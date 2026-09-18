@@ -1,0 +1,5 @@
+changelog: |
+  - Exposes `selected` state on `Autocomplete` option semantics (`b/464138739`, `b/464133587`, `b/464122713`).
+  - Wraps `DrawerHeader` in `Semantics(header: true)` (`b/462597561`, `b/462583677`).
+  - Adds `ignorePointer` to `TooltipThemeData` for WCAG 1.4.13 Hoverable support (`b/463913706`).
+version: minor
