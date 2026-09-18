@@ -1,0 +1,3 @@
+changelog: |
+  - Keeps non-fullscreen `SearchAnchor` suggestion views above the on-screen keyboard.
+version: patch
