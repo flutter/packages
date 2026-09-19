@@ -1,0 +1,3 @@
+changelog: |
+  - Replace usages of WidgetStatesController setter with the recommended update method
+version: patch
