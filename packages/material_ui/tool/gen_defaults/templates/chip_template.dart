@@ -33,8 +33,8 @@ class $className extends ChipThemeData {
   @override
   TextStyle? get labelStyle => ${textStyle(TokenFilterChip.labelTextType, '_textTheme')}?.copyWith(
     color: isEnabled
-      ? ${color(TokenFilterChip.unselectedLabelTextColor, '_colors')}
-      : ${color(TokenFilterChip.disabledLabelTextColor, '_colors')},
+      ? ${color(TokenFilterChip.unselectedLabelTextColor)}
+      : ${color(TokenFilterChip.disabledLabelTextColor)},
   );
 
   @override
@@ -51,19 +51,19 @@ class $className extends ChipThemeData {
 
   @override
   Color? get deleteIconColor => isEnabled
-    ? ${color(TokenFilterChip.withTrailingIconUnselectedTrailingIconColor, '_colors')}
-    : ${color(TokenFilterChip.withTrailingIconDisabledTrailingIconColor, '_colors')};
+    ? ${color(TokenFilterChip.withTrailingIconUnselectedTrailingIconColor)}
+    : ${color(TokenFilterChip.withTrailingIconDisabledTrailingIconColor)};
 
   @override
   BorderSide? get side => isEnabled
-    ? ${border(color(TokenFilterChip.flatUnselectedOutlineColor, '_colors'), width: TokenFilterChip.flatUnselectedOutlineWidth)}
-    : ${border(colorWithOpacity(TokenFilterChip.flatDisabledUnselectedOutlineColor, TokenFilterChip.flatDisabledUnselectedOutlineOpacity, '_colors'))};
+    ? ${border(color(TokenFilterChip.flatUnselectedOutlineColor), width: TokenFilterChip.flatUnselectedOutlineWidth)}
+    : ${border(colorWithOpacity(TokenFilterChip.flatDisabledUnselectedOutlineColor, TokenFilterChip.flatDisabledUnselectedOutlineOpacity))};
 
   @override
   IconThemeData? get iconTheme => IconThemeData(
     color: isEnabled
-      ? ${color(TokenFilterChip.withLeadingIconUnselectedLeadingIconColor, '_colors')}
-      : ${color(TokenFilterChip.withLeadingIconDisabledLeadingIconColor, '_colors')},
+      ? ${color(TokenFilterChip.withLeadingIconUnselectedLeadingIconColor)}
+      : ${color(TokenFilterChip.withLeadingIconDisabledLeadingIconColor)},
     size: ${number(TokenFilterChip.withIconIconSize)},
   );
 
