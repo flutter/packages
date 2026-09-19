@@ -1,0 +1,3 @@
+changelog: |
+  - update timePicker i10n tests to use constant locales
+version: patch
