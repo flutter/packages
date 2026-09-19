@@ -1,0 +1,3 @@
+changelog: |
+  - Adds tests for Indonesian, Korean and Thai locales tests in TimePicker i10n tests
+version: patch

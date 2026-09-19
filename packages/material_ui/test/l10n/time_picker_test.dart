@@ -35,7 +35,6 @@ void main() {
       (Widget w) => '${w.runtimeType}' == '_DayPeriodControl',
     );
 
-    // TODO(yjbanov): also test `HH.mm` (in_ID), `a h:mm` (ko_KR) and `HH:mm น.` (th_TH) when we have .arb files for them
     final locales = <Locale>[
       const Locale('en', 'US'), //'h:mm a'
       const Locale('en', 'GB'), //'HH:mm'
@@ -43,6 +42,9 @@ void main() {
       const Locale('fr', 'CA'), //'HH \'h\' mm'
       const Locale('zh', 'ZH'), //'ah:mm'
       const Locale('fa', 'IR'), //'H:mm' but RTL
+      const Locale('in', 'ID'), //'HH.mm'
+      const Locale('ko', 'KR'), //'a h:mm`
+      const Locale('th', 'TH'), //`HH:mm น.`
     ];
 
     for (final locale in locales) {
@@ -90,6 +92,22 @@ void main() {
         expect(hourLeftOffset, lessThan(stringFragmentLeftOffset));
         expect(stringFragmentLeftOffset, lessThan(minuteLeftOffset));
         expect(dayPeriodControlFinder, findsNothing);
+      } else if (locale == const Locale('in', 'ID')) {
+        // This is an LTR locale, it uses a dot separator instead of a standard colon.
+        expect(stringFragmentText.data, '.');
+        expect(hourLeftOffset, lessThan(stringFragmentLeftOffset));
+        expect(stringFragmentLeftOffset, lessThan(minuteLeftOffset));
+        expect(dayPeriodControlFinder, findsNothing);
+      } else if (locale == const Locale('ko', 'KR')) {
+        expect(stringFragmentText.data, ':');
+        expect(hourLeftOffset, lessThan(stringFragmentLeftOffset));
+        expect(stringFragmentLeftOffset, lessThan(minuteLeftOffset));
+        expect(dayPeriodControlFinder, findsOne);
+      } else if (locale == const Locale('th', 'TH')) {
+        expect(stringFragmentText.data, ':');
+        expect(hourLeftOffset, lessThan(stringFragmentLeftOffset));
+        expect(stringFragmentLeftOffset, lessThan(minuteLeftOffset));
+        expect(dayPeriodControlFinder, findsOne);
       }
       await tester.tapAt(Offset(center.dx, center.dy - 50.0));
       await finishPicker(tester);
@@ -120,7 +138,6 @@ void main() {
       (Widget w) => '${w.runtimeType}' == '_DayPeriodControl',
     );
 
-    // TODO(yjbanov): also test `HH.mm` (in_ID), `a h:mm` (ko_KR) and `HH:mm น.` (th_TH) when we have .arb files for them
     final locales = <Locale>[
       const Locale('en', 'US'), //'h:mm a'
       const Locale('en', 'GB'), //'HH:mm'
@@ -128,6 +145,9 @@ void main() {
       const Locale('fr', 'CA'), //'HH \'h\' mm'
       const Locale('zh', 'ZH'), //'ah:mm'
       const Locale('fa', 'IR'), //'H:mm' but RTL
+      const Locale('in', 'ID'), //'HH.mm'
+      const Locale('ko', 'KR'), //'a h:mm`
+      const Locale('th', 'TH'), //`HH:mm น.`
     ];
 
     for (final locale in locales) {
@@ -170,6 +190,22 @@ void main() {
         expect(hourLeftOffset, lessThan(stringFragmentLeftOffset));
         expect(stringFragmentLeftOffset, lessThan(minuteLeftOffset));
         expect(dayPeriodControlFinder, findsNothing);
+      } else if (locale == const Locale('in', 'ID')) {
+        // This is an LTR locale, it uses a dot separator instead of a standard colon.
+        expect(stringFragmentText.data, '.');
+        expect(hourLeftOffset, lessThan(stringFragmentLeftOffset));
+        expect(stringFragmentLeftOffset, lessThan(minuteLeftOffset));
+        expect(dayPeriodControlFinder, findsNothing);
+      } else if (locale == const Locale('ko', 'KR')) {
+        expect(stringFragmentText.data, ':');
+        expect(hourLeftOffset, lessThan(stringFragmentLeftOffset));
+        expect(stringFragmentLeftOffset, lessThan(minuteLeftOffset));
+        expect(dayPeriodControlFinder, findsOne);
+      } else if (locale == const Locale('th', 'TH')) {
+        expect(stringFragmentText.data, ':');
+        expect(hourLeftOffset, lessThan(stringFragmentLeftOffset));
+        expect(stringFragmentLeftOffset, lessThan(minuteLeftOffset));
+        expect(dayPeriodControlFinder, findsOne);
       }
       await tester.tapAt(Offset(center.dx, center.dy - 50.0));
       await finishPicker(tester);
@@ -200,7 +236,6 @@ void main() {
       (Widget w) => '${w.runtimeType}' == '_DayPeriodControl',
     );
 
-    // TODO(yjbanov): also test `HH.mm` (in_ID), `a h:mm` (ko_KR) and `HH:mm น.` (th_TH) when we have .arb files for them
     final locales = <Locale>[
       const Locale('en', 'US'), //'h:mm a'
       const Locale('en', 'GB'), //'HH:mm'
@@ -208,6 +243,9 @@ void main() {
       const Locale('fr', 'CA'), //'HH \'h\' mm'
       const Locale('zh', 'ZH'), //'ah:mm'
       const Locale('fa', 'IR'), //'H:mm' but RTL
+      const Locale('in', 'ID'), //'HH.mm'
+      const Locale('ko', 'KR'), //'a h:mm`
+      const Locale('th', 'TH'), //`HH:mm น.`
     ];
 
     for (final locale in locales) {
@@ -260,6 +298,22 @@ void main() {
         expect(hourLeftOffset, lessThan(stringFragmentLeftOffset));
         expect(stringFragmentLeftOffset, lessThan(minuteLeftOffset));
         expect(dayPeriodControlFinder, findsNothing);
+      } else if (locale == const Locale('in', 'ID')) {
+        // This is an LTR locale, it uses a dot separator instead of a standard colon.
+        expect(stringFragmentText.data, '.');
+        expect(hourLeftOffset, lessThan(stringFragmentLeftOffset));
+        expect(stringFragmentLeftOffset, lessThan(minuteLeftOffset));
+        expect(dayPeriodControlFinder, findsNothing);
+      } else if (locale == const Locale('ko', 'KR')) {
+        expect(stringFragmentText.data, ':');
+        expect(hourLeftOffset, lessThan(stringFragmentLeftOffset));
+        expect(stringFragmentLeftOffset, lessThan(minuteLeftOffset));
+        expect(dayPeriodControlFinder, findsOne);
+      } else if (locale == const Locale('th', 'TH')) {
+        expect(stringFragmentText.data, ':');
+        expect(hourLeftOffset, lessThan(stringFragmentLeftOffset));
+        expect(stringFragmentLeftOffset, lessThan(minuteLeftOffset));
+        expect(dayPeriodControlFinder, findsOne);
       }
       await tester.tapAt(Offset(center.dx, center.dy - 50.0));
       await finishPicker(tester);
@@ -290,7 +344,6 @@ void main() {
       (Widget w) => '${w.runtimeType}' == '_DayPeriodControl',
     );
 
-    // TODO(yjbanov): also test `HH.mm` (in_ID), `a h:mm` (ko_KR) and `HH:mm น.` (th_TH) when we have .arb files for them
     final locales = <Locale>[
       const Locale('en', 'US'), //'h:mm a'
       const Locale('en', 'GB'), //'HH:mm'
@@ -298,6 +351,9 @@ void main() {
       const Locale('fr', 'CA'), //'HH \'h\' mm'
       const Locale('zh', 'ZH'), //'ah:mm'
       const Locale('fa', 'IR'), //'H:mm' but RTL
+      const Locale('in', 'ID'), //'HH.mm'
+      const Locale('ko', 'KR'), //'a h:mm`
+      const Locale('th', 'TH'), //`HH:mm น.`
     ];
 
     for (final locale in locales) {
@@ -345,6 +401,38 @@ void main() {
         expect(hourLeftOffset, lessThan(stringFragmentLeftOffset));
         expect(stringFragmentLeftOffset, lessThan(minuteLeftOffset));
         expect(dayPeriodControlFinder, findsNothing);
+      } else if (locale == const Locale('in', 'ID')) {
+        // This is an LTR locale, it uses a dot separator instead of a standard colon.
+        expect(stringFragmentText.data, '.');
+        expect(hourLeftOffset, lessThan(stringFragmentLeftOffset));
+        expect(stringFragmentLeftOffset, lessThan(minuteLeftOffset));
+        expect(dayPeriodControlFinder, findsNothing);
+      } else if (locale == const Locale('ko', 'KR')) {
+        expect(stringFragmentText.data, ':');
+        expect(hourLeftOffset, lessThan(stringFragmentLeftOffset));
+        expect(stringFragmentLeftOffset, lessThan(minuteLeftOffset));
+        expect(dayPeriodControlFinder, findsOne);
+      } else if (locale == const Locale('th', 'TH')) {
+        expect(stringFragmentText.data, ':');
+        expect(hourLeftOffset, lessThan(stringFragmentLeftOffset));
+        expect(stringFragmentLeftOffset, lessThan(minuteLeftOffset));
+        expect(dayPeriodControlFinder, findsOne);
+      } else if (locale == const Locale('in', 'ID')) {
+        // This is an LTR locale, it uses a dot separator instead of a standard colon.
+        expect(stringFragmentText.data, '.');
+        expect(hourLeftOffset, lessThan(stringFragmentLeftOffset));
+        expect(stringFragmentLeftOffset, lessThan(minuteLeftOffset));
+        expect(dayPeriodControlFinder, findsNothing);
+      } else if (locale == const Locale('ko', 'KR')) {
+        expect(stringFragmentText.data, ':');
+        expect(hourLeftOffset, lessThan(stringFragmentLeftOffset));
+        expect(stringFragmentLeftOffset, lessThan(minuteLeftOffset));
+        expect(dayPeriodControlFinder, findsOne);
+      } else if (locale == const Locale('th', 'TH')) {
+        expect(stringFragmentText.data, ':');
+        expect(hourLeftOffset, lessThan(stringFragmentLeftOffset));
+        expect(stringFragmentLeftOffset, lessThan(minuteLeftOffset));
+        expect(dayPeriodControlFinder, findsOne);
       }
       await tester.tapAt(Offset(center.dx, center.dy - 50.0));
       await finishPicker(tester);
@@ -370,7 +458,6 @@ void main() {
         )
         .first;
 
-    // TODO(yjbanov): also test `HH.mm` (in_ID), `a h:mm` (ko_KR) and `HH:mm น.` (th_TH) when we have .arb files for them
     final locales = <Locale>[
       const Locale('en', 'US'), //'h:mm a'
       const Locale('en', 'GB'), //'HH:mm'
@@ -378,9 +465,15 @@ void main() {
       const Locale('fr', 'CA'), //'HH \'h\' mm'
       const Locale('zh', 'ZH'), //'ah:mm'
       const Locale('fa', 'IR'), //'H:mm' but RTL
+      const Locale('in', 'ID'), //'HH.mm'
+      const Locale('ko', 'KR'), //'a h:mm`
+      const Locale('th', 'TH'), //`HH:mm น.`
     ];
 
     for (final locale in locales) {
+      await tester.pumpWidget(
+        const SizedBox(),
+      ); // this is needed to reset the widget tree and prevent state/Directionality leaks between loop iterations.
       await tester.pumpWidget(
         _TimePickerLauncher(
           onChanged: (TimeOfDay? time) {},
@@ -430,6 +523,22 @@ void main() {
         expect(hourLeftOffset, lessThan(stringFragmentLeftOffset));
         expect(stringFragmentLeftOffset, lessThan(minuteLeftOffset));
         expect(dayPeriodControlFinder, findsNothing);
+      } else if (locale == const Locale('in', 'ID')) {
+        // This is an LTR locale, it uses a dot separator instead of a standard colon.
+        expect(stringFragmentText.data, '.');
+        expect(hourLeftOffset, lessThan(stringFragmentLeftOffset));
+        expect(stringFragmentLeftOffset, lessThan(minuteLeftOffset));
+        expect(dayPeriodControlFinder, findsNothing);
+      } else if (locale == const Locale('ko', 'KR')) {
+        expect(stringFragmentText.data, ':');
+        expect(hourLeftOffset, lessThan(stringFragmentLeftOffset));
+        expect(stringFragmentLeftOffset, lessThan(minuteLeftOffset));
+        expect(dayPeriodControlFinder, findsOne);
+      } else if (locale == const Locale('th', 'TH')) {
+        expect(stringFragmentText.data, ':');
+        expect(hourLeftOffset, lessThan(stringFragmentLeftOffset));
+        expect(stringFragmentLeftOffset, lessThan(minuteLeftOffset));
+        expect(dayPeriodControlFinder, findsOne);
       }
       await finishPicker(tester);
       expect(tester.takeException(), isNot(throwsFlutterError));
@@ -455,7 +564,6 @@ void main() {
         )
         .first;
 
-    // TODO(yjbanov): also test `HH.mm` (in_ID), `a h:mm` (ko_KR) and `HH:mm น.` (th_TH) when we have .arb files for them
     final locales = <Locale>[
       const Locale('en', 'US'), //'h:mm a'
       const Locale('en', 'GB'), //'HH:mm'
@@ -463,9 +571,15 @@ void main() {
       const Locale('fr', 'CA'), //'HH \'h\' mm'
       const Locale('zh', 'ZH'), //'ah:mm'
       const Locale('fa', 'IR'), //'H:mm' but RTL
+      const Locale('in', 'ID'), //'HH.mm'
+      const Locale('ko', 'KR'), //'a h:mm`
+      const Locale('th', 'TH'), //`HH:mm น.`
     ];
 
     for (final locale in locales) {
+      await tester.pumpWidget(
+        const SizedBox(),
+      ); // this is needed to reset the widget tree and prevent state/Directionality leaks between loop iterations.
       await tester.pumpWidget(
         _TimePickerLauncher(
           onChanged: (TimeOfDay? time) {},
@@ -514,6 +628,22 @@ void main() {
         expect(hourLeftOffset, lessThan(stringFragmentLeftOffset));
         expect(stringFragmentLeftOffset, lessThan(minuteLeftOffset));
         expect(dayPeriodControlFinder, findsNothing);
+      } else if (locale == const Locale('in', 'ID')) {
+        // This is an LTR locale, it uses a dot separator instead of a standard colon.
+        expect(stringFragmentText.data, '.');
+        expect(hourLeftOffset, lessThan(stringFragmentLeftOffset));
+        expect(stringFragmentLeftOffset, lessThan(minuteLeftOffset));
+        expect(dayPeriodControlFinder, findsNothing);
+      } else if (locale == const Locale('ko', 'KR')) {
+        expect(stringFragmentText.data, ':');
+        expect(hourLeftOffset, lessThan(stringFragmentLeftOffset));
+        expect(stringFragmentLeftOffset, lessThan(minuteLeftOffset));
+        expect(dayPeriodControlFinder, findsOne);
+      } else if (locale == const Locale('th', 'TH')) {
+        expect(stringFragmentText.data, ':');
+        expect(hourLeftOffset, lessThan(stringFragmentLeftOffset));
+        expect(stringFragmentLeftOffset, lessThan(minuteLeftOffset));
+        expect(dayPeriodControlFinder, findsOne);
       }
       await finishPicker(tester);
       expect(tester.takeException(), isNot(throwsFlutterError));
