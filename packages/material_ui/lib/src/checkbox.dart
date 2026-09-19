@@ -738,6 +738,7 @@ class _CheckboxPainter extends ToggleablePainter {
   EdgeInsets get markInsets => _markInsets;
   EdgeInsets _markInsets = EdgeInsets.zero;
   set markInsets(EdgeInsets value) {
+    assert(value.isNonNegative, 'markInsets must be non-negative.');
     if (_markInsets == value) {
       return;
     }
@@ -790,6 +791,27 @@ class _CheckboxPainter extends ToggleablePainter {
       ..strokeWidth = _kStrokeWidth;
   }
 
+  // The square that the check mark or the indeterminate dash is drawn in.
+  //
+  // The square is inset by [markInsets] and then scaled down uniformly to fit
+  // whatever space is left, so that the mark keeps its aspect ratio no matter
+  // how asymmetric the insets are. It is centered in the space the insets leave
+  // behind. Returns null when the insets leave no room to draw in.
+  Rect? _markSquare() {
+    final double innerWidth = clampDouble(_kEdgeSize - _markInsets.horizontal, 0.0, _kEdgeSize);
+    final double innerHeight = clampDouble(_kEdgeSize - _markInsets.vertical, 0.0, _kEdgeSize);
+    if (innerWidth <= 0.0 || innerHeight <= 0.0) {
+      return null;
+    }
+    final side = innerWidth < innerHeight ? innerWidth : innerHeight;
+    return Rect.fromLTWH(
+      _markInsets.left + (innerWidth - side) / 2.0,
+      _markInsets.top + (innerHeight - side) / 2.0,
+      side,
+      side,
+    );
+  }
+
   void _drawBox(Canvas canvas, Rect outer, Paint paint, BorderSide? side) {
     if (shape.preferPaintInterior) {
       shape.paintInterior(canvas, outer, paint);
@@ -805,20 +827,17 @@ class _CheckboxPainter extends ToggleablePainter {
     assert(t >= 0.0 && t <= 1.0);
     // As t goes from 0.0 to 1.0, animate the two check mark strokes from the
     // short side to the long side.
-    final path = Path();
-    final double innerW = clampDouble(_kEdgeSize - _markInsets.horizontal, 0.0, _kEdgeSize);
-    final double innerH = clampDouble(_kEdgeSize - _markInsets.vertical, 0.0, _kEdgeSize);
-    if (innerW <= 0 || innerH <= 0) {
+    final Rect? square = _markSquare();
+    if (square == null) {
       return;
-    } // no room — paint nothing
+    }
+    // Shrink the stroke by the same factor so a smaller mark doesn't look chunky.
+    paint.strokeWidth = _kStrokeWidth * (square.width / _kEdgeSize);
 
-    // Shrink the stroke proportionally so a smaller mark doesn't look chunky.
-    final double scale = (innerW < innerH ? innerW : innerH) / _kEdgeSize;
-    paint.strokeWidth = _kStrokeWidth * scale;
-
-    final start = Offset(_markInsets.left + innerW * 0.15, _markInsets.top + innerH * 0.45);
-    final mid = Offset(_markInsets.left + innerW * 0.40, _markInsets.top + innerH * 0.70);
-    final end = Offset(_markInsets.left + innerW * 0.85, _markInsets.top + innerH * 0.25);
+    final path = Path();
+    final start = Offset(square.left + square.width * 0.15, square.top + square.height * 0.45);
+    final mid = Offset(square.left + square.width * 0.4, square.top + square.height * 0.7);
+    final end = Offset(square.left + square.width * 0.85, square.top + square.height * 0.25);
 
     if (t < 0.5) {
       final double strokeT = t * 2.0;
@@ -839,18 +858,15 @@ class _CheckboxPainter extends ToggleablePainter {
     assert(t >= 0.0 && t <= 1.0);
     // As t goes from 0.0 to 1.0, animate the horizontal line from the
     // mid point outwards.
-    final double innerW = clampDouble(_kEdgeSize - _markInsets.horizontal, 0.0, _kEdgeSize);
-    final double innerH = clampDouble(_kEdgeSize - _markInsets.vertical, 0.0, _kEdgeSize);
-    if (innerW <= 0 || innerH <= 0) {
+    final Rect? square = _markSquare();
+    if (square == null) {
       return;
-    } // nothing to draw
+    }
+    paint.strokeWidth = _kStrokeWidth * (square.width / _kEdgeSize);
 
-    final double scale = (innerW < innerH ? innerW : innerH) / _kEdgeSize;
-    paint.strokeWidth = _kStrokeWidth * scale; // shrink stroke too
-
-    final start = Offset(_markInsets.left + innerW * 0.2, _markInsets.top + innerH * 0.5);
-    final mid = Offset(_markInsets.left + innerW * 0.5, _markInsets.top + innerH * 0.5);
-    final end = Offset(_markInsets.left + innerW * 0.8, _markInsets.top + innerH * 0.5);
+    final start = Offset(square.left + square.width * 0.2, square.top + square.height * 0.5);
+    final mid = Offset(square.left + square.width * 0.5, square.top + square.height * 0.5);
+    final end = Offset(square.left + square.width * 0.8, square.top + square.height * 0.5);
 
     final Offset drawStart = Offset.lerp(start, mid, 1.0 - t)!;
     final Offset drawEnd = Offset.lerp(mid, end, t)!;
