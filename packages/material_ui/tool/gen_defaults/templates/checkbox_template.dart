@@ -32,24 +32,24 @@ class $className extends CheckboxThemeData {
         if (states.contains(WidgetState.selected)) {
           return ${border('Colors.transparent', width: TokenCheckbox.unselectedDisabledOutlineWidth, prefix: 'const ')};
         }
-        return ${border(colorWithOpacity(TokenCheckbox.unselectedDisabledOutlineColor, TokenCheckbox.unselectedDisabledContainerOpacity, '_colors'), width: TokenCheckbox.unselectedDisabledOutlineWidth)};
+        return ${border(colorWithOpacity(TokenCheckbox.unselectedDisabledOutlineColor, TokenCheckbox.unselectedDisabledContainerOpacity), width: TokenCheckbox.unselectedDisabledOutlineWidth)};
       }
       if (states.contains(WidgetState.selected)) {
         return ${border('Colors.transparent', width: TokenCheckbox.selectedOutlineWidth, prefix: 'const ')};
       }
       if (states.contains(WidgetState.error)) {
-        return ${border(color(TokenCheckbox.unselectedErrorOutlineColor, '_colors'), width: TokenCheckbox.unselectedOutlineWidth)};
+        return ${border(color(TokenCheckbox.unselectedErrorOutlineColor), width: TokenCheckbox.unselectedOutlineWidth)};
       }
       if (states.contains(WidgetState.pressed)) {
-        return ${border(color(TokenCheckbox.unselectedPressedOutlineColor, '_colors'), width: TokenCheckbox.unselectedPressedOutlineWidth)};
+        return ${border(color(TokenCheckbox.unselectedPressedOutlineColor), width: TokenCheckbox.unselectedPressedOutlineWidth)};
       }
       if (states.contains(WidgetState.hovered)) {
-        return ${border(color(TokenCheckbox.unselectedHoverOutlineColor, '_colors'), width: TokenCheckbox.unselectedHoverOutlineWidth)};
+        return ${border(color(TokenCheckbox.unselectedHoverOutlineColor), width: TokenCheckbox.unselectedHoverOutlineWidth)};
       }
       if (states.contains(WidgetState.focused)) {
-        return ${border(color(TokenCheckbox.unselectedFocusOutlineColor, '_colors'), width: TokenCheckbox.unselectedFocusOutlineWidth)};
+        return ${border(color(TokenCheckbox.unselectedFocusOutlineColor), width: TokenCheckbox.unselectedFocusOutlineWidth)};
       }
-      return ${border(color(TokenCheckbox.unselectedOutlineColor, '_colors'), width: TokenCheckbox.unselectedOutlineWidth)};
+      return ${border(color(TokenCheckbox.unselectedOutlineColor), width: TokenCheckbox.unselectedOutlineWidth)};
     });
   }
 
@@ -58,15 +58,15 @@ class $className extends CheckboxThemeData {
     return WidgetStateProperty.resolveWith((Set<WidgetState> states) {
       if (states.contains(WidgetState.disabled)) {
         if (states.contains(WidgetState.selected)) {
-          return ${colorWithOpacity(TokenCheckbox.selectedDisabledContainerColor, TokenCheckbox.selectedDisabledContainerOpacity, '_colors')};
+          return ${colorWithOpacity(TokenCheckbox.selectedDisabledContainerColor, TokenCheckbox.selectedDisabledContainerOpacity)};
         }
         return Colors.transparent;
       }
       if (states.contains(WidgetState.selected)) {
         if (states.contains(WidgetState.error)) {
-          return ${color(TokenCheckbox.selectedErrorContainerColor, '_colors')};
+          return ${color(TokenCheckbox.selectedErrorContainerColor)};
         }
-        return ${color(TokenCheckbox.selectedContainerColor, '_colors')};
+        return ${color(TokenCheckbox.selectedContainerColor)};
       }
       return Colors.transparent;
     });
@@ -77,15 +77,15 @@ class $className extends CheckboxThemeData {
     return WidgetStateProperty.resolveWith((Set<WidgetState> states) {
       if (states.contains(WidgetState.disabled)) {
         if (states.contains(WidgetState.selected)) {
-          return ${color(TokenCheckbox.selectedDisabledIconColor, '_colors')};
+          return ${color(TokenCheckbox.selectedDisabledIconColor)};
         }
         return Colors.transparent; // No icons available when the checkbox is unselected.
       }
       if (states.contains(WidgetState.selected)) {
         if (states.contains(WidgetState.error)) {
-          return ${color(TokenCheckbox.selectedErrorIconColor, '_colors')};
+          return ${color(TokenCheckbox.selectedErrorIconColor)};
         }
-        return ${color(TokenCheckbox.selectedIconColor, '_colors')};
+        return ${color(TokenCheckbox.selectedIconColor)};
       }
       return Colors.transparent; // No icons available when the checkbox is unselected.
     });
@@ -96,35 +96,35 @@ class $className extends CheckboxThemeData {
     return WidgetStateProperty.resolveWith((Set<WidgetState> states) {
       if (states.contains(WidgetState.error)) {
         if (states.contains(WidgetState.pressed)) {
-          return ${colorWithOpacity(TokenCheckbox.errorPressedStateLayerColor, TokenCheckbox.errorPressedStateLayerOpacity, '_colors')};
+          return ${colorWithOpacity(TokenCheckbox.errorPressedStateLayerColor, TokenCheckbox.errorPressedStateLayerOpacity)};
         }
         if (states.contains(WidgetState.hovered)) {
-          return ${colorWithOpacity(TokenCheckbox.errorHoverStateLayerColor, TokenCheckbox.errorHoverStateLayerOpacity, '_colors')};
+          return ${colorWithOpacity(TokenCheckbox.errorHoverStateLayerColor, TokenCheckbox.errorHoverStateLayerOpacity)};
         }
         if (states.contains(WidgetState.focused)) {
-          return ${colorWithOpacity(TokenCheckbox.errorFocusStateLayerColor, TokenCheckbox.errorFocusStateLayerOpacity, '_colors')};
+          return ${colorWithOpacity(TokenCheckbox.errorFocusStateLayerColor, TokenCheckbox.errorFocusStateLayerOpacity)};
         }
       }
       if (states.contains(WidgetState.selected)) {
         if (states.contains(WidgetState.pressed)) {
-          return ${colorWithOpacity(TokenCheckbox.selectedPressedStateLayerColor, TokenCheckbox.selectedPressedStateLayerOpacity, '_colors')};
+          return ${colorWithOpacity(TokenCheckbox.selectedPressedStateLayerColor, TokenCheckbox.selectedPressedStateLayerOpacity)};
         }
         if (states.contains(WidgetState.hovered)) {
-          return ${colorWithOpacity(TokenCheckbox.selectedHoverStateLayerColor, TokenCheckbox.selectedHoverStateLayerOpacity, '_colors')};
+          return ${colorWithOpacity(TokenCheckbox.selectedHoverStateLayerColor, TokenCheckbox.selectedHoverStateLayerOpacity)};
         }
         if (states.contains(WidgetState.focused)) {
-          return ${colorWithOpacity(TokenCheckbox.selectedFocusStateLayerColor, TokenCheckbox.selectedFocusStateLayerOpacity, '_colors')};
+          return ${colorWithOpacity(TokenCheckbox.selectedFocusStateLayerColor, TokenCheckbox.selectedFocusStateLayerOpacity)};
         }
         return Colors.transparent;
       }
       if (states.contains(WidgetState.pressed)) {
-        return ${colorWithOpacity(TokenCheckbox.unselectedPressedStateLayerColor, TokenCheckbox.unselectedPressedStateLayerOpacity, '_colors')};
+        return ${colorWithOpacity(TokenCheckbox.unselectedPressedStateLayerColor, TokenCheckbox.unselectedPressedStateLayerOpacity)};
       }
       if (states.contains(WidgetState.hovered)) {
-        return ${colorWithOpacity(TokenCheckbox.unselectedHoverStateLayerColor, TokenCheckbox.unselectedHoverStateLayerOpacity, '_colors')};
+        return ${colorWithOpacity(TokenCheckbox.unselectedHoverStateLayerColor, TokenCheckbox.unselectedHoverStateLayerOpacity)};
       }
       if (states.contains(WidgetState.focused)) {
-        return ${colorWithOpacity(TokenCheckbox.unselectedFocusStateLayerColor, TokenCheckbox.unselectedFocusStateLayerOpacity, '_colors')};
+        return ${colorWithOpacity(TokenCheckbox.unselectedFocusStateLayerColor, TokenCheckbox.unselectedFocusStateLayerOpacity)};
       }
       return Colors.transparent;
     });
