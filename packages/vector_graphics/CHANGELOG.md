@@ -4,6 +4,7 @@
 * Updates minimum supported SDK version to Flutter 3.41/Dart 3.11.
 * Fixes deprecation lints.
 * Adds versioned filter decoding, bounded resource ownership, correct opacity, mask, and pattern composition.
+* Adds SVG `feOffset` support with parameter, pixel, and visual reference tests.
 
 ## 1.2.3
 

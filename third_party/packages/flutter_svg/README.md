@@ -10,8 +10,7 @@ Draw SVG files using Flutter.
 
 ## SVG filters
 
-Filter definitions are preserved by the compiler and resolved by the renderer.
-Unsupported filter primitives produce an explicit diagnostic.
+Supported filter primitives: `feOffset`.
 Existing `SvgPicture` loaders and both rendering strategies use the same compiler
 and renderer. Canvas fragment shaders work with both Skia and Impeller.
 

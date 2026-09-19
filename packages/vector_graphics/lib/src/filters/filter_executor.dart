@@ -7,6 +7,7 @@ import 'dart:ui';
 import 'package:vector_graphics_codec/vector_graphics_codec.dart';
 
 import 'filter_context.dart';
+import 'offset.dart';
 
 /// Evaluates a definition in document order, preserving named intermediate results.
 FilterImage executeFilter(FilterContext context) {
@@ -21,5 +22,10 @@ FilterImage executeFilter(FilterContext context) {
 
 /// Dispatches one primitive. Each supported operation has a separate implementation.
 FilterImage executePrimitive(FilterContext context, VectorFilter primitive) {
-  throw UnsupportedError('SVG filter primitive ${primitive.name} is not implemented');
+  switch (primitive.name) {
+    case 'feOffset':
+      return offset(context, primitive);
+    default:
+      throw UnsupportedError('SVG filter primitive ${primitive.name} is not implemented');
+  }
 }

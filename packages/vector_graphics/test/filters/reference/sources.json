@@ -3,6 +3,178 @@
     "kind": "browser",
     "input": "empty.svg"
   },
+  "integration_mask_clip_layers": {
+    "kind": "browser",
+    "input": "integration_mask_clip_layers.svg"
+  },
+  "integration_mask_inside_filter": {
+    "kind": "browser",
+    "input": "integration_mask_inside_filter.svg"
+  },
+  "integration_mask_inside_transformed_filter": {
+    "kind": "browser",
+    "input": "integration_mask_inside_transformed_filter.svg"
+  },
+  "integration_nested_masks": {
+    "kind": "browser",
+    "input": "integration_nested_masks.svg"
+  },
+  "integration_pattern_contains_filter": {
+    "kind": "browser",
+    "input": "integration_pattern_contains_filter.svg"
+  },
+  "integration_pattern_contains_mask": {
+    "kind": "browser",
+    "input": "integration_pattern_contains_mask.svg"
+  },
+  "integration_pattern_contains_nested": {
+    "kind": "browser",
+    "input": "integration_pattern_contains_nested.svg"
+  },
+  "offset_alpha": {
+    "kind": "browser",
+    "input": "offset_alpha.svg"
+  },
+  "offset_alpha_outside_negative": {
+    "kind": "browser",
+    "input": "offset_alpha_outside_negative.svg"
+  },
+  "offset_alpha_outside_positive": {
+    "kind": "browser",
+    "input": "offset_alpha_outside_positive.svg"
+  },
+  "offset_basic": {
+    "kind": "browser",
+    "input": "offset_basic.svg"
+  },
+  "offset_bbox": {
+    "kind": "browser",
+    "input": "offset_bbox.svg"
+  },
+  "offset_chain": {
+    "kind": "browser",
+    "input": "offset_chain.svg"
+  },
+  "offset_clipped": {
+    "kind": "browser",
+    "input": "offset_clipped.svg"
+  },
+  "offset_dashed_bbox": {
+    "kind": "browser",
+    "input": "offset_dashed_bbox.svg"
+  },
+  "offset_default_region": {
+    "kind": "browser",
+    "input": "offset_default_region.svg"
+  },
+  "offset_font_units": {
+    "kind": "browser",
+    "input": "offset_font_units.svg"
+  },
+  "offset_forward": {
+    "kind": "browser",
+    "input": "offset_forward.svg"
+  },
+  "offset_fractional": {
+    "kind": "browser",
+    "input": "offset_fractional.svg"
+  },
+  "offset_metadata": {
+    "kind": "browser",
+    "input": "offset_metadata.svg"
+  },
+  "offset_negative": {
+    "kind": "browser",
+    "input": "offset_negative.svg"
+  },
+  "offset_nested": {
+    "kind": "browser",
+    "input": "offset_nested.svg"
+  },
+  "offset_opacity": {
+    "kind": "browser",
+    "input": "offset_opacity.svg"
+  },
+  "offset_overwrite": {
+    "kind": "browser",
+    "input": "offset_overwrite.svg"
+  },
+  "offset_physical_units": {
+    "kind": "browser",
+    "input": "offset_physical_units.svg"
+  },
+  "offset_quoted_url": {
+    "kind": "browser",
+    "input": "offset_quoted_url.svg"
+  },
+  "offset_root": {
+    "kind": "browser",
+    "input": "offset_root.svg"
+  },
+  "offset_rotate": {
+    "kind": "browser",
+    "input": "offset_rotate.svg"
+  },
+  "offset_source": {
+    "kind": "browser",
+    "input": "offset_source.svg"
+  },
+  "offset_source_clipped": {
+    "kind": "browser",
+    "input": "offset_source_clipped.svg"
+  },
+  "offset_subregion": {
+    "kind": "browser",
+    "input": "offset_subregion.svg"
+  },
+  "offset_transform": {
+    "kind": "browser",
+    "input": "offset_transform.svg"
+  },
+  "offset_unknown_input": {
+    "kind": "browser",
+    "input": "offset_unknown_input.svg"
+  },
+  "offset_unpainted_bbox": {
+    "kind": "browser",
+    "input": "offset_unpainted_bbox.svg"
+  },
+  "offset_unpainted_clip": {
+    "kind": "browser",
+    "input": "offset_unpainted_clip.svg"
+  },
+  "offset_unpainted_mask": {
+    "kind": "browser",
+    "input": "offset_unpainted_mask.svg"
+  },
+  "offset_unpainted_nested": {
+    "kind": "browser",
+    "input": "offset_unpainted_nested.svg"
+  },
+  "offset_unpainted_transform": {
+    "kind": "browser",
+    "input": "offset_unpainted_transform.svg"
+  },
+  "offset_unpainted_use": {
+    "kind": "browser",
+    "input": "offset_unpainted_use.svg"
+  },
+  "offset_use": {
+    "kind": "browser",
+    "input": "offset_use.svg"
+  },
+  "offset_use_filtered_source": {
+    "kind": "browser",
+    "input": "offset_use_filtered_source.svg"
+  },
+  "offset_viewbox": {
+    "kind": "browser",
+    "input": "offset_viewbox.svg"
+  },
+  "offset_zero_scale": {
+    "kind": "browser",
+    "input": "offset_zero_scale.svg"
+  },
   "unfiltered": {
     "kind": "browser",
     "input": "unfiltered.svg"
