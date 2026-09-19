@@ -14,6 +14,10 @@ class InputChipTemplateM3 extends TokenTemplateM3 {
   @override
   String get parentFilePath => 'input_chip.dart';
 
+  // TODO(QuncCccccc): Replace these values if padding tokens become available.
+  static const double _defaultPadding = 8.0;
+  static const double _minimumLabelPadding = 4.0;
+
   @override
   String generateContents(String className) =>
       '''
@@ -93,7 +97,7 @@ class $className extends ChipThemeData {
   );
 
   @override
-  EdgeInsetsGeometry? get padding => const EdgeInsets.all(8.0);
+  EdgeInsetsGeometry? get padding => const EdgeInsets.all(${number(_defaultPadding)});
 
   /// The label padding of the chip scales with the font size specified in the
   /// [labelStyle], and the system font size settings that scale font sizes
@@ -105,11 +109,11 @@ class $className extends ChipThemeData {
   /// higher, label padding remains 4px.
   @override
   EdgeInsetsGeometry? get labelPadding {
-    final double fontSize = labelStyle?.fontSize ?? 14.0;
-    final double fontSizeRatio = MediaQuery.textScalerOf(context).scale(fontSize) / 14.0;
+    final double fontSize = labelStyle?.fontSize ?? ${number(TokenInputChip.labelTextType.fontSize)};
+    final double fontSizeRatio = MediaQuery.textScalerOf(context).scale(fontSize) / ${number(TokenInputChip.labelTextType.fontSize)};
     return EdgeInsets.lerp(
-      const EdgeInsets.symmetric(horizontal: 8.0),
-      const EdgeInsets.symmetric(horizontal: 4.0),
+      const EdgeInsets.symmetric(horizontal: ${number(_defaultPadding)}),
+      const EdgeInsets.symmetric(horizontal: ${number(_minimumLabelPadding)}),
       clampDouble(fontSizeRatio - 1.0, 0.0, 1.0),
     )!;
   }
