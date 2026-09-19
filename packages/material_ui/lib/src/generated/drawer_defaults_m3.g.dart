@@ -2,32 +2,25 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import 'template.dart';
+// Do not edit by hand. The code is generated from data in the Material
+// Design token database by the script:
+//   packages/material_ui/tool/gen_defaults/bin/gen_defaults.dart.
+part of '../drawer.dart';
 
-class DrawerTemplate extends TokenTemplate {
-  const DrawerTemplate(super.blockName, super.fileName, super.tokens);
-
-  @override
-  String generate() =>
-      '''
-class _${blockName}DefaultsM3 extends DrawerThemeData {
-  _${blockName}DefaultsM3(this.context)
-      : super(
-          elevation: ${elevation("md.comp.navigation-drawer.modal.container")},
-          clipBehavior: Clip.hardEdge,
-        );
+class _DrawerDefaultsM3 extends DrawerThemeData {
+  _DrawerDefaultsM3(this.context) : super(elevation: 1.0, clipBehavior: Clip.hardEdge);
 
   final BuildContext context;
   late final TextDirection direction = Directionality.of(context);
 
   @override
-  Color? get backgroundColor => ${componentColor("md.comp.navigation-drawer.modal.container")};
+  Color? get backgroundColor => Theme.of(context).colorScheme.surfaceContainerLow;
 
   @override
-  Color? get surfaceTintColor => ${colorOrTransparent("md.comp.navigation-drawer.container.surface-tint-layer.color")};
+  Color? get surfaceTintColor => Colors.transparent;
 
   @override
-  Color? get shadowColor => ${colorOrTransparent("md.comp.navigation-drawer.container.shadow-color")};
+  Color? get shadowColor => Colors.transparent;
 
   // There isn't currently a token for this value, but it is shown in the spec,
   // so hard coding here for now.
@@ -46,6 +39,4 @@ class _${blockName}DefaultsM3 extends DrawerThemeData {
       start: Radius.circular(16.0),
     ).resolve(direction),
   );
-}
-''';
 }
