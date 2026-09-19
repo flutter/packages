@@ -15221,7 +15221,7 @@ void main() {
 
       // Ideographic (incorrect) value is 50.299999713897705
       expect(tester.getBottomLeft(find.text('hint')).dy, isBrowser ? 45.75 : 47.75);
-    });
+    }, tags: 'reduced-web-test-set');
 
     testWidgets('InputDecorator floating label Y coordinate', (WidgetTester tester) async {
       // Regression test for https://github.com/flutter/flutter/issues/54028

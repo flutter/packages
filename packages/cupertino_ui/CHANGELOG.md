@@ -1,3 +1,13 @@
+## 1.1.0
+
+- Add `hasPlatformViews` to Cupertino sheet transitions to keep platform views synchronized with the underlying route.
+- Allows `CupertinoTabBar` to contain a single item.
+- Fixed some leaks of TextEditingControllers in the cupertino_ui magnifier examples.
+- Fixed an issue where the `CupertinoIcons` font was not included in the cupertino_ui examples.
+- Adds an option for `CupertinoPageRoute` and `CupertinoPage` to opt out of introducing a semantics route scope.
+- Fixes lower routes being revealed through the top gap when multiple `CupertinoSheetRoute`s are stacked.
+- Adds awaitNotRequired annotation to showCupertinoModalPopup and showCupertinoDialog.
+
 ## 1.0.1
 
 - Add missing Widget of the Week videos to widget API docs.
