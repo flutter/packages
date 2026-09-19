@@ -1,3 +1,7 @@
+## 0.5.5
+
+* Fixes a crash when trailing pinned rows or columns fall within the viewport's cache extent.
+
 ## 0.5.4
 
 * Fixes memory leaks.
