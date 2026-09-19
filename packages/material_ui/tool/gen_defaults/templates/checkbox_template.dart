@@ -14,10 +14,6 @@ class CheckboxTemplateM3 extends TokenTemplateM3 {
   @override
   String get parentFilePath => 'checkbox.dart';
 
-  String _borderSide(double width, String color, {bool isConst = false}) {
-    return '${isConst ? 'const ' : ''}BorderSide(width: ${number(width)}, color: $color)';
-  }
-
   @override
   String generateContents(String className) =>
       '''
@@ -34,26 +30,26 @@ class $className extends CheckboxThemeData {
     return WidgetStateBorderSide.resolveWith((Set<WidgetState> states) {
       if (states.contains(WidgetState.disabled)) {
         if (states.contains(WidgetState.selected)) {
-          return ${_borderSide(TokenCheckbox.unselectedDisabledOutlineWidth, 'Colors.transparent', isConst: true)};
+          return ${border('Colors.transparent', width: TokenCheckbox.unselectedDisabledOutlineWidth, prefix: 'const ')};
         }
-        return ${_borderSide(TokenCheckbox.unselectedDisabledOutlineWidth, colorWithOpacity(TokenCheckbox.unselectedDisabledOutlineColor, TokenCheckbox.unselectedDisabledContainerOpacity, '_colors'))};
+        return ${border(colorWithOpacity(TokenCheckbox.unselectedDisabledOutlineColor, TokenCheckbox.unselectedDisabledContainerOpacity, '_colors'), width: TokenCheckbox.unselectedDisabledOutlineWidth)};
       }
       if (states.contains(WidgetState.selected)) {
-        return ${_borderSide(TokenCheckbox.selectedOutlineWidth, 'Colors.transparent', isConst: true)};
+        return ${border('Colors.transparent', width: TokenCheckbox.selectedOutlineWidth, prefix: 'const ')};
       }
       if (states.contains(WidgetState.error)) {
-        return ${_borderSide(TokenCheckbox.unselectedOutlineWidth, color(TokenCheckbox.unselectedErrorOutlineColor, '_colors'))};
+        return ${border(color(TokenCheckbox.unselectedErrorOutlineColor, '_colors'), width: TokenCheckbox.unselectedOutlineWidth)};
       }
       if (states.contains(WidgetState.pressed)) {
-        return ${_borderSide(TokenCheckbox.unselectedPressedOutlineWidth, color(TokenCheckbox.unselectedPressedOutlineColor, '_colors'))};
+        return ${border(color(TokenCheckbox.unselectedPressedOutlineColor, '_colors'), width: TokenCheckbox.unselectedPressedOutlineWidth)};
       }
       if (states.contains(WidgetState.hovered)) {
-        return ${_borderSide(TokenCheckbox.unselectedHoverOutlineWidth, color(TokenCheckbox.unselectedHoverOutlineColor, '_colors'))};
+        return ${border(color(TokenCheckbox.unselectedHoverOutlineColor, '_colors'), width: TokenCheckbox.unselectedHoverOutlineWidth)};
       }
       if (states.contains(WidgetState.focused)) {
-        return ${_borderSide(TokenCheckbox.unselectedFocusOutlineWidth, color(TokenCheckbox.unselectedFocusOutlineColor, '_colors'))};
+        return ${border(color(TokenCheckbox.unselectedFocusOutlineColor, '_colors'), width: TokenCheckbox.unselectedFocusOutlineWidth)};
       }
-      return ${_borderSide(TokenCheckbox.unselectedOutlineWidth, color(TokenCheckbox.unselectedOutlineColor, '_colors'))};
+      return ${border(color(TokenCheckbox.unselectedOutlineColor, '_colors'), width: TokenCheckbox.unselectedOutlineWidth)};
     });
   }
 

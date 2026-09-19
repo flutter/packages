@@ -171,9 +171,13 @@ void main() {
       expect(template.border('_colors.outline'), 'BorderSide(color: _colors.outline)');
       expect(
         template.border('_colors.outline', width: 2.0),
-        'BorderSide(color: _colors.outline, width: 2.0)',
+        'BorderSide(width: 2.0, color: _colors.outline)',
       );
       expect(template.border('_colors.outline', width: 1.0), 'BorderSide(color: _colors.outline)');
+      expect(
+        template.border('Colors.transparent', width: 2.0, prefix: 'const '),
+        'const BorderSide(width: 2.0, color: Colors.transparent)',
+      );
     });
 
     test('shape generates shape expressions', () {
