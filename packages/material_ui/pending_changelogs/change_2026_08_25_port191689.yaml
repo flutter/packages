@@ -1,0 +1,3 @@
+changelog: |
+  - Fix `Scrollbar` mouse hover highlighting the thumb up to 24 logical pixels away from where a press actually starts a drag, and fix the thumb's cross-axis-inset region not being draggable with a precise pointer.
+version: patch
