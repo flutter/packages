@@ -1,0 +1,3 @@
+changelog: |
+  - Fix `CupertinoScrollbar` thumb staying stuck at its dragging thickness when a thumb drag is canceled before it is accepted (e.g. a touch that starts inside the padded hit area but loses the gesture arena to the scroll view).
+version: patch
