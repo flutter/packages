@@ -691,13 +691,13 @@ class _ExpansionTileState extends State<ExpansionTile> {
 
     if (defaultTargetPlatform == TargetPlatform.android) {
       return Semantics(
-        // Live region used to announce state changes (e.g., "expanded" or "collapsed")
-        // without taking focus.
-        // blockNode prevents this node from being part of the focus traversal.
-        label: semanticsHint,
+        // Live region announces expand/collapse without a separate focusable
+        // wrapper node. Nesting a liveRegion+label Semantics over the hint node
+        // caused TalkBack to stop twice on the same tile (flutter/flutter#190601).
         liveRegion: true,
-        accessibilityFocusBlockType: AccessibilityFocusBlockType.blockNode,
-        child: Semantics(hint: semanticsHint, onTapHint: onTapHint, child: child),
+        hint: semanticsHint,
+        onTapHint: onTapHint,
+        child: child,
       );
     }
     return Semantics(hint: semanticsHint, onTapHint: onTapHint, child: child);
