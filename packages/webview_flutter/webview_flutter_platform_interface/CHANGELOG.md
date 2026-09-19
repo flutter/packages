@@ -1,5 +1,8 @@
-## NEXT
+## 2.16.0
 
+* Adds `PlatformWebViewController.addDocumentStartJavaScript(DocumentStartJavaScriptParams)` and
+  `PlatformWebViewController.supportsAddDocumentStartJavaScript` to support injecting JavaScript
+  that runs before the page's own scripts.
 * Updates minimum supported SDK version to Flutter 3.38/Dart 3.10.
 
 ## 2.15.1

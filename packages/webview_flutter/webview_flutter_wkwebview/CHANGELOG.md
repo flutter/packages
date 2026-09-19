@@ -1,3 +1,10 @@
+## 3.27.0
+
+* Adds support for `PlatformWebViewController.addDocumentStartJavaScript` and
+  `PlatformWebViewController.supportsAddDocumentStartJavaScript`.
+* Introduces `WebKitDocumentStartJavaScriptParams`, a platform-specific extension of
+  `DocumentStartJavaScriptParams` for iOS and macOS that adds support for `forMainFrameOnly`.
+
 ## 3.26.1
 
 * Updates pigeon dev_dependency to ^27.3.2 for analyzer 14 compatibility.

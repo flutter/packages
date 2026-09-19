@@ -261,4 +261,10 @@ public class ProxyApiRegistrar extends AndroidWebkitLibraryPigeonProxyApiRegistr
   public PigeonApiWebSettingsCompat getPigeonApiWebSettingsCompat() {
     return new WebSettingsCompatProxyApi(this);
   }
+
+  @NonNull
+  @Override
+  public PigeonApiWebViewCompat getPigeonApiWebViewCompat() {
+    return new WebViewCompatProxyApi(this);
+  }
 }

@@ -127,6 +127,11 @@ class WebViewFeatureConstants {
   /// See https://developer.android.com/reference/androidx/webkit/WebViewFeature#PAYMENT_REQUEST.
   static const String paymentRequest = 'PAYMENT_REQUEST';
 
+  /// This feature covers [WebViewCompat.addDocumentStartJavaScript].
+  ///
+  /// See https://developer.android.com/reference/androidx/webkit/WebViewFeature#DOCUMENT_START_SCRIPT.
+  static const String documentStartScript = 'DOCUMENT_START_SCRIPT';
+
   /// This feature covers [WebSettingsCompat.setWebAuthenticationSupport].
   ///
   /// See https://developer.android.com/reference/androidx/webkit/WebViewFeature#WEB_AUTHENTICATION.
