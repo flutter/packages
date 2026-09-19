@@ -1,3 +1,7 @@
+## 0.3.0+18
+
+* Fixes unit test compilation when the Android build uses AGP's built-in Kotlin support.
+
 ## 0.3.0+17
 
 * Updates pigeon dev_dependency to ^27.3.2 for analyzer 14 compatibility.
