@@ -2,8 +2,13 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-class _IconButtonDefaultsM3 extends ButtonStyle {
-  _IconButtonDefaultsM3(this.context, this.toggleable)
+// Do not edit by hand. The code is generated from data in the Material
+// Design token database by the script:
+//   packages/material_ui/tool/gen_defaults/bin/gen_defaults.dart.
+part of '../icon_button.dart';
+
+class _FilledTonalIconButtonDefaultsM3 extends ButtonStyle {
+  _FilledTonalIconButtonDefaultsM3(this.context, this.toggleable)
     : super(
         animationDuration: kThemeChangeDuration,
         enableFeedback: true,
@@ -18,7 +23,19 @@ class _IconButtonDefaultsM3 extends ButtonStyle {
 
   @override
   WidgetStateProperty<Color?>? get backgroundColor =>
-      const MaterialStatePropertyAll<Color?>(Colors.transparent);
+      WidgetStateProperty.resolveWith((Set<WidgetState> states) {
+        if (states.contains(WidgetState.disabled)) {
+          return _colors.onSurface.withOpacity(0.12);
+        }
+        if (states.contains(WidgetState.selected)) {
+          return _colors.secondaryContainer;
+        }
+        if (toggleable) {
+          // toggleable but unselected case
+          return _colors.surfaceContainerHighest;
+        }
+        return _colors.secondaryContainer;
+      });
 
   @override
   WidgetStateProperty<Color?>? get foregroundColor =>
@@ -27,9 +44,13 @@ class _IconButtonDefaultsM3 extends ButtonStyle {
           return _colors.onSurface.withOpacity(0.38);
         }
         if (states.contains(WidgetState.selected)) {
-          return _colors.primary;
+          return _colors.onSecondaryContainer;
         }
-        return _colors.onSurfaceVariant;
+        if (toggleable) {
+          // toggleable but unselected case
+          return _colors.onSurfaceVariant;
+        }
+        return _colors.onSecondaryContainer;
       });
 
   @override
@@ -37,23 +58,35 @@ class _IconButtonDefaultsM3 extends ButtonStyle {
       WidgetStateProperty.resolveWith((Set<WidgetState> states) {
         if (states.contains(WidgetState.selected)) {
           if (states.contains(WidgetState.pressed)) {
-            return _colors.primary.withOpacity(0.1);
+            return _colors.onSecondaryContainer.withOpacity(0.1);
           }
           if (states.contains(WidgetState.hovered)) {
-            return _colors.primary.withOpacity(0.08);
+            return _colors.onSecondaryContainer.withOpacity(0.08);
           }
           if (states.contains(WidgetState.focused)) {
-            return _colors.primary.withOpacity(0.1);
+            return _colors.onSecondaryContainer.withOpacity(0.1);
+          }
+        }
+        if (toggleable) {
+          // toggleable but unselected case
+          if (states.contains(WidgetState.pressed)) {
+            return _colors.onSurfaceVariant.withOpacity(0.1);
+          }
+          if (states.contains(WidgetState.hovered)) {
+            return _colors.onSurfaceVariant.withOpacity(0.08);
+          }
+          if (states.contains(WidgetState.focused)) {
+            return _colors.onSurfaceVariant.withOpacity(0.1);
           }
         }
         if (states.contains(WidgetState.pressed)) {
-          return _colors.onSurfaceVariant.withOpacity(0.1);
+          return _colors.onSecondaryContainer.withOpacity(0.1);
         }
         if (states.contains(WidgetState.hovered)) {
-          return _colors.onSurfaceVariant.withOpacity(0.08);
+          return _colors.onSecondaryContainer.withOpacity(0.08);
         }
         if (states.contains(WidgetState.focused)) {
-          return _colors.onSurfaceVariant.withOpacity(0.1);
+          return _colors.onSecondaryContainer.withOpacity(0.1);
         }
         return Colors.transparent;
       });
