@@ -54,10 +54,11 @@ rm .git/hooks/pre-commit
 
 ### Bypass Hooks Temporarily
 
-To skip running hooks for a single action, pass the `--no-verify` flag. For example, to bypass the pre-commit hook during a commit:
+To skip running hooks for a single action, pass the `--no-verify` flag. For example, to bypass the pre-commit hook during a commit or pre-push hook during a push:
 
 ```bash
 git commit --no-verify
+git push --no-verify
 ```
 
 ## Available Hooks
@@ -73,4 +74,14 @@ If either check fails, it aborts the commit. To bypass the hook (for a WIP commi
 
 ```bash
 git commit -m "WIP" --no-verify
+```
+
+### pre-push
+
+The `pre-push` hook runs automatically when you run `git push` and inspects the last 20 commits to ensure that no commits authored or committed using evaluation credentials (`Eval Author` or `eval-author@example.com`) are pushed.
+
+If an evaluation commit is found, it aborts the push. To bypass the hook, use `--no-verify`:
+
+```bash
+git push --no-verify
 ```

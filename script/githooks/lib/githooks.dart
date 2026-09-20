@@ -5,11 +5,13 @@
 import 'package:args/command_runner.dart';
 
 import 'src/pre_commit_command.dart';
+import 'src/pre_push_command.dart';
 
 /// Runs the githooks command line utility.
 Future<int> run(List<String> args) async {
   final runner = CommandRunner<bool>('githooks', 'Git hooks for flutter/packages')
-    ..addCommand(PreCommitCommand());
+    ..addCommand(PreCommitCommand())
+    ..addCommand(PrePushCommand());
 
   final bool success = await runner.run(args) ?? false;
   return success ? 0 : 1;
