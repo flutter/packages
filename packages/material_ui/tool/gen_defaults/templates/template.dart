@@ -254,7 +254,7 @@ abstract class TokenTemplate {
     if (verbose) {
       stdout.writeln('Formatting $fileName...');
     }
-    final ProcessResult result = Process.runSync(Platform.resolvedExecutable, <String>[
+    final ProcessResult result = Process.runSync(Platform.isWindows ? 'dart.bat' : 'dart', <String>[
       'format',
       fileName,
     ]);
