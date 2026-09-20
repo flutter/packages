@@ -1,5 +1,6 @@
 ## NEXT
 
+* Removes unnecessary Material imports.
 * Fixes deprecation lints.
 
 ## 1.2.3
