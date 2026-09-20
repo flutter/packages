@@ -15,11 +15,16 @@ public class VideoPlayerOptions {
    */
   @Nullable public Long backBufferDurationMs;
 
+  public boolean enableDecoderFallback;
+  public boolean disableMediaCodecAsyncQueueing;
+
   public VideoPlayerOptions() {}
 
   /** Copy constructor to ensure all options are reliably copied. */
   public VideoPlayerOptions(@NonNull VideoPlayerOptions other) {
     this.mixWithOthers = other.mixWithOthers;
     this.backBufferDurationMs = other.backBufferDurationMs;
+    this.enableDecoderFallback = other.enableDecoderFallback;
+    this.disableMediaCodecAsyncQueueing = other.disableMediaCodecAsyncQueueing;
   }
 }
