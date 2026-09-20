@@ -90,6 +90,42 @@ public class WebChromeClientTest {
   }
 
   @Test
+  public void onCreateWindowWithWebViewClientImplNotifiesDart() {
+    final WebViewClientProxyApi mockWebViewClientApi = mock(WebViewClientProxyApi.class);
+    when(mockWebViewClientApi.getPigeonRegistrar()).thenReturn(new TestProxyApiRegistrar());
+    final WebViewClientProxyApi.WebViewClientImpl webViewClient =
+        new WebViewClientProxyApi.WebViewClientImpl(mockWebViewClientApi);
+
+    final WebView mockOnCreateWindowWebView = mock(WebView.class);
+    final Message message = new Message();
+    message.obj = mock(WebViewTransport.class);
+
+    final WebChromeClientProxyApi mockApi = mock(WebChromeClientProxyApi.class);
+    final WebChromeClientImpl instance = new WebChromeClientImpl(mockApi);
+
+    final WebView mockWebView = mock(WebView.class);
+    instance.setWebViewClient(webViewClient);
+    assertTrue(instance.onCreateWindow(mockWebView, message, mockOnCreateWindowWebView));
+
+    final ArgumentCaptor<WebViewClient> webViewClientCaptor =
+        ArgumentCaptor.forClass(WebViewClient.class);
+    verify(mockOnCreateWindowWebView).setWebViewClient(webViewClientCaptor.capture());
+    final WebViewClient onCreateWindowWebViewClient = webViewClientCaptor.getValue();
+    assertNotNull(onCreateWindowWebViewClient);
+
+    final WebResourceRequest mockRequest = mock(WebResourceRequest.class);
+    when(mockRequest.getUrl()).thenReturn(mock(Uri.class));
+    when(mockRequest.getUrl().toString()).thenReturn("https://www.google.com");
+
+    assertTrue(
+        onCreateWindowWebViewClient.shouldOverrideUrlLoading(
+            mockOnCreateWindowWebView, mockRequest));
+    verify(mockWebViewClientApi)
+        .onCreateWindow(eq(webViewClient), eq("https://www.google.com"), any());
+    verify(mockWebView, never()).loadUrl(any());
+  }
+
+  @Test
   public void onPermissionRequest() {
     final WebChromeClientProxyApi mockApi = mock(WebChromeClientProxyApi.class);
     when(mockApi.getPigeonRegistrar()).thenReturn(new TestProxyApiRegistrar());

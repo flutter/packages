@@ -149,6 +149,15 @@ class MockPlatformNavigationDelegate extends _i1.Mock implements _i3.PlatformNav
           as _i8.Future<void>);
 
   @override
+  _i8.Future<void> setOnCreateWindow(_i3.CreateWindowCallback? onCreateWindow) =>
+      (super.noSuchMethod(
+            Invocation.method(#setOnCreateWindow, [onCreateWindow]),
+            returnValue: _i8.Future<void>.value(),
+            returnValueForMissingStub: _i8.Future<void>.value(),
+          )
+          as _i8.Future<void>);
+
+  @override
   _i8.Future<void> setOnPageStarted(_i3.PageEventCallback? onPageStarted) =>
       (super.noSuchMethod(
             Invocation.method(#setOnPageStarted, [onPageStarted]),
