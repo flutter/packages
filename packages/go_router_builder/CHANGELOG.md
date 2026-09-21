@@ -1,3 +1,8 @@
+## 4.5.1
+
+- Migrates examples to `material_ui` package (1.3.0).
+- Updates minimum supported SDK version to Flutter 3.44/Dart 3.12.
+
 ## 4.5.0
 
 - Detects routes that resolve to the same URL pattern. Routes are compared by
