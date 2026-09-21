@@ -3,7 +3,8 @@ description: A Flutter application showcasing how to use the google_fonts packag
 publish_to: none
 
 environment:
-  sdk: ^3.10.0
+  sdk: ^3.12.0
+  flutter: ">=3.44.0"
 
 dependencies:
   cupertino_icons: ^1.0.0
@@ -11,6 +12,7 @@ dependencies:
     sdk: flutter
   google_fonts:
     path: ../
+  material_ui: ^1.0.0
 
 dev_dependencies:
   flutter_test:
