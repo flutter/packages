@@ -16,7 +16,7 @@ import 'generator.dart';
 /// The current version of pigeon.
 ///
 /// This must match the version in pubspec.yaml.
-const String pigeonVersion = '29.0.2';
+const String pigeonVersion = '29.1.0';
 
 /// Default plugin package name.
 const String defaultPluginPackageName = 'dev.flutter.pigeon';
@@ -212,6 +212,23 @@ class Indent {
       nestCount: nestCount,
       addTrailingNewline: addTrailingNewline,
     );
+  }
+
+  /// Like [writeScoped], but only scopes [func] if [condition] is true.
+  /// Otherwise, executes [func] directly.
+  void maybeWriteScoped(
+    String? begin,
+    String? end,
+    void Function() func, {
+    required bool condition,
+    int nestCount = 1,
+    bool addTrailingNewline = true,
+  }) {
+    if (condition) {
+      writeScoped(begin, end, func, nestCount: nestCount, addTrailingNewline: addTrailingNewline);
+    } else {
+      func();
+    }
   }
 
   /// Scoped increase of the indent level.

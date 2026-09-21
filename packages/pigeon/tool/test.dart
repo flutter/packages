@@ -78,12 +78,16 @@ ${parser.usage}''');
       iOSObjCIntegrationTests,
       iOSSwiftUnitTests,
       iOSSwiftIntegrationTests,
+      iOSSwiftStrictConcurrencyUnitTests,
+      iOSSwiftStrictConcurrencyIntegrationTests,
     ];
     const linuxTests = <String>[linuxUnitTests, linuxIntegrationTests];
     const macOSTests = <String>[
       macOSObjCIntegrationTests,
       macOSSwiftUnitTests,
       macOSSwiftIntegrationTests,
+      macOSSwiftStrictConcurrencyUnitTests,
+      macOSSwiftStrictConcurrencyIntegrationTests,
     ];
     const windowsTests = <String>[windowsUnitTests, windowsIntegrationTests];
 

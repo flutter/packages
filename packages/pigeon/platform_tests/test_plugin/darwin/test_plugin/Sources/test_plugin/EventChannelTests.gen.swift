@@ -8,9 +8,9 @@
 import Foundation
 
 #if os(iOS)
-  import Flutter
+  @preconcurrency import Flutter
 #elseif os(macOS)
-  import FlutterMacOS
+  @preconcurrency import FlutterMacOS
 #else
   #error("Unsupported platform.")
 #endif
@@ -828,10 +828,10 @@ class EventChannelTestsPigeonCodec: FlutterStandardMessageCodec, @unchecked Send
     readerWriter: EventChannelTestsPigeonCodecReaderWriter())
 }
 
-var eventChannelTestsPigeonMethodCodec = FlutterStandardMethodCodec(
+let eventChannelTestsPigeonMethodCodec = FlutterStandardMethodCodec(
   readerWriter: EventChannelTestsPigeonCodecReaderWriter())
 
-private class PigeonStreamHandler<ReturnType>: NSObject, FlutterStreamHandler {
+private class PigeonStreamHandler<ReturnType>: NSObject, @preconcurrency FlutterStreamHandler {
   private let wrapper: PigeonEventChannelWrapper<ReturnType>
   private var pigeonSink: PigeonEventSink<ReturnType>? = nil
 

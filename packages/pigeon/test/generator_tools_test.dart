@@ -467,6 +467,30 @@ void myMethod() {
 ''');
   });
 
+  test('Indent.maybeWriteScoped when condition is true', () {
+    final indent = Indent();
+    indent.maybeWriteScoped('if (condition) {', '}', condition: true, () {
+      indent.writeln('doSomething();');
+    });
+
+    expect(indent.toString(), '''
+if (condition) {
+  doSomething();
+}
+''');
+  });
+
+  test('Indent.maybeWriteScoped when condition is false', () {
+    final indent = Indent();
+    indent.maybeWriteScoped('if (condition) {', '}', condition: false, () {
+      indent.writeln('doSomething();');
+    });
+
+    expect(indent.toString(), '''
+doSomething();
+''');
+  });
+
   group('compareTypeDeclarationGenericness', () {
     const object = TypeDeclaration(baseName: 'Object', isNullable: false);
     const nullableObject = TypeDeclaration(baseName: 'Object', isNullable: true);
