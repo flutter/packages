@@ -1,3 +1,7 @@
+## NEXT
+
+* Updates minimum supported SDK version to Flutter 3.41/Dart 3.11.
+
 ## 6.3.5
 
 * Migrates ViewProvider and GID SDK wrappers from Objective-C to Swift.
