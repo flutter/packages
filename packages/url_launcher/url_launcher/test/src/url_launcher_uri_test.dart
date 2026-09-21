@@ -10,13 +10,11 @@ import 'package:url_launcher_platform_interface/url_launcher_platform_interface.
 import '../mocks/mock_url_launcher_platform.dart';
 
 void main() {
-  final mock = MockUrlLauncher();
-  UrlLauncherPlatform.instance = mock;
+  late MockUrlLauncher mock;
 
-  // The mock is shared across tests, so reset any close-mode override that a
-  // test opts into to avoid leaking it into later tests.
-  tearDown(() {
-    mock.setCloseForModeResponse(null);
+  setUp(() {
+    mock = MockUrlLauncher();
+    UrlLauncherPlatform.instance = mock;
   });
 
   test('closeInAppWebView', () async {
@@ -316,21 +314,20 @@ void main() {
 
   group('supportsCloseForLaunchMode', () {
     test('handles returning true', () async {
-      mock.setResponse(true);
+      mock.setCloseForModeResponse(true);
 
       expect(await supportsCloseForLaunchMode(LaunchMode.inAppBrowserView), true);
       expect(mock.launchMode, PreferredLaunchMode.inAppBrowserView);
     });
 
     test('handles returning false', () async {
-      mock.setResponse(false);
+      mock.setCloseForModeResponse(false);
 
       expect(await supportsCloseForLaunchMode(LaunchMode.inAppBrowserView), false);
       expect(mock.launchMode, PreferredLaunchMode.inAppBrowserView);
     });
 
-    test('uses supportsCloseForMode rather than supportsMode', () async {
-      // Regression test for https://github.com/flutter/flutter/issues/192758
+    test('reflects close support independently of launch support', () async {
       mock
         ..setResponse(false)
         ..setCloseForModeResponse(true);

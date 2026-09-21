@@ -1,7 +1,7 @@
 ## 6.3.3
 
 * Fixes `supportsCloseForLaunchMode` reporting launch support instead of close
-  support; it now queries `supportsCloseForMode` on the platform.
+  support.
 * Updates minimum supported SDK version to Flutter 3.38/Dart 3.10.
 * Updates README to reflect currently supported OS versions for the latest
   versions of the endorsed platform implementations.
