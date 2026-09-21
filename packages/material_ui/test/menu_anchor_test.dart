@@ -4068,9 +4068,8 @@ void main() {
         MaterialApp(
           builder: (BuildContext context, Widget? child) {
             return MediaQuery(
-              data: MediaQuery.of(
-                context,
-              ).copyWith(viewInsets: const EdgeInsets.only(bottom: keyboardHeight)),
+              data: MediaQuery.of(context)
+                  .copyWith(viewInsets: const EdgeInsets.only(bottom: keyboardHeight)),
               child: child!,
             );
           },
