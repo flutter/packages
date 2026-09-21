@@ -127,7 +127,6 @@ Widget buildDropdownButtonFormField({
   bool isExpanded = false,
   Widget? hint,
   Widget? disabledHint,
-  Widget? underline,
   FocusNode? focusNode,
   bool autofocus = false,
   Color? focusColor,
