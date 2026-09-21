@@ -41,7 +41,7 @@ final class GIDSignInWrapper: GIDSignInProtocol {
 
   func restorePreviousSignIn(completion: ((GIDGoogleUserProtocol?, Error?) -> Void)?) {
     gidSignIn.restorePreviousSignIn { user, error in
-      completion?(user.flatMap { GIDGoogleUserWrapper(user: $0) }, error)
+      completion?(user.map { GIDGoogleUserWrapper(user: $0) }, error)
     }
   }
 
@@ -126,11 +126,6 @@ final class GIDGoogleUserWrapper: GIDGoogleUserProtocol {
     self.user = user
   }
 
-  convenience init?(user: GIDGoogleUser?) {
-    guard let user else { return nil }
-    self.init(user: user)
-  }
-
   var userID: String? {
     return user.userID
   }
@@ -152,12 +147,12 @@ final class GIDGoogleUserWrapper: GIDGoogleUserProtocol {
   }
 
   var idToken: GIDTokenProtocol? {
-    return GIDTokenWrapper(token: user.idToken)
+    return user.idToken.map { GIDTokenWrapper(token: $0) }
   }
 
   func refreshTokensIfNeeded(completion: @escaping (GIDGoogleUserProtocol?, Error?) -> Void) {
     user.refreshTokensIfNeeded { user, error in
-      completion(user.flatMap { GIDGoogleUserWrapper(user: $0) }, error)
+      completion(user.map { GIDGoogleUserWrapper(user: $0) }, error)
     }
   }
 
@@ -229,11 +224,6 @@ final class GIDTokenWrapper: GIDTokenProtocol {
 
   init(token: GIDToken) {
     self.token = token
-  }
-
-  convenience init?(token: GIDToken?) {
-    guard let token else { return nil }
-    self.init(token: token)
   }
 
   var tokenString: String {
