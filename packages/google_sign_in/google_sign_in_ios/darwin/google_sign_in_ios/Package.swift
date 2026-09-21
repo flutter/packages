@@ -33,9 +33,6 @@ let package = Package(
     ),
     .target(
       name: "google_sign_in_ios_objc",
-      dependencies: [
-        .product(name: "GoogleSignIn", package: "GoogleSignIn-iOS")
-      ],
       publicHeadersPath: "include",
       cSettings: [
         .headerSearchPath("include/google_sign_in_ios"),
