@@ -126,9 +126,9 @@ abstract class TokenTemplate {
   }
 
   /// Generate a [BorderSide] for the given component.
-  String border(String color, {double? width}) {
-    final widthString = (width != null && width != 1.0) ? ', width: $width' : '';
-    return 'BorderSide(color: $color$widthString)';
+  String border(String color, {double? width, String prefix = ''}) {
+    final widthString = (width != null && width != 1.0) ? 'width: ${number(width)}, ' : '';
+    return '${prefix}BorderSide(${widthString}color: $color)';
   }
 
   /// Generates an [OutlinedBorder] expression for a shape token.
