@@ -5,7 +5,7 @@ repository: https://github.com/flutter/packages/tree/main/packages/cupertino_ui
 issue_tracker: https://github.com/flutter/flutter/issues?q=is%3Aissue+is%3Aopen+label%3A%22p%3A%20cupertino_ui%22
 
 environment:
-  sdk: ^3.12.0
+  sdk: ^3.13.0
   flutter: ">=3.47.0"
 
 dependencies:
