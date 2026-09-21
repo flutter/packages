@@ -945,6 +945,47 @@ void main() {
         expect(collapsedCode, contains('func doSomething(pigeonApi: PigeonApiApi) throws'));
         expect(collapsedCode, contains(r'try api.pigeonDelegate.doSomething(pigeonApi: api)'));
       });
+
+      test('async method completion closure is Sendable', () {
+        final root = Root(
+          apis: <Api>[
+            AstProxyApi(
+              name: 'Api',
+              constructors: <Constructor>[],
+              fields: <ApiField>[],
+              methods: <Method>[
+                Method(
+                  name: 'doSomething',
+                  location: ApiLocation.host,
+                  isAsynchronous: true,
+                  parameters: <Parameter>[],
+                  returnType: const TypeDeclaration.voidDeclaration(),
+                ),
+              ],
+            ),
+          ],
+          classes: <Class>[],
+          enums: <Enum>[],
+        );
+        final sink = StringBuffer();
+        const generator = SwiftGenerator();
+        generator.generate(
+          const InternalSwiftOptions(swiftOut: ''),
+          root,
+          sink,
+          dartPackageName: DEFAULT_PACKAGE_NAME,
+        );
+        final String collapsedCode = _collapseNewlineAndIndentation(sink.toString());
+        // The delegate receives this closure, so `@Sendable` lets the
+        // implementation reply from another queue.
+        expect(
+          collapsedCode,
+          contains(
+            'func doSomething(pigeonApi: PigeonApiApi, pigeonInstance: Api, '
+            'completion: @escaping @Sendable (Result<Void, Error>) -> Void)',
+          ),
+        );
+      });
     });
 
     group('Flutter methods', () {
