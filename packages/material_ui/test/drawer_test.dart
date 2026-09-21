@@ -1632,7 +1632,7 @@ void main() {
     // The history entry should have been re-added.
     expect(route.willHandlePopInternally, true);
 
-    // Fling it closed again by dragging left and releasing.
+    // Drag it closed again by dragging left and releasing.
     await gesture.moveBy(const Offset(-20.0, 0.0));
     await tester.pump();
     await gesture.up();
