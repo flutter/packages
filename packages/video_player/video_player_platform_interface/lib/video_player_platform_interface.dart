@@ -199,6 +199,23 @@ abstract class VideoPlayerPlatform extends PlatformInterface {
 
 class _PlaceholderImplementation extends VideoPlayerPlatform {}
 
+/// Base class for DRM configuration passed to [DataSource.drmConfiguration].
+///
+/// This class exists only to provide a common type for platform-specific DRM
+/// configurations; there are currently no DRM options that are not specific to
+/// a single platform implementation. Applications construct a subclass provided
+/// by a platform implementation package, such as `WidevineDrmConfiguration`
+/// from `video_player_android` or `FairPlayDrmConfiguration` from
+/// `video_player_avfoundation`.
+///
+/// Platform implementations are expected to recognize only their own
+/// subclasses, and to reject any other subclass.
+@immutable
+abstract class VideoDrmConfiguration {
+  /// Allows subclasses to be const constructed.
+  const VideoDrmConfiguration();
+}
+
 /// Description of the data source used to create an instance of
 /// the video player.
 class DataSource {
@@ -222,6 +239,7 @@ class DataSource {
     this.asset,
     this.package,
     this.httpHeaders = const <String, String>{},
+    this.drmConfiguration,
   });
 
   /// The way in which the video was originally loaded.
@@ -244,6 +262,14 @@ class DataSource {
   /// Only for [DataSourceType.network] videos.
   /// Always empty for other video types.
   Map<String, String> httpHeaders;
+
+  /// Platform-specific DRM configuration for the video.
+  ///
+  /// Only supported for [DataSourceType.network] videos. Implementations
+  /// should throw an [ArgumentError] if a configuration is provided for
+  /// another source type, or if it is a subclass of [VideoDrmConfiguration]
+  /// that the implementation does not support.
+  final VideoDrmConfiguration? drmConfiguration;
 
   /// The name of the asset. Only set for [DataSourceType.asset] videos.
   final String? asset;

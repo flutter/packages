@@ -85,8 +85,14 @@ NS_ASSUME_NONNULL_BEGIN
 @required
 
 /// Creates and returns a wrapped AVAsset instance with the specified URL and options.
+///
+/// If `resourceLoaderDelegate` is non-nil it is installed as the asset's resource loader delegate,
+/// and the returned asset takes ownership of it. This is needed for DRM, where the plugin has to
+/// service the key requests that AVFoundation makes for protected content.
 - (NSObject<FVPAVAsset> *)URLAssetWithURL:(NSURL *)URL
-                                  options:(nullable NSDictionary<NSString *, id> *)options;
+                                  options:(nullable NSDictionary<NSString *, id> *)options
+                   resourceLoaderDelegate:
+                       (nullable NSObject<AVAssetResourceLoaderDelegate> *)resourceLoaderDelegate;
 
 /// Creates and returns a wrapped AVPlayerItem instance with the specified asset.
 - (NSObject<FVPAVPlayerItem> *)playerItemWithAsset:(NSObject<FVPAVAsset> *)asset;
