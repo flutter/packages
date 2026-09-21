@@ -663,6 +663,24 @@ void main() {
     });
 
     group('seekTo', () {
+      test('ignores a pending seek result after disposal', () async {
+        final controller = VideoPlayerController.networkUrl(_localhostUri);
+        addTearDown(controller.dispose);
+        await controller.initialize();
+
+        final seekCompleter = Completer<void>();
+        fakeVideoPlayerPlatform.seekCompleter = seekCompleter;
+        final VideoPlayerValue valueBeforeSeek = controller.value;
+        final Future<void> pendingSeek = controller.seekTo(const Duration(milliseconds: 500));
+        expect(fakeVideoPlayerPlatform.calls.last, 'seekTo');
+
+        await controller.dispose();
+        seekCompleter.complete();
+        await pendingSeek;
+
+        expect(controller.value, valueBeforeSeek);
+      });
+
       test('works', () async {
         final controller = VideoPlayerController.networkUrl(_localhostUri);
         addTearDown(controller.dispose);
@@ -1030,13 +1048,11 @@ void main() {
         }
 
         expect(isSorted, false, reason: 'Expected captions to be unsorted');
-        expect(captions.map((Caption c) => c.text).toList(), <String>[
-          'one',
-          'two',
-          'three',
-          'five',
-          'four',
-        ], reason: 'Captions should be in original unsorted order');
+        expect(
+          captions.map((Caption c) => c.text).toList(),
+          <String>['one', 'two', 'three', 'five', 'four'],
+          reason: 'Captions should be in original unsorted order',
+        );
       });
 
       test('works when seeking, includes all captions', () async {
@@ -1447,6 +1463,26 @@ void main() {
     });
 
     group('Platform callbacks', () {
+      test('ignores a pending completion seek result after disposal', () async {
+        final controller = VideoPlayerController.networkUrl(_localhostUri);
+        addTearDown(controller.dispose);
+        await controller.initialize();
+
+        final seekCompleter = Completer<void>();
+        fakeVideoPlayerPlatform.seekCompleter = seekCompleter;
+        fakeVideoPlayerPlatform.streams[controller.playerId]!.add(
+          VideoEvent(eventType: VideoEventType.completed),
+        );
+        await Future<void>.delayed(Duration.zero);
+        expect(fakeVideoPlayerPlatform.calls.last, 'seekTo');
+        final VideoPlayerValue valueBeforeDisposal = controller.value;
+
+        await controller.dispose();
+        seekCompleter.complete();
+        await Future<void>.delayed(Duration.zero);
+        expect(controller.value, valueBeforeDisposal);
+      });
+
       testWidgets('playing completed', (WidgetTester tester) async {
         final controller = VideoPlayerController.networkUrl(_localhostUri);
 
@@ -1916,6 +1952,7 @@ void main() {
 
 class FakeVideoPlayerPlatform extends VideoPlayerPlatform {
   Completer<bool> initialized = Completer<bool>();
+  Completer<void>? seekCompleter;
   List<String> calls = <String>[];
   List<DataSource> dataSources = <DataSource>[];
   List<VideoViewType> viewTypes = <VideoViewType>[];
@@ -2003,6 +2040,7 @@ class FakeVideoPlayerPlatform extends VideoPlayerPlatform {
   @override
   Future<void> seekTo(int playerId, Duration position) async {
     calls.add('seekTo');
+    await seekCompleter?.future;
     _positions[playerId] = position;
   }
 

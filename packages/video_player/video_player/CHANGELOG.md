@@ -1,3 +1,7 @@
+## 2.13.1
+
+* Ignores late position updates from pending platform requests after disposal.
+
 ## 2.13.0
 
 * Adds `preventsDisplaySleepDuringVideoPlayback` to `VideoPlayerOptions` and
