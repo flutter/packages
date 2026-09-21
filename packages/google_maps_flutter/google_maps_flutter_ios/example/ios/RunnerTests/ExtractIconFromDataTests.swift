@@ -298,6 +298,60 @@ import Testing
     #expect(resultImage?.size.height == 1.0)
   }
 
+  @Test func extractIconFromDataBytesSharesImageForEqualBytesAndScaling() throws {
+    let pngData = try #require(createOnePixelImage().pngData())
+    let screenScale: CGFloat = 3.0
+
+    func createIcon() -> UIImage? {
+      let bitmap = FGMPlatformBitmapBytesMap.make(
+        withByteData: FlutterStandardTypedData(bytes: pngData),
+        bitmapScaling: .auto,
+        imagePixelRatio: 1,
+        width: nil,
+        height: nil
+      )
+      return FGMIconFromBitmap(
+        FGMPlatformBitmap.make(withBitmap: bitmap),
+        TestAssetProvider(),
+        screenScale
+      )
+    }
+
+    let firstImage = try #require(createIcon())
+    let secondImage = try #require(createIcon())
+
+    // The Maps SDK allocates marker texture space per UIImage instance, so bitmaps that describe
+    // the same image must share a single instance.
+    #expect(firstImage === secondImage)
+  }
+
+  @Test func extractIconFromDataBytesDoesNotShareImageForDifferentPixelRatio() throws {
+    let pngData = try #require(createOnePixelImage().pngData())
+    let screenScale: CGFloat = 3.0
+
+    func createIcon(imagePixelRatio: Double) -> UIImage? {
+      let bitmap = FGMPlatformBitmapBytesMap.make(
+        withByteData: FlutterStandardTypedData(bytes: pngData),
+        bitmapScaling: .auto,
+        imagePixelRatio: imagePixelRatio,
+        width: nil,
+        height: nil
+      )
+      return FGMIconFromBitmap(
+        FGMPlatformBitmap.make(withBitmap: bitmap),
+        TestAssetProvider(),
+        screenScale
+      )
+    }
+
+    let firstImage = try #require(createIcon(imagePixelRatio: 1))
+    let secondImage = try #require(createIcon(imagePixelRatio: 10))
+
+    #expect(firstImage !== secondImage)
+    #expect(firstImage.scale == 1.0)
+    #expect(secondImage.scale == 10.0)
+  }
+
   /// Tests for PinConfig (GMSPinImageOptions) - requires iOS 16.0+ and Google Maps SDK 9.0+.
   /// On earlier versions, FGMIconFromBitmap returns nil for PinConfig, which is expected behavior.
   @Test func extractIconFromPinConfigWithGlyphColor() {

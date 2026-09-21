@@ -1,3 +1,9 @@
+## 2.18.7
+
+* Fixes corrupted and missing marker icons on maps with many markers created from
+  `BitmapDescriptor.bytes`, by sharing a single `UIImage` between markers that use the same
+  bytes and scaling.
+
 ## 2.18.6
 
 * Updates pigeon dev_dependency to ^27.3.2 for analyzer 14 compatibility.
