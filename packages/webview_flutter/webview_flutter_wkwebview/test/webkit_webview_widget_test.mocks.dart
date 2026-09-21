@@ -80,79 +80,63 @@ class MockWKUIDelegate extends _i1.Mock implements _i2.WKUIDelegate {
   )
   get requestMediaCapturePermission =>
       (super.noSuchMethod(
-            Invocation.getter(#requestMediaCapturePermission),
-            returnValue:
-                (
-                  _i2.WKUIDelegate pigeon_instance,
-                  _i2.WKWebView webView,
-                  _i2.WKSecurityOrigin origin,
-                  _i2.WKFrameInfo frame,
-                  _i2.MediaCaptureType type,
-                ) => _i3.Future<_i2.PermissionDecision>.value(_i2.PermissionDecision.deny),
-          )
-          as _i3.Future<_i2.PermissionDecision> Function(
-            _i2.WKUIDelegate,
-            _i2.WKWebView,
-            _i2.WKSecurityOrigin,
-            _i2.WKFrameInfo,
-            _i2.MediaCaptureType,
-          ));
+        Invocation.getter(#requestMediaCapturePermission),
+        returnValue: (
+          _i2.WKUIDelegate pigeon_instance,
+          _i2.WKWebView webView,
+          _i2.WKSecurityOrigin origin,
+          _i2.WKFrameInfo frame,
+          _i2.MediaCaptureType type,
+        ) => _i3.Future<_i2.PermissionDecision>.value(_i2.PermissionDecision.deny),
+      ) as _i3.Future<_i2.PermissionDecision> Function(
+        _i2.WKUIDelegate,
+        _i2.WKWebView,
+        _i2.WKSecurityOrigin,
+        _i2.WKFrameInfo,
+        _i2.MediaCaptureType,
+      ));
 
   @override
   _i3.Future<bool> Function(_i2.WKUIDelegate, _i2.WKWebView, String, _i2.WKFrameInfo)
-  get runJavaScriptConfirmPanel =>
-      (super.noSuchMethod(
-            Invocation.getter(#runJavaScriptConfirmPanel),
-            returnValue:
-                (
-                  _i2.WKUIDelegate pigeon_instance,
-                  _i2.WKWebView webView,
-                  String message,
-                  _i2.WKFrameInfo frame,
-                ) => _i3.Future<bool>.value(false),
-          )
-          as _i3.Future<bool> Function(_i2.WKUIDelegate, _i2.WKWebView, String, _i2.WKFrameInfo));
+  get runJavaScriptConfirmPanel => (super.noSuchMethod(
+    Invocation.getter(#runJavaScriptConfirmPanel),
+    returnValue: (
+      _i2.WKUIDelegate pigeon_instance,
+      _i2.WKWebView webView,
+      String message,
+      _i2.WKFrameInfo frame,
+    ) => _i3.Future<bool>.value(false),
+  ) as _i3.Future<bool> Function(_i2.WKUIDelegate, _i2.WKWebView, String, _i2.WKFrameInfo));
 
   @override
-  _i2.PigeonInstanceManager get pigeon_instanceManager =>
-      (super.noSuchMethod(
-            Invocation.getter(#pigeon_instanceManager),
-            returnValue: _FakePigeonInstanceManager_0(
-              this,
-              Invocation.getter(#pigeon_instanceManager),
-            ),
-          )
-          as _i2.PigeonInstanceManager);
+  _i2.PigeonInstanceManager get pigeon_instanceManager => (super.noSuchMethod(
+    Invocation.getter(#pigeon_instanceManager),
+    returnValue: _FakePigeonInstanceManager_0(this, Invocation.getter(#pigeon_instanceManager)),
+  ) as _i2.PigeonInstanceManager);
 
   @override
-  _i2.WKUIDelegate pigeon_copy() =>
-      (super.noSuchMethod(
-            Invocation.method(#pigeon_copy, []),
-            returnValue: _FakeWKUIDelegate_1(this, Invocation.method(#pigeon_copy, [])),
-          )
-          as _i2.WKUIDelegate);
+  _i2.WKUIDelegate pigeon_copy() => (super.noSuchMethod(
+    Invocation.method(#pigeon_copy, []),
+    returnValue: _FakeWKUIDelegate_1(this, Invocation.method(#pigeon_copy, [])),
+  ) as _i2.WKUIDelegate);
 
   @override
   _i3.Future<void> addObserver(
     _i2.NSObject? observer,
     String? keyPath,
     List<_i2.KeyValueObservingOptions>? options,
-  ) =>
-      (super.noSuchMethod(
-            Invocation.method(#addObserver, [observer, keyPath, options]),
-            returnValue: _i3.Future<void>.value(),
-            returnValueForMissingStub: _i3.Future<void>.value(),
-          )
-          as _i3.Future<void>);
+  ) => (super.noSuchMethod(
+    Invocation.method(#addObserver, [observer, keyPath, options]),
+    returnValue: _i3.Future<void>.value(),
+    returnValueForMissingStub: _i3.Future<void>.value(),
+  ) as _i3.Future<void>);
 
   @override
-  _i3.Future<void> removeObserver(_i2.NSObject? observer, String? keyPath) =>
-      (super.noSuchMethod(
-            Invocation.method(#removeObserver, [observer, keyPath]),
-            returnValue: _i3.Future<void>.value(),
-            returnValueForMissingStub: _i3.Future<void>.value(),
-          )
-          as _i3.Future<void>);
+  _i3.Future<void> removeObserver(_i2.NSObject? observer, String? keyPath) => (super.noSuchMethod(
+    Invocation.method(#removeObserver, [observer, keyPath]),
+    returnValue: _i3.Future<void>.value(),
+    returnValueForMissingStub: _i3.Future<void>.value(),
+  ) as _i3.Future<void>);
 }
 
 /// A class which mocks [WKWebViewConfiguration].
@@ -164,145 +148,110 @@ class MockWKWebViewConfiguration extends _i1.Mock implements _i2.WKWebViewConfig
   }
 
   @override
-  _i2.PigeonInstanceManager get pigeon_instanceManager =>
-      (super.noSuchMethod(
-            Invocation.getter(#pigeon_instanceManager),
-            returnValue: _FakePigeonInstanceManager_0(
-              this,
-              Invocation.getter(#pigeon_instanceManager),
-            ),
-          )
-          as _i2.PigeonInstanceManager);
+  _i2.PigeonInstanceManager get pigeon_instanceManager => (super.noSuchMethod(
+    Invocation.getter(#pigeon_instanceManager),
+    returnValue: _FakePigeonInstanceManager_0(this, Invocation.getter(#pigeon_instanceManager)),
+  ) as _i2.PigeonInstanceManager);
 
   @override
   _i3.Future<void> setUserContentController(_i2.WKUserContentController? controller) =>
       (super.noSuchMethod(
-            Invocation.method(#setUserContentController, [controller]),
-            returnValue: _i3.Future<void>.value(),
-            returnValueForMissingStub: _i3.Future<void>.value(),
-          )
-          as _i3.Future<void>);
+        Invocation.method(#setUserContentController, [controller]),
+        returnValue: _i3.Future<void>.value(),
+        returnValueForMissingStub: _i3.Future<void>.value(),
+      ) as _i3.Future<void>);
 
   @override
-  _i3.Future<_i2.WKUserContentController> getUserContentController() =>
-      (super.noSuchMethod(
-            Invocation.method(#getUserContentController, []),
-            returnValue: _i3.Future<_i2.WKUserContentController>.value(
-              _FakeWKUserContentController_2(
-                this,
-                Invocation.method(#getUserContentController, []),
-              ),
-            ),
-          )
-          as _i3.Future<_i2.WKUserContentController>);
+  _i3.Future<_i2.WKUserContentController> getUserContentController() => (super.noSuchMethod(
+    Invocation.method(#getUserContentController, []),
+    returnValue: _i3.Future<_i2.WKUserContentController>.value(
+      _FakeWKUserContentController_2(this, Invocation.method(#getUserContentController, [])),
+    ),
+  ) as _i3.Future<_i2.WKUserContentController>);
 
   @override
-  _i3.Future<void> setWebsiteDataStore(_i2.WKWebsiteDataStore? dataStore) =>
-      (super.noSuchMethod(
-            Invocation.method(#setWebsiteDataStore, [dataStore]),
-            returnValue: _i3.Future<void>.value(),
-            returnValueForMissingStub: _i3.Future<void>.value(),
-          )
-          as _i3.Future<void>);
+  _i3.Future<void> setWebsiteDataStore(_i2.WKWebsiteDataStore? dataStore) => (super.noSuchMethod(
+    Invocation.method(#setWebsiteDataStore, [dataStore]),
+    returnValue: _i3.Future<void>.value(),
+    returnValueForMissingStub: _i3.Future<void>.value(),
+  ) as _i3.Future<void>);
 
   @override
-  _i3.Future<_i2.WKWebsiteDataStore> getWebsiteDataStore() =>
-      (super.noSuchMethod(
-            Invocation.method(#getWebsiteDataStore, []),
-            returnValue: _i3.Future<_i2.WKWebsiteDataStore>.value(
-              _FakeWKWebsiteDataStore_3(this, Invocation.method(#getWebsiteDataStore, [])),
-            ),
-          )
-          as _i3.Future<_i2.WKWebsiteDataStore>);
+  _i3.Future<_i2.WKWebsiteDataStore> getWebsiteDataStore() => (super.noSuchMethod(
+    Invocation.method(#getWebsiteDataStore, []),
+    returnValue: _i3.Future<_i2.WKWebsiteDataStore>.value(
+      _FakeWKWebsiteDataStore_3(this, Invocation.method(#getWebsiteDataStore, [])),
+    ),
+  ) as _i3.Future<_i2.WKWebsiteDataStore>);
 
   @override
-  _i3.Future<void> setPreferences(_i2.WKPreferences? preferences) =>
-      (super.noSuchMethod(
-            Invocation.method(#setPreferences, [preferences]),
-            returnValue: _i3.Future<void>.value(),
-            returnValueForMissingStub: _i3.Future<void>.value(),
-          )
-          as _i3.Future<void>);
+  _i3.Future<void> setPreferences(_i2.WKPreferences? preferences) => (super.noSuchMethod(
+    Invocation.method(#setPreferences, [preferences]),
+    returnValue: _i3.Future<void>.value(),
+    returnValueForMissingStub: _i3.Future<void>.value(),
+  ) as _i3.Future<void>);
 
   @override
-  _i3.Future<_i2.WKPreferences> getPreferences() =>
-      (super.noSuchMethod(
-            Invocation.method(#getPreferences, []),
-            returnValue: _i3.Future<_i2.WKPreferences>.value(
-              _FakeWKPreferences_4(this, Invocation.method(#getPreferences, [])),
-            ),
-          )
-          as _i3.Future<_i2.WKPreferences>);
+  _i3.Future<_i2.WKPreferences> getPreferences() => (super.noSuchMethod(
+    Invocation.method(#getPreferences, []),
+    returnValue: _i3.Future<_i2.WKPreferences>.value(
+      _FakeWKPreferences_4(this, Invocation.method(#getPreferences, [])),
+    ),
+  ) as _i3.Future<_i2.WKPreferences>);
 
   @override
-  _i3.Future<void> setAllowsInlineMediaPlayback(bool? allow) =>
-      (super.noSuchMethod(
-            Invocation.method(#setAllowsInlineMediaPlayback, [allow]),
-            returnValue: _i3.Future<void>.value(),
-            returnValueForMissingStub: _i3.Future<void>.value(),
-          )
-          as _i3.Future<void>);
+  _i3.Future<void> setAllowsInlineMediaPlayback(bool? allow) => (super.noSuchMethod(
+    Invocation.method(#setAllowsInlineMediaPlayback, [allow]),
+    returnValue: _i3.Future<void>.value(),
+    returnValueForMissingStub: _i3.Future<void>.value(),
+  ) as _i3.Future<void>);
 
   @override
-  _i3.Future<void> setLimitsNavigationsToAppBoundDomains(bool? limit) =>
-      (super.noSuchMethod(
-            Invocation.method(#setLimitsNavigationsToAppBoundDomains, [limit]),
-            returnValue: _i3.Future<void>.value(),
-            returnValueForMissingStub: _i3.Future<void>.value(),
-          )
-          as _i3.Future<void>);
+  _i3.Future<void> setLimitsNavigationsToAppBoundDomains(bool? limit) => (super.noSuchMethod(
+    Invocation.method(#setLimitsNavigationsToAppBoundDomains, [limit]),
+    returnValue: _i3.Future<void>.value(),
+    returnValueForMissingStub: _i3.Future<void>.value(),
+  ) as _i3.Future<void>);
 
   @override
   _i3.Future<void> setMediaTypesRequiringUserActionForPlayback(_i2.AudiovisualMediaType? type) =>
       (super.noSuchMethod(
-            Invocation.method(#setMediaTypesRequiringUserActionForPlayback, [type]),
-            returnValue: _i3.Future<void>.value(),
-            returnValueForMissingStub: _i3.Future<void>.value(),
-          )
-          as _i3.Future<void>);
+        Invocation.method(#setMediaTypesRequiringUserActionForPlayback, [type]),
+        returnValue: _i3.Future<void>.value(),
+        returnValueForMissingStub: _i3.Future<void>.value(),
+      ) as _i3.Future<void>);
 
   @override
-  _i3.Future<_i2.WKWebpagePreferences> getDefaultWebpagePreferences() =>
-      (super.noSuchMethod(
-            Invocation.method(#getDefaultWebpagePreferences, []),
-            returnValue: _i3.Future<_i2.WKWebpagePreferences>.value(
-              _FakeWKWebpagePreferences_5(
-                this,
-                Invocation.method(#getDefaultWebpagePreferences, []),
-              ),
-            ),
-          )
-          as _i3.Future<_i2.WKWebpagePreferences>);
+  _i3.Future<_i2.WKWebpagePreferences> getDefaultWebpagePreferences() => (super.noSuchMethod(
+    Invocation.method(#getDefaultWebpagePreferences, []),
+    returnValue: _i3.Future<_i2.WKWebpagePreferences>.value(
+      _FakeWKWebpagePreferences_5(this, Invocation.method(#getDefaultWebpagePreferences, [])),
+    ),
+  ) as _i3.Future<_i2.WKWebpagePreferences>);
 
   @override
-  _i2.WKWebViewConfiguration pigeon_copy() =>
-      (super.noSuchMethod(
-            Invocation.method(#pigeon_copy, []),
-            returnValue: _FakeWKWebViewConfiguration_6(this, Invocation.method(#pigeon_copy, [])),
-          )
-          as _i2.WKWebViewConfiguration);
+  _i2.WKWebViewConfiguration pigeon_copy() => (super.noSuchMethod(
+    Invocation.method(#pigeon_copy, []),
+    returnValue: _FakeWKWebViewConfiguration_6(this, Invocation.method(#pigeon_copy, [])),
+  ) as _i2.WKWebViewConfiguration);
 
   @override
   _i3.Future<void> addObserver(
     _i2.NSObject? observer,
     String? keyPath,
     List<_i2.KeyValueObservingOptions>? options,
-  ) =>
-      (super.noSuchMethod(
-            Invocation.method(#addObserver, [observer, keyPath, options]),
-            returnValue: _i3.Future<void>.value(),
-            returnValueForMissingStub: _i3.Future<void>.value(),
-          )
-          as _i3.Future<void>);
+  ) => (super.noSuchMethod(
+    Invocation.method(#addObserver, [observer, keyPath, options]),
+    returnValue: _i3.Future<void>.value(),
+    returnValueForMissingStub: _i3.Future<void>.value(),
+  ) as _i3.Future<void>);
 
   @override
-  _i3.Future<void> removeObserver(_i2.NSObject? observer, String? keyPath) =>
-      (super.noSuchMethod(
-            Invocation.method(#removeObserver, [observer, keyPath]),
-            returnValue: _i3.Future<void>.value(),
-            returnValueForMissingStub: _i3.Future<void>.value(),
-          )
-          as _i3.Future<void>);
+  _i3.Future<void> removeObserver(_i2.NSObject? observer, String? keyPath) => (super.noSuchMethod(
+    Invocation.method(#removeObserver, [observer, keyPath]),
+    returnValue: _i3.Future<void>.value(),
+    returnValueForMissingStub: _i3.Future<void>.value(),
+  ) as _i3.Future<void>);
 }
 
 /// A class which mocks [UIScrollViewDelegate].
@@ -314,43 +263,32 @@ class MockUIScrollViewDelegate extends _i1.Mock implements _i2.UIScrollViewDeleg
   }
 
   @override
-  _i2.PigeonInstanceManager get pigeon_instanceManager =>
-      (super.noSuchMethod(
-            Invocation.getter(#pigeon_instanceManager),
-            returnValue: _FakePigeonInstanceManager_0(
-              this,
-              Invocation.getter(#pigeon_instanceManager),
-            ),
-          )
-          as _i2.PigeonInstanceManager);
+  _i2.PigeonInstanceManager get pigeon_instanceManager => (super.noSuchMethod(
+    Invocation.getter(#pigeon_instanceManager),
+    returnValue: _FakePigeonInstanceManager_0(this, Invocation.getter(#pigeon_instanceManager)),
+  ) as _i2.PigeonInstanceManager);
 
   @override
-  _i2.UIScrollViewDelegate pigeon_copy() =>
-      (super.noSuchMethod(
-            Invocation.method(#pigeon_copy, []),
-            returnValue: _FakeUIScrollViewDelegate_7(this, Invocation.method(#pigeon_copy, [])),
-          )
-          as _i2.UIScrollViewDelegate);
+  _i2.UIScrollViewDelegate pigeon_copy() => (super.noSuchMethod(
+    Invocation.method(#pigeon_copy, []),
+    returnValue: _FakeUIScrollViewDelegate_7(this, Invocation.method(#pigeon_copy, [])),
+  ) as _i2.UIScrollViewDelegate);
 
   @override
   _i3.Future<void> addObserver(
     _i2.NSObject? observer,
     String? keyPath,
     List<_i2.KeyValueObservingOptions>? options,
-  ) =>
-      (super.noSuchMethod(
-            Invocation.method(#addObserver, [observer, keyPath, options]),
-            returnValue: _i3.Future<void>.value(),
-            returnValueForMissingStub: _i3.Future<void>.value(),
-          )
-          as _i3.Future<void>);
+  ) => (super.noSuchMethod(
+    Invocation.method(#addObserver, [observer, keyPath, options]),
+    returnValue: _i3.Future<void>.value(),
+    returnValueForMissingStub: _i3.Future<void>.value(),
+  ) as _i3.Future<void>);
 
   @override
-  _i3.Future<void> removeObserver(_i2.NSObject? observer, String? keyPath) =>
-      (super.noSuchMethod(
-            Invocation.method(#removeObserver, [observer, keyPath]),
-            returnValue: _i3.Future<void>.value(),
-            returnValueForMissingStub: _i3.Future<void>.value(),
-          )
-          as _i3.Future<void>);
+  _i3.Future<void> removeObserver(_i2.NSObject? observer, String? keyPath) => (super.noSuchMethod(
+    Invocation.method(#removeObserver, [observer, keyPath]),
+    returnValue: _i3.Future<void>.value(),
+    returnValueForMissingStub: _i3.Future<void>.value(),
+  ) as _i3.Future<void>);
 }
