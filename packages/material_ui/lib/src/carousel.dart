@@ -546,7 +546,7 @@ class _CarouselViewState extends State<CarouselView> {
   bool get _consumeMaxWeight => widget.consumeMaxWeight;
   CarouselController? _internalController;
   CarouselController get _controller => widget.controller ?? _internalController!;
-  late int _lastReportedLeadingItem;
+  late int _lastReportedActiveIndex;
 
   int? _cachedMaxWeightIndex;
   int? get _maxWeightIndex {
@@ -564,7 +564,7 @@ class _CarouselViewState extends State<CarouselView> {
     if (widget.controller == null) {
       _internalController = CarouselController();
     }
-    _lastReportedLeadingItem = _getInitialLeadingItem();
+    _lastReportedActiveIndex = _getInitialActiveIndex();
     _controller._attach(this);
     _controller.addListener(_handleScroll);
   }
@@ -613,16 +613,16 @@ class _CarouselViewState extends State<CarouselView> {
 
     final ScrollPosition position = _controller.position;
     final carouselPosition = position as _CarouselPosition;
-    final int currentLeadingIndex = carouselPosition.activeIndex;
+    final int currentActiveIndex = carouselPosition.activeIndex;
 
-    if (currentLeadingIndex != _lastReportedLeadingItem) {
-      _lastReportedLeadingItem = currentLeadingIndex;
-      widget.onIndexChanged!(currentLeadingIndex);
+    if (currentActiveIndex != _lastReportedActiveIndex) {
+      _lastReportedActiveIndex = currentActiveIndex;
+      widget.onIndexChanged!(currentActiveIndex);
     }
   }
 
   // For weighted carousel, we want to always report the index of the max weight item.
-  int _getInitialLeadingItem() {
+  int _getInitialActiveIndex() {
     int index = _controller.initialItem;
     if (widget.flexWeights != null) {
       if (!widget.consumeMaxWeight) {
