@@ -1,3 +1,9 @@
+## 3.26.2
+
+* Updates pigeon dev_dependency to ^29.0.2 and regenerates code, fixing a crash
+  when a `WKNavigationDelegate` authentication challenge reply cannot be
+  resolved to a native instance.
+
 ## 3.26.1
 
 * Updates pigeon dev_dependency to ^27.3.2 for analyzer 14 compatibility.
