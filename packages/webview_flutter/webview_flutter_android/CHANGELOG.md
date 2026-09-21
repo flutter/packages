@@ -1,3 +1,10 @@
+## 4.15.0
+
+* Adds support for `PlatformWebViewController.addDocumentStartJavaScript` and
+  `PlatformWebViewController.supportsAddDocumentStartJavaScript`.
+* Introduces `AndroidDocumentStartJavaScriptParams`, a platform-specific extension of
+  `DocumentStartJavaScriptParams` for Android that adds support for `allowedOriginRules`.
+
 ## 4.14.1
 
 * Updates pigeon dev_dependency to ^27.3.2 for analyzer 14 compatibility.

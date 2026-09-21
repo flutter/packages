@@ -2,6 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+export 'document_start_javascript_params.dart';
 export 'http_auth_request.dart';
 export 'http_response_error.dart';
 export 'javascript_console_message.dart';

@@ -193,6 +193,33 @@ abstract class PlatformWebViewController extends PlatformInterface {
     throw UnimplementedError('removeJavaScriptChannel is not implemented on the current platform');
   }
 
+  /// Injects JavaScript that runs when the document element is created,
+  /// before any other content of the page loads.
+  ///
+  /// Registered scripts run on the current page and every page loaded
+  /// afterwards, in frames permitted by the platform implementation.
+  ///
+  /// Platform-specific implementations may extend
+  /// [DocumentStartJavaScriptParams] to support additional parameters, such
+  /// as Android-specific allowed origin rules.
+  ///
+  /// Use [supportsAddDocumentStartJavaScript] to check whether the current
+  /// platform and WebView implementation support this feature before calling
+  /// this method.
+  Future<void> addDocumentStartJavaScript(DocumentStartJavaScriptParams params) {
+    throw UnimplementedError(
+      'addDocumentStartJavaScript is not implemented on the current platform',
+    );
+  }
+
+  /// Returns true if the current platform and WebView implementation support
+  /// injecting JavaScript at document start.
+  ///
+  /// See [addDocumentStartJavaScript].
+  Future<bool> supportsAddDocumentStartJavaScript() {
+    return Future<bool>.value(false);
+  }
+
   /// Returns the title of the currently loaded page.
   Future<String?> getTitle() {
     throw UnimplementedError('getTitle is not implemented on the current platform');

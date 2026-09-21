@@ -89,6 +89,40 @@ base class AndroidLoadFileParams extends LoadFileParams {
   final Map<String, String> headers;
 }
 
+/// Object specifying parameters for injecting JavaScript at document start in
+/// a [AndroidWebViewController].
+@immutable
+base class AndroidDocumentStartJavaScriptParams extends DocumentStartJavaScriptParams {
+  /// Constructs a [AndroidDocumentStartJavaScriptParams], the subclass of a
+  /// [DocumentStartJavaScriptParams].
+  const AndroidDocumentStartJavaScriptParams({
+    required super.source,
+    this.allowedOriginRules = const <String>{'*'},
+  });
+
+  /// Constructs a [AndroidDocumentStartJavaScriptParams] using a
+  /// [DocumentStartJavaScriptParams].
+  factory AndroidDocumentStartJavaScriptParams.fromDocumentStartJavaScriptParams(
+    DocumentStartJavaScriptParams params, {
+    Set<String> allowedOriginRules = const <String>{'*'},
+  }) {
+    return AndroidDocumentStartJavaScriptParams(
+      source: params.source,
+      allowedOriginRules: allowedOriginRules,
+    );
+  }
+
+  /// A set of matching rules for the origins the script runs in.
+  ///
+  /// The default value, `{'*'}`, matches every origin. An empty set blocks
+  /// every origin.
+  ///
+  /// See
+  /// https://developer.android.com/reference/androidx/webkit/WebViewCompat#addDocumentStartJavaScript(android.webkit.WebView,java.lang.String,java.util.Set%3Cjava.lang.String%3E)
+  /// for the format of the rules.
+  final Set<String> allowedOriginRules;
+}
+
 /// Object specifying creation parameters for creating a [AndroidWebViewController].
 ///
 /// When adding additional fields make sure they can be null or have a default
@@ -790,6 +824,7 @@ class AndroidWebViewController extends PlatformWebViewController {
   Future<bool> isWebViewFeatureSupported(WebViewFeatureType featureType) {
     final String feature = switch (featureType) {
       WebViewFeatureType.paymentRequest => WebViewFeatureConstants.paymentRequest,
+      WebViewFeatureType.documentStartScript => WebViewFeatureConstants.documentStartScript,
       WebViewFeatureType.webAuthentication => WebViewFeatureConstants.webAuthentication,
     };
     return android_webview.WebViewFeature.isFeatureSupported(feature);
@@ -838,6 +873,27 @@ class AndroidWebViewController extends PlatformWebViewController {
   /// See https://developer.android.com/reference/androidx/webkit/WebSettingsCompat#setPaymentRequestEnabled(android.webkit.WebSettings,boolean).
   Future<void> setPaymentRequestEnabled(bool enabled) {
     return android_webview.WebSettingsCompat.setPaymentRequestEnabled(_webView.settings, enabled);
+  }
+
+  @override
+  Future<void> addDocumentStartJavaScript(DocumentStartJavaScriptParams params) async {
+    switch (params) {
+      case final AndroidDocumentStartJavaScriptParams params:
+        await android_webview.WebViewCompat.addDocumentStartJavaScript(
+          _webView,
+          params.source,
+          params.allowedOriginRules.toList(),
+        );
+      default:
+        await addDocumentStartJavaScript(
+          AndroidDocumentStartJavaScriptParams.fromDocumentStartJavaScriptParams(params),
+        );
+    }
+  }
+
+  @override
+  Future<bool> supportsAddDocumentStartJavaScript() {
+    return isWebViewFeatureSupported(WebViewFeatureType.documentStartScript);
   }
 
   /// Sets the insets that the native View should prevent the web contents from
@@ -995,6 +1051,9 @@ enum WebViewFeatureType {
 
   /// Feature for isFeatureSupported.
   ///
+  /// This feature covers [WebViewCompat.addDocumentStartJavaScript].
+  documentStartScript,
+
   /// This feature covers [WebSettingsCompat.setWebAuthenticationSupport].
   webAuthentication,
 }
