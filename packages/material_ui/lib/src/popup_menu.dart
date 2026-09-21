@@ -1173,6 +1173,7 @@ typedef PopupMenuPositionBuilder =
 ///    calling this method automatically.
 ///  * [SemanticsConfiguration.namesRoute], for a description of edge triggered
 ///    semantics.
+@awaitNotRequired
 Future<T?> showMenu<T>({
   required BuildContext context,
   RelativeRect? position,
@@ -1796,16 +1797,25 @@ class PopupMenuButtonState<T> extends State<PopupMenuButton<T>> {
       );
       final MaterialTapTargetSize tapTargetSize =
           widget.style?.tapTargetSize ?? MaterialTapTargetSize.shrinkWrap;
-      if (tapTargetSize == MaterialTapTargetSize.padded) {
-        return ConstrainedBox(
-          constraints: const BoxConstraints(
-            minWidth: kMinInteractiveDimension,
-            minHeight: kMinInteractiveDimension,
-          ),
-          child: child,
-        );
-      }
-      return Semantics(expanded: _isMenuExpanded, child: child);
+      final Widget result = tapTargetSize == MaterialTapTargetSize.padded
+          ? ConstrainedBox(
+              constraints: const BoxConstraints(
+                minWidth: kMinInteractiveDimension,
+                minHeight: kMinInteractiveDimension,
+              ),
+              child: child,
+            )
+          : child;
+      // The button semantics are added here rather than by the [InkWell] so
+      // that assistive technologies describe the popup menu button the same way
+      // regardless of whether it is built from [child] or from [icon], in which
+      // case the semantics come from the [IconButton].
+      return Semantics(
+        button: true,
+        enabled: widget.enabled,
+        expanded: _isMenuExpanded,
+        child: result,
+      );
     }
 
     return Semantics(

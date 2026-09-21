@@ -102,20 +102,33 @@ abstract class TokenTemplate {
   String number(num value) => value.toString();
 
   /// Generates a [ColorScheme] color expression for the given token.
-  String color(TokenColorRole role, String prefix) => '$prefix.${role.name}';
+  String color(TokenColorRole role, [String prefix = '_colors']) {
+    final String colorName = switch (role) {
+      TokenColorRole.inverseOnSurface => 'onInverseSurface',
+      _ => role.name,
+    };
+    return '$prefix.$colorName';
+  }
 
   /// Generates a color expression with opacity applied.
-  String colorWithOpacity(TokenColorRole role, double opacity, String prefix) {
+  String colorWithOpacity(TokenColorRole role, double opacity, [String prefix = '_colors']) {
+    final String colorExpression = color(role, prefix);
     if (opacity == 1.0) {
-      return color(role, prefix);
+      return colorExpression;
     }
-    return '${color(role, prefix)}.withOpacity(${number(opacity)})';
+    final String opacityValue = number(opacity);
+    return switch (_version) {
+      // TODO(QuncCccccc): Update M3 defaults to use withValues(alpha:) once
+      // all existing M3 templates have migrated to the new generator.
+      _MaterialVersion.material3 => '$colorExpression.withOpacity($opacityValue)',
+      _MaterialVersion.material3Expressive => '$colorExpression.withValues(alpha: $opacityValue)',
+    };
   }
 
   /// Generate a [BorderSide] for the given component.
-  String border(String color, {double? width}) {
-    final widthString = (width != null && width != 1.0) ? ', width: $width' : '';
-    return 'BorderSide(color: $color$widthString)';
+  String border(String color, {double? width, String prefix = ''}) {
+    final widthString = (width != null && width != 1.0) ? 'width: ${number(width)}, ' : '';
+    return '${prefix}BorderSide(${widthString}color: $color)';
   }
 
   /// Generates an [OutlinedBorder] expression for a shape token.

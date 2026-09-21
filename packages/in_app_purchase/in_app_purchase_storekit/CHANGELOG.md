@@ -1,3 +1,11 @@
+## NEXT
+
+* Fixes lint issues.
+
+## 0.4.13
+
+* Exposes expirationDate on SK2PurchaseDetails.
+
 ## 0.4.12
 
 * Adds support for setting introductory offer eligibility from a server-signed

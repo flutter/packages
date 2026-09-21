@@ -103,7 +103,7 @@ void main() {
     await tester.longPress(textFinder);
     await tester.pumpAndSettle();
     expect(findLiveTextButton(), findsNothing);
-  });
+  }, tags: 'reduced-web-test-set');
 
   testWidgets(
     'text field selection toolbar should hide when the user starts typing',
@@ -2077,7 +2077,7 @@ void main() {
     expect(find.text('Copy'), isContextMenuProvidedByPlatform ? findsNothing : findsOneWidget);
     expect(find.text('Paste'), findsNothing);
     expect(find.text('Cut'), findsNothing);
-  });
+  }, tags: 'reduced-web-test-set');
 
   testWidgets(
     'does not paint toolbar when no options available',
@@ -2255,7 +2255,7 @@ void main() {
     await tester.pump();
     // On web, we always have a client connection to the engine.
     expect(tester.testTextInput.hasAnyClients, isBrowser ? isTrue : isFalse);
-  });
+  }, tags: 'reduced-web-test-set');
 
   testWidgets('Dynamically switching to non read only should open input connection', (
     WidgetTester tester,
@@ -2287,7 +2287,7 @@ void main() {
     entry.markNeedsBuild();
     await tester.pump();
     expect(tester.testTextInput.hasAnyClients, true);
-  });
+  }, tags: 'reduced-web-test-set');
 
   testWidgets('enableInteractiveSelection = false, long-press', (WidgetTester tester) async {
     final TextEditingController controller = _textEditingController();
@@ -3591,6 +3591,7 @@ void main() {
     },
     skip: !kIsWeb, // [intended] on web only one selection handle can be dragged at a time.
     variant: TargetPlatformVariant.only(TargetPlatform.android),
+    tags: 'reduced-web-test-set',
   );
 
   testWidgets(
@@ -14792,7 +14793,7 @@ void main() {
       );
       expect(state.selectionOverlay!.handlesAreVisible, isFalse);
     }
-  });
+  }, tags: 'reduced-web-test-set');
 
   testWidgets('Tapping selection handles toggles the toolbar', (WidgetTester tester) async {
     final TextEditingController controller = _textEditingController(text: 'abc def ghi');
@@ -15450,7 +15451,7 @@ void main() {
       RendererBinding.instance.mouseTracker.debugDeviceActiveCursor(1),
       kIsWeb ? SystemMouseCursors.click : SystemMouseCursors.basic,
     );
-  });
+  }, tags: 'reduced-web-test-set');
 
   testWidgets(
     'Text selection menu does not change mouse cursor when hovered',
@@ -15866,7 +15867,7 @@ void main() {
       state.updateEditingValue(const TextEditingValue(text: '侬好啊旁友'));
       expect(state.currentTextEditingValue.text, '侬好啊旁友');
       expect(state.currentTextEditingValue.composing, TextRange.empty);
-    });
+    }, tags: 'reduced-web-test-set');
   });
 
   testWidgets('TextField does not leak touch events when deadline has exceeded', (
@@ -17965,40 +17966,45 @@ void main() {
       expect(focusNode.hasPrimaryFocus, isFalse);
     }, variant: TargetPlatformVariant.desktop());
 
-    testWidgets("Tapping outside doesn't lose focus on mobile", (WidgetTester tester) async {
-      final focusNode = FocusNode(debugLabel: 'Test Node');
-      addTearDown(focusNode.dispose);
-      await tester.pumpWidget(
-        MaterialApp(
-          home: Scaffold(
-            body: Center(
-              child: SizedBox.square(
-                dimension: 100.0,
-                child: Opacity(
-                  opacity: 0.5,
-                  child: TextField(
-                    autofocus: true,
-                    focusNode: focusNode,
-                    decoration: const InputDecoration(
-                      hintText: 'Placeholder',
-                      border: OutlineInputBorder(),
+    testWidgets(
+      "Tapping outside doesn't lose focus on mobile",
+      (WidgetTester tester) async {
+        final focusNode = FocusNode(debugLabel: 'Test Node');
+        addTearDown(focusNode.dispose);
+        await tester.pumpWidget(
+          MaterialApp(
+            home: Scaffold(
+              body: Center(
+                child: SizedBox.square(
+                  dimension: 100.0,
+                  child: Opacity(
+                    opacity: 0.5,
+                    child: TextField(
+                      autofocus: true,
+                      focusNode: focusNode,
+                      decoration: const InputDecoration(
+                        hintText: 'Placeholder',
+                        border: OutlineInputBorder(),
+                      ),
                     ),
                   ),
                 ),
               ),
             ),
           ),
-        ),
-      );
-      await tester.pump();
-      expect(focusNode.hasPrimaryFocus, isTrue);
+        );
+        await tester.pump();
+        expect(focusNode.hasPrimaryFocus, isTrue);
 
-      await tester.tapAt(const Offset(10, 10));
-      await tester.pump();
+        await tester.tapAt(const Offset(10, 10));
+        await tester.pump();
 
-      // Focus is lost on mobile browsers, but not mobile apps.
-      expect(focusNode.hasPrimaryFocus, kIsWeb ? isFalse : isTrue);
-    }, variant: TargetPlatformVariant.mobile());
+        // Focus is lost on mobile browsers, but not mobile apps.
+        expect(focusNode.hasPrimaryFocus, kIsWeb ? isFalse : isTrue);
+      },
+      variant: TargetPlatformVariant.mobile(),
+      tags: 'reduced-web-test-set',
+    );
 
     testWidgets(
       "Tapping on toolbar doesn't lose focus",
@@ -18152,6 +18158,7 @@ void main() {
           }
         },
         variant: TargetPlatformVariant.all(),
+        tags: 'reduced-web-test-set',
       );
     }
   });
