@@ -275,6 +275,32 @@ void main() {
     expect(material.color, const Color(0xff00ff00));
   });
 
+  testWidgets('Disabled MaterialButton prefers disabledTextColor over textColor', (
+    WidgetTester tester,
+  ) async {
+    // Regression test for https://github.com/flutter/flutter/issues/127449.
+
+    final Finder rawButtonMaterial = find.descendant(
+      of: find.byType(MaterialButton),
+      matching: find.byType(Material),
+    );
+
+    await tester.pumpWidget(
+      const Directionality(
+        textDirection: TextDirection.ltr,
+        child: MaterialButton(
+          onPressed: null,
+          textColor: Colors.blue,
+          disabledTextColor: Colors.red,
+          child: Text('button'),
+        ),
+      ),
+    );
+
+    final Material material = tester.widget<Material>(rawButtonMaterial);
+    expect(material.textStyle!.color, Colors.red);
+  });
+
   testWidgets(
     'Default MaterialButton meets a11y contrast guidelines',
     (WidgetTester tester) async {
