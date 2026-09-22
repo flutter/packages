@@ -298,10 +298,10 @@ class TooltipThemeData with Diagnosticable {
     properties.add(
       DiagnosticsProperty<TooltipTriggerMode>('triggerMode', triggerMode, defaultValue: null),
     );
-    properties.add(DiagnosticsProperty<bool>('ignorePointer', ignorePointer, defaultValue: null));
     properties.add(
       FlagProperty('enableFeedback', value: enableFeedback, ifTrue: 'true', showName: true),
     );
+    properties.add(DiagnosticsProperty<bool>('ignorePointer', ignorePointer, defaultValue: null));
   }
 }
 
