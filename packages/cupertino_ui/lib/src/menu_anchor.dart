@@ -912,17 +912,14 @@ class _MenuOverlayState extends State<_MenuOverlay>
     // disableAnimations accessibility feature is not present on iOS, all
     // animations are disabled when disableAnimations is enabled.
     //
-    // These settings are read from the ambient MediaQuery (falling back to the
-    // platform values when there is no MediaQuery) so that they can be
-    // overridden for a subtree, like every other accessibility feature exposed
-    // by MediaQueryData.
-    final ui.AccessibilityFeatures accessibilityFeatures = View.of(
-      context,
-    ).platformDispatcher.accessibilityFeatures;
+    // Allow a subtree to override disableAnimations. Reduced motion is only
+    // exposed by the platform accessibility features.
+    final ui.AccessibilityFeatures accessibilityFeatures = View.of(context)
+        .platformDispatcher
+        .accessibilityFeatures;
     final bool disableAnimations =
         MediaQuery.maybeDisableAnimationsOf(context) ?? accessibilityFeatures.disableAnimations;
-    final bool reduceMotion =
-        MediaQuery.maybeReduceMotionOf(context) ?? accessibilityFeatures.reduceMotion;
+    final bool reduceMotion = accessibilityFeatures.reduceMotion;
 
     switch ((disableAnimations, reduceMotion)) {
       case (true, _):

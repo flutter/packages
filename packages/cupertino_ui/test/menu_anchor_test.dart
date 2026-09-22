@@ -1651,10 +1651,10 @@ void main() {
     WidgetTester tester,
   ) async {
     await tester.pumpWidget(
-      MediaQuery(
-        data: const MediaQueryData(disableAnimations: true),
-        child: App(
-          CupertinoMenuAnchor(
+      App(
+        MediaQuery(
+          data: const MediaQueryData(disableAnimations: true),
+          child: CupertinoMenuAnchor(
             controller: controller,
             menuChildren: <Widget>[CupertinoMenuItem(onPressed: () {}, child: Text(Tag.a.text))],
             child: const AnchorButton(Tag.anchor),
@@ -1673,14 +1673,18 @@ void main() {
     expect(getScale(tester), moreOrLessEquals(1, epsilon: 0.01));
   });
 
-  testWidgets('Menu scale animation respects MediaQueryData.reduceMotion', (
+  testWidgets('MediaQuery can enable menu animations when the platform disables them', (
     WidgetTester tester,
   ) async {
+    tester.binding.platformDispatcher.accessibilityFeaturesTestValue =
+        const FakeAccessibilityFeatures(disableAnimations: true);
+    addTearDown(tester.binding.platformDispatcher.clearAccessibilityFeaturesTestValue);
+
     await tester.pumpWidget(
-      MediaQuery(
-        data: const MediaQueryData(reduceMotion: true),
-        child: App(
-          CupertinoMenuAnchor(
+      App(
+        MediaQuery(
+          data: const MediaQueryData(),
+          child: CupertinoMenuAnchor(
             controller: controller,
             menuChildren: <Widget>[CupertinoMenuItem(onPressed: () {}, child: Text(Tag.a.text))],
             child: const AnchorButton(Tag.anchor),
@@ -1692,7 +1696,7 @@ void main() {
     controller.open();
     await tester.pump();
 
-    expect(getScale(tester), moreOrLessEquals(1, epsilon: 0.01));
+    expect(getScale(tester), lessThan(1));
   });
 
   group('Focus', () {
@@ -3954,11 +3958,12 @@ void main() {
           darkColor: Color.fromRGBO(150, 0, 0, 1),
         );
 
-        const decoration =
-            WidgetStateProperty<BoxDecoration>.fromMap(<WidgetStatesConstraint, BoxDecoration>{
-              WidgetState.pressed: BoxDecoration(color: customPressedColor),
-              WidgetState.any: BoxDecoration(),
-            });
+        const decoration = WidgetStateProperty<BoxDecoration>.fromMap(
+          <WidgetStatesConstraint, BoxDecoration>{
+            WidgetState.pressed: BoxDecoration(color: customPressedColor),
+            WidgetState.any: BoxDecoration(),
+          },
+        );
 
         BoxDecoration getItemDecoration(Tag tag) {
           return tester
@@ -4056,11 +4061,12 @@ void main() {
           darkColor: Color.fromRGBO(0, 150, 0, 1),
         );
 
-        const decoration =
-            WidgetStateProperty<BoxDecoration>.fromMap(<WidgetStatesConstraint, BoxDecoration>{
-              WidgetState.focused: BoxDecoration(color: customFocusedColor),
-              WidgetState.any: BoxDecoration(),
-            });
+        const decoration = WidgetStateProperty<BoxDecoration>.fromMap(
+          <WidgetStatesConstraint, BoxDecoration>{
+            WidgetState.focused: BoxDecoration(color: customFocusedColor),
+            WidgetState.any: BoxDecoration(),
+          },
+        );
 
         BoxDecoration getItemDecoration(Tag tag) {
           return tester
@@ -4151,11 +4157,12 @@ void main() {
           darkColor: Color.fromRGBO(150, 0, 0, 1),
         );
 
-        const decoration =
-            WidgetStateProperty<BoxDecoration>.fromMap(<WidgetStatesConstraint, BoxDecoration>{
-              WidgetState.dragged: BoxDecoration(color: customSwipedColor),
-              WidgetState.any: BoxDecoration(),
-            });
+        const decoration = WidgetStateProperty<BoxDecoration>.fromMap(
+          <WidgetStatesConstraint, BoxDecoration>{
+            WidgetState.dragged: BoxDecoration(color: customSwipedColor),
+            WidgetState.any: BoxDecoration(),
+          },
+        );
 
         BoxDecoration getItemDecoration(Tag tag) {
           return tester
@@ -4922,9 +4929,8 @@ void main() {
               Builder(
                 builder: (BuildContext context) {
                   return MediaQuery(
-                    data: MediaQuery.of(
-                      context,
-                    ).copyWith(textScaler: textScaler, devicePixelRatio: devicePixelRatio),
+                    data: MediaQuery.of(context)
+                        .copyWith(textScaler: textScaler, devicePixelRatio: devicePixelRatio),
                     child: CupertinoMenuAnchor(
                       controller: controller,
                       menuChildren: <Widget>[
@@ -5241,9 +5247,8 @@ void main() {
               Builder(
                 builder: (BuildContext context) {
                   return MediaQuery(
-                    data: MediaQuery.of(
-                      context,
-                    ).copyWith(textScaler: textScaler, devicePixelRatio: devicePixelRatio),
+                    data: MediaQuery.of(context)
+                        .copyWith(textScaler: textScaler, devicePixelRatio: devicePixelRatio),
                     child: CupertinoMenuAnchor(
                       controller: controller,
                       menuChildren: <Widget>[
@@ -5827,9 +5832,8 @@ void main() {
               Builder(
                 builder: (BuildContext context) {
                   return MediaQuery(
-                    data: MediaQuery.of(
-                      context,
-                    ).copyWith(textScaler: textScaler, devicePixelRatio: 2.0),
+                    data: MediaQuery.of(context)
+                        .copyWith(textScaler: textScaler, devicePixelRatio: 2.0),
                     child: CupertinoMenuAnchor(
                       controller: controller,
                       menuChildren: <Widget>[
@@ -5881,9 +5885,8 @@ void main() {
               Builder(
                 builder: (BuildContext context) {
                   return MediaQuery(
-                    data: MediaQuery.of(
-                      context,
-                    ).copyWith(textScaler: textScaler, devicePixelRatio: devicePixelRatio),
+                    data: MediaQuery.of(context)
+                        .copyWith(textScaler: textScaler, devicePixelRatio: devicePixelRatio),
                     child: CupertinoMenuAnchor(
                       controller: controller,
                       menuChildren: <Widget>[

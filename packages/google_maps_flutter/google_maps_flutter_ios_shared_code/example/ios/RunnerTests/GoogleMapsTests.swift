@@ -8,7 +8,7 @@ import Testing
 
 @testable import google_maps_flutter_ios
 
-class MockCATransaction: NSObject, FGMCATransactionProtocol {
+class MockCATransaction: MapAnimationCATransactionProtocol {
   var beginCalled = false
   var commitCalled = false
   var animationDuration: CFTimeInterval = 0.0
@@ -60,7 +60,7 @@ class StubPluginRegistrar: NSObject, FlutterPluginRegistrar {
 
   @Test func plugin() {
     // Verify that creating an actual plugin instance succeeds.
-    let _ = FGMGoogleMapsPlugin()
+    let _ = GoogleMapsPlugin()
   }
 
   @Test func frameObserver() {
@@ -69,7 +69,7 @@ class StubPluginRegistrar: NSObject, FlutterPluginRegistrar {
     options.frame = frame
     options.camera = GMSCameraPosition(latitude: 0, longitude: 0, zoom: 0)
     let mapView = PartiallyMockedMapView(options: options)
-    let controller = FGMGoogleMapController(
+    let controller = GoogleMapController(
       mapView: mapView,
       viewIdentifier: 0,
       creationParameters: emptyCreationParameters(),
@@ -86,22 +86,11 @@ class StubPluginRegistrar: NSObject, FlutterPluginRegistrar {
     #expect(mapView.frameObserverCount == 0)
   }
 
-  @Test func mapsServiceSync() {
-    // The API requires a registrar, but this test doesn't actually use it, so just pass in a
-    // dummy object rather than set up a full mock.
-    let registrar = StubPluginRegistrar()
-    let factory1 = FGMGoogleMapFactory(registrar: registrar)
-    #expect(factory1.sharedMapServices != nil)
-    let factory2 = FGMGoogleMapFactory(registrar: registrar)
-    // Test pointer equality, should be same retained singleton +[GMSServices sharedServices] object.
-    // Retaining the opaque object should be enough to avoid multiple internal initializations,
-    // but don't test the internals of the GoogleMaps API. Assume that it does what is documented.
-    // https://developers.google.com/maps/documentation/ios-sdk/reference/interface_g_m_s_services#a436e03c32b1c0be74e072310a7158831
-    #expect(factory1.sharedMapServices as AnyObject === factory2.sharedMapServices as AnyObject)
-  }
-
   @Test func handleResultTileDownsamplesWideGamutImages() throws {
-    let controller = FGMTileProviderController()
+    let controller = TileProviderController(
+      tileOverlayIdentifier: "test",
+      tileProvider: TestTileProvider(onTileCalled: {})
+    )
 
     let bundle = Bundle(for: MockCATransaction.self)
     let imagePath = try #require(
@@ -128,7 +117,7 @@ class StubPluginRegistrar: NSObject, FlutterPluginRegistrar {
 
     let mapView = PartiallyMockedMapView(options: mapViewOptions)
 
-    let controller = FGMGoogleMapController(
+    let controller = GoogleMapController(
       mapView: mapView,
       viewIdentifier: 0,
       creationParameters: emptyCreationParameters(),
@@ -139,12 +128,9 @@ class StubPluginRegistrar: NSObject, FlutterPluginRegistrar {
     let mockTransactionWrapper = MockCATransaction()
     controller.callHandler.transactionWrapper = mockTransactionWrapper
 
-    let zoomTo = FGMPlatformCameraUpdateZoomTo.make(withZoom: 10.0)
-    let cameraUpdate = FGMPlatformCameraUpdate.make(withCameraUpdate: zoomTo)
-    var error: FlutterError? = nil
+    let zoomTo = PlatformCameraUpdateZoomTo(zoom: 10.0)
 
-    controller.callHandler.animateCamera(with: cameraUpdate, duration: nil, error: &error)
-    #expect(error == nil)
+    try controller.callHandler.animateCamera(zoomTo, duration: nil)
     #expect(mapView.didAnimateCamera)
     #expect(!mockTransactionWrapper.beginCalled)
     #expect(!mockTransactionWrapper.commitCalled)
@@ -160,7 +146,7 @@ class StubPluginRegistrar: NSObject, FlutterPluginRegistrar {
 
     let mapView = PartiallyMockedMapView(options: mapViewOptions)
 
-    let controller = FGMGoogleMapController(
+    let controller = GoogleMapController(
       mapView: mapView,
       viewIdentifier: 0,
       creationParameters: emptyCreationParameters(),
@@ -171,21 +157,14 @@ class StubPluginRegistrar: NSObject, FlutterPluginRegistrar {
     let mockTransactionWrapper = MockCATransaction()
     controller.callHandler.transactionWrapper = mockTransactionWrapper
 
-    let zoomTo = FGMPlatformCameraUpdateZoomTo.make(withZoom: 10.0)
-    let cameraUpdate = FGMPlatformCameraUpdate.make(withCameraUpdate: zoomTo)
-    var error: FlutterError? = nil
+    let zoomTo = PlatformCameraUpdateZoomTo(zoom: 10.0)
 
-    let durationMilliseconds: NSNumber = 100
-    controller.callHandler.animateCamera(
-      with: cameraUpdate,
-      duration: durationMilliseconds,
-      error: &error
-    )
-    #expect(error == nil)
+    let durationMilliseconds: Int64 = 100
+    try controller.callHandler.animateCamera(zoomTo, duration: durationMilliseconds)
     #expect(mapView.didAnimateCamera)
     #expect(mockTransactionWrapper.beginCalled)
     #expect(mockTransactionWrapper.commitCalled)
-    #expect(mockTransactionWrapper.animationDuration == durationMilliseconds.doubleValue / 1000)
+    #expect(mockTransactionWrapper.animationDuration == Double(durationMilliseconds) / 1000)
   }
 
   @Test func inspectorAPICameraPosition() throws {
@@ -200,7 +179,7 @@ class StubPluginRegistrar: NSObject, FlutterPluginRegistrar {
     let mapView = PartiallyMockedMapView(options: mapViewOptions)
 
     let binaryMessenger = StubBinaryMessenger()
-    let controller = FGMGoogleMapController(
+    let controller = GoogleMapController(
       mapView: mapView,
       viewIdentifier: 0,
       creationParameters: emptyCreationParameters(),
@@ -208,15 +187,10 @@ class StubPluginRegistrar: NSObject, FlutterPluginRegistrar {
       binaryMessenger: binaryMessenger
     )
 
-    let inspector = FGMMapInspector(
-      mapController: controller,
-      messenger: binaryMessenger,
-      pigeonSuffix: "0"
-    )
+    let inspector = MapInspector(messenger: binaryMessenger, pigeonSuffix: "0")
+    inspector.controller = controller
 
-    var error: FlutterError? = nil
-    let cameraPosition = try #require(inspector.cameraPosition(&error))
-    #expect(error == nil)
+    let cameraPosition = try inspector.cameraPosition()
 
     #expect(cameraPosition.target.latitude == initialCameraPosition.target.latitude)
     #expect(cameraPosition.target.longitude == initialCameraPosition.target.longitude)
@@ -225,16 +199,16 @@ class StubPluginRegistrar: NSObject, FlutterPluginRegistrar {
 
   /// Creates an empty creation parameters object for tests where the values don't matter, just that
   /// there's a valid object to pass in.
-  private func emptyCreationParameters() -> FGMPlatformMapViewCreationParams {
-    return FGMPlatformMapViewCreationParams.make(
-      withInitialCameraPosition: FGMPlatformCameraPosition.make(
-        withBearing: 0.0,
-        target: FGMPlatformLatLng.make(withLatitude: 0.0, longitude: 0.0),
+  private func emptyCreationParameters() -> PlatformMapViewCreationParams {
+    return PlatformMapViewCreationParams(
+      initialCameraPosition: PlatformCameraPosition(
+        bearing: 0.0,
+        target: PlatformLatLng(latitude: 0.0, longitude: 0.0),
         tilt: 0.0,
         zoom: 0.0
       ),
-      mapConfiguration: FGMPlatformMapConfiguration.make(
-        withCompassEnabled: nil,
+      mapConfiguration: PlatformMapConfiguration(
+        compassEnabled: nil,
         cameraTargetBounds: nil,
         mapType: nil,
         minMaxZoomPreference: nil,
@@ -262,5 +236,69 @@ class StubPluginRegistrar: NSObject, FlutterPluginRegistrar {
       initialClusterManagers: [],
       initialGroundOverlays: []
     )
+  }
+
+  @Test func frameObserverRemovedOnDeinitIfNeverFired() {
+    let options = GMSMapViewOptions()
+    options.frame = .zero
+    options.camera = GMSCameraPosition(latitude: 0, longitude: 0, zoom: 0)
+    let mapView = PartiallyMockedMapView(options: options)
+
+    var controller: GoogleMapController? = GoogleMapController(
+      mapView: mapView,
+      viewIdentifier: 0,
+      creationParameters: emptyCreationParameters(),
+      assetProvider: TestAssetProvider(),
+      binaryMessenger: StubBinaryMessenger()
+    )
+
+    #expect(mapView.frameObserverCount == 1)
+
+    withExtendedLifetime(controller) {}
+    // Deallocate the controller
+    controller = nil
+
+    #expect(mapView.frameObserverCount == 0)
+  }
+
+  @Test func styleErrorPersistsAcrossConfigUpdates() {
+    let mapView = PartiallyMockedMapView(options: GMSMapViewOptions())
+    let controller = GoogleMapController(
+      mapView: mapView,
+      viewIdentifier: 0,
+      creationParameters: emptyCreationParameters(),
+      assetProvider: TestAssetProvider(),
+      binaryMessenger: StubBinaryMessenger()
+    )
+
+    // Set an invalid style to trigger an error
+    _ = controller.setMapStyle("invalid json")
+    #expect(controller.styleError != nil)
+
+    // Update config without style
+    let config = PlatformMapConfiguration(
+      compassEnabled: true,
+      cameraTargetBounds: nil,
+      mapType: nil,
+      minMaxZoomPreference: nil,
+      rotateGesturesEnabled: nil,
+      scrollGesturesEnabled: nil,
+      tiltGesturesEnabled: nil,
+      trackCameraPosition: nil,
+      zoomGesturesEnabled: nil,
+      myLocationEnabled: nil,
+      myLocationButtonEnabled: nil,
+      padding: nil,
+      indoorViewEnabled: nil,
+      trafficEnabled: nil,
+      buildingsEnabled: nil,
+      markerType: .marker,
+      mapId: nil,
+      style: nil
+    )
+    controller.interpretMapConfiguration(config)
+
+    // The style error should still be present
+    #expect(controller.styleError != nil)
   }
 }

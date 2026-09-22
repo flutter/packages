@@ -674,7 +674,6 @@ class _CheckedPopupMenuItemState<T> extends PopupMenuItemState<T, CheckedPopupMe
 
 class _PopupMenu<T> extends StatefulWidget {
   const _PopupMenu({
-    super.key,
     required this.itemKeys,
     required this.route,
     required this.semanticLabel,
@@ -858,9 +857,8 @@ class _PopupMenuRouteLayout extends SingleChildLayoutDelegate {
   BoxConstraints getConstraintsForChild(BoxConstraints constraints) {
     // The menu can be at most the size of the overlay minus 8.0 pixels in each
     // direction.
-    return BoxConstraints.loose(
-      constraints.biggest,
-    ).deflate(const EdgeInsets.all(_kMenuScreenPadding) + padding);
+    return BoxConstraints.loose(constraints.biggest)
+        .deflate(const EdgeInsets.all(_kMenuScreenPadding) + padding);
   }
 
   @override
@@ -990,11 +988,8 @@ class _PopupMenuRoute<T> extends PopupRoute<T> {
   final Clip clipBehavior;
   final AnimationStyle? popUpAnimationStyle;
 
-  // Whether MediaQueryData.disableAnimations/reduceMotion (or, absent an
-  // override, the platform's AccessibilityFeatures) request that the menu's
-  // open/close animation be skipped or shortened. Resolved once in [showMenu]
-  // from the ambient MediaQuery so it stays consistent for the lifetime of
-  // this route.
+  // Resolve accessibility settings in showMenu's calling context before the
+  // route is built, and keep them consistent for the lifetime of the route.
   final bool disableAnimations;
   final bool reduceMotion;
 
@@ -1128,8 +1123,10 @@ class _PopupMenuRoute<T> extends PopupRoute<T> {
 ///  * [RelativeRect.fromRect], which creates a [RelativeRect] from two [Rect]s,
 ///    one representing the size of the popup menu and one representing the size
 ///    of the overlay.
-typedef PopupMenuPositionBuilder =
-    RelativeRect Function(BuildContext context, BoxConstraints constraints);
+typedef PopupMenuPositionBuilder = RelativeRect Function(
+  BuildContext context,
+  BoxConstraints constraints,
+);
 
 /// Shows a popup menu that contains the `items` at `position`.
 ///
@@ -1198,6 +1195,7 @@ typedef PopupMenuPositionBuilder =
 ///    calling this method automatically.
 ///  * [SemanticsConfiguration.namesRoute], for a description of edge triggered
 ///    semantics.
+@awaitNotRequired
 Future<T?> showMenu<T>({
   required BuildContext context,
   RelativeRect? position,
@@ -1239,18 +1237,14 @@ Future<T?> showMenu<T>({
   final menuItemKeys = List<GlobalKey>.generate(items.length, (int index) => GlobalKey());
   final NavigatorState navigator = Navigator.of(context, rootNavigator: useRootNavigator);
 
-  // These settings are read from the ambient MediaQuery (falling back to the
-  // platform values when there is no MediaQuery) so that they can be
-  // overridden for a subtree, like every other accessibility feature exposed
-  // by MediaQueryData. They are resolved here, from the calling context,
-  // because the route itself may need them before its own subtree (and
-  // therefore its own MediaQuery) has been built.
-  final AccessibilityFeatures accessibilityFeatures =
-      View.of(context).platformDispatcher.accessibilityFeatures;
+  // Read the caller's override before the route has its own subtree.
+  // Reduced motion is only exposed by the platform accessibility features.
+  final AccessibilityFeatures accessibilityFeatures = View.of(context)
+      .platformDispatcher
+      .accessibilityFeatures;
   final bool disableAnimations =
       MediaQuery.maybeDisableAnimationsOf(context) ?? accessibilityFeatures.disableAnimations;
-  final bool reduceMotion =
-      MediaQuery.maybeReduceMotionOf(context) ?? accessibilityFeatures.reduceMotion;
+  final bool reduceMotion = accessibilityFeatures.reduceMotion;
 
   return navigator.push(
     _PopupMenuRoute<T>(
@@ -1837,16 +1831,25 @@ class PopupMenuButtonState<T> extends State<PopupMenuButton<T>> {
       );
       final MaterialTapTargetSize tapTargetSize =
           widget.style?.tapTargetSize ?? MaterialTapTargetSize.shrinkWrap;
-      if (tapTargetSize == MaterialTapTargetSize.padded) {
-        return ConstrainedBox(
-          constraints: const BoxConstraints(
-            minWidth: kMinInteractiveDimension,
-            minHeight: kMinInteractiveDimension,
-          ),
-          child: child,
-        );
-      }
-      return Semantics(expanded: _isMenuExpanded, child: child);
+      final Widget result = tapTargetSize == MaterialTapTargetSize.padded
+          ? ConstrainedBox(
+              constraints: const BoxConstraints(
+                minWidth: kMinInteractiveDimension,
+                minHeight: kMinInteractiveDimension,
+              ),
+              child: child,
+            )
+          : child;
+      // The button semantics are added here rather than by the [InkWell] so
+      // that assistive technologies describe the popup menu button the same way
+      // regardless of whether it is built from [child] or from [icon], in which
+      // case the semantics come from the [IconButton].
+      return Semantics(
+        button: true,
+        enabled: widget.enabled,
+        expanded: _isMenuExpanded,
+        child: result,
+      );
     }
 
     return Semantics(
