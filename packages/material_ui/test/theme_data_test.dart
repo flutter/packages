@@ -1735,9 +1735,8 @@ void main() {
     WidgetTester tester,
   ) async {
     const lightColors = ColorScheme.light();
-    final ThemeData theme = ThemeData.from(
-      colorScheme: lightColors,
-    ).copyWith(brightness: Brightness.dark);
+    final ThemeData theme = ThemeData.from(colorScheme: lightColors)
+        .copyWith(brightness: Brightness.dark);
 
     // The brightness parameter only overrides ColorScheme.brightness.
     expect(theme.brightness, equals(Brightness.dark));

@@ -1123,9 +1123,8 @@ void main() {
 
     await tester.pumpWidget(
       MaterialApp(
-        theme: ThemeData.light(
-          useMaterial3: false,
-        ).copyWith(scaffoldBackgroundColor: scaffoldColor, cardColor: cardColor),
+        theme: ThemeData.light(useMaterial3: false)
+            .copyWith(scaffoldBackgroundColor: scaffoldColor, cardColor: cardColor),
         home: Scaffold(
           body: Center(
             child: Builder(
