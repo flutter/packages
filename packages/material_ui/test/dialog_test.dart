@@ -713,7 +713,7 @@ void main() {
     await tester.pumpAndSettle();
     expect(
       tester.widget<ModalBarrier>(find.byType(ModalBarrier).last).color,
-      Theme.of(context).fallbackScrimColor,
+      scrim.withValues(alpha: 0.32),
     );
   });
 

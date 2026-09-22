@@ -1156,7 +1156,7 @@ void main() {
     await tester.pumpAndSettle();
 
     final ModalBarrier modalBarrier = tester.widget(find.byType(ModalBarrier).last);
-    expect(modalBarrier.color, Theme.of(savedContext).fallbackScrimColor);
+    expect(modalBarrier.color, scrim.withValues(alpha: 0.32));
   });
 
   testWidgets('ModalBottomSheetRoute barrier color uses ColorScheme.scrim', (

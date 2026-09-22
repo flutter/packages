@@ -1115,6 +1115,7 @@ class ModalBottomSheetRoute<T> extends PopupRoute<T> {
       final ThemeData theme = Theme.of(navigator!.context);
       return theme.bottomSheetTheme.modalBarrierColor ?? theme.fallbackScrimColor;
     }
+    // The route is not in the tree yet, so there is no theme to read.
     return Colors.black54;
   }
 

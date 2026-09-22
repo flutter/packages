@@ -489,10 +489,7 @@ void main() {
 
     scaffoldKey.currentState!.openDrawer();
     await tester.pumpAndSettle();
-    expect(
-      (getScrim() as ColoredBox).color,
-      isSameColorAs(Theme.of(tester.element(find.byType(Scaffold))).fallbackScrimColor),
-    );
+    expect((getScrim() as ColoredBox).color, isSameColorAs(scrim.withValues(alpha: 0.32)));
   });
 
   testWidgets('Material 2 drawer scrim uses Colors.black54', (WidgetTester tester) async {
