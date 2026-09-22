@@ -3,6 +3,7 @@
 // found in the LICENSE file.
 
 /// @docImport 'dart:ui';
+/// @docImport 'theme_data.dart';
 library;
 
 import 'dart:math' as math;
@@ -974,8 +975,7 @@ class ModalBottomSheetRoute<T> extends PopupRoute<T> {
   /// bottom sheet.
   ///
   /// If this is null, then [BottomSheetThemeData.modalBarrierColor] is used.
-  /// If that is also null, then [ColorScheme.scrim] is used with an opacity
-  /// matching [Colors.black54].
+  /// If that is also null, then [ThemeData.fallbackScrimColor] is used.
   final Color? modalBarrierColor;
 
   /// Specifies whether the bottom sheet will be dismissed
@@ -1113,8 +1113,7 @@ class ModalBottomSheetRoute<T> extends PopupRoute<T> {
     }
     if (navigator != null) {
       final ThemeData theme = Theme.of(navigator!.context);
-      return theme.bottomSheetTheme.modalBarrierColor ??
-          theme.colorScheme.scrim.withValues(alpha: Colors.black54.a);
+      return theme.bottomSheetTheme.modalBarrierColor ?? theme.fallbackScrimColor;
     }
     return Colors.black54;
   }
@@ -1361,7 +1360,7 @@ Future<T?> showModalBottomSheet<T>({
       modalBarrierColor:
           barrierColor ??
           Theme.of(context).bottomSheetTheme.modalBarrierColor ??
-          Theme.of(context).colorScheme.scrim.withValues(alpha: Colors.black54.a),
+          Theme.of(context).fallbackScrimColor,
       enableDrag: enableDrag,
       showDragHandle: showDragHandle,
       settings: routeSettings,

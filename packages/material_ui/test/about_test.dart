@@ -805,7 +805,10 @@ void main() {
     // Open the dialog.
     await tester.tap(find.byType(ElevatedButton));
     await tester.pumpAndSettle();
-    expect(tester.widget<ModalBarrier>(find.byType(ModalBarrier).last).color, Colors.black54);
+    expect(
+      tester.widget<ModalBarrier>(find.byType(ModalBarrier).last).color,
+      Theme.of(tester.element(find.byType(ElevatedButton))).fallbackScrimColor,
+    );
 
     // Dismiss the dialog.
     await tester.tapAt(const Offset(10.0, 10.0));

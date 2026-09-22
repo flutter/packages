@@ -1,3 +1,3 @@
 changelog: |
-  - Uses `ColorScheme.scrim` as the default fallback for dialog, modal bottom sheet, and drawer barrier/scrim colors.
+  - Uses `ThemeData.fallbackScrimColor` (`ColorScheme.scrim` at 32% opacity in Material 3, `Colors.black54` in Material 2) as the default fallback for dialog, modal bottom sheet, and drawer barrier/scrim colors.
 version: patch

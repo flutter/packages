@@ -79,7 +79,7 @@ void main() {
       expect(_drawerMaterial(tester).shadowColor, theme.shadowColor);
       expect(_drawerMaterial(tester).surfaceTintColor, null);
       expect(_drawerMaterial(tester).shape, null);
-      expect(_scrim(tester).color, Colors.black54);
+      expect(_scrim(tester).color, theme.fallbackScrimColor);
       expect(_drawerRenderBox(tester).size.width, 304.0);
       expect(_drawerMaterial(tester).clipBehavior, Clip.none);
     },
@@ -109,7 +109,7 @@ void main() {
           borderRadius: BorderRadius.horizontal(right: Radius.circular(16.0)),
         ),
       );
-      expect(_scrim(tester).color, Colors.black54);
+      expect(_scrim(tester).color, theme.fallbackScrimColor);
       expect(_drawerRenderBox(tester).size.width, 304.0);
       expect(_drawerMaterial(tester).clipBehavior, Clip.hardEdge);
     },
@@ -134,7 +134,7 @@ void main() {
       expect(_drawerMaterial(tester).shadowColor, theme.shadowColor);
       expect(_drawerMaterial(tester).surfaceTintColor, null);
       expect(_drawerMaterial(tester).shape, null);
-      expect(_scrim(tester).color, Colors.black54);
+      expect(_scrim(tester).color, theme.fallbackScrimColor);
       expect(_drawerRenderBox(tester).size.width, 304.0);
       expect(_drawerMaterial(tester).clipBehavior, Clip.none);
     },
@@ -164,7 +164,7 @@ void main() {
           borderRadius: BorderRadius.horizontal(left: Radius.circular(16.0)),
         ),
       );
-      expect(_scrim(tester).color, Colors.black54);
+      expect(_scrim(tester).color, theme.fallbackScrimColor);
       expect(_drawerRenderBox(tester).size.width, 304.0);
       expect(_drawerMaterial(tester).clipBehavior, Clip.hardEdge);
     },

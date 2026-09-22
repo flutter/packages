@@ -14,6 +14,7 @@
 /// @docImport 'tab_controller.dart';
 /// @docImport 'tabs.dart';
 /// @docImport 'text_button.dart';
+/// @docImport 'theme_data.dart';
 library;
 
 import 'dart:async';
@@ -1956,8 +1957,7 @@ class Scaffold extends StatefulWidget {
   /// The color to use for the scrim that obscures primary content while a drawer is open.
   ///
   /// If this is null, then [DrawerThemeData.scrimColor] is used. If that
-  /// is also null, then [ColorScheme.scrim] is used with an opacity matching
-  /// [Colors.black54].
+  /// is also null, then [ThemeData.fallbackScrimColor] is used.
   final Color? drawerScrimColor;
 
   /// A builder for the widget that obscures primary content while a bottom sheet is open.

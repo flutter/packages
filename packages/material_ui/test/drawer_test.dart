@@ -337,7 +337,7 @@ void main() {
 
     // Default drawerScrimColor
     await tester.pumpWidget(buildFrame());
-    await checkScrim(Colors.black54);
+    await checkScrim(Theme.of(tester.element(find.byType(Scaffold))).fallbackScrimColor);
 
     // Specific drawerScrimColor
     await tester.pumpWidget(buildFrame(drawerScrimColor: const Color(0xFF323232)));
@@ -346,7 +346,6 @@ void main() {
 
   testWidgets('Drawer scrim uses ColorScheme.scrim', (WidgetTester tester) async {
     const Color scrim = Colors.red;
-    final Color expectedScrim = scrim.withValues(alpha: Colors.black54.a);
     final scaffoldKey = GlobalKey<ScaffoldState>();
 
     Widget getScrim() {
@@ -376,7 +375,10 @@ void main() {
 
     scaffoldKey.currentState!.openDrawer();
     await tester.pumpAndSettle();
-    expect((getScrim() as ColoredBox).color, isSameColorAs(expectedScrim));
+    expect(
+      (getScrim() as ColoredBox).color,
+      isSameColorAs(Theme.of(tester.element(find.byType(Scaffold))).fallbackScrimColor),
+    );
   });
 
   testWidgets('DrawerTheme.scrimColor takes precedence over ColorScheme.scrim', (
@@ -456,11 +458,8 @@ void main() {
     expect((getScrim() as ColoredBox).color, isSameColorAs(drawerScrimColor));
   });
 
-  testWidgets('Drawer ColorScheme.scrim alpha is normalized to Colors.black54 opacity', (
-    WidgetTester tester,
-  ) async {
+  testWidgets('Drawer Material 3 ColorScheme.scrim uses 32% opacity', (WidgetTester tester) async {
     final Color scrim = Colors.red.withValues(alpha: 0.2);
-    final Color expectedScrim = scrim.withValues(alpha: Colors.black54.a);
     final scaffoldKey = GlobalKey<ScaffoldState>();
 
     Widget getScrim() {
@@ -490,7 +489,45 @@ void main() {
 
     scaffoldKey.currentState!.openDrawer();
     await tester.pumpAndSettle();
-    expect((getScrim() as ColoredBox).color, isSameColorAs(expectedScrim));
+    expect(
+      (getScrim() as ColoredBox).color,
+      isSameColorAs(Theme.of(tester.element(find.byType(Scaffold))).fallbackScrimColor),
+    );
+  });
+
+  testWidgets('Material 2 drawer scrim uses Colors.black54', (WidgetTester tester) async {
+    const Color scrim = Colors.red;
+    final scaffoldKey = GlobalKey<ScaffoldState>();
+
+    Widget getScrim() {
+      return tester
+          .widget<Semantics>(
+            find.descendant(
+              of: find.byType(DrawerController),
+              matching: find.byWidgetPredicate((Widget widget) {
+                return widget is Semantics && widget.properties.label == 'Dismiss';
+              }),
+            ),
+          )
+          .child!;
+    }
+
+    await tester.pumpWidget(
+      MaterialApp(
+        theme: ThemeData(
+          useMaterial3: false,
+          colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple, scrim: scrim),
+        ),
+        home: Scaffold(
+          key: scaffoldKey,
+          drawer: const Drawer(child: SizedBox.expand()),
+        ),
+      ),
+    );
+
+    scaffoldKey.currentState!.openDrawer();
+    await tester.pumpAndSettle();
+    expect((getScrim() as ColoredBox).color, isSameColorAs(Colors.black54));
   });
 
   testWidgets('Open/close drawers by flinging', (WidgetTester tester) async {
