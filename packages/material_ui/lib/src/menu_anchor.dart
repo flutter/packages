@@ -143,8 +143,11 @@ const double _kMenuItemRelativeFadeOutDelay = 1 / 3;
 /// The `child` is an optional child supplied as the [MenuAnchor.child]
 /// attribute. The child is intended to be incorporated in the result of the
 /// function.
-typedef MenuAnchorChildBuilder =
-    Widget Function(BuildContext context, MenuController controller, Widget? child);
+typedef MenuAnchorChildBuilder = Widget Function(
+  BuildContext context,
+  MenuController controller,
+  Widget? child,
+);
 
 class _MenuAnchorScope extends InheritedWidget {
   const _MenuAnchorScope({
@@ -282,6 +285,7 @@ class MenuAnchor extends StatefulWidget {
     this.onAnimationStatusChanged,
     required this.menuChildren,
     this.builder,
+    this.semanticLabel,
     this.child,
   });
 
@@ -474,6 +478,11 @@ class MenuAnchor extends StatefulWidget {
   /// If provided, the builder will be called each time the menu is opened or
   /// closed.
   final MenuAnchorChildBuilder? builder;
+
+  /// The semantic label of the menu.
+  ///
+  /// Defaults to null.
+  final String? semanticLabel;
 
   /// The optional child to be passed to the [builder].
   ///
@@ -714,6 +723,32 @@ class _MenuAnchorState extends State<MenuAnchor> with SingleTickerProviderStateM
   }
 
   Widget _buildOverlay(BuildContext context, RawMenuOverlayInfo position) {
+    Widget submenu = _Submenu(
+      fadeAnimation: opacityAnimation,
+      heightAnimation: heightAnimation,
+      layerLink: widget.layerLink,
+      consumeOutsideTaps: widget.consumeOutsideTap,
+      menuScopeNode: _menuScopeNode,
+      menuStyle: widget.style,
+      clipBehavior: widget.clipBehavior,
+      menuChildren: _menuChildren,
+      crossAxisUnconstrained: widget.crossAxisUnconstrained,
+      menuPosition: position,
+      anchor: this,
+      alignmentOffset: widget.alignmentOffset ?? Offset.zero,
+      reservedPadding: widget.reservedPadding ?? const EdgeInsets.all(_kMenuViewPadding),
+    );
+
+    // Only inject the semantics node if a label is provided
+    if (widget.semanticLabel != null) {
+      submenu = Semantics(
+        container: true,
+        explicitChildNodes: true,
+        label: widget.semanticLabel,
+        child: submenu,
+      );
+    }
+
     // ExcludeSemantics, ExcludeFocus, and IgnorePointer are used to effectively
     // disable all interactions with the menu while it is closing.
     //
@@ -724,24 +759,7 @@ class _MenuAnchorState extends State<MenuAnchor> with SingleTickerProviderStateM
       excluding: isClosingOrClosed,
       child: IgnorePointer(
         ignoring: isClosingOrClosed,
-        child: ExcludeFocus(
-          excluding: isClosingOrClosed,
-          child: _Submenu(
-            fadeAnimation: opacityAnimation,
-            heightAnimation: heightAnimation,
-            layerLink: widget.layerLink,
-            consumeOutsideTaps: widget.consumeOutsideTap,
-            menuScopeNode: _menuScopeNode,
-            menuStyle: widget.style,
-            clipBehavior: widget.clipBehavior,
-            menuChildren: _menuChildren,
-            crossAxisUnconstrained: widget.crossAxisUnconstrained,
-            menuPosition: position,
-            anchor: this,
-            alignmentOffset: widget.alignmentOffset ?? Offset.zero,
-            reservedPadding: widget.reservedPadding ?? const EdgeInsets.all(_kMenuViewPadding),
-          ),
-        ),
+        child: ExcludeFocus(excluding: isClosingOrClosed, child: submenu),
       ),
     );
   }
@@ -2612,9 +2630,8 @@ class _LocalizedShortcutLabeler {
         if (shortcutTrigger == null && logicalKeyId & LogicalKeyboardKey.planeMask == 0x0) {
           // If the trigger is a Unicode-character-producing key, then use the
           // character.
-          shortcutTrigger = String.fromCharCode(
-            logicalKeyId & LogicalKeyboardKey.valueMask,
-          ).toUpperCase();
+          shortcutTrigger = String.fromCharCode(logicalKeyId & LogicalKeyboardKey.valueMask)
+              .toUpperCase();
         }
         // Fall back to the key label if all else fails.
         shortcutTrigger ??= trigger.keyLabel;
@@ -2930,8 +2947,11 @@ class MenuAcceleratorCallbackBinding extends InheritedWidget {
 ///
 /// * [MenuAcceleratorLabel.defaultLabelBuilder], which is the implementation
 ///   used as the default value for [MenuAcceleratorLabel.builder].
-typedef MenuAcceleratorChildBuilder =
-    Widget Function(BuildContext context, String label, int index);
+typedef MenuAcceleratorChildBuilder = Widget Function(
+  BuildContext context,
+  String label,
+  int index,
+);
 
 /// A widget that draws the label text for a menu item (typically a
 /// [MenuItemButton] or [SubmenuButton]) and renders its child with information
@@ -3689,9 +3709,8 @@ class _MenuPanelState extends State<_MenuPanel> {
     final Size? fixedSize = resolve<Size?>((MenuStyle? style) => style?.fixedSize);
     final Size? maximumSize = resolve<Size?>((MenuStyle? style) => style?.maximumSize);
     final BorderSide? side = resolve<BorderSide?>((MenuStyle? style) => style?.side);
-    final OutlinedBorder shape = resolve<OutlinedBorder?>(
-      (MenuStyle? style) => style?.shape,
-    )!.copyWith(side: side);
+    final OutlinedBorder shape = resolve<OutlinedBorder?>((MenuStyle? style) => style?.shape)!
+        .copyWith(side: side);
     final VisualDensity visualDensity =
         effectiveValue((MenuStyle? style) => style?.visualDensity) ?? VisualDensity.standard;
     final EdgeInsetsGeometry padding =
@@ -3752,9 +3771,8 @@ class _MenuPanelState extends State<_MenuPanel> {
     Widget menuPanel = Padding(
       padding: resolvedPadding,
       child: ScrollConfiguration(
-        behavior: ScrollConfiguration.of(
-          context,
-        ).copyWith(scrollbars: false, overscroll: false, physics: const ClampingScrollPhysics()),
+        behavior: ScrollConfiguration.of(context)
+            .copyWith(scrollbars: false, overscroll: false, physics: const ClampingScrollPhysics()),
         child: PrimaryScrollController(
           controller: scrollController,
           child: Scrollbar(

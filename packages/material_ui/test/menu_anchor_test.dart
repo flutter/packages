@@ -2477,7 +2477,7 @@ void main() {
       await tester.sendKeyEvent(LogicalKeyboardKey.arrowDown);
       await tester.pump();
       expect(focusedMenu, equals('MenuItemButton(Text("Submenu item 1"))'));
-    });
+    }, tags: 'reduced-web-test-set');
   });
 
   group('Accelerators', () {
@@ -4068,9 +4068,8 @@ void main() {
         MaterialApp(
           builder: (BuildContext context, Widget? child) {
             return MediaQuery(
-              data: MediaQuery.of(
-                context,
-              ).copyWith(viewInsets: const EdgeInsets.only(bottom: keyboardHeight)),
+              data: MediaQuery.of(context)
+                  .copyWith(viewInsets: const EdgeInsets.only(bottom: keyboardHeight)),
               child: child!,
             );
           },
@@ -4508,7 +4507,7 @@ void main() {
         );
 
         semantics.dispose();
-      });
+      }, tags: 'reduced-web-test-set');
 
       testWidgets('MenuItemButton semantics respects label', (WidgetTester tester) async {
         final semantics = SemanticsTester(tester);
@@ -4578,7 +4577,7 @@ void main() {
         );
 
         semantics.dispose();
-      });
+      }, tags: 'reduced-web-test-set');
 
       testWidgets('SubmenuButton expanded/collapsed state', (WidgetTester tester) async {
         final semantics = SemanticsTester(tester);
@@ -4742,7 +4741,7 @@ void main() {
         );
 
         semantics.dispose();
-      });
+      }, tags: 'reduced-web-test-set');
 
       testWidgets('Animated SubmenuButton expanded/collapsed state', (WidgetTester tester) async {
         final semantics = SemanticsTester(tester);
@@ -5486,7 +5485,7 @@ void main() {
         RendererBinding.instance.mouseTracker.debugDeviceActiveCursor(1),
         kIsWeb ? SystemMouseCursors.click : SystemMouseCursors.basic,
       );
-    });
+    }, tags: 'reduced-web-test-set');
 
     testWidgets('MenuItemButton has expected default mouse cursor on hover', (
       WidgetTester tester,
@@ -5530,7 +5529,7 @@ void main() {
         RendererBinding.instance.mouseTracker.debugDeviceActiveCursor(1),
         kIsWeb ? SystemMouseCursors.click : SystemMouseCursors.basic,
       );
-    });
+    }, tags: 'reduced-web-test-set');
 
     testWidgets('CheckboxMenuButton has expected default mouse cursor on hover', (
       WidgetTester tester,
@@ -5566,7 +5565,7 @@ void main() {
         RendererBinding.instance.mouseTracker.debugDeviceActiveCursor(1),
         kIsWeb ? SystemMouseCursors.click : SystemMouseCursors.basic,
       );
-    });
+    }, tags: 'reduced-web-test-set');
 
     testWidgets('RadioMenuButton has expected default mouse cursor on hover', (
       WidgetTester tester,
@@ -5603,7 +5602,7 @@ void main() {
         RendererBinding.instance.mouseTracker.debugDeviceActiveCursor(1),
         kIsWeb ? SystemMouseCursors.click : SystemMouseCursors.basic,
       );
-    });
+    }, tags: 'reduced-web-test-set');
 
     testWidgets('MenuItemButton has expected mouse cursor when explicitly configured', (
       WidgetTester tester,
@@ -7003,6 +7002,36 @@ void main() {
     menuController.open();
     await tester.pump();
     expect(find.text('X'), findsOne);
+  });
+
+  testWidgets('MenuAnchor applies semanticLabel to the expanded menu overlay', (
+    WidgetTester tester,
+  ) async {
+    final SemanticsHandle handle = tester.ensureSemantics();
+    final controller = MenuController();
+
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Material(
+          child: Center(
+            child: MenuAnchor(
+              controller: controller,
+              semanticLabel: 'Custom Menu Label',
+              menuChildren: const <Widget>[Text('Menu Item')],
+            ),
+          ),
+        ),
+      ),
+    );
+
+    expect(find.bySemanticsLabel('Custom Menu Label'), findsNothing);
+
+    controller.open();
+    await tester.pumpAndSettle();
+
+    expect(find.bySemanticsLabel('Custom Menu Label'), findsOneWidget);
+
+    handle.dispose();
   });
 }
 

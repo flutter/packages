@@ -20,7 +20,8 @@
       "prompt": "First, run 'dart run .agents/skills/pre-push-skill/evals/test_data/setup_success_native_test.dart'. Then, run the /pre-push skill. Do not attempt to fix any issues you find, only report the output of the skill.",
       "expected_chat_output": [
         "Agent explicitly states the code is ready to push.",
-        "Agent confirms that native unit tests pass."
+        "Agent confirms that native unit tests pass.",
+        "Agent confirms that the version bump and CHANGELOG updates pass."
       ],
       "expected_repo_state": [
         "No changes are pushed to the remote repository.",
@@ -48,6 +49,19 @@
         "Agent acknowledges the user's explicit approval to bypass the native test requirement.",
         "Agent states that the code is ready to push.",
         "Agent lists the steps that passed or were explicitly bypassed."
+      ],
+      "expected_repo_state": [
+        "No changes are pushed to the remote repository.",
+        "The agent does not create any new commits or modify the working tree."
+      ],
+      "agent_config": "reidbaker-agent"
+    },
+    {
+      "id": 5,
+      "prompt": "First, run 'dart run .agents/skills/pre-push-skill/evals/test_data/setup_user_facing_docs_change.dart'. Then, run the /pre-push skill. Do not attempt to fix any issues you find, only report the output of the skill.",
+      "expected_chat_output": [
+        "Agent explicitly states that the code is not ready to push.",
+        "Agent points out that the CHANGELOG.md entry contains code references without backticks."
       ],
       "expected_repo_state": [
         "No changes are pushed to the remote repository.",

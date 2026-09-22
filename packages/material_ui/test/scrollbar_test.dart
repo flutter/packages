@@ -1583,73 +1583,79 @@ void main() {
     }),
   );
 
-  testWidgets(
-    'Mouse proximity reveals the Scrollbar without presenting the thumb as interactive',
-    (WidgetTester tester) async {
-      // Regression test for https://github.com/flutter/flutter/issues/163464
-      final scrollController = ScrollController();
-      addTearDown(scrollController.dispose);
-      await tester.pumpWidget(
-        MaterialApp(
-          theme: ThemeData(useMaterial3: false),
-          home: ScrollConfiguration(
-            behavior: const NoScrollbarBehavior(),
-            child: Scrollbar(
+  testWidgets('Mouse proximity reveals the Scrollbar without presenting the thumb as interactive', (
+    WidgetTester tester,
+  ) async {
+    // Regression test for https://github.com/flutter/flutter/issues/163464
+    final scrollController = ScrollController();
+    addTearDown(scrollController.dispose);
+    await tester.pumpWidget(
+      MaterialApp(
+        theme: ThemeData(useMaterial3: false),
+        home: ScrollConfiguration(
+          behavior: const NoScrollbarBehavior(),
+          child: Scrollbar(
+            controller: scrollController,
+            child: SingleChildScrollView(
               controller: scrollController,
-              child: SingleChildScrollView(
-                controller: scrollController,
-                child: const SizedBox(width: 4000.0, height: 4000.0),
-              ),
+              child: const SizedBox(width: 4000.0, height: 4000.0),
             ),
           ),
         ),
-      );
-      await tester.pumpAndSettle();
-      // Scroll so the scrollbar has metrics, then let it fade out again.
-      await tester.dragFrom(const Offset(400.0, 300.0), const Offset(0.0, -20.0), touchSlopY: 0.0);
-      await tester.pumpAndSettle();
-      final double scrolledOffset = scrollController.offset;
-      expect(scrolledOffset, greaterThan(0.0));
-      await tester.pump(_kScrollbarTimeToFade);
-      await tester.pump(_kScrollbarFadeDuration);
-      expect(find.byType(Scrollbar), isNot(paints..rrect()));
+      ),
+    );
+    await tester.pumpAndSettle();
+    // Scroll so the scrollbar has metrics, then let it fade out again.
+    await tester.dragFrom(const Offset(400.0, 300.0), const Offset(0.0, -20.0), touchSlopY: 0.0);
+    await tester.pumpAndSettle();
+    final double scrolledOffset = scrollController.offset;
+    expect(scrolledOffset, greaterThan(0.0));
+    await tester.pump(_kScrollbarTimeToFade);
+    await tester.pump(_kScrollbarFadeDuration);
+    expect(find.byType(Scrollbar), isNot(paints..rrect()));
 
-      final TestGesture gesture = await tester.createGesture(kind: ui.PointerDeviceKind.mouse);
-      await gesture.addPointer(location: Offset.zero);
-      addTearDown(gesture.removePointer);
+    final TestGesture gesture = await tester.createGesture(kind: ui.PointerDeviceKind.mouse);
+    await gesture.addPointer(location: Offset.zero);
+    addTearDown(gesture.removePointer);
 
-      // The proximity area of a faded out scrollbar reaches far past the track.
-      // Moving into it brings the scrollbar back into view, but the thumb must
-      // not be painted as hovered there, since a press that far from the track
-      // is passed on to the scroll view.
-      await gesture.moveTo(const Offset(775.0, 45.0));
-      await tester.pumpAndSettle();
-      expect(find.byType(Scrollbar), paints..rrect(color: _kDefaultIdleThumbColor));
+    // The proximity area of a faded out scrollbar reaches far past the track.
+    // Moving into it brings the scrollbar back into view, but the thumb must
+    // not be painted as hovered there, since a press that far from the track
+    // is passed on to the scroll view.
+    await gesture.moveTo(const Offset(775.0, 45.0));
+    await tester.pumpAndSettle();
+    expect(find.byType(Scrollbar), paints..rrect(color: _kDefaultIdleThumbColor));
 
-      await gesture.down(const Offset(775.0, 45.0));
-      await tester.pump();
-      await gesture.moveBy(const Offset(0.0, 10.0));
-      await tester.pumpAndSettle();
-      expect(scrollController.offset, scrolledOffset);
-      await gesture.up();
-      await tester.pumpAndSettle();
+    await gesture.down(const Offset(775.0, 45.0));
+    await tester.pump();
+    await gesture.moveBy(const Offset(0.0, 10.0));
+    await tester.pumpAndSettle();
+    expect(scrollController.offset, scrolledOffset);
+    await gesture.up();
+    await tester.pumpAndSettle();
 
-      // Once the pointer is over the track the thumb is highlighted, and a drag
-      // started from there moves the scroll view.
-      await gesture.moveTo(const Offset(799.0, 45.0));
-      await tester.pumpAndSettle();
-      expect(find.byType(Scrollbar), paints..rrect(color: const Color(0x80000000)));
+    // Leaving the scrollbar lets it fade out. Moving directly onto its track
+    // must highlight it after it fades in, without another pointer event.
+    await gesture.moveTo(Offset.zero);
+    await tester.pumpAndSettle();
+    await tester.pump(_kScrollbarTimeToFade);
+    await tester.pump(_kScrollbarFadeDuration);
+    expect(find.byType(Scrollbar), isNot(paints..rrect()));
 
-      await gesture.down(const Offset(799.0, 45.0));
-      await tester.pump();
-      await gesture.moveBy(const Offset(0.0, 10.0));
-      await tester.pumpAndSettle();
-      expect(scrollController.offset, greaterThan(scrolledOffset));
-      await gesture.up();
-      await tester.pumpAndSettle();
-    },
-    variant: const TargetPlatformVariant(<TargetPlatform>{TargetPlatform.linux}),
-  );
+    // Once the pointer is over the track the thumb is highlighted, and a drag
+    // started from there moves the scroll view.
+    await gesture.moveTo(const Offset(799.0, 45.0));
+    await tester.pumpAndSettle();
+    expect(find.byType(Scrollbar), paints..rrect(color: const Color(0x80000000)));
+
+    await gesture.down(const Offset(799.0, 45.0));
+    await tester.pump();
+    await gesture.moveBy(const Offset(0.0, 10.0));
+    await tester.pumpAndSettle();
+    expect(scrollController.offset, greaterThan(scrolledOffset));
+    await gesture.up();
+    await tester.pumpAndSettle();
+  }, variant: const TargetPlatformVariant(<TargetPlatform>{TargetPlatform.linux}));
 
   testWidgets('Scrollbar dragging is disabled by default on Android', (WidgetTester tester) async {
     var tapCount = 0;
@@ -1880,7 +1886,7 @@ void main() {
     );
 
     scrollController.dispose();
-  });
+  }, tags: 'reduced-web-test-set');
 
   testWidgets(
     'Scrollbar.thumbVisibility triggers assertion when multiple ScrollPositions are attached.',
