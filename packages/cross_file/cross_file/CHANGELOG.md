@@ -15,7 +15,7 @@
     implementation can use `WebScopedStorageXFileExtension.download`. See README to see how to
     access platform-specific features.
   * Removes `XFile.mimeType`.
-  * Removes `XFile.path`. This has been replaced by `FileSystemXFile.path`.
+  * Removes `XFile.path`. This has been replaced by `XFile.uri` or `FileSystemXFile.path`.
   * Changes `XFile.name` to a method that returns `Future<String>` rather than a field that returns
     `String`.
   * Adds Flutter as a dependency.
