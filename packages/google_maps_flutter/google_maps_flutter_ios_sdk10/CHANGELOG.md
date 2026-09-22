@@ -1,3 +1,15 @@
+## NEXT
+
+* Updates minimum supported SDK version to Flutter 3.41/Dart 3.11.
+
+## 2.18.13
+
+* Adopts new Pigeon async Swift support.
+
+## 2.18.12
+
+* Converts remaining Objective-C code to Swift.
+
 ## 2.18.11
 
 * Converts heatmap controller and data conversion to Swift.

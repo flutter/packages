@@ -1,3 +1,12 @@
+## NEXT
+
+* Updates minimum supported SDK version to Flutter 3.41/Dart 3.11.
+
+## 0.8.13+23
+
+* Fixes a crash when the content provider returns no stream for a picked
+  image; the pick now fails with `missing_valid_image_uri` instead.
+
 ## 0.8.13+22
 
 * Fixes gallery image/video selection on Android API 36+ returning no paths when

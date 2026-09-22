@@ -48,6 +48,14 @@ void main() {
     expect(code, isNot(contains('containsKey')));
   });
 
+  test('fileSpecificClassNameComponent defaults to UpperCamelCase from kotlinOut', () {
+    final kotlinOptions = InternalKotlinOptions.fromKotlinOptions(
+      const KotlinOptions(),
+      kotlinOut: 'path/to/messages.g.kt',
+    );
+    expect(kotlinOptions.fileSpecificClassNameComponent, equals('Messages'));
+  });
+
   test('gen one enum', () {
     final anEnum = Enum(
       name: 'Foobar',
@@ -1879,6 +1887,51 @@ void main() {
     expect(code, contains('const val boolConst: Boolean = true'));
     expect(code, contains(r'const val stringWithBackslashDollar: String = "\\\$"'));
     expect(code, contains(r'const val stringWithTwoBackslashesDollar: String = "\\\\\$"'));
+  });
+
+  test('kotlin generator handles HostApi and FlutterApi deregistration with null', () {
+    final root = Root(
+      apis: <Api>[
+        AstHostApi(
+          name: 'HostApi',
+          methods: <Method>[
+            Method(
+              name: 'doSomething',
+              location: ApiLocation.host,
+              returnType: const TypeDeclaration.voidDeclaration(),
+              parameters: <Parameter>[],
+            ),
+          ],
+        ),
+        AstFlutterApi(
+          name: 'FlutterApi',
+          methods: <Method>[
+            Method(
+              name: 'onEvent',
+              location: ApiLocation.flutter,
+              returnType: const TypeDeclaration.voidDeclaration(),
+              parameters: <Parameter>[],
+            ),
+          ],
+        ),
+      ],
+      classes: <Class>[],
+      enums: <Enum>[],
+    );
+    final sink = StringBuffer();
+    const kotlinOptions = InternalKotlinOptions(kotlinOut: '', useJni: true);
+    const generator = KotlinGenerator();
+    generator.generate(kotlinOptions, root, sink, dartPackageName: DEFAULT_PACKAGE_NAME);
+    final code = sink.toString();
+    expect(code, contains('interface HostApi {'));
+    expect(code, contains('class HostApiRegistrar : HostApi {'));
+    expect(code, contains('api: HostApi?,'));
+    expect(code, contains('HostApiInstances.remove(name)'));
+    expect(
+      code,
+      contains('fun registerInstance(api: FlutterApi?, name: String = defaultInstanceName)'),
+    );
+    expect(code, contains('registeredFlutterApi.remove(name)'));
   });
 
   test('asyncCallback emits callback-based host api method', () {
