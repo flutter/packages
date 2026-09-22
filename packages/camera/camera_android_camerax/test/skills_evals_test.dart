@@ -11,7 +11,7 @@ import 'package:path/path.dart' as p;
 void main() {
   group('Evals structure consistency', () {
     test('all evals.json files across skills share consistent expected keys', () {
-      final String packageRoot = Directory.current.path;
+      final String packageRoot = _getPackageRoot();
 
       final List<File> evalsFiles = [
         ..._findEvalsFiles(Directory(p.join(packageRoot, '.agents', 'skills'))),
@@ -28,12 +28,14 @@ void main() {
     });
 
     test('all rubric JSON files in evals/ share consistent structure and keys', () {
-      final String packageRoot = Directory.current.path;
+      final String packageRoot = _getPackageRoot();
 
       final rubricsDir = Directory(p.join(packageRoot, 'evals'));
-      if (!rubricsDir.existsSync()) {
-        return;
-      }
+      expect(
+        rubricsDir.existsSync(),
+        isTrue,
+        reason: 'evals/ directory must exist at $packageRoot/evals',
+      );
 
       final List<File> rubricFiles =
           rubricsDir
@@ -43,9 +45,11 @@ void main() {
               .toList()
             ..sort((a, b) => a.path.compareTo(b.path));
 
-      if (rubricFiles.isEmpty) {
-        return;
-      }
+      expect(
+        rubricFiles,
+        isNotEmpty,
+        reason: 'Should find at least one rubric JSON file in evals/.',
+      );
 
       _verifyStructuralConsistency(rubricFiles, 'evals');
     });
@@ -113,4 +117,15 @@ List<File> _findEvalsFiles(Directory baseDir) {
     final String name = p.basename(f.path);
     return name == 'evals.json' || name.endsWith('_evals.json');
   }).toList();
+}
+
+String _getPackageRoot() {
+  String packageRoot = Directory.current.path;
+  if (!File(p.join(packageRoot, 'pubspec.yaml')).existsSync()) {
+    final String candidate = p.join(packageRoot, 'packages', 'camera', 'camera_android_camerax');
+    if (Directory(candidate).existsSync()) {
+      packageRoot = candidate;
+    }
+  }
+  return packageRoot;
 }

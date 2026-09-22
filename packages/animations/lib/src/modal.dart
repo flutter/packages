@@ -4,7 +4,7 @@
 
 import 'dart:ui' as ui;
 
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 
 import 'fade_scale_transition.dart';
 
@@ -96,12 +96,11 @@ class _ModalRoute<T> extends PopupRoute<T> {
     this.barrierLabel,
     required this.transitionDuration,
     required this.reverseTransitionDuration,
-    required _ModalTransitionBuilder transitionBuilder,
+    required this._transitionBuilder,
     required this.builder,
     RouteSettings? routeSettings,
     super.filter,
   }) : assert(!barrierDismissible || barrierLabel != null),
-       _transitionBuilder = transitionBuilder,
        super(settings: routeSettings);
 
   @override

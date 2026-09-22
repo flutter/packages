@@ -9,9 +9,9 @@ import io.mockk.every
 import io.mockk.mockk
 import io.mockk.slot
 import io.mockk.verify
+import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotNull
-import org.junit.Assert.assertTrue
 import org.junit.Test
 
 class NullableReturnsTest {
@@ -46,7 +46,7 @@ class NullableReturnsTest {
   }
 
   @Test
-  fun testNullableParameterFlutter() {
+  fun testNullableParameterFlutter() = runTest {
     val binaryMessenger = mockk<BinaryMessenger>()
     val api = NullableReturnFlutterApi(binaryMessenger)
 
@@ -61,12 +61,7 @@ class NullableReturnsTest {
           reply.reply(replyData)
         }
 
-    var didCall = false
-    api.doit {
-      didCall = true
-      assertEquals(output, it.getOrNull())
-    }
-
-    assertTrue(didCall)
+    val res = api.doit()
+    assertEquals(output, res)
   }
 }

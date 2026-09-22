@@ -19,7 +19,6 @@
 ///    for a catalog of all Cupertino widgets.
 ///  * [flutter.dev/widgets](https://docs.flutter.dev/ui/widgets)
 ///    for a catalog of commonly-used Flutter widgets.
-/// @docImport 'package:flutter_test/flutter_test.dart';
 /// @docImport 'package:intl/intl.dart';
 library cupertino_ui;
 
@@ -55,6 +54,7 @@ export 'src/list_tile.dart';
 export 'src/localizations.dart';
 export 'src/magnifier.dart';
 export 'src/menu_anchor.dart';
+export 'src/migration_utility.dart';
 export 'src/nav_bar.dart';
 export 'src/page_scaffold.dart';
 export 'src/picker.dart';

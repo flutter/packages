@@ -1263,7 +1263,7 @@ void main() {
         expect(find.text('Select range'), findsOne);
       });
 
-      // Simulate the portait mode on a device with a small display when the virtual
+      // Simulate the portrait mode on a device with a small display when the virtual
       // keyboard is visible.
       tester.view.viewInsets = const FakeViewPadding(bottom: 1000);
       await tester.pumpAndSettle();

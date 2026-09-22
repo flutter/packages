@@ -219,6 +219,7 @@ class RouteConfiguration {
       pageKey: const ValueKey<String>('topLevel'),
       topRoute: matchList.lastOrNull?.route,
       error: matchList.error,
+      metadata: matchList.topRouteMetadata,
     );
   }
 
@@ -339,15 +340,18 @@ class RouteConfiguration {
   RouteMatchList reparse(RouteMatchList matchList) {
     RouteMatchList result = findMatch(matchList.uri, extra: matchList.extra);
 
-    for (final ImperativeRouteMatch imperativeMatch
-        in matchList.matches.whereType<ImperativeRouteMatch>()) {
-      final match = ImperativeRouteMatch(
-        pageKey: imperativeMatch.pageKey,
-        matches: findMatch(imperativeMatch.matches.uri, extra: imperativeMatch.matches.extra),
-        completer: imperativeMatch.completer,
-      );
-      result = result.push(match);
-    }
+    matchList.visitRouteMatches((RouteMatchBase match) {
+      if (match is ImperativeRouteMatch) {
+        result = result.push(
+          ImperativeRouteMatch(
+            pageKey: match.pageKey,
+            matches: findMatch(match.matches.uri, extra: match.matches.extra),
+            completer: match.completer,
+          ),
+        );
+      }
+      return true;
+    });
     return result;
   }
 
@@ -538,7 +542,10 @@ class RouteConfiguration {
     final RouteBase route = match.route;
     try {
       final FutureOr<String?> routeRedirectResult = _runInRouterZone(() {
-        return route.redirect!.call(context, match.buildState(this, matchList));
+        return route.redirect!.call(
+          context,
+          match.buildState(this, matchList, metadata: matchList.metadataFor(match)),
+        );
       });
       if (routeRedirectResult is String?) {
         return processRouteRedirect(routeRedirectResult);

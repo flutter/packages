@@ -351,7 +351,7 @@ abstract class SearchDelegate<T> {
       ..pop(result);
   }
 
-  /// Closes the search page and returns to the underlying route whitout result.
+  /// Closes the search page and returns to the underlying route without result.
   void _pop(BuildContext context) {
     _currentBody = null;
     _focusNode?.unfocus();
