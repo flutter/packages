@@ -45,7 +45,6 @@ import io.flutter.plugin.common.BinaryMessenger
 import io.flutter.plugins.googlesignin.GoogleSignInPlugin.AuthorizationClientFactory
 import io.flutter.plugins.googlesignin.GoogleSignInPlugin.CredentialManagerFactory
 import io.flutter.plugins.googlesignin.GoogleSignInPlugin.GoogleIdCredentialConverter
-import io.flutter.plugins.googlesignin.ResultCompat.Companion.asCompatCallback
 import java.lang.AutoCloseable
 import java.util.concurrent.Executor
 import org.junit.After
@@ -235,7 +234,7 @@ class GoogleSignInTest {
     plugin!!.setActivity(mockActivity)
     plugin!!.getCredential(
         params,
-        asCompatCallback<GetCredentialResult?> { reply: ResultCompat<GetCredentialResult?>? ->
+        { reply ->
           callbackCalled[0] = true
           Assert.assertTrue(reply!!.isSuccess)
           val result = reply.getOrNull()
@@ -277,11 +276,7 @@ class GoogleSignInTest {
             null)
 
     plugin!!.setActivity(mockActivity)
-    plugin!!.getCredential(
-        params,
-        asCompatCallback<GetCredentialResult?> { reply: ResultCompat<GetCredentialResult?>? ->
-          null
-        })
+    plugin!!.getCredential(params, {})
 
     val captor =
         ArgumentCaptor.forClass<GetCredentialRequest?, GetCredentialRequest?>(
@@ -312,7 +307,7 @@ class GoogleSignInTest {
     plugin!!.setActivity(mockActivity)
     plugin!!.getCredential(
         params,
-        asCompatCallback<GetCredentialResult?> { reply: ResultCompat<GetCredentialResult?>? ->
+        { reply ->
           // This test doesn't trigger the getCredentialsAsync callback that would call this,
           // so if this is reached something has gone wrong.
           Assert.fail()
@@ -349,7 +344,7 @@ class GoogleSignInTest {
     plugin!!.setActivity(mockActivity)
     plugin!!.getCredential(
         params,
-        asCompatCallback<GetCredentialResult?> { reply: ResultCompat<GetCredentialResult?>? ->
+        { reply ->
           // This test doesn't trigger the getCredentialsAsync callback that would call this,
           // so if this is reached something has gone wrong.
           Assert.fail()
@@ -389,7 +384,7 @@ class GoogleSignInTest {
     plugin!!.setActivity(mockActivity)
     plugin!!.getCredential(
         params,
-        asCompatCallback<GetCredentialResult?> { reply: ResultCompat<GetCredentialResult?>? ->
+        { reply ->
           // This test doesn't trigger the getCredentialsAsync callback that would call this,
           // so if this is reached something has gone wrong.
           Assert.fail()
@@ -427,7 +422,7 @@ class GoogleSignInTest {
     plugin!!.setActivity(mockActivity)
     plugin!!.getCredential(
         params,
-        asCompatCallback<GetCredentialResult?> { reply: ResultCompat<GetCredentialResult?>? ->
+        { reply ->
           // This test doesn't trigger the getCredentialsAsync callback that would call this,
           // so if this is reached something has gone wrong.
           Assert.fail()
@@ -465,7 +460,7 @@ class GoogleSignInTest {
     plugin!!.setActivity(null)
     plugin!!.getCredential(
         params,
-        asCompatCallback<GetCredentialResult?> { reply: ResultCompat<GetCredentialResult?>? ->
+        { reply ->
           callbackCalled[0] = true
           // This failure is a structured return value, not an exception.
           Assert.assertTrue(reply!!.isSuccess)
@@ -488,7 +483,7 @@ class GoogleSignInTest {
     plugin!!.setActivity(mockActivity)
     plugin!!.getCredential(
         params,
-        asCompatCallback<GetCredentialResult?> { reply: ResultCompat<GetCredentialResult?>? ->
+        { reply ->
           callbackCalled[0] = true
           // This failure is a structured return value, not an exception.
           Assert.assertTrue(reply!!.isSuccess)
@@ -515,7 +510,7 @@ class GoogleSignInTest {
     plugin!!.setActivity(mockActivity)
     plugin!!.getCredential(
         params,
-        asCompatCallback<GetCredentialResult?> { reply: ResultCompat<GetCredentialResult?>? ->
+        { reply ->
           callbackCalled[0] = true
           // This failure is a structured return value, not an exception.
           Assert.assertTrue(reply!!.isSuccess)
@@ -559,7 +554,7 @@ class GoogleSignInTest {
     plugin!!.setActivity(mockActivity)
     plugin!!.getCredential(
         params,
-        asCompatCallback<GetCredentialResult?> { reply: ResultCompat<GetCredentialResult?>? ->
+        { reply ->
           callbackCalled[0] = true
           // This failure is a structured return value, not an exception.
           Assert.assertTrue(reply!!.isSuccess)
@@ -601,7 +596,7 @@ class GoogleSignInTest {
     plugin!!.setActivity(mockActivity)
     plugin!!.getCredential(
         params,
-        asCompatCallback<GetCredentialResult?> { reply: ResultCompat<GetCredentialResult?>? ->
+        { reply ->
           callbackCalled[0] = true
           // This failure is a structured return value, not an exception.
           Assert.assertTrue(reply!!.isSuccess)
@@ -643,7 +638,7 @@ class GoogleSignInTest {
     plugin!!.setActivity(mockActivity)
     plugin!!.getCredential(
         params,
-        asCompatCallback<GetCredentialResult?> { reply: ResultCompat<GetCredentialResult?>? ->
+        { reply ->
           callbackCalled[0] = true
           // This failure is a structured return value, not an exception.
           Assert.assertTrue(reply!!.isSuccess)
@@ -685,7 +680,7 @@ class GoogleSignInTest {
     plugin!!.setActivity(mockActivity)
     plugin!!.getCredential(
         params,
-        asCompatCallback<GetCredentialResult?> { reply: ResultCompat<GetCredentialResult?>? ->
+        { reply ->
           callbackCalled[0] = true
           // This failure is a structured return value, not an exception.
           Assert.assertTrue(reply!!.isSuccess)
@@ -727,7 +722,7 @@ class GoogleSignInTest {
     plugin!!.setActivity(mockActivity)
     plugin!!.getCredential(
         params,
-        asCompatCallback<GetCredentialResult?> { reply: ResultCompat<GetCredentialResult?>? ->
+        { reply ->
           callbackCalled[0] = true
           // This failure is a structured return value, not an exception.
           Assert.assertTrue(reply!!.isSuccess)
@@ -769,7 +764,7 @@ class GoogleSignInTest {
     plugin!!.setActivity(mockActivity)
     plugin!!.getCredential(
         params,
-        asCompatCallback<GetCredentialResult?> { reply: ResultCompat<GetCredentialResult?>? ->
+        { reply ->
           callbackCalled[0] = true
           // This failure is a structured return value, not an exception.
           Assert.assertTrue(reply!!.isSuccess)
@@ -810,7 +805,7 @@ class GoogleSignInTest {
     plugin!!.authorize(
         params,
         false,
-        asCompatCallback<AuthorizeResult?> { reply: ResultCompat<AuthorizeResult?>? ->
+        { reply ->
           // This test doesn't trigger the getCredentialsAsync callback that would call this,
           // so if this is reached something has gone wrong.
           Assert.fail()
@@ -845,7 +840,7 @@ class GoogleSignInTest {
     plugin!!.authorize(
         params,
         false,
-        asCompatCallback<AuthorizeResult?> { reply: ResultCompat<AuthorizeResult?>? ->
+        { reply ->
           // This test doesn't trigger the getCredentialsAsync callback that would call this,
           // so if this is reached something has gone wrong.
           Assert.fail()
@@ -881,7 +876,7 @@ class GoogleSignInTest {
     plugin!!.authorize(
         params,
         false,
-        asCompatCallback<AuthorizeResult?> { reply: ResultCompat<AuthorizeResult?>? ->
+        { reply ->
           callbackCalled[0] = true
           Assert.assertTrue(reply!!.isSuccess)
           val result = reply.getOrNull()
@@ -919,7 +914,7 @@ class GoogleSignInTest {
     plugin!!.authorize(
         params,
         false,
-        asCompatCallback<AuthorizeResult?> { reply: ResultCompat<AuthorizeResult?>? ->
+        { reply ->
           callbackCalled[0] = true
           // This failure is a structured return value, not an exception.
           Assert.assertTrue(reply!!.isSuccess)
@@ -947,7 +942,7 @@ class GoogleSignInTest {
     plugin!!.authorize(
         params,
         false,
-        asCompatCallback<AuthorizeResult?> { reply: ResultCompat<AuthorizeResult?>? ->
+        { reply ->
           callbackCalled[0] = true
           // This failure is a structured return value, not an exception.
           Assert.assertTrue(reply!!.isSuccess)
@@ -985,7 +980,7 @@ class GoogleSignInTest {
     plugin!!.authorize(
         params,
         true,
-        asCompatCallback<AuthorizeResult?> { reply: ResultCompat<AuthorizeResult?>? ->
+        { reply ->
           callbackCalled[0] = true
           // This failure is a structured return value, not an exception.
           Assert.assertTrue(reply!!.isSuccess)
@@ -1034,7 +1029,7 @@ class GoogleSignInTest {
     plugin!!.authorize(
         params,
         true,
-        asCompatCallback<AuthorizeResult?> { reply: ResultCompat<AuthorizeResult?>? ->
+        { reply ->
           callbackCalled[0] = true
           Assert.assertTrue(reply!!.isSuccess)
           val result = reply.getOrNull()
@@ -1104,7 +1099,7 @@ class GoogleSignInTest {
     plugin!!.authorize(
         params,
         true,
-        asCompatCallback<AuthorizeResult?> { reply: ResultCompat<AuthorizeResult?>? ->
+        { reply ->
           callbackCount[0] += 1
           null
         })
@@ -1159,7 +1154,7 @@ class GoogleSignInTest {
     plugin!!.authorize(
         params,
         true,
-        asCompatCallback<AuthorizeResult?> { reply: ResultCompat<AuthorizeResult?>? ->
+        { reply ->
           callbackCalled[0] = true
           // This failure is a structured return value, not an exception.
           Assert.assertTrue(reply!!.isSuccess)
@@ -1205,7 +1200,7 @@ class GoogleSignInTest {
     plugin!!.authorize(
         params,
         true,
-        asCompatCallback<AuthorizeResult?> { reply: ResultCompat<AuthorizeResult?>? ->
+        { reply ->
           callbackCalled[0] = true
           // This failure is a structured return value, not an exception.
           Assert.assertTrue(reply!!.isSuccess)
@@ -1246,11 +1241,10 @@ class GoogleSignInTest {
 
   @Test
   fun clearCredentialState_reportsSuccess() {
-    plugin!!.clearCredentialState(
-        asCompatCallback<Unit?> { reply: ResultCompat<Unit?>? ->
-          Assert.assertTrue(reply!!.isSuccess)
-          null
-        })
+    plugin!!.clearCredentialState({ reply ->
+      Assert.assertTrue(reply!!.isSuccess)
+      null
+    })
 
     val callbackCaptor =
         ArgumentCaptor.forClass<
@@ -1270,11 +1264,10 @@ class GoogleSignInTest {
 
   @Test
   fun clearCredentialState_reportsFailure() {
-    plugin!!.clearCredentialState(
-        asCompatCallback<Unit?> { reply: ResultCompat<Unit?>? ->
-          Assert.assertTrue(reply!!.isFailure)
-          null
-        })
+    plugin!!.clearCredentialState({ reply ->
+      Assert.assertTrue(reply!!.isFailure)
+      null
+    })
 
     val callbackCaptor =
         ArgumentCaptor.forClass<
@@ -1302,7 +1295,7 @@ class GoogleSignInTest {
     Mockito.`when`<Task<Void?>?>(
             mockAuthorizationClient!!.revokeAccess(ArgumentMatchers.any<RevokeAccessRequest?>()))
         .thenReturn(mockVoidTask)
-    plugin!!.revokeAccess(params, asCompatCallback<Unit?> { reply: ResultCompat<Unit?>? -> null })
+    plugin!!.revokeAccess(params, { reply -> null })
 
     val requestCaptor =
         ArgumentCaptor.forClass<RevokeAccessRequest?, RevokeAccessRequest?>(
@@ -1329,8 +1322,7 @@ class GoogleSignInTest {
     Mockito.`when`<Task<Void?>?>(
             mockAuthorizationClient!!.clearToken(ArgumentMatchers.any<ClearTokenRequest?>()))
         .thenReturn(mockVoidTask)
-    plugin!!.clearAuthorizationToken(
-        testToken, asCompatCallback<Unit?> { reply: ResultCompat<Unit?>? -> null })
+    plugin!!.clearAuthorizationToken(testToken, { reply -> null })
 
     val authRequestCaptor =
         ArgumentCaptor.forClass<ClearTokenRequest?, ClearTokenRequest?>(
