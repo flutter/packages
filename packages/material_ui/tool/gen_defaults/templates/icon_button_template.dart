@@ -26,7 +26,7 @@ class IconButtonTemplateM3E extends TokenTemplateM3E {
   String tokenColor(TokenColorRole role) {
     return switch (role) {
       TokenColorRole.inverseOnSurface => '_colors.onInverseSurface',
-      _ => color(role, '_colors'),
+      _ => color(role),
     };
   }
 
