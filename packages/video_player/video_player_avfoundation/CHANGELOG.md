@@ -1,3 +1,8 @@
+## 2.13.0
+
+* Adds support for `VideoPlayerOptions.forwardBufferDurationMs`, capping how far ahead of the
+  playback position `AVPlayerItem` buffers via `preferredForwardBufferDuration`.
+
 ## 2.12.3
 
 * Fixes a potential crash when a player is disposed while an async method is in progress.

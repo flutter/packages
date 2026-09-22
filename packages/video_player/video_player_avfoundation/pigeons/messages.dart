@@ -25,6 +25,7 @@ class CreationOptions {
 
   String uri;
   Map<String, String> httpHeaders;
+  int? forwardBufferDurationMs;
 }
 
 class TexturePlayerIds {
