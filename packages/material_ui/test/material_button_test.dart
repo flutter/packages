@@ -301,7 +301,7 @@ void main() {
     expect(material.textStyle!.color, Colors.red);
   });
 
-  for (final Color? disabledTextColor in <Color?>[null, Colors.red]) {
+  for (final disabledTextColor in <Color?>[null, Colors.red]) {
     testWidgets(
       'Disabled MaterialButton resolves stateful textColor with disabledTextColor=$disabledTextColor',
       (WidgetTester tester) async {
