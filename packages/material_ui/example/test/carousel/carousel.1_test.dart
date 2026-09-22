@@ -18,6 +18,10 @@ void main() {
     expect(find.text('Item 999'), findsNothing);
 
     final Finder carousel = find.byType(CarouselView);
+    // Drag by an amount greater than the itemExtent (350) to ensure the first item
+    // is completely scrolled off-screen. Since CarouselView.builder now correctly
+    // wraps items in Material and InkWell, items sitting exactly on the viewport
+    // boundary can be retained in the widget tree longer. 400 pixels bypasses this.
     await tester.drag(carousel, const Offset(-400, 0));
     await tester.pumpAndSettle();
 

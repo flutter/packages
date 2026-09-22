@@ -709,7 +709,7 @@ class _CarouselViewState extends State<CarouselView> {
   }
 
   Widget _buildSliverCarousel(ThemeData theme) {
-    // Determine the child count and builder based on whether we're using lazy loading
+    // Determine the child count based on whether an item builder is used.
     final int? childCount = widget.infinite
         ? null
         : (widget.itemBuilder != null ? widget.itemCount : widget.children.length);
@@ -1996,8 +1996,14 @@ class CarouselController extends ScrollController {
     final bool hasFlexWeights = _carouselState!._flexWeights?.isNotEmpty ?? false;
     if (_carouselState!.widget.itemBuilder != null) {
       final int? itemCount = _carouselState!.widget.itemCount;
+      if (itemCount == 0) {
+        return;
+      }
       index = itemCount != null ? index.clamp(0, itemCount - 1) : 0;
     } else {
+      if (_carouselState!.widget.children.isEmpty) {
+        return;
+      }
       index = index.clamp(0, _carouselState!.widget.children.length - 1);
     }
 
