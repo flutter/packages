@@ -1,3 +1,11 @@
+## 1.4.0
+
+- Updates minimum supported SDK version to Flutter 3.47/Dart 3.13.
+- Adds sortIconBuilder parameter to DataTable, PaginatedDataTable, and DataTableThemeData for custom sorting indicators.
+- Fix `PopupMenuButton` not announcing button semantics (enabled state, expanded state) when built with a `child` instead of the default icon.
+- Fixes `DatePickerThemeData.todayBorder` color being overridden by `todayForegroundColor` in the year selector.
+- Adds an alternative keyboard input method for RangeSlider in NavigationMode.directional.
+
 ## 1.3.0
 
 - Adds `@awaitNotRequired` annotations to asynchronous functions that do not need to be awaited.

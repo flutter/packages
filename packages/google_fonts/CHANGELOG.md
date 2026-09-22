@@ -1,5 +1,6 @@
 ## NEXT
 
+- Updates minimum supported SDK version to Flutter 3.41/Dart 3.11.
 - Adds the `GoogleFontsLite` class to allow tree-shaking unused font code.
 - Added fonts:
   - `Akt`
