@@ -12,7 +12,7 @@ reviewed by someone else.
   - **Android**: @camsim99
   - **iOS**: @hellohuanlin, @louisehsu
   - **Web**: @mdebbar
-  - **Windows**: @windows-reviewers
+  - **Windows**: @flutter/windows-reviewers
 
 `cross_file`:
   - @bparrishMines
@@ -36,7 +36,7 @@ reviewed by someone else.
   - **Linux**: @robert-ancell
   - **macOS**: @okorohelijah, @vashworth
   - **Web**: @mdebbar
-  - **Windows**: @windows-reviewers
+  - **Windows**: @flutter/windows-reviewers
 
 `flutter_lints`:
   - @loic-sharma
@@ -81,7 +81,7 @@ reviewed by someone else.
   - **Linux**: @robert-ancell
   - **macOS**: @okorohelijah, @vashworth
   - **Web**: @mdebbar
-  - **Windows**: @windows-reviewers
+  - **Windows**: @flutter/windows-reviewers
 
 `interactive_media_ads`:
   - @dkwingsmt
@@ -95,7 +95,7 @@ reviewed by someone else.
   - **Cross-platform**: @loic-sharma
   - **Android**: @mboetger
   - **iOS/macOS**: @louisehsu, @okorohelijah
-  - **Windows**: @windows-reviewers
+  - **Windows**: @flutter/windows-reviewers
 
 `material_ui`:
   - @qunccccccc, @elliette
@@ -117,7 +117,7 @@ reviewed by someone else.
   - **Android**: @camsim99
   - **iOS/macOS**: @LongCatIsLooong, @vashworth
   - **Linux**: @robert-ancell, @pjkammer
-  - **Windows**: @windows-reviewers
+  - **Windows**: @flutter/windows-reviewers
 
 `pigeon`:
   - @tarrinneal
@@ -143,7 +143,7 @@ reviewed by someone else.
   - **Android**: @jesswrd
   - **iOS/macOS**: @tarrinneal
   - **Linux**: @robert-ancell
-  - **Windows**: @windows-reviewers
+  - **Windows**: @flutter/windows-reviewers
   - **Web**: @mdebbar
   - **Devtools**: @adsonpleal
 
@@ -159,7 +159,7 @@ reviewed by someone else.
   - **iOS**: @vashworth, @LongCatIsLooong
   - **Linux**: @robert-ancell
   - **macOS**: @vashworth, @LongCatIsLooong
-  - **Windows**: @windows-reviewers
+  - **Windows**: @flutter/windows-reviewers
   - **Web**: @mdebbar
 
 `vector_graphics, vector_graphics_codec, vector_graphics_compiler`:
@@ -181,4 +181,4 @@ reviewed by someone else.
   - **Web**: @mdebbar
 
 `xdg_directories`:
-  - @linux-reviewers
+  - @flutter/linux-reviewers
