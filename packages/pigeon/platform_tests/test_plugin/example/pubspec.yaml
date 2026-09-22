@@ -3,7 +3,7 @@ description: Pigeon test harness for primary plugin languages.
 publish_to: 'none'
 
 environment:
-  sdk: ^3.10.0
+  sdk: ^3.11.0
 
 dependencies:
   ffi: ^2.2.0
