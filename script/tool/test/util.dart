@@ -32,7 +32,7 @@ const String _defaultFlutterConstraint = '>=2.5.0';
 
 /// Returns the exe name that command will use when running Flutter on
 /// [platform].
-String getFlutterCommand(Platform platform) => platform.isWindows ? 'flutter.bat' : 'flutter';
+String getFlutterCommand(NativePlatform platform) => platform.isWindows ? 'flutter.bat' : 'flutter';
 
 /// Creates a packages directory at an arbitrary location in the given
 /// filesystem.
@@ -530,7 +530,7 @@ class ProcessCall {
   GitDir gitDir,
 })
 configureBaseCommandMocks({
-  Platform? platform,
+  NativePlatform? platform,
   RecordingProcessRunner? customProcessRunner,
   RecordingProcessRunner? customGitProcessRunner,
 }) {

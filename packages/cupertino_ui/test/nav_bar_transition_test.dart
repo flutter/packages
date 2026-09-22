@@ -1945,9 +1945,7 @@ void main() {
       await tester.pumpWidget(
         CupertinoApp(
           home: CupertinoPageScaffold(
-            navigationBar: CupertinoNavigationBar(
-              middle: CupertinoTextField(focusNode: focusNode),
-            ),
+            navigationBar: CupertinoNavigationBar(middle: CupertinoTextField(focusNode: focusNode)),
             child: const Placeholder(),
           ),
         ),
