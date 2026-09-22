@@ -278,7 +278,7 @@ class GoogleSignInTest {
                 CredentialManagerCallback<GetCredentialResponse?, GetCredentialException?>?>())
 
     Assert.assertEquals(1, captor.getValue()!!.credentialOptions.size.toLong())
-    Assert.assertTrue(captor.getValue()!!.credentialOptions.get(0) is GetSignInWithGoogleOption)
+    Assert.assertTrue(captor.getValue()!!.credentialOptions[0] is GetSignInWithGoogleOption)
   }
 
   @Test
@@ -310,7 +310,7 @@ class GoogleSignInTest {
                 CredentialManagerCallback<GetCredentialResponse?, GetCredentialException?>?>())
 
     Assert.assertEquals(1, captor.getValue()!!.credentialOptions.size.toLong())
-    Assert.assertTrue(captor.getValue()!!.credentialOptions.get(0) is GetGoogleIdOption)
+    Assert.assertTrue(captor.getValue()!!.credentialOptions[0] is GetGoogleIdOption)
   }
 
   @Test
@@ -345,8 +345,7 @@ class GoogleSignInTest {
     Assert.assertEquals(1, captor.getValue()!!.credentialOptions.size.toLong())
     Assert.assertEquals(
         hostedDomain,
-        (captor.getValue()!!.credentialOptions.get(0) as GetSignInWithGoogleOption)
-            .hostedDomainFilter)
+        (captor.getValue()!!.credentialOptions[0] as GetSignInWithGoogleOption).hostedDomainFilter)
   }
 
   @Test
@@ -380,7 +379,7 @@ class GoogleSignInTest {
 
     Assert.assertEquals(1, captor.getValue()!!.credentialOptions.size.toLong())
     Assert.assertEquals(
-        nonce, (captor.getValue()!!.credentialOptions.get(0) as GetSignInWithGoogleOption).nonce)
+        nonce, (captor.getValue()!!.credentialOptions[0] as GetSignInWithGoogleOption).nonce)
   }
 
   @Test
@@ -414,7 +413,7 @@ class GoogleSignInTest {
 
     Assert.assertEquals(1, captor.getValue()!!.credentialOptions.size.toLong())
     Assert.assertEquals(
-        nonce, (captor.getValue()!!.credentialOptions.get(0) as GetGoogleIdOption).nonce)
+        nonce, (captor.getValue()!!.credentialOptions[0] as GetGoogleIdOption).nonce)
   }
 
   @Test
@@ -1199,7 +1198,7 @@ class GoogleSignInTest {
 
     val request = requestCaptor.getValue()
     Assert.assertEquals(scopes.size.toLong(), request.scopes.size.toLong())
-    Assert.assertEquals(scopes.get(0), request.scopes.get(0).scopeUri)
+    Assert.assertEquals(scopes[0], request.scopes[0].scopeUri)
     // Account is mostly opaque, so just verify that one was set.
     Assert.assertNotNull(request.account)
   }
