@@ -15,6 +15,9 @@ class DatePickerTemplateM3 extends TokenTemplateM3 {
   @override
   String get parentFilePath => 'date_picker_theme.dart';
 
+  // TODO(QuncCccccc): Replace this value if a subheader opacity token becomes available.
+  static const double _legacySubHeaderForegroundOpacity = 0.60;
+
   String get _textThemePrefix => '_textTheme';
 
   @override
@@ -42,7 +45,7 @@ class $className extends DatePickerThemeData {
   Color? get backgroundColor => ${color(TokenDatePickerModal.containerColor)};
 
   @override
-  Color? get subHeaderForegroundColor => ${color(TokenDatePickerModal.weekdaysLabelTextColor)}.withOpacity(0.60);
+  Color? get subHeaderForegroundColor => ${colorWithOpacity(TokenDatePickerModal.weekdaysLabelTextColor, _legacySubHeaderForegroundOpacity)};
 
   @override
   TextStyle? get toggleButtonTextStyle => ${textStyle(TokenDatePickerModal.rangeSelectionMonthSubheadType, _textThemePrefix)}?.apply(

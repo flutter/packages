@@ -492,6 +492,10 @@ void main() {
           'shape: const RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(28.0)))',
         ),
       );
+      expect(
+        contents,
+        contains('Color? get subHeaderForegroundColor => _colors.onSurface.withOpacity(0.6);'),
+      );
       expect(contents, contains('_colors.onSurface.withOpacity(0.38)'));
       expect(contents, contains('_colors.onPrimaryContainer.withOpacity(0.1)'));
     });

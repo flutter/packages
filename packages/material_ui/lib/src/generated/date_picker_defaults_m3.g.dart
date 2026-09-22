@@ -29,7 +29,7 @@ class _DatePickerDefaultsM3 extends DatePickerThemeData {
   Color? get backgroundColor => _colors.surfaceContainerHigh;
 
   @override
-  Color? get subHeaderForegroundColor => _colors.onSurface.withOpacity(0.60);
+  Color? get subHeaderForegroundColor => _colors.onSurface.withOpacity(0.6);
 
   @override
   TextStyle? get toggleButtonTextStyle =>
