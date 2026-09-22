@@ -4183,6 +4183,86 @@ void main() {
     expect(find.text('R18 C19'), findsOneWidget);
   });
 
+  testWidgets('Regular columns are found when more than one column is trailing pinned', (
+    WidgetTester tester,
+  ) async {
+    final verticalController = ScrollController();
+    addTearDown(verticalController.dispose);
+
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Scaffold(
+          body: SizedBox(
+            height: 400,
+            width: 400,
+            child: TableView.builder(
+              columnCount: 3,
+              rowCount: 20,
+              trailingPinnedColumnCount: 2,
+              verticalDetails: ScrollableDetails.vertical(controller: verticalController),
+              columnBuilder: (int index) => const TableSpan(extent: FixedTableSpanExtent(100)),
+              rowBuilder: (int index) => const TableSpan(extent: FixedTableSpanExtent(100)),
+              cellBuilder: (BuildContext context, TableVicinity vicinity) {
+                return TableViewCell(child: Text('R${vicinity.row} C${vicinity.column}'));
+              },
+            ),
+          ),
+        ),
+      ),
+    );
+    expect(find.text('R0 C0'), findsOneWidget);
+
+    // Scrolling lays the table out again from the cached metrics, which binary
+    // searches them for the first and last regular column. The trailing pinned
+    // columns at the end of the metrics must not steer that search away from
+    // the only regular column.
+    verticalController.jumpTo(100);
+    await tester.pump();
+
+    expect(tester.takeException(), isNull);
+    expect(find.text('R1 C0'), findsOneWidget);
+    expect(find.text('R1 C1'), findsOneWidget);
+    expect(find.text('R1 C2'), findsOneWidget);
+  });
+
+  testWidgets('Regular rows are found when more than one row is trailing pinned', (
+    WidgetTester tester,
+  ) async {
+    final horizontalController = ScrollController();
+    addTearDown(horizontalController.dispose);
+
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Scaffold(
+          body: SizedBox(
+            height: 400,
+            width: 400,
+            child: TableView.builder(
+              columnCount: 20,
+              rowCount: 3,
+              trailingPinnedRowCount: 2,
+              horizontalDetails: ScrollableDetails.horizontal(controller: horizontalController),
+              columnBuilder: (int index) => const TableSpan(extent: FixedTableSpanExtent(100)),
+              rowBuilder: (int index) => const TableSpan(extent: FixedTableSpanExtent(100)),
+              cellBuilder: (BuildContext context, TableVicinity vicinity) {
+                return TableViewCell(child: Text('R${vicinity.row} C${vicinity.column}'));
+              },
+            ),
+          ),
+        ),
+      ),
+    );
+    expect(find.text('R0 C0'), findsOneWidget);
+
+    horizontalController.jumpTo(100);
+    await tester.pump();
+
+    expect(tester.takeException(), isNull);
+    expect(find.text('R0 C1'), findsOneWidget);
+    expect(find.text('R1 C1'), findsOneWidget);
+    expect(find.text('R2 C1'), findsOneWidget);
+  });
+
   testWidgets('Intersections of leading and trailing pinned', (WidgetTester tester) async {
     const span = TableSpan(extent: FixedTableSpanExtent(100));
     await tester.pumpWidget(

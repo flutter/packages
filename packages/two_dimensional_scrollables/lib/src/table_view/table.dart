@@ -1036,12 +1036,23 @@ class RenderTableViewport extends RenderTwoDimensionalViewport {
   /// Binary search to find the first index with [_Span] matching the condition.
   /// [map]: Index-[_Span] map, [condition]: Match rule
   /// Returns the first matched index or null if not found.
-  int? _binarySearchFirstFromMap(Map<int, _Span> map, bool Function(_Span) condition) {
+  ///
+  /// Only indices from [first] to [last] are searched. [condition] must be
+  /// false for every index before the first match and true for every index
+  /// after it within that range, so callers searching for regular spans pass
+  /// the range of regular spans: the pinned spans on either side of it would
+  /// break that ordering.
+  int? _binarySearchFirstFromMap(
+    Map<int, _Span> map,
+    bool Function(_Span) condition, {
+    int first = 0,
+    int? last,
+  }) {
     if (map.isEmpty) {
       return null;
     }
-    var low = 0;
-    int high = map.length - 1;
+    var low = first;
+    int high = math.min(last ?? map.length - 1, map.length - 1);
     int? result;
     while (low <= high) {
       final int mid = low + ((high - low) >> 1);
@@ -1081,10 +1092,14 @@ class RenderTableViewport extends RenderTwoDimensionalViewport {
     _firstNonPinnedColumn = _binarySearchFirstFromMap(
       _columnMetrics,
       (span) => !span.isPinned && span.trailingOffset >= _targetLeadingColumnPixel,
+      first: delegate.pinnedColumnCount,
+      last: _lastRegularColumnIndex,
     );
     _lastNonPinnedColumn = _binarySearchFirstFromMap(
       _columnMetrics,
       (span) => !span.isPinned && span.trailingOffset >= _targetTrailingColumnPixel,
+      first: delegate.pinnedColumnCount,
+      last: _lastRegularColumnIndex,
     );
     if (_firstNonPinnedColumn != null) {
       // Trailing pinned columns are laid out and painted separately, so the
@@ -1112,10 +1127,14 @@ class RenderTableViewport extends RenderTwoDimensionalViewport {
     _firstNonPinnedRow = _binarySearchFirstFromMap(
       _rowMetrics,
       (span) => !span.isPinned && span.trailingOffset >= _targetLeadingRowPixel,
+      first: delegate.pinnedRowCount,
+      last: _lastRegularRowIndex,
     );
     _lastNonPinnedRow = _binarySearchFirstFromMap(
       _rowMetrics,
       (span) => !span.isPinned && span.trailingOffset >= _targetTrailingRowPixel,
+      first: delegate.pinnedRowCount,
+      last: _lastRegularRowIndex,
     );
     if (_firstNonPinnedRow != null) {
       // Trailing pinned rows are laid out and painted separately, so the range
