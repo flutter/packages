@@ -499,7 +499,7 @@ class ThemeData with Diagnosticable {
     );
     contrastLevel ??= ContrastLevel.standard;
     assert(
-      colorSchemeSeed != null || _isM3BaselineContrastLevel(contrastLevel),
+      colorSchemeSeed != null || _debugIsUsingPredefinedContrastLevel(contrastLevel),
       'colorSchemeSeed must be provided to use a custom contrastLevel. '
       'Without a colorSchemeSeed, contrastLevel must be '
       'ContrastLevel.standard (0.0), ContrastLevel.medium (0.5), or '
@@ -3051,7 +3051,7 @@ ColorScheme _defaultM3ColorScheme(Brightness brightness, double contrastLevel) {
   };
 }
 
-bool _isM3BaselineContrastLevel(double contrastLevel) {
+bool _debugIsUsingPredefinedContrastLevel(double contrastLevel) {
   return contrastLevel == ContrastLevel.standard ||
       contrastLevel == ContrastLevel.medium ||
       contrastLevel == ContrastLevel.high;
