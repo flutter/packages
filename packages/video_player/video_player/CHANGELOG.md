@@ -1,5 +1,7 @@
-## NEXT
+## 2.15.0
 
+* Adds `forwardBufferDurationMs` to `VideoPlayerOptions`, to cap how far ahead of the playback
+  position streamed media is buffered. Supported on Android and iOS/macOS.
 * Updates minimum supported SDK version to Flutter 3.41/Dart 3.11.
 
 ## 2.14.0
