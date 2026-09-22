@@ -116,7 +116,7 @@ reviewed by someone else.
   - **Cross-platform**: @pjkammer
   - **Android**: @camsim99
   - **iOS/macOS**: @LongCatIsLooong, @vashworth
-  - **Linux**: @robert-ancell, @pjkammer
+  - **Linux**: @robert-ancell
   - **Windows**: @flutter/windows-reviewers
 
 `pigeon`:
