@@ -476,9 +476,8 @@ class _SegmentedControlState<T extends Object> extends State<CupertinoSegmentedC
       selectedIndex = (widget.groupValue == currentKey) ? index : selectedIndex;
       pressedIndex = (_pressedKey == currentKey) ? index : pressedIndex;
 
-      final TextStyle textStyle = DefaultTextStyle.of(
-        context,
-      ).style.copyWith(color: getTextColor(index, currentKey));
+      final TextStyle textStyle = DefaultTextStyle.of(context).style
+          .copyWith(color: getTextColor(index, currentKey));
       final iconTheme = IconThemeData(color: getTextColor(index, currentKey));
 
       Widget child = Center(child: widget.children[currentKey]);
@@ -559,7 +558,6 @@ class _SegmentedControlState<T extends Object> extends State<CupertinoSegmentedC
 
 class _SegmentedControlRenderWidget<T> extends MultiChildRenderObjectWidget {
   const _SegmentedControlRenderWidget({
-    super.key,
     super.children,
     required this.selectedIndex,
     required this.pressedIndex,

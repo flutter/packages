@@ -12,6 +12,7 @@ import 'package:camera_platform_interface/camera_platform_interface.dart';
 // ignore_for_file: implementation_imports
 import 'package:camera_web/src/camera.dart';
 import 'package:camera_web/src/types/types.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:integration_test/integration_test.dart';
 import 'package:mockito/mockito.dart';
@@ -262,7 +263,7 @@ void main() {
           videoElement = getVideoElementWithBlankStream(const Size(100, 100))..muted = true;
 
           mockVideoTrack.getCapabilities = () {
-            return MediaTrackCapabilities(torch: <JSBoolean>[true.toJS].toJS);
+            return capabilitiesWithTorch(true.toJS);
           }.toJS;
         });
 
@@ -441,6 +442,125 @@ void main() {
 
         expect(capturedConstraints.length, 1);
         expect(capturedConstraints[0].torch.dartify(), false);
+      });
+
+      // Regression tests for https://github.com/flutter/flutter/issues/191384.
+      group('reads the torch capability', () {
+        late List<String> warnings;
+        late DebugPrintCallback originalDebugPrint;
+
+        setUp(() {
+          warnings = <String>[];
+          originalDebugPrint = debugPrint;
+          debugPrint = (String? message, {int? wrapWidth}) {
+            if (message != null) {
+              warnings.add(message);
+            }
+          };
+        });
+
+        tearDown(() {
+          debugPrint = originalDebugPrint;
+        });
+
+        final torchCapabilities = <String, (JSAny?, bool)>{
+          'reported as a bare true by Chromium and WebKit': (true.toJS, true),
+          'reported as a bare false by Chromium and WebKit': (false.toJS, false),
+          'reported as a sequence by a browser following the specification': (
+            <JSBoolean>[false.toJS, true.toJS].toJS,
+            true,
+          ),
+          'reported as a sequence holding only true': (<JSBoolean>[true.toJS].toJS, true),
+          'reported as a sequence holding only false': (<JSBoolean>[false.toJS].toJS, false),
+          'reported as an empty sequence': (<JSBoolean>[].toJS, false),
+          'not reported by the browser at all': (null, false),
+        };
+
+        for (final MapEntry<String, (JSAny?, bool)> testCase in torchCapabilities.entries) {
+          final (JSAny? capability, bool canEnableTorch) = testCase.value;
+
+          testWidgets(testCase.key, (WidgetTester tester) async {
+            mockMediaDevices.getSupportedConstraints = () {
+              return MediaTrackSupportedConstraints(torch: true);
+            }.toJS;
+
+            mockVideoTrack.getCapabilities = () {
+              return capabilitiesWithTorch(capability);
+            }.toJS;
+
+            final camera = Camera(textureId: textureId, cameraService: cameraService)
+              ..window = window
+              ..stream = videoStream;
+
+            final capturedConstraints = <MediaTrackConstraints>[];
+            mockVideoTrack.applyConstraints = ([MediaTrackConstraints? constraints]) {
+              if (constraints != null) {
+                capturedConstraints.add(constraints);
+              }
+              return Future<JSAny?>.value().toJS;
+            }.toJS;
+
+            if (canEnableTorch) {
+              camera.setFlashMode(FlashMode.torch);
+
+              expect(capturedConstraints.length, 1);
+              expect(capturedConstraints[0].torch.dartify(), true);
+            } else {
+              expect(
+                () => camera.setFlashMode(FlashMode.torch),
+                throwsA(
+                  isA<CameraWebException>()
+                      .having((CameraWebException e) => e.cameraId, 'cameraId', textureId)
+                      .having(
+                        (CameraWebException e) => e.code,
+                        'code',
+                        CameraErrorCode.torchModeNotSupported,
+                      ),
+                ),
+              );
+              expect(capturedConstraints, isEmpty);
+            }
+
+            expect(warnings, isEmpty, reason: 'a recognized shape must not warn');
+          });
+        }
+
+        final unrecognizedCapabilities = <String, JSAny>{
+          'a value that is not a boolean': 'yes'.toJS,
+          'a sequence holding something other than booleans': <JSAny>['yes'.toJS].toJS,
+        };
+
+        for (final MapEntry<String, JSAny> testCase in unrecognizedCapabilities.entries) {
+          testWidgets('warns while debugging when the browser reports '
+              '${testCase.key}', (WidgetTester tester) async {
+            mockMediaDevices.getSupportedConstraints = () {
+              return MediaTrackSupportedConstraints(torch: true);
+            }.toJS;
+
+            mockVideoTrack.getCapabilities = () {
+              return capabilitiesWithTorch(testCase.value);
+            }.toJS;
+
+            final camera = Camera(textureId: textureId, cameraService: cameraService)
+              ..window = window
+              ..stream = videoStream;
+
+            expect(
+              () => camera.setFlashMode(FlashMode.torch),
+              throwsA(
+                isA<CameraWebException>().having(
+                  (CameraWebException e) => e.code,
+                  'code',
+                  CameraErrorCode.torchModeNotSupported,
+                ),
+              ),
+            );
+
+            expect(warnings, hasLength(1));
+            expect(warnings.single, contains('torch'));
+            expect(warnings.single, contains('github.com/flutter/flutter/issues'));
+          });
+        }
       });
 
       group('throws a CameraWebException', () {
@@ -1274,4 +1394,18 @@ void main() {
       });
     });
   });
+}
+
+/// Builds a [MediaTrackCapabilities] reporting [torch] as its torch
+/// capability, or omitting the capability entirely when [torch] is null.
+///
+/// Browser engines disagree on the shape of this value, so it cannot be built
+/// with the typed `MediaTrackCapabilities` constructor from `package:web`,
+/// which only accepts the `sequence<boolean>` the specification describes.
+MediaTrackCapabilities capabilitiesWithTorch(JSAny? torch) {
+  final capabilities = JSObject();
+  if (torch != null) {
+    capabilities.setProperty('torch'.toJS, torch);
+  }
+  return capabilities as MediaTrackCapabilities;
 }

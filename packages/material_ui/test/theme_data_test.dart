@@ -949,29 +949,32 @@ void main() {
     expect(theme.applyElevationOverlayColor, isTrue);
   });
 
-  testWidgets('splashFactory is InkSparkle only for Android non-web when useMaterial3 is true', (
-    WidgetTester tester,
-  ) async {
-    final theme = ThemeData();
+  testWidgets(
+    'splashFactory is InkSparkle only for Android non-web when useMaterial3 is true',
+    (WidgetTester tester) async {
+      final theme = ThemeData();
 
-    // Basic check that this theme is in fact using material 3.
-    expect(theme.useMaterial3, true);
+      // Basic check that this theme is in fact using material 3.
+      expect(theme.useMaterial3, true);
 
-    switch (debugDefaultTargetPlatformOverride!) {
-      case TargetPlatform.android:
-        if (kIsWeb) {
+      switch (debugDefaultTargetPlatformOverride!) {
+        case TargetPlatform.android:
+          if (kIsWeb) {
+            expect(theme.splashFactory, equals(InkRipple.splashFactory));
+          } else {
+            expect(theme.splashFactory, equals(InkSparkle.splashFactory));
+          }
+        case TargetPlatform.iOS:
+        case TargetPlatform.fuchsia:
+        case TargetPlatform.linux:
+        case TargetPlatform.macOS:
+        case TargetPlatform.windows:
           expect(theme.splashFactory, equals(InkRipple.splashFactory));
-        } else {
-          expect(theme.splashFactory, equals(InkSparkle.splashFactory));
-        }
-      case TargetPlatform.iOS:
-      case TargetPlatform.fuchsia:
-      case TargetPlatform.linux:
-      case TargetPlatform.macOS:
-      case TargetPlatform.windows:
-        expect(theme.splashFactory, equals(InkRipple.splashFactory));
-    }
-  }, variant: TargetPlatformVariant.all());
+      }
+    },
+    variant: TargetPlatformVariant.all(),
+    tags: 'reduced-web-test-set',
+  );
 
   testWidgets(
     'splashFactory is InkSplash for every platform scenario, including Android non-web, when useMaterial3 is false',
@@ -1732,9 +1735,8 @@ void main() {
     WidgetTester tester,
   ) async {
     const lightColors = ColorScheme.light();
-    final ThemeData theme = ThemeData.from(
-      colorScheme: lightColors,
-    ).copyWith(brightness: Brightness.dark);
+    final ThemeData theme = ThemeData.from(colorScheme: lightColors)
+        .copyWith(brightness: Brightness.dark);
 
     // The brightness parameter only overrides ColorScheme.brightness.
     expect(theme.brightness, equals(Brightness.dark));
