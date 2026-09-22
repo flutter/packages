@@ -1,0 +1,3 @@
+changelog: |
+  - Correct the `Divider.color` and `VerticalDivider.color` docstrings to describe the Material 3 fallback behavior (`ColorScheme.outlineVariant` when `ThemeData.useMaterial3` is true, otherwise `ThemeData.dividerColor`).
+version: patch
