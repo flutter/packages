@@ -202,7 +202,8 @@ class GoogleSignInTest {
     val params =
         GetCredentialRequestParams(
             false,
-            GetCredentialRequestGoogleIdOptionParams(false, false),
+            GetCredentialRequestGoogleIdOptionParams(
+                filterToAuthorized = false, autoSelectEnabled = false),
             "serverClientId",
             null,
             null)
@@ -259,7 +260,8 @@ class GoogleSignInTest {
     val params =
         GetCredentialRequestParams(
             true,
-            GetCredentialRequestGoogleIdOptionParams(false, false),
+            GetCredentialRequestGoogleIdOptionParams(
+                filterToAuthorized = false, autoSelectEnabled = false),
             "serverClientId",
             null,
             null)
@@ -286,7 +288,8 @@ class GoogleSignInTest {
     val params =
         GetCredentialRequestParams(
             false,
-            GetCredentialRequestGoogleIdOptionParams(false, false),
+            GetCredentialRequestGoogleIdOptionParams(
+                filterToAuthorized = false, autoSelectEnabled = false),
             "serverClientId",
             null,
             null)
@@ -320,7 +323,8 @@ class GoogleSignInTest {
     val params =
         GetCredentialRequestParams(
             true,
-            GetCredentialRequestGoogleIdOptionParams(false, false),
+            GetCredentialRequestGoogleIdOptionParams(
+                filterToAuthorized = false, autoSelectEnabled = false),
             "serverClientId",
             hostedDomain,
             null)
@@ -357,7 +361,8 @@ class GoogleSignInTest {
     val params =
         GetCredentialRequestParams(
             true,
-            GetCredentialRequestGoogleIdOptionParams(false, false),
+            GetCredentialRequestGoogleIdOptionParams(
+                filterToAuthorized = false, autoSelectEnabled = false),
             "serverClientId",
             null,
             nonce)
@@ -392,7 +397,8 @@ class GoogleSignInTest {
     val params =
         GetCredentialRequestParams(
             false,
-            GetCredentialRequestGoogleIdOptionParams(false, false),
+            GetCredentialRequestGoogleIdOptionParams(
+                filterToAuthorized = false, autoSelectEnabled = false),
             "serverClientId",
             null,
             nonce)
@@ -426,7 +432,8 @@ class GoogleSignInTest {
     val params =
         GetCredentialRequestParams(
             false,
-            GetCredentialRequestGoogleIdOptionParams(false, false),
+            GetCredentialRequestGoogleIdOptionParams(
+                filterToAuthorized = false, autoSelectEnabled = false),
             "serverClientId",
             null,
             null)
@@ -451,7 +458,12 @@ class GoogleSignInTest {
   fun getCredential_reportsMissingServerClientId() {
     val params =
         GetCredentialRequestParams(
-            false, GetCredentialRequestGoogleIdOptionParams(false, false), null, null, null)
+            false,
+            GetCredentialRequestGoogleIdOptionParams(
+                filterToAuthorized = false, autoSelectEnabled = false),
+            null,
+            null,
+            null)
 
     val callbackCalled = arrayOfNulls<Boolean>(1)
     plugin!!.activity = mockActivity
@@ -474,7 +486,8 @@ class GoogleSignInTest {
     val params =
         GetCredentialRequestParams(
             false,
-            GetCredentialRequestGoogleIdOptionParams(false, false),
+            GetCredentialRequestGoogleIdOptionParams(
+                filterToAuthorized = false, autoSelectEnabled = false),
             "serverClientId",
             null,
             null)
@@ -517,7 +530,8 @@ class GoogleSignInTest {
     val params =
         GetCredentialRequestParams(
             false,
-            GetCredentialRequestGoogleIdOptionParams(false, false),
+            GetCredentialRequestGoogleIdOptionParams(
+                filterToAuthorized = false, autoSelectEnabled = false),
             "serverClientId",
             null,
             null)
@@ -558,7 +572,8 @@ class GoogleSignInTest {
     val params =
         GetCredentialRequestParams(
             false,
-            GetCredentialRequestGoogleIdOptionParams(false, false),
+            GetCredentialRequestGoogleIdOptionParams(
+                filterToAuthorized = false, autoSelectEnabled = false),
             "serverClientId",
             null,
             null)
@@ -599,7 +614,8 @@ class GoogleSignInTest {
     val params =
         GetCredentialRequestParams(
             false,
-            GetCredentialRequestGoogleIdOptionParams(false, false),
+            GetCredentialRequestGoogleIdOptionParams(
+                filterToAuthorized = false, autoSelectEnabled = false),
             "serverClientId",
             null,
             null)
@@ -640,7 +656,8 @@ class GoogleSignInTest {
     val params =
         GetCredentialRequestParams(
             false,
-            GetCredentialRequestGoogleIdOptionParams(false, false),
+            GetCredentialRequestGoogleIdOptionParams(
+                filterToAuthorized = false, autoSelectEnabled = false),
             "serverClientId",
             null,
             null)
@@ -681,7 +698,8 @@ class GoogleSignInTest {
     val params =
         GetCredentialRequestParams(
             false,
-            GetCredentialRequestGoogleIdOptionParams(false, false),
+            GetCredentialRequestGoogleIdOptionParams(
+                filterToAuthorized = false, autoSelectEnabled = false),
             "serverClientId",
             null,
             null)
@@ -722,7 +740,8 @@ class GoogleSignInTest {
     val params =
         GetCredentialRequestParams(
             false,
-            GetCredentialRequestGoogleIdOptionParams(false, false),
+            GetCredentialRequestGoogleIdOptionParams(
+                filterToAuthorized = false, autoSelectEnabled = false),
             "serverClientId",
             null,
             null)
