@@ -93,7 +93,7 @@ class GoogleSignInTest {
     mockCloseable = MockitoAnnotations.openMocks(this)
 
     // Wire up basic mock functionality that is not test-specific.
-    Mockito.`when`<Resources?>(mockContext!!.getResources()).thenReturn(mockResources)
+    Mockito.`when`<Resources?>(mockContext!!.resources).thenReturn(mockResources)
     Mockito.`when`<String?>(mockGenericCredential!!.type)
         .thenReturn(GoogleIdTokenCredential.TYPE_GOOGLE_ID_TOKEN_CREDENTIAL)
     Mockito.`when`<Task<AuthorizationResult?>?>(
@@ -106,9 +106,9 @@ class GoogleSignInTest {
         .thenReturn(mockVoidTask)
     Mockito.`when`<Task<Void?>?>(mockVoidTask!!.addOnFailureListener(ArgumentMatchers.any()))
         .thenReturn(mockVoidTask)
-    Mockito.`when`<IntentSender?>(mockAuthorizationIntent!!.getIntentSender())
+    Mockito.`when`<IntentSender?>(mockAuthorizationIntent!!.intentSender)
         .thenReturn(mockAuthorizationIntentSender)
-    Mockito.`when`<Activity?>(mockActivityPluginBinding!!.getActivity()).thenReturn(mockActivity)
+    Mockito.`when`<Activity?>(mockActivityPluginBinding!!.activity).thenReturn(mockActivity)
 
     plugin =
         GoogleSignInPlugin.Delegate(
@@ -133,7 +133,7 @@ class GoogleSignInTest {
 
     Mockito.verify<ActivityPluginBinding?>(mockActivityPluginBinding)
         .addActivityResultListener(plugin!!)
-    Assert.assertEquals(mockActivity, plugin!!.getActivity())
+    Assert.assertEquals(mockActivity, plugin!!.activity)
   }
 
   @Test
@@ -146,7 +146,7 @@ class GoogleSignInTest {
 
     Mockito.verify<ActivityPluginBinding?>(mockActivityPluginBinding)
         .removeActivityResultListener(plugin!!)
-    Assert.assertNull(plugin!!.getActivity())
+    Assert.assertNull(plugin!!.activity)
   }
 
   @Test
@@ -158,7 +158,7 @@ class GoogleSignInTest {
 
     Mockito.verify<ActivityPluginBinding?>(mockActivityPluginBinding)
         .addActivityResultListener(plugin!!)
-    Assert.assertEquals(mockActivity, plugin!!.getActivity())
+    Assert.assertEquals(mockActivity, plugin!!.activity)
   }
 
   @Test
@@ -171,7 +171,7 @@ class GoogleSignInTest {
 
     Mockito.verify<ActivityPluginBinding?>(mockActivityPluginBinding)
         .removeActivityResultListener(plugin!!)
-    Assert.assertNull(plugin!!.getActivity())
+    Assert.assertNull(plugin!!.activity)
   }
 
   @Test
@@ -179,7 +179,7 @@ class GoogleSignInTest {
     val packageName = "fakePackageName"
     val serverClientId = "fakeServerClientId"
     val resourceId = 1
-    Mockito.`when`<String?>(mockContext!!.getPackageName()).thenReturn(packageName)
+    Mockito.`when`<String?>(mockContext!!.packageName).thenReturn(packageName)
     Mockito.`when`<Int?>(
             mockResources!!.getIdentifier("default_web_client_id", "string", packageName))
         .thenReturn(resourceId)
@@ -192,7 +192,7 @@ class GoogleSignInTest {
   @Test
   fun getGoogleServicesJsonServerClientId_returnsNullIfNotFound() {
     val packageName = "fakePackageName"
-    Mockito.`when`<String?>(mockContext!!.getPackageName()).thenReturn(packageName)
+    Mockito.`when`<String?>(mockContext!!.packageName).thenReturn(packageName)
     Mockito.`when`<Int?>(
             mockResources!!.getIdentifier("default_web_client_id", "string", packageName))
         .thenReturn(0)
@@ -225,7 +225,7 @@ class GoogleSignInTest {
     Mockito.`when`<String?>(mockGoogleCredential!!.idToken).thenReturn(idToken)
 
     val callbackCalled = arrayOfNulls<Boolean>(1)
-    plugin!!.setActivity(mockActivity)
+    plugin!!.activity = mockActivity
     plugin!!.getCredential(
         params,
         { reply ->
@@ -268,7 +268,7 @@ class GoogleSignInTest {
             null,
             null)
 
-    plugin!!.setActivity(mockActivity)
+    plugin!!.activity = mockActivity
     plugin!!.getCredential(params, {})
 
     val captor =
@@ -297,7 +297,7 @@ class GoogleSignInTest {
             null,
             null)
 
-    plugin!!.setActivity(mockActivity)
+    plugin!!.activity = mockActivity
     plugin!!.getCredential(
         params,
         {
@@ -333,7 +333,7 @@ class GoogleSignInTest {
             hostedDomain,
             null)
 
-    plugin!!.setActivity(mockActivity)
+    plugin!!.activity = mockActivity
     plugin!!.getCredential(
         params,
         {
@@ -372,7 +372,7 @@ class GoogleSignInTest {
             null,
             nonce)
 
-    plugin!!.setActivity(mockActivity)
+    plugin!!.activity = mockActivity
     plugin!!.getCredential(
         params,
         {
@@ -409,7 +409,7 @@ class GoogleSignInTest {
             null,
             nonce)
 
-    plugin!!.setActivity(mockActivity)
+    plugin!!.activity = mockActivity
     plugin!!.getCredential(
         params,
         {
@@ -446,7 +446,7 @@ class GoogleSignInTest {
             null)
 
     val callbackCalled = arrayOfNulls<Boolean>(1)
-    plugin!!.setActivity(null)
+    plugin!!.activity = null
     plugin!!.getCredential(
         params,
         { reply ->
@@ -468,7 +468,7 @@ class GoogleSignInTest {
             false, GetCredentialRequestGoogleIdOptionParams(false, false), null, null, null)
 
     val callbackCalled = arrayOfNulls<Boolean>(1)
-    plugin!!.setActivity(mockActivity)
+    plugin!!.activity = mockActivity
     plugin!!.getCredential(
         params,
         { reply ->
@@ -494,7 +494,7 @@ class GoogleSignInTest {
             null)
 
     val callbackCalled = arrayOfNulls<Boolean>(1)
-    plugin!!.setActivity(mockActivity)
+    plugin!!.activity = mockActivity
     plugin!!.getCredential(
         params,
         { reply ->
@@ -537,7 +537,7 @@ class GoogleSignInTest {
             null)
 
     val callbackCalled = arrayOfNulls<Boolean>(1)
-    plugin!!.setActivity(mockActivity)
+    plugin!!.activity = mockActivity
     plugin!!.getCredential(
         params,
         { reply ->
@@ -578,7 +578,7 @@ class GoogleSignInTest {
             null)
 
     val callbackCalled = arrayOfNulls<Boolean>(1)
-    plugin!!.setActivity(mockActivity)
+    plugin!!.activity = mockActivity
     plugin!!.getCredential(
         params,
         { reply ->
@@ -619,7 +619,7 @@ class GoogleSignInTest {
             null)
 
     val callbackCalled = arrayOfNulls<Boolean>(1)
-    plugin!!.setActivity(mockActivity)
+    plugin!!.activity = mockActivity
     plugin!!.getCredential(
         params,
         { reply ->
@@ -660,7 +660,7 @@ class GoogleSignInTest {
             null)
 
     val callbackCalled = arrayOfNulls<Boolean>(1)
-    plugin!!.setActivity(mockActivity)
+    plugin!!.activity = mockActivity
     plugin!!.getCredential(
         params,
         { reply ->
@@ -701,7 +701,7 @@ class GoogleSignInTest {
             null)
 
     val callbackCalled = arrayOfNulls<Boolean>(1)
-    plugin!!.setActivity(mockActivity)
+    plugin!!.activity = mockActivity
     plugin!!.getCredential(
         params,
         { reply ->
@@ -742,7 +742,7 @@ class GoogleSignInTest {
             null)
 
     val callbackCalled = arrayOfNulls<Boolean>(1)
-    plugin!!.setActivity(mockActivity)
+    plugin!!.activity = mockActivity
     plugin!!.getCredential(
         params,
         { reply ->
@@ -798,9 +798,9 @@ class GoogleSignInTest {
         .authorize(authRequestCaptor.capture())
 
     val request = authRequestCaptor.getValue()
-    Assert.assertNull(request.getHostedDomain())
-    Assert.assertNull(request.getServerClientId())
-    Assert.assertNull(request.getAccount())
+    Assert.assertNull(request.hostedDomain)
+    Assert.assertNull(request.serverClientId)
+    Assert.assertNull(request.account)
   }
 
   @Test
@@ -832,10 +832,10 @@ class GoogleSignInTest {
         .authorize(authRequestCaptor.capture())
 
     val request = authRequestCaptor.getValue()
-    Assert.assertEquals(hostedDomain, request.getHostedDomain())
-    Assert.assertEquals(serverClientId, request.getServerClientId())
+    Assert.assertEquals(hostedDomain, request.hostedDomain)
+    Assert.assertEquals(serverClientId, request.serverClientId)
     // Account is mostly opaque, so just verify that one was set if an email was provided.
-    Assert.assertNotNull(request.getAccount())
+    Assert.assertNotNull(request.account)
   }
 
   @Test
@@ -950,7 +950,7 @@ class GoogleSignInTest {
             mockAuthorizationClient!!.authorize(ArgumentMatchers.any()))
         .thenReturn(mockAuthorizationTask)
 
-    plugin!!.setActivity(null)
+    plugin!!.activity = null
     val callbackCalled = arrayOfNulls<Boolean>(1)
     plugin!!.authorize(
         params,
@@ -998,7 +998,7 @@ class GoogleSignInTest {
       Assert.fail()
     }
 
-    plugin!!.setActivity(mockActivity)
+    plugin!!.activity = mockActivity
     val callbackCalled = arrayOfNulls<Boolean>(1)
     plugin!!.authorize(
         params,
@@ -1025,7 +1025,7 @@ class GoogleSignInTest {
     try {
       Mockito.verify<Activity?>(mockActivity)
           .startIntentSenderForResult(
-              mockAuthorizationIntent!!.getIntentSender(),
+              mockAuthorizationIntent!!.intentSender,
               GoogleSignInPlugin.Delegate.REQUEST_CODE_AUTHORIZE,
               null,
               0,
@@ -1067,7 +1067,7 @@ class GoogleSignInTest {
       Assert.fail()
     }
 
-    plugin!!.setActivity(mockActivity)
+    plugin!!.activity = mockActivity
     val callbackCount = intArrayOf(0)
     plugin!!.authorize(params, true, { callbackCount[0] += 1 })
 
@@ -1116,7 +1116,7 @@ class GoogleSignInTest {
       Assert.fail()
     }
 
-    plugin!!.setActivity(mockActivity)
+    plugin!!.activity = mockActivity
     val callbackCalled = arrayOfNulls<Boolean>(1)
     plugin!!.authorize(
         params,
@@ -1161,7 +1161,7 @@ class GoogleSignInTest {
       Assert.fail()
     }
 
-    plugin!!.setActivity(mockActivity)
+    plugin!!.activity = mockActivity
     val callbackCalled = arrayOfNulls<Boolean>(1)
     plugin!!.authorize(
         params,
@@ -1187,7 +1187,7 @@ class GoogleSignInTest {
     try {
       Mockito.verify<Activity?>(mockActivity)
           .startIntentSenderForResult(
-              mockAuthorizationIntent!!.getIntentSender(),
+              mockAuthorizationIntent!!.intentSender,
               GoogleSignInPlugin.Delegate.REQUEST_CODE_AUTHORIZE,
               null,
               0,
@@ -1266,10 +1266,10 @@ class GoogleSignInTest {
     callbackCaptor.getValue()!!.onSuccess(null)
 
     val request = requestCaptor.getValue()
-    Assert.assertEquals(scopes.size.toLong(), request.getScopes().size.toLong())
-    Assert.assertEquals(scopes.get(0), request.getScopes().get(0).getScopeUri())
+    Assert.assertEquals(scopes.size.toLong(), request.scopes.size.toLong())
+    Assert.assertEquals(scopes.get(0), request.scopes.get(0).scopeUri)
     // Account is mostly opaque, so just verify that one was set.
-    Assert.assertNotNull(request.getAccount())
+    Assert.assertNotNull(request.account)
   }
 
   @Test
@@ -1292,7 +1292,7 @@ class GoogleSignInTest {
     callbackCaptor.getValue()!!.onSuccess(null)
 
     val request = authRequestCaptor.getValue()
-    Assert.assertEquals(testToken, request.getToken())
+    Assert.assertEquals(testToken, request.token)
   }
 
   private fun mockSuccessAuthorizationResult(
@@ -1302,9 +1302,9 @@ class GoogleSignInTest {
   ): AuthorizationResult {
     val mockResult = Mockito.mock<AuthorizationResult>(AuthorizationResult::class.java)
     Mockito.`when`<Boolean?>(mockResult.hasResolution()).thenReturn(false)
-    Mockito.`when`<String?>(mockResult.getAccessToken()).thenReturn(accessToken)
-    Mockito.`when`<String?>(mockResult.getServerAuthCode()).thenReturn(serverAuthCode)
-    Mockito.`when`<MutableList<String?>?>(mockResult.getGrantedScopes()).thenReturn(scopes)
+    Mockito.`when`<String?>(mockResult.accessToken).thenReturn(accessToken)
+    Mockito.`when`<String?>(mockResult.serverAuthCode).thenReturn(serverAuthCode)
+    Mockito.`when`<MutableList<String?>?>(mockResult.grantedScopes).thenReturn(scopes)
     return mockResult
   }
 
@@ -1313,7 +1313,7 @@ class GoogleSignInTest {
   ): AuthorizationResult {
     val mockResult = Mockito.mock<AuthorizationResult>(AuthorizationResult::class.java)
     Mockito.`when`<Boolean?>(mockResult.hasResolution()).thenReturn(true)
-    Mockito.`when`<PendingIntent?>(mockResult.getPendingIntent()).thenReturn(pendingIntent)
+    Mockito.`when`<PendingIntent?>(mockResult.pendingIntent).thenReturn(pendingIntent)
     return mockResult
   }
 }
