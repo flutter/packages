@@ -732,6 +732,109 @@ test_on: !vm && firefox
       );
     });
 
+    test('skips packages where no tests match tag (exit code 79)', () async {
+      createFakePlugin('plugin1', packagesDir, extraFiles: <String>['test/empty_test.dart']);
+      createFakePlugin('plugin2', packagesDir, extraFiles: <String>['test/empty_test.dart']);
+
+      processRunner.mockProcessesForExecutable[getFlutterCommand(mockPlatform)] = <FakeProcessInfo>[
+        FakeProcessInfo(MockProcess(exitCode: 79), <String>[
+          'test',
+        ]), // plugin 1 has no matching tests
+        FakeProcessInfo(MockProcess(), <String>['test']), // plugin 2 test passes
+      ];
+
+      final File configFile = packagesDir.fileSystem.file('config.yaml');
+      configFile.writeAsStringSync('''
+plugin1: reduced-web-test-set
+plugin2: reduced-web-test-set
+''');
+
+      final List<String> output = await runCapturingPrint(runner, <String>[
+        'dart-test',
+        '--package-tags=${configFile.path}',
+      ]);
+
+      expect(
+        output,
+        containsAllInOrder(<Matcher>[
+          contains('SKIPPING: No tests match the requested tag selector.'),
+          contains('plugin1 - skipped'),
+          contains('plugin2 - ran'),
+        ]),
+      );
+    });
+
+    test('package-tags flag applies tags only to matching packages', () async {
+      final RepositoryPackage pluginA = createFakePlugin(
+        'a',
+        packagesDir,
+        extraFiles: <String>['test/empty_test.dart', 'example/test/empty_test.dart'],
+      );
+      final RepositoryPackage packageB = createFakePackage(
+        'b',
+        packagesDir,
+        extraFiles: <String>['test/empty_test.dart'],
+      );
+
+      final File configFile = packagesDir.fileSystem.file('config.yaml');
+      configFile.writeAsStringSync('''
+a: reduced-web-test-set
+''');
+
+      await runCapturingPrint(runner, <String>['dart-test', '--package-tags=${configFile.path}']);
+
+      expect(
+        processRunner.recordedCalls,
+        orderedEquals(<ProcessCall>[
+          ProcessCall(getFlutterCommand(mockPlatform), const <String>[
+            'test',
+            '--color',
+            '--tags=reduced-web-test-set',
+          ], pluginA.path),
+          ProcessCall(getFlutterCommand(mockPlatform), const <String>[
+            'test',
+            '--color',
+            '--tags=reduced-web-test-set',
+          ], getExampleDir(pluginA).path),
+          ProcessCall('dart', const <String>['pub', 'get'], packageB.path),
+          ProcessCall('dart', const <String>['run', 'test'], packageB.path),
+        ]),
+      );
+    });
+
+    test('package-tags flag fails if configuration file does not exist', () async {
+      createFakePlugin('a', packagesDir, extraFiles: <String>['test/empty_test.dart']);
+
+      Error? commandError;
+      final List<String> output = await runCapturingPrint(runner, <String>[
+        'dart-test',
+        '--package-tags=non_existent_file.yaml',
+      ], errorHandler: (Error e) => commandError = e);
+
+      expect(commandError, isA<ToolExit>());
+      expect(
+        output,
+        containsAllInOrder(<Matcher>[
+          contains('The package tags file "non_existent_file.yaml" does not exist.'),
+        ]),
+      );
+    });
+
+    test('package-tags flag fails if configuration file is not a YAML map', () async {
+      createFakePlugin('a', packagesDir, extraFiles: <String>['test/empty_test.dart']);
+      final File configFile = packagesDir.fileSystem.file('invalid.yaml');
+      configFile.writeAsStringSync('- item1\n- item2');
+
+      Error? commandError;
+      final List<String> output = await runCapturingPrint(runner, <String>[
+        'dart-test',
+        '--package-tags=${configFile.path}',
+      ], errorHandler: (Error e) => commandError = e);
+
+      expect(commandError, isA<ToolExit>());
+      expect(output, containsAllInOrder(<Matcher>[contains('is not a valid YAML map.')]));
+    });
+
     group('file filtering', () {
       test('runs command for changes to Dart source', () async {
         createFakePackage('package_a', packagesDir);

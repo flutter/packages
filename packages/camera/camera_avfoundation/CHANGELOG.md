@@ -2,6 +2,7 @@
 
 * Adds support for zero-shutter-lag still image capture via
   `isZeroShutterLagSupported` and `setZeroShutterLagEnabled` (iOS 17+).
+* Updates minimum supported SDK version to Flutter 3.41/Dart 3.11.
 
 ## 0.10.3
 
