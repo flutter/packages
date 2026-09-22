@@ -12,8 +12,8 @@ import androidx.annotation.RestrictTo;
 import androidx.annotation.VisibleForTesting;
 import androidx.media3.common.MediaItem;
 import androidx.media3.common.util.UnstableApi;
-import androidx.media3.exoplayer.DefaultLoadControl;
 import androidx.media3.exoplayer.ExoPlayer;
+import androidx.media3.exoplayer.LoadControl;
 import io.flutter.plugins.videoplayer.ExoPlayerEventListener;
 import io.flutter.plugins.videoplayer.VideoAsset;
 import io.flutter.plugins.videoplayer.VideoPlayer;
@@ -58,21 +58,9 @@ public final class TextureVideoPlayer extends VideoPlayer implements SurfaceProd
         options,
         () -> {
           ExoPlayer.Builder builder = new ExoPlayer.Builder(context);
-          if (options.backBufferDurationMs != null) {
-            if (options.backBufferDurationMs < 0) {
-              throw new IllegalArgumentException("backBufferDurationMs must be at least 0");
-            }
-            if (options.backBufferDurationMs > 0) {
-              // Clamp the value to ensure it fits within the int range expected by
-              // DefaultLoadControl.
-              int backBufferInt =
-                  (int) Math.min(options.backBufferDurationMs.longValue(), Integer.MAX_VALUE);
-              DefaultLoadControl loadControl =
-                  new DefaultLoadControl.Builder()
-                      .setBackBuffer(backBufferInt, /* retainBackBufferFromKeyframe= */ true)
-                      .build();
-              builder.setLoadControl(loadControl);
-            }
+          LoadControl loadControl = buildLoadControl(options);
+          if (loadControl != null) {
+            builder.setLoadControl(loadControl);
           }
           androidx.media3.exoplayer.trackselection.DefaultTrackSelector trackSelector =
               new androidx.media3.exoplayer.trackselection.DefaultTrackSelector(context);

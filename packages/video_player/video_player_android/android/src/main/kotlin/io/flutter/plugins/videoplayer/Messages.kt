@@ -520,7 +520,8 @@ data class CreationOptions(
     val formatHint: PlatformVideoFormat? = null,
     val httpHeaders: Map<String, String>,
     val userAgent: String? = null,
-    val backBufferDurationMs: Long? = null
+    val backBufferDurationMs: Long? = null,
+    val forwardBufferDurationMs: Long? = null
 ) {
   companion object {
     fun fromList(pigeonVar_list: List<Any?>): CreationOptions {
@@ -529,7 +530,9 @@ data class CreationOptions(
       val httpHeaders = pigeonVar_list[2] as Map<String, String>
       val userAgent = pigeonVar_list[3] as String?
       val backBufferDurationMs = pigeonVar_list[4] as Long?
-      return CreationOptions(uri, formatHint, httpHeaders, userAgent, backBufferDurationMs)
+      val forwardBufferDurationMs = pigeonVar_list[5] as Long?
+      return CreationOptions(
+          uri, formatHint, httpHeaders, userAgent, backBufferDurationMs, forwardBufferDurationMs)
     }
   }
 
@@ -540,6 +543,7 @@ data class CreationOptions(
         httpHeaders,
         userAgent,
         backBufferDurationMs,
+        forwardBufferDurationMs,
     )
   }
 
@@ -555,7 +559,8 @@ data class CreationOptions(
         MessagesPigeonUtils.deepEquals(this.formatHint, other.formatHint) &&
         MessagesPigeonUtils.deepEquals(this.httpHeaders, other.httpHeaders) &&
         MessagesPigeonUtils.deepEquals(this.userAgent, other.userAgent) &&
-        MessagesPigeonUtils.deepEquals(this.backBufferDurationMs, other.backBufferDurationMs)
+        MessagesPigeonUtils.deepEquals(this.backBufferDurationMs, other.backBufferDurationMs) &&
+        MessagesPigeonUtils.deepEquals(this.forwardBufferDurationMs, other.forwardBufferDurationMs)
   }
 
   override fun hashCode(): Int {
@@ -565,11 +570,12 @@ data class CreationOptions(
     result = 31 * result + MessagesPigeonUtils.deepHash(this.httpHeaders)
     result = 31 * result + MessagesPigeonUtils.deepHash(this.userAgent)
     result = 31 * result + MessagesPigeonUtils.deepHash(this.backBufferDurationMs)
+    result = 31 * result + MessagesPigeonUtils.deepHash(this.forwardBufferDurationMs)
     return result
   }
 
   override fun toString(): String {
-    return "CreationOptions(uri=$uri, formatHint=$formatHint, httpHeaders=$httpHeaders, userAgent=$userAgent, backBufferDurationMs=$backBufferDurationMs)"
+    return "CreationOptions(uri=$uri, formatHint=$formatHint, httpHeaders=$httpHeaders, userAgent=$userAgent, backBufferDurationMs=$backBufferDurationMs, forwardBufferDurationMs=$forwardBufferDurationMs)"
   }
 }
 
