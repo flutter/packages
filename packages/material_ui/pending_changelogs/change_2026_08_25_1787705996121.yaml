@@ -1,3 +1,0 @@
-changelog: |
-  - Adds an alternative keyboard input method for RangeSlider in NavigationMode.directional.
-version: minor
