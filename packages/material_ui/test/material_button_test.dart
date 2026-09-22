@@ -301,6 +301,32 @@ void main() {
     expect(material.textStyle!.color, Colors.red);
   });
 
+  for (final Color? disabledTextColor in <Color?>[null, Colors.red]) {
+    testWidgets(
+      'Disabled MaterialButton resolves stateful textColor with disabledTextColor=$disabledTextColor',
+      (WidgetTester tester) async {
+        await tester.pumpWidget(
+          Directionality(
+            textDirection: TextDirection.ltr,
+            child: MaterialButton(
+              onPressed: null,
+              textColor: WidgetStateColor.resolveWith((Set<WidgetState> states) {
+                return states.contains(WidgetState.disabled) ? Colors.grey : Colors.blue;
+              }),
+              disabledTextColor: disabledTextColor,
+              child: const Text('button'),
+            ),
+          ),
+        );
+
+        final Material material = tester.widget<Material>(
+          find.descendant(of: find.byType(MaterialButton), matching: find.byType(Material)),
+        );
+        expect(material.textStyle!.color, Colors.grey);
+      },
+    );
+  }
+
   testWidgets(
     'Default MaterialButton meets a11y contrast guidelines',
     (WidgetTester tester) async {

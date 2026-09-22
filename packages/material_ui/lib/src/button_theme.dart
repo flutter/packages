@@ -396,6 +396,9 @@ class ButtonThemeData with Diagnosticable {
   /// If [MaterialButton.textColor] is a [WidgetStateProperty<Color>], it will be
   /// used as the `disabledTextColor`. It will be resolved in the [WidgetState.disabled] state.
   Color getDisabledTextColor(MaterialButton button) {
+    if (button.textColor is WidgetStateProperty<Color>) {
+      return button.textColor!;
+    }
     return button.disabledTextColor ?? button.textColor ?? colorScheme!.onSurface.withOpacity(0.38);
   }
 
