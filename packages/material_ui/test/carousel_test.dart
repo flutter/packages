@@ -2362,12 +2362,61 @@ void main() {
     for (var i = 1; i <= 7; i++) {
       await tester.drag(find.byType(CarouselView), const Offset(-200, 0));
       await tester.pumpAndSettle();
+      expect(controller.activeIndex, inInclusiveRange(0, 4));
     }
 
     // Scroll backward by dragging right.
     for (var i = 1; i <= 7; i++) {
       await tester.drag(find.byType(CarouselView), const Offset(200, 0));
       await tester.pumpAndSettle();
+      expect(controller.activeIndex, inInclusiveRange(0, 4));
+    }
+
+    // Verify the onIndexChanged callback was invoked with correct wrapped indices.
+    expect(reportedIndices.length, greaterThan(0));
+    for (final index in reportedIndices) {
+      expect(index, inInclusiveRange(0, 4));
+    }
+  });
+
+  testWidgets('CarouselView infinite activeIndex wraps correctly within bounds', (
+    WidgetTester tester,
+  ) async {
+    final controller = CarouselController();
+    addTearDown(controller.dispose);
+    final reportedIndices = <int>[];
+
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Scaffold(
+          body: CarouselView(
+            itemExtent: 200,
+            itemSnapping: true,
+            infinite: true,
+            controller: controller,
+            onIndexChanged: (int index) {
+              reportedIndices.add(index);
+            },
+            children: List<Widget>.generate(5, (int index) {
+              return Center(child: Text('Item $index'));
+            }),
+          ),
+        ),
+      ),
+    );
+
+    // Scroll forward by dragging left.
+    for (var i = 1; i <= 7; i++) {
+      await tester.drag(find.byType(CarouselView), const Offset(-200, 0));
+      await tester.pumpAndSettle();
+      expect(controller.activeIndex, inInclusiveRange(0, 4));
+    }
+
+    // Scroll backward by dragging right.
+    for (var i = 1; i <= 7; i++) {
+      await tester.drag(find.byType(CarouselView), const Offset(200, 0));
+      await tester.pumpAndSettle();
+      expect(controller.activeIndex, inInclusiveRange(0, 4));
     }
 
     // Verify the onIndexChanged callback was invoked with correct wrapped indices.
