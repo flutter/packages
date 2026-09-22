@@ -88,7 +88,88 @@ void main() {
       expect(find.text('Home'), findsOneWidget);
     });
   });
+
+  // Regression test for https://github.com/flutter/flutter/issues/193098
+  group('Inactive StatefulShellRoute branch with an active sub-route', () {
+    testWidgets('does not prevent the root route from being popped', (WidgetTester tester) async {
+      await tester.pumpWidget(const _MultiBranchTestApp());
+      expect(find.text('Home'), findsOneWidget);
+
+      await tester.tap(find.byKey(const Key('toSettings')));
+      await tester.pumpAndSettle();
+      expect(find.text('Settings'), findsOneWidget);
+
+      await tester.tap(find.byKey(const Key('toGeneral')));
+      await tester.pumpAndSettle();
+      expect(find.text('General'), findsOneWidget);
+
+      // Leave the Settings branch without popping its sub-route first.
+      await tester.tap(find.byKey(const Key('toHome')));
+      await tester.pumpAndSettle();
+      expect(find.text('Home'), findsOneWidget);
+
+      // The Home branch has nothing to pop, so the system back must not be
+      // handled by the framework, allowing the platform to close the app.
+      expect(await tester.binding.handlePopRoute(), isFalse);
+    });
+
+    testWidgets('keeps popping its sub-route once the branch is active again', (
+      WidgetTester tester,
+    ) async {
+      await tester.pumpWidget(const _MultiBranchTestApp());
+
+      await tester.tap(find.byKey(const Key('toSettings')));
+      await tester.pumpAndSettle();
+      await tester.tap(find.byKey(const Key('toGeneral')));
+      await tester.pumpAndSettle();
+      await tester.tap(find.byKey(const Key('toHome')));
+      await tester.pumpAndSettle();
+
+      await tester.tap(find.byKey(const Key('toSettings')));
+      await tester.pumpAndSettle();
+      expect(find.text('General'), findsOneWidget);
+
+      expect(await tester.binding.handlePopRoute(), isTrue);
+      await tester.pumpAndSettle();
+      expect(find.text('Settings'), findsOneWidget);
+
+      // The Settings branch no longer has a sub-route, so back is unhandled.
+      expect(await tester.binding.handlePopRoute(), isFalse);
+    });
+
+    testWidgets('only the active branch guards against popping the shell', (
+      WidgetTester tester,
+    ) async {
+      await tester.pumpWidget(const _MultiBranchTestApp());
+      // Only the Navigator of the initial branch has been created so far.
+      expect(_branchCanPopValues(tester), <bool>[true]);
+
+      await tester.tap(find.byKey(const Key('toSettings')));
+      await tester.pumpAndSettle();
+      await tester.tap(find.byKey(const Key('toGeneral')));
+      await tester.pumpAndSettle();
+
+      // The active Settings branch has a sub-route, so the shell itself must
+      // stay protected against being popped, for example by an iOS back
+      // gesture.
+      expect(_branchCanPopValues(tester), <bool>[true, false]);
+
+      await tester.tap(find.byKey(const Key('toHome')));
+      await tester.pumpAndSettle();
+
+      // Settings is now inactive and must no longer veto pops, even though it
+      // still has an active sub-route.
+      expect(_branchCanPopValues(tester), <bool>[true, true]);
+    });
+  });
 }
+
+/// The `canPop` value of the [PopScope] wrapping each branch Navigator, in
+/// branch order.
+List<bool> _branchCanPopValues(WidgetTester tester) => tester
+    .widgetList(find.byWidgetPredicate((Widget widget) => widget is PopScope, skipOffstage: false))
+    .map((Widget widget) => (widget as PopScope<dynamic>).canPop)
+    .toList();
 
 class _TestApp extends StatefulWidget {
   const _TestApp();
@@ -151,6 +232,92 @@ class _TestAppState extends State<_TestApp> {
                         },
                       ),
                     ],
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ],
+      ),
+    ],
+  );
+
+  @override
+  void dispose() {
+    _router.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp.router(routerConfig: _router);
+  }
+}
+
+class _MultiBranchTestApp extends StatefulWidget {
+  const _MultiBranchTestApp();
+
+  @override
+  State<_MultiBranchTestApp> createState() => _MultiBranchTestAppState();
+}
+
+class _MultiBranchTestAppState extends State<_MultiBranchTestApp> {
+  final GoRouter _router = GoRouter(
+    initialLocation: '/home',
+    routes: <RouteBase>[
+      StatefulShellRoute.indexedStack(
+        builder:
+            (BuildContext context, GoRouterState state, StatefulNavigationShell navigationShell) {
+              return Scaffold(
+                body: navigationShell,
+                bottomNavigationBar: Row(
+                  children: <Widget>[
+                    FilledButton(
+                      key: const Key('toHome'),
+                      onPressed: () => navigationShell.goBranch(0),
+                      child: const Text('To Home'),
+                    ),
+                    FilledButton(
+                      key: const Key('toSettings'),
+                      onPressed: () => navigationShell.goBranch(1),
+                      child: const Text('To Settings'),
+                    ),
+                  ],
+                ),
+              );
+            },
+        branches: <StatefulShellBranch>[
+          StatefulShellBranch(
+            routes: <RouteBase>[
+              GoRoute(
+                path: '/home',
+                builder: (BuildContext context, GoRouterState state) {
+                  return const Scaffold(body: Center(child: Text('Home')));
+                },
+              ),
+            ],
+          ),
+          StatefulShellBranch(
+            routes: <RouteBase>[
+              GoRoute(
+                path: '/settings',
+                builder: (BuildContext context, GoRouterState state) {
+                  return Scaffold(
+                    body: Center(
+                      child: FilledButton(
+                        key: const Key('toGeneral'),
+                        onPressed: () => GoRouter.of(context).go('/settings/general'),
+                        child: const Text('Settings'),
+                      ),
+                    ),
+                  );
+                },
+                routes: <RouteBase>[
+                  GoRoute(
+                    path: 'general',
+                    builder: (BuildContext context, GoRouterState state) {
+                      return const Scaffold(body: Center(child: Text('General')));
+                    },
                   ),
                 ],
               ),

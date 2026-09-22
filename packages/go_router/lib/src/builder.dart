@@ -7,6 +7,7 @@ import 'package:flutter/widgets.dart';
 import 'configuration.dart';
 import 'logging.dart';
 import 'match.dart';
+import 'misc/active_branch_scope.dart';
 import 'misc/error_screen.dart';
 import 'misc/errors.dart';
 import 'pages/cupertino.dart';
@@ -308,29 +309,44 @@ class _CustomNavigatorState extends State<_CustomNavigator> {
             List<NavigatorObserver>? observers,
             String? restorationScopeId,
           ) {
-            return PopScope(
-              // Prevent ShellRoute from being popped, for example
-              // by an iOS back gesture, when the route has active sub-routes.
-              // TODO(LukasMirbt): Remove when minimum flutter version includes
-              // https://github.com/flutter/flutter/pull/152330.
-              canPop: match.matches.length == 1,
-              child: _CustomNavigator(
-                // The state needs to persist across rebuild.
-                key: GlobalObjectKey(navigatorKey.hashCode),
-                navigatorRestorationId: restorationScopeId,
-                navigatorKey: navigatorKey,
-                matches: match.matches,
-                matchList: matchList,
-                inheritedMetadata: state.metadata,
-                configuration: widget.configuration,
-                observers: observers ?? const <NavigatorObserver>[],
-                onPopPageWithRouteMatch: widget.onPopPageWithRouteMatch,
-                // This is used to recursively build pages under this shell route.
-                errorBuilder: widget.errorBuilder,
-                errorPageBuilder: widget.errorPageBuilder,
-                requestFocus: widget.requestFocus,
-                isShellNavigator: true,
-              ),
+            final Widget navigator = _CustomNavigator(
+              // The state needs to persist across rebuild.
+              key: GlobalObjectKey(navigatorKey.hashCode),
+              navigatorRestorationId: restorationScopeId,
+              navigatorKey: navigatorKey,
+              matches: match.matches,
+              matchList: matchList,
+              inheritedMetadata: state.metadata,
+              configuration: widget.configuration,
+              observers: observers ?? const <NavigatorObserver>[],
+              onPopPageWithRouteMatch: widget.onPopPageWithRouteMatch,
+              // This is used to recursively build pages under this shell route.
+              errorBuilder: widget.errorBuilder,
+              errorPageBuilder: widget.errorPageBuilder,
+              requestFocus: widget.requestFocus,
+              isShellNavigator: true,
+            );
+            // The Builder gives the PopScope a context below the
+            // ActiveBranchScope of the branch this Navigator belongs to, so
+            // that canPop is kept up to date when the active branch changes.
+            return Builder(
+              builder: (BuildContext context) {
+                return PopScope(
+                  // Prevent ShellRoute from being popped, for example
+                  // by an iOS back gesture, when the route has active
+                  // sub-routes.
+                  //
+                  // Inactive StatefulShellRoute branches stay mounted, and
+                  // their PopScope is registered on the same enclosing route
+                  // as the one of the active branch. Since a single doNotPop
+                  // vote suppresses the pop for all of them, only the active
+                  // branch may hold back a pop.
+                  // TODO(LukasMirbt): Remove when minimum flutter version includes
+                  // https://github.com/flutter/flutter/pull/152330.
+                  canPop: match.matches.length == 1 || !ActiveBranchScope.isActiveBranchOf(context),
+                  child: navigator,
+                );
+              },
             );
           },
     );
