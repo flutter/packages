@@ -223,20 +223,18 @@ class GoogleSignInTest {
 
     val callbackCalled = arrayOfNulls<Boolean>(1)
     plugin!!.activity = mockActivity
-    plugin!!.getCredential(
-        params,
-        { reply ->
-          callbackCalled[0] = true
-          Assert.assertTrue(reply.isSuccess)
-          val result = reply.getOrNull()
-          Assert.assertTrue(result is GetCredentialSuccess)
-          val credential = (result as GetCredentialSuccess).credential
-          Assert.assertEquals(displayName, credential.displayName)
-          Assert.assertEquals(givenName, credential.givenName)
-          Assert.assertEquals(familyName, credential.familyName)
-          Assert.assertEquals(email, credential.email)
-          Assert.assertEquals(idToken, credential.idToken)
-        })
+    plugin!!.getCredential(params) { reply ->
+      callbackCalled[0] = true
+      Assert.assertTrue(reply.isSuccess)
+      val result = reply.getOrNull()
+      Assert.assertTrue(result is GetCredentialSuccess)
+      val credential = (result as GetCredentialSuccess).credential
+      Assert.assertEquals(displayName, credential.displayName)
+      Assert.assertEquals(givenName, credential.givenName)
+      Assert.assertEquals(familyName, credential.familyName)
+      Assert.assertEquals(email, credential.email)
+      Assert.assertEquals(idToken, credential.idToken)
+    }
 
     val callbackCaptor =
         ArgumentCaptor.forClass<
@@ -267,7 +265,7 @@ class GoogleSignInTest {
             null)
 
     plugin!!.activity = mockActivity
-    plugin!!.getCredential(params, {})
+    plugin!!.getCredential(params) {}
 
     val captor = ArgumentCaptor.forClass(GetCredentialRequest::class.java)
     Mockito.verify<CredentialManager?>(mockCredentialManager)
@@ -295,13 +293,11 @@ class GoogleSignInTest {
             null)
 
     plugin!!.activity = mockActivity
-    plugin!!.getCredential(
-        params,
-        {
-          // This test doesn't trigger the getCredentialsAsync callback that would call this,
-          // so if this is reached something has gone wrong.
-          Assert.fail()
-        })
+    plugin!!.getCredential(params) {
+      // This test doesn't trigger the getCredentialsAsync callback that would call this,
+      // so if this is reached something has gone wrong.
+      Assert.fail()
+    }
 
     val captor = ArgumentCaptor.forClass(GetCredentialRequest::class.java)
     Mockito.verify<CredentialManager?>(mockCredentialManager)
@@ -330,13 +326,11 @@ class GoogleSignInTest {
             null)
 
     plugin!!.activity = mockActivity
-    plugin!!.getCredential(
-        params,
-        {
-          // This test doesn't trigger the getCredentialsAsync callback that would call this,
-          // so if this is reached something has gone wrong.
-          Assert.fail()
-        })
+    plugin!!.getCredential(params) {
+      // This test doesn't trigger the getCredentialsAsync callback that would call this,
+      // so if this is reached something has gone wrong.
+      Assert.fail()
+    }
 
     val captor = ArgumentCaptor.forClass(GetCredentialRequest::class.java)
     Mockito.verify<CredentialManager?>(mockCredentialManager)
@@ -368,13 +362,11 @@ class GoogleSignInTest {
             nonce)
 
     plugin!!.activity = mockActivity
-    plugin!!.getCredential(
-        params,
-        {
-          // This test doesn't trigger the getCredentialsAsync callback that would call this,
-          // so if this is reached something has gone wrong.
-          Assert.fail()
-        })
+    plugin!!.getCredential(params) {
+      // This test doesn't trigger the getCredentialsAsync callback that would call this,
+      // so if this is reached something has gone wrong.
+      Assert.fail()
+    }
 
     val captor = ArgumentCaptor.forClass(GetCredentialRequest::class.java)
     Mockito.verify<CredentialManager?>(mockCredentialManager)
@@ -404,13 +396,11 @@ class GoogleSignInTest {
             nonce)
 
     plugin!!.activity = mockActivity
-    plugin!!.getCredential(
-        params,
-        {
-          // This test doesn't trigger the getCredentialsAsync callback that would call this,
-          // so if this is reached something has gone wrong.
-          Assert.fail()
-        })
+    plugin!!.getCredential(params) {
+      // This test doesn't trigger the getCredentialsAsync callback that would call this,
+      // so if this is reached something has gone wrong.
+      Assert.fail()
+    }
 
     val captor = ArgumentCaptor.forClass(GetCredentialRequest::class.java)
     Mockito.verify<CredentialManager?>(mockCredentialManager)
@@ -440,17 +430,15 @@ class GoogleSignInTest {
 
     val callbackCalled = arrayOfNulls<Boolean>(1)
     plugin!!.activity = null
-    plugin!!.getCredential(
-        params,
-        { reply ->
-          callbackCalled[0] = true
-          // This failure is a structured return value, not an exception.
-          Assert.assertTrue(reply.isSuccess)
-          val result = reply.getOrNull()
-          Assert.assertTrue(result is GetCredentialFailure)
-          val failure = result as GetCredentialFailure
-          Assert.assertEquals(GetCredentialFailureType.NO_ACTIVITY, failure.type)
-        })
+    plugin!!.getCredential(params) { reply ->
+      callbackCalled[0] = true
+      // This failure is a structured return value, not an exception.
+      Assert.assertTrue(reply.isSuccess)
+      val result = reply.getOrNull()
+      Assert.assertTrue(result is GetCredentialFailure)
+      val failure = result as GetCredentialFailure
+      Assert.assertEquals(GetCredentialFailureType.NO_ACTIVITY, failure.type)
+    }
     Assert.assertTrue(callbackCalled[0]!!)
   }
 
@@ -467,17 +455,15 @@ class GoogleSignInTest {
 
     val callbackCalled = arrayOfNulls<Boolean>(1)
     plugin!!.activity = mockActivity
-    plugin!!.getCredential(
-        params,
-        { reply ->
-          callbackCalled[0] = true
-          // This failure is a structured return value, not an exception.
-          Assert.assertTrue(reply.isSuccess)
-          val result = reply.getOrNull()
-          Assert.assertTrue(result is GetCredentialFailure)
-          val failure = result as GetCredentialFailure
-          Assert.assertEquals(GetCredentialFailureType.MISSING_SERVER_CLIENT_ID, failure.type)
-        })
+    plugin!!.getCredential(params) { reply ->
+      callbackCalled[0] = true
+      // This failure is a structured return value, not an exception.
+      Assert.assertTrue(reply.isSuccess)
+      val result = reply.getOrNull()
+      Assert.assertTrue(result is GetCredentialFailure)
+      val failure = result as GetCredentialFailure
+      Assert.assertEquals(GetCredentialFailureType.MISSING_SERVER_CLIENT_ID, failure.type)
+    }
     Assert.assertTrue(callbackCalled[0]!!)
   }
 
@@ -494,17 +480,15 @@ class GoogleSignInTest {
 
     val callbackCalled = arrayOfNulls<Boolean>(1)
     plugin!!.activity = mockActivity
-    plugin!!.getCredential(
-        params,
-        { reply ->
-          callbackCalled[0] = true
-          // This failure is a structured return value, not an exception.
-          Assert.assertTrue(reply.isSuccess)
-          val result = reply.getOrNull()
-          Assert.assertTrue(result is GetCredentialFailure)
-          val failure = result as GetCredentialFailure
-          Assert.assertEquals(GetCredentialFailureType.UNEXPECTED_CREDENTIAL_TYPE, failure.type)
-        })
+    plugin!!.getCredential(params) { reply ->
+      callbackCalled[0] = true
+      // This failure is a structured return value, not an exception.
+      Assert.assertTrue(reply.isSuccess)
+      val result = reply.getOrNull()
+      Assert.assertTrue(result is GetCredentialFailure)
+      val failure = result as GetCredentialFailure
+      Assert.assertEquals(GetCredentialFailureType.UNEXPECTED_CREDENTIAL_TYPE, failure.type)
+    }
 
     val callbackCaptor =
         ArgumentCaptor.forClass<
@@ -538,17 +522,15 @@ class GoogleSignInTest {
 
     val callbackCalled = arrayOfNulls<Boolean>(1)
     plugin!!.activity = mockActivity
-    plugin!!.getCredential(
-        params,
-        { reply ->
-          callbackCalled[0] = true
-          // This failure is a structured return value, not an exception.
-          Assert.assertTrue(reply.isSuccess)
-          val result = reply.getOrNull()
-          Assert.assertTrue(result is GetCredentialFailure)
-          val failure = result as GetCredentialFailure
-          Assert.assertEquals(GetCredentialFailureType.CANCELED, failure.type)
-        })
+    plugin!!.getCredential(params) { reply ->
+      callbackCalled[0] = true
+      // This failure is a structured return value, not an exception.
+      Assert.assertTrue(reply.isSuccess)
+      val result = reply.getOrNull()
+      Assert.assertTrue(result is GetCredentialFailure)
+      val failure = result as GetCredentialFailure
+      Assert.assertEquals(GetCredentialFailureType.CANCELED, failure.type)
+    }
 
     val callbackCaptor =
         ArgumentCaptor.forClass<
@@ -580,17 +562,15 @@ class GoogleSignInTest {
 
     val callbackCalled = arrayOfNulls<Boolean>(1)
     plugin!!.activity = mockActivity
-    plugin!!.getCredential(
-        params,
-        { reply ->
-          callbackCalled[0] = true
-          // This failure is a structured return value, not an exception.
-          Assert.assertTrue(reply.isSuccess)
-          val result = reply.getOrNull()
-          Assert.assertTrue(result is GetCredentialFailure)
-          val failure = result as GetCredentialFailure
-          Assert.assertEquals(GetCredentialFailureType.INTERRUPTED, failure.type)
-        })
+    plugin!!.getCredential(params) { reply ->
+      callbackCalled[0] = true
+      // This failure is a structured return value, not an exception.
+      Assert.assertTrue(reply.isSuccess)
+      val result = reply.getOrNull()
+      Assert.assertTrue(result is GetCredentialFailure)
+      val failure = result as GetCredentialFailure
+      Assert.assertEquals(GetCredentialFailureType.INTERRUPTED, failure.type)
+    }
 
     val callbackCaptor =
         ArgumentCaptor.forClass<
@@ -622,17 +602,15 @@ class GoogleSignInTest {
 
     val callbackCalled = arrayOfNulls<Boolean>(1)
     plugin!!.activity = mockActivity
-    plugin!!.getCredential(
-        params,
-        { reply ->
-          callbackCalled[0] = true
-          // This failure is a structured return value, not an exception.
-          Assert.assertTrue(reply.isSuccess)
-          val result = reply.getOrNull()
-          Assert.assertTrue(result is GetCredentialFailure)
-          val failure = result as GetCredentialFailure
-          Assert.assertEquals(GetCredentialFailureType.PROVIDER_CONFIGURATION_ISSUE, failure.type)
-        })
+    plugin!!.getCredential(params) { reply ->
+      callbackCalled[0] = true
+      // This failure is a structured return value, not an exception.
+      Assert.assertTrue(reply.isSuccess)
+      val result = reply.getOrNull()
+      Assert.assertTrue(result is GetCredentialFailure)
+      val failure = result as GetCredentialFailure
+      Assert.assertEquals(GetCredentialFailureType.PROVIDER_CONFIGURATION_ISSUE, failure.type)
+    }
 
     val callbackCaptor =
         ArgumentCaptor.forClass<
@@ -664,17 +642,15 @@ class GoogleSignInTest {
 
     val callbackCalled = arrayOfNulls<Boolean>(1)
     plugin!!.activity = mockActivity
-    plugin!!.getCredential(
-        params,
-        { reply ->
-          callbackCalled[0] = true
-          // This failure is a structured return value, not an exception.
-          Assert.assertTrue(reply.isSuccess)
-          val result = reply.getOrNull()
-          Assert.assertTrue(result is GetCredentialFailure)
-          val failure = result as GetCredentialFailure
-          Assert.assertEquals(GetCredentialFailureType.UNSUPPORTED, failure.type)
-        })
+    plugin!!.getCredential(params) { reply ->
+      callbackCalled[0] = true
+      // This failure is a structured return value, not an exception.
+      Assert.assertTrue(reply.isSuccess)
+      val result = reply.getOrNull()
+      Assert.assertTrue(result is GetCredentialFailure)
+      val failure = result as GetCredentialFailure
+      Assert.assertEquals(GetCredentialFailureType.UNSUPPORTED, failure.type)
+    }
 
     val callbackCaptor =
         ArgumentCaptor.forClass<
@@ -706,17 +682,15 @@ class GoogleSignInTest {
 
     val callbackCalled = arrayOfNulls<Boolean>(1)
     plugin!!.activity = mockActivity
-    plugin!!.getCredential(
-        params,
-        { reply ->
-          callbackCalled[0] = true
-          // This failure is a structured return value, not an exception.
-          Assert.assertTrue(reply.isSuccess)
-          val result = reply.getOrNull()
-          Assert.assertTrue(result is GetCredentialFailure)
-          val failure = result as GetCredentialFailure
-          Assert.assertEquals(GetCredentialFailureType.NO_CREDENTIAL, failure.type)
-        })
+    plugin!!.getCredential(params) { reply ->
+      callbackCalled[0] = true
+      // This failure is a structured return value, not an exception.
+      Assert.assertTrue(reply.isSuccess)
+      val result = reply.getOrNull()
+      Assert.assertTrue(result is GetCredentialFailure)
+      val failure = result as GetCredentialFailure
+      Assert.assertEquals(GetCredentialFailureType.NO_CREDENTIAL, failure.type)
+    }
 
     val callbackCaptor =
         ArgumentCaptor.forClass<
@@ -748,17 +722,15 @@ class GoogleSignInTest {
 
     val callbackCalled = arrayOfNulls<Boolean>(1)
     plugin!!.activity = mockActivity
-    plugin!!.getCredential(
-        params,
-        { reply ->
-          callbackCalled[0] = true
-          // This failure is a structured return value, not an exception.
-          Assert.assertTrue(reply.isSuccess)
-          val result = reply.getOrNull()
-          Assert.assertTrue(result is GetCredentialFailure)
-          val failure = result as GetCredentialFailure
-          Assert.assertEquals(GetCredentialFailureType.UNKNOWN, failure.type)
-        })
+    plugin!!.getCredential(params) { reply ->
+      callbackCalled[0] = true
+      // This failure is a structured return value, not an exception.
+      Assert.assertTrue(reply.isSuccess)
+      val result = reply.getOrNull()
+      Assert.assertTrue(result is GetCredentialFailure)
+      val failure = result as GetCredentialFailure
+      Assert.assertEquals(GetCredentialFailureType.UNKNOWN, failure.type)
+    }
 
     val callbackCaptor =
         ArgumentCaptor.forClass<
@@ -786,14 +758,11 @@ class GoogleSignInTest {
             mockAuthorizationClient!!.authorize(ArgumentMatchers.any()))
         .thenReturn(mockAuthorizationTask)
 
-    plugin!!.authorize(
-        params,
-        false,
-        {
-          // This test doesn't trigger the getCredentialsAsync callback that would call this,
-          // so if this is reached something has gone wrong.
-          Assert.fail()
-        })
+    plugin!!.authorize(params, false) {
+      // This test doesn't trigger the getCredentialsAsync callback that would call this,
+      // so if this is reached something has gone wrong.
+      Assert.fail()
+    }
 
     val authRequestCaptor = ArgumentCaptor.forClass(AuthorizationRequest::class.java)
     Mockito.verify<AuthorizationClient?>(mockAuthorizationClient)
@@ -817,14 +786,11 @@ class GoogleSignInTest {
             mockAuthorizationClient!!.authorize(ArgumentMatchers.any()))
         .thenReturn(mockAuthorizationTask)
 
-    plugin!!.authorize(
-        params,
-        false,
-        {
-          // This test doesn't trigger the getCredentialsAsync callback that would call this,
-          // so if this is reached something has gone wrong.
-          Assert.fail()
-        })
+    plugin!!.authorize(params, false) {
+      // This test doesn't trigger the getCredentialsAsync callback that would call this,
+      // so if this is reached something has gone wrong.
+      Assert.fail()
+    }
 
     val authRequestCaptor = ArgumentCaptor.forClass(AuthorizationRequest::class.java)
     Mockito.verify<AuthorizationClient?>(mockAuthorizationClient)
@@ -849,19 +815,16 @@ class GoogleSignInTest {
         .thenReturn(mockAuthorizationTask)
 
     val callbackCalled = arrayOfNulls<Boolean>(1)
-    plugin!!.authorize(
-        params,
-        false,
-        { reply ->
-          callbackCalled[0] = true
-          Assert.assertTrue(reply.isSuccess)
-          val result = reply.getOrNull()
-          Assert.assertTrue(result is PlatformAuthorizationResult)
-          val auth = result as PlatformAuthorizationResult
-          Assert.assertEquals(accessToken, auth.accessToken)
-          Assert.assertEquals(serverAuthCode, auth.serverAuthCode)
-          Assert.assertEquals(scopes, auth.grantedScopes)
-        })
+    plugin!!.authorize(params, false) { reply ->
+      callbackCalled[0] = true
+      Assert.assertTrue(reply.isSuccess)
+      val result = reply.getOrNull()
+      Assert.assertTrue(result is PlatformAuthorizationResult)
+      val auth = result as PlatformAuthorizationResult
+      Assert.assertEquals(accessToken, auth.accessToken)
+      Assert.assertEquals(serverAuthCode, auth.serverAuthCode)
+      Assert.assertEquals(scopes, auth.grantedScopes)
+    }
 
     val callbackCaptor =
         ArgumentCaptor.forClass<OnSuccessListener<AuthorizationResult?>?, OnSuccessListener<*>?>(
@@ -885,18 +848,15 @@ class GoogleSignInTest {
         .thenThrow(RuntimeException())
 
     val callbackCalled = arrayOfNulls<Boolean>(1)
-    plugin!!.authorize(
-        params,
-        false,
-        { reply ->
-          callbackCalled[0] = true
-          // This failure is a structured return value, not an exception.
-          Assert.assertTrue(reply.isSuccess)
-          val result = reply.getOrNull()
-          Assert.assertTrue(result is AuthorizeFailure)
-          val failure = result as AuthorizeFailure
-          Assert.assertEquals(AuthorizeFailureType.API_EXCEPTION, failure.type)
-        })
+    plugin!!.authorize(params, false) { reply ->
+      callbackCalled[0] = true
+      // This failure is a structured return value, not an exception.
+      Assert.assertTrue(reply.isSuccess)
+      val result = reply.getOrNull()
+      Assert.assertTrue(result is AuthorizeFailure)
+      val failure = result as AuthorizeFailure
+      Assert.assertEquals(AuthorizeFailureType.API_EXCEPTION, failure.type)
+    }
 
     Assert.assertTrue(callbackCalled[0]!!)
   }
@@ -911,18 +871,15 @@ class GoogleSignInTest {
         .thenReturn(mockAuthorizationTask)
 
     val callbackCalled = arrayOfNulls<Boolean>(1)
-    plugin!!.authorize(
-        params,
-        false,
-        { reply ->
-          callbackCalled[0] = true
-          // This failure is a structured return value, not an exception.
-          Assert.assertTrue(reply.isSuccess)
-          val result = reply.getOrNull()
-          Assert.assertTrue(result is AuthorizeFailure)
-          val failure = result as AuthorizeFailure
-          Assert.assertEquals(AuthorizeFailureType.UNAUTHORIZED, failure.type)
-        })
+    plugin!!.authorize(params, false) { reply ->
+      callbackCalled[0] = true
+      // This failure is a structured return value, not an exception.
+      Assert.assertTrue(reply.isSuccess)
+      val result = reply.getOrNull()
+      Assert.assertTrue(result is AuthorizeFailure)
+      val failure = result as AuthorizeFailure
+      Assert.assertEquals(AuthorizeFailureType.UNAUTHORIZED, failure.type)
+    }
 
     val callbackCaptor =
         ArgumentCaptor.forClass<OnSuccessListener<AuthorizationResult?>?, OnSuccessListener<*>?>(
@@ -947,18 +904,15 @@ class GoogleSignInTest {
 
     plugin!!.activity = null
     val callbackCalled = arrayOfNulls<Boolean>(1)
-    plugin!!.authorize(
-        params,
-        true,
-        { reply ->
-          callbackCalled[0] = true
-          // This failure is a structured return value, not an exception.
-          Assert.assertTrue(reply.isSuccess)
-          val result = reply.getOrNull()
-          Assert.assertTrue(result is AuthorizeFailure)
-          val failure = result as AuthorizeFailure
-          Assert.assertEquals(AuthorizeFailureType.NO_ACTIVITY, failure.type)
-        })
+    plugin!!.authorize(params, true) { reply ->
+      callbackCalled[0] = true
+      // This failure is a structured return value, not an exception.
+      Assert.assertTrue(reply.isSuccess)
+      val result = reply.getOrNull()
+      Assert.assertTrue(result is AuthorizeFailure)
+      val failure = result as AuthorizeFailure
+      Assert.assertEquals(AuthorizeFailureType.NO_ACTIVITY, failure.type)
+    }
 
     val callbackCaptor =
         ArgumentCaptor.forClass<OnSuccessListener<AuthorizationResult?>?, OnSuccessListener<*>?>(
@@ -994,19 +948,16 @@ class GoogleSignInTest {
 
     plugin!!.activity = mockActivity
     val callbackCalled = arrayOfNulls<Boolean>(1)
-    plugin!!.authorize(
-        params,
-        true,
-        { reply ->
-          callbackCalled[0] = true
-          Assert.assertTrue(reply.isSuccess)
-          val result = reply.getOrNull()
-          Assert.assertTrue(result is PlatformAuthorizationResult)
-          val auth = result as PlatformAuthorizationResult
-          Assert.assertEquals(accessToken, auth.accessToken)
-          Assert.assertEquals(serverAuthCode, auth.serverAuthCode)
-          Assert.assertEquals(scopes, auth.grantedScopes)
-        })
+    plugin!!.authorize(params, true) { reply ->
+      callbackCalled[0] = true
+      Assert.assertTrue(reply.isSuccess)
+      val result = reply.getOrNull()
+      Assert.assertTrue(result is PlatformAuthorizationResult)
+      val auth = result as PlatformAuthorizationResult
+      Assert.assertEquals(accessToken, auth.accessToken)
+      Assert.assertEquals(serverAuthCode, auth.serverAuthCode)
+      Assert.assertEquals(scopes, auth.grantedScopes)
+    }
 
     val callbackCaptor =
         ArgumentCaptor.forClass<OnSuccessListener<AuthorizationResult?>?, OnSuccessListener<*>?>(
@@ -1062,7 +1013,7 @@ class GoogleSignInTest {
 
     plugin!!.activity = mockActivity
     val callbackCount = intArrayOf(0)
-    plugin!!.authorize(params, true, { callbackCount[0] += 1 })
+    plugin!!.authorize(params, true) { callbackCount[0] += 1 }
 
     val callbackCaptor =
         ArgumentCaptor.forClass<OnSuccessListener<AuthorizationResult?>?, OnSuccessListener<*>?>(
@@ -1110,18 +1061,15 @@ class GoogleSignInTest {
 
     plugin!!.activity = mockActivity
     val callbackCalled = arrayOfNulls<Boolean>(1)
-    plugin!!.authorize(
-        params,
-        true,
-        { reply ->
-          callbackCalled[0] = true
-          // This failure is a structured return value, not an exception.
-          Assert.assertTrue(reply.isSuccess)
-          val result = reply.getOrNull()
-          Assert.assertTrue(result is AuthorizeFailure)
-          val failure = result as AuthorizeFailure
-          Assert.assertEquals(AuthorizeFailureType.PENDING_INTENT_EXCEPTION, failure.type)
-        })
+    plugin!!.authorize(params, true) { reply ->
+      callbackCalled[0] = true
+      // This failure is a structured return value, not an exception.
+      Assert.assertTrue(reply.isSuccess)
+      val result = reply.getOrNull()
+      Assert.assertTrue(result is AuthorizeFailure)
+      val failure = result as AuthorizeFailure
+      Assert.assertEquals(AuthorizeFailureType.PENDING_INTENT_EXCEPTION, failure.type)
+    }
 
     val callbackCaptor =
         ArgumentCaptor.forClass<OnSuccessListener<AuthorizationResult?>?, OnSuccessListener<*>?>(
@@ -1154,18 +1102,15 @@ class GoogleSignInTest {
 
     plugin!!.activity = mockActivity
     val callbackCalled = arrayOfNulls<Boolean>(1)
-    plugin!!.authorize(
-        params,
-        true,
-        { reply ->
-          callbackCalled[0] = true
-          // This failure is a structured return value, not an exception.
-          Assert.assertTrue(reply.isSuccess)
-          val result = reply.getOrNull()
-          Assert.assertTrue(result is AuthorizeFailure)
-          val failure = result as AuthorizeFailure
-          Assert.assertEquals(AuthorizeFailureType.API_EXCEPTION, failure.type)
-        })
+    plugin!!.authorize(params, true) { reply ->
+      callbackCalled[0] = true
+      // This failure is a structured return value, not an exception.
+      Assert.assertTrue(reply.isSuccess)
+      val result = reply.getOrNull()
+      Assert.assertTrue(result is AuthorizeFailure)
+      val failure = result as AuthorizeFailure
+      Assert.assertEquals(AuthorizeFailureType.API_EXCEPTION, failure.type)
+    }
 
     val callbackCaptor =
         ArgumentCaptor.forClass<OnSuccessListener<AuthorizationResult?>?, OnSuccessListener<*>?>(
@@ -1197,7 +1142,7 @@ class GoogleSignInTest {
 
   @Test
   fun clearCredentialState_reportsSuccess() {
-    plugin!!.clearCredentialState({ reply -> Assert.assertTrue(reply.isSuccess) })
+    plugin!!.clearCredentialState { reply -> Assert.assertTrue(reply.isSuccess) }
 
     val callbackCaptor =
         ArgumentCaptor.forClass<
@@ -1216,7 +1161,7 @@ class GoogleSignInTest {
 
   @Test
   fun clearCredentialState_reportsFailure() {
-    plugin!!.clearCredentialState({ reply -> Assert.assertTrue(reply.isFailure) })
+    plugin!!.clearCredentialState { reply -> Assert.assertTrue(reply.isFailure) }
 
     val callbackCaptor =
         ArgumentCaptor.forClass<
@@ -1240,7 +1185,7 @@ class GoogleSignInTest {
     val params = PlatformRevokeAccessRequest(accountEmail, scopes)
     Mockito.`when`<Task<Void?>?>(mockAuthorizationClient!!.revokeAccess(ArgumentMatchers.any()))
         .thenReturn(mockVoidTask)
-    plugin!!.revokeAccess(params, {})
+    plugin!!.revokeAccess(params) {}
 
     val requestCaptor = ArgumentCaptor.forClass(RevokeAccessRequest::class.java)
     Mockito.verify<AuthorizationClient?>(mockAuthorizationClient)
@@ -1264,7 +1209,7 @@ class GoogleSignInTest {
     val testToken = "testToken"
     Mockito.`when`<Task<Void?>?>(mockAuthorizationClient!!.clearToken(ArgumentMatchers.any()))
         .thenReturn(mockVoidTask)
-    plugin!!.clearAuthorizationToken(testToken, {})
+    plugin!!.clearAuthorizationToken(testToken) {}
 
     val authRequestCaptor = ArgumentCaptor.forClass(ClearTokenRequest::class.java)
     Mockito.verify<AuthorizationClient?>(mockAuthorizationClient)
