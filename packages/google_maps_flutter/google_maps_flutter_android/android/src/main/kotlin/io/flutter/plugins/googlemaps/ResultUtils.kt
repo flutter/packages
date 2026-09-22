@@ -20,7 +20,7 @@ fun resumeWithUnitSuccess(continuation: Continuation<Unit>) {
 }
 
 fun resumeWithException(continuation: Continuation<*>, exception: Throwable) {
-  @Suppress("UNCHECKED_CAST") (continuation as Continuation<Any?>).resumeWithException(exception)
+  continuation.resumeWith(Result.failure(exception))
 }
 
 fun coroutineSuspended(): Any = COROUTINE_SUSPENDED
