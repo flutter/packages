@@ -3505,12 +3505,15 @@ void main() {
       final mockDeviceOrientationManager = MockDeviceOrientationManager();
       final mockImageCapture = MockImageCapture();
       final mockNewImageCapture = MockImageCapture();
+      final mockCameraInfo = MockCameraInfo();
       const int defaultTargetRotation = Surface.rotation90;
       const cameraId = 9;
       bool? actualZeroShutterLagEnabled;
 
       camera.processCameraProvider = mockProcessCameraProvider;
       camera.imageCapture = mockImageCapture;
+      camera.cameraInfo = mockCameraInfo;
+      when(mockCameraInfo.isZslSupported()).thenAnswer((_) async => true);
 
       PigeonOverrides.deviceOrientationManager_new =
           ({required void Function(DeviceOrientationManager, String) onDeviceOrientationChanged}) {
@@ -3541,12 +3544,48 @@ void main() {
     },
   );
 
+  test(
+    'setZeroShutterLagEnabled does not recreate ImageCapture when zero-shutter-lag is unsupported',
+    () async {
+      final camera = AndroidCameraCameraX();
+      final mockProcessCameraProvider = MockProcessCameraProvider();
+      final mockImageCapture = MockImageCapture();
+      final mockCameraInfo = MockCameraInfo();
+      const cameraId = 9;
+      var imageCaptureCreated = false;
+
+      camera.processCameraProvider = mockProcessCameraProvider;
+      camera.imageCapture = mockImageCapture;
+      camera.cameraInfo = mockCameraInfo;
+      when(mockCameraInfo.isZslSupported()).thenAnswer((_) async => false);
+
+      PigeonOverrides.imageCapture_new =
+          ({
+            int? targetRotation,
+            CameraXFlashMode? flashMode,
+            ResolutionSelector? resolutionSelector,
+            int? jpegQuality,
+            bool? zeroShutterLagEnabled,
+          }) {
+            imageCaptureCreated = true;
+            return MockImageCapture();
+          };
+
+      await camera.setZeroShutterLagEnabled(cameraId, true);
+
+      verifyNever(mockProcessCameraProvider.unbind(any));
+      expect(imageCaptureCreated, isFalse);
+      expect(camera.imageCapture, same(mockImageCapture));
+    },
+  );
+
   test('setZeroShutterLagEnabled preserves a previously requested JPEG quality', () async {
     final camera = AndroidCameraCameraX();
     final mockProcessCameraProvider = MockProcessCameraProvider();
     final mockDeviceOrientationManager = MockDeviceOrientationManager();
     final mockImageCapture = MockImageCapture();
     final mockNewImageCapture = MockImageCapture();
+    final mockCameraInfo = MockCameraInfo();
     const int defaultTargetRotation = Surface.rotation90;
     const jpegQuality = 73;
     const cameraId = 9;
@@ -3554,6 +3593,8 @@ void main() {
 
     camera.processCameraProvider = mockProcessCameraProvider;
     camera.imageCapture = mockImageCapture;
+    camera.cameraInfo = mockCameraInfo;
+    when(mockCameraInfo.isZslSupported()).thenAnswer((_) async => true);
 
     PigeonOverrides.deviceOrientationManager_new =
         ({required void Function(DeviceOrientationManager, String) onDeviceOrientationChanged}) {
@@ -3588,12 +3629,15 @@ void main() {
     final mockDeviceOrientationManager = MockDeviceOrientationManager();
     final mockImageCapture = MockImageCapture();
     final mockNewImageCapture = MockImageCapture();
+    final mockCameraInfo = MockCameraInfo();
     const int defaultTargetRotation = Surface.rotation90;
     const cameraId = 9;
     bool? actualZeroShutterLagEnabled;
 
     camera.processCameraProvider = mockProcessCameraProvider;
     camera.imageCapture = mockImageCapture;
+    camera.cameraInfo = mockCameraInfo;
+    when(mockCameraInfo.isZslSupported()).thenAnswer((_) async => true);
 
     PigeonOverrides.deviceOrientationManager_new =
         ({required void Function(DeviceOrientationManager, String) onDeviceOrientationChanged}) {

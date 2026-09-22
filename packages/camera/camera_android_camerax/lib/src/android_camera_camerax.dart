@@ -1121,11 +1121,14 @@ class AndroidCameraCameraX extends CameraPlatform {
   /// the requested mode. The next call to [takePicture] will bind the new
   /// instance automatically.
   ///
-  /// This is a no-op on devices that do not support zero-shutter-lag; CameraX
-  /// falls back to the regular capture pipeline on its own.
+  /// If the selected camera does not support zero-shutter-lag, this only
+  /// records the requested mode and skips recreating the use case.
   @override
   Future<void> setZeroShutterLagEnabled(int cameraId, bool enabled) async {
     _zeroShutterLagEnabled = enabled;
+    if (!await isZeroShutterLagSupported(cameraId)) {
+      return;
+    }
     await _recreateImageCapture();
   }
 
