@@ -1475,7 +1475,6 @@ void main() {
           key: uniqueKey,
           data: const MediaQueryData(),
           child: MaterialApp(
-            useInheritedMediaQuery: true,
             builder: (BuildContext context, Widget? child) {
               capturedContext = context;
               return const Placeholder();
