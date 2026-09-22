@@ -56,7 +56,7 @@ class TileProviderController implements TileProvider {
                   tileOverlayId,
                   location,
                   zoom,
-                  ResultCompat.asCompatCallback(
+                  ResultCompat.<PlatformTile>asContinuation(
                       result -> {
                         tile = result.getOrNull();
                         if (tile == null) {

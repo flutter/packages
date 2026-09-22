@@ -4,6 +4,37 @@
 
 package io.flutter.plugins.googlemaps
 
+import kotlin.coroutines.Continuation
+import kotlin.coroutines.CoroutineContext
+import kotlin.coroutines.EmptyCoroutineContext
+import kotlin.coroutines.intrinsics.COROUTINE_SUSPENDED
+import kotlin.coroutines.resume
+import kotlin.coroutines.resumeWithException
+
+fun <T> resumeWithValue(continuation: Continuation<T>, value: T) {
+  continuation.resume(value)
+}
+
+fun resumeWithUnitSuccess(continuation: Continuation<Unit>) {
+  continuation.resume(Unit)
+}
+
+fun resumeWithException(continuation: Continuation<*>, exception: Throwable) {
+  @Suppress("UNCHECKED_CAST") (continuation as Continuation<Any?>).resumeWithException(exception)
+}
+
+fun coroutineSuspended(): Any = COROUTINE_SUSPENDED
+
+private val noopContinuation =
+    object : Continuation<Any?> {
+      override val context: CoroutineContext = EmptyCoroutineContext
+
+      override fun resumeWith(result: Result<Any?>) {}
+    }
+
+@Suppress("UNCHECKED_CAST")
+fun <T> emptyContinuation(): Continuation<T> = noopContinuation as Continuation<T>
+
 fun <T> completeWithError(callback: (Result<@JvmSuppressWildcards T>) -> Unit, failure: Throwable) {
   callback(Result.failure(failure))
 }
@@ -33,6 +64,17 @@ class ResultCompat<T>(private val result: Result<T>) {
     @JvmStatic
     fun <T> asCompatCallback(result: (ResultCompat<T>) -> Unit): (Result<T>) -> Unit {
       return { result(ResultCompat(it)) }
+    }
+
+    @JvmStatic
+    fun <T> asContinuation(result: (ResultCompat<T>) -> Unit): Continuation<T> {
+      return object : Continuation<T> {
+        override val context: CoroutineContext = EmptyCoroutineContext
+
+        override fun resumeWith(result: Result<T>) {
+          result(ResultCompat(result))
+        }
+      }
     }
   }
 

@@ -128,7 +128,7 @@ public class MarkersControllerTest {
     controller.onMarkerDragStart(googleMarkerId, latLng);
 
     Mockito.verify(flutterApi)
-        .onMarkerDragStart(eq(googleMarkerId), eq(Convert.latLngToPigeon(latLng)), any());
+        .onMarkerDragStart(eq(googleMarkerId), eq(Convert.latLngToPigeon(latLng)), null);
   }
 
   @Test
@@ -148,7 +148,7 @@ public class MarkersControllerTest {
     controller.onMarkerDragEnd(googleMarkerId, latLng);
 
     Mockito.verify(flutterApi)
-        .onMarkerDragEnd(eq(googleMarkerId), eq(Convert.latLngToPigeon(latLng)), any());
+        .onMarkerDragEnd(eq(googleMarkerId), eq(Convert.latLngToPigeon(latLng)), null);
   }
 
   @Test
@@ -169,7 +169,7 @@ public class MarkersControllerTest {
     controller.onMarkerDrag(googleMarkerId, latLng);
 
     Mockito.verify(flutterApi)
-        .onMarkerDrag(eq(googleMarkerId), eq(Convert.latLngToPigeon(latLng)), any());
+        .onMarkerDrag(eq(googleMarkerId), eq(Convert.latLngToPigeon(latLng)), null);
   }
 
   @Test(expected = NullPointerException.class)

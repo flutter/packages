@@ -41,7 +41,7 @@ public class GoogleMapInitializerTest {
     final Boolean[] callbackCalled = new Boolean[1];
     googleMapInitializer.initializeWithPreferredRenderer(
         PlatformRendererType.LATEST,
-        ResultCompat.asCompatCallback(
+        ResultCompat.asContinuation(
             result -> {
               callbackCalled[0] = true;
               PlatformRendererType type = result.getOrNull();
@@ -60,7 +60,7 @@ public class GoogleMapInitializerTest {
     final Boolean[] callbackCalled = new Boolean[1];
     googleMapInitializer.initializeWithPreferredRenderer(
         PlatformRendererType.LEGACY,
-        ResultCompat.asCompatCallback(
+        ResultCompat.asContinuation(
             result -> {
               callbackCalled[0] = true;
               PlatformRendererType type = result.getOrNull();
@@ -78,7 +78,7 @@ public class GoogleMapInitializerTest {
     final Boolean[] callbackCalled = new Boolean[1];
     googleMapInitializer.initializeWithPreferredRenderer(
         null,
-        ResultCompat.asCompatCallback(
+        ResultCompat.asContinuation(
             result -> {
               callbackCalled[0] = true;
               Throwable error = result.exceptionOrNull();
