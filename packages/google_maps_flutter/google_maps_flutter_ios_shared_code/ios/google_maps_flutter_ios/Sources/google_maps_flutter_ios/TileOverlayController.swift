@@ -2,34 +2,27 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import Flutter
 import GoogleMaps
 import UIKit
 
-#if canImport(google_maps_flutter_ios_objc)
-  import google_maps_flutter_ios_objc
-#endif
-
 /// Protocol for requesting tiles from the Dart side.
-// TODO(stuartmorgan): Adjust this to match the Swift API once the Pigeon
-// generation is switched to Swift.
 protocol TileProviderDelegate: AnyObject {
-  func tile(
+  @MainActor func tile(
     withOverlayIdentifier tileOverlayId: String,
-    location: FGMPlatformPoint,
-    zoom: Int,
-    completion: @escaping (FGMPlatformTile?, FlutterError?) -> Void
-  )
+    location: PlatformPoint,
+    zoom: Int64
+  ) async throws -> PlatformTile
 }
 
 /// Controller of a single tile overlay on the map.
-class TileOverlayController: NSObject {
+class TileOverlayController {
   let layer: GMSTileLayer
   private weak var mapView: GMSMapView?
 
-  init(tileOverlay: FGMPlatformTileOverlay, tileLayer: GMSTileLayer, mapView: GMSMapView) {
+  init(tileOverlay: PlatformTileOverlay, tileLayer: GMSTileLayer, mapView: GMSMapView) {
     self.layer = tileLayer
     self.mapView = mapView
-    super.init()
     TileOverlayController.update(tileLayer, from: tileOverlay, with: mapView)
   }
 
@@ -41,21 +34,21 @@ class TileOverlayController: NSObject {
     layer.clearTileCache()
   }
 
-  /// Updates the controller's tile overlay with the properties from a FGMPlatformTileOverlay.
+  /// Updates the controller's tile overlay with the properties from a PlatformTileOverlay.
   ///
   /// Setting the tile overlay to visible will set its map to the controller's mapView.
-  func update(from overlay: FGMPlatformTileOverlay) {
+  func update(from overlay: PlatformTileOverlay) {
     if let mapView = mapView {
       TileOverlayController.update(layer, from: overlay, with: mapView)
     }
   }
 
-  /// Updates the given GMSTileLayer with the properties from a FGMPlatformTileOverlay.
+  /// Updates the given GMSTileLayer with the properties from a PlatformTileOverlay.
   ///
   /// Setting the tile overlay to visible will set its map to the given mapView.
   static func update(
     _ tileLayer: GMSTileLayer,
-    from platformOverlay: FGMPlatformTileOverlay,
+    from platformOverlay: PlatformTileOverlay,
     with mapView: GMSMapView
   ) {
     tileLayer.opacity = Float(1.0 - platformOverlay.transparency)
@@ -113,40 +106,37 @@ class TileProviderController: GMSTileLayer {
   }
 
   override func requestTileFor(x: UInt, y: UInt, zoom: UInt, receiver: any GMSTileReceiver) {
-    DispatchQueue.main.async { [weak self] in
-      guard let self = self, let tileProviderDelegate = self.tileProviderDelegate else {
+    Task { @MainActor in
+      guard let tileProviderDelegate = self.tileProviderDelegate else {
         receiver.receiveTileWith(x: x, y: y, zoom: zoom, image: kGMSTileLayerNoTile)
         return
       }
-      tileProviderDelegate.tile(
-        withOverlayIdentifier: self.tileOverlayIdentifier,
-        location: FGMPlatformPoint.makeWith(x: Double(x), y: Double(y)),
-        zoom: Int(zoom)
-      ) { [weak self] tile, error in
-        guard let self = self else {
-          receiver.receiveTileWith(x: x, y: y, zoom: zoom, image: kGMSTileLayerNoTile)
-          return
-        }
-        let typedData = tile?.data
-        let tileImage: UIImage
-        if let data = typedData?.data {
+      var tileImage = kGMSTileLayerNoTile
+      do {
+        let tile = try await tileProviderDelegate.tile(
+          withOverlayIdentifier: self.tileOverlayIdentifier,
+          location: PlatformPoint(x: Double(x), y: Double(y)),
+          zoom: Int64(zoom)
+        )
+        if let data = tile.data?.data {
           tileImage = self.handleResultTile(UIImage(data: data)) ?? kGMSTileLayerNoTile
-        } else {
-          tileImage = kGMSTileLayerNoTile
         }
-        if let error = error {
-          NSLog(
+      } catch {
+        let message =
+          if let error = error as? PigeonError {
             "Can't get tile: errorCode = \(error.code), errorMessage = \(error.message ?? "nil"), details = \(error.details ?? "nil")"
-          )
-        }
-        receiver.receiveTileWith(x: x, y: y, zoom: zoom, image: tileImage)
+          } else {
+            "Can't get tile: unexpected error \(error)"
+          }
+        NSLog(message)
       }
+      receiver.receiveTileWith(x: x, y: y, zoom: zoom, image: tileImage)
     }
   }
 }
 
 /// Controller of multiple tile overlays on the map.
-class TileOverlaysController: NSObject {
+class TileOverlaysController {
   private var tileOverlayIdentifierToController: [String: TileOverlayController] = [:]
   private weak var tileProviderDelegate: TileProviderDelegate?
   private weak var mapView: GMSMapView?
@@ -154,10 +144,9 @@ class TileOverlaysController: NSObject {
   init(mapView: GMSMapView, tileProvider: TileProviderDelegate) {
     self.mapView = mapView
     self.tileProviderDelegate = tileProvider
-    super.init()
   }
 
-  func add(_ tileOverlaysToAdd: [FGMPlatformTileOverlay]) {
+  func add(_ tileOverlaysToAdd: [PlatformTileOverlay]) {
     guard let mapView = mapView, let tileProviderDelegate = tileProviderDelegate else { return }
     for tileOverlay in tileOverlaysToAdd {
       let identifier = tileOverlay.tileOverlayId
@@ -174,7 +163,7 @@ class TileOverlaysController: NSObject {
     }
   }
 
-  func change(_ tileOverlaysToChange: [FGMPlatformTileOverlay]) {
+  func change(_ tileOverlaysToChange: [PlatformTileOverlay]) {
     for tileOverlay in tileOverlaysToChange {
       let identifier = tileOverlay.tileOverlayId
       tileOverlayIdentifierToController[identifier]?.update(from: tileOverlay)
