@@ -19,6 +19,7 @@
   * Changes `XFile.name` to a method that returns `Future<String>` rather than a field that returns
     `String`.
   * Adds Flutter as a dependency.
+  * Updates minimum supported SDK version to Flutter 3.41/Dart 3.11.
 
 ## 0.3.5+5
 

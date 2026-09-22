@@ -3,8 +3,8 @@ description: Demonstrates how to use cross files.
 publish_to: none
 
 environment:
-  sdk: ^3.10.0
-  flutter: ">=3.38.0"
+  sdk: ^3.11.0
+  flutter: ">=3.41.0"
 
 dependencies:
   cross_file_io:
