@@ -17,18 +17,18 @@ import '../templates/banner_template.dart';
 import '../templates/bottom_sheet_template.dart';
 import '../templates/button_template.dart';
 import '../templates/card_template.dart';
-// import '../templates/checkbox_template.dart';
-// import '../templates/chip_template.dart';
-// import '../templates/color_scheme_template.dart';
+import '../templates/checkbox_template.dart';
+import '../templates/chip_template.dart';
+import '../templates/color_scheme_template.dart';
 // import '../templates/date_picker_template.dart';
 // import '../templates/dialog_template.dart';
 // import '../templates/divider_template.dart';
 // import '../templates/drawer_template.dart';
 // import '../templates/expansion_tile_template.dart';
 // import '../templates/fab_template.dart';
-// import '../templates/filter_chip_template.dart';
+import '../templates/filter_chip_template.dart';
 // import '../templates/icon_button_template.dart';
-// import '../templates/input_chip_template.dart';
+import '../templates/input_chip_template.dart';
 // import '../templates/input_decorator_template.dart';
 // import '../templates/list_tile_template.dart';
 // import '../templates/menu_template.dart';
@@ -114,11 +114,9 @@ void main() {
 
     test('color generates color expression', () {
       final template = IconButtonTemplateM3(testPath());
-      expect(template.color(TokenColorRole.onSurface, '_colors'), '_colors.onSurface');
-      expect(
-        template.color(TokenColorRole.inverseOnSurface, '_colors'),
-        '_colors.onInverseSurface',
-      );
+      expect(template.color(TokenColorRole.onSurface), '_colors.onSurface');
+      expect(template.color(TokenColorRole.inverseOnSurface), '_colors.onInverseSurface');
+      expect(template.color(TokenColorRole.onSurface, '_customColors'), '_customColors.onSurface');
     });
 
     test('textStyle generates text name', () {
@@ -138,31 +136,32 @@ void main() {
     test('M3 colorWithOpacity generates color expression with opacity', () {
       final template = IconButtonTemplateM3(testPath());
       expect(
-        template.colorWithOpacity(TokenColorRole.onSurface, 0.12, '_colors'),
+        template.colorWithOpacity(TokenColorRole.onSurface, 0.12),
         '_colors.onSurface.withOpacity(0.12)',
       );
       expect(
-        template.colorWithOpacity(TokenColorRole.inverseOnSurface, 0.12, '_colors'),
+        template.colorWithOpacity(TokenColorRole.inverseOnSurface, 0.12),
         '_colors.onInverseSurface.withOpacity(0.12)',
       );
+      expect(template.colorWithOpacity(TokenColorRole.onSurface, 1.0), '_colors.onSurface');
       expect(
-        template.colorWithOpacity(TokenColorRole.onSurface, 1.0, '_colors'),
-        '_colors.onSurface',
+        template.colorWithOpacity(TokenColorRole.onSurface, 0.12, '_customColors'),
+        '_customColors.onSurface.withOpacity(0.12)',
       );
     });
 
     test('M3E colorWithOpacity uses withValues', () {
       final template = IconButtonTemplateM3E(testPath());
       expect(
-        template.colorWithOpacity(TokenColorRole.onSurface, 0.12, '_colors'),
+        template.colorWithOpacity(TokenColorRole.onSurface, 0.12),
         '_colors.onSurface.withValues(alpha: 0.12)',
       );
       expect(
-        template.colorWithOpacity(TokenColorRole.inverseOnSurface, 0.12, '_colors'),
+        template.colorWithOpacity(TokenColorRole.inverseOnSurface, 0.12),
         '_colors.onInverseSurface.withValues(alpha: 0.12)',
       );
       expect(
-        template.colorWithOpacity(TokenColorRole.inverseOnSurface, 1.0, '_colors'),
+        template.colorWithOpacity(TokenColorRole.inverseOnSurface, 1.0),
         '_colors.onInverseSurface',
       );
     });
@@ -172,9 +171,13 @@ void main() {
       expect(template.border('_colors.outline'), 'BorderSide(color: _colors.outline)');
       expect(
         template.border('_colors.outline', width: 2.0),
-        'BorderSide(color: _colors.outline, width: 2.0)',
+        'BorderSide(width: 2.0, color: _colors.outline)',
       );
       expect(template.border('_colors.outline', width: 1.0), 'BorderSide(color: _colors.outline)');
+      expect(
+        template.border('Colors.transparent', width: 2.0, prefix: 'const '),
+        'const BorderSide(width: 2.0, color: Colors.transparent)',
+      );
     });
 
     test('shape generates shape expressions', () {
@@ -470,18 +473,72 @@ void main() {
     });
 
     test('CheckboxTemplateM3 emits M3 Checkbox defaults from tokens', () {
-      // Intentionally empty, will be implemented during migration. See:
-      // https://github.com/flutter/flutter/issues/187899
+      final String contents = _generateContents(const CheckboxTemplateM3());
+      expect(contents, contains('class _CheckboxDefaultsM3 extends CheckboxThemeData'));
+      expect(contents, contains('WidgetStateBorderSide? get side'));
+      expect(contents, contains('return const BorderSide(width: 2.0, color: Colors.transparent);'));
+      expect(
+        contents,
+        contains('return BorderSide(width: 2.0, color: _colors.onSurface.withOpacity(0.38));'),
+      );
+      expect(contents, contains('return const BorderSide(width: 0.0, color: Colors.transparent);'));
+      expect(contents, contains('return BorderSide(width: 2.0, color: _colors.error);'));
+      expect(contents, contains('WidgetStateProperty<Color> get fillColor'));
+      expect(contents, contains('return _colors.onSurface.withOpacity(0.38);'));
+      expect(contents, contains('return _colors.primary;'));
+      expect(contents, contains('WidgetStateProperty<Color> get checkColor'));
+      expect(contents, contains('return _colors.surface;'));
+      expect(contents, contains('return _colors.onError;'));
+      expect(contents, contains('return _colors.onPrimary;'));
+      expect(contents, contains('WidgetStateProperty<Color> get overlayColor'));
+      expect(contents, contains('return _colors.error.withOpacity(0.1);'));
+      expect(contents, contains('return _colors.primary.withOpacity(0.08);'));
+      expect(contents, contains('return _colors.onSurface.withOpacity(0.1);'));
+      expect(contents, contains('double get splashRadius => 40.0 / 2'));
+      expect(contents, contains('VisualDensity get visualDensity => VisualDensity.standard'));
+      expect(
+        contents,
+        contains(
+          'const RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(2.0)))',
+        ),
+      );
     });
 
     test('ChipTemplateM3 emits M3 Chip defaults from tokens', () {
-      // Intentionally empty, will be implemented during migration. See:
-      // https://github.com/flutter/flutter/issues/187899
+      final String contents = const ChipTemplateM3().generateContents('_ChipDefaultsM3');
+      expect(contents, contains('class _ChipDefaultsM3 extends ChipThemeData'));
+      expect(contents, contains('elevation: 0.0'));
+      expect(
+        contents,
+        contains(
+          'shape: const RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(8.0)))',
+        ),
+      );
+      expect(contents, contains('Color? get shadowColor => Colors.transparent'));
+      expect(contents, contains('Color? get surfaceTintColor => Colors.transparent'));
+      expect(contents, contains('BorderSide(color: _colors.onSurface.withOpacity(0.12))'));
+      expect(contents, contains('size: 18.0'));
     });
 
     test('ColorSchemeTemplateM3 emits M3 ColorScheme defaults from tokens', () {
-      // Intentionally empty, will be implemented during migration. See:
-      // https://github.com/flutter/flutter/issues/187899
+      final String contents = const ColorSchemeTemplateM3().generateContents('');
+
+      expect(contents, contains('const ColorScheme _colorSchemeLightM3 = ColorScheme('));
+      expect(contents, contains('const ColorScheme _colorSchemeDarkM3 = ColorScheme('));
+      expect(
+        contents,
+        contains('const ColorScheme _colorSchemeLightMediumContrastM3 = ColorScheme('),
+      );
+      expect(
+        contents,
+        contains('const ColorScheme _colorSchemeLightHighContrastM3 = ColorScheme('),
+      );
+      expect(
+        contents,
+        contains('const ColorScheme _colorSchemeDarkMediumContrastM3 = ColorScheme('),
+      );
+      expect(contents, contains('const ColorScheme _colorSchemeDarkHighContrastM3 = ColorScheme('));
+      expect(contents, isNot(contains('_colorSchemeLightM3E')));
     });
 
     test('DatePickerTemplateM3 emits M3 DatePicker defaults from tokens', () {
@@ -515,8 +572,11 @@ void main() {
     });
 
     test('FilterChipTemplateM3 emits M3 FilterChip defaults from tokens', () {
-      // Intentionally empty, will be implemented during migration. See:
-      // https://github.com/flutter/flutter/issues/187899
+      final String contents = _generateContents(const FilterChipTemplateM3());
+      expect(contents, contains('class _FilterChipDefaultsM3 extends ChipThemeData'));
+      expect(contents, contains('_colors.onSurface.withOpacity(0.12)'));
+      expect(contents, contains('_colors.surfaceContainerLow'));
+      expect(contents, contains('BorderSide(color: _colors.outlineVariant)'));
     });
 
     test('IconButtonTemplateM3 emits M3 IconButton defaults from tokens', () {
@@ -525,8 +585,11 @@ void main() {
     });
 
     test('InputChipTemplateM3 emits M3 InputChip defaults from tokens', () {
-      // Intentionally empty, will be implemented during migration. See:
-      // https://github.com/flutter/flutter/issues/187899
+      final String contents = _generateContents(const InputChipTemplateM3());
+      expect(contents, contains('class _InputChipDefaultsM3 extends ChipThemeData'));
+      expect(contents, contains('_colors.onSurface.withOpacity(0.12)'));
+      expect(contents, contains('return _colors.secondaryContainer'));
+      expect(contents, contains('BorderSide(color: _colors.outlineVariant)'));
     });
 
     test('InputDecoratorTemplateM3 emits M3 InputDecorator defaults from tokens', () {
@@ -655,7 +718,7 @@ void main() {
           isA<AssertionError>().having(
             (AssertionError e) => e.message,
             'message',
-            contains('Make sure you are utilizing the passed `className` parameter.'),
+            contains('Make sure you are utilizing the passed `className` parameter,'),
           ),
         ),
       );

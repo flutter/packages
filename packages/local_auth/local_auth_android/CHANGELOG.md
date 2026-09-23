@@ -1,3 +1,15 @@
+## NEXT
+
+* Updates minimum supported SDK version to Flutter 3.41/Dart 3.11.
+
+## 2.2.0
+
+* Adjusts visibilty modifiers to support the migration of unit tests to Kotlin.
+
+## 2.1.0
+
+* Converts the implementation to Kotlin.
+
 ## 2.0.10
 
 * Updates pigeon dev_dependency to ^27.3.2 for analyzer 14 compatibility.
