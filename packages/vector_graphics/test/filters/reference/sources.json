@@ -1,0 +1,10 @@
+{
+  "empty": {
+    "kind": "browser",
+    "input": "empty.svg"
+  },
+  "unfiltered": {
+    "kind": "browser",
+    "input": "unfiltered.svg"
+  }
+}

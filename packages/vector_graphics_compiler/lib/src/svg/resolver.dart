@@ -24,6 +24,58 @@ class ResolvingVisitor extends Visitor<Node, AffineMatrix> {
   final Set<String> _activeDeferred = <String>{};
   final Set<String> _activePatterns = <String>{};
   int _deferredExpansionCount = 0;
+  int _filterDepth = 0;
+
+  Node _withOpacity(Node result, SvgAttributes attributes) {
+    final double? opacity = attributes.compositingOpacity;
+    if (opacity == null || opacity == 1) {
+      return result;
+    }
+    return SaveLayerNode(
+      SvgAttributes.empty,
+      paint: Paint(fill: Fill(color: Color.opaqueBlack.withOpacity(opacity))),
+      children: <Node>[result],
+    );
+  }
+
+  @override
+  Node visitFilterNode(FilterNode node, AffineMatrix data) {
+    final child = node.children.single.applyAttributes(node.attributes) as AttributedNode;
+    final hasFilter = node.filterResolver(node.filterId) != null;
+    if (hasFilter) {
+      _filterDepth++;
+    }
+    final Node resolved;
+    try {
+      resolved = child.accept(this, data);
+    } finally {
+      if (hasFilter) {
+        _filterDepth--;
+      }
+    }
+    // An unresolved URL has no filter effect. Remove its boundary before the
+    // optimizers, while retaining the child's transform, opacity, and clips.
+    if (!hasFilter) {
+      return resolved;
+    }
+    final double? opacity = child.attributes.compositingOpacity;
+    // The normal visitor has already isolated the element's opacity. Move that
+    // layer around the filter so generated pixels receive the same coverage.
+    final bool liftOpacity = opacity != null && opacity != 1;
+    final Node source = liftOpacity ? (resolved as SaveLayerNode).children.single : resolved;
+    return _withOpacity(
+      FilterNode(
+        SvgAttributes.empty,
+        filterId: node.filterId,
+        filterResolver: node.filterResolver,
+        filterTransform: data.multiplied(child.transform),
+        viewportWidth: _bounds.width,
+        viewportHeight: _bounds.height,
+        children: <Node>[source],
+      ),
+      child.attributes,
+    );
+  }
 
   @override
   Node visitClipNode(ClipNode clipNode, AffineMatrix data) {
@@ -43,16 +95,17 @@ class ResolvingVisitor extends Visitor<Node, AffineMatrix> {
     if (_deferredExpansionCount > kMaxReferenceExpansions) {
       throw StateError(kMaxReferenceExpansionsErrorMessage);
     }
+    // Reusing a mask on nested source elements is not recursion in its definition.
+    final Node child = maskNode.child.accept(this, data);
     if (!_activeMasks.add(maskNode.maskId)) {
       // Recursive loop detected.
-      return maskNode.child.accept(this, data);
+      return child;
     }
     try {
       final AttributedNode? resolvedMask = maskNode.resolver(maskNode.maskId);
       if (resolvedMask == null) {
-        return maskNode.child.accept(this, data);
+        return child;
       }
-      final Node child = maskNode.child.accept(this, data);
       final AffineMatrix childTransform = maskNode.concatTransform(data);
       final Node mask = resolvedMask.accept(this, childTransform);
 
@@ -88,7 +141,7 @@ class ResolvingVisitor extends Visitor<Node, AffineMatrix> {
         ],
       );
     }
-    return result;
+    return _withOpacity(result, parentNode.attributes);
   }
 
   @override
@@ -104,6 +157,16 @@ class ResolvingVisitor extends Visitor<Node, AffineMatrix> {
       if (pathNode.attributes.stroke?.dashArray != null) {
         final children = <Node>[];
         final parent = ParentNode(pathNode.attributes, children: children);
+        if (_filterDepth > 0) {
+          children.add(
+            ResolvedPathNode(
+              paint: const Paint(),
+              bounds: newBounds,
+              path: transformedPath,
+              geometryOnly: true,
+            ),
+          );
+        }
         if (paint.fill != null) {
           children.add(
             ResolvedPathNode(
@@ -122,21 +185,34 @@ class ResolvingVisitor extends Visitor<Node, AffineMatrix> {
             ),
           );
         }
-        return parent;
+        return _withOpacity(parent, pathNode.attributes);
       }
-      return ResolvedPathNode(paint: paint, bounds: newBounds, path: transformedPath);
+      return _withOpacity(
+        ResolvedPathNode(paint: paint, bounds: newBounds, path: transformedPath),
+        pathNode.attributes,
+      );
     }
-    return Node.empty;
+    return _filterDepth > 0
+        ? ResolvedPathNode(
+            paint: const Paint(),
+            bounds: newBounds,
+            path: transformedPath,
+            geometryOnly: true,
+          )
+        : _withOpacity(Node.empty, pathNode.attributes);
   }
 
   @override
   Node visitTextPositionNode(TextPositionNode textPositionNode, AffineMatrix data) {
     final AffineMatrix nextTransform = textPositionNode.concatTransform(data);
 
-    return ResolvedTextPositionNode(textPositionNode.computeTextPosition(_bounds, data), <Node>[
-      for (final Node child in textPositionNode.children)
-        child.applyAttributes(textPositionNode.attributes).accept(this, nextTransform),
-    ]);
+    return _withOpacity(
+      ResolvedTextPositionNode(textPositionNode.computeTextPosition(_bounds, data), <Node>[
+        for (final Node child in textPositionNode.children)
+          child.applyAttributes(textPositionNode.attributes).accept(this, nextTransform),
+      ]),
+      textPositionNode.attributes,
+    );
   }
 
   @override
@@ -144,10 +220,17 @@ class ResolvingVisitor extends Visitor<Node, AffineMatrix> {
     final Paint? paint = textNode.computePaint(_bounds, data);
     final TextConfig textConfig = textNode.computeTextConfig(_bounds, data);
 
-    if (paint != null && textConfig.text.trim().isNotEmpty) {
-      return ResolvedTextNode(textConfig: textConfig, paint: paint);
+    if ((paint != null || _filterDepth > 0) && textConfig.text.trim().isNotEmpty) {
+      return _withOpacity(
+        ResolvedTextNode(
+          textConfig: textConfig,
+          paint: paint ?? const Paint(),
+          geometryOnly: paint == null,
+        ),
+        textNode.attributes,
+      );
     }
-    return Node.empty;
+    return _withOpacity(Node.empty, textNode.attributes);
   }
 
   @override
@@ -160,8 +243,16 @@ class ResolvingVisitor extends Visitor<Node, AffineMatrix> {
       height: viewportNode.height,
       transform: AffineMatrix.identity,
       children: <Node>[
-        for (final Node child in viewportNode.children)
-          child.applyAttributes(viewportNode.attributes).accept(this, transform),
+        _withOpacity(
+          ParentNode(
+            SvgAttributes.empty,
+            children: <Node>[
+              for (final Node child in viewportNode.children)
+                child.applyAttributes(viewportNode.attributes).accept(this, transform),
+            ],
+          ),
+          viewportNode.attributes,
+        ),
       ],
     );
   }
@@ -181,8 +272,11 @@ class ResolvingVisitor extends Visitor<Node, AffineMatrix> {
       if (resolvedNode == null) {
         return Node.empty;
       }
-      final Node concreteRef = resolvedNode.applyAttributes(deferredNode.attributes, replace: true);
-      return concreteRef.accept(this, data);
+      final Node concreteRef = resolvedNode.applyAttributes(
+        deferredNode.attributes.withoutCompositingOpacity(),
+        replace: true,
+      );
+      return _withOpacity(concreteRef.accept(this, data), deferredNode.attributes);
     } finally {
       _activeDeferred.remove(deferredNode.refId);
     }
@@ -254,20 +348,26 @@ class ResolvingVisitor extends Visitor<Node, AffineMatrix> {
     // it only has an offset and/or scale.
     if (childTransform.encodableInRect) {
       // trivial transform.
-      return ResolvedImageNode(
-        data: imageNode.data,
-        format: imageNode.format,
-        rect: childTransform.transformRect(rect),
-        transform: null,
+      return _withOpacity(
+        ResolvedImageNode(
+          data: imageNode.data,
+          format: imageNode.format,
+          rect: childTransform.transformRect(rect),
+          transform: null,
+        ),
+        attributes,
       );
     }
 
     // Non-trivial transform.
-    return ResolvedImageNode(
-      data: imageNode.data,
-      format: imageNode.format,
-      rect: rect,
-      transform: childTransform,
+    return _withOpacity(
+      ResolvedImageNode(
+        data: imageNode.data,
+        format: imageNode.format,
+        rect: rect,
+        transform: childTransform,
+      ),
+      attributes,
     );
   }
 
@@ -347,7 +447,10 @@ class ResolvedTextPositionNode extends Node {
 /// This should only be constructed from a [TextNode] in a [ResolvingVisitor].
 class ResolvedTextNode extends Node {
   /// Create a new [ResolvedTextNode].
-  ResolvedTextNode({required this.textConfig, required this.paint});
+  ResolvedTextNode({required this.textConfig, required this.paint, this.geometryOnly = false});
+
+  /// Whether to lay out this text only for its position and filter bounds.
+  final bool geometryOnly;
 
   /// The text configuration to draw this piece of text.
   final TextConfig textConfig;
@@ -369,7 +472,15 @@ class ResolvedTextNode extends Node {
 /// This should only be constructed from a [PathNode] in a [ResolvingVisitor].
 class ResolvedPathNode extends Node {
   /// Create a new [ResolvedPathNode].
-  ResolvedPathNode({required this.paint, required this.bounds, required this.path});
+  ResolvedPathNode({
+    required this.paint,
+    required this.bounds,
+    required this.path,
+    this.geometryOnly = false,
+  });
+
+  /// Whether this path contributes geometry without producing paint commands.
+  final bool geometryOnly;
 
   /// The paint for the current path node.
   final Paint paint;

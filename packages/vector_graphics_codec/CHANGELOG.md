@@ -1,6 +1,8 @@
 ## NEXT
 
+* Adds filter geometry commands and shared SVG length conversion.
 * Updates minimum supported SDK version to Flutter 3.41/Dart 3.11.
+* Adds version 2 filter commands, metadata inspection, and bounded nested vector and fallible raster image resources.
 
 ## 1.1.13
 

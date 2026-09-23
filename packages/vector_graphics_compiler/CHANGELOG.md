@@ -1,6 +1,8 @@
 ## NEXT
 
+* Preserves filter geometry independently of paint, ignores descriptive filter children, resolves SVG length units, and optimizes independent unfiltered subtrees.
 * Updates minimum supported SDK version to Flutter 3.41/Dart 3.11.
+* Adds isolated SVG filter commands, bounded image resources, and correct opacity, mask, and text composition.
 
 ## 1.3.0
 

@@ -2,6 +2,8 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'package:vector_graphics_codec/vector_graphics_codec.dart';
+
 import 'geometry/image.dart';
 import 'geometry/matrix.dart';
 import 'geometry/path.dart';
@@ -25,6 +27,30 @@ class DrawCommandBuilder {
   final Map<TextPosition, int> _textPositions = <TextPosition, int>{};
 
   int _getOrGenerateId<T>(T object, Map<T, int> map) => map.putIfAbsent(object, () => map.length);
+
+  /// Starts recording a filter's source graphic.
+  void beginFilter(VectorFilter filter, AffineMatrix transform, double width, double height) {
+    _commands.add(
+      DrawCommand(
+        DrawCommandType.beginFilter,
+        filter: filter,
+        filterTransform: transform,
+        filterWidth: width,
+        filterHeight: height,
+      ),
+    );
+  }
+
+  /// Completes the current filter source.
+  void endFilter() => _commands.add(const DrawCommand(DrawCommandType.endFilter));
+
+  /// Preserves source geometry that has no corresponding paint operation.
+  void addPathGeometry(Path path) {
+    if (!path.isEmpty) {
+      final int pathId = _getOrGenerateId(path, _paths);
+      _commands.add(DrawCommand(DrawCommandType.pathGeometry, objectId: pathId));
+    }
+  }
 
   /// Add a vertices to the command stack.
   void addVertices(IndexedVertices vertices, Paint paint) {
@@ -100,8 +126,8 @@ class DrawCommandBuilder {
   }
 
   /// Adds a text to the current draw command stack.
-  void addText(TextConfig textConfig, Paint paint, String? debugString, Object? patternId) {
-    final int paintId = _getOrGenerateId(paint, _paints);
+  void addText(TextConfig textConfig, Paint? paint, String? debugString, Object? patternId) {
+    final int? paintId = paint == null ? null : _getOrGenerateId(paint, _paints);
     final int styleId = _getOrGenerateId(textConfig, _text);
     _commands.add(
       DrawCommand(

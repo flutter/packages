@@ -10,6 +10,7 @@ import 'dart:math' as math;
 import 'dart:typed_data';
 
 import 'package:meta/meta.dart';
+import 'package:vector_graphics_codec/vector_graphics_codec.dart';
 import 'package:xml/xml_events.dart';
 
 import '../geometry/basic_types.dart';
@@ -22,6 +23,8 @@ import 'clipping_optimizer.dart';
 import 'color_mapper.dart';
 import 'colors.dart';
 import 'constants.dart';
+import 'filter.dart';
+import 'filter_optimizer.dart';
 import 'masking_optimizer.dart';
 import 'node.dart';
 import 'numbers.dart' as numbers show parseDoubleWithUnits;
@@ -113,6 +116,7 @@ class _Elements {
       group,
       clipId: parserState._currentAttributes.clipPathId,
       clipResolver: parserState._definitions.getClipPath,
+      filterResolver: parserState._definitions.getFilter,
       maskId: parserState.attribute('mask'),
       maskResolver: parserState._definitions.getDrawable,
       patternId: parserState._definitions.getPattern(parserState),
@@ -138,6 +142,7 @@ class _Elements {
       group,
       clipId: parserState._currentAttributes.clipPathId,
       clipResolver: parserState._definitions.getClipPath,
+      filterResolver: parserState._definitions.getFilter,
       maskId: parserState.attribute('mask'),
       maskResolver: parserState._definitions.getDrawable,
       patternId: parserState._definitions.getPattern(parserState),
@@ -187,6 +192,7 @@ class _Elements {
       clipRule: attributes.clipRule,
       clipPathId: attributes.clipPathId,
       blendMode: attributes.blendMode,
+      compositingOpacity: attributes.compositingOpacity,
       fontFamily: attributes.fontFamily,
       fontWeight: attributes.fontWeight,
       fontSize: attributes.fontSize,
@@ -221,14 +227,16 @@ class _Elements {
         );
 
     final group = ParentNode(
-      // parserState._currentAttributes,
-      SvgAttributes.empty,
+      SvgAttributes._(
+        raw: const <String, String>{},
+        compositingOpacity: parserState._currentAttributes.compositingOpacity,
+      ),
       precalculatedTransform: transform,
     );
 
     group.addChild(
       DeferredNode(
-        parserState._currentAttributes,
+        parserState._currentAttributes.withoutCompositingOpacity(),
         refId: 'url($xlinkHref)',
         resolver: parserState._definitions.getDrawable,
       ),
@@ -241,8 +249,10 @@ class _Elements {
     }
     parent!.addChild(
       group,
+      filterId: parserState.attribute('filter'),
       clipId: parserState._currentAttributes.clipPathId,
       clipResolver: parserState._definitions.getClipPath,
+      filterResolver: parserState._definitions.getFilter,
       maskId: parserState.attribute('mask'),
       maskResolver: parserState._definitions.getDrawable,
       patternId: parserState._definitions.getPattern(parserState),
@@ -446,6 +456,7 @@ class _Elements {
       parserState.currentGroup!.addChild(
         image,
         clipResolver: parserState._definitions.getClipPath,
+        filterResolver: parserState._definitions.getFilter,
         maskResolver: parserState._definitions.getDrawable,
         patternResolver: parserState._definitions.getDrawable,
       );
@@ -615,7 +626,9 @@ Node parseToNodeTree(String source) {
 class SvgParser {
   /// Creates a new [SvgParser].
   SvgParser(String xml, this.theme, this._key, this._warningsAsErrors, this._colorMapper)
-    : _eventIterator = parseEvents(xml).iterator;
+    : _eventIterator = parseEvents(xml).iterator {
+    _definitions.filters.addAll(readFilterDefinitions(xml, theme: theme));
+  }
 
   /// The theme used when parsing SVG elements.
   final SvgTheme theme;
@@ -755,10 +768,12 @@ class SvgParser {
     }
 
     currentGroup?.addChild(
-      TextNode(prependSpace ? ' $text' : text, _currentAttributes),
+      TextNode(prependSpace ? ' $text' : text, _currentAttributes.withoutCompositingOpacity()),
       // Do not supply pattern/clip/mask IDs, those are handled by the group
       // text or tspan this text is part of.
+      filterId: 'none',
       clipResolver: _definitions.getClipPath,
+      filterResolver: _definitions.getFilter,
       maskResolver: _definitions.getDrawable,
       patternResolver: _definitions.getDrawable,
     );
@@ -808,42 +823,53 @@ class SvgParser {
 
     /// Resolve the tree
     final resolvingVisitor = ResolvingVisitor();
-    final tessellator = Tessellator();
-    final maskingOptimizer = MaskingOptimizer();
-    final clippingOptimizer = ClippingOptimizer();
-    final overdrawOptimizer = OverdrawOptimizer();
 
-    Node newRoot = _root!.accept(resolvingVisitor, AffineMatrix.identity);
+    final ViewportNode root = _root!;
+    final String? rootFilter = root.attributes.raw['filter'];
+    final source = rootFilter == null || rootFilter == 'none'
+        ? root
+        : ViewportNode(
+            SvgAttributes.empty,
+            width: root.width,
+            height: root.height,
+            transform: AffineMatrix.identity,
+            children: <Node>[
+              FilterNode(
+                SvgAttributes.empty,
+                filterId: rootFilter,
+                filterResolver: _definitions.getFilter,
+                children: <Node>[
+                  ParentNode(
+                    root.attributes,
+                    precalculatedTransform: root.transform,
+                    children: root.children.toList(),
+                  ),
+                ],
+              ),
+            ],
+          );
+    Node newRoot = source.accept(resolvingVisitor, AffineMatrix.identity);
 
-    // The order of these matters. The overdraw optimizer can do its best if
-    // masks and unnecessary clips have been eliminated.
-    if (enableMaskingOptimizer) {
-      if (path_ops.isPathOpsInitialized) {
-        newRoot = maskingOptimizer.apply(newRoot);
-      } else {
+    newRoot = optimizeFilterSubtrees(newRoot, (Node subtree) {
+      // Preserve the optimizer order within each independent subtree.
+      if ((enableMaskingOptimizer || enableClippingOptimizer || enableOverdrawOptimizer) &&
+          !path_ops.isPathOpsInitialized) {
         throw Exception('PathOps library was not initialized.');
       }
-    }
-
-    if (enableClippingOptimizer) {
-      if (path_ops.isPathOpsInitialized) {
-        newRoot = clippingOptimizer.apply(newRoot);
-      } else {
-        throw Exception('PathOps library was not initialized.');
+      if (enableMaskingOptimizer) {
+        subtree = MaskingOptimizer().apply(subtree);
       }
-    }
-
-    if (enableOverdrawOptimizer) {
-      if (path_ops.isPathOpsInitialized) {
-        newRoot = overdrawOptimizer.apply(newRoot);
-      } else {
-        throw Exception('PathOps library was not initialized.');
+      if (enableClippingOptimizer) {
+        subtree = ClippingOptimizer().apply(subtree);
       }
-    }
-
-    if (isTesselatorInitialized) {
-      newRoot = newRoot.accept(tessellator, null);
-    }
+      if (enableOverdrawOptimizer) {
+        subtree = OverdrawOptimizer().apply(subtree);
+      }
+      if (isTesselatorInitialized) {
+        subtree = subtree.accept(Tessellator(), null);
+      }
+      return subtree;
+    });
 
     /// Convert to vector instructions
     final commandVisitor = CommandBuilderVisitor();
@@ -877,7 +903,18 @@ class SvgParser {
     assert('#${_currentAttributes.id}' != _currentAttributes.href);
     final String iri = buildUrlIri();
     if (iri != emptyUrlIri) {
-      _definitions.addDrawable(iri, drawable);
+      final String? filter = drawable.attributes.raw['filter'];
+      _definitions.addDrawable(
+        iri,
+        filter == null || filter == 'none'
+            ? drawable
+            : FilterNode(
+                SvgAttributes.empty,
+                filterId: filter,
+                filterResolver: _definitions.getFilter,
+                children: <Node>[drawable],
+              ),
+      );
       return true;
     }
     return false;
@@ -907,6 +944,7 @@ class SvgParser {
       drawable,
       clipId: _currentAttributes.clipPathId,
       clipResolver: _definitions.getClipPath,
+      filterResolver: _definitions.getFilter,
       maskId: attribute('mask'),
       maskResolver: _definitions.getDrawable,
       patternId: _definitions.getPattern(this),
@@ -918,6 +956,12 @@ class SvgParser {
   /// Potentially handles a starting element, if it was a singular shape or a
   /// `<defs>` element.
   bool startElement(XmlStartElementEvent event) {
+    if (event.name == 'filter') {
+      if (!event.isSelfClosing) {
+        _discardSubtree();
+      }
+      return true;
+    }
     if (event.name == 'defs') {
       if (!event.isSelfClosing) {
         addGroup(event, ParentNode(_currentAttributes));
@@ -992,16 +1036,6 @@ class SvgParser {
   /// Returns the viewport height, or null if not yet parsed.
   double? get viewportHeight => _root?.height;
 
-  static final Map<String, double> _kTextSizeMap = <String, double>{
-    'xx-small': 10,
-    'x-small': 12,
-    'small': 14,
-    'medium': 18,
-    'large': 22,
-    'x-large': 26,
-    'xx-large': 32,
-  };
-
   /// Parses a `font-size` attribute.
   double? parseFontSize(String? raw) {
     if (raw == null || raw == '') {
@@ -1014,7 +1048,7 @@ class SvgParser {
     }
 
     raw = raw.toLowerCase().trim();
-    ret = _kTextSizeMap[raw];
+    ret = svgFontSizes[raw];
     if (ret != null) {
       return ret;
     }
@@ -1558,7 +1592,10 @@ class SvgParser {
 
   SvgAttributes _createSvgAttributes(Map<String, String> attributeMap, {Color? currentColor}) {
     final String? id = attributeMap['id'];
-    final double? opacity = parseDouble(attributeMap['opacity'])?.clamp(0.0, 1.0);
+    final double? overallOpacity = parseDouble(attributeMap['opacity'])?.clamp(0.0, 1.0);
+    // Opacity peepholing into source paint is invalid for generated filter pixels.
+    final bool separateOpacity = _definitions.filters.isNotEmpty;
+    final double? opacity = separateOpacity ? null : overallOpacity;
     final Color? color =
         parseColor(attributeMap['color'], attributeName: 'color', id: id) ?? currentColor;
 
@@ -1570,6 +1607,7 @@ class SvgParser {
 
     return SvgAttributes._(
       raw: attributeMap,
+      compositingOpacity: separateOpacity ? (overallOpacity ?? 1) : null,
       id: id,
       x: DoubleOrPercentage.fromString(rawX),
       y: DoubleOrPercentage.fromString(rawY),
@@ -1610,6 +1648,22 @@ class _Resolver {
   final Map<String, Gradient> _shaders = <String, Gradient>{};
   final Map<String, List<Node>> _clips = <String, List<Node>>{};
   int _deferredExpansionCount = 0;
+
+  final Map<String, VectorFilter> filters = <String, VectorFilter>{};
+
+  /// Resolves forward filter references after the document has been read.
+  VectorFilter? getFilter(String reference) {
+    reference = reference.trim();
+    if (!reference.startsWith('url(') || !reference.endsWith(')')) {
+      return null;
+    }
+    String target = reference.substring(4, reference.length - 1).trim();
+    if ((target.startsWith('"') && target.endsWith('"')) ||
+        (target.startsWith("'") && target.endsWith("'"))) {
+      target = target.substring(1, target.length - 1);
+    }
+    return filters['url($target)'];
+  }
 
   bool _sealed = false;
 
@@ -1765,6 +1819,7 @@ class SvgAttributes {
     this.clipRule,
     this.clipPathId,
     this.blendMode,
+    this.compositingOpacity,
     this.fontFamily,
     this.fontWeight,
     this.fontSize,
@@ -1794,6 +1849,7 @@ class SvgAttributes {
     this.clipRule,
     this.clipPathId,
     this.blendMode,
+    this.compositingOpacity,
     this.fontFamily,
     this.fontWeight,
     this.fontSize,
@@ -1814,6 +1870,12 @@ class SvgAttributes {
 
   /// The raw attribute map.
   final Map<String, String> raw;
+
+  /// Overall opacity kept separate from source paint when a document has filters.
+  /// Unlike fill/stroke opacity, this is applied after filtering and is not inherited.
+  /// Null retains legacy paint peepholing; one selects separate composition with
+  /// no local opacity, including on inherited attributes and generated groups.
+  final double? compositingOpacity;
 
   /// Whether either the stroke or fill on this object has opacity.
   bool get hasOpacity => (fill?.opacity ?? stroke?.opacity) != null;
@@ -1837,7 +1899,7 @@ class SvgAttributes {
   /// set += '};';
   /// console.log(set);
   /// ```
-  static const Set<String> _heritableProps = <String>{
+  static const Set<String> heritableProperties = <String>{
     'writing-mode',
     'glyph-orientation-vertical',
     'glyph-orientation-horizontal',
@@ -1884,7 +1946,7 @@ class SvgAttributes {
   /// The properties in [raw] that are heritable per the SVG 1.1 specification.
   Iterable<MapEntry<String, String>> get heritable {
     return raw.entries.where((MapEntry<String, String> entry) {
-      return _heritableProps.contains(entry.key);
+      return heritableProperties.contains(entry.key);
     });
   }
 
@@ -1981,6 +2043,7 @@ class SvgAttributes {
       clipRule: clipRule,
       clipPathId: clipPathId,
       blendMode: blendMode,
+      compositingOpacity: compositingOpacity,
       fontFamily: fontFamily,
       fontWeight: fontWeight,
       fontSize: fontSize,
@@ -1995,6 +2058,9 @@ class SvgAttributes {
     );
   }
 
+  /// Removes an opacity already assigned to an enclosing compositing group.
+  SvgAttributes withoutCompositingOpacity() => applyParent(empty, omitCompositingOpacity: true);
+
   /// Creates a new set of attributes as if this inherited from `parent`.
   ///
   /// If `includePosition` is true, the `x`/`y` coordinates are also inherited. This
@@ -2004,6 +2070,7 @@ class SvgAttributes {
     bool includePosition = false,
     AffineMatrix? transformOverride,
     String? hrefOverride,
+    bool omitCompositingOpacity = false,
   }) {
     final newRaw = <String, String>{
       ...Map<String, String>.fromEntries(parent.heritable),
@@ -2024,6 +2091,9 @@ class SvgAttributes {
       clipRule: clipRule ?? parent.clipRule,
       clipPathId: clipPathId ?? parent.clipPathId,
       blendMode: blendMode ?? parent.blendMode,
+      compositingOpacity: omitCompositingOpacity
+          ? (compositingOpacity == null ? null : 1)
+          : (compositingOpacity ?? (parent.compositingOpacity == null ? null : 1)),
       fontFamily: fontFamily ?? parent.fontFamily,
       fontWeight: fontWeight ?? parent.fontWeight,
       fontSize: fontSize ?? parent.fontSize,

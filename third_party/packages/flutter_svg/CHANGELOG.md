@@ -1,6 +1,7 @@
 ## NEXT
 
 * Updates minimum supported SDK version to Flutter 3.41/Dart 3.11.
+* Adds filter-aware loaders and automatic filter texture resolution with a `filterRasterScale` override.
 
 ## 2.3.0
 

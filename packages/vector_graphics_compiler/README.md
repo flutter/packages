@@ -19,7 +19,7 @@ Supported SVG features:
 
 Unsupported SVG features:
 
-- Filters
+- Filter primitive rendering (definitions are preserved for the renderer)
 - Some text processing attributes
 
 Optimizations:

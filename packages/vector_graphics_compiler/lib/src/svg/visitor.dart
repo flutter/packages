@@ -2,6 +2,8 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'package:vector_graphics_codec/vector_graphics_codec.dart';
+
 import '../draw_command_builder.dart';
 import '../geometry/path.dart';
 import '../paint.dart';
@@ -13,6 +15,11 @@ import 'resolver.dart';
 abstract class Visitor<S, V> {
   /// Const constructor so subclasses can be const.
   const Visitor();
+
+  /// Visits a filter boundary. Optimizers must preserve this boundary.
+  S visitFilterNode(FilterNode node, V data) {
+    throw UnsupportedError('Filter boundaries cannot be flattened by $runtimeType');
+  }
 
   /// Visit a [ViewportNode].
   S visitViewportNode(ViewportNode viewportNode, V data);
@@ -137,6 +144,18 @@ class CommandBuilderVisitor extends Visitor<void, void> with ErrorOnUnResolvedNo
   }
 
   @override
+  void visitFilterNode(FilterNode node, void data) {
+    final VectorFilter? filter = node.filterResolver(node.filterId);
+    if (filter == null) {
+      visitParentNode(node, data);
+      return;
+    }
+    _builder.beginFilter(filter, node.filterTransform, node.viewportWidth, node.viewportHeight);
+    visitParentNode(node, data);
+    _builder.endFilter();
+  }
+
+  @override
   void visitEmptyNode(Node node, void data) {}
 
   @override
@@ -172,7 +191,11 @@ class CommandBuilderVisitor extends Visitor<void, void> with ErrorOnUnResolvedNo
 
   @override
   void visitResolvedPath(ResolvedPathNode pathNode, void data) {
-    _builder.addPath(pathNode.path, pathNode.paint, null, currentPatternId);
+    if (pathNode.geometryOnly) {
+      _builder.addPathGeometry(pathNode.path);
+    } else {
+      _builder.addPath(pathNode.path, pathNode.paint, null, currentPatternId);
+    }
   }
 
   @override
@@ -185,7 +208,12 @@ class CommandBuilderVisitor extends Visitor<void, void> with ErrorOnUnResolvedNo
 
   @override
   void visitResolvedText(ResolvedTextNode textNode, void data) {
-    _builder.addText(textNode.textConfig, textNode.paint, null, currentPatternId);
+    _builder.addText(
+      textNode.textConfig,
+      textNode.geometryOnly ? null : textNode.paint,
+      null,
+      textNode.geometryOnly ? null : currentPatternId,
+    );
   }
 
   @override
