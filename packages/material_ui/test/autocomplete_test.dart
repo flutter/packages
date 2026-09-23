@@ -913,7 +913,6 @@ void main() {
         isButton: true,
         isFocusable: true,
         hasSelectedState: true,
-        isSelected: false,
         hasTapAction: true,
         hasFocusAction: true,
         label: 'bobcat',

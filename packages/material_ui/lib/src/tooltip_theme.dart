@@ -210,6 +210,11 @@ class TooltipThemeData with Diagnosticable {
       decoration: Decoration.lerp(a?.decoration, b?.decoration, t),
       textStyle: TextStyle.lerp(a?.textStyle, b?.textStyle, t),
       textAlign: t < 0.5 ? a?.textAlign : b?.textAlign,
+      waitDuration: t < 0.5 ? a?.waitDuration : b?.waitDuration,
+      showDuration: t < 0.5 ? a?.showDuration : b?.showDuration,
+      exitDuration: t < 0.5 ? a?.exitDuration : b?.exitDuration,
+      triggerMode: t < 0.5 ? a?.triggerMode : b?.triggerMode,
+      enableFeedback: t < 0.5 ? a?.enableFeedback : b?.enableFeedback,
       ignorePointer: t < 0.5 ? a?.ignorePointer : b?.ignorePointer,
     );
   }

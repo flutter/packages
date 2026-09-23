@@ -23,6 +23,38 @@ void main() {
     expect(TooltipThemeData.lerp(null, null, 0), null);
     const data = TooltipThemeData();
     expect(identical(TooltipThemeData.lerp(data, data, 0.5), data), true);
+
+    const a = TooltipThemeData(
+      waitDuration: Duration(milliseconds: 100),
+      showDuration: Duration(milliseconds: 200),
+      exitDuration: Duration(milliseconds: 300),
+      triggerMode: TooltipTriggerMode.tap,
+      enableFeedback: true,
+      ignorePointer: true,
+    );
+    const b = TooltipThemeData(
+      waitDuration: Duration(milliseconds: 400),
+      showDuration: Duration(milliseconds: 500),
+      exitDuration: Duration(milliseconds: 600),
+      triggerMode: TooltipTriggerMode.longPress,
+      enableFeedback: false,
+      ignorePointer: false,
+    );
+    final TooltipThemeData lerpedEarly = TooltipThemeData.lerp(a, b, 0.25)!;
+    expect(lerpedEarly.waitDuration, a.waitDuration);
+    expect(lerpedEarly.showDuration, a.showDuration);
+    expect(lerpedEarly.exitDuration, a.exitDuration);
+    expect(lerpedEarly.triggerMode, a.triggerMode);
+    expect(lerpedEarly.enableFeedback, a.enableFeedback);
+    expect(lerpedEarly.ignorePointer, a.ignorePointer);
+
+    final TooltipThemeData lerpedLate = TooltipThemeData.lerp(a, b, 0.75)!;
+    expect(lerpedLate.waitDuration, b.waitDuration);
+    expect(lerpedLate.showDuration, b.showDuration);
+    expect(lerpedLate.exitDuration, b.exitDuration);
+    expect(lerpedLate.triggerMode, b.triggerMode);
+    expect(lerpedLate.enableFeedback, b.enableFeedback);
+    expect(lerpedLate.ignorePointer, b.ignorePointer);
   });
 
   test('TooltipThemeData defaults', () {
