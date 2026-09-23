@@ -16,9 +16,8 @@ void main() {
 
   testWidgets('Default PageTransitionsTheme platform', (WidgetTester tester) async {
     await tester.pumpWidget(const MaterialApp(home: Text('home')));
-    final PageTransitionsTheme theme = Theme.of(
-      tester.element(find.text('home')),
-    ).pageTransitionsTheme;
+    final PageTransitionsTheme theme = Theme.of(tester.element(find.text('home')))
+        .pageTransitionsTheme;
     expect(theme.builders, isNotNull);
     for (final TargetPlatform platform in TargetPlatform.values) {
       switch (platform) {
@@ -959,7 +958,7 @@ void main() {
 
       switch (defaultTargetPlatform) {
         case TargetPlatform.android:
-          // Shows both pages while doing the "peek" predicitve back transition.
+          // Shows both pages while doing the "peek" predictive back transition.
           expect(find.text('push'), findsOneWidget);
         case TargetPlatform.iOS:
         case TargetPlatform.macOS:

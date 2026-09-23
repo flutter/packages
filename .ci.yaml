@@ -7,9 +7,9 @@
 #  * https://github.com/flutter/cocoon/blob/main/CI_YAML.md
 enabled_branches:
   - main
-  - release-go_router-\d+\.\d+\.\d+
-  - release-cupertino_ui-\d+\.\d+\.\d+
-  - release-material_ui-\d+\.\d+\.\d+
+  - release-go_router-\d+\.\d+\.\d+(?:-[\w.]+)?(?:\+[\w.]+)?
+  - release-cupertino_ui-\d+\.\d+\.\d+(?:-[\w.]+)?(?:\+[\w.]+)?
+  - release-material_ui-\d+\.\d+\.\d+(?:-[\w.]+)?(?:\+[\w.]+)?
 
 platform_properties:
   linux:
@@ -73,7 +73,7 @@ platform_properties:
       device_type: none
       dependencies: >-
         [
-          {"dependency": "chrome_and_driver", "version": "version:125.0.6422.141"}
+          {"dependency": "chrome_and_driver", "version": "version:145.0.7632.117"}
         ]
   windows_arm64:
     properties:
@@ -101,19 +101,6 @@ platform_properties:
       os: Mac-15.7
       device_type: none
       cpu: arm64
-      $flutter/osx_sdk : >-
-        {
-          "sdk_version": "17c52"
-        }
-  mac_x64:
-    properties:
-      dependencies: >-
-        [
-          {"dependency": "ruby", "version": "ruby_3.1-pod_1.13"}
-        ]
-      os: Mac-15.7
-      device_type: none
-      cpu: x86
       $flutter/osx_sdk : >-
         {
           "sdk_version": "17c52"
@@ -183,7 +170,7 @@ targets:
 
   - name: Linux_web web_dart_unit_test_shard_1 master
     recipe: packages/packages
-    timeout: 60
+    timeout: 90
     properties:
       add_recipes_cq: "true"
       target_file: web_dart_unit_tests.yaml
@@ -193,7 +180,7 @@ targets:
 
   - name: Linux_web web_dart_unit_test_shard_2 master
     recipe: packages/packages
-    timeout: 60
+    timeout: 90
     properties:
       target_file: web_dart_unit_tests.yaml
       channel: master
@@ -202,7 +189,7 @@ targets:
 
   - name: Linux_web web_dart_unit_test_shard_3 master
     recipe: packages/packages
-    timeout: 60
+    timeout: 90
     properties:
       target_file: web_dart_unit_tests.yaml
       channel: master
@@ -211,30 +198,54 @@ targets:
 
   - name: Linux_web web_dart_unit_test_shard_1 stable
     recipe: packages/packages
-    timeout: 60
+    timeout: 90
     properties:
       target_file: web_dart_unit_tests.yaml
       channel: stable
       version_file: flutter_stable.version
       package_sharding: "--shardIndex 0 --shardCount 3"
+      # TODO(mdebbar): Upgrade to Chrome 145 once Flutter stable includes the
+      # upstream flutter_tools fixes for Chrome 145 (flutter/flutter#190155 and
+      # flutter/flutter#190584) which pass --disable-search-engine-choice-screen
+      # and --disable-background-timer-throttling; see https://github.com/flutter/flutter/issues/191299
+      dependencies: >-
+        [
+          {"dependency": "chrome_and_driver", "version": "version:137.0.7151.119"}
+        ]
 
   - name: Linux_web web_dart_unit_test_shard_2 stable
     recipe: packages/packages
-    timeout: 60
+    timeout: 90
     properties:
       target_file: web_dart_unit_tests.yaml
       channel: stable
       version_file: flutter_stable.version
       package_sharding: "--shardIndex 1 --shardCount 3"
+      # TODO(mdebbar): Upgrade to Chrome 145 once Flutter stable includes the
+      # upstream flutter_tools fixes for Chrome 145 (flutter/flutter#190155 and
+      # flutter/flutter#190584) which pass --disable-search-engine-choice-screen
+      # and --disable-background-timer-throttling; see https://github.com/flutter/flutter/issues/191299
+      dependencies: >-
+        [
+          {"dependency": "chrome_and_driver", "version": "version:137.0.7151.119"}
+        ]
 
   - name: Linux_web web_dart_unit_test_shard_3 stable
     recipe: packages/packages
-    timeout: 60
+    timeout: 90
     properties:
       target_file: web_dart_unit_tests.yaml
       channel: stable
       version_file: flutter_stable.version
       package_sharding: "--shardIndex 2 --shardCount 3"
+      # TODO(mdebbar): Upgrade to Chrome 145 once Flutter stable includes the
+      # upstream flutter_tools fixes for Chrome 145 (flutter/flutter#190155 and
+      # flutter/flutter#190584) which pass --disable-search-engine-choice-screen
+      # and --disable-background-timer-throttling; see https://github.com/flutter/flutter/issues/191299
+      dependencies: >-
+        [
+          {"dependency": "chrome_and_driver", "version": "version:137.0.7151.119"}
+        ]
 
   # Wasm unit tests in master
   # TODO(stuartmorgan): Switch to testing wasm on master and stable and non-wasm
@@ -294,14 +305,14 @@ targets:
     timeout: 30
     properties:
       target_file: analyze_legacy.yaml
-      channel: "3.41.9"
+      channel: "3.44.9"
 
   - name: Linux analyze_legacy N-2
     recipe: packages/packages
     timeout: 30
     properties:
       target_file: analyze_legacy.yaml
-      channel: "3.38.10"
+      channel: "3.41.9"
 
   - name: Linux_android custom_package_tests master
     recipe: packages/packages
@@ -321,7 +332,7 @@ targets:
           {"dependency": "clang", "version": "git_revision:5d5aba78dbbee75508f01bcaa69aedb2ab79065a"},
           {"dependency": "cmake", "version": "build_id:8787856497187628321"},
           {"dependency": "ninja", "version": "version:1.9.0"},
-          {"dependency": "chrome_and_driver", "version": "version:125.0.6422.141"}
+          {"dependency": "chrome_and_driver", "version": "version:145.0.7632.117"}
         ]
       channel: master
 
@@ -334,13 +345,17 @@ targets:
       version_file: flutter_stable.version
       target_file: linux_custom_package_tests.yaml
       # See comments on 'master' version above.
+      # TODO(mdebbar): Upgrade to Chrome 145 once Flutter stable includes the
+      # upstream flutter_tools fixes for Chrome 145 (flutter/flutter#190155 and
+      # flutter/flutter#190584) which pass --disable-search-engine-choice-screen
+      # and --disable-background-timer-throttling; see https://github.com/flutter/flutter/issues/191299
       dependencies: >-
         [
           {"dependency": "android_virtual_device", "version": "android_37_google_apis_ps16k_x64.textpb"},
           {"dependency": "clang", "version": "git_revision:5d5aba78dbbee75508f01bcaa69aedb2ab79065a"},
           {"dependency": "cmake", "version": "build_id:8787856497187628321"},
           {"dependency": "ninja", "version": "version:1.9.0"},
-          {"dependency": "chrome_and_driver", "version": "version:125.0.6422.141"}
+          {"dependency": "chrome_and_driver", "version": "version:137.0.7151.119"}
         ]
       channel: stable
 
@@ -722,6 +737,14 @@ targets:
       version_file: flutter_stable.version
       channel: stable
       package_sharding: "--shardIndex 0 --shardCount 3"
+      # TODO(mdebbar): Upgrade to Chrome 145 once Flutter stable includes the
+      # upstream flutter_tools fixes for Chrome 145 (flutter/flutter#190155 and
+      # flutter/flutter#190584) which pass --disable-search-engine-choice-screen
+      # and --disable-background-timer-throttling; see https://github.com/flutter/flutter/issues/191299
+      dependencies: >-
+        [
+          {"dependency": "chrome_and_driver", "version": "version:137.0.7151.119"}
+        ]
 
   - name: Linux_web web_platform_tests_shard_2 stable
     recipe: packages/packages
@@ -731,6 +754,14 @@ targets:
       version_file: flutter_stable.version
       channel: stable
       package_sharding: "--shardIndex 1 --shardCount 3"
+      # TODO(mdebbar): Upgrade to Chrome 145 once Flutter stable includes the
+      # upstream flutter_tools fixes for Chrome 145 (flutter/flutter#190155 and
+      # flutter/flutter#190584) which pass --disable-search-engine-choice-screen
+      # and --disable-background-timer-throttling; see https://github.com/flutter/flutter/issues/191299
+      dependencies: >-
+        [
+          {"dependency": "chrome_and_driver", "version": "version:137.0.7151.119"}
+        ]
 
   - name: Linux_web web_platform_tests_shard_3 stable
     recipe: packages/packages
@@ -740,6 +771,14 @@ targets:
       version_file: flutter_stable.version
       channel: stable
       package_sharding: "--shardIndex 2 --shardCount 3"
+      # TODO(mdebbar): Upgrade to Chrome 145 once Flutter stable includes the
+      # upstream flutter_tools fixes for Chrome 145 (flutter/flutter#190155 and
+      # flutter/flutter#190584) which pass --disable-search-engine-choice-screen
+      # and --disable-background-timer-throttling; see https://github.com/flutter/flutter/issues/191299
+      dependencies: >-
+        [
+          {"dependency": "chrome_and_driver", "version": "version:137.0.7151.119"}
+        ]
 
   ### Linux desktop tasks
   - name: Linux_desktop build_all_packages master
@@ -769,7 +808,7 @@ targets:
       # Install Chrome as a default handler for schemes for url_launcher.
       dependencies: >-
         [
-          {"dependency": "chrome_and_driver", "version": "version:125.0.6422.141"}
+          {"dependency": "chrome_and_driver", "version": "version:145.0.7632.117"}
         ]
 
   - name: Linux_desktop platform_tests stable
@@ -781,9 +820,13 @@ targets:
       target_file: linux_platform_tests.yaml
       channel: stable
       # Install Chrome as a default handler for schemes for url_launcher.
+      # TODO(mdebbar): Upgrade to Chrome 145 once Flutter stable includes the
+      # upstream flutter_tools fixes for Chrome 145 (flutter/flutter#190155 and
+      # flutter/flutter#190584) which pass --disable-search-engine-choice-screen
+      # and --disable-background-timer-throttling; see https://github.com/flutter/flutter/issues/191299
       dependencies: >-
         [
-          {"dependency": "chrome_and_driver", "version": "version:125.0.6422.141"}
+          {"dependency": "chrome_and_driver", "version": "version:137.0.7151.119"}
         ]
 
   ### iOS+macOS tasks ###
@@ -795,9 +838,7 @@ targets:
       target_file: macos_repo_checks.yaml
 
   ### macOS desktop tasks ###
-  # macos-platform_tests builds all the packages on ARM, so this build is run
-  # on Intel to give us build coverage of both host types.
-  - name: Mac_x64 build_all_packages master
+  - name: Mac_arm64 build_all_packages master
     recipe: packages/packages
     timeout: 30
     properties:
@@ -805,7 +846,7 @@ targets:
       target_file: macos_build_all_packages.yaml
       channel: master
 
-  - name: Mac_x64 build_all_packages stable
+  - name: Mac_arm64 build_all_packages stable
     recipe: packages/packages
     timeout: 30
     properties:
@@ -852,9 +893,7 @@ targets:
       channel: stable
 
   ### iOS tasks ###
-  # ios_platform_tests builds all the packages on ARM, so this build is run
-  # on Intel to give us build coverage of both host types.
-  - name: Mac_x64 ios_build_all_packages master
+  - name: Mac_arm64 ios_build_all_packages master
     recipe: packages/packages
     timeout: 30
     properties:
@@ -862,7 +901,7 @@ targets:
       version_file: flutter_master.version
       target_file: ios_build_all_packages.yaml
 
-  - name: Mac_x64 ios_build_all_packages stable
+  - name: Mac_arm64 ios_build_all_packages stable
     recipe: packages/packages
     timeout: 30
     properties:

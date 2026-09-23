@@ -16,6 +16,43 @@ void main() {
     });
   });
 
+  group('normalizePathParameters', () {
+    test('It should leave a pattern without parameters alone', () {
+      expect(normalizePathParameters('/'), '/');
+      expect(normalizePathParameters('/user/book'), '/user/book');
+    });
+
+    test('It should make patterns differing only in parameter name equal', () {
+      expect(normalizePathParameters('/user/:id'), normalizePathParameters('/user/:userId'));
+      expect(
+        normalizePathParameters('/user/:id/book/:bookId'),
+        normalizePathParameters('/user/:a/book/:b'),
+      );
+    });
+
+    test('It should keep patterns with different literal segments distinct', () {
+      expect(normalizePathParameters('/user/:id'), isNot(normalizePathParameters('/book/:id')));
+      expect(
+        normalizePathParameters('/user/:id'),
+        isNot(normalizePathParameters('/user/:id/book')),
+      );
+    });
+
+    test('It should keep a parameter constraint, which changes what matches', () {
+      expect(normalizePathParameters(r'/user/:id(\d+)'), r'/user/:_(\d+)');
+      expect(
+        normalizePathParameters(r'/user/:id(\d+)'),
+        isNot(normalizePathParameters(r'/user/:id(\w+)')),
+      );
+      // A colon inside a constraint is part of the constraint, not a second
+      // parameter, so these two must stay distinct.
+      expect(
+        normalizePathParameters('/user/:id(mon:tue)'),
+        isNot(normalizePathParameters('/user/:id(mon:wed)')),
+      );
+    });
+  });
+
   group('patternToPath', () {
     test('It should replace the path parameters with their values', () {
       expect(patternToPath('/', const <String, String>{}), '/');

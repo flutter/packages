@@ -5,8 +5,8 @@
 import 'dart:ui' as ui;
 
 import 'package:animations/src/modal.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:material_ui/material_ui.dart';
 
 void main() {
   testWidgets('showModal builds a new route with specified barrier properties', (

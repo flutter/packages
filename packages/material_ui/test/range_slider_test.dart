@@ -33,9 +33,8 @@ void main() {
                       dragStarted = true;
                     },
                     child: MediaQuery(
-                      data: MediaQuery.of(
-                        context,
-                      ).copyWith(gestureSettings: const DeviceGestureSettings(touchSlop: 20)),
+                      data: MediaQuery.of(context)
+                          .copyWith(gestureSettings: const DeviceGestureSettings(touchSlop: 20)),
                       child: RangeSlider(
                         key: sliderKey,
                         values: values,
@@ -89,9 +88,8 @@ void main() {
                       dragStarted = true;
                     },
                     child: MediaQuery(
-                      data: MediaQuery.of(
-                        context,
-                      ).copyWith(gestureSettings: const DeviceGestureSettings(touchSlop: 10)),
+                      data: MediaQuery.of(context)
+                          .copyWith(gestureSettings: const DeviceGestureSettings(touchSlop: 10)),
                       child: RangeSlider(
                         key: sliderKey,
                         values: values,
@@ -1629,7 +1627,7 @@ void main() {
       expect(
         valueIndicatorBox,
         paints
-          // Represents the raised button wth next text.
+          // Represents the raised button with next text.
           ..path(color: Colors.black)
           ..paragraph()
           // Represents the range slider.
@@ -1726,10 +1724,10 @@ void main() {
     expect(values.end, moreOrLessEquals(0.5, epsilon: 0.03));
     await tester.pumpAndSettle();
 
+    // The drag gesture has finished, so no overlayColor should show up.
     expect(
       sliderBox,
       paints
-        ..circle(color: sliderTheme.overlayColor)
         ..circle(color: sliderTheme.thumbColor)
         ..circle(color: sliderTheme.overlappingShapeStrokeColor)
         ..circle(color: sliderTheme.thumbColor),
@@ -2704,6 +2702,264 @@ void main() {
     expect(FocusManager.instance.primaryFocus, endFocusNode);
   });
 
+  group('RangeSlider keyboard with NavigationMode.directional', () {
+    // Pumps a RangeSlider in the given navigation mode between two focusable
+    // neighbors, so tests can tell when arrow keys move the focus instead of
+    // changing the values. Arrow keys are explicitly bound to directional
+    // focus traversal because the app-level defaults differ per platform (on
+    // the web they scroll instead). Read the live values back through
+    // [sliderKey] with [valuesOf]; [initialValues] is where the slider starts.
+    Future<void> pumpRangeSlider(
+      WidgetTester tester, {
+      required NavigationMode navigationMode,
+      required GlobalKey sliderKey,
+      required RangeValues initialValues,
+      FocusNode? leftNeighborNode,
+      FocusNode? rightNeighborNode,
+    }) async {
+      const directionalTraversalShortcuts = <ShortcutActivator, Intent>{
+        SingleActivator(LogicalKeyboardKey.arrowLeft): DirectionalFocusIntent(
+          TraversalDirection.left,
+        ),
+        SingleActivator(LogicalKeyboardKey.arrowRight): DirectionalFocusIntent(
+          TraversalDirection.right,
+        ),
+        SingleActivator(LogicalKeyboardKey.arrowUp): DirectionalFocusIntent(TraversalDirection.up),
+        SingleActivator(LogicalKeyboardKey.arrowDown): DirectionalFocusIntent(
+          TraversalDirection.down,
+        ),
+      };
+      var values = initialValues;
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Shortcuts(
+            shortcuts: directionalTraversalShortcuts,
+            child: Material(
+              child: Directionality(
+                textDirection: TextDirection.ltr,
+                child: StatefulBuilder(
+                  builder: (BuildContext context, StateSetter setState) {
+                    return MediaQuery(
+                      data: MediaQueryData(navigationMode: navigationMode),
+                      child: Center(
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: <Widget>[
+                            Focus(
+                              focusNode: leftNeighborNode,
+                              child: const SizedBox(width: 50, height: 200),
+                            ),
+                            SizedBox(
+                              width: 300,
+                              child: RangeSlider(
+                                key: sliderKey,
+                                values: values,
+                                max: 100,
+                                onChanged: (RangeValues newValues) {
+                                  setState(() {
+                                    values = newValues;
+                                  });
+                                },
+                              ),
+                            ),
+                            Focus(
+                              focusNode: rightNeighborNode,
+                              child: const SizedBox(width: 50, height: 200),
+                            ),
+                          ],
+                        ),
+                      ),
+                    );
+                  },
+                ),
+              ),
+            ),
+          ),
+        ),
+      );
+    }
+
+    RangeValues valuesOf(GlobalKey sliderKey) => (sliderKey.currentWidget! as RangeSlider).values;
+
+    FocusNode startFocusNodeOf(WidgetTester tester) =>
+        (tester.firstState(find.byType(RangeSlider)) as dynamic).startFocusNode as FocusNode;
+
+    testWidgets('arrow keys do not change the value when not in editing mode', (
+      WidgetTester tester,
+    ) async {
+      final GlobalKey sliderKey = GlobalKey();
+      final leftNeighbor = FocusNode(debugLabel: 'left neighbor');
+      addTearDown(leftNeighbor.dispose);
+      final rightNeighbor = FocusNode(debugLabel: 'right neighbor');
+      addTearDown(rightNeighbor.dispose);
+      await pumpRangeSlider(
+        tester,
+        navigationMode: NavigationMode.directional,
+        sliderKey: sliderKey,
+        initialValues: const RangeValues(40, 80),
+        leftNeighborNode: leftNeighbor,
+        rightNeighborNode: rightNeighbor,
+      );
+      startFocusNodeOf(tester).requestFocus();
+      await tester.pumpAndSettle();
+
+      await tester.sendKeyEvent(LogicalKeyboardKey.arrowRight);
+      await tester.pumpAndSettle();
+      expect(
+        valuesOf(sliderKey),
+        const RangeValues(40, 80),
+        reason: 'arrowRight should move focus, not change the value, outside editing mode',
+      );
+      expect(
+        FocusManager.instance.primaryFocus,
+        rightNeighbor,
+        reason: 'arrowRight should move the focus to the right neighbor',
+      );
+
+      await tester.sendKeyEvent(LogicalKeyboardKey.arrowLeft);
+      await tester.pumpAndSettle();
+      expect(
+        valuesOf(sliderKey),
+        const RangeValues(40, 80),
+        reason: 'arrowLeft should move focus, not change the value, outside editing mode',
+      );
+      expect(
+        FocusManager.instance.primaryFocus,
+        startFocusNodeOf(tester),
+        reason: 'arrowLeft should move the focus back to the start thumb',
+      );
+
+      await tester.sendKeyEvent(LogicalKeyboardKey.arrowLeft);
+      await tester.pumpAndSettle();
+      expect(
+        valuesOf(sliderKey),
+        const RangeValues(40, 80),
+        reason: 'arrowLeft should move focus, not change the value, outside editing mode',
+      );
+      expect(
+        FocusManager.instance.primaryFocus,
+        leftNeighbor,
+        reason: 'a second arrowLeft should move the focus to the left neighbor',
+      );
+    });
+
+    testWidgets('pressing enter enters editing mode and arrow keys adjust the value', (
+      WidgetTester tester,
+    ) async {
+      final GlobalKey sliderKey = GlobalKey();
+      await pumpRangeSlider(
+        tester,
+        navigationMode: NavigationMode.directional,
+        sliderKey: sliderKey,
+        initialValues: const RangeValues(40, 80),
+      );
+      startFocusNodeOf(tester).requestFocus();
+      await tester.pumpAndSettle();
+
+      // Enter editing mode.
+      await tester.sendKeyEvent(LogicalKeyboardKey.enter);
+      await tester.pumpAndSettle();
+
+      // In LTR, the right arrow increases the focused (start) thumb...
+      await tester.sendKeyEvent(LogicalKeyboardKey.arrowRight);
+      await tester.pumpAndSettle();
+      final double increasedStart = valuesOf(sliderKey).start;
+      expect(increasedStart, greaterThan(40));
+      expect(valuesOf(sliderKey).end, 80);
+
+      // ...and the left arrow decreases it.
+      await tester.sendKeyEvent(LogicalKeyboardKey.arrowLeft);
+      await tester.pumpAndSettle();
+      expect(valuesOf(sliderKey).start, lessThan(increasedStart));
+      expect(valuesOf(sliderKey).end, 80);
+    });
+
+    testWidgets('pressing enter again exits editing mode', (WidgetTester tester) async {
+      final GlobalKey sliderKey = GlobalKey();
+      await pumpRangeSlider(
+        tester,
+        navigationMode: NavigationMode.directional,
+        sliderKey: sliderKey,
+        initialValues: const RangeValues(40, 80),
+      );
+      startFocusNodeOf(tester).requestFocus();
+      await tester.pumpAndSettle();
+
+      // Enter then exit editing mode.
+      await tester.sendKeyEvent(LogicalKeyboardKey.enter);
+      await tester.pumpAndSettle();
+      await tester.sendKeyEvent(LogicalKeyboardKey.enter);
+      await tester.pumpAndSettle();
+
+      // Arrow keys no longer adjust the value.
+      await tester.sendKeyEvent(LogicalKeyboardKey.arrowRight);
+      await tester.pumpAndSettle();
+      expect(
+        valuesOf(sliderKey),
+        const RangeValues(40, 80),
+        reason: 'arrow keys should not change the value after exiting editing mode',
+      );
+    });
+
+    testWidgets('losing focus exits editing mode', (WidgetTester tester) async {
+      final GlobalKey sliderKey = GlobalKey();
+      await pumpRangeSlider(
+        tester,
+        navigationMode: NavigationMode.directional,
+        sliderKey: sliderKey,
+        initialValues: const RangeValues(40, 80),
+      );
+      final FocusNode startFocusNode = startFocusNodeOf(tester);
+      startFocusNode.requestFocus();
+      await tester.pumpAndSettle();
+
+      // Enter editing mode.
+      await tester.sendKeyEvent(LogicalKeyboardKey.enter);
+      await tester.pumpAndSettle();
+
+      // Losing focus should reset the editing mode.
+      startFocusNode.unfocus();
+      await tester.pumpAndSettle();
+
+      // Re-focus and verify arrow keys no longer adjust the value, proving the
+      // editing mode was reset when focus was lost.
+      startFocusNode.requestFocus();
+      await tester.pumpAndSettle();
+      await tester.sendKeyEvent(LogicalKeyboardKey.arrowRight);
+      await tester.pumpAndSettle();
+      expect(
+        valuesOf(sliderKey),
+        const RangeValues(40, 80),
+        reason: 'editing mode should be reset after the slider lost focus',
+      );
+    });
+
+    testWidgets('arrow keys change the value directly in traditional navigation mode', (
+      WidgetTester tester,
+    ) async {
+      final GlobalKey sliderKey = GlobalKey();
+      await pumpRangeSlider(
+        tester,
+        navigationMode: NavigationMode.traditional,
+        sliderKey: sliderKey,
+        initialValues: const RangeValues(40, 80),
+      );
+      startFocusNodeOf(tester).requestFocus();
+      await tester.pumpAndSettle();
+
+      // No need to enter an editing mode in traditional navigation.
+      await tester.sendKeyEvent(LogicalKeyboardKey.arrowRight);
+      await tester.pumpAndSettle();
+      expect(valuesOf(sliderKey).start, greaterThan(40));
+      expect(valuesOf(sliderKey).end, 80);
+
+      await tester.sendKeyEvent(LogicalKeyboardKey.arrowLeft);
+      await tester.pumpAndSettle();
+      expect(valuesOf(sliderKey).start, moreOrLessEquals(40));
+      expect(valuesOf(sliderKey).end, 80);
+    });
+  });
+
   testWidgets('Keyboard focus also changes semantics focus', (WidgetTester tester) async {
     await tester.pumpWidget(
       MaterialApp(
@@ -3411,9 +3667,8 @@ void main() {
 
     RenderBox sliderRenderBox() {
       return tester.allRenderObjects.firstWhere(
-            (RenderObject object) => object.runtimeType.toString() == '_RenderRangeSlider',
-          )
-          as RenderBox;
+        (RenderObject object) => object.runtimeType.toString() == '_RenderRangeSlider',
+      ) as RenderBox;
     }
 
     // Test RangeSlider height and tracks spacing with zero padding.
@@ -3537,7 +3792,7 @@ void main() {
     );
   });
 
-  // Regression test for hhttps://github.com/flutter/flutter/issues/161805
+  // Regression test for https://github.com/flutter/flutter/issues/161805
   testWidgets('Discrete RangeSlider does not apply thumb padding in a non-rounded track shape', (
     WidgetTester tester,
   ) async {
@@ -3897,6 +4152,207 @@ void main() {
     expect(tester.getSize(find.byType(RangeSlider)), Size.zero);
   });
 
+  testWidgets('RangeSlider keeps drag overlay when touch moves outside thumb', (
+    WidgetTester tester,
+  ) async {
+    tester.binding.focusManager.highlightStrategy = FocusHighlightStrategy.alwaysTouch;
+    addTearDown(() {
+      tester.binding.focusManager.highlightStrategy = FocusHighlightStrategy.automatic;
+    });
+
+    const overlayColor = Color(0xff800080);
+    var values = const RangeValues(0.3, 0.7);
+
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Material(
+          child: Center(
+            child: StatefulBuilder(
+              builder: (BuildContext context, StateSetter setState) {
+                return RangeSlider(
+                  values: values,
+                  overlayColor: const WidgetStatePropertyAll<Color>(overlayColor),
+                  onChanged: (RangeValues newValues) {
+                    setState(() {
+                      values = newValues;
+                    });
+                  },
+                );
+              },
+            ),
+          ),
+        ),
+      ),
+    );
+
+    final Offset topLeft = tester.getTopLeft(find.byType(RangeSlider));
+    final Offset bottomRight = tester.getBottomRight(find.byType(RangeSlider));
+    final Offset startThumbPos = topLeft + (bottomRight - topLeft) * 0.3;
+    final TestGesture gesture = await tester.startGesture(startThumbPos);
+    await gesture.moveBy(const Offset(40.0, -80.0));
+    await tester.pumpAndSettle();
+
+    expect(
+      Material.of(tester.element(find.byType(RangeSlider))),
+      paints..circle(color: overlayColor),
+    );
+
+    await gesture.up();
+    await tester.pumpAndSettle();
+
+    expect(
+      Material.of(tester.element(find.byType(RangeSlider))),
+      isNot(paints..circle(color: overlayColor)),
+    );
+  });
+
+  testWidgets('RangeSlider touch focus does not show persistent overlay', (
+    WidgetTester tester,
+  ) async {
+    tester.binding.focusManager.highlightStrategy = FocusHighlightStrategy.alwaysTouch;
+    addTearDown(() {
+      tester.binding.focusManager.highlightStrategy = FocusHighlightStrategy.automatic;
+    });
+
+    const overlayColor = Color(0xff800080);
+    var values = const RangeValues(0.3, 0.7);
+
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Material(
+          child: Center(
+            child: StatefulBuilder(
+              builder: (BuildContext context, StateSetter setState) {
+                return RangeSlider(
+                  values: values,
+                  overlayColor: const WidgetStatePropertyAll<Color>(overlayColor),
+                  onChanged: (RangeValues newValues) {
+                    setState(() {
+                      values = newValues;
+                    });
+                  },
+                );
+              },
+            ),
+          ),
+        ),
+      ),
+    );
+
+    final Offset topLeft = tester.getTopLeft(find.byType(RangeSlider));
+    final Offset bottomRight = tester.getBottomRight(find.byType(RangeSlider));
+    final Offset startThumbPos = topLeft + (bottomRight - topLeft) * 0.3;
+    final TestGesture gesture = await tester.startGesture(startThumbPos);
+    await tester.pump();
+    await gesture.moveBy(const Offset(10.0, 0.0));
+    await gesture.up();
+    await tester.pumpAndSettle();
+
+    final startFocusNode =
+        (tester.state(find.byType(RangeSlider)) as dynamic).startFocusNode as FocusNode;
+    expect(startFocusNode.hasFocus, isTrue);
+    expect(
+      Material.of(tester.element(find.byType(RangeSlider))),
+      isNot(paints..circle(color: overlayColor)),
+    );
+  });
+
+  testWidgets('RangeSlider keyboard focus shows focused overlay', (WidgetTester tester) async {
+    tester.binding.focusManager.highlightStrategy = FocusHighlightStrategy.alwaysTraditional;
+    addTearDown(() {
+      tester.binding.focusManager.highlightStrategy = FocusHighlightStrategy.automatic;
+    });
+
+    const overlayColor = Color(0xff800080);
+    var values = const RangeValues(0.3, 0.7);
+
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Material(
+          child: Center(
+            child: StatefulBuilder(
+              builder: (BuildContext context, StateSetter setState) {
+                return RangeSlider(
+                  values: values,
+                  overlayColor: const WidgetStatePropertyAll<Color>(overlayColor),
+                  onChanged: (RangeValues newValues) {
+                    setState(() {
+                      values = newValues;
+                    });
+                  },
+                );
+              },
+            ),
+          ),
+        ),
+      ),
+    );
+
+    await tester.sendKeyEvent(LogicalKeyboardKey.tab);
+    await tester.pumpAndSettle();
+
+    final startFocusNode =
+        (tester.state(find.byType(RangeSlider)) as dynamic).startFocusNode as FocusNode;
+    expect(startFocusNode.hasFocus, isTrue);
+    expect(
+      Material.of(tester.element(find.byType(RangeSlider))),
+      paints..circle(color: overlayColor),
+    );
+  });
+
+  testWidgets('RangeSlider overlayColor resolves focused state', (WidgetTester tester) async {
+    tester.binding.focusManager.highlightStrategy = FocusHighlightStrategy.alwaysTraditional;
+    addTearDown(() {
+      tester.binding.focusManager.highlightStrategy = FocusHighlightStrategy.automatic;
+    });
+
+    const focusedColor = Color(0xff800080);
+    var values = const RangeValues(0.3, 0.7);
+
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Material(
+          child: Center(
+            child: StatefulBuilder(
+              builder: (BuildContext context, StateSetter setState) {
+                return RangeSlider(
+                  values: values,
+                  overlayColor: WidgetStateProperty.resolveWith<Color?>((Set<WidgetState> states) {
+                    if (states.contains(WidgetState.focused)) {
+                      return focusedColor;
+                    }
+                    return null;
+                  }),
+                  onChanged: (RangeValues newValues) {
+                    setState(() {
+                      values = newValues;
+                    });
+                  },
+                );
+              },
+            ),
+          ),
+        ),
+      ),
+    );
+
+    expect(
+      Material.of(tester.element(find.byType(RangeSlider))),
+      isNot(paints..circle(color: focusedColor)),
+    );
+
+    await tester.sendKeyEvent(LogicalKeyboardKey.tab);
+    await tester.pumpAndSettle();
+
+    final startFocusNode =
+        (tester.state(find.byType(RangeSlider)) as dynamic).startFocusNode as FocusNode;
+    expect(startFocusNode.hasFocus, isTrue);
+    expect(
+      Material.of(tester.element(find.byType(RangeSlider))),
+      paints..circle(color: focusedColor),
+    );
+  });
+
   testWidgets('RangeSlider taps should set focus on start/end thumbs', (WidgetTester tester) async {
     var values = const RangeValues(0.3, 0.7);
 
@@ -4073,13 +4529,56 @@ void main() {
     expect(endFocusNode.hasFocus, isTrue, reason: 'End thumb should have focus after tab');
     expect(FocusManager.instance.primaryFocus, equals(endFocusNode));
   });
+
+  testWidgets('RangeSlider labels respect horizontal buffer and avoid screen overflow', (
+    WidgetTester tester,
+  ) async {
+    final logPainters = <TextPainter>[];
+    final shape = LoggingRangeSliderValueIndicatorShape(<InlineSpan>[], logPainters);
+
+    const longLabelStart = 'A very long start label string that exceeds standard screen widths';
+    const longLabelEnd = 'A very long end label string that exceeds standard screen widths';
+
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Scaffold(
+          body: SliderTheme(
+            data: SliderThemeData(
+              showValueIndicator: ShowValueIndicator.always,
+              rangeValueIndicatorShape: shape,
+            ),
+            child: RangeSlider(
+              values: const RangeValues(0.2, 0.8),
+              divisions: 10,
+              labels: const RangeLabels(longLabelStart, longLabelEnd),
+              onChanged: (RangeValues values) {},
+            ),
+          ),
+        ),
+      ),
+    );
+
+    // Press the range slider to trigger the value indicators
+    final TestGesture gesture = await tester.startGesture(
+      tester.getCenter(find.byType(RangeSlider)),
+    );
+    await tester.pumpAndSettle();
+
+    final double screenWidth = tester.view.physicalSize.width / tester.view.devicePixelRatio;
+
+    expect(logPainters, isNotEmpty);
+    expect(logPainters.last.width, lessThanOrEqualTo(screenWidth - 64.0));
+
+    await gesture.up();
+  });
 }
 
 // A value indicator shape to log labelPainter text.
 class LoggingRangeSliderValueIndicatorShape extends RangeSliderValueIndicatorShape {
-  LoggingRangeSliderValueIndicatorShape(this.logLabel);
+  LoggingRangeSliderValueIndicatorShape(this.logLabel, [this.logPainter]);
 
   final List<InlineSpan> logLabel;
+  final List<TextPainter>? logPainter;
 
   @override
   Size getPreferredSize(
@@ -4109,5 +4608,6 @@ class LoggingRangeSliderValueIndicatorShape extends RangeSliderValueIndicatorSha
     Thumb? thumb,
   }) {
     logLabel.add(labelPainter.text!);
+    logPainter?.add(labelPainter);
   }
 }

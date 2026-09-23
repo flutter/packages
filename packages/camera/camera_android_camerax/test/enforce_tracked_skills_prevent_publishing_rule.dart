@@ -4,11 +4,11 @@
 
 import 'dart:io';
 
-import 'package:dart_skills_lint/dart_skills_lint.dart';
 import 'package:path/path.dart' as p;
+import 'package:skills_lint/skills_lint.dart';
 
 /// A custom lint rule that enforces that all skills tracked in version control
-/// have the `prevent-skills-sh-publishing` rule enabled in `dart_skills_lint.yaml`.
+/// have the `prevent-skills-sh-publishing` rule enabled in `skills_lint.yaml`.
 ///
 /// Third-party skills symlinked from the repository root's `third_party` directory
 /// are exempt.
@@ -46,7 +46,7 @@ class EnforceTrackedSkillsPreventPublishingRule extends SkillRule {
         ValidationError(
           ruleId: name,
           severity: severity,
-          file: 'dart_skills_lint.yaml',
+          file: 'skills_lint.yaml',
           message: 'Failed to run git to check tracked status. Error: $e',
         ),
       ];
@@ -60,7 +60,7 @@ class EnforceTrackedSkillsPreventPublishingRule extends SkillRule {
       return [];
     }
 
-    // 3. Check dart_skills_lint.yaml config
+    // 3. Check skills_lint.yaml config
     final Configuration config = await ConfigParser.loadConfig();
     var ruleEnabled = false;
     var pathFound = false;
@@ -84,7 +84,7 @@ class EnforceTrackedSkillsPreventPublishingRule extends SkillRule {
         ValidationError(
           ruleId: name,
           severity: severity,
-          file: 'dart_skills_lint.yaml',
+          file: 'skills_lint.yaml',
           message: _buildErrorMessage(
             relativePath: context.directory.path,
             pathFound: pathFound,
@@ -101,7 +101,7 @@ class EnforceTrackedSkillsPreventPublishingRule extends SkillRule {
   ///
   /// The [relativePath] is the path to the skill directory being validated.
   /// If [pathFound] is false, the message indicates that the skill is entirely
-  /// missing from `dart_skills_lint.yaml`. If [pathFound] is true but
+  /// missing from `skills_lint.yaml`. If [pathFound] is true but
   /// [configuredSeverity] is null, it indicates the rule is missing. If
   /// [configuredSeverity] is provided, it indicates the rule is set to an
   /// invalid severity.
@@ -116,14 +116,14 @@ class EnforceTrackedSkillsPreventPublishingRule extends SkillRule {
 
     if (!pathFound) {
       buffer.writeln(
-        'The skill at "$relativePath" is tracked in git, but is missing from dart_skills_lint.yaml.',
+        'The skill at "$relativePath" is tracked in git, but is missing from skills_lint.yaml.',
       );
       buffer.writeln(
         'Please add it under `individual_skills:` with the `prevent-skills-sh-publishing` rule set to `error`:',
       );
     } else if (configuredSeverity == null) {
       buffer.writeln(
-        'The skill at "$relativePath" is listed in dart_skills_lint.yaml, but the `prevent-skills-sh-publishing` rule is missing.',
+        'The skill at "$relativePath" is listed in skills_lint.yaml, but the `prevent-skills-sh-publishing` rule is missing.',
       );
       buffer.writeln('Please add it to the `rules` section for this skill:');
     } else {
@@ -134,7 +134,7 @@ class EnforceTrackedSkillsPreventPublishingRule extends SkillRule {
         'Tracked skills strictly require this rule to be set to `error` to prevent accidental publishing.',
       );
       buffer.writeln();
-      buffer.writeln('Please update dart_skills_lint.yaml:');
+      buffer.writeln('Please update skills_lint.yaml:');
     }
 
     buffer.writeln();

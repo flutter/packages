@@ -674,7 +674,6 @@ class _CheckedPopupMenuItemState<T> extends PopupMenuItemState<T, CheckedPopupMe
 
 class _PopupMenu<T> extends StatefulWidget {
   const _PopupMenu({
-    super.key,
     required this.itemKeys,
     required this.route,
     required this.semanticLabel,
@@ -858,9 +857,8 @@ class _PopupMenuRouteLayout extends SingleChildLayoutDelegate {
   BoxConstraints getConstraintsForChild(BoxConstraints constraints) {
     // The menu can be at most the size of the overlay minus 8.0 pixels in each
     // direction.
-    return BoxConstraints.loose(
-      constraints.biggest,
-    ).deflate(const EdgeInsets.all(_kMenuScreenPadding) + padding);
+    return BoxConstraints.loose(constraints.biggest)
+        .deflate(const EdgeInsets.all(_kMenuScreenPadding) + padding);
   }
 
   @override
@@ -1104,8 +1102,10 @@ class _PopupMenuRoute<T> extends PopupRoute<T> {
 ///  * [RelativeRect.fromRect], which creates a [RelativeRect] from two [Rect]s,
 ///    one representing the size of the popup menu and one representing the size
 ///    of the overlay.
-typedef PopupMenuPositionBuilder =
-    RelativeRect Function(BuildContext context, BoxConstraints constraints);
+typedef PopupMenuPositionBuilder = RelativeRect Function(
+  BuildContext context,
+  BoxConstraints constraints,
+);
 
 /// Shows a popup menu that contains the `items` at `position`.
 ///
@@ -1174,6 +1174,7 @@ typedef PopupMenuPositionBuilder =
 ///    calling this method automatically.
 ///  * [SemanticsConfiguration.namesRoute], for a description of edge triggered
 ///    semantics.
+@awaitNotRequired
 Future<T?> showMenu<T>({
   required BuildContext context,
   RelativeRect? position,
@@ -1797,16 +1798,25 @@ class PopupMenuButtonState<T> extends State<PopupMenuButton<T>> {
       );
       final MaterialTapTargetSize tapTargetSize =
           widget.style?.tapTargetSize ?? MaterialTapTargetSize.shrinkWrap;
-      if (tapTargetSize == MaterialTapTargetSize.padded) {
-        return ConstrainedBox(
-          constraints: const BoxConstraints(
-            minWidth: kMinInteractiveDimension,
-            minHeight: kMinInteractiveDimension,
-          ),
-          child: child,
-        );
-      }
-      return Semantics(expanded: _isMenuExpanded, child: child);
+      final Widget result = tapTargetSize == MaterialTapTargetSize.padded
+          ? ConstrainedBox(
+              constraints: const BoxConstraints(
+                minWidth: kMinInteractiveDimension,
+                minHeight: kMinInteractiveDimension,
+              ),
+              child: child,
+            )
+          : child;
+      // The button semantics are added here rather than by the [InkWell] so
+      // that assistive technologies describe the popup menu button the same way
+      // regardless of whether it is built from [child] or from [icon], in which
+      // case the semantics come from the [IconButton].
+      return Semantics(
+        button: true,
+        enabled: widget.enabled,
+        expanded: _isMenuExpanded,
+        child: result,
+      );
     }
 
     return Semantics(
