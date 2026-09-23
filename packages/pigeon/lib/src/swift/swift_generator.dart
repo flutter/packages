@@ -2682,13 +2682,18 @@ enum ${_classNamePrefix}PigeonInternalNumberType: Int {
           );
         }, addTrailingNewline: false);
         if (!returnType.isNullable && !returnType.isVoid) {
-          indent.addScoped('else if listResponse[0] == nil || listResponse[0] is NSNull {', '} ', () {
-            indent.writeln(
-              resumeError(
-                '${_getErrorClassName(generatorOptions)}(code: "null-error", message: "Flutter api returned null value for non-null return value.", details: "")',
-              ),
-            );
-          }, addTrailingNewline: false);
+          indent.addScoped(
+            'else if ${_classNamePrefix}PigeonInternal.isNullish(listResponse[0]) {',
+            '} ',
+            () {
+              indent.writeln(
+                resumeError(
+                  '${_getErrorClassName(generatorOptions)}(code: "null-error", message: "Flutter api returned null value for non-null return value.", details: "")',
+                ),
+              );
+            },
+            addTrailingNewline: false,
+          );
         }
         indent.addScoped('else {', '}', () {
           if (returnType.isVoid) {
