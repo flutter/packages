@@ -115,10 +115,32 @@ return MaterialApp(
 ```
 
 ### Lower build size
-The `GoogleFontsLite` class is a replacement for the `GoogleFonts` class containing only a map of all fonts and the `getFont` function. Using *only* `GoogleFontsLite` allows the Dart compiler to tree-shake most of the package's code, yielding a significant reduction in build size.
+The `GoogleFontsLite` class is an alternative entry point containing only a map of all fonts and dynamic font resolution methods. Using *only* `GoogleFontsLite` allows the Dart compiler to tree-shake all unused font methods, yielding a significant reduction in build size.
+
+To allow the Dart compiler to tree-shake unused fonts, import `package:google_fonts/google_fonts_lite.dart` instead of `package:google_fonts/google_fonts.dart`.
+
+Do not import `package:google_fonts/google_fonts.dart` when optimizing for bundle size, as that imports the generated static font methods.
+
+<?code-excerpt "readme_excerpts.dart (GoogleFontsLite)"?>
+```dart
+Widget liteExamples(BuildContext context) {
+  return Column(
+    children: <Widget>[
+      // Single text style:
+      Text('Dynamic font with minimal bundle size', style: GoogleFontsLite.getFont('Lato')),
+      // Custom text theme:
+      Theme(
+        data: ThemeData(textTheme: GoogleFontsLite.getTextTheme('Lato')),
+        child: const Text('Themed text'),
+      ),
+    ],
+  );
+}
+```
+
 
 ### Visual font swapping
-To avoid visual font swaps that occur when a font is loading, use [FutureBuilder](https://api.flutter.dev/flutter/widgets/FutureBuilder-class.html) and [GoogleFonts.pendingFonts()](https://pub.dev/documentation/google_fonts/latest/google_fonts/GoogleFonts/pendingFonts.html).
+To avoid visual font swaps that occur when a font is loading, use [FutureBuilder](https://api.flutter.dev/flutter/widgets/FutureBuilder-class.html) and [GoogleFonts.pendingFonts()](https://pub.dev/documentation/google_fonts/latest/google_fonts/GoogleFonts/pendingFonts.html) (or `GoogleFontsLite.pendingFonts()`).
 
 See the [example app](https://pub.dev/packages/google_fonts/example).
 
