@@ -3337,6 +3337,48 @@ void main() {
       expect(exception, isAssertionError);
     });
 
+    // This is a regression test for https://github.com/flutter/flutter/issues/192732.
+    testWidgets('MenuItemButton does not clip leadingIcon or trailingIcon', (
+      WidgetTester tester,
+    ) async {
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: MenuAnchor(
+              menuChildren: <Widget>[
+                MenuItemButton(
+                  leadingIcon: const Icon(Icons.add, key: Key('leading')),
+                  trailingIcon: const Icon(Icons.remove, key: Key('trailing')),
+                  onPressed: () {},
+                  child: const Text('Item'),
+                ),
+              ],
+              builder: (BuildContext context, MenuController controller, Widget? child) {
+                return TextButton(onPressed: controller.open, child: const Text('Open'));
+              },
+            ),
+          ),
+        ),
+      );
+
+      await tester.tap(find.text('Open'));
+      await tester.pumpAndSettle();
+
+      // Neither icon slot should be clipped, so that decorations painting
+      // outside an icon's bounds (such as a Badge) stay visible.
+      expect(
+        find.ancestor(of: find.byKey(const Key('leading')), matching: find.byType(ClipRect)),
+        findsNothing,
+      );
+      expect(
+        find.ancestor(of: find.byKey(const Key('trailing')), matching: find.byType(ClipRect)),
+        findsNothing,
+      );
+
+      // The label itself is still clipped so that long labels truncate.
+      expect(find.ancestor(of: find.text('Item'), matching: find.byType(ClipRect)), findsOneWidget);
+    });
+
     testWidgets('MenuItemButton.styleFrom overlayColor overrides default overlay color', (
       WidgetTester tester,
     ) async {

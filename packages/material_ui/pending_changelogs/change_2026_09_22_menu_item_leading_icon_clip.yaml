@@ -1,0 +1,3 @@
+changelog: |
+  - Fixes `MenuItemButton.leadingIcon` always being clipped, which prevented decorations that paint outside the icon's bounds, such as `Badge`, from being visible.
+version: patch
