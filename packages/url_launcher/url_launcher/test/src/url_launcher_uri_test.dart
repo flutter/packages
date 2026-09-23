@@ -27,7 +27,7 @@ void main() {
       final Uri url = Uri.parse('https://flutter.dev');
       mock
         ..setCanLaunchExpectations(url.toString())
-        ..setResponse(true);
+        ..setLaunchResponse(true);
 
       final bool result = await canLaunchUrl(url);
 
@@ -38,7 +38,7 @@ void main() {
       final Uri url = Uri.parse('https://flutter.dev');
       mock
         ..setCanLaunchExpectations(url.toString())
-        ..setResponse(false);
+        ..setLaunchResponse(false);
 
       final bool result = await canLaunchUrl(url);
 
@@ -60,7 +60,7 @@ void main() {
           webOnlyWindowName: null,
           showTitle: false,
         )
-        ..setResponse(true);
+        ..setLaunchResponse(true);
       expect(await launchUrl(url), isTrue);
     });
 
@@ -77,7 +77,7 @@ void main() {
           webOnlyWindowName: null,
           showTitle: false,
         )
-        ..setResponse(true);
+        ..setLaunchResponse(true);
       expect(await launchUrl(url), isTrue);
     });
 
@@ -94,7 +94,7 @@ void main() {
           webOnlyWindowName: null,
           showTitle: false,
         )
-        ..setResponse(true);
+        ..setLaunchResponse(true);
       expect(await launchUrl(url), isTrue);
     });
 
@@ -111,7 +111,7 @@ void main() {
           webOnlyWindowName: null,
           showTitle: false,
         )
-        ..setResponse(true);
+        ..setLaunchResponse(true);
       expect(await launchUrl(url), isTrue);
     });
 
@@ -128,7 +128,7 @@ void main() {
           webOnlyWindowName: null,
           showTitle: false,
         )
-        ..setResponse(true);
+        ..setLaunchResponse(true);
       expect(await launchUrl(url, mode: LaunchMode.inAppWebView), isTrue);
     });
 
@@ -145,7 +145,7 @@ void main() {
           webOnlyWindowName: null,
           showTitle: false,
         )
-        ..setResponse(true);
+        ..setLaunchResponse(true);
       expect(await launchUrl(url, mode: LaunchMode.externalApplication), isTrue);
     });
 
@@ -162,7 +162,7 @@ void main() {
           webOnlyWindowName: null,
           showTitle: false,
         )
-        ..setResponse(true);
+        ..setLaunchResponse(true);
       expect(await launchUrl(url, mode: LaunchMode.externalNonBrowserApplication), isTrue);
     });
 
@@ -179,7 +179,7 @@ void main() {
           webOnlyWindowName: null,
           showTitle: false,
         )
-        ..setResponse(true);
+        ..setLaunchResponse(true);
       expect(
         await launchUrl(
           url,
@@ -203,7 +203,7 @@ void main() {
           webOnlyWindowName: null,
           showTitle: true,
         )
-        ..setResponse(true);
+        ..setLaunchResponse(true);
       expect(
         await launchUrl(
           url,
@@ -227,7 +227,7 @@ void main() {
           webOnlyWindowName: null,
           showTitle: false,
         )
-        ..setResponse(true);
+        ..setLaunchResponse(true);
       expect(
         await launchUrl(
           url,
@@ -251,7 +251,7 @@ void main() {
           webOnlyWindowName: null,
           showTitle: false,
         )
-        ..setResponse(true);
+        ..setLaunchResponse(true);
       expect(
         await launchUrl(
           url,
@@ -291,21 +291,21 @@ void main() {
           webOnlyWindowName: null,
           showTitle: false,
         )
-        ..setResponse(true);
+        ..setLaunchResponse(true);
       expect(await launchUrl(emailLaunchUrl), isTrue);
     });
   });
 
   group('supportsLaunchMode', () {
     test('handles returning true', () async {
-      mock.setResponse(true);
+      mock.setLaunchResponse(true);
 
       expect(await supportsLaunchMode(LaunchMode.inAppBrowserView), true);
       expect(mock.launchMode, PreferredLaunchMode.inAppBrowserView);
     });
 
     test('handles returning false', () async {
-      mock.setResponse(false);
+      mock.setLaunchResponse(false);
 
       expect(await supportsLaunchMode(LaunchMode.inAppBrowserView), false);
       expect(mock.launchMode, PreferredLaunchMode.inAppBrowserView);
@@ -314,14 +314,14 @@ void main() {
 
   group('supportsCloseForLaunchMode', () {
     test('handles returning true', () async {
-      mock.setCloseForModeResponse(true);
+      mock.setCloseResponse(true);
 
       expect(await supportsCloseForLaunchMode(LaunchMode.inAppBrowserView), true);
       expect(mock.launchMode, PreferredLaunchMode.inAppBrowserView);
     });
 
     test('handles returning false', () async {
-      mock.setCloseForModeResponse(false);
+      mock.setCloseResponse(false);
 
       expect(await supportsCloseForLaunchMode(LaunchMode.inAppBrowserView), false);
       expect(mock.launchMode, PreferredLaunchMode.inAppBrowserView);
@@ -329,11 +329,11 @@ void main() {
 
     test('reflects close support independently of launch support', () async {
       mock
-        ..setResponse(false)
-        ..setCloseForModeResponse(true);
+        ..setLaunchResponse(true)
+        ..setCloseResponse(false);
 
-      expect(await supportsLaunchMode(LaunchMode.inAppBrowserView), false);
-      expect(await supportsCloseForLaunchMode(LaunchMode.inAppBrowserView), true);
+      expect(await supportsLaunchMode(LaunchMode.inAppBrowserView), true);
+      expect(await supportsCloseForLaunchMode(LaunchMode.inAppBrowserView), false);
     });
   });
 }
