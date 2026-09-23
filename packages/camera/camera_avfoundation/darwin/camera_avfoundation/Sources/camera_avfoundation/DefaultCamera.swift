@@ -122,6 +122,12 @@ final class DefaultCamera: NSObject, Camera {
 
   private var fileFormat = PlatformImageFileFormat.jpeg
   private var imageQuality: Int64 = 100
+
+  /// The zero-shutter-lag state last requested via [setZeroShutterLagEnabled],
+  /// if any. Session reconfiguration (e.g. switching cameras) silently resets
+  /// `isZeroShutterLagEnabled`, so the requested state is kept here and
+  /// reapplied afterwards.
+  private var zeroShutterLagRequested: Bool?
   private var lockedCaptureOrientation = UIDeviceOrientation.unknown
   private var exposureMode = PlatformExposureMode.auto
   private var focusMode = PlatformFocusMode.auto
@@ -858,6 +864,35 @@ final class DefaultCamera: NSObject, Camera {
     self.imageQuality = quality
   }
 
+  func isZeroShutterLagSupported() -> Bool {
+    return capturePhotoOutput.flutterZeroShutterLagSupported
+  }
+
+  /// Applies the requested zero-shutter-lag state to the photo output.
+  ///
+  /// Enabling is guarded on `flutterZeroShutterLagSupported`: setting
+  /// `isZeroShutterLagEnabled` to `true` while unsupported throws
+  /// `NSInvalidArgumentException`, and the platform interface documents this
+  /// setting as best-effort. Changing the value requires a reconfiguration of
+  /// the capture pipeline, so the update is wrapped in
+  /// `beginConfiguration`/`commitConfiguration`.
+  func setZeroShutterLagEnabled(_ enabled: Bool) {
+    zeroShutterLagRequested = enabled
+    applyZeroShutterLag(enabled)
+  }
+
+  private func applyZeroShutterLag(_ enabled: Bool) {
+    if enabled && !capturePhotoOutput.flutterZeroShutterLagSupported {
+      return
+    }
+    if capturePhotoOutput.flutterZeroShutterLagEnabled == enabled {
+      return
+    }
+    videoCaptureSession.beginConfiguration()
+    capturePhotoOutput.flutterZeroShutterLagEnabled = enabled
+    videoCaptureSession.commitConfiguration()
+  }
+
   func setExposureMode(_ mode: PlatformExposureMode) {
     exposureMode = mode
     applyExposureMode()
@@ -1207,6 +1242,12 @@ final class DefaultCamera: NSObject, Camera {
     }
     videoCaptureSession.addConnection(newConnection)
     videoCaptureSession.commitConfiguration()
+
+    // Reconfiguring the session silently resets `isZeroShutterLagEnabled`;
+    // reapply the state the caller last requested.
+    if let zeroShutterLagRequested = zeroShutterLagRequested {
+      applyZeroShutterLag(zeroShutterLagRequested)
+    }
 
     completion(.success(()))
   }

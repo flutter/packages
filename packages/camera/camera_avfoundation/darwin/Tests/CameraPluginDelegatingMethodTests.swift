@@ -273,6 +273,51 @@ final class CameraPluginDelegatingMethodTests: XCTestCase {
     XCTAssertTrue(setJpegImageQualityCalled)
   }
 
+  func testIsZeroShutterLagSupported_returnsValueFromCameraIsZeroShutterLagSupported() {
+    let (cameraPlugin, mockCamera) = createCameraPlugin()
+    let expectation = expectation(description: "Call completed")
+
+    var isZeroShutterLagSupportedCalled = false
+    mockCamera.isZeroShutterLagSupportedStub = {
+      isZeroShutterLagSupportedCalled = true
+      return true
+    }
+
+    cameraPlugin.isZeroShutterLagSupported { result in
+      switch result {
+      case .success(let supported):
+        XCTAssertTrue(supported)
+      case .failure:
+        XCTFail("Unexpected error")
+      }
+      expectation.fulfill()
+    }
+
+    waitForExpectations(timeout: 30, handler: nil)
+
+    XCTAssertTrue(isZeroShutterLagSupportedCalled)
+  }
+
+  func testSetZeroShutterLagEnabled_callsCameraSetZeroShutterLagEnabled() {
+    let (cameraPlugin, mockCamera) = createCameraPlugin()
+    let expectation = expectation(description: "Call completed")
+
+    var setZeroShutterLagEnabledCalled = false
+    mockCamera.setZeroShutterLagEnabledStub = { enabled in
+      XCTAssertTrue(enabled)
+      setZeroShutterLagEnabledCalled = true
+    }
+
+    cameraPlugin.setZeroShutterLagEnabled(enabled: true) { result in
+      let _ = self.assertSuccess(result)
+      expectation.fulfill()
+    }
+
+    waitForExpectations(timeout: 30, handler: nil)
+
+    XCTAssertTrue(setZeroShutterLagEnabledCalled)
+  }
+
   func testStartImageStream_callsCameraStartImageStream() {
     let (cameraPlugin, mockCamera) = createCameraPlugin()
     let expectation = expectation(description: "Call completed")

@@ -9,6 +9,7 @@ import androidx.annotation.OptIn;
 import androidx.camera.core.CameraInfo;
 import androidx.camera.core.CameraSelector;
 import androidx.camera.core.ExperimentalLensFacing;
+import androidx.camera.core.ExperimentalZeroShutterLag;
 import androidx.camera.core.ExposureState;
 
 /**
@@ -60,5 +61,11 @@ class CameraInfoProxyApi extends PigeonApiCameraInfo {
   public LiveDataProxyApi.LiveDataWrapper getZoomState(CameraInfo pigeonInstance) {
     return new LiveDataProxyApi.LiveDataWrapper(
         pigeonInstance.getZoomState(), LiveDataSupportedType.ZOOM_STATE);
+  }
+
+  @Override
+  @OptIn(markerClass = ExperimentalZeroShutterLag.class)
+  public boolean isZslSupported(CameraInfo pigeonInstance) {
+    return pigeonInstance.isZslSupported();
   }
 }
