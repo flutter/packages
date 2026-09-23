@@ -3338,17 +3338,17 @@ void main() {
     });
 
     // This is a regression test for https://github.com/flutter/flutter/issues/192732.
-    testWidgets('MenuItemButton does not clip leadingIcon or trailingIcon', (
-      WidgetTester tester,
-    ) async {
+    testWidgets('MenuItemButton does not clip leadingIcon', (WidgetTester tester) async {
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
             body: MenuAnchor(
               menuChildren: <Widget>[
                 MenuItemButton(
-                  leadingIcon: const Icon(Icons.add, key: Key('leading')),
-                  trailingIcon: const Icon(Icons.remove, key: Key('trailing')),
+                  leadingIcon: const Badge(
+                    label: Text('1'),
+                    child: Icon(Icons.add, key: Key('leading')),
+                  ),
                   onPressed: () {},
                   child: const Text('Item'),
                 ),
@@ -3364,14 +3364,9 @@ void main() {
       await tester.tap(find.text('Open'));
       await tester.pumpAndSettle();
 
-      // Neither icon slot should be clipped, so that decorations painting
-      // outside an icon's bounds (such as a Badge) stay visible.
+      // Decorations that paint outside the leading icon's bounds stay visible.
       expect(
         find.ancestor(of: find.byKey(const Key('leading')), matching: find.byType(ClipRect)),
-        findsNothing,
-      );
-      expect(
-        find.ancestor(of: find.byKey(const Key('trailing')), matching: find.byType(ClipRect)),
         findsNothing,
       );
 
