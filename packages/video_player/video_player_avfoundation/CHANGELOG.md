@@ -2,6 +2,10 @@
 
 * Updates minimum supported SDK version to Flutter 3.41/Dart 3.11.
 
+## 2.12.1
+
+* Fixes crash when `videoTrack.minFrameDuration` is zero.
+
 ## 2.12.0
 
 * Routes video over AirPlay when an external screen is active, by setting
