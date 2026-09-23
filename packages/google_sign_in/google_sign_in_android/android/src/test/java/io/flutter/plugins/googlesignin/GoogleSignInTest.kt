@@ -130,7 +130,7 @@ class GoogleSignInTest {
     flutterPlugin!!.initWithDelegate(Mockito.mock(BinaryMessenger::class.java), plugin!!)
     flutterPlugin!!.onAttachedToActivity(mockActivityPluginBinding!!)
 
-    Mockito.verify<ActivityPluginBinding?>(mockActivityPluginBinding)
+    Mockito.verify<ActivityPluginBinding>(mockActivityPluginBinding)
         .addActivityResultListener(plugin!!)
     Assert.assertEquals(mockActivity, plugin!!.activity)
   }
@@ -142,7 +142,7 @@ class GoogleSignInTest {
     flutterPlugin!!.onAttachedToActivity(mockActivityPluginBinding!!)
     flutterPlugin!!.onDetachedFromActivity()
 
-    Mockito.verify<ActivityPluginBinding?>(mockActivityPluginBinding)
+    Mockito.verify<ActivityPluginBinding>(mockActivityPluginBinding)
         .removeActivityResultListener(plugin!!)
     Assert.assertNull(plugin!!.activity)
   }
@@ -153,7 +153,7 @@ class GoogleSignInTest {
     flutterPlugin!!.initWithDelegate(Mockito.mock(BinaryMessenger::class.java), plugin!!)
     flutterPlugin!!.onReattachedToActivityForConfigChanges(mockActivityPluginBinding!!)
 
-    Mockito.verify<ActivityPluginBinding?>(mockActivityPluginBinding)
+    Mockito.verify<ActivityPluginBinding>(mockActivityPluginBinding)
         .addActivityResultListener(plugin!!)
     Assert.assertEquals(mockActivity, plugin!!.activity)
   }
@@ -165,7 +165,7 @@ class GoogleSignInTest {
     flutterPlugin!!.onAttachedToActivity(mockActivityPluginBinding!!)
     flutterPlugin!!.onDetachedFromActivityForConfigChanges()
 
-    Mockito.verify<ActivityPluginBinding?>(mockActivityPluginBinding)
+    Mockito.verify<ActivityPluginBinding>(mockActivityPluginBinding)
         .removeActivityResultListener(plugin!!)
     Assert.assertNull(plugin!!.activity)
   }
@@ -241,7 +241,7 @@ class GoogleSignInTest {
             CredentialManagerCallback<GetCredentialResponse?, GetCredentialException?>?,
             CredentialManagerCallback<*, *>?>(
             CredentialManagerCallback::class.java)
-    Mockito.verify<CredentialManager?>(mockCredentialManager)
+    Mockito.verify<CredentialManager>(mockCredentialManager)
         .getCredentialAsync(
             ArgumentMatchers.eq<Activity?>(mockActivity),
             ArgumentMatchers.any(GetCredentialRequest::class.java),
@@ -268,7 +268,7 @@ class GoogleSignInTest {
     plugin!!.getCredential(params) {}
 
     val captor = ArgumentCaptor.forClass(GetCredentialRequest::class.java)
-    Mockito.verify<CredentialManager?>(mockCredentialManager)
+    Mockito.verify<CredentialManager>(mockCredentialManager)
         .getCredentialAsync(
             ArgumentMatchers.eq<Activity?>(mockActivity),
             captor.capture(),
@@ -300,7 +300,7 @@ class GoogleSignInTest {
     }
 
     val captor = ArgumentCaptor.forClass(GetCredentialRequest::class.java)
-    Mockito.verify<CredentialManager?>(mockCredentialManager)
+    Mockito.verify<CredentialManager>(mockCredentialManager)
         .getCredentialAsync(
             ArgumentMatchers.eq<Activity?>(mockActivity),
             captor.capture(),
@@ -333,7 +333,7 @@ class GoogleSignInTest {
     }
 
     val captor = ArgumentCaptor.forClass(GetCredentialRequest::class.java)
-    Mockito.verify<CredentialManager?>(mockCredentialManager)
+    Mockito.verify<CredentialManager>(mockCredentialManager)
         .getCredentialAsync(
             ArgumentMatchers.eq<Activity?>(mockActivity),
             captor.capture(),
@@ -368,7 +368,7 @@ class GoogleSignInTest {
     }
 
     val captor = ArgumentCaptor.forClass(GetCredentialRequest::class.java)
-    Mockito.verify<CredentialManager?>(mockCredentialManager)
+    Mockito.verify<CredentialManager>(mockCredentialManager)
         .getCredentialAsync(
             ArgumentMatchers.eq<Activity?>(mockActivity),
             captor.capture(),
@@ -402,7 +402,7 @@ class GoogleSignInTest {
     }
 
     val captor = ArgumentCaptor.forClass(GetCredentialRequest::class.java)
-    Mockito.verify<CredentialManager?>(mockCredentialManager)
+    Mockito.verify<CredentialManager>(mockCredentialManager)
         .getCredentialAsync(
             ArgumentMatchers.eq<Activity?>(mockActivity),
             captor.capture(),
@@ -494,7 +494,7 @@ class GoogleSignInTest {
             CredentialManagerCallback<GetCredentialResponse?, GetCredentialException?>?,
             CredentialManagerCallback<*, *>?>(
             CredentialManagerCallback::class.java)
-    Mockito.verify<CredentialManager?>(mockCredentialManager)
+    Mockito.verify<CredentialManager>(mockCredentialManager)
         .getCredentialAsync(
             ArgumentMatchers.eq<Activity?>(mockActivity),
             ArgumentMatchers.any(GetCredentialRequest::class.java),
@@ -536,7 +536,7 @@ class GoogleSignInTest {
             CredentialManagerCallback<GetCredentialResponse?, GetCredentialException?>?,
             CredentialManagerCallback<*, *>?>(
             CredentialManagerCallback::class.java)
-    Mockito.verify<CredentialManager?>(mockCredentialManager)
+    Mockito.verify<CredentialManager>(mockCredentialManager)
         .getCredentialAsync(
             ArgumentMatchers.eq<Activity?>(mockActivity),
             ArgumentMatchers.any(GetCredentialRequest::class.java),
@@ -576,7 +576,7 @@ class GoogleSignInTest {
             CredentialManagerCallback<GetCredentialResponse?, GetCredentialException?>?,
             CredentialManagerCallback<*, *>?>(
             CredentialManagerCallback::class.java)
-    Mockito.verify<CredentialManager?>(mockCredentialManager)
+    Mockito.verify<CredentialManager>(mockCredentialManager)
         .getCredentialAsync(
             ArgumentMatchers.eq<Activity?>(mockActivity),
             ArgumentMatchers.any(GetCredentialRequest::class.java),
@@ -616,7 +616,7 @@ class GoogleSignInTest {
             CredentialManagerCallback<GetCredentialResponse?, GetCredentialException?>?,
             CredentialManagerCallback<*, *>?>(
             CredentialManagerCallback::class.java)
-    Mockito.verify<CredentialManager?>(mockCredentialManager)
+    Mockito.verify<CredentialManager>(mockCredentialManager)
         .getCredentialAsync(
             ArgumentMatchers.eq<Activity?>(mockActivity),
             ArgumentMatchers.any(GetCredentialRequest::class.java),
@@ -656,7 +656,7 @@ class GoogleSignInTest {
             CredentialManagerCallback<GetCredentialResponse?, GetCredentialException?>?,
             CredentialManagerCallback<*, *>?>(
             CredentialManagerCallback::class.java)
-    Mockito.verify<CredentialManager?>(mockCredentialManager)
+    Mockito.verify<CredentialManager>(mockCredentialManager)
         .getCredentialAsync(
             ArgumentMatchers.eq<Activity?>(mockActivity),
             ArgumentMatchers.any(GetCredentialRequest::class.java),
@@ -696,7 +696,7 @@ class GoogleSignInTest {
             CredentialManagerCallback<GetCredentialResponse?, GetCredentialException?>?,
             CredentialManagerCallback<*, *>?>(
             CredentialManagerCallback::class.java)
-    Mockito.verify<CredentialManager?>(mockCredentialManager)
+    Mockito.verify<CredentialManager>(mockCredentialManager)
         .getCredentialAsync(
             ArgumentMatchers.eq<Activity?>(mockActivity),
             ArgumentMatchers.any(GetCredentialRequest::class.java),
@@ -736,7 +736,7 @@ class GoogleSignInTest {
             CredentialManagerCallback<GetCredentialResponse?, GetCredentialException?>?,
             CredentialManagerCallback<*, *>?>(
             CredentialManagerCallback::class.java)
-    Mockito.verify<CredentialManager?>(mockCredentialManager)
+    Mockito.verify<CredentialManager>(mockCredentialManager)
         .getCredentialAsync(
             ArgumentMatchers.eq<Activity?>(mockActivity),
             ArgumentMatchers.any(GetCredentialRequest::class.java),
@@ -764,7 +764,7 @@ class GoogleSignInTest {
     }
 
     val authRequestCaptor = ArgumentCaptor.forClass(AuthorizationRequest::class.java)
-    Mockito.verify<AuthorizationClient?>(mockAuthorizationClient)
+    Mockito.verify<AuthorizationClient>(mockAuthorizationClient)
         .authorize(authRequestCaptor.capture())
 
     val request = authRequestCaptor.getValue()
@@ -792,7 +792,7 @@ class GoogleSignInTest {
     }
 
     val authRequestCaptor = ArgumentCaptor.forClass(AuthorizationRequest::class.java)
-    Mockito.verify<AuthorizationClient?>(mockAuthorizationClient)
+    Mockito.verify<AuthorizationClient>(mockAuthorizationClient)
         .authorize(authRequestCaptor.capture())
 
     val request = authRequestCaptor.getValue()
@@ -828,7 +828,7 @@ class GoogleSignInTest {
     val callbackCaptor =
         ArgumentCaptor.forClass<OnSuccessListener<AuthorizationResult?>?, OnSuccessListener<*>?>(
             OnSuccessListener::class.java)
-    Mockito.verify<Task<AuthorizationResult?>?>(mockAuthorizationTask)
+    Mockito.verify<Task<AuthorizationResult?>>(mockAuthorizationTask)
         .addOnSuccessListener(callbackCaptor.capture()!!)
 
     callbackCaptor
@@ -883,7 +883,7 @@ class GoogleSignInTest {
     val callbackCaptor =
         ArgumentCaptor.forClass<OnSuccessListener<AuthorizationResult?>?, OnSuccessListener<*>?>(
             OnSuccessListener::class.java)
-    Mockito.verify<Task<AuthorizationResult?>?>(mockAuthorizationTask)
+    Mockito.verify<Task<AuthorizationResult?>>(mockAuthorizationTask)
         .addOnSuccessListener(callbackCaptor.capture()!!)
 
     callbackCaptor
@@ -916,7 +916,7 @@ class GoogleSignInTest {
     val callbackCaptor =
         ArgumentCaptor.forClass<OnSuccessListener<AuthorizationResult?>?, OnSuccessListener<*>?>(
             OnSuccessListener::class.java)
-    Mockito.verify<Task<AuthorizationResult?>?>(mockAuthorizationTask)
+    Mockito.verify<Task<AuthorizationResult?>>(mockAuthorizationTask)
         .addOnSuccessListener(callbackCaptor.capture()!!)
 
     callbackCaptor
@@ -961,13 +961,13 @@ class GoogleSignInTest {
     val callbackCaptor =
         ArgumentCaptor.forClass<OnSuccessListener<AuthorizationResult?>?, OnSuccessListener<*>?>(
             OnSuccessListener::class.java)
-    Mockito.verify<Task<AuthorizationResult?>?>(mockAuthorizationTask)
+    Mockito.verify<Task<AuthorizationResult?>>(mockAuthorizationTask)
         .addOnSuccessListener(callbackCaptor.capture()!!)
     callbackCaptor
         .getValue()!!
         .onSuccess(mockResolutionAuthorizationResult(mockAuthorizationIntent))
     try {
-      Mockito.verify<Activity?>(mockActivity)
+      Mockito.verify<Activity>(mockActivity)
           .startIntentSenderForResult(
               mockAuthorizationIntent!!.intentSender,
               GoogleSignInPlugin.Delegate.REQUEST_CODE_AUTHORIZE,
@@ -1017,7 +1017,7 @@ class GoogleSignInTest {
     val callbackCaptor =
         ArgumentCaptor.forClass<OnSuccessListener<AuthorizationResult?>?, OnSuccessListener<*>?>(
             OnSuccessListener::class.java)
-    Mockito.verify<Task<AuthorizationResult?>?>(mockAuthorizationTask)
+    Mockito.verify<Task<AuthorizationResult?>>(mockAuthorizationTask)
         .addOnSuccessListener(callbackCaptor.capture()!!)
     callbackCaptor
         .getValue()!!
@@ -1045,7 +1045,7 @@ class GoogleSignInTest {
         .thenReturn(mockAuthorizationTask)
     try {
       Mockito.doThrow(SendIntentException())
-          .`when`<Activity?>(mockActivity)
+          .`when`<Activity>(mockActivity)
           .startIntentSenderForResult(
               mockAuthorizationIntentSender,
               GoogleSignInPlugin.Delegate.REQUEST_CODE_AUTHORIZE,
@@ -1073,7 +1073,7 @@ class GoogleSignInTest {
     val callbackCaptor =
         ArgumentCaptor.forClass<OnSuccessListener<AuthorizationResult?>?, OnSuccessListener<*>?>(
             OnSuccessListener::class.java)
-    Mockito.verify<Task<AuthorizationResult?>?>(mockAuthorizationTask)
+    Mockito.verify<Task<AuthorizationResult?>>(mockAuthorizationTask)
         .addOnSuccessListener(callbackCaptor.capture()!!)
     callbackCaptor
         .getValue()!!
@@ -1114,13 +1114,13 @@ class GoogleSignInTest {
     val callbackCaptor =
         ArgumentCaptor.forClass<OnSuccessListener<AuthorizationResult?>?, OnSuccessListener<*>?>(
             OnSuccessListener::class.java)
-    Mockito.verify<Task<AuthorizationResult?>?>(mockAuthorizationTask)
+    Mockito.verify<Task<AuthorizationResult?>>(mockAuthorizationTask)
         .addOnSuccessListener(callbackCaptor.capture()!!)
     callbackCaptor
         .getValue()!!
         .onSuccess(mockResolutionAuthorizationResult(mockAuthorizationIntent))
     try {
-      Mockito.verify<Activity?>(mockActivity)
+      Mockito.verify<Activity>(mockActivity)
           .startIntentSenderForResult(
               mockAuthorizationIntent!!.intentSender,
               GoogleSignInPlugin.Delegate.REQUEST_CODE_AUTHORIZE,
@@ -1148,7 +1148,7 @@ class GoogleSignInTest {
             CredentialManagerCallback<Void?, ClearCredentialException?>?,
             CredentialManagerCallback<*, *>?>(
             CredentialManagerCallback::class.java)
-    Mockito.verify<CredentialManager?>(mockCredentialManager)
+    Mockito.verify<CredentialManager>(mockCredentialManager)
         .clearCredentialStateAsync(
             ArgumentMatchers.any(ClearCredentialStateRequest::class.java),
             ArgumentMatchers.any<CancellationSignal?>(),
@@ -1167,7 +1167,7 @@ class GoogleSignInTest {
             CredentialManagerCallback<Void?, ClearCredentialException?>?,
             CredentialManagerCallback<*, *>?>(
             CredentialManagerCallback::class.java)
-    Mockito.verify<CredentialManager?>(mockCredentialManager)
+    Mockito.verify<CredentialManager>(mockCredentialManager)
         .clearCredentialStateAsync(
             ArgumentMatchers.any(ClearCredentialStateRequest::class.java),
             ArgumentMatchers.any<CancellationSignal?>(),
@@ -1187,13 +1187,13 @@ class GoogleSignInTest {
     plugin!!.revokeAccess(params) {}
 
     val requestCaptor = ArgumentCaptor.forClass(RevokeAccessRequest::class.java)
-    Mockito.verify<AuthorizationClient?>(mockAuthorizationClient)
+    Mockito.verify<AuthorizationClient>(mockAuthorizationClient)
         .revokeAccess(requestCaptor.capture())
 
     val callbackCaptor =
         ArgumentCaptor.forClass<OnSuccessListener<Void?>?, OnSuccessListener<*>?>(
             OnSuccessListener::class.java)
-    Mockito.verify<Task<Void?>?>(mockVoidTask).addOnSuccessListener(callbackCaptor.capture()!!)
+    Mockito.verify<Task<Void?>>(mockVoidTask).addOnSuccessListener(callbackCaptor.capture()!!)
     callbackCaptor.getValue()!!.onSuccess(null)
 
     val request = requestCaptor.getValue()
@@ -1211,7 +1211,7 @@ class GoogleSignInTest {
     plugin!!.clearAuthorizationToken(testToken) {}
 
     val authRequestCaptor = ArgumentCaptor.forClass(ClearTokenRequest::class.java)
-    Mockito.verify<AuthorizationClient?>(mockAuthorizationClient)
+    Mockito.verify<AuthorizationClient>(mockAuthorizationClient)
         .clearToken(authRequestCaptor.capture())
 
     val callbackCaptor =
