@@ -74,24 +74,52 @@ const double _fontSizeToScale = 14.0;
 /// The signature of a function that builds a widget for a day in a
 /// [CalendarDatePicker].
 ///
-/// The [day] is the date represented by the widget. The [states] are the
-/// current [WidgetState]s of the day, such as [WidgetState.disabled],
-/// [WidgetState.selected], or [WidgetState.hovered]. The [child] is the
-/// default widget built by the date picker.
+/// The [details] contain the date, its current [WidgetState]s, and the default
+/// widget built by the date picker.
 ///
 /// The date picker's semantics, focus, and tap handling are applied to the
 /// widget returned by this function.
 typedef CalendarDatePickerDayBuilder =
-    Widget Function(BuildContext context, DateTime day, Set<WidgetState> states, Widget child);
+    Widget Function(BuildContext context, CalendarDatePickerDayDetails details);
+
+/// Details for building a day in a [CalendarDatePickerDayBuilder].
+final class CalendarDatePickerDayDetails {
+  const CalendarDatePickerDayDetails._({
+    required this.day,
+    required this.states,
+    required this.child,
+  });
+
+  /// The date represented by the widget.
+  final DateTime day;
+
+  /// An unmodifiable snapshot of the current states of the day, such as
+  /// [WidgetState.disabled], [WidgetState.selected], or [WidgetState.hovered].
+  final Set<WidgetState> states;
+
+  /// The default widget built by the date picker.
+  final Widget child;
+}
 
 /// The signature of a function that builds a weekday header in a
 /// [CalendarDatePicker].
 ///
-/// The [weekday] uses the same numbering as [DateTime.weekday], from
-/// [DateTime.monday] through [DateTime.sunday]. The [child] is the default
-/// localized weekday header built by the date picker.
+/// The [details] contain the weekday and the default localized weekday header
+/// built by the date picker.
 typedef CalendarDatePickerWeekdayBuilder =
-    Widget Function(BuildContext context, int weekday, Widget child);
+    Widget Function(BuildContext context, CalendarDatePickerWeekdayDetails details);
+
+/// Details for building a weekday header in a [CalendarDatePickerWeekdayBuilder].
+final class CalendarDatePickerWeekdayDetails {
+  const CalendarDatePickerWeekdayDetails._({required this.weekday, required this.child});
+
+  /// The weekday, using the same numbering as [DateTime.weekday], from
+  /// [DateTime.monday] through [DateTime.sunday].
+  final int weekday;
+
+  /// The default localized weekday header built by the date picker.
+  final Widget child;
+}
 
 /// Displays a grid of days for a given month and allows the user to select a
 /// date.
@@ -1170,15 +1198,15 @@ class _DayPickerState extends State<_DayPicker> {
         final int dateTimeWeekday = (i == 0 ? DateTime.sunday : i);
         final Widget weekdayWidget = widget.weekdayBuilder!(
           context,
-          dateTimeWeekday,
-          Text(weekday),
+          CalendarDatePickerWeekdayDetails._(
+            weekday: dateTimeWeekday,
+            child: ExcludeSemantics(child: Text(weekday)),
+          ),
         );
         result.add(
-          ExcludeSemantics(
-            child: DefaultTextStyle.merge(
-              style: headerStyle,
-              child: Center(child: weekdayWidget),
-            ),
+          DefaultTextStyle.merge(
+            style: headerStyle,
+            child: Center(child: weekdayWidget),
           ),
         );
       } else {
@@ -1319,7 +1347,15 @@ class _DayState extends State<_Day> {
       if (widget.isSelectedDay) WidgetState.selected,
     };
 
-    _statesController.value = states;
+    // Preserve interaction states managed by InkResponse across rebuilds.
+    final Set<WidgetState> interactionStates = widget.isDisabled
+        ? <WidgetState>{}
+        : _statesController.value.difference(<WidgetState>{
+            WidgetState.disabled,
+            WidgetState.selected,
+          });
+
+    _statesController.value = <WidgetState>{...states, ...interactionStates};
 
     final Color? dayForegroundColor = resolve<Color?>(
       (DatePickerThemeData? theme) =>
@@ -1364,9 +1400,11 @@ class _DayState extends State<_Day> {
         builder: (BuildContext context, Widget? child) {
           return widget.dayBuilder!(
             context,
-            widget.day,
-            Set<WidgetState>.unmodifiable(_statesController.value),
-            child!,
+            CalendarDatePickerDayDetails._(
+              day: widget.day,
+              states: Set<WidgetState>.unmodifiable(_statesController.value),
+              child: child!,
+            ),
           );
         },
         child: dayWidget,
