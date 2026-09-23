@@ -40,14 +40,11 @@ import com.google.android.libraries.identity.googleid.GetSignInWithGoogleOption
 import com.google.android.libraries.identity.googleid.GoogleIdTokenCredential
 import io.flutter.embedding.engine.plugins.activity.ActivityPluginBinding
 import io.flutter.plugin.common.BinaryMessenger
-import java.lang.AutoCloseable
 import java.util.concurrent.Executor
-import org.junit.After
 import org.junit.Assert
 import org.junit.Before
 import org.junit.Test
 import org.mockito.Mockito
-import org.mockito.MockitoAnnotations
 import org.mockito.kotlin.any
 import org.mockito.kotlin.anyOrNull
 import org.mockito.kotlin.argumentCaptor
@@ -57,39 +54,36 @@ import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
 
 class GoogleSignInTest {
-  var mockContext: Context = mock()
+  private val mockContext = mock<Context>()
 
-  var mockResources: Resources = mock()
+  private val mockResources = mock<Resources>()
 
-  var mockActivity: Activity = mock()
+  private val mockActivity = mock<Activity>()
 
-  var mockActivityPluginBinding: ActivityPluginBinding = mock()
+  private val mockActivityPluginBinding = mock<ActivityPluginBinding>()
 
-  var mockAuthorizationIntent: PendingIntent = mock()
+  private val mockAuthorizationIntent = mock<PendingIntent>()
 
-  var mockAuthorizationIntentSender: IntentSender = mock()
+  private val mockAuthorizationIntentSender = mock<IntentSender>()
 
-  var mockCredentialManager: CredentialManager = mock()
+  private val mockCredentialManager = mock<CredentialManager>()
 
-  var mockAuthorizationClient: AuthorizationClient = mock()
+  private val mockAuthorizationClient = mock<AuthorizationClient>()
 
-  var mockGenericCredential: CustomCredential = mock()
+  private val mockGenericCredential = mock<CustomCredential>()
 
-  var mockGoogleCredential: GoogleIdTokenCredential = mock()
+  private val mockGoogleCredential = mock<GoogleIdTokenCredential>()
 
-  var mockAuthorizationTask: Task<AuthorizationResult> = mock()
+  private val mockAuthorizationTask = mock<Task<AuthorizationResult>>()
 
-  var mockVoidTask: Task<Void> = mock()
+  private val mockVoidTask = mock<Task<Void>>()
 
   // Technically this is not the plugin, but in practice almost all of the functionality is in this
   // class so it is given the simpler name.
   private lateinit var plugin: GoogleSignInPlugin.Delegate
-  private lateinit var mockCloseable: AutoCloseable
 
   @Before
   fun setUp() {
-    mockCloseable = MockitoAnnotations.openMocks(this)
-
     // Wire up basic mock functionality that is not test-specific.
     whenever(mockContext.resources).thenReturn(mockResources)
     whenever(mockGenericCredential.type)
@@ -107,12 +101,6 @@ class GoogleSignInTest {
             { mockCredentialManager },
             { mockAuthorizationClient },
             { mockGoogleCredential })
-  }
-
-  @After
-  @Throws(Exception::class)
-  fun tearDown() {
-    mockCloseable.close()
   }
 
   @Test
@@ -939,7 +927,7 @@ class GoogleSignInTest {
 
     whenever(mockAuthorizationClient.authorize(any())).thenReturn(mockAuthorizationTask)
     Mockito.doThrow(SendIntentException())
-        .`when`(mockActivity)
+        .whenever(mockActivity)
         .startIntentSenderForResult(
             mockAuthorizationIntentSender,
             GoogleSignInPlugin.Delegate.REQUEST_CODE_AUTHORIZE,
