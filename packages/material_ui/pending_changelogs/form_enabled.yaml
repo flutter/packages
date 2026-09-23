@@ -1,0 +1,3 @@
+changelog: |
+  - Disables `TextFormField`, `DropdownButtonFormField`, and `DropdownMenuFormField` when their enclosing `Form.enabled` is false.
+version: minor

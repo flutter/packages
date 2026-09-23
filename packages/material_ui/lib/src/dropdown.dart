@@ -1894,7 +1894,8 @@ class DropdownButtonFormField<T> extends FormField<T> {
            final bool showSelectedItem =
                items != null &&
                items.where((DropdownMenuItem<T> item) => item.value == state.value).isNotEmpty;
-           final bool isDropdownEnabled = onChanged != null && items != null && items.isNotEmpty;
+           final bool isDropdownEnabled =
+               field.isEnabled && onChanged != null && items != null && items.isNotEmpty;
            // If decoration hintText is provided, use it as the default value for both hint and disabledHint.
            final Widget? decorationHint = effectiveDecoration.hintText != null
                ? Text(effectiveDecoration.hintText!)
@@ -1933,7 +1934,7 @@ class DropdownButtonFormField<T> extends FormField<T> {
                  value: state.value,
                  hint: effectiveHint,
                  disabledHint: effectiveDisabledHint,
-                 onChanged: onChanged == null ? null : state.didChange,
+                 onChanged: onChanged == null || !field.isEnabled ? null : state.didChange,
                  onTap: onTap,
                  elevation: elevation,
                  style: style,
