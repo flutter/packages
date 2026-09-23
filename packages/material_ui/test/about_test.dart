@@ -56,6 +56,7 @@ void main() {
       expect(find.byType(AboutDialog), findsOneWidget);
     },
     skip: !kIsWeb, // [intended] Exercises the web-specific fallback.
+    tags: 'reduced-web-test-set',
   );
 
   testWidgets('Material3 has sentence case labels', (WidgetTester tester) async {

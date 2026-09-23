@@ -17,7 +17,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter/widgets.dart' hide Flow;
 
-import '_about_io.dart' if (dart.library.js_interop) '_about_web.dart' as about;
+import '_about_io.dart' if (dart.library.js_interop) '_about_web.dart' as impl;
 import 'app_bar.dart';
 import 'back_button.dart';
 import 'card.dart';
@@ -103,7 +103,9 @@ class AboutListTile extends StatelessWidget {
   /// [child]) and as the caption of the [AboutDialog] that is shown.
   ///
   /// Defaults to the value of [Title.title], if a [Title] widget can be found.
-  /// Otherwise, defaults to [Platform.resolvedExecutable].
+  /// Otherwise, defaults to the file name of [Platform.resolvedExecutable] on
+  /// native platforms, or to the empty string on the web, where there is no
+  /// executable.
   final String? applicationName;
 
   /// The version of this build of the application.
@@ -384,7 +386,9 @@ class AboutDialog extends StatelessWidget {
   /// The name of the application.
   ///
   /// Defaults to the value of [Title.title], if a [Title] widget can be found.
-  /// Otherwise, defaults to [Platform.resolvedExecutable].
+  /// Otherwise, defaults to the file name of [Platform.resolvedExecutable] on
+  /// native platforms, or to the empty string on the web, where there is no
+  /// executable.
   final String? applicationName;
 
   /// The version of this build of the application.
@@ -633,7 +637,9 @@ class LicensePage extends StatefulWidget {
   /// The name of the application.
   ///
   /// Defaults to the value of [Title.title], if a [Title] widget can be found.
-  /// Otherwise, defaults to [Platform.resolvedExecutable].
+  /// Otherwise, defaults to the file name of [Platform.resolvedExecutable] on
+  /// native platforms, or to the empty string on the web, where there is no
+  /// executable.
   final String? applicationName;
 
   /// The version of this build of the application.
@@ -1202,7 +1208,7 @@ String _defaultApplicationName(BuildContext context) {
   // can provide an explicit applicationName to the widgets defined in this
   // file, instead of relying on the default.
   final Title? ancestorTitle = context.findAncestorWidgetOfExactType<Title>();
-  return ancestorTitle?.title ?? about.executableName;
+  return ancestorTitle?.title ?? impl.executableName;
 }
 
 String _defaultApplicationVersion(BuildContext context) {
