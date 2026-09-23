@@ -12,7 +12,6 @@ import android.content.IntentSender.SendIntentException
 import android.content.res.Resources
 import android.os.CancellationSignal
 import androidx.credentials.ClearCredentialStateRequest
-import androidx.credentials.Credential
 import androidx.credentials.CredentialManager
 import androidx.credentials.CredentialManagerCallback
 import androidx.credentials.CustomCredential
@@ -41,9 +40,6 @@ import com.google.android.libraries.identity.googleid.GetSignInWithGoogleOption
 import com.google.android.libraries.identity.googleid.GoogleIdTokenCredential
 import io.flutter.embedding.engine.plugins.activity.ActivityPluginBinding
 import io.flutter.plugin.common.BinaryMessenger
-import io.flutter.plugins.googlesignin.GoogleSignInPlugin.AuthorizationClientFactory
-import io.flutter.plugins.googlesignin.GoogleSignInPlugin.CredentialManagerFactory
-import io.flutter.plugins.googlesignin.GoogleSignInPlugin.GoogleIdCredentialConverter
 import java.lang.AutoCloseable
 import java.util.concurrent.Executor
 import org.junit.After
@@ -108,9 +104,9 @@ class GoogleSignInTest {
     plugin =
         GoogleSignInPlugin.Delegate(
             mockContext,
-            CredentialManagerFactory { c: Context -> mockCredentialManager },
-            AuthorizationClientFactory { c: Context -> mockAuthorizationClient },
-            GoogleIdCredentialConverter { cred: Credential -> mockGoogleCredential })
+            { mockCredentialManager },
+            { mockAuthorizationClient },
+            { mockGoogleCredential })
   }
 
   @After
@@ -708,7 +704,7 @@ class GoogleSignInTest {
   }
 
   @Test
-  fun authorize_passesNullParamaters() {
+  fun authorize_passesNullParameters() {
     val scopes = mutableListOf("scope1", "scope1")
     val params = PlatformAuthorizationRequest(scopes, null, null, null)
 
@@ -868,7 +864,7 @@ class GoogleSignInTest {
     try {
       whenever(mockAuthorizationClient.getAuthorizationResultFromIntent(anyOrNull<Intent>()))
           .thenReturn(successResult)
-    } catch (e: ApiException) {
+    } catch (_: ApiException) {
       Assert.fail()
     }
 
@@ -898,10 +894,10 @@ class GoogleSignInTest {
               0,
               0,
               null)
-    } catch (e: SendIntentException) {
+    } catch (_: SendIntentException) {
       Assert.fail()
     }
-    // Simulate the UI flow completing. The intent data can be null here because the mock of
+    // Simulate the UI flow completing. The intent data can be null here because
     // mockAuthorizationClient.getAuthorizationResultFromIntent above ignores the parameter.
     plugin.onActivityResult(GoogleSignInPlugin.Delegate.REQUEST_CODE_AUTHORIZE, 0, null)
 
@@ -924,7 +920,7 @@ class GoogleSignInTest {
     try {
       whenever(mockAuthorizationClient.getAuthorizationResultFromIntent(anyOrNull<Intent>()))
           .thenReturn(successResult)
-    } catch (e: ApiException) {
+    } catch (_: ApiException) {
       Assert.fail()
     }
 
@@ -965,7 +961,7 @@ class GoogleSignInTest {
               0,
               0,
               null)
-    } catch (e: SendIntentException) {
+    } catch (_: SendIntentException) {
       Assert.fail()
     }
 
@@ -997,7 +993,7 @@ class GoogleSignInTest {
     try {
       whenever(mockAuthorizationClient.getAuthorizationResultFromIntent(anyOrNull()))
           .thenThrow(ApiException(Status.RESULT_INTERNAL_ERROR))
-    } catch (e: ApiException) {
+    } catch (_: ApiException) {
       Assert.fail()
     }
 
@@ -1026,10 +1022,10 @@ class GoogleSignInTest {
               0,
               0,
               null)
-    } catch (e: SendIntentException) {
+    } catch (_: SendIntentException) {
       Assert.fail()
     }
-    // Simulate the UI flow completing. The intent data can be null here because the mock of
+    // Simulate the UI flow completing. The intent data can be null here because
     // mockAuthorizationClient.getAuthorizationResultFromIntent above ignores the parameter.
     plugin.onActivityResult(GoogleSignInPlugin.Delegate.REQUEST_CODE_AUTHORIZE, 0, null)
 
