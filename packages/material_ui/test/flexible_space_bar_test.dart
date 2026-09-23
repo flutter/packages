@@ -57,21 +57,19 @@ void main() {
     const maxExtent = 300.0;
     const alpha = 0.5;
 
-    final customSettings =
-        FlexibleSpaceBar.createSettings(
-              currentExtent: initExtent,
-              minExtent: minExtent,
-              maxExtent: maxExtent,
-              toolbarOpacity: alpha,
-              child: AppBar(
-                flexibleSpace: const FlexibleSpaceBar(
-                  title: Text('title'),
-                  background: Text('X2'),
-                  collapseMode: CollapseMode.pin,
-                ),
-              ),
-            )
-            as FlexibleSpaceBarSettings;
+    final customSettings = FlexibleSpaceBar.createSettings(
+      currentExtent: initExtent,
+      minExtent: minExtent,
+      maxExtent: maxExtent,
+      toolbarOpacity: alpha,
+      child: AppBar(
+        flexibleSpace: const FlexibleSpaceBar(
+          title: Text('title'),
+          background: Text('X2'),
+          collapseMode: CollapseMode.pin,
+        ),
+      ),
+    ) as FlexibleSpaceBarSettings;
 
     const dragTarget = Key('orange box');
 
@@ -128,21 +126,19 @@ void main() {
     const maxExtent = 300.0;
     const alpha = 0.5;
 
-    final customSettings =
-        FlexibleSpaceBar.createSettings(
-              currentExtent: initExtent,
-              minExtent: minExtent,
-              maxExtent: maxExtent,
-              toolbarOpacity: alpha,
-              child: AppBar(
-                flexibleSpace: const FlexibleSpaceBar(
-                  title: Text('title'),
-                  background: Text('X2'),
-                  collapseMode: CollapseMode.pin,
-                ),
-              ),
-            )
-            as FlexibleSpaceBarSettings;
+    final customSettings = FlexibleSpaceBar.createSettings(
+      currentExtent: initExtent,
+      minExtent: minExtent,
+      maxExtent: maxExtent,
+      toolbarOpacity: alpha,
+      child: AppBar(
+        flexibleSpace: const FlexibleSpaceBar(
+          title: Text('title'),
+          background: Text('X2'),
+          collapseMode: CollapseMode.pin,
+        ),
+      ),
+    ) as FlexibleSpaceBarSettings;
 
     const dragTarget = Key('orange box');
 
@@ -1503,21 +1499,19 @@ void main() {
   testWidgets('FlexibleSpaceBarSettings.hasLeading provides a gap between leading and title', (
     WidgetTester tester,
   ) async {
-    final customSettings =
-        FlexibleSpaceBar.createSettings(
-              currentExtent: 200.0,
-              hasLeading: true,
-              child: AppBar(
-                leading: const Icon(Icons.menu),
-                flexibleSpace: FlexibleSpaceBar(
-                  title: Text('title ' * 10),
-                  // Set centerTitle to false to create a gap between the leading widget
-                  // and the long title.
-                  centerTitle: false,
-                ),
-              ),
-            )
-            as FlexibleSpaceBarSettings;
+    final customSettings = FlexibleSpaceBar.createSettings(
+      currentExtent: 200.0,
+      hasLeading: true,
+      child: AppBar(
+        leading: const Icon(Icons.menu),
+        flexibleSpace: FlexibleSpaceBar(
+          title: Text('title ' * 10),
+          // Set centerTitle to false to create a gap between the leading widget
+          // and the long title.
+          centerTitle: false,
+        ),
+      ),
+    ) as FlexibleSpaceBarSettings;
 
     await tester.pumpWidget(
       MaterialApp(

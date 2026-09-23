@@ -1,8 +1,12 @@
-## 2.18.1
+## 2.18.2
 
 * Updates README to indicate that `google_maps_flutter_ios` is a legacy
   implementation.
 * Updates minimum supported SDK version to Flutter 3.47/Dart 3.13.
+
+## 2.18.1
+
+* Clarifies that clearing a tile cache may cause flickering on some platforms.
 
 ## 2.18.0
 
