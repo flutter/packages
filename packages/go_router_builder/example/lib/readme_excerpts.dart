@@ -4,8 +4,10 @@
 
 // ignore_for_file: public_member_api_docs, unreachable_from_main, avoid_print, unused_element, unused_local_variable, directives_ordering
 
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
+
 import 'shared/data.dart';
+
 // #docregion import
 import 'package:go_router/go_router.dart';
 
@@ -136,9 +138,8 @@ class HomeScreen extends StatelessWidget {
       body: TextButton(
         onPressed: () async {
           // #docregion awaitPush
-          final bool? result = await const FamilyRoute(
-            fid: 'John',
-          ).push<bool>(context);
+          final bool? result = await const FamilyRoute(fid: 'John')
+              .push<bool>(context);
           // #enddocregion awaitPush
           print('result is $result');
         },
