@@ -840,7 +840,6 @@ targets:
   ### macOS desktop tasks ###
   - name: Mac_arm64 build_all_packages master
     recipe: packages/packages
-    bringup: true
     timeout: 30
     properties:
       version_file: flutter_master.version
@@ -849,7 +848,6 @@ targets:
 
   - name: Mac_arm64 build_all_packages stable
     recipe: packages/packages
-    bringup: true
     timeout: 30
     properties:
       add_recipes_cq: "true"
@@ -897,7 +895,6 @@ targets:
   ### iOS tasks ###
   - name: Mac_arm64 ios_build_all_packages master
     recipe: packages/packages
-    bringup: true
     timeout: 30
     properties:
       channel: master
@@ -906,7 +903,6 @@ targets:
 
   - name: Mac_arm64 ios_build_all_packages stable
     recipe: packages/packages
-    bringup: true
     timeout: 30
     properties:
       channel: stable
