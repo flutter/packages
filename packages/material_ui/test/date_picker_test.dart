@@ -163,11 +163,11 @@ void main() {
           expect(find.text('Custom day 1'), findsOneWidget);
           expect(find.text('Custom Sunday'), findsOneWidget);
         },
-        dayBuilder: (BuildContext context, DateTime day, Set<WidgetState> states, Widget child) {
-          return day.day == 1 ? const Text('Custom day 1') : child;
+        dayBuilder: (BuildContext context, CalendarDatePickerDayDetails details) {
+          return details.day.day == 1 ? const Text('Custom day 1') : details.child;
         },
-        weekdayBuilder: (BuildContext context, int weekday, Widget child) {
-          return weekday == DateTime.sunday ? const Text('Custom Sunday') : child;
+        weekdayBuilder: (BuildContext context, CalendarDatePickerWeekdayDetails details) {
+          return details.weekday == DateTime.sunday ? const Text('Custom Sunday') : details.child;
         },
       );
     });
