@@ -9,7 +9,6 @@ import kotlin.coroutines.CoroutineContext
 import kotlin.coroutines.EmptyCoroutineContext
 import kotlin.coroutines.intrinsics.COROUTINE_SUSPENDED
 import kotlin.coroutines.resume
-import kotlin.coroutines.resumeWithException
 
 fun <T> resumeWithValue(continuation: Continuation<T>, value: T) {
   continuation.resume(value)
