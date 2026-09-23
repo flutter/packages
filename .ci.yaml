@@ -105,19 +105,6 @@ platform_properties:
         {
           "sdk_version": "17c52"
         }
-  mac_x64:
-    properties:
-      dependencies: >-
-        [
-          {"dependency": "ruby", "version": "ruby_3.1-pod_1.13"}
-        ]
-      os: Mac-15.7
-      device_type: none
-      cpu: x86
-      $flutter/osx_sdk : >-
-        {
-          "sdk_version": "17c52"
-        }
 
 targets:
   - name: Linux repo_checks
@@ -318,14 +305,14 @@ targets:
     timeout: 30
     properties:
       target_file: analyze_legacy.yaml
-      channel: "3.41.9"
+      channel: "3.44.9"
 
   - name: Linux analyze_legacy N-2
     recipe: packages/packages
     timeout: 30
     properties:
       target_file: analyze_legacy.yaml
-      channel: "3.38.10"
+      channel: "3.41.9"
 
   - name: Linux_android custom_package_tests master
     recipe: packages/packages
@@ -851,9 +838,7 @@ targets:
       target_file: macos_repo_checks.yaml
 
   ### macOS desktop tasks ###
-  # macos-platform_tests builds all the packages on ARM, so this build is run
-  # on Intel to give us build coverage of both host types.
-  - name: Mac_x64 build_all_packages master
+  - name: Mac_arm64 build_all_packages master
     recipe: packages/packages
     timeout: 30
     properties:
@@ -861,7 +846,7 @@ targets:
       target_file: macos_build_all_packages.yaml
       channel: master
 
-  - name: Mac_x64 build_all_packages stable
+  - name: Mac_arm64 build_all_packages stable
     recipe: packages/packages
     timeout: 30
     properties:
@@ -908,9 +893,7 @@ targets:
       channel: stable
 
   ### iOS tasks ###
-  # ios_platform_tests builds all the packages on ARM, so this build is run
-  # on Intel to give us build coverage of both host types.
-  - name: Mac_x64 ios_build_all_packages master
+  - name: Mac_arm64 ios_build_all_packages master
     recipe: packages/packages
     timeout: 30
     properties:
@@ -918,7 +901,7 @@ targets:
       version_file: flutter_master.version
       target_file: ios_build_all_packages.yaml
 
-  - name: Mac_x64 ios_build_all_packages stable
+  - name: Mac_arm64 ios_build_all_packages stable
     recipe: packages/packages
     timeout: 30
     properties:

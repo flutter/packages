@@ -3906,11 +3906,12 @@ void main() {
           darkColor: Color.fromRGBO(150, 0, 0, 1),
         );
 
-        const decoration =
-            WidgetStateProperty<BoxDecoration>.fromMap(<WidgetStatesConstraint, BoxDecoration>{
-              WidgetState.pressed: BoxDecoration(color: customPressedColor),
-              WidgetState.any: BoxDecoration(),
-            });
+        const decoration = WidgetStateProperty<BoxDecoration>.fromMap(
+          <WidgetStatesConstraint, BoxDecoration>{
+            WidgetState.pressed: BoxDecoration(color: customPressedColor),
+            WidgetState.any: BoxDecoration(),
+          },
+        );
 
         BoxDecoration getItemDecoration(Tag tag) {
           return tester
@@ -4008,11 +4009,12 @@ void main() {
           darkColor: Color.fromRGBO(0, 150, 0, 1),
         );
 
-        const decoration =
-            WidgetStateProperty<BoxDecoration>.fromMap(<WidgetStatesConstraint, BoxDecoration>{
-              WidgetState.focused: BoxDecoration(color: customFocusedColor),
-              WidgetState.any: BoxDecoration(),
-            });
+        const decoration = WidgetStateProperty<BoxDecoration>.fromMap(
+          <WidgetStatesConstraint, BoxDecoration>{
+            WidgetState.focused: BoxDecoration(color: customFocusedColor),
+            WidgetState.any: BoxDecoration(),
+          },
+        );
 
         BoxDecoration getItemDecoration(Tag tag) {
           return tester
@@ -4103,11 +4105,12 @@ void main() {
           darkColor: Color.fromRGBO(150, 0, 0, 1),
         );
 
-        const decoration =
-            WidgetStateProperty<BoxDecoration>.fromMap(<WidgetStatesConstraint, BoxDecoration>{
-              WidgetState.dragged: BoxDecoration(color: customSwipedColor),
-              WidgetState.any: BoxDecoration(),
-            });
+        const decoration = WidgetStateProperty<BoxDecoration>.fromMap(
+          <WidgetStatesConstraint, BoxDecoration>{
+            WidgetState.dragged: BoxDecoration(color: customSwipedColor),
+            WidgetState.any: BoxDecoration(),
+          },
+        );
 
         BoxDecoration getItemDecoration(Tag tag) {
           return tester
@@ -4874,9 +4877,8 @@ void main() {
               Builder(
                 builder: (BuildContext context) {
                   return MediaQuery(
-                    data: MediaQuery.of(
-                      context,
-                    ).copyWith(textScaler: textScaler, devicePixelRatio: devicePixelRatio),
+                    data: MediaQuery.of(context)
+                        .copyWith(textScaler: textScaler, devicePixelRatio: devicePixelRatio),
                     child: CupertinoMenuAnchor(
                       controller: controller,
                       menuChildren: <Widget>[
@@ -5193,9 +5195,8 @@ void main() {
               Builder(
                 builder: (BuildContext context) {
                   return MediaQuery(
-                    data: MediaQuery.of(
-                      context,
-                    ).copyWith(textScaler: textScaler, devicePixelRatio: devicePixelRatio),
+                    data: MediaQuery.of(context)
+                        .copyWith(textScaler: textScaler, devicePixelRatio: devicePixelRatio),
                     child: CupertinoMenuAnchor(
                       controller: controller,
                       menuChildren: <Widget>[
@@ -5779,9 +5780,8 @@ void main() {
               Builder(
                 builder: (BuildContext context) {
                   return MediaQuery(
-                    data: MediaQuery.of(
-                      context,
-                    ).copyWith(textScaler: textScaler, devicePixelRatio: 2.0),
+                    data: MediaQuery.of(context)
+                        .copyWith(textScaler: textScaler, devicePixelRatio: 2.0),
                     child: CupertinoMenuAnchor(
                       controller: controller,
                       menuChildren: <Widget>[
@@ -5833,9 +5833,8 @@ void main() {
               Builder(
                 builder: (BuildContext context) {
                   return MediaQuery(
-                    data: MediaQuery.of(
-                      context,
-                    ).copyWith(textScaler: textScaler, devicePixelRatio: devicePixelRatio),
+                    data: MediaQuery.of(context)
+                        .copyWith(textScaler: textScaler, devicePixelRatio: devicePixelRatio),
                     child: CupertinoMenuAnchor(
                       controller: controller,
                       menuChildren: <Widget>[

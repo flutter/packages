@@ -1,3 +1,7 @@
+## NEXT
+
+* Updates minimum supported SDK version to Flutter 3.41/Dart 3.11.
+
 ## 0.3.5+5
 
 * Fixes native `readAsString` returning mojibake for `XFile.fromData`, which

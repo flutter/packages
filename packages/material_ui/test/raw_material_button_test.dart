@@ -110,7 +110,7 @@ void main() {
 
     expect(pressed, isTrue);
     focusNode.dispose();
-  });
+  }, tags: 'reduced-web-test-set');
 
   testWidgets('materialTapTargetSize.padded expands hit test area', (WidgetTester tester) async {
     var pressed = 0;
@@ -651,5 +651,5 @@ void main() {
       RendererBinding.instance.mouseTracker.debugDeviceActiveCursor(1),
       SystemMouseCursors.basic,
     );
-  });
+  }, tags: 'reduced-web-test-set');
 }
