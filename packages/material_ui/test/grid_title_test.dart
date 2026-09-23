@@ -115,6 +115,30 @@ void main() {
     expect(tester.getSize(find.byKey(childKey)), const Size(200.0, 150.0));
   });
 
+  testWidgets('GridTile child fills the tile when the constraints are bounded but loose', (
+    WidgetTester tester,
+  ) async {
+    final Key childKey = UniqueKey();
+
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Center(
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(maxWidth: 200.0, maxHeight: 150.0),
+            child: GridTile(
+              header: const Text('Header'),
+              footer: const Text('Footer'),
+              child: Container(key: childKey, width: 80.0, height: 100.0, color: Colors.red),
+            ),
+          ),
+        ),
+      ),
+    );
+
+    expect(tester.getSize(find.byType(GridTile)), const Size(200.0, 150.0));
+    expect(tester.getSize(find.byKey(childKey)), const Size(200.0, 150.0));
+  });
+
   testWidgets('GridTileBar does not crash at zero area', (WidgetTester tester) async {
     await tester.pumpWidget(
       const MaterialApp(
