@@ -50,124 +50,115 @@ import org.junit.After
 import org.junit.Assert
 import org.junit.Before
 import org.junit.Test
-import org.mockito.ArgumentCaptor
-import org.mockito.ArgumentMatchers
-import org.mockito.Mock
 import org.mockito.Mockito
 import org.mockito.MockitoAnnotations
+import org.mockito.kotlin.any
+import org.mockito.kotlin.anyOrNull
+import org.mockito.kotlin.argumentCaptor
+import org.mockito.kotlin.eq
+import org.mockito.kotlin.mock
+import org.mockito.kotlin.verify
+import org.mockito.kotlin.whenever
 
 class GoogleSignInTest {
-  @Mock var mockContext: Context? = null
+  var mockContext: Context = mock()
 
-  @Mock var mockResources: Resources? = null
+  var mockResources: Resources = mock()
 
-  @Mock var mockActivity: Activity? = null
+  var mockActivity: Activity = mock()
 
-  @Mock var mockActivityPluginBinding: ActivityPluginBinding? = null
+  var mockActivityPluginBinding: ActivityPluginBinding = mock()
 
-  @Mock var mockAuthorizationIntent: PendingIntent? = null
+  var mockAuthorizationIntent: PendingIntent = mock()
 
-  @Mock var mockAuthorizationIntentSender: IntentSender? = null
+  var mockAuthorizationIntentSender: IntentSender = mock()
 
-  @Mock var mockCredentialManager: CredentialManager? = null
+  var mockCredentialManager: CredentialManager = mock()
 
-  @Mock var mockAuthorizationClient: AuthorizationClient? = null
+  var mockAuthorizationClient: AuthorizationClient = mock()
 
-  @Mock var mockGenericCredential: CustomCredential? = null
+  var mockGenericCredential: CustomCredential = mock()
 
-  @Mock var mockGoogleCredential: GoogleIdTokenCredential? = null
+  var mockGoogleCredential: GoogleIdTokenCredential = mock()
 
-  @Mock var mockAuthorizationTask: Task<AuthorizationResult?>? = null
+  var mockAuthorizationTask: Task<AuthorizationResult> = mock()
 
-  @Mock var mockVoidTask: Task<Void?>? = null
-
-  private var flutterPlugin: GoogleSignInPlugin? = null
+  var mockVoidTask: Task<Void> = mock()
 
   // Technically this is not the plugin, but in practice almost all of the functionality is in this
   // class so it is given the simpler name.
-  private var plugin: GoogleSignInPlugin.Delegate? = null
-  private var mockCloseable: AutoCloseable? = null
+  private lateinit var plugin: GoogleSignInPlugin.Delegate
+  private lateinit var mockCloseable: AutoCloseable
 
   @Before
   fun setUp() {
     mockCloseable = MockitoAnnotations.openMocks(this)
 
     // Wire up basic mock functionality that is not test-specific.
-    Mockito.`when`<Resources?>(mockContext!!.resources).thenReturn(mockResources)
-    Mockito.`when`<String?>(mockGenericCredential!!.type)
+    whenever(mockContext.resources).thenReturn(mockResources)
+    whenever(mockGenericCredential.type)
         .thenReturn(GoogleIdTokenCredential.TYPE_GOOGLE_ID_TOKEN_CREDENTIAL)
-    Mockito.`when`<Task<AuthorizationResult?>?>(
-            mockAuthorizationTask!!.addOnSuccessListener(ArgumentMatchers.any()))
-        .thenReturn(mockAuthorizationTask)
-    Mockito.`when`<Task<AuthorizationResult?>?>(
-            mockAuthorizationTask!!.addOnFailureListener(ArgumentMatchers.any()))
-        .thenReturn(mockAuthorizationTask)
-    Mockito.`when`<Task<Void?>?>(mockVoidTask!!.addOnSuccessListener(ArgumentMatchers.any()))
-        .thenReturn(mockVoidTask)
-    Mockito.`when`<Task<Void?>?>(mockVoidTask!!.addOnFailureListener(ArgumentMatchers.any()))
-        .thenReturn(mockVoidTask)
-    Mockito.`when`<IntentSender?>(mockAuthorizationIntent!!.intentSender)
-        .thenReturn(mockAuthorizationIntentSender)
-    Mockito.`when`<Activity?>(mockActivityPluginBinding!!.activity).thenReturn(mockActivity)
+    whenever(mockAuthorizationTask.addOnSuccessListener(any())).thenReturn(mockAuthorizationTask)
+    whenever(mockAuthorizationTask.addOnFailureListener(any())).thenReturn(mockAuthorizationTask)
+    whenever(mockVoidTask.addOnSuccessListener(any())).thenReturn(mockVoidTask)
+    whenever(mockVoidTask.addOnFailureListener(any())).thenReturn(mockVoidTask)
+    whenever(mockAuthorizationIntent.intentSender).thenReturn(mockAuthorizationIntentSender)
+    whenever(mockActivityPluginBinding.activity).thenReturn(mockActivity)
 
     plugin =
         GoogleSignInPlugin.Delegate(
-            mockContext!!,
-            CredentialManagerFactory { c: Context -> mockCredentialManager!! },
-            AuthorizationClientFactory { c: Context -> mockAuthorizationClient!! },
-            GoogleIdCredentialConverter { cred: Credential -> mockGoogleCredential!! })
+            mockContext,
+            CredentialManagerFactory { c: Context -> mockCredentialManager },
+            AuthorizationClientFactory { c: Context -> mockAuthorizationClient },
+            GoogleIdCredentialConverter { cred: Credential -> mockGoogleCredential })
   }
 
   @After
   @Throws(Exception::class)
   fun tearDown() {
-    mockCloseable!!.close()
+    mockCloseable.close()
   }
 
   @Test
   fun onAttachedToActivity_updatesDelegate() {
-    flutterPlugin = GoogleSignInPlugin()
-    flutterPlugin!!.initWithDelegate(Mockito.mock(BinaryMessenger::class.java), plugin!!)
-    flutterPlugin!!.onAttachedToActivity(mockActivityPluginBinding!!)
+    val flutterPlugin = GoogleSignInPlugin()
+    flutterPlugin.initWithDelegate(mock<BinaryMessenger>(), plugin)
+    flutterPlugin.onAttachedToActivity(mockActivityPluginBinding)
 
-    Mockito.verify<ActivityPluginBinding>(mockActivityPluginBinding)
-        .addActivityResultListener(plugin!!)
-    Assert.assertEquals(mockActivity, plugin!!.activity)
+    verify(mockActivityPluginBinding).addActivityResultListener(plugin)
+    Assert.assertEquals(mockActivity, plugin.activity)
   }
 
   @Test
   fun onDetachedFromActivity_updatesDelegate() {
-    flutterPlugin = GoogleSignInPlugin()
-    flutterPlugin!!.initWithDelegate(Mockito.mock(BinaryMessenger::class.java), plugin!!)
-    flutterPlugin!!.onAttachedToActivity(mockActivityPluginBinding!!)
-    flutterPlugin!!.onDetachedFromActivity()
+    val flutterPlugin = GoogleSignInPlugin()
+    flutterPlugin.initWithDelegate(mock<BinaryMessenger>(), plugin)
+    flutterPlugin.onAttachedToActivity(mockActivityPluginBinding)
+    flutterPlugin.onDetachedFromActivity()
 
-    Mockito.verify<ActivityPluginBinding>(mockActivityPluginBinding)
-        .removeActivityResultListener(plugin!!)
-    Assert.assertNull(plugin!!.activity)
+    verify(mockActivityPluginBinding).removeActivityResultListener(plugin)
+    Assert.assertNull(plugin.activity)
   }
 
   @Test
   fun onReattachedToActivityForConfigChanges_updatesDelegate() {
-    flutterPlugin = GoogleSignInPlugin()
-    flutterPlugin!!.initWithDelegate(Mockito.mock(BinaryMessenger::class.java), plugin!!)
-    flutterPlugin!!.onReattachedToActivityForConfigChanges(mockActivityPluginBinding!!)
+    val flutterPlugin = GoogleSignInPlugin()
+    flutterPlugin.initWithDelegate(mock<BinaryMessenger>(), plugin)
+    flutterPlugin.onReattachedToActivityForConfigChanges(mockActivityPluginBinding)
 
-    Mockito.verify<ActivityPluginBinding>(mockActivityPluginBinding)
-        .addActivityResultListener(plugin!!)
-    Assert.assertEquals(mockActivity, plugin!!.activity)
+    verify(mockActivityPluginBinding).addActivityResultListener(plugin)
+    Assert.assertEquals(mockActivity, plugin.activity)
   }
 
   @Test
   fun onDetachedFromActivityForConfigChanges_updatesDelegate() {
-    flutterPlugin = GoogleSignInPlugin()
-    flutterPlugin!!.initWithDelegate(Mockito.mock(BinaryMessenger::class.java), plugin!!)
-    flutterPlugin!!.onAttachedToActivity(mockActivityPluginBinding!!)
-    flutterPlugin!!.onDetachedFromActivityForConfigChanges()
+    val flutterPlugin = GoogleSignInPlugin()
+    flutterPlugin.initWithDelegate(mock<BinaryMessenger>(), plugin)
+    flutterPlugin.onAttachedToActivity(mockActivityPluginBinding)
+    flutterPlugin.onDetachedFromActivityForConfigChanges()
 
-    Mockito.verify<ActivityPluginBinding>(mockActivityPluginBinding)
-        .removeActivityResultListener(plugin!!)
-    Assert.assertNull(plugin!!.activity)
+    verify(mockActivityPluginBinding).removeActivityResultListener(plugin)
+    Assert.assertNull(plugin.activity)
   }
 
   @Test
@@ -175,25 +166,23 @@ class GoogleSignInTest {
     val packageName = "fakePackageName"
     val serverClientId = "fakeServerClientId"
     val resourceId = 1
-    Mockito.`when`<String?>(mockContext!!.packageName).thenReturn(packageName)
-    Mockito.`when`<Int?>(
-            mockResources!!.getIdentifier("default_web_client_id", "string", packageName))
+    whenever(mockContext.packageName).thenReturn(packageName)
+    whenever(mockResources.getIdentifier("default_web_client_id", "string", packageName))
         .thenReturn(resourceId)
-    Mockito.`when`<String?>(mockContext!!.getString(resourceId)).thenReturn(serverClientId)
+    whenever(mockContext.getString(resourceId)).thenReturn(serverClientId)
 
-    val returnedId = plugin!!.getGoogleServicesJsonServerClientId()
+    val returnedId = plugin.getGoogleServicesJsonServerClientId()
     Assert.assertEquals(serverClientId, returnedId)
   }
 
   @Test
   fun getGoogleServicesJsonServerClientId_returnsNullIfNotFound() {
     val packageName = "fakePackageName"
-    Mockito.`when`<String?>(mockContext!!.packageName).thenReturn(packageName)
-    Mockito.`when`<Int?>(
-            mockResources!!.getIdentifier("default_web_client_id", "string", packageName))
+    whenever(mockContext.packageName).thenReturn(packageName)
+    whenever(mockResources.getIdentifier("default_web_client_id", "string", packageName))
         .thenReturn(0)
 
-    val returnedId = plugin!!.getGoogleServicesJsonServerClientId()
+    val returnedId = plugin.getGoogleServicesJsonServerClientId()
     Assert.assertNull(returnedId)
   }
 
@@ -214,16 +203,16 @@ class GoogleSignInTest {
     val email = "someEmail"
     val uniqueId = "someAccountId"
     val idToken = "idToken"
-    Mockito.`when`<String?>(mockGoogleCredential!!.displayName).thenReturn(displayName)
-    Mockito.`when`<String?>(mockGoogleCredential!!.givenName).thenReturn(givenName)
-    Mockito.`when`<String?>(mockGoogleCredential!!.familyName).thenReturn(familyName)
-    Mockito.`when`<String?>(mockGoogleCredential!!.email).thenReturn(email)
-    Mockito.`when`<String?>(mockGoogleCredential!!.uniqueId).thenReturn(uniqueId)
-    Mockito.`when`<String?>(mockGoogleCredential!!.idToken).thenReturn(idToken)
+    whenever(mockGoogleCredential.displayName).thenReturn(displayName)
+    whenever(mockGoogleCredential.givenName).thenReturn(givenName)
+    whenever(mockGoogleCredential.familyName).thenReturn(familyName)
+    whenever(mockGoogleCredential.email).thenReturn(email)
+    whenever(mockGoogleCredential.uniqueId).thenReturn(uniqueId)
+    whenever(mockGoogleCredential.idToken).thenReturn(idToken)
 
     val callbackCalled = arrayOfNulls<Boolean>(1)
-    plugin!!.activity = mockActivity
-    plugin!!.getCredential(params) { reply ->
+    plugin.activity = mockActivity
+    plugin.getCredential(params) { reply ->
       callbackCalled[0] = true
       Assert.assertTrue(reply.isSuccess)
       val result = reply.getOrNull()
@@ -237,19 +226,16 @@ class GoogleSignInTest {
     }
 
     val callbackCaptor =
-        ArgumentCaptor.forClass<
-            CredentialManagerCallback<GetCredentialResponse?, GetCredentialException?>?,
-            CredentialManagerCallback<*, *>?>(
-            CredentialManagerCallback::class.java)
-    Mockito.verify<CredentialManager>(mockCredentialManager)
+        argumentCaptor<CredentialManagerCallback<GetCredentialResponse, GetCredentialException>>()
+    verify(mockCredentialManager)
         .getCredentialAsync(
-            ArgumentMatchers.eq<Activity?>(mockActivity),
-            ArgumentMatchers.any(GetCredentialRequest::class.java),
-            ArgumentMatchers.any<CancellationSignal?>(),
-            ArgumentMatchers.any<Executor?>(),
+            eq(mockActivity),
+            any<GetCredentialRequest>(),
+            anyOrNull<CancellationSignal>(),
+            any<Executor>(),
             callbackCaptor.capture())
 
-    callbackCaptor.getValue()!!.onResult(GetCredentialResponse(mockGenericCredential!!))
+    callbackCaptor.firstValue.onResult(GetCredentialResponse(mockGenericCredential))
     Assert.assertTrue(callbackCalled[0]!!)
   }
 
@@ -264,21 +250,20 @@ class GoogleSignInTest {
             null,
             null)
 
-    plugin!!.activity = mockActivity
-    plugin!!.getCredential(params) {}
+    plugin.activity = mockActivity
+    plugin.getCredential(params) {}
 
-    val captor = ArgumentCaptor.forClass(GetCredentialRequest::class.java)
-    Mockito.verify<CredentialManager>(mockCredentialManager)
+    val captor = argumentCaptor<GetCredentialRequest>()
+    verify(mockCredentialManager)
         .getCredentialAsync(
-            ArgumentMatchers.eq<Activity?>(mockActivity),
+            eq(mockActivity),
             captor.capture(),
-            ArgumentMatchers.any<CancellationSignal?>(),
-            ArgumentMatchers.any<Executor?>(),
-            ArgumentMatchers.any<
-                CredentialManagerCallback<GetCredentialResponse?, GetCredentialException?>?>())
+            anyOrNull<CancellationSignal>(),
+            any<Executor>(),
+            any<CredentialManagerCallback<GetCredentialResponse, GetCredentialException>>())
 
-    Assert.assertEquals(1, captor.getValue()!!.credentialOptions.size.toLong())
-    Assert.assertTrue(captor.getValue()!!.credentialOptions[0] is GetSignInWithGoogleOption)
+    Assert.assertEquals(1, captor.firstValue.credentialOptions.size.toLong())
+    Assert.assertTrue(captor.firstValue.credentialOptions[0] is GetSignInWithGoogleOption)
   }
 
   @Test
@@ -292,25 +277,24 @@ class GoogleSignInTest {
             null,
             null)
 
-    plugin!!.activity = mockActivity
-    plugin!!.getCredential(params) {
+    plugin.activity = mockActivity
+    plugin.getCredential(params) {
       // This test doesn't trigger the getCredentialsAsync callback that would call this,
       // so if this is reached something has gone wrong.
       Assert.fail()
     }
 
-    val captor = ArgumentCaptor.forClass(GetCredentialRequest::class.java)
-    Mockito.verify<CredentialManager>(mockCredentialManager)
+    val captor = argumentCaptor<GetCredentialRequest>()
+    verify(mockCredentialManager)
         .getCredentialAsync(
-            ArgumentMatchers.eq<Activity?>(mockActivity),
+            eq(mockActivity),
             captor.capture(),
-            ArgumentMatchers.any<CancellationSignal?>(),
-            ArgumentMatchers.any<Executor?>(),
-            ArgumentMatchers.any<
-                CredentialManagerCallback<GetCredentialResponse?, GetCredentialException?>?>())
+            anyOrNull<CancellationSignal>(),
+            any<Executor>(),
+            any<CredentialManagerCallback<GetCredentialResponse, GetCredentialException>>())
 
-    Assert.assertEquals(1, captor.getValue()!!.credentialOptions.size.toLong())
-    Assert.assertTrue(captor.getValue()!!.credentialOptions[0] is GetGoogleIdOption)
+    Assert.assertEquals(1, captor.firstValue.credentialOptions.size.toLong())
+    Assert.assertTrue(captor.firstValue.credentialOptions[0] is GetGoogleIdOption)
   }
 
   @Test
@@ -325,27 +309,26 @@ class GoogleSignInTest {
             hostedDomain,
             null)
 
-    plugin!!.activity = mockActivity
-    plugin!!.getCredential(params) {
+    plugin.activity = mockActivity
+    plugin.getCredential(params) {
       // This test doesn't trigger the getCredentialsAsync callback that would call this,
       // so if this is reached something has gone wrong.
       Assert.fail()
     }
 
-    val captor = ArgumentCaptor.forClass(GetCredentialRequest::class.java)
-    Mockito.verify<CredentialManager>(mockCredentialManager)
+    val captor = argumentCaptor<GetCredentialRequest>()
+    verify(mockCredentialManager)
         .getCredentialAsync(
-            ArgumentMatchers.eq<Activity?>(mockActivity),
+            eq(mockActivity),
             captor.capture(),
-            ArgumentMatchers.any<CancellationSignal?>(),
-            ArgumentMatchers.any<Executor?>(),
-            ArgumentMatchers.any<
-                CredentialManagerCallback<GetCredentialResponse?, GetCredentialException?>?>())
+            anyOrNull<CancellationSignal>(),
+            any<Executor>(),
+            any<CredentialManagerCallback<GetCredentialResponse, GetCredentialException>>())
 
-    Assert.assertEquals(1, captor.getValue()!!.credentialOptions.size.toLong())
+    Assert.assertEquals(1, captor.firstValue.credentialOptions.size.toLong())
     Assert.assertEquals(
         hostedDomain,
-        (captor.getValue()!!.credentialOptions[0] as GetSignInWithGoogleOption).hostedDomainFilter)
+        (captor.firstValue.credentialOptions[0] as GetSignInWithGoogleOption).hostedDomainFilter)
   }
 
   @Test
@@ -360,26 +343,25 @@ class GoogleSignInTest {
             null,
             nonce)
 
-    plugin!!.activity = mockActivity
-    plugin!!.getCredential(params) {
+    plugin.activity = mockActivity
+    plugin.getCredential(params) {
       // This test doesn't trigger the getCredentialsAsync callback that would call this,
       // so if this is reached something has gone wrong.
       Assert.fail()
     }
 
-    val captor = ArgumentCaptor.forClass(GetCredentialRequest::class.java)
-    Mockito.verify<CredentialManager>(mockCredentialManager)
+    val captor = argumentCaptor<GetCredentialRequest>()
+    verify(mockCredentialManager)
         .getCredentialAsync(
-            ArgumentMatchers.eq<Activity?>(mockActivity),
+            eq(mockActivity),
             captor.capture(),
-            ArgumentMatchers.any<CancellationSignal?>(),
-            ArgumentMatchers.any<Executor?>(),
-            ArgumentMatchers.any<
-                CredentialManagerCallback<GetCredentialResponse?, GetCredentialException?>?>())
+            anyOrNull<CancellationSignal>(),
+            any<Executor>(),
+            any<CredentialManagerCallback<GetCredentialResponse, GetCredentialException>>())
 
-    Assert.assertEquals(1, captor.getValue()!!.credentialOptions.size.toLong())
+    Assert.assertEquals(1, captor.firstValue.credentialOptions.size.toLong())
     Assert.assertEquals(
-        nonce, (captor.getValue()!!.credentialOptions[0] as GetSignInWithGoogleOption).nonce)
+        nonce, (captor.firstValue.credentialOptions[0] as GetSignInWithGoogleOption).nonce)
   }
 
   @Test
@@ -394,26 +376,24 @@ class GoogleSignInTest {
             null,
             nonce)
 
-    plugin!!.activity = mockActivity
-    plugin!!.getCredential(params) {
+    plugin.activity = mockActivity
+    plugin.getCredential(params) {
       // This test doesn't trigger the getCredentialsAsync callback that would call this,
       // so if this is reached something has gone wrong.
       Assert.fail()
     }
 
-    val captor = ArgumentCaptor.forClass(GetCredentialRequest::class.java)
-    Mockito.verify<CredentialManager>(mockCredentialManager)
+    val captor = argumentCaptor<GetCredentialRequest>()
+    verify(mockCredentialManager)
         .getCredentialAsync(
-            ArgumentMatchers.eq<Activity?>(mockActivity),
+            eq(mockActivity),
             captor.capture(),
-            ArgumentMatchers.any<CancellationSignal?>(),
-            ArgumentMatchers.any<Executor?>(),
-            ArgumentMatchers.any<
-                CredentialManagerCallback<GetCredentialResponse?, GetCredentialException?>?>())
+            anyOrNull<CancellationSignal>(),
+            any<Executor>(),
+            any<CredentialManagerCallback<GetCredentialResponse, GetCredentialException>>())
 
-    Assert.assertEquals(1, captor.getValue()!!.credentialOptions.size.toLong())
-    Assert.assertEquals(
-        nonce, (captor.getValue()!!.credentialOptions[0] as GetGoogleIdOption).nonce)
+    Assert.assertEquals(1, captor.firstValue.credentialOptions.size.toLong())
+    Assert.assertEquals(nonce, (captor.firstValue.credentialOptions[0] as GetGoogleIdOption).nonce)
   }
 
   @Test
@@ -428,8 +408,8 @@ class GoogleSignInTest {
             null)
 
     val callbackCalled = arrayOfNulls<Boolean>(1)
-    plugin!!.activity = null
-    plugin!!.getCredential(params) { reply ->
+    plugin.activity = null
+    plugin.getCredential(params) { reply ->
       callbackCalled[0] = true
       // This failure is a structured return value, not an exception.
       Assert.assertTrue(reply.isSuccess)
@@ -453,8 +433,8 @@ class GoogleSignInTest {
             null)
 
     val callbackCalled = arrayOfNulls<Boolean>(1)
-    plugin!!.activity = mockActivity
-    plugin!!.getCredential(params) { reply ->
+    plugin.activity = mockActivity
+    plugin.getCredential(params) { reply ->
       callbackCalled[0] = true
       // This failure is a structured return value, not an exception.
       Assert.assertTrue(reply.isSuccess)
@@ -478,8 +458,8 @@ class GoogleSignInTest {
             null)
 
     val callbackCalled = arrayOfNulls<Boolean>(1)
-    plugin!!.activity = mockActivity
-    plugin!!.getCredential(params) { reply ->
+    plugin.activity = mockActivity
+    plugin.getCredential(params) { reply ->
       callbackCalled[0] = true
       // This failure is a structured return value, not an exception.
       Assert.assertTrue(reply.isSuccess)
@@ -490,21 +470,18 @@ class GoogleSignInTest {
     }
 
     val callbackCaptor =
-        ArgumentCaptor.forClass<
-            CredentialManagerCallback<GetCredentialResponse?, GetCredentialException?>?,
-            CredentialManagerCallback<*, *>?>(
-            CredentialManagerCallback::class.java)
-    Mockito.verify<CredentialManager>(mockCredentialManager)
+        argumentCaptor<CredentialManagerCallback<GetCredentialResponse, GetCredentialException>>()
+    verify(mockCredentialManager)
         .getCredentialAsync(
-            ArgumentMatchers.eq<Activity?>(mockActivity),
-            ArgumentMatchers.any(GetCredentialRequest::class.java),
-            ArgumentMatchers.any<CancellationSignal?>(),
-            ArgumentMatchers.any<Executor?>(),
+            eq(mockActivity),
+            any<GetCredentialRequest>(),
+            anyOrNull<CancellationSignal>(),
+            any<Executor>(),
             callbackCaptor.capture())
 
     // PasswordCredential is used because it's easy to create without mocking; all that matters is
     // that it's not a CustomCredential of type TYPE_GOOGLE_ID_TOKEN_CREDENTIAL.
-    callbackCaptor.getValue()!!.onResult(GetCredentialResponse(PasswordCredential("wrong", "type")))
+    callbackCaptor.firstValue.onResult(GetCredentialResponse(PasswordCredential("wrong", "type")))
     Assert.assertTrue(callbackCalled[0]!!)
   }
 
@@ -520,8 +497,8 @@ class GoogleSignInTest {
             null)
 
     val callbackCalled = arrayOfNulls<Boolean>(1)
-    plugin!!.activity = mockActivity
-    plugin!!.getCredential(params) { reply ->
+    plugin.activity = mockActivity
+    plugin.getCredential(params) { reply ->
       callbackCalled[0] = true
       // This failure is a structured return value, not an exception.
       Assert.assertTrue(reply.isSuccess)
@@ -532,19 +509,16 @@ class GoogleSignInTest {
     }
 
     val callbackCaptor =
-        ArgumentCaptor.forClass<
-            CredentialManagerCallback<GetCredentialResponse?, GetCredentialException?>?,
-            CredentialManagerCallback<*, *>?>(
-            CredentialManagerCallback::class.java)
-    Mockito.verify<CredentialManager>(mockCredentialManager)
+        argumentCaptor<CredentialManagerCallback<GetCredentialResponse, GetCredentialException>>()
+    verify(mockCredentialManager)
         .getCredentialAsync(
-            ArgumentMatchers.eq<Activity?>(mockActivity),
-            ArgumentMatchers.any(GetCredentialRequest::class.java),
-            ArgumentMatchers.any<CancellationSignal?>(),
-            ArgumentMatchers.any<Executor?>(),
+            eq(mockActivity),
+            any<GetCredentialRequest>(),
+            anyOrNull<CancellationSignal>(),
+            any<Executor>(),
             callbackCaptor.capture())
 
-    callbackCaptor.getValue()!!.onError(GetCredentialCancellationException())
+    callbackCaptor.firstValue.onError(GetCredentialCancellationException())
     Assert.assertTrue(callbackCalled[0]!!)
   }
 
@@ -560,8 +534,8 @@ class GoogleSignInTest {
             null)
 
     val callbackCalled = arrayOfNulls<Boolean>(1)
-    plugin!!.activity = mockActivity
-    plugin!!.getCredential(params) { reply ->
+    plugin.activity = mockActivity
+    plugin.getCredential(params) { reply ->
       callbackCalled[0] = true
       // This failure is a structured return value, not an exception.
       Assert.assertTrue(reply.isSuccess)
@@ -572,19 +546,16 @@ class GoogleSignInTest {
     }
 
     val callbackCaptor =
-        ArgumentCaptor.forClass<
-            CredentialManagerCallback<GetCredentialResponse?, GetCredentialException?>?,
-            CredentialManagerCallback<*, *>?>(
-            CredentialManagerCallback::class.java)
-    Mockito.verify<CredentialManager>(mockCredentialManager)
+        argumentCaptor<CredentialManagerCallback<GetCredentialResponse, GetCredentialException>>()
+    verify(mockCredentialManager)
         .getCredentialAsync(
-            ArgumentMatchers.eq<Activity?>(mockActivity),
-            ArgumentMatchers.any(GetCredentialRequest::class.java),
-            ArgumentMatchers.any<CancellationSignal?>(),
-            ArgumentMatchers.any<Executor?>(),
+            eq(mockActivity),
+            any<GetCredentialRequest>(),
+            anyOrNull<CancellationSignal>(),
+            any<Executor>(),
             callbackCaptor.capture())
 
-    callbackCaptor.getValue()!!.onError(GetCredentialInterruptedException())
+    callbackCaptor.firstValue.onError(GetCredentialInterruptedException())
     Assert.assertTrue(callbackCalled[0]!!)
   }
 
@@ -600,8 +571,8 @@ class GoogleSignInTest {
             null)
 
     val callbackCalled = arrayOfNulls<Boolean>(1)
-    plugin!!.activity = mockActivity
-    plugin!!.getCredential(params) { reply ->
+    plugin.activity = mockActivity
+    plugin.getCredential(params) { reply ->
       callbackCalled[0] = true
       // This failure is a structured return value, not an exception.
       Assert.assertTrue(reply.isSuccess)
@@ -612,19 +583,16 @@ class GoogleSignInTest {
     }
 
     val callbackCaptor =
-        ArgumentCaptor.forClass<
-            CredentialManagerCallback<GetCredentialResponse?, GetCredentialException?>?,
-            CredentialManagerCallback<*, *>?>(
-            CredentialManagerCallback::class.java)
-    Mockito.verify<CredentialManager>(mockCredentialManager)
+        argumentCaptor<CredentialManagerCallback<GetCredentialResponse, GetCredentialException>>()
+    verify(mockCredentialManager)
         .getCredentialAsync(
-            ArgumentMatchers.eq<Activity?>(mockActivity),
-            ArgumentMatchers.any(GetCredentialRequest::class.java),
-            ArgumentMatchers.any<CancellationSignal?>(),
-            ArgumentMatchers.any<Executor?>(),
+            eq(mockActivity),
+            any<GetCredentialRequest>(),
+            anyOrNull<CancellationSignal>(),
+            any<Executor>(),
             callbackCaptor.capture())
 
-    callbackCaptor.getValue()!!.onError(GetCredentialProviderConfigurationException())
+    callbackCaptor.firstValue.onError(GetCredentialProviderConfigurationException())
     Assert.assertTrue(callbackCalled[0]!!)
   }
 
@@ -640,8 +608,8 @@ class GoogleSignInTest {
             null)
 
     val callbackCalled = arrayOfNulls<Boolean>(1)
-    plugin!!.activity = mockActivity
-    plugin!!.getCredential(params) { reply ->
+    plugin.activity = mockActivity
+    plugin.getCredential(params) { reply ->
       callbackCalled[0] = true
       // This failure is a structured return value, not an exception.
       Assert.assertTrue(reply.isSuccess)
@@ -652,19 +620,16 @@ class GoogleSignInTest {
     }
 
     val callbackCaptor =
-        ArgumentCaptor.forClass<
-            CredentialManagerCallback<GetCredentialResponse?, GetCredentialException?>?,
-            CredentialManagerCallback<*, *>?>(
-            CredentialManagerCallback::class.java)
-    Mockito.verify<CredentialManager>(mockCredentialManager)
+        argumentCaptor<CredentialManagerCallback<GetCredentialResponse, GetCredentialException>>()
+    verify(mockCredentialManager)
         .getCredentialAsync(
-            ArgumentMatchers.eq<Activity?>(mockActivity),
-            ArgumentMatchers.any(GetCredentialRequest::class.java),
-            ArgumentMatchers.any<CancellationSignal?>(),
-            ArgumentMatchers.any<Executor?>(),
+            eq(mockActivity),
+            any<GetCredentialRequest>(),
+            anyOrNull<CancellationSignal>(),
+            any<Executor>(),
             callbackCaptor.capture())
 
-    callbackCaptor.getValue()!!.onError(GetCredentialUnsupportedException())
+    callbackCaptor.firstValue.onError(GetCredentialUnsupportedException())
     Assert.assertTrue(callbackCalled[0]!!)
   }
 
@@ -680,8 +645,8 @@ class GoogleSignInTest {
             null)
 
     val callbackCalled = arrayOfNulls<Boolean>(1)
-    plugin!!.activity = mockActivity
-    plugin!!.getCredential(params) { reply ->
+    plugin.activity = mockActivity
+    plugin.getCredential(params) { reply ->
       callbackCalled[0] = true
       // This failure is a structured return value, not an exception.
       Assert.assertTrue(reply.isSuccess)
@@ -692,19 +657,16 @@ class GoogleSignInTest {
     }
 
     val callbackCaptor =
-        ArgumentCaptor.forClass<
-            CredentialManagerCallback<GetCredentialResponse?, GetCredentialException?>?,
-            CredentialManagerCallback<*, *>?>(
-            CredentialManagerCallback::class.java)
-    Mockito.verify<CredentialManager>(mockCredentialManager)
+        argumentCaptor<CredentialManagerCallback<GetCredentialResponse, GetCredentialException>>()
+    verify(mockCredentialManager)
         .getCredentialAsync(
-            ArgumentMatchers.eq<Activity?>(mockActivity),
-            ArgumentMatchers.any(GetCredentialRequest::class.java),
-            ArgumentMatchers.any<CancellationSignal?>(),
-            ArgumentMatchers.any<Executor?>(),
+            eq(mockActivity),
+            any<GetCredentialRequest>(),
+            anyOrNull<CancellationSignal>(),
+            any<Executor>(),
             callbackCaptor.capture())
 
-    callbackCaptor.getValue()!!.onError(NoCredentialException())
+    callbackCaptor.firstValue.onError(NoCredentialException())
     Assert.assertTrue(callbackCalled[0]!!)
   }
 
@@ -720,8 +682,8 @@ class GoogleSignInTest {
             null)
 
     val callbackCalled = arrayOfNulls<Boolean>(1)
-    plugin!!.activity = mockActivity
-    plugin!!.getCredential(params) { reply ->
+    plugin.activity = mockActivity
+    plugin.getCredential(params) { reply ->
       callbackCalled[0] = true
       // This failure is a structured return value, not an exception.
       Assert.assertTrue(reply.isSuccess)
@@ -732,42 +694,36 @@ class GoogleSignInTest {
     }
 
     val callbackCaptor =
-        ArgumentCaptor.forClass<
-            CredentialManagerCallback<GetCredentialResponse?, GetCredentialException?>?,
-            CredentialManagerCallback<*, *>?>(
-            CredentialManagerCallback::class.java)
-    Mockito.verify<CredentialManager>(mockCredentialManager)
+        argumentCaptor<CredentialManagerCallback<GetCredentialResponse, GetCredentialException>>()
+    verify(mockCredentialManager)
         .getCredentialAsync(
-            ArgumentMatchers.eq<Activity?>(mockActivity),
-            ArgumentMatchers.any(GetCredentialRequest::class.java),
-            ArgumentMatchers.any<CancellationSignal?>(),
-            ArgumentMatchers.any<Executor?>(),
+            eq(mockActivity),
+            any<GetCredentialRequest>(),
+            anyOrNull<CancellationSignal>(),
+            any<Executor>(),
             callbackCaptor.capture())
 
-    callbackCaptor.getValue()!!.onError(GetCredentialUnknownException())
+    callbackCaptor.firstValue.onError(GetCredentialUnknownException())
     Assert.assertTrue(callbackCalled[0]!!)
   }
 
   @Test
   fun authorize_passesNullParamaters() {
-    val scopes: MutableList<String?> = ArrayList(mutableListOf<String?>("scope1", "scope1"))
+    val scopes = mutableListOf("scope1", "scope1")
     val params = PlatformAuthorizationRequest(scopes, null, null, null)
 
-    Mockito.`when`<Task<AuthorizationResult?>?>(
-            mockAuthorizationClient!!.authorize(ArgumentMatchers.any()))
-        .thenReturn(mockAuthorizationTask)
+    whenever(mockAuthorizationClient.authorize(any())).thenReturn(mockAuthorizationTask)
 
-    plugin!!.authorize(params, false) {
+    plugin.authorize(params, false) {
       // This test doesn't trigger the getCredentialsAsync callback that would call this,
       // so if this is reached something has gone wrong.
       Assert.fail()
     }
 
-    val authRequestCaptor = ArgumentCaptor.forClass(AuthorizationRequest::class.java)
-    Mockito.verify<AuthorizationClient>(mockAuthorizationClient)
-        .authorize(authRequestCaptor.capture())
+    val authRequestCaptor = argumentCaptor<AuthorizationRequest>()
+    verify(mockAuthorizationClient).authorize(authRequestCaptor.capture())
 
-    val request = authRequestCaptor.getValue()
+    val request = authRequestCaptor.firstValue
     Assert.assertNull(request.hostedDomain)
     Assert.assertNull(request.serverClientId)
     Assert.assertNull(request.account)
@@ -775,27 +731,24 @@ class GoogleSignInTest {
 
   @Test
   fun authorize_passesOptionalParameters() {
-    val scopes: MutableList<String?> = ArrayList(mutableListOf<String?>("scope1", "scope1"))
+    val scopes = mutableListOf("scope1", "scope1")
     val hostedDomain = "example.com"
     val accountEmail = "someone@example.com"
     val serverClientId = "serverClientId"
     val params = PlatformAuthorizationRequest(scopes, hostedDomain, accountEmail, serverClientId)
 
-    Mockito.`when`<Task<AuthorizationResult?>?>(
-            mockAuthorizationClient!!.authorize(ArgumentMatchers.any()))
-        .thenReturn(mockAuthorizationTask)
+    whenever(mockAuthorizationClient.authorize(any())).thenReturn(mockAuthorizationTask)
 
-    plugin!!.authorize(params, false) {
+    plugin.authorize(params, false) {
       // This test doesn't trigger the getCredentialsAsync callback that would call this,
       // so if this is reached something has gone wrong.
       Assert.fail()
     }
 
-    val authRequestCaptor = ArgumentCaptor.forClass(AuthorizationRequest::class.java)
-    Mockito.verify<AuthorizationClient>(mockAuthorizationClient)
-        .authorize(authRequestCaptor.capture())
+    val authRequestCaptor = argumentCaptor<AuthorizationRequest>()
+    verify(mockAuthorizationClient).authorize(authRequestCaptor.capture())
 
-    val request = authRequestCaptor.getValue()
+    val request = authRequestCaptor.firstValue
     Assert.assertEquals(hostedDomain, request.hostedDomain)
     Assert.assertEquals(serverClientId, request.serverClientId)
     // Account is mostly opaque, so just verify that one was set if an email was provided.
@@ -804,17 +757,15 @@ class GoogleSignInTest {
 
   @Test
   fun authorize_returnsImmediateResult() {
-    val scopes: MutableList<String?> = ArrayList(mutableListOf<String?>("scope1", "scope1"))
+    val scopes = mutableListOf("scope1", "scope1")
     val params = PlatformAuthorizationRequest(scopes, null, null, null)
 
     val accessToken = "accessToken"
     val serverAuthCode = "serverAuthCode"
-    Mockito.`when`<Task<AuthorizationResult?>?>(
-            mockAuthorizationClient!!.authorize(ArgumentMatchers.any()))
-        .thenReturn(mockAuthorizationTask)
+    whenever(mockAuthorizationClient.authorize(any())).thenReturn(mockAuthorizationTask)
 
     val callbackCalled = arrayOfNulls<Boolean>(1)
-    plugin!!.authorize(params, false) { reply ->
+    plugin.authorize(params, false) { reply ->
       callbackCalled[0] = true
       Assert.assertTrue(reply.isSuccess)
       val result = reply.getOrNull()
@@ -825,29 +776,23 @@ class GoogleSignInTest {
       Assert.assertEquals(scopes, auth.grantedScopes)
     }
 
-    val callbackCaptor =
-        ArgumentCaptor.forClass<OnSuccessListener<AuthorizationResult?>?, OnSuccessListener<*>?>(
-            OnSuccessListener::class.java)
-    Mockito.verify<Task<AuthorizationResult?>>(mockAuthorizationTask)
-        .addOnSuccessListener(callbackCaptor.capture()!!)
+    val callbackCaptor = argumentCaptor<OnSuccessListener<AuthorizationResult>>()
+    verify(mockAuthorizationTask).addOnSuccessListener(callbackCaptor.capture())
 
-    callbackCaptor
-        .getValue()!!
-        .onSuccess(mockSuccessAuthorizationResult(serverAuthCode, accessToken, scopes))
+    callbackCaptor.firstValue.onSuccess(
+        mockSuccessAuthorizationResult(serverAuthCode, accessToken, scopes))
     Assert.assertTrue(callbackCalled[0]!!)
   }
 
   @Test
   fun authorize_reportsImmediateException() {
-    val scopes: MutableList<String?> = ArrayList(mutableListOf<String?>("scope1", "scope1"))
+    val scopes = mutableListOf("scope1", "scope1")
     val params = PlatformAuthorizationRequest(scopes, null, null, null)
 
-    Mockito.`when`<Task<AuthorizationResult?>?>(
-            mockAuthorizationClient!!.authorize(ArgumentMatchers.any()))
-        .thenThrow(RuntimeException())
+    whenever(mockAuthorizationClient.authorize(any())).thenThrow(RuntimeException())
 
     val callbackCalled = arrayOfNulls<Boolean>(1)
-    plugin!!.authorize(params, false) { reply ->
+    plugin.authorize(params, false) { reply ->
       callbackCalled[0] = true
       // This failure is a structured return value, not an exception.
       Assert.assertTrue(reply.isSuccess)
@@ -862,15 +807,13 @@ class GoogleSignInTest {
 
   @Test
   fun authorize_reportsFailureIfUnauthorizedAndNoPromptAllowed() {
-    val scopes: MutableList<String?> = ArrayList(mutableListOf<String?>("scope1", "scope1"))
+    val scopes = mutableListOf("scope1", "scope1")
     val params = PlatformAuthorizationRequest(scopes, null, null, null)
 
-    Mockito.`when`<Task<AuthorizationResult?>?>(
-            mockAuthorizationClient!!.authorize(ArgumentMatchers.any()))
-        .thenReturn(mockAuthorizationTask)
+    whenever(mockAuthorizationClient.authorize(any())).thenReturn(mockAuthorizationTask)
 
     val callbackCalled = arrayOfNulls<Boolean>(1)
-    plugin!!.authorize(params, false) { reply ->
+    plugin.authorize(params, false) { reply ->
       callbackCalled[0] = true
       // This failure is a structured return value, not an exception.
       Assert.assertTrue(reply.isSuccess)
@@ -880,30 +823,23 @@ class GoogleSignInTest {
       Assert.assertEquals(AuthorizeFailureType.UNAUTHORIZED, failure.type)
     }
 
-    val callbackCaptor =
-        ArgumentCaptor.forClass<OnSuccessListener<AuthorizationResult?>?, OnSuccessListener<*>?>(
-            OnSuccessListener::class.java)
-    Mockito.verify<Task<AuthorizationResult?>>(mockAuthorizationTask)
-        .addOnSuccessListener(callbackCaptor.capture()!!)
+    val callbackCaptor = argumentCaptor<OnSuccessListener<AuthorizationResult>>()
+    verify(mockAuthorizationTask).addOnSuccessListener(callbackCaptor.capture())
 
-    callbackCaptor
-        .getValue()!!
-        .onSuccess(mockResolutionAuthorizationResult(mockAuthorizationIntent))
+    callbackCaptor.firstValue.onSuccess(mockResolutionAuthorizationResult(mockAuthorizationIntent))
     Assert.assertTrue(callbackCalled[0]!!)
   }
 
   @Test
   fun authorize_reportsFailureIfUnauthorizedAndNoActivity() {
-    val scopes: MutableList<String?> = ArrayList(mutableListOf<String?>("scope1", "scope1"))
+    val scopes = mutableListOf("scope1", "scope1")
     val params = PlatformAuthorizationRequest(scopes, null, null, null)
 
-    Mockito.`when`<Task<AuthorizationResult?>?>(
-            mockAuthorizationClient!!.authorize(ArgumentMatchers.any()))
-        .thenReturn(mockAuthorizationTask)
+    whenever(mockAuthorizationClient.authorize(any())).thenReturn(mockAuthorizationTask)
 
-    plugin!!.activity = null
+    plugin.activity = null
     val callbackCalled = arrayOfNulls<Boolean>(1)
-    plugin!!.authorize(params, true) { reply ->
+    plugin.authorize(params, true) { reply ->
       callbackCalled[0] = true
       // This failure is a structured return value, not an exception.
       Assert.assertTrue(reply.isSuccess)
@@ -913,41 +849,32 @@ class GoogleSignInTest {
       Assert.assertEquals(AuthorizeFailureType.NO_ACTIVITY, failure.type)
     }
 
-    val callbackCaptor =
-        ArgumentCaptor.forClass<OnSuccessListener<AuthorizationResult?>?, OnSuccessListener<*>?>(
-            OnSuccessListener::class.java)
-    Mockito.verify<Task<AuthorizationResult?>>(mockAuthorizationTask)
-        .addOnSuccessListener(callbackCaptor.capture()!!)
+    val callbackCaptor = argumentCaptor<OnSuccessListener<AuthorizationResult>>()
+    verify(mockAuthorizationTask).addOnSuccessListener(callbackCaptor.capture())
 
-    callbackCaptor
-        .getValue()!!
-        .onSuccess(mockResolutionAuthorizationResult(mockAuthorizationIntent))
+    callbackCaptor.firstValue.onSuccess(mockResolutionAuthorizationResult(mockAuthorizationIntent))
     Assert.assertTrue(callbackCalled[0]!!)
   }
 
   @Test
   fun authorize_returnsPostIntentResult() {
-    val scopes: MutableList<String?> = ArrayList(mutableListOf<String?>("scope1", "scope1"))
+    val scopes = mutableListOf("scope1", "scope1")
     val params = PlatformAuthorizationRequest(scopes, null, null, null)
 
     val accessToken = "accessToken"
     val serverAuthCode = "serverAuthCode"
-    Mockito.`when`<Task<AuthorizationResult?>?>(
-            mockAuthorizationClient!!.authorize(ArgumentMatchers.any()))
-        .thenReturn(mockAuthorizationTask)
+    whenever(mockAuthorizationClient.authorize(any())).thenReturn(mockAuthorizationTask)
     val successResult = mockSuccessAuthorizationResult(serverAuthCode, accessToken, scopes)
     try {
-      Mockito.`when`<AuthorizationResult?>(
-              mockAuthorizationClient!!.getAuthorizationResultFromIntent(
-                  ArgumentMatchers.any<Intent?>()))
+      whenever(mockAuthorizationClient.getAuthorizationResultFromIntent(anyOrNull<Intent>()))
           .thenReturn(successResult)
     } catch (e: ApiException) {
       Assert.fail()
     }
 
-    plugin!!.activity = mockActivity
+    plugin.activity = mockActivity
     val callbackCalled = arrayOfNulls<Boolean>(1)
-    plugin!!.authorize(params, true) { reply ->
+    plugin.authorize(params, true) { reply ->
       callbackCalled[0] = true
       Assert.assertTrue(reply.isSuccess)
       val result = reply.getOrNull()
@@ -958,18 +885,13 @@ class GoogleSignInTest {
       Assert.assertEquals(scopes, auth.grantedScopes)
     }
 
-    val callbackCaptor =
-        ArgumentCaptor.forClass<OnSuccessListener<AuthorizationResult?>?, OnSuccessListener<*>?>(
-            OnSuccessListener::class.java)
-    Mockito.verify<Task<AuthorizationResult?>>(mockAuthorizationTask)
-        .addOnSuccessListener(callbackCaptor.capture()!!)
-    callbackCaptor
-        .getValue()!!
-        .onSuccess(mockResolutionAuthorizationResult(mockAuthorizationIntent))
+    val callbackCaptor = argumentCaptor<OnSuccessListener<AuthorizationResult>>()
+    verify(mockAuthorizationTask).addOnSuccessListener(callbackCaptor.capture())
+    callbackCaptor.firstValue.onSuccess(mockResolutionAuthorizationResult(mockAuthorizationIntent))
     try {
-      Mockito.verify<Activity>(mockActivity)
+      verify(mockActivity)
           .startIntentSenderForResult(
-              mockAuthorizationIntent!!.intentSender,
+              mockAuthorizationIntent.intentSender,
               GoogleSignInPlugin.Delegate.REQUEST_CODE_AUTHORIZE,
               null,
               0,
@@ -981,7 +903,7 @@ class GoogleSignInTest {
     }
     // Simulate the UI flow completing. The intent data can be null here because the mock of
     // mockAuthorizationClient.getAuthorizationResultFromIntent above ignores the parameter.
-    plugin!!.onActivityResult(GoogleSignInPlugin.Delegate.REQUEST_CODE_AUTHORIZE, 0, null)
+    plugin.onActivityResult(GoogleSignInPlugin.Delegate.REQUEST_CODE_AUTHORIZE, 0, null)
 
     Assert.assertTrue(callbackCalled[0]!!)
   }
@@ -992,43 +914,34 @@ class GoogleSignInTest {
   // throw IllegalStateException ("Reply already submitted") on the real Pigeon reply.
   @Test
   fun authorize_ignoresDuplicateActivityResult() {
-    val scopes: MutableList<String?> = ArrayList(mutableListOf<String?>("scope1", "scope1"))
+    val scopes = mutableListOf("scope1", "scope1")
     val params = PlatformAuthorizationRequest(scopes, null, null, null)
 
     val accessToken = "accessToken"
     val serverAuthCode = "serverAuthCode"
-    Mockito.`when`<Task<AuthorizationResult?>?>(
-            mockAuthorizationClient!!.authorize(ArgumentMatchers.any()))
-        .thenReturn(mockAuthorizationTask)
+    whenever(mockAuthorizationClient.authorize(any())).thenReturn(mockAuthorizationTask)
     val successResult = mockSuccessAuthorizationResult(serverAuthCode, accessToken, scopes)
     try {
-      Mockito.`when`<AuthorizationResult?>(
-              mockAuthorizationClient!!.getAuthorizationResultFromIntent(
-                  ArgumentMatchers.any<Intent?>()))
+      whenever(mockAuthorizationClient.getAuthorizationResultFromIntent(anyOrNull<Intent>()))
           .thenReturn(successResult)
     } catch (e: ApiException) {
       Assert.fail()
     }
 
-    plugin!!.activity = mockActivity
+    plugin.activity = mockActivity
     val callbackCount = intArrayOf(0)
-    plugin!!.authorize(params, true) { callbackCount[0] += 1 }
+    plugin.authorize(params, true) { callbackCount[0] += 1 }
 
-    val callbackCaptor =
-        ArgumentCaptor.forClass<OnSuccessListener<AuthorizationResult?>?, OnSuccessListener<*>?>(
-            OnSuccessListener::class.java)
-    Mockito.verify<Task<AuthorizationResult?>>(mockAuthorizationTask)
-        .addOnSuccessListener(callbackCaptor.capture()!!)
-    callbackCaptor
-        .getValue()!!
-        .onSuccess(mockResolutionAuthorizationResult(mockAuthorizationIntent))
+    val callbackCaptor = argumentCaptor<OnSuccessListener<AuthorizationResult>>()
+    verify(mockAuthorizationTask).addOnSuccessListener(callbackCaptor.capture())
+    callbackCaptor.firstValue.onSuccess(mockResolutionAuthorizationResult(mockAuthorizationIntent))
 
     // The first delivery resolves the authorization and is consumed.
     val firstHandled =
-        plugin!!.onActivityResult(GoogleSignInPlugin.Delegate.REQUEST_CODE_AUTHORIZE, 0, null)
+        plugin.onActivityResult(GoogleSignInPlugin.Delegate.REQUEST_CODE_AUTHORIZE, 0, null)
     // A duplicate/re-delivered result for the same request code must be ignored, not re-resolved.
     val secondHandled =
-        plugin!!.onActivityResult(GoogleSignInPlugin.Delegate.REQUEST_CODE_AUTHORIZE, 0, null)
+        plugin.onActivityResult(GoogleSignInPlugin.Delegate.REQUEST_CODE_AUTHORIZE, 0, null)
 
     Assert.assertTrue(firstHandled)
     Assert.assertFalse(secondHandled)
@@ -1037,15 +950,13 @@ class GoogleSignInTest {
 
   @Test
   fun authorize_reportsPendingIntentException() {
-    val scopes: MutableList<String?> = ArrayList(mutableListOf<String?>("scope1", "scope1"))
+    val scopes = mutableListOf("scope1", "scope1")
     val params = PlatformAuthorizationRequest(scopes, null, null, null)
 
-    Mockito.`when`<Task<AuthorizationResult?>?>(
-            mockAuthorizationClient!!.authorize(ArgumentMatchers.any()))
-        .thenReturn(mockAuthorizationTask)
+    whenever(mockAuthorizationClient.authorize(any())).thenReturn(mockAuthorizationTask)
     try {
       Mockito.doThrow(SendIntentException())
-          .`when`<Activity>(mockActivity)
+          .`when`(mockActivity)
           .startIntentSenderForResult(
               mockAuthorizationIntentSender,
               GoogleSignInPlugin.Delegate.REQUEST_CODE_AUTHORIZE,
@@ -1058,9 +969,9 @@ class GoogleSignInTest {
       Assert.fail()
     }
 
-    plugin!!.activity = mockActivity
+    plugin.activity = mockActivity
     val callbackCalled = arrayOfNulls<Boolean>(1)
-    plugin!!.authorize(params, true) { reply ->
+    plugin.authorize(params, true) { reply ->
       callbackCalled[0] = true
       // This failure is a structured return value, not an exception.
       Assert.assertTrue(reply.isSuccess)
@@ -1070,38 +981,29 @@ class GoogleSignInTest {
       Assert.assertEquals(AuthorizeFailureType.PENDING_INTENT_EXCEPTION, failure.type)
     }
 
-    val callbackCaptor =
-        ArgumentCaptor.forClass<OnSuccessListener<AuthorizationResult?>?, OnSuccessListener<*>?>(
-            OnSuccessListener::class.java)
-    Mockito.verify<Task<AuthorizationResult?>>(mockAuthorizationTask)
-        .addOnSuccessListener(callbackCaptor.capture()!!)
-    callbackCaptor
-        .getValue()!!
-        .onSuccess(mockResolutionAuthorizationResult(mockAuthorizationIntent))
+    val callbackCaptor = argumentCaptor<OnSuccessListener<AuthorizationResult>>()
+    verify(mockAuthorizationTask).addOnSuccessListener(callbackCaptor.capture())
+    callbackCaptor.firstValue.onSuccess(mockResolutionAuthorizationResult(mockAuthorizationIntent))
 
     Assert.assertTrue(callbackCalled[0]!!)
   }
 
   @Test
   fun authorize_reportsPostIntentException() {
-    val scopes: MutableList<String?> = ArrayList(mutableListOf<String?>("scope1", "scope1"))
+    val scopes = mutableListOf("scope1", "scope1")
     val params = PlatformAuthorizationRequest(scopes, null, null, null)
 
-    Mockito.`when`<Task<AuthorizationResult?>?>(
-            mockAuthorizationClient!!.authorize(ArgumentMatchers.any()))
-        .thenReturn(mockAuthorizationTask)
+    whenever(mockAuthorizationClient.authorize(any())).thenReturn(mockAuthorizationTask)
     try {
-      Mockito.`when`<AuthorizationResult?>(
-              mockAuthorizationClient!!.getAuthorizationResultFromIntent(
-                  ArgumentMatchers.any<Intent?>()))
+      whenever(mockAuthorizationClient.getAuthorizationResultFromIntent(anyOrNull()))
           .thenThrow(ApiException(Status.RESULT_INTERNAL_ERROR))
     } catch (e: ApiException) {
       Assert.fail()
     }
 
-    plugin!!.activity = mockActivity
+    plugin.activity = mockActivity
     val callbackCalled = arrayOfNulls<Boolean>(1)
-    plugin!!.authorize(params, true) { reply ->
+    plugin.authorize(params, true) { reply ->
       callbackCalled[0] = true
       // This failure is a structured return value, not an exception.
       Assert.assertTrue(reply.isSuccess)
@@ -1111,18 +1013,13 @@ class GoogleSignInTest {
       Assert.assertEquals(AuthorizeFailureType.API_EXCEPTION, failure.type)
     }
 
-    val callbackCaptor =
-        ArgumentCaptor.forClass<OnSuccessListener<AuthorizationResult?>?, OnSuccessListener<*>?>(
-            OnSuccessListener::class.java)
-    Mockito.verify<Task<AuthorizationResult?>>(mockAuthorizationTask)
-        .addOnSuccessListener(callbackCaptor.capture()!!)
-    callbackCaptor
-        .getValue()!!
-        .onSuccess(mockResolutionAuthorizationResult(mockAuthorizationIntent))
+    val callbackCaptor = argumentCaptor<OnSuccessListener<AuthorizationResult>>()
+    verify(mockAuthorizationTask).addOnSuccessListener(callbackCaptor.capture())
+    callbackCaptor.firstValue.onSuccess(mockResolutionAuthorizationResult(mockAuthorizationIntent))
     try {
-      Mockito.verify<Activity>(mockActivity)
+      verify(mockActivity)
           .startIntentSenderForResult(
-              mockAuthorizationIntent!!.intentSender,
+              mockAuthorizationIntent.intentSender,
               GoogleSignInPlugin.Delegate.REQUEST_CODE_AUTHORIZE,
               null,
               0,
@@ -1134,69 +1031,59 @@ class GoogleSignInTest {
     }
     // Simulate the UI flow completing. The intent data can be null here because the mock of
     // mockAuthorizationClient.getAuthorizationResultFromIntent above ignores the parameter.
-    plugin!!.onActivityResult(GoogleSignInPlugin.Delegate.REQUEST_CODE_AUTHORIZE, 0, null)
+    plugin.onActivityResult(GoogleSignInPlugin.Delegate.REQUEST_CODE_AUTHORIZE, 0, null)
 
     Assert.assertTrue(callbackCalled[0]!!)
   }
 
   @Test
   fun clearCredentialState_reportsSuccess() {
-    plugin!!.clearCredentialState { reply -> Assert.assertTrue(reply.isSuccess) }
+    plugin.clearCredentialState { reply -> Assert.assertTrue(reply.isSuccess) }
 
     val callbackCaptor =
-        ArgumentCaptor.forClass<
-            CredentialManagerCallback<Void?, ClearCredentialException?>?,
-            CredentialManagerCallback<*, *>?>(
-            CredentialManagerCallback::class.java)
-    Mockito.verify<CredentialManager>(mockCredentialManager)
+        argumentCaptor<CredentialManagerCallback<Void?, ClearCredentialException>>()
+    verify(mockCredentialManager)
         .clearCredentialStateAsync(
-            ArgumentMatchers.any(ClearCredentialStateRequest::class.java),
-            ArgumentMatchers.any<CancellationSignal?>(),
-            ArgumentMatchers.any(),
+            any<ClearCredentialStateRequest>(),
+            anyOrNull<CancellationSignal>(),
+            any(),
             callbackCaptor.capture())
 
-    callbackCaptor.getValue()!!.onResult(null)
+    callbackCaptor.firstValue.onResult(null)
   }
 
   @Test
   fun clearCredentialState_reportsFailure() {
-    plugin!!.clearCredentialState { reply -> Assert.assertTrue(reply.isFailure) }
+    plugin.clearCredentialState { reply -> Assert.assertTrue(reply.isFailure) }
 
     val callbackCaptor =
-        ArgumentCaptor.forClass<
-            CredentialManagerCallback<Void?, ClearCredentialException?>?,
-            CredentialManagerCallback<*, *>?>(
-            CredentialManagerCallback::class.java)
-    Mockito.verify<CredentialManager>(mockCredentialManager)
+        argumentCaptor<CredentialManagerCallback<Void?, ClearCredentialException>>()
+    verify(mockCredentialManager)
         .clearCredentialStateAsync(
-            ArgumentMatchers.any(ClearCredentialStateRequest::class.java),
-            ArgumentMatchers.any<CancellationSignal?>(),
-            ArgumentMatchers.any(),
+            any<ClearCredentialStateRequest>(),
+            anyOrNull<CancellationSignal>(),
+            any(),
             callbackCaptor.capture())
 
-    callbackCaptor.getValue()!!.onError(Mockito.mock(ClearCredentialException::class.java))
+    callbackCaptor.firstValue.onError(mock<ClearCredentialException>())
   }
 
   @Test
   fun revokeAccess_callsClient() {
-    val scopes: MutableList<String?> = ArrayList(mutableListOf<String?>("openid"))
+    val scopes = mutableListOf("openid")
     val accountEmail = "someone@example.com"
     val params = PlatformRevokeAccessRequest(accountEmail, scopes)
-    Mockito.`when`<Task<Void?>?>(mockAuthorizationClient!!.revokeAccess(ArgumentMatchers.any()))
-        .thenReturn(mockVoidTask)
-    plugin!!.revokeAccess(params) {}
+    whenever(mockAuthorizationClient.revokeAccess(any())).thenReturn(mockVoidTask)
+    plugin.revokeAccess(params) {}
 
-    val requestCaptor = ArgumentCaptor.forClass(RevokeAccessRequest::class.java)
-    Mockito.verify<AuthorizationClient>(mockAuthorizationClient)
-        .revokeAccess(requestCaptor.capture())
+    val requestCaptor = argumentCaptor<RevokeAccessRequest>()
+    verify(mockAuthorizationClient).revokeAccess(requestCaptor.capture())
 
-    val callbackCaptor =
-        ArgumentCaptor.forClass<OnSuccessListener<Void?>?, OnSuccessListener<*>?>(
-            OnSuccessListener::class.java)
-    Mockito.verify<Task<Void?>>(mockVoidTask).addOnSuccessListener(callbackCaptor.capture()!!)
-    callbackCaptor.getValue()!!.onSuccess(null)
+    val callbackCaptor = argumentCaptor<OnSuccessListener<Void>>()
+    verify(mockVoidTask).addOnSuccessListener(callbackCaptor.capture())
+    callbackCaptor.firstValue.onSuccess(null)
 
-    val request = requestCaptor.getValue()
+    val request = requestCaptor.firstValue
     Assert.assertEquals(scopes.size.toLong(), request.scopes.size.toLong())
     Assert.assertEquals(scopes[0], request.scopes[0].scopeUri)
     // Account is mostly opaque, so just verify that one was set.
@@ -1206,43 +1093,37 @@ class GoogleSignInTest {
   @Test
   fun clearAuthorizationToken_callsClient() {
     val testToken = "testToken"
-    Mockito.`when`<Task<Void?>?>(mockAuthorizationClient!!.clearToken(ArgumentMatchers.any()))
-        .thenReturn(mockVoidTask)
-    plugin!!.clearAuthorizationToken(testToken) {}
+    whenever(mockAuthorizationClient.clearToken(any())).thenReturn(mockVoidTask)
+    plugin.clearAuthorizationToken(testToken) {}
 
-    val authRequestCaptor = ArgumentCaptor.forClass(ClearTokenRequest::class.java)
-    Mockito.verify<AuthorizationClient>(mockAuthorizationClient)
-        .clearToken(authRequestCaptor.capture())
+    val authRequestCaptor = argumentCaptor<ClearTokenRequest>()
+    verify(mockAuthorizationClient).clearToken(authRequestCaptor.capture())
 
-    val callbackCaptor =
-        ArgumentCaptor.forClass<OnSuccessListener<Void?>?, OnSuccessListener<*>?>(
-            OnSuccessListener::class.java)
-    Mockito.verify<Task<Void?>?>(mockVoidTask).addOnSuccessListener(callbackCaptor.capture()!!)
-    callbackCaptor.getValue()!!.onSuccess(null)
+    val callbackCaptor = argumentCaptor<OnSuccessListener<Void>>()
+    verify(mockVoidTask).addOnSuccessListener(callbackCaptor.capture())
+    callbackCaptor.firstValue.onSuccess(null)
 
-    val request = authRequestCaptor.getValue()
+    val request = authRequestCaptor.firstValue
     Assert.assertEquals(testToken, request.token)
   }
 
   private fun mockSuccessAuthorizationResult(
-      serverAuthCode: String?,
-      accessToken: String?,
-      scopes: MutableList<String?>?
+      serverAuthCode: String,
+      accessToken: String,
+      scopes: MutableList<String>?
   ): AuthorizationResult {
-    val mockResult = Mockito.mock(AuthorizationResult::class.java)
-    Mockito.`when`<Boolean?>(mockResult.hasResolution()).thenReturn(false)
-    Mockito.`when`<String?>(mockResult.accessToken).thenReturn(accessToken)
-    Mockito.`when`<String?>(mockResult.serverAuthCode).thenReturn(serverAuthCode)
-    Mockito.`when`<MutableList<String?>?>(mockResult.grantedScopes).thenReturn(scopes)
+    val mockResult = mock<AuthorizationResult>()
+    whenever(mockResult.hasResolution()).thenReturn(false)
+    whenever(mockResult.accessToken).thenReturn(accessToken)
+    whenever(mockResult.serverAuthCode).thenReturn(serverAuthCode)
+    whenever(mockResult.grantedScopes).thenReturn(scopes)
     return mockResult
   }
 
-  private fun mockResolutionAuthorizationResult(
-      pendingIntent: PendingIntent?
-  ): AuthorizationResult {
-    val mockResult = Mockito.mock(AuthorizationResult::class.java)
-    Mockito.`when`<Boolean?>(mockResult.hasResolution()).thenReturn(true)
-    Mockito.`when`<PendingIntent?>(mockResult.pendingIntent).thenReturn(pendingIntent)
+  private fun mockResolutionAuthorizationResult(pendingIntent: PendingIntent): AuthorizationResult {
+    val mockResult = mock<AuthorizationResult>()
+    whenever(mockResult.hasResolution()).thenReturn(true)
+    whenever(mockResult.pendingIntent).thenReturn(pendingIntent)
     return mockResult
   }
 }
