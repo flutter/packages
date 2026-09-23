@@ -1,5 +1,6 @@
 ## NEXT
 
+- Updates minimum supported SDK version to Flutter 3.41/Dart 3.11.
 - Adds `config`, `pendingFonts`, and `getTextTheme` to `GoogleFontsLite`.
 - Decouples internal base library from the main entry point to ensure complete tree-shakability.
 - Adds code samples and documentation for `GoogleFontsLite`.

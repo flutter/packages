@@ -14,8 +14,7 @@ Downloaded by pub (not CocoaPods).
   s.author           = { 'Flutter Dev Team' => 'flutter-dev@googlegroups.com' }
   s.source           = { :http => 'https://github.com/flutter/packages/tree/main/packages/google_maps_flutter/google_maps_flutter_ios_sdk9' }
   s.documentation_url = 'https://pub.dev/packages/google_maps_flutter_ios_sdk9'
-  s.source_files = 'google_maps_flutter_ios_sdk9/Sources/**/*.{h,m,swift}'
-  s.public_header_files = 'google_maps_flutter_ios_sdk9/Sources/google_maps_flutter_ios_sdk9_objc/include/**/*.h'
+  s.source_files = 'google_maps_flutter_ios_sdk9/Sources/**/*.swift'
   s.dependency 'Flutter'
   s.dependency 'GoogleMaps', '~> 9.2'
   # Google-Maps-iOS-Utils 6.0 and 6.1.0 support GoogleMaps 9.x. The next release

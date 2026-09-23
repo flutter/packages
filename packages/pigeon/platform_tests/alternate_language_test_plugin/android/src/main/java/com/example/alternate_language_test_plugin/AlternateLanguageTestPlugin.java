@@ -1134,6 +1134,31 @@ public class AlternateLanguageTestPlugin
     flutterCallbackApi.throwErrorFromVoid(result);
   }
 
+  @Override
+  public void callFlutterIsAsyncFlutterApiOnRoot(@NonNull Result<Boolean> result) {
+    if (Looper.myLooper() != Looper.getMainLooper()) {
+      result.success(false);
+      return;
+    }
+    assert flutterApi != null;
+    flutterApi.isAsyncFlutterApiOnRoot(
+        new Result<Boolean>() {
+          @Override
+          public void success(Boolean res) {
+            if (Looper.myLooper() != Looper.getMainLooper()) {
+              result.success(false);
+              return;
+            }
+            result.success(res);
+          }
+
+          @Override
+          public void error(@NonNull Throwable error) {
+            result.error(error);
+          }
+        });
+  }
+
   public @NonNull CoreTests.UnusedClass testIfUnusedClassIsGenerated() {
     return new CoreTests.UnusedClass();
   }
