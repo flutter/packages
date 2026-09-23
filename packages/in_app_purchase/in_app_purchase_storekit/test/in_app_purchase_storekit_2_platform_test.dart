@@ -184,6 +184,10 @@ void main() {
         expect(result.first.verificationData.serverVerificationData, 'receiptData');
         expect(result.first.verificationData.localVerificationData, 'jsonRepresentation');
         expect((result.first as SK2PurchaseDetails).appAccountToken, 'appAccountToken');
+        expect(
+          (result.first as SK2PurchaseDetails).expirationDate,
+          (321321.32 * 1000).round().toString(),
+        );
       },
     );
 

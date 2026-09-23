@@ -4,6 +4,7 @@
   `maxPhotoDimensions` on iOS 16 and later, falling back to the deprecated APIs on older versions.
 * Fixes the maximum resolution setting being ignored for HEIF captures when using
   `ResolutionPreset.max`.
+* Updates minimum supported SDK version to Flutter 3.41/Dart 3.11.
 
 ## 0.10.3
 
