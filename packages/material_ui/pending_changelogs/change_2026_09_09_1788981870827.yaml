@@ -1,3 +1,0 @@
-changelog: |
-  - Adds `@awaitNotRequired` annotations to asynchronous functions that do not need to be awaited.
-version: patch

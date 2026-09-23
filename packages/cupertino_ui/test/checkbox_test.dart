@@ -16,6 +16,18 @@ import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
+  // Workaround for https://github.com/dart-lang/sdk/issues/64326:
+  // Ensure TFA infers nullable `circularity` and `eccentricity` parameters on
+  // `_ShapeToCircleBorder.copyWith` implementations in the `OutlinedBorder.copyWith`
+  // dispatch selector so dart2wasm does not miscompile `shape.copyWith(side: side)`
+  // in `_CheckboxPainter._drawBox` into `unreachable`.
+  // TODO(Piinks): Restore original test when https://github.com/dart-lang/sdk/issues/64326 is resolved.
+  (ShapeBorder.lerp(const RoundedRectangleBorder(), const CircleBorder(), 0.5)! as OutlinedBorder)
+      .copyWith();
+  (ShapeBorder.lerp(const RoundedSuperellipseBorder(), const CircleBorder(), 0.5)!
+          as OutlinedBorder)
+      .copyWith();
+
   setUp(() {
     debugResetSemanticsIdCounter();
   });
