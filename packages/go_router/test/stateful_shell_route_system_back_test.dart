@@ -168,7 +168,7 @@ void main() {
 /// branch order.
 List<bool> _branchCanPopValues(WidgetTester tester) => tester
     .widgetList(find.byWidgetPredicate((Widget widget) => widget is PopScope, skipOffstage: false))
-    .map((Widget widget) => (widget as PopScope<dynamic>).canPop)
+    .map((Widget widget) => (widget as PopScope).canPop)
     .toList();
 
 class _TestApp extends StatefulWidget {
