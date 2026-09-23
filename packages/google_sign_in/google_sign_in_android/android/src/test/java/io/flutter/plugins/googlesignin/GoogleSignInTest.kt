@@ -861,12 +861,8 @@ class GoogleSignInTest {
     val serverAuthCode = "serverAuthCode"
     whenever(mockAuthorizationClient.authorize(any())).thenReturn(mockAuthorizationTask)
     val successResult = mockSuccessAuthorizationResult(serverAuthCode, accessToken, scopes)
-    try {
-      whenever(mockAuthorizationClient.getAuthorizationResultFromIntent(anyOrNull<Intent>()))
-          .thenReturn(successResult)
-    } catch (_: ApiException) {
-      Assert.fail()
-    }
+    whenever(mockAuthorizationClient.getAuthorizationResultFromIntent(anyOrNull<Intent>()))
+        .thenReturn(successResult)
 
     plugin.activity = mockActivity
     var callbackCalled = false
@@ -884,19 +880,15 @@ class GoogleSignInTest {
     val callbackCaptor = argumentCaptor<OnSuccessListener<AuthorizationResult>>()
     verify(mockAuthorizationTask).addOnSuccessListener(callbackCaptor.capture())
     callbackCaptor.firstValue.onSuccess(mockResolutionAuthorizationResult(mockAuthorizationIntent))
-    try {
-      verify(mockActivity)
-          .startIntentSenderForResult(
-              mockAuthorizationIntent.intentSender,
-              GoogleSignInPlugin.Delegate.REQUEST_CODE_AUTHORIZE,
-              null,
-              0,
-              0,
-              0,
-              null)
-    } catch (_: SendIntentException) {
-      Assert.fail()
-    }
+    verify(mockActivity)
+        .startIntentSenderForResult(
+            mockAuthorizationIntent.intentSender,
+            GoogleSignInPlugin.Delegate.REQUEST_CODE_AUTHORIZE,
+            null,
+            0,
+            0,
+            0,
+            null)
     // Simulate the UI flow completing. The intent data can be null here because
     // mockAuthorizationClient.getAuthorizationResultFromIntent above ignores the parameter.
     plugin.onActivityResult(GoogleSignInPlugin.Delegate.REQUEST_CODE_AUTHORIZE, 0, null)
@@ -917,12 +909,8 @@ class GoogleSignInTest {
     val serverAuthCode = "serverAuthCode"
     whenever(mockAuthorizationClient.authorize(any())).thenReturn(mockAuthorizationTask)
     val successResult = mockSuccessAuthorizationResult(serverAuthCode, accessToken, scopes)
-    try {
-      whenever(mockAuthorizationClient.getAuthorizationResultFromIntent(anyOrNull<Intent>()))
-          .thenReturn(successResult)
-    } catch (_: ApiException) {
-      Assert.fail()
-    }
+    whenever(mockAuthorizationClient.getAuthorizationResultFromIntent(anyOrNull<Intent>()))
+        .thenReturn(successResult)
 
     plugin.activity = mockActivity
     var callbackCount = 0
@@ -950,20 +938,16 @@ class GoogleSignInTest {
     val params = PlatformAuthorizationRequest(scopes, null, null, null)
 
     whenever(mockAuthorizationClient.authorize(any())).thenReturn(mockAuthorizationTask)
-    try {
-      Mockito.doThrow(SendIntentException())
-          .`when`(mockActivity)
-          .startIntentSenderForResult(
-              mockAuthorizationIntentSender,
-              GoogleSignInPlugin.Delegate.REQUEST_CODE_AUTHORIZE,
-              null,
-              0,
-              0,
-              0,
-              null)
-    } catch (_: SendIntentException) {
-      Assert.fail()
-    }
+    Mockito.doThrow(SendIntentException())
+        .`when`(mockActivity)
+        .startIntentSenderForResult(
+            mockAuthorizationIntentSender,
+            GoogleSignInPlugin.Delegate.REQUEST_CODE_AUTHORIZE,
+            null,
+            0,
+            0,
+            0,
+            null)
 
     plugin.activity = mockActivity
     var callbackCalled = false
@@ -990,12 +974,8 @@ class GoogleSignInTest {
     val params = PlatformAuthorizationRequest(scopes, null, null, null)
 
     whenever(mockAuthorizationClient.authorize(any())).thenReturn(mockAuthorizationTask)
-    try {
-      whenever(mockAuthorizationClient.getAuthorizationResultFromIntent(anyOrNull()))
-          .thenThrow(ApiException(Status.RESULT_INTERNAL_ERROR))
-    } catch (_: ApiException) {
-      Assert.fail()
-    }
+    whenever(mockAuthorizationClient.getAuthorizationResultFromIntent(anyOrNull()))
+        .thenThrow(ApiException(Status.RESULT_INTERNAL_ERROR))
 
     plugin.activity = mockActivity
     var callbackCalled = false
@@ -1012,19 +992,15 @@ class GoogleSignInTest {
     val callbackCaptor = argumentCaptor<OnSuccessListener<AuthorizationResult>>()
     verify(mockAuthorizationTask).addOnSuccessListener(callbackCaptor.capture())
     callbackCaptor.firstValue.onSuccess(mockResolutionAuthorizationResult(mockAuthorizationIntent))
-    try {
-      verify(mockActivity)
-          .startIntentSenderForResult(
-              mockAuthorizationIntent.intentSender,
-              GoogleSignInPlugin.Delegate.REQUEST_CODE_AUTHORIZE,
-              null,
-              0,
-              0,
-              0,
-              null)
-    } catch (_: SendIntentException) {
-      Assert.fail()
-    }
+    verify(mockActivity)
+        .startIntentSenderForResult(
+            mockAuthorizationIntent.intentSender,
+            GoogleSignInPlugin.Delegate.REQUEST_CODE_AUTHORIZE,
+            null,
+            0,
+            0,
+            0,
+            null)
     // Simulate the UI flow completing. The intent data can be null here because
     // mockAuthorizationClient.getAuthorizationResultFromIntent above ignores the parameter.
     plugin.onActivityResult(GoogleSignInPlugin.Delegate.REQUEST_CODE_AUTHORIZE, 0, null)
