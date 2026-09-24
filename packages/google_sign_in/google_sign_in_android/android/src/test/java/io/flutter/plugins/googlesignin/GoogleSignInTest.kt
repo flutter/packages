@@ -665,7 +665,7 @@ class GoogleSignInTest {
 
   @Test
   fun authorize_passesNullParameters() {
-    val scopes = mutableListOf("scope1", "scope1")
+    val scopes = listOf("scope1", "scope1")
     val params = PlatformAuthorizationRequest(scopes)
 
     whenever(mockAuthorizationClient.authorize(any())).thenReturn(mockAuthorizationTask)
@@ -687,7 +687,7 @@ class GoogleSignInTest {
 
   @Test
   fun authorize_passesOptionalParameters() {
-    val scopes = mutableListOf("scope1", "scope1")
+    val scopes = listOf("scope1", "scope1")
     val hostedDomain = "example.com"
     val accountEmail = "someone@example.com"
     val serverClientId = "serverClientId"
@@ -742,7 +742,7 @@ class GoogleSignInTest {
 
   @Test
   fun authorize_reportsImmediateException() {
-    val scopes = mutableListOf("scope1", "scope1")
+    val scopes = listOf("scope1", "scope1")
     val params = PlatformAuthorizationRequest(scopes)
 
     whenever(mockAuthorizationClient.authorize(any())).thenThrow(RuntimeException())
@@ -763,7 +763,7 @@ class GoogleSignInTest {
 
   @Test
   fun authorize_reportsFailureIfUnauthorizedAndNoPromptAllowed() {
-    val scopes = mutableListOf("scope1", "scope1")
+    val scopes = listOf("scope1", "scope1")
     val params = PlatformAuthorizationRequest(scopes)
 
     whenever(mockAuthorizationClient.authorize(any())).thenReturn(mockAuthorizationTask)
@@ -788,7 +788,7 @@ class GoogleSignInTest {
 
   @Test
   fun authorize_reportsFailureIfUnauthorizedAndNoActivity() {
-    val scopes = mutableListOf("scope1", "scope1")
+    val scopes = listOf("scope1", "scope1")
     val params = PlatformAuthorizationRequest(scopes)
 
     whenever(mockAuthorizationClient.authorize(any())).thenReturn(mockAuthorizationTask)
@@ -894,7 +894,7 @@ class GoogleSignInTest {
 
   @Test
   fun authorize_reportsPendingIntentException() {
-    val scopes = mutableListOf("scope1", "scope1")
+    val scopes = listOf("scope1", "scope1")
     val params = PlatformAuthorizationRequest(scopes)
 
     whenever(mockAuthorizationClient.authorize(any())).thenReturn(mockAuthorizationTask)
@@ -930,7 +930,7 @@ class GoogleSignInTest {
 
   @Test
   fun authorize_reportsPostIntentException() {
-    val scopes = mutableListOf("scope1", "scope1")
+    val scopes = listOf("scope1", "scope1")
     val params = PlatformAuthorizationRequest(scopes)
 
     whenever(mockAuthorizationClient.authorize(any())).thenReturn(mockAuthorizationTask)
@@ -1002,7 +1002,7 @@ class GoogleSignInTest {
 
   @Test
   fun revokeAccess_callsClient() {
-    val scopes = mutableListOf("openid")
+    val scopes = listOf("openid")
     val accountEmail = "someone@example.com"
     val params = PlatformRevokeAccessRequest(accountEmail, scopes)
     whenever(mockAuthorizationClient.revokeAccess(any())).thenReturn(mockVoidTask)
