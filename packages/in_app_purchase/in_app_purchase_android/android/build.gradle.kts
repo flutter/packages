@@ -78,7 +78,7 @@ dependencies {
     testImplementation("org.json:json:20251224")
     testImplementation("org.mockito:mockito-core:5.23.0")
     testImplementation("androidx.test:core:1.7.0")
-    testImplementation("org.robolectric:robolectric:4.16")
+    testImplementation("org.robolectric:robolectric:4.17")
     androidTestImplementation("androidx.test:runner:1.7.0")
     androidTestImplementation("androidx.test.espresso:espresso-core:3.7.0")
 }
