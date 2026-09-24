@@ -86,15 +86,13 @@ class GoRouteInformationProvider extends RouteInformationProvider
   GoRouteInformationProvider({
     required String initialLocation,
     required Object? initialExtra,
-    Listenable? refreshListenable,
-    bool routerNeglect = false,
-  }) : _refreshListenable = refreshListenable,
-       _value = RouteInformation(
+    this._refreshListenable,
+    this._routerNeglect = false,
+  }) : _value = RouteInformation(
          uri: Uri.parse(initialLocation),
          state: RouteInformationState<void>(extra: initialExtra, type: NavigatingType.go),
        ),
-       _valueInEngine = _kEmptyRouteInformation,
-       _routerNeglect = routerNeglect {
+       _valueInEngine = _kEmptyRouteInformation {
     _refreshListenable?.addListener(notifyListeners);
   }
 

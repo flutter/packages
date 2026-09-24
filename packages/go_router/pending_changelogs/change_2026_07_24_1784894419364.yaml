@@ -1,3 +1,0 @@
-changelog: |
-  - Documents support for regular expression constraints in GoRoute path parameters.
-version: patch

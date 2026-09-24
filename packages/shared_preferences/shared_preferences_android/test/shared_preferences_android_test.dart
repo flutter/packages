@@ -60,7 +60,7 @@ void main() {
   });
 
   test('registerWith', () async {
-    SharedPreferencesAndroid.registerWith();
+    SharedPreferencesAndroid.registerWith(api: api);
     expect(SharedPreferencesStorePlatform.instance, isA<SharedPreferencesAndroid>());
   });
 

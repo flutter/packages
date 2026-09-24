@@ -13,7 +13,7 @@ import 'dart:ffi' as ffi;
 import 'package:objective_c/objective_c.dart' as objc;
 import 'package:ffi/ffi.dart' as pkg_ffi;
 
-const _$objcVersionCheck = objc.ObjCVersionCheck(9, 5);
+const _$objcVersionCheck = objc.ObjCVersionCheck(9, 6);
 
 /// Generated setup class from Pigeon to register implemented LegacyUserDefaultsApi classes.
 extension type LegacyUserDefaultsApiSetup._(objc.ObjCObject object$)
@@ -351,13 +351,13 @@ extension type MessagesPigeonInternalNull._(objc.ObjCObject object$)
 extension MessagesPigeonInternalNull$Methods on MessagesPigeonInternalNull {
   /// init
   MessagesPigeonInternalNull init() {
-    final _$$ref$1 = object$.ref;
+    final _$$ref = object$.ref;
     objc.checkOsVersionInternal(
       'MessagesPigeonInternalNull.init',
       iOS: (false, (2, 0, 0)),
       macOS: (false, (10, 0, 0)),
     );
-    final $ret = _objc_msgSend_151sglz(_$$ref$1.retainAndReturnPointer(), _sel_init);
+    final $ret = _objc_msgSend_151sglz(_$$ref.retainAndReturnPointer(), _sel_init);
     return MessagesPigeonInternalNull.fromPointer($ret, retain: false, release: true);
   }
 }
@@ -485,13 +485,13 @@ extension PigeonError$Methods on PigeonError {
 
   /// init
   PigeonError init() {
-    final _$$ref$2 = object$.ref;
+    final _$$ref = object$.ref;
     objc.checkOsVersionInternal(
       'PigeonError.init',
       iOS: (false, (2, 0, 0)),
       macOS: (false, (10, 0, 0)),
     );
-    final $ret = _objc_msgSend_151sglz(_$$ref$2.retainAndReturnPointer(), _sel_init);
+    final $ret = _objc_msgSend_151sglz(_$$ref.retainAndReturnPointer(), _sel_init);
     return PigeonError.fromPointer($ret, retain: false, release: true);
   }
 
@@ -752,13 +752,13 @@ extension UserDefaultsApiSetup$Methods on UserDefaultsApiSetup {
 
   /// init
   UserDefaultsApiSetup init() {
-    final _$$ref$3 = object$.ref;
+    final _$$ref = object$.ref;
     objc.checkOsVersionInternal(
       'UserDefaultsApiSetup.init',
       iOS: (false, (2, 0, 0)),
       macOS: (false, (10, 0, 0)),
     );
-    final $ret = _objc_msgSend_151sglz(_$$ref$3.retainAndReturnPointer(), _sel_init);
+    final $ret = _objc_msgSend_151sglz(_$$ref.retainAndReturnPointer(), _sel_init);
     return UserDefaultsApiSetup.fromPointer($ret, retain: false, release: true);
   }
 
@@ -786,67 +786,69 @@ extension UserDefaultsApiSetup$Methods on UserDefaultsApiSetup {
 }
 
 @ffi.Native<ffi.Pointer<objc.ObjCObjectImpl>>(
-  symbol: 'OBJC_CLASS_\$__TtC6Runner26LegacyUserDefaultsApiSetup',
+  symbol: 'OBJC_CLASS_\$__TtC29shared_preferences_foundation26LegacyUserDefaultsApiSetup',
 )
 external ffi.Pointer<objc.ObjCObjectImpl> _class_LegacyUserDefaultsApiSetup_raw;
 final _class_LegacyUserDefaultsApiSetup = objc.getClass(
-  "Runner.LegacyUserDefaultsApiSetup",
+  "shared_preferences_foundation.LegacyUserDefaultsApiSetup",
   () => ffi.Native.addressOf<ffi.Pointer<objc.ObjCObjectImpl>>(
     _class_LegacyUserDefaultsApiSetup_raw,
   ).cast(),
 );
 @ffi.Native<ffi.Pointer<objc.ObjCObjectImpl>>(
-  symbol: 'OBJC_CLASS_\$__TtC6Runner21MessagesNumberWrapper',
+  symbol: 'OBJC_CLASS_\$__TtC29shared_preferences_foundation21MessagesNumberWrapper',
 )
 external ffi.Pointer<objc.ObjCObjectImpl> _class_MessagesNumberWrapper_raw;
 final _class_MessagesNumberWrapper = objc.getClass(
-  "Runner.MessagesNumberWrapper",
+  "shared_preferences_foundation.MessagesNumberWrapper",
   () => ffi.Native.addressOf<ffi.Pointer<objc.ObjCObjectImpl>>(
     _class_MessagesNumberWrapper_raw,
   ).cast(),
 );
 @ffi.Native<ffi.Pointer<objc.ObjCObjectImpl>>(
-  symbol: 'OBJC_CLASS_\$__TtC6Runner26MessagesPigeonInternalNull',
+  symbol: 'OBJC_CLASS_\$__TtC29shared_preferences_foundation26MessagesPigeonInternalNull',
 )
 external ffi.Pointer<objc.ObjCObjectImpl> _class_MessagesPigeonInternalNull_raw;
 final _class_MessagesPigeonInternalNull = objc.getClass(
-  "Runner.MessagesPigeonInternalNull",
+  "shared_preferences_foundation.MessagesPigeonInternalNull",
   () => ffi.Native.addressOf<ffi.Pointer<objc.ObjCObjectImpl>>(
     _class_MessagesPigeonInternalNull_raw,
   ).cast(),
 );
 @ffi.Native<ffi.Pointer<objc.ObjCObjectImpl>>(
-  symbol: 'OBJC_CLASS_\$__TtC6Runner23MessagesPigeonTypedData',
+  symbol: 'OBJC_CLASS_\$__TtC29shared_preferences_foundation23MessagesPigeonTypedData',
 )
 external ffi.Pointer<objc.ObjCObjectImpl> _class_MessagesPigeonTypedData_raw;
 final _class_MessagesPigeonTypedData = objc.getClass(
-  "Runner.MessagesPigeonTypedData",
+  "shared_preferences_foundation.MessagesPigeonTypedData",
   () => ffi.Native.addressOf<ffi.Pointer<objc.ObjCObjectImpl>>(
     _class_MessagesPigeonTypedData_raw,
   ).cast(),
 );
-@ffi.Native<ffi.Pointer<objc.ObjCObjectImpl>>(symbol: 'OBJC_CLASS_\$__TtC6Runner11PigeonError')
+@ffi.Native<ffi.Pointer<objc.ObjCObjectImpl>>(
+  symbol: 'OBJC_CLASS_\$__TtC29shared_preferences_foundation11PigeonError',
+)
 external ffi.Pointer<objc.ObjCObjectImpl> _class_PigeonError_raw;
 final _class_PigeonError = objc.getClass(
-  "Runner.PigeonError",
+  "shared_preferences_foundation.PigeonError",
   () => ffi.Native.addressOf<ffi.Pointer<objc.ObjCObjectImpl>>(_class_PigeonError_raw).cast(),
 );
 @ffi.Native<ffi.Pointer<objc.ObjCObjectImpl>>(
-  symbol: 'OBJC_CLASS_\$__TtC6Runner36SharedPreferencesPigeonOptionsBridge',
+  symbol: 'OBJC_CLASS_\$__TtC29shared_preferences_foundation36SharedPreferencesPigeonOptionsBridge',
 )
 external ffi.Pointer<objc.ObjCObjectImpl> _class_SharedPreferencesPigeonOptionsBridge_raw;
 final _class_SharedPreferencesPigeonOptionsBridge = objc.getClass(
-  "Runner.SharedPreferencesPigeonOptionsBridge",
+  "shared_preferences_foundation.SharedPreferencesPigeonOptionsBridge",
   () => ffi.Native.addressOf<ffi.Pointer<objc.ObjCObjectImpl>>(
     _class_SharedPreferencesPigeonOptionsBridge_raw,
   ).cast(),
 );
 @ffi.Native<ffi.Pointer<objc.ObjCObjectImpl>>(
-  symbol: 'OBJC_CLASS_\$__TtC6Runner20UserDefaultsApiSetup',
+  symbol: 'OBJC_CLASS_\$__TtC29shared_preferences_foundation20UserDefaultsApiSetup',
 )
 external ffi.Pointer<objc.ObjCObjectImpl> _class_UserDefaultsApiSetup_raw;
 final _class_UserDefaultsApiSetup = objc.getClass(
-  "Runner.UserDefaultsApiSetup",
+  "shared_preferences_foundation.UserDefaultsApiSetup",
   () => ffi.Native.addressOf<ffi.Pointer<objc.ObjCObjectImpl>>(
     _class_UserDefaultsApiSetup_raw,
   ).cast(),

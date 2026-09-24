@@ -26,8 +26,8 @@ class SharedPreferencesAndroid extends SharedPreferencesStorePlatform {
   final SharedPreferencesApi api;
 
   /// Registers this class as the default instance of [SharedPreferencesStorePlatform].
-  static void registerWith() {
-    SharedPreferencesStorePlatform.instance = SharedPreferencesAndroid();
+  static void registerWith({@visibleForTesting SharedPreferencesApi? api}) {
+    SharedPreferencesStorePlatform.instance = SharedPreferencesAndroid(api: api);
     // A temporary work-around for having two plugins contained in a single package.
     SharedPreferencesAsyncAndroid.registerWith();
   }

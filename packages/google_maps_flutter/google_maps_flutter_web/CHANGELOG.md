@@ -1,3 +1,11 @@
+## NEXT
+
+* Updates minimum supported SDK version to Flutter 3.41/Dart 3.11.
+
+## 0.6.3+1
+
+* Fixes flickering of byte-backed advanced markers when updating their position on web.
+
 ## 0.6.3
 
 * Adds support for mapTypeControlEnabled, fullscreenControlEnabled, and streetViewControlEnabled.

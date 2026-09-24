@@ -6,6 +6,7 @@ import 'package:args/command_runner.dart';
 import 'package:file/file.dart';
 import 'package:flutter_plugin_tools/src/validate_command.dart';
 import 'package:git/git.dart';
+import 'package:platform/platform.dart';
 import 'package:test/test.dart';
 
 import 'mocks.dart';
@@ -18,7 +19,7 @@ void main() {
     late Directory packagesDir;
 
     setUp(() {
-      final mockPlatform = MockPlatform();
+      final NativePlatform mockPlatform = createMockPlatform();
       final ({
         Directory packagesDir,
         RecordingProcessRunner processRunner,

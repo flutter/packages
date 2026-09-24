@@ -4,6 +4,7 @@
 
 package io.flutter.plugins.webviewflutter;
 
+import static org.junit.Assert.assertThrows;
 import static org.junit.Assert.fail;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.mockStatic;
@@ -34,6 +35,40 @@ public class WebSettingsCompatTest {
       }
     } catch (Exception e) {
       fail(e.toString());
+    }
+  }
+
+  @Test
+  public void setWebAuthenticationSupport() {
+    final PigeonApiWebSettingsCompat api =
+        new TestProxyApiRegistrar().getPigeonApiWebSettingsCompat();
+
+    final WebSettings webSettings = mock(WebSettings.class);
+
+    try (MockedStatic<WebSettingsCompat> mockedStatic = mockStatic(WebSettingsCompat.class);
+        MockedStatic<WebViewFeature> mockedWebViewFeature = mockStatic(WebViewFeature.class)) {
+      mockedWebViewFeature
+          .when(() -> WebViewFeature.isFeatureSupported(WebViewFeature.WEB_AUTHENTICATION))
+          .thenReturn(true);
+      api.setWebAuthenticationSupport(webSettings, 2L);
+      mockedStatic.verify(() -> WebSettingsCompat.setWebAuthenticationSupport(webSettings, 2));
+    }
+  }
+
+  @Test
+  public void setWebAuthenticationSupportWithLongOutsideIntRangeThrows() {
+    final PigeonApiWebSettingsCompat api =
+        new TestProxyApiRegistrar().getPigeonApiWebSettingsCompat();
+
+    final WebSettings webSettings = mock(WebSettings.class);
+
+    try (MockedStatic<WebViewFeature> mockedWebViewFeature = mockStatic(WebViewFeature.class)) {
+      mockedWebViewFeature
+          .when(() -> WebViewFeature.isFeatureSupported(WebViewFeature.WEB_AUTHENTICATION))
+          .thenReturn(true);
+      assertThrows(
+          ArithmeticException.class,
+          () -> api.setWebAuthenticationSupport(webSettings, Integer.MAX_VALUE + 1L));
     }
   }
 }

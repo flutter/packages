@@ -2,15 +2,10 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-// no-shuffle:
-//   //TODO(gspencergoog): Remove this tag once this test's state leaks/test
-//   dependencies have been fixed.
-//   https://github.com/flutter/flutter/issues/85160
-//   Fails with "flutter test --test-randomize-ordering-seed=456"
 // reduced-test-set:
 //   This file is run as part of a reduced test set in CI on Mac and Windows
 //   machines.
-@Tags(<String>['reduced-test-set', 'no-shuffle'])
+@Tags(<String>['reduced-test-set'])
 library;
 
 import 'dart:math' as math;
@@ -2710,9 +2705,9 @@ void main() {
     );
 
     await tester.pumpWidget(buildFormField());
-    final Color defaultBorderColor = Theme.of(
-      tester.element(find.byType(InputDecorator)),
-    ).colorScheme.surfaceContainerHighest;
+    final Color defaultBorderColor = Theme.of(tester.element(find.byType(InputDecorator)))
+        .colorScheme
+        .surfaceContainerHighest;
     expect(
       findInputDecoratorBorderPainter(),
       paints..rrect(style: PaintingStyle.fill, color: defaultBorderColor),
@@ -3253,9 +3248,8 @@ void main() {
     // Scrolling to the top again has removed the one the focus was on from the
     // tree, causing it to lose focus.
     expect(
-      Focus.of(
-        tester.element(find.byKey(const ValueKey<int>(91), skipOffstage: false).last),
-      ).hasPrimaryFocus,
+      Focus.of(tester.element(find.byKey(const ValueKey<int>(91), skipOffstage: false).last))
+          .hasPrimaryFocus,
       isFalse,
     );
   });
@@ -4012,7 +4006,7 @@ void main() {
       RendererBinding.instance.mouseTracker.debugDeviceActiveCursor(1),
       SystemMouseCursors.basic,
     );
-  });
+  }, tags: 'reduced-web-test-set');
 
   testWidgets('DropdownButton changes mouse cursor when hovered as expected', (
     WidgetTester tester,
@@ -4085,7 +4079,7 @@ void main() {
       RendererBinding.instance.mouseTracker.debugDeviceActiveCursor(1),
       SystemMouseCursors.basic,
     );
-  });
+  }, tags: 'reduced-web-test-set');
 
   testWidgets('DropdownButton has expected mouse cursor when explicitly configured', (
     WidgetTester tester,
@@ -4932,9 +4926,8 @@ void main() {
       ),
     );
 
-    final TextStyle labelStyle = DefaultTextStyle.of(
-      tester.firstElement(find.text(labelText)),
-    ).style;
+    final TextStyle labelStyle = DefaultTextStyle.of(tester.firstElement(find.text(labelText)))
+        .style;
     expect(labelStyle.color, labelColor);
   });
 
