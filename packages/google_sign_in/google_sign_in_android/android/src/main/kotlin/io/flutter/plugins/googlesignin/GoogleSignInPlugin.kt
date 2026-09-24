@@ -329,58 +329,53 @@ class GoogleSignInPlugin : FlutterPlugin, ActivityAware {
         val authorizationRequest = authorizationRequestBuilder.build()
         authorizationClientFactory(context)
             .authorize(authorizationRequest)
-            .addOnSuccessListener(
-                OnSuccessListener { authorizationResult: AuthorizationResult? ->
-                  if (authorizationResult!!.hasResolution()) {
-                    if (promptIfUnauthorized) {
-                      val activity = this.activity
-                      if (activity == null) {
-                        callback(
-                            Result.success(
-                                AuthorizeFailure(
-                                    AuthorizeFailureType.NO_ACTIVITY,
-                                    "No activity available",
-                                    null)))
-                        return@addOnSuccessListener
-                      }
-                      // Prompt for access. `callback` will be resolved in onActivityResult.
-                      // There must be a pending intent if hasResolution() was true.
-                      val pendingIntent =
-                          Objects.requireNonNull<PendingIntent>(
-                              authorizationResult.getPendingIntent())
-                      try {
-                        pendingAuthorizationCallback = callback
-                        activity.startIntentSenderForResult(
-                            pendingIntent.getIntentSender(),
-                            REQUEST_CODE_AUTHORIZE, /* fillInIntent */
-                            null, /* flagsMask */
-                            0, /* flagsValue */
-                            0, /* extraFlags */
-                            0, /* options */
-                            null)
-                      } catch (e: SendIntentException) {
-                        pendingAuthorizationCallback = null
-                        callback(
-                            Result.success(
-                                AuthorizeFailure(
-                                    AuthorizeFailureType.PENDING_INTENT_EXCEPTION,
-                                    e.message,
-                                    null)))
-                      }
-                    } else {
-                      callback(
-                          Result.success(
-                              AuthorizeFailure(AuthorizeFailureType.UNAUTHORIZED, null, null)))
-                    }
-                  } else {
+            .addOnSuccessListener({ authorizationResult: AuthorizationResult? ->
+              if (authorizationResult!!.hasResolution()) {
+                if (promptIfUnauthorized) {
+                  val activity = this.activity
+                  if (activity == null) {
                     callback(
                         Result.success(
-                            PlatformAuthorizationResult(
-                                authorizationResult.getAccessToken(),
-                                authorizationResult.getServerAuthCode(),
-                                authorizationResult.getGrantedScopes())))
+                            AuthorizeFailure(
+                                AuthorizeFailureType.NO_ACTIVITY, "No activity available", null)))
+                  } else {
+                    // Prompt for access. `callback` will be resolved in onActivityResult.
+                    // There must be a pending intent if hasResolution() was true.
+                    val pendingIntent =
+                        Objects.requireNonNull<PendingIntent>(
+                            authorizationResult.getPendingIntent())
+                    try {
+                      pendingAuthorizationCallback = callback
+                      activity.startIntentSenderForResult(
+                          pendingIntent.getIntentSender(),
+                          REQUEST_CODE_AUTHORIZE, /* fillInIntent */
+                          null, /* flagsMask */
+                          0, /* flagsValue */
+                          0, /* extraFlags */
+                          0, /* options */
+                          null)
+                    } catch (e: SendIntentException) {
+                      pendingAuthorizationCallback = null
+                      callback(
+                          Result.success(
+                              AuthorizeFailure(
+                                  AuthorizeFailureType.PENDING_INTENT_EXCEPTION, e.message, null)))
+                    }
                   }
-                })
+                } else {
+                  callback(
+                      Result.success(
+                          AuthorizeFailure(AuthorizeFailureType.UNAUTHORIZED, null, null)))
+                }
+              } else {
+                callback(
+                    Result.success(
+                        PlatformAuthorizationResult(
+                            authorizationResult.getAccessToken(),
+                            authorizationResult.getServerAuthCode(),
+                            authorizationResult.getGrantedScopes())))
+              }
+            })
             .addOnFailureListener(
                 OnFailureListener { e: Exception? ->
                   callback(
