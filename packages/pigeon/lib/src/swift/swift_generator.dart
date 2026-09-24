@@ -501,7 +501,7 @@ class _PigeonFfiCodec {
       let dict = value as! [AnyHashable: Any]
       let res: NSMutableDictionary = NSMutableDictionary(capacity: dict.count)
       for (key, value) in dict {
-         res.setObject(${_classNamePrefix}PigeonInternal.isNullish(key) ? ${_classNamePrefix}PigeonInternalNull() : writeValue(value: value, isObject: true) as! NSObject, forKey: writeValue(value: key, isObject: true) as! NSCopying)
+         res.setObject(${_classNamePrefix}PigeonInternal.isNullish(value) ? ${_classNamePrefix}PigeonInternalNull() : writeValue(value: value, isObject: true) as! NSObject, forKey: writeValue(value: key, isObject: true) as! NSCopying)
       }
       return res
     }
@@ -2321,6 +2321,14 @@ static func deepHash(value: Any?, hasher: inout Hasher) {
       'private func wrapNumber(number: Any) -> ${_classNamePrefix}NumberWrapper {',
       '}',
       () {
+        indent.format('''
+  if CFGetTypeID(number as CFTypeRef) == CFBooleanGetTypeID(), let value = number as? Bool {
+    return ${_classNamePrefix}NumberWrapper(number: NSNumber(value: value), type: 3)
+  }
+  if let nsNumber = number as? NSNumber, CFNumberIsFloatType(nsNumber) {
+    return ${_classNamePrefix}NumberWrapper(number: nsNumber, type: 2)
+  }
+''');
         indent.writeScoped('switch number {', '}', () {
           var caseNum = 4;
           indent.format('''

@@ -67,6 +67,12 @@ private func createConnectionError(withChannelName channelName: String) -> Nativ
 }
 
 private func wrapNumber(number: Any) -> NativeInteropTestsNumberWrapper {
+  if CFGetTypeID(number as CFTypeRef) == CFBooleanGetTypeID(), let value = number as? Bool {
+    return NativeInteropTestsNumberWrapper(number: NSNumber(value: value), type: 3)
+  }
+  if let nsNumber = number as? NSNumber, CFNumberIsFloatType(nsNumber) {
+    return NativeInteropTestsNumberWrapper(number: nsNumber, type: 2)
+  }
   switch number {
   case let value as Int:
     return NativeInteropTestsNumberWrapper(number: NSNumber(value: value), type: 1)
@@ -2004,7 +2010,7 @@ class _PigeonFfiCodec {
       let res: NSMutableDictionary = NSMutableDictionary(capacity: dict.count)
       for (key, value) in dict {
         res.setObject(
-          NativeInteropTestsPigeonInternal.isNullish(key)
+          NativeInteropTestsPigeonInternal.isNullish(value)
             ? NativeInteropTestsPigeonInternalNull()
             : writeValue(value: value, isObject: true) as! NSObject,
           forKey: writeValue(value: key, isObject: true) as! NSCopying)
