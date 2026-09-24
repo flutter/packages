@@ -177,9 +177,7 @@ class GoogleSignInTest {
             false,
             GetCredentialRequestGoogleIdOptionParams(
                 filterToAuthorized = false, autoSelectEnabled = false),
-            "serverClientId",
-            null,
-            null)
+            serverClientId = "serverClientId")
 
     val displayName = "Jane User"
     val givenName = "Jane"
@@ -230,9 +228,7 @@ class GoogleSignInTest {
             true,
             GetCredentialRequestGoogleIdOptionParams(
                 filterToAuthorized = false, autoSelectEnabled = false),
-            "serverClientId",
-            null,
-            null)
+            serverClientId = "serverClientId")
 
     plugin.activity = mockActivity
     plugin.getCredential(params) {}
@@ -257,9 +253,7 @@ class GoogleSignInTest {
             false,
             GetCredentialRequestGoogleIdOptionParams(
                 filterToAuthorized = false, autoSelectEnabled = false),
-            "serverClientId",
-            null,
-            null)
+            serverClientId = "serverClientId")
 
     plugin.activity = mockActivity
     plugin.getCredential(params) {
@@ -289,9 +283,8 @@ class GoogleSignInTest {
             true,
             GetCredentialRequestGoogleIdOptionParams(
                 filterToAuthorized = false, autoSelectEnabled = false),
-            "serverClientId",
-            hostedDomain,
-            null)
+            serverClientId = "serverClientId",
+            hostedDomain)
 
     plugin.activity = mockActivity
     plugin.getCredential(params) {
@@ -323,9 +316,8 @@ class GoogleSignInTest {
             true,
             GetCredentialRequestGoogleIdOptionParams(
                 filterToAuthorized = false, autoSelectEnabled = false),
-            "serverClientId",
-            null,
-            nonce)
+            serverClientId = "serverClientId",
+            nonce = nonce)
 
     plugin.activity = mockActivity
     plugin.getCredential(params) {
@@ -356,9 +348,8 @@ class GoogleSignInTest {
             false,
             GetCredentialRequestGoogleIdOptionParams(
                 filterToAuthorized = false, autoSelectEnabled = false),
-            "serverClientId",
-            null,
-            nonce)
+            serverClientId = "serverClientId",
+            nonce = nonce)
 
     plugin.activity = mockActivity
     plugin.getCredential(params) {
@@ -387,9 +378,7 @@ class GoogleSignInTest {
             false,
             GetCredentialRequestGoogleIdOptionParams(
                 filterToAuthorized = false, autoSelectEnabled = false),
-            "serverClientId",
-            null,
-            null)
+            serverClientId = "serverClientId")
 
     var callbackCalled = false
     plugin.activity = null
@@ -411,10 +400,7 @@ class GoogleSignInTest {
         GetCredentialRequestParams(
             false,
             GetCredentialRequestGoogleIdOptionParams(
-                filterToAuthorized = false, autoSelectEnabled = false),
-            null,
-            null,
-            null)
+                filterToAuthorized = false, autoSelectEnabled = false))
 
     var callbackCalled = false
     plugin.activity = mockActivity
@@ -437,9 +423,7 @@ class GoogleSignInTest {
             false,
             GetCredentialRequestGoogleIdOptionParams(
                 filterToAuthorized = false, autoSelectEnabled = false),
-            "serverClientId",
-            null,
-            null)
+            serverClientId = "serverClientId")
 
     var callbackCalled = false
     plugin.activity = mockActivity
@@ -476,9 +460,7 @@ class GoogleSignInTest {
             false,
             GetCredentialRequestGoogleIdOptionParams(
                 filterToAuthorized = false, autoSelectEnabled = false),
-            "serverClientId",
-            null,
-            null)
+            serverClientId = "serverClientId")
 
     var callbackCalled = false
     plugin.activity = mockActivity
@@ -513,9 +495,7 @@ class GoogleSignInTest {
             false,
             GetCredentialRequestGoogleIdOptionParams(
                 filterToAuthorized = false, autoSelectEnabled = false),
-            "serverClientId",
-            null,
-            null)
+            serverClientId = "serverClientId")
 
     var callbackCalled = false
     plugin.activity = mockActivity
@@ -550,9 +530,7 @@ class GoogleSignInTest {
             false,
             GetCredentialRequestGoogleIdOptionParams(
                 filterToAuthorized = false, autoSelectEnabled = false),
-            "serverClientId",
-            null,
-            null)
+            serverClientId = "serverClientId")
 
     var callbackCalled = false
     plugin.activity = mockActivity
@@ -587,9 +565,7 @@ class GoogleSignInTest {
             false,
             GetCredentialRequestGoogleIdOptionParams(
                 filterToAuthorized = false, autoSelectEnabled = false),
-            "serverClientId",
-            null,
-            null)
+            serverClientId = "serverClientId")
 
     var callbackCalled = false
     plugin.activity = mockActivity
@@ -624,9 +600,7 @@ class GoogleSignInTest {
             false,
             GetCredentialRequestGoogleIdOptionParams(
                 filterToAuthorized = false, autoSelectEnabled = false),
-            "serverClientId",
-            null,
-            null)
+            serverClientId = "serverClientId")
 
     var callbackCalled = false
     plugin.activity = mockActivity
@@ -661,9 +635,7 @@ class GoogleSignInTest {
             false,
             GetCredentialRequestGoogleIdOptionParams(
                 filterToAuthorized = false, autoSelectEnabled = false),
-            "serverClientId",
-            null,
-            null)
+            serverClientId = "serverClientId")
 
     var callbackCalled = false
     plugin.activity = mockActivity
@@ -694,7 +666,7 @@ class GoogleSignInTest {
   @Test
   fun authorize_passesNullParameters() {
     val scopes = mutableListOf("scope1", "scope1")
-    val params = PlatformAuthorizationRequest(scopes, null, null, null)
+    val params = PlatformAuthorizationRequest(scopes)
 
     whenever(mockAuthorizationClient.authorize(any())).thenReturn(mockAuthorizationTask)
 
@@ -742,7 +714,7 @@ class GoogleSignInTest {
   @Test
   fun authorize_returnsImmediateResult() {
     val scopes = mutableListOf("scope1", "scope1")
-    val params = PlatformAuthorizationRequest(scopes, null, null, null)
+    val params = PlatformAuthorizationRequest(scopes)
 
     val accessToken = "accessToken"
     val serverAuthCode = "serverAuthCode"
@@ -771,7 +743,7 @@ class GoogleSignInTest {
   @Test
   fun authorize_reportsImmediateException() {
     val scopes = mutableListOf("scope1", "scope1")
-    val params = PlatformAuthorizationRequest(scopes, null, null, null)
+    val params = PlatformAuthorizationRequest(scopes)
 
     whenever(mockAuthorizationClient.authorize(any())).thenThrow(RuntimeException())
 
@@ -792,7 +764,7 @@ class GoogleSignInTest {
   @Test
   fun authorize_reportsFailureIfUnauthorizedAndNoPromptAllowed() {
     val scopes = mutableListOf("scope1", "scope1")
-    val params = PlatformAuthorizationRequest(scopes, null, null, null)
+    val params = PlatformAuthorizationRequest(scopes)
 
     whenever(mockAuthorizationClient.authorize(any())).thenReturn(mockAuthorizationTask)
 
@@ -817,7 +789,7 @@ class GoogleSignInTest {
   @Test
   fun authorize_reportsFailureIfUnauthorizedAndNoActivity() {
     val scopes = mutableListOf("scope1", "scope1")
-    val params = PlatformAuthorizationRequest(scopes, null, null, null)
+    val params = PlatformAuthorizationRequest(scopes)
 
     whenever(mockAuthorizationClient.authorize(any())).thenReturn(mockAuthorizationTask)
 
@@ -843,7 +815,7 @@ class GoogleSignInTest {
   @Test
   fun authorize_returnsPostIntentResult() {
     val scopes = mutableListOf("scope1", "scope1")
-    val params = PlatformAuthorizationRequest(scopes, null, null, null)
+    val params = PlatformAuthorizationRequest(scopes)
 
     val accessToken = "accessToken"
     val serverAuthCode = "serverAuthCode"
@@ -891,7 +863,7 @@ class GoogleSignInTest {
   @Test
   fun authorize_ignoresDuplicateActivityResult() {
     val scopes = mutableListOf("scope1", "scope1")
-    val params = PlatformAuthorizationRequest(scopes, null, null, null)
+    val params = PlatformAuthorizationRequest(scopes)
 
     val accessToken = "accessToken"
     val serverAuthCode = "serverAuthCode"
@@ -923,7 +895,7 @@ class GoogleSignInTest {
   @Test
   fun authorize_reportsPendingIntentException() {
     val scopes = mutableListOf("scope1", "scope1")
-    val params = PlatformAuthorizationRequest(scopes, null, null, null)
+    val params = PlatformAuthorizationRequest(scopes)
 
     whenever(mockAuthorizationClient.authorize(any())).thenReturn(mockAuthorizationTask)
     Mockito.doThrow(SendIntentException())
@@ -959,7 +931,7 @@ class GoogleSignInTest {
   @Test
   fun authorize_reportsPostIntentException() {
     val scopes = mutableListOf("scope1", "scope1")
-    val params = PlatformAuthorizationRequest(scopes, null, null, null)
+    val params = PlatformAuthorizationRequest(scopes)
 
     whenever(mockAuthorizationClient.authorize(any())).thenReturn(mockAuthorizationTask)
     whenever(mockAuthorizationClient.getAuthorizationResultFromIntent(anyOrNull()))
