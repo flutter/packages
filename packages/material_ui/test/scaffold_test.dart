@@ -2899,9 +2899,8 @@ void main() {
           home: Scaffold(
             body: Builder(
               builder: (BuildContext context) {
-                ScaffoldMessenger.of(
-                  context,
-                ).showSnackBar(const SnackBar(content: Text('SnackBar')));
+                ScaffoldMessenger.of(context)
+                    .showSnackBar(const SnackBar(content: Text('SnackBar')));
                 return const SizedBox.shrink();
               },
             ),
@@ -3760,9 +3759,8 @@ void main() {
           home: Builder(
             builder: (BuildContext context) {
               return MediaQuery(
-                data: MediaQuery.of(
-                  context,
-                ).copyWith(viewInsets: EdgeInsets.only(bottom: keyboardHeight)),
+                data: MediaQuery.of(context)
+                    .copyWith(viewInsets: EdgeInsets.only(bottom: keyboardHeight)),
                 child: Scaffold(
                   extendBody: true,
                   body: SizedBox.expand(key: bodyKey),

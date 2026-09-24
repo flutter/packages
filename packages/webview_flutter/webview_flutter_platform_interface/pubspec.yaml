@@ -7,8 +7,8 @@ issue_tracker: https://github.com/flutter/flutter/issues?q=is%3Aissue+is%3Aopen+
 version: 2.15.1
 
 environment:
-  sdk: ^3.10.0
-  flutter: ">=3.38.0"
+  sdk: ^3.11.0
+  flutter: ">=3.41.0"
 
 dependencies:
   flutter:

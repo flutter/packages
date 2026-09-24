@@ -1,3 +1,8 @@
+## 29.0.3
+
+* [swift] Uses `isNullish` to check for null and `NSNull` in non-null Flutter API returns.
+* Updates minimum supported SDK version to Flutter 3.41/Dart 3.11.
+
 ## 29.0.2
 
 * [swift] Fixes a crash when a Flutter API returns null for a non-null return
