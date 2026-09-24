@@ -6,8 +6,8 @@ import Foundation
 
 @testable import google_maps_flutter_ios_sdk9
 
-/// Fake implementation of MapEventDelegate for unit tests.
-class TestMapEventHandler: MapEventDelegate {
+/// Fake implementation of MapEventDelegate (and TileProviderDelegate) for unit tests.
+class TestMapEventHandler: MapEventDelegate, TileProviderDelegate {
   func didStartCameraMove() async throws {}
 
   func didMoveCamera(to cameraPositionArg: PlatformCameraPosition) async throws {}

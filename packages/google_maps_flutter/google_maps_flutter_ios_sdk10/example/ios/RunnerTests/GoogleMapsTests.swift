@@ -203,7 +203,8 @@ class StubPluginRegistrar: NSObject, FlutterPluginRegistrar {
       creationParameters: emptyCreationParameters(),
       assetProvider: TestAssetProvider(),
       binaryMessenger: StubBinaryMessenger(),
-      callbackHandler: mapEventHandler
+      callbackHandler: mapEventHandler,
+      tileProvider: mapEventHandler
     )
 
     async let poiTapReceived: Void = mapEventHandler.waitForPointOfInterestTap()

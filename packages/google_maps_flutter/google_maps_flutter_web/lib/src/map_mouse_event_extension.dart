@@ -18,5 +18,5 @@ import 'package:google_maps/google_maps.dart' as gmaps;
 extension PlaceIdExtension on gmaps.MapMouseEventOrIconMouseEvent {
   /// The place ID of a tapped point of interest, if this event is an icon
   /// mouse event. Otherwise `null`.
-  external String? placeId;
+  external String? get placeId;
 }

@@ -102,16 +102,18 @@ public class GoogleMapController: NSObject, GMSMapViewDelegate, FlutterPlatformV
     }
 
     let binaryMessenger = registrar.messenger()
+    let callbackHandler = MapsCallbackApi(
+      binaryMessenger: binaryMessenger,
+      messageChannelSuffix: String(format: "%lld", viewId)
+    )
     self.init(
       mapView: GMSMapView(options: options),
       viewIdentifier: viewId,
       creationParameters: creationParameters,
       assetProvider: DefaultAssetProvider(registrar: registrar),
       binaryMessenger: binaryMessenger,
-      callbackHandler: MapsCallbackApi(
-        binaryMessenger: binaryMessenger,
-        messageChannelSuffix: String(format: "%lld", viewId)
-      )
+      callbackHandler: callbackHandler,
+      tileProvider: callbackHandler
     )
   }
 
@@ -122,16 +124,18 @@ public class GoogleMapController: NSObject, GMSMapViewDelegate, FlutterPlatformV
     assetProvider: AssetProvider,
     binaryMessenger: FlutterBinaryMessenger
   ) {
+    let callbackHandler = MapsCallbackApi(
+      binaryMessenger: binaryMessenger,
+      messageChannelSuffix: String(format: "%lld", viewId)
+    )
     self.init(
       mapView: mapView,
       viewIdentifier: viewId,
       creationParameters: creationParameters,
       assetProvider: assetProvider,
       binaryMessenger: binaryMessenger,
-      callbackHandler: MapsCallbackApi(
-        binaryMessenger: binaryMessenger,
-        messageChannelSuffix: String(format: "%lld", viewId)
-      )
+      callbackHandler: callbackHandler,
+      tileProvider: callbackHandler
     )
   }
 
@@ -141,7 +145,8 @@ public class GoogleMapController: NSObject, GMSMapViewDelegate, FlutterPlatformV
     creationParameters: PlatformMapViewCreationParams,
     assetProvider: AssetProvider,
     binaryMessenger: FlutterBinaryMessenger,
-    callbackHandler: MapEventDelegate
+    callbackHandler: MapEventDelegate,
+    tileProvider: TileProviderDelegate
   ) {
     self.mapView = mapView
     mapView.accessibilityElementsHidden = false
@@ -190,8 +195,7 @@ public class GoogleMapController: NSObject, GMSMapViewDelegate, FlutterPlatformV
     heatmapsController = HeatmapsController(mapView: mapView)
     tileOverlaysController = TileOverlaysController(
       mapView: mapView,
-      tileProvider: (callbackHandler as? MapsCallbackApi)
-        ?? MapsCallbackApi(binaryMessenger: binaryMessenger, messageChannelSuffix: pigeonSuffix)
+      tileProvider: tileProvider
     )
     groundOverlaysController = GroundOverlaysController(
       mapView: mapView,
