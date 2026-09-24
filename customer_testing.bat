@@ -12,5 +12,6 @@ CD packages/animations
 CALL flutter analyze --no-fatal-infos
 CALL flutter test
 
-REM We don't run the tests in packages/rfw because those tests are
-REM platform-sensitive and only work reliably on Linux.
+REM We don't run the tests in packages/cupertino_ui, packages/material_ui, or
+REM packages/rfw because those tests are platform-sensitive and only work
+REM reliably on Linux.
