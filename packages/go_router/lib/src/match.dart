@@ -663,9 +663,18 @@ class RouteMatchList with Diagnosticable {
   static List<RouteMatchBase> _createNewMatchUntilIncompatible(
     List<RouteMatchBase> currentMatches,
     List<RouteMatchBase> otherMatches,
-    ImperativeRouteMatch match,
-  ) {
+    ImperativeRouteMatch match, {
+    List<ShellRouteMatch> ancestorShellRouteMatches = const <ShellRouteMatch>[],
+  }) {
     final List<RouteMatchBase> newMatches = currentMatches.toList();
+    // Shell matches outside a recursive branch can still reserve its keys.
+    final existingShellRouteMatches = <ShellRouteMatch>[...ancestorShellRouteMatches];
+    _visitRouteMatches(newMatches, (RouteMatchBase match) {
+      if (match is ShellRouteMatch) {
+        existingShellRouteMatches.add(match);
+      }
+      return true;
+    });
     if (otherMatches.last is ShellRouteMatch &&
         newMatches.isNotEmpty &&
         otherMatches.last.route == newMatches.last.route) {
@@ -678,19 +687,13 @@ class RouteMatchList with Diagnosticable {
             lastShellRouteMatch.matches,
             (otherMatches.last as ShellRouteMatch).matches,
             match,
+            ancestorShellRouteMatches: existingShellRouteMatches,
           ),
         ),
       );
       return newMatches;
     }
     final RouteMatchBase branch = otherMatches.last;
-    final existingShellRouteMatches = <ShellRouteMatch>[];
-    _visitRouteMatches(newMatches, (RouteMatchBase match) {
-      if (match is ShellRouteMatch) {
-        existingShellRouteMatches.add(match);
-      }
-      return true;
-    });
     newMatches.add(
       _cloneBranchAndInsertImperativeMatch(
         branch,

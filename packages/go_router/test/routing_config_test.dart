@@ -2,7 +2,6 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import 'package:cupertino_ui/cupertino_ui.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 import 'package:material_ui/material_ui.dart';
@@ -340,6 +339,82 @@ void main() {
     expect(branchNavigatorKey.currentState, same(branchNavigator));
     expect(pageKey.currentState, same(pageState));
     expect(pageState.value, 1);
+  });
+
+  testWidgets('routing config reparses inactive loaded stateful shell branches', (
+    WidgetTester tester,
+  ) async {
+    final shellKey = GlobalKey<StatefulNavigationShellState>(debugLabel: 'statefulShell');
+    final branchAKey = GlobalKey<NavigatorState>(debugLabel: 'branchA');
+    final branchBKey = GlobalKey<NavigatorState>(debugLabel: 'branchB');
+    final branchCKey = GlobalKey<NavigatorState>(debugLabel: 'branchC');
+
+    RoutingConfig buildConfig({
+      required String aLabel,
+      required bool includeBranchC,
+      String aPath = '/a',
+    }) => RoutingConfig(
+      routes: <RouteBase>[
+        StatefulShellRoute.indexedStack(
+          key: shellKey,
+          builder: (_, _, StatefulNavigationShell shell) => shell,
+          branches: <StatefulShellBranch>[
+            StatefulShellBranch(
+              navigatorKey: branchAKey,
+              preload: true,
+              routes: <RouteBase>[GoRoute(path: aPath, builder: (_, _) => Text(aLabel))],
+            ),
+            StatefulShellBranch(
+              navigatorKey: branchBKey,
+              routes: <RouteBase>[GoRoute(path: '/b', builder: (_, _) => const Text('Branch B'))],
+            ),
+            if (includeBranchC)
+              StatefulShellBranch(
+                navigatorKey: branchCKey,
+                preload: true,
+                routes: <RouteBase>[GoRoute(path: '/c', builder: (_, _) => const Text('Branch C'))],
+              ),
+          ],
+        ),
+      ],
+    );
+
+    final config = ValueNotifier<RoutingConfig>(
+      buildConfig(aLabel: 'Branch A v1', includeBranchC: false),
+    );
+    addTearDown(config.dispose);
+    final router = GoRouter.routingConfig(routingConfig: config, initialLocation: '/a');
+    addTearDown(router.dispose);
+
+    await tester.pumpWidget(MaterialApp.router(routerConfig: router));
+    await tester.pumpAndSettle();
+    expect(find.text('Branch A v1'), findsOneWidget);
+    final NavigatorState branchANavigator = branchAKey.currentState!;
+
+    shellKey.currentState!.goBranch(1);
+    await tester.pumpAndSettle();
+    expect(find.text('Branch B'), findsOneWidget);
+
+    config.value = buildConfig(aLabel: 'Branch A v2', includeBranchC: true);
+    await tester.pumpAndSettle();
+    expect(tester.takeException(), isNull);
+    expect(branchCKey.currentState, isNotNull);
+
+    shellKey.currentState!.goBranch(0);
+    await tester.pumpAndSettle();
+    expect(tester.takeException(), isNull);
+    expect(find.text('Branch A v2'), findsOneWidget);
+    expect(branchAKey.currentState, same(branchANavigator));
+    expect(branchCKey.currentState, isNotNull);
+
+    shellKey.currentState!.goBranch(1);
+    await tester.pumpAndSettle();
+    config.value = buildConfig(aLabel: 'Branch A v3', includeBranchC: true, aPath: '/new-a');
+    await tester.pumpAndSettle();
+    shellKey.currentState!.goBranch(0);
+    await tester.pumpAndSettle();
+    expect(tester.takeException(), isNull);
+    expect(find.text('Branch A v3'), findsOneWidget);
   });
 
   testWidgets('routing config works with named route', (WidgetTester tester) async {

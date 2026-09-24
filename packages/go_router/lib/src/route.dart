@@ -1495,6 +1495,46 @@ class StatefulNavigationShellState extends State<StatefulNavigationShell> with R
     });
   }
 
+  void _reparseInactiveBranches() {
+    // Their saved matches and navigator widgets still reference the old routes.
+    for (final StatefulShellBranch branch in route.branches) {
+      if (branch.navigatorKey == route.branches[widget.currentIndex].navigatorKey) {
+        continue;
+      }
+      final _StatefulShellBranchState? branchState = _branchState[branch.navigatorKey];
+      if (branchState == null || branchState.location.value.isEmpty) {
+        continue;
+      }
+
+      final RouteMatchList matchList = _router.configuration.reparse(branchState.location.value);
+      ShellRouteMatch? match;
+      matchList.visitRouteMatches((RouteMatchBase candidate) {
+        if (candidate is ShellRouteMatch && candidate.route == route) {
+          match = candidate;
+          return false;
+        }
+        return true;
+      });
+      final branchMatch = match;
+      if (branchMatch == null ||
+          branchMatch.matches.isEmpty ||
+          route.navigatorKeyForSubRoute(branchMatch.matches.first.route) != branch.navigatorKey) {
+        // The saved location was removed or moved to another branch.
+        _branchState.remove(branch.navigatorKey)!.dispose();
+        continue;
+      }
+
+      branchState.location.value = matchList;
+      branchState.navigator = widget.shellRouteContext.navigatorBuilder(
+        branch.navigatorKey,
+        branchMatch,
+        matchList,
+        branch.observers,
+        branch.restorationScopeId,
+      );
+    }
+  }
+
   /// The index of the currently active [StatefulShellBranch].
   ///
   /// Corresponds to the index in the branches field of [StatefulShellRoute].
@@ -1539,6 +1579,9 @@ class StatefulNavigationShellState extends State<StatefulNavigationShell> with R
   @override
   void didUpdateWidget(covariant StatefulNavigationShell oldWidget) {
     super.didUpdateWidget(oldWidget);
+    if (oldWidget.route != route) {
+      _reparseInactiveBranches();
+    }
     _updateCurrentBranchStateFromWidget();
   }
 

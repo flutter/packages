@@ -1,3 +1,8 @@
+## 17.5.1
+
+- Fixes `ShellRoute` page and navigator key collisions when pushing between nested shell routes.
+- Preserves loaded `StatefulShellRoute` branches when the routing configuration changes.
+
 ## 17.5.0
 
 - Adds route `metadata` support, including inheritance and override behavior with exposure on `GoRouterState`.

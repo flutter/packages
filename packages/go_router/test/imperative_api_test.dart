@@ -310,6 +310,48 @@ void main() {
     expect(find.byKey(secondPageKey), findsOneWidget);
   });
 
+  testWidgets('push nested shell into a second outer shell scopes inner navigator key', (
+    WidgetTester tester,
+  ) async {
+    final innerNavigatorKey = GlobalKey<NavigatorState>(debugLabel: 'inner');
+    final router = GoRouter(
+      initialLocation: '/inner/1',
+      routes: <RouteBase>[
+        GoRoute(path: '/top', builder: (_, _) => const Text('Top Screen')),
+        ShellRoute(
+          builder: (_, _, Widget child) => child,
+          routes: <RouteBase>[
+            GoRoute(path: '/outer-sibling', builder: (_, _) => const Text('Outer Sibling')),
+            ShellRoute(
+              navigatorKey: innerNavigatorKey,
+              builder: (_, _, Widget child) => child,
+              routes: <RouteBase>[
+                GoRoute(path: '/inner/1', builder: (_, _) => const Text('Inner 1')),
+                GoRoute(path: '/inner/2', builder: (_, _) => const Text('Inner 2')),
+              ],
+            ),
+          ],
+        ),
+      ],
+    );
+    addTearDown(router.dispose);
+
+    await tester.pumpWidget(MaterialApp.router(routerConfig: router));
+    await tester.pumpAndSettle();
+    final NavigatorState originalInnerNavigator = innerNavigatorKey.currentState!;
+    router.push<void>('/top');
+    await tester.pumpAndSettle();
+    router.push<void>('/outer-sibling');
+    await tester.pumpAndSettle();
+    router.push<void>('/inner/2');
+    await tester.pumpAndSettle();
+
+    expect(tester.takeException(), isNull);
+    expect(find.text('Inner 2'), findsOneWidget);
+    expect(innerNavigatorKey.currentState, same(originalInnerNavigator));
+    expect(Navigator.of(tester.element(find.text('Inner 2'))), isNot(same(originalInnerNavigator)));
+  });
+
   testWidgets('push sequence from flutter/flutter#140586 does not duplicate page keys', (
     WidgetTester tester,
   ) async {
