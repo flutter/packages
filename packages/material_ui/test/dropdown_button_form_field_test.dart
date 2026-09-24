@@ -1927,9 +1927,8 @@ void main() {
       ),
     );
 
-    final TextStyle labelStyle = DefaultTextStyle.of(
-      tester.firstElement(find.text(labelText)),
-    ).style;
+    final TextStyle labelStyle = DefaultTextStyle.of(tester.firstElement(find.text(labelText)))
+        .style;
     expect(labelStyle.color, labelColor);
   });
 
@@ -2051,9 +2050,9 @@ void main() {
     );
 
     await tester.pumpWidget(buildFormField());
-    final Color defaultBorderColor = Theme.of(
-      tester.element(find.byType(InputDecorator)),
-    ).colorScheme.surfaceContainerHighest;
+    final Color defaultBorderColor = Theme.of(tester.element(find.byType(InputDecorator)))
+        .colorScheme
+        .surfaceContainerHighest;
     expect(
       findInputDecoratorBorderPainter(),
       paints..rrect(style: PaintingStyle.fill, color: defaultBorderColor),
