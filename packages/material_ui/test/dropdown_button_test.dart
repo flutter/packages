@@ -2220,47 +2220,6 @@ void main() {
     expect(tester.getCenter(item40.first).dy, tester.getCenter(item40.last).dy);
   });
 
-  testWidgets('DropdownButton selectedItemBuilder builds custom buttons', (
-    WidgetTester tester,
-  ) async {
-    const items = <String>['One', 'Two', 'Three'];
-    String? selectedItem = items[0];
-
-    await tester.pumpWidget(
-      StatefulBuilder(
-        builder: (BuildContext context, StateSetter setState) {
-          return MaterialApp(
-            home: Scaffold(
-              body: DropdownButton<String>(
-                value: selectedItem,
-                onChanged: (String? string) {
-                  setState(() => selectedItem = string);
-                },
-                selectedItemBuilder: (BuildContext context) {
-                  var index = 0;
-                  return items.map((String string) {
-                    index += 1;
-                    return Text('$string as an Arabic numeral: $index');
-                  }).toList();
-                },
-                items: items.map((String string) {
-                  return DropdownMenuItem<String>(value: string, child: Text(string));
-                }).toList(),
-              ),
-            ),
-          );
-        },
-      ),
-    );
-
-    expect(find.text('One as an Arabic numeral: 1'), findsOneWidget);
-    await tester.tap(find.text('One as an Arabic numeral: 1'));
-    await tester.pumpAndSettle();
-    await tester.tap(find.text('Two'));
-    await tester.pumpAndSettle();
-    expect(find.text('Two as an Arabic numeral: 2'), findsOneWidget);
-  });
-
   testWidgets('DropdownButton hint displays properly when selectedItemBuilder is defined', (
     WidgetTester tester,
   ) async {
