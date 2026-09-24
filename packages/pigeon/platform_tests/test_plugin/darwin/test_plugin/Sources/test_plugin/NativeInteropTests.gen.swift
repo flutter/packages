@@ -76,6 +76,7 @@ private func wrapNumber(number: Any) -> NativeInteropTestsNumberWrapper {
     }
     return NativeInteropTestsNumberWrapper(number: nsNumber, type: 1)
   }
+
   switch number {
   case let value as NativeInteropAnEnum:
     return NativeInteropTestsNumberWrapper(number: NSNumber(value: value.rawValue), type: 4)

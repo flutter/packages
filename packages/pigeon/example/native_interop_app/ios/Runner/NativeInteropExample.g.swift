@@ -69,6 +69,7 @@ private func wrapNumber(number: Any) -> NativeInteropExampleNumberWrapper {
     }
     return NativeInteropExampleNumberWrapper(number: nsNumber, type: 1)
   }
+
   return NativeInteropExampleNumberWrapper(number: NSNumber(value: 0), type: 0)
 }
 
@@ -302,7 +303,7 @@ class _PigeonFfiCodec {
       let res: NSMutableDictionary = NSMutableDictionary(capacity: dict.count)
       for (key, value) in dict {
         res.setObject(
-          NativeInteropExamplePigeonInternal.isNullish(key)
+          NativeInteropExamplePigeonInternal.isNullish(value)
             ? NativeInteropExamplePigeonInternalNull()
             : writeValue(value: value, isObject: true) as! NSObject,
           forKey: writeValue(value: key, isObject: true) as! NSCopying)
