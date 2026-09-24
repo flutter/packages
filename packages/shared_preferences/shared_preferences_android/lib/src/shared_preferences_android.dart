@@ -10,6 +10,7 @@ import 'package:shared_preferences_platform_interface/shared_preferences_platfor
 import 'package:shared_preferences_platform_interface/types.dart';
 
 import 'messages.g.dart';
+import 'messages_async.g.dart';
 import 'shared_preferences_async_android.dart';
 import 'strings.dart';
 
@@ -26,10 +27,15 @@ class SharedPreferencesAndroid extends SharedPreferencesStorePlatform {
   final SharedPreferencesApi api;
 
   /// Registers this class as the default instance of [SharedPreferencesStorePlatform].
-  static void registerWith({@visibleForTesting SharedPreferencesApi? api}) {
+  static void registerWith({
+    @visibleForTesting SharedPreferencesApi? api,
+    @visibleForTesting SharedPreferencesAsyncApi? asyncApi,
+  }) {
     SharedPreferencesStorePlatform.instance = SharedPreferencesAndroid(api: api);
     // A temporary work-around for having two plugins contained in a single package.
-    SharedPreferencesAsyncAndroid.registerWith();
+    // Test APIs must be forwarded to the async plugin.
+    // ignore: invalid_use_of_visible_for_testing_member
+    SharedPreferencesAsyncAndroid.registerWith(api: asyncApi);
   }
 
   static const String _defaultPrefix = 'flutter.';

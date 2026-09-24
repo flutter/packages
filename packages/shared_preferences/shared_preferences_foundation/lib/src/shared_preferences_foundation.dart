@@ -15,7 +15,7 @@ typedef _Setter = Future<void> Function(String key, Object value);
 class SharedPreferencesFoundation extends SharedPreferencesStorePlatform {
   /// Creates an instance of [SharedPreferencesFoundation].
   SharedPreferencesFoundation({@visibleForTesting LegacyUserDefaultsApi? api})
-    : _api = api ?? LegacyUserDefaultsApi();
+    : _api = api ?? LegacyUserDefaultsApi.createWithNativeInteropApi();
 
   final LegacyUserDefaultsApi _api;
 
@@ -41,10 +41,16 @@ class SharedPreferencesFoundation extends SharedPreferencesStorePlatform {
 
   /// Registers this class as the default instance of
   /// [SharedPreferencesStorePlatform].
-  static void registerWith() {
-    SharedPreferencesStorePlatform.instance = SharedPreferencesFoundation();
+  static void registerWith({
+    @visibleForTesting LegacyUserDefaultsApi? api,
+    @visibleForTesting UserDefaultsApi? asyncApi,
+  }) {
+    SharedPreferencesStorePlatform.instance = SharedPreferencesFoundation(api: api);
+
     // A temporary work-around for having two plugins contained in a single package.
-    SharedPreferencesAsyncFoundation.registerWith();
+    // Test APIs must be forwarded to the async plugin.
+    // ignore: invalid_use_of_visible_for_testing_member
+    SharedPreferencesAsyncFoundation.registerWith(api: asyncApi);
   }
 
   @override

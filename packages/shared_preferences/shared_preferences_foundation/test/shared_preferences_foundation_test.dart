@@ -103,7 +103,7 @@ void main() {
   });
 
   test('registerWith', () async {
-    SharedPreferencesFoundation.registerWith();
+    SharedPreferencesFoundation.registerWith(api: api, asyncApi: UserDefaultsApi());
     expect(SharedPreferencesStorePlatform.instance, isA<SharedPreferencesFoundation>());
   });
 
