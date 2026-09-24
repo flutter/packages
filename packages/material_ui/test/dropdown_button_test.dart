@@ -1809,9 +1809,8 @@ void main() {
       // Scrolling to the top again has removed the one the focus was on from the
       // tree, causing it to lose focus.
       expect(
-        Focus.of(
-          tester.element(find.byKey(const ValueKey<int>(91), skipOffstage: false).last),
-        ).hasPrimaryFocus,
+        Focus.of(tester.element(find.byKey(const ValueKey<int>(91), skipOffstage: false).last))
+            .hasPrimaryFocus,
         isFalse,
       );
     },
