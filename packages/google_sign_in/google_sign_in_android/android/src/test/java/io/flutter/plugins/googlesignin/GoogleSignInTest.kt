@@ -6,12 +6,9 @@ package io.flutter.plugins.googlesignin
 import android.app.Activity
 import android.app.PendingIntent
 import android.content.Context
-import android.content.Intent
 import android.content.IntentSender
 import android.content.IntentSender.SendIntentException
 import android.content.res.Resources
-import android.os.CancellationSignal
-import androidx.credentials.ClearCredentialStateRequest
 import androidx.credentials.CredentialManager
 import androidx.credentials.CredentialManagerCallback
 import androidx.credentials.CustomCredential
@@ -40,7 +37,6 @@ import com.google.android.libraries.identity.googleid.GetSignInWithGoogleOption
 import com.google.android.libraries.identity.googleid.GoogleIdTokenCredential
 import io.flutter.embedding.engine.plugins.activity.ActivityPluginBinding
 import io.flutter.plugin.common.BinaryMessenger
-import java.util.concurrent.Executor
 import org.junit.Assert
 import org.junit.Before
 import org.junit.Test
@@ -213,8 +209,8 @@ class GoogleSignInTest {
         .getCredentialAsync(
             eq(mockActivity),
             any<GetCredentialRequest>(),
-            anyOrNull<CancellationSignal>(),
-            any<Executor>(),
+            anyOrNull(),
+            any(),
             callbackCaptor.capture())
 
     callbackCaptor.firstValue.onResult(GetCredentialResponse(mockGenericCredential))
@@ -235,14 +231,9 @@ class GoogleSignInTest {
 
     val captor = argumentCaptor<GetCredentialRequest>()
     verify(mockCredentialManager)
-        .getCredentialAsync(
-            eq(mockActivity),
-            captor.capture(),
-            anyOrNull<CancellationSignal>(),
-            any<Executor>(),
-            any<CredentialManagerCallback<GetCredentialResponse, GetCredentialException>>())
+        .getCredentialAsync(eq(mockActivity), captor.capture(), anyOrNull(), any(), any())
 
-    Assert.assertEquals(1, captor.firstValue.credentialOptions.size.toLong())
+    Assert.assertEquals(1, captor.firstValue.credentialOptions.size)
     Assert.assertTrue(captor.firstValue.credentialOptions[0] is GetSignInWithGoogleOption)
   }
 
@@ -264,14 +255,9 @@ class GoogleSignInTest {
 
     val captor = argumentCaptor<GetCredentialRequest>()
     verify(mockCredentialManager)
-        .getCredentialAsync(
-            eq(mockActivity),
-            captor.capture(),
-            anyOrNull<CancellationSignal>(),
-            any<Executor>(),
-            any<CredentialManagerCallback<GetCredentialResponse, GetCredentialException>>())
+        .getCredentialAsync(eq(mockActivity), captor.capture(), anyOrNull(), any(), any())
 
-    Assert.assertEquals(1, captor.firstValue.credentialOptions.size.toLong())
+    Assert.assertEquals(1, captor.firstValue.credentialOptions.size)
     Assert.assertTrue(captor.firstValue.credentialOptions[0] is GetGoogleIdOption)
   }
 
@@ -295,14 +281,9 @@ class GoogleSignInTest {
 
     val captor = argumentCaptor<GetCredentialRequest>()
     verify(mockCredentialManager)
-        .getCredentialAsync(
-            eq(mockActivity),
-            captor.capture(),
-            anyOrNull<CancellationSignal>(),
-            any<Executor>(),
-            any<CredentialManagerCallback<GetCredentialResponse, GetCredentialException>>())
+        .getCredentialAsync(eq(mockActivity), captor.capture(), anyOrNull(), any(), any())
 
-    Assert.assertEquals(1, captor.firstValue.credentialOptions.size.toLong())
+    Assert.assertEquals(1, captor.firstValue.credentialOptions.size)
     Assert.assertEquals(
         hostedDomain,
         (captor.firstValue.credentialOptions[0] as GetSignInWithGoogleOption).hostedDomainFilter)
@@ -328,14 +309,9 @@ class GoogleSignInTest {
 
     val captor = argumentCaptor<GetCredentialRequest>()
     verify(mockCredentialManager)
-        .getCredentialAsync(
-            eq(mockActivity),
-            captor.capture(),
-            anyOrNull<CancellationSignal>(),
-            any<Executor>(),
-            any<CredentialManagerCallback<GetCredentialResponse, GetCredentialException>>())
+        .getCredentialAsync(eq(mockActivity), captor.capture(), anyOrNull(), any(), any())
 
-    Assert.assertEquals(1, captor.firstValue.credentialOptions.size.toLong())
+    Assert.assertEquals(1, captor.firstValue.credentialOptions.size)
     Assert.assertEquals(
         nonce, (captor.firstValue.credentialOptions[0] as GetSignInWithGoogleOption).nonce)
   }
@@ -360,14 +336,9 @@ class GoogleSignInTest {
 
     val captor = argumentCaptor<GetCredentialRequest>()
     verify(mockCredentialManager)
-        .getCredentialAsync(
-            eq(mockActivity),
-            captor.capture(),
-            anyOrNull<CancellationSignal>(),
-            any<Executor>(),
-            any<CredentialManagerCallback<GetCredentialResponse, GetCredentialException>>())
+        .getCredentialAsync(eq(mockActivity), captor.capture(), anyOrNull(), any(), any())
 
-    Assert.assertEquals(1, captor.firstValue.credentialOptions.size.toLong())
+    Assert.assertEquals(1, captor.firstValue.credentialOptions.size)
     Assert.assertEquals(nonce, (captor.firstValue.credentialOptions[0] as GetGoogleIdOption).nonce)
   }
 
@@ -443,8 +414,8 @@ class GoogleSignInTest {
         .getCredentialAsync(
             eq(mockActivity),
             any<GetCredentialRequest>(),
-            anyOrNull<CancellationSignal>(),
-            any<Executor>(),
+            anyOrNull(),
+            any(),
             callbackCaptor.capture())
 
     // PasswordCredential is used because it's easy to create without mocking; all that matters is
@@ -480,8 +451,8 @@ class GoogleSignInTest {
         .getCredentialAsync(
             eq(mockActivity),
             any<GetCredentialRequest>(),
-            anyOrNull<CancellationSignal>(),
-            any<Executor>(),
+            anyOrNull(),
+            any(),
             callbackCaptor.capture())
 
     callbackCaptor.firstValue.onError(GetCredentialCancellationException())
@@ -515,8 +486,8 @@ class GoogleSignInTest {
         .getCredentialAsync(
             eq(mockActivity),
             any<GetCredentialRequest>(),
-            anyOrNull<CancellationSignal>(),
-            any<Executor>(),
+            anyOrNull(),
+            any(),
             callbackCaptor.capture())
 
     callbackCaptor.firstValue.onError(GetCredentialInterruptedException())
@@ -550,8 +521,8 @@ class GoogleSignInTest {
         .getCredentialAsync(
             eq(mockActivity),
             any<GetCredentialRequest>(),
-            anyOrNull<CancellationSignal>(),
-            any<Executor>(),
+            anyOrNull(),
+            any(),
             callbackCaptor.capture())
 
     callbackCaptor.firstValue.onError(GetCredentialProviderConfigurationException())
@@ -585,8 +556,8 @@ class GoogleSignInTest {
         .getCredentialAsync(
             eq(mockActivity),
             any<GetCredentialRequest>(),
-            anyOrNull<CancellationSignal>(),
-            any<Executor>(),
+            anyOrNull(),
+            any(),
             callbackCaptor.capture())
 
     callbackCaptor.firstValue.onError(GetCredentialUnsupportedException())
@@ -620,8 +591,8 @@ class GoogleSignInTest {
         .getCredentialAsync(
             eq(mockActivity),
             any<GetCredentialRequest>(),
-            anyOrNull<CancellationSignal>(),
-            any<Executor>(),
+            anyOrNull(),
+            any(),
             callbackCaptor.capture())
 
     callbackCaptor.firstValue.onError(NoCredentialException())
@@ -655,8 +626,8 @@ class GoogleSignInTest {
         .getCredentialAsync(
             eq(mockActivity),
             any<GetCredentialRequest>(),
-            anyOrNull<CancellationSignal>(),
-            any<Executor>(),
+            anyOrNull(),
+            any(),
             callbackCaptor.capture())
 
     callbackCaptor.firstValue.onError(GetCredentialUnknownException())
@@ -821,7 +792,7 @@ class GoogleSignInTest {
     val serverAuthCode = "serverAuthCode"
     whenever(mockAuthorizationClient.authorize(any())).thenReturn(mockAuthorizationTask)
     val successResult = mockSuccessAuthorizationResult(serverAuthCode, accessToken, scopes)
-    whenever(mockAuthorizationClient.getAuthorizationResultFromIntent(anyOrNull<Intent>()))
+    whenever(mockAuthorizationClient.getAuthorizationResultFromIntent(anyOrNull()))
         .thenReturn(successResult)
 
     plugin.activity = mockActivity
@@ -869,7 +840,7 @@ class GoogleSignInTest {
     val serverAuthCode = "serverAuthCode"
     whenever(mockAuthorizationClient.authorize(any())).thenReturn(mockAuthorizationTask)
     val successResult = mockSuccessAuthorizationResult(serverAuthCode, accessToken, scopes)
-    whenever(mockAuthorizationClient.getAuthorizationResultFromIntent(anyOrNull<Intent>()))
+    whenever(mockAuthorizationClient.getAuthorizationResultFromIntent(anyOrNull()))
         .thenReturn(successResult)
 
     plugin.activity = mockActivity
@@ -975,11 +946,7 @@ class GoogleSignInTest {
     val callbackCaptor =
         argumentCaptor<CredentialManagerCallback<Void?, ClearCredentialException>>()
     verify(mockCredentialManager)
-        .clearCredentialStateAsync(
-            any<ClearCredentialStateRequest>(),
-            anyOrNull<CancellationSignal>(),
-            any(),
-            callbackCaptor.capture())
+        .clearCredentialStateAsync(any(), anyOrNull(), any(), callbackCaptor.capture())
 
     callbackCaptor.firstValue.onResult(null)
   }
@@ -991,11 +958,7 @@ class GoogleSignInTest {
     val callbackCaptor =
         argumentCaptor<CredentialManagerCallback<Void?, ClearCredentialException>>()
     verify(mockCredentialManager)
-        .clearCredentialStateAsync(
-            any<ClearCredentialStateRequest>(),
-            anyOrNull<CancellationSignal>(),
-            any(),
-            callbackCaptor.capture())
+        .clearCredentialStateAsync(any(), anyOrNull(), any(), callbackCaptor.capture())
 
     callbackCaptor.firstValue.onError(mock<ClearCredentialException>())
   }
@@ -1016,7 +979,7 @@ class GoogleSignInTest {
     callbackCaptor.firstValue.onSuccess(null)
 
     val request = requestCaptor.firstValue
-    Assert.assertEquals(scopes.size.toLong(), request.scopes.size.toLong())
+    Assert.assertEquals(scopes.size, request.scopes.size)
     Assert.assertEquals(scopes[0], request.scopes[0].scopeUri)
     // Account is mostly opaque, so just verify that one was set.
     Assert.assertNotNull(request.account)
