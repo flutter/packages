@@ -213,12 +213,12 @@ class GoogleSignInPlugin : FlutterPlugin, ActivityAware {
             requestBuilder.build(),
             null,
             Executors.newSingleThreadExecutor(),
-            object : CredentialManagerCallback<GetCredentialResponse?, GetCredentialException?> {
+            object : CredentialManagerCallback<GetCredentialResponse, GetCredentialException> {
               override fun onResult(response: GetCredentialResponse) {
                 val credential = response.credential
                 if (credential is CustomCredential &&
                     (credential.type == GoogleIdTokenCredential.TYPE_GOOGLE_ID_TOKEN_CREDENTIAL)) {
-                  val googleIdTokenCredential = credentialConverter.createFrom(credential)
+                  val googleIdTokenCredential = credentialConverter(credential)
                   val profilePictureUri = googleIdTokenCredential.profilePictureUri
                   callback(
                       Result.success(
@@ -278,7 +278,7 @@ class GoogleSignInPlugin : FlutterPlugin, ActivityAware {
           ClearCredentialStateRequest(),
           null,
           Executors.newSingleThreadExecutor(),
-          object : CredentialManagerCallback<Void?, ClearCredentialException?> {
+          object : CredentialManagerCallback<Void?, ClearCredentialException> {
             override fun onResult(result: Void?) {
               callback(Result.success(Unit))
             }
@@ -422,10 +422,10 @@ class GoogleSignInPlugin : FlutterPlugin, ActivityAware {
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?): Boolean {
       if (requestCode == REQUEST_CODE_AUTHORIZE) {
-        if (pendingAuthorizationCallback != null) {
+        val callback = pendingAuthorizationCallback
+        if (callback != null) {
           // Clear the pending callback before completing it so a re-delivered result (e.g. after a
           // configuration change or process death) cannot complete the same reply twice.
-          val callback: (Result<AuthorizeResult>) -> Unit = pendingAuthorizationCallback
           pendingAuthorizationCallback = null
           try {
             val authorizationResult =
