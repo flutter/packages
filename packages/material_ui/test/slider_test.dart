@@ -203,9 +203,8 @@ void main() {
           textDirection: TextDirection.ltr,
           child: StatefulBuilder(
             builder: (BuildContext context, StateSetter setState) {
-              final SliderThemeData sliderTheme = SliderTheme.of(
-                context,
-              ).copyWith(thumbShape: loggingThumb);
+              final SliderThemeData sliderTheme = SliderTheme.of(context)
+                  .copyWith(thumbShape: loggingThumb);
               return Material(
                 child: Center(
                   child: SliderTheme(
@@ -458,9 +457,8 @@ void main() {
           textDirection: TextDirection.ltr,
           child: StatefulBuilder(
             builder: (BuildContext context, StateSetter setState) {
-              final SliderThemeData sliderTheme = SliderTheme.of(
-                context,
-              ).copyWith(thumbShape: loggingThumb);
+              final SliderThemeData sliderTheme = SliderTheme.of(context)
+                  .copyWith(thumbShape: loggingThumb);
               return Material(
                 child: Center(
                   child: SliderTheme(
@@ -571,9 +569,8 @@ void main() {
           textDirection: TextDirection.ltr,
           child: StatefulBuilder(
             builder: (BuildContext context, StateSetter setState) {
-              final SliderThemeData sliderTheme = SliderTheme.of(
-                context,
-              ).copyWith(thumbShape: loggingThumb);
+              final SliderThemeData sliderTheme = SliderTheme.of(context)
+                  .copyWith(thumbShape: loggingThumb);
               return Material(
                 child: Center(
                   child: SliderTheme(
@@ -927,9 +924,8 @@ void main() {
                   child: Material(
                     child: Theme(
                       data: Theme.of(context).copyWith(
-                        sliderTheme: Theme.of(
-                          context,
-                        ).sliderTheme.copyWith(showValueIndicator: show),
+                        sliderTheme: Theme.of(context).sliderTheme
+                            .copyWith(showValueIndicator: show),
                       ),
                       child: Center(
                         child: OverflowBox(
@@ -3382,9 +3378,8 @@ void main() {
           textDirection: TextDirection.ltr,
           child: StatefulBuilder(
             builder: (BuildContext context, StateSetter setState) {
-              final SliderThemeData sliderTheme = SliderTheme.of(
-                context,
-              ).copyWith(tickMarkShape: TallSliderTickMarkShape());
+              final SliderThemeData sliderTheme = SliderTheme.of(context)
+                  .copyWith(tickMarkShape: TallSliderTickMarkShape());
               return Material(
                 child: Center(
                   child: IntrinsicHeight(
@@ -3885,9 +3880,8 @@ void main() {
                       dragStarted = true;
                     },
                     child: MediaQuery(
-                      data: MediaQuery.of(
-                        context,
-                      ).copyWith(gestureSettings: const DeviceGestureSettings(touchSlop: 20)),
+                      data: MediaQuery.of(context)
+                          .copyWith(gestureSettings: const DeviceGestureSettings(touchSlop: 20)),
                       child: Slider(
                         value: value,
                         key: sliderKey,
@@ -3941,9 +3935,8 @@ void main() {
                       dragStarted = true;
                     },
                     child: MediaQuery(
-                      data: MediaQuery.of(
-                        context,
-                      ).copyWith(gestureSettings: const DeviceGestureSettings(touchSlop: 10)),
+                      data: MediaQuery.of(context)
+                          .copyWith(gestureSettings: const DeviceGestureSettings(touchSlop: 10)),
                       child: Slider(
                         value: value,
                         key: sliderKey,
@@ -5282,9 +5275,8 @@ void main() {
 
     RenderBox sliderRenderBox() {
       return tester.allRenderObjects.firstWhere(
-            (RenderObject object) => object.runtimeType.toString() == '_RenderSlider',
-          )
-          as RenderBox;
+        (RenderObject object) => object.runtimeType.toString() == '_RenderSlider',
+      ) as RenderBox;
     }
 
     // Test Slider height and tracks spacing with zero padding.
@@ -5693,8 +5685,7 @@ void main() {
             child: Slider(
               value: 0.5,
               divisions: 10,
-              label:
-                  'A very long label string that exceeds standard screen widths to test clipping behavior',
+              label: 'A very long label string that exceeds standard screen widths to test clipping behavior',
               onChanged: (double value) {},
             ),
           ),

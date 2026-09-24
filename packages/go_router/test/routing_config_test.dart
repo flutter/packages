@@ -2,7 +2,8 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import 'package:cupertino_ui/cupertino_ui.dart';
+import 'dart:async';
+
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 import 'package:material_ui/material_ui.dart';
@@ -134,6 +135,64 @@ void main() {
     );
     await tester.pumpAndSettle();
     expect(key.currentState!.value == 1, isTrue);
+  });
+
+  testWidgets('routing config preserves pushed shell routes', (WidgetTester tester) async {
+    final branchANavigatorKey = GlobalKey<NavigatorState>(debugLabel: 'branch-a');
+    final branchBNavigatorKey = GlobalKey<NavigatorState>(debugLabel: 'branch-b');
+    RoutingConfig createConfig({required List<RouteBase> additionalRoutes}) {
+      return RoutingConfig(
+        routes: <RouteBase>[
+          GoRoute(path: '/top', builder: (_, _) => const Text('Top-level route')),
+          StatefulShellRoute.indexedStack(
+            branches: <StatefulShellBranch>[
+              StatefulShellBranch(
+                navigatorKey: branchANavigatorKey,
+                routes: <RouteBase>[
+                  GoRoute(path: '/a', builder: (_, _) => const Text('Screen A')),
+                  ...additionalRoutes,
+                ],
+              ),
+              StatefulShellBranch(
+                navigatorKey: branchBNavigatorKey,
+                routes: <RouteBase>[
+                  GoRoute(
+                    path: '/b',
+                    builder: (_, _) => const Text('Screen B'),
+                    routes: <RouteBase>[
+                      GoRoute(path: 'details', builder: (_, _) => const Text('Screen B Detail')),
+                    ],
+                  ),
+                ],
+              ),
+            ],
+            pageBuilder: (_, _, StatefulNavigationShell navigationShell) =>
+                MaterialPage<void>(child: navigationShell),
+          ),
+        ],
+      );
+    }
+
+    final config = ValueNotifier<RoutingConfig>(createConfig(additionalRoutes: <RouteBase>[]));
+    addTearDown(config.dispose);
+    final GoRouter router = await createRouterWithRoutingConfig(
+      config,
+      tester,
+      initialLocation: '/a',
+    );
+    unawaited(router.push('/b/details'));
+    await tester.pumpAndSettle();
+    unawaited(router.push('/top'));
+    await tester.pumpAndSettle();
+
+    config.value = createConfig(
+      additionalRoutes: <RouteBase>[GoRoute(path: '/c', builder: (_, _) => const Text('Screen C'))],
+    );
+    await tester.pumpAndSettle();
+    router.pop();
+    await tester.pumpAndSettle();
+
+    expect(find.text('Screen B Detail'), findsOneWidget);
   });
 
   testWidgets(
