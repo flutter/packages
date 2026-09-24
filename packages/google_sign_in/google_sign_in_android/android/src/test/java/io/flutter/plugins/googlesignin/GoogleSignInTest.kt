@@ -688,7 +688,7 @@ class GoogleSignInTest {
 
   @Test
   fun authorize_returnsImmediateResult() {
-    val scopes = mutableListOf("scope1", "scope1")
+    val scopes = listOf("scope1", "scope1")
     val params = PlatformAuthorizationRequest(scopes)
 
     val accessToken = "accessToken"
@@ -789,7 +789,7 @@ class GoogleSignInTest {
 
   @Test
   fun authorize_returnsPostIntentResult() {
-    val scopes = mutableListOf("scope1", "scope1")
+    val scopes = listOf("scope1", "scope1")
     val params = PlatformAuthorizationRequest(scopes)
 
     val accessToken = "accessToken"
@@ -837,7 +837,7 @@ class GoogleSignInTest {
   // throw IllegalStateException ("Reply already submitted") on the real Pigeon reply.
   @Test
   fun authorize_ignoresDuplicateActivityResult() {
-    val scopes = mutableListOf("scope1", "scope1")
+    val scopes = listOf("scope1", "scope1")
     val params = PlatformAuthorizationRequest(scopes)
 
     val accessToken = "accessToken"
@@ -1009,7 +1009,7 @@ class GoogleSignInTest {
   private fun mockSuccessAuthorizationResult(
       serverAuthCode: String,
       accessToken: String,
-      scopes: MutableList<String>?
+      scopes: List<String>
   ): AuthorizationResult {
     val mockResult = mock<AuthorizationResult>()
     whenever(mockResult.hasResolution()).thenReturn(false)
