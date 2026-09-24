@@ -840,7 +840,9 @@ protocol CameraApi {
   func prepareForVideoRecording(completion: @escaping (Result<Void, Error>) -> Void)
   /// Begins recording video, optionally enabling streaming to Dart at the same
   /// time.
-  func startVideoRecording(enableStream: Bool, completion: @escaping (Result<Void, Error>) -> Void)
+  func startVideoRecording(
+    enableStream: Bool, videoOutputPath: String?,
+    completion: @escaping (Result<Void, Error>) -> Void)
   /// Stops recording video, and results the path to the resulting file.
   func stopVideoRecording(completion: @escaping (Result<String, Error>) -> Void)
   /// Pauses video recording.
@@ -1131,7 +1133,9 @@ class CameraApiSetup {
       startVideoRecordingChannel.setMessageHandler { message, reply in
         let args = message as! [Any?]
         let enableStreamArg = args[0] as! Bool
-        api.startVideoRecording(enableStream: enableStreamArg) { result in
+        let videoOutputPathArg: String? = nilOrValue(args[1])
+        api.startVideoRecording(enableStream: enableStreamArg, videoOutputPath: videoOutputPathArg)
+        { result in
           switch result {
           case .success:
             reply(wrapResult(nil))
