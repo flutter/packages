@@ -2332,35 +2332,29 @@ static func deepHash(value: Any?, hasher: inout Hasher) {
     return ${_classNamePrefix}NumberWrapper(number: nsNumber, type: 1)
   }
 ''');
-        indent.writeScoped('switch number {', '}', () {
-          var caseNum = 4;
-          indent.format('''
-    case let value as Int:
-      return ${_classNamePrefix}NumberWrapper(number: NSNumber(value: value), type: 1)
-    case let value as Int64:
-      return ${_classNamePrefix}NumberWrapper(number: NSNumber(value: value), type: 1)
-    case let value as Double:
-      return ${_classNamePrefix}NumberWrapper(number: NSNumber(value: value), type: 2)
-    case let value as Float:
-      return ${_classNamePrefix}NumberWrapper(number: NSNumber(value: value), type: 2)
-    case let value as Bool:
-      return ${_classNamePrefix}NumberWrapper(number: NSNumber(value: value), type: 3)
-''');
-          for (final Enum anEnum in root.enums) {
-            indent.writeln('case let value as ${anEnum.name}:');
+        if (root.enums.isNotEmpty) {
+          indent.writeScoped('switch number {', '}', () {
+            var caseNum = 4;
+            for (final Enum anEnum in root.enums) {
+              indent.writeln('case let value as ${anEnum.name}:');
+              indent.inc();
+              indent.writeln(
+                'return ${_classNamePrefix}NumberWrapper(number: NSNumber(value: value.rawValue), type: ${caseNum++})',
+              );
+              indent.dec();
+            }
+            indent.writeln('default:');
             indent.inc();
             indent.writeln(
-              'return ${_classNamePrefix}NumberWrapper(number: NSNumber(value: value.rawValue), type: ${caseNum++})',
+              'return ${_classNamePrefix}NumberWrapper(number: NSNumber(value: 0), type: 0)',
             );
             indent.dec();
-          }
-          indent.writeln('default:');
-          indent.inc();
+          });
+        } else {
           indent.writeln(
             'return ${_classNamePrefix}NumberWrapper(number: NSNumber(value: 0), type: 0)',
           );
-          indent.dec();
-        });
+        }
       },
     );
     indent.newln();

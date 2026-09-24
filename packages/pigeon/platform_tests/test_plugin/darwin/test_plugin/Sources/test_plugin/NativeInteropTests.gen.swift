@@ -77,17 +77,6 @@ private func wrapNumber(number: Any) -> NativeInteropTestsNumberWrapper {
     return NativeInteropTestsNumberWrapper(number: nsNumber, type: 1)
   }
   switch number {
-  case let value as Int:
-    return NativeInteropTestsNumberWrapper(number: NSNumber(value: value), type: 1)
-  case let value as Int64:
-    return NativeInteropTestsNumberWrapper(number: NSNumber(value: value), type: 1)
-  case let value as Double:
-    return NativeInteropTestsNumberWrapper(number: NSNumber(value: value), type: 2)
-  case let value as Float:
-    return NativeInteropTestsNumberWrapper(number: NSNumber(value: value), type: 2)
-  case let value as Bool:
-    return NativeInteropTestsNumberWrapper(number: NSNumber(value: value), type: 3)
-
   case let value as NativeInteropAnEnum:
     return NativeInteropTestsNumberWrapper(number: NSNumber(value: value.rawValue), type: 4)
   case let value as NativeInteropAnotherEnum:
