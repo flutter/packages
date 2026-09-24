@@ -399,7 +399,7 @@ void main() {
     expect(find.text('Branch A v1'), findsOneWidget);
     final NavigatorState branchANavigator = branchAKey.currentState!;
 
-    router.go('/a/detail');
+    final Future<void> detailResult = router.push<void>('/a/detail');
     await tester.pumpAndSettle();
     expect(find.text('Detail Branch A v1'), findsOneWidget);
 
@@ -418,6 +418,7 @@ void main() {
     expect(find.text('Detail Branch A v2'), findsOneWidget);
     router.pop();
     await tester.pumpAndSettle();
+    await detailResult;
     expect(tester.takeException(), isNull);
     expect(find.text('Branch A v2'), findsOneWidget);
     expect(branchAKey.currentState, same(branchANavigator));
