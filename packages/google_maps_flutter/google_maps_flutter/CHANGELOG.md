@@ -1,3 +1,7 @@
+## NEXT
+
+* Updates minimum supported SDK version to Flutter 3.41/Dart 3.11.
+
 ## 2.18.1
 
 * Clarifies that clearing a tile cache may cause flickering on some platforms.
