@@ -329,7 +329,7 @@ class GoogleSignInPlugin : FlutterPlugin, ActivityAware {
         val authorizationRequest = authorizationRequestBuilder.build()
         authorizationClientFactory(context)
             .authorize(authorizationRequest)
-            .addOnSuccessListener({ authorizationResult: AuthorizationResult? ->
+            .addOnSuccessListener { authorizationResult: AuthorizationResult? ->
               if (authorizationResult!!.hasResolution()) {
                 if (promptIfUnauthorized) {
                   val activity = this.activity
@@ -375,14 +375,12 @@ class GoogleSignInPlugin : FlutterPlugin, ActivityAware {
                             authorizationResult.getServerAuthCode(),
                             authorizationResult.getGrantedScopes())))
               }
-            })
-            .addOnFailureListener(
-                OnFailureListener { e: Exception? ->
-                  callback(
-                      Result.success(
-                          AuthorizeFailure(
-                              AuthorizeFailureType.AUTHORIZE_FAILURE, e!!.message, null)))
-                })
+            }
+            .addOnFailureListener { e: Exception? ->
+              callback(
+                  Result.success(
+                      AuthorizeFailure(AuthorizeFailureType.AUTHORIZE_FAILURE, e!!.message, null)))
+            }
       } catch (e: RuntimeException) {
         callback(
             Result.success(
