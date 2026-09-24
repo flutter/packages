@@ -3044,6 +3044,42 @@ void main() {
     expect(menuRect.bottomRight, const Offset(800.0, 600.0));
   });
 
+  testWidgets('Dropdown screen edges', (WidgetTester tester) async {
+    int? value = 4;
+    final items = <DropdownMenuItem<int>>[
+      for (int i = 0; i < 20; ++i) DropdownMenuItem<int>(value: i, child: Text('$i')),
+    ];
+
+    void handleChanged(int? newValue) {
+      value = newValue;
+    }
+
+    final button = DropdownButton<int>(value: value, onChanged: handleChanged, items: items);
+
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Material(
+          child: Align(alignment: Alignment.topCenter, child: button),
+        ),
+      ),
+    );
+
+    await tester.tap(find.text('4'));
+    await tester.pump();
+    await tester.pump(const Duration(seconds: 1)); // finish the menu animation
+
+    // We should have two copies of item 5, one in the menu and one in the
+    // button itself.
+    expect(tester.elementList(find.text('5', skipOffstage: false)), hasLength(2));
+
+    expect(value, 4);
+    await tester.tap(find.byWidget(button, skipOffstage: false), warnIfMissed: false);
+    expect(value, 4);
+    // this waits for the route's completer to complete, which calls handleChanged
+    await tester.idle();
+    expect(value, 4);
+  });
+
   testWidgets(
     'DropdownButtons are dismissed on screen orientation changes, but not on keyboard hide',
     (WidgetTester tester) async {
