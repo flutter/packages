@@ -1,3 +1,7 @@
+## 0.8.13+9
+
+* Returns an `invalid_image` error instead of an empty or missing file when a picked image cannot be saved.
+
 ## 0.8.13+8
 
 * Fixes scaling 10-bit images on iOS.

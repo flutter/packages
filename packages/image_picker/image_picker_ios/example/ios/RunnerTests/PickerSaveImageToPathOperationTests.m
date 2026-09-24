@@ -4,6 +4,8 @@
 
 #import <OCMock/OCMock.h>
 
+#import "ImagePickerTestImages.h"
+
 @import image_picker_ios;
 #if __has_include(<image_picker_ios/image_picker_ios-umbrella.h>)
 @import image_picker_ios.Test;
@@ -222,6 +224,45 @@
              XCTAssertEqualObjects(error.code, @"invalid_image");
              XCTAssertEqualObjects(error.message, loadDataError.localizedDescription);
              XCTAssertEqualObjects(error.details, @"PHPickerDomain");
+             [errorExpectation fulfill];
+           }];
+
+  [operation start];
+  [self waitForExpectationsWithTimeout:30 handler:nil];
+}
+
+- (void)testSaveImageFailsWhenImageCannotBeDecoded API_AVAILABLE(ios(14)) {
+  NSData *dataJPG = ImagePickerTestImages.JPGTestData;
+  NSData *truncatedJPG = [dataJPG subdataWithRange:NSMakeRange(0, dataJPG.length / 2)];
+  XCTAssertNil([UIImage imageWithData:truncatedJPG]);
+
+  id mockItemProvider = OCMClassMock([NSItemProvider class]);
+  OCMStub([mockItemProvider hasItemConformingToTypeIdentifier:OCMOCK_ANY]).andReturn(YES);
+  [[mockItemProvider stub]
+      loadDataRepresentationForTypeIdentifier:OCMOCK_ANY
+                            completionHandler:[OCMArg invokeBlockWithArgs:truncatedJPG,
+                                                                          [NSNull null], nil]];
+
+  id pickerResult = OCMClassMock([PHPickerResult class]);
+  OCMStub([pickerResult itemProvider]).andReturn(mockItemProvider);
+
+  XCTestExpectation *errorExpectation =
+      [self expectationWithDescription:@"undecodable image error"];
+  FLTPHPickerSaveImageToPathOperation *operation = [[FLTPHPickerSaveImageToPathOperation alloc]
+           initWithResult:pickerResult
+                maxHeight:@100
+                 maxWidth:@100
+      desiredImageQuality:@100
+             fullMetadata:YES
+           savedPathBlock:^(NSString *savedPath, FlutterError *error) {
+             XCTAssertNil(savedPath, @"Returned a path to a %llu-byte file.",
+                          [[NSFileManager defaultManager] attributesOfItemAtPath:savedPath
+                                                                           error:nil]
+                              .fileSize);
+             XCTAssertEqualObjects(error.code, @"invalid_image");
+             if (savedPath) {
+               [[NSFileManager defaultManager] removeItemAtPath:savedPath error:nil];
+             }
              [errorExpectation fulfill];
            }];
 
