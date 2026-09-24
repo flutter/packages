@@ -849,10 +849,23 @@ void runPigeonNativeInteropIntegrationTests(TargetGenerator targetGenerator) {
       final Object? receivedString = api!.echoNullableObject(sentString);
       expect(receivedString, sentString);
 
-      // Echo a second type as well to ensure the handling is generic.
+      // Echo each primitive number/boolean type as well to test boxed number handling.
       const Object sentInt = regularInt;
       final Object? receivedInt = api.echoNullableObject(sentInt);
       expect(receivedInt, sentInt);
+
+      const Object sentBool = true;
+      final Object? receivedBool = api.echoNullableObject(sentBool);
+      expect(receivedBool, sentBool);
+
+      const Object sentDouble = 2.0694;
+      final Object? receivedDouble = api.echoNullableObject(sentDouble);
+      expect(receivedDouble, sentDouble);
+
+      const Object sentWholeDouble = 3.0;
+      final Object? receivedWholeDouble = api.echoNullableObject(sentWholeDouble);
+      expect(receivedWholeDouble, isA<double>());
+      expect(receivedWholeDouble, sentWholeDouble);
     });
 
     testWidgets('Null generic Objects serialize and deserialize correctly', (WidgetTester _) async {

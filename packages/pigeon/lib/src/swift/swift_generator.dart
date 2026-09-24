@@ -2323,12 +2323,13 @@ static func deepHash(value: Any?, hasher: inout Hasher) {
       () {
         indent.format('''
   if let nsNumber = number as? NSNumber {
-    if CFGetTypeID(nsNumber as CFTypeRef) == CFBooleanGetTypeID(), let value = number as? Bool {
-      return ${_classNamePrefix}NumberWrapper(number: NSNumber(value: value), type: 3)
+    if CFGetTypeID(nsNumber as CFTypeRef) == CFBooleanGetTypeID() {
+      return ${_classNamePrefix}NumberWrapper(number: nsNumber, type: 3)
     }
     if CFNumberIsFloatType(nsNumber) {
       return ${_classNamePrefix}NumberWrapper(number: nsNumber, type: 2)
     }
+    return ${_classNamePrefix}NumberWrapper(number: nsNumber, type: 1)
   }
 ''');
         indent.writeScoped('switch number {', '}', () {

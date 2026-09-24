@@ -1814,30 +1814,4 @@ void main() {
     expect(code, contains('registerInstance(api: FlutterApiBridge?, name: String = '));
     expect(code, contains('FlutterApiRegistrar.registeredFlutterApi.removeValue(forKey: name)'));
   });
-
-  test('ffi wrapNumber checks CFBooleanGetTypeID and CFNumberIsFloatType before numeric casts', () {
-    final root = Root(apis: <Api>[], classes: <Class>[], enums: <Enum>[]);
-    final sink = StringBuffer();
-    const swiftOptions = InternalSwiftOptions(swiftOut: '', useFfi: true);
-    const generator = SwiftGenerator();
-    generator.generate(swiftOptions, root, sink, dartPackageName: DEFAULT_PACKAGE_NAME);
-    final code = sink.toString();
-    expect(
-      code,
-      contains(
-        '  if let nsNumber = number as? NSNumber {\n'
-        '    if CFGetTypeID(nsNumber as CFTypeRef) == CFBooleanGetTypeID(), let value = number as? Bool {\n'
-        '      return NumberWrapper(number: NSNumber(value: value), type: 3)\n'
-        '    }\n'
-        '    if CFNumberIsFloatType(nsNumber) {\n'
-        '      return NumberWrapper(number: nsNumber, type: 2)\n'
-        '    }\n'
-        '  }',
-      ),
-    );
-    expect(
-      code,
-      contains('PigeonInternal.isNullish(value) ? PigeonInternalNull() : writeValue(value: value'),
-    );
-  });
 }

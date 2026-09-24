@@ -61,12 +61,13 @@ import Foundation
 
 private func wrapNumber(number: Any) -> NativeInteropExampleNumberWrapper {
   if let nsNumber = number as? NSNumber {
-    if CFGetTypeID(nsNumber as CFTypeRef) == CFBooleanGetTypeID(), let value = number as? Bool {
-      return NativeInteropExampleNumberWrapper(number: NSNumber(value: value), type: 3)
+    if CFGetTypeID(nsNumber as CFTypeRef) == CFBooleanGetTypeID() {
+      return NativeInteropExampleNumberWrapper(number: nsNumber, type: 3)
     }
     if CFNumberIsFloatType(nsNumber) {
       return NativeInteropExampleNumberWrapper(number: nsNumber, type: 2)
     }
+    return NativeInteropExampleNumberWrapper(number: nsNumber, type: 1)
   }
   switch number {
   case let value as Int:

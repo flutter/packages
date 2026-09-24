@@ -68,12 +68,13 @@ private func createConnectionError(withChannelName channelName: String) -> Nativ
 
 private func wrapNumber(number: Any) -> NativeInteropTestsNumberWrapper {
   if let nsNumber = number as? NSNumber {
-    if CFGetTypeID(nsNumber as CFTypeRef) == CFBooleanGetTypeID(), let value = number as? Bool {
-      return NativeInteropTestsNumberWrapper(number: NSNumber(value: value), type: 3)
+    if CFGetTypeID(nsNumber as CFTypeRef) == CFBooleanGetTypeID() {
+      return NativeInteropTestsNumberWrapper(number: nsNumber, type: 3)
     }
     if CFNumberIsFloatType(nsNumber) {
       return NativeInteropTestsNumberWrapper(number: nsNumber, type: 2)
     }
+    return NativeInteropTestsNumberWrapper(number: nsNumber, type: 1)
   }
   switch number {
   case let value as Int:
