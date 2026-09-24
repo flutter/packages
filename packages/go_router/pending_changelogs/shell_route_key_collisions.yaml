@@ -1,3 +1,4 @@
 changelog: |
-  - Fixes `ShellRoute` key collisions during imperative navigation and preserves shell navigator state across dynamic routing configuration updates.
+  - Fixes `ShellRoute` page and navigator key collisions when pushing between nested shell routes.
+  - Preserves and updates loaded `StatefulShellRoute` branches when the routing configuration changes.
 version: patch

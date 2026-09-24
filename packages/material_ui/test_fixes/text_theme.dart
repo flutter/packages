@@ -24,7 +24,7 @@ void main() {
   var errorTextTheme = TextTheme(error: '');
 
   // Changes made in https://github.com/flutter/flutter/pull/48547
-  var copiedTextTheme = TextTheme.copyWith(
+  var copiedTextTheme = textTheme.copyWith(
     display4: displayStyle4,
     display3: displayStyle3,
     display2: displayStyle2,
@@ -39,7 +39,7 @@ void main() {
     subtitle: subtitleStyle,
     overline: overlineStyle,
   );
-  var errorCopiedTextTheme = TextTheme.copyWith(error: '');
+  var errorCopiedTextTheme = textTheme.copyWith(error: '');
 
   // Changes made in https://github.com/flutter/flutter/pull/48547
   var style;
@@ -76,7 +76,7 @@ void main() {
   var anotherErrorTextTheme = TextTheme(error: '');
 
   // Changes made in https://github.com/flutter/flutter/pull/109817
-  var anotherCopiedTextTheme = TextTheme.copyWith(
+  var anotherCopiedTextTheme = anotherTextTheme.copyWith(
     headline1: headline1Style,
     headline2: headline2Style,
     headline3: headline3Style,
@@ -91,7 +91,7 @@ void main() {
     button: buttonStyle,
     overline: overlineStyle,
   );
-  var anotherErrorCopiedTextTheme = TextTheme.copyWith(error: '');
+  var anotherErrorCopiedTextTheme = anotherTextTheme.copyWith(error: '');
 
   // Changes made in https://github.com/flutter/flutter/pull/109817
   var style;

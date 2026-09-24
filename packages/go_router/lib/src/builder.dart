@@ -137,10 +137,24 @@ class _CustomNavigator extends StatefulWidget {
     required this.errorBuilder,
     required this.errorPageBuilder,
     required this.requestFocus,
+    this.isShellNavigator = false,
   });
 
   final GlobalKey<NavigatorState> navigatorKey;
   final List<NavigatorObserver> observers;
+
+  /// Whether this navigator builds the nested Navigator for a
+  /// [ShellRoute]/[StatefulShellRoute] branch, as opposed to the root
+  /// [GoRouter] navigator.
+  ///
+  /// Shell navigators are wrapped in `Semantics(container: true)` so that
+  /// each route's [ModalBarrier] (which blocks the semantics of
+  /// previously-painted siblings up to the nearest semantics boundary)
+  /// cannot reach past the shell's Navigator and drop shell chrome that
+  /// paints before it (e.g. a side rail or app bar in a `Row`/`Column`
+  /// shell). The root navigator has no earlier-painted siblings by
+  /// construction, so it does not need the same containment.
+  final bool isShellNavigator;
 
   /// The actual [RouteMatchBase]s to be built.
   ///
@@ -315,6 +329,7 @@ class _CustomNavigatorState extends State<_CustomNavigator> {
                 errorBuilder: widget.errorBuilder,
                 errorPageBuilder: widget.errorPageBuilder,
                 requestFocus: widget.requestFocus,
+                isShellNavigator: true,
               ),
             );
           },
@@ -443,18 +458,24 @@ class _CustomNavigatorState extends State<_CustomNavigator> {
       _updatePages(context);
     }
     assert(_pages != null);
+    final navigator = Navigator(
+      key: widget.navigatorKey,
+      requestFocus: widget.requestFocus,
+      restorationScopeId: widget.navigatorRestorationId,
+      pages: _pages!,
+      observers: widget.observers,
+      onPopPage: _handlePopPage,
+    );
     return GoRouterStateRegistryScope(
       registry: _registry,
       child: HeroControllerScope(
         controller: _controller!,
-        child: Navigator(
-          key: widget.navigatorKey,
-          requestFocus: widget.requestFocus,
-          restorationScopeId: widget.navigatorRestorationId,
-          pages: _pages!,
-          observers: widget.observers,
-          onPopPage: _handlePopPage,
-        ),
+        // A Navigator does not establish a semantics boundary, so a route's
+        // ModalBarrier (wrapped in BlockSemantics) can otherwise drop the
+        // semantics of shell chrome painted before this navigator (e.g. a
+        // side rail in a Row-based ShellRoute shell). See
+        // https://github.com/flutter/flutter/issues/135656.
+        child: widget.isShellNavigator ? Semantics(container: true, child: navigator) : navigator,
       ),
     );
   }

@@ -1,7 +1,11 @@
-## 17.5.1
+## 18.0.1
 
-- Fixes `ShellRoute` page and navigator key collisions when pushing between nested shell routes.
-- Preserves loaded `StatefulShellRoute` branches when the routing configuration changes.
+Clarifies `onEnter` documentation regarding evaluation order relative to `redirect:` chains.
+
+## 18.0.0
+
+- Migrates to material_ui and cupertino_ui.
+- Updates minimum supported SDK version to Flutter 3.44/Dart 3.12.
 
 ## 17.5.0
 

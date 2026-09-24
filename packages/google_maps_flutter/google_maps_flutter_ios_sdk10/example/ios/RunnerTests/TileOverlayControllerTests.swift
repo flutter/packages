@@ -11,10 +11,10 @@ import Testing
 
   @Test func updateTileOverlaySetsVisibilityLast() {
     let tileLayer = PropertyOrderValidatingTileLayer()
-    FGMTileOverlayController.update(
+    TileOverlayController.update(
       tileLayer,
-      from: FGMPlatformTileOverlay.make(
-        withTileOverlayId: "overlay",
+      from: PlatformTileOverlay(
+        tileOverlayId: "overlay",
         fadeIn: false,
         transparency: 0.5,
         zIndex: 0,
