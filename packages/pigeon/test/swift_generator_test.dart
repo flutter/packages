@@ -1825,11 +1825,13 @@ void main() {
     expect(
       code,
       contains(
-        'if CFGetTypeID(number as CFTypeRef) == CFBooleanGetTypeID(), let value = number as? Bool {\n'
-        '    return NumberWrapper(number: NSNumber(value: value), type: 3)\n'
-        '  }\n'
-        '  if let nsNumber = number as? NSNumber, CFNumberIsFloatType(nsNumber) {\n'
-        '    return NumberWrapper(number: nsNumber, type: 2)\n'
+        '  if let nsNumber = number as? NSNumber {\n'
+        '    if CFGetTypeID(nsNumber as CFTypeRef) == CFBooleanGetTypeID(), let value = number as? Bool {\n'
+        '      return NumberWrapper(number: NSNumber(value: value), type: 3)\n'
+        '    }\n'
+        '    if CFNumberIsFloatType(nsNumber) {\n'
+        '      return NumberWrapper(number: nsNumber, type: 2)\n'
+        '    }\n'
         '  }',
       ),
     );
