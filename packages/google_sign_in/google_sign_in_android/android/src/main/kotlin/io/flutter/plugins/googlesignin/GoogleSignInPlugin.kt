@@ -34,8 +34,6 @@ import com.google.android.gms.auth.api.identity.Identity
 import com.google.android.gms.auth.api.identity.RevokeAccessRequest
 import com.google.android.gms.common.api.ApiException
 import com.google.android.gms.common.api.Scope
-import com.google.android.gms.tasks.OnFailureListener
-import com.google.android.gms.tasks.OnSuccessListener
 import com.google.android.libraries.identity.googleid.GetGoogleIdOption
 import com.google.android.libraries.identity.googleid.GetSignInWithGoogleOption
 import com.google.android.libraries.identity.googleid.GoogleIdTokenCredential
@@ -47,7 +45,6 @@ import io.flutter.embedding.engine.plugins.activity.ActivityAware
 import io.flutter.embedding.engine.plugins.activity.ActivityPluginBinding
 import io.flutter.plugin.common.BinaryMessenger
 import io.flutter.plugin.common.PluginRegistry.ActivityResultListener
-import io.flutter.plugins.googlesignin.GoogleSignInApi.Companion.setUp
 import java.util.Objects
 import java.util.concurrent.Executors
 
@@ -71,13 +68,13 @@ class GoogleSignInPlugin : FlutterPlugin, ActivityAware {
   fun initWithDelegate(messenger: BinaryMessenger, delegate: Delegate) {
     this.messenger = messenger
     this.delegate = delegate
-    setUp(messenger, delegate)
+    GoogleSignInApi.setUp(messenger, delegate)
   }
 
   private fun dispose() {
     delegate = null
     if (messenger != null) {
-      GoogleSignInApi.Companion.setUp(messenger!!, null)
+      GoogleSignInApi.setUp(messenger!!, null)
       messenger = null
     }
   }
@@ -85,7 +82,7 @@ class GoogleSignInPlugin : FlutterPlugin, ActivityAware {
   private fun attachToActivity(activityPluginBinding: ActivityPluginBinding) {
     this.activityPluginBinding = activityPluginBinding
     activityPluginBinding.addActivityResultListener(delegate!!)
-    delegate!!.activity = activityPluginBinding.getActivity()
+    delegate!!.activity = activityPluginBinding.activity
   }
 
   private fun disposeActivity() {
@@ -95,7 +92,7 @@ class GoogleSignInPlugin : FlutterPlugin, ActivityAware {
   }
 
   override fun onAttachedToEngine(binding: FlutterPluginBinding) {
-    initInstance(binding.getBinaryMessenger(), binding.getApplicationContext())
+    initInstance(binding.binaryMessenger, binding.applicationContext)
   }
 
   override fun onDetachedFromEngine(binding: FlutterPluginBinding) {
@@ -144,9 +141,7 @@ class GoogleSignInPlugin : FlutterPlugin, ActivityAware {
     override fun getGoogleServicesJsonServerClientId(): String? {
       @SuppressLint("DiscouragedApi")
       val webClientIdIdentifier =
-          context
-              .getResources()
-              .getIdentifier("default_web_client_id", "string", context.getPackageName())
+          context.resources.getIdentifier("default_web_client_id", "string", context.packageName)
       if (webClientIdIdentifier != 0) {
         return context.getString(webClientIdIdentifier)
       }
@@ -159,7 +154,7 @@ class GoogleSignInPlugin : FlutterPlugin, ActivityAware {
     ) {
       try {
         val serverClientId = params.serverClientId
-        if (serverClientId == null || serverClientId.isEmpty()) {
+        if (serverClientId.isNullOrEmpty()) {
           callback(
               Result.success(
                   GetCredentialFailure(
@@ -214,8 +209,8 @@ class GoogleSignInPlugin : FlutterPlugin, ActivityAware {
             null,
             Executors.newSingleThreadExecutor(),
             object : CredentialManagerCallback<GetCredentialResponse, GetCredentialException> {
-              override fun onResult(response: GetCredentialResponse) {
-                val credential = response.credential
+              override fun onResult(result: GetCredentialResponse) {
+                val credential = result.credential
                 if (credential is CustomCredential &&
                     (credential.type == GoogleIdTokenCredential.TYPE_GOOGLE_ID_TOKEN_CREDENTIAL)) {
                   val googleIdTokenCredential = credentialConverter(credential)
@@ -237,26 +232,22 @@ class GoogleSignInPlugin : FlutterPlugin, ActivityAware {
                       Result.success(
                           GetCredentialFailure(
                               GetCredentialFailureType.UNEXPECTED_CREDENTIAL_TYPE,
-                              "Unexpected credential type: " + credential,
+                              "Unexpected credential type: $credential",
                               null)))
                 }
               }
 
               override fun onError(e: GetCredentialException) {
-                val type: GetCredentialFailureType?
-                if (e is GetCredentialCancellationException) {
-                  type = GetCredentialFailureType.CANCELED
-                } else if (e is GetCredentialInterruptedException) {
-                  type = GetCredentialFailureType.INTERRUPTED
-                } else if (e is GetCredentialProviderConfigurationException) {
-                  type = GetCredentialFailureType.PROVIDER_CONFIGURATION_ISSUE
-                } else if (e is GetCredentialUnsupportedException) {
-                  type = GetCredentialFailureType.UNSUPPORTED
-                } else if (e is NoCredentialException) {
-                  type = GetCredentialFailureType.NO_CREDENTIAL
-                } else {
-                  type = GetCredentialFailureType.UNKNOWN
-                }
+                val type =
+                    when (e) {
+                      is GetCredentialCancellationException -> GetCredentialFailureType.CANCELED
+                      is GetCredentialInterruptedException -> GetCredentialFailureType.INTERRUPTED
+                      is GetCredentialProviderConfigurationException ->
+                          GetCredentialFailureType.PROVIDER_CONFIGURATION_ISSUE
+                      is GetCredentialUnsupportedException -> GetCredentialFailureType.UNSUPPORTED
+                      is NoCredentialException -> GetCredentialFailureType.NO_CREDENTIAL
+                      else -> GetCredentialFailureType.UNKNOWN
+                    }
                 // Errors are reported through the return value as structured data, rather than
                 // a Result error's PlatformException.
                 callback(Result.success(GetCredentialFailure(type, e.message, null)))
@@ -292,14 +283,11 @@ class GoogleSignInPlugin : FlutterPlugin, ActivityAware {
     override fun clearAuthorizationToken(token: String, callback: (Result<Unit>) -> Unit) {
       authorizationClientFactory(context)
           .clearToken(ClearTokenRequest.builder().setToken(token).build())
-          .addOnSuccessListener(
-              OnSuccessListener { unused: Void? -> callback(Result.success(Unit)) })
-          .addOnFailureListener(
-              OnFailureListener { e: Exception? ->
-                callback(
-                    Result.failure(
-                        FlutterError("clearAuthorizationToken failed", e!!.message, null)))
-              })
+          .addOnSuccessListener { callback(Result.success(Unit)) }
+          .addOnFailureListener { e: Exception? ->
+            callback(
+                Result.failure(FlutterError("clearAuthorizationToken failed", e!!.message, null)))
+          }
     }
 
     override fun authorize(
@@ -308,7 +296,7 @@ class GoogleSignInPlugin : FlutterPlugin, ActivityAware {
         callback: (Result<AuthorizeResult>) -> Unit
     ) {
       try {
-        val requestedScopes: MutableList<Scope?> = ArrayList<Scope?>()
+        val requestedScopes = ArrayList<Scope>()
         for (scope in params.scopes) {
           requestedScopes.add(Scope(scope))
         }
@@ -342,12 +330,11 @@ class GoogleSignInPlugin : FlutterPlugin, ActivityAware {
                     // Prompt for access. `callback` will be resolved in onActivityResult.
                     // There must be a pending intent if hasResolution() was true.
                     val pendingIntent =
-                        Objects.requireNonNull<PendingIntent>(
-                            authorizationResult.getPendingIntent())
+                        Objects.requireNonNull<PendingIntent>(authorizationResult.pendingIntent)
                     try {
                       pendingAuthorizationCallback = callback
                       activity.startIntentSenderForResult(
-                          pendingIntent.getIntentSender(),
+                          pendingIntent.intentSender,
                           REQUEST_CODE_AUTHORIZE, /* fillInIntent */
                           null, /* flagsMask */
                           0, /* flagsValue */
@@ -371,9 +358,9 @@ class GoogleSignInPlugin : FlutterPlugin, ActivityAware {
                 callback(
                     Result.success(
                         PlatformAuthorizationResult(
-                            authorizationResult.getAccessToken(),
-                            authorizationResult.getServerAuthCode(),
-                            authorizationResult.getGrantedScopes())))
+                            authorizationResult.accessToken,
+                            authorizationResult.serverAuthCode,
+                            authorizationResult.grantedScopes)))
               }
             }
             .addOnFailureListener { e: Exception? ->
@@ -395,7 +382,7 @@ class GoogleSignInPlugin : FlutterPlugin, ActivityAware {
         params: PlatformRevokeAccessRequest,
         callback: (Result<Unit>) -> Unit
     ) {
-      val scopes: MutableList<Scope?> = ArrayList<Scope?>()
+      val scopes = ArrayList<Scope>()
       for (scope in params.scopes) {
         scopes.add(Scope(scope))
       }
@@ -405,12 +392,10 @@ class GoogleSignInPlugin : FlutterPlugin, ActivityAware {
                   .setAccount(Account(params.accountEmail, GOOGLE_ACCOUNT_TYPE))
                   .setScopes(scopes)
                   .build())
-          .addOnSuccessListener(
-              OnSuccessListener { unused: Void? -> callback(Result.success(Unit)) })
-          .addOnFailureListener(
-              OnFailureListener { e: Exception? ->
-                callback(Result.failure(FlutterError("revokeAccess failed", e!!.message, null)))
-              })
+          .addOnSuccessListener { callback(Result.success(Unit)) }
+          .addOnFailureListener { e: Exception? ->
+            callback(Result.failure(FlutterError("revokeAccess failed", e!!.message, null)))
+          }
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?): Boolean {
@@ -426,9 +411,9 @@ class GoogleSignInPlugin : FlutterPlugin, ActivityAware {
             callback(
                 Result.success(
                     PlatformAuthorizationResult(
-                        authorizationResult.getAccessToken(),
-                        authorizationResult.getServerAuthCode(),
-                        authorizationResult.getGrantedScopes())))
+                        authorizationResult.accessToken,
+                        authorizationResult.serverAuthCode,
+                        authorizationResult.grantedScopes)))
             return true
           } catch (e: ApiException) {
             callback(
