@@ -350,6 +350,22 @@ void main() {
     expect(find.text('Inner 2'), findsOneWidget);
     expect(innerNavigatorKey.currentState, same(originalInnerNavigator));
     expect(Navigator.of(tester.element(find.text('Inner 2'))), isNot(same(originalInnerNavigator)));
+
+    router.pop();
+    await tester.pumpAndSettle();
+    expect(tester.takeException(), isNull);
+    expect(find.text('Outer Sibling'), findsOneWidget);
+
+    router.pop();
+    await tester.pumpAndSettle();
+    expect(tester.takeException(), isNull);
+    expect(find.text('Top Screen'), findsOneWidget);
+
+    router.pop();
+    await tester.pumpAndSettle();
+    expect(tester.takeException(), isNull);
+    expect(find.text('Inner 1'), findsOneWidget);
+    expect(innerNavigatorKey.currentState, same(originalInnerNavigator));
   });
 
   testWidgets('push sequence from flutter/flutter#140586 does not duplicate page keys', (

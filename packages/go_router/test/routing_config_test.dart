@@ -362,7 +362,15 @@ void main() {
             StatefulShellBranch(
               navigatorKey: branchAKey,
               preload: true,
-              routes: <RouteBase>[GoRoute(path: aPath, builder: (_, _) => Text(aLabel))],
+              routes: <RouteBase>[
+                GoRoute(
+                  path: aPath,
+                  builder: (_, _) => Text(aLabel),
+                  routes: <RouteBase>[
+                    GoRoute(path: 'detail', builder: (_, _) => Text('Detail $aLabel')),
+                  ],
+                ),
+              ],
             ),
             StatefulShellBranch(
               navigatorKey: branchBKey,
@@ -391,6 +399,10 @@ void main() {
     expect(find.text('Branch A v1'), findsOneWidget);
     final NavigatorState branchANavigator = branchAKey.currentState!;
 
+    router.go('/a/detail');
+    await tester.pumpAndSettle();
+    expect(find.text('Detail Branch A v1'), findsOneWidget);
+
     shellKey.currentState!.goBranch(1);
     await tester.pumpAndSettle();
     expect(find.text('Branch B'), findsOneWidget);
@@ -401,6 +413,10 @@ void main() {
     expect(branchCKey.currentState, isNotNull);
 
     shellKey.currentState!.goBranch(0);
+    await tester.pumpAndSettle();
+    expect(tester.takeException(), isNull);
+    expect(find.text('Detail Branch A v2'), findsOneWidget);
+    router.pop();
     await tester.pumpAndSettle();
     expect(tester.takeException(), isNull);
     expect(find.text('Branch A v2'), findsOneWidget);
