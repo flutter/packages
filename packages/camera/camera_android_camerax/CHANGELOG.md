@@ -1,3 +1,7 @@
+## 0.7.5+1
+
+* Updates Robolectric to 4.17 and adds the JVM arguments it requires for unit tests.
+
 ## 0.7.5
 
 * Adds support for custom video output path in video recording.
