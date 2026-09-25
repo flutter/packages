@@ -62,7 +62,13 @@ android {
         testImplementation("junit:junit:4.13.2")
         testImplementation("androidx.test:core:1.7.0")
         testImplementation("org.mockito:mockito-core:5.23.0")
-        testImplementation("org.robolectric:robolectric:4.16")
+        testImplementation("org.robolectric:robolectric:4.17")
+        // Robolectric 4.17 added a JSR 305 @GuardedBy annotation to ShadowView (the
+        // superclass of ShadowSurfaceView, used by PlatformVideoViewTest) without
+        // declaring a dependency on jsr305. javac warns when a referenced class has an
+        // annotation it can't resolve, and the example app compiles this project with
+        // -Xlint:all -Werror, so the test compile fails without jsr305.
+        testImplementation("com.google.code.findbugs:jsr305:3.0.2")
         testImplementation("androidx.media3:media3-test-utils:${exoplayerVersion}")
     }
 
