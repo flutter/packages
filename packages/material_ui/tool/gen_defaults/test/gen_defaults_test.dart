@@ -25,7 +25,7 @@ import '../templates/color_scheme_template.dart';
 import '../templates/divider_template.dart';
 // import '../templates/drawer_template.dart';
 // import '../templates/expansion_tile_template.dart';
-// import '../templates/fab_template.dart';
+import '../templates/fab_template.dart';
 import '../templates/filter_chip_template.dart';
 // import '../templates/icon_button_template.dart';
 import '../templates/input_chip_template.dart';
@@ -572,8 +572,13 @@ void main() {
     });
 
     test('FabTemplateM3 emits M3 Fab defaults from tokens', () {
-      // Intentionally empty, will be implemented during migration. See:
-      // https://github.com/flutter/flutter/issues/187899
+      const template = FabTemplateM3();
+      expect(template.className, '_FABDefaultsM3');
+
+      final String contents = _generateContents(template);
+      expect(contents, contains('Color? get backgroundColor => _colors.primaryContainer'));
+      expect(contents, contains(RegExp(r'_FloatingActionButtonType\.large\s+=> 36\.0')));
+      expect(contents, contains('TextStyle? get extendedTextStyle => _textTheme.labelLarge'));
     });
 
     test('FilterChipTemplateM3 emits M3 FilterChip defaults from tokens', () {
