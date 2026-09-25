@@ -1516,6 +1516,21 @@ void main() {
     expect(tester.getSize(find.byType(DrawerHeader)), Size.zero);
   });
 
+  testWidgets('DrawerHeader provides header semantics', (WidgetTester tester) async {
+    final SemanticsHandle handle = tester.ensureSemantics();
+    await tester.pumpWidget(
+      const MaterialApp(
+        home: Scaffold(body: DrawerHeader(child: Text('Drawer Title'))),
+      ),
+    );
+
+    expect(
+      tester.getSemantics(find.byType(DrawerHeader)),
+      matchesSemantics(isHeader: true, label: 'Drawer Title', textDirection: TextDirection.ltr),
+    );
+    handle.dispose();
+  });
+
   testWidgets('Drawer double tap to close does not leak LocalHistoryEntry', (
     WidgetTester tester,
   ) async {
