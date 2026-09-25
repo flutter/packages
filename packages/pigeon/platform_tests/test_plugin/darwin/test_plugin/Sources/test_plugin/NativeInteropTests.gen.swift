@@ -67,18 +67,17 @@ private func createConnectionError(withChannelName channelName: String) -> Nativ
 }
 
 private func wrapNumber(number: Any) -> NativeInteropTestsNumberWrapper {
-  switch number {
-  case let value as Int:
-    return NativeInteropTestsNumberWrapper(number: NSNumber(value: value), type: 1)
-  case let value as Int64:
-    return NativeInteropTestsNumberWrapper(number: NSNumber(value: value), type: 1)
-  case let value as Double:
-    return NativeInteropTestsNumberWrapper(number: NSNumber(value: value), type: 2)
-  case let value as Float:
-    return NativeInteropTestsNumberWrapper(number: NSNumber(value: value), type: 2)
-  case let value as Bool:
-    return NativeInteropTestsNumberWrapper(number: NSNumber(value: value), type: 3)
+  if let nsNumber = number as? NSNumber {
+    if CFGetTypeID(nsNumber as CFTypeRef) == CFBooleanGetTypeID() {
+      return NativeInteropTestsNumberWrapper(number: nsNumber, type: 3)
+    }
+    if CFNumberIsFloatType(nsNumber) {
+      return NativeInteropTestsNumberWrapper(number: nsNumber, type: 2)
+    }
+    return NativeInteropTestsNumberWrapper(number: nsNumber, type: 1)
+  }
 
+  switch number {
   case let value as NativeInteropAnEnum:
     return NativeInteropTestsNumberWrapper(number: NSNumber(value: value.rawValue), type: 4)
   case let value as NativeInteropAnotherEnum:
@@ -2004,7 +2003,7 @@ class _PigeonFfiCodec {
       let res: NSMutableDictionary = NSMutableDictionary(capacity: dict.count)
       for (key, value) in dict {
         res.setObject(
-          NativeInteropTestsPigeonInternal.isNullish(key)
+          NativeInteropTestsPigeonInternal.isNullish(value)
             ? NativeInteropTestsPigeonInternalNull()
             : writeValue(value: value, isObject: true) as! NSObject,
           forKey: writeValue(value: key, isObject: true) as! NSCopying)
