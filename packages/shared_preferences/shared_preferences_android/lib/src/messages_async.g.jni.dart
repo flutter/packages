@@ -259,135 +259,187 @@ extension type SharedPreferencesAsyncApi._(jni$_.JObject _$this) implements jni$
       final $d = $i.methodDescriptor.toDartString(releaseOriginal: true);
       final $a = $i.args;
       if ($d ==
-          r'setBool(Ljava/lang/String;ZLio/flutter/plugins/sharedpreferences/SharedPreferencesPigeonOptions;)V') {
-        _$impls[$p]!.setBool(
-          ($a![0] as jni$_.JString),
-          ($a![1] as jni$_.JBoolean).toDartBool(releaseOriginal: true),
-          ($a![2] as SharedPreferencesPigeonOptions),
-        );
-        return jni$_.nullptr;
-      }
-      if ($d ==
-          r'setString(Ljava/lang/String;Ljava/lang/String;Lio/flutter/plugins/sharedpreferences/SharedPreferencesPigeonOptions;)V') {
-        _$impls[$p]!.setString(
-          ($a![0] as jni$_.JString),
-          ($a![1] as jni$_.JString),
-          ($a![2] as SharedPreferencesPigeonOptions),
-        );
-        return jni$_.nullptr;
-      }
-      if ($d ==
-          r'setInt(Ljava/lang/String;JLio/flutter/plugins/sharedpreferences/SharedPreferencesPigeonOptions;)V') {
-        _$impls[$p]!.setInt(
-          ($a![0] as jni$_.JString),
-          ($a![1] as jni$_.JLong).toDartInt(releaseOriginal: true),
-          ($a![2] as SharedPreferencesPigeonOptions),
-        );
-        return jni$_.nullptr;
-      }
-      if ($d ==
-          r'setDouble(Ljava/lang/String;DLio/flutter/plugins/sharedpreferences/SharedPreferencesPigeonOptions;)V') {
-        _$impls[$p]!.setDouble(
-          ($a![0] as jni$_.JString),
-          ($a![1] as jni$_.JDouble).toDartDouble(releaseOriginal: true),
-          ($a![2] as SharedPreferencesPigeonOptions),
-        );
-        return jni$_.nullptr;
-      }
-      if ($d ==
-          r'setEncodedStringList(Ljava/lang/String;Ljava/lang/String;Lio/flutter/plugins/sharedpreferences/SharedPreferencesPigeonOptions;)V') {
-        _$impls[$p]!.setEncodedStringList(
-          ($a![0] as jni$_.JString),
-          ($a![1] as jni$_.JString),
-          ($a![2] as SharedPreferencesPigeonOptions),
-        );
-        return jni$_.nullptr;
-      }
-      if ($d ==
-          r'setDeprecatedStringList(Ljava/lang/String;Ljava/util/List;Lio/flutter/plugins/sharedpreferences/SharedPreferencesPigeonOptions;)V') {
-        _$impls[$p]!.setDeprecatedStringList(
-          ($a![0] as jni$_.JString),
-          ($a![1] as jni$_.JList<jni$_.JString>),
-          ($a![2] as SharedPreferencesPigeonOptions),
-        );
-        return jni$_.nullptr;
-      }
-      if ($d ==
-          r'getString(Ljava/lang/String;Lio/flutter/plugins/sharedpreferences/SharedPreferencesPigeonOptions;)Ljava/lang/String;') {
-        final $r = _$impls[$p]!.getString(
-          ($a![0] as jni$_.JString),
-          ($a![1] as SharedPreferencesPigeonOptions),
+          r'setBool(Ljava/lang/String;ZLio/flutter/plugins/sharedpreferences/SharedPreferencesPigeonOptions;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;') {
+        final _$$contRef = ($a![3] as Continuation).reference;
+        final $r = jni$_.KotlinContinuation.fromReference(_$$contRef).resumeWithVoidFuture(
+          _$impls[$p]!.setBool(
+            ($a![0] as jni$_.JString),
+            ($a![1] as jni$_.JBoolean).toDartBool(releaseOriginal: true),
+            ($a![2] as SharedPreferencesPigeonOptions),
+          ),
         );
         return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
             jni$_.nullptr;
       }
       if ($d ==
-          r'getBool(Ljava/lang/String;Lio/flutter/plugins/sharedpreferences/SharedPreferencesPigeonOptions;)Ljava/lang/Boolean;') {
-        final $r = _$impls[$p]!.getBool(
-          ($a![0] as jni$_.JString),
-          ($a![1] as SharedPreferencesPigeonOptions),
+          r'setString(Ljava/lang/String;Ljava/lang/String;Lio/flutter/plugins/sharedpreferences/SharedPreferencesPigeonOptions;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;') {
+        final _$$contRef = ($a![3] as Continuation).reference;
+        final $r = jni$_.KotlinContinuation.fromReference(_$$contRef).resumeWithVoidFuture(
+          _$impls[$p]!.setString(
+            ($a![0] as jni$_.JString),
+            ($a![1] as jni$_.JString),
+            ($a![2] as SharedPreferencesPigeonOptions),
+          ),
         );
         return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
             jni$_.nullptr;
       }
       if ($d ==
-          r'getDouble(Ljava/lang/String;Lio/flutter/plugins/sharedpreferences/SharedPreferencesPigeonOptions;)Ljava/lang/Double;') {
-        final $r = _$impls[$p]!.getDouble(
-          ($a![0] as jni$_.JString),
-          ($a![1] as SharedPreferencesPigeonOptions),
+          r'setInt(Ljava/lang/String;JLio/flutter/plugins/sharedpreferences/SharedPreferencesPigeonOptions;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;') {
+        final _$$contRef = ($a![3] as Continuation).reference;
+        final $r = jni$_.KotlinContinuation.fromReference(_$$contRef).resumeWithVoidFuture(
+          _$impls[$p]!.setInt(
+            ($a![0] as jni$_.JString),
+            ($a![1] as jni$_.JLong).toDartInt(releaseOriginal: true),
+            ($a![2] as SharedPreferencesPigeonOptions),
+          ),
         );
         return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
             jni$_.nullptr;
       }
       if ($d ==
-          r'getInt(Ljava/lang/String;Lio/flutter/plugins/sharedpreferences/SharedPreferencesPigeonOptions;)Ljava/lang/Long;') {
-        final $r = _$impls[$p]!.getInt(
-          ($a![0] as jni$_.JString),
-          ($a![1] as SharedPreferencesPigeonOptions),
+          r'setDouble(Ljava/lang/String;DLio/flutter/plugins/sharedpreferences/SharedPreferencesPigeonOptions;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;') {
+        final _$$contRef = ($a![3] as Continuation).reference;
+        final $r = jni$_.KotlinContinuation.fromReference(_$$contRef).resumeWithVoidFuture(
+          _$impls[$p]!.setDouble(
+            ($a![0] as jni$_.JString),
+            ($a![1] as jni$_.JDouble).toDartDouble(releaseOriginal: true),
+            ($a![2] as SharedPreferencesPigeonOptions),
+          ),
         );
         return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
             jni$_.nullptr;
       }
       if ($d ==
-          r'getPlatformEncodedStringList(Ljava/lang/String;Lio/flutter/plugins/sharedpreferences/SharedPreferencesPigeonOptions;)Ljava/util/List;') {
-        final $r = _$impls[$p]!.getPlatformEncodedStringList(
-          ($a![0] as jni$_.JString),
-          ($a![1] as SharedPreferencesPigeonOptions),
+          r'setEncodedStringList(Ljava/lang/String;Ljava/lang/String;Lio/flutter/plugins/sharedpreferences/SharedPreferencesPigeonOptions;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;') {
+        final _$$contRef = ($a![3] as Continuation).reference;
+        final $r = jni$_.KotlinContinuation.fromReference(_$$contRef).resumeWithVoidFuture(
+          _$impls[$p]!.setEncodedStringList(
+            ($a![0] as jni$_.JString),
+            ($a![1] as jni$_.JString),
+            ($a![2] as SharedPreferencesPigeonOptions),
+          ),
         );
         return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
             jni$_.nullptr;
       }
       if ($d ==
-          r'getStringList(Ljava/lang/String;Lio/flutter/plugins/sharedpreferences/SharedPreferencesPigeonOptions;)Lio/flutter/plugins/sharedpreferences/StringListResult;') {
-        final $r = _$impls[$p]!.getStringList(
-          ($a![0] as jni$_.JString),
-          ($a![1] as SharedPreferencesPigeonOptions),
+          r'setDeprecatedStringList(Ljava/lang/String;Ljava/util/List;Lio/flutter/plugins/sharedpreferences/SharedPreferencesPigeonOptions;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;') {
+        final _$$contRef = ($a![3] as Continuation).reference;
+        final $r = jni$_.KotlinContinuation.fromReference(_$$contRef).resumeWithVoidFuture(
+          _$impls[$p]!.setDeprecatedStringList(
+            ($a![0] as jni$_.JString),
+            ($a![1] as jni$_.JList<jni$_.JString?>),
+            ($a![2] as SharedPreferencesPigeonOptions),
+          ),
         );
         return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
             jni$_.nullptr;
       }
       if ($d ==
-          r'clear(Ljava/util/List;Lio/flutter/plugins/sharedpreferences/SharedPreferencesPigeonOptions;)V') {
-        _$impls[$p]!.clear(
-          ($a![0] as jni$_.JList<jni$_.JString>?),
-          ($a![1] as SharedPreferencesPigeonOptions),
-        );
-        return jni$_.nullptr;
-      }
-      if ($d ==
-          r'getAll(Ljava/util/List;Lio/flutter/plugins/sharedpreferences/SharedPreferencesPigeonOptions;)Ljava/util/Map;') {
-        final $r = _$impls[$p]!.getAll(
-          ($a![0] as jni$_.JList<jni$_.JString>?),
-          ($a![1] as SharedPreferencesPigeonOptions),
+          r'getString(Ljava/lang/String;Lio/flutter/plugins/sharedpreferences/SharedPreferencesPigeonOptions;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;') {
+        final _$$contRef = ($a![2] as Continuation).reference;
+        final $r = jni$_.KotlinContinuation.fromReference(_$$contRef).resumeWithFuture(
+          _$impls[$p]!.getString(
+            ($a![0] as jni$_.JString),
+            ($a![1] as SharedPreferencesPigeonOptions),
+          ),
         );
         return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
             jni$_.nullptr;
       }
       if ($d ==
-          r'getKeys(Ljava/util/List;Lio/flutter/plugins/sharedpreferences/SharedPreferencesPigeonOptions;)Ljava/util/List;') {
-        final $r = _$impls[$p]!.getKeys(
-          ($a![0] as jni$_.JList<jni$_.JString>?),
-          ($a![1] as SharedPreferencesPigeonOptions),
+          r'getBool(Ljava/lang/String;Lio/flutter/plugins/sharedpreferences/SharedPreferencesPigeonOptions;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;') {
+        final _$$contRef = ($a![2] as Continuation).reference;
+        final $r = jni$_.KotlinContinuation.fromReference(_$$contRef).resumeWithFuture(
+          _$impls[$p]!.getBool(
+            ($a![0] as jni$_.JString),
+            ($a![1] as SharedPreferencesPigeonOptions),
+          ),
+        );
+        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
+            jni$_.nullptr;
+      }
+      if ($d ==
+          r'getDouble(Ljava/lang/String;Lio/flutter/plugins/sharedpreferences/SharedPreferencesPigeonOptions;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;') {
+        final _$$contRef = ($a![2] as Continuation).reference;
+        final $r = jni$_.KotlinContinuation.fromReference(_$$contRef).resumeWithFuture(
+          _$impls[$p]!.getDouble(
+            ($a![0] as jni$_.JString),
+            ($a![1] as SharedPreferencesPigeonOptions),
+          ),
+        );
+        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
+            jni$_.nullptr;
+      }
+      if ($d ==
+          r'getInt(Ljava/lang/String;Lio/flutter/plugins/sharedpreferences/SharedPreferencesPigeonOptions;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;') {
+        final _$$contRef = ($a![2] as Continuation).reference;
+        final $r = jni$_.KotlinContinuation.fromReference(_$$contRef).resumeWithFuture(
+          _$impls[$p]!.getInt(
+            ($a![0] as jni$_.JString),
+            ($a![1] as SharedPreferencesPigeonOptions),
+          ),
+        );
+        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
+            jni$_.nullptr;
+      }
+      if ($d ==
+          r'getPlatformEncodedStringList(Ljava/lang/String;Lio/flutter/plugins/sharedpreferences/SharedPreferencesPigeonOptions;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;') {
+        final _$$contRef = ($a![2] as Continuation).reference;
+        final $r = jni$_.KotlinContinuation.fromReference(_$$contRef).resumeWithFuture(
+          _$impls[$p]!.getPlatformEncodedStringList(
+            ($a![0] as jni$_.JString),
+            ($a![1] as SharedPreferencesPigeonOptions),
+          ),
+        );
+        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
+            jni$_.nullptr;
+      }
+      if ($d ==
+          r'getStringList(Ljava/lang/String;Lio/flutter/plugins/sharedpreferences/SharedPreferencesPigeonOptions;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;') {
+        final _$$contRef = ($a![2] as Continuation).reference;
+        final $r = jni$_.KotlinContinuation.fromReference(_$$contRef).resumeWithFuture(
+          _$impls[$p]!.getStringList(
+            ($a![0] as jni$_.JString),
+            ($a![1] as SharedPreferencesPigeonOptions),
+          ),
+        );
+        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
+            jni$_.nullptr;
+      }
+      if ($d ==
+          r'clear(Ljava/util/List;Lio/flutter/plugins/sharedpreferences/SharedPreferencesPigeonOptions;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;') {
+        final _$$contRef = ($a![2] as Continuation).reference;
+        final $r = jni$_.KotlinContinuation.fromReference(_$$contRef).resumeWithVoidFuture(
+          _$impls[$p]!.clear(
+            ($a![0] as jni$_.JList<jni$_.JString?>?),
+            ($a![1] as SharedPreferencesPigeonOptions),
+          ),
+        );
+        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
+            jni$_.nullptr;
+      }
+      if ($d ==
+          r'getAll(Ljava/util/List;Lio/flutter/plugins/sharedpreferences/SharedPreferencesPigeonOptions;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;') {
+        final _$$contRef = ($a![2] as Continuation).reference;
+        final $r = jni$_.KotlinContinuation.fromReference(_$$contRef).resumeWithFuture(
+          _$impls[$p]!.getAll(
+            ($a![0] as jni$_.JList<jni$_.JString?>?),
+            ($a![1] as SharedPreferencesPigeonOptions),
+          ),
+        );
+        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
+            jni$_.nullptr;
+      }
+      if ($d ==
+          r'getKeys(Ljava/util/List;Lio/flutter/plugins/sharedpreferences/SharedPreferencesPigeonOptions;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;') {
+        final _$$contRef = ($a![2] as Continuation).reference;
+        final $r = jni$_.KotlinContinuation.fromReference(_$$contRef).resumeWithFuture(
+          _$impls[$p]!.getKeys(
+            ($a![0] as jni$_.JList<jni$_.JString?>?),
+            ($a![1] as SharedPreferencesPigeonOptions),
+          ),
         );
         return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
             jni$_.nullptr;
@@ -411,22 +463,12 @@ extension type SharedPreferencesAsyncApi._(jni$_.JObject _$this) implements jni$
       $i.args?.release();
       jni$_.ProtectedJniExtensions.returnResult($i.result, $r);
     });
-    implementer.add(r'io.flutter.plugins.sharedpreferences.SharedPreferencesAsyncApi', $p, _$invokePointer, [
-      if ($impl.setBool$async)
-        r'setBool(Ljava/lang/String;ZLio/flutter/plugins/sharedpreferences/SharedPreferencesPigeonOptions;)V',
-      if ($impl.setString$async)
-        r'setString(Ljava/lang/String;Ljava/lang/String;Lio/flutter/plugins/sharedpreferences/SharedPreferencesPigeonOptions;)V',
-      if ($impl.setInt$async)
-        r'setInt(Ljava/lang/String;JLio/flutter/plugins/sharedpreferences/SharedPreferencesPigeonOptions;)V',
-      if ($impl.setDouble$async)
-        r'setDouble(Ljava/lang/String;DLio/flutter/plugins/sharedpreferences/SharedPreferencesPigeonOptions;)V',
-      if ($impl.setEncodedStringList$async)
-        r'setEncodedStringList(Ljava/lang/String;Ljava/lang/String;Lio/flutter/plugins/sharedpreferences/SharedPreferencesPigeonOptions;)V',
-      if ($impl.setDeprecatedStringList$async)
-        r'setDeprecatedStringList(Ljava/lang/String;Ljava/util/List;Lio/flutter/plugins/sharedpreferences/SharedPreferencesPigeonOptions;)V',
-      if ($impl.clear$async)
-        r'clear(Ljava/util/List;Lio/flutter/plugins/sharedpreferences/SharedPreferencesPigeonOptions;)V',
-    ]);
+    implementer.add(
+      r'io.flutter.plugins.sharedpreferences.SharedPreferencesAsyncApi',
+      $p,
+      _$invokePointer,
+      [],
+    );
     final $a = $p.sendPort.nativePort;
     _$impls[$a] = $impl;
   }
@@ -441,274 +483,442 @@ extension type SharedPreferencesAsyncApi._(jni$_.JObject _$this) implements jni$
 extension SharedPreferencesAsyncApi$$Methods on SharedPreferencesAsyncApi {
   static final _id_setBool = SharedPreferencesAsyncApi._class.instanceMethodId(
     r'setBool',
-    r'(Ljava/lang/String;ZLio/flutter/plugins/sharedpreferences/SharedPreferencesPigeonOptions;)V',
+    r'(Ljava/lang/String;ZLio/flutter/plugins/sharedpreferences/SharedPreferencesPigeonOptions;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;',
   );
 
   static final _setBool =
       jni$_.ProtectedJniExtensions.lookup<
             jni$_.NativeFunction<
-              jni$_.JThrowablePtr Function(
+              jni$_.JniResult Function(
                 jni$_.Pointer<jni$_.Void>,
                 jni$_.JMethodIDPtr,
-                jni$_.VarArgs<(jni$_.Pointer<jni$_.Void>, jni$_.Int32, jni$_.Pointer<jni$_.Void>)>,
+                jni$_.VarArgs<
+                  (
+                    jni$_.Pointer<jni$_.Void>,
+                    jni$_.Int32,
+                    jni$_.Pointer<jni$_.Void>,
+                    jni$_.Pointer<jni$_.Void>,
+                  )
+                >,
               )
             >
-          >('globalEnv_CallVoidMethod')
+          >('globalEnv_CallObjectMethod')
           .asFunction<
-            jni$_.JThrowablePtr Function(
+            jni$_.JniResult Function(
               jni$_.Pointer<jni$_.Void>,
               jni$_.JMethodIDPtr,
               jni$_.Pointer<jni$_.Void>,
               core$_.int,
               jni$_.Pointer<jni$_.Void>,
+              jni$_.Pointer<jni$_.Void>,
             )
           >();
 
-  /// from: `public fun setBool(key: kotlin.String, value: kotlin.Boolean, options: io.flutter.plugins.sharedpreferences.SharedPreferencesPigeonOptions): kotlin.Unit`
-  void setBool(
+  /// from: `public suspend fun setBool(key: kotlin.String, value: kotlin.Boolean, options: io.flutter.plugins.sharedpreferences.SharedPreferencesPigeonOptions): kotlin.Unit`
+  /// The returned object must be released after use, by calling the [release] method.
+  core$_.Future<void> setBool(
     jni$_.JString string,
     core$_.bool z,
     SharedPreferencesPigeonOptions sharedPreferencesPigeonOptions,
-  ) {
+  ) async {
+    final $p = jni$_.ReceivePort();
+    final _$continuation = jni$_.ProtectedJniExtensions.newPortContinuation($p);
     final _$$selfRef = reference;
     final _$string = string.reference;
     final _$sharedPreferencesPigeonOptions = sharedPreferencesPigeonOptions.reference;
-    _setBool(
+    final $r = _setBool(
       _$$selfRef.pointer,
       _id_setBool.pointer,
       _$string.pointer,
       z ? 1 : 0,
       _$sharedPreferencesPigeonOptions.pointer,
-    ).check();
+      _$continuation.pointer,
+    ).object<jni$_.JObject>();
+    _$continuation.release();
+    jni$_.JObject $o;
+    if ($r.isInstanceOf(jni$_.coroutineSingletonsClass)) {
+      $r.release();
+      final $a = await $p.first;
+      $o = jni$_.JObject.fromReference(jni$_.JGlobalReference(jni$_.JObjectPtr.fromAddress($a)));
+      if ($o.isInstanceOf(jni$_.result$Class)) {
+        $o = jni$_.resultValueField.get($o, const jni$_.$JObject$Type$());
+      } else if ($o.isInstanceOf(jni$_.result$FailureClass)) {
+        final $e = jni$_.failureExceptionField.get($o, const jni$_.$JObject$Type$());
+        $o.release();
+        jni$_.Jni.throwException($e.reference.toPointer());
+      }
+    } else {
+      $o = $r;
+    }
+    return;
   }
 
   static final _id_setString = SharedPreferencesAsyncApi._class.instanceMethodId(
     r'setString',
-    r'(Ljava/lang/String;Ljava/lang/String;Lio/flutter/plugins/sharedpreferences/SharedPreferencesPigeonOptions;)V',
+    r'(Ljava/lang/String;Ljava/lang/String;Lio/flutter/plugins/sharedpreferences/SharedPreferencesPigeonOptions;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;',
   );
 
   static final _setString =
       jni$_.ProtectedJniExtensions.lookup<
             jni$_.NativeFunction<
-              jni$_.JThrowablePtr Function(
+              jni$_.JniResult Function(
                 jni$_.Pointer<jni$_.Void>,
                 jni$_.JMethodIDPtr,
                 jni$_.VarArgs<
-                  (jni$_.Pointer<jni$_.Void>, jni$_.Pointer<jni$_.Void>, jni$_.Pointer<jni$_.Void>)
+                  (
+                    jni$_.Pointer<jni$_.Void>,
+                    jni$_.Pointer<jni$_.Void>,
+                    jni$_.Pointer<jni$_.Void>,
+                    jni$_.Pointer<jni$_.Void>,
+                  )
                 >,
               )
             >
-          >('globalEnv_CallVoidMethod')
+          >('globalEnv_CallObjectMethod')
           .asFunction<
-            jni$_.JThrowablePtr Function(
+            jni$_.JniResult Function(
               jni$_.Pointer<jni$_.Void>,
               jni$_.JMethodIDPtr,
+              jni$_.Pointer<jni$_.Void>,
               jni$_.Pointer<jni$_.Void>,
               jni$_.Pointer<jni$_.Void>,
               jni$_.Pointer<jni$_.Void>,
             )
           >();
 
-  /// from: `public fun setString(key: kotlin.String, value: kotlin.String, options: io.flutter.plugins.sharedpreferences.SharedPreferencesPigeonOptions): kotlin.Unit`
-  void setString(
+  /// from: `public suspend fun setString(key: kotlin.String, value: kotlin.String, options: io.flutter.plugins.sharedpreferences.SharedPreferencesPigeonOptions): kotlin.Unit`
+  /// The returned object must be released after use, by calling the [release] method.
+  core$_.Future<void> setString(
     jni$_.JString string,
     jni$_.JString string1,
     SharedPreferencesPigeonOptions sharedPreferencesPigeonOptions,
-  ) {
+  ) async {
+    final $p = jni$_.ReceivePort();
+    final _$continuation = jni$_.ProtectedJniExtensions.newPortContinuation($p);
     final _$$selfRef = reference;
     final _$string = string.reference;
     final _$string1 = string1.reference;
     final _$sharedPreferencesPigeonOptions = sharedPreferencesPigeonOptions.reference;
-    _setString(
+    final $r = _setString(
       _$$selfRef.pointer,
       _id_setString.pointer,
       _$string.pointer,
       _$string1.pointer,
       _$sharedPreferencesPigeonOptions.pointer,
-    ).check();
+      _$continuation.pointer,
+    ).object<jni$_.JObject>();
+    _$continuation.release();
+    jni$_.JObject $o;
+    if ($r.isInstanceOf(jni$_.coroutineSingletonsClass)) {
+      $r.release();
+      final $a = await $p.first;
+      $o = jni$_.JObject.fromReference(jni$_.JGlobalReference(jni$_.JObjectPtr.fromAddress($a)));
+      if ($o.isInstanceOf(jni$_.result$Class)) {
+        $o = jni$_.resultValueField.get($o, const jni$_.$JObject$Type$());
+      } else if ($o.isInstanceOf(jni$_.result$FailureClass)) {
+        final $e = jni$_.failureExceptionField.get($o, const jni$_.$JObject$Type$());
+        $o.release();
+        jni$_.Jni.throwException($e.reference.toPointer());
+      }
+    } else {
+      $o = $r;
+    }
+    return;
   }
 
   static final _id_setInt = SharedPreferencesAsyncApi._class.instanceMethodId(
     r'setInt',
-    r'(Ljava/lang/String;JLio/flutter/plugins/sharedpreferences/SharedPreferencesPigeonOptions;)V',
+    r'(Ljava/lang/String;JLio/flutter/plugins/sharedpreferences/SharedPreferencesPigeonOptions;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;',
   );
 
   static final _setInt =
       jni$_.ProtectedJniExtensions.lookup<
             jni$_.NativeFunction<
-              jni$_.JThrowablePtr Function(
+              jni$_.JniResult Function(
                 jni$_.Pointer<jni$_.Void>,
                 jni$_.JMethodIDPtr,
-                jni$_.VarArgs<(jni$_.Pointer<jni$_.Void>, jni$_.Int64, jni$_.Pointer<jni$_.Void>)>,
+                jni$_.VarArgs<
+                  (
+                    jni$_.Pointer<jni$_.Void>,
+                    jni$_.Int64,
+                    jni$_.Pointer<jni$_.Void>,
+                    jni$_.Pointer<jni$_.Void>,
+                  )
+                >,
               )
             >
-          >('globalEnv_CallVoidMethod')
+          >('globalEnv_CallObjectMethod')
           .asFunction<
-            jni$_.JThrowablePtr Function(
+            jni$_.JniResult Function(
               jni$_.Pointer<jni$_.Void>,
               jni$_.JMethodIDPtr,
               jni$_.Pointer<jni$_.Void>,
               core$_.int,
               jni$_.Pointer<jni$_.Void>,
+              jni$_.Pointer<jni$_.Void>,
             )
           >();
 
-  /// from: `public fun setInt(key: kotlin.String, value: kotlin.Long, options: io.flutter.plugins.sharedpreferences.SharedPreferencesPigeonOptions): kotlin.Unit`
-  void setInt(
+  /// from: `public suspend fun setInt(key: kotlin.String, value: kotlin.Long, options: io.flutter.plugins.sharedpreferences.SharedPreferencesPigeonOptions): kotlin.Unit`
+  /// The returned object must be released after use, by calling the [release] method.
+  core$_.Future<void> setInt(
     jni$_.JString string,
     core$_.int j,
     SharedPreferencesPigeonOptions sharedPreferencesPigeonOptions,
-  ) {
+  ) async {
+    final $p = jni$_.ReceivePort();
+    final _$continuation = jni$_.ProtectedJniExtensions.newPortContinuation($p);
     final _$$selfRef = reference;
     final _$string = string.reference;
     final _$sharedPreferencesPigeonOptions = sharedPreferencesPigeonOptions.reference;
-    _setInt(
+    final $r = _setInt(
       _$$selfRef.pointer,
       _id_setInt.pointer,
       _$string.pointer,
       j,
       _$sharedPreferencesPigeonOptions.pointer,
-    ).check();
+      _$continuation.pointer,
+    ).object<jni$_.JObject>();
+    _$continuation.release();
+    jni$_.JObject $o;
+    if ($r.isInstanceOf(jni$_.coroutineSingletonsClass)) {
+      $r.release();
+      final $a = await $p.first;
+      $o = jni$_.JObject.fromReference(jni$_.JGlobalReference(jni$_.JObjectPtr.fromAddress($a)));
+      if ($o.isInstanceOf(jni$_.result$Class)) {
+        $o = jni$_.resultValueField.get($o, const jni$_.$JObject$Type$());
+      } else if ($o.isInstanceOf(jni$_.result$FailureClass)) {
+        final $e = jni$_.failureExceptionField.get($o, const jni$_.$JObject$Type$());
+        $o.release();
+        jni$_.Jni.throwException($e.reference.toPointer());
+      }
+    } else {
+      $o = $r;
+    }
+    return;
   }
 
   static final _id_setDouble = SharedPreferencesAsyncApi._class.instanceMethodId(
     r'setDouble',
-    r'(Ljava/lang/String;DLio/flutter/plugins/sharedpreferences/SharedPreferencesPigeonOptions;)V',
+    r'(Ljava/lang/String;DLio/flutter/plugins/sharedpreferences/SharedPreferencesPigeonOptions;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;',
   );
 
   static final _setDouble =
       jni$_.ProtectedJniExtensions.lookup<
             jni$_.NativeFunction<
-              jni$_.JThrowablePtr Function(
+              jni$_.JniResult Function(
                 jni$_.Pointer<jni$_.Void>,
                 jni$_.JMethodIDPtr,
-                jni$_.VarArgs<(jni$_.Pointer<jni$_.Void>, jni$_.Double, jni$_.Pointer<jni$_.Void>)>,
+                jni$_.VarArgs<
+                  (
+                    jni$_.Pointer<jni$_.Void>,
+                    jni$_.Double,
+                    jni$_.Pointer<jni$_.Void>,
+                    jni$_.Pointer<jni$_.Void>,
+                  )
+                >,
               )
             >
-          >('globalEnv_CallVoidMethod')
+          >('globalEnv_CallObjectMethod')
           .asFunction<
-            jni$_.JThrowablePtr Function(
+            jni$_.JniResult Function(
               jni$_.Pointer<jni$_.Void>,
               jni$_.JMethodIDPtr,
               jni$_.Pointer<jni$_.Void>,
               core$_.double,
               jni$_.Pointer<jni$_.Void>,
+              jni$_.Pointer<jni$_.Void>,
             )
           >();
 
-  /// from: `public fun setDouble(key: kotlin.String, value: kotlin.Double, options: io.flutter.plugins.sharedpreferences.SharedPreferencesPigeonOptions): kotlin.Unit`
-  void setDouble(
+  /// from: `public suspend fun setDouble(key: kotlin.String, value: kotlin.Double, options: io.flutter.plugins.sharedpreferences.SharedPreferencesPigeonOptions): kotlin.Unit`
+  /// The returned object must be released after use, by calling the [release] method.
+  core$_.Future<void> setDouble(
     jni$_.JString string,
     core$_.double d,
     SharedPreferencesPigeonOptions sharedPreferencesPigeonOptions,
-  ) {
+  ) async {
+    final $p = jni$_.ReceivePort();
+    final _$continuation = jni$_.ProtectedJniExtensions.newPortContinuation($p);
     final _$$selfRef = reference;
     final _$string = string.reference;
     final _$sharedPreferencesPigeonOptions = sharedPreferencesPigeonOptions.reference;
-    _setDouble(
+    final $r = _setDouble(
       _$$selfRef.pointer,
       _id_setDouble.pointer,
       _$string.pointer,
       d,
       _$sharedPreferencesPigeonOptions.pointer,
-    ).check();
+      _$continuation.pointer,
+    ).object<jni$_.JObject>();
+    _$continuation.release();
+    jni$_.JObject $o;
+    if ($r.isInstanceOf(jni$_.coroutineSingletonsClass)) {
+      $r.release();
+      final $a = await $p.first;
+      $o = jni$_.JObject.fromReference(jni$_.JGlobalReference(jni$_.JObjectPtr.fromAddress($a)));
+      if ($o.isInstanceOf(jni$_.result$Class)) {
+        $o = jni$_.resultValueField.get($o, const jni$_.$JObject$Type$());
+      } else if ($o.isInstanceOf(jni$_.result$FailureClass)) {
+        final $e = jni$_.failureExceptionField.get($o, const jni$_.$JObject$Type$());
+        $o.release();
+        jni$_.Jni.throwException($e.reference.toPointer());
+      }
+    } else {
+      $o = $r;
+    }
+    return;
   }
 
   static final _id_setEncodedStringList = SharedPreferencesAsyncApi._class.instanceMethodId(
     r'setEncodedStringList',
-    r'(Ljava/lang/String;Ljava/lang/String;Lio/flutter/plugins/sharedpreferences/SharedPreferencesPigeonOptions;)V',
+    r'(Ljava/lang/String;Ljava/lang/String;Lio/flutter/plugins/sharedpreferences/SharedPreferencesPigeonOptions;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;',
   );
 
   static final _setEncodedStringList =
       jni$_.ProtectedJniExtensions.lookup<
             jni$_.NativeFunction<
-              jni$_.JThrowablePtr Function(
+              jni$_.JniResult Function(
                 jni$_.Pointer<jni$_.Void>,
                 jni$_.JMethodIDPtr,
                 jni$_.VarArgs<
-                  (jni$_.Pointer<jni$_.Void>, jni$_.Pointer<jni$_.Void>, jni$_.Pointer<jni$_.Void>)
+                  (
+                    jni$_.Pointer<jni$_.Void>,
+                    jni$_.Pointer<jni$_.Void>,
+                    jni$_.Pointer<jni$_.Void>,
+                    jni$_.Pointer<jni$_.Void>,
+                  )
                 >,
               )
             >
-          >('globalEnv_CallVoidMethod')
+          >('globalEnv_CallObjectMethod')
           .asFunction<
-            jni$_.JThrowablePtr Function(
+            jni$_.JniResult Function(
               jni$_.Pointer<jni$_.Void>,
               jni$_.JMethodIDPtr,
+              jni$_.Pointer<jni$_.Void>,
               jni$_.Pointer<jni$_.Void>,
               jni$_.Pointer<jni$_.Void>,
               jni$_.Pointer<jni$_.Void>,
             )
           >();
 
-  /// from: `public fun setEncodedStringList(key: kotlin.String, value: kotlin.String, options: io.flutter.plugins.sharedpreferences.SharedPreferencesPigeonOptions): kotlin.Unit`
-  void setEncodedStringList(
+  /// from: `public suspend fun setEncodedStringList(key: kotlin.String, value: kotlin.String, options: io.flutter.plugins.sharedpreferences.SharedPreferencesPigeonOptions): kotlin.Unit`
+  /// The returned object must be released after use, by calling the [release] method.
+  core$_.Future<void> setEncodedStringList(
     jni$_.JString string,
     jni$_.JString string1,
     SharedPreferencesPigeonOptions sharedPreferencesPigeonOptions,
-  ) {
+  ) async {
+    final $p = jni$_.ReceivePort();
+    final _$continuation = jni$_.ProtectedJniExtensions.newPortContinuation($p);
     final _$$selfRef = reference;
     final _$string = string.reference;
     final _$string1 = string1.reference;
     final _$sharedPreferencesPigeonOptions = sharedPreferencesPigeonOptions.reference;
-    _setEncodedStringList(
+    final $r = _setEncodedStringList(
       _$$selfRef.pointer,
       _id_setEncodedStringList.pointer,
       _$string.pointer,
       _$string1.pointer,
       _$sharedPreferencesPigeonOptions.pointer,
-    ).check();
+      _$continuation.pointer,
+    ).object<jni$_.JObject>();
+    _$continuation.release();
+    jni$_.JObject $o;
+    if ($r.isInstanceOf(jni$_.coroutineSingletonsClass)) {
+      $r.release();
+      final $a = await $p.first;
+      $o = jni$_.JObject.fromReference(jni$_.JGlobalReference(jni$_.JObjectPtr.fromAddress($a)));
+      if ($o.isInstanceOf(jni$_.result$Class)) {
+        $o = jni$_.resultValueField.get($o, const jni$_.$JObject$Type$());
+      } else if ($o.isInstanceOf(jni$_.result$FailureClass)) {
+        final $e = jni$_.failureExceptionField.get($o, const jni$_.$JObject$Type$());
+        $o.release();
+        jni$_.Jni.throwException($e.reference.toPointer());
+      }
+    } else {
+      $o = $r;
+    }
+    return;
   }
 
   static final _id_setDeprecatedStringList = SharedPreferencesAsyncApi._class.instanceMethodId(
     r'setDeprecatedStringList',
-    r'(Ljava/lang/String;Ljava/util/List;Lio/flutter/plugins/sharedpreferences/SharedPreferencesPigeonOptions;)V',
+    r'(Ljava/lang/String;Ljava/util/List;Lio/flutter/plugins/sharedpreferences/SharedPreferencesPigeonOptions;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;',
   );
 
   static final _setDeprecatedStringList =
       jni$_.ProtectedJniExtensions.lookup<
             jni$_.NativeFunction<
-              jni$_.JThrowablePtr Function(
+              jni$_.JniResult Function(
                 jni$_.Pointer<jni$_.Void>,
                 jni$_.JMethodIDPtr,
                 jni$_.VarArgs<
-                  (jni$_.Pointer<jni$_.Void>, jni$_.Pointer<jni$_.Void>, jni$_.Pointer<jni$_.Void>)
+                  (
+                    jni$_.Pointer<jni$_.Void>,
+                    jni$_.Pointer<jni$_.Void>,
+                    jni$_.Pointer<jni$_.Void>,
+                    jni$_.Pointer<jni$_.Void>,
+                  )
                 >,
               )
             >
-          >('globalEnv_CallVoidMethod')
+          >('globalEnv_CallObjectMethod')
           .asFunction<
-            jni$_.JThrowablePtr Function(
+            jni$_.JniResult Function(
               jni$_.Pointer<jni$_.Void>,
               jni$_.JMethodIDPtr,
+              jni$_.Pointer<jni$_.Void>,
               jni$_.Pointer<jni$_.Void>,
               jni$_.Pointer<jni$_.Void>,
               jni$_.Pointer<jni$_.Void>,
             )
           >();
 
-  /// from: `public fun setDeprecatedStringList(key: kotlin.String, value: kotlin.collections.List<kotlin.String>, options: io.flutter.plugins.sharedpreferences.SharedPreferencesPigeonOptions): kotlin.Unit`
-  void setDeprecatedStringList(
+  /// from: `public suspend fun setDeprecatedStringList(key: kotlin.String, value: kotlin.collections.List<kotlin.String>, options: io.flutter.plugins.sharedpreferences.SharedPreferencesPigeonOptions): kotlin.Unit`
+  /// The returned object must be released after use, by calling the [release] method.
+  core$_.Future<void> setDeprecatedStringList(
     jni$_.JString string,
-    jni$_.JList<jni$_.JString> list,
+    jni$_.JList<jni$_.JString?> list,
     SharedPreferencesPigeonOptions sharedPreferencesPigeonOptions,
-  ) {
+  ) async {
+    final $p = jni$_.ReceivePort();
+    final _$continuation = jni$_.ProtectedJniExtensions.newPortContinuation($p);
     final _$$selfRef = reference;
     final _$string = string.reference;
     final _$list = list.reference;
     final _$sharedPreferencesPigeonOptions = sharedPreferencesPigeonOptions.reference;
-    _setDeprecatedStringList(
+    final $r = _setDeprecatedStringList(
       _$$selfRef.pointer,
       _id_setDeprecatedStringList.pointer,
       _$string.pointer,
       _$list.pointer,
       _$sharedPreferencesPigeonOptions.pointer,
-    ).check();
+      _$continuation.pointer,
+    ).object<jni$_.JObject>();
+    _$continuation.release();
+    jni$_.JObject $o;
+    if ($r.isInstanceOf(jni$_.coroutineSingletonsClass)) {
+      $r.release();
+      final $a = await $p.first;
+      $o = jni$_.JObject.fromReference(jni$_.JGlobalReference(jni$_.JObjectPtr.fromAddress($a)));
+      if ($o.isInstanceOf(jni$_.result$Class)) {
+        $o = jni$_.resultValueField.get($o, const jni$_.$JObject$Type$());
+      } else if ($o.isInstanceOf(jni$_.result$FailureClass)) {
+        final $e = jni$_.failureExceptionField.get($o, const jni$_.$JObject$Type$());
+        $o.release();
+        jni$_.Jni.throwException($e.reference.toPointer());
+      }
+    } else {
+      $o = $r;
+    }
+    return;
   }
 
   static final _id_getString = SharedPreferencesAsyncApi._class.instanceMethodId(
     r'getString',
-    r'(Ljava/lang/String;Lio/flutter/plugins/sharedpreferences/SharedPreferencesPigeonOptions;)Ljava/lang/String;',
+    r'(Ljava/lang/String;Lio/flutter/plugins/sharedpreferences/SharedPreferencesPigeonOptions;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;',
   );
 
   static final _getString =
@@ -717,7 +927,9 @@ extension SharedPreferencesAsyncApi$$Methods on SharedPreferencesAsyncApi {
               jni$_.JniResult Function(
                 jni$_.Pointer<jni$_.Void>,
                 jni$_.JMethodIDPtr,
-                jni$_.VarArgs<(jni$_.Pointer<jni$_.Void>, jni$_.Pointer<jni$_.Void>)>,
+                jni$_.VarArgs<
+                  (jni$_.Pointer<jni$_.Void>, jni$_.Pointer<jni$_.Void>, jni$_.Pointer<jni$_.Void>)
+                >,
               )
             >
           >('globalEnv_CallObjectMethod')
@@ -727,29 +939,52 @@ extension SharedPreferencesAsyncApi$$Methods on SharedPreferencesAsyncApi {
               jni$_.JMethodIDPtr,
               jni$_.Pointer<jni$_.Void>,
               jni$_.Pointer<jni$_.Void>,
+              jni$_.Pointer<jni$_.Void>,
             )
           >();
 
-  /// from: `public fun getString(key: kotlin.String, options: io.flutter.plugins.sharedpreferences.SharedPreferencesPigeonOptions): kotlin.String?`
+  /// from: `public suspend fun getString(key: kotlin.String, options: io.flutter.plugins.sharedpreferences.SharedPreferencesPigeonOptions): kotlin.String?`
   /// The returned object must be released after use, by calling the [release] method.
-  jni$_.JString? getString(
+  core$_.Future<jni$_.JString?> getString(
     jni$_.JString string,
     SharedPreferencesPigeonOptions sharedPreferencesPigeonOptions,
-  ) {
+  ) async {
+    final $p = jni$_.ReceivePort();
+    final _$continuation = jni$_.ProtectedJniExtensions.newPortContinuation($p);
     final _$$selfRef = reference;
     final _$string = string.reference;
     final _$sharedPreferencesPigeonOptions = sharedPreferencesPigeonOptions.reference;
-    return _getString(
+    final $r = _getString(
       _$$selfRef.pointer,
       _id_getString.pointer,
       _$string.pointer,
       _$sharedPreferencesPigeonOptions.pointer,
-    ).object<jni$_.JString?>();
+      _$continuation.pointer,
+    ).object<jni$_.JObject?>();
+    _$continuation.release();
+    jni$_.JObject? $o;
+    if ($r != null && $r.isInstanceOf(jni$_.coroutineSingletonsClass)) {
+      $r.release();
+      final $a = await $p.first;
+      $o = $a == 0
+          ? null
+          : jni$_.JObject.fromReference(jni$_.JGlobalReference(jni$_.JObjectPtr.fromAddress($a)));
+      if ($o != null && $o.isInstanceOf(jni$_.result$Class)) {
+        $o = jni$_.resultValueField.get($o, const jni$_.$JObject$Type$());
+      } else if ($o != null && $o.isInstanceOf(jni$_.result$FailureClass)) {
+        final $e = jni$_.failureExceptionField.get($o, const jni$_.$JObject$Type$());
+        $o.release();
+        jni$_.Jni.throwException($e.reference.toPointer());
+      }
+    } else {
+      $o = $r;
+    }
+    return $o?.as<jni$_.JString>(jni$_.JString.type, releaseOriginal: true);
   }
 
   static final _id_getBool = SharedPreferencesAsyncApi._class.instanceMethodId(
     r'getBool',
-    r'(Ljava/lang/String;Lio/flutter/plugins/sharedpreferences/SharedPreferencesPigeonOptions;)Ljava/lang/Boolean;',
+    r'(Ljava/lang/String;Lio/flutter/plugins/sharedpreferences/SharedPreferencesPigeonOptions;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;',
   );
 
   static final _getBool =
@@ -758,7 +993,9 @@ extension SharedPreferencesAsyncApi$$Methods on SharedPreferencesAsyncApi {
               jni$_.JniResult Function(
                 jni$_.Pointer<jni$_.Void>,
                 jni$_.JMethodIDPtr,
-                jni$_.VarArgs<(jni$_.Pointer<jni$_.Void>, jni$_.Pointer<jni$_.Void>)>,
+                jni$_.VarArgs<
+                  (jni$_.Pointer<jni$_.Void>, jni$_.Pointer<jni$_.Void>, jni$_.Pointer<jni$_.Void>)
+                >,
               )
             >
           >('globalEnv_CallObjectMethod')
@@ -768,29 +1005,52 @@ extension SharedPreferencesAsyncApi$$Methods on SharedPreferencesAsyncApi {
               jni$_.JMethodIDPtr,
               jni$_.Pointer<jni$_.Void>,
               jni$_.Pointer<jni$_.Void>,
+              jni$_.Pointer<jni$_.Void>,
             )
           >();
 
-  /// from: `public fun getBool(key: kotlin.String, options: io.flutter.plugins.sharedpreferences.SharedPreferencesPigeonOptions): kotlin.Boolean?`
+  /// from: `public suspend fun getBool(key: kotlin.String, options: io.flutter.plugins.sharedpreferences.SharedPreferencesPigeonOptions): kotlin.Boolean?`
   /// The returned object must be released after use, by calling the [release] method.
-  jni$_.JBoolean? getBool(
+  core$_.Future<jni$_.JBoolean?> getBool(
     jni$_.JString string,
     SharedPreferencesPigeonOptions sharedPreferencesPigeonOptions,
-  ) {
+  ) async {
+    final $p = jni$_.ReceivePort();
+    final _$continuation = jni$_.ProtectedJniExtensions.newPortContinuation($p);
     final _$$selfRef = reference;
     final _$string = string.reference;
     final _$sharedPreferencesPigeonOptions = sharedPreferencesPigeonOptions.reference;
-    return _getBool(
+    final $r = _getBool(
       _$$selfRef.pointer,
       _id_getBool.pointer,
       _$string.pointer,
       _$sharedPreferencesPigeonOptions.pointer,
-    ).object<jni$_.JBoolean?>();
+      _$continuation.pointer,
+    ).object<jni$_.JObject?>();
+    _$continuation.release();
+    jni$_.JObject? $o;
+    if ($r != null && $r.isInstanceOf(jni$_.coroutineSingletonsClass)) {
+      $r.release();
+      final $a = await $p.first;
+      $o = $a == 0
+          ? null
+          : jni$_.JObject.fromReference(jni$_.JGlobalReference(jni$_.JObjectPtr.fromAddress($a)));
+      if ($o != null && $o.isInstanceOf(jni$_.result$Class)) {
+        $o = jni$_.resultValueField.get($o, const jni$_.$JObject$Type$());
+      } else if ($o != null && $o.isInstanceOf(jni$_.result$FailureClass)) {
+        final $e = jni$_.failureExceptionField.get($o, const jni$_.$JObject$Type$());
+        $o.release();
+        jni$_.Jni.throwException($e.reference.toPointer());
+      }
+    } else {
+      $o = $r;
+    }
+    return $o?.as<jni$_.JBoolean>(jni$_.JBoolean.type, releaseOriginal: true);
   }
 
   static final _id_getDouble = SharedPreferencesAsyncApi._class.instanceMethodId(
     r'getDouble',
-    r'(Ljava/lang/String;Lio/flutter/plugins/sharedpreferences/SharedPreferencesPigeonOptions;)Ljava/lang/Double;',
+    r'(Ljava/lang/String;Lio/flutter/plugins/sharedpreferences/SharedPreferencesPigeonOptions;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;',
   );
 
   static final _getDouble =
@@ -799,7 +1059,9 @@ extension SharedPreferencesAsyncApi$$Methods on SharedPreferencesAsyncApi {
               jni$_.JniResult Function(
                 jni$_.Pointer<jni$_.Void>,
                 jni$_.JMethodIDPtr,
-                jni$_.VarArgs<(jni$_.Pointer<jni$_.Void>, jni$_.Pointer<jni$_.Void>)>,
+                jni$_.VarArgs<
+                  (jni$_.Pointer<jni$_.Void>, jni$_.Pointer<jni$_.Void>, jni$_.Pointer<jni$_.Void>)
+                >,
               )
             >
           >('globalEnv_CallObjectMethod')
@@ -809,29 +1071,52 @@ extension SharedPreferencesAsyncApi$$Methods on SharedPreferencesAsyncApi {
               jni$_.JMethodIDPtr,
               jni$_.Pointer<jni$_.Void>,
               jni$_.Pointer<jni$_.Void>,
+              jni$_.Pointer<jni$_.Void>,
             )
           >();
 
-  /// from: `public fun getDouble(key: kotlin.String, options: io.flutter.plugins.sharedpreferences.SharedPreferencesPigeonOptions): kotlin.Double?`
+  /// from: `public suspend fun getDouble(key: kotlin.String, options: io.flutter.plugins.sharedpreferences.SharedPreferencesPigeonOptions): kotlin.Double?`
   /// The returned object must be released after use, by calling the [release] method.
-  jni$_.JDouble? getDouble(
+  core$_.Future<jni$_.JDouble?> getDouble(
     jni$_.JString string,
     SharedPreferencesPigeonOptions sharedPreferencesPigeonOptions,
-  ) {
+  ) async {
+    final $p = jni$_.ReceivePort();
+    final _$continuation = jni$_.ProtectedJniExtensions.newPortContinuation($p);
     final _$$selfRef = reference;
     final _$string = string.reference;
     final _$sharedPreferencesPigeonOptions = sharedPreferencesPigeonOptions.reference;
-    return _getDouble(
+    final $r = _getDouble(
       _$$selfRef.pointer,
       _id_getDouble.pointer,
       _$string.pointer,
       _$sharedPreferencesPigeonOptions.pointer,
-    ).object<jni$_.JDouble?>();
+      _$continuation.pointer,
+    ).object<jni$_.JObject?>();
+    _$continuation.release();
+    jni$_.JObject? $o;
+    if ($r != null && $r.isInstanceOf(jni$_.coroutineSingletonsClass)) {
+      $r.release();
+      final $a = await $p.first;
+      $o = $a == 0
+          ? null
+          : jni$_.JObject.fromReference(jni$_.JGlobalReference(jni$_.JObjectPtr.fromAddress($a)));
+      if ($o != null && $o.isInstanceOf(jni$_.result$Class)) {
+        $o = jni$_.resultValueField.get($o, const jni$_.$JObject$Type$());
+      } else if ($o != null && $o.isInstanceOf(jni$_.result$FailureClass)) {
+        final $e = jni$_.failureExceptionField.get($o, const jni$_.$JObject$Type$());
+        $o.release();
+        jni$_.Jni.throwException($e.reference.toPointer());
+      }
+    } else {
+      $o = $r;
+    }
+    return $o?.as<jni$_.JDouble>(jni$_.JDouble.type, releaseOriginal: true);
   }
 
   static final _id_getInt = SharedPreferencesAsyncApi._class.instanceMethodId(
     r'getInt',
-    r'(Ljava/lang/String;Lio/flutter/plugins/sharedpreferences/SharedPreferencesPigeonOptions;)Ljava/lang/Long;',
+    r'(Ljava/lang/String;Lio/flutter/plugins/sharedpreferences/SharedPreferencesPigeonOptions;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;',
   );
 
   static final _getInt =
@@ -840,7 +1125,9 @@ extension SharedPreferencesAsyncApi$$Methods on SharedPreferencesAsyncApi {
               jni$_.JniResult Function(
                 jni$_.Pointer<jni$_.Void>,
                 jni$_.JMethodIDPtr,
-                jni$_.VarArgs<(jni$_.Pointer<jni$_.Void>, jni$_.Pointer<jni$_.Void>)>,
+                jni$_.VarArgs<
+                  (jni$_.Pointer<jni$_.Void>, jni$_.Pointer<jni$_.Void>, jni$_.Pointer<jni$_.Void>)
+                >,
               )
             >
           >('globalEnv_CallObjectMethod')
@@ -850,29 +1137,52 @@ extension SharedPreferencesAsyncApi$$Methods on SharedPreferencesAsyncApi {
               jni$_.JMethodIDPtr,
               jni$_.Pointer<jni$_.Void>,
               jni$_.Pointer<jni$_.Void>,
+              jni$_.Pointer<jni$_.Void>,
             )
           >();
 
-  /// from: `public fun getInt(key: kotlin.String, options: io.flutter.plugins.sharedpreferences.SharedPreferencesPigeonOptions): kotlin.Long?`
+  /// from: `public suspend fun getInt(key: kotlin.String, options: io.flutter.plugins.sharedpreferences.SharedPreferencesPigeonOptions): kotlin.Long?`
   /// The returned object must be released after use, by calling the [release] method.
-  jni$_.JLong? getInt(
+  core$_.Future<jni$_.JLong?> getInt(
     jni$_.JString string,
     SharedPreferencesPigeonOptions sharedPreferencesPigeonOptions,
-  ) {
+  ) async {
+    final $p = jni$_.ReceivePort();
+    final _$continuation = jni$_.ProtectedJniExtensions.newPortContinuation($p);
     final _$$selfRef = reference;
     final _$string = string.reference;
     final _$sharedPreferencesPigeonOptions = sharedPreferencesPigeonOptions.reference;
-    return _getInt(
+    final $r = _getInt(
       _$$selfRef.pointer,
       _id_getInt.pointer,
       _$string.pointer,
       _$sharedPreferencesPigeonOptions.pointer,
-    ).object<jni$_.JLong?>();
+      _$continuation.pointer,
+    ).object<jni$_.JObject?>();
+    _$continuation.release();
+    jni$_.JObject? $o;
+    if ($r != null && $r.isInstanceOf(jni$_.coroutineSingletonsClass)) {
+      $r.release();
+      final $a = await $p.first;
+      $o = $a == 0
+          ? null
+          : jni$_.JObject.fromReference(jni$_.JGlobalReference(jni$_.JObjectPtr.fromAddress($a)));
+      if ($o != null && $o.isInstanceOf(jni$_.result$Class)) {
+        $o = jni$_.resultValueField.get($o, const jni$_.$JObject$Type$());
+      } else if ($o != null && $o.isInstanceOf(jni$_.result$FailureClass)) {
+        final $e = jni$_.failureExceptionField.get($o, const jni$_.$JObject$Type$());
+        $o.release();
+        jni$_.Jni.throwException($e.reference.toPointer());
+      }
+    } else {
+      $o = $r;
+    }
+    return $o?.as<jni$_.JLong>(jni$_.JLong.type, releaseOriginal: true);
   }
 
   static final _id_getPlatformEncodedStringList = SharedPreferencesAsyncApi._class.instanceMethodId(
     r'getPlatformEncodedStringList',
-    r'(Ljava/lang/String;Lio/flutter/plugins/sharedpreferences/SharedPreferencesPigeonOptions;)Ljava/util/List;',
+    r'(Ljava/lang/String;Lio/flutter/plugins/sharedpreferences/SharedPreferencesPigeonOptions;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;',
   );
 
   static final _getPlatformEncodedStringList =
@@ -881,7 +1191,9 @@ extension SharedPreferencesAsyncApi$$Methods on SharedPreferencesAsyncApi {
               jni$_.JniResult Function(
                 jni$_.Pointer<jni$_.Void>,
                 jni$_.JMethodIDPtr,
-                jni$_.VarArgs<(jni$_.Pointer<jni$_.Void>, jni$_.Pointer<jni$_.Void>)>,
+                jni$_.VarArgs<
+                  (jni$_.Pointer<jni$_.Void>, jni$_.Pointer<jni$_.Void>, jni$_.Pointer<jni$_.Void>)
+                >,
               )
             >
           >('globalEnv_CallObjectMethod')
@@ -891,29 +1203,53 @@ extension SharedPreferencesAsyncApi$$Methods on SharedPreferencesAsyncApi {
               jni$_.JMethodIDPtr,
               jni$_.Pointer<jni$_.Void>,
               jni$_.Pointer<jni$_.Void>,
+              jni$_.Pointer<jni$_.Void>,
             )
           >();
 
-  /// from: `public fun getPlatformEncodedStringList(key: kotlin.String, options: io.flutter.plugins.sharedpreferences.SharedPreferencesPigeonOptions): kotlin.collections.List<kotlin.String>?`
+  /// from: `public suspend fun getPlatformEncodedStringList(key: kotlin.String, options: io.flutter.plugins.sharedpreferences.SharedPreferencesPigeonOptions): kotlin.collections.List<kotlin.String>?`
   /// The returned object must be released after use, by calling the [release] method.
-  jni$_.JList<jni$_.JString>? getPlatformEncodedStringList(
+  core$_.Future<jni$_.JList<jni$_.JString>?> getPlatformEncodedStringList(
     jni$_.JString string,
     SharedPreferencesPigeonOptions sharedPreferencesPigeonOptions,
-  ) {
+  ) async {
+    final $p = jni$_.ReceivePort();
+    final _$continuation = jni$_.ProtectedJniExtensions.newPortContinuation($p);
     final _$$selfRef = reference;
     final _$string = string.reference;
     final _$sharedPreferencesPigeonOptions = sharedPreferencesPigeonOptions.reference;
-    return _getPlatformEncodedStringList(
+    final $r = _getPlatformEncodedStringList(
       _$$selfRef.pointer,
       _id_getPlatformEncodedStringList.pointer,
       _$string.pointer,
       _$sharedPreferencesPigeonOptions.pointer,
-    ).object<jni$_.JList<jni$_.JString>?>();
+      _$continuation.pointer,
+    ).object<jni$_.JObject?>();
+    _$continuation.release();
+    jni$_.JObject? $o;
+    if ($r != null && $r.isInstanceOf(jni$_.coroutineSingletonsClass)) {
+      $r.release();
+      final $a = await $p.first;
+      $o = $a == 0
+          ? null
+          : jni$_.JObject.fromReference(jni$_.JGlobalReference(jni$_.JObjectPtr.fromAddress($a)));
+      if ($o != null && $o.isInstanceOf(jni$_.result$Class)) {
+        $o = jni$_.resultValueField.get($o, const jni$_.$JObject$Type$());
+      } else if ($o != null && $o.isInstanceOf(jni$_.result$FailureClass)) {
+        final $e = jni$_.failureExceptionField.get($o, const jni$_.$JObject$Type$());
+        $o.release();
+        jni$_.Jni.throwException($e.reference.toPointer());
+      }
+    } else {
+      $o = $r;
+    }
+    return $o?.as<jni$_.JList>(jni$_.JList.type, releaseOriginal: true)
+        as jni$_.JList<jni$_.JString>?;
   }
 
   static final _id_getStringList = SharedPreferencesAsyncApi._class.instanceMethodId(
     r'getStringList',
-    r'(Ljava/lang/String;Lio/flutter/plugins/sharedpreferences/SharedPreferencesPigeonOptions;)Lio/flutter/plugins/sharedpreferences/StringListResult;',
+    r'(Ljava/lang/String;Lio/flutter/plugins/sharedpreferences/SharedPreferencesPigeonOptions;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;',
   );
 
   static final _getStringList =
@@ -922,7 +1258,9 @@ extension SharedPreferencesAsyncApi$$Methods on SharedPreferencesAsyncApi {
               jni$_.JniResult Function(
                 jni$_.Pointer<jni$_.Void>,
                 jni$_.JMethodIDPtr,
-                jni$_.VarArgs<(jni$_.Pointer<jni$_.Void>, jni$_.Pointer<jni$_.Void>)>,
+                jni$_.VarArgs<
+                  (jni$_.Pointer<jni$_.Void>, jni$_.Pointer<jni$_.Void>, jni$_.Pointer<jni$_.Void>)
+                >,
               )
             >
           >('globalEnv_CallObjectMethod')
@@ -932,69 +1270,116 @@ extension SharedPreferencesAsyncApi$$Methods on SharedPreferencesAsyncApi {
               jni$_.JMethodIDPtr,
               jni$_.Pointer<jni$_.Void>,
               jni$_.Pointer<jni$_.Void>,
+              jni$_.Pointer<jni$_.Void>,
             )
           >();
 
-  /// from: `public fun getStringList(key: kotlin.String, options: io.flutter.plugins.sharedpreferences.SharedPreferencesPigeonOptions): io.flutter.plugins.sharedpreferences.StringListResult?`
+  /// from: `public suspend fun getStringList(key: kotlin.String, options: io.flutter.plugins.sharedpreferences.SharedPreferencesPigeonOptions): io.flutter.plugins.sharedpreferences.StringListResult?`
   /// The returned object must be released after use, by calling the [release] method.
-  StringListResult? getStringList(
+  core$_.Future<StringListResult?> getStringList(
     jni$_.JString string,
     SharedPreferencesPigeonOptions sharedPreferencesPigeonOptions,
-  ) {
+  ) async {
+    final $p = jni$_.ReceivePort();
+    final _$continuation = jni$_.ProtectedJniExtensions.newPortContinuation($p);
     final _$$selfRef = reference;
     final _$string = string.reference;
     final _$sharedPreferencesPigeonOptions = sharedPreferencesPigeonOptions.reference;
-    return _getStringList(
+    final $r = _getStringList(
       _$$selfRef.pointer,
       _id_getStringList.pointer,
       _$string.pointer,
       _$sharedPreferencesPigeonOptions.pointer,
-    ).object<StringListResult?>();
+      _$continuation.pointer,
+    ).object<jni$_.JObject?>();
+    _$continuation.release();
+    jni$_.JObject? $o;
+    if ($r != null && $r.isInstanceOf(jni$_.coroutineSingletonsClass)) {
+      $r.release();
+      final $a = await $p.first;
+      $o = $a == 0
+          ? null
+          : jni$_.JObject.fromReference(jni$_.JGlobalReference(jni$_.JObjectPtr.fromAddress($a)));
+      if ($o != null && $o.isInstanceOf(jni$_.result$Class)) {
+        $o = jni$_.resultValueField.get($o, const jni$_.$JObject$Type$());
+      } else if ($o != null && $o.isInstanceOf(jni$_.result$FailureClass)) {
+        final $e = jni$_.failureExceptionField.get($o, const jni$_.$JObject$Type$());
+        $o.release();
+        jni$_.Jni.throwException($e.reference.toPointer());
+      }
+    } else {
+      $o = $r;
+    }
+    return $o?.as<StringListResult>(StringListResult.type, releaseOriginal: true);
   }
 
   static final _id_clear = SharedPreferencesAsyncApi._class.instanceMethodId(
     r'clear',
-    r'(Ljava/util/List;Lio/flutter/plugins/sharedpreferences/SharedPreferencesPigeonOptions;)V',
+    r'(Ljava/util/List;Lio/flutter/plugins/sharedpreferences/SharedPreferencesPigeonOptions;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;',
   );
 
   static final _clear =
       jni$_.ProtectedJniExtensions.lookup<
             jni$_.NativeFunction<
-              jni$_.JThrowablePtr Function(
+              jni$_.JniResult Function(
                 jni$_.Pointer<jni$_.Void>,
                 jni$_.JMethodIDPtr,
-                jni$_.VarArgs<(jni$_.Pointer<jni$_.Void>, jni$_.Pointer<jni$_.Void>)>,
+                jni$_.VarArgs<
+                  (jni$_.Pointer<jni$_.Void>, jni$_.Pointer<jni$_.Void>, jni$_.Pointer<jni$_.Void>)
+                >,
               )
             >
-          >('globalEnv_CallVoidMethod')
+          >('globalEnv_CallObjectMethod')
           .asFunction<
-            jni$_.JThrowablePtr Function(
+            jni$_.JniResult Function(
               jni$_.Pointer<jni$_.Void>,
               jni$_.JMethodIDPtr,
+              jni$_.Pointer<jni$_.Void>,
               jni$_.Pointer<jni$_.Void>,
               jni$_.Pointer<jni$_.Void>,
             )
           >();
 
-  /// from: `public fun clear(allowList: kotlin.collections.List<kotlin.String>?, options: io.flutter.plugins.sharedpreferences.SharedPreferencesPigeonOptions): kotlin.Unit`
-  void clear(
-    jni$_.JList<jni$_.JString>? list,
+  /// from: `public suspend fun clear(allowList: kotlin.collections.List<kotlin.String>?, options: io.flutter.plugins.sharedpreferences.SharedPreferencesPigeonOptions): kotlin.Unit`
+  /// The returned object must be released after use, by calling the [release] method.
+  core$_.Future<void> clear(
+    jni$_.JList<jni$_.JString?>? list,
     SharedPreferencesPigeonOptions sharedPreferencesPigeonOptions,
-  ) {
+  ) async {
+    final $p = jni$_.ReceivePort();
+    final _$continuation = jni$_.ProtectedJniExtensions.newPortContinuation($p);
     final _$$selfRef = reference;
     final _$list = list?.reference ?? jni$_.jNullReference;
     final _$sharedPreferencesPigeonOptions = sharedPreferencesPigeonOptions.reference;
-    _clear(
+    final $r = _clear(
       _$$selfRef.pointer,
       _id_clear.pointer,
       _$list.pointer,
       _$sharedPreferencesPigeonOptions.pointer,
-    ).check();
+      _$continuation.pointer,
+    ).object<jni$_.JObject>();
+    _$continuation.release();
+    jni$_.JObject $o;
+    if ($r.isInstanceOf(jni$_.coroutineSingletonsClass)) {
+      $r.release();
+      final $a = await $p.first;
+      $o = jni$_.JObject.fromReference(jni$_.JGlobalReference(jni$_.JObjectPtr.fromAddress($a)));
+      if ($o.isInstanceOf(jni$_.result$Class)) {
+        $o = jni$_.resultValueField.get($o, const jni$_.$JObject$Type$());
+      } else if ($o.isInstanceOf(jni$_.result$FailureClass)) {
+        final $e = jni$_.failureExceptionField.get($o, const jni$_.$JObject$Type$());
+        $o.release();
+        jni$_.Jni.throwException($e.reference.toPointer());
+      }
+    } else {
+      $o = $r;
+    }
+    return;
   }
 
   static final _id_getAll = SharedPreferencesAsyncApi._class.instanceMethodId(
     r'getAll',
-    r'(Ljava/util/List;Lio/flutter/plugins/sharedpreferences/SharedPreferencesPigeonOptions;)Ljava/util/Map;',
+    r'(Ljava/util/List;Lio/flutter/plugins/sharedpreferences/SharedPreferencesPigeonOptions;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;',
   );
 
   static final _getAll =
@@ -1003,7 +1388,9 @@ extension SharedPreferencesAsyncApi$$Methods on SharedPreferencesAsyncApi {
               jni$_.JniResult Function(
                 jni$_.Pointer<jni$_.Void>,
                 jni$_.JMethodIDPtr,
-                jni$_.VarArgs<(jni$_.Pointer<jni$_.Void>, jni$_.Pointer<jni$_.Void>)>,
+                jni$_.VarArgs<
+                  (jni$_.Pointer<jni$_.Void>, jni$_.Pointer<jni$_.Void>, jni$_.Pointer<jni$_.Void>)
+                >,
               )
             >
           >('globalEnv_CallObjectMethod')
@@ -1013,29 +1400,51 @@ extension SharedPreferencesAsyncApi$$Methods on SharedPreferencesAsyncApi {
               jni$_.JMethodIDPtr,
               jni$_.Pointer<jni$_.Void>,
               jni$_.Pointer<jni$_.Void>,
+              jni$_.Pointer<jni$_.Void>,
             )
           >();
 
-  /// from: `public fun getAll(allowList: kotlin.collections.List<kotlin.String>?, options: io.flutter.plugins.sharedpreferences.SharedPreferencesPigeonOptions): kotlin.collections.Map<kotlin.String, kotlin.Any>`
+  /// from: `public suspend fun getAll(allowList: kotlin.collections.List<kotlin.String>?, options: io.flutter.plugins.sharedpreferences.SharedPreferencesPigeonOptions): kotlin.collections.Map<kotlin.String, kotlin.Any>`
   /// The returned object must be released after use, by calling the [release] method.
-  jni$_.JMap<jni$_.JString, jni$_.JObject> getAll(
-    jni$_.JList<jni$_.JString>? list,
+  core$_.Future<jni$_.JMap<jni$_.JString, jni$_.JObject>> getAll(
+    jni$_.JList<jni$_.JString?>? list,
     SharedPreferencesPigeonOptions sharedPreferencesPigeonOptions,
-  ) {
+  ) async {
+    final $p = jni$_.ReceivePort();
+    final _$continuation = jni$_.ProtectedJniExtensions.newPortContinuation($p);
     final _$$selfRef = reference;
     final _$list = list?.reference ?? jni$_.jNullReference;
     final _$sharedPreferencesPigeonOptions = sharedPreferencesPigeonOptions.reference;
-    return _getAll(
+    final $r = _getAll(
       _$$selfRef.pointer,
       _id_getAll.pointer,
       _$list.pointer,
       _$sharedPreferencesPigeonOptions.pointer,
-    ).object<jni$_.JMap<jni$_.JString, jni$_.JObject>>();
+      _$continuation.pointer,
+    ).object<jni$_.JObject>();
+    _$continuation.release();
+    jni$_.JObject $o;
+    if ($r.isInstanceOf(jni$_.coroutineSingletonsClass)) {
+      $r.release();
+      final $a = await $p.first;
+      $o = jni$_.JObject.fromReference(jni$_.JGlobalReference(jni$_.JObjectPtr.fromAddress($a)));
+      if ($o.isInstanceOf(jni$_.result$Class)) {
+        $o = jni$_.resultValueField.get($o, const jni$_.$JObject$Type$());
+      } else if ($o.isInstanceOf(jni$_.result$FailureClass)) {
+        final $e = jni$_.failureExceptionField.get($o, const jni$_.$JObject$Type$());
+        $o.release();
+        jni$_.Jni.throwException($e.reference.toPointer());
+      }
+    } else {
+      $o = $r;
+    }
+    return $o.as<jni$_.JMap>(jni$_.JMap.type, releaseOriginal: true)
+        as jni$_.JMap<jni$_.JString, jni$_.JObject>;
   }
 
   static final _id_getKeys = SharedPreferencesAsyncApi._class.instanceMethodId(
     r'getKeys',
-    r'(Ljava/util/List;Lio/flutter/plugins/sharedpreferences/SharedPreferencesPigeonOptions;)Ljava/util/List;',
+    r'(Ljava/util/List;Lio/flutter/plugins/sharedpreferences/SharedPreferencesPigeonOptions;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;',
   );
 
   static final _getKeys =
@@ -1044,7 +1453,9 @@ extension SharedPreferencesAsyncApi$$Methods on SharedPreferencesAsyncApi {
               jni$_.JniResult Function(
                 jni$_.Pointer<jni$_.Void>,
                 jni$_.JMethodIDPtr,
-                jni$_.VarArgs<(jni$_.Pointer<jni$_.Void>, jni$_.Pointer<jni$_.Void>)>,
+                jni$_.VarArgs<
+                  (jni$_.Pointer<jni$_.Void>, jni$_.Pointer<jni$_.Void>, jni$_.Pointer<jni$_.Void>)
+                >,
               )
             >
           >('globalEnv_CallObjectMethod')
@@ -1054,281 +1465,282 @@ extension SharedPreferencesAsyncApi$$Methods on SharedPreferencesAsyncApi {
               jni$_.JMethodIDPtr,
               jni$_.Pointer<jni$_.Void>,
               jni$_.Pointer<jni$_.Void>,
+              jni$_.Pointer<jni$_.Void>,
             )
           >();
 
-  /// from: `public fun getKeys(allowList: kotlin.collections.List<kotlin.String>?, options: io.flutter.plugins.sharedpreferences.SharedPreferencesPigeonOptions): kotlin.collections.List<kotlin.String>`
+  /// from: `public suspend fun getKeys(allowList: kotlin.collections.List<kotlin.String>?, options: io.flutter.plugins.sharedpreferences.SharedPreferencesPigeonOptions): kotlin.collections.List<kotlin.String>`
   /// The returned object must be released after use, by calling the [release] method.
-  jni$_.JList<jni$_.JString> getKeys(
-    jni$_.JList<jni$_.JString>? list,
+  core$_.Future<jni$_.JList<jni$_.JString>> getKeys(
+    jni$_.JList<jni$_.JString?>? list,
     SharedPreferencesPigeonOptions sharedPreferencesPigeonOptions,
-  ) {
+  ) async {
+    final $p = jni$_.ReceivePort();
+    final _$continuation = jni$_.ProtectedJniExtensions.newPortContinuation($p);
     final _$$selfRef = reference;
     final _$list = list?.reference ?? jni$_.jNullReference;
     final _$sharedPreferencesPigeonOptions = sharedPreferencesPigeonOptions.reference;
-    return _getKeys(
+    final $r = _getKeys(
       _$$selfRef.pointer,
       _id_getKeys.pointer,
       _$list.pointer,
       _$sharedPreferencesPigeonOptions.pointer,
-    ).object<jni$_.JList<jni$_.JString>>();
+      _$continuation.pointer,
+    ).object<jni$_.JObject>();
+    _$continuation.release();
+    jni$_.JObject $o;
+    if ($r.isInstanceOf(jni$_.coroutineSingletonsClass)) {
+      $r.release();
+      final $a = await $p.first;
+      $o = jni$_.JObject.fromReference(jni$_.JGlobalReference(jni$_.JObjectPtr.fromAddress($a)));
+      if ($o.isInstanceOf(jni$_.result$Class)) {
+        $o = jni$_.resultValueField.get($o, const jni$_.$JObject$Type$());
+      } else if ($o.isInstanceOf(jni$_.result$FailureClass)) {
+        final $e = jni$_.failureExceptionField.get($o, const jni$_.$JObject$Type$());
+        $o.release();
+        jni$_.Jni.throwException($e.reference.toPointer());
+      }
+    } else {
+      $o = $r;
+    }
+    return $o.as<jni$_.JList>(jni$_.JList.type, releaseOriginal: true)
+        as jni$_.JList<jni$_.JString>;
   }
 }
 
 abstract base mixin class $SharedPreferencesAsyncApi {
   factory $SharedPreferencesAsyncApi({
-    required void Function(
+    required core$_.Future<void> Function(
       jni$_.JString string,
       core$_.bool z,
       SharedPreferencesPigeonOptions sharedPreferencesPigeonOptions,
     )
     setBool,
-    core$_.bool setBool$async,
-    required void Function(
+    required core$_.Future<void> Function(
       jni$_.JString string,
       jni$_.JString string1,
       SharedPreferencesPigeonOptions sharedPreferencesPigeonOptions,
     )
     setString,
-    core$_.bool setString$async,
-    required void Function(
+    required core$_.Future<void> Function(
       jni$_.JString string,
       core$_.int j,
       SharedPreferencesPigeonOptions sharedPreferencesPigeonOptions,
     )
     setInt,
-    core$_.bool setInt$async,
-    required void Function(
+    required core$_.Future<void> Function(
       jni$_.JString string,
       core$_.double d,
       SharedPreferencesPigeonOptions sharedPreferencesPigeonOptions,
     )
     setDouble,
-    core$_.bool setDouble$async,
-    required void Function(
+    required core$_.Future<void> Function(
       jni$_.JString string,
       jni$_.JString string1,
       SharedPreferencesPigeonOptions sharedPreferencesPigeonOptions,
     )
     setEncodedStringList,
-    core$_.bool setEncodedStringList$async,
-    required void Function(
+    required core$_.Future<void> Function(
       jni$_.JString string,
-      jni$_.JList<jni$_.JString> list,
+      jni$_.JList<jni$_.JString?> list,
       SharedPreferencesPigeonOptions sharedPreferencesPigeonOptions,
     )
     setDeprecatedStringList,
-    core$_.bool setDeprecatedStringList$async,
-    required jni$_.JString? Function(
+    required core$_.Future<jni$_.JString?> Function(
       jni$_.JString string,
       SharedPreferencesPigeonOptions sharedPreferencesPigeonOptions,
     )
     getString,
-    required jni$_.JBoolean? Function(
+    required core$_.Future<jni$_.JBoolean?> Function(
       jni$_.JString string,
       SharedPreferencesPigeonOptions sharedPreferencesPigeonOptions,
     )
     getBool,
-    required jni$_.JDouble? Function(
+    required core$_.Future<jni$_.JDouble?> Function(
       jni$_.JString string,
       SharedPreferencesPigeonOptions sharedPreferencesPigeonOptions,
     )
     getDouble,
-    required jni$_.JLong? Function(
+    required core$_.Future<jni$_.JLong?> Function(
       jni$_.JString string,
       SharedPreferencesPigeonOptions sharedPreferencesPigeonOptions,
     )
     getInt,
-    required jni$_.JList<jni$_.JString>? Function(
+    required core$_.Future<jni$_.JList<jni$_.JString>?> Function(
       jni$_.JString string,
       SharedPreferencesPigeonOptions sharedPreferencesPigeonOptions,
     )
     getPlatformEncodedStringList,
-    required StringListResult? Function(
+    required core$_.Future<StringListResult?> Function(
       jni$_.JString string,
       SharedPreferencesPigeonOptions sharedPreferencesPigeonOptions,
     )
     getStringList,
-    required void Function(
-      jni$_.JList<jni$_.JString>? list,
+    required core$_.Future<void> Function(
+      jni$_.JList<jni$_.JString?>? list,
       SharedPreferencesPigeonOptions sharedPreferencesPigeonOptions,
     )
     clear,
-    core$_.bool clear$async,
-    required jni$_.JMap<jni$_.JString, jni$_.JObject> Function(
-      jni$_.JList<jni$_.JString>? list,
+    required core$_.Future<jni$_.JMap<jni$_.JString, jni$_.JObject>> Function(
+      jni$_.JList<jni$_.JString?>? list,
       SharedPreferencesPigeonOptions sharedPreferencesPigeonOptions,
     )
     getAll,
-    required jni$_.JList<jni$_.JString> Function(
-      jni$_.JList<jni$_.JString>? list,
+    required core$_.Future<jni$_.JList<jni$_.JString>> Function(
+      jni$_.JList<jni$_.JString?>? list,
       SharedPreferencesPigeonOptions sharedPreferencesPigeonOptions,
     )
     getKeys,
   }) = _$SharedPreferencesAsyncApi;
 
-  void setBool(
+  core$_.Future<void> setBool(
     jni$_.JString string,
     core$_.bool z,
     SharedPreferencesPigeonOptions sharedPreferencesPigeonOptions,
   );
-  core$_.bool get setBool$async => false;
-  void setString(
+  core$_.Future<void> setString(
     jni$_.JString string,
     jni$_.JString string1,
     SharedPreferencesPigeonOptions sharedPreferencesPigeonOptions,
   );
-  core$_.bool get setString$async => false;
-  void setInt(
+  core$_.Future<void> setInt(
     jni$_.JString string,
     core$_.int j,
     SharedPreferencesPigeonOptions sharedPreferencesPigeonOptions,
   );
-  core$_.bool get setInt$async => false;
-  void setDouble(
+  core$_.Future<void> setDouble(
     jni$_.JString string,
     core$_.double d,
     SharedPreferencesPigeonOptions sharedPreferencesPigeonOptions,
   );
-  core$_.bool get setDouble$async => false;
-  void setEncodedStringList(
+  core$_.Future<void> setEncodedStringList(
     jni$_.JString string,
     jni$_.JString string1,
     SharedPreferencesPigeonOptions sharedPreferencesPigeonOptions,
   );
-  core$_.bool get setEncodedStringList$async => false;
-  void setDeprecatedStringList(
+  core$_.Future<void> setDeprecatedStringList(
     jni$_.JString string,
-    jni$_.JList<jni$_.JString> list,
+    jni$_.JList<jni$_.JString?> list,
     SharedPreferencesPigeonOptions sharedPreferencesPigeonOptions,
   );
-  core$_.bool get setDeprecatedStringList$async => false;
-  jni$_.JString? getString(
+  core$_.Future<jni$_.JString?> getString(
     jni$_.JString string,
     SharedPreferencesPigeonOptions sharedPreferencesPigeonOptions,
   );
-  jni$_.JBoolean? getBool(
+  core$_.Future<jni$_.JBoolean?> getBool(
     jni$_.JString string,
     SharedPreferencesPigeonOptions sharedPreferencesPigeonOptions,
   );
-  jni$_.JDouble? getDouble(
+  core$_.Future<jni$_.JDouble?> getDouble(
     jni$_.JString string,
     SharedPreferencesPigeonOptions sharedPreferencesPigeonOptions,
   );
-  jni$_.JLong? getInt(
+  core$_.Future<jni$_.JLong?> getInt(
     jni$_.JString string,
     SharedPreferencesPigeonOptions sharedPreferencesPigeonOptions,
   );
-  jni$_.JList<jni$_.JString>? getPlatformEncodedStringList(
+  core$_.Future<jni$_.JList<jni$_.JString>?> getPlatformEncodedStringList(
     jni$_.JString string,
     SharedPreferencesPigeonOptions sharedPreferencesPigeonOptions,
   );
-  StringListResult? getStringList(
+  core$_.Future<StringListResult?> getStringList(
     jni$_.JString string,
     SharedPreferencesPigeonOptions sharedPreferencesPigeonOptions,
   );
-  void clear(
-    jni$_.JList<jni$_.JString>? list,
+  core$_.Future<void> clear(
+    jni$_.JList<jni$_.JString?>? list,
     SharedPreferencesPigeonOptions sharedPreferencesPigeonOptions,
   );
-  core$_.bool get clear$async => false;
-  jni$_.JMap<jni$_.JString, jni$_.JObject> getAll(
-    jni$_.JList<jni$_.JString>? list,
+  core$_.Future<jni$_.JMap<jni$_.JString, jni$_.JObject>> getAll(
+    jni$_.JList<jni$_.JString?>? list,
     SharedPreferencesPigeonOptions sharedPreferencesPigeonOptions,
   );
-  jni$_.JList<jni$_.JString> getKeys(
-    jni$_.JList<jni$_.JString>? list,
+  core$_.Future<jni$_.JList<jni$_.JString>> getKeys(
+    jni$_.JList<jni$_.JString?>? list,
     SharedPreferencesPigeonOptions sharedPreferencesPigeonOptions,
   );
 }
 
 final class _$SharedPreferencesAsyncApi with $SharedPreferencesAsyncApi {
   _$SharedPreferencesAsyncApi({
-    required void Function(
+    required core$_.Future<void> Function(
       jni$_.JString string,
       core$_.bool z,
       SharedPreferencesPigeonOptions sharedPreferencesPigeonOptions,
     )
     setBool,
-    this.setBool$async = false,
-    required void Function(
+    required core$_.Future<void> Function(
       jni$_.JString string,
       jni$_.JString string1,
       SharedPreferencesPigeonOptions sharedPreferencesPigeonOptions,
     )
     setString,
-    this.setString$async = false,
-    required void Function(
+    required core$_.Future<void> Function(
       jni$_.JString string,
       core$_.int j,
       SharedPreferencesPigeonOptions sharedPreferencesPigeonOptions,
     )
     setInt,
-    this.setInt$async = false,
-    required void Function(
+    required core$_.Future<void> Function(
       jni$_.JString string,
       core$_.double d,
       SharedPreferencesPigeonOptions sharedPreferencesPigeonOptions,
     )
     setDouble,
-    this.setDouble$async = false,
-    required void Function(
+    required core$_.Future<void> Function(
       jni$_.JString string,
       jni$_.JString string1,
       SharedPreferencesPigeonOptions sharedPreferencesPigeonOptions,
     )
     setEncodedStringList,
-    this.setEncodedStringList$async = false,
-    required void Function(
+    required core$_.Future<void> Function(
       jni$_.JString string,
-      jni$_.JList<jni$_.JString> list,
+      jni$_.JList<jni$_.JString?> list,
       SharedPreferencesPigeonOptions sharedPreferencesPigeonOptions,
     )
     setDeprecatedStringList,
-    this.setDeprecatedStringList$async = false,
-    required jni$_.JString? Function(
+    required core$_.Future<jni$_.JString?> Function(
       jni$_.JString string,
       SharedPreferencesPigeonOptions sharedPreferencesPigeonOptions,
     )
     getString,
-    required jni$_.JBoolean? Function(
+    required core$_.Future<jni$_.JBoolean?> Function(
       jni$_.JString string,
       SharedPreferencesPigeonOptions sharedPreferencesPigeonOptions,
     )
     getBool,
-    required jni$_.JDouble? Function(
+    required core$_.Future<jni$_.JDouble?> Function(
       jni$_.JString string,
       SharedPreferencesPigeonOptions sharedPreferencesPigeonOptions,
     )
     getDouble,
-    required jni$_.JLong? Function(
+    required core$_.Future<jni$_.JLong?> Function(
       jni$_.JString string,
       SharedPreferencesPigeonOptions sharedPreferencesPigeonOptions,
     )
     getInt,
-    required jni$_.JList<jni$_.JString>? Function(
+    required core$_.Future<jni$_.JList<jni$_.JString>?> Function(
       jni$_.JString string,
       SharedPreferencesPigeonOptions sharedPreferencesPigeonOptions,
     )
     getPlatformEncodedStringList,
-    required StringListResult? Function(
+    required core$_.Future<StringListResult?> Function(
       jni$_.JString string,
       SharedPreferencesPigeonOptions sharedPreferencesPigeonOptions,
     )
     getStringList,
-    required void Function(
-      jni$_.JList<jni$_.JString>? list,
+    required core$_.Future<void> Function(
+      jni$_.JList<jni$_.JString?>? list,
       SharedPreferencesPigeonOptions sharedPreferencesPigeonOptions,
     )
     clear,
-    this.clear$async = false,
-    required jni$_.JMap<jni$_.JString, jni$_.JObject> Function(
-      jni$_.JList<jni$_.JString>? list,
+    required core$_.Future<jni$_.JMap<jni$_.JString, jni$_.JObject>> Function(
+      jni$_.JList<jni$_.JString?>? list,
       SharedPreferencesPigeonOptions sharedPreferencesPigeonOptions,
     )
     getAll,
-    required jni$_.JList<jni$_.JString> Function(
-      jni$_.JList<jni$_.JString>? list,
+    required core$_.Future<jni$_.JList<jni$_.JString>> Function(
+      jni$_.JList<jni$_.JString?>? list,
       SharedPreferencesPigeonOptions sharedPreferencesPigeonOptions,
     )
     getKeys,
@@ -1348,96 +1760,89 @@ final class _$SharedPreferencesAsyncApi with $SharedPreferencesAsyncApi {
        _getAll = getAll,
        _getKeys = getKeys;
 
-  final void Function(
+  final core$_.Future<void> Function(
     jni$_.JString string,
     core$_.bool z,
     SharedPreferencesPigeonOptions sharedPreferencesPigeonOptions,
   )
   _setBool;
-  final core$_.bool setBool$async;
-  final void Function(
+  final core$_.Future<void> Function(
     jni$_.JString string,
     jni$_.JString string1,
     SharedPreferencesPigeonOptions sharedPreferencesPigeonOptions,
   )
   _setString;
-  final core$_.bool setString$async;
-  final void Function(
+  final core$_.Future<void> Function(
     jni$_.JString string,
     core$_.int j,
     SharedPreferencesPigeonOptions sharedPreferencesPigeonOptions,
   )
   _setInt;
-  final core$_.bool setInt$async;
-  final void Function(
+  final core$_.Future<void> Function(
     jni$_.JString string,
     core$_.double d,
     SharedPreferencesPigeonOptions sharedPreferencesPigeonOptions,
   )
   _setDouble;
-  final core$_.bool setDouble$async;
-  final void Function(
+  final core$_.Future<void> Function(
     jni$_.JString string,
     jni$_.JString string1,
     SharedPreferencesPigeonOptions sharedPreferencesPigeonOptions,
   )
   _setEncodedStringList;
-  final core$_.bool setEncodedStringList$async;
-  final void Function(
+  final core$_.Future<void> Function(
     jni$_.JString string,
-    jni$_.JList<jni$_.JString> list,
+    jni$_.JList<jni$_.JString?> list,
     SharedPreferencesPigeonOptions sharedPreferencesPigeonOptions,
   )
   _setDeprecatedStringList;
-  final core$_.bool setDeprecatedStringList$async;
-  final jni$_.JString? Function(
+  final core$_.Future<jni$_.JString?> Function(
     jni$_.JString string,
     SharedPreferencesPigeonOptions sharedPreferencesPigeonOptions,
   )
   _getString;
-  final jni$_.JBoolean? Function(
+  final core$_.Future<jni$_.JBoolean?> Function(
     jni$_.JString string,
     SharedPreferencesPigeonOptions sharedPreferencesPigeonOptions,
   )
   _getBool;
-  final jni$_.JDouble? Function(
+  final core$_.Future<jni$_.JDouble?> Function(
     jni$_.JString string,
     SharedPreferencesPigeonOptions sharedPreferencesPigeonOptions,
   )
   _getDouble;
-  final jni$_.JLong? Function(
+  final core$_.Future<jni$_.JLong?> Function(
     jni$_.JString string,
     SharedPreferencesPigeonOptions sharedPreferencesPigeonOptions,
   )
   _getInt;
-  final jni$_.JList<jni$_.JString>? Function(
+  final core$_.Future<jni$_.JList<jni$_.JString>?> Function(
     jni$_.JString string,
     SharedPreferencesPigeonOptions sharedPreferencesPigeonOptions,
   )
   _getPlatformEncodedStringList;
-  final StringListResult? Function(
+  final core$_.Future<StringListResult?> Function(
     jni$_.JString string,
     SharedPreferencesPigeonOptions sharedPreferencesPigeonOptions,
   )
   _getStringList;
-  final void Function(
-    jni$_.JList<jni$_.JString>? list,
+  final core$_.Future<void> Function(
+    jni$_.JList<jni$_.JString?>? list,
     SharedPreferencesPigeonOptions sharedPreferencesPigeonOptions,
   )
   _clear;
-  final core$_.bool clear$async;
-  final jni$_.JMap<jni$_.JString, jni$_.JObject> Function(
-    jni$_.JList<jni$_.JString>? list,
+  final core$_.Future<jni$_.JMap<jni$_.JString, jni$_.JObject>> Function(
+    jni$_.JList<jni$_.JString?>? list,
     SharedPreferencesPigeonOptions sharedPreferencesPigeonOptions,
   )
   _getAll;
-  final jni$_.JList<jni$_.JString> Function(
-    jni$_.JList<jni$_.JString>? list,
+  final core$_.Future<jni$_.JList<jni$_.JString>> Function(
+    jni$_.JList<jni$_.JString?>? list,
     SharedPreferencesPigeonOptions sharedPreferencesPigeonOptions,
   )
   _getKeys;
 
-  void setBool(
+  core$_.Future<void> setBool(
     jni$_.JString string,
     core$_.bool z,
     SharedPreferencesPigeonOptions sharedPreferencesPigeonOptions,
@@ -1445,7 +1850,7 @@ final class _$SharedPreferencesAsyncApi with $SharedPreferencesAsyncApi {
     return _setBool(string, z, sharedPreferencesPigeonOptions);
   }
 
-  void setString(
+  core$_.Future<void> setString(
     jni$_.JString string,
     jni$_.JString string1,
     SharedPreferencesPigeonOptions sharedPreferencesPigeonOptions,
@@ -1453,7 +1858,7 @@ final class _$SharedPreferencesAsyncApi with $SharedPreferencesAsyncApi {
     return _setString(string, string1, sharedPreferencesPigeonOptions);
   }
 
-  void setInt(
+  core$_.Future<void> setInt(
     jni$_.JString string,
     core$_.int j,
     SharedPreferencesPigeonOptions sharedPreferencesPigeonOptions,
@@ -1461,7 +1866,7 @@ final class _$SharedPreferencesAsyncApi with $SharedPreferencesAsyncApi {
     return _setInt(string, j, sharedPreferencesPigeonOptions);
   }
 
-  void setDouble(
+  core$_.Future<void> setDouble(
     jni$_.JString string,
     core$_.double d,
     SharedPreferencesPigeonOptions sharedPreferencesPigeonOptions,
@@ -1469,7 +1874,7 @@ final class _$SharedPreferencesAsyncApi with $SharedPreferencesAsyncApi {
     return _setDouble(string, d, sharedPreferencesPigeonOptions);
   }
 
-  void setEncodedStringList(
+  core$_.Future<void> setEncodedStringList(
     jni$_.JString string,
     jni$_.JString string1,
     SharedPreferencesPigeonOptions sharedPreferencesPigeonOptions,
@@ -1477,72 +1882,72 @@ final class _$SharedPreferencesAsyncApi with $SharedPreferencesAsyncApi {
     return _setEncodedStringList(string, string1, sharedPreferencesPigeonOptions);
   }
 
-  void setDeprecatedStringList(
+  core$_.Future<void> setDeprecatedStringList(
     jni$_.JString string,
-    jni$_.JList<jni$_.JString> list,
+    jni$_.JList<jni$_.JString?> list,
     SharedPreferencesPigeonOptions sharedPreferencesPigeonOptions,
   ) {
     return _setDeprecatedStringList(string, list, sharedPreferencesPigeonOptions);
   }
 
-  jni$_.JString? getString(
+  core$_.Future<jni$_.JString?> getString(
     jni$_.JString string,
     SharedPreferencesPigeonOptions sharedPreferencesPigeonOptions,
   ) {
     return _getString(string, sharedPreferencesPigeonOptions);
   }
 
-  jni$_.JBoolean? getBool(
+  core$_.Future<jni$_.JBoolean?> getBool(
     jni$_.JString string,
     SharedPreferencesPigeonOptions sharedPreferencesPigeonOptions,
   ) {
     return _getBool(string, sharedPreferencesPigeonOptions);
   }
 
-  jni$_.JDouble? getDouble(
+  core$_.Future<jni$_.JDouble?> getDouble(
     jni$_.JString string,
     SharedPreferencesPigeonOptions sharedPreferencesPigeonOptions,
   ) {
     return _getDouble(string, sharedPreferencesPigeonOptions);
   }
 
-  jni$_.JLong? getInt(
+  core$_.Future<jni$_.JLong?> getInt(
     jni$_.JString string,
     SharedPreferencesPigeonOptions sharedPreferencesPigeonOptions,
   ) {
     return _getInt(string, sharedPreferencesPigeonOptions);
   }
 
-  jni$_.JList<jni$_.JString>? getPlatformEncodedStringList(
+  core$_.Future<jni$_.JList<jni$_.JString>?> getPlatformEncodedStringList(
     jni$_.JString string,
     SharedPreferencesPigeonOptions sharedPreferencesPigeonOptions,
   ) {
     return _getPlatformEncodedStringList(string, sharedPreferencesPigeonOptions);
   }
 
-  StringListResult? getStringList(
+  core$_.Future<StringListResult?> getStringList(
     jni$_.JString string,
     SharedPreferencesPigeonOptions sharedPreferencesPigeonOptions,
   ) {
     return _getStringList(string, sharedPreferencesPigeonOptions);
   }
 
-  void clear(
-    jni$_.JList<jni$_.JString>? list,
+  core$_.Future<void> clear(
+    jni$_.JList<jni$_.JString?>? list,
     SharedPreferencesPigeonOptions sharedPreferencesPigeonOptions,
   ) {
     return _clear(list, sharedPreferencesPigeonOptions);
   }
 
-  jni$_.JMap<jni$_.JString, jni$_.JObject> getAll(
-    jni$_.JList<jni$_.JString>? list,
+  core$_.Future<jni$_.JMap<jni$_.JString, jni$_.JObject>> getAll(
+    jni$_.JList<jni$_.JString?>? list,
     SharedPreferencesPigeonOptions sharedPreferencesPigeonOptions,
   ) {
     return _getAll(list, sharedPreferencesPigeonOptions);
   }
 
-  jni$_.JList<jni$_.JString> getKeys(
-    jni$_.JList<jni$_.JString>? list,
+  core$_.Future<jni$_.JList<jni$_.JString>> getKeys(
+    jni$_.JList<jni$_.JString?>? list,
     SharedPreferencesPigeonOptions sharedPreferencesPigeonOptions,
   ) {
     return _getKeys(list, sharedPreferencesPigeonOptions);
@@ -1669,274 +2074,442 @@ extension SharedPreferencesAsyncApiRegistrar$$Methods on SharedPreferencesAsyncA
 
   static final _id_setBool = SharedPreferencesAsyncApiRegistrar._class.instanceMethodId(
     r'setBool',
-    r'(Ljava/lang/String;ZLio/flutter/plugins/sharedpreferences/SharedPreferencesPigeonOptions;)V',
+    r'(Ljava/lang/String;ZLio/flutter/plugins/sharedpreferences/SharedPreferencesPigeonOptions;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;',
   );
 
   static final _setBool =
       jni$_.ProtectedJniExtensions.lookup<
             jni$_.NativeFunction<
-              jni$_.JThrowablePtr Function(
+              jni$_.JniResult Function(
                 jni$_.Pointer<jni$_.Void>,
                 jni$_.JMethodIDPtr,
-                jni$_.VarArgs<(jni$_.Pointer<jni$_.Void>, jni$_.Int32, jni$_.Pointer<jni$_.Void>)>,
+                jni$_.VarArgs<
+                  (
+                    jni$_.Pointer<jni$_.Void>,
+                    jni$_.Int32,
+                    jni$_.Pointer<jni$_.Void>,
+                    jni$_.Pointer<jni$_.Void>,
+                  )
+                >,
               )
             >
-          >('globalEnv_CallVoidMethod')
+          >('globalEnv_CallObjectMethod')
           .asFunction<
-            jni$_.JThrowablePtr Function(
+            jni$_.JniResult Function(
               jni$_.Pointer<jni$_.Void>,
               jni$_.JMethodIDPtr,
               jni$_.Pointer<jni$_.Void>,
               core$_.int,
               jni$_.Pointer<jni$_.Void>,
+              jni$_.Pointer<jni$_.Void>,
             )
           >();
 
-  /// from: `public fun setBool(key: kotlin.String, value: kotlin.Boolean, options: io.flutter.plugins.sharedpreferences.SharedPreferencesPigeonOptions): kotlin.Unit`
-  void setBool(
+  /// from: `public suspend fun setBool(key: kotlin.String, value: kotlin.Boolean, options: io.flutter.plugins.sharedpreferences.SharedPreferencesPigeonOptions): kotlin.Unit`
+  /// The returned object must be released after use, by calling the [release] method.
+  core$_.Future<void> setBool(
     jni$_.JString string,
     core$_.bool z,
     SharedPreferencesPigeonOptions sharedPreferencesPigeonOptions,
-  ) {
+  ) async {
+    final $p = jni$_.ReceivePort();
+    final _$continuation = jni$_.ProtectedJniExtensions.newPortContinuation($p);
     final _$$selfRef = reference;
     final _$string = string.reference;
     final _$sharedPreferencesPigeonOptions = sharedPreferencesPigeonOptions.reference;
-    _setBool(
+    final $r = _setBool(
       _$$selfRef.pointer,
       _id_setBool.pointer,
       _$string.pointer,
       z ? 1 : 0,
       _$sharedPreferencesPigeonOptions.pointer,
-    ).check();
+      _$continuation.pointer,
+    ).object<jni$_.JObject>();
+    _$continuation.release();
+    jni$_.JObject $o;
+    if ($r.isInstanceOf(jni$_.coroutineSingletonsClass)) {
+      $r.release();
+      final $a = await $p.first;
+      $o = jni$_.JObject.fromReference(jni$_.JGlobalReference(jni$_.JObjectPtr.fromAddress($a)));
+      if ($o.isInstanceOf(jni$_.result$Class)) {
+        $o = jni$_.resultValueField.get($o, const jni$_.$JObject$Type$());
+      } else if ($o.isInstanceOf(jni$_.result$FailureClass)) {
+        final $e = jni$_.failureExceptionField.get($o, const jni$_.$JObject$Type$());
+        $o.release();
+        jni$_.Jni.throwException($e.reference.toPointer());
+      }
+    } else {
+      $o = $r;
+    }
+    return;
   }
 
   static final _id_setString = SharedPreferencesAsyncApiRegistrar._class.instanceMethodId(
     r'setString',
-    r'(Ljava/lang/String;Ljava/lang/String;Lio/flutter/plugins/sharedpreferences/SharedPreferencesPigeonOptions;)V',
+    r'(Ljava/lang/String;Ljava/lang/String;Lio/flutter/plugins/sharedpreferences/SharedPreferencesPigeonOptions;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;',
   );
 
   static final _setString =
       jni$_.ProtectedJniExtensions.lookup<
             jni$_.NativeFunction<
-              jni$_.JThrowablePtr Function(
+              jni$_.JniResult Function(
                 jni$_.Pointer<jni$_.Void>,
                 jni$_.JMethodIDPtr,
                 jni$_.VarArgs<
-                  (jni$_.Pointer<jni$_.Void>, jni$_.Pointer<jni$_.Void>, jni$_.Pointer<jni$_.Void>)
+                  (
+                    jni$_.Pointer<jni$_.Void>,
+                    jni$_.Pointer<jni$_.Void>,
+                    jni$_.Pointer<jni$_.Void>,
+                    jni$_.Pointer<jni$_.Void>,
+                  )
                 >,
               )
             >
-          >('globalEnv_CallVoidMethod')
+          >('globalEnv_CallObjectMethod')
           .asFunction<
-            jni$_.JThrowablePtr Function(
+            jni$_.JniResult Function(
               jni$_.Pointer<jni$_.Void>,
               jni$_.JMethodIDPtr,
+              jni$_.Pointer<jni$_.Void>,
               jni$_.Pointer<jni$_.Void>,
               jni$_.Pointer<jni$_.Void>,
               jni$_.Pointer<jni$_.Void>,
             )
           >();
 
-  /// from: `public fun setString(key: kotlin.String, value: kotlin.String, options: io.flutter.plugins.sharedpreferences.SharedPreferencesPigeonOptions): kotlin.Unit`
-  void setString(
+  /// from: `public suspend fun setString(key: kotlin.String, value: kotlin.String, options: io.flutter.plugins.sharedpreferences.SharedPreferencesPigeonOptions): kotlin.Unit`
+  /// The returned object must be released after use, by calling the [release] method.
+  core$_.Future<void> setString(
     jni$_.JString string,
     jni$_.JString string1,
     SharedPreferencesPigeonOptions sharedPreferencesPigeonOptions,
-  ) {
+  ) async {
+    final $p = jni$_.ReceivePort();
+    final _$continuation = jni$_.ProtectedJniExtensions.newPortContinuation($p);
     final _$$selfRef = reference;
     final _$string = string.reference;
     final _$string1 = string1.reference;
     final _$sharedPreferencesPigeonOptions = sharedPreferencesPigeonOptions.reference;
-    _setString(
+    final $r = _setString(
       _$$selfRef.pointer,
       _id_setString.pointer,
       _$string.pointer,
       _$string1.pointer,
       _$sharedPreferencesPigeonOptions.pointer,
-    ).check();
+      _$continuation.pointer,
+    ).object<jni$_.JObject>();
+    _$continuation.release();
+    jni$_.JObject $o;
+    if ($r.isInstanceOf(jni$_.coroutineSingletonsClass)) {
+      $r.release();
+      final $a = await $p.first;
+      $o = jni$_.JObject.fromReference(jni$_.JGlobalReference(jni$_.JObjectPtr.fromAddress($a)));
+      if ($o.isInstanceOf(jni$_.result$Class)) {
+        $o = jni$_.resultValueField.get($o, const jni$_.$JObject$Type$());
+      } else if ($o.isInstanceOf(jni$_.result$FailureClass)) {
+        final $e = jni$_.failureExceptionField.get($o, const jni$_.$JObject$Type$());
+        $o.release();
+        jni$_.Jni.throwException($e.reference.toPointer());
+      }
+    } else {
+      $o = $r;
+    }
+    return;
   }
 
   static final _id_setInt = SharedPreferencesAsyncApiRegistrar._class.instanceMethodId(
     r'setInt',
-    r'(Ljava/lang/String;JLio/flutter/plugins/sharedpreferences/SharedPreferencesPigeonOptions;)V',
+    r'(Ljava/lang/String;JLio/flutter/plugins/sharedpreferences/SharedPreferencesPigeonOptions;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;',
   );
 
   static final _setInt =
       jni$_.ProtectedJniExtensions.lookup<
             jni$_.NativeFunction<
-              jni$_.JThrowablePtr Function(
+              jni$_.JniResult Function(
                 jni$_.Pointer<jni$_.Void>,
                 jni$_.JMethodIDPtr,
-                jni$_.VarArgs<(jni$_.Pointer<jni$_.Void>, jni$_.Int64, jni$_.Pointer<jni$_.Void>)>,
+                jni$_.VarArgs<
+                  (
+                    jni$_.Pointer<jni$_.Void>,
+                    jni$_.Int64,
+                    jni$_.Pointer<jni$_.Void>,
+                    jni$_.Pointer<jni$_.Void>,
+                  )
+                >,
               )
             >
-          >('globalEnv_CallVoidMethod')
+          >('globalEnv_CallObjectMethod')
           .asFunction<
-            jni$_.JThrowablePtr Function(
+            jni$_.JniResult Function(
               jni$_.Pointer<jni$_.Void>,
               jni$_.JMethodIDPtr,
               jni$_.Pointer<jni$_.Void>,
               core$_.int,
               jni$_.Pointer<jni$_.Void>,
+              jni$_.Pointer<jni$_.Void>,
             )
           >();
 
-  /// from: `public fun setInt(key: kotlin.String, value: kotlin.Long, options: io.flutter.plugins.sharedpreferences.SharedPreferencesPigeonOptions): kotlin.Unit`
-  void setInt(
+  /// from: `public suspend fun setInt(key: kotlin.String, value: kotlin.Long, options: io.flutter.plugins.sharedpreferences.SharedPreferencesPigeonOptions): kotlin.Unit`
+  /// The returned object must be released after use, by calling the [release] method.
+  core$_.Future<void> setInt(
     jni$_.JString string,
     core$_.int j,
     SharedPreferencesPigeonOptions sharedPreferencesPigeonOptions,
-  ) {
+  ) async {
+    final $p = jni$_.ReceivePort();
+    final _$continuation = jni$_.ProtectedJniExtensions.newPortContinuation($p);
     final _$$selfRef = reference;
     final _$string = string.reference;
     final _$sharedPreferencesPigeonOptions = sharedPreferencesPigeonOptions.reference;
-    _setInt(
+    final $r = _setInt(
       _$$selfRef.pointer,
       _id_setInt.pointer,
       _$string.pointer,
       j,
       _$sharedPreferencesPigeonOptions.pointer,
-    ).check();
+      _$continuation.pointer,
+    ).object<jni$_.JObject>();
+    _$continuation.release();
+    jni$_.JObject $o;
+    if ($r.isInstanceOf(jni$_.coroutineSingletonsClass)) {
+      $r.release();
+      final $a = await $p.first;
+      $o = jni$_.JObject.fromReference(jni$_.JGlobalReference(jni$_.JObjectPtr.fromAddress($a)));
+      if ($o.isInstanceOf(jni$_.result$Class)) {
+        $o = jni$_.resultValueField.get($o, const jni$_.$JObject$Type$());
+      } else if ($o.isInstanceOf(jni$_.result$FailureClass)) {
+        final $e = jni$_.failureExceptionField.get($o, const jni$_.$JObject$Type$());
+        $o.release();
+        jni$_.Jni.throwException($e.reference.toPointer());
+      }
+    } else {
+      $o = $r;
+    }
+    return;
   }
 
   static final _id_setDouble = SharedPreferencesAsyncApiRegistrar._class.instanceMethodId(
     r'setDouble',
-    r'(Ljava/lang/String;DLio/flutter/plugins/sharedpreferences/SharedPreferencesPigeonOptions;)V',
+    r'(Ljava/lang/String;DLio/flutter/plugins/sharedpreferences/SharedPreferencesPigeonOptions;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;',
   );
 
   static final _setDouble =
       jni$_.ProtectedJniExtensions.lookup<
             jni$_.NativeFunction<
-              jni$_.JThrowablePtr Function(
+              jni$_.JniResult Function(
                 jni$_.Pointer<jni$_.Void>,
                 jni$_.JMethodIDPtr,
-                jni$_.VarArgs<(jni$_.Pointer<jni$_.Void>, jni$_.Double, jni$_.Pointer<jni$_.Void>)>,
+                jni$_.VarArgs<
+                  (
+                    jni$_.Pointer<jni$_.Void>,
+                    jni$_.Double,
+                    jni$_.Pointer<jni$_.Void>,
+                    jni$_.Pointer<jni$_.Void>,
+                  )
+                >,
               )
             >
-          >('globalEnv_CallVoidMethod')
+          >('globalEnv_CallObjectMethod')
           .asFunction<
-            jni$_.JThrowablePtr Function(
+            jni$_.JniResult Function(
               jni$_.Pointer<jni$_.Void>,
               jni$_.JMethodIDPtr,
               jni$_.Pointer<jni$_.Void>,
               core$_.double,
               jni$_.Pointer<jni$_.Void>,
+              jni$_.Pointer<jni$_.Void>,
             )
           >();
 
-  /// from: `public fun setDouble(key: kotlin.String, value: kotlin.Double, options: io.flutter.plugins.sharedpreferences.SharedPreferencesPigeonOptions): kotlin.Unit`
-  void setDouble(
+  /// from: `public suspend fun setDouble(key: kotlin.String, value: kotlin.Double, options: io.flutter.plugins.sharedpreferences.SharedPreferencesPigeonOptions): kotlin.Unit`
+  /// The returned object must be released after use, by calling the [release] method.
+  core$_.Future<void> setDouble(
     jni$_.JString string,
     core$_.double d,
     SharedPreferencesPigeonOptions sharedPreferencesPigeonOptions,
-  ) {
+  ) async {
+    final $p = jni$_.ReceivePort();
+    final _$continuation = jni$_.ProtectedJniExtensions.newPortContinuation($p);
     final _$$selfRef = reference;
     final _$string = string.reference;
     final _$sharedPreferencesPigeonOptions = sharedPreferencesPigeonOptions.reference;
-    _setDouble(
+    final $r = _setDouble(
       _$$selfRef.pointer,
       _id_setDouble.pointer,
       _$string.pointer,
       d,
       _$sharedPreferencesPigeonOptions.pointer,
-    ).check();
+      _$continuation.pointer,
+    ).object<jni$_.JObject>();
+    _$continuation.release();
+    jni$_.JObject $o;
+    if ($r.isInstanceOf(jni$_.coroutineSingletonsClass)) {
+      $r.release();
+      final $a = await $p.first;
+      $o = jni$_.JObject.fromReference(jni$_.JGlobalReference(jni$_.JObjectPtr.fromAddress($a)));
+      if ($o.isInstanceOf(jni$_.result$Class)) {
+        $o = jni$_.resultValueField.get($o, const jni$_.$JObject$Type$());
+      } else if ($o.isInstanceOf(jni$_.result$FailureClass)) {
+        final $e = jni$_.failureExceptionField.get($o, const jni$_.$JObject$Type$());
+        $o.release();
+        jni$_.Jni.throwException($e.reference.toPointer());
+      }
+    } else {
+      $o = $r;
+    }
+    return;
   }
 
   static final _id_setEncodedStringList = SharedPreferencesAsyncApiRegistrar._class.instanceMethodId(
     r'setEncodedStringList',
-    r'(Ljava/lang/String;Ljava/lang/String;Lio/flutter/plugins/sharedpreferences/SharedPreferencesPigeonOptions;)V',
+    r'(Ljava/lang/String;Ljava/lang/String;Lio/flutter/plugins/sharedpreferences/SharedPreferencesPigeonOptions;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;',
   );
 
   static final _setEncodedStringList =
       jni$_.ProtectedJniExtensions.lookup<
             jni$_.NativeFunction<
-              jni$_.JThrowablePtr Function(
+              jni$_.JniResult Function(
                 jni$_.Pointer<jni$_.Void>,
                 jni$_.JMethodIDPtr,
                 jni$_.VarArgs<
-                  (jni$_.Pointer<jni$_.Void>, jni$_.Pointer<jni$_.Void>, jni$_.Pointer<jni$_.Void>)
+                  (
+                    jni$_.Pointer<jni$_.Void>,
+                    jni$_.Pointer<jni$_.Void>,
+                    jni$_.Pointer<jni$_.Void>,
+                    jni$_.Pointer<jni$_.Void>,
+                  )
                 >,
               )
             >
-          >('globalEnv_CallVoidMethod')
+          >('globalEnv_CallObjectMethod')
           .asFunction<
-            jni$_.JThrowablePtr Function(
+            jni$_.JniResult Function(
               jni$_.Pointer<jni$_.Void>,
               jni$_.JMethodIDPtr,
+              jni$_.Pointer<jni$_.Void>,
               jni$_.Pointer<jni$_.Void>,
               jni$_.Pointer<jni$_.Void>,
               jni$_.Pointer<jni$_.Void>,
             )
           >();
 
-  /// from: `public fun setEncodedStringList(key: kotlin.String, value: kotlin.String, options: io.flutter.plugins.sharedpreferences.SharedPreferencesPigeonOptions): kotlin.Unit`
-  void setEncodedStringList(
+  /// from: `public suspend fun setEncodedStringList(key: kotlin.String, value: kotlin.String, options: io.flutter.plugins.sharedpreferences.SharedPreferencesPigeonOptions): kotlin.Unit`
+  /// The returned object must be released after use, by calling the [release] method.
+  core$_.Future<void> setEncodedStringList(
     jni$_.JString string,
     jni$_.JString string1,
     SharedPreferencesPigeonOptions sharedPreferencesPigeonOptions,
-  ) {
+  ) async {
+    final $p = jni$_.ReceivePort();
+    final _$continuation = jni$_.ProtectedJniExtensions.newPortContinuation($p);
     final _$$selfRef = reference;
     final _$string = string.reference;
     final _$string1 = string1.reference;
     final _$sharedPreferencesPigeonOptions = sharedPreferencesPigeonOptions.reference;
-    _setEncodedStringList(
+    final $r = _setEncodedStringList(
       _$$selfRef.pointer,
       _id_setEncodedStringList.pointer,
       _$string.pointer,
       _$string1.pointer,
       _$sharedPreferencesPigeonOptions.pointer,
-    ).check();
+      _$continuation.pointer,
+    ).object<jni$_.JObject>();
+    _$continuation.release();
+    jni$_.JObject $o;
+    if ($r.isInstanceOf(jni$_.coroutineSingletonsClass)) {
+      $r.release();
+      final $a = await $p.first;
+      $o = jni$_.JObject.fromReference(jni$_.JGlobalReference(jni$_.JObjectPtr.fromAddress($a)));
+      if ($o.isInstanceOf(jni$_.result$Class)) {
+        $o = jni$_.resultValueField.get($o, const jni$_.$JObject$Type$());
+      } else if ($o.isInstanceOf(jni$_.result$FailureClass)) {
+        final $e = jni$_.failureExceptionField.get($o, const jni$_.$JObject$Type$());
+        $o.release();
+        jni$_.Jni.throwException($e.reference.toPointer());
+      }
+    } else {
+      $o = $r;
+    }
+    return;
   }
 
   static final _id_setDeprecatedStringList = SharedPreferencesAsyncApiRegistrar._class.instanceMethodId(
     r'setDeprecatedStringList',
-    r'(Ljava/lang/String;Ljava/util/List;Lio/flutter/plugins/sharedpreferences/SharedPreferencesPigeonOptions;)V',
+    r'(Ljava/lang/String;Ljava/util/List;Lio/flutter/plugins/sharedpreferences/SharedPreferencesPigeonOptions;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;',
   );
 
   static final _setDeprecatedStringList =
       jni$_.ProtectedJniExtensions.lookup<
             jni$_.NativeFunction<
-              jni$_.JThrowablePtr Function(
+              jni$_.JniResult Function(
                 jni$_.Pointer<jni$_.Void>,
                 jni$_.JMethodIDPtr,
                 jni$_.VarArgs<
-                  (jni$_.Pointer<jni$_.Void>, jni$_.Pointer<jni$_.Void>, jni$_.Pointer<jni$_.Void>)
+                  (
+                    jni$_.Pointer<jni$_.Void>,
+                    jni$_.Pointer<jni$_.Void>,
+                    jni$_.Pointer<jni$_.Void>,
+                    jni$_.Pointer<jni$_.Void>,
+                  )
                 >,
               )
             >
-          >('globalEnv_CallVoidMethod')
+          >('globalEnv_CallObjectMethod')
           .asFunction<
-            jni$_.JThrowablePtr Function(
+            jni$_.JniResult Function(
               jni$_.Pointer<jni$_.Void>,
               jni$_.JMethodIDPtr,
+              jni$_.Pointer<jni$_.Void>,
               jni$_.Pointer<jni$_.Void>,
               jni$_.Pointer<jni$_.Void>,
               jni$_.Pointer<jni$_.Void>,
             )
           >();
 
-  /// from: `public fun setDeprecatedStringList(key: kotlin.String, value: kotlin.collections.List<kotlin.String>, options: io.flutter.plugins.sharedpreferences.SharedPreferencesPigeonOptions): kotlin.Unit`
-  void setDeprecatedStringList(
+  /// from: `public suspend fun setDeprecatedStringList(key: kotlin.String, value: kotlin.collections.List<kotlin.String>, options: io.flutter.plugins.sharedpreferences.SharedPreferencesPigeonOptions): kotlin.Unit`
+  /// The returned object must be released after use, by calling the [release] method.
+  core$_.Future<void> setDeprecatedStringList(
     jni$_.JString string,
-    jni$_.JList<jni$_.JString> list,
+    jni$_.JList<jni$_.JString?> list,
     SharedPreferencesPigeonOptions sharedPreferencesPigeonOptions,
-  ) {
+  ) async {
+    final $p = jni$_.ReceivePort();
+    final _$continuation = jni$_.ProtectedJniExtensions.newPortContinuation($p);
     final _$$selfRef = reference;
     final _$string = string.reference;
     final _$list = list.reference;
     final _$sharedPreferencesPigeonOptions = sharedPreferencesPigeonOptions.reference;
-    _setDeprecatedStringList(
+    final $r = _setDeprecatedStringList(
       _$$selfRef.pointer,
       _id_setDeprecatedStringList.pointer,
       _$string.pointer,
       _$list.pointer,
       _$sharedPreferencesPigeonOptions.pointer,
-    ).check();
+      _$continuation.pointer,
+    ).object<jni$_.JObject>();
+    _$continuation.release();
+    jni$_.JObject $o;
+    if ($r.isInstanceOf(jni$_.coroutineSingletonsClass)) {
+      $r.release();
+      final $a = await $p.first;
+      $o = jni$_.JObject.fromReference(jni$_.JGlobalReference(jni$_.JObjectPtr.fromAddress($a)));
+      if ($o.isInstanceOf(jni$_.result$Class)) {
+        $o = jni$_.resultValueField.get($o, const jni$_.$JObject$Type$());
+      } else if ($o.isInstanceOf(jni$_.result$FailureClass)) {
+        final $e = jni$_.failureExceptionField.get($o, const jni$_.$JObject$Type$());
+        $o.release();
+        jni$_.Jni.throwException($e.reference.toPointer());
+      }
+    } else {
+      $o = $r;
+    }
+    return;
   }
 
   static final _id_getString = SharedPreferencesAsyncApiRegistrar._class.instanceMethodId(
     r'getString',
-    r'(Ljava/lang/String;Lio/flutter/plugins/sharedpreferences/SharedPreferencesPigeonOptions;)Ljava/lang/String;',
+    r'(Ljava/lang/String;Lio/flutter/plugins/sharedpreferences/SharedPreferencesPigeonOptions;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;',
   );
 
   static final _getString =
@@ -1945,7 +2518,9 @@ extension SharedPreferencesAsyncApiRegistrar$$Methods on SharedPreferencesAsyncA
               jni$_.JniResult Function(
                 jni$_.Pointer<jni$_.Void>,
                 jni$_.JMethodIDPtr,
-                jni$_.VarArgs<(jni$_.Pointer<jni$_.Void>, jni$_.Pointer<jni$_.Void>)>,
+                jni$_.VarArgs<
+                  (jni$_.Pointer<jni$_.Void>, jni$_.Pointer<jni$_.Void>, jni$_.Pointer<jni$_.Void>)
+                >,
               )
             >
           >('globalEnv_CallObjectMethod')
@@ -1955,29 +2530,52 @@ extension SharedPreferencesAsyncApiRegistrar$$Methods on SharedPreferencesAsyncA
               jni$_.JMethodIDPtr,
               jni$_.Pointer<jni$_.Void>,
               jni$_.Pointer<jni$_.Void>,
+              jni$_.Pointer<jni$_.Void>,
             )
           >();
 
-  /// from: `public fun getString(key: kotlin.String, options: io.flutter.plugins.sharedpreferences.SharedPreferencesPigeonOptions): kotlin.String?`
+  /// from: `public suspend fun getString(key: kotlin.String, options: io.flutter.plugins.sharedpreferences.SharedPreferencesPigeonOptions): kotlin.String?`
   /// The returned object must be released after use, by calling the [release] method.
-  jni$_.JString? getString(
+  core$_.Future<jni$_.JString?> getString(
     jni$_.JString string,
     SharedPreferencesPigeonOptions sharedPreferencesPigeonOptions,
-  ) {
+  ) async {
+    final $p = jni$_.ReceivePort();
+    final _$continuation = jni$_.ProtectedJniExtensions.newPortContinuation($p);
     final _$$selfRef = reference;
     final _$string = string.reference;
     final _$sharedPreferencesPigeonOptions = sharedPreferencesPigeonOptions.reference;
-    return _getString(
+    final $r = _getString(
       _$$selfRef.pointer,
       _id_getString.pointer,
       _$string.pointer,
       _$sharedPreferencesPigeonOptions.pointer,
-    ).object<jni$_.JString?>();
+      _$continuation.pointer,
+    ).object<jni$_.JObject?>();
+    _$continuation.release();
+    jni$_.JObject? $o;
+    if ($r != null && $r.isInstanceOf(jni$_.coroutineSingletonsClass)) {
+      $r.release();
+      final $a = await $p.first;
+      $o = $a == 0
+          ? null
+          : jni$_.JObject.fromReference(jni$_.JGlobalReference(jni$_.JObjectPtr.fromAddress($a)));
+      if ($o != null && $o.isInstanceOf(jni$_.result$Class)) {
+        $o = jni$_.resultValueField.get($o, const jni$_.$JObject$Type$());
+      } else if ($o != null && $o.isInstanceOf(jni$_.result$FailureClass)) {
+        final $e = jni$_.failureExceptionField.get($o, const jni$_.$JObject$Type$());
+        $o.release();
+        jni$_.Jni.throwException($e.reference.toPointer());
+      }
+    } else {
+      $o = $r;
+    }
+    return $o?.as<jni$_.JString>(jni$_.JString.type, releaseOriginal: true);
   }
 
   static final _id_getBool = SharedPreferencesAsyncApiRegistrar._class.instanceMethodId(
     r'getBool',
-    r'(Ljava/lang/String;Lio/flutter/plugins/sharedpreferences/SharedPreferencesPigeonOptions;)Ljava/lang/Boolean;',
+    r'(Ljava/lang/String;Lio/flutter/plugins/sharedpreferences/SharedPreferencesPigeonOptions;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;',
   );
 
   static final _getBool =
@@ -1986,7 +2584,9 @@ extension SharedPreferencesAsyncApiRegistrar$$Methods on SharedPreferencesAsyncA
               jni$_.JniResult Function(
                 jni$_.Pointer<jni$_.Void>,
                 jni$_.JMethodIDPtr,
-                jni$_.VarArgs<(jni$_.Pointer<jni$_.Void>, jni$_.Pointer<jni$_.Void>)>,
+                jni$_.VarArgs<
+                  (jni$_.Pointer<jni$_.Void>, jni$_.Pointer<jni$_.Void>, jni$_.Pointer<jni$_.Void>)
+                >,
               )
             >
           >('globalEnv_CallObjectMethod')
@@ -1996,29 +2596,52 @@ extension SharedPreferencesAsyncApiRegistrar$$Methods on SharedPreferencesAsyncA
               jni$_.JMethodIDPtr,
               jni$_.Pointer<jni$_.Void>,
               jni$_.Pointer<jni$_.Void>,
+              jni$_.Pointer<jni$_.Void>,
             )
           >();
 
-  /// from: `public fun getBool(key: kotlin.String, options: io.flutter.plugins.sharedpreferences.SharedPreferencesPigeonOptions): kotlin.Boolean?`
+  /// from: `public suspend fun getBool(key: kotlin.String, options: io.flutter.plugins.sharedpreferences.SharedPreferencesPigeonOptions): kotlin.Boolean?`
   /// The returned object must be released after use, by calling the [release] method.
-  jni$_.JBoolean? getBool(
+  core$_.Future<jni$_.JBoolean?> getBool(
     jni$_.JString string,
     SharedPreferencesPigeonOptions sharedPreferencesPigeonOptions,
-  ) {
+  ) async {
+    final $p = jni$_.ReceivePort();
+    final _$continuation = jni$_.ProtectedJniExtensions.newPortContinuation($p);
     final _$$selfRef = reference;
     final _$string = string.reference;
     final _$sharedPreferencesPigeonOptions = sharedPreferencesPigeonOptions.reference;
-    return _getBool(
+    final $r = _getBool(
       _$$selfRef.pointer,
       _id_getBool.pointer,
       _$string.pointer,
       _$sharedPreferencesPigeonOptions.pointer,
-    ).object<jni$_.JBoolean?>();
+      _$continuation.pointer,
+    ).object<jni$_.JObject?>();
+    _$continuation.release();
+    jni$_.JObject? $o;
+    if ($r != null && $r.isInstanceOf(jni$_.coroutineSingletonsClass)) {
+      $r.release();
+      final $a = await $p.first;
+      $o = $a == 0
+          ? null
+          : jni$_.JObject.fromReference(jni$_.JGlobalReference(jni$_.JObjectPtr.fromAddress($a)));
+      if ($o != null && $o.isInstanceOf(jni$_.result$Class)) {
+        $o = jni$_.resultValueField.get($o, const jni$_.$JObject$Type$());
+      } else if ($o != null && $o.isInstanceOf(jni$_.result$FailureClass)) {
+        final $e = jni$_.failureExceptionField.get($o, const jni$_.$JObject$Type$());
+        $o.release();
+        jni$_.Jni.throwException($e.reference.toPointer());
+      }
+    } else {
+      $o = $r;
+    }
+    return $o?.as<jni$_.JBoolean>(jni$_.JBoolean.type, releaseOriginal: true);
   }
 
   static final _id_getDouble = SharedPreferencesAsyncApiRegistrar._class.instanceMethodId(
     r'getDouble',
-    r'(Ljava/lang/String;Lio/flutter/plugins/sharedpreferences/SharedPreferencesPigeonOptions;)Ljava/lang/Double;',
+    r'(Ljava/lang/String;Lio/flutter/plugins/sharedpreferences/SharedPreferencesPigeonOptions;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;',
   );
 
   static final _getDouble =
@@ -2027,7 +2650,9 @@ extension SharedPreferencesAsyncApiRegistrar$$Methods on SharedPreferencesAsyncA
               jni$_.JniResult Function(
                 jni$_.Pointer<jni$_.Void>,
                 jni$_.JMethodIDPtr,
-                jni$_.VarArgs<(jni$_.Pointer<jni$_.Void>, jni$_.Pointer<jni$_.Void>)>,
+                jni$_.VarArgs<
+                  (jni$_.Pointer<jni$_.Void>, jni$_.Pointer<jni$_.Void>, jni$_.Pointer<jni$_.Void>)
+                >,
               )
             >
           >('globalEnv_CallObjectMethod')
@@ -2037,29 +2662,52 @@ extension SharedPreferencesAsyncApiRegistrar$$Methods on SharedPreferencesAsyncA
               jni$_.JMethodIDPtr,
               jni$_.Pointer<jni$_.Void>,
               jni$_.Pointer<jni$_.Void>,
+              jni$_.Pointer<jni$_.Void>,
             )
           >();
 
-  /// from: `public fun getDouble(key: kotlin.String, options: io.flutter.plugins.sharedpreferences.SharedPreferencesPigeonOptions): kotlin.Double?`
+  /// from: `public suspend fun getDouble(key: kotlin.String, options: io.flutter.plugins.sharedpreferences.SharedPreferencesPigeonOptions): kotlin.Double?`
   /// The returned object must be released after use, by calling the [release] method.
-  jni$_.JDouble? getDouble(
+  core$_.Future<jni$_.JDouble?> getDouble(
     jni$_.JString string,
     SharedPreferencesPigeonOptions sharedPreferencesPigeonOptions,
-  ) {
+  ) async {
+    final $p = jni$_.ReceivePort();
+    final _$continuation = jni$_.ProtectedJniExtensions.newPortContinuation($p);
     final _$$selfRef = reference;
     final _$string = string.reference;
     final _$sharedPreferencesPigeonOptions = sharedPreferencesPigeonOptions.reference;
-    return _getDouble(
+    final $r = _getDouble(
       _$$selfRef.pointer,
       _id_getDouble.pointer,
       _$string.pointer,
       _$sharedPreferencesPigeonOptions.pointer,
-    ).object<jni$_.JDouble?>();
+      _$continuation.pointer,
+    ).object<jni$_.JObject?>();
+    _$continuation.release();
+    jni$_.JObject? $o;
+    if ($r != null && $r.isInstanceOf(jni$_.coroutineSingletonsClass)) {
+      $r.release();
+      final $a = await $p.first;
+      $o = $a == 0
+          ? null
+          : jni$_.JObject.fromReference(jni$_.JGlobalReference(jni$_.JObjectPtr.fromAddress($a)));
+      if ($o != null && $o.isInstanceOf(jni$_.result$Class)) {
+        $o = jni$_.resultValueField.get($o, const jni$_.$JObject$Type$());
+      } else if ($o != null && $o.isInstanceOf(jni$_.result$FailureClass)) {
+        final $e = jni$_.failureExceptionField.get($o, const jni$_.$JObject$Type$());
+        $o.release();
+        jni$_.Jni.throwException($e.reference.toPointer());
+      }
+    } else {
+      $o = $r;
+    }
+    return $o?.as<jni$_.JDouble>(jni$_.JDouble.type, releaseOriginal: true);
   }
 
   static final _id_getInt = SharedPreferencesAsyncApiRegistrar._class.instanceMethodId(
     r'getInt',
-    r'(Ljava/lang/String;Lio/flutter/plugins/sharedpreferences/SharedPreferencesPigeonOptions;)Ljava/lang/Long;',
+    r'(Ljava/lang/String;Lio/flutter/plugins/sharedpreferences/SharedPreferencesPigeonOptions;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;',
   );
 
   static final _getInt =
@@ -2068,7 +2716,9 @@ extension SharedPreferencesAsyncApiRegistrar$$Methods on SharedPreferencesAsyncA
               jni$_.JniResult Function(
                 jni$_.Pointer<jni$_.Void>,
                 jni$_.JMethodIDPtr,
-                jni$_.VarArgs<(jni$_.Pointer<jni$_.Void>, jni$_.Pointer<jni$_.Void>)>,
+                jni$_.VarArgs<
+                  (jni$_.Pointer<jni$_.Void>, jni$_.Pointer<jni$_.Void>, jni$_.Pointer<jni$_.Void>)
+                >,
               )
             >
           >('globalEnv_CallObjectMethod')
@@ -2078,30 +2728,53 @@ extension SharedPreferencesAsyncApiRegistrar$$Methods on SharedPreferencesAsyncA
               jni$_.JMethodIDPtr,
               jni$_.Pointer<jni$_.Void>,
               jni$_.Pointer<jni$_.Void>,
+              jni$_.Pointer<jni$_.Void>,
             )
           >();
 
-  /// from: `public fun getInt(key: kotlin.String, options: io.flutter.plugins.sharedpreferences.SharedPreferencesPigeonOptions): kotlin.Long?`
+  /// from: `public suspend fun getInt(key: kotlin.String, options: io.flutter.plugins.sharedpreferences.SharedPreferencesPigeonOptions): kotlin.Long?`
   /// The returned object must be released after use, by calling the [release] method.
-  jni$_.JLong? getInt(
+  core$_.Future<jni$_.JLong?> getInt(
     jni$_.JString string,
     SharedPreferencesPigeonOptions sharedPreferencesPigeonOptions,
-  ) {
+  ) async {
+    final $p = jni$_.ReceivePort();
+    final _$continuation = jni$_.ProtectedJniExtensions.newPortContinuation($p);
     final _$$selfRef = reference;
     final _$string = string.reference;
     final _$sharedPreferencesPigeonOptions = sharedPreferencesPigeonOptions.reference;
-    return _getInt(
+    final $r = _getInt(
       _$$selfRef.pointer,
       _id_getInt.pointer,
       _$string.pointer,
       _$sharedPreferencesPigeonOptions.pointer,
-    ).object<jni$_.JLong?>();
+      _$continuation.pointer,
+    ).object<jni$_.JObject?>();
+    _$continuation.release();
+    jni$_.JObject? $o;
+    if ($r != null && $r.isInstanceOf(jni$_.coroutineSingletonsClass)) {
+      $r.release();
+      final $a = await $p.first;
+      $o = $a == 0
+          ? null
+          : jni$_.JObject.fromReference(jni$_.JGlobalReference(jni$_.JObjectPtr.fromAddress($a)));
+      if ($o != null && $o.isInstanceOf(jni$_.result$Class)) {
+        $o = jni$_.resultValueField.get($o, const jni$_.$JObject$Type$());
+      } else if ($o != null && $o.isInstanceOf(jni$_.result$FailureClass)) {
+        final $e = jni$_.failureExceptionField.get($o, const jni$_.$JObject$Type$());
+        $o.release();
+        jni$_.Jni.throwException($e.reference.toPointer());
+      }
+    } else {
+      $o = $r;
+    }
+    return $o?.as<jni$_.JLong>(jni$_.JLong.type, releaseOriginal: true);
   }
 
   static final _id_getPlatformEncodedStringList = SharedPreferencesAsyncApiRegistrar._class
       .instanceMethodId(
         r'getPlatformEncodedStringList',
-        r'(Ljava/lang/String;Lio/flutter/plugins/sharedpreferences/SharedPreferencesPigeonOptions;)Ljava/util/List;',
+        r'(Ljava/lang/String;Lio/flutter/plugins/sharedpreferences/SharedPreferencesPigeonOptions;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;',
       );
 
   static final _getPlatformEncodedStringList =
@@ -2110,7 +2783,9 @@ extension SharedPreferencesAsyncApiRegistrar$$Methods on SharedPreferencesAsyncA
               jni$_.JniResult Function(
                 jni$_.Pointer<jni$_.Void>,
                 jni$_.JMethodIDPtr,
-                jni$_.VarArgs<(jni$_.Pointer<jni$_.Void>, jni$_.Pointer<jni$_.Void>)>,
+                jni$_.VarArgs<
+                  (jni$_.Pointer<jni$_.Void>, jni$_.Pointer<jni$_.Void>, jni$_.Pointer<jni$_.Void>)
+                >,
               )
             >
           >('globalEnv_CallObjectMethod')
@@ -2120,29 +2795,53 @@ extension SharedPreferencesAsyncApiRegistrar$$Methods on SharedPreferencesAsyncA
               jni$_.JMethodIDPtr,
               jni$_.Pointer<jni$_.Void>,
               jni$_.Pointer<jni$_.Void>,
+              jni$_.Pointer<jni$_.Void>,
             )
           >();
 
-  /// from: `public fun getPlatformEncodedStringList(key: kotlin.String, options: io.flutter.plugins.sharedpreferences.SharedPreferencesPigeonOptions): kotlin.collections.List<kotlin.String>?`
+  /// from: `public suspend fun getPlatformEncodedStringList(key: kotlin.String, options: io.flutter.plugins.sharedpreferences.SharedPreferencesPigeonOptions): kotlin.collections.List<kotlin.String>?`
   /// The returned object must be released after use, by calling the [release] method.
-  jni$_.JList<jni$_.JString>? getPlatformEncodedStringList(
+  core$_.Future<jni$_.JList<jni$_.JString>?> getPlatformEncodedStringList(
     jni$_.JString string,
     SharedPreferencesPigeonOptions sharedPreferencesPigeonOptions,
-  ) {
+  ) async {
+    final $p = jni$_.ReceivePort();
+    final _$continuation = jni$_.ProtectedJniExtensions.newPortContinuation($p);
     final _$$selfRef = reference;
     final _$string = string.reference;
     final _$sharedPreferencesPigeonOptions = sharedPreferencesPigeonOptions.reference;
-    return _getPlatformEncodedStringList(
+    final $r = _getPlatformEncodedStringList(
       _$$selfRef.pointer,
       _id_getPlatformEncodedStringList.pointer,
       _$string.pointer,
       _$sharedPreferencesPigeonOptions.pointer,
-    ).object<jni$_.JList<jni$_.JString>?>();
+      _$continuation.pointer,
+    ).object<jni$_.JObject?>();
+    _$continuation.release();
+    jni$_.JObject? $o;
+    if ($r != null && $r.isInstanceOf(jni$_.coroutineSingletonsClass)) {
+      $r.release();
+      final $a = await $p.first;
+      $o = $a == 0
+          ? null
+          : jni$_.JObject.fromReference(jni$_.JGlobalReference(jni$_.JObjectPtr.fromAddress($a)));
+      if ($o != null && $o.isInstanceOf(jni$_.result$Class)) {
+        $o = jni$_.resultValueField.get($o, const jni$_.$JObject$Type$());
+      } else if ($o != null && $o.isInstanceOf(jni$_.result$FailureClass)) {
+        final $e = jni$_.failureExceptionField.get($o, const jni$_.$JObject$Type$());
+        $o.release();
+        jni$_.Jni.throwException($e.reference.toPointer());
+      }
+    } else {
+      $o = $r;
+    }
+    return $o?.as<jni$_.JList>(jni$_.JList.type, releaseOriginal: true)
+        as jni$_.JList<jni$_.JString>?;
   }
 
   static final _id_getStringList = SharedPreferencesAsyncApiRegistrar._class.instanceMethodId(
     r'getStringList',
-    r'(Ljava/lang/String;Lio/flutter/plugins/sharedpreferences/SharedPreferencesPigeonOptions;)Lio/flutter/plugins/sharedpreferences/StringListResult;',
+    r'(Ljava/lang/String;Lio/flutter/plugins/sharedpreferences/SharedPreferencesPigeonOptions;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;',
   );
 
   static final _getStringList =
@@ -2151,7 +2850,9 @@ extension SharedPreferencesAsyncApiRegistrar$$Methods on SharedPreferencesAsyncA
               jni$_.JniResult Function(
                 jni$_.Pointer<jni$_.Void>,
                 jni$_.JMethodIDPtr,
-                jni$_.VarArgs<(jni$_.Pointer<jni$_.Void>, jni$_.Pointer<jni$_.Void>)>,
+                jni$_.VarArgs<
+                  (jni$_.Pointer<jni$_.Void>, jni$_.Pointer<jni$_.Void>, jni$_.Pointer<jni$_.Void>)
+                >,
               )
             >
           >('globalEnv_CallObjectMethod')
@@ -2161,69 +2862,116 @@ extension SharedPreferencesAsyncApiRegistrar$$Methods on SharedPreferencesAsyncA
               jni$_.JMethodIDPtr,
               jni$_.Pointer<jni$_.Void>,
               jni$_.Pointer<jni$_.Void>,
+              jni$_.Pointer<jni$_.Void>,
             )
           >();
 
-  /// from: `public fun getStringList(key: kotlin.String, options: io.flutter.plugins.sharedpreferences.SharedPreferencesPigeonOptions): io.flutter.plugins.sharedpreferences.StringListResult?`
+  /// from: `public suspend fun getStringList(key: kotlin.String, options: io.flutter.plugins.sharedpreferences.SharedPreferencesPigeonOptions): io.flutter.plugins.sharedpreferences.StringListResult?`
   /// The returned object must be released after use, by calling the [release] method.
-  StringListResult? getStringList(
+  core$_.Future<StringListResult?> getStringList(
     jni$_.JString string,
     SharedPreferencesPigeonOptions sharedPreferencesPigeonOptions,
-  ) {
+  ) async {
+    final $p = jni$_.ReceivePort();
+    final _$continuation = jni$_.ProtectedJniExtensions.newPortContinuation($p);
     final _$$selfRef = reference;
     final _$string = string.reference;
     final _$sharedPreferencesPigeonOptions = sharedPreferencesPigeonOptions.reference;
-    return _getStringList(
+    final $r = _getStringList(
       _$$selfRef.pointer,
       _id_getStringList.pointer,
       _$string.pointer,
       _$sharedPreferencesPigeonOptions.pointer,
-    ).object<StringListResult?>();
+      _$continuation.pointer,
+    ).object<jni$_.JObject?>();
+    _$continuation.release();
+    jni$_.JObject? $o;
+    if ($r != null && $r.isInstanceOf(jni$_.coroutineSingletonsClass)) {
+      $r.release();
+      final $a = await $p.first;
+      $o = $a == 0
+          ? null
+          : jni$_.JObject.fromReference(jni$_.JGlobalReference(jni$_.JObjectPtr.fromAddress($a)));
+      if ($o != null && $o.isInstanceOf(jni$_.result$Class)) {
+        $o = jni$_.resultValueField.get($o, const jni$_.$JObject$Type$());
+      } else if ($o != null && $o.isInstanceOf(jni$_.result$FailureClass)) {
+        final $e = jni$_.failureExceptionField.get($o, const jni$_.$JObject$Type$());
+        $o.release();
+        jni$_.Jni.throwException($e.reference.toPointer());
+      }
+    } else {
+      $o = $r;
+    }
+    return $o?.as<StringListResult>(StringListResult.type, releaseOriginal: true);
   }
 
   static final _id_clear = SharedPreferencesAsyncApiRegistrar._class.instanceMethodId(
     r'clear',
-    r'(Ljava/util/List;Lio/flutter/plugins/sharedpreferences/SharedPreferencesPigeonOptions;)V',
+    r'(Ljava/util/List;Lio/flutter/plugins/sharedpreferences/SharedPreferencesPigeonOptions;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;',
   );
 
   static final _clear =
       jni$_.ProtectedJniExtensions.lookup<
             jni$_.NativeFunction<
-              jni$_.JThrowablePtr Function(
+              jni$_.JniResult Function(
                 jni$_.Pointer<jni$_.Void>,
                 jni$_.JMethodIDPtr,
-                jni$_.VarArgs<(jni$_.Pointer<jni$_.Void>, jni$_.Pointer<jni$_.Void>)>,
+                jni$_.VarArgs<
+                  (jni$_.Pointer<jni$_.Void>, jni$_.Pointer<jni$_.Void>, jni$_.Pointer<jni$_.Void>)
+                >,
               )
             >
-          >('globalEnv_CallVoidMethod')
+          >('globalEnv_CallObjectMethod')
           .asFunction<
-            jni$_.JThrowablePtr Function(
+            jni$_.JniResult Function(
               jni$_.Pointer<jni$_.Void>,
               jni$_.JMethodIDPtr,
+              jni$_.Pointer<jni$_.Void>,
               jni$_.Pointer<jni$_.Void>,
               jni$_.Pointer<jni$_.Void>,
             )
           >();
 
-  /// from: `public fun clear(allowList: kotlin.collections.List<kotlin.String>?, options: io.flutter.plugins.sharedpreferences.SharedPreferencesPigeonOptions): kotlin.Unit`
-  void clear(
-    jni$_.JList<jni$_.JString>? list,
+  /// from: `public suspend fun clear(allowList: kotlin.collections.List<kotlin.String>?, options: io.flutter.plugins.sharedpreferences.SharedPreferencesPigeonOptions): kotlin.Unit`
+  /// The returned object must be released after use, by calling the [release] method.
+  core$_.Future<void> clear(
+    jni$_.JList<jni$_.JString?>? list,
     SharedPreferencesPigeonOptions sharedPreferencesPigeonOptions,
-  ) {
+  ) async {
+    final $p = jni$_.ReceivePort();
+    final _$continuation = jni$_.ProtectedJniExtensions.newPortContinuation($p);
     final _$$selfRef = reference;
     final _$list = list?.reference ?? jni$_.jNullReference;
     final _$sharedPreferencesPigeonOptions = sharedPreferencesPigeonOptions.reference;
-    _clear(
+    final $r = _clear(
       _$$selfRef.pointer,
       _id_clear.pointer,
       _$list.pointer,
       _$sharedPreferencesPigeonOptions.pointer,
-    ).check();
+      _$continuation.pointer,
+    ).object<jni$_.JObject>();
+    _$continuation.release();
+    jni$_.JObject $o;
+    if ($r.isInstanceOf(jni$_.coroutineSingletonsClass)) {
+      $r.release();
+      final $a = await $p.first;
+      $o = jni$_.JObject.fromReference(jni$_.JGlobalReference(jni$_.JObjectPtr.fromAddress($a)));
+      if ($o.isInstanceOf(jni$_.result$Class)) {
+        $o = jni$_.resultValueField.get($o, const jni$_.$JObject$Type$());
+      } else if ($o.isInstanceOf(jni$_.result$FailureClass)) {
+        final $e = jni$_.failureExceptionField.get($o, const jni$_.$JObject$Type$());
+        $o.release();
+        jni$_.Jni.throwException($e.reference.toPointer());
+      }
+    } else {
+      $o = $r;
+    }
+    return;
   }
 
   static final _id_getAll = SharedPreferencesAsyncApiRegistrar._class.instanceMethodId(
     r'getAll',
-    r'(Ljava/util/List;Lio/flutter/plugins/sharedpreferences/SharedPreferencesPigeonOptions;)Ljava/util/Map;',
+    r'(Ljava/util/List;Lio/flutter/plugins/sharedpreferences/SharedPreferencesPigeonOptions;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;',
   );
 
   static final _getAll =
@@ -2232,7 +2980,9 @@ extension SharedPreferencesAsyncApiRegistrar$$Methods on SharedPreferencesAsyncA
               jni$_.JniResult Function(
                 jni$_.Pointer<jni$_.Void>,
                 jni$_.JMethodIDPtr,
-                jni$_.VarArgs<(jni$_.Pointer<jni$_.Void>, jni$_.Pointer<jni$_.Void>)>,
+                jni$_.VarArgs<
+                  (jni$_.Pointer<jni$_.Void>, jni$_.Pointer<jni$_.Void>, jni$_.Pointer<jni$_.Void>)
+                >,
               )
             >
           >('globalEnv_CallObjectMethod')
@@ -2242,29 +2992,51 @@ extension SharedPreferencesAsyncApiRegistrar$$Methods on SharedPreferencesAsyncA
               jni$_.JMethodIDPtr,
               jni$_.Pointer<jni$_.Void>,
               jni$_.Pointer<jni$_.Void>,
+              jni$_.Pointer<jni$_.Void>,
             )
           >();
 
-  /// from: `public fun getAll(allowList: kotlin.collections.List<kotlin.String>?, options: io.flutter.plugins.sharedpreferences.SharedPreferencesPigeonOptions): kotlin.collections.Map<kotlin.String, kotlin.Any>`
+  /// from: `public suspend fun getAll(allowList: kotlin.collections.List<kotlin.String>?, options: io.flutter.plugins.sharedpreferences.SharedPreferencesPigeonOptions): kotlin.collections.Map<kotlin.String, kotlin.Any>`
   /// The returned object must be released after use, by calling the [release] method.
-  jni$_.JMap<jni$_.JString, jni$_.JObject> getAll(
-    jni$_.JList<jni$_.JString>? list,
+  core$_.Future<jni$_.JMap<jni$_.JString, jni$_.JObject>> getAll(
+    jni$_.JList<jni$_.JString?>? list,
     SharedPreferencesPigeonOptions sharedPreferencesPigeonOptions,
-  ) {
+  ) async {
+    final $p = jni$_.ReceivePort();
+    final _$continuation = jni$_.ProtectedJniExtensions.newPortContinuation($p);
     final _$$selfRef = reference;
     final _$list = list?.reference ?? jni$_.jNullReference;
     final _$sharedPreferencesPigeonOptions = sharedPreferencesPigeonOptions.reference;
-    return _getAll(
+    final $r = _getAll(
       _$$selfRef.pointer,
       _id_getAll.pointer,
       _$list.pointer,
       _$sharedPreferencesPigeonOptions.pointer,
-    ).object<jni$_.JMap<jni$_.JString, jni$_.JObject>>();
+      _$continuation.pointer,
+    ).object<jni$_.JObject>();
+    _$continuation.release();
+    jni$_.JObject $o;
+    if ($r.isInstanceOf(jni$_.coroutineSingletonsClass)) {
+      $r.release();
+      final $a = await $p.first;
+      $o = jni$_.JObject.fromReference(jni$_.JGlobalReference(jni$_.JObjectPtr.fromAddress($a)));
+      if ($o.isInstanceOf(jni$_.result$Class)) {
+        $o = jni$_.resultValueField.get($o, const jni$_.$JObject$Type$());
+      } else if ($o.isInstanceOf(jni$_.result$FailureClass)) {
+        final $e = jni$_.failureExceptionField.get($o, const jni$_.$JObject$Type$());
+        $o.release();
+        jni$_.Jni.throwException($e.reference.toPointer());
+      }
+    } else {
+      $o = $r;
+    }
+    return $o.as<jni$_.JMap>(jni$_.JMap.type, releaseOriginal: true)
+        as jni$_.JMap<jni$_.JString, jni$_.JObject>;
   }
 
   static final _id_getKeys = SharedPreferencesAsyncApiRegistrar._class.instanceMethodId(
     r'getKeys',
-    r'(Ljava/util/List;Lio/flutter/plugins/sharedpreferences/SharedPreferencesPigeonOptions;)Ljava/util/List;',
+    r'(Ljava/util/List;Lio/flutter/plugins/sharedpreferences/SharedPreferencesPigeonOptions;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;',
   );
 
   static final _getKeys =
@@ -2273,7 +3045,9 @@ extension SharedPreferencesAsyncApiRegistrar$$Methods on SharedPreferencesAsyncA
               jni$_.JniResult Function(
                 jni$_.Pointer<jni$_.Void>,
                 jni$_.JMethodIDPtr,
-                jni$_.VarArgs<(jni$_.Pointer<jni$_.Void>, jni$_.Pointer<jni$_.Void>)>,
+                jni$_.VarArgs<
+                  (jni$_.Pointer<jni$_.Void>, jni$_.Pointer<jni$_.Void>, jni$_.Pointer<jni$_.Void>)
+                >,
               )
             >
           >('globalEnv_CallObjectMethod')
@@ -2283,24 +3057,46 @@ extension SharedPreferencesAsyncApiRegistrar$$Methods on SharedPreferencesAsyncA
               jni$_.JMethodIDPtr,
               jni$_.Pointer<jni$_.Void>,
               jni$_.Pointer<jni$_.Void>,
+              jni$_.Pointer<jni$_.Void>,
             )
           >();
 
-  /// from: `public fun getKeys(allowList: kotlin.collections.List<kotlin.String>?, options: io.flutter.plugins.sharedpreferences.SharedPreferencesPigeonOptions): kotlin.collections.List<kotlin.String>`
+  /// from: `public suspend fun getKeys(allowList: kotlin.collections.List<kotlin.String>?, options: io.flutter.plugins.sharedpreferences.SharedPreferencesPigeonOptions): kotlin.collections.List<kotlin.String>`
   /// The returned object must be released after use, by calling the [release] method.
-  jni$_.JList<jni$_.JString> getKeys(
-    jni$_.JList<jni$_.JString>? list,
+  core$_.Future<jni$_.JList<jni$_.JString>> getKeys(
+    jni$_.JList<jni$_.JString?>? list,
     SharedPreferencesPigeonOptions sharedPreferencesPigeonOptions,
-  ) {
+  ) async {
+    final $p = jni$_.ReceivePort();
+    final _$continuation = jni$_.ProtectedJniExtensions.newPortContinuation($p);
     final _$$selfRef = reference;
     final _$list = list?.reference ?? jni$_.jNullReference;
     final _$sharedPreferencesPigeonOptions = sharedPreferencesPigeonOptions.reference;
-    return _getKeys(
+    final $r = _getKeys(
       _$$selfRef.pointer,
       _id_getKeys.pointer,
       _$list.pointer,
       _$sharedPreferencesPigeonOptions.pointer,
-    ).object<jni$_.JList<jni$_.JString>>();
+      _$continuation.pointer,
+    ).object<jni$_.JObject>();
+    _$continuation.release();
+    jni$_.JObject $o;
+    if ($r.isInstanceOf(jni$_.coroutineSingletonsClass)) {
+      $r.release();
+      final $a = await $p.first;
+      $o = jni$_.JObject.fromReference(jni$_.JGlobalReference(jni$_.JObjectPtr.fromAddress($a)));
+      if ($o.isInstanceOf(jni$_.result$Class)) {
+        $o = jni$_.resultValueField.get($o, const jni$_.$JObject$Type$());
+      } else if ($o.isInstanceOf(jni$_.result$FailureClass)) {
+        final $e = jni$_.failureExceptionField.get($o, const jni$_.$JObject$Type$());
+        $o.release();
+        jni$_.Jni.throwException($e.reference.toPointer());
+      }
+    } else {
+      $o = $r;
+    }
+    return $o.as<jni$_.JList>(jni$_.JList.type, releaseOriginal: true)
+        as jni$_.JList<jni$_.JString>;
   }
 }
 
@@ -3435,6 +4231,42 @@ final class $DefaultConstructorMarker$Type$ extends jni$_.JType<DefaultConstruct
   @jni$_.internal
   @core$_.override
   String get signature => r'Lkotlin/jvm/internal/DefaultConstructorMarker;';
+}
+
+/// from: `kotlin.coroutines.Continuation`
+///
+/// WARNING: Continuation is a stub. To generate bindings for this class, include
+/// kotlin.coroutines.Continuation in your config's classes list.
+///
+extension type Continuation._(jni$_.JObject _$this) implements jni$_.JObject {
+  static const jni$_.JType<Continuation> type = $Continuation$Type$();
+}
+
+final class $Continuation$Type$ extends jni$_.JType<Continuation> {
+  @jni$_.internal
+  const $Continuation$Type$();
+
+  @jni$_.internal
+  @core$_.override
+  String get signature => r'Lkotlin/coroutines/Continuation;';
+}
+
+/// from: `kotlin.Unit`
+///
+/// WARNING: Unit is a stub. To generate bindings for this class, include
+/// kotlin.Unit in your config's classes list.
+///
+extension type Unit._(jni$_.JObject _$this) implements jni$_.JObject {
+  static const jni$_.JType<Unit> type = $Unit$Type$();
+}
+
+final class $Unit$Type$ extends jni$_.JType<Unit> {
+  @jni$_.internal
+  const $Unit$Type$();
+
+  @jni$_.internal
+  @core$_.override
+  String get signature => r'Lkotlin/Unit;';
 }
 
 /// from: `java.lang.Enum`

@@ -495,10 +495,10 @@ class SharedPreferencesAsyncApiForNativeInterop {
 
   late final jni_bridge.SharedPreferencesAsyncApiRegistrar? _jniApi;
 
-  void setBool(String key, bool value, SharedPreferencesPigeonOptions options) {
+  Future<void> setBool(String key, bool value, SharedPreferencesPigeonOptions options) async {
     try {
       if (_jniApi != null) {
-        return _jniApi.setBool(_PigeonJniCodec.writeValue<JString>(key), value, options.toJni());
+        await _jniApi.setBool(_PigeonJniCodec.writeValue<JString>(key), value, options.toJni());
       } else {
         throw Exception('No JNI or FFI api available');
       }
@@ -507,10 +507,10 @@ class SharedPreferencesAsyncApiForNativeInterop {
     }
   }
 
-  void setString(String key, String value, SharedPreferencesPigeonOptions options) {
+  Future<void> setString(String key, String value, SharedPreferencesPigeonOptions options) async {
     try {
       if (_jniApi != null) {
-        return _jniApi.setString(
+        await _jniApi.setString(
           _PigeonJniCodec.writeValue<JString>(key),
           _PigeonJniCodec.writeValue<JString>(value),
           options.toJni(),
@@ -523,10 +523,10 @@ class SharedPreferencesAsyncApiForNativeInterop {
     }
   }
 
-  void setInt(String key, int value, SharedPreferencesPigeonOptions options) {
+  Future<void> setInt(String key, int value, SharedPreferencesPigeonOptions options) async {
     try {
       if (_jniApi != null) {
-        return _jniApi.setInt(_PigeonJniCodec.writeValue<JString>(key), value, options.toJni());
+        await _jniApi.setInt(_PigeonJniCodec.writeValue<JString>(key), value, options.toJni());
       } else {
         throw Exception('No JNI or FFI api available');
       }
@@ -535,10 +535,10 @@ class SharedPreferencesAsyncApiForNativeInterop {
     }
   }
 
-  void setDouble(String key, double value, SharedPreferencesPigeonOptions options) {
+  Future<void> setDouble(String key, double value, SharedPreferencesPigeonOptions options) async {
     try {
       if (_jniApi != null) {
-        return _jniApi.setDouble(_PigeonJniCodec.writeValue<JString>(key), value, options.toJni());
+        await _jniApi.setDouble(_PigeonJniCodec.writeValue<JString>(key), value, options.toJni());
       } else {
         throw Exception('No JNI or FFI api available');
       }
@@ -547,10 +547,14 @@ class SharedPreferencesAsyncApiForNativeInterop {
     }
   }
 
-  void setEncodedStringList(String key, String value, SharedPreferencesPigeonOptions options) {
+  Future<void> setEncodedStringList(
+    String key,
+    String value,
+    SharedPreferencesPigeonOptions options,
+  ) async {
     try {
       if (_jniApi != null) {
-        return _jniApi.setEncodedStringList(
+        await _jniApi.setEncodedStringList(
           _PigeonJniCodec.writeValue<JString>(key),
           _PigeonJniCodec.writeValue<JString>(value),
           options.toJni(),
@@ -563,14 +567,14 @@ class SharedPreferencesAsyncApiForNativeInterop {
     }
   }
 
-  void setDeprecatedStringList(
+  Future<void> setDeprecatedStringList(
     String key,
     List<String> value,
     SharedPreferencesPigeonOptions options,
-  ) {
+  ) async {
     try {
       if (_jniApi != null) {
-        return _jniApi.setDeprecatedStringList(
+        await _jniApi.setDeprecatedStringList(
           _PigeonJniCodec.writeValue<JString>(key),
           _PigeonJniCodec.writeValue<JList<JString>>(value),
           options.toJni(),
@@ -583,10 +587,10 @@ class SharedPreferencesAsyncApiForNativeInterop {
     }
   }
 
-  String? getString(String key, SharedPreferencesPigeonOptions options) {
+  Future<String?> getString(String key, SharedPreferencesPigeonOptions options) async {
     try {
       if (_jniApi != null) {
-        final JString? res = _jniApi.getString(
+        final JString? res = await _jniApi.getString(
           _PigeonJniCodec.writeValue<JString>(key),
           options.toJni(),
         );
@@ -600,10 +604,10 @@ class SharedPreferencesAsyncApiForNativeInterop {
     }
   }
 
-  bool? getBool(String key, SharedPreferencesPigeonOptions options) {
+  Future<bool?> getBool(String key, SharedPreferencesPigeonOptions options) async {
     try {
       if (_jniApi != null) {
-        final JBoolean? res = _jniApi.getBool(
+        final JBoolean? res = await _jniApi.getBool(
           _PigeonJniCodec.writeValue<JString>(key),
           options.toJni(),
         );
@@ -617,10 +621,10 @@ class SharedPreferencesAsyncApiForNativeInterop {
     }
   }
 
-  double? getDouble(String key, SharedPreferencesPigeonOptions options) {
+  Future<double?> getDouble(String key, SharedPreferencesPigeonOptions options) async {
     try {
       if (_jniApi != null) {
-        final JDouble? res = _jniApi.getDouble(
+        final JDouble? res = await _jniApi.getDouble(
           _PigeonJniCodec.writeValue<JString>(key),
           options.toJni(),
         );
@@ -634,10 +638,10 @@ class SharedPreferencesAsyncApiForNativeInterop {
     }
   }
 
-  int? getInt(String key, SharedPreferencesPigeonOptions options) {
+  Future<int?> getInt(String key, SharedPreferencesPigeonOptions options) async {
     try {
       if (_jniApi != null) {
-        final JLong? res = _jniApi.getInt(
+        final JLong? res = await _jniApi.getInt(
           _PigeonJniCodec.writeValue<JString>(key),
           options.toJni(),
         );
@@ -651,10 +655,13 @@ class SharedPreferencesAsyncApiForNativeInterop {
     }
   }
 
-  List<String>? getPlatformEncodedStringList(String key, SharedPreferencesPigeonOptions options) {
+  Future<List<String>?> getPlatformEncodedStringList(
+    String key,
+    SharedPreferencesPigeonOptions options,
+  ) async {
     try {
       if (_jniApi != null) {
-        final JList<JString>? res = _jniApi.getPlatformEncodedStringList(
+        final JList<JString>? res = await _jniApi.getPlatformEncodedStringList(
           _PigeonJniCodec.writeValue<JString>(key),
           options.toJni(),
         );
@@ -669,10 +676,13 @@ class SharedPreferencesAsyncApiForNativeInterop {
     }
   }
 
-  StringListResult? getStringList(String key, SharedPreferencesPigeonOptions options) {
+  Future<StringListResult?> getStringList(
+    String key,
+    SharedPreferencesPigeonOptions options,
+  ) async {
     try {
       if (_jniApi != null) {
-        final jni_bridge.StringListResult? res = _jniApi.getStringList(
+        final jni_bridge.StringListResult? res = await _jniApi.getStringList(
           _PigeonJniCodec.writeValue<JString>(key),
           options.toJni(),
         );
@@ -686,10 +696,10 @@ class SharedPreferencesAsyncApiForNativeInterop {
     }
   }
 
-  void clear(List<String>? allowList, SharedPreferencesPigeonOptions options) {
+  Future<void> clear(List<String>? allowList, SharedPreferencesPigeonOptions options) async {
     try {
       if (_jniApi != null) {
-        return _jniApi.clear(
+        await _jniApi.clear(
           _PigeonJniCodec.writeValue<JList<JString>?>(allowList),
           options.toJni(),
         );
@@ -701,10 +711,13 @@ class SharedPreferencesAsyncApiForNativeInterop {
     }
   }
 
-  Map<String, Object> getAll(List<String>? allowList, SharedPreferencesPigeonOptions options) {
+  Future<Map<String, Object>> getAll(
+    List<String>? allowList,
+    SharedPreferencesPigeonOptions options,
+  ) async {
     try {
       if (_jniApi != null) {
-        final JMap<JString, JObject> res = _jniApi.getAll(
+        final JMap<JString, JObject> res = await _jniApi.getAll(
           _PigeonJniCodec.writeValue<JList<JString>?>(allowList),
           options.toJni(),
         );
@@ -719,10 +732,13 @@ class SharedPreferencesAsyncApiForNativeInterop {
     }
   }
 
-  List<String> getKeys(List<String>? allowList, SharedPreferencesPigeonOptions options) {
+  Future<List<String>> getKeys(
+    List<String>? allowList,
+    SharedPreferencesPigeonOptions options,
+  ) async {
     try {
       if (_jniApi != null) {
-        final JList<JString> res = _jniApi.getKeys(
+        final JList<JString> res = await _jniApi.getKeys(
           _PigeonJniCodec.writeValue<JList<JString>?>(allowList),
           options.toJni(),
         );

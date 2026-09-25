@@ -1,5 +1,6 @@
-## NEXT
+## 2.5.8
 
+* Updates internal implementation to use Pigeon FFI.
 * Updates minimum supported SDK version to Flutter 3.41/Dart 3.11.
 
 ## 2.5.7

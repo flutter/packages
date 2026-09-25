@@ -296,46 +296,56 @@ val SharedPreferencesAsyncApiInstances: MutableMap<String, SharedPreferencesAsyn
 @Keep
 interface SharedPreferencesAsyncApi {
   /** Adds property to shared preferences data set of type `bool`. */
-  fun setBool(key: String, value: Boolean, options: SharedPreferencesPigeonOptions)
+  suspend fun setBool(key: String, value: Boolean, options: SharedPreferencesPigeonOptions)
   /** Adds property to shared preferences data set of type `String`. */
-  fun setString(key: String, value: String, options: SharedPreferencesPigeonOptions)
+  suspend fun setString(key: String, value: String, options: SharedPreferencesPigeonOptions)
   /** Adds property to shared preferences data set of type `int`. */
-  fun setInt(key: String, value: Long, options: SharedPreferencesPigeonOptions)
+  suspend fun setInt(key: String, value: Long, options: SharedPreferencesPigeonOptions)
   /** Adds property to shared preferences data set of type `double`. */
-  fun setDouble(key: String, value: Double, options: SharedPreferencesPigeonOptions)
+  suspend fun setDouble(key: String, value: Double, options: SharedPreferencesPigeonOptions)
   /** Adds property to shared preferences data set of type `List<String>`. */
-  fun setEncodedStringList(key: String, value: String, options: SharedPreferencesPigeonOptions)
+  suspend fun setEncodedStringList(
+      key: String,
+      value: String,
+      options: SharedPreferencesPigeonOptions
+  )
   /**
    * Adds property to shared preferences data set of type `List<String>`.
    *
    * Deprecated, this is only here for testing purposes.
    */
-  fun setDeprecatedStringList(
+  suspend fun setDeprecatedStringList(
       key: String,
       value: List<String>,
       options: SharedPreferencesPigeonOptions
   )
   /** Gets individual String value stored with [key], if any. */
-  fun getString(key: String, options: SharedPreferencesPigeonOptions): String?
+  suspend fun getString(key: String, options: SharedPreferencesPigeonOptions): String?
   /** Gets individual void value stored with [key], if any. */
-  fun getBool(key: String, options: SharedPreferencesPigeonOptions): Boolean?
+  suspend fun getBool(key: String, options: SharedPreferencesPigeonOptions): Boolean?
   /** Gets individual double value stored with [key], if any. */
-  fun getDouble(key: String, options: SharedPreferencesPigeonOptions): Double?
+  suspend fun getDouble(key: String, options: SharedPreferencesPigeonOptions): Double?
   /** Gets individual int value stored with [key], if any. */
-  fun getInt(key: String, options: SharedPreferencesPigeonOptions): Long?
+  suspend fun getInt(key: String, options: SharedPreferencesPigeonOptions): Long?
   /** Gets individual `List<String>` value stored with [key], if any. */
-  fun getPlatformEncodedStringList(
+  suspend fun getPlatformEncodedStringList(
       key: String,
       options: SharedPreferencesPigeonOptions
   ): List<String>?
   /** Gets the JSON-encoded `List<String>` value stored with [key], if any. */
-  fun getStringList(key: String, options: SharedPreferencesPigeonOptions): StringListResult?
+  suspend fun getStringList(key: String, options: SharedPreferencesPigeonOptions): StringListResult?
   /** Removes all properties from shared preferences data set with matching prefix. */
-  fun clear(allowList: List<String>?, options: SharedPreferencesPigeonOptions)
+  suspend fun clear(allowList: List<String>?, options: SharedPreferencesPigeonOptions)
   /** Gets all properties from shared preferences data set with matching prefix. */
-  fun getAll(allowList: List<String>?, options: SharedPreferencesPigeonOptions): Map<String, Any>
+  suspend fun getAll(
+      allowList: List<String>?,
+      options: SharedPreferencesPigeonOptions
+  ): Map<String, Any>
   /** Gets all properties from shared preferences data set with matching prefix. */
-  fun getKeys(allowList: List<String>?, options: SharedPreferencesPigeonOptions): List<String>
+  suspend fun getKeys(
+      allowList: List<String>?,
+      options: SharedPreferencesPigeonOptions
+  ): List<String>
 }
 
 @Keep
@@ -360,7 +370,11 @@ class SharedPreferencesAsyncApiRegistrar : SharedPreferencesAsyncApi {
     return SharedPreferencesAsyncApiInstances[name]
   }
   /** Adds property to shared preferences data set of type `bool`. */
-  override fun setBool(key: String, value: Boolean, options: SharedPreferencesPigeonOptions) {
+  override suspend fun setBool(
+      key: String,
+      value: Boolean,
+      options: SharedPreferencesPigeonOptions
+  ) {
     api?.let {
       try {
         return it.setBool(key, value, options)
@@ -371,7 +385,11 @@ class SharedPreferencesAsyncApiRegistrar : SharedPreferencesAsyncApi {
     error("SharedPreferencesAsyncApi has not been registered")
   }
   /** Adds property to shared preferences data set of type `String`. */
-  override fun setString(key: String, value: String, options: SharedPreferencesPigeonOptions) {
+  override suspend fun setString(
+      key: String,
+      value: String,
+      options: SharedPreferencesPigeonOptions
+  ) {
     api?.let {
       try {
         return it.setString(key, value, options)
@@ -382,7 +400,7 @@ class SharedPreferencesAsyncApiRegistrar : SharedPreferencesAsyncApi {
     error("SharedPreferencesAsyncApi has not been registered")
   }
   /** Adds property to shared preferences data set of type `int`. */
-  override fun setInt(key: String, value: Long, options: SharedPreferencesPigeonOptions) {
+  override suspend fun setInt(key: String, value: Long, options: SharedPreferencesPigeonOptions) {
     api?.let {
       try {
         return it.setInt(key, value, options)
@@ -393,7 +411,11 @@ class SharedPreferencesAsyncApiRegistrar : SharedPreferencesAsyncApi {
     error("SharedPreferencesAsyncApi has not been registered")
   }
   /** Adds property to shared preferences data set of type `double`. */
-  override fun setDouble(key: String, value: Double, options: SharedPreferencesPigeonOptions) {
+  override suspend fun setDouble(
+      key: String,
+      value: Double,
+      options: SharedPreferencesPigeonOptions
+  ) {
     api?.let {
       try {
         return it.setDouble(key, value, options)
@@ -404,7 +426,7 @@ class SharedPreferencesAsyncApiRegistrar : SharedPreferencesAsyncApi {
     error("SharedPreferencesAsyncApi has not been registered")
   }
   /** Adds property to shared preferences data set of type `List<String>`. */
-  override fun setEncodedStringList(
+  override suspend fun setEncodedStringList(
       key: String,
       value: String,
       options: SharedPreferencesPigeonOptions
@@ -423,7 +445,7 @@ class SharedPreferencesAsyncApiRegistrar : SharedPreferencesAsyncApi {
    *
    * Deprecated, this is only here for testing purposes.
    */
-  override fun setDeprecatedStringList(
+  override suspend fun setDeprecatedStringList(
       key: String,
       value: List<String>,
       options: SharedPreferencesPigeonOptions
@@ -438,7 +460,7 @@ class SharedPreferencesAsyncApiRegistrar : SharedPreferencesAsyncApi {
     error("SharedPreferencesAsyncApi has not been registered")
   }
   /** Gets individual String value stored with [key], if any. */
-  override fun getString(key: String, options: SharedPreferencesPigeonOptions): String? {
+  override suspend fun getString(key: String, options: SharedPreferencesPigeonOptions): String? {
     api?.let {
       try {
         return it.getString(key, options)
@@ -449,7 +471,7 @@ class SharedPreferencesAsyncApiRegistrar : SharedPreferencesAsyncApi {
     error("SharedPreferencesAsyncApi has not been registered")
   }
   /** Gets individual void value stored with [key], if any. */
-  override fun getBool(key: String, options: SharedPreferencesPigeonOptions): Boolean? {
+  override suspend fun getBool(key: String, options: SharedPreferencesPigeonOptions): Boolean? {
     api?.let {
       try {
         return it.getBool(key, options)
@@ -460,7 +482,7 @@ class SharedPreferencesAsyncApiRegistrar : SharedPreferencesAsyncApi {
     error("SharedPreferencesAsyncApi has not been registered")
   }
   /** Gets individual double value stored with [key], if any. */
-  override fun getDouble(key: String, options: SharedPreferencesPigeonOptions): Double? {
+  override suspend fun getDouble(key: String, options: SharedPreferencesPigeonOptions): Double? {
     api?.let {
       try {
         return it.getDouble(key, options)
@@ -471,7 +493,7 @@ class SharedPreferencesAsyncApiRegistrar : SharedPreferencesAsyncApi {
     error("SharedPreferencesAsyncApi has not been registered")
   }
   /** Gets individual int value stored with [key], if any. */
-  override fun getInt(key: String, options: SharedPreferencesPigeonOptions): Long? {
+  override suspend fun getInt(key: String, options: SharedPreferencesPigeonOptions): Long? {
     api?.let {
       try {
         return it.getInt(key, options)
@@ -482,7 +504,7 @@ class SharedPreferencesAsyncApiRegistrar : SharedPreferencesAsyncApi {
     error("SharedPreferencesAsyncApi has not been registered")
   }
   /** Gets individual `List<String>` value stored with [key], if any. */
-  override fun getPlatformEncodedStringList(
+  override suspend fun getPlatformEncodedStringList(
       key: String,
       options: SharedPreferencesPigeonOptions
   ): List<String>? {
@@ -496,7 +518,7 @@ class SharedPreferencesAsyncApiRegistrar : SharedPreferencesAsyncApi {
     error("SharedPreferencesAsyncApi has not been registered")
   }
   /** Gets the JSON-encoded `List<String>` value stored with [key], if any. */
-  override fun getStringList(
+  override suspend fun getStringList(
       key: String,
       options: SharedPreferencesPigeonOptions
   ): StringListResult? {
@@ -510,7 +532,7 @@ class SharedPreferencesAsyncApiRegistrar : SharedPreferencesAsyncApi {
     error("SharedPreferencesAsyncApi has not been registered")
   }
   /** Removes all properties from shared preferences data set with matching prefix. */
-  override fun clear(allowList: List<String>?, options: SharedPreferencesPigeonOptions) {
+  override suspend fun clear(allowList: List<String>?, options: SharedPreferencesPigeonOptions) {
     api?.let {
       try {
         return it.clear(allowList, options)
@@ -521,7 +543,7 @@ class SharedPreferencesAsyncApiRegistrar : SharedPreferencesAsyncApi {
     error("SharedPreferencesAsyncApi has not been registered")
   }
   /** Gets all properties from shared preferences data set with matching prefix. */
-  override fun getAll(
+  override suspend fun getAll(
       allowList: List<String>?,
       options: SharedPreferencesPigeonOptions
   ): Map<String, Any> {
@@ -535,7 +557,7 @@ class SharedPreferencesAsyncApiRegistrar : SharedPreferencesAsyncApi {
     error("SharedPreferencesAsyncApi has not been registered")
   }
   /** Gets all properties from shared preferences data set with matching prefix. */
-  override fun getKeys(
+  override suspend fun getKeys(
       allowList: List<String>?,
       options: SharedPreferencesPigeonOptions
   ): List<String> {

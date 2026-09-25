@@ -252,60 +252,92 @@ extension type SharedPreferencesApi._(jni$_.JObject _$this) implements jni$_.JOb
     try {
       final $d = $i.methodDescriptor.toDartString(releaseOriginal: true);
       final $a = $i.args;
-      if ($d == r'remove(Ljava/lang/String;)Z') {
-        final $r = _$impls[$p]!.remove(($a![0] as jni$_.JString));
-        return $r.toJBoolean().reference.toPointer();
+      if ($d == r'remove(Ljava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;') {
+        final _$$contRef = ($a![1] as Continuation).reference;
+        final $r = jni$_.KotlinContinuation.fromReference(
+          _$$contRef,
+        ).resumeWithFuture(_$impls[$p]!.remove(($a![0] as jni$_.JString)));
+        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
+            jni$_.nullptr;
       }
-      if ($d == r'setBool(Ljava/lang/String;Z)Z') {
-        final $r = _$impls[$p]!.setBool(
-          ($a![0] as jni$_.JString),
-          ($a![1] as jni$_.JBoolean).toDartBool(releaseOriginal: true),
+      if ($d == r'setBool(Ljava/lang/String;ZLkotlin/coroutines/Continuation;)Ljava/lang/Object;') {
+        final _$$contRef = ($a![2] as Continuation).reference;
+        final $r = jni$_.KotlinContinuation.fromReference(_$$contRef).resumeWithFuture(
+          _$impls[$p]!.setBool(
+            ($a![0] as jni$_.JString),
+            ($a![1] as jni$_.JBoolean).toDartBool(releaseOriginal: true),
+          ),
         );
-        return $r.toJBoolean().reference.toPointer();
+        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
+            jni$_.nullptr;
       }
-      if ($d == r'setString(Ljava/lang/String;Ljava/lang/String;)Z') {
-        final $r = _$impls[$p]!.setString(($a![0] as jni$_.JString), ($a![1] as jni$_.JString));
-        return $r.toJBoolean().reference.toPointer();
-      }
-      if ($d == r'setInt(Ljava/lang/String;J)Z') {
-        final $r = _$impls[$p]!.setInt(
-          ($a![0] as jni$_.JString),
-          ($a![1] as jni$_.JLong).toDartInt(releaseOriginal: true),
+      if ($d ==
+          r'setString(Ljava/lang/String;Ljava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;') {
+        final _$$contRef = ($a![2] as Continuation).reference;
+        final $r = jni$_.KotlinContinuation.fromReference(_$$contRef).resumeWithFuture(
+          _$impls[$p]!.setString(($a![0] as jni$_.JString), ($a![1] as jni$_.JString)),
         );
-        return $r.toJBoolean().reference.toPointer();
+        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
+            jni$_.nullptr;
       }
-      if ($d == r'setDouble(Ljava/lang/String;D)Z') {
-        final $r = _$impls[$p]!.setDouble(
-          ($a![0] as jni$_.JString),
-          ($a![1] as jni$_.JDouble).toDartDouble(releaseOriginal: true),
+      if ($d == r'setInt(Ljava/lang/String;JLkotlin/coroutines/Continuation;)Ljava/lang/Object;') {
+        final _$$contRef = ($a![2] as Continuation).reference;
+        final $r = jni$_.KotlinContinuation.fromReference(_$$contRef).resumeWithFuture(
+          _$impls[$p]!.setInt(
+            ($a![0] as jni$_.JString),
+            ($a![1] as jni$_.JLong).toDartInt(releaseOriginal: true),
+          ),
         );
-        return $r.toJBoolean().reference.toPointer();
+        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
+            jni$_.nullptr;
       }
-      if ($d == r'setEncodedStringList(Ljava/lang/String;Ljava/lang/String;)Z') {
-        final $r = _$impls[$p]!.setEncodedStringList(
-          ($a![0] as jni$_.JString),
-          ($a![1] as jni$_.JString),
+      if ($d ==
+          r'setDouble(Ljava/lang/String;DLkotlin/coroutines/Continuation;)Ljava/lang/Object;') {
+        final _$$contRef = ($a![2] as Continuation).reference;
+        final $r = jni$_.KotlinContinuation.fromReference(_$$contRef).resumeWithFuture(
+          _$impls[$p]!.setDouble(
+            ($a![0] as jni$_.JString),
+            ($a![1] as jni$_.JDouble).toDartDouble(releaseOriginal: true),
+          ),
         );
-        return $r.toJBoolean().reference.toPointer();
+        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
+            jni$_.nullptr;
       }
-      if ($d == r'setDeprecatedStringList(Ljava/lang/String;Ljava/util/List;)Z') {
-        final $r = _$impls[$p]!.setDeprecatedStringList(
-          ($a![0] as jni$_.JString),
-          ($a![1] as jni$_.JList<jni$_.JString>),
+      if ($d ==
+          r'setEncodedStringList(Ljava/lang/String;Ljava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;') {
+        final _$$contRef = ($a![2] as Continuation).reference;
+        final $r = jni$_.KotlinContinuation.fromReference(_$$contRef).resumeWithFuture(
+          _$impls[$p]!.setEncodedStringList(($a![0] as jni$_.JString), ($a![1] as jni$_.JString)),
         );
-        return $r.toJBoolean().reference.toPointer();
+        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
+            jni$_.nullptr;
       }
-      if ($d == r'clear(Ljava/lang/String;Ljava/util/List;)Z') {
-        final $r = _$impls[$p]!.clear(
-          ($a![0] as jni$_.JString),
-          ($a![1] as jni$_.JList<jni$_.JString>?),
+      if ($d ==
+          r'setDeprecatedStringList(Ljava/lang/String;Ljava/util/List;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;') {
+        final _$$contRef = ($a![2] as Continuation).reference;
+        final $r = jni$_.KotlinContinuation.fromReference(_$$contRef).resumeWithFuture(
+          _$impls[$p]!.setDeprecatedStringList(
+            ($a![0] as jni$_.JString),
+            ($a![1] as jni$_.JList<jni$_.JString?>),
+          ),
         );
-        return $r.toJBoolean().reference.toPointer();
+        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
+            jni$_.nullptr;
       }
-      if ($d == r'getAll(Ljava/lang/String;Ljava/util/List;)Ljava/util/Map;') {
-        final $r = _$impls[$p]!.getAll(
-          ($a![0] as jni$_.JString),
-          ($a![1] as jni$_.JList<jni$_.JString>?),
+      if ($d ==
+          r'clear(Ljava/lang/String;Ljava/util/List;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;') {
+        final _$$contRef = ($a![2] as Continuation).reference;
+        final $r = jni$_.KotlinContinuation.fromReference(_$$contRef).resumeWithFuture(
+          _$impls[$p]!.clear(($a![0] as jni$_.JString), ($a![1] as jni$_.JList<jni$_.JString?>?)),
+        );
+        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
+            jni$_.nullptr;
+      }
+      if ($d ==
+          r'getAll(Ljava/lang/String;Ljava/util/List;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;') {
+        final _$$contRef = ($a![2] as Continuation).reference;
+        final $r = jni$_.KotlinContinuation.fromReference(_$$contRef).resumeWithFuture(
+          _$impls[$p]!.getAll(($a![0] as jni$_.JString), ($a![1] as jni$_.JList<jni$_.JString?>?)),
         );
         return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
             jni$_.nullptr;
@@ -349,276 +381,10 @@ extension type SharedPreferencesApi._(jni$_.JObject _$this) implements jni$_.JOb
 extension SharedPreferencesApi$$Methods on SharedPreferencesApi {
   static final _id_remove = SharedPreferencesApi._class.instanceMethodId(
     r'remove',
-    r'(Ljava/lang/String;)Z',
+    r'(Ljava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;',
   );
 
   static final _remove =
-      jni$_.ProtectedJniExtensions.lookup<
-            jni$_.NativeFunction<
-              jni$_.JniResult Function(
-                jni$_.Pointer<jni$_.Void>,
-                jni$_.JMethodIDPtr,
-                jni$_.VarArgs<(jni$_.Pointer<jni$_.Void>,)>,
-              )
-            >
-          >('globalEnv_CallBooleanMethod')
-          .asFunction<
-            jni$_.JniResult Function(
-              jni$_.Pointer<jni$_.Void>,
-              jni$_.JMethodIDPtr,
-              jni$_.Pointer<jni$_.Void>,
-            )
-          >();
-
-  /// from: `public fun remove(key: kotlin.String): kotlin.Boolean`
-  core$_.bool remove(jni$_.JString string) {
-    final _$$selfRef = reference;
-    final _$string = string.reference;
-    return _remove(_$$selfRef.pointer, _id_remove.pointer, _$string.pointer).boolean;
-  }
-
-  static final _id_setBool = SharedPreferencesApi._class.instanceMethodId(
-    r'setBool',
-    r'(Ljava/lang/String;Z)Z',
-  );
-
-  static final _setBool =
-      jni$_.ProtectedJniExtensions.lookup<
-            jni$_.NativeFunction<
-              jni$_.JniResult Function(
-                jni$_.Pointer<jni$_.Void>,
-                jni$_.JMethodIDPtr,
-                jni$_.VarArgs<(jni$_.Pointer<jni$_.Void>, jni$_.Int32)>,
-              )
-            >
-          >('globalEnv_CallBooleanMethod')
-          .asFunction<
-            jni$_.JniResult Function(
-              jni$_.Pointer<jni$_.Void>,
-              jni$_.JMethodIDPtr,
-              jni$_.Pointer<jni$_.Void>,
-              core$_.int,
-            )
-          >();
-
-  /// from: `public fun setBool(key: kotlin.String, value: kotlin.Boolean): kotlin.Boolean`
-  core$_.bool setBool(jni$_.JString string, core$_.bool z) {
-    final _$$selfRef = reference;
-    final _$string = string.reference;
-    return _setBool(_$$selfRef.pointer, _id_setBool.pointer, _$string.pointer, z ? 1 : 0).boolean;
-  }
-
-  static final _id_setString = SharedPreferencesApi._class.instanceMethodId(
-    r'setString',
-    r'(Ljava/lang/String;Ljava/lang/String;)Z',
-  );
-
-  static final _setString =
-      jni$_.ProtectedJniExtensions.lookup<
-            jni$_.NativeFunction<
-              jni$_.JniResult Function(
-                jni$_.Pointer<jni$_.Void>,
-                jni$_.JMethodIDPtr,
-                jni$_.VarArgs<(jni$_.Pointer<jni$_.Void>, jni$_.Pointer<jni$_.Void>)>,
-              )
-            >
-          >('globalEnv_CallBooleanMethod')
-          .asFunction<
-            jni$_.JniResult Function(
-              jni$_.Pointer<jni$_.Void>,
-              jni$_.JMethodIDPtr,
-              jni$_.Pointer<jni$_.Void>,
-              jni$_.Pointer<jni$_.Void>,
-            )
-          >();
-
-  /// from: `public fun setString(key: kotlin.String, value: kotlin.String): kotlin.Boolean`
-  core$_.bool setString(jni$_.JString string, jni$_.JString string1) {
-    final _$$selfRef = reference;
-    final _$string = string.reference;
-    final _$string1 = string1.reference;
-    return _setString(
-      _$$selfRef.pointer,
-      _id_setString.pointer,
-      _$string.pointer,
-      _$string1.pointer,
-    ).boolean;
-  }
-
-  static final _id_setInt = SharedPreferencesApi._class.instanceMethodId(
-    r'setInt',
-    r'(Ljava/lang/String;J)Z',
-  );
-
-  static final _setInt =
-      jni$_.ProtectedJniExtensions.lookup<
-            jni$_.NativeFunction<
-              jni$_.JniResult Function(
-                jni$_.Pointer<jni$_.Void>,
-                jni$_.JMethodIDPtr,
-                jni$_.VarArgs<(jni$_.Pointer<jni$_.Void>, jni$_.Int64)>,
-              )
-            >
-          >('globalEnv_CallBooleanMethod')
-          .asFunction<
-            jni$_.JniResult Function(
-              jni$_.Pointer<jni$_.Void>,
-              jni$_.JMethodIDPtr,
-              jni$_.Pointer<jni$_.Void>,
-              core$_.int,
-            )
-          >();
-
-  /// from: `public fun setInt(key: kotlin.String, value: kotlin.Long): kotlin.Boolean`
-  core$_.bool setInt(jni$_.JString string, core$_.int j) {
-    final _$$selfRef = reference;
-    final _$string = string.reference;
-    return _setInt(_$$selfRef.pointer, _id_setInt.pointer, _$string.pointer, j).boolean;
-  }
-
-  static final _id_setDouble = SharedPreferencesApi._class.instanceMethodId(
-    r'setDouble',
-    r'(Ljava/lang/String;D)Z',
-  );
-
-  static final _setDouble =
-      jni$_.ProtectedJniExtensions.lookup<
-            jni$_.NativeFunction<
-              jni$_.JniResult Function(
-                jni$_.Pointer<jni$_.Void>,
-                jni$_.JMethodIDPtr,
-                jni$_.VarArgs<(jni$_.Pointer<jni$_.Void>, jni$_.Double)>,
-              )
-            >
-          >('globalEnv_CallBooleanMethod')
-          .asFunction<
-            jni$_.JniResult Function(
-              jni$_.Pointer<jni$_.Void>,
-              jni$_.JMethodIDPtr,
-              jni$_.Pointer<jni$_.Void>,
-              core$_.double,
-            )
-          >();
-
-  /// from: `public fun setDouble(key: kotlin.String, value: kotlin.Double): kotlin.Boolean`
-  core$_.bool setDouble(jni$_.JString string, core$_.double d) {
-    final _$$selfRef = reference;
-    final _$string = string.reference;
-    return _setDouble(_$$selfRef.pointer, _id_setDouble.pointer, _$string.pointer, d).boolean;
-  }
-
-  static final _id_setEncodedStringList = SharedPreferencesApi._class.instanceMethodId(
-    r'setEncodedStringList',
-    r'(Ljava/lang/String;Ljava/lang/String;)Z',
-  );
-
-  static final _setEncodedStringList =
-      jni$_.ProtectedJniExtensions.lookup<
-            jni$_.NativeFunction<
-              jni$_.JniResult Function(
-                jni$_.Pointer<jni$_.Void>,
-                jni$_.JMethodIDPtr,
-                jni$_.VarArgs<(jni$_.Pointer<jni$_.Void>, jni$_.Pointer<jni$_.Void>)>,
-              )
-            >
-          >('globalEnv_CallBooleanMethod')
-          .asFunction<
-            jni$_.JniResult Function(
-              jni$_.Pointer<jni$_.Void>,
-              jni$_.JMethodIDPtr,
-              jni$_.Pointer<jni$_.Void>,
-              jni$_.Pointer<jni$_.Void>,
-            )
-          >();
-
-  /// from: `public fun setEncodedStringList(key: kotlin.String, value: kotlin.String): kotlin.Boolean`
-  core$_.bool setEncodedStringList(jni$_.JString string, jni$_.JString string1) {
-    final _$$selfRef = reference;
-    final _$string = string.reference;
-    final _$string1 = string1.reference;
-    return _setEncodedStringList(
-      _$$selfRef.pointer,
-      _id_setEncodedStringList.pointer,
-      _$string.pointer,
-      _$string1.pointer,
-    ).boolean;
-  }
-
-  static final _id_setDeprecatedStringList = SharedPreferencesApi._class.instanceMethodId(
-    r'setDeprecatedStringList',
-    r'(Ljava/lang/String;Ljava/util/List;)Z',
-  );
-
-  static final _setDeprecatedStringList =
-      jni$_.ProtectedJniExtensions.lookup<
-            jni$_.NativeFunction<
-              jni$_.JniResult Function(
-                jni$_.Pointer<jni$_.Void>,
-                jni$_.JMethodIDPtr,
-                jni$_.VarArgs<(jni$_.Pointer<jni$_.Void>, jni$_.Pointer<jni$_.Void>)>,
-              )
-            >
-          >('globalEnv_CallBooleanMethod')
-          .asFunction<
-            jni$_.JniResult Function(
-              jni$_.Pointer<jni$_.Void>,
-              jni$_.JMethodIDPtr,
-              jni$_.Pointer<jni$_.Void>,
-              jni$_.Pointer<jni$_.Void>,
-            )
-          >();
-
-  /// from: `public fun setDeprecatedStringList(key: kotlin.String, value: kotlin.collections.List<kotlin.String>): kotlin.Boolean`
-  core$_.bool setDeprecatedStringList(jni$_.JString string, jni$_.JList<jni$_.JString> list) {
-    final _$$selfRef = reference;
-    final _$string = string.reference;
-    final _$list = list.reference;
-    return _setDeprecatedStringList(
-      _$$selfRef.pointer,
-      _id_setDeprecatedStringList.pointer,
-      _$string.pointer,
-      _$list.pointer,
-    ).boolean;
-  }
-
-  static final _id_clear = SharedPreferencesApi._class.instanceMethodId(
-    r'clear',
-    r'(Ljava/lang/String;Ljava/util/List;)Z',
-  );
-
-  static final _clear =
-      jni$_.ProtectedJniExtensions.lookup<
-            jni$_.NativeFunction<
-              jni$_.JniResult Function(
-                jni$_.Pointer<jni$_.Void>,
-                jni$_.JMethodIDPtr,
-                jni$_.VarArgs<(jni$_.Pointer<jni$_.Void>, jni$_.Pointer<jni$_.Void>)>,
-              )
-            >
-          >('globalEnv_CallBooleanMethod')
-          .asFunction<
-            jni$_.JniResult Function(
-              jni$_.Pointer<jni$_.Void>,
-              jni$_.JMethodIDPtr,
-              jni$_.Pointer<jni$_.Void>,
-              jni$_.Pointer<jni$_.Void>,
-            )
-          >();
-
-  /// from: `public fun clear(prefix: kotlin.String, allowList: kotlin.collections.List<kotlin.String>?): kotlin.Boolean`
-  core$_.bool clear(jni$_.JString string, jni$_.JList<jni$_.JString>? list) {
-    final _$$selfRef = reference;
-    final _$string = string.reference;
-    final _$list = list?.reference ?? jni$_.jNullReference;
-    return _clear(_$$selfRef.pointer, _id_clear.pointer, _$string.pointer, _$list.pointer).boolean;
-  }
-
-  static final _id_getAll = SharedPreferencesApi._class.instanceMethodId(
-    r'getAll',
-    r'(Ljava/lang/String;Ljava/util/List;)Ljava/util/Map;',
-  );
-
-  static final _getAll =
       jni$_.ProtectedJniExtensions.lookup<
             jni$_.NativeFunction<
               jni$_.JniResult Function(
@@ -637,70 +403,600 @@ extension SharedPreferencesApi$$Methods on SharedPreferencesApi {
             )
           >();
 
-  /// from: `public fun getAll(prefix: kotlin.String, allowList: kotlin.collections.List<kotlin.String>?): kotlin.collections.Map<kotlin.String, kotlin.Any>`
+  /// from: `public suspend fun remove(key: kotlin.String): kotlin.Boolean`
   /// The returned object must be released after use, by calling the [release] method.
-  jni$_.JMap<jni$_.JString, jni$_.JObject> getAll(
+  core$_.Future<jni$_.JBoolean> remove(jni$_.JString string) async {
+    final $p = jni$_.ReceivePort();
+    final _$continuation = jni$_.ProtectedJniExtensions.newPortContinuation($p);
+    final _$$selfRef = reference;
+    final _$string = string.reference;
+    final $r = _remove(
+      _$$selfRef.pointer,
+      _id_remove.pointer,
+      _$string.pointer,
+      _$continuation.pointer,
+    ).object<jni$_.JObject>();
+    _$continuation.release();
+    jni$_.JObject $o;
+    if ($r.isInstanceOf(jni$_.coroutineSingletonsClass)) {
+      $r.release();
+      final $a = await $p.first;
+      $o = jni$_.JObject.fromReference(jni$_.JGlobalReference(jni$_.JObjectPtr.fromAddress($a)));
+      if ($o.isInstanceOf(jni$_.result$Class)) {
+        $o = jni$_.resultValueField.get($o, const jni$_.$JObject$Type$());
+      } else if ($o.isInstanceOf(jni$_.result$FailureClass)) {
+        final $e = jni$_.failureExceptionField.get($o, const jni$_.$JObject$Type$());
+        $o.release();
+        jni$_.Jni.throwException($e.reference.toPointer());
+      }
+    } else {
+      $o = $r;
+    }
+    return $o.as<jni$_.JBoolean>(jni$_.JBoolean.type, releaseOriginal: true);
+  }
+
+  static final _id_setBool = SharedPreferencesApi._class.instanceMethodId(
+    r'setBool',
+    r'(Ljava/lang/String;ZLkotlin/coroutines/Continuation;)Ljava/lang/Object;',
+  );
+
+  static final _setBool =
+      jni$_.ProtectedJniExtensions.lookup<
+            jni$_.NativeFunction<
+              jni$_.JniResult Function(
+                jni$_.Pointer<jni$_.Void>,
+                jni$_.JMethodIDPtr,
+                jni$_.VarArgs<(jni$_.Pointer<jni$_.Void>, jni$_.Int32, jni$_.Pointer<jni$_.Void>)>,
+              )
+            >
+          >('globalEnv_CallObjectMethod')
+          .asFunction<
+            jni$_.JniResult Function(
+              jni$_.Pointer<jni$_.Void>,
+              jni$_.JMethodIDPtr,
+              jni$_.Pointer<jni$_.Void>,
+              core$_.int,
+              jni$_.Pointer<jni$_.Void>,
+            )
+          >();
+
+  /// from: `public suspend fun setBool(key: kotlin.String, value: kotlin.Boolean): kotlin.Boolean`
+  /// The returned object must be released after use, by calling the [release] method.
+  core$_.Future<jni$_.JBoolean> setBool(jni$_.JString string, core$_.bool z) async {
+    final $p = jni$_.ReceivePort();
+    final _$continuation = jni$_.ProtectedJniExtensions.newPortContinuation($p);
+    final _$$selfRef = reference;
+    final _$string = string.reference;
+    final $r = _setBool(
+      _$$selfRef.pointer,
+      _id_setBool.pointer,
+      _$string.pointer,
+      z ? 1 : 0,
+      _$continuation.pointer,
+    ).object<jni$_.JObject>();
+    _$continuation.release();
+    jni$_.JObject $o;
+    if ($r.isInstanceOf(jni$_.coroutineSingletonsClass)) {
+      $r.release();
+      final $a = await $p.first;
+      $o = jni$_.JObject.fromReference(jni$_.JGlobalReference(jni$_.JObjectPtr.fromAddress($a)));
+      if ($o.isInstanceOf(jni$_.result$Class)) {
+        $o = jni$_.resultValueField.get($o, const jni$_.$JObject$Type$());
+      } else if ($o.isInstanceOf(jni$_.result$FailureClass)) {
+        final $e = jni$_.failureExceptionField.get($o, const jni$_.$JObject$Type$());
+        $o.release();
+        jni$_.Jni.throwException($e.reference.toPointer());
+      }
+    } else {
+      $o = $r;
+    }
+    return $o.as<jni$_.JBoolean>(jni$_.JBoolean.type, releaseOriginal: true);
+  }
+
+  static final _id_setString = SharedPreferencesApi._class.instanceMethodId(
+    r'setString',
+    r'(Ljava/lang/String;Ljava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;',
+  );
+
+  static final _setString =
+      jni$_.ProtectedJniExtensions.lookup<
+            jni$_.NativeFunction<
+              jni$_.JniResult Function(
+                jni$_.Pointer<jni$_.Void>,
+                jni$_.JMethodIDPtr,
+                jni$_.VarArgs<
+                  (jni$_.Pointer<jni$_.Void>, jni$_.Pointer<jni$_.Void>, jni$_.Pointer<jni$_.Void>)
+                >,
+              )
+            >
+          >('globalEnv_CallObjectMethod')
+          .asFunction<
+            jni$_.JniResult Function(
+              jni$_.Pointer<jni$_.Void>,
+              jni$_.JMethodIDPtr,
+              jni$_.Pointer<jni$_.Void>,
+              jni$_.Pointer<jni$_.Void>,
+              jni$_.Pointer<jni$_.Void>,
+            )
+          >();
+
+  /// from: `public suspend fun setString(key: kotlin.String, value: kotlin.String): kotlin.Boolean`
+  /// The returned object must be released after use, by calling the [release] method.
+  core$_.Future<jni$_.JBoolean> setString(jni$_.JString string, jni$_.JString string1) async {
+    final $p = jni$_.ReceivePort();
+    final _$continuation = jni$_.ProtectedJniExtensions.newPortContinuation($p);
+    final _$$selfRef = reference;
+    final _$string = string.reference;
+    final _$string1 = string1.reference;
+    final $r = _setString(
+      _$$selfRef.pointer,
+      _id_setString.pointer,
+      _$string.pointer,
+      _$string1.pointer,
+      _$continuation.pointer,
+    ).object<jni$_.JObject>();
+    _$continuation.release();
+    jni$_.JObject $o;
+    if ($r.isInstanceOf(jni$_.coroutineSingletonsClass)) {
+      $r.release();
+      final $a = await $p.first;
+      $o = jni$_.JObject.fromReference(jni$_.JGlobalReference(jni$_.JObjectPtr.fromAddress($a)));
+      if ($o.isInstanceOf(jni$_.result$Class)) {
+        $o = jni$_.resultValueField.get($o, const jni$_.$JObject$Type$());
+      } else if ($o.isInstanceOf(jni$_.result$FailureClass)) {
+        final $e = jni$_.failureExceptionField.get($o, const jni$_.$JObject$Type$());
+        $o.release();
+        jni$_.Jni.throwException($e.reference.toPointer());
+      }
+    } else {
+      $o = $r;
+    }
+    return $o.as<jni$_.JBoolean>(jni$_.JBoolean.type, releaseOriginal: true);
+  }
+
+  static final _id_setInt = SharedPreferencesApi._class.instanceMethodId(
+    r'setInt',
+    r'(Ljava/lang/String;JLkotlin/coroutines/Continuation;)Ljava/lang/Object;',
+  );
+
+  static final _setInt =
+      jni$_.ProtectedJniExtensions.lookup<
+            jni$_.NativeFunction<
+              jni$_.JniResult Function(
+                jni$_.Pointer<jni$_.Void>,
+                jni$_.JMethodIDPtr,
+                jni$_.VarArgs<(jni$_.Pointer<jni$_.Void>, jni$_.Int64, jni$_.Pointer<jni$_.Void>)>,
+              )
+            >
+          >('globalEnv_CallObjectMethod')
+          .asFunction<
+            jni$_.JniResult Function(
+              jni$_.Pointer<jni$_.Void>,
+              jni$_.JMethodIDPtr,
+              jni$_.Pointer<jni$_.Void>,
+              core$_.int,
+              jni$_.Pointer<jni$_.Void>,
+            )
+          >();
+
+  /// from: `public suspend fun setInt(key: kotlin.String, value: kotlin.Long): kotlin.Boolean`
+  /// The returned object must be released after use, by calling the [release] method.
+  core$_.Future<jni$_.JBoolean> setInt(jni$_.JString string, core$_.int j) async {
+    final $p = jni$_.ReceivePort();
+    final _$continuation = jni$_.ProtectedJniExtensions.newPortContinuation($p);
+    final _$$selfRef = reference;
+    final _$string = string.reference;
+    final $r = _setInt(
+      _$$selfRef.pointer,
+      _id_setInt.pointer,
+      _$string.pointer,
+      j,
+      _$continuation.pointer,
+    ).object<jni$_.JObject>();
+    _$continuation.release();
+    jni$_.JObject $o;
+    if ($r.isInstanceOf(jni$_.coroutineSingletonsClass)) {
+      $r.release();
+      final $a = await $p.first;
+      $o = jni$_.JObject.fromReference(jni$_.JGlobalReference(jni$_.JObjectPtr.fromAddress($a)));
+      if ($o.isInstanceOf(jni$_.result$Class)) {
+        $o = jni$_.resultValueField.get($o, const jni$_.$JObject$Type$());
+      } else if ($o.isInstanceOf(jni$_.result$FailureClass)) {
+        final $e = jni$_.failureExceptionField.get($o, const jni$_.$JObject$Type$());
+        $o.release();
+        jni$_.Jni.throwException($e.reference.toPointer());
+      }
+    } else {
+      $o = $r;
+    }
+    return $o.as<jni$_.JBoolean>(jni$_.JBoolean.type, releaseOriginal: true);
+  }
+
+  static final _id_setDouble = SharedPreferencesApi._class.instanceMethodId(
+    r'setDouble',
+    r'(Ljava/lang/String;DLkotlin/coroutines/Continuation;)Ljava/lang/Object;',
+  );
+
+  static final _setDouble =
+      jni$_.ProtectedJniExtensions.lookup<
+            jni$_.NativeFunction<
+              jni$_.JniResult Function(
+                jni$_.Pointer<jni$_.Void>,
+                jni$_.JMethodIDPtr,
+                jni$_.VarArgs<(jni$_.Pointer<jni$_.Void>, jni$_.Double, jni$_.Pointer<jni$_.Void>)>,
+              )
+            >
+          >('globalEnv_CallObjectMethod')
+          .asFunction<
+            jni$_.JniResult Function(
+              jni$_.Pointer<jni$_.Void>,
+              jni$_.JMethodIDPtr,
+              jni$_.Pointer<jni$_.Void>,
+              core$_.double,
+              jni$_.Pointer<jni$_.Void>,
+            )
+          >();
+
+  /// from: `public suspend fun setDouble(key: kotlin.String, value: kotlin.Double): kotlin.Boolean`
+  /// The returned object must be released after use, by calling the [release] method.
+  core$_.Future<jni$_.JBoolean> setDouble(jni$_.JString string, core$_.double d) async {
+    final $p = jni$_.ReceivePort();
+    final _$continuation = jni$_.ProtectedJniExtensions.newPortContinuation($p);
+    final _$$selfRef = reference;
+    final _$string = string.reference;
+    final $r = _setDouble(
+      _$$selfRef.pointer,
+      _id_setDouble.pointer,
+      _$string.pointer,
+      d,
+      _$continuation.pointer,
+    ).object<jni$_.JObject>();
+    _$continuation.release();
+    jni$_.JObject $o;
+    if ($r.isInstanceOf(jni$_.coroutineSingletonsClass)) {
+      $r.release();
+      final $a = await $p.first;
+      $o = jni$_.JObject.fromReference(jni$_.JGlobalReference(jni$_.JObjectPtr.fromAddress($a)));
+      if ($o.isInstanceOf(jni$_.result$Class)) {
+        $o = jni$_.resultValueField.get($o, const jni$_.$JObject$Type$());
+      } else if ($o.isInstanceOf(jni$_.result$FailureClass)) {
+        final $e = jni$_.failureExceptionField.get($o, const jni$_.$JObject$Type$());
+        $o.release();
+        jni$_.Jni.throwException($e.reference.toPointer());
+      }
+    } else {
+      $o = $r;
+    }
+    return $o.as<jni$_.JBoolean>(jni$_.JBoolean.type, releaseOriginal: true);
+  }
+
+  static final _id_setEncodedStringList = SharedPreferencesApi._class.instanceMethodId(
+    r'setEncodedStringList',
+    r'(Ljava/lang/String;Ljava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;',
+  );
+
+  static final _setEncodedStringList =
+      jni$_.ProtectedJniExtensions.lookup<
+            jni$_.NativeFunction<
+              jni$_.JniResult Function(
+                jni$_.Pointer<jni$_.Void>,
+                jni$_.JMethodIDPtr,
+                jni$_.VarArgs<
+                  (jni$_.Pointer<jni$_.Void>, jni$_.Pointer<jni$_.Void>, jni$_.Pointer<jni$_.Void>)
+                >,
+              )
+            >
+          >('globalEnv_CallObjectMethod')
+          .asFunction<
+            jni$_.JniResult Function(
+              jni$_.Pointer<jni$_.Void>,
+              jni$_.JMethodIDPtr,
+              jni$_.Pointer<jni$_.Void>,
+              jni$_.Pointer<jni$_.Void>,
+              jni$_.Pointer<jni$_.Void>,
+            )
+          >();
+
+  /// from: `public suspend fun setEncodedStringList(key: kotlin.String, value: kotlin.String): kotlin.Boolean`
+  /// The returned object must be released after use, by calling the [release] method.
+  core$_.Future<jni$_.JBoolean> setEncodedStringList(
     jni$_.JString string,
-    jni$_.JList<jni$_.JString>? list,
-  ) {
+    jni$_.JString string1,
+  ) async {
+    final $p = jni$_.ReceivePort();
+    final _$continuation = jni$_.ProtectedJniExtensions.newPortContinuation($p);
+    final _$$selfRef = reference;
+    final _$string = string.reference;
+    final _$string1 = string1.reference;
+    final $r = _setEncodedStringList(
+      _$$selfRef.pointer,
+      _id_setEncodedStringList.pointer,
+      _$string.pointer,
+      _$string1.pointer,
+      _$continuation.pointer,
+    ).object<jni$_.JObject>();
+    _$continuation.release();
+    jni$_.JObject $o;
+    if ($r.isInstanceOf(jni$_.coroutineSingletonsClass)) {
+      $r.release();
+      final $a = await $p.first;
+      $o = jni$_.JObject.fromReference(jni$_.JGlobalReference(jni$_.JObjectPtr.fromAddress($a)));
+      if ($o.isInstanceOf(jni$_.result$Class)) {
+        $o = jni$_.resultValueField.get($o, const jni$_.$JObject$Type$());
+      } else if ($o.isInstanceOf(jni$_.result$FailureClass)) {
+        final $e = jni$_.failureExceptionField.get($o, const jni$_.$JObject$Type$());
+        $o.release();
+        jni$_.Jni.throwException($e.reference.toPointer());
+      }
+    } else {
+      $o = $r;
+    }
+    return $o.as<jni$_.JBoolean>(jni$_.JBoolean.type, releaseOriginal: true);
+  }
+
+  static final _id_setDeprecatedStringList = SharedPreferencesApi._class.instanceMethodId(
+    r'setDeprecatedStringList',
+    r'(Ljava/lang/String;Ljava/util/List;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;',
+  );
+
+  static final _setDeprecatedStringList =
+      jni$_.ProtectedJniExtensions.lookup<
+            jni$_.NativeFunction<
+              jni$_.JniResult Function(
+                jni$_.Pointer<jni$_.Void>,
+                jni$_.JMethodIDPtr,
+                jni$_.VarArgs<
+                  (jni$_.Pointer<jni$_.Void>, jni$_.Pointer<jni$_.Void>, jni$_.Pointer<jni$_.Void>)
+                >,
+              )
+            >
+          >('globalEnv_CallObjectMethod')
+          .asFunction<
+            jni$_.JniResult Function(
+              jni$_.Pointer<jni$_.Void>,
+              jni$_.JMethodIDPtr,
+              jni$_.Pointer<jni$_.Void>,
+              jni$_.Pointer<jni$_.Void>,
+              jni$_.Pointer<jni$_.Void>,
+            )
+          >();
+
+  /// from: `public suspend fun setDeprecatedStringList(key: kotlin.String, value: kotlin.collections.List<kotlin.String>): kotlin.Boolean`
+  /// The returned object must be released after use, by calling the [release] method.
+  core$_.Future<jni$_.JBoolean> setDeprecatedStringList(
+    jni$_.JString string,
+    jni$_.JList<jni$_.JString?> list,
+  ) async {
+    final $p = jni$_.ReceivePort();
+    final _$continuation = jni$_.ProtectedJniExtensions.newPortContinuation($p);
+    final _$$selfRef = reference;
+    final _$string = string.reference;
+    final _$list = list.reference;
+    final $r = _setDeprecatedStringList(
+      _$$selfRef.pointer,
+      _id_setDeprecatedStringList.pointer,
+      _$string.pointer,
+      _$list.pointer,
+      _$continuation.pointer,
+    ).object<jni$_.JObject>();
+    _$continuation.release();
+    jni$_.JObject $o;
+    if ($r.isInstanceOf(jni$_.coroutineSingletonsClass)) {
+      $r.release();
+      final $a = await $p.first;
+      $o = jni$_.JObject.fromReference(jni$_.JGlobalReference(jni$_.JObjectPtr.fromAddress($a)));
+      if ($o.isInstanceOf(jni$_.result$Class)) {
+        $o = jni$_.resultValueField.get($o, const jni$_.$JObject$Type$());
+      } else if ($o.isInstanceOf(jni$_.result$FailureClass)) {
+        final $e = jni$_.failureExceptionField.get($o, const jni$_.$JObject$Type$());
+        $o.release();
+        jni$_.Jni.throwException($e.reference.toPointer());
+      }
+    } else {
+      $o = $r;
+    }
+    return $o.as<jni$_.JBoolean>(jni$_.JBoolean.type, releaseOriginal: true);
+  }
+
+  static final _id_clear = SharedPreferencesApi._class.instanceMethodId(
+    r'clear',
+    r'(Ljava/lang/String;Ljava/util/List;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;',
+  );
+
+  static final _clear =
+      jni$_.ProtectedJniExtensions.lookup<
+            jni$_.NativeFunction<
+              jni$_.JniResult Function(
+                jni$_.Pointer<jni$_.Void>,
+                jni$_.JMethodIDPtr,
+                jni$_.VarArgs<
+                  (jni$_.Pointer<jni$_.Void>, jni$_.Pointer<jni$_.Void>, jni$_.Pointer<jni$_.Void>)
+                >,
+              )
+            >
+          >('globalEnv_CallObjectMethod')
+          .asFunction<
+            jni$_.JniResult Function(
+              jni$_.Pointer<jni$_.Void>,
+              jni$_.JMethodIDPtr,
+              jni$_.Pointer<jni$_.Void>,
+              jni$_.Pointer<jni$_.Void>,
+              jni$_.Pointer<jni$_.Void>,
+            )
+          >();
+
+  /// from: `public suspend fun clear(prefix: kotlin.String, allowList: kotlin.collections.List<kotlin.String>?): kotlin.Boolean`
+  /// The returned object must be released after use, by calling the [release] method.
+  core$_.Future<jni$_.JBoolean> clear(
+    jni$_.JString string,
+    jni$_.JList<jni$_.JString?>? list,
+  ) async {
+    final $p = jni$_.ReceivePort();
+    final _$continuation = jni$_.ProtectedJniExtensions.newPortContinuation($p);
     final _$$selfRef = reference;
     final _$string = string.reference;
     final _$list = list?.reference ?? jni$_.jNullReference;
-    return _getAll(
+    final $r = _clear(
+      _$$selfRef.pointer,
+      _id_clear.pointer,
+      _$string.pointer,
+      _$list.pointer,
+      _$continuation.pointer,
+    ).object<jni$_.JObject>();
+    _$continuation.release();
+    jni$_.JObject $o;
+    if ($r.isInstanceOf(jni$_.coroutineSingletonsClass)) {
+      $r.release();
+      final $a = await $p.first;
+      $o = jni$_.JObject.fromReference(jni$_.JGlobalReference(jni$_.JObjectPtr.fromAddress($a)));
+      if ($o.isInstanceOf(jni$_.result$Class)) {
+        $o = jni$_.resultValueField.get($o, const jni$_.$JObject$Type$());
+      } else if ($o.isInstanceOf(jni$_.result$FailureClass)) {
+        final $e = jni$_.failureExceptionField.get($o, const jni$_.$JObject$Type$());
+        $o.release();
+        jni$_.Jni.throwException($e.reference.toPointer());
+      }
+    } else {
+      $o = $r;
+    }
+    return $o.as<jni$_.JBoolean>(jni$_.JBoolean.type, releaseOriginal: true);
+  }
+
+  static final _id_getAll = SharedPreferencesApi._class.instanceMethodId(
+    r'getAll',
+    r'(Ljava/lang/String;Ljava/util/List;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;',
+  );
+
+  static final _getAll =
+      jni$_.ProtectedJniExtensions.lookup<
+            jni$_.NativeFunction<
+              jni$_.JniResult Function(
+                jni$_.Pointer<jni$_.Void>,
+                jni$_.JMethodIDPtr,
+                jni$_.VarArgs<
+                  (jni$_.Pointer<jni$_.Void>, jni$_.Pointer<jni$_.Void>, jni$_.Pointer<jni$_.Void>)
+                >,
+              )
+            >
+          >('globalEnv_CallObjectMethod')
+          .asFunction<
+            jni$_.JniResult Function(
+              jni$_.Pointer<jni$_.Void>,
+              jni$_.JMethodIDPtr,
+              jni$_.Pointer<jni$_.Void>,
+              jni$_.Pointer<jni$_.Void>,
+              jni$_.Pointer<jni$_.Void>,
+            )
+          >();
+
+  /// from: `public suspend fun getAll(prefix: kotlin.String, allowList: kotlin.collections.List<kotlin.String>?): kotlin.collections.Map<kotlin.String, kotlin.Any>`
+  /// The returned object must be released after use, by calling the [release] method.
+  core$_.Future<jni$_.JMap<jni$_.JString, jni$_.JObject>> getAll(
+    jni$_.JString string,
+    jni$_.JList<jni$_.JString?>? list,
+  ) async {
+    final $p = jni$_.ReceivePort();
+    final _$continuation = jni$_.ProtectedJniExtensions.newPortContinuation($p);
+    final _$$selfRef = reference;
+    final _$string = string.reference;
+    final _$list = list?.reference ?? jni$_.jNullReference;
+    final $r = _getAll(
       _$$selfRef.pointer,
       _id_getAll.pointer,
       _$string.pointer,
       _$list.pointer,
-    ).object<jni$_.JMap<jni$_.JString, jni$_.JObject>>();
+      _$continuation.pointer,
+    ).object<jni$_.JObject>();
+    _$continuation.release();
+    jni$_.JObject $o;
+    if ($r.isInstanceOf(jni$_.coroutineSingletonsClass)) {
+      $r.release();
+      final $a = await $p.first;
+      $o = jni$_.JObject.fromReference(jni$_.JGlobalReference(jni$_.JObjectPtr.fromAddress($a)));
+      if ($o.isInstanceOf(jni$_.result$Class)) {
+        $o = jni$_.resultValueField.get($o, const jni$_.$JObject$Type$());
+      } else if ($o.isInstanceOf(jni$_.result$FailureClass)) {
+        final $e = jni$_.failureExceptionField.get($o, const jni$_.$JObject$Type$());
+        $o.release();
+        jni$_.Jni.throwException($e.reference.toPointer());
+      }
+    } else {
+      $o = $r;
+    }
+    return $o.as<jni$_.JMap>(jni$_.JMap.type, releaseOriginal: true)
+        as jni$_.JMap<jni$_.JString, jni$_.JObject>;
   }
 }
 
 abstract base mixin class $SharedPreferencesApi {
   factory $SharedPreferencesApi({
-    required core$_.bool Function(jni$_.JString string) remove,
-    required core$_.bool Function(jni$_.JString string, core$_.bool z) setBool,
-    required core$_.bool Function(jni$_.JString string, jni$_.JString string1) setString,
-    required core$_.bool Function(jni$_.JString string, core$_.int j) setInt,
-    required core$_.bool Function(jni$_.JString string, core$_.double d) setDouble,
-    required core$_.bool Function(jni$_.JString string, jni$_.JString string1) setEncodedStringList,
-    required core$_.bool Function(jni$_.JString string, jni$_.JList<jni$_.JString> list)
-    setDeprecatedStringList,
-    required core$_.bool Function(jni$_.JString string, jni$_.JList<jni$_.JString>? list) clear,
-    required jni$_.JMap<jni$_.JString, jni$_.JObject> Function(
+    required core$_.Future<jni$_.JBoolean> Function(jni$_.JString string) remove,
+    required core$_.Future<jni$_.JBoolean> Function(jni$_.JString string, core$_.bool z) setBool,
+    required core$_.Future<jni$_.JBoolean> Function(jni$_.JString string, jni$_.JString string1)
+    setString,
+    required core$_.Future<jni$_.JBoolean> Function(jni$_.JString string, core$_.int j) setInt,
+    required core$_.Future<jni$_.JBoolean> Function(jni$_.JString string, core$_.double d)
+    setDouble,
+    required core$_.Future<jni$_.JBoolean> Function(jni$_.JString string, jni$_.JString string1)
+    setEncodedStringList,
+    required core$_.Future<jni$_.JBoolean> Function(
       jni$_.JString string,
-      jni$_.JList<jni$_.JString>? list,
+      jni$_.JList<jni$_.JString?> list,
+    )
+    setDeprecatedStringList,
+    required core$_.Future<jni$_.JBoolean> Function(
+      jni$_.JString string,
+      jni$_.JList<jni$_.JString?>? list,
+    )
+    clear,
+    required core$_.Future<jni$_.JMap<jni$_.JString, jni$_.JObject>> Function(
+      jni$_.JString string,
+      jni$_.JList<jni$_.JString?>? list,
     )
     getAll,
   }) = _$SharedPreferencesApi;
 
-  core$_.bool remove(jni$_.JString string);
-  core$_.bool setBool(jni$_.JString string, core$_.bool z);
-  core$_.bool setString(jni$_.JString string, jni$_.JString string1);
-  core$_.bool setInt(jni$_.JString string, core$_.int j);
-  core$_.bool setDouble(jni$_.JString string, core$_.double d);
-  core$_.bool setEncodedStringList(jni$_.JString string, jni$_.JString string1);
-  core$_.bool setDeprecatedStringList(jni$_.JString string, jni$_.JList<jni$_.JString> list);
-  core$_.bool clear(jni$_.JString string, jni$_.JList<jni$_.JString>? list);
-  jni$_.JMap<jni$_.JString, jni$_.JObject> getAll(
+  core$_.Future<jni$_.JBoolean> remove(jni$_.JString string);
+  core$_.Future<jni$_.JBoolean> setBool(jni$_.JString string, core$_.bool z);
+  core$_.Future<jni$_.JBoolean> setString(jni$_.JString string, jni$_.JString string1);
+  core$_.Future<jni$_.JBoolean> setInt(jni$_.JString string, core$_.int j);
+  core$_.Future<jni$_.JBoolean> setDouble(jni$_.JString string, core$_.double d);
+  core$_.Future<jni$_.JBoolean> setEncodedStringList(jni$_.JString string, jni$_.JString string1);
+  core$_.Future<jni$_.JBoolean> setDeprecatedStringList(
     jni$_.JString string,
-    jni$_.JList<jni$_.JString>? list,
+    jni$_.JList<jni$_.JString?> list,
+  );
+  core$_.Future<jni$_.JBoolean> clear(jni$_.JString string, jni$_.JList<jni$_.JString?>? list);
+  core$_.Future<jni$_.JMap<jni$_.JString, jni$_.JObject>> getAll(
+    jni$_.JString string,
+    jni$_.JList<jni$_.JString?>? list,
   );
 }
 
 final class _$SharedPreferencesApi with $SharedPreferencesApi {
   _$SharedPreferencesApi({
-    required core$_.bool Function(jni$_.JString string) remove,
-    required core$_.bool Function(jni$_.JString string, core$_.bool z) setBool,
-    required core$_.bool Function(jni$_.JString string, jni$_.JString string1) setString,
-    required core$_.bool Function(jni$_.JString string, core$_.int j) setInt,
-    required core$_.bool Function(jni$_.JString string, core$_.double d) setDouble,
-    required core$_.bool Function(jni$_.JString string, jni$_.JString string1) setEncodedStringList,
-    required core$_.bool Function(jni$_.JString string, jni$_.JList<jni$_.JString> list)
-    setDeprecatedStringList,
-    required core$_.bool Function(jni$_.JString string, jni$_.JList<jni$_.JString>? list) clear,
-    required jni$_.JMap<jni$_.JString, jni$_.JObject> Function(
+    required core$_.Future<jni$_.JBoolean> Function(jni$_.JString string) remove,
+    required core$_.Future<jni$_.JBoolean> Function(jni$_.JString string, core$_.bool z) setBool,
+    required core$_.Future<jni$_.JBoolean> Function(jni$_.JString string, jni$_.JString string1)
+    setString,
+    required core$_.Future<jni$_.JBoolean> Function(jni$_.JString string, core$_.int j) setInt,
+    required core$_.Future<jni$_.JBoolean> Function(jni$_.JString string, core$_.double d)
+    setDouble,
+    required core$_.Future<jni$_.JBoolean> Function(jni$_.JString string, jni$_.JString string1)
+    setEncodedStringList,
+    required core$_.Future<jni$_.JBoolean> Function(
       jni$_.JString string,
-      jni$_.JList<jni$_.JString>? list,
+      jni$_.JList<jni$_.JString?> list,
+    )
+    setDeprecatedStringList,
+    required core$_.Future<jni$_.JBoolean> Function(
+      jni$_.JString string,
+      jni$_.JList<jni$_.JString?>? list,
+    )
+    clear,
+    required core$_.Future<jni$_.JMap<jni$_.JString, jni$_.JObject>> Function(
+      jni$_.JString string,
+      jni$_.JList<jni$_.JString?>? list,
     )
     getAll,
   }) : _remove = remove,
@@ -713,56 +1009,68 @@ final class _$SharedPreferencesApi with $SharedPreferencesApi {
        _clear = clear,
        _getAll = getAll;
 
-  final core$_.bool Function(jni$_.JString string) _remove;
-  final core$_.bool Function(jni$_.JString string, core$_.bool z) _setBool;
-  final core$_.bool Function(jni$_.JString string, jni$_.JString string1) _setString;
-  final core$_.bool Function(jni$_.JString string, core$_.int j) _setInt;
-  final core$_.bool Function(jni$_.JString string, core$_.double d) _setDouble;
-  final core$_.bool Function(jni$_.JString string, jni$_.JString string1) _setEncodedStringList;
-  final core$_.bool Function(jni$_.JString string, jni$_.JList<jni$_.JString> list)
-  _setDeprecatedStringList;
-  final core$_.bool Function(jni$_.JString string, jni$_.JList<jni$_.JString>? list) _clear;
-  final jni$_.JMap<jni$_.JString, jni$_.JObject> Function(
+  final core$_.Future<jni$_.JBoolean> Function(jni$_.JString string) _remove;
+  final core$_.Future<jni$_.JBoolean> Function(jni$_.JString string, core$_.bool z) _setBool;
+  final core$_.Future<jni$_.JBoolean> Function(jni$_.JString string, jni$_.JString string1)
+  _setString;
+  final core$_.Future<jni$_.JBoolean> Function(jni$_.JString string, core$_.int j) _setInt;
+  final core$_.Future<jni$_.JBoolean> Function(jni$_.JString string, core$_.double d) _setDouble;
+  final core$_.Future<jni$_.JBoolean> Function(jni$_.JString string, jni$_.JString string1)
+  _setEncodedStringList;
+  final core$_.Future<jni$_.JBoolean> Function(
     jni$_.JString string,
-    jni$_.JList<jni$_.JString>? list,
+    jni$_.JList<jni$_.JString?> list,
+  )
+  _setDeprecatedStringList;
+  final core$_.Future<jni$_.JBoolean> Function(
+    jni$_.JString string,
+    jni$_.JList<jni$_.JString?>? list,
+  )
+  _clear;
+  final core$_.Future<jni$_.JMap<jni$_.JString, jni$_.JObject>> Function(
+    jni$_.JString string,
+    jni$_.JList<jni$_.JString?>? list,
   )
   _getAll;
 
-  core$_.bool remove(jni$_.JString string) {
+  core$_.Future<jni$_.JBoolean> remove(jni$_.JString string) {
     return _remove(string);
   }
 
-  core$_.bool setBool(jni$_.JString string, core$_.bool z) {
+  core$_.Future<jni$_.JBoolean> setBool(jni$_.JString string, core$_.bool z) {
     return _setBool(string, z);
   }
 
-  core$_.bool setString(jni$_.JString string, jni$_.JString string1) {
+  core$_.Future<jni$_.JBoolean> setString(jni$_.JString string, jni$_.JString string1) {
     return _setString(string, string1);
   }
 
-  core$_.bool setInt(jni$_.JString string, core$_.int j) {
+  core$_.Future<jni$_.JBoolean> setInt(jni$_.JString string, core$_.int j) {
     return _setInt(string, j);
   }
 
-  core$_.bool setDouble(jni$_.JString string, core$_.double d) {
+  core$_.Future<jni$_.JBoolean> setDouble(jni$_.JString string, core$_.double d) {
     return _setDouble(string, d);
   }
 
-  core$_.bool setEncodedStringList(jni$_.JString string, jni$_.JString string1) {
+  core$_.Future<jni$_.JBoolean> setEncodedStringList(jni$_.JString string, jni$_.JString string1) {
     return _setEncodedStringList(string, string1);
   }
 
-  core$_.bool setDeprecatedStringList(jni$_.JString string, jni$_.JList<jni$_.JString> list) {
+  core$_.Future<jni$_.JBoolean> setDeprecatedStringList(
+    jni$_.JString string,
+    jni$_.JList<jni$_.JString?> list,
+  ) {
     return _setDeprecatedStringList(string, list);
   }
 
-  core$_.bool clear(jni$_.JString string, jni$_.JList<jni$_.JString>? list) {
+  core$_.Future<jni$_.JBoolean> clear(jni$_.JString string, jni$_.JList<jni$_.JString?>? list) {
     return _clear(string, list);
   }
 
-  jni$_.JMap<jni$_.JString, jni$_.JObject> getAll(
+  core$_.Future<jni$_.JMap<jni$_.JString, jni$_.JObject>> getAll(
     jni$_.JString string,
-    jni$_.JList<jni$_.JString>? list,
+    jni$_.JList<jni$_.JString?>? list,
   ) {
     return _getAll(string, list);
   }
@@ -884,276 +1192,10 @@ extension SharedPreferencesApiRegistrar$$Methods on SharedPreferencesApiRegistra
 
   static final _id_remove = SharedPreferencesApiRegistrar._class.instanceMethodId(
     r'remove',
-    r'(Ljava/lang/String;)Z',
+    r'(Ljava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;',
   );
 
   static final _remove =
-      jni$_.ProtectedJniExtensions.lookup<
-            jni$_.NativeFunction<
-              jni$_.JniResult Function(
-                jni$_.Pointer<jni$_.Void>,
-                jni$_.JMethodIDPtr,
-                jni$_.VarArgs<(jni$_.Pointer<jni$_.Void>,)>,
-              )
-            >
-          >('globalEnv_CallBooleanMethod')
-          .asFunction<
-            jni$_.JniResult Function(
-              jni$_.Pointer<jni$_.Void>,
-              jni$_.JMethodIDPtr,
-              jni$_.Pointer<jni$_.Void>,
-            )
-          >();
-
-  /// from: `public fun remove(key: kotlin.String): kotlin.Boolean`
-  core$_.bool remove(jni$_.JString string) {
-    final _$$selfRef = reference;
-    final _$string = string.reference;
-    return _remove(_$$selfRef.pointer, _id_remove.pointer, _$string.pointer).boolean;
-  }
-
-  static final _id_setBool = SharedPreferencesApiRegistrar._class.instanceMethodId(
-    r'setBool',
-    r'(Ljava/lang/String;Z)Z',
-  );
-
-  static final _setBool =
-      jni$_.ProtectedJniExtensions.lookup<
-            jni$_.NativeFunction<
-              jni$_.JniResult Function(
-                jni$_.Pointer<jni$_.Void>,
-                jni$_.JMethodIDPtr,
-                jni$_.VarArgs<(jni$_.Pointer<jni$_.Void>, jni$_.Int32)>,
-              )
-            >
-          >('globalEnv_CallBooleanMethod')
-          .asFunction<
-            jni$_.JniResult Function(
-              jni$_.Pointer<jni$_.Void>,
-              jni$_.JMethodIDPtr,
-              jni$_.Pointer<jni$_.Void>,
-              core$_.int,
-            )
-          >();
-
-  /// from: `public fun setBool(key: kotlin.String, value: kotlin.Boolean): kotlin.Boolean`
-  core$_.bool setBool(jni$_.JString string, core$_.bool z) {
-    final _$$selfRef = reference;
-    final _$string = string.reference;
-    return _setBool(_$$selfRef.pointer, _id_setBool.pointer, _$string.pointer, z ? 1 : 0).boolean;
-  }
-
-  static final _id_setString = SharedPreferencesApiRegistrar._class.instanceMethodId(
-    r'setString',
-    r'(Ljava/lang/String;Ljava/lang/String;)Z',
-  );
-
-  static final _setString =
-      jni$_.ProtectedJniExtensions.lookup<
-            jni$_.NativeFunction<
-              jni$_.JniResult Function(
-                jni$_.Pointer<jni$_.Void>,
-                jni$_.JMethodIDPtr,
-                jni$_.VarArgs<(jni$_.Pointer<jni$_.Void>, jni$_.Pointer<jni$_.Void>)>,
-              )
-            >
-          >('globalEnv_CallBooleanMethod')
-          .asFunction<
-            jni$_.JniResult Function(
-              jni$_.Pointer<jni$_.Void>,
-              jni$_.JMethodIDPtr,
-              jni$_.Pointer<jni$_.Void>,
-              jni$_.Pointer<jni$_.Void>,
-            )
-          >();
-
-  /// from: `public fun setString(key: kotlin.String, value: kotlin.String): kotlin.Boolean`
-  core$_.bool setString(jni$_.JString string, jni$_.JString string1) {
-    final _$$selfRef = reference;
-    final _$string = string.reference;
-    final _$string1 = string1.reference;
-    return _setString(
-      _$$selfRef.pointer,
-      _id_setString.pointer,
-      _$string.pointer,
-      _$string1.pointer,
-    ).boolean;
-  }
-
-  static final _id_setInt = SharedPreferencesApiRegistrar._class.instanceMethodId(
-    r'setInt',
-    r'(Ljava/lang/String;J)Z',
-  );
-
-  static final _setInt =
-      jni$_.ProtectedJniExtensions.lookup<
-            jni$_.NativeFunction<
-              jni$_.JniResult Function(
-                jni$_.Pointer<jni$_.Void>,
-                jni$_.JMethodIDPtr,
-                jni$_.VarArgs<(jni$_.Pointer<jni$_.Void>, jni$_.Int64)>,
-              )
-            >
-          >('globalEnv_CallBooleanMethod')
-          .asFunction<
-            jni$_.JniResult Function(
-              jni$_.Pointer<jni$_.Void>,
-              jni$_.JMethodIDPtr,
-              jni$_.Pointer<jni$_.Void>,
-              core$_.int,
-            )
-          >();
-
-  /// from: `public fun setInt(key: kotlin.String, value: kotlin.Long): kotlin.Boolean`
-  core$_.bool setInt(jni$_.JString string, core$_.int j) {
-    final _$$selfRef = reference;
-    final _$string = string.reference;
-    return _setInt(_$$selfRef.pointer, _id_setInt.pointer, _$string.pointer, j).boolean;
-  }
-
-  static final _id_setDouble = SharedPreferencesApiRegistrar._class.instanceMethodId(
-    r'setDouble',
-    r'(Ljava/lang/String;D)Z',
-  );
-
-  static final _setDouble =
-      jni$_.ProtectedJniExtensions.lookup<
-            jni$_.NativeFunction<
-              jni$_.JniResult Function(
-                jni$_.Pointer<jni$_.Void>,
-                jni$_.JMethodIDPtr,
-                jni$_.VarArgs<(jni$_.Pointer<jni$_.Void>, jni$_.Double)>,
-              )
-            >
-          >('globalEnv_CallBooleanMethod')
-          .asFunction<
-            jni$_.JniResult Function(
-              jni$_.Pointer<jni$_.Void>,
-              jni$_.JMethodIDPtr,
-              jni$_.Pointer<jni$_.Void>,
-              core$_.double,
-            )
-          >();
-
-  /// from: `public fun setDouble(key: kotlin.String, value: kotlin.Double): kotlin.Boolean`
-  core$_.bool setDouble(jni$_.JString string, core$_.double d) {
-    final _$$selfRef = reference;
-    final _$string = string.reference;
-    return _setDouble(_$$selfRef.pointer, _id_setDouble.pointer, _$string.pointer, d).boolean;
-  }
-
-  static final _id_setEncodedStringList = SharedPreferencesApiRegistrar._class.instanceMethodId(
-    r'setEncodedStringList',
-    r'(Ljava/lang/String;Ljava/lang/String;)Z',
-  );
-
-  static final _setEncodedStringList =
-      jni$_.ProtectedJniExtensions.lookup<
-            jni$_.NativeFunction<
-              jni$_.JniResult Function(
-                jni$_.Pointer<jni$_.Void>,
-                jni$_.JMethodIDPtr,
-                jni$_.VarArgs<(jni$_.Pointer<jni$_.Void>, jni$_.Pointer<jni$_.Void>)>,
-              )
-            >
-          >('globalEnv_CallBooleanMethod')
-          .asFunction<
-            jni$_.JniResult Function(
-              jni$_.Pointer<jni$_.Void>,
-              jni$_.JMethodIDPtr,
-              jni$_.Pointer<jni$_.Void>,
-              jni$_.Pointer<jni$_.Void>,
-            )
-          >();
-
-  /// from: `public fun setEncodedStringList(key: kotlin.String, value: kotlin.String): kotlin.Boolean`
-  core$_.bool setEncodedStringList(jni$_.JString string, jni$_.JString string1) {
-    final _$$selfRef = reference;
-    final _$string = string.reference;
-    final _$string1 = string1.reference;
-    return _setEncodedStringList(
-      _$$selfRef.pointer,
-      _id_setEncodedStringList.pointer,
-      _$string.pointer,
-      _$string1.pointer,
-    ).boolean;
-  }
-
-  static final _id_setDeprecatedStringList = SharedPreferencesApiRegistrar._class.instanceMethodId(
-    r'setDeprecatedStringList',
-    r'(Ljava/lang/String;Ljava/util/List;)Z',
-  );
-
-  static final _setDeprecatedStringList =
-      jni$_.ProtectedJniExtensions.lookup<
-            jni$_.NativeFunction<
-              jni$_.JniResult Function(
-                jni$_.Pointer<jni$_.Void>,
-                jni$_.JMethodIDPtr,
-                jni$_.VarArgs<(jni$_.Pointer<jni$_.Void>, jni$_.Pointer<jni$_.Void>)>,
-              )
-            >
-          >('globalEnv_CallBooleanMethod')
-          .asFunction<
-            jni$_.JniResult Function(
-              jni$_.Pointer<jni$_.Void>,
-              jni$_.JMethodIDPtr,
-              jni$_.Pointer<jni$_.Void>,
-              jni$_.Pointer<jni$_.Void>,
-            )
-          >();
-
-  /// from: `public fun setDeprecatedStringList(key: kotlin.String, value: kotlin.collections.List<kotlin.String>): kotlin.Boolean`
-  core$_.bool setDeprecatedStringList(jni$_.JString string, jni$_.JList<jni$_.JString> list) {
-    final _$$selfRef = reference;
-    final _$string = string.reference;
-    final _$list = list.reference;
-    return _setDeprecatedStringList(
-      _$$selfRef.pointer,
-      _id_setDeprecatedStringList.pointer,
-      _$string.pointer,
-      _$list.pointer,
-    ).boolean;
-  }
-
-  static final _id_clear = SharedPreferencesApiRegistrar._class.instanceMethodId(
-    r'clear',
-    r'(Ljava/lang/String;Ljava/util/List;)Z',
-  );
-
-  static final _clear =
-      jni$_.ProtectedJniExtensions.lookup<
-            jni$_.NativeFunction<
-              jni$_.JniResult Function(
-                jni$_.Pointer<jni$_.Void>,
-                jni$_.JMethodIDPtr,
-                jni$_.VarArgs<(jni$_.Pointer<jni$_.Void>, jni$_.Pointer<jni$_.Void>)>,
-              )
-            >
-          >('globalEnv_CallBooleanMethod')
-          .asFunction<
-            jni$_.JniResult Function(
-              jni$_.Pointer<jni$_.Void>,
-              jni$_.JMethodIDPtr,
-              jni$_.Pointer<jni$_.Void>,
-              jni$_.Pointer<jni$_.Void>,
-            )
-          >();
-
-  /// from: `public fun clear(prefix: kotlin.String, allowList: kotlin.collections.List<kotlin.String>?): kotlin.Boolean`
-  core$_.bool clear(jni$_.JString string, jni$_.JList<jni$_.JString>? list) {
-    final _$$selfRef = reference;
-    final _$string = string.reference;
-    final _$list = list?.reference ?? jni$_.jNullReference;
-    return _clear(_$$selfRef.pointer, _id_clear.pointer, _$string.pointer, _$list.pointer).boolean;
-  }
-
-  static final _id_getAll = SharedPreferencesApiRegistrar._class.instanceMethodId(
-    r'getAll',
-    r'(Ljava/lang/String;Ljava/util/List;)Ljava/util/Map;',
-  );
-
-  static final _getAll =
       jni$_.ProtectedJniExtensions.lookup<
             jni$_.NativeFunction<
               jni$_.JniResult Function(
@@ -1172,21 +1214,528 @@ extension SharedPreferencesApiRegistrar$$Methods on SharedPreferencesApiRegistra
             )
           >();
 
-  /// from: `public fun getAll(prefix: kotlin.String, allowList: kotlin.collections.List<kotlin.String>?): kotlin.collections.Map<kotlin.String, kotlin.Any>`
+  /// from: `public suspend fun remove(key: kotlin.String): kotlin.Boolean`
   /// The returned object must be released after use, by calling the [release] method.
-  jni$_.JMap<jni$_.JString, jni$_.JObject> getAll(
+  core$_.Future<jni$_.JBoolean> remove(jni$_.JString string) async {
+    final $p = jni$_.ReceivePort();
+    final _$continuation = jni$_.ProtectedJniExtensions.newPortContinuation($p);
+    final _$$selfRef = reference;
+    final _$string = string.reference;
+    final $r = _remove(
+      _$$selfRef.pointer,
+      _id_remove.pointer,
+      _$string.pointer,
+      _$continuation.pointer,
+    ).object<jni$_.JObject>();
+    _$continuation.release();
+    jni$_.JObject $o;
+    if ($r.isInstanceOf(jni$_.coroutineSingletonsClass)) {
+      $r.release();
+      final $a = await $p.first;
+      $o = jni$_.JObject.fromReference(jni$_.JGlobalReference(jni$_.JObjectPtr.fromAddress($a)));
+      if ($o.isInstanceOf(jni$_.result$Class)) {
+        $o = jni$_.resultValueField.get($o, const jni$_.$JObject$Type$());
+      } else if ($o.isInstanceOf(jni$_.result$FailureClass)) {
+        final $e = jni$_.failureExceptionField.get($o, const jni$_.$JObject$Type$());
+        $o.release();
+        jni$_.Jni.throwException($e.reference.toPointer());
+      }
+    } else {
+      $o = $r;
+    }
+    return $o.as<jni$_.JBoolean>(jni$_.JBoolean.type, releaseOriginal: true);
+  }
+
+  static final _id_setBool = SharedPreferencesApiRegistrar._class.instanceMethodId(
+    r'setBool',
+    r'(Ljava/lang/String;ZLkotlin/coroutines/Continuation;)Ljava/lang/Object;',
+  );
+
+  static final _setBool =
+      jni$_.ProtectedJniExtensions.lookup<
+            jni$_.NativeFunction<
+              jni$_.JniResult Function(
+                jni$_.Pointer<jni$_.Void>,
+                jni$_.JMethodIDPtr,
+                jni$_.VarArgs<(jni$_.Pointer<jni$_.Void>, jni$_.Int32, jni$_.Pointer<jni$_.Void>)>,
+              )
+            >
+          >('globalEnv_CallObjectMethod')
+          .asFunction<
+            jni$_.JniResult Function(
+              jni$_.Pointer<jni$_.Void>,
+              jni$_.JMethodIDPtr,
+              jni$_.Pointer<jni$_.Void>,
+              core$_.int,
+              jni$_.Pointer<jni$_.Void>,
+            )
+          >();
+
+  /// from: `public suspend fun setBool(key: kotlin.String, value: kotlin.Boolean): kotlin.Boolean`
+  /// The returned object must be released after use, by calling the [release] method.
+  core$_.Future<jni$_.JBoolean> setBool(jni$_.JString string, core$_.bool z) async {
+    final $p = jni$_.ReceivePort();
+    final _$continuation = jni$_.ProtectedJniExtensions.newPortContinuation($p);
+    final _$$selfRef = reference;
+    final _$string = string.reference;
+    final $r = _setBool(
+      _$$selfRef.pointer,
+      _id_setBool.pointer,
+      _$string.pointer,
+      z ? 1 : 0,
+      _$continuation.pointer,
+    ).object<jni$_.JObject>();
+    _$continuation.release();
+    jni$_.JObject $o;
+    if ($r.isInstanceOf(jni$_.coroutineSingletonsClass)) {
+      $r.release();
+      final $a = await $p.first;
+      $o = jni$_.JObject.fromReference(jni$_.JGlobalReference(jni$_.JObjectPtr.fromAddress($a)));
+      if ($o.isInstanceOf(jni$_.result$Class)) {
+        $o = jni$_.resultValueField.get($o, const jni$_.$JObject$Type$());
+      } else if ($o.isInstanceOf(jni$_.result$FailureClass)) {
+        final $e = jni$_.failureExceptionField.get($o, const jni$_.$JObject$Type$());
+        $o.release();
+        jni$_.Jni.throwException($e.reference.toPointer());
+      }
+    } else {
+      $o = $r;
+    }
+    return $o.as<jni$_.JBoolean>(jni$_.JBoolean.type, releaseOriginal: true);
+  }
+
+  static final _id_setString = SharedPreferencesApiRegistrar._class.instanceMethodId(
+    r'setString',
+    r'(Ljava/lang/String;Ljava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;',
+  );
+
+  static final _setString =
+      jni$_.ProtectedJniExtensions.lookup<
+            jni$_.NativeFunction<
+              jni$_.JniResult Function(
+                jni$_.Pointer<jni$_.Void>,
+                jni$_.JMethodIDPtr,
+                jni$_.VarArgs<
+                  (jni$_.Pointer<jni$_.Void>, jni$_.Pointer<jni$_.Void>, jni$_.Pointer<jni$_.Void>)
+                >,
+              )
+            >
+          >('globalEnv_CallObjectMethod')
+          .asFunction<
+            jni$_.JniResult Function(
+              jni$_.Pointer<jni$_.Void>,
+              jni$_.JMethodIDPtr,
+              jni$_.Pointer<jni$_.Void>,
+              jni$_.Pointer<jni$_.Void>,
+              jni$_.Pointer<jni$_.Void>,
+            )
+          >();
+
+  /// from: `public suspend fun setString(key: kotlin.String, value: kotlin.String): kotlin.Boolean`
+  /// The returned object must be released after use, by calling the [release] method.
+  core$_.Future<jni$_.JBoolean> setString(jni$_.JString string, jni$_.JString string1) async {
+    final $p = jni$_.ReceivePort();
+    final _$continuation = jni$_.ProtectedJniExtensions.newPortContinuation($p);
+    final _$$selfRef = reference;
+    final _$string = string.reference;
+    final _$string1 = string1.reference;
+    final $r = _setString(
+      _$$selfRef.pointer,
+      _id_setString.pointer,
+      _$string.pointer,
+      _$string1.pointer,
+      _$continuation.pointer,
+    ).object<jni$_.JObject>();
+    _$continuation.release();
+    jni$_.JObject $o;
+    if ($r.isInstanceOf(jni$_.coroutineSingletonsClass)) {
+      $r.release();
+      final $a = await $p.first;
+      $o = jni$_.JObject.fromReference(jni$_.JGlobalReference(jni$_.JObjectPtr.fromAddress($a)));
+      if ($o.isInstanceOf(jni$_.result$Class)) {
+        $o = jni$_.resultValueField.get($o, const jni$_.$JObject$Type$());
+      } else if ($o.isInstanceOf(jni$_.result$FailureClass)) {
+        final $e = jni$_.failureExceptionField.get($o, const jni$_.$JObject$Type$());
+        $o.release();
+        jni$_.Jni.throwException($e.reference.toPointer());
+      }
+    } else {
+      $o = $r;
+    }
+    return $o.as<jni$_.JBoolean>(jni$_.JBoolean.type, releaseOriginal: true);
+  }
+
+  static final _id_setInt = SharedPreferencesApiRegistrar._class.instanceMethodId(
+    r'setInt',
+    r'(Ljava/lang/String;JLkotlin/coroutines/Continuation;)Ljava/lang/Object;',
+  );
+
+  static final _setInt =
+      jni$_.ProtectedJniExtensions.lookup<
+            jni$_.NativeFunction<
+              jni$_.JniResult Function(
+                jni$_.Pointer<jni$_.Void>,
+                jni$_.JMethodIDPtr,
+                jni$_.VarArgs<(jni$_.Pointer<jni$_.Void>, jni$_.Int64, jni$_.Pointer<jni$_.Void>)>,
+              )
+            >
+          >('globalEnv_CallObjectMethod')
+          .asFunction<
+            jni$_.JniResult Function(
+              jni$_.Pointer<jni$_.Void>,
+              jni$_.JMethodIDPtr,
+              jni$_.Pointer<jni$_.Void>,
+              core$_.int,
+              jni$_.Pointer<jni$_.Void>,
+            )
+          >();
+
+  /// from: `public suspend fun setInt(key: kotlin.String, value: kotlin.Long): kotlin.Boolean`
+  /// The returned object must be released after use, by calling the [release] method.
+  core$_.Future<jni$_.JBoolean> setInt(jni$_.JString string, core$_.int j) async {
+    final $p = jni$_.ReceivePort();
+    final _$continuation = jni$_.ProtectedJniExtensions.newPortContinuation($p);
+    final _$$selfRef = reference;
+    final _$string = string.reference;
+    final $r = _setInt(
+      _$$selfRef.pointer,
+      _id_setInt.pointer,
+      _$string.pointer,
+      j,
+      _$continuation.pointer,
+    ).object<jni$_.JObject>();
+    _$continuation.release();
+    jni$_.JObject $o;
+    if ($r.isInstanceOf(jni$_.coroutineSingletonsClass)) {
+      $r.release();
+      final $a = await $p.first;
+      $o = jni$_.JObject.fromReference(jni$_.JGlobalReference(jni$_.JObjectPtr.fromAddress($a)));
+      if ($o.isInstanceOf(jni$_.result$Class)) {
+        $o = jni$_.resultValueField.get($o, const jni$_.$JObject$Type$());
+      } else if ($o.isInstanceOf(jni$_.result$FailureClass)) {
+        final $e = jni$_.failureExceptionField.get($o, const jni$_.$JObject$Type$());
+        $o.release();
+        jni$_.Jni.throwException($e.reference.toPointer());
+      }
+    } else {
+      $o = $r;
+    }
+    return $o.as<jni$_.JBoolean>(jni$_.JBoolean.type, releaseOriginal: true);
+  }
+
+  static final _id_setDouble = SharedPreferencesApiRegistrar._class.instanceMethodId(
+    r'setDouble',
+    r'(Ljava/lang/String;DLkotlin/coroutines/Continuation;)Ljava/lang/Object;',
+  );
+
+  static final _setDouble =
+      jni$_.ProtectedJniExtensions.lookup<
+            jni$_.NativeFunction<
+              jni$_.JniResult Function(
+                jni$_.Pointer<jni$_.Void>,
+                jni$_.JMethodIDPtr,
+                jni$_.VarArgs<(jni$_.Pointer<jni$_.Void>, jni$_.Double, jni$_.Pointer<jni$_.Void>)>,
+              )
+            >
+          >('globalEnv_CallObjectMethod')
+          .asFunction<
+            jni$_.JniResult Function(
+              jni$_.Pointer<jni$_.Void>,
+              jni$_.JMethodIDPtr,
+              jni$_.Pointer<jni$_.Void>,
+              core$_.double,
+              jni$_.Pointer<jni$_.Void>,
+            )
+          >();
+
+  /// from: `public suspend fun setDouble(key: kotlin.String, value: kotlin.Double): kotlin.Boolean`
+  /// The returned object must be released after use, by calling the [release] method.
+  core$_.Future<jni$_.JBoolean> setDouble(jni$_.JString string, core$_.double d) async {
+    final $p = jni$_.ReceivePort();
+    final _$continuation = jni$_.ProtectedJniExtensions.newPortContinuation($p);
+    final _$$selfRef = reference;
+    final _$string = string.reference;
+    final $r = _setDouble(
+      _$$selfRef.pointer,
+      _id_setDouble.pointer,
+      _$string.pointer,
+      d,
+      _$continuation.pointer,
+    ).object<jni$_.JObject>();
+    _$continuation.release();
+    jni$_.JObject $o;
+    if ($r.isInstanceOf(jni$_.coroutineSingletonsClass)) {
+      $r.release();
+      final $a = await $p.first;
+      $o = jni$_.JObject.fromReference(jni$_.JGlobalReference(jni$_.JObjectPtr.fromAddress($a)));
+      if ($o.isInstanceOf(jni$_.result$Class)) {
+        $o = jni$_.resultValueField.get($o, const jni$_.$JObject$Type$());
+      } else if ($o.isInstanceOf(jni$_.result$FailureClass)) {
+        final $e = jni$_.failureExceptionField.get($o, const jni$_.$JObject$Type$());
+        $o.release();
+        jni$_.Jni.throwException($e.reference.toPointer());
+      }
+    } else {
+      $o = $r;
+    }
+    return $o.as<jni$_.JBoolean>(jni$_.JBoolean.type, releaseOriginal: true);
+  }
+
+  static final _id_setEncodedStringList = SharedPreferencesApiRegistrar._class.instanceMethodId(
+    r'setEncodedStringList',
+    r'(Ljava/lang/String;Ljava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;',
+  );
+
+  static final _setEncodedStringList =
+      jni$_.ProtectedJniExtensions.lookup<
+            jni$_.NativeFunction<
+              jni$_.JniResult Function(
+                jni$_.Pointer<jni$_.Void>,
+                jni$_.JMethodIDPtr,
+                jni$_.VarArgs<
+                  (jni$_.Pointer<jni$_.Void>, jni$_.Pointer<jni$_.Void>, jni$_.Pointer<jni$_.Void>)
+                >,
+              )
+            >
+          >('globalEnv_CallObjectMethod')
+          .asFunction<
+            jni$_.JniResult Function(
+              jni$_.Pointer<jni$_.Void>,
+              jni$_.JMethodIDPtr,
+              jni$_.Pointer<jni$_.Void>,
+              jni$_.Pointer<jni$_.Void>,
+              jni$_.Pointer<jni$_.Void>,
+            )
+          >();
+
+  /// from: `public suspend fun setEncodedStringList(key: kotlin.String, value: kotlin.String): kotlin.Boolean`
+  /// The returned object must be released after use, by calling the [release] method.
+  core$_.Future<jni$_.JBoolean> setEncodedStringList(
     jni$_.JString string,
-    jni$_.JList<jni$_.JString>? list,
-  ) {
+    jni$_.JString string1,
+  ) async {
+    final $p = jni$_.ReceivePort();
+    final _$continuation = jni$_.ProtectedJniExtensions.newPortContinuation($p);
+    final _$$selfRef = reference;
+    final _$string = string.reference;
+    final _$string1 = string1.reference;
+    final $r = _setEncodedStringList(
+      _$$selfRef.pointer,
+      _id_setEncodedStringList.pointer,
+      _$string.pointer,
+      _$string1.pointer,
+      _$continuation.pointer,
+    ).object<jni$_.JObject>();
+    _$continuation.release();
+    jni$_.JObject $o;
+    if ($r.isInstanceOf(jni$_.coroutineSingletonsClass)) {
+      $r.release();
+      final $a = await $p.first;
+      $o = jni$_.JObject.fromReference(jni$_.JGlobalReference(jni$_.JObjectPtr.fromAddress($a)));
+      if ($o.isInstanceOf(jni$_.result$Class)) {
+        $o = jni$_.resultValueField.get($o, const jni$_.$JObject$Type$());
+      } else if ($o.isInstanceOf(jni$_.result$FailureClass)) {
+        final $e = jni$_.failureExceptionField.get($o, const jni$_.$JObject$Type$());
+        $o.release();
+        jni$_.Jni.throwException($e.reference.toPointer());
+      }
+    } else {
+      $o = $r;
+    }
+    return $o.as<jni$_.JBoolean>(jni$_.JBoolean.type, releaseOriginal: true);
+  }
+
+  static final _id_setDeprecatedStringList = SharedPreferencesApiRegistrar._class.instanceMethodId(
+    r'setDeprecatedStringList',
+    r'(Ljava/lang/String;Ljava/util/List;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;',
+  );
+
+  static final _setDeprecatedStringList =
+      jni$_.ProtectedJniExtensions.lookup<
+            jni$_.NativeFunction<
+              jni$_.JniResult Function(
+                jni$_.Pointer<jni$_.Void>,
+                jni$_.JMethodIDPtr,
+                jni$_.VarArgs<
+                  (jni$_.Pointer<jni$_.Void>, jni$_.Pointer<jni$_.Void>, jni$_.Pointer<jni$_.Void>)
+                >,
+              )
+            >
+          >('globalEnv_CallObjectMethod')
+          .asFunction<
+            jni$_.JniResult Function(
+              jni$_.Pointer<jni$_.Void>,
+              jni$_.JMethodIDPtr,
+              jni$_.Pointer<jni$_.Void>,
+              jni$_.Pointer<jni$_.Void>,
+              jni$_.Pointer<jni$_.Void>,
+            )
+          >();
+
+  /// from: `public suspend fun setDeprecatedStringList(key: kotlin.String, value: kotlin.collections.List<kotlin.String>): kotlin.Boolean`
+  /// The returned object must be released after use, by calling the [release] method.
+  core$_.Future<jni$_.JBoolean> setDeprecatedStringList(
+    jni$_.JString string,
+    jni$_.JList<jni$_.JString?> list,
+  ) async {
+    final $p = jni$_.ReceivePort();
+    final _$continuation = jni$_.ProtectedJniExtensions.newPortContinuation($p);
+    final _$$selfRef = reference;
+    final _$string = string.reference;
+    final _$list = list.reference;
+    final $r = _setDeprecatedStringList(
+      _$$selfRef.pointer,
+      _id_setDeprecatedStringList.pointer,
+      _$string.pointer,
+      _$list.pointer,
+      _$continuation.pointer,
+    ).object<jni$_.JObject>();
+    _$continuation.release();
+    jni$_.JObject $o;
+    if ($r.isInstanceOf(jni$_.coroutineSingletonsClass)) {
+      $r.release();
+      final $a = await $p.first;
+      $o = jni$_.JObject.fromReference(jni$_.JGlobalReference(jni$_.JObjectPtr.fromAddress($a)));
+      if ($o.isInstanceOf(jni$_.result$Class)) {
+        $o = jni$_.resultValueField.get($o, const jni$_.$JObject$Type$());
+      } else if ($o.isInstanceOf(jni$_.result$FailureClass)) {
+        final $e = jni$_.failureExceptionField.get($o, const jni$_.$JObject$Type$());
+        $o.release();
+        jni$_.Jni.throwException($e.reference.toPointer());
+      }
+    } else {
+      $o = $r;
+    }
+    return $o.as<jni$_.JBoolean>(jni$_.JBoolean.type, releaseOriginal: true);
+  }
+
+  static final _id_clear = SharedPreferencesApiRegistrar._class.instanceMethodId(
+    r'clear',
+    r'(Ljava/lang/String;Ljava/util/List;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;',
+  );
+
+  static final _clear =
+      jni$_.ProtectedJniExtensions.lookup<
+            jni$_.NativeFunction<
+              jni$_.JniResult Function(
+                jni$_.Pointer<jni$_.Void>,
+                jni$_.JMethodIDPtr,
+                jni$_.VarArgs<
+                  (jni$_.Pointer<jni$_.Void>, jni$_.Pointer<jni$_.Void>, jni$_.Pointer<jni$_.Void>)
+                >,
+              )
+            >
+          >('globalEnv_CallObjectMethod')
+          .asFunction<
+            jni$_.JniResult Function(
+              jni$_.Pointer<jni$_.Void>,
+              jni$_.JMethodIDPtr,
+              jni$_.Pointer<jni$_.Void>,
+              jni$_.Pointer<jni$_.Void>,
+              jni$_.Pointer<jni$_.Void>,
+            )
+          >();
+
+  /// from: `public suspend fun clear(prefix: kotlin.String, allowList: kotlin.collections.List<kotlin.String>?): kotlin.Boolean`
+  /// The returned object must be released after use, by calling the [release] method.
+  core$_.Future<jni$_.JBoolean> clear(
+    jni$_.JString string,
+    jni$_.JList<jni$_.JString?>? list,
+  ) async {
+    final $p = jni$_.ReceivePort();
+    final _$continuation = jni$_.ProtectedJniExtensions.newPortContinuation($p);
     final _$$selfRef = reference;
     final _$string = string.reference;
     final _$list = list?.reference ?? jni$_.jNullReference;
-    return _getAll(
+    final $r = _clear(
+      _$$selfRef.pointer,
+      _id_clear.pointer,
+      _$string.pointer,
+      _$list.pointer,
+      _$continuation.pointer,
+    ).object<jni$_.JObject>();
+    _$continuation.release();
+    jni$_.JObject $o;
+    if ($r.isInstanceOf(jni$_.coroutineSingletonsClass)) {
+      $r.release();
+      final $a = await $p.first;
+      $o = jni$_.JObject.fromReference(jni$_.JGlobalReference(jni$_.JObjectPtr.fromAddress($a)));
+      if ($o.isInstanceOf(jni$_.result$Class)) {
+        $o = jni$_.resultValueField.get($o, const jni$_.$JObject$Type$());
+      } else if ($o.isInstanceOf(jni$_.result$FailureClass)) {
+        final $e = jni$_.failureExceptionField.get($o, const jni$_.$JObject$Type$());
+        $o.release();
+        jni$_.Jni.throwException($e.reference.toPointer());
+      }
+    } else {
+      $o = $r;
+    }
+    return $o.as<jni$_.JBoolean>(jni$_.JBoolean.type, releaseOriginal: true);
+  }
+
+  static final _id_getAll = SharedPreferencesApiRegistrar._class.instanceMethodId(
+    r'getAll',
+    r'(Ljava/lang/String;Ljava/util/List;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;',
+  );
+
+  static final _getAll =
+      jni$_.ProtectedJniExtensions.lookup<
+            jni$_.NativeFunction<
+              jni$_.JniResult Function(
+                jni$_.Pointer<jni$_.Void>,
+                jni$_.JMethodIDPtr,
+                jni$_.VarArgs<
+                  (jni$_.Pointer<jni$_.Void>, jni$_.Pointer<jni$_.Void>, jni$_.Pointer<jni$_.Void>)
+                >,
+              )
+            >
+          >('globalEnv_CallObjectMethod')
+          .asFunction<
+            jni$_.JniResult Function(
+              jni$_.Pointer<jni$_.Void>,
+              jni$_.JMethodIDPtr,
+              jni$_.Pointer<jni$_.Void>,
+              jni$_.Pointer<jni$_.Void>,
+              jni$_.Pointer<jni$_.Void>,
+            )
+          >();
+
+  /// from: `public suspend fun getAll(prefix: kotlin.String, allowList: kotlin.collections.List<kotlin.String>?): kotlin.collections.Map<kotlin.String, kotlin.Any>`
+  /// The returned object must be released after use, by calling the [release] method.
+  core$_.Future<jni$_.JMap<jni$_.JString, jni$_.JObject>> getAll(
+    jni$_.JString string,
+    jni$_.JList<jni$_.JString?>? list,
+  ) async {
+    final $p = jni$_.ReceivePort();
+    final _$continuation = jni$_.ProtectedJniExtensions.newPortContinuation($p);
+    final _$$selfRef = reference;
+    final _$string = string.reference;
+    final _$list = list?.reference ?? jni$_.jNullReference;
+    final $r = _getAll(
       _$$selfRef.pointer,
       _id_getAll.pointer,
       _$string.pointer,
       _$list.pointer,
-    ).object<jni$_.JMap<jni$_.JString, jni$_.JObject>>();
+      _$continuation.pointer,
+    ).object<jni$_.JObject>();
+    _$continuation.release();
+    jni$_.JObject $o;
+    if ($r.isInstanceOf(jni$_.coroutineSingletonsClass)) {
+      $r.release();
+      final $a = await $p.first;
+      $o = jni$_.JObject.fromReference(jni$_.JGlobalReference(jni$_.JObjectPtr.fromAddress($a)));
+      if ($o.isInstanceOf(jni$_.result$Class)) {
+        $o = jni$_.resultValueField.get($o, const jni$_.$JObject$Type$());
+      } else if ($o.isInstanceOf(jni$_.result$FailureClass)) {
+        final $e = jni$_.failureExceptionField.get($o, const jni$_.$JObject$Type$());
+        $o.release();
+        jni$_.Jni.throwException($e.reference.toPointer());
+      }
+    } else {
+      $o = $r;
+    }
+    return $o.as<jni$_.JMap>(jni$_.JMap.type, releaseOriginal: true)
+        as jni$_.JMap<jni$_.JString, jni$_.JObject>;
   }
 }
 
@@ -1234,4 +1783,22 @@ final class $DefaultConstructorMarker$Type$ extends jni$_.JType<DefaultConstruct
   @jni$_.internal
   @core$_.override
   String get signature => r'Lkotlin/jvm/internal/DefaultConstructorMarker;';
+}
+
+/// from: `kotlin.coroutines.Continuation`
+///
+/// WARNING: Continuation is a stub. To generate bindings for this class, include
+/// kotlin.coroutines.Continuation in your config's classes list.
+///
+extension type Continuation._(jni$_.JObject _$this) implements jni$_.JObject {
+  static const jni$_.JType<Continuation> type = $Continuation$Type$();
+}
+
+final class $Continuation$Type$ extends jni$_.JType<Continuation> {
+  @jni$_.internal
+  const $Continuation$Type$();
+
+  @jni$_.internal
+  @core$_.override
+  String get signature => r'Lkotlin/coroutines/Continuation;';
 }

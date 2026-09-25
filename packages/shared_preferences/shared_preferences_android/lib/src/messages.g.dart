@@ -250,10 +250,12 @@ class SharedPreferencesApiForNativeInterop {
 
   late final jni_bridge.SharedPreferencesApiRegistrar? _jniApi;
 
-  bool remove(String key) {
+  Future<bool> remove(String key) async {
     try {
       if (_jniApi != null) {
-        return _jniApi.remove(_PigeonJniCodec.writeValue<JString>(key));
+        final JBoolean res = await _jniApi.remove(_PigeonJniCodec.writeValue<JString>(key));
+        final bool dartTypeRes = res.toDartBool(releaseOriginal: true);
+        return dartTypeRes;
       } else {
         throw Exception('No JNI or FFI api available');
       }
@@ -262,10 +264,12 @@ class SharedPreferencesApiForNativeInterop {
     }
   }
 
-  bool setBool(String key, bool value) {
+  Future<bool> setBool(String key, bool value) async {
     try {
       if (_jniApi != null) {
-        return _jniApi.setBool(_PigeonJniCodec.writeValue<JString>(key), value);
+        final JBoolean res = await _jniApi.setBool(_PigeonJniCodec.writeValue<JString>(key), value);
+        final bool dartTypeRes = res.toDartBool(releaseOriginal: true);
+        return dartTypeRes;
       } else {
         throw Exception('No JNI or FFI api available');
       }
@@ -274,13 +278,15 @@ class SharedPreferencesApiForNativeInterop {
     }
   }
 
-  bool setString(String key, String value) {
+  Future<bool> setString(String key, String value) async {
     try {
       if (_jniApi != null) {
-        return _jniApi.setString(
+        final JBoolean res = await _jniApi.setString(
           _PigeonJniCodec.writeValue<JString>(key),
           _PigeonJniCodec.writeValue<JString>(value),
         );
+        final bool dartTypeRes = res.toDartBool(releaseOriginal: true);
+        return dartTypeRes;
       } else {
         throw Exception('No JNI or FFI api available');
       }
@@ -289,10 +295,12 @@ class SharedPreferencesApiForNativeInterop {
     }
   }
 
-  bool setInt(String key, int value) {
+  Future<bool> setInt(String key, int value) async {
     try {
       if (_jniApi != null) {
-        return _jniApi.setInt(_PigeonJniCodec.writeValue<JString>(key), value);
+        final JBoolean res = await _jniApi.setInt(_PigeonJniCodec.writeValue<JString>(key), value);
+        final bool dartTypeRes = res.toDartBool(releaseOriginal: true);
+        return dartTypeRes;
       } else {
         throw Exception('No JNI or FFI api available');
       }
@@ -301,10 +309,15 @@ class SharedPreferencesApiForNativeInterop {
     }
   }
 
-  bool setDouble(String key, double value) {
+  Future<bool> setDouble(String key, double value) async {
     try {
       if (_jniApi != null) {
-        return _jniApi.setDouble(_PigeonJniCodec.writeValue<JString>(key), value);
+        final JBoolean res = await _jniApi.setDouble(
+          _PigeonJniCodec.writeValue<JString>(key),
+          value,
+        );
+        final bool dartTypeRes = res.toDartBool(releaseOriginal: true);
+        return dartTypeRes;
       } else {
         throw Exception('No JNI or FFI api available');
       }
@@ -313,13 +326,15 @@ class SharedPreferencesApiForNativeInterop {
     }
   }
 
-  bool setEncodedStringList(String key, String value) {
+  Future<bool> setEncodedStringList(String key, String value) async {
     try {
       if (_jniApi != null) {
-        return _jniApi.setEncodedStringList(
+        final JBoolean res = await _jniApi.setEncodedStringList(
           _PigeonJniCodec.writeValue<JString>(key),
           _PigeonJniCodec.writeValue<JString>(value),
         );
+        final bool dartTypeRes = res.toDartBool(releaseOriginal: true);
+        return dartTypeRes;
       } else {
         throw Exception('No JNI or FFI api available');
       }
@@ -328,13 +343,15 @@ class SharedPreferencesApiForNativeInterop {
     }
   }
 
-  bool setDeprecatedStringList(String key, List<String> value) {
+  Future<bool> setDeprecatedStringList(String key, List<String> value) async {
     try {
       if (_jniApi != null) {
-        return _jniApi.setDeprecatedStringList(
+        final JBoolean res = await _jniApi.setDeprecatedStringList(
           _PigeonJniCodec.writeValue<JString>(key),
           _PigeonJniCodec.writeValue<JList<JString>>(value),
         );
+        final bool dartTypeRes = res.toDartBool(releaseOriginal: true);
+        return dartTypeRes;
       } else {
         throw Exception('No JNI or FFI api available');
       }
@@ -343,13 +360,15 @@ class SharedPreferencesApiForNativeInterop {
     }
   }
 
-  bool clear(String prefix, List<String>? allowList) {
+  Future<bool> clear(String prefix, List<String>? allowList) async {
     try {
       if (_jniApi != null) {
-        return _jniApi.clear(
+        final JBoolean res = await _jniApi.clear(
           _PigeonJniCodec.writeValue<JString>(prefix),
           _PigeonJniCodec.writeValue<JList<JString>?>(allowList),
         );
+        final bool dartTypeRes = res.toDartBool(releaseOriginal: true);
+        return dartTypeRes;
       } else {
         throw Exception('No JNI or FFI api available');
       }
@@ -358,10 +377,10 @@ class SharedPreferencesApiForNativeInterop {
     }
   }
 
-  Map<String, Object> getAll(String prefix, List<String>? allowList) {
+  Future<Map<String, Object>> getAll(String prefix, List<String>? allowList) async {
     try {
       if (_jniApi != null) {
-        final JMap<JString, JObject> res = _jniApi.getAll(
+        final JMap<JString, JObject> res = await _jniApi.getAll(
           _PigeonJniCodec.writeValue<JString>(prefix),
           _PigeonJniCodec.writeValue<JList<JString>?>(allowList),
         );

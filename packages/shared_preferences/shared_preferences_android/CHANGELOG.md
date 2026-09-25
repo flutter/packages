@@ -1,5 +1,6 @@
-## NEXT
+## 2.4.29
 
+* Updates internal implementation to use Pigeon JNI.
 * Updates minimum supported SDK version to Flutter 3.41/Dart 3.11.
 
 ## 2.4.28
