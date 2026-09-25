@@ -23,17 +23,23 @@ base class SharedPreferencesAsyncAndroid extends SharedPreferencesAsyncPlatform 
     @visibleForTesting SharedPreferencesAsyncApi? dataStoreApi,
     @visibleForTesting SharedPreferencesAsyncApi? sharedPreferencesApi,
   }) : _dataStoreApi =
-           dataStoreApi ?? SharedPreferencesAsyncApi(messageChannelSuffix: 'data_store'),
+           dataStoreApi ??
+           SharedPreferencesAsyncApi.createWithNativeInteropApi(messageChannelSuffix: 'data_store'),
        _sharedPreferencesApi =
            sharedPreferencesApi ??
-           SharedPreferencesAsyncApi(messageChannelSuffix: 'shared_preferences');
+           SharedPreferencesAsyncApi.createWithNativeInteropApi(
+             messageChannelSuffix: 'shared_preferences',
+           );
 
   final SharedPreferencesAsyncApi _dataStoreApi;
   final SharedPreferencesAsyncApi _sharedPreferencesApi;
 
   /// Registers this class as the default instance of [SharedPreferencesAsyncPlatform].
-  static void registerWith() {
-    SharedPreferencesAsyncPlatform.instance = SharedPreferencesAsyncAndroid();
+  static void registerWith({@visibleForTesting SharedPreferencesAsyncApi? api}) {
+    SharedPreferencesAsyncPlatform.instance = SharedPreferencesAsyncAndroid(
+      dataStoreApi: api,
+      sharedPreferencesApi: api,
+    );
   }
 
   /// Returns a SharedPreferencesPigeonOptions for sending to platform.

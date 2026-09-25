@@ -17,13 +17,13 @@ const String _argumentErrorCode = 'Argument Error';
 base class SharedPreferencesAsyncFoundation extends SharedPreferencesAsyncPlatform {
   /// Creates a new plugin implementation instance.
   SharedPreferencesAsyncFoundation({@visibleForTesting UserDefaultsApi? api})
-    : _api = api ?? UserDefaultsApi();
+    : _api = api ?? UserDefaultsApi.createWithNativeInteropApi();
 
   final UserDefaultsApi _api;
 
   /// Registers this class as the default instance of [SharedPreferencesAsyncPlatform].
-  static void registerWith() {
-    SharedPreferencesAsyncPlatform.instance = SharedPreferencesAsyncFoundation();
+  static void registerWith({@visibleForTesting UserDefaultsApi? api}) {
+    SharedPreferencesAsyncPlatform.instance = SharedPreferencesAsyncFoundation(api: api);
   }
 
   /// Returns a SharedPreferencesPigeonOptions for sending to platform.

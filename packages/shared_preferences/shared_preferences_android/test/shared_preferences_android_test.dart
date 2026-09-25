@@ -8,6 +8,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences_android/shared_preferences_android.dart';
 import 'package:shared_preferences_android/src/messages.g.dart';
+import 'package:shared_preferences_android/src/messages_async.g.dart';
 import 'package:shared_preferences_android/src/strings.dart';
 import 'package:shared_preferences_platform_interface/shared_preferences_platform_interface.dart';
 import 'package:shared_preferences_platform_interface/types.dart';
@@ -60,7 +61,7 @@ void main() {
   });
 
   test('registerWith', () async {
-    SharedPreferencesAndroid.registerWith();
+    SharedPreferencesAndroid.registerWith(api: api, asyncApi: SharedPreferencesAsyncApi());
     expect(SharedPreferencesStorePlatform.instance, isA<SharedPreferencesAndroid>());
   });
 
