@@ -5,9 +5,9 @@
 // ignore_for_file: public_member_api_docs, unreachable_from_main
 
 import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:material_ui/material_ui.dart';
 
 List<Widget> textStyleExamples(BuildContext context) {
   return <Widget>[
@@ -103,9 +103,8 @@ class MyMultiFontApp extends StatelessWidget {
       title: 'Example',
       // #docregion AppThemeComplex
       theme: ThemeData(
-        textTheme: GoogleFonts.latoTextTheme(
-          textTheme,
-        ).copyWith(bodyMedium: GoogleFonts.oswald(textStyle: textTheme.bodyMedium)),
+        textTheme: GoogleFonts.latoTextTheme(textTheme)
+            .copyWith(bodyMedium: GoogleFonts.oswald(textStyle: textTheme.bodyMedium)),
       ),
       // #enddocregion AppThemeComplex
       home: const Text('placeholder'),
