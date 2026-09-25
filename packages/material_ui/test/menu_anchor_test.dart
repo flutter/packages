@@ -3339,18 +3339,22 @@ void main() {
 
     // This is a regression test for https://github.com/flutter/flutter/issues/192732.
     testWidgets('MenuItemButton does not clip leadingIcon', (WidgetTester tester) async {
+      const label = 'This is a very long menu item label that must be clipped';
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
             body: MenuAnchor(
               menuChildren: <Widget>[
-                MenuItemButton(
-                  leadingIcon: const Badge(
-                    label: Text('1'),
-                    child: Icon(Icons.add, key: Key('leading')),
+                SizedBox(
+                  width: 200.0,
+                  child: MenuItemButton(
+                    leadingIcon: const Badge(
+                      label: Text('1'),
+                      child: Icon(Icons.add, key: Key('leading')),
+                    ),
+                    onPressed: () {},
+                    child: const Text(label, maxLines: 1),
                   ),
-                  onPressed: () {},
-                  child: const Text('Item'),
                 ),
               ],
               builder: (BuildContext context, MenuController controller, Widget? child) {
@@ -3371,7 +3375,10 @@ void main() {
       );
 
       // The label itself is still clipped so that long labels truncate.
-      expect(find.ancestor(of: find.text('Item'), matching: find.byType(ClipRect)), findsOneWidget);
+      final Finder labelFinder = find.text(label);
+      expect(find.ancestor(of: labelFinder, matching: find.byType(ClipRect)), findsOneWidget);
+      final RenderParagraph paragraph = tester.renderObject<RenderParagraph>(labelFinder);
+      expect(paragraph.didExceedMaxLines, isTrue);
     });
 
     testWidgets('MenuItemButton.styleFrom overlayColor overrides default overlay color', (
