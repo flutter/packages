@@ -44,7 +44,7 @@ import '../templates/input_chip_template.dart';
 // import '../templates/search_view_template.dart';
 // import '../templates/segmented_button_template.dart';
 // import '../templates/slider_template.dart';
-// import '../templates/snackbar_template.dart';
+import '../templates/snackbar_template.dart';
 // import '../templates/surface_tint_template.dart';
 // import '../templates/switch_template.dart';
 // import '../templates/tabs_template.dart';
@@ -679,8 +679,19 @@ void main() {
     });
 
     test('SnackbarTemplateM3 emits M3 Snackbar defaults from tokens', () {
-      // Intentionally empty, will be implemented during migration. See:
-      // https://github.com/flutter/flutter/issues/187899
+      final String contents = const SnackbarTemplateM3().generateContents('_SnackbarDefaultsM3');
+      expect(contents, contains('class _SnackbarDefaultsM3 extends SnackBarThemeData'));
+      expect(contents, contains('Color get backgroundColor => _colors.inverseSurface'));
+      expect(
+        contents,
+        contains(
+          'ShapeBorder get shape => const RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(4.0)))',
+        ),
+      );
+      expect(contents, contains('double get elevation => 6.0'));
+      expect(contents, contains('SnackBarBehavior get behavior => SnackBarBehavior.fixed'));
+      expect(contents, contains('Color? get closeIconColor => _colors.onInverseSurface'));
+      expect(contents, contains('double get actionOverflowThreshold => 0.25'));
     });
 
     test('SurfaceTintTemplateM3 emits M3 SurfaceTint defaults from tokens', () {
