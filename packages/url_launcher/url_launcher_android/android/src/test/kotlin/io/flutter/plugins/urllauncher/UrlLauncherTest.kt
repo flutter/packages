@@ -313,8 +313,8 @@ class UrlLauncherTest {
     verify(activity).startActivity(intentCaptor.capture())
     assertTrue(result)
     assertEquals(url, intentCaptor.firstValue.extras?.getString(WebViewActivity.URL_EXTRA))
-    assertFalse(intentCaptor.firstValue.extras!!.getBoolean(WebViewActivity.ENABLE_JS_EXTRA))
-    assertFalse(intentCaptor.firstValue.extras!!.getBoolean(WebViewActivity.ENABLE_DOM_EXTRA))
+    assertEquals(false, intentCaptor.firstValue.extras?.getBoolean(WebViewActivity.ENABLE_JS_EXTRA))
+    assertEquals(false, intentCaptor.firstValue.extras?.getBoolean(WebViewActivity.ENABLE_DOM_EXTRA))
   }
 
   @Test
