@@ -12,7 +12,11 @@ import android.provider.Browser
 import androidx.browser.customtabs.CustomTabsIntent
 import androidx.test.core.app.ApplicationProvider
 import io.flutter.plugins.urllauncher.UrlLauncher.IntentResolver
-import org.junit.Assert
+import org.junit.Assert.assertEquals
+import org.junit.Assert.assertFalse
+import org.junit.Assert.assertNull
+import org.junit.Assert.assertThrows
+import org.junit.Assert.assertTrue
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.mockito.kotlin.any
@@ -37,7 +41,7 @@ class UrlLauncherTest {
 
     val intentCaptor = argumentCaptor<Intent>()
     verify(resolver).getHandlerComponentName(intentCaptor.capture())
-    Assert.assertEquals(url, intentCaptor.firstValue.data)
+    assertEquals(url, intentCaptor.firstValue.data)
   }
 
   @Test
@@ -46,7 +50,7 @@ class UrlLauncherTest {
 
     val result = api.canLaunchUrl("https://flutter.dev")
 
-    Assert.assertTrue(result)
+    assertTrue(result)
   }
 
   @Test
@@ -55,7 +59,7 @@ class UrlLauncherTest {
 
     val result = api.canLaunchUrl("https://flutter.dev")
 
-    Assert.assertFalse(result)
+    assertFalse(result)
   }
 
   // Integration testing on emulators won't work as expected without the workaround this tests
@@ -69,7 +73,7 @@ class UrlLauncherTest {
 
     val result = api.canLaunchUrl("https://flutter.dev")
 
-    Assert.assertFalse(result)
+    assertFalse(result)
   }
 
   @Test
@@ -78,10 +82,10 @@ class UrlLauncherTest {
     api.setActivity(null)
 
     val exception =
-        Assert.assertThrows(FlutterError::class.java) {
+        assertThrows(FlutterError::class.java) {
           api.launchUrl("https://flutter.dev", mapOf(), false)
         }
-    Assert.assertEquals("NO_ACTIVITY", exception.code)
+    assertEquals("NO_ACTIVITY", exception.code)
   }
 
   @Test
@@ -96,9 +100,8 @@ class UrlLauncherTest {
 
     val intentCaptor = argumentCaptor<Intent>()
     verify(activity).startActivity(intentCaptor.capture())
-    Assert.assertEquals(url, intentCaptor.firstValue.data.toString())
-    Assert.assertEquals(
-        0, (intentCaptor.firstValue.flags and Intent.FLAG_ACTIVITY_REQUIRE_NON_BROWSER))
+    assertEquals(url, intentCaptor.firstValue.data.toString())
+    assertEquals(0, (intentCaptor.firstValue.flags and Intent.FLAG_ACTIVITY_REQUIRE_NON_BROWSER))
   }
 
   @Config(minSdk = 30)
@@ -113,7 +116,7 @@ class UrlLauncherTest {
 
     val intentCaptor = argumentCaptor<Intent>()
     verify(activity).startActivity(intentCaptor.capture())
-    Assert.assertEquals(
+    assertEquals(
         Intent.FLAG_ACTIVITY_REQUIRE_NON_BROWSER,
         (intentCaptor.firstValue.flags and Intent.FLAG_ACTIVITY_REQUIRE_NON_BROWSER))
   }
@@ -127,7 +130,7 @@ class UrlLauncherTest {
 
     val result = api.launchUrl("https://flutter.dev", mapOf(), false)
 
-    Assert.assertFalse(result)
+    assertFalse(result)
   }
 
   @Test
@@ -138,7 +141,7 @@ class UrlLauncherTest {
 
     val result = api.launchUrl("https://flutter.dev", mapOf(), false)
 
-    Assert.assertTrue(result)
+    assertTrue(result)
   }
 
   @Test
@@ -161,14 +164,14 @@ class UrlLauncherTest {
 
     val intentCaptor = argumentCaptor<Intent>()
     verify(activity).startActivity(intentCaptor.capture())
-    Assert.assertTrue(result)
-    Assert.assertEquals(url, intentCaptor.firstValue.extras!!.getString(WebViewActivity.URL_EXTRA))
-    Assert.assertEquals(
+    assertTrue(result)
+    assertEquals(url, intentCaptor.firstValue.extras?.getString(WebViewActivity.URL_EXTRA))
+    assertEquals(
         enableJavaScript,
-        intentCaptor.firstValue.extras!!.getBoolean(WebViewActivity.ENABLE_JS_EXTRA))
-    Assert.assertEquals(
+        intentCaptor.firstValue.extras?.getBoolean(WebViewActivity.ENABLE_JS_EXTRA))
+    assertEquals(
         enableDomStorage,
-        intentCaptor.firstValue.extras!!.getBoolean(WebViewActivity.ENABLE_DOM_EXTRA))
+        intentCaptor.firstValue.extras?.getBoolean(WebViewActivity.ENABLE_DOM_EXTRA))
   }
 
   @Test
@@ -187,8 +190,8 @@ class UrlLauncherTest {
 
     val intentCaptor = argumentCaptor<Intent>()
     verify(activity).startActivity(intentCaptor.capture())
-    Assert.assertTrue(result)
-    Assert.assertEquals(url, intentCaptor.firstValue.extras!!.getString(WebViewActivity.URL_EXTRA))
+    assertTrue(result)
+    assertEquals(url, intentCaptor.firstValue.extras?.getString(WebViewActivity.URL_EXTRA))
   }
 
   @Test
@@ -207,9 +210,9 @@ class UrlLauncherTest {
 
     val intentCaptor = argumentCaptor<Intent>()
     verify(activity).startActivity(intentCaptor.capture(), any())
-    Assert.assertTrue(result)
-    Assert.assertEquals(Intent.ACTION_VIEW, intentCaptor.firstValue.action)
-    Assert.assertNull(intentCaptor.firstValue.component)
+    assertTrue(result)
+    assertEquals(Intent.ACTION_VIEW, intentCaptor.firstValue.action)
+    assertNull(intentCaptor.firstValue.component)
   }
 
   @Test
@@ -230,11 +233,11 @@ class UrlLauncherTest {
 
     val intentCaptor = argumentCaptor<Intent>()
     verify(activity).startActivity(intentCaptor.capture(), any())
-    Assert.assertTrue(result)
-    Assert.assertEquals(Intent.ACTION_VIEW, intentCaptor.firstValue.action)
-    Assert.assertNull(intentCaptor.firstValue.component)
-    val passedHeaders = intentCaptor.firstValue.extras!!.getBundle(Browser.EXTRA_HEADERS)
-    Assert.assertEquals(headers[headerKey], passedHeaders!!.getString(headerKey))
+    assertTrue(result)
+    assertEquals(Intent.ACTION_VIEW, intentCaptor.firstValue.action)
+    assertNull(intentCaptor.firstValue.component)
+    val passedHeaders = intentCaptor.firstValue.extras?.getBundle(Browser.EXTRA_HEADERS)
+    assertEquals(headers[headerKey], passedHeaders!!.getString(headerKey))
   }
 
   @Test
@@ -254,12 +257,12 @@ class UrlLauncherTest {
 
     val intentCaptor = argumentCaptor<Intent>()
     verify(activity).startActivity(intentCaptor.capture(), any())
-    Assert.assertTrue(result)
-    Assert.assertEquals(Intent.ACTION_VIEW, intentCaptor.firstValue.action)
-    Assert.assertNull(intentCaptor.firstValue.component)
-    Assert.assertEquals(
+    assertTrue(result)
+    assertEquals(Intent.ACTION_VIEW, intentCaptor.firstValue.action)
+    assertNull(intentCaptor.firstValue.component)
+    assertEquals(
         CustomTabsIntent.SHOW_PAGE_TITLE,
-        intentCaptor.firstValue.extras!!.getInt(CustomTabsIntent.EXTRA_TITLE_VISIBILITY_STATE))
+        intentCaptor.firstValue.extras?.getInt(CustomTabsIntent.EXTRA_TITLE_VISIBILITY_STATE))
   }
 
   @Test
@@ -279,12 +282,12 @@ class UrlLauncherTest {
 
     val intentCaptor = argumentCaptor<Intent>()
     verify(activity).startActivity(intentCaptor.capture(), any())
-    Assert.assertTrue(result)
-    Assert.assertEquals(Intent.ACTION_VIEW, intentCaptor.firstValue.action)
-    Assert.assertNull(intentCaptor.firstValue.component)
-    Assert.assertEquals(
+    assertTrue(result)
+    assertEquals(Intent.ACTION_VIEW, intentCaptor.firstValue.action)
+    assertNull(intentCaptor.firstValue.component)
+    assertEquals(
         CustomTabsIntent.NO_TITLE,
-        intentCaptor.firstValue.extras!!.getInt(CustomTabsIntent.EXTRA_TITLE_VISIBILITY_STATE))
+        intentCaptor.firstValue.extras?.getInt(CustomTabsIntent.EXTRA_TITLE_VISIBILITY_STATE))
   }
 
   @Test
@@ -306,11 +309,10 @@ class UrlLauncherTest {
 
     val intentCaptor = argumentCaptor<Intent>()
     verify(activity).startActivity(intentCaptor.capture())
-    Assert.assertTrue(result)
-    Assert.assertEquals(url, intentCaptor.firstValue.extras!!.getString(WebViewActivity.URL_EXTRA))
-    Assert.assertFalse(intentCaptor.firstValue.extras!!.getBoolean(WebViewActivity.ENABLE_JS_EXTRA))
-    Assert.assertFalse(
-        intentCaptor.firstValue.extras!!.getBoolean(WebViewActivity.ENABLE_DOM_EXTRA))
+    assertTrue(result)
+    assertEquals(url, intentCaptor.firstValue.extras?.getString(WebViewActivity.URL_EXTRA))
+    assertFalse(intentCaptor.firstValue.extras!!.getBoolean(WebViewActivity.ENABLE_JS_EXTRA))
+    assertFalse(intentCaptor.firstValue.extras!!.getBoolean(WebViewActivity.ENABLE_DOM_EXTRA))
   }
 
   @Test
@@ -329,9 +331,9 @@ class UrlLauncherTest {
 
     val intentCaptor = argumentCaptor<Intent>()
     verify(activity).startActivity(intentCaptor.capture())
-    Assert.assertEquals(
+    assertEquals(
         enableJavaScript,
-        intentCaptor.firstValue.extras!!.getBoolean(WebViewActivity.ENABLE_JS_EXTRA))
+        intentCaptor.firstValue.extras?.getBoolean(WebViewActivity.ENABLE_JS_EXTRA))
   }
 
   @Test
@@ -351,10 +353,10 @@ class UrlLauncherTest {
 
     val intentCaptor = argumentCaptor<Intent>()
     verify(activity).startActivity(intentCaptor.capture())
-    val passedHeaders = intentCaptor.firstValue.extras!!.getBundle(Browser.EXTRA_HEADERS)
-    Assert.assertEquals(headers.size, passedHeaders!!.size())
-    Assert.assertEquals(headers[key1], passedHeaders.getString(key1))
-    Assert.assertEquals(headers[key2], passedHeaders.getString(key2))
+    val passedHeaders = intentCaptor.firstValue.extras?.getBundle(Browser.EXTRA_HEADERS)
+    assertEquals(headers.size, passedHeaders!!.size())
+    assertEquals(headers[key1], passedHeaders.getString(key1))
+    assertEquals(headers[key2], passedHeaders.getString(key2))
   }
 
   @Test
@@ -373,9 +375,9 @@ class UrlLauncherTest {
 
     val intentCaptor = argumentCaptor<Intent>()
     verify(activity).startActivity(intentCaptor.capture())
-    Assert.assertEquals(
+    assertEquals(
         enableDomStorage,
-        intentCaptor.firstValue.extras!!.getBoolean(WebViewActivity.ENABLE_DOM_EXTRA))
+        intentCaptor.firstValue.extras?.getBoolean(WebViewActivity.ENABLE_DOM_EXTRA))
   }
 
   @Test
@@ -396,9 +398,9 @@ class UrlLauncherTest {
     val intentCaptor = argumentCaptor<Intent>()
     verify(activity).startActivity(intentCaptor.capture(), any())
 
-    Assert.assertEquals(
+    assertEquals(
         CustomTabsIntent.SHOW_PAGE_TITLE,
-        intentCaptor.firstValue.extras!!.getInt(CustomTabsIntent.EXTRA_TITLE_VISIBILITY_STATE))
+        intentCaptor.firstValue.extras?.getInt(CustomTabsIntent.EXTRA_TITLE_VISIBILITY_STATE))
   }
 
   @Test
@@ -407,14 +409,14 @@ class UrlLauncherTest {
     api.setActivity(null)
 
     val exception =
-        Assert.assertThrows(FlutterError::class.java) {
+        assertThrows(FlutterError::class.java) {
           api.openUrlInApp(
               "https://flutter.dev",
               true,
               WebViewOptions(enableJavaScript = false, enableDomStorage = false, headers = mapOf()),
               BrowserOptions(false))
         }
-    Assert.assertEquals("NO_ACTIVITY", exception.code)
+    assertEquals("NO_ACTIVITY", exception.code)
   }
 
   @Test
@@ -436,7 +438,7 @@ class UrlLauncherTest {
             WebViewOptions(enableJavaScript = false, enableDomStorage = false, headers = mapOf()),
             BrowserOptions(false))
 
-    Assert.assertFalse(result)
+    assertFalse(result)
   }
 
   @Test
@@ -448,6 +450,6 @@ class UrlLauncherTest {
 
     val intentCaptor = argumentCaptor<Intent>()
     verify(context).sendBroadcast(intentCaptor.capture())
-    Assert.assertEquals(WebViewActivity.ACTION_CLOSE, intentCaptor.firstValue.action)
+    assertEquals(WebViewActivity.ACTION_CLOSE, intentCaptor.firstValue.action)
   }
 }
