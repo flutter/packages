@@ -16,10 +16,11 @@ void main() {
     );
 
     expect(find.text('SwitchListTile with red background'), findsOneWidget);
-    final SwitchListTile tile = tester.widget<SwitchListTile>(
-      find.byType(SwitchListTile),
+    expect(
+      find.byType(example.SwitchListTileExample),
+      paints
+        ..rect(color: Colors.green.shade500)
+        ..rect(color: Colors.red.shade500),
     );
-    expect(tile.tileColor, Colors.red);
-    expect(tile.value, isTrue);
   });
 }

@@ -16,7 +16,11 @@ void main() {
     );
 
     expect(find.text('ListTile with red background'), findsOneWidget);
-    final ListTile tile = tester.widget<ListTile>(find.byType(ListTile));
-    expect(tile.tileColor, Colors.red);
+    expect(
+      find.byType(example.ListTileExample),
+      paints
+        ..rect(color: Colors.green.shade500)
+        ..rect(color: Colors.red.shade500),
+    );
   });
 }
