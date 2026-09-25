@@ -98,7 +98,7 @@ class UrlLauncherTest {
     verify(activity).startActivity(intentCaptor.capture())
     Assert.assertEquals(url, intentCaptor.firstValue.data.toString())
     Assert.assertEquals(
-        0, (intentCaptor.firstValue.flags and Intent.FLAG_ACTIVITY_REQUIRE_NON_BROWSER).toLong())
+        0, (intentCaptor.firstValue.flags and Intent.FLAG_ACTIVITY_REQUIRE_NON_BROWSER))
   }
 
   @Config(minSdk = 30)
@@ -114,8 +114,8 @@ class UrlLauncherTest {
     val intentCaptor = argumentCaptor<Intent>()
     verify(activity).startActivity(intentCaptor.capture())
     Assert.assertEquals(
-        Intent.FLAG_ACTIVITY_REQUIRE_NON_BROWSER.toLong(),
-        (intentCaptor.firstValue.flags and Intent.FLAG_ACTIVITY_REQUIRE_NON_BROWSER).toLong())
+        Intent.FLAG_ACTIVITY_REQUIRE_NON_BROWSER,
+        (intentCaptor.firstValue.flags and Intent.FLAG_ACTIVITY_REQUIRE_NON_BROWSER))
   }
 
   @Test
@@ -258,10 +258,8 @@ class UrlLauncherTest {
     Assert.assertEquals(Intent.ACTION_VIEW, intentCaptor.firstValue.action)
     Assert.assertNull(intentCaptor.firstValue.component)
     Assert.assertEquals(
-        CustomTabsIntent.SHOW_PAGE_TITLE.toLong(),
-        intentCaptor.firstValue.extras!!
-            .getInt(CustomTabsIntent.EXTRA_TITLE_VISIBILITY_STATE)
-            .toLong())
+        CustomTabsIntent.SHOW_PAGE_TITLE,
+        intentCaptor.firstValue.extras!!.getInt(CustomTabsIntent.EXTRA_TITLE_VISIBILITY_STATE))
   }
 
   @Test
@@ -285,10 +283,8 @@ class UrlLauncherTest {
     Assert.assertEquals(Intent.ACTION_VIEW, intentCaptor.firstValue.action)
     Assert.assertNull(intentCaptor.firstValue.component)
     Assert.assertEquals(
-        CustomTabsIntent.NO_TITLE.toLong(),
-        intentCaptor.firstValue.extras!!
-            .getInt(CustomTabsIntent.EXTRA_TITLE_VISIBILITY_STATE)
-            .toLong())
+        CustomTabsIntent.NO_TITLE,
+        intentCaptor.firstValue.extras!!.getInt(CustomTabsIntent.EXTRA_TITLE_VISIBILITY_STATE))
   }
 
   @Test
@@ -356,7 +352,7 @@ class UrlLauncherTest {
     val intentCaptor = argumentCaptor<Intent>()
     verify(activity).startActivity(intentCaptor.capture())
     val passedHeaders = intentCaptor.firstValue.extras!!.getBundle(Browser.EXTRA_HEADERS)
-    Assert.assertEquals(headers.size.toLong(), passedHeaders!!.size().toLong())
+    Assert.assertEquals(headers.size, passedHeaders!!.size())
     Assert.assertEquals(headers[key1], passedHeaders.getString(key1))
     Assert.assertEquals(headers[key2], passedHeaders.getString(key2))
   }
@@ -401,10 +397,8 @@ class UrlLauncherTest {
     verify(activity).startActivity(intentCaptor.capture(), any())
 
     Assert.assertEquals(
-        CustomTabsIntent.SHOW_PAGE_TITLE.toLong(),
-        intentCaptor.firstValue.extras!!
-            .getInt(CustomTabsIntent.EXTRA_TITLE_VISIBILITY_STATE)
-            .toLong())
+        CustomTabsIntent.SHOW_PAGE_TITLE,
+        intentCaptor.firstValue.extras!!.getInt(CustomTabsIntent.EXTRA_TITLE_VISIBILITY_STATE))
   }
 
   @Test
