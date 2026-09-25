@@ -1,5 +1,6 @@
-## NEXT
+## 2.19.0
 
+* Adds a `GoogleMap.backgroundColor` option for the color displayed behind unloaded map tiles.
 * Updates minimum supported SDK version to Flutter 3.41/Dart 3.11.
 
 ## 2.18.1

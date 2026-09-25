@@ -53,6 +53,11 @@ public class GoogleMapFactory extends PlatformViewFactory {
       builder.setMapId(mapId);
     }
 
+    final PlatformColor backgroundColor = mapConfig.getBackgroundColor();
+    if (backgroundColor != null) {
+      builder.setBackgroundColor((int) backgroundColor.getArgbValue());
+    }
+
     return builder.build(
         id, context, binaryMessenger, lifecycleProvider, mapConfig.getMarkerType());
   }

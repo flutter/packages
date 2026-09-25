@@ -1,3 +1,7 @@
+## 2.21.0
+
+* Adds support for configuring the color displayed behind unloaded map tiles.
+
 ## 2.20.0
 
 * Adds support for tapping points of interest on the map.
