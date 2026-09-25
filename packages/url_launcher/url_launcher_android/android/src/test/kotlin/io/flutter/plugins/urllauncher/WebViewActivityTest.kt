@@ -9,6 +9,6 @@ import org.junit.Test
 class WebViewActivityTest {
   @Test
   fun extractHeaders_returnsEmptyMapWhenHeadersBundleNull() {
-    Assert.assertEquals(WebViewActivity.extractHeaders(null), mutableMapOf<Any?, Any?>())
+    Assert.assertEquals(WebViewActivity.extractHeaders(null), mapOf<String, String>())
   }
 }

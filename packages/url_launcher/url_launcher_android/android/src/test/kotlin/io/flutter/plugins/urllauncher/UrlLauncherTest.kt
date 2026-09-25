@@ -8,7 +8,6 @@ import android.content.ActivityNotFoundException
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
-import android.os.Bundle
 import android.provider.Browser
 import androidx.browser.customtabs.CustomTabsIntent
 import androidx.test.core.app.ApplicationProvider
@@ -17,9 +16,12 @@ import org.junit.Assert
 import org.junit.Test
 import org.junit.function.ThrowingRunnable
 import org.junit.runner.RunWith
-import org.mockito.ArgumentCaptor
-import org.mockito.ArgumentMatchers
-import org.mockito.Mockito
+import org.mockito.kotlin.any
+import org.mockito.kotlin.argumentCaptor
+import org.mockito.kotlin.doThrow
+import org.mockito.kotlin.mock
+import org.mockito.kotlin.verify
+import org.mockito.kotlin.whenever
 import org.robolectric.RobolectricTestRunner
 import org.robolectric.annotation.Config
 
@@ -27,17 +29,16 @@ import org.robolectric.annotation.Config
 class UrlLauncherTest {
   @Test
   fun canLaunch_createsIntentWithPassedUrl() {
-    val resolver = Mockito.mock<IntentResolver>(IntentResolver::class.java)
+    val resolver = mock<IntentResolver>()
     val api = UrlLauncher(ApplicationProvider.getApplicationContext<Context?>(), resolver)
     val url = Uri.parse("https://flutter.dev")
-    Mockito.`when`<String?>(resolver.getHandlerComponentName(ArgumentMatchers.any<Intent?>()))
-        .thenReturn(null)
+    whenever(resolver.getHandlerComponentName(any())).thenReturn(null)
 
     api.canLaunchUrl(url.toString())
 
-    val intentCaptor = ArgumentCaptor.forClass<Intent?, Intent?>(Intent::class.java)
-    Mockito.verify<IntentResolver?>(resolver).getHandlerComponentName(intentCaptor.capture()!!)
-    Assert.assertEquals(url, intentCaptor.getValue()!!.getData())
+    val intentCaptor = argumentCaptor<Intent>()
+    verify(resolver).getHandlerComponentName(intentCaptor.capture())
+    Assert.assertEquals(url, intentCaptor.firstValue.data)
   }
 
   @Test
@@ -88,87 +89,77 @@ class UrlLauncherTest {
     val exception =
         Assert.assertThrows<FlutterError>(
             FlutterError::class.java,
-            ThrowingRunnable {
-              api.launchUrl("https://flutter.dev", HashMap<String?, String?>(), false)
-            })
+            ThrowingRunnable { api.launchUrl("https://flutter.dev", mapOf(), false) })
     Assert.assertEquals("NO_ACTIVITY", exception.code)
   }
 
   @Test
   fun launch_createsIntentWithPassedUrl() {
-    val activity = Mockito.mock<Activity?>(Activity::class.java)
+    val activity = mock<Activity>()
     val url = "https://flutter.dev"
     val api = UrlLauncher(ApplicationProvider.getApplicationContext<Context?>())
     api.setActivity(activity)
-    Mockito.doThrow(ActivityNotFoundException())
-        .`when`<Activity?>(activity)
-        .startActivity(ArgumentMatchers.any<Intent?>())
+    doThrow(ActivityNotFoundException()).whenever(activity).startActivity(any())
 
-    api.launchUrl("https://flutter.dev", HashMap<String?, String?>(), false)
+    api.launchUrl("https://flutter.dev", mapOf(), false)
 
-    val intentCaptor = ArgumentCaptor.forClass<Intent?, Intent?>(Intent::class.java)
-    Mockito.verify<Activity?>(activity).startActivity(intentCaptor.capture())
-    Assert.assertEquals(url, intentCaptor.getValue()!!.getData().toString())
+    val intentCaptor = argumentCaptor<Intent>()
+    verify(activity).startActivity(intentCaptor.capture())
+    Assert.assertEquals(url, intentCaptor.firstValue.getData().toString())
     Assert.assertEquals(
         0,
-        (intentCaptor.getValue()!!.getFlags() and Intent.FLAG_ACTIVITY_REQUIRE_NON_BROWSER)
-            .toLong())
+        (intentCaptor.firstValue.getFlags() and Intent.FLAG_ACTIVITY_REQUIRE_NON_BROWSER).toLong())
   }
 
   @Config(minSdk = 30)
   @Test
   fun launch_setsRequireNonBrowserWhenRequested() {
-    val activity = Mockito.mock<Activity?>(Activity::class.java)
+    val activity = mock<Activity>()
     val api = UrlLauncher(ApplicationProvider.getApplicationContext<Context?>())
     api.setActivity(activity)
-    Mockito.doThrow(ActivityNotFoundException())
-        .`when`<Activity?>(activity)
-        .startActivity(ArgumentMatchers.any<Intent?>())
+    doThrow(ActivityNotFoundException()).whenever(activity).startActivity(any())
 
-    api.launchUrl("https://flutter.dev", HashMap<String?, String?>(), true)
+    api.launchUrl("https://flutter.dev", mapOf(), true)
 
-    val intentCaptor = ArgumentCaptor.forClass<Intent?, Intent?>(Intent::class.java)
-    Mockito.verify<Activity?>(activity).startActivity(intentCaptor.capture())
+    val intentCaptor = argumentCaptor<Intent>()
+    verify(activity).startActivity(intentCaptor.capture())
     Assert.assertEquals(
         Intent.FLAG_ACTIVITY_REQUIRE_NON_BROWSER.toLong(),
-        (intentCaptor.getValue()!!.getFlags() and Intent.FLAG_ACTIVITY_REQUIRE_NON_BROWSER)
-            .toLong())
+        (intentCaptor.firstValue.getFlags() and Intent.FLAG_ACTIVITY_REQUIRE_NON_BROWSER).toLong())
   }
 
   @Test
   fun launch_returnsFalse() {
-    val activity = Mockito.mock<Activity?>(Activity::class.java)
+    val activity = mock<Activity>()
     val api = UrlLauncher(ApplicationProvider.getApplicationContext<Context?>())
     api.setActivity(activity)
-    Mockito.doThrow(ActivityNotFoundException())
-        .`when`<Activity?>(activity)
-        .startActivity(ArgumentMatchers.any<Intent?>())
+    doThrow(ActivityNotFoundException()).whenever(activity).startActivity(any())
 
-    val result = api.launchUrl("https://flutter.dev", HashMap<String?, String?>(), false)
+    val result = api.launchUrl("https://flutter.dev", mapOf(), false)
 
     Assert.assertFalse(result)
   }
 
   @Test
   fun launch_returnsTrue() {
-    val activity = Mockito.mock<Activity?>(Activity::class.java)
+    val activity = mock<Activity>()
     val api = UrlLauncher(ApplicationProvider.getApplicationContext<Context?>())
     api.setActivity(activity)
 
-    val result = api.launchUrl("https://flutter.dev", HashMap<String?, String?>(), false)
+    val result = api.launchUrl("https://flutter.dev", mapOf(), false)
 
     Assert.assertTrue(result)
   }
 
   @Test
   fun openUrlInApp_opensUrlInWebViewIfNecessary() {
-    val activity = Mockito.mock<Activity?>(Activity::class.java)
+    val activity = mock<Activity>()
     val api = UrlLauncher(ApplicationProvider.getApplicationContext<Context?>())
     api.setActivity(activity)
     val url = "https://flutter.dev"
     val enableJavaScript = false
     val enableDomStorage = false
-    val headers = HashMap<String?, String?>()
+    val headers = mapOf<String, String>()
     headers.put("key", "value")
     val showTitle = false
 
@@ -179,106 +170,94 @@ class UrlLauncherTest {
             WebViewOptions(enableJavaScript, enableDomStorage, headers),
             BrowserOptions(showTitle))
 
-    val intentCaptor = ArgumentCaptor.forClass<Intent?, Intent?>(Intent::class.java)
-    Mockito.verify<Activity?>(activity).startActivity(intentCaptor.capture())
+    val intentCaptor = argumentCaptor<Intent>()
+    verify(activity).startActivity(intentCaptor.capture())
     Assert.assertTrue(result)
     Assert.assertEquals(
-        url, intentCaptor.getValue()!!.getExtras()!!.getString(WebViewActivity.URL_EXTRA))
+        url, intentCaptor.firstValue.getExtras()!!.getString(WebViewActivity.URL_EXTRA))
     Assert.assertEquals(
         enableJavaScript,
-        intentCaptor.getValue()!!.getExtras()!!.getBoolean(WebViewActivity.ENABLE_JS_EXTRA))
+        intentCaptor.firstValue.getExtras()!!.getBoolean(WebViewActivity.ENABLE_JS_EXTRA))
     Assert.assertEquals(
         enableDomStorage,
-        intentCaptor.getValue()!!.getExtras()!!.getBoolean(WebViewActivity.ENABLE_DOM_EXTRA))
+        intentCaptor.firstValue.getExtras()!!.getBoolean(WebViewActivity.ENABLE_DOM_EXTRA))
   }
 
   @Test
   fun openWebView_opensUrlInWebViewIfRequested() {
-    val activity = Mockito.mock<Activity?>(Activity::class.java)
+    val activity = mock<Activity>()
     val api = UrlLauncher(ApplicationProvider.getApplicationContext<Context?>())
     api.setActivity(activity)
     val url = "https://flutter.dev"
 
     val result =
-        api.openUrlInApp(
-            url,
-            false,
-            WebViewOptions(false, false, HashMap<String?, String?>()),
-            BrowserOptions(true))
+        api.openUrlInApp(url, false, WebViewOptions(false, false, mapOf()), BrowserOptions(true))
 
-    val intentCaptor = ArgumentCaptor.forClass<Intent?, Intent?>(Intent::class.java)
-    Mockito.verify<Activity?>(activity).startActivity(intentCaptor.capture())
+    val intentCaptor = argumentCaptor<Intent>()
+    verify(activity).startActivity(intentCaptor.capture())
     Assert.assertTrue(result)
     Assert.assertEquals(
-        url, intentCaptor.getValue()!!.getExtras()!!.getString(WebViewActivity.URL_EXTRA))
+        url, intentCaptor.firstValue.getExtras()!!.getString(WebViewActivity.URL_EXTRA))
   }
 
   @Test
   fun openWebView_opensUrlInCustomTabs() {
-    val activity = Mockito.mock<Activity?>(Activity::class.java)
+    val activity = mock<Activity>()
     val api = UrlLauncher(ApplicationProvider.getApplicationContext<Context?>())
     api.setActivity(activity)
     val url = "https://flutter.dev"
 
     val result =
-        api.openUrlInApp(
-            url,
-            true,
-            WebViewOptions(false, false, HashMap<String?, String?>()),
-            BrowserOptions(false))
+        api.openUrlInApp(url, true, WebViewOptions(false, false, mapOf()), BrowserOptions(false))
 
-    val intentCaptor = ArgumentCaptor.forClass<Intent?, Intent?>(Intent::class.java)
-    Mockito.verify<Activity?>(activity)
-        .startActivity(intentCaptor.capture(), ArgumentMatchers.any<Bundle?>())
+    val intentCaptor = argumentCaptor<Intent>()
+    verify(activity).startActivity(intentCaptor.capture(), any())
     Assert.assertTrue(result)
-    Assert.assertEquals(Intent.ACTION_VIEW, intentCaptor.getValue()!!.getAction())
-    Assert.assertNull(intentCaptor.getValue()!!.getComponent())
+    Assert.assertEquals(Intent.ACTION_VIEW, intentCaptor.firstValue.getAction())
+    Assert.assertNull(intentCaptor.firstValue.getComponent())
   }
 
   @Test
   fun openWebView_opensUrlInCustomTabsWithCORSAllowedHeader() {
-    val activity = Mockito.mock<Activity?>(Activity::class.java)
+    val activity = mock<Activity>()
     val api = UrlLauncher(ApplicationProvider.getApplicationContext<Context?>())
     api.setActivity(activity)
     val url = "https://flutter.dev"
-    val headers = HashMap<String?, String?>()
+    val headers = mapOf<String, String>()
     val headerKey = "Content-Type"
     headers.put(headerKey, "text/plain")
 
     val result =
         api.openUrlInApp(url, true, WebViewOptions(false, false, headers), BrowserOptions(false))
 
-    val intentCaptor = ArgumentCaptor.forClass<Intent?, Intent?>(Intent::class.java)
-    Mockito.verify<Activity?>(activity)
-        .startActivity(intentCaptor.capture(), ArgumentMatchers.any<Bundle?>())
+    val intentCaptor = argumentCaptor<Intent>()
+    verify(activity).startActivity(intentCaptor.capture(), any())
     Assert.assertTrue(result)
-    Assert.assertEquals(Intent.ACTION_VIEW, intentCaptor.getValue()!!.getAction())
-    Assert.assertNull(intentCaptor.getValue()!!.getComponent())
-    val passedHeaders = intentCaptor.getValue()!!.getExtras()!!.getBundle(Browser.EXTRA_HEADERS)
+    Assert.assertEquals(Intent.ACTION_VIEW, intentCaptor.firstValue.getAction())
+    Assert.assertNull(intentCaptor.firstValue.getComponent())
+    val passedHeaders = intentCaptor.firstValue.getExtras()!!.getBundle(Browser.EXTRA_HEADERS)
     Assert.assertEquals(headers.get(headerKey), passedHeaders!!.getString(headerKey))
   }
 
   @Test
   fun openWebView_opensUrlInCustomTabsWithShowTitle() {
-    val activity = Mockito.mock<Activity?>(Activity::class.java)
+    val activity = mock<Activity>()
     val api = UrlLauncher(ApplicationProvider.getApplicationContext<Context?>())
     api.setActivity(activity)
     val url = "https://flutter.dev"
-    val headers = HashMap<String?, String?>()
+    val headers = mapOf<String, String>()
 
     val result =
         api.openUrlInApp(url, true, WebViewOptions(false, false, headers), BrowserOptions(true))
 
-    val intentCaptor = ArgumentCaptor.forClass<Intent?, Intent?>(Intent::class.java)
-    Mockito.verify<Activity?>(activity)
-        .startActivity(intentCaptor.capture(), ArgumentMatchers.any<Bundle?>())
+    val intentCaptor = argumentCaptor<Intent>()
+    verify(activity).startActivity(intentCaptor.capture(), any())
     Assert.assertTrue(result)
-    Assert.assertEquals(Intent.ACTION_VIEW, intentCaptor.getValue()!!.getAction())
-    Assert.assertNull(intentCaptor.getValue()!!.getComponent())
+    Assert.assertEquals(Intent.ACTION_VIEW, intentCaptor.firstValue.getAction())
+    Assert.assertNull(intentCaptor.firstValue.getComponent())
     Assert.assertEquals(
         CustomTabsIntent.SHOW_PAGE_TITLE.toLong(),
-        intentCaptor
-            .getValue()!!
+        intentCaptor.firstValue
             .getExtras()!!
             .getInt(CustomTabsIntent.EXTRA_TITLE_VISIBILITY_STATE)
             .toLong())
@@ -286,25 +265,23 @@ class UrlLauncherTest {
 
   @Test
   fun openWebView_opensUrlInCustomTabsWithoutShowTitle() {
-    val activity = Mockito.mock<Activity?>(Activity::class.java)
+    val activity = mock<Activity>()
     val api = UrlLauncher(ApplicationProvider.getApplicationContext<Context?>())
     api.setActivity(activity)
     val url = "https://flutter.dev"
-    val headers = HashMap<String?, String?>()
+    val headers = mapOf<String, String>()
 
     val result =
         api.openUrlInApp(url, true, WebViewOptions(false, false, headers), BrowserOptions(false))
 
-    val intentCaptor = ArgumentCaptor.forClass<Intent?, Intent?>(Intent::class.java)
-    Mockito.verify<Activity?>(activity)
-        .startActivity(intentCaptor.capture(), ArgumentMatchers.any<Bundle?>())
+    val intentCaptor = argumentCaptor<Intent>()
+    verify(activity).startActivity(intentCaptor.capture(), any())
     Assert.assertTrue(result)
-    Assert.assertEquals(Intent.ACTION_VIEW, intentCaptor.getValue()!!.getAction())
-    Assert.assertNull(intentCaptor.getValue()!!.getComponent())
+    Assert.assertEquals(Intent.ACTION_VIEW, intentCaptor.firstValue.getAction())
+    Assert.assertNull(intentCaptor.firstValue.getComponent())
     Assert.assertEquals(
         CustomTabsIntent.NO_TITLE.toLong(),
-        intentCaptor
-            .getValue()!!
+        intentCaptor.firstValue
             .getExtras()!!
             .getInt(CustomTabsIntent.EXTRA_TITLE_VISIBILITY_STATE)
             .toLong())
@@ -312,41 +289,35 @@ class UrlLauncherTest {
 
   @Test
   fun openWebView_fallsBackToWebViewIfCustomTabFails() {
-    val activity = Mockito.mock<Activity?>(Activity::class.java)
+    val activity = mock<Activity>()
     val api = UrlLauncher(ApplicationProvider.getApplicationContext<Context?>())
     api.setActivity(activity)
     val url = "https://flutter.dev"
-    Mockito.doThrow(ActivityNotFoundException())
-        .`when`<Activity?>(activity)
-        .startActivity(
-            ArgumentMatchers.any<Intent?>(),
-            ArgumentMatchers.any<Bundle?>()) // for custom tabs intent
+    doThrow(ActivityNotFoundException())
+        .whenever(activity)
+        .startActivity(any(), any()) // for custom tabs intent
 
     val result =
-        api.openUrlInApp(
-            url,
-            true,
-            WebViewOptions(false, false, HashMap<String?, String?>()),
-            BrowserOptions(false))
+        api.openUrlInApp(url, true, WebViewOptions(false, false, mapOf()), BrowserOptions(false))
 
-    val intentCaptor = ArgumentCaptor.forClass<Intent?, Intent?>(Intent::class.java)
-    Mockito.verify<Activity?>(activity).startActivity(intentCaptor.capture())
+    val intentCaptor = argumentCaptor<Intent>()
+    verify(activity).startActivity(intentCaptor.capture())
     Assert.assertTrue(result)
     Assert.assertEquals(
-        url, intentCaptor.getValue()!!.getExtras()!!.getString(WebViewActivity.URL_EXTRA))
+        url, intentCaptor.firstValue.getExtras()!!.getString(WebViewActivity.URL_EXTRA))
     Assert.assertFalse(
-        intentCaptor.getValue()!!.getExtras()!!.getBoolean(WebViewActivity.ENABLE_JS_EXTRA))
+        intentCaptor.firstValue.getExtras()!!.getBoolean(WebViewActivity.ENABLE_JS_EXTRA))
     Assert.assertFalse(
-        intentCaptor.getValue()!!.getExtras()!!.getBoolean(WebViewActivity.ENABLE_DOM_EXTRA))
+        intentCaptor.firstValue.getExtras()!!.getBoolean(WebViewActivity.ENABLE_DOM_EXTRA))
   }
 
   @Test
   fun openWebView_handlesEnableJavaScript() {
-    val activity = Mockito.mock<Activity?>(Activity::class.java)
+    val activity = mock<Activity>()
     val api = UrlLauncher(ApplicationProvider.getApplicationContext<Context?>())
     api.setActivity(activity)
     val enableJavaScript = true
-    val headers = HashMap<String?, String?>()
+    val headers = mapOf<String, String>()
     headers.put("key", "value")
 
     api.openUrlInApp(
@@ -355,19 +326,19 @@ class UrlLauncherTest {
         WebViewOptions(enableJavaScript, false, headers),
         BrowserOptions(false))
 
-    val intentCaptor = ArgumentCaptor.forClass<Intent?, Intent?>(Intent::class.java)
-    Mockito.verify<Activity?>(activity).startActivity(intentCaptor.capture())
+    val intentCaptor = argumentCaptor<Intent>()
+    verify(activity).startActivity(intentCaptor.capture())
     Assert.assertEquals(
         enableJavaScript,
-        intentCaptor.getValue()!!.getExtras()!!.getBoolean(WebViewActivity.ENABLE_JS_EXTRA))
+        intentCaptor.firstValue.getExtras()!!.getBoolean(WebViewActivity.ENABLE_JS_EXTRA))
   }
 
   @Test
   fun openWebView_handlesHeaders() {
-    val activity = Mockito.mock<Activity?>(Activity::class.java)
+    val activity = mock<Activity>()
     val api = UrlLauncher(ApplicationProvider.getApplicationContext<Context?>())
     api.setActivity(activity)
-    val headers = HashMap<String?, String?>()
+    val headers = mapOf<String, String>()
     val key1 = "key"
     val key2 = "key2"
     headers.put(key1, "value")
@@ -376,9 +347,9 @@ class UrlLauncherTest {
     api.openUrlInApp(
         "https://flutter.dev", true, WebViewOptions(false, false, headers), BrowserOptions(false))
 
-    val intentCaptor = ArgumentCaptor.forClass<Intent?, Intent?>(Intent::class.java)
-    Mockito.verify<Activity?>(activity).startActivity(intentCaptor.capture())
-    val passedHeaders = intentCaptor.getValue()!!.getExtras()!!.getBundle(Browser.EXTRA_HEADERS)
+    val intentCaptor = argumentCaptor<Intent>()
+    verify(activity).startActivity(intentCaptor.capture())
+    val passedHeaders = intentCaptor.firstValue.getExtras()!!.getBundle(Browser.EXTRA_HEADERS)
     Assert.assertEquals(headers.size.toLong(), passedHeaders!!.size().toLong())
     Assert.assertEquals(headers.get(key1), passedHeaders.getString(key1))
     Assert.assertEquals(headers.get(key2), passedHeaders.getString(key2))
@@ -386,11 +357,11 @@ class UrlLauncherTest {
 
   @Test
   fun openWebView_handlesEnableDomStorage() {
-    val activity = Mockito.mock<Activity?>(Activity::class.java)
+    val activity = mock<Activity>()
     val api = UrlLauncher(ApplicationProvider.getApplicationContext<Context?>())
     api.setActivity(activity)
     val enableDomStorage = true
-    val headers = HashMap<String?, String?>()
+    val headers = mapOf<String, String>()
     headers.put("key", "value")
 
     api.openUrlInApp(
@@ -399,20 +370,20 @@ class UrlLauncherTest {
         WebViewOptions(false, enableDomStorage, headers),
         BrowserOptions(false))
 
-    val intentCaptor = ArgumentCaptor.forClass<Intent?, Intent?>(Intent::class.java)
-    Mockito.verify<Activity?>(activity).startActivity(intentCaptor.capture())
+    val intentCaptor = argumentCaptor<Intent>()
+    verify(activity).startActivity(intentCaptor.capture())
     Assert.assertEquals(
         enableDomStorage,
-        intentCaptor.getValue()!!.getExtras()!!.getBoolean(WebViewActivity.ENABLE_DOM_EXTRA))
+        intentCaptor.firstValue.getExtras()!!.getBoolean(WebViewActivity.ENABLE_DOM_EXTRA))
   }
 
   @Test
   fun openWebView_handlesEnableShowTitle() {
-    val activity = Mockito.mock<Activity?>(Activity::class.java)
+    val activity = mock<Activity>()
     val api = UrlLauncher(ApplicationProvider.getApplicationContext<Context?>())
     api.setActivity(activity)
     val enableDomStorage = true
-    val headers = HashMap<String?, String?>()
+    val headers = mapOf<String, String>()
     val showTitle = true
 
     api.openUrlInApp(
@@ -421,14 +392,12 @@ class UrlLauncherTest {
         WebViewOptions(false, enableDomStorage, headers),
         BrowserOptions(showTitle))
 
-    val intentCaptor = ArgumentCaptor.forClass<Intent?, Intent?>(Intent::class.java)
-    Mockito.verify<Activity?>(activity)
-        .startActivity(intentCaptor.capture(), ArgumentMatchers.any<Bundle?>())
+    val intentCaptor = argumentCaptor<Intent>()
+    verify(activity).startActivity(intentCaptor.capture(), any())
 
     Assert.assertEquals(
         CustomTabsIntent.SHOW_PAGE_TITLE.toLong(),
-        intentCaptor
-            .getValue()!!
+        intentCaptor.firstValue
             .getExtras()!!
             .getInt(CustomTabsIntent.EXTRA_TITLE_VISIBILITY_STATE)
             .toLong())
@@ -446,7 +415,7 @@ class UrlLauncherTest {
               api.openUrlInApp(
                   "https://flutter.dev",
                   true,
-                  WebViewOptions(false, false, HashMap<String?, String?>()),
+                  WebViewOptions(false, false, mapOf()),
                   BrowserOptions(false))
             })
     Assert.assertEquals("NO_ACTIVITY", exception.code)
@@ -454,23 +423,21 @@ class UrlLauncherTest {
 
   @Test
   fun openWebView_returnsFalse() {
-    val activity = Mockito.mock<Activity?>(Activity::class.java)
+    val activity = mock<Activity>()
     val api = UrlLauncher(ApplicationProvider.getApplicationContext<Context?>())
     api.setActivity(activity)
-    Mockito.doThrow(ActivityNotFoundException())
-        .`when`<Activity?>(activity)
-        .startActivity(
-            ArgumentMatchers.any<Intent?>(),
-            ArgumentMatchers.any<Bundle?>()) // for custom tabs intent
-    Mockito.doThrow(ActivityNotFoundException())
-        .`when`<Activity?>(activity)
-        .startActivity(ArgumentMatchers.any<Intent?>()) // for webview intent
+    doThrow(ActivityNotFoundException())
+        .whenever(activity)
+        .startActivity(any(), any()) // for custom tabs intent
+    doThrow(ActivityNotFoundException())
+        .whenever(activity)
+        .startActivity(any()) // for webview intent
 
     val result =
         api.openUrlInApp(
             "https://flutter.dev",
             true,
-            WebViewOptions(false, false, HashMap<String?, String?>()),
+            WebViewOptions(false, false, mapOf()),
             BrowserOptions(false))
 
     Assert.assertFalse(result)
@@ -478,13 +445,13 @@ class UrlLauncherTest {
 
   @Test
   fun closeWebView_closes() {
-    val context = Mockito.mock<Context>(Context::class.java)
+    val context = mock<Context>()
     val api = UrlLauncher(context)
 
     api.closeWebView()
 
-    val intentCaptor = ArgumentCaptor.forClass<Intent?, Intent?>(Intent::class.java)
-    Mockito.verify<Context?>(context).sendBroadcast(intentCaptor.capture())
-    Assert.assertEquals(WebViewActivity.ACTION_CLOSE, intentCaptor.getValue()!!.getAction())
+    val intentCaptor = argumentCaptor<Intent>()
+    verify(context).sendBroadcast(intentCaptor.capture())
+    Assert.assertEquals(WebViewActivity.ACTION_CLOSE, intentCaptor.firstValue.getAction())
   }
 }
