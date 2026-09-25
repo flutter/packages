@@ -100,7 +100,7 @@ class UrlLauncherTest {
 
     val intentCaptor = argumentCaptor<Intent>()
     verify(activity).startActivity(intentCaptor.capture())
-    assertEquals(url, intentCaptor.firstValue.data.toString())
+    assertEquals(url, intentCaptor.firstValue.data?.toString())
     assertEquals(0, intentCaptor.firstValue.flags and Intent.FLAG_ACTIVITY_REQUIRE_NON_BROWSER)
   }
 
@@ -356,9 +356,9 @@ class UrlLauncherTest {
     val intentCaptor = argumentCaptor<Intent>()
     verify(activity).startActivity(intentCaptor.capture())
     val passedHeaders = intentCaptor.firstValue.extras?.getBundle(Browser.EXTRA_HEADERS)
-    assertEquals(headers.size, passedHeaders!!.size())
-    assertEquals(headers[key1], passedHeaders.getString(key1))
-    assertEquals(headers[key2], passedHeaders.getString(key2))
+    assertEquals(headers.size, passedHeaders?.size())
+    assertEquals(headers[key1], passedHeaders?.getString(key1))
+    assertEquals(headers[key2], passedHeaders?.getString(key2))
   }
 
   @Test
