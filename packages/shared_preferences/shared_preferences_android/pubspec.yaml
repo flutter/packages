@@ -28,7 +28,7 @@ dev_dependencies:
   flutter_test:
     sdk: flutter
   jnigen: ^1.0.0
-  pigeon: ^29.0.2
+  pigeon: ^29.0.4
 
 topics:
   - persistence

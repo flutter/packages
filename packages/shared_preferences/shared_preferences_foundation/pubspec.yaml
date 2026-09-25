@@ -32,7 +32,7 @@ dev_dependencies:
   ffigen: ^22.0.0
   flutter_test:
     sdk: flutter
-  pigeon: ^29.0.2
+  pigeon: ^29.0.4
   swift2objc: ^0.3.0
   swiftgen: ^0.2.0
 
