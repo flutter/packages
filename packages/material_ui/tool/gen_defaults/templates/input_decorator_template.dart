@@ -2,23 +2,28 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import '../data/filled_text_field.dart';
+import '../data/outlined_text_field.dart';
 import 'template.dart';
 
-class InputDecoratorTemplate extends TokenTemplate {
-  const InputDecoratorTemplate(
-    super.blockName,
-    super.fileName,
-    super.tokens, {
-    super.colorSchemePrefix = '_colors.',
-    super.textThemePrefix = '_textTheme.',
-  });
+class InputDecoratorTemplateM3 extends TokenTemplateM3 {
+  const InputDecoratorTemplateM3();
 
   @override
-  String generate() =>
+  String get name => 'Input Decorator';
+
+  @override
+  String get parentFilePath => 'input_decorator.dart';
+
+  // TODO(QuncCccccc): Use TokenOutlinedTextField.focusOutlineWidth when
+  // InputDecorator adopts the latest 3.0 token value.
+  static const double _legacyFocusedOutlineWidth = 2.0;
+
+  @override
+  String generateContents(String className) =>
       '''
-class _${blockName}DefaultsM3 extends InputDecorationThemeData {
-   _${blockName}DefaultsM3(this.context)
-    : super();
+class $className extends InputDecorationThemeData {
+  $className(this.context) : super();
 
   final BuildContext context;
 
@@ -38,203 +43,152 @@ class _${blockName}DefaultsM3 extends InputDecorationThemeData {
   @override
   TextStyle? get hintStyle => WidgetStateTextStyle.resolveWith((Set<WidgetState> states) {
     if (states.contains(WidgetState.disabled)) {
-      return TextStyle(color: ${componentColor('md.comp.filled-text-field.disabled.supporting-text')});
+      return TextStyle(color: ${colorWithOpacity(TokenFilledTextField.disabledSupportingTextColor, TokenFilledTextField.disabledSupportingTextOpacity)});
     }
-    return TextStyle(color: ${componentColor('md.comp.filled-text-field.supporting-text')});
+    return TextStyle(color: ${color(TokenFilledTextField.supportingTextColor)});
   });
 
   @override
   Color? get fillColor => WidgetStateColor.resolveWith((Set<WidgetState> states) {
     if (states.contains(WidgetState.disabled)) {
-      return ${componentColor("md.comp.filled-text-field.disabled.container")};
+      return ${colorWithOpacity(TokenFilledTextField.disabledContainerColor, TokenFilledTextField.disabledContainerOpacity)};
     }
-    return ${componentColor("md.comp.filled-text-field.container")};
+    return ${color(TokenFilledTextField.containerColor)};
   });
 
   @override
   BorderSide? get activeIndicatorBorder => WidgetStateBorderSide.resolveWith((Set<WidgetState> states) {
     if (states.contains(WidgetState.disabled)) {
-      return ${border('md.comp.filled-text-field.disabled.active-indicator')};
+      return ${border(colorWithOpacity(TokenFilledTextField.disabledActiveIndicatorColor, TokenFilledTextField.disabledActiveIndicatorOpacity), width: TokenFilledTextField.disabledActiveIndicatorHeight)};
     }
     if (states.contains(WidgetState.error)) {
       if (states.contains(WidgetState.focused)) {
-        return ${mergedBorder('md.comp.filled-text-field.error.focus.active-indicator', 'md.comp.filled-text-field.focus.active-indicator')};
+        return ${border(color(TokenFilledTextField.errorFocusActiveIndicatorColor), width: TokenFilledTextField.focusActiveIndicatorHeight)};
       }
       if (states.contains(WidgetState.hovered)) {
-        return ${border('md.comp.filled-text-field.error.hover.active-indicator')};
+        return ${border(color(TokenFilledTextField.errorHoverActiveIndicatorColor))};
       }
-      return ${border('md.comp.filled-text-field.error.active-indicator')};
+      return ${border(color(TokenFilledTextField.errorActiveIndicatorColor))};
     }
     if (states.contains(WidgetState.focused)) {
-      return ${border('md.comp.filled-text-field.focus.active-indicator')};
+      return ${border(color(TokenFilledTextField.focusActiveIndicatorColor), width: TokenFilledTextField.focusActiveIndicatorHeight)};
     }
     if (states.contains(WidgetState.hovered)) {
-      return ${border('md.comp.filled-text-field.hover.active-indicator')};
+      return ${border(color(TokenFilledTextField.hoverActiveIndicatorColor), width: TokenFilledTextField.hoverActiveIndicatorHeight)};
     }
-    return ${border('md.comp.filled-text-field.active-indicator')};
-    });
+    return ${border(color(TokenFilledTextField.activeIndicatorColor), width: TokenFilledTextField.activeIndicatorHeight)};
+  });
 
   @override
   BorderSide? get outlineBorder => WidgetStateBorderSide.resolveWith((Set<WidgetState> states) {
     if (states.contains(WidgetState.disabled)) {
-      return ${border('md.comp.outlined-text-field.disabled.outline')};
+      return ${border(colorWithOpacity(TokenOutlinedTextField.disabledOutlineColor, TokenOutlinedTextField.disabledOutlineOpacity), width: TokenOutlinedTextField.disabledOutlineWidth)};
     }
     if (states.contains(WidgetState.error)) {
       if (states.contains(WidgetState.focused)) {
-        return ${mergedBorder('md.comp.outlined-text-field.error.focus.outline', 'md.comp.outlined-text-field.focus.outline')};
+        return ${border(color(TokenOutlinedTextField.errorFocusOutlineColor), width: _legacyFocusedOutlineWidth)};
       }
       if (states.contains(WidgetState.hovered)) {
-        return ${border('md.comp.outlined-text-field.error.hover.outline')};
+        return ${border(color(TokenOutlinedTextField.errorHoverOutlineColor))};
       }
-      return ${border('md.comp.outlined-text-field.error.outline')};
+      return ${border(color(TokenOutlinedTextField.errorOutlineColor))};
     }
     if (states.contains(WidgetState.focused)) {
-      return ${border('md.comp.outlined-text-field.focus.outline')};
+      return ${border(color(TokenOutlinedTextField.focusOutlineColor), width: _legacyFocusedOutlineWidth)};
     }
     if (states.contains(WidgetState.hovered)) {
-      return ${border('md.comp.outlined-text-field.hover.outline')};
+      return ${border(color(TokenOutlinedTextField.hoverOutlineColor), width: TokenOutlinedTextField.hoverOutlineWidth)};
     }
-    return ${border('md.comp.outlined-text-field.outline')};
+    return ${border(color(TokenOutlinedTextField.outlineColor), width: TokenOutlinedTextField.outlineWidth)};
   });
 
   @override
-  Color? get iconColor => ${componentColor("md.comp.filled-text-field.leading-icon")};
+  Color? get iconColor => ${color(TokenFilledTextField.leadingIconColor)};
 
   @override
   Color? get prefixIconColor => WidgetStateColor.resolveWith((Set<WidgetState> states) {
     if (states.contains(WidgetState.disabled)) {
-      return ${componentColor('md.comp.filled-text-field.disabled.leading-icon')};
-    }${componentColor('md.comp.filled-text-field.error.leading-icon') == componentColor('md.comp.filled-text-field.leading-icon') ? '' : '''
-    if (states.contains(WidgetState.error)) {
-      if (states.contains(WidgetState.hovered)) {
-        return ${componentColor('md.comp.filled-text-field.error.hover.leading-icon')};
-      }
-      if (states.contains(WidgetState.focused)) {
-        return ${componentColor('md.comp.filled-text-field.error.focus.leading-icon')};
-      }
-      return ${componentColor('md.comp.filled-text-field.error.leading-icon')};
-    }'''}${componentColor('md.comp.filled-text-field.hover.leading-icon') == componentColor('md.comp.filled-text-field.leading-icon') ? '' : '''
-    if (states.contains(WidgetState.hovered)) {
-      return ${componentColor('md.comp.filled-text-field.hover.leading-icon')};
-    }'''}${componentColor('md.comp.filled-text-field.focus.leading-icon') == componentColor('md.comp.filled-text-field.leading-icon') ? '' : '''
-    if (states.contains(WidgetState.focused)) {
-      return ${componentColor('md.comp.filled-text-field.focus.leading-icon')};
-    }'''}
-    return ${componentColor('md.comp.filled-text-field.leading-icon')};
+      return ${colorWithOpacity(TokenFilledTextField.disabledLeadingIconColor, TokenFilledTextField.disabledLeadingIconOpacity)};
+    }
+    return ${color(TokenFilledTextField.leadingIconColor)};
   });
 
   @override
   Color? get suffixIconColor => WidgetStateColor.resolveWith((Set<WidgetState> states) {
     if (states.contains(WidgetState.disabled)) {
-      return ${componentColor('md.comp.filled-text-field.disabled.trailing-icon')};
+      return ${colorWithOpacity(TokenFilledTextField.disabledTrailingIconColor, TokenFilledTextField.disabledTrailingIconOpacity)};
     }
     if (states.contains(WidgetState.error)) {
       if (states.contains(WidgetState.hovered)) {
-        return ${componentColor('md.comp.filled-text-field.error.hover.trailing-icon')};
-      }${componentColor('md.comp.filled-text-field.error.trailing-icon') == componentColor('md.comp.filled-text-field.error.focus.trailing-icon') ? '' : '''
-      if (states.contains(WidgetState.focused)) {
-        return ${componentColor('md.comp.filled-text-field.error.focus.trailing-icon')};
-      }'''}
-      return ${componentColor('md.comp.filled-text-field.error.trailing-icon')};
-    }${componentColor('md.comp.filled-text-field.hover.trailing-icon') == componentColor('md.comp.filled-text-field.trailing-icon') ? '' : '''
-    if (states.contains(WidgetState.hovered)) {
-      return ${componentColor('md.comp.filled-text-field.hover.trailing-icon')};
-    }'''}${componentColor('md.comp.filled-text-field.focus.trailing-icon') == componentColor('md.comp.filled-text-field.trailing-icon') ? '' : '''
-    if (states.contains(WidgetState.focused)) {
-      return ${componentColor('md.comp.filled-text-field.focus.trailing-icon')};
-    }'''}
-    return ${componentColor('md.comp.filled-text-field.trailing-icon')};
+        return ${color(TokenFilledTextField.errorHoverTrailingIconColor)};
+      }
+      return ${color(TokenFilledTextField.errorTrailingIconColor)};
+    }
+    return ${color(TokenFilledTextField.trailingIconColor)};
   });
 
   @override
   TextStyle? get labelStyle => WidgetStateTextStyle.resolveWith((Set<WidgetState> states) {
-    final TextStyle textStyle = ${textStyle("md.comp.filled-text-field.label-text")} ?? const TextStyle();
+    final TextStyle textStyle = ${textStyle(TokenFilledTextField.labelTextType, '_textTheme')} ?? const TextStyle();
     if (states.contains(WidgetState.disabled)) {
-      return textStyle.copyWith(color: ${componentColor('md.comp.filled-text-field.disabled.label-text')});
+      return textStyle.copyWith(color: ${colorWithOpacity(TokenFilledTextField.disabledLabelTextColor, TokenFilledTextField.disabledLabelTextOpacity)});
     }
     if (states.contains(WidgetState.error)) {
       if (states.contains(WidgetState.focused)) {
-        return textStyle.copyWith(color: ${componentColor('md.comp.filled-text-field.error.focus.label-text')});
+        return textStyle.copyWith(color: ${color(TokenFilledTextField.errorFocusLabelTextColor)});
       }
       if (states.contains(WidgetState.hovered)) {
-        return textStyle.copyWith(color: ${componentColor('md.comp.filled-text-field.error.hover.label-text')});
+        return textStyle.copyWith(color: ${color(TokenFilledTextField.errorHoverLabelTextColor)});
       }
-      return textStyle.copyWith(color: ${componentColor('md.comp.filled-text-field.error.label-text')});
+      return textStyle.copyWith(color: ${color(TokenFilledTextField.errorLabelTextColor)});
     }
     if (states.contains(WidgetState.focused)) {
-      return textStyle.copyWith(color: ${componentColor('md.comp.filled-text-field.focus.label-text')});
+      return textStyle.copyWith(color: ${color(TokenFilledTextField.focusLabelTextColor)});
     }
     if (states.contains(WidgetState.hovered)) {
-      return textStyle.copyWith(color: ${componentColor('md.comp.filled-text-field.hover.label-text')});
+      return textStyle.copyWith(color: ${color(TokenFilledTextField.hoverLabelTextColor)});
     }
-    return textStyle.copyWith(color: ${componentColor('md.comp.filled-text-field.label-text')});
+    return textStyle.copyWith(color: ${color(TokenFilledTextField.labelTextColor)});
   });
 
   @override
   TextStyle? get floatingLabelStyle => WidgetStateTextStyle.resolveWith((Set<WidgetState> states) {
-    final TextStyle textStyle = ${textStyle("md.comp.filled-text-field.label-text")} ?? const TextStyle();
+    final TextStyle textStyle = ${textStyle(TokenFilledTextField.labelTextType, '_textTheme')} ?? const TextStyle();
     if (states.contains(WidgetState.disabled)) {
-      return textStyle.copyWith(color: ${componentColor('md.comp.filled-text-field.disabled.label-text')});
+      return textStyle.copyWith(color: ${colorWithOpacity(TokenFilledTextField.disabledLabelTextColor, TokenFilledTextField.disabledLabelTextOpacity)});
     }
     if (states.contains(WidgetState.error)) {
       if (states.contains(WidgetState.focused)) {
-        return textStyle.copyWith(color: ${componentColor('md.comp.filled-text-field.error.focus.label-text')});
+        return textStyle.copyWith(color: ${color(TokenFilledTextField.errorFocusLabelTextColor)});
       }
       if (states.contains(WidgetState.hovered)) {
-        return textStyle.copyWith(color: ${componentColor('md.comp.filled-text-field.error.hover.label-text')});
+        return textStyle.copyWith(color: ${color(TokenFilledTextField.errorHoverLabelTextColor)});
       }
-      return textStyle.copyWith(color: ${componentColor('md.comp.filled-text-field.error.label-text')});
+      return textStyle.copyWith(color: ${color(TokenFilledTextField.errorLabelTextColor)});
     }
     if (states.contains(WidgetState.focused)) {
-      return textStyle.copyWith(color: ${componentColor('md.comp.filled-text-field.focus.label-text')});
+      return textStyle.copyWith(color: ${color(TokenFilledTextField.focusLabelTextColor)});
     }
     if (states.contains(WidgetState.hovered)) {
-      return textStyle.copyWith(color: ${componentColor('md.comp.filled-text-field.hover.label-text')});
+      return textStyle.copyWith(color: ${color(TokenFilledTextField.hoverLabelTextColor)});
     }
-    return textStyle.copyWith(color: ${componentColor('md.comp.filled-text-field.label-text')});
+    return textStyle.copyWith(color: ${color(TokenFilledTextField.labelTextColor)});
   });
 
   @override
   TextStyle? get helperStyle => WidgetStateTextStyle.resolveWith((Set<WidgetState> states) {
-    final TextStyle textStyle = ${textStyle("md.comp.filled-text-field.supporting-text")} ?? const TextStyle();
+    final TextStyle textStyle = ${textStyle(TokenFilledTextField.supportingTextType, '_textTheme')} ?? const TextStyle();
     if (states.contains(WidgetState.disabled)) {
-      return textStyle.copyWith(color: ${componentColor('md.comp.filled-text-field.disabled.supporting-text')});
-    }${componentColor('md.comp.filled-text-field.focus.supporting-text') == componentColor('md.comp.filled-text-field.supporting-text') ? '' : '''
-    if (states.contains(WidgetState.focused)) {
-      return textStyle.copyWith(color: ${componentColor('md.comp.filled-text-field.focus.supporting-text')});
-    }'''}${componentColor('md.comp.filled-text-field.hover.supporting-text') == componentColor('md.comp.filled-text-field.supporting-text') ? '' : '''
-    if (states.contains(WidgetState.hovered)) {
-      return textStyle.copyWith(color: ${componentColor('md.comp.filled-text-field.hover.supporting-text')});
-    }'''}
-    return textStyle.copyWith(color: ${componentColor('md.comp.filled-text-field.supporting-text')});
+      return textStyle.copyWith(color: ${colorWithOpacity(TokenFilledTextField.disabledSupportingTextColor, TokenFilledTextField.disabledSupportingTextOpacity)});
+    }
+    return textStyle.copyWith(color: ${color(TokenFilledTextField.supportingTextColor)});
   });
 
   @override
   TextStyle? get errorStyle => WidgetStateTextStyle.resolveWith((Set<WidgetState> states) {
-    final TextStyle textStyle = ${textStyle("md.comp.filled-text-field.supporting-text")} ?? const TextStyle();${componentColor('md.comp.filled-text-field.error.hover.supporting-text') == componentColor('md.comp.filled-text-field.error.supporting-text') ? '' : '''
-    if (states.contains(WidgetState.focused)) {
-      return textStyle.copyWith(color: ${componentColor('md.comp.filled-text-field.error.focus.supporting-text')});
-    }'''}${componentColor('md.comp.filled-text-field.error.focus.supporting-text') == componentColor('md.comp.filled-text-field.error.supporting-text') ? '' : '''
-    if (states.contains(WidgetState.hovered)) {
-      return textStyle.copyWith(color: ${componentColor('md.comp.filled-text-field.error.hover.supporting-text')});
-    }'''}
-    return textStyle.copyWith(color: ${componentColor('md.comp.filled-text-field.error.supporting-text')});
+    final TextStyle textStyle = ${textStyle(TokenFilledTextField.supportingTextType, '_textTheme')} ?? const TextStyle();
+    return textStyle.copyWith(color: ${color(TokenFilledTextField.errorSupportingTextColor)});
   });
 }
 ''';
-
-  /// Generate a [BorderSide] for the given components.
-  String mergedBorder(String componentToken1, String componentToken2) {
-    final String borderColor = componentColor(componentToken1) != 'null'
-        ? componentColor(componentToken1)
-        : componentColor(componentToken2);
-    final width =
-        (getToken('$componentToken1.width', optional: true) ??
-                getToken('$componentToken1.height', optional: true) ??
-                getToken('$componentToken2.width', optional: true) ??
-                getToken('$componentToken2.height', optional: true) ??
-                1.0)
-            as double;
-    return 'BorderSide(color: $borderColor${width != 1.0 ? ", width: $width" : ""})';
-  }
 }
