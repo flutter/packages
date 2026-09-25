@@ -7,8 +7,8 @@ import org.junit.Assert
 import org.junit.Test
 
 class WebViewActivityTest {
-    @Test
-    fun extractHeaders_returnsEmptyMapWhenHeadersBundleNull() {
-        Assert.assertEquals(WebViewActivity.extractHeaders(null), mutableMapOf<Any?, Any?>())
-    }
+  @Test
+  fun extractHeaders_returnsEmptyMapWhenHeadersBundleNull() {
+    Assert.assertEquals(WebViewActivity.extractHeaders(null), mutableMapOf<Any?, Any?>())
+  }
 }
