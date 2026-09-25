@@ -2,65 +2,64 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import '../data/snackbar.dart';
 import 'template.dart';
 
-class SnackbarTemplate extends TokenTemplate {
-  const SnackbarTemplate(
-    this.tokenGroup,
-    super.blockName,
-    super.fileName,
-    super.tokens, {
-    super.colorSchemePrefix = '_colors.',
-  });
-
-  final String tokenGroup;
+class SnackbarTemplateM3 extends TokenTemplateM3 {
+  const SnackbarTemplateM3();
 
   @override
-  String generate() =>
+  String get name => 'Snackbar';
+
+  @override
+  String get parentFilePath => 'snack_bar.dart';
+
+  @override
+  String generateContents(String className) =>
       '''
-class _${blockName}DefaultsM3 extends SnackBarThemeData {
-    _${blockName}DefaultsM3(this.context);
+class $className extends SnackBarThemeData {
+    $className(this.context);
 
   final BuildContext context;
   late final ThemeData _theme = Theme.of(context);
   late final ColorScheme _colors = _theme.colorScheme;
 
   @override
-  Color get backgroundColor => ${componentColor("$tokenGroup.container")};
+  Color get backgroundColor => ${color(TokenSnackbar.containerColor)};
 
   @override
   Color get actionTextColor =>  WidgetStateColor.resolveWith((Set<WidgetState> states) {
     if (states.contains(WidgetState.disabled)) {
-      return ${componentColor("$tokenGroup.action.pressed.label-text")};
+      return ${color(TokenSnackbar.actionPressedLabelTextColor)};
     }
     if (states.contains(WidgetState.pressed)) {
-      return ${componentColor("$tokenGroup.action.pressed.label-text")};
+      return ${color(TokenSnackbar.actionPressedLabelTextColor)};
     }
     if (states.contains(WidgetState.hovered)) {
-      return ${componentColor("$tokenGroup.action.hover.label-text")};
+      return ${color(TokenSnackbar.actionHoverLabelTextColor)};
     }
     if (states.contains(WidgetState.focused)) {
-      return ${componentColor("$tokenGroup.action.focus.label-text")};
+      return ${color(TokenSnackbar.actionFocusLabelTextColor)};
     }
-    return ${componentColor("$tokenGroup.action.label-text")};
+    return ${color(TokenSnackbar.actionLabelTextColor)};
   });
 
   @override
   Color get disabledActionTextColor =>
-    ${componentColor("$tokenGroup.action.pressed.label-text")};
+    ${color(TokenSnackbar.actionPressedLabelTextColor)};
 
 
   @override
   TextStyle get contentTextStyle =>
-    ${textStyle("$tokenGroup.supporting-text")}!.copyWith
-      (color:  ${componentColor("$tokenGroup.supporting-text")},
+    ${textStyle(TokenSnackbar.supportingTextType, 'Theme.of(context).textTheme')}!.copyWith
+      (color:  ${color(TokenSnackbar.supportingTextColor)},
     );
 
   @override
-  double get elevation => ${elevation("$tokenGroup.container")};
+  double get elevation => ${TokenSnackbar.containerElevation};
 
   @override
-  ShapeBorder get shape => ${shape("$tokenGroup.container")};
+  ShapeBorder get shape => ${shape(TokenSnackbar.containerShape)};
 
   @override
   SnackBarBehavior get behavior => SnackBarBehavior.fixed;
@@ -72,7 +71,7 @@ class _${blockName}DefaultsM3 extends SnackBarThemeData {
   bool get showCloseIcon => false;
 
   @override
-  Color? get closeIconColor => ${componentColor("$tokenGroup.icon")};
+  Color? get closeIconColor => ${color(TokenSnackbar.iconColor)};
 
   @override
   double get actionOverflowThreshold => 0.25;
