@@ -22,8 +22,8 @@ import '../templates/chip_template.dart';
 import '../templates/color_scheme_template.dart';
 // import '../templates/date_picker_template.dart';
 // import '../templates/dialog_template.dart';
-// import '../templates/divider_template.dart';
-// import '../templates/drawer_template.dart';
+import '../templates/divider_template.dart';
+import '../templates/drawer_template.dart';
 // import '../templates/expansion_tile_template.dart';
 // import '../templates/fab_template.dart';
 import '../templates/filter_chip_template.dart';
@@ -552,13 +552,24 @@ void main() {
     });
 
     test('DividerTemplateM3 emits M3 Divider defaults from tokens', () {
-      // Intentionally empty, will be implemented during migration. See:
-      // https://github.com/flutter/flutter/issues/187899
+      final String contents = _generateContents(const DividerTemplateM3());
+      expect(contents, contains('class _DividerDefaultsM3 extends DividerThemeData'));
+      expect(contents, contains('thickness: 1.0'));
+      expect(
+        contents,
+        contains('Color? get color => Theme.of(context).colorScheme.outlineVariant;'),
+      );
     });
 
     test('DrawerTemplateM3 emits M3 Drawer defaults from tokens', () {
-      // Intentionally empty, will be implemented during migration. See:
-      // https://github.com/flutter/flutter/issues/187899
+      final String contents = _generateContents(const DrawerTemplateM3());
+      expect(contents, contains('class _DrawerDefaultsM3 extends DrawerThemeData'));
+      expect(contents, contains('elevation: 1.0'));
+      expect(
+        contents,
+        contains('Color? get backgroundColor => Theme.of(context).colorScheme.surfaceContainerLow'),
+      );
+      expect(contents, contains('ShapeBorder? get endShape => RoundedRectangleBorder('));
     });
 
     test('ExpansionTileTemplateM3 emits M3 ExpansionTile defaults from tokens', () {
