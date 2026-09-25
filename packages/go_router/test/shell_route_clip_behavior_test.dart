@@ -2,6 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 import 'package:material_ui/material_ui.dart';
@@ -15,8 +16,38 @@ import 'test_helpers.dart';
 Clip clipBehaviorOf(WidgetTester tester, GlobalKey<NavigatorState> navigatorKey) =>
     tester.widget<Navigator>(find.byKey(navigatorKey, skipOffstage: false)).clipBehavior;
 
+class _ShellRouteData extends ShellRouteData {
+  const _ShellRouteData();
+
+  @override
+  Widget builder(BuildContext context, GoRouterState state, Widget navigator) => navigator;
+}
+
+/// Reads the description of the `clipBehavior` diagnostics property of the
+/// given [route], or null if the property is hidden at its default value.
+String? clipBehaviorDiagnosticOf(ShellRoute route) {
+  final builder = DiagnosticPropertiesBuilder();
+  route.debugFillProperties(builder);
+  return builder.properties
+      .where((DiagnosticsNode node) => !node.isFiltered(DiagnosticLevel.info))
+      .where((DiagnosticsNode node) => node.name == 'clipBehavior')
+      .map((DiagnosticsNode node) => node.toDescription())
+      .firstOrNull;
+}
+
 void main() {
   group('ShellRoute', () {
+    test('includes a non-default clipBehavior in debugFillProperties', () {
+      ShellRoute shellRoute({Clip clipBehavior = Clip.hardEdge}) => ShellRoute(
+        clipBehavior: clipBehavior,
+        builder: (_, _, Widget child) => child,
+        routes: <RouteBase>[GoRoute(path: '/', builder: (_, _) => const Text('Home'))],
+      );
+
+      expect(clipBehaviorDiagnosticOf(shellRoute()), isNull);
+      expect(clipBehaviorDiagnosticOf(shellRoute(clipBehavior: Clip.none)), 'none');
+    });
+
     testWidgets('clips the nested Navigator by default', (WidgetTester tester) async {
       final navigatorKey = GlobalKey<NavigatorState>(debugLabel: 'shell');
       await createRouter(<RouteBase>[
@@ -143,6 +174,35 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(clipBehaviorOf(tester, keyB), Clip.none);
+    });
+  });
+
+  group('typed routes', () {
+    test(r'ShellRouteData.$route forwards clipBehavior', () {
+      final routes = <RouteBase>[GoRoute(path: '/', builder: (_, _) => const Text('Home'))];
+
+      expect(
+        ShellRouteData.$route(factory: (_) => const _ShellRouteData(), routes: routes).clipBehavior,
+        Clip.hardEdge,
+      );
+      expect(
+        ShellRouteData.$route(
+          factory: (_) => const _ShellRouteData(),
+          clipBehavior: Clip.none,
+          routes: routes,
+        ).clipBehavior,
+        Clip.none,
+      );
+    });
+
+    test(r'StatefulShellBranchData.$branch forwards clipBehavior', () {
+      final routes = <RouteBase>[GoRoute(path: '/', builder: (_, _) => const Text('Home'))];
+
+      expect(StatefulShellBranchData.$branch(routes: routes).clipBehavior, Clip.hardEdge);
+      expect(
+        StatefulShellBranchData.$branch(routes: routes, clipBehavior: Clip.none).clipBehavior,
+        Clip.none,
+      );
     });
   });
 }

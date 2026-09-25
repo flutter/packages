@@ -140,7 +140,6 @@ class RouteBuilder {
         errorBuilder: errorBuilder,
         errorPageBuilder: errorPageBuilder,
         requestFocus: requestFocus,
-        clipBehavior: Clip.hardEdge,
       ),
     );
   }
@@ -160,7 +159,7 @@ class _CustomNavigator extends StatefulWidget {
     required this.errorBuilder,
     required this.errorPageBuilder,
     required this.requestFocus,
-    required this.clipBehavior,
+    this.clipBehavior = Clip.hardEdge,
   });
 
   final GlobalKey<NavigatorState> navigatorKey;
@@ -181,7 +180,9 @@ class _CustomNavigator extends StatefulWidget {
   final GoRouterPageBuilder? errorPageBuilder;
   final bool requestFocus;
 
-  /// The clip behavior forwarded to the [Navigator] built by this widget.
+  /// The clip behavior of the [Navigator] built by this widget.
+  ///
+  /// {@macro go_router.ShellRoute.clipBehavior}
   final Clip clipBehavior;
 
   @override

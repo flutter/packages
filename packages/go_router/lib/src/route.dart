@@ -807,6 +807,7 @@ class ShellRoute extends ShellRouteBase {
 
   /// The clip behavior of the [Navigator] built for this route.
   ///
+  /// {@template go_router.ShellRoute.clipBehavior}
   /// The nested Navigator clips its contents by default, so that the route
   /// transitions of its sub-routes are not painted outside the bounds the
   /// shell lays out for them. Set this to [Clip.none] when a sub-route needs
@@ -815,6 +816,7 @@ class ShellRoute extends ShellRouteBase {
   /// to paint outside the bounds of the shell.
   ///
   /// Defaults to [Clip.hardEdge].
+  /// {@endtemplate}
   final Clip clipBehavior;
 
   @override
@@ -827,6 +829,7 @@ class ShellRoute extends ShellRouteBase {
   void debugFillProperties(DiagnosticPropertiesBuilder properties) {
     super.debugFillProperties(properties);
     properties.add(DiagnosticsProperty<GlobalKey<NavigatorState>>('navigatorKey', navigatorKey));
+    properties.add(EnumProperty<Clip>('clipBehavior', clipBehavior, defaultValue: Clip.hardEdge));
   }
 }
 
@@ -1181,9 +1184,7 @@ class StatefulShellBranch {
   /// Each branch of a [StatefulShellRoute] builds its own [Navigator], so the
   /// clip behavior is configured per branch rather than on the shell route.
   ///
-  /// See [ShellRoute.clipBehavior] for a description of the behavior.
-  ///
-  /// Defaults to [Clip.hardEdge].
+  /// {@macro go_router.ShellRoute.clipBehavior}
   final Clip clipBehavior;
 
   /// Whether this route branch should be eagerly loaded when navigating to the
