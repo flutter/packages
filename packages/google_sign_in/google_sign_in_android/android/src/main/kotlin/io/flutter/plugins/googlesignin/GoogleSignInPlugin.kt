@@ -82,7 +82,7 @@ class GoogleSignInPlugin : FlutterPlugin, ActivityAware {
 
   private fun disposeActivity() {
     delegate?.let {
-      activityPluginBinding!!.removeActivityResultListener(it)
+      activityPluginBinding?.removeActivityResultListener(it)
       it.activity = null
     }
     activityPluginBinding = null
