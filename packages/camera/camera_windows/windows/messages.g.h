@@ -201,7 +201,7 @@ class CameraApi {
       std::function<void(ErrorOr<std::string> reply)> result) = 0;
   // Starts recording video with the given camera.
   virtual void StartVideoRecording(
-      int64_t camera_id,
+      int64_t camera_id, const std::string* video_output_path,
       std::function<void(std::optional<FlutterError> reply)> result) = 0;
   // Finishes recording video with the given camera, and returns the path to
   // the resulting file.
