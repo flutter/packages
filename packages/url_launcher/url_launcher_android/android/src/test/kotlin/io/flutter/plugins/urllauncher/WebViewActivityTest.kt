@@ -3,12 +3,12 @@
 // found in the LICENSE file.
 package io.flutter.plugins.urllauncher
 
-import org.junit.Assert
+import org.junit.Assert.assertEquals
 import org.junit.Test
 
 class WebViewActivityTest {
   @Test
   fun extractHeaders_returnsEmptyMapWhenHeadersBundleNull() {
-    Assert.assertEquals(WebViewActivity.extractHeaders(null), mapOf<String, String>())
+    assertEquals(WebViewActivity.extractHeaders(null), emptyMap<String, String>())
   }
 }

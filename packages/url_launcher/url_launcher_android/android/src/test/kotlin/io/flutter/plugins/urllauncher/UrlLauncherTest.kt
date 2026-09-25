@@ -83,7 +83,7 @@ class UrlLauncherTest {
 
     val exception =
         assertThrows(FlutterError::class.java) {
-          api.launchUrl("https://flutter.dev", mapOf(), false)
+          api.launchUrl("https://flutter.dev", emptyMap(), false)
         }
     assertEquals("NO_ACTIVITY", exception.code)
   }
@@ -96,12 +96,12 @@ class UrlLauncherTest {
     api.setActivity(activity)
     doThrow(ActivityNotFoundException()).whenever(activity).startActivity(any())
 
-    api.launchUrl("https://flutter.dev", mapOf(), false)
+    api.launchUrl("https://flutter.dev", emptyMap(), false)
 
     val intentCaptor = argumentCaptor<Intent>()
     verify(activity).startActivity(intentCaptor.capture())
     assertEquals(url, intentCaptor.firstValue.data.toString())
-    assertEquals(0, (intentCaptor.firstValue.flags and Intent.FLAG_ACTIVITY_REQUIRE_NON_BROWSER))
+    assertEquals(0, intentCaptor.firstValue.flags and Intent.FLAG_ACTIVITY_REQUIRE_NON_BROWSER)
   }
 
   @Config(minSdk = 30)
@@ -112,13 +112,13 @@ class UrlLauncherTest {
     api.setActivity(activity)
     doThrow(ActivityNotFoundException()).whenever(activity).startActivity(any())
 
-    api.launchUrl("https://flutter.dev", mapOf(), true)
+    api.launchUrl("https://flutter.dev", emptyMap(), true)
 
     val intentCaptor = argumentCaptor<Intent>()
     verify(activity).startActivity(intentCaptor.capture())
     assertEquals(
         Intent.FLAG_ACTIVITY_REQUIRE_NON_BROWSER,
-        (intentCaptor.firstValue.flags and Intent.FLAG_ACTIVITY_REQUIRE_NON_BROWSER))
+        intentCaptor.firstValue.flags and Intent.FLAG_ACTIVITY_REQUIRE_NON_BROWSER)
   }
 
   @Test
@@ -128,7 +128,7 @@ class UrlLauncherTest {
     api.setActivity(activity)
     doThrow(ActivityNotFoundException()).whenever(activity).startActivity(any())
 
-    val result = api.launchUrl("https://flutter.dev", mapOf(), false)
+    val result = api.launchUrl("https://flutter.dev", emptyMap(), false)
 
     assertFalse(result)
   }
@@ -139,7 +139,7 @@ class UrlLauncherTest {
     val api = UrlLauncher(ApplicationProvider.getApplicationContext())
     api.setActivity(activity)
 
-    val result = api.launchUrl("https://flutter.dev", mapOf(), false)
+    val result = api.launchUrl("https://flutter.dev", emptyMap(), false)
 
     assertTrue(result)
   }
@@ -153,14 +153,13 @@ class UrlLauncherTest {
     val enableJavaScript = false
     val enableDomStorage = false
     val headers = mapOf("key" to "value")
-    val showTitle = false
 
     val result =
         api.openUrlInApp(
             url,
             true,
             WebViewOptions(enableJavaScript, enableDomStorage, headers),
-            BrowserOptions(showTitle))
+            BrowserOptions(showTitle = false))
 
     val intentCaptor = argumentCaptor<Intent>()
     verify(activity).startActivity(intentCaptor.capture())
@@ -185,7 +184,8 @@ class UrlLauncherTest {
         api.openUrlInApp(
             url,
             false,
-            WebViewOptions(enableJavaScript = false, enableDomStorage = false, headers = mapOf()),
+            WebViewOptions(
+                enableJavaScript = false, enableDomStorage = false, headers = emptyMap()),
             BrowserOptions(true))
 
     val intentCaptor = argumentCaptor<Intent>()
@@ -205,7 +205,8 @@ class UrlLauncherTest {
         api.openUrlInApp(
             url,
             true,
-            WebViewOptions(enableJavaScript = false, enableDomStorage = false, headers = mapOf()),
+            WebViewOptions(
+                enableJavaScript = false, enableDomStorage = false, headers = emptyMap()),
             BrowserOptions(false))
 
     val intentCaptor = argumentCaptor<Intent>()
@@ -237,7 +238,7 @@ class UrlLauncherTest {
     assertEquals(Intent.ACTION_VIEW, intentCaptor.firstValue.action)
     assertNull(intentCaptor.firstValue.component)
     val passedHeaders = intentCaptor.firstValue.extras?.getBundle(Browser.EXTRA_HEADERS)
-    assertEquals(headers[headerKey], passedHeaders!!.getString(headerKey))
+    assertEquals(headers[headerKey], passedHeaders?.getString(headerKey))
   }
 
   @Test
@@ -246,13 +247,13 @@ class UrlLauncherTest {
     val api = UrlLauncher(ApplicationProvider.getApplicationContext())
     api.setActivity(activity)
     val url = "https://flutter.dev"
-    val headers = mapOf<String, String>()
 
     val result =
         api.openUrlInApp(
             url,
             true,
-            WebViewOptions(enableJavaScript = false, enableDomStorage = false, headers = headers),
+            WebViewOptions(
+                enableJavaScript = false, enableDomStorage = false, headers = emptyMap()),
             BrowserOptions(true))
 
     val intentCaptor = argumentCaptor<Intent>()
@@ -271,13 +272,13 @@ class UrlLauncherTest {
     val api = UrlLauncher(ApplicationProvider.getApplicationContext())
     api.setActivity(activity)
     val url = "https://flutter.dev"
-    val headers = mapOf<String, String>()
 
     val result =
         api.openUrlInApp(
             url,
             true,
-            WebViewOptions(enableJavaScript = false, enableDomStorage = false, headers = headers),
+            WebViewOptions(
+                enableJavaScript = false, enableDomStorage = false, headers = emptyMap()),
             BrowserOptions(false))
 
     val intentCaptor = argumentCaptor<Intent>()
@@ -304,7 +305,8 @@ class UrlLauncherTest {
         api.openUrlInApp(
             url,
             true,
-            WebViewOptions(enableJavaScript = false, enableDomStorage = false, headers = mapOf()),
+            WebViewOptions(
+                enableJavaScript = false, enableDomStorage = false, headers = emptyMap()),
             BrowserOptions(false))
 
     val intentCaptor = argumentCaptor<Intent>()
@@ -326,7 +328,7 @@ class UrlLauncherTest {
     api.openUrlInApp(
         "https://flutter.dev",
         true,
-        WebViewOptions(enableJavaScript, false, headers),
+        WebViewOptions(enableJavaScript = enableJavaScript, enableDomStorage = false, headers),
         BrowserOptions(false))
 
     val intentCaptor = argumentCaptor<Intent>()
@@ -370,7 +372,7 @@ class UrlLauncherTest {
     api.openUrlInApp(
         "https://flutter.dev",
         true,
-        WebViewOptions(false, enableDomStorage, headers),
+        WebViewOptions(enableJavaScript = false, enableDomStorage = enableDomStorage, headers),
         BrowserOptions(false))
 
     val intentCaptor = argumentCaptor<Intent>()
@@ -385,15 +387,12 @@ class UrlLauncherTest {
     val activity = mock<Activity>()
     val api = UrlLauncher(ApplicationProvider.getApplicationContext())
     api.setActivity(activity)
-    val enableDomStorage = true
-    val headers = mapOf<String, String>()
-    val showTitle = true
 
     api.openUrlInApp(
         "https://flutter.dev",
         true,
-        WebViewOptions(false, enableDomStorage, headers),
-        BrowserOptions(showTitle))
+        WebViewOptions(enableJavaScript = false, enableDomStorage = true, headers = emptyMap()),
+        BrowserOptions(showTitle = true))
 
     val intentCaptor = argumentCaptor<Intent>()
     verify(activity).startActivity(intentCaptor.capture(), any())
@@ -413,7 +412,8 @@ class UrlLauncherTest {
           api.openUrlInApp(
               "https://flutter.dev",
               true,
-              WebViewOptions(enableJavaScript = false, enableDomStorage = false, headers = mapOf()),
+              WebViewOptions(
+                  enableJavaScript = false, enableDomStorage = false, headers = emptyMap()),
               BrowserOptions(false))
         }
     assertEquals("NO_ACTIVITY", exception.code)
@@ -435,7 +435,8 @@ class UrlLauncherTest {
         api.openUrlInApp(
             "https://flutter.dev",
             true,
-            WebViewOptions(enableJavaScript = false, enableDomStorage = false, headers = mapOf()),
+            WebViewOptions(
+                enableJavaScript = false, enableDomStorage = false, headers = emptyMap()),
             BrowserOptions(false))
 
     assertFalse(result)
