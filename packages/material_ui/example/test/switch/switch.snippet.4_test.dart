@@ -1,0 +1,36 @@
+// Copyright 2013 The Flutter Authors
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
+import 'package:flutter_test/flutter_test.dart';
+import 'package:material_ui/material_ui.dart';
+import 'package:material_ui_examples/switch/switch.snippet.4.dart' as example;
+
+void main() {
+  testWidgets('Switch thumbIcon resolves based on enabled state', (
+    WidgetTester tester,
+  ) async {
+    Widget buildApp({required ValueChanged<bool>? onChanged}) {
+      return MaterialApp(
+        home: Scaffold(
+          body: Center(child: example.SwitchExample(onChanged: onChanged)),
+        ),
+      );
+    }
+
+    await tester.pumpWidget(buildApp(onChanged: (bool _) {}));
+    await tester.pumpAndSettle();
+    Switch materialSwitch = tester.widget<Switch>(find.byType(Switch));
+    expect(materialSwitch.thumbIcon!.resolve(<WidgetState>{}), isNull);
+
+    await tester.pumpWidget(buildApp(onChanged: null));
+    await tester.pumpAndSettle();
+    materialSwitch = tester.widget<Switch>(find.byType(Switch));
+    expect(
+      materialSwitch.thumbIcon!.resolve(<WidgetState>{
+        WidgetState.disabled,
+      })!.icon,
+      Icons.close,
+    );
+  });
+}
