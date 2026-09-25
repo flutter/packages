@@ -2,6 +2,8 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+/// @docImport 'dart:io';
+///
 /// @docImport 'package:cupertino_ui/cupertino_ui.dart';
 ///
 /// @docImport 'drawer.dart';
@@ -9,13 +11,13 @@
 library;
 
 import 'dart:developer' show Flow, Timeline;
-import 'dart:io' show Platform;
 
 import 'package:cupertino_ui/cupertino_ui.dart' show CupertinoDialogAction;
 import 'package:flutter/foundation.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter/widgets.dart' hide Flow;
 
+import '_about_io.dart' if (dart.library.js_interop) '_about_web.dart' as impl;
 import 'app_bar.dart';
 import 'back_button.dart';
 import 'card.dart';
@@ -101,7 +103,9 @@ class AboutListTile extends StatelessWidget {
   /// [child]) and as the caption of the [AboutDialog] that is shown.
   ///
   /// Defaults to the value of [Title.title], if a [Title] widget can be found.
-  /// Otherwise, defaults to [Platform.resolvedExecutable].
+  /// Otherwise, defaults to the file name of [Platform.resolvedExecutable] on
+  /// native platforms, or to the empty string on the web, where there is no
+  /// executable.
   final String? applicationName;
 
   /// The version of this build of the application.
@@ -382,7 +386,9 @@ class AboutDialog extends StatelessWidget {
   /// The name of the application.
   ///
   /// Defaults to the value of [Title.title], if a [Title] widget can be found.
-  /// Otherwise, defaults to [Platform.resolvedExecutable].
+  /// Otherwise, defaults to the file name of [Platform.resolvedExecutable] on
+  /// native platforms, or to the empty string on the web, where there is no
+  /// executable.
   final String? applicationName;
 
   /// The version of this build of the application.
@@ -631,7 +637,9 @@ class LicensePage extends StatefulWidget {
   /// The name of the application.
   ///
   /// Defaults to the value of [Title.title], if a [Title] widget can be found.
-  /// Otherwise, defaults to [Platform.resolvedExecutable].
+  /// Otherwise, defaults to the file name of [Platform.resolvedExecutable] on
+  /// native platforms, or to the empty string on the web, where there is no
+  /// executable.
   final String? applicationName;
 
   /// The version of this build of the application.
@@ -1200,7 +1208,7 @@ String _defaultApplicationName(BuildContext context) {
   // can provide an explicit applicationName to the widgets defined in this
   // file, instead of relying on the default.
   final Title? ancestorTitle = context.findAncestorWidgetOfExactType<Title>();
-  return ancestorTitle?.title ?? Platform.resolvedExecutable.split(Platform.pathSeparator).last;
+  return ancestorTitle?.title ?? impl.executableName;
 }
 
 String _defaultApplicationVersion(BuildContext context) {
