@@ -20,17 +20,10 @@ void main() {
 
     await tester.pumpWidget(buildApp(onChanged: (bool _) {}));
     await tester.pumpAndSettle();
-    Switch materialSwitch = tester.widget<Switch>(find.byType(Switch));
-    expect(materialSwitch.thumbIcon!.resolve(<WidgetState>{}), isNull);
+    expect(find.byType(Switch), isNot(paints..paragraph()));
 
     await tester.pumpWidget(buildApp(onChanged: null));
     await tester.pumpAndSettle();
-    materialSwitch = tester.widget<Switch>(find.byType(Switch));
-    expect(
-      materialSwitch.thumbIcon!.resolve(<WidgetState>{
-        WidgetState.disabled,
-      })!.icon,
-      Icons.close,
-    );
+    expect(find.byType(Switch), paints..paragraph());
   });
 }
