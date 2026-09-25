@@ -56,7 +56,12 @@ class ResolvingVisitor extends Visitor<Node, AffineMatrix> {
       final AffineMatrix childTransform = maskNode.concatTransform(data);
       final Node mask = resolvedMask.accept(this, childTransform);
 
-      return ResolvedMaskNode(child: child, mask: mask, blendMode: maskNode.blendMode);
+      return ResolvedMaskNode(
+        child: child,
+        mask: mask,
+        blendMode: maskNode.blendMode,
+        maskType: resolvedMask.attributes.maskType,
+      );
     } finally {
       _activeMasks.remove(maskNode.maskId);
     }
@@ -443,7 +448,12 @@ class ResolvedClipNode extends Node {
 /// This should only be constructed from a [MaskNode] in a [ResolvingVisitor].
 class ResolvedMaskNode extends Node {
   /// Create a new [ResolvedMaskNode].
-  ResolvedMaskNode({required this.child, required this.mask, required this.blendMode});
+  ResolvedMaskNode({
+    required this.child,
+    required this.mask,
+    required this.blendMode,
+    this.maskType,
+  });
 
   /// The child to apply as a mask.
   final Node mask;
@@ -453,6 +463,9 @@ class ResolvedMaskNode extends Node {
 
   /// The blend mode to apply when saving a layer for the mask, if any.
   final BlendMode? blendMode;
+
+  /// The `mask-type` attribute of the mask, if any.
+  final String? maskType;
 
   @override
   S accept<S, V>(Visitor<S, V> visitor, V data) {

@@ -46,4 +46,19 @@ void main() {
     ]);
     expect(verticesNode.vertices.indices, null);
   });
+
+  test('Preserves maskType on ResolvedMaskNode', () {
+    final Node node = parseToNodeTree('''
+<svg viewBox="0 0 100 100">
+  <mask id="m" mask-type="alpha">
+    <rect x="0" y="0" width="50" height="50" fill="black" />
+  </mask>
+  <rect x="0" y="0" width="100" height="100" fill="red" mask="url(#m)" />
+</svg>''');
+    Node resolvedNode = node.accept(ResolvingVisitor(), AffineMatrix.identity);
+    resolvedNode = resolvedNode.accept(Tessellator(), null);
+
+    final ResolvedMaskNode maskNode = queryChildren<ResolvedMaskNode>(resolvedNode).single;
+    expect(maskNode.maskType, 'alpha');
+  });
 }

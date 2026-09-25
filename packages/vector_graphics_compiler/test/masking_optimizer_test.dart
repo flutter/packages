@@ -286,4 +286,77 @@ void main() {
       ),
     ]);
   });
+
+  test('Preserves alpha mask-type across optimizer passes when mask is retained', () {
+    const svg = '''
+<svg viewBox="0 0 100 100">
+  <mask id="mask1" style="mask-type:alpha">
+    <circle cx="25" cy="25" r="25" fill="#3366CC" />
+    <circle cx="75" cy="75" r="25" fill="#3366CC" />
+  </mask>
+  <rect width="100" height="100" fill="blue" mask="url(#mask1)"/>
+</svg>
+''';
+    final VectorInstructions instructions = parse(svg);
+    expect(instructions.paints, contains(const Paint(blendMode: BlendMode.dstIn, fill: Fill())));
+    expect(instructions.commands.where((DrawCommand c) => c.type == DrawCommandType.mask), isEmpty);
+  });
+
+  test('Preserves alpha mask-type on single-path mask when child has stroke', () {
+    const svg = '''
+<svg viewBox="0 0 100 100">
+  <mask id="mask1" mask-type="alpha">
+    <circle cx="50" cy="50" r="25" fill="black" />
+  </mask>
+  <rect width="100" height="100" fill="blue" stroke="red" stroke-width="2" mask="url(#mask1)"/>
+</svg>
+''';
+    final VectorInstructions instructions = parse(svg);
+    expect(instructions.paints, contains(const Paint(blendMode: BlendMode.dstIn, fill: Fill())));
+    expect(instructions.commands.where((DrawCommand c) => c.type == DrawCommandType.mask), isEmpty);
+  });
+
+  test('Does not optimize away single-path alpha mask with gradient or partial opacity', () {
+    const gradientAlphaMaskSvg = '''
+<svg viewBox="0 0 100 100">
+  <defs>
+    <linearGradient id="fade">
+      <stop offset="0" stop-color="black" stop-opacity="1"/>
+      <stop offset="1" stop-color="black" stop-opacity="0"/>
+    </linearGradient>
+    <mask id="fade-mask" mask-type="alpha">
+      <rect width="100" height="100" fill="url(#fade)" />
+    </mask>
+  </defs>
+  <rect width="100" height="100" fill="blue" mask="url(#fade-mask)"/>
+</svg>
+''';
+    final VectorInstructions gradInstructions = parse(gradientAlphaMaskSvg);
+    expect(
+      gradInstructions.paints,
+      contains(const Paint(blendMode: BlendMode.dstIn, fill: Fill())),
+    );
+    expect(
+      gradInstructions.commands.where((DrawCommand c) => c.type == DrawCommandType.saveLayer),
+      hasLength(2),
+    );
+
+    const semiTransparentAlphaMaskSvg = '''
+<svg viewBox="0 0 100 100">
+  <mask id="half-mask" mask-type="alpha">
+    <rect width="100" height="100" fill="black" fill-opacity="0.5" />
+  </mask>
+  <rect width="100" height="100" fill="blue" mask="url(#half-mask)"/>
+</svg>
+''';
+    final VectorInstructions semiInstructions = parse(semiTransparentAlphaMaskSvg);
+    expect(
+      semiInstructions.paints,
+      contains(const Paint(blendMode: BlendMode.dstIn, fill: Fill())),
+    );
+    expect(
+      semiInstructions.commands.where((DrawCommand c) => c.type == DrawCommandType.saveLayer),
+      hasLength(2),
+    );
+  });
 }

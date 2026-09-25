@@ -215,8 +215,14 @@ class MaskingOptimizer extends Visitor<_Result, Node> with ErrorOnUnResolvedNode
   _Result visitResolvedMaskNode(ResolvedMaskNode maskNode, void data) {
     var result = _Result(maskNode);
     final ResolvedPathNode? singleMaskPathNode = getSingleChild(maskNode.mask);
+    final bool canOptimizeSingleMaskPath =
+        singleMaskPathNode != null &&
+        (maskNode.maskType != 'alpha' ||
+            (singleMaskPathNode.paint.fill?.shader == null &&
+                singleMaskPathNode.paint.fill?.color.a == 255 &&
+                singleMaskPathNode.paint.stroke == null));
 
-    if (singleMaskPathNode != null) {
+    if (canOptimizeSingleMaskPath) {
       masksToApply.add(singleMaskPathNode);
       final _Result childResult = maskNode.child.accept(this, maskNode);
       masksToApply.removeLast();
@@ -228,6 +234,7 @@ class MaskingOptimizer extends Visitor<_Result, Node> with ErrorOnUnResolvedNode
           child: childResult.node,
           mask: maskNode.mask,
           blendMode: maskNode.blendMode,
+          maskType: maskNode.maskType,
         );
         result = _Result(newMaskNode);
       }
@@ -237,6 +244,7 @@ class MaskingOptimizer extends Visitor<_Result, Node> with ErrorOnUnResolvedNode
         child: childResult.node,
         mask: maskNode.mask,
         blendMode: maskNode.blendMode,
+        maskType: maskNode.maskType,
       );
       result = _Result(newMaskNode);
     }
