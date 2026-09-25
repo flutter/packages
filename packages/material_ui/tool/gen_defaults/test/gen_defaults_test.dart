@@ -598,6 +598,19 @@ void main() {
       expect(contents, contains('WidgetStateProperty<BorderSide?>? get side'));
     });
 
+    test('IconButtonTemplateM3E emits M3E color opacity with withValues', () {
+      for (final name in <String>[
+        'Icon Button',
+        'Filled Icon Button',
+        'Filled Tonal Icon Button',
+        'Outlined Icon Button',
+      ]) {
+        final String contents = _generateContents(icon_button.IconButtonTemplateM3E(name));
+        expect(contents, contains('.withValues(alpha:'));
+        expect(contents, isNot(contains('.withOpacity(')));
+      }
+    });
+
     test('InputChipTemplateM3 emits M3 InputChip defaults from tokens', () {
       final String contents = _generateContents(const InputChipTemplateM3());
       expect(contents, contains('class _InputChipDefaultsM3 extends ChipThemeData'));

@@ -45,7 +45,7 @@ class _OutlinedIconButtonDefaultsM3E extends ButtonStyle {
       WidgetStateProperty.resolveWith((Set<WidgetState> states) {
         if (states.contains(WidgetState.disabled)) {
           if (toggleable && states.contains(WidgetState.selected)) {
-            return _colors.onSurface.withOpacity(0.1);
+            return _colors.onSurface.withValues(alpha: 0.1);
           }
           return Colors.transparent;
         }
@@ -59,7 +59,7 @@ class _OutlinedIconButtonDefaultsM3E extends ButtonStyle {
   WidgetStateProperty<Color?>? get foregroundColor =>
       WidgetStateProperty.resolveWith((Set<WidgetState> states) {
         if (states.contains(WidgetState.disabled)) {
-          return _colors.onSurface.withOpacity(0.38);
+          return _colors.onSurface.withValues(alpha: 0.38);
         }
         if (toggleable && states.contains(WidgetState.selected)) {
           return _colors.onInverseSurface;
@@ -72,23 +72,23 @@ class _OutlinedIconButtonDefaultsM3E extends ButtonStyle {
       WidgetStateProperty.resolveWith((Set<WidgetState> states) {
         if (toggleable && states.contains(WidgetState.selected)) {
           if (states.contains(WidgetState.pressed)) {
-            return _colors.onInverseSurface.withOpacity(0.1);
+            return _colors.onInverseSurface.withValues(alpha: 0.1);
           }
           if (states.contains(WidgetState.hovered)) {
-            return _colors.onInverseSurface.withOpacity(0.08);
+            return _colors.onInverseSurface.withValues(alpha: 0.08);
           }
           if (states.contains(WidgetState.focused)) {
-            return _colors.onInverseSurface.withOpacity(0.1);
+            return _colors.onInverseSurface.withValues(alpha: 0.1);
           }
         }
         if (states.contains(WidgetState.pressed)) {
-          return _colors.onSurfaceVariant.withOpacity(0.1);
+          return _colors.onSurfaceVariant.withValues(alpha: 0.1);
         }
         if (states.contains(WidgetState.hovered)) {
-          return _colors.onSurfaceVariant.withOpacity(0.08);
+          return _colors.onSurfaceVariant.withValues(alpha: 0.08);
         }
         if (states.contains(WidgetState.focused)) {
-          return _colors.onSurfaceVariant.withOpacity(0.1);
+          return _colors.onSurfaceVariant.withValues(alpha: 0.1);
         }
         return Colors.transparent;
       });

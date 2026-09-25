@@ -4168,7 +4168,10 @@ void main() {
       );
 
       expect(m3eIconButtonMaterial(tester).color, Colors.transparent);
-      expect(m3eIconColor(tester, Icons.add), m3eColorScheme(tester).onSurface.withOpacity(0.38));
+      expect(
+        m3eIconColor(tester, Icons.add),
+        m3eColorScheme(tester).onSurface.withValues(alpha: 0.38),
+      );
     });
 
     testWidgets('onLongPress without onPressed keeps button disabled', (WidgetTester tester) async {
@@ -4204,9 +4207,12 @@ void main() {
 
       expect(
         m3eIconButtonMaterial(tester).color,
-        m3eColorScheme(tester).onSurface.withOpacity(0.1),
+        m3eColorScheme(tester).onSurface.withValues(alpha: 0.1),
       );
-      expect(m3eIconColor(tester, Icons.add), m3eColorScheme(tester).onSurface.withOpacity(0.38));
+      expect(
+        m3eIconColor(tester, Icons.add),
+        m3eColorScheme(tester).onSurface.withValues(alpha: 0.38),
+      );
     });
   });
 

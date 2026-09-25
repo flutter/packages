@@ -2,7 +2,6 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import '../data/color_role.dart';
 import '../data/icon_button_filled.dart';
 import '../data/icon_button_large.dart';
 import '../data/icon_button_medium.dart';
@@ -22,21 +21,6 @@ class IconButtonTemplateM3E extends TokenTemplateM3E {
 
   @override
   String get parentFilePath => 'icon_button.dart';
-
-  String tokenColor(TokenColorRole role) {
-    return switch (role) {
-      TokenColorRole.inverseOnSurface => '_colors.onInverseSurface',
-      _ => color(role),
-    };
-  }
-
-  String componentColor(TokenColorRole role, double opacity) {
-    final String value = tokenColor(role);
-    if (opacity == 1.0) {
-      return value;
-    }
-    return '$value.withOpacity($opacity)';
-  }
 
   @override
   String generateContents(String className) {
@@ -372,12 +356,12 @@ $_variantGetters
   WidgetStateProperty<Color?>? get foregroundColor =>
     WidgetStateProperty.resolveWith((Set<WidgetState> states) {
       if (states.contains(WidgetState.disabled)) {
-        return ${componentColor(TokenIconButtonStandard.disabledIconColor, TokenIconButtonStandard.disabledIconOpacity)};
+        return ${colorWithOpacity(TokenIconButtonStandard.disabledIconColor, TokenIconButtonStandard.disabledIconOpacity)};
       }
       if (toggleable && states.contains(WidgetState.selected)) {
-        return ${tokenColor(TokenIconButtonStandard.selectedIconColor)};
+        return ${color(TokenIconButtonStandard.selectedIconColor)};
       }
-      return ${tokenColor(TokenIconButtonStandard.iconColor)};
+      return ${color(TokenIconButtonStandard.iconColor)};
     });
 
   @override
@@ -385,23 +369,23 @@ $_variantGetters
     WidgetStateProperty.resolveWith((Set<WidgetState> states) {
       if (toggleable && states.contains(WidgetState.selected)) {
         if (states.contains(WidgetState.pressed)) {
-          return ${componentColor(TokenIconButtonStandard.selectedPressedStateLayerColor, TokenIconButtonStandard.pressedStateLayerOpacity)};
+          return ${colorWithOpacity(TokenIconButtonStandard.selectedPressedStateLayerColor, TokenIconButtonStandard.pressedStateLayerOpacity)};
         }
         if (states.contains(WidgetState.hovered)) {
-          return ${componentColor(TokenIconButtonStandard.selectedHoveredStateLayerColor, TokenIconButtonStandard.hoveredStateLayerOpacity)};
+          return ${colorWithOpacity(TokenIconButtonStandard.selectedHoveredStateLayerColor, TokenIconButtonStandard.hoveredStateLayerOpacity)};
         }
         if (states.contains(WidgetState.focused)) {
-          return ${componentColor(TokenIconButtonStandard.selectedFocusedStateLayerColor, TokenIconButtonStandard.focusedStateLayerOpacity)};
+          return ${colorWithOpacity(TokenIconButtonStandard.selectedFocusedStateLayerColor, TokenIconButtonStandard.focusedStateLayerOpacity)};
         }
       }
       if (states.contains(WidgetState.pressed)) {
-        return ${componentColor(TokenIconButtonStandard.pressedStateLayerColor, TokenIconButtonStandard.pressedStateLayerOpacity)};
+        return ${colorWithOpacity(TokenIconButtonStandard.pressedStateLayerColor, TokenIconButtonStandard.pressedStateLayerOpacity)};
       }
       if (states.contains(WidgetState.hovered)) {
-        return ${componentColor(TokenIconButtonStandard.hoveredStateLayerColor, TokenIconButtonStandard.hoveredStateLayerOpacity)};
+        return ${colorWithOpacity(TokenIconButtonStandard.hoveredStateLayerColor, TokenIconButtonStandard.hoveredStateLayerOpacity)};
       }
       if (states.contains(WidgetState.focused)) {
-        return ${componentColor(TokenIconButtonStandard.focusedStateLayerColor, TokenIconButtonStandard.focusedStateLayerOpacity)};
+        return ${colorWithOpacity(TokenIconButtonStandard.focusedStateLayerColor, TokenIconButtonStandard.focusedStateLayerOpacity)};
       }
       return Colors.transparent;
     });
@@ -467,30 +451,30 @@ $_variantGetters
   WidgetStateProperty<Color?>? get backgroundColor =>
     WidgetStateProperty.resolveWith((Set<WidgetState> states) {
       if (states.contains(WidgetState.disabled)) {
-        return ${componentColor(TokenIconButtonFilled.disabledContainerColor, TokenIconButtonFilled.disabledContainerOpacity)};
+        return ${colorWithOpacity(TokenIconButtonFilled.disabledContainerColor, TokenIconButtonFilled.disabledContainerOpacity)};
       }
       if (toggleable && states.contains(WidgetState.selected)) {
-        return ${tokenColor(TokenIconButtonFilled.selectedContainerColor)};
+        return ${color(TokenIconButtonFilled.selectedContainerColor)};
       }
       if (toggleable) {
-        return ${tokenColor(TokenIconButtonFilled.unselectedContainerColor)};
+        return ${color(TokenIconButtonFilled.unselectedContainerColor)};
       }
-      return ${tokenColor(TokenIconButtonFilled.containerColor)};
+      return ${color(TokenIconButtonFilled.containerColor)};
     });
 
   @override
   WidgetStateProperty<Color?>? get foregroundColor =>
     WidgetStateProperty.resolveWith((Set<WidgetState> states) {
       if (states.contains(WidgetState.disabled)) {
-        return ${componentColor(TokenIconButtonFilled.disabledIconColor, TokenIconButtonFilled.disabledIconOpacity)};
+        return ${colorWithOpacity(TokenIconButtonFilled.disabledIconColor, TokenIconButtonFilled.disabledIconOpacity)};
       }
       if (toggleable && states.contains(WidgetState.selected)) {
-        return ${tokenColor(TokenIconButtonFilled.selectedIconColor)};
+        return ${color(TokenIconButtonFilled.selectedIconColor)};
       }
       if (toggleable) {
-        return ${tokenColor(TokenIconButtonFilled.unselectedIconColor)};
+        return ${color(TokenIconButtonFilled.unselectedIconColor)};
       }
-      return ${tokenColor(TokenIconButtonFilled.iconColor)};
+      return ${color(TokenIconButtonFilled.iconColor)};
     });
 
   @override
@@ -498,34 +482,34 @@ $_variantGetters
     WidgetStateProperty.resolveWith((Set<WidgetState> states) {
       if (toggleable && states.contains(WidgetState.selected)) {
         if (states.contains(WidgetState.pressed)) {
-          return ${componentColor(TokenIconButtonFilled.selectedPressedStateLayerColor, TokenIconButtonFilled.pressedStateLayerOpacity)};
+          return ${colorWithOpacity(TokenIconButtonFilled.selectedPressedStateLayerColor, TokenIconButtonFilled.pressedStateLayerOpacity)};
         }
         if (states.contains(WidgetState.hovered)) {
-          return ${componentColor(TokenIconButtonFilled.selectedHoveredStateLayerColor, TokenIconButtonFilled.hoveredStateLayerOpacity)};
+          return ${colorWithOpacity(TokenIconButtonFilled.selectedHoveredStateLayerColor, TokenIconButtonFilled.hoveredStateLayerOpacity)};
         }
         if (states.contains(WidgetState.focused)) {
-          return ${componentColor(TokenIconButtonFilled.selectedFocusedStateLayerColor, TokenIconButtonFilled.focusedStateLayerOpacity)};
+          return ${colorWithOpacity(TokenIconButtonFilled.selectedFocusedStateLayerColor, TokenIconButtonFilled.focusedStateLayerOpacity)};
         }
       }
       if (toggleable) {
         if (states.contains(WidgetState.pressed)) {
-          return ${componentColor(TokenIconButtonFilled.unselectedPressedStateLayerColor, TokenIconButtonFilled.pressedStateLayerOpacity)};
+          return ${colorWithOpacity(TokenIconButtonFilled.unselectedPressedStateLayerColor, TokenIconButtonFilled.pressedStateLayerOpacity)};
         }
         if (states.contains(WidgetState.hovered)) {
-          return ${componentColor(TokenIconButtonFilled.unselectedHoveredStateLayerColor, TokenIconButtonFilled.hoveredStateLayerOpacity)};
+          return ${colorWithOpacity(TokenIconButtonFilled.unselectedHoveredStateLayerColor, TokenIconButtonFilled.hoveredStateLayerOpacity)};
         }
         if (states.contains(WidgetState.focused)) {
-          return ${componentColor(TokenIconButtonFilled.unselectedFocusedStateLayerColor, TokenIconButtonFilled.focusedStateLayerOpacity)};
+          return ${colorWithOpacity(TokenIconButtonFilled.unselectedFocusedStateLayerColor, TokenIconButtonFilled.focusedStateLayerOpacity)};
         }
       }
       if (states.contains(WidgetState.pressed)) {
-        return ${componentColor(TokenIconButtonFilled.pressedStateLayerColor, TokenIconButtonFilled.pressedStateLayerOpacity)};
+        return ${colorWithOpacity(TokenIconButtonFilled.pressedStateLayerColor, TokenIconButtonFilled.pressedStateLayerOpacity)};
       }
       if (states.contains(WidgetState.hovered)) {
-        return ${componentColor(TokenIconButtonFilled.hoveredStateLayerColor, TokenIconButtonFilled.hoveredStateLayerOpacity)};
+        return ${colorWithOpacity(TokenIconButtonFilled.hoveredStateLayerColor, TokenIconButtonFilled.hoveredStateLayerOpacity)};
       }
       if (states.contains(WidgetState.focused)) {
-        return ${componentColor(TokenIconButtonFilled.focusedStateLayerColor, TokenIconButtonFilled.focusedStateLayerOpacity)};
+        return ${colorWithOpacity(TokenIconButtonFilled.focusedStateLayerColor, TokenIconButtonFilled.focusedStateLayerOpacity)};
       }
       return Colors.transparent;
     });
@@ -591,30 +575,30 @@ $_variantGetters
   WidgetStateProperty<Color?>? get backgroundColor =>
     WidgetStateProperty.resolveWith((Set<WidgetState> states) {
       if (states.contains(WidgetState.disabled)) {
-        return ${componentColor(TokenIconButtonTonal.disabledContainerColor, TokenIconButtonTonal.disabledContainerOpacity)};
+        return ${colorWithOpacity(TokenIconButtonTonal.disabledContainerColor, TokenIconButtonTonal.disabledContainerOpacity)};
       }
       if (toggleable && states.contains(WidgetState.selected)) {
-        return ${tokenColor(TokenIconButtonTonal.selectedContainerColor)};
+        return ${color(TokenIconButtonTonal.selectedContainerColor)};
       }
       if (toggleable) {
-        return ${tokenColor(TokenIconButtonTonal.unselectedContainerColor)};
+        return ${color(TokenIconButtonTonal.unselectedContainerColor)};
       }
-      return ${tokenColor(TokenIconButtonTonal.containerColor)};
+      return ${color(TokenIconButtonTonal.containerColor)};
     });
 
   @override
   WidgetStateProperty<Color?>? get foregroundColor =>
     WidgetStateProperty.resolveWith((Set<WidgetState> states) {
       if (states.contains(WidgetState.disabled)) {
-        return ${componentColor(TokenIconButtonTonal.disabledIconColor, TokenIconButtonTonal.disabledIconOpacity)};
+        return ${colorWithOpacity(TokenIconButtonTonal.disabledIconColor, TokenIconButtonTonal.disabledIconOpacity)};
       }
       if (toggleable && states.contains(WidgetState.selected)) {
-        return ${tokenColor(TokenIconButtonTonal.selectedIconColor)};
+        return ${color(TokenIconButtonTonal.selectedIconColor)};
       }
       if (toggleable) {
-        return ${tokenColor(TokenIconButtonTonal.unselectedIconColor)};
+        return ${color(TokenIconButtonTonal.unselectedIconColor)};
       }
-      return ${tokenColor(TokenIconButtonTonal.iconColor)};
+      return ${color(TokenIconButtonTonal.iconColor)};
     });
 
   @override
@@ -622,34 +606,34 @@ $_variantGetters
     WidgetStateProperty.resolveWith((Set<WidgetState> states) {
       if (toggleable && states.contains(WidgetState.selected)) {
         if (states.contains(WidgetState.pressed)) {
-          return ${componentColor(TokenIconButtonTonal.selectedPressedStateLayerColor, TokenIconButtonTonal.pressedStateLayerOpacity)};
+          return ${colorWithOpacity(TokenIconButtonTonal.selectedPressedStateLayerColor, TokenIconButtonTonal.pressedStateLayerOpacity)};
         }
         if (states.contains(WidgetState.hovered)) {
-          return ${componentColor(TokenIconButtonTonal.selectedHoveredStateLayerColor, TokenIconButtonTonal.hoveredStateLayerOpacity)};
+          return ${colorWithOpacity(TokenIconButtonTonal.selectedHoveredStateLayerColor, TokenIconButtonTonal.hoveredStateLayerOpacity)};
         }
         if (states.contains(WidgetState.focused)) {
-          return ${componentColor(TokenIconButtonTonal.selectedFocusedStateLayerColor, TokenIconButtonTonal.focusedStateLayerOpacity)};
+          return ${colorWithOpacity(TokenIconButtonTonal.selectedFocusedStateLayerColor, TokenIconButtonTonal.focusedStateLayerOpacity)};
         }
       }
       if (toggleable) {
         if (states.contains(WidgetState.pressed)) {
-          return ${componentColor(TokenIconButtonTonal.unselectedPressedStateLayerColor, TokenIconButtonTonal.pressedStateLayerOpacity)};
+          return ${colorWithOpacity(TokenIconButtonTonal.unselectedPressedStateLayerColor, TokenIconButtonTonal.pressedStateLayerOpacity)};
         }
         if (states.contains(WidgetState.hovered)) {
-          return ${componentColor(TokenIconButtonTonal.unselectedHoveredStateLayerColor, TokenIconButtonTonal.hoveredStateLayerOpacity)};
+          return ${colorWithOpacity(TokenIconButtonTonal.unselectedHoveredStateLayerColor, TokenIconButtonTonal.hoveredStateLayerOpacity)};
         }
         if (states.contains(WidgetState.focused)) {
-          return ${componentColor(TokenIconButtonTonal.unselectedFocusedStateLayerColor, TokenIconButtonTonal.focusedStateLayerOpacity)};
+          return ${colorWithOpacity(TokenIconButtonTonal.unselectedFocusedStateLayerColor, TokenIconButtonTonal.focusedStateLayerOpacity)};
         }
       }
       if (states.contains(WidgetState.pressed)) {
-        return ${componentColor(TokenIconButtonTonal.pressedStateLayerColor, TokenIconButtonTonal.pressedStateLayerOpacity)};
+        return ${colorWithOpacity(TokenIconButtonTonal.pressedStateLayerColor, TokenIconButtonTonal.pressedStateLayerOpacity)};
       }
       if (states.contains(WidgetState.hovered)) {
-        return ${componentColor(TokenIconButtonTonal.hoveredStateLayerColor, TokenIconButtonTonal.hoveredStateLayerOpacity)};
+        return ${colorWithOpacity(TokenIconButtonTonal.hoveredStateLayerColor, TokenIconButtonTonal.hoveredStateLayerOpacity)};
       }
       if (states.contains(WidgetState.focused)) {
-        return ${componentColor(TokenIconButtonTonal.focusedStateLayerColor, TokenIconButtonTonal.focusedStateLayerOpacity)};
+        return ${colorWithOpacity(TokenIconButtonTonal.focusedStateLayerColor, TokenIconButtonTonal.focusedStateLayerOpacity)};
       }
       return Colors.transparent;
     });
@@ -716,12 +700,12 @@ $_variantGetters
     WidgetStateProperty.resolveWith((Set<WidgetState> states) {
       if (states.contains(WidgetState.disabled)) {
         if (toggleable && states.contains(WidgetState.selected)) {
-          return ${componentColor(TokenIconButtonOutlined.selectedDisabledContainerColor, TokenIconButtonOutlined.selectedDisabledContainerOpacity)};
+          return ${colorWithOpacity(TokenIconButtonOutlined.selectedDisabledContainerColor, TokenIconButtonOutlined.selectedDisabledContainerOpacity)};
         }
         return Colors.transparent;
       }
       if (toggleable && states.contains(WidgetState.selected)) {
-        return ${tokenColor(TokenIconButtonOutlined.selectedContainerColor)};
+        return ${color(TokenIconButtonOutlined.selectedContainerColor)};
       }
       return Colors.transparent;
     });
@@ -730,12 +714,12 @@ $_variantGetters
   WidgetStateProperty<Color?>? get foregroundColor =>
     WidgetStateProperty.resolveWith((Set<WidgetState> states) {
       if (states.contains(WidgetState.disabled)) {
-        return ${componentColor(TokenIconButtonOutlined.disabledIconColor, TokenIconButtonOutlined.disabledIconOpacity)};
+        return ${colorWithOpacity(TokenIconButtonOutlined.disabledIconColor, TokenIconButtonOutlined.disabledIconOpacity)};
       }
       if (toggleable && states.contains(WidgetState.selected)) {
-        return ${tokenColor(TokenIconButtonOutlined.selectedIconColor)};
+        return ${color(TokenIconButtonOutlined.selectedIconColor)};
       }
-      return ${tokenColor(TokenIconButtonOutlined.iconColor)};
+      return ${color(TokenIconButtonOutlined.iconColor)};
     });
 
   @override
@@ -743,23 +727,23 @@ $_variantGetters
     WidgetStateProperty.resolveWith((Set<WidgetState> states) {
       if (toggleable && states.contains(WidgetState.selected)) {
         if (states.contains(WidgetState.pressed)) {
-          return ${componentColor(TokenIconButtonOutlined.selectedPressedStateLayerColor, TokenIconButtonOutlined.pressedStateLayerOpacity)};
+          return ${colorWithOpacity(TokenIconButtonOutlined.selectedPressedStateLayerColor, TokenIconButtonOutlined.pressedStateLayerOpacity)};
         }
         if (states.contains(WidgetState.hovered)) {
-          return ${componentColor(TokenIconButtonOutlined.selectedHoveredStateLayerColor, TokenIconButtonOutlined.hoveredStateLayerOpacity)};
+          return ${colorWithOpacity(TokenIconButtonOutlined.selectedHoveredStateLayerColor, TokenIconButtonOutlined.hoveredStateLayerOpacity)};
         }
         if (states.contains(WidgetState.focused)) {
-          return ${componentColor(TokenIconButtonOutlined.selectedFocusedStateLayerColor, TokenIconButtonOutlined.focusedStateLayerOpacity)};
+          return ${colorWithOpacity(TokenIconButtonOutlined.selectedFocusedStateLayerColor, TokenIconButtonOutlined.focusedStateLayerOpacity)};
         }
       }
       if (states.contains(WidgetState.pressed)) {
-        return ${componentColor(TokenIconButtonOutlined.pressedStateLayerColor, TokenIconButtonOutlined.pressedStateLayerOpacity)};
+        return ${colorWithOpacity(TokenIconButtonOutlined.pressedStateLayerColor, TokenIconButtonOutlined.pressedStateLayerOpacity)};
       }
       if (states.contains(WidgetState.hovered)) {
-        return ${componentColor(TokenIconButtonOutlined.hoveredStateLayerColor, TokenIconButtonOutlined.hoveredStateLayerOpacity)};
+        return ${colorWithOpacity(TokenIconButtonOutlined.hoveredStateLayerColor, TokenIconButtonOutlined.hoveredStateLayerOpacity)};
       }
       if (states.contains(WidgetState.focused)) {
-        return ${componentColor(TokenIconButtonOutlined.focusedStateLayerColor, TokenIconButtonOutlined.focusedStateLayerOpacity)};
+        return ${colorWithOpacity(TokenIconButtonOutlined.focusedStateLayerColor, TokenIconButtonOutlined.focusedStateLayerOpacity)};
       }
       return Colors.transparent;
     });
@@ -785,9 +769,9 @@ $_sizeDependentProperties
         return null;
       }
       if (states.contains(WidgetState.disabled)) {
-        return BorderSide(color: ${tokenColor(TokenIconButtonOutlined.unselectedDisabledOutlineColor)}, width: $_outlineWidthSwitch);
+        return BorderSide(color: ${color(TokenIconButtonOutlined.unselectedDisabledOutlineColor)}, width: $_outlineWidthSwitch);
       }
-      return BorderSide(color: ${tokenColor(TokenIconButtonOutlined.outlineColor)}, width: $_outlineWidthSwitch);
+      return BorderSide(color: ${color(TokenIconButtonOutlined.outlineColor)}, width: $_outlineWidthSwitch);
     });
 
   @override
