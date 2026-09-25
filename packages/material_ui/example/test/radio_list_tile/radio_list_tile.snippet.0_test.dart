@@ -16,11 +16,11 @@ void main() {
     );
 
     expect(find.text('AM'), findsOneWidget);
-    final RadioListTile<example.Meridiem> tile = tester
-        .widget<RadioListTile<example.Meridiem>>(
-          find.byType(RadioListTile<example.Meridiem>),
-        );
-    expect(tile.tileColor, Colors.red);
-    expect(tile.value, example.Meridiem.am);
+    expect(
+      find.byType(example.RadioListTileExample),
+      paints
+        ..rect(color: Colors.green.shade500)
+        ..rect(color: Colors.red.shade500),
+    );
   });
 }

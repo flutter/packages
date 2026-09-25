@@ -18,10 +18,11 @@ void main() {
     );
 
     expect(find.text('CheckboxListTile with red background'), findsOneWidget);
-    final CheckboxListTile tile = tester.widget<CheckboxListTile>(
-      find.byType(CheckboxListTile),
+    expect(
+      find.byType(example.CheckboxListTileExample),
+      paints
+        ..rect(color: Colors.green.shade500)
+        ..rect(color: Colors.red.shade500),
     );
-    expect(tile.tileColor, Colors.red);
-    expect(tile.value, isTrue);
   });
 }
