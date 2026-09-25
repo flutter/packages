@@ -2,6 +2,11 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+// Do not edit by hand. The code is generated from data in the Material
+// Design token database by the script:
+//   packages/material_ui/tool/gen_defaults/bin/gen_defaults.dart.
+part of '../date_picker_theme.dart';
+
 class _DatePickerDefaultsM3 extends DatePickerThemeData {
   _DatePickerDefaultsM3(this.context)
     : super(
@@ -24,7 +29,7 @@ class _DatePickerDefaultsM3 extends DatePickerThemeData {
   Color? get backgroundColor => _colors.surfaceContainerHigh;
 
   @override
-  Color? get subHeaderForegroundColor => _colors.onSurface.withOpacity(0.60);
+  Color? get subHeaderForegroundColor => _colors.onSurface.withOpacity(0.6);
 
   @override
   TextStyle? get toggleButtonTextStyle =>

@@ -20,7 +20,7 @@ import '../templates/card_template.dart';
 import '../templates/checkbox_template.dart';
 import '../templates/chip_template.dart';
 import '../templates/color_scheme_template.dart';
-// import '../templates/date_picker_template.dart';
+import '../templates/date_picker_template.dart';
 // import '../templates/dialog_template.dart';
 import '../templates/divider_template.dart';
 import '../templates/drawer_template.dart';
@@ -542,8 +542,20 @@ void main() {
     });
 
     test('DatePickerTemplateM3 emits M3 DatePicker defaults from tokens', () {
-      // Intentionally empty, will be implemented during migration. See:
-      // https://github.com/flutter/flutter/issues/187899
+      final String contents = _generateContents(const DatePickerTemplateM3());
+      expect(contents, contains('class _DatePickerDefaultsM3 extends DatePickerThemeData'));
+      expect(
+        contents,
+        contains(
+          'shape: const RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(28.0)))',
+        ),
+      );
+      expect(
+        contents,
+        contains('Color? get subHeaderForegroundColor => _colors.onSurface.withOpacity(0.6);'),
+      );
+      expect(contents, contains('_colors.onSurface.withOpacity(0.38)'));
+      expect(contents, contains('_colors.onPrimaryContainer.withOpacity(0.1)'));
     });
 
     test('DialogTemplateM3 emits M3 Dialog defaults from tokens', () {
