@@ -104,10 +104,10 @@ class UrlLauncherTest {
 
     val intentCaptor = argumentCaptor<Intent>()
     verify(activity).startActivity(intentCaptor.capture())
-    Assert.assertEquals(url, intentCaptor.firstValue.getData().toString())
+    Assert.assertEquals(url, intentCaptor.firstValue.data.toString())
     Assert.assertEquals(
         0,
-        (intentCaptor.firstValue.getFlags() and Intent.FLAG_ACTIVITY_REQUIRE_NON_BROWSER).toLong())
+        (intentCaptor.firstValue.flags and Intent.FLAG_ACTIVITY_REQUIRE_NON_BROWSER).toLong())
   }
 
   @Config(minSdk = 30)
@@ -124,7 +124,7 @@ class UrlLauncherTest {
     verify(activity).startActivity(intentCaptor.capture())
     Assert.assertEquals(
         Intent.FLAG_ACTIVITY_REQUIRE_NON_BROWSER.toLong(),
-        (intentCaptor.firstValue.getFlags() and Intent.FLAG_ACTIVITY_REQUIRE_NON_BROWSER).toLong())
+        (intentCaptor.firstValue.flags and Intent.FLAG_ACTIVITY_REQUIRE_NON_BROWSER).toLong())
   }
 
   @Test
@@ -172,13 +172,13 @@ class UrlLauncherTest {
     verify(activity).startActivity(intentCaptor.capture())
     Assert.assertTrue(result)
     Assert.assertEquals(
-        url, intentCaptor.firstValue.getExtras()!!.getString(WebViewActivity.URL_EXTRA))
+        url, intentCaptor.firstValue.extras!!.getString(WebViewActivity.URL_EXTRA))
     Assert.assertEquals(
         enableJavaScript,
-        intentCaptor.firstValue.getExtras()!!.getBoolean(WebViewActivity.ENABLE_JS_EXTRA))
+        intentCaptor.firstValue.extras!!.getBoolean(WebViewActivity.ENABLE_JS_EXTRA))
     Assert.assertEquals(
         enableDomStorage,
-        intentCaptor.firstValue.getExtras()!!.getBoolean(WebViewActivity.ENABLE_DOM_EXTRA))
+        intentCaptor.firstValue.extras!!.getBoolean(WebViewActivity.ENABLE_DOM_EXTRA))
   }
 
   @Test
@@ -195,7 +195,7 @@ class UrlLauncherTest {
     verify(activity).startActivity(intentCaptor.capture())
     Assert.assertTrue(result)
     Assert.assertEquals(
-        url, intentCaptor.firstValue.getExtras()!!.getString(WebViewActivity.URL_EXTRA))
+        url, intentCaptor.firstValue.extras!!.getString(WebViewActivity.URL_EXTRA))
   }
 
   @Test
@@ -211,8 +211,8 @@ class UrlLauncherTest {
     val intentCaptor = argumentCaptor<Intent>()
     verify(activity).startActivity(intentCaptor.capture(), any())
     Assert.assertTrue(result)
-    Assert.assertEquals(Intent.ACTION_VIEW, intentCaptor.firstValue.getAction())
-    Assert.assertNull(intentCaptor.firstValue.getComponent())
+    Assert.assertEquals(Intent.ACTION_VIEW, intentCaptor.firstValue.action)
+    Assert.assertNull(intentCaptor.firstValue.component)
   }
 
   @Test
@@ -230,10 +230,10 @@ class UrlLauncherTest {
     val intentCaptor = argumentCaptor<Intent>()
     verify(activity).startActivity(intentCaptor.capture(), any())
     Assert.assertTrue(result)
-    Assert.assertEquals(Intent.ACTION_VIEW, intentCaptor.firstValue.getAction())
-    Assert.assertNull(intentCaptor.firstValue.getComponent())
-    val passedHeaders = intentCaptor.firstValue.getExtras()!!.getBundle(Browser.EXTRA_HEADERS)
-    Assert.assertEquals(headers.get(headerKey), passedHeaders!!.getString(headerKey))
+    Assert.assertEquals(Intent.ACTION_VIEW, intentCaptor.firstValue.action)
+    Assert.assertNull(intentCaptor.firstValue.component)
+    val passedHeaders = intentCaptor.firstValue.extras!!.getBundle(Browser.EXTRA_HEADERS)
+    Assert.assertEquals(headers[headerKey], passedHeaders!!.getString(headerKey))
   }
 
   @Test
@@ -250,12 +250,12 @@ class UrlLauncherTest {
     val intentCaptor = argumentCaptor<Intent>()
     verify(activity).startActivity(intentCaptor.capture(), any())
     Assert.assertTrue(result)
-    Assert.assertEquals(Intent.ACTION_VIEW, intentCaptor.firstValue.getAction())
-    Assert.assertNull(intentCaptor.firstValue.getComponent())
+    Assert.assertEquals(Intent.ACTION_VIEW, intentCaptor.firstValue.action)
+    Assert.assertNull(intentCaptor.firstValue.component)
     Assert.assertEquals(
         CustomTabsIntent.SHOW_PAGE_TITLE.toLong(),
         intentCaptor.firstValue
-            .getExtras()!!
+            .extras!!
             .getInt(CustomTabsIntent.EXTRA_TITLE_VISIBILITY_STATE)
             .toLong())
   }
@@ -274,12 +274,12 @@ class UrlLauncherTest {
     val intentCaptor = argumentCaptor<Intent>()
     verify(activity).startActivity(intentCaptor.capture(), any())
     Assert.assertTrue(result)
-    Assert.assertEquals(Intent.ACTION_VIEW, intentCaptor.firstValue.getAction())
-    Assert.assertNull(intentCaptor.firstValue.getComponent())
+    Assert.assertEquals(Intent.ACTION_VIEW, intentCaptor.firstValue.action)
+    Assert.assertNull(intentCaptor.firstValue.component)
     Assert.assertEquals(
         CustomTabsIntent.NO_TITLE.toLong(),
         intentCaptor.firstValue
-            .getExtras()!!
+            .extras!!
             .getInt(CustomTabsIntent.EXTRA_TITLE_VISIBILITY_STATE)
             .toLong())
   }
@@ -301,11 +301,11 @@ class UrlLauncherTest {
     verify(activity).startActivity(intentCaptor.capture())
     Assert.assertTrue(result)
     Assert.assertEquals(
-        url, intentCaptor.firstValue.getExtras()!!.getString(WebViewActivity.URL_EXTRA))
+        url, intentCaptor.firstValue.extras!!.getString(WebViewActivity.URL_EXTRA))
     Assert.assertFalse(
-        intentCaptor.firstValue.getExtras()!!.getBoolean(WebViewActivity.ENABLE_JS_EXTRA))
+        intentCaptor.firstValue.extras!!.getBoolean(WebViewActivity.ENABLE_JS_EXTRA))
     Assert.assertFalse(
-        intentCaptor.firstValue.getExtras()!!.getBoolean(WebViewActivity.ENABLE_DOM_EXTRA))
+        intentCaptor.firstValue.extras!!.getBoolean(WebViewActivity.ENABLE_DOM_EXTRA))
   }
 
   @Test
@@ -326,7 +326,7 @@ class UrlLauncherTest {
     verify(activity).startActivity(intentCaptor.capture())
     Assert.assertEquals(
         enableJavaScript,
-        intentCaptor.firstValue.getExtras()!!.getBoolean(WebViewActivity.ENABLE_JS_EXTRA))
+        intentCaptor.firstValue.extras!!.getBoolean(WebViewActivity.ENABLE_JS_EXTRA))
   }
 
   @Test
@@ -343,10 +343,10 @@ class UrlLauncherTest {
 
     val intentCaptor = argumentCaptor<Intent>()
     verify(activity).startActivity(intentCaptor.capture())
-    val passedHeaders = intentCaptor.firstValue.getExtras()!!.getBundle(Browser.EXTRA_HEADERS)
+    val passedHeaders = intentCaptor.firstValue.extras!!.getBundle(Browser.EXTRA_HEADERS)
     Assert.assertEquals(headers.size.toLong(), passedHeaders!!.size().toLong())
-    Assert.assertEquals(headers.get(key1), passedHeaders.getString(key1))
-    Assert.assertEquals(headers.get(key2), passedHeaders.getString(key2))
+    Assert.assertEquals(headers[key1], passedHeaders.getString(key1))
+    Assert.assertEquals(headers[key2], passedHeaders.getString(key2))
   }
 
   @Test
@@ -367,7 +367,7 @@ class UrlLauncherTest {
     verify(activity).startActivity(intentCaptor.capture())
     Assert.assertEquals(
         enableDomStorage,
-        intentCaptor.firstValue.getExtras()!!.getBoolean(WebViewActivity.ENABLE_DOM_EXTRA))
+        intentCaptor.firstValue.extras!!.getBoolean(WebViewActivity.ENABLE_DOM_EXTRA))
   }
 
   @Test
@@ -391,7 +391,7 @@ class UrlLauncherTest {
     Assert.assertEquals(
         CustomTabsIntent.SHOW_PAGE_TITLE.toLong(),
         intentCaptor.firstValue
-            .getExtras()!!
+            .extras!!
             .getInt(CustomTabsIntent.EXTRA_TITLE_VISIBILITY_STATE)
             .toLong())
   }
@@ -445,6 +445,6 @@ class UrlLauncherTest {
 
     val intentCaptor = argumentCaptor<Intent>()
     verify(context).sendBroadcast(intentCaptor.capture())
-    Assert.assertEquals(WebViewActivity.ACTION_CLOSE, intentCaptor.firstValue.getAction())
+    Assert.assertEquals(WebViewActivity.ACTION_CLOSE, intentCaptor.firstValue.action)
   }
 }
