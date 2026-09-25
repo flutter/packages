@@ -14,7 +14,6 @@ import androidx.test.core.app.ApplicationProvider
 import io.flutter.plugins.urllauncher.UrlLauncher.IntentResolver
 import org.junit.Assert
 import org.junit.Test
-import org.junit.function.ThrowingRunnable
 import org.junit.runner.RunWith
 import org.mockito.kotlin.any
 import org.mockito.kotlin.argumentCaptor
@@ -43,10 +42,7 @@ class UrlLauncherTest {
 
   @Test
   fun canLaunch_returnsTrue() {
-    val api =
-        UrlLauncher(
-            ApplicationProvider.getApplicationContext(),
-            IntentResolver { intent: Intent? -> "some.component" })
+    val api = UrlLauncher(ApplicationProvider.getApplicationContext()) { "some.component" }
 
     val result = api.canLaunchUrl("https://flutter.dev")
 
@@ -55,9 +51,7 @@ class UrlLauncherTest {
 
   @Test
   fun canLaunch_returnsFalse() {
-    val api =
-        UrlLauncher(
-            ApplicationProvider.getApplicationContext(), IntentResolver { intent: Intent? -> null })
+    val api = UrlLauncher(ApplicationProvider.getApplicationContext()) { null }
 
     val result = api.canLaunchUrl("https://flutter.dev")
 
@@ -69,11 +63,9 @@ class UrlLauncherTest {
   @Test
   fun canLaunch_returnsFalseForEmulatorFallbackComponent() {
     val api =
-        UrlLauncher(
-            ApplicationProvider.getApplicationContext(),
-            IntentResolver { intent: Intent? ->
-              "{com.android.fallback/com.android.fallback.Fallback}"
-            })
+        UrlLauncher(ApplicationProvider.getApplicationContext()) {
+          "{com.android.fallback/com.android.fallback.Fallback}"
+        }
 
     val result = api.canLaunchUrl("https://flutter.dev")
 
@@ -86,9 +78,9 @@ class UrlLauncherTest {
     api.setActivity(null)
 
     val exception =
-        Assert.assertThrows(
-            FlutterError::class.java,
-            ThrowingRunnable { api.launchUrl("https://flutter.dev", mapOf(), false) })
+        Assert.assertThrows(FlutterError::class.java) {
+          api.launchUrl("https://flutter.dev", mapOf(), false)
+        }
     Assert.assertEquals("NO_ACTIVITY", exception.code)
   }
 
@@ -421,16 +413,13 @@ class UrlLauncherTest {
     api.setActivity(null)
 
     val exception =
-        Assert.assertThrows(
-            FlutterError::class.java,
-            ThrowingRunnable {
-              api.openUrlInApp(
-                  "https://flutter.dev",
-                  true,
-                  WebViewOptions(
-                      enableJavaScript = false, enableDomStorage = false, headers = mapOf()),
-                  BrowserOptions(false))
-            })
+        Assert.assertThrows(FlutterError::class.java) {
+          api.openUrlInApp(
+              "https://flutter.dev",
+              true,
+              WebViewOptions(enableJavaScript = false, enableDomStorage = false, headers = mapOf()),
+              BrowserOptions(false))
+        }
     Assert.assertEquals("NO_ACTIVITY", exception.code)
   }
 
