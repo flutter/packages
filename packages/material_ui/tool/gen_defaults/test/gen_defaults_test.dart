@@ -24,7 +24,7 @@ import '../templates/color_scheme_template.dart';
 // import '../templates/dialog_template.dart';
 import '../templates/divider_template.dart';
 import '../templates/drawer_template.dart';
-// import '../templates/expansion_tile_template.dart';
+import '../templates/expansion_tile_template.dart';
 // import '../templates/fab_template.dart';
 import '../templates/filter_chip_template.dart';
 // import '../templates/icon_button_template.dart';
@@ -573,8 +573,11 @@ void main() {
     });
 
     test('ExpansionTileTemplateM3 emits M3 ExpansionTile defaults from tokens', () {
-      // Intentionally empty, will be implemented during migration. See:
-      // https://github.com/flutter/flutter/issues/187899
+      final String contents = _generateContents(const ExpansionTileTemplateM3());
+      expect(contents, contains('class _ExpansionTileDefaultsM3 extends ExpansionTileThemeData'));
+      expect(contents, contains('Color? get textColor => _colors.onSurface'));
+      expect(contents, contains('Color? get iconColor => _colors.primary'));
+      expect(contents, contains('Color? get collapsedIconColor => _colors.onSurfaceVariant'));
     });
 
     test('FabTemplateM3 emits M3 Fab defaults from tokens', () {
