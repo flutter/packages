@@ -12,10 +12,7 @@ void main() {
     (WidgetTester tester) async {
       await tester.pumpWidget(const example.MaterialAppExample());
 
-      final MaterialApp app = tester.widget<MaterialApp>(
-        find.byType(MaterialApp),
-      );
-      expect(app.debugShowCheckedModeBanner, isFalse);
+      expect(find.byType(CheckedModeBanner), findsNothing);
       expect(find.widgetWithText(AppBar, 'Home'), findsOneWidget);
     },
   );

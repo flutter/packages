@@ -8,17 +8,31 @@ import 'package:material_ui/material_ui.dart';
 import 'package:material_ui_examples/app/app.snippet.3.dart' as example;
 
 void main() {
-  testWidgets('WidgetsApp includes select key shortcut in shortcuts map', (
+  testWidgets('WidgetsApp shortcuts maps select key to ActivateIntent', (
     WidgetTester tester,
   ) async {
-    await tester.pumpWidget(const example.MaterialAppExample());
-
-    expect(find.byType(Placeholder), findsOneWidget);
-
-    final WidgetsApp app = tester.widget<WidgetsApp>(find.byType(WidgetsApp));
-    expect(
-      app.shortcuts?[const SingleActivator(LogicalKeyboardKey.select)],
-      isA<ActivateIntent>(),
+    bool invoked = false;
+    await tester.pumpWidget(
+      Actions(
+        actions: <Type, Action<Intent>>{
+          ActivateIntent: CallbackAction<ActivateIntent>(
+            onInvoke: (ActivateIntent intent) {
+              invoked = true;
+              return null;
+            },
+          ),
+        },
+        child: const example.MaterialAppExample(),
+      ),
     );
+
+    final Element placeholderElement = tester.element(find.byType(Placeholder));
+    final FocusNode focusNode = Focus.of(placeholderElement);
+    focusNode.canRequestFocus = true;
+    focusNode.requestFocus();
+    await tester.pump();
+
+    await tester.sendKeyEvent(LogicalKeyboardKey.select);
+    expect(invoked, isTrue);
   });
 }
