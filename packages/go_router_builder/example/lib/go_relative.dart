@@ -4,7 +4,7 @@
 
 // ignore_for_file: public_member_api_docs, unreachable_from_main
 
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:go_router/go_router.dart';
 
 part 'go_relative.g.dart';
@@ -152,9 +152,9 @@ class DetailsScreen extends StatelessWidget {
               child: const Text('Go back'),
             ),
             ElevatedButton(
-              onPressed: () => const SettingsRoute(
-                settingId: 'SettingsId',
-              ).goRelative(context),
+              onPressed: () =>
+                  const SettingsRoute(settingId: 'SettingsId')
+                      .goRelative(context),
               child: const Text('Go to the Settings screen'),
             ),
           ],
