@@ -7,7 +7,9 @@ import 'package:material_ui/material_ui.dart';
 /// Flutter code sample for [MaterialApp.actions].
 
 class MaterialAppExample extends StatelessWidget {
-  const MaterialAppExample({super.key});
+  const MaterialAppExample({super.key, this.onActivated});
+
+  final VoidCallback? onActivated;
 
   // #region body
   @override
@@ -15,9 +17,10 @@ class MaterialAppExample extends StatelessWidget {
     return WidgetsApp(
       actions: <Type, Action<Intent>>{
         ...WidgetsApp.defaultActions,
-        ActivateAction: CallbackAction<Intent>(
+        ActivateIntent: CallbackAction<Intent>(
           onInvoke: (Intent intent) {
             // Do something here...
+            onActivated?.call();
             return null;
           },
         ),
