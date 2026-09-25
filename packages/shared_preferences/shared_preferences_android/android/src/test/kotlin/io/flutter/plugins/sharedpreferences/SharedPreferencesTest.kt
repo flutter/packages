@@ -331,7 +331,7 @@ internal class SharedPreferencesTest {
     plugin.setBool(boolKey, testBool, sharedPreferencesOptions)
     plugin.setString(stringKey, testString, sharedPreferencesOptions)
     plugin.setInt(intKey, testInt, sharedPreferencesOptions)
-    plugin.setDouble(doubleKey, testDouble, dataStoreOptions)
+    plugin.setDouble(doubleKey, testDouble, sharedPreferencesOptions)
     plugin.setEncodedStringList(listKey, testList, sharedPreferencesOptions)
 
     val all = plugin.getAll(listOf(boolKey, stringKey), sharedPreferencesOptions)

@@ -44,6 +44,7 @@ const val DOUBLE_PREFIX = "VGhpcyBpcyB0aGUgcHJlZml4IGZvciBEb3VibGUu"
 class SharedPreferencesPlugin() : FlutterPlugin, SharedPreferencesAsyncApi {
   private lateinit var context: Context
   private var backend: SharedPreferencesBackend? = null
+  private var legacyPlugin: LegacySharedPreferencesPlugin? = null
   private val backgroundDispatcher = Dispatchers.IO.limitedParallelism(1)
 
   private var listEncoder = ListEncoder() as SharedPreferencesListEncoder
@@ -65,13 +66,15 @@ class SharedPreferencesPlugin() : FlutterPlugin, SharedPreferencesAsyncApi {
 
   override fun onAttachedToEngine(binding: FlutterPlugin.FlutterPluginBinding) {
     setUp(binding.applicationContext)
-    LegacySharedPreferencesPlugin().onAttachedToEngine(binding)
+    legacyPlugin = LegacySharedPreferencesPlugin().also { it.onAttachedToEngine(binding) }
   }
 
   override fun onDetachedFromEngine(binding: FlutterPlugin.FlutterPluginBinding) {
     SharedPreferencesAsyncApiRegistrar().register(null, "data_store")
     backend?.tearDown()
     backend = null
+    legacyPlugin?.onDetachedFromEngine(binding)
+    legacyPlugin = null
   }
 
   /** Adds property to data store of type bool. */
