@@ -30,7 +30,7 @@ class UrlLauncherTest {
   @Test
   fun canLaunch_createsIntentWithPassedUrl() {
     val resolver = mock<IntentResolver>()
-    val api = UrlLauncher(ApplicationProvider.getApplicationContext<Context?>(), resolver)
+    val api = UrlLauncher(ApplicationProvider.getApplicationContext(), resolver)
     val url = Uri.parse("https://flutter.dev")
     whenever(resolver.getHandlerComponentName(any())).thenReturn(null)
 
@@ -45,7 +45,7 @@ class UrlLauncherTest {
   fun canLaunch_returnsTrue() {
     val api =
         UrlLauncher(
-            ApplicationProvider.getApplicationContext<Context?>(),
+            ApplicationProvider.getApplicationContext(),
             IntentResolver { intent: Intent? -> "some.component" })
 
     val result = api.canLaunchUrl("https://flutter.dev")
@@ -57,8 +57,7 @@ class UrlLauncherTest {
   fun canLaunch_returnsFalse() {
     val api =
         UrlLauncher(
-            ApplicationProvider.getApplicationContext<Context?>(),
-            IntentResolver { intent: Intent? -> null })
+            ApplicationProvider.getApplicationContext(), IntentResolver { intent: Intent? -> null })
 
     val result = api.canLaunchUrl("https://flutter.dev")
 
@@ -71,7 +70,7 @@ class UrlLauncherTest {
   fun canLaunch_returnsFalseForEmulatorFallbackComponent() {
     val api =
         UrlLauncher(
-            ApplicationProvider.getApplicationContext<Context?>(),
+            ApplicationProvider.getApplicationContext(),
             IntentResolver { intent: Intent? ->
               "{com.android.fallback/com.android.fallback.Fallback}"
             })
@@ -83,11 +82,11 @@ class UrlLauncherTest {
 
   @Test
   fun launch_throwsForNoCurrentActivity() {
-    val api = UrlLauncher(ApplicationProvider.getApplicationContext<Context?>())
+    val api = UrlLauncher(ApplicationProvider.getApplicationContext())
     api.setActivity(null)
 
     val exception =
-        Assert.assertThrows<FlutterError>(
+        Assert.assertThrows(
             FlutterError::class.java,
             ThrowingRunnable { api.launchUrl("https://flutter.dev", mapOf(), false) })
     Assert.assertEquals("NO_ACTIVITY", exception.code)
@@ -97,7 +96,7 @@ class UrlLauncherTest {
   fun launch_createsIntentWithPassedUrl() {
     val activity = mock<Activity>()
     val url = "https://flutter.dev"
-    val api = UrlLauncher(ApplicationProvider.getApplicationContext<Context?>())
+    val api = UrlLauncher(ApplicationProvider.getApplicationContext())
     api.setActivity(activity)
     doThrow(ActivityNotFoundException()).whenever(activity).startActivity(any())
 
@@ -115,7 +114,7 @@ class UrlLauncherTest {
   @Test
   fun launch_setsRequireNonBrowserWhenRequested() {
     val activity = mock<Activity>()
-    val api = UrlLauncher(ApplicationProvider.getApplicationContext<Context?>())
+    val api = UrlLauncher(ApplicationProvider.getApplicationContext())
     api.setActivity(activity)
     doThrow(ActivityNotFoundException()).whenever(activity).startActivity(any())
 
@@ -131,7 +130,7 @@ class UrlLauncherTest {
   @Test
   fun launch_returnsFalse() {
     val activity = mock<Activity>()
-    val api = UrlLauncher(ApplicationProvider.getApplicationContext<Context?>())
+    val api = UrlLauncher(ApplicationProvider.getApplicationContext())
     api.setActivity(activity)
     doThrow(ActivityNotFoundException()).whenever(activity).startActivity(any())
 
@@ -143,7 +142,7 @@ class UrlLauncherTest {
   @Test
   fun launch_returnsTrue() {
     val activity = mock<Activity>()
-    val api = UrlLauncher(ApplicationProvider.getApplicationContext<Context?>())
+    val api = UrlLauncher(ApplicationProvider.getApplicationContext())
     api.setActivity(activity)
 
     val result = api.launchUrl("https://flutter.dev", mapOf(), false)
@@ -154,7 +153,7 @@ class UrlLauncherTest {
   @Test
   fun openUrlInApp_opensUrlInWebViewIfNecessary() {
     val activity = mock<Activity>()
-    val api = UrlLauncher(ApplicationProvider.getApplicationContext<Context?>())
+    val api = UrlLauncher(ApplicationProvider.getApplicationContext())
     api.setActivity(activity)
     val url = "https://flutter.dev"
     val enableJavaScript = false
@@ -185,7 +184,7 @@ class UrlLauncherTest {
   @Test
   fun openWebView_opensUrlInWebViewIfRequested() {
     val activity = mock<Activity>()
-    val api = UrlLauncher(ApplicationProvider.getApplicationContext<Context?>())
+    val api = UrlLauncher(ApplicationProvider.getApplicationContext())
     api.setActivity(activity)
     val url = "https://flutter.dev"
 
@@ -202,7 +201,7 @@ class UrlLauncherTest {
   @Test
   fun openWebView_opensUrlInCustomTabs() {
     val activity = mock<Activity>()
-    val api = UrlLauncher(ApplicationProvider.getApplicationContext<Context?>())
+    val api = UrlLauncher(ApplicationProvider.getApplicationContext())
     api.setActivity(activity)
     val url = "https://flutter.dev"
 
@@ -219,11 +218,11 @@ class UrlLauncherTest {
   @Test
   fun openWebView_opensUrlInCustomTabsWithCORSAllowedHeader() {
     val activity = mock<Activity>()
-    val api = UrlLauncher(ApplicationProvider.getApplicationContext<Context?>())
+    val api = UrlLauncher(ApplicationProvider.getApplicationContext())
     api.setActivity(activity)
     val url = "https://flutter.dev"
     val headerKey = "Content-Type"
-    val headers = mapOf<String, String>(headerKey to "text/plain")
+    val headers = mapOf(headerKey to "text/plain")
 
     val result =
         api.openUrlInApp(url, true, WebViewOptions(false, false, headers), BrowserOptions(false))
@@ -240,7 +239,7 @@ class UrlLauncherTest {
   @Test
   fun openWebView_opensUrlInCustomTabsWithShowTitle() {
     val activity = mock<Activity>()
-    val api = UrlLauncher(ApplicationProvider.getApplicationContext<Context?>())
+    val api = UrlLauncher(ApplicationProvider.getApplicationContext())
     api.setActivity(activity)
     val url = "https://flutter.dev"
     val headers = mapOf<String, String>()
@@ -264,7 +263,7 @@ class UrlLauncherTest {
   @Test
   fun openWebView_opensUrlInCustomTabsWithoutShowTitle() {
     val activity = mock<Activity>()
-    val api = UrlLauncher(ApplicationProvider.getApplicationContext<Context?>())
+    val api = UrlLauncher(ApplicationProvider.getApplicationContext())
     api.setActivity(activity)
     val url = "https://flutter.dev"
     val headers = mapOf<String, String>()
@@ -288,7 +287,7 @@ class UrlLauncherTest {
   @Test
   fun openWebView_fallsBackToWebViewIfCustomTabFails() {
     val activity = mock<Activity>()
-    val api = UrlLauncher(ApplicationProvider.getApplicationContext<Context?>())
+    val api = UrlLauncher(ApplicationProvider.getApplicationContext())
     api.setActivity(activity)
     val url = "https://flutter.dev"
     doThrow(ActivityNotFoundException())
@@ -312,7 +311,7 @@ class UrlLauncherTest {
   @Test
   fun openWebView_handlesEnableJavaScript() {
     val activity = mock<Activity>()
-    val api = UrlLauncher(ApplicationProvider.getApplicationContext<Context?>())
+    val api = UrlLauncher(ApplicationProvider.getApplicationContext())
     api.setActivity(activity)
     val enableJavaScript = true
     val headers = mapOf("key" to "value")
@@ -333,11 +332,11 @@ class UrlLauncherTest {
   @Test
   fun openWebView_handlesHeaders() {
     val activity = mock<Activity>()
-    val api = UrlLauncher(ApplicationProvider.getApplicationContext<Context?>())
+    val api = UrlLauncher(ApplicationProvider.getApplicationContext())
     api.setActivity(activity)
     val key1 = "key"
     val key2 = "key2"
-    val headers = mapOf<String, String>(key1 to "value", key2 to "value2")
+    val headers = mapOf(key1 to "value", key2 to "value2")
 
     api.openUrlInApp(
         "https://flutter.dev", true, WebViewOptions(false, false, headers), BrowserOptions(false))
@@ -353,7 +352,7 @@ class UrlLauncherTest {
   @Test
   fun openWebView_handlesEnableDomStorage() {
     val activity = mock<Activity>()
-    val api = UrlLauncher(ApplicationProvider.getApplicationContext<Context?>())
+    val api = UrlLauncher(ApplicationProvider.getApplicationContext())
     api.setActivity(activity)
     val enableDomStorage = true
     val headers = mapOf("key" to "value")
@@ -374,7 +373,7 @@ class UrlLauncherTest {
   @Test
   fun openWebView_handlesEnableShowTitle() {
     val activity = mock<Activity>()
-    val api = UrlLauncher(ApplicationProvider.getApplicationContext<Context?>())
+    val api = UrlLauncher(ApplicationProvider.getApplicationContext())
     api.setActivity(activity)
     val enableDomStorage = true
     val headers = mapOf<String, String>()
@@ -399,11 +398,11 @@ class UrlLauncherTest {
 
   @Test
   fun openWebView_throwsForNoCurrentActivity() {
-    val api = UrlLauncher(ApplicationProvider.getApplicationContext<Context?>())
+    val api = UrlLauncher(ApplicationProvider.getApplicationContext())
     api.setActivity(null)
 
     val exception =
-        Assert.assertThrows<FlutterError>(
+        Assert.assertThrows(
             FlutterError::class.java,
             ThrowingRunnable {
               api.openUrlInApp(
@@ -418,7 +417,7 @@ class UrlLauncherTest {
   @Test
   fun openWebView_returnsFalse() {
     val activity = mock<Activity>()
-    val api = UrlLauncher(ApplicationProvider.getApplicationContext<Context?>())
+    val api = UrlLauncher(ApplicationProvider.getApplicationContext())
     api.setActivity(activity)
     doThrow(ActivityNotFoundException())
         .whenever(activity)
