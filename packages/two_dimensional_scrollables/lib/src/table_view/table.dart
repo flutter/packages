@@ -1033,15 +1033,16 @@ class RenderTableViewport extends RenderTwoDimensionalViewport {
     return verticalOffset.applyContentDimensions(0.0, maxVerticalScrollExtent);
   }
 
-  /// Binary search to find the first index with [_Span] matching the condition.
-  /// [map]: Index-[_Span] map, [condition]: Match rule
-  /// Returns the first matched index or null if not found.
+  /// Returns the first index in the given [map] whose [_Span] satisfies the
+  /// [condition], searching only from [first] to [last].
   ///
-  /// Only indices from [first] to [last] are searched. [condition] must be
-  /// false for every index before the first match and true for every index
-  /// after it within that range, so callers searching for regular spans pass
-  /// the range of regular spans: the pinned spans on either side of it would
-  /// break that ordering.
+  /// If no [_Span] in that range satisfies the [condition], this will return
+  /// null.
+  ///
+  /// This is a binary search, so once the [condition] is true for an index, it
+  /// must remain true for every following index in the range. Pinned spans do
+  /// not follow this order, so callers should limit the range to the regular
+  /// spans.
   int? _binarySearchFirstFromMap(
     Map<int, _Span> map,
     bool Function(_Span) condition, {
