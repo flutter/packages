@@ -159,8 +159,7 @@ class UrlLauncherTest {
     val url = "https://flutter.dev"
     val enableJavaScript = false
     val enableDomStorage = false
-    val headers = mapOf<String, String>()
-    headers.put("key", "value")
+    val headers = mapOf("key" to "value")
     val showTitle = false
 
     val result =
@@ -223,9 +222,8 @@ class UrlLauncherTest {
     val api = UrlLauncher(ApplicationProvider.getApplicationContext<Context?>())
     api.setActivity(activity)
     val url = "https://flutter.dev"
-    val headers = mapOf<String, String>()
     val headerKey = "Content-Type"
-    headers.put(headerKey, "text/plain")
+    val headers = mapOf<String, String>(headerKey to "text/plain")
 
     val result =
         api.openUrlInApp(url, true, WebViewOptions(false, false, headers), BrowserOptions(false))
@@ -317,8 +315,7 @@ class UrlLauncherTest {
     val api = UrlLauncher(ApplicationProvider.getApplicationContext<Context?>())
     api.setActivity(activity)
     val enableJavaScript = true
-    val headers = mapOf<String, String>()
-    headers.put("key", "value")
+    val headers = mapOf("key" to "value")
 
     api.openUrlInApp(
         "https://flutter.dev",
@@ -338,11 +335,9 @@ class UrlLauncherTest {
     val activity = mock<Activity>()
     val api = UrlLauncher(ApplicationProvider.getApplicationContext<Context?>())
     api.setActivity(activity)
-    val headers = mapOf<String, String>()
     val key1 = "key"
     val key2 = "key2"
-    headers.put(key1, "value")
-    headers.put(key2, "value2")
+    val headers = mapOf<String, String>(key1 to "value", key2 to "value2")
 
     api.openUrlInApp(
         "https://flutter.dev", true, WebViewOptions(false, false, headers), BrowserOptions(false))
@@ -361,8 +356,7 @@ class UrlLauncherTest {
     val api = UrlLauncher(ApplicationProvider.getApplicationContext<Context?>())
     api.setActivity(activity)
     val enableDomStorage = true
-    val headers = mapOf<String, String>()
-    headers.put("key", "value")
+    val headers = mapOf("key" to "value")
 
     api.openUrlInApp(
         "https://flutter.dev",
