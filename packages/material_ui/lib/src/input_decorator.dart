@@ -2584,8 +2584,9 @@ class _InputDecoratorState extends State<InputDecorator> with TickerProviderStat
       contentPadding = decorationContentPadding ?? EdgeInsetsDirectional.zero;
     } else if (!border.isOutline) {
       // 4.0: the vertical gap between the inline elements and the floating label.
-      floatingLabelHeight = MediaQuery.textScalerOf(context)
-          .scale(4.0 + 0.75 * labelStyle.fontSize!);
+      floatingLabelHeight = MediaQuery.textScalerOf(
+        context,
+      ).scale(4.0 + 0.75 * labelStyle.fontSize!);
       if (decoration.filled ?? false) {
         contentPadding =
             decorationContentPadding ??
@@ -2816,6 +2817,7 @@ class InputDecoration {
     this.labelText,
     this.labelStyle,
     this.floatingLabelStyle,
+    this.labelTextDirection,
     this.helper,
     this.helperText,
     this.helperStyle,
@@ -2873,7 +2875,6 @@ class InputDecoration {
     this.alignLabelWithHint,
     this.constraints,
     this.visualDensity,
-    this.labelTextDirection,
   }) : assert(
          !(label != null && labelText != null),
          'Declaring both label and labelText is not supported.',
