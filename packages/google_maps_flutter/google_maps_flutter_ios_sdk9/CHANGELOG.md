@@ -1,3 +1,32 @@
+## 2.19.0
+
+* Adds support for tapping points of interest on the map.
+* Updates minimum supported SDK version to Flutter 3.41/Dart 3.11.
+
+## 2.18.14
+
+* Adopts new Pigeon async Swift support.
+
+## 2.18.13
+
+* Converts remaining Objective-C code to Swift.
+
+## 2.18.12
+
+* Converts heatmap controller and data conversion to Swift.
+
+## 2.18.11
+
+* Converts marker controllers to Swift.
+
+## 2.18.10
+
+* Updates pigeon dev_dependency to ^27.3.2 for analyzer 14 compatibility.
+
+## 2.18.9
+
+* Converts overlay controllers to Swift.
+
 ## 2.18.8
 
 * Converts circle, polygon, and polyline controllers to Swift.

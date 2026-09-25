@@ -389,7 +389,7 @@ void main() {
     test('Should start recording a video', () async {
       await camera.startVideoRecording(cameraId);
 
-      verify(mockApi.startVideoRecording(any));
+      verify(mockApi.startVideoRecording(any, any));
     });
 
     test(
@@ -399,7 +399,7 @@ void main() {
           VideoCaptureOptions(cameraId, streamCallback: (CameraImageData imageData) {}),
         );
 
-        verify(mockApi.startVideoRecording(true));
+        verify(mockApi.startVideoRecording(true, any));
       },
     );
 
