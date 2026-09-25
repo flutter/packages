@@ -26,17 +26,15 @@ class _DrawerDefaultsM3 extends DrawerThemeData {
   // so hard coding here for now.
   @override
   ShapeBorder? get shape => RoundedRectangleBorder(
-    borderRadius: const BorderRadiusDirectional.horizontal(
-      end: Radius.circular(16.0),
-    ).resolve(direction),
+    borderRadius: const BorderRadiusDirectional.horizontal(end: Radius.circular(16.0))
+        .resolve(direction),
   );
 
   // There isn't currently a token for this value, but it is shown in the spec,
   // so hard coding here for now.
   @override
   ShapeBorder? get endShape => RoundedRectangleBorder(
-    borderRadius: const BorderRadiusDirectional.horizontal(
-      start: Radius.circular(16.0),
-    ).resolve(direction),
+    borderRadius: const BorderRadiusDirectional.horizontal(start: Radius.circular(16.0))
+        .resolve(direction),
   );
 }
