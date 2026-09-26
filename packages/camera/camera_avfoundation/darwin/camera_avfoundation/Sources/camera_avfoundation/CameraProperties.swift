@@ -3,7 +3,10 @@
 // found in the LICENSE file.
 
 import AVFoundation
-import UIKit
+
+#if os(iOS)
+  import UIKit
+#endif
 
 /// Gets AVCaptureFlashMode from PlatformFlashMode.
 /// mode - flash mode.
@@ -24,44 +27,46 @@ func getAVCaptureFlashMode(for mode: PlatformFlashMode) -> AVCaptureDevice.Flash
   }
 }
 
-/// Gets UIDeviceOrientation from its Pigeon representation.
-/// orientation - the Pigeon device orientation.
-func getUIDeviceOrientation(
-  for orientation: PlatformDeviceOrientation
-) -> UIDeviceOrientation {
-  switch orientation {
-  case .portraitDown:
-    return .portraitUpsideDown
-  case .landscapeLeft:
-    return .landscapeLeft
-  case .landscapeRight:
-    return .landscapeRight
-  case .portraitUp:
-    return .portrait
-  @unknown default:
-    assertionFailure("Unknown device orientation")
-    return .portrait
+#if os(iOS)
+  /// Gets UIDeviceOrientation from its Pigeon representation.
+  /// orientation - the Pigeon device orientation.
+  func getUIDeviceOrientation(
+    for orientation: PlatformDeviceOrientation
+  ) -> UIDeviceOrientation {
+    switch orientation {
+    case .portraitDown:
+      return .portraitUpsideDown
+    case .landscapeLeft:
+      return .landscapeLeft
+    case .landscapeRight:
+      return .landscapeRight
+    case .portraitUp:
+      return .portrait
+    @unknown default:
+      assertionFailure("Unknown device orientation")
+      return .portrait
+    }
   }
-}
 
-/// Gets a Pigeon representation of UIDeviceOrientation.
-/// orientation - the UIDeviceOrientation.
-func getPigeonDeviceOrientation(
-  for orientation: UIDeviceOrientation
-) -> PlatformDeviceOrientation {
-  switch orientation {
-  case .portraitUpsideDown:
-    return .portraitDown
-  case .landscapeLeft:
-    return .landscapeLeft
-  case .landscapeRight:
-    return .landscapeRight
-  case .portrait:
-    return .portraitUp
-  default:
-    return .portraitUp
+  /// Gets a Pigeon representation of UIDeviceOrientation.
+  /// orientation - the UIDeviceOrientation.
+  func getPigeonDeviceOrientation(
+    for orientation: UIDeviceOrientation
+  ) -> PlatformDeviceOrientation {
+    switch orientation {
+    case .portraitUpsideDown:
+      return .portraitDown
+    case .landscapeLeft:
+      return .landscapeLeft
+    case .landscapeRight:
+      return .landscapeRight
+    case .portrait:
+      return .portraitUp
+    default:
+      return .portraitUp
+    }
   }
-}
+#endif
 
 /// Gets pixel format from its Pigeon representation.
 /// imageFormat - the Pigeon image format.

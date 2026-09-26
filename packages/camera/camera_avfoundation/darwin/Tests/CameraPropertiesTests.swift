@@ -36,38 +36,40 @@ final class CameraPropertiesTests: XCTestCase {
 
   // MARK: - Device Orientation Tests
 
-  func testGetUIDeviceOrientationForPigeonDeviceOrientation() {
-    XCTAssertEqual(
-      UIDeviceOrientation.portraitUpsideDown,
-      getUIDeviceOrientation(for: .portraitDown)
-    )
-    XCTAssertEqual(
-      UIDeviceOrientation.landscapeLeft,
-      getUIDeviceOrientation(for: .landscapeLeft))
-    XCTAssertEqual(
-      UIDeviceOrientation.landscapeRight,
-      getUIDeviceOrientation(for: .landscapeRight))
-    XCTAssertEqual(
-      UIDeviceOrientation.portrait,
-      getUIDeviceOrientation(for: .portraitUp))
-  }
+  #if os(iOS)
+    func testGetUIDeviceOrientationForPigeonDeviceOrientation() {
+      XCTAssertEqual(
+        UIDeviceOrientation.portraitUpsideDown,
+        getUIDeviceOrientation(for: .portraitDown)
+      )
+      XCTAssertEqual(
+        UIDeviceOrientation.landscapeLeft,
+        getUIDeviceOrientation(for: .landscapeLeft))
+      XCTAssertEqual(
+        UIDeviceOrientation.landscapeRight,
+        getUIDeviceOrientation(for: .landscapeRight))
+      XCTAssertEqual(
+        UIDeviceOrientation.portrait,
+        getUIDeviceOrientation(for: .portraitUp))
+    }
 
-  func testGetPigeonDeviceOrientationForUIDeviceOrientation() {
-    XCTAssertEqual(
-      PlatformDeviceOrientation.portraitDown,
-      getPigeonDeviceOrientation(for: .portraitUpsideDown))
-    XCTAssertEqual(
-      PlatformDeviceOrientation.landscapeLeft,
-      getPigeonDeviceOrientation(for: .landscapeLeft))
-    XCTAssertEqual(
-      PlatformDeviceOrientation.landscapeRight,
-      getPigeonDeviceOrientation(for: .landscapeRight))
-    XCTAssertEqual(
-      PlatformDeviceOrientation.portraitUp,
-      getPigeonDeviceOrientation(for: .portrait))
-    // Test default case.
-    XCTAssertEqual(
-      PlatformDeviceOrientation.portraitUp,
-      getPigeonDeviceOrientation(for: .unknown))
-  }
+    func testGetPigeonDeviceOrientationForUIDeviceOrientation() {
+      XCTAssertEqual(
+        PlatformDeviceOrientation.portraitDown,
+        getPigeonDeviceOrientation(for: .portraitUpsideDown))
+      XCTAssertEqual(
+        PlatformDeviceOrientation.landscapeLeft,
+        getPigeonDeviceOrientation(for: .landscapeLeft))
+      XCTAssertEqual(
+        PlatformDeviceOrientation.landscapeRight,
+        getPigeonDeviceOrientation(for: .landscapeRight))
+      XCTAssertEqual(
+        PlatformDeviceOrientation.portraitUp,
+        getPigeonDeviceOrientation(for: .portrait))
+      // Test default case.
+      XCTAssertEqual(
+        PlatformDeviceOrientation.portraitUp,
+        getPigeonDeviceOrientation(for: .unknown))
+    }
+  #endif
 }
