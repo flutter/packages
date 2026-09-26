@@ -1,0 +1,3 @@
+changelog: |
+  - Adds `onTertiaryTapDown`, `onTertiaryTapUp` and `onTertiaryTapCancel` to `InkResponse` and `InkWell`, so a tertiary (middle) button click can be handled directly.
+version: minor
