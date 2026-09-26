@@ -9,6 +9,7 @@ import 'logging.dart';
 import 'match.dart';
 import 'misc/error_screen.dart';
 import 'misc/errors.dart';
+import 'pages/app_type.dart';
 import 'pages/cupertino.dart';
 import 'pages/custom_transition_page.dart';
 import 'pages/material.dart';
@@ -194,17 +195,18 @@ class _CustomNavigatorState extends State<_CustomNavigator> {
   void didChangeDependencies() {
     super.didChangeDependencies();
     // Create a HeroController based on the app type.
-    if (_controller == null) {
-      if (isMaterialApp(context)) {
-        _controller = createMaterialHeroController();
-      } else if (isCupertinoApp(context)) {
-        _controller = createCupertinoHeroController();
-      } else {
-        _controller = HeroController();
-      }
-    }
+    _controller ??= switch (appTypeOf(context)) {
+      AppType.sdkMaterial => createSdkMaterialHeroController(),
+      AppType.materialUi => createMaterialHeroController(),
+      AppType.sdkCupertino => createSdkCupertinoHeroController(),
+      AppType.cupertinoUi => createCupertinoHeroController(),
+      null => HeroController(),
+    };
     // This method can also be called if any of the page builders depend on
-    // the context. In this case, make sure _pages are rebuilt.
+    // the context. In this case, make sure the app-type builders and pages are
+    // recomputed from the current ancestor tree.
+    _pageBuilderForAppType = null;
+    _errorBuilderForAppType = null;
     _pages = null;
   }
 
@@ -362,12 +364,23 @@ class _CustomNavigatorState extends State<_CustomNavigator> {
 
       // can be null during testing
       final Element? elem = context is Element ? context : null;
+      final AppType? appType = elem == null ? null : appTypeOf(elem);
 
-      if (elem != null && isMaterialApp(elem)) {
+      if (appType == AppType.sdkMaterial) {
+        log('Using MaterialApp configuration');
+        _pageBuilderForAppType = pageBuilderForSdkMaterialApp;
+        _errorBuilderForAppType = (BuildContext c, GoRouterState s) =>
+            SdkMaterialErrorScreen(s.error);
+      } else if (appType == AppType.materialUi) {
         log('Using MaterialApp configuration');
         _pageBuilderForAppType = pageBuilderForMaterialApp;
         _errorBuilderForAppType = (BuildContext c, GoRouterState s) => MaterialErrorScreen(s.error);
-      } else if (elem != null && isCupertinoApp(elem)) {
+      } else if (appType == AppType.sdkCupertino) {
+        log('Using CupertinoApp configuration');
+        _pageBuilderForAppType = pageBuilderForSdkCupertinoApp;
+        _errorBuilderForAppType = (BuildContext c, GoRouterState s) =>
+            SdkCupertinoErrorScreen(s.error);
+      } else if (appType == AppType.cupertinoUi) {
         log('Using CupertinoApp configuration');
         _pageBuilderForAppType = pageBuilderForCupertinoApp;
         _errorBuilderForAppType = (BuildContext c, GoRouterState s) =>
