@@ -3,6 +3,7 @@
 // found in the LICENSE file.
 
 /// @docImport 'dart:ui';
+/// @docImport 'theme_data.dart';
 library;
 
 import 'dart:math' as math;
@@ -973,7 +974,8 @@ class ModalBottomSheetRoute<T> extends PopupRoute<T> {
   /// Specifies the color of the modal barrier that darkens everything below the
   /// bottom sheet.
   ///
-  /// Defaults to `Colors.black54` if not provided.
+  /// If this is null, then [BottomSheetThemeData.modalBarrierColor] is used.
+  /// If that is also null, then [ThemeData.fallbackScrimColor] is used.
   final Color? modalBarrierColor;
 
   /// Specifies whether the bottom sheet will be dismissed
@@ -1105,7 +1107,17 @@ class ModalBottomSheetRoute<T> extends PopupRoute<T> {
   final String? barrierLabel;
 
   @override
-  Color get barrierColor => modalBarrierColor ?? Colors.black54;
+  Color get barrierColor {
+    if (modalBarrierColor != null) {
+      return modalBarrierColor!;
+    }
+    if (navigator != null) {
+      final ThemeData theme = Theme.of(navigator!.context);
+      return theme.bottomSheetTheme.modalBarrierColor ?? theme.fallbackScrimColor;
+    }
+    // The route is not in the tree yet, so there is no theme to read.
+    return Colors.black54;
+  }
 
   AnimationController? _animationController;
 
@@ -1346,7 +1358,10 @@ Future<T?> showModalBottomSheet<T>({
       clipBehavior: clipBehavior,
       constraints: constraints,
       isDismissible: isDismissible,
-      modalBarrierColor: barrierColor ?? Theme.of(context).bottomSheetTheme.modalBarrierColor,
+      modalBarrierColor:
+          barrierColor ??
+          Theme.of(context).bottomSheetTheme.modalBarrierColor ??
+          Theme.of(context).fallbackScrimColor,
       enableDrag: enableDrag,
       showDragHandle: showDragHandle,
       settings: routeSettings,

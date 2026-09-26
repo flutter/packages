@@ -1018,6 +1018,294 @@ void main() {
     expect(modalBarrier.color, barrierColor);
   });
 
+  testWidgets('Modal bottom sheet barrier color uses ColorScheme.scrim', (
+    WidgetTester tester,
+  ) async {
+    const Color scrim = Colors.red;
+    late BuildContext savedContext;
+
+    await tester.pumpWidget(
+      MaterialApp(
+        theme: ThemeData(
+          colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple, scrim: scrim),
+        ),
+        home: Builder(
+          builder: (BuildContext context) {
+            savedContext = context;
+            return const SizedBox.expand();
+          },
+        ),
+      ),
+    );
+
+    unawaited(
+      showModalBottomSheet<void>(
+        context: savedContext,
+        builder: (BuildContext context) {
+          return const SizedBox(height: 200, child: Text('BottomSheet'));
+        },
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    final ModalBarrier modalBarrier = tester.widget(find.byType(ModalBarrier).last);
+    expect(modalBarrier.color, Theme.of(savedContext).fallbackScrimColor);
+  });
+
+  testWidgets('BottomSheetTheme.modalBarrierColor takes precedence over ColorScheme.scrim', (
+    WidgetTester tester,
+  ) async {
+    const Color scrim = Colors.red;
+    const Color themeBarrierColor = Colors.blue;
+    late BuildContext savedContext;
+
+    await tester.pumpWidget(
+      MaterialApp(
+        theme: ThemeData(
+          colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple, scrim: scrim),
+          bottomSheetTheme: const BottomSheetThemeData(modalBarrierColor: themeBarrierColor),
+        ),
+        home: Builder(
+          builder: (BuildContext context) {
+            savedContext = context;
+            return const SizedBox.expand();
+          },
+        ),
+      ),
+    );
+
+    unawaited(
+      showModalBottomSheet<void>(
+        context: savedContext,
+        builder: (BuildContext context) {
+          return const SizedBox(height: 200, child: Text('BottomSheet'));
+        },
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    final ModalBarrier modalBarrier = tester.widget(find.byType(ModalBarrier).last);
+    expect(modalBarrier.color, themeBarrierColor);
+  });
+
+  testWidgets('Explicit barrierColor takes precedence over ColorScheme.scrim for bottom sheets', (
+    WidgetTester tester,
+  ) async {
+    const Color scrim = Colors.red;
+    const Color explicitBarrierColor = Colors.green;
+    late BuildContext savedContext;
+
+    await tester.pumpWidget(
+      MaterialApp(
+        theme: ThemeData(
+          colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple, scrim: scrim),
+          bottomSheetTheme: const BottomSheetThemeData(modalBarrierColor: Colors.blue),
+        ),
+        home: Builder(
+          builder: (BuildContext context) {
+            savedContext = context;
+            return const SizedBox.expand();
+          },
+        ),
+      ),
+    );
+
+    unawaited(
+      showModalBottomSheet<void>(
+        context: savedContext,
+        barrierColor: explicitBarrierColor,
+        builder: (BuildContext context) {
+          return const SizedBox(height: 200, child: Text('BottomSheet'));
+        },
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    final ModalBarrier modalBarrier = tester.widget(find.byType(ModalBarrier).last);
+    expect(modalBarrier.color, explicitBarrierColor);
+  });
+
+  testWidgets('Bottom sheet Material 3 ColorScheme.scrim uses 32% opacity', (
+    WidgetTester tester,
+  ) async {
+    final Color scrim = Colors.red.withValues(alpha: 0.2);
+    late BuildContext savedContext;
+
+    await tester.pumpWidget(
+      MaterialApp(
+        theme: ThemeData(
+          colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple, scrim: scrim),
+        ),
+        home: Builder(
+          builder: (BuildContext context) {
+            savedContext = context;
+            return const SizedBox.expand();
+          },
+        ),
+      ),
+    );
+
+    unawaited(
+      showModalBottomSheet<void>(
+        context: savedContext,
+        builder: (BuildContext context) {
+          return const SizedBox(height: 200, child: Text('BottomSheet'));
+        },
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    final ModalBarrier modalBarrier = tester.widget(find.byType(ModalBarrier).last);
+    expect(modalBarrier.color, scrim.withValues(alpha: 0.32));
+  });
+
+  testWidgets('ModalBottomSheetRoute barrier color uses ColorScheme.scrim', (
+    WidgetTester tester,
+  ) async {
+    const Color scrim = Colors.red;
+    await tester.pumpWidget(
+      MaterialApp(
+        theme: ThemeData(
+          colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple, scrim: scrim),
+        ),
+        home: Builder(
+          builder: (BuildContext context) {
+            return TextButton(
+              onPressed: () {
+                Navigator.of(context).push<void>(
+                  ModalBottomSheetRoute<void>(
+                    isScrollControlled: false,
+                    builder: (BuildContext context) {
+                      return const SizedBox(height: 200, child: Text('BottomSheet'));
+                    },
+                  ),
+                );
+              },
+              child: const Text('Open'),
+            );
+          },
+        ),
+      ),
+    );
+
+    await tester.tap(find.text('Open'));
+    await tester.pumpAndSettle();
+
+    final ModalBarrier modalBarrier = tester.widget(find.byType(ModalBarrier).last);
+    expect(modalBarrier.color, Theme.of(tester.element(find.text('Open'))).fallbackScrimColor);
+  });
+
+  testWidgets(
+    'ModalBottomSheetRoute uses BottomSheetTheme.modalBarrierColor over ColorScheme.scrim',
+    (WidgetTester tester) async {
+      const Color scrim = Colors.red;
+      const Color themeBarrierColor = Colors.blue;
+      await tester.pumpWidget(
+        MaterialApp(
+          theme: ThemeData(
+            colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple, scrim: scrim),
+            bottomSheetTheme: const BottomSheetThemeData(modalBarrierColor: themeBarrierColor),
+          ),
+          home: Builder(
+            builder: (BuildContext context) {
+              return TextButton(
+                onPressed: () {
+                  Navigator.of(context).push<void>(
+                    ModalBottomSheetRoute<void>(
+                      isScrollControlled: false,
+                      builder: (BuildContext context) {
+                        return const SizedBox(height: 200, child: Text('BottomSheet'));
+                      },
+                    ),
+                  );
+                },
+                child: const Text('Open'),
+              );
+            },
+          ),
+        ),
+      );
+
+      await tester.tap(find.text('Open'));
+      await tester.pumpAndSettle();
+
+      final ModalBarrier modalBarrier = tester.widget(find.byType(ModalBarrier).last);
+      expect(modalBarrier.color, themeBarrierColor);
+    },
+  );
+
+  testWidgets('Material 2 modal bottom sheet barrier uses Colors.black54', (
+    WidgetTester tester,
+  ) async {
+    const Color scrim = Colors.red;
+    late BuildContext savedContext;
+
+    await tester.pumpWidget(
+      MaterialApp(
+        theme: ThemeData(
+          useMaterial3: false,
+          colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple, scrim: scrim),
+        ),
+        home: Builder(
+          builder: (BuildContext context) {
+            savedContext = context;
+            return const SizedBox.expand();
+          },
+        ),
+      ),
+    );
+
+    unawaited(
+      showModalBottomSheet<void>(
+        context: savedContext,
+        builder: (BuildContext context) {
+          return const SizedBox(height: 200, child: Text('BottomSheet'));
+        },
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    final ModalBarrier modalBarrier = tester.widget(find.byType(ModalBarrier).last);
+    expect(modalBarrier.color, Colors.black54);
+  });
+
+  testWidgets('Material 2 ModalBottomSheetRoute barrier uses Colors.black54', (
+    WidgetTester tester,
+  ) async {
+    const Color scrim = Colors.red;
+    await tester.pumpWidget(
+      MaterialApp(
+        theme: ThemeData(
+          useMaterial3: false,
+          colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple, scrim: scrim),
+        ),
+        home: Builder(
+          builder: (BuildContext context) {
+            return TextButton(
+              onPressed: () {
+                Navigator.of(context).push<void>(
+                  ModalBottomSheetRoute<void>(
+                    isScrollControlled: false,
+                    builder: (BuildContext context) {
+                      return const SizedBox(height: 200, child: Text('BottomSheet'));
+                    },
+                  ),
+                );
+              },
+              child: const Text('Open'),
+            );
+          },
+        ),
+      ),
+    );
+
+    await tester.tap(find.text('Open'));
+    await tester.pumpAndSettle();
+
+    final ModalBarrier modalBarrier = tester.widget(find.byType(ModalBarrier).last);
+    expect(modalBarrier.color, Colors.black54);
+  });
+
   testWidgets('Material3 - BottomSheet uses fallback values', (WidgetTester tester) async {
     const Color surfaceColor = Colors.pink;
     const Color surfaceTintColor = Colors.blue;

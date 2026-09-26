@@ -1305,6 +1305,24 @@ class ThemeData with Diagnosticable {
   /// backwards compatibility breaks.
   final ColorScheme colorScheme;
 
+  /// The default color for modal barriers and drawer scrims when no explicit
+  /// color or component theme color is provided.
+  ///
+  /// When [useMaterial3] is true, this is [ColorScheme.scrim] at 32% opacity,
+  /// matching the Material 3 elevation specification. When [useMaterial3] is
+  /// false, this is [Colors.black54].
+  ///
+  /// See also:
+  ///
+  ///  * [ColorScheme.scrim], which is used when [useMaterial3] is true.
+  ///  * <https://m3.material.io/styles/elevation/applying-elevation>
+  Color get fallbackScrimColor {
+    if (useMaterial3) {
+      return colorScheme.scrim.withValues(alpha: 0.32);
+    }
+    return Colors.black54;
+  }
+
   /// The color used for widgets that are inoperative, regardless of
   /// their state. For example, a disabled checkbox (which may be
   /// checked or unchecked).

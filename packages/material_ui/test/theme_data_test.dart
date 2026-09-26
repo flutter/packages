@@ -314,6 +314,26 @@ void main() {
     expect(theme.applyElevationOverlayColor, false);
   });
 
+  test('ThemeData.fallbackScrimColor uses ColorScheme.scrim at 32% opacity in Material 3', () {
+    const scrim = Color(0xffff0000);
+    final theme = ThemeData(
+      colorScheme: ColorScheme.fromSeed(seedColor: Colors.blue, scrim: scrim),
+    );
+
+    expect(theme.useMaterial3, isTrue);
+    expect(theme.fallbackScrimColor, scrim.withValues(alpha: 0.32));
+  });
+
+  test('ThemeData.fallbackScrimColor uses Colors.black54 in Material 2', () {
+    const scrim = Color(0xffff0000);
+    final theme = ThemeData(
+      useMaterial3: false,
+      colorScheme: ColorScheme.fromSeed(seedColor: Colors.blue, scrim: scrim),
+    );
+
+    expect(theme.fallbackScrimColor, Colors.black54);
+  });
+
   test('ThemeData can generate a dark colorScheme from colorSchemeSeed', () {
     final theme = ThemeData(colorSchemeSeed: Colors.blue, brightness: Brightness.dark);
 
