@@ -277,7 +277,17 @@ public final class VideoPlayerPlugin: NSObject, FlutterPlugin, AVFoundationVideo
       throw PigeonError(code: "video_player", message: "Invalid URI", details: nil)
     }
     let asset = avFactory.urlAsset(with: url, options: itemOptions)
-    return avFactory.playerItem(with: asset)
+    let item = avFactory.playerItem(with: asset)
+    if let forwardBufferDurationMs = options.forwardBufferDurationMs {
+      guard forwardBufferDurationMs >= 0 else {
+        throw PigeonError(
+          code: "video_player", message: "forwardBufferDurationMs must be at least 0", details: nil)
+      }
+      // A value of 0 means "automatic", which is AVPlayer's default behavior, so a caller
+      // asking for 0 gets the same result as not setting the option at all.
+      item.preferredForwardBufferDuration = Double(forwardBufferDurationMs) / 1000.0
+    }
+    return item
   }
 }
 
