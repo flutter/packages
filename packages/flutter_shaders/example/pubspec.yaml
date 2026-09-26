@@ -1,0 +1,24 @@
+name: example
+publish_to: none
+
+environment:
+  sdk: ^3.10.0
+  flutter: ">=3.38.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+  flutter_shaders: any
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+
+flutter:
+  uses-material-design: true
+  shaders:
+    - shaders/inkwell.frag
+    - shaders/sampler.frag
+    - shaders/solid_color.frag
+    - shaders/blank.frag
+    - packages/flutter_shaders/shaders/pixelation.frag
