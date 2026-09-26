@@ -120,81 +120,32 @@ enum ThemeMode {
 ///
 /// <callout-box>
 ///
-// TODO(framework): Add unit tests to this code snippet.
-// https://github.com/flutter/flutter/issues/188530
-///
 /// This example shows how to create a [MaterialApp] that disables the "debug"
 /// banner with a [home] route that will be displayed when the app is launched.
 ///
 /// ![The MaterialApp displays a Scaffold ](https://flutter.github.io/assets-for-api-docs/assets/material/basic_material_app.png)
 ///
-/// ```dart
-/// MaterialApp(
-///   home: Scaffold(
-///     appBar: AppBar(
-///       title: const Text('Home'),
-///     ),
-///   ),
-///   debugShowCheckedModeBanner: false,
-/// )
-/// ```
+/// {@example /example/lib/app/app.snippet.0.dart#body indent=strip}
 ///
 /// </callout-box>
 ///
 /// <callout-box>
-///
-// TODO(framework): Add unit tests to this code snippet.
-// https://github.com/flutter/flutter/issues/188530
 ///
 /// This example shows how to create a [MaterialApp] that uses the [routes]
 /// `Map` to define the "home" route and an "about" route.
 ///
-/// ```dart
-/// MaterialApp(
-///   routes: <String, WidgetBuilder>{
-///     '/': (BuildContext context) {
-///       return Scaffold(
-///         appBar: AppBar(
-///           title: const Text('Home Route'),
-///         ),
-///       );
-///     },
-///     '/about': (BuildContext context) {
-///       return Scaffold(
-///         appBar: AppBar(
-///           title: const Text('About Route'),
-///         ),
-///       );
-///      }
-///    },
-/// )
-/// ```
+/// {@example /example/lib/app/app.snippet.1.dart#body indent=strip}
 ///
 /// </callout-box>
 ///
 /// <callout-box>
-///
-// TODO(framework): Add unit tests to this code snippet.
-// https://github.com/flutter/flutter/issues/188530
 ///
 /// This example shows how to create a [MaterialApp] that defines a [theme] that
 /// will be used for material widgets in the app.
 ///
 /// ![The MaterialApp displays a Scaffold with a dark background and a blue / grey AppBar at the top](https://flutter.github.io/assets-for-api-docs/assets/material/theme_material_app.png)
 ///
-/// ```dart
-/// MaterialApp(
-///   theme: ThemeData(
-///     brightness: Brightness.dark,
-///     primaryColor: Colors.blueGrey
-///   ),
-///   home: Scaffold(
-///     appBar: AppBar(
-///       title: const Text('MaterialApp Theme'),
-///     ),
-///   ),
-/// )
-/// ```
+/// {@example /example/lib/app/app.snippet.2.dart#body indent=strip}
 ///
 /// </callout-box>
 ///
@@ -695,9 +646,6 @@ class MaterialApp extends StatefulWidget {
   /// {@macro flutter.widgets.widgetsApp.shortcuts}
   /// <callout-box>
   ///
-  // TODO(framework): Add unit tests to this code snippet.
-  // https://github.com/flutter/flutter/issues/188530
-  ///
   /// This example shows how to add a single shortcut for
   /// [LogicalKeyboardKey.select] to the default shortcuts without needing to
   /// add your own [Shortcuts] widget.
@@ -706,20 +654,7 @@ class MaterialApp extends StatefulWidget {
   /// you want to add between the [WidgetsApp] and its child and get the same
   /// effect.
   ///
-  /// ```dart
-  /// Widget build(BuildContext context) {
-  ///   return WidgetsApp(
-  ///     shortcuts: <ShortcutActivator, Intent>{
-  ///       ... WidgetsApp.defaultShortcuts,
-  ///       const SingleActivator(LogicalKeyboardKey.select): const ActivateIntent(),
-  ///     },
-  ///     color: const Color(0xFFFF0000),
-  ///     builder: (BuildContext context, Widget? child) {
-  ///       return const Placeholder();
-  ///     },
-  ///   );
-  /// }
-  /// ```
+  /// {@example /example/lib/app/app.snippet.3.dart#body indent=strip}
   ///
   /// </callout-box>
   /// {@macro flutter.widgets.widgetsApp.shortcuts.seeAlso}
@@ -727,9 +662,6 @@ class MaterialApp extends StatefulWidget {
 
   /// {@macro flutter.widgets.widgetsApp.actions}
   /// <callout-box>
-  ///
-  // TODO(framework): Add unit tests to this code snippet.
-  // https://github.com/flutter/flutter/issues/188530
   ///
   /// This example shows how to add a single action handling an
   /// [ActivateAction] to the default actions without needing to
@@ -739,25 +671,7 @@ class MaterialApp extends StatefulWidget {
   /// you want to add between the [WidgetsApp] and its child and get the same
   /// effect.
   ///
-  /// ```dart
-  /// Widget build(BuildContext context) {
-  ///   return WidgetsApp(
-  ///     actions: <Type, Action<Intent>>{
-  ///       ... WidgetsApp.defaultActions,
-  ///       ActivateAction: CallbackAction<Intent>(
-  ///         onInvoke: (Intent intent) {
-  ///           // Do something here...
-  ///           return null;
-  ///         },
-  ///       ),
-  ///     },
-  ///     color: const Color(0xFFFF0000),
-  ///     builder: (BuildContext context, Widget? child) {
-  ///       return const Placeholder();
-  ///     },
-  ///   );
-  /// }
-  /// ```
+  /// {@example /example/lib/app/app.snippet.4.dart#body indent=strip}
   ///
   /// </callout-box>
   /// {@macro flutter.widgets.widgetsApp.actions.seeAlso}
