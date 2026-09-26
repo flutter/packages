@@ -275,6 +275,78 @@ void main() {
     expect(material.color, const Color(0xff00ff00));
   });
 
+  testWidgets('Disabled MaterialButton prefers disabledTextColor over textColor', (
+    WidgetTester tester,
+  ) async {
+    // Regression test for https://github.com/flutter/flutter/issues/127449.
+
+    final Finder rawButtonMaterial = find.descendant(
+      of: find.byType(MaterialButton),
+      matching: find.byType(Material),
+    );
+
+    await tester.pumpWidget(
+      const Directionality(
+        textDirection: TextDirection.ltr,
+        child: MaterialButton(
+          onPressed: null,
+          textColor: Colors.blue,
+          disabledTextColor: Colors.red,
+          child: Text('button'),
+        ),
+      ),
+    );
+
+    final Material material = tester.widget<Material>(rawButtonMaterial);
+    expect(material.textStyle!.color, Colors.red);
+  });
+
+  testWidgets(
+    'Disabled MaterialButton resolves stateful textColor when disabledTextColor is null',
+    (WidgetTester tester) async {
+      await tester.pumpWidget(
+        Directionality(
+          textDirection: TextDirection.ltr,
+          child: MaterialButton(
+            onPressed: null,
+            textColor: WidgetStateColor.resolveWith((Set<WidgetState> states) {
+              return states.contains(WidgetState.disabled) ? Colors.grey : Colors.blue;
+            }),
+            child: const Text('button'),
+          ),
+        ),
+      );
+
+      final Material material = tester.widget<Material>(
+        find.descendant(of: find.byType(MaterialButton), matching: find.byType(Material)),
+      );
+      expect(material.textStyle!.color, Colors.grey);
+    },
+  );
+
+  testWidgets('Disabled MaterialButton prefers stateful textColor over disabledTextColor', (
+    WidgetTester tester,
+  ) async {
+    await tester.pumpWidget(
+      Directionality(
+        textDirection: TextDirection.ltr,
+        child: MaterialButton(
+          onPressed: null,
+          textColor: WidgetStateColor.resolveWith((Set<WidgetState> states) {
+            return states.contains(WidgetState.disabled) ? Colors.grey : Colors.blue;
+          }),
+          disabledTextColor: Colors.red,
+          child: const Text('button'),
+        ),
+      ),
+    );
+
+    final Material material = tester.widget<Material>(
+      find.descendant(of: find.byType(MaterialButton), matching: find.byType(Material)),
+    );
+    expect(material.textStyle!.color, Colors.grey);
+  });
+
   testWidgets(
     'Default MaterialButton meets a11y contrast guidelines',
     (WidgetTester tester) async {

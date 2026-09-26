@@ -1,0 +1,3 @@
+changelog: |
+  - Fixes MaterialButton using textColor instead of disabledTextColor when disabled.
+version: patch
