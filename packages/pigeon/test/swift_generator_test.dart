@@ -1220,7 +1220,7 @@ void main() {
     const generator = SwiftGenerator();
     generator.generate(swiftOptions, root, sink, dartPackageName: DEFAULT_PACKAGE_NAME);
     final code = sink.toString();
-    expect(code, contains('else if listResponse[0] == nil || listResponse[0] is NSNull {'));
+    expect(code, contains('else if PigeonInternal.isNullish(listResponse[0]) {'));
   });
 
   test('return nullable host', () {
