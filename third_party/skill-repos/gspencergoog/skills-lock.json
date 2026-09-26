@@ -1,0 +1,11 @@
+{
+  "version": 1,
+  "skills": {
+    "write-prose": {
+      "source": "gspencergoog/skills",
+      "sourceType": "github",
+      "skillPath": "skills/write-prose/SKILL.md",
+      "computedHash": "266b4bdb6e03459b7a1990e34174f843dfcdea959d872122ba424e1806e7a0a4"
+    }
+  }
+}
