@@ -1,0 +1,3 @@
+changelog: |
+  - Prevents a covered route from entering a predictive back transition while dragging a `CupertinoSheet`.
+version: patch
