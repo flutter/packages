@@ -132,15 +132,20 @@ class RepositoryPackage {
   /// Throws if the file exists but is not a valid ci_config.yaml.
   CIConfig? parseCIConfig() => _parsedCIConfig;
 
-  /// Returns true if the package depends on Flutter.
+  /// Returns true if the package has a known direct or transitive Flutter dependency.
   bool requiresFlutter() {
     final Pubspec pubspec = parsePubspec();
-    return _includesFlutterSdkDependency(pubspec.dependencies) ||
-        _includesFlutterSdkDependency(pubspec.devDependencies);
+    return _includesFlutterDependency(pubspec.dependencies) ||
+        _includesFlutterDependency(pubspec.devDependencies);
   }
 
-  /// True if this package has a dependency on Flutter.
-  bool _includesFlutterSdkDependency(Map<String, Dependency> deps) {
+  /// True if the dependencies include Flutter or a known Flutter-dependent package.
+  bool _includesFlutterDependency(Map<String, Dependency> deps) {
+    // Account for known transitive Flutter requirements without resolving the
+    // full dependency graph, since this check is used before running pub get.
+    if (deps.containsKey('jni')) {
+      return true;
+    }
     const flutterSdkDependencyName = 'flutter';
     return deps.values.whereType<SdkDependency>().any(
       (SdkDependency dependency) => dependency.sdk == flutterSdkDependencyName,

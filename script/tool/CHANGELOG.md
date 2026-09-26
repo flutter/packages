@@ -1,3 +1,8 @@
+## 0.14.4+3
+
+* Uses Flutter for pub commands when a package depends on `jni`, including through
+  a dev dependency.
+
 ## 0.14.4+2
 
 * Adds an `in-flight-release-check` command, which reports whether an earlier
