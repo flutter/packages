@@ -1642,6 +1642,67 @@ ${[for (var i = 2; i <= 30; i++) '    <pattern id="lvl$i" width="10" height="10"
     ]);
   });
 
+  test('Handles alpha masks correctly', () {
+    const svg = '''
+<svg viewBox="0 0 100 100">
+  <mask id="mask1" mask-type="alpha">
+    <circle cx="50" cy="50" r="50" fill="white" />
+  </mask>
+  <rect width="100" height="100" fill="blue" mask="url(#mask1)"/>
+</svg>
+''';
+    final VectorInstructions instructions = parseWithoutOptimizers(svg);
+    expect(instructions.paths, <Path>[
+      PathBuilder().addRect(const Rect.fromLTWH(0, 0, 100, 100)).toPath(),
+      PathBuilder().addOval(const Rect.fromCircle(50, 50, 50)).toPath(),
+    ]);
+
+    expect(instructions.paints, const <Paint>[
+      Paint(fill: Fill()),
+      Paint(fill: Fill(color: Color(0xff0000ff))),
+      Paint(blendMode: BlendMode.dstIn, fill: Fill()),
+      Paint(fill: Fill(color: Color(0xffffffff))),
+    ]);
+
+    expect(instructions.commands, const <DrawCommand>[
+      DrawCommand(DrawCommandType.saveLayer, paintId: 0),
+      DrawCommand(DrawCommandType.path, objectId: 0, paintId: 1),
+      DrawCommand(DrawCommandType.saveLayer, paintId: 2),
+      DrawCommand(DrawCommandType.path, objectId: 1, paintId: 3),
+      DrawCommand(DrawCommandType.restore),
+      DrawCommand(DrawCommandType.restore),
+    ]);
+  });
+
+  test('Handles alpha masks specified via style attribute', () {
+    const svg = '''
+<svg width="100" height="100" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+  <mask id="m" style="mask-type:alpha" maskUnits="userSpaceOnUse" x="0" y="0" width="100" height="100">
+    <rect width="100" height="100" fill="#3366CC"/>
+  </mask>
+  <g mask="url(#m)">
+    <rect width="100" height="100" fill="#FF8800"/>
+  </g>
+</svg>
+''';
+    final VectorInstructions instructions = parseWithoutOptimizers(svg);
+    expect(instructions.paints, const <Paint>[
+      Paint(fill: Fill()),
+      Paint(fill: Fill(color: Color(0xffff8800))),
+      Paint(blendMode: BlendMode.dstIn, fill: Fill()),
+      Paint(fill: Fill(color: Color(0xff3366cc))),
+    ]);
+
+    expect(instructions.commands, const <DrawCommand>[
+      DrawCommand(DrawCommandType.saveLayer, paintId: 0),
+      DrawCommand(DrawCommandType.path, objectId: 0, paintId: 1),
+      DrawCommand(DrawCommandType.saveLayer, paintId: 2),
+      DrawCommand(DrawCommandType.path, objectId: 0, paintId: 3),
+      DrawCommand(DrawCommandType.restore),
+      DrawCommand(DrawCommandType.restore),
+    ]);
+  });
+
   test('Handles viewBox transformations correctly', () {
     const svg = '''
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="-10 -12 120 120">

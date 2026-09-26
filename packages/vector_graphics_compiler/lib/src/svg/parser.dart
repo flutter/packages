@@ -1597,6 +1597,7 @@ class SvgParser {
         id: id,
       ),
       textAnchorMultiplier: parseTextAnchor(attributeMap['text-anchor']),
+      maskType: attributeMap['mask-type'],
     );
   }
 }
@@ -1778,6 +1779,7 @@ class SvgAttributes {
     this.dy,
     this.width,
     this.height,
+    this.maskType,
   });
 
   /// For use in tests to construct arbitrary attributes.
@@ -1807,6 +1809,7 @@ class SvgAttributes {
     this.dy,
     this.width,
     this.height,
+    this.maskType,
   });
 
   /// The empty set of properties.
@@ -1962,6 +1965,9 @@ class SvgAttributes {
   /// The relative y translation.
   final DoubleOrPercentage? dy;
 
+  /// The `mask-type` attribute.
+  final String? maskType;
+
   /// A copy of these attributes after absorbing a saveLayer.
   ///
   /// Specifically, this will null out `blendMode` and any opacity related
@@ -1992,6 +1998,7 @@ class SvgAttributes {
       y: y,
       width: width,
       height: height,
+      maskType: maskType,
     );
   }
 
@@ -2037,6 +2044,7 @@ class SvgAttributes {
       y: y,
       dx: dx,
       dy: dy,
+      maskType: maskType,
     );
   }
 }
