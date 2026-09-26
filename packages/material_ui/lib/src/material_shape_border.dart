@@ -390,21 +390,23 @@ Path _pathFromRect(List<CubicBezier> cubics, double squash, Rect rect) {
     return Path();
   }
 
-  var scale = Offset(rect.width, rect.height);
+  double width = rect.width;
+  double height = rect.height;
 
   if (rect.shortestSide == rect.width) {
-    scale = Offset(scale.dx, squash * scale.dy + (1 - squash) * scale.dx);
+    height = squash * height + (1 - squash) * width;
   } else {
-    scale = Offset(squash * scale.dx + (1 - squash) * scale.dy, scale.dy);
+    width = squash * width + (1 - squash) * height;
   }
 
-  final Rect actualRect =
-      Offset(rect.left + (rect.width - scale.dx) / 2, rect.top + (rect.height - scale.dy) / 2) &
-      Size(scale.dx, scale.dy);
-
   final matrix = Matrix4.identity()
-    ..translateByDouble(actualRect.left, actualRect.top, 0, 1)
-    ..scaleByDouble(scale.dx, scale.dy, 1, 1);
+    ..translateByDouble(
+      rect.left + (rect.width - width) / 2,
+      rect.top + (rect.height - height) / 2,
+      0,
+      1,
+    )
+    ..scaleByDouble(width, height, 1, 1);
 
   return pathFromCubics(cubics).transform(matrix.storage);
 }
