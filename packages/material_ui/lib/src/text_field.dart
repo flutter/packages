@@ -29,6 +29,7 @@ import 'material_state.dart';
 import 'selectable_text.dart' show iOSHorizontalOffset;
 import 'spell_check_suggestions_toolbar.dart';
 import 'text_selection.dart';
+import 'text_selection_theme.dart';
 import 'theme.dart';
 
 export 'package:flutter/services.dart'
@@ -899,6 +900,8 @@ class TextField extends StatefulWidget {
   ///  * [AdaptiveTextSelectionToolbar], which is built by default.
   ///  * [BrowserContextMenu], which allows the browser's context menu on web to
   ///    be disabled and Flutter-rendered context menus to appear.
+  ///  * [ThemeData.textSelectionTheme], which provides a way to override the
+  ///    default context menu.
   final EditableTextContextMenuBuilder? contextMenuBuilder;
 
   /// Determine whether this text field can request the primary focus.
@@ -1707,6 +1710,12 @@ class _TextFieldState extends State<TextField>
         };
     }
 
+    final EditableTextContextMenuBuilder? resolvedContextMenuBuilder =
+        widget.contextMenuBuilder == TextField._defaultContextMenuBuilder
+        ? (TextSelectionTheme.of(context).contextMenuBuilder ??
+              TextField._defaultContextMenuBuilder)
+        : widget.contextMenuBuilder;
+
     Widget child = RepaintBoundary(
       child: UnmanagedRestorationScope(
         bucket: bucket,
@@ -1778,7 +1787,7 @@ class _TextFieldState extends State<TextField>
           enableIMEPersonalizedLearning: widget.enableIMEPersonalizedLearning,
           enableInlinePrediction: widget.enableInlinePrediction,
           contentInsertionConfiguration: widget.contentInsertionConfiguration,
-          contextMenuBuilder: widget.contextMenuBuilder,
+          contextMenuBuilder: resolvedContextMenuBuilder,
           spellCheckConfiguration: spellCheckConfiguration,
           magnifierConfiguration:
               widget.magnifierConfiguration ?? TextMagnifier.adaptiveMagnifierConfiguration,

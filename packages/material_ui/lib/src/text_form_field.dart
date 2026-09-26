@@ -12,6 +12,7 @@ import 'adaptive_text_selection_toolbar.dart';
 import 'input_decorator.dart';
 import 'material_state.dart';
 import 'text_field.dart';
+import 'text_selection_theme.dart';
 
 export 'package:flutter/services.dart' show SmartDashesType, SmartQuotesType;
 
@@ -246,6 +247,12 @@ class TextFormField extends FormField<String> {
              onChanged?.call(value);
            }
 
+           final EditableTextContextMenuBuilder? resolvedContextMenuBuilder =
+               contextMenuBuilder == _defaultContextMenuBuilder
+               ? (TextSelectionTheme.of(field.context).contextMenuBuilder ??
+                     _defaultContextMenuBuilder)
+               : contextMenuBuilder;
+
            return UnmanagedRestorationScope(
              bucket: field.bucket,
              child: TextField(
@@ -309,7 +316,7 @@ class TextFormField extends FormField<String> {
                scrollController: scrollController,
                enableIMEPersonalizedLearning: enableIMEPersonalizedLearning,
                mouseCursor: mouseCursor,
-               contextMenuBuilder: contextMenuBuilder,
+               contextMenuBuilder: resolvedContextMenuBuilder,
                spellCheckConfiguration: spellCheckConfiguration,
                magnifierConfiguration: magnifierConfiguration,
                undoController: undoController,
