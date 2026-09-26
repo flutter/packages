@@ -74,6 +74,7 @@ dependencies {
     testImplementation("org.mockito:mockito-core:5.23.0")
     testImplementation("org.mockito.kotlin:mockito-kotlin:6.3.0")
     testImplementation("org.robolectric:robolectric:4.16")
+    testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.10.1")
     androidTestImplementation("androidx.test:runner:1.7.0")
     androidTestImplementation("androidx.test:rules:1.7.0")
     androidTestImplementation("androidx.test.espresso:espresso-core:3.7.0")
