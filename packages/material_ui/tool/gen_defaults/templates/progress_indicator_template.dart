@@ -2,34 +2,53 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import '../data/progress_indicator.dart';
+import '../data/progress_indicator_circular.dart';
+import '../data/progress_indicator_linear.dart';
 import 'template.dart';
 
-class ProgressIndicatorTemplate extends TokenTemplate {
-  const ProgressIndicatorTemplate(
-    super.blockName,
-    super.fileName,
-    super.tokens, {
-    super.colorSchemePrefix = '_colors.',
-  });
+enum _ProgressIndicatorVariant { circular, linear }
+
+class ProgressIndicatorTemplateM3 extends TokenTemplateM3 {
+  const ProgressIndicatorTemplateM3(this.name);
 
   @override
-  String generate() =>
+  final String name;
+
+  @override
+  String get parentFilePath => 'progress_indicator.dart';
+
+  _ProgressIndicatorVariant get _variant => switch (name) {
+    'Circular Progress Indicator' => _ProgressIndicatorVariant.circular,
+    'Linear Progress Indicator' => _ProgressIndicatorVariant.linear,
+    _ => throw UnsupportedError('Unsupported progress indicator template name: $name'),
+  };
+
+  @override
+  String generateContents(String className) {
+    return switch (_variant) {
+      _ProgressIndicatorVariant.circular => _generateCircular(className),
+      _ProgressIndicatorVariant.linear => _generateLinear(className),
+    };
+  }
+
+  String _generateCircular(String className) =>
       '''
-class _Circular${blockName}DefaultsM3 extends ProgressIndicatorThemeData {
-  _Circular${blockName}DefaultsM3(this.context, { required this.indeterminate });
+class $className extends ProgressIndicatorThemeData {
+  $className(this.context, { required this.indeterminate });
 
   final BuildContext context;
   late final ColorScheme _colors = Theme.of(context).colorScheme;
   final bool indeterminate;
 
   @override
-  Color get color => ${componentColor('md.comp.progress-indicator.active-indicator')};
+  Color get color => ${color(TokenProgressIndicator.activeIndicatorColor)};
 
   @override
-  Color? get circularTrackColor => indeterminate ? null : ${componentColor('md.comp.progress-indicator.track')};
+  Color? get circularTrackColor => indeterminate ? null : ${color(TokenProgressIndicator.trackColor)};
 
   @override
-  double get strokeWidth => ${getToken('md.comp.progress-indicator.track.thickness')};
+  double get strokeWidth => ${number(TokenProgressIndicatorCircular.trackThickness)};
 
   @override
   double? get strokeAlign => CircularProgressIndicator.strokeAlignInside;
@@ -41,38 +60,41 @@ class _Circular${blockName}DefaultsM3 extends ProgressIndicatorThemeData {
   );
 
   @override
-  double? get trackGap => ${getToken('md.comp.progress-indicator.active-indicator-track-space')};
+  double? get trackGap => ${number(TokenProgressIndicatorCircular.trackActiveIndicatorSpace)};
 
   @override
   EdgeInsetsGeometry? get circularTrackPadding => const EdgeInsets.all(4.0);
 }
+''';
 
-class _Linear${blockName}DefaultsM3 extends ProgressIndicatorThemeData {
-  _Linear${blockName}DefaultsM3(this.context);
+  String _generateLinear(String className) =>
+      '''
+class $className extends ProgressIndicatorThemeData {
+  $className(this.context);
 
   final BuildContext context;
   late final ColorScheme _colors = Theme.of(context).colorScheme;
 
   @override
-  Color get color => ${componentColor('md.comp.progress-indicator.active-indicator')};
+  Color get color => ${color(TokenProgressIndicator.activeIndicatorColor)};
 
   @override
-  Color get linearTrackColor => ${componentColor('md.comp.progress-indicator.track')};
+  Color get linearTrackColor => ${color(TokenProgressIndicator.trackColor)};
 
   @override
-  double get linearMinHeight => ${getToken('md.comp.progress-indicator.track.thickness')};
+  double get linearMinHeight => ${number(TokenProgressIndicatorLinear.trackThickness)};
 
   @override
-  BorderRadius get borderRadius => const BorderRadius.all(Radius.circular(${getToken('md.comp.progress-indicator.track.thickness')} / 2));
+  BorderRadius get borderRadius => const BorderRadius.all(Radius.circular(${number(TokenProgressIndicatorLinear.trackThickness)} / 2));
 
   @override
-  Color get stopIndicatorColor => ${componentColor('md.comp.progress-indicator.stop-indicator')};
+  Color get stopIndicatorColor => ${color(TokenProgressIndicator.stopIndicatorColor)};
 
   @override
-  double? get stopIndicatorRadius => ${getToken('md.comp.progress-indicator.stop-indicator.size')} / 2;
+  double? get stopIndicatorRadius => ${number(TokenProgressIndicatorLinear.stopIndicatorSize)} / 2;
 
   @override
-  double? get trackGap => ${getToken('md.comp.progress-indicator.active-indicator-track-space')};
+  double? get trackGap => ${number(TokenProgressIndicatorLinear.trackActiveIndicatorSpace)};
 }
 ''';
 }
