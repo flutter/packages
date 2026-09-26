@@ -911,16 +911,22 @@ class _MenuOverlayState extends State<_MenuOverlay>
     // Behavior of reduce motion is based on iOS 18.5 simulator. Because the
     // disableAnimations accessibility feature is not present on iOS, all
     // animations are disabled when disableAnimations is enabled.
+    //
+    // Allow a subtree to override disableAnimations. Reduced motion is only
+    // exposed by the platform accessibility features.
     final ui.AccessibilityFeatures accessibilityFeatures = View.of(context)
         .platformDispatcher
         .accessibilityFeatures;
+    final bool disableAnimations =
+        MediaQuery.maybeDisableAnimationsOf(context) ?? accessibilityFeatures.disableAnimations;
+    final bool reduceMotion = accessibilityFeatures.reduceMotion;
 
-    switch (accessibilityFeatures) {
-      case ui.AccessibilityFeatures(disableAnimations: true):
+    switch ((disableAnimations, reduceMotion)) {
+      case (true, _):
         _scaleAnimation.parent = kAlwaysCompleteAnimation;
         _fadeAnimation.parent = kAlwaysCompleteAnimation;
         _sizeAnimation.parent = kAlwaysCompleteAnimation;
-      case ui.AccessibilityFeatures(reduceMotion: true):
+      case (_, true):
         // Swipe scaling works with reduced motion.
         _scaleAnimation.parent = _swipeAnimationController.view.drive(
           Tween<double>(begin: 0.8, end: 1),

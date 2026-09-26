@@ -959,6 +959,8 @@ class _PopupMenuRoute<T> extends PopupRoute<T> {
     super.settings,
     super.requestFocus,
     this.popUpAnimationStyle,
+    this.disableAnimations = false,
+    this.reduceMotion = false,
   }) : assert(
          (position != null) != (positionBuilder != null),
          'Either position or positionBuilder must be provided.',
@@ -986,6 +988,11 @@ class _PopupMenuRoute<T> extends PopupRoute<T> {
   final Clip clipBehavior;
   final AnimationStyle? popUpAnimationStyle;
 
+  // Resolve accessibility settings in showMenu's calling context before the
+  // route is built, and keep them consistent for the lifetime of the route.
+  final bool disableAnimations;
+  final bool reduceMotion;
+
   CurvedAnimation? _animation;
 
   @override
@@ -1010,7 +1017,21 @@ class _PopupMenuRoute<T> extends PopupRoute<T> {
   }
 
   @override
-  Duration get transitionDuration => popUpAnimationStyle?.duration ?? _kMenuDuration;
+  Duration get transitionDuration {
+    // Disabling animations entirely means the menu should pop open and
+    // closed instantly, so a zero duration is used instead of skipping the
+    // AnimationController's forward()/reverse() calls: this keeps the
+    // controller-driven status changes (and therefore route finalization)
+    // intact while making the transition imperceptible.
+    if (disableAnimations) {
+      return Duration.zero;
+    }
+    final Duration duration = popUpAnimationStyle?.duration ?? _kMenuDuration;
+    if (reduceMotion) {
+      return duration ~/ 3;
+    }
+    return duration;
+  }
 
   @override
   bool get barrierDismissible => true;
@@ -1215,6 +1236,16 @@ Future<T?> showMenu<T>({
 
   final menuItemKeys = List<GlobalKey>.generate(items.length, (int index) => GlobalKey());
   final NavigatorState navigator = Navigator.of(context, rootNavigator: useRootNavigator);
+
+  // Read the caller's override before the route has its own subtree.
+  // Reduced motion is only exposed by the platform accessibility features.
+  final AccessibilityFeatures accessibilityFeatures = View.of(context)
+      .platformDispatcher
+      .accessibilityFeatures;
+  final bool disableAnimations =
+      MediaQuery.maybeDisableAnimationsOf(context) ?? accessibilityFeatures.disableAnimations;
+  final bool reduceMotion = accessibilityFeatures.reduceMotion;
+
   return navigator.push(
     _PopupMenuRoute<T>(
       position: position,
@@ -1236,6 +1267,8 @@ Future<T?> showMenu<T>({
       settings: routeSettings,
       popUpAnimationStyle: popUpAnimationStyle,
       requestFocus: requestFocus,
+      disableAnimations: disableAnimations,
+      reduceMotion: reduceMotion,
     ),
   );
 }

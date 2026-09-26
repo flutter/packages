@@ -1647,6 +1647,58 @@ void main() {
     expect(disabledFade.opacity.value, moreOrLessEquals(1, epsilon: 0.01));
   });
 
+  testWidgets('Menu animations respect MediaQueryData.disableAnimations', (
+    WidgetTester tester,
+  ) async {
+    await tester.pumpWidget(
+      App(
+        MediaQuery(
+          data: const MediaQueryData(disableAnimations: true),
+          child: CupertinoMenuAnchor(
+            controller: controller,
+            menuChildren: <Widget>[CupertinoMenuItem(onPressed: () {}, child: Text(Tag.a.text))],
+            child: const AnchorButton(Tag.anchor),
+          ),
+        ),
+      ),
+    );
+
+    controller.open();
+    await tester.pump();
+
+    final FadeTransition fade = tester.widget<FadeTransition>(
+      find.ancestor(of: find.byType(ClipRSuperellipse), matching: find.byType(FadeTransition)),
+    );
+    expect(fade.opacity.value, moreOrLessEquals(1, epsilon: 0.01));
+    expect(getScale(tester), moreOrLessEquals(1, epsilon: 0.01));
+  });
+
+  testWidgets('MediaQuery can enable menu animations when the platform disables them', (
+    WidgetTester tester,
+  ) async {
+    tester.binding.platformDispatcher.accessibilityFeaturesTestValue =
+        const FakeAccessibilityFeatures(disableAnimations: true);
+    addTearDown(tester.binding.platformDispatcher.clearAccessibilityFeaturesTestValue);
+
+    await tester.pumpWidget(
+      App(
+        MediaQuery(
+          data: const MediaQueryData(),
+          child: CupertinoMenuAnchor(
+            controller: controller,
+            menuChildren: <Widget>[CupertinoMenuItem(onPressed: () {}, child: Text(Tag.a.text))],
+            child: const AnchorButton(Tag.anchor),
+          ),
+        ),
+      ),
+    );
+
+    controller.open();
+    await tester.pump();
+
+    expect(getScale(tester), lessThan(1));
+  });
+
   group('Focus', () {
     testWidgets(
       '[Browser] Focus wraps on all platforms',
