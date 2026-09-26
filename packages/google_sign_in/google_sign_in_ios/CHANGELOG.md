@@ -1,5 +1,6 @@
-## NEXT
+## 6.3.6
 
+* Converts the Pigeon host API from Objective-C to Swift.
 * Updates minimum supported SDK version to Flutter 3.41/Dart 3.11.
 
 ## 6.3.5
