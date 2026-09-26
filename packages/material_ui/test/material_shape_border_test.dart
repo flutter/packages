@@ -13,7 +13,7 @@ void main() {
       center: const Offset(0.5, 0.5),
     );
 
-    test('== compares lerped cubics by value', () {
+    test('== compares lerp results by value', () {
       final start = MaterialShapeBorder(shape: MaterialShapes.circle);
       final end = MaterialShapeBorder(shape: MaterialShapes.square);
 
@@ -26,7 +26,7 @@ void main() {
       expect(reverse, first);
     });
 
-    test('hashCode hashes lerped cubics by value', () {
+    test('hashCode hashes lerp results by value', () {
       final start = MaterialShapeBorder(shape: MaterialShapes.circle);
       final end = MaterialShapeBorder(shape: MaterialShapes.square);
 
@@ -250,72 +250,76 @@ void main() {
       expect(scaled.squash, 0.5);
     });
 
-    test('scale keeps the cubics of a lerped border', () {
+    test('lerping different shapes does not return a MaterialShapeBorder', () {
+      final start = MaterialShapeBorder(shape: MaterialShapes.circle);
+      final end = MaterialShapeBorder(shape: MaterialShapes.square);
+
+      // The shape in between is not a RoundedPolygon, so it can't be
+      // represented by a MaterialShapeBorder.
+      expect(start.lerpTo(end, 0.5), isA<OutlinedBorder>());
+      expect(start.lerpTo(end, 0.5), isNot(isA<MaterialShapeBorder>()));
+      expect(end.lerpFrom(start, 0.5), isNot(isA<MaterialShapeBorder>()));
+    });
+
+    test('lerp result toString', () {
+      final start = MaterialShapeBorder(shape: unitSquare);
+      final end = MaterialShapeBorder(shape: MaterialShapes.circle, squash: 1.0);
+
+      expect(
+        start.lerpTo(end, 0.25).toString(),
+        'MaterialShapeBorder(side: BorderSide(width: 0.0, style: none), squash: 0.25, '
+        '25.0% of the way from $unitSquare to ${MaterialShapes.circle})',
+      );
+    });
+
+    test('scale keeps the morph of a lerped border', () {
       final start = MaterialShapeBorder(shape: MaterialShapes.circle);
       final end = MaterialShapeBorder(
         shape: MaterialShapes.square,
         side: const BorderSide(width: 2.0),
       );
 
-      final lerped = start.lerpTo(end, 0.5)! as MaterialShapeBorder;
-      final scaled = lerped.scale(2.0) as MaterialShapeBorder;
+      final lerped = start.lerpTo(end, 0.5)! as OutlinedBorder;
+      final scaled = lerped.scale(2.0) as OutlinedBorder;
 
-      expect(scaled.shape, isNull);
+      expect(scaled, isNot(isA<MaterialShapeBorder>()));
       expect(scaled.side, lerped.side.scale(2.0));
-      expect(scaled.squash, lerped.squash);
-      // The cubics survive the scale, so restoring the side restores the
+      // The morph survives the scale, so restoring the side restores the
       // border.
       expect(scaled.copyWith(side: lerped.side), lerped);
     });
 
-    test('copyWith keeps the cubics of a lerped border', () {
+    test('copyWith keeps the morph of a lerped border', () {
       final start = MaterialShapeBorder(shape: MaterialShapes.circle);
       final end = MaterialShapeBorder(shape: MaterialShapes.square);
 
-      final lerped = start.lerpTo(end, 0.5)! as MaterialShapeBorder;
-      final MaterialShapeBorder copy = lerped.copyWith(
-        side: const BorderSide(width: 3.0),
-        squash: 0.5,
-      );
+      final lerped = start.lerpTo(end, 0.5)! as OutlinedBorder;
+      final OutlinedBorder copy = lerped.copyWith(side: const BorderSide(width: 3.0));
 
-      expect(copy.shape, isNull);
+      expect(copy, isNot(isA<MaterialShapeBorder>()));
       expect(copy.side, const BorderSide(width: 3.0));
-      expect(copy.squash, 0.5);
       expect(copy, isNot(lerped));
-      expect(copy.copyWith(side: lerped.side, squash: lerped.squash), lerped);
-    });
-
-    test('copyWith with a shape turns a lerped border back into a shaped one', () {
-      final start = MaterialShapeBorder(shape: MaterialShapes.circle);
-      final end = MaterialShapeBorder(shape: MaterialShapes.square);
-
-      final lerped = start.lerpTo(end, 0.5)! as MaterialShapeBorder;
-      final MaterialShapeBorder restored = lerped.copyWith(shape: MaterialShapes.square);
-
-      expect(restored.shape, same(MaterialShapes.square));
-      // A lerped border interpolates on its own now, so this is a way of
-      // discarding the morph rather than the only way of escaping it.
-      expect(restored.lerpTo(end, 0.5), end.lerpFrom(restored, 0.5));
+      expect(copy.copyWith(side: lerped.side), lerped);
     });
 
     test('scale and copyWith keep a lerped border on its morph', () {
       final start = MaterialShapeBorder(shape: MaterialShapes.circle);
       final end = MaterialShapeBorder(shape: MaterialShapes.square);
 
-      final lerped = start.lerpTo(end, 0.5)! as MaterialShapeBorder;
-      final expected = start.lerpTo(end, 0.25)! as MaterialShapeBorder;
+      final lerped = start.lerpTo(end, 0.5)! as OutlinedBorder;
+      final expected = start.lerpTo(end, 0.25)! as OutlinedBorder;
 
       // Both carry the morph through, so a transition interrupted after its
       // current value was scaled or copied still resumes instead of snapping.
-      // The side and the squash are normalized away because those are what
-      // scale and copyWith set out to change.
-      final scaled = lerped.scale(2.0) as MaterialShapeBorder;
-      final resumedFromScale = scaled.lerpTo(start, 0.5)! as MaterialShapeBorder;
+      // The side is normalized away because that is what scale and copyWith
+      // set out to change.
+      final scaled = lerped.scale(2.0) as OutlinedBorder;
+      final resumedFromScale = scaled.lerpTo(start, 0.5)! as OutlinedBorder;
       expect(resumedFromScale.copyWith(side: expected.side), expected);
 
-      final MaterialShapeBorder copy = lerped.copyWith(squash: 1.0);
-      final resumedFromCopy = copy.lerpTo(start, 0.5)! as MaterialShapeBorder;
-      expect(resumedFromCopy.copyWith(squash: expected.squash), expected);
+      final OutlinedBorder copy = lerped.copyWith(side: const BorderSide(width: 3.0));
+      final resumedFromCopy = copy.lerpTo(start, 0.5)! as OutlinedBorder;
+      expect(resumedFromCopy.copyWith(side: expected.side), expected);
     });
 
     test('lerp returns the endpoints at zero and one', () {
@@ -327,9 +331,8 @@ void main() {
       expect(end.lerpFrom(start, 0.0), same(start));
       expect(end.lerpFrom(start, 1.0), same(end));
 
-      // Those checks come before the shapes are read, so an already-lerped
-      // border passes through instead of throwing.
-      final lerped = start.lerpTo(end, 0.5)! as MaterialShapeBorder;
+      // The same holds for a border that is already the result of a lerp.
+      final lerped = start.lerpTo(end, 0.5)! as OutlinedBorder;
       expect(lerped.lerpTo(end, 0.0), same(lerped));
       expect(lerped.lerpFrom(start, 1.0), same(lerped));
     });
@@ -345,14 +348,29 @@ void main() {
         squash: 1.0,
       );
 
-      final forward = start.lerpTo(end, 0.25)! as MaterialShapeBorder;
-      expect(forward.shape, isNull);
+      final forward = start.lerpTo(end, 0.25)! as OutlinedBorder;
       expect(forward.side, const BorderSide(width: 3.0));
-      expect(forward.squash, 0.25);
 
-      final backward = end.lerpFrom(start, 0.25)! as MaterialShapeBorder;
+      final backward = end.lerpFrom(start, 0.25)! as OutlinedBorder;
       expect(backward.side, const BorderSide(width: 3.0));
-      expect(backward.squash, 0.25);
+
+      // A lerp result doesn't expose its squash, so compare it with a lerp
+      // whose side and squash stay at the expected values throughout.
+      final ShapeBorder? expected =
+          MaterialShapeBorder(
+            shape: MaterialShapes.circle,
+            side: const BorderSide(width: 3.0),
+            squash: 0.25,
+          ).lerpTo(
+            MaterialShapeBorder(
+              shape: MaterialShapes.square,
+              side: const BorderSide(width: 3.0),
+              squash: 0.25,
+            ),
+            0.25,
+          );
+      expect(forward, expected);
+      expect(backward, expected);
     });
 
     test('lerp between borders with equal shapes keeps the shape', () {
@@ -386,8 +404,7 @@ void main() {
       final start = MaterialShapeBorder(shape: MaterialShapes.circle);
       final end = MaterialShapeBorder(shape: MaterialShapes.square);
 
-      final lerped = start.lerpTo(end, 0.5)! as MaterialShapeBorder;
-      expect(lerped.shape, isNull);
+      final lerped = start.lerpTo(end, 0.5)! as OutlinedBorder;
 
       // Halfway from progress 0.5 back to the start is progress 0.25 on the
       // same morph, which is what the uninterrupted transition drew there.
@@ -407,8 +424,8 @@ void main() {
       final start = MaterialShapeBorder(shape: MaterialShapes.circle);
       final end = MaterialShapeBorder(shape: MaterialShapes.square);
 
-      final quarter = start.lerpTo(end, 0.25)! as MaterialShapeBorder;
-      final threeQuarters = start.lerpTo(end, 0.75)! as MaterialShapeBorder;
+      final quarter = start.lerpTo(end, 0.25)! as OutlinedBorder;
+      final threeQuarters = start.lerpTo(end, 0.75)! as OutlinedBorder;
 
       expect(quarter.lerpTo(threeQuarters, 0.5), start.lerpTo(end, 0.5));
     });
@@ -417,8 +434,8 @@ void main() {
       final start = MaterialShapeBorder(shape: MaterialShapes.circle);
       final end = MaterialShapeBorder(shape: MaterialShapes.square);
 
-      final forward = start.lerpTo(end, 0.25)! as MaterialShapeBorder;
-      final backward = end.lerpTo(start, 0.25)! as MaterialShapeBorder;
+      final forward = start.lerpTo(end, 0.25)! as OutlinedBorder;
+      final backward = end.lerpTo(start, 0.25)! as OutlinedBorder;
 
       // backward sits at 0.75 of the morph forward is on, so lerping between
       // the two resumes along that shared morph instead of snapping.
@@ -430,7 +447,7 @@ void main() {
       final start = MaterialShapeBorder(shape: MaterialShapes.circle);
       final end = MaterialShapeBorder(shape: MaterialShapes.square);
 
-      final lerped = start.lerpTo(end, 0.5)! as MaterialShapeBorder;
+      final lerped = start.lerpTo(end, 0.5)! as OutlinedBorder;
 
       // A widget that builds its border inline hands over a new polygon on
       // every build, so matching the endpoints by identity would snap here.
@@ -449,8 +466,8 @@ void main() {
       final start = MaterialShapeBorder(shape: MaterialShapes.circle);
       final end = MaterialShapeBorder(shape: MaterialShapes.square);
 
-      final first = start.lerpTo(end, 0.5)! as MaterialShapeBorder;
-      final second = first.lerpTo(start, 0.5)! as MaterialShapeBorder;
+      final first = start.lerpTo(end, 0.5)! as OutlinedBorder;
+      final second = first.lerpTo(start, 0.5)! as OutlinedBorder;
 
       expect(second, start.lerpTo(end, 0.25));
       // The result of the first interruption is on the morph too, so a second
@@ -463,8 +480,8 @@ void main() {
       final end = MaterialShapeBorder(shape: MaterialShapes.square);
       final third = MaterialShapeBorder(shape: MaterialShapes.triangle);
 
-      final lerped = start.lerpTo(end, 0.5)! as MaterialShapeBorder;
-      final other = start.lerpTo(third, 0.5)! as MaterialShapeBorder;
+      final lerped = start.lerpTo(end, 0.5)! as OutlinedBorder;
+      final other = start.lerpTo(third, 0.5)! as OutlinedBorder;
 
       // A third shape is on neither end of the morph, and the two lerped
       // borders are on different morphs. All four of ShapeBorder.lerp's
