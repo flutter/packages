@@ -174,7 +174,7 @@ abstract class RouteMatchBase with Diagnosticable {
       // have at least one match for this ShellRouteBase.
       matches: subRouteMatches!.remove(null)!,
       matchedLocation: remainingLocation,
-      pageKey: ValueKey<String>(route.hashCode.toString()),
+      pageKey: _ShellRoutePageKey(route),
       navigatorKey: navigatorKeyUsed,
     );
     subRouteMatches.putIfAbsent(parentKey, () => <RouteMatchBase>[]).insert(0, result);
@@ -336,6 +336,49 @@ class RouteMatch extends RouteMatchBase {
   }
 }
 
+class _ShellRoutePageKey extends ValueKey<String> {
+  _ShellRoutePageKey(ShellRouteBase route, [ValueKey<String>? imperativePageKey])
+    : _routeIdentity = route.pageIdentity,
+      _imperativePageKey = imperativePageKey,
+      super(
+        imperativePageKey == null
+            ? route.pageIdentity.hashCode.toString()
+            : '${route.pageIdentity.hashCode}-${imperativePageKey.value}',
+      );
+
+  final Object _routeIdentity;
+  final ValueKey<String>? _imperativePageKey;
+
+  @override
+  bool operator ==(Object other) {
+    return other is _ShellRoutePageKey &&
+        other._routeIdentity == _routeIdentity &&
+        other._imperativePageKey == _imperativePageKey;
+  }
+
+  @override
+  int get hashCode => Object.hash(_routeIdentity.hashCode, _imperativePageKey);
+}
+
+class _ShellRouteNavigatorKey extends GlobalKey<NavigatorState> {
+  _ShellRouteNavigatorKey(ShellRouteBase route, this.imperativePageKey)
+    : _routeIdentity = route.pageIdentity,
+      super.constructor();
+
+  final Object _routeIdentity;
+  final ValueKey<String> imperativePageKey;
+
+  @override
+  bool operator ==(Object other) {
+    return other is _ShellRouteNavigatorKey &&
+        other._routeIdentity == _routeIdentity &&
+        other.imperativePageKey == imperativePageKey;
+  }
+
+  @override
+  int get hashCode => Object.hash(_routeIdentity.hashCode, imperativePageKey);
+}
+
 /// An matched result by matching a [ShellRoute] against a location.
 ///
 /// This is typically created by calling [RouteMatchBase.match].
@@ -404,13 +447,17 @@ class ShellRouteMatch extends RouteMatchBase {
   // TODO(loic-sharma): Remove meta library prefix.
   // https://github.com/flutter/flutter/issues/171410
   @meta.internal
-  ShellRouteMatch copyWith({required List<RouteMatchBase>? matches}) {
+  ShellRouteMatch copyWith({
+    required List<RouteMatchBase>? matches,
+    ValueKey<String>? pageKey,
+    GlobalKey<NavigatorState>? navigatorKey,
+  }) {
     return ShellRouteMatch(
       matches: matches ?? this.matches,
       route: route,
       matchedLocation: matchedLocation,
-      pageKey: pageKey,
-      navigatorKey: navigatorKey,
+      pageKey: pageKey ?? this.pageKey,
+      navigatorKey: navigatorKey ?? this.navigatorKey,
     );
   }
 
@@ -616,9 +663,18 @@ class RouteMatchList with Diagnosticable {
   static List<RouteMatchBase> _createNewMatchUntilIncompatible(
     List<RouteMatchBase> currentMatches,
     List<RouteMatchBase> otherMatches,
-    ImperativeRouteMatch match,
-  ) {
+    ImperativeRouteMatch match, {
+    List<ShellRouteMatch> ancestorShellRouteMatches = const <ShellRouteMatch>[],
+  }) {
     final List<RouteMatchBase> newMatches = currentMatches.toList();
+    // Shell matches outside a recursive branch can still reserve its keys.
+    final existingShellRouteMatches = <ShellRouteMatch>[...ancestorShellRouteMatches];
+    _visitRouteMatches(newMatches, (RouteMatchBase match) {
+      if (match is ShellRouteMatch) {
+        existingShellRouteMatches.add(match);
+      }
+      return true;
+    });
     if (otherMatches.last is ShellRouteMatch &&
         newMatches.isNotEmpty &&
         otherMatches.last.route == newMatches.last.route) {
@@ -631,22 +687,52 @@ class RouteMatchList with Diagnosticable {
             lastShellRouteMatch.matches,
             (otherMatches.last as ShellRouteMatch).matches,
             match,
+            ancestorShellRouteMatches: existingShellRouteMatches,
           ),
         ),
       );
       return newMatches;
     }
-    newMatches.add(_cloneBranchAndInsertImperativeMatch(otherMatches.last, match));
+    final RouteMatchBase branch = otherMatches.last;
+    newMatches.add(
+      _cloneBranchAndInsertImperativeMatch(
+        branch,
+        match,
+        existingShellRouteMatches: existingShellRouteMatches,
+      ),
+    );
     return newMatches;
   }
 
   static RouteMatchBase _cloneBranchAndInsertImperativeMatch(
     RouteMatchBase branch,
-    ImperativeRouteMatch match,
-  ) {
+    ImperativeRouteMatch match, {
+    required List<ShellRouteMatch> existingShellRouteMatches,
+  }) {
     if (branch is ShellRouteMatch) {
+      final bool scopeKeys =
+          branch.route is ShellRoute &&
+          existingShellRouteMatches.any(
+            (ShellRouteMatch existingMatch) =>
+                existingMatch.pageKey == branch.pageKey ||
+                existingMatch.navigatorKey == branch.navigatorKey,
+          );
+      final ValueKey<String> pageKey = scopeKeys
+          ? _ShellRoutePageKey(branch.route, match.pageKey)
+          : branch.pageKey;
+      final GlobalKey<NavigatorState> navigatorKey = scopeKeys
+          ? _ShellRouteNavigatorKey(branch.route, match.pageKey)
+          : branch.navigatorKey;
       return branch.copyWith(
-        matches: <RouteMatchBase>[_cloneBranchAndInsertImperativeMatch(branch.matches.last, match)],
+        matches: <RouteMatchBase>[
+          _cloneBranchAndInsertImperativeMatch(
+            branch.matches.last,
+            match,
+            existingShellRouteMatches: existingShellRouteMatches,
+          ),
+        ],
+        pageKey: pageKey,
+        navigatorKey: navigatorKey,
       );
     }
     // Add the input `match` instead of the incompatibleMatch since it contains

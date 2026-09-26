@@ -316,7 +316,7 @@ class _CustomNavigatorState extends State<_CustomNavigator> {
               canPop: match.matches.length == 1,
               child: _CustomNavigator(
                 // The state needs to persist across rebuild.
-                key: GlobalObjectKey(navigatorKey.hashCode),
+                key: ValueKey<GlobalKey<NavigatorState>>(navigatorKey),
                 navigatorRestorationId: restorationScopeId,
                 navigatorKey: navigatorKey,
                 matches: match.matches,

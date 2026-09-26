@@ -95,6 +95,58 @@ void main() {
       expect(find.byType(_DetailsScreen), findsOneWidget);
     });
 
+    // Regression test for https://github.com/flutter/flutter/issues/148712.
+    testWidgets('rebuilding GoRouter preserves ShellRoute navigator key', (
+      WidgetTester tester,
+    ) async {
+      final rootNavigatorKey = GlobalKey<NavigatorState>();
+      final shellNavigatorKey = GlobalKey<NavigatorState>();
+      final routers = <GoRouter>[];
+      late StateSetter rebuildRouter;
+      addTearDown(() {
+        for (final router in routers) {
+          router.dispose();
+        }
+      });
+
+      await tester.pumpWidget(
+        StatefulBuilder(
+          builder: (BuildContext context, StateSetter setState) {
+            rebuildRouter = setState;
+            final router = GoRouter(
+              navigatorKey: rootNavigatorKey,
+              routes: <RouteBase>[
+                ShellRoute(
+                  navigatorKey: shellNavigatorKey,
+                  builder: (_, _, Widget child) => child,
+                  routes: <RouteBase>[
+                    GoRoute(
+                      path: '/',
+                      pageBuilder: (_, GoRouterState state) {
+                        return NoTransitionPage<void>(key: state.pageKey, child: const SizedBox());
+                      },
+                    ),
+                  ],
+                ),
+              ],
+            );
+            routers.add(router);
+            return MaterialApp.router(routerConfig: router);
+          },
+        ),
+      );
+      await tester.pumpAndSettle();
+      expect(tester.takeException(), isNull);
+      final NavigatorState shellNavigator = shellNavigatorKey.currentState!;
+
+      rebuildRouter(() {});
+      await tester.pumpAndSettle();
+
+      expect(tester.takeException(), isNull);
+      expect(routers, hasLength(2));
+      expect(shellNavigatorKey.currentState, same(shellNavigator));
+    });
+
     testWidgets('Uses the correct navigatorKey', (WidgetTester tester) async {
       final rootNavigatorKey = GlobalKey<NavigatorState>();
       final RouteConfiguration config = createRouteConfiguration(

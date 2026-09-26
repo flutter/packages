@@ -1,0 +1,4 @@
+changelog: |
+  - Fixes `ShellRoute` page and navigator key collisions when pushing between nested shell routes.
+  - Preserves and updates loaded `StatefulShellRoute` branches when the routing configuration changes.
+version: patch
