@@ -43,7 +43,8 @@ part 'generated/app_bar_defaults_m3.g.dart';
 typedef _FlexibleConfigBuilder = _ScrollUnderFlexibleConfig Function(BuildContext);
 
 const double _kLeadingWidth = kToolbarHeight; // So the leading button is square.
-const double _kMaxTitleTextScaleFactor = 1.34; // TODO(perc): Add link to Material spec when available, https://github.com/flutter/flutter/issues/58769.
+const double _kMaxTitleTextScaleFactor =
+    1.34; // TODO(perc): Add link to Material spec when available, https://github.com/flutter/flutter/issues/58769.
 
 enum _SliverAppVariant { small, medium, large }
 
@@ -288,25 +289,10 @@ class AppBar extends StatefulWidget implements PreferredSizeWidget {
   ///
   /// <callout-box>
   ///
-  // TODO(framework): Add unit tests to this code snippet.
-  // https://github.com/flutter/flutter/issues/188530
-  ///
   /// The following code shows how the drawer button could be manually specified
   /// instead of relying on [automaticallyImplyLeading]:
   ///
-  /// ```dart
-  /// AppBar(
-  ///   leading: Builder(
-  ///     builder: (BuildContext context) {
-  ///       return IconButton(
-  ///         icon: const Icon(Icons.menu),
-  ///         onPressed: () { Scaffold.of(context).openDrawer(); },
-  ///         tooltip: MaterialLocalizations.of(context).openAppDrawerTooltip,
-  ///       );
-  ///     },
-  ///   ),
-  /// )
-  /// ```
+  /// {@example /example/lib/app_bar/app_bar.snippet.0.dart#body indent=strip}
   ///
   /// </callout-box>
   ///
@@ -389,31 +375,7 @@ class AppBar extends StatefulWidget implements PreferredSizeWidget {
   ///
   /// <callout-box>
   ///
-  // TODO(framework): Add unit tests to this code snippet.
-  // https://github.com/flutter/flutter/issues/188530
-  ///
-  /// ```dart
-  /// Scaffold(
-  ///   body: CustomScrollView(
-  ///     primary: true,
-  ///     slivers: <Widget>[
-  ///       SliverAppBar(
-  ///         title: const Text('Hello World'),
-  ///         actions: <Widget>[
-  ///           IconButton(
-  ///             icon: const Icon(Icons.shopping_cart),
-  ///             tooltip: 'Open shopping cart',
-  ///             onPressed: () {
-  ///               // handle the press
-  ///             },
-  ///           ),
-  ///         ],
-  ///       ),
-  ///       // ...rest of body...
-  ///     ],
-  ///   ),
-  /// )
-  /// ```
+  /// {@example /example/lib/app_bar/app_bar.snippet.1.dart#body indent=strip}
   ///
   /// </callout-box>
   final List<Widget>? actions;
@@ -1535,27 +1497,10 @@ class _SliverAppBarDelegate extends SliverPersistentHeaderDelegate {
 ///
 /// <callout-box>
 ///
-// TODO(framework): Add unit tests to this code snippet.
-// https://github.com/flutter/flutter/issues/188530
-///
 /// This is an example that could be included in a [CustomScrollView]'s
 /// [CustomScrollView.slivers] list:
 ///
-/// ```dart
-/// SliverAppBar(
-///   expandedHeight: 150.0,
-///   flexibleSpace: const FlexibleSpaceBar(
-///     title: Text('Available seats'),
-///   ),
-///   actions: <Widget>[
-///     IconButton(
-///       icon: const Icon(Icons.add_circle),
-///       tooltip: 'Add new entry',
-///       onPressed: () { /* ... */ },
-///     ),
-///   ]
-/// )
-/// ```
+/// {@example /example/lib/app_bar/sliver_app_bar.snippet.0.dart#body indent=strip}
 ///
 /// </callout-box>
 ///
