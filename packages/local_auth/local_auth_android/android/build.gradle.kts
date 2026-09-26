@@ -69,7 +69,7 @@ android {
 dependencies {
     api("androidx.core:core:1.18.0")
     api("androidx.biometric:biometric:1.1.0")
-    api("androidx.fragment:fragment:1.8.9")
+    api("androidx.fragment:fragment:1.9.0")
     testImplementation("junit:junit:4.13.2")
     testImplementation("org.mockito:mockito-core:5.23.0")
     testImplementation("org.mockito.kotlin:mockito-kotlin:6.3.0")
