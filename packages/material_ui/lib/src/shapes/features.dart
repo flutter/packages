@@ -22,18 +22,18 @@ import 'point.dart';
 ///     process.
 ///   - Curve Type Mapping: [Morph] maps similar curve types (convex, concave)
 ///     together. Note that edges or features created with
-///     [Feature.ignorable] are ignored in the default mapping.
+///     [PolygonFeature.ignorable] are ignored in the default mapping.
 ///
 /// By using features, you can manipulate polygon shapes with more context and
 /// control.
 @immutable
-abstract class Feature {
-  /// Creates a [Feature] spanning the given [cubics].
+abstract class PolygonFeature {
+  /// Creates a [PolygonFeature] spanning the given [cubics].
   ///
   /// The list is defensively copied into an unmodifiable one, so later changes
-  /// to [cubics] do not affect this feature, and [Feature.cubics] can return
-  /// the stored list directly instead of allocating a wrapper per call.
-  Feature._(List<CubicBezier> cubics) : _cubics = List<CubicBezier>.unmodifiable(cubics);
+  /// to [cubics] do not affect this feature, and [PolygonFeature.cubics] can
+  /// return the stored list directly instead of allocating a wrapper per call.
+  PolygonFeature._(List<CubicBezier> cubics) : _cubics = List<CubicBezier>.unmodifiable(cubics);
 
   /// Groups a list of [CubicBezier] objects into a feature that should be
   /// ignored in the default [Morph] mapping. The feature can have any
@@ -57,33 +57,34 @@ abstract class Feature {
   /// squares' outer corners.
   ///
   /// Throws [ArgumentError] for lists of empty cubics or non-continuous cubics.
-  factory Feature.ignorable(List<CubicBezier> cubics) => _validated(EdgeFeature(cubics));
+  factory PolygonFeature.ignorable(List<CubicBezier> cubics) => _validated(EdgeFeature(cubics));
 
   /// Groups a [CubicBezier] object into an edge (neither inward nor outward
   /// indentation in a shape).
-  factory Feature.edge(CubicBezier cubic) => EdgeFeature([cubic]);
+  factory PolygonFeature.edge(CubicBezier cubic) => EdgeFeature([cubic]);
 
   /// Groups a list of [CubicBezier] objects into a convex corner (outward
   /// indentation in a shape).
   ///
   /// Throws [ArgumentError] for lists of empty cubics or non-continuous cubics.
-  factory Feature.convexCorner(List<CubicBezier> cubics) => _validated(CornerFeature(cubics));
+  factory PolygonFeature.convexCorner(List<CubicBezier> cubics) =>
+      _validated(CornerFeature(cubics));
 
   /// Groups a list of [CubicBezier] objects into a concave corner (inward
   /// indentation in a shape).
   ///
   /// Throws [ArgumentError] for lists of empty cubics or non-continuous cubics.
-  factory Feature.concaveCorner(List<CubicBezier> cubics) =>
+  factory PolygonFeature.concaveCorner(List<CubicBezier> cubics) =>
       _validated(CornerFeature(cubics, convex: false));
 
-  static Feature _validated(Feature feature) {
+  static PolygonFeature _validated(PolygonFeature feature) {
     if (feature._cubics.isEmpty) {
       throw ArgumentError('Features need at least one cubic.');
     }
 
     if (!_isContinuous(feature)) {
       throw ArgumentError(
-        'Feature must be continuous, with the anchor points of all cubics '
+        'PolygonFeature must be continuous, with the anchor points of all cubics '
         'matching the anchor points of the preceding and succeeding cubics',
       );
     }
@@ -91,7 +92,7 @@ abstract class Feature {
     return feature;
   }
 
-  static bool _isContinuous(Feature feature) {
+  static bool _isContinuous(PolygonFeature feature) {
     const distanceEpsilon = 1e-5;
     CubicBezier prevCubic = feature._cubics.first;
     for (var i = 1; i < feature._cubics.length; i++) {
@@ -110,30 +111,30 @@ abstract class Feature {
   /// The cubic curves defining this feature, as an unmodifiable list.
   List<CubicBezier> get cubics => _cubics;
 
-  /// Whether this Feature gets ignored in the [Morph] mapping.
+  /// Whether this feature gets ignored in the [Morph] mapping.
   ///
-  /// See [Feature.ignorable] for more details.
+  /// See [PolygonFeature.ignorable] for more details.
   bool get isIgnorable;
 
-  /// Whether this Feature is an Edge with no inward or outward indentation.
+  /// Whether this feature is an Edge with no inward or outward indentation.
   bool get isEdge;
 
-  /// Whether this Feature is a corner.
+  /// Whether this feature is a corner.
   bool get isCorner;
 
-  /// Whether this Feature is a convex corner (outward indentation in a shape).
+  /// Whether this feature is a convex corner (outward indentation in a shape).
   bool get isConvexCorner;
 
-  /// Whether this Feature is a concave corner (inward indentation in a shape).
+  /// Whether this feature is a concave corner (inward indentation in a shape).
   bool get isConcaveCorner;
 
-  /// Transforms the points in this [Feature] with the given [transformer] and
-  /// returns a new [Feature].
-  Feature transformed(PointTransformer transformer);
+  /// Transforms the points in this [PolygonFeature] with the given
+  /// [transformer] and returns a new [PolygonFeature].
+  PolygonFeature transformed(PointTransformer transformer);
 
-  /// A new [Feature] with the points that define the shape of this [Feature]
-  /// in reversed order.
-  Feature get reversed;
+  /// A new [PolygonFeature] with the points that define the shape of this
+  /// [PolygonFeature] in reversed order.
+  PolygonFeature get reversed;
 
   @override
   bool operator ==(Object other) {
@@ -141,7 +142,7 @@ abstract class Feature {
       return true;
     }
 
-    return other is Feature &&
+    return other is PolygonFeature &&
         other.runtimeType == runtimeType &&
         listEquals(other._cubics, _cubics);
   }
@@ -154,16 +155,16 @@ abstract class Feature {
 /// lie between corners and have no vertex or concavity; the curves are simply
 /// straight lines (represented by [CubicBezier] curves).
 @internal
-class EdgeFeature extends Feature {
+class EdgeFeature extends PolygonFeature {
   /// Creates an [EdgeFeature] from the given cubics.
   EdgeFeature(super._cubics) : super._();
 
   @override
-  Feature transformed(PointTransformer transformer) =>
+  PolygonFeature transformed(PointTransformer transformer) =>
       EdgeFeature(List.generate(_cubics.length, (i) => _cubics[i].transformed(transformer)));
 
   @override
-  Feature get reversed =>
+  PolygonFeature get reversed =>
       EdgeFeature(List.generate(_cubics.length, (i) => _cubics[_cubics.length - 1 - i].reversed));
 
   @override
@@ -190,7 +191,7 @@ class EdgeFeature extends Feature {
 /// regular polygon has all convex corners, while a star polygon generally
 /// (but not necessarily) has both convex (outer) and concave (inner) corners.
 @internal
-class CornerFeature extends Feature {
+class CornerFeature extends PolygonFeature {
   /// Creates a [CornerFeature] from the given cubics.
   CornerFeature(super._cubics, {this.convex = true}) : super._();
 
@@ -198,13 +199,13 @@ class CornerFeature extends Feature {
   final bool convex;
 
   @override
-  Feature transformed(PointTransformer transformer) => CornerFeature(
+  PolygonFeature transformed(PointTransformer transformer) => CornerFeature(
     List.generate(_cubics.length, (i) => _cubics[i].transformed(transformer)),
     convex: convex,
   );
 
   @override
-  Feature get reversed => CornerFeature(
+  PolygonFeature get reversed => CornerFeature(
     List.generate(_cubics.length, (i) => _cubics[_cubics.length - 1 - i].reversed),
     convex: !convex,
   );

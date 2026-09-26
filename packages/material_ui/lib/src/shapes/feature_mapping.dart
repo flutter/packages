@@ -10,8 +10,8 @@ import 'features.dart';
 import 'point.dart';
 import 'utils.dart';
 
-/// A [Feature] paired with the [0..1] progress at which it sits along the
-/// outline of its polygon.
+/// A [PolygonFeature] paired with the [0..1] progress at which it sits along
+/// the outline of its polygon.
 @internal
 class ProgressableFeature {
   /// Creates a [ProgressableFeature].
@@ -21,7 +21,7 @@ class ProgressableFeature {
   final double progress;
 
   /// The feature at [progress].
-  final Feature feature;
+  final PolygonFeature feature;
 }
 
 /// A candidate pairing of two features, along with the distance between them.
@@ -191,7 +191,7 @@ class _MappingHelper {
 /// This information is used to determine how to map features (and the curves
 /// that make up those features).
 @internal
-double featureDistSquared(Feature f1, Feature f2) {
+double featureDistSquared(PolygonFeature f1, PolygonFeature f2) {
   if (f1 is CornerFeature && f2 is CornerFeature && f1.convex != f2.convex) {
     // Simple hack to force all features to map only to features of the same
     // concavity, by returning an infinitely large distance in that case.
@@ -204,7 +204,7 @@ double featureDistSquared(Feature f1, Feature f2) {
 /// Returns the point that best represents [feature] when matching features
 /// between two shapes.
 @internal
-Point featureRepresentativePoint(Feature feature) {
+Point featureRepresentativePoint(PolygonFeature feature) {
   final List<CubicBezier> cubics = feature.cubics;
   final double x = (cubics.first.anchor0X + cubics.last.anchor1X) / 2;
   final double y = (cubics.first.anchor0Y + cubics.last.anchor1Y) / 2;

@@ -19,7 +19,7 @@ import 'utils.dart';
 /// A closed polygonal shape, with optional rounding at its vertices.
 ///
 /// A polygon can be built from a number of vertices, from an ordered list of
-/// vertices, or from a list of [Feature]s.
+/// vertices, or from a list of [PolygonFeature]s.
 @immutable
 class RoundedPolygon {
   /// Creates a regular polygon with [numVertices] vertices, equally spaced
@@ -54,8 +54,8 @@ class RoundedPolygon {
     );
   }
 
-  RoundedPolygon._raw(List<Feature> features, Point center)
-    : features = List<Feature>.unmodifiable(features),
+  RoundedPolygon._raw(List<PolygonFeature> features, Point center)
+    : features = List<PolygonFeature>.unmodifiable(features),
       _center = center,
       cubics = List<CubicBezier>.unmodifiable(_buildCubics(features, center)) {
     CubicBezier prevCubic = cubics.last;
@@ -163,7 +163,7 @@ class RoundedPolygon {
     // Finally, store the calculated cubics. This includes all of the rounded
     // corners from above, along with new cubics representing the edges between
     // those corners.
-    final tempFeatures = <Feature>[];
+    final tempFeatures = <PolygonFeature>[];
     for (var i = 0; i < n; i++) {
       final Point currVertex = vertices[i];
       final Point prevVertex = vertices[(i + n - 1) % n];
@@ -193,7 +193,7 @@ class RoundedPolygon {
   ///
   /// Throws [ArgumentError] if [features] has fewer than 2 elements, or if the
   /// features don't describe a closed shape.
-  factory RoundedPolygon.fromFeatures(List<Feature> features, {Offset? center}) {
+  factory RoundedPolygon.fromFeatures(List<PolygonFeature> features, {Offset? center}) {
     if (features.length < 2) {
       throw ArgumentError('Polygons must have at least 2 features.');
     }
@@ -449,14 +449,14 @@ class RoundedPolygon {
     );
   }
 
-  /// The [Feature]s this polygon is composed of.
+  /// The [PolygonFeature]s this polygon is composed of.
   ///
   /// This list is unmodifiable.
-  final List<Feature> features;
+  final List<PolygonFeature> features;
 
   final Point _center;
 
-  /// A flattened version of the [Feature]s, as a `List<CubicBezier>`.
+  /// A flattened version of the [PolygonFeature]s, as a `List<CubicBezier>`.
   ///
   /// This list is unmodifiable.
   final List<CubicBezier> cubics;
@@ -464,7 +464,7 @@ class RoundedPolygon {
   /// The center of this polygon, around which all vertices are placed.
   Offset get center => _center;
 
-  static List<CubicBezier> _buildCubics(List<Feature> features, Point center) {
+  static List<CubicBezier> _buildCubics(List<PolygonFeature> features, Point center) {
     final cubics = <CubicBezier>[];
 
     // The first/last mechanism here ensures that the final anchor point in the

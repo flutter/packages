@@ -126,10 +126,10 @@ void main() {
       // mapped, the remaining one is rejected for being within distanceEpsilon
       // of the existing mapping, leaving a single pair, which is not enough
       // for a valid mapping on its own.
-      final corner1 = Feature.convexCorner([
+      final corner1 = PolygonFeature.convexCorner([
         CubicBezier.straightLine(Point.zero, const Point(0.1, 0)),
       ]);
-      final corner2 = Feature.convexCorner([
+      final corner2 = PolygonFeature.convexCorner([
         CubicBezier.straightLine(const Point(1, 1), const Point(1.1, 1)),
       ]);
 

@@ -58,10 +58,10 @@ void main() {
     });
 
     test('hashCode agrees with == for equal shapes', () {
-      final List<Feature> features = MaterialShapes.circle.features;
+      final List<PolygonFeature> features = MaterialShapes.circle.features;
       final border = MaterialShapeBorder(shape: RoundedPolygon.fromFeatures(features));
       final other = MaterialShapeBorder(
-        shape: RoundedPolygon.fromFeatures(List<Feature>.of(features)),
+        shape: RoundedPolygon.fromFeatures(List<PolygonFeature>.of(features)),
       );
 
       expect(border, other);
@@ -436,7 +436,7 @@ void main() {
       // every build, so matching the endpoints by identity would snap here.
       final rebuilt = MaterialShapeBorder(
         shape: RoundedPolygon.fromFeatures(
-          List<Feature>.of(MaterialShapes.circle.features),
+          List<PolygonFeature>.of(MaterialShapes.circle.features),
           center: MaterialShapes.circle.center,
         ),
       );

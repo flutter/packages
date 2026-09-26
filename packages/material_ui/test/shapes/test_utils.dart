@@ -50,7 +50,7 @@ void expectCubicListsEqualish(List<CubicBezier> expected, List<CubicBezier> actu
   }
 }
 
-void expectFeaturesEqualish(Feature expected, Feature actual) {
+void expectFeaturesEqualish(PolygonFeature expected, PolygonFeature actual) {
   expectCubicListsEqualish(expected.cubics, actual.cubics);
   expect(expected.runtimeType, actual.runtimeType);
 

@@ -105,7 +105,10 @@ void main() {
         final cubic1 = CubicBezier.straightLine(Point.zero, const Point(1, 0));
         final cubic2 = CubicBezier.straightLine(const Point(10, 10), const Point(20, 20));
         expect(
-          () => RoundedPolygon.fromFeatures([Feature.edge(cubic1), Feature.edge(cubic2)]),
+          () => RoundedPolygon.fromFeatures([
+            PolygonFeature.edge(cubic1),
+            PolygonFeature.edge(cubic2),
+          ]),
           throwsArgumentError,
         );
       });
@@ -188,9 +191,9 @@ void main() {
     });
 
     test('hashCode agrees with ==', () {
-      final List<Feature> features = RoundedPolygon.circle().features;
+      final List<PolygonFeature> features = RoundedPolygon.circle().features;
       final first = RoundedPolygon.fromFeatures(features);
-      final second = RoundedPolygon.fromFeatures(List<Feature>.of(features));
+      final second = RoundedPolygon.fromFeatures(List<PolygonFeature>.of(features));
 
       expect(first, second);
       expect(first.hashCode, second.hashCode);
@@ -208,7 +211,7 @@ void main() {
     });
 
     test('== distinguishes centers', () {
-      final List<Feature> features = RoundedPolygon.circle().features;
+      final List<PolygonFeature> features = RoundedPolygon.circle().features;
       final base = RoundedPolygon.fromFeatures(features);
       final sameCenter = RoundedPolygon.fromFeatures(features, center: base.center);
       final movedCenter = RoundedPolygon.fromFeatures(
@@ -259,7 +262,7 @@ void main() {
       // Since there is not enough room in the p0 -> p1 side even for the
       // roundings, we shouldn't take smoothing into account, so the corners
       // should end in the middle point.
-      final Feature lowerEdgeFeature = polygon.features.firstWhere((f) => f is EdgeFeature);
+      final PolygonFeature lowerEdgeFeature = polygon.features.firstWhere((f) => f is EdgeFeature);
       expect(1, lowerEdgeFeature.cubics.length);
 
       final CubicBezier lowerEdge = lowerEdgeFeature.cubics.first;

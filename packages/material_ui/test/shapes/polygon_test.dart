@@ -124,7 +124,7 @@ void main() {
         return original.where((c) => !c.isZeroLength).toList();
       }
 
-      final List<Feature> squareFeatures = square.features;
+      final List<PolygonFeature> squareFeatures = square.features;
 
       // Verify that cubics of polygon == nonzero cubics of features of that
       // polygon.
@@ -138,7 +138,7 @@ void main() {
 
     test('cubics and features are unmodifiable', () {
       final polygon = RoundedPolygon(4);
-      final edge = Feature.edge(CubicBezier.straightLine(Point.zero, const Point(1, 0)));
+      final edge = PolygonFeature.edge(CubicBezier.straightLine(Point.zero, const Point(1, 0)));
 
       expect(() => polygon.cubics.clear(), throwsUnsupportedError);
       expect(() => polygon.cubics.add(edge.cubics.first), throwsUnsupportedError);
@@ -147,8 +147,8 @@ void main() {
     });
 
     test('fromFeatures does not alias the list it is given', () {
-      final List<Feature> expected = RoundedPolygon(4).features;
-      final features = List<Feature>.of(expected);
+      final List<PolygonFeature> expected = RoundedPolygon(4).features;
+      final features = List<PolygonFeature>.of(expected);
       final polygon = RoundedPolygon.fromFeatures(features);
       final int cubicCount = polygon.cubics.length;
 

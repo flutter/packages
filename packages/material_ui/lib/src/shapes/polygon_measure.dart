@@ -53,12 +53,12 @@ class MeasuredPolygon {
 
   factory MeasuredPolygon.measure(Measurer measurer, RoundedPolygon polygon) {
     final cubics = <CubicBezier>[];
-    final featureToCubic = <(Feature, int)>[];
+    final featureToCubic = <(PolygonFeature, int)>[];
 
     // Get the cubics from the polygon, at the same time, extract the features
     // and keep a reference to the representative cubic we will use.
     for (var featureIndex = 0; featureIndex < polygon.features.length; featureIndex++) {
-      final Feature feature = polygon.features[featureIndex];
+      final PolygonFeature feature = polygon.features[featureIndex];
       final List<CubicBezier> featureCubics = feature.cubics;
       for (var cubicIndex = 0; cubicIndex < featureCubics.length; cubicIndex++) {
         if (feature is CornerFeature && cubicIndex == featureCubics.length ~/ 2) {
