@@ -307,6 +307,39 @@ void main() {
     expect(hintEmptyLabel, const Offset(0.0, 20.0));
   });
 
+  testWidgets('label position test - show disabledHint: disabled Form', (
+    WidgetTester tester,
+  ) async {
+    Widget buildForm({required bool formEnabled}) {
+      return TestApp(
+        textDirection: TextDirection.ltr,
+        child: Material(
+          child: Form(
+            enabled: formEnabled,
+            child: DropdownButtonFormField<int?>(
+              decoration: const InputDecoration(labelText: 'labelText'),
+              disabledHint: const Text('disabledHint'),
+              onChanged: (_) {},
+              items: const <DropdownMenuItem<int?>>[
+                DropdownMenuItem<int?>(value: 1, child: Text('One')),
+                DropdownMenuItem<int?>(value: 2, child: Text('Two')),
+                DropdownMenuItem<int?>(value: 3, child: Text('Three')),
+              ],
+            ),
+          ),
+        ),
+      );
+    }
+
+    // The disabled Form disables the menu and shows the disabledHint.
+    await tester.pumpWidget(buildForm(formEnabled: false));
+    expect(tester.getTopLeft(find.text('labelText')), const Offset(0.0, 8.0));
+
+    await tester.pumpWidget(buildForm(formEnabled: true));
+    await tester.pumpAndSettle();
+    expect(tester.getTopLeft(find.text('labelText')), const Offset(0.0, 20.0));
+  });
+
   testWidgets('label position test - show selected item: disabled + hint + disabledHint', (
     WidgetTester tester,
   ) async {
@@ -1528,5 +1561,42 @@ void main() {
       RendererBinding.instance.mouseTracker.debugDeviceActiveCursor(1),
       SystemMouseCursors.cell,
     );
+  });
+
+  testWidgets('DropdownButtonFormField is disabled when its Form is disabled', (
+    WidgetTester tester,
+  ) async {
+    Widget buildForm({required bool formEnabled}) {
+      return TestApp(
+        textDirection: TextDirection.ltr,
+        child: Material(
+          child: Form(
+            enabled: formEnabled,
+            child: DropdownButtonFormField<String>(
+              hint: const Text('hint'),
+              disabledHint: const Text('disabledHint'),
+              onChanged: (String? value) {},
+              items: menuItems.map<DropdownMenuItem<String>>((String item) {
+                return DropdownMenuItem<String>(value: item, child: Text(item));
+              }).toList(),
+            ),
+          ),
+        ),
+      );
+    }
+
+    DropdownButton<String> dropdownButton() {
+      return tester.widget<DropdownButton<String>>(find.byType(DropdownButton<String>));
+    }
+
+    await tester.pumpWidget(buildForm(formEnabled: false));
+    expect(dropdownButton().onChanged, isNull);
+    expect(find.text('disabledHint'), findsOneWidget);
+    expect(find.text('hint'), findsNothing);
+
+    await tester.pumpWidget(buildForm(formEnabled: true));
+    expect(dropdownButton().onChanged, isNotNull);
+    expect(find.text('hint'), findsOneWidget);
+    expect(find.text('disabledHint'), findsNothing);
   });
 }

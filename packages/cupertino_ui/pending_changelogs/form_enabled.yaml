@@ -1,0 +1,3 @@
+changelog: |
+  - Disables `CupertinoTextFormFieldRow` when its enclosing `Form.enabled` is false.
+version: minor
