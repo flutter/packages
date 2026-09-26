@@ -33,7 +33,8 @@ import '../templates/filter_chip_template.dart';
 import '../templates/icon_button_template.dart';
 import '../templates/input_chip_template.dart';
 
-// import '../templates/input_decorator_template.dart';
+import '../templates/input_decorator_template.dart';
+
 // import '../templates/list_tile_template.dart';
 // import '../templates/menu_template.dart';
 // import '../templates/motion_template.dart';
@@ -94,7 +95,7 @@ Future<void> main(List<String> args) async {
   const IconButtonTemplateM3E('Filled Tonal Icon Button').generateFile(verbose: verbose);
   const IconButtonTemplateM3E('Outlined Icon Button').generateFile(verbose: verbose);
   const InputChipTemplateM3().generateFile(verbose: verbose);
-  // const InputDecoratorTemplateM3().generateFile(verbose: verbose);
+  const InputDecoratorTemplateM3().generateFile(verbose: verbose);
   // const ListTileTemplateM3().generateFile(verbose: verbose);
   // const MenuTemplateM3().generateFile(verbose: verbose);
   // const MotionTemplateM3().generateFile(verbose: verbose);

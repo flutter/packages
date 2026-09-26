@@ -29,7 +29,7 @@ import '../templates/expansion_tile_template.dart';
 import '../templates/filter_chip_template.dart';
 import '../templates/icon_button_template.dart' as icon_button;
 import '../templates/input_chip_template.dart';
-// import '../templates/input_decorator_template.dart';
+import '../templates/input_decorator_template.dart';
 // import '../templates/list_tile_template.dart';
 // import '../templates/menu_template.dart';
 // import '../templates/motion_template.dart';
@@ -650,8 +650,15 @@ void main() {
     });
 
     test('InputDecoratorTemplateM3 emits M3 InputDecorator defaults from tokens', () {
-      // Intentionally empty, will be implemented during migration. See:
-      // https://github.com/flutter/flutter/issues/187899
+      final String contents = _generateContents(const InputDecoratorTemplateM3());
+      expect(
+        contents,
+        contains('class _InputDecoratorDefaultsM3 extends InputDecorationThemeData'),
+      );
+      expect(contents, contains('_colors.onSurface.withOpacity(0.04)'));
+      expect(contents, contains('_colors.surfaceContainerHighest'));
+      expect(contents, contains('BorderSide(color: _colors.outline)'));
+      expect('BorderSide(width: 2.0, color: _colors.primary)'.allMatches(contents), hasLength(2));
     });
 
     test('ListTileTemplateM3 emits M3 ListTile defaults from tokens', () {
