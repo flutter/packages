@@ -1,5 +1,9 @@
-## NEXT
+## 2.19.0
 
+* Adds support for tapping points of interest on the map.
+  On iOS, this requires `google_maps_flutter_ios_sdk9` or
+  `google_maps_flutter_ios_sdk10` (the default `google_maps_flutter_ios`
+  package does not receive new features).
 * Updates minimum supported SDK version to Flutter 3.41/Dart 3.11.
 
 ## 2.18.1

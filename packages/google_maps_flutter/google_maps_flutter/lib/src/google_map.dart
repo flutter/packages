@@ -136,6 +136,7 @@ class GoogleMap extends StatefulWidget {
     this.onCameraIdle,
     this.onTap,
     this.onLongPress,
+    this.onPointOfInterestTap,
     this.markerType = GoogleMapMarkerType.marker,
     this.colorScheme,
     String? mapId,
@@ -299,6 +300,14 @@ class GoogleMap extends StatefulWidget {
 
   /// Called every time a [GoogleMap] is long pressed.
   final ArgumentCallback<LatLng>? onLongPress;
+
+  /// Called when a point of interest on the map is tapped.
+  ///
+  /// Supported on Android and web, and on iOS when using
+  /// `google_maps_flutter_ios_sdk9` or `google_maps_flutter_ios_sdk10`.
+  /// The default `google_maps_flutter_ios` package does not receive new
+  /// features, so this callback is not delivered there.
+  final ArgumentCallback<PointOfInterestId>? onPointOfInterestTap;
 
   /// True if a "My Location" layer should be shown on the map.
   ///
@@ -714,6 +723,13 @@ class _GoogleMapState extends State<GoogleMap> {
     final ArgumentCallback<LatLng>? onLongPress = widget.onLongPress;
     if (onLongPress != null) {
       onLongPress(position);
+    }
+  }
+
+  void onPointOfInterestTap(PointOfInterestId pointOfInterestId) {
+    final ArgumentCallback<PointOfInterestId>? onPointOfInterestTap = widget.onPointOfInterestTap;
+    if (onPointOfInterestTap != null) {
+      onPointOfInterestTap(pointOfInterestId);
     }
   }
 
