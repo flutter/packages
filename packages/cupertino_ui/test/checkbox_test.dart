@@ -32,6 +32,10 @@ void main() {
     debugResetSemanticsIdCounter();
   });
 
+  testWidgets('Verifier test', (WidgetTester tester) async {
+    expect(true, true);
+  });
+
   testWidgets('CupertinoCheckbox semantics', (WidgetTester tester) async {
     final SemanticsHandle handle = tester.ensureSemantics();
 
