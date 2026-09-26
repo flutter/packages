@@ -1,0 +1,3 @@
+changelog: |
+  - Adds the `scrollPadding` property to `DropdownMenuFormField`, forwarding it to the underlying `DropdownMenu`.
+version: minor
