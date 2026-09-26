@@ -249,6 +249,7 @@ class SearchAnchor extends StatefulWidget {
     bool enabled,
     SmartDashesType? smartDashesType,
     SmartQuotesType? smartQuotesType,
+    FocusNode? barFocusNode,
   }) = _SearchAnchorWithSearchBar;
 
   /// Whether the search view grows to fill the entire screen when the
@@ -1317,6 +1318,7 @@ class _SearchAnchorWithSearchBar extends SearchAnchor {
     super.enabled,
     super.smartDashesType,
     super.smartQuotesType,
+    FocusNode? barFocusNode,
   }) : super(
          viewHintText: viewHintText ?? barHintText,
          headerHeight: viewHeaderHeight,
@@ -1330,6 +1332,7 @@ class _SearchAnchorWithSearchBar extends SearchAnchor {
            return SearchBar(
              constraints: constraints,
              controller: controller,
+             focusNode: barFocusNode,
              onTap: () {
                controller.openView();
                onTap?.call();
