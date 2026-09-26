@@ -165,8 +165,18 @@ void main() {
     test('toString', () {
       expect(
         CubicBezier(Point.zero, const Point(1, 0), const Point(2, 0), const Point(3, 0)).toString(),
-        'CubicBezier(anchor0: (0.0, 0.0), control0: (1.0, 0.0), '
-        'control1: (2.0, 0.0), anchor1: (3.0, 0.0))',
+        'CubicBezier(anchor0: (0.00, 0.00), control0: (1.00, 0.00), '
+        'control1: (2.00, 0.00), anchor1: (3.00, 0.00))',
+      );
+      expect(
+        CubicBezier(
+          Point.zero,
+          const Point(0.25, 0.5),
+          const Point(0.75, 0.123),
+          const Point(1, 1),
+        ).toString(),
+        'CubicBezier(anchor0: (0.00, 0.00), control0: (0.25, 0.50), '
+        'control1: (0.75, 0.12), anchor1: (1.00, 1.00))',
       );
     });
   });

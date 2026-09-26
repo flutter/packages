@@ -65,7 +65,11 @@ void main() {
   test('$CornerRounding toString', () {
     expect(
       const CornerRounding(radius: 5, smoothing: 0.5).toString(),
-      'CornerRounding(radius: 5.0, smoothing: 0.5)',
+      'CornerRounding(radius: 5.00, smoothing: 0.50)',
+    );
+    expect(
+      const CornerRounding(radius: 0.25, smoothing: 0.75).toString(),
+      'CornerRounding(radius: 0.25, smoothing: 0.75)',
     );
   });
 }
