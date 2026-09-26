@@ -362,6 +362,30 @@ void main() {
     });
   });
 
+  testWidgets('CupertinoMagnifier focal point is based on its size', (WidgetTester tester) async {
+    // Regression test for https://github.com/flutter/flutter/issues/151740.
+    Future<Offset> focalPointOffsetFor(Size size) async {
+      await tester.pumpWidget(
+        CupertinoApp(
+          home: CupertinoPageScaffold(child: CupertinoMagnifier(size: size)),
+        ),
+      );
+      return tester.widget<RawMagnifier>(find.byType(RawMagnifier)).focalPointOffset;
+    }
+
+    expect(
+      await focalPointOffsetFor(CupertinoMagnifier.kDefaultSize),
+      Offset(
+        0,
+        CupertinoMagnifier.kDefaultSize.height / 2 - CupertinoMagnifier.kMagnifierAboveFocalPoint,
+      ),
+    );
+    expect(
+      await focalPointOffsetFor(const Size(100, 200)),
+      const Offset(0, 200 / 2 - CupertinoMagnifier.kMagnifierAboveFocalPoint),
+    );
+  });
+
   testWidgets('CupertinoMagnifier does not crash at zero area', (WidgetTester tester) async {
     await tester.pumpWidget(
       const CupertinoApp(
