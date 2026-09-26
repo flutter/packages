@@ -126,7 +126,7 @@ void main() {
       }
 
       // And at progress 1 it stays within the other shape's bounds.
-      final ui.Rect bounds = poly2.bounds;
+      final ui.Rect bounds = poly2.calculateBounds();
       expectInBounds(
         morph.toCubics(1),
         Point(bounds.left, bounds.top),

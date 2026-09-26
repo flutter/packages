@@ -62,13 +62,13 @@ void main() {
     });
 
     test('bounds', () {
-      Rect bounds = square.approximateBounds;
+      Rect bounds = square.calculateApproximateBounds();
       expectEqualish(-1, bounds.left);
       expectEqualish(-1, bounds.top);
       expectEqualish(1, bounds.right);
       expectEqualish(1, bounds.bottom);
 
-      Rect betterBounds = square.bounds;
+      Rect betterBounds = square.calculateBounds();
       expectEqualish(-1, betterBounds.left);
       expectEqualish(-1, betterBounds.top);
       expectEqualish(1, betterBounds.right);
@@ -76,16 +76,16 @@ void main() {
 
       // roundedSquare's approximate bounds will be larger due to control
       // points.
-      bounds = roundedSquare.approximateBounds;
-      betterBounds = roundedSquare.bounds;
+      bounds = roundedSquare.calculateApproximateBounds();
+      betterBounds = roundedSquare.calculateBounds();
       expect(
         betterBounds.width < bounds.width,
         isTrue,
         reason: 'bounds = $bounds, betterBounds = $betterBounds',
       );
 
-      bounds = pentagon.approximateBounds;
-      final Rect maxBounds = pentagon.maxBounds;
+      bounds = pentagon.calculateApproximateBounds();
+      final Rect maxBounds = pentagon.calculateMaxBounds();
       expect(maxBounds.width > bounds.width, isTrue);
     });
 

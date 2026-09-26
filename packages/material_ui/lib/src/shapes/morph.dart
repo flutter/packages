@@ -142,27 +142,29 @@ class Morph {
     return ret;
   }
 
-  /// The axis-aligned bounds of this morph, covering both of its shapes.
+  /// Calculates the axis-aligned bounds of this morph, covering both of its
+  /// shapes.
   ///
   /// This solves for the actual extrema of every curve. See
-  /// [approximateBounds] for a cheaper result that is never smaller than this
-  /// one.
-  Rect get bounds => start.bounds.expandToInclude(end.bounds);
+  /// [calculateApproximateBounds] for a cheaper result that is never smaller
+  /// than this one.
+  Rect calculateBounds() => start.calculateBounds().expandToInclude(end.calculateBounds());
 
-  /// A cheaper alternative to [bounds], based on the min/max values of all
-  /// anchor and control points that make up the two shapes.
+  /// A cheaper alternative to [calculateBounds], based on the min/max values of
+  /// all anchor and control points that make up the two shapes.
   ///
-  /// The result is never smaller than [bounds], but can be larger.
-  Rect get approximateBounds => start.approximateBounds.expandToInclude(end.approximateBounds);
+  /// The result is never smaller than [calculateBounds], but can be larger.
+  Rect calculateApproximateBounds() =>
+      start.calculateApproximateBounds().expandToInclude(end.calculateApproximateBounds());
 
-  /// Like [bounds], the axis-aligned bounds of this morph, but determining the
-  /// max dimension of the shapes (by calculating the distance from their
-  /// center to the start and midpoint of each curve) and returning a square
-  /// which can be used to hold the morph in any rotation.
+  /// Like [calculateBounds], calculates the axis-aligned bounds of this morph,
+  /// but determines the max dimension of the shapes (by calculating the
+  /// distance from their center to the start and midpoint of each curve) and
+  /// returns a square which can be used to hold the morph in any rotation.
   ///
   /// This can be used, for example, to calculate the max size of a UI element
   /// meant to hold this morph in any rotation.
-  Rect get maxBounds => start.maxBounds.expandToInclude(end.maxBounds);
+  Rect calculateMaxBounds() => start.calculateMaxBounds().expandToInclude(end.calculateMaxBounds());
 
   /// Returns this morph's shape at [progress] as a list of [CubicBezier]s.
   ///

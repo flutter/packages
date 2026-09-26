@@ -207,20 +207,21 @@ class CubicBezier {
 
   bool _zeroIsh(double value) => value.abs() < distanceEpsilon;
 
-  /// The axis-aligned bounding box of this curve.
+  /// Calculates the axis-aligned bounding box of this curve.
   ///
-  /// This solves for the curve's actual extrema. See [approximateBounds] for a
-  /// cheaper result that is never smaller than this one.
-  Rect get bounds => _calculateBounds(approximate: false);
+  /// This solves for the curve's actual extrema. See
+  /// [calculateApproximateBounds] for a cheaper result that is never smaller
+  /// than this one.
+  Rect calculateBounds() => _computeBounds(approximate: false);
 
-  /// A cheaper alternative to [bounds], which bounds the two anchor points and
-  /// the two control points rather than solving for the curve's actual
-  /// extrema.
+  /// A cheaper alternative to [calculateBounds], which bounds the two anchor
+  /// points and the two control points rather than solving for the curve's
+  /// actual extrema.
   ///
-  /// The result is never smaller than [bounds], but can be larger.
-  Rect get approximateBounds => _calculateBounds(approximate: true);
+  /// The result is never smaller than [calculateBounds], but can be larger.
+  Rect calculateApproximateBounds() => _computeBounds(approximate: true);
 
-  Rect _calculateBounds({required bool approximate}) {
+  Rect _computeBounds({required bool approximate}) {
     // A curve might be of zero-length, with both anchors co-located.
     // Just return the point itself.
     if (isZeroLength) {

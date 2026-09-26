@@ -561,11 +561,11 @@ class RoundedPolygon {
     ], _center.transformed(transformer));
   }
 
-  /// A new [RoundedPolygon], moving and resizing this one, so it's completely
-  /// inside the (0, 0) -> (1, 1) square, centered if there is extra space in
-  /// one direction.
-  RoundedPolygon get normalized {
-    final Rect bounds = approximateBounds;
+  /// Returns a new [RoundedPolygon], moving and resizing this one, so it's
+  /// completely inside the (0, 0) -> (1, 1) square, centered if there is extra
+  /// space in one direction.
+  RoundedPolygon normalized() {
+    final Rect bounds = calculateApproximateBounds();
     final double side = math.max(bounds.width, bounds.height);
 
     if (side < distanceEpsilon) {
@@ -579,14 +579,14 @@ class RoundedPolygon {
     return transformed((x, y) => ((x + offsetX) / side, (y + offsetY) / side));
   }
 
-  /// Like [bounds], the axis-aligned bounds of this shape, but determining the
-  /// max dimension of the shape (by calculating the distance from its center
-  /// to the start and midpoint of each curve) and returning a square which can
-  /// be used to hold the object in any rotation.
+  /// Like [calculateBounds], calculates the axis-aligned bounds of this shape,
+  /// but determines the max dimension of the shape (by calculating the
+  /// distance from its center to the start and midpoint of each curve) and
+  /// returns a square which can be used to hold the object in any rotation.
   ///
   /// This can be used, for example, to calculate the max size of a UI element
   /// meant to hold this shape in any rotation.
-  Rect get maxBounds {
+  Rect calculateMaxBounds() {
     var maxDistSquared = 0.0;
     for (var i = 0; i < cubics.length; i++) {
       final CubicBezier cubic = cubics[i];
@@ -606,25 +606,29 @@ class RoundedPolygon {
     );
   }
 
-  /// The axis-aligned bounds of this shape.
+  /// Calculates the axis-aligned bounds of this shape.
   ///
   /// This solves for the actual extrema of every curve. See
-  /// [approximateBounds] for a cheaper result that is never smaller than this
-  /// one.
-  Rect get bounds => _calculateBounds(approximate: false);
+  /// [calculateApproximateBounds] for a cheaper result that is never smaller
+  /// than this one.
+  Rect calculateBounds() => _computeBounds(approximate: false);
 
-  /// A cheaper alternative to [bounds], based on the min/max values of all
-  /// anchor and control points that make up this shape.
+  /// A cheaper alternative to [calculateBounds], based on the min/max values of
+  /// all anchor and control points that make up this shape.
   ///
-  /// The result is never smaller than [bounds], but can be larger.
-  Rect get approximateBounds => _calculateBounds(approximate: true);
+  /// The result is never smaller than [calculateBounds], but can be larger.
+  Rect calculateApproximateBounds() => _computeBounds(approximate: true);
 
-  Rect _calculateBounds({required bool approximate}) {
-    Rect bounds = approximate ? cubics.first.approximateBounds : cubics.first.bounds;
+  Rect _computeBounds({required bool approximate}) {
+    Rect bounds = approximate
+        ? cubics.first.calculateApproximateBounds()
+        : cubics.first.calculateBounds();
 
     for (var i = 1; i < cubics.length; i++) {
       final CubicBezier cubic = cubics[i];
-      bounds = bounds.expandToInclude(approximate ? cubic.approximateBounds : cubic.bounds);
+      bounds = bounds.expandToInclude(
+        approximate ? cubic.calculateApproximateBounds() : cubic.calculateBounds(),
+      );
     }
 
     return bounds;

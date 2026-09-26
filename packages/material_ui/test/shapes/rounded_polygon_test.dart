@@ -181,7 +181,7 @@ void main() {
 
     test('normalized handles a degenerate point polygon', () {
       final RoundedPolygon degenerate = RoundedPolygon(4).transformed((x, y) => (0.5, 0.5));
-      final RoundedPolygon normalized = degenerate.normalized;
+      final RoundedPolygon normalized = degenerate.normalized();
 
       for (final CubicBezier cubic in normalized.cubics) {
         for (final double coordinate in cubic.points) {
