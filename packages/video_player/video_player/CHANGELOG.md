@@ -1,5 +1,6 @@
-## NEXT
+## 2.14.1
 
+* Fixes late position updates after a controller is disposed.
 * Updates minimum supported SDK version to Flutter 3.41/Dart 3.11.
 
 ## 2.14.0
