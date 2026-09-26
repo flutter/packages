@@ -19,7 +19,7 @@ Supported SVG features:
 
 Unsupported SVG features:
 
-- Filters
+- Filters other than the primitives listed in [filter support](../../third_party/packages/flutter_svg/README.md#svg-filters)
 - Some text processing attributes
 
 Optimizations:

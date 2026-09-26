@@ -5,7 +5,11 @@
 import 'dart:convert';
 import 'dart:typed_data';
 
+import 'src/filter.dart';
 import 'src/fp16.dart' as fp16;
+
+export 'src/filter.dart';
+export 'src/svg_length.dart';
 
 // TODO(stuartmorgan): Fix the lack of documentation, and remove this. See
 //  https://github.com/flutter/flutter/issues/157616
@@ -43,7 +47,7 @@ typedef VectorGraphicsErrorListener = void Function(Object error, StackTrace? st
 
 /// Enumeration of the types of image data accepted by [VectorGraphicsCodec.writeImage].
 ///
-// Must match ImageFormat from vector_graphics_compiler.
+// Raster values must match ImageFormat from vector_graphics_compiler.
 abstract class ImageFormatTypes {
   /// PNG format.
   ///
@@ -76,7 +80,15 @@ abstract class ImageFormatTypes {
   /// A Windows Bitmap format image.
   static const int bmp = 4;
 
-  static const List<int> values = <int>[png, jpeg, webp, gif, bmp];
+  /// A nested vector_graphics binary with an independent resource table.
+  /// Requires version 2 of the containing binary.
+  static const int vector = 5;
+
+  /// An encoded raster for feImage. Invalid content produces a transparent image.
+  /// The platform decoder detects the raster format from the bytes.
+  static const int filterRaster = 6;
+
+  static const List<int> values = <int>[png, jpeg, webp, gif, bmp, vector, filterRaster];
 }
 
 class DecodeResponse {
@@ -87,6 +99,23 @@ class DecodeResponse {
 
   final bool complete;
   final _ReadBuffer? _buffer;
+}
+
+/// Intrinsic dimensions and filter definitions, without allocating render resources.
+class VectorGraphicsMetadata {
+  VectorGraphicsMetadata._();
+
+  /// Intrinsic width from the size command.
+  double get width => _width;
+  double _width = 0;
+
+  /// Intrinsic height from the size command.
+  double get height => _height;
+  double _height = 0;
+
+  /// Filter invocations in command order. Nested vector resources are independent.
+  List<VectorFilter> get filters => List<VectorFilter>.unmodifiable(_filters);
+  final List<VectorFilter> _filters = <VectorFilter>[];
 }
 
 /// The [VectorGraphicsCodec] provides support for both encoding and
@@ -128,7 +157,22 @@ class VectorGraphicsCodec {
   static const int _pathTagHalfPrecision = 52;
 
   static const int _version = 1;
+  static const int _filterVersion = 2;
+  static const int _beginFilterTag = 53;
+  static const int _pathGeometryTag = 55;
+  static const int _textGeometryTag = 56;
+  static const int _endFilterTag = 54;
   static const int _magicNumber = 0x00882d62;
+
+  /// Reads dimensions and filter definitions without constructing paths or images.
+  VectorGraphicsMetadata readMetadata(ByteData data) {
+    final metadata = VectorGraphicsMetadata._();
+    DecodeResponse? response;
+    do {
+      response = _decode(data, null, response: response, metadata: metadata);
+    } while (!response.complete);
+    return metadata;
+  }
 
   /// Decode the vector_graphics binary.
   ///
@@ -141,6 +185,13 @@ class VectorGraphicsCodec {
     ByteData data,
     VectorGraphicsCodecListener? listener, {
     DecodeResponse? response,
+  }) => _decode(data, listener, response: response);
+
+  DecodeResponse _decode(
+    ByteData data,
+    VectorGraphicsCodecListener? listener, {
+    DecodeResponse? response,
+    VectorGraphicsMetadata? metadata,
   }) {
     final _ReadBuffer buffer;
     if (response == null) {
@@ -153,7 +204,8 @@ class VectorGraphicsCodec {
         throw StateError('The provided data was not a vector_graphics binary asset.');
       }
       final int version = buffer.getUint8();
-      if (version != _version) {
+      buffer.version = version;
+      if (version != _version && version != _filterVersion) {
         throw StateError('The provided data does not match the currently supported version.');
       }
     } else {
@@ -168,6 +220,47 @@ class VectorGraphicsCodec {
           if (readImage) {
             return DecodeResponse(false, buffer);
           }
+          continue;
+        case _beginFilterTag:
+          if (buffer.version != _filterVersion || ++buffer.filterDepth > 64) {
+            throw const FormatException('Invalid filter version or nesting depth');
+          }
+          final int length = buffer.getUint32();
+          final description =
+              jsonDecode(utf8.decode(buffer.getUint8List(length))) as Map<String, dynamic>;
+          final filter = VectorFilter.fromJson(description['filter'] as Map<String, dynamic>);
+          metadata?._filters.add(filter);
+          listener?.onBeginFilter(
+            filter,
+            Float64List.fromList(
+              (description['transform'] as List<dynamic>)
+                  .cast<num>()
+                  .map((num v) => v.toDouble())
+                  .toList(),
+            ),
+            (description['width'] as num).toDouble(),
+            (description['height'] as num).toDouble(),
+          );
+          continue;
+        case _textGeometryTag:
+          if (buffer.version != _filterVersion || buffer.filterDepth == 0) {
+            throw const FormatException('Text geometry requires an active filter');
+          }
+          final int textId = buffer.getUint16();
+          listener?.onDrawText(textId, null, null, null);
+          continue;
+        case _pathGeometryTag:
+          if (buffer.version != _filterVersion || buffer.filterDepth == 0) {
+            throw const FormatException('Path geometry requires an active filter');
+          }
+          final int pathId = buffer.getUint16();
+          listener?.onPathGeometry(pathId);
+          continue;
+        case _endFilterTag:
+          if (buffer.filterDepth-- <= 0) {
+            throw const FormatException('Unbalanced filter commands');
+          }
+          listener?.onEndFilter();
           continue;
         case _linearGradientTag:
           _readLinearGradient(buffer, listener);
@@ -200,7 +293,12 @@ class VectorGraphicsCodec {
           _readSaveLayer(buffer, listener);
           continue;
         case _sizeTag:
-          _readSize(buffer, listener);
+          final (double width, double height) = _readSize(buffer, listener);
+          if (metadata != null) {
+            metadata
+              .._width = width
+              .._height = height;
+          }
           continue;
         case _clipPathTag:
           _readClipPath(buffer, listener);
@@ -234,7 +332,66 @@ class VectorGraphicsCodec {
           throw StateError('Unknown type tag $type');
       }
     }
-    return const DecodeResponse(true, null);
+    if (buffer.filterDepth != 0) {
+      throw const FormatException('Unclosed filter command');
+    }
+    // Even an unused resource must finish decoding before its owner is closed.
+    return readImage ? DecodeResponse(false, buffer) : const DecodeResponse(true, null);
+  }
+
+  /// Begins an isolated SVG filter source. Requires a version 2 buffer.
+  void writeBeginFilter(
+    VectorGraphicsBuffer buffer,
+    VectorFilter filter,
+    Float64List transform,
+    double width,
+    double height,
+  ) {
+    if (transform.length != 16 ||
+        transform.any((double v) => !v.isFinite) ||
+        !width.isFinite ||
+        !height.isFinite ||
+        width < 0 ||
+        height < 0) {
+      throw ArgumentError('Filter transform and viewport must be finite and valid');
+    }
+    buffer._buffer[4] = _filterVersion;
+    buffer._addCommandsTag();
+    final Uint8List data = utf8.encode(
+      jsonEncode(<String, Object?>{
+        'filter': filter.toJson(),
+        'transform': transform,
+        'width': width,
+        'height': height,
+      }),
+    );
+    buffer._putUint8(_beginFilterTag);
+    buffer._putUint32(data.length);
+    buffer._putUint8List(data);
+  }
+
+  /// Completes the current filter source and composites its result.
+  void writeEndFilter(VectorGraphicsBuffer buffer) {
+    buffer._addCommandsTag();
+    buffer._putUint8(_endFilterTag);
+  }
+
+  /// Records an original path's geometry without painting it.
+  ///
+  /// Used inside filter boundaries for unpainted and dashed source paths.
+  void writePathGeometry(VectorGraphicsBuffer buffer, int pathId) {
+    buffer._buffer[4] = _filterVersion;
+    buffer._addCommandsTag();
+    buffer._putUint8(_pathGeometryTag);
+    buffer._putUint16(pathId);
+  }
+
+  /// Lays out text for filter bounds and pen advance without drawing it.
+  void writeTextGeometry(VectorGraphicsBuffer buffer, int textId) {
+    buffer._buffer[4] = _filterVersion;
+    buffer._addCommandsTag();
+    buffer._putUint8(_textGeometryTag);
+    buffer._putUint16(textId);
   }
 
   /// Encode the dimensions of the vector graphic.
@@ -737,11 +894,14 @@ class VectorGraphicsCodec {
   /// assigned to it.
   ///
   /// The [data] argument should be the image data encoded according
-  /// to the [format] argument. Currently only PNG is supported.
+  /// to the [format] argument, one of [ImageFormatTypes.values].
   int writeImage(VectorGraphicsBuffer buffer, int format, Uint8List data) {
     buffer._checkPhase(_CurrentSection.images);
     assert(buffer._nextImageId < kMaxId);
     assert(ImageFormatTypes.values.contains(format));
+    if (format == ImageFormatTypes.vector || format == ImageFormatTypes.filterRaster) {
+      buffer._buffer[4] = _filterVersion;
+    }
 
     final int id = buffer._nextImageId;
     buffer._nextImageId += 1;
@@ -852,10 +1012,11 @@ class VectorGraphicsCodec {
     listener?.onClipPath(pathId);
   }
 
-  void _readSize(_ReadBuffer buffer, VectorGraphicsCodecListener? listener) {
+  (double, double) _readSize(_ReadBuffer buffer, VectorGraphicsCodecListener? listener) {
     final double width = buffer.getFloat32();
     final double height = buffer.getFloat32();
     listener?.onSize(width, height);
+    return (width, height);
   }
 
   void _readTextPosition(_ReadBuffer buffer, VectorGraphicsCodecListener? listener) {
@@ -934,6 +1095,10 @@ class VectorGraphicsCodec {
   void _readImageConfig(_ReadBuffer buffer, VectorGraphicsCodecListener? listener) {
     final int id = buffer.getUint16();
     final int format = buffer.getUint8();
+    if ((format == ImageFormatTypes.vector || format == ImageFormatTypes.filterRaster) &&
+        buffer.version != _filterVersion) {
+      throw const FormatException('Filter image resources require binary version 2');
+    }
     final int dataLength = buffer.getUint32();
     final Uint8List data = buffer.getUint8List(dataLength);
     listener?.onImage(id, format, data);
@@ -964,6 +1129,21 @@ class VectorGraphicsCodec {
 /// Implement this listener class to support decoding of vector_graphics binary
 /// assets.
 abstract class VectorGraphicsCodecListener {
+  /// Includes a path in the filtered object's bounds without drawing it.
+  void onPathGeometry(int pathId) {
+    throw UnsupportedError('This listener does not support SVG filter geometry');
+  }
+
+  /// Begins a filter in the coordinate space described by [transform].
+  void onBeginFilter(VectorFilter filter, Float64List transform, double width, double height) {
+    throw UnsupportedError('This listener does not support SVG filters');
+  }
+
+  /// Completes an isolated filter source.
+  void onEndFilter() {
+    throw UnsupportedError('This listener does not support SVG filters');
+  }
+
   /// The size of the vector graphic has been decoded.
   void onSize(double width, double height);
 
@@ -1283,7 +1463,18 @@ class VectorGraphicsBuffer {
 /// The byte order used is [Endian.little] throughout.
 class _ReadBuffer {
   /// Creates a [_ReadBuffer] for reading from the specified [data].
-  _ReadBuffer(this.data);
+  _ReadBuffer(ByteData data)
+    : data = data.offsetInBytes % 8 == 0
+          ? data
+          : Uint8List.fromList(
+              data.buffer.asUint8List(data.offsetInBytes, data.lengthInBytes),
+            ).buffer.asByteData();
+
+  // Nested assets need not start at an aligned address in their parent buffer.
+  // Copy only those views whose typed numeric arrays would be unaligned.
+
+  int version = 1;
+  int filterDepth = 0;
 
   /// The underlying data being read.
   final ByteData data;

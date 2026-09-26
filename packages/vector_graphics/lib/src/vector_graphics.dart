@@ -7,6 +7,7 @@ import 'dart:math' as math;
 import 'dart:ui' as ui;
 
 import 'package:flutter/foundation.dart';
+import 'package:flutter/rendering.dart' show RenderProxyBox;
 import 'package:flutter/widgets.dart';
 import 'package:vector_graphics_codec/vector_graphics_codec.dart';
 
@@ -70,6 +71,7 @@ VectorGraphic createCompatVectorGraphic({
   Animation<double>? opacity,
   RenderingStrategy strategy = RenderingStrategy.picture,
   bool clipViewbox = true,
+  double? filterRasterScale,
   bool matchTextDirection = false,
 }) {
   return VectorGraphic._(
@@ -90,6 +92,7 @@ VectorGraphic createCompatVectorGraphic({
     opacity: opacity,
     strategy: strategy,
     clipViewbox: clipViewbox,
+    filterRasterScale: filterRasterScale,
     matchTextDirection: matchTextDirection,
   );
 }
@@ -130,6 +133,7 @@ class VectorGraphic extends StatefulWidget {
     this.colorFilter,
     this.opacity,
     this.clipViewbox = true,
+    this.filterRasterScale,
     this.matchTextDirection = false,
   }) : strategy = RenderingStrategy.raster;
 
@@ -152,6 +156,7 @@ class VectorGraphic extends StatefulWidget {
     this.opacity,
     this.strategy = RenderingStrategy.picture,
     this.clipViewbox = true,
+    this.filterRasterScale,
     this.matchTextDirection = false,
   });
 
@@ -285,6 +290,16 @@ class VectorGraphic extends StatefulWidget {
   /// their specified dimensions and thus must not be clipped.
   final bool clipViewbox;
 
+  /// Samples per SVG unit for filter textures, overriding automatic resolution.
+  ///
+  /// By default the widget uses its laid-out size, [fit], and device pixel ratio,
+  /// rounded up to powers of two to reuse pictures across small layout changes.
+  /// A resize keeps the previous picture until the new resolution is ready.
+  /// Set a finite positive value when an ancestor Transform or a later Canvas
+  /// scale magnifies the image: those transforms are not part of widget layout.
+  /// Higher values increase decoding time and intermediate texture memory.
+  final double? filterRasterScale;
+
   @override
   State<VectorGraphic> createState() => _VectorGraphicWidgetState();
 }
@@ -299,15 +314,22 @@ class _PictureData {
 
 @immutable
 class _PictureKey {
-  const _PictureKey(this.cacheKey, this.locale, this.textDirection, this.clipViewbox);
+  const _PictureKey(
+    this.cacheKey,
+    this.locale,
+    this.textDirection,
+    this.clipViewbox,
+    this.filterRasterScale,
+  );
 
   final Object cacheKey;
   final Locale? locale;
   final TextDirection? textDirection;
   final bool clipViewbox;
+  final double filterRasterScale;
 
   @override
-  int get hashCode => Object.hash(cacheKey, locale, textDirection, clipViewbox);
+  int get hashCode => Object.hash(cacheKey, locale, textDirection, clipViewbox, filterRasterScale);
 
   @override
   bool operator ==(Object other) =>
@@ -315,7 +337,8 @@ class _PictureKey {
       other.cacheKey == cacheKey &&
       other.locale == locale &&
       other.textDirection == textDirection &&
-      other.clipViewbox == clipViewbox;
+      other.clipViewbox == clipViewbox &&
+      other.filterRasterScale == filterRasterScale;
 }
 
 class _VectorGraphicWidgetState extends State<VectorGraphic> {
@@ -324,6 +347,51 @@ class _VectorGraphicWidgetState extends State<VectorGraphic> {
   StackTrace? _stackTrace;
   Locale? locale;
   TextDirection? textDirection;
+  Size? _displaySize;
+  _PictureKey? _requestedKey;
+
+  double _resolution() {
+    if (widget.filterRasterScale != null) {
+      return widget.filterRasterScale!;
+    }
+    final _PictureData? current = _pictureData;
+    if (current != null &&
+        current.key.cacheKey == widget.loader.cacheKey(context) &&
+        !current.pictureInfo.requiresRasterResolution) {
+      return current.key.filterRasterScale;
+    }
+    final double dpr =
+        MediaQuery.maybeDevicePixelRatioOf(context) ?? View.of(context).devicePixelRatio;
+    final Size? source = _pictureData?.pictureInfo.size;
+    final Size? target = _displaySize;
+    if (source == null ||
+        source.isEmpty ||
+        target == null ||
+        target.isEmpty ||
+        _pictureData?.pictureInfo.requiresRasterResolution != true) {
+      return dpr;
+    }
+    final FittedSizes sizes = applyBoxFit(widget.fit, source, target);
+    final double scale =
+        dpr *
+        math.max(
+          sizes.destination.width / sizes.source.width,
+          sizes.destination.height / sizes.source.height,
+        );
+    return scale.isFinite && scale > 0
+        ? math.pow(2, (math.log(scale) / math.ln2).ceil()).toDouble()
+        : dpr;
+  }
+
+  void _updateFilterResolution(Size size) {
+    if (!mounted) {
+      return;
+    }
+    _displaySize = size;
+    if (_requestedKey?.filterRasterScale != _resolution()) {
+      unawaited(_loadAssetBytes());
+    }
+  }
 
   static final Map<_PictureKey, _PictureData> _livePictureCache = <_PictureKey, _PictureData>{};
   static final Map<_PictureKey, Future<_PictureData>> _pendingPictures =
@@ -339,7 +407,12 @@ class _VectorGraphicWidgetState extends State<VectorGraphic> {
 
   @override
   void didUpdateWidget(covariant VectorGraphic oldWidget) {
-    if (oldWidget.loader != widget.loader) {
+    if (oldWidget.loader != widget.loader ||
+        oldWidget.clipViewbox != widget.clipViewbox ||
+        oldWidget.filterRasterScale != widget.filterRasterScale) {
+      if (oldWidget.loader != widget.loader) {
+        _displaySize = null;
+      }
       unawaited(_loadAssetBytes());
     }
     super.didUpdateWidget(oldWidget);
@@ -375,6 +448,7 @@ class _VectorGraphicWidgetState extends State<VectorGraphic> {
             locale: key.locale,
             textDirection: key.textDirection,
             clipViewbox: key.clipViewbox,
+            filterRasterScale: key.filterRasterScale,
             loader: loader,
           );
         })
@@ -382,9 +456,18 @@ class _VectorGraphicWidgetState extends State<VectorGraphic> {
           return _PictureData(pictureInfo, 0, key);
         });
     _pendingPictures[key] = result;
-    result.whenComplete(() {
-      _pendingPictures.remove(key);
-    });
+    // Keep cleanup's derived future successful. An ignored whenComplete future
+    // would rethrow a load error even after the widget's errorBuilder handled it.
+    unawaited(
+      result.then<void>(
+        (_) {
+          _pendingPictures.remove(key);
+        },
+        onError: (Object error, StackTrace stack) {
+          _pendingPictures.remove(key);
+        },
+      ),
+    );
     return result;
   }
 
@@ -402,13 +485,16 @@ class _VectorGraphicWidgetState extends State<VectorGraphic> {
   Future<void> _loadAssetBytes() async {
     // First check if we have an available picture and use this immediately.
     final Object loaderKey = widget.loader.cacheKey(context);
-    final key = _PictureKey(loaderKey, locale, textDirection, widget.clipViewbox);
+    final key = _PictureKey(loaderKey, locale, textDirection, widget.clipViewbox, _resolution());
+    _requestedKey = key;
     final _PictureData? data = _livePictureCache[key];
     if (data != null) {
       data.count += 1;
       setState(() {
         _maybeReleasePicture(_pictureData);
         _pictureData = data;
+        _error = null;
+        _stackTrace = null;
       });
       return;
     }
@@ -421,7 +507,7 @@ class _VectorGraphicWidgetState extends State<VectorGraphic> {
 
       // The widget may have changed, requesting a new vector graphic before
       // this operation could complete.
-      if (!mounted || loader != widget.loader) {
+      if (!mounted || key != _requestedKey) {
         _maybeReleasePicture(data);
         return;
       }
@@ -433,9 +519,13 @@ class _VectorGraphicWidgetState extends State<VectorGraphic> {
       setState(() {
         _maybeReleasePicture(_pictureData);
         _pictureData = data;
+        _error = null;
+        _stackTrace = null;
       });
     } catch (error, stackTrace) {
-      _handleError(error, stackTrace);
+      if (key == _requestedKey) {
+        _handleError(error, stackTrace);
+      }
     }
   }
 
@@ -508,6 +598,9 @@ class _VectorGraphicWidgetState extends State<VectorGraphic> {
         child: SizedBox.fromSize(size: pictureInfo.size, child: child),
       );
 
+      if (pictureInfo.requiresRasterResolution && widget.filterRasterScale == null) {
+        child = _FilterResolutionObserver(onSize: _updateFilterResolution, child: child);
+      }
       if (width != null && height != null) {
         child = SizedBox(width: width, height: height, child: child);
       }
@@ -543,6 +636,39 @@ class _VectorGraphicWidgetState extends State<VectorGraphic> {
       );
     }
     return child;
+  }
+}
+
+// Observing layout preserves intrinsic sizing, unlike a LayoutBuilder around
+// the graphic. Decoding starts after layout; no setState runs during layout.
+class _FilterResolutionObserver extends SingleChildRenderObjectWidget {
+  const _FilterResolutionObserver({required this.onSize, required super.child});
+  final ValueChanged<Size> onSize;
+
+  @override
+  RenderObject createRenderObject(BuildContext context) => _FilterResolutionBox(onSize);
+
+  @override
+  void updateRenderObject(BuildContext context, _FilterResolutionBox renderObject) {
+    renderObject
+      ..onSize = onSize
+      ..markNeedsLayout();
+  }
+}
+
+class _FilterResolutionBox extends RenderProxyBox {
+  _FilterResolutionBox(this.onSize);
+  ValueChanged<Size> onSize;
+
+  @override
+  void performLayout() {
+    super.performLayout();
+    final Size laidOutSize = size;
+    WidgetsBinding.instance.addPostFrameCallback((Duration _) {
+      if (attached) {
+        onSize(laidOutSize);
+      }
+    });
   }
 }
 
@@ -676,11 +802,16 @@ class VectorGraphicUtilities {
   ///
   /// It is the caller's responsibility to handle disposing the picture when
   /// they are done with it.
+  ///
+  /// [filterRasterScale] sets samples per SVG unit for pixel-based filters.
+  /// It defaults to the context's device pixel ratio, or 1 without a context.
+  /// Increase it when the returned picture will be enlarged after decoding.
   Future<PictureInfo> loadPicture(
     BytesLoader loader,
     BuildContext? context, {
     bool clipViewbox = true,
     VectorGraphicsErrorListener? onError,
+    double? filterRasterScale,
   }) async {
     TextDirection textDirection = TextDirection.ltr;
     Locale locale = ui.PlatformDispatcher.instance.locale;
@@ -688,6 +819,11 @@ class VectorGraphicUtilities {
       locale = Localizations.maybeLocaleOf(context) ?? locale;
       textDirection = Directionality.maybeOf(context) ?? textDirection;
     }
+    final double resolvedFilterScale =
+        filterRasterScale ??
+        (context == null
+            ? 1
+            : MediaQuery.maybeDevicePixelRatioOf(context) ?? View.of(context).devicePixelRatio);
     return loader.loadBytes(context).then((ByteData data) {
       try {
         return decodeVectorGraphics(
@@ -697,6 +833,7 @@ class VectorGraphicUtilities {
           loader: loader,
           clipViewbox: clipViewbox,
           onError: onError,
+          filterRasterScale: resolvedFilterScale,
         );
       } catch (e) {
         debugPrint('Failed to decode $loader');

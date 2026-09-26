@@ -8,6 +8,19 @@
 
 Draw SVG files using Flutter.
 
+## SVG filters
+
+Supported filter primitives: `feOffset`.
+Existing `SvgPicture` loaders and both rendering strategies use the same compiler
+and renderer. Canvas fragment shaders work with both Skia and Impeller.
+
+BackgroundImage/BackgroundAlpha and FillPaint/StrokePaint inputs, filterRes,
+CSS filter functions, animation, and external SVG filter URLs are not implemented.
+Vector-only filters preserve picture commands and do not redecode for layout or
+DPR changes. Unsupported primitives fail decoding with an explicit diagnostic;
+use `errorBuilder` for an application fallback. Independent unfiltered subtrees
+retain compiler optimizations, and filter sources retain unpainted geometry.
+
 ## Getting Started
 
 Basic usage (to create an SVG rendering widget from an asset):

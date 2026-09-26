@@ -666,7 +666,7 @@ ${[for (var i = 2; i <= 30; i++) '    <pattern id="lvl$i" width="10" height="10"
 
     final VectorInstructions instructions = parseWithoutOptimizers(strokeOpacitySvg);
 
-    expect(instructions.paints.single, const Paint(stroke: Stroke(color: Color(0x7fff0000))));
+    expect(instructions.paints.single, const Paint(stroke: Stroke(color: Color(0x80ff0000))));
   });
 
   test('preserve opacity from color mapper for strokes', () {
@@ -1388,7 +1388,7 @@ ${[for (var i = 2; i <= 30; i++) '    <pattern id="lvl$i" width="10" height="10"
               id: 'url(#paint1_linear)',
               from: Point(405.5634918610405, 547.9898987322333),
               to: Point(440.9188309203679, 866.1879502661797),
-              colors: <Color>[Color(0x7f0000ff), Color(0x19ff0000)],
+              colors: <Color>[Color(0x800000ff), Color(0x1aff0000)],
               offsets: <double>[0.0, 1.0],
               tileMode: TileMode.clamp,
               unitMode: GradientUnitMode.transformed,
@@ -1478,10 +1478,10 @@ ${[for (var i = 2; i <= 30; i++) '    <pattern id="lvl$i" width="10" height="10"
             to: Point(337.966, 241.771),
             colors: <Color>[
               Color(0xffffffff),
-              Color(0xb9c2c3c3),
-              Color(0x6a7d7e80),
+              Color(0xbac2c3c3),
+              Color(0x6b7d7e80),
               Color(0x314b4c4e),
-              Color(0x0d2c2d30),
+              Color(0x0e2c2d30),
               Color(0x00202124),
             ],
             offsets: <double>[0.0, 0.229, 0.508, 0.739, 0.909, 1.0],
@@ -1499,10 +1499,10 @@ ${[for (var i = 2; i <= 30; i++) '    <pattern id="lvl$i" width="10" height="10"
             to: Point(0.0, 330.779),
             colors: <Color>[
               Color(0xffffffff),
-              Color(0xb9c2c3c3),
-              Color(0x6a7d7e80),
+              Color(0xbac2c3c3),
+              Color(0x6b7d7e80),
               Color(0x314b4c4e),
-              Color(0x0d2c2d30),
+              Color(0x0e2c2d30),
               Color(0x00202124),
             ],
             offsets: <double>[0.0, 0.229, 0.508, 0.739, 0.909, 1.0],
@@ -1521,9 +1521,9 @@ ${[for (var i = 2; i <= 30; i++) '    <pattern id="lvl$i" width="10" height="10"
       PathBuilder().addOval(const Rect.fromCircle(120, 100, 50)).toPath(),
     ]);
     expect(instructions.paints, const <Paint>[
-      Paint(fill: Fill(color: Color(0x7f000000))),
-      Paint(fill: Fill(color: Color(0x7fff0000))),
-      Paint(fill: Fill(color: Color(0x7f008000))),
+      Paint(fill: Fill(color: Color(0x80000000))),
+      Paint(fill: Fill(color: Color(0x80ff0000))),
+      Paint(fill: Fill(color: Color(0x80008000))),
     ]);
     expect(instructions.commands, const <DrawCommand>[
       DrawCommand(DrawCommandType.saveLayer, paintId: 0),

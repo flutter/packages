@@ -103,6 +103,7 @@ class SvgPicture extends StatelessWidget {
     SvgTheme? theme,
     @Deprecated('This no longer does anything.') bool cacheColorFilter = false,
     this.renderingStrategy = RenderingStrategy.picture,
+    this.filterRasterScale,
   });
 
   /// Instantiates a widget that renders an SVG picture from an [AssetBundle].
@@ -205,6 +206,7 @@ class SvgPicture extends StatelessWidget {
     @Deprecated('Use colorFilter instead.') ui.BlendMode colorBlendMode = ui.BlendMode.srcIn,
     @Deprecated('This no longer does anything.') bool cacheColorFilter = false,
     this.renderingStrategy = RenderingStrategy.picture,
+    this.filterRasterScale,
   }) : bytesLoader = SvgAssetLoader(
          assetName,
          packageName: package,
@@ -270,6 +272,7 @@ class SvgPicture extends StatelessWidget {
     ColorMapper? colorMapper,
     http.Client? httpClient,
     this.renderingStrategy = RenderingStrategy.picture,
+    this.filterRasterScale,
   }) : bytesLoader = SvgNetworkLoader(
          url,
          headers: headers,
@@ -331,6 +334,7 @@ class SvgPicture extends StatelessWidget {
     ColorMapper? colorMapper,
     @Deprecated('This no longer does anything.') bool cacheColorFilter = false,
     this.renderingStrategy = RenderingStrategy.picture,
+    this.filterRasterScale,
   }) : bytesLoader = SvgFileLoader(file, theme: theme, colorMapper: colorMapper),
        colorFilter = colorFilter ?? _getColorFilter(color, colorBlendMode);
 
@@ -383,6 +387,7 @@ class SvgPicture extends StatelessWidget {
     ColorMapper? colorMapper,
     @Deprecated('This no longer does anything.') bool cacheColorFilter = false,
     this.renderingStrategy = RenderingStrategy.picture,
+    this.filterRasterScale,
   }) : bytesLoader = SvgBytesLoader(bytes, theme: theme, colorMapper: colorMapper),
        colorFilter = colorFilter ?? _getColorFilter(color, colorBlendMode);
 
@@ -435,6 +440,7 @@ class SvgPicture extends StatelessWidget {
     ColorMapper? colorMapper,
     @Deprecated('This no longer does anything.') bool cacheColorFilter = false,
     this.renderingStrategy = RenderingStrategy.picture,
+    this.filterRasterScale,
   }) : bytesLoader = SvgStringLoader(string, theme: theme, colorMapper: colorMapper),
        colorFilter = colorFilter ?? _getColorFilter(color, colorBlendMode);
 
@@ -536,6 +542,14 @@ class SvgPicture extends StatelessWidget {
   /// Defaults to [RenderingStrategy.picture].
   final RenderingStrategy renderingStrategy;
 
+  /// Samples per SVG unit for filter textures. Must be finite and positive.
+  ///
+  /// By default resolution follows layout size, BoxFit and device pixel ratio,
+  /// rounded up to powers of two. Set this explicitly for magnification by an
+  /// ancestor Transform, which cannot be inferred from layout. Higher values
+  /// increase decoding time and texture memory; resource limits still apply.
+  final double? filterRasterScale;
+
   @override
   Widget build(BuildContext context) {
     return createCompatVectorGraphic(
@@ -552,6 +566,7 @@ class SvgPicture extends StatelessWidget {
       colorFilter: colorFilter,
       placeholderBuilder: placeholderBuilder,
       strategy: renderingStrategy,
+      filterRasterScale: filterRasterScale,
       clipViewbox: !allowDrawingOutsideViewBox,
       matchTextDirection: matchTextDirection,
     );
