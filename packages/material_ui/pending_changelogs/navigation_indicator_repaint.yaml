@@ -1,0 +1,3 @@
+changelog: |
+  - Fixes `NavigationIndicator` not repainting when the selected destination changes without pointer interaction.
+version: patch
