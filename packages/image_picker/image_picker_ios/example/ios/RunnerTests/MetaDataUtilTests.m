@@ -82,6 +82,21 @@
   XCTAssertNil(newData);
 }
 
+- (void)testUpdateMetaDataReturnsNilWhenWritingFails {
+  NSData *dataJPG = ImagePickerTestImages.JPGTestData;
+  // Truncated data is still recognized as JPEG, but has no decodable image, so writing it fails.
+  NSData *truncatedJPG = [dataJPG subdataWithRange:NSMakeRange(0, dataJPG.length / 2)];
+  XCTAssertNil([UIImage imageWithData:truncatedJPG]);
+  CGImageSourceRef source = CGImageSourceCreateWithData((__bridge CFDataRef)truncatedJPG, NULL);
+  XCTAssertEqualObjects((__bridge NSString *)CGImageSourceGetType(source), @"public.jpeg");
+  if (source) {
+    CFRelease(source);
+  }
+  NSDictionary *metaData = [FLTImagePickerMetaDataUtil getMetaDataFromImageData:dataJPG];
+  NSData *newData = [FLTImagePickerMetaDataUtil imageFromImage:truncatedJPG withMetaData:metaData];
+  XCTAssertNil(newData, @"Returned %lu bytes of data.", (unsigned long)newData.length);
+}
+
 - (void)testConvertImageToData {
   UIImage *imageJPG = [UIImage imageWithData:ImagePickerTestImages.JPGTestData];
   NSData *convertedDataJPG = [FLTImagePickerMetaDataUtil convertImage:imageJPG

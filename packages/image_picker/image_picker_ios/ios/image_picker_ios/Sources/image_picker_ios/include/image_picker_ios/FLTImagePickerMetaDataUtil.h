@@ -39,9 +39,11 @@ extern const FLTImagePickerMIMEType kFLTImagePickerMIMETypeDefault;
 // quality with type other than FLTImagePickerMIMETypeJPEG. Converting UIImage to
 // FLTImagePickerMIMETypeGIF or FLTImagePickerMIMETypeTIFF is not supported in iOS. This
 // method throws exception if trying to do so.
-+ (nonnull NSData *)convertImage:(nonnull UIImage *)image
-                       usingType:(FLTImagePickerMIMEType)type
-                         quality:(nullable NSNumber *)quality;
+//
+// Returns nil if the image cannot be encoded.
++ (nullable NSData *)convertImage:(nonnull UIImage *)image
+                        usingType:(FLTImagePickerMIMEType)type
+                          quality:(nullable NSNumber *)quality;
 
 @end
 

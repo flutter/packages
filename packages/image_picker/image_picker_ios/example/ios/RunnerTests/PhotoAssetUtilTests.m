@@ -12,6 +12,12 @@
 
 #import <OCMock/OCMock.h>
 
+@interface FLTImagePickerPhotoAssetUtil (Test)
++ (nullable NSString *)saveImageWithMetaData:(nullable NSDictionary *)metaData
+                                     gifInfo:(GIFInfo *)gifInfo
+                                        path:(NSString *)path;
+@end
+
 @interface PhotoAssetUtilTests : XCTestCase
 @end
 
@@ -89,19 +95,83 @@
   }
 }
 
-- (void)testCreateFileReturnsPathWhenWriteFails {
+- (void)testCreateFileReturnsNilWhenWriteFails {
   UIImage *imageJPG = [UIImage imageWithData:ImagePickerTestImages.JPGTestData];
   id mockFileManager = OCMPartialMock([NSFileManager defaultManager]);
   OCMStub([mockFileManager createFileAtPath:OCMOCK_ANY contents:OCMOCK_ANY attributes:OCMOCK_ANY])
       .andReturn(NO);
 
-  // Current behavior: the write-failure branch is a no-op and still returns the temp path.
   NSString *savedPath = [FLTImagePickerPhotoAssetUtil saveImageWithPickerInfo:nil
                                                                         image:imageJPG
                                                                  imageQuality:nil];
-  XCTAssertNotNil(savedPath);
+  XCTAssertNil(savedPath);
 
   [mockFileManager stopMocking];
+}
+
+- (void)testSaveImageWithPickerInfoReturnsNilWhenImageCannotBeEncoded {
+  // An image with no underlying bitmap cannot be encoded as JPEG, so there is no data to save.
+  UIImage *image = [[UIImage alloc] init];
+  NSString *savedPath = [FLTImagePickerPhotoAssetUtil saveImageWithPickerInfo:nil
+                                                                        image:image
+                                                                 imageQuality:nil];
+  XCTAssertNil(
+      savedPath, @"Returned a path to a %llu-byte file.",
+      [[NSFileManager defaultManager] attributesOfItemAtPath:savedPath error:nil].fileSize);
+  if (savedPath) {
+    [[NSFileManager defaultManager] removeItemAtPath:savedPath error:nil];
+  }
+}
+
+- (void)testSaveImageWithOriginalImageDataSavesImageWhenMetaDataUpdateFails {
+  NSData *dataJPG = ImagePickerTestImages.JPGTestData;
+  UIImage *imageJPG = [UIImage imageWithData:dataJPG];
+  id mockMetaDataUtil = OCMClassMock([FLTImagePickerMetaDataUtil class]);
+  OCMStub(ClassMethod([mockMetaDataUtil imageFromImage:OCMOCK_ANY withMetaData:OCMOCK_ANY]))
+      .andReturn(nil);
+
+  NSString *savedPath = [FLTImagePickerPhotoAssetUtil saveImageWithOriginalImageData:dataJPG
+                                                                               image:imageJPG
+                                                                            maxWidth:nil
+                                                                           maxHeight:nil
+                                                                        imageQuality:nil];
+  OCMVerify(ClassMethod([mockMetaDataUtil imageFromImage:OCMOCK_ANY withMetaData:OCMOCK_ANY]));
+  [mockMetaDataUtil stopMocking];
+
+  XCTAssertNotNil(savedPath);
+  NSData *savedData = [NSData dataWithContentsOfFile:savedPath];
+  XCTAssertGreaterThan(savedData.length, 0U);
+  XCTAssertNotNil([UIImage imageWithData:savedData]);
+  if (savedPath) {
+    [[NSFileManager defaultManager] removeItemAtPath:savedPath error:nil];
+  }
+}
+
+- (void)testSaveImageWithOriginalImageDataReturnsNilWhenGIFCannotBeSaved {
+  // Only the GIF header and logical screen descriptor, so there are no frames to write.
+  NSData *truncatedGIF = [ImagePickerTestImages.GIFTestData subdataWithRange:NSMakeRange(0, 13)];
+  XCTAssertNil([UIImage imageWithData:truncatedGIF]);
+
+  NSString *savedPath = [FLTImagePickerPhotoAssetUtil saveImageWithOriginalImageData:truncatedGIF
+                                                                               image:nil
+                                                                            maxWidth:nil
+                                                                           maxHeight:nil
+                                                                        imageQuality:nil];
+  XCTAssertNil(
+      savedPath, @"Returned a path to a file that %@.",
+      [[NSFileManager defaultManager] fileExistsAtPath:savedPath] ? @"exists" : @"does not exist");
+  if (savedPath) {
+    [[NSFileManager defaultManager] removeItemAtPath:savedPath error:nil];
+  }
+}
+
+- (void)testSaveGIFReturnsNilWhenDestinationCannotBeCreated {
+  UIImage *frame = [UIImage imageWithData:ImagePickerTestImages.GIFTestData];
+  GIFInfo *gifInfo = [[GIFInfo alloc] initWithImages:@[ frame ] interval:0.1];
+  XCTAssertNil([FLTImagePickerPhotoAssetUtil
+      saveImageWithMetaData:nil
+                    gifInfo:gifInfo
+                       path:@"/this/path/does/not/exist.gif"]);
 }
 
 - (void)testSaveImageWithOriginalImageData_ShouldSaveWithTheCorrectExtentionAndMetaData {
