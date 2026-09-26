@@ -1642,6 +1642,559 @@ ${[for (var i = 2; i <= 30; i++) '    <pattern id="lvl$i" width="10" height="10"
     ]);
   });
 
+  test('Handles filters (blur) correctly', () {
+    const svg = '''
+<svg viewBox="0 0 100 100">
+  <filter id="blur">
+    <feGaussianBlur stdDeviation="5" />
+  </filter>
+  <rect width="100" height="100" fill="blue" filter="url(#blur)"/>
+</svg>
+''';
+    final VectorInstructions instructions = parseWithoutOptimizers(svg);
+    expect(instructions.paths, <Path>[
+      PathBuilder().addRect(const Rect.fromLTWH(0, 0, 100, 100)).toPath(),
+    ]);
+
+    expect(instructions.paints, const <Paint>[
+      Paint(fill: Fill(color: Color(0xff0000ff)), filterBlurX: 5.0, filterBlurY: 5.0),
+    ]);
+
+    expect(instructions.commands, const <DrawCommand>[
+      DrawCommand(DrawCommandType.path, objectId: 0, paintId: 0),
+    ]);
+  });
+
+  test('Handles directional filters (blur) correctly', () {
+    const svg = '''
+<svg viewBox="0 0 100 100">
+  <filter id="blur">
+    <feGaussianBlur stdDeviation="5 10" />
+  </filter>
+  <rect width="100" height="100" fill="blue" filter="url(#blur)"/>
+</svg>
+''';
+    final VectorInstructions instructions = parseWithoutOptimizers(svg);
+    expect(instructions.paints, const <Paint>[
+      Paint(fill: Fill(color: Color(0xff0000ff)), filterBlurX: 5.0, filterBlurY: 10.0),
+    ]);
+  });
+
+  test('Ignores directional filters if one value is negative', () {
+    const svg = '''
+<svg viewBox="0 0 100 100">
+  <filter id="blur">
+    <feGaussianBlur stdDeviation="5 -10" />
+  </filter>
+  <rect width="100" height="100" fill="blue" filter="url(#blur)"/>
+</svg>
+''';
+    final VectorInstructions instructions = parseWithoutOptimizers(svg);
+    expect(instructions.paints, const <Paint>[Paint(fill: Fill(color: Color(0xff0000ff)))]);
+  });
+
+  test('Ignores negative stdDeviation in filters', () {
+    const svg = '''
+<svg viewBox="0 0 100 100">
+  <filter id="blur">
+    <feGaussianBlur stdDeviation="-5" />
+  </filter>
+  <rect width="100" height="100" fill="blue" filter="url(#blur)"/>
+</svg>
+''';
+    final VectorInstructions instructions = parseWithoutOptimizers(svg);
+    expect(instructions.paints, const <Paint>[Paint(fill: Fill(color: Color(0xff0000ff)))]);
+  });
+
+  test('Ignores invalid stdDeviation in filters', () {
+    const svg = '''
+<svg viewBox="0 0 100 100">
+  <filter id="blur">
+    <feGaussianBlur stdDeviation="abc" />
+  </filter>
+  <rect width="100" height="100" fill="blue" filter="url(#blur)"/>
+</svg>
+''';
+    final VectorInstructions instructions = parseWithoutOptimizers(svg);
+    expect(instructions.paints, const <Paint>[Paint(fill: Fill(color: Color(0xff0000ff)))]);
+  });
+
+  test('Handles elements referencing non-existent filters', () {
+    const svg = '''
+<svg viewBox="0 0 100 100">
+  <rect width="100" height="100" fill="blue" filter="url(#does-not-exist)"/>
+</svg>
+''';
+    final VectorInstructions instructions = parseWithoutOptimizers(svg);
+    expect(instructions.paints, const <Paint>[Paint(fill: Fill(color: Color(0xff0000ff)))]);
+  });
+
+  test('Ignores empty filters', () {
+    const svg = '''
+<svg viewBox="0 0 100 100">
+  <filter id="empty" />
+  <rect width="100" height="100" fill="blue" filter="url(#empty)"/>
+</svg>
+''';
+    final VectorInstructions instructions = parseWithoutOptimizers(svg);
+    expect(instructions.paints, const <Paint>[Paint(fill: Fill(color: Color(0xff0000ff)))]);
+  });
+
+  test('Handles nested filters correctly', () {
+    const svg = '''
+<svg viewBox="0 0 100 100">
+  <filter id="blurA">
+    <feGaussianBlur stdDeviation="5" />
+  </filter>
+  <filter id="blurB">
+    <feGaussianBlur stdDeviation="10" />
+  </filter>
+  <g filter="url(#blurA)">
+    <rect width="100" height="100" fill="blue" filter="url(#blurB)"/>
+  </g>
+</svg>
+''';
+    final VectorInstructions instructions = parseWithoutOptimizers(svg);
+    expect(instructions.paths, <Path>[
+      PathBuilder().addRect(const Rect.fromLTWH(0, 0, 100, 100)).toPath(),
+    ]);
+
+    expect(instructions.paints, const <Paint>[
+      Paint(filterBlurX: 5.0, filterBlurY: 5.0, fill: Fill(color: Color.opaqueBlack)),
+      Paint(fill: Fill(color: Color(0xff0000ff)), filterBlurX: 10.0, filterBlurY: 10.0),
+    ]);
+
+    expect(instructions.commands, const <DrawCommand>[
+      DrawCommand(DrawCommandType.saveLayer, paintId: 0),
+      DrawCommand(DrawCommandType.path, objectId: 0, paintId: 1),
+      DrawCommand(DrawCommandType.restore),
+    ]);
+  });
+
+  test('Handles zero stdDeviation (disables blur)', () {
+    const svg = '''
+<svg viewBox="0 0 100 100">
+  <filter id="blur">
+    <feGaussianBlur stdDeviation="0" />
+  </filter>
+  <rect width="100" height="100" fill="blue" filter="url(#blur)"/>
+</svg>
+''';
+    final VectorInstructions instructions = parseWithoutOptimizers(svg);
+    expect(instructions.paints, const <Paint>[Paint(fill: Fill(color: Color(0xff0000ff)))]);
+  });
+
+  test('Handles omitted stdDeviation (defaults to zero)', () {
+    const svg = '''
+<svg viewBox="0 0 100 100">
+  <filter id="blur">
+    <feGaussianBlur />
+  </filter>
+  <rect width="100" height="100" fill="blue" filter="url(#blur)"/>
+</svg>
+''';
+    final VectorInstructions instructions = parseWithoutOptimizers(svg);
+    expect(instructions.paints, const <Paint>[Paint(fill: Fill(color: Color(0xff0000ff)))]);
+  });
+
+  test('Handles directional zero stdDeviation (blurs one axis)', () {
+    const svg = '''
+<svg viewBox="0 0 100 100">
+  <filter id="blur">
+    <feGaussianBlur stdDeviation="0 5" />
+  </filter>
+  <rect width="100" height="100" fill="blue" filter="url(#blur)"/>
+</svg>
+''';
+    final VectorInstructions instructions = parseWithoutOptimizers(svg);
+    expect(instructions.paints, const <Paint>[
+      Paint(fill: Fill(color: Color(0xff0000ff)), filterBlurX: 0.0, filterBlurY: 5.0),
+    ]);
+  });
+
+  test('Handles feMerge and multiple feGaussianBlur correctly (Neon Glow)', () {
+    const svg = '''
+<svg viewBox="0 0 100 100">
+  <filter id="neon-glow">
+    <feGaussianBlur in="SourceGraphic" stdDeviation="12" result="blur1" />
+    <feGaussianBlur in="SourceGraphic" stdDeviation="4" result="blur2" />
+    <feMerge>
+      <feMergeNode in="blur1" />
+      <feMergeNode in="blur2" />
+      <feMergeNode in="SourceGraphic" />
+    </feMerge>
+  </filter>
+  <text fill="white" filter="url(#neon-glow)">OPEN</text>
+</svg>
+''';
+    final VectorInstructions instructions = parseWithoutOptimizers(svg);
+    expect(instructions.paints.length, 3);
+    expect(instructions.paints[0].filterBlurX, 12.0);
+    expect(instructions.paints[0].filterBlurY, 12.0);
+    expect(instructions.paints[1].filterBlurX, 4.0);
+    expect(instructions.paints[1].filterBlurY, 4.0);
+    expect(instructions.paints[2].filterBlurX, null);
+    expect(instructions.paints[2].filterBlurY, null);
+    expect(
+      instructions.commands.where((DrawCommand c) => c.type == DrawCommandType.text).length,
+      3,
+    );
+  });
+
+  test('Handles comma-separated stdDeviation', () {
+    const svg = '''
+<svg viewBox="0 0 100 100">
+  <filter id="blur">
+    <feGaussianBlur stdDeviation="5,10" />
+  </filter>
+  <rect width="100" height="100" fill="blue" filter="url(#blur)"/>
+</svg>
+''';
+    final VectorInstructions instructions = parseWithoutOptimizers(svg);
+    expect(instructions.paints, const <Paint>[
+      Paint(fill: Fill(color: Color(0xff0000ff)), filterBlurX: 5.0, filterBlurY: 10.0),
+    ]);
+  });
+
+  test('Handles feMergeNode with omitted "in" attribute', () {
+    const svg = '''
+<svg viewBox="0 0 100 100">
+  <filter id="blur-merge">
+    <feGaussianBlur stdDeviation="5" result="blur" />
+    <feMerge>
+      <feMergeNode /> <!-- should default to "blur" -->
+      <feMergeNode in="SourceGraphic" />
+    </feMerge>
+  </filter>
+  <rect width="100" height="100" fill="blue" filter="url(#blur-merge)"/>
+</svg>
+''';
+    final VectorInstructions instructions = parseWithoutOptimizers(svg);
+    expect(instructions.paints.length, 2);
+    expect(instructions.paints[0].filterBlurX, 5.0);
+    expect(instructions.paints[1].filterBlurX, null);
+  });
+
+  test('Preserves original opacity when applying SourceAlpha filter', () {
+    const svg = '''
+<svg viewBox="0 0 100 100">
+  <filter id="shadow">
+    <feGaussianBlur in="SourceAlpha" stdDeviation="5" />
+  </filter>
+  <rect width="100" height="100" fill="rgba(255, 0, 0, 0.5)" filter="url(#shadow)"/>
+</svg>
+''';
+    final VectorInstructions instructions = parseWithoutOptimizers(svg);
+    expect(instructions.paints.length, 1);
+    expect(instructions.paints[0].fill?.color, const Color(0x80000000));
+  });
+
+  test('Preserves gradient stop opacity when applying SourceAlpha filter', () {
+    const svg = '''
+<svg viewBox="0 0 100 100">
+  <defs>
+    <linearGradient id="grad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="red" stop-opacity="1" />
+      <stop offset="100%" stop-color="blue" stop-opacity="0.5" />
+    </linearGradient>
+    <filter id="shadow">
+      <feGaussianBlur in="SourceAlpha" stdDeviation="5" />
+    </filter>
+  </defs>
+  <rect width="100" height="100" fill="url(#grad)" filter="url(#shadow)"/>
+</svg>
+''';
+    final VectorInstructions instructions = parseWithoutOptimizers(svg);
+    expect(instructions.paints.length, 1);
+    final Fill? fill = instructions.paints[0].fill;
+    expect(fill, isNotNull);
+    expect(fill!.shader, isNotNull);
+    expect(fill.shader!.colors, <Color>[
+      Color.opaqueBlack, // Black (opaque)
+      const Color(0x7F000000), // Black (0.5 opacity)
+    ]);
+  });
+
+  test('Nested groups inherit SourceAlpha state', () {
+    const svg = '''
+<svg viewBox="0 0 100 100">
+  <defs>
+    <filter id="shadow">
+      <feGaussianBlur in="SourceAlpha" stdDeviation="5" />
+    </filter>
+    <filter id="blur">
+      <feGaussianBlur stdDeviation="2" />
+    </filter>
+  </defs>
+  <g filter="url(#shadow)">
+    <g filter="url(#blur)">
+      <rect width="50" height="50" fill="red" />
+    </g>
+  </g>
+</svg>
+''';
+    final VectorInstructions instructions = parseWithoutOptimizers(svg);
+    final List<Paint> fillPaints = instructions.paints.where((p) => p.fill != null).toList();
+    expect(fillPaints.length, 3);
+    for (final paint in fillPaints) {
+      expect(paint.fill!.color, Color.opaqueBlack);
+    }
+  });
+
+  test('Inner path filter combines with outer SourceAlpha state', () {
+    const svg = '''
+<svg viewBox="0 0 100 100">
+  <defs>
+    <filter id="shadow">
+      <feGaussianBlur in="SourceAlpha" stdDeviation="5" />
+    </filter>
+    <filter id="blur">
+      <feGaussianBlur stdDeviation="2" />
+    </filter>
+  </defs>
+  <g filter="url(#shadow)">
+    <rect width="50" height="50" fill="red" filter="url(#blur)" />
+  </g>
+</svg>
+''';
+    final VectorInstructions instructions = parseWithoutOptimizers(svg);
+    final List<Paint> fillPaints = instructions.paints.where((p) => p.fill != null).toList();
+    expect(fillPaints.length, 2);
+    for (final paint in fillPaints) {
+      expect(paint.fill!.color, Color.opaqueBlack);
+    }
+  });
+
+  test('Text position node inherits SourceAlpha state and restores it', () {
+    const svg = '''
+<svg viewBox="0 0 100 100">
+  <defs>
+    <filter id="shadow">
+      <feGaussianBlur in="SourceAlpha" stdDeviation="5" />
+    </filter>
+    <filter id="blur">
+      <feGaussianBlur stdDeviation="2" />
+    </filter>
+  </defs>
+  <g filter="url(#shadow)">
+    <text fill="red" filter="url(#blur)">Hello</text>
+  </g>
+</svg>
+''';
+    final VectorInstructions instructions = parseWithoutOptimizers(svg);
+    final List<Paint> fillPaints = instructions.paints.where((p) => p.fill != null).toList();
+    expect(fillPaints.length, 2);
+    for (final paint in fillPaints) {
+      expect(paint.fill!.color, Color.opaqueBlack);
+    }
+  });
+
+  test('Scales blur standard deviation by transform scale factors', () {
+    const svg = '''
+<svg viewBox="0 0 100 100">
+  <defs>
+    <filter id="blur">
+      <feGaussianBlur stdDeviation="5" />
+    </filter>
+  </defs>
+  <g transform="scale(2, 3)">
+    <rect width="10" height="10" fill="red" filter="url(#blur)" />
+  </g>
+</svg>
+''';
+    final VectorInstructions instructions = parseWithoutOptimizers(svg);
+    expect(instructions.paints.length, 1);
+    final Paint paint = instructions.paints.first;
+    expect(paint.filterBlurX, 10.0);
+    expect(paint.filterBlurY, 15.0);
+  });
+
+  test('Handles cyclic filter definitions gracefully without stack overflow', () {
+    const svg = '''
+<svg viewBox="0 0 100 100">
+  <filter id="cycle">
+    <feGaussianBlur in="blur2" stdDeviation="5" result="blur1" />
+    <feGaussianBlur in="blur1" stdDeviation="10" result="blur2" />
+  </filter>
+  <rect width="100" height="100" fill="blue" filter="url(#cycle)"/>
+</svg>
+''';
+    final VectorInstructions instructions = parseWithoutOptimizers(svg);
+    expect(instructions.paints.length, 1);
+    expect(instructions.paints[0].filterBlurX, null);
+  });
+
+  test('Handles feMerge followed by other primitives', () {
+    const svg = '''
+<svg viewBox="0 0 100 100">
+  <filter id="merge-then-blur">
+    <feGaussianBlur in="SourceGraphic" stdDeviation="5" result="blur" />
+    <feMerge result="merged">
+      <feMergeNode in="blur" />
+      <feMergeNode in="SourceGraphic" />
+    </feMerge>
+    <feGaussianBlur in="merged" stdDeviation="10" />
+  </filter>
+  <rect width="100" height="100" fill="blue" filter="url(#merge-then-blur)"/>
+</svg>
+''';
+    final VectorInstructions instructions = parseWithoutOptimizers(svg);
+    expect(instructions.paints.length, 2);
+    expect(instructions.paints[0].filterBlurX, closeTo(11.180339887498949, 1e-9));
+    expect(instructions.paints[0].filterBlurY, closeTo(11.180339887498949, 1e-9));
+    expect(instructions.paints[1].filterBlurX, 10.0);
+    expect(instructions.paints[1].filterBlurY, 10.0);
+  });
+
+  test('Handles self-closing feMerge element', () {
+    const svg = '''
+<svg viewBox="0 0 100 100">
+  <filter id="empty-merge">
+    <feMerge />
+  </filter>
+  <rect width="100" height="100" fill="blue" filter="url(#empty-merge)"/>
+</svg>
+''';
+    final VectorInstructions instructions = parseWithoutOptimizers(svg);
+    expect(instructions.paints.length, 1);
+    expect(instructions.paints[0].filterBlurX, null);
+    expect(instructions.paints[0].filterBlurY, null);
+  });
+
+  test('Handles multi-layer filters on ParentNode', () {
+    const svg = '''
+<svg viewBox="0 0 100 100">
+  <filter id="shadow-glow">
+    <feGaussianBlur in="SourceAlpha" stdDeviation="5" result="shadow" />
+    <feOffset in="shadow" dx="5" dy="5" result="offset-shadow" />
+    <feGaussianBlur in="SourceGraphic" stdDeviation="10" result="glow" />
+    <feMerge>
+      <feMergeNode in="offset-shadow" />
+      <feMergeNode in="glow" />
+      <feMergeNode in="SourceGraphic" />
+    </feMerge>
+  </filter>
+  <g filter="url(#shadow-glow)">
+    <rect width="50" height="50" fill="red" />
+    <rect x="50" y="50" width="50" height="50" fill="blue" />
+  </g>
+</svg>
+''';
+    final VectorInstructions instructions = parseWithoutOptimizers(svg);
+    // 4 paths: 2 original rects, 2 offset rects (for shadow)
+    expect(instructions.paths.length, 4);
+
+    // We expect SaveLayer for shadow (blur 5), SaveLayer for glow (blur 10), and then original drawing.
+    // Paints should include:
+    // - SaveLayer 1 paint (blur 5)
+    // - SaveLayer 2 paint (blur 10)
+    // - Red fill paint
+    // - Blue fill paint
+    // - Black fill paint (for shadow)
+    // Let's verify we have these.
+    final List<double?> blurs = instructions.paints.map((p) => p.filterBlurX).toList();
+    expect(blurs, contains(5.0));
+    expect(blurs, contains(10.0));
+
+    final List<Color?> colors = instructions.paints.map((p) => p.fill?.color).toList();
+    expect(colors, contains(const Color(0xffff0000))); // Red
+    expect(colors, contains(const Color(0xff0000ff))); // Blue
+    expect(colors, contains(Color.opaqueBlack)); // Black (shadow)
+
+    final List<Rect> bounds = instructions.paths.map((p) => p.bounds()).toList();
+    expect(bounds, contains(const Rect.fromLTWH(5, 5, 50, 50)));
+    expect(bounds, contains(const Rect.fromLTWH(55, 55, 50, 50)));
+    expect(bounds, contains(const Rect.fromLTWH(0, 0, 50, 50)));
+    expect(bounds, contains(const Rect.fromLTWH(50, 50, 50, 50)));
+  });
+
+  test('Preserves radial gradient stop opacity and stroke on SourceAlpha filter', () {
+    const svg = '''
+<svg viewBox="0 0 100 100">
+  <defs>
+    <radialGradient id="rgrad" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="red" stop-opacity="1" />
+      <stop offset="100%" stop-color="blue" stop-opacity="0.5" />
+    </radialGradient>
+    <filter id="shadow">
+      <feGaussianBlur in="SourceAlpha" stdDeviation="5" />
+    </filter>
+  </defs>
+  <rect width="100" height="100" fill="url(#rgrad)" stroke="url(#rgrad)" stroke-width="2" filter="url(#shadow)"/>
+</svg>
+''';
+    final VectorInstructions instructions = parseWithoutOptimizers(svg);
+    expect(instructions.paints.length, 1);
+    final Paint paint = instructions.paints.first;
+    expect(paint.fill?.shader?.colors, const <Color>[Color.opaqueBlack, Color(0x7F000000)]);
+    expect(paint.stroke?.shader?.colors, const <Color>[Color.opaqueBlack, Color(0x7F000000)]);
+    expect(paint.stroke?.width, 2.0);
+  });
+
+  test('Handles feMergeNode referencing missing input', () {
+    const svg = '''
+<svg viewBox="0 0 100 100">
+  <filter id="broken-merge">
+    <feMerge>
+      <feMergeNode in="nonexistent" />
+    </feMerge>
+  </filter>
+  <rect width="100" height="100" fill="blue" filter="url(#broken-merge)"/>
+</svg>
+''';
+    final VectorInstructions instructions = parseWithoutOptimizers(svg);
+    expect(instructions.paints, const <Paint>[Paint(fill: Fill(color: Color(0xff0000ff)))]);
+  });
+
+  test('SvgFilter and SvgFilterLayer equality and hashCode', () {
+    const layer1 = SvgFilterLayer(isSourceAlpha: true, sigmaX: 2, sigmaY: 3, dx: 4, dy: 5);
+    // ignore: prefer_const_constructors
+    final layer2 = SvgFilterLayer(isSourceAlpha: true, sigmaX: 2, sigmaY: 3, dx: 4, dy: 5);
+    const layer3 = SvgFilterLayer(isSourceAlpha: false, sigmaX: 0, sigmaY: 0, dx: 0, dy: 0);
+    expect(layer1, equals(layer2));
+    expect(layer1.hashCode, equals(layer2.hashCode));
+    expect(layer1, isNot(equals(layer3)));
+    expect(layer1.hasEffect, isTrue);
+    expect(layer3.hasEffect, isFalse);
+
+    const filter1 = SvgFilter(<SvgFilterLayer>[layer1, layer3]);
+    final filter2 = SvgFilter(<SvgFilterLayer>[layer2, layer3]);
+    const filter3 = SvgFilter(<SvgFilterLayer>[layer3]);
+    expect(filter1, equals(filter2));
+    expect(filter1.hashCode, equals(filter2.hashCode));
+    expect(filter1, isNot(equals(filter3)));
+  });
+
+  test('Supports filters on <use> and referenced elements', () {
+    const svg = '''
+<svg viewBox="0 0 100 100">
+  <defs>
+    <filter id="blur1"><feGaussianBlur stdDeviation="3"/></filter>
+    <filter id="blur2"><feGaussianBlur stdDeviation="5"/></filter>
+    <rect id="r1" width="20" height="20" fill="red"/>
+    <rect id="r2" width="20" height="20" fill="blue" filter="url(#blur2)"/>
+    <g id="g1"><circle cx="10" cy="10" r="10" fill="green"/></g>
+    <text id="t1" x="10" y="20" fill="black">Hi</text>
+    <use id="u1" href="#r1"/>
+  </defs>
+  <use href="#r1" x="5" y="5" filter="url(#blur1)"/>
+  <use href="#r2" x="30" y="5"/>
+  <use href="#g1" x="55" y="5" filter="url(#blur1)"/>
+  <use href="#t1" x="5" y="40" filter="url(#blur2)"/>
+  <use href="#u1" x="50" y="40" filter="url(#blur1)"/>
+</svg>
+''';
+    final VectorInstructions instructions = parseWithoutOptimizers(svg);
+    expect(
+      instructions.paints.where((Paint p) => p.filterBlurX == 3.0 && p.filterBlurY == 3.0),
+      hasLength(3),
+    );
+    expect(
+      instructions.paints.where((Paint p) => p.filterBlurX == 5.0 && p.filterBlurY == 5.0),
+      hasLength(2),
+    );
+  });
+
   test('Handles viewBox transformations correctly', () {
     const svg = '''
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="-10 -12 120 120">

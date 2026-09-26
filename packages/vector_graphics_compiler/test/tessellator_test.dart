@@ -46,4 +46,26 @@ void main() {
     ]);
     expect(verticesNode.vertices.indices, null);
   });
+
+  test('Preserves filterBlurX and filterBlurY on tessellated fill and stroke', () {
+    const svg = '''
+<svg viewBox="0 0 200 200">
+  <filter id="blur">
+    <feGaussianBlur stdDeviation="4 6" />
+  </filter>
+  <rect x="0" y="0" width="10" height="10" fill="white" stroke="black" stroke-width="2" filter="url(#blur)" />
+</svg>''';
+    final VectorInstructions instructions = parseWithoutOptimizers(svg);
+    expect(
+      instructions.paints,
+      containsAll(const <Paint>[
+        Paint(fill: Fill(color: Color(0xffffffff)), filterBlurX: 4.0, filterBlurY: 6.0),
+        Paint(
+          stroke: Stroke(color: Color(0xff000000), width: 2.0),
+          filterBlurX: 4.0,
+          filterBlurY: 6.0,
+        ),
+      ]),
+    );
+  });
 }
