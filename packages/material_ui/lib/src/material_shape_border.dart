@@ -88,7 +88,7 @@ class MaterialShapeBorder extends OutlinedBorder {
   /// animate backwards or never reach the snapping fallback.
   static OutlinedBorder? _lerp(OutlinedBorder a, OutlinedBorder b, double t) {
     final BorderSide side = BorderSide.lerp(a.side, b.side, t);
-    final double squash = ui.lerpDouble(_squashOf(a), _squashOf(b), t)!;
+    final double squash = ui.lerpDouble(_squashOf(a), _squashOf(b), t)!.clamp(0.0, 1.0);
 
     if (a is MaterialShapeBorder && b is MaterialShapeBorder) {
       if (a.shape == b.shape) {

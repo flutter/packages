@@ -400,6 +400,22 @@ void main() {
       expect(redirected.squash, 0.625);
     });
 
+    test('lerp clamps the squash when t overshoots', () {
+      final start = MaterialShapeBorder(shape: MaterialShapes.circle);
+      final end = MaterialShapeBorder(shape: MaterialShapes.circle, squash: 1.0);
+
+      final overshot = start.lerpTo(end, 1.5)! as MaterialShapeBorder;
+      expect(overshot.squash, 1.0);
+
+      final undershot = start.lerpTo(end, -0.5)! as MaterialShapeBorder;
+      expect(undershot.squash, 0.0);
+
+      // A morph clamps the same way, so it draws like the in-range border.
+      final square = MaterialShapeBorder(shape: MaterialShapes.square, squash: 1.0);
+      final expected = MaterialShapeBorder(shape: MaterialShapes.circle, squash: 1.0);
+      expect(start.lerpTo(square, 1.5), expected.lerpTo(square, 1.5));
+    });
+
     test('lerp resumes the morph of an already lerped border', () {
       final start = MaterialShapeBorder(shape: MaterialShapes.circle);
       final end = MaterialShapeBorder(shape: MaterialShapes.square);
