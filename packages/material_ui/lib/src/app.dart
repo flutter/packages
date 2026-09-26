@@ -277,12 +277,6 @@ class MaterialApp extends StatefulWidget {
     this.actions,
     this.restorationScopeId,
     this.scrollBehavior,
-    @Deprecated(
-      'Remove this parameter as it is now ignored. '
-      'MaterialApp never introduces its own MediaQuery; the View widget takes care of that. '
-      'This feature was deprecated after v3.7.0-29.0.pre.',
-    )
-    this.useInheritedMediaQuery = false,
     this.themeAnimationStyle,
   }) : routeInformationProvider = null,
        routeInformationParser = null,
@@ -328,12 +322,6 @@ class MaterialApp extends StatefulWidget {
     this.actions,
     this.restorationScopeId,
     this.scrollBehavior,
-    @Deprecated(
-      'Remove this parameter as it is now ignored. '
-      'MaterialApp never introduces its own MediaQuery; the View widget takes care of that. '
-      'This feature was deprecated after v3.7.0-29.0.pre.',
-    )
-    this.useInheritedMediaQuery = false,
     this.themeAnimationStyle,
   }) : assert(routerDelegate != null || routerConfig != null),
        navigatorObservers = null,
@@ -785,14 +773,6 @@ class MaterialApp extends StatefulWidget {
   ///
   ///  * <https://material.io/design/layout/spacing-methods.html>
   final bool debugShowMaterialGrid;
-
-  /// {@macro flutter.widgets.widgetsApp.useInheritedMediaQuery}
-  @Deprecated(
-    'This setting is now ignored. '
-    'MaterialApp never introduces its own MediaQuery; the View widget takes care of that. '
-    'This feature was deprecated after v3.7.0-29.0.pre.',
-  )
-  final bool useInheritedMediaQuery;
 
   /// Used to override the theme animation curve and duration.
   ///
