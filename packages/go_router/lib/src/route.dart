@@ -1473,7 +1473,7 @@ class StatefulNavigationShellState extends State<StatefulNavigationShell> with R
     assert(index >= 0 && index < route.branches.length);
     final RouteMatchList? matchList = initialLocation ? null : _matchListForBranch(index);
     if (matchList != null && matchList.isNotEmpty) {
-      _router.restore(matchList);
+      _router.restore(_router.configuration.reparse(matchList));
     } else {
       _router.go(widget._effectiveInitialBranchLocation(index));
     }
