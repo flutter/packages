@@ -25,13 +25,12 @@ import '../templates/chip_template.dart';
 import '../templates/color_scheme_template.dart';
 // import '../templates/date_picker_template.dart';
 // import '../templates/dialog_template.dart';
-// import '../templates/divider_template.dart';
-// import '../templates/drawer_template.dart';
-// import '../templates/expansion_tile_template.dart';
+import '../templates/divider_template.dart';
+import '../templates/drawer_template.dart';
+import '../templates/expansion_tile_template.dart';
 // import '../templates/fab_template.dart';
 import '../templates/filter_chip_template.dart';
-
-// import '../templates/icon_button_template.dart';
+import '../templates/icon_button_template.dart';
 import '../templates/input_chip_template.dart';
 
 // import '../templates/input_decorator_template.dart';
@@ -85,12 +84,16 @@ Future<void> main(List<String> args) async {
   const ColorSchemeTemplateM3().generateFile(verbose: verbose);
   // const DatePickerTemplateM3().generateFile(verbose: verbose);
   // const DialogTemplateM3().generateFile(verbose: verbose);
-  // const DividerTemplateM3().generateFile(verbose: verbose);
-  // const DrawerTemplateM3().generateFile(verbose: verbose);
-  // const ExpansionTileTemplateM3().generateFile(verbose: verbose);
+  const DividerTemplateM3().generateFile(verbose: verbose);
+  const DrawerTemplateM3().generateFile(verbose: verbose);
+  const ExpansionTileTemplateM3().generateFile(verbose: verbose);
   // const FabTemplateM3().generateFile(verbose: verbose);
   const FilterChipTemplateM3().generateFile(verbose: verbose);
   // const IconButtonTemplateM3().generateFile(verbose: verbose);
+  const IconButtonTemplateM3E('Icon Button').generateFile(verbose: verbose);
+  const IconButtonTemplateM3E('Filled Icon Button').generateFile(verbose: verbose);
+  const IconButtonTemplateM3E('Filled Tonal Icon Button').generateFile(verbose: verbose);
+  const IconButtonTemplateM3E('Outlined Icon Button').generateFile(verbose: verbose);
   const InputChipTemplateM3().generateFile(verbose: verbose);
   // const InputDecoratorTemplateM3().generateFile(verbose: verbose);
   // const ListTileTemplateM3().generateFile(verbose: verbose);
