@@ -201,7 +201,9 @@ void main() {
     expect(_material(tester).elevation, equals(elevation));
     expect(_material(tester).color, equals(backgroundColor));
 
-    for (final InkResponse inkResponse in tester.widgetList<InkResponse>(find.byType(InkResponse))) {
+    for (final InkResponse inkResponse in tester.widgetList<InkResponse>(
+      find.byType(InkResponse),
+    )) {
       expect(inkResponse.radius, 28.0);
     }
 
