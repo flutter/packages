@@ -164,7 +164,7 @@ final class InAppPurchase2PluginTests: XCTestCase {
 
     await fulfillment(of: [expectation], timeout: 5)
 
-    let transaction = try await plugin.fetchTransaction(
+    let transaction = await plugin.fetchTransaction(
       by: UInt64(session.allTransactions()[0].originalTransactionIdentifier))
 
     guard let transaction = transaction else {
@@ -512,6 +512,53 @@ final class InAppPurchase2PluginTests: XCTestCase {
     }
 
     await fulfillment(of: [finishExpectation], timeout: 5)
+
+    for await result in Transaction.unfinished {
+      if case .verified(let transaction) = result {
+        XCTAssertNotEqual(transaction.id, 0, "The purchase should be finished.")
+      }
+    }
+  }
+
+  func testFinishTransactionSucceedsWhenAlreadyFinished() async throws {
+    let purchaseExpectation = self.expectation(description: "Purchase should succeed")
+    let finishExpectation = self.expectation(description: "Finishing purchase should succeed")
+    let secondFinishExpectation = self.expectation(
+      description: "Finishing an already finished purchase should succeed")
+
+    plugin.purchase(id: "consumable", options: nil) { result in
+      switch result {
+      case .success(_):
+        purchaseExpectation.fulfill()
+      case .failure(let error):
+        XCTFail("Purchase should NOT fail. Failed with \(error)")
+      }
+    }
+
+    await fulfillment(of: [purchaseExpectation], timeout: 5)
+
+    plugin.finish(id: 0) { result in
+      switch result {
+      case .success():
+        finishExpectation.fulfill()
+      case .failure(let error):
+        XCTFail("Finish purchases should NOT fail. Failed with \(error)")
+      }
+    }
+
+    await fulfillment(of: [finishExpectation], timeout: 5)
+
+    // A finished consumable is no longer in Transaction.all.
+    plugin.finish(id: 0) { result in
+      switch result {
+      case .success():
+        secondFinishExpectation.fulfill()
+      case .failure(let error):
+        XCTFail("Finish purchases should NOT fail. Failed with \(error)")
+      }
+    }
+
+    await fulfillment(of: [secondFinishExpectation], timeout: 5)
   }
 
   @available(iOS 18.0, macOS 15.0, *)
