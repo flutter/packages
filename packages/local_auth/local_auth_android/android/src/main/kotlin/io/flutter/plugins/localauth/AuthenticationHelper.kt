@@ -72,6 +72,10 @@ internal class AuthenticationHelper(
   fun stopAuthentication() {
     biometricPrompt?.cancelAuthentication()
     biometricPrompt = null
+    // Canceling reports no error when no prompt is showing, and the error is ignored while paused,
+    // so stop listening here; otherwise a later resume would show a prompt that can no longer be
+    // canceled.
+    stop()
   }
 
   /** Stops the biometric listener. */
@@ -131,12 +135,13 @@ internal class AuthenticationHelper(
   private fun handleResume() {
     if (isAuthSticky) {
       activityPaused = false
-      // TODO(stuartmorgan): This should be assigning to biometricPrompt instead; see
-      // https://github.com/flutter/flutter/issues/191804
-      val prompt = BiometricPrompt(activity, uiThreadExecutor, this)
+      // Prompts for the same activity share one BiometricFragment, so replacing the reference does
+      // not lose the previous one. Keeping the new one here lets stopAuthentication cancel it.
+      biometricPrompt = BiometricPrompt(activity, uiThreadExecutor, this)
       // When activity is resuming, we cannot show the prompt right away. We need to post it to the
-      // UI queue.
-      uiThreadExecutor.handler.post { prompt.authenticate(promptInfo) }
+      // UI queue. Reading biometricPrompt when the post runs skips showing it if
+      // stopAuthentication was called in the meantime.
+      uiThreadExecutor.handler.post { biometricPrompt?.authenticate(promptInfo) }
     }
   }
 

@@ -5,14 +5,23 @@ package io.flutter.plugins.localauth
 
 import android.app.Application
 import android.content.Context
+import android.os.Looper
 import androidx.biometric.BiometricPrompt
+import androidx.biometric.BiometricPrompt.PromptInfo
 import androidx.fragment.app.FragmentActivity
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleOwner
 import org.junit.Assert
 import org.junit.Test
 import org.junit.runner.RunWith
+import org.mockito.Mockito
+import org.mockito.kotlin.any
 import org.mockito.kotlin.mock
+import org.mockito.kotlin.never
+import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
 import org.robolectric.RobolectricTestRunner
+import org.robolectric.Shadows.shadowOf
 
 // TODO(stuartmorgan): Add injectable BiometricPrompt factory, and AlertDialog factor, and add
 // testing of the rest of the flows.
@@ -250,6 +259,72 @@ class AuthenticationHelperTest {
 
     Assert.assertEquals(1, result.size)
     Assert.assertEquals(AuthResultCode.UNKNOWN_ERROR, result[0].code)
+  }
+
+  @Test
+  fun stopAuthentication_afterStickyResume_cancelsResumedPrompt() {
+    // Regression test for https://github.com/flutter/flutter/issues/191804.
+    Mockito.mockConstruction(BiometricPrompt::class.java).use { prompts ->
+      val helper = buildStickyHelper()
+      val owner = mock<LifecycleOwner>()
+
+      helper.authenticate()
+      helper.onPause(owner)
+      helper.onResume(owner)
+      shadowOf(Looper.getMainLooper()).idle()
+      helper.stopAuthentication()
+
+      Assert.assertEquals(2, prompts.constructed().size)
+      verify(prompts.constructed()[1]).authenticate(any<PromptInfo>())
+      verify(prompts.constructed()[1]).cancelAuthentication()
+    }
+  }
+
+  @Test
+  fun stopAuthentication_beforeResumedPromptIsShown_doesNotShowIt() {
+    // Regression test for https://github.com/flutter/flutter/issues/191804.
+    Mockito.mockConstruction(BiometricPrompt::class.java).use { prompts ->
+      val lifecycle = mock<Lifecycle>()
+      val helper = buildStickyHelper(lifecycle)
+      val owner = mock<LifecycleOwner>()
+
+      helper.authenticate()
+      helper.onPause(owner)
+      helper.onResume(owner)
+      helper.stopAuthentication()
+      shadowOf(Looper.getMainLooper()).idle()
+
+      Assert.assertEquals(2, prompts.constructed().size)
+      verify(prompts.constructed()[1], never()).authenticate(any<PromptInfo>())
+      verify(lifecycle).removeObserver(helper)
+    }
+  }
+
+  @Test
+  fun stopAuthentication_whilePaused_stopsListeningForResume() {
+    // Regression test for https://github.com/flutter/flutter/issues/191804.
+    Mockito.mockConstruction(BiometricPrompt::class.java).use {
+      val lifecycle = mock<Lifecycle>()
+      val helper = buildStickyHelper(lifecycle)
+
+      helper.authenticate()
+      helper.onPause(mock<LifecycleOwner>())
+      helper.stopAuthentication()
+
+      // The cancel error is ignored while paused, so without this the next resume would show a
+      // prompt that can no longer be canceled.
+      verify(lifecycle).removeObserver(helper)
+    }
+  }
+
+  private fun buildStickyHelper(lifecycle: Lifecycle = mock<Lifecycle>()): AuthenticationHelper {
+    return AuthenticationHelper(
+        lifecycle,
+        buildMockActivityWithContext(mock<FragmentActivity>()),
+        AuthOptions(biometricOnly = false, sensitiveTransaction = false, sticky = true),
+        dummyStrings,
+        {},
+        true)
   }
 
   private fun buildMockActivityWithContext(mockActivity: FragmentActivity): FragmentActivity {

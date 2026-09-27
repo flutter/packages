@@ -1,5 +1,7 @@
-## NEXT
+## 2.2.1
 
+* Fixes a sticky authentication prompt reappearing on resume after
+  `stopAuthentication` was called.
 * Updates minimum supported SDK version to Flutter 3.41/Dart 3.11.
 
 ## 2.2.0
