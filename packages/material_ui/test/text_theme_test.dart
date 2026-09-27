@@ -175,8 +175,10 @@ void main() {
       theme.labelMedium!,
       theme.labelSmall!,
     ];
-    expect(themeStyles.every((TextStyle style) => style.fontFeatures == fontFeatures), true);
-    expect(themeStyles.every((TextStyle style) => style.fontVariations == fontVariations), true);
+    for (final style in themeStyles) {
+      expect(style.fontFeatures, fontFeatures);
+      expect(style.fontVariations, fontVariations);
+    }
   });
 
   test('TextTheme apply null fontFeatures fontVariations preserves original', () {
