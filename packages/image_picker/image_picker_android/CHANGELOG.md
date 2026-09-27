@@ -1,5 +1,7 @@
-## NEXT
+## 0.8.13+24
 
+* Fixes resizing with `maxWidth` or `maxHeight` always decoding the full-size
+  image; large images are now subsampled while decoding.
 * Updates minimum supported SDK version to Flutter 3.41/Dart 3.11.
 
 ## 0.8.13+23
