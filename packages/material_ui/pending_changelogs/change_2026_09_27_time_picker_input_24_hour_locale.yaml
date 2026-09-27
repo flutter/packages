@@ -1,0 +1,3 @@
+changelog: |
+  - Fixes `showTimePicker` and `TimePickerDialog` input mode parsing the hour as a 12-hour value for locales that use a 24-hour format, which rejected hours from 0 and 13 to 23 and could shift hours from 1 to 12 by 12 hours depending on the AM/PM period of the selected time.
+version: patch
