@@ -1,0 +1,3 @@
+changelog: |
+  - Fixes `showTimePicker` input mode failing to parse localized digits (e.g. Farsi, Arabic, Bengali, Myanmar, Thai, Nepali, French, German, Portuguese locales) by parsing hour/minute via `MaterialLocalizations` and handling localized leading zeros. Ported from flutter/flutter#186311 (fixes flutter/flutter#85527).
+version: patch
