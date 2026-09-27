@@ -102,6 +102,11 @@ class _RenderFillBoundedAxes extends RenderProxyBox {
   }
 
   @override
+  double? computeDryBaseline(BoxConstraints constraints, TextBaseline baseline) {
+    return child?.getDryBaseline(_fillBoundedAxes(constraints), baseline);
+  }
+
+  @override
   void performLayout() {
     final BoxConstraints childConstraints = _fillBoundedAxes(constraints);
     final RenderBox? child = this.child;
