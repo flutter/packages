@@ -283,6 +283,9 @@ class CupertinoRadio<T> extends StatefulWidget {
 }
 
 class _CupertinoRadioState<T> extends State<CupertinoRadio<T>> {
+  /// The [AnimationBehavior] of the internal [AnimationController]s.
+  AnimationBehavior get animationBehavior => widget.animationBehavior;
+
   FocusNode get _effectiveFocusNode => widget.focusNode ?? (_internalFocusNode ??= FocusNode());
   FocusNode? _internalFocusNode;
 

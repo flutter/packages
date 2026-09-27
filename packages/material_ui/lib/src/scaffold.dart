@@ -370,11 +370,18 @@ class ScaffoldMessengerState extends State<ScaffoldMessenger> with TickerProvide
       'descendant Scaffolds to present to.',
     );
     _didUpdateAnimationStyle(snackBarAnimationStyle);
+    final AnimationBehavior behavior = snackBar.animationBehavior != AnimationBehavior.normal
+        ? snackBar.animationBehavior
+        : widget.animationBehavior;
+    if (_snackBarController?.animationBehavior != behavior) {
+      _snackBarController?.dispose();
+      _snackBarController = null;
+    }
     _snackBarController ??= SnackBar.createAnimationController(
       duration: snackBarAnimationStyle?.duration,
       reverseDuration: snackBarAnimationStyle?.reverseDuration,
       vsync: this,
-      animationBehavior: widget.animationBehavior,
+      animationBehavior: behavior,
     )..addStatusListener(_handleSnackBarStatusChanged);
     if (_snackBars.isEmpty) {
       assert(_snackBarController!.isDismissed);
@@ -560,9 +567,16 @@ class ScaffoldMessengerState extends State<ScaffoldMessenger> with TickerProvide
       'ScaffoldMessenger.showMaterialBanner was called, but there are currently no '
       'descendant Scaffolds to present to.',
     );
+    final AnimationBehavior behavior = materialBanner.animationBehavior != AnimationBehavior.normal
+        ? materialBanner.animationBehavior
+        : widget.animationBehavior;
+    if (_materialBannerController?.animationBehavior != behavior) {
+      _materialBannerController?.dispose();
+      _materialBannerController = null;
+    }
     _materialBannerController ??= MaterialBanner.createAnimationController(
       vsync: this,
-      animationBehavior: widget.animationBehavior,
+      animationBehavior: behavior,
     )..addStatusListener(_handleMaterialBannerStatusChanged);
     if (_materialBanners.isEmpty) {
       assert(_materialBannerController!.isDismissed);

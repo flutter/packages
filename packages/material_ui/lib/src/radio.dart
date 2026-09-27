@@ -462,6 +462,9 @@ class Radio<T> extends StatefulWidget {
 }
 
 class _RadioState<T> extends State<Radio<T>> {
+  /// The [AnimationBehavior] of the internal [AnimationController]s.
+  AnimationBehavior get animationBehavior => widget.animationBehavior;
+
   FocusNode? _internalFocusNode;
   FocusNode get _focusNode => widget.focusNode ?? (_internalFocusNode ??= FocusNode());
 

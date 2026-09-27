@@ -1479,6 +1479,7 @@ Future<T?> showCupertinoDialog<T>({
       settings: routeSettings,
       anchorPoint: anchorPoint,
       requestFocus: requestFocus,
+      animationBehavior: animationBehavior,
     ),
   );
 }
@@ -1557,6 +1558,20 @@ class CupertinoDialogRoute<T> extends RawDialogRoute<T> {
   ///
   /// Defaults to [AnimationBehavior.normal].
   final AnimationBehavior animationBehavior;
+
+  @override
+  AnimationController createAnimationController() {
+    final Duration duration = transitionDuration;
+    final Duration reverseDuration = reverseTransitionDuration;
+    assert(duration >= Duration.zero);
+    return AnimationController(
+      duration: duration,
+      reverseDuration: reverseDuration,
+      debugLabel: debugLabel,
+      vsync: navigator!,
+      animationBehavior: animationBehavior,
+    );
+  }
 
   CurvedAnimation? _fadeAnimation;
 
