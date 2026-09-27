@@ -130,6 +130,7 @@ class CupertinoRadio<T> extends StatefulWidget {
     this.useCheckmarkStyle = false,
     this.enabled,
     this.groupRegistry,
+    this.animationBehavior = AnimationBehavior.normal,
   });
 
   /// {@macro flutter.widget.RawRadio.value}
@@ -271,6 +272,11 @@ class CupertinoRadio<T> extends StatefulWidget {
   /// Otherwise, an assertion error is thrown.
   /// {@endtemplate}
   final bool? enabled;
+
+  /// The behavior of the animation relative to the device's clock.
+  ///
+  /// Defaults to [AnimationBehavior.normal].
+  final AnimationBehavior animationBehavior;
 
   @override
   State<CupertinoRadio<T>> createState() => _CupertinoRadioState<T>();

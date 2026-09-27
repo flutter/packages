@@ -311,6 +311,7 @@ class SnackBar extends StatefulWidget {
     this.onVisible,
     this.dismissDirection,
     this.clipBehavior = Clip.hardEdge,
+    this.animationBehavior = AnimationBehavior.normal,
   }) : assert(elevation == null || elevation >= 0.0),
        assert(width == null || margin == null, 'Width and margin can not be used together'),
        assert(
@@ -511,6 +512,9 @@ class SnackBar extends StatefulWidget {
   /// Defaults to [Clip.hardEdge].
   final Clip clipBehavior;
 
+  /// The [AnimationBehavior] of the internal [AnimationController]s.
+  final AnimationBehavior animationBehavior;
+
   // API for ScaffoldMessengerState.showSnackBar():
 
   /// Creates an animation controller useful for driving a snack bar's entrance and exit animation.
@@ -518,12 +522,14 @@ class SnackBar extends StatefulWidget {
     required TickerProvider vsync,
     Duration? duration,
     Duration? reverseDuration,
+    AnimationBehavior animationBehavior = AnimationBehavior.normal,
   }) {
     return AnimationController(
       duration: duration ?? _snackBarTransitionDuration,
       reverseDuration: reverseDuration,
       debugLabel: 'SnackBar',
       vsync: vsync,
+      animationBehavior: animationBehavior,
     );
   }
 

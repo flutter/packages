@@ -1683,6 +1683,7 @@ Future<T?> showDialog<T>({
   bool fullscreenDialog = false,
   bool? requestFocus,
   AnimationStyle? animationStyle,
+  AnimationBehavior animationBehavior = AnimationBehavior.normal,
 }) {
   assert(_debugIsActive(context));
   assert(debugCheckHasMaterialLocalizations(context));
@@ -1717,6 +1718,7 @@ Future<T?> showDialog<T>({
         requestFocus: requestFocus,
         animationStyle: animationStyle,
         fullscreenDialog: fullscreenDialog,
+        animationBehavior: animationBehavior,
       );
     },
     builder: (BuildContext routeContext) {
@@ -1883,6 +1885,7 @@ class DialogRoute<T> extends RawDialogRoute<T> {
     super.traversalEdgeBehavior,
     super.fullscreenDialog,
     AnimationStyle? animationStyle,
+    this.animationBehavior = AnimationBehavior.normal,
   }) : _animationStyle = animationStyle,
        super(
          pageBuilder:
@@ -1907,6 +1910,11 @@ class DialogRoute<T> extends RawDialogRoute<T> {
 
   CurvedAnimation? _curvedAnimation;
   final AnimationStyle? _animationStyle;
+
+  /// The behavior of the animation relative to the device's clock.
+  ///
+  /// Defaults to [AnimationBehavior.normal].
+  final AnimationBehavior animationBehavior;
 
   void _setAnimation(Animation<double> animation) {
     if (_curvedAnimation?.parent != animation) {
