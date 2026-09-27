@@ -1,5 +1,6 @@
-## NEXT
+## 2.20.0
 
+* Adds support for tapping points of interest on the map.
 * Updates minimum supported SDK version to Flutter 3.41/Dart 3.11.
 
 ## 2.19.13
