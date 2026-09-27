@@ -16697,6 +16697,81 @@ core_tests_pigeon_test_host_integration_core_api_call_flutter_callback_throw_err
   return self;
 }
 
+G_DECLARE_FINAL_TYPE(
+    CoreTestsPigeonTestHostIntegrationCoreApiCallFlutterIsAsyncFlutterApiOnRootResponse,
+    core_tests_pigeon_test_host_integration_core_api_call_flutter_is_async_flutter_api_on_root_response,
+    CORE_TESTS_PIGEON_TEST,
+    HOST_INTEGRATION_CORE_API_CALL_FLUTTER_IS_ASYNC_FLUTTER_API_ON_ROOT_RESPONSE,
+    GObject)
+
+struct
+    _CoreTestsPigeonTestHostIntegrationCoreApiCallFlutterIsAsyncFlutterApiOnRootResponse {
+  GObject parent_instance;
+
+  FlValue* value;
+};
+
+G_DEFINE_TYPE(
+    CoreTestsPigeonTestHostIntegrationCoreApiCallFlutterIsAsyncFlutterApiOnRootResponse,
+    core_tests_pigeon_test_host_integration_core_api_call_flutter_is_async_flutter_api_on_root_response,
+    G_TYPE_OBJECT)
+
+static void
+core_tests_pigeon_test_host_integration_core_api_call_flutter_is_async_flutter_api_on_root_response_dispose(
+    GObject* object) {
+  CoreTestsPigeonTestHostIntegrationCoreApiCallFlutterIsAsyncFlutterApiOnRootResponse*
+      self =
+          CORE_TESTS_PIGEON_TEST_HOST_INTEGRATION_CORE_API_CALL_FLUTTER_IS_ASYNC_FLUTTER_API_ON_ROOT_RESPONSE(
+              object);
+  g_clear_pointer(&self->value, fl_value_unref);
+  G_OBJECT_CLASS(
+      core_tests_pigeon_test_host_integration_core_api_call_flutter_is_async_flutter_api_on_root_response_parent_class)
+      ->dispose(object);
+}
+
+static void
+core_tests_pigeon_test_host_integration_core_api_call_flutter_is_async_flutter_api_on_root_response_init(
+    CoreTestsPigeonTestHostIntegrationCoreApiCallFlutterIsAsyncFlutterApiOnRootResponse*
+        self) {}
+
+static void
+core_tests_pigeon_test_host_integration_core_api_call_flutter_is_async_flutter_api_on_root_response_class_init(
+    CoreTestsPigeonTestHostIntegrationCoreApiCallFlutterIsAsyncFlutterApiOnRootResponseClass*
+        klass) {
+  G_OBJECT_CLASS(klass)->dispose =
+      core_tests_pigeon_test_host_integration_core_api_call_flutter_is_async_flutter_api_on_root_response_dispose;
+}
+
+static CoreTestsPigeonTestHostIntegrationCoreApiCallFlutterIsAsyncFlutterApiOnRootResponse*
+core_tests_pigeon_test_host_integration_core_api_call_flutter_is_async_flutter_api_on_root_response_new(
+    gboolean return_value) {
+  CoreTestsPigeonTestHostIntegrationCoreApiCallFlutterIsAsyncFlutterApiOnRootResponse*
+      self = CORE_TESTS_PIGEON_TEST_HOST_INTEGRATION_CORE_API_CALL_FLUTTER_IS_ASYNC_FLUTTER_API_ON_ROOT_RESPONSE(
+          g_object_new(
+              core_tests_pigeon_test_host_integration_core_api_call_flutter_is_async_flutter_api_on_root_response_get_type(),
+              nullptr));
+  self->value = fl_value_new_list();
+  fl_value_append_take(self->value, fl_value_new_bool(return_value));
+  return self;
+}
+
+static CoreTestsPigeonTestHostIntegrationCoreApiCallFlutterIsAsyncFlutterApiOnRootResponse*
+core_tests_pigeon_test_host_integration_core_api_call_flutter_is_async_flutter_api_on_root_response_new_error(
+    const gchar* code, const gchar* message, FlValue* details) {
+  CoreTestsPigeonTestHostIntegrationCoreApiCallFlutterIsAsyncFlutterApiOnRootResponse*
+      self = CORE_TESTS_PIGEON_TEST_HOST_INTEGRATION_CORE_API_CALL_FLUTTER_IS_ASYNC_FLUTTER_API_ON_ROOT_RESPONSE(
+          g_object_new(
+              core_tests_pigeon_test_host_integration_core_api_call_flutter_is_async_flutter_api_on_root_response_get_type(),
+              nullptr));
+  self->value = fl_value_new_list();
+  fl_value_append_take(self->value, fl_value_new_string(code));
+  fl_value_append_take(self->value,
+                       fl_value_new_string(message != nullptr ? message : ""));
+  fl_value_append_take(self->value, details != nullptr ? fl_value_ref(details)
+                                                       : fl_value_new_null());
+  return self;
+}
+
 struct _CoreTestsPigeonTestHostIntegrationCoreApi {
   GObject parent_instance;
 
@@ -20958,6 +21033,25 @@ core_tests_pigeon_test_host_integration_core_api_call_flutter_callback_throw_err
                                                             self->user_data);
 }
 
+static void
+core_tests_pigeon_test_host_integration_core_api_call_flutter_is_async_flutter_api_on_root_cb(
+    FlBasicMessageChannel* channel, FlValue* message_,
+    FlBasicMessageChannelResponseHandle* response_handle, gpointer user_data) {
+  CoreTestsPigeonTestHostIntegrationCoreApi* self =
+      CORE_TESTS_PIGEON_TEST_HOST_INTEGRATION_CORE_API(user_data);
+
+  if (self->vtable == nullptr ||
+      self->vtable->call_flutter_is_async_flutter_api_on_root == nullptr) {
+    return;
+  }
+
+  g_autoptr(CoreTestsPigeonTestHostIntegrationCoreApiResponseHandle) handle =
+      core_tests_pigeon_test_host_integration_core_api_response_handle_new(
+          channel, response_handle);
+  self->vtable->call_flutter_is_async_flutter_api_on_root(handle,
+                                                          self->user_data);
+}
+
 void core_tests_pigeon_test_host_integration_core_api_set_method_handlers(
     FlBinaryMessenger* messenger, const gchar* suffix,
     const CoreTestsPigeonTestHostIntegrationCoreApiVTable* vtable,
@@ -23007,6 +23101,20 @@ void core_tests_pigeon_test_host_integration_core_api_set_method_handlers(
       call_flutter_callback_throw_error_from_void_channel,
       core_tests_pigeon_test_host_integration_core_api_call_flutter_callback_throw_error_from_void_cb,
       g_object_ref(api_data), g_object_unref);
+  g_autofree gchar* call_flutter_is_async_flutter_api_on_root_channel_name =
+      g_strdup_printf(
+          "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi."
+          "callFlutterIsAsyncFlutterApiOnRoot%s",
+          dot_suffix);
+  g_autoptr(FlBasicMessageChannel)
+      call_flutter_is_async_flutter_api_on_root_channel =
+          fl_basic_message_channel_new(
+              messenger, call_flutter_is_async_flutter_api_on_root_channel_name,
+              FL_MESSAGE_CODEC(codec));
+  fl_basic_message_channel_set_message_handler(
+      call_flutter_is_async_flutter_api_on_root_channel,
+      core_tests_pigeon_test_host_integration_core_api_call_flutter_is_async_flutter_api_on_root_cb,
+      g_object_ref(api_data), g_object_unref);
 }
 
 void core_tests_pigeon_test_host_integration_core_api_clear_method_handlers(
@@ -24739,6 +24847,19 @@ void core_tests_pigeon_test_host_integration_core_api_clear_method_handlers(
               FL_MESSAGE_CODEC(codec));
   fl_basic_message_channel_set_message_handler(
       call_flutter_callback_throw_error_from_void_channel, nullptr, nullptr,
+      nullptr);
+  g_autofree gchar* call_flutter_is_async_flutter_api_on_root_channel_name =
+      g_strdup_printf(
+          "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi."
+          "callFlutterIsAsyncFlutterApiOnRoot%s",
+          dot_suffix);
+  g_autoptr(FlBasicMessageChannel)
+      call_flutter_is_async_flutter_api_on_root_channel =
+          fl_basic_message_channel_new(
+              messenger, call_flutter_is_async_flutter_api_on_root_channel_name,
+              FL_MESSAGE_CODEC(codec));
+  fl_basic_message_channel_set_message_handler(
+      call_flutter_is_async_flutter_api_on_root_channel, nullptr, nullptr,
       nullptr);
 }
 
@@ -27921,6 +28042,40 @@ void core_tests_pigeon_test_host_integration_core_api_respond_error_call_flutter
                                         response->value, &error)) {
     g_warning("Failed to send response to %s.%s: %s", "HostIntegrationCoreApi",
               "callFlutterCallbackThrowErrorFromVoid", error->message);
+  }
+}
+
+void core_tests_pigeon_test_host_integration_core_api_respond_call_flutter_is_async_flutter_api_on_root(
+    CoreTestsPigeonTestHostIntegrationCoreApiResponseHandle* response_handle,
+    gboolean return_value) {
+  g_autoptr(
+      CoreTestsPigeonTestHostIntegrationCoreApiCallFlutterIsAsyncFlutterApiOnRootResponse)
+      response =
+          core_tests_pigeon_test_host_integration_core_api_call_flutter_is_async_flutter_api_on_root_response_new(
+              return_value);
+  g_autoptr(GError) error = nullptr;
+  if (!fl_basic_message_channel_respond(response_handle->channel,
+                                        response_handle->response_handle,
+                                        response->value, &error)) {
+    g_warning("Failed to send response to %s.%s: %s", "HostIntegrationCoreApi",
+              "callFlutterIsAsyncFlutterApiOnRoot", error->message);
+  }
+}
+
+void core_tests_pigeon_test_host_integration_core_api_respond_error_call_flutter_is_async_flutter_api_on_root(
+    CoreTestsPigeonTestHostIntegrationCoreApiResponseHandle* response_handle,
+    const gchar* code, const gchar* message, FlValue* details) {
+  g_autoptr(
+      CoreTestsPigeonTestHostIntegrationCoreApiCallFlutterIsAsyncFlutterApiOnRootResponse)
+      response =
+          core_tests_pigeon_test_host_integration_core_api_call_flutter_is_async_flutter_api_on_root_response_new_error(
+              code, message, details);
+  g_autoptr(GError) error = nullptr;
+  if (!fl_basic_message_channel_respond(response_handle->channel,
+                                        response_handle->response_handle,
+                                        response->value, &error)) {
+    g_warning("Failed to send response to %s.%s: %s", "HostIntegrationCoreApi",
+              "callFlutterIsAsyncFlutterApiOnRoot", error->message);
   }
 }
 
@@ -37320,6 +37475,174 @@ core_tests_pigeon_test_flutter_integration_core_api_echo_async_string_finish(
     return nullptr;
   }
   return core_tests_pigeon_test_flutter_integration_core_api_echo_async_string_response_new(
+      response);
+}
+
+struct
+    _CoreTestsPigeonTestFlutterIntegrationCoreApiIsAsyncFlutterApiOnRootResponse {
+  GObject parent_instance;
+
+  FlValue* error;
+  FlValue* return_value;
+};
+
+G_DEFINE_TYPE(
+    CoreTestsPigeonTestFlutterIntegrationCoreApiIsAsyncFlutterApiOnRootResponse,
+    core_tests_pigeon_test_flutter_integration_core_api_is_async_flutter_api_on_root_response,
+    G_TYPE_OBJECT)
+
+static void
+core_tests_pigeon_test_flutter_integration_core_api_is_async_flutter_api_on_root_response_dispose(
+    GObject* object) {
+  CoreTestsPigeonTestFlutterIntegrationCoreApiIsAsyncFlutterApiOnRootResponse* self =
+      CORE_TESTS_PIGEON_TEST_FLUTTER_INTEGRATION_CORE_API_IS_ASYNC_FLUTTER_API_ON_ROOT_RESPONSE(
+          object);
+  g_clear_pointer(&self->error, fl_value_unref);
+  g_clear_pointer(&self->return_value, fl_value_unref);
+  G_OBJECT_CLASS(
+      core_tests_pigeon_test_flutter_integration_core_api_is_async_flutter_api_on_root_response_parent_class)
+      ->dispose(object);
+}
+
+static void
+core_tests_pigeon_test_flutter_integration_core_api_is_async_flutter_api_on_root_response_init(
+    CoreTestsPigeonTestFlutterIntegrationCoreApiIsAsyncFlutterApiOnRootResponse*
+        self) {}
+
+static void
+core_tests_pigeon_test_flutter_integration_core_api_is_async_flutter_api_on_root_response_class_init(
+    CoreTestsPigeonTestFlutterIntegrationCoreApiIsAsyncFlutterApiOnRootResponseClass*
+        klass) {
+  G_OBJECT_CLASS(klass)->dispose =
+      core_tests_pigeon_test_flutter_integration_core_api_is_async_flutter_api_on_root_response_dispose;
+}
+
+static CoreTestsPigeonTestFlutterIntegrationCoreApiIsAsyncFlutterApiOnRootResponse*
+core_tests_pigeon_test_flutter_integration_core_api_is_async_flutter_api_on_root_response_new(
+    FlValue* response) {
+  CoreTestsPigeonTestFlutterIntegrationCoreApiIsAsyncFlutterApiOnRootResponse* self =
+      CORE_TESTS_PIGEON_TEST_FLUTTER_INTEGRATION_CORE_API_IS_ASYNC_FLUTTER_API_ON_ROOT_RESPONSE(
+          g_object_new(
+              core_tests_pigeon_test_flutter_integration_core_api_is_async_flutter_api_on_root_response_get_type(),
+              nullptr));
+  if (fl_value_get_length(response) > 1) {
+    self->error = fl_value_ref(response);
+  } else {
+    FlValue* value = fl_value_get_list_value(response, 0);
+    self->return_value = fl_value_ref(value);
+  }
+  return self;
+}
+
+gboolean
+core_tests_pigeon_test_flutter_integration_core_api_is_async_flutter_api_on_root_response_is_error(
+    CoreTestsPigeonTestFlutterIntegrationCoreApiIsAsyncFlutterApiOnRootResponse*
+        self) {
+  g_return_val_if_fail(
+      CORE_TESTS_PIGEON_TEST_IS_FLUTTER_INTEGRATION_CORE_API_IS_ASYNC_FLUTTER_API_ON_ROOT_RESPONSE(
+          self),
+      FALSE);
+  return self->error != nullptr;
+}
+
+const gchar*
+core_tests_pigeon_test_flutter_integration_core_api_is_async_flutter_api_on_root_response_get_error_code(
+    CoreTestsPigeonTestFlutterIntegrationCoreApiIsAsyncFlutterApiOnRootResponse*
+        self) {
+  g_return_val_if_fail(
+      CORE_TESTS_PIGEON_TEST_IS_FLUTTER_INTEGRATION_CORE_API_IS_ASYNC_FLUTTER_API_ON_ROOT_RESPONSE(
+          self),
+      nullptr);
+  g_assert(
+      core_tests_pigeon_test_flutter_integration_core_api_is_async_flutter_api_on_root_response_is_error(
+          self));
+  return fl_value_get_string(fl_value_get_list_value(self->error, 0));
+}
+
+const gchar*
+core_tests_pigeon_test_flutter_integration_core_api_is_async_flutter_api_on_root_response_get_error_message(
+    CoreTestsPigeonTestFlutterIntegrationCoreApiIsAsyncFlutterApiOnRootResponse*
+        self) {
+  g_return_val_if_fail(
+      CORE_TESTS_PIGEON_TEST_IS_FLUTTER_INTEGRATION_CORE_API_IS_ASYNC_FLUTTER_API_ON_ROOT_RESPONSE(
+          self),
+      nullptr);
+  g_assert(
+      core_tests_pigeon_test_flutter_integration_core_api_is_async_flutter_api_on_root_response_is_error(
+          self));
+  return fl_value_get_string(fl_value_get_list_value(self->error, 1));
+}
+
+FlValue*
+core_tests_pigeon_test_flutter_integration_core_api_is_async_flutter_api_on_root_response_get_error_details(
+    CoreTestsPigeonTestFlutterIntegrationCoreApiIsAsyncFlutterApiOnRootResponse*
+        self) {
+  g_return_val_if_fail(
+      CORE_TESTS_PIGEON_TEST_IS_FLUTTER_INTEGRATION_CORE_API_IS_ASYNC_FLUTTER_API_ON_ROOT_RESPONSE(
+          self),
+      nullptr);
+  g_assert(
+      core_tests_pigeon_test_flutter_integration_core_api_is_async_flutter_api_on_root_response_is_error(
+          self));
+  return fl_value_get_list_value(self->error, 2);
+}
+
+gboolean
+core_tests_pigeon_test_flutter_integration_core_api_is_async_flutter_api_on_root_response_get_return_value(
+    CoreTestsPigeonTestFlutterIntegrationCoreApiIsAsyncFlutterApiOnRootResponse*
+        self) {
+  g_return_val_if_fail(
+      CORE_TESTS_PIGEON_TEST_IS_FLUTTER_INTEGRATION_CORE_API_IS_ASYNC_FLUTTER_API_ON_ROOT_RESPONSE(
+          self),
+      FALSE);
+  g_assert(
+      !core_tests_pigeon_test_flutter_integration_core_api_is_async_flutter_api_on_root_response_is_error(
+          self));
+  return fl_value_get_bool(self->return_value);
+}
+
+static void
+core_tests_pigeon_test_flutter_integration_core_api_is_async_flutter_api_on_root_cb(
+    GObject* object, GAsyncResult* result, gpointer user_data) {
+  GTask* task = G_TASK(user_data);
+  g_task_return_pointer(task, result, g_object_unref);
+}
+
+void core_tests_pigeon_test_flutter_integration_core_api_is_async_flutter_api_on_root(
+    CoreTestsPigeonTestFlutterIntegrationCoreApi* self,
+    GCancellable* cancellable, GAsyncReadyCallback callback,
+    gpointer user_data) {
+  g_autoptr(FlValue) args = fl_value_new_list();
+  g_autofree gchar* channel_name = g_strdup_printf(
+      "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi."
+      "isAsyncFlutterApiOnRoot%s",
+      self->suffix);
+  g_autoptr(CoreTestsPigeonTestMessageCodec) codec =
+      core_tests_pigeon_test_message_codec_new();
+  FlBasicMessageChannel* channel = fl_basic_message_channel_new(
+      self->messenger, channel_name, FL_MESSAGE_CODEC(codec));
+  GTask* task = g_task_new(self, cancellable, callback, user_data);
+  g_task_set_task_data(task, channel, g_object_unref);
+  fl_basic_message_channel_send(
+      channel, args, cancellable,
+      core_tests_pigeon_test_flutter_integration_core_api_is_async_flutter_api_on_root_cb,
+      task);
+}
+
+CoreTestsPigeonTestFlutterIntegrationCoreApiIsAsyncFlutterApiOnRootResponse*
+core_tests_pigeon_test_flutter_integration_core_api_is_async_flutter_api_on_root_finish(
+    CoreTestsPigeonTestFlutterIntegrationCoreApi* self, GAsyncResult* result,
+    GError** error) {
+  g_autoptr(GTask) task = G_TASK(result);
+  GAsyncResult* r = G_ASYNC_RESULT(g_task_propagate_pointer(task, nullptr));
+  FlBasicMessageChannel* channel =
+      FL_BASIC_MESSAGE_CHANNEL(g_task_get_task_data(task));
+  g_autoptr(FlValue) response =
+      fl_basic_message_channel_send_finish(channel, r, error);
+  if (response == nullptr) {
+    return nullptr;
+  }
+  return core_tests_pigeon_test_flutter_integration_core_api_is_async_flutter_api_on_root_response_new(
       response);
 }
 
