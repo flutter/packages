@@ -870,10 +870,11 @@ void main() {
 
     final startThumb = topLeft;
     final TestGesture gesture = await tester.startGesture(startThumb);
-    await gesture.moveTo(topLeft + Offset(activeTrackWidth * 15.0 / 35.0, 0.0));
+    await gesture.moveTo(topLeft + Offset(activeTrackWidth * 29.0 / 35.0, 0.0));
     await gesture.up();
 
     expect(valuesList.isNotEmpty, isTrue);
+    expect(valuesList.last, const RangeValues(29.0, 35.0));
     for (final val in valuesList) {
       expect(val.start, equals(val.start.roundToDouble()));
       expect(val.end, equals(val.end.roundToDouble()));

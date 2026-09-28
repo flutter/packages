@@ -714,6 +714,7 @@ void main() {
     await gesture.up();
 
     expect(values.isNotEmpty, isTrue);
+    expect(values.last, 29.0);
     for (final val in values) {
       expect(val, equals(val.roundToDouble()));
     }
