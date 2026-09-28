@@ -161,7 +161,8 @@ void main() {
         ]),
       );
     });
-  });
+    // Flaky; see https://github.com/flutter/flutter/issues/193452
+  }, skip: true);
 }
 
 // Repeatedly checks an asynchronous value against a test condition, waiting

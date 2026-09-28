@@ -169,6 +169,7 @@ void main() {
       await tester.pump();
       verify(tileProviders[0].getTile(any, any, any));
       verifyNoMoreInteractions(tileProviders[1]);
-    });
+      // Flaky; see https://github.com/flutter/flutter/issues/193452
+    }, skip: true);
   });
 }
