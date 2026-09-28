@@ -40,7 +40,7 @@ private func sanitizedCodecValue(_ value: Any) -> any Sendable {
       "domain": error.domain,
       "code": "\(error.code)",
       "localizedDescription": error.localizedDescription,
-      "userInfo": sanitizedUserInfo(error.userInfo),
+      "userInfo": sanitizedCodecDictionary(error.userInfo),
     ] as [String: any Sendable]
   case let string as String:
     return string
@@ -67,11 +67,6 @@ private func sanitizedCodecDictionary(_ dict: [AnyHashable: Any]) -> [String: an
   return safeValues
 }
 
-/// `userInfo` values that can be sent through the standard message codec.
-private func sanitizedUserInfo(_ userInfo: [AnyHashable: Any]) -> [String: any Sendable] {
-  sanitizedCodecDictionary(userInfo)
-}
-
 extension PigeonError {
   /// Maps an NSError to a corresponding PigeonError.
   ///
@@ -81,7 +76,7 @@ extension PigeonError {
     return PigeonError(
       code: "\(error.domain): \(error.code)",
       message: error.localizedDescription,
-      details: sanitizedUserInfo(error.userInfo))
+      details: sanitizedCodecDictionary(error.userInfo))
   }
 }
 
@@ -388,7 +383,7 @@ public final class GoogleSignInPlugin: NSObject, FlutterPlugin, GoogleSignInApi 
           SignInFailure(
             type: pigeonErrorCode(for: nsError.code),
             message: nsError.localizedDescription,
-            details: sanitizedUserInfo(nsError.userInfo))))
+            details: sanitizedCodecDictionary(nsError.userInfo))))
     } else if let nsError {
       completion(.failure(PigeonError.make(from: nsError)))
     } else {
