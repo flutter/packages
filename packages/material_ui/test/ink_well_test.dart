@@ -1230,7 +1230,7 @@ void main() {
       RendererBinding.instance.mouseTracker.debugDeviceActiveCursor(1),
       SystemMouseCursors.basic,
     );
-  });
+  }, tags: 'reduced-web-test-set');
 
   testWidgets('InkResponse containing selectable text changes mouse cursor when hovered', (
     WidgetTester tester,
@@ -1258,7 +1258,7 @@ void main() {
       RendererBinding.instance.mouseTracker.debugDeviceActiveCursor(1),
       kIsWeb ? SystemMouseCursors.click : SystemMouseCursors.basic,
     );
-  });
+  }, tags: 'reduced-web-test-set');
 
   group('feedback', () {
     late FeedbackTester feedback;
