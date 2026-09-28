@@ -231,7 +231,8 @@ void main() {
         expect(coords.longitude, closeTo(southEast.longitude, _acceptableLatLngDelta));
       });
     });
-  });
+    // Flaky; see https://github.com/flutter/flutter/issues/193452
+  }, skip: true);
 }
 
 // Pumps a CenteredMap Widget into a given tester, with some parameters
