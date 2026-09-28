@@ -728,6 +728,8 @@ class _RangeSliderState extends State<RangeSlider> with TickerProviderStateMixin
   // Returns a number between min and max, proportional to value, which must
   // be between 0.0 and 1.0.
   double _lerp(double value) {
+    assert(value >= 0.0);
+    assert(value <= 1.0);
     final int? divisions = widget.divisions;
     if (divisions != null) {
       return widget.min + (value * divisions).round() * (widget.max - widget.min) / divisions;
