@@ -386,8 +386,7 @@ class GoogleMapController
   @Override
   public void onPoiClick(PointOfInterest pointOfInterest) {
     if (pointOfInterest.placeId != null) {
-      flutterApi.onPointOfInterestTap(
-          pointOfInterest.placeId, (Result<Unit> result) -> Unit.INSTANCE);
+      flutterApi.onPointOfInterestTap(pointOfInterest.placeId, ResultUtilsKt.emptyContinuation());
     }
   }
 
