@@ -2229,7 +2229,7 @@ void main() {
     expect(getSelectProgress(tester), equals(0.0));
     expect(getAvatarDrawerProgress(tester), equals(1.0));
     expect(getDeleteDrawerProgress(tester), equals(0.0));
-  });
+  }, tags: 'reduced-web-test-set');
 
   testWidgets('Material2 - Selection without avatar works as expected on RawChip', (
     WidgetTester tester,
@@ -2390,7 +2390,7 @@ void main() {
     expect(getSelectProgress(tester), equals(0.0));
     expect(getAvatarDrawerProgress(tester), equals(0.0));
     expect(getDeleteDrawerProgress(tester), equals(0.0));
-  });
+  }, tags: 'reduced-web-test-set');
 
   testWidgets('Material2 - Activation works as expected on RawChip', (WidgetTester tester) async {
     var selected = false;
@@ -2503,7 +2503,7 @@ void main() {
     expect(getAvatarDrawerProgress(tester), equals(1.0));
     expect(getDeleteDrawerProgress(tester), equals(0.0));
     await tester.pumpAndSettle();
-  });
+  }, tags: 'reduced-web-test-set');
 
   testWidgets('Chip uses ThemeData chip theme if present', (WidgetTester tester) async {
     final theme = ThemeData(chipTheme: const ChipThemeData(backgroundColor: Color(0xffff0000)));
@@ -2876,7 +2876,7 @@ void main() {
         ),
       );
       semanticsTester.dispose();
-    });
+    }, tags: 'reduced-web-test-set');
 
     testWidgets('delete', (WidgetTester tester) async {
       final semanticsTester = SemanticsTester(tester);
@@ -2940,7 +2940,7 @@ void main() {
         ),
       );
       semanticsTester.dispose();
-    });
+    }, tags: 'reduced-web-test-set');
 
     testWidgets('with onPressed', (WidgetTester tester) async {
       final semanticsTester = SemanticsTester(tester);
@@ -2994,7 +2994,7 @@ void main() {
       );
 
       semanticsTester.dispose();
-    });
+    }, tags: 'reduced-web-test-set');
 
     testWidgets('with onSelected', (WidgetTester tester) async {
       final semanticsTester = SemanticsTester(tester);
@@ -3117,7 +3117,7 @@ void main() {
       );
 
       semanticsTester.dispose();
-    });
+    }, tags: 'reduced-web-test-set');
 
     testWidgets('disabled', (WidgetTester tester) async {
       final semanticsTester = SemanticsTester(tester);
@@ -3169,7 +3169,7 @@ void main() {
       );
 
       semanticsTester.dispose();
-    });
+    }, tags: 'reduced-web-test-set');
 
     testWidgets('tapEnabled explicitly false', (WidgetTester tester) async {
       final semanticsTester = SemanticsTester(tester);
@@ -3218,7 +3218,7 @@ void main() {
       );
 
       semanticsTester.dispose();
-    });
+    }, tags: 'reduced-web-test-set');
 
     testWidgets('enabled when tapEnabled and canTap', (WidgetTester tester) async {
       final semanticsTester = SemanticsTester(tester);
@@ -3273,7 +3273,7 @@ void main() {
       );
 
       semanticsTester.dispose();
-    });
+    }, tags: 'reduced-web-test-set');
 
     testWidgets('disabled when tapEnabled but not canTap', (WidgetTester tester) async {
       final semanticsTester = SemanticsTester(tester);
@@ -3322,7 +3322,7 @@ void main() {
       );
 
       semanticsTester.dispose();
-    });
+    }, tags: 'reduced-web-test-set');
   });
 
   testWidgets('can be tapped outside of chip delete icon', (WidgetTester tester) async {

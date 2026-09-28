@@ -1,3 +1,7 @@
+## NEXT
+
+* Updates minimum supported SDK version to Flutter 3.41/Dart 3.11.
+
 ## 0.4.0+26
 
 * Adopts `code-excerpt` for the README's Dart driver snippet so it is

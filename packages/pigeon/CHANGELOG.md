@@ -1,3 +1,13 @@
+## 29.0.4
+
+* [swift] Fixes FFI number wrapping for Objective-C `CFBoolean` and floating-point `NSNumber` values.
+* [swift] Fixes FFI dictionary serialization checking `isNullish` on the key instead of the value.
+
+## 29.0.3
+
+* [swift] Uses `isNullish` to check for null and `NSNull` in non-null Flutter API returns.
+* Updates minimum supported SDK version to Flutter 3.41/Dart 3.11.
+
 ## 29.0.2
 
 * [swift] Fixes a crash when a Flutter API returns null for a non-null return
