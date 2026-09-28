@@ -150,7 +150,7 @@ dart run $REPO_ROOT/script/tool/bin/flutter_plugin_tools.dart update-release-inf
   --changelog="A description of the changes."
 ```
 
-- `--version=minimal`: Bumps patch for bug fixes and non-breaking changes, and skips unchanged packages. This is usually the best option unless a new feature or breaking API change is being added.
+- `--version=minimal`: Bumps patch for bug fixes and non-breaking changes, and skips unchanged packages. This is usually the best option unless a new feature is being added.
   - When making public API changes, use `--version=minor` instead.
 - `--base-branch=origin/main`: Diffs against the `main` branch to find changed packages.
 
