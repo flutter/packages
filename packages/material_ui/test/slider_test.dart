@@ -103,9 +103,10 @@ class LoggingThumbShape extends SliderComponentShape {
 
 // A value indicator shape to log labelPainter text.
 class LoggingValueIndicatorShape extends SliderComponentShape {
-  LoggingValueIndicatorShape(this.logLabel);
+  LoggingValueIndicatorShape(this.logLabel, [this.logPainter]);
 
   final List<InlineSpan> logLabel;
+  final List<TextPainter>? logPainter;
 
   @override
   Size getPreferredSize(bool isEnabled, bool isDiscrete) {
@@ -128,6 +129,7 @@ class LoggingValueIndicatorShape extends SliderComponentShape {
     required Size sizeWithOverflow,
   }) {
     logLabel.add(labelPainter.text!);
+    logPainter?.add(labelPainter);
   }
 }
 
@@ -201,9 +203,8 @@ void main() {
           textDirection: TextDirection.ltr,
           child: StatefulBuilder(
             builder: (BuildContext context, StateSetter setState) {
-              final SliderThemeData sliderTheme = SliderTheme.of(
-                context,
-              ).copyWith(thumbShape: loggingThumb);
+              final SliderThemeData sliderTheme = SliderTheme.of(context)
+                  .copyWith(thumbShape: loggingThumb);
               return Material(
                 child: Center(
                   child: SliderTheme(
@@ -456,9 +457,8 @@ void main() {
           textDirection: TextDirection.ltr,
           child: StatefulBuilder(
             builder: (BuildContext context, StateSetter setState) {
-              final SliderThemeData sliderTheme = SliderTheme.of(
-                context,
-              ).copyWith(thumbShape: loggingThumb);
+              final SliderThemeData sliderTheme = SliderTheme.of(context)
+                  .copyWith(thumbShape: loggingThumb);
               return Material(
                 child: Center(
                   child: SliderTheme(
@@ -569,9 +569,8 @@ void main() {
           textDirection: TextDirection.ltr,
           child: StatefulBuilder(
             builder: (BuildContext context, StateSetter setState) {
-              final SliderThemeData sliderTheme = SliderTheme.of(
-                context,
-              ).copyWith(thumbShape: loggingThumb);
+              final SliderThemeData sliderTheme = SliderTheme.of(context)
+                  .copyWith(thumbShape: loggingThumb);
               return Material(
                 child: Center(
                   child: SliderTheme(
@@ -925,9 +924,8 @@ void main() {
                   child: Material(
                     child: Theme(
                       data: Theme.of(context).copyWith(
-                        sliderTheme: Theme.of(
-                          context,
-                        ).sliderTheme.copyWith(showValueIndicator: show),
+                        sliderTheme: Theme.of(context).sliderTheme
+                            .copyWith(showValueIndicator: show),
                       ),
                       child: Center(
                         child: OverflowBox(
@@ -3380,9 +3378,8 @@ void main() {
           textDirection: TextDirection.ltr,
           child: StatefulBuilder(
             builder: (BuildContext context, StateSetter setState) {
-              final SliderThemeData sliderTheme = SliderTheme.of(
-                context,
-              ).copyWith(tickMarkShape: TallSliderTickMarkShape());
+              final SliderThemeData sliderTheme = SliderTheme.of(context)
+                  .copyWith(tickMarkShape: TallSliderTickMarkShape());
               return Material(
                 child: Center(
                   child: IntrinsicHeight(
@@ -3883,9 +3880,8 @@ void main() {
                       dragStarted = true;
                     },
                     child: MediaQuery(
-                      data: MediaQuery.of(
-                        context,
-                      ).copyWith(gestureSettings: const DeviceGestureSettings(touchSlop: 20)),
+                      data: MediaQuery.of(context)
+                          .copyWith(gestureSettings: const DeviceGestureSettings(touchSlop: 20)),
                       child: Slider(
                         value: value,
                         key: sliderKey,
@@ -3939,9 +3935,8 @@ void main() {
                       dragStarted = true;
                     },
                     child: MediaQuery(
-                      data: MediaQuery.of(
-                        context,
-                      ).copyWith(gestureSettings: const DeviceGestureSettings(touchSlop: 10)),
+                      data: MediaQuery.of(context)
+                          .copyWith(gestureSettings: const DeviceGestureSettings(touchSlop: 10)),
                       child: Slider(
                         value: value,
                         key: sliderKey,
@@ -5280,9 +5275,8 @@ void main() {
 
     RenderBox sliderRenderBox() {
       return tester.allRenderObjects.firstWhere(
-            (RenderObject object) => object.runtimeType.toString() == '_RenderSlider',
-          )
-          as RenderBox;
+        (RenderObject object) => object.runtimeType.toString() == '_RenderSlider',
+      ) as RenderBox;
     }
 
     // Test Slider height and tracks spacing with zero padding.
@@ -5672,6 +5666,42 @@ void main() {
       ),
     );
     expect(tester.getSize(find.byType(Slider)), Size.zero);
+  });
+
+  testWidgets('Slider label respects horizontal buffer and avoids screen overflow', (
+    WidgetTester tester,
+  ) async {
+    final logPainters = <TextPainter>[];
+    final shape = LoggingValueIndicatorShape(<InlineSpan>[], logPainters);
+
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Scaffold(
+          body: SliderTheme(
+            data: SliderThemeData(
+              showValueIndicator: ShowValueIndicator.always,
+              valueIndicatorShape: shape,
+            ),
+            child: Slider(
+              value: 0.5,
+              divisions: 10,
+              label: 'A very long label string that exceeds standard screen widths to test clipping behavior',
+              onChanged: (double value) {},
+            ),
+          ),
+        ),
+      ),
+    );
+
+    final TestGesture gesture = await tester.startGesture(tester.getCenter(find.byType(Slider)));
+    await tester.pumpAndSettle();
+
+    final double screenWidth = tester.view.physicalSize.width / tester.view.devicePixelRatio;
+
+    expect(logPainters, isNotEmpty);
+    expect(logPainters.last.width, lessThanOrEqualTo(screenWidth - 64.0));
+
+    await gesture.up();
   });
 }
 

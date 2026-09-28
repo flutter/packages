@@ -126,3 +126,19 @@ void main() {
 }
 
 // #enddocregion LicenseRegistration
+
+// #docregion GoogleFontsLite
+Widget liteExamples(BuildContext context) {
+  return Column(
+    children: <Widget>[
+      // Single text style:
+      Text('Dynamic font with minimal bundle size', style: GoogleFontsLite.getFont('Lato')),
+      // Custom text theme:
+      Theme(
+        data: ThemeData(textTheme: GoogleFontsLite.getTextTheme('Lato')),
+        child: const Text('Themed text'),
+      ),
+    ],
+  );
+}
+// #enddocregion GoogleFontsLite

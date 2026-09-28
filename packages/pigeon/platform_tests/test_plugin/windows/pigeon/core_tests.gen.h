@@ -1495,6 +1495,8 @@ class HostIntegrationCoreApi {
           result) = 0;
   virtual void CallFlutterCallbackThrowErrorFromVoid(
       std::function<void(std::optional<FlutterError> reply)> result) = 0;
+  virtual void CallFlutterIsAsyncFlutterApiOnRoot(
+      std::function<void(ErrorOr<bool> reply)> result) = 0;
 
   // The codec used by HostIntegrationCoreApi.
   static const ::flutter::StandardMessageCodec& GetCodec();
@@ -1792,6 +1794,10 @@ class FlutterIntegrationCoreApi {
   void EchoAsyncString(const std::string& a_string,
                        std::function<void(const std::string&)>&& on_success,
                        std::function<void(const FlutterError&)>&& on_error);
+  // Returns true if the async FlutterApi method is run on the root isolate.
+  void IsAsyncFlutterApiOnRoot(
+      std::function<void(bool)>&& on_success,
+      std::function<void(const FlutterError&)>&& on_error);
 
  private:
   ::flutter::BinaryMessenger* binary_messenger_;

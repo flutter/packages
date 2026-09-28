@@ -1,0 +1,2 @@
+changelog: Fixes pushed routes nested within a shell being lost when a dynamic routing configuration changes.
+version: patch
