@@ -288,7 +288,11 @@ class GoogleMapController {
     // for a detached 0x0 map.
     // See https://github.com/flutter/flutter/issues/193452.
     map.onTilesloaded
-        .merge(map.onIdle.where((void _) => _div.isConnected && _div.offsetWidth > 0))
+        .merge(
+          map.onIdle.where(
+            (void _) => _div.isConnected && _div.offsetWidth > 0 && _div.offsetHeight > 0,
+          ),
+        )
         .first
         .then((void _) {
           // Report the map as ready to go the first time it is fully rendered.
