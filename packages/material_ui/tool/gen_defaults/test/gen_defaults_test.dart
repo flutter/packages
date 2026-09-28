@@ -611,7 +611,7 @@ void main() {
     test('ListTileTemplateM3 emits M3 ListTile defaults from tokens', () {
       const template = ListTileTemplateM3();
       final String contents = _generateContents(template);
-      expect(template.className, '_LisTileDefaultsM3');
+      expect(template.className, '_ListTileDefaultsM3');
       expect(template.outputFileName, 'list_tile_defaults_m3.g.dart');
       expect(contents, contains('contentPadding: const EdgeInsetsDirectional.only'));
       expect(contents, contains('minLeadingWidth: 24.0'));

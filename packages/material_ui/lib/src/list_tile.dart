@@ -886,7 +886,7 @@ class ListTile extends StatelessWidget {
     final ListTileStyle listTileStyle =
         style ?? tileTheme.style ?? theme.listTileTheme.style ?? ListTileStyle.list;
     final ListTileThemeData defaults = theme.useMaterial3
-        ? _LisTileDefaultsM3(context)
+        ? _ListTileDefaultsM3(context)
         : _LisTileDefaultsM2(context, listTileStyle);
 
     final Color backgroundColor =

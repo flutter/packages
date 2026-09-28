@@ -20,7 +20,7 @@ class ListTileTemplateM3 extends TokenTemplateM3 {
   static const TokenColorRole _legacySelectedColor = TokenColorRole.primary;
 
   @override
-  String get className => '_LisTileDefaultsM3';
+  String get className => '_ListTileDefaultsM3';
 
   @override
   String generateContents(String className) =>
