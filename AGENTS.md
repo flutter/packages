@@ -97,7 +97,6 @@ dart run $REPO_ROOT/script/tool/bin/flutter_plugin_tools.dart update-dependency 
 
 ### Specialized Workflows
 
-- **Allowed Dependencies in `.repo_tool_config.yaml`**: The repository strictly enforces a whitelist of non-local dependencies. If you add or modify a dependency in any package's `pubspec.yaml` (including `dev_dependencies`), ensure the package is registered under `allowed_dependencies` (either `pinned` or `unpinned`) in `.repo_tool_config.yaml` at the repository root. Otherwise, `validate` will fail with `The following unexpected non-local dependencies were found`.
 - **Federated Plugin Development**: If you change multiple packages in a federated plugin that depend on each other, use `make-deps-path-based` to make their pubspec.yaml files use `path:` dependencies. This allows you to test them together locally.
   ```bash
   dart run $REPO_ROOT/script/tool/bin/flutter_plugin_tools.dart make-deps-path-based --target-dependencies=<changed_plugin_packages>
