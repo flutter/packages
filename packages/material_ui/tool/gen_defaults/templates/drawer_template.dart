@@ -2,14 +2,33 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-class _DrawerDefaultsM3 extends DrawerThemeData {
-  _DrawerDefaultsM3(this.context) : super(elevation: 1.0, clipBehavior: Clip.hardEdge);
+import '../data/navigation_drawer.dart';
+import 'template.dart';
+
+class DrawerTemplateM3 extends TokenTemplateM3 {
+  const DrawerTemplateM3();
+
+  @override
+  String get name => 'Drawer';
+
+  @override
+  String get parentFilePath => 'drawer.dart';
+
+  @override
+  String generateContents(String className) =>
+      '''
+class $className extends DrawerThemeData {
+  $className(this.context)
+      : super(
+          elevation: ${number(TokenNavigationDrawer.modalContainerElevation)},
+          clipBehavior: Clip.hardEdge,
+        );
 
   final BuildContext context;
   late final TextDirection direction = Directionality.of(context);
 
   @override
-  Color? get backgroundColor => Theme.of(context).colorScheme.surfaceContainerLow;
+  Color? get backgroundColor => ${color(TokenNavigationDrawer.modalContainerColor, 'Theme.of(context).colorScheme')};
 
   @override
   Color? get surfaceTintColor => Colors.transparent;
@@ -34,4 +53,6 @@ class _DrawerDefaultsM3 extends DrawerThemeData {
       start: Radius.circular(16.0),
     ).resolve(direction),
   );
+}
+''';
 }
