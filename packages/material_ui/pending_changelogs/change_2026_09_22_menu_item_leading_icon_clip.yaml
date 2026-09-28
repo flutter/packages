@@ -1,3 +1,0 @@
-changelog: |
-  - Fixes decorations on `MenuItemButton.leadingIcon`, such as `Badge`, being clipped to the icon's bounds in vertically expanding menus.
-version: patch
