@@ -43,8 +43,7 @@ part 'generated/app_bar_defaults_m3.g.dart';
 typedef _FlexibleConfigBuilder = _ScrollUnderFlexibleConfig Function(BuildContext);
 
 const double _kLeadingWidth = kToolbarHeight; // So the leading button is square.
-const double _kMaxTitleTextScaleFactor =
-    1.34; // TODO(perc): Add link to Material spec when available, https://github.com/flutter/flutter/issues/58769.
+const double _kMaxTitleTextScaleFactor = 1.34; // TODO(perc): Add link to Material spec when available, https://github.com/flutter/flutter/issues/58769.
 
 enum _SliverAppVariant { small, medium, large }
 

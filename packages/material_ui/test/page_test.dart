@@ -14,6 +14,7 @@ import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';
+
 import 'finders.dart';
 
 void main() {
@@ -1102,9 +1103,8 @@ void main() {
       expect(homeTapCount, 1);
       expect(pageTapCount, 0);
 
-      final ValueNotifier<bool> notifier = Navigator.of(
-        homeScaffoldKey.currentContext!,
-      ).userGestureInProgressNotifier;
+      final ValueNotifier<bool> notifier = Navigator.of(homeScaffoldKey.currentContext!)
+          .userGestureInProgressNotifier;
       expect(notifier.value, false);
 
       unawaited(
@@ -1196,6 +1196,44 @@ void main() {
       TargetPlatform.macOS,
     }),
   );
+
+  testWidgets('MaterialPageRoute can opt out of route semantics', (WidgetTester tester) async {
+    final SemanticsHandle handle = tester.ensureSemantics();
+
+    await tester.pumpWidget(
+      MaterialApp(
+        onGenerateRoute: (RouteSettings settings) {
+          return MaterialPageRoute<void>(
+            includeRouteSemantics: false,
+            builder: (BuildContext context) => const Text('Page'),
+          );
+        },
+      ),
+    );
+
+    expect(find.semantics.byFlag(SemanticsFlag.scopesRoute), findsNothing);
+    handle.dispose();
+  });
+
+  testWidgets('MaterialPage can opt out of route semantics', (WidgetTester tester) async {
+    final SemanticsHandle handle = tester.ensureSemantics();
+
+    await tester.pumpWidget(
+      buildNavigator(
+        view: tester.view,
+        pages: const <Page<void>>[
+          MaterialPage<void>(includeRouteSemantics: false, child: Text('Page')),
+        ],
+        onPopPage: (Route<dynamic> route, dynamic result) {
+          assert(false); // The test shouldn't call this.
+          return true;
+        },
+      ),
+    );
+
+    expect(find.semantics.byFlag(SemanticsFlag.scopesRoute), findsNothing);
+    handle.dispose();
+  });
 
   testWidgets('MaterialPage works', (WidgetTester tester) async {
     final LocalKey pageKey = UniqueKey();

@@ -2,6 +2,7 @@
 
 * Documents that `retrieveLostData` is a one-time operation that clears the
   stored lost data once it is returned.
+* Updates minimum supported SDK version to Flutter 3.41/Dart 3.11.
 
 ## 1.2.3
 

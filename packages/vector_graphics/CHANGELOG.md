@@ -1,5 +1,6 @@
 ## NEXT
 
+* Updates minimum supported SDK version to Flutter 3.41/Dart 3.11.
 * Fixes deprecation lints.
 
 ## 1.2.3

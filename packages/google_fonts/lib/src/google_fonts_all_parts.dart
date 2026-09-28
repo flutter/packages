@@ -57,7 +57,7 @@ class GoogleFonts {
   /// ```dart
   /// GoogleFonts.config.allowRuntimeFetching = false;
   /// ```
-  static final GoogleFontsConfig config = GoogleFontsConfig();
+  static final GoogleFontsConfig config = sharedGoogleFontsConfig;
 
   /// Returns a [Future] which resolves when requested fonts have finished
   /// loading and are ready to be rendered on screen.

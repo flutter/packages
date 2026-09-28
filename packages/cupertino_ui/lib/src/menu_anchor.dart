@@ -911,9 +911,9 @@ class _MenuOverlayState extends State<_MenuOverlay>
     // Behavior of reduce motion is based on iOS 18.5 simulator. Because the
     // disableAnimations accessibility feature is not present on iOS, all
     // animations are disabled when disableAnimations is enabled.
-    final ui.AccessibilityFeatures accessibilityFeatures = View.of(
-      context,
-    ).platformDispatcher.accessibilityFeatures;
+    final ui.AccessibilityFeatures accessibilityFeatures = View.of(context)
+        .platformDispatcher
+        .accessibilityFeatures;
 
     switch (accessibilityFeatures) {
       case ui.AccessibilityFeatures(disableAnimations: true):

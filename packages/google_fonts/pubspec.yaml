@@ -6,14 +6,15 @@ version: 8.2.1
 publish_to: none
 
 environment:
-  sdk: ^3.10.0
-  flutter: ">=3.38.0"
+  sdk: ^3.11.0
+  flutter: ">=3.41.0"
 
 dependencies:
   crypto: ^3.0.0
   flutter:
     sdk: flutter
   http: ^1.0.0
+  meta: ^1.10.0
   path_provider: ^2.0.0
 
 dev_dependencies:

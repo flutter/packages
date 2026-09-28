@@ -1,3 +1,0 @@
-changelog: |
-  - Constrains Slider and RangeSlider value indicator labels to the screen width, truncating with an ellipsis instead of clipping.
-version: patch
