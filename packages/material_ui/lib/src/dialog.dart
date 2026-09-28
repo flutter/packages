@@ -1440,8 +1440,7 @@ class _FullWindowDialogWrapper extends StatelessWidget {
       insetPadding: EdgeInsets.zero,
       shape: const RoundedRectangleBorder(), // No rounded corners.
       alignment: Alignment.topLeft, // Align to top-left so it fills from corner.
-      constraints:
-          const BoxConstraints.expand(), // Remove default constraints so dialog can expand to fill available space.
+      constraints: const BoxConstraints.expand(), // Remove default constraints so dialog can expand to fill available space.
     );
 
     return DialogTheme(

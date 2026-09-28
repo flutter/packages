@@ -60,21 +60,17 @@ import Foundation
 }
 
 private func wrapNumber(number: Any) -> NativeInteropExampleNumberWrapper {
-  switch number {
-  case let value as Int:
-    return NativeInteropExampleNumberWrapper(number: NSNumber(value: value), type: 1)
-  case let value as Int64:
-    return NativeInteropExampleNumberWrapper(number: NSNumber(value: value), type: 1)
-  case let value as Double:
-    return NativeInteropExampleNumberWrapper(number: NSNumber(value: value), type: 2)
-  case let value as Float:
-    return NativeInteropExampleNumberWrapper(number: NSNumber(value: value), type: 2)
-  case let value as Bool:
-    return NativeInteropExampleNumberWrapper(number: NSNumber(value: value), type: 3)
-
-  default:
-    return NativeInteropExampleNumberWrapper(number: NSNumber(value: 0), type: 0)
+  if let nsNumber = number as? NSNumber {
+    if CFGetTypeID(nsNumber as CFTypeRef) == CFBooleanGetTypeID() {
+      return NativeInteropExampleNumberWrapper(number: nsNumber, type: 3)
+    }
+    if CFNumberIsFloatType(nsNumber) {
+      return NativeInteropExampleNumberWrapper(number: nsNumber, type: 2)
+    }
+    return NativeInteropExampleNumberWrapper(number: nsNumber, type: 1)
   }
+
+  return NativeInteropExampleNumberWrapper(number: NSNumber(value: 0), type: 0)
 }
 
 private func unwrapNumber(wrappedNumber: NativeInteropExampleNumberWrapper) -> Any {
@@ -307,7 +303,7 @@ class _PigeonFfiCodec {
       let res: NSMutableDictionary = NSMutableDictionary(capacity: dict.count)
       for (key, value) in dict {
         res.setObject(
-          NativeInteropExamplePigeonInternal.isNullish(key)
+          NativeInteropExamplePigeonInternal.isNullish(value)
             ? NativeInteropExamplePigeonInternalNull()
             : writeValue(value: value, isObject: true) as! NSObject,
           forKey: writeValue(value: key, isObject: true) as! NSCopying)

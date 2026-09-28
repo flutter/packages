@@ -24,7 +24,8 @@ let package = Package(
     .target(
       name: "google_sign_in_ios",
       dependencies: [
-        "google_sign_in_ios_objc"
+        .product(name: "GoogleSignIn", package: "GoogleSignIn-iOS"),
+        "google_sign_in_ios_objc",
       ],
       resources: [
         .process("Resources")
@@ -32,12 +33,10 @@ let package = Package(
     ),
     .target(
       name: "google_sign_in_ios_objc",
-      dependencies: [
-        .product(name: "GoogleSignIn", package: "GoogleSignIn-iOS")
-      ],
       publicHeadersPath: "include",
       cSettings: [
-        .headerSearchPath("include/google_sign_in_ios")
+        .headerSearchPath("include/google_sign_in_ios"),
+        .headerSearchPath("include/google_sign_in_ios_objc"),
       ]
     ),
   ]
