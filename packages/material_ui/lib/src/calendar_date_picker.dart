@@ -1423,10 +1423,13 @@ class _DayState extends State<_Day> {
       dayWidget = Ink(
         decoration: decoration,
         child: Center(
-          child: ExcludeSemantics(
-            child: Text(
-              localizations.formatDecimal(widget.day.day),
-              style: dayStyle?.apply(color: dayForegroundColor),
+          child: FittedBox(
+            fit: .scaleDown,
+            child: ExcludeSemantics(
+              child: Text(
+                localizations.formatDecimal(widget.day.day),
+                style: dayStyle?.apply(color: dayForegroundColor),
+              ),
             ),
           ),
         ),
