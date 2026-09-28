@@ -42,7 +42,7 @@ void main() {
       debugDefaultTargetPlatformOverride = null;
     });
 
-    testWidgets('gestureBlockingPolicy defaults to falling back to the plugin default', (
+    testWidgets('uiKitGestureBlockingPolicy defaults to falling back to the plugin default', (
       WidgetTester tester,
     ) async {
       debugDefaultTargetPlatformOverride = TargetPlatform.iOS;
@@ -61,7 +61,9 @@ void main() {
       debugDefaultTargetPlatformOverride = null;
     });
 
-    testWidgets('gestureBlockingPolicy is passed to the UiKitView', (WidgetTester tester) async {
+    testWidgets('uiKitGestureBlockingPolicy is passed to the UiKitView', (
+      WidgetTester tester,
+    ) async {
       debugDefaultTargetPlatformOverride = TargetPlatform.iOS;
 
       final WebKitWebViewController controller = createTestWebViewController();
@@ -69,7 +71,7 @@ void main() {
       final widget = WebKitWebViewWidget(
         WebKitWebViewWidgetCreationParams(
           controller: controller,
-          gestureBlockingPolicy: .doNotBlockGesture,
+          uiKitGestureBlockingPolicy: .doNotBlockGesture,
         ),
       );
 
@@ -83,7 +85,28 @@ void main() {
       debugDefaultTargetPlatformOverride = null;
     });
 
-    testWidgets('Key of the PlatformView changes when the gestureBlockingPolicy changes', (
+    testWidgets('uiKitGestureBlockingPolicy does not change the macOS platform view type', (
+      WidgetTester tester,
+    ) async {
+      debugDefaultTargetPlatformOverride = TargetPlatform.macOS;
+
+      final WebKitWebViewController controller = createTestWebViewController();
+      final widget = WebKitWebViewWidget(
+        WebKitWebViewWidgetCreationParams(
+          controller: controller,
+          uiKitGestureBlockingPolicy: .doNotBlockGesture,
+        ),
+      );
+
+      await tester.pumpWidget(Builder(builder: (BuildContext context) => widget.build(context)));
+
+      expect(find.byType(AppKitView), findsOneWidget);
+      expect(find.byType(UiKitView), findsNothing);
+
+      debugDefaultTargetPlatformOverride = null;
+    });
+
+    testWidgets('Key of the PlatformView changes when the uiKitGestureBlockingPolicy changes', (
       WidgetTester tester,
     ) async {
       debugDefaultTargetPlatformOverride = TargetPlatform.iOS;
@@ -102,7 +125,7 @@ void main() {
       final webViewWidget2 = WebKitWebViewWidget(
         WebKitWebViewWidgetCreationParams(
           controller: controller,
-          gestureBlockingPolicy: .doNotBlockGesture,
+          uiKitGestureBlockingPolicy: .doNotBlockGesture,
         ),
       );
 

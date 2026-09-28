@@ -12,7 +12,7 @@ PlatformWebViewWidgetCreationParams createParamsWithoutGestureBlocking(
   // #docregion gesture_blocking_policy_example
   final params = WebKitWebViewWidgetCreationParams(
     controller: controller,
-    gestureBlockingPolicy: .doNotBlockGesture,
+    uiKitGestureBlockingPolicy: .doNotBlockGesture,
   );
   // #enddocregion gesture_blocking_policy_example
   return params;

@@ -13,15 +13,15 @@ should add it to your `pubspec.yaml` as usual.
 
 ### Gesture blocking policy on iOS
 
-If a web view stops responding to touches after the first interaction on iOS, letting the web view
-handle those touches itself, rather than disambiguating them through Flutter's gesture arena, can
+If a web view stops responding to touches after the first interaction on iOS, using hit-test results
+instead of Flutter's gesture arena to decide when to block the web view's gesture recognizers can
 work around it:
 
 <?code-excerpt "example/lib/readme_excerpts.dart (gesture_blocking_policy_example)"?>
 ```dart
 final params = WebKitWebViewWidgetCreationParams(
   controller: controller,
-  gestureBlockingPolicy: .doNotBlockGesture,
+  uiKitGestureBlockingPolicy: .doNotBlockGesture,
 );
 ```
 

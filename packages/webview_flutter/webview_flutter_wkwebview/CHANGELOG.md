@@ -1,6 +1,6 @@
 ## 3.27.0
 
-* Adds `WebKitWebViewWidgetCreationParams.gestureBlockingPolicy` for choosing the gesture
+* Adds `WebKitWebViewWidgetCreationParams.uiKitGestureBlockingPolicy` for choosing the gesture
   blocking policy of the iOS platform view. Setting it to `doNotBlockGesture` works around web
   views becoming unresponsive to touches. See
   https://github.com/flutter/flutter/issues/175099.
