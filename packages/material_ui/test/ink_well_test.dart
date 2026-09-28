@@ -2546,7 +2546,7 @@ void main() {
   ) async {
     final log = <bool>[];
 
-    Widget buildFrame({required bool withTertiaryCallback}) {
+    Widget buildFrame({required bool withTertiaryTapDown, required bool withTertiaryTapUp}) {
       return Directionality(
         textDirection: TextDirection.ltr,
         child: Material(
@@ -2557,7 +2557,8 @@ void main() {
               child: InkWell(
                 onTap: () {},
                 onHighlightChanged: log.add,
-                onTertiaryTapUp: withTertiaryCallback ? (TapUpDetails details) {} : null,
+                onTertiaryTapDown: withTertiaryTapDown ? (TapDownDetails details) {} : null,
+                onTertiaryTapUp: withTertiaryTapUp ? (TapUpDetails details) {} : null,
               ),
             ),
           ),
@@ -2565,27 +2566,37 @@ void main() {
       );
     }
 
-    await tester.pumpWidget(buildFrame(withTertiaryCallback: true));
+    // Each of onTertiaryTapDown and onTertiaryTapUp, alone or together,
+    // enables tertiary button handling.
+    for (final (bool withTertiaryTapDown, bool withTertiaryTapUp) in <(bool, bool)>[
+      (false, true),
+      (true, false),
+      (true, true),
+    ]) {
+      await tester.pumpWidget(
+        buildFrame(withTertiaryTapDown: withTertiaryTapDown, withTertiaryTapUp: withTertiaryTapUp),
+      );
 
-    TestGesture gesture = await tester.startGesture(
-      tester.getRect(find.byType(InkWell)).center,
-      buttons: kTertiaryButton,
-    );
-    await tester.pump(const Duration(milliseconds: 200));
+      final TestGesture gesture = await tester.startGesture(
+        tester.getRect(find.byType(InkWell)).center,
+        buttons: kTertiaryButton,
+      );
+      await tester.pump(const Duration(milliseconds: 200));
 
-    expect(log, equals(<bool>[true]));
-    log.clear();
+      expect(log, equals(<bool>[true]));
+      log.clear();
 
-    await gesture.up();
-    await tester.pump(const Duration(milliseconds: 200));
+      await gesture.up();
+      await tester.pump(const Duration(milliseconds: 200));
 
-    expect(log, equals(<bool>[false]));
-    log.clear();
+      expect(log, equals(<bool>[false]));
+      log.clear();
+    }
 
     // Without a tertiary callback, a tertiary button press is ignored.
-    await tester.pumpWidget(buildFrame(withTertiaryCallback: false));
+    await tester.pumpWidget(buildFrame(withTertiaryTapDown: false, withTertiaryTapUp: false));
 
-    gesture = await tester.startGesture(
+    final TestGesture gesture = await tester.startGesture(
       tester.getRect(find.byType(InkWell)).center,
       buttons: kTertiaryButton,
     );
