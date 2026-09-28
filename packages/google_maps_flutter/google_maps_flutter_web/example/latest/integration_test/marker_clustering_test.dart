@@ -13,6 +13,8 @@ import 'package:google_maps_flutter_web/src/google_maps_inspector_web.dart';
 import 'package:google_maps_flutter_web/src/marker_clustering.dart';
 import 'package:integration_test/integration_test.dart';
 
+import 'resources/wait_for_map.dart';
+
 void main() {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
 
@@ -61,7 +63,7 @@ void main() {
         ),
       );
 
-      final int mapId = await mapIdCompleter.future;
+      final int mapId = await waitForMap(mapIdCompleter.future);
       expect(mapId, equals(testMapId));
 
       final List<Cluster> clusters =

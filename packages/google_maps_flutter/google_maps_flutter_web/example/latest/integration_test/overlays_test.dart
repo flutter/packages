@@ -19,6 +19,7 @@ import 'package:web/web.dart';
 
 @GenerateNiceMocks(<MockSpec<dynamic>>[MockSpec<TileProvider>()])
 import 'overlays_test.mocks.dart';
+import 'resources/wait_for_map.dart';
 
 MockTileProvider neverTileProvider() {
   final tileProvider = MockTileProvider();
@@ -158,7 +159,7 @@ void main() {
 
       // This is needed to kick-off the rendering of the JS Map flutter widget
       await tester.pump();
-      final GoogleMapController controller = await controllerCompleter.future;
+      final GoogleMapController controller = await waitForMap(controllerCompleter.future);
 
       await tester.pump();
       verify(tileProviders[0].getTile(any, any, any));

@@ -247,7 +247,8 @@ class GoogleMapController {
   /// [GoogleMapsPlugin.buildViewWithConfiguration] method so the internal
   /// [GoogleMapsController] of a Web Map initializes as soon as possible.
   /// Check [_attachMapEvents] to see how this controller notifies the
-  /// plugin of it being fully ready (through the `onTilesloaded.first` event).
+  /// plugin of it being fully ready (through the first `tilesloaded` event, or
+  /// the first `idle` event after the map is laid out).
   ///
   /// Failure to call this method would result in the GMap not rendering at all,
   /// and most of the public methods on this class no-op'ing.
@@ -280,12 +281,21 @@ class GoogleMapController {
 
   // Funnels map gmap events into the plugin's stream controller.
   void _attachMapEvents(gmaps.Map map) {
-    map.onTilesloaded.first.then((void _) {
-      // Report the map as ready to go the first time the tiles load
-      if (!_streamController.isClosed) {
-        _streamController.add(WebMapReadyEvent(_mapId));
-      }
-    });
+    // `tilesloaded` requires every visible tile to finish downloading, so it
+    // never fires if a tile request stalls or fails. `idle` fires once the
+    // camera settles, when the projection and bounds are available, but it is
+    // only accepted after the div is laid out, so the bounds aren't computed
+    // for a detached 0x0 map.
+    // See https://github.com/flutter/flutter/issues/193452.
+    map.onTilesloaded
+        .merge(map.onIdle.where((void _) => _div.isConnected && _div.offsetWidth > 0))
+        .first
+        .then((void _) {
+          // Report the map as ready to go the first time it is fully rendered.
+          if (!_streamController.isClosed) {
+            _streamController.add(WebMapReadyEvent(_mapId));
+          }
+        });
     _onClickSubscription = map.onClick.listen((gmaps.MapMouseEventOrIconMouseEvent event) {
       assert(event.latLng != null);
       if (!_streamController.isClosed) {

@@ -15,6 +15,8 @@ import 'package:google_maps_flutter/google_maps_flutter.dart' show GoogleMap, Go
 import 'package:google_maps_flutter_platform_interface/google_maps_flutter_platform_interface.dart';
 import 'package:integration_test/integration_test.dart';
 
+import 'resources/wait_for_map.dart';
+
 // This value is used when comparing long~num, like LatLng values.
 const double _acceptableLatLngDelta = 0.0000000001;
 
@@ -52,7 +54,7 @@ void main() {
             onMapCreated: onMapCreated,
           );
 
-          final GoogleMapController controller = await controllerCompleter.future;
+          final GoogleMapController controller = await waitForMap(controllerCompleter.future);
 
           await controller.moveCamera(CameraUpdate.newLatLngZoom(const LatLng(19, 26), 12));
 
@@ -91,7 +93,7 @@ void main() {
         );
         await tester.pumpAndSettle();
 
-        final GoogleMapController controller = await controllerCompleter.future;
+        final GoogleMapController controller = await waitForMap(controllerCompleter.future);
 
         final LatLngBounds firstVisibleRegion = await controller.getVisibleRegion();
 
@@ -125,7 +127,7 @@ void main() {
           onMapCreated: onMapCreated,
         );
 
-        final GoogleMapController controller = await controllerCompleter.future;
+        final GoogleMapController controller = await waitForMap(controllerCompleter.future);
 
         final ScreenCoordinate screenPosition = await controller.getScreenCoordinate(center);
 
@@ -142,7 +144,7 @@ void main() {
           size: size,
           onMapCreated: onMapCreated,
         );
-        final GoogleMapController controller = await controllerCompleter.future;
+        final GoogleMapController controller = await waitForMap(controllerCompleter.future);
 
         final LatLngBounds bounds = await controller.getVisibleRegion();
         final northWest = LatLng(bounds.northeast.latitude, bounds.southwest.longitude);
@@ -162,7 +164,7 @@ void main() {
           size: size,
           onMapCreated: onMapCreated,
         );
-        final GoogleMapController controller = await controllerCompleter.future;
+        final GoogleMapController controller = await waitForMap(controllerCompleter.future);
 
         final LatLngBounds bounds = await controller.getVisibleRegion();
         final southEast = LatLng(bounds.southwest.latitude, bounds.northeast.longitude);
@@ -183,7 +185,7 @@ void main() {
           onMapCreated: onMapCreated,
         );
 
-        final GoogleMapController controller = await controllerCompleter.future;
+        final GoogleMapController controller = await waitForMap(controllerCompleter.future);
 
         final LatLng coords = await controller.getLatLng(
           ScreenCoordinate(x: size.width ~/ 2, y: size.height ~/ 2),
@@ -200,7 +202,7 @@ void main() {
           size: size,
           onMapCreated: onMapCreated,
         );
-        final GoogleMapController controller = await controllerCompleter.future;
+        final GoogleMapController controller = await waitForMap(controllerCompleter.future);
 
         final LatLngBounds bounds = await controller.getVisibleRegion();
         final northWest = LatLng(bounds.northeast.latitude, bounds.southwest.longitude);
@@ -218,7 +220,7 @@ void main() {
           size: size,
           onMapCreated: onMapCreated,
         );
-        final GoogleMapController controller = await controllerCompleter.future;
+        final GoogleMapController controller = await waitForMap(controllerCompleter.future);
 
         final LatLngBounds bounds = await controller.getVisibleRegion();
         final southEast = LatLng(bounds.southwest.latitude, bounds.northeast.longitude);
