@@ -10,8 +10,11 @@
 import 'package:go_router/go_router.dart';
 
 mixin $HomeRoute {}
+
 mixin $DetailsRoute {}
+
 mixin $InvoicesRoute {}
+
 mixin $ShipmentsRoute {}
 
 @TypedGoRoute<HomeRoute>(
