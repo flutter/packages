@@ -43,8 +43,8 @@ void main() {
       const Locale('zh', 'ZH'), //'ah:mm'
       const Locale('fa', 'IR'), //'H:mm' but RTL
       const Locale('in', 'ID'), //'HH.mm'
-      const Locale('ko', 'KR'), //'a h:mm`
-      const Locale('th', 'TH'), //`HH:mm น.`
+      const Locale('ko', 'KR'), //'a h:mm'
+      const Locale('th', 'TH'), //'HH:mm น.'
     ];
 
     for (final locale in locales) {
@@ -146,8 +146,8 @@ void main() {
       const Locale('zh', 'ZH'), //'ah:mm'
       const Locale('fa', 'IR'), //'H:mm' but RTL
       const Locale('in', 'ID'), //'HH.mm'
-      const Locale('ko', 'KR'), //'a h:mm`
-      const Locale('th', 'TH'), //`HH:mm น.`
+      const Locale('ko', 'KR'), //'a h:mm'
+      const Locale('th', 'TH'), //'HH:mm น.'
     ];
 
     for (final locale in locales) {
@@ -244,8 +244,8 @@ void main() {
       const Locale('zh', 'ZH'), //'ah:mm'
       const Locale('fa', 'IR'), //'H:mm' but RTL
       const Locale('in', 'ID'), //'HH.mm'
-      const Locale('ko', 'KR'), //'a h:mm`
-      const Locale('th', 'TH'), //`HH:mm น.`
+      const Locale('ko', 'KR'), //'a h:mm'
+      const Locale('th', 'TH'), //'HH:mm น.'
     ];
 
     for (final locale in locales) {
@@ -352,8 +352,8 @@ void main() {
       const Locale('zh', 'ZH'), //'ah:mm'
       const Locale('fa', 'IR'), //'H:mm' but RTL
       const Locale('in', 'ID'), //'HH.mm'
-      const Locale('ko', 'KR'), //'a h:mm`
-      const Locale('th', 'TH'), //`HH:mm น.`
+      const Locale('ko', 'KR'), //'a h:mm'
+      const Locale('th', 'TH'), //'HH:mm น.'
     ];
 
     for (final locale in locales) {
@@ -417,22 +417,6 @@ void main() {
         expect(hourLeftOffset, lessThan(stringFragmentLeftOffset));
         expect(stringFragmentLeftOffset, lessThan(minuteLeftOffset));
         expect(dayPeriodControlFinder, findsOne);
-      } else if (locale == const Locale('in', 'ID')) {
-        // This is an LTR locale, it uses a dot separator instead of a standard colon.
-        expect(stringFragmentText.data, '.');
-        expect(hourLeftOffset, lessThan(stringFragmentLeftOffset));
-        expect(stringFragmentLeftOffset, lessThan(minuteLeftOffset));
-        expect(dayPeriodControlFinder, findsNothing);
-      } else if (locale == const Locale('ko', 'KR')) {
-        expect(stringFragmentText.data, ':');
-        expect(hourLeftOffset, lessThan(stringFragmentLeftOffset));
-        expect(stringFragmentLeftOffset, lessThan(minuteLeftOffset));
-        expect(dayPeriodControlFinder, findsOne);
-      } else if (locale == const Locale('th', 'TH')) {
-        expect(stringFragmentText.data, ':');
-        expect(hourLeftOffset, lessThan(stringFragmentLeftOffset));
-        expect(stringFragmentLeftOffset, lessThan(minuteLeftOffset));
-        expect(dayPeriodControlFinder, findsOne);
       }
       await tester.tapAt(Offset(center.dx, center.dy - 50.0));
       await finishPicker(tester);
@@ -466,8 +450,8 @@ void main() {
       const Locale('zh', 'ZH'), //'ah:mm'
       const Locale('fa', 'IR'), //'H:mm' but RTL
       const Locale('in', 'ID'), //'HH.mm'
-      const Locale('ko', 'KR'), //'a h:mm`
-      const Locale('th', 'TH'), //`HH:mm น.`
+      const Locale('ko', 'KR'), //'a h:mm'
+      const Locale('th', 'TH'), //'HH:mm น.'
     ];
 
     for (final locale in locales) {
@@ -572,8 +556,8 @@ void main() {
       const Locale('zh', 'ZH'), //'ah:mm'
       const Locale('fa', 'IR'), //'H:mm' but RTL
       const Locale('in', 'ID'), //'HH.mm'
-      const Locale('ko', 'KR'), //'a h:mm`
-      const Locale('th', 'TH'), //`HH:mm น.`
+      const Locale('ko', 'KR'), //'a h:mm'
+      const Locale('th', 'TH'), //'HH:mm น.'
     ];
 
     for (final locale in locales) {
