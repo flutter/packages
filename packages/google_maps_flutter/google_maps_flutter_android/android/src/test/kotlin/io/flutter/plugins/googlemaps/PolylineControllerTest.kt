@@ -21,6 +21,6 @@ class PolylineControllerTest {
     val controller = PolylineController(polyline, false, density)
     controller.setWidth(strokeWidth)
 
-    verify(polyline).setWidth(density * strokeWidth)
+    verify(polyline).width = density * strokeWidth
   }
 }

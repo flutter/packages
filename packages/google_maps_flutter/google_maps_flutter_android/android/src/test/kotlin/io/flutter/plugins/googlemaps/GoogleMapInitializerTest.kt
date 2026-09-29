@@ -39,9 +39,9 @@ class GoogleMapInitializerTest {
         .initializeWithRendererRequest(MapsInitializer.Renderer.LATEST)
     val type =
         async(start = CoroutineStart.UNDISPATCHED) {
-          googleMapInitializer!!.initializeWithPreferredRenderer(PlatformRendererType.LATEST)
+          googleMapInitializer.initializeWithPreferredRenderer(PlatformRendererType.LATEST)
         }
-    googleMapInitializer!!.onMapsSdkInitialized(MapsInitializer.Renderer.LATEST)
+    googleMapInitializer.onMapsSdkInitialized(MapsInitializer.Renderer.LATEST)
 
     Assert.assertEquals(PlatformRendererType.LATEST, type.await())
   }
@@ -54,9 +54,9 @@ class GoogleMapInitializerTest {
         .initializeWithRendererRequest(MapsInitializer.Renderer.LEGACY)
     val type =
         async(start = CoroutineStart.UNDISPATCHED) {
-          googleMapInitializer!!.initializeWithPreferredRenderer(PlatformRendererType.LEGACY)
+          googleMapInitializer.initializeWithPreferredRenderer(PlatformRendererType.LEGACY)
         }
-    googleMapInitializer!!.onMapsSdkInitialized(MapsInitializer.Renderer.LEGACY)
+    googleMapInitializer.onMapsSdkInitialized(MapsInitializer.Renderer.LEGACY)
 
     Assert.assertEquals(PlatformRendererType.LEGACY, type.await())
   }
@@ -66,9 +66,9 @@ class GoogleMapInitializerTest {
     doNothing().whenever(googleMapInitializer).initializeWithRendererRequest(null)
     val type =
         async(start = CoroutineStart.UNDISPATCHED) {
-          googleMapInitializer!!.initializeWithPreferredRenderer(null)
+          googleMapInitializer.initializeWithPreferredRenderer(null)
         }
-    googleMapInitializer!!.onMapsSdkInitialized(MapsInitializer.Renderer.LATEST)
+    googleMapInitializer.onMapsSdkInitialized(MapsInitializer.Renderer.LATEST)
 
     Assert.assertNull(type.await())
   }

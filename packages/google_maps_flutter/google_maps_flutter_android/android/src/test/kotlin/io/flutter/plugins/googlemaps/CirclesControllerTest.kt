@@ -22,33 +22,33 @@ class CirclesControllerTest {
   fun controller_changeCircles_updatesExistingCircle() {
     val z = mock<zzl>()
     val circle = spy(Circle(z))
-    whenever(mockGoogleMap!!.addCircle(any())).thenReturn(circle)
+    whenever(mockGoogleMap.addCircle(any())).thenReturn(circle)
 
     val controller = CirclesController(mock(), 1.0f)
     controller.setGoogleMap(mockGoogleMap)
 
     val id = "a_circle"
 
-    controller.addCircles(listOf(createCircle(id, /* consumesEvents */ false)))
+    controller.addCircles(listOf(createCircle(id, consumesEvents = false)))
     // There should be exactly one circle.
     Assert.assertEquals(1, controller.circleIdToController.size.toLong())
 
-    controller.changeCircles(listOf(createCircle(id, /* consumesEvents */ true)))
+    controller.changeCircles(listOf(createCircle(id, consumesEvents = true)))
     // There should still only be one circle, and it should be updated.
     Assert.assertEquals(1, controller.circleIdToController.size.toLong())
-    verify(circle, times(1)).setClickable(true)
+    verify(circle, times(1)).isClickable = true
   }
 
   private fun createCircle(circleId: String, consumesEvents: Boolean): PlatformCircle {
     return PlatformCircle(
-        consumesEvents, /* fillColor */
-        PlatformColor(0L), /* strokeColor */
-        PlatformColor(0L), /* visible */
-        true, /* strokeWidth */
-        1L, /* zIndex */
-        0.0, /* center */
-        (PlatformLatLng(0.0, 0.0)), /* radius */
-        1.0,
+        consumesEvents,
+        fillColor = PlatformColor(0L),
+        strokeColor = PlatformColor(0L),
+        visible = true,
+        strokeWidth = 1L,
+        zIndex = 0.0,
+        center = (PlatformLatLng(0.0, 0.0)),
+        radius = 1.0,
         circleId)
   }
 }

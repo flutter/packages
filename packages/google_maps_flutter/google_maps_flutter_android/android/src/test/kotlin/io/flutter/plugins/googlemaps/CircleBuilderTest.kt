@@ -15,7 +15,7 @@ class CircleBuilderTest {
     builder.setStrokeWidth(strokeWidth)
 
     val options = builder.build()
-    val width = options.getStrokeWidth()
+    val width = options.strokeWidth
 
     TestCase.assertEquals(density * strokeWidth, width)
   }

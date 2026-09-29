@@ -44,32 +44,32 @@ class GroundOverlaysControllerTest {
         PlatformBitmap(
             PlatformBitmapBytesMap(
                 bmpData,
-                PlatformMapBitmapScaling.AUTO, /* imagePixelRatio */
-                2.0, /* width */
-                100.0, /* height */
-                null)), /* position */
-        null, /* bounds */
-        null, /* width */
-        null, /* height */
-        null, /* anchor */
-        null,
-        transparency, /* bearing */
-        1.0, /* zIndex */
-        1L, /* visible */
-        true, /* clickable */
-        true)
+                PlatformMapBitmapScaling.AUTO,
+                imagePixelRatio = 2.0,
+                width = 100.0,
+                height = null)),
+        position = null,
+        bounds = null,
+        width = null,
+        height = null,
+        anchor = null,
+        transparency,
+        bearing = 1.0,
+        zIndex = 1L,
+        visible = true,
+        clickable = true)
   }
 
   @Before
   fun setUp() {
     val context = ApplicationProvider.getApplicationContext<Context>()
-    val assetManager = context.getAssets()
+    val assetManager = context.assets
     val flutterApi = spy(MapsCallbackApi(mock<BinaryMessenger>(), ""))
     controller =
         spy(
             GroundOverlaysController(
-                flutterApi, assetManager, 1.0f, bitmapDescriptorFactoryWrapper!!))
-    controller!!.setGoogleMap(googleMap)
+                flutterApi, assetManager, 1.0f, bitmapDescriptorFactoryWrapper))
+    controller.setGoogleMap(googleMap)
     whenever(bitmapDescriptorFactoryWrapper.fromBitmap(any())).thenReturn(mockBitmapDescriptor)
   }
 
@@ -79,23 +79,21 @@ class GroundOverlaysControllerTest {
     val googleGroundOverlayId = "abc123"
     val transparency = 0.1f
 
-    whenever(groundOverlay.getId()).thenReturn(googleGroundOverlayId)
-    whenever(googleMap!!.addGroundOverlay(any())).thenReturn(groundOverlay)
+    whenever(groundOverlay.id).thenReturn(googleGroundOverlayId)
+    whenever(googleMap.addGroundOverlay(any())).thenReturn(groundOverlay)
 
-    controller!!.addGroundOverlays(
+    controller.addGroundOverlays(
         listOf(createGroundOverlay(googleGroundOverlayId, transparency.toDouble())))
     verify(googleMap, times(1))
         .addGroundOverlay(
-            argThat { argument: GroundOverlayOptions? ->
-              argument!!.getTransparency() == transparency
-            })
+            argThat { argument: GroundOverlayOptions? -> argument!!.transparency == transparency })
 
     val newTransparency = 0.2f
-    controller!!.changeGroundOverlays(
+    controller.changeGroundOverlays(
         listOf(createGroundOverlay(googleGroundOverlayId, newTransparency.toDouble())))
-    verify(groundOverlay, times(1)).setTransparency(newTransparency)
+    verify(groundOverlay, times(1)).transparency = newTransparency
 
-    controller!!.removeGroundOverlays(listOf(googleGroundOverlayId))
+    controller.removeGroundOverlays(listOf(googleGroundOverlayId))
 
     verify(groundOverlay, times(1)).remove()
   }

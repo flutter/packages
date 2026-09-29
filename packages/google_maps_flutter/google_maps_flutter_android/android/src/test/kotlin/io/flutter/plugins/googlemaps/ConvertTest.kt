@@ -45,18 +45,18 @@ class ConvertTest {
   private val base64Image: String? = TestImageUtils.generateBase64Image()
 
   @Test
-  fun ConvertPointsFromPigeonConvertsThePointsWithFullPrecision() {
+  fun convertPointsFromPigeonConvertsThePointsWithFullPrecision() {
     val latitude = 43.03725568057
     val longitude = -87.90466904649
     val platLng = PlatformLatLng(latitude, longitude)
     val latLngs = Convert.pointsFromPigeon(listOf(platLng))
-    val latLng = latLngs.get(0)
+    val latLng = latLngs[0]
     Assert.assertEquals(latitude, latLng.latitude, 1e-15)
     Assert.assertEquals(longitude, latLng.longitude, 1e-15)
   }
 
   @Test
-  fun ConvertClusterToPigeonReturnsCorrectData() {
+  fun convertClusterToPigeonReturnsCorrectData() {
     val clusterManagerId = "cm_1"
     val clusterPosition = LatLng(43.00, -87.90)
     val markerPosition1 = LatLng(43.05, -87.95)
@@ -65,11 +65,11 @@ class ConvertTest {
     val cluster = StaticCluster<MarkerBuilder>(clusterPosition)
 
     val marker1 = MarkerBuilder("m_1", clusterManagerId, PlatformMarkerType.MARKER)
-    marker1.setPosition(markerPosition1)
+    marker1.position = markerPosition1
     cluster.add(marker1)
 
     val marker2 = MarkerBuilder("m_2", clusterManagerId, PlatformMarkerType.MARKER)
-    marker2.setPosition(markerPosition2)
+    marker2.position = markerPosition2
     cluster.add(marker2)
 
     val result = Convert.clusterToPigeon(clusterManagerId, cluster)
@@ -90,28 +90,28 @@ class ConvertTest {
 
     val markerIds = result.markerIds
     Assert.assertEquals(2, markerIds.size.toLong())
-    Assert.assertEquals(marker1.markerId(), markerIds.get(0))
-    Assert.assertEquals(marker2.markerId(), markerIds.get(1))
+    Assert.assertEquals(marker1.markerId(), markerIds[0])
+    Assert.assertEquals(marker2.markerId(), markerIds[1])
   }
 
   @Test
   @Throws(Exception::class)
-  fun GetBitmapFromAssetAuto() {
+  fun getBitmapFromAssetAuto() {
     val fakeAssetName = "fake_asset_name"
     val fakeAssetKey = "fake_asset_key"
 
-    whenever(flutterInjectorWrapper!!.getLookupKeyForAsset(fakeAssetName)).thenReturn(fakeAssetKey)
+    whenever(flutterInjectorWrapper.getLookupKeyForAsset(fakeAssetName)).thenReturn(fakeAssetKey)
 
-    whenever(assetManager!!.open(fakeAssetKey)).thenReturn(TestImageUtils.buildImageInputStream())
+    whenever(assetManager.open(fakeAssetKey)).thenReturn(TestImageUtils.buildImageInputStream())
 
-    whenever(bitmapDescriptorFactoryWrapper!!.fromBitmap(any())).thenReturn(mockBitmapDescriptor)
+    whenever(bitmapDescriptorFactoryWrapper.fromBitmap(any())).thenReturn(mockBitmapDescriptor)
     val bitmap =
         PlatformBitmapAssetMap(
             fakeAssetName,
-            PlatformMapBitmapScaling.AUTO, /* imagePixelRatio */
-            2.0, /* width */
-            15.0, /* height */
-            15.0)
+            PlatformMapBitmapScaling.AUTO,
+            imagePixelRatio = 2.0,
+            width = 15.0,
+            height = 15.0)
 
     val result =
         Convert.getBitmapFromAsset(
@@ -122,22 +122,22 @@ class ConvertTest {
 
   @Test
   @Throws(Exception::class)
-  fun GetBitmapFromAssetAutoAndWidth() {
+  fun getBitmapFromAssetAutoAndWidth() {
     val fakeAssetName = "fake_asset_name"
     val fakeAssetKey = "fake_asset_key"
 
-    whenever(flutterInjectorWrapper!!.getLookupKeyForAsset(fakeAssetName)).thenReturn(fakeAssetKey)
+    whenever(flutterInjectorWrapper.getLookupKeyForAsset(fakeAssetName)).thenReturn(fakeAssetKey)
 
-    whenever(assetManager!!.open(fakeAssetKey)).thenReturn(TestImageUtils.buildImageInputStream())
+    whenever(assetManager.open(fakeAssetKey)).thenReturn(TestImageUtils.buildImageInputStream())
 
-    whenever(bitmapDescriptorFactoryWrapper!!.fromBitmap(any())).thenReturn(mockBitmapDescriptor)
+    whenever(bitmapDescriptorFactoryWrapper.fromBitmap(any())).thenReturn(mockBitmapDescriptor)
     val bitmap =
         PlatformBitmapAssetMap(
             fakeAssetName,
-            PlatformMapBitmapScaling.AUTO, /* imagePixelRatio */
-            2.0, /* width */
-            15.0, /* height */
-            null)
+            PlatformMapBitmapScaling.AUTO,
+            imagePixelRatio = 2.0,
+            width = 15.0,
+            height = null)
 
     val result =
         Convert.getBitmapFromAsset(
@@ -148,22 +148,22 @@ class ConvertTest {
 
   @Test
   @Throws(Exception::class)
-  fun GetBitmapFromAssetAutoAndHeight() {
+  fun getBitmapFromAssetAutoAndHeight() {
     val fakeAssetName = "fake_asset_name"
     val fakeAssetKey = "fake_asset_key"
 
-    whenever(flutterInjectorWrapper!!.getLookupKeyForAsset(fakeAssetName)).thenReturn(fakeAssetKey)
+    whenever(flutterInjectorWrapper.getLookupKeyForAsset(fakeAssetName)).thenReturn(fakeAssetKey)
 
-    whenever(assetManager!!.open(fakeAssetKey)).thenReturn(TestImageUtils.buildImageInputStream())
+    whenever(assetManager.open(fakeAssetKey)).thenReturn(TestImageUtils.buildImageInputStream())
 
-    whenever(bitmapDescriptorFactoryWrapper!!.fromBitmap(any())).thenReturn(mockBitmapDescriptor)
+    whenever(bitmapDescriptorFactoryWrapper.fromBitmap(any())).thenReturn(mockBitmapDescriptor)
     val bitmap =
         PlatformBitmapAssetMap(
             fakeAssetName,
-            PlatformMapBitmapScaling.AUTO, /* imagePixelRatio */
-            2.0, /* width */
-            null, /* height */
-            15.0)
+            PlatformMapBitmapScaling.AUTO,
+            imagePixelRatio = 2.0,
+            width = null,
+            height = 15.0)
 
     val result =
         Convert.getBitmapFromAsset(
@@ -174,24 +174,24 @@ class ConvertTest {
 
   @Test
   @Throws(Exception::class)
-  fun GetBitmapFromAssetNoScaling() {
+  fun getBitmapFromAssetNoScaling() {
     val fakeAssetName = "fake_asset_name"
     val fakeAssetKey = "fake_asset_key"
 
-    whenever(flutterInjectorWrapper!!.getLookupKeyForAsset(fakeAssetName)).thenReturn(fakeAssetKey)
+    whenever(flutterInjectorWrapper.getLookupKeyForAsset(fakeAssetName)).thenReturn(fakeAssetKey)
 
-    whenever(assetManager!!.open(fakeAssetKey)).thenReturn(TestImageUtils.buildImageInputStream())
+    whenever(assetManager.open(fakeAssetKey)).thenReturn(TestImageUtils.buildImageInputStream())
 
-    whenever(bitmapDescriptorFactoryWrapper!!.fromAsset(any())).thenReturn(mockBitmapDescriptor)
+    whenever(bitmapDescriptorFactoryWrapper.fromAsset(any())).thenReturn(mockBitmapDescriptor)
 
     verify(bitmapDescriptorFactoryWrapper, never()).fromBitmap(any())
     val bitmap =
         PlatformBitmapAssetMap(
             fakeAssetName,
-            PlatformMapBitmapScaling.NONE, /* imagePixelRatio */
-            2.0, /* width */
-            null, /* height */
-            null)
+            PlatformMapBitmapScaling.NONE,
+            imagePixelRatio = 2.0,
+            width = null,
+            height = null)
 
     val result =
         Convert.getBitmapFromAsset(
@@ -201,18 +201,18 @@ class ConvertTest {
   }
 
   @Test
-  fun GetBitmapFromBytesAuto() {
+  fun getBitmapFromBytesAuto() {
     val bmpData = Base64.decode(base64Image, Base64.DEFAULT)
 
-    whenever(bitmapDescriptorFactoryWrapper!!.fromBitmap(any())).thenReturn(mockBitmapDescriptor)
+    whenever(bitmapDescriptorFactoryWrapper.fromBitmap(any())).thenReturn(mockBitmapDescriptor)
 
     val bitmap =
         PlatformBitmapBytesMap(
             bmpData,
-            PlatformMapBitmapScaling.AUTO, /* imagePixelRatio */
-            2.0, /* width */
-            null, /* height */
-            null)
+            PlatformMapBitmapScaling.AUTO,
+            imagePixelRatio = 2.0,
+            width = null,
+            height = null)
 
     val result = Convert.getBitmapFromBytes(bitmap, 1f, bitmapDescriptorFactoryWrapper)
 
@@ -220,17 +220,17 @@ class ConvertTest {
   }
 
   @Test
-  fun GetBitmapFromBytesAutoAndWidth() {
+  fun getBitmapFromBytesAutoAndWidth() {
     val bmpData = Base64.decode(base64Image, Base64.DEFAULT)
 
-    whenever(bitmapDescriptorFactoryWrapper!!.fromBitmap(any())).thenReturn(mockBitmapDescriptor)
+    whenever(bitmapDescriptorFactoryWrapper.fromBitmap(any())).thenReturn(mockBitmapDescriptor)
     val bitmap =
         PlatformBitmapBytesMap(
-            bmpData, /* bitmapScaling */
-            PlatformMapBitmapScaling.AUTO, /* imagePixelRatio */
-            2.0, /* width */
-            15.0, /* height */
-            null)
+            bmpData,
+            bitmapScaling = PlatformMapBitmapScaling.AUTO,
+            imagePixelRatio = 2.0,
+            width = 15.0,
+            height = null)
 
     val result = Convert.getBitmapFromBytes(bitmap, 1f, bitmapDescriptorFactoryWrapper)
 
@@ -238,17 +238,17 @@ class ConvertTest {
   }
 
   @Test
-  fun GetBitmapFromBytesAutoAndHeight() {
+  fun getBitmapFromBytesAutoAndHeight() {
     val bmpData = Base64.decode(base64Image, Base64.DEFAULT)
 
-    whenever(bitmapDescriptorFactoryWrapper!!.fromBitmap(any())).thenReturn(mockBitmapDescriptor)
+    whenever(bitmapDescriptorFactoryWrapper.fromBitmap(any())).thenReturn(mockBitmapDescriptor)
     val bitmap =
         PlatformBitmapBytesMap(
-            bmpData, /* bitmapScaling */
-            PlatformMapBitmapScaling.AUTO, /* imagePixelRatio */
-            2.0, /* width */
-            null, /* height */
-            15.0)
+            bmpData,
+            bitmapScaling = PlatformMapBitmapScaling.AUTO,
+            imagePixelRatio = 2.0,
+            width = null,
+            height = 15.0)
 
     val result = Convert.getBitmapFromBytes(bitmap, 1f, bitmapDescriptorFactoryWrapper)
 
@@ -256,17 +256,17 @@ class ConvertTest {
   }
 
   @Test
-  fun GetBitmapFromBytesNoScaling() {
+  fun getBitmapFromBytesNoScaling() {
     val bmpData = Base64.decode(base64Image, Base64.DEFAULT)
 
-    whenever(bitmapDescriptorFactoryWrapper!!.fromBitmap(any())).thenReturn(mockBitmapDescriptor)
+    whenever(bitmapDescriptorFactoryWrapper.fromBitmap(any())).thenReturn(mockBitmapDescriptor)
     val bitmap =
         PlatformBitmapBytesMap(
-            bmpData, /* bitmapScaling */
-            PlatformMapBitmapScaling.NONE, /* imagePixelRatio */
-            2.0, /* width */
-            null, /* height */
-            null)
+            bmpData,
+            bitmapScaling = PlatformMapBitmapScaling.NONE,
+            imagePixelRatio = 2.0,
+            width = null,
+            height = null)
 
     val result = Convert.getBitmapFromBytes(bitmap, 1f, bitmapDescriptorFactoryWrapper)
 
@@ -274,18 +274,18 @@ class ConvertTest {
   }
 
   @Test(expected = IllegalArgumentException::class) // Expecting an IllegalArgumentException
-  fun GetBitmapFromBytesThrowsErrorIfInvalidImageData() {
+  fun getBitmapFromBytesThrowsErrorIfInvalidImageData() {
     val invalidBase64Image = "not valid image data"
     val bmpData = Base64.decode(invalidBase64Image, Base64.DEFAULT)
 
     verify(bitmapDescriptorFactoryWrapper, never()).fromBitmap(any())
     val bitmap =
         PlatformBitmapBytesMap(
-            bmpData, /* bitmapScaling */
-            PlatformMapBitmapScaling.NONE, /* imagePixelRatio */
-            2.0, /* width */
-            null, /* height */
-            null)
+            bmpData,
+            bitmapScaling = PlatformMapBitmapScaling.NONE,
+            imagePixelRatio = 2.0,
+            width = null,
+            height = null)
 
     try {
       Convert.getBitmapFromBytes(bitmap, 1f, bitmapDescriptorFactoryWrapper)
@@ -298,71 +298,68 @@ class ConvertTest {
   }
 
   @Test
-  fun GetPinConfigFromPlatformPinConfig_GlyphColor() {
+  fun getPinConfigFromPlatformPinConfig_GlyphColor() {
     val platformBitmap =
         PlatformBitmapPinConfig(
-            /* backgroundColor */
-            PlatformColor(0x00FFFFL), /* borderColor */
-            PlatformColor(0xFF00FFL), /* glyphColor */
-            PlatformColor(0x112233L), /* glyphBitmap */
-            null, /* glyphText */
-            null, /* glyphTextColor */
-            null)
+            backgroundColor = PlatformColor(0x00FFFFL),
+            borderColor = PlatformColor(0xFF00FFL),
+            glyphColor = PlatformColor(0x112233L),
+            glyphBitmap = null,
+            glyphText = null,
+            glyphTextColor = null)
 
     val pinConfig =
         Convert.getPinConfigFromPlatformPinConfig(
             platformBitmap, assetManager, 1f, bitmapDescriptorFactoryWrapper)
-    Assert.assertEquals(0x00FFFFL, pinConfig.getBackgroundColor().toLong())
-    Assert.assertEquals(0xFF00FFL, pinConfig.getBorderColor().toLong())
-    Assert.assertEquals(0x112233L, pinConfig.getGlyph().getGlyphColor().toLong())
+    Assert.assertEquals(0x00FFFFL, pinConfig.backgroundColor.toLong())
+    Assert.assertEquals(0xFF00FFL, pinConfig.borderColor.toLong())
+    Assert.assertEquals(0x112233L, pinConfig.glyph.glyphColor.toLong())
   }
 
   @Test
-  fun GetPinConfigFromPlatformPinConfig_Glyph() {
+  fun getPinConfigFromPlatformPinConfig_Glyph() {
     val platformBitmap =
         PlatformBitmapPinConfig(
-            /* backgroundColor */
-            null, /* borderColor */
-            null, /* glyphColor */
-            null, /* glyphBitmap */
-            null, /* glyphText */
-            "Hi", /* glyphTextColor */
-            PlatformColor(0xFFFFFFL))
+            backgroundColor = null,
+            borderColor = null,
+            glyphColor = null,
+            glyphBitmap = null,
+            glyphText = "Hi",
+            glyphTextColor = PlatformColor(0xFFFFFFL))
     val pinConfig =
         Convert.getPinConfigFromPlatformPinConfig(
             platformBitmap, assetManager, 1f, bitmapDescriptorFactoryWrapper)
-    Assert.assertEquals("Hi", pinConfig.getGlyph().getText())
-    Assert.assertEquals(0xFFFFFFL, pinConfig.getGlyph().getTextColor().toLong())
+    Assert.assertEquals("Hi", pinConfig.glyph.text)
+    Assert.assertEquals(0xFFFFFFL, pinConfig.glyph.textColor.toLong())
   }
 
   @Test
-  fun GetPinConfigFromPlatformPinConfig_GlyphBitmap() {
+  fun getPinConfigFromPlatformPinConfig_GlyphBitmap() {
     val bmpData = Base64.decode(base64Image, Base64.DEFAULT)
     val bytesBitmap =
         PlatformBitmapBytesMap(
-            bmpData, /* bitmapScaling */
-            PlatformMapBitmapScaling.AUTO, /* imagePixelRatio */
-            2.0, /* width */
-            null, /* height */
-            null)
+            bmpData,
+            bitmapScaling = PlatformMapBitmapScaling.AUTO,
+            imagePixelRatio = 2.0,
+            width = null,
+            height = null)
     val icon = PlatformBitmap(bytesBitmap)
     val platformBitmap =
         PlatformBitmapPinConfig(
-            /* backgroundColor */
-            PlatformColor(0xFFFFFFL), /* borderColor */
-            PlatformColor(0x000000L), /* glyphColor */
-            null, /* glyphBitmap */
-            icon, /* glyphText */
-            null, /* glyphTextColor */
-            null)
-    whenever(bitmapDescriptorFactoryWrapper!!.fromBitmap(any())).thenReturn(mockBitmapDescriptor)
+            backgroundColor = PlatformColor(0xFFFFFFL),
+            borderColor = PlatformColor(0x000000L),
+            glyphColor = null,
+            glyphBitmap = icon,
+            glyphText = null,
+            glyphTextColor = null)
+    whenever(bitmapDescriptorFactoryWrapper.fromBitmap(any())).thenReturn(mockBitmapDescriptor)
     val pinConfig =
         Convert.getPinConfigFromPlatformPinConfig(
             platformBitmap, assetManager, 1f, bitmapDescriptorFactoryWrapper)
 
-    Assert.assertEquals(0xFFFFFFL, pinConfig.getBackgroundColor().toLong())
-    Assert.assertEquals(0x000000L, pinConfig.getBorderColor().toLong())
-    Assert.assertEquals(mockBitmapDescriptor, pinConfig.getGlyph().getBitmapDescriptor())
+    Assert.assertEquals(0xFFFFFFL, pinConfig.backgroundColor.toLong())
+    Assert.assertEquals(0x000000L, pinConfig.borderColor.toLong())
+    Assert.assertEquals(mockBitmapDescriptor, pinConfig.glyph.bitmapDescriptor)
   }
 
   private val minimalConfigurationBuilder: PlatformMapConfigurationBuilder
@@ -372,112 +369,112 @@ class ConvertTest {
   @Test
   fun interpretMapConfiguration_handlesNulls() {
     val config = this.minimalConfigurationBuilder.build()
-    Convert.interpretMapConfiguration(config, optionsSink!!)
+    Convert.interpretMapConfiguration(config, optionsSink)
     verifyNoInteractions(optionsSink)
   }
 
   @Test
   fun interpretMapConfiguration_handlesCompassEnabled() {
     val config = this.minimalConfigurationBuilder.setCompassEnabled(false).build()
-    Convert.interpretMapConfiguration(config, optionsSink!!)
+    Convert.interpretMapConfiguration(config, optionsSink)
     verify(optionsSink, times(1)).setCompassEnabled(false)
   }
 
   @Test
   fun interpretMapConfiguration_handlesMapToolbarEnabled() {
     val config = this.minimalConfigurationBuilder.setMapToolbarEnabled(true).build()
-    Convert.interpretMapConfiguration(config, optionsSink!!)
+    Convert.interpretMapConfiguration(config, optionsSink)
     verify(optionsSink, times(1)).setMapToolbarEnabled(true)
   }
 
   @Test
   fun interpretMapConfiguration_handlesRotateGesturesEnabled() {
     val config = this.minimalConfigurationBuilder.setRotateGesturesEnabled(false).build()
-    Convert.interpretMapConfiguration(config, optionsSink!!)
+    Convert.interpretMapConfiguration(config, optionsSink)
     verify(optionsSink, times(1)).setRotateGesturesEnabled(false)
   }
 
   @Test
   fun interpretMapConfiguration_handlesScrollGesturesEnabled() {
     val config = this.minimalConfigurationBuilder.setScrollGesturesEnabled(true).build()
-    Convert.interpretMapConfiguration(config, optionsSink!!)
+    Convert.interpretMapConfiguration(config, optionsSink)
     verify(optionsSink, times(1)).setScrollGesturesEnabled(true)
   }
 
   @Test
   fun interpretMapConfiguration_handlesTiltGesturesEnabled() {
     val config = this.minimalConfigurationBuilder.setTiltGesturesEnabled(false).build()
-    Convert.interpretMapConfiguration(config, optionsSink!!)
+    Convert.interpretMapConfiguration(config, optionsSink)
     verify(optionsSink, times(1)).setTiltGesturesEnabled(false)
   }
 
   @Test
   fun interpretMapConfiguration_handlesTrackCameraPosition() {
     val config = this.minimalConfigurationBuilder.setTrackCameraPosition(true).build()
-    Convert.interpretMapConfiguration(config, optionsSink!!)
+    Convert.interpretMapConfiguration(config, optionsSink)
     verify(optionsSink, times(1)).setTrackCameraPosition(true)
   }
 
   @Test
   fun interpretMapConfiguration_handlesZoomControlsEnabled() {
     val config = this.minimalConfigurationBuilder.setZoomControlsEnabled(false).build()
-    Convert.interpretMapConfiguration(config, optionsSink!!)
+    Convert.interpretMapConfiguration(config, optionsSink)
     verify(optionsSink, times(1)).setZoomControlsEnabled(false)
   }
 
   @Test
   fun interpretMapConfiguration_handlesZoomGesturesEnabled() {
     val config = this.minimalConfigurationBuilder.setZoomGesturesEnabled(true).build()
-    Convert.interpretMapConfiguration(config, optionsSink!!)
+    Convert.interpretMapConfiguration(config, optionsSink)
     verify(optionsSink, times(1)).setZoomGesturesEnabled(true)
   }
 
   @Test
   fun interpretMapConfiguration_handlesMyLocationEnabled() {
     val config = this.minimalConfigurationBuilder.setMyLocationEnabled(false).build()
-    Convert.interpretMapConfiguration(config, optionsSink!!)
+    Convert.interpretMapConfiguration(config, optionsSink)
     verify(optionsSink, times(1)).setMyLocationEnabled(false)
   }
 
   @Test
   fun interpretMapConfiguration_handlesMyLocationButtonEnabled() {
     val config = this.minimalConfigurationBuilder.setMyLocationButtonEnabled(true).build()
-    Convert.interpretMapConfiguration(config, optionsSink!!)
+    Convert.interpretMapConfiguration(config, optionsSink)
     verify(optionsSink, times(1)).setMyLocationButtonEnabled(true)
   }
 
   @Test
   fun interpretMapConfiguration_handlesIndoorViewEnabled() {
     val config = this.minimalConfigurationBuilder.setIndoorViewEnabled(false).build()
-    Convert.interpretMapConfiguration(config, optionsSink!!)
+    Convert.interpretMapConfiguration(config, optionsSink)
     verify(optionsSink, times(1)).setIndoorEnabled(false)
   }
 
   @Test
   fun interpretMapConfiguration_handlesTrafficEnabled() {
     val config = this.minimalConfigurationBuilder.setTrafficEnabled(true).build()
-    Convert.interpretMapConfiguration(config, optionsSink!!)
+    Convert.interpretMapConfiguration(config, optionsSink)
     verify(optionsSink, times(1)).setTrafficEnabled(true)
   }
 
   @Test
   fun interpretMapConfiguration_handlesBuildingsEnabled() {
     val config = this.minimalConfigurationBuilder.setBuildingsEnabled(false).build()
-    Convert.interpretMapConfiguration(config, optionsSink!!)
+    Convert.interpretMapConfiguration(config, optionsSink)
     verify(optionsSink, times(1)).setBuildingsEnabled(false)
   }
 
   @Test
   fun interpretMapConfiguration_handlesLiteModeEnabled() {
     val config = this.minimalConfigurationBuilder.setLiteModeEnabled(true).build()
-    Convert.interpretMapConfiguration(config, optionsSink!!)
+    Convert.interpretMapConfiguration(config, optionsSink)
     verify(optionsSink, times(1)).setLiteModeEnabled(true)
   }
 
   @Test
   fun interpretMapConfiguration_handlesStyle() {
     val config = this.minimalConfigurationBuilder.setStyle("foo").build()
-    Convert.interpretMapConfiguration(config, optionsSink!!)
+    Convert.interpretMapConfiguration(config, optionsSink)
     verify(optionsSink, times(1)).setMapStyle("foo")
   }
 
@@ -487,7 +484,7 @@ class ConvertTest {
         this.minimalConfigurationBuilder
             .setCameraTargetBounds(PlatformCameraTargetBounds(null))
             .build()
-    Convert.interpretMapConfiguration(config, optionsSink!!)
+    Convert.interpretMapConfiguration(config, optionsSink)
     verify(optionsSink, times(1)).setCameraTargetBounds(null)
   }
 
@@ -502,14 +499,14 @@ class ConvertTest {
                         PlatformLatLng(bounds.northeast.latitude, bounds.northeast.longitude),
                         PlatformLatLng(bounds.southwest.latitude, bounds.southwest.longitude))))
             .build()
-    Convert.interpretMapConfiguration(config, optionsSink!!)
+    Convert.interpretMapConfiguration(config, optionsSink)
     verify(optionsSink, times(1)).setCameraTargetBounds(bounds)
   }
 
   @Test
   fun interpretMapConfiguration_handlesMapType() {
     val config = this.minimalConfigurationBuilder.setMapType(PlatformMapType.HYBRID).build()
-    Convert.interpretMapConfiguration(config, optionsSink!!)
+    Convert.interpretMapConfiguration(config, optionsSink)
     verify(optionsSink, times(1)).setMapType(GoogleMap.MAP_TYPE_HYBRID)
   }
 
@@ -521,11 +518,9 @@ class ConvertTest {
     val right = 4.0
     val config =
         this.minimalConfigurationBuilder
-            .setPadding(
-                PlatformEdgeInsets(
-                    /* top= */ top, /* bottom= */ bottom, /* left= */ left, /* right= */ right))
+            .setPadding(PlatformEdgeInsets(top = top, bottom = bottom, left = left, right = right))
             .build()
-    Convert.interpretMapConfiguration(config, optionsSink!!)
+    Convert.interpretMapConfiguration(config, optionsSink)
     verify(optionsSink, times(1))
         .setPadding(top.toFloat(), left.toFloat(), bottom.toFloat(), right.toFloat())
   }
@@ -538,12 +533,12 @@ class ConvertTest {
         this.minimalConfigurationBuilder
             .setMinMaxZoomPreference(PlatformZoomRange(min, max))
             .build()
-    Convert.interpretMapConfiguration(config, optionsSink!!)
+    Convert.interpretMapConfiguration(config, optionsSink)
     verify(optionsSink, times(1)).setMinMaxZoomPreference(min.toFloat(), max.toFloat())
   }
 
   @Test
-  fun ConvertToWeightedLatLngReturnsCorrectData() {
+  fun convertToWeightedLatLngReturnsCorrectData() {
     val intensity = 3.3
     val data = PlatformWeightedLatLng(PlatformLatLng(1.1, 2.2), intensity)
     val point: Point = sProjection.toPoint(LatLng(1.1, 2.2))
@@ -556,7 +551,7 @@ class ConvertTest {
   }
 
   @Test
-  fun ConvertToWeightedDataReturnsCorrectData() {
+  fun convertToWeightedDataReturnsCorrectData() {
     val intensity = 3.3
     val data = listOf(PlatformWeightedLatLng(PlatformLatLng(1.1, 2.2), intensity))
     val point: Point = sProjection.toPoint(LatLng(1.1, 2.2))
@@ -564,13 +559,13 @@ class ConvertTest {
     val result = Convert.weightedDataFromPigeon(data)
 
     Assert.assertEquals(1, result.size.toLong())
-    Assert.assertEquals(point.x, result.get(0)!!.point.x, 0.0)
-    Assert.assertEquals(point.y, result.get(0)!!.point.y, 0.0)
-    Assert.assertEquals(intensity, result.get(0)!!.intensity, 0.0)
+    Assert.assertEquals(point.x, result[0].point.x, 0.0)
+    Assert.assertEquals(point.y, result[0].point.y, 0.0)
+    Assert.assertEquals(intensity, result[0].intensity, 0.0)
   }
 
   @Test
-  fun ConvertToGradientReturnsCorrectData() {
+  fun convertToGradientReturnsCorrectData() {
     val color1: Long = 0
     val color2: Long = 1
     val color3: Long = 2
@@ -598,10 +593,9 @@ class ConvertTest {
   }
 
   @Test
-  fun ConvertInterpretHeatmapOptionsReturnsCorrectData() {
+  fun convertInterpretHeatmapOptionsReturnsCorrectData() {
     val intensity = 3.3
-    val dataData =
-        listOf<PlatformWeightedLatLng>(PlatformWeightedLatLng(PlatformLatLng(1.1, 2.2), intensity))
+    val dataData = listOf(PlatformWeightedLatLng(PlatformLatLng(1.1, 2.2), intensity))
     val point: Point = sProjection.toPoint(LatLng(1.1, 2.2))
 
     val color1: Long = 0
@@ -626,18 +620,18 @@ class ConvertTest {
         PlatformHeatmap(
             idData,
             dataData,
-            gradientData, /* opacity */
-            opacity, /* radius */
-            radius, /* maxIntensity */
-            maxIntensity)
+            gradientData,
+            opacity = opacity,
+            radius = radius,
+            maxIntensity = maxIntensity)
 
     val builder = MockHeatmapBuilder()
     val id = Convert.interpretHeatmapOptions(data, builder)
 
     Assert.assertEquals(1, builder.getWeightedData()!!.size.toLong())
-    Assert.assertEquals(point.x, builder.getWeightedData()!!.get(0)!!.point.x, 0.0)
-    Assert.assertEquals(point.y, builder.getWeightedData()!!.get(0)!!.point.y, 0.0)
-    Assert.assertEquals(intensity, builder.getWeightedData()!!.get(0)!!.intensity, 0.0)
+    Assert.assertEquals(point.x, builder.getWeightedData()!![0].point.x, 0.0)
+    Assert.assertEquals(point.y, builder.getWeightedData()!![0].point.y, 0.0)
+    Assert.assertEquals(intensity, builder.getWeightedData()!![0].intensity, 0.0)
     Assert.assertEquals(3, builder.getGradient()!!.colors.size.toLong())
     Assert.assertEquals(color1, builder.getGradient()!!.colors[0].toLong())
     Assert.assertEquals(color2, builder.getGradient()!!.colors[1].toLong())
@@ -664,8 +658,8 @@ class ConvertTest {
     val northeast = LatLng(15.0, 25.0)
     val bounds = LatLngBounds(southwest, northeast)
     val groundOverlay = mock<GroundOverlay>()
-    whenever(groundOverlay.getPosition()).thenReturn(position)
-    whenever(groundOverlay.getBounds()).thenReturn(bounds)
+    whenever(groundOverlay.position).thenReturn(position)
+    whenever(groundOverlay.bounds).thenReturn(bounds)
 
     val anchor = Convert.buildGroundOverlayAnchorForPigeon(groundOverlay)
 
@@ -680,8 +674,8 @@ class ConvertTest {
     val northeast = LatLng(15.0, -160.0)
     val bounds = LatLngBounds(southwest, northeast)
     val groundOverlay = mock<GroundOverlay>()
-    whenever(groundOverlay.getPosition()).thenReturn(position)
-    whenever(groundOverlay.getBounds()).thenReturn(bounds)
+    whenever(groundOverlay.position).thenReturn(position)
+    whenever(groundOverlay.bounds).thenReturn(bounds)
 
     val anchor = Convert.buildGroundOverlayAnchorForPigeon(groundOverlay)
 
@@ -703,8 +697,8 @@ class ConvertTest {
       Assert.assertEquals(expectedPosition.longitude, result.position.longitude, 1e-15)
       Assert.assertNotNull(result.width)
       Assert.assertNotNull(result.height)
-      Assert.assertEquals(expectedOverlay.getWidth().toDouble(), result.width!!, 1e-15)
-      Assert.assertEquals(expectedOverlay.getHeight().toDouble(), result.height!!, 1e-15)
+      Assert.assertEquals(expectedOverlay.width.toDouble(), result.width!!, 1e-15)
+      Assert.assertEquals(expectedOverlay.height.toDouble(), result.height!!, 1e-15)
     } else {
       Assert.assertNull(result.position)
     }
@@ -722,11 +716,11 @@ class ConvertTest {
       Assert.assertNull(result.bounds)
     }
 
-    Assert.assertEquals(expectedOverlay.getBearing().toDouble(), result.bearing, 1e-15)
-    Assert.assertEquals(expectedOverlay.getTransparency().toDouble(), result.transparency, 1e-6)
-    Assert.assertEquals(expectedOverlay.getZIndex().toDouble(), result.zIndex.toDouble(), 1e-6)
-    Assert.assertEquals(expectedOverlay.isVisible(), result.visible)
-    Assert.assertEquals(expectedOverlay.isClickable(), result.clickable)
+    Assert.assertEquals(expectedOverlay.bearing.toDouble(), result.bearing, 1e-15)
+    Assert.assertEquals(expectedOverlay.transparency.toDouble(), result.transparency, 1e-6)
+    Assert.assertEquals(expectedOverlay.zIndex.toDouble(), result.zIndex.toDouble(), 1e-6)
+    Assert.assertEquals(expectedOverlay.isVisible, result.visible)
+    Assert.assertEquals(expectedOverlay.isClickable, result.clickable)
     val anchor = result.anchor
     Assert.assertNotNull(anchor)
     Assert.assertEquals(0.5, anchor!!.x, 1e-6)
@@ -740,15 +734,15 @@ class ConvertTest {
     val southwest = LatLng(5.0, 15.0)
     val northeast = LatLng(15.0, 25.0)
     val bounds = LatLngBounds(southwest, northeast)
-    whenever(mockGroundOverlay.getPosition()).thenReturn(position)
-    whenever(mockGroundOverlay.getBounds()).thenReturn(bounds)
-    whenever(mockGroundOverlay.getWidth()).thenReturn(30f)
-    whenever(mockGroundOverlay.getHeight()).thenReturn(40f)
-    whenever(mockGroundOverlay.getBearing()).thenReturn(50f)
-    whenever(mockGroundOverlay.getTransparency()).thenReturn(0.6f)
-    whenever(mockGroundOverlay.getZIndex()).thenReturn(7f)
-    whenever(mockGroundOverlay.isVisible()).thenReturn(true)
-    whenever(mockGroundOverlay.isClickable()).thenReturn(false)
+    whenever(mockGroundOverlay.position).thenReturn(position)
+    whenever(mockGroundOverlay.bounds).thenReturn(bounds)
+    whenever(mockGroundOverlay.width).thenReturn(30f)
+    whenever(mockGroundOverlay.height).thenReturn(40f)
+    whenever(mockGroundOverlay.bearing).thenReturn(50f)
+    whenever(mockGroundOverlay.transparency).thenReturn(0.6f)
+    whenever(mockGroundOverlay.zIndex).thenReturn(7f)
+    whenever(mockGroundOverlay.isVisible).thenReturn(true)
+    whenever(mockGroundOverlay.isClickable).thenReturn(false)
 
     val overlayId = "overlay_1"
     val result = Convert.groundOverlayToPigeon(mockGroundOverlay, overlayId, false)
@@ -763,15 +757,15 @@ class ConvertTest {
     val southwest = LatLng(5.0, 15.0)
     val northeast = LatLng(15.0, 25.0)
     val bounds = LatLngBounds(southwest, northeast)
-    whenever(mockGroundOverlay.getPosition()).thenReturn(position)
-    whenever(mockGroundOverlay.getBounds()).thenReturn(bounds)
-    whenever(mockGroundOverlay.getWidth()).thenReturn(30f)
-    whenever(mockGroundOverlay.getHeight()).thenReturn(40f)
-    whenever(mockGroundOverlay.getBearing()).thenReturn(50f)
-    whenever(mockGroundOverlay.getTransparency()).thenReturn(0.6f)
-    whenever(mockGroundOverlay.getZIndex()).thenReturn(7f)
-    whenever(mockGroundOverlay.isVisible()).thenReturn(true)
-    whenever(mockGroundOverlay.isClickable()).thenReturn(false)
+    whenever(mockGroundOverlay.position).thenReturn(position)
+    whenever(mockGroundOverlay.bounds).thenReturn(bounds)
+    whenever(mockGroundOverlay.width).thenReturn(30f)
+    whenever(mockGroundOverlay.height).thenReturn(40f)
+    whenever(mockGroundOverlay.bearing).thenReturn(50f)
+    whenever(mockGroundOverlay.transparency).thenReturn(0.6f)
+    whenever(mockGroundOverlay.zIndex).thenReturn(7f)
+    whenever(mockGroundOverlay.isVisible).thenReturn(true)
+    whenever(mockGroundOverlay.isClickable).thenReturn(false)
 
     val overlayId = "overlay_2"
     val result = Convert.groundOverlayToPigeon(mockGroundOverlay, overlayId, true)

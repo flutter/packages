@@ -27,7 +27,7 @@ class HeatmapsControllerTest {
 
   @Before
   fun setUp() {
-    controller!!.setGoogleMap(googleMap)
+    controller.setGoogleMap(googleMap)
   }
 
   @Test
@@ -39,41 +39,31 @@ class HeatmapsControllerTest {
     val heatmapData = listOf(PlatformWeightedLatLng(PlatformLatLng(1.1, 2.2), 3.3))
     val radius: Long = 20
 
-    whenever(googleMap!!.addTileOverlay(any())).thenReturn(tileOverlay)
+    whenever(googleMap.addTileOverlay(any())).thenReturn(tileOverlay)
     doReturn(heatmap).whenever(controller).buildHeatmap(any())
 
     val opacity1 = 0.1
     val heatmap1 =
         PlatformHeatmap(
-            googleHeatmapId,
-            heatmapData, /* gradient */
-            null,
-            opacity1,
-            radius, /* maxIntensity */
-            null)
+            googleHeatmapId, heatmapData, gradient = null, opacity1, radius, maxIntensity = null)
 
-    controller!!.addHeatmaps(listOf(heatmap1))
+    controller.addHeatmaps(listOf(heatmap1))
 
     verify(googleMap, times(1))
         .addTileOverlay(
             argThat { argument: TileOverlayOptions? ->
-              argument!!.getTileProvider() is HeatmapTileProvider
+              argument!!.tileProvider is HeatmapTileProvider
             })
 
     val opacity2 = 0.2
     val heatmap2 =
         PlatformHeatmap(
-            googleHeatmapId,
-            heatmapData, /* gradient */
-            null,
-            opacity2,
-            radius, /* maxIntensity */
-            null)
+            googleHeatmapId, heatmapData, gradient = null, opacity2, radius, maxIntensity = null)
 
-    controller!!.changeHeatmaps(listOf(heatmap2))
+    controller.changeHeatmaps(listOf(heatmap2))
     verify(heatmap, times(1)).setOpacity(opacity2)
 
-    controller!!.removeHeatmaps(listOf(googleHeatmapId))
+    controller.removeHeatmaps(listOf(googleHeatmapId))
 
     verify(tileOverlay, times(1)).remove()
   }

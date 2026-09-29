@@ -22,7 +22,6 @@ import kotlinx.coroutines.test.runTest
 import org.junit.Assert
 import org.junit.Before
 import org.junit.Test
-import org.junit.function.ThrowingRunnable
 import org.junit.runner.RunWith
 import org.mockito.kotlin.eq
 import org.mockito.kotlin.mock
@@ -45,16 +44,16 @@ class ClusterManagersControllerTest {
 
   @Before
   fun setUp() {
-    context = ApplicationProvider.getApplicationContext<Context>()
-    assetManager = context!!.getAssets()
+    context = ApplicationProvider.getApplicationContext()
+    assetManager = context.assets
     flutterApi = spy(MapsCallbackApi(mock<BinaryMessenger>(), ""))
-    controller = spy(ClusterManagersController(flutterApi!!, context!!, PlatformMarkerType.MARKER))
+    controller = spy(ClusterManagersController(flutterApi, context, PlatformMarkerType.MARKER))
     markerManager = MarkerManager(googleMap)
-    controller!!.init(googleMap, markerManager)
+    controller.init(googleMap, markerManager)
   }
 
   @Test
-  fun AddClusterManagersAndMarkers() {
+  fun addClusterManagersAndMarkers() {
     val clusterManagerId = "cm_1"
     val markerId1 = "mid_1"
     val markerId2 = "mid_2"
@@ -65,10 +64,10 @@ class ClusterManagersControllerTest {
     val location1 = listOf(latLng1.latitude, latLng1.longitude)
     val location2 = listOf(latLng2.latitude, latLng2.longitude)
 
-    whenever(googleMap!!.getCameraPosition())
+    whenever(googleMap.cameraPosition)
         .thenReturn(CameraPosition.builder().target(LatLng(0.0, 0.0)).build())
     val initialClusterManager = PlatformClusterManager(clusterManagerId)
-    controller!!.addClusterManagers(listOf(initialClusterManager))
+    controller.addClusterManagers(listOf(initialClusterManager))
 
     val markerBuilder1 = MarkerBuilder(markerId1, clusterManagerId, PlatformMarkerType.MARKER)
     val markerBuilder2 = MarkerBuilder(markerId2, clusterManagerId, PlatformMarkerType.MARKER)
@@ -81,36 +80,36 @@ class ClusterManagersControllerTest {
     Convert.interpretMarkerOptions(
         markerData2, markerBuilder2, assetManager, density, bitmapFactory)
 
-    controller!!.addItem(markerBuilder1)
-    controller!!.addItem(markerBuilder2)
+    controller.addItem(markerBuilder1)
+    controller.addItem(markerBuilder2)
 
-    val clusters = controller!!.getClustersWithClusterManagerId(clusterManagerId)
+    val clusters = controller.getClustersWithClusterManagerId(clusterManagerId)
     Assert.assertEquals("Amount of clusters should be 1", 1, clusters.size.toLong())
 
     val cluster: Cluster<MarkerBuilder> = clusters.iterator().next()
-    Assert.assertNotNull("Cluster position should not be null", cluster.getPosition())
+    Assert.assertNotNull("Cluster position should not be null", cluster.position)
     val markerIds: Set<String> =
         cluster.getItems().map { marker: MarkerBuilder -> marker.markerId() }.toSet()
     Assert.assertTrue("Marker IDs should contain markerId1", markerIds.contains(markerId1))
     Assert.assertTrue("Marker IDs should contain markerId2", markerIds.contains(markerId2))
-    Assert.assertEquals("Cluster should contain exactly 2 markers", 2, cluster.getSize().toLong())
+    Assert.assertEquals("Cluster should contain exactly 2 markers", 2, cluster.size.toLong())
   }
 
   @Test
-  fun SelectClusterRenderer() {
+  fun selectClusterRenderer() {
     val defaultClusterManagerId = "cm_default"
     val advancedClusterManagerId = "cm_advanced"
     val defaultMarkerId = "mid_default"
     val advancedMarkerId = "mid_advanced"
 
-    whenever(googleMap!!.getCameraPosition())
+    whenever(googleMap.cameraPosition)
         .thenReturn(CameraPosition.builder().target(LatLng(0.0, 0.0)).build())
 
     val defaultController =
-        spy(ClusterManagersController(flutterApi!!, context!!, PlatformMarkerType.MARKER))
+        spy(ClusterManagersController(flutterApi, context, PlatformMarkerType.MARKER))
     defaultController.init(googleMap, markerManager)
     val advancedController =
-        spy(ClusterManagersController(flutterApi!!, context!!, PlatformMarkerType.ADVANCED_MARKER))
+        spy(ClusterManagersController(flutterApi, context, PlatformMarkerType.ADVANCED_MARKER))
     advancedController.init(googleMap, markerManager)
 
     val initialClusterManager1 = PlatformClusterManager(defaultClusterManagerId)
@@ -121,27 +120,27 @@ class ClusterManagersControllerTest {
 
     val defaultMarkerBuilder =
         MarkerBuilder(defaultMarkerId, defaultClusterManagerId, PlatformMarkerType.MARKER)
-    defaultMarkerBuilder.setPosition(LatLng(10.0, 20.0))
+    defaultMarkerBuilder.position = LatLng(10.0, 20.0)
     defaultController.addItem(defaultMarkerBuilder)
 
     val advancedMarkerBuilder =
         MarkerBuilder(
             advancedMarkerId, advancedClusterManagerId, PlatformMarkerType.ADVANCED_MARKER)
-    advancedMarkerBuilder.setPosition(LatLng(20.0, 10.0))
+    advancedMarkerBuilder.position = LatLng(20.0, 10.0)
     advancedController.addItem(advancedMarkerBuilder)
 
-    val clusterManager1 = defaultController.clusterManagerIdToManager.get(defaultClusterManagerId)
+    val clusterManager1 = defaultController.clusterManagerIdToManager[defaultClusterManagerId]
     Assert.assertNotNull(clusterManager1)
     Assert.assertSame(MarkerClusterRenderer::class.java, clusterManager1!!.getRenderer().javaClass)
 
-    val clusterManager2 = advancedController.clusterManagerIdToManager.get(advancedClusterManagerId)
+    val clusterManager2 = advancedController.clusterManagerIdToManager[advancedClusterManagerId]
     Assert.assertNotNull(clusterManager2)
     Assert.assertSame(
         AdvancedMarkerClusterRenderer::class.java, clusterManager2!!.getRenderer().javaClass)
   }
 
   @Test
-  fun OnClusterClickCallsMethodChannel() = runTest {
+  fun onClusterClickCallsMethodChannel() = runTest {
     val clusterManagerId = "cm_1"
     val clusterPosition = LatLng(43.00, -87.90)
     val markerPosition1 = LatLng(43.05, -87.95)
@@ -150,35 +149,35 @@ class ClusterManagersControllerTest {
     val cluster = StaticCluster<MarkerBuilder>(clusterPosition)
 
     val marker1 = MarkerBuilder("m_1", clusterManagerId, PlatformMarkerType.MARKER)
-    marker1.setPosition(markerPosition1)
+    marker1.position = markerPosition1
     cluster.add(marker1)
 
     val marker2 = MarkerBuilder("m_2", clusterManagerId, PlatformMarkerType.MARKER)
-    marker2.setPosition(markerPosition2)
+    marker2.position = markerPosition2
     cluster.add(marker2)
 
-    controller!!.onClusterClick(cluster)
+    controller.onClusterClick(cluster)
     verify(flutterApi).onClusterTap(eq(Convert.clusterToPigeon(clusterManagerId, cluster)))
   }
 
   @Test
-  fun RemoveClusterManagers() {
+  fun removeClusterManagers() {
     val clusterManagerId = "cm_1"
 
-    whenever(googleMap!!.getCameraPosition())
+    whenever(googleMap.cameraPosition)
         .thenReturn(CameraPosition.builder().target(LatLng(0.0, 0.0)).build())
     val initialClusterManager = PlatformClusterManager(clusterManagerId)
     val clusterManagersToAdd = listOf(initialClusterManager)
-    controller!!.addClusterManagers(clusterManagersToAdd)
+    controller.addClusterManagers(clusterManagersToAdd)
 
     // Verify that fetching the cluster data success and therefore ClusterManager is added.
-    controller!!.getClustersWithClusterManagerId(clusterManagerId)
+    controller.getClustersWithClusterManagerId(clusterManagerId)
 
-    controller!!.removeClusterManagers(listOf(clusterManagerId))
+    controller.removeClusterManagers(listOf(clusterManagerId))
     // Verify that fetching the cluster data fails and therefore ClusterManager is removed.
-    Assert.assertThrows(
-        FlutterError::class.java,
-        ThrowingRunnable { controller!!.getClustersWithClusterManagerId(clusterManagerId) })
+    Assert.assertThrows(FlutterError::class.java) {
+      controller.getClustersWithClusterManagerId(clusterManagerId)
+    }
   }
 
   private fun createPlatformMarker(
@@ -193,23 +192,22 @@ class ClusterManagersControllerTest {
     val icon =
         PlatformBitmap(
             PlatformBitmapBytesMap(
-                byteArray, PlatformMapBitmapScaling.NONE, /* imagePixelRatio */ 1.0, null, null))
+                byteArray, PlatformMapBitmapScaling.NONE, imagePixelRatio = 1.0, null, null))
     val anchor = PlatformDoublePair(0.0, 0.0)
     return PlatformMarker(
-        /* alpha */
-        1.0,
-        anchor, /* consumeTapEvents */
-        false, /* draggable */
-        false, /* flat */
-        false,
+        alpha = 1.0,
+        anchor,
+        consumeTapEvents = false,
+        draggable = false,
+        flat = false,
         icon,
-        PlatformInfoWindow(/* title */ null, /* snippet */ null, anchor), /* position */
-        PlatformLatLng(location.get(0)!!, location.get(1)!!), /* rotation */
-        0.0, /* visible */
-        true, /* zIndex */
-        0.0,
-        markerId,
-        clusterManagerId,
+        PlatformInfoWindow(title = null, snippet = null, anchor),
+        position = PlatformLatLng(location[0], location[1]),
+        rotation = 0.0,
+        visible = true,
+        zIndex = 0.0,
+        markerId = markerId,
+        clusterManagerId = clusterManagerId,
         PlatformMarkerCollisionBehavior.REQUIRED_DISPLAY)
   }
 }

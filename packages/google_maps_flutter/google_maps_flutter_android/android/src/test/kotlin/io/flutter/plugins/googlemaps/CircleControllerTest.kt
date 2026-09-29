@@ -21,6 +21,6 @@ class CircleControllerTest {
     val controller = CircleController(circle, false, density)
     controller.setStrokeWidth(strokeWidth)
 
-    verify(circle).setStrokeWidth(density * strokeWidth)
+    verify(circle).strokeWidth = density * strokeWidth
   }
 }

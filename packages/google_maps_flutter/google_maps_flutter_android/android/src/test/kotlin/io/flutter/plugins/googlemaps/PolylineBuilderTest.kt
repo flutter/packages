@@ -16,7 +16,7 @@ class PolylineBuilderTest {
     builder.setWidth(strokeWidth)
 
     val options = builder.build()
-    val width = options.getWidth()
+    val width = options.width
 
     TestCase.assertEquals(density * strokeWidth, width)
   }

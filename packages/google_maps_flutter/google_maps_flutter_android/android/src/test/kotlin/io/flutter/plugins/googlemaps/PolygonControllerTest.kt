@@ -21,6 +21,6 @@ class PolygonControllerTest {
     val controller = PolygonController(polygon, false, density)
     controller.setStrokeWidth(strokeWidth)
 
-    verify(polygon).setStrokeWidth(density * strokeWidth)
+    verify(polygon).strokeWidth = density * strokeWidth
   }
 }
