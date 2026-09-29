@@ -652,7 +652,9 @@ class GoogleMapController {
       return;
     }
 
-    _myLocationController?.addMyLocationButton(map, this);
+    if (_myLocationController?.myLocationButton == null) {
+      _myLocationController?.addMyLocationButton(map, this);
+    }
   }
 
   /// Returns true if the [InfoWindow] of the marker identified by [MarkerId] is shown.
