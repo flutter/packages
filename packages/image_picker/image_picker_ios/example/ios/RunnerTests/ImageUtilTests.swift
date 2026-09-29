@@ -223,13 +223,13 @@ struct ImageUtilTests {
 
   /// Regression for a 10-bit wide-gamut source requesting an unsupported bitmap
   /// context and producing an empty JPEG. See flutter/flutter#185623.
-  @Test func scaledImage10BitWideGamutImageCanBeEncodedAsJPEG() {
+  @Test func scaledImage10BitWideGamutImageCanBeEncodedAsJPEG() throws {
     guard #available(iOS 17.0, *) else {
       return
     }
-    let displayP3 = CGColorSpace(name: CGColorSpace.displayP3)!
-    let color = CIColor(
-      red: 0.5, green: 0.25, blue: 0.75, alpha: 1.0, colorSpace: displayP3)
+    let displayP3 = try #require(CGColorSpace(name: CGColorSpace.displayP3))
+    let color = try #require(
+      CIColor(red: 0.5, green: 0.25, blue: 0.75, alpha: 1.0, colorSpace: displayP3))
     let ciImage = CIImage(color: color).cropped(to: CGRect(x: 0, y: 0, width: 2880, height: 2160))
     let ciContext = CIContext(options: nil)
     let cgImage = ciContext.createCGImage(

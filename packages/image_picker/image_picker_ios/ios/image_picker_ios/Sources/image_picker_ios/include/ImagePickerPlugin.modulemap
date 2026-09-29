@@ -13,6 +13,5 @@ framework module image_picker_ios {
     header "FLTImagePickerMetaDataUtil.h"
     header "FLTImagePickerPhotoAssetUtil.h"
     header "FLTPHPickerSaveImageToPathOperation.h"
-    header "FIPPickerSeams.h"
   }
 }

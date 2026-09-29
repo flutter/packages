@@ -29,15 +29,15 @@ struct PhotoAssetUtilTests {
   @Test func saveVideoFromURLCopiesReadableFile() throws {
     let sourcePath = (NSTemporaryDirectory() as NSString).appendingPathComponent(
       UUID().uuidString + ".mov")
+    defer { try? FileManager.default.removeItem(atPath: sourcePath) }
     #expect(
       FileManager.default.createFile(
         atPath: sourcePath, contents: Data("video".utf8), attributes: nil))
     let destination = FLTImagePickerPhotoAssetUtil.saveVideo(
       from: URL(fileURLWithPath: sourcePath))
     let copied = try #require(destination)
+    defer { try? FileManager.default.removeItem(at: copied) }
     #expect(FileManager.default.fileExists(atPath: copied.path))
-    try? FileManager.default.removeItem(at: copied)
-    try? FileManager.default.removeItem(atPath: sourcePath)
   }
 
   @Test func saveImageWithOriginalImageDataNilUsesDefaultJPEG() {
@@ -114,7 +114,7 @@ struct PhotoAssetUtilTests {
     #expect(comment == "aNote")
   }
 
-  @Test func saveImageWithOriginalImageDataShouldSaveAsGifAnimation() {
+  @Test func saveImageWithOriginalImageDataShouldSaveAsGifAnimation() throws {
     let dataGIF = ImagePickerTestImages.gifTestData
     let imageGIF = UIImage(data: dataGIF)!
     let imageSource = CGImageSourceCreateWithData(dataGIF as CFData, nil)!
@@ -126,13 +126,13 @@ struct PhotoAssetUtilTests {
     defer { try? FileManager.default.removeItem(atPath: savedPathGIF) }
     #expect(URL(string: savedPathGIF)?.pathExtension == "gif")
 
-    let newDataGIF = try? Data(contentsOf: URL(fileURLWithPath: savedPathGIF))
-    let newImageSource = CGImageSourceCreateWithData((newDataGIF ?? Data()) as CFData, nil)!
+    let newDataGIF = try Data(contentsOf: URL(fileURLWithPath: savedPathGIF))
+    let newImageSource = try #require(CGImageSourceCreateWithData(newDataGIF as CFData, nil))
     let newNumberOfFrames = CGImageSourceGetCount(newImageSource)
     #expect(numberOfFrames == newNumberOfFrames)
   }
 
-  @Test func saveImageWithOriginalImageDataShouldSaveAsScaledGifAnimation() {
+  @Test func saveImageWithOriginalImageDataShouldSaveAsScaledGifAnimation() throws {
     let dataGIF = ImagePickerTestImages.gifTestData
     let imageGIF = UIImage(data: dataGIF)!
     let imageSource = CGImageSourceCreateWithData(dataGIF as CFData, nil)!
@@ -141,12 +141,12 @@ struct PhotoAssetUtilTests {
     let savedPathGIF = FLTImagePickerPhotoAssetUtil.saveImage(
       withOriginalImageData: dataGIF, image: imageGIF, maxWidth: 3, maxHeight: 2, imageQuality: nil)
     defer { try? FileManager.default.removeItem(atPath: savedPathGIF) }
-    let newDataGIF = try? Data(contentsOf: URL(fileURLWithPath: savedPathGIF))
-    let newImage = UIImage(data: newDataGIF ?? Data())
-    #expect(newImage?.size.width == 3)
-    #expect(newImage?.size.height == 2)
+    let newDataGIF = try Data(contentsOf: URL(fileURLWithPath: savedPathGIF))
+    let newImage = try #require(UIImage(data: newDataGIF))
+    #expect(newImage.size.width == 3)
+    #expect(newImage.size.height == 2)
 
-    let newImageSource = CGImageSourceCreateWithData((newDataGIF ?? Data()) as CFData, nil)!
+    let newImageSource = try #require(CGImageSourceCreateWithData(newDataGIF as CFData, nil))
     let newNumberOfFrames = CGImageSourceGetCount(newImageSource)
     #expect(numberOfFrames == newNumberOfFrames)
   }

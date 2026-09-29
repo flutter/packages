@@ -22,28 +22,14 @@ struct PickerSaveImageToPathOperationTests {
       assetIdentifier: itemProvider.registeredTypeIdentifiers.first)
   }
 
-  /// Starts `operation` and suspends until its `completionBlock` runs.
-  ///
-  /// Swift Testing `confirmation` does not wait after its body returns, so
-  /// async `NSOperation` work must be awaited with a continuation.
-  private func runUntilFinished(_ operation: FLTPHPickerSaveImageToPathOperation) async {
-    await withCheckedContinuation { (continuation: CheckedContinuation<Void, Never>) in
-      let previous = operation.completionBlock
-      operation.completionBlock = {
-        previous?()
-        continuation.resume()
-      }
-      operation.start()
-    }
-    #expect(operation.isFinished)
-  }
-
   /// Runs a save operation and returns the `savedPathBlock` arguments.
   ///
-  /// `#expect` inside `savedPathBlock` is not attributed to the test case: the
-  /// operation queue has no Swift Testing task-local context, so those
-  /// expectations cannot fail `xcodebuild`. Capture here and assert after
-  /// `confirmation` returns; `confirmation` still fails if the block never runs.
+  /// Swift Testing `confirmation` does not wait after its body returns, so the
+  /// operation is awaited with a continuation. `#expect` inside `savedPathBlock`
+  /// is not recorded on this test: the operation queue has no Swift Testing
+  /// task-local context, so a failure there does not fail `xcodebuild test`.
+  /// The block still stores the arguments because it runs before the operation
+  /// finishes.
   private func runSaveOperation(
     result: PickerItem,
     maxHeight: NSNumber = 100,
@@ -53,21 +39,26 @@ struct PickerSaveImageToPathOperationTests {
   ) async throws -> (savedPath: String?, error: FlutterError?) {
     nonisolated(unsafe) var savedPath: String?
     nonisolated(unsafe) var savedError: FlutterError?
-    try await confirmation("savedPathBlock called") { saved in
-      let operation = try #require(
-        FLTPHPickerSaveImageToPathOperation(
-          result: result,
-          maxHeight: maxHeight,
-          maxWidth: maxWidth,
-          desiredImageQuality: desiredImageQuality,
-          fullMetadata: fullMetadata,
-          savedPathBlock: { path, error in
-            savedPath = path
-            savedError = error
-            saved()
-          }))
-      await runUntilFinished(operation)
+    let operation = try #require(
+      FLTPHPickerSaveImageToPathOperation(
+        result: result,
+        maxHeight: maxHeight,
+        maxWidth: maxWidth,
+        desiredImageQuality: desiredImageQuality,
+        fullMetadata: fullMetadata,
+        savedPathBlock: { path, error in
+          savedPath = path
+          savedError = error
+        }))
+    await withCheckedContinuation { (continuation: CheckedContinuation<Void, Never>) in
+      let previous = operation.completionBlock
+      operation.completionBlock = {
+        previous?()
+        continuation.resume()
+      }
+      operation.start()
     }
+    #expect(operation.isFinished)
     return (savedPath, savedError)
   }
 
@@ -83,19 +74,25 @@ struct PickerSaveImageToPathOperationTests {
     #expect(URL(fileURLWithPath: path).pathExtension == expectedExtension)
   }
 
-  @Test func saveWebPImage() async throws {
+  @Test(arguments: [
+    ("webpImage", "webp", true, "jpg"),
+    ("pngImage", "png", true, "png"),
+    ("jpgImage", "jpg", true, "jpg"),
+    ("bmpImage", "bmp", true, "jpg"),
+    ("heicImage", "heic", true, "jpg"),
+    ("icnsImage", "icns", true, "jpg"),
+    ("icoImage", "ico", true, "jpg"),
+    ("proRawImage", "dng", true, "jpg"),
+    ("tiffImage", "tiff", true, "jpg"),
+    // fullMetadata false skips the PHAsset lookup.
+    ("pngImage", "png", false, "png"),
+  ])
+  func saveImage(resource: String, ext: String, fullMetadata: Bool, expectedExtension: String)
+    async throws
+  {
     try await verifySavingImage(
-      try pickerItem(forResource: "webpImage", ext: "webp"), fullMetadata: true, extension: "jpg")
-  }
-
-  @Test func savePNGImage() async throws {
-    try await verifySavingImage(
-      try pickerItem(forResource: "pngImage", ext: "png"), fullMetadata: true, extension: "png")
-  }
-
-  @Test func saveJPGImage() async throws {
-    try await verifySavingImage(
-      try pickerItem(forResource: "jpgImage", ext: "jpg"), fullMetadata: true, extension: "jpg")
+      try pickerItem(forResource: resource, ext: ext), fullMetadata: fullMetadata,
+      extension: expectedExtension)
   }
 
   @Test func saveGIFImage() async throws {
@@ -120,16 +117,6 @@ struct PickerSaveImageToPathOperationTests {
     #expect(CGImageSourceGetCount(newImageSource) == numberOfFrames)
   }
 
-  @Test func saveBMPImage() async throws {
-    try await verifySavingImage(
-      try pickerItem(forResource: "bmpImage", ext: "bmp"), fullMetadata: true, extension: "jpg")
-  }
-
-  @Test func saveHEICImage() async throws {
-    try await verifySavingImage(
-      try pickerItem(forResource: "heicImage", ext: "heic"), fullMetadata: true, extension: "jpg")
-  }
-
   @Test func saveWithOrientation() async throws {
     let result = try pickerItem(forResource: "jpgImageWithRightOrientation", ext: "jpg")
     let (savedPath, savedError) = try await runSaveOperation(
@@ -143,26 +130,6 @@ struct PickerSaveImageToPathOperationTests {
     #expect(image.imageOrientation == .right)
     #expect(image.size.width == 7)
     #expect(image.size.height == 10)
-  }
-
-  @Test func saveICNSImage() async throws {
-    try await verifySavingImage(
-      try pickerItem(forResource: "icnsImage", ext: "icns"), fullMetadata: true, extension: "jpg")
-  }
-
-  @Test func saveICOImage() async throws {
-    try await verifySavingImage(
-      try pickerItem(forResource: "icoImage", ext: "ico"), fullMetadata: true, extension: "jpg")
-  }
-
-  @Test func saveProRAWImage() async throws {
-    try await verifySavingImage(
-      try pickerItem(forResource: "proRawImage", ext: "dng"), fullMetadata: true, extension: "jpg")
-  }
-
-  @Test func saveTIFFImage() async throws {
-    try await verifySavingImage(
-      try pickerItem(forResource: "tiffImage", ext: "tiff"), fullMetadata: true, extension: "jpg")
   }
 
   @Test func nonexistentImage() async throws {
@@ -183,12 +150,6 @@ struct PickerSaveImageToPathOperationTests {
     #expect(savedError?.code == "invalid_image")
     #expect(savedError?.message == loadDataError.localizedDescription)
     #expect(savedError?.details as? String == "PHPickerDomain")
-  }
-
-  @Test func savePNGImageWithoutFullMetadata() async throws {
-    // The operation does not fetch PHAsset when fullMetadata is false (or at all).
-    try await verifySavingImage(
-      try pickerItem(forResource: "pngImage", ext: "png"), fullMetadata: false, extension: "png")
   }
 
   @Test func initWithNilResultReturnsNil() {

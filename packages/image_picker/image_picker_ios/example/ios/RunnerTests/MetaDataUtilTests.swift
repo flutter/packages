@@ -37,7 +37,7 @@ struct MetaDataUtilTests {
     #expect(dimension?.intValue == 12)
   }
 
-  @Test func writeMetaData() {
+  @Test func writeMetaData() throws {
     let dataJPG = ImagePickerTestImages.jpgTestData
     let metaData = FLTImagePickerMetaDataUtil.getMetaData(fromImageData: dataJPG)
     let tmpPath = (NSTemporaryDirectory() as NSString).appendingPathComponent(
@@ -45,9 +45,8 @@ struct MetaDataUtilTests {
     defer { try? FileManager.default.removeItem(atPath: tmpPath) }
     let newData = FLTImagePickerMetaDataUtil.image(fromImage: dataJPG, withMetaData: metaData)
     #expect(FileManager.default.createFile(atPath: tmpPath, contents: newData, attributes: nil))
-    let savedTmpImageData = try? Data(contentsOf: URL(fileURLWithPath: tmpPath))
-    let tmpMetaData = FLTImagePickerMetaDataUtil.getMetaData(
-      fromImageData: savedTmpImageData ?? Data())
+    let savedTmpImageData = try Data(contentsOf: URL(fileURLWithPath: tmpPath))
+    let tmpMetaData = FLTImagePickerMetaDataUtil.getMetaData(fromImageData: savedTmpImageData)
     #expect(NSDictionary(dictionary: tmpMetaData).isEqual(to: metaData))
   }
 
