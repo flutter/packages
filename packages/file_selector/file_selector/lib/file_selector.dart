@@ -13,6 +13,7 @@ export 'package:file_selector_platform_interface/file_selector_platform_interfac
         FileSystemXFile,
         ScopedStorageXDirectory,
         ScopedStorageXFile,
+        XDirectory,
         XEntity,
         XFile,
         XTypeGroup;
