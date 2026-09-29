@@ -10,6 +10,7 @@ import 'package:flutter/widgets.dart';
 
 import 'button_style.dart';
 import 'theme.dart';
+import 'theme_data.dart';
 
 // Examples can assume:
 // late BuildContext context;
@@ -39,7 +40,7 @@ class ElevatedButtonThemeData with Diagnosticable {
   /// Creates an [ElevatedButtonThemeData].
   ///
   /// The [style] may be null.
-  const ElevatedButtonThemeData({this.style});
+  const ElevatedButtonThemeData({this.style, this.variant});
 
   /// Overrides for [ElevatedButton]'s default style.
   ///
@@ -50,6 +51,14 @@ class ElevatedButtonThemeData with Diagnosticable {
   /// If [style] is null, then this theme doesn't override anything.
   final ButtonStyle? style;
 
+  /// The style variant of Material Design used by [ElevatedButton].
+  ///
+  /// Set this to [StyleVariant.material3Expressive] to opt elevated buttons
+  /// into the Material 3 Expressive style.
+  ///
+  /// If null, [ElevatedButton] uses [StyleVariant.material3].
+  final StyleVariant? variant;
+
   /// Linearly interpolate between two elevated button themes.
   static ElevatedButtonThemeData? lerp(
     ElevatedButtonThemeData? a,
@@ -59,11 +68,14 @@ class ElevatedButtonThemeData with Diagnosticable {
     if (identical(a, b)) {
       return a;
     }
-    return ElevatedButtonThemeData(style: ButtonStyle.lerp(a?.style, b?.style, t));
+    return ElevatedButtonThemeData(
+      style: ButtonStyle.lerp(a?.style, b?.style, t),
+      variant: t < 0.5 ? a?.variant : b?.variant,
+    );
   }
 
   @override
-  int get hashCode => style.hashCode;
+  int get hashCode => Object.hash(style, variant);
 
   @override
   bool operator ==(Object other) {
@@ -73,13 +85,14 @@ class ElevatedButtonThemeData with Diagnosticable {
     if (other.runtimeType != runtimeType) {
       return false;
     }
-    return other is ElevatedButtonThemeData && other.style == style;
+    return other is ElevatedButtonThemeData && other.style == style && other.variant == variant;
   }
 
   @override
   void debugFillProperties(DiagnosticPropertiesBuilder properties) {
     super.debugFillProperties(properties);
     properties.add(DiagnosticsProperty<ButtonStyle>('style', style, defaultValue: null));
+    properties.add(EnumProperty<StyleVariant>('variant', variant, defaultValue: null));
   }
 }
 

@@ -26,6 +26,7 @@ import 'theme.dart';
 import 'theme_data.dart';
 
 part 'generated/elevated_button_defaults_m3.g.dart';
+part 'generated/elevated_button_defaults_m3e.g.dart';
 
 /// A Material Design "elevated button".
 ///
@@ -87,6 +88,7 @@ class ElevatedButton extends ButtonStyleButton {
     super.autofocus = false,
     super.clipBehavior,
     super.statesController,
+    super.isSelected,
     required super.child,
   }) : _addPadding = false;
 
@@ -112,6 +114,7 @@ class ElevatedButton extends ButtonStyleButton {
     super.autofocus = false,
     super.clipBehavior = Clip.none,
     super.statesController,
+    super.isSelected,
     Widget? icon,
     required Widget label,
     IconAlignment? iconAlignment,
@@ -402,8 +405,24 @@ class ElevatedButton extends ButtonStyleButton {
   ButtonStyle defaultStyleOf(BuildContext context) {
     final ThemeData theme = Theme.of(context);
     final ColorScheme colorScheme = theme.colorScheme;
+    final ElevatedButtonThemeData elevatedButtonTheme = ElevatedButtonTheme.of(context);
+    final StyleVariant effectiveVariant = elevatedButtonTheme.variant ?? StyleVariant.material3;
+    final ButtonSizeVariant? effectiveSize =
+        style?.sizeVariant ?? elevatedButtonTheme.style?.sizeVariant;
+    final ButtonShapeVariant? effectiveShape =
+        style?.shapeVariant ?? elevatedButtonTheme.style?.shapeVariant;
+    final bool useExpressive =
+        theme.useMaterial3 && effectiveVariant == StyleVariant.material3Expressive;
     final ButtonStyle buttonStyle = theme.useMaterial3
-        ? _ElevatedButtonDefaultsM3(context)
+        ? switch (effectiveVariant) {
+            StyleVariant.material3 => _ElevatedButtonDefaultsM3(context),
+            StyleVariant.material3Expressive => _ElevatedButtonDefaultsM3E(
+              context,
+              isSelected != null,
+              effectiveSize,
+              effectiveShape,
+            ),
+          }
         : styleFrom(
             backgroundColor: colorScheme.primary,
             foregroundColor: colorScheme.onPrimary,
@@ -428,6 +447,9 @@ class ElevatedButton extends ButtonStyleButton {
 
     // Only apply padding when the ElevatedButton has an Icon.
     if (_addPadding) {
+      if (useExpressive) {
+        return buttonStyle;
+      }
       final double defaultFontSize =
           buttonStyle.textStyle?.resolve(const <WidgetState>{})?.fontSize ?? 14.0;
       final double effectiveTextScale =
@@ -496,6 +518,13 @@ class _ElevatedButtonWithIconChild extends StatelessWidget {
     final double scale =
         clampDouble(MediaQuery.textScalerOf(context).scale(defaultFontSize) / 14.0, 1.0, 2.0) - 1.0;
     final ElevatedButtonThemeData elevatedButtonTheme = ElevatedButtonTheme.of(context);
+    final bool useExpressive =
+        Theme.of(context).useMaterial3 &&
+        elevatedButtonTheme.variant == StyleVariant.material3Expressive;
+    final ButtonSizeVariant effectiveSize =
+        buttonStyle?.sizeVariant ??
+        elevatedButtonTheme.style?.sizeVariant ??
+        ButtonSizeVariant.small;
     final IconAlignment effectiveIconAlignment =
         iconAlignment ??
         elevatedButtonTheme.style?.iconAlignment ??
@@ -503,7 +532,14 @@ class _ElevatedButtonWithIconChild extends StatelessWidget {
         IconAlignment.start;
     return Row(
       mainAxisSize: MainAxisSize.min,
-      spacing: lerpDouble(8, 4, scale)!,
+      spacing: useExpressive
+          ? switch (effectiveSize) {
+              ButtonSizeVariant.xSmall => 4.0,
+              ButtonSizeVariant.small || ButtonSizeVariant.medium => 8.0,
+              ButtonSizeVariant.large => 12.0,
+              ButtonSizeVariant.xLarge => 16.0,
+            }
+          : lerpDouble(8, 4, scale)!,
       children: effectiveIconAlignment == IconAlignment.start
           ? <Widget>[icon, Flexible(child: label)]
           : <Widget>[Flexible(child: label), icon],

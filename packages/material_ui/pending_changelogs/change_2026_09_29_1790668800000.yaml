@@ -1,0 +1,3 @@
+changelog: |
+  - Adds Material 3 Expressive support and selectable states for ElevatedButton.
+version: minor
