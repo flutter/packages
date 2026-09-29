@@ -5,7 +5,6 @@
 import 'package:file_selector/file_selector.dart';
 import 'package:file_selector_platform_interface/file_selector_platform_interface.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:plugin_platform_interface/plugin_platform_interface.dart';
 
 void main() {
   late FakeFileSelector fakePlatformImplementation;
@@ -30,7 +29,7 @@ void main() {
   });
 
   group('openFile', () {
-    final expectedFile = XFile('path');
+    final expectedFile = XFile.fileSystem(path: 'path');
 
     test('works', () async {
       fakePlatformImplementation
@@ -87,7 +86,7 @@ void main() {
   });
 
   group('openFiles', () {
-    final expectedFiles = <XFile>[XFile('path')];
+    final expectedFiles = <XFile>[XFile.fileSystem(path: 'path')];
 
     test('works', () async {
       fakePlatformImplementation
@@ -164,7 +163,7 @@ void main() {
         suggestedName: suggestedName,
       );
 
-      expect(location?.path, expectedSavePath);
+      expect(location?.file.uri, expectedSavePath);
       expect(location?.activeFilter, acceptedTypeGroups[expectedActiveFilter]);
     });
 
@@ -172,7 +171,7 @@ void main() {
       fakePlatformImplementation.setPathsResponse(<String>[expectedSavePath]);
 
       final FileSaveLocation? location = await getSaveLocation();
-      expect(location?.path, expectedSavePath);
+      expect(location?.file.uri, expectedSavePath);
     });
 
     test('sets the initial directory', () async {
@@ -181,7 +180,7 @@ void main() {
         ..setPathsResponse(<String>[expectedSavePath]);
 
       final FileSaveLocation? location = await getSaveLocation(initialDirectory: initialDirectory);
-      expect(location?.path, expectedSavePath);
+      expect(location?.file.uri, expectedSavePath);
     });
 
     test('sets the button confirmation label', () async {
@@ -192,7 +191,7 @@ void main() {
       final FileSaveLocation? location = await getSaveLocation(
         confirmButtonText: confirmButtonText,
       );
-      expect(location?.path, expectedSavePath);
+      expect(location?.file.uri, expectedSavePath);
     });
 
     test('sets the accepted type groups', () async {
@@ -203,7 +202,7 @@ void main() {
       final FileSaveLocation? location = await getSaveLocation(
         acceptedTypeGroups: acceptedTypeGroups,
       );
-      expect(location?.path, expectedSavePath);
+      expect(location?.file.uri, expectedSavePath);
     });
 
     test('sets the suggested name', () async {
@@ -212,7 +211,7 @@ void main() {
         ..setPathsResponse(<String>[expectedSavePath]);
 
       final FileSaveLocation? location = await getSaveLocation(suggestedName: suggestedName);
-      expect(location?.path, expectedSavePath);
+      expect(location?.file.uri, expectedSavePath);
     });
 
     test('sets the directory creation control flag', () async {
@@ -224,7 +223,7 @@ void main() {
       final FileSaveLocation? location = await getSaveLocation(
         canCreateDirectories: canCreateDirectories,
       );
-      expect(location?.path, expectedSavePath);
+      expect(location?.file.uri, expectedSavePath);
     });
   });
 
@@ -236,18 +235,18 @@ void main() {
         ..setExpectations(initialDirectory: initialDirectory, confirmButtonText: confirmButtonText)
         ..setPathsResponse(<String>[expectedDirectoryPath]);
 
-      final String? directoryPath = await getDirectoryPath(
+      final XDirectory? directory = await getDirectoryPath(
         initialDirectory: initialDirectory,
         confirmButtonText: confirmButtonText,
       );
 
-      expect(directoryPath, expectedDirectoryPath);
+      expect(directory.uri, expectedDirectoryPath);
     });
 
     test('works with no arguments', () async {
       fakePlatformImplementation.setPathsResponse(<String>[expectedDirectoryPath]);
 
-      final String? directoryPath = await getDirectoryPath();
+      final XDirectory? directoryPath = await getDirectoryPath();
       expect(directoryPath, expectedDirectoryPath);
     });
 
@@ -340,9 +339,7 @@ void main() {
   });
 }
 
-class FakeFileSelector extends Fake
-    with MockPlatformInterfaceMixin
-    implements FileSelectorPlatform {
+final class FakeFileSelector extends FileSelectorPlatform {
   // Expectations.
   List<XTypeGroup>? acceptedTypeGroups = const <XTypeGroup>[];
   String? initialDirectory;
@@ -351,7 +348,7 @@ class FakeFileSelector extends Fake
   bool? canCreateDirectories;
   // Return values.
   List<XFile>? files;
-  List<String>? paths;
+  List<XDirectory> directories = <XDirectory>[];
   int? activeFilter;
 
   void setExpectations({
@@ -369,113 +366,61 @@ class FakeFileSelector extends Fake
   }
 
   // ignore: use_setters_to_change_properties
-  void setFileResponse(List<XFile> files) {
+  void setFileResponse(List<XFile> files, {int? activeFilter}) {
     this.files = files;
-  }
-
-  void setPathsResponse(List<String> paths, {int? activeFilter}) {
-    this.paths = paths;
     this.activeFilter = activeFilter;
   }
 
   @override
-  Future<XFile?> openFile({
-    List<XTypeGroup>? acceptedTypeGroups,
-    String? initialDirectory,
-    String? confirmButtonText,
-  }) async {
-    expect(acceptedTypeGroups, this.acceptedTypeGroups);
-    expect(initialDirectory, this.initialDirectory);
-    expect(suggestedName, suggestedName);
+  Future<XFile?> openFile([OpenDialogOptions options = const OpenDialogOptions()]) async {
+    expect(acceptedTypeGroups, options.acceptedTypeGroups);
+    expect(initialDirectory, options.initialDirectory);
     return files?[0];
   }
 
   @override
-  Future<List<XFile>> openFiles({
-    List<XTypeGroup>? acceptedTypeGroups,
-    String? initialDirectory,
-    String? confirmButtonText,
-  }) async {
-    expect(acceptedTypeGroups, this.acceptedTypeGroups);
-    expect(initialDirectory, this.initialDirectory);
+  Future<List<XFile>> openFiles([OpenDialogOptions options = const OpenDialogOptions()]) async {
+    expect(acceptedTypeGroups, options.acceptedTypeGroups);
+    expect(initialDirectory, options.initialDirectory);
     expect(suggestedName, suggestedName);
     return files!;
   }
 
   @override
-  Future<String?> getSavePath({
-    List<XTypeGroup>? acceptedTypeGroups,
-    String? initialDirectory,
-    String? suggestedName,
-    String? confirmButtonText,
-  }) async {
-    final FileSaveLocation? result = await getSaveLocation(
-      acceptedTypeGroups: acceptedTypeGroups,
-      options: SaveDialogOptions(
-        initialDirectory: initialDirectory,
-        suggestedName: suggestedName,
-        confirmButtonText: confirmButtonText,
-      ),
-    );
-    return result?.path;
-  }
-
-  @override
-  Future<FileSaveLocation?> getSaveLocation({
-    List<XTypeGroup>? acceptedTypeGroups,
-    SaveDialogOptions options = const SaveDialogOptions(),
-  }) async {
-    expect(acceptedTypeGroups, this.acceptedTypeGroups);
+  Future<FileSaveLocation?> getSaveLocation([
+    SaveLocationOptions options = const SaveLocationOptions(),
+  ]) async {
+    expect(options.acceptedTypeGroups, acceptedTypeGroups);
     expect(options.initialDirectory, initialDirectory);
     expect(options.suggestedName, suggestedName);
     expect(options.confirmButtonText, confirmButtonText);
-    final String? path = paths?[0];
+    final XFile? file = files?[0];
     final int? activeFilterIndex = activeFilter;
-    return path == null
+    return file == null
         ? null
         : FileSaveLocation(
-            path,
+            file,
             activeFilter: activeFilterIndex == null ? null : acceptedTypeGroups?[activeFilterIndex],
           );
   }
 
   @override
-  Future<String?> getDirectoryPath({
-    String? initialDirectory,
-    String? confirmButtonText,
-    bool canCreateDirectories = true,
-  }) async {
-    expect(initialDirectory, this.initialDirectory);
-    expect(confirmButtonText, this.confirmButtonText);
-    expect(canCreateDirectories, this.canCreateDirectories);
-    return paths?[0];
-  }
-
-  @override
-  Future<String?> getDirectoryPathWithOptions(FileDialogOptions options) async {
+  Future<XDirectory?> getDirectoryPath([
+    FileDialogOptions options = const FileDialogOptions(),
+  ]) async {
     expect(options.initialDirectory, initialDirectory);
     expect(options.confirmButtonText, confirmButtonText);
     expect(options.canCreateDirectories, canCreateDirectories);
-    return paths?[0];
+    return directories[0];
   }
 
   @override
-  Future<List<String>> getDirectoryPaths({
-    String? initialDirectory,
-    String? confirmButtonText,
-    bool canCreateDirectories = true,
-  }) async {
-    expect(initialDirectory, this.initialDirectory);
-    expect(confirmButtonText, this.confirmButtonText);
-    expect(canCreateDirectories, this.canCreateDirectories);
-    return paths!;
-  }
-
-  @override
-  Future<List<String>> getDirectoryPathsWithOptions(FileDialogOptions options) async {
+  Future<List<XDirectory>> getDirectoryPaths([
+    FileDialogOptions options = const FileDialogOptions(),
+  ]) async {
     expect(options.initialDirectory, initialDirectory);
     expect(options.confirmButtonText, confirmButtonText);
     expect(options.canCreateDirectories, canCreateDirectories);
-    return paths!;
+    return directories;
   }
 }
