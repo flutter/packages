@@ -35,7 +35,7 @@ import '../templates/input_chip_template.dart';
 // import '../templates/motion_template.dart';
 // import '../templates/navigation_bar_template.dart';
 // import '../templates/navigation_drawer_template.dart';
-// import '../templates/navigation_rail_template.dart';
+import '../templates/navigation_rail_template.dart';
 // import '../templates/popup_menu_template.dart';
 // import '../templates/progress_indicator_template.dart';
 // import '../templates/radio_template.dart';
@@ -680,8 +680,13 @@ void main() {
     });
 
     test('NavigationRailTemplateM3 emits M3 NavigationRail defaults from tokens', () {
-      // Intentionally empty, will be implemented during migration. See:
-      // https://github.com/flutter/flutter/issues/187899
+      const template = NavigationRailTemplateM3();
+      final String contents = _generateContents(template);
+      expect(contents, contains('class _NavigationRailDefaultsM3 extends NavigationRailThemeData'));
+      expect(contents, contains('minWidth: 80.0'));
+      expect(contents, contains('Color? get backgroundColor => _colors.surface'));
+      expect(contents, contains('color: _colors.onSurfaceVariant'));
+      expect(contents, contains('ShapeBorder? get indicatorShape => const StadiumBorder()'));
     });
 
     test('PopupMenuTemplateM3 emits M3 PopupMenu defaults from tokens', () {

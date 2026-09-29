@@ -2,28 +2,29 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import '../data/navigation_rail.dart';
 import 'template.dart';
 
-class NavigationRailTemplate extends TokenTemplate {
-  const NavigationRailTemplate(
-    super.blockName,
-    super.fileName,
-    super.tokens, {
-    super.colorSchemePrefix = '_colors.',
-    super.textThemePrefix = '_textTheme.',
-  });
+class NavigationRailTemplateM3 extends TokenTemplateM3 {
+  const NavigationRailTemplateM3();
 
   @override
-  String generate() =>
+  String get name => 'Navigation Rail';
+
+  @override
+  String get parentFilePath => 'navigation_rail.dart';
+
+  @override
+  String generateContents(String className) =>
       '''
-class _${blockName}DefaultsM3 extends NavigationRailThemeData {
-  _${blockName}DefaultsM3(this.context)
+class $className extends NavigationRailThemeData {
+  $className(this.context)
     : super(
-        elevation: ${elevation("md.comp.navigation-rail.container")},
+        elevation: ${number(TokenNavigationRail.containerElevation)},
         groupAlignment: -1,
         labelType: NavigationRailLabelType.none,
         useIndicator: true,
-        minWidth: ${getToken('md.comp.navigation-rail.container.width')},
+        minWidth: ${number(TokenNavigationRail.containerWidth)},
         minExtendedWidth: 256,
       );
 
@@ -31,33 +32,40 @@ class _${blockName}DefaultsM3 extends NavigationRailThemeData {
   late final ColorScheme _colors = Theme.of(context).colorScheme;
   late final TextTheme _textTheme = Theme.of(context).textTheme;
 
-  @override Color? get backgroundColor => ${componentColor("md.comp.navigation-rail.container")};
+  @override
+  Color? get backgroundColor => ${color(TokenNavigationRail.containerColor)};
 
-  @override TextStyle? get unselectedLabelTextStyle {
-    return ${textStyle("md.comp.navigation-rail.label-text")}!.copyWith(color: ${componentColor("md.comp.navigation-rail.inactive.focus.label-text")});
+  @override
+  TextStyle? get unselectedLabelTextStyle {
+    return ${textStyle(TokenNavigationRail.labelTextType, '_textTheme')}!.copyWith(color: ${color(TokenNavigationRail.inactiveFocusLabelTextColor)});
   }
 
-  @override TextStyle? get selectedLabelTextStyle {
-    return ${textStyle("md.comp.navigation-rail.label-text")}!.copyWith(color: ${componentColor("md.comp.navigation-rail.active.focus.label-text")});
+  @override
+  TextStyle? get selectedLabelTextStyle {
+    return ${textStyle(TokenNavigationRail.labelTextType, '_textTheme')}!.copyWith(color: ${color(TokenNavigationRail.activeFocusLabelTextColor)});
   }
 
-  @override IconThemeData? get unselectedIconTheme {
+  @override
+  IconThemeData? get unselectedIconTheme {
     return IconThemeData(
-      size: ${getToken("md.comp.navigation-rail.icon.size")},
-      color: ${componentColor("md.comp.navigation-rail.inactive.icon")},
+      size: ${number(TokenNavigationRail.iconSize)},
+      color: ${color(TokenNavigationRail.inactiveIconColor)},
     );
   }
 
-  @override IconThemeData? get selectedIconTheme {
+  @override
+  IconThemeData? get selectedIconTheme {
     return IconThemeData(
-      size: ${getToken("md.comp.navigation-rail.icon.size")},
-      color: ${componentColor("md.comp.navigation-rail.active.icon")},
+      size: ${number(TokenNavigationRail.iconSize)},
+      color: ${color(TokenNavigationRail.activeIconColor)},
     );
   }
 
-  @override Color? get indicatorColor => ${componentColor("md.comp.navigation-rail.active-indicator")};
+  @override
+  Color? get indicatorColor => ${color(TokenNavigationRail.activeIndicatorColor)};
 
-  @override ShapeBorder? get indicatorShape => ${shape("md.comp.navigation-rail.active-indicator")};
+  @override
+  ShapeBorder? get indicatorShape => ${shape(TokenNavigationRail.activeIndicatorShape)};
 }
 ''';
 }
