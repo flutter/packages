@@ -2,11 +2,14 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'package:cross_file_platform_interface/cross_file_platform_interface.dart';
 import 'package:file_selector/file_selector.dart';
 import 'package:file_selector_platform_interface/file_selector_platform_interface.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
+  CrossFilePlatform.instance = CrossFileTest();
+
   late FakeFileSelector fakePlatformImplementation;
   const initialDirectory = '/home/flutteruser';
   const confirmButtonText = 'Use this profile picture';
@@ -143,7 +146,7 @@ void main() {
   });
 
   group('getSaveLocation', () {
-    const expectedSavePath = '/example/path';
+    final expectedFile = FileSystemXFile('/example/path');
 
     test('works', () async {
       const expectedActiveFilter = 1;
@@ -154,7 +157,7 @@ void main() {
           acceptedTypeGroups: acceptedTypeGroups,
           suggestedName: suggestedName,
         )
-        ..setPathsResponse(<String>[expectedSavePath], activeFilter: expectedActiveFilter);
+        ..setFileResponse(<XFile>[expectedFile], activeFilter: expectedActiveFilter);
 
       final FileSaveLocation? location = await getSaveLocation(
         initialDirectory: initialDirectory,
@@ -163,178 +166,196 @@ void main() {
         suggestedName: suggestedName,
       );
 
-      expect(location?.file.uri, expectedSavePath);
+      expect(location?.file.uri, expectedFile.uri);
       expect(location?.activeFilter, acceptedTypeGroups[expectedActiveFilter]);
     });
 
     test('works with no arguments', () async {
-      fakePlatformImplementation.setPathsResponse(<String>[expectedSavePath]);
+      fakePlatformImplementation.setFileResponse(<XFile>[expectedFile]);
 
       final FileSaveLocation? location = await getSaveLocation();
-      expect(location?.file.uri, expectedSavePath);
+      expect(location?.file.uri, expectedFile.uri);
     });
 
     test('sets the initial directory', () async {
       fakePlatformImplementation
         ..setExpectations(initialDirectory: initialDirectory)
-        ..setPathsResponse(<String>[expectedSavePath]);
+        ..setFileResponse(<XFile>[expectedFile]);
 
       final FileSaveLocation? location = await getSaveLocation(initialDirectory: initialDirectory);
-      expect(location?.file.uri, expectedSavePath);
+      expect(location?.file.uri, expectedFile.uri);
     });
 
     test('sets the button confirmation label', () async {
       fakePlatformImplementation
         ..setExpectations(confirmButtonText: confirmButtonText)
-        ..setPathsResponse(<String>[expectedSavePath]);
+        ..setFileResponse(<XFile>[expectedFile]);
 
       final FileSaveLocation? location = await getSaveLocation(
         confirmButtonText: confirmButtonText,
       );
-      expect(location?.file.uri, expectedSavePath);
+      expect(location?.file.uri, expectedFile.uri);
     });
 
     test('sets the accepted type groups', () async {
       fakePlatformImplementation
         ..setExpectations(acceptedTypeGroups: acceptedTypeGroups)
-        ..setPathsResponse(<String>[expectedSavePath]);
+        ..setFileResponse(<XFile>[expectedFile]);
 
       final FileSaveLocation? location = await getSaveLocation(
         acceptedTypeGroups: acceptedTypeGroups,
       );
-      expect(location?.file.uri, expectedSavePath);
+      expect(location?.file.uri, expectedFile.uri);
     });
 
     test('sets the suggested name', () async {
       fakePlatformImplementation
         ..setExpectations(suggestedName: suggestedName)
-        ..setPathsResponse(<String>[expectedSavePath]);
+        ..setFileResponse(<XFile>[expectedFile]);
 
       final FileSaveLocation? location = await getSaveLocation(suggestedName: suggestedName);
-      expect(location?.file.uri, expectedSavePath);
+      expect(location?.file.uri, expectedFile.uri);
     });
 
     test('sets the directory creation control flag', () async {
       const canCreateDirectories = false;
       fakePlatformImplementation
         ..setExpectations(canCreateDirectories: canCreateDirectories)
-        ..setPathsResponse(<String>[expectedSavePath]);
+        ..setFileResponse(<XFile>[expectedFile]);
 
       final FileSaveLocation? location = await getSaveLocation(
         canCreateDirectories: canCreateDirectories,
       );
-      expect(location?.file.uri, expectedSavePath);
+      expect(location?.file.uri, expectedFile.uri);
     });
   });
 
   group('getDirectoryPath', () {
-    const expectedDirectoryPath = '/example/path';
+    final expectedDirectory = FileSystemXDirectory('/example/path');
 
     test('works', () async {
       fakePlatformImplementation
         ..setExpectations(initialDirectory: initialDirectory, confirmButtonText: confirmButtonText)
-        ..setPathsResponse(<String>[expectedDirectoryPath]);
+        ..directories = <XDirectory>[expectedDirectory];
 
       final XDirectory? directory = await getDirectoryPath(
         initialDirectory: initialDirectory,
         confirmButtonText: confirmButtonText,
       );
 
-      expect(directory.uri, expectedDirectoryPath);
+      expect(directory?.uri, expectedDirectory.uri);
     });
 
     test('works with no arguments', () async {
-      fakePlatformImplementation.setPathsResponse(<String>[expectedDirectoryPath]);
+      fakePlatformImplementation.directories = <XDirectory>[expectedDirectory];
 
-      final XDirectory? directoryPath = await getDirectoryPath();
-      expect(directoryPath, expectedDirectoryPath);
+      final XDirectory? directory = await getDirectoryPath();
+      expect(directory?.uri, expectedDirectory.uri);
     });
 
     test('sets the initial directory', () async {
       fakePlatformImplementation
         ..setExpectations(initialDirectory: initialDirectory)
-        ..setPathsResponse(<String>[expectedDirectoryPath]);
+        ..directories = <XDirectory>[expectedDirectory];
 
-      final String? directoryPath = await getDirectoryPath(initialDirectory: initialDirectory);
-      expect(directoryPath, expectedDirectoryPath);
+      final XDirectory? directory = await getDirectoryPath(initialDirectory: initialDirectory);
+      expect(directory?.uri, expectedDirectory.uri);
     });
 
     test('sets the button confirmation label', () async {
       fakePlatformImplementation
         ..setExpectations(confirmButtonText: confirmButtonText)
-        ..setPathsResponse(<String>[expectedDirectoryPath]);
+        ..directories = <XDirectory>[expectedDirectory];
 
-      final String? directoryPath = await getDirectoryPath(confirmButtonText: confirmButtonText);
-      expect(directoryPath, expectedDirectoryPath);
+      final XDirectory? directory = await getDirectoryPath(confirmButtonText: confirmButtonText);
+      expect(directory?.uri, expectedDirectory.uri);
     });
 
     test('sets the directory creation control flag', () async {
       const canCreateDirectories = true;
       fakePlatformImplementation
         ..setExpectations(canCreateDirectories: canCreateDirectories)
-        ..setPathsResponse(<String>[expectedDirectoryPath]);
+        ..directories = <XDirectory>[expectedDirectory];
 
-      final String? directoryPath = await getDirectoryPath(
+      final XDirectory? directory = await getDirectoryPath(
         canCreateDirectories: canCreateDirectories,
       );
-      expect(directoryPath, expectedDirectoryPath);
+      expect(directory?.uri, expectedDirectory.uri);
     });
   });
 
   group('getDirectoryPaths', () {
-    const expectedDirectoryPaths = <String>['/example/path', '/example/2/path'];
+    final expectedDirectories = <XDirectory>[
+      XDirectory.fileSystem(path: '/example/path'),
+      XDirectory.fileSystem(path: '/example/2/path'),
+    ];
 
     test('works', () async {
       fakePlatformImplementation
         ..setExpectations(initialDirectory: initialDirectory, confirmButtonText: confirmButtonText)
-        ..setPathsResponse(expectedDirectoryPaths);
+        ..directories = expectedDirectories;
 
-      final List<String?> directoryPaths = await getDirectoryPaths(
+      final List<XDirectory> directories = await getDirectoryPaths(
         initialDirectory: initialDirectory,
         confirmButtonText: confirmButtonText,
       );
 
-      expect(directoryPaths, expectedDirectoryPaths);
+      expect(
+        directories.map((XDirectory directory) => directory.uri),
+        expectedDirectories.map((XDirectory directory) => directory.uri),
+      );
     });
 
     test('works with no arguments', () async {
-      fakePlatformImplementation.setPathsResponse(expectedDirectoryPaths);
+      fakePlatformImplementation.directories = expectedDirectories;
 
-      final List<String?> directoryPaths = await getDirectoryPaths();
-      expect(directoryPaths, expectedDirectoryPaths);
+      final List<XDirectory> directories = await getDirectoryPaths();
+      expect(
+        directories.map((XDirectory directory) => directory.uri),
+        expectedDirectories.map((XDirectory directory) => directory.uri),
+      );
     });
 
     test('sets the initial directory', () async {
       fakePlatformImplementation
         ..setExpectations(initialDirectory: initialDirectory)
-        ..setPathsResponse(expectedDirectoryPaths);
+        ..directories = expectedDirectories;
 
-      final List<String?> directoryPaths = await getDirectoryPaths(
+      final List<XDirectory> directories = await getDirectoryPaths(
         initialDirectory: initialDirectory,
       );
-      expect(directoryPaths, expectedDirectoryPaths);
+      expect(
+        directories.map((XDirectory directory) => directory.uri),
+        expectedDirectories.map((XDirectory directory) => directory.uri),
+      );
     });
 
     test('sets the button confirmation label', () async {
       fakePlatformImplementation
         ..setExpectations(confirmButtonText: confirmButtonText)
-        ..setPathsResponse(expectedDirectoryPaths);
+        ..directories = expectedDirectories;
 
-      final List<String?> directoryPaths = await getDirectoryPaths(
+      final List<XDirectory> directories = await getDirectoryPaths(
         confirmButtonText: confirmButtonText,
       );
-      expect(directoryPaths, expectedDirectoryPaths);
+      expect(
+        directories.map((XDirectory directory) => directory.uri),
+        expectedDirectories.map((XDirectory directory) => directory.uri),
+      );
     });
     test('sets the directory creation control flag', () async {
       const canCreateDirectories = true;
       fakePlatformImplementation
         ..setExpectations(canCreateDirectories: canCreateDirectories)
-        ..setPathsResponse(expectedDirectoryPaths);
+        ..directories = expectedDirectories;
 
-      final List<String?> directoryPaths = await getDirectoryPaths(
+      final List<XDirectory> directories = await getDirectoryPaths(
         canCreateDirectories: canCreateDirectories,
       );
-      expect(directoryPaths, expectedDirectoryPaths);
+      expect(
+        directories.map((XDirectory directory) => directory.uri),
+        expectedDirectories.map((XDirectory directory) => directory.uri),
+      );
     });
   });
 }
@@ -365,7 +386,6 @@ final class FakeFileSelector extends FileSelectorPlatform {
     this.canCreateDirectories = canCreateDirectories;
   }
 
-  // ignore: use_setters_to_change_properties
   void setFileResponse(List<XFile> files, {int? activeFilter}) {
     this.files = files;
     this.activeFilter = activeFilter;
@@ -424,3 +444,5 @@ final class FakeFileSelector extends FileSelectorPlatform {
     return directories;
   }
 }
+
+final class CrossFileTest extends CrossFilePlatform {}
