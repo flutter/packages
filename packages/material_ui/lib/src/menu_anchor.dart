@@ -3327,24 +3327,22 @@ class _MenuItemLabel extends StatelessWidget {
     Widget leadings;
     if (overflowAxis == Axis.vertical) {
       leadings = Expanded(
-        child: ClipRect(
-          child: Row(
-            mainAxisSize: MainAxisSize.min,
-            children: <Widget>[
-              ?leadingIcon,
-              if (child != null)
-                Expanded(
-                  child: ClipRect(
-                    child: Padding(
-                      padding: leadingIcon != null
-                          ? EdgeInsetsDirectional.only(start: horizontalPadding)
-                          : EdgeInsets.zero,
-                      child: child,
-                    ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: <Widget>[
+            ?leadingIcon,
+            if (child != null)
+              Expanded(
+                child: ClipRect(
+                  child: Padding(
+                    padding: leadingIcon != null
+                        ? EdgeInsetsDirectional.only(start: horizontalPadding)
+                        : EdgeInsets.zero,
+                    child: child,
                   ),
                 ),
-            ],
-          ),
+              ),
+          ],
         ),
       );
     } else {
