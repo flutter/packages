@@ -1,7 +1,3 @@
-## 0.7.5+1
-
-* Fixes a misplaced Javadoc comment that fails the example app build on JDK 23+.
-
 ## 0.7.5
 
 * Adds support for custom video output path in video recording.
