@@ -12,33 +12,22 @@ import org.junit.After
 import org.junit.Assert
 import org.junit.Before
 import org.junit.Test
-import org.mockito.ArgumentMatchers
-import org.mockito.Mock
-import org.mockito.Mockito
-import org.mockito.MockitoAnnotations
+import org.mockito.kotlin.any
+import org.mockito.kotlin.mock
+import org.mockito.kotlin.spy
+import org.mockito.kotlin.times
+import org.mockito.kotlin.verify
+import org.mockito.kotlin.whenever
 
 class CirclesControllerTest {
-  @Mock var mockGoogleMap: GoogleMap? = null
-  var mockCloseable: AutoCloseable? = null
-
-  @Before
-  fun setUp() {
-    mockCloseable = MockitoAnnotations.openMocks(this)
-  }
-
-  @After
-  @Throws(Exception::class)
-  fun tearDown() {
-    mockCloseable!!.close()
-  }
+  var mockGoogleMap: GoogleMap = mock()
 
   @Test
   fun controller_changeCircles_updatesExistingCircle() {
-    val z = Mockito.mock<zzl>(zzl::class.java)
-    val circle = Mockito.spy<Circle?>(Circle(z))
-    Mockito.`when`<Circle?>(
-            mockGoogleMap!!.addCircle(
-                ArgumentMatchers.any<CircleOptions?>(CircleOptions::class.java)))
+    val z = mock<zzl>()
+    val circle = spy(Circle(z))
+    whenever(
+            mockGoogleMap!!.addCircle(any()))
         .thenReturn(circle)
 
     val controller = CirclesController(null, 1.0f)
@@ -55,7 +44,7 @@ class CirclesControllerTest {
         mutableListOf<PlatformCircle?>(createCircle(id, /* consumesEvents */ true)))
     // There should still only be one circle, and it should be updated.
     Assert.assertEquals(1, controller.circleIdToController.size.toLong())
-    Mockito.verify<Circle?>(circle, Mockito.times(1)).setClickable(true)
+    verify(circle, times(1)).setClickable(true)
   }
 
   private fun createCircle(circleId: String, consumesEvents: Boolean): PlatformCircle {

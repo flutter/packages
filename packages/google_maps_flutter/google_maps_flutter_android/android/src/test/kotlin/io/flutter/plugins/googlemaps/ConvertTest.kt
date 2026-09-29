@@ -27,39 +27,29 @@ import org.junit.Assert
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
-import org.mockito.ArgumentMatchers
-import org.mockito.Mock
-import org.mockito.Mockito
-import org.mockito.MockitoAnnotations
+import org.mockito.kotlin.any
+import org.mockito.kotlin.mock
+import org.mockito.kotlin.never
+import org.mockito.kotlin.times
+import org.mockito.kotlin.verify
+import org.mockito.kotlin.verifyNoInteractions
+import org.mockito.kotlin.whenever
 import org.robolectric.RobolectricTestRunner
 
 @RunWith(RobolectricTestRunner::class)
 class ConvertTest {
-  @Mock private val assetManager: AssetManager? = null
+  private val assetManager: AssetManager = mock()
 
-  @Mock private val bitmapDescriptorFactoryWrapper: BitmapDescriptorFactoryWrapper? = null
+  private val bitmapDescriptorFactoryWrapper: BitmapDescriptorFactoryWrapper = mock()
 
-  @Mock private val mockBitmapDescriptor: BitmapDescriptor? = null
+  private val mockBitmapDescriptor: BitmapDescriptor = mock()
 
-  @Mock private val flutterInjectorWrapper: FlutterInjectorWrapper? = null
+  private val flutterInjectorWrapper: FlutterInjectorWrapper = mock()
 
-  @Mock private val optionsSink: GoogleMapOptionsSink? = null
-
-  var mockCloseable: AutoCloseable? = null
+   private val optionsSink: GoogleMapOptionsSink = mock()
 
   // A 1x1 pixel (#8080ff) PNG image encoded in base64
   private val base64Image: String? = TestImageUtils.generateBase64Image()
-
-  @Before
-  fun before() {
-    mockCloseable = MockitoAnnotations.openMocks(this)
-  }
-
-  @After
-  @Throws(Exception::class)
-  fun tearDown() {
-    mockCloseable!!.close()
-  }
 
   @Test
   fun ConvertPointsFromPigeonConvertsThePointsWithFullPrecision() {
@@ -117,14 +107,14 @@ class ConvertTest {
     val fakeAssetName = "fake_asset_name"
     val fakeAssetKey = "fake_asset_key"
 
-    Mockito.`when`<String?>(flutterInjectorWrapper!!.getLookupKeyForAsset(fakeAssetName))
+    whenever(flutterInjectorWrapper!!.getLookupKeyForAsset(fakeAssetName))
         .thenReturn(fakeAssetKey)
 
-    Mockito.`when`<InputStream?>(assetManager!!.open(fakeAssetKey))
+    whenever(assetManager!!.open(fakeAssetKey))
         .thenReturn(TestImageUtils.buildImageInputStream())
 
-    Mockito.`when`<BitmapDescriptor?>(
-            bitmapDescriptorFactoryWrapper!!.fromBitmap(ArgumentMatchers.any<Bitmap?>()))
+    whenever(
+            bitmapDescriptorFactoryWrapper!!.fromBitmap(any()))
         .thenReturn(mockBitmapDescriptor)
     val bitmap =
         PlatformBitmapAssetMap(
@@ -147,14 +137,14 @@ class ConvertTest {
     val fakeAssetName = "fake_asset_name"
     val fakeAssetKey = "fake_asset_key"
 
-    Mockito.`when`<String?>(flutterInjectorWrapper!!.getLookupKeyForAsset(fakeAssetName))
+    whenever(flutterInjectorWrapper!!.getLookupKeyForAsset(fakeAssetName))
         .thenReturn(fakeAssetKey)
 
-    Mockito.`when`<InputStream?>(assetManager!!.open(fakeAssetKey))
+    whenever(assetManager!!.open(fakeAssetKey))
         .thenReturn(TestImageUtils.buildImageInputStream())
 
-    Mockito.`when`<BitmapDescriptor?>(
-            bitmapDescriptorFactoryWrapper!!.fromBitmap(ArgumentMatchers.any<Bitmap?>()))
+    whenever(
+            bitmapDescriptorFactoryWrapper!!.fromBitmap(any()))
         .thenReturn(mockBitmapDescriptor)
     val bitmap =
         PlatformBitmapAssetMap(
@@ -177,14 +167,14 @@ class ConvertTest {
     val fakeAssetName = "fake_asset_name"
     val fakeAssetKey = "fake_asset_key"
 
-    Mockito.`when`<String?>(flutterInjectorWrapper!!.getLookupKeyForAsset(fakeAssetName))
+    whenever(flutterInjectorWrapper!!.getLookupKeyForAsset(fakeAssetName))
         .thenReturn(fakeAssetKey)
 
-    Mockito.`when`<InputStream?>(assetManager!!.open(fakeAssetKey))
+    whenever(assetManager!!.open(fakeAssetKey))
         .thenReturn(TestImageUtils.buildImageInputStream())
 
-    Mockito.`when`<BitmapDescriptor?>(
-            bitmapDescriptorFactoryWrapper!!.fromBitmap(ArgumentMatchers.any<Bitmap?>()))
+    whenever(
+            bitmapDescriptorFactoryWrapper!!.fromBitmap(any()))
         .thenReturn(mockBitmapDescriptor)
     val bitmap =
         PlatformBitmapAssetMap(
@@ -207,18 +197,18 @@ class ConvertTest {
     val fakeAssetName = "fake_asset_name"
     val fakeAssetKey = "fake_asset_key"
 
-    Mockito.`when`<String?>(flutterInjectorWrapper!!.getLookupKeyForAsset(fakeAssetName))
+    whenever(flutterInjectorWrapper!!.getLookupKeyForAsset(fakeAssetName))
         .thenReturn(fakeAssetKey)
 
-    Mockito.`when`<InputStream?>(assetManager!!.open(fakeAssetKey))
+    whenever(assetManager!!.open(fakeAssetKey))
         .thenReturn(TestImageUtils.buildImageInputStream())
 
-    Mockito.`when`<BitmapDescriptor?>(
-            bitmapDescriptorFactoryWrapper!!.fromAsset(ArgumentMatchers.any<String?>()))
+    whenever(
+            bitmapDescriptorFactoryWrapper!!.fromAsset(any()))
         .thenReturn(mockBitmapDescriptor)
 
-    Mockito.verify<BitmapDescriptorFactoryWrapper?>(bitmapDescriptorFactoryWrapper, Mockito.never())
-        .fromBitmap(ArgumentMatchers.any<Bitmap?>())
+    verify(bitmapDescriptorFactoryWrapper, never())
+        .fromBitmap(any())
     val bitmap =
         PlatformBitmapAssetMap(
             fakeAssetName,
@@ -238,8 +228,8 @@ class ConvertTest {
   fun GetBitmapFromBytesAuto() {
     val bmpData = Base64.decode(base64Image, Base64.DEFAULT)
 
-    Mockito.`when`<BitmapDescriptor?>(
-            bitmapDescriptorFactoryWrapper!!.fromBitmap(ArgumentMatchers.any<Bitmap?>()))
+    whenever(
+            bitmapDescriptorFactoryWrapper!!.fromBitmap(any()))
         .thenReturn(mockBitmapDescriptor)
 
     val bitmap =
@@ -259,8 +249,8 @@ class ConvertTest {
   fun GetBitmapFromBytesAutoAndWidth() {
     val bmpData = Base64.decode(base64Image, Base64.DEFAULT)
 
-    Mockito.`when`<BitmapDescriptor?>(
-            bitmapDescriptorFactoryWrapper!!.fromBitmap(ArgumentMatchers.any<Bitmap?>()))
+    whenever(
+            bitmapDescriptorFactoryWrapper!!.fromBitmap(any()))
         .thenReturn(mockBitmapDescriptor)
     val bitmap =
         PlatformBitmapBytesMap(
@@ -279,8 +269,8 @@ class ConvertTest {
   fun GetBitmapFromBytesAutoAndHeight() {
     val bmpData = Base64.decode(base64Image, Base64.DEFAULT)
 
-    Mockito.`when`<BitmapDescriptor?>(
-            bitmapDescriptorFactoryWrapper!!.fromBitmap(ArgumentMatchers.any<Bitmap?>()))
+    whenever(
+            bitmapDescriptorFactoryWrapper!!.fromBitmap(any()))
         .thenReturn(mockBitmapDescriptor)
     val bitmap =
         PlatformBitmapBytesMap(
@@ -299,8 +289,8 @@ class ConvertTest {
   fun GetBitmapFromBytesNoScaling() {
     val bmpData = Base64.decode(base64Image, Base64.DEFAULT)
 
-    Mockito.`when`<BitmapDescriptor?>(
-            bitmapDescriptorFactoryWrapper!!.fromBitmap(ArgumentMatchers.any<Bitmap?>()))
+    whenever(
+            bitmapDescriptorFactoryWrapper!!.fromBitmap(any()))
         .thenReturn(mockBitmapDescriptor)
     val bitmap =
         PlatformBitmapBytesMap(
@@ -320,8 +310,8 @@ class ConvertTest {
     val invalidBase64Image = "not valid image data"
     val bmpData = Base64.decode(invalidBase64Image, Base64.DEFAULT)
 
-    Mockito.verify<BitmapDescriptorFactoryWrapper?>(bitmapDescriptorFactoryWrapper, Mockito.never())
-        .fromBitmap(ArgumentMatchers.any<Bitmap?>())
+    verify(bitmapDescriptorFactoryWrapper, never())
+        .fromBitmap(any())
     val bitmap =
         PlatformBitmapBytesMap(
             bmpData, /* bitmapScaling */
@@ -398,8 +388,8 @@ class ConvertTest {
             icon, /* glyphText */
             null, /* glyphTextColor */
             null)
-    Mockito.`when`<BitmapDescriptor?>(
-            bitmapDescriptorFactoryWrapper!!.fromBitmap(ArgumentMatchers.any<Bitmap?>()))
+    whenever(
+            bitmapDescriptorFactoryWrapper!!.fromBitmap(any()))
         .thenReturn(mockBitmapDescriptor)
     val pinConfig =
         Convert.getPinConfigFromPlatformPinConfig(
@@ -418,28 +408,28 @@ class ConvertTest {
   fun interpretMapConfiguration_handlesNulls() {
     val config = this.minimalConfigurationBuilder.build()
     Convert.interpretMapConfiguration(config, optionsSink!!)
-    Mockito.verifyNoInteractions(optionsSink)
+      verifyNoInteractions(optionsSink)
   }
 
   @Test
   fun interpretMapConfiguration_handlesCompassEnabled() {
     val config = this.minimalConfigurationBuilder.setCompassEnabled(false).build()
     Convert.interpretMapConfiguration(config, optionsSink!!)
-    Mockito.verify<GoogleMapOptionsSink?>(optionsSink, Mockito.times(1)).setCompassEnabled(false)
+    verify(optionsSink, times(1)).setCompassEnabled(false)
   }
 
   @Test
   fun interpretMapConfiguration_handlesMapToolbarEnabled() {
     val config = this.minimalConfigurationBuilder.setMapToolbarEnabled(true).build()
     Convert.interpretMapConfiguration(config, optionsSink!!)
-    Mockito.verify<GoogleMapOptionsSink?>(optionsSink, Mockito.times(1)).setMapToolbarEnabled(true)
+    verify(optionsSink, times(1)).setMapToolbarEnabled(true)
   }
 
   @Test
   fun interpretMapConfiguration_handlesRotateGesturesEnabled() {
     val config = this.minimalConfigurationBuilder.setRotateGesturesEnabled(false).build()
     Convert.interpretMapConfiguration(config, optionsSink!!)
-    Mockito.verify<GoogleMapOptionsSink?>(optionsSink, Mockito.times(1))
+    verify(optionsSink, times(1))
         .setRotateGesturesEnabled(false)
   }
 
@@ -447,7 +437,7 @@ class ConvertTest {
   fun interpretMapConfiguration_handlesScrollGesturesEnabled() {
     val config = this.minimalConfigurationBuilder.setScrollGesturesEnabled(true).build()
     Convert.interpretMapConfiguration(config, optionsSink!!)
-    Mockito.verify<GoogleMapOptionsSink?>(optionsSink, Mockito.times(1))
+    verify(optionsSink, times(1))
         .setScrollGesturesEnabled(true)
   }
 
@@ -455,7 +445,7 @@ class ConvertTest {
   fun interpretMapConfiguration_handlesTiltGesturesEnabled() {
     val config = this.minimalConfigurationBuilder.setTiltGesturesEnabled(false).build()
     Convert.interpretMapConfiguration(config, optionsSink!!)
-    Mockito.verify<GoogleMapOptionsSink?>(optionsSink, Mockito.times(1))
+    verify(optionsSink, times(1))
         .setTiltGesturesEnabled(false)
   }
 
@@ -463,7 +453,7 @@ class ConvertTest {
   fun interpretMapConfiguration_handlesTrackCameraPosition() {
     val config = this.minimalConfigurationBuilder.setTrackCameraPosition(true).build()
     Convert.interpretMapConfiguration(config, optionsSink!!)
-    Mockito.verify<GoogleMapOptionsSink?>(optionsSink, Mockito.times(1))
+    verify(optionsSink, times(1))
         .setTrackCameraPosition(true)
   }
 
@@ -471,7 +461,7 @@ class ConvertTest {
   fun interpretMapConfiguration_handlesZoomControlsEnabled() {
     val config = this.minimalConfigurationBuilder.setZoomControlsEnabled(false).build()
     Convert.interpretMapConfiguration(config, optionsSink!!)
-    Mockito.verify<GoogleMapOptionsSink?>(optionsSink, Mockito.times(1))
+    verify(optionsSink, times(1))
         .setZoomControlsEnabled(false)
   }
 
@@ -479,7 +469,7 @@ class ConvertTest {
   fun interpretMapConfiguration_handlesZoomGesturesEnabled() {
     val config = this.minimalConfigurationBuilder.setZoomGesturesEnabled(true).build()
     Convert.interpretMapConfiguration(config, optionsSink!!)
-    Mockito.verify<GoogleMapOptionsSink?>(optionsSink, Mockito.times(1))
+    verify(optionsSink, times(1))
         .setZoomGesturesEnabled(true)
   }
 
@@ -487,14 +477,14 @@ class ConvertTest {
   fun interpretMapConfiguration_handlesMyLocationEnabled() {
     val config = this.minimalConfigurationBuilder.setMyLocationEnabled(false).build()
     Convert.interpretMapConfiguration(config, optionsSink!!)
-    Mockito.verify<GoogleMapOptionsSink?>(optionsSink, Mockito.times(1)).setMyLocationEnabled(false)
+    verify(optionsSink, times(1)).setMyLocationEnabled(false)
   }
 
   @Test
   fun interpretMapConfiguration_handlesMyLocationButtonEnabled() {
     val config = this.minimalConfigurationBuilder.setMyLocationButtonEnabled(true).build()
     Convert.interpretMapConfiguration(config, optionsSink!!)
-    Mockito.verify<GoogleMapOptionsSink?>(optionsSink, Mockito.times(1))
+    verify(optionsSink, times(1))
         .setMyLocationButtonEnabled(true)
   }
 
@@ -502,35 +492,35 @@ class ConvertTest {
   fun interpretMapConfiguration_handlesIndoorViewEnabled() {
     val config = this.minimalConfigurationBuilder.setIndoorViewEnabled(false).build()
     Convert.interpretMapConfiguration(config, optionsSink!!)
-    Mockito.verify<GoogleMapOptionsSink?>(optionsSink, Mockito.times(1)).setIndoorEnabled(false)
+    verify(optionsSink, times(1)).setIndoorEnabled(false)
   }
 
   @Test
   fun interpretMapConfiguration_handlesTrafficEnabled() {
     val config = this.minimalConfigurationBuilder.setTrafficEnabled(true).build()
     Convert.interpretMapConfiguration(config, optionsSink!!)
-    Mockito.verify<GoogleMapOptionsSink?>(optionsSink, Mockito.times(1)).setTrafficEnabled(true)
+    verify(optionsSink, times(1)).setTrafficEnabled(true)
   }
 
   @Test
   fun interpretMapConfiguration_handlesBuildingsEnabled() {
     val config = this.minimalConfigurationBuilder.setBuildingsEnabled(false).build()
     Convert.interpretMapConfiguration(config, optionsSink!!)
-    Mockito.verify<GoogleMapOptionsSink?>(optionsSink, Mockito.times(1)).setBuildingsEnabled(false)
+    verify(optionsSink, times(1)).setBuildingsEnabled(false)
   }
 
   @Test
   fun interpretMapConfiguration_handlesLiteModeEnabled() {
     val config = this.minimalConfigurationBuilder.setLiteModeEnabled(true).build()
     Convert.interpretMapConfiguration(config, optionsSink!!)
-    Mockito.verify<GoogleMapOptionsSink?>(optionsSink, Mockito.times(1)).setLiteModeEnabled(true)
+    verify(optionsSink, times(1)).setLiteModeEnabled(true)
   }
 
   @Test
   fun interpretMapConfiguration_handlesStyle() {
     val config = this.minimalConfigurationBuilder.setStyle("foo").build()
     Convert.interpretMapConfiguration(config, optionsSink!!)
-    Mockito.verify<GoogleMapOptionsSink?>(optionsSink, Mockito.times(1)).setMapStyle("foo")
+    verify(optionsSink, times(1)).setMapStyle("foo")
   }
 
   @Test
@@ -540,7 +530,7 @@ class ConvertTest {
             .setCameraTargetBounds(PlatformCameraTargetBounds(null))
             .build()
     Convert.interpretMapConfiguration(config, optionsSink!!)
-    Mockito.verify<GoogleMapOptionsSink?>(optionsSink, Mockito.times(1)).setCameraTargetBounds(null)
+    verify(optionsSink, times(1)).setCameraTargetBounds(null)
   }
 
   @Test
@@ -555,7 +545,7 @@ class ConvertTest {
                         PlatformLatLng(bounds.southwest.latitude, bounds.southwest.longitude))))
             .build()
     Convert.interpretMapConfiguration(config, optionsSink!!)
-    Mockito.verify<GoogleMapOptionsSink?>(optionsSink, Mockito.times(1))
+    verify(optionsSink, times(1))
         .setCameraTargetBounds(bounds)
   }
 
@@ -563,7 +553,7 @@ class ConvertTest {
   fun interpretMapConfiguration_handlesMapType() {
     val config = this.minimalConfigurationBuilder.setMapType(PlatformMapType.HYBRID).build()
     Convert.interpretMapConfiguration(config, optionsSink!!)
-    Mockito.verify<GoogleMapOptionsSink?>(optionsSink, Mockito.times(1))
+    verify(optionsSink, times(1))
         .setMapType(GoogleMap.MAP_TYPE_HYBRID)
   }
 
@@ -580,7 +570,7 @@ class ConvertTest {
                     /* top= */ top, /* bottom= */ bottom, /* left= */ left, /* right= */ right))
             .build()
     Convert.interpretMapConfiguration(config, optionsSink!!)
-    Mockito.verify<GoogleMapOptionsSink?>(optionsSink, Mockito.times(1))
+    verify(optionsSink, times(1))
         .setPadding(top.toFloat(), left.toFloat(), bottom.toFloat(), right.toFloat())
   }
 
@@ -593,7 +583,7 @@ class ConvertTest {
             .setMinMaxZoomPreference(PlatformZoomRange(min, max))
             .build()
     Convert.interpretMapConfiguration(config, optionsSink!!)
-    Mockito.verify<GoogleMapOptionsSink?>(optionsSink, Mockito.times(1))
+    verify(optionsSink, times(1))
         .setMinMaxZoomPreference(min.toFloat(), max.toFloat())
   }
 
@@ -721,9 +711,9 @@ class ConvertTest {
     val southwest = LatLng(5.0, 15.0)
     val northeast = LatLng(15.0, 25.0)
     val bounds = LatLngBounds(southwest, northeast)
-    val groundOverlay = Mockito.mock<GroundOverlay>(GroundOverlay::class.java)
-    Mockito.`when`<LatLng?>(groundOverlay.getPosition()).thenReturn(position)
-    Mockito.`when`<LatLngBounds?>(groundOverlay.getBounds()).thenReturn(bounds)
+    val groundOverlay = mock<GroundOverlay>()
+    whenever(groundOverlay.getPosition()).thenReturn(position)
+    whenever(groundOverlay.getBounds()).thenReturn(bounds)
 
     val anchor = Convert.buildGroundOverlayAnchorForPigeon(groundOverlay)
 
@@ -737,9 +727,9 @@ class ConvertTest {
     val southwest = LatLng(5.0, 170.0)
     val northeast = LatLng(15.0, -160.0)
     val bounds = LatLngBounds(southwest, northeast)
-    val groundOverlay = Mockito.mock<GroundOverlay>(GroundOverlay::class.java)
-    Mockito.`when`<LatLng?>(groundOverlay.getPosition()).thenReturn(position)
-    Mockito.`when`<LatLngBounds?>(groundOverlay.getBounds()).thenReturn(bounds)
+    val groundOverlay = mock<GroundOverlay>()
+    whenever(groundOverlay.getPosition()).thenReturn(position)
+    whenever(groundOverlay.getBounds()).thenReturn(bounds)
 
     val anchor = Convert.buildGroundOverlayAnchorForPigeon(groundOverlay)
 
@@ -793,20 +783,20 @@ class ConvertTest {
 
   @Test
   fun groundOverlayToPigeonWithPosition() {
-    val mockGroundOverlay = Mockito.mock<GroundOverlay>(GroundOverlay::class.java)
+    val mockGroundOverlay = mock<GroundOverlay>()
     val position = LatLng(10.0, 20.0)
     val southwest = LatLng(5.0, 15.0)
     val northeast = LatLng(15.0, 25.0)
     val bounds = LatLngBounds(southwest, northeast)
-    Mockito.`when`<LatLng?>(mockGroundOverlay.getPosition()).thenReturn(position)
-    Mockito.`when`<LatLngBounds?>(mockGroundOverlay.getBounds()).thenReturn(bounds)
-    Mockito.`when`<Float?>(mockGroundOverlay.getWidth()).thenReturn(30f)
-    Mockito.`when`<Float?>(mockGroundOverlay.getHeight()).thenReturn(40f)
-    Mockito.`when`<Float?>(mockGroundOverlay.getBearing()).thenReturn(50f)
-    Mockito.`when`<Float?>(mockGroundOverlay.getTransparency()).thenReturn(0.6f)
-    Mockito.`when`<Float?>(mockGroundOverlay.getZIndex()).thenReturn(7f)
-    Mockito.`when`<Boolean?>(mockGroundOverlay.isVisible()).thenReturn(true)
-    Mockito.`when`<Boolean?>(mockGroundOverlay.isClickable()).thenReturn(false)
+    whenever(mockGroundOverlay.getPosition()).thenReturn(position)
+    whenever(mockGroundOverlay.getBounds()).thenReturn(bounds)
+    whenever(mockGroundOverlay.getWidth()).thenReturn(30f)
+    whenever(mockGroundOverlay.getHeight()).thenReturn(40f)
+    whenever(mockGroundOverlay.getBearing()).thenReturn(50f)
+    whenever(mockGroundOverlay.getTransparency()).thenReturn(0.6f)
+    whenever(mockGroundOverlay.getZIndex()).thenReturn(7f)
+    whenever(mockGroundOverlay.isVisible()).thenReturn(true)
+    whenever(mockGroundOverlay.isClickable()).thenReturn(false)
 
     val overlayId = "overlay_1"
     val result = Convert.groundOverlayToPigeon(mockGroundOverlay, overlayId, false)
@@ -816,20 +806,20 @@ class ConvertTest {
 
   @Test
   fun groundOverlayToPigeonWithBounds() {
-    val mockGroundOverlay = Mockito.mock<GroundOverlay>(GroundOverlay::class.java)
+    val mockGroundOverlay = mock<GroundOverlay>()
     val position = LatLng(10.0, 20.0)
     val southwest = LatLng(5.0, 15.0)
     val northeast = LatLng(15.0, 25.0)
     val bounds = LatLngBounds(southwest, northeast)
-    Mockito.`when`<LatLng?>(mockGroundOverlay.getPosition()).thenReturn(position)
-    Mockito.`when`<LatLngBounds?>(mockGroundOverlay.getBounds()).thenReturn(bounds)
-    Mockito.`when`<Float?>(mockGroundOverlay.getWidth()).thenReturn(30f)
-    Mockito.`when`<Float?>(mockGroundOverlay.getHeight()).thenReturn(40f)
-    Mockito.`when`<Float?>(mockGroundOverlay.getBearing()).thenReturn(50f)
-    Mockito.`when`<Float?>(mockGroundOverlay.getTransparency()).thenReturn(0.6f)
-    Mockito.`when`<Float?>(mockGroundOverlay.getZIndex()).thenReturn(7f)
-    Mockito.`when`<Boolean?>(mockGroundOverlay.isVisible()).thenReturn(true)
-    Mockito.`when`<Boolean?>(mockGroundOverlay.isClickable()).thenReturn(false)
+    whenever(mockGroundOverlay.getPosition()).thenReturn(position)
+    whenever(mockGroundOverlay.getBounds()).thenReturn(bounds)
+    whenever(mockGroundOverlay.getWidth()).thenReturn(30f)
+    whenever(mockGroundOverlay.getHeight()).thenReturn(40f)
+    whenever(mockGroundOverlay.getBearing()).thenReturn(50f)
+    whenever(mockGroundOverlay.getTransparency()).thenReturn(0.6f)
+    whenever(mockGroundOverlay.getZIndex()).thenReturn(7f)
+    whenever(mockGroundOverlay.isVisible()).thenReturn(true)
+    whenever(mockGroundOverlay.isClickable()).thenReturn(false)
 
     val overlayId = "overlay_2"
     val result = Convert.groundOverlayToPigeon(mockGroundOverlay, overlayId, true)

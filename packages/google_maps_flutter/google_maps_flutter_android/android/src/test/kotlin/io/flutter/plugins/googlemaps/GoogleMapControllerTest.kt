@@ -25,11 +25,15 @@ import org.junit.Assert
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
-import org.mockito.ArgumentMatchers
-import org.mockito.Mock
-import org.mockito.MockedStatic
 import org.mockito.Mockito
-import org.mockito.MockitoAnnotations
+import org.mockito.kotlin.any
+import org.mockito.kotlin.eq
+import org.mockito.kotlin.isNull
+import org.mockito.kotlin.mock
+import org.mockito.kotlin.spy
+import org.mockito.kotlin.times
+import org.mockito.kotlin.verify
+import org.mockito.kotlin.whenever
 import org.robolectric.Robolectric
 import org.robolectric.RobolectricTestRunner
 
@@ -38,40 +42,37 @@ class GoogleMapControllerTest {
   private var context: Context? = null
   private var activity: ComponentActivity? = null
 
-  var mockCloseable: AutoCloseable? = null
+  private var mockMessenger: BinaryMessenger = mock()
 
-  @Mock var mockMessenger: BinaryMessenger? = null
+  private var mockGoogleMap: GoogleMap = mock()
 
-  @Mock var mockGoogleMap: GoogleMap? = null
+  private  var flutterApi: MapsCallbackApi = mock()
 
-  @Mock var flutterApi: MapsCallbackApi? = null
+  private var mockClusterManagersController: ClusterManagersController = mock()
 
-  @Mock var mockClusterManagersController: ClusterManagersController? = null
+  private var mockMarkersController: MarkersController = mock()
 
-  @Mock var mockMarkersController: MarkersController? = null
+  private var mockPolygonsController: PolygonsController = mock()
 
-  @Mock var mockPolygonsController: PolygonsController? = null
+  private var mockPolylinesController: PolylinesController = mock()
 
-  @Mock var mockPolylinesController: PolylinesController? = null
+  private var mockCirclesController: CirclesController = mock()
 
-  @Mock var mockCirclesController: CirclesController? = null
+  private var mockHeatmapsController: HeatmapsController = mock()
 
-  @Mock var mockHeatmapsController: HeatmapsController? = null
+  private var mockTileOverlaysController: TileOverlaysController = mock()
 
-  @Mock var mockTileOverlaysController: TileOverlaysController? = null
+  private var mockGroundOverlaysController: GroundOverlaysController = mock()
 
-  @Mock var mockGroundOverlaysController: GroundOverlaysController? = null
-
-  @Mock var mapCapabilities: MapCapabilities? = null
+  private var mapCapabilities: MapCapabilities = mock()
 
   @Before
   fun before() {
-    mockCloseable = MockitoAnnotations.openMocks(this)
     context = ApplicationProvider.getApplicationContext<Context?>()
     setUpActivityLegacy()
   }
 
-  val googleMapController: GoogleMapController
+  private val googleMapController: GoogleMapController
     // Returns GoogleMapController instance.
     get() {
       val googleMapController =
@@ -86,7 +87,7 @@ class GoogleMapControllerTest {
       return googleMapController
     }
 
-  val googleMapControllerWithMockedDependencies: GoogleMapController
+  private val googleMapControllerWithMockedDependencies: GoogleMapController
     // Returns GoogleMapController instance with mocked dependency injections.
     get() {
       val googleMapController =
@@ -116,12 +117,6 @@ class GoogleMapControllerTest {
     activity = Robolectric.setupActivity<ComponentActivity>(ComponentActivity::class.java)
   }
 
-  @After
-  @Throws(Exception::class)
-  fun tearDown() {
-    mockCloseable!!.close()
-  }
-
   @Test
   fun DisposeReleaseTheMap() {
     val googleMapController = this.googleMapController
@@ -147,7 +142,7 @@ class GoogleMapControllerTest {
     val paddingWithDensity = (padding * googleMapController.density).toInt()
     googleMapController.setInitialPadding(padding, padding, padding, padding)
     googleMapController.onMapReady(mockGoogleMap!!)
-    Mockito.verify<GoogleMap?>(mockGoogleMap, Mockito.times(1))
+    verify(mockGoogleMap, times(1))
         .setPadding(paddingWithDensity, paddingWithDensity, paddingWithDensity, paddingWithDensity)
   }
 
@@ -163,71 +158,69 @@ class GoogleMapControllerTest {
   @Test
   fun OnMapReadySetsMarkerCollectionListener() {
     val googleMapController = this.googleMapController
-    val spyGoogleMapController = Mockito.spy<GoogleMapController>(googleMapController)
+    val spyGoogleMapController = spy(googleMapController)
     // setMarkerCollectionListener method should be called when map is ready
     spyGoogleMapController.onMapReady(mockGoogleMap!!)
 
     // Verify if the setMarkerCollectionListener method is called with listener
-    Mockito.verify<GoogleMapController?>(spyGoogleMapController, Mockito.times(1))
+    verify(spyGoogleMapController, times(1))
         .setMarkerCollectionListener(
-            ArgumentMatchers.any<GoogleMapListener?>(GoogleMapListener::class.java))
+            any())
 
     spyGoogleMapController.dispose()
     // Verify if the setMarkerCollectionListener is cleared on dispose
-    Mockito.verify<GoogleMapController?>(spyGoogleMapController, Mockito.times(1))
+    verify(spyGoogleMapController, times(1))
         .setMarkerCollectionListener(null)
   }
 
   @Test
   fun OnMapReadySetsClusterItemClickListener() {
     val googleMapController = this.googleMapController
-    val spyGoogleMapController = Mockito.spy<GoogleMapController>(googleMapController)
+    val spyGoogleMapController = spy(googleMapController)
     // setMarkerCollectionListener method should be called when map is ready
     spyGoogleMapController.onMapReady(mockGoogleMap!!)
 
     // Verify if the setMarkerCollectionListener method is called with listener
-    Mockito.verify<GoogleMapController?>(spyGoogleMapController, Mockito.times(1))
+    verify(spyGoogleMapController, times(1))
         .setClusterItemClickListener(
-            ArgumentMatchers.any<ClusterManager.OnClusterItemClickListener<*>?>(
-                ClusterManager.OnClusterItemClickListener::class.java))
+            any())
 
     spyGoogleMapController.dispose()
     // Verify if the setMarkerCollectionListener is cleared on dispose
-    Mockito.verify<GoogleMapController?>(spyGoogleMapController, Mockito.times(1))
+    verify(spyGoogleMapController, times(1))
         .setClusterItemClickListener(null)
   }
 
   @Test
   fun OnMapReadySetsClusterItemInfoWindowClickListener() {
     val googleMapController = this.googleMapController
-    val spyGoogleMapController = Mockito.spy<GoogleMapController>(googleMapController)
+    val spyGoogleMapController = spy(googleMapController)
     spyGoogleMapController.onMapReady(mockGoogleMap!!)
 
-    Mockito.verify<GoogleMapController?>(spyGoogleMapController, Mockito.times(1))
+    verify(spyGoogleMapController, times(1))
         .setClusterItemInfoWindowClickListener(
-            ArgumentMatchers.any<ClusterManager.OnClusterItemInfoWindowClickListener<*>?>(
-                ClusterManager.OnClusterItemInfoWindowClickListener::class.java))
+            any())
 
     spyGoogleMapController.dispose()
-    Mockito.verify<GoogleMapController?>(spyGoogleMapController, Mockito.times(1))
+    verify(spyGoogleMapController, times(1))
         .setClusterItemInfoWindowClickListener(null)
   }
 
   @Test
   fun OnMapReadySetsClusterItemRenderedListener() {
     val googleMapController = this.googleMapController
-    val spyGoogleMapController = Mockito.spy<GoogleMapController>(googleMapController)
+    val spyGoogleMapController = spy(googleMapController)
     // setMarkerCollectionListener method should be called when map is ready
     spyGoogleMapController.onMapReady(mockGoogleMap!!)
 
     // Verify if the setMarkerCollectionListener method is called with listener
-    Mockito.verify<GoogleMapController?>(spyGoogleMapController, Mockito.times(1))
+    verify(spyGoogleMapController, times(1))
         .setClusterItemRenderedListener(
-            ArgumentMatchers.any<OnClusterItemRendered<*>?>(OnClusterItemRendered::class.java))
+            any())
 
     spyGoogleMapController.dispose()
     // Verify if the setMarkerCollectionListener is cleared on dispose
-    Mockito.verify<GoogleMapController?>(spyGoogleMapController, Mockito.times(1))
+    verify(spyGoogleMapController, times(1))
         .setClusterItemRenderedListener(null)
   }
 
@@ -243,17 +236,17 @@ class GoogleMapControllerTest {
 
     // Verify if the ClusterManagersController.addClusterManagers method is called with initial
     // cluster managers.
-    Mockito.verify<ClusterManagersController?>(mockClusterManagersController, Mockito.times(1))
-        .addClusterManagers(ArgumentMatchers.any<MutableList<PlatformClusterManager?>?>())
+    verify(mockClusterManagersController, times(1))
+        .addClusterManagers(any())
   }
 
   @Test
   fun OnClusterItemRenderedCallsMarkersController() {
     val googleMapController = this.googleMapControllerWithMockedDependencies
     val markerBuilder = MarkerBuilder("m_1", "cm_1", PlatformMarkerType.MARKER)
-    val marker = Mockito.mock<Marker>(Marker::class.java)
+    val marker = mock<Marker>()
     googleMapController.onClusterItemRendered(markerBuilder, marker)
-    Mockito.verify<MarkersController?>(mockMarkersController, Mockito.times(1))
+    verify(mockMarkersController, times(1))
         .onClusterItemRendered(markerBuilder, marker)
   }
 
@@ -263,7 +256,7 @@ class GoogleMapControllerTest {
     val markerBuilder = MarkerBuilder("m_1", "cm_1", PlatformMarkerType.MARKER)
 
     googleMapController.onClusterItemClick(markerBuilder)
-    Mockito.verify<MarkersController?>(mockMarkersController, Mockito.times(1))
+    verify(mockMarkersController, times(1))
         .onMarkerTap(markerBuilder.markerId())
   }
 
@@ -273,7 +266,7 @@ class GoogleMapControllerTest {
     val markerBuilder = MarkerBuilder("m_1", "cm_1", PlatformMarkerType.MARKER)
 
     googleMapController.onClusterItemInfoWindowClick(markerBuilder)
-    Mockito.verify<MarkersController?>(mockMarkersController, Mockito.times(1))
+    verify(mockMarkersController, times(1))
         .onClusterItemInfoWindowTap(markerBuilder.markerId())
   }
 
@@ -285,8 +278,8 @@ class GoogleMapControllerTest {
     val pointOfInterest = PointOfInterest(LatLng(0.0, 0.0), "place-123", "Test Place")
     googleMapController.onPoiClick(pointOfInterest)
 
-    Mockito.verify<MapsCallbackApi?>(flutterApi, Mockito.times(1))
-        .onPointOfInterestTap(ArgumentMatchers.eq<String?>("place-123"), null)
+    verify(flutterApi, times(1))
+        .onPointOfInterestTap(eq("place-123"), null)
   }
 
   @Test
@@ -296,8 +289,8 @@ class GoogleMapControllerTest {
 
     googleMapController.onPoiClick(PointOfInterest(LatLng(0.0, 0.0), null, "Test Place"))
 
-    Mockito.verify<MapsCallbackApi?>(flutterApi, Mockito.times(0))
-        .onPointOfInterestTap(ArgumentMatchers.any<String>(), null)
+    verify(flutterApi, times(0))
+        .onPointOfInterestTap(any(), null)
   }
 
   @Test
@@ -309,7 +302,7 @@ class GoogleMapControllerTest {
     googleMapController.onMapReady(mockGoogleMap!!)
 
     // Verify if the HeatmapsController.addHeatmaps method is called with initial heatmaps.
-    Mockito.verify<HeatmapsController?>(mockHeatmapsController, Mockito.times(1))
+    verify(mockHeatmapsController, times(1))
         .addHeatmaps(initialHeatmaps)
   }
 
@@ -323,10 +316,10 @@ class GoogleMapControllerTest {
 
     googleMapController.updateHeatmaps(toAdd, toChange, idsToRemove)
 
-    Mockito.verify<HeatmapsController?>(mockHeatmapsController, Mockito.times(1)).addHeatmaps(toAdd)
-    Mockito.verify<HeatmapsController?>(mockHeatmapsController, Mockito.times(1))
+    verify(mockHeatmapsController, times(1)).addHeatmaps(toAdd)
+    verify(mockHeatmapsController, times(1))
         .changeHeatmaps(toChange)
-    Mockito.verify<HeatmapsController?>(mockHeatmapsController, Mockito.times(1))
+    verify(mockHeatmapsController, times(1))
         .removeHeatmaps(idsToRemove)
   }
 
@@ -338,15 +331,15 @@ class GoogleMapControllerTest {
     val newCameraPosition = PlatformCameraUpdateZoomBy(1.0, null)
     val cameraUpdate = PlatformCameraUpdate(newCameraPosition)
 
-    Mockito.mockStatic<CameraUpdateFactory?>(CameraUpdateFactory::class.java).use { mockedFactory ->
+    Mockito.mockStatic(CameraUpdateFactory::class.java).use { mockedFactory ->
       mockedFactory
-          .`when`<Any?>(
-              MockedStatic.Verification { CameraUpdateFactory.zoomBy(ArgumentMatchers.anyFloat()) })
-          .thenReturn(Mockito.mock<CameraUpdate?>(CameraUpdate::class.java))
+          .whenever(
+               { CameraUpdateFactory.zoomBy(any()) })
+          .thenReturn(mock<CameraUpdate>())
       googleMapController.animateCamera(cameraUpdate, null)
     }
-    Mockito.verify<GoogleMap?>(mockGoogleMap, Mockito.times(1))
-        .animateCamera(ArgumentMatchers.any<CameraUpdate?>(CameraUpdate::class.java))
+    verify(mockGoogleMap, times(1))
+        .animateCamera(any())
   }
 
   @Test
@@ -359,18 +352,19 @@ class GoogleMapControllerTest {
 
     val durationMilliseconds = 1000L
 
-    Mockito.mockStatic<CameraUpdateFactory?>(CameraUpdateFactory::class.java).use { mockedFactory ->
+    Mockito.mockStatic(CameraUpdateFactory::class.java).use { mockedFactory ->
       mockedFactory
-          .`when`<Any?>(
-              MockedStatic.Verification { CameraUpdateFactory.zoomBy(ArgumentMatchers.anyFloat()) })
-          .thenReturn(Mockito.mock<CameraUpdate?>(CameraUpdate::class.java))
+          .whenever(
+               { CameraUpdateFactory.zoomBy(any()) })
+          .thenReturn(mock<CameraUpdate>())    
       googleMapController.animateCamera(cameraUpdate, durationMilliseconds)
     }
-    Mockito.verify<GoogleMap?>(mockGoogleMap, Mockito.times(1))
+    verify(mockGoogleMap, times(1))
         .animateCamera(
-            ArgumentMatchers.any<CameraUpdate?>(CameraUpdate::class.java),
-            ArgumentMatchers.eq(durationMilliseconds.toInt()),
-            ArgumentMatchers.isNull<CancelableCallback?>())
+            any(),
+            eq(durationMilliseconds.toInt()),
+            isNull()
+        )
   }
 
   @Test
@@ -379,7 +373,7 @@ class GoogleMapControllerTest {
     googleMapController.onMapReady(mockGoogleMap!!)
 
     val cameraPosition = CameraPosition(LatLng(10.0, 20.0), 15.0f, 30.0f, 45.0f)
-    Mockito.`when`<CameraPosition?>(mockGoogleMap!!.getCameraPosition()).thenReturn(cameraPosition)
+    whenever(mockGoogleMap!!.getCameraPosition()).thenReturn(cameraPosition)
 
     val result = googleMapController.getCameraPosition()
 
@@ -395,12 +389,12 @@ class GoogleMapControllerTest {
     val googleMapController = this.googleMapControllerWithMockedDependencies
     googleMapController.onMapReady(mockGoogleMap!!)
 
-    Mockito.`when`<MapCapabilities?>(mockGoogleMap!!.getMapCapabilities())
+    whenever(mockGoogleMap!!.getMapCapabilities())
         .thenReturn(mapCapabilities)
-    Mockito.`when`<Boolean?>(mapCapabilities!!.isAdvancedMarkersAvailable()).thenReturn(true)
+    whenever(mapCapabilities!!.isAdvancedMarkersAvailable()).thenReturn(true)
     Assert.assertTrue(googleMapController.isAdvancedMarkersAvailable())
 
-    Mockito.`when`<Boolean?>(mapCapabilities!!.isAdvancedMarkersAvailable()).thenReturn(false)
+    whenever(mapCapabilities!!.isAdvancedMarkersAvailable()).thenReturn(false)
     Assert.assertFalse(googleMapController.isAdvancedMarkersAvailable())
   }
 

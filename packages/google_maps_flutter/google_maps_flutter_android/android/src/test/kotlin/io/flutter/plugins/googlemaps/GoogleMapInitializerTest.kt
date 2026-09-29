@@ -12,29 +12,29 @@ import org.junit.Assert
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
-import org.mockito.Mock
-import org.mockito.Mockito
-import org.mockito.MockitoAnnotations
+import org.mockito.kotlin.doNothing
+import org.mockito.kotlin.mock
+import org.mockito.kotlin.spy
+import org.mockito.kotlin.whenever
 import org.robolectric.RobolectricTestRunner
 
 @RunWith(RobolectricTestRunner::class)
 class GoogleMapInitializerTest {
-  private var googleMapInitializer: GoogleMapInitializer? = null
+  private lateinit var googleMapInitializer: GoogleMapInitializer
 
-  @Mock var mockMessenger: BinaryMessenger? = null
+  private var mockMessenger: BinaryMessenger = mock()
 
   @Before
   fun before() {
-    MockitoAnnotations.openMocks(this)
     val context = ApplicationProvider.getApplicationContext<Context?>()
     googleMapInitializer =
-        Mockito.spy<GoogleMapInitializer>(GoogleMapInitializer(context, mockMessenger))
+        spy(GoogleMapInitializer(context, mockMessenger))
   }
 
   @Test
   fun initializer_OnMapsSdkInitializedWithLatestRenderer() {
-    Mockito.doNothing()
-        .`when`<GoogleMapInitializer?>(googleMapInitializer)
+    doNothing()
+        .whenever(googleMapInitializer)
         .initializeWithRendererRequest(MapsInitializer.Renderer.LATEST)
     val callbackCalled = arrayOfNulls<Boolean>(1)
     googleMapInitializer!!.initializeWithPreferredRenderer(
@@ -53,8 +53,8 @@ class GoogleMapInitializerTest {
   @Suppress("deprecation")
   @Test
   fun initializer_OnMapsSdkInitializedWithLegacyRenderer() {
-    Mockito.doNothing()
-        .`when`<GoogleMapInitializer?>(googleMapInitializer)
+    doNothing()
+        .whenever(googleMapInitializer)
         .initializeWithRendererRequest(MapsInitializer.Renderer.LEGACY)
     val callbackCalled = arrayOfNulls<Boolean>(1)
     googleMapInitializer!!.initializeWithPreferredRenderer(
@@ -72,8 +72,8 @@ class GoogleMapInitializerTest {
 
   @Test
   fun initializer_onMethodCallWithNoRendererPreference() {
-    Mockito.doNothing()
-        .`when`<GoogleMapInitializer?>(googleMapInitializer)
+    doNothing()
+        .whenever(googleMapInitializer)
         .initializeWithRendererRequest(null)
     val callbackCalled = arrayOfNulls<Boolean>(1)
     googleMapInitializer!!.initializeWithPreferredRenderer(

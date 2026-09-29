@@ -18,20 +18,19 @@ import org.junit.After
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
-import org.mockito.ArgumentMatcher
-import org.mockito.ArgumentMatchers
-import org.mockito.Mock
-import org.mockito.Mockito
-import org.mockito.MockitoAnnotations
+import org.mockito.kotlin.argThat
+import org.mockito.kotlin.mock
+import org.mockito.kotlin.spy
+import org.mockito.kotlin.times
+import org.mockito.kotlin.verify
+import org.mockito.kotlin.whenever
 import org.robolectric.RobolectricTestRunner
 
 @RunWith(RobolectricTestRunner::class)
 class GroundOverlaysControllerTest {
-  @Mock private val bitmapDescriptorFactoryWrapper: BitmapDescriptorFactoryWrapper? = null
+  private val bitmapDescriptorFactoryWrapper: BitmapDescriptorFactoryWrapper = mock()
 
-  @Mock private val mockBitmapDescriptor: BitmapDescriptor? = null
-
-  var mockCloseable: AutoCloseable? = null
+  private val mockBitmapDescriptor: BitmapDescriptor = mock()
 
   private var controller: GroundOverlaysController? = null
   private var googleMap: GoogleMap? = null
@@ -65,59 +64,49 @@ class GroundOverlaysControllerTest {
 
   @Before
   fun setUp() {
-    mockCloseable = MockitoAnnotations.openMocks(this)
     val context = ApplicationProvider.getApplicationContext<Context>()
     val assetManager = context.getAssets()
     val flutterApi =
-        Mockito.spy<MapsCallbackApi>(
-            MapsCallbackApi(Mockito.mock<BinaryMessenger?>(BinaryMessenger::class.java), ""))
+        spy(MapsCallbackApi(mock<BinaryMessenger>(), ""))
     controller =
-        Mockito.spy<GroundOverlaysController>(
-            GroundOverlaysController(
+        spy(GroundOverlaysController(
                 flutterApi, assetManager, 1.0f, bitmapDescriptorFactoryWrapper!!))
-    googleMap = Mockito.mock<GoogleMap>(GoogleMap::class.java)
+    googleMap = mock<GoogleMap>()
     controller!!.setGoogleMap(googleMap)
-    Mockito.`when`<BitmapDescriptor?>(
-            bitmapDescriptorFactoryWrapper.fromBitmap(ArgumentMatchers.any<Bitmap?>()))
+    whenever(
+            bitmapDescriptorFactoryWrapper.fromBitmap(any()))
         .thenReturn(mockBitmapDescriptor)
-  }
-
-  @After
-  @Throws(Exception::class)
-  fun tearDown() {
-    mockCloseable!!.close()
   }
 
   @Test
   fun controller_AddChangeAndRemoveGroundOverlay() {
-    val groundOverlay = Mockito.mock<GroundOverlay>(GroundOverlay::class.java)
+    val groundOverlay = mock<GroundOverlay>()
     val googleGroundOverlayId = "abc123"
     val transparency = 0.1f
 
-    Mockito.`when`<String?>(groundOverlay.getId()).thenReturn(googleGroundOverlayId)
-    Mockito.`when`<GroundOverlay?>(
+    whenever(groundOverlay.getId()).thenReturn(googleGroundOverlayId)
+    whenever(
             googleMap!!.addGroundOverlay(
-                ArgumentMatchers.any<GroundOverlayOptions?>(GroundOverlayOptions::class.java)))
+                any()))
         .thenReturn(groundOverlay)
 
     controller!!.addGroundOverlays(
         mutableListOf<PlatformGroundOverlay?>(
             createGroundOverlay(googleGroundOverlayId, transparency.toDouble())))
-    Mockito.verify<GoogleMap?>(googleMap, Mockito.times(1))
+    verify(googleMap, times(1))
         .addGroundOverlay(
-            Mockito.argThat<GroundOverlayOptions?>(
-                ArgumentMatcher { argument: GroundOverlayOptions? ->
+            argThat { argument: GroundOverlayOptions? ->
                   argument!!.getTransparency() == transparency
-                }))
+                })
 
     val newTransparency = 0.2f
     controller!!.changeGroundOverlays(
         mutableListOf<PlatformGroundOverlay?>(
             createGroundOverlay(googleGroundOverlayId, newTransparency.toDouble())))
-    Mockito.verify<GroundOverlay?>(groundOverlay, Mockito.times(1)).setTransparency(newTransparency)
+    verify(groundOverlay, times(1)).setTransparency(newTransparency)
 
     controller!!.removeGroundOverlays(mutableListOf<String?>(googleGroundOverlayId))
 
-    Mockito.verify<GroundOverlay?>(groundOverlay, Mockito.times(1)).remove()
+    verify(groundOverlay, times(1)).remove()
   }
 }

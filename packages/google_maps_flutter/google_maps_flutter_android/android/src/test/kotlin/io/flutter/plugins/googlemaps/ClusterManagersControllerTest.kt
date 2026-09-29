@@ -26,46 +26,35 @@ import org.junit.Before
 import org.junit.Test
 import org.junit.function.ThrowingRunnable
 import org.junit.runner.RunWith
-import org.mockito.ArgumentMatchers
-import org.mockito.Mock
-import org.mockito.Mockito
-import org.mockito.MockitoAnnotations
+import org.mockito.kotlin.eq
+import org.mockito.kotlin.mock
+import org.mockito.kotlin.spy
+import org.mockito.kotlin.verify
+import org.mockito.kotlin.whenever
 import org.robolectric.RobolectricTestRunner
 
 @RunWith(RobolectricTestRunner::class)
 class ClusterManagersControllerTest {
-  private var context: Context? = null
-  private var flutterApi: MapsCallbackApi? = null
-  private var controller: ClusterManagersController? = null
-  private var googleMap: GoogleMap? = null
-  private var markerManager: MarkerManager? = null
-  private var assetManager: AssetManager? = null
+  private lateinit var context: Context
+  private lateinit var flutterApi: MapsCallbackApi
+  private lateinit var controller: ClusterManagersController
+  private val googleMap: GoogleMap = mock()
+  private lateinit var markerManager: MarkerManager
+  private lateinit var assetManager: AssetManager
   private val density = 1f
 
-  @Mock var bitmapFactory: BitmapDescriptorFactoryWrapper? = null
-
-  private var mocksClosable: AutoCloseable? = null
+  private val bitmapFactory: BitmapDescriptorFactoryWrapper = mock()
 
   @Before
   fun setUp() {
-    mocksClosable = MockitoAnnotations.openMocks(this)
     context = ApplicationProvider.getApplicationContext<Context>()
     assetManager = context!!.getAssets()
     flutterApi =
-        Mockito.spy<MapsCallbackApi>(
-            MapsCallbackApi(Mockito.mock<BinaryMessenger?>(BinaryMessenger::class.java), ""))
+        spy(MapsCallbackApi(mock<BinaryMessenger>(), ""))
     controller =
-        Mockito.spy<ClusterManagersController>(
-            ClusterManagersController(flutterApi!!, context!!, PlatformMarkerType.MARKER))
-    googleMap = Mockito.mock<GoogleMap>(GoogleMap::class.java)
+        spy(ClusterManagersController(flutterApi!!, context!!, PlatformMarkerType.MARKER))
     markerManager = MarkerManager(googleMap)
     controller!!.init(googleMap, markerManager)
-  }
-
-  @After
-  @Throws(Exception::class)
-  fun close() {
-    mocksClosable!!.close()
   }
 
   @Test
@@ -85,7 +74,7 @@ class ClusterManagersControllerTest {
     location2.add(latLng2.latitude)
     location2.add(latLng2.longitude)
 
-    Mockito.`when`<CameraPosition?>(googleMap!!.getCameraPosition())
+    whenever(googleMap!!.getCameraPosition())
         .thenReturn(CameraPosition.builder().target(LatLng(0.0, 0.0)).build())
     val initialClusterManager = PlatformClusterManager(clusterManagerId)
     val clusterManagersToAdd: MutableList<PlatformClusterManager?> =
@@ -128,16 +117,14 @@ class ClusterManagersControllerTest {
     val defaultMarkerId = "mid_default"
     val advancedMarkerId = "mid_advanced"
 
-    Mockito.`when`<CameraPosition?>(googleMap!!.getCameraPosition())
+    whenever(googleMap!!.getCameraPosition())
         .thenReturn(CameraPosition.builder().target(LatLng(0.0, 0.0)).build())
 
     val defaultController =
-        Mockito.spy<ClusterManagersController>(
-            ClusterManagersController(flutterApi!!, context!!, PlatformMarkerType.MARKER))
+        spy(ClusterManagersController(flutterApi!!, context!!, PlatformMarkerType.MARKER))
     defaultController.init(googleMap, markerManager)
     val advancedController =
-        Mockito.spy<ClusterManagersController>(
-            ClusterManagersController(flutterApi!!, context!!, PlatformMarkerType.ADVANCED_MARKER))
+        spy(ClusterManagersController(flutterApi!!, context!!, PlatformMarkerType.ADVANCED_MARKER))
     advancedController.init(googleMap, markerManager)
 
     val initialClusterManager1 = PlatformClusterManager(defaultClusterManagerId)
@@ -193,9 +180,9 @@ class ClusterManagersControllerTest {
     cluster.add(marker2)
 
     controller!!.onClusterClick(cluster)
-    Mockito.verify<MapsCallbackApi?>(flutterApi)
+    verify(flutterApi)
         .onClusterTap(
-            ArgumentMatchers.eq<PlatformCluster?>(
+            eq(
                 Convert.clusterToPigeon(clusterManagerId, cluster)),
             null)
   }
@@ -204,7 +191,7 @@ class ClusterManagersControllerTest {
   fun RemoveClusterManagers() {
     val clusterManagerId = "cm_1"
 
-    Mockito.`when`<CameraPosition?>(googleMap!!.getCameraPosition())
+    whenever(googleMap!!.getCameraPosition())
         .thenReturn(CameraPosition.builder().target(LatLng(0.0, 0.0)).build())
     val initialClusterManager = PlatformClusterManager(clusterManagerId)
     val clusterManagersToAdd: MutableList<PlatformClusterManager?> =

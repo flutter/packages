@@ -24,40 +24,39 @@ import org.junit.Assert
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
-import org.mockito.ArgumentCaptor
-import org.mockito.ArgumentMatcher
-import org.mockito.ArgumentMatchers
-import org.mockito.Mock
-import org.mockito.Mockito
-import org.mockito.MockitoAnnotations
+import org.mockito.kotlin.any
+import org.mockito.kotlin.argThat
+import org.mockito.kotlin.eq
+import org.mockito.kotlin.mock
+import org.mockito.kotlin.reset
+import org.mockito.kotlin.spy
+import org.mockito.kotlin.times
+import org.mockito.kotlin.verify
+import org.mockito.kotlin.whenever
 import org.robolectric.RobolectricTestRunner
 
 @RunWith(RobolectricTestRunner::class)
 class MarkersControllerTest {
-  private var context: Context? = null
-  private var flutterApi: MapsCallbackApi? = null
-  private var clusterManagersController: ClusterManagersController? = null
-  private var controller: MarkersController? = null
-  private var googleMap: GoogleMap? = null
-  private var markerManager: MarkerManager? = null
-  private var markerCollection: MarkerManager.Collection? = null
-  private var assetManager: AssetManager? = null
+  private lateinit var context: Context
+  private lateinit var flutterApi: MapsCallbackApi
+  private lateinit var clusterManagersController: ClusterManagersController
+  private lateinit var controller: MarkersController
+  private val googleMap: GoogleMap = mock()
+  private lateinit var markerManager: MarkerManager
+  private lateinit var markerCollection: MarkerManager.Collection
+  private lateinit var assetManager: AssetManager
   private val density = 1f
-  private var mocksClosable: AutoCloseable? = null
 
-  @Mock private val bitmapDescriptorFactoryWrapper: BitmapDescriptorFactoryWrapper? = null
+  private val bitmapDescriptorFactoryWrapper: BitmapDescriptorFactoryWrapper = mock()
 
   @Before
   fun setUp() {
-    mocksClosable = MockitoAnnotations.openMocks(this)
     assetManager = ApplicationProvider.getApplicationContext<Context?>().getAssets()
     context = ApplicationProvider.getApplicationContext<Context>()
     flutterApi =
-        Mockito.spy<MapsCallbackApi>(
-            MapsCallbackApi(Mockito.mock<BinaryMessenger?>(BinaryMessenger::class.java), ""))
+        spy(MapsCallbackApi(mock<BinaryMessenger>(), ""))
     clusterManagersController =
-        Mockito.spy<ClusterManagersController>(
-            ClusterManagersController(flutterApi!!, context!!, PlatformMarkerType.MARKER))
+        spy(ClusterManagersController(flutterApi!!, context!!, PlatformMarkerType.MARKER))
     controller =
         MarkersController(
             flutterApi!!,
@@ -66,28 +65,21 @@ class MarkersControllerTest {
             density,
             bitmapDescriptorFactoryWrapper,
             PlatformMarkerType.MARKER)
-    googleMap = Mockito.mock<GoogleMap>(GoogleMap::class.java)
     markerManager = MarkerManager(googleMap)
     markerCollection = markerManager!!.newCollection()
     controller!!.setCollection(markerCollection)
     clusterManagersController!!.init(googleMap, markerManager)
   }
 
-  @After
-  @Throws(Exception::class)
-  fun close() {
-    mocksClosable!!.close()
-  }
-
   @Test
   fun controller_OnMarkerDragStart() {
-    val marker = Mockito.mock<Marker>(Marker::class.java)
+    val marker = mock<Marker>()
 
     val googleMarkerId = "abc123"
 
-    Mockito.`when`<String?>(marker.getId()).thenReturn(googleMarkerId)
-    Mockito.`when`<Marker?>(
-            googleMap!!.addMarker(ArgumentMatchers.any<MarkerOptions?>(MarkerOptions::class.java)))
+    whenever(marker.getId()).thenReturn(googleMarkerId)
+    whenever(
+            googleMap!!.addMarker(any()))
         .thenReturn(marker)
 
     val latLng = LatLng(1.1, 2.2)
@@ -97,23 +89,21 @@ class MarkersControllerTest {
     controller!!.addMarkers(markers)
     controller!!.onMarkerDragStart(googleMarkerId, latLng)
 
-    Mockito.verify<MapsCallbackApi?>(flutterApi)
+    verify(flutterApi)
         .onMarkerDragStart(
-            ArgumentMatchers.eq<String?>(googleMarkerId),
-            ArgumentMatchers.eq<PlatformLatLng?>(Convert.latLngToPigeon(latLng)),
+            eq(googleMarkerId),
+            eq(Convert.latLngToPigeon(latLng)),
             null)
   }
 
   @Test
   fun controller_OnMarkerDragEnd() {
-    val marker = Mockito.mock<Marker>(Marker::class.java)
+    val marker = mock<Marker>()
 
     val googleMarkerId = "abc123"
 
-    Mockito.`when`<String?>(marker.getId()).thenReturn(googleMarkerId)
-    Mockito.`when`<Marker?>(
-            googleMap!!.addMarker(ArgumentMatchers.any<MarkerOptions?>(MarkerOptions::class.java)))
-        .thenReturn(marker)
+    whenever(marker.getId()).thenReturn(googleMarkerId)
+    whenever(googleMap!!.addMarker(any())).thenReturn(marker)
 
     val latLng = LatLng(1.1, 2.2)
 
@@ -122,23 +112,21 @@ class MarkersControllerTest {
     controller!!.addMarkers(markers)
     controller!!.onMarkerDragEnd(googleMarkerId, latLng)
 
-    Mockito.verify<MapsCallbackApi?>(flutterApi)
+    verify(flutterApi)
         .onMarkerDragEnd(
-            ArgumentMatchers.eq<String?>(googleMarkerId),
-            ArgumentMatchers.eq<PlatformLatLng?>(Convert.latLngToPigeon(latLng)),
+            eq(googleMarkerId),
+            eq(Convert.latLngToPigeon(latLng)),
             null)
   }
 
   @Test
   fun controller_OnMarkerDrag() {
-    val marker = Mockito.mock<Marker>(Marker::class.java)
+    val marker = mock<Marker>()
 
     val googleMarkerId = "abc123"
 
-    Mockito.`when`<String?>(marker.getId()).thenReturn(googleMarkerId)
-    Mockito.`when`<Marker?>(
-            googleMap!!.addMarker(ArgumentMatchers.any<MarkerOptions?>(MarkerOptions::class.java)))
-        .thenReturn(marker)
+    whenever(marker.getId()).thenReturn(googleMarkerId)
+    whenever(googleMap!!.addMarker(any())).thenReturn(marker)
 
     val latLng = LatLng(1.1, 2.2)
 
@@ -148,10 +136,10 @@ class MarkersControllerTest {
     controller!!.addMarkers(markers)
     controller!!.onMarkerDrag(googleMarkerId, latLng)
 
-    Mockito.verify<MapsCallbackApi?>(flutterApi)
+    verify(flutterApi)
         .onMarkerDrag(
-            ArgumentMatchers.eq<String?>(googleMarkerId),
-            ArgumentMatchers.eq<PlatformLatLng?>(Convert.latLngToPigeon(latLng)),
+            eq(googleMarkerId),
+            eq(Convert.latLngToPigeon(latLng)),
             null)
   }
 
@@ -168,7 +156,7 @@ class MarkersControllerTest {
 
   @Test
   fun controller_AddChangeAndRemoveMarkerWithClusterManagerId() {
-    val marker = Mockito.mock<Marker>(Marker::class.java)
+    val marker = mock<Marker>()
 
     val googleMarkerId = "abc123"
     val clusterManagerId = "cm123"
@@ -179,18 +167,17 @@ class MarkersControllerTest {
         .setClusterManagerId(clusterManagerId)
         .setPosition(PlatformLatLng(1.1, 2.2))
 
-    Mockito.`when`<String?>(marker.getId()).thenReturn(googleMarkerId)
+    whenever(marker.getId()).thenReturn(googleMarkerId)
 
     // Store reference to verify later, since markerIdToMarkerBuilder is private
     val addedMarkerBuilder = arrayOfNulls<MarkerBuilder>(1)
 
     // Add marker and verify addItems is called with correct parameters
     controller!!.addMarkers(mutableListOf<PlatformMarker?>(builder.build()))
-    Mockito.verify<ClusterManagersController?>(clusterManagersController, Mockito.times(1))
+    verify(clusterManagersController, times(1))
         .addItems(
-            ArgumentMatchers.eq<String?>(clusterManagerId),
-            Mockito.argThat<MutableList<MarkerBuilder?>?>(
-                ArgumentMatcher { markerBuilders: MutableList<MarkerBuilder?>? ->
+            eq(clusterManagerId),
+            argThat { markerBuilders: MutableList<MarkerBuilder?>? ->
                   if (markerBuilders!!.size == 1 &&
                       markerBuilders.get(0)!!.clusterManagerId() == clusterManagerId) {
                     // Store reference for later use in onClusterItemRendered
@@ -198,7 +185,7 @@ class MarkersControllerTest {
                     return@argThat true
                   }
                   false
-                }))
+                })
 
     // clusterManagersController calls onClusterItemRendered with created marker.
     controller!!.onClusterItemRendered(addedMarkerBuilder[0], marker)
@@ -211,59 +198,54 @@ class MarkersControllerTest {
     val updatedMarkers = mutableListOf<PlatformMarker?>(builder.build())
 
     controller!!.changeMarkers(updatedMarkers)
-    Mockito.verify<Marker?>(marker, Mockito.times(1)).setPosition(latLng2)
+    verify(marker, times(1)).setPosition(latLng2)
 
     // Remove marker
     controller!!.removeMarkers(mutableListOf<String?>(googleMarkerId))
 
-    Mockito.verify<ClusterManagersController?>(clusterManagersController, Mockito.times(1))
+    verify(clusterManagersController, times(1))
         .removeItems(
-            ArgumentMatchers.eq<String?>(clusterManagerId),
-            Mockito.argThat<MutableList<MarkerBuilder?>?>(
-                ArgumentMatcher { PlatformMarkerBuilders: MutableList<MarkerBuilder?>? ->
+            eq(clusterManagerId),
+            argThat { PlatformMarkerBuilders: MutableList<MarkerBuilder?>? ->
                   PlatformMarkerBuilders!!.size == 1 &&
                       (PlatformMarkerBuilders.get(0)!!.clusterManagerId() == clusterManagerId)
-                }))
+                })
   }
 
   @Test
   fun controller_AddChangeAndRemoveMarkerWithoutClusterManagerId() {
-    val spyMarkerCollection = Mockito.spy<MarkerManager.Collection?>(markerCollection)
+    val spyMarkerCollection = spy(markerCollection)
     controller!!.setCollection(spyMarkerCollection)
 
-    val marker = Mockito.mock<Marker>(Marker::class.java)
+    val marker = mock<Marker>()
 
     val googleMarkerId = "abc123"
 
-    Mockito.`when`<String?>(marker.getId()).thenReturn(googleMarkerId)
-    Mockito.`when`<Marker?>(
-            googleMap!!.addMarker(ArgumentMatchers.any<MarkerOptions?>(MarkerOptions::class.java)))
-        .thenReturn(marker)
+    whenever(marker.getId()).thenReturn(googleMarkerId)
+    whenever(googleMap!!.addMarker(any())).thenReturn(marker)
 
     val builder: PlatformMarkerBuilder = defaultMarkerBuilder()
     builder.setMarkerId(googleMarkerId)
     controller!!.addMarkers(mutableListOf<PlatformMarker?>(builder.build()))
 
     // clusterManagersController should not be called when adding the marker
-    Mockito.verify<ClusterManagersController?>(clusterManagersController, Mockito.times(0))
-        .addItem(ArgumentMatchers.any<MarkerBuilder?>())
+    verify(clusterManagersController, times(0)).addItem(any())
 
-    Mockito.verify<MarkerManager.Collection?>(spyMarkerCollection, Mockito.times(1))
-        .addMarker(ArgumentMatchers.any<MarkerOptions?>(MarkerOptions::class.java))
+    verify(spyMarkerCollection, times(1)).addMarker(any())
 
     val alpha = 0.1f
 
     val markerUpdates = mutableListOf<PlatformMarker?>(builder.setAlpha(alpha.toDouble()).build())
     controller!!.changeMarkers(markerUpdates)
-    Mockito.verify<Marker?>(marker, Mockito.times(1)).setAlpha(alpha)
+    verify(marker, times(1)).setAlpha(alpha)
 
     controller!!.removeMarkers(mutableListOf<String?>(googleMarkerId))
 
     // clusterManagersController should not be called when removing the marker
-    Mockito.verify<ClusterManagersController?>(clusterManagersController, Mockito.times(0))
-        .removeItem(ArgumentMatchers.any<MarkerBuilder?>())
+    verify(clusterManagersController, times(0))
+        .removeItem(any())
 
-    Mockito.verify<MarkerManager.Collection?>(spyMarkerCollection, Mockito.times(1)).remove(marker)
+    verify(spyMarkerCollection, times(1)).remove(marker)
   }
 
   @Test
@@ -322,20 +304,19 @@ class MarkersControllerTest {
     controller!!.addMarkers(markers)
 
     // Verify addItems is called exactly once with all 5 markers
-    Mockito.verify<ClusterManagersController?>(clusterManagersController, Mockito.times(1))
+    verify(clusterManagersController, times(1))
         .addItems(
-            ArgumentMatchers.eq<String?>(clusterManagerId),
-            Mockito.argThat<MutableList<MarkerBuilder?>?>(
-                ArgumentMatcher { PlatformMarkerBuilders: MutableList<MarkerBuilder?>? ->
+            eq(clusterManagerId),
+            argThat { PlatformMarkerBuilders: MutableList<MarkerBuilder?>? ->
                   PlatformMarkerBuilders!!.size == 5 &&
                       PlatformMarkerBuilders.stream().allMatch { mb: MarkerBuilder? ->
                         mb!!.clusterManagerId() == clusterManagerId
                       }
-                }))
+                })
 
     // Verify addItem is never called (we're using batch operation)
-    Mockito.verify<ClusterManagersController?>(clusterManagersController, Mockito.times(0))
-        .addItem(ArgumentMatchers.any<MarkerBuilder?>())
+    verify(clusterManagersController, times(0))
+        .addItem(any())
   }
 
   @Test
@@ -362,20 +343,19 @@ class MarkersControllerTest {
     controller!!.removeMarkers(markerIds)
 
     // Verify removeItems is called exactly once with all 5 markers
-    Mockito.verify<ClusterManagersController?>(clusterManagersController, Mockito.times(1))
+    verify(clusterManagersController, times(1))
         .removeItems(
-            ArgumentMatchers.eq<String?>(clusterManagerId),
-            Mockito.argThat<MutableList<MarkerBuilder?>?>(
-                ArgumentMatcher { PlatformMarkerBuilders: MutableList<MarkerBuilder?>? ->
+            eq(clusterManagerId),
+            argThat { PlatformMarkerBuilders: MutableList<MarkerBuilder?>? ->
                   PlatformMarkerBuilders!!.size == 5 &&
                       PlatformMarkerBuilders.stream().allMatch { mb: MarkerBuilder? ->
                         mb!!.clusterManagerId() == clusterManagerId
                       }
-                }))
+                })
 
     // Verify removeItem is never called (we're using batch operation)
-    Mockito.verify<ClusterManagersController?>(clusterManagersController, Mockito.times(0))
-        .removeItem(ArgumentMatchers.any<MarkerBuilder?>())
+    verify(clusterManagersController, times(0))
+        .removeItem(any())
   }
 
   @Test
@@ -396,7 +376,7 @@ class MarkersControllerTest {
     controller!!.addMarkers(initialMarkers)
 
     // Reset mock to clear invocation counts
-    Mockito.reset<ClusterManagersController?>(clusterManagersController)
+      reset(clusterManagersController)
 
     // Now change all markers to cluster manager 2
     val changedMarkers: MutableList<PlatformMarker?> = ArrayList<PlatformMarker?>()
@@ -412,44 +392,40 @@ class MarkersControllerTest {
 
     // Verify removeItems is called exactly once for cluster manager 1 with all 5
     // markers
-    Mockito.verify<ClusterManagersController?>(clusterManagersController, Mockito.times(1))
+    verify(clusterManagersController, times(1))
         .removeItems(
-            ArgumentMatchers.eq<String?>(clusterManagerId1),
-            Mockito.argThat<MutableList<MarkerBuilder?>?>(
-                ArgumentMatcher { PlatformMarkerBuilders: MutableList<MarkerBuilder?>? ->
+            eq(clusterManagerId1),
+            argThat { PlatformMarkerBuilders: MutableList<MarkerBuilder?>? ->
                   PlatformMarkerBuilders!!.size == 5 &&
                       PlatformMarkerBuilders.stream().allMatch { mb: MarkerBuilder? ->
                         mb!!.clusterManagerId() == clusterManagerId1
                       }
-                }))
+                })
 
     // Verify addItems is called exactly once for cluster manager 2 with all 5
     // markers
-    Mockito.verify<ClusterManagersController?>(clusterManagersController, Mockito.times(1))
+    verify(clusterManagersController, times(1))
         .addItems(
-            ArgumentMatchers.eq<String?>(clusterManagerId2),
-            Mockito.argThat<MutableList<MarkerBuilder?>?>(
-                ArgumentMatcher { PlatformMarkerBuilders: MutableList<MarkerBuilder?>? ->
+            eq(clusterManagerId2),
+            argThat { PlatformMarkerBuilders: MutableList<MarkerBuilder?>? ->
                   PlatformMarkerBuilders!!.size == 5 &&
                       PlatformMarkerBuilders.stream().allMatch { mb: MarkerBuilder? ->
                         mb!!.clusterManagerId() == clusterManagerId2
                       }
-                }))
+                })
 
     // Verify individual operations are never called (we're using batch operations)
-    Mockito.verify<ClusterManagersController?>(clusterManagersController, Mockito.times(0))
-        .addItem(ArgumentMatchers.any<MarkerBuilder?>())
-    Mockito.verify<ClusterManagersController?>(clusterManagersController, Mockito.times(0))
-        .removeItem(ArgumentMatchers.any<MarkerBuilder?>())
+    verify(clusterManagersController, times(0)).addItem(any())
+    verify(clusterManagersController, times(0)).removeItem(any())
   }
 
   @Test
   fun controller_ChangeMarkerInPlace() {
-    val marker = Mockito.mock<Marker>(Marker::class.java)
+    val marker = mock<Marker>()
     val markerId = "marker1"
     val clusterManagerId = "cm123"
 
-    Mockito.`when`<String?>(marker.getId()).thenReturn(markerId)
+    whenever(marker.getId()).thenReturn(markerId)
 
     // Add a clustered marker
     val builder: PlatformMarkerBuilder = defaultMarkerBuilder()
@@ -463,15 +439,15 @@ class MarkersControllerTest {
     val captor: ArgumentCaptor<MutableList<MarkerBuilder>?> =
         ArgumentCaptor.forClass<MutableList<MarkerBuilder?>?, MutableList<*>?>(
             MutableList::class.java)
-    Mockito.verify<ClusterManagersController?>(clusterManagersController)
-        .addItems(ArgumentMatchers.eq<String?>(clusterManagerId), captor.capture()!!)
+    verify(clusterManagersController)
+        .addItems(eq(clusterManagerId), captor.capture()!!)
     val capturedMarkerBuilder = captor.getValue()!!.get(0)
 
     // Simulate cluster render so markerController exists
     controller!!.onClusterItemRendered(capturedMarkerBuilder, marker)
 
     // Reset to clear invocation counts
-    Mockito.reset<ClusterManagersController?>(clusterManagersController)
+    reset(clusterManagersController)
 
     // Change marker in place (same clusterManagerId)
     val newLatLng = LatLng(3.0, 4.0)
@@ -479,14 +455,10 @@ class MarkersControllerTest {
     controller!!.changeMarkers(mutableListOf<PlatformMarker?>(builder.build()))
 
     // In-place update: marker position is updated directly
-    Mockito.verify<Marker?>(marker, Mockito.times(1)).setPosition(newLatLng)
+    verify(marker, times(1)).setPosition(newLatLng)
     // No re-clustering needed
-    Mockito.verify<ClusterManagersController?>(clusterManagersController, Mockito.times(0))
-        .addItems(
-            ArgumentMatchers.any<String?>(), ArgumentMatchers.any<MutableList<MarkerBuilder?>?>())
-    Mockito.verify<ClusterManagersController?>(clusterManagersController, Mockito.times(0))
-        .removeItems(
-            ArgumentMatchers.any<String?>(), ArgumentMatchers.any<MutableList<MarkerBuilder?>?>())
+    verify(clusterManagersController, times(0)).addItems(any(), any())
+    verify(clusterManagersController, times(0)).removeItems(any(), any())
   }
 
   // Remove this if builders are added to the Kotlin generator; see discussion in

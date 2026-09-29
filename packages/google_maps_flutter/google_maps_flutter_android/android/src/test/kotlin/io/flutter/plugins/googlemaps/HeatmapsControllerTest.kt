@@ -11,9 +11,14 @@ import java.util.List
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
-import org.mockito.ArgumentMatcher
-import org.mockito.ArgumentMatchers
-import org.mockito.Mockito
+import org.mockito.kotlin.any
+import org.mockito.kotlin.argThat
+import org.mockito.kotlin.doReturn
+import org.mockito.kotlin.mock
+import org.mockito.kotlin.spy
+import org.mockito.kotlin.times
+import org.mockito.kotlin.verify
+import org.mockito.kotlin.whenever
 import org.robolectric.RobolectricTestRunner
 
 @RunWith(RobolectricTestRunner::class)
@@ -23,28 +28,28 @@ class HeatmapsControllerTest {
 
   @Before
   fun setUp() {
-    controller = Mockito.spy<HeatmapsController>(HeatmapsController())
-    googleMap = Mockito.mock<GoogleMap>(GoogleMap::class.java)
+    controller = spy(HeatmapsController())
+    googleMap = mock<GoogleMap>()
     controller!!.setGoogleMap(googleMap)
   }
 
   @Test
   fun controller_AddChangeAndRemoveHeatmap() {
-    val tileOverlay = Mockito.mock<TileOverlay?>(TileOverlay::class.java)
-    val heatmap = Mockito.mock<HeatmapTileProvider?>(HeatmapTileProvider::class.java)
+    val tileOverlay = mock<TileOverlay>()
+    val heatmap = mock<HeatmapTileProvider>()
 
     val googleHeatmapId = "abc123"
     val heatmapData =
         List.of<PlatformWeightedLatLng?>(PlatformWeightedLatLng(PlatformLatLng(1.1, 2.2), 3.3))
     val radius: Long = 20
 
-    Mockito.`when`<TileOverlay?>(
+    whenever(
             googleMap!!.addTileOverlay(
-                ArgumentMatchers.any<TileOverlayOptions?>(TileOverlayOptions::class.java)))
+                any()))
         .thenReturn(tileOverlay)
-    Mockito.doReturn(heatmap)
-        .`when`<HeatmapsController?>(controller)
-        .buildHeatmap(ArgumentMatchers.any<HeatmapBuilder?>(HeatmapBuilder::class.java))
+    doReturn(heatmap)
+        .whenever(controller)
+        .buildHeatmap(any())
 
     val opacity1 = 0.1
     val heatmap1 =
@@ -59,12 +64,11 @@ class HeatmapsControllerTest {
     val heatmaps = mutableListOf<PlatformHeatmap?>(heatmap1)
     controller!!.addHeatmaps(heatmaps)
 
-    Mockito.verify<GoogleMap?>(googleMap, Mockito.times(1))
+    verify(googleMap, times(1))
         .addTileOverlay(
-            Mockito.argThat<TileOverlayOptions?>(
-                ArgumentMatcher { argument: TileOverlayOptions? ->
+            argThat { argument: TileOverlayOptions? ->
                   argument!!.getTileProvider() is HeatmapTileProvider
-                }))
+                })
 
     val opacity2 = 0.2
     val heatmap2 =
@@ -79,10 +83,10 @@ class HeatmapsControllerTest {
     val heatmapUpdates = mutableListOf<PlatformHeatmap?>(heatmap2)
 
     controller!!.changeHeatmaps(heatmapUpdates)
-    Mockito.verify<HeatmapTileProvider?>(heatmap, Mockito.times(1)).opacity = opacity2
+    verify(heatmap, times(1)).opacity = opacity2
 
     controller!!.removeHeatmaps(mutableListOf<String?>(googleHeatmapId))
 
-    Mockito.verify<TileOverlay?>(tileOverlay, Mockito.times(1)).remove()
+    verify(tileOverlay, times(1)).remove()
   }
 }
