@@ -6,6 +6,17 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';
 
 void main() {
+  test('ElevatedButtonThemeData supports Material style variants', () {
+    const material3 = ElevatedButtonThemeData(variant: StyleVariant.material3);
+    const expressive = ElevatedButtonThemeData(variant: StyleVariant.material3Expressive);
+
+    expect(material3.variant, StyleVariant.material3);
+    expect(expressive.variant, StyleVariant.material3Expressive);
+    expect(ElevatedButtonThemeData.lerp(material3, expressive, 0.49), material3);
+    expect(ElevatedButtonThemeData.lerp(material3, expressive, 0.5), expressive);
+    expect(material3, isNot(expressive));
+  });
+
   TextStyle iconStyle(WidgetTester tester, IconData icon) {
     final RichText iconRichText = tester.widget<RichText>(
       find.descendant(of: find.byIcon(icon), matching: find.byType(RichText)),

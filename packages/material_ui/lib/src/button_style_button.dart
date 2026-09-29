@@ -92,6 +92,7 @@ abstract class ButtonStyleButton extends StatefulWidget {
     required this.autofocus,
     required this.clipBehavior,
     this.statesController,
+    this.isSelected,
     this.isSemanticButton = true,
     @Deprecated(
       'Remove this parameter as it is now ignored. '
@@ -159,6 +160,12 @@ abstract class ButtonStyleButton extends StatefulWidget {
 
   /// {@macro material_ui.inkwell.statesController}
   final MaterialStatesController? statesController;
+
+  /// Whether this button is in the selected state.
+  ///
+  /// If null, the button is not selectable. Otherwise, this value controls
+  /// [WidgetState.selected] and the button's selected semantics.
+  final bool? isSelected;
 
   /// Determine whether this subtree represents a button.
   ///
@@ -254,6 +261,7 @@ abstract class ButtonStyleButton extends StatefulWidget {
   void debugFillProperties(DiagnosticPropertiesBuilder properties) {
     super.debugFillProperties(properties);
     properties.add(FlagProperty('enabled', value: enabled, ifFalse: 'disabled'));
+    properties.add(FlagProperty('selected', value: isSelected, ifTrue: 'selected'));
     properties.add(DiagnosticsProperty<ButtonStyle>('style', style, defaultValue: null));
     properties.add(DiagnosticsProperty<FocusNode>('focusNode', focusNode, defaultValue: null));
   }
@@ -328,6 +336,11 @@ class _ButtonStyleState extends State<ButtonStyleButton> with TickerProviderStat
   MaterialStatesController? internalStatesController;
 
   void handleStatesControllerChange() {
+    if (widget.isSelected != null &&
+        statesController.value.contains(WidgetState.selected) != widget.isSelected) {
+      statesController.update(WidgetState.selected, widget.isSelected!);
+      return;
+    }
     // Force a rebuild to resolve WidgetStateProperty properties
     setState(() {});
   }
@@ -340,6 +353,9 @@ class _ButtonStyleState extends State<ButtonStyleButton> with TickerProviderStat
       internalStatesController = MaterialStatesController();
     }
     statesController.update(WidgetState.disabled, !widget.enabled);
+    if (widget.isSelected != null) {
+      statesController.update(WidgetState.selected, widget.isSelected!);
+    }
     statesController.addListener(handleStatesControllerChange);
   }
 
@@ -366,6 +382,9 @@ class _ButtonStyleState extends State<ButtonStyleButton> with TickerProviderStat
         // The button may have been disabled while a press gesture is currently underway.
         statesController.update(WidgetState.pressed, false);
       }
+    }
+    if (widget.isSelected != oldWidget.isSelected) {
+      statesController.update(WidgetState.selected, widget.isSelected ?? false);
     }
   }
 
@@ -598,6 +617,7 @@ class _ButtonStyleState extends State<ButtonStyleButton> with TickerProviderStat
       container: true,
       button: widget.isSemanticButton,
       enabled: widget.enabled,
+      selected: widget.isSelected,
       child: _InputPadding(
         minSize: minSize,
         child: ConstrainedBox(
