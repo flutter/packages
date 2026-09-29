@@ -1,3 +1,14 @@
+## 1.5.0
+
+- Adds Material 3 Expressive support for IconButton.
+- Exposes `selected` state on `Autocomplete` option semantics.
+- Wraps `DrawerHeader` in `Semantics(header: true)`.
+- Adds `ignorePointer` to `TooltipThemeData` for WCAG 1.4.13 Hoverable support.
+- Fixes decorations on `MenuItemButton.leadingIcon`, such as `Badge`, being clipped to the icon's bounds in vertically expanding menus.
+- Introduces labelTextDirection property to InputDecoration.
+- Adds support for standard, medium, and high contrast Material 3 color scheme baselines.
+- Fixes LocalHistoryEntry leak when double tapping Drawer scrim
+
 ## 1.4.0
 
 - Updates minimum supported SDK version to Flutter 3.47/Dart 3.13.
