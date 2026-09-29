@@ -2,27 +2,34 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import '../data/color_role.dart';
+import '../data/navigation_drawer.dart';
 import 'template.dart';
 
-class NavigationDrawerTemplate extends TokenTemplate {
-  const NavigationDrawerTemplate(
-    super.blockName,
-    super.fileName,
-    super.tokens, {
-    super.colorSchemePrefix = '_colors.',
-    super.textThemePrefix = '_textTheme.',
-  });
+class NavigationDrawerTemplateM3 extends TokenTemplateM3 {
+  const NavigationDrawerTemplateM3();
 
   @override
-  String generate() =>
+  String get name => 'Navigation Drawer';
+
+  @override
+  String get parentFilePath => 'navigation_drawer.dart';
+
+  // Disabled-state tokens are not currently available. Preserve the existing
+  // defaults during this template migration.
+  static const TokenColorRole _legacyDisabledColor = TokenColorRole.onSurfaceVariant;
+  static const double _legacyDisabledOpacity = 0.38;
+
+  @override
+  String generateContents(String className) =>
       '''
-class _${blockName}DefaultsM3 extends NavigationDrawerThemeData {
-  _${blockName}DefaultsM3(this.context)
+class $className extends NavigationDrawerThemeData {
+  $className(this.context)
     : super(
-        elevation: ${elevation("md.comp.navigation-drawer.modal.container")},
-        tileHeight: ${getToken("md.comp.navigation-drawer.active-indicator.height")},
-        indicatorShape: ${shape("md.comp.navigation-drawer.active-indicator")},
-        indicatorSize: const Size(${getToken("md.comp.navigation-drawer.active-indicator.width")}, ${getToken("md.comp.navigation-drawer.active-indicator.height")}),
+        elevation: ${number(TokenNavigationDrawer.modalContainerElevation)},
+        tileHeight: ${number(TokenNavigationDrawer.activeIndicatorHeight)},
+        indicatorShape: ${shape(TokenNavigationDrawer.activeIndicatorShape)},
+        indicatorSize: const Size(${number(TokenNavigationDrawer.activeIndicatorWidth)}, ${number(TokenNavigationDrawer.activeIndicatorHeight)}),
       );
 
   final BuildContext context;
@@ -30,27 +37,27 @@ class _${blockName}DefaultsM3 extends NavigationDrawerThemeData {
   late final TextTheme _textTheme = Theme.of(context).textTheme;
 
   @override
-  Color? get backgroundColor => ${componentColor("md.comp.navigation-drawer.modal.container")};
+  Color? get backgroundColor => ${color(TokenNavigationDrawer.modalContainerColor)};
 
   @override
-  Color? get surfaceTintColor => ${colorOrTransparent("md.comp.navigation-drawer.container.surface-tint-layer.color")};
+  Color? get surfaceTintColor => Colors.transparent;
 
   @override
-  Color? get shadowColor => ${colorOrTransparent("md.comp.navigation-drawer.container.shadow-color")};
+  Color? get shadowColor => Colors.transparent;
 
   @override
-  Color? get indicatorColor => ${componentColor("md.comp.navigation-drawer.active-indicator")};
+  Color? get indicatorColor => ${color(TokenNavigationDrawer.activeIndicatorColor)};
 
   @override
   WidgetStateProperty<IconThemeData?>? get iconTheme {
     return WidgetStateProperty.resolveWith((Set<WidgetState> states) {
       return IconThemeData(
-        size: ${getToken("md.comp.navigation-drawer.icon.size")},
+        size: ${number(TokenNavigationDrawer.iconSize)},
         color: states.contains(WidgetState.disabled)
-          ? _colors.onSurfaceVariant.withOpacity(0.38)
+          ? ${colorWithOpacity(_legacyDisabledColor, _legacyDisabledOpacity)}
           : states.contains(WidgetState.selected)
-            ? ${componentColor("md.comp.navigation-drawer.active.icon")}
-            : ${componentColor("md.comp.navigation-drawer.inactive.icon")},
+            ? ${color(TokenNavigationDrawer.activeIconColor)}
+            : ${color(TokenNavigationDrawer.inactiveIconColor)},
       );
     });
   }
@@ -58,13 +65,13 @@ class _${blockName}DefaultsM3 extends NavigationDrawerThemeData {
   @override
   WidgetStateProperty<TextStyle?>? get labelTextStyle {
     return WidgetStateProperty.resolveWith((Set<WidgetState> states) {
-      final TextStyle style = ${textStyle("md.comp.navigation-drawer.label-text")}!;
+      final TextStyle style = ${textStyle(TokenNavigationDrawer.labelTextType, '_textTheme')}!;
       return style.apply(
         color: states.contains(WidgetState.disabled)
-          ? _colors.onSurfaceVariant.withOpacity(0.38)
+          ? ${colorWithOpacity(_legacyDisabledColor, _legacyDisabledOpacity)}
           : states.contains(WidgetState.selected)
-            ? ${componentColor("md.comp.navigation-drawer.active.label-text")}
-            : ${componentColor("md.comp.navigation-drawer.inactive.label-text")},
+            ? ${color(TokenNavigationDrawer.activeLabelTextColor)}
+            : ${color(TokenNavigationDrawer.inactiveLabelTextColor)},
       );
     });
   }
