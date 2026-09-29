@@ -2,7 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 import 'package:go_router_builder_example/all_types.dart';
@@ -299,9 +299,8 @@ void main() {
 
       // Test invalid Uri parameter
       scaffoldState.context.go(
-        Uri.parse(
-          '/uri-route/https%3A%2F%2Fdart.dev?uriField=invalid-uri',
-        ).toString(),
+        Uri.parse('/uri-route/https%3A%2F%2Fdart.dev?uriField=invalid-uri')
+            .toString(),
       );
       await tester.pumpAndSettle();
       expect(find.text('UriRoute'), findsOneWidget);

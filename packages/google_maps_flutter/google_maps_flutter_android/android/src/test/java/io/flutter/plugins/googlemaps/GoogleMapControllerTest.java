@@ -268,7 +268,7 @@ public class GoogleMapControllerTest {
         new PointOfInterest(new LatLng(0, 0), "place-123", "Test Place");
     googleMapController.onPoiClick(pointOfInterest);
 
-    verify(flutterApi, times(1)).onPointOfInterestTap(eq("place-123"), any());
+    verify(flutterApi, times(1)).onPointOfInterestTap(eq("place-123"), null);
   }
 
   @Test
@@ -278,7 +278,7 @@ public class GoogleMapControllerTest {
 
     googleMapController.onPoiClick(new PointOfInterest(new LatLng(0, 0), null, "Test Place"));
 
-    verify(flutterApi, times(0)).onPointOfInterestTap(any(), any());
+    verify(flutterApi, times(0)).onPointOfInterestTap(any(), null);
   }
 
   @Test
