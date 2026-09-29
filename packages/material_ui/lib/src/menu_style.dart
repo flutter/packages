@@ -118,6 +118,7 @@ class MenuStyle with Diagnosticable {
     this.mouseCursor,
     this.visualDensity,
     this.alignment,
+    this.menuAlignment,
   });
 
   /// The menu's background fill color.
@@ -202,6 +203,11 @@ class MenuStyle with Diagnosticable {
   /// as much of itself as possible, possibly overlapping the parent button.
   final AlignmentGeometry? alignment;
 
+  /// The alignment to use for the menu itself when determining its position
+  /// relative to the anchor. This allows the menu to be aligned differently
+  /// from the anchor's alignment.
+  final AlignmentGeometry? menuAlignment;
+
   @override
   int get hashCode {
     final values = <Object?>[
@@ -218,6 +224,7 @@ class MenuStyle with Diagnosticable {
       mouseCursor,
       visualDensity,
       alignment,
+      menuAlignment,
     ];
     return Object.hashAll(values);
   }
@@ -243,7 +250,8 @@ class MenuStyle with Diagnosticable {
         other.shape == shape &&
         other.mouseCursor == mouseCursor &&
         other.visualDensity == visualDensity &&
-        other.alignment == alignment;
+        other.alignment == alignment &&
+        other.menuAlignment == menuAlignment;
   }
 
   /// Returns a copy of this MenuStyle with the given fields replaced with
@@ -262,6 +270,7 @@ class MenuStyle with Diagnosticable {
     WidgetStateProperty<MouseCursor?>? mouseCursor,
     VisualDensity? visualDensity,
     AlignmentGeometry? alignment,
+    AlignmentGeometry? menuAlignment,
   }) {
     return MenuStyle(
       backgroundColor: backgroundColor ?? this.backgroundColor,
@@ -277,6 +286,7 @@ class MenuStyle with Diagnosticable {
       mouseCursor: mouseCursor ?? this.mouseCursor,
       visualDensity: visualDensity ?? this.visualDensity,
       alignment: alignment ?? this.alignment,
+      menuAlignment: menuAlignment ?? this.menuAlignment,
     );
   }
 
@@ -303,6 +313,7 @@ class MenuStyle with Diagnosticable {
       mouseCursor: mouseCursor ?? style.mouseCursor,
       visualDensity: visualDensity ?? style.visualDensity,
       alignment: alignment ?? style.alignment,
+      menuAlignment: menuAlignment ?? style.menuAlignment,
     );
   }
 
@@ -340,6 +351,7 @@ class MenuStyle with Diagnosticable {
       mouseCursor: t < 0.5 ? a?.mouseCursor : b?.mouseCursor,
       visualDensity: t < 0.5 ? a?.visualDensity : b?.visualDensity,
       alignment: AlignmentGeometry.lerp(a?.alignment, b?.alignment, t),
+      menuAlignment: AlignmentGeometry.lerp(a?.menuAlignment, b?.menuAlignment, t),
     );
   }
 
@@ -412,6 +424,9 @@ class MenuStyle with Diagnosticable {
     );
     properties.add(
       DiagnosticsProperty<AlignmentGeometry>('alignment', alignment, defaultValue: null),
+    );
+    properties.add(
+      DiagnosticsProperty<AlignmentGeometry>('menuAlignment', menuAlignment, defaultValue: null),
     );
   }
 }
