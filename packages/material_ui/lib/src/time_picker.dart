@@ -1831,11 +1831,11 @@ class _TimePickerInputState extends State<_TimePickerInput> with RestorationMixi
       return parsedNumber;
     }
 
-    _cachedNumbers ??= _generateLocalizedNumbers();
+    final Map<String, int> cachedNumbers = _cachedNumbers ??= _generateLocalizedNumbers();
 
     final String trimmedNumber = _removeLeadingZeros(number);
 
-    return _cachedNumbers![trimmedNumber];
+    return cachedNumbers[trimmedNumber];
   }
 
   Map<String, int> _generateLocalizedNumbers() {
