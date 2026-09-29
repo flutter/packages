@@ -140,16 +140,16 @@ class _PigeonJniCodec {
       return value.as(JBoolean.type).booleanValue();
     } else if (value.isA<JByteArray>(JByteArray.type)) {
       final JByteArray array = value.as(JByteArray.type);
-      return array.getRange(0, array.length).buffer.asUint8List();
+      return Uint8List.fromList(array.getRange(0, array.length).buffer.asUint8List());
     } else if (value.isA<JIntArray>(JIntArray.type)) {
       final JIntArray array = value.as(JIntArray.type);
-      return array.getRange(0, array.length);
+      return Int32List.fromList(array.getRange(0, array.length));
     } else if (value.isA<JLongArray>(JLongArray.type)) {
       final JLongArray array = value.as(JLongArray.type);
-      return array.getRange(0, array.length);
+      return Int64List.fromList(array.getRange(0, array.length));
     } else if (value.isA<JDoubleArray>(JDoubleArray.type)) {
       final JDoubleArray array = value.as(JDoubleArray.type);
-      return array.getRange(0, array.length);
+      return Float64List.fromList(array.getRange(0, array.length));
     } else if (value.isA<JList<JObject>>(JList.type as JType<JList<JObject>>)) {
       final List<JObject?> list = value.as(JList.type).asDart();
       final res = <Object?>[];
@@ -919,15 +919,33 @@ ffi_bridge.NativeInteropTestsPigeonTypedData _toPigeonTypedData(TypedData value)
 
 Object? _getValueFromPigeonTypedData(ffi_bridge.NativeInteropTestsPigeonTypedData value) {
   final NSData data = value.data;
+  final int lengthInBytes = data.length;
+  if (lengthInBytes == 0) {
+    return switch (value.type) {
+      0 => Uint8List(0),
+      1 => Int32List(0),
+      2 => Int64List(0),
+      3 => Float32List(0),
+      4 => Float64List(0),
+      _ => throw ArgumentError.value(value),
+    };
+  }
   final Pointer<Void> bytes = data.bytes;
-  return switch (value.type) {
-    0 => Uint8List.fromList(bytes.cast<Uint8>().asTypedList(data.length)),
-    1 => Int32List.fromList(bytes.cast<Int32>().asTypedList(data.length ~/ 4)),
-    2 => Int64List.fromList(bytes.cast<Int64>().asTypedList(data.length ~/ 8)),
-    3 => Float32List.fromList(bytes.cast<Float>().asTypedList(data.length ~/ 4)),
-    4 => Float64List.fromList(bytes.cast<Double>().asTypedList(data.length ~/ 8)),
+  final Object result = switch (value.type) {
+    0 => Uint8List.fromList(bytes.cast<Uint8>().asTypedList(lengthInBytes)),
+    1 => Int32List.fromList(bytes.cast<Int32>().asTypedList(lengthInBytes ~/ 4)),
+    2 => Int64List.fromList(bytes.cast<Int64>().asTypedList(lengthInBytes ~/ 8)),
+    3 => Float32List.fromList(bytes.cast<Float>().asTypedList(lengthInBytes ~/ 4)),
+    4 => Float64List.fromList(bytes.cast<Double>().asTypedList(lengthInBytes ~/ 8)),
     _ => throw ArgumentError.value(value),
   };
+  // `bytes` is owned by `data`, which is released by a finalizer once it is
+  // unreachable. Using `data` after the copy keeps it alive until the copy
+  // above has completed.
+  if (data.length != lengthInBytes) {
+    throw StateError('PigeonTypedData changed while being read.');
+  }
+  return result;
 }
 
 Object? _convertNumberWrapperToDart(ffi_bridge.NativeInteropTestsNumberWrapper value) {
