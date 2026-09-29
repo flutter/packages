@@ -7,6 +7,10 @@ application's minimum deployment target.
 
 **Note**: This package will not receive new feature updates. All clients are
 encouraged to adopt one of the [SDK-specific implementations](#alternate-implementations).
+For example, `GoogleMap.onPointOfInterestTap` is not supported here; use
+[`google_maps_flutter_ios_sdk9`](https://pub.dev/packages/google_maps_flutter_ios_sdk9)
+or
+[`google_maps_flutter_ios_sdk10`](https://pub.dev/packages/google_maps_flutter_ios_sdk10).
 
 ## Usage
 

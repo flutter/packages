@@ -303,10 +303,7 @@ class GoogleMap extends StatefulWidget {
 
   /// Called when a point of interest on the map is tapped.
   ///
-  /// Supported on Android and web, and on iOS when using
-  /// `google_maps_flutter_ios_sdk9` or `google_maps_flutter_ios_sdk10`.
-  /// The default `google_maps_flutter_ios` package does not receive new
-  /// features, so this callback is not delivered there.
+  /// May not be supported on all implementations.
   final ArgumentCallback<PointOfInterestId>? onPointOfInterestTap;
 
   /// True if a "My Location" layer should be shown on the map.
