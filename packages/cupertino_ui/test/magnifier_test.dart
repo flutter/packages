@@ -382,7 +382,7 @@ void main() {
     );
     expect(
       await focalPointOffsetFor(const Size(100, 200)),
-      const Offset(0, 200 / 2 - CupertinoMagnifier.kMagnifierAboveFocalPoint),
+      const Offset(0, 100 - CupertinoMagnifier.kMagnifierAboveFocalPoint),
     );
   });
 
