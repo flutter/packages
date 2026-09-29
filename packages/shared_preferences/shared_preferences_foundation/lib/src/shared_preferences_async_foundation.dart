@@ -16,14 +16,14 @@ const String _argumentErrorCode = 'Argument Error';
 /// iOS and macOS implementation of shared_preferences.
 base class SharedPreferencesAsyncFoundation extends SharedPreferencesAsyncPlatform {
   /// Creates a new plugin implementation instance.
-  SharedPreferencesAsyncFoundation({@visibleForTesting UserDefaultsApi? api})
-    : _api = api ?? UserDefaultsApi.createWithNativeInteropApi();
+  SharedPreferencesAsyncFoundation({@visibleForTesting UserDefaultsApi? api}) : _apiOverride = api;
 
-  final UserDefaultsApi _api;
+  final UserDefaultsApi? _apiOverride;
+  late final UserDefaultsApi _api = _apiOverride ?? UserDefaultsApi.createWithNativeInteropApi();
 
   /// Registers this class as the default instance of [SharedPreferencesAsyncPlatform].
-  static void registerWith({@visibleForTesting UserDefaultsApi? api}) {
-    SharedPreferencesAsyncPlatform.instance = SharedPreferencesAsyncFoundation(api: api);
+  static void registerWith() {
+    SharedPreferencesAsyncPlatform.instance = SharedPreferencesAsyncFoundation();
   }
 
   /// Returns a SharedPreferencesPigeonOptions for sending to platform.

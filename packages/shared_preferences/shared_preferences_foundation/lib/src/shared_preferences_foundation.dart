@@ -14,10 +14,11 @@ typedef _Setter = Future<void> Function(String key, Object value);
 /// iOS and macOS implementation of shared_preferences.
 class SharedPreferencesFoundation extends SharedPreferencesStorePlatform {
   /// Creates an instance of [SharedPreferencesFoundation].
-  SharedPreferencesFoundation({@visibleForTesting LegacyUserDefaultsApi? api})
-    : _api = api ?? LegacyUserDefaultsApi.createWithNativeInteropApi();
+  SharedPreferencesFoundation({@visibleForTesting LegacyUserDefaultsApi? api}) : _apiOverride = api;
 
-  final LegacyUserDefaultsApi _api;
+  final LegacyUserDefaultsApi? _apiOverride;
+  late final LegacyUserDefaultsApi _api =
+      _apiOverride ?? LegacyUserDefaultsApi.createWithNativeInteropApi();
 
   static const String _defaultPrefix = 'flutter.';
 
@@ -41,16 +42,10 @@ class SharedPreferencesFoundation extends SharedPreferencesStorePlatform {
 
   /// Registers this class as the default instance of
   /// [SharedPreferencesStorePlatform].
-  static void registerWith({
-    @visibleForTesting LegacyUserDefaultsApi? api,
-    @visibleForTesting UserDefaultsApi? asyncApi,
-  }) {
-    SharedPreferencesStorePlatform.instance = SharedPreferencesFoundation(api: api);
-
+  static void registerWith() {
+    SharedPreferencesStorePlatform.instance = SharedPreferencesFoundation();
     // A temporary work-around for having two plugins contained in a single package.
-    // Test APIs must be forwarded to the async plugin.
-    // ignore: invalid_use_of_visible_for_testing_member
-    SharedPreferencesAsyncFoundation.registerWith(api: asyncApi);
+    SharedPreferencesAsyncFoundation.registerWith();
   }
 
   @override

@@ -25,6 +25,7 @@ dependencies:
   ffi: ^2.1.4
   flutter:
     sdk: flutter
+  meta: ^1.10.0
   objective_c: ^9.6.0
   shared_preferences_platform_interface: ^2.4.0
 
@@ -32,7 +33,9 @@ dev_dependencies:
   ffigen: ^22.0.0
   flutter_test:
     sdk: flutter
+  path: ^1.9.0
   pigeon: ^29.0.4
+  pub_semver: ^2.1.4
   swift2objc: ^0.3.0
   swiftgen: ^0.2.0
 
