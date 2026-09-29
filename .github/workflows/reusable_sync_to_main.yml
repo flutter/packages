@@ -44,21 +44,35 @@ jobs:
           # 1. Fetch main so the runner can see the difference
           git fetch origin main
 
-          # 2. Check if PR already exists before creating
+          # 2. Find the reviewer(s) who approved the batch release PR into this branch.
+          REVIEWERS=$(gh pr list \
+            --base "${BRANCH_NAME}" \
+            --state merged \
+            --json latestReviews \
+            --jq '[.[0].latestReviews[]? | select(.state == "APPROVED") | .author.login] | unique | join(",")')
+
+          # 3. Check if PR already exists before creating
           EXISTING_PR=$(gh pr list --head "${BRANCH_NAME}" --base "main" --json number --jq '.[0].number')
           if [ -n "$EXISTING_PR" ]; then
             echo "A pull request for ${BRANCH_NAME} already exists (#${EXISTING_PR})."
+            if [ -n "$REVIEWERS" ]; then
+              gh pr edit "$EXISTING_PR" --add-reviewer "$REVIEWERS"
+            fi
             if [ -n "$COMMENT" ]; then
               if gh pr view "$EXISTING_PR" --json comments --jq '.comments[].body' | grep -qF "$COMMENT_MARKER"; then
                 echo "Already commented on #${EXISTING_PR}."
               else
-                gh pr comment "$EXISTING_PR" --body "${COMMENT} ${COMMENT_MARKER}"
+                MENTIONS=""
+                if [ -n "$REVIEWERS" ]; then
+                  MENTIONS="cc $(echo "$REVIEWERS" | sed 's/[^,]*/@&/g; s/,/ /g'): "
+                fi
+                gh pr comment "$EXISTING_PR" --body "${MENTIONS}${COMMENT} ${COMMENT_MARKER}"
               fi
             fi
             exit 0
           fi
 
-          # 3. Verify there are actually new commits to sync.
+          # 4. Verify there are actually new commits to sync.
           # This prevents the "GraphQL: No commits between main..." error, and is
           # the expected state when the release PR itself has not landed yet.
           COMMITS_COUNT=$(git rev-list --count origin/main..HEAD)
@@ -68,15 +82,21 @@ jobs:
             exit 0
           fi
 
-          # 4. Extract package name for label. Package names can't contain a
+          # 5. Extract package name for label. Package names can't contain a
           # hyphen, so everything from the first one on is the version.
           TEMP="${BRANCH_NAME#release-}"
           PACKAGE_NAME="${TEMP%%-*}"
 
-          # 5. Create the PR directly
+          REVIEWER_ARGS=()
+          if [ -n "$REVIEWERS" ]; then
+            REVIEWER_ARGS=(--reviewer "$REVIEWERS")
+          fi
+
+          # 6. Create the PR directly
           gh pr create \
             --base "main" \
             --head "${BRANCH_NAME}" \
             --title "Sync ${BRANCH_NAME} to main" \
             --body "This automated PR syncs the changes from the release branch ${BRANCH_NAME} back to the main branch." \
-            --label "override: batch-${PACKAGE_NAME}"
+            --label "override: batch-${PACKAGE_NAME}" \
+            "${REVIEWER_ARGS[@]}"

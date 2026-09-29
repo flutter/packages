@@ -443,6 +443,11 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
       const Object sentDouble = 2.0694;
       final Object receivedDouble = await api.echoObject(sentDouble);
       expect(receivedDouble, sentDouble);
+
+      const Object sentWholeDouble = 3.0;
+      final Object receivedWholeDouble = await api.echoObject(sentWholeDouble);
+      expect(receivedWholeDouble, isA<double>());
+      expect(receivedWholeDouble, sentWholeDouble);
     });
 
     testWidgets('Uint8List as generic Objects serialize and deserialize correctly', (
@@ -2367,27 +2372,34 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
     await completer.future;
   }, skip: !eventChannelSupported.contains(targetGenerator));
 
-  testWidgets('event channels handle multiple instances', (_) async {
-    final completer1 = Completer<void>();
-    final completer2 = Completer<void>();
-    final Stream<int> events1 = streamConsistentNumbers(instanceName: '1');
-    final Stream<int> events2 = streamConsistentNumbers(instanceName: '2');
+  testWidgets(
+    'event channels handle multiple instances',
+    (_) async {
+      final completer1 = Completer<void>();
+      final completer2 = Completer<void>();
+      final Stream<int> events1 = streamConsistentNumbers(instanceName: '1');
+      final Stream<int> events2 = streamConsistentNumbers(instanceName: '2');
 
-    events1
-        .listen((int event) {
-          expect(event, 1);
-        })
-        .onDone(() => completer1.complete());
+      events1
+          .listen((int event) {
+            expect(event, 1);
+          })
+          .onDone(() => completer1.complete());
 
-    events2
-        .listen((int event) {
-          expect(event, 2);
-        })
-        .onDone(() => completer2.complete());
+      events2
+          .listen((int event) {
+            expect(event, 2);
+          })
+          .onDone(() => completer2.complete());
 
-    await completer1.future;
-    await completer2.future;
-  }, skip: !eventChannelSupported.contains(targetGenerator));
+      await completer1.future;
+      await completer2.future;
+    },
+    skip:
+        !eventChannelSupported.contains(targetGenerator) ||
+        // Flaky on macOS Swift, see https://github.com/flutter/flutter/issues/179154
+        (targetGenerator == TargetGenerator.swift && defaultTargetPlatform == TargetPlatform.macOS),
+  );
 
   testWidgets('constants are generated correctly', (WidgetTester _) async {
     expect(aStringConstant, 'stringConstantValue');

@@ -1,8 +1,8 @@
 ## 3.26.2
 
-* Updates pigeon dev_dependency to ^29.0.2 and regenerates code, fixing a crash
-  when a `WKNavigationDelegate` authentication challenge reply cannot be
+* Fixes a crash when a `WKNavigationDelegate` authentication challenge reply cannot be
   resolved to a native instance.
+* Updates minimum supported SDK version to Flutter 3.41/Dart 3.11.
 
 ## 3.26.1
 

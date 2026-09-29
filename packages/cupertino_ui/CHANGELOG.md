@@ -1,3 +1,7 @@
+## 1.1.1
+
+- Updates minimum supported SDK version to Flutter 3.47/Dart 3.13.
+
 ## 1.1.0
 
 - Add `hasPlatformViews` to Cupertino sheet transitions to keep platform views synchronized with the underlying route.
