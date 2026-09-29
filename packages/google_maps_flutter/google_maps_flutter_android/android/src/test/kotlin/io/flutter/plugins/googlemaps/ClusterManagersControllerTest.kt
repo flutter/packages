@@ -18,6 +18,7 @@ import io.flutter.plugin.common.BinaryMessenger
 import io.flutter.plugins.googlemaps.ClusterManagersController.AdvancedMarkerClusterRenderer
 import io.flutter.plugins.googlemaps.ClusterManagersController.MarkerClusterRenderer
 import io.flutter.plugins.googlemaps.Convert.BitmapDescriptorFactoryWrapper
+import kotlinx.coroutines.test.runTest
 import java.io.ByteArrayOutputStream
 import java.lang.AutoCloseable
 import org.junit.After
@@ -163,7 +164,7 @@ class ClusterManagersControllerTest {
   }
 
   @Test
-  fun OnClusterClickCallsMethodChannel() {
+  fun OnClusterClickCallsMethodChannel() = runTest {
     val clusterManagerId = "cm_1"
     val clusterPosition = LatLng(43.00, -87.90)
     val markerPosition1 = LatLng(43.05, -87.95)
@@ -183,8 +184,7 @@ class ClusterManagersControllerTest {
     verify(flutterApi)
         .onClusterTap(
             eq(
-                Convert.clusterToPigeon(clusterManagerId, cluster)),
-            null)
+                Convert.clusterToPigeon(clusterManagerId, cluster)))
   }
 
   @Test

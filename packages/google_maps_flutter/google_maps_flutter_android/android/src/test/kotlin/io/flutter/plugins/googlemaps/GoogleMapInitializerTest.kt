@@ -7,7 +7,9 @@ import android.content.Context
 import androidx.test.core.app.ApplicationProvider
 import com.google.android.gms.maps.MapsInitializer
 import io.flutter.plugin.common.BinaryMessenger
-import io.flutter.plugins.googlemaps.ResultCompat.Companion.asContinuation
+import kotlinx.coroutines.CoroutineStart
+import kotlinx.coroutines.async
+import kotlinx.coroutines.test.runTest
 import org.junit.Assert
 import org.junit.Before
 import org.junit.Test
@@ -32,60 +34,45 @@ class GoogleMapInitializerTest {
   }
 
   @Test
-  fun initializer_OnMapsSdkInitializedWithLatestRenderer() {
+  fun initializer_OnMapsSdkInitializedWithLatestRenderer() = runTest {
     doNothing()
         .whenever(googleMapInitializer)
         .initializeWithRendererRequest(MapsInitializer.Renderer.LATEST)
-    val callbackCalled = arrayOfNulls<Boolean>(1)
-    googleMapInitializer!!.initializeWithPreferredRenderer(
-        PlatformRendererType.LATEST,
-        asContinuation<PlatformRendererType?> { result: ResultCompat<PlatformRendererType?>? ->
-          callbackCalled[0] = true
-          val type = result!!.getOrNull()
-          Assert.assertEquals(PlatformRendererType.LATEST, type)
-          Unit
-        })
+    val type = async(start = CoroutineStart.UNDISPATCHED) {
+        googleMapInitializer!!.initializeWithPreferredRenderer(
+            PlatformRendererType.LATEST)
+    }
     googleMapInitializer!!.onMapsSdkInitialized(MapsInitializer.Renderer.LATEST)
 
-    Assert.assertTrue(callbackCalled[0]!!)
+    Assert.assertEquals(PlatformRendererType.LATEST, type.await())
   }
 
   @Suppress("deprecation")
   @Test
-  fun initializer_OnMapsSdkInitializedWithLegacyRenderer() {
+  fun initializer_OnMapsSdkInitializedWithLegacyRenderer() = runTest {
     doNothing()
         .whenever(googleMapInitializer)
         .initializeWithRendererRequest(MapsInitializer.Renderer.LEGACY)
-    val callbackCalled = arrayOfNulls<Boolean>(1)
-    googleMapInitializer!!.initializeWithPreferredRenderer(
-        PlatformRendererType.LEGACY,
-        asContinuation<PlatformRendererType?> { result: ResultCompat<PlatformRendererType?>? ->
-          callbackCalled[0] = true
-          val type = result!!.getOrNull()
-          Assert.assertEquals(PlatformRendererType.LEGACY, type)
-          Unit
-        })
+    val type = async(start = CoroutineStart.UNDISPATCHED) {
+        googleMapInitializer!!.initializeWithPreferredRenderer(
+            PlatformRendererType.LEGACY)
+    }
     googleMapInitializer!!.onMapsSdkInitialized(MapsInitializer.Renderer.LEGACY)
 
-    Assert.assertTrue(callbackCalled[0]!!)
+    Assert.assertEquals(PlatformRendererType.LEGACY, type.await())
   }
 
   @Test
-  fun initializer_onMethodCallWithNoRendererPreference() {
+  fun initializer_onMethodCallWithNoRendererPreference() = runTest {
     doNothing()
         .whenever(googleMapInitializer)
         .initializeWithRendererRequest(null)
-    val callbackCalled = arrayOfNulls<Boolean>(1)
-    googleMapInitializer!!.initializeWithPreferredRenderer(
-        null,
-        asContinuation<PlatformRendererType?> { result: ResultCompat<PlatformRendererType?>? ->
-          callbackCalled[0] = true
-          val error = result!!.exceptionOrNull()
-          Assert.assertNull(error)
-          Unit
-        })
+    val type = async(start = CoroutineStart.UNDISPATCHED) {
+        googleMapInitializer!!.initializeWithPreferredRenderer(
+            null)
+    }
     googleMapInitializer!!.onMapsSdkInitialized(MapsInitializer.Renderer.LATEST)
 
-    Assert.assertTrue(callbackCalled[0]!!)
+    Assert.assertNull(type.await())
   }
 }

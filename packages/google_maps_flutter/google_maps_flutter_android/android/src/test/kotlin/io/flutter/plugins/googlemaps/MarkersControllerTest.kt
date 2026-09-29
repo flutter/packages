@@ -16,6 +16,7 @@ import com.google.android.gms.maps.model.MarkerOptions
 import com.google.maps.android.collections.MarkerManager
 import io.flutter.plugin.common.BinaryMessenger
 import io.flutter.plugins.googlemaps.Convert.BitmapDescriptorFactoryWrapper
+import kotlinx.coroutines.test.runTest
 import java.io.ByteArrayOutputStream
 import java.lang.AutoCloseable
 import java.util.Objects
@@ -26,6 +27,7 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import org.mockito.kotlin.any
 import org.mockito.kotlin.argThat
+import org.mockito.kotlin.argumentCaptor
 import org.mockito.kotlin.eq
 import org.mockito.kotlin.mock
 import org.mockito.kotlin.reset
@@ -72,7 +74,7 @@ class MarkersControllerTest {
   }
 
   @Test
-  fun controller_OnMarkerDragStart() {
+  fun controller_OnMarkerDragStart() = runTest {
     val marker = mock<Marker>()
 
     val googleMarkerId = "abc123"
@@ -92,12 +94,11 @@ class MarkersControllerTest {
     verify(flutterApi)
         .onMarkerDragStart(
             eq(googleMarkerId),
-            eq(Convert.latLngToPigeon(latLng)),
-            null)
+            eq(Convert.latLngToPigeon(latLng)))
   }
 
   @Test
-  fun controller_OnMarkerDragEnd() {
+  fun controller_OnMarkerDragEnd() = runTest {
     val marker = mock<Marker>()
 
     val googleMarkerId = "abc123"
@@ -115,12 +116,11 @@ class MarkersControllerTest {
     verify(flutterApi)
         .onMarkerDragEnd(
             eq(googleMarkerId),
-            eq(Convert.latLngToPigeon(latLng)),
-            null)
+            eq(Convert.latLngToPigeon(latLng)))
   }
 
   @Test
-  fun controller_OnMarkerDrag() {
+  fun controller_OnMarkerDrag() = runTest {
     val marker = mock<Marker>()
 
     val googleMarkerId = "abc123"
@@ -139,8 +139,7 @@ class MarkersControllerTest {
     verify(flutterApi)
         .onMarkerDrag(
             eq(googleMarkerId),
-            eq(Convert.latLngToPigeon(latLng)),
-            null)
+            eq(Convert.latLngToPigeon(latLng)))
   }
 
   @Test(expected = NullPointerException::class)
@@ -436,12 +435,10 @@ class MarkersControllerTest {
     controller!!.addMarkers(mutableListOf<PlatformMarker?>(builder.build()))
 
     // Capture the PlatformMarkerBuilder passed to addItems
-    val captor: ArgumentCaptor<MutableList<MarkerBuilder>?> =
-        ArgumentCaptor.forClass<MutableList<MarkerBuilder?>?, MutableList<*>?>(
-            MutableList::class.java)
+    val captor = argumentCaptor<List<MarkerBuilder>>()
     verify(clusterManagersController)
         .addItems(eq(clusterManagerId), captor.capture()!!)
-    val capturedMarkerBuilder = captor.getValue()!!.get(0)
+    val capturedMarkerBuilder = captor.firstValue[0]
 
     // Simulate cluster render so markerController exists
     controller!!.onClusterItemRendered(capturedMarkerBuilder, marker)

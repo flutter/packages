@@ -23,13 +23,11 @@ import org.robolectric.RobolectricTestRunner
 
 @RunWith(RobolectricTestRunner::class)
 class HeatmapsControllerTest {
-  private var controller: HeatmapsController? = null
-  private var googleMap: GoogleMap? = null
+  private val controller: HeatmapsController = spy(HeatmapsController())
+  private val googleMap: GoogleMap = mock()
 
   @Before
   fun setUp() {
-    controller = spy(HeatmapsController())
-    googleMap = mock<GoogleMap>()
     controller!!.setGoogleMap(googleMap)
   }
 
@@ -83,7 +81,7 @@ class HeatmapsControllerTest {
     val heatmapUpdates = mutableListOf<PlatformHeatmap?>(heatmap2)
 
     controller!!.changeHeatmaps(heatmapUpdates)
-    verify(heatmap, times(1)).opacity = opacity2
+    verify(heatmap, times(1)).setOpacity(opacity2)
 
     controller!!.removeHeatmaps(mutableListOf<String?>(googleHeatmapId))
 

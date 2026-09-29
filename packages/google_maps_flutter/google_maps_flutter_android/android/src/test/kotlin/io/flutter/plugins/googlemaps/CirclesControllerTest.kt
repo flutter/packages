@@ -30,7 +30,7 @@ class CirclesControllerTest {
             mockGoogleMap!!.addCircle(any()))
         .thenReturn(circle)
 
-    val controller = CirclesController(null, 1.0f)
+    val controller = CirclesController(mock(), 1.0f)
     controller.setGoogleMap(mockGoogleMap)
 
     val id = "a_circle"

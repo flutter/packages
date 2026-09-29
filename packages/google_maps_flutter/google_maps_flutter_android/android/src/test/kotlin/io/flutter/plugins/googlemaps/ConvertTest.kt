@@ -95,7 +95,7 @@ class ConvertTest {
     Assert.assertEquals(markerPosition1.latitude, northeast.latitude, 1e-15)
     Assert.assertEquals(markerPosition2.longitude, northeast.longitude, 1e-15)
 
-    val markerIds: MutableList<String?> = result.markerIds
+    val markerIds = result.markerIds
     Assert.assertEquals(2, markerIds.size.toLong())
     Assert.assertEquals(marker1.markerId(), markerIds.get(0))
     Assert.assertEquals(marker2.markerId(), markerIds.get(1))

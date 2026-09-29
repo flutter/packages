@@ -18,6 +18,7 @@ import org.junit.After
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
+import org.mockito.kotlin.any
 import org.mockito.kotlin.argThat
 import org.mockito.kotlin.mock
 import org.mockito.kotlin.spy
@@ -32,8 +33,8 @@ class GroundOverlaysControllerTest {
 
   private val mockBitmapDescriptor: BitmapDescriptor = mock()
 
-  private var controller: GroundOverlaysController? = null
-  private var googleMap: GoogleMap? = null
+  private lateinit var controller: GroundOverlaysController
+  private val googleMap: GoogleMap = mock()
 
   // A 1x1 pixel (#8080ff) PNG image encoded in base64
   private val base64Image: String? = TestImageUtils.generateBase64Image()
@@ -71,7 +72,6 @@ class GroundOverlaysControllerTest {
     controller =
         spy(GroundOverlaysController(
                 flutterApi, assetManager, 1.0f, bitmapDescriptorFactoryWrapper!!))
-    googleMap = mock<GoogleMap>()
     controller!!.setGoogleMap(googleMap)
     whenever(
             bitmapDescriptorFactoryWrapper.fromBitmap(any()))
