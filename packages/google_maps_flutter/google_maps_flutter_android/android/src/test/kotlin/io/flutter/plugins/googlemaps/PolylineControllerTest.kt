@@ -9,16 +9,16 @@ import org.junit.Test
 import org.mockito.Mockito
 
 class PolylineControllerTest {
-    @Test
-    fun controller_SetsStrokeDensity() {
-        val z = Mockito.mock<zzar>(zzar::class.java)
-        val polyline = Mockito.spy<Polyline>(Polyline(z))
+  @Test
+  fun controller_SetsStrokeDensity() {
+    val z = Mockito.mock<zzar>(zzar::class.java)
+    val polyline = Mockito.spy<Polyline>(Polyline(z))
 
-        val density = 5f
-        val strokeWidth = 3f
-        val controller = PolylineController(polyline, false, density)
-        controller.setWidth(strokeWidth)
+    val density = 5f
+    val strokeWidth = 3f
+    val controller = PolylineController(polyline, false, density)
+    controller.setWidth(strokeWidth)
 
-        Mockito.verify<Polyline?>(polyline).setWidth(density * strokeWidth)
-    }
+    Mockito.verify<Polyline?>(polyline).setWidth(density * strokeWidth)
+  }
 }

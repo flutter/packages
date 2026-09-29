@@ -9,16 +9,16 @@ import org.junit.Test
 import org.mockito.Mockito
 
 class CircleControllerTest {
-    @Test
-    fun controller_SetsStrokeDensity() {
-        val z = Mockito.mock<zzl>(zzl::class.java)
-        val circle = Mockito.spy<Circle>(Circle(z))
+  @Test
+  fun controller_SetsStrokeDensity() {
+    val z = Mockito.mock<zzl>(zzl::class.java)
+    val circle = Mockito.spy<Circle>(Circle(z))
 
-        val density = 5f
-        val strokeWidth = 3f
-        val controller = CircleController(circle, false, density)
-        controller.setStrokeWidth(strokeWidth)
+    val density = 5f
+    val strokeWidth = 3f
+    val controller = CircleController(circle, false, density)
+    controller.setStrokeWidth(strokeWidth)
 
-        Mockito.verify<Circle?>(circle).setStrokeWidth(density * strokeWidth)
-    }
+    Mockito.verify<Circle?>(circle).setStrokeWidth(density * strokeWidth)
+  }
 }

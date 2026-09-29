@@ -18,6 +18,10 @@ import com.google.maps.android.heatmaps.WeightedLatLng
 import com.google.maps.android.projection.SphericalMercatorProjection
 import io.flutter.plugins.googlemaps.Convert.BitmapDescriptorFactoryWrapper
 import io.flutter.plugins.googlemaps.Convert.FlutterInjectorWrapper
+import java.io.InputStream
+import java.lang.AutoCloseable
+import java.util.List
+import java.util.Objects
 import org.junit.After
 import org.junit.Assert
 import org.junit.Before
@@ -28,1166 +32,1018 @@ import org.mockito.Mock
 import org.mockito.Mockito
 import org.mockito.MockitoAnnotations
 import org.robolectric.RobolectricTestRunner
-import java.io.InputStream
-import java.lang.AutoCloseable
-import java.util.List
-import java.util.Objects
 
 @RunWith(RobolectricTestRunner::class)
 class ConvertTest {
-    @Mock
-    private val assetManager: AssetManager? = null
+  @Mock private val assetManager: AssetManager? = null
 
-    @Mock
-    private val bitmapDescriptorFactoryWrapper: BitmapDescriptorFactoryWrapper? = null
+  @Mock private val bitmapDescriptorFactoryWrapper: BitmapDescriptorFactoryWrapper? = null
 
-    @Mock
-    private val mockBitmapDescriptor: BitmapDescriptor? = null
+  @Mock private val mockBitmapDescriptor: BitmapDescriptor? = null
 
-    @Mock
-    private val flutterInjectorWrapper: FlutterInjectorWrapper? = null
+  @Mock private val flutterInjectorWrapper: FlutterInjectorWrapper? = null
 
-    @Mock
-    private val optionsSink: GoogleMapOptionsSink? = null
+  @Mock private val optionsSink: GoogleMapOptionsSink? = null
 
-    var mockCloseable: AutoCloseable? = null
+  var mockCloseable: AutoCloseable? = null
 
-    // A 1x1 pixel (#8080ff) PNG image encoded in base64
-    private val base64Image: String? = TestImageUtils.generateBase64Image()
+  // A 1x1 pixel (#8080ff) PNG image encoded in base64
+  private val base64Image: String? = TestImageUtils.generateBase64Image()
 
-    @Before
-    fun before() {
-        mockCloseable = MockitoAnnotations.openMocks(this)
+  @Before
+  fun before() {
+    mockCloseable = MockitoAnnotations.openMocks(this)
+  }
+
+  @After
+  @Throws(Exception::class)
+  fun tearDown() {
+    mockCloseable!!.close()
+  }
+
+  @Test
+  fun ConvertPointsFromPigeonConvertsThePointsWithFullPrecision() {
+    val latitude = 43.03725568057
+    val longitude = -87.90466904649
+    val platLng = PlatformLatLng(latitude, longitude)
+    val latLngs = Convert.pointsFromPigeon(mutableListOf<PlatformLatLng?>(platLng))
+    val latLng = latLngs.get(0)
+    Assert.assertEquals(latitude, latLng.latitude, 1e-15)
+    Assert.assertEquals(longitude, latLng.longitude, 1e-15)
+  }
+
+  @Test
+  fun ConvertClusterToPigeonReturnsCorrectData() {
+    val clusterManagerId = "cm_1"
+    val clusterPosition = LatLng(43.00, -87.90)
+    val markerPosition1 = LatLng(43.05, -87.95)
+    val markerPosition2 = LatLng(43.02, -87.92)
+
+    val cluster = StaticCluster<MarkerBuilder?>(clusterPosition)
+
+    val marker1 = MarkerBuilder("m_1", clusterManagerId, PlatformMarkerType.MARKER)
+    marker1.setPosition(markerPosition1)
+    cluster.add(marker1)
+
+    val marker2 = MarkerBuilder("m_2", clusterManagerId, PlatformMarkerType.MARKER)
+    marker2.setPosition(markerPosition2)
+    cluster.add(marker2)
+
+    val result = Convert.clusterToPigeon(clusterManagerId, cluster)
+    Assert.assertEquals(clusterManagerId, result.clusterManagerId)
+
+    val position = result.position
+    Assert.assertEquals(clusterPosition.latitude, position.latitude, 1e-15)
+    Assert.assertEquals(clusterPosition.longitude, position.longitude, 1e-15)
+
+    val bounds = result.bounds
+    val southwest = bounds.southwest
+    val northeast = bounds.northeast
+    // bounding data should combine data from marker positions markerPosition1 and markerPosition2
+    Assert.assertEquals(markerPosition2.latitude, southwest.latitude, 1e-15)
+    Assert.assertEquals(markerPosition1.longitude, southwest.longitude, 1e-15)
+    Assert.assertEquals(markerPosition1.latitude, northeast.latitude, 1e-15)
+    Assert.assertEquals(markerPosition2.longitude, northeast.longitude, 1e-15)
+
+    val markerIds: MutableList<String?> = result.markerIds
+    Assert.assertEquals(2, markerIds.size.toLong())
+    Assert.assertEquals(marker1.markerId(), markerIds.get(0))
+    Assert.assertEquals(marker2.markerId(), markerIds.get(1))
+  }
+
+  @Test
+  @Throws(Exception::class)
+  fun GetBitmapFromAssetAuto() {
+    val fakeAssetName = "fake_asset_name"
+    val fakeAssetKey = "fake_asset_key"
+
+    Mockito.`when`<String?>(flutterInjectorWrapper!!.getLookupKeyForAsset(fakeAssetName))
+        .thenReturn(fakeAssetKey)
+
+    Mockito.`when`<InputStream?>(assetManager!!.open(fakeAssetKey))
+        .thenReturn(TestImageUtils.buildImageInputStream())
+
+    Mockito.`when`<BitmapDescriptor?>(
+            bitmapDescriptorFactoryWrapper!!.fromBitmap(ArgumentMatchers.any<Bitmap?>()))
+        .thenReturn(mockBitmapDescriptor)
+    val bitmap =
+        PlatformBitmapAssetMap(
+            fakeAssetName,
+            PlatformMapBitmapScaling.AUTO, /* imagePixelRatio */
+            2.0, /* width */
+            15.0, /* height */
+            15.0)
+
+    val result =
+        Convert.getBitmapFromAsset(
+            bitmap, assetManager, 1.0f, bitmapDescriptorFactoryWrapper, flutterInjectorWrapper)
+
+    Assert.assertEquals(mockBitmapDescriptor, result)
+  }
+
+  @Test
+  @Throws(Exception::class)
+  fun GetBitmapFromAssetAutoAndWidth() {
+    val fakeAssetName = "fake_asset_name"
+    val fakeAssetKey = "fake_asset_key"
+
+    Mockito.`when`<String?>(flutterInjectorWrapper!!.getLookupKeyForAsset(fakeAssetName))
+        .thenReturn(fakeAssetKey)
+
+    Mockito.`when`<InputStream?>(assetManager!!.open(fakeAssetKey))
+        .thenReturn(TestImageUtils.buildImageInputStream())
+
+    Mockito.`when`<BitmapDescriptor?>(
+            bitmapDescriptorFactoryWrapper!!.fromBitmap(ArgumentMatchers.any<Bitmap?>()))
+        .thenReturn(mockBitmapDescriptor)
+    val bitmap =
+        PlatformBitmapAssetMap(
+            fakeAssetName,
+            PlatformMapBitmapScaling.AUTO, /* imagePixelRatio */
+            2.0, /* width */
+            15.0, /* height */
+            null)
+
+    val result =
+        Convert.getBitmapFromAsset(
+            bitmap, assetManager, 1.0f, bitmapDescriptorFactoryWrapper, flutterInjectorWrapper)
+
+    Assert.assertEquals(mockBitmapDescriptor, result)
+  }
+
+  @Test
+  @Throws(Exception::class)
+  fun GetBitmapFromAssetAutoAndHeight() {
+    val fakeAssetName = "fake_asset_name"
+    val fakeAssetKey = "fake_asset_key"
+
+    Mockito.`when`<String?>(flutterInjectorWrapper!!.getLookupKeyForAsset(fakeAssetName))
+        .thenReturn(fakeAssetKey)
+
+    Mockito.`when`<InputStream?>(assetManager!!.open(fakeAssetKey))
+        .thenReturn(TestImageUtils.buildImageInputStream())
+
+    Mockito.`when`<BitmapDescriptor?>(
+            bitmapDescriptorFactoryWrapper!!.fromBitmap(ArgumentMatchers.any<Bitmap?>()))
+        .thenReturn(mockBitmapDescriptor)
+    val bitmap =
+        PlatformBitmapAssetMap(
+            fakeAssetName,
+            PlatformMapBitmapScaling.AUTO, /* imagePixelRatio */
+            2.0, /* width */
+            null, /* height */
+            15.0)
+
+    val result =
+        Convert.getBitmapFromAsset(
+            bitmap, assetManager, 1.0f, bitmapDescriptorFactoryWrapper, flutterInjectorWrapper)
+
+    Assert.assertEquals(mockBitmapDescriptor, result)
+  }
+
+  @Test
+  @Throws(Exception::class)
+  fun GetBitmapFromAssetNoScaling() {
+    val fakeAssetName = "fake_asset_name"
+    val fakeAssetKey = "fake_asset_key"
+
+    Mockito.`when`<String?>(flutterInjectorWrapper!!.getLookupKeyForAsset(fakeAssetName))
+        .thenReturn(fakeAssetKey)
+
+    Mockito.`when`<InputStream?>(assetManager!!.open(fakeAssetKey))
+        .thenReturn(TestImageUtils.buildImageInputStream())
+
+    Mockito.`when`<BitmapDescriptor?>(
+            bitmapDescriptorFactoryWrapper!!.fromAsset(ArgumentMatchers.any<String?>()))
+        .thenReturn(mockBitmapDescriptor)
+
+    Mockito.verify<BitmapDescriptorFactoryWrapper?>(bitmapDescriptorFactoryWrapper, Mockito.never())
+        .fromBitmap(ArgumentMatchers.any<Bitmap?>())
+    val bitmap =
+        PlatformBitmapAssetMap(
+            fakeAssetName,
+            PlatformMapBitmapScaling.NONE, /* imagePixelRatio */
+            2.0, /* width */
+            null, /* height */
+            null)
+
+    val result =
+        Convert.getBitmapFromAsset(
+            bitmap, assetManager, 1.0f, bitmapDescriptorFactoryWrapper, flutterInjectorWrapper)
+
+    Assert.assertEquals(mockBitmapDescriptor, result)
+  }
+
+  @Test
+  fun GetBitmapFromBytesAuto() {
+    val bmpData = Base64.decode(base64Image, Base64.DEFAULT)
+
+    Mockito.`when`<BitmapDescriptor?>(
+            bitmapDescriptorFactoryWrapper!!.fromBitmap(ArgumentMatchers.any<Bitmap?>()))
+        .thenReturn(mockBitmapDescriptor)
+
+    val bitmap =
+        PlatformBitmapBytesMap(
+            bmpData,
+            PlatformMapBitmapScaling.AUTO, /* imagePixelRatio */
+            2.0, /* width */
+            null, /* height */
+            null)
+
+    val result = Convert.getBitmapFromBytes(bitmap, 1f, bitmapDescriptorFactoryWrapper)
+
+    Assert.assertEquals(mockBitmapDescriptor, result)
+  }
+
+  @Test
+  fun GetBitmapFromBytesAutoAndWidth() {
+    val bmpData = Base64.decode(base64Image, Base64.DEFAULT)
+
+    Mockito.`when`<BitmapDescriptor?>(
+            bitmapDescriptorFactoryWrapper!!.fromBitmap(ArgumentMatchers.any<Bitmap?>()))
+        .thenReturn(mockBitmapDescriptor)
+    val bitmap =
+        PlatformBitmapBytesMap(
+            bmpData, /* bitmapScaling */
+            PlatformMapBitmapScaling.AUTO, /* imagePixelRatio */
+            2.0, /* width */
+            15.0, /* height */
+            null)
+
+    val result = Convert.getBitmapFromBytes(bitmap, 1f, bitmapDescriptorFactoryWrapper)
+
+    Assert.assertEquals(mockBitmapDescriptor, result)
+  }
+
+  @Test
+  fun GetBitmapFromBytesAutoAndHeight() {
+    val bmpData = Base64.decode(base64Image, Base64.DEFAULT)
+
+    Mockito.`when`<BitmapDescriptor?>(
+            bitmapDescriptorFactoryWrapper!!.fromBitmap(ArgumentMatchers.any<Bitmap?>()))
+        .thenReturn(mockBitmapDescriptor)
+    val bitmap =
+        PlatformBitmapBytesMap(
+            bmpData, /* bitmapScaling */
+            PlatformMapBitmapScaling.AUTO, /* imagePixelRatio */
+            2.0, /* width */
+            null, /* height */
+            15.0)
+
+    val result = Convert.getBitmapFromBytes(bitmap, 1f, bitmapDescriptorFactoryWrapper)
+
+    Assert.assertEquals(mockBitmapDescriptor, result)
+  }
+
+  @Test
+  fun GetBitmapFromBytesNoScaling() {
+    val bmpData = Base64.decode(base64Image, Base64.DEFAULT)
+
+    Mockito.`when`<BitmapDescriptor?>(
+            bitmapDescriptorFactoryWrapper!!.fromBitmap(ArgumentMatchers.any<Bitmap?>()))
+        .thenReturn(mockBitmapDescriptor)
+    val bitmap =
+        PlatformBitmapBytesMap(
+            bmpData, /* bitmapScaling */
+            PlatformMapBitmapScaling.NONE, /* imagePixelRatio */
+            2.0, /* width */
+            null, /* height */
+            null)
+
+    val result = Convert.getBitmapFromBytes(bitmap, 1f, bitmapDescriptorFactoryWrapper)
+
+    Assert.assertEquals(mockBitmapDescriptor, result)
+  }
+
+  @Test(expected = IllegalArgumentException::class) // Expecting an IllegalArgumentException
+  fun GetBitmapFromBytesThrowsErrorIfInvalidImageData() {
+    val invalidBase64Image = "not valid image data"
+    val bmpData = Base64.decode(invalidBase64Image, Base64.DEFAULT)
+
+    Mockito.verify<BitmapDescriptorFactoryWrapper?>(bitmapDescriptorFactoryWrapper, Mockito.never())
+        .fromBitmap(ArgumentMatchers.any<Bitmap?>())
+    val bitmap =
+        PlatformBitmapBytesMap(
+            bmpData, /* bitmapScaling */
+            PlatformMapBitmapScaling.NONE, /* imagePixelRatio */
+            2.0, /* width */
+            null, /* height */
+            null)
+
+    try {
+      Convert.getBitmapFromBytes(bitmap, 1f, bitmapDescriptorFactoryWrapper)
+    } catch (e: IllegalArgumentException) {
+      Assert.assertEquals("Unable to interpret bytes as a valid image.", e.message)
+      throw e // rethrow the exception
     }
 
-    @After
-    @Throws(Exception::class)
-    fun tearDown() {
-        mockCloseable!!.close()
+    Assert.fail("Expected an IllegalArgumentException to be thrown")
+  }
+
+  @Test
+  fun GetPinConfigFromPlatformPinConfig_GlyphColor() {
+    val platformBitmap =
+        PlatformBitmapPinConfig(
+            /* backgroundColor */
+            PlatformColor(0x00FFFFL), /* borderColor */
+            PlatformColor(0xFF00FFL), /* glyphColor */
+            PlatformColor(0x112233L), /* glyphBitmap */
+            null, /* glyphText */
+            null, /* glyphTextColor */
+            null)
+
+    val pinConfig =
+        Convert.getPinConfigFromPlatformPinConfig(
+            platformBitmap, assetManager, 1f, bitmapDescriptorFactoryWrapper)
+    Assert.assertEquals(0x00FFFFL, pinConfig.getBackgroundColor().toLong())
+    Assert.assertEquals(0xFF00FFL, pinConfig.getBorderColor().toLong())
+    Assert.assertEquals(0x112233L, pinConfig.getGlyph().getGlyphColor().toLong())
+  }
+
+  @Test
+  fun GetPinConfigFromPlatformPinConfig_Glyph() {
+    val platformBitmap =
+        PlatformBitmapPinConfig(
+            /* backgroundColor */
+            null, /* borderColor */
+            null, /* glyphColor */
+            null, /* glyphBitmap */
+            null, /* glyphText */
+            "Hi", /* glyphTextColor */
+            PlatformColor(0xFFFFFFL))
+    val pinConfig =
+        Convert.getPinConfigFromPlatformPinConfig(
+            platformBitmap, assetManager, 1f, bitmapDescriptorFactoryWrapper)
+    Assert.assertEquals("Hi", pinConfig.getGlyph().getText())
+    Assert.assertEquals(0xFFFFFFL, pinConfig.getGlyph().getTextColor().toLong())
+  }
+
+  @Test
+  fun GetPinConfigFromPlatformPinConfig_GlyphBitmap() {
+    val bmpData = Base64.decode(base64Image, Base64.DEFAULT)
+    val bytesBitmap =
+        PlatformBitmapBytesMap(
+            bmpData, /* bitmapScaling */
+            PlatformMapBitmapScaling.AUTO, /* imagePixelRatio */
+            2.0, /* width */
+            null, /* height */
+            null)
+    val icon = PlatformBitmap(bytesBitmap)
+    val platformBitmap =
+        PlatformBitmapPinConfig(
+            /* backgroundColor */
+            PlatformColor(0xFFFFFFL), /* borderColor */
+            PlatformColor(0x000000L), /* glyphColor */
+            null, /* glyphBitmap */
+            icon, /* glyphText */
+            null, /* glyphTextColor */
+            null)
+    Mockito.`when`<BitmapDescriptor?>(
+            bitmapDescriptorFactoryWrapper!!.fromBitmap(ArgumentMatchers.any<Bitmap?>()))
+        .thenReturn(mockBitmapDescriptor)
+    val pinConfig =
+        Convert.getPinConfigFromPlatformPinConfig(
+            platformBitmap, assetManager, 1f, bitmapDescriptorFactoryWrapper)
+
+    Assert.assertEquals(0xFFFFFFL, pinConfig.getBackgroundColor().toLong())
+    Assert.assertEquals(0x000000L, pinConfig.getBorderColor().toLong())
+    Assert.assertEquals(mockBitmapDescriptor, pinConfig.getGlyph().getBitmapDescriptor())
+  }
+
+  private val minimalConfigurationBuilder: PlatformMapConfigurationBuilder
+    /** Returns a PlatformMapConfiguration.Builder that sets required parameters. */
+    get() = PlatformMapConfigurationBuilder().setMarkerType(PlatformMarkerType.MARKER)
+
+  @Test
+  fun interpretMapConfiguration_handlesNulls() {
+    val config = this.minimalConfigurationBuilder.build()
+    Convert.interpretMapConfiguration(config, optionsSink!!)
+    Mockito.verifyNoInteractions(optionsSink)
+  }
+
+  @Test
+  fun interpretMapConfiguration_handlesCompassEnabled() {
+    val config = this.minimalConfigurationBuilder.setCompassEnabled(false).build()
+    Convert.interpretMapConfiguration(config, optionsSink!!)
+    Mockito.verify<GoogleMapOptionsSink?>(optionsSink, Mockito.times(1)).setCompassEnabled(false)
+  }
+
+  @Test
+  fun interpretMapConfiguration_handlesMapToolbarEnabled() {
+    val config = this.minimalConfigurationBuilder.setMapToolbarEnabled(true).build()
+    Convert.interpretMapConfiguration(config, optionsSink!!)
+    Mockito.verify<GoogleMapOptionsSink?>(optionsSink, Mockito.times(1)).setMapToolbarEnabled(true)
+  }
+
+  @Test
+  fun interpretMapConfiguration_handlesRotateGesturesEnabled() {
+    val config = this.minimalConfigurationBuilder.setRotateGesturesEnabled(false).build()
+    Convert.interpretMapConfiguration(config, optionsSink!!)
+    Mockito.verify<GoogleMapOptionsSink?>(optionsSink, Mockito.times(1))
+        .setRotateGesturesEnabled(false)
+  }
+
+  @Test
+  fun interpretMapConfiguration_handlesScrollGesturesEnabled() {
+    val config = this.minimalConfigurationBuilder.setScrollGesturesEnabled(true).build()
+    Convert.interpretMapConfiguration(config, optionsSink!!)
+    Mockito.verify<GoogleMapOptionsSink?>(optionsSink, Mockito.times(1))
+        .setScrollGesturesEnabled(true)
+  }
+
+  @Test
+  fun interpretMapConfiguration_handlesTiltGesturesEnabled() {
+    val config = this.minimalConfigurationBuilder.setTiltGesturesEnabled(false).build()
+    Convert.interpretMapConfiguration(config, optionsSink!!)
+    Mockito.verify<GoogleMapOptionsSink?>(optionsSink, Mockito.times(1))
+        .setTiltGesturesEnabled(false)
+  }
+
+  @Test
+  fun interpretMapConfiguration_handlesTrackCameraPosition() {
+    val config = this.minimalConfigurationBuilder.setTrackCameraPosition(true).build()
+    Convert.interpretMapConfiguration(config, optionsSink!!)
+    Mockito.verify<GoogleMapOptionsSink?>(optionsSink, Mockito.times(1))
+        .setTrackCameraPosition(true)
+  }
+
+  @Test
+  fun interpretMapConfiguration_handlesZoomControlsEnabled() {
+    val config = this.minimalConfigurationBuilder.setZoomControlsEnabled(false).build()
+    Convert.interpretMapConfiguration(config, optionsSink!!)
+    Mockito.verify<GoogleMapOptionsSink?>(optionsSink, Mockito.times(1))
+        .setZoomControlsEnabled(false)
+  }
+
+  @Test
+  fun interpretMapConfiguration_handlesZoomGesturesEnabled() {
+    val config = this.minimalConfigurationBuilder.setZoomGesturesEnabled(true).build()
+    Convert.interpretMapConfiguration(config, optionsSink!!)
+    Mockito.verify<GoogleMapOptionsSink?>(optionsSink, Mockito.times(1))
+        .setZoomGesturesEnabled(true)
+  }
+
+  @Test
+  fun interpretMapConfiguration_handlesMyLocationEnabled() {
+    val config = this.minimalConfigurationBuilder.setMyLocationEnabled(false).build()
+    Convert.interpretMapConfiguration(config, optionsSink!!)
+    Mockito.verify<GoogleMapOptionsSink?>(optionsSink, Mockito.times(1)).setMyLocationEnabled(false)
+  }
+
+  @Test
+  fun interpretMapConfiguration_handlesMyLocationButtonEnabled() {
+    val config = this.minimalConfigurationBuilder.setMyLocationButtonEnabled(true).build()
+    Convert.interpretMapConfiguration(config, optionsSink!!)
+    Mockito.verify<GoogleMapOptionsSink?>(optionsSink, Mockito.times(1))
+        .setMyLocationButtonEnabled(true)
+  }
+
+  @Test
+  fun interpretMapConfiguration_handlesIndoorViewEnabled() {
+    val config = this.minimalConfigurationBuilder.setIndoorViewEnabled(false).build()
+    Convert.interpretMapConfiguration(config, optionsSink!!)
+    Mockito.verify<GoogleMapOptionsSink?>(optionsSink, Mockito.times(1)).setIndoorEnabled(false)
+  }
+
+  @Test
+  fun interpretMapConfiguration_handlesTrafficEnabled() {
+    val config = this.minimalConfigurationBuilder.setTrafficEnabled(true).build()
+    Convert.interpretMapConfiguration(config, optionsSink!!)
+    Mockito.verify<GoogleMapOptionsSink?>(optionsSink, Mockito.times(1)).setTrafficEnabled(true)
+  }
+
+  @Test
+  fun interpretMapConfiguration_handlesBuildingsEnabled() {
+    val config = this.minimalConfigurationBuilder.setBuildingsEnabled(false).build()
+    Convert.interpretMapConfiguration(config, optionsSink!!)
+    Mockito.verify<GoogleMapOptionsSink?>(optionsSink, Mockito.times(1)).setBuildingsEnabled(false)
+  }
+
+  @Test
+  fun interpretMapConfiguration_handlesLiteModeEnabled() {
+    val config = this.minimalConfigurationBuilder.setLiteModeEnabled(true).build()
+    Convert.interpretMapConfiguration(config, optionsSink!!)
+    Mockito.verify<GoogleMapOptionsSink?>(optionsSink, Mockito.times(1)).setLiteModeEnabled(true)
+  }
+
+  @Test
+  fun interpretMapConfiguration_handlesStyle() {
+    val config = this.minimalConfigurationBuilder.setStyle("foo").build()
+    Convert.interpretMapConfiguration(config, optionsSink!!)
+    Mockito.verify<GoogleMapOptionsSink?>(optionsSink, Mockito.times(1)).setMapStyle("foo")
+  }
+
+  @Test
+  fun interpretMapConfiguration_handlesUnboundedCameraTargetBounds() {
+    val config =
+        this.minimalConfigurationBuilder
+            .setCameraTargetBounds(PlatformCameraTargetBounds(null))
+            .build()
+    Convert.interpretMapConfiguration(config, optionsSink!!)
+    Mockito.verify<GoogleMapOptionsSink?>(optionsSink, Mockito.times(1)).setCameraTargetBounds(null)
+  }
+
+  @Test
+  fun interpretMapConfiguration_handlesBoundedCameraTargetBounds() {
+    val bounds = LatLngBounds(LatLng(10.0, 20.0), LatLng(30.0, 40.0))
+    val config =
+        this.minimalConfigurationBuilder
+            .setCameraTargetBounds(
+                PlatformCameraTargetBounds(
+                    PlatformLatLngBounds(
+                        PlatformLatLng(bounds.northeast.latitude, bounds.northeast.longitude),
+                        PlatformLatLng(bounds.southwest.latitude, bounds.southwest.longitude))))
+            .build()
+    Convert.interpretMapConfiguration(config, optionsSink!!)
+    Mockito.verify<GoogleMapOptionsSink?>(optionsSink, Mockito.times(1))
+        .setCameraTargetBounds(bounds)
+  }
+
+  @Test
+  fun interpretMapConfiguration_handlesMapType() {
+    val config = this.minimalConfigurationBuilder.setMapType(PlatformMapType.HYBRID).build()
+    Convert.interpretMapConfiguration(config, optionsSink!!)
+    Mockito.verify<GoogleMapOptionsSink?>(optionsSink, Mockito.times(1))
+        .setMapType(GoogleMap.MAP_TYPE_HYBRID)
+  }
+
+  @Test
+  fun interpretMapConfiguration_handlesPadding() {
+    val top = 1.0
+    val bottom = 2.0
+    val left = 3.0
+    val right = 4.0
+    val config =
+        this.minimalConfigurationBuilder
+            .setPadding(
+                PlatformEdgeInsets(
+                    /* top= */ top, /* bottom= */ bottom, /* left= */ left, /* right= */ right))
+            .build()
+    Convert.interpretMapConfiguration(config, optionsSink!!)
+    Mockito.verify<GoogleMapOptionsSink?>(optionsSink, Mockito.times(1))
+        .setPadding(top.toFloat(), left.toFloat(), bottom.toFloat(), right.toFloat())
+  }
+
+  @Test
+  fun interpretMapConfiguration_handlesMinMaxZoomPreference() {
+    val min = 1.0
+    val max = 2.0
+    val config =
+        this.minimalConfigurationBuilder
+            .setMinMaxZoomPreference(PlatformZoomRange(min, max))
+            .build()
+    Convert.interpretMapConfiguration(config, optionsSink!!)
+    Mockito.verify<GoogleMapOptionsSink?>(optionsSink, Mockito.times(1))
+        .setMinMaxZoomPreference(min.toFloat(), max.toFloat())
+  }
+
+  @Test
+  fun ConvertToWeightedLatLngReturnsCorrectData() {
+    val intensity = 3.3
+    val data = PlatformWeightedLatLng(PlatformLatLng(1.1, 2.2), intensity)
+    val point: Point = sProjection.toPoint(LatLng(1.1, 2.2))
+
+    val result = Convert.weightedLatLngFromPigeon(data)
+
+    Assert.assertEquals(point.x, result.point.x, 0.0)
+    Assert.assertEquals(point.y, result.point.y, 0.0)
+    Assert.assertEquals(intensity, result.intensity, 0.0)
+  }
+
+  @Test
+  fun ConvertToWeightedDataReturnsCorrectData() {
+    val intensity = 3.3
+    val data =
+        List.of<PlatformWeightedLatLng?>(
+            PlatformWeightedLatLng(PlatformLatLng(1.1, 2.2), intensity))
+    val point: Point = sProjection.toPoint(LatLng(1.1, 2.2))
+
+    val result = Convert.weightedDataFromPigeon(data)
+
+    Assert.assertEquals(1, result.size.toLong())
+    Assert.assertEquals(point.x, result.get(0)!!.point.x, 0.0)
+    Assert.assertEquals(point.y, result.get(0)!!.point.y, 0.0)
+    Assert.assertEquals(intensity, result.get(0)!!.intensity, 0.0)
+  }
+
+  @Test
+  fun ConvertToGradientReturnsCorrectData() {
+    val color1: Long = 0
+    val color2: Long = 1
+    val color3: Long = 2
+    val colorData =
+        List.of<PlatformColor?>(
+            createPlatformColor(color1), createPlatformColor(color2), createPlatformColor(color3))
+    val startPoint1 = 0.0
+    val startPoint2 = 1.0
+    val startPoint3 = 2.0
+    val startPointData = List.of<Double?>(startPoint1, startPoint2, startPoint3)
+    val colorMapSize: Long = 3
+    val data = PlatformHeatmapGradient(colorData, startPointData, colorMapSize)
+
+    val result = Convert.gradientFromPigeon(data)
+
+    Assert.assertEquals(3, result.colors.size.toLong())
+    Assert.assertEquals(color1, result.colors[0].toLong())
+    Assert.assertEquals(color2, result.colors[1].toLong())
+    Assert.assertEquals(color3, result.colors[2].toLong())
+    Assert.assertEquals(3, result.startPoints.size.toLong())
+    Assert.assertEquals(startPoint1, result.startPoints[0].toDouble(), 0.0)
+    Assert.assertEquals(startPoint2, result.startPoints[1].toDouble(), 0.0)
+    Assert.assertEquals(startPoint3, result.startPoints[2].toDouble(), 0.0)
+    Assert.assertEquals(colorMapSize, result.colorMapSize.toLong())
+  }
+
+  @Test
+  fun ConvertInterpretHeatmapOptionsReturnsCorrectData() {
+    val intensity = 3.3
+    val dataData =
+        List.of<PlatformWeightedLatLng?>(
+            PlatformWeightedLatLng(PlatformLatLng(1.1, 2.2), intensity))
+    val point: Point = sProjection.toPoint(LatLng(1.1, 2.2))
+
+    val color1: Long = 0
+    val color2: Long = 1
+    val color3: Long = 2
+    val colorData =
+        List.of<PlatformColor?>(
+            createPlatformColor(color1), createPlatformColor(color2), createPlatformColor(color3))
+    val startPoint1 = 0.0
+    val startPoint2 = 1.0
+    val startPoint3 = 2.0
+    val startPointData = List.of<Double?>(startPoint1, startPoint2, startPoint3)
+    val colorMapSize: Long = 3
+    val gradientData = PlatformHeatmapGradient(colorData, startPointData, colorMapSize)
+
+    val maxIntensity = 4.0
+    val opacity = 5.5
+    val radius: Long = 6
+    val idData = "heatmap_1"
+
+    val data =
+        PlatformHeatmap(
+            idData,
+            dataData,
+            gradientData, /* opacity */
+            opacity, /* radius */
+            radius, /* maxIntensity */
+            maxIntensity)
+
+    val builder = MockHeatmapBuilder()
+    val id = Convert.interpretHeatmapOptions(data, builder)
+
+    Assert.assertEquals(1, builder.getWeightedData()!!.size.toLong())
+    Assert.assertEquals(point.x, builder.getWeightedData()!!.get(0)!!.point.x, 0.0)
+    Assert.assertEquals(point.y, builder.getWeightedData()!!.get(0)!!.point.y, 0.0)
+    Assert.assertEquals(intensity, builder.getWeightedData()!!.get(0)!!.intensity, 0.0)
+    Assert.assertEquals(3, builder.getGradient()!!.colors.size.toLong())
+    Assert.assertEquals(color1, builder.getGradient()!!.colors[0].toLong())
+    Assert.assertEquals(color2, builder.getGradient()!!.colors[1].toLong())
+    Assert.assertEquals(color3, builder.getGradient()!!.colors[2].toLong())
+    Assert.assertEquals(3, builder.getGradient()!!.startPoints.size.toLong())
+    Assert.assertEquals(startPoint1, builder.getGradient()!!.startPoints[0].toDouble(), 0.0)
+    Assert.assertEquals(startPoint2, builder.getGradient()!!.startPoints[1].toDouble(), 0.0)
+    Assert.assertEquals(startPoint3, builder.getGradient()!!.startPoints[2].toDouble(), 0.0)
+    Assert.assertEquals(colorMapSize, builder.getGradient()!!.colorMapSize.toLong())
+    Assert.assertEquals(maxIntensity, builder.getMaxIntensity(), 0.0)
+    Assert.assertEquals(opacity, builder.getOpacity(), 0.0)
+    Assert.assertEquals(radius, builder.getRadius().toLong())
+    Assert.assertEquals(idData, id)
+  }
+
+  private fun createPlatformColor(rgba: Long): PlatformColor {
+    return PlatformColor(rgba)
+  }
+
+  @Test
+  fun buildGroundOverlayAnchorForPigeonWithNonCrossingMeridian() {
+    val position = LatLng(10.0, 20.0)
+    val southwest = LatLng(5.0, 15.0)
+    val northeast = LatLng(15.0, 25.0)
+    val bounds = LatLngBounds(southwest, northeast)
+    val groundOverlay = Mockito.mock<GroundOverlay>(GroundOverlay::class.java)
+    Mockito.`when`<LatLng?>(groundOverlay.getPosition()).thenReturn(position)
+    Mockito.`when`<LatLngBounds?>(groundOverlay.getBounds()).thenReturn(bounds)
+
+    val anchor = Convert.buildGroundOverlayAnchorForPigeon(groundOverlay)
+
+    Assert.assertEquals(0.5, anchor.x, 1e-15)
+    Assert.assertEquals(0.5, anchor.y, 1e-15)
+  }
+
+  @Test
+  fun buildGroundOverlayAnchorForPigeonWithCrossingMeridian() {
+    val position = LatLng(10.0, -175.0)
+    val southwest = LatLng(5.0, 170.0)
+    val northeast = LatLng(15.0, -160.0)
+    val bounds = LatLngBounds(southwest, northeast)
+    val groundOverlay = Mockito.mock<GroundOverlay>(GroundOverlay::class.java)
+    Mockito.`when`<LatLng?>(groundOverlay.getPosition()).thenReturn(position)
+    Mockito.`when`<LatLngBounds?>(groundOverlay.getBounds()).thenReturn(bounds)
+
+    val anchor = Convert.buildGroundOverlayAnchorForPigeon(groundOverlay)
+
+    Assert.assertEquals(0.5, anchor.x, 1e-15)
+    Assert.assertEquals(0.5, anchor.y, 1e-15)
+  }
+
+  private fun assertGroundOverlayEquals(
+      result: PlatformGroundOverlay,
+      expectedOverlay: GroundOverlay,
+      expectedId: String?,
+      expectedPosition: LatLng?,
+      expectedBounds: LatLngBounds?
+  ) {
+    Assert.assertEquals(expectedId, result.groundOverlayId)
+    if (expectedPosition != null) {
+      Assert.assertNotNull(result.position)
+      Assert.assertEquals(expectedPosition.latitude, result.position!!.latitude, 1e-15)
+      Assert.assertEquals(expectedPosition.longitude, result.position.longitude, 1e-15)
+      Assert.assertNotNull(result.width)
+      Assert.assertNotNull(result.height)
+      Assert.assertEquals(expectedOverlay.getWidth().toDouble(), result.width!!, 1e-15)
+      Assert.assertEquals(expectedOverlay.getHeight().toDouble(), result.height!!, 1e-15)
+    } else {
+      Assert.assertNull(result.position)
+    }
+    if (expectedBounds != null) {
+      Assert.assertNotNull(result.bounds)
+      Assert.assertEquals(
+          expectedBounds.southwest.latitude, result.bounds!!.southwest.latitude, 1e-15)
+      Assert.assertEquals(
+          expectedBounds.southwest.longitude, result.bounds.southwest.longitude, 1e-15)
+      Assert.assertEquals(
+          expectedBounds.northeast.latitude, result.bounds.northeast.latitude, 1e-15)
+      Assert.assertEquals(
+          expectedBounds.northeast.longitude, result.bounds.northeast.longitude, 1e-15)
+    } else {
+      Assert.assertNull(result.bounds)
     }
 
-    @Test
-    fun ConvertPointsFromPigeonConvertsThePointsWithFullPrecision() {
-        val latitude = 43.03725568057
-        val longitude = -87.90466904649
-        val platLng = PlatformLatLng(latitude, longitude)
-        val latLngs = Convert.pointsFromPigeon(mutableListOf<PlatformLatLng?>(platLng))
-        val latLng = latLngs.get(0)
-        Assert.assertEquals(latitude, latLng.latitude, 1e-15)
-        Assert.assertEquals(longitude, latLng.longitude, 1e-15)
+    Assert.assertEquals(expectedOverlay.getBearing().toDouble(), result.bearing, 1e-15)
+    Assert.assertEquals(expectedOverlay.getTransparency().toDouble(), result.transparency, 1e-6)
+    Assert.assertEquals(expectedOverlay.getZIndex().toDouble(), result.zIndex.toDouble(), 1e-6)
+    Assert.assertEquals(expectedOverlay.isVisible(), result.visible)
+    Assert.assertEquals(expectedOverlay.isClickable(), result.clickable)
+    val anchor = result.anchor
+    Assert.assertNotNull(anchor)
+    Assert.assertEquals(0.5, anchor!!.x, 1e-6)
+    Assert.assertEquals(0.5, anchor.y, 1e-6)
+  }
+
+  @Test
+  fun groundOverlayToPigeonWithPosition() {
+    val mockGroundOverlay = Mockito.mock<GroundOverlay>(GroundOverlay::class.java)
+    val position = LatLng(10.0, 20.0)
+    val southwest = LatLng(5.0, 15.0)
+    val northeast = LatLng(15.0, 25.0)
+    val bounds = LatLngBounds(southwest, northeast)
+    Mockito.`when`<LatLng?>(mockGroundOverlay.getPosition()).thenReturn(position)
+    Mockito.`when`<LatLngBounds?>(mockGroundOverlay.getBounds()).thenReturn(bounds)
+    Mockito.`when`<Float?>(mockGroundOverlay.getWidth()).thenReturn(30f)
+    Mockito.`when`<Float?>(mockGroundOverlay.getHeight()).thenReturn(40f)
+    Mockito.`when`<Float?>(mockGroundOverlay.getBearing()).thenReturn(50f)
+    Mockito.`when`<Float?>(mockGroundOverlay.getTransparency()).thenReturn(0.6f)
+    Mockito.`when`<Float?>(mockGroundOverlay.getZIndex()).thenReturn(7f)
+    Mockito.`when`<Boolean?>(mockGroundOverlay.isVisible()).thenReturn(true)
+    Mockito.`when`<Boolean?>(mockGroundOverlay.isClickable()).thenReturn(false)
+
+    val overlayId = "overlay_1"
+    val result = Convert.groundOverlayToPigeon(mockGroundOverlay, overlayId, false)
+
+    assertGroundOverlayEquals(result, mockGroundOverlay, overlayId, position, null)
+  }
+
+  @Test
+  fun groundOverlayToPigeonWithBounds() {
+    val mockGroundOverlay = Mockito.mock<GroundOverlay>(GroundOverlay::class.java)
+    val position = LatLng(10.0, 20.0)
+    val southwest = LatLng(5.0, 15.0)
+    val northeast = LatLng(15.0, 25.0)
+    val bounds = LatLngBounds(southwest, northeast)
+    Mockito.`when`<LatLng?>(mockGroundOverlay.getPosition()).thenReturn(position)
+    Mockito.`when`<LatLngBounds?>(mockGroundOverlay.getBounds()).thenReturn(bounds)
+    Mockito.`when`<Float?>(mockGroundOverlay.getWidth()).thenReturn(30f)
+    Mockito.`when`<Float?>(mockGroundOverlay.getHeight()).thenReturn(40f)
+    Mockito.`when`<Float?>(mockGroundOverlay.getBearing()).thenReturn(50f)
+    Mockito.`when`<Float?>(mockGroundOverlay.getTransparency()).thenReturn(0.6f)
+    Mockito.`when`<Float?>(mockGroundOverlay.getZIndex()).thenReturn(7f)
+    Mockito.`when`<Boolean?>(mockGroundOverlay.isVisible()).thenReturn(true)
+    Mockito.`when`<Boolean?>(mockGroundOverlay.isClickable()).thenReturn(false)
+
+    val overlayId = "overlay_2"
+    val result = Convert.groundOverlayToPigeon(mockGroundOverlay, overlayId, true)
+
+    assertGroundOverlayEquals(result, mockGroundOverlay, overlayId, null, bounds)
+  }
+
+  // Remove this if builders are added to the Kotlin generator; see discussion in
+  // https://github.com/flutter/flutter/issues/158287
+  private class PlatformMapConfigurationBuilder {
+    private var compassEnabled: Boolean? = null
+    private var cameraTargetBounds: PlatformCameraTargetBounds? = null
+    private var mapType: PlatformMapType? = null
+    private var minMaxZoomPreference: PlatformZoomRange? = null
+    private var mapToolbarEnabled: Boolean? = null
+    private var rotateGesturesEnabled: Boolean? = null
+    private var scrollGesturesEnabled: Boolean? = null
+    private var tiltGesturesEnabled: Boolean? = null
+    private var trackCameraPosition: Boolean? = null
+    private var zoomControlsEnabled: Boolean? = null
+    private var zoomGesturesEnabled: Boolean? = null
+    private var myLocationEnabled: Boolean? = null
+    private var myLocationButtonEnabled: Boolean? = null
+    private var padding: PlatformEdgeInsets? = null
+    private var indoorViewEnabled: Boolean? = null
+    private var trafficEnabled: Boolean? = null
+    private var buildingsEnabled: Boolean? = null
+    private var liteModeEnabled: Boolean? = null
+    private var markerType: PlatformMarkerType? = null
+    private var mapId: String? = null
+    private var style: String? = null
+
+    fun setCompassEnabled(setterArg: Boolean?): PlatformMapConfigurationBuilder {
+      this.compassEnabled = setterArg
+      return this
     }
 
-    @Test
-    fun ConvertClusterToPigeonReturnsCorrectData() {
-        val clusterManagerId = "cm_1"
-        val clusterPosition = LatLng(43.00, -87.90)
-        val markerPosition1 = LatLng(43.05, -87.95)
-        val markerPosition2 = LatLng(43.02, -87.92)
-
-        val cluster = StaticCluster<MarkerBuilder?>(clusterPosition)
-
-        val marker1 = MarkerBuilder("m_1", clusterManagerId, PlatformMarkerType.MARKER)
-        marker1.setPosition(markerPosition1)
-        cluster.add(marker1)
-
-        val marker2 = MarkerBuilder("m_2", clusterManagerId, PlatformMarkerType.MARKER)
-        marker2.setPosition(markerPosition2)
-        cluster.add(marker2)
-
-        val result = Convert.clusterToPigeon(clusterManagerId, cluster)
-        Assert.assertEquals(clusterManagerId, result.clusterManagerId)
-
-        val position = result.position
-        Assert.assertEquals(clusterPosition.latitude, position.latitude, 1e-15)
-        Assert.assertEquals(clusterPosition.longitude, position.longitude, 1e-15)
-
-        val bounds = result.bounds
-        val southwest = bounds.southwest
-        val northeast = bounds.northeast
-        // bounding data should combine data from marker positions markerPosition1 and markerPosition2
-        Assert.assertEquals(markerPosition2.latitude, southwest.latitude, 1e-15)
-        Assert.assertEquals(markerPosition1.longitude, southwest.longitude, 1e-15)
-        Assert.assertEquals(markerPosition1.latitude, northeast.latitude, 1e-15)
-        Assert.assertEquals(markerPosition2.longitude, northeast.longitude, 1e-15)
-
-        val markerIds: MutableList<String?> = result.markerIds
-        Assert.assertEquals(2, markerIds.size.toLong())
-        Assert.assertEquals(marker1.markerId(), markerIds.get(0))
-        Assert.assertEquals(marker2.markerId(), markerIds.get(1))
+    fun setCameraTargetBounds(
+        setterArg: PlatformCameraTargetBounds?
+    ): PlatformMapConfigurationBuilder {
+      this.cameraTargetBounds = setterArg
+      return this
     }
 
-    @Test
-    @Throws(Exception::class)
-    fun GetBitmapFromAssetAuto() {
-        val fakeAssetName = "fake_asset_name"
-        val fakeAssetKey = "fake_asset_key"
-
-        Mockito.`when`<String?>(flutterInjectorWrapper!!.getLookupKeyForAsset(fakeAssetName))
-            .thenReturn(fakeAssetKey)
-
-        Mockito.`when`<InputStream?>(assetManager!!.open(fakeAssetKey))
-            .thenReturn(TestImageUtils.buildImageInputStream())
-
-        Mockito.`when`<BitmapDescriptor?>(
-            bitmapDescriptorFactoryWrapper!!.fromBitmap(
-                ArgumentMatchers.any<Bitmap?>()
-            )
-        ).thenReturn(mockBitmapDescriptor)
-        val bitmap =
-            PlatformBitmapAssetMap(
-                fakeAssetName,
-                PlatformMapBitmapScaling.AUTO,  /* imagePixelRatio */
-                2.0,  /* width */
-                15.0,  /* height */
-                15.0
-            )
-
-        val result =
-            Convert.getBitmapFromAsset(
-                bitmap, assetManager, 1.0f, bitmapDescriptorFactoryWrapper, flutterInjectorWrapper
-            )
-
-        Assert.assertEquals(mockBitmapDescriptor, result)
+    fun setMapType(setterArg: PlatformMapType?): PlatformMapConfigurationBuilder {
+      this.mapType = setterArg
+      return this
     }
 
-    @Test
-    @Throws(Exception::class)
-    fun GetBitmapFromAssetAutoAndWidth() {
-        val fakeAssetName = "fake_asset_name"
-        val fakeAssetKey = "fake_asset_key"
-
-        Mockito.`when`<String?>(flutterInjectorWrapper!!.getLookupKeyForAsset(fakeAssetName))
-            .thenReturn(fakeAssetKey)
-
-        Mockito.`when`<InputStream?>(assetManager!!.open(fakeAssetKey))
-            .thenReturn(TestImageUtils.buildImageInputStream())
-
-        Mockito.`when`<BitmapDescriptor?>(
-            bitmapDescriptorFactoryWrapper!!.fromBitmap(
-                ArgumentMatchers.any<Bitmap?>()
-            )
-        ).thenReturn(mockBitmapDescriptor)
-        val bitmap =
-            PlatformBitmapAssetMap(
-                fakeAssetName,
-                PlatformMapBitmapScaling.AUTO,  /* imagePixelRatio */
-                2.0,  /* width */
-                15.0,  /* height */
-                null
-            )
-
-        val result =
-            Convert.getBitmapFromAsset(
-                bitmap, assetManager, 1.0f, bitmapDescriptorFactoryWrapper, flutterInjectorWrapper
-            )
-
-        Assert.assertEquals(mockBitmapDescriptor, result)
+    fun setMinMaxZoomPreference(setterArg: PlatformZoomRange?): PlatformMapConfigurationBuilder {
+      this.minMaxZoomPreference = setterArg
+      return this
     }
 
-    @Test
-    @Throws(Exception::class)
-    fun GetBitmapFromAssetAutoAndHeight() {
-        val fakeAssetName = "fake_asset_name"
-        val fakeAssetKey = "fake_asset_key"
-
-        Mockito.`when`<String?>(flutterInjectorWrapper!!.getLookupKeyForAsset(fakeAssetName))
-            .thenReturn(fakeAssetKey)
-
-        Mockito.`when`<InputStream?>(assetManager!!.open(fakeAssetKey))
-            .thenReturn(TestImageUtils.buildImageInputStream())
-
-        Mockito.`when`<BitmapDescriptor?>(
-            bitmapDescriptorFactoryWrapper!!.fromBitmap(
-                ArgumentMatchers.any<Bitmap?>()
-            )
-        ).thenReturn(mockBitmapDescriptor)
-        val bitmap =
-            PlatformBitmapAssetMap(
-                fakeAssetName,
-                PlatformMapBitmapScaling.AUTO,  /* imagePixelRatio */
-                2.0,  /* width */
-                null,  /* height */
-                15.0
-            )
-
-        val result =
-            Convert.getBitmapFromAsset(
-                bitmap, assetManager, 1.0f, bitmapDescriptorFactoryWrapper, flutterInjectorWrapper
-            )
-
-        Assert.assertEquals(mockBitmapDescriptor, result)
+    fun setMapToolbarEnabled(setterArg: Boolean?): PlatformMapConfigurationBuilder {
+      this.mapToolbarEnabled = setterArg
+      return this
     }
 
-    @Test
-    @Throws(Exception::class)
-    fun GetBitmapFromAssetNoScaling() {
-        val fakeAssetName = "fake_asset_name"
-        val fakeAssetKey = "fake_asset_key"
-
-        Mockito.`when`<String?>(flutterInjectorWrapper!!.getLookupKeyForAsset(fakeAssetName))
-            .thenReturn(fakeAssetKey)
-
-        Mockito.`when`<InputStream?>(assetManager!!.open(fakeAssetKey))
-            .thenReturn(TestImageUtils.buildImageInputStream())
-
-        Mockito.`when`<BitmapDescriptor?>(
-            bitmapDescriptorFactoryWrapper!!.fromAsset(
-                ArgumentMatchers.any<String?>()
-            )
-        ).thenReturn(mockBitmapDescriptor)
-
-        Mockito.verify<BitmapDescriptorFactoryWrapper?>(
-            bitmapDescriptorFactoryWrapper,
-            Mockito.never()
-        ).fromBitmap(
-            ArgumentMatchers.any<Bitmap?>()
-        )
-        val bitmap =
-            PlatformBitmapAssetMap(
-                fakeAssetName,
-                PlatformMapBitmapScaling.NONE,  /* imagePixelRatio */
-                2.0,  /* width */
-                null,  /* height */
-                null
-            )
-
-        val result =
-            Convert.getBitmapFromAsset(
-                bitmap, assetManager, 1.0f, bitmapDescriptorFactoryWrapper, flutterInjectorWrapper
-            )
-
-        Assert.assertEquals(mockBitmapDescriptor, result)
+    fun setRotateGesturesEnabled(setterArg: Boolean?): PlatformMapConfigurationBuilder {
+      this.rotateGesturesEnabled = setterArg
+      return this
     }
 
-    @Test
-    fun GetBitmapFromBytesAuto() {
-        val bmpData = Base64.decode(base64Image, Base64.DEFAULT)
-
-        Mockito.`when`<BitmapDescriptor?>(
-            bitmapDescriptorFactoryWrapper!!.fromBitmap(
-                ArgumentMatchers.any<Bitmap?>()
-            )
-        ).thenReturn(mockBitmapDescriptor)
-
-        val bitmap =
-            PlatformBitmapBytesMap(
-                bmpData,
-                PlatformMapBitmapScaling.AUTO,  /* imagePixelRatio */
-                2.0,  /* width */
-                null,  /* height */
-                null
-            )
-
-        val result =
-            Convert.getBitmapFromBytes(bitmap, 1f, bitmapDescriptorFactoryWrapper)
-
-        Assert.assertEquals(mockBitmapDescriptor, result)
+    fun setScrollGesturesEnabled(setterArg: Boolean?): PlatformMapConfigurationBuilder {
+      this.scrollGesturesEnabled = setterArg
+      return this
     }
 
-    @Test
-    fun GetBitmapFromBytesAutoAndWidth() {
-        val bmpData = Base64.decode(base64Image, Base64.DEFAULT)
-
-        Mockito.`when`<BitmapDescriptor?>(
-            bitmapDescriptorFactoryWrapper!!.fromBitmap(
-                ArgumentMatchers.any<Bitmap?>()
-            )
-        ).thenReturn(mockBitmapDescriptor)
-        val bitmap =
-            PlatformBitmapBytesMap(
-                bmpData,  /* bitmapScaling */
-                PlatformMapBitmapScaling.AUTO,  /* imagePixelRatio */
-                2.0,  /* width */
-                15.0,  /* height */
-                null
-            )
-
-        val result =
-            Convert.getBitmapFromBytes(bitmap, 1f, bitmapDescriptorFactoryWrapper)
-
-        Assert.assertEquals(mockBitmapDescriptor, result)
+    fun setTiltGesturesEnabled(setterArg: Boolean?): PlatformMapConfigurationBuilder {
+      this.tiltGesturesEnabled = setterArg
+      return this
     }
 
-    @Test
-    fun GetBitmapFromBytesAutoAndHeight() {
-        val bmpData = Base64.decode(base64Image, Base64.DEFAULT)
-
-        Mockito.`when`<BitmapDescriptor?>(
-            bitmapDescriptorFactoryWrapper!!.fromBitmap(
-                ArgumentMatchers.any<Bitmap?>()
-            )
-        ).thenReturn(mockBitmapDescriptor)
-        val bitmap =
-            PlatformBitmapBytesMap(
-                bmpData,  /* bitmapScaling */
-                PlatformMapBitmapScaling.AUTO,  /* imagePixelRatio */
-                2.0,  /* width */
-                null,  /* height */
-                15.0
-            )
-
-        val result =
-            Convert.getBitmapFromBytes(bitmap, 1f, bitmapDescriptorFactoryWrapper)
-
-        Assert.assertEquals(mockBitmapDescriptor, result)
+    fun setTrackCameraPosition(setterArg: Boolean?): PlatformMapConfigurationBuilder {
+      this.trackCameraPosition = setterArg
+      return this
     }
 
-    @Test
-    fun GetBitmapFromBytesNoScaling() {
-        val bmpData = Base64.decode(base64Image, Base64.DEFAULT)
-
-        Mockito.`when`<BitmapDescriptor?>(
-            bitmapDescriptorFactoryWrapper!!.fromBitmap(
-                ArgumentMatchers.any<Bitmap?>()
-            )
-        ).thenReturn(mockBitmapDescriptor)
-        val bitmap =
-            PlatformBitmapBytesMap(
-                bmpData,  /* bitmapScaling */
-                PlatformMapBitmapScaling.NONE,  /* imagePixelRatio */
-                2.0,  /* width */
-                null,  /* height */
-                null
-            )
-
-        val result =
-            Convert.getBitmapFromBytes(bitmap, 1f, bitmapDescriptorFactoryWrapper)
-
-        Assert.assertEquals(mockBitmapDescriptor, result)
+    fun setZoomControlsEnabled(setterArg: Boolean?): PlatformMapConfigurationBuilder {
+      this.zoomControlsEnabled = setterArg
+      return this
     }
 
-    @Test(expected = IllegalArgumentException::class) // Expecting an IllegalArgumentException
-    fun GetBitmapFromBytesThrowsErrorIfInvalidImageData() {
-        val invalidBase64Image = "not valid image data"
-        val bmpData = Base64.decode(invalidBase64Image, Base64.DEFAULT)
-
-        Mockito.verify<BitmapDescriptorFactoryWrapper?>(
-            bitmapDescriptorFactoryWrapper,
-            Mockito.never()
-        ).fromBitmap(
-            ArgumentMatchers.any<Bitmap?>()
-        )
-        val bitmap =
-            PlatformBitmapBytesMap(
-                bmpData,  /* bitmapScaling */
-                PlatformMapBitmapScaling.NONE,  /* imagePixelRatio */
-                2.0,  /* width */
-                null,  /* height */
-                null
-            )
-
-        try {
-            Convert.getBitmapFromBytes(bitmap, 1f, bitmapDescriptorFactoryWrapper)
-        } catch (e: IllegalArgumentException) {
-            Assert.assertEquals("Unable to interpret bytes as a valid image.", e.message)
-            throw e // rethrow the exception
-        }
-
-        Assert.fail("Expected an IllegalArgumentException to be thrown")
+    fun setZoomGesturesEnabled(setterArg: Boolean?): PlatformMapConfigurationBuilder {
+      this.zoomGesturesEnabled = setterArg
+      return this
     }
 
-    @Test
-    fun GetPinConfigFromPlatformPinConfig_GlyphColor() {
-        val platformBitmap =
-            PlatformBitmapPinConfig( /* backgroundColor */
-                PlatformColor(0x00FFFFL),  /* borderColor */
-                PlatformColor(0xFF00FFL),  /* glyphColor */
-                PlatformColor(0x112233L),  /* glyphBitmap */
-                null,  /* glyphText */
-                null,  /* glyphTextColor */
-                null
-            )
-
-        val pinConfig =
-            Convert.getPinConfigFromPlatformPinConfig(
-                platformBitmap, assetManager, 1f, bitmapDescriptorFactoryWrapper
-            )
-        Assert.assertEquals(0x00FFFFL, pinConfig.getBackgroundColor().toLong())
-        Assert.assertEquals(0xFF00FFL, pinConfig.getBorderColor().toLong())
-        Assert.assertEquals(0x112233L, pinConfig.getGlyph().getGlyphColor().toLong())
+    fun setMyLocationEnabled(setterArg: Boolean?): PlatformMapConfigurationBuilder {
+      this.myLocationEnabled = setterArg
+      return this
     }
 
-    @Test
-    fun GetPinConfigFromPlatformPinConfig_Glyph() {
-        val platformBitmap =
-            PlatformBitmapPinConfig( /* backgroundColor */
-                null,  /* borderColor */
-                null,  /* glyphColor */
-                null,  /* glyphBitmap */
-                null,  /* glyphText */
-                "Hi",  /* glyphTextColor */
-                PlatformColor(0xFFFFFFL)
-            )
-        val pinConfig =
-            Convert.getPinConfigFromPlatformPinConfig(
-                platformBitmap, assetManager, 1f, bitmapDescriptorFactoryWrapper
-            )
-        Assert.assertEquals("Hi", pinConfig.getGlyph().getText())
-        Assert.assertEquals(0xFFFFFFL, pinConfig.getGlyph().getTextColor().toLong())
+    fun setMyLocationButtonEnabled(setterArg: Boolean?): PlatformMapConfigurationBuilder {
+      this.myLocationButtonEnabled = setterArg
+      return this
     }
 
-    @Test
-    fun GetPinConfigFromPlatformPinConfig_GlyphBitmap() {
-        val bmpData = Base64.decode(base64Image, Base64.DEFAULT)
-        val bytesBitmap =
-            PlatformBitmapBytesMap(
-                bmpData,  /* bitmapScaling */
-                PlatformMapBitmapScaling.AUTO,  /* imagePixelRatio */
-                2.0,  /* width */
-                null,  /* height */
-                null
-            )
-        val icon = PlatformBitmap(bytesBitmap)
-        val platformBitmap =
-            PlatformBitmapPinConfig( /* backgroundColor */
-                PlatformColor(0xFFFFFFL),  /* borderColor */
-                PlatformColor(0x000000L),  /* glyphColor */
-                null,  /* glyphBitmap */
-                icon,  /* glyphText */
-                null,  /* glyphTextColor */
-                null
-            )
-        Mockito.`when`<BitmapDescriptor?>(
-            bitmapDescriptorFactoryWrapper!!.fromBitmap(
-                ArgumentMatchers.any<Bitmap?>()
-            )
-        ).thenReturn(mockBitmapDescriptor)
-        val pinConfig =
-            Convert.getPinConfigFromPlatformPinConfig(
-                platformBitmap, assetManager, 1f, bitmapDescriptorFactoryWrapper
-            )
-
-        Assert.assertEquals(0xFFFFFFL, pinConfig.getBackgroundColor().toLong())
-        Assert.assertEquals(0x000000L, pinConfig.getBorderColor().toLong())
-        Assert.assertEquals(mockBitmapDescriptor, pinConfig.getGlyph().getBitmapDescriptor())
+    fun setPadding(setterArg: PlatformEdgeInsets?): PlatformMapConfigurationBuilder {
+      this.padding = setterArg
+      return this
     }
 
-    private val minimalConfigurationBuilder: PlatformMapConfigurationBuilder
-        /**  Returns a PlatformMapConfiguration.Builder that sets required parameters. */
-        get() = PlatformMapConfigurationBuilder().setMarkerType(PlatformMarkerType.MARKER)
-
-    @Test
-    fun interpretMapConfiguration_handlesNulls() {
-        val config = this.minimalConfigurationBuilder.build()
-        Convert.interpretMapConfiguration(config, optionsSink!!)
-        Mockito.verifyNoInteractions(optionsSink)
+    fun setIndoorViewEnabled(setterArg: Boolean?): PlatformMapConfigurationBuilder {
+      this.indoorViewEnabled = setterArg
+      return this
     }
 
-    @Test
-    fun interpretMapConfiguration_handlesCompassEnabled() {
-        val config =
-            this.minimalConfigurationBuilder.setCompassEnabled(false).build()
-        Convert.interpretMapConfiguration(config, optionsSink!!)
-        Mockito.verify<GoogleMapOptionsSink?>(optionsSink, Mockito.times(1))
-            .setCompassEnabled(false)
+    fun setTrafficEnabled(setterArg: Boolean?): PlatformMapConfigurationBuilder {
+      this.trafficEnabled = setterArg
+      return this
     }
 
-    @Test
-    fun interpretMapConfiguration_handlesMapToolbarEnabled() {
-        val config =
-            this.minimalConfigurationBuilder.setMapToolbarEnabled(true).build()
-        Convert.interpretMapConfiguration(config, optionsSink!!)
-        Mockito.verify<GoogleMapOptionsSink?>(optionsSink, Mockito.times(1))
-            .setMapToolbarEnabled(true)
+    fun setBuildingsEnabled(setterArg: Boolean?): PlatformMapConfigurationBuilder {
+      this.buildingsEnabled = setterArg
+      return this
     }
 
-    @Test
-    fun interpretMapConfiguration_handlesRotateGesturesEnabled() {
-        val config =
-            this.minimalConfigurationBuilder.setRotateGesturesEnabled(false).build()
-        Convert.interpretMapConfiguration(config, optionsSink!!)
-        Mockito.verify<GoogleMapOptionsSink?>(optionsSink, Mockito.times(1))
-            .setRotateGesturesEnabled(false)
+    fun setLiteModeEnabled(setterArg: Boolean?): PlatformMapConfigurationBuilder {
+      this.liteModeEnabled = setterArg
+      return this
     }
 
-    @Test
-    fun interpretMapConfiguration_handlesScrollGesturesEnabled() {
-        val config =
-            this.minimalConfigurationBuilder.setScrollGesturesEnabled(true).build()
-        Convert.interpretMapConfiguration(config, optionsSink!!)
-        Mockito.verify<GoogleMapOptionsSink?>(optionsSink, Mockito.times(1))
-            .setScrollGesturesEnabled(true)
+    fun setMarkerType(setterArg: PlatformMarkerType): PlatformMapConfigurationBuilder {
+      this.markerType = setterArg
+      return this
     }
 
-    @Test
-    fun interpretMapConfiguration_handlesTiltGesturesEnabled() {
-        val config =
-            this.minimalConfigurationBuilder.setTiltGesturesEnabled(false).build()
-        Convert.interpretMapConfiguration(config, optionsSink!!)
-        Mockito.verify<GoogleMapOptionsSink?>(optionsSink, Mockito.times(1))
-            .setTiltGesturesEnabled(false)
+    fun setMapId(setterArg: String?): PlatformMapConfigurationBuilder {
+      this.mapId = setterArg
+      return this
     }
 
-    @Test
-    fun interpretMapConfiguration_handlesTrackCameraPosition() {
-        val config =
-            this.minimalConfigurationBuilder.setTrackCameraPosition(true).build()
-        Convert.interpretMapConfiguration(config, optionsSink!!)
-        Mockito.verify<GoogleMapOptionsSink?>(optionsSink, Mockito.times(1))
-            .setTrackCameraPosition(true)
+    fun setStyle(setterArg: String?): PlatformMapConfigurationBuilder {
+      this.style = setterArg
+      return this
     }
 
-    @Test
-    fun interpretMapConfiguration_handlesZoomControlsEnabled() {
-        val config =
-            this.minimalConfigurationBuilder.setZoomControlsEnabled(false).build()
-        Convert.interpretMapConfiguration(config, optionsSink!!)
-        Mockito.verify<GoogleMapOptionsSink?>(optionsSink, Mockito.times(1))
-            .setZoomControlsEnabled(false)
+    fun build(): PlatformMapConfiguration {
+      return PlatformMapConfiguration(
+          compassEnabled,
+          cameraTargetBounds,
+          mapType,
+          minMaxZoomPreference,
+          mapToolbarEnabled,
+          rotateGesturesEnabled,
+          scrollGesturesEnabled,
+          tiltGesturesEnabled,
+          trackCameraPosition,
+          zoomControlsEnabled,
+          zoomGesturesEnabled,
+          myLocationEnabled,
+          myLocationButtonEnabled,
+          padding,
+          indoorViewEnabled,
+          trafficEnabled,
+          buildingsEnabled,
+          liteModeEnabled,
+          Objects.requireNonNull<PlatformMarkerType?>(markerType),
+          mapId,
+          style)
     }
-
-    @Test
-    fun interpretMapConfiguration_handlesZoomGesturesEnabled() {
-        val config =
-            this.minimalConfigurationBuilder.setZoomGesturesEnabled(true).build()
-        Convert.interpretMapConfiguration(config, optionsSink!!)
-        Mockito.verify<GoogleMapOptionsSink?>(optionsSink, Mockito.times(1))
-            .setZoomGesturesEnabled(true)
-    }
-
-    @Test
-    fun interpretMapConfiguration_handlesMyLocationEnabled() {
-        val config =
-            this.minimalConfigurationBuilder.setMyLocationEnabled(false).build()
-        Convert.interpretMapConfiguration(config, optionsSink!!)
-        Mockito.verify<GoogleMapOptionsSink?>(optionsSink, Mockito.times(1))
-            .setMyLocationEnabled(false)
-    }
-
-    @Test
-    fun interpretMapConfiguration_handlesMyLocationButtonEnabled() {
-        val config =
-            this.minimalConfigurationBuilder.setMyLocationButtonEnabled(true).build()
-        Convert.interpretMapConfiguration(config, optionsSink!!)
-        Mockito.verify<GoogleMapOptionsSink?>(optionsSink, Mockito.times(1))
-            .setMyLocationButtonEnabled(true)
-    }
-
-    @Test
-    fun interpretMapConfiguration_handlesIndoorViewEnabled() {
-        val config =
-            this.minimalConfigurationBuilder.setIndoorViewEnabled(false).build()
-        Convert.interpretMapConfiguration(config, optionsSink!!)
-        Mockito.verify<GoogleMapOptionsSink?>(optionsSink, Mockito.times(1)).setIndoorEnabled(false)
-    }
-
-    @Test
-    fun interpretMapConfiguration_handlesTrafficEnabled() {
-        val config =
-            this.minimalConfigurationBuilder.setTrafficEnabled(true).build()
-        Convert.interpretMapConfiguration(config, optionsSink!!)
-        Mockito.verify<GoogleMapOptionsSink?>(optionsSink, Mockito.times(1)).setTrafficEnabled(true)
-    }
-
-    @Test
-    fun interpretMapConfiguration_handlesBuildingsEnabled() {
-        val config =
-            this.minimalConfigurationBuilder.setBuildingsEnabled(false).build()
-        Convert.interpretMapConfiguration(config, optionsSink!!)
-        Mockito.verify<GoogleMapOptionsSink?>(optionsSink, Mockito.times(1))
-            .setBuildingsEnabled(false)
-    }
-
-    @Test
-    fun interpretMapConfiguration_handlesLiteModeEnabled() {
-        val config =
-            this.minimalConfigurationBuilder.setLiteModeEnabled(true).build()
-        Convert.interpretMapConfiguration(config, optionsSink!!)
-        Mockito.verify<GoogleMapOptionsSink?>(optionsSink, Mockito.times(1))
-            .setLiteModeEnabled(true)
-    }
-
-    @Test
-    fun interpretMapConfiguration_handlesStyle() {
-        val config =
-            this.minimalConfigurationBuilder.setStyle("foo").build()
-        Convert.interpretMapConfiguration(config, optionsSink!!)
-        Mockito.verify<GoogleMapOptionsSink?>(optionsSink, Mockito.times(1)).setMapStyle("foo")
-    }
-
-    @Test
-    fun interpretMapConfiguration_handlesUnboundedCameraTargetBounds() {
-        val config =
-            this.minimalConfigurationBuilder
-                .setCameraTargetBounds(PlatformCameraTargetBounds(null))
-                .build()
-        Convert.interpretMapConfiguration(config, optionsSink!!)
-        Mockito.verify<GoogleMapOptionsSink?>(optionsSink, Mockito.times(1))
-            .setCameraTargetBounds(null)
-    }
-
-    @Test
-    fun interpretMapConfiguration_handlesBoundedCameraTargetBounds() {
-        val bounds = LatLngBounds(LatLng(10.0, 20.0), LatLng(30.0, 40.0))
-        val config =
-            this.minimalConfigurationBuilder
-                .setCameraTargetBounds(
-                    PlatformCameraTargetBounds(
-                        PlatformLatLngBounds(
-                            PlatformLatLng(bounds.northeast.latitude, bounds.northeast.longitude),
-                            PlatformLatLng(bounds.southwest.latitude, bounds.southwest.longitude)
-                        )
-                    )
-                )
-                .build()
-        Convert.interpretMapConfiguration(config, optionsSink!!)
-        Mockito.verify<GoogleMapOptionsSink?>(optionsSink, Mockito.times(1))
-            .setCameraTargetBounds(bounds)
-    }
-
-    @Test
-    fun interpretMapConfiguration_handlesMapType() {
-        val config =
-            this.minimalConfigurationBuilder.setMapType(PlatformMapType.HYBRID).build()
-        Convert.interpretMapConfiguration(config, optionsSink!!)
-        Mockito.verify<GoogleMapOptionsSink?>(optionsSink, Mockito.times(1))
-            .setMapType(GoogleMap.MAP_TYPE_HYBRID)
-    }
-
-    @Test
-    fun interpretMapConfiguration_handlesPadding() {
-        val top = 1.0
-        val bottom = 2.0
-        val left = 3.0
-        val right = 4.0
-        val config =
-            this.minimalConfigurationBuilder
-                .setPadding(
-                    PlatformEdgeInsets( /* top= */
-                        top,  /* bottom= */bottom,  /* left= */left,  /* right= */right
-                    )
-                )
-                .build()
-        Convert.interpretMapConfiguration(config, optionsSink!!)
-        Mockito.verify<GoogleMapOptionsSink?>(optionsSink, Mockito.times(1))
-            .setPadding(top.toFloat(), left.toFloat(), bottom.toFloat(), right.toFloat())
-    }
-
-    @Test
-    fun interpretMapConfiguration_handlesMinMaxZoomPreference() {
-        val min = 1.0
-        val max = 2.0
-        val config =
-            this.minimalConfigurationBuilder
-                .setMinMaxZoomPreference(PlatformZoomRange(min, max))
-                .build()
-        Convert.interpretMapConfiguration(config, optionsSink!!)
-        Mockito.verify<GoogleMapOptionsSink?>(optionsSink, Mockito.times(1))
-            .setMinMaxZoomPreference(min.toFloat(), max.toFloat())
-    }
-
-    @Test
-    fun ConvertToWeightedLatLngReturnsCorrectData() {
-        val intensity = 3.3
-        val data =
-            PlatformWeightedLatLng(PlatformLatLng(1.1, 2.2), intensity)
-        val point: Point = sProjection.toPoint(LatLng(1.1, 2.2))
-
-        val result = Convert.weightedLatLngFromPigeon(data)
-
-        Assert.assertEquals(point.x, result.point.x, 0.0)
-        Assert.assertEquals(point.y, result.point.y, 0.0)
-        Assert.assertEquals(intensity, result.intensity, 0.0)
-    }
-
-    @Test
-    fun ConvertToWeightedDataReturnsCorrectData() {
-        val intensity = 3.3
-        val data =
-            List.of<PlatformWeightedLatLng?>(
-                PlatformWeightedLatLng(
-                    PlatformLatLng(1.1, 2.2),
-                    intensity
-                )
-            )
-        val point: Point = sProjection.toPoint(LatLng(1.1, 2.2))
-
-        val result = Convert.weightedDataFromPigeon(data)
-
-        Assert.assertEquals(1, result.size.toLong())
-        Assert.assertEquals(point.x, result.get(0)!!.point.x, 0.0)
-        Assert.assertEquals(point.y, result.get(0)!!.point.y, 0.0)
-        Assert.assertEquals(intensity, result.get(0)!!.intensity, 0.0)
-    }
-
-    @Test
-    fun ConvertToGradientReturnsCorrectData() {
-        val color1: Long = 0
-        val color2: Long = 1
-        val color3: Long = 2
-        val colorData =
-            List.of<PlatformColor?>(
-                createPlatformColor(color1),
-                createPlatformColor(color2),
-                createPlatformColor(color3)
-            )
-        val startPoint1 = 0.0
-        val startPoint2 = 1.0
-        val startPoint3 = 2.0
-        val startPointData = List.of<Double?>(startPoint1, startPoint2, startPoint3)
-        val colorMapSize: Long = 3
-        val data =
-            PlatformHeatmapGradient(colorData, startPointData, colorMapSize)
-
-        val result = Convert.gradientFromPigeon(data)
-
-        Assert.assertEquals(3, result.colors.size.toLong())
-        Assert.assertEquals(color1, result.colors[0].toLong())
-        Assert.assertEquals(color2, result.colors[1].toLong())
-        Assert.assertEquals(color3, result.colors[2].toLong())
-        Assert.assertEquals(3, result.startPoints.size.toLong())
-        Assert.assertEquals(startPoint1, result.startPoints[0].toDouble(), 0.0)
-        Assert.assertEquals(startPoint2, result.startPoints[1].toDouble(), 0.0)
-        Assert.assertEquals(startPoint3, result.startPoints[2].toDouble(), 0.0)
-        Assert.assertEquals(colorMapSize, result.colorMapSize.toLong())
-    }
-
-    @Test
-    fun ConvertInterpretHeatmapOptionsReturnsCorrectData() {
-        val intensity = 3.3
-        val dataData =
-            List.of<PlatformWeightedLatLng?>(
-                PlatformWeightedLatLng(
-                    PlatformLatLng(1.1, 2.2),
-                    intensity
-                )
-            )
-        val point: Point = sProjection.toPoint(LatLng(1.1, 2.2))
-
-        val color1: Long = 0
-        val color2: Long = 1
-        val color3: Long = 2
-        val colorData =
-            List.of<PlatformColor?>(
-                createPlatformColor(color1),
-                createPlatformColor(color2),
-                createPlatformColor(color3)
-            )
-        val startPoint1 = 0.0
-        val startPoint2 = 1.0
-        val startPoint3 = 2.0
-        val startPointData = List.of<Double?>(startPoint1, startPoint2, startPoint3)
-        val colorMapSize: Long = 3
-        val gradientData =
-            PlatformHeatmapGradient(colorData, startPointData, colorMapSize)
-
-        val maxIntensity = 4.0
-        val opacity = 5.5
-        val radius: Long = 6
-        val idData = "heatmap_1"
-
-        val data =
-            PlatformHeatmap(
-                idData,
-                dataData,
-                gradientData,  /* opacity */
-                opacity,  /* radius */
-                radius,  /* maxIntensity */
-                maxIntensity
-            )
-
-        val builder = MockHeatmapBuilder()
-        val id = Convert.interpretHeatmapOptions(data, builder)
-
-        Assert.assertEquals(1, builder.getWeightedData()!!.size.toLong())
-        Assert.assertEquals(point.x, builder.getWeightedData()!!.get(0)!!.point.x, 0.0)
-        Assert.assertEquals(point.y, builder.getWeightedData()!!.get(0)!!.point.y, 0.0)
-        Assert.assertEquals(intensity, builder.getWeightedData()!!.get(0)!!.intensity, 0.0)
-        Assert.assertEquals(3, builder.getGradient()!!.colors.size.toLong())
-        Assert.assertEquals(color1, builder.getGradient()!!.colors[0].toLong())
-        Assert.assertEquals(color2, builder.getGradient()!!.colors[1].toLong())
-        Assert.assertEquals(color3, builder.getGradient()!!.colors[2].toLong())
-        Assert.assertEquals(3, builder.getGradient()!!.startPoints.size.toLong())
-        Assert.assertEquals(startPoint1, builder.getGradient()!!.startPoints[0].toDouble(), 0.0)
-        Assert.assertEquals(startPoint2, builder.getGradient()!!.startPoints[1].toDouble(), 0.0)
-        Assert.assertEquals(startPoint3, builder.getGradient()!!.startPoints[2].toDouble(), 0.0)
-        Assert.assertEquals(colorMapSize, builder.getGradient()!!.colorMapSize.toLong())
-        Assert.assertEquals(maxIntensity, builder.getMaxIntensity(), 0.0)
-        Assert.assertEquals(opacity, builder.getOpacity(), 0.0)
-        Assert.assertEquals(radius, builder.getRadius().toLong())
-        Assert.assertEquals(idData, id)
-    }
-
-    private fun createPlatformColor(rgba: Long): PlatformColor {
-        return PlatformColor(rgba)
-    }
-
-    @Test
-    fun buildGroundOverlayAnchorForPigeonWithNonCrossingMeridian() {
-        val position = LatLng(10.0, 20.0)
-        val southwest = LatLng(5.0, 15.0)
-        val northeast = LatLng(15.0, 25.0)
-        val bounds = LatLngBounds(southwest, northeast)
-        val groundOverlay = Mockito.mock<GroundOverlay>(GroundOverlay::class.java)
-        Mockito.`when`<LatLng?>(groundOverlay.getPosition()).thenReturn(position)
-        Mockito.`when`<LatLngBounds?>(groundOverlay.getBounds()).thenReturn(bounds)
-
-        val anchor = Convert.buildGroundOverlayAnchorForPigeon(groundOverlay)
-
-        Assert.assertEquals(0.5, anchor.x, 1e-15)
-        Assert.assertEquals(0.5, anchor.y, 1e-15)
-    }
-
-    @Test
-    fun buildGroundOverlayAnchorForPigeonWithCrossingMeridian() {
-        val position = LatLng(10.0, -175.0)
-        val southwest = LatLng(5.0, 170.0)
-        val northeast = LatLng(15.0, -160.0)
-        val bounds = LatLngBounds(southwest, northeast)
-        val groundOverlay = Mockito.mock<GroundOverlay>(GroundOverlay::class.java)
-        Mockito.`when`<LatLng?>(groundOverlay.getPosition()).thenReturn(position)
-        Mockito.`when`<LatLngBounds?>(groundOverlay.getBounds()).thenReturn(bounds)
-
-        val anchor = Convert.buildGroundOverlayAnchorForPigeon(groundOverlay)
-
-        Assert.assertEquals(0.5, anchor.x, 1e-15)
-        Assert.assertEquals(0.5, anchor.y, 1e-15)
-    }
-
-    private fun assertGroundOverlayEquals(
-        result: PlatformGroundOverlay,
-        expectedOverlay: GroundOverlay,
-        expectedId: String?,
-        expectedPosition: LatLng?,
-        expectedBounds: LatLngBounds?
-    ) {
-        Assert.assertEquals(expectedId, result.groundOverlayId)
-        if (expectedPosition != null) {
-            Assert.assertNotNull(result.position)
-            Assert.assertEquals(expectedPosition.latitude, result.position!!.latitude, 1e-15)
-            Assert.assertEquals(expectedPosition.longitude, result.position.longitude, 1e-15)
-            Assert.assertNotNull(result.width)
-            Assert.assertNotNull(result.height)
-            Assert.assertEquals(expectedOverlay.getWidth().toDouble(), result.width!!, 1e-15)
-            Assert.assertEquals(expectedOverlay.getHeight().toDouble(), result.height!!, 1e-15)
-        } else {
-            Assert.assertNull(result.position)
-        }
-        if (expectedBounds != null) {
-            Assert.assertNotNull(result.bounds)
-            Assert.assertEquals(
-                expectedBounds.southwest.latitude,
-                result.bounds!!.southwest.latitude,
-                1e-15
-            )
-            Assert.assertEquals(
-                expectedBounds.southwest.longitude,
-                result.bounds.southwest.longitude,
-                1e-15
-            )
-            Assert.assertEquals(
-                expectedBounds.northeast.latitude,
-                result.bounds.northeast.latitude,
-                1e-15
-            )
-            Assert.assertEquals(
-                expectedBounds.northeast.longitude,
-                result.bounds.northeast.longitude,
-                1e-15
-            )
-        } else {
-            Assert.assertNull(result.bounds)
-        }
-
-        Assert.assertEquals(expectedOverlay.getBearing().toDouble(), result.bearing, 1e-15)
-        Assert.assertEquals(expectedOverlay.getTransparency().toDouble(), result.transparency, 1e-6)
-        Assert.assertEquals(expectedOverlay.getZIndex().toDouble(), result.zIndex.toDouble(), 1e-6)
-        Assert.assertEquals(expectedOverlay.isVisible(), result.visible)
-        Assert.assertEquals(expectedOverlay.isClickable(), result.clickable)
-        val anchor = result.anchor
-        Assert.assertNotNull(anchor)
-        Assert.assertEquals(0.5, anchor!!.x, 1e-6)
-        Assert.assertEquals(0.5, anchor.y, 1e-6)
-    }
-
-    @Test
-    fun groundOverlayToPigeonWithPosition() {
-        val mockGroundOverlay = Mockito.mock<GroundOverlay>(GroundOverlay::class.java)
-        val position = LatLng(10.0, 20.0)
-        val southwest = LatLng(5.0, 15.0)
-        val northeast = LatLng(15.0, 25.0)
-        val bounds = LatLngBounds(southwest, northeast)
-        Mockito.`when`<LatLng?>(mockGroundOverlay.getPosition()).thenReturn(position)
-        Mockito.`when`<LatLngBounds?>(mockGroundOverlay.getBounds()).thenReturn(bounds)
-        Mockito.`when`<Float?>(mockGroundOverlay.getWidth()).thenReturn(30f)
-        Mockito.`when`<Float?>(mockGroundOverlay.getHeight()).thenReturn(40f)
-        Mockito.`when`<Float?>(mockGroundOverlay.getBearing()).thenReturn(50f)
-        Mockito.`when`<Float?>(mockGroundOverlay.getTransparency()).thenReturn(0.6f)
-        Mockito.`when`<Float?>(mockGroundOverlay.getZIndex()).thenReturn(7f)
-        Mockito.`when`<Boolean?>(mockGroundOverlay.isVisible()).thenReturn(true)
-        Mockito.`when`<Boolean?>(mockGroundOverlay.isClickable()).thenReturn(false)
-
-        val overlayId = "overlay_1"
-        val result =
-            Convert.groundOverlayToPigeon(mockGroundOverlay, overlayId, false)
-
-        assertGroundOverlayEquals(result, mockGroundOverlay, overlayId, position, null)
-    }
-
-    @Test
-    fun groundOverlayToPigeonWithBounds() {
-        val mockGroundOverlay = Mockito.mock<GroundOverlay>(GroundOverlay::class.java)
-        val position = LatLng(10.0, 20.0)
-        val southwest = LatLng(5.0, 15.0)
-        val northeast = LatLng(15.0, 25.0)
-        val bounds = LatLngBounds(southwest, northeast)
-        Mockito.`when`<LatLng?>(mockGroundOverlay.getPosition()).thenReturn(position)
-        Mockito.`when`<LatLngBounds?>(mockGroundOverlay.getBounds()).thenReturn(bounds)
-        Mockito.`when`<Float?>(mockGroundOverlay.getWidth()).thenReturn(30f)
-        Mockito.`when`<Float?>(mockGroundOverlay.getHeight()).thenReturn(40f)
-        Mockito.`when`<Float?>(mockGroundOverlay.getBearing()).thenReturn(50f)
-        Mockito.`when`<Float?>(mockGroundOverlay.getTransparency()).thenReturn(0.6f)
-        Mockito.`when`<Float?>(mockGroundOverlay.getZIndex()).thenReturn(7f)
-        Mockito.`when`<Boolean?>(mockGroundOverlay.isVisible()).thenReturn(true)
-        Mockito.`when`<Boolean?>(mockGroundOverlay.isClickable()).thenReturn(false)
-
-        val overlayId = "overlay_2"
-        val result =
-            Convert.groundOverlayToPigeon(mockGroundOverlay, overlayId, true)
-
-        assertGroundOverlayEquals(result, mockGroundOverlay, overlayId, null, bounds)
-    }
-
-    // Remove this if builders are added to the Kotlin generator; see discussion in
-    // https://github.com/flutter/flutter/issues/158287
-    private class PlatformMapConfigurationBuilder {
-        private var compassEnabled: Boolean? = null
-        private var cameraTargetBounds: PlatformCameraTargetBounds? = null
-        private var mapType: PlatformMapType? = null
-        private var minMaxZoomPreference: PlatformZoomRange? = null
-        private var mapToolbarEnabled: Boolean? = null
-        private var rotateGesturesEnabled: Boolean? = null
-        private var scrollGesturesEnabled: Boolean? = null
-        private var tiltGesturesEnabled: Boolean? = null
-        private var trackCameraPosition: Boolean? = null
-        private var zoomControlsEnabled: Boolean? = null
-        private var zoomGesturesEnabled: Boolean? = null
-        private var myLocationEnabled: Boolean? = null
-        private var myLocationButtonEnabled: Boolean? = null
-        private var padding: PlatformEdgeInsets? = null
-        private var indoorViewEnabled: Boolean? = null
-        private var trafficEnabled: Boolean? = null
-        private var buildingsEnabled: Boolean? = null
-        private var liteModeEnabled: Boolean? = null
-        private var markerType: PlatformMarkerType? = null
-        private var mapId: String? = null
-        private var style: String? = null
-
-        fun setCompassEnabled(setterArg: Boolean?): PlatformMapConfigurationBuilder {
-            this.compassEnabled = setterArg
-            return this
-        }
-
-        fun setCameraTargetBounds(
-            setterArg: PlatformCameraTargetBounds?
-        ): PlatformMapConfigurationBuilder {
-            this.cameraTargetBounds = setterArg
-            return this
-        }
-
-        fun setMapType(
-            setterArg: PlatformMapType?
-        ): PlatformMapConfigurationBuilder {
-            this.mapType = setterArg
-            return this
-        }
-
-        fun setMinMaxZoomPreference(
-            setterArg: PlatformZoomRange?
-        ): PlatformMapConfigurationBuilder {
-            this.minMaxZoomPreference = setterArg
-            return this
-        }
-
-        fun setMapToolbarEnabled(
-            setterArg: Boolean?
-        ): PlatformMapConfigurationBuilder {
-            this.mapToolbarEnabled = setterArg
-            return this
-        }
-
-        fun setRotateGesturesEnabled(
-            setterArg: Boolean?
-        ): PlatformMapConfigurationBuilder {
-            this.rotateGesturesEnabled = setterArg
-            return this
-        }
-
-        fun setScrollGesturesEnabled(
-            setterArg: Boolean?
-        ): PlatformMapConfigurationBuilder {
-            this.scrollGesturesEnabled = setterArg
-            return this
-        }
-
-        fun setTiltGesturesEnabled(
-            setterArg: Boolean?
-        ): PlatformMapConfigurationBuilder {
-            this.tiltGesturesEnabled = setterArg
-            return this
-        }
-
-        fun setTrackCameraPosition(
-            setterArg: Boolean?
-        ): PlatformMapConfigurationBuilder {
-            this.trackCameraPosition = setterArg
-            return this
-        }
-
-        fun setZoomControlsEnabled(
-            setterArg: Boolean?
-        ): PlatformMapConfigurationBuilder {
-            this.zoomControlsEnabled = setterArg
-            return this
-        }
-
-        fun setZoomGesturesEnabled(
-            setterArg: Boolean?
-        ): PlatformMapConfigurationBuilder {
-            this.zoomGesturesEnabled = setterArg
-            return this
-        }
-
-        fun setMyLocationEnabled(
-            setterArg: Boolean?
-        ): PlatformMapConfigurationBuilder {
-            this.myLocationEnabled = setterArg
-            return this
-        }
-
-        fun setMyLocationButtonEnabled(
-            setterArg: Boolean?
-        ): PlatformMapConfigurationBuilder {
-            this.myLocationButtonEnabled = setterArg
-            return this
-        }
-
-        fun setPadding(
-            setterArg: PlatformEdgeInsets?
-        ): PlatformMapConfigurationBuilder {
-            this.padding = setterArg
-            return this
-        }
-
-        fun setIndoorViewEnabled(
-            setterArg: Boolean?
-        ): PlatformMapConfigurationBuilder {
-            this.indoorViewEnabled = setterArg
-            return this
-        }
-
-        fun setTrafficEnabled(setterArg: Boolean?): PlatformMapConfigurationBuilder {
-            this.trafficEnabled = setterArg
-            return this
-        }
-
-        fun setBuildingsEnabled(
-            setterArg: Boolean?
-        ): PlatformMapConfigurationBuilder {
-            this.buildingsEnabled = setterArg
-            return this
-        }
-
-        fun setLiteModeEnabled(
-            setterArg: Boolean?
-        ): PlatformMapConfigurationBuilder {
-            this.liteModeEnabled = setterArg
-            return this
-        }
-
-        fun setMarkerType(
-            setterArg: PlatformMarkerType
-        ): PlatformMapConfigurationBuilder {
-            this.markerType = setterArg
-            return this
-        }
-
-        fun setMapId(setterArg: String?): PlatformMapConfigurationBuilder {
-            this.mapId = setterArg
-            return this
-        }
-
-        fun setStyle(setterArg: String?): PlatformMapConfigurationBuilder {
-            this.style = setterArg
-            return this
-        }
-
-        fun build(): PlatformMapConfiguration {
-            return PlatformMapConfiguration(
-                compassEnabled,
-                cameraTargetBounds,
-                mapType,
-                minMaxZoomPreference,
-                mapToolbarEnabled,
-                rotateGesturesEnabled,
-                scrollGesturesEnabled,
-                tiltGesturesEnabled,
-                trackCameraPosition,
-                zoomControlsEnabled,
-                zoomGesturesEnabled,
-                myLocationEnabled,
-                myLocationButtonEnabled,
-                padding,
-                indoorViewEnabled,
-                trafficEnabled,
-                buildingsEnabled,
-                liteModeEnabled,
-                Objects.requireNonNull<PlatformMarkerType?>(markerType),
-                mapId,
-                style
-            )
-        }
-    }
-
-    companion object {
-        private val sProjection = SphericalMercatorProjection(1.0)
-    }
+  }
+
+  companion object {
+    private val sProjection = SphericalMercatorProjection(1.0)
+  }
 }
 
 internal class MockHeatmapBuilder : HeatmapOptionsSink {
-    private var weightedData: MutableList<WeightedLatLng?>? = null
-    private var gradient: Gradient? = null
-    private var maxIntensity = 0.0
-    private var opacity = 0.0
-    private var radius = 0
+  private var weightedData: MutableList<WeightedLatLng?>? = null
+  private var gradient: Gradient? = null
+  private var maxIntensity = 0.0
+  private var opacity = 0.0
+  private var radius = 0
 
-    fun getWeightedData(): MutableList<WeightedLatLng?>? {
-        return weightedData
-    }
+  fun getWeightedData(): MutableList<WeightedLatLng?>? {
+    return weightedData
+  }
 
-    fun getGradient(): Gradient? {
-        return gradient
-    }
+  fun getGradient(): Gradient? {
+    return gradient
+  }
 
-    fun getMaxIntensity(): Double {
-        return maxIntensity
-    }
+  fun getMaxIntensity(): Double {
+    return maxIntensity
+  }
 
-    fun getOpacity(): Double {
-        return opacity
-    }
+  fun getOpacity(): Double {
+    return opacity
+  }
 
-    fun getRadius(): Int {
-        return radius
-    }
+  fun getRadius(): Int {
+    return radius
+  }
 
-    override fun setWeightedData(weightedData: MutableList<WeightedLatLng?>) {
-        this.weightedData = weightedData
-    }
+  override fun setWeightedData(weightedData: MutableList<WeightedLatLng?>) {
+    this.weightedData = weightedData
+  }
 
-    override fun setGradient(gradient: Gradient) {
-        this.gradient = gradient
-    }
+  override fun setGradient(gradient: Gradient) {
+    this.gradient = gradient
+  }
 
-    override fun setMaxIntensity(maxIntensity: Double) {
-        this.maxIntensity = maxIntensity
-    }
+  override fun setMaxIntensity(maxIntensity: Double) {
+    this.maxIntensity = maxIntensity
+  }
 
-    override fun setOpacity(opacity: Double) {
-        this.opacity = opacity
-    }
+  override fun setOpacity(opacity: Double) {
+    this.opacity = opacity
+  }
 
-    override fun setRadius(radius: Int) {
-        this.radius = radius
-    }
+  override fun setRadius(radius: Int) {
+    this.radius = radius
+  }
 }

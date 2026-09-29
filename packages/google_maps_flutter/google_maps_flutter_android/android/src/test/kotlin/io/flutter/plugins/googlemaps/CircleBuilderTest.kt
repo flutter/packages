@@ -7,16 +7,16 @@ import junit.framework.TestCase
 import org.junit.Test
 
 class CircleBuilderTest {
-    @Test
-    fun density_AppliesToStrokeWidth() {
-        val density = 5f
-        val strokeWidth = 3f
-        val builder = CircleBuilder(density)
-        builder.setStrokeWidth(strokeWidth)
+  @Test
+  fun density_AppliesToStrokeWidth() {
+    val density = 5f
+    val strokeWidth = 3f
+    val builder = CircleBuilder(density)
+    builder.setStrokeWidth(strokeWidth)
 
-        val options = builder.build()
-        val width = options.getStrokeWidth()
+    val options = builder.build()
+    val width = options.getStrokeWidth()
 
-        TestCase.assertEquals(density * strokeWidth, width)
-    }
+    TestCase.assertEquals(density * strokeWidth, width)
+  }
 }

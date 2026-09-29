@@ -7,17 +7,17 @@ import junit.framework.TestCase
 import org.junit.Test
 
 class PolylineBuilderTest {
-    @Test
-    fun density_AppliesToStrokeWidth() {
-        val density = 5f
-        val strokeWidth = 3f
+  @Test
+  fun density_AppliesToStrokeWidth() {
+    val density = 5f
+    val strokeWidth = 3f
 
-        val builder = PolylineBuilder(density)
-        builder.setWidth(strokeWidth)
+    val builder = PolylineBuilder(density)
+    builder.setWidth(strokeWidth)
 
-        val options = builder.build()
-        val width = options.getWidth()
+    val options = builder.build()
+    val width = options.getWidth()
 
-        TestCase.assertEquals(density * strokeWidth, width)
-    }
+    TestCase.assertEquals(density * strokeWidth, width)
+  }
 }

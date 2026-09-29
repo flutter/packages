@@ -7,17 +7,17 @@ import junit.framework.TestCase
 import org.junit.Test
 
 class PolygonBuilderTest {
-    @Test
-    fun density_AppliesToStrokeWidth() {
-        val density = 5f
-        val strokeWidth = 3f
+  @Test
+  fun density_AppliesToStrokeWidth() {
+    val density = 5f
+    val strokeWidth = 3f
 
-        val builder = PolygonBuilder(density)
-        builder.setStrokeWidth(strokeWidth)
+    val builder = PolygonBuilder(density)
+    builder.setStrokeWidth(strokeWidth)
 
-        val options = builder.build()
-        val width = options.getStrokeWidth()
+    val options = builder.build()
+    val width = options.getStrokeWidth()
 
-        TestCase.assertEquals(density * strokeWidth, width)
-    }
+    TestCase.assertEquals(density * strokeWidth, width)
+  }
 }

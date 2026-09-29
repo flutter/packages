@@ -19,71 +19,73 @@ import org.robolectric.RobolectricTestRunner
 
 @RunWith(RobolectricTestRunner::class)
 class GoogleMapInitializerTest {
-    private var googleMapInitializer: GoogleMapInitializer? = null
+  private var googleMapInitializer: GoogleMapInitializer? = null
 
-    @Mock
-    var mockMessenger: BinaryMessenger? = null
+  @Mock var mockMessenger: BinaryMessenger? = null
 
-    @Before
-    fun before() {
-        MockitoAnnotations.openMocks(this)
-        val context = ApplicationProvider.getApplicationContext<Context?>()
-        googleMapInitializer =
-            Mockito.spy<GoogleMapInitializer>(GoogleMapInitializer(context, mockMessenger))
-    }
+  @Before
+  fun before() {
+    MockitoAnnotations.openMocks(this)
+    val context = ApplicationProvider.getApplicationContext<Context?>()
+    googleMapInitializer =
+        Mockito.spy<GoogleMapInitializer>(GoogleMapInitializer(context, mockMessenger))
+  }
 
-    @Test
-    fun initializer_OnMapsSdkInitializedWithLatestRenderer() {
-        Mockito.doNothing().`when`<GoogleMapInitializer?>(googleMapInitializer)
-            .initializeWithRendererRequest(MapsInitializer.Renderer.LATEST)
-        val callbackCalled = arrayOfNulls<Boolean>(1)
-        googleMapInitializer!!.initializeWithPreferredRenderer(
-            PlatformRendererType.LATEST,
-            asContinuation<PlatformRendererType?> { result: ResultCompat<PlatformRendererType?>? ->
-                callbackCalled[0] = true
-                val type = result!!.getOrNull()
-                Assert.assertEquals(PlatformRendererType.LATEST, type)
-                Unit
-            })
-        googleMapInitializer!!.onMapsSdkInitialized(MapsInitializer.Renderer.LATEST)
+  @Test
+  fun initializer_OnMapsSdkInitializedWithLatestRenderer() {
+    Mockito.doNothing()
+        .`when`<GoogleMapInitializer?>(googleMapInitializer)
+        .initializeWithRendererRequest(MapsInitializer.Renderer.LATEST)
+    val callbackCalled = arrayOfNulls<Boolean>(1)
+    googleMapInitializer!!.initializeWithPreferredRenderer(
+        PlatformRendererType.LATEST,
+        asContinuation<PlatformRendererType?> { result: ResultCompat<PlatformRendererType?>? ->
+          callbackCalled[0] = true
+          val type = result!!.getOrNull()
+          Assert.assertEquals(PlatformRendererType.LATEST, type)
+          Unit
+        })
+    googleMapInitializer!!.onMapsSdkInitialized(MapsInitializer.Renderer.LATEST)
 
-        Assert.assertTrue(callbackCalled[0]!!)
-    }
+    Assert.assertTrue(callbackCalled[0]!!)
+  }
 
-    @Suppress("deprecation")
-    @Test
-    fun initializer_OnMapsSdkInitializedWithLegacyRenderer() {
-        Mockito.doNothing().`when`<GoogleMapInitializer?>(googleMapInitializer)
-            .initializeWithRendererRequest(MapsInitializer.Renderer.LEGACY)
-        val callbackCalled = arrayOfNulls<Boolean>(1)
-        googleMapInitializer!!.initializeWithPreferredRenderer(
-            PlatformRendererType.LEGACY,
-            asContinuation<PlatformRendererType?> { result: ResultCompat<PlatformRendererType?>? ->
-                callbackCalled[0] = true
-                val type = result!!.getOrNull()
-                Assert.assertEquals(PlatformRendererType.LEGACY, type)
-                Unit
-            })
-        googleMapInitializer!!.onMapsSdkInitialized(MapsInitializer.Renderer.LEGACY)
+  @Suppress("deprecation")
+  @Test
+  fun initializer_OnMapsSdkInitializedWithLegacyRenderer() {
+    Mockito.doNothing()
+        .`when`<GoogleMapInitializer?>(googleMapInitializer)
+        .initializeWithRendererRequest(MapsInitializer.Renderer.LEGACY)
+    val callbackCalled = arrayOfNulls<Boolean>(1)
+    googleMapInitializer!!.initializeWithPreferredRenderer(
+        PlatformRendererType.LEGACY,
+        asContinuation<PlatformRendererType?> { result: ResultCompat<PlatformRendererType?>? ->
+          callbackCalled[0] = true
+          val type = result!!.getOrNull()
+          Assert.assertEquals(PlatformRendererType.LEGACY, type)
+          Unit
+        })
+    googleMapInitializer!!.onMapsSdkInitialized(MapsInitializer.Renderer.LEGACY)
 
-        Assert.assertTrue(callbackCalled[0]!!)
-    }
+    Assert.assertTrue(callbackCalled[0]!!)
+  }
 
-    @Test
-    fun initializer_onMethodCallWithNoRendererPreference() {
-        Mockito.doNothing().`when`<GoogleMapInitializer?>(googleMapInitializer)
-            .initializeWithRendererRequest(null)
-        val callbackCalled = arrayOfNulls<Boolean>(1)
-        googleMapInitializer!!.initializeWithPreferredRenderer(
-            null,
-            asContinuation<PlatformRendererType?> { result: ResultCompat<PlatformRendererType?>? ->
-                callbackCalled[0] = true
-                val error = result!!.exceptionOrNull()
-                Assert.assertNull(error)
-                Unit
-            })
-        googleMapInitializer!!.onMapsSdkInitialized(MapsInitializer.Renderer.LATEST)
+  @Test
+  fun initializer_onMethodCallWithNoRendererPreference() {
+    Mockito.doNothing()
+        .`when`<GoogleMapInitializer?>(googleMapInitializer)
+        .initializeWithRendererRequest(null)
+    val callbackCalled = arrayOfNulls<Boolean>(1)
+    googleMapInitializer!!.initializeWithPreferredRenderer(
+        null,
+        asContinuation<PlatformRendererType?> { result: ResultCompat<PlatformRendererType?>? ->
+          callbackCalled[0] = true
+          val error = result!!.exceptionOrNull()
+          Assert.assertNull(error)
+          Unit
+        })
+    googleMapInitializer!!.onMapsSdkInitialized(MapsInitializer.Renderer.LATEST)
 
-        Assert.assertTrue(callbackCalled[0]!!)
-    }
+    Assert.assertTrue(callbackCalled[0]!!)
+  }
 }
