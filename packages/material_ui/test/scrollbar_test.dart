@@ -1730,7 +1730,7 @@ void main() {
     );
 
     scrollController.dispose();
-  });
+  }, tags: 'reduced-web-test-set');
 
   testWidgets(
     'Scrollbar.thumbVisibility triggers assertion when multiple ScrollPositions are attached.',

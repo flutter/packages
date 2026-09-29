@@ -400,7 +400,7 @@ class _VectorGraphicWidgetState extends State<VectorGraphic> {
   }
 
   Future<void> _loadAssetBytes() async {
-    // First check if we have an avilable picture and use this immediately.
+    // First check if we have an available picture and use this immediately.
     final Object loaderKey = widget.loader.cacheKey(context);
     final key = _PictureKey(loaderKey, locale, textDirection, widget.clipViewbox);
     final _PictureData? data = _livePictureCache[key];
@@ -494,8 +494,8 @@ class _VectorGraphicWidgetState extends State<VectorGraphic> {
         if (direction == TextDirection.rtl) {
           child = Transform(
             transform: Matrix4.identity()
-              ..translate(pictureInfo.size.width)
-              ..scale(-1.0, 1.0),
+              ..translateByDouble(pictureInfo.size.width, 0, 0, 1)
+              ..scaleByDouble(-1, 1, -1, 1),
             child: child,
           );
         }

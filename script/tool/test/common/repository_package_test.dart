@@ -277,6 +277,15 @@ void main() {
       expect(subPackage.isPubIgnored, true);
     });
 
+    test('returns true if the package itself matches a trailing slash pattern', () async {
+      final RepositoryPackage package = createFakePackage('a_package', packagesDir);
+      package.directory.childFile('.pubignore').writeAsStringSync('sub_package/\n');
+
+      final RepositoryPackage subPackage = createFakePackage('sub_package', package.directory);
+
+      expect(subPackage.isPubIgnored, true);
+    });
+
     test('gracefully ignores malformed glob patterns', () async {
       final RepositoryPackage package = createFakePackage('a_package', packagesDir);
       package.directory.childFile('.pubignore').writeAsStringSync('[unclosed bracket\n.agents/');
@@ -287,6 +296,30 @@ void main() {
       // Should not throw, and should still match valid patterns in the file
       expect(subPackage.isPubIgnored, true);
     });
+
+    test('returns true if an intermediate directory has a matching .pubignore', () async {
+      final RepositoryPackage package = createFakePackage('a_package', packagesDir);
+      final Directory intermediateDir = package.directory.childDirectory('test_apps')..createSync();
+      intermediateDir.childFile('.pubignore').writeAsStringSync('*\n');
+
+      final RepositoryPackage subPackage = createFakePackage('sub_package', intermediateDir);
+
+      expect(subPackage.isPubIgnored, true);
+    });
+
+    test(
+      'returns true if an intermediate directory has a matching .pubignore with specific pattern',
+      () async {
+        final RepositoryPackage package = createFakePackage('a_package', packagesDir);
+        final Directory intermediateDir = package.directory.childDirectory('test_apps')
+          ..createSync();
+        intermediateDir.childFile('.pubignore').writeAsStringSync('sub_package/\n');
+
+        final RepositoryPackage subPackage = createFakePackage('sub_package', intermediateDir);
+
+        expect(subPackage.isPubIgnored, true);
+      },
+    );
   });
 
   group('pubspec', () {
