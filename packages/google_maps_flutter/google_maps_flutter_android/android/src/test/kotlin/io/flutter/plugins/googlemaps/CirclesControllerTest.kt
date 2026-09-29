@@ -6,11 +6,7 @@ package io.flutter.plugins.googlemaps
 import com.google.android.gms.internal.maps.zzl
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.model.Circle
-import com.google.android.gms.maps.model.CircleOptions
-import java.lang.AutoCloseable
-import org.junit.After
 import org.junit.Assert
-import org.junit.Before
 import org.junit.Test
 import org.mockito.kotlin.any
 import org.mockito.kotlin.mock
@@ -26,9 +22,7 @@ class CirclesControllerTest {
   fun controller_changeCircles_updatesExistingCircle() {
     val z = mock<zzl>()
     val circle = spy(Circle(z))
-    whenever(
-            mockGoogleMap!!.addCircle(any()))
-        .thenReturn(circle)
+    whenever(mockGoogleMap!!.addCircle(any())).thenReturn(circle)
 
     val controller = CirclesController(mock(), 1.0f)
     controller.setGoogleMap(mockGoogleMap)

@@ -41,13 +41,8 @@ class HeatmapsControllerTest {
         List.of<PlatformWeightedLatLng?>(PlatformWeightedLatLng(PlatformLatLng(1.1, 2.2), 3.3))
     val radius: Long = 20
 
-    whenever(
-            googleMap!!.addTileOverlay(
-                any()))
-        .thenReturn(tileOverlay)
-    doReturn(heatmap)
-        .whenever(controller)
-        .buildHeatmap(any())
+    whenever(googleMap!!.addTileOverlay(any())).thenReturn(tileOverlay)
+    doReturn(heatmap).whenever(controller).buildHeatmap(any())
 
     val opacity1 = 0.1
     val heatmap1 =
@@ -65,8 +60,8 @@ class HeatmapsControllerTest {
     verify(googleMap, times(1))
         .addTileOverlay(
             argThat { argument: TileOverlayOptions? ->
-                  argument!!.getTileProvider() is HeatmapTileProvider
-                })
+              argument!!.getTileProvider() is HeatmapTileProvider
+            })
 
     val opacity2 = 0.2
     val heatmap2 =

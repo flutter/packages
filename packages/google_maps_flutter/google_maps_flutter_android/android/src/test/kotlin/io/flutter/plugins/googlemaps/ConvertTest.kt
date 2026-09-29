@@ -4,7 +4,6 @@
 package io.flutter.plugins.googlemaps
 
 import android.content.res.AssetManager
-import android.graphics.Bitmap
 import android.util.Base64
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.model.BitmapDescriptor
@@ -18,13 +17,9 @@ import com.google.maps.android.heatmaps.WeightedLatLng
 import com.google.maps.android.projection.SphericalMercatorProjection
 import io.flutter.plugins.googlemaps.Convert.BitmapDescriptorFactoryWrapper
 import io.flutter.plugins.googlemaps.Convert.FlutterInjectorWrapper
-import java.io.InputStream
-import java.lang.AutoCloseable
 import java.util.List
 import java.util.Objects
-import org.junit.After
 import org.junit.Assert
-import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.mockito.kotlin.any
@@ -46,7 +41,7 @@ class ConvertTest {
 
   private val flutterInjectorWrapper: FlutterInjectorWrapper = mock()
 
-   private val optionsSink: GoogleMapOptionsSink = mock()
+  private val optionsSink: GoogleMapOptionsSink = mock()
 
   // A 1x1 pixel (#8080ff) PNG image encoded in base64
   private val base64Image: String? = TestImageUtils.generateBase64Image()
@@ -107,15 +102,11 @@ class ConvertTest {
     val fakeAssetName = "fake_asset_name"
     val fakeAssetKey = "fake_asset_key"
 
-    whenever(flutterInjectorWrapper!!.getLookupKeyForAsset(fakeAssetName))
-        .thenReturn(fakeAssetKey)
+    whenever(flutterInjectorWrapper!!.getLookupKeyForAsset(fakeAssetName)).thenReturn(fakeAssetKey)
 
-    whenever(assetManager!!.open(fakeAssetKey))
-        .thenReturn(TestImageUtils.buildImageInputStream())
+    whenever(assetManager!!.open(fakeAssetKey)).thenReturn(TestImageUtils.buildImageInputStream())
 
-    whenever(
-            bitmapDescriptorFactoryWrapper!!.fromBitmap(any()))
-        .thenReturn(mockBitmapDescriptor)
+    whenever(bitmapDescriptorFactoryWrapper!!.fromBitmap(any())).thenReturn(mockBitmapDescriptor)
     val bitmap =
         PlatformBitmapAssetMap(
             fakeAssetName,
@@ -137,15 +128,11 @@ class ConvertTest {
     val fakeAssetName = "fake_asset_name"
     val fakeAssetKey = "fake_asset_key"
 
-    whenever(flutterInjectorWrapper!!.getLookupKeyForAsset(fakeAssetName))
-        .thenReturn(fakeAssetKey)
+    whenever(flutterInjectorWrapper!!.getLookupKeyForAsset(fakeAssetName)).thenReturn(fakeAssetKey)
 
-    whenever(assetManager!!.open(fakeAssetKey))
-        .thenReturn(TestImageUtils.buildImageInputStream())
+    whenever(assetManager!!.open(fakeAssetKey)).thenReturn(TestImageUtils.buildImageInputStream())
 
-    whenever(
-            bitmapDescriptorFactoryWrapper!!.fromBitmap(any()))
-        .thenReturn(mockBitmapDescriptor)
+    whenever(bitmapDescriptorFactoryWrapper!!.fromBitmap(any())).thenReturn(mockBitmapDescriptor)
     val bitmap =
         PlatformBitmapAssetMap(
             fakeAssetName,
@@ -167,15 +154,11 @@ class ConvertTest {
     val fakeAssetName = "fake_asset_name"
     val fakeAssetKey = "fake_asset_key"
 
-    whenever(flutterInjectorWrapper!!.getLookupKeyForAsset(fakeAssetName))
-        .thenReturn(fakeAssetKey)
+    whenever(flutterInjectorWrapper!!.getLookupKeyForAsset(fakeAssetName)).thenReturn(fakeAssetKey)
 
-    whenever(assetManager!!.open(fakeAssetKey))
-        .thenReturn(TestImageUtils.buildImageInputStream())
+    whenever(assetManager!!.open(fakeAssetKey)).thenReturn(TestImageUtils.buildImageInputStream())
 
-    whenever(
-            bitmapDescriptorFactoryWrapper!!.fromBitmap(any()))
-        .thenReturn(mockBitmapDescriptor)
+    whenever(bitmapDescriptorFactoryWrapper!!.fromBitmap(any())).thenReturn(mockBitmapDescriptor)
     val bitmap =
         PlatformBitmapAssetMap(
             fakeAssetName,
@@ -197,18 +180,13 @@ class ConvertTest {
     val fakeAssetName = "fake_asset_name"
     val fakeAssetKey = "fake_asset_key"
 
-    whenever(flutterInjectorWrapper!!.getLookupKeyForAsset(fakeAssetName))
-        .thenReturn(fakeAssetKey)
+    whenever(flutterInjectorWrapper!!.getLookupKeyForAsset(fakeAssetName)).thenReturn(fakeAssetKey)
 
-    whenever(assetManager!!.open(fakeAssetKey))
-        .thenReturn(TestImageUtils.buildImageInputStream())
+    whenever(assetManager!!.open(fakeAssetKey)).thenReturn(TestImageUtils.buildImageInputStream())
 
-    whenever(
-            bitmapDescriptorFactoryWrapper!!.fromAsset(any()))
-        .thenReturn(mockBitmapDescriptor)
+    whenever(bitmapDescriptorFactoryWrapper!!.fromAsset(any())).thenReturn(mockBitmapDescriptor)
 
-    verify(bitmapDescriptorFactoryWrapper, never())
-        .fromBitmap(any())
+    verify(bitmapDescriptorFactoryWrapper, never()).fromBitmap(any())
     val bitmap =
         PlatformBitmapAssetMap(
             fakeAssetName,
@@ -228,9 +206,7 @@ class ConvertTest {
   fun GetBitmapFromBytesAuto() {
     val bmpData = Base64.decode(base64Image, Base64.DEFAULT)
 
-    whenever(
-            bitmapDescriptorFactoryWrapper!!.fromBitmap(any()))
-        .thenReturn(mockBitmapDescriptor)
+    whenever(bitmapDescriptorFactoryWrapper!!.fromBitmap(any())).thenReturn(mockBitmapDescriptor)
 
     val bitmap =
         PlatformBitmapBytesMap(
@@ -249,9 +225,7 @@ class ConvertTest {
   fun GetBitmapFromBytesAutoAndWidth() {
     val bmpData = Base64.decode(base64Image, Base64.DEFAULT)
 
-    whenever(
-            bitmapDescriptorFactoryWrapper!!.fromBitmap(any()))
-        .thenReturn(mockBitmapDescriptor)
+    whenever(bitmapDescriptorFactoryWrapper!!.fromBitmap(any())).thenReturn(mockBitmapDescriptor)
     val bitmap =
         PlatformBitmapBytesMap(
             bmpData, /* bitmapScaling */
@@ -269,9 +243,7 @@ class ConvertTest {
   fun GetBitmapFromBytesAutoAndHeight() {
     val bmpData = Base64.decode(base64Image, Base64.DEFAULT)
 
-    whenever(
-            bitmapDescriptorFactoryWrapper!!.fromBitmap(any()))
-        .thenReturn(mockBitmapDescriptor)
+    whenever(bitmapDescriptorFactoryWrapper!!.fromBitmap(any())).thenReturn(mockBitmapDescriptor)
     val bitmap =
         PlatformBitmapBytesMap(
             bmpData, /* bitmapScaling */
@@ -289,9 +261,7 @@ class ConvertTest {
   fun GetBitmapFromBytesNoScaling() {
     val bmpData = Base64.decode(base64Image, Base64.DEFAULT)
 
-    whenever(
-            bitmapDescriptorFactoryWrapper!!.fromBitmap(any()))
-        .thenReturn(mockBitmapDescriptor)
+    whenever(bitmapDescriptorFactoryWrapper!!.fromBitmap(any())).thenReturn(mockBitmapDescriptor)
     val bitmap =
         PlatformBitmapBytesMap(
             bmpData, /* bitmapScaling */
@@ -310,8 +280,7 @@ class ConvertTest {
     val invalidBase64Image = "not valid image data"
     val bmpData = Base64.decode(invalidBase64Image, Base64.DEFAULT)
 
-    verify(bitmapDescriptorFactoryWrapper, never())
-        .fromBitmap(any())
+    verify(bitmapDescriptorFactoryWrapper, never()).fromBitmap(any())
     val bitmap =
         PlatformBitmapBytesMap(
             bmpData, /* bitmapScaling */
@@ -388,9 +357,7 @@ class ConvertTest {
             icon, /* glyphText */
             null, /* glyphTextColor */
             null)
-    whenever(
-            bitmapDescriptorFactoryWrapper!!.fromBitmap(any()))
-        .thenReturn(mockBitmapDescriptor)
+    whenever(bitmapDescriptorFactoryWrapper!!.fromBitmap(any())).thenReturn(mockBitmapDescriptor)
     val pinConfig =
         Convert.getPinConfigFromPlatformPinConfig(
             platformBitmap, assetManager, 1f, bitmapDescriptorFactoryWrapper)
@@ -408,7 +375,7 @@ class ConvertTest {
   fun interpretMapConfiguration_handlesNulls() {
     val config = this.minimalConfigurationBuilder.build()
     Convert.interpretMapConfiguration(config, optionsSink!!)
-      verifyNoInteractions(optionsSink)
+    verifyNoInteractions(optionsSink)
   }
 
   @Test
@@ -429,48 +396,42 @@ class ConvertTest {
   fun interpretMapConfiguration_handlesRotateGesturesEnabled() {
     val config = this.minimalConfigurationBuilder.setRotateGesturesEnabled(false).build()
     Convert.interpretMapConfiguration(config, optionsSink!!)
-    verify(optionsSink, times(1))
-        .setRotateGesturesEnabled(false)
+    verify(optionsSink, times(1)).setRotateGesturesEnabled(false)
   }
 
   @Test
   fun interpretMapConfiguration_handlesScrollGesturesEnabled() {
     val config = this.minimalConfigurationBuilder.setScrollGesturesEnabled(true).build()
     Convert.interpretMapConfiguration(config, optionsSink!!)
-    verify(optionsSink, times(1))
-        .setScrollGesturesEnabled(true)
+    verify(optionsSink, times(1)).setScrollGesturesEnabled(true)
   }
 
   @Test
   fun interpretMapConfiguration_handlesTiltGesturesEnabled() {
     val config = this.minimalConfigurationBuilder.setTiltGesturesEnabled(false).build()
     Convert.interpretMapConfiguration(config, optionsSink!!)
-    verify(optionsSink, times(1))
-        .setTiltGesturesEnabled(false)
+    verify(optionsSink, times(1)).setTiltGesturesEnabled(false)
   }
 
   @Test
   fun interpretMapConfiguration_handlesTrackCameraPosition() {
     val config = this.minimalConfigurationBuilder.setTrackCameraPosition(true).build()
     Convert.interpretMapConfiguration(config, optionsSink!!)
-    verify(optionsSink, times(1))
-        .setTrackCameraPosition(true)
+    verify(optionsSink, times(1)).setTrackCameraPosition(true)
   }
 
   @Test
   fun interpretMapConfiguration_handlesZoomControlsEnabled() {
     val config = this.minimalConfigurationBuilder.setZoomControlsEnabled(false).build()
     Convert.interpretMapConfiguration(config, optionsSink!!)
-    verify(optionsSink, times(1))
-        .setZoomControlsEnabled(false)
+    verify(optionsSink, times(1)).setZoomControlsEnabled(false)
   }
 
   @Test
   fun interpretMapConfiguration_handlesZoomGesturesEnabled() {
     val config = this.minimalConfigurationBuilder.setZoomGesturesEnabled(true).build()
     Convert.interpretMapConfiguration(config, optionsSink!!)
-    verify(optionsSink, times(1))
-        .setZoomGesturesEnabled(true)
+    verify(optionsSink, times(1)).setZoomGesturesEnabled(true)
   }
 
   @Test
@@ -484,8 +445,7 @@ class ConvertTest {
   fun interpretMapConfiguration_handlesMyLocationButtonEnabled() {
     val config = this.minimalConfigurationBuilder.setMyLocationButtonEnabled(true).build()
     Convert.interpretMapConfiguration(config, optionsSink!!)
-    verify(optionsSink, times(1))
-        .setMyLocationButtonEnabled(true)
+    verify(optionsSink, times(1)).setMyLocationButtonEnabled(true)
   }
 
   @Test
@@ -545,16 +505,14 @@ class ConvertTest {
                         PlatformLatLng(bounds.southwest.latitude, bounds.southwest.longitude))))
             .build()
     Convert.interpretMapConfiguration(config, optionsSink!!)
-    verify(optionsSink, times(1))
-        .setCameraTargetBounds(bounds)
+    verify(optionsSink, times(1)).setCameraTargetBounds(bounds)
   }
 
   @Test
   fun interpretMapConfiguration_handlesMapType() {
     val config = this.minimalConfigurationBuilder.setMapType(PlatformMapType.HYBRID).build()
     Convert.interpretMapConfiguration(config, optionsSink!!)
-    verify(optionsSink, times(1))
-        .setMapType(GoogleMap.MAP_TYPE_HYBRID)
+    verify(optionsSink, times(1)).setMapType(GoogleMap.MAP_TYPE_HYBRID)
   }
 
   @Test
@@ -583,8 +541,7 @@ class ConvertTest {
             .setMinMaxZoomPreference(PlatformZoomRange(min, max))
             .build()
     Convert.interpretMapConfiguration(config, optionsSink!!)
-    verify(optionsSink, times(1))
-        .setMinMaxZoomPreference(min.toFloat(), max.toFloat())
+    verify(optionsSink, times(1)).setMinMaxZoomPreference(min.toFloat(), max.toFloat())
   }
 
   @Test

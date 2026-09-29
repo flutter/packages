@@ -16,11 +16,9 @@ import com.google.android.gms.maps.model.MarkerOptions
 import com.google.maps.android.collections.MarkerManager
 import io.flutter.plugin.common.BinaryMessenger
 import io.flutter.plugins.googlemaps.Convert.BitmapDescriptorFactoryWrapper
-import kotlinx.coroutines.test.runTest
 import java.io.ByteArrayOutputStream
-import java.lang.AutoCloseable
 import java.util.Objects
-import org.junit.After
+import kotlinx.coroutines.test.runTest
 import org.junit.Assert
 import org.junit.Before
 import org.junit.Test
@@ -55,8 +53,7 @@ class MarkersControllerTest {
   fun setUp() {
     assetManager = ApplicationProvider.getApplicationContext<Context?>().getAssets()
     context = ApplicationProvider.getApplicationContext<Context>()
-    flutterApi =
-        spy(MapsCallbackApi(mock<BinaryMessenger>(), ""))
+    flutterApi = spy(MapsCallbackApi(mock<BinaryMessenger>(), ""))
     clusterManagersController =
         spy(ClusterManagersController(flutterApi!!, context!!, PlatformMarkerType.MARKER))
     controller =
@@ -80,9 +77,7 @@ class MarkersControllerTest {
     val googleMarkerId = "abc123"
 
     whenever(marker.getId()).thenReturn(googleMarkerId)
-    whenever(
-            googleMap!!.addMarker(any()))
-        .thenReturn(marker)
+    whenever(googleMap!!.addMarker(any())).thenReturn(marker)
 
     val latLng = LatLng(1.1, 2.2)
 
@@ -91,10 +86,7 @@ class MarkersControllerTest {
     controller!!.addMarkers(markers)
     controller!!.onMarkerDragStart(googleMarkerId, latLng)
 
-    verify(flutterApi)
-        .onMarkerDragStart(
-            eq(googleMarkerId),
-            eq(Convert.latLngToPigeon(latLng)))
+    verify(flutterApi).onMarkerDragStart(eq(googleMarkerId), eq(Convert.latLngToPigeon(latLng)))
   }
 
   @Test
@@ -113,10 +105,7 @@ class MarkersControllerTest {
     controller!!.addMarkers(markers)
     controller!!.onMarkerDragEnd(googleMarkerId, latLng)
 
-    verify(flutterApi)
-        .onMarkerDragEnd(
-            eq(googleMarkerId),
-            eq(Convert.latLngToPigeon(latLng)))
+    verify(flutterApi).onMarkerDragEnd(eq(googleMarkerId), eq(Convert.latLngToPigeon(latLng)))
   }
 
   @Test
@@ -136,10 +125,7 @@ class MarkersControllerTest {
     controller!!.addMarkers(markers)
     controller!!.onMarkerDrag(googleMarkerId, latLng)
 
-    verify(flutterApi)
-        .onMarkerDrag(
-            eq(googleMarkerId),
-            eq(Convert.latLngToPigeon(latLng)))
+    verify(flutterApi).onMarkerDrag(eq(googleMarkerId), eq(Convert.latLngToPigeon(latLng)))
   }
 
   @Test(expected = NullPointerException::class)
@@ -177,14 +163,14 @@ class MarkersControllerTest {
         .addItems(
             eq(clusterManagerId),
             argThat { markerBuilders: MutableList<MarkerBuilder?>? ->
-                  if (markerBuilders!!.size == 1 &&
-                      markerBuilders.get(0)!!.clusterManagerId() == clusterManagerId) {
-                    // Store reference for later use in onClusterItemRendered
-                    addedMarkerBuilder[0] = markerBuilders.get(0)
-                    return@argThat true
-                  }
-                  false
-                })
+              if (markerBuilders!!.size == 1 &&
+                  markerBuilders.get(0)!!.clusterManagerId() == clusterManagerId) {
+                // Store reference for later use in onClusterItemRendered
+                addedMarkerBuilder[0] = markerBuilders.get(0)
+                return@argThat true
+              }
+              false
+            })
 
     // clusterManagersController calls onClusterItemRendered with created marker.
     controller!!.onClusterItemRendered(addedMarkerBuilder[0], marker)
@@ -206,9 +192,9 @@ class MarkersControllerTest {
         .removeItems(
             eq(clusterManagerId),
             argThat { PlatformMarkerBuilders: MutableList<MarkerBuilder?>? ->
-                  PlatformMarkerBuilders!!.size == 1 &&
-                      (PlatformMarkerBuilders.get(0)!!.clusterManagerId() == clusterManagerId)
-                })
+              PlatformMarkerBuilders!!.size == 1 &&
+                  (PlatformMarkerBuilders.get(0)!!.clusterManagerId() == clusterManagerId)
+            })
   }
 
   @Test
@@ -241,8 +227,7 @@ class MarkersControllerTest {
     controller!!.removeMarkers(mutableListOf<String?>(googleMarkerId))
 
     // clusterManagersController should not be called when removing the marker
-    verify(clusterManagersController, times(0))
-        .removeItem(any())
+    verify(clusterManagersController, times(0)).removeItem(any())
 
     verify(spyMarkerCollection, times(1)).remove(marker)
   }
@@ -307,15 +292,14 @@ class MarkersControllerTest {
         .addItems(
             eq(clusterManagerId),
             argThat { PlatformMarkerBuilders: MutableList<MarkerBuilder?>? ->
-                  PlatformMarkerBuilders!!.size == 5 &&
-                      PlatformMarkerBuilders.stream().allMatch { mb: MarkerBuilder? ->
-                        mb!!.clusterManagerId() == clusterManagerId
-                      }
-                })
+              PlatformMarkerBuilders!!.size == 5 &&
+                  PlatformMarkerBuilders.stream().allMatch { mb: MarkerBuilder? ->
+                    mb!!.clusterManagerId() == clusterManagerId
+                  }
+            })
 
     // Verify addItem is never called (we're using batch operation)
-    verify(clusterManagersController, times(0))
-        .addItem(any())
+    verify(clusterManagersController, times(0)).addItem(any())
   }
 
   @Test
@@ -346,15 +330,14 @@ class MarkersControllerTest {
         .removeItems(
             eq(clusterManagerId),
             argThat { PlatformMarkerBuilders: MutableList<MarkerBuilder?>? ->
-                  PlatformMarkerBuilders!!.size == 5 &&
-                      PlatformMarkerBuilders.stream().allMatch { mb: MarkerBuilder? ->
-                        mb!!.clusterManagerId() == clusterManagerId
-                      }
-                })
+              PlatformMarkerBuilders!!.size == 5 &&
+                  PlatformMarkerBuilders.stream().allMatch { mb: MarkerBuilder? ->
+                    mb!!.clusterManagerId() == clusterManagerId
+                  }
+            })
 
     // Verify removeItem is never called (we're using batch operation)
-    verify(clusterManagersController, times(0))
-        .removeItem(any())
+    verify(clusterManagersController, times(0)).removeItem(any())
   }
 
   @Test
@@ -375,7 +358,7 @@ class MarkersControllerTest {
     controller!!.addMarkers(initialMarkers)
 
     // Reset mock to clear invocation counts
-      reset(clusterManagersController)
+    reset(clusterManagersController)
 
     // Now change all markers to cluster manager 2
     val changedMarkers: MutableList<PlatformMarker?> = ArrayList<PlatformMarker?>()
@@ -395,11 +378,11 @@ class MarkersControllerTest {
         .removeItems(
             eq(clusterManagerId1),
             argThat { PlatformMarkerBuilders: MutableList<MarkerBuilder?>? ->
-                  PlatformMarkerBuilders!!.size == 5 &&
-                      PlatformMarkerBuilders.stream().allMatch { mb: MarkerBuilder? ->
-                        mb!!.clusterManagerId() == clusterManagerId1
-                      }
-                })
+              PlatformMarkerBuilders!!.size == 5 &&
+                  PlatformMarkerBuilders.stream().allMatch { mb: MarkerBuilder? ->
+                    mb!!.clusterManagerId() == clusterManagerId1
+                  }
+            })
 
     // Verify addItems is called exactly once for cluster manager 2 with all 5
     // markers
@@ -407,11 +390,11 @@ class MarkersControllerTest {
         .addItems(
             eq(clusterManagerId2),
             argThat { PlatformMarkerBuilders: MutableList<MarkerBuilder?>? ->
-                  PlatformMarkerBuilders!!.size == 5 &&
-                      PlatformMarkerBuilders.stream().allMatch { mb: MarkerBuilder? ->
-                        mb!!.clusterManagerId() == clusterManagerId2
-                      }
-                })
+              PlatformMarkerBuilders!!.size == 5 &&
+                  PlatformMarkerBuilders.stream().allMatch { mb: MarkerBuilder? ->
+                    mb!!.clusterManagerId() == clusterManagerId2
+                  }
+            })
 
     // Verify individual operations are never called (we're using batch operations)
     verify(clusterManagersController, times(0)).addItem(any())
@@ -436,8 +419,7 @@ class MarkersControllerTest {
 
     // Capture the PlatformMarkerBuilder passed to addItems
     val captor = argumentCaptor<List<MarkerBuilder>>()
-    verify(clusterManagersController)
-        .addItems(eq(clusterManagerId), captor.capture()!!)
+    verify(clusterManagersController).addItems(eq(clusterManagerId), captor.capture()!!)
     val capturedMarkerBuilder = captor.firstValue[0]
 
     // Simulate cluster render so markerController exists

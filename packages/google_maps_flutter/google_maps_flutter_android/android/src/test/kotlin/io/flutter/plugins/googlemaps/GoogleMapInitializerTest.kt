@@ -29,8 +29,7 @@ class GoogleMapInitializerTest {
   @Before
   fun before() {
     val context = ApplicationProvider.getApplicationContext<Context?>()
-    googleMapInitializer =
-        spy(GoogleMapInitializer(context, mockMessenger))
+    googleMapInitializer = spy(GoogleMapInitializer(context, mockMessenger))
   }
 
   @Test
@@ -38,10 +37,10 @@ class GoogleMapInitializerTest {
     doNothing()
         .whenever(googleMapInitializer)
         .initializeWithRendererRequest(MapsInitializer.Renderer.LATEST)
-    val type = async(start = CoroutineStart.UNDISPATCHED) {
-        googleMapInitializer!!.initializeWithPreferredRenderer(
-            PlatformRendererType.LATEST)
-    }
+    val type =
+        async(start = CoroutineStart.UNDISPATCHED) {
+          googleMapInitializer!!.initializeWithPreferredRenderer(PlatformRendererType.LATEST)
+        }
     googleMapInitializer!!.onMapsSdkInitialized(MapsInitializer.Renderer.LATEST)
 
     Assert.assertEquals(PlatformRendererType.LATEST, type.await())
@@ -53,10 +52,10 @@ class GoogleMapInitializerTest {
     doNothing()
         .whenever(googleMapInitializer)
         .initializeWithRendererRequest(MapsInitializer.Renderer.LEGACY)
-    val type = async(start = CoroutineStart.UNDISPATCHED) {
-        googleMapInitializer!!.initializeWithPreferredRenderer(
-            PlatformRendererType.LEGACY)
-    }
+    val type =
+        async(start = CoroutineStart.UNDISPATCHED) {
+          googleMapInitializer!!.initializeWithPreferredRenderer(PlatformRendererType.LEGACY)
+        }
     googleMapInitializer!!.onMapsSdkInitialized(MapsInitializer.Renderer.LEGACY)
 
     Assert.assertEquals(PlatformRendererType.LEGACY, type.await())
@@ -64,13 +63,11 @@ class GoogleMapInitializerTest {
 
   @Test
   fun initializer_onMethodCallWithNoRendererPreference() = runTest {
-    doNothing()
-        .whenever(googleMapInitializer)
-        .initializeWithRendererRequest(null)
-    val type = async(start = CoroutineStart.UNDISPATCHED) {
-        googleMapInitializer!!.initializeWithPreferredRenderer(
-            null)
-    }
+    doNothing().whenever(googleMapInitializer).initializeWithRendererRequest(null)
+    val type =
+        async(start = CoroutineStart.UNDISPATCHED) {
+          googleMapInitializer!!.initializeWithPreferredRenderer(null)
+        }
     googleMapInitializer!!.onMapsSdkInitialized(MapsInitializer.Renderer.LATEST)
 
     Assert.assertNull(type.await())

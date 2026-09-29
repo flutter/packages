@@ -18,10 +18,8 @@ import io.flutter.plugin.common.BinaryMessenger
 import io.flutter.plugins.googlemaps.ClusterManagersController.AdvancedMarkerClusterRenderer
 import io.flutter.plugins.googlemaps.ClusterManagersController.MarkerClusterRenderer
 import io.flutter.plugins.googlemaps.Convert.BitmapDescriptorFactoryWrapper
-import kotlinx.coroutines.test.runTest
 import java.io.ByteArrayOutputStream
-import java.lang.AutoCloseable
-import org.junit.After
+import kotlinx.coroutines.test.runTest
 import org.junit.Assert
 import org.junit.Before
 import org.junit.Test
@@ -50,10 +48,8 @@ class ClusterManagersControllerTest {
   fun setUp() {
     context = ApplicationProvider.getApplicationContext<Context>()
     assetManager = context!!.getAssets()
-    flutterApi =
-        spy(MapsCallbackApi(mock<BinaryMessenger>(), ""))
-    controller =
-        spy(ClusterManagersController(flutterApi!!, context!!, PlatformMarkerType.MARKER))
+    flutterApi = spy(MapsCallbackApi(mock<BinaryMessenger>(), ""))
+    controller = spy(ClusterManagersController(flutterApi!!, context!!, PlatformMarkerType.MARKER))
     markerManager = MarkerManager(googleMap)
     controller!!.init(googleMap, markerManager)
   }
@@ -181,10 +177,7 @@ class ClusterManagersControllerTest {
     cluster.add(marker2)
 
     controller!!.onClusterClick(cluster)
-    verify(flutterApi)
-        .onClusterTap(
-            eq(
-                Convert.clusterToPigeon(clusterManagerId, cluster)))
+    verify(flutterApi).onClusterTap(eq(Convert.clusterToPigeon(clusterManagerId, cluster)))
   }
 
   @Test

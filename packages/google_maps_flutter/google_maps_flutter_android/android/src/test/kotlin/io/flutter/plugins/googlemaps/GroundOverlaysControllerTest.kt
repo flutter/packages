@@ -4,7 +4,6 @@
 package io.flutter.plugins.googlemaps
 
 import android.content.Context
-import android.graphics.Bitmap
 import android.util.Base64
 import androidx.test.core.app.ApplicationProvider
 import com.google.android.gms.maps.GoogleMap
@@ -13,8 +12,6 @@ import com.google.android.gms.maps.model.GroundOverlay
 import com.google.android.gms.maps.model.GroundOverlayOptions
 import io.flutter.plugin.common.BinaryMessenger
 import io.flutter.plugins.googlemaps.Convert.BitmapDescriptorFactoryWrapper
-import java.lang.AutoCloseable
-import org.junit.After
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -67,15 +64,13 @@ class GroundOverlaysControllerTest {
   fun setUp() {
     val context = ApplicationProvider.getApplicationContext<Context>()
     val assetManager = context.getAssets()
-    val flutterApi =
-        spy(MapsCallbackApi(mock<BinaryMessenger>(), ""))
+    val flutterApi = spy(MapsCallbackApi(mock<BinaryMessenger>(), ""))
     controller =
-        spy(GroundOverlaysController(
+        spy(
+            GroundOverlaysController(
                 flutterApi, assetManager, 1.0f, bitmapDescriptorFactoryWrapper!!))
     controller!!.setGoogleMap(googleMap)
-    whenever(
-            bitmapDescriptorFactoryWrapper.fromBitmap(any()))
-        .thenReturn(mockBitmapDescriptor)
+    whenever(bitmapDescriptorFactoryWrapper.fromBitmap(any())).thenReturn(mockBitmapDescriptor)
   }
 
   @Test
@@ -85,10 +80,7 @@ class GroundOverlaysControllerTest {
     val transparency = 0.1f
 
     whenever(groundOverlay.getId()).thenReturn(googleGroundOverlayId)
-    whenever(
-            googleMap!!.addGroundOverlay(
-                any()))
-        .thenReturn(groundOverlay)
+    whenever(googleMap!!.addGroundOverlay(any())).thenReturn(groundOverlay)
 
     controller!!.addGroundOverlays(
         mutableListOf<PlatformGroundOverlay?>(
@@ -96,8 +88,8 @@ class GroundOverlaysControllerTest {
     verify(googleMap, times(1))
         .addGroundOverlay(
             argThat { argument: GroundOverlayOptions? ->
-                  argument!!.getTransparency() == transparency
-                })
+              argument!!.getTransparency() == transparency
+            })
 
     val newTransparency = 0.2f
     controller!!.changeGroundOverlays(
