@@ -32,7 +32,7 @@ void main() {
     focusNode.requestFocus();
     await tester.pump();
 
-    await tester.sendKeyEvent(LogicalKeyboardKey.select);
+    await tester.sendKeyEvent(LogicalKeyboardKey.keyE);
     expect(invoked, isTrue);
   });
 }

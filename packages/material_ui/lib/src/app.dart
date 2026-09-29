@@ -647,7 +647,7 @@ class MaterialApp extends StatefulWidget {
   /// <callout-box>
   ///
   /// This example shows how to add a single shortcut for
-  /// [LogicalKeyboardKey.select] to the default shortcuts without needing to
+  /// [LogicalKeyboardKey.keyE] to the default shortcuts without needing to
   /// add your own [Shortcuts] widget.
   ///
   /// Alternatively, you could insert a [Shortcuts] widget with just the mapping
