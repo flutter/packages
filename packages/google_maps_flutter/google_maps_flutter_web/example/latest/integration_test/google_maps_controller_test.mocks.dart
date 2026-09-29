@@ -558,13 +558,21 @@ class MockMyLocationController extends _i1.Mock implements _i2.MyLocationControl
 /// See the documentation for Mockito's code generation for more information.
 class MockGeolocationApi extends _i1.Mock implements _i2.GeolocationApi {
   @override
-  int watchPosition(void Function(double, double)? onSuccess, void Function(dynamic)? onError) =>
+  bool get isAvailable =>
+      (super.noSuchMethod(
+            Invocation.getter(#isAvailable),
+            returnValue: false,
+            returnValueForMissingStub: false,
+          )
+          as bool);
+
+  @override
+  int? watchPosition(void Function(double, double)? onSuccess, void Function(dynamic)? onError) =>
       (super.noSuchMethod(
             Invocation.method(#watchPosition, [onSuccess, onError]),
-            returnValue: 0,
-            returnValueForMissingStub: 0,
+            returnValueForMissingStub: null,
           )
-          as int);
+          as int?);
 
   @override
   void getCurrentPosition(
