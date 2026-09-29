@@ -14,8 +14,8 @@ import Testing
     let assetName = "fakeImageName"
     let assetProvider = TestAssetProvider(image: testImage, forAssetName: assetName, package: nil)
 
-    let bitmap = FGMPlatformBitmapAssetMap.make(
-      withAssetName: assetName,
+    let bitmap = PlatformBitmapAssetMap(
+      assetName: assetName,
       bitmapScaling: .auto,
       imagePixelRatio: 1,
       width: nil,
@@ -24,11 +24,7 @@ import Testing
 
     let screenScale: CGFloat = 3.0
 
-    let resultImage = FGMIconFromBitmap(
-      FGMPlatformBitmap.make(withBitmap: bitmap),
-      assetProvider,
-      screenScale
-    )
+    let resultImage = bitmap.createIcon(assetProvider: assetProvider, screenScale: screenScale)
 
     #expect(resultImage != nil)
     #expect(resultImage?.scale == 1.0)
@@ -42,8 +38,8 @@ import Testing
     let assetName = "fakeImageName"
     let assetProvider = TestAssetProvider(image: testImage, forAssetName: assetName, package: nil)
 
-    let bitmap = FGMPlatformBitmapAssetMap.make(
-      withAssetName: assetName,
+    let bitmap = PlatformBitmapAssetMap(
+      assetName: assetName,
       bitmapScaling: .auto,
       imagePixelRatio: 10,
       width: nil,
@@ -52,11 +48,7 @@ import Testing
 
     let screenScale: CGFloat = 3.0
 
-    let resultImage = FGMIconFromBitmap(
-      FGMPlatformBitmap.make(withBitmap: bitmap),
-      assetProvider,
-      screenScale
-    )
+    let resultImage = bitmap.createIcon(assetProvider: assetProvider, screenScale: screenScale)
 
     #expect(resultImage != nil)
     #expect(resultImage?.scale == 10)
@@ -72,21 +64,17 @@ import Testing
     let assetProvider = TestAssetProvider(image: testImage, forAssetName: assetName, package: nil)
 
     let width: CGFloat = 15.0
-    let bitmap = FGMPlatformBitmapAssetMap.make(
-      withAssetName: assetName,
+    let bitmap = PlatformBitmapAssetMap(
+      assetName: assetName,
       bitmapScaling: .auto,
       imagePixelRatio: 1,
-      width: width as NSNumber,
+      width: width,
       height: nil
     )
 
     let screenScale: CGFloat = 3.0
 
-    let resultImage = FGMIconFromBitmap(
-      FGMPlatformBitmap.make(withBitmap: bitmap),
-      assetProvider,
-      screenScale
-    )
+    let resultImage = bitmap.createIcon(assetProvider: assetProvider, screenScale: screenScale)
     #expect(resultImage != nil)
     #expect(testImage.scale == 1.0)
 
@@ -107,21 +95,17 @@ import Testing
 
     let width: CGFloat = 15.0
     let height: CGFloat = 45.0
-    let bitmap = FGMPlatformBitmapAssetMap.make(
-      withAssetName: assetName,
+    let bitmap = PlatformBitmapAssetMap(
+      assetName: assetName,
       bitmapScaling: .auto,
       imagePixelRatio: 1,
-      width: width as NSNumber,
-      height: height as NSNumber
+      width: width,
+      height: height
     )
 
     let screenScale: CGFloat = 3.0
 
-    let resultImage = FGMIconFromBitmap(
-      FGMPlatformBitmap.make(withBitmap: bitmap),
-      assetProvider,
-      screenScale
-    )
+    let resultImage = bitmap.createIcon(assetProvider: assetProvider, screenScale: screenScale)
     #expect(resultImage != nil)
     #expect(resultImage?.scale == screenScale)
     #expect(resultImage?.size.width == width)
@@ -134,8 +118,8 @@ import Testing
     let assetName = "fakeImageName"
     let assetProvider = TestAssetProvider(image: testImage, forAssetName: assetName, package: nil)
 
-    let bitmap = FGMPlatformBitmapAssetMap.make(
-      withAssetName: assetName,
+    let bitmap = PlatformBitmapAssetMap(
+      assetName: assetName,
       bitmapScaling: .none,
       imagePixelRatio: 1,
       width: nil,
@@ -144,11 +128,7 @@ import Testing
 
     let screenScale: CGFloat = 3.0
 
-    let resultImage = FGMIconFromBitmap(
-      FGMPlatformBitmap.make(withBitmap: bitmap),
-      assetProvider,
-      screenScale
-    )
+    let resultImage = bitmap.createIcon(assetProvider: assetProvider, screenScale: screenScale)
 
     #expect(resultImage != nil)
     #expect(resultImage?.scale == 1.0)
@@ -161,8 +141,8 @@ import Testing
     let pngData = try #require(testImage.pngData())
 
     let typedData = FlutterStandardTypedData(bytes: pngData)
-    let bitmap = FGMPlatformBitmapBytesMap.make(
-      withByteData: typedData,
+    let bitmap = PlatformBitmapBytesMap(
+      byteData: typedData,
       bitmapScaling: .auto,
       imagePixelRatio: 1,
       width: nil,
@@ -171,10 +151,9 @@ import Testing
 
     let screenScale: CGFloat = 3.0
 
-    let resultImage = FGMIconFromBitmap(
-      FGMPlatformBitmap.make(withBitmap: bitmap),
-      TestAssetProvider(),
-      screenScale
+    let resultImage = bitmap.createIcon(
+      assetProvider: TestAssetProvider(),
+      screenScale: screenScale
     )
 
     #expect(resultImage != nil)
@@ -188,8 +167,8 @@ import Testing
     let pngData = try #require(testImage.pngData())
 
     let typedData = FlutterStandardTypedData(bytes: pngData)
-    let bitmap = FGMPlatformBitmapBytesMap.make(
-      withByteData: typedData,
+    let bitmap = PlatformBitmapBytesMap(
+      byteData: typedData,
       bitmapScaling: .auto,
       imagePixelRatio: 10,
       width: nil,
@@ -198,10 +177,9 @@ import Testing
 
     let screenScale: CGFloat = 3.0
 
-    let resultImage = FGMIconFromBitmap(
-      FGMPlatformBitmap.make(withBitmap: bitmap),
-      TestAssetProvider(),
-      screenScale
+    let resultImage = bitmap.createIcon(
+      assetProvider: TestAssetProvider(),
+      screenScale: screenScale
     )
     #expect(resultImage != nil)
     #expect(resultImage?.scale == 10)
@@ -216,20 +194,19 @@ import Testing
     let width: CGFloat = 15.0
     let height: CGFloat = 15.0
     let typedData = FlutterStandardTypedData(bytes: pngData)
-    let bitmap = FGMPlatformBitmapBytesMap.make(
-      withByteData: typedData,
+    let bitmap = PlatformBitmapBytesMap(
+      byteData: typedData,
       bitmapScaling: .auto,
       imagePixelRatio: 1,
-      width: width as NSNumber,
-      height: height as NSNumber
+      width: width,
+      height: height
     )
 
     let screenScale: CGFloat = 3.0
 
-    let resultImage = FGMIconFromBitmap(
-      FGMPlatformBitmap.make(withBitmap: bitmap),
-      TestAssetProvider(),
-      screenScale
+    let resultImage = bitmap.createIcon(
+      assetProvider: TestAssetProvider(),
+      screenScale: screenScale
     )
 
     #expect(resultImage != nil)
@@ -251,20 +228,19 @@ import Testing
     let width: CGFloat = 15.0
     let height: CGFloat = 45.0
     let typedData = FlutterStandardTypedData(bytes: pngData)
-    let bitmap = FGMPlatformBitmapBytesMap.make(
-      withByteData: typedData,
+    let bitmap = PlatformBitmapBytesMap(
+      byteData: typedData,
       bitmapScaling: .auto,
       imagePixelRatio: 1,
-      width: width as NSNumber,
-      height: height as NSNumber
+      width: width,
+      height: height
     )
 
     let screenScale: CGFloat = 3.0
 
-    let resultImage = FGMIconFromBitmap(
-      FGMPlatformBitmap.make(withBitmap: bitmap),
-      TestAssetProvider(),
-      screenScale
+    let resultImage = bitmap.createIcon(
+      assetProvider: TestAssetProvider(),
+      screenScale: screenScale
     )
     #expect(resultImage != nil)
     #expect(resultImage?.scale == screenScale)
@@ -277,8 +253,8 @@ import Testing
     let pngData = try #require(testImage.pngData())
 
     let typedData = FlutterStandardTypedData(bytes: pngData)
-    let bitmap = FGMPlatformBitmapBytesMap.make(
-      withByteData: typedData,
+    let bitmap = PlatformBitmapBytesMap(
+      byteData: typedData,
       bitmapScaling: .none,
       imagePixelRatio: 1,
       width: nil,
@@ -287,10 +263,9 @@ import Testing
 
     let screenScale: CGFloat = 3.0
 
-    let resultImage = FGMIconFromBitmap(
-      FGMPlatformBitmap.make(withBitmap: bitmap),
-      TestAssetProvider(),
-      screenScale
+    let resultImage = bitmap.createIcon(
+      assetProvider: TestAssetProvider(),
+      screenScale: screenScale
     )
     #expect(resultImage != nil)
     #expect(resultImage?.scale == 1.0)
@@ -299,16 +274,16 @@ import Testing
   }
 
   /// Tests for PinConfig (GMSPinImageOptions) - requires iOS 16.0+ and Google Maps SDK 9.0+.
-  /// On earlier versions, FGMIconFromBitmap returns nil for PinConfig, which is expected behavior.
+  /// On earlier versions, createIcon returns nil for PinConfig, which is expected behavior.
   @Test func extractIconFromPinConfigWithGlyphColor() {
     let assetProvider = TestAssetProvider()
 
-    let backgroundColor = FGMPlatformColor.make(withRed: 0.0, green: 1.0, blue: 1.0, alpha: 1.0)
-    let borderColor = FGMPlatformColor.make(withRed: 1.0, green: 0.0, blue: 1.0, alpha: 1.0)
-    let glyphColor = FGMPlatformColor.make(withRed: 0.1, green: 0.2, blue: 0.3, alpha: 1.0)
+    let backgroundColor = PlatformColor(red: 0.0, green: 1.0, blue: 1.0, alpha: 1.0)
+    let borderColor = PlatformColor(red: 1.0, green: 0.0, blue: 1.0, alpha: 1.0)
+    let glyphColor = PlatformColor(red: 0.1, green: 0.2, blue: 0.3, alpha: 1.0)
 
-    let pinConfig = FGMPlatformBitmapPinConfig.make(
-      withBackgroundColor: backgroundColor,
+    let pinConfig = PlatformBitmapPinConfig(
+      backgroundColor: backgroundColor,
       borderColor: borderColor,
       glyphColor: glyphColor,
       glyphTextColor: nil,
@@ -318,11 +293,7 @@ import Testing
 
     let screenScale: CGFloat = 3.0
 
-    let resultImage = FGMIconFromBitmap(
-      FGMPlatformBitmap.make(withBitmap: pinConfig),
-      assetProvider,
-      screenScale
-    )
+    let resultImage = pinConfig.createIcon(assetProvider: assetProvider, screenScale: screenScale)
 
     // PinConfig may return nil on old Google Maps SDK versions (<=8.4.0).
     // Also, due to a Google Maps SDK issue (https://issuetracker.google.com/issues/370536110),
@@ -334,10 +305,10 @@ import Testing
   @Test func extractIconFromPinConfigWithGlyphText() {
     let assetProvider = TestAssetProvider()
 
-    let glyphTextColor = FGMPlatformColor.make(withRed: 1.0, green: 1.0, blue: 1.0, alpha: 1.0)
+    let glyphTextColor = PlatformColor(red: 1.0, green: 1.0, blue: 1.0, alpha: 1.0)
 
-    let pinConfig = FGMPlatformBitmapPinConfig.make(
-      withBackgroundColor: nil,
+    let pinConfig = PlatformBitmapPinConfig(
+      backgroundColor: nil,
       borderColor: nil,
       glyphColor: nil,
       glyphTextColor: glyphTextColor,
@@ -347,11 +318,7 @@ import Testing
 
     let screenScale: CGFloat = 3.0
 
-    let resultImage = FGMIconFromBitmap(
-      FGMPlatformBitmap.make(withBitmap: pinConfig),
-      assetProvider,
-      screenScale
-    )
+    let resultImage = pinConfig.createIcon(assetProvider: assetProvider, screenScale: screenScale)
 
     // PinConfig returns nil on iOS versions without GMSPinImageOptions support (< iOS 16.0).
     // On simulators, GMSPinImage may also return a zero-dimension image. Both cases are acceptable
@@ -366,34 +333,29 @@ import Testing
     let assetName = "fakeImageNameKey"
     let assetProvider = TestAssetProvider(image: testImage, forAssetName: assetName, package: nil)
 
-    let assetBitmap = FGMPlatformBitmapAssetMap.make(
-      withAssetName: assetName,
+    let assetBitmap = PlatformBitmapAssetMap(
+      assetName: assetName,
       bitmapScaling: .auto,
       imagePixelRatio: 1,
       width: nil,
       height: nil
     )
-    let glyphBitmap = FGMPlatformBitmap.make(withBitmap: assetBitmap)
 
-    let backgroundColor = FGMPlatformColor.make(withRed: 1.0, green: 1.0, blue: 1.0, alpha: 1.0)
-    let borderColor = FGMPlatformColor.make(withRed: 0.0, green: 0.0, blue: 0.0, alpha: 1.0)
+    let backgroundColor = PlatformColor(red: 1.0, green: 1.0, blue: 1.0, alpha: 1.0)
+    let borderColor = PlatformColor(red: 0.0, green: 0.0, blue: 0.0, alpha: 1.0)
 
-    let pinConfig = FGMPlatformBitmapPinConfig.make(
-      withBackgroundColor: backgroundColor,
+    let pinConfig = PlatformBitmapPinConfig(
+      backgroundColor: backgroundColor,
       borderColor: borderColor,
       glyphColor: nil,
       glyphTextColor: nil,
       glyphText: nil,
-      glyphBitmap: glyphBitmap
+      glyphBitmap: assetBitmap
     )
 
     let screenScale: CGFloat = 3.0
 
-    let resultImage = FGMIconFromBitmap(
-      FGMPlatformBitmap.make(withBitmap: pinConfig),
-      assetProvider,
-      screenScale
-    )
+    let resultImage = pinConfig.createIcon(assetProvider: assetProvider, screenScale: screenScale)
 
     // PinConfig returns nil on iOS versions without GMSPinImageOptions support (< iOS 16.0).
     // On simulators, GMSPinImage may also return a zero-dimension image. Both cases are acceptable
@@ -406,43 +368,43 @@ import Testing
   @Test func isScalableWithScaleFactorFromSize100x100to10x100() {
     let originalSize = CGSize(width: 100.0, height: 100.0)
     let targetSize = CGSize(width: 10.0, height: 100.0)
-    #expect(!FGMIsScalableWithScaleFactorFromSize(originalSize, targetSize))
+    #expect(!isScalableWithScaleFactor(from: originalSize, to: targetSize))
   }
 
   @Test func isScalableWithScaleFactorFromSize100x100to10x10() {
     let originalSize = CGSize(width: 100.0, height: 100.0)
     let targetSize = CGSize(width: 10.0, height: 10.0)
-    #expect(FGMIsScalableWithScaleFactorFromSize(originalSize, targetSize))
+    #expect(isScalableWithScaleFactor(from: originalSize, to: targetSize))
   }
 
   @Test func isScalableWithScaleFactorFromSize233x200to23x20() {
     let originalSize = CGSize(width: 233.0, height: 200.0)
     let targetSize = CGSize(width: 23.0, height: 20.0)
-    #expect(FGMIsScalableWithScaleFactorFromSize(originalSize, targetSize))
+    #expect(isScalableWithScaleFactor(from: originalSize, to: targetSize))
   }
 
   @Test func isScalableWithScaleFactorFromSize233x200to22x20() {
     let originalSize = CGSize(width: 233.0, height: 200.0)
     let targetSize = CGSize(width: 22.0, height: 20.0)
-    #expect(!FGMIsScalableWithScaleFactorFromSize(originalSize, targetSize))
+    #expect(!isScalableWithScaleFactor(from: originalSize, to: targetSize))
   }
 
   @Test func isScalableWithScaleFactorFromSize200x233to20x23() {
     let originalSize = CGSize(width: 200.0, height: 233.0)
     let targetSize = CGSize(width: 20.0, height: 23.0)
-    #expect(FGMIsScalableWithScaleFactorFromSize(originalSize, targetSize))
+    #expect(isScalableWithScaleFactor(from: originalSize, to: targetSize))
   }
 
   @Test func isScalableWithScaleFactorFromSize200x233to20x22() {
     let originalSize = CGSize(width: 200.0, height: 233.0)
     let targetSize = CGSize(width: 20.0, height: 22.0)
-    #expect(!FGMIsScalableWithScaleFactorFromSize(originalSize, targetSize))
+    #expect(!isScalableWithScaleFactor(from: originalSize, to: targetSize))
   }
 
   @Test func isScalableWithScaleFactorFromSize1024x768to500x250() {
     let originalSize = CGSize(width: 1024.0, height: 768.0)
     let targetSize = CGSize(width: 500.0, height: 250.0)
-    #expect(!FGMIsScalableWithScaleFactorFromSize(originalSize, targetSize))
+    #expect(!isScalableWithScaleFactor(from: originalSize, to: targetSize))
   }
 
   private func createOnePixelImage() -> UIImage {

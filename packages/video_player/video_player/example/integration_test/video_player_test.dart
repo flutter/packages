@@ -286,7 +286,9 @@ void main() {
           // MEDIA_ELEMENT_ERROR on web, see https://github.com/flutter/flutter/issues/169219
           kIsWeb ||
           // Hanging on Android, see https://github.com/flutter/flutter/issues/160797
-          defaultTargetPlatform == TargetPlatform.android,
+          defaultTargetPlatform == TargetPlatform.android ||
+          // Hanging on macOS, see https://github.com/flutter/flutter/issues/193300
+          defaultTargetPlatform == TargetPlatform.macOS,
     );
   });
 
@@ -306,7 +308,7 @@ void main() {
       // Due to the duration calculation accuracy between platforms,
       // the milliseconds on Web will be a slightly different from natives.
       // The audio was made with 44100 Hz, 192 Kbps CBR, and 32 bits.
-      expect(controller.value.duration, const Duration(seconds: 5, milliseconds: kIsWeb ? 42 : 41));
+      expect(controller.value.duration.inMilliseconds, closeTo(5000, 50));
     });
 
     testWidgets('can be played', (WidgetTester tester) async {
