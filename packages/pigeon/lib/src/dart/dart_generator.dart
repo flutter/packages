@@ -2930,43 +2930,48 @@ $_ffiBridgePrefix.${_classNamePrefix}PigeonTypedData _toPigeonTypedData(TypedDat
 }
 
 
+''');
+    // `bytes` is owned by `data`, so `data` must stay alive until the copy is
+    // complete. `NSData` itself isn't `Finalizable`, so holding the local isn't
+    // enough; holding its `ObjCObjectRef` and releasing it explicitly in
+    // `finally` guarantees liveness, and frees it immediately rather than
+    // waiting for its finalizer.
+    indent.format('''
 Object? _getValueFromPigeonTypedData($_ffiBridgePrefix.${_classNamePrefix}PigeonTypedData value) {
   final NSData data = value.data;
-  final int lengthInBytes = data.length;
-  if (lengthInBytes == 0) {
+  final ObjCObjectRef dataRef = data.object\$.ref;
+  try {
+    final int lengthInBytes = data.length;
+    if (lengthInBytes == 0) {
+      return switch (value.type) {
+        0 => Uint8List(0),
+        1 => Int32List(0),
+        2 => Int64List(0),
+        3 => Float32List(0),
+        4 => Float64List(0),
+        _ => throw ArgumentError.value(value),
+      };
+    }
+    final Pointer<Void> bytes = data.bytes;
     return switch (value.type) {
-      0 => Uint8List(0),
-      1 => Int32List(0),
-      2 => Int64List(0),
-      3 => Float32List(0),
-      4 => Float64List(0),
+      0 => Uint8List.fromList(bytes.cast<Uint8>().asTypedList(lengthInBytes)),
+      1 => Int32List.fromList(
+        bytes.cast<Int32>().asTypedList(lengthInBytes ~/ 4),
+      ),
+      2 => Int64List.fromList(
+        bytes.cast<Int64>().asTypedList(lengthInBytes ~/ 8),
+      ),
+      3 => Float32List.fromList(
+        bytes.cast<Float>().asTypedList(lengthInBytes ~/ 4),
+      ),
+      4 => Float64List.fromList(
+        bytes.cast<Double>().asTypedList(lengthInBytes ~/ 8),
+      ),
       _ => throw ArgumentError.value(value),
     };
+  } finally {
+    dataRef.release();
   }
-  final Pointer<Void> bytes = data.bytes;
-  final Object result = switch (value.type) {
-    0 => Uint8List.fromList(bytes.cast<Uint8>().asTypedList(lengthInBytes)),
-    1 => Int32List.fromList(
-      bytes.cast<Int32>().asTypedList(lengthInBytes ~/ 4),
-    ),
-    2 => Int64List.fromList(
-      bytes.cast<Int64>().asTypedList(lengthInBytes ~/ 8),
-    ),
-    3 => Float32List.fromList(
-      bytes.cast<Float>().asTypedList(lengthInBytes ~/ 4),
-    ),
-    4 => Float64List.fromList(
-      bytes.cast<Double>().asTypedList(lengthInBytes ~/ 8),
-    ),
-    _ => throw ArgumentError.value(value),
-  };
-  // `bytes` is owned by `data`, which is released by a finalizer once it is
-  // unreachable. Using `data` after the copy keeps it alive until the copy
-  // above has completed.
-  if (data.length != lengthInBytes) {
-    throw StateError('PigeonTypedData changed while being read.');
-  }
-  return result;
 }
     ''');
   }
