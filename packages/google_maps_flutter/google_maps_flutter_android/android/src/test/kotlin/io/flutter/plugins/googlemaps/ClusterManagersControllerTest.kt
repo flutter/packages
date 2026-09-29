@@ -11,7 +11,6 @@ import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLng
 import com.google.maps.android.clustering.Cluster
-import com.google.maps.android.clustering.ClusterManager
 import com.google.maps.android.clustering.algo.StaticCluster
 import com.google.maps.android.collections.MarkerManager
 import io.flutter.plugin.common.BinaryMessenger
@@ -63,21 +62,13 @@ class ClusterManagersControllerTest {
     val latLng1 = LatLng(1.1, 2.2)
     val latLng2 = LatLng(3.3, 4.4)
 
-    val location1: MutableList<Double?> = ArrayList<Double?>()
-    location1.add(latLng1.latitude)
-    location1.add(latLng1.longitude)
-
-    val location2: MutableList<Double?> = ArrayList<Double?>()
-    location2.add(latLng2.latitude)
-    location2.add(latLng2.longitude)
+    val location1 = listOf(latLng1.latitude, latLng1.longitude)
+    val location2 = listOf(latLng2.latitude, latLng2.longitude)
 
     whenever(googleMap!!.getCameraPosition())
         .thenReturn(CameraPosition.builder().target(LatLng(0.0, 0.0)).build())
     val initialClusterManager = PlatformClusterManager(clusterManagerId)
-    val clusterManagersToAdd: MutableList<PlatformClusterManager?> =
-        ArrayList<PlatformClusterManager?>()
-    clusterManagersToAdd.add(initialClusterManager)
-    controller!!.addClusterManagers(clusterManagersToAdd)
+    controller!!.addClusterManagers(listOf(initialClusterManager))
 
     val markerBuilder1 = MarkerBuilder(markerId1, clusterManagerId, PlatformMarkerType.MARKER)
     val markerBuilder2 = MarkerBuilder(markerId2, clusterManagerId, PlatformMarkerType.MARKER)
@@ -98,10 +89,8 @@ class ClusterManagersControllerTest {
 
     val cluster: Cluster<MarkerBuilder> = clusters.iterator().next()
     Assert.assertNotNull("Cluster position should not be null", cluster.getPosition())
-    val markerIds: MutableSet<String?> = HashSet<String?>()
-    for (marker in cluster.getItems()) {
-      markerIds.add(marker.markerId())
-    }
+    val markerIds: Set<String> =
+        cluster.getItems().map { marker: MarkerBuilder -> marker.markerId() }.toSet()
     Assert.assertTrue("Marker IDs should contain markerId1", markerIds.contains(markerId1))
     Assert.assertTrue("Marker IDs should contain markerId2", markerIds.contains(markerId2))
     Assert.assertEquals("Cluster should contain exactly 2 markers", 2, cluster.getSize().toLong())
@@ -125,16 +114,10 @@ class ClusterManagersControllerTest {
     advancedController.init(googleMap, markerManager)
 
     val initialClusterManager1 = PlatformClusterManager(defaultClusterManagerId)
-    val clusterManagersToAdd1: MutableList<PlatformClusterManager?> =
-        ArrayList<PlatformClusterManager?>()
-    clusterManagersToAdd1.add(initialClusterManager1)
-    defaultController.addClusterManagers(clusterManagersToAdd1)
+    defaultController.addClusterManagers(listOf(initialClusterManager1))
 
     val initialClusterManager2 = PlatformClusterManager(advancedClusterManagerId)
-    val clusterManagersToAdd2: MutableList<PlatformClusterManager?> =
-        ArrayList<PlatformClusterManager?>()
-    clusterManagersToAdd2.add(initialClusterManager2)
-    advancedController.addClusterManagers(clusterManagersToAdd2)
+    advancedController.addClusterManagers(listOf(initialClusterManager2))
 
     val defaultMarkerBuilder =
         MarkerBuilder(defaultMarkerId, defaultClusterManagerId, PlatformMarkerType.MARKER)
@@ -147,13 +130,11 @@ class ClusterManagersControllerTest {
     advancedMarkerBuilder.setPosition(LatLng(20.0, 10.0))
     advancedController.addItem(advancedMarkerBuilder)
 
-    val clusterManager1: ClusterManager<*>? =
-        defaultController.clusterManagerIdToManager.get(defaultClusterManagerId)
+    val clusterManager1 = defaultController.clusterManagerIdToManager.get(defaultClusterManagerId)
     Assert.assertNotNull(clusterManager1)
     Assert.assertSame(MarkerClusterRenderer::class.java, clusterManager1!!.getRenderer().javaClass)
 
-    val clusterManager2: ClusterManager<*>? =
-        advancedController.clusterManagerIdToManager.get(advancedClusterManagerId)
+    val clusterManager2 = advancedController.clusterManagerIdToManager.get(advancedClusterManagerId)
     Assert.assertNotNull(clusterManager2)
     Assert.assertSame(
         AdvancedMarkerClusterRenderer::class.java, clusterManager2!!.getRenderer().javaClass)
@@ -166,7 +147,7 @@ class ClusterManagersControllerTest {
     val markerPosition1 = LatLng(43.05, -87.95)
     val markerPosition2 = LatLng(43.02, -87.92)
 
-    val cluster = StaticCluster<MarkerBuilder?>(clusterPosition)
+    val cluster = StaticCluster<MarkerBuilder>(clusterPosition)
 
     val marker1 = MarkerBuilder("m_1", clusterManagerId, PlatformMarkerType.MARKER)
     marker1.setPosition(markerPosition1)
@@ -187,24 +168,22 @@ class ClusterManagersControllerTest {
     whenever(googleMap!!.getCameraPosition())
         .thenReturn(CameraPosition.builder().target(LatLng(0.0, 0.0)).build())
     val initialClusterManager = PlatformClusterManager(clusterManagerId)
-    val clusterManagersToAdd: MutableList<PlatformClusterManager?> =
-        ArrayList<PlatformClusterManager?>()
-    clusterManagersToAdd.add(initialClusterManager)
+    val clusterManagersToAdd = listOf(initialClusterManager)
     controller!!.addClusterManagers(clusterManagersToAdd)
 
     // Verify that fetching the cluster data success and therefore ClusterManager is added.
     controller!!.getClustersWithClusterManagerId(clusterManagerId)
 
-    controller!!.removeClusterManagers(mutableListOf<String?>(clusterManagerId))
+    controller!!.removeClusterManagers(listOf(clusterManagerId))
     // Verify that fetching the cluster data fails and therefore ClusterManager is removed.
-    Assert.assertThrows<FlutterError?>(
+    Assert.assertThrows(
         FlutterError::class.java,
         ThrowingRunnable { controller!!.getClustersWithClusterManagerId(clusterManagerId) })
   }
 
   private fun createPlatformMarker(
       markerId: String,
-      location: MutableList<Double?>,
+      location: List<Double>,
       clusterManagerId: String?
   ): PlatformMarker {
     val fakeBitmap = Bitmap.createBitmap(1, 1, Bitmap.Config.ARGB_8888)

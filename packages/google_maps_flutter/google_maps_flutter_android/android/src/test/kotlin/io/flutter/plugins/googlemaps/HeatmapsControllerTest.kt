@@ -7,7 +7,6 @@ import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.model.TileOverlay
 import com.google.android.gms.maps.model.TileOverlayOptions
 import com.google.maps.android.heatmaps.HeatmapTileProvider
-import java.util.List
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -37,8 +36,7 @@ class HeatmapsControllerTest {
     val heatmap = mock<HeatmapTileProvider>()
 
     val googleHeatmapId = "abc123"
-    val heatmapData =
-        List.of<PlatformWeightedLatLng?>(PlatformWeightedLatLng(PlatformLatLng(1.1, 2.2), 3.3))
+    val heatmapData = listOf(PlatformWeightedLatLng(PlatformLatLng(1.1, 2.2), 3.3))
     val radius: Long = 20
 
     whenever(googleMap!!.addTileOverlay(any())).thenReturn(tileOverlay)
@@ -54,8 +52,7 @@ class HeatmapsControllerTest {
             radius, /* maxIntensity */
             null)
 
-    val heatmaps = mutableListOf<PlatformHeatmap?>(heatmap1)
-    controller!!.addHeatmaps(heatmaps)
+    controller!!.addHeatmaps(listOf(heatmap1))
 
     verify(googleMap, times(1))
         .addTileOverlay(
@@ -73,12 +70,10 @@ class HeatmapsControllerTest {
             radius, /* maxIntensity */
             null)
 
-    val heatmapUpdates = mutableListOf<PlatformHeatmap?>(heatmap2)
-
-    controller!!.changeHeatmaps(heatmapUpdates)
+    controller!!.changeHeatmaps(listOf(heatmap2))
     verify(heatmap, times(1)).setOpacity(opacity2)
 
-    controller!!.removeHeatmaps(mutableListOf<String?>(googleHeatmapId))
+    controller!!.removeHeatmaps(listOf(googleHeatmapId))
 
     verify(tileOverlay, times(1)).remove()
   }

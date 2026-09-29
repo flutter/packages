@@ -17,7 +17,6 @@ import com.google.maps.android.collections.MarkerManager
 import io.flutter.plugin.common.BinaryMessenger
 import io.flutter.plugins.googlemaps.Convert.BitmapDescriptorFactoryWrapper
 import java.io.ByteArrayOutputStream
-import java.util.Objects
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert
 import org.junit.Before
@@ -51,7 +50,7 @@ class MarkersControllerTest {
 
   @Before
   fun setUp() {
-    assetManager = ApplicationProvider.getApplicationContext<Context?>().getAssets()
+    assetManager = ApplicationProvider.getApplicationContext<Context>().getAssets()
     context = ApplicationProvider.getApplicationContext<Context>()
     flutterApi = spy(MapsCallbackApi(mock<BinaryMessenger>(), ""))
     clusterManagersController =
@@ -81,8 +80,7 @@ class MarkersControllerTest {
 
     val latLng = LatLng(1.1, 2.2)
 
-    val markers =
-        mutableListOf<PlatformMarker?>(defaultMarkerBuilder().setMarkerId(googleMarkerId).build())
+    val markers = listOf(defaultMarkerBuilder().setMarkerId(googleMarkerId).build())
     controller!!.addMarkers(markers)
     controller!!.onMarkerDragStart(googleMarkerId, latLng)
 
@@ -100,8 +98,7 @@ class MarkersControllerTest {
 
     val latLng = LatLng(1.1, 2.2)
 
-    val markers =
-        mutableListOf<PlatformMarker?>(defaultMarkerBuilder().setMarkerId(googleMarkerId).build())
+    val markers = listOf(defaultMarkerBuilder().setMarkerId(googleMarkerId).build())
     controller!!.addMarkers(markers)
     controller!!.onMarkerDragEnd(googleMarkerId, latLng)
 
@@ -119,8 +116,7 @@ class MarkersControllerTest {
 
     val latLng = LatLng(1.1, 2.2)
 
-    val markers =
-        mutableListOf<PlatformMarker?>(defaultMarkerBuilder().setMarkerId(googleMarkerId).build())
+    val markers = listOf(defaultMarkerBuilder().setMarkerId(googleMarkerId).build())
 
     controller!!.addMarkers(markers)
     controller!!.onMarkerDrag(googleMarkerId, latLng)
@@ -130,7 +126,7 @@ class MarkersControllerTest {
 
   @Test(expected = NullPointerException::class)
   fun controller_AddMarkerThrowsErrorIfMarkerIdIsNull() {
-    val markers = mutableListOf<PlatformMarker?>(defaultMarkerBuilder().build())
+    val markers = listOf(defaultMarkerBuilder().build())
     try {
       controller!!.addMarkers(markers)
     } catch (e: NullPointerException) {
@@ -158,11 +154,11 @@ class MarkersControllerTest {
     val addedMarkerBuilder = arrayOfNulls<MarkerBuilder>(1)
 
     // Add marker and verify addItems is called with correct parameters
-    controller!!.addMarkers(mutableListOf<PlatformMarker?>(builder.build()))
+    controller!!.addMarkers(listOf(builder.build()))
     verify(clusterManagersController, times(1))
         .addItems(
             eq(clusterManagerId),
-            argThat { markerBuilders: MutableList<MarkerBuilder?>? ->
+            argThat { markerBuilders ->
               if (markerBuilders!!.size == 1 &&
                   markerBuilders.get(0)!!.clusterManagerId() == clusterManagerId) {
                 // Store reference for later use in onClusterItemRendered
@@ -180,18 +176,18 @@ class MarkersControllerTest {
     val latLng2 = LatLng(3.3, 4.4)
 
     builder.setPosition(PlatformLatLng(latLng2.latitude, latLng2.longitude))
-    val updatedMarkers = mutableListOf<PlatformMarker?>(builder.build())
+    val updatedMarkers = listOf(builder.build())
 
     controller!!.changeMarkers(updatedMarkers)
     verify(marker, times(1)).setPosition(latLng2)
 
     // Remove marker
-    controller!!.removeMarkers(mutableListOf<String?>(googleMarkerId))
+    controller!!.removeMarkers(listOf(googleMarkerId))
 
     verify(clusterManagersController, times(1))
         .removeItems(
             eq(clusterManagerId),
-            argThat { PlatformMarkerBuilders: MutableList<MarkerBuilder?>? ->
+            argThat { PlatformMarkerBuilders ->
               PlatformMarkerBuilders!!.size == 1 &&
                   (PlatformMarkerBuilders.get(0)!!.clusterManagerId() == clusterManagerId)
             })
@@ -211,7 +207,7 @@ class MarkersControllerTest {
 
     val builder: PlatformMarkerBuilder = defaultMarkerBuilder()
     builder.setMarkerId(googleMarkerId)
-    controller!!.addMarkers(mutableListOf<PlatformMarker?>(builder.build()))
+    controller!!.addMarkers(listOf(builder.build()))
 
     // clusterManagersController should not be called when adding the marker
     verify(clusterManagersController, times(0)).addItem(any())
@@ -220,11 +216,11 @@ class MarkersControllerTest {
 
     val alpha = 0.1f
 
-    val markerUpdates = mutableListOf<PlatformMarker?>(builder.setAlpha(alpha.toDouble()).build())
+    val markerUpdates = listOf(builder.setAlpha(alpha.toDouble()).build())
     controller!!.changeMarkers(markerUpdates)
     verify(marker, times(1)).setAlpha(alpha)
 
-    controller!!.removeMarkers(mutableListOf<String?>(googleMarkerId))
+    controller!!.removeMarkers(listOf(googleMarkerId))
 
     // clusterManagersController should not be called when removing the marker
     verify(clusterManagersController, times(0)).removeItem(any())
@@ -274,7 +270,7 @@ class MarkersControllerTest {
     val clusterManagerId = "cm123"
 
     // Create multiple markers with the same cluster manager
-    val markers: MutableList<PlatformMarker?> = ArrayList<PlatformMarker?>()
+    val markers = mutableListOf<PlatformMarker>()
     for (i in 0..4) {
       val builder: PlatformMarkerBuilder = defaultMarkerBuilder()
       builder
@@ -291,9 +287,9 @@ class MarkersControllerTest {
     verify(clusterManagersController, times(1))
         .addItems(
             eq(clusterManagerId),
-            argThat { PlatformMarkerBuilders: MutableList<MarkerBuilder?>? ->
-              PlatformMarkerBuilders!!.size == 5 &&
-                  PlatformMarkerBuilders.stream().allMatch { mb: MarkerBuilder? ->
+            argThat { platformMarkerBuilders ->
+              platformMarkerBuilders!!.size == 5 &&
+                  platformMarkerBuilders.stream().allMatch { mb: MarkerBuilder? ->
                     mb!!.clusterManagerId() == clusterManagerId
                   }
             })
@@ -307,8 +303,8 @@ class MarkersControllerTest {
     val clusterManagerId = "cm123"
 
     // First add markers
-    val markers: MutableList<PlatformMarker?> = ArrayList<PlatformMarker?>()
-    val markerIds: MutableList<String?> = ArrayList<String?>()
+    val markers = mutableListOf<PlatformMarker>()
+    val markerIds = mutableListOf<String>()
     for (i in 0..4) {
       val markerId = "marker" + i
       markerIds.add(markerId)
@@ -329,9 +325,9 @@ class MarkersControllerTest {
     verify(clusterManagersController, times(1))
         .removeItems(
             eq(clusterManagerId),
-            argThat { PlatformMarkerBuilders: MutableList<MarkerBuilder?>? ->
-              PlatformMarkerBuilders!!.size == 5 &&
-                  PlatformMarkerBuilders.stream().allMatch { mb: MarkerBuilder? ->
+            argThat { platformMarkerBuilders ->
+              platformMarkerBuilders!!.size == 5 &&
+                  platformMarkerBuilders.stream().allMatch { mb: MarkerBuilder? ->
                     mb!!.clusterManagerId() == clusterManagerId
                   }
             })
@@ -346,7 +342,7 @@ class MarkersControllerTest {
     val clusterManagerId2 = "cm456"
 
     // First add markers to cluster manager 1
-    val initialMarkers: MutableList<PlatformMarker?> = ArrayList<PlatformMarker?>()
+    val initialMarkers = mutableListOf<PlatformMarker>()
     for (i in 0..4) {
       val builder: PlatformMarkerBuilder = defaultMarkerBuilder()
       builder
@@ -361,7 +357,7 @@ class MarkersControllerTest {
     reset(clusterManagersController)
 
     // Now change all markers to cluster manager 2
-    val changedMarkers: MutableList<PlatformMarker?> = ArrayList<PlatformMarker?>()
+    val changedMarkers = mutableListOf<PlatformMarker>()
     for (i in 0..4) {
       val builder: PlatformMarkerBuilder = defaultMarkerBuilder()
       builder
@@ -377,9 +373,9 @@ class MarkersControllerTest {
     verify(clusterManagersController, times(1))
         .removeItems(
             eq(clusterManagerId1),
-            argThat { PlatformMarkerBuilders: MutableList<MarkerBuilder?>? ->
-              PlatformMarkerBuilders!!.size == 5 &&
-                  PlatformMarkerBuilders.stream().allMatch { mb: MarkerBuilder? ->
+            argThat { platformMarkerBuilders ->
+              platformMarkerBuilders!!.size == 5 &&
+                  platformMarkerBuilders.stream().allMatch { mb: MarkerBuilder? ->
                     mb!!.clusterManagerId() == clusterManagerId1
                   }
             })
@@ -389,9 +385,9 @@ class MarkersControllerTest {
     verify(clusterManagersController, times(1))
         .addItems(
             eq(clusterManagerId2),
-            argThat { PlatformMarkerBuilders: MutableList<MarkerBuilder?>? ->
-              PlatformMarkerBuilders!!.size == 5 &&
-                  PlatformMarkerBuilders.stream().allMatch { mb: MarkerBuilder? ->
+            argThat { platformMarkerBuilders ->
+              platformMarkerBuilders!!.size == 5 &&
+                  platformMarkerBuilders.stream().allMatch { mb: MarkerBuilder? ->
                     mb!!.clusterManagerId() == clusterManagerId2
                   }
             })
@@ -415,7 +411,7 @@ class MarkersControllerTest {
         .setMarkerId(markerId)
         .setClusterManagerId(clusterManagerId)
         .setPosition(PlatformLatLng(1.0, 2.0))
-    controller!!.addMarkers(mutableListOf<PlatformMarker?>(builder.build()))
+    controller!!.addMarkers(listOf(builder.build()))
 
     // Capture the PlatformMarkerBuilder passed to addItems
     val captor = argumentCaptor<List<MarkerBuilder>>()
@@ -431,7 +427,7 @@ class MarkersControllerTest {
     // Change marker in place (same clusterManagerId)
     val newLatLng = LatLng(3.0, 4.0)
     builder.setPosition(PlatformLatLng(newLatLng.latitude, newLatLng.longitude))
-    controller!!.changeMarkers(mutableListOf<PlatformMarker?>(builder.build()))
+    controller!!.changeMarkers(listOf(builder.build()))
 
     // In-place update: marker position is updated directly
     verify(marker, times(1)).setPosition(newLatLng)
@@ -530,20 +526,20 @@ class MarkersControllerTest {
 
     fun build(): PlatformMarker {
       return PlatformMarker(
-          Objects.requireNonNull<Double?>(alpha),
-          Objects.requireNonNull<PlatformDoublePair?>(anchor),
-          Objects.requireNonNull<Boolean?>(consumeTapEvents),
-          Objects.requireNonNull<Boolean?>(draggable),
-          Objects.requireNonNull<Boolean?>(flat),
-          Objects.requireNonNull<PlatformBitmap?>(icon),
-          Objects.requireNonNull<PlatformInfoWindow?>(infoWindow),
-          Objects.requireNonNull<PlatformLatLng?>(position),
-          Objects.requireNonNull<Double?>(rotation),
-          Objects.requireNonNull<Boolean?>(visible),
-          Objects.requireNonNull<Double?>(zIndex),
-          Objects.requireNonNull<String?>(markerId),
+          alpha!!,
+          anchor!!,
+          consumeTapEvents!!,
+          draggable!!,
+          flat!!,
+          icon!!,
+          infoWindow!!,
+          position!!,
+          rotation!!,
+          visible!!,
+          zIndex!!,
+          markerId!!,
           clusterManagerId,
-          Objects.requireNonNull<PlatformMarkerCollisionBehavior?>(collisionBehavior))
+          collisionBehavior!!)
     }
   }
 

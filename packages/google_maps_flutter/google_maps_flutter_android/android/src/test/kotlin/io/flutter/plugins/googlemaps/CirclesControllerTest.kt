@@ -29,13 +29,11 @@ class CirclesControllerTest {
 
     val id = "a_circle"
 
-    controller.addCircles(
-        mutableListOf<PlatformCircle?>(createCircle(id, /* consumesEvents */ false)))
+    controller.addCircles(listOf(createCircle(id, /* consumesEvents */ false)))
     // There should be exactly one circle.
     Assert.assertEquals(1, controller.circleIdToController.size.toLong())
 
-    controller.changeCircles(
-        mutableListOf<PlatformCircle?>(createCircle(id, /* consumesEvents */ true)))
+    controller.changeCircles(listOf(createCircle(id, /* consumesEvents */ true)))
     // There should still only be one circle, and it should be updated.
     Assert.assertEquals(1, controller.circleIdToController.size.toLong())
     verify(circle, times(1)).setClickable(true)

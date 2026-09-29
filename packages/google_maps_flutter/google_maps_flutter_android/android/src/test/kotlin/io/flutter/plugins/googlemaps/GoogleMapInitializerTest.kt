@@ -28,7 +28,7 @@ class GoogleMapInitializerTest {
 
   @Before
   fun before() {
-    val context = ApplicationProvider.getApplicationContext<Context?>()
+    val context = ApplicationProvider.getApplicationContext<Context>()
     googleMapInitializer = spy(GoogleMapInitializer(context, mockMessenger))
   }
 

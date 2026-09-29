@@ -83,8 +83,7 @@ class GroundOverlaysControllerTest {
     whenever(googleMap!!.addGroundOverlay(any())).thenReturn(groundOverlay)
 
     controller!!.addGroundOverlays(
-        mutableListOf<PlatformGroundOverlay?>(
-            createGroundOverlay(googleGroundOverlayId, transparency.toDouble())))
+        listOf(createGroundOverlay(googleGroundOverlayId, transparency.toDouble())))
     verify(googleMap, times(1))
         .addGroundOverlay(
             argThat { argument: GroundOverlayOptions? ->
@@ -93,11 +92,10 @@ class GroundOverlaysControllerTest {
 
     val newTransparency = 0.2f
     controller!!.changeGroundOverlays(
-        mutableListOf<PlatformGroundOverlay?>(
-            createGroundOverlay(googleGroundOverlayId, newTransparency.toDouble())))
+        listOf(createGroundOverlay(googleGroundOverlayId, newTransparency.toDouble())))
     verify(groundOverlay, times(1)).setTransparency(newTransparency)
 
-    controller!!.removeGroundOverlays(mutableListOf<String?>(googleGroundOverlayId))
+    controller!!.removeGroundOverlays(listOf(googleGroundOverlayId))
 
     verify(groundOverlay, times(1)).remove()
   }

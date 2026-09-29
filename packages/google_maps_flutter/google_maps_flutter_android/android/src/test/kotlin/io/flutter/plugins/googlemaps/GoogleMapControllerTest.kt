@@ -15,7 +15,6 @@ import com.google.android.gms.maps.model.MapCapabilities
 import com.google.android.gms.maps.model.Marker
 import com.google.android.gms.maps.model.PointOfInterest
 import io.flutter.plugin.common.BinaryMessenger
-import java.util.List
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert
 import org.junit.Before
@@ -64,7 +63,7 @@ class GoogleMapControllerTest {
 
   @Before
   fun before() {
-    context = ApplicationProvider.getApplicationContext<Context?>()
+    context = ApplicationProvider.getApplicationContext()
     setUpActivityLegacy()
   }
 
@@ -212,10 +211,7 @@ class GoogleMapControllerTest {
   fun SetInitialClusterManagers() {
     val googleMapController = googleMapControllerWithMockedDependencies
     val initialClusterManager = PlatformClusterManager("cm_1")
-    val initialClusterManagers: MutableList<PlatformClusterManager?> =
-        ArrayList<PlatformClusterManager?>()
-    initialClusterManagers.add(initialClusterManager)
-    googleMapController.setInitialClusterManagers(initialClusterManagers)
+    googleMapController.setInitialClusterManagers(listOf(initialClusterManager))
     googleMapController.onMapReady(mockGoogleMap!!)
 
     // Verify if the ClusterManagersController.addClusterManagers method is called with initial
@@ -275,7 +271,7 @@ class GoogleMapControllerTest {
   fun SetInitialHeatmaps() {
     val googleMapController = googleMapControllerWithMockedDependencies
 
-    val initialHeatmaps = List.of<PlatformHeatmap?>(createHeatmap("hm_1"))
+    val initialHeatmaps = listOf(createHeatmap("hm_1"))
     googleMapController.setInitialHeatmaps(initialHeatmaps)
     googleMapController.onMapReady(mockGoogleMap!!)
 
@@ -361,8 +357,7 @@ class GoogleMapControllerTest {
   }
 
   private fun createHeatmap(id: String): PlatformHeatmap {
-    val heatmapData =
-        List.of<PlatformWeightedLatLng?>(PlatformWeightedLatLng(PlatformLatLng(1.1, 2.2), 3.3))
+    val heatmapData = listOf(PlatformWeightedLatLng(PlatformLatLng(1.1, 2.2), 3.3))
     return PlatformHeatmap(id, heatmapData, null, /* opacity */ 1.0, /* radius */ 20, null)
   }
 }

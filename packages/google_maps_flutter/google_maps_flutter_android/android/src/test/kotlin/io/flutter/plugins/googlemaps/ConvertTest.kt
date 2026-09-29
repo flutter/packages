@@ -17,8 +17,6 @@ import com.google.maps.android.heatmaps.WeightedLatLng
 import com.google.maps.android.projection.SphericalMercatorProjection
 import io.flutter.plugins.googlemaps.Convert.BitmapDescriptorFactoryWrapper
 import io.flutter.plugins.googlemaps.Convert.FlutterInjectorWrapper
-import java.util.List
-import java.util.Objects
 import org.junit.Assert
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -51,7 +49,7 @@ class ConvertTest {
     val latitude = 43.03725568057
     val longitude = -87.90466904649
     val platLng = PlatformLatLng(latitude, longitude)
-    val latLngs = Convert.pointsFromPigeon(mutableListOf<PlatformLatLng?>(platLng))
+    val latLngs = Convert.pointsFromPigeon(listOf(platLng))
     val latLng = latLngs.get(0)
     Assert.assertEquals(latitude, latLng.latitude, 1e-15)
     Assert.assertEquals(longitude, latLng.longitude, 1e-15)
@@ -64,7 +62,7 @@ class ConvertTest {
     val markerPosition1 = LatLng(43.05, -87.95)
     val markerPosition2 = LatLng(43.02, -87.92)
 
-    val cluster = StaticCluster<MarkerBuilder?>(clusterPosition)
+    val cluster = StaticCluster<MarkerBuilder>(clusterPosition)
 
     val marker1 = MarkerBuilder("m_1", clusterManagerId, PlatformMarkerType.MARKER)
     marker1.setPosition(markerPosition1)
@@ -560,9 +558,7 @@ class ConvertTest {
   @Test
   fun ConvertToWeightedDataReturnsCorrectData() {
     val intensity = 3.3
-    val data =
-        List.of<PlatformWeightedLatLng?>(
-            PlatformWeightedLatLng(PlatformLatLng(1.1, 2.2), intensity))
+    val data = listOf(PlatformWeightedLatLng(PlatformLatLng(1.1, 2.2), intensity))
     val point: Point = sProjection.toPoint(LatLng(1.1, 2.2))
 
     val result = Convert.weightedDataFromPigeon(data)
@@ -579,12 +575,12 @@ class ConvertTest {
     val color2: Long = 1
     val color3: Long = 2
     val colorData =
-        List.of<PlatformColor?>(
+        listOf(
             createPlatformColor(color1), createPlatformColor(color2), createPlatformColor(color3))
     val startPoint1 = 0.0
     val startPoint2 = 1.0
     val startPoint3 = 2.0
-    val startPointData = List.of<Double?>(startPoint1, startPoint2, startPoint3)
+    val startPointData = listOf(startPoint1, startPoint2, startPoint3)
     val colorMapSize: Long = 3
     val data = PlatformHeatmapGradient(colorData, startPointData, colorMapSize)
 
@@ -605,20 +601,19 @@ class ConvertTest {
   fun ConvertInterpretHeatmapOptionsReturnsCorrectData() {
     val intensity = 3.3
     val dataData =
-        List.of<PlatformWeightedLatLng?>(
-            PlatformWeightedLatLng(PlatformLatLng(1.1, 2.2), intensity))
+        listOf<PlatformWeightedLatLng>(PlatformWeightedLatLng(PlatformLatLng(1.1, 2.2), intensity))
     val point: Point = sProjection.toPoint(LatLng(1.1, 2.2))
 
     val color1: Long = 0
     val color2: Long = 1
     val color3: Long = 2
     val colorData =
-        List.of<PlatformColor?>(
+        listOf(
             createPlatformColor(color1), createPlatformColor(color2), createPlatformColor(color3))
     val startPoint1 = 0.0
     val startPoint2 = 1.0
     val startPoint3 = 2.0
-    val startPointData = List.of<Double?>(startPoint1, startPoint2, startPoint3)
+    val startPointData = listOf(startPoint1, startPoint2, startPoint3)
     val colorMapSize: Long = 3
     val gradientData = PlatformHeatmapGradient(colorData, startPointData, colorMapSize)
 
@@ -936,7 +931,7 @@ class ConvertTest {
           trafficEnabled,
           buildingsEnabled,
           liteModeEnabled,
-          Objects.requireNonNull<PlatformMarkerType?>(markerType),
+          markerType!!,
           mapId,
           style)
     }
@@ -948,13 +943,13 @@ class ConvertTest {
 }
 
 internal class MockHeatmapBuilder : HeatmapOptionsSink {
-  private var weightedData: MutableList<WeightedLatLng?>? = null
+  private var weightedData: MutableList<WeightedLatLng>? = null
   private var gradient: Gradient? = null
   private var maxIntensity = 0.0
   private var opacity = 0.0
   private var radius = 0
 
-  fun getWeightedData(): MutableList<WeightedLatLng?>? {
+  fun getWeightedData(): MutableList<WeightedLatLng>? {
     return weightedData
   }
 
@@ -974,7 +969,7 @@ internal class MockHeatmapBuilder : HeatmapOptionsSink {
     return radius
   }
 
-  override fun setWeightedData(weightedData: MutableList<WeightedLatLng?>) {
+  override fun setWeightedData(weightedData: MutableList<WeightedLatLng>) {
     this.weightedData = weightedData
   }
 
