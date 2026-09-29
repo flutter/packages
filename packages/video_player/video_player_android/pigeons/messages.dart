@@ -83,6 +83,7 @@ class CreationOptions {
   Map<String, String> httpHeaders;
   String? userAgent;
   int? backBufferDurationMs;
+  String? preferredAudioLanguage;
 }
 
 class TexturePlayerIds {
