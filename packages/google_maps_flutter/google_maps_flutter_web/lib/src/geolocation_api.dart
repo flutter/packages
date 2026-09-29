@@ -6,17 +6,24 @@ part of '../google_maps_flutter_web.dart';
 
 /// A pure-Dart interface that Mockito can easily mock.
 abstract class GeolocationApi {
+  /// Whether the Geolocation API is available in the current browser.
+  bool get isAvailable;
+
   /// Watches the current position and calls [onSuccess] with the coordinates whenever they change.
   ///
-  /// [onError] is called if there is an error while watching the position.
-  int watchPosition(
+  /// [onError] is called if there is an error while watching the position,
+  /// or if the Geolocation API is not [isAvailable].
+  ///
+  /// Returns null if the Geolocation API is not [isAvailable].
+  int? watchPosition(
     void Function(double latitude, double longitude) onSuccess,
     void Function(dynamic error) onError,
   );
 
   /// Fetches the current position and calls [onSuccess] with the coordinates.
   ///
-  /// [onError] is called if there is an error while fetching the position.
+  /// [onError] is called if there is an error while fetching the position,
+  /// or if the Geolocation API is not [isAvailable].
   ///
   /// [timeoutMs] specifies the maximum time in milliseconds
   void getCurrentPosition(
@@ -31,14 +38,22 @@ abstract class GeolocationApi {
 
 /// The real implementation that uses package:web.
 class WebGeolocationApi implements GeolocationApi {
-  final web.Geolocation _geolocation = web.window.navigator.geolocation;
+  @override
+  bool get isAvailable => web.window.navigator.has('geolocation');
+
+  web.Geolocation? get _geolocation => isAvailable ? web.window.navigator.geolocation : null;
 
   @override
-  int watchPosition(
+  int? watchPosition(
     void Function(double latitude, double longitude) onSuccess,
     void Function(dynamic error) onError,
   ) {
-    return _geolocation.watchPosition(
+    if (_geolocation == null) {
+      onError('Geolocation API is not available.');
+      return null;
+    }
+
+    return _geolocation?.watchPosition(
       (web.GeolocationPosition location) {
         onSuccess(location.coords.latitude, location.coords.longitude);
       }.toJS,
@@ -55,7 +70,12 @@ class WebGeolocationApi implements GeolocationApi {
     void Function(dynamic error) onError, {
     int timeoutMs = 30000,
   }) {
-    _geolocation.getCurrentPosition(
+    if (_geolocation == null) {
+      onError('Geolocation API is not available.');
+      return;
+    }
+
+    _geolocation?.getCurrentPosition(
       (web.GeolocationPosition location) {
         onSuccess(location.coords.latitude, location.coords.longitude);
       }.toJS,
@@ -67,5 +87,5 @@ class WebGeolocationApi implements GeolocationApi {
   }
 
   @override
-  void clearWatch(int watchId) => _geolocation.clearWatch(watchId);
+  void clearWatch(int watchId) => _geolocation?.clearWatch(watchId);
 }

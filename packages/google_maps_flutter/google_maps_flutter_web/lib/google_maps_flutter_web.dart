@@ -7,6 +7,7 @@ library google_maps_flutter_web;
 import 'dart:async';
 import 'dart:convert';
 import 'dart:js_interop';
+import 'dart:js_interop_unsafe';
 import 'dart:ui_web' as ui_web;
 
 import 'package:collection/collection.dart';
