@@ -4,6 +4,8 @@
 
 import 'dart:async';
 
+import 'map_diagnostics.dart';
+
 /// Waits for a map-creation [future] (e.g. the value passed to `onMapCreated`).
 ///
 /// Integration tests have no default timeout, so a map that never becomes
@@ -11,8 +13,12 @@ import 'dart:async';
 /// `DriverError` with no test output.
 /// See https://github.com/flutter/flutter/issues/193452.
 Future<T> waitForMap<T>(Future<T> future) {
+  installMapDiagnostics();
   return future.timeout(
     const Duration(seconds: 30),
-    onTimeout: () => throw TimeoutException('The map never reported being ready.'),
+    onTimeout: () => throw TimeoutException(
+      'The map never reported being ready.\n'
+      'GM_DIAG: ${mapDiagnostics()}',
+    ),
   );
 }
