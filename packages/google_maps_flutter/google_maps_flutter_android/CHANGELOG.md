@@ -1,5 +1,10 @@
-## NEXT
+## 2.21.0
 
+* Switches to Pigeon's new 'suspend' support for platform communication.
+
+## 2.20.0
+
+* Adds support for tapping points of interest on the map.
 * Updates minimum supported SDK version to Flutter 3.41/Dart 3.11.
 
 ## 2.19.13

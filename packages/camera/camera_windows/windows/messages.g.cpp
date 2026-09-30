@@ -833,8 +833,12 @@ void CameraApi::SetUp(::flutter::BinaryMessenger* binary_messenger,
                 return;
               }
               const int64_t camera_id_arg = encodable_camera_id_arg.LongValue();
+              const auto& encodable_video_output_path_arg = args.at(1);
+              const auto* video_output_path_arg =
+                  std::get_if<std::string>(&encodable_video_output_path_arg);
               api->StartVideoRecording(
-                  camera_id_arg, [reply](std::optional<FlutterError>&& output) {
+                  camera_id_arg, video_output_path_arg,
+                  [reply](std::optional<FlutterError>&& output) {
                     if (output.has_value()) {
                       reply(WrapError(output.value()));
                       return;

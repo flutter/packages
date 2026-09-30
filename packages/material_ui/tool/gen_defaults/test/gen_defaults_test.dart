@@ -20,14 +20,14 @@ import '../templates/card_template.dart';
 import '../templates/checkbox_template.dart';
 import '../templates/chip_template.dart';
 import '../templates/color_scheme_template.dart';
-// import '../templates/date_picker_template.dart';
+import '../templates/date_picker_template.dart';
 import '../templates/dialog_template.dart';
-// import '../templates/divider_template.dart';
-// import '../templates/drawer_template.dart';
-// import '../templates/expansion_tile_template.dart';
-// import '../templates/fab_template.dart';
+import '../templates/divider_template.dart';
+import '../templates/drawer_template.dart';
+import '../templates/expansion_tile_template.dart';
+import '../templates/fab_template.dart';
 import '../templates/filter_chip_template.dart';
-// import '../templates/icon_button_template.dart';
+import '../templates/icon_button_template.dart' as icon_button;
 import '../templates/input_chip_template.dart';
 // import '../templates/input_decorator_template.dart';
 // import '../templates/list_tile_template.dart';
@@ -542,8 +542,20 @@ void main() {
     });
 
     test('DatePickerTemplateM3 emits M3 DatePicker defaults from tokens', () {
-      // Intentionally empty, will be implemented during migration. See:
-      // https://github.com/flutter/flutter/issues/187899
+      final String contents = _generateContents(const DatePickerTemplateM3());
+      expect(contents, contains('class _DatePickerDefaultsM3 extends DatePickerThemeData'));
+      expect(
+        contents,
+        contains(
+          'shape: const RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(28.0)))',
+        ),
+      );
+      expect(
+        contents,
+        contains('Color? get subHeaderForegroundColor => _colors.onSurface.withOpacity(0.6);'),
+      );
+      expect(contents, contains('_colors.onSurface.withOpacity(0.38)'));
+      expect(contents, contains('_colors.onPrimaryContainer.withOpacity(0.1)'));
     });
 
     test('DialogTemplateM3 emits M3 Dialog defaults from tokens', () {
@@ -568,23 +580,42 @@ void main() {
     });
 
     test('DividerTemplateM3 emits M3 Divider defaults from tokens', () {
-      // Intentionally empty, will be implemented during migration. See:
-      // https://github.com/flutter/flutter/issues/187899
+      final String contents = _generateContents(const DividerTemplateM3());
+      expect(contents, contains('class _DividerDefaultsM3 extends DividerThemeData'));
+      expect(contents, contains('thickness: 1.0'));
+      expect(
+        contents,
+        contains('Color? get color => Theme.of(context).colorScheme.outlineVariant;'),
+      );
     });
 
     test('DrawerTemplateM3 emits M3 Drawer defaults from tokens', () {
-      // Intentionally empty, will be implemented during migration. See:
-      // https://github.com/flutter/flutter/issues/187899
+      final String contents = _generateContents(const DrawerTemplateM3());
+      expect(contents, contains('class _DrawerDefaultsM3 extends DrawerThemeData'));
+      expect(contents, contains('elevation: 1.0'));
+      expect(
+        contents,
+        contains('Color? get backgroundColor => Theme.of(context).colorScheme.surfaceContainerLow'),
+      );
+      expect(contents, contains('ShapeBorder? get endShape => RoundedRectangleBorder('));
     });
 
     test('ExpansionTileTemplateM3 emits M3 ExpansionTile defaults from tokens', () {
-      // Intentionally empty, will be implemented during migration. See:
-      // https://github.com/flutter/flutter/issues/187899
+      final String contents = _generateContents(const ExpansionTileTemplateM3());
+      expect(contents, contains('class _ExpansionTileDefaultsM3 extends ExpansionTileThemeData'));
+      expect(contents, contains('Color? get textColor => _colors.onSurface'));
+      expect(contents, contains('Color? get iconColor => _colors.primary'));
+      expect(contents, contains('Color? get collapsedIconColor => _colors.onSurfaceVariant'));
     });
 
     test('FabTemplateM3 emits M3 Fab defaults from tokens', () {
-      // Intentionally empty, will be implemented during migration. See:
-      // https://github.com/flutter/flutter/issues/187899
+      const template = FabTemplateM3();
+      expect(template.className, '_FABDefaultsM3');
+
+      final String contents = _generateContents(template);
+      expect(contents, contains('Color? get backgroundColor => _colors.primaryContainer'));
+      expect(contents, contains(RegExp(r'_FloatingActionButtonType\.large\s+=> 36\.0')));
+      expect(contents, contains('TextStyle? get extendedTextStyle => _textTheme.labelLarge'));
     });
 
     test('FilterChipTemplateM3 emits M3 FilterChip defaults from tokens', () {
@@ -595,9 +626,52 @@ void main() {
       expect(contents, contains('BorderSide(color: _colors.outlineVariant)'));
     });
 
-    test('IconButtonTemplateM3 emits M3 IconButton defaults from tokens', () {
-      // Intentionally empty, will be implemented during migration. See:
-      // https://github.com/flutter/flutter/issues/187899
+    test('IconButtonTemplateM3E emits M3E IconButton defaults from tokens', () {
+      const template = icon_button.IconButtonTemplateM3E('Icon Button');
+      final String contents = _generateContents(template);
+      expect(contents, contains('class _IconButtonDefaultsM3E extends ButtonStyle'));
+      expect(contents, isNot(contains('class _FilledIconButtonDefaultsM3E extends ButtonStyle')));
+      expect(contents, contains('const WidgetStatePropertyAll<Color?>(Colors.transparent)'));
+    });
+
+    test('IconButtonTemplateM3E emits M3E FilledIconButton defaults from tokens', () {
+      const template = icon_button.IconButtonTemplateM3E('Filled Icon Button');
+      final String contents = _generateContents(template);
+      expect(contents, contains('class _FilledIconButtonDefaultsM3E extends ButtonStyle'));
+      expect(
+        contents,
+        isNot(contains('class _FilledTonalIconButtonDefaultsM3E extends ButtonStyle')),
+      );
+      expect(contents, contains('return _colors.primary;'));
+    });
+
+    test('IconButtonTemplateM3E emits M3E FilledTonalIconButton defaults from tokens', () {
+      const template = icon_button.IconButtonTemplateM3E('Filled Tonal Icon Button');
+      final String contents = _generateContents(template);
+      expect(contents, contains('class _FilledTonalIconButtonDefaultsM3E extends ButtonStyle'));
+      expect(contents, isNot(contains('class _OutlinedIconButtonDefaultsM3E extends ButtonStyle')));
+      expect(contents, contains('return _colors.secondaryContainer;'));
+    });
+
+    test('IconButtonTemplateM3E emits M3E OutlinedIconButton defaults from tokens', () {
+      const template = icon_button.IconButtonTemplateM3E('Outlined Icon Button');
+      final String contents = _generateContents(template);
+      expect(contents, contains('class _OutlinedIconButtonDefaultsM3E extends ButtonStyle'));
+      expect(contents, isNot(contains('class _IconButtonDefaultsM3E extends ButtonStyle')));
+      expect(contents, contains('WidgetStateProperty<BorderSide?>? get side'));
+    });
+
+    test('IconButtonTemplateM3E emits M3E color opacity with withValues', () {
+      for (final name in <String>[
+        'Icon Button',
+        'Filled Icon Button',
+        'Filled Tonal Icon Button',
+        'Outlined Icon Button',
+      ]) {
+        final String contents = _generateContents(icon_button.IconButtonTemplateM3E(name));
+        expect(contents, contains('.withValues(alpha:'));
+        expect(contents, isNot(contains('.withOpacity(')));
+      }
     });
 
     test('InputChipTemplateM3 emits M3 InputChip defaults from tokens', () {
