@@ -102,6 +102,7 @@ class QuickActionsTest {
     val mockActivityPluginBinding =
         mock<ActivityPluginBinding> { on { activity } doReturn mockMainActivity }
     plugin.onAttachedToActivity(mockActivityPluginBinding)
+    testBinaryMessenger.launchActionCalled = false
 
     // Act
     val onNewIntentReturn = plugin.onNewIntent(mockIntent)
