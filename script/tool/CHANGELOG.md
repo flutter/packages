@@ -1,3 +1,8 @@
+## 0.14.4+2
+
+* Adds an `in-flight-release-check` command, which reports whether an earlier
+  batch release for a package hasn't been merged back yet.
+
 ## 0.14.4+1
 
 * Adds support for batch release of pre-1.0 packages.

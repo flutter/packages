@@ -24,7 +24,7 @@ class _OutlinedCardDefaultsM3 extends CardThemeData {
   Color? get surfaceTintColor => Colors.transparent;
 
   @override
-  ShapeBorder? get shape => const RoundedRectangleBorder(
-    borderRadius: BorderRadius.all(Radius.circular(12.0)),
-  ).copyWith(side: BorderSide(color: _colors.outlineVariant));
+  ShapeBorder? get shape =>
+      const RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(12.0)))
+          .copyWith(side: BorderSide(color: _colors.outlineVariant));
 }
