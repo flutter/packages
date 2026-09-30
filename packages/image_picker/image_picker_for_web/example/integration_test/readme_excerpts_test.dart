@@ -3,10 +3,9 @@
 // found in the LICENSE file.
 
 import 'dart:convert';
-import 'dart:typed_data';
 
-import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:image_picker_for_web_integration_tests/readme_excerpts.dart';
 import 'package:image_picker_platform_interface/image_picker_platform_interface.dart';
@@ -56,5 +55,10 @@ XFile createXFileWeb() {
 
 /// Pumps an [image] widget into a [tester].
 Future<void> pumpImage(WidgetTester tester, Image image) async {
-  await tester.pumpWidget(MaterialApp(home: Scaffold(body: image)));
+  await tester.pumpWidget(
+    Directionality(
+      textDirection: TextDirection.ltr,
+      child: Center(child: image),
+    ),
+  );
 }
