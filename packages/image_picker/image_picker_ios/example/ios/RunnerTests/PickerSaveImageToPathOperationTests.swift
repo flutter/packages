@@ -24,12 +24,9 @@ struct PickerSaveImageToPathOperationTests {
 
   /// Runs a save operation and returns the `savedPathBlock` arguments.
   ///
-  /// Swift Testing `confirmation` does not wait after its body returns, so the
-  /// operation is awaited with a continuation. `#expect` inside `savedPathBlock`
-  /// is not recorded on this test: the operation queue has no Swift Testing
-  /// task-local context, so a failure there does not fail `xcodebuild test`.
-  /// The block still stores the arguments because it runs before the operation
-  /// finishes.
+  /// The block resumes the continuation with those arguments. It runs on the
+  /// operation queue, before the operation is marked finished, so the values
+  /// are not stored across that boundary.
   private func runSaveOperation(
     result: PickerItem,
     maxHeight: NSNumber = 100,
@@ -37,29 +34,27 @@ struct PickerSaveImageToPathOperationTests {
     desiredImageQuality: NSNumber = 100,
     fullMetadata: Bool
   ) async throws -> (savedPath: String?, error: FlutterError?) {
-    nonisolated(unsafe) var savedPath: String?
-    nonisolated(unsafe) var savedError: FlutterError?
-    let operation = try #require(
-      FLTPHPickerSaveImageToPathOperation(
-        result: result,
-        maxHeight: maxHeight,
-        maxWidth: maxWidth,
-        desiredImageQuality: desiredImageQuality,
-        fullMetadata: fullMetadata,
-        savedPathBlock: { path, error in
-          savedPath = path
-          savedError = error
-        }))
-    await withCheckedContinuation { (continuation: CheckedContinuation<Void, Never>) in
-      let previous = operation.completionBlock
-      operation.completionBlock = {
-        previous?()
-        continuation.resume()
+    let outcome = await withCheckedContinuation {
+      (
+        continuation: CheckedContinuation<(savedPath: String?, error: FlutterError?)?, Never>
+      ) in
+      guard
+        let operation = FLTPHPickerSaveImageToPathOperation(
+          result: result,
+          maxHeight: maxHeight,
+          maxWidth: maxWidth,
+          desiredImageQuality: desiredImageQuality,
+          fullMetadata: fullMetadata,
+          savedPathBlock: { path, error in
+            continuation.resume(returning: (path, error))
+          })
+      else {
+        continuation.resume(returning: nil)
+        return
       }
       operation.start()
     }
-    #expect(operation.isFinished)
-    return (savedPath, savedError)
+    return try #require(outcome)
   }
 
   private func verifySavingImage(
