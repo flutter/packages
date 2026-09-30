@@ -10,7 +10,8 @@ import io.flutter.plugin.common.BinaryMessenger
 import kotlinx.coroutines.CoroutineStart
 import kotlinx.coroutines.async
 import kotlinx.coroutines.test.runTest
-import org.junit.Assert
+import org.junit.Assert.assertEquals
+import org.junit.Assert.assertNotNull
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -43,7 +44,7 @@ class GoogleMapInitializerTest {
         }
     googleMapInitializer.onMapsSdkInitialized(MapsInitializer.Renderer.LATEST)
 
-    Assert.assertEquals(PlatformRendererType.LATEST, type.await())
+    assertEquals(PlatformRendererType.LATEST, type.await())
   }
 
   @Suppress("deprecation")
@@ -58,7 +59,7 @@ class GoogleMapInitializerTest {
         }
     googleMapInitializer.onMapsSdkInitialized(MapsInitializer.Renderer.LEGACY)
 
-    Assert.assertEquals(PlatformRendererType.LEGACY, type.await())
+    assertEquals(PlatformRendererType.LEGACY, type.await())
   }
 
   @Test
@@ -70,6 +71,6 @@ class GoogleMapInitializerTest {
         }
     googleMapInitializer.onMapsSdkInitialized(MapsInitializer.Renderer.LATEST)
 
-    Assert.assertNotNull(type.await())
+    assertNotNull(type.await())
   }
 }

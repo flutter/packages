@@ -16,7 +16,11 @@ import com.google.android.gms.maps.model.Marker
 import com.google.android.gms.maps.model.PointOfInterest
 import io.flutter.plugin.common.BinaryMessenger
 import kotlinx.coroutines.test.runTest
-import org.junit.Assert
+import org.junit.Assert.assertEquals
+import org.junit.Assert.assertFalse
+import org.junit.Assert.assertNotNull
+import org.junit.Assert.assertNull
+import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -111,18 +115,18 @@ class GoogleMapControllerTest {
   fun disposeReleaseTheMap() {
     val googleMapController = googleMapController
     googleMapController.onMapReady(mockGoogleMap)
-    Assert.assertNotNull(googleMapController)
+    assertNotNull(googleMapController)
     googleMapController.dispose()
-    Assert.assertNull(googleMapController.view)
+    assertNull(googleMapController.view)
   }
 
   @Test
   fun onDestroyReleaseTheMap() {
     val googleMapController = googleMapController
     googleMapController.onMapReady(mockGoogleMap)
-    Assert.assertNotNull(googleMapController)
+    assertNotNull(googleMapController)
     googleMapController.onDestroy(activity)
-    Assert.assertNull(googleMapController.view)
+    assertNull(googleMapController.view)
   }
 
   @Test
@@ -139,10 +143,10 @@ class GoogleMapControllerTest {
   @Test
   fun setPaddingStoresThePaddingValuesInInInitialPaddingWhenGoogleMapIsNull() {
     val googleMapController = googleMapController
-    Assert.assertNull(googleMapController.initialPadding)
+    assertNull(googleMapController.initialPadding)
     googleMapController.setPadding(0f, 0f, 0f, 0f)
-    Assert.assertNotNull(googleMapController.initialPadding)
-    Assert.assertEquals(4, googleMapController.initialPadding.size)
+    assertNotNull(googleMapController.initialPadding)
+    assertEquals(4, googleMapController.initialPadding.size)
   }
 
   @Test
@@ -321,11 +325,11 @@ class GoogleMapControllerTest {
 
     val result = googleMapController.getCameraPosition()
 
-    Assert.assertEquals(cameraPosition.target.latitude, result.target.latitude, 1e-15)
-    Assert.assertEquals(cameraPosition.target.longitude, result.target.longitude, 1e-15)
-    Assert.assertEquals(cameraPosition.zoom.toDouble(), result.zoom, 1e-15)
-    Assert.assertEquals(cameraPosition.tilt.toDouble(), result.tilt, 1e-15)
-    Assert.assertEquals(cameraPosition.bearing.toDouble(), result.bearing, 1e-15)
+    assertEquals(cameraPosition.target.latitude, result.target.latitude, 1e-15)
+    assertEquals(cameraPosition.target.longitude, result.target.longitude, 1e-15)
+    assertEquals(cameraPosition.zoom.toDouble(), result.zoom, 1e-15)
+    assertEquals(cameraPosition.tilt.toDouble(), result.tilt, 1e-15)
+    assertEquals(cameraPosition.bearing.toDouble(), result.bearing, 1e-15)
   }
 
   @Test
@@ -335,10 +339,10 @@ class GoogleMapControllerTest {
 
     whenever(mockGoogleMap.mapCapabilities).thenReturn(mapCapabilities)
     whenever(mapCapabilities.isAdvancedMarkersAvailable).thenReturn(true)
-    Assert.assertTrue(googleMapController.isAdvancedMarkersAvailable())
+    assertTrue(googleMapController.isAdvancedMarkersAvailable())
 
     whenever(mapCapabilities.isAdvancedMarkersAvailable).thenReturn(false)
-    Assert.assertFalse(googleMapController.isAdvancedMarkersAvailable())
+    assertFalse(googleMapController.isAdvancedMarkersAvailable())
   }
 
   private fun createHeatmap(id: String): PlatformHeatmap {

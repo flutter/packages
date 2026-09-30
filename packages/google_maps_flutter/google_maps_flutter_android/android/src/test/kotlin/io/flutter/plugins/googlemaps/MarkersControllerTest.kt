@@ -18,7 +18,7 @@ import io.flutter.plugin.common.BinaryMessenger
 import io.flutter.plugins.googlemaps.Convert.BitmapDescriptorFactoryWrapper
 import java.io.ByteArrayOutputStream
 import kotlinx.coroutines.test.runTest
-import org.junit.Assert
+import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -130,7 +130,7 @@ class MarkersControllerTest {
     try {
       controller.addMarkers(markers)
     } catch (e: NullPointerException) {
-      Assert.assertEquals("markerId was null", e.message)
+      assertEquals("markerId was null", e.message)
       throw e
     }
   }
@@ -237,8 +237,8 @@ class MarkersControllerTest {
     Convert.interpretMarkerOptions(
         platformMarker, markerBuilder, assetManager, 1f, bitmapDescriptorFactoryWrapper)
     var markerOptions = markerBuilder.build()
-    Assert.assertEquals(AdvancedMarkerOptions::class.java, markerOptions.javaClass)
-    Assert.assertEquals(
+    assertEquals(AdvancedMarkerOptions::class.java, markerOptions.javaClass)
+    assertEquals(
         CollisionBehavior.REQUIRED, (markerOptions as AdvancedMarkerOptions).collisionBehavior)
 
     // Customized collision behavior of an AdvancedMarker
@@ -250,8 +250,8 @@ class MarkersControllerTest {
     Convert.interpretMarkerOptions(
         platformMarker, markerBuilder, assetManager, 1f, bitmapDescriptorFactoryWrapper)
     markerOptions = markerBuilder.build()
-    Assert.assertEquals(AdvancedMarkerOptions::class.java, markerOptions.javaClass)
-    Assert.assertEquals(
+    assertEquals(AdvancedMarkerOptions::class.java, markerOptions.javaClass)
+    assertEquals(
         CollisionBehavior.OPTIONAL_AND_HIDES_LOWER_PRIORITY,
         (markerOptions as AdvancedMarkerOptions).collisionBehavior)
 
@@ -261,7 +261,7 @@ class MarkersControllerTest {
     Convert.interpretMarkerOptions(
         platformMarker, markerBuilder, assetManager, 1f, bitmapDescriptorFactoryWrapper)
     markerOptions = markerBuilder.build()
-    Assert.assertEquals(MarkerOptions::class.java, markerOptions.javaClass)
+    assertEquals(MarkerOptions::class.java, markerOptions.javaClass)
   }
 
   @Test

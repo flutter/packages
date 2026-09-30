@@ -17,7 +17,10 @@ import com.google.maps.android.heatmaps.WeightedLatLng
 import com.google.maps.android.projection.SphericalMercatorProjection
 import io.flutter.plugins.googlemaps.Convert.BitmapDescriptorFactoryWrapper
 import io.flutter.plugins.googlemaps.Convert.FlutterInjectorWrapper
-import org.junit.Assert
+import org.junit.Assert.assertEquals
+import org.junit.Assert.assertNotNull
+import org.junit.Assert.assertNull
+import org.junit.Assert.fail
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.mockito.kotlin.any
@@ -51,8 +54,8 @@ class ConvertTest {
     val platLng = PlatformLatLng(latitude, longitude)
     val latLngs = Convert.pointsFromPigeon(listOf(platLng))
     val latLng = latLngs[0]
-    Assert.assertEquals(latitude, latLng.latitude, 1e-15)
-    Assert.assertEquals(longitude, latLng.longitude, 1e-15)
+    assertEquals(latitude, latLng.latitude, 1e-15)
+    assertEquals(longitude, latLng.longitude, 1e-15)
   }
 
   @Test
@@ -73,25 +76,25 @@ class ConvertTest {
     cluster.add(marker2)
 
     val result = Convert.clusterToPigeon(clusterManagerId, cluster)
-    Assert.assertEquals(clusterManagerId, result.clusterManagerId)
+    assertEquals(clusterManagerId, result.clusterManagerId)
 
     val position = result.position
-    Assert.assertEquals(clusterPosition.latitude, position.latitude, 1e-15)
-    Assert.assertEquals(clusterPosition.longitude, position.longitude, 1e-15)
+    assertEquals(clusterPosition.latitude, position.latitude, 1e-15)
+    assertEquals(clusterPosition.longitude, position.longitude, 1e-15)
 
     val bounds = result.bounds
     val southwest = bounds.southwest
     val northeast = bounds.northeast
     // bounding data should combine data from marker positions markerPosition1 and markerPosition2
-    Assert.assertEquals(markerPosition2.latitude, southwest.latitude, 1e-15)
-    Assert.assertEquals(markerPosition1.longitude, southwest.longitude, 1e-15)
-    Assert.assertEquals(markerPosition1.latitude, northeast.latitude, 1e-15)
-    Assert.assertEquals(markerPosition2.longitude, northeast.longitude, 1e-15)
+    assertEquals(markerPosition2.latitude, southwest.latitude, 1e-15)
+    assertEquals(markerPosition1.longitude, southwest.longitude, 1e-15)
+    assertEquals(markerPosition1.latitude, northeast.latitude, 1e-15)
+    assertEquals(markerPosition2.longitude, northeast.longitude, 1e-15)
 
     val markerIds = result.markerIds
-    Assert.assertEquals(2, markerIds.size)
-    Assert.assertEquals(marker1.markerId(), markerIds[0])
-    Assert.assertEquals(marker2.markerId(), markerIds[1])
+    assertEquals(2, markerIds.size)
+    assertEquals(marker1.markerId(), markerIds[0])
+    assertEquals(marker2.markerId(), markerIds[1])
   }
 
   @Test
@@ -117,7 +120,7 @@ class ConvertTest {
         Convert.getBitmapFromAsset(
             bitmap, assetManager, 1.0f, bitmapDescriptorFactoryWrapper, flutterInjectorWrapper)
 
-    Assert.assertEquals(mockBitmapDescriptor, result)
+    assertEquals(mockBitmapDescriptor, result)
   }
 
   @Test
@@ -143,7 +146,7 @@ class ConvertTest {
         Convert.getBitmapFromAsset(
             bitmap, assetManager, 1.0f, bitmapDescriptorFactoryWrapper, flutterInjectorWrapper)
 
-    Assert.assertEquals(mockBitmapDescriptor, result)
+    assertEquals(mockBitmapDescriptor, result)
   }
 
   @Test
@@ -169,7 +172,7 @@ class ConvertTest {
         Convert.getBitmapFromAsset(
             bitmap, assetManager, 1.0f, bitmapDescriptorFactoryWrapper, flutterInjectorWrapper)
 
-    Assert.assertEquals(mockBitmapDescriptor, result)
+    assertEquals(mockBitmapDescriptor, result)
   }
 
   @Test
@@ -197,7 +200,7 @@ class ConvertTest {
         Convert.getBitmapFromAsset(
             bitmap, assetManager, 1.0f, bitmapDescriptorFactoryWrapper, flutterInjectorWrapper)
 
-    Assert.assertEquals(mockBitmapDescriptor, result)
+    assertEquals(mockBitmapDescriptor, result)
   }
 
   @Test
@@ -216,7 +219,7 @@ class ConvertTest {
 
     val result = Convert.getBitmapFromBytes(bitmap, 1f, bitmapDescriptorFactoryWrapper)
 
-    Assert.assertEquals(mockBitmapDescriptor, result)
+    assertEquals(mockBitmapDescriptor, result)
   }
 
   @Test
@@ -234,7 +237,7 @@ class ConvertTest {
 
     val result = Convert.getBitmapFromBytes(bitmap, 1f, bitmapDescriptorFactoryWrapper)
 
-    Assert.assertEquals(mockBitmapDescriptor, result)
+    assertEquals(mockBitmapDescriptor, result)
   }
 
   @Test
@@ -252,7 +255,7 @@ class ConvertTest {
 
     val result = Convert.getBitmapFromBytes(bitmap, 1f, bitmapDescriptorFactoryWrapper)
 
-    Assert.assertEquals(mockBitmapDescriptor, result)
+    assertEquals(mockBitmapDescriptor, result)
   }
 
   @Test
@@ -270,7 +273,7 @@ class ConvertTest {
 
     val result = Convert.getBitmapFromBytes(bitmap, 1f, bitmapDescriptorFactoryWrapper)
 
-    Assert.assertEquals(mockBitmapDescriptor, result)
+    assertEquals(mockBitmapDescriptor, result)
   }
 
   @Test(expected = IllegalArgumentException::class) // Expecting an IllegalArgumentException
@@ -290,11 +293,11 @@ class ConvertTest {
     try {
       Convert.getBitmapFromBytes(bitmap, 1f, bitmapDescriptorFactoryWrapper)
     } catch (e: IllegalArgumentException) {
-      Assert.assertEquals("Unable to interpret bytes as a valid image.", e.message)
+      assertEquals("Unable to interpret bytes as a valid image.", e.message)
       throw e // rethrow the exception
     }
 
-    Assert.fail("Expected an IllegalArgumentException to be thrown")
+    fail("Expected an IllegalArgumentException to be thrown")
   }
 
   @Test
@@ -311,9 +314,9 @@ class ConvertTest {
     val pinConfig =
         Convert.getPinConfigFromPlatformPinConfig(
             platformBitmap, assetManager, 1f, bitmapDescriptorFactoryWrapper)
-    Assert.assertEquals(0x00FFFFL, pinConfig.backgroundColor.toLong())
-    Assert.assertEquals(0xFF00FFL, pinConfig.borderColor.toLong())
-    Assert.assertEquals(0x112233L, pinConfig.glyph.glyphColor.toLong())
+    assertEquals(0x00FFFFL, pinConfig.backgroundColor.toLong())
+    assertEquals(0xFF00FFL, pinConfig.borderColor.toLong())
+    assertEquals(0x112233L, pinConfig.glyph.glyphColor.toLong())
   }
 
   @Test
@@ -329,8 +332,8 @@ class ConvertTest {
     val pinConfig =
         Convert.getPinConfigFromPlatformPinConfig(
             platformBitmap, assetManager, 1f, bitmapDescriptorFactoryWrapper)
-    Assert.assertEquals("Hi", pinConfig.glyph.text)
-    Assert.assertEquals(0xFFFFFFL, pinConfig.glyph.textColor.toLong())
+    assertEquals("Hi", pinConfig.glyph.text)
+    assertEquals(0xFFFFFFL, pinConfig.glyph.textColor.toLong())
   }
 
   @Test
@@ -357,9 +360,9 @@ class ConvertTest {
         Convert.getPinConfigFromPlatformPinConfig(
             platformBitmap, assetManager, 1f, bitmapDescriptorFactoryWrapper)
 
-    Assert.assertEquals(0xFFFFFFL, pinConfig.backgroundColor.toLong())
-    Assert.assertEquals(0x000000L, pinConfig.borderColor.toLong())
-    Assert.assertEquals(mockBitmapDescriptor, pinConfig.glyph.bitmapDescriptor)
+    assertEquals(0xFFFFFFL, pinConfig.backgroundColor.toLong())
+    assertEquals(0x000000L, pinConfig.borderColor.toLong())
+    assertEquals(mockBitmapDescriptor, pinConfig.glyph.bitmapDescriptor)
   }
 
   private val minimalConfigurationBuilder: PlatformMapConfigurationBuilder
@@ -545,9 +548,9 @@ class ConvertTest {
 
     val result = Convert.weightedLatLngFromPigeon(data)
 
-    Assert.assertEquals(point.x, result.point.x, 0.0)
-    Assert.assertEquals(point.y, result.point.y, 0.0)
-    Assert.assertEquals(intensity, result.intensity, 0.0)
+    assertEquals(point.x, result.point.x, 0.0)
+    assertEquals(point.y, result.point.y, 0.0)
+    assertEquals(intensity, result.intensity, 0.0)
   }
 
   @Test
@@ -558,10 +561,10 @@ class ConvertTest {
 
     val result = Convert.weightedDataFromPigeon(data)
 
-    Assert.assertEquals(1, result.size)
-    Assert.assertEquals(point.x, result[0].point.x, 0.0)
-    Assert.assertEquals(point.y, result[0].point.y, 0.0)
-    Assert.assertEquals(intensity, result[0].intensity, 0.0)
+    assertEquals(1, result.size)
+    assertEquals(point.x, result[0].point.x, 0.0)
+    assertEquals(point.y, result[0].point.y, 0.0)
+    assertEquals(intensity, result[0].intensity, 0.0)
   }
 
   @Test
@@ -581,15 +584,15 @@ class ConvertTest {
 
     val result = Convert.gradientFromPigeon(data)
 
-    Assert.assertEquals(3, result.colors.size)
-    Assert.assertEquals(color1, result.colors[0].toLong())
-    Assert.assertEquals(color2, result.colors[1].toLong())
-    Assert.assertEquals(color3, result.colors[2].toLong())
-    Assert.assertEquals(3, result.startPoints.size)
-    Assert.assertEquals(startPoint1, result.startPoints[0].toDouble(), 0.0)
-    Assert.assertEquals(startPoint2, result.startPoints[1].toDouble(), 0.0)
-    Assert.assertEquals(startPoint3, result.startPoints[2].toDouble(), 0.0)
-    Assert.assertEquals(colorMapSize, result.colorMapSize.toLong())
+    assertEquals(3, result.colors.size)
+    assertEquals(color1, result.colors[0].toLong())
+    assertEquals(color2, result.colors[1].toLong())
+    assertEquals(color3, result.colors[2].toLong())
+    assertEquals(3, result.startPoints.size)
+    assertEquals(startPoint1, result.startPoints[0].toDouble(), 0.0)
+    assertEquals(startPoint2, result.startPoints[1].toDouble(), 0.0)
+    assertEquals(startPoint3, result.startPoints[2].toDouble(), 0.0)
+    assertEquals(colorMapSize, result.colorMapSize.toLong())
   }
 
   @Test
@@ -628,23 +631,23 @@ class ConvertTest {
     val builder = MockHeatmapBuilder()
     val id = Convert.interpretHeatmapOptions(data, builder)
 
-    Assert.assertEquals(1, builder.getWeightedData()!!.size)
-    Assert.assertEquals(point.x, builder.getWeightedData()!![0].point.x, 0.0)
-    Assert.assertEquals(point.y, builder.getWeightedData()!![0].point.y, 0.0)
-    Assert.assertEquals(intensity, builder.getWeightedData()!![0].intensity, 0.0)
-    Assert.assertEquals(3, builder.getGradient()!!.colors.size)
-    Assert.assertEquals(color1, builder.getGradient()!!.colors[0].toLong())
-    Assert.assertEquals(color2, builder.getGradient()!!.colors[1].toLong())
-    Assert.assertEquals(color3, builder.getGradient()!!.colors[2].toLong())
-    Assert.assertEquals(3, builder.getGradient()!!.startPoints.size)
-    Assert.assertEquals(startPoint1, builder.getGradient()!!.startPoints[0].toDouble(), 0.0)
-    Assert.assertEquals(startPoint2, builder.getGradient()!!.startPoints[1].toDouble(), 0.0)
-    Assert.assertEquals(startPoint3, builder.getGradient()!!.startPoints[2].toDouble(), 0.0)
-    Assert.assertEquals(colorMapSize, builder.getGradient()!!.colorMapSize.toLong())
-    Assert.assertEquals(maxIntensity, builder.getMaxIntensity(), 0.0)
-    Assert.assertEquals(opacity, builder.getOpacity(), 0.0)
-    Assert.assertEquals(radius, builder.getRadius().toLong())
-    Assert.assertEquals(idData, id)
+    assertEquals(1, builder.getWeightedData()!!.size)
+    assertEquals(point.x, builder.getWeightedData()!![0].point.x, 0.0)
+    assertEquals(point.y, builder.getWeightedData()!![0].point.y, 0.0)
+    assertEquals(intensity, builder.getWeightedData()!![0].intensity, 0.0)
+    assertEquals(3, builder.getGradient()!!.colors.size)
+    assertEquals(color1, builder.getGradient()!!.colors[0].toLong())
+    assertEquals(color2, builder.getGradient()!!.colors[1].toLong())
+    assertEquals(color3, builder.getGradient()!!.colors[2].toLong())
+    assertEquals(3, builder.getGradient()!!.startPoints.size)
+    assertEquals(startPoint1, builder.getGradient()!!.startPoints[0].toDouble(), 0.0)
+    assertEquals(startPoint2, builder.getGradient()!!.startPoints[1].toDouble(), 0.0)
+    assertEquals(startPoint3, builder.getGradient()!!.startPoints[2].toDouble(), 0.0)
+    assertEquals(colorMapSize, builder.getGradient()!!.colorMapSize.toLong())
+    assertEquals(maxIntensity, builder.getMaxIntensity(), 0.0)
+    assertEquals(opacity, builder.getOpacity(), 0.0)
+    assertEquals(radius, builder.getRadius().toLong())
+    assertEquals(idData, id)
   }
 
   private fun createPlatformColor(rgba: Long): PlatformColor {
@@ -663,8 +666,8 @@ class ConvertTest {
 
     val anchor = Convert.buildGroundOverlayAnchorForPigeon(groundOverlay)
 
-    Assert.assertEquals(0.5, anchor.x, 1e-15)
-    Assert.assertEquals(0.5, anchor.y, 1e-15)
+    assertEquals(0.5, anchor.x, 1e-15)
+    assertEquals(0.5, anchor.y, 1e-15)
   }
 
   @Test
@@ -679,8 +682,8 @@ class ConvertTest {
 
     val anchor = Convert.buildGroundOverlayAnchorForPigeon(groundOverlay)
 
-    Assert.assertEquals(0.5, anchor.x, 1e-15)
-    Assert.assertEquals(0.5, anchor.y, 1e-15)
+    assertEquals(0.5, anchor.x, 1e-15)
+    assertEquals(0.5, anchor.y, 1e-15)
   }
 
   private fun assertGroundOverlayEquals(
@@ -690,41 +693,37 @@ class ConvertTest {
       expectedPosition: LatLng?,
       expectedBounds: LatLngBounds?
   ) {
-    Assert.assertEquals(expectedId, result.groundOverlayId)
+    assertEquals(expectedId, result.groundOverlayId)
     if (expectedPosition != null) {
-      Assert.assertNotNull(result.position)
-      Assert.assertEquals(expectedPosition.latitude, result.position!!.latitude, 1e-15)
-      Assert.assertEquals(expectedPosition.longitude, result.position.longitude, 1e-15)
-      Assert.assertNotNull(result.width)
-      Assert.assertNotNull(result.height)
-      Assert.assertEquals(expectedOverlay.width.toDouble(), result.width!!, 1e-15)
-      Assert.assertEquals(expectedOverlay.height.toDouble(), result.height!!, 1e-15)
+      assertNotNull(result.position)
+      assertEquals(expectedPosition.latitude, result.position!!.latitude, 1e-15)
+      assertEquals(expectedPosition.longitude, result.position.longitude, 1e-15)
+      assertNotNull(result.width)
+      assertNotNull(result.height)
+      assertEquals(expectedOverlay.width.toDouble(), result.width!!, 1e-15)
+      assertEquals(expectedOverlay.height.toDouble(), result.height!!, 1e-15)
     } else {
-      Assert.assertNull(result.position)
+      assertNull(result.position)
     }
     if (expectedBounds != null) {
-      Assert.assertNotNull(result.bounds)
-      Assert.assertEquals(
-          expectedBounds.southwest.latitude, result.bounds!!.southwest.latitude, 1e-15)
-      Assert.assertEquals(
-          expectedBounds.southwest.longitude, result.bounds.southwest.longitude, 1e-15)
-      Assert.assertEquals(
-          expectedBounds.northeast.latitude, result.bounds.northeast.latitude, 1e-15)
-      Assert.assertEquals(
-          expectedBounds.northeast.longitude, result.bounds.northeast.longitude, 1e-15)
+      assertNotNull(result.bounds)
+      assertEquals(expectedBounds.southwest.latitude, result.bounds!!.southwest.latitude, 1e-15)
+      assertEquals(expectedBounds.southwest.longitude, result.bounds.southwest.longitude, 1e-15)
+      assertEquals(expectedBounds.northeast.latitude, result.bounds.northeast.latitude, 1e-15)
+      assertEquals(expectedBounds.northeast.longitude, result.bounds.northeast.longitude, 1e-15)
     } else {
-      Assert.assertNull(result.bounds)
+      assertNull(result.bounds)
     }
 
-    Assert.assertEquals(expectedOverlay.bearing.toDouble(), result.bearing, 1e-15)
-    Assert.assertEquals(expectedOverlay.transparency.toDouble(), result.transparency, 1e-6)
-    Assert.assertEquals(expectedOverlay.zIndex.toDouble(), result.zIndex.toDouble(), 1e-6)
-    Assert.assertEquals(expectedOverlay.isVisible, result.visible)
-    Assert.assertEquals(expectedOverlay.isClickable, result.clickable)
+    assertEquals(expectedOverlay.bearing.toDouble(), result.bearing, 1e-15)
+    assertEquals(expectedOverlay.transparency.toDouble(), result.transparency, 1e-6)
+    assertEquals(expectedOverlay.zIndex.toDouble(), result.zIndex.toDouble(), 1e-6)
+    assertEquals(expectedOverlay.isVisible, result.visible)
+    assertEquals(expectedOverlay.isClickable, result.clickable)
     val anchor = result.anchor
-    Assert.assertNotNull(anchor)
-    Assert.assertEquals(0.5, anchor!!.x, 1e-6)
-    Assert.assertEquals(0.5, anchor.y, 1e-6)
+    assertNotNull(anchor)
+    assertEquals(0.5, anchor!!.x, 1e-6)
+    assertEquals(0.5, anchor.y, 1e-6)
   }
 
   @Test

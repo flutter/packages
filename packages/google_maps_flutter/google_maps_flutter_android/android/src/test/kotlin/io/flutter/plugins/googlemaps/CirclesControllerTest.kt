@@ -6,7 +6,7 @@ package io.flutter.plugins.googlemaps
 import com.google.android.gms.internal.maps.zzl
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.model.Circle
-import org.junit.Assert
+import org.junit.Assert.assertEquals
 import org.junit.Test
 import org.mockito.kotlin.any
 import org.mockito.kotlin.mock
@@ -31,11 +31,11 @@ class CirclesControllerTest {
 
     controller.addCircles(listOf(createCircle(id, consumesEvents = false)))
     // There should be exactly one circle.
-    Assert.assertEquals(1, controller.circleIdToController.size)
+    assertEquals(1, controller.circleIdToController.size)
 
     controller.changeCircles(listOf(createCircle(id, consumesEvents = true)))
     // There should still only be one circle, and it should be updated.
-    Assert.assertEquals(1, controller.circleIdToController.size)
+    assertEquals(1, controller.circleIdToController.size)
     verify(circle, times(1)).isClickable = true
   }
 

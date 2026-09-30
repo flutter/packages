@@ -19,7 +19,11 @@ import io.flutter.plugins.googlemaps.ClusterManagersController.MarkerClusterRend
 import io.flutter.plugins.googlemaps.Convert.BitmapDescriptorFactoryWrapper
 import java.io.ByteArrayOutputStream
 import kotlinx.coroutines.test.runTest
-import org.junit.Assert
+import org.junit.Assert.assertEquals
+import org.junit.Assert.assertNotNull
+import org.junit.Assert.assertSame
+import org.junit.Assert.assertThrows
+import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -84,15 +88,15 @@ class ClusterManagersControllerTest {
     controller.addItem(markerBuilder2)
 
     val clusters = controller.getClustersWithClusterManagerId(clusterManagerId)
-    Assert.assertEquals("Amount of clusters should be 1", 1, clusters.size)
+    assertEquals("Amount of clusters should be 1", 1, clusters.size)
 
     val cluster: Cluster<MarkerBuilder> = clusters.iterator().next()
-    Assert.assertNotNull("Cluster position should not be null", cluster.position)
+    assertNotNull("Cluster position should not be null", cluster.position)
     val markerIds: Set<String> =
         cluster.getItems().map { marker: MarkerBuilder -> marker.markerId() }.toSet()
-    Assert.assertTrue("Marker IDs should contain markerId1", markerIds.contains(markerId1))
-    Assert.assertTrue("Marker IDs should contain markerId2", markerIds.contains(markerId2))
-    Assert.assertEquals("Cluster should contain exactly 2 markers", 2, cluster.size)
+    assertTrue("Marker IDs should contain markerId1", markerIds.contains(markerId1))
+    assertTrue("Marker IDs should contain markerId2", markerIds.contains(markerId2))
+    assertEquals("Cluster should contain exactly 2 markers", 2, cluster.size)
   }
 
   @Test
@@ -130,13 +134,12 @@ class ClusterManagersControllerTest {
     advancedController.addItem(advancedMarkerBuilder)
 
     val clusterManager1 = defaultController.clusterManagerIdToManager[defaultClusterManagerId]
-    Assert.assertNotNull(clusterManager1)
-    Assert.assertSame(MarkerClusterRenderer::class.java, clusterManager1!!.getRenderer().javaClass)
+    assertNotNull(clusterManager1)
+    assertSame(MarkerClusterRenderer::class.java, clusterManager1!!.getRenderer().javaClass)
 
     val clusterManager2 = advancedController.clusterManagerIdToManager[advancedClusterManagerId]
-    Assert.assertNotNull(clusterManager2)
-    Assert.assertSame(
-        AdvancedMarkerClusterRenderer::class.java, clusterManager2!!.getRenderer().javaClass)
+    assertNotNull(clusterManager2)
+    assertSame(AdvancedMarkerClusterRenderer::class.java, clusterManager2!!.getRenderer().javaClass)
   }
 
   @Test
@@ -175,7 +178,7 @@ class ClusterManagersControllerTest {
 
     controller.removeClusterManagers(listOf(clusterManagerId))
     // Verify that fetching the cluster data fails and therefore ClusterManager is removed.
-    Assert.assertThrows(FlutterError::class.java) {
+    assertThrows(FlutterError::class.java) {
       controller.getClustersWithClusterManagerId(clusterManagerId)
     }
   }
