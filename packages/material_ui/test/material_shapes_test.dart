@@ -61,6 +61,33 @@ void main() {
     );
   });
 
+  test('a morph between any two shapes keeps every curve', () {
+    // A morph that loses a curve of one of its shapes has a jump in its outline
+    // where that curve used to be. Some pairs used to hit this when the point
+    // at which one shape got cut to line it up with the other fell, up to
+    // rounding, on the boundary between two of its curves.
+    for (final MapEntry<String, RoundedPolygon> start in namedShapes.entries) {
+      for (final MapEntry<String, RoundedPolygon> end in namedShapes.entries) {
+        final morph = Morph(start.value, end.value);
+
+        for (final progress in <double>[0.0, 0.5, 1.0]) {
+          final List<CubicBezier> cubics = morph.toCubics(progress);
+
+          for (var i = 0; i < cubics.length; i++) {
+            final CubicBezier previous = cubics[(i + cubics.length - 1) % cubics.length];
+            expect(
+              (cubics[i].anchor0 - previous.anchor1).distance,
+              lessThan(1e-4),
+              reason:
+                  'The morph from ${start.key} to ${end.key} jumps between '
+                  'curves ${i - 1} and $i at progress $progress.',
+            );
+          }
+        }
+      }
+    }
+  });
+
   for (final MapEntry<String, RoundedPolygon> entry in namedShapes.entries) {
     testWidgets('MaterialShapes.${entry.key} golden', (WidgetTester tester) async {
       await tester.pumpWidget(

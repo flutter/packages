@@ -201,10 +201,16 @@ class MeasuredPolygon {
         retOutlineProgress[i] = 1;
       } else {
         final int cubicIndex = (targetIndex + i - 1) % _cubics.length;
-        retOutlineProgress[i] = positiveModulo(
-          _cubics[cubicIndex]._endOutlineProgress - cuttingPoint,
-          1,
-        );
+        double progress = positiveModulo(_cubics[cubicIndex]._endOutlineProgress - cuttingPoint, 1);
+
+        // Only the first cubic may end at 0. For any other cubic, 0 means its
+        // end was a rounding error before the cutting point and wrapped
+        // around: it ends at 1, or it would be dropped as empty below.
+        if (i > 1 && progress == 0) {
+          progress = 1;
+        }
+
+        retOutlineProgress[i] = progress;
       }
     }
 

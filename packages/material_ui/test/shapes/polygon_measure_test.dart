@@ -3,6 +3,7 @@
 // found in the LICENSE file.
 
 import 'dart:math' as math;
+import 'dart:typed_data';
 
 import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/src/shapes/corner_rounding.dart';
@@ -12,6 +13,7 @@ import 'package:material_ui/src/shapes/features.dart';
 import 'package:material_ui/src/shapes/point.dart';
 import 'package:material_ui/src/shapes/polygon_measure.dart';
 import 'package:material_ui/src/shapes/rounded_polygon.dart';
+import 'package:material_ui/src/shapes/utils.dart';
 
 import 'test_utils.dart';
 
@@ -211,6 +213,32 @@ void main() {
       });
     });
 
+    test('cutAndShift keeps a cubic that ends a rounding error before the cut', () {
+      final measured = MeasuredPolygon.measure(measurer, RoundedPolygon(3));
+      final double boundary = measured[0].endOutlineProgress;
+
+      // The smallest double above the boundary. The cut then falls on the
+      // second cubic, and the first one ends a rounding error before it, so
+      // close that its shifted end wraps around to 0 instead of 1.
+      final double cut = _nextUp(boundary);
+      expect(cut, greaterThan(boundary));
+      expect(positiveModulo(boundary - cut, 1), 0);
+
+      final MeasuredPolygon shifted = measured.cutAndShift(cut);
+
+      // All three edges survive, starting from the second one.
+      expect(shifted.length, 3);
+      expectCubicsEqualish(measured[1].cubic, shifted[0].cubic);
+      expectCubicsEqualish(measured[2].cubic, shifted[1].cubic);
+      expectCubicsEqualish(measured[0].cubic, shifted[2].cubic);
+      for (var index = 0; index < shifted.length; index++) {
+        expectEqualish(
+          1 / 3,
+          shifted[index].endOutlineProgress - shifted[index].startOutlineProgress,
+        );
+      }
+    });
+
     test('findCubicCutPoint at measure zero returns the curve start', () {
       final zeroLength = CubicBezier.point(Offset.zero);
       expect(measurer.findCubicCutPoint(zeroLength, 0), 0);
@@ -219,4 +247,11 @@ void main() {
       expect(measurer.findCubicCutPoint(line, 0), 0);
     });
   });
+}
+
+/// The smallest double greater than [value].
+double _nextUp(double value) {
+  final data = ByteData(8)..setFloat64(0, value);
+  data.setInt64(0, data.getInt64(0) + 1);
+  return data.getFloat64(0);
 }
