@@ -81,7 +81,8 @@ Future<void> recordLatestMapTelemetry(int readyMs) async {
     'firstTilesloadedMs': record['firstTilesloadedMs'],
     'layoutAtCreation': record['layoutAtCreation'],
     'resourcesByType': diag['resourcesByType'],
-    if (record['firstTilesloadedMs'] == null) 'diag': diag,
+    if (record['firstTilesloadedMs'] == null || (record['firstTilesloadedMs']! as int) > 2000)
+      'diag': diag,
   };
   _testMapTelemetry.add(entry);
   final IntegrationTestWidgetsFlutterBinding binding =
