@@ -443,6 +443,11 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
       const Object sentDouble = 2.0694;
       final Object receivedDouble = await api.echoObject(sentDouble);
       expect(receivedDouble, sentDouble);
+
+      const Object sentWholeDouble = 3.0;
+      final Object receivedWholeDouble = await api.echoObject(sentWholeDouble);
+      expect(receivedWholeDouble, isA<double>());
+      expect(receivedWholeDouble, sentWholeDouble);
     });
 
     testWidgets('Uint8List as generic Objects serialize and deserialize correctly', (
