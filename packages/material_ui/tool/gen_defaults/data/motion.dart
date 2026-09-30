@@ -2,10 +2,10 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-// Version: 38.2.82
+// Version: 38.2.83
 
 // dart format off
-import 'package:flutter/animation.dart';
+import 'cubic_struct.dart';
 
 class TokenMotion {
   /// md.sys.motion.duration.extra-long1
@@ -61,31 +61,76 @@ class TokenMotion {
       'M 0,0 C 0.05, 0, 0.133333, 0.06, 0.166666, 0.4 C 0.208333, 0.82, 0.25, 1, 1, 1';
 
   /// md.sys.motion.easing.emphasized.accelerate
-  static const Cubic easingEmphasizedAccelerate = Cubic(0.30, 0.00, 0.80, 0.15);
+  static const CubicStruct easingEmphasizedAccelerate = CubicStruct(
+    a: 0.30,
+    b: 0.00,
+    c: 0.80,
+    d: 0.15,
+  );
 
   /// md.sys.motion.easing.emphasized.decelerate
-  static const Cubic easingEmphasizedDecelerate = Cubic(0.05, 0.70, 0.10, 1.00);
+  static const CubicStruct easingEmphasizedDecelerate = CubicStruct(
+    a: 0.05,
+    b: 0.70,
+    c: 0.10,
+    d: 1.00,
+  );
 
   /// md.sys.motion.easing.legacy
-  static const Cubic easingLegacy = Cubic(0.40, 0.00, 0.20, 1.00);
+  static const CubicStruct easingLegacy = CubicStruct(
+    a: 0.40,
+    b: 0.00,
+    c: 0.20,
+    d: 1.00,
+  );
 
   /// md.sys.motion.easing.legacy.accelerate
-  static const Cubic easingLegacyAccelerate = Cubic(0.40, 0.00, 1.00, 1.00);
+  static const CubicStruct easingLegacyAccelerate = CubicStruct(
+    a: 0.40,
+    b: 0.00,
+    c: 1.00,
+    d: 1.00,
+  );
 
   /// md.sys.motion.easing.legacy.decelerate
-  static const Cubic easingLegacyDecelerate = Cubic(0.00, 0.00, 0.20, 1.00);
+  static const CubicStruct easingLegacyDecelerate = CubicStruct(
+    a: 0.00,
+    b: 0.00,
+    c: 0.20,
+    d: 1.00,
+  );
 
   /// md.sys.motion.easing.linear
-  static const Cubic easingLinear = Cubic(0.00, 0.00, 1.00, 1.00);
+  static const CubicStruct easingLinear = CubicStruct(
+    a: 0.00,
+    b: 0.00,
+    c: 1.00,
+    d: 1.00,
+  );
 
   /// md.sys.motion.easing.standard
-  static const Cubic easingStandard = Cubic(0.20, 0.00, 0.00, 1.00);
+  static const CubicStruct easingStandard = CubicStruct(
+    a: 0.20,
+    b: 0.00,
+    c: 0.00,
+    d: 1.00,
+  );
 
   /// md.sys.motion.easing.standard.accelerate
-  static const Cubic easingStandardAccelerate = Cubic(0.30, 0.00, 1.00, 1.00);
+  static const CubicStruct easingStandardAccelerate = CubicStruct(
+    a: 0.30,
+    b: 0.00,
+    c: 1.00,
+    d: 1.00,
+  );
 
   /// md.sys.motion.easing.standard.decelerate
-  static const Cubic easingStandardDecelerate = Cubic(0.00, 0.00, 0.00, 1.00);
+  static const CubicStruct easingStandardDecelerate = CubicStruct(
+    a: 0.00,
+    b: 0.00,
+    c: 0.00,
+    d: 1.00,
+  );
 
   /// md.sys.motion.path
   static const String path = 'LINEAR';
