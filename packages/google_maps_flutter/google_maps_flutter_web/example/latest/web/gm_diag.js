@@ -8,6 +8,9 @@
 // layout, pending tile images and Maps-related network/console activity into
 // `window.__gmDiag`. Read from Dart with `window.__gmDiagSnapshot()`.
 (function () {
+  if (window.performance && performance.setResourceTimingBufferSize) {
+    performance.setResourceTimingBufferSize(5000);
+  }
   const t0 = performance.now();
   const now = () => Math.round(performance.now() - t0);
   const diag = (window.__gmDiag = {
