@@ -84,7 +84,7 @@ class TextDisplay extends StatefulWidget {
 class _TextDisplayState extends State<TextDisplay> {
   late final scrollController = ScrollController();
 
-  @overrideg
+  @override
   Widget build(BuildContext context) {
     return AlertDialog(
       title: Text(widget.fileName),
