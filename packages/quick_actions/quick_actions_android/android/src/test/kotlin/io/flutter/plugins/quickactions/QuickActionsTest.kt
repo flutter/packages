@@ -12,135 +12,129 @@ import io.flutter.plugin.common.BinaryMessenger
 import io.flutter.plugin.common.BinaryMessenger.BinaryMessageHandler
 import io.flutter.plugin.common.BinaryMessenger.BinaryReply
 import io.flutter.plugins.quickactions.QuickActionsPlugin.AndroidSdkChecker
+import java.nio.ByteBuffer
 import org.junit.Assert
 import org.junit.Test
 import org.mockito.Mockito
-import java.nio.ByteBuffer
 
 class QuickActionsTest {
-    private class TestBinaryMessenger : BinaryMessenger {
-        var launchActionCalled: Boolean = false
+  private class TestBinaryMessenger : BinaryMessenger {
+    var launchActionCalled: Boolean = false
 
-        override fun send(channel: String, message: ByteBuffer?) {
-            send(channel, message, null)
-        }
-
-        override fun send(
-            channel: String,
-            message: ByteBuffer?,
-            callback: BinaryReply?
-        ) {
-            if (channel.contains("launchAction")) {
-                launchActionCalled = true
-            }
-        }
-
-        override fun setMessageHandler(channel: String, handler: BinaryMessageHandler?) {
-            // Do nothing.
-        }
+    override fun send(channel: String, message: ByteBuffer?) {
+      send(channel, message, null)
     }
 
-    @Test
-    fun canAttachToEngine() {
-        val testBinaryMessenger = TestBinaryMessenger()
-        val mockPluginBinding = Mockito.mock<FlutterPluginBinding>(FlutterPluginBinding::class.java)
-        Mockito.`when`<BinaryMessenger?>(mockPluginBinding.getBinaryMessenger())
-            .thenReturn(testBinaryMessenger)
-
-        val plugin = QuickActionsPlugin()
-        plugin.onAttachedToEngine(mockPluginBinding)
+    override fun send(channel: String, message: ByteBuffer?, callback: BinaryReply?) {
+      if (channel.contains("launchAction")) {
+        launchActionCalled = true
+      }
     }
 
-    @Test
-    @Throws(NoSuchFieldException::class, IllegalAccessException::class)
-    fun onAttachedToActivity_buildVersionSupported_invokesLaunchMethod() {
-        // Arrange
-        val testBinaryMessenger = TestBinaryMessenger()
-        val plugin =
-            QuickActionsPlugin(AndroidSdkChecker { version: Int -> SUPPORTED_BUILD >= version })
-        setUpMessengerAndFlutterPluginBinding(testBinaryMessenger, plugin)
-        val mockIntent = createMockIntentWithQuickActionExtra()
-        val mockMainActivity = Mockito.mock<Activity>(Activity::class.java)
-        Mockito.`when`<Intent?>(mockMainActivity.getIntent()).thenReturn(mockIntent)
-        val mockActivityPluginBinding =
-            Mockito.mock<ActivityPluginBinding>(ActivityPluginBinding::class.java)
-        Mockito.`when`<Activity?>(mockActivityPluginBinding.getActivity())
-            .thenReturn(mockMainActivity)
-        val mockContext = Mockito.mock<Context?>(Context::class.java)
-        Mockito.`when`<Context?>(mockMainActivity.getApplicationContext()).thenReturn(mockContext)
-        plugin.onAttachedToActivity(mockActivityPluginBinding)
-
-        // Act
-        plugin.onAttachedToActivity(mockActivityPluginBinding)
-
-        // Assert
-        Assert.assertTrue(testBinaryMessenger.launchActionCalled)
+    override fun setMessageHandler(channel: String, handler: BinaryMessageHandler?) {
+      // Do nothing.
     }
+  }
 
-    @Test
-    fun onNewIntent_buildVersionUnsupported_doesNotInvokeMethod() {
-        // Arrange
-        val testBinaryMessenger = TestBinaryMessenger()
-        val plugin =
-            QuickActionsPlugin(AndroidSdkChecker { version: Int -> UNSUPPORTED_BUILD >= version })
-        setUpMessengerAndFlutterPluginBinding(testBinaryMessenger, plugin)
-        val mockIntent = createMockIntentWithQuickActionExtra()
+  @Test
+  fun canAttachToEngine() {
+    val testBinaryMessenger = TestBinaryMessenger()
+    val mockPluginBinding = Mockito.mock<FlutterPluginBinding>(FlutterPluginBinding::class.java)
+    Mockito.`when`<BinaryMessenger?>(mockPluginBinding.getBinaryMessenger())
+        .thenReturn(testBinaryMessenger)
 
-        // Act
-        val onNewIntentReturn = plugin.onNewIntent(mockIntent)
+    val plugin = QuickActionsPlugin()
+    plugin.onAttachedToEngine(mockPluginBinding)
+  }
 
-        // Assert
-        Assert.assertFalse(testBinaryMessenger.launchActionCalled)
-        Assert.assertFalse(onNewIntentReturn)
-    }
+  @Test
+  @Throws(NoSuchFieldException::class, IllegalAccessException::class)
+  fun onAttachedToActivity_buildVersionSupported_invokesLaunchMethod() {
+    // Arrange
+    val testBinaryMessenger = TestBinaryMessenger()
+    val plugin =
+        QuickActionsPlugin(AndroidSdkChecker { version: Int -> SUPPORTED_BUILD >= version })
+    setUpMessengerAndFlutterPluginBinding(testBinaryMessenger, plugin)
+    val mockIntent = createMockIntentWithQuickActionExtra()
+    val mockMainActivity = Mockito.mock<Activity>(Activity::class.java)
+    Mockito.`when`<Intent?>(mockMainActivity.getIntent()).thenReturn(mockIntent)
+    val mockActivityPluginBinding =
+        Mockito.mock<ActivityPluginBinding>(ActivityPluginBinding::class.java)
+    Mockito.`when`<Activity?>(mockActivityPluginBinding.getActivity()).thenReturn(mockMainActivity)
+    val mockContext = Mockito.mock<Context?>(Context::class.java)
+    Mockito.`when`<Context?>(mockMainActivity.getApplicationContext()).thenReturn(mockContext)
+    plugin.onAttachedToActivity(mockActivityPluginBinding)
 
-    @Test
-    fun onNewIntent_buildVersionSupported_invokesLaunchMethod() {
-        // Arrange
-        val testBinaryMessenger = TestBinaryMessenger()
-        val plugin =
-            QuickActionsPlugin(AndroidSdkChecker { version: Int -> SUPPORTED_BUILD >= version })
-        setUpMessengerAndFlutterPluginBinding(testBinaryMessenger, plugin)
-        val mockIntent = createMockIntentWithQuickActionExtra()
-        val mockMainActivity = Mockito.mock<Activity>(Activity::class.java)
-        Mockito.`when`<Intent?>(mockMainActivity.getIntent()).thenReturn(mockIntent)
-        val mockActivityPluginBinding =
-            Mockito.mock<ActivityPluginBinding>(ActivityPluginBinding::class.java)
-        Mockito.`when`<Activity?>(mockActivityPluginBinding.getActivity())
-            .thenReturn(mockMainActivity)
-        val mockContext = Mockito.mock<Context?>(Context::class.java)
-        Mockito.`when`<Context?>(mockMainActivity.getApplicationContext()).thenReturn(mockContext)
-        plugin.onAttachedToActivity(mockActivityPluginBinding)
+    // Act
+    plugin.onAttachedToActivity(mockActivityPluginBinding)
 
-        // Act
-        val onNewIntentReturn = plugin.onNewIntent(mockIntent)
+    // Assert
+    Assert.assertTrue(testBinaryMessenger.launchActionCalled)
+  }
 
-        // Assert
-        Assert.assertTrue(testBinaryMessenger.launchActionCalled)
-        Assert.assertFalse(onNewIntentReturn)
-    }
+  @Test
+  fun onNewIntent_buildVersionUnsupported_doesNotInvokeMethod() {
+    // Arrange
+    val testBinaryMessenger = TestBinaryMessenger()
+    val plugin =
+        QuickActionsPlugin(AndroidSdkChecker { version: Int -> UNSUPPORTED_BUILD >= version })
+    setUpMessengerAndFlutterPluginBinding(testBinaryMessenger, plugin)
+    val mockIntent = createMockIntentWithQuickActionExtra()
 
-    private fun setUpMessengerAndFlutterPluginBinding(
-        testBinaryMessenger: TestBinaryMessenger?, plugin: QuickActionsPlugin
-    ) {
-        val mockPluginBinding = Mockito.mock<FlutterPluginBinding>(FlutterPluginBinding::class.java)
-        Mockito.`when`<BinaryMessenger?>(mockPluginBinding.getBinaryMessenger())
-            .thenReturn(testBinaryMessenger)
-        plugin.onAttachedToEngine(mockPluginBinding)
-    }
+    // Act
+    val onNewIntentReturn = plugin.onNewIntent(mockIntent)
 
-    private fun createMockIntentWithQuickActionExtra(): Intent {
-        val mockIntent = Mockito.mock<Intent>(Intent::class.java)
-        Mockito.`when`<Boolean?>(mockIntent.hasExtra(QuickActions.EXTRA_ACTION)).thenReturn(true)
-        Mockito.`when`<String?>(mockIntent.getStringExtra(QuickActions.EXTRA_ACTION)).thenReturn(
-            SHORTCUT_TYPE
-        )
-        return mockIntent
-    }
+    // Assert
+    Assert.assertFalse(testBinaryMessenger.launchActionCalled)
+    Assert.assertFalse(onNewIntentReturn)
+  }
 
-    companion object {
-        const val SUPPORTED_BUILD: Int = 25
-        const val UNSUPPORTED_BUILD: Int = 24
-        const val SHORTCUT_TYPE: String = "action_one"
-    }
+  @Test
+  fun onNewIntent_buildVersionSupported_invokesLaunchMethod() {
+    // Arrange
+    val testBinaryMessenger = TestBinaryMessenger()
+    val plugin =
+        QuickActionsPlugin(AndroidSdkChecker { version: Int -> SUPPORTED_BUILD >= version })
+    setUpMessengerAndFlutterPluginBinding(testBinaryMessenger, plugin)
+    val mockIntent = createMockIntentWithQuickActionExtra()
+    val mockMainActivity = Mockito.mock<Activity>(Activity::class.java)
+    Mockito.`when`<Intent?>(mockMainActivity.getIntent()).thenReturn(mockIntent)
+    val mockActivityPluginBinding =
+        Mockito.mock<ActivityPluginBinding>(ActivityPluginBinding::class.java)
+    Mockito.`when`<Activity?>(mockActivityPluginBinding.getActivity()).thenReturn(mockMainActivity)
+    val mockContext = Mockito.mock<Context?>(Context::class.java)
+    Mockito.`when`<Context?>(mockMainActivity.getApplicationContext()).thenReturn(mockContext)
+    plugin.onAttachedToActivity(mockActivityPluginBinding)
+
+    // Act
+    val onNewIntentReturn = plugin.onNewIntent(mockIntent)
+
+    // Assert
+    Assert.assertTrue(testBinaryMessenger.launchActionCalled)
+    Assert.assertFalse(onNewIntentReturn)
+  }
+
+  private fun setUpMessengerAndFlutterPluginBinding(
+      testBinaryMessenger: TestBinaryMessenger?,
+      plugin: QuickActionsPlugin
+  ) {
+    val mockPluginBinding = Mockito.mock<FlutterPluginBinding>(FlutterPluginBinding::class.java)
+    Mockito.`when`<BinaryMessenger?>(mockPluginBinding.getBinaryMessenger())
+        .thenReturn(testBinaryMessenger)
+    plugin.onAttachedToEngine(mockPluginBinding)
+  }
+
+  private fun createMockIntentWithQuickActionExtra(): Intent {
+    val mockIntent = Mockito.mock<Intent>(Intent::class.java)
+    Mockito.`when`<Boolean?>(mockIntent.hasExtra(QuickActions.EXTRA_ACTION)).thenReturn(true)
+    Mockito.`when`<String?>(mockIntent.getStringExtra(QuickActions.EXTRA_ACTION))
+        .thenReturn(SHORTCUT_TYPE)
+    return mockIntent
+  }
+
+  companion object {
+    const val SUPPORTED_BUILD: Int = 25
+    const val UNSUPPORTED_BUILD: Int = 24
+    const val SHORTCUT_TYPE: String = "action_one"
+  }
 }
