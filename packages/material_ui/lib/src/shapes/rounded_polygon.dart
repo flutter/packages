@@ -663,7 +663,7 @@ class RoundedPolygon {
   @override
   String toString() {
     return '${objectRuntimeType(this, 'RoundedPolygon')}'
-        '(center: $center, features: $features, cubics: $cubics)';
+        '(center: $center, features: ${features.length}, cubics: ${cubics.length})';
   }
 
   @override

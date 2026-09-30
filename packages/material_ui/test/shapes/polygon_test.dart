@@ -158,14 +158,19 @@ void main() {
       expect(polygon.cubics.length, cubicCount);
     });
 
-    test('toString names the type and its parts', () {
-      final description = square.toString();
+    test('toString counts the features and cubics instead of listing them', () {
+      // Four corners and four edges. The sharp corners are zero-length cubics,
+      // which the polygon leaves out of its cubics.
+      expect(square.toString(), 'RoundedPolygon(center: Offset(0.0, 0.0), features: 8, cubics: 4)');
 
-      expect(description, startsWith('RoundedPolygon(center: Offset(0.0, 0.0), features: ['));
-      expect(description, contains('EdgeFeature(cubics: ['));
-      expect(description, contains('CornerFeature(cubics: ['));
-      expect(description, contains(', cubics: [CubicBezier(anchor0: '));
-      expect(description, endsWith(')])'));
+      // Rounded corners add curves, but this stays a single short line.
+      final rounded = RoundedPolygon(4, rounding: const CornerRounding(radius: 0.2));
+      expect(
+        rounded.toString(),
+        'RoundedPolygon(center: Offset(0.0, 0.0), features: 8, cubics: ${rounded.cubics.length})',
+      );
+      expect(rounded.cubics.length, greaterThan(8));
+      expect(rounded.toString().length, lessThan(100));
     });
 
     test('transform keeps contiguous anchors equal', () {

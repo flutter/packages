@@ -272,6 +272,17 @@ void main() {
       );
     });
 
+    test('toString stays short for shapes with many curves', () {
+      // The description ends up in the diagnostics of Material and
+      // ShapeDecoration, so it must not list every curve of the shape.
+      final start = MaterialShapeBorder(shape: MaterialShapes.softBoom);
+      final end = MaterialShapeBorder(shape: MaterialShapes.boom);
+
+      expect(MaterialShapes.softBoom.cubics.length, greaterThan(100));
+      expect(start.toString().length, lessThan(200));
+      expect(start.lerpTo(end, 0.5).toString().length, lessThan(300));
+    });
+
     test('scale keeps the morph of a lerped border', () {
       final start = MaterialShapeBorder(shape: MaterialShapes.circle);
       final end = MaterialShapeBorder(
