@@ -27,6 +27,7 @@ import org.mockito.kotlin.argThat
 import org.mockito.kotlin.argumentCaptor
 import org.mockito.kotlin.eq
 import org.mockito.kotlin.mock
+import org.mockito.kotlin.never
 import org.mockito.kotlin.reset
 import org.mockito.kotlin.spy
 import org.mockito.kotlin.times
@@ -138,25 +139,16 @@ class MarkersControllerTest {
     whenever(marker.id).thenReturn(googleMarkerId)
 
     // Store reference to verify later, since markerIdToMarkerBuilder is private
-    val addedMarkerBuilder = arrayOfNulls<MarkerBuilder>(1)
+    val captor = argumentCaptor<List<MarkerBuilder>>()
 
     // Add marker and verify addItems is called with correct parameters
     controller.addMarkers(listOf(platformMarker))
-    verify(clusterManagersController, times(1))
-        .addItems(
-            eq(clusterManagerId),
-            argThat { markerBuilders ->
-              if (markerBuilders.size == 1 &&
-                  markerBuilders.firstOrNull()?.clusterManagerId() == clusterManagerId) {
-                // Store reference for later use in onClusterItemRendered
-                addedMarkerBuilder[0] = markerBuilders[0]
-                return@argThat true
-              }
-              false
-            })
+    verify(clusterManagersController, times(1)).addItems(eq(clusterManagerId), captor.capture())
 
+    val addedMarkerBuilder = captor.firstValue[0]
+    assertEquals(clusterManagerId, addedMarkerBuilder.clusterManagerId())
     // clusterManagersController calls onClusterItemRendered with created marker.
-    controller.onClusterItemRendered(addedMarkerBuilder[0], marker)
+    controller.onClusterItemRendered(addedMarkerBuilder, marker)
 
     // Change marker to test that markerController is created and the marker can be
     // updated
@@ -196,7 +188,7 @@ class MarkersControllerTest {
     controller.addMarkers(listOf(platformMarker))
 
     // clusterManagersController should not be called when adding the marker
-    verify(clusterManagersController, times(0)).addItem(any())
+    verify(clusterManagersController, never()).addItem(any())
 
     verify(spyMarkerCollection, times(1)).addMarker(any<MarkerOptions>())
 
@@ -209,7 +201,7 @@ class MarkersControllerTest {
     controller.removeMarkers(listOf(googleMarkerId))
 
     // clusterManagersController should not be called when removing the marker
-    verify(clusterManagersController, times(0)).removeItem(any())
+    verify(clusterManagersController, never()).removeItem(any())
 
     verify(spyMarkerCollection, times(1)).remove(marker)
   }
@@ -255,14 +247,12 @@ class MarkersControllerTest {
     val clusterManagerId = "cm123"
 
     // Create multiple markers with the same cluster manager
-    val markers = mutableListOf<PlatformMarker>()
-    for (i in 0..4) {
-      val platformMarker: PlatformMarker =
+    val markers =
+        (0..4).map { i ->
           defaultMarker("marker$i")
               .copy(
                   clusterManagerId = clusterManagerId, position = PlatformLatLng(1.0 + i, 2.0 + i))
-      markers.add(platformMarker)
-    }
+        }
 
     // Add all markers in one batch
     controller.addMarkers(markers)
@@ -271,15 +261,10 @@ class MarkersControllerTest {
     verify(clusterManagersController, times(1))
         .addItems(
             eq(clusterManagerId),
-            argThat { platformMarkerBuilders ->
-              platformMarkerBuilders.size == 5 &&
-                  platformMarkerBuilders.stream().allMatch { mb: MarkerBuilder? ->
-                    mb!!.clusterManagerId() == clusterManagerId
-                  }
-            })
+            argThat { size == 5 && all { it.clusterManagerId() == clusterManagerId } })
 
     // Verify addItem is never called (we're using batch operation)
-    verify(clusterManagersController, times(0)).addItem(any())
+    verify(clusterManagersController, never()).addItem(any())
   }
 
   @Test
@@ -287,36 +272,27 @@ class MarkersControllerTest {
     val clusterManagerId = "cm123"
 
     // First add markers
-    val markers = mutableListOf<PlatformMarker>()
-    val markerIds = mutableListOf<String>()
-    for (i in 0..4) {
-      val markerId = "marker$i"
-      markerIds.add(markerId)
-      val platformMarker: PlatformMarker =
+    val markers =
+        (0..4).map { i ->
+          val markerId = "marker$i"
           defaultMarker(markerId)
               .copy(
                   clusterManagerId = clusterManagerId, position = PlatformLatLng(1.0 + i, 2.0 + i))
-      markers.add(platformMarker)
-    }
+        }
 
     controller.addMarkers(markers)
 
     // Remove all markers in one batch
-    controller.removeMarkers(markerIds)
+    controller.removeMarkers(markers.map { it.markerId })
 
     // Verify removeItems is called exactly once with all 5 markers
     verify(clusterManagersController, times(1))
         .removeItems(
             eq(clusterManagerId),
-            argThat { platformMarkerBuilders ->
-              platformMarkerBuilders.size == 5 &&
-                  platformMarkerBuilders.stream().allMatch { mb: MarkerBuilder? ->
-                    mb!!.clusterManagerId() == clusterManagerId
-                  }
-            })
+            argThat { size == 5 && all { it.clusterManagerId() == clusterManagerId } })
 
     // Verify removeItem is never called (we're using batch operation)
-    verify(clusterManagersController, times(0)).removeItem(any())
+    verify(clusterManagersController, never()).removeItem(any())
   }
 
   @Test
@@ -325,28 +301,24 @@ class MarkersControllerTest {
     val clusterManagerId2 = "cm456"
 
     // First add markers to cluster manager 1
-    val initialMarkers = mutableListOf<PlatformMarker>()
-    for (i in 0..4) {
-      val platformMarker: PlatformMarker =
+    val initialMarkers =
+        (0..4).map { i ->
           defaultMarker("marker$i")
               .copy(
                   clusterManagerId = clusterManagerId1, position = PlatformLatLng(1.0 + i, 2.0 + i))
-      initialMarkers.add(platformMarker)
-    }
+        }
     controller.addMarkers(initialMarkers)
 
     // Reset mock to clear invocation counts
     reset(clusterManagersController)
 
     // Now change all markers to cluster manager 2
-    val changedMarkers = mutableListOf<PlatformMarker>()
-    for (i in 0..4) {
-      val platformMarker: PlatformMarker =
+    val changedMarkers =
+        (0..4).map { i ->
           defaultMarker("marker$i")
               .copy(
                   clusterManagerId = clusterManagerId2, position = PlatformLatLng(3.0 + i, 4.0 + i))
-      changedMarkers.add(platformMarker)
-    }
+        }
     controller.changeMarkers(changedMarkers)
 
     // Verify removeItems is called exactly once for cluster manager 1 with all 5
@@ -354,28 +326,18 @@ class MarkersControllerTest {
     verify(clusterManagersController, times(1))
         .removeItems(
             eq(clusterManagerId1),
-            argThat { platformMarkerBuilders ->
-              platformMarkerBuilders.size == 5 &&
-                  platformMarkerBuilders.stream().allMatch { mb: MarkerBuilder? ->
-                    mb!!.clusterManagerId() == clusterManagerId1
-                  }
-            })
+            argThat { size == 5 && all { it.clusterManagerId() == clusterManagerId1 } })
 
     // Verify addItems is called exactly once for cluster manager 2 with all 5
     // markers
     verify(clusterManagersController, times(1))
         .addItems(
             eq(clusterManagerId2),
-            argThat { platformMarkerBuilders ->
-              platformMarkerBuilders.size == 5 &&
-                  platformMarkerBuilders.stream().allMatch { mb: MarkerBuilder? ->
-                    mb!!.clusterManagerId() == clusterManagerId2
-                  }
-            })
+            argThat { size == 5 && all { it.clusterManagerId() == clusterManagerId2 } })
 
     // Verify individual operations are never called (we're using batch operations)
-    verify(clusterManagersController, times(0)).addItem(any())
-    verify(clusterManagersController, times(0)).removeItem(any())
+    verify(clusterManagersController, never()).addItem(any())
+    verify(clusterManagersController, never()).removeItem(any())
   }
 
   @Test
@@ -413,8 +375,8 @@ class MarkersControllerTest {
     // In-place update: marker position is updated directly
     verify(marker, times(1)).position = newLatLng
     // No re-clustering needed
-    verify(clusterManagersController, times(0)).addItems(any(), any())
-    verify(clusterManagersController, times(0)).removeItems(any(), any())
+    verify(clusterManagersController, never()).addItems(any(), any())
+    verify(clusterManagersController, never()).removeItems(any(), any())
   }
 
   companion object {

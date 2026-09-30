@@ -9,7 +9,6 @@ import androidx.test.core.app.ApplicationProvider
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.model.BitmapDescriptor
 import com.google.android.gms.maps.model.GroundOverlay
-import com.google.android.gms.maps.model.GroundOverlayOptions
 import io.flutter.plugin.common.BinaryMessenger
 import io.flutter.plugins.googlemaps.Convert.BitmapDescriptorFactoryWrapper
 import org.junit.Before
@@ -34,7 +33,7 @@ class GroundOverlaysControllerTest {
   private val googleMap: GoogleMap = mock()
 
   // A 1x1 pixel (#8080ff) PNG image encoded in base64
-  private val base64Image: String? = TestImageUtils.generateBase64Image()
+  private val base64Image: String = TestImageUtils.generateBase64Image()
 
   private fun createGroundOverlay(overlayId: String, transparency: Double): PlatformGroundOverlay {
     val bmpData = Base64.decode(base64Image, Base64.DEFAULT)
@@ -84,9 +83,7 @@ class GroundOverlaysControllerTest {
 
     controller.addGroundOverlays(
         listOf(createGroundOverlay(googleGroundOverlayId, transparency.toDouble())))
-    verify(googleMap, times(1))
-        .addGroundOverlay(
-            argThat { argument: GroundOverlayOptions? -> argument!!.transparency == transparency })
+    verify(googleMap, times(1)).addGroundOverlay(argThat { this.transparency == transparency })
 
     val newTransparency = 0.2f
     controller.changeGroundOverlays(

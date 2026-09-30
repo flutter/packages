@@ -25,7 +25,7 @@ import org.robolectric.RobolectricTestRunner
 class GoogleMapInitializerTest {
   private lateinit var googleMapInitializer: GoogleMapInitializer
 
-  private var mockMessenger: BinaryMessenger = mock()
+  private val mockMessenger: BinaryMessenger = mock()
 
   @Before
   fun before() {

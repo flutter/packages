@@ -5,7 +5,6 @@ package io.flutter.plugins.googlemaps
 
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.model.TileOverlay
-import com.google.android.gms.maps.model.TileOverlayOptions
 import com.google.maps.android.heatmaps.HeatmapTileProvider
 import org.junit.Before
 import org.junit.Test
@@ -49,11 +48,7 @@ class HeatmapsControllerTest {
 
     controller.addHeatmaps(listOf(heatmap1))
 
-    verify(googleMap, times(1))
-        .addTileOverlay(
-            argThat { argument: TileOverlayOptions? ->
-              argument!!.tileProvider is HeatmapTileProvider
-            })
+    verify(googleMap, times(1)).addTileOverlay(argThat { this.tileProvider is HeatmapTileProvider })
 
     val opacity2 = 0.2
     val heatmap2 =

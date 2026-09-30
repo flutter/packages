@@ -4,6 +4,7 @@
 package io.flutter.plugins.googlemaps
 
 import android.content.res.AssetManager
+import android.graphics.BitmapFactory
 import android.util.Base64
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.model.BitmapDescriptor
@@ -20,9 +21,10 @@ import io.flutter.plugins.googlemaps.Convert.FlutterInjectorWrapper
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertNull
-import org.junit.Assert.fail
+import org.junit.Assert.assertThrows
 import org.junit.Test
 import org.junit.runner.RunWith
+import org.mockito.Mockito
 import org.mockito.kotlin.any
 import org.mockito.kotlin.mock
 import org.mockito.kotlin.never
@@ -45,7 +47,7 @@ class ConvertTest {
   private val optionsSink: GoogleMapOptionsSink = mock()
 
   // A 1x1 pixel (#8080ff) PNG image encoded in base64
-  private val base64Image: String? = TestImageUtils.generateBase64Image()
+  private val base64Image: String = TestImageUtils.generateBase64Image()
 
   @Test
   fun convertPointsFromPigeonConvertsThePointsWithFullPrecision() {
@@ -183,7 +185,6 @@ class ConvertTest {
 
     whenever(bitmapDescriptorFactoryWrapper.fromAsset(any())).thenReturn(mockBitmapDescriptor)
 
-    verify(bitmapDescriptorFactoryWrapper, never()).fromBitmap(any())
     val bitmap =
         PlatformBitmapAssetMap(
             fakeAssetName,
@@ -197,6 +198,7 @@ class ConvertTest {
             bitmap, assetManager, 1.0f, bitmapDescriptorFactoryWrapper, flutterInjectorWrapper)
 
     assertEquals(mockBitmapDescriptor, result)
+    verify(bitmapDescriptorFactoryWrapper, never()).fromBitmap(any())
   }
 
   @Test
@@ -272,28 +274,26 @@ class ConvertTest {
     assertEquals(mockBitmapDescriptor, result)
   }
 
-  @Test(expected = IllegalArgumentException::class) // Expecting an IllegalArgumentException
+  @Test
   fun getBitmapFromBytesThrowsErrorIfInvalidImageData() {
-    val invalidBase64Image = "not valid image data"
-    val bmpData = Base64.decode(invalidBase64Image, Base64.DEFAULT)
+    Mockito.mockStatic(BitmapFactory::class.java).use { mockedFactory ->
+      mockedFactory.whenever { BitmapFactory.decodeByteArray(any(), any(), any()) }.thenReturn(null)
 
-    verify(bitmapDescriptorFactoryWrapper, never()).fromBitmap(any())
-    val bitmap =
-        PlatformBitmapBytesMap(
-            bmpData,
-            bitmapScaling = PlatformMapBitmapScaling.NONE,
-            imagePixelRatio = 2.0,
-            width = null,
-            height = null)
+      val bitmap =
+          PlatformBitmapBytesMap(
+              byteArrayOf(),
+              bitmapScaling = PlatformMapBitmapScaling.NONE,
+              imagePixelRatio = 2.0,
+              width = null,
+              height = null)
 
-    try {
-      Convert.getBitmapFromBytes(bitmap, 1f, bitmapDescriptorFactoryWrapper)
-    } catch (e: IllegalArgumentException) {
-      assertEquals("Unable to interpret bytes as a valid image.", e.message)
-      throw e // rethrow the exception
+      val exception =
+          assertThrows(IllegalArgumentException::class.java) {
+            Convert.getBitmapFromBytes(bitmap, 1f, bitmapDescriptorFactoryWrapper)
+          }
+      assertEquals("Unable to interpret bytes as a valid image.", exception.message)
+      verify(bitmapDescriptorFactoryWrapper, never()).fromBitmap(any())
     }
-
-    fail("Expected an IllegalArgumentException to be thrown")
   }
 
   @Test
@@ -310,9 +310,9 @@ class ConvertTest {
     val pinConfig =
         Convert.getPinConfigFromPlatformPinConfig(
             platformBitmap, assetManager, 1f, bitmapDescriptorFactoryWrapper)
-    assertEquals(0x00FFFFL, pinConfig.backgroundColor.toLong())
-    assertEquals(0xFF00FFL, pinConfig.borderColor.toLong())
-    assertEquals(0x112233L, pinConfig.glyph.glyphColor.toLong())
+    assertEquals(0x00FFFF, pinConfig.backgroundColor)
+    assertEquals(0xFF00FF, pinConfig.borderColor)
+    assertEquals(0x112233, pinConfig.glyph.glyphColor)
   }
 
   @Test
@@ -329,7 +329,7 @@ class ConvertTest {
         Convert.getPinConfigFromPlatformPinConfig(
             platformBitmap, assetManager, 1f, bitmapDescriptorFactoryWrapper)
     assertEquals("Hi", pinConfig.glyph.text)
-    assertEquals(0xFFFFFFL, pinConfig.glyph.textColor.toLong())
+    assertEquals(0xFFFFFF, pinConfig.glyph.textColor)
   }
 
   @Test
@@ -356,8 +356,8 @@ class ConvertTest {
         Convert.getPinConfigFromPlatformPinConfig(
             platformBitmap, assetManager, 1f, bitmapDescriptorFactoryWrapper)
 
-    assertEquals(0xFFFFFFL, pinConfig.backgroundColor.toLong())
-    assertEquals(0x000000L, pinConfig.borderColor.toLong())
+    assertEquals(0xFFFFFF, pinConfig.backgroundColor)
+    assertEquals(0x000000, pinConfig.borderColor)
     assertEquals(mockBitmapDescriptor, pinConfig.glyph.bitmapDescriptor)
   }
 
@@ -644,19 +644,21 @@ class ConvertTest {
     val builder = MockHeatmapBuilder()
     val id = Convert.interpretHeatmapOptions(data, builder)
 
-    assertEquals(1, builder.getWeightedData()!!.size)
-    assertEquals(point.x, builder.getWeightedData()!![0].point.x, 0.0)
-    assertEquals(point.y, builder.getWeightedData()!![0].point.y, 0.0)
-    assertEquals(intensity, builder.getWeightedData()!![0].intensity, 0.0)
-    assertEquals(3, builder.getGradient()!!.colors.size)
-    assertEquals(color1, builder.getGradient()!!.colors[0].toLong())
-    assertEquals(color2, builder.getGradient()!!.colors[1].toLong())
-    assertEquals(color3, builder.getGradient()!!.colors[2].toLong())
-    assertEquals(3, builder.getGradient()!!.startPoints.size)
-    assertEquals(startPoint1, builder.getGradient()!!.startPoints[0].toDouble(), 0.0)
-    assertEquals(startPoint2, builder.getGradient()!!.startPoints[1].toDouble(), 0.0)
-    assertEquals(startPoint3, builder.getGradient()!!.startPoints[2].toDouble(), 0.0)
-    assertEquals(colorMapSize, builder.getGradient()!!.colorMapSize.toLong())
+    val weightedData = checkNotNull(builder.getWeightedData())
+    val gradient = checkNotNull(builder.getGradient())
+    assertEquals(1, weightedData.size)
+    assertEquals(point.x, weightedData[0].point.x, 0.0)
+    assertEquals(point.y, weightedData[0].point.y, 0.0)
+    assertEquals(intensity, weightedData[0].intensity, 0.0)
+    assertEquals(3, gradient.colors.size)
+    assertEquals(color1, gradient.colors[0].toLong())
+    assertEquals(color2, gradient.colors[1].toLong())
+    assertEquals(color3, gradient.colors[2].toLong())
+    assertEquals(3, gradient.startPoints.size)
+    assertEquals(startPoint1, gradient.startPoints[0].toDouble(), 0.0)
+    assertEquals(startPoint2, gradient.startPoints[1].toDouble(), 0.0)
+    assertEquals(startPoint3, gradient.startPoints[2].toDouble(), 0.0)
+    assertEquals(colorMapSize, gradient.colorMapSize.toLong())
     assertEquals(maxIntensity, builder.getMaxIntensity(), 0.0)
     assertEquals(opacity, builder.getOpacity(), 0.0)
     assertEquals(radius, builder.getRadius().toLong())

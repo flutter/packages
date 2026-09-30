@@ -15,7 +15,7 @@ import java.io.InputStream
 // Collection of helper methods for generating test images.
 object TestImageUtils {
   // Helper method to generate 1x1 pixel base64 encoded png test image.
-  fun generateBase64Image(): String? {
+  fun generateBase64Image(): String {
     val width = 1
     val height = 1
     val bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888)

@@ -3,7 +3,7 @@
 // found in the LICENSE file.
 package io.flutter.plugins.googlemaps
 
-import junit.framework.TestCase
+import org.junit.Assert.assertEquals
 import org.junit.Test
 
 class PolygonBuilderTest {
@@ -18,6 +18,6 @@ class PolygonBuilderTest {
     val options = builder.build()
     val width = options.strokeWidth
 
-    TestCase.assertEquals(density * strokeWidth, width)
+    assertEquals(density * strokeWidth, width)
   }
 }

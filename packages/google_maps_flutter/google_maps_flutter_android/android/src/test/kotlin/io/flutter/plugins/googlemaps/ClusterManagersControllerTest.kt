@@ -62,11 +62,8 @@ class ClusterManagersControllerTest {
     val markerId1 = "mid_1"
     val markerId2 = "mid_2"
 
-    val latLng1 = LatLng(1.1, 2.2)
-    val latLng2 = LatLng(3.3, 4.4)
-
-    val location1 = listOf(latLng1.latitude, latLng1.longitude)
-    val location2 = listOf(latLng2.latitude, latLng2.longitude)
+    val latLng1 = PlatformLatLng(1.1, 2.2)
+    val latLng2 = PlatformLatLng(3.3, 4.4)
 
     whenever(googleMap.cameraPosition)
         .thenReturn(CameraPosition.builder().target(LatLng(0.0, 0.0)).build())
@@ -76,8 +73,8 @@ class ClusterManagersControllerTest {
     val markerBuilder1 = MarkerBuilder(markerId1, clusterManagerId, PlatformMarkerType.MARKER)
     val markerBuilder2 = MarkerBuilder(markerId2, clusterManagerId, PlatformMarkerType.MARKER)
 
-    val markerData1 = createPlatformMarker(markerId1, location1, clusterManagerId)
-    val markerData2 = createPlatformMarker(markerId2, location2, clusterManagerId)
+    val markerData1 = createPlatformMarker(markerId1, latLng1, clusterManagerId)
+    val markerData2 = createPlatformMarker(markerId2, latLng2, clusterManagerId)
 
     Convert.interpretMarkerOptions(
         markerData1, markerBuilder1, assetManager, density, bitmapFactory)
@@ -88,12 +85,10 @@ class ClusterManagersControllerTest {
     controller.addItem(markerBuilder2)
 
     val clusters = controller.getClustersWithClusterManagerId(clusterManagerId)
-    assertEquals("Amount of clusters should be 1", 1, clusters.size)
 
-    val cluster: Cluster<MarkerBuilder> = clusters.iterator().next()
+    val cluster: Cluster<MarkerBuilder> = clusters.single()
     assertNotNull("Cluster position should not be null", cluster.position)
-    val markerIds: Set<String> =
-        cluster.getItems().map { marker: MarkerBuilder -> marker.markerId() }.toSet()
+    val markerIds: Set<String> = cluster.getItems().map { it.markerId() }.toSet()
     assertTrue("Marker IDs should contain markerId1", markerIds.contains(markerId1))
     assertTrue("Marker IDs should contain markerId2", markerIds.contains(markerId2))
     assertEquals("Cluster should contain exactly 2 markers", 2, cluster.size)
@@ -135,11 +130,11 @@ class ClusterManagersControllerTest {
 
     val clusterManager1 = defaultController.clusterManagerIdToManager[defaultClusterManagerId]
     assertNotNull(clusterManager1)
-    assertSame(MarkerClusterRenderer::class.java, clusterManager1!!.getRenderer().javaClass)
+    assertSame(MarkerClusterRenderer::class.java, clusterManager1?.renderer?.javaClass)
 
     val clusterManager2 = advancedController.clusterManagerIdToManager[advancedClusterManagerId]
     assertNotNull(clusterManager2)
-    assertSame(AdvancedMarkerClusterRenderer::class.java, clusterManager2!!.getRenderer().javaClass)
+    assertSame(AdvancedMarkerClusterRenderer::class.java, clusterManager2?.renderer?.javaClass)
   }
 
   @Test
@@ -185,7 +180,7 @@ class ClusterManagersControllerTest {
 
   private fun createPlatformMarker(
       markerId: String,
-      location: List<Double>,
+      location: PlatformLatLng,
       clusterManagerId: String?
   ): PlatformMarker {
     val fakeBitmap = Bitmap.createBitmap(1, 1, Bitmap.Config.ARGB_8888)
@@ -205,7 +200,7 @@ class ClusterManagersControllerTest {
         flat = false,
         icon,
         PlatformInfoWindow(title = null, snippet = null, anchor),
-        position = PlatformLatLng(location[0], location[1]),
+        position = location,
         rotation = 0.0,
         visible = true,
         zIndex = 0.0,

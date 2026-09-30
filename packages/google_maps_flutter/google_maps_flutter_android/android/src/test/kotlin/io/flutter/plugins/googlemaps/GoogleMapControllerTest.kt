@@ -41,29 +41,29 @@ class GoogleMapControllerTest {
   private lateinit var context: Context
   private lateinit var activity: ComponentActivity
 
-  private var mockMessenger: BinaryMessenger = mock()
+  private val mockMessenger: BinaryMessenger = mock()
 
-  private var mockGoogleMap: GoogleMap = mock()
+  private val mockGoogleMap: GoogleMap = mock()
 
-  private var flutterApi: MapsCallbackApi = mock()
+  private val flutterApi: MapsCallbackApi = mock()
 
-  private var mockClusterManagersController: ClusterManagersController = mock()
+  private val mockClusterManagersController: ClusterManagersController = mock()
 
-  private var mockMarkersController: MarkersController = mock()
+  private val mockMarkersController: MarkersController = mock()
 
-  private var mockPolygonsController: PolygonsController = mock()
+  private val mockPolygonsController: PolygonsController = mock()
 
-  private var mockPolylinesController: PolylinesController = mock()
+  private val mockPolylinesController: PolylinesController = mock()
 
-  private var mockCirclesController: CirclesController = mock()
+  private val mockCirclesController: CirclesController = mock()
 
-  private var mockHeatmapsController: HeatmapsController = mock()
+  private val mockHeatmapsController: HeatmapsController = mock()
 
-  private var mockTileOverlaysController: TileOverlaysController = mock()
+  private val mockTileOverlaysController: TileOverlaysController = mock()
 
-  private var mockGroundOverlaysController: GroundOverlaysController = mock()
+  private val mockGroundOverlaysController: GroundOverlaysController = mock()
 
-  private var mapCapabilities: MapCapabilities = mock()
+  private val mapCapabilities: MapCapabilities = mock()
 
   @Before
   fun before() {
@@ -71,38 +71,32 @@ class GoogleMapControllerTest {
     setUpActivityLegacy()
   }
 
-  private val googleMapController: GoogleMapController
-    // Returns GoogleMapController instance.
-    get() {
-      val googleMapController =
-          GoogleMapController(
-              0, context, mockMessenger, { activity.lifecycle }, null, PlatformMarkerType.MARKER)
-      googleMapController.init()
-      return googleMapController
-    }
+  // Returns GoogleMapController instance.
+  private fun createGoogleMapController(): GoogleMapController {
+    return GoogleMapController(
+            0, context, mockMessenger, { activity.lifecycle }, null, PlatformMarkerType.MARKER)
+        .apply { init() }
+  }
 
-  private val googleMapControllerWithMockedDependencies: GoogleMapController
-    // Returns GoogleMapController instance with mocked dependency injections.
-    get() {
-      val googleMapController =
-          GoogleMapController(
-              0,
-              context,
-              mockMessenger,
-              flutterApi,
-              { activity.lifecycle },
-              null,
-              mockClusterManagersController,
-              mockMarkersController,
-              mockPolygonsController,
-              mockPolylinesController,
-              mockCirclesController,
-              mockHeatmapsController,
-              mockTileOverlaysController,
-              mockGroundOverlaysController)
-      googleMapController.init()
-      return googleMapController
-    }
+  // Returns GoogleMapController instance with mocked dependency injections.
+  private fun createGoogleMapControllerWithMockedDependencies(): GoogleMapController {
+    return GoogleMapController(
+            0,
+            context,
+            mockMessenger,
+            flutterApi,
+            { activity.lifecycle },
+            null,
+            mockClusterManagersController,
+            mockMarkersController,
+            mockPolygonsController,
+            mockPolylinesController,
+            mockCirclesController,
+            mockHeatmapsController,
+            mockTileOverlaysController,
+            mockGroundOverlaysController)
+        .apply { init() }
+  }
 
   // TODO(stuartmorgan): Update this to a non-deprecated test API.
   // See https://github.com/flutter/flutter/issues/122102
@@ -113,7 +107,7 @@ class GoogleMapControllerTest {
 
   @Test
   fun disposeReleaseTheMap() {
-    val googleMapController = googleMapController
+    val googleMapController = createGoogleMapController()
     googleMapController.onMapReady(mockGoogleMap)
     assertNotNull(googleMapController)
     googleMapController.dispose()
@@ -122,7 +116,7 @@ class GoogleMapControllerTest {
 
   @Test
   fun onDestroyReleaseTheMap() {
-    val googleMapController = googleMapController
+    val googleMapController = createGoogleMapController()
     googleMapController.onMapReady(mockGoogleMap)
     assertNotNull(googleMapController)
     googleMapController.onDestroy(activity)
@@ -131,7 +125,7 @@ class GoogleMapControllerTest {
 
   @Test
   fun onMapReadySetsPaddingIfInitialPaddingIsThere() {
-    val googleMapController = googleMapController
+    val googleMapController = createGoogleMapController()
     val padding = 10f
     val paddingWithDensity = (padding * googleMapController.density).toInt()
     googleMapController.setInitialPadding(padding, padding, padding, padding)
@@ -142,7 +136,7 @@ class GoogleMapControllerTest {
 
   @Test
   fun setPaddingStoresThePaddingValuesInInInitialPaddingWhenGoogleMapIsNull() {
-    val googleMapController = googleMapController
+    val googleMapController = createGoogleMapController()
     assertNull(googleMapController.initialPadding)
     googleMapController.setPadding(0f, 0f, 0f, 0f)
     assertNotNull(googleMapController.initialPadding)
@@ -151,8 +145,7 @@ class GoogleMapControllerTest {
 
   @Test
   fun onMapReadySetsMarkerCollectionListener() {
-    val googleMapController = googleMapController
-    val spyGoogleMapController = spy(googleMapController)
+    val spyGoogleMapController = spy(createGoogleMapController())
     // setMarkerCollectionListener method should be called when map is ready
     spyGoogleMapController.onMapReady(mockGoogleMap)
 
@@ -166,8 +159,7 @@ class GoogleMapControllerTest {
 
   @Test
   fun onMapReadySetsClusterItemClickListener() {
-    val googleMapController = googleMapController
-    val spyGoogleMapController = spy(googleMapController)
+    val spyGoogleMapController = spy(createGoogleMapController())
     // setMarkerCollectionListener method should be called when map is ready
     spyGoogleMapController.onMapReady(mockGoogleMap)
 
@@ -181,8 +173,7 @@ class GoogleMapControllerTest {
 
   @Test
   fun onMapReadySetsClusterItemInfoWindowClickListener() {
-    val googleMapController = googleMapController
-    val spyGoogleMapController = spy(googleMapController)
+    val spyGoogleMapController = spy(createGoogleMapController())
     spyGoogleMapController.onMapReady(mockGoogleMap)
 
     verify(spyGoogleMapController, times(1)).setClusterItemInfoWindowClickListener(any())
@@ -193,8 +184,7 @@ class GoogleMapControllerTest {
 
   @Test
   fun onMapReadySetsClusterItemRenderedListener() {
-    val googleMapController = googleMapController
-    val spyGoogleMapController = spy(googleMapController)
+    val spyGoogleMapController = spy(createGoogleMapController())
     // setMarkerCollectionListener method should be called when map is ready
     spyGoogleMapController.onMapReady(mockGoogleMap)
 
@@ -208,7 +198,7 @@ class GoogleMapControllerTest {
 
   @Test
   fun setInitialClusterManagers() {
-    val googleMapController = googleMapControllerWithMockedDependencies
+    val googleMapController = createGoogleMapControllerWithMockedDependencies()
     val initialClusterManager = PlatformClusterManager("cm_1")
     googleMapController.setInitialClusterManagers(listOf(initialClusterManager))
     googleMapController.onMapReady(mockGoogleMap)
@@ -220,7 +210,7 @@ class GoogleMapControllerTest {
 
   @Test
   fun onClusterItemRenderedCallsMarkersController() {
-    val googleMapController = googleMapControllerWithMockedDependencies
+    val googleMapController = createGoogleMapControllerWithMockedDependencies()
     val markerBuilder = MarkerBuilder("m_1", "cm_1", PlatformMarkerType.MARKER)
     val marker = mock<Marker>()
     googleMapController.onClusterItemRendered(markerBuilder, marker)
@@ -229,7 +219,7 @@ class GoogleMapControllerTest {
 
   @Test
   fun onClusterItemClickCallsMarkersController() {
-    val googleMapController = googleMapControllerWithMockedDependencies
+    val googleMapController = createGoogleMapControllerWithMockedDependencies()
     val markerBuilder = MarkerBuilder("m_1", "cm_1", PlatformMarkerType.MARKER)
 
     googleMapController.onClusterItemClick(markerBuilder)
@@ -238,7 +228,7 @@ class GoogleMapControllerTest {
 
   @Test
   fun onClusterItemInfoWindowClickCallsMarkersController() {
-    val googleMapController = googleMapControllerWithMockedDependencies
+    val googleMapController = createGoogleMapControllerWithMockedDependencies()
     val markerBuilder = MarkerBuilder("m_1", "cm_1", PlatformMarkerType.MARKER)
 
     googleMapController.onClusterItemInfoWindowClick(markerBuilder)
@@ -247,7 +237,7 @@ class GoogleMapControllerTest {
 
   @Test
   fun onPoiClickCallsFlutterApi() = runTest {
-    val googleMapController = googleMapControllerWithMockedDependencies
+    val googleMapController = createGoogleMapControllerWithMockedDependencies()
     googleMapController.onMapReady(mockGoogleMap)
 
     val pointOfInterest = PointOfInterest(LatLng(0.0, 0.0), "place-123", "Test Place")
@@ -258,7 +248,7 @@ class GoogleMapControllerTest {
 
   @Test
   fun setInitialHeatmaps() {
-    val googleMapController = googleMapControllerWithMockedDependencies
+    val googleMapController = createGoogleMapControllerWithMockedDependencies()
 
     val initialHeatmaps = listOf(createHeatmap("hm_1"))
     googleMapController.setInitialHeatmaps(initialHeatmaps)
@@ -270,7 +260,7 @@ class GoogleMapControllerTest {
 
   @Test
   fun updateHeatmaps() {
-    val googleMapController = googleMapControllerWithMockedDependencies
+    val googleMapController = createGoogleMapControllerWithMockedDependencies()
 
     val toAdd = listOf(createHeatmap("hm_add"))
     val toChange = listOf(createHeatmap("hm_change"))
@@ -285,7 +275,7 @@ class GoogleMapControllerTest {
 
   @Test
   fun animateCamera() {
-    val googleMapController = googleMapControllerWithMockedDependencies
+    val googleMapController = createGoogleMapControllerWithMockedDependencies()
     googleMapController.onMapReady(mockGoogleMap)
 
     val newCameraPosition = PlatformCameraUpdateZoomBy(1.0, null)
@@ -300,7 +290,7 @@ class GoogleMapControllerTest {
 
   @Test
   fun animateCameraWithDuration() {
-    val googleMapController = googleMapControllerWithMockedDependencies
+    val googleMapController = createGoogleMapControllerWithMockedDependencies()
     googleMapController.onMapReady(mockGoogleMap)
 
     val newCameraPosition = PlatformCameraUpdateZoomBy(1.0, null)
@@ -317,7 +307,7 @@ class GoogleMapControllerTest {
 
   @Test
   fun getCameraPositionReturnsCorrectData() {
-    val googleMapController = googleMapControllerWithMockedDependencies
+    val googleMapController = createGoogleMapControllerWithMockedDependencies()
     googleMapController.onMapReady(mockGoogleMap)
 
     val cameraPosition = CameraPosition(LatLng(10.0, 20.0), 15.0f, 30.0f, 45.0f)
@@ -334,7 +324,7 @@ class GoogleMapControllerTest {
 
   @Test
   fun isAdvancedMarkersAvailableReturnsCorrectData() {
-    val googleMapController = googleMapControllerWithMockedDependencies
+    val googleMapController = createGoogleMapControllerWithMockedDependencies()
     googleMapController.onMapReady(mockGoogleMap)
 
     whenever(mockGoogleMap.mapCapabilities).thenReturn(mapCapabilities)

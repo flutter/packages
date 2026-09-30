@@ -16,7 +16,7 @@ import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
 
 class CirclesControllerTest {
-  var mockGoogleMap: GoogleMap = mock()
+  private val mockGoogleMap: GoogleMap = mock()
 
   @Test
   fun controller_changeCircles_updatesExistingCircle() {
@@ -47,7 +47,7 @@ class CirclesControllerTest {
         visible = true,
         strokeWidth = 1L,
         zIndex = 0.0,
-        center = (PlatformLatLng(0.0, 0.0)),
+        center = PlatformLatLng(0.0, 0.0),
         radius = 1.0,
         circleId)
   }
