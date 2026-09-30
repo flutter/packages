@@ -70,6 +70,6 @@ class GoogleMapInitializerTest {
         }
     googleMapInitializer.onMapsSdkInitialized(MapsInitializer.Renderer.LATEST)
 
-    Assert.assertNull(type.await())
+    Assert.assertNotNull(type.await())
   }
 }

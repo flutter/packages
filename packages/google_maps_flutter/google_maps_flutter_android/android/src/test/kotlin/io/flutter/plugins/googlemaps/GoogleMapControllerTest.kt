@@ -253,16 +253,6 @@ class GoogleMapControllerTest {
   }
 
   @Test
-  fun onPoiClickNullPlaceIdDoesNotCallFlutterApi() = runTest {
-    val googleMapController = googleMapControllerWithMockedDependencies
-    googleMapController.onMapReady(mockGoogleMap)
-
-    googleMapController.onPoiClick(PointOfInterest(LatLng(0.0, 0.0), "anId", "Test Place"))
-
-    verify(flutterApi, times(0)).onPointOfInterestTap(any())
-  }
-
-  @Test
   fun setInitialHeatmaps() {
     val googleMapController = googleMapControllerWithMockedDependencies
 

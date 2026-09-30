@@ -212,7 +212,7 @@ class MarkersControllerTest {
     // clusterManagersController should not be called when adding the marker
     verify(clusterManagersController, times(0)).addItem(any())
 
-    verify(spyMarkerCollection, times(1)).addMarker(any())
+    verify(spyMarkerCollection, times(1)).addMarker(any<MarkerOptions>())
 
     val alpha = 0.1f
 
