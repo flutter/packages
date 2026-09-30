@@ -199,7 +199,7 @@ class AdaptiveTextSelectionToolbar extends StatelessWidget {
   final TextSelectionToolbarAnchors anchors;
 
   /// Returns the default button label String for the button of the given
-  /// [ContextMenuButtonType] on any platform.
+  /// [ContextMenuButtonKind] on any platform.
   static String getButtonLabel(BuildContext context, ContextMenuButtonItem buttonItem) {
     if (buttonItem.label != null) {
       return buttonItem.label!;
@@ -215,17 +215,19 @@ class AdaptiveTextSelectionToolbar extends StatelessWidget {
       case TargetPlatform.windows:
         assert(debugCheckHasMaterialLocalizations(context));
         final MaterialLocalizations localizations = MaterialLocalizations.of(context);
-        return switch (buttonItem.type) {
-          ContextMenuButtonType.cut => localizations.cutButtonLabel,
-          ContextMenuButtonType.copy => localizations.copyButtonLabel,
-          ContextMenuButtonType.paste => localizations.pasteButtonLabel,
-          ContextMenuButtonType.selectAll => localizations.selectAllButtonLabel,
-          ContextMenuButtonType.delete => localizations.deleteButtonTooltip.toUpperCase(),
-          ContextMenuButtonType.lookUp => localizations.lookUpButtonLabel,
-          ContextMenuButtonType.searchWeb => localizations.searchWebButtonLabel,
-          ContextMenuButtonType.share => localizations.shareButtonLabel,
-          ContextMenuButtonType.liveTextInput => localizations.scanTextButtonLabel,
-          ContextMenuButtonType.custom => '',
+        return switch (buttonItem.kind) {
+          ContextMenuButtonKind.cut => localizations.cutButtonLabel,
+          ContextMenuButtonKind.copy => localizations.copyButtonLabel,
+          ContextMenuButtonKind.paste => localizations.pasteButtonLabel,
+          ContextMenuButtonKind.selectAll => localizations.selectAllButtonLabel,
+          ContextMenuButtonKind.delete => localizations.deleteButtonTooltip.toUpperCase(),
+          ContextMenuButtonKind.lookUp => localizations.lookUpButtonLabel,
+          ContextMenuButtonKind.searchWeb => localizations.searchWebButtonLabel,
+          ContextMenuButtonKind.share => localizations.shareButtonLabel,
+          ContextMenuButtonKind.liveTextInput => localizations.scanTextButtonLabel,
+          // Other kinds have no default label here; ContextMenuButtonItem.label
+          // is used for them instead.
+          _ => '',
         };
     }
   }

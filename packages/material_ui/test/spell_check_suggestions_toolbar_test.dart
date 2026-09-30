@@ -20,7 +20,7 @@ void main() {
     return <ContextMenuButtonItem>[
       for (final String suggestion in suggestions)
         ContextMenuButtonItem(onPressed: () {}, label: suggestion),
-      ContextMenuButtonItem(onPressed: () {}, type: ContextMenuButtonType.delete, label: 'DELETE'),
+      ContextMenuButtonItem(onPressed: () {}, kind: ContextMenuButtonKind.delete, label: 'DELETE'),
     ];
   }
 
@@ -126,7 +126,7 @@ void main() {
     );
 
     expect(buttonItems, hasLength(1));
-    expect(buttonItems!.first.type, ContextMenuButtonType.delete);
+    expect(buttonItems!.first.kind, ContextMenuButtonKind.delete);
   });
 
   testWidgets('SpellCheckSuggestionsToolbar does not crash at zero area', (

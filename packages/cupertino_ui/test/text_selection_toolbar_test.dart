@@ -595,7 +595,7 @@ void main() {
             text: 'Lorem ipsum \ndolor sit amet',
           ),
           CupertinoTextSelectionToolbarButton.buttonItem(
-            buttonItem: ContextMenuButtonItem(onPressed: () {}, type: ContextMenuButtonType.copy),
+            buttonItem: ContextMenuButtonItem(onPressed: () {}, kind: ContextMenuButtonKind.copy),
           ),
         ],
       );

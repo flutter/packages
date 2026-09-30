@@ -300,7 +300,7 @@ void main() {
         // selection menu.
         await Clipboard.setData(const ClipboardData(text: 'Clipboard data'));
 
-        var buttonTypes = <ContextMenuButtonType>{};
+        var buttonTypes = <ContextMenuButtonKind>{};
         final controller = TextEditingController();
         final focusNode = FocusNode();
 
@@ -317,7 +317,7 @@ void main() {
                   selectionControls: materialTextSelectionHandleControls,
                   contextMenuBuilder: (BuildContext context, EditableTextState editableTextState) {
                     buttonTypes = editableTextState.contextMenuButtonItems
-                        .map((ContextMenuButtonItem buttonItem) => buttonItem.type)
+                        .map((ContextMenuButtonItem buttonItem) => buttonItem.kind)
                         .toSet();
                     return const SizedBox.shrink();
                   },
@@ -335,10 +335,10 @@ void main() {
         expect(state.showToolbar(), true);
         await tester.pump();
 
-        expect(buttonTypes, isNot(contains(ContextMenuButtonType.cut)));
-        expect(buttonTypes, isNot(contains(ContextMenuButtonType.copy)));
-        expect(buttonTypes, contains(ContextMenuButtonType.paste));
-        expect(buttonTypes, isNot(contains(ContextMenuButtonType.selectAll)));
+        expect(buttonTypes, isNot(contains(ContextMenuButtonKind.cut)));
+        expect(buttonTypes, isNot(contains(ContextMenuButtonKind.copy)));
+        expect(buttonTypes, contains(ContextMenuButtonKind.paste));
+        expect(buttonTypes, isNot(contains(ContextMenuButtonKind.selectAll)));
 
         // With text but no selection.
         const text = 'lorem ipsum';
@@ -348,9 +348,9 @@ void main() {
         );
         await tester.pump();
 
-        expect(buttonTypes, isNot(contains(ContextMenuButtonType.cut)));
-        expect(buttonTypes, isNot(contains(ContextMenuButtonType.copy)));
-        expect(buttonTypes, contains(ContextMenuButtonType.paste));
+        expect(buttonTypes, isNot(contains(ContextMenuButtonKind.cut)));
+        expect(buttonTypes, isNot(contains(ContextMenuButtonKind.copy)));
+        expect(buttonTypes, contains(ContextMenuButtonKind.paste));
 
         switch (defaultTargetPlatform) {
           case TargetPlatform.android:
@@ -358,9 +358,9 @@ void main() {
           case TargetPlatform.fuchsia:
           case TargetPlatform.linux:
           case TargetPlatform.windows:
-            expect(buttonTypes, contains(ContextMenuButtonType.selectAll));
+            expect(buttonTypes, contains(ContextMenuButtonKind.selectAll));
           case TargetPlatform.macOS:
-            expect(buttonTypes, isNot(contains(ContextMenuButtonType.selectAll)));
+            expect(buttonTypes, isNot(contains(ContextMenuButtonKind.selectAll)));
         }
 
         // With text and selection.
@@ -369,19 +369,19 @@ void main() {
         );
         await tester.pump();
 
-        expect(buttonTypes, contains(ContextMenuButtonType.cut));
-        expect(buttonTypes, contains(ContextMenuButtonType.copy));
-        expect(buttonTypes, contains(ContextMenuButtonType.paste));
+        expect(buttonTypes, contains(ContextMenuButtonKind.cut));
+        expect(buttonTypes, contains(ContextMenuButtonKind.copy));
+        expect(buttonTypes, contains(ContextMenuButtonKind.paste));
 
         switch (defaultTargetPlatform) {
           case TargetPlatform.android:
           case TargetPlatform.fuchsia:
           case TargetPlatform.linux:
           case TargetPlatform.windows:
-            expect(buttonTypes, contains(ContextMenuButtonType.selectAll));
+            expect(buttonTypes, contains(ContextMenuButtonKind.selectAll));
           case TargetPlatform.iOS:
           case TargetPlatform.macOS:
-            expect(buttonTypes, isNot(contains(ContextMenuButtonType.selectAll)));
+            expect(buttonTypes, isNot(contains(ContextMenuButtonKind.selectAll)));
         }
 
         focusNode.dispose();

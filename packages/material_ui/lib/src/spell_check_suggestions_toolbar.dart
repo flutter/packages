@@ -107,7 +107,7 @@ class SpellCheckSuggestionsToolbar extends StatelessWidget {
         }
         _replaceText(editableTextState, '', editableTextState.currentTextEditingValue.composing);
       },
-      type: ContextMenuButtonType.delete,
+      kind: ContextMenuButtonKind.delete,
     );
     buttonItems.add(deleteButton);
 
@@ -153,13 +153,13 @@ class SpellCheckSuggestionsToolbar extends StatelessWidget {
         alignment: Alignment.centerLeft,
         child: Text(
           AdaptiveTextSelectionToolbar.getButtonLabel(context, buttonItem),
-          style: buttonItem.type == ContextMenuButtonType.delete
+          style: buttonItem.kind == ContextMenuButtonKind.delete
               ? const TextStyle(color: Colors.blue)
               : null,
         ),
       );
 
-      if (buttonItem.type != ContextMenuButtonType.delete) {
+      if (buttonItem.kind != ContextMenuButtonKind.delete) {
         return button;
       }
       return DecoratedBox(

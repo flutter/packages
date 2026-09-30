@@ -78,7 +78,7 @@ class CupertinoTextSelectionToolbarButton extends StatefulWidget {
   final String? text;
 
   /// Returns the default button label String for the button of the given
-  /// [ContextMenuButtonItem]'s [ContextMenuButtonType].
+  /// [ContextMenuButtonItem]'s [ContextMenuButtonKind].
   static String getButtonLabel(BuildContext context, ContextMenuButtonItem buttonItem) {
     if (buttonItem.label != null) {
       return buttonItem.label!;
@@ -86,17 +86,17 @@ class CupertinoTextSelectionToolbarButton extends StatefulWidget {
 
     assert(debugCheckHasCupertinoLocalizations(context));
     final CupertinoLocalizations localizations = CupertinoLocalizations.of(context);
-    return switch (buttonItem.type) {
-      ContextMenuButtonType.cut => localizations.cutButtonLabel,
-      ContextMenuButtonType.copy => localizations.copyButtonLabel,
-      ContextMenuButtonType.paste => localizations.pasteButtonLabel,
-      ContextMenuButtonType.selectAll => localizations.selectAllButtonLabel,
-      ContextMenuButtonType.lookUp => localizations.lookUpButtonLabel,
-      ContextMenuButtonType.searchWeb => localizations.searchWebButtonLabel,
-      ContextMenuButtonType.share => localizations.shareButtonLabel,
-      ContextMenuButtonType.liveTextInput ||
-      ContextMenuButtonType.delete ||
-      ContextMenuButtonType.custom => '',
+    return switch (buttonItem.kind) {
+      ContextMenuButtonKind.cut => localizations.cutButtonLabel,
+      ContextMenuButtonKind.copy => localizations.copyButtonLabel,
+      ContextMenuButtonKind.paste => localizations.pasteButtonLabel,
+      ContextMenuButtonKind.selectAll => localizations.selectAllButtonLabel,
+      ContextMenuButtonKind.lookUp => localizations.lookUpButtonLabel,
+      ContextMenuButtonKind.searchWeb => localizations.searchWebButtonLabel,
+      ContextMenuButtonKind.share => localizations.shareButtonLabel,
+      // Other kinds have no default label here; ContextMenuButtonItem.label
+      // is used for them instead.
+      _ => '',
     };
   }
 
@@ -166,26 +166,15 @@ class _CupertinoTextSelectionToolbarButtonState extends State<CupertinoTextSelec
             : CupertinoColors.inactiveGray,
       ),
     );
-    switch (widget.buttonItem?.type) {
-      case ContextMenuButtonType.cut:
-      case ContextMenuButtonType.copy:
-      case ContextMenuButtonType.paste:
-      case ContextMenuButtonType.selectAll:
-      case ContextMenuButtonType.delete:
-      case ContextMenuButtonType.lookUp:
-      case ContextMenuButtonType.searchWeb:
-      case ContextMenuButtonType.share:
-      case ContextMenuButtonType.custom:
-      case null:
-        return textWidget;
-      case ContextMenuButtonType.liveTextInput:
-        return SizedBox.square(
-          dimension: 13.0,
-          child: CustomPaint(
-            painter: _LiveTextIconPainter(color: _kToolbarTextColor.resolveFrom(context)),
-          ),
-        );
+    if (widget.buttonItem?.kind == ContextMenuButtonKind.liveTextInput) {
+      return SizedBox.square(
+        dimension: 13.0,
+        child: CustomPaint(
+          painter: _LiveTextIconPainter(color: _kToolbarTextColor.resolveFrom(context)),
+        ),
+      );
     }
+    return textWidget;
   }
 }
 
