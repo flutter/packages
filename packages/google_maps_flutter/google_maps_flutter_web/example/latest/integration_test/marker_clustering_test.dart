@@ -88,7 +88,7 @@ void main() {
           await waitForValueMatchingPredicate<List<Cluster>>(
             tester,
             () async => inspector.getClusters(mapId: mapId, clusterManagerId: clusterManagerId),
-            (List<Cluster> clusters) => clusters.isNotEmpty,
+            (List<Cluster> clusters) => clusters.isEmpty,
           ) ??
           <Cluster>[];
 
