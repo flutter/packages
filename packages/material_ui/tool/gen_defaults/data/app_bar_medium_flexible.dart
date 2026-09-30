@@ -2,7 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-// Version: 38.2.31
+// Version: 38.2.82
 
 // dart format off
 import 'typescale.dart';
