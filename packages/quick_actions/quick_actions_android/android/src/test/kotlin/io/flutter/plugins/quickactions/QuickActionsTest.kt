@@ -17,7 +17,6 @@ import org.junit.Assert.assertTrue
 import org.junit.Test
 import org.mockito.kotlin.doReturn
 import org.mockito.kotlin.mock
-import org.mockito.kotlin.whenever
 
 class QuickActionsTest {
   private class TestBinaryMessenger : BinaryMessenger {
@@ -55,11 +54,14 @@ class QuickActionsTest {
     val plugin = QuickActionsPlugin { version -> SUPPORTED_BUILD >= version }
     setUpMessengerAndFlutterPluginBinding(testBinaryMessenger, plugin)
     val mockIntent = createMockIntentWithQuickActionExtra()
-    val mockMainActivity = mock<Activity> { on { intent } doReturn mockIntent }
+    val mockContext = mock<Context>()
+    val mockMainActivity =
+        mock<Activity> {
+          on { intent } doReturn mockIntent
+          on { applicationContext } doReturn mockContext
+        }
     val mockActivityPluginBinding =
         mock<ActivityPluginBinding> { on { activity } doReturn mockMainActivity }
-    val mockContext = mock<Context>()
-    whenever(mockMainActivity.applicationContext).thenReturn(mockContext)
 
     // Act
     plugin.onAttachedToActivity(mockActivityPluginBinding)
@@ -91,11 +93,14 @@ class QuickActionsTest {
     val plugin = QuickActionsPlugin { version -> SUPPORTED_BUILD >= version }
     setUpMessengerAndFlutterPluginBinding(testBinaryMessenger, plugin)
     val mockIntent = createMockIntentWithQuickActionExtra()
-    val mockMainActivity = mock<Activity> { on { intent } doReturn mockIntent }
+    val mockContext = mock<Context>()
+    val mockMainActivity =
+        mock<Activity> {
+          on { intent } doReturn mockIntent
+          on { applicationContext } doReturn mockContext
+        }
     val mockActivityPluginBinding =
         mock<ActivityPluginBinding> { on { activity } doReturn mockMainActivity }
-    val mockContext = mock<Context>()
-    whenever(mockMainActivity.applicationContext).thenReturn(mockContext)
     plugin.onAttachedToActivity(mockActivityPluginBinding)
 
     // Act
