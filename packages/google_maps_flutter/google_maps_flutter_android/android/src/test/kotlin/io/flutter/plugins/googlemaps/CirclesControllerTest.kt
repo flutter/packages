@@ -31,11 +31,11 @@ class CirclesControllerTest {
 
     controller.addCircles(listOf(createCircle(id, consumesEvents = false)))
     // There should be exactly one circle.
-    Assert.assertEquals(1, controller.circleIdToController.size.toLong())
+    Assert.assertEquals(1, controller.circleIdToController.size)
 
     controller.changeCircles(listOf(createCircle(id, consumesEvents = true)))
     // There should still only be one circle, and it should be updated.
-    Assert.assertEquals(1, controller.circleIdToController.size.toLong())
+    Assert.assertEquals(1, controller.circleIdToController.size)
     verify(circle, times(1)).isClickable = true
   }
 

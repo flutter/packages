@@ -239,8 +239,7 @@ class MarkersControllerTest {
     var markerOptions = markerBuilder.build()
     Assert.assertEquals(AdvancedMarkerOptions::class.java, markerOptions.javaClass)
     Assert.assertEquals(
-        CollisionBehavior.REQUIRED.toLong(),
-        (markerOptions as AdvancedMarkerOptions).collisionBehavior.toLong())
+        CollisionBehavior.REQUIRED, (markerOptions as AdvancedMarkerOptions).collisionBehavior)
 
     // Customized collision behavior of an AdvancedMarker
     platformMarker =
@@ -253,8 +252,8 @@ class MarkersControllerTest {
     markerOptions = markerBuilder.build()
     Assert.assertEquals(AdvancedMarkerOptions::class.java, markerOptions.javaClass)
     Assert.assertEquals(
-        CollisionBehavior.OPTIONAL_AND_HIDES_LOWER_PRIORITY.toLong(),
-        (markerOptions as AdvancedMarkerOptions).collisionBehavior.toLong())
+        CollisionBehavior.OPTIONAL_AND_HIDES_LOWER_PRIORITY,
+        (markerOptions as AdvancedMarkerOptions).collisionBehavior)
 
     // Legacy markers don't have collision behavior in the marker options
     platformMarker = defaultMarkerBuilder().setMarkerId("1").build()

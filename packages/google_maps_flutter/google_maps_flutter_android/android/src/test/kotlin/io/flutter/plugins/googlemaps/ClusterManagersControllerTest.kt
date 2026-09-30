@@ -84,7 +84,7 @@ class ClusterManagersControllerTest {
     controller.addItem(markerBuilder2)
 
     val clusters = controller.getClustersWithClusterManagerId(clusterManagerId)
-    Assert.assertEquals("Amount of clusters should be 1", 1, clusters.size.toLong())
+    Assert.assertEquals("Amount of clusters should be 1", 1, clusters.size)
 
     val cluster: Cluster<MarkerBuilder> = clusters.iterator().next()
     Assert.assertNotNull("Cluster position should not be null", cluster.position)
@@ -92,7 +92,7 @@ class ClusterManagersControllerTest {
         cluster.getItems().map { marker: MarkerBuilder -> marker.markerId() }.toSet()
     Assert.assertTrue("Marker IDs should contain markerId1", markerIds.contains(markerId1))
     Assert.assertTrue("Marker IDs should contain markerId2", markerIds.contains(markerId2))
-    Assert.assertEquals("Cluster should contain exactly 2 markers", 2, cluster.size.toLong())
+    Assert.assertEquals("Cluster should contain exactly 2 markers", 2, cluster.size)
   }
 
   @Test

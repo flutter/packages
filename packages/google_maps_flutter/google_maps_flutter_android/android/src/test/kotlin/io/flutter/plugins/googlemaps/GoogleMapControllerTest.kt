@@ -142,7 +142,7 @@ class GoogleMapControllerTest {
     Assert.assertNull(googleMapController.initialPadding)
     googleMapController.setPadding(0f, 0f, 0f, 0f)
     Assert.assertNotNull(googleMapController.initialPadding)
-    Assert.assertEquals(4, googleMapController.initialPadding.size.toLong())
+    Assert.assertEquals(4, googleMapController.initialPadding.size)
   }
 
   @Test

@@ -89,7 +89,7 @@ class ConvertTest {
     Assert.assertEquals(markerPosition2.longitude, northeast.longitude, 1e-15)
 
     val markerIds = result.markerIds
-    Assert.assertEquals(2, markerIds.size.toLong())
+    Assert.assertEquals(2, markerIds.size)
     Assert.assertEquals(marker1.markerId(), markerIds[0])
     Assert.assertEquals(marker2.markerId(), markerIds[1])
   }
@@ -558,7 +558,7 @@ class ConvertTest {
 
     val result = Convert.weightedDataFromPigeon(data)
 
-    Assert.assertEquals(1, result.size.toLong())
+    Assert.assertEquals(1, result.size)
     Assert.assertEquals(point.x, result[0].point.x, 0.0)
     Assert.assertEquals(point.y, result[0].point.y, 0.0)
     Assert.assertEquals(intensity, result[0].intensity, 0.0)
@@ -581,11 +581,11 @@ class ConvertTest {
 
     val result = Convert.gradientFromPigeon(data)
 
-    Assert.assertEquals(3, result.colors.size.toLong())
+    Assert.assertEquals(3, result.colors.size)
     Assert.assertEquals(color1, result.colors[0].toLong())
     Assert.assertEquals(color2, result.colors[1].toLong())
     Assert.assertEquals(color3, result.colors[2].toLong())
-    Assert.assertEquals(3, result.startPoints.size.toLong())
+    Assert.assertEquals(3, result.startPoints.size)
     Assert.assertEquals(startPoint1, result.startPoints[0].toDouble(), 0.0)
     Assert.assertEquals(startPoint2, result.startPoints[1].toDouble(), 0.0)
     Assert.assertEquals(startPoint3, result.startPoints[2].toDouble(), 0.0)
@@ -628,15 +628,15 @@ class ConvertTest {
     val builder = MockHeatmapBuilder()
     val id = Convert.interpretHeatmapOptions(data, builder)
 
-    Assert.assertEquals(1, builder.getWeightedData()!!.size.toLong())
+    Assert.assertEquals(1, builder.getWeightedData()!!.size)
     Assert.assertEquals(point.x, builder.getWeightedData()!![0].point.x, 0.0)
     Assert.assertEquals(point.y, builder.getWeightedData()!![0].point.y, 0.0)
     Assert.assertEquals(intensity, builder.getWeightedData()!![0].intensity, 0.0)
-    Assert.assertEquals(3, builder.getGradient()!!.colors.size.toLong())
+    Assert.assertEquals(3, builder.getGradient()!!.colors.size)
     Assert.assertEquals(color1, builder.getGradient()!!.colors[0].toLong())
     Assert.assertEquals(color2, builder.getGradient()!!.colors[1].toLong())
     Assert.assertEquals(color3, builder.getGradient()!!.colors[2].toLong())
-    Assert.assertEquals(3, builder.getGradient()!!.startPoints.size.toLong())
+    Assert.assertEquals(3, builder.getGradient()!!.startPoints.size)
     Assert.assertEquals(startPoint1, builder.getGradient()!!.startPoints[0].toDouble(), 0.0)
     Assert.assertEquals(startPoint2, builder.getGradient()!!.startPoints[1].toDouble(), 0.0)
     Assert.assertEquals(startPoint3, builder.getGradient()!!.startPoints[2].toDouble(), 0.0)
@@ -892,11 +892,6 @@ class ConvertTest {
 
     fun setMarkerType(setterArg: PlatformMarkerType): PlatformMapConfigurationBuilder {
       this.markerType = setterArg
-      return this
-    }
-
-    fun setMapId(setterArg: String?): PlatformMapConfigurationBuilder {
-      this.mapId = setterArg
       return this
     }
 
