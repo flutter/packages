@@ -91,14 +91,6 @@ void main() {
         expect(await files[1].lastModified(), isNotNull);
       });
     });
-
-    group('getSavePath', () {
-      testWidgets('returns non-null', (WidgetTester _) async {
-        final plugin = FileSelectorWeb();
-        final Future<FileSaveLocation?> saveLocation = plugin.getSaveLocation();
-        expect(await saveLocation, isNotNull);
-      });
-    });
   });
 }
 
