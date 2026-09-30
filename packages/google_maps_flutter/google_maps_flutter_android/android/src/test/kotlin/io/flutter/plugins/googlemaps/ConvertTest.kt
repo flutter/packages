@@ -19,7 +19,6 @@ import com.google.maps.android.projection.SphericalMercatorProjection
 import io.flutter.plugins.googlemaps.Convert.BitmapDescriptorFactoryWrapper
 import io.flutter.plugins.googlemaps.Convert.FlutterInjectorWrapper
 import org.junit.Assert.assertEquals
-import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertNull
 import org.junit.Assert.assertThrows
 import org.junit.Test
@@ -710,22 +709,22 @@ class ConvertTest {
   ) {
     assertEquals(expectedId, result.groundOverlayId)
     if (expectedPosition != null) {
-      assertNotNull(result.position)
-      assertEquals(expectedPosition.latitude, result.position!!.latitude, 1e-15)
-      assertEquals(expectedPosition.longitude, result.position.longitude, 1e-15)
-      assertNotNull(result.width)
-      assertNotNull(result.height)
-      assertEquals(expectedOverlay.width.toDouble(), result.width!!, 1e-15)
-      assertEquals(expectedOverlay.height.toDouble(), result.height!!, 1e-15)
+      val position = checkNotNull(result.position)
+      assertEquals(expectedPosition.latitude, position.latitude, 1e-15)
+      assertEquals(expectedPosition.longitude, position.longitude, 1e-15)
+      val width = checkNotNull(result.width)
+      val height = checkNotNull(result.height)
+      assertEquals(expectedOverlay.width.toDouble(), width, 1e-15)
+      assertEquals(expectedOverlay.height.toDouble(), height, 1e-15)
     } else {
       assertNull(result.position)
     }
     if (expectedBounds != null) {
-      assertNotNull(result.bounds)
-      assertEquals(expectedBounds.southwest.latitude, result.bounds!!.southwest.latitude, 1e-15)
-      assertEquals(expectedBounds.southwest.longitude, result.bounds.southwest.longitude, 1e-15)
-      assertEquals(expectedBounds.northeast.latitude, result.bounds.northeast.latitude, 1e-15)
-      assertEquals(expectedBounds.northeast.longitude, result.bounds.northeast.longitude, 1e-15)
+      val bounds = checkNotNull(result.bounds)
+      assertEquals(expectedBounds.southwest.latitude, bounds.southwest.latitude, 1e-15)
+      assertEquals(expectedBounds.southwest.longitude, bounds.southwest.longitude, 1e-15)
+      assertEquals(expectedBounds.northeast.latitude, bounds.northeast.latitude, 1e-15)
+      assertEquals(expectedBounds.northeast.longitude, bounds.northeast.longitude, 1e-15)
     } else {
       assertNull(result.bounds)
     }
@@ -735,9 +734,8 @@ class ConvertTest {
     assertEquals(expectedOverlay.zIndex.toDouble(), result.zIndex.toDouble(), 1e-6)
     assertEquals(expectedOverlay.isVisible, result.visible)
     assertEquals(expectedOverlay.isClickable, result.clickable)
-    val anchor = result.anchor
-    assertNotNull(anchor)
-    assertEquals(0.5, anchor!!.x, 1e-6)
+    val anchor = checkNotNull(result.anchor)
+    assertEquals(0.5, anchor.x, 1e-6)
     assertEquals(0.5, anchor.y, 1e-6)
   }
 
