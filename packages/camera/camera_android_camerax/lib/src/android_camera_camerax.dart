@@ -751,6 +751,8 @@ class AndroidCameraCameraX extends CameraPlatform {
       );
 
       if (newIndex == null) {
+        // The operation to set exposure was cancelled. Return rounded exposure
+        // compensation index so the UI doesn't revert.
         return roundedExposureCompensationIndex * exposureOffsetStepSize;
       }
 

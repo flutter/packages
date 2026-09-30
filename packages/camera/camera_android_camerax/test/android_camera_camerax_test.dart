@@ -4675,6 +4675,8 @@ void main() {
       );
       final int expectedExposureCompensationIndex =
           (offset / exposureState.exposureCompensationStep).round();
+      final double expectedOffset =
+          expectedExposureCompensationIndex * exposureState.exposureCompensationStep;
 
       // Set directly for test versus calling createCamera.
       camera.cameraInfo = mockCameraInfo;
@@ -4685,7 +4687,7 @@ void main() {
         mockCameraControl.setExposureCompensationIndex(expectedExposureCompensationIndex),
       ).thenAnswer((_) async => Future<int?>.value());
 
-      expect(await camera.setExposureOffset(cameraId, offset), equals(5.0));
+      expect(await camera.setExposureOffset(cameraId, offset), equals(expectedOffset));
     },
   );
 
