@@ -98,7 +98,6 @@ class ConvertTest {
   }
 
   @Test
-  @Throws(Exception::class)
   fun getBitmapFromAssetAuto() {
     val fakeAssetName = "fake_asset_name"
     val fakeAssetKey = "fake_asset_key"
@@ -124,7 +123,6 @@ class ConvertTest {
   }
 
   @Test
-  @Throws(Exception::class)
   fun getBitmapFromAssetAutoAndWidth() {
     val fakeAssetName = "fake_asset_name"
     val fakeAssetKey = "fake_asset_key"
@@ -150,7 +148,6 @@ class ConvertTest {
   }
 
   @Test
-  @Throws(Exception::class)
   fun getBitmapFromAssetAutoAndHeight() {
     val fakeAssetName = "fake_asset_name"
     val fakeAssetKey = "fake_asset_key"
@@ -176,7 +173,6 @@ class ConvertTest {
   }
 
   @Test
-  @Throws(Exception::class)
   fun getBitmapFromAssetNoScaling() {
     val fakeAssetName = "fake_asset_name"
     val fakeAssetKey = "fake_asset_key"
@@ -365,118 +361,133 @@ class ConvertTest {
     assertEquals(mockBitmapDescriptor, pinConfig.glyph.bitmapDescriptor)
   }
 
-  private val minimalConfigurationBuilder: PlatformMapConfigurationBuilder
-    /** Returns a PlatformMapConfiguration.Builder that sets required parameters. */
-    get() = PlatformMapConfigurationBuilder().setMarkerType(PlatformMarkerType.MARKER)
-
   @Test
   fun interpretMapConfiguration_handlesNulls() {
-    val config = this.minimalConfigurationBuilder.build()
+    val config = PlatformMapConfiguration(markerType = PlatformMarkerType.MARKER)
     Convert.interpretMapConfiguration(config, optionsSink)
     verifyNoInteractions(optionsSink)
   }
 
   @Test
   fun interpretMapConfiguration_handlesCompassEnabled() {
-    val config = this.minimalConfigurationBuilder.setCompassEnabled(false).build()
+    val config =
+        PlatformMapConfiguration(markerType = PlatformMarkerType.MARKER, compassEnabled = false)
     Convert.interpretMapConfiguration(config, optionsSink)
     verify(optionsSink, times(1)).setCompassEnabled(false)
   }
 
   @Test
   fun interpretMapConfiguration_handlesMapToolbarEnabled() {
-    val config = this.minimalConfigurationBuilder.setMapToolbarEnabled(true).build()
+    val config =
+        PlatformMapConfiguration(markerType = PlatformMarkerType.MARKER, mapToolbarEnabled = true)
     Convert.interpretMapConfiguration(config, optionsSink)
     verify(optionsSink, times(1)).setMapToolbarEnabled(true)
   }
 
   @Test
   fun interpretMapConfiguration_handlesRotateGesturesEnabled() {
-    val config = this.minimalConfigurationBuilder.setRotateGesturesEnabled(false).build()
+    val config =
+        PlatformMapConfiguration(
+            markerType = PlatformMarkerType.MARKER, rotateGesturesEnabled = false)
     Convert.interpretMapConfiguration(config, optionsSink)
     verify(optionsSink, times(1)).setRotateGesturesEnabled(false)
   }
 
   @Test
   fun interpretMapConfiguration_handlesScrollGesturesEnabled() {
-    val config = this.minimalConfigurationBuilder.setScrollGesturesEnabled(true).build()
+    val config =
+        PlatformMapConfiguration(
+            markerType = PlatformMarkerType.MARKER, scrollGesturesEnabled = true)
     Convert.interpretMapConfiguration(config, optionsSink)
     verify(optionsSink, times(1)).setScrollGesturesEnabled(true)
   }
 
   @Test
   fun interpretMapConfiguration_handlesTiltGesturesEnabled() {
-    val config = this.minimalConfigurationBuilder.setTiltGesturesEnabled(false).build()
+    val config =
+        PlatformMapConfiguration(
+            markerType = PlatformMarkerType.MARKER, tiltGesturesEnabled = false)
     Convert.interpretMapConfiguration(config, optionsSink)
     verify(optionsSink, times(1)).setTiltGesturesEnabled(false)
   }
 
   @Test
   fun interpretMapConfiguration_handlesTrackCameraPosition() {
-    val config = this.minimalConfigurationBuilder.setTrackCameraPosition(true).build()
+    val config =
+        PlatformMapConfiguration(markerType = PlatformMarkerType.MARKER, trackCameraPosition = true)
     Convert.interpretMapConfiguration(config, optionsSink)
     verify(optionsSink, times(1)).setTrackCameraPosition(true)
   }
 
   @Test
   fun interpretMapConfiguration_handlesZoomControlsEnabled() {
-    val config = this.minimalConfigurationBuilder.setZoomControlsEnabled(false).build()
+    val config =
+        PlatformMapConfiguration(
+            markerType = PlatformMarkerType.MARKER, zoomControlsEnabled = false)
     Convert.interpretMapConfiguration(config, optionsSink)
     verify(optionsSink, times(1)).setZoomControlsEnabled(false)
   }
 
   @Test
   fun interpretMapConfiguration_handlesZoomGesturesEnabled() {
-    val config = this.minimalConfigurationBuilder.setZoomGesturesEnabled(true).build()
+    val config =
+        PlatformMapConfiguration(markerType = PlatformMarkerType.MARKER, zoomGesturesEnabled = true)
     Convert.interpretMapConfiguration(config, optionsSink)
     verify(optionsSink, times(1)).setZoomGesturesEnabled(true)
   }
 
   @Test
   fun interpretMapConfiguration_handlesMyLocationEnabled() {
-    val config = this.minimalConfigurationBuilder.setMyLocationEnabled(false).build()
+    val config =
+        PlatformMapConfiguration(markerType = PlatformMarkerType.MARKER, myLocationEnabled = false)
     Convert.interpretMapConfiguration(config, optionsSink)
     verify(optionsSink, times(1)).setMyLocationEnabled(false)
   }
 
   @Test
   fun interpretMapConfiguration_handlesMyLocationButtonEnabled() {
-    val config = this.minimalConfigurationBuilder.setMyLocationButtonEnabled(true).build()
+    val config =
+        PlatformMapConfiguration(
+            markerType = PlatformMarkerType.MARKER, myLocationButtonEnabled = true)
     Convert.interpretMapConfiguration(config, optionsSink)
     verify(optionsSink, times(1)).setMyLocationButtonEnabled(true)
   }
 
   @Test
   fun interpretMapConfiguration_handlesIndoorViewEnabled() {
-    val config = this.minimalConfigurationBuilder.setIndoorViewEnabled(false).build()
+    val config =
+        PlatformMapConfiguration(markerType = PlatformMarkerType.MARKER, indoorViewEnabled = false)
     Convert.interpretMapConfiguration(config, optionsSink)
     verify(optionsSink, times(1)).setIndoorEnabled(false)
   }
 
   @Test
   fun interpretMapConfiguration_handlesTrafficEnabled() {
-    val config = this.minimalConfigurationBuilder.setTrafficEnabled(true).build()
+    val config =
+        PlatformMapConfiguration(markerType = PlatformMarkerType.MARKER, trafficEnabled = true)
     Convert.interpretMapConfiguration(config, optionsSink)
     verify(optionsSink, times(1)).setTrafficEnabled(true)
   }
 
   @Test
   fun interpretMapConfiguration_handlesBuildingsEnabled() {
-    val config = this.minimalConfigurationBuilder.setBuildingsEnabled(false).build()
+    val config =
+        PlatformMapConfiguration(markerType = PlatformMarkerType.MARKER, buildingsEnabled = false)
     Convert.interpretMapConfiguration(config, optionsSink)
     verify(optionsSink, times(1)).setBuildingsEnabled(false)
   }
 
   @Test
   fun interpretMapConfiguration_handlesLiteModeEnabled() {
-    val config = this.minimalConfigurationBuilder.setLiteModeEnabled(true).build()
+    val config =
+        PlatformMapConfiguration(markerType = PlatformMarkerType.MARKER, liteModeEnabled = true)
     Convert.interpretMapConfiguration(config, optionsSink)
     verify(optionsSink, times(1)).setLiteModeEnabled(true)
   }
 
   @Test
   fun interpretMapConfiguration_handlesStyle() {
-    val config = this.minimalConfigurationBuilder.setStyle("foo").build()
+    val config = PlatformMapConfiguration(markerType = PlatformMarkerType.MARKER, style = "foo")
     Convert.interpretMapConfiguration(config, optionsSink)
     verify(optionsSink, times(1)).setMapStyle("foo")
   }
@@ -484,9 +495,9 @@ class ConvertTest {
   @Test
   fun interpretMapConfiguration_handlesUnboundedCameraTargetBounds() {
     val config =
-        this.minimalConfigurationBuilder
-            .setCameraTargetBounds(PlatformCameraTargetBounds(null))
-            .build()
+        PlatformMapConfiguration(
+            markerType = PlatformMarkerType.MARKER,
+            cameraTargetBounds = PlatformCameraTargetBounds(null))
     Convert.interpretMapConfiguration(config, optionsSink)
     verify(optionsSink, times(1)).setCameraTargetBounds(null)
   }
@@ -495,20 +506,22 @@ class ConvertTest {
   fun interpretMapConfiguration_handlesBoundedCameraTargetBounds() {
     val bounds = LatLngBounds(LatLng(10.0, 20.0), LatLng(30.0, 40.0))
     val config =
-        this.minimalConfigurationBuilder
-            .setCameraTargetBounds(
+        PlatformMapConfiguration(
+            markerType = PlatformMarkerType.MARKER,
+            cameraTargetBounds =
                 PlatformCameraTargetBounds(
                     PlatformLatLngBounds(
                         PlatformLatLng(bounds.northeast.latitude, bounds.northeast.longitude),
                         PlatformLatLng(bounds.southwest.latitude, bounds.southwest.longitude))))
-            .build()
     Convert.interpretMapConfiguration(config, optionsSink)
     verify(optionsSink, times(1)).setCameraTargetBounds(bounds)
   }
 
   @Test
   fun interpretMapConfiguration_handlesMapType() {
-    val config = this.minimalConfigurationBuilder.setMapType(PlatformMapType.HYBRID).build()
+    val config =
+        PlatformMapConfiguration(
+            markerType = PlatformMarkerType.MARKER, mapType = PlatformMapType.HYBRID)
     Convert.interpretMapConfiguration(config, optionsSink)
     verify(optionsSink, times(1)).setMapType(GoogleMap.MAP_TYPE_HYBRID)
   }
@@ -520,9 +533,9 @@ class ConvertTest {
     val left = 3.0
     val right = 4.0
     val config =
-        this.minimalConfigurationBuilder
-            .setPadding(PlatformEdgeInsets(top = top, bottom = bottom, left = left, right = right))
-            .build()
+        PlatformMapConfiguration(
+            markerType = PlatformMarkerType.MARKER,
+            padding = PlatformEdgeInsets(top = top, bottom = bottom, left = left, right = right))
     Convert.interpretMapConfiguration(config, optionsSink)
     verify(optionsSink, times(1))
         .setPadding(top.toFloat(), left.toFloat(), bottom.toFloat(), right.toFloat())
@@ -533,9 +546,9 @@ class ConvertTest {
     val min = 1.0
     val max = 2.0
     val config =
-        this.minimalConfigurationBuilder
-            .setMinMaxZoomPreference(PlatformZoomRange(min, max))
-            .build()
+        PlatformMapConfiguration(
+            markerType = PlatformMarkerType.MARKER,
+            minMaxZoomPreference = PlatformZoomRange(min, max))
     Convert.interpretMapConfiguration(config, optionsSink)
     verify(optionsSink, times(1)).setMinMaxZoomPreference(min.toFloat(), max.toFloat())
   }
@@ -770,159 +783,6 @@ class ConvertTest {
     val result = Convert.groundOverlayToPigeon(mockGroundOverlay, overlayId, true)
 
     assertGroundOverlayEquals(result, mockGroundOverlay, overlayId, null, bounds)
-  }
-
-  // Remove this if builders are added to the Kotlin generator; see discussion in
-  // https://github.com/flutter/flutter/issues/158287
-  private class PlatformMapConfigurationBuilder {
-    private var compassEnabled: Boolean? = null
-    private var cameraTargetBounds: PlatformCameraTargetBounds? = null
-    private var mapType: PlatformMapType? = null
-    private var minMaxZoomPreference: PlatformZoomRange? = null
-    private var mapToolbarEnabled: Boolean? = null
-    private var rotateGesturesEnabled: Boolean? = null
-    private var scrollGesturesEnabled: Boolean? = null
-    private var tiltGesturesEnabled: Boolean? = null
-    private var trackCameraPosition: Boolean? = null
-    private var zoomControlsEnabled: Boolean? = null
-    private var zoomGesturesEnabled: Boolean? = null
-    private var myLocationEnabled: Boolean? = null
-    private var myLocationButtonEnabled: Boolean? = null
-    private var padding: PlatformEdgeInsets? = null
-    private var indoorViewEnabled: Boolean? = null
-    private var trafficEnabled: Boolean? = null
-    private var buildingsEnabled: Boolean? = null
-    private var liteModeEnabled: Boolean? = null
-    private var markerType: PlatformMarkerType? = null
-    private var mapId: String? = null
-    private var style: String? = null
-
-    fun setCompassEnabled(setterArg: Boolean?): PlatformMapConfigurationBuilder {
-      this.compassEnabled = setterArg
-      return this
-    }
-
-    fun setCameraTargetBounds(
-        setterArg: PlatformCameraTargetBounds?
-    ): PlatformMapConfigurationBuilder {
-      this.cameraTargetBounds = setterArg
-      return this
-    }
-
-    fun setMapType(setterArg: PlatformMapType?): PlatformMapConfigurationBuilder {
-      this.mapType = setterArg
-      return this
-    }
-
-    fun setMinMaxZoomPreference(setterArg: PlatformZoomRange?): PlatformMapConfigurationBuilder {
-      this.minMaxZoomPreference = setterArg
-      return this
-    }
-
-    fun setMapToolbarEnabled(setterArg: Boolean?): PlatformMapConfigurationBuilder {
-      this.mapToolbarEnabled = setterArg
-      return this
-    }
-
-    fun setRotateGesturesEnabled(setterArg: Boolean?): PlatformMapConfigurationBuilder {
-      this.rotateGesturesEnabled = setterArg
-      return this
-    }
-
-    fun setScrollGesturesEnabled(setterArg: Boolean?): PlatformMapConfigurationBuilder {
-      this.scrollGesturesEnabled = setterArg
-      return this
-    }
-
-    fun setTiltGesturesEnabled(setterArg: Boolean?): PlatformMapConfigurationBuilder {
-      this.tiltGesturesEnabled = setterArg
-      return this
-    }
-
-    fun setTrackCameraPosition(setterArg: Boolean?): PlatformMapConfigurationBuilder {
-      this.trackCameraPosition = setterArg
-      return this
-    }
-
-    fun setZoomControlsEnabled(setterArg: Boolean?): PlatformMapConfigurationBuilder {
-      this.zoomControlsEnabled = setterArg
-      return this
-    }
-
-    fun setZoomGesturesEnabled(setterArg: Boolean?): PlatformMapConfigurationBuilder {
-      this.zoomGesturesEnabled = setterArg
-      return this
-    }
-
-    fun setMyLocationEnabled(setterArg: Boolean?): PlatformMapConfigurationBuilder {
-      this.myLocationEnabled = setterArg
-      return this
-    }
-
-    fun setMyLocationButtonEnabled(setterArg: Boolean?): PlatformMapConfigurationBuilder {
-      this.myLocationButtonEnabled = setterArg
-      return this
-    }
-
-    fun setPadding(setterArg: PlatformEdgeInsets?): PlatformMapConfigurationBuilder {
-      this.padding = setterArg
-      return this
-    }
-
-    fun setIndoorViewEnabled(setterArg: Boolean?): PlatformMapConfigurationBuilder {
-      this.indoorViewEnabled = setterArg
-      return this
-    }
-
-    fun setTrafficEnabled(setterArg: Boolean?): PlatformMapConfigurationBuilder {
-      this.trafficEnabled = setterArg
-      return this
-    }
-
-    fun setBuildingsEnabled(setterArg: Boolean?): PlatformMapConfigurationBuilder {
-      this.buildingsEnabled = setterArg
-      return this
-    }
-
-    fun setLiteModeEnabled(setterArg: Boolean?): PlatformMapConfigurationBuilder {
-      this.liteModeEnabled = setterArg
-      return this
-    }
-
-    fun setMarkerType(setterArg: PlatformMarkerType): PlatformMapConfigurationBuilder {
-      this.markerType = setterArg
-      return this
-    }
-
-    fun setStyle(setterArg: String?): PlatformMapConfigurationBuilder {
-      this.style = setterArg
-      return this
-    }
-
-    fun build(): PlatformMapConfiguration {
-      return PlatformMapConfiguration(
-          compassEnabled,
-          cameraTargetBounds,
-          mapType,
-          minMaxZoomPreference,
-          mapToolbarEnabled,
-          rotateGesturesEnabled,
-          scrollGesturesEnabled,
-          tiltGesturesEnabled,
-          trackCameraPosition,
-          zoomControlsEnabled,
-          zoomGesturesEnabled,
-          myLocationEnabled,
-          myLocationButtonEnabled,
-          padding,
-          indoorViewEnabled,
-          trafficEnabled,
-          buildingsEnabled,
-          liteModeEnabled,
-          markerType!!,
-          mapId,
-          style)
-    }
   }
 
   companion object {

@@ -80,7 +80,7 @@ class MarkersControllerTest {
 
     val latLng = LatLng(1.1, 2.2)
 
-    val markers = listOf(defaultMarkerBuilder().setMarkerId(googleMarkerId).build())
+    val markers = listOf(defaultMarker(googleMarkerId))
     controller.addMarkers(markers)
     controller.onMarkerDragStart(googleMarkerId, latLng)
 
@@ -98,7 +98,7 @@ class MarkersControllerTest {
 
     val latLng = LatLng(1.1, 2.2)
 
-    val markers = listOf(defaultMarkerBuilder().setMarkerId(googleMarkerId).build())
+    val markers = listOf(defaultMarker(googleMarkerId))
     controller.addMarkers(markers)
     controller.onMarkerDragEnd(googleMarkerId, latLng)
 
@@ -116,23 +116,12 @@ class MarkersControllerTest {
 
     val latLng = LatLng(1.1, 2.2)
 
-    val markers = listOf(defaultMarkerBuilder().setMarkerId(googleMarkerId).build())
+    val markers = listOf(defaultMarker(googleMarkerId))
 
     controller.addMarkers(markers)
     controller.onMarkerDrag(googleMarkerId, latLng)
 
     verify(flutterApi).onMarkerDrag(eq(googleMarkerId), eq(Convert.latLngToPigeon(latLng)))
-  }
-
-  @Test(expected = NullPointerException::class)
-  fun controller_AddMarkerThrowsErrorIfMarkerIdIsNull() {
-    val markers = listOf(defaultMarkerBuilder().build())
-    try {
-      controller.addMarkers(markers)
-    } catch (e: NullPointerException) {
-      assertEquals("markerId was null", e.message)
-      throw e
-    }
   }
 
   @Test
@@ -142,11 +131,9 @@ class MarkersControllerTest {
     val googleMarkerId = "abc123"
     val clusterManagerId = "cm123"
 
-    val builder: PlatformMarkerBuilder = defaultMarkerBuilder()
-    builder
-        .setMarkerId(googleMarkerId)
-        .setClusterManagerId(clusterManagerId)
-        .setPosition(PlatformLatLng(1.1, 2.2))
+    val platformMarker: PlatformMarker =
+        defaultMarker(googleMarkerId)
+            .copy(clusterManagerId = clusterManagerId, position = PlatformLatLng(1.1, 2.2))
 
     whenever(marker.id).thenReturn(googleMarkerId)
 
@@ -154,7 +141,7 @@ class MarkersControllerTest {
     val addedMarkerBuilder = arrayOfNulls<MarkerBuilder>(1)
 
     // Add marker and verify addItems is called with correct parameters
-    controller.addMarkers(listOf(builder.build()))
+    controller.addMarkers(listOf(platformMarker))
     verify(clusterManagersController, times(1))
         .addItems(
             eq(clusterManagerId),
@@ -175,8 +162,8 @@ class MarkersControllerTest {
     // updated
     val latLng2 = LatLng(3.3, 4.4)
 
-    builder.setPosition(PlatformLatLng(latLng2.latitude, latLng2.longitude))
-    val updatedMarkers = listOf(builder.build())
+    val updatedMarkers =
+        listOf(platformMarker.copy(position = PlatformLatLng(latLng2.latitude, latLng2.longitude)))
 
     controller.changeMarkers(updatedMarkers)
     verify(marker, times(1)).position = latLng2
@@ -205,9 +192,8 @@ class MarkersControllerTest {
     whenever(marker.id).thenReturn(googleMarkerId)
     whenever(googleMap.addMarker(any())).thenReturn(marker)
 
-    val builder: PlatformMarkerBuilder = defaultMarkerBuilder()
-    builder.setMarkerId(googleMarkerId)
-    controller.addMarkers(listOf(builder.build()))
+    val platformMarker: PlatformMarker = defaultMarker(googleMarkerId)
+    controller.addMarkers(listOf(platformMarker))
 
     // clusterManagersController should not be called when adding the marker
     verify(clusterManagersController, times(0)).addItem(any())
@@ -216,7 +202,7 @@ class MarkersControllerTest {
 
     val alpha = 0.1f
 
-    val markerUpdates = listOf(builder.setAlpha(alpha.toDouble()).build())
+    val markerUpdates = listOf(platformMarker.copy(alpha = alpha.toDouble()))
     controller.changeMarkers(markerUpdates)
     verify(marker, times(1)).alpha = alpha
 
@@ -230,7 +216,7 @@ class MarkersControllerTest {
 
   @Test
   fun platformMarkerBuilder_setCollisionBehavior() {
-    var platformMarker: PlatformMarker = defaultMarkerBuilder().setMarkerId("1").build()
+    var platformMarker: PlatformMarker = defaultMarker("1")
     var markerBuilder = MarkerBuilder("m_1", "1", PlatformMarkerType.ADVANCED_MARKER)
 
     // Default collision behavior of an AdvancedMarker
@@ -243,10 +229,10 @@ class MarkersControllerTest {
 
     // Customized collision behavior of an AdvancedMarker
     platformMarker =
-        defaultMarkerBuilder()
-            .setMarkerId("1")
-            .setCollisionBehavior(PlatformMarkerCollisionBehavior.OPTIONAL_AND_HIDES_LOWER_PRIORITY)
-            .build()
+        defaultMarker("1")
+            .copy(
+                collisionBehavior =
+                    PlatformMarkerCollisionBehavior.OPTIONAL_AND_HIDES_LOWER_PRIORITY)
     Convert.interpretMarkerOptions(
         platformMarker, markerBuilder, assetManager, 1f, bitmapDescriptorFactoryWrapper)
     markerOptions = markerBuilder.build()
@@ -256,7 +242,7 @@ class MarkersControllerTest {
         (markerOptions as AdvancedMarkerOptions).collisionBehavior)
 
     // Legacy markers don't have collision behavior in the marker options
-    platformMarker = defaultMarkerBuilder().setMarkerId("1").build()
+    platformMarker = defaultMarker("1")
     markerBuilder = MarkerBuilder("m_1", "1", PlatformMarkerType.MARKER)
     Convert.interpretMarkerOptions(
         platformMarker, markerBuilder, assetManager, 1f, bitmapDescriptorFactoryWrapper)
@@ -271,12 +257,11 @@ class MarkersControllerTest {
     // Create multiple markers with the same cluster manager
     val markers = mutableListOf<PlatformMarker>()
     for (i in 0..4) {
-      val builder: PlatformMarkerBuilder = defaultMarkerBuilder()
-      builder
-          .setMarkerId("marker$i")
-          .setClusterManagerId(clusterManagerId)
-          .setPosition(PlatformLatLng(1.0 + i, 2.0 + i))
-      markers.add(builder.build())
+      val platformMarker: PlatformMarker =
+          defaultMarker("marker$i")
+              .copy(
+                  clusterManagerId = clusterManagerId, position = PlatformLatLng(1.0 + i, 2.0 + i))
+      markers.add(platformMarker)
     }
 
     // Add all markers in one batch
@@ -307,12 +292,11 @@ class MarkersControllerTest {
     for (i in 0..4) {
       val markerId = "marker$i"
       markerIds.add(markerId)
-      val builder: PlatformMarkerBuilder = defaultMarkerBuilder()
-      builder
-          .setMarkerId(markerId)
-          .setClusterManagerId(clusterManagerId)
-          .setPosition(PlatformLatLng(1.0 + i, 2.0 + i))
-      markers.add(builder.build())
+      val platformMarker: PlatformMarker =
+          defaultMarker(markerId)
+              .copy(
+                  clusterManagerId = clusterManagerId, position = PlatformLatLng(1.0 + i, 2.0 + i))
+      markers.add(platformMarker)
     }
 
     controller.addMarkers(markers)
@@ -343,12 +327,11 @@ class MarkersControllerTest {
     // First add markers to cluster manager 1
     val initialMarkers = mutableListOf<PlatformMarker>()
     for (i in 0..4) {
-      val builder: PlatformMarkerBuilder = defaultMarkerBuilder()
-      builder
-          .setMarkerId("marker$i")
-          .setClusterManagerId(clusterManagerId1)
-          .setPosition(PlatformLatLng(1.0 + i, 2.0 + i))
-      initialMarkers.add(builder.build())
+      val platformMarker: PlatformMarker =
+          defaultMarker("marker$i")
+              .copy(
+                  clusterManagerId = clusterManagerId1, position = PlatformLatLng(1.0 + i, 2.0 + i))
+      initialMarkers.add(platformMarker)
     }
     controller.addMarkers(initialMarkers)
 
@@ -358,12 +341,11 @@ class MarkersControllerTest {
     // Now change all markers to cluster manager 2
     val changedMarkers = mutableListOf<PlatformMarker>()
     for (i in 0..4) {
-      val builder: PlatformMarkerBuilder = defaultMarkerBuilder()
-      builder
-          .setMarkerId("marker$i")
-          .setClusterManagerId(clusterManagerId2) // Different cluster manager
-          .setPosition(PlatformLatLng(3.0 + i, 4.0 + i))
-      changedMarkers.add(builder.build())
+      val platformMarker: PlatformMarker =
+          defaultMarker("marker$i")
+              .copy(
+                  clusterManagerId = clusterManagerId2, position = PlatformLatLng(3.0 + i, 4.0 + i))
+      changedMarkers.add(platformMarker)
     }
     controller.changeMarkers(changedMarkers)
 
@@ -405,12 +387,10 @@ class MarkersControllerTest {
     whenever(marker.id).thenReturn(markerId)
 
     // Add a clustered marker
-    val builder: PlatformMarkerBuilder = defaultMarkerBuilder()
-    builder
-        .setMarkerId(markerId)
-        .setClusterManagerId(clusterManagerId)
-        .setPosition(PlatformLatLng(1.0, 2.0))
-    controller.addMarkers(listOf(builder.build()))
+    val platformMarker: PlatformMarker =
+        defaultMarker(markerId)
+            .copy(clusterManagerId = clusterManagerId, position = PlatformLatLng(1.0, 2.0))
+    controller.addMarkers(listOf(platformMarker))
 
     // Capture the PlatformMarkerBuilder passed to addItems
     val captor = argumentCaptor<List<MarkerBuilder>>()
@@ -425,8 +405,10 @@ class MarkersControllerTest {
 
     // Change marker in place (same clusterManagerId)
     val newLatLng = LatLng(3.0, 4.0)
-    builder.setPosition(PlatformLatLng(newLatLng.latitude, newLatLng.longitude))
-    controller.changeMarkers(listOf(builder.build()))
+    controller.changeMarkers(
+        listOf(
+            platformMarker.copy(
+                position = PlatformLatLng(newLatLng.latitude, newLatLng.longitude))))
 
     // In-place update: marker position is updated directly
     verify(marker, times(1)).position = newLatLng
@@ -435,115 +417,8 @@ class MarkersControllerTest {
     verify(clusterManagersController, times(0)).removeItems(any(), any())
   }
 
-  // Remove this if builders are added to the Kotlin generator; see discussion in
-  // https://github.com/flutter/flutter/issues/158287
-  private class PlatformMarkerBuilder {
-    private var alpha: Double? = null
-    private var anchor: PlatformDoublePair? = null
-    private var consumeTapEvents: Boolean? = null
-    private var draggable: Boolean? = null
-    private var flat: Boolean? = null
-    private var icon: PlatformBitmap? = null
-    private var infoWindow: PlatformInfoWindow? = null
-    private var position: PlatformLatLng? = null
-    private var rotation: Double? = null
-    private var visible: Boolean? = null
-    private var zIndex: Double? = null
-    private var markerId: String? = null
-    private var clusterManagerId: String? = null
-    private var collisionBehavior: PlatformMarkerCollisionBehavior? = null
-
-    fun setAlpha(setterArg: Double): PlatformMarkerBuilder {
-      this.alpha = setterArg
-      return this
-    }
-
-    fun setAnchor(setterArg: PlatformDoublePair): PlatformMarkerBuilder {
-      this.anchor = setterArg
-      return this
-    }
-
-    fun setConsumeTapEvents(setterArg: Boolean): PlatformMarkerBuilder {
-      this.consumeTapEvents = setterArg
-      return this
-    }
-
-    fun setDraggable(setterArg: Boolean): PlatformMarkerBuilder {
-      this.draggable = setterArg
-      return this
-    }
-
-    fun setFlat(setterArg: Boolean): PlatformMarkerBuilder {
-      this.flat = setterArg
-      return this
-    }
-
-    fun setIcon(setterArg: PlatformBitmap): PlatformMarkerBuilder {
-      this.icon = setterArg
-      return this
-    }
-
-    fun setInfoWindow(setterArg: PlatformInfoWindow): PlatformMarkerBuilder {
-      this.infoWindow = setterArg
-      return this
-    }
-
-    fun setPosition(setterArg: PlatformLatLng): PlatformMarkerBuilder {
-      this.position = setterArg
-      return this
-    }
-
-    fun setRotation(setterArg: Double): PlatformMarkerBuilder {
-      this.rotation = setterArg
-      return this
-    }
-
-    fun setVisible(setterArg: Boolean): PlatformMarkerBuilder {
-      this.visible = setterArg
-      return this
-    }
-
-    fun setZIndex(setterArg: Double): PlatformMarkerBuilder {
-      this.zIndex = setterArg
-      return this
-    }
-
-    fun setMarkerId(setterArg: String): PlatformMarkerBuilder {
-      this.markerId = setterArg
-      return this
-    }
-
-    fun setClusterManagerId(setterArg: String?): PlatformMarkerBuilder {
-      this.clusterManagerId = setterArg
-      return this
-    }
-
-    fun setCollisionBehavior(setterArg: PlatformMarkerCollisionBehavior): PlatformMarkerBuilder {
-      this.collisionBehavior = setterArg
-      return this
-    }
-
-    fun build(): PlatformMarker {
-      return PlatformMarker(
-          alpha!!,
-          anchor!!,
-          consumeTapEvents!!,
-          draggable!!,
-          flat!!,
-          icon!!,
-          infoWindow!!,
-          position!!,
-          rotation!!,
-          visible!!,
-          zIndex!!,
-          markerId!!,
-          clusterManagerId,
-          collisionBehavior!!)
-    }
-  }
-
   companion object {
-    private fun defaultMarkerBuilder(): PlatformMarkerBuilder {
+    private fun defaultMarker(markerId: String): PlatformMarker {
       val fakeBitmap = Bitmap.createBitmap(1, 1, Bitmap.Config.ARGB_8888)
       val byteArrayOutputStream = ByteArrayOutputStream()
       fakeBitmap.compress(Bitmap.CompressFormat.PNG, 100, byteArrayOutputStream)
@@ -554,19 +429,20 @@ class MarkersControllerTest {
                   byteArray, PlatformMapBitmapScaling.NONE, imagePixelRatio = 1.0, null, null))
       val anchor = PlatformDoublePair(0.5, 0.0)
       val infoWindow = PlatformInfoWindow(null, null, anchor)
-      return PlatformMarkerBuilder()
-          .setPosition(PlatformLatLng(0.0, 0.0))
-          .setAnchor(PlatformDoublePair(0.0, 0.0))
-          .setFlat(false)
-          .setDraggable(false)
-          .setVisible(true)
-          .setAlpha(1.0)
-          .setRotation(0.0)
-          .setZIndex(0.0)
-          .setConsumeTapEvents(false)
-          .setIcon(icon)
-          .setInfoWindow(infoWindow)
-          .setCollisionBehavior(PlatformMarkerCollisionBehavior.REQUIRED_DISPLAY)
+      return PlatformMarker(
+          markerId = markerId,
+          position = PlatformLatLng(0.0, 0.0),
+          anchor = PlatformDoublePair(0.0, 0.0),
+          flat = false,
+          draggable = false,
+          visible = true,
+          alpha = 1.0,
+          rotation = 0.0,
+          zIndex = 0.0,
+          consumeTapEvents = false,
+          icon = icon,
+          infoWindow = infoWindow,
+          collisionBehavior = PlatformMarkerCollisionBehavior.REQUIRED_DISPLAY)
     }
   }
 }
