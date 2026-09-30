@@ -571,6 +571,23 @@ void main() {
       expect(square.lerpTo(circle, 0.25), backward);
     });
 
+    test('lerp caches the morph of a pair of shapes', () {
+      final circle = MaterialShapeBorder(shape: MaterialShapes.circle);
+      final heart = MaterialShapeBorder(shape: MaterialShapes.heart);
+
+      circle.lerpTo(heart, 0.5);
+
+      expect(
+        MaterialShapeBorder.debugIsMorphCached(MaterialShapes.circle, MaterialShapes.heart),
+        isTrue,
+      );
+      // Each direction is a morph of its own.
+      expect(
+        MaterialShapeBorder.debugIsMorphCached(MaterialShapes.heart, MaterialShapes.circle),
+        isFalse,
+      );
+    });
+
     test('lerp stays correct once the morph cache evicts entries', () {
       final circle = MaterialShapeBorder(shape: MaterialShapes.circle);
       final square = MaterialShapeBorder(shape: MaterialShapes.square);
@@ -579,11 +596,66 @@ void main() {
 
       // More distinct pairs than the cache holds, so the pair above is pushed
       // out of it.
-      for (final RoundedPolygon shape in MaterialShapes.all.take(10)) {
+      for (final RoundedPolygon shape in MaterialShapes.all.skip(2)) {
         circle.lerpTo(MaterialShapeBorder(shape: shape), 0.5);
       }
 
+      expect(
+        MaterialShapeBorder.debugIsMorphCached(MaterialShapes.circle, MaterialShapes.square),
+        isFalse,
+      );
       expect(circle.lerpTo(square, 0.5), expected);
+    });
+
+    test('the morph cache evicts the least recently used morph', () {
+      // The cache holds 20 morphs. Filling it with fresh pairs leaves it in a
+      // known state, whatever the tests before this one cached.
+      const cacheSize = 20;
+      final start = MaterialShapeBorder(shape: MaterialShapes.heart);
+      final List<RoundedPolygon> ends = MaterialShapes.all.take(cacheSize + 1).toList();
+
+      for (final RoundedPolygon end in ends.take(cacheSize)) {
+        start.lerpTo(MaterialShapeBorder(shape: end), 0.5);
+      }
+
+      // Using the oldest pair again makes it the most recently used one.
+      start.lerpTo(MaterialShapeBorder(shape: ends[0]), 0.75);
+
+      // Adding one more pair evicts a single morph: the least recently used
+      // one, which is now the second pair.
+      start.lerpTo(MaterialShapeBorder(shape: ends[cacheSize]), 0.5);
+
+      expect(MaterialShapeBorder.debugIsMorphCached(MaterialShapes.heart, ends[0]), isTrue);
+      expect(MaterialShapeBorder.debugIsMorphCached(MaterialShapes.heart, ends[1]), isFalse);
+      for (final RoundedPolygon end in ends.skip(2)) {
+        expect(MaterialShapeBorder.debugIsMorphCached(MaterialShapes.heart, end), isTrue);
+      }
+    });
+
+    test('resuming a lerp reuses the morph of the interrupted border', () {
+      final circle = MaterialShapeBorder(shape: MaterialShapes.circle);
+      final square = MaterialShapeBorder(shape: MaterialShapes.square);
+
+      final lerped = circle.lerpTo(square, 0.5)! as OutlinedBorder;
+
+      // Push the morph out of the cache.
+      for (final RoundedPolygon shape in MaterialShapes.all.skip(2)) {
+        circle.lerpTo(MaterialShapeBorder(shape: shape), 0.5);
+      }
+      expect(
+        MaterialShapeBorder.debugIsMorphCached(MaterialShapes.circle, MaterialShapes.square),
+        isFalse,
+      );
+
+      // The interrupted border still carries its morph, so continuing along it
+      // neither needs the cache nor repopulates it.
+      final ShapeBorder? resumed = lerped.lerpTo(square, 0.5);
+      expect(
+        MaterialShapeBorder.debugIsMorphCached(MaterialShapes.circle, MaterialShapes.square),
+        isFalse,
+      );
+
+      expect(resumed, circle.lerpTo(square, 0.75));
     });
 
     test('lerp falls back to the superclass for other border types', () {
