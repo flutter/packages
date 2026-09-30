@@ -701,11 +701,7 @@ enabled_branches:
       }
     }
 
-    void writeWorkflowFiles({
-      bool validBatchFile = true,
-      bool validReleaseFromBranches = true,
-      bool validSyncRelease = true,
-    }) {
+    void writeWorkflowFiles({bool validBatchFile = true, bool validReleaseFromBranches = true}) {
       final Directory workflowDir = root.childDirectory('.github').childDirectory('workflows');
       workflowDir.createSync(recursive: true);
 
@@ -729,15 +725,6 @@ jobs:
 
       if (validReleaseFromBranches) {
         workflowDir.childFile('release_from_branches.yml').writeAsStringSync('''
-on:
-  push:
-    branches:
-      - 'release-a_package-*'
-''');
-      }
-
-      if (validSyncRelease) {
-        workflowDir.childFile('sync_release_pr.yml').writeAsStringSync('''
 on:
   push:
     branches:
@@ -787,14 +774,6 @@ on:
         contains(
           contains(
             'Unexpected trigger for release-a_package-* in .github/workflows/release_from_branches.yml',
-          ),
-        ),
-      );
-      expect(
-        output,
-        contains(
-          contains(
-            'Unexpected trigger for release-a_package-* in .github/workflows/sync_release_pr.yml',
           ),
         ),
       );
@@ -868,7 +847,6 @@ jobs:
       workflowDir
           .childFile('release_from_branches.yml')
           .writeAsStringSync("- 'release-a_package-*'");
-      workflowDir.childFile('sync_release_pr.yml').writeAsStringSync("- 'release-a_package-*'");
 
       // Mock successful git and gh calls
       gitProcessRunner.mockProcessesForExecutable['git-ls-remote'] = <FakeProcessInfo>[
@@ -901,11 +879,10 @@ jobs:
     test('fails if global workflows are missing triggers', () async {
       final RepositoryPackage package = setupReleaseStrategyTest();
       writeBatchConfig(package);
-      writeWorkflowFiles(validReleaseFromBranches: false, validSyncRelease: false);
+      writeWorkflowFiles(validReleaseFromBranches: false);
       // Create files but without correct content
       final Directory workflowDir = root.childDirectory('.github').childDirectory('workflows');
       workflowDir.childFile('release_from_branches.yml').writeAsStringSync('name: something');
-      workflowDir.childFile('sync_release_pr.yml').writeAsStringSync('name: something');
 
       gitProcessRunner.mockProcessesForExecutable['git'] = <FakeProcessInfo>[
         FakeProcessInfo(MockProcess()),
@@ -926,14 +903,6 @@ jobs:
         contains(
           contains(
             'Missing trigger for release-a_package-* in .github/workflows/release_from_branches.yml',
-          ),
-        ),
-      );
-      expect(
-        output,
-        contains(
-          contains(
-            'Missing trigger for release-a_package-* in .github/workflows/sync_release_pr.yml',
           ),
         ),
       );
