@@ -147,5 +147,31 @@ void main() {
 
       expect(() => featureMapper(features1, features2), returnsNormally);
     });
+
+    test('feature mapping skips a second feature at exactly the same progress', () {
+      // A polygon with a duplicated vertex has two sharp corners at the same
+      // point, and so at the same progress. Only one of them can be mapped.
+      final corner1 = PolygonFeature.convexCorner([CubicBezier.point(Point.zero)]);
+      final corner2 = PolygonFeature.convexCorner([CubicBezier.point(Point.zero)]);
+      final corner3 = PolygonFeature.convexCorner([
+        CubicBezier.straightLine(const Point(1, 1), const Point(1.1, 1)),
+      ]);
+
+      final features1 = <ProgressableFeature>[
+        ProgressableFeature(0, corner1),
+        ProgressableFeature(0, corner2),
+        ProgressableFeature(0.5, corner3),
+      ];
+      final features2 = <ProgressableFeature>[
+        ProgressableFeature(0, corner1),
+        ProgressableFeature(0.25, corner2),
+        ProgressableFeature(0.5, corner3),
+      ];
+
+      final List<(double, double)> map = doMapping(features1, features2);
+      expect(map, [(0.0, 0.0), (0.5, 0.5)]);
+
+      expect(() => featureMapper(features1, features2), returnsNormally);
+    });
   });
 }

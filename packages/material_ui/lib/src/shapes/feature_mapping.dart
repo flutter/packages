@@ -150,8 +150,11 @@ class _MappingHelper {
       f1.progress,
     );
 
+    // Two features at exactly the same progress, e.g. the sharp corners at a
+    // duplicated vertex, can't both be mapped. The first one to get here took
+    // the spot.
     if (index >= 0) {
-      throw StateError("There can't be two features with the same progress.");
+      return;
     }
 
     final int insertionIndex = -index - 1;
@@ -163,11 +166,11 @@ class _MappingHelper {
       final (double after1, double after2) = mapping[insertionIndex % n];
 
       // We don't want features that are way too close to each other, that will
-      // make the DoubleMapper unstable.
-      if (progressDistance(f1.progress, before1) < distanceEpsilon ||
-          progressDistance(f1.progress, after1) < distanceEpsilon ||
-          progressDistance(f2.progress, before2) < distanceEpsilon ||
-          progressDistance(f2.progress, after2) < distanceEpsilon) {
+      // make the DoubleMapper unstable, and validateProgress rejects them.
+      if (progressDistance(f1.progress, before1) <= distanceEpsilon ||
+          progressDistance(f1.progress, after1) <= distanceEpsilon ||
+          progressDistance(f2.progress, before2) <= distanceEpsilon ||
+          progressDistance(f2.progress, after2) <= distanceEpsilon) {
         return;
       }
 

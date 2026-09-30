@@ -6,6 +6,7 @@ import 'dart:typed_data';
 import 'dart:ui' as ui;
 
 import 'package:flutter_test/flutter_test.dart';
+import 'package:material_ui/src/shapes/corner_rounding.dart';
 import 'package:material_ui/src/shapes/cubic.dart';
 import 'package:material_ui/src/shapes/morph.dart';
 import 'package:material_ui/src/shapes/point.dart';
@@ -132,6 +133,32 @@ void main() {
         Point(bounds.left, bounds.top),
         Point(bounds.right, bounds.bottom),
       );
+    });
+
+    test('morphs a polygon with duplicated vertices', () {
+      const vertices = <Point>[Point.zero, Point.zero, Point(1, 0), Point(1, 1), Point(0, 1)];
+      final sharp = RoundedPolygon.fromVertices(vertices);
+      final rounded = RoundedPolygon.fromVertices(
+        vertices,
+        rounding: const CornerRounding(radius: 0.2),
+      );
+
+      // The duplicated vertex puts two concave corners at the same progress,
+      // which used to throw while matching them to the concave corners of the
+      // star.
+      final star = RoundedPolygon.star(numVerticesPerRadius: 4, center: const Point(0.5, 0.5));
+
+      for (final polygon in [sharp, rounded]) {
+        final morph = Morph(polygon, star);
+
+        for (final progress in [0.0, 0.5, 1.0]) {
+          for (final CubicBezier cubic in morph.toCubics(progress)) {
+            for (final double coordinate in cubic.points) {
+              expect(coordinate.isFinite, isTrue);
+            }
+          }
+        }
+      }
     });
 
     test('exposes the shapes it morphs between', () {
