@@ -1,3 +1,0 @@
-changelog: |
-  - Introduces labelTextDirection property to InputDecoration.
-version: minor
