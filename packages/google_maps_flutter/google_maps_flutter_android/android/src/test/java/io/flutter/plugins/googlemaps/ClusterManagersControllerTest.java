@@ -38,7 +38,6 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.ArgumentMatchers;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
@@ -173,12 +172,12 @@ public class ClusterManagersControllerTest {
     ClusterManager<?> clusterManager1 =
         defaultController.clusterManagerIdToManager.get(defaultClusterManagerId);
     assertNotNull(clusterManager1);
-    assertSame(clusterManager1.getRenderer().getClass(), MarkerClusterRenderer.class);
+    assertSame(MarkerClusterRenderer.class, clusterManager1.getRenderer().getClass());
 
     ClusterManager<?> clusterManager2 =
         advancedController.clusterManagerIdToManager.get(advancedClusterManagerId);
     assertNotNull(clusterManager2);
-    assertSame(clusterManager2.getRenderer().getClass(), AdvancedMarkerClusterRenderer.class);
+    assertSame(AdvancedMarkerClusterRenderer.class, clusterManager2.getRenderer().getClass());
   }
 
   @Test
@@ -200,8 +199,7 @@ public class ClusterManagersControllerTest {
 
     controller.onClusterClick(cluster);
     Mockito.verify(flutterApi)
-        .onClusterTap(
-            eq(Convert.clusterToPigeon(clusterManagerId, cluster)), ArgumentMatchers.any());
+        .onClusterTap(eq(Convert.clusterToPigeon(clusterManagerId, cluster)), null);
   }
 
   @Test

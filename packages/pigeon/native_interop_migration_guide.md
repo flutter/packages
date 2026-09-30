@@ -24,23 +24,26 @@ To migrate an existing Pigeon plugin or app to Native Interop, follow these init
 
 ### 2.1 Add Dependencies
 
-Add the required runtime dependencies to `dependencies` and code generators to `dev_dependencies` (in both the plugin and its `example/` app, if applicable). Using `flutter pub add` ensures runtime packages resolve to the latest compatible versions:
+Add the required runtime dependencies to `dependencies` and code generators/config-script dependencies to `dev_dependencies` in the package where Pigeon runs (for a plugin package, add these to the **plugin's** `pubspec.yaml`, not `example/pubspec.yaml`, unless the example app runs Pigeon directly).
+
+Because Pigeon generates helper scripts in `tool/pigeon/` (`*_ffigen_config.dart` and `*_jnigen_config.dart`), `dart pub publish --dry-run` requires every package imported by `lib/` or `tool/` to be explicitly declared in `pubspec.yaml`:
 
 ```bash
 # Add Pigeon (if not already added):
 flutter pub add dev:pigeon
 
 # For iOS/macOS Swift FFI:
-flutter pub add ffi
-flutter pub add objective_c
-# Pigeon requires this specific version for compatibility with its generated FFIgen configuration:
-flutter pub add dev:ffigen@21.0.0
+flutter pub add ffi objective_c meta
+# Code generators and packages imported by tool/pigeon/*_ffigen_config.dart:
+flutter pub add dev:ffigen dev:swift2objc dev:swiftgen dev:path dev:pub_semver
 
 # For Android Kotlin JNI:
 flutter pub add jni
-# Pigeon requires this specific version for compatibility with its generated JNIgen configuration:
-flutter pub add dev:jnigen@1.0.0
+# Code generator and packages imported by tool/pigeon/*_jnigen_config.dart:
+flutter pub add dev:jnigen dev:logging dev:path
 ```
+
+*Note: Ensure the resolved `objective_c` version in `pubspec.yaml` matches the version expected by your `ffigen` version (e.g., `ffigen: ^22.0.0` generates bindings that require `objective_c: ^9.6.0`).*
 
 ### 2.2 Update Pigeon Configuration Options
 
@@ -145,7 +148,19 @@ final String result = await Isolate.run(() => api.doSomething(value));
 
 ## 4. Dart Client Adaptation
 
-From the Dart side, the API surface remains largely identical because both models return standard Dart `Future`s for asynchronous calls. However:
+From the Dart side, instantiate your generated Host API using `<MyApi>.createWithNativeInteropApi()` (passing `messageChannelSuffix` if multiple named instances are registered on the host).
+
+- **Lazy Initialization for `dartPluginClass` (`late final`)**: If your plugin declares `dartPluginClass` in `pubspec.yaml`, Flutter calls `<PluginClass>.registerWith()` during Dart plugin registration **before `main()`** and before `JniPlugin` initializes `DartJNI` on Android (or before native host registration). Calling `createWithNativeInteropApi()` eagerly in the constructor initializer list will crash the app at startup on Android (`F DartJNI : JNI is not initialized`). Always initialize the API lazily using `late final`:
+  ```dart
+  class MyPluginAndroid extends MyPluginPlatform {
+    MyPluginAndroid({@visibleForTesting MyApi? api}) : _apiOverride = api;
+
+    final MyApi? _apiOverride;
+
+    @visibleForTesting
+    late final MyApi api = _apiOverride ?? MyApi.createWithNativeInteropApi();
+  }
+  ```
 - **Synchronous execution**: Host API methods that are synchronous now block the calling thread until completion, bypassing any message loop scheduling latency.
 - **Dart Isolates**: Host API calls can be made directly from any background Dart isolate without initializing `BackgroundIsolateBinaryMessenger` or passing a `RootIsolateToken`. Callers must ensure the isolate stays alive while there are pending asynchronous calls, as attempting to execute a callback after the isolate has terminated will cause a crash.
 - **Platform UI Thread Affinity**: If native code interacts with platform UI elements (such as UIKit views on iOS/macOS or `Activity`/view hierarchies on Android), that work must execute on the platform's main thread. If an interop call is initiated from a background isolate or dispatches work to a background queue, the native implementation must explicitly dispatch to the main thread (`DispatchQueue.main.async` in Swift, `Handler(Looper.getMainLooper()).post` in Kotlin) before interacting with UI APIs.
@@ -158,7 +173,7 @@ From the Dart side, the API surface remains largely identical because both model
 
 For Swift FFI, the toolchain generates an Objective-C bridging target under `<swift_output_dir>_objc_gen`. Ensure your build system includes these Objective-C files:
 
-- **CocoaPods**: Ensure `s.source_files = 'Sources/**/*.{swift,m}'` in your `.podspec`.
+- **CocoaPods**: Ensure `s.source_files = 'Sources/**/*.{swift,m,h}'` in your `.podspec`.
 - **SwiftPM**: Add a separate Objective-C target for `my_plugin_objc_gen` in `Package.swift` and depend on it from your main Swift target.
 - **Application & Example App Targets**:
   - **Swift Module Name**: Set `ffiModuleName` in `SwiftOptions` to match your application's Swift module name (defaults to `'Runner'`). If iOS and macOS share the same generated Dart FFI file, both platforms must compile under that same module name. Since Flutter's default macOS template sets the module name to the app name rather than `Runner`, you can unify them by setting `PRODUCT_MODULE_NAME = Runner` in `macos/Runner/Configs/AppInfo.xcconfig` (or by matching whatever module name you configure). If iOS and macOS use separate Pigeon generation outputs or you only target one platform, unifying module names across platforms is not required.
@@ -169,9 +184,5 @@ For Swift FFI, the toolchain generates an Objective-C bridging target under `<sw
 ## 6. Environment Prerequisites & Tooling Versions
 
 To use Native Interop and its external code generators:
-- **Java 17**: Required specifically by Android build tools and JNIgen.
-- **Kotlin Version (`<= 2.1.0`)**: JNIgen uses `kotlinx-metadata-jvm` to parse Kotlin class metadata. It currently supports Kotlin metadata versions up to **2.1.0**. If the Android Gradle project uses a higher Kotlin plugin version (e.g. Kotlin 2.4.0), JNIgen will throw `IllegalArgumentException: Provided Metadata instance has version ... while maximum supported version is ...`. Ensure `settings.gradle.kts` sets Kotlin to `2.1.0`:
-  ```kotlin
-  id("org.jetbrains.kotlin.android") version "2.1.0" apply false
-  ```
+- **`jnigen` 1.0.0 or later**: Earlier versions of JNIgen cannot parse metadata from newer Kotlin compilers and fail with `IllegalArgumentException: Provided Metadata instance has version ... while maximum supported version is ...`. `jnigen` 1.0.0 supports Kotlin metadata up to 2.4, and uses the JDK bundled with Flutter by default.
 - **LLVM / Xcode Command Line Tools**: Required by FFIgen to parse C/Objective-C headers (`xcode-select --install`).
