@@ -2,5 +2,5 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-export 'src/google_fonts_config.dart';
+export 'src/google_fonts_config.dart' show Config, GoogleFontsConfig;
 export 'src/google_fonts_lite.dart';

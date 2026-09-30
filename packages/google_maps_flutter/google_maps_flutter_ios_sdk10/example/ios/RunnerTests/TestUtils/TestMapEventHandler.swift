@@ -6,111 +6,54 @@ import Foundation
 
 @testable import google_maps_flutter_ios_sdk10
 
-/// Fake implementation of MapEventDelegate for unit tests.
-class TestMapEventHandler: MapEventDelegate {
-  func didStartCameraMove(completion: @escaping (Result<Void, PigeonError>) -> Void) {}
+/// Fake implementation of MapEventDelegate (and TileProviderDelegate) for unit tests.
+class TestMapEventHandler: MapEventDelegate, TileProviderDelegate {
+  func didStartCameraMove() async throws {}
 
-  func didMoveCamera(
-    to cameraPositionArg: PlatformCameraPosition,
-    completion:
-      @escaping (
-        Result<Void, PigeonError>
-      ) -> Void
-  ) {}
+  func didMoveCamera(to cameraPositionArg: PlatformCameraPosition) async throws {}
 
-  func didIdleCamera(completion: @escaping (Result<Void, PigeonError>) -> Void) {}
+  func didIdleCamera() async throws {}
 
-  func didTap(
-    at positionArg: PlatformLatLng,
-    completion:
-      @escaping (
-        Result<Void, PigeonError>
-      ) -> Void
-  ) {}
+  func didTap(at positionArg: PlatformLatLng) async throws {}
 
-  func didLongPress(
-    at positionArg: PlatformLatLng,
-    completion:
-      @escaping (
-        Result<Void, PigeonError>
-      ) -> Void
-  ) {}
+  func didLongPress(at positionArg: PlatformLatLng) async throws {}
 
-  func didTapMarker(
-    withIdentifier markerIdArg: String,
-    completion: @escaping (Result<Void, PigeonError>) -> Void
-  ) {}
+  func didTapMarker(withIdentifier markerIdArg: String) async throws {}
 
   func didStartDragForMarker(
     withIdentifier markerIdArg: String,
-    at positionArg: PlatformLatLng,
-    completion: @escaping (Result<Void, PigeonError>) -> Void
-  ) {}
+    at positionArg: PlatformLatLng
+  ) async throws {}
 
   func didDragMarker(
     withIdentifier markerIdArg: String,
-    at positionArg: PlatformLatLng,
-    completion: @escaping (Result<Void, PigeonError>) -> Void
-  ) {}
+    at positionArg: PlatformLatLng
+  ) async throws {}
 
   func didEndDragForMarker(
     withIdentifier markerIdArg: String,
-    at positionArg: PlatformLatLng,
-    completion:
-      @escaping (
-        Result<Void, PigeonError>
-      ) -> Void
-  ) {}
+    at positionArg: PlatformLatLng
+  ) async throws {}
 
-  func didTapInfoWindowOfMarker(
-    withIdentifier markerIdArg: String,
-    completion:
-      @escaping (
-        Result<Void, PigeonError>
-      ) -> Void
-  ) {}
+  func didTapInfoWindowOfMarker(withIdentifier markerIdArg: String) async throws {}
 
-  func didTapCircle(
-    withIdentifier circleIdArg: String,
-    completion: @escaping (Result<Void, PigeonError>) -> Void
-  ) {}
+  func didTapCircle(withIdentifier circleIdArg: String) async throws {}
 
-  func didTapCluster(
-    _ clusterArg: PlatformCluster,
-    completion:
-      @escaping (
-        Result<Void, PigeonError>
-      ) -> Void
-  ) {}
+  func didTapPointOfInterest(withPlaceIdentifier placeIdArg: String) async throws {}
 
-  func didTapPolygon(
-    withIdentifier polygonIdArg: String,
-    completion:
-      @escaping (
-        Result<Void, PigeonError>
-      ) -> Void
-  ) {}
+  func didTapCluster(_ clusterArg: PlatformCluster) async throws {}
 
-  func didTapPolyline(
-    withIdentifier polylineIdArg: String,
-    completion: @escaping (Result<Void, PigeonError>) -> Void
-  ) {}
+  func didTapPolygon(withIdentifier polygonIdArg: String) async throws {}
 
-  func didTapGroundOverlay(
-    withIdentifier groundOverlayIdArg: String,
-    completion:
-      @escaping (
-        Result<Void, PigeonError>
-      ) -> Void
-  ) {}
+  func didTapPolyline(withIdentifier polylineIdArg: String) async throws {}
+
+  func didTapGroundOverlay(withIdentifier groundOverlayIdArg: String) async throws {}
 
   func tile(
     withOverlayIdentifier tileOverlayIdArg: String,
     location locationArg: PlatformPoint,
-    zoom zoomArg: Int64,
-    completion:
-      @escaping (
-        Result<PlatformTile, PigeonError>
-      ) -> Void
-  ) {}
+    zoom zoomArg: Int64
+  ) async throws -> PlatformTile {
+    return PlatformTile(width: 0, height: 0)
+  }
 }
