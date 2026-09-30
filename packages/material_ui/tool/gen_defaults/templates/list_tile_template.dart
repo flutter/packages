@@ -29,7 +29,7 @@ class $className extends ListTileThemeData {
   $className(this.context)
     : super(
         contentPadding: const EdgeInsetsDirectional.only(start: 16.0, end: 24.0),
-        minLeadingWidth: ${number(TokenList.listItemLeadingIconSize)},
+        minLeadingWidth: ${TokenList.listItemLeadingIconSize},
         minVerticalPadding: 8,
         shape: ${shape(TokenList.listItemContainerShape)},
       );
