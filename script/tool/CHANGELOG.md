@@ -1,3 +1,7 @@
+## 0.14.4+3
+
+* Adds validation that the root README package table is sorted alphabetically.
+
 ## 0.14.4+2
 
 * Adds an `in-flight-release-check` command, which reports whether an earlier
@@ -5,7 +9,6 @@
 
 ## 0.14.4+1
 
-* Adds validation that the root README package table is sorted alphabetically.
 * Adds support for batch release of pre-1.0 packages.
 * Exempts `AGENTS.md` from requiring version and changelog changes.
 * Updates to support `platform` 3.2.0, to account for upstream breaking changes
