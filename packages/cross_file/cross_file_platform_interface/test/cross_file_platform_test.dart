@@ -61,6 +61,17 @@ void main() {
         );
       });
 
+      test('_DefaultFileSystemXFile.canWrite() returns false', () async {
+        final platform = TestCrossFilePlatform();
+
+        expect(
+          await platform
+              .createPlatformFileSystemXFile(PlatformFileSystemXFileCreationParams('test'))
+              .canWrite(),
+          false,
+        );
+      });
+
       test('_DefaultFileSystemXFile.openRead should throw error by adding it to stream', () async {
         final platform = TestCrossFilePlatform();
 
@@ -81,6 +92,19 @@ void main() {
                 PlatformFileSystemXDirectoryCreationParams('test'),
               )
               .exists(),
+          false,
+        );
+      });
+
+      test('_DefaultFileSystemXDirectory.canWrite() returns false', () async {
+        final platform = TestCrossFilePlatform();
+
+        expect(
+          await platform
+              .createPlatformFileSystemXDirectory(
+                PlatformFileSystemXDirectoryCreationParams('test'),
+              )
+              .canWrite(),
           false,
         );
       });
@@ -111,6 +135,19 @@ void main() {
         );
       });
 
+      test('_DefaultScopedStorageXFile.canWrite() returns false', () async {
+        final platform = TestCrossFilePlatform();
+
+        expect(
+          await platform
+              .createPlatformScopedStorageXFile(
+                const PlatformScopedStorageXFileCreationParams(uri: 'test'),
+              )
+              .canWrite(),
+          false,
+        );
+      });
+
       test(
         '_DefaultScopedStorageXFile.openRead should throw error by adding it to stream',
         () async {
@@ -134,6 +171,19 @@ void main() {
                 const PlatformScopedStorageXDirectoryCreationParams(uri: 'test'),
               )
               .exists(),
+          false,
+        );
+      });
+
+      test('_DefaultScopedStorageXDirectory.canWrite() returns false', () async {
+        final platform = TestCrossFilePlatform();
+
+        expect(
+          await platform
+              .createPlatformScopedStorageXDirectory(
+                const PlatformScopedStorageXDirectoryCreationParams(uri: 'test'),
+              )
+              .canWrite(),
           false,
         );
       });
