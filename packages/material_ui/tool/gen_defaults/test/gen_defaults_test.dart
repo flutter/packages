@@ -5,6 +5,7 @@
 import 'dart:io';
 
 import 'package:test/test.dart';
+
 import '../data/color_role.dart';
 import '../data/shape_struct.dart';
 import '../data/typescale.dart';
@@ -29,8 +30,6 @@ import '../templates/fab_template.dart';
 import '../templates/filter_chip_template.dart';
 import '../templates/icon_button_template.dart' as icon_button;
 import '../templates/input_chip_template.dart';
-import '../templates/input_decorator_template.dart';
-import '../templates/list_tile_template.dart';
 // import '../templates/menu_template.dart';
 // import '../templates/motion_template.dart';
 // import '../templates/navigation_bar_template.dart';
@@ -50,8 +49,7 @@ import '../templates/list_tile_template.dart';
 // import '../templates/tabs_template.dart';
 // import '../templates/text_field_template.dart';
 // import '../templates/time_picker_template.dart';
-// import '../templates/typography_template.dart';
-import '../templates/template.dart';
+import '../templates/typography_template.dart';
 import 'test_fixtures/test_templates.dart';
 
 void main() {
@@ -806,8 +804,11 @@ void main() {
     });
 
     test('TypographyTemplateM3 emits M3 Typography defaults from tokens', () {
-      // Intentionally empty, will be implemented during migration. See:
-      // https://github.com/flutter/flutter/issues/187899
+      const template = TypographyTemplateM3();
+      final String contents = _generateContents(template);
+      expect(contents, contains('abstract final class _M3Typography'));
+      expect(contents, contains('displayLarge: TextStyle('));
+      expect(contents, contains("debugLabel: 'englishLike displayLarge 2021'"));
     });
 
     test('will run dart format over the generated file', () {
