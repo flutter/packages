@@ -1,6 +1,6 @@
 ## 0.6.4+2
 
-* Fixes `onMapCreated` never being called when a map tile fails to load.
+* Fixes `onMapCreated` never being called when a map tile request stalls or fails.
 
 ## 0.6.4+1
 
