@@ -23,19 +23,16 @@ import '../templates/card_template.dart';
 import '../templates/checkbox_template.dart';
 import '../templates/chip_template.dart';
 import '../templates/color_scheme_template.dart';
-// import '../templates/date_picker_template.dart';
-// import '../templates/dialog_template.dart';
+import '../templates/date_picker_template.dart';
+import '../templates/dialog_template.dart';
 import '../templates/divider_template.dart';
 import '../templates/drawer_template.dart';
-
-// import '../templates/expansion_tile_template.dart';
-// import '../templates/fab_template.dart';
+import '../templates/expansion_tile_template.dart';
+import '../templates/fab_template.dart';
 import '../templates/filter_chip_template.dart';
-
-// import '../templates/icon_button_template.dart';
+import '../templates/icon_button_template.dart';
 import '../templates/input_chip_template.dart';
-
-// import '../templates/input_decorator_template.dart';
+import '../templates/input_decorator_template.dart';
 import '../templates/list_tile_template.dart';
 
 // import '../templates/menu_template.dart';
@@ -84,16 +81,21 @@ Future<void> main(List<String> args) async {
   const CheckboxTemplateM3().generateFile(verbose: verbose);
   const ChipTemplateM3().generateFile(verbose: verbose);
   const ColorSchemeTemplateM3().generateFile(verbose: verbose);
-  // const DatePickerTemplateM3().generateFile(verbose: verbose);
-  // const DialogTemplateM3().generateFile(verbose: verbose);
+  const DatePickerTemplateM3().generateFile(verbose: verbose);
+  const DialogTemplateM3().generateFile(verbose: verbose);
+  const DialogFullscreenTemplateM3().generateFile(verbose: verbose);
   const DividerTemplateM3().generateFile(verbose: verbose);
   const DrawerTemplateM3().generateFile(verbose: verbose);
-  // const ExpansionTileTemplateM3().generateFile(verbose: verbose);
-  // const FabTemplateM3().generateFile(verbose: verbose);
+  const ExpansionTileTemplateM3().generateFile(verbose: verbose);
+  const FabTemplateM3().generateFile(verbose: verbose);
   const FilterChipTemplateM3().generateFile(verbose: verbose);
   // const IconButtonTemplateM3().generateFile(verbose: verbose);
+  const IconButtonTemplateM3E('Icon Button').generateFile(verbose: verbose);
+  const IconButtonTemplateM3E('Filled Icon Button').generateFile(verbose: verbose);
+  const IconButtonTemplateM3E('Filled Tonal Icon Button').generateFile(verbose: verbose);
+  const IconButtonTemplateM3E('Outlined Icon Button').generateFile(verbose: verbose);
   const InputChipTemplateM3().generateFile(verbose: verbose);
-  // const InputDecoratorTemplateM3().generateFile(verbose: verbose);
+  const InputDecoratorTemplateM3().generateFile(verbose: verbose);
   const ListTileTemplateM3().generateFile(verbose: verbose);
   // const MenuTemplateM3().generateFile(verbose: verbose);
   // const MotionTemplateM3().generateFile(verbose: verbose);

@@ -1,3 +1,0 @@
-changelog: |
-  - Fixes LocalHistoryEntry leak when double tapping Drawer scrim
-version: patch
