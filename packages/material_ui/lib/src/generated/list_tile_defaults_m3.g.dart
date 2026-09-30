@@ -2,11 +2,16 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-class _LisTileDefaultsM3 extends ListTileThemeData {
-  _LisTileDefaultsM3(this.context)
+// Do not edit by hand. The code is generated from data in the Material
+// Design token database by the script:
+//   packages/material_ui/tool/gen_defaults/bin/gen_defaults.dart.
+part of '../list_tile.dart';
+
+class _ListTileDefaultsM3 extends ListTileThemeData {
+  _ListTileDefaultsM3(this.context)
     : super(
         contentPadding: const EdgeInsetsDirectional.only(start: 16.0, end: 24.0),
-        minLeadingWidth: 24,
+        minLeadingWidth: 24.0,
         minVerticalPadding: 8,
         shape: const RoundedRectangleBorder(),
       );

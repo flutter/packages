@@ -30,7 +30,7 @@ import '../templates/filter_chip_template.dart';
 import '../templates/icon_button_template.dart' as icon_button;
 import '../templates/input_chip_template.dart';
 import '../templates/input_decorator_template.dart';
-// import '../templates/list_tile_template.dart';
+import '../templates/list_tile_template.dart';
 // import '../templates/menu_template.dart';
 // import '../templates/motion_template.dart';
 // import '../templates/navigation_bar_template.dart';
@@ -695,8 +695,19 @@ void main() {
     });
 
     test('ListTileTemplateM3 emits M3 ListTile defaults from tokens', () {
-      // Intentionally empty, will be implemented during migration. See:
-      // https://github.com/flutter/flutter/issues/187899
+      const template = ListTileTemplateM3();
+      final String contents = _generateContents(template);
+      expect(template.className, '_ListTileDefaultsM3');
+      expect(template.outputFileName, 'list_tile_defaults_m3.g.dart');
+      expect(contents, contains('contentPadding: const EdgeInsetsDirectional.only'));
+      expect(contents, contains('minLeadingWidth: 24.0'));
+      expect(
+        contents,
+        contains(
+          'TextStyle? get titleTextStyle => _textTheme.bodyLarge!.copyWith(color: _colors.onSurface)',
+        ),
+      );
+      expect(contents, contains('Color? get selectedColor => _colors.primary;'));
     });
 
     test('MenuTemplateM3 emits M3 Menu defaults from tokens', () {
