@@ -178,16 +178,8 @@ class MaterialShapeBorder extends OutlinedBorder {
 
   @override
   ShapeBorder? lerpFrom(ShapeBorder? a, double t) {
-    if (t == 0) {
-      return a;
-    }
-
-    if (t == 1.0) {
-      return this;
-    }
-
     if (a is OutlinedBorder && _canLerpWith(a)) {
-      return _lerp(a, this, t);
+      return _lerpOrSnap(a, this, t);
     }
 
     return super.lerpFrom(a, t);
@@ -195,19 +187,25 @@ class MaterialShapeBorder extends OutlinedBorder {
 
   @override
   ShapeBorder? lerpTo(ShapeBorder? b, double t) {
+    if (b is OutlinedBorder && _canLerpWith(b)) {
+      return _lerpOrSnap(this, b, t);
+    }
+
+    return super.lerpTo(b, t);
+  }
+
+  /// Like [_lerp], but returns [a] or [b] themselves at the ends of the
+  /// interpolation instead of an equivalent morphing border.
+  static OutlinedBorder? _lerpOrSnap(OutlinedBorder a, OutlinedBorder b, double t) {
     if (t == 0) {
-      return this;
+      return a;
     }
 
     if (t == 1.0) {
       return b;
     }
 
-    if (b is OutlinedBorder && _canLerpWith(b)) {
-      return _lerp(this, b, t);
-    }
-
-    return super.lerpTo(b, t);
+    return _lerp(a, b, t);
   }
 
   @override
@@ -301,16 +299,8 @@ class _MorphingShapeBorder extends OutlinedBorder {
 
   @override
   ShapeBorder? lerpFrom(ShapeBorder? a, double t) {
-    if (t == 0) {
-      return a;
-    }
-
-    if (t == 1.0) {
-      return this;
-    }
-
     if (a is OutlinedBorder && MaterialShapeBorder._canLerpWith(a)) {
-      return MaterialShapeBorder._lerp(a, this, t);
+      return MaterialShapeBorder._lerpOrSnap(a, this, t);
     }
 
     return super.lerpFrom(a, t);
@@ -318,16 +308,8 @@ class _MorphingShapeBorder extends OutlinedBorder {
 
   @override
   ShapeBorder? lerpTo(ShapeBorder? b, double t) {
-    if (t == 0) {
-      return this;
-    }
-
-    if (t == 1.0) {
-      return b;
-    }
-
     if (b is OutlinedBorder && MaterialShapeBorder._canLerpWith(b)) {
-      return MaterialShapeBorder._lerp(this, b, t);
+      return MaterialShapeBorder._lerpOrSnap(this, b, t);
     }
 
     return super.lerpTo(b, t);

@@ -680,5 +680,24 @@ void main() {
       expect(border.lerpFrom(null, 0.25), border.scale(0.25));
       expect(border.lerpTo(null, 0.25), border.scale(0.75));
     });
+
+    test('lerp to or from a missing border scales down to nothing at its ends', () {
+      final border = MaterialShapeBorder(shape: unitSquare, side: const BorderSide(width: 4.0));
+      final morphing =
+          border.lerpTo(MaterialShapeBorder(shape: MaterialShapes.circle), 0.5)! as OutlinedBorder;
+
+      for (final shape in <OutlinedBorder>[border, morphing]) {
+        expect(shape.lerpFrom(null, 0.0), shape.scale(0.0));
+        expect(shape.lerpTo(null, 1.0), shape.scale(0.0));
+
+        // Same as Flutter's own borders, which ShapeDecoration.lerp relies on.
+        expect(ShapeBorder.lerp(null, shape, 0.0), shape.scale(0.0));
+        expect(ShapeBorder.lerp(shape, null, 1.0), shape.scale(0.0));
+        expect(
+          ShapeDecoration.lerp(null, ShapeDecoration(shape: shape), 0.0),
+          ShapeDecoration(shape: shape.scale(0.0)),
+        );
+      }
+    });
   });
 }
