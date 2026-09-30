@@ -4,6 +4,8 @@
 
 import 'dart:async';
 
+import 'package:flutter_test/flutter_test.dart';
+
 import 'map_diagnostics.dart';
 
 /// Waits for a map-creation [future] (e.g. the value passed to `onMapCreated`).
@@ -12,13 +14,24 @@ import 'map_diagnostics.dart';
 /// ready would otherwise hang until the driver gives up, reporting an opaque
 /// `DriverError` with no test output.
 /// See https://github.com/flutter/flutter/issues/193452.
-Future<T> waitForMap<T>(Future<T> future) {
+Future<T> waitForMap<T>(Future<T> future) async {
   installMapDiagnostics();
-  return future.timeout(
+  final watch = Stopwatch()..start();
+  recordBreadcrumb('waitForMap:start');
+  final T result = await future.timeout(
     const Duration(seconds: 30),
-    onTimeout: () => throw TimeoutException(
-      'The map never reported being ready.\n'
-      'GM_DIAG: ${mapDiagnostics()}',
-    ),
+    onTimeout: () {
+      recordBreadcrumb('waitForMap:timeout');
+      throw TimeoutException(
+        'The map never reported being ready.\n'
+        'GM_DIAG: ${mapDiagnostics()}',
+      );
+    },
   );
+  final int readyMs = watch.elapsedMilliseconds;
+  recordBreadcrumb('waitForMap:ready:${readyMs}ms');
+  addTearDown(() async {
+    await recordLatestMapTelemetry(readyMs);
+  });
+  return result;
 }

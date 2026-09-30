@@ -12,7 +12,6 @@
 // Results are printed by the driver (see test_driver/integration_test.dart).
 
 import 'dart:async';
-import 'dart:convert';
 import 'dart:math';
 
 import 'package:flutter/material.dart';
@@ -24,18 +23,18 @@ import 'package:web/web.dart' as web;
 
 import 'resources/map_diagnostics.dart';
 
-const int _rawMaps = 300;
-const int _pluginMaps = 300;
+const int _rawMaps = 200;
+const int _pluginMaps = 200;
 const Duration _pluginTimeout = Duration(seconds: 10);
-const Duration _perMapTimeout = Duration(seconds: 20);
-const Duration _phaseBudget = Duration(minutes: 4);
+const Duration _perMapTimeout = Duration(seconds: 15);
+const Duration _phaseBudget = Duration(seconds: 100);
 
 final Random _random = Random();
 
 ({double lat, double lng}) _randomCenter() =>
     (lat: _random.nextDouble() * 120 - 60, lng: _random.nextDouble() * 360 - 180);
 
-Map<String, Object?> _diag() => jsonDecode(mapDiagnostics()) as Map<String, Object?>;
+Map<String, Object?> _diag() => mapDiagnosticsMap();
 
 bool _laidOut(web.HTMLElement div) =>
     div.isConnected && div.offsetWidth > 0 && div.offsetHeight > 0;
@@ -68,8 +67,11 @@ Map<String, Object?> _summarize(List<Map<String, Object?>> samples) {
           s['tilesMs'] != null &&
           (s['idleMs']! as int) <= (s['tilesMs']! as int),
     ),
+    'unlaidOutIdle': count((s) => s.containsKey('firstIdleMs') && s['firstIdleMs'] != s['idleMs']),
     'idleMs': stats('idleMs'),
     'tilesMs': stats('tilesMs'),
+    if (samples.any((s) => s.containsKey('projectionMs'))) 'projectionMs': stats('projectionMs'),
+    if (samples.any((s) => s.containsKey('boundsMs'))) 'boundsMs': stats('boundsMs'),
     if (samples.any((s) => s.containsKey('readyMs'))) 'readyMs': stats('readyMs'),
   };
 }
@@ -84,10 +86,12 @@ void main() {
   // Set after every test, since the binding may send results before any
   // tearDownAll registered here runs.
   void publish() {
+    report['resourcesByType'] = _diag()['resourcesByType'];
     binding.reportData = <String, Object?>{'gm_stress': report};
   }
 
   testWidgets('raw google.maps.Map readiness', (WidgetTester tester) async {
+    recordBreadcrumb('stress:raw:start');
     report['mapsVersion'] = _diag()['mapsVersion'];
     final samples = <Map<String, Object?>>[];
     final anomalies = <Object?>[];
@@ -143,6 +147,7 @@ void main() {
     report['raw'] = _summarize(samples);
     report['rawElapsedMs'] = phase.elapsedMilliseconds;
     report['rawAnomalies'] = anomalies.take(5).toList();
+    recordBreadcrumb('stress:raw:done:${samples.length}');
     publish();
   });
 
@@ -151,7 +156,8 @@ void main() {
   // `keepPumping` keeps producing frames while waiting.
   for (final mode in <String>['onePump', 'keepPumping']) {
     testWidgets('plugin GoogleMap readiness ($mode)', (WidgetTester tester) async {
-      final int n = mode == 'onePump' ? _pluginMaps : _pluginMaps ~/ 5;
+      recordBreadcrumb('stress:$mode:start');
+      final int n = mode == 'onePump' ? _pluginMaps : _pluginMaps ~/ 4;
       final samples = <Map<String, Object?>>[];
       final anomalies = <Object?>[];
       final phase = Stopwatch()..start();
@@ -208,32 +214,23 @@ void main() {
         while (true) {
           final List<Object?> maps = (_diag()['maps'] as List<Object?>?) ?? <Object?>[];
           record = maps.isEmpty ? <String, Object?>{} : maps.last! as Map<String, Object?>;
-          final Map<String, Object?> events =
-              (record['events'] as Map<String, Object?>?) ?? <String, Object?>{};
           if (readyMs == null ||
               settle.elapsed > _pluginTimeout ||
-              (events['tilesloaded'] != null && events['idle'] != null)) {
+              (record['firstTilesloadedMs'] != null && record['firstLaidOutIdleMs'] != null)) {
             break;
           }
-          await Future<void>.delayed(const Duration(milliseconds: 250));
-        }
-
-        int? relative(String event) {
-          final Map<String, Object?> events =
-              (record['events'] as Map<String, Object?>?) ?? <String, Object?>{};
-          final list = events[event] as List<Object?>?;
-          if (list == null || list.isEmpty) {
-            return null;
-          }
-          return ((list.first! as Map<String, Object?>)['t']! as int) - (record['created']! as int);
+          await Future<void>.delayed(const Duration(milliseconds: 100));
         }
 
         final List<Object?> resizes = (record['resizes'] as List<Object?>?) ?? <Object?>[];
         final sample = <String, Object?>{
           'i': i,
           'readyMs': readyMs,
-          'idleMs': relative('idle'),
-          'tilesMs': relative('tilesloaded'),
+          'projectionMs': record['firstProjectionMs'],
+          'boundsMs': record['firstBoundsMs'],
+          'firstIdleMs': record['firstIdleMs'],
+          'idleMs': record['firstLaidOutIdleMs'],
+          'tilesMs': record['firstTilesloadedMs'],
           'layoutAtCreation': record['layoutAtCreation'],
           'everConnected': resizes.any(
             (Object? r) => (r! as Map<String, Object?>)['connected'] == true,
@@ -258,6 +255,7 @@ void main() {
       report['plugin_$mode'] = summary;
       report['plugin_${mode}_elapsedMs'] = phase.elapsedMilliseconds;
       report['plugin_${mode}_anomalies'] = anomalies.take(3).toList();
+      recordBreadcrumb('stress:$mode:done:${samples.length}');
       publish();
     });
   }

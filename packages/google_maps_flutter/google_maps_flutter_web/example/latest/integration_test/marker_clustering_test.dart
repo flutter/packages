@@ -123,11 +123,13 @@ void main() {
 
       const testMapId = 33931;
       final events = StreamController<ClusteringEvent>();
+      final mapReady = Completer<int>();
       await _pumpMap(
         tester,
         plugin.buildViewWithConfiguration(
           testMapId,
           (int id) async {
+            mapReady.complete(id);
             final StreamSubscription<ClusteringEvent>? subscription =
                 (inspector as GoogleMapsInspectorWeb)
                     .getClusteringEvents(mapId: testMapId, clusterManagerId: clusterManagerId)
@@ -149,6 +151,8 @@ void main() {
           mapObjects: MapObjects(clusterManagers: clusterManagers, markers: initialMarkers),
         ),
       );
+
+      await waitForMap(mapReady.future);
 
       await expectLater(
         events.stream,
