@@ -2,7 +2,12 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-abstract final class _M3Typography {
+// Do not edit by hand. The code is generated from data in the Material
+// Design token database by the script:
+//   packages/material_ui/tool/gen_defaults/bin/gen_defaults.dart.
+part of '../typography.dart';
+
+abstract final class _TypographyDefaultsM3 {
   static const TextTheme englishLike = TextTheme(
     displayLarge: TextStyle(
       debugLabel: 'englishLike displayLarge 2021',
