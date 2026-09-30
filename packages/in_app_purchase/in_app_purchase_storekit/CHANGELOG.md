@@ -1,3 +1,12 @@
+## NEXT
+
+* Updates minimum supported SDK version to Flutter 3.41/Dart 3.11.
+* Fixes lint issues.
+
+## 0.4.13
+
+* Exposes expirationDate on SK2PurchaseDetails.
+
 ## 0.4.12
 
 * Adds support for setting introductory offer eligibility from a server-signed

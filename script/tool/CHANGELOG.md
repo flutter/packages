@@ -1,3 +1,8 @@
+## 0.14.4+2
+
+* Adds an `in-flight-release-check` command, which reports whether an earlier
+  batch release for a package hasn't been merged back yet.
+
 ## 0.14.4+1
 
 * Adds validation that the root README package table is sorted alphabetically.

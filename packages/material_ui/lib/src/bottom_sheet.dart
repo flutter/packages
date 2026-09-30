@@ -41,8 +41,10 @@ typedef BottomSheetDragStartHandler = void Function(DragStartDetails details);
 /// A callback for when the user stops dragging the bottom sheet.
 ///
 /// Used by [BottomSheet.onDragEnd].
-typedef BottomSheetDragEndHandler =
-    void Function(DragEndDetails details, {required bool isClosing});
+typedef BottomSheetDragEndHandler = void Function(
+  DragEndDetails details, {
+  required bool isClosing,
+});
 
 /// A Material Design bottom sheet.
 ///
@@ -1301,6 +1303,7 @@ class ModalBottomSheetRoute<T> extends PopupRoute<T> {
 ///  * The Material 3 spec at <https://m3.material.io/components/bottom-sheets/overview>.
 ///  * [AnimationStyle], which is used to override the modal bottom sheet
 ///    animation duration and reverse animation duration.
+@awaitNotRequired
 Future<T?> showModalBottomSheet<T>({
   required BuildContext context,
   required WidgetBuilder builder,
