@@ -4,7 +4,6 @@
 
 import GoogleMaps
 import Testing
-import google_maps_flutter_ios_objc
 
 @testable import google_maps_flutter_ios
 
@@ -18,12 +17,12 @@ import google_maps_flutter_ios_objc
     return PartiallyMockedMapView(options: mapViewOptions)
   }
 
-  /// Returns a FGMMarkersController instance instantiated with the given map view.
+  /// Returns a MarkersController instance instantiated with the given map view.
   ///
   /// The mapView should outlive the controller, as the controller keeps a weak reference to it.
   func markersController(
     withMapView mapView: GMSMapView,
-    eventDelegate: NSObject & FGMMapEventDelegate
+    eventDelegate: MapEventDelegate
   ) -> MarkersController {
     return MarkersController(
       mapView: mapView,
@@ -34,8 +33,8 @@ import google_maps_flutter_ios_objc
     )
   }
 
-  func placeholderBitmap() -> FGMPlatformBitmap {
-    return FGMPlatformBitmap.make(withBitmap: FGMPlatformBitmapDefaultMarker.make(withHue: 0))
+  func placeholderBitmap() -> PlatformBitmap {
+    return PlatformBitmapDefaultMarker(hue: 0)
   }
 
   @Test func setsMarkerNumericProperties() throws {
@@ -48,23 +47,23 @@ import google_maps_flutter_ios_objc
     let anchorY = 2.718
     let alpha = 0.4
     let rotation = 90.0
-    let zIndex = 3
+    let zIndex: Int64 = 3
     let latitude = 10.0
     let longitude = 20.0
     controller.add([
-      FGMPlatformMarker.make(
-        withAlpha: alpha,
-        anchor: FGMPlatformPoint.makeWith(x: anchorX, y: anchorY),
+      PlatformMarker(
+        alpha: alpha,
+        anchor: PlatformPoint(x: anchorX, y: anchorY),
         consumeTapEvents: true,
         draggable: true,
         flat: true,
         icon: placeholderBitmap(),
-        infoWindow: FGMPlatformInfoWindow.make(
-          withTitle: "info title",
+        infoWindow: PlatformInfoWindow(
+          title: "info title",
           snippet: "info snippet",
-          anchor: FGMPlatformPoint.makeWith(x: 0, y: 0)
+          anchor: PlatformPoint(x: 0, y: 0)
         ),
-        position: FGMPlatformLatLng.make(withLatitude: latitude, longitude: longitude),
+        position: PlatformLatLng(latitude: latitude, longitude: longitude),
         rotation: rotation,
         visible: true,
         zIndex: zIndex,
@@ -94,19 +93,19 @@ import google_maps_flutter_ios_objc
 
     let markerIdentifier = "marker"
     controller.add([
-      FGMPlatformMarker.make(
-        withAlpha: 1.0,
-        anchor: FGMPlatformPoint.makeWith(x: 0, y: 0),
+      PlatformMarker(
+        alpha: 1.0,
+        anchor: PlatformPoint(x: 0, y: 0),
         consumeTapEvents: false,
         draggable: true,
         flat: false,
         icon: placeholderBitmap(),
-        infoWindow: FGMPlatformInfoWindow.make(
-          withTitle: "info title",
+        infoWindow: PlatformInfoWindow(
+          title: "info title",
           snippet: "info snippet",
-          anchor: FGMPlatformPoint.makeWith(x: 0, y: 0)
+          anchor: PlatformPoint(x: 0, y: 0)
         ),
-        position: FGMPlatformLatLng.make(withLatitude: 0.0, longitude: 0.0),
+        position: PlatformLatLng(latitude: 0.0, longitude: 0.0),
         rotation: 0,
         visible: false,
         zIndex: 0,
@@ -131,19 +130,19 @@ import google_maps_flutter_ios_objc
 
     let markerIdentifier = "marker"
     controller.add([
-      FGMPlatformMarker.make(
-        withAlpha: 1.0,
-        anchor: FGMPlatformPoint.makeWith(x: 0, y: 0),
+      PlatformMarker(
+        alpha: 1.0,
+        anchor: PlatformPoint(x: 0, y: 0),
         consumeTapEvents: false,
         draggable: false,
         flat: true,
         icon: placeholderBitmap(),
-        infoWindow: FGMPlatformInfoWindow.make(
-          withTitle: "info title",
+        infoWindow: PlatformInfoWindow(
+          title: "info title",
           snippet: "info snippet",
-          anchor: FGMPlatformPoint.makeWith(x: 0, y: 0)
+          anchor: PlatformPoint(x: 0, y: 0)
         ),
-        position: FGMPlatformLatLng.make(withLatitude: 0.0, longitude: 0.0),
+        position: PlatformLatLng(latitude: 0.0, longitude: 0.0),
         rotation: 0,
         visible: false,
         zIndex: 0,
@@ -168,19 +167,19 @@ import google_maps_flutter_ios_objc
 
     let markerIdentifier = "marker"
     controller.add([
-      FGMPlatformMarker.make(
-        withAlpha: 1.0,
-        anchor: FGMPlatformPoint.makeWith(x: 0, y: 0),
+      PlatformMarker(
+        alpha: 1.0,
+        anchor: PlatformPoint(x: 0, y: 0),
         consumeTapEvents: false,
         draggable: false,
         flat: false,
         icon: placeholderBitmap(),
-        infoWindow: FGMPlatformInfoWindow.make(
-          withTitle: "info title",
+        infoWindow: PlatformInfoWindow(
+          title: "info title",
           snippet: "info snippet",
-          anchor: FGMPlatformPoint.makeWith(x: 0, y: 0)
+          anchor: PlatformPoint(x: 0, y: 0)
         ),
-        position: FGMPlatformLatLng.make(withLatitude: 0.0, longitude: 0.0),
+        position: PlatformLatLng(latitude: 0.0, longitude: 0.0),
         rotation: 0,
         visible: true,
         zIndex: 0,
@@ -208,19 +207,19 @@ import google_maps_flutter_ios_objc
     let anchorX = 3.14
     let anchorY = 2.718
     controller.add([
-      FGMPlatformMarker.make(
-        withAlpha: 1.0,
-        anchor: FGMPlatformPoint.makeWith(x: 0, y: 0),
+      PlatformMarker(
+        alpha: 1.0,
+        anchor: PlatformPoint(x: 0, y: 0),
         consumeTapEvents: true,
         draggable: true,
         flat: true,
         icon: placeholderBitmap(),
-        infoWindow: FGMPlatformInfoWindow.make(
-          withTitle: title,
+        infoWindow: PlatformInfoWindow(
+          title: title,
           snippet: snippet,
-          anchor: FGMPlatformPoint.makeWith(x: anchorX, y: anchorY)
+          anchor: PlatformPoint(x: anchorX, y: anchorY)
         ),
-        position: FGMPlatformLatLng.make(withLatitude: 0, longitude: 0),
+        position: PlatformLatLng(latitude: 0, longitude: 0),
         rotation: 0,
         visible: true,
         zIndex: 0,
@@ -242,24 +241,22 @@ import google_maps_flutter_ios_objc
 
   @Test func updateMarkerSetsVisibilityLast() {
     let marker = PropertyOrderValidatingAdvancedMarker()
-    let collisionBehavior = FGMPlatformMarkerCollisionBehaviorBox(
-      value: .requiredAndHidesOptional
-    )
+    let collisionBehavior = PlatformMarkerCollisionBehavior.requiredAndHidesOptional
     MarkerController.update(
       marker,
-      from: FGMPlatformMarker.make(
-        withAlpha: 1.0,
-        anchor: FGMPlatformPoint.makeWith(x: 0, y: 0),
+      from: PlatformMarker(
+        alpha: 1.0,
+        anchor: PlatformPoint(x: 0, y: 0),
         consumeTapEvents: true,
         draggable: true,
         flat: true,
         icon: placeholderBitmap(),
-        infoWindow: FGMPlatformInfoWindow.make(
-          withTitle: "info title",
+        infoWindow: PlatformInfoWindow(
+          title: "info title",
           snippet: "info snippet",
-          anchor: FGMPlatformPoint.makeWith(x: 0, y: 0)
+          anchor: PlatformPoint(x: 0, y: 0)
         ),
-        position: FGMPlatformLatLng.make(withLatitude: 0, longitude: 0),
+        position: PlatformLatLng(latitude: 0, longitude: 0),
         rotation: 0,
         visible: true,
         zIndex: 0,

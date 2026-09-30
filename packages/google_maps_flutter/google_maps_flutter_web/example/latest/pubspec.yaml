@@ -2,13 +2,13 @@ name: google_maps_flutter_web_integration_tests
 publish_to: none
 
 environment:
-  sdk: ^3.10.0
-  flutter: ">=3.38.0"
+  sdk: ^3.11.0
+  flutter: ">=3.41.0"
 
 dependencies:
   flutter:
     sdk: flutter
-  google_maps_flutter_platform_interface: ^2.16.0
+  google_maps_flutter_platform_interface: ^2.17.0
   google_maps_flutter_web:
     path: ../..
   web: ^1.0.0

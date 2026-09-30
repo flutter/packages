@@ -65,5 +65,5 @@ void main() {
     } else {
       expect(getFocuses(), const <bool>[true, false, false, false, false]);
     }
-  });
+  }, tags: 'reduced-web-test-set');
 }
