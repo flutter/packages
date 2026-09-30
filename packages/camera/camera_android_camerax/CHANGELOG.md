@@ -1,3 +1,7 @@
+## 0.7.5+1
+
+* Fix exposure offset slider freezing camera preview and fix setExposureOffset return value.
+
 ## 0.7.5
 
 * Adds support for custom video output path in video recording.

@@ -11,8 +11,6 @@ import com.google.android.gms.maps.model.PolygonOptions;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import kotlin.Result;
-import kotlin.Unit;
 
 class PolygonsController {
 
@@ -60,7 +58,7 @@ class PolygonsController {
     if (polygonId == null) {
       return false;
     }
-    flutterApi.onPolygonTap(polygonId, (Result<Unit> result) -> Unit.INSTANCE);
+    flutterApi.onPolygonTap(polygonId, ResultUtilsKt.emptyContinuation());
     PolygonController polygonController = polygonIdToController.get(polygonId);
     if (polygonController != null) {
       return polygonController.consumeTapEvents();

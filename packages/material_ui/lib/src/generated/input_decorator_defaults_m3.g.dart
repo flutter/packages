@@ -2,6 +2,11 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+// Do not edit by hand. The code is generated from data in the Material
+// Design token database by the script:
+//   packages/material_ui/tool/gen_defaults/bin/gen_defaults.dart.
+part of '../input_decorator.dart';
+
 class _InputDecoratorDefaultsM3 extends InputDecorationThemeData {
   _InputDecoratorDefaultsM3(this.context) : super();
 
@@ -44,7 +49,7 @@ class _InputDecoratorDefaultsM3 extends InputDecorationThemeData {
         }
         if (states.contains(WidgetState.error)) {
           if (states.contains(WidgetState.focused)) {
-            return BorderSide(color: _colors.error, width: 2.0);
+            return BorderSide(width: 2.0, color: _colors.error);
           }
           if (states.contains(WidgetState.hovered)) {
             return BorderSide(color: _colors.onErrorContainer);
@@ -52,7 +57,7 @@ class _InputDecoratorDefaultsM3 extends InputDecorationThemeData {
           return BorderSide(color: _colors.error);
         }
         if (states.contains(WidgetState.focused)) {
-          return BorderSide(color: _colors.primary, width: 2.0);
+          return BorderSide(width: 2.0, color: _colors.primary);
         }
         if (states.contains(WidgetState.hovered)) {
           return BorderSide(color: _colors.onSurface);
@@ -67,7 +72,7 @@ class _InputDecoratorDefaultsM3 extends InputDecorationThemeData {
     }
     if (states.contains(WidgetState.error)) {
       if (states.contains(WidgetState.focused)) {
-        return BorderSide(color: _colors.error, width: 2.0);
+        return BorderSide(width: 2.0, color: _colors.error);
       }
       if (states.contains(WidgetState.hovered)) {
         return BorderSide(color: _colors.onErrorContainer);
@@ -75,7 +80,7 @@ class _InputDecoratorDefaultsM3 extends InputDecorationThemeData {
       return BorderSide(color: _colors.error);
     }
     if (states.contains(WidgetState.focused)) {
-      return BorderSide(color: _colors.primary, width: 2.0);
+      return BorderSide(width: 2.0, color: _colors.primary);
     }
     if (states.contains(WidgetState.hovered)) {
       return BorderSide(color: _colors.onSurface);

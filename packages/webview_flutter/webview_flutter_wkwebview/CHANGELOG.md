@@ -4,7 +4,12 @@
   blocking policy of the iOS platform view. Setting it to `doNotBlockGesture` works around web
   views becoming unresponsive to touches. See
   https://github.com/flutter/flutter/issues/175099.
-* Updates minimum supported SDK version to Flutter 3.47/Dart 3.13.
+
+## 3.26.2
+
+* Fixes a crash when a `WKNavigationDelegate` authentication challenge reply cannot be
+  resolved to a native instance.
+* Updates minimum supported SDK version to Flutter 3.41/Dart 3.11.
 
 ## 3.26.1
 
