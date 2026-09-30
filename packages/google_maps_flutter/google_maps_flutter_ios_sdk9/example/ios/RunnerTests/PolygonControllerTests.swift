@@ -11,17 +11,17 @@ import Testing
 
   @Test func updatePolygonSetsVisibilityLast() {
     let polygon = PropertyOrderValidatingPolygon()
-    FGMPolygonController.update(
+    PolygonController.update(
       polygon,
-      from: FGMPlatformPolygon.make(
-        withPolygonId: "polygon",
+      from: PlatformPolygon(
+        polygonId: "polygon",
         consumesTapEvents: false,
-        fill: FGMPlatformColor.make(withRed: 0, green: 0, blue: 0, alpha: 0),
+        fillColor: PlatformColor(red: 0, green: 0, blue: 0, alpha: 0),
         geodesic: false,
         points: [],
         holes: [],
         visible: true,
-        stroke: FGMPlatformColor.make(withRed: 0, green: 0, blue: 0, alpha: 0),
+        strokeColor: PlatformColor(red: 0, green: 0, blue: 0, alpha: 0),
         strokeWidth: 0,
         zIndex: 0
       ),

@@ -1,3 +1,12 @@
+## 0.10.12
+
+* Adds support for custom video output path in video recording.
+* Updates minimum supported SDK version to Flutter 3.41/Dart 3.11.
+
+## 0.10.11+1
+
+* Updates pigeon dev_dependency to ^27.3.2 for analyzer 14 compatibility.
+
 ## 0.10.11
 
 * Adds `setJpegImageQuality` for controlling JPEG compression quality.

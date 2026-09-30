@@ -16,6 +16,7 @@ class Sk2PurchaseParam extends PurchaseParam {
     this.quantity = 1,
     this.winBackOfferId,
     this.promotionalOffer,
+    this.introductoryOfferEligibilityCompactJWS,
   });
 
   /// Creates a [Sk2PurchaseParam] from a [ProductDetails] and a [SK2SubscriptionOffer].
@@ -54,4 +55,32 @@ class Sk2PurchaseParam extends PurchaseParam {
 
   /// The promotional offer identifier to apply to the purchase.
   final SK2PromotionalOffer? promotionalOffer;
+
+  /// A compact JWS, signed by your server, that sets the customer's
+  /// eligibility for an introductory offer on this purchase.
+  ///
+  /// When non-null this is forwarded verbatim to StoreKit as
+  /// [`Product.PurchaseOption.introductoryOfferEligibility(compactJWS:)`](https://developer.apple.com/documentation/storekit/product/purchaseoption/introductoryoffereligibility(compactjws:)).
+  /// When null, no such purchase option is set and the App Store applies its
+  /// own default introductory offer eligibility.
+  ///
+  /// The JWS is signed on your server with an App Store Connect In-App
+  /// Purchase key; see
+  /// [Generating JWS to sign App Store requests](https://developer.apple.com/documentation/storekit/generating-jws-to-sign-app-store-requests).
+  /// Its `allowIntroductoryOffer` claim determines whether the customer is
+  /// eligible, and can both grant an introductory offer to a customer the App
+  /// Store would consider ineligible and block one for a customer it would
+  /// consider eligible.
+  ///
+  /// This value is passed through untouched: the plugin never generates,
+  /// parses, validates or inspects it.
+  ///
+  /// This is **not** the same as [InAppPurchaseStoreKitPlatformAddition.isIntroductoryOfferEligible],
+  /// which reports the App Store's *default* eligibility for a product. This
+  /// property is a pricing decision supplied by a trusted server, and is
+  /// neither entitlement nor purchase verification.
+  ///
+  /// Available on iOS 15.0+ and macOS 12.0+; the underlying StoreKit API is
+  /// back deployed, so no additional OS version check is required.
+  final String? introductoryOfferEligibilityCompactJWS;
 }

@@ -4,6 +4,7 @@
 
 // This header is available in the Test module. Import via "@import image_picker_ios_ios.Test;"
 
+#import "FIPPickerSeams.h"
 #import "FIPViewProvider.h"
 #import "FLTImagePickerPlugin.h"
 #import "messages.g.h"
@@ -63,6 +64,23 @@ typedef void (^FlutterResultAdapter)(NSArray<NSString *> *_Nullable, FlutterErro
 @property(strong, nonatomic, nullable) FLTImagePickerMethodCallContext *callContext;
 
 - (instancetype)initWithViewProvider:(NSObject<FIPViewProvider> *)viewProvider;
+
+/// Camera source/device availability. Overridable for tests.
+@property(nonatomic, strong) NSObject<FIPCameraAvailabilityChecking> *cameraAvailability;
+
+/// Camera authorization. Overridable for tests.
+@property(nonatomic, strong) NSObject<FIPCameraPermissionChecking> *cameraPermissionChecker;
+
+/// Photo library authorization. Overridable for tests.
+@property(nonatomic, strong)
+    NSObject<FIPPhotoLibraryPermissionChecking> *photoLibraryPermissionChecker;
+
+/// PHPicker factory. Overridable for tests.
+@property(nonatomic, strong) NSObject<FIPPHPickerCreating> *phPickerCreator API_AVAILABLE(ios(14));
+
+/// Processes picker results. Exposed for tests that cannot construct PHPickerResult.
+- (void)processPickerItems:(NSArray<id<FIPPickerItem>> *)results
+                fromPicker:(PHPickerViewController *)picker API_AVAILABLE(ios(14));
 
 /// Validates the provided paths list, then sends it via `callContext.result` as the result of the
 /// original platform channel method call, clearing the in-progress call state.
