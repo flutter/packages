@@ -68,7 +68,7 @@ base class PlatformXDirectoryCreationParams extends PlatformXEntityCreationParam
 /// ```
 mixin PlatformXDirectoryExtension implements PlatformXEntityExtension {}
 
-/// Interface for a reference to a container of local data resources.
+/// Interface for a reference to a container of data resources.
 abstract base class PlatformXDirectory extends PlatformXEntity {
   /// Constructs a [PlatformXDirectory].
   @protected
@@ -81,11 +81,27 @@ abstract base class PlatformXDirectory extends PlatformXEntity {
   @override
   PlatformXDirectoryExtension? get extension => null;
 
-  /// Lists the sub-directories and files of this Directory.
+  /// Lists the sub-directories and resources of this container.
   ///
   /// Platforms may throw an exception if there is an error listing entities in
   /// the directory
   Stream<PlatformXEntity> list(PlatformListParams params);
+
+  /// Whether the application has permission to modify or write to the
+  /// container.
+  Future<bool> canWrite() {
+    throw UnimplementedError('`canWrite` is not implemented on the current platform.');
+  }
+
+  /// Creates the container.
+  Future<bool> create(PlatformDirectoryCreateParams params) {
+    throw UnimplementedError('`create` is not implemented on the current platform.');
+  }
+
+  /// Deletes the container.
+  Future<bool> delete(PlatformDirectoryDeleteParams params) {
+    throw UnimplementedError('`delete` is not implemented on the current platform.');
+  }
 }
 
 /// Base class for parameters passed to [PlatformXDirectory.list].
@@ -93,4 +109,18 @@ abstract base class PlatformXDirectory extends PlatformXEntity {
 base class PlatformListParams {
   /// Constructs a [PlatformListParams];
   const PlatformListParams();
+}
+
+/// Base class for parameters passed to [PlatformXDirectory.create].
+@immutable
+base class PlatformDirectoryCreateParams {
+  /// Constructs a [PlatformDirectoryCreateParams];
+  const PlatformDirectoryCreateParams();
+}
+
+/// Base class for parameters passed to [PlatformXDirectory.delete].
+@immutable
+base class PlatformDirectoryDeleteParams {
+  /// Constructs a [PlatformDirectoryDeleteParams];
+  const PlatformDirectoryDeleteParams();
 }

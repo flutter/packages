@@ -2,6 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'dart:async';
 import 'dart:convert';
 import 'dart:typed_data';
 
@@ -69,7 +70,7 @@ base class PlatformXFileCreationParams extends PlatformXEntityCreationParams {
 /// ```
 mixin PlatformXFileExtension implements PlatformXEntityExtension {}
 
-/// Interface for a reference to a local data resource.
+/// Interface for a reference to a data resource.
 abstract base class PlatformXFile extends PlatformXEntity {
   /// Constructs a [PlatformXFile].
   @protected
@@ -85,21 +86,21 @@ abstract base class PlatformXFile extends PlatformXEntity {
   /// Date and time when the resource was last modified, if the information is
   /// available.
   ///
-  /// Returns null if file doesn't exist or information is not available.
+  /// Returns null if resource doesn't exist or information is not available.
   Future<DateTime?> lastModified();
 
   /// The length of the data represented by this uri, in bytes.
   ///
-  /// Returns null if file doesn't exist or information is not available.
+  /// Returns null if resource doesn't exist or information is not available.
   Future<int?> length();
 
   /// Creates a new independent Stream for the contents of this resource.
   ///
-  /// If start is present, the file will be read from byte-offset start.
+  /// If start is present, the resource will be read from byte-offset start.
   /// Otherwise from the beginning (index 0).
   ///
   /// If end is present, only bytes up to byte-index end will be read.
-  /// Otherwise, until end of file.
+  /// Otherwise, until end of the resource.
   ///
   /// Platforms may throw an exception if there is an error opening or reading
   /// the resource.
@@ -117,10 +118,69 @@ abstract base class PlatformXFile extends PlatformXEntity {
   /// the resource.
   Future<String> readAsString({Encoding encoding = utf8});
 
-  /// The name of the resource represented by this object or null if the file
-  /// doesn't exist or information is not available.
+  /// Whether the application has permission to modify or write to the resource.
+  Future<bool> canWrite() {
+    throw UnimplementedError('`canWrite` is not implemented on the current platform.');
+  }
+
+  /// Creates a new independent [StreamSink] for the resource.
+  StreamSink<Uint8List> openWrite(PlatformOpenWriteParams params) {
+    throw UnimplementedError('`openWrite` is not implemented on the current platform.');
+  }
+
+  /// Writes a string to a resource.
+  Future<PlatformXFile> writeAsString(PlatformWriteAsStringParams params) {
+    throw UnimplementedError('`openWrite` is not implemented on the current platform.');
+  }
+
+  /// Creates the resource.
+  Future<bool> create(PlatformFileCreateParams params) {
+    throw UnimplementedError('`create` is not implemented on the current platform.');
+  }
+
+  /// Deletes the resource.
+  Future<bool> delete(PlatformFileDeleteParams params) {
+    throw UnimplementedError('`delete` is not implemented on the current platform.');
+  }
+
+  /// The name of the resource represented by this object or null if the
+  /// resource doesn't exist or information is not available.
   ///
-  /// If the file is identified by a path, only the base name of the file will
-  /// be included in the name.
+  /// If the resource is identified by a path, only the base name of the
+  /// resource will be included in the name.
   Future<String?> name();
+}
+
+/// Base class for parameters passed to [PlatformXFile.openWrite].
+@immutable
+base class PlatformOpenWriteParams {
+  /// Constructs a [PlatformOpenWriteParams];
+  const PlatformOpenWriteParams();
+}
+
+/// Base class for parameters passed to [PlatformXFile.writeAsString].
+@immutable
+base class PlatformWriteAsStringParams {
+  /// Constructs a [PlatformWriteAsStringParams];
+  const PlatformWriteAsStringParams(this.contents, {this.encoding = utf8});
+
+  /// The contents to write to the resource.
+  final String contents;
+
+  /// The encoding use to encode [contents].
+  final Encoding encoding;
+}
+
+/// Base class for parameters passed to [PlatformXFile.create].
+@immutable
+base class PlatformFileCreateParams {
+  /// Constructs a [PlatformFileCreateParams];
+  const PlatformFileCreateParams();
+}
+
+/// Base class for parameters passed to [PlatformXFile.delete].
+@immutable
+base class PlatformFileDeleteParams {
+  /// Constructs a [PlatformFileDeleteParams];
+  const PlatformFileDeleteParams();
 }
