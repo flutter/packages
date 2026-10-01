@@ -1,7 +1,11 @@
-## 0.14.4+3
+## 0.14.4+4
 
 * Uses `flutter pub` instead of `dart pub` for non-Flutter packages that depend
   on `jni`.
+  
+## 0.14.4+3
+
+* Adds validation that the root README package table is sorted alphabetically.
 
 ## 0.14.4+2
 
