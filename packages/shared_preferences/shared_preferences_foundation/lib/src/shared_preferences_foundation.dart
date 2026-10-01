@@ -14,10 +14,11 @@ typedef _Setter = Future<void> Function(String key, Object value);
 /// iOS and macOS implementation of shared_preferences.
 class SharedPreferencesFoundation extends SharedPreferencesStorePlatform {
   /// Creates an instance of [SharedPreferencesFoundation].
-  SharedPreferencesFoundation({@visibleForTesting LegacyUserDefaultsApi? api})
-    : _api = api ?? LegacyUserDefaultsApi();
+  SharedPreferencesFoundation({@visibleForTesting LegacyUserDefaultsApi? api}) : _apiOverride = api;
 
-  final LegacyUserDefaultsApi _api;
+  final LegacyUserDefaultsApi? _apiOverride;
+  late final LegacyUserDefaultsApi _api =
+      _apiOverride ?? LegacyUserDefaultsApi.createWithNativeInteropApi();
 
   static const String _defaultPrefix = 'flutter.';
 
