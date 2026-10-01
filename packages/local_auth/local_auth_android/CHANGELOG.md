@@ -1,5 +1,6 @@
-## NEXT
+## 2.3.0
 
+* Updates internal platform API from callbacks to `suspend`.
 * Updates minimum supported SDK version to Flutter 3.41/Dart 3.11.
 
 ## 2.2.0
