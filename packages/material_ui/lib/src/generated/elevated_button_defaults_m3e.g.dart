@@ -33,6 +33,15 @@ class _ElevatedButtonDefaultsM3E extends ButtonStyle {
   @override
   ButtonShapeVariant get shapeVariant => _shapeVariant ?? ButtonShapeVariant.round;
 
+  /// The space between the icon and the label for the given [sizeVariant].
+  static double iconLabelSpace(ButtonSizeVariant sizeVariant) => switch (sizeVariant) {
+    ButtonSizeVariant.xSmall => 4.0,
+    ButtonSizeVariant.small => 8.0,
+    ButtonSizeVariant.medium => 8.0,
+    ButtonSizeVariant.large => 12.0,
+    ButtonSizeVariant.xLarge => 16.0,
+  };
+
   @override
   WidgetStateProperty<TextStyle?> get textStyle =>
       WidgetStatePropertyAll<TextStyle?>(switch (sizeVariant) {

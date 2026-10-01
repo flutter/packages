@@ -381,6 +381,14 @@ switch (sizeVariant) {
     xLarge: '${TokenButtonXlarge.iconSize}',
   );
 
+  String get _iconLabelSpaceSwitch => _sizeSwitch(
+    xSmall: '${TokenButtonXsmall.iconLabelSpace}',
+    small: '${TokenButtonSmall.iconLabelSpace}',
+    medium: '${TokenButtonMedium.iconLabelSpace}',
+    large: '${TokenButtonLarge.iconLabelSpace}',
+    xLarge: '${TokenButtonXlarge.iconLabelSpace}',
+  );
+
   String get _roundShapeSwitch => _sizeSwitch(
     xSmall: shape(TokenButtonXsmall.containerShapeRound),
     small: shape(TokenButtonSmall.containerShapeRound),
@@ -449,6 +457,9 @@ class $className extends ButtonStyle {
 
   @override
   ButtonShapeVariant get shapeVariant => _shapeVariant ?? ButtonShapeVariant.round;
+
+  /// The space between the icon and the label for the given [sizeVariant].
+  static double iconLabelSpace(ButtonSizeVariant sizeVariant) => $_iconLabelSpaceSwitch;
 
   @override
   WidgetStateProperty<TextStyle?> get textStyle =>
