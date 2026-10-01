@@ -806,7 +806,7 @@ void main() {
     test('TypographyTemplateM3 emits M3 Typography defaults from tokens', () {
       const template = TypographyTemplateM3();
       final String contents = _generateContents(template);
-      expect(contents, contains('abstract final class _M3Typography'));
+      expect(contents, contains('abstract final class _TypographyDefaultsM3'));
       expect(contents, contains('displayLarge: TextStyle('));
       expect(contents, contains("debugLabel: 'englishLike displayLarge 2021'"));
     });
