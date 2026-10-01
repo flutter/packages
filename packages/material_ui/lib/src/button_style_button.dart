@@ -163,10 +163,16 @@ abstract class ButtonStyleButton extends StatefulWidget {
 
   /// Whether this button is in the selected state.
   ///
-  /// If null, the button is not selectable. Otherwise, this value initializes
-  /// [WidgetState.selected] and controls the button's selected semantics.
-  /// A provided [statesController] can independently update
-  /// [WidgetState.selected] to override the button's visual state.
+  /// If null, the button is not selectable. Otherwise, this value is the source
+  /// of truth for the button's selected state. It is written to
+  /// [WidgetState.selected] when the button is first built, when a new
+  /// [statesController] is provided, and whenever [isSelected] changes. It also
+  /// controls the button's selected semantics. Tapping the button does not
+  /// change [isSelected]; update it in [onPressed] to create a toggle button.
+  ///
+  /// Avoid also updating [WidgetState.selected] through [statesController].
+  /// That changes only the button's appearance, not its semantics, and is
+  /// overwritten the next time [isSelected] changes.
   final bool? isSelected;
 
   /// Determine whether this subtree represents a button.
