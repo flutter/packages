@@ -171,9 +171,9 @@ struct ImagePickerPluginTests {
     plugin.imagePickerControllerDidCancel(controller)
   }
 
-  @Test func cameraPickerInteractionBlockerWindowIsAddedAndRemoved() {
+  @Test func cameraPickerInteractionBlockerWindowIsAddedAndRemoved() throws {
     let (_, camera, permissions) = pluginWithAuthorizedCamera()
-    let scene = UIApplication.shared.connectedScenes.first as! UIWindowScene
+    let scene = try #require(UIApplication.shared.connectedScenes.first as? UIWindowScene)
     let window = UIWindow(windowScene: scene)
     window.frame = scene.coordinateSpace.bounds
     let rootViewController = UIViewController()
