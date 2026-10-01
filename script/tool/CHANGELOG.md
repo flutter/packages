@@ -1,3 +1,8 @@
+## 0.14.4+3
+
+* Uses `flutter pub` instead of `dart pub` for non-Flutter packages that depend
+  on `jni`.
+
 ## 0.14.4+2
 
 * Adds an `in-flight-release-check` command, which reports whether an earlier

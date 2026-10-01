@@ -93,10 +93,10 @@ String _pubCommand(
 }) {
   // Running `dart pub get` on a Flutter package can fail if a non-Flutter Dart
   // is first in the path, so use `flutter pub get` for any Flutter package.
-  bool useFlutter = package.requiresFlutter();
+  bool useFlutter = _requiresFlutterForPub(package);
   if (!useFlutter && recursiveFlutterCheck) {
     for (final RepositoryPackage example in package.getExamples()) {
-      if (example.requiresFlutter()) {
+      if (_requiresFlutterForPub(example)) {
         useFlutter = true;
         break;
       }
@@ -105,4 +105,17 @@ String _pubCommand(
   return useFlutter
       ? (platform.isWindows ? 'flutter.bat' : 'flutter')
       : (dartSdkPathOverride ?? 'dart');
+}
+
+bool _requiresFlutterForPub(RepositoryPackage package) {
+  if (package.requiresFlutter()) {
+    return true;
+  }
+  // Some packages declare a `flutter` constraint in their `pubspec.yaml`
+  // environment section, which causes `dart pub` to fail version solving unless
+  // run via `flutter pub`, even when depended on by a non-Flutter package.
+  const flutterRequiringPackages = <String>{'jni'};
+  final Pubspec pubspec = package.parsePubspec();
+  return pubspec.dependencies.keys.any(flutterRequiringPackages.contains) ||
+      pubspec.devDependencies.keys.any(flutterRequiringPackages.contains);
 }
