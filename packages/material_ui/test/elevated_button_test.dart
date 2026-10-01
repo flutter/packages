@@ -3162,6 +3162,46 @@ void main() {
     expect(controller.value, isNot(contains(WidgetState.selected)));
   });
 
+  testWidgets('ElevatedButton statesController can override the visual selected state', (
+    WidgetTester tester,
+  ) async {
+    final controller = MaterialStatesController();
+    addTearDown(controller.dispose);
+
+    await tester.pumpWidget(
+      MaterialApp(
+        theme: ThemeData(
+          elevatedButtonTheme: const ElevatedButtonThemeData(
+            variant: StyleVariant.material3Expressive,
+          ),
+        ),
+        home: Center(
+          child: ElevatedButton(
+            statesController: controller,
+            isSelected: false,
+            onPressed: () {},
+            child: const Text('Button'),
+          ),
+        ),
+      ),
+    );
+
+    final ColorScheme colors = Theme.of(tester.element(find.byType(ElevatedButton))).colorScheme;
+    Material material = tester.widget<Material>(
+      find.descendant(of: find.byType(ElevatedButton), matching: find.byType(Material)),
+    );
+    expect(material.color, colors.surfaceContainerLow);
+
+    controller.update(WidgetState.selected, true);
+    await tester.pump();
+
+    expect(controller.value, contains(WidgetState.selected));
+    material = tester.widget<Material>(
+      find.descendant(of: find.byType(ElevatedButton), matching: find.byType(Material)),
+    );
+    expect(material.color, colors.primary);
+  });
+
   test('ElevatedButton debugFillProperties includes selected', () {
     final builder = DiagnosticPropertiesBuilder();
     ElevatedButton(
