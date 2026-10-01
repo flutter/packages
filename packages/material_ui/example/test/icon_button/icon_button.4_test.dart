@@ -75,7 +75,7 @@ void main() {
         .shape;
 
     expect(unselectedShape, isA<RoundedRectangleBorder>());
-    expect(selectedShape, isNot(unselectedShape));
+    expect(selectedShape, isA<StadiumBorder>());
   });
 
   testWidgets('M3E IconButton example buttons can be selected and unselected', (
