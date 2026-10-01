@@ -94,6 +94,38 @@ ${readmeTableEntry('a_package')}
     expect(output, containsAllInOrder(<Matcher>[contains('Running for a_package')]));
   });
 
+  test('fails when README table entries are not sorted', () async {
+    final packages = <RepositoryPackage>[
+      createFakePackage('a_package', packagesDir),
+      createFakePackage('b_package', packagesDir),
+    ];
+
+    root.childFile('README.md').writeAsStringSync('''
+${readmeTableHeader()}
+${readmeTableEntry('b_package')}
+${readmeTableEntry('a_package')}
+''');
+    writeAutoLabelerYaml(packages);
+
+    Error? commandError;
+    final List<String> output = await runCapturingPrint(
+      runner,
+      <String>['validate'],
+      errorHandler: (Error e) {
+        commandError = e;
+      },
+    );
+
+    expect(commandError, isA<ToolExit>());
+    expect(
+      output,
+      contains(
+        'README package table is not sorted alphabetically: '
+        '"a_package" must appear before "b_package".',
+      ),
+    );
+  });
+
   test('passes for correct coverage with a different repo name', () async {
     final packages = <RepositoryPackage>[createFakePackage('a_package', packagesDir)];
 
