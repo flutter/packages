@@ -2960,6 +2960,45 @@ void main() {
       }
     });
 
+    testWidgets('xSmall keeps a 48dp tap target when the theme shrink-wraps', (
+      WidgetTester tester,
+    ) async {
+      var pressCount = 0;
+      Widget buildApp({MaterialTapTargetSize? tapTargetSize}) {
+        return MaterialApp(
+          theme: m3eTheme().copyWith(materialTapTargetSize: MaterialTapTargetSize.shrinkWrap),
+          home: Center(
+            child: ElevatedButton(
+              style: ButtonStyle(
+                sizeVariant: ButtonSizeVariant.xSmall,
+                tapTargetSize: tapTargetSize,
+              ),
+              onPressed: () {
+                pressCount += 1;
+              },
+              child: const Text('Button'),
+            ),
+          ),
+        );
+      }
+
+      await tester.pumpWidget(buildApp());
+      expect(tester.getSize(buttonMaterial()).height, 32.0);
+      expect(tester.getSize(find.byType(ElevatedButton)).height, 48.0);
+
+      // Taps just above and below the 32dp button still reach it.
+      final Offset center = tester.getCenter(find.byType(ElevatedButton));
+      for (final offset in const <Offset>[Offset(0.0, 23.0), Offset(0.0, -23.0)]) {
+        await tester.tapAt(center + offset);
+        await tester.pump();
+      }
+      expect(pressCount, 2);
+
+      // An explicit tap target size in the style overrides the default.
+      await tester.pumpWidget(buildApp(tapTargetSize: MaterialTapTargetSize.shrinkWrap));
+      expect(tester.getSize(find.byType(ElevatedButton)).height, 32.0);
+    });
+
     testWidgets('resolves shapes for shape variants and states', (WidgetTester tester) async {
       const selected = <WidgetState>{WidgetState.selected};
       const pressed = <WidgetState>{WidgetState.pressed};

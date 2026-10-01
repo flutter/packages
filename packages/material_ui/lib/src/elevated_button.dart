@@ -479,7 +479,7 @@ class ElevatedButton extends ButtonStyleButton {
   ///     * square - RoundedRectangleBorder with radius 12, 12, 16, 28, 28
   /// * `mouseCursor` - WidgetStateMouseCursor.adaptiveClickable
   /// * `visualDensity` - Theme.visualDensity
-  /// * `tapTargetSize` - Theme.materialTapTargetSize
+  /// * `tapTargetSize` - MaterialTapTargetSize.padded
   /// * `animationDuration` - kThemeChangeDuration
   /// * `enableFeedback` - true
   /// * `alignment` - Alignment.center
