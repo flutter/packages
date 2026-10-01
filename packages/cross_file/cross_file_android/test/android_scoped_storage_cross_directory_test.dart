@@ -87,4 +87,85 @@ void main() {
 
     expect(entityUris, <String>[fileUri]);
   });
+
+  test('canWrite', () async {
+    final mockDocumentFile = MockDocumentFile();
+    const canWrite = true;
+    when(mockDocumentFile.canWrite()).thenAnswer((_) async => canWrite);
+
+    const uri = 'uri';
+    android.PigeonOverrides.documentFile_fromTreeUri = ({required String treeUri}) {
+      expect(treeUri, uri);
+      return mockDocumentFile;
+    };
+
+    final directory = AndroidScopedStorageXDirectory(
+      const PlatformScopedStorageXDirectoryCreationParams(uri: uri),
+    );
+
+    expect(await directory.canWrite(), canWrite);
+  });
+
+  test('createFile', () async {
+    const fileName = 'test.txt';
+    const fileUri = 'fileUri';
+    final mockFile = MockDocumentFile();
+    when(mockFile.getUri()).thenAnswer((_) async => fileUri);
+
+    final mockDirectory = MockDocumentFile();
+    when(mockDirectory.createFile(fileName)).thenAnswer((_) async => mockFile);
+
+    const uri = 'uri';
+    android.PigeonOverrides.documentFile_fromTreeUri = ({required String treeUri}) {
+      expect(treeUri, uri);
+      return mockDirectory;
+    };
+
+    android.PigeonOverrides.documentFile_fromSingleUri = ({required String singleUri}) {
+      expect(singleUri, fileUri);
+      return mockFile;
+    };
+
+    final directory = AndroidScopedStorageXDirectory(
+      const PlatformScopedStorageXDirectoryCreationParams(uri: uri),
+    );
+
+    final PlatformXFile file = await directory.createFile(
+      const PlatformCreateParams(fileName),
+    );
+
+    expect(file.params.uri, fileUri);
+    verify(mockDirectory.createFile(fileName)).called(1);
+  });
+
+  test('createDirectory', () async {
+    const dirName = 'subDir';
+    const subDirUri = 'subDirUri';
+    final mockSubDir = MockDocumentFile();
+    when(mockSubDir.getUri()).thenAnswer((_) async => subDirUri);
+
+    final mockDirectory = MockDocumentFile();
+    when(mockDirectory.createDirectory(dirName)).thenAnswer((_) async => mockSubDir);
+
+    const uri = 'uri';
+    android.PigeonOverrides.documentFile_fromTreeUri = ({required String treeUri}) {
+      if (treeUri == uri) {
+        return mockDirectory;
+      } else if (treeUri == subDirUri) {
+        return mockSubDir;
+      }
+      throw UnsupportedError('Unexpected treeUri: $treeUri');
+    };
+
+    final directory = AndroidScopedStorageXDirectory(
+      const PlatformScopedStorageXDirectoryCreationParams(uri: uri),
+    );
+
+    final PlatformXDirectory subDir = await directory.createDirectory(
+      const PlatformCreateParams(dirName),
+    );
+
+    expect(subDir.params.uri, subDirUri);
+    verify(mockDirectory.createDirectory(dirName)).called(1);
+  });
 }

@@ -37,6 +37,9 @@ base class AndroidScopedStorageXDirectory extends PlatformScopedStorageXDirector
   }
 
   @override
+  Future<bool> canWrite() => _documentFile.canWrite();
+
+  @override
   Future<PlatformXFile> createFile(PlatformCreateParams params) async {
     final DocumentFile? file = await _documentFile.createFile(params.name);
     if (file != null) {
