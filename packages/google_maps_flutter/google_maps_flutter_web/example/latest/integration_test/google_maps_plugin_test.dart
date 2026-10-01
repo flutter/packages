@@ -17,7 +17,6 @@ import 'package:mockito/mockito.dart';
 
 @GenerateNiceMocks(<MockSpec<dynamic>>[MockSpec<GoogleMapController>()])
 import 'google_maps_plugin_test.mocks.dart';
-import 'resources/pump_map.dart';
 
 /// Test GoogleMapsPlugin
 void main() {
@@ -66,12 +65,8 @@ void main() {
     });
 
     group('buildView', () {
+      const testMapId = 33930;
       const initialCameraPosition = CameraPosition(target: LatLng(0, 0));
-      late int testMapId;
-
-      setUp(() {
-        testMapId = getNextMapId();
-      });
 
       testWidgets('returns an HtmlElementView and caches the controller for later', (
         WidgetTester tester,

@@ -15,7 +15,6 @@ import 'package:integration_test/integration_test.dart';
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
 import 'google_maps_controller_test.mocks.dart';
-import 'resources/pump_map.dart';
 
 // This value is used when comparing long~num, like
 // LatLng values.
@@ -39,19 +38,18 @@ void main() {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
 
   group('GoogleMapController', () {
-    late int mapId;
+    var mapId = 33930;
     late GoogleMapController controller;
     late StreamController<MapEvent<Object?>> stream;
 
-    // Creates a controller with a fresh mapId and the test's stream controller.
+    // Creates a controller with the default mapId and stream controller, and any `options` needed.
     GoogleMapController createController({
       CameraPosition initialCameraPosition = const CameraPosition(target: LatLng(0, 0)),
       MapObjects mapObjects = const MapObjects(),
       MapConfiguration mapConfiguration = const MapConfiguration(),
     }) {
-      mapId = getNextMapId();
       return GoogleMapController(
-        mapId: mapId,
+        mapId: ++mapId,
         streamController: stream,
         widgetConfiguration: MapWidgetConfiguration(
           initialCameraPosition: initialCameraPosition,

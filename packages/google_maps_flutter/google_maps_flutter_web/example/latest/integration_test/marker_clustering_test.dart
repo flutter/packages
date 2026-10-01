@@ -13,13 +13,8 @@ import 'package:google_maps_flutter_web/src/google_maps_inspector_web.dart';
 import 'package:google_maps_flutter_web/src/marker_clustering.dart';
 import 'package:integration_test/integration_test.dart';
 
-import 'resources/pump_map.dart';
-
 void main() {
-  // Fails any test that hangs, instead of letting the driver time out.
-  IntegrationTestWidgetsFlutterBinding.ensureInitialized().defaultTestTimeout = const Timeout(
-    Duration(minutes: 2),
-  );
+  IntegrationTestWidgetsFlutterBinding.ensureInitialized();
 
   GoogleMapsFlutterPlatform.instance.enableDebugInspection();
   final GoogleMapsFlutterPlatform plugin = GoogleMapsFlutterPlatform.instance;
@@ -30,7 +25,7 @@ void main() {
 
   group('MarkersController', () {
     testWidgets('Marker clustering', (WidgetTester tester) async {
-      final int testMapId = getNextMapId();
+      const testMapId = 33930;
       const clusterManagerId = ClusterManagerId('cluster 1');
 
       final clusterManagers = <ClusterManager>{
@@ -51,20 +46,22 @@ void main() {
         ),
       };
 
-      final int mapId = await pumpPlatformMap(
+      final mapIdCompleter = Completer<int>();
+
+      await _pumpMap(
         tester,
-        (void Function(int) onPlatformViewCreated) => _wrapMap(
-          plugin.buildViewWithConfiguration(
-            testMapId,
-            onPlatformViewCreated,
-            widgetConfiguration: const MapWidgetConfiguration(
-              initialCameraPosition: initialCameraPosition,
-              textDirection: TextDirection.ltr,
-            ),
-            mapObjects: MapObjects(clusterManagers: clusterManagers, markers: initialMarkers),
+        plugin.buildViewWithConfiguration(
+          testMapId,
+          (int id) => mapIdCompleter.complete(id),
+          widgetConfiguration: const MapWidgetConfiguration(
+            initialCameraPosition: initialCameraPosition,
+            textDirection: TextDirection.ltr,
           ),
+          mapObjects: MapObjects(clusterManagers: clusterManagers, markers: initialMarkers),
         ),
       );
+
+      final int mapId = await mapIdCompleter.future;
       expect(mapId, equals(testMapId));
 
       final List<Cluster> clusters =
@@ -89,7 +86,7 @@ void main() {
           await waitForValueMatchingPredicate<List<Cluster>>(
             tester,
             () async => inspector.getClusters(mapId: mapId, clusterManagerId: clusterManagerId),
-            (List<Cluster> clusters) => clusters.isEmpty,
+            (List<Cluster> clusters) => clusters.isNotEmpty,
           ) ??
           <Cluster>[];
 
@@ -122,35 +119,32 @@ void main() {
           ),
       };
 
-      final int testMapId = getNextMapId();
+      const testMapId = 33931;
       final events = StreamController<ClusteringEvent>();
-      await pumpPlatformMap(
+      await _pumpMap(
         tester,
-        (void Function(int) onPlatformViewCreated) => _wrapMap(
-          plugin.buildViewWithConfiguration(
-            testMapId,
-            (int id) async {
-              onPlatformViewCreated(id);
-              final StreamSubscription<ClusteringEvent>? subscription =
-                  (inspector as GoogleMapsInspectorWeb)
-                      .getClusteringEvents(mapId: testMapId, clusterManagerId: clusterManagerId)
-                      ?.listen(events.add);
+        plugin.buildViewWithConfiguration(
+          testMapId,
+          (int id) async {
+            final StreamSubscription<ClusteringEvent>? subscription =
+                (inspector as GoogleMapsInspectorWeb)
+                    .getClusteringEvents(mapId: testMapId, clusterManagerId: clusterManagerId)
+                    ?.listen(events.add);
 
-              await plugin.updateMarkers(
-                MarkerUpdates.from(initialMarkers, markersCluster1),
-                mapId: testMapId,
-              );
+            await plugin.updateMarkers(
+              MarkerUpdates.from(initialMarkers, markersCluster1),
+              mapId: testMapId,
+            );
 
-              await Future<void>.delayed(const Duration(seconds: 1));
-              await subscription?.cancel();
-              await events.close();
-            },
-            widgetConfiguration: const MapWidgetConfiguration(
-              initialCameraPosition: initialCameraPosition,
-              textDirection: TextDirection.ltr,
-            ),
-            mapObjects: MapObjects(clusterManagers: clusterManagers, markers: initialMarkers),
+            await Future<void>.delayed(const Duration(seconds: 1));
+            await subscription?.cancel();
+            await events.close();
+          },
+          widgetConfiguration: const MapWidgetConfiguration(
+            initialCameraPosition: initialCameraPosition,
+            textDirection: TextDirection.ltr,
           ),
+          mapObjects: MapObjects(clusterManagers: clusterManagers, markers: initialMarkers),
         ),
       );
 
@@ -216,6 +210,12 @@ Marker _copyMarkerWithClusterManagerId(Marker marker, ClusterManagerId? clusterM
     onDragEnd: marker.onDragEnd,
     clusterManagerId: clusterManagerId,
   );
+}
+
+/// Pumps a [map] widget in [tester] of a certain [size], then waits until it settles.
+Future<void> _pumpMap(WidgetTester tester, Widget map, [Size size = const Size.square(200)]) async {
+  await tester.pumpWidget(_wrapMap(map, size));
+  await tester.pumpAndSettle();
 }
 
 /// Wraps a [map] in a bunch of widgets so it renders in all platforms.
