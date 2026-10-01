@@ -160,6 +160,7 @@ struct PickerSaveImageToPathOperationTests {
     let savedData = savedPath.flatMap { FileManager.default.contents(atPath: $0) }
     #expect(savedPath == nil, "Returned a path to a \(savedData?.count ?? 0)-byte file.")
     #expect(savedError?.code == "invalid_image")
+    #expect(savedError?.message == "Could not save the image.")
     if let savedPath { try? FileManager.default.removeItem(atPath: savedPath) }
   }
 

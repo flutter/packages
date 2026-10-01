@@ -9,6 +9,13 @@ import UIKit
 
 @testable import image_picker_ios
 
+/// Saves into a directory that does not exist, so writing the file fails.
+private final class UnwritablePhotoAssetUtil: FLTImagePickerPhotoAssetUtil {
+  override class func temporaryFilePath(_ suffix: String) -> String {
+    "/this/path/does/not/exist/image" + suffix
+  }
+}
+
 @Suite
 struct PhotoAssetUtilTests {
   @Test func getAssetFromImagePickerInfoShouldReturnNilIfNotAvailable() {
@@ -117,6 +124,13 @@ struct PhotoAssetUtilTests {
       (meta[kCGImagePropertyExifDictionary as String] as? [String: Any])?[
         kCGImagePropertyExifUserComment as String] as? String
     #expect(comment == "aNote")
+  }
+
+  @Test func createFileReturnsNilWhenWriteFails() throws {
+    let imageJPG = try #require(UIImage(data: ImagePickerTestImages.jpgTestData))
+    let savedPath = UnwritablePhotoAssetUtil.saveImage(
+      withPickerInfo: nil, image: imageJPG, imageQuality: nil)
+    #expect(savedPath == nil)
   }
 
   @Test func saveImageWithPickerInfoReturnsNilWhenImageCannotBeEncoded() {
