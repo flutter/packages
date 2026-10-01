@@ -195,7 +195,7 @@ enum _IconButtonVariant { standard, filled, filledTonal, outlined }
 /// <callout-box>
 ///
 /// This sample shows Material 3 Expressive [IconButton] size, width, and shape
-/// variants.
+/// variants, and disabled buttons.
 ///
 // TODO(framework): Replace the following block with a @dartpad directive
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123

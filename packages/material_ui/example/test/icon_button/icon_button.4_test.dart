@@ -96,6 +96,55 @@ void main() {
       const ValueKey<String>('m3e-icon-button-shape-square'),
     );
   });
+
+  testWidgets('M3E IconButton example shows disabled buttons', (
+    WidgetTester tester,
+  ) async {
+    await tester.pumpWidget(const example.IconButtonM3EExampleApp());
+
+    const Key unselectedKey = ValueKey<String>(
+      'm3e-icon-button-disabled-unselected',
+    );
+    const Key selectedKey = ValueKey<String>(
+      'm3e-icon-button-disabled-selected',
+    );
+    await tester.scrollUntilVisible(find.byKey(selectedKey), 200.0);
+    expect(find.text('Disabled'), findsOneWidget);
+
+    final ColorScheme colors = Theme.of(
+      tester.element(find.byType(example.IconButtonM3EExample)),
+    ).colorScheme;
+    for (final Key key in <Key>[unselectedKey, selectedKey]) {
+      expect(tester.widget<IconButton>(find.byKey(key)).onPressed, isNull);
+      expect(
+        tester.widget<Material>(_buttonMaterial(key)).color,
+        colors.onSurface.withValues(alpha: 0.1),
+      );
+      final Finder icon = find.descendant(
+        of: find.byKey(key),
+        matching: find.byType(Icon),
+      );
+      expect(
+        IconTheme.of(tester.element(icon)).color,
+        colors.onSurface.withValues(alpha: 0.38),
+      );
+    }
+
+    expect(
+      find.descendant(
+        of: find.byKey(unselectedKey),
+        matching: find.byIcon(Icons.favorite_border),
+      ),
+      findsOneWidget,
+    );
+    expect(
+      find.descendant(
+        of: find.byKey(selectedKey),
+        matching: find.byIcon(Icons.favorite),
+      ),
+      findsOneWidget,
+    );
+  });
 }
 
 Finder _buttonMaterial(Key key) {

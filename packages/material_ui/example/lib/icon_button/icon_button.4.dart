@@ -127,6 +127,36 @@ class _IconButtonM3EExampleState extends State<IconButtonM3EExample> {
             }).toList(),
           ),
         ),
+        const _Section(
+          title: 'Disabled',
+          child: Wrap(
+            spacing: 16.0,
+            runSpacing: 20.0,
+            children: <Widget>[
+              // A null onPressed disables the button.
+              _IconButtonDemoTile(
+                label: 'Unselected',
+                child: IconButton.filledTonal(
+                  key: ValueKey<String>('m3e-icon-button-disabled-unselected'),
+                  icon: Icon(Icons.favorite_border),
+                  selectedIcon: Icon(Icons.favorite),
+                  isSelected: false,
+                  onPressed: null,
+                ),
+              ),
+              _IconButtonDemoTile(
+                label: 'Selected',
+                child: IconButton.filledTonal(
+                  key: ValueKey<String>('m3e-icon-button-disabled-selected'),
+                  icon: Icon(Icons.favorite_border),
+                  selectedIcon: Icon(Icons.favorite),
+                  isSelected: true,
+                  onPressed: null,
+                ),
+              ),
+            ],
+          ),
+        ),
       ],
     );
   }
