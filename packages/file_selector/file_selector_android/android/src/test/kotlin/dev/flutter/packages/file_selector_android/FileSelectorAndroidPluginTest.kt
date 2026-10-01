@@ -235,8 +235,8 @@ class FileSelectorAndroidPluginTest {
       listenerArgumentCaptor.firstValue.onActivityResult(222, Activity.RESULT_OK, resultMockIntent)
 
       assertTrue(callbackCalled)
-      assertNotNull(failure)
-      assertTrue(failure!!.message!!.contains("Failed to read file"))
+      val message = checkNotNull(failure?.message)
+      assertTrue(message.contains("Failed to read file"))
     }
   }
 
@@ -294,8 +294,8 @@ class FileSelectorAndroidPluginTest {
     listenerArgumentCaptor.firstValue.onActivityResult(221, Activity.RESULT_OK, resultMockIntent)
 
     assertTrue(callbackCalled)
-    assertNotNull(failure)
-    assertTrue(failure!!.message!!.contains("Failed to read file"))
+    val message = checkNotNull(failure?.message)
+    assertTrue(message.contains("Failed to read file"))
     verify(mockObjectFactory, never()).newDataInputStream(any())
   }
 
@@ -339,8 +339,8 @@ class FileSelectorAndroidPluginTest {
       listenerArgumentCaptor.firstValue.onActivityResult(221, Activity.RESULT_OK, resultMockIntent)
 
       assertTrue(callbackCalled)
-      assertNotNull(failure)
-      assertTrue(failure!!.message!!.contains("Failed to read file"))
+      val message = checkNotNull(failure?.message)
+      assertTrue(message.contains("Failed to read file"))
     }
   }
 
