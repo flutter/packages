@@ -2999,6 +2999,31 @@ void main() {
       expect(tester.getSize(find.byType(ElevatedButton)).height, 32.0);
     });
 
+    testWidgets('ignores the theme visual density', (WidgetTester tester) async {
+      Widget buildApp({VisualDensity? visualDensity}) {
+        return MaterialApp(
+          // Compact is the default density on desktop platforms.
+          theme: m3eTheme().copyWith(visualDensity: VisualDensity.compact),
+          home: Center(
+            child: ElevatedButton(
+              style: ButtonStyle(visualDensity: visualDensity),
+              onPressed: () {},
+              child: const Text('Button'),
+            ),
+          ),
+        );
+      }
+
+      await tester.pumpWidget(buildApp());
+      expect(tester.getSize(buttonMaterial()).height, 40.0);
+      expect(tester.getSize(find.byType(ElevatedButton)).height, 48.0);
+
+      // An explicit visual density in the style overrides the default.
+      await tester.pumpWidget(buildApp(visualDensity: VisualDensity.compact));
+      expect(tester.getSize(buttonMaterial()).height, 32.0);
+      expect(tester.getSize(find.byType(ElevatedButton)).height, 40.0);
+    });
+
     testWidgets('resolves shapes for shape variants and states', (WidgetTester tester) async {
       const selected = <WidgetState>{WidgetState.selected};
       const pressed = <WidgetState>{WidgetState.pressed};
