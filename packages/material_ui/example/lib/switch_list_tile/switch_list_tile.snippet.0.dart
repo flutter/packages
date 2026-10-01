@@ -20,7 +20,7 @@ class SwitchListTileExample extends StatelessWidget {
           tileColor: Colors.red,
           title: const Text('SwitchListTile with red background'),
           value: true,
-          onChanged: (bool? value) {},
+          onChanged: (bool value) {},
         ),
       ),
     )
