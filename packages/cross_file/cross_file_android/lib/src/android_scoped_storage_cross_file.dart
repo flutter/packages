@@ -182,7 +182,7 @@ final class NullOutputStreamException implements Exception {
   }
 }
 
-class _AndroidStreamConsumer implements StreamConsumer<Uint8List> {
+class _AndroidStreamConsumer implements StreamConsumer<List<int>> {
   _AndroidStreamConsumer(this.uri);
 
   final String uri;
@@ -195,14 +195,14 @@ class _AndroidStreamConsumer implements StreamConsumer<Uint8List> {
   );
 
   @override
-  Future<void> addStream(Stream<Uint8List> stream) async {
+  Future<void> addStream(Stream<List<int>> stream) async {
     final android.OutputStream? outputStream = await outputStreamFuture;
     if (outputStream == null) {
       throw NullOutputStreamException(uri);
     }
 
-    await for (final Uint8List data in stream) {
-      await outputStream.write(data);
+    await for (final List<int> data in stream) {
+      await outputStream.write(data is Uint8List ? data : Uint8List.fromList(data));
     }
 
     await outputStream.flush();
