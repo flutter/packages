@@ -8,6 +8,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThrows;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
@@ -1516,6 +1517,60 @@ public class CameraTest {
     camera.pausePreview();
 
     verify(mockCaptureSession, never()).stopRepeating();
+  }
+
+  @SuppressWarnings("try")
+  @Test
+  public void stopVideoRecording_returnsVideoPath_evenIfTakePictureOverwroteCaptureFile()
+      throws Exception {
+    final String videoPath = new File(System.getProperty("java.io.tmpdir"), "test_video.mp4").getAbsolutePath();
+    final String jpegPath = new File(System.getProperty("java.io.tmpdir"), "test_photo.jpg").getAbsolutePath();
+
+    final MediaRecorder mockMediaRecorder = mock(MediaRecorder.class);
+    camera.mediaRecorder = mockMediaRecorder;
+    camera.recordingVideo = true;
+    camera.captureSession = mockCaptureSession;
+
+    // Avoid real preview restart work in stopVideoRecording.
+    Camera cameraSpy = spy(camera);
+    doNothing().when(cameraSpy).startPreview(any());
+
+    // prepareRecording sets videoCaptureFile to the .mp4 path.
+    try (MockedConstruction<MediaRecorderBuilder> mockedBuilder = Mockito.mockConstruction(
+        MediaRecorderBuilder.class,
+        (mock, context) -> {
+          when(mock.setEnableAudio(anyBoolean())).thenReturn(mock);
+          when(mock.setMediaOrientation(anyInt())).thenReturn(mock);
+          when(mock.build()).thenReturn(mockMediaRecorder);
+        })) {
+      cameraSpy.prepareRecording(videoPath);
+    }
+
+    // Simulate takePicture() overwriting the shared field with a JPEG path
+    // (this is the bug we fixed by introducing videoCaptureFile).
+    cameraSpy.captureFile = new File(jpegPath);
+
+    // Act
+    String resultPath = cameraSpy.stopVideoRecording();
+
+    // Assert: must still be the video path, not the JPEG from takePicture.
+    assertEquals(videoPath, resultPath);
+    assertFalse(resultPath.endsWith(".jpg"));
+    assertTrue(resultPath.endsWith(".mp4"));
+  }
+
+  @Test
+  public void stopVideoRecording_throwsWhenVideoCaptureFileIsNull() throws Exception {
+    camera.recordingVideo = true;
+    camera.mediaRecorder = mock(MediaRecorder.class);
+    camera.captureSession = mockCaptureSession;
+
+    Camera cameraSpy = spy(camera);
+    doNothing().when(cameraSpy).startPreview(any());
+
+    // videoCaptureFile left null
+    Messages.FlutterError error = assertThrows(Messages.FlutterError.class, cameraSpy::stopVideoRecording);
+    assertEquals("videoRecordingFailed", error.code);
   }
 
   /// Allow to use `new android.util.Range(Integer, Integer)`

@@ -1,3 +1,7 @@
+## NEXT
+
+* Fixes `stopVideoRecording` returning the JPEG path from `takePicture` when a photo is taken during video recording.
+
 ## 0.10.12
 
 * Adds support for custom video output path in video recording.
