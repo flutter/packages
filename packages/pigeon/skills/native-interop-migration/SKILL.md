@@ -32,7 +32,7 @@ flutter pub add dev:jnigen dev:logging dev:path
 ```
 
 > [!NOTE]
-> Ensure the resolved `objective_c` version in `pubspec.yaml` matches the version expected by your `ffigen` version (e.g., `ffigen: ^22.0.0` generates bindings that require `objective_c: ^9.6.0`).
+> Ensure the resolved `objective_c` version matches the version expected by your `ffigen` version (e.g., `ffigen: ^22.0.0` generates bindings for `objective_c` 9.6.0). In `flutter/packages` (or when supporting Flutter SDKs that pin `meta: 1.18.0`), specify `objective_c: ^9.5.0` in `dependencies` so that `9.6.0` resolves on `master` while CI's legacy analysis (after `remove-dev-dependencies` strips `dev_dependencies`) can still resolve `9.5.0` without failing on `meta ^1.19.0`.
 
 ---
 
@@ -96,7 +96,7 @@ s.source_files = 'my_plugin/Sources/**/*.{swift,m,h}'
 ```
 
 ### 3.2 Swift Package Manager (`Package.swift`)
-Because SPM targets cannot mix Swift and Objective-C files in a single target, split the targets into an Objective-C bridging target (`<plugin_name>_objc_gen`) and the main Swift target:
+**Only if a `.m` file is generated** in `<swift_output_dir>_objc_gen`, split the targets in `Package.swift` into an Objective-C bridging target (`<plugin_name>_objc_gen`) and the main Swift target (since SPM targets cannot mix Swift and Objective-C files in a single target):
 
 ```swift
 targets: [
@@ -114,6 +114,11 @@ targets: [
   ),
 ]
 ```
+
+> [!IMPORTANT]
+> **Do NOT add `<plugin_name>_objc_gen` to `Package.swift` if no `.m` file is generated!**
+> If your Pigeon schema only has synchronous `@HostApi()` methods, `ffigen` only generates a `.h` header (and a temporary `.o` file that should be deleted/ignored) in `<swift_output_dir>_objc_gen`, without a `.m` file. Because SwiftPM requires every `.target` to have at least one compilable source file (`.m`, `.c`, or `.swift`), declaring `<plugin_name>_objc_gen` without a `.m` file will cause `flutter build ios`/`macos` to fail with:
+> `Error (Xcode): Build input file cannot be found: '.../<plugin_name>_objc_gen.o'`
 
 ### 3.3 Application & Example App Targets
 When implementing Native Interop host APIs directly in an application target (such as a plugin's `example/` app or a standalone app) rather than a plugin package:
@@ -311,3 +316,8 @@ F DartJNI : JNI is not initialized. Are you trying to invoke a Java API from Dar
 ```
 - **Cause**: Your plugin's `registerWith()` method (invoked by Flutter's `_PluginRegistrant.register()` before `main()`) constructed your Dart plugin class, and its constructor eagerly called `<MyApi>.createWithNativeInteropApi()` before `JniPlugin` initialized `DartJNI`.
 - **Solution**: Initialize `<MyApi>.createWithNativeInteropApi()` lazily using `late final` (see [Section 4.4](#44-dart-plugin-client-createwithnativeinteropapi--dartpluginclass)).
+
+### 6.9 Xcode Build Error: `Build input file cannot be found: '.../<plugin_name>_objc_gen.o'`
+If an iOS or macOS SwiftPM build fails because `<plugin_name>_objc_gen.o` cannot be found:
+- **Cause**: `Package.swift` defines a `<plugin_name>_objc_gen` target, but `ffigen` did not generate a `.m` implementation file in `Sources/<plugin_name>_objc_gen/` (because the Pigeon schema has no async callbacks, closures, or `@FlutterApi` methods requiring Objective-C trampolines). Without a `.m` source file, SwiftPM does not produce an object file for the target. (Note: any `.o` file produced inside `Sources/<plugin_name>_objc_gen/` during `ffigen` execution is a temporary `swiftc` artifact and must be deleted/ignored, never committed.)
+- **Solution**: Remove the `<plugin_name>_objc_gen` target and its dependency entry from `Package.swift`.
