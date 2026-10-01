@@ -279,7 +279,7 @@ class _ElevatedButtonDefaultsM3E extends ButtonStyle {
   WidgetStateProperty<MouseCursor?>? get mouseCursor => WidgetStateMouseCursor.adaptiveClickable;
 
   @override
-  VisualDensity? get visualDensity => Theme.of(context).visualDensity;
+  VisualDensity? get visualDensity => VisualDensity.standard;
 
   @override
   MaterialTapTargetSize? get tapTargetSize => MaterialTapTargetSize.padded;
