@@ -73,10 +73,7 @@ android {
                     events("passed", "skipped", "failed", "standardOut", "standardError")
                     showStandardStreams = true
                 }
-                // JDK 17+ blocks reflective access to JDK internals by default. Starting
-                // with 4.17, Robolectric's test environment setup reflects into
-                // jdk.internal.access, so these are required. This is the flag set
-                // recommended by Robolectric, see
+                // Recommended flag set starting Robolectric 4.17 for JDK 17+, see
                 // https://robolectric.org/getting-started/#running-with-java-17-and-higher
                 it.jvmArgs(
                     "--add-opens=java.base/java.lang=ALL-UNNAMED",
