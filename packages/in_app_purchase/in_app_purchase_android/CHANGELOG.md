@@ -1,5 +1,8 @@
-## NEXT
+## 0.5.4
 
+* Fixes a crash (`IllegalStateException: Reply already submitted`) when the
+  Play Billing library invokes a response listener more than once for a single
+  call.
 * Updates minimum supported SDK version to Flutter 3.41/Dart 3.11.
 
 ## 0.5.3
