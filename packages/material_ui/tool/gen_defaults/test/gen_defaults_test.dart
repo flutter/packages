@@ -375,6 +375,7 @@ void main() {
       expect(contents, contains('ButtonShapeVariant get shapeVariant'));
       expect(contents, contains('ButtonSizeVariant.xSmall => const Size(64.0, 32.0)'));
       expect(contents, contains('ButtonSizeVariant.xLarge => 40.0'));
+      expect(contents, contains('static double iconLabelSpace(ButtonSizeVariant sizeVariant)'));
       expect(contents, contains('ButtonStyleButton.scaledPadding('));
       expect(contents, contains('MediaQuery.textScalerOf(context).scale(fontSize) / fontSize'));
       expect(contents, contains('return _colors.primary;'));

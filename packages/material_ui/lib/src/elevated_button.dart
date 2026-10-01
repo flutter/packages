@@ -533,12 +533,7 @@ class _ElevatedButtonWithIconChild extends StatelessWidget {
     return Row(
       mainAxisSize: MainAxisSize.min,
       spacing: useExpressive
-          ? switch (effectiveSize) {
-              ButtonSizeVariant.xSmall => 4.0,
-              ButtonSizeVariant.small || ButtonSizeVariant.medium => 8.0,
-              ButtonSizeVariant.large => 12.0,
-              ButtonSizeVariant.xLarge => 16.0,
-            }
+          ? _ElevatedButtonDefaultsM3E.iconLabelSpace(effectiveSize)
           : lerpDouble(8, 4, scale)!,
       children: effectiveIconAlignment == IconAlignment.start
           ? <Widget>[icon, Flexible(child: label)]
