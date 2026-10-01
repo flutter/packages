@@ -18,12 +18,18 @@ dependencies:
     path: ../
 
 dev_dependencies:
-  ffigen: ^22.0.0
+  # TODO(QuncCccccc): Remove the upper bound once swiftgen supports ffigen
+  # 22.1.0, which removed `defaultCompilerOpts`.
+  # https://github.com/dart-lang/native/issues/3723
+  ffigen: ">=22.0.0 <22.1.0"
   flutter_test:
     sdk: flutter
   integration_test:
     sdk: flutter
-  jnigen: ^1.0.0
+  # TODO(QuncCccccc): Remove the upper bound and regenerate the JNI bindings
+  # with jnigen 1.0.1+, along with removing the ffigen pin above.
+  # https://github.com/dart-lang/native/issues/3723
+  jnigen: ">=1.0.0 <1.0.1"
   logging: ^1.3.0
   pigeon:
     path: ../../..
