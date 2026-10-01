@@ -259,6 +259,9 @@ class _MenuDefaultsM3 extends MenuStyle {
 
   @override
   VisualDensity get visualDensity => Theme.of(context).visualDensity;
+
+  @override
+  AlignmentGeometry get menuAlignment => AlignmentDirectional.bottomStart;
 }
 ''';
 }

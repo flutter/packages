@@ -3416,6 +3416,7 @@ class _MenuLayout extends SingleChildLayoutDelegate {
     required this.textDirection,
     required this.alignment,
     required this.alignmentOffset,
+    required this.menuAlignment,
     required this.menuPosition,
     required this.menuPadding,
     required this.avoidBounds,
@@ -3438,6 +3439,11 @@ class _MenuLayout extends SingleChildLayoutDelegate {
   // The offset from the alignment position to find the ideal location for the
   // menu.
   final Offset alignmentOffset;
+
+  /// The alignment to use for the menu itself when determining its position
+  /// relative to the anchor. This allows the menu to be aligned differently
+  /// from the anchor's alignment.
+  final AlignmentGeometry menuAlignment;
 
   // The position passed to the open method, if any.
   final Offset? menuPosition;
@@ -3483,29 +3489,31 @@ class _MenuLayout extends SingleChildLayoutDelegate {
     final double unconstrainedHeight = heightFactor > 0.01 ? childSize.height / heightFactor : 0;
     final double childHeightEstimate = math.min(unconstrainedHeight, size.height);
     final childSizeEstimate = Size(childSize.width, childHeightEstimate);
-    final ui.Offset finalPosition = _positionChild(childSizeEstimate, overlayRect);
+    final ({ui.Offset anchorPoint, Alignment resolvedMenuAlignment, ui.Offset topLeft}) placement =
+        _positionChild(childSizeEstimate, overlayRect);
 
     if (menuPosition != null) {
-      return finalPosition;
+      return placement.topLeft;
     }
 
-    // If the menu sits above the anchor when fully open, grow upward.
-    // Keep the bottom (attachment) fixed by shifting the top-left during animation.
-    final bool growsUp = finalPosition.dy + childSizeEstimate.height <= anchorRect.center.dy;
-    if (growsUp) {
-      final double dy = childHeightEstimate - childSize.height;
-      return Offset(finalPosition.dx, finalPosition.dy + dy);
-    }
+    final Offset currentMenuOffset = placement.resolvedMenuAlignment.alongSize(childSize);
 
-    final initialPosition = Offset(finalPosition.dx, anchorRect.bottom);
-    return Offset.lerp(initialPosition, finalPosition, heightFactor)!;
+    final Offset currentPosition = placement.anchorPoint - currentMenuOffset;
+    final Offset finalPosition = placement.topLeft;
+
+    return Offset.lerp(currentPosition, finalPosition, heightFactor)!;
   }
 
-  ui.Offset _positionChild(ui.Size childSize, ui.Rect overlayRect) {
-    double x;
-    double y;
+  ({ui.Offset topLeft, Alignment resolvedMenuAlignment, ui.Offset anchorPoint}) _positionChild(
+    ui.Size childSize,
+    ui.Rect overlayRect,
+  ) {
+    final Alignment resolvedAlignment = alignment.resolve(textDirection);
+    final Alignment resolvedMenuAlignment = menuAlignment.resolve(textDirection);
+
+    Offset anchorPoint;
     if (menuPosition == null) {
-      Offset desiredPosition = alignment.resolve(textDirection).withinRect(anchorRect);
+      final Offset desiredPosition = resolvedAlignment.withinRect(anchorRect);
       final Offset directionalOffset;
       if (alignment is AlignmentDirectional) {
         directionalOffset = switch (textDirection) {
@@ -3515,20 +3523,13 @@ class _MenuLayout extends SingleChildLayoutDelegate {
       } else {
         directionalOffset = alignmentOffset;
       }
-      desiredPosition += directionalOffset;
-      x = desiredPosition.dx;
-      y = desiredPosition.dy;
-      switch (textDirection) {
-        case TextDirection.rtl:
-          x -= childSize.width;
-        case TextDirection.ltr:
-          break;
-      }
+      anchorPoint = desiredPosition + directionalOffset;
     } else {
-      final Offset adjustedPosition = menuPosition! + anchorRect.topLeft;
-      x = adjustedPosition.dx;
-      y = adjustedPosition.dy;
+      anchorPoint = menuPosition! + anchorRect.topLeft;
     }
+    final Offset menuAnchorOffset = resolvedMenuAlignment.alongSize(childSize);
+    double x = anchorPoint.dx - menuAnchorOffset.dx;
+    double y = anchorPoint.dy - menuAnchorOffset.dy;
 
     final Iterable<Rect> subScreens = DisplayFeatureSubScreen.subScreensInBounds(
       overlayRect,
@@ -3549,29 +3550,9 @@ class _MenuLayout extends SingleChildLayoutDelegate {
       x = allowedRect.left;
     } else {
       if (offLeftSide(x)) {
-        // If the parent is a different orientation than the current one, then
-        // just push it over instead of trying the other side.
-        if (parentOrientation != orientation) {
-          x = allowedRect.left;
-        } else {
-          final double newX = anchorRect.right + alignmentOffset.dx;
-          if (!offRightSide(newX)) {
-            x = newX;
-          } else {
-            x = allowedRect.left;
-          }
-        }
+        x = allowedRect.left;
       } else if (offRightSide(x)) {
-        if (parentOrientation != orientation) {
-          x = allowedRect.right - childSize.width;
-        } else {
-          final double newX = anchorRect.left - childSize.width - alignmentOffset.dx;
-          if (!offLeftSide(newX)) {
-            x = newX;
-          } else {
-            x = allowedRect.right - childSize.width;
-          }
-        }
+        x = allowedRect.right - childSize.width;
       }
     }
     if (childSize.height >= allowedRect.height) {
@@ -3579,27 +3560,16 @@ class _MenuLayout extends SingleChildLayoutDelegate {
       y = allowedRect.top;
     } else {
       if (offTop(y)) {
-        final double newY = anchorRect.bottom;
-        if (!offBottom(newY)) {
-          y = newY;
-        } else {
-          y = allowedRect.top;
-        }
+        y = allowedRect.top;
       } else if (offBottom(y)) {
-        final double newY = anchorRect.top - childSize.height;
-        if (!offTop(newY)) {
-          // Only move the menu up if its parent is horizontal (MenuAnchor/MenuBar).
-          if (parentOrientation == Axis.horizontal) {
-            y = newY - alignmentOffset.dy;
-          } else {
-            y = newY;
-          }
-        } else {
-          y = allowedRect.bottom - childSize.height;
-        }
+        y = allowedRect.bottom - childSize.height;
       }
     }
-    return Offset(x, y);
+    return (
+      topLeft: Offset(x, y),
+      resolvedMenuAlignment: resolvedMenuAlignment,
+      anchorPoint: anchorPoint,
+    );
   }
 
   @override
@@ -3608,6 +3578,7 @@ class _MenuLayout extends SingleChildLayoutDelegate {
         textDirection != oldDelegate.textDirection ||
         alignment != oldDelegate.alignment ||
         alignmentOffset != oldDelegate.alignmentOffset ||
+        menuAlignment != oldDelegate.menuAlignment ||
         menuPosition != oldDelegate.menuPosition ||
         menuPadding != oldDelegate.menuPadding ||
         orientation != oldDelegate.orientation ||
@@ -3902,6 +3873,9 @@ class _Submenu extends StatelessWidget {
         effectiveValue((MenuStyle? style) => style?.visualDensity) ??
         Theme.of(context).visualDensity;
     final AlignmentGeometry alignment = effectiveValue((MenuStyle? style) => style?.alignment)!;
+    final AlignmentGeometry menuAlignment =
+        effectiveValue((MenuStyle? style) => style?.menuAlignment) ??
+        AlignmentDirectional.topStart; // TODO(ValentinVignal): Use _MenuDefaultsM3 once migrated.
     final EdgeInsetsGeometry padding =
         resolve<EdgeInsetsGeometry?>((MenuStyle? style) => style?.padding) ?? EdgeInsets.zero;
     final Offset densityAdjustment = visualDensity.baseSizeAdjustment;
@@ -3975,6 +3949,7 @@ class _Submenu extends StatelessWidget {
                 menuPadding: resolvedPadding,
                 alignment: alignment,
                 alignmentOffset: alignmentOffset,
+                menuAlignment: menuAlignment,
                 menuPosition: menuPosition.position,
                 orientation: anchor._orientation,
                 parentOrientation: anchor._parent?._orientation ?? Axis.horizontal,
