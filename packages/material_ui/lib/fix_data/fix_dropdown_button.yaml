@@ -34,7 +34,7 @@ transforms:
   - title: "Migrate to 'enabled: false'"
     date: 2026-02-14
     element:
-      uris: [ 'material.dart' ]
+      uris: [ 'material_ui.dart', 'package:material_ui/material_ui.dart' ]
       constructor: ''
       inClass: "DropdownButton"
     oneOf:
@@ -74,7 +74,7 @@ transforms:
   - title: "Migrate to 'enabled: false'"
     date: 2026-02-14
     element:
-      uris: [ 'material.dart' ]
+      uris: [ 'material_ui.dart', 'package:material_ui/material_ui.dart' ]
       constructor: ''
       inClass: "DropdownButtonFormField"
     oneOf:
