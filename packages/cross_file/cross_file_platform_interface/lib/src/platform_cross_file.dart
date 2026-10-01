@@ -124,21 +124,25 @@ abstract base class PlatformXFile extends PlatformXEntity {
   }
 
   /// Creates a new independent [StreamSink] for the resource.
+  ///
+  /// Platforms may throw an exception if there is an error opening or writing
+  /// to the resource.
   StreamSink<Uint8List> openWrite(PlatformOpenWriteParams params) {
     throw UnimplementedError('`openWrite` is not implemented on the current platform.');
   }
 
   /// Writes a string to a resource.
+  ///
+  /// Platforms may throw an exception if there is an error opening or writing
+  /// to the resource.
   Future<PlatformXFile> writeAsString(PlatformWriteAsStringParams params) {
     throw UnimplementedError('`openWrite` is not implemented on the current platform.');
   }
 
-  /// Creates the resource.
-  Future<bool> create(PlatformFileCreateParams params) {
-    throw UnimplementedError('`create` is not implemented on the current platform.');
-  }
-
   /// Deletes the resource.
+  ///
+  /// Platforms may throw an exception if there is an error deleting the
+  /// resource.
   Future<bool> delete(PlatformFileDeleteParams params) {
     throw UnimplementedError('`delete` is not implemented on the current platform.');
   }
@@ -169,13 +173,6 @@ base class PlatformWriteAsStringParams {
 
   /// The encoding use to encode [contents].
   final Encoding encoding;
-}
-
-/// Base class for parameters passed to [PlatformXFile.create].
-@immutable
-base class PlatformFileCreateParams {
-  /// Constructs a [PlatformFileCreateParams];
-  const PlatformFileCreateParams();
 }
 
 /// Base class for parameters passed to [PlatformXFile.delete].

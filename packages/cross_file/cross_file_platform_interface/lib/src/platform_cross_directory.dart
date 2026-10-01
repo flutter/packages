@@ -7,6 +7,7 @@ import 'dart:async';
 import 'package:flutter/foundation.dart' show immutable, protected;
 
 import 'platform_cross_entity.dart';
+import 'platform_cross_file.dart';
 
 /// Object specifying creation parameters for creating a [PlatformXDirectory].
 ///
@@ -88,17 +89,31 @@ abstract base class PlatformXDirectory extends PlatformXEntity {
   Stream<PlatformXEntity> list(PlatformListParams params);
 
   /// Whether the application has permission to modify or write to the
-  /// container.
+  /// fcontainer.
   Future<bool> canWrite() {
     throw UnimplementedError('`canWrite` is not implemented on the current platform.');
   }
 
-  /// Creates the container.
-  Future<bool> create(PlatformDirectoryCreateParams params) {
-    throw UnimplementedError('`create` is not implemented on the current platform.');
+  /// Creates a resource in this container.
+  ///
+  /// Platforms may throw an exception if there is an error creating the
+  /// resource.
+  Future<PlatformXFile> createFile(PlatformCreateParams params) {
+    throw UnimplementedError('`createFile` is not implemented on the current platform.');
+  }
+
+  /// Creates a container in this the container.
+  ///
+  /// Platforms may throw an exception if there is an error creating the
+  /// container.
+  Future<PlatformXDirectory> createDirectory(PlatformCreateParams params) {
+    throw UnimplementedError('`createDirectory` is not implemented on the current platform.');
   }
 
   /// Deletes the container.
+  ///
+  /// Platforms may throw an exception if there is an error deleting the
+  /// container.
   Future<bool> delete(PlatformDirectoryDeleteParams params) {
     throw UnimplementedError('`delete` is not implemented on the current platform.');
   }
@@ -113,9 +128,9 @@ base class PlatformListParams {
 
 /// Base class for parameters passed to [PlatformXDirectory.create].
 @immutable
-base class PlatformDirectoryCreateParams {
-  /// Constructs a [PlatformDirectoryCreateParams];
-  const PlatformDirectoryCreateParams();
+base class PlatformCreateParams {
+  /// Constructs a [PlatformCreateParams];
+  const PlatformCreateParams();
 }
 
 /// Base class for parameters passed to [PlatformXDirectory.delete].

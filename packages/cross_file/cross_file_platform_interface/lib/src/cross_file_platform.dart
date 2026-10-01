@@ -102,11 +102,6 @@ final class _DefaultFileSystemXFile extends PlatformFileSystemXFile {
   }
 
   @override
-  Future<bool> create(PlatformFileCreateParams params) {
-    throw UnsupportedError('This instance does not represent any resource.');
-  }
-
-  @override
   Future<bool> delete(PlatformFileDeleteParams params) {
     throw UnsupportedError('This instance does not represent any resource.');
   }
@@ -129,7 +124,12 @@ final class _DefaultFileSystemXDirectory extends PlatformFileSystemXDirectory {
   Future<bool> canWrite() async => false;
 
   @override
-  Future<bool> create(PlatformDirectoryCreateParams params) {
+  Future<PlatformXFile> createFile(PlatformCreateParams params) {
+    throw UnsupportedError('This instance does not represent any resource.');
+  }
+
+  @override
+  Future<PlatformXDirectory> createDirectory(PlatformCreateParams params) {
     throw UnsupportedError('This instance does not represent any resource.');
   }
 
@@ -188,11 +188,6 @@ final class _DefaultScopedStorageXFile extends PlatformScopedStorageXFile {
   }
 
   @override
-  Future<bool> create(PlatformFileCreateParams params) {
-    throw UnsupportedError('This instance does not represent any resource.');
-  }
-
-  @override
   Future<bool> delete(PlatformFileDeleteParams params) {
     throw UnsupportedError('This instance does not represent any resource.');
   }
@@ -221,7 +216,12 @@ final class _DefaultScopedStorageXDirectory extends PlatformScopedStorageXDirect
   Future<bool> canWrite() async => false;
 
   @override
-  Future<bool> create(PlatformDirectoryCreateParams params) {
+  Future<PlatformXFile> createFile(PlatformCreateParams params) {
+    throw UnsupportedError('This instance does not represent any resource.');
+  }
+
+  @override
+  Future<PlatformXDirectory> createDirectory(PlatformCreateParams params) {
     throw UnsupportedError('This instance does not represent any resource.');
   }
 
