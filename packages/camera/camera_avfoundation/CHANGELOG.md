@@ -1,3 +1,7 @@
+## 0.11.0
+
+* Adds support for custom video output path in video recording.
+
 ## 0.10.3+1
 
 * Replaces the deprecated `isHighResolutionCaptureEnabled`/`isHighResolutionPhotoEnabled` with

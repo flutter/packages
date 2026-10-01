@@ -1,5 +1,10 @@
-## NEXT
+## 0.7.5+1
 
+* Fix exposure offset slider freezing camera preview and fix setExposureOffset return value.
+
+## 0.7.5
+
+* Adds support for custom video output path in video recording.
 * Updates minimum supported SDK version to Flutter 3.41/Dart 3.11.
 
 ## 0.7.4+8

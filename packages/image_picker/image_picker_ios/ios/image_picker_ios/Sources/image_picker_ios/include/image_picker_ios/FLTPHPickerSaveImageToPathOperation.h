@@ -5,6 +5,7 @@
 #import <Foundation/Foundation.h>
 #import <PhotosUI/PhotosUI.h>
 
+#import "FIPPickerSeams.h"
 #import "FLTImagePickerImageUtil.h"
 #import "FLTImagePickerMetaDataUtil.h"
 #import "FLTImagePickerPhotoAssetUtil.h"
@@ -25,12 +26,12 @@ typedef void (^FLTGetSavedPath)(NSString *_Nullable savedPath, FlutterError *_Nu
 /// @helps It helps FLTImagePickerPlugin class.
 @interface FLTPHPickerSaveImageToPathOperation : NSOperation
 
-- (instancetype)initWithResult:(PHPickerResult *)result
-                     maxHeight:(NSNumber *)maxHeight
-                      maxWidth:(NSNumber *)maxWidth
-           desiredImageQuality:(NSNumber *)desiredImageQuality
-                  fullMetadata:(BOOL)fullMetadata
-                savedPathBlock:(FLTGetSavedPath)savedPathBlock API_AVAILABLE(ios(14));
+- (nullable instancetype)initWithResult:(nullable NSObject<FIPPickerItem> *)result
+                              maxHeight:(NSNumber *)maxHeight
+                               maxWidth:(NSNumber *)maxWidth
+                    desiredImageQuality:(NSNumber *)desiredImageQuality
+                           fullMetadata:(BOOL)fullMetadata
+                         savedPathBlock:(FLTGetSavedPath)savedPathBlock API_AVAILABLE(ios(14));
 
 @end
 

@@ -15,12 +15,12 @@ NS_ASSUME_NONNULL_BEGIN
 + (nullable PHAsset *)getAssetFromImagePickerInfo:(NSDictionary *)info;
 
 // Saves video to temporary URL. Returns nil on failure;
-+ (NSURL *)saveVideoFromURL:(NSURL *)videoURL;
++ (nullable NSURL *)saveVideoFromURL:(NSURL *)videoURL;
 
 // Saves image with correct meta data and extension copied from the original asset.
 // maxWidth and maxHeight are used only for GIF images.
 // Returns nil if the image cannot be encoded or saved.
-+ (nullable NSString *)saveImageWithOriginalImageData:(NSData *)originalImageData
++ (nullable NSString *)saveImageWithOriginalImageData:(nullable NSData *)originalImageData
                                                 image:(nullable UIImage *)image
                                              maxWidth:(nullable NSNumber *)maxWidth
                                             maxHeight:(nullable NSNumber *)maxHeight
