@@ -2,6 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';
 
@@ -15,6 +16,30 @@ void main() {
     expect(ElevatedButtonThemeData.lerp(material3, expressive, 0.49), material3);
     expect(ElevatedButtonThemeData.lerp(material3, expressive, 0.5), expressive);
     expect(material3, isNot(expressive));
+  });
+
+  test('ElevatedButtonThemeData hashCode, diagnostics, and lerp include variant', () {
+    const expressive = ElevatedButtonThemeData(variant: StyleVariant.material3Expressive);
+
+    expect(
+      expressive.hashCode,
+      const ElevatedButtonThemeData(variant: StyleVariant.material3Expressive).hashCode,
+    );
+    expect(expressive.hashCode, isNot(const ElevatedButtonThemeData().hashCode));
+
+    final builder = DiagnosticPropertiesBuilder();
+    expressive.debugFillProperties(builder);
+    final List<String> description = builder.properties
+        .where((DiagnosticsNode node) => !node.isFiltered(DiagnosticLevel.info))
+        .map((DiagnosticsNode node) => node.toString())
+        .toList();
+    expect(description, <String>['variant: material3Expressive']);
+
+    expect(ElevatedButtonThemeData.lerp(null, expressive, 0.4)?.variant, isNull);
+    expect(
+      ElevatedButtonThemeData.lerp(null, expressive, 0.6)?.variant,
+      StyleVariant.material3Expressive,
+    );
   });
 
   TextStyle iconStyle(WidgetTester tester, IconData icon) {
