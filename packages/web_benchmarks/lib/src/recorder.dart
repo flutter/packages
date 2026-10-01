@@ -849,6 +849,7 @@ class _RecordingWidgetsBinding extends BindingBase
       for (final RenderView renderView in renderViews) {
         // TODO(knopp): Remove this workaround once RenderView.markNeedsCompositeFrame
         // is available in stable.
+        // ignore: avoid_dynamic_calls
         if (_callMarkNeedsCompositeFrame) {
           try {
             (renderView as dynamic).markNeedsCompositeFrame();
