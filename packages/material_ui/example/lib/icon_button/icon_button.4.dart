@@ -245,8 +245,8 @@ const List<_SizeOption> _sizeOptions = <_SizeOption>[
     'Medium',
     'medium',
     ButtonSizeVariant.medium,
-    Icons.tune,
-    Icons.tune,
+    Icons.bookmark_border,
+    Icons.bookmark,
   ),
   _SizeOption(
     'Large',
