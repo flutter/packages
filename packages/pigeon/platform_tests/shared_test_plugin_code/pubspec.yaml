@@ -4,11 +4,12 @@ version: 0.0.1
 publish_to: none
 
 environment:
-  sdk: ^3.10.0
-  flutter: ">=3.38.0"
+  sdk: ^3.11.0
+  flutter: ">=3.41.0"
 
 dependencies:
   build_runner: ^2.1.10
+  ffi: ^2.2.0
   flutter:
     sdk: flutter
   # These are normal dependencies rather than dev_dependencies because the
@@ -18,8 +19,12 @@ dependencies:
     sdk: flutter
   integration_test:
     sdk: flutter
+  jni: ^1.0.3
   meta: ^1.17.0
   mockito: ^5.4.4
+  objective_c: ^9.5.0
 
 dev_dependencies:
+  ffigen: ^22.0.0
+  jnigen: ^1.0.0
   leak_tracker: any

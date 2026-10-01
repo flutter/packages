@@ -382,9 +382,9 @@ class _CalendarDatePickerState extends State<CalendarDatePicker> {
     assert(debugCheckHasMaterialLocalizations(context));
     assert(debugCheckHasDirectionality(context));
     final double textScaleFactor =
-        MediaQuery.textScalerOf(
-          context,
-        ).clamp(maxScaleFactor: _kMaxTextScaleFactor).scale(_fontSizeToScale) /
+        MediaQuery.textScalerOf(context)
+            .clamp(maxScaleFactor: _kMaxTextScaleFactor)
+            .scale(_fontSizeToScale) /
         _fontSizeToScale;
 
     // Conform to M3 spec in portrait mode (landscape mode is not specified).
@@ -1523,10 +1523,11 @@ class _YearPickerState extends State<YearPicker> {
 
     BorderSide? borderSide;
     if (isCurrentYear) {
-      borderSide = datePickerTheme.todayBorder ?? defaults.todayBorder;
-      if (borderSide != null) {
-        borderSide = borderSide.copyWith(color: textColor);
-      }
+      final bool hasCustomBorderColor =
+          datePickerTheme.todayBorder != null && datePickerTheme.todayBorder!.color.opacity != 0.0;
+      borderSide = hasCustomBorderColor
+          ? datePickerTheme.todayBorder
+          : (datePickerTheme.todayBorder ?? defaults.todayBorder)?.copyWith(color: textColor);
     }
     final decoration = ShapeDecoration(
       color: background,
