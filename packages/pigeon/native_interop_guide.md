@@ -161,10 +161,10 @@ This allows CocoaPods to automatically compile the generated Objective-C bridgin
 1. An Objective-C target for the generated bridge files (e.g., `my_plugin_objc_gen`).
 2. The main Swift target that depends on the Objective-C target.
 
-> **Important:** If your Pigeon schema only uses synchronous `@HostApi()` methods (and does not generate a `.m` file in `<swift_output_dir>_objc_gen`), **do not** add the `<plugin>_objc_gen` target to `Package.swift`. SwiftPM requires every `.target` to contain at least one compilable source file (`.m`, `.c`, or `.swift`). Declaring a `<plugin>_objc_gen` target when the directory only contains a `.h` header (or temporary `.o` file) will cause Xcode builds to fail with:
-> `Build input file cannot be found: '.../<plugin>_objc_gen.o'`
+> **Important:** If your Pigeon schema only uses synchronous `@HostApi()` methods (and does not generate a `.m` file in `<swift_output_dir>_objc_gen`), **do not** add the `<plugin_name>_objc_gen` target to `Package.swift`. SwiftPM requires every `.target` to contain at least one compilable source file (`.m`, `.c`, or `.swift`). Declaring a `<plugin_name>_objc_gen` target when the directory only contains a `.h` header (or temporary `.o` file) will cause Xcode builds to fail with:
+> `Build input file cannot be found: '.../<plugin_name>_objc_gen.o'`
 
-Example configuration (when `<plugin>_objc_gen` contains a generated `.m` file):
+Example configuration (when `<plugin_name>_objc_gen` contains a generated `.m` file):
 <?code-excerpt "platform_tests/test_plugin/darwin/test_plugin/Package.swift (swiftpm-targets)"?>
 ```swift
 targets: [
@@ -259,11 +259,11 @@ F DartJNI : JNI is not initialized. Are you trying to invoke a Java API from Dar
 - **Cause**: Your plugin's `registerWith()` method (invoked by Flutter's `_PluginRegistrant.register()` before `main()`) constructed your Dart plugin class, and its constructor eagerly called `<MyApi>.createWithNativeInteropApi()` before `JniPlugin` initialized `DartJNI`.
 - **Solution**: Initialize `<MyApi>.createWithNativeInteropApi()` lazily using `late final` rather than eagerly in the constructor initializer list (see [Section 4 of the Migration Guide](./native_interop_migration_guide.md#4-dart-client-adaptation)).
 
-### 5.6 Xcode Error: `Build input file cannot be found: '.../<plugin>_objc_gen.o'`
+### 5.6 Xcode Error: `Build input file cannot be found: '.../<plugin_name>_objc_gen.o'`
 
-If an iOS or macOS SwiftPM build fails because `<plugin>_objc_gen.o` cannot be found:
-- **Cause**: `Package.swift` defines a `<plugin>_objc_gen` target, but `ffigen` did not generate a `.m` implementation file in `Sources/<plugin>_objc_gen/` (because the Pigeon schema has no async callbacks, closures, or `@FlutterApi` methods requiring Objective-C trampolines). Without a `.m` source file, SwiftPM does not produce an object file for the target. (Note: any `.o` file produced inside `Sources/<plugin>_objc_gen/` during `ffigen` execution is a temporary `swiftc` artifact and must not be committed or used.)
-- **Solution**: Remove the `<plugin>_objc_gen` target and its dependency entry from `Package.swift`.
+If an iOS or macOS SwiftPM build fails because `<plugin_name>_objc_gen.o` cannot be found:
+- **Cause**: `Package.swift` defines a `<plugin_name>_objc_gen` target, but `ffigen` did not generate a `.m` implementation file in `Sources/<plugin_name>_objc_gen/` (because the Pigeon schema has no async callbacks, closures, or `@FlutterApi` methods requiring Objective-C trampolines). Without a `.m` source file, SwiftPM does not produce an object file for the target. (Note: any `.o` file produced inside `Sources/<plugin_name>_objc_gen/` during `ffigen` execution is a temporary `swiftc` artifact and must not be committed or used.)
+- **Solution**: Remove the `<plugin_name>_objc_gen` target and its dependency entry from `Package.swift`.
 
 ---
 
