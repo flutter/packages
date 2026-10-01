@@ -1,4 +1,4 @@
-## NEXT
+## 0.10.13
 
 * Fixes `stopVideoRecording` returning the JPEG path from `takePicture` when a photo is taken during video recording.
 
