@@ -175,6 +175,16 @@ class ElevatedButton extends ButtonStyleButton {
   /// create a [WidgetStateProperty] with a single value for all
   /// states.
   ///
+  /// The [sizeVariant] and [shapeVariant] parameters are Material 3 Expressive
+  /// options. They provide extra-small through extra-large sizes and round or
+  /// square shapes through [ButtonStyle.sizeVariant] and
+  /// [ButtonStyle.shapeVariant].
+  ///
+  /// When [ElevatedButtonThemeData.variant] is
+  /// [StyleVariant.material3Expressive] and these properties are null,
+  /// Material 3 Expressive [ElevatedButton] defaults use
+  /// [ButtonSizeVariant.small] and [ButtonShapeVariant.round].
+  ///
   /// All parameters default to null, by default this method returns
   /// a [ButtonStyle] that doesn't override anything.
   ///
@@ -235,6 +245,8 @@ class ElevatedButton extends ButtonStyleButton {
     InteractiveInkFeatureFactory? splashFactory,
     ButtonLayerBuilder? backgroundBuilder,
     ButtonLayerBuilder? foregroundBuilder,
+    ButtonSizeVariant? sizeVariant,
+    ButtonShapeVariant? shapeVariant,
   }) {
     final WidgetStateProperty<Color?>? overlayColorProp = switch ((foregroundColor, overlayColor)) {
       (null, null) => null,
@@ -288,6 +300,8 @@ class ElevatedButton extends ButtonStyleButton {
       splashFactory: splashFactory,
       backgroundBuilder: backgroundBuilder,
       foregroundBuilder: foregroundBuilder,
+      sizeVariant: sizeVariant,
+      shapeVariant: shapeVariant,
     );
   }
 
