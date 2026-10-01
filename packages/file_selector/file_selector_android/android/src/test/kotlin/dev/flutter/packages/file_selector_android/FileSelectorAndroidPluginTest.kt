@@ -30,7 +30,6 @@ import org.mockito.kotlin.mock
 import org.mockito.kotlin.never
 import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
-import org.mockito.stubbing.Answer
 
 class FileSelectorAndroidPluginTest {
   private fun mockContentResolver(
@@ -65,13 +64,13 @@ class FileSelectorAndroidPluginTest {
       val mockUriPath = "/some/path"
       mockedFileUtils
           .whenever { FileUtils.getPathFromCopyOfFileFromUri(any(), eq(mockUri)) }
-          .thenAnswer(Answer { mockUriPath })
+          .thenReturn(mockUriPath)
       mockContentResolver(mockContentResolver, mockUri, "filename", 30, "text/plain")
 
       val mockIntent = mock<Intent>()
       val mockObjectFactory =
           mock<NativeObjectFactory> {
-            on { newIntent(Intent.ACTION_OPEN_DOCUMENT) } doReturn (mockIntent)
+            on { newIntent(Intent.ACTION_OPEN_DOCUMENT) } doReturn mockIntent
             on { newDataInputStream(any()) } doReturn mock<DataInputStream>()
           }
       val mockActivity = mock<Activity> { on { contentResolver } doReturn mockContentResolver }
@@ -79,16 +78,15 @@ class FileSelectorAndroidPluginTest {
           mock<ActivityPluginBinding> { on { activity } doReturn mockActivity }
 
       val fileSelectorApi =
-          FileSelectorApiImpl(mockActivityBinding, mockObjectFactory) { version: Int ->
+          FileSelectorApiImpl(mockActivityBinding, mockObjectFactory) { version ->
             Build.VERSION.SDK_INT >= version
           }
 
-      val callbackCalled = arrayOfNulls<Boolean>(1)
-      fileSelectorApi.openFile(null, FileTypes(mutableListOf(), mutableListOf())) { reply ->
-        callbackCalled[0] = true
-        val file = reply.getOrNull()
-        assertNotNull(file)
-        assertEquals(30, file!!.bytes.size.toLong())
+      var callbackCalled = false
+      fileSelectorApi.openFile(null, FileTypes(emptyList(), emptyList())) { reply ->
+        callbackCalled = true
+        val file = checkNotNull(reply.getOrNull())
+        assertEquals(30, file.bytes.size)
         assertEquals("text/plain", file.mimeType)
         assertEquals("filename", file.name)
         assertEquals(30L, file.size)
@@ -103,7 +101,7 @@ class FileSelectorAndroidPluginTest {
 
       val resultMockIntent = mock<Intent> { on { data } doReturn mockUri }
       listenerArgumentCaptor.firstValue.onActivityResult(221, Activity.RESULT_OK, resultMockIntent)
-      assertTrue(callbackCalled[0]!!)
+      assertTrue(callbackCalled)
     }
   }
 
@@ -115,44 +113,43 @@ class FileSelectorAndroidPluginTest {
       val mockUriPath = "some/path/"
       mockedFileUtils
           .whenever { FileUtils.getPathFromCopyOfFileFromUri(any(), eq(mockUri)) }
-          .thenAnswer(Answer { mockUriPath })
+          .thenReturn(mockUriPath)
       mockContentResolver(mockContentResolver, mockUri, "filename", 30, "text/plain")
 
       val mockUri2 = mock<Uri>()
       val mockUri2Path = "some/other/path/"
       mockedFileUtils
           .whenever { FileUtils.getPathFromCopyOfFileFromUri(any(), eq(mockUri2)) }
-          .thenAnswer(Answer { mockUri2Path })
+          .thenReturn(mockUri2Path)
       mockContentResolver(mockContentResolver, mockUri2, "filename2", 40, "image/jpg")
 
       val mockIntent = mock<Intent>()
       val mockObjectFactory =
           mock<NativeObjectFactory> {
-            on { newIntent(Intent.ACTION_OPEN_DOCUMENT) } doReturn (mockIntent)
+            on { newIntent(Intent.ACTION_OPEN_DOCUMENT) } doReturn mockIntent
             on { newDataInputStream(any()) } doReturn mock<DataInputStream>()
           }
       val mockActivity = mock<Activity> { on { contentResolver } doReturn mockContentResolver }
       val mockActivityBinding =
           mock<ActivityPluginBinding> { on { activity } doReturn mockActivity }
       val fileSelectorApi =
-          FileSelectorApiImpl(mockActivityBinding, mockObjectFactory) { version: Int ->
+          FileSelectorApiImpl(mockActivityBinding, mockObjectFactory) { version ->
             Build.VERSION.SDK_INT >= version
           }
 
-      val callbackCalled = arrayOfNulls<Boolean>(1)
-      fileSelectorApi.openFiles(null, FileTypes(mutableListOf(), mutableListOf())) { reply ->
-        callbackCalled[0] = true
-        val fileList = reply.getOrNull()
-        assertNotNull(fileList)
-        val file1 = fileList!![0]
-        assertEquals(30, file1.bytes.size.toLong())
+      var callbackCalled = false
+      fileSelectorApi.openFiles(null, FileTypes(emptyList(), emptyList())) { reply ->
+        callbackCalled = true
+        val fileList = checkNotNull(reply.getOrNull())
+        val file1 = fileList[0]
+        assertEquals(30, file1.bytes.size)
         assertEquals("text/plain", file1.mimeType)
         assertEquals("filename", file1.name)
         assertEquals(30L, file1.size)
         assertEquals(mockUriPath, file1.path)
 
         val file2 = fileList[1]
-        assertEquals(40, file2.bytes.size.toLong())
+        assertEquals(40, file2.bytes.size)
         assertEquals("image/jpg", file2.mimeType)
         assertEquals("filename2", file2.name)
         assertEquals(40L, file2.size)
@@ -177,7 +174,7 @@ class FileSelectorAndroidPluginTest {
       val resultMockIntent = mock<Intent> { on { clipData } doReturn mockClipData }
 
       listenerArgumentCaptor.firstValue.onActivityResult(222, Activity.RESULT_OK, resultMockIntent)
-      assertTrue(callbackCalled[0]!!)
+      assertTrue(callbackCalled)
     }
   }
 
@@ -198,22 +195,22 @@ class FileSelectorAndroidPluginTest {
       val mockIntent = mock<Intent>()
       val mockObjectFactory =
           mock<NativeObjectFactory> {
-            on { newIntent(Intent.ACTION_OPEN_DOCUMENT) } doReturn (mockIntent)
+            on { newIntent(Intent.ACTION_OPEN_DOCUMENT) } doReturn mockIntent
             on { newDataInputStream(any()) } doReturn mock<DataInputStream>()
           }
       val mockActivity = mock<Activity> { on { contentResolver } doReturn mockContentResolver }
       val mockActivityBinding =
           mock<ActivityPluginBinding> { on { activity } doReturn mockActivity }
       val fileSelectorApi =
-          FileSelectorApiImpl(mockActivityBinding, mockObjectFactory) { version: Int ->
+          FileSelectorApiImpl(mockActivityBinding, mockObjectFactory) { version ->
             Build.VERSION.SDK_INT >= version
           }
 
-      val callbackCalled = BooleanArray(1)
-      val failure = arrayOfNulls<Throwable>(1)
-      fileSelectorApi.openFiles(null, FileTypes(mutableListOf(), mutableListOf())) { reply ->
-        callbackCalled[0] = true
-        failure[0] = reply.exceptionOrNull()
+      var callbackCalled = false
+      var failure: Throwable? = null
+      fileSelectorApi.openFiles(null, FileTypes(emptyList(), emptyList())) { reply ->
+        callbackCalled = true
+        failure = reply.exceptionOrNull()
       }
       verify(mockIntent).addCategory(Intent.CATEGORY_OPENABLE)
       verify(mockIntent).putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true)
@@ -237,9 +234,9 @@ class FileSelectorAndroidPluginTest {
       // complete the callback with a failure instead of crashing.
       listenerArgumentCaptor.firstValue.onActivityResult(222, Activity.RESULT_OK, resultMockIntent)
 
-      assertTrue(callbackCalled[0])
-      assertNotNull(failure[0])
-      assertTrue(failure[0]!!.message!!.contains("Failed to read file"))
+      assertTrue(callbackCalled)
+      assertNotNull(failure)
+      assertTrue(failure!!.message!!.contains("Failed to read file"))
     }
   }
 
@@ -271,21 +268,21 @@ class FileSelectorAndroidPluginTest {
     val mockIntent = mock<Intent>()
     val mockObjectFactory =
         mock<NativeObjectFactory> {
-          on { newIntent(Intent.ACTION_OPEN_DOCUMENT) } doReturn (mockIntent)
+          on { newIntent(Intent.ACTION_OPEN_DOCUMENT) } doReturn mockIntent
           on { newDataInputStream(any()) } doReturn mock<DataInputStream>()
         }
     val mockActivity = mock<Activity> { on { contentResolver } doReturn mockContentResolver }
     val mockActivityBinding = mock<ActivityPluginBinding> { on { activity } doReturn mockActivity }
     val fileSelectorApi =
-        FileSelectorApiImpl(mockActivityBinding, mockObjectFactory) { version: Int ->
+        FileSelectorApiImpl(mockActivityBinding, mockObjectFactory) { version ->
           Build.VERSION.SDK_INT >= version
         }
 
-    val callbackCalled = BooleanArray(1)
-    val failure = arrayOfNulls<Throwable>(1)
-    fileSelectorApi.openFile(null, FileTypes(mutableListOf(), mutableListOf())) { reply ->
-      callbackCalled[0] = true
-      failure[0] = reply.exceptionOrNull()
+    var callbackCalled = false
+    var failure: Throwable? = null
+    fileSelectorApi.openFile(null, FileTypes(emptyList(), emptyList())) { reply ->
+      callbackCalled = true
+      failure = reply.exceptionOrNull()
     }
 
     verify(mockActivity).startActivityForResult(mockIntent, 221)
@@ -296,9 +293,9 @@ class FileSelectorAndroidPluginTest {
     val resultMockIntent = mock<Intent> { on { data } doReturn mockUri }
     listenerArgumentCaptor.firstValue.onActivityResult(221, Activity.RESULT_OK, resultMockIntent)
 
-    assertTrue(callbackCalled[0])
-    assertNotNull(failure[0])
-    assertTrue(failure[0]!!.message!!.contains("Failed to read file"))
+    assertTrue(callbackCalled)
+    assertNotNull(failure)
+    assertTrue(failure!!.message!!.contains("Failed to read file"))
     verify(mockObjectFactory, never()).newDataInputStream(any())
   }
 
@@ -315,22 +312,22 @@ class FileSelectorAndroidPluginTest {
       val mockIntent = mock<Intent>()
       val mockObjectFactory =
           mock<NativeObjectFactory> {
-            on { newIntent(Intent.ACTION_OPEN_DOCUMENT) } doReturn (mockIntent)
+            on { newIntent(Intent.ACTION_OPEN_DOCUMENT) } doReturn mockIntent
             on { newDataInputStream(any()) } doReturn mock<DataInputStream>()
           }
       val mockActivity = mock<Activity> { on { contentResolver } doReturn mockContentResolver }
       val mockActivityBinding =
           mock<ActivityPluginBinding> { on { activity } doReturn mockActivity }
       val fileSelectorApi =
-          FileSelectorApiImpl(mockActivityBinding, mockObjectFactory) { version: Int ->
+          FileSelectorApiImpl(mockActivityBinding, mockObjectFactory) { version ->
             Build.VERSION.SDK_INT >= version
           }
 
-      val callbackCalled = BooleanArray(1)
-      val failure = arrayOfNulls<Throwable>(1)
-      fileSelectorApi.openFile(null, FileTypes(mutableListOf(), mutableListOf())) { reply ->
-        callbackCalled[0] = true
-        failure[0] = reply.exceptionOrNull()
+      var callbackCalled = false
+      var failure: Throwable? = null
+      fileSelectorApi.openFile(null, FileTypes(emptyList(), emptyList())) { reply ->
+        callbackCalled = true
+        failure = reply.exceptionOrNull()
       }
 
       verify(mockActivity).startActivityForResult(mockIntent, 221)
@@ -341,9 +338,9 @@ class FileSelectorAndroidPluginTest {
       val resultMockIntent = mock<Intent> { on { data } doReturn mockUri }
       listenerArgumentCaptor.firstValue.onActivityResult(221, Activity.RESULT_OK, resultMockIntent)
 
-      assertTrue(callbackCalled[0])
-      assertNotNull(failure[0])
-      assertTrue(failure[0]!!.message!!.contains("Failed to read file"))
+      assertTrue(callbackCalled)
+      assertNotNull(failure)
+      assertTrue(failure!!.message!!.contains("Failed to read file"))
     }
   }
 
@@ -360,23 +357,22 @@ class FileSelectorAndroidPluginTest {
       val mockIntent = mock<Intent>()
       val mockObjectFactory =
           mock<NativeObjectFactory> {
-            on { newIntent(Intent.ACTION_OPEN_DOCUMENT) } doReturn (mockIntent)
+            on { newIntent(Intent.ACTION_OPEN_DOCUMENT) } doReturn mockIntent
             on { newDataInputStream(any()) } doReturn mock<DataInputStream>()
           }
       val mockActivity = mock<Activity> { on { contentResolver } doReturn mockContentResolver }
       val mockActivityBinding =
           mock<ActivityPluginBinding> { on { activity } doReturn mockActivity }
       val fileSelectorApi =
-          FileSelectorApiImpl(mockActivityBinding, mockObjectFactory) { version: Int ->
+          FileSelectorApiImpl(mockActivityBinding, mockObjectFactory) { version ->
             Build.VERSION.SDK_INT >= version
           }
 
-      val callbackCalled = arrayOfNulls<Boolean>(1)
-      fileSelectorApi.openFile(null, FileTypes(mutableListOf(), mutableListOf())) { reply ->
-        callbackCalled[0] = true
-        val file = reply.getOrNull()
-        assertNotNull(file)
-        assertNotNull(file!!.fileSelectorNativeException)
+      var callbackCalled = false
+      fileSelectorApi.openFile(null, FileTypes(emptyList(), emptyList())) { reply ->
+        callbackCalled = true
+        val file = checkNotNull(reply.getOrNull())
+        assertNotNull(file.fileSelectorNativeException)
         assertEquals(FileUtils.FILE_SELECTOR_EXCEPTION_PLACEHOLDER_PATH, file.path)
       }
       verify(mockIntent).addCategory(Intent.CATEGORY_OPENABLE)
@@ -388,7 +384,7 @@ class FileSelectorAndroidPluginTest {
 
       val resultMockIntent = mock<Intent> { on { data } doReturn mockUri }
       listenerArgumentCaptor.firstValue.onActivityResult(221, Activity.RESULT_OK, resultMockIntent)
-      assertTrue(callbackCalled[0]!!)
+      assertTrue(callbackCalled)
     }
   }
 
@@ -405,23 +401,22 @@ class FileSelectorAndroidPluginTest {
       val mockIntent = mock<Intent>()
       val mockObjectFactory =
           mock<NativeObjectFactory> {
-            on { newIntent(Intent.ACTION_OPEN_DOCUMENT) } doReturn (mockIntent)
+            on { newIntent(Intent.ACTION_OPEN_DOCUMENT) } doReturn mockIntent
             on { newDataInputStream(any()) } doReturn mock<DataInputStream>()
           }
       val mockActivity = mock<Activity> { on { contentResolver } doReturn mockContentResolver }
       val mockActivityBinding =
           mock<ActivityPluginBinding> { on { activity } doReturn mockActivity }
       val fileSelectorApi =
-          FileSelectorApiImpl(mockActivityBinding, mockObjectFactory) { version: Int ->
+          FileSelectorApiImpl(mockActivityBinding, mockObjectFactory) { version ->
             Build.VERSION.SDK_INT >= version
           }
 
-      val callbackCalled = arrayOfNulls<Boolean>(1)
-      fileSelectorApi.openFiles(null, FileTypes(mutableListOf(), mutableListOf())) { reply ->
-        callbackCalled[0] = true
-        val files = reply.getOrNull()
-        assertNotNull(files)
-        val file = files!![0]
+      var callbackCalled = false
+      fileSelectorApi.openFiles(null, FileTypes(emptyList(), emptyList())) { reply ->
+        callbackCalled = true
+        val files = checkNotNull(reply.getOrNull())
+        val file = files[0]
         assertNotNull(file.fileSelectorNativeException)
         assertEquals(FileUtils.FILE_SELECTOR_EXCEPTION_PLACEHOLDER_PATH, file.path)
       }
@@ -444,7 +439,7 @@ class FileSelectorAndroidPluginTest {
       val resultMockIntent = mock<Intent> { on { clipData } doReturn mockClipData }
 
       listenerArgumentCaptor.firstValue.onActivityResult(222, Activity.RESULT_OK, resultMockIntent)
-      assertTrue(callbackCalled[0]!!)
+      assertTrue(callbackCalled)
     }
   }
 
@@ -458,31 +453,31 @@ class FileSelectorAndroidPluginTest {
 
       mockedFileUtils
           .whenever { FileUtils.getPathFromUri(any(), eq(mockUriUsingTree)) }
-          .thenAnswer(Answer { mockUriPath })
+          .thenReturn(mockUriPath)
       Mockito.mockStatic(DocumentsContract::class.java).use { mockedDocumentsContract ->
         mockedDocumentsContract
             .whenever { DocumentsContract.getTreeDocumentId(mockUri) }
-            .thenAnswer(Answer { mockUriId })
+            .thenReturn(mockUriId)
         mockedDocumentsContract
             .whenever { DocumentsContract.buildDocumentUriUsingTree(mockUri, mockUriId) }
-            .thenAnswer(Answer { mockUriUsingTree })
+            .thenReturn(mockUriUsingTree)
 
         val mockIntent = mock<Intent>()
         val mockObjectFactory =
             mock<NativeObjectFactory> {
-              on { newIntent(Intent.ACTION_OPEN_DOCUMENT_TREE) } doReturn (mockIntent)
+              on { newIntent(Intent.ACTION_OPEN_DOCUMENT_TREE) } doReturn mockIntent
             }
         val mockActivity = mock<Activity>()
         val mockActivityBinding =
-            mock<ActivityPluginBinding> { on { activity } doReturn (mockActivity) }
+            mock<ActivityPluginBinding> { on { activity } doReturn mockActivity }
         val fileSelectorApi =
-            FileSelectorApiImpl(mockActivityBinding, mockObjectFactory) { version: Int ->
+            FileSelectorApiImpl(mockActivityBinding, mockObjectFactory) { version ->
               Build.VERSION.SDK_INT >= version
             }
 
-        val callbackCalled = arrayOfNulls<Boolean>(1)
+        var callbackCalled = false
         fileSelectorApi.getDirectoryPath(null) { reply ->
-          callbackCalled[0] = true
+          callbackCalled = true
           assertEquals(mockUriPath, reply.getOrNull())
         }
 
@@ -494,7 +489,7 @@ class FileSelectorAndroidPluginTest {
         val resultMockIntent = mock<Intent> { on { data } doReturn mockUri }
         listenerArgumentCaptor.firstValue.onActivityResult(
             223, Activity.RESULT_OK, resultMockIntent)
-        assertTrue(callbackCalled[0]!!)
+        assertTrue(callbackCalled)
       }
     }
   }

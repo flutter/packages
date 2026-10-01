@@ -16,15 +16,12 @@ import android.provider.DocumentsContract
 import android.provider.MediaStore
 import android.webkit.MimeTypeMap
 import androidx.test.core.app.ApplicationProvider
-import java.io.BufferedInputStream
 import java.io.ByteArrayInputStream
 import java.io.File
-import java.io.FileInputStream
 import java.io.IOException
 import java.nio.charset.StandardCharsets
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
-import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertThrows
 import org.junit.Assert.assertTrue
 import org.junit.Before
@@ -35,7 +32,6 @@ import org.mockito.kotlin.doReturn
 import org.mockito.kotlin.mock
 import org.mockito.kotlin.spy
 import org.mockito.kotlin.whenever
-import org.mockito.stubbing.Answer
 import org.robolectric.Robolectric
 import org.robolectric.RobolectricTestRunner
 import org.robolectric.Shadows
@@ -84,11 +80,11 @@ class FileUtilsTest {
     Mockito.mockStatic(DocumentsContract::class.java).use { mockedDocumentsContract ->
       mockedDocumentsContract
           .whenever { DocumentsContract.getDocumentId(uri) }
-          .thenAnswer(Answer { "primary:Documents/test" })
+          .thenReturn("primary:Documents/test")
       val path = FileUtils.getPathFromUri(context, uri)
       val externalStorageDirectoryPath = Environment.getExternalStorageDirectory().path
       val expectedPath = "$externalStorageDirectoryPath/Documents/test"
-      assertEquals(path, expectedPath)
+      assertEquals(expectedPath, path)
     }
   }
 
@@ -102,7 +98,7 @@ class FileUtilsTest {
     Mockito.mockStatic(DocumentsContract::class.java).use { mockedDocumentsContract ->
       mockedDocumentsContract
           .whenever { DocumentsContract.getDocumentId(uri) }
-          .thenAnswer(Answer { "external:Documents/test" })
+          .thenReturn("external:Documents/test")
       assertThrows(UnsupportedOperationException::class.java) {
         FileUtils.getPathFromUri(context, uri)
       }
@@ -125,17 +121,7 @@ class FileUtilsTest {
         uri, ByteArrayInputStream("fileStream".toByteArray(StandardCharsets.UTF_8)))
 
     val path = checkNotNull(FileUtils.getPathFromCopyOfFileFromUri(context, uri))
-    val file = File(path)
-    val size = file.length().toInt()
-    val bytes = ByteArray(size)
-
-    val buf = BufferedInputStream(FileInputStream(file))
-    buf.read(bytes, 0, bytes.size)
-    buf.close()
-
-    assertTrue(bytes.isNotEmpty())
-    val fileStream = String(bytes, StandardCharsets.UTF_8)
-    assertEquals("fileStream", fileStream)
+    assertEquals("fileStream", File(path).readText())
   }
 
   @Test
@@ -145,9 +131,8 @@ class FileUtilsTest {
     shadowContentResolver.registerInputStream(
         uri, ByteArrayInputStream("fileStream".toByteArray(StandardCharsets.UTF_8)))
 
-    val path = FileUtils.getPathFromCopyOfFileFromUri(context, uri)
-    println(path)
-    assertTrue(path!!.endsWith(".txt"))
+    val path = checkNotNull(FileUtils.getPathFromCopyOfFileFromUri(context, uri))
+    assertTrue(path.endsWith(".txt"))
   }
 
   @Test
@@ -156,8 +141,8 @@ class FileUtilsTest {
     Robolectric.buildContentProvider(MockContentProvider::class.java).create("dummy")
     shadowContentResolver.registerInputStream(
         uri, ByteArrayInputStream("fileStream".toByteArray(StandardCharsets.UTF_8)))
-    val path = FileUtils.getPathFromCopyOfFileFromUri(context, uri)
-    assertTrue(path!!.endsWith("a.b.png"))
+    val path = checkNotNull(FileUtils.getPathFromCopyOfFileFromUri(context, uri))
+    assertTrue(path.endsWith("a.b.png"))
   }
 
   @Test
@@ -166,8 +151,8 @@ class FileUtilsTest {
     Robolectric.buildContentProvider(MockContentProvider::class.java).create("dummy")
     shadowContentResolver.registerInputStream(
         uri, ByteArrayInputStream("fileStream".toByteArray(StandardCharsets.UTF_8)))
-    val path = FileUtils.getPathFromCopyOfFileFromUri(context, uri)
-    assertTrue(path!!.endsWith("abc.png"))
+    val path = checkNotNull(FileUtils.getPathFromCopyOfFileFromUri(context, uri))
+    assertTrue(path.endsWith("abc.png"))
   }
 
   @Test
@@ -176,8 +161,8 @@ class FileUtilsTest {
     Robolectric.buildContentProvider(MockContentProvider::class.java).create("dummy")
     shadowContentResolver.registerInputStream(
         uri, ByteArrayInputStream("fileStream".toByteArray(StandardCharsets.UTF_8)))
-    val path = FileUtils.getPathFromCopyOfFileFromUri(context, uri)
-    assertTrue(path!!.endsWith("c.d.webp"))
+    val path = checkNotNull(FileUtils.getPathFromCopyOfFileFromUri(context, uri))
+    assertTrue(path.endsWith("c.d.webp"))
   }
 
   @Test
@@ -186,8 +171,8 @@ class FileUtilsTest {
     Robolectric.buildContentProvider(MockContentProvider::class.java).create("dummy")
     shadowContentResolver.registerInputStream(
         uri, ByteArrayInputStream("fileStream".toByteArray(StandardCharsets.UTF_8)))
-    val path = FileUtils.getPathFromCopyOfFileFromUri(context, uri)
-    assertTrue(path!!.endsWith("e.f.g"))
+    val path = checkNotNull(FileUtils.getPathFromCopyOfFileFromUri(context, uri))
+    assertTrue(path.endsWith("e.f.g"))
   }
 
   @Test
@@ -196,9 +181,8 @@ class FileUtilsTest {
     Robolectric.buildContentProvider(MockMaliciousContentProvider::class.java).create("dummy")
     shadowContentResolver.registerInputStream(
         uri, ByteArrayInputStream("fileStream".toByteArray(StandardCharsets.UTF_8)))
-    val path = FileUtils.getPathFromCopyOfFileFromUri(context, uri)
-    assertNotNull(path)
-    assertTrue(path!!.endsWith("_bar.png"))
+    val path = checkNotNull(FileUtils.getPathFromCopyOfFileFromUri(context, uri))
+    assertTrue(path.endsWith("_bar.png"))
     assertFalse(path.contains(".."))
   }
 
@@ -219,13 +203,14 @@ class FileUtilsTest {
       return cursor
     }
 
-    override fun getType(uri: Uri): String? {
-      if (uri == TXT_URI) return "text/plain"
-      if (uri == PNG_URI) return "image/png"
-      if (uri == WEBP_URI) return "image/webp"
-      if (uri == NO_EXTENSION_URI) return "image/png"
-      return null
-    }
+    override fun getType(uri: Uri): String? =
+        when (uri) {
+          TXT_URI -> "text/plain"
+          PNG_URI,
+          NO_EXTENSION_URI -> "image/png"
+          WEBP_URI -> "image/webp"
+          else -> null
+        }
 
     override fun insert(uri: Uri, values: ContentValues?): Uri? {
       return null
@@ -258,9 +243,7 @@ class FileUtilsTest {
   // See
   // https://developer.android.com/privacy-and-security/risks/untrustworthy-contentprovider-provided-filename#don%27t-trust-user-input.
   private class MockMaliciousContentProvider : ContentProvider() {
-    override fun onCreate(): Boolean {
-      return true
-    }
+    override fun onCreate(): Boolean = true
 
     override fun query(
         uri: Uri,
@@ -270,33 +253,25 @@ class FileUtilsTest {
         sortOrder: String?
     ): Cursor {
       val cursor = MatrixCursor(arrayOf(MediaStore.MediaColumns.DISPLAY_NAME))
-      cursor.addRow(arrayOf<Any>("foo/../..bar.png"))
+      cursor.addRow(arrayOf("foo/../..bar.png"))
       return cursor
     }
 
-    override fun getType(uri: Uri): String {
-      return "image/png"
-    }
+    override fun getType(uri: Uri): String = "image/png"
 
-    override fun insert(uri: Uri, values: ContentValues?): Uri? {
-      return null
-    }
+    override fun insert(uri: Uri, values: ContentValues?): Uri? = null
 
-    override fun delete(uri: Uri, selection: String?, selectionArgs: Array<String?>?): Int {
-      return 0
-    }
+    override fun delete(uri: Uri, selection: String?, selectionArgs: Array<String?>?): Int = 0
 
     override fun update(
         uri: Uri,
         values: ContentValues?,
         selection: String?,
         selectionArgs: Array<String?>?
-    ): Int {
-      return 0
-    }
+    ): Int = 0
 
     companion object {
-      var PNG_URI: String = "content://dummy/a.png"
+      const val PNG_URI: String = "content://dummy/a.png"
     }
   }
 }
