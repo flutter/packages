@@ -1,6 +1,10 @@
-## 2.20.1
+## 2.21.1
 
 * Updates Robolectric to 4.17 and adds the JVM arguments it requires for unit tests.
+
+## 2.21.0
+
+* Switches to Pigeon's new 'suspend' support for platform communication.
 
 ## 2.20.0
 

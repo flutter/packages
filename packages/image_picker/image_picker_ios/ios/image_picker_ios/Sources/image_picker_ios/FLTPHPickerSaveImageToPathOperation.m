@@ -12,7 +12,7 @@
 API_AVAILABLE(ios(14))
 @interface FLTPHPickerSaveImageToPathOperation ()
 
-@property(strong, nonatomic) PHPickerResult *result;
+@property(strong, nonatomic) NSObject<FIPPickerItem> *result;
 @property(strong, nonatomic) NSNumber *maxHeight;
 @property(strong, nonatomic) NSNumber *maxWidth;
 @property(strong, nonatomic) NSNumber *desiredImageQuality;
@@ -26,7 +26,7 @@ API_AVAILABLE(ios(14))
   FLTGetSavedPath getSavedPath;
 }
 
-- (instancetype)initWithResult:(PHPickerResult *)result
+- (instancetype)initWithResult:(NSObject<FIPPickerItem> *)result
                      maxHeight:(NSNumber *)maxHeight
                       maxWidth:(NSNumber *)maxWidth
            desiredImageQuality:(NSNumber *)desiredImageQuality

@@ -1,6 +1,10 @@
-## 0.7.5+1
+## 0.7.5+2
 
 * Updates Robolectric to 4.17 and adds the JVM arguments it requires for unit tests.
+
+## 0.7.5+1
+
+* Fix exposure offset slider freezing camera preview and fix setExposureOffset return value.
 
 ## 0.7.5
 
