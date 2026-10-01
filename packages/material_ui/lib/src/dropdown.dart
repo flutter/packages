@@ -1081,11 +1081,10 @@ class DropdownButton<T> extends StatefulWidget {
     this.dropdownMenuItemMouseCursor,
     required this._inputDecoration,
     required this._isEmpty,
+    bool? enabled,
   }) : underline = null,
        menuWidth = null,
-       assert(
-    bool? enabled,
-  }) : enabled = enabled ?? onChanged != null,
+       enabled = enabled ?? onChanged != null,
        assert(
          items == null ||
              items.isEmpty ||
