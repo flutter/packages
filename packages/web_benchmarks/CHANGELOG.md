@@ -1,6 +1,7 @@
 ## NEXT
 
 * Updates minimum supported SDK version to Flutter 3.41/Dart 3.11.
+* Fix benchmarks stalling when only repainting views that are dirty.
 
 ## 4.1.2
 
