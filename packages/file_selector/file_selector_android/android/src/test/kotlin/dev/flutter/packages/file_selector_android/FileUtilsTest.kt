@@ -16,6 +16,13 @@ import android.provider.DocumentsContract
 import android.provider.MediaStore
 import android.webkit.MimeTypeMap
 import androidx.test.core.app.ApplicationProvider
+import java.io.BufferedInputStream
+import java.io.ByteArrayInputStream
+import java.io.File
+import java.io.FileInputStream
+import java.io.IOException
+import java.io.InputStream
+import java.nio.charset.StandardCharsets
 import org.junit.Assert
 import org.junit.Before
 import org.junit.Test
@@ -29,305 +36,284 @@ import org.robolectric.Robolectric
 import org.robolectric.RobolectricTestRunner
 import org.robolectric.Shadows
 import org.robolectric.shadows.ShadowContentResolver
-import java.io.BufferedInputStream
-import java.io.ByteArrayInputStream
-import java.io.File
-import java.io.FileInputStream
-import java.io.IOException
-import java.io.InputStream
-import java.nio.charset.StandardCharsets
 
 @RunWith(RobolectricTestRunner::class)
 class FileUtilsTest {
-    private var context: Context? = null
-    var shadowContentResolver: ShadowContentResolver? = null
-    var contentResolver: ContentResolver? = null
+  private var context: Context? = null
+  var shadowContentResolver: ShadowContentResolver? = null
+  var contentResolver: ContentResolver? = null
 
-    @Before
-    @Suppress("deprecation") // shadowOf(MimeTypeMap)
-    fun before() {
-        context = ApplicationProvider.getApplicationContext<Context>()
-        contentResolver = Mockito.spy<ContentResolver?>(context!!.getContentResolver())
-        shadowContentResolver = Shadows.shadowOf(context!!.getContentResolver())
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.S) {
-            // On S and higher robolectric does not need this setup because all the mappings are
-            // present already.
-            val mimeTypeMap = Shadows.shadowOf(MimeTypeMap.getSingleton())
-            mimeTypeMap.addExtensionMimeTypeMapping("txt", "text/plain")
-            mimeTypeMap.addExtensionMimeTypeMapping("jpg", "image/jpeg")
-            mimeTypeMap.addExtensionMimeTypeMapping("png", "image/png")
-            mimeTypeMap.addExtensionMimeTypeMapping("webp", "image/webp")
-        }
+  @Before
+  @Suppress("deprecation") // shadowOf(MimeTypeMap)
+  fun before() {
+    context = ApplicationProvider.getApplicationContext<Context>()
+    contentResolver = Mockito.spy<ContentResolver?>(context!!.getContentResolver())
+    shadowContentResolver = Shadows.shadowOf(context!!.getContentResolver())
+    if (Build.VERSION.SDK_INT < Build.VERSION_CODES.S) {
+      // On S and higher robolectric does not need this setup because all the mappings are
+      // present already.
+      val mimeTypeMap = Shadows.shadowOf(MimeTypeMap.getSingleton())
+      mimeTypeMap.addExtensionMimeTypeMapping("txt", "text/plain")
+      mimeTypeMap.addExtensionMimeTypeMapping("jpg", "image/jpeg")
+      mimeTypeMap.addExtensionMimeTypeMapping("png", "image/png")
+      mimeTypeMap.addExtensionMimeTypeMapping("webp", "image/webp")
+    }
+  }
+
+  @Test
+  @Throws(IOException::class)
+  fun getPathFromCopyOfFileFromUri_throwsIOExceptionForNullStream() {
+    val uri = Uri.parse("content://dummy/dummy.txt")
+
+    val mockContentResolver = Mockito.mock<ContentResolver>(ContentResolver::class.java)
+    Mockito.`when`<InputStream?>(mockContentResolver.openInputStream(uri)).thenReturn(null)
+    val mockContext = Mockito.mock<Context>(Context::class.java)
+    Mockito.`when`<ContentResolver?>(mockContext.getContentResolver())
+        .thenReturn(mockContentResolver)
+
+    Assert.assertThrows<IOException?>(
+        IOException::class.java,
+        ThrowingRunnable { FileUtils.getPathFromCopyOfFileFromUri(mockContext, uri) })
+  }
+
+  @Test
+  fun getPathFromUri_returnsExpectedPathForExternalDocumentUri() {
+    // Uri that represents Documents/test directory on device:
+    val uri =
+        Uri.parse("content://com.android.externalstorage.documents/tree/primary%3ADocuments%2Ftest")
+    Mockito.mockStatic<DocumentsContract?>(DocumentsContract::class.java).use {
+        mockedDocumentsContract ->
+      mockedDocumentsContract
+          .`when`<Any?>(MockedStatic.Verification { DocumentsContract.getDocumentId(uri) })
+          .thenAnswer(Answer { invocation: InvocationOnMock? -> "primary:Documents/test" })
+      val path = FileUtils.getPathFromUri(context!!, uri)
+      val externalStorageDirectoryPath = Environment.getExternalStorageDirectory().getPath()
+      val expectedPath = externalStorageDirectoryPath + "/Documents/test"
+      Assert.assertEquals(path, expectedPath)
+    }
+  }
+
+  @Test
+  fun getPathFromUri_throwExceptionForExternalDocumentUriWithNonPrimaryStorageVolume() {
+    // Uri that represents Documents/test directory from some external storage volume ("external"
+    // for this test):
+    val uri =
+        Uri.parse(
+            "content://com.android.externalstorage.documents/tree/external%3ADocuments%2Ftest")
+    Mockito.mockStatic<DocumentsContract?>(DocumentsContract::class.java).use {
+        mockedDocumentsContract ->
+      mockedDocumentsContract
+          .`when`<Any?>(MockedStatic.Verification { DocumentsContract.getDocumentId(uri) })
+          .thenAnswer(Answer { invocation: InvocationOnMock? -> "external:Documents/test" })
+      Assert.assertThrows<UnsupportedOperationException?>(
+          UnsupportedOperationException::class.java,
+          ThrowingRunnable { FileUtils.getPathFromUri(context!!, uri) })
+    }
+  }
+
+  @Test
+  fun getPathFromUri_throwExceptionForUriWithUnhandledAuthority() {
+    val uri = Uri.parse("content://com.unsupported.authority/tree/primary%3ADocuments%2Ftest")
+    Assert.assertThrows<UnsupportedOperationException?>(
+        UnsupportedOperationException::class.java,
+        ThrowingRunnable { FileUtils.getPathFromUri(context!!, uri) })
+  }
+
+  @Test
+  @Throws(IOException::class)
+  fun getPathFromCopyOfFileFromUri_returnsPathWithContent() {
+    val uri = MockContentProvider.PNG_URI
+    Robolectric.buildContentProvider<MockContentProvider?>(MockContentProvider::class.java)
+        .create("dummy")
+    shadowContentResolver!!.registerInputStream(
+        uri, ByteArrayInputStream("fileStream".toByteArray(StandardCharsets.UTF_8)))
+
+    val path = FileUtils.getPathFromCopyOfFileFromUri(context!!, uri)
+    val file = File(path)
+    val size = file.length().toInt()
+    val bytes = ByteArray(size)
+
+    val buf = BufferedInputStream(FileInputStream(file))
+    buf.read(bytes, 0, bytes.size)
+    buf.close()
+
+    Assert.assertTrue(bytes.size > 0)
+    val fileStream = String(bytes, StandardCharsets.UTF_8)
+    Assert.assertEquals("fileStream", fileStream)
+  }
+
+  @Test
+  @Throws(IOException::class)
+  fun getFileExtension_returnsExpectedFileExtension() {
+    val uri = MockContentProvider.TXT_URI
+    Robolectric.buildContentProvider<MockContentProvider?>(MockContentProvider::class.java)
+        .create("dummy")
+    shadowContentResolver!!.registerInputStream(
+        uri, ByteArrayInputStream("fileStream".toByteArray(StandardCharsets.UTF_8)))
+
+    val path = FileUtils.getPathFromCopyOfFileFromUri(context!!, uri)
+    println(path)
+    Assert.assertTrue(path!!.endsWith(".txt"))
+  }
+
+  @Test
+  @Throws(IOException::class)
+  fun getFileName_returnsExpectedName() {
+    val uri = MockContentProvider.PNG_URI
+    Robolectric.buildContentProvider<MockContentProvider?>(MockContentProvider::class.java)
+        .create("dummy")
+    shadowContentResolver!!.registerInputStream(
+        uri, ByteArrayInputStream("fileStream".toByteArray(StandardCharsets.UTF_8)))
+    val path = FileUtils.getPathFromCopyOfFileFromUri(context!!, uri)
+    Assert.assertTrue(path!!.endsWith("a.b.png"))
+  }
+
+  @Test
+  @Throws(IOException::class)
+  fun getPathFromCopyOfFileFromUri_returnsExpectedPathForUriWithNoExtensionInBaseName() {
+    val uri = MockContentProvider.NO_EXTENSION_URI
+    Robolectric.buildContentProvider<MockContentProvider?>(MockContentProvider::class.java)
+        .create("dummy")
+    shadowContentResolver!!.registerInputStream(
+        uri, ByteArrayInputStream("fileStream".toByteArray(StandardCharsets.UTF_8)))
+    val path = FileUtils.getPathFromCopyOfFileFromUri(context!!, uri)
+    Assert.assertTrue(path!!.endsWith("abc.png"))
+  }
+
+  @Test
+  @Throws(IOException::class)
+  fun getPathFromCopyOfFileFromUri_returnsExpectedPathForUriWithMismatchedTypeToFile() {
+    val uri = MockContentProvider.WEBP_URI
+    Robolectric.buildContentProvider<MockContentProvider?>(MockContentProvider::class.java)
+        .create("dummy")
+    shadowContentResolver!!.registerInputStream(
+        uri, ByteArrayInputStream("fileStream".toByteArray(StandardCharsets.UTF_8)))
+    val path = FileUtils.getPathFromCopyOfFileFromUri(context!!, uri)
+    Assert.assertTrue(path!!.endsWith("c.d.webp"))
+  }
+
+  @Test
+  @Throws(IOException::class)
+  fun getPathFromCopyOfFileFromUri_returnsExpectedPathForUriWithUnknownType() {
+    val uri = MockContentProvider.UNKNOWN_URI
+    Robolectric.buildContentProvider<MockContentProvider?>(MockContentProvider::class.java)
+        .create("dummy")
+    shadowContentResolver!!.registerInputStream(
+        uri, ByteArrayInputStream("fileStream".toByteArray(StandardCharsets.UTF_8)))
+    val path = FileUtils.getPathFromCopyOfFileFromUri(context!!, uri)
+    Assert.assertTrue(path!!.endsWith("e.f.g"))
+  }
+
+  @Test
+  @Throws(IOException::class)
+  fun getPathFromCopyOfFileFromUri_sanitizesPathIndirection() {
+    val uri = Uri.parse(MockMaliciousContentProvider.PNG_URI)
+    Robolectric.buildContentProvider<MockMaliciousContentProvider?>(
+            MockMaliciousContentProvider::class.java)
+        .create("dummy")
+    shadowContentResolver!!.registerInputStream(
+        uri, ByteArrayInputStream("fileStream".toByteArray(StandardCharsets.UTF_8)))
+    val path = FileUtils.getPathFromCopyOfFileFromUri(context!!, uri)
+    Assert.assertNotNull(path)
+    Assert.assertTrue(path!!.endsWith("_bar.png"))
+    Assert.assertFalse(path.contains(".."))
+  }
+
+  private class MockContentProvider : ContentProvider() {
+    override fun onCreate(): Boolean {
+      return true
     }
 
-    @Test
-    @Throws(IOException::class)
-    fun getPathFromCopyOfFileFromUri_throwsIOExceptionForNullStream() {
-        val uri = Uri.parse("content://dummy/dummy.txt")
-
-        val mockContentResolver = Mockito.mock<ContentResolver>(ContentResolver::class.java)
-        Mockito.`when`<InputStream?>(mockContentResolver.openInputStream(uri)).thenReturn(null)
-        val mockContext = Mockito.mock<Context>(Context::class.java)
-        Mockito.`when`<ContentResolver?>(mockContext.getContentResolver())
-            .thenReturn(mockContentResolver)
-
-        Assert.assertThrows<IOException?>(
-            IOException::class.java,
-            ThrowingRunnable { FileUtils.getPathFromCopyOfFileFromUri(mockContext, uri) })
+    override fun query(
+        uri: Uri,
+        projection: Array<String?>?,
+        selection: String?,
+        selectionArgs: Array<String?>?,
+        sortOrder: String?
+    ): Cursor? {
+      val cursor = MatrixCursor(arrayOf<String>(MediaStore.MediaColumns.DISPLAY_NAME))
+      cursor.addRow(arrayOf<Any?>(uri.getLastPathSegment()))
+      return cursor
     }
 
-    @Test
-    fun getPathFromUri_returnsExpectedPathForExternalDocumentUri() {
-        // Uri that represents Documents/test directory on device:
-        val uri =
-            Uri.parse(
-                "content://com.android.externalstorage.documents/tree/primary%3ADocuments%2Ftest"
-            )
-        Mockito.mockStatic<DocumentsContract?>(DocumentsContract::class.java)
-            .use { mockedDocumentsContract ->
-                mockedDocumentsContract
-                    .`when`<Any?>(MockedStatic.Verification { DocumentsContract.getDocumentId(uri) })
-                    .thenAnswer(Answer { invocation: InvocationOnMock? -> "primary:Documents/test" })
-                val path = FileUtils.getPathFromUri(context!!, uri)
-                val externalStorageDirectoryPath =
-                    Environment.getExternalStorageDirectory().getPath()
-                val expectedPath = externalStorageDirectoryPath + "/Documents/test"
-                Assert.assertEquals(path, expectedPath)
-            }
+    override fun getType(uri: Uri): String? {
+      if (uri == TXT_URI) return "text/plain"
+      if (uri == PNG_URI) return "image/png"
+      if (uri == WEBP_URI) return "image/webp"
+      if (uri == NO_EXTENSION_URI) return "image/png"
+      return null
     }
 
-    @Test
-    fun getPathFromUri_throwExceptionForExternalDocumentUriWithNonPrimaryStorageVolume() {
-        // Uri that represents Documents/test directory from some external storage volume ("external"
-        // for this test):
-        val uri =
-            Uri.parse(
-                "content://com.android.externalstorage.documents/tree/external%3ADocuments%2Ftest"
-            )
-        Mockito.mockStatic<DocumentsContract?>(DocumentsContract::class.java)
-            .use { mockedDocumentsContract ->
-                mockedDocumentsContract
-                    .`when`<Any?>(MockedStatic.Verification { DocumentsContract.getDocumentId(uri) })
-                    .thenAnswer(Answer { invocation: InvocationOnMock? -> "external:Documents/test" })
-                Assert.assertThrows<UnsupportedOperationException?>(
-                    UnsupportedOperationException::class.java,
-                    ThrowingRunnable { FileUtils.getPathFromUri(context!!, uri) })
-            }
+    override fun insert(uri: Uri, values: ContentValues?): Uri? {
+      return null
     }
 
-    @Test
-    fun getPathFromUri_throwExceptionForUriWithUnhandledAuthority() {
-        val uri = Uri.parse("content://com.unsupported.authority/tree/primary%3ADocuments%2Ftest")
-        Assert.assertThrows<UnsupportedOperationException?>(
-            UnsupportedOperationException::class.java,
-            ThrowingRunnable { FileUtils.getPathFromUri(context!!, uri) })
+    override fun delete(uri: Uri, selection: String?, selectionArgs: Array<String?>?): Int {
+      return 0
     }
 
-    @Test
-    @Throws(IOException::class)
-    fun getPathFromCopyOfFileFromUri_returnsPathWithContent() {
-        val uri = MockContentProvider.PNG_URI
-        Robolectric.buildContentProvider<MockContentProvider?>(MockContentProvider::class.java)
-            .create("dummy")
-        shadowContentResolver!!.registerInputStream(
-            uri, ByteArrayInputStream("fileStream".toByteArray(StandardCharsets.UTF_8))
-        )
-
-        val path = FileUtils.getPathFromCopyOfFileFromUri(context!!, uri)
-        val file = File(path)
-        val size = file.length().toInt()
-        val bytes = ByteArray(size)
-
-        val buf = BufferedInputStream(FileInputStream(file))
-        buf.read(bytes, 0, bytes.size)
-        buf.close()
-
-        Assert.assertTrue(bytes.size > 0)
-        val fileStream = String(bytes, StandardCharsets.UTF_8)
-        Assert.assertEquals("fileStream", fileStream)
+    override fun update(
+        uri: Uri,
+        values: ContentValues?,
+        selection: String?,
+        selectionArgs: Array<String?>?
+    ): Int {
+      return 0
     }
 
-    @Test
-    @Throws(IOException::class)
-    fun getFileExtension_returnsExpectedFileExtension() {
-        val uri = MockContentProvider.TXT_URI
-        Robolectric.buildContentProvider<MockContentProvider?>(MockContentProvider::class.java)
-            .create("dummy")
-        shadowContentResolver!!.registerInputStream(
-            uri, ByteArrayInputStream("fileStream".toByteArray(StandardCharsets.UTF_8))
-        )
+    companion object {
+      val TXT_URI: Uri = Uri.parse("content://dummy/dummydocument")
+      val PNG_URI: Uri = Uri.parse("content://dummy/a.b.png")
+      val WEBP_URI: Uri = Uri.parse("content://dummy/c.d.png")
+      val UNKNOWN_URI: Uri = Uri.parse("content://dummy/e.f.g")
+      val NO_EXTENSION_URI: Uri = Uri.parse("content://dummy/abc")
+    }
+  }
 
-        val path = FileUtils.getPathFromCopyOfFileFromUri(context!!, uri)
-        println(path)
-        Assert.assertTrue(path!!.endsWith(".txt"))
+  // Mocks a malicious content provider attempting to use path indirection to modify files outside
+  // of the intended directory.
+  // See
+  // https://developer.android.com/privacy-and-security/risks/untrustworthy-contentprovider-provided-filename#don%27t-trust-user-input.
+  private class MockMaliciousContentProvider : ContentProvider() {
+    override fun onCreate(): Boolean {
+      return true
     }
 
-    @Test
-    @Throws(IOException::class)
-    fun getFileName_returnsExpectedName() {
-        val uri = MockContentProvider.PNG_URI
-        Robolectric.buildContentProvider<MockContentProvider?>(MockContentProvider::class.java)
-            .create("dummy")
-        shadowContentResolver!!.registerInputStream(
-            uri, ByteArrayInputStream("fileStream".toByteArray(StandardCharsets.UTF_8))
-        )
-        val path = FileUtils.getPathFromCopyOfFileFromUri(context!!, uri)
-        Assert.assertTrue(path!!.endsWith("a.b.png"))
+    override fun query(
+        uri: Uri,
+        projection: Array<String?>?,
+        selection: String?,
+        selectionArgs: Array<String?>?,
+        sortOrder: String?
+    ): Cursor? {
+      val cursor = MatrixCursor(arrayOf<String>(MediaStore.MediaColumns.DISPLAY_NAME))
+      cursor.addRow(arrayOf<Any>("foo/../..bar.png"))
+      return cursor
     }
 
-    @Test
-    @Throws(IOException::class)
-    fun getPathFromCopyOfFileFromUri_returnsExpectedPathForUriWithNoExtensionInBaseName() {
-        val uri = MockContentProvider.NO_EXTENSION_URI
-        Robolectric.buildContentProvider<MockContentProvider?>(MockContentProvider::class.java)
-            .create("dummy")
-        shadowContentResolver!!.registerInputStream(
-            uri, ByteArrayInputStream("fileStream".toByteArray(StandardCharsets.UTF_8))
-        )
-        val path = FileUtils.getPathFromCopyOfFileFromUri(context!!, uri)
-        Assert.assertTrue(path!!.endsWith("abc.png"))
+    override fun getType(uri: Uri): String? {
+      return "image/png"
     }
 
-    @Test
-    @Throws(IOException::class)
-    fun getPathFromCopyOfFileFromUri_returnsExpectedPathForUriWithMismatchedTypeToFile() {
-        val uri = MockContentProvider.WEBP_URI
-        Robolectric.buildContentProvider<MockContentProvider?>(MockContentProvider::class.java)
-            .create("dummy")
-        shadowContentResolver!!.registerInputStream(
-            uri, ByteArrayInputStream("fileStream".toByteArray(StandardCharsets.UTF_8))
-        )
-        val path = FileUtils.getPathFromCopyOfFileFromUri(context!!, uri)
-        Assert.assertTrue(path!!.endsWith("c.d.webp"))
+    override fun insert(uri: Uri, values: ContentValues?): Uri? {
+      return null
     }
 
-    @Test
-    @Throws(IOException::class)
-    fun getPathFromCopyOfFileFromUri_returnsExpectedPathForUriWithUnknownType() {
-        val uri = MockContentProvider.UNKNOWN_URI
-        Robolectric.buildContentProvider<MockContentProvider?>(MockContentProvider::class.java)
-            .create("dummy")
-        shadowContentResolver!!.registerInputStream(
-            uri, ByteArrayInputStream("fileStream".toByteArray(StandardCharsets.UTF_8))
-        )
-        val path = FileUtils.getPathFromCopyOfFileFromUri(context!!, uri)
-        Assert.assertTrue(path!!.endsWith("e.f.g"))
+    override fun delete(uri: Uri, selection: String?, selectionArgs: Array<String?>?): Int {
+      return 0
     }
 
-    @Test
-    @Throws(IOException::class)
-    fun getPathFromCopyOfFileFromUri_sanitizesPathIndirection() {
-        val uri = Uri.parse(MockMaliciousContentProvider.PNG_URI)
-        Robolectric.buildContentProvider<MockMaliciousContentProvider?>(MockMaliciousContentProvider::class.java)
-            .create("dummy")
-        shadowContentResolver!!.registerInputStream(
-            uri, ByteArrayInputStream("fileStream".toByteArray(StandardCharsets.UTF_8))
-        )
-        val path = FileUtils.getPathFromCopyOfFileFromUri(context!!, uri)
-        Assert.assertNotNull(path)
-        Assert.assertTrue(path!!.endsWith("_bar.png"))
-        Assert.assertFalse(path.contains(".."))
+    override fun update(
+        uri: Uri,
+        values: ContentValues?,
+        selection: String?,
+        selectionArgs: Array<String?>?
+    ): Int {
+      return 0
     }
 
-    private class MockContentProvider : ContentProvider() {
-        override fun onCreate(): Boolean {
-            return true
-        }
-
-        override fun query(
-            uri: Uri,
-            projection: Array<String?>?,
-            selection: String?,
-            selectionArgs: Array<String?>?,
-            sortOrder: String?
-        ): Cursor? {
-            val cursor = MatrixCursor(arrayOf<String>(MediaStore.MediaColumns.DISPLAY_NAME))
-            cursor.addRow(arrayOf<Any?>(uri.getLastPathSegment()))
-            return cursor
-        }
-
-        override fun getType(uri: Uri): String? {
-            if (uri == TXT_URI) return "text/plain"
-            if (uri == PNG_URI) return "image/png"
-            if (uri == WEBP_URI) return "image/webp"
-            if (uri == NO_EXTENSION_URI) return "image/png"
-            return null
-        }
-
-        override fun insert(uri: Uri, values: ContentValues?): Uri? {
-            return null
-        }
-
-        override fun delete(
-            uri: Uri, selection: String?, selectionArgs: Array<String?>?
-        ): Int {
-            return 0
-        }
-
-        override fun update(
-            uri: Uri,
-            values: ContentValues?,
-            selection: String?,
-            selectionArgs: Array<String?>?
-        ): Int {
-            return 0
-        }
-
-        companion object {
-            val TXT_URI: Uri = Uri.parse("content://dummy/dummydocument")
-            val PNG_URI: Uri = Uri.parse("content://dummy/a.b.png")
-            val WEBP_URI: Uri = Uri.parse("content://dummy/c.d.png")
-            val UNKNOWN_URI: Uri = Uri.parse("content://dummy/e.f.g")
-            val NO_EXTENSION_URI: Uri = Uri.parse("content://dummy/abc")
-        }
+    companion object {
+      var PNG_URI: String = "content://dummy/a.png"
     }
-
-    // Mocks a malicious content provider attempting to use path indirection to modify files outside
-    // of the intended directory.
-    // See
-    // https://developer.android.com/privacy-and-security/risks/untrustworthy-contentprovider-provided-filename#don%27t-trust-user-input.
-    private class MockMaliciousContentProvider : ContentProvider() {
-        override fun onCreate(): Boolean {
-            return true
-        }
-
-        override fun query(
-            uri: Uri,
-            projection: Array<String?>?,
-            selection: String?,
-            selectionArgs: Array<String?>?,
-            sortOrder: String?
-        ): Cursor? {
-            val cursor = MatrixCursor(arrayOf<String>(MediaStore.MediaColumns.DISPLAY_NAME))
-            cursor.addRow(arrayOf<Any>("foo/../..bar.png"))
-            return cursor
-        }
-
-        override fun getType(uri: Uri): String? {
-            return "image/png"
-        }
-
-        override fun insert(uri: Uri, values: ContentValues?): Uri? {
-            return null
-        }
-
-        override fun delete(
-            uri: Uri, selection: String?, selectionArgs: Array<String?>?
-        ): Int {
-            return 0
-        }
-
-        override fun update(
-            uri: Uri,
-            values: ContentValues?,
-            selection: String?,
-            selectionArgs: Array<String?>?
-        ): Int {
-            return 0
-        }
-
-        companion object {
-            var PNG_URI: String = "content://dummy/a.png"
-        }
-    }
+  }
 }
