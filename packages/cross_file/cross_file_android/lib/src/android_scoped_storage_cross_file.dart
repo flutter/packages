@@ -2,7 +2,9 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'dart:async';
 import 'dart:convert';
+import 'dart:io';
 import 'dart:math';
 import 'dart:typed_data';
 
@@ -114,6 +116,37 @@ base class AndroidScopedStorageXFile extends PlatformScopedStorageXFile {
   Future<String?> name() => _documentFile.getName();
 
   @override
+  Future<bool> canWrite() => _documentFile.canWrite();
+
+  @override
+  StreamSink<Uint8List> openWrite(PlatformOpenWriteParams params) {
+    return _IOSinkWrapper(IOSink(_AndroidStreamConsumer(this.params.uri)));
+  }
+
+  @override
+  Future<PlatformXFile> writeAsString(PlatformWriteAsStringParams params) async {
+    final android.OutputStream? outputStream = await _contentResolver.openOutputStream(
+      this.params.uri,
+      'w',
+    );
+
+    if (outputStream == null) {
+      throw NullOutputStreamException(this.params.uri);
+    }
+
+    await Future.wait(<Future<void>>[
+      outputStream.write(Uint8List.fromList(params.encoding.encode(params.contents))),
+      outputStream.flush(),
+      outputStream.close(),
+    ]);
+
+    return this;
+  }
+
+  @override
+  Future<bool> delete(PlatformFileDeleteParams params) => _documentFile.delete();
+
+  @override
   Future<void> dispose() async {
     // Reference to the resource does not need to be released.
   }
@@ -132,4 +165,73 @@ final class NullInputStreamException implements Exception {
     return 'NullInputStreamException: Failed to get native InputStream from file with path: $uri. '
         'App may not have permissions to access file.';
   }
+}
+
+/// Error thrown when the native [android.OutputStream] is not accessible.
+final class NullOutputStreamException implements Exception {
+  /// Constructs a [NullOutputStreamException].
+  NullOutputStreamException(this.uri);
+
+  /// The URI the input stream that was request for.
+  final String uri;
+
+  @override
+  String toString() {
+    return 'NullOutputStreamException: Failed to get native OutputStream from file with path: $uri. '
+        'App may not have permissions to access file.';
+  }
+}
+
+class _AndroidStreamConsumer implements StreamConsumer<Uint8List> {
+  _AndroidStreamConsumer(this.uri);
+
+  final String uri;
+
+  late final android.ContentResolver _contentResolver = android.ContentResolver.instance;
+
+  late final Future<android.OutputStream?> outputStreamFuture = _contentResolver.openOutputStream(
+    uri,
+    'w',
+  );
+
+  @override
+  Future<void> addStream(Stream<Uint8List> stream) async {
+    final android.OutputStream? outputStream = await outputStreamFuture;
+    if (outputStream == null) {
+      throw NullOutputStreamException(uri);
+    }
+
+    await for (final Uint8List data in stream) {
+      await outputStream.write(data);
+    }
+
+    await outputStream.flush();
+  }
+
+  @override
+  Future<void> close() async {
+    final android.OutputStream? outputStream = await outputStreamFuture;
+    await outputStream?.close();
+  }
+}
+
+class _IOSinkWrapper implements StreamSink<Uint8List> {
+  _IOSinkWrapper(this._ioSink);
+
+  final IOSink _ioSink;
+
+  @override
+  void add(Uint8List event) => _ioSink.add(event);
+
+  @override
+  void addError(Object error, [StackTrace? stackTrace]) => _ioSink.addError(error, stackTrace);
+
+  @override
+  Future<dynamic> addStream(Stream<Uint8List> stream) => _ioSink.addStream(stream);
+
+  @override
+  Future<dynamic> close() => _ioSink.close();
+
+  @override
+  Future<dynamic> get done => _ioSink.done;
 }

@@ -130,7 +130,9 @@ base class PlatformListParams {
 @immutable
 base class PlatformCreateParams {
   /// Constructs a [PlatformCreateParams];
-  const PlatformCreateParams();
+  const PlatformCreateParams(this.name);
+
+  final String name;
 }
 
 /// Base class for parameters passed to [PlatformXDirectory.delete].
