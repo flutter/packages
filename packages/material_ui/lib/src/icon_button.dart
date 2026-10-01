@@ -192,6 +192,11 @@ enum _IconButtonVariant { standard, filled, filledTonal, outlined }
 ///
 /// </callout-box>
 ///
+/// To use the Material 3 Expressive style, set [IconButtonThemeData.variant]
+/// to [StyleVariant.material3Expressive]. The Expressive size, width, and
+/// shape variants can then be selected with [ButtonStyle.sizeVariant],
+/// [ButtonStyle.iconButtonWidth], and [ButtonStyle.shapeVariant].
+///
 /// <callout-box>
 ///
 /// This sample shows Material 3 Expressive [IconButton] size, width, and shape
