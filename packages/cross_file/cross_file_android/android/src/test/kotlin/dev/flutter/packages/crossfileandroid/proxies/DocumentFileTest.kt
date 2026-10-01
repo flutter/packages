@@ -5,6 +5,7 @@
 package dev.flutter.packages.crossfileandroid.proxies
 
 import android.net.Uri
+import android.webkit.MimeTypeMap
 import androidx.documentfile.provider.DocumentFile
 import dev.flutter.packages.crossfileandroid.TestProxyApiRegistrar
 import kotlin.test.Test
@@ -154,5 +155,60 @@ class DocumentFileTest {
     whenever(instance.name).thenReturn(value)
 
     assertEquals(value, api.getName(instance))
+  }
+
+  @Test
+  fun canWrite() {
+    val api = TestProxyApiRegistrar().getPigeonApiDocumentFile()
+
+    val instance = mock<DocumentFile>()
+    val value = true
+    whenever(instance.canWrite()).thenReturn(value)
+
+    assertEquals(value, api.canWrite(instance))
+  }
+
+  @Test
+  fun createDirectory() {
+    val api = TestProxyApiRegistrar().getPigeonApiDocumentFile()
+
+    val instance = mock<DocumentFile>()
+    val displayName = "dirName"
+    val value = mock<DocumentFile>()
+    whenever(instance.createDirectory(displayName)).thenReturn(value)
+
+    assertEquals(value, api.createDirectory(instance, displayName))
+  }
+
+  @Test
+  fun createFileWithDefaultMimeType() {
+    val api = TestProxyApiRegistrar().getPigeonApiDocumentFile()
+
+    val instance = mock<DocumentFile>()
+    val displayName = "file"
+    val value = mock<DocumentFile>()
+    whenever(instance.createFile("application/octet-stream", displayName)).thenReturn(value)
+
+    assertEquals(value, api.createFile(instance, displayName))
+  }
+
+  @Test
+  fun createFileWithCustomMimeType() {
+    val api = TestProxyApiRegistrar().getPigeonApiDocumentFile()
+
+    mockStatic(MimeTypeMap::class.java).use { mockedStatic ->
+      val mimeTypeMap = mock<MimeTypeMap>()
+      mockedStatic.`when`<MimeTypeMap> { MimeTypeMap.getSingleton() }.thenReturn(mimeTypeMap)
+      mockedStatic.`when`<String> { MimeTypeMap.getFileExtensionFromUrl("file.txt") }
+          .thenReturn("txt")
+      whenever(mimeTypeMap.getMimeTypeFromExtension("txt")).thenReturn("text/plain")
+
+      val instance = mock<DocumentFile>()
+      val displayName = "file.txt"
+      val value = mock<DocumentFile>()
+      whenever(instance.createFile("text/plain", displayName)).thenReturn(value)
+
+      assertEquals(value, api.createFile(instance, displayName))
+    }
   }
 }
