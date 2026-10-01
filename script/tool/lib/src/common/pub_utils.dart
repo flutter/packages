@@ -116,6 +116,6 @@ bool _requiresFlutterForPub(RepositoryPackage package) {
   // run via `flutter pub`, even when depended on by a non-Flutter package.
   const flutterRequiringPackages = <String>{'jni'};
   final Pubspec pubspec = package.parsePubspec();
-  return pubspec.dependencies.keys.any(flutterRequiringPackages.contains) ||
-      pubspec.devDependencies.keys.any(flutterRequiringPackages.contains);
+  return flutterRequiringPackages.any(pubspec.dependencies.containsKey) ||
+      flutterRequiringPackages.any(pubspec.devDependencies.containsKey);
 }
