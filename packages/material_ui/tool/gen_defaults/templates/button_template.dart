@@ -333,6 +333,12 @@ class ButtonTemplateM3E extends TokenTemplateM3E {
     _ => throw UnsupportedError('Unsupported expressive button template name: $name'),
   };
 
+  // The token data does not include a hovered container elevation for the
+  // elevated button. The Material 3 Expressive spec uses elevation level 2
+  // (3dp) when hovered: https://m3.material.io/components/buttons/specs
+  // TODO(QuncCccccc): Replace this value with a token once it is available.
+  static const double _hoveredContainerElevation = 3.0;
+
   String _sizeSwitch({
     required String xSmall,
     required String small,
@@ -533,6 +539,9 @@ class $className extends ButtonStyle {
         }
         if (states.contains(WidgetState.pressed)) {
           return ${TokenButtonElevated.pressedContainerElevation};
+        }
+        if (states.contains(WidgetState.hovered)) {
+          return $_hoveredContainerElevation;
         }
         if (states.contains(WidgetState.focused)) {
           return ${TokenButtonElevated.focusedContainerElevation};

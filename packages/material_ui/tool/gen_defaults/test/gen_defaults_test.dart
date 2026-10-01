@@ -382,6 +382,7 @@ void main() {
       expect(contents, contains('return _colors.onPrimary;'));
       expect(contents, contains('states.contains(WidgetState.selected)'));
       expect(contents, contains('states.contains(WidgetState.pressed)'));
+      expect(contents, contains('return 3.0;'));
     });
 
     test('ButtonTemplateM3 emits M3 FilledButton defaults from tokens', () {
