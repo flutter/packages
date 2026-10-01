@@ -55,6 +55,12 @@ part 'generated/elevated_button_defaults_m3e.g.dart';
 /// If [onPressed] and [onLongPress] callbacks are null, then the
 /// button will be disabled.
 ///
+/// To use the Material 3 Expressive style, set
+/// [ElevatedButtonThemeData.variant] to [StyleVariant.material3Expressive].
+/// The Expressive size and shape variants can then be selected with
+/// [ButtonStyle.sizeVariant] and [ButtonStyle.shapeVariant], and the button
+/// becomes a toggle button when [isSelected] is non-null.
+///
 /// <callout-box>
 ///
 /// This sample produces an enabled and a disabled ElevatedButton.
@@ -97,6 +103,9 @@ class ElevatedButton extends ButtonStyleButton {
   ///
   /// The icon and label are arranged in a row and padded by 12 logical pixels
   /// at the start, and 16 at the end, with an 8 pixel gap in between.
+  ///
+  /// With the Material 3 Expressive style, the padding and the gap depend on
+  /// [ButtonStyle.sizeVariant]. See [defaultStyleOf].
   ///
   /// If [icon] is null, this constructor will create an [ElevatedButton]
   /// that doesn't display an icon.
@@ -400,6 +409,73 @@ class ElevatedButton extends ButtonStyleButton {
   ///
   /// For the [ElevatedButton.icon] factory, the start (generally the left) value of
   /// [ButtonStyle.padding] is reduced from 24 to 16.
+  ///
+  /// ## Material 3 Expressive defaults
+  ///
+  /// If [ThemeData.useMaterial3] is true and [ElevatedButtonThemeData.variant]
+  /// is [StyleVariant.material3Expressive], the following defaults will be
+  /// used. Values listed per size are for [ButtonSizeVariant.xSmall],
+  /// [ButtonSizeVariant.small], [ButtonSizeVariant.medium],
+  /// [ButtonSizeVariant.large], and [ButtonSizeVariant.xLarge] respectively.
+  /// The selected values only apply when [isSelected] is non-null.
+  ///
+  /// * `textStyle` - based on [ButtonStyle.sizeVariant]
+  ///   * xSmall or small - Theme.textTheme.labelLarge
+  ///   * medium - Theme.textTheme.titleMedium
+  ///   * large - Theme.textTheme.headlineSmall
+  ///   * xLarge - Theme.textTheme.headlineLarge
+  /// * `backgroundColor`
+  ///   * disabled - Theme.colorScheme.onSurface(0.1)
+  ///   * selected - Theme.colorScheme.primary
+  ///   * others - Theme.colorScheme.surfaceContainerLow
+  /// * `foregroundColor`
+  ///   * disabled - Theme.colorScheme.onSurface(0.38)
+  ///   * selected - Theme.colorScheme.onPrimary
+  ///   * others - Theme.colorScheme.primary
+  /// * `overlayColor`
+  ///   * selected
+  ///     * hovered - Theme.colorScheme.onPrimary(0.08)
+  ///     * focused or pressed - Theme.colorScheme.onPrimary(0.1)
+  ///   * hovered - Theme.colorScheme.primary(0.08)
+  ///   * focused or pressed - Theme.colorScheme.primary(0.1)
+  /// * `shadowColor` - Theme.colorScheme.shadow
+  /// * `surfaceTintColor` - Colors.transparent
+  /// * `elevation`
+  ///   * disabled - 0
+  ///   * hovered - 3
+  ///   * others - 1
+  /// * `padding` - based on [ButtonStyle.sizeVariant]; horizontal(12),
+  ///   horizontal(16), horizontal(24), horizontal(48), horizontal(64). The
+  ///   padding is halved at 2x text scale and quartered at 3x text scale.
+  /// * `minimumSize` - based on [ButtonStyle.sizeVariant]; Size(64, 32),
+  ///   Size(64, 40), Size(64, 56), Size(64, 96), Size(64, 136)
+  /// * `fixedSize` - null
+  /// * `maximumSize` - Size.infinite
+  /// * `iconSize` - based on [ButtonStyle.sizeVariant]; 20, 20, 24, 32, 40
+  /// * `iconColor` - same as `foregroundColor`
+  /// * `side` - null
+  /// * `shape` - based on [ButtonStyle.sizeVariant], [ButtonStyle.shapeVariant],
+  ///   and state
+  ///   * pressed - RoundedRectangleBorder with radius 8, 8, 12, 16, 16
+  ///   * selected
+  ///     * round - RoundedRectangleBorder with radius 12, 12, 16, 28, 28
+  ///     * square - StadiumBorder()
+  ///   * others
+  ///     * round - StadiumBorder()
+  ///     * square - RoundedRectangleBorder with radius 12, 12, 16, 28, 28
+  /// * `mouseCursor` - WidgetStateMouseCursor.adaptiveClickable
+  /// * `visualDensity` - Theme.visualDensity
+  /// * `tapTargetSize` - Theme.materialTapTargetSize
+  /// * `animationDuration` - kThemeChangeDuration
+  /// * `enableFeedback` - true
+  /// * `alignment` - Alignment.center
+  /// * `splashFactory` - Theme.splashFactory
+  /// * `sizeVariant` - ButtonSizeVariant.small
+  /// * `shapeVariant` - ButtonShapeVariant.round
+  ///
+  /// For the [ElevatedButton.icon] factory, the padding is the same, and the
+  /// gap between the icon and the label is 4, 8, 8, 12, or 16 based on
+  /// [ButtonStyle.sizeVariant].
 
   @override
   ButtonStyle defaultStyleOf(BuildContext context) {
