@@ -7,9 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		334733FC266813EE00DCC49E /* ImageUtilTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FC8F0ED229FB90B00C8D58F /* ImageUtilTests.m */; };
-		334733FD266813F100DCC49E /* MetaDataUtilTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 680049252280D736006DD6AB /* MetaDataUtilTests.m */; };
-		334733FE266813F400DCC49E /* PhotoAssetUtilTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 68F4B463228B3AB500C25614 /* PhotoAssetUtilTests.m */; };
+		334733FC266813EE00DCC49E /* ImageUtilTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9FC8F0ED229FB90B00C8D58F /* ImageUtilTests.swift */; };
+		334733FD266813F100DCC49E /* MetaDataUtilTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 680049252280D736006DD6AB /* MetaDataUtilTests.swift */; };
+		334733FE266813F400DCC49E /* PhotoAssetUtilTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 68F4B463228B3AB500C25614 /* PhotoAssetUtilTests.swift */; };
 		334733FF266813FA00DCC49E /* ImagePickerTestImages.m in Sources */ = {isa = PBXBuildFile; fileRef = F78AF3182342D9D7008449C7 /* ImagePickerTestImages.m */; };
 		33473400266813FD00DCC49E /* ImagePickerPluginTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 68B9AF71243E4B3F00927CE4 /* ImagePickerPluginTests.m */; };
 		3B3967161E833CAA004F5970 /* AppFrameworkInfo.plist in Resources */ = {isa = PBXBuildFile; fileRef = 3B3967151E833CAA004F5970 /* AppFrameworkInfo.plist */; };
@@ -25,7 +25,8 @@
 		78A318202AECB46A00862997 /* FlutterGeneratedPluginSwiftPackage in Frameworks */ = {isa = PBXBuildFile; productRef = 78A3181F2AECB46A00862997 /* FlutterGeneratedPluginSwiftPackage */; };
 		78CF8D862BC5E7070051231B /* OCMock in Frameworks */ = {isa = PBXBuildFile; productRef = 78CF8D852BC5E7070051231B /* OCMock */; };
 		86430DF9272D71E9002D9D6C /* gifImage.gif in Resources */ = {isa = PBXBuildFile; fileRef = 9FC8F0E8229FA49E00C8D58F /* gifImage.gif */; };
-		86E9A893272754860017E6E0 /* PickerSaveImageToPathOperationTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 86E9A892272754860017E6E0 /* PickerSaveImageToPathOperationTests.m */; };
+		86E9A893272754860017E6E0 /* PickerSaveImageToPathOperationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 86E9A892272754860017E6E0 /* PickerSaveImageToPathOperationTests.swift */; };
+		F8A11B022E8C000100000001 /* TestDoubles.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8A11B012E8C000100000001 /* TestDoubles.swift */; };
 		86E9A894272754A30017E6E0 /* webpImage.webp in Resources */ = {isa = PBXBuildFile; fileRef = 86E9A88F272747B90017E6E0 /* webpImage.webp */; };
 		86E9A895272769130017E6E0 /* pngImage.png in Resources */ = {isa = PBXBuildFile; fileRef = 680049352280F2B8006DD6AB /* pngImage.png */; };
 		86E9A896272769150017E6E0 /* jpgImage.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 680049362280F2B8006DD6AB /* jpgImage.jpg */; };
@@ -85,14 +86,14 @@
 		3B3967151E833CAA004F5970 /* AppFrameworkInfo.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = AppFrameworkInfo.plist; path = Flutter/AppFrameworkInfo.plist; sourceTree = "<group>"; };
 		5C9512FF1EC38BD300040975 /* GeneratedPluginRegistrant.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GeneratedPluginRegistrant.h; sourceTree = "<group>"; };
 		5C9513001EC38BD300040975 /* GeneratedPluginRegistrant.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GeneratedPluginRegistrant.m; sourceTree = "<group>"; };
-		680049252280D736006DD6AB /* MetaDataUtilTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MetaDataUtilTests.m; sourceTree = "<group>"; };
+		680049252280D736006DD6AB /* MetaDataUtilTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MetaDataUtilTests.swift; sourceTree = "<group>"; };
 		680049352280F2B8006DD6AB /* pngImage.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = pngImage.png; sourceTree = "<group>"; };
 		680049362280F2B8006DD6AB /* jpgImage.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = jpgImage.jpg; sourceTree = "<group>"; };
 		6801C8362555D726009DAF8D /* RunnerUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = RunnerUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		6801C8382555D726009DAF8D /* ImagePickerFromGalleryUITests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ImagePickerFromGalleryUITests.m; sourceTree = "<group>"; };
 		6801C83A2555D726009DAF8D /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		68B9AF71243E4B3F00927CE4 /* ImagePickerPluginTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ImagePickerPluginTests.m; sourceTree = "<group>"; };
-		68F4B463228B3AB500C25614 /* PhotoAssetUtilTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = PhotoAssetUtilTests.m; sourceTree = "<group>"; };
+		68F4B463228B3AB500C25614 /* PhotoAssetUtilTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotoAssetUtilTests.swift; sourceTree = "<group>"; };
 		782C2B44299ECE33008DC703 /* jpgImageWithRightOrientation.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = jpgImageWithRightOrientation.jpg; sourceTree = "<group>"; };
 		784666492D4C4C64000A1A5F /* FlutterFramework */ = {isa = PBXFileReference; lastKnownFileType = wrapper; name = FlutterFramework; path = Flutter/ephemeral/Packages/.packages/FlutterFramework; sourceTree = "<group>"; };
 		7865C5E02941326F0010E17F /* bmpImage.bmp */ = {isa = PBXFileReference; lastKnownFileType = image.bmp; path = bmpImage.bmp; sourceTree = "<group>"; };
@@ -107,7 +108,8 @@
 		7AFFD8ED1D35381100E5BB4D /* AppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
 		7AFFD8EE1D35381100E5BB4D /* AppDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
 		86E9A88F272747B90017E6E0 /* webpImage.webp */ = {isa = PBXFileReference; lastKnownFileType = file; path = webpImage.webp; sourceTree = "<group>"; };
-		86E9A892272754860017E6E0 /* PickerSaveImageToPathOperationTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = PickerSaveImageToPathOperationTests.m; sourceTree = "<group>"; };
+		86E9A892272754860017E6E0 /* PickerSaveImageToPathOperationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PickerSaveImageToPathOperationTests.swift; sourceTree = "<group>"; };
+		F8A11B012E8C000100000001 /* TestDoubles.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestDoubles.swift; sourceTree = "<group>"; };
 		9740EEB21CF90195004384FC /* Debug.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = Debug.xcconfig; path = Flutter/Debug.xcconfig; sourceTree = "<group>"; };
 		9740EEB31CF90195004384FC /* Generated.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = Generated.xcconfig; path = Flutter/Generated.xcconfig; sourceTree = "<group>"; };
 		97C146EE1CF9000F007C117D /* Runner.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Runner.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -117,7 +119,7 @@
 		97C147001CF9000F007C117D /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		97C147021CF9000F007C117D /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		9FC8F0E8229FA49E00C8D58F /* gifImage.gif */ = {isa = PBXFileReference; lastKnownFileType = image.gif; path = gifImage.gif; sourceTree = "<group>"; };
-		9FC8F0ED229FB90B00C8D58F /* ImageUtilTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ImageUtilTests.m; sourceTree = "<group>"; };
+		9FC8F0ED229FB90B00C8D58F /* ImageUtilTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageUtilTests.swift; sourceTree = "<group>"; };
 		BE6173D726A958B800D0974D /* ImagePickerFromLimitedGalleryUITests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ImagePickerFromLimitedGalleryUITests.m; sourceTree = "<group>"; };
 		F706BF722E433163001263B9 /* jpgImageTall.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = jpgImageTall.jpg; sourceTree = "<group>"; };
 		F78AF3172342D9D7008449C7 /* ImagePickerTestImages.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ImagePickerTestImages.h; sourceTree = "<group>"; };
@@ -154,13 +156,14 @@
 		334733F32668136400DCC49E /* RunnerTests */ = {
 			isa = PBXGroup;
 			children = (
-				9FC8F0ED229FB90B00C8D58F /* ImageUtilTests.m */,
-				680049252280D736006DD6AB /* MetaDataUtilTests.m */,
-				68F4B463228B3AB500C25614 /* PhotoAssetUtilTests.m */,
+				9FC8F0ED229FB90B00C8D58F /* ImageUtilTests.swift */,
+				680049252280D736006DD6AB /* MetaDataUtilTests.swift */,
+				68F4B463228B3AB500C25614 /* PhotoAssetUtilTests.swift */,
 				F78AF3172342D9D7008449C7 /* ImagePickerTestImages.h */,
 				F78AF3182342D9D7008449C7 /* ImagePickerTestImages.m */,
 				68B9AF71243E4B3F00927CE4 /* ImagePickerPluginTests.m */,
-				86E9A892272754860017E6E0 /* PickerSaveImageToPathOperationTests.m */,
+				86E9A892272754860017E6E0 /* PickerSaveImageToPathOperationTests.swift */,
+				F8A11B012E8C000100000001 /* TestDoubles.swift */,
 				334733F62668136400DCC49E /* Info.plist */,
 			);
 			path = RunnerTests;
@@ -464,12 +467,13 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				334733FD266813F100DCC49E /* MetaDataUtilTests.m in Sources */,
+				334733FD266813F100DCC49E /* MetaDataUtilTests.swift in Sources */,
 				334733FF266813FA00DCC49E /* ImagePickerTestImages.m in Sources */,
-				86E9A893272754860017E6E0 /* PickerSaveImageToPathOperationTests.m in Sources */,
-				334733FC266813EE00DCC49E /* ImageUtilTests.m in Sources */,
+				86E9A893272754860017E6E0 /* PickerSaveImageToPathOperationTests.swift in Sources */,
+				F8A11B022E8C000100000001 /* TestDoubles.swift in Sources */,
+				334733FC266813EE00DCC49E /* ImageUtilTests.swift in Sources */,
 				33473400266813FD00DCC49E /* ImagePickerPluginTests.m in Sources */,
-				334733FE266813F400DCC49E /* PhotoAssetUtilTests.m in Sources */,
+				334733FE266813F400DCC49E /* PhotoAssetUtilTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -533,12 +537,15 @@
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CODE_SIGN_STYLE = Automatic;
 				INFOPLIST_FILE = RunnerTests/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = dev.flutter.plugins.RunnerTests;
+				SWIFT_OBJC_BRIDGING_HEADER = "RunnerTests/RunnerTests-Bridging-Header.h";
+				SWIFT_VERSION = 5.0;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Runner.app/Runner";
 			};
@@ -550,12 +557,15 @@
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CODE_SIGN_STYLE = Automatic;
 				INFOPLIST_FILE = RunnerTests/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = dev.flutter.plugins.RunnerTests;
+				SWIFT_OBJC_BRIDGING_HEADER = "RunnerTests/RunnerTests-Bridging-Header.h";
+				SWIFT_VERSION = 5.0;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Runner.app/Runner";
 			};

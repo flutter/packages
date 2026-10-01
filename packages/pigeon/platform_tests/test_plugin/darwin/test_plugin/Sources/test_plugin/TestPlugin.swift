@@ -1009,6 +1009,16 @@ class NativeInteropTestsClass: NSObject, NativeInteropHostIntegrationCoreApi {
   }
 
   func echoNullable(_ aNullableObject: Any?) throws -> Any? {
+    // Return boxed NSNumber instances to test NSNumber/CFBoolean/CFNumber bridging across FFI.
+    if let boolValue = aNullableObject as? Bool {
+      return NSNumber(value: boolValue)
+    }
+    if let doubleValue = aNullableObject as? Double {
+      return NSNumber(value: doubleValue)
+    }
+    if let intValue = aNullableObject as? Int64 {
+      return NSNumber(value: intValue)
+    }
     return aNullableObject
   }
 

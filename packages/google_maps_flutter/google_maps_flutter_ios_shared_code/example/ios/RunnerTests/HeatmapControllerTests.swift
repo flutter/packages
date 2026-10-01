@@ -5,7 +5,6 @@
 import GoogleMaps
 import GoogleMapsUtils
 import Testing
-import google_maps_flutter_ios_objc
 
 @testable import google_maps_flutter_ios
 
@@ -13,25 +12,25 @@ import google_maps_flutter_ios_objc
 
   @Test func updateHeatmapSetsVisibilityLast() {
     let heatmap = PropertyOrderValidatingHeatmap()
-    let gradient = FGMPlatformHeatmapGradient.make(
-      with: [
-        FGMPlatformColor.make(withRed: 0, green: 0, blue: 0, alpha: 0),
-        FGMPlatformColor.make(withRed: 1.0, green: 1.0, blue: 1.0, alpha: 1.0),
+    let gradient = PlatformHeatmapGradient(
+      colors: [
+        PlatformColor(red: 0, green: 0, blue: 0, alpha: 0),
+        PlatformColor(red: 1.0, green: 1.0, blue: 1.0, alpha: 1.0),
       ],
-      startPoints: [0 as NSNumber, 1 as NSNumber],
+      startPoints: [0, 1],
       colorMapSize: 256
     )
     HeatmapController.update(
       heatmap,
-      from: FGMPlatformHeatmap.make(
-        withHeatmapId: "heatmap",
+      from: PlatformHeatmap(
+        heatmapId: "heatmap",
         data: [
-          FGMPlatformWeightedLatLng.make(
-            withPoint: FGMPlatformLatLng.make(withLatitude: 5.0, longitude: 5.0),
+          PlatformWeightedLatLng(
+            point: PlatformLatLng(latitude: 5.0, longitude: 5.0),
             weight: 0.5
           ),
-          FGMPlatformWeightedLatLng.make(
-            withPoint: FGMPlatformLatLng.make(withLatitude: 10.0, longitude: 10.0),
+          PlatformWeightedLatLng(
+            point: PlatformLatLng(latitude: 10.0, longitude: 10.0),
             weight: 0.75
           ),
         ],
