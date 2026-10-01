@@ -336,11 +336,6 @@ class _ButtonStyleState extends State<ButtonStyleButton> with TickerProviderStat
   MaterialStatesController? internalStatesController;
 
   void handleStatesControllerChange() {
-    if (widget.isSelected != null &&
-        statesController.value.contains(WidgetState.selected) != widget.isSelected) {
-      statesController.update(WidgetState.selected, widget.isSelected!);
-      return;
-    }
     // Force a rebuild to resolve WidgetStateProperty properties
     setState(() {});
   }
