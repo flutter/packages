@@ -1,5 +1,7 @@
-## NEXT
+## 2.13.0
 
+* Adds support for `VideoPlayerOptions.forwardBufferDurationMs`, capping how far ahead of the
+  playback position `AVPlayerItem` buffers via `preferredForwardBufferDuration`.
 * Updates minimum supported SDK version to Flutter 3.41/Dart 3.11.
 
 ## 2.12.0

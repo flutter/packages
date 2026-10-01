@@ -473,9 +473,14 @@ class VideoPlayerOptions {
     this.preventsDisplaySleepDuringVideoPlayback = true,
     this.webOptions,
     this.backBufferDurationMs,
+    this.forwardBufferDurationMs,
   }) : assert(
          backBufferDurationMs == null || backBufferDurationMs >= 0,
          'backBufferDurationMs must be zero or greater',
+       ),
+       assert(
+         forwardBufferDurationMs == null || forwardBufferDurationMs >= 0,
+         'forwardBufferDurationMs must be zero or greater',
        );
 
   /// Set this to true to keep playing video in background, when app goes in background.
@@ -504,6 +509,24 @@ class VideoPlayerOptions {
   ///
   /// Ignored on platforms that do not support controlling the back buffer.
   final int? backBufferDurationMs;
+
+  /// The maximum duration, in milliseconds, of media to buffer ahead of the
+  /// current playback position.
+  ///
+  /// Capping the forward buffer avoids downloading media that is discarded when
+  /// a user seeks away from or abandons playback, at the cost of an increased
+  /// chance of rebuffering on unreliable networks.
+  ///
+  /// When null or zero, the platform's default buffering behavior is used.
+  ///
+  /// This is an upper bound on buffering that the platform requests, not a
+  /// guarantee; adaptive formats such as HLS and DASH are fetched in whole
+  /// segments, so the buffered amount may exceed this by up to one segment.
+  ///
+  /// Only applies to streamed media. Local files and assets are unaffected.
+  ///
+  /// Ignored on platforms that do not support controlling the forward buffer.
+  final int? forwardBufferDurationMs;
 }
 
 /// [VideoPlayerWebOptions] can be optionally used to set additional web settings

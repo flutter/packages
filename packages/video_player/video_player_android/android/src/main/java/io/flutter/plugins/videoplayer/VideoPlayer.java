@@ -20,7 +20,9 @@ import androidx.media3.common.TrackGroup;
 import androidx.media3.common.TrackSelectionOverride;
 import androidx.media3.common.Tracks;
 import androidx.media3.common.util.UnstableApi;
+import androidx.media3.exoplayer.DefaultLoadControl;
 import androidx.media3.exoplayer.ExoPlayer;
+import androidx.media3.exoplayer.LoadControl;
 import androidx.media3.exoplayer.trackselection.DefaultTrackSelector;
 import io.flutter.view.TextureRegistry.SurfaceProducer;
 import java.util.ArrayList;
@@ -90,6 +92,57 @@ public abstract class VideoPlayer implements VideoPlayerInstanceApi {
 
   public void setDisposeHandler(@Nullable DisposeHandler handler) {
     disposeHandler = handler;
+  }
+
+  /**
+   * Builds a {@link LoadControl} for the buffering options that are set, or returns null if none
+   * are set and ExoPlayer's default buffering should be used.
+   *
+   * <p>A back buffer duration is applied to all playback. A forward buffer duration is applied to
+   * streaming playback only, so that local files and assets keep ExoPlayer's defaults.
+   *
+   * @throws IllegalArgumentException if either duration is negative.
+   */
+  @UnstableApi
+  @Nullable
+  protected static LoadControl buildLoadControl(@NonNull VideoPlayerOptions options) {
+    if (options.backBufferDurationMs != null && options.backBufferDurationMs < 0) {
+      throw new IllegalArgumentException("backBufferDurationMs must be at least 0");
+    }
+    if (options.forwardBufferDurationMs != null && options.forwardBufferDurationMs < 0) {
+      throw new IllegalArgumentException("forwardBufferDurationMs must be at least 0");
+    }
+    boolean hasBackBuffer =
+        options.backBufferDurationMs != null && options.backBufferDurationMs > 0;
+    boolean hasForwardBuffer =
+        options.forwardBufferDurationMs != null && options.forwardBufferDurationMs > 0;
+    if (!hasBackBuffer && !hasForwardBuffer) {
+      return null;
+    }
+
+    DefaultLoadControl.Builder loadControlBuilder = new DefaultLoadControl.Builder();
+    if (hasBackBuffer) {
+      // Clamp the value to ensure it fits within the int range expected by DefaultLoadControl.
+      int backBufferMs =
+          (int) Math.min(options.backBufferDurationMs.longValue(), Integer.MAX_VALUE);
+      loadControlBuilder.setBackBuffer(backBufferMs, /* retainBackBufferFromKeyframe= */ true);
+    }
+    if (hasForwardBuffer) {
+      // Clamp the value to ensure it fits within the int range expected by DefaultLoadControl.
+      int forwardBufferMs =
+          (int) Math.min(options.forwardBufferDurationMs.longValue(), Integer.MAX_VALUE);
+      // DefaultLoadControl requires the playback start thresholds to be no larger than the
+      // buffer size, so clamp them to the cap.
+      int bufferForPlaybackMs =
+          Math.min(DefaultLoadControl.DEFAULT_BUFFER_FOR_PLAYBACK_MS, forwardBufferMs);
+      int bufferForPlaybackAfterRebufferMs =
+          Math.min(
+              DefaultLoadControl.DEFAULT_BUFFER_FOR_PLAYBACK_AFTER_REBUFFER_MS, forwardBufferMs);
+      // Only streaming playback is capped; local playback keeps ExoPlayer's defaults.
+      loadControlBuilder.setBufferDurationsMsForStreaming(
+          forwardBufferMs, forwardBufferMs, bufferForPlaybackMs, bufferForPlaybackAfterRebufferMs);
+    }
+    return loadControlBuilder.build();
   }
 
   @NonNull

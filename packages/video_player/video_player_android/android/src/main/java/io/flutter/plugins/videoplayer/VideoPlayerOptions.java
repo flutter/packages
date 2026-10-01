@@ -15,11 +15,18 @@ public class VideoPlayerOptions {
    */
   @Nullable public Long backBufferDurationMs;
 
+  /**
+   * The maximum duration of the forward buffer in milliseconds, used to configure ExoPlayer's load
+   * control.
+   */
+  @Nullable public Long forwardBufferDurationMs;
+
   public VideoPlayerOptions() {}
 
   /** Copy constructor to ensure all options are reliably copied. */
   public VideoPlayerOptions(@NonNull VideoPlayerOptions other) {
     this.mixWithOthers = other.mixWithOthers;
     this.backBufferDurationMs = other.backBufferDurationMs;
+    this.forwardBufferDurationMs = other.forwardBufferDurationMs;
   }
 }

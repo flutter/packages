@@ -91,4 +91,24 @@ void main() {
           'backBufferDurationMs must be forwarded to the platform via VideoCreationOptions.videoPlayerOptions',
     );
   });
+
+  test('forward buffer duration is forwarded to platform', () async {
+    const expectedForwardBufferDurationMs = 15000;
+
+    final controller = VideoPlayerController.networkUrl(
+      Uri.parse('https://127.0.0.1'),
+      videoPlayerOptions: VideoPlayerOptions(
+        forwardBufferDurationMs: expectedForwardBufferDurationMs,
+      ),
+    );
+
+    await controller.initialize();
+
+    expect(
+      fakeVideoPlayerPlatform.videoPlayerOptions.last?.forwardBufferDurationMs,
+      expectedForwardBufferDurationMs,
+      reason:
+          'forwardBufferDurationMs must be forwarded to the platform via VideoCreationOptions.videoPlayerOptions',
+    );
+  });
 }

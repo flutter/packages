@@ -52,6 +52,42 @@ private let hlsAudioTestURI =
     #expect(player.playerLayer.superlayer == view.layer)
   }
 
+  @Test func forwardBufferDurationSetsPreferredForwardBufferDuration() throws {
+    let stubItem = StubPlayerItem()
+    let videoPlayerPlugin = try createInitializedPlugin(
+      avFactory: StubFVPAVFactory(playerItem: stubItem))
+
+    _ = try videoPlayerPlugin.createTexturePlayer(
+      options: CreationOptions(
+        uri: mp4TestURI, httpHeaders: [:], forwardBufferDurationMs: 15000))
+
+    #expect(stubItem.preferredForwardBufferDuration == 15.0)
+  }
+
+  @Test func forwardBufferDurationDefaultsToAutomatic() throws {
+    let stubItem = StubPlayerItem()
+    let videoPlayerPlugin = try createInitializedPlugin(
+      avFactory: StubFVPAVFactory(playerItem: stubItem))
+
+    _ = try videoPlayerPlugin.createTexturePlayer(
+      options: CreationOptions(uri: mp4TestURI, httpHeaders: [:]))
+
+    // 0 is AVPlayerItem's "automatic" default; the option must not change it.
+    #expect(stubItem.preferredForwardBufferDuration == 0)
+  }
+
+  @Test func negativeForwardBufferDurationThrows() throws {
+    let stubItem = StubPlayerItem()
+    let videoPlayerPlugin = try createInitializedPlugin(
+      avFactory: StubFVPAVFactory(playerItem: stubItem))
+
+    #expect(throws: PigeonError.self) {
+      _ = try videoPlayerPlugin.createTexturePlayer(
+        options: CreationOptions(
+          uri: mp4TestURI, httpHeaders: [:], forwardBufferDurationMs: -1))
+    }
+  }
+
   @Test func playerForPlatformViewDoesNotRegisterTexture() throws {
     let textureRegistry = TestTextureRegistry()
     let stubDisplayLinkFactory = StubFVPDisplayLinkFactory()
