@@ -22,7 +22,11 @@ import java.io.File
 import java.io.FileInputStream
 import java.io.IOException
 import java.nio.charset.StandardCharsets
-import org.junit.Assert
+import org.junit.Assert.assertEquals
+import org.junit.Assert.assertFalse
+import org.junit.Assert.assertNotNull
+import org.junit.Assert.assertThrows
+import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -30,6 +34,7 @@ import org.mockito.Mockito
 import org.mockito.kotlin.doReturn
 import org.mockito.kotlin.mock
 import org.mockito.kotlin.spy
+import org.mockito.kotlin.whenever
 import org.mockito.stubbing.Answer
 import org.robolectric.Robolectric
 import org.robolectric.RobolectricTestRunner
@@ -66,7 +71,7 @@ class FileUtilsTest {
     val mockContentResolver = mock<ContentResolver> { on { openInputStream(uri) } doReturn null }
     val mockContext = mock<Context> { on { contentResolver } doReturn mockContentResolver }
 
-    Assert.assertThrows(IOException::class.java) {
+    assertThrows(IOException::class.java) {
       FileUtils.getPathFromCopyOfFileFromUri(mockContext, uri)
     }
   }
@@ -78,12 +83,12 @@ class FileUtilsTest {
         Uri.parse("content://com.android.externalstorage.documents/tree/primary%3ADocuments%2Ftest")
     Mockito.mockStatic(DocumentsContract::class.java).use { mockedDocumentsContract ->
       mockedDocumentsContract
-          .`when`<Any?> { DocumentsContract.getDocumentId(uri) }
+          .whenever { DocumentsContract.getDocumentId(uri) }
           .thenAnswer(Answer { "primary:Documents/test" })
       val path = FileUtils.getPathFromUri(context, uri)
       val externalStorageDirectoryPath = Environment.getExternalStorageDirectory().path
       val expectedPath = "$externalStorageDirectoryPath/Documents/test"
-      Assert.assertEquals(path, expectedPath)
+      assertEquals(path, expectedPath)
     }
   }
 
@@ -96,9 +101,9 @@ class FileUtilsTest {
             "content://com.android.externalstorage.documents/tree/external%3ADocuments%2Ftest")
     Mockito.mockStatic(DocumentsContract::class.java).use { mockedDocumentsContract ->
       mockedDocumentsContract
-          .`when`<Any?> { DocumentsContract.getDocumentId(uri) }
+          .whenever { DocumentsContract.getDocumentId(uri) }
           .thenAnswer(Answer { "external:Documents/test" })
-      Assert.assertThrows(UnsupportedOperationException::class.java) {
+      assertThrows(UnsupportedOperationException::class.java) {
         FileUtils.getPathFromUri(context, uri)
       }
     }
@@ -107,7 +112,7 @@ class FileUtilsTest {
   @Test
   fun getPathFromUri_throwExceptionForUriWithUnhandledAuthority() {
     val uri = Uri.parse("content://com.unsupported.authority/tree/primary%3ADocuments%2Ftest")
-    Assert.assertThrows(UnsupportedOperationException::class.java) {
+    assertThrows(UnsupportedOperationException::class.java) {
       FileUtils.getPathFromUri(context, uri)
     }
   }
@@ -128,9 +133,9 @@ class FileUtilsTest {
     buf.read(bytes, 0, bytes.size)
     buf.close()
 
-    Assert.assertTrue(bytes.isNotEmpty())
+    assertTrue(bytes.isNotEmpty())
     val fileStream = String(bytes, StandardCharsets.UTF_8)
-    Assert.assertEquals("fileStream", fileStream)
+    assertEquals("fileStream", fileStream)
   }
 
   @Test
@@ -142,7 +147,7 @@ class FileUtilsTest {
 
     val path = FileUtils.getPathFromCopyOfFileFromUri(context, uri)
     println(path)
-    Assert.assertTrue(path!!.endsWith(".txt"))
+    assertTrue(path!!.endsWith(".txt"))
   }
 
   @Test
@@ -152,7 +157,7 @@ class FileUtilsTest {
     shadowContentResolver.registerInputStream(
         uri, ByteArrayInputStream("fileStream".toByteArray(StandardCharsets.UTF_8)))
     val path = FileUtils.getPathFromCopyOfFileFromUri(context, uri)
-    Assert.assertTrue(path!!.endsWith("a.b.png"))
+    assertTrue(path!!.endsWith("a.b.png"))
   }
 
   @Test
@@ -162,7 +167,7 @@ class FileUtilsTest {
     shadowContentResolver.registerInputStream(
         uri, ByteArrayInputStream("fileStream".toByteArray(StandardCharsets.UTF_8)))
     val path = FileUtils.getPathFromCopyOfFileFromUri(context, uri)
-    Assert.assertTrue(path!!.endsWith("abc.png"))
+    assertTrue(path!!.endsWith("abc.png"))
   }
 
   @Test
@@ -172,7 +177,7 @@ class FileUtilsTest {
     shadowContentResolver.registerInputStream(
         uri, ByteArrayInputStream("fileStream".toByteArray(StandardCharsets.UTF_8)))
     val path = FileUtils.getPathFromCopyOfFileFromUri(context, uri)
-    Assert.assertTrue(path!!.endsWith("c.d.webp"))
+    assertTrue(path!!.endsWith("c.d.webp"))
   }
 
   @Test
@@ -182,7 +187,7 @@ class FileUtilsTest {
     shadowContentResolver.registerInputStream(
         uri, ByteArrayInputStream("fileStream".toByteArray(StandardCharsets.UTF_8)))
     val path = FileUtils.getPathFromCopyOfFileFromUri(context, uri)
-    Assert.assertTrue(path!!.endsWith("e.f.g"))
+    assertTrue(path!!.endsWith("e.f.g"))
   }
 
   @Test
@@ -192,9 +197,9 @@ class FileUtilsTest {
     shadowContentResolver.registerInputStream(
         uri, ByteArrayInputStream("fileStream".toByteArray(StandardCharsets.UTF_8)))
     val path = FileUtils.getPathFromCopyOfFileFromUri(context, uri)
-    Assert.assertNotNull(path)
-    Assert.assertTrue(path!!.endsWith("_bar.png"))
-    Assert.assertFalse(path.contains(".."))
+    assertNotNull(path)
+    assertTrue(path!!.endsWith("_bar.png"))
+    assertFalse(path.contains(".."))
   }
 
   private class MockContentProvider : ContentProvider() {
