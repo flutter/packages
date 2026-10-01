@@ -4,6 +4,7 @@
 
 package dev.flutter.packages.crossfileandroid.proxies
 
+import android.webkit.MimeTypeMap
 import androidx.core.net.toUri
 import androidx.documentfile.provider.DocumentFile
 import dev.flutter.packages.crossfileandroid.ProxyApiRegistrar
@@ -28,6 +29,10 @@ class DocumentFileProxyApi(override val pigeonRegistrar: ProxyApiRegistrar) :
 
   override fun canRead(pigeon_instance: DocumentFile): Boolean {
     return pigeon_instance.canRead()
+  }
+
+  override fun canWrite(pigeon_instance: DocumentFile): Boolean {
+    return pigeon_instance.canWrite()
   }
 
   override fun delete(pigeon_instance: DocumentFile): Boolean {
@@ -64,5 +69,28 @@ class DocumentFileProxyApi(override val pigeonRegistrar: ProxyApiRegistrar) :
 
   override fun getName(pigeon_instance: DocumentFile): String? {
     return pigeon_instance.name
+  }
+
+  override fun createFile(
+    pigeon_instance: DocumentFile,
+    displayName: String
+  ): DocumentFile? {
+    val fileExtension = MimeTypeMap.getFileExtensionFromUrl(displayName)
+
+    if (fileExtension.isNotEmpty()) {
+      val mimeType = MimeTypeMap.getSingleton().getMimeTypeFromExtension(fileExtension.lowercase())
+      if (mimeType != null) {
+        return pigeon_instance.createFile(mimeType, displayName)
+      }
+    }
+
+    return pigeon_instance.createFile("application/octet-stream", displayName)
+  }
+
+  override fun createDirectory(
+    pigeon_instance: DocumentFile,
+    displayName: String
+  ): DocumentFile? {
+    return pigeon_instance.createDirectory(displayName)
   }
 }

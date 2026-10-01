@@ -8,6 +8,7 @@ import android.content.ContentResolver
 import androidx.core.net.toUri
 import dev.flutter.packages.crossfileandroid.ProxyApiRegistrar
 import java.io.InputStream
+import java.io.OutputStream
 
 /**
  * ProxyApi implementation for [ContentResolver].
@@ -23,5 +24,13 @@ class ContentResolverProxyApi(override val pigeonRegistrar: ProxyApiRegistrar) :
 
   override fun openInputStream(pigeon_instance: ContentResolver, uri: String): InputStream? {
     return pigeon_instance.openInputStream(uri.toUri())
+  }
+
+  override fun openOutputStream(
+    pigeon_instance: ContentResolver,
+    uri: String,
+    mode: String
+  ): OutputStream? {
+    return pigeon_instance.openOutputStream(uri.toUri(), mode)
   }
 }
