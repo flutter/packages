@@ -501,7 +501,7 @@ class _PigeonFfiCodec {
       let dict = value as! [AnyHashable: Any]
       let res: NSMutableDictionary = NSMutableDictionary(capacity: dict.count)
       for (key, value) in dict {
-         res.setObject(${_classNamePrefix}PigeonInternal.isNullish(key) ? ${_classNamePrefix}PigeonInternalNull() : writeValue(value: value, isObject: true) as! NSObject, forKey: writeValue(value: key, isObject: true) as! NSCopying)
+         res.setObject(${_classNamePrefix}PigeonInternal.isNullish(value) ? ${_classNamePrefix}PigeonInternalNull() : writeValue(value: value, isObject: true) as! NSObject, forKey: writeValue(value: key, isObject: true) as! NSCopying)
       }
       return res
     }
@@ -2321,35 +2321,40 @@ static func deepHash(value: Any?, hasher: inout Hasher) {
       'private func wrapNumber(number: Any) -> ${_classNamePrefix}NumberWrapper {',
       '}',
       () {
-        indent.writeScoped('switch number {', '}', () {
-          var caseNum = 4;
-          indent.format('''
-    case let value as Int:
-      return ${_classNamePrefix}NumberWrapper(number: NSNumber(value: value), type: 1)
-    case let value as Int64:
-      return ${_classNamePrefix}NumberWrapper(number: NSNumber(value: value), type: 1)
-    case let value as Double:
-      return ${_classNamePrefix}NumberWrapper(number: NSNumber(value: value), type: 2)
-    case let value as Float:
-      return ${_classNamePrefix}NumberWrapper(number: NSNumber(value: value), type: 2)
-    case let value as Bool:
-      return ${_classNamePrefix}NumberWrapper(number: NSNumber(value: value), type: 3)
+        indent.format('''
+  if let nsNumber = number as? NSNumber {
+    if CFGetTypeID(nsNumber as CFTypeRef) == CFBooleanGetTypeID() {
+      return ${_classNamePrefix}NumberWrapper(number: nsNumber, type: 3)
+    }
+    if CFNumberIsFloatType(nsNumber) {
+      return ${_classNamePrefix}NumberWrapper(number: nsNumber, type: 2)
+    }
+    return ${_classNamePrefix}NumberWrapper(number: nsNumber, type: 1)
+  }
 ''');
-          for (final Enum anEnum in root.enums) {
-            indent.writeln('case let value as ${anEnum.name}:');
+        if (root.enums.isNotEmpty) {
+          indent.writeScoped('switch number {', '}', () {
+            var caseNum = 4;
+            for (final Enum anEnum in root.enums) {
+              indent.writeln('case let value as ${anEnum.name}:');
+              indent.inc();
+              indent.writeln(
+                'return ${_classNamePrefix}NumberWrapper(number: NSNumber(value: value.rawValue), type: ${caseNum++})',
+              );
+              indent.dec();
+            }
+            indent.writeln('default:');
             indent.inc();
             indent.writeln(
-              'return ${_classNamePrefix}NumberWrapper(number: NSNumber(value: value.rawValue), type: ${caseNum++})',
+              'return ${_classNamePrefix}NumberWrapper(number: NSNumber(value: 0), type: 0)',
             );
             indent.dec();
-          }
-          indent.writeln('default:');
-          indent.inc();
+          });
+        } else {
           indent.writeln(
             'return ${_classNamePrefix}NumberWrapper(number: NSNumber(value: 0), type: 0)',
           );
-          indent.dec();
-        });
+        }
       },
     );
     indent.newln();

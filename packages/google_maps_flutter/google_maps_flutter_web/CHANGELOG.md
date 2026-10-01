@@ -1,3 +1,7 @@
+## 0.6.4+1
+
+* Fixes AdvancedMarker anchor handling.
+
 ## 0.6.4
 
 * Adds support for tapping points of interest on the map.
