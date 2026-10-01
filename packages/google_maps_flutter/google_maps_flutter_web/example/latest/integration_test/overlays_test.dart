@@ -19,6 +19,7 @@ import 'package:web/web.dart';
 
 @GenerateNiceMocks(<MockSpec<dynamic>>[MockSpec<TileProvider>()])
 import 'overlays_test.mocks.dart';
+import 'resources/pump_map.dart';
 
 MockTileProvider neverTileProvider() {
   final tileProvider = MockTileProvider();
@@ -27,7 +28,10 @@ MockTileProvider neverTileProvider() {
 }
 
 void main() {
-  IntegrationTestWidgetsFlutterBinding.ensureInitialized();
+  // Fails any test that hangs, instead of letting the driver time out.
+  IntegrationTestWidgetsFlutterBinding.ensureInitialized().defaultTestTimeout = const Timeout(
+    Duration(minutes: 2),
+  );
 
   group('TileOverlaysController', () {
     late TileOverlaysController controller;
@@ -139,9 +143,9 @@ void main() {
     testWidgets(
       'clearTileCache',
       (WidgetTester tester) async {
-        final controllerCompleter = Completer<GoogleMapController>();
-        await tester.pumpWidget(
-          MaterialApp(
+        final GoogleMapController controller = await pumpMap(
+          tester,
+          (void Function(GoogleMapController) onMapCreated) => MaterialApp(
             home: Scaffold(
               body: GoogleMap(
                 initialCameraPosition: const CameraPosition(
@@ -149,18 +153,12 @@ void main() {
                   zoom: 14,
                 ),
                 tileOverlays: <TileOverlay>{...tileOverlays.take(2)},
-                onMapCreated: (GoogleMapController value) {
-                  controllerCompleter.complete(value);
-                  addTearDown(() => value.dispose());
-                },
+                onMapCreated: onMapCreated,
               ),
             ),
           ),
         );
-
-        // This is needed to kick-off the rendering of the JS Map flutter widget
-        await tester.pump();
-        final GoogleMapController controller = await controllerCompleter.future;
+        addTearDown(controller.dispose);
 
         await tester.pump();
         verify(tileProviders[0].getTile(any, any, any));
