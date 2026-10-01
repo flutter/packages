@@ -98,10 +98,16 @@ class Chrome {
     final args = <String>[
       if (options.userDataDirectory != null) '--user-data-dir=${options.userDataDirectory}',
       if (url != null) url,
-      if (io.Platform.environment['CHROME_NO_SANDBOX'] == 'true') '--no-sandbox',
-      if (options.headless) '--headless',
-      if (withDebugging) '--remote-debugging-port=${options.debugPort}',
-      '--window-size=${options.windowWidth},${options.windowHeight}',
+      '--disable-background-timer-throttling',
+      '--disable-renderer-backgrounding',
+      '--disable-background-networking',
+      '--disable-sync',
+      '--disable-client-side-phishing-detection',
+      '--disable-notifications',
+      '--disable-features=GCM',
+      '--gcm-checkin-url=http://127.0.0.1',
+      '--gcm-registration-url=http://127.0.0.1',
+      '--gcm-mcs-endpoint=127.0.0.1:0',
       '--disable-extensions',
       '--disable-popup-blocking',
       // Indicates that the browser is in "browse without sign-in" (Guest session) mode.
@@ -110,6 +116,22 @@ class Chrome {
       '--no-default-browser-check',
       '--disable-default-apps',
       '--disable-translate',
+      '--password-store=basic',
+      if (io.Platform.isMacOS) '--use-mock-keychain',
+      '--disable-search-engine-choice-screen',
+      if (io.Platform.environment['CHROME_NO_SANDBOX'] == 'true') '--no-sandbox',
+      if (options.headless) ...<String>[
+        '--headless',
+        '--no-sandbox',
+        if (io.Platform.isLinux) ...<String>[
+          '--use-gl=angle',
+          '--use-angle=swiftshader',
+          '--enable-unsafe-swiftshader',
+          '--disable-gpu-sandbox',
+        ],
+      ],
+      if (withDebugging) '--remote-debugging-port=${options.debugPort}',
+      '--window-size=${options.windowWidth},${options.windowHeight}',
     ];
     final io.Process chromeProcess = await io.Process.start(
       _findSystemChromeExecutable(),

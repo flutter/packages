@@ -29,8 +29,10 @@ You must verify that there are actually changed files to test.
 Command to run:
 
 ```bash
-git fetch origin main
-git diff --name-only origin/main...HEAD | grep '^packages/camera/camera_android_camerax'
+UPSTREAM_PREPUSH=$(git remote -v | grep 'flutter/packages' | head -n 1 | awk '{print $1}')
+UPSTREAM_PREPUSH=${UPSTREAM_PREPUSH:-upstream}
+git fetch $UPSTREAM_PREPUSH main
+git diff --name-only $UPSTREAM_PREPUSH/main...HEAD | grep '^packages/camera/camera_android_camerax'
 ```
 
 If this command outputs nothing,
@@ -51,30 +53,47 @@ is an ancestor of your current `HEAD`.
 Command to run:
 
 ```bash
-git fetch origin main
-git merge-base --is-ancestor origin/main HEAD
+UPSTREAM_PREPUSH=$(git remote -v | grep 'flutter/packages' | head -n 1 | awk '{print $1}')
+UPSTREAM_PREPUSH=${UPSTREAM_PREPUSH:-upstream}
+git fetch $UPSTREAM_PREPUSH main
+git merge-base --is-ancestor $UPSTREAM_PREPUSH/main HEAD
 ```
 
-If this command fails (exits with a non-zero code),
-the branch is behind `origin/main`.
-The code is NOT ready to push.
-The latest changes from `main` must be pulled first,
-and then merge conflicts must be resolved.
+If this command fails (exits with a non-zero code), the branch is behind upstream.
+In this case, check if there are actual merge conflicts by simulating a merge:
+
+```bash
+git merge-tree HEAD $UPSTREAM_PREPUSH/main
+```
+
+If the `merge-tree` command fails (exits with a non-zero code), there are merge conflicts.
+**STOP IMMEDIATELY.** Do not proceed to any subsequent checks and do not run `update-release-info`. Output `# NO, you are not ready to push`, inform the user that there are merge conflicts, and provide the command to reproduce the merge (`git merge $UPSTREAM_PREPUSH/main`).
+
+If the branch is behind but there are no merge conflicts, you may proceed with the remaining checks. However, you must warn the user that they are behind and should pull/merge `$UPSTREAM_PREPUSH/main` before pushing, and you should still avoid running `update-release-info` automatically to prevent creating potential conflicts.
 
 ## 4. Check Unit Tests Pass
 
 Tests ensure that your changes do not break existing functionality
 and that new features work as expected.
-All unit tests must pass before code can be merged.
+All unit tests (both Dart and native Android) must pass before code can be merged.
+
+### Dart Unit Tests
 Command to run:
 
 ```bash
-cd $(git rev-parse --show-toplevel)
-dart run script/tool/bin/flutter_plugin_tools.dart \
+dart pub global run flutter_plugin_tools \
   dart-test --packages camera_android_camerax
 ```
 
-If this command fails, the code is likely not ready to push.
+### Native Unit Tests
+Command to run:
+
+```bash
+dart pub global run flutter_plugin_tools \
+  native-test --android --packages camera_android_camerax --no-integration
+```
+
+If either command fails, the code is not ready to push.
 The tests might have been failing prior to any changes being made,
 so prompt the user to review all found errors
 and fix the newly introduced failures before pushing any code.
@@ -88,14 +107,15 @@ and add a corresponding entry describing the change in `CHANGELOG.md`.
 Command to run:
 
 ```bash
-cd $(git rev-parse --show-toplevel)
-dart run script/tool/bin/flutter_plugin_tools.dart \
+dart pub global run flutter_plugin_tools \
   publish-check --packages camera_android_camerax
 ```
 
 If this command fails, the code WAS NOT ready to push.
 The required version bump and changelog entry must be made
 and committed before code can be pushed.
+
+Additionally, ensure `CHANGELOG.md` formatting follows the [CHANGELOG style guide](https://github.com/flutter/flutter/blob/master/docs/ecosystem/contributing/README.md#changelog-style).
 
 ## 6. Check License Headers
 
@@ -104,8 +124,7 @@ the standard copyright and license header.
 Command to run:
 
 ```bash
-cd $(git rev-parse --show-toplevel)
-dart run script/tool/bin/flutter_plugin_tools.dart license-check --packages camera_android_camerax
+dart pub global run flutter_plugin_tools license-check --packages camera_android_camerax
 ```
 
 If this command fails, the code WAS NOT ready to push.
@@ -122,6 +141,10 @@ be pushed.
 Virtually all changes require a test.
 See [Test Documentation](https://github.com/flutter/flutter/blob/master/docs/ecosystem/testing/Plugin-Tests.md).
 Evaluate the change against that testing rubric.
+
+Specifically check:
+- **Dart changes**: If Dart source files in `lib/` (excluding generated files, e.g., `.g.dart` files) were modified or added, verify that corresponding Dart tests in `test/` were added or updated.
+- **Native Android changes**: If native Android source files (`.java`, `.kt` in `android/src/main/`, excluding Pigeon generated files like `.g.java` and `.g.kt`) were modified or added, verify that corresponding native unit tests in `android/src/test/` were added or updated.
 
 Based on the rubric, if the change requires a test,
 give the user a quote from the testing documentation
@@ -156,7 +179,7 @@ communicate:
 [x] Check for Required Documentation
 [x] Check for Added Tests
 
-If for some reason you had to skip a check or it partially failed but you still think the code is ready to push then call out the skipped work like this: 
+If for some reason you had to skip a check or it partially failed but you still think the code is ready to push then call out the skipped work like this:
 
 # YES, you are ready to push!
 Unit tests failing for <path to failing test> but failure appears unrelated to the work being pushed.

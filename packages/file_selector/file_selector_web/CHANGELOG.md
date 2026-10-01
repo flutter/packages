@@ -1,3 +1,7 @@
+## NEXT
+
+* Updates minimum supported SDK version to Flutter 3.41/Dart 3.11.
+
 ## 0.9.5
 
 * Adds support for mimeType on XFile.
