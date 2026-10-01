@@ -3162,45 +3162,65 @@ void main() {
     expect(controller.value, isNot(contains(WidgetState.selected)));
   });
 
-  testWidgets('ElevatedButton statesController can override the visual selected state', (
-    WidgetTester tester,
-  ) async {
-    final controller = MaterialStatesController();
-    addTearDown(controller.dispose);
+  testWidgets(
+    'ElevatedButton statesController selected override is visual-only until isSelected changes',
+    (WidgetTester tester) async {
+      final SemanticsHandle handle = tester.ensureSemantics();
+      final controller = MaterialStatesController();
+      addTearDown(controller.dispose);
 
-    await tester.pumpWidget(
-      MaterialApp(
-        theme: ThemeData(
-          elevatedButtonTheme: const ElevatedButtonThemeData(
-            variant: StyleVariant.material3Expressive,
+      Widget buildButton({required bool isSelected}) {
+        return MaterialApp(
+          theme: ThemeData(
+            elevatedButtonTheme: const ElevatedButtonThemeData(
+              variant: StyleVariant.material3Expressive,
+            ),
           ),
-        ),
-        home: Center(
-          child: ElevatedButton(
-            statesController: controller,
-            isSelected: false,
-            onPressed: () {},
-            child: const Text('Button'),
+          home: Center(
+            child: ElevatedButton(
+              statesController: controller,
+              isSelected: isSelected,
+              onPressed: () {},
+              child: const Text('Button'),
+            ),
           ),
-        ),
-      ),
-    );
+        );
+      }
 
-    final ColorScheme colors = Theme.of(tester.element(find.byType(ElevatedButton))).colorScheme;
-    Material material = tester.widget<Material>(
-      find.descendant(of: find.byType(ElevatedButton), matching: find.byType(Material)),
-    );
-    expect(material.color, colors.surfaceContainerLow);
+      Color? backgroundColor() {
+        return tester
+            .widget<Material>(
+              find.descendant(of: find.byType(ElevatedButton), matching: find.byType(Material)),
+            )
+            .color;
+      }
 
-    controller.update(WidgetState.selected, true);
-    await tester.pump();
+      await tester.pumpWidget(buildButton(isSelected: false));
+      final ColorScheme colors = Theme.of(tester.element(find.byType(ElevatedButton))).colorScheme;
+      expect(backgroundColor(), colors.surfaceContainerLow);
 
-    expect(controller.value, contains(WidgetState.selected));
-    material = tester.widget<Material>(
-      find.descendant(of: find.byType(ElevatedButton), matching: find.byType(Material)),
-    );
-    expect(material.color, colors.primary);
-  });
+      // Updating the controller changes only the appearance, not the semantics.
+      controller.update(WidgetState.selected, true);
+      await tester.pump();
+      expect(backgroundColor(), colors.primary);
+      expect(
+        tester.getSemantics(find.byType(ElevatedButton)),
+        containsSemantics(hasSelectedState: true, isSelected: false),
+      );
+
+      // Rebuilding with the same isSelected keeps the controller's value.
+      await tester.pumpWidget(buildButton(isSelected: false));
+      expect(controller.value, contains(WidgetState.selected));
+      expect(backgroundColor(), colors.primary);
+
+      // Changing isSelected overwrites the controller's value.
+      await tester.pumpWidget(buildButton(isSelected: true));
+      await tester.pumpWidget(buildButton(isSelected: false));
+      expect(controller.value, isNot(contains(WidgetState.selected)));
+      expect(backgroundColor(), colors.surfaceContainerLow);
+      handle.dispose();
+    },
+  );
 
   test('ElevatedButton debugFillProperties includes selected', () {
     final builder = DiagnosticPropertiesBuilder();
