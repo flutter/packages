@@ -31,9 +31,6 @@ flutter pub add jni
 flutter pub add dev:jnigen dev:logging dev:path
 ```
 
-> [!NOTE]
-> Ensure the resolved `objective_c` version matches the version expected by your `ffigen` version (e.g., `ffigen: ^22.0.0` generates bindings for `objective_c` 9.6.0). In `flutter/packages` (or when supporting Flutter SDKs that pin `meta: 1.18.0`), specify `objective_c: ^9.5.0` in `dependencies` so that `9.6.0` resolves on `master` while CI's legacy analysis (after `remove-dev-dependencies` strips `dev_dependencies`) can still resolve `9.5.0` without failing on `meta ^1.19.0`.
-
 ---
 
 ## 2. Configure `@ConfigurePigeon` Options

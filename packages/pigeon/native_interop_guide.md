@@ -77,8 +77,6 @@ flutter pub add jni
 flutter pub add dev:jnigen dev:logging dev:path
 ```
 
-*Note: Ensure the resolved `objective_c` version matches the version expected by your `ffigen` version (e.g., `ffigen: ^22.0.0` generates bindings for `objective_c` 9.6.0). In `flutter/packages` (or when supporting Flutter SDKs that pin `meta: 1.18.0`), specify `objective_c: ^9.5.0` in `dependencies` so that `9.6.0` resolves on `master` while legacy analysis (after stripping `dev_dependencies`) can still resolve `9.5.0`.*
-
 ### Step 2: Configure Pigeon Options
 
 Enable Native Interop for your target platforms by setting the configuration options in your Pigeon file:

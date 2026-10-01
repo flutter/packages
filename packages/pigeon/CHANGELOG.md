@@ -1,6 +1,6 @@
 ## 29.0.6
 
-* Updates native interop guides and migration skill with SwiftPM `<plugin_name>_objc_gen` target and `objective_c` version guidance.
+* Updates native interop guides and migration skill with SwiftPM `<plugin_name>_objc_gen` target guidance.
 
 ## 29.0.5
 
