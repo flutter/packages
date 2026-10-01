@@ -18,16 +18,11 @@ let package = Package(
   dependencies: [],
   targets: [
     .target(
-      name: "shared_preferences_foundation_objc_gen",
-      dependencies: [],
-      publicHeadersPath: "."
-    ),
-    .target(
       name: "shared_preferences_foundation",
-      dependencies: ["shared_preferences_foundation_objc_gen"],
+      dependencies: [],
       resources: [
         .process("Resources")
       ]
-    ),
+    )
   ]
 )

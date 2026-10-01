@@ -26,7 +26,7 @@ dependencies:
   flutter:
     sdk: flutter
   meta: ^1.10.0
-  objective_c: ^9.6.0
+  objective_c: ^9.5.0
   shared_preferences_platform_interface: ^2.4.0
 
 dev_dependencies:
