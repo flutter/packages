@@ -16,8 +16,7 @@ class MaterialAppExample extends StatelessWidget {
     return WidgetsApp(
       shortcuts: <ShortcutActivator, Intent>{
         ...WidgetsApp.defaultShortcuts,
-        const SingleActivator(LogicalKeyboardKey.keyE):
-            const ActivateIntent(),
+        const SingleActivator(LogicalKeyboardKey.keyE): const ActivateIntent(),
       },
       color: const Color(0xFFFF0000),
       builder: (BuildContext context, Widget? child) {
