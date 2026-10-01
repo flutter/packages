@@ -2851,4 +2851,37 @@ void main() {
     );
     expect(row.spacing, 12.0);
   });
+
+  testWidgets('ElevatedButton.styleFrom supports M3E size and shape variants', (
+    WidgetTester tester,
+  ) async {
+    final ButtonStyle style = ElevatedButton.styleFrom(
+      sizeVariant: ButtonSizeVariant.large,
+      shapeVariant: ButtonShapeVariant.square,
+    );
+    expect(style.sizeVariant, ButtonSizeVariant.large);
+    expect(style.shapeVariant, ButtonShapeVariant.square);
+
+    await tester.pumpWidget(
+      MaterialApp(
+        theme: ThemeData(
+          elevatedButtonTheme: const ElevatedButtonThemeData(
+            variant: StyleVariant.material3Expressive,
+          ),
+        ),
+        home: Center(
+          child: ElevatedButton(style: style, onPressed: () {}, child: const Text('Button')),
+        ),
+      ),
+    );
+
+    expect(tester.getSize(find.byType(ElevatedButton)).height, 96.0);
+    final Material material = tester.widget<Material>(
+      find.descendant(of: find.byType(ElevatedButton), matching: find.byType(Material)),
+    );
+    expect(
+      material.shape,
+      const RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(28.0))),
+    );
+  });
 }
