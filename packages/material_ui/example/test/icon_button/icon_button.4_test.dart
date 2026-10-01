@@ -54,6 +54,16 @@ void main() {
     );
     expect(square.style?.shapeVariant, ButtonShapeVariant.square);
     expect(square.style?.sizeVariant, isNull);
+    // Shape buttons use the default small size.
+    for (final shape in <String>['round', 'square']) {
+      expect(
+        tester.getSize(
+          _buttonMaterial(ValueKey<String>('m3e-icon-button-shape-$shape')),
+        ),
+        const Size(40.0, 40.0),
+        reason: shape,
+      );
+    }
   });
 
   testWidgets('M3E IconButton example square button morphs when selected', (
