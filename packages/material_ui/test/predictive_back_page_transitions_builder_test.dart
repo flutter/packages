@@ -706,10 +706,6 @@ void main() {
       await tester.tap(find.text('push'));
       await tester.pumpAndSettle();
 
-      if (defaultTargetPlatform != TargetPlatform.android) {
-        return;
-      }
-
       // Start back gesture from the right edge (swipeEdge: 1).
       final ByteData startMessage = const StandardMethodCodec().encodeMethodCall(
         const MethodCall('startBackGesture', <String, dynamic>{
@@ -763,7 +759,7 @@ void main() {
       expect(find.text('push'), findsOneWidget);
       expect(find.text('page b'), findsNothing);
     },
-    variant: TargetPlatformVariant.all(),
+    variant: TargetPlatformVariant.only(TargetPlatform.android),
   );
 
   testWidgets('button-triggered back does not start a predictive back animation', (
@@ -797,10 +793,6 @@ void main() {
     await tester.tap(find.text('push'));
     await tester.pumpAndSettle();
 
-    if (defaultTargetPlatform != TargetPlatform.android) {
-      return;
-    }
-
     // Android button-triggered back events report a zero touch offset and
     // zero progress. handleStartBackGesture treats these as isButtonEvent
     // and does not start a predictive animation.
@@ -821,7 +813,7 @@ void main() {
     // The predictive back transition must NOT have started.
     expect(_findPredictiveBackPageTransition(pageTransitionsBuilder), findsNothing);
     expect(_findFallbackPageTransition(pageTransitionsBuilder), findsOneWidget);
-  }, variant: TargetPlatformVariant.all());
+  }, variant: TargetPlatformVariant.only(TargetPlatform.android));
 
   testWidgets('PredictiveBackPageTransitionsBuilder uses fallbackColor', (
     WidgetTester tester,
