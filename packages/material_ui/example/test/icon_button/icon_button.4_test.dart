@@ -53,6 +53,7 @@ void main() {
       find.byKey(const ValueKey<String>('m3e-icon-button-shape-square')),
     );
     expect(square.style?.shapeVariant, ButtonShapeVariant.square);
+    expect(square.style?.sizeVariant, isNull);
   });
 
   testWidgets('M3E IconButton example square button morphs when selected', (
