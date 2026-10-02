@@ -7,8 +7,9 @@
 // returned value is a generated instance of a GlobalMaterialLocalizations or
 // GlobalCupertinoLocalizations object that corresponds to a single locale.
 //
-// The *.arb files are in packages/material_ui/lib/l10n and
-// packages/cupertino_ui/lib/l10n.
+// The *.arb files are in packages/material_ui/lib/src/l10n and
+// packages/cupertino_ui/lib/src/l10n. See script/l10n/README.md for more
+// information.
 //
 // The arb (JSON) format files must contain a single map indexed by locale.
 // Each map value is itself a map with resource identifier keys and localized
@@ -42,7 +43,7 @@
 // If the data looks good, use the `-w` or `--overwrite` option to overwrite the
 // generated_material_localizations.dart and
 // generated_cupertino_localizations.dart files in
-// packages/flutter_localizations/lib/l10n/:
+// packages/material_ui/lib/src/l10n and packages/cupertino_ui/lib/src/l10n:
 //
 // ```
 // dart script/l10n/bin/gen_localizations.dart --overwrite
