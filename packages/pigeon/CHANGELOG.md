@@ -1,6 +1,47 @@
+## 29.0.6
+
+* Updates native interop guides and migration skill with SwiftPM `<plugin_name>_objc_gen` target guidance.
+* Updates FFI and JNI dependencies and pins code generation `dev_dependencies` (`ffigen`, `jnigen`, `swift2objc`, and `swiftgen`).
+
+## 29.0.5
+
+* [dart] Fixes JNI typed data arrays being backed by native memory that is freed when
+  the isolate that read them exits.
+* [dart] Fixes a potential use-after-free when reading FFI typed data arrays.
+* Updates native interop guides and migration skill for `jnigen` 1.0.0 and
+  current tooling requirements.
+
+## 29.0.4
+
+* [swift] Fixes FFI number wrapping for Objective-C `CFBoolean` and floating-point `NSNumber` values.
+* [swift] Fixes FFI dictionary serialization checking `isNullish` on the key instead of the value.
+
+## 29.0.3
+
+* [swift] Uses `isNullish` to check for null and `NSNull` in non-null Flutter API returns.
+* Updates minimum supported SDK version to Flutter 3.41/Dart 3.11.
+
+## 29.0.2
+
+* [swift] Fixes a crash when a Flutter API returns null for a non-null return
+  value and the null arrives as `NSNull`.
+
+## 29.0.1
+
+* [swift] Annotates async `FlutterApi` methods with `@MainActor`.
+
+## 29.0.0
+
+* [swift] [kotlin] Adds experimental support for FFI and JNI.
+* Exposes missing PigeonOptions and language-specific configurations as command-line arguments.
+
+## 28.1.0
+
+* [swift] Adds support for multiple output locations in `swiftOut` and `--swift_out`.
+
 ## 28.0.0
 
-* **Breaking Change** Updates Kotlin and Swift generators to generate `suspend` functions and `async throws` signatures for `@FlutterApi` methods by default, and for `@HostApi` methods annotated with `@async`.
+* **Breaking Change** Updates Kotlin and Swift generators to generate `suspend` functions and `async` signatures for `@FlutterApi` methods by default, and for `@HostApi` methods annotated with `@async`.
   * Use `@asyncCallback` if callback-style signatures are required.
 
 ## 27.3.2

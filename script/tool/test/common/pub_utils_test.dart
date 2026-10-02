@@ -4,6 +4,7 @@
 
 import 'package:file/file.dart';
 import 'package:flutter_plugin_tools/src/common/pub_utils.dart';
+import 'package:platform/platform.dart';
 import 'package:test/test.dart';
 
 import '../mocks.dart';
@@ -19,7 +20,7 @@ void main() {
 
   test('runs with Dart for a non-Flutter package', () async {
     final RepositoryPackage package = createFakePackage('a_package', packagesDir);
-    final platform = MockPlatform();
+    final NativePlatform platform = createMockPlatform();
 
     await runPubGet(package, processRunner, platform);
 
@@ -33,7 +34,7 @@ void main() {
 
   test('runs with Flutter for a Flutter package', () async {
     final RepositoryPackage package = createFakePackage('a_package', packagesDir, isFlutter: true);
-    final platform = MockPlatform();
+    final NativePlatform platform = createMockPlatform();
 
     await runPubGet(package, processRunner, platform);
 
@@ -48,7 +49,55 @@ void main() {
   test('runs with Flutter for a non-Flutter package with a Flutter example', () async {
     final RepositoryPackage package = createFakePackage('a_package', packagesDir, examples: []);
     createFakePackage('example', package.directory, examples: [], isFlutter: true);
-    final platform = MockPlatform();
+    final NativePlatform platform = createMockPlatform();
+
+    await runPubGet(package, processRunner, platform);
+
+    expect(
+      processRunner.recordedCalls,
+      orderedEquals(<ProcessCall>[
+        ProcessCall('flutter', const <String>['pub', 'get'], package.path),
+      ]),
+    );
+  });
+
+  test('runs with Flutter for a non-Flutter package that depends on jni', () async {
+    final RepositoryPackage package = createFakePackage('a_package', packagesDir);
+    package.pubspecFile.writeAsStringSync('''
+name: a_package
+version: 0.0.1
+
+environment:
+  sdk: ^3.0.0
+
+dependencies:
+  jni: ^1.0.0
+''');
+    final NativePlatform platform = createMockPlatform();
+
+    await runPubGet(package, processRunner, platform);
+
+    expect(
+      processRunner.recordedCalls,
+      orderedEquals(<ProcessCall>[
+        ProcessCall('flutter', const <String>['pub', 'get'], package.path),
+      ]),
+    );
+  });
+
+  test('runs with Flutter for a non-Flutter package with a jni dev_dependency', () async {
+    final RepositoryPackage package = createFakePackage('a_package', packagesDir);
+    package.pubspecFile.writeAsStringSync('''
+name: a_package
+version: 0.0.1
+
+environment:
+  sdk: ^3.0.0
+
+dev_dependencies:
+  jni: ^1.0.0
+''');
+    final NativePlatform platform = createMockPlatform();
 
     await runPubGet(package, processRunner, platform);
 
@@ -62,7 +111,7 @@ void main() {
 
   test('uses the correct Flutter command on Windows', () async {
     final RepositoryPackage package = createFakePackage('a_package', packagesDir, isFlutter: true);
-    final platform = MockPlatform(isWindows: true);
+    final NativePlatform platform = createMockPlatform(isWindows: true);
 
     await runPubGet(package, processRunner, platform);
 
@@ -76,7 +125,7 @@ void main() {
 
   test('reports success', () async {
     final RepositoryPackage package = createFakePackage('a_package', packagesDir);
-    final platform = MockPlatform();
+    final NativePlatform platform = createMockPlatform();
 
     final bool result = await runPubGet(package, processRunner, platform);
 
@@ -85,7 +134,7 @@ void main() {
 
   test('reports failure', () async {
     final RepositoryPackage package = createFakePackage('a_package', packagesDir);
-    final platform = MockPlatform();
+    final NativePlatform platform = createMockPlatform();
 
     processRunner.mockProcessesForExecutable['dart'] = <FakeProcessInfo>[
       FakeProcessInfo(MockProcess(exitCode: 1), <String>['pub', 'get']),
