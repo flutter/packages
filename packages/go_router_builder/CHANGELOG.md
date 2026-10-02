@@ -3,6 +3,10 @@
 - Migrates examples to `material_ui` package (1.4.0).
 - Updates minimum supported SDK version to Flutter 3.47/Dart 3.13.
 
+## 4.5.1
+
+- Fixes path parameter regex parsing to support nested parentheses, grouping constructs, and lookahead assertions in `TypedGoRoute` paths.
+
 ## 4.5.0
 
 - Detects routes that resolve to the same URL pattern. Routes are compared by

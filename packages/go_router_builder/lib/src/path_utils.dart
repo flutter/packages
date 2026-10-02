@@ -1,8 +1,96 @@
 // Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
+import 'package:collection/collection.dart';
 
-final RegExp _parameterRegExp = RegExp(r':(\w+)(\((?:\\.|[^\\()])+\))?');
+final RegExp _parameterNameRegExp = RegExp(r':(\w+)');
+
+/// A `:name` occurrence in a path pattern, with its optional constraint.
+class _PathParameter {
+  const _PathParameter({
+    required this.start,
+    required this.end,
+    required this.name,
+    required this.constraint,
+  });
+
+  /// Index of the leading `:`.
+  final int start;
+
+  /// Exclusive end of the whole occurrence, constraint included.
+  final int end;
+
+  final String name;
+
+  /// The `(...)` regex constraint following the name, or '' when absent.
+  final String constraint;
+}
+
+/// Scans [pattern] for `:name` occurrences, each optionally followed by a
+/// `(...)` constraint.
+List<_PathParameter> _pathParametersOf(String pattern) {
+  final parameters = <_PathParameter>[];
+  RegExpMatch? match = _parameterNameRegExp.firstMatch(pattern);
+  while (match != null) {
+    final int closingParen = _closingParenIndex(pattern, match.end);
+    final int end = closingParen != -1 ? closingParen + 1 : match.end;
+    final String? name = match[1];
+
+    if (name != null) {
+      parameters.add(
+        _PathParameter(
+          start: match.start,
+          end: end,
+          name: name,
+          constraint: pattern.substring(match.end, end),
+        ),
+      );
+    }
+    match = _parameterNameRegExp.allMatches(pattern, end).firstOrNull;
+  }
+  return parameters;
+}
+
+/// The index of the `)` that closes the `(` at [start], or -1 when [start] is
+/// not a `(` or the group is never closed.
+///
+/// Escaped characters and character classes never open or close a group, so
+/// `(\()` and `([()])` are both single groups.
+int _closingParenIndex(String pattern, int start) {
+  if (start >= pattern.length || pattern[start] != '(') {
+    return -1;
+  }
+
+  var depth = 0;
+  var inCharacterClass = false;
+  for (var currentIndex = start; currentIndex < pattern.length; currentIndex++) {
+    final String character = pattern[currentIndex];
+    if (character == r'\') {
+      // The next character is a literal: skip it together with the backslash.
+      currentIndex++;
+      continue;
+    }
+    if (inCharacterClass) {
+      if (character == ']') {
+        inCharacterClass = false;
+      }
+      continue;
+    }
+    switch (character) {
+      case '[':
+        inCharacterClass = true;
+      case '(':
+        depth++;
+      case ')':
+        depth--;
+        if (depth == 0) {
+          return currentIndex;
+        }
+    }
+  }
+
+  return -1;
+}
 
 /// Extracts the path parameters from a [pattern] such as `/user/:id`.
 ///
@@ -15,7 +103,7 @@ final RegExp _parameterRegExp = RegExp(r':(\w+)(\((?:\\.|[^\\()])+\))?');
 /// final pathParameters = pathParametersFromPattern(pattern); // {'id', 'bookId'}
 /// ```
 Set<String> pathParametersFromPattern(String pattern) => <String>{
-  for (final RegExpMatch match in _parameterRegExp.allMatches(pattern)) match[1]!,
+  for (final _PathParameter parameter in _pathParametersOf(pattern)) parameter.name,
 };
 
 /// Replaces the parameter names in a [pattern] with a placeholder, so that
@@ -31,7 +119,7 @@ Set<String> pathParametersFromPattern(String pattern) => <String>{
 /// normalizePathParameters(r'item/:id(\d+)'); // r'item/:_(\d+)'
 /// ```
 String normalizePathParameters(String pattern) =>
-    pattern.replaceAllMapped(_parameterRegExp, (Match match) => ':_${match[2] ?? ''}');
+    _replacePathParameters(pattern, (_PathParameter parameter) => ':_${parameter.constraint}');
 
 /// Reconstructs the full path from a [pattern] and path parameters.
 ///
@@ -41,20 +129,21 @@ String normalizePathParameters(String pattern) =>
 /// final pattern = '/family/:id';
 /// final path = patternToPath(pattern, {'id': 'family-id'}); // '/family/family-id'
 /// ```
-String patternToPath(String pattern, Map<String, String> pathParameters) {
+String patternToPath(String pattern, Map<String, String> pathParameters) => _replacePathParameters(
+  pattern,
+  (_PathParameter parameter) => '${pathParameters[parameter.name]}',
+);
+
+/// Rebuilds [pattern], replacing each parameter occurrence with the result of
+/// [replace] and keeping the literal text in between.
+String _replacePathParameters(String pattern, String Function(_PathParameter) replace) {
   final buffer = StringBuffer();
   var start = 0;
-  for (final RegExpMatch match in _parameterRegExp.allMatches(pattern)) {
-    if (match.start > start) {
-      buffer.write(pattern.substring(start, match.start));
-    }
-    final String name = match[1]!;
-    buffer.write(pathParameters[name]);
-    start = match.end;
+  for (final _PathParameter parameter in _pathParametersOf(pattern)) {
+    buffer.write(pattern.substring(start, parameter.start));
+    buffer.write(replace(parameter));
+    start = parameter.end;
   }
-
-  if (start < pattern.length) {
-    buffer.write(pattern.substring(start));
-  }
+  buffer.write(pattern.substring(start));
   return buffer.toString();
 }
