@@ -131,7 +131,7 @@ abstract base class PlatformXFile extends PlatformXEntity {
   /// Platforms may throw an exception if there is an error opening or writing
   /// to the resource.
   Future<PlatformXFile> writeAsString(PlatformWriteAsStringParams params) {
-    throw UnimplementedError('`openWrite` is not implemented on the current platform.');
+    throw UnimplementedError('`writeAsString` is not implemented on the current platform.');
   }
 
   /// Deletes the resource.
