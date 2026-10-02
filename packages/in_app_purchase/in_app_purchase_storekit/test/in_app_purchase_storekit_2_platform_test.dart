@@ -65,6 +65,100 @@ void main() {
       expect(response.productDetails.first.currencySymbol, r'$');
       expect(response.productDetails[1].currencySymbol, r'$');
     });
+    test('should expose the billing plans of a subscription', () async {
+      fakeStoreKit2Platform.subscriptionInfo['123'] = SK2SubscriptionInfoMessage(
+        promotionalOffers: <SK2SubscriptionOfferMessage>[],
+        subscriptionGroupID: 'group',
+        subscriptionPeriod: SK2SubscriptionPeriodMessage(
+          value: 1,
+          unit: SK2SubscriptionPeriodUnitMessage.year,
+        ),
+        pricingTerms: <SK2PricingTermsMessage>[
+          SK2PricingTermsMessage(
+            billingPlanType: SK2BillingPlanTypeMessage.upFront,
+            billingPrice: 119.88,
+            billingDisplayPrice: r'$119.88',
+            billingPeriod: SK2SubscriptionPeriodMessage(
+              value: 1,
+              unit: SK2SubscriptionPeriodUnitMessage.year,
+            ),
+            subscriptionOffers: <SK2SubscriptionOfferMessage>[],
+          ),
+          SK2PricingTermsMessage(
+            billingPlanType: SK2BillingPlanTypeMessage.monthly,
+            billingPrice: 9.99,
+            billingDisplayPrice: r'$9.99',
+            billingPeriod: SK2SubscriptionPeriodMessage(
+              value: 1,
+              unit: SK2SubscriptionPeriodUnitMessage.month,
+            ),
+            subscriptionOffers: <SK2SubscriptionOfferMessage>[
+              SK2SubscriptionOfferMessage(
+                id: 'monthly_intro',
+                price: 0,
+                type: SK2SubscriptionOfferTypeMessage.introductory,
+                period: SK2SubscriptionPeriodMessage(
+                  value: 1,
+                  unit: SK2SubscriptionPeriodUnitMessage.month,
+                ),
+                periodCount: 1,
+                paymentMode: SK2SubscriptionOfferPaymentModeMessage.freeTrial,
+              ),
+            ],
+            commitmentInfo: SK2CommitmentInfoMessage(
+              price: 119.88,
+              displayPrice: r'$119.88',
+              period: SK2SubscriptionPeriodMessage(
+                value: 12,
+                unit: SK2SubscriptionPeriodUnitMessage.month,
+              ),
+            ),
+          ),
+        ],
+      );
+
+      final connection = InAppPurchaseStoreKitPlatform();
+      final ProductDetailsResponse response = await connection.queryProductDetails(<String>{'123'});
+
+      final details = response.productDetails.first as AppStoreProduct2Details;
+      final List<SK2PricingTerms> terms = details.sk2Product.subscription!.pricingTerms!;
+
+      expect(terms, hasLength(2));
+      expect(terms.first.billingPlanType, SK2BillingPlanType.upFront);
+      expect(terms.first.billingDisplayPrice, r'$119.88');
+      expect(terms.first.billingPeriod.unit, SK2SubscriptionPeriodUnit.year);
+      expect(terms.first.subscriptionOffers, isEmpty);
+      expect(terms.first.commitmentInfo, isNull);
+      expect(terms[1].billingPlanType, SK2BillingPlanType.monthly);
+      expect(terms[1].billingPrice, 9.99);
+      expect(terms[1].billingDisplayPrice, r'$9.99');
+      expect(terms[1].billingPeriod.value, 1);
+      expect(terms[1].billingPeriod.unit, SK2SubscriptionPeriodUnit.month);
+      expect(terms[1].subscriptionOffers, hasLength(1));
+      expect(terms[1].subscriptionOffers.first.id, 'monthly_intro');
+      expect(terms[1].commitmentInfo!.price, 119.88);
+      expect(terms[1].commitmentInfo!.displayPrice, r'$119.88');
+      expect(terms[1].commitmentInfo!.period.value, 12);
+      expect(terms[1].commitmentInfo!.period.unit, SK2SubscriptionPeriodUnit.month);
+    });
+
+    test('should expose no billing plans when the platform reports none', () async {
+      fakeStoreKit2Platform.subscriptionInfo['123'] = SK2SubscriptionInfoMessage(
+        promotionalOffers: <SK2SubscriptionOfferMessage>[],
+        subscriptionGroupID: 'group',
+        subscriptionPeriod: SK2SubscriptionPeriodMessage(
+          value: 1,
+          unit: SK2SubscriptionPeriodUnitMessage.year,
+        ),
+      );
+
+      final connection = InAppPurchaseStoreKitPlatform();
+      final ProductDetailsResponse response = await connection.queryProductDetails(<String>{'123'});
+
+      final details = response.productDetails.first as AppStoreProduct2Details;
+      expect(details.sk2Product.subscription!.pricingTerms, isNull);
+    });
+
     test('if query products throws error, should get error object in the response', () async {
       fakeStoreKit2Platform.queryProductException = PlatformException(
         code: 'error_code',
@@ -310,6 +404,77 @@ void main() {
       expect(lastPurchaseOptions.winBackOfferId, 'winBack123');
       expect(lastPurchaseOptions.promotionalOffer!.promotionalOfferId, 'promo123');
       expect(lastPurchaseOptions.introductoryOfferEligibilityCompactJWS, 'jws-value');
+    });
+
+    test('should not set a billing plan type when it is null', () async {
+      final purchaseParam = Sk2PurchaseParam(
+        productDetails: AppStoreProduct2Details.fromSK2Product(dummyProductWrapper),
+        applicationUserName: 'testUser',
+      );
+
+      await iapStoreKitPlatform.buyNonConsumable(purchaseParam: purchaseParam);
+
+      expect(fakeStoreKit2Platform.lastPurchaseOptions!.billingPlanType, isNull);
+    });
+
+    test('should forward the monthly billing plan type', () async {
+      final purchaseParam = Sk2PurchaseParam(
+        productDetails: AppStoreProduct2Details.fromSK2Product(dummyProductWrapper),
+        billingPlanType: SK2BillingPlanType.monthly,
+      );
+
+      await iapStoreKitPlatform.buyNonConsumable(purchaseParam: purchaseParam);
+
+      expect(
+        fakeStoreKit2Platform.lastPurchaseOptions!.billingPlanType,
+        SK2BillingPlanTypeMessage.monthly,
+      );
+    });
+
+    test('should forward a billing plan type alongside the other options', () async {
+      final purchaseParam = Sk2PurchaseParam(
+        productDetails: AppStoreProduct2Details.fromSK2Product(dummyProductWrapper),
+        applicationUserName: 'testUser',
+        quantity: 2,
+        winBackOfferId: 'winBack123',
+        billingPlanType: SK2BillingPlanType.upFront,
+      );
+
+      await iapStoreKitPlatform.buyNonConsumable(purchaseParam: purchaseParam);
+
+      final SK2ProductPurchaseOptionsMessage lastPurchaseOptions =
+          fakeStoreKit2Platform.lastPurchaseOptions!;
+
+      expect(lastPurchaseOptions.appAccountToken, 'testUser');
+      expect(lastPurchaseOptions.quantity, 2);
+      expect(lastPurchaseOptions.winBackOfferId, 'winBack123');
+      expect(lastPurchaseOptions.billingPlanType, SK2BillingPlanTypeMessage.upFront);
+    });
+
+    test('should forward the quantity together with a monthly billing plan', () async {
+      final purchaseParam = Sk2PurchaseParam(
+        productDetails: AppStoreProduct2Details.fromSK2Product(dummyProductWrapper),
+        billingPlanType: SK2BillingPlanType.monthly,
+      );
+
+      await iapStoreKitPlatform.buyNonConsumable(purchaseParam: purchaseParam);
+
+      final SK2ProductPurchaseOptionsMessage lastPurchaseOptions =
+          fakeStoreKit2Platform.lastPurchaseOptions!;
+
+      expect(lastPurchaseOptions.quantity, 1);
+      expect(lastPurchaseOptions.billingPlanType, SK2BillingPlanTypeMessage.monthly);
+    });
+
+    test('should not set a billing plan type for a generic PurchaseParam', () async {
+      final purchaseParam = PurchaseParam(
+        productDetails: AppStoreProduct2Details.fromSK2Product(dummyProductWrapper),
+        applicationUserName: 'testUser',
+      );
+
+      await iapStoreKitPlatform.buyNonConsumable(purchaseParam: purchaseParam);
+
+      expect(fakeStoreKit2Platform.lastPurchaseOptions!.billingPlanType, isNull);
     });
 
     test('should not set introductory offer eligibility JWS for a generic PurchaseParam', () async {

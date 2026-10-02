@@ -3,6 +3,13 @@
 * Updates minimum supported SDK version to Flutter 3.41/Dart 3.11.
 * Fixes lint issues.
 
+## 0.4.14
+
+* Adds support for StoreKit 2 monthly billing plans with a 12-month commitment.
+  `SK2SubscriptionInfo.pricingTerms` reports the billing plans available in the
+  customer's storefront, and `Sk2PurchaseParam.billingPlanType` selects one for
+  a purchase.
+
 ## 0.4.13
 
 * Exposes expirationDate on SK2PurchaseDetails.
