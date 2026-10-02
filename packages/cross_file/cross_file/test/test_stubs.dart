@@ -2,6 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'dart:async';
 import 'dart:convert';
 import 'dart:typed_data';
 
@@ -68,6 +69,9 @@ final class TestFileSystemXFile extends PlatformFileSystemXFile {
     this.onReadAsBytes,
     this.onReadAsString,
     this.onWriteAsBytes,
+    this.onWriteAsString,
+    this.onOpenWrite,
+    this.onDelete,
   }) : super.implementation();
 
   Future<bool> Function()? onExists;
@@ -78,6 +82,9 @@ final class TestFileSystemXFile extends PlatformFileSystemXFile {
   Future<Uint8List> Function()? onReadAsBytes;
   Future<String> Function({required Encoding encoding})? onReadAsString;
   Future<TestFileSystemXFile> Function(Uint8List bytes)? onWriteAsBytes;
+  Future<PlatformFileSystemXFile> Function(PlatformWriteAsStringParams params)? onWriteAsString;
+  StreamSink<Uint8List> Function(PlatformOpenWriteParams params)? onOpenWrite;
+  Future<bool> Function(PlatformFileDeleteParams params)? onDelete;
 
   @override
   Future<bool> exists() async {
@@ -124,6 +131,30 @@ final class TestFileSystemXFile extends PlatformFileSystemXFile {
 
     throw UnimplementedError();
   }
+
+  @override
+  Future<PlatformFileSystemXFile> writeAsString(PlatformWriteAsStringParams params) async {
+    if (onWriteAsString != null) {
+      return await onWriteAsString!(params);
+    }
+    throw UnimplementedError();
+  }
+
+  @override
+  StreamSink<Uint8List> openWrite(PlatformOpenWriteParams params) {
+    if (onOpenWrite != null) {
+      return onOpenWrite!(params);
+    }
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<bool> delete(PlatformFileDeleteParams params) async {
+    if (onDelete != null) {
+      return await onDelete!(params);
+    }
+    throw UnimplementedError();
+  }
 }
 
 final class TestFileSystemXDirectory extends PlatformFileSystemXDirectory {
@@ -157,6 +188,9 @@ final class TestScopedStorageXFile extends PlatformScopedStorageXFile {
     this.onReadAsBytes,
     this.onReadAsString,
     this.onDispose,
+    this.onWriteAsString,
+    this.onOpenWrite,
+    this.onDelete,
   }) : super.implementation();
 
   Future<bool> Function()? onCanRead;
@@ -168,6 +202,9 @@ final class TestScopedStorageXFile extends PlatformScopedStorageXFile {
   Future<Uint8List> Function()? onReadAsBytes;
   Future<String> Function({required Encoding encoding})? onReadAsString;
   Future<void> Function()? onDispose;
+  Future<PlatformScopedStorageXFile> Function(PlatformWriteAsStringParams params)? onWriteAsString;
+  StreamSink<Uint8List> Function(PlatformOpenWriteParams params)? onOpenWrite;
+  Future<bool> Function(PlatformFileDeleteParams params)? onDelete;
 
   @override
   Future<bool> canRead() async {
@@ -214,6 +251,30 @@ final class TestScopedStorageXFile extends PlatformScopedStorageXFile {
   @override
   Future<void> dispose() async {
     return await onDispose?.call();
+  }
+
+  @override
+  Future<PlatformScopedStorageXFile> writeAsString(PlatformWriteAsStringParams params) async {
+    if (onWriteAsString != null) {
+      return await onWriteAsString!(params);
+    }
+    throw UnimplementedError();
+  }
+
+  @override
+  StreamSink<Uint8List> openWrite(PlatformOpenWriteParams params) {
+    if (onOpenWrite != null) {
+      return onOpenWrite!(params);
+    }
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<bool> delete(PlatformFileDeleteParams params) async {
+    if (onDelete != null) {
+      return await onDelete!(params);
+    }
+    throw UnimplementedError();
   }
 }
 
