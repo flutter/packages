@@ -1,3 +1,7 @@
+## 1.6.0
+
+- Adds `enableInlinePrediction` to `TextFormField`.
+
 ## 1.5.0
 
 - Adds Material 3 Expressive support for IconButton.
