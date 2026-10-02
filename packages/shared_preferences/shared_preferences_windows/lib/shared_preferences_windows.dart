@@ -326,7 +326,35 @@ Map<String, Object> _readFileSync(File localDataFile) {
   if (stringMap.isEmpty) {
     return <String, Object>{};
   }
-  final Object? data = json.decode(stringMap);
+  return _decodePreferences(stringMap);
+}
+
+/// Decodes the stored file's [contents], keeping what it can of a damaged one.
+///
+/// Two processes writing the file at once, such as two instances of an app,
+/// can leave one complete write followed by the tail of an older, longer one.
+/// That leading write is still valid JSON, so it is kept. Anything else that
+/// cannot be read is treated as empty. Either way the next write replaces the
+/// file, whereas throwing here would fail every write, since each one starts
+/// by reading the file, and nothing could be saved again.
+Map<String, Object> _decodePreferences(String contents) {
+  Object? data;
+  try {
+    data = json.decode(contents);
+  } on FormatException catch (e) {
+    final int? offset = e.offset;
+    if (offset != null && offset > 0 && offset < contents.length) {
+      try {
+        data = json.decode(contents.substring(0, offset));
+      } on FormatException {
+        data = null;
+      }
+    }
+    debugPrint(
+      'Preferences file was damaged (${e.message}); '
+      '${data is Map ? 'kept its first $offset characters' : 'starting from empty'}.',
+    );
+  }
   return data is Map ? data.cast<String, Object>() : <String, Object>{};
 }
 

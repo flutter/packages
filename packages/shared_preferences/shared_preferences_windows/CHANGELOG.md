@@ -7,6 +7,10 @@
   every key the other had written since. A write now reads the file, applies
   its change and writes back with no suspension in between, so it starts from
   what is on disk and cannot interleave with another write.
+* Recovers from a damaged `shared_preferences.json` instead of throwing. When
+  the file is a complete write followed by leftover text, as two processes
+  writing at once can leave it, the complete write is kept; otherwise the file
+  reads as empty. Either way the next write replaces it.
 * Updates minimum supported SDK version to Flutter 3.38/Dart 3.10.
 
 ## 2.4.1

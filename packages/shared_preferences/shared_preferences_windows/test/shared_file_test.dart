@@ -52,6 +52,48 @@ void main() {
     return json.decode(contents) as Map<String, Object?>;
   }
 
+  Future<void> writeFile(String contents) async {
+    final String? directory = await pathProvider.getApplicationSupportPath();
+    fs.file(path.join(directory!, 'shared_preferences.json'))
+      ..createSync(recursive: true)
+      ..writeAsStringSync(contents);
+  }
+
+  // What two processes writing at once can leave: one complete write followed
+  // by the tail of an older, longer one.
+  const damagedFile = '{"$asyncKey":"kept","$legacyKey":"also kept"}7}';
+
+  test('a damaged file keeps its complete leading write', () async {
+    await writeFile(damagedFile);
+
+    expect(await getAsyncPreferences().getString(asyncKey, options), 'kept');
+    final Map<String, Object> legacy = await getLegacyPreferences().getAllWithParameters(
+      GetAllParameters(filter: PreferencesFilter(prefix: 'flutter.')),
+    );
+    expect(legacy, <String, Object>{legacyKey: 'also kept'});
+  });
+
+  test('a write repairs a damaged file', () async {
+    await writeFile(damagedFile);
+
+    await getAsyncPreferences().setString('another', 'value', options);
+
+    expect(await readFile(), <String, Object?>{
+      asyncKey: 'kept',
+      legacyKey: 'also kept',
+      'another': 'value',
+    });
+  });
+
+  test('a write replaces a file that cannot be read at all', () async {
+    await writeFile('{"$asyncKey":"cut off');
+
+    expect(await getAsyncPreferences().getString(asyncKey, options), isNull);
+    await getLegacyPreferences().setValue('String', legacyKey, 'saved');
+
+    expect(await readFile(), <String, Object?>{legacyKey: 'saved'});
+  });
+
   test('a legacy write keeps keys the async store wrote after it loaded', () async {
     final SharedPreferencesWindows legacy = getLegacyPreferences();
     final SharedPreferencesAsyncWindows async = getAsyncPreferences();
