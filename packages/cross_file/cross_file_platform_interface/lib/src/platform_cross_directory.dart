@@ -125,6 +125,7 @@ base class PlatformListParams {
 base class PlatformCreateParams {
   /// Constructs a [PlatformCreateParams];
   const PlatformCreateParams(this.name);
+
   /// The path excluded name of the resource or container being created.
   final String name;
 }

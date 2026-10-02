@@ -39,7 +39,7 @@ abstract base class XDirectory extends XEntity {
   @override
   PlatformXDirectory get platform => super.platform as PlatformXDirectory;
 
-  /// Lists the sub-directories and files of this directory.
+  /// Lists the sub-directories and resources of this directory.
   Stream<XEntity> list() {
     // Converts PlatformXEntities to XEntities.
     return platform.list(const PlatformListParams()).map<XEntity>((PlatformXEntity entity) {
@@ -77,6 +77,8 @@ abstract base class XDirectory extends XEntity {
 
   /// Creates a container in this the container.
   ///
+  /// `name`: Path excluded name of the resource being created.
+  ///
   /// Platforms may throw an exception if there is an error creating the
   /// container.
   Future<XDirectory> createDirectory(String name) async {
@@ -93,6 +95,8 @@ abstract base class XDirectory extends XEntity {
   }
 
   /// Deletes the container.
+  ///
+  /// `name`: Path excluded name of the container being created.
   ///
   /// Platforms may throw an exception if there is an error deleting the
   /// container.
