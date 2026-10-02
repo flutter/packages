@@ -90,7 +90,10 @@ Future<void> main(List<String> args) async {
   const ExpansionTileTemplateM3().generateFile(verbose: verbose);
   const FabTemplateM3().generateFile(verbose: verbose);
   const FilterChipTemplateM3().generateFile(verbose: verbose);
-  // const IconButtonTemplateM3().generateFile(verbose: verbose);
+  const IconButtonTemplateM3('Icon Button').generateFile(verbose: verbose);
+  const IconButtonTemplateM3('Filled Icon Button').generateFile(verbose: verbose);
+  const IconButtonTemplateM3('Filled Tonal Icon Button').generateFile(verbose: verbose);
+  const IconButtonTemplateM3('Outlined Icon Button').generateFile(verbose: verbose);
   const IconButtonTemplateM3E('Icon Button').generateFile(verbose: verbose);
   const IconButtonTemplateM3E('Filled Icon Button').generateFile(verbose: verbose);
   const IconButtonTemplateM3E('Filled Tonal Icon Button').generateFile(verbose: verbose);
