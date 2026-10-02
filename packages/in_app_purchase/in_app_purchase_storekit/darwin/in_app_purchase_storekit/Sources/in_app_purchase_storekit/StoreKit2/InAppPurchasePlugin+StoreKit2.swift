@@ -322,11 +322,12 @@ extension InAppPurchasePlugin: InAppPurchase2API {
   /// Wrapper method around StoreKit2's finish() method https://developer.apple.com/documentation/storekit/transaction/3749694-finish
   func finish(id: Int64, completion: @escaping (Result<Void, Error>) -> Void) {
     Task {
-      let transaction = try await fetchTransaction(by: UInt64(id))
-      if let transaction = transaction {
+      // Report success when no verified transaction matches, as StoreKit 1
+      // does; a finished consumable is no longer in Transaction.all.
+      if let transaction = await fetchTransaction(by: UInt64(id)) {
         await transaction.finish()
-        completion(.success(Void()))
       }
+      completion(.success(Void()))
     }
   }
 
@@ -516,7 +517,7 @@ extension InAppPurchasePlugin: InAppPurchase2API {
   }
 
   /// Helper function to fetch specific transaction
-  func fetchTransaction(by id: UInt64) async throws -> Transaction? {
+  func fetchTransaction(by id: UInt64) async -> Transaction? {
     for await result in Transaction.all {
       switch result {
       case .verified(let transaction):
