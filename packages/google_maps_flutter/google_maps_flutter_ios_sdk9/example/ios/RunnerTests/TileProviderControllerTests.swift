@@ -17,28 +17,26 @@ class StubTileReceiver: NSObject, GMSTileReceiver {
 // A tile provider that expects a single call to
 // tileWithOverlayIdentifier:location:zoom:completion: on the main thread,
 // and then confirms it.
-class TestTileProvider: NSObject, TileProviderDelegate {
+class TestTileProvider: TileProviderDelegate {
   var onTileCalled: () -> Void
 
   init(onTileCalled: @escaping () -> Void) {
     self.onTileCalled = onTileCalled
-    super.init()
   }
 
-  func tile(
+  @MainActor func tile(
     withOverlayIdentifier tileOverlayId: String,
-    location: FGMPlatformPoint,
-    zoom: Int,
-    completion: @escaping (FGMPlatformTile?, FlutterError?) -> Void
-  ) {
-    #expect(Thread.isMainThread)
+    location: PlatformPoint,
+    zoom: Int64,
+  ) async throws -> PlatformTile {
     onTileCalled()
+    return PlatformTile(width: 0, height: 0)
   }
 }
 
 @MainActor struct TileProviderControllerTests {
 
-  @Test func callChannelOnPlatformThread() async {
+  @Test func tileProviderCallsFlutterApi() async {
     var continuationToResume: CheckedContinuation<Void, Never>?
 
     let tileProvider = TestTileProvider {

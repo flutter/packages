@@ -1,3 +1,8 @@
+## NEXT
+
+* Updates the example app to Robolectric 4.17.
+* Updates minimum supported SDK version to Flutter 3.41/Dart 3.11.
+
 ## 2.14.0
 
 * Adds video quality selection support for HLS/DASH adaptive streams via
