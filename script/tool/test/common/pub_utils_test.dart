@@ -61,6 +61,54 @@ void main() {
     );
   });
 
+  test('runs with Flutter for a non-Flutter package that depends on jni', () async {
+    final RepositoryPackage package = createFakePackage('a_package', packagesDir);
+    package.pubspecFile.writeAsStringSync('''
+name: a_package
+version: 0.0.1
+
+environment:
+  sdk: ^3.0.0
+
+dependencies:
+  jni: ^1.0.0
+''');
+    final NativePlatform platform = createMockPlatform();
+
+    await runPubGet(package, processRunner, platform);
+
+    expect(
+      processRunner.recordedCalls,
+      orderedEquals(<ProcessCall>[
+        ProcessCall('flutter', const <String>['pub', 'get'], package.path),
+      ]),
+    );
+  });
+
+  test('runs with Flutter for a non-Flutter package with a jni dev_dependency', () async {
+    final RepositoryPackage package = createFakePackage('a_package', packagesDir);
+    package.pubspecFile.writeAsStringSync('''
+name: a_package
+version: 0.0.1
+
+environment:
+  sdk: ^3.0.0
+
+dev_dependencies:
+  jni: ^1.0.0
+''');
+    final NativePlatform platform = createMockPlatform();
+
+    await runPubGet(package, processRunner, platform);
+
+    expect(
+      processRunner.recordedCalls,
+      orderedEquals(<ProcessCall>[
+        ProcessCall('flutter', const <String>['pub', 'get'], package.path),
+      ]),
+    );
+  });
+
   test('uses the correct Flutter command on Windows', () async {
     final RepositoryPackage package = createFakePackage('a_package', packagesDir, isFlutter: true);
     final NativePlatform platform = createMockPlatform(isWindows: true);
