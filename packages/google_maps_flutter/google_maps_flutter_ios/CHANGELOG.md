@@ -1,7 +1,6 @@
-## NEXT
+## 2.18.7
 
-* Updates README to note that `GoogleMap.onPointOfInterestTap` is not supported;
-  use an SDK-specific implementation package instead.
+* Updates README to note that `GoogleMap.onPointOfInterestTap` is not supported.
 * Updates minimum supported SDK version to Flutter 3.41/Dart 3.11.
 
 ## 2.18.6
