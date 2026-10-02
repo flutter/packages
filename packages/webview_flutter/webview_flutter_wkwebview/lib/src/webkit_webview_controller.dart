@@ -953,6 +953,7 @@ class WebKitWebViewWidgetCreationParams extends PlatformWebViewWidgetCreationPar
     required super.controller,
     super.layoutDirection,
     super.gestureRecognizers,
+    this.uiKitGestureBlockingPolicy = .fallbackToPluginDefault,
   });
 
   /// Constructs a [WebKitWebViewWidgetCreationParams] using a
@@ -966,14 +967,33 @@ class WebKitWebViewWidgetCreationParams extends PlatformWebViewWidgetCreationPar
         gestureRecognizers: params.gestureRecognizers,
       );
 
+  /// When Flutter blocks the `UIGestureRecognizer`s that the underlying
+  /// `WKWebView` installs on itself.
+  ///
+  /// Blocking them is what lets a Flutter gesture win over a gesture inside the
+  /// web view; the policy controls how that decision is made.
+  ///
+  /// This is only used on iOS; the value is ignored on macOS.
+  ///
+  /// Defaults to [UiKitViewGestureBlockingPolicy.fallbackToPluginDefault],
+  /// which uses the policy the plugin registers the platform view with.
+  ///
+  /// With [UiKitViewGestureBlockingPolicy.doNotBlockGesture], Flutter blocks
+  /// these gesture recognizers based on hit-test results instead of relying on
+  /// Flutter's gesture arena. This can work around a web view that stops
+  /// responding to touches, but may cause the web view to recognize a gesture
+  /// that should have been blocked.
+  final UiKitViewGestureBlockingPolicy uiKitGestureBlockingPolicy;
+
   @override
-  int get hashCode => Object.hash(controller, layoutDirection);
+  int get hashCode => Object.hash(controller, layoutDirection, uiKitGestureBlockingPolicy);
 
   @override
   bool operator ==(Object other) {
     return other is WebKitWebViewWidgetCreationParams &&
         controller == other.controller &&
-        layoutDirection == other.layoutDirection;
+        layoutDirection == other.layoutDirection &&
+        uiKitGestureBlockingPolicy == other.uiKitGestureBlockingPolicy;
   }
 }
 
@@ -1013,6 +1033,7 @@ class WebKitWebViewWidget extends PlatformWebViewWidget {
       return UiKitView(
         key: key,
         viewType: 'plugins.flutter.io/webview',
+        gestureBlockingPolicy: _webKitParams.uiKitGestureBlockingPolicy,
         onPlatformViewCreated: (_) {},
         layoutDirection: params.layoutDirection,
         gestureRecognizers: params.gestureRecognizers,

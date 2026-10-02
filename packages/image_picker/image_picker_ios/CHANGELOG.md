@@ -1,6 +1,10 @@
-## 0.8.13+9
+## 0.8.13+10
 
 * Returns an error when selected image data cannot be decoded.
+
+## 0.8.13+9
+
+* Adds injectable protocol seams for camera, photo library, and PHPicker APIs.
 
 ## 0.8.13+8
 
