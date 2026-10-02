@@ -3,7 +3,10 @@
 // found in the LICENSE file.
 
 import 'dart:convert';
+import 'dart:io' as io;
+import 'dart:typed_data';
 
+import 'package:file/file.dart';
 import 'package:file/memory.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:path/path.dart' as path;
@@ -92,6 +95,37 @@ void main() {
     await getLegacyPreferences().setValue('String', legacyKey, 'saved');
 
     expect(await readFile(), <String, Object?>{legacyKey: 'saved'});
+  });
+
+  test('a damaged file can end part-way through a character', () async {
+    final String? directory = await pathProvider.getApplicationSupportPath();
+    fs.file(path.join(directory!, 'shared_preferences.json'))
+      ..createSync(recursive: true)
+      ..writeAsBytesSync(<int>[
+        ...utf8.encode('{"$asyncKey":"caf\u00e9"}'),
+        // The second byte of a two-byte character, left over from a longer write.
+        0xA9,
+        ...utf8.encode('"}'),
+      ]);
+
+    expect(await getAsyncPreferences().getString(asyncKey, options), 'caf\u00e9');
+  });
+
+  test('a write does not trust a file another process is writing', () async {
+    const complete = '{"$asyncKey":"kept","$legacyKey":"also kept"}';
+    await writeFile(complete);
+    // The first read lands while another process has written only part of it.
+    final preferences = SharedPreferencesAsyncWindows()
+      ..fs = _CutOffFirstReadFileSystem(fs, complete.length ~/ 2)
+      ..pathProvider = pathProvider;
+
+    await preferences.setString('another', 'value', options);
+
+    expect(await readFile(), <String, Object?>{
+      asyncKey: 'kept',
+      legacyKey: 'also kept',
+      'another': 'value',
+    });
   });
 
   test('a legacy write keeps keys the async store wrote after it loaded', () async {
@@ -197,4 +231,48 @@ void main() {
 
     expect(await readFile(), <String, Object?>{legacyKey: 'legacy value'});
   });
+}
+
+/// A file system whose first read of any file returns only its first
+/// [cutOffAt] bytes, as if another process were part-way through writing it.
+class _CutOffFirstReadFileSystem extends ForwardingFileSystem {
+  _CutOffFirstReadFileSystem(super.delegate, this.cutOffAt);
+
+  final int cutOffAt;
+  bool _cutOff = false;
+
+  @override
+  File file(dynamic path) => _CutOffFirstReadFile(this, delegate.file(path));
+}
+
+class _CutOffFirstReadFile extends ForwardingFileSystemEntity<File, io.File> with ForwardingFile {
+  _CutOffFirstReadFile(this.fileSystem, this.delegate);
+
+  @override
+  final _CutOffFirstReadFileSystem fileSystem;
+
+  @override
+  final File delegate;
+
+  @override
+  Uint8List readAsBytesSync() {
+    final Uint8List bytes = delegate.readAsBytesSync();
+    if (fileSystem._cutOff) {
+      return bytes;
+    }
+    fileSystem._cutOff = true;
+    return Uint8List.sublistView(bytes, 0, fileSystem.cutOffAt);
+  }
+
+  @override
+  String readAsStringSync({Encoding encoding = utf8}) => encoding.decode(readAsBytesSync());
+
+  @override
+  File wrapFile(io.File delegate) => _CutOffFirstReadFile(fileSystem, delegate as File);
+
+  @override
+  Directory wrapDirectory(io.Directory delegate) => delegate as Directory;
+
+  @override
+  Link wrapLink(io.Link delegate) => delegate as Link;
 }

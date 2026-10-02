@@ -3,7 +3,8 @@
 // found in the LICENSE file.
 
 import 'dart:async';
-import 'dart:convert' show json;
+import 'dart:convert' show json, utf8;
+import 'dart:io' show sleep;
 
 import 'package:file/file.dart';
 import 'package:file/local.dart';
@@ -322,38 +323,57 @@ Map<String, Object> _readFileSync(File localDataFile) {
   if (!localDataFile.existsSync()) {
     return <String, Object>{};
   }
-  final String stringMap = localDataFile.readAsStringSync();
-  if (stringMap.isEmpty) {
-    return <String, Object>{};
+  // A write empties the file and then fills it, so another process reading it
+  // in between sees it empty or cut off. Treating that as the stored data would
+  // make the next write here replace every key with just its own, so read again
+  // after a moment; the other write is long finished by then. Only a file that
+  // stays unreadable, such as one a crash left half-written, reads as empty.
+  for (var attempt = 0; ; attempt++) {
+    // Leniently: a damaged file can end part-way through a multi-byte character.
+    final String contents = utf8.decode(localDataFile.readAsBytesSync(), allowMalformed: true);
+    final Map<String, Object>? preferences = _decodePreferences(contents);
+    if (preferences != null) {
+      return preferences;
+    }
+    if (attempt == _unreadableFileRetries) {
+      debugPrint('Preferences file is unreadable; starting from empty.');
+      return <String, Object>{};
+    }
+    sleep(_unreadableFileRetryDelay);
   }
-  return _decodePreferences(stringMap);
 }
 
-/// Decodes the stored file's [contents], keeping what it can of a damaged one.
+/// How many times [_readFileSync] reads an empty or unreadable file again.
+const int _unreadableFileRetries = 5;
+
+/// The pause before each of those reads.
+const Duration _unreadableFileRetryDelay = Duration(milliseconds: 20);
+
+/// Decodes the stored file's [contents], or returns null if they are empty or
+/// cannot be read at all.
 ///
 /// Two processes writing the file at once, such as two instances of an app,
 /// can leave one complete write followed by the tail of an older, longer one.
-/// That leading write is still valid JSON, so it is kept. Anything else that
-/// cannot be read is treated as empty. Either way the next write replaces the
-/// file, whereas throwing here would fail every write, since each one starts
-/// by reading the file, and nothing could be saved again.
-Map<String, Object> _decodePreferences(String contents) {
+/// That leading write is still valid JSON and is kept, so the next write
+/// replaces the damage.
+Map<String, Object>? _decodePreferences(String contents) {
+  if (contents.isEmpty) {
+    return null;
+  }
   Object? data;
   try {
     data = json.decode(contents);
   } on FormatException catch (e) {
     final int? offset = e.offset;
-    if (offset != null && offset > 0 && offset < contents.length) {
-      try {
-        data = json.decode(contents.substring(0, offset));
-      } on FormatException {
-        data = null;
-      }
+    if (offset == null || offset <= 0 || offset >= contents.length) {
+      return null;
     }
-    debugPrint(
-      'Preferences file was damaged (${e.message}); '
-      '${data is Map ? 'kept its first $offset characters' : 'starting from empty'}.',
-    );
+    try {
+      data = json.decode(contents.substring(0, offset));
+    } on FormatException {
+      return null;
+    }
+    debugPrint('Preferences file was damaged (${e.message}); kept its first $offset characters.');
   }
   return data is Map ? data.cast<String, Object>() : <String, Object>{};
 }
