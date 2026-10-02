@@ -87,5 +87,66 @@ void main() {
 
       await file.dispose();
     });
+
+    test('createFile', () async {
+      const fileName = 'new_file.txt';
+      CrossFilePlatform.instance = TestCrossFilePlatform(
+        onCreatePlatformScopedStorageXDirectory:
+            (PlatformScopedStorageXDirectoryCreationParams params) => TestScopedStorageXDirectory(
+              params,
+              onCreateFile: expectAsync1((PlatformCreateParams createParams) async {
+                expect(createParams.name, fileName);
+                return TestScopedStorageXFile(
+                  const PlatformScopedStorageXFileCreationParams(uri: fileName),
+                );
+              }),
+            ),
+      );
+
+      final directory = ScopedStorageXDirectory(uri: 'uri');
+      final XFile file = await directory.createFile(fileName);
+
+      expect(file, isA<ScopedStorageXFile>());
+      expect(file.uri, fileName);
+    });
+
+    test('createDirectory', () async {
+      const dirName = 'sub_dir';
+      CrossFilePlatform.instance = TestCrossFilePlatform(
+        onCreatePlatformScopedStorageXDirectory:
+            (PlatformScopedStorageXDirectoryCreationParams params) => TestScopedStorageXDirectory(
+              params,
+              onCreateDirectory: expectAsync1((PlatformCreateParams createParams) async {
+                expect(createParams.name, dirName);
+                return TestScopedStorageXDirectory(
+                  const PlatformScopedStorageXDirectoryCreationParams(uri: dirName),
+                );
+              }),
+            ),
+      );
+
+      final directory = ScopedStorageXDirectory(uri: 'uri');
+      final XDirectory subDir = await directory.createDirectory(dirName);
+
+      expect(subDir, isA<ScopedStorageXDirectory>());
+      expect(subDir.uri, dirName);
+    });
+
+    test('delete', () async {
+      CrossFilePlatform.instance = TestCrossFilePlatform(
+        onCreatePlatformScopedStorageXDirectory:
+            (PlatformScopedStorageXDirectoryCreationParams params) => TestScopedStorageXDirectory(
+              params,
+              onDelete: expectAsync1((PlatformDirectoryDeleteParams deleteParams) async {
+                return true;
+              }),
+            ),
+      );
+
+      final directory = ScopedStorageXDirectory(uri: 'uri');
+      final bool result = await directory.delete();
+
+      expect(result, isTrue);
+    });
   });
 }
