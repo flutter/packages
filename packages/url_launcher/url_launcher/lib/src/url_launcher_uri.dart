@@ -104,5 +104,5 @@ Future<bool> supportsLaunchMode(LaunchMode mode) {
 /// If this returns false, [closeInAppWebView] will not work when launching
 /// URLs with [mode].
 Future<bool> supportsCloseForLaunchMode(LaunchMode mode) {
-  return UrlLauncherPlatform.instance.supportsMode(convertLaunchMode(mode));
+  return UrlLauncherPlatform.instance.supportsCloseForMode(convertLaunchMode(mode));
 }
