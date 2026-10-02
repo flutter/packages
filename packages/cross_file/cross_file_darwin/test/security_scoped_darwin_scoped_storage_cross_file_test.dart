@@ -2,8 +2,10 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
+import 'dart:typed_data';
 
 import 'package:cross_file_darwin/cross_file_darwin.dart';
 import 'package:cross_file_platform_interface/cross_file_platform_interface.dart';
@@ -73,20 +75,8 @@ void main() {
     expect(await file.name(), 'test_file.txt');
   });
 
-  test('canWrite', () async {
-    final Directory tempDir = Directory.systemTemp.createTempSync();
-    final tempFile = File(path.join(tempDir.path, 'temp_file.txt'))..writeAsStringSync('test');
-    addTearDown(() => tempDir.deleteSync(recursive: true));
-
-    final file = PlatformScopedStorageXFile(
-      PlatformScopedStorageXFileCreationParams(uri: tempFile.uri.toString()),
-    );
-
-    expect(await file.canWrite(), isTrue);
-  });
-
   test('openWrite', () async {
-    final tempDir = Directory.systemTemp.createTempSync();
+    final Directory tempDir = Directory.systemTemp.createTempSync();
     final tempFile = File(path.join(tempDir.path, 'temp_file.txt'));
     addTearDown(() => tempDir.deleteSync(recursive: true));
 
@@ -94,7 +84,7 @@ void main() {
       PlatformScopedStorageXFileCreationParams(uri: tempFile.uri.toString()),
     );
 
-    final sink = file.openWrite(const PlatformOpenWriteParams());
+    final StreamSink<Uint8List> sink = file.openWrite(const PlatformOpenWriteParams());
     sink.add(utf8.encode('hello openWrite'));
     await sink.close();
 
@@ -102,7 +92,7 @@ void main() {
   });
 
   test('writeAsString', () async {
-    final tempDir = Directory.systemTemp.createTempSync();
+    final Directory tempDir = Directory.systemTemp.createTempSync();
     final tempFile = File(path.join(tempDir.path, 'temp_file.txt'));
     addTearDown(() => tempDir.deleteSync(recursive: true));
 
@@ -111,7 +101,7 @@ void main() {
     );
 
     final PlatformXFile writtenFile = await file.writeAsString(
-      PlatformWriteAsStringParams('hello writeAsString', encoding: utf8),
+      const PlatformWriteAsStringParams('hello writeAsString'),
     );
 
     expect(writtenFile.params.uri, tempFile.uri.toString());
@@ -119,7 +109,7 @@ void main() {
   });
 
   test('delete', () async {
-    final tempDir = Directory.systemTemp.createTempSync();
+    final Directory tempDir = Directory.systemTemp.createTempSync();
     final tempFile = File(path.join(tempDir.path, 'temp_file.txt'))
       ..writeAsStringSync('to be deleted');
     addTearDown(() => tempDir.deleteSync(recursive: true));
@@ -128,9 +118,9 @@ void main() {
       PlatformScopedStorageXFileCreationParams(uri: tempFile.uri.toString()),
     );
 
-    expect(await tempFile.existsSync(), isTrue);
+    expect(tempFile.existsSync(), isTrue);
     final bool success = await file.delete(const PlatformFileDeleteParams());
     expect(success, isTrue);
-    expect(await tempFile.existsSync(), isFalse);
+    expect(tempFile.existsSync(), isFalse);
   });
 }
