@@ -2,6 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'dart:async';
 import 'dart:convert';
 import 'dart:typed_data';
 
@@ -89,4 +90,35 @@ abstract base class XFile extends XEntity {
   /// If the file is identified by a path, only the base name of the file will
   /// be included in the name.
   Future<String?> name() => platform.name();
+
+  /// Creates a new independent [StreamSink] for the resource.
+  ///
+  /// If an error occurs while opening or writing to the resource, the
+  /// [StreamSink.done] and [StreamSink.close] methods will throw an exception.
+  StreamSink<Uint8List> openWrite() => platform.openWrite(const PlatformOpenWriteParams());
+
+  /// Writes a string to a resource.
+  ///
+  /// Platforms may throw an exception if there is an error opening or writing
+  /// to the resource.
+  Future<XFile> writeAsString(String contents, {Encoding encoding = utf8}) async {
+    final PlatformXFile file = await platform.writeAsString(
+      PlatformWriteAsStringParams(contents, encoding: encoding),
+    );
+
+    switch (file) {
+      case PlatformScopedStorageXFile():
+        return ScopedStorageXFile.fromPlatform(file);
+      case PlatformFileSystemXFile():
+        return FileSystemXFile.fromPlatform(file);
+      default:
+        throw Exception('Unsupported XFile type was returned: ${file.runtimeType}');
+    }
+  }
+
+  /// Deletes the resource.
+  ///
+  /// Platforms may throw an exception if there is an error deleting the
+  /// resource.
+  Future<bool> delete() => platform.delete(const PlatformFileDeleteParams());
 }

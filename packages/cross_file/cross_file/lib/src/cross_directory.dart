@@ -6,6 +6,7 @@ import 'package:cross_file_platform_interface/cross_file_platform_interface.dart
 import 'package:flutter/foundation.dart' show immutable, internal, protected;
 
 import 'cross_entity.dart';
+import 'cross_file.dart';
 import 'file_system/file_system_cross_directory.dart';
 import 'file_system/file_system_cross_file.dart';
 import 'scoped_storage/scoped_storage_cross_directory.dart';
@@ -56,4 +57,44 @@ abstract base class XDirectory extends XEntity {
       return XEntity(entity);
     });
   }
+
+  /// Creates a resource in this container.
+  ///
+  /// Platforms may throw an exception if there is an error creating the
+  /// resource.
+  Future<XFile> createFile(String name) async {
+    final PlatformXFile file = await platform.createFile(PlatformCreateParams(name));
+
+    switch (file) {
+      case PlatformScopedStorageXFile():
+        return ScopedStorageXFile.fromPlatform(file);
+      case PlatformFileSystemXFile():
+        return FileSystemXFile.fromPlatform(file);
+      default:
+        throw Exception('Unsupported XFile type was returned: ${file.runtimeType}');
+    }
+  }
+
+  /// Creates a container in this the container.
+  ///
+  /// Platforms may throw an exception if there is an error creating the
+  /// container.
+  Future<XDirectory> createDirectory(String name) async {
+    final PlatformXDirectory directory = await platform.createDirectory(PlatformCreateParams(name));
+
+    switch (directory) {
+      case PlatformScopedStorageXDirectory():
+        return ScopedStorageXDirectory.fromPlatform(directory);
+      case PlatformFileSystemXDirectory():
+        return FileSystemXDirectory.fromPlatform(directory);
+      default:
+        throw Exception('Unsupported XDirectory type was returned: ${directory.runtimeType}');
+    }
+  }
+
+  /// Deletes the container.
+  ///
+  /// Platforms may throw an exception if there is an error deleting the
+  /// container.
+  Future<bool> delete() => platform.delete(const PlatformDirectoryDeleteParams());
 }
