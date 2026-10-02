@@ -34,7 +34,7 @@ import '../templates/list_tile_template.dart';
 import '../templates/menu_template.dart';
 // import '../templates/motion_template.dart';
 // import '../templates/navigation_bar_template.dart';
-// import '../templates/navigation_drawer_template.dart';
+import '../templates/navigation_drawer_template.dart';
 // import '../templates/navigation_rail_template.dart';
 // import '../templates/popup_menu_template.dart';
 // import '../templates/progress_indicator_template.dart';
@@ -731,8 +731,16 @@ void main() {
     });
 
     test('NavigationDrawerTemplateM3 emits M3 NavigationDrawer defaults from tokens', () {
-      // Intentionally empty, will be implemented during migration. See:
-      // https://github.com/flutter/flutter/issues/187899
+      const template = NavigationDrawerTemplateM3();
+      final String contents = _generateContents(template);
+      expect(
+        contents,
+        contains('class _NavigationDrawerDefaultsM3 extends NavigationDrawerThemeData'),
+      );
+      expect(contents, contains('indicatorSize: const Size(336.0, 56.0)'));
+      expect(contents, contains('_colors.surfaceContainerLow'));
+      expect(contents, contains('_colors.onSurfaceVariant.withOpacity(0.38)'));
+      expect(contents, contains('_textTheme.labelLarge!'));
     });
 
     test('NavigationRailTemplateM3 emits M3 NavigationRail defaults from tokens', () {
