@@ -3697,13 +3697,11 @@ class _MenuPanelState extends State<_MenuPanel> {
     final EdgeInsetsGeometry padding =
         resolve<EdgeInsetsGeometry?>((MenuStyle? style) => style?.padding) ?? EdgeInsets.zero;
     final Offset densityAdjustment = visualDensity.baseSizeAdjustment;
-    // Material's Scrollbar uses the ambient MediaQuery padding as its painter
-    // padding when no explicit padding is given, so that the thumb clears
-    // system intrusions such as a gesture bar. The menu overlay is already
-    // positioned inside the safe area, so honoring that padding a second time
-    // shortens the scrollbar track and stops the thumb from reaching the end of
-    // the menu. The padding is therefore removed for the Scrollbar only and
-    // restored below it, so menu children keep observing the ambient values.
+    // Scrollbar uses the `MediaQuery.padding` as its painter padding by
+    // default. Menu overlays are already positioned within the safe area, so
+    // applying that padding again shortens the scrollbar track and stops the
+    // thumb from reaching the end of the menu. Remove the padding only for the
+    // Scrollbar and restore the ambient MediaQuery for menu children.
     final MediaQueryData ambientMediaQuery = MediaQuery.of(context);
     final MediaQueryData scrollbarMediaQuery = ambientMediaQuery.removePadding(
       removeLeft: true,
