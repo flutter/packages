@@ -1,5 +1,6 @@
-## NEXT
+## 0.8.13+24
 
+* Updates Robolectric to 4.17 and adds the JVM arguments it requires for unit tests.
 * Updates minimum supported SDK version to Flutter 3.41/Dart 3.11.
 
 ## 0.8.13+23
