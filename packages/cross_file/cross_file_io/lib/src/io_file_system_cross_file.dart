@@ -88,21 +88,6 @@ base class IOFileSystemXFile extends PlatformFileSystemXFile with IOFileSystemXF
   }
 
   @override
-  Future<bool> canWrite() async {
-    try {
-      if (await exists()) {
-        final RandomAccessFile access = await file.open(mode: FileMode.append);
-        await access.close();
-        return true;
-      }
-
-      return false;
-    } on FileSystemException {
-      return false;
-    }
-  }
-
-  @override
   StreamSink<Uint8List> openWrite(PlatformOpenWriteParams params) {
     return _IOSinkWrapper(file.openWrite());
   }

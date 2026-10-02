@@ -67,25 +67,6 @@ base class IOFileSystemXDirectory extends PlatformFileSystemXDirectory
   }
 
   @override
-  Future<bool> canWrite() async {
-    if (!await exists()) {
-      return false;
-    }
-
-    final tmpFile = File(
-      path.join(directory.path, '.writetest_${DateTime.now().millisecondsSinceEpoch}'),
-    );
-
-    try {
-      await tmpFile.writeAsString('');
-      await tmpFile.delete();
-      return true;
-    } on FileSystemException {
-      return false;
-    }
-  }
-
-  @override
   Future<PlatformXFile> createFile(PlatformCreateParams params) async {
     var newFile = File(path.join(directory.path, params.name));
     newFile = await newFile.create();
