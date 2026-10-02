@@ -732,7 +732,7 @@ Which is below the minimum required. Use at least "JavaVersion.VERSION_$_minimum
 
       if (versionMatch != null) {
         final int compileSdkVersion = int.parse(versionMatch.group(1)!);
-        const minCompileSdkVersion = 36;
+        const minCompileSdkVersion = 37;
 
         if (compileSdkVersion < minCompileSdkVersion) {
           printError(
