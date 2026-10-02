@@ -31,7 +31,7 @@ import '../templates/icon_button_template.dart' as icon_button;
 import '../templates/input_chip_template.dart';
 import '../templates/input_decorator_template.dart';
 import '../templates/list_tile_template.dart';
-// import '../templates/menu_template.dart';
+import '../templates/menu_template.dart';
 // import '../templates/motion_template.dart';
 // import '../templates/navigation_bar_template.dart';
 // import '../templates/navigation_drawer_template.dart';
@@ -711,8 +711,13 @@ void main() {
     });
 
     test('MenuTemplateM3 emits M3 Menu defaults from tokens', () {
-      // Intentionally empty, will be implemented during migration. See:
-      // https://github.com/flutter/flutter/issues/187899
+      final String contents = _generateContents(const MenuTemplateM3());
+      expect(contents, contains('class _MenuBarDefaultsM3 extends MenuStyle'));
+      expect(contents, contains('class _MenuButtonDefaultsM3 extends ButtonStyle'));
+      expect(contents, contains('class _MenuDefaultsM3 extends MenuStyle'));
+      expect(contents, contains('MaterialStatePropertyAll<Color?>(_colors.surfaceContainer)'));
+      expect(contents, contains('return _colors.onSurface.withOpacity(0.38);'));
+      expect(contents, contains('return _colors.onSurface.withOpacity(0.1);'));
     });
 
     test('MotionTemplateM3 emits M3 Motion defaults from tokens', () {
