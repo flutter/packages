@@ -39,7 +39,7 @@ class MotionTemplateM3 extends TokenTemplateM3 {
   ///
   /// * [M3 guidelines: Easing tokens](https://m3.material.io/styles/motion/easing-and-duration/tokens-specs#433b1153-2ea3-4fe2-9748-803a47bc97ee)
   /// * [M3 guidelines: Applying easing and duration](https://m3.material.io/styles/motion/easing-and-duration/applying-easing-and-duration)
-  static const Curve $tokenName = Cubic(${number(tokenValue.a)}, ${number(tokenValue.b)}, ${number(tokenValue.c)}, ${number(tokenValue.d)});
+  static const Curve $tokenName = Cubic(${tokenValue.a}, ${tokenValue.b}, ${tokenValue.c}, ${tokenValue.d});
 ''';
 
   @override
