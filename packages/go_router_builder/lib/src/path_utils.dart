@@ -7,7 +7,12 @@ final RegExp _parameterNameRegExp = RegExp(r':(\w+)');
 
 /// A `:name` occurrence in a path pattern, with its optional constraint.
 class _PathParameter {
-  const _PathParameter({required this.start, required this.end, required this.name});
+  const _PathParameter({
+    required this.start,
+    required this.end,
+    required this.name,
+    required this.constraint,
+  });
 
   /// Index of the leading `:`.
   final int start;
@@ -16,6 +21,9 @@ class _PathParameter {
   final int end;
 
   final String name;
+
+  /// The `(...)` regex constraint following the name, or '' when absent.
+  final String constraint;
 }
 
 /// Scans [pattern] for `:name` occurrences, each optionally followed by a
@@ -29,7 +37,14 @@ List<_PathParameter> _pathParametersOf(String pattern) {
     final String? name = match[1];
 
     if (name != null) {
-      parameters.add(_PathParameter(start: match.start, end: end, name: name));
+      parameters.add(
+        _PathParameter(
+          start: match.start,
+          end: end,
+          name: name,
+          constraint: pattern.substring(match.end, end),
+        ),
+      );
     }
     match = _parameterNameRegExp.allMatches(pattern, end).firstOrNull;
   }
@@ -103,24 +118,8 @@ Set<String> pathParametersFromPattern(String pattern) => <String>{
 /// normalizePathParameters('item/:id'); // 'item/:_'
 /// normalizePathParameters(r'item/:id(\d+)'); // r'item/:_(\d+)'
 /// ```
-String normalizePathParameters(String pattern) {
-  final buffer = StringBuffer();
-  var start = 0;
-  for (final _PathParameter parameter in _pathParametersOf(pattern)) {
-    if (parameter.start > start) {
-      buffer.write(pattern.substring(start, parameter.start));
-    }
-    buffer.write(':_');
-    // Keep the constraint, which follows the `:name` prefix within the match.
-    buffer.write(pattern.substring(parameter.start + 1 + parameter.name.length, parameter.end));
-    start = parameter.end;
-  }
-
-  if (start < pattern.length) {
-    buffer.write(pattern.substring(start));
-  }
-  return buffer.toString();
-}
+String normalizePathParameters(String pattern) =>
+    _replacePathParameters(pattern, (_PathParameter parameter) => ':_${parameter.constraint}');
 
 /// Reconstructs the full path from a [pattern] and path parameters.
 ///
@@ -130,19 +129,21 @@ String normalizePathParameters(String pattern) {
 /// final pattern = '/family/:id';
 /// final path = patternToPath(pattern, {'id': 'family-id'}); // '/family/family-id'
 /// ```
-String patternToPath(String pattern, Map<String, String> pathParameters) {
+String patternToPath(String pattern, Map<String, String> pathParameters) => _replacePathParameters(
+  pattern,
+  (_PathParameter parameter) => '${pathParameters[parameter.name]}',
+);
+
+/// Rebuilds [pattern], replacing each parameter occurrence with the result of
+/// [replace] and keeping the literal text in between.
+String _replacePathParameters(String pattern, String Function(_PathParameter) replace) {
   final buffer = StringBuffer();
   var start = 0;
   for (final _PathParameter parameter in _pathParametersOf(pattern)) {
-    if (parameter.start > start) {
-      buffer.write(pattern.substring(start, parameter.start));
-    }
-    buffer.write(pathParameters[parameter.name]);
+    buffer.write(pattern.substring(start, parameter.start));
+    buffer.write(replace(parameter));
     start = parameter.end;
   }
-
-  if (start < pattern.length) {
-    buffer.write(pattern.substring(start));
-  }
+  buffer.write(pattern.substring(start));
   return buffer.toString();
 }
