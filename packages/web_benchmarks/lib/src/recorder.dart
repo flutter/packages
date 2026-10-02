@@ -831,6 +831,8 @@ class _RecordingWidgetsBinding extends BindingBase
     super.scheduleFrame();
   }
 
+  bool _callMarkNeedsCompositeFrame = true;
+
   @override
   void handleDrawFrame() {
     // Don't keep on truckin' if there's an error or the benchmark has stopped.
@@ -840,6 +842,22 @@ class _RecordingWidgetsBinding extends BindingBase
     try {
       _recorder!.frameWillDraw();
       super.handleDrawFrame();
+      // Flutter will not render views that don't need compositing,
+      // but this recorder expect preroll/applyFrame for every frame,
+      // even if the views don't change otherwise it stalls.
+      // See https://github.com/flutter/flutter/issues/191251
+      for (final RenderView renderView in renderViews) {
+        // TODO(knopp): Remove this workaround once RenderView.markNeedsCompositeFrame
+        // is available in stable.
+        // ignore: avoid_dynamic_calls
+        if (_callMarkNeedsCompositeFrame) {
+          try {
+            (renderView as dynamic).markNeedsCompositeFrame();
+          } on NoSuchMethodError {
+            _callMarkNeedsCompositeFrame = false;
+          }
+        }
+      }
       _recorder!.frameDidDraw();
     } catch (error, stackTrace) {
       _haltBenchmarkWithError(error, stackTrace);
