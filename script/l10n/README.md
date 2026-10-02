@@ -60,14 +60,14 @@ Widget build(BuildContext context) {
 }
 ```
 
-This widget build method creates a button whose label is the local
+Each of these widget build methods creates a button whose label is the local
 translation of "Cancel" which is defined for the `cancelButtonLabel`
 resource ID.
 
 Each of the language-specific .arb files contains an entry for
 `cancelButtonLabel`.
 
-## The English .arb file defines all of the resource IDs
+## The English .arb files define all of the resource IDs
 
 All of the `material_*.arb` and `cupertino_*.arb` files whose names do not
 include a regional suffix contain translations for the same set of resource IDs
@@ -88,8 +88,8 @@ to write.
 
 ## Values with Parameters, Plurals
 
-A few of material and cupertino translations contain `$variable` tokens. The
-Material and Cupertino libraries replace these tokens with values at
+A few of the Material and Cupertino translations contain `$variable` tokens.
+The Material and Cupertino libraries replace these tokens with values at
 run-time. For example:
 
 Material:
@@ -146,7 +146,7 @@ suffix which must be one of "Zero", "One", "Two", "Few", "Many",
 quantities apply. All plural resources must include a resource with
 the "Other" suffix. For example:
 
-Material: the English translations ('material_en.arb') for
+Material: the English translations (`material_en.arb`) for
 `selectedRowCountTitle` are:
 
 ```dart
@@ -155,7 +155,7 @@ Material: the English translations ('material_en.arb') for
 "selectedRowCountTitleOther": "$selectedRowCount items selected",
 ```
 
-Cupertino: the English translations ('cupertino_en.arb') for
+Cupertino: the English translations (`cupertino_en.arb`) for
 `datePickerMinuteSemanticsLabel` are:
 
 ```dart
@@ -201,7 +201,7 @@ you've added a new widget and it has a tooltip), follow these steps:
    @override
    String aboutListTileTitle(String applicationName) => 'About $applicationName';
    ```
-   For messages with parameters, do also add the function to `GlobalMaterialLocalizations`  in [`packages/material_ui/lib/src/global_material_localizations.dart`](https://github.com/flutter/packages/blob/main/packages/material_ui/lib/src/global_material_localizations.dart) or `GlobalCupertinoLocalizations` in [`packages/cupertino_ui/lib/src/global_cupertino_localizations.dart`](https://github.com/flutter/packages/blob/main/packages/cupertino_ui/lib/src/global_cupertino_localizations.dart), and add a raw getter as demonstrated below:
+   For messages with parameters, do also add the function to `GlobalMaterialLocalizations` in [`packages/material_ui/lib/src/global_material_localizations.dart`](https://github.com/flutter/packages/blob/main/packages/material_ui/lib/src/global_material_localizations.dart) or `GlobalCupertinoLocalizations` in [`packages/cupertino_ui/lib/src/global_cupertino_localizations.dart`](https://github.com/flutter/packages/blob/main/packages/cupertino_ui/lib/src/global_cupertino_localizations.dart), and add a raw getter as demonstrated below:
 
    ```
    /// The raw version of [aboutListTileTitle], with `$applicationName` verbatim
@@ -251,8 +251,8 @@ you've added a new widget and it has a tooltip), follow these steps:
    until they can be translated.
 
    Finally you need to re-generate
-   packages/material_ui/lib/src/l10n/generated_material_localizations.dart and
-   packages/cupertino_ui/lib/src/l10n/generated_cupertino_localizations.dart by
+   `packages/material_ui/lib/src/l10n/generated_material_localizations.dart` and
+   `packages/cupertino_ui/lib/src/l10n/generated_cupertino_localizations.dart` by
    running the following from the repo root:
    ```
    dart script/l10n/bin/gen_localizations.dart --overwrite
