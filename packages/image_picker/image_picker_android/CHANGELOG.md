@@ -1,4 +1,3 @@
-
 ## 0.8.13+25
 
 * Fixes resizing with `maxWidth` or `maxHeight` always decoding the full-size
