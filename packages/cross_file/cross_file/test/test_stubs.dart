@@ -135,7 +135,7 @@ final class TestFileSystemXFile extends PlatformFileSystemXFile {
   @override
   Future<PlatformFileSystemXFile> writeAsString(PlatformWriteAsStringParams params) async {
     if (onWriteAsString != null) {
-      return await onWriteAsString!(params);
+      return onWriteAsString!(params);
     }
     throw UnimplementedError();
   }
@@ -150,10 +150,7 @@ final class TestFileSystemXFile extends PlatformFileSystemXFile {
 
   @override
   Future<bool> delete(PlatformFileDeleteParams params) async {
-    if (onDelete != null) {
-      return await onDelete!(params);
-    }
-    throw UnimplementedError();
+    return await onDelete?.call(params) ?? false;
   }
 }
 
@@ -180,6 +177,7 @@ final class TestScopedStorageXFile extends PlatformScopedStorageXFile {
   TestScopedStorageXFile(
     super.params, {
     this.onCanRead,
+    this.onCanWrite,
     this.onExists,
     this.onLastModified,
     this.onLength,
@@ -194,6 +192,7 @@ final class TestScopedStorageXFile extends PlatformScopedStorageXFile {
   }) : super.implementation();
 
   Future<bool> Function()? onCanRead;
+  Future<bool> Function()? onCanWrite;
   Future<bool> Function()? onExists;
   Future<DateTime?> Function()? onLastModified;
   Future<int?> Function()? onLength;
@@ -209,6 +208,11 @@ final class TestScopedStorageXFile extends PlatformScopedStorageXFile {
   @override
   Future<bool> canRead() async {
     return await onCanRead?.call() ?? false;
+  }
+
+  @override
+  Future<bool> canWrite() async {
+    return await onCanWrite?.call() ?? false;
   }
 
   @override
@@ -256,7 +260,7 @@ final class TestScopedStorageXFile extends PlatformScopedStorageXFile {
   @override
   Future<PlatformScopedStorageXFile> writeAsString(PlatformWriteAsStringParams params) async {
     if (onWriteAsString != null) {
-      return await onWriteAsString!(params);
+      return onWriteAsString!(params);
     }
     throw UnimplementedError();
   }
@@ -271,10 +275,7 @@ final class TestScopedStorageXFile extends PlatformScopedStorageXFile {
 
   @override
   Future<bool> delete(PlatformFileDeleteParams params) async {
-    if (onDelete != null) {
-      return await onDelete!(params);
-    }
-    throw UnimplementedError();
+    return await onDelete?.call(params) ?? false;
   }
 }
 
@@ -284,12 +285,14 @@ final class TestScopedStorageXDirectory extends PlatformScopedStorageXDirectory 
     this.onExists,
     this.onList,
     this.onCanRead,
+    this.onCanWrite,
     this.onDispose,
   }) : super.implementation();
 
   Future<bool> Function()? onExists;
   Stream<PlatformXEntity> Function(PlatformListParams params)? onList;
   Future<bool> Function()? onCanRead;
+  Future<bool> Function()? onCanWrite;
   Future<void> Function()? onDispose;
 
   @override
@@ -300,6 +303,11 @@ final class TestScopedStorageXDirectory extends PlatformScopedStorageXDirectory 
   @override
   Future<bool> canRead() async {
     return await onCanRead?.call() ?? false;
+  }
+
+  @override
+  Future<bool> canWrite() async {
+    return await onCanWrite?.call() ?? false;
   }
 
   @override

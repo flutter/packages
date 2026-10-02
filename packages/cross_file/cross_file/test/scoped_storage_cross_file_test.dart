@@ -115,6 +115,18 @@ void main() {
       expect(await file.canRead(), canRead);
     });
 
+    test('canWrite', () async {
+      const canWrite = false;
+      CrossFilePlatform.instance = TestCrossFilePlatform(
+        onCreatePlatformScopedStorageXFile: (PlatformScopedStorageXFileCreationParams params) =>
+            TestScopedStorageXFile(params, onCanWrite: () async => canWrite),
+      );
+
+      final file = ScopedStorageXFile(uri: 'uri');
+
+      expect(await file.canWrite(), canWrite);
+    });
+
     test('dispose', () async {
       CrossFilePlatform.instance = TestCrossFilePlatform(
         onCreatePlatformScopedStorageXFile: (PlatformScopedStorageXFileCreationParams params) =>
