@@ -132,6 +132,7 @@ base class PlatformCreateParams {
   /// Constructs a [PlatformCreateParams];
   const PlatformCreateParams(this.name);
 
+  /// Name of the resource or container being created.
   final String name;
 }
 
