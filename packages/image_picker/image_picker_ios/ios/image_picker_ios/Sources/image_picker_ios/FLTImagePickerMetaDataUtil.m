@@ -66,10 +66,10 @@ const FLTImagePickerMIMEType kFLTImagePickerMIMETypeDefault = FLTImagePickerMIME
     return nil;
   }
   CGImageDestinationAddImageFromSource(destination, source, 0, (__bridge CFDictionaryRef)metadata);
-  CGImageDestinationFinalize(destination);
+  BOOL finalized = CGImageDestinationFinalize(destination);
   CFRelease(source);
   CFRelease(destination);
-  return targetData;
+  return finalized ? targetData : nil;
 }
 
 + (NSData *)convertImage:(UIImage *)image

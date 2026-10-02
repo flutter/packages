@@ -1527,6 +1527,64 @@
   [self waitForExpectationsWithTimeout:30 handler:nil];
 }
 
+- (void)testImagePickerDidFinishPickingImageSaveFailure {
+  FLTImagePickerPlugin *plugin =
+      [[FLTImagePickerPlugin alloc] initWithViewProvider:[[StubViewProvider alloc] init]];
+  // An image with no underlying bitmap cannot be encoded, so it cannot be saved.
+  UIImage *image = [[UIImage alloc] init];
+  XCTestExpectation *resultExpectation = [self expectationWithDescription:@"save failed"];
+  plugin.callContext = [[FLTImagePickerMethodCallContext alloc]
+      initWithResult:^(NSArray<NSString *> *result, FlutterError *error) {
+        XCTAssertNil(result);
+        XCTAssertEqualObjects(error.code, @"invalid_image");
+        [resultExpectation fulfill];
+      }];
+  plugin.callContext.maxSize = [[FLTMaxSize alloc] init];
+  plugin.callContext.requestFullMetadata = NO;
+  UIImagePickerController *picker = [[UIImagePickerController alloc] init];
+  [plugin imagePickerController:picker
+      didFinishPickingMediaWithInfo:@{UIImagePickerControllerOriginalImage : image}];
+  [self waitForExpectationsWithTimeout:30 handler:nil];
+}
+
+- (void)testImagePickerDidFinishPickingWithFullMetadataAssetSaveFailure {
+  // An image with no underlying bitmap cannot be encoded, so it cannot be saved.
+  UIImage *image = [[UIImage alloc] init];
+  id mockAsset = OCMClassMock([PHAsset class]);
+  id mockManager = OCMClassMock([PHImageManager class]);
+  OCMStub(ClassMethod([mockManager defaultManager])).andReturn(mockManager);
+  OCMStub([mockManager requestImageDataAndOrientationForAsset:OCMOCK_ANY
+                                                      options:OCMOCK_ANY
+                                                resultHandler:OCMOCK_ANY])
+      .andDo(^(NSInvocation *invocation) {
+        __unsafe_unretained void (^handler)(NSData *, NSString *, CGImagePropertyOrientation,
+                                            NSDictionary *);
+        [invocation getArgument:&handler atIndex:4];
+        handler(ImagePickerTestImages.JPGTestData, @"public.jpeg", kCGImagePropertyOrientationUp,
+                nil);
+      });
+
+  FLTImagePickerPlugin *plugin =
+      [[FLTImagePickerPlugin alloc] initWithViewProvider:[[StubViewProvider alloc] init]];
+  XCTestExpectation *resultExpectation = [self expectationWithDescription:@"asset save failed"];
+  plugin.callContext = [[FLTImagePickerMethodCallContext alloc]
+      initWithResult:^(NSArray<NSString *> *result, FlutterError *error) {
+        XCTAssertNil(result);
+        XCTAssertEqualObjects(error.code, @"invalid_image");
+        [resultExpectation fulfill];
+      }];
+  plugin.callContext.maxSize = [[FLTMaxSize alloc] init];
+  plugin.callContext.requestFullMetadata = YES;
+
+  UIImagePickerController *picker = [[UIImagePickerController alloc] init];
+  [plugin imagePickerController:picker
+      didFinishPickingMediaWithInfo:@{
+        UIImagePickerControllerOriginalImage : image,
+        UIImagePickerControllerPHAsset : mockAsset
+      }];
+  [self waitForExpectationsWithTimeout:30 handler:nil];
+}
+
 - (void)testImagePickerDidFinishPickingVideo {
   NSString *sourcePath = [NSTemporaryDirectory()
       stringByAppendingPathComponent:[[NSUUID UUID].UUIDString

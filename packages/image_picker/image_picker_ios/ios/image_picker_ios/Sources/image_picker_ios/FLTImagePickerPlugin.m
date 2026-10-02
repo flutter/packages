@@ -658,6 +658,12 @@ typedef NS_ENUM(NSInteger, ImagePickerClassType) { UIImagePickerClassType, PHPic
                                                           maxWidth:maxWidth
                                                          maxHeight:maxHeight
                                                       imageQuality:imageQuality];
+  if (savedPath == nil) {
+    [self sendCallResultWithError:[FlutterError errorWithCode:@"invalid_image"
+                                                      message:@"Could not save the image."
+                                                      details:nil]];
+    return;
+  }
   [self sendCallResultWithSavedPathList:@[ savedPath ]];
 }
 
@@ -667,6 +673,12 @@ typedef NS_ENUM(NSInteger, ImagePickerClassType) { UIImagePickerClassType, PHPic
   NSString *savedPath = [FLTImagePickerPhotoAssetUtil saveImageWithPickerInfo:info
                                                                         image:image
                                                                  imageQuality:imageQuality];
+  if (savedPath == nil) {
+    [self sendCallResultWithError:[FlutterError errorWithCode:@"invalid_image"
+                                                      message:@"Could not save the image."
+                                                      details:nil]];
+    return;
+  }
   [self sendCallResultWithSavedPathList:@[ savedPath ]];
 }
 
