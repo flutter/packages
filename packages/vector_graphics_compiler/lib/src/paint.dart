@@ -1493,3 +1493,14 @@ const FontWeight normalFontWeight = FontWeight.w400;
 
 /// A commonly used font weight that is heavier than normal.
 const FontWeight boldFontWeight = FontWeight.w700;
+
+/// The type of mask to apply.
+///
+/// Corresponds to the SVG `mask-type` attribute.
+enum MaskType {
+  /// An alpha mask where the alpha channel of the mask determines the opacity.
+  alpha,
+
+  /// A luminance mask where the luminance of the mask determines the opacity.
+  luminance,
+}
