@@ -90,6 +90,14 @@ Keep `torchEnabled` as the **requested** torch mode, which is how the app sees i
 
 All camera (re)binding already goes through [`_updateCameraInfoAndLiveCameraState`](file:///Users/camillesimon/packages/packages/camera/camera_android_camerax/lib/src/android_camera_camerax.dart#L1454-L1460): `initializeCamera`, `setDescriptionWhileRecording`, and `_bindUseCaseToLifecycle` (used by `takePicture`, `resumePreview`, `startVideoCapturing` and image streaming). Putting the restore there covers every path in one place.
 
+### Design decision: one torch value, not a map per camera
+Devices can have more than one front and one back camera (for example rear wide, telephoto and ultrawide). We considered storing torch state per camera (`Map<String, bool>`). We chose to keep **one controller-level value**:
+
+- **It matches the app-facing API.** `CameraValue.flashMode` is one value per `CameraController`, and it stays the same across `setDescription`. With a map, switching from a rear wide camera with the torch on to a rear telephoto camera would leave the torch **off** while the UI still shows `torch`. That's the same kind of mismatch this fix removes.
+- **It matches the other flash modes.** [`_currentFlashMode`](file:///Users/camillesimon/packages/packages/camera/camera_android_camerax/lib/src/android_camera_camerax.dart#L132-L133) (`off`/`auto`/`always`) is already one value, applied to whichever `ImageCapture` is active on [`takePicture`](file:///Users/camillesimon/packages/packages/camera/camera_android_camerax/lib/src/android_camera_camerax.dart#L1028-L1035).
+- **It matches the hardware.** Rear lenses usually share one flash LED. Turning it off when switching between rear lenses would look like a bug.
+- **It still handles any number of cameras.** The torch is restored on every camera where `hasFlashUnit == true`, and cameras without a flash are skipped. Unit test 7 covers this.
+
 ### Checking for a flash unit
 The front camera usually has no flash unit. Calling CameraX `enableTorch` on it fails with `IllegalStateException("No flash unit")`. [`_enableTorchMode`](file:///Users/camillesimon/packages/packages/camera/camera_android_camerax/lib/src/android_camera_camerax.dart#L1816-L1822) would send that to `onCameraError`, and the example app shows it as a snackbar on every switch to the front camera. To avoid that, expose CameraX's [`CameraInfo.hasFlashUnit()`](https://developer.android.com/reference/androidx/camera/core/CameraInfo#hasFlashUnit()) and check it before restoring.
 
@@ -202,6 +210,7 @@ These go next to the existing flash tests ([L3547-L3659](file:///Users/camillesi
 | 4 | `setDescriptionWhileRecording restores torch mode on new camera` | While recording, switching to a camera with a flash unit calls `enableTorch(true)` on the new control. |
 | 5 | `resumePreview restores torch mode when rebinding the camera` | The `_bindUseCaseToLifecycle` path (`isBound → false`) calls `enableTorch(true)` on the new control. |
 | 6 | `dispose resets torch mode` | After `setFlashMode(torch)` and `dispose`, `torchEnabled == false`. A later create + initialize doesn't call `enableTorch`, and a new `setFlashMode(torch)` **does** call `enableTorch(true)` (checks the second half of the bug via dispose). |
+| 7 | `torch mode is restored when switching between multiple cameras with flash units` | Uses three or more cameras (e.g. rear A with flash, rear B with flash, front without flash). Switching A → front → B → A calls `enableTorch(true)` on each camera with a flash and never on the front camera. |
 
 Sketch of test 1:
 ```dart
@@ -284,7 +293,17 @@ Before pushing, run the `pre-push-skill` (validate / publish-check / version che
 
 ---
 
-## Open questions
+## Decisions
+
+| # | Question | Decision |
+|---|---|---|
+| 1 | Expected behavior after step 4 | The torch comes back **on**; "off" in the report was a typo. |
+| 2 | Integration test depth | **(a)**: check the Dart/app side only and skip without a flash unit. Exposing `TorchState` is out of scope. |
+| 3 | `hasFlashUnit` via pigeon | Approved. |
+| 4 | Reset torch on `dispose` | Approved. A setting on a disposed object shouldn't persist. |
+| 5 | Per-camera map vs. one value | One controller-level value (see the design decision above), unless the reviewer prefers otherwise. |
+
+## Previously open questions (resolved)
 
 > [!IMPORTANT]
 > **1. Expected behavior.** The report says "after step 4, the torch does not turn back **off**". I've assumed you meant "**on**", because you expect it to come back on and keep its state from step 2. Is that right?
