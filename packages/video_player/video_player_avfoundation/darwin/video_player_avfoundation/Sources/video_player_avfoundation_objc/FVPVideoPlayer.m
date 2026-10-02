@@ -259,10 +259,6 @@ NS_INLINE CGFloat radiansToDegrees(CGFloat radians) {
   return degrees;
 };
 
-BOOL FVPFrameDurationIsValid(CMTime frameDuration) {
-  return CMTIME_IS_NUMERIC(frameDuration) && CMTimeCompare(frameDuration, kCMTimeZero) > 0;
-}
-
 - (AVMutableVideoComposition *)videoCompositionWithTransform:(CGAffineTransform)transform
                                                        asset:(NSObject<FVPAVAsset> *)asset
                                                   videoTrack:(AVAssetTrack *)videoTrack {

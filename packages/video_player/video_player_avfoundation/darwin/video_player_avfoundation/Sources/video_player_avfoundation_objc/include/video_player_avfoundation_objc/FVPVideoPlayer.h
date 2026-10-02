@@ -44,7 +44,4 @@ NS_ASSUME_NONNULL_BEGIN
 
 @end
 
-/// Returns true if the given CMTime is valid and strictly positive.
-BOOL FVPFrameDurationIsValid(CMTime frameDuration);
-
 NS_ASSUME_NONNULL_END
