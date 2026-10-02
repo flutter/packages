@@ -89,9 +89,6 @@ final class _DefaultFileSystemXFile extends PlatformFileSystemXFile {
   }
 
   @override
-  Future<bool> canWrite() async => false;
-
-  @override
   StreamSink<Uint8List> openWrite(PlatformOpenWriteParams params) {
     throw UnsupportedError('This instance does not represent any resource.');
   }
@@ -119,9 +116,6 @@ final class _DefaultFileSystemXDirectory extends PlatformFileSystemXDirectory {
   Stream<PlatformXEntity> list(PlatformListParams params) async* {
     throw UnsupportedError('This instance does not represent any directory.');
   }
-
-  @override
-  Future<bool> canWrite() async => false;
 
   @override
   Future<PlatformXFile> createFile(PlatformCreateParams params) {

@@ -118,11 +118,6 @@ abstract base class PlatformXFile extends PlatformXEntity {
   /// the resource.
   Future<String> readAsString({Encoding encoding = utf8});
 
-  /// Whether the application has permission to modify or write to the resource.
-  Future<bool> canWrite() {
-    throw UnimplementedError('`canWrite` is not implemented on the current platform.');
-  }
-
   /// Creates a new independent [StreamSink] for the resource.
   ///
   /// If an error occurs while opening or writing to the resource, the

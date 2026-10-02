@@ -88,12 +88,6 @@ abstract base class PlatformXDirectory extends PlatformXEntity {
   /// the directory
   Stream<PlatformXEntity> list(PlatformListParams params);
 
-  /// Whether the application has permission to modify or write to the
-  /// fcontainer.
-  Future<bool> canWrite() {
-    throw UnimplementedError('`canWrite` is not implemented on the current platform.');
-  }
-
   /// Creates a resource in this container.
   ///
   /// Platforms may throw an exception if there is an error creating the
