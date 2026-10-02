@@ -29,9 +29,9 @@ import '../templates/fab_template.dart';
 import '../templates/filter_chip_template.dart';
 import '../templates/icon_button_template.dart' as icon_button;
 import '../templates/input_chip_template.dart';
-// import '../templates/input_decorator_template.dart';
-// import '../templates/list_tile_template.dart';
-// import '../templates/menu_template.dart';
+import '../templates/input_decorator_template.dart';
+import '../templates/list_tile_template.dart';
+import '../templates/menu_template.dart';
 // import '../templates/motion_template.dart';
 // import '../templates/navigation_bar_template.dart';
 // import '../templates/navigation_drawer_template.dart';
@@ -44,7 +44,7 @@ import '../templates/input_chip_template.dart';
 // import '../templates/search_view_template.dart';
 // import '../templates/segmented_button_template.dart';
 // import '../templates/slider_template.dart';
-// import '../templates/snackbar_template.dart';
+import '../templates/snackbar_template.dart';
 // import '../templates/surface_tint_template.dart';
 // import '../templates/switch_template.dart';
 // import '../templates/tabs_template.dart';
@@ -683,18 +683,41 @@ void main() {
     });
 
     test('InputDecoratorTemplateM3 emits M3 InputDecorator defaults from tokens', () {
-      // Intentionally empty, will be implemented during migration. See:
-      // https://github.com/flutter/flutter/issues/187899
+      final String contents = _generateContents(const InputDecoratorTemplateM3());
+      expect(
+        contents,
+        contains('class _InputDecoratorDefaultsM3 extends InputDecorationThemeData'),
+      );
+      expect(contents, contains('_colors.onSurface.withOpacity(0.04)'));
+      expect(contents, contains('_colors.surfaceContainerHighest'));
+      expect(contents, contains('BorderSide(color: _colors.outline)'));
+      expect('BorderSide(width: 2.0, color: _colors.primary)'.allMatches(contents), hasLength(2));
     });
 
     test('ListTileTemplateM3 emits M3 ListTile defaults from tokens', () {
-      // Intentionally empty, will be implemented during migration. See:
-      // https://github.com/flutter/flutter/issues/187899
+      const template = ListTileTemplateM3();
+      final String contents = _generateContents(template);
+      expect(template.className, '_ListTileDefaultsM3');
+      expect(template.outputFileName, 'list_tile_defaults_m3.g.dart');
+      expect(contents, contains('contentPadding: const EdgeInsetsDirectional.only'));
+      expect(contents, contains('minLeadingWidth: 24.0'));
+      expect(
+        contents,
+        contains(
+          'TextStyle? get titleTextStyle => _textTheme.bodyLarge!.copyWith(color: _colors.onSurface)',
+        ),
+      );
+      expect(contents, contains('Color? get selectedColor => _colors.primary;'));
     });
 
     test('MenuTemplateM3 emits M3 Menu defaults from tokens', () {
-      // Intentionally empty, will be implemented during migration. See:
-      // https://github.com/flutter/flutter/issues/187899
+      final String contents = _generateContents(const MenuTemplateM3());
+      expect(contents, contains('class _MenuBarDefaultsM3 extends MenuStyle'));
+      expect(contents, contains('class _MenuButtonDefaultsM3 extends ButtonStyle'));
+      expect(contents, contains('class _MenuDefaultsM3 extends MenuStyle'));
+      expect(contents, contains('MaterialStatePropertyAll<Color?>(_colors.surfaceContainer)'));
+      expect(contents, contains('return _colors.onSurface.withOpacity(0.38);'));
+      expect(contents, contains('return _colors.onSurface.withOpacity(0.1);'));
     });
 
     test('MotionTemplateM3 emits M3 Motion defaults from tokens', () {
@@ -758,8 +781,19 @@ void main() {
     });
 
     test('SnackbarTemplateM3 emits M3 Snackbar defaults from tokens', () {
-      // Intentionally empty, will be implemented during migration. See:
-      // https://github.com/flutter/flutter/issues/187899
+      final String contents = const SnackbarTemplateM3().generateContents('_SnackbarDefaultsM3');
+      expect(contents, contains('class _SnackbarDefaultsM3 extends SnackBarThemeData'));
+      expect(contents, contains('Color get backgroundColor => _colors.inverseSurface'));
+      expect(
+        contents,
+        contains(
+          'ShapeBorder get shape => const RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(4.0)))',
+        ),
+      );
+      expect(contents, contains('double get elevation => 6.0'));
+      expect(contents, contains('SnackBarBehavior get behavior => SnackBarBehavior.fixed'));
+      expect(contents, contains('Color? get closeIconColor => _colors.onInverseSurface'));
+      expect(contents, contains('double get actionOverflowThreshold => 0.25'));
     });
 
     test('SurfaceTintTemplateM3 emits M3 SurfaceTint defaults from tokens', () {
