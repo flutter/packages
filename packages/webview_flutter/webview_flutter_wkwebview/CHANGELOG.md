@@ -1,5 +1,14 @@
-## NEXT
+## 3.27.0
 
+* Adds `WebKitWebViewWidgetCreationParams.uiKitGestureBlockingPolicy` for choosing the gesture
+  blocking policy of the iOS platform view. Setting it to `doNotBlockGesture` works around web
+  views becoming unresponsive to touches. See
+  https://github.com/flutter/flutter/issues/175099.
+
+## 3.26.2
+
+* Fixes a crash when a `WKNavigationDelegate` authentication challenge reply cannot be
+  resolved to a native instance.
 * Updates minimum supported SDK version to Flutter 3.41/Dart 3.11.
 
 ## 3.26.1
