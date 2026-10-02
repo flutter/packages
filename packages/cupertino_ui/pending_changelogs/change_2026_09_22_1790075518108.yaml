@@ -1,0 +1,3 @@
+changelog: |
+  - Remove deprecated `useInheritedMediaQuery` flag in CupertinoApp
+version: minor
