@@ -3,8 +3,7 @@
 // found in the LICENSE file.
 
 import '../data/cubic_struct.dart';
-import '../data/motion_expressive.dart';
-import '../data/motion_standard.dart';
+import '../data/motion.dart';
 import 'template.dart';
 
 class MotionTemplateM3 extends TokenTemplateM3 {
@@ -32,7 +31,7 @@ class MotionTemplateM3 extends TokenTemplateM3 {
 ''';
   }
 
-  String _easingCurveTokenString(String tokenName, Cubic tokenValue) =>
+  String _easingCurveTokenString(String tokenName, CubicStruct tokenValue) =>
       '''
   /// The $tokenName easing curve in the Material specification.
   ///
@@ -53,22 +52,23 @@ class MotionTemplateM3 extends TokenTemplateM3 {
 /// * [M3 guidelines: Duration tokens](https://m3.material.io/styles/motion/easing-and-duration/tokens-specs#c009dec6-f29b-4503-b9f0-482af14a8bbd)
 /// * [M3 guidelines: Applying easing and duration](https://m3.material.io/styles/motion/easing-and-duration/applying-easing-and-duration)
 abstract final class Durations {
-${_durationTokenString('short1', TokenMotionStandard.durationShort1)}
-${_durationTokenString('short2', TokenMotionStandard.durationShort2)}
-${_durationTokenString('short3', TokenMotionStandard.durationShort3)}
-${_durationTokenString('short4', TokenMotionStandard.durationShort4)}
-${_durationTokenString('medium1', TokenMotionStandard.durationMedium1)}
-${_durationTokenString('medium2', TokenMotionStandard.durationMedium2)}
-${_durationTokenString('medium3', TokenMotionStandard.durationMedium3)}
-${_durationTokenString('medium4', TokenMotionStandard.durationMedium4)}
-${_durationTokenString('long1', TokenMotionStandard.durationLong1)}
-${_durationTokenString('long2', TokenMotionStandard.durationLong2)}
-${_durationTokenString('long3', TokenMotionStandard.durationLong3)}
-${_durationTokenString('long4', TokenMotionStandard.durationLong4)}
-${_durationTokenString('extralong1', TokenMotionStandard.durationExtraLong1)}
-${_durationTokenString('extralong2', TokenMotionStandard.durationExtraLong2)}
-${_durationTokenString('extralong3', TokenMotionStandard.durationExtraLong3)}
-${_durationTokenString('extralong4', TokenMotionStandard.durationExtraLong4)}}
+${_durationTokenString('short1', TokenMotion.durationShort1)}
+${_durationTokenString('short2', TokenMotion.durationShort2)}
+${_durationTokenString('short3', TokenMotion.durationShort3)}
+${_durationTokenString('short4', TokenMotion.durationShort4)}
+${_durationTokenString('medium1', TokenMotion.durationMedium1)}
+${_durationTokenString('medium2', TokenMotion.durationMedium2)}
+${_durationTokenString('medium3', TokenMotion.durationMedium3)}
+${_durationTokenString('medium4', TokenMotion.durationMedium4)}
+${_durationTokenString('long1', TokenMotion.durationLong1)}
+${_durationTokenString('long2', TokenMotion.durationLong2)}
+${_durationTokenString('long3', TokenMotion.durationLong3)}
+${_durationTokenString('long4', TokenMotion.durationLong4)}
+${_durationTokenString('extralong1', TokenMotion.durationExtraLong1)}
+${_durationTokenString('extralong2', TokenMotion.durationExtraLong2)}
+${_durationTokenString('extralong3', TokenMotion.durationExtraLong3)}
+${_durationTokenString('extralong4', TokenMotion.durationExtraLong4).trimRight()}
+}
 
 // TODO(guidezpl): Improve with description and assets, b/289870605
 
@@ -80,14 +80,15 @@ ${_durationTokenString('extralong4', TokenMotionStandard.durationExtraLong4)}}
 /// * [M3 guidelines: Applying easing and duration](https://m3.material.io/styles/motion/easing-and-duration/applying-easing-and-duration)
 /// * [Curves], for a collection of non-Material animation easing curves.
 abstract final class Easing {
-${_easingCurveTokenString('emphasizedAccelerate', TokenMotionExpressive.easingEmphasizedAccelerate)}
-${_easingCurveTokenString('emphasizedDecelerate', TokenMotionExpressive.easingEmphasizedDecelerate)}
-${_easingCurveTokenString('linear', TokenMotionStandard.easingLinear)}
-${_easingCurveTokenString('standard', TokenMotionStandard.easingStandard)}
-${_easingCurveTokenString('standardAccelerate', TokenMotionStandard.easingStandardAccelerate)}
-${_easingCurveTokenString('standardDecelerate', TokenMotionStandard.easingStandardDecelerate)}
-${_easingCurveTokenString('legacyDecelerate', TokenMotionStandard.easingLegacyDecelerate)}
-${_easingCurveTokenString('legacyAccelerate', TokenMotionStandard.easingLegacyAccelerate)}
-${_easingCurveTokenString('legacy', TokenMotionStandard.easingLegacy)}}
+${_easingCurveTokenString('emphasizedAccelerate', TokenMotion.easingEmphasizedAccelerate)}
+${_easingCurveTokenString('emphasizedDecelerate', TokenMotion.easingEmphasizedDecelerate)}
+${_easingCurveTokenString('linear', TokenMotion.easingLinear)}
+${_easingCurveTokenString('standard', TokenMotion.easingStandard)}
+${_easingCurveTokenString('standardAccelerate', TokenMotion.easingStandardAccelerate)}
+${_easingCurveTokenString('standardDecelerate', TokenMotion.easingStandardDecelerate)}
+${_easingCurveTokenString('legacyDecelerate', TokenMotion.easingLegacyDecelerate)}
+${_easingCurveTokenString('legacyAccelerate', TokenMotion.easingLegacyAccelerate)}
+${_easingCurveTokenString('legacy', TokenMotion.easingLegacy).trimRight()}
+}
 ''';
 }

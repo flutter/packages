@@ -2,8 +2,14 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-class Cubic {
-  const Cubic(this.a, this.b, this.c, this.d);
+// dart format off
+class CubicStruct {
+  const CubicStruct({
+    required this.a,
+    required this.b,
+    required this.c,
+    required this.d,
+  });
 
   final double a;
   final double b;
