@@ -10,8 +10,8 @@
 		334733FC266813EE00DCC49E /* ImageUtilTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9FC8F0ED229FB90B00C8D58F /* ImageUtilTests.swift */; };
 		334733FD266813F100DCC49E /* MetaDataUtilTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 680049252280D736006DD6AB /* MetaDataUtilTests.swift */; };
 		334733FE266813F400DCC49E /* PhotoAssetUtilTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 68F4B463228B3AB500C25614 /* PhotoAssetUtilTests.swift */; };
-		334733FF266813FA00DCC49E /* ImagePickerTestImages.m in Sources */ = {isa = PBXBuildFile; fileRef = F78AF3182342D9D7008449C7 /* ImagePickerTestImages.m */; };
-		33473400266813FD00DCC49E /* ImagePickerPluginTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 68B9AF71243E4B3F00927CE4 /* ImagePickerPluginTests.m */; };
+		334733FF266813FA00DCC49E /* ImagePickerTestImages.swift in Sources */ = {isa = PBXBuildFile; fileRef = F78AF3182342D9D7008449C7 /* ImagePickerTestImages.swift */; };
+		33473400266813FD00DCC49E /* ImagePickerPluginTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 68B9AF71243E4B3F00927CE4 /* ImagePickerPluginTests.swift */; };
 		3B3967161E833CAA004F5970 /* AppFrameworkInfo.plist in Resources */ = {isa = PBXBuildFile; fileRef = 3B3967151E833CAA004F5970 /* AppFrameworkInfo.plist */; };
 		5C9513011EC38BD300040975 /* GeneratedPluginRegistrant.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C9513001EC38BD300040975 /* GeneratedPluginRegistrant.m */; };
 		6801C8392555D726009DAF8D /* ImagePickerFromGalleryUITests.m in Sources */ = {isa = PBXBuildFile; fileRef = 6801C8382555D726009DAF8D /* ImagePickerFromGalleryUITests.m */; };
@@ -23,7 +23,6 @@
 		7865C5FC294157BC0010E17F /* icnsImage.icns in Resources */ = {isa = PBXBuildFile; fileRef = 7865C5FB294157BB0010E17F /* icnsImage.icns */; };
 		7865C5FF294252A60010E17F /* proRawImage.dng in Resources */ = {isa = PBXBuildFile; fileRef = 7865C5FE294252A60010E17F /* proRawImage.dng */; };
 		78A318202AECB46A00862997 /* FlutterGeneratedPluginSwiftPackage in Frameworks */ = {isa = PBXBuildFile; productRef = 78A3181F2AECB46A00862997 /* FlutterGeneratedPluginSwiftPackage */; };
-		78CF8D862BC5E7070051231B /* OCMock in Frameworks */ = {isa = PBXBuildFile; productRef = 78CF8D852BC5E7070051231B /* OCMock */; };
 		86430DF9272D71E9002D9D6C /* gifImage.gif in Resources */ = {isa = PBXBuildFile; fileRef = 9FC8F0E8229FA49E00C8D58F /* gifImage.gif */; };
 		86E9A893272754860017E6E0 /* PickerSaveImageToPathOperationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 86E9A892272754860017E6E0 /* PickerSaveImageToPathOperationTests.swift */; };
 		F8A11B022E8C000100000001 /* TestDoubles.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8A11B012E8C000100000001 /* TestDoubles.swift */; };
@@ -92,7 +91,7 @@
 		6801C8362555D726009DAF8D /* RunnerUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = RunnerUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		6801C8382555D726009DAF8D /* ImagePickerFromGalleryUITests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ImagePickerFromGalleryUITests.m; sourceTree = "<group>"; };
 		6801C83A2555D726009DAF8D /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		68B9AF71243E4B3F00927CE4 /* ImagePickerPluginTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ImagePickerPluginTests.m; sourceTree = "<group>"; };
+		68B9AF71243E4B3F00927CE4 /* ImagePickerPluginTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImagePickerPluginTests.swift; sourceTree = "<group>"; };
 		68F4B463228B3AB500C25614 /* PhotoAssetUtilTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotoAssetUtilTests.swift; sourceTree = "<group>"; };
 		782C2B44299ECE33008DC703 /* jpgImageWithRightOrientation.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = jpgImageWithRightOrientation.jpg; sourceTree = "<group>"; };
 		784666492D4C4C64000A1A5F /* FlutterFramework */ = {isa = PBXFileReference; lastKnownFileType = wrapper; name = FlutterFramework; path = Flutter/ephemeral/Packages/.packages/FlutterFramework; sourceTree = "<group>"; };
@@ -122,8 +121,7 @@
 		9FC8F0ED229FB90B00C8D58F /* ImageUtilTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageUtilTests.swift; sourceTree = "<group>"; };
 		BE6173D726A958B800D0974D /* ImagePickerFromLimitedGalleryUITests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ImagePickerFromLimitedGalleryUITests.m; sourceTree = "<group>"; };
 		F706BF722E433163001263B9 /* jpgImageTall.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = jpgImageTall.jpg; sourceTree = "<group>"; };
-		F78AF3172342D9D7008449C7 /* ImagePickerTestImages.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ImagePickerTestImages.h; sourceTree = "<group>"; };
-		F78AF3182342D9D7008449C7 /* ImagePickerTestImages.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ImagePickerTestImages.m; sourceTree = "<group>"; };
+		F78AF3182342D9D7008449C7 /* ImagePickerTestImages.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImagePickerTestImages.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -131,7 +129,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				78CF8D862BC5E7070051231B /* OCMock in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -159,9 +156,8 @@
 				9FC8F0ED229FB90B00C8D58F /* ImageUtilTests.swift */,
 				680049252280D736006DD6AB /* MetaDataUtilTests.swift */,
 				68F4B463228B3AB500C25614 /* PhotoAssetUtilTests.swift */,
-				F78AF3172342D9D7008449C7 /* ImagePickerTestImages.h */,
-				F78AF3182342D9D7008449C7 /* ImagePickerTestImages.m */,
-				68B9AF71243E4B3F00927CE4 /* ImagePickerPluginTests.m */,
+				F78AF3182342D9D7008449C7 /* ImagePickerTestImages.swift */,
+				68B9AF71243E4B3F00927CE4 /* ImagePickerPluginTests.swift */,
 				86E9A892272754860017E6E0 /* PickerSaveImageToPathOperationTests.swift */,
 				F8A11B012E8C000100000001 /* TestDoubles.swift */,
 				334733F62668136400DCC49E /* Info.plist */,
@@ -276,7 +272,6 @@
 			);
 			name = RunnerTests;
 			packageProductDependencies = (
-				78CF8D852BC5E7070051231B /* OCMock */,
 			);
 			productName = RunnerTests;
 			productReference = 334733F22668136400DCC49E /* RunnerTests.xctest */;
@@ -364,7 +359,6 @@
 			mainGroup = 97C146E51CF9000F007C117D;
 			packageReferences = (
 				781AD8BC2B33823900A9FFBB /* XCLocalSwiftPackageReference "FlutterGeneratedPluginSwiftPackage" */,
-				78CF8D842BC5E7070051231B /* XCRemoteSwiftPackageReference "ocmock" */,
 			);
 			productRefGroup = 97C146EF1CF9000F007C117D /* Products */;
 			projectDirPath = "";
@@ -468,11 +462,11 @@
 			buildActionMask = 2147483647;
 			files = (
 				334733FD266813F100DCC49E /* MetaDataUtilTests.swift in Sources */,
-				334733FF266813FA00DCC49E /* ImagePickerTestImages.m in Sources */,
+				334733FF266813FA00DCC49E /* ImagePickerTestImages.swift in Sources */,
 				86E9A893272754860017E6E0 /* PickerSaveImageToPathOperationTests.swift in Sources */,
 				F8A11B022E8C000100000001 /* TestDoubles.swift in Sources */,
 				334733FC266813EE00DCC49E /* ImageUtilTests.swift in Sources */,
-				33473400266813FD00DCC49E /* ImagePickerPluginTests.m in Sources */,
+				33473400266813FD00DCC49E /* ImagePickerPluginTests.swift in Sources */,
 				334733FE266813F400DCC49E /* PhotoAssetUtilTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -544,7 +538,6 @@
 					"@loader_path/Frameworks",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = dev.flutter.plugins.RunnerTests;
-				SWIFT_OBJC_BRIDGING_HEADER = "RunnerTests/RunnerTests-Bridging-Header.h";
 				SWIFT_VERSION = 5.0;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Runner.app/Runner";
@@ -564,7 +557,6 @@
 					"@loader_path/Frameworks",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = dev.flutter.plugins.RunnerTests;
-				SWIFT_OBJC_BRIDGING_HEADER = "RunnerTests/RunnerTests-Bridging-Header.h";
 				SWIFT_VERSION = 5.0;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Runner.app/Runner";
@@ -826,26 +818,10 @@
 		};
 /* End XCLocalSwiftPackageReference section */
 
-/* Begin XCRemoteSwiftPackageReference section */
-		78CF8D842BC5E7070051231B /* XCRemoteSwiftPackageReference "ocmock" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/erikdoe/ocmock";
-			requirement = {
-				kind = revision;
-				revision = ef21a2ece3ee092f8ed175417718bdd9b8eb7c9a;
-			};
-		};
-/* End XCRemoteSwiftPackageReference section */
-
 /* Begin XCSwiftPackageProductDependency section */
 		78A3181F2AECB46A00862997 /* FlutterGeneratedPluginSwiftPackage */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = FlutterGeneratedPluginSwiftPackage;
-		};
-		78CF8D852BC5E7070051231B /* OCMock */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 78CF8D842BC5E7070051231B /* XCRemoteSwiftPackageReference "ocmock" */;
-			productName = OCMock;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};
