@@ -609,6 +609,20 @@ class ShellRouteContext {
     bool notifyRootObserver,
     String? restorationScopeId,
   ) {
+    return navigatorBuilder(
+      navigatorKey,
+      match,
+      routeMatchList,
+      _effectiveObservers(context, observers, notifyRootObserver),
+      restorationScopeId,
+    );
+  }
+
+  List<NavigatorObserver> _effectiveObservers(
+    BuildContext context,
+    List<NavigatorObserver>? observers,
+    bool notifyRootObserver,
+  ) {
     final effectiveObservers = <NavigatorObserver>[...?observers];
 
     if (notifyRootObserver) {
@@ -618,13 +632,7 @@ class ShellRouteContext {
       }
     }
 
-    return navigatorBuilder(
-      navigatorKey,
-      match,
-      routeMatchList,
-      effectiveObservers,
-      restorationScopeId,
-    );
+    return effectiveObservers;
   }
 }
 
@@ -1493,7 +1501,11 @@ class StatefulNavigationShellState extends State<StatefulNavigationShell> with R
           branch.navigatorKey,
           match!,
           matchList,
-          branch.observers,
+          widget.shellRouteContext._effectiveObservers(
+            context,
+            branch.observers,
+            route.notifyRootObserver,
+          ),
           branch.restorationScopeId,
         );
 
@@ -1531,7 +1543,9 @@ class StatefulNavigationShellState extends State<StatefulNavigationShell> with R
         continue;
       }
 
-      final RouteMatchList matchList = _router.configuration.reparse(branchState.location.value);
+      final RouteMatchList matchList = _scopedMatchList(
+        _router.configuration.reparse(branchState.location.value),
+      );
       ShellRouteMatch? match;
       matchList.visitRouteMatches((RouteMatchBase candidate) {
         if (candidate is ShellRouteMatch && candidate.route == route) {
@@ -1541,9 +1555,10 @@ class StatefulNavigationShellState extends State<StatefulNavigationShell> with R
         return true;
       });
       final branchMatch = match;
-      if (branchMatch == null ||
+      if (matchList.isError ||
+          branchMatch == null ||
           branchMatch.matches.isEmpty ||
-          route.navigatorKeyForSubRoute(branchMatch.matches.first.route) != branch.navigatorKey) {
+          branchMatch.navigatorKey != branch.navigatorKey) {
         // The saved location was removed or moved to another branch.
         _branchState.remove(branch.navigatorKey)!.dispose();
         continue;
@@ -1554,7 +1569,11 @@ class StatefulNavigationShellState extends State<StatefulNavigationShell> with R
         branch.navigatorKey,
         branchMatch,
         matchList,
-        branch.observers,
+        widget.shellRouteContext._effectiveObservers(
+          context,
+          branch.observers,
+          route.notifyRootObserver,
+        ),
         branch.restorationScopeId,
       );
     }

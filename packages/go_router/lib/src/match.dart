@@ -666,7 +666,7 @@ class RouteMatchList with Diagnosticable {
     ImperativeRouteMatch match, {
     List<ShellRouteMatch> ancestorShellRouteMatches = const <ShellRouteMatch>[],
   }) {
-    final List<RouteMatchBase> newMatches = currentMatches.toList();
+    final newMatches = <RouteMatchBase>[...currentMatches];
     // Shell matches outside a recursive branch can still reserve its keys.
     final existingShellRouteMatches = <ShellRouteMatch>[...ancestorShellRouteMatches];
     _visitRouteMatches(newMatches, (RouteMatchBase match) {

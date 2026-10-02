@@ -494,6 +494,301 @@ void main() {
     expect(find.text('Branch A v3'), findsOneWidget);
   });
 
+  for (final preload in <bool>[false, true]) {
+    testWidgets('routing config resets an inactive branch with a removed base and surviving push '
+        '(preload: $preload)', (WidgetTester tester) async {
+      final shellKey = GlobalKey<StatefulNavigationShellState>();
+      final branchAKey = GlobalKey<NavigatorState>();
+      final branchBKey = GlobalKey<NavigatorState>();
+
+      RoutingConfig buildConfig({required String aPath, required String label}) => RoutingConfig(
+        routes: <RouteBase>[
+          StatefulShellRoute.indexedStack(
+            key: shellKey,
+            builder: (_, _, StatefulNavigationShell shell) => shell,
+            branches: <StatefulShellBranch>[
+              StatefulShellBranch(
+                navigatorKey: branchAKey,
+                preload: preload,
+                routes: <RouteBase>[
+                  GoRoute(path: aPath, builder: (_, _) => Text(label)),
+                  GoRoute(path: '/a-pushed', builder: (_, _) => Text('Pushed $label')),
+                ],
+              ),
+              StatefulShellBranch(
+                navigatorKey: branchBKey,
+                routes: <RouteBase>[GoRoute(path: '/b', builder: (_, _) => const Text('Branch B'))],
+              ),
+            ],
+          ),
+        ],
+      );
+
+      final config = ValueNotifier<RoutingConfig>(buildConfig(aPath: '/a', label: 'v1'));
+      addTearDown(config.dispose);
+      final GoRouter router = await createRouterWithRoutingConfig(
+        config,
+        tester,
+        initialLocation: '/a',
+      );
+      await tester.pumpAndSettle();
+      unawaited(router.push<void>('/a-pushed'));
+      await tester.pumpAndSettle();
+      expect(find.text('Pushed v1'), findsOneWidget);
+
+      shellKey.currentState!.goBranch(1);
+      await tester.pumpAndSettle();
+      config.value = buildConfig(aPath: '/new-a', label: 'v2');
+      await tester.pumpAndSettle();
+      expect(tester.takeException(), isNull);
+      expect(find.text('Branch B'), findsOneWidget);
+
+      shellKey.currentState!.goBranch(0);
+      await tester.pumpAndSettle();
+      expect(tester.takeException(), isNull);
+      expect(find.text('v2'), findsOneWidget);
+      expect(find.text('Pushed v2'), findsNothing);
+      expect(router.routerDelegate.currentConfiguration.isError, isFalse);
+      expect(router.routerDelegate.currentConfiguration.uri.path, '/new-a');
+    });
+  }
+
+  testWidgets('routing config preserves an inactive branch at a replaced nested route', (
+    WidgetTester tester,
+  ) async {
+    final shellKey = GlobalKey<StatefulNavigationShellState>();
+    final branchAKey = GlobalKey<NavigatorState>();
+    final branchBKey = GlobalKey<NavigatorState>();
+
+    RoutingConfig buildConfig({required String label}) => RoutingConfig(
+      routes: <RouteBase>[
+        GoRoute(
+          path: '/root',
+          builder: (_, _) => const Text('Root'),
+          routes: <RouteBase>[
+            StatefulShellRoute.indexedStack(
+              key: shellKey,
+              builder: (_, _, StatefulNavigationShell shell) => shell,
+              branches: <StatefulShellBranch>[
+                StatefulShellBranch(
+                  navigatorKey: branchAKey,
+                  routes: <RouteBase>[
+                    GoRoute(
+                      path: 'a',
+                      builder: (_, _) => Text('A $label'),
+                      routes: <RouteBase>[
+                        GoRoute(path: 'detail', builder: (_, _) => Text('Detail $label')),
+                      ],
+                    ),
+                  ],
+                ),
+                StatefulShellBranch(
+                  navigatorKey: branchBKey,
+                  routes: <RouteBase>[
+                    GoRoute(path: 'b', builder: (_, _) => const Text('Branch B')),
+                  ],
+                ),
+              ],
+            ),
+          ],
+        ),
+      ],
+    );
+
+    final config = ValueNotifier<RoutingConfig>(buildConfig(label: 'v1'));
+    addTearDown(config.dispose);
+    final GoRouter router = await createRouterWithRoutingConfig(
+      config,
+      tester,
+      initialLocation: '/root/a',
+    );
+    await tester.pumpAndSettle();
+    final NavigatorState branchANavigator = branchAKey.currentState!;
+    unawaited(router.pushReplacement<void>('/root/a/detail'));
+    await tester.pumpAndSettle();
+    expect(find.text('Detail v1'), findsOneWidget);
+
+    shellKey.currentState!.goBranch(1);
+    await tester.pumpAndSettle();
+    config.value = buildConfig(label: 'v2');
+    await tester.pumpAndSettle();
+    expect(tester.takeException(), isNull);
+    expect(find.text('Branch B'), findsOneWidget);
+
+    shellKey.currentState!.goBranch(0);
+    await tester.pumpAndSettle();
+    expect(tester.takeException(), isNull);
+    expect(find.text('Detail v2'), findsOneWidget);
+    expect(branchAKey.currentState, same(branchANavigator));
+  });
+
+  testWidgets('routing config discards a removed push from an inactive branch', (
+    WidgetTester tester,
+  ) async {
+    final shellKey = GlobalKey<StatefulNavigationShellState>();
+    final branchAKey = GlobalKey<NavigatorState>();
+    final branchBKey = GlobalKey<NavigatorState>();
+
+    RoutingConfig buildConfig({required bool includeDetail, required String label}) =>
+        RoutingConfig(
+          routes: <RouteBase>[
+            StatefulShellRoute.indexedStack(
+              key: shellKey,
+              builder: (_, _, StatefulNavigationShell shell) => shell,
+              branches: <StatefulShellBranch>[
+                StatefulShellBranch(
+                  navigatorKey: branchAKey,
+                  routes: <RouteBase>[
+                    GoRoute(
+                      path: '/a',
+                      builder: (_, _) => Text('Branch A $label'),
+                      routes: <RouteBase>[
+                        if (includeDetail)
+                          GoRoute(path: 'detail', builder: (_, _) => Text('Detail $label')),
+                      ],
+                    ),
+                  ],
+                ),
+                StatefulShellBranch(
+                  navigatorKey: branchBKey,
+                  routes: <RouteBase>[
+                    GoRoute(path: '/b', builder: (_, _) => const Text('Branch B')),
+                  ],
+                ),
+              ],
+            ),
+          ],
+        );
+
+    final config = ValueNotifier<RoutingConfig>(buildConfig(includeDetail: true, label: 'v1'));
+    addTearDown(config.dispose);
+    final GoRouter router = await createRouterWithRoutingConfig(
+      config,
+      tester,
+      initialLocation: '/a',
+      errorBuilder: (_, _) => const Text('Routing error'),
+    );
+    await tester.pumpAndSettle();
+    final NavigatorState branchANavigator = branchAKey.currentState!;
+    unawaited(router.push<void>('/a/detail'));
+    await tester.pumpAndSettle();
+    expect(find.text('Detail v1'), findsOneWidget);
+
+    shellKey.currentState!.goBranch(1);
+    await tester.pumpAndSettle();
+    config.value = buildConfig(includeDetail: false, label: 'v2');
+    await tester.pumpAndSettle();
+    expect(tester.takeException(), isNull);
+
+    shellKey.currentState!.goBranch(0);
+    await tester.pumpAndSettle();
+    expect(tester.takeException(), isNull);
+    expect(find.text('Branch A v2'), findsOneWidget);
+    expect(find.text('Routing error'), findsNothing);
+    expect(branchAKey.currentState, same(branchANavigator));
+    expect(router.routerDelegate.currentConfiguration.isError, isFalse);
+    expect(router.routerDelegate.currentConfiguration.uri.path, '/a');
+  });
+
+  for (final preload in <bool>[false, true]) {
+    for (final notifyRootObserver in <bool>[false, true]) {
+      testWidgets('routing config preserves inactive branch observers '
+          '(preload: $preload, notifyRootObserver: $notifyRootObserver)', (
+        WidgetTester tester,
+      ) async {
+        final shellKey = GlobalKey<StatefulNavigationShellState>();
+        final branchAKey = GlobalKey<NavigatorState>();
+        final branchBKey = GlobalKey<NavigatorState>();
+        final rootObserver = _RecordingNavigatorObserver();
+        final branchObserver = _RecordingNavigatorObserver();
+
+        RoutingConfig buildConfig({required String label, required Clip clipBehavior}) =>
+            RoutingConfig(
+              routes: <RouteBase>[
+                StatefulShellRoute.indexedStack(
+                  key: shellKey,
+                  notifyRootObserver: notifyRootObserver,
+                  builder: (_, _, StatefulNavigationShell shell) => shell,
+                  branches: <StatefulShellBranch>[
+                    StatefulShellBranch(
+                      navigatorKey: branchAKey,
+                      preload: preload,
+                      observers: <NavigatorObserver>[branchObserver],
+                      clipBehavior: clipBehavior,
+                      routes: <RouteBase>[
+                        GoRoute(
+                          path: '/a',
+                          builder: (_, _) => Text('Branch A $label'),
+                          routes: <RouteBase>[
+                            GoRoute(path: 'detail', builder: (_, _) => Text('Detail $label')),
+                          ],
+                        ),
+                      ],
+                    ),
+                    StatefulShellBranch(
+                      navigatorKey: branchBKey,
+                      routes: <RouteBase>[
+                        GoRoute(path: '/b', builder: (_, _) => const Text('Branch B')),
+                      ],
+                    ),
+                  ],
+                ),
+              ],
+            );
+
+        final config = ValueNotifier<RoutingConfig>(
+          buildConfig(label: 'v1', clipBehavior: Clip.none),
+        );
+        addTearDown(config.dispose);
+        final router = GoRouter.routingConfig(
+          routingConfig: config,
+          initialLocation: '/b',
+          observers: <NavigatorObserver>[rootObserver],
+        );
+        addTearDown(router.dispose);
+        await tester.pumpWidget(MaterialApp.router(routerConfig: router));
+        await tester.pumpAndSettle();
+        shellKey.currentState!.goBranch(0);
+        await tester.pumpAndSettle();
+        expect(branchObserver.pushedRoutes, hasLength(1));
+        expect(
+          rootObserver.pushedRoutes.contains(branchObserver.pushedRoutes.single),
+          notifyRootObserver,
+        );
+        final NavigatorState branchANavigator = branchAKey.currentState!;
+
+        shellKey.currentState!.goBranch(1);
+        await tester.pumpAndSettle();
+        config.value = buildConfig(label: 'v2', clipBehavior: Clip.antiAlias);
+        await tester.pumpAndSettle();
+        expect(tester.takeException(), isNull);
+        shellKey.currentState!.goBranch(0);
+        await tester.pumpAndSettle();
+        expect(branchAKey.currentState, same(branchANavigator));
+        expect(branchANavigator.widget.clipBehavior, Clip.antiAlias);
+
+        rootObserver.pushedRoutes.clear();
+        branchObserver.pushedRoutes.clear();
+        final Future<void> result = branchANavigator.push<void>(
+          MaterialPageRoute<void>(builder: (_) => const Text('Pageless detail')),
+        );
+        await tester.pumpAndSettle();
+        expect(tester.takeException(), isNull);
+        expect(find.text('Pageless detail'), findsOneWidget);
+        expect(branchObserver.pushedRoutes, hasLength(1));
+        if (notifyRootObserver) {
+          expect(rootObserver.pushedRoutes, branchObserver.pushedRoutes);
+        } else {
+          expect(rootObserver.pushedRoutes, isEmpty);
+        }
+        branchANavigator.pop();
+        await tester.pumpAndSettle();
+        await result;
+        expect(find.text('Branch A v2'), findsOneWidget);
+      });
+    }
+  }
+
   testWidgets('routing config works with named route', (WidgetTester tester) async {
     final config = ValueNotifier<RoutingConfig>(
       RoutingConfig(
@@ -563,4 +858,13 @@ State<StatefulWidget> _customNavigatorStateFor(NavigatorState navigator) {
     return true;
   });
   return customNavigatorElement!.state;
+}
+
+class _RecordingNavigatorObserver extends NavigatorObserver {
+  final List<Route<dynamic>> pushedRoutes = <Route<dynamic>>[];
+
+  @override
+  void didPush(Route<dynamic> route, Route<dynamic>? previousRoute) {
+    pushedRoutes.add(route);
+  }
 }
