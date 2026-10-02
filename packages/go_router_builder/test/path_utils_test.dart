@@ -72,6 +72,23 @@ void main() {
         isNot(normalizePathParameters('/user/:id(mon:wed)')),
       );
     });
+
+    test('It should support group constructs in the parameter pattern', () {
+      // `(?:abc)` must not be mistaken for a `:abc` parameter and rewritten
+      // to `:_`, which would make these two constraints compare as equal.
+      expect(normalizePathParameters(r'/user/:id((?:0x)?\d+)'), r'/user/:_((?:0x)?\d+)');
+      expect(
+        normalizePathParameters(r'/user/:id((?:abc)\d+)'),
+        isNot(normalizePathParameters(r'/user/:id((?:xyz)\d+)')),
+      );
+    });
+
+    test('It should support a nested group in the parameter pattern', () {
+      expect(
+        normalizePathParameters(r'/user/:id((?!(?:0|1)(?:/|$))[^/]+)/book/:bookId'),
+        r'/user/:_((?!(?:0|1)(?:/|$))[^/]+)/book/:_',
+      );
+    });
   });
 
   group('patternToPath', () {
