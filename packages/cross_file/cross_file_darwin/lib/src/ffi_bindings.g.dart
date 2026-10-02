@@ -1113,6 +1113,13 @@ extension NSFileManager$Methods on NSFileManager {
     final _$$ref$1 = path.ref;
     return _objc_msgSend_19nvye5(_$$ref.pointer, _sel_isReadableFileAtPath_, _$$ref$1.pointer);
   }
+
+  /// isWritableFileAtPath:
+  bool isWritableFileAtPath(objc.NSString path) {
+    final _$$ref = object$.ref;
+    final _$$ref$1 = path.ref;
+    return _objc_msgSend_19nvye5(_$$ref.pointer, _sel_isWritableFileAtPath_, _$$ref$1.pointer);
+  }
 }
 
 /// NSKeyValueCoding
@@ -5099,6 +5106,7 @@ late final _sel_isNotEqualTo_ = objc.registerName("isNotEqualTo:");
 late final _sel_isReadableFileAtPath_ = objc.registerName("isReadableFileAtPath:");
 late final _sel_isSubtypeOfType_ = objc.registerName("isSubtypeOfType:");
 late final _sel_isSupertypeOfType_ = objc.registerName("isSupertypeOfType:");
+late final _sel_isWritableFileAtPath_ = objc.registerName("isWritableFileAtPath:");
 late final _sel_keyPathsForValuesAffectingValueForKey_ = objc.registerName(
   "keyPathsForValuesAffectingValueForKey:",
 );

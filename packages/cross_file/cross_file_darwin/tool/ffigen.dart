@@ -47,6 +47,7 @@ void main() {
             'NSFileManager' => <String>{
               'defaultManager',
               'isReadableFileAtPath:',
+              'isWritableFileAtPath:',
             }.contains(signature),
             'NSObject' => <String>{'valueForKey:'}.contains(signature),
             'PHAsset' => <String>{
