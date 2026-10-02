@@ -37,6 +37,8 @@ void main() {
     ValueChanged<DateTime>? onDisplayedMonthChanged,
     DatePickerMode initialCalendarMode = DatePickerMode.day,
     SelectableDayPredicate? selectableDayPredicate,
+    CalendarDatePickerDayBuilder? dayBuilder,
+    CalendarDatePickerWeekdayBuilder? weekdayBuilder,
     TextDirection textDirection = TextDirection.ltr,
     ThemeData? theme,
     bool? useMaterial3,
@@ -56,6 +58,8 @@ void main() {
             onDisplayedMonthChanged: onDisplayedMonthChanged,
             initialCalendarMode: initialCalendarMode,
             selectableDayPredicate: selectableDayPredicate,
+            dayBuilder: dayBuilder,
+            weekdayBuilder: weekdayBuilder,
           ),
         ),
       ),
@@ -470,6 +474,180 @@ void main() {
       await tester.tap(find.text('2018'));
       await tester.pumpAndSettle();
       expect(find.text('January 2018'), findsOneWidget);
+    });
+
+    testWidgets('dayBuilder customizes days and preserves tap handling and semantics', (
+      WidgetTester tester,
+    ) async {
+      final SemanticsHandle semantics = tester.ensureSemantics();
+      final selectedDates = <DateTime>[];
+
+      await tester.pumpWidget(
+        calendarDatePicker(
+          initialDate: DateTime(2016, DateTime.january, 15),
+          onDateChanged: selectedDates.add,
+          dayBuilder: (BuildContext context, CalendarDatePickerDayDetails details) {
+            return details.day.day == 1 ? const Text('Custom day 1') : details.child;
+          },
+        ),
+      );
+
+      expect(find.text('Custom day 1'), findsOneWidget);
+      expect(
+        tester.getSemantics(find.text('Custom day 1')),
+        matchesSemantics(
+          label: '1, Friday, January 1, 2016',
+          isButton: true,
+          hasEnabledState: true,
+          isEnabled: true,
+          hasSelectedState: true,
+          hasTapAction: true,
+          hasFocusAction: true,
+          isFocusable: true,
+        ),
+      );
+      expect(selectedDates, isEmpty);
+
+      await tester.tap(find.text('Custom day 1'));
+      await tester.pumpAndSettle();
+
+      final januaryFirst2016 = DateTime(2016);
+      expect(selectedDates, <DateTime>[januaryFirst2016]);
+      semantics.dispose();
+    });
+
+    testWidgets('dayBuilder receives day states', (WidgetTester tester) async {
+      final statesForDay = <DateTime, Set<WidgetState>>{};
+
+      await tester.pumpWidget(
+        calendarDatePicker(
+          initialDate: DateTime(2016, DateTime.january, 15),
+          selectableDayPredicate: (DateTime date) => date.day != 10,
+          dayBuilder: (BuildContext context, CalendarDatePickerDayDetails details) {
+            statesForDay[details.day] = details.states;
+            return details.child;
+          },
+        ),
+      );
+
+      expect(statesForDay[DateTime(2016, DateTime.january, 10)], contains(WidgetState.disabled));
+      expect(statesForDay[DateTime(2016, DateTime.january, 15)], contains(WidgetState.selected));
+
+      final TestGesture gesture = await tester.createGesture(kind: PointerDeviceKind.mouse);
+      addTearDown(gesture.removePointer);
+      await gesture.addPointer(location: Offset.zero);
+      await gesture.moveTo(tester.getCenter(find.text('12')));
+      await tester.pump();
+      expect(statesForDay[DateTime(2016, DateTime.january, 12)], contains(WidgetState.hovered));
+
+      await tester.tap(find.text('12'));
+      await tester.pumpAndSettle();
+      expect(statesForDay[DateTime(2016, DateTime.january, 12)], contains(WidgetState.selected));
+      expect(
+        statesForDay[DateTime(2016, DateTime.january, 15)],
+        isNot(contains(WidgetState.selected)),
+      );
+    });
+
+    for (final state in <WidgetState>[
+      WidgetState.hovered,
+      WidgetState.focused,
+      WidgetState.pressed,
+    ]) {
+      testWidgets('dayBuilder preserves $state when rebuilt', (WidgetTester tester) async {
+        final targetDate = DateTime(2016, DateTime.january, 12);
+        final statesForDay = <DateTime, Set<WidgetState>>{};
+        Widget buildPicker({bool disabled = false}) {
+          return calendarDatePicker(
+            initialDate: DateTime(2016, DateTime.january, 15),
+            selectableDayPredicate: (DateTime date) => !disabled || date != targetDate,
+            dayBuilder: (BuildContext context, CalendarDatePickerDayDetails details) {
+              statesForDay[details.day] = details.states;
+              return details.child;
+            },
+          );
+        }
+
+        await tester.pumpWidget(buildPicker());
+        final Finder dayFinder = find.text('12');
+        TestGesture? gesture;
+        switch (state) {
+          case WidgetState.hovered:
+            gesture = await tester.createGesture(kind: PointerDeviceKind.mouse);
+            await gesture.addPointer(location: Offset.zero);
+            await gesture.moveTo(tester.getCenter(dayFinder));
+
+          case WidgetState.focused:
+            final InkResponse selectedInkResponse = tester.widget<InkResponse>(
+              find.ancestor(of: find.text('15'), matching: find.byType(InkResponse)),
+            );
+            selectedInkResponse.focusNode!.requestFocus();
+            await tester.pumpAndSettle();
+
+            for (var i = 0; i < 3; i++) {
+              await tester.sendKeyEvent(LogicalKeyboardKey.arrowLeft);
+              await tester.pumpAndSettle();
+            }
+          case WidgetState.pressed:
+            gesture = await tester.startGesture(tester.getCenter(dayFinder));
+          case WidgetState.dragged:
+          case WidgetState.selected:
+          case WidgetState.scrolledUnder:
+          case WidgetState.disabled:
+          case WidgetState.error:
+            throw StateError('Unexpected state: $state');
+        }
+        await tester.pumpAndSettle();
+        expect(statesForDay[targetDate], contains(state));
+
+        // Verify that interactive states reported by InkResponse survive a rebuild.
+        statesForDay.clear();
+        await tester.pumpWidget(buildPicker());
+        expect(statesForDay[targetDate], contains(state));
+
+        // Disabling the day should replace transient interactive states with disabled.
+        await tester.pumpWidget(buildPicker(disabled: true));
+        await tester.pumpAndSettle();
+        expect(statesForDay[targetDate], <WidgetState>{WidgetState.disabled});
+
+        if (gesture != null) {
+          if (state == WidgetState.pressed) {
+            await gesture.cancel();
+          }
+          await gesture.removePointer();
+        }
+      });
+    }
+
+    testWidgets('weekdayBuilder customizes headers and uses DateTime weekday values', (
+      WidgetTester tester,
+    ) async {
+      await tester.pumpWidget(
+        calendarDatePicker(
+          weekdayBuilder: (BuildContext context, CalendarDatePickerWeekdayDetails details) {
+            return details.weekday == DateTime.sunday ? const Text('Custom Sunday') : details.child;
+          },
+        ),
+      );
+
+      expect(find.text('Custom Sunday'), findsOneWidget);
+    });
+
+    testWidgets('weekdayBuilder preserves custom semantics', (WidgetTester tester) async {
+      final SemanticsHandle semantics = tester.ensureSemantics();
+
+      await tester.pumpWidget(
+        calendarDatePicker(
+          weekdayBuilder: (BuildContext context, CalendarDatePickerWeekdayDetails details) {
+            return details.weekday == DateTime.sunday
+                ? Semantics(label: 'Custom Sunday', child: details.child)
+                : details.child;
+          },
+        ),
+      );
+
+      expect(find.bySemanticsLabel('Custom Sunday'), findsOneWidget);
+      semantics.dispose();
     });
 
     testWidgets('Material2 - currentDate is highlighted', (WidgetTester tester) async {
