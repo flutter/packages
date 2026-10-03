@@ -1,0 +1,2 @@
+changelog: Reparses the match list a stateful shell branch saved when it becomes active again, so a branch left behind by a `GoRouter.routingConfig` update no longer restores routes the current table does not contain — which made an imperative push on top of it mount a second copy of the shell.
+version: patch
