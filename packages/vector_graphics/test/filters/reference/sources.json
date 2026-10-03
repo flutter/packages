@@ -115,9 +115,169 @@
     "kind": "browser",
     "input": "empty.svg"
   },
+  "flood_alpha_product": {
+    "kind": "browser",
+    "input": "flood_alpha_product.svg"
+  },
+  "flood_bbox": {
+    "kind": "browser",
+    "input": "flood_bbox.svg"
+  },
+  "flood_chain": {
+    "kind": "browser",
+    "input": "flood_chain.svg"
+  },
+  "flood_current_color": {
+    "kind": "browser",
+    "input": "flood_current_color.svg"
+  },
+  "flood_defaults": {
+    "kind": "browser",
+    "input": "flood_defaults.svg"
+  },
+  "flood_explicit_inherit": {
+    "kind": "browser",
+    "input": "flood_explicit_inherit.svg"
+  },
+  "flood_hex": {
+    "kind": "browser",
+    "input": "flood_hex.svg"
+  },
+  "flood_hex_alpha": {
+    "kind": "browser",
+    "input": "flood_hex_alpha.svg"
+  },
+  "flood_ignored_input": {
+    "kind": "browser",
+    "input": "flood_ignored_input.svg"
+  },
+  "flood_linear_color": {
+    "kind": "browser",
+    "input": "flood_linear_color.svg"
+  },
+  "flood_named": {
+    "kind": "browser",
+    "input": "flood_named.svg"
+  },
+  "flood_not_inherited": {
+    "kind": "browser",
+    "input": "flood_not_inherited.svg"
+  },
+  "flood_opacity": {
+    "kind": "browser",
+    "input": "flood_opacity.svg"
+  },
+  "flood_opacity_negative": {
+    "kind": "browser",
+    "input": "flood_opacity_negative.svg"
+  },
+  "flood_opacity_over": {
+    "kind": "browser",
+    "input": "flood_opacity_over.svg"
+  },
+  "flood_opacity_percent": {
+    "kind": "browser",
+    "input": "flood_opacity_percent.svg"
+  },
+  "flood_rgb_percent": {
+    "kind": "browser",
+    "input": "flood_rgb_percent.svg"
+  },
+  "flood_rgba": {
+    "kind": "browser",
+    "input": "flood_rgba.svg"
+  },
+  "flood_style": {
+    "kind": "browser",
+    "input": "flood_style.svg"
+  },
+  "flood_subregion": {
+    "kind": "browser",
+    "input": "flood_subregion.svg"
+  },
+  "flood_transparent": {
+    "kind": "browser",
+    "input": "flood_transparent.svg"
+  },
+  "flood_zero_region": {
+    "kind": "browser",
+    "input": "flood_zero_region.svg"
+  },
+  "integration_filtered_mask": {
+    "kind": "browser",
+    "input": "integration_filtered_mask.svg"
+  },
+  "integration_flood_ancestor_opacity": {
+    "kind": "browser",
+    "input": "integration_flood_ancestor_opacity.svg"
+  },
+  "integration_flood_ancestor_zero": {
+    "kind": "browser",
+    "input": "integration_flood_ancestor_zero.svg"
+  },
+  "integration_flood_clip": {
+    "kind": "browser",
+    "input": "integration_flood_clip.svg"
+  },
+  "integration_flood_filtered_use_opacity": {
+    "kind": "browser",
+    "input": "integration_flood_filtered_use_opacity.svg"
+  },
+  "integration_flood_group_opacity": {
+    "kind": "browser",
+    "input": "integration_flood_group_opacity.svg"
+  },
+  "integration_flood_mask": {
+    "kind": "browser",
+    "input": "integration_flood_mask.svg"
+  },
+  "integration_flood_nested": {
+    "kind": "browser",
+    "input": "integration_flood_nested.svg"
+  },
+  "integration_flood_pattern": {
+    "kind": "browser",
+    "input": "integration_flood_pattern.svg"
+  },
+  "integration_flood_pattern_opacity": {
+    "kind": "browser",
+    "input": "integration_flood_pattern_opacity.svg"
+  },
+  "integration_flood_root": {
+    "kind": "browser",
+    "input": "integration_flood_root.svg"
+  },
+  "integration_flood_root_opacity": {
+    "kind": "browser",
+    "input": "integration_flood_root_opacity.svg"
+  },
+  "integration_flood_shape_opacity": {
+    "kind": "browser",
+    "input": "integration_flood_shape_opacity.svg"
+  },
+  "integration_flood_use": {
+    "kind": "browser",
+    "input": "integration_flood_use.svg"
+  },
+  "integration_flood_use_opacity": {
+    "kind": "browser",
+    "input": "integration_flood_use_opacity.svg"
+  },
+  "integration_mask_blue": {
+    "kind": "browser",
+    "input": "integration_mask_blue.svg"
+  },
   "integration_mask_clip_layers": {
     "kind": "browser",
     "input": "integration_mask_clip_layers.svg"
+  },
+  "integration_mask_green": {
+    "kind": "browser",
+    "input": "integration_mask_green.svg"
+  },
+  "integration_mask_hex808080": {
+    "kind": "browser",
+    "input": "integration_mask_hex808080.svg"
   },
   "integration_mask_inside_filter": {
     "kind": "browser",
@@ -126,6 +286,10 @@
   "integration_mask_inside_transformed_filter": {
     "kind": "browser",
     "input": "integration_mask_inside_transformed_filter.svg"
+  },
+  "integration_mask_red": {
+    "kind": "browser",
+    "input": "integration_mask_red.svg"
   },
   "integration_nested_masks": {
     "kind": "browser",
