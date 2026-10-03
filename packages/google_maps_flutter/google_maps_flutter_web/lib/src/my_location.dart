@@ -187,7 +187,8 @@ class MyLocationButton {
     final styleElement = web.HTMLStyleElement();
     web.document.head?.append(styleElement);
     final web.CSSStyleSheet? sheet = styleElement.sheet;
-    var rule = '.waiting { animation: 1000ms infinite step-end blink-position-icon;}';
+    var rule =
+        '.gmf-my-location-waiting { animation: 1000ms infinite step-end blink-position-icon;}';
     sheet?.insertRule(rule);
     rule =
         '@keyframes blink-position-icon {0% {background-position: -24px 0px;} '
@@ -250,7 +251,7 @@ class MyLocationButton {
     if (_btnChild.disabled) {
       return;
     }
-    _imageChild.classList.add('waiting');
+    _imageChild.classList.add('gmf-my-location-waiting');
   }
 
   /// Done animation
@@ -258,14 +259,14 @@ class MyLocationButton {
     if (_btnChild.disabled) {
       return;
     }
-    _imageChild.classList.remove('waiting');
+    _imageChild.classList.remove('gmf-my-location-waiting');
     _imageChild.style.backgroundPosition = '-192px 0px';
   }
 
   /// Disable button
   void disableBtn() {
     _btnChild.disabled = true;
-    _imageChild.classList.remove('waiting');
+    _imageChild.classList.remove('gmf-my-location-waiting');
     _imageChild.style.backgroundPosition = '-24px 0px';
   }
 
