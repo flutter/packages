@@ -1119,12 +1119,35 @@ void main() {
       setUp(() {
         mockMyLocationController = MockMyLocationController();
         mockGeolocationApi = MockGeolocationApi();
+        when(mockGeolocationApi.isAvailable).thenReturn(true);
       });
 
       testWidgets('by default is disabled', (WidgetTester tester) async {
         controller = createController();
         controller.init();
         expect(mockMyLocationController.myLocationButton, isNull);
+      });
+
+      testWidgets('does not show my location button when geolocation is unavailable', (
+        WidgetTester tester,
+      ) async {
+        when(mockGeolocationApi.isAvailable).thenReturn(false);
+        final map = gmaps.Map(createDivElement());
+        final myLocationController = MyLocationController(geolocationApi: mockGeolocationApi);
+
+        controller = createController(
+          mapConfiguration: const MapConfiguration(
+            myLocationEnabled: true,
+            myLocationButtonEnabled: true,
+          ),
+        );
+        controller.debugSetOverrides(createMap: (_, _) => map, myLocation: myLocationController);
+
+        controller.init();
+        await tester.pumpAndSettle();
+
+        expect(myLocationController.myLocationButton, isNull);
+        expect(map.controls[gmaps.ControlPosition.RIGHT_BOTTOM as int].length, equals(0));
       });
 
       testWidgets('initializes with my location & display my location button', (
