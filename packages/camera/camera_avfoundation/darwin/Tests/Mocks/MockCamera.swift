@@ -23,7 +23,7 @@ final class MockCamera: NSObject, Camera {
   var resumeVideoRecordingStub: (() -> Void)?
   var stopVideoRecordingStub: ((@escaping (Result<String, any Error>) -> Void) -> Void)?
   var captureToFileStub: ((@escaping (Result<String, any Error>) -> Void) -> Void)?
-  var setDeviceOrientationStub: ((UIDeviceOrientation) -> Void)?
+  var setDeviceOrientationStub: ((PlatformDeviceOrientation) -> Void)?
   var lockCaptureOrientationStub: ((PlatformDeviceOrientation) -> Void)?
   var unlockCaptureOrientationStub: (() -> Void)?
   var setImageFileFormatStub: ((PlatformImageFileFormat) -> Void)?
@@ -69,7 +69,7 @@ final class MockCamera: NSObject, Camera {
   var isPreviewPaused: Bool = false
   var isStreamingImages: Bool = false
 
-  var deviceOrientation: UIDeviceOrientation {
+  var deviceOrientation: PlatformDeviceOrientation {
     get {
       preconditionFailure("Attempted to access unimplemented property: deviceOrientation")
     }
