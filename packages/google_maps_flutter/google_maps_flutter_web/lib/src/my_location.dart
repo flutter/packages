@@ -220,7 +220,7 @@ class MyLocationButton {
     _imageChild.style.width = '24px';
     _imageChild.style.height = '24px';
     _imageChild.style.backgroundImage =
-        'url(assets/packages/google_maps_flutter_web/assets/my_location-sprite-2x.png)';
+        'url(${ui_web.assetManager.getAssetUrl('packages/google_maps_flutter_web/assets/my_location-sprite-2x.png')})';
     _imageChild.style.backgroundSize = '240px 24px';
     _imageChild.style.backgroundPosition = '0px 0px';
     _imageChild.style.backgroundRepeat = 'no-repeat';
