@@ -4615,6 +4615,91 @@ void main() {
 
     await gesture.up();
   });
+
+  // Regression test for https://github.com/flutter/flutter/issues/184391.
+  //
+  // Tick marks on a discrete rounded track are painted with half a track height of
+  // padding at each end, so the snap boundary between two ticks has to sit at their
+  // visual midpoint. Tapping on the exact tick center can't tell the difference, so
+  // tap just on either side of the midpoint.
+  testWidgets('Discrete RangeSlider snaps at the visual midpoint between ticks', (
+    WidgetTester tester,
+  ) async {
+    const divisions = 10;
+    var values = const RangeValues(0, 10);
+    final tickCenters = <Offset>[];
+
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Material(
+          child: SliderTheme(
+            data: SliderThemeData(
+              rangeTickMarkShape: _PositionRecordingRangeTickMarkShape(tickCenters),
+            ),
+            child: StatefulBuilder(
+              builder: (BuildContext context, StateSetter setState) {
+                return Center(
+                  child: RangeSlider(
+                    values: values,
+                    max: 10,
+                    divisions: divisions,
+                    onChanged: (RangeValues newValues) => setState(() => values = newValues),
+                  ),
+                );
+              },
+            ),
+          ),
+        ),
+      ),
+    );
+    // Later repaints append to the list, so keep only the first frame's ticks.
+    final List<Offset> ticks = tickCenters.take(divisions + 1).toList();
+    expect(ticks, hasLength(divisions + 1));
+
+    // A small offset keeps the taps well clear of the exact midpoint while
+    // staying smaller than the smallest drift of the old formula.
+    const midpointOffset = 0.05;
+    double midpointDx(int i) => (ticks[i].dx + ticks[i + 1].dx) / 2;
+
+    // Taps in the lower half move the start thumb.
+    for (var i = 0; i < 4; i++) {
+      await tester.tapAt(Offset(midpointDx(i) - midpointOffset, ticks[i].dy));
+      await tester.pump();
+      expect(
+        values.start,
+        i.toDouble(),
+        reason: 'Just left of the midpoint of ticks $i and ${i + 1}',
+      );
+
+      await tester.tapAt(Offset(midpointDx(i) + midpointOffset, ticks[i].dy));
+      await tester.pump();
+      expect(
+        values.start,
+        (i + 1).toDouble(),
+        reason: 'Just right of the midpoint of ticks $i and ${i + 1}',
+      );
+    }
+
+    // Taps closer to the end thumb than the start thumb (which is now at 4) move
+    // the end thumb.
+    for (int i = divisions - 3; i < divisions; i++) {
+      await tester.tapAt(Offset(midpointDx(i) - midpointOffset, ticks[i].dy));
+      await tester.pump();
+      expect(
+        values.end,
+        i.toDouble(),
+        reason: 'Just left of the midpoint of ticks $i and ${i + 1}',
+      );
+
+      await tester.tapAt(Offset(midpointDx(i) + midpointOffset, ticks[i].dy));
+      await tester.pump();
+      expect(
+        values.end,
+        (i + 1).toDouble(),
+        reason: 'Just right of the midpoint of ticks $i and ${i + 1}',
+      );
+    }
+  });
 }
 
 // A value indicator shape to log labelPainter text.
@@ -4653,5 +4738,33 @@ class LoggingRangeSliderValueIndicatorShape extends RangeSliderValueIndicatorSha
   }) {
     logLabel.add(labelPainter.text!);
     logPainter?.add(labelPainter);
+  }
+}
+
+/// Records the center of each tick mark as it is painted, so tests can tap
+/// relative to the real tick marks without duplicating the track geometry math.
+class _PositionRecordingRangeTickMarkShape extends RangeSliderTickMarkShape {
+  _PositionRecordingRangeTickMarkShape(this.positions);
+
+  final List<Offset> positions;
+
+  @override
+  Size getPreferredSize({required SliderThemeData sliderTheme, bool isEnabled = false}) {
+    return Size.zero;
+  }
+
+  @override
+  void paint(
+    PaintingContext context,
+    Offset center, {
+    required RenderBox parentBox,
+    required SliderThemeData sliderTheme,
+    required Animation<double> enableAnimation,
+    required Offset startThumbCenter,
+    required Offset endThumbCenter,
+    bool isEnabled = false,
+    required TextDirection textDirection,
+  }) {
+    positions.add(center);
   }
 }
