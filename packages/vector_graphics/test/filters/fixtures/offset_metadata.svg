@@ -1,0 +1,1 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="128" height="128"><defs><filter id="f"><title>A shift</title><desc>Non-executable elements</desc><metadata><anything><feUnsupported/></anything></metadata><feOffset dx="8"><metadata/></feOffset></filter></defs><g filter="url(#f)"><rect x="16" y="16" width="16" height="16" fill="red"/></g></svg>

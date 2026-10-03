@@ -1,5 +1,7 @@
-## NEXT
+## 1.3.0
 
+* Adds SVG filter infrastructure and static `feOffset` support, including filter regions and named inputs.
+* Reports unsupported filter primitives and inputs through decode errors.
 * Updates minimum supported SDK version to Flutter 3.41/Dart 3.11.
 * Removes unnecessary Material imports.
 * Fixes deprecation lints.

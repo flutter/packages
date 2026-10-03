@@ -40,7 +40,7 @@ void main() {
     final List<ResolvedPathNode> nodes = queryChildren<ResolvedPathNode>(resolvedNode);
     final SaveLayerNode saveLayerNode = queryChildren<SaveLayerNode>(resolvedNode).single;
 
-    expect(saveLayerNode.paint.fill!.color, const Color(0x7FFF0000));
+    expect(saveLayerNode.paint.fill!.color, const Color(0x80FF0000));
 
     expect(nodes.length, 2);
 

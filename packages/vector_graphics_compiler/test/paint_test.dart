@@ -2,16 +2,35 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'dart:ui' as ui;
+
 import 'package:flutter_test/flutter_test.dart';
 import 'package:vector_graphics_compiler/vector_graphics_compiler.dart';
 
 void main() {
+  test('opacity quantization matches dart:ui throughout the unit interval', () {
+    for (var step = 0; step <= 1000; step++) {
+      final double opacity = step / 1000;
+      final int expected = ui.Color.fromRGBO(10, 15, 20, opacity).toARGB32() >> 24;
+      expect(Color.fromRGBO(10, 15, 20, opacity).a, expected, reason: 'opacity=$opacity');
+    }
+  });
+  test('all encoded alpha bytes survive an opacity round trip', () {
+    for (var alpha = 0; alpha <= 255; alpha++) {
+      expect(Color.fromRGBO(10, 15, 20, alpha / 255).a, alpha);
+    }
+  });
+  test('opacity around a half-alpha threshold is rounded consistently', () {
+    expect(const Color.fromRGBO(0, 0, 0, .499).a, 127);
+    expect(const Color.fromRGBO(0, 0, 0, .5).a, 128);
+    expect(const Color.fromRGBO(0, 0, 0, .501).a, 128);
+  });
   test('Color tests', () {
-    expect(const Color.fromRGBO(10, 15, 20, .1), const Color.fromARGB(25, 10, 15, 20));
+    expect(const Color.fromRGBO(10, 15, 20, .1), const Color.fromARGB(26, 10, 15, 20));
 
     expect(
       const Color.fromARGB(255, 10, 15, 20).withOpacity(.1),
-      const Color.fromARGB(25, 10, 15, 20),
+      const Color.fromARGB(26, 10, 15, 20),
     );
 
     const testColor = Color(0xFFABCDEF);

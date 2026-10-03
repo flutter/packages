@@ -7,6 +7,7 @@ import 'package:vector_graphics_compiler/src/svg/node.dart';
 import 'package:vector_graphics_compiler/src/svg/overdraw_optimizer.dart';
 import 'package:vector_graphics_compiler/src/svg/parser.dart';
 import 'package:vector_graphics_compiler/vector_graphics_compiler.dart';
+
 import 'helpers.dart';
 import 'test_svg_strings.dart';
 
@@ -138,15 +139,15 @@ void main() {
     expect(instructions.paints, const <Paint>[
       Paint(
         blendMode: BlendMode.srcOver,
-        fill: Fill(color: Color(0x7fff0000)),
+        fill: Fill(color: Color(0x80ff0000)),
       ),
       Paint(
         blendMode: BlendMode.srcOver,
-        fill: Fill(color: Color(0x4c0000ff)),
+        fill: Fill(color: Color(0x4d0000ff)),
       ),
       Paint(
         blendMode: BlendMode.srcOver,
-        fill: Fill(color: Color(0xa58a0075)),
+        fill: Fill(color: Color(0xa6890076)),
       ),
     ]);
 
@@ -212,7 +213,7 @@ void main() {
     expect(instructions.paints, const <Paint>[
       Paint(
         blendMode: BlendMode.srcOver,
-        fill: Fill(color: Color(0x7fff0000)),
+        fill: Fill(color: Color(0x80ff0000)),
       ),
       Paint(
         blendMode: BlendMode.srcOver,
@@ -268,11 +269,11 @@ void main() {
       ),
       Paint(
         blendMode: BlendMode.srcOver,
-        fill: Fill(color: Color(0x7f0000ff)),
+        fill: Fill(color: Color(0x800000ff)),
       ),
       Paint(
         blendMode: BlendMode.srcOver,
-        fill: Fill(color: Color(0xff80007f)),
+        fill: Fill(color: Color(0xff7f0080)),
       ),
     ]);
 
@@ -393,19 +394,19 @@ void main() {
       ),
       Paint(
         blendMode: BlendMode.srcOver,
-        fill: Fill(color: Color(0x7fff0000)),
+        fill: Fill(color: Color(0x80ff0000)),
       ),
       Paint(
         blendMode: BlendMode.srcOver,
-        fill: Fill(color: Color(0x7f008000)),
+        fill: Fill(color: Color(0x80008000)),
       ),
       Paint(
         blendMode: BlendMode.srcOver,
-        fill: Fill(color: Color(0x3fff0000)),
+        fill: Fill(color: Color(0x40ff0000)),
       ),
       Paint(
         blendMode: BlendMode.srcOver,
-        fill: Fill(color: Color(0x3f008000)),
+        fill: Fill(color: Color(0x40008000)),
       ),
     ]);
 
