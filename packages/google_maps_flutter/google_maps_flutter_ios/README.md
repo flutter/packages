@@ -7,6 +7,7 @@ application's minimum deployment target.
 
 **Note**: This package will not receive new feature updates. All clients are
 encouraged to adopt one of the [SDK-specific implementations](#alternate-implementations).
+For example, `GoogleMap.onPointOfInterestTap` is not supported here.
 
 ## Usage
 

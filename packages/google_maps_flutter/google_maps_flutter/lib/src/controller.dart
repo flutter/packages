@@ -113,6 +113,11 @@ class GoogleMapController {
     );
     _streamSubscriptions.add(
       GoogleMapsFlutterPlatform.instance
+          .onPointOfInterestTap(mapId: mapId)
+          .listen((PointOfInterestTapEvent e) => _googleMapState.onPointOfInterestTap(e.value)),
+    );
+    _streamSubscriptions.add(
+      GoogleMapsFlutterPlatform.instance
           .onClusterTap(mapId: mapId)
           .listen((ClusterTapEvent e) => _googleMapState.onClusterTap(e.value)),
     );
