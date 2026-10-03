@@ -166,6 +166,7 @@ public final class VideoPlayerPlugin: NSObject, FlutterPlugin, AVFoundationVideo
   func createPlatformViewPlayer(options params: CreationOptions) throws -> Int64 {
     let item = try playerItem(with: params)
     let player = FVPVideoPlayer(playerItem: item, avFactory: avFactory, viewProvider: viewProvider)
+    player.preferredAudioLanguage = params.preferredAudioLanguage
     return configurePlayer(player, extraDisposeHandler: nil)
   }
 
@@ -183,6 +184,7 @@ public final class VideoPlayerPlugin: NSObject, FlutterPlugin, AVFoundationVideo
       avFactory: avFactory,
       viewProvider: viewProvider
     )
+    player.preferredAudioLanguage = creationOptions.preferredAudioLanguage
 
     let textureId = textureRegistry.register(player)
     player.setTextureIdentifier(textureId)

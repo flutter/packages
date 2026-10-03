@@ -2,6 +2,10 @@
 
 * Updates minimum supported SDK version to Flutter 3.41/Dart 3.11.
 
+## 2.13.0
+
+* Adds support for setting a preferred audio language during player creation via `VideoPlayerOptions.preferredAudioLanguage`.
+
 ## 2.12.0
 
 * Routes video over AirPlay when an external screen is active, by setting
