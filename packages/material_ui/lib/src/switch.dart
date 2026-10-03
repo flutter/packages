@@ -336,25 +336,11 @@ class Switch extends StatelessWidget {
   ///
   /// <callout-box>
   ///
-  // TODO(framework): Add unit tests to this code snippet.
-  // https://github.com/flutter/flutter/issues/188530
-  ///
   /// This example resolves the [thumbColor] based on the current
   /// [WidgetState] of the [Switch], providing a different [Color] when it is
   /// [WidgetState.disabled].
   ///
-  /// ```dart
-  /// Switch(
-  ///   value: true,
-  ///   onChanged: (bool value) { },
-  ///   thumbColor: WidgetStateProperty.resolveWith<Color>((Set<WidgetState> states) {
-  ///     if (states.contains(WidgetState.disabled)) {
-  ///       return Colors.orange.withValues(alpha: .48);
-  ///     }
-  ///     return Colors.orange;
-  ///   }),
-  /// )
-  /// ```
+  /// {@example /example/lib/switch/switch.snippet.0.dart#body indent=strip}
   ///
   /// </callout-box>
   /// {@endtemplate}
@@ -382,25 +368,11 @@ class Switch extends StatelessWidget {
   ///
   /// <callout-box>
   ///
-  // TODO(framework): Add unit tests to this code snippet.
-  // https://github.com/flutter/flutter/issues/188530
-  ///
   /// This example resolves the [trackColor] based on the current
   /// [WidgetState] of the [Switch], providing a different [Color] when it is
   /// [WidgetState.disabled].
   ///
-  /// ```dart
-  /// Switch(
-  ///   value: true,
-  ///   onChanged: (bool value) { },
-  ///   thumbColor: WidgetStateProperty.resolveWith<Color>((Set<WidgetState> states) {
-  ///     if (states.contains(WidgetState.disabled)) {
-  ///       return Colors.orange.withValues(alpha: .48);
-  ///     }
-  ///     return Colors.orange;
-  ///   }),
-  /// )
-  /// ```
+  /// {@example /example/lib/switch/switch.snippet.1.dart#body indent=strip}
   ///
   /// </callout-box>
   /// {@endtemplate}
@@ -428,25 +400,11 @@ class Switch extends StatelessWidget {
   ///
   /// <callout-box>
   ///
-  // TODO(framework): Add unit tests to this code snippet.
-  // https://github.com/flutter/flutter/issues/188530
-  ///
   /// This example resolves the [trackOutlineColor] based on the current
   /// [WidgetState] of the [Switch], providing a different [Color] when it is
   /// [WidgetState.disabled].
   ///
-  /// ```dart
-  /// Switch(
-  ///   value: true,
-  ///   onChanged: (bool value) { },
-  ///   trackOutlineColor: WidgetStateProperty.resolveWith<Color?>((Set<WidgetState> states) {
-  ///     if (states.contains(WidgetState.disabled)) {
-  ///       return Colors.orange.withValues(alpha: .48);
-  ///     }
-  ///     return null; // Use the default color.
-  ///   }),
-  /// )
-  /// ```
+  /// {@example /example/lib/switch/switch.snippet.2.dart#body indent=strip}
   ///
   /// </callout-box>
   /// {@endtemplate}
@@ -467,25 +425,11 @@ class Switch extends StatelessWidget {
   ///
   /// <callout-box>
   ///
-  // TODO(framework): Add unit tests to this code snippet.
-  // https://github.com/flutter/flutter/issues/188530
-  ///
   /// This example resolves the [trackOutlineWidth] based on the current
   /// [WidgetState] of the [Switch], providing a different outline width when it is
   /// [WidgetState.disabled].
   ///
-  /// ```dart
-  /// Switch(
-  ///   value: true,
-  ///   onChanged: (bool value) { },
-  ///   trackOutlineWidth: WidgetStateProperty.resolveWith<double?>((Set<WidgetState> states) {
-  ///     if (states.contains(WidgetState.disabled)) {
-  ///       return 5.0;
-  ///     }
-  ///     return null; // Use the default width.
-  ///   }),
-  /// )
-  /// ```
+  /// {@example /example/lib/switch/switch.snippet.3.dart#body indent=strip}
   ///
   /// </callout-box>
   /// {@endtemplate}
@@ -504,25 +448,11 @@ class Switch extends StatelessWidget {
   ///
   /// <callout-box>
   ///
-  // TODO(framework): Add unit tests to this code snippet.
-  // https://github.com/flutter/flutter/issues/188530
-  ///
   /// This example resolves the [thumbIcon] based on the current
   /// [WidgetState] of the [Switch], providing a different [Icon] when it is
   /// [WidgetState.disabled].
   ///
-  /// ```dart
-  /// Switch(
-  ///   value: true,
-  ///   onChanged: (bool value) { },
-  ///   thumbIcon: WidgetStateProperty.resolveWith<Icon?>((Set<WidgetState> states) {
-  ///     if (states.contains(WidgetState.disabled)) {
-  ///       return const Icon(Icons.close);
-  ///     }
-  ///     return null; // All other states will use the default thumbIcon.
-  ///   }),
-  /// )
-  /// ```
+  /// {@example /example/lib/switch/switch.snippet.4.dart#body indent=strip}
   ///
   /// </callout-box>
   /// {@endtemplate}

@@ -32,7 +32,7 @@ import '../templates/input_chip_template.dart';
 import '../templates/input_decorator_template.dart';
 import '../templates/list_tile_template.dart';
 import '../templates/menu_template.dart';
-// import '../templates/motion_template.dart';
+import '../templates/motion_template.dart';
 // import '../templates/navigation_bar_template.dart';
 // import '../templates/navigation_drawer_template.dart';
 // import '../templates/navigation_rail_template.dart';
@@ -721,8 +721,11 @@ void main() {
     });
 
     test('MotionTemplateM3 emits M3 Motion defaults from tokens', () {
-      // Intentionally empty, will be implemented during migration. See:
-      // https://github.com/flutter/flutter/issues/187899
+      final String contents = _generateContents(const MotionTemplateM3());
+      expect(contents, contains('short1 = Duration(milliseconds: 50)'));
+      expect(contents, contains('extralong4 = Duration(milliseconds: 1000)'));
+      expect(contents, contains('emphasizedAccelerate = Cubic(0.3, 0.0, 0.8, 0.15)'));
+      expect(contents, contains('legacy = Cubic(0.4, 0.0, 0.2, 1.0)'));
     });
 
     test('NavigationBarTemplateM3 emits M3 NavigationBar defaults from tokens', () {
