@@ -580,6 +580,11 @@ class TooltipState extends State<Tooltip> with SingleTickerProviderStateMixin {
             widget.ignorePointer ?? _tooltipTheme.ignorePointer ?? widget.message != null,
         child: effectiveChild,
       );
+    } else if (!excludeFromSemantics) {
+      // Tooltip rendering is suppressed (e.g. by TooltipVisibility(visible:
+      // false)), but the message should still be exposed to assistive
+      // technologies rather than silently dropped.
+      effectiveChild = Semantics(tooltip: _tooltipMessage, child: effectiveChild);
     }
 
     return effectiveChild;
