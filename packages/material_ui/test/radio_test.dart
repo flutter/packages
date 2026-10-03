@@ -2779,4 +2779,24 @@ void main() {
     );
     expect(tester.getSize(find.byType(Radio<bool>)), Size.zero);
   });
+
+  testWidgets('Radio accepts animationBehavior', (WidgetTester tester) async {
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Scaffold(
+          body: Center(
+            child: Radio<int>(
+              value: 1,
+              groupValue: 1,
+              onChanged: (int? i) {},
+              animationBehavior: AnimationBehavior.preserve,
+            ),
+          ),
+        ),
+      ),
+    );
+
+    final Radio<int> radio = tester.widget<Radio<int>>(find.byType(Radio<int>));
+    expect(radio.animationBehavior, AnimationBehavior.preserve);
+  });
 }

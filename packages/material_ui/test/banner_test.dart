@@ -1219,6 +1219,44 @@ void main() {
     final Finder content = find.text('X');
     expect(tester.getSize(content).isEmpty, isTrue);
   });
+
+  testWidgets('MaterialBanner respects animationBehavior', (WidgetTester tester) async {
+    late ScaffoldMessengerState messenger;
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Scaffold(
+          body: Builder(
+            builder: (BuildContext context) {
+              messenger = ScaffoldMessenger.of(context);
+              return ElevatedButton(
+                onPressed: () {
+                  messenger.showMaterialBanner(
+                    const MaterialBanner(
+                      content: Text('Test Banner'),
+                      actions: <Widget>[Text('OK')],
+                      animationBehavior: AnimationBehavior.preserve,
+                    ),
+                  );
+                },
+                child: const Text('Show'),
+              );
+            },
+          ),
+        ),
+      ),
+    );
+
+    const banner = MaterialBanner(
+      content: Text('Test Banner'),
+      actions: <Widget>[Text('OK')],
+      animationBehavior: AnimationBehavior.preserve,
+    );
+    expect(banner.animationBehavior, AnimationBehavior.preserve);
+
+    await tester.tap(find.text('Show'));
+    await tester.pump();
+    expect(find.text('Test Banner'), findsOneWidget);
+  });
 }
 
 Material _getMaterialFromBanner(WidgetTester tester) {

@@ -160,6 +160,7 @@ class Switch extends StatelessWidget {
     this.onFocusChange,
     this.autofocus = false,
     this.padding,
+    this.animationBehavior = AnimationBehavior.normal,
   }) : _switchType = _SwitchType.material,
        applyCupertinoTheme = false,
        assert(activeThumbImage != null || onActiveThumbImageError == null),
@@ -226,6 +227,7 @@ class Switch extends StatelessWidget {
     this.autofocus = false,
     this.padding,
     this.applyCupertinoTheme,
+    this.animationBehavior = AnimationBehavior.normal,
   }) : assert(activeThumbImage != null || onActiveThumbImageError == null),
        assert(inactiveThumbImage != null || onInactiveThumbImageError == null),
        _switchType = _SwitchType.adaptive;
@@ -559,6 +561,9 @@ class Switch extends StatelessWidget {
   /// then there is no padding by default.
   final EdgeInsetsGeometry? padding;
 
+  /// {@macro flutter.widgets.AnimationController.animationBehavior}
+  final AnimationBehavior animationBehavior;
+
   Size _getSwitchSize(BuildContext context) {
     final ThemeData theme = Theme.of(context);
     SwitchThemeData switchTheme = SwitchTheme.of(context);
@@ -637,6 +642,7 @@ class Switch extends StatelessWidget {
       autofocus: autofocus,
       applyCupertinoTheme: applyCupertinoTheme,
       switchType: _switchType,
+      animationBehavior: animationBehavior,
     );
   }
 
@@ -682,6 +688,7 @@ class _MaterialSwitch extends StatefulWidget {
     this.onFocusChange,
     this.autofocus = false,
     this.applyCupertinoTheme,
+    this.animationBehavior = AnimationBehavior.normal,
   }) : assert(activeThumbImage != null || onActiveThumbImageError == null),
        assert(inactiveThumbImage != null || onInactiveThumbImageError == null);
 
@@ -713,6 +720,7 @@ class _MaterialSwitch extends StatefulWidget {
   final Size size;
   final bool? applyCupertinoTheme;
   final _SwitchType switchType;
+  final AnimationBehavior animationBehavior;
 
   @override
   State<StatefulWidget> createState() => _MaterialSwitchState();
@@ -756,6 +764,8 @@ class _MaterialSwitchState extends State<_MaterialSwitch>
     _painter.dispose();
     super.dispose();
   }
+
+  AnimationBehavior get animationBehavior => widget.animationBehavior;
 
   @override
   ValueChanged<bool?>? get onChanged => widget.onChanged != null ? _handleChanged : null;

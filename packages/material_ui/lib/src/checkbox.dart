@@ -115,6 +115,7 @@ class Checkbox extends StatefulWidget {
     this.side,
     this.isError = false,
     this.semanticLabel,
+    this.animationBehavior = AnimationBehavior.normal,
   }) : _checkboxType = _CheckboxType.material,
        assert(tristate || value != null);
 
@@ -155,6 +156,7 @@ class Checkbox extends StatefulWidget {
     this.side,
     this.isError = false,
     this.semanticLabel,
+    this.animationBehavior = AnimationBehavior.normal,
   }) : _checkboxType = _CheckboxType.adaptive,
        assert(tristate || value != null);
 
@@ -420,6 +422,9 @@ class Checkbox extends StatefulWidget {
   /// {@endtemplate}
   final String? semanticLabel;
 
+  /// {@macro flutter.widgets.AnimationController.animationBehavior}
+  final AnimationBehavior animationBehavior;
+
   /// The width of a checkbox widget.
   static const double width = 18.0;
 
@@ -453,6 +458,8 @@ class _CheckboxState extends State<Checkbox> with TickerProviderStateMixin, Togg
     _painter.dispose();
     super.dispose();
   }
+
+  AnimationBehavior get animationBehavior => widget.animationBehavior;
 
   @override
   ValueChanged<bool?>? get onChanged => widget.onChanged;
@@ -517,6 +524,7 @@ class _CheckboxState extends State<Checkbox> with TickerProviderStateMixin, Togg
               side: widget.side,
               shape: widget.shape,
               semanticLabel: widget.semanticLabel,
+              animationBehavior: widget.animationBehavior,
             );
         }
     }
