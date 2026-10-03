@@ -2,12 +2,12 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-// Version: 38.2.31
+// Version: 38.2.83
 
 // dart format off
-import 'package:flutter/animation.dart';
+import 'cubic_struct.dart';
 
-class TokenMotionStandard {
+class TokenMotion {
   /// md.sys.motion.duration.extra-long1
   static const Duration durationExtraLong1 = Duration(milliseconds: 700);
 
@@ -60,26 +60,77 @@ class TokenMotionStandard {
   static const String easingEmphasized =
       'M 0,0 C 0.05, 0, 0.133333, 0.06, 0.166666, 0.4 C 0.208333, 0.82, 0.25, 1, 1, 1';
 
+  /// md.sys.motion.easing.emphasized.accelerate
+  static const CubicStruct easingEmphasizedAccelerate = CubicStruct(
+    a: 0.30,
+    b: 0.00,
+    c: 0.80,
+    d: 0.15,
+  );
+
+  /// md.sys.motion.easing.emphasized.decelerate
+  static const CubicStruct easingEmphasizedDecelerate = CubicStruct(
+    a: 0.05,
+    b: 0.70,
+    c: 0.10,
+    d: 1.00,
+  );
+
   /// md.sys.motion.easing.legacy
-  static const Cubic easingLegacy = Cubic(0.40, 0.00, 0.20, 1.00);
+  static const CubicStruct easingLegacy = CubicStruct(
+    a: 0.40,
+    b: 0.00,
+    c: 0.20,
+    d: 1.00,
+  );
 
   /// md.sys.motion.easing.legacy.accelerate
-  static const Cubic easingLegacyAccelerate = Cubic(0.40, 0.00, 1.00, 1.00);
+  static const CubicStruct easingLegacyAccelerate = CubicStruct(
+    a: 0.40,
+    b: 0.00,
+    c: 1.00,
+    d: 1.00,
+  );
 
   /// md.sys.motion.easing.legacy.decelerate
-  static const Cubic easingLegacyDecelerate = Cubic(0.00, 0.00, 0.20, 1.00);
+  static const CubicStruct easingLegacyDecelerate = CubicStruct(
+    a: 0.00,
+    b: 0.00,
+    c: 0.20,
+    d: 1.00,
+  );
 
   /// md.sys.motion.easing.linear
-  static const Cubic easingLinear = Cubic(0.00, 0.00, 1.00, 1.00);
+  static const CubicStruct easingLinear = CubicStruct(
+    a: 0.00,
+    b: 0.00,
+    c: 1.00,
+    d: 1.00,
+  );
 
   /// md.sys.motion.easing.standard
-  static const Cubic easingStandard = Cubic(0.20, 0.00, 0.00, 1.00);
+  static const CubicStruct easingStandard = CubicStruct(
+    a: 0.20,
+    b: 0.00,
+    c: 0.00,
+    d: 1.00,
+  );
 
   /// md.sys.motion.easing.standard.accelerate
-  static const Cubic easingStandardAccelerate = Cubic(0.30, 0.00, 1.00, 1.00);
+  static const CubicStruct easingStandardAccelerate = CubicStruct(
+    a: 0.30,
+    b: 0.00,
+    c: 1.00,
+    d: 1.00,
+  );
 
   /// md.sys.motion.easing.standard.decelerate
-  static const Cubic easingStandardDecelerate = Cubic(0.00, 0.00, 0.00, 1.00);
+  static const CubicStruct easingStandardDecelerate = CubicStruct(
+    a: 0.00,
+    b: 0.00,
+    c: 0.00,
+    d: 1.00,
+  );
 
   /// md.sys.motion.path
   static const String path = 'LINEAR';
@@ -91,10 +142,10 @@ class TokenMotionStandard {
   static const double springDefaultEffectsStiffness = 1600.00;
 
   /// md.sys.motion.spring.default.spatial.damping
-  static const double springDefaultSpatialDamping = 0.80;
+  static const double springDefaultSpatialDamping = 0.90;
 
   /// md.sys.motion.spring.default.spatial.stiffness
-  static const double springDefaultSpatialStiffness = 380.00;
+  static const double springDefaultSpatialStiffness = 700.00;
 
   /// md.sys.motion.spring.fast.effects.damping
   static const double springFastEffectsDamping = 1.00;
@@ -103,10 +154,10 @@ class TokenMotionStandard {
   static const double springFastEffectsStiffness = 3800.00;
 
   /// md.sys.motion.spring.fast.spatial.damping
-  static const double springFastSpatialDamping = 0.60;
+  static const double springFastSpatialDamping = 0.90;
 
   /// md.sys.motion.spring.fast.spatial.stiffness
-  static const double springFastSpatialStiffness = 800.00;
+  static const double springFastSpatialStiffness = 1400.00;
 
   /// md.sys.motion.spring.slow.effects.damping
   static const double springSlowEffectsDamping = 1.00;
@@ -115,8 +166,8 @@ class TokenMotionStandard {
   static const double springSlowEffectsStiffness = 800.00;
 
   /// md.sys.motion.spring.slow.spatial.damping
-  static const double springSlowSpatialDamping = 0.80;
+  static const double springSlowSpatialDamping = 0.90;
 
   /// md.sys.motion.spring.slow.spatial.stiffness
-  static const double springSlowSpatialStiffness = 200.00;
+  static const double springSlowSpatialStiffness = 300.00;
 }
