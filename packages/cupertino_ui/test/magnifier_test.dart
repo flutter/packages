@@ -408,4 +408,22 @@ void main() {
     );
     expect(tester.getSize(find.byType(RawMagnifier)), Size.zero);
   });
+
+  testWidgets('CupertinoMagnifier focal point is scaled by inOutAnimation', (
+    WidgetTester tester,
+  ) async {
+    final controller = AnimationController(vsync: const TestVSync(), value: 0.5);
+    addTearDown(controller.dispose);
+
+    await tester.pumpWidget(
+      CupertinoApp(
+        home: CupertinoPageScaffold(child: CupertinoMagnifier(inOutAnimation: controller)),
+      ),
+    );
+
+    final RawMagnifier rawMagnifier = tester.widget<RawMagnifier>(find.byType(RawMagnifier));
+    final double unscaledY =
+        CupertinoMagnifier.kDefaultSize.height / 2 - CupertinoMagnifier.kMagnifierAboveFocalPoint;
+    expect(rawMagnifier.focalPointOffset, Offset(0, unscaledY).scale(1, 0.5));
+  });
 }
