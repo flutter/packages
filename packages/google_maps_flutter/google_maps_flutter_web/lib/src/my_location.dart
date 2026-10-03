@@ -112,6 +112,10 @@ class MyLocationController {
 
   /// Add my location to map
   void addMyLocationButton(gmaps.Map map, GoogleMapController controller) {
+    if (!_geolocationApi.isAvailable) {
+      return;
+    }
+
     myLocationButton = MyLocationButton();
     myLocationButton?.addClickListener((_) => centerMyCurrentLocation(controller));
     _dragEndListener = map.addListener(
