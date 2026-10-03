@@ -1,0 +1,3 @@
+changelog: |
+  - Fixes TextFormField overriding the default autovalidateMode, preventing an ancestor Form's autovalidateMode from taking priority.
+version: patch
