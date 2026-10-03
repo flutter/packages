@@ -622,16 +622,16 @@ class GoogleMapController {
   }
 
   /// Render my location
-  Future<void> _renderMyLocation(gmaps.Map map, MapConfiguration mapConfiguration) async {
+  void _renderMyLocation(gmaps.Map map, MapConfiguration mapConfiguration) {
     if (mapConfiguration.myLocationEnabled != true) {
       _myLocationController?.removeMyLocationButton(map);
-      _myLocationController?.removeBlueDot(_markersController!);
+      _myLocationController?.removeBlueDot();
       return;
     }
 
     assert(_markersController != null, 'Cannot render my location after dispose().');
 
-    await _myLocationController?.displayAndWatchMyLocation(_markersController!);
+    _myLocationController?.displayAndWatchMyLocation(map);
 
     if (mapConfiguration.myLocationButtonEnabled != true) {
       _myLocationController?.removeMyLocationButton(map);
