@@ -1,4 +1,116 @@
 {
+  "color_alpha_bias": {
+    "kind": "browser",
+    "input": "color_alpha_bias.svg"
+  },
+  "color_chain": {
+    "kind": "browser",
+    "input": "color_chain.svg"
+  },
+  "color_defaults": {
+    "kind": "browser",
+    "input": "color_defaults.svg"
+  },
+  "color_gray": {
+    "kind": "browser",
+    "input": "color_gray.svg"
+  },
+  "color_hue_90": {
+    "kind": "browser",
+    "input": "color_hue_90.svg"
+  },
+  "color_hue_cycle": {
+    "kind": "browser",
+    "input": "color_hue_cycle.svg"
+  },
+  "color_hue_default": {
+    "kind": "browser",
+    "input": "color_hue_default.svg"
+  },
+  "color_hue_negative": {
+    "kind": "browser",
+    "input": "color_hue_negative.svg"
+  },
+  "color_identity": {
+    "kind": "browser",
+    "input": "color_identity.svg"
+  },
+  "color_inherited": {
+    "kind": "browser",
+    "input": "color_inherited.svg"
+  },
+  "color_initial": {
+    "kind": "browser",
+    "input": "color_initial.svg"
+  },
+  "color_invert": {
+    "kind": "browser",
+    "input": "color_invert.svg"
+  },
+  "color_linear_alpha_bias": {
+    "kind": "browser",
+    "input": "color_linear_alpha_bias.svg"
+  },
+  "color_linear_default": {
+    "kind": "browser",
+    "input": "color_linear_default.svg"
+  },
+  "color_linear_gray": {
+    "kind": "browser",
+    "input": "color_linear_gray.svg"
+  },
+  "color_linear_luminance": {
+    "kind": "browser",
+    "input": "color_linear_luminance.svg"
+  },
+  "color_linear_matrix": {
+    "kind": "browser",
+    "input": "color_linear_matrix.svg"
+  },
+  "color_luminance": {
+    "kind": "browser",
+    "input": "color_luminance.svg"
+  },
+  "color_luminance_ignored": {
+    "kind": "browser",
+    "input": "color_luminance_ignored.svg"
+  },
+  "color_saturate_default": {
+    "kind": "browser",
+    "input": "color_saturate_default.svg"
+  },
+  "color_saturate_half": {
+    "kind": "browser",
+    "input": "color_saturate_half.svg"
+  },
+  "color_saturate_negative": {
+    "kind": "browser",
+    "input": "color_saturate_negative.svg"
+  },
+  "color_saturate_over": {
+    "kind": "browser",
+    "input": "color_saturate_over.svg"
+  },
+  "color_short_values": {
+    "kind": "browser",
+    "input": "color_short_values.svg"
+  },
+  "color_source_alpha": {
+    "kind": "browser",
+    "input": "color_source_alpha.svg"
+  },
+  "color_style": {
+    "kind": "browser",
+    "input": "color_style.svg"
+  },
+  "color_subregion": {
+    "kind": "browser",
+    "input": "color_subregion.svg"
+  },
+  "color_swap": {
+    "kind": "browser",
+    "input": "color_swap.svg"
+  },
   "empty": {
     "kind": "browser",
     "input": "empty.svg"

@@ -6,6 +6,7 @@ import 'dart:ui';
 
 import 'package:vector_graphics_codec/vector_graphics_codec.dart';
 
+import 'color_matrix.dart';
 import 'filter_context.dart';
 import 'offset.dart';
 
@@ -25,6 +26,8 @@ FilterImage executePrimitive(FilterContext context, VectorFilter primitive) {
   switch (primitive.name) {
     case 'feOffset':
       return offset(context, primitive);
+    case 'feColorMatrix':
+      return colorMatrix(context, primitive);
     default:
       throw UnsupportedError('SVG filter primitive ${primitive.name} is not implemented');
   }

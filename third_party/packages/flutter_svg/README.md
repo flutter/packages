@@ -205,7 +205,7 @@ honor his memory by continuing to publish and maintain this package.
 
 ## Static SVG filters
 
-Supports `feOffset`.
+Supports `feOffset`, `feColorMatrix`.
 Filters use version 2 vector assets; version 1 assets remain supported.
 Filter regions, named inputs, solid `FillPaint` and `StrokePaint`, local template
 references, and inline styles are supported. Other contributing primitives,
