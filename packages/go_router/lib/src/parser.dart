@@ -91,7 +91,12 @@ class GoRouteInformationParser extends RouteInformationParser<RouteMatchList> {
       incomingUri = routeInformation.uri;
     } else if (raw is! RouteInformationState) {
       // Restoration/back-forward: decode the stored match list and treat as restore.
-      final RouteMatchList decoded = _routeMatchListCodec.decode(raw as Map<Object?, Object?>);
+      // Decoding mints fresh completers for imperative matches; carry over the
+      // live ones so a re-parse of the current configuration stays a no-op
+      // instead of spuriously exiting a route or orphaning its push future.
+      final RouteMatchList decoded = _routeMatchListCodec
+          .decode(raw as Map<Object?, Object?>)
+          .reconcileImperativeCompleters(router.routerDelegate.currentConfiguration);
       infoState = RouteInformationState.restore(base: decoded);
       incomingUri = decoded.uri;
     } else {
