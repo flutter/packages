@@ -143,6 +143,74 @@ class GoRouterPopSpy extends GoRouter {
   }
 }
 
+class GoRouterCanPopSpy extends GoRouter {
+  GoRouterCanPopSpy({required List<RouteBase> routes, this.canPopResult = false})
+    : super.routingConfig(routingConfig: ConstantRoutingConfig(RoutingConfig(routes: routes)));
+
+  bool canPopResult;
+  bool canPopCalled = false;
+
+  @override
+  bool canPop() {
+    canPopCalled = true;
+    return canPopResult;
+  }
+}
+
+class GoRouterPushReplacementSpy extends GoRouter {
+  GoRouterPushReplacementSpy({required List<RouteBase> routes})
+    : super.routingConfig(routingConfig: ConstantRoutingConfig(RoutingConfig(routes: routes)));
+
+  String? myLocation;
+  Object? extra;
+
+  @override
+  Future<T?> pushReplacement<T extends Object?>(String location, {Object? extra}) {
+    myLocation = location;
+    this.extra = extra;
+    return Future<T?>.value();
+  }
+}
+
+class GoRouterPushReplacementNamedSpy extends GoRouter {
+  GoRouterPushReplacementNamedSpy({required List<RouteBase> routes})
+    : super.routingConfig(routingConfig: ConstantRoutingConfig(RoutingConfig(routes: routes)));
+
+  String? name;
+  Map<String, String>? pathParameters;
+  Map<String, dynamic>? queryParameters;
+  Object? extra;
+
+  @override
+  Future<T?> pushReplacementNamed<T extends Object?>(
+    String name, {
+    Map<String, String> pathParameters = const <String, String>{},
+    Map<String, dynamic> queryParameters = const <String, dynamic>{},
+    Object? extra,
+  }) {
+    this.name = name;
+    this.pathParameters = pathParameters;
+    this.queryParameters = queryParameters;
+    this.extra = extra;
+    return Future<T?>.value();
+  }
+}
+
+class GoRouterReplaceSpy extends GoRouter {
+  GoRouterReplaceSpy({required List<RouteBase> routes})
+    : super.routingConfig(routingConfig: ConstantRoutingConfig(RoutingConfig(routes: routes)));
+
+  String? myLocation;
+  Object? extra;
+
+  @override
+  Future<T?> replace<T>(String location, {Object? extra}) {
+    myLocation = location;
+    this.extra = extra;
+    return Future<T?>.value();
+  }
+}
+
 Future<GoRouter> createRouter(
   List<RouteBase> routes,
   WidgetTester tester, {
