@@ -1,3 +1,7 @@
+## 0.6.5
+
+* Adds support for my location button.
+
 ## 0.6.4+1
 
 * Fixes AdvancedMarker anchor handling.
