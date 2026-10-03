@@ -625,6 +625,7 @@ class GoogleMapController {
   void _renderMyLocation(gmaps.Map map, MapConfiguration mapConfiguration) {
     if (mapConfiguration.myLocationEnabled != true) {
       _myLocationController?.removeMyLocationButton(map);
+      _myLocationController?.stopWatchingMyLocation();
       _myLocationController?.removeBlueDot();
       return;
     }
@@ -681,7 +682,7 @@ class GoogleMapController {
     _onIdleSubscription?.cancel();
     _onIdleSubscription = null;
     _streamController.close();
-    _myLocationController?.dispose();
+    _myLocationController?.stopWatchingMyLocation();
     _myLocationController = null;
   }
 }

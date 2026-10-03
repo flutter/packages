@@ -149,8 +149,8 @@ class MyLocationController {
     _blueDot = null;
   }
 
-  /// Dispose the controller and stop watching the position
-  void dispose() {
+  /// Stop watching current location
+  void stopWatchingMyLocation() {
     if (_watchId == null) {
       return;
     }
