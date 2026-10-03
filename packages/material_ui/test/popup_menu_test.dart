@@ -5139,6 +5139,122 @@ void main() {
     // Test with theme.platform = iOS on different real platforms.
     await pumpPopupMenuWithTheme(TargetPlatform.iOS);
   }, variant: TargetPlatformVariant.all());
+
+  group('PopupMenuButton icon padding', () {
+    Widget buildApp(Widget child, {IconButtonThemeData? iconButtonTheme}) {
+      return MaterialApp(
+        theme: ThemeData(
+          iconButtonTheme:
+              iconButtonTheme ??
+              const IconButtonThemeData(variant: StyleVariant.material3Expressive),
+        ),
+        home: Scaffold(body: Center(child: child)),
+      );
+    }
+
+    // The outer size is affected by the minimum tap target size, so measure the
+    // Material that is sized by the button's padding.
+    Size iconButtonMaterialSize(WidgetTester tester) {
+      return tester.getSize(
+        find.descendant(of: find.byType(IconButton), matching: find.byType(Material)),
+      );
+    }
+
+    PopupMenuButton<int> buildButton({
+      ButtonStyle? style,
+      EdgeInsetsGeometry? padding,
+      PopupMenuPosition? position,
+    }) {
+      return PopupMenuButton<int>(
+        style: style,
+        padding: padding,
+        position: position,
+        itemBuilder: (BuildContext context) => const <PopupMenuEntry<int>>[
+          PopupMenuItem<int>(value: 1, child: Text('One')),
+        ],
+      );
+    }
+
+    testWidgets('respects ButtonStyle.iconButtonWidth', (WidgetTester tester) async {
+      const style = ButtonStyle(iconButtonWidth: IconButtonWidthVariant.narrow);
+
+      await tester.pumpWidget(buildApp(buildButton(style: style)));
+      final Size popupMenuButtonSize = iconButtonMaterialSize(tester);
+
+      await tester.pumpWidget(
+        buildApp(IconButton(onPressed: () {}, icon: const Icon(Icons.more_vert), style: style)),
+      );
+      expect(popupMenuButtonSize, iconButtonMaterialSize(tester));
+
+      await tester.pumpWidget(buildApp(buildButton()));
+      expect(popupMenuButtonSize.width, lessThan(iconButtonMaterialSize(tester).width));
+    });
+
+    testWidgets('explicit padding takes precedence over iconButtonWidth', (
+      WidgetTester tester,
+    ) async {
+      await tester.pumpWidget(
+        buildApp(
+          buildButton(
+            padding: const EdgeInsets.all(20),
+            style: const ButtonStyle(iconButtonWidth: IconButtonWidthVariant.narrow),
+          ),
+        ),
+      );
+
+      expect(iconButtonMaterialSize(tester), const Size(64, 64));
+    });
+
+    testWidgets('uses padding from IconButtonTheme', (WidgetTester tester) async {
+      await tester.pumpWidget(
+        buildApp(
+          buildButton(),
+          iconButtonTheme: IconButtonThemeData(
+            style: IconButton.styleFrom(padding: const EdgeInsets.all(20)),
+          ),
+        ),
+      );
+
+      expect(iconButtonMaterialSize(tester), const Size(64, 64));
+    });
+
+    testWidgets('menu under the button accounts for the resolved padding', (
+      WidgetTester tester,
+    ) async {
+      Future<Offset> menuTopLeft({EdgeInsetsGeometry? padding, ButtonStyle? style}) async {
+        await tester.pumpWidget(
+          MaterialApp(
+            home: Scaffold(
+              body: Material(
+                child: buildButton(
+                  padding: padding,
+                  style: style,
+                  position: PopupMenuPosition.under,
+                ),
+              ),
+            ),
+          ),
+        );
+        await tester.tap(find.byType(IconButton));
+        await tester.pumpAndSettle();
+        final Offset topLeft = tester.getTopLeft(
+          find.byWidgetPredicate((Widget w) => '${w.runtimeType}' == '_PopupMenu<int?>'),
+        );
+        await tester.tapAt(Offset.zero);
+        await tester.pumpAndSettle();
+        return topLeft;
+      }
+
+      // The default padding is 8, which is the same as before padding was nullable.
+      expect(await menuTopLeft(), const Offset(8.0, 40.0));
+
+      final Offset withPadding = await menuTopLeft(padding: const EdgeInsets.all(20));
+      final Offset withStylePadding = await menuTopLeft(
+        style: IconButton.styleFrom(padding: const EdgeInsets.all(20)),
+      );
+      expect(withStylePadding, withPadding);
+    });
+  });
 }
 
 Matcher overlaps(Rect other) => OverlapsMatcher(other);
