@@ -356,8 +356,10 @@ class CupertinoMagnifier extends StatelessWidget {
     final double animationValue = inOutAnimation?.value ?? 1.0;
     final double defaultYOffset = (size.height / 2) - kMagnifierAboveFocalPoint;
 
-    final Offset focalPointOffset =
-        Offset(0, defaultYOffset).scale(1, animationValue) + additionalFocalPointOffset;
+    final Offset focalPointOffset = Offset(
+      additionalFocalPointOffset.dx,
+      (defaultYOffset * animationValue) + additionalFocalPointOffset.dy,
+    );
 
     return Transform.translate(
       offset: Offset.lerp(
