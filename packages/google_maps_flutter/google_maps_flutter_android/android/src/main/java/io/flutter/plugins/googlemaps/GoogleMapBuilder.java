@@ -80,6 +80,11 @@ class GoogleMapBuilder implements GoogleMapOptionsSink {
     options.mapId(mapId);
   }
 
+  /**
+   * Sets the color shown behind unloaded map tiles.
+   *
+   * @param backgroundColor an opaque ARGB color int (0xFFRRGGBB), not a color resource ID
+   */
   public void setBackgroundColor(int backgroundColor) {
     options.backgroundColor(backgroundColor);
   }
