@@ -1169,7 +1169,6 @@ void main() {
       ) async {
         const currentLocation = LatLng(10.8231, 106.6297);
         final map = gmaps.Map(createDivElement());
-        final markers = MockMarkersController();
 
         controller = createController(
           mapConfiguration: const MapConfiguration(
@@ -1180,11 +1179,7 @@ void main() {
 
         final myLocationController = MyLocationController(geolocationApi: mockGeolocationApi);
 
-        controller.debugSetOverrides(
-          createMap: (_, _) => map,
-          markers: markers,
-          myLocation: myLocationController,
-        );
+        controller.debugSetOverrides(createMap: (_, _) => map, myLocation: myLocationController);
 
         when(mockGeolocationApi.watchPosition(any, any)).thenAnswer((inv) {
           final onSuccess = inv.positionalArguments[0] as void Function(double, double);
@@ -1201,23 +1196,11 @@ void main() {
         controller.init();
         await tester.pumpAndSettle();
 
-        final List<Set<Marker>> allAddMarkersCalls = verify(
-          markers.addMarkers(captureAny),
-        ).captured.cast<Set<Marker>>();
-        final Set<Marker> blueDotCall = allAddMarkersCalls.firstWhere(
-          (set) => set.any((m) => m.markerId == const MarkerId('my_location_blue_dot')),
-          orElse: () => <Marker>{},
-        );
-
-        expect(blueDotCall.length, 1);
-        expect(blueDotCall.first.position, currentLocation);
-        expect(blueDotCall.first.zIndex, .5);
         expect(map.controls[gmaps.ControlPosition.RIGHT_BOTTOM as int].length, equals(1));
       });
 
       testWidgets('initializes with my location only', (WidgetTester tester) async {
         final map = gmaps.Map(createDivElement());
-        final markers = MockMarkersController();
         const currentLocation = LatLng(10.8231, 106.6297);
 
         controller = createController(
@@ -1229,11 +1212,7 @@ void main() {
 
         final myLocationController = MyLocationController(geolocationApi: mockGeolocationApi);
 
-        controller.debugSetOverrides(
-          createMap: (_, _) => map,
-          markers: markers,
-          myLocation: myLocationController,
-        );
+        controller.debugSetOverrides(createMap: (_, _) => map, myLocation: myLocationController);
 
         when(mockGeolocationApi.watchPosition(any, any)).thenAnswer((inv) {
           final onSuccess = inv.positionalArguments[0] as void Function(double, double);
@@ -1250,17 +1229,6 @@ void main() {
         controller.init();
         await tester.pumpAndSettle();
 
-        final List<Set<Marker>> allAddMarkersCalls = verify(
-          markers.addMarkers(captureAny),
-        ).captured.cast<Set<Marker>>();
-        final Set<Marker> blueDotCall = allAddMarkersCalls.firstWhere(
-          (set) => set.any((m) => m.markerId == const MarkerId('my_location_blue_dot')),
-          orElse: () => <Marker>{},
-        );
-
-        expect(blueDotCall.length, 1);
-        expect(blueDotCall.first.position, currentLocation);
-        expect(blueDotCall.first.zIndex, 0.5);
         expect(map.controls[gmaps.ControlPosition.RIGHT_BOTTOM as int].length, equals(0));
       });
     });

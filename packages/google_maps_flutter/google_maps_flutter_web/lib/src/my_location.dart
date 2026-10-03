@@ -5,7 +5,6 @@
 part of '../google_maps_flutter_web.dart';
 
 const _kMyLocationButtonId = 'my_location_button';
-const _kMyLocationBlueDot = 'my_location_blue_dot';
 
 /// This class manages the current location and the my location button.
 class MyLocationController {
@@ -21,20 +20,12 @@ class MyLocationController {
 
   gmaps.MapsEventListener? _dragEndListener;
   gmaps.MapsEventListener? _centerChangedListener;
+  gmaps.Marker? _blueDot;
 
   /// Watch current location and update blue dot
-  Future<void> displayAndWatchMyLocation(
-    MarkersController<Object?, Object> markersController,
-  ) async {
+  void displayAndWatchMyLocation(gmaps.Map map) {
     if (_watchId != null) {
-      _geolocationApi.clearWatch(_watchId!);
-      _watchId = null;
-    }
-
-    final Marker marker = await _createBlueDotMarker();
-
-    if (_lastKnownLocation != null) {
-      _setBlueDotMarker(markersController, marker.copyWith(positionParam: _lastKnownLocation));
+      return;
     }
 
     _watchId = _geolocationApi.watchPosition((double latitude, double longitude) {
@@ -46,18 +37,30 @@ class MyLocationController {
       // - Render the direction in which we're looking at with a small "cone" using the heading information.
       // - Render the current position marker as an arrow when the current position is "moving" (speed > certain threshold), and the direction in which the arrow should point (again, with the heading information).
 
-      final Marker markerUpdate = marker.copyWith(positionParam: _lastKnownLocation);
-
-      _setBlueDotMarker(markersController, markerUpdate);
+      if (_lastKnownLocation != null) {
+        _updateBlueDot(map, _lastKnownLocation!);
+      }
     }, (dynamic error) => myLocationButton?.doneAnimation());
   }
 
-  void _setBlueDotMarker(MarkersController<Object?, Object> markersController, Marker marker) {
-    if (markersController.markers.containsKey(marker.markerId)) {
-      markersController.changeMarkers({marker});
-    } else {
-      markersController.addMarkers(<Marker>{marker});
+  void _updateBlueDot(gmaps.Map map, LatLng position) {
+    final gmaps.LatLng gmPosition = _latLngToGmLatLng(position);
+    final gmaps.Marker? blueDot = _blueDot;
+    if (blueDot != null) {
+      blueDot.position = gmPosition;
+      return;
     }
+    _blueDot = gmaps.Marker(
+      gmaps.MarkerOptions()
+        ..map = map
+        ..position = gmPosition
+        ..clickable = false
+        ..icon = (gmaps.Icon()
+          ..url = ui_web.assetManager.getAssetUrl(
+            'packages/google_maps_flutter_web/assets/blue-dot.png',
+          )
+          ..scaledSize = gmaps.Size(18, 18)),
+    );
   }
 
   /// Get current location
@@ -141,23 +144,9 @@ class MyLocationController {
   }
 
   /// Remove blue dot from map
-  void removeBlueDot(MarkersController<Object?, Object?> markersController) {
-    const markerId = MarkerId(_kMyLocationBlueDot);
-
-    if (markersController.markers.containsKey(markerId)) {
-      markersController.removeMarkers({markerId});
-    }
-  }
-
-  /// Create blue dot marker
-  Future<Marker> _createBlueDotMarker() async {
-    final BitmapDescriptor icon = await BitmapDescriptor.fromAssetImage(
-      const ImageConfiguration(size: Size(18, 18)),
-      'assets/blue-dot.png',
-      package: 'google_maps_flutter_web',
-    );
-
-    return Marker(markerId: const MarkerId(_kMyLocationBlueDot), icon: icon, zIndex: 0.5);
+  void removeBlueDot() {
+    _blueDot?.map = null;
+    _blueDot = null;
   }
 
   /// Dispose the controller and stop watching the position
