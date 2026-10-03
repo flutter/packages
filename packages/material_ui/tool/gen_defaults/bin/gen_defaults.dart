@@ -72,6 +72,7 @@ Future<void> main(List<String> args) async {
   // const BottomAppBarTemplateM3().generateFile(verbose: verbose);
   const BottomSheetTemplateM3().generateFile(verbose: verbose);
   const ButtonTemplateM3('Elevated Button').generateFile(verbose: verbose);
+  const ButtonTemplateM3E('Elevated Button').generateFile(verbose: verbose);
   const ButtonTemplateM3('Filled Button').generateFile(verbose: verbose);
   const ButtonTemplateM3('Filled Tonal Button').generateFile(verbose: verbose);
   const ButtonTemplateM3('Outlined Button').generateFile(verbose: verbose);
