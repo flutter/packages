@@ -1942,4 +1942,25 @@ void main() {
 
     expect(controller.text, 'Initial Value');
   });
+
+  testWidgets('TextFormField is disabled when its Form is disabled', (WidgetTester tester) async {
+    Widget buildForm({required bool formEnabled}) {
+      return MaterialApp(
+        home: Material(
+          child: Form(enabled: formEnabled, child: TextFormField(enabled: true)),
+        ),
+      );
+    }
+
+    await tester.pumpWidget(buildForm(formEnabled: false));
+    expect(tester.widget<TextField>(find.byType(TextField)).enabled, isFalse);
+    await tester.tap(find.byType(TextFormField));
+    await tester.pump();
+    expect(tester.widget<EditableText>(find.byType(EditableText)).focusNode.hasFocus, isFalse);
+
+    await tester.pumpWidget(buildForm(formEnabled: true));
+    expect(tester.widget<TextField>(find.byType(TextField)).enabled, isTrue);
+    await tester.enterText(find.byType(TextFormField), 'Hello');
+    expect(find.text('Hello'), findsOneWidget);
+  });
 }

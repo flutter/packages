@@ -109,7 +109,7 @@ class DropdownMenuFormField<T> extends FormField<T> {
              bucket: field.bucket,
              child: DropdownMenu<T>(
                restorationId: restorationId,
-               enabled: enabled,
+               enabled: enabled && field.isEnabled,
                width: width,
                menuHeight: menuHeight,
                leadingIcon: leadingIcon,
