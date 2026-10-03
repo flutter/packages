@@ -66,8 +66,8 @@ class SliderTheme extends InheritedTheme {
   /// Defaults to the ambient [ThemeData.sliderTheme] if there is no
   /// [SliderTheme] in the given build context.
   ///
-  // TODO(framework): Replace the following block with a blue example container
-  // when it's supported. https://github.com/dart-lang/dartdoc/issues/4243
+  /// <callout-box>
+  ///
   // TODO(framework): Add unit tests to this code snippet.
   // https://github.com/flutter/flutter/issues/188530
   ///
@@ -95,7 +95,7 @@ class SliderTheme extends InheritedTheme {
   /// }
   /// ```
   ///
-  // TODO(framework): End of the blue example container.
+  /// </callout-box>
   ///
   /// See also:
   ///
@@ -254,8 +254,8 @@ class SliderThemeData with Diagnosticable {
   /// [copyWith] on the one you get from [SliderTheme.of], or create an
   /// entirely new one with [SliderThemeData.fromPrimaryColors].
   ///
-  // TODO(framework): Replace the following block with a blue example container
-  // when it's supported. https://github.com/dart-lang/dartdoc/issues/4243
+  /// <callout-box>
+  ///
   // TODO(framework): Add unit tests to this code snippet.
   // https://github.com/flutter/flutter/issues/188530
   ///
@@ -283,7 +283,7 @@ class SliderThemeData with Diagnosticable {
   /// }
   /// ```
   ///
-  // TODO(framework): End of the blue example container.
+  /// </callout-box>
   const SliderThemeData({
     this.trackHeight,
     this.activeTrackColor,
@@ -609,7 +609,7 @@ class SliderThemeData with Diagnosticable {
   /// Override this for custom thumb selection.
   final RangeThumbSelector? thumbSelector;
 
-  /// {@macro flutter.material.slider.mouseCursor}
+  /// {@macro material_ui.slider.mouseCursor}
   ///
   /// If specified, overrides the default value of [Slider.mouseCursor].
   final WidgetStateProperty<MouseCursor?>? mouseCursor;

@@ -1,5 +1,6 @@
 RouteBase get $listRoute => GoRouteData.$route(
       path: '/list-route',
+      hasOverriddenOnExit: false,
       factory: $ListRoute._fromState,
     );
 

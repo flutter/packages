@@ -1,3 +1,11 @@
+## NEXT
+
+* Updates minimum supported SDK version to Flutter 3.41/Dart 3.11.
+
+## 6.9.0
+
+* Adds `backBufferDurationMs` to `VideoPlayerOptions` to support configuring the back buffer duration.
+
 ## 6.8.0
 
 * Adds `preventsDisplaySleepDuringVideoPlayback` to `VideoPlayerOptions` and

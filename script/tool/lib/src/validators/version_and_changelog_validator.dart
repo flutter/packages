@@ -164,11 +164,11 @@ class VersionAndChangelogValidator {
       pubspec: pubspec,
       ignorePlatformInterfaceBreaks: ignorePlatformInterfaceBreaks,
     );
-    // PR with override: skip-batch-release-repo-check-<package> label is going to sync
-    // changelog.md and pubspec.yaml changes back to main branch.
-    // Proceed with regular version check.
+    // PR with override: batch-<package> label is batching the pending
+    // changelogs into CHANGELOG.md, so do the standard checks instead of batch
+    // checks.
     final bool shouldSkipBatchReleaseRepoCheck = _prLabels.contains(
-      'override: skip-batch-release-repo-check-${pubspec.name}',
+      'override: batch-${pubspec.name}',
     );
     bool versionChanged;
 
@@ -634,6 +634,18 @@ ${_indentation}The first version listed in CHANGELOG.md is $fromChangeLog.
         errors.add('pubspec.yaml version changed');
       }
     }
+
+    final bool hasPromote = allChangelogs.any(
+      (PendingChangelogEntry entry) => entry.version == VersionChange.promote,
+    );
+    if (hasPromote) {
+      final Version version = package.parsePubspec().version!;
+      if (version.major != 0) {
+        printError('"promote" is only valid for pre-1.0 packages.');
+        errors.add('Invalid promote version change for post-1.0 package');
+      }
+    }
+
     return versionChanged;
   }
 

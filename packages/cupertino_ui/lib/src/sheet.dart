@@ -105,7 +105,7 @@ typedef _GetSheetDragged = bool Function();
 /// Shows a Cupertino-style sheet widget that slides up from the bottom of the
 /// screen and stacks the previous route behind the new sheet.
 ///
-/// {@youtube 560 315 https://www.youtube.com/watch?v=5H-WvH5O29I}
+/// Learn more about [CupertinoSheetRoute] on the [Flutter YouTube channel](https://www.youtube.com/watch?v=5H-WvH5O29I).
 ///
 /// This is a convenience method for displaying [CupertinoSheetRoute] for most
 /// use cases. The Widget returned from `scrollableBuilder` will be used to display
@@ -143,6 +143,11 @@ typedef _GetSheetDragged = bool Function();
 /// When `showDragHandle` is set to `true`, then a drag handle will be placed at
 /// the top of the sheet. This flag will default to false.
 ///
+/// The `hasPlatformViews` parameter should be set to `true` when the sheet or
+/// the route underneath it contains a platform view that is composited by the
+/// host platform. See [CupertinoSheetTransition.hasPlatformViews] for
+/// platform-specific details.
+///
 /// iOS sheet widgets are generally designed to be tightly coupled to the context
 /// of the widget that opened the sheet. As such, it is not recommended to push
 /// a non-sheet route that covers the sheet without first popping the sheet. If
@@ -158,15 +163,18 @@ typedef _GetSheetDragged = bool Function();
 /// Returns a [Future] that resolves to the value (if any) that was passed to
 /// [Navigator.pop] when the sheet was closed.
 ///
-// TODO(framework): Replace the following block with a @dartpad directive
-// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// <callout-box>
 ///
 /// This example shows how to navigate to use [showCupertinoSheet] to display a
 /// Cupertino sheet widget with nested navigation.
 ///
-/// {@example /example/lib/sheet/cupertino_sheet.1.dart}
+// TODO(framework): Replace the following block with a @dartpad directive
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// {@macro cupertino_ui.dartpad_guide}
 ///
-// TODO(framework): End of the @dartpad directive.
+/// {@example /example/lib/sheet/cupertino_sheet.1.dart#body}
+///
+/// </callout-box>
 ///
 /// See also:
 ///
@@ -191,6 +199,7 @@ Future<T?> showCupertinoSheet<T>({
   RouteSettings? settings,
   double? topGap,
   bool showDragHandle = false,
+  bool hasPlatformViews = false,
 }) {
   assert(topGap == null || (topGap >= 0.0 && topGap <= 0.9), 'topGap must be between 0.0 and 0.9');
   assert(pageBuilder != null || builder != null || scrollableBuilder != null);
@@ -208,6 +217,8 @@ Future<T?> showCupertinoSheet<T>({
       settings: settings,
       enableDrag: enableDrag,
       topGap: topGap,
+      hasPlatformViews: hasPlatformViews,
+      showDragHandle: showDragHandle,
     );
 
     return Navigator.of(context, rootNavigator: true).push<T>(route);
@@ -252,6 +263,8 @@ Future<T?> showCupertinoSheet<T>({
       settings: settings,
       enableDrag: enableDrag,
       topGap: topGap,
+      hasPlatformViews: hasPlatformViews,
+      showDragHandle: showDragHandle,
     );
     return Navigator.of(context, rootNavigator: true).push<T>(route);
   }
@@ -270,6 +283,7 @@ class CupertinoSheetTransition extends StatefulWidget {
     required this.secondaryRouteAnimation,
     required this.child,
     required this.linearTransition,
+    this.hasPlatformViews = false,
     this.topGap = _kTopGapRatio,
   });
 
@@ -292,7 +306,7 @@ class CupertinoSheetTransition extends StatefulWidget {
   /// The gap between the top of the screen and the top of the sheet as a ratio
   /// of the screen height.
   ///
-  ///{@template flutter.cupertino.CupertinoSheetTransition.topGap}
+  ///{@template cupertino_ui.CupertinoSheetTransition.topGap}
   /// This value should be between 0.0 and 0.9, where 0.0 means no gap (sheet
   /// extends to the top of the screen) and 0.9 means the sheet covers only the
   /// bottom 10% of the screen. A value of 0.08 represents 8% of the screen height.
@@ -301,21 +315,61 @@ class CupertinoSheetTransition extends StatefulWidget {
   /// {@endtemplate}
   final double topGap;
 
+  /// {@template cupertino_ui.CupertinoSheetTransition.hasPlatformViews}
+  /// Whether the sheet or the route underneath it contains a platform view
+  /// that is composited by the host platform.
+  ///
+  /// On iOS and macOS, set this to `true` when the sheet or the route underneath
+  /// it contains a platform view. On Android, this flag is generally not needed
+  /// unless the platform view uses a native-view composition mode such as hybrid
+  /// composition.
+  ///
+  /// When set to `false` (the default), the transition uses image-filtered
+  /// scaling for high-quality rendering. This can cause a native-composited
+  /// platform view to appear detached from the rest of the route. Set this to
+  /// `true` to keep it synchronized with the rest of the transition.
+  /// {@endtemplate}
+  final bool hasPlatformViews;
+
+  static Widget _delegateTransitionWithPlatformViews(
+    BuildContext context,
+    Animation<double> animation,
+    Animation<double> secondaryAnimation,
+    bool allowSnapshotting,
+    Widget? child,
+  ) => delegateTransition(
+    context,
+    animation,
+    secondaryAnimation,
+    allowSnapshotting,
+    child,
+    hasPlatformViews: true,
+  );
+
   /// The primary delegated transition. Will slide a non [CupertinoSheetRoute] page down.
   ///
   /// Provided to the previous route to coordinate transitions between routes.
   ///
   /// If a [CupertinoSheetRoute] already exists in the stack, then it will
   /// slide the previous sheet upwards instead.
+  ///
+  /// Set [hasPlatformViews] to `true` when the sheet or the route underneath it
+  /// contains a platform view that is composited by the host platform. See
+  /// [CupertinoSheetTransition.hasPlatformViews] for platform-specific details.
   static Widget delegateTransition(
     BuildContext context,
     Animation<double> animation,
     Animation<double> secondaryAnimation,
     bool allowSnapshotting,
-    Widget? child,
-  ) {
+    Widget? child, {
+    bool hasPlatformViews = false,
+  }) {
     if (CupertinoSheetRoute.hasParentSheet(context)) {
-      return _delegatedCoverSheetSecondaryTransition(secondaryAnimation, child);
+      return _delegatedCoverSheetSecondaryTransition(
+        secondaryAnimation,
+        child,
+        hasPlatformViews: hasPlatformViews,
+      );
     }
     final bool linear = Navigator.of(context).userGestureInProgress;
 
@@ -374,7 +428,12 @@ class CupertinoSheetTransition extends StatefulWidget {
           position: slideAnimation,
           child: ScaleTransition(
             scale: scaleAnimation,
-            filterQuality: FilterQuality.medium,
+            // During animation, FilterQuality.medium uses an ImageFilterLayer, which is
+            // usually worthwhile for animated transforms and avoids the observed subpixel
+            // drift. A null filter quality always uses a TransformLayer to keep platform
+            // views synchronized with the host. When not animating, filterQuality is ignored
+            // and both options have the same effect.
+            filterQuality: hasPlatformViews ? null : FilterQuality.medium,
             alignment: Alignment.topCenter,
             child: AnimatedBuilder(
               animation: radiusAnimation,
@@ -396,8 +455,9 @@ class CupertinoSheetTransition extends StatefulWidget {
 
   static Widget _delegatedCoverSheetSecondaryTransition(
     Animation<double> secondaryAnimation,
-    Widget? child,
-  ) {
+    Widget? child, {
+    bool hasPlatformViews = false,
+  }) {
     const Curve curve = Curves.linearToEaseOut;
     const Curve reverseCurve = Curves.easeInToLinear;
     final curvedAnimation = CurvedAnimation(
@@ -415,7 +475,7 @@ class CupertinoSheetTransition extends StatefulWidget {
       transformHitTests: false,
       child: ScaleTransition(
         scale: scaleAnimation,
-        filterQuality: FilterQuality.medium,
+        filterQuality: hasPlatformViews ? null : FilterQuality.medium,
         alignment: Alignment.topCenter,
         child: ClipRSuperellipse(
           borderRadius: const BorderRadius.vertical(top: Radius.circular(12)),
@@ -534,7 +594,7 @@ class _CupertinoSheetTransitionState extends State<CupertinoSheetTransition>
       transformHitTests: false,
       child: ScaleTransition(
         scale: _secondaryScaleAnimation,
-        filterQuality: FilterQuality.medium,
+        filterQuality: widget.hasPlatformViews ? null : FilterQuality.medium,
         alignment: Alignment.topCenter,
         child: child,
       ),
@@ -549,13 +609,13 @@ class _CupertinoSheetTransitionState extends State<CupertinoSheetTransition>
         child: AnimatedBuilder(
           animation: _stretchDragAnimation,
           builder: (BuildContext context, Widget? child) {
-            return Padding(
-              padding: EdgeInsets.only(
-                top: MediaQuery.heightOf(context) * _stretchDragAnimation.value,
-              ),
-              child: _coverSheetSecondaryTransition(
-                widget.secondaryRouteAnimation,
-                _coverSheetPrimaryTransition(
+            return _coverSheetSecondaryTransition(
+              widget.secondaryRouteAnimation,
+              Padding(
+                padding: EdgeInsets.only(
+                  top: MediaQuery.heightOf(context) * _stretchDragAnimation.value,
+                ),
+                child: _coverSheetPrimaryTransition(
                   context,
                   widget.primaryRouteAnimation,
                   widget.linearTransition,
@@ -588,7 +648,7 @@ class _StretchDragControllerProvider extends InheritedWidget {
 
 /// Route for displaying an iOS sheet styled page.
 ///
-/// {@youtube 560 315 https://www.youtube.com/watch?v=5H-WvH5O29I}
+/// Learn more about [CupertinoSheetRoute] on the [Flutter YouTube channel](https://www.youtube.com/watch?v=5H-WvH5O29I).
 ///
 /// The `CupertinoSheetRoute` will slide up from the bottom of the screen and stop
 /// below the top of the screen. If the previous route is a non-sheet route, then
@@ -611,34 +671,43 @@ class _StretchDragControllerProvider extends InheritedWidget {
 /// scrollable area within the sheet, this parameter can be ignored. See below
 /// for an example.
 ///
-// TODO(framework): Replace the following block with a @dartpad directive
-// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// <callout-box>
 ///
 /// This example shows how to navigate to [CupertinoSheetRoute] by using it the
 /// same as a regular route.
 ///
-/// {@example /example/lib/sheet/cupertino_sheet.0.dart}
-///
-// TODO(framework): End of the @dartpad directive.
-///
 // TODO(framework): Replace the following block with a @dartpad directive
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// {@macro cupertino_ui.dartpad_guide}
+///
+/// {@example /example/lib/sheet/cupertino_sheet.0.dart#body}
+///
+/// </callout-box>
+///
+/// <callout-box>
 ///
 /// This example shows how to show a Cupertino Sheet with nested navigation manually
 /// set up in order to enable restorable state.
 ///
-/// {@example /example/lib/sheet/cupertino_sheet.2.dart}
-///
-// TODO(framework): End of the @dartpad directive.
-///
 // TODO(framework): Replace the following block with a @dartpad directive
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// {@macro cupertino_ui.dartpad_guide}
+///
+/// {@example /example/lib/sheet/cupertino_sheet.2.dart#body}
+///
+/// </callout-box>
+///
+/// <callout-box>
 ///
 /// This example shows how to show a Cupertino Sheet with scrollable content.
 ///
-/// {@example /example/lib/sheet/cupertino_sheet.3.dart}
+// TODO(framework): Replace the following block with a @dartpad directive
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// {@macro cupertino_ui.dartpad_guide}
 ///
-// TODO(framework): End of the @dartpad directive.
+/// {@example /example/lib/sheet/cupertino_sheet.3.dart#body}
+///
+/// </callout-box>
 ///
 /// See also:
 ///   * [showCupertinoSheet], which is a convenience method for pushing a
@@ -655,6 +724,7 @@ class CupertinoSheetRoute<T> extends PageRoute<T> with _CupertinoSheetRouteTrans
     this.scrollableBuilder,
     this.enableDrag = true,
     this.showDragHandle = false,
+    this.hasPlatformViews = false,
     double? topGap,
   }) : assert(
          topGap == null || (topGap >= 0.0 && topGap <= 0.9),
@@ -679,14 +749,17 @@ class CupertinoSheetRoute<T> extends PageRoute<T> with _CupertinoSheetRouteTrans
   /// then when a downward drag is applied to the scrollable area while the content
   /// is scrolled to the top, the drag to dismiss behavior of the sheet will be triggered.
   ///
-  // TODO(framework): Replace the following block with a @dartpad directive
-  // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+  /// <callout-box>
   ///
   /// This example shows how to show a Cupertino Sheet with scrollable content.
   ///
-  /// {@example /example/lib/sheet/cupertino_sheet.3.dart}
+  // TODO(framework): Replace the following block with a @dartpad directive
+  // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+  /// {@macro cupertino_ui.dartpad_guide}
   ///
-  // TODO(framework): End of the @dartpad directive.
+  /// {@example /example/lib/sheet/cupertino_sheet.3.dart#body}
+  ///
+  /// </callout-box>
   final ScrollableWidgetBuilder? scrollableBuilder;
 
   ScrollableWidgetBuilder get _effectiveBuilder {
@@ -696,6 +769,10 @@ class CupertinoSheetRoute<T> extends PageRoute<T> with _CupertinoSheetRouteTrans
 
   @override
   final bool enableDrag;
+
+  /// {@macro cupertino_ui.CupertinoSheetTransition.hasPlatformViews}
+  @override
+  final bool hasPlatformViews;
 
   // The gap between the top of the screen and the top of the sheet.
   final double? _topGap;
@@ -726,9 +803,8 @@ class CupertinoSheetRoute<T> extends PageRoute<T> with _CupertinoSheetRouteTrans
       fit: StackFit.expand,
       children: <Widget>[
         MediaQuery(
-          data: MediaQuery.of(
-            context,
-          ).copyWith(padding: const EdgeInsets.only(top: dragHandlePadding)),
+          data: MediaQuery.of(context)
+              .copyWith(padding: const EdgeInsets.only(top: dragHandlePadding)),
           child: _effectiveBuilder(context, controller),
         ),
         const Align(
@@ -835,7 +911,9 @@ mixin _CupertinoSheetRouteTransitionMixin<T> on PageRoute<T> {
     if (_hasCustomTopGap) {
       return null;
     }
-    return CupertinoSheetTransition.delegateTransition;
+    return hasPlatformViews
+        ? CupertinoSheetTransition._delegateTransitionWithPlatformViews
+        : CupertinoSheetTransition.delegateTransition;
   }
 
   /// Determines whether the content can be dragged.
@@ -846,8 +924,11 @@ mixin _CupertinoSheetRouteTransitionMixin<T> on PageRoute<T> {
   /// The gap between the top of the screen and the top of the sheet as a ratio
   /// of the screen height.
   ///
-  /// {@macro flutter.cupertino.CupertinoSheetTransition.topGap}
+  /// {@macro cupertino_ui.CupertinoSheetTransition.topGap}
   double get topGap;
+
+  /// {@macro cupertino_ui.CupertinoSheetTransition.hasPlatformViews}
+  bool get hasPlatformViews;
 
   /// Whether a custom top gap has been set.
   bool get _hasCustomTopGap;
@@ -883,6 +964,7 @@ mixin _CupertinoSheetRouteTransitionMixin<T> on PageRoute<T> {
     Widget child,
     bool enableDrag,
     double topGap,
+    bool hasPlatformViews,
   ) {
     final bool linearTransition = route.popGestureInProgress;
     return CupertinoSheetTransition(
@@ -890,6 +972,7 @@ mixin _CupertinoSheetRouteTransitionMixin<T> on PageRoute<T> {
       secondaryRouteAnimation: secondaryAnimation,
       linearTransition: linearTransition,
       topGap: topGap,
+      hasPlatformViews: hasPlatformViews,
       child: _CupertinoDragGestureDetector<T>(
         enabledCallback: () => enableDrag,
         onStartPopGesture: () => _startPopGesture<T>(route, topGap),
@@ -926,13 +1009,13 @@ mixin _CupertinoSheetRouteTransitionMixin<T> on PageRoute<T> {
       child,
       enableDrag,
       topGap,
+      hasPlatformViews,
     );
   }
 }
 
 class _CupertinoDragGestureDetector<T> extends StatefulWidget {
   const _CupertinoDragGestureDetector({
-    super.key,
     required this.enabledCallback,
     required this.onStartPopGesture,
     required this.child,
@@ -1312,7 +1395,6 @@ class _CupertinoSheetScrollPosition extends ScrollPositionWithSingleContext {
 
 class _CupertinoDraggableScrollableSheet<T> extends StatefulWidget {
   const _CupertinoDraggableScrollableSheet({
-    super.key,
     required this.enabledCallback,
     required this.onStartPopGesture,
     required this.builder,

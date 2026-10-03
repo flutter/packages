@@ -2,6 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+// #region body
 import 'dart:ui';
 
 import 'package:material_ui/material_ui.dart';
@@ -126,3 +127,4 @@ class MyNavigationRailFab extends StatelessWidget {
     );
   }
 }
+// #endregion body

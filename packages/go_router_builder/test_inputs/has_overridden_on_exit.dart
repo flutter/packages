@@ -1,0 +1,18 @@
+// Copyright 2013 The Flutter Authors
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
+import 'dart:async';
+
+import 'package:go_router/go_router.dart';
+import 'package:material_ui/material_ui.dart';
+
+mixin $HasOverriddenOnExitRoute {}
+
+@TypedGoRoute<HasOverriddenOnExitRoute>(path: '/has-overridden-on-exit-route')
+class HasOverriddenOnExitRoute extends GoRouteData with $HasOverriddenOnExitRoute {
+  @override
+  FutureOr<bool> onExit(BuildContext context, GoRouterState state) {
+    return true;
+  }
+}

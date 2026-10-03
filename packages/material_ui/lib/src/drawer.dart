@@ -27,6 +27,8 @@ import 'material.dart';
 import 'material_localizations.dart';
 import 'theme.dart';
 
+part 'generated/drawer_defaults_m3.g.dart';
+
 // Examples can assume:
 // late BuildContext context;
 
@@ -70,7 +72,7 @@ const Duration _kBaseSettleDuration = Duration(milliseconds: 246);
 /// that's preferred for applications that are configured for Material 3
 /// (see [ThemeData.useMaterial3]).
 ///
-/// {@youtube 560 315 https://www.youtube.com/watch?v=WRj86iHihgY}
+/// Learn more about [Drawer] on the [Flutter YouTube channel](https://www.youtube.com/watch?v=WRj86iHihgY).
 ///
 /// Drawers are typically used with the [Scaffold.drawer] property. The child of
 /// the drawer is usually a [ListView] whose first child is a [DrawerHeader]
@@ -96,8 +98,7 @@ const Duration _kBaseSettleDuration = Duration(milliseconds: 246);
 /// [NavigationDrawerDestination] widgets and/or customized widgets like headlines
 /// and dividers.
 ///
-// TODO(framework): Replace the following block with a @dartpad directive
-// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// <callout-box>
 ///
 /// This example shows how to create a [Scaffold] that contains an [AppBar] and
 /// a [Drawer]. A user taps the "menu" icon in the [AppBar] to open the
@@ -105,18 +106,25 @@ const Duration _kBaseSettleDuration = Duration(milliseconds: 246);
 /// The [Drawer] displays the four items using a [ListView], which allows the
 /// user to scroll through the items if need be.
 ///
-/// {@example /example/lib/drawer/drawer.0.dart}
-///
-// TODO(framework): End of the @dartpad directive.
-///
 // TODO(framework): Replace the following block with a @dartpad directive
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// {@macro material_ui.dartpad_guide}
+///
+/// {@example /example/lib/drawer/drawer.0.dart#body}
+///
+/// </callout-box>
+///
+/// <callout-box>
 ///
 /// This example shows how to migrate the above [Drawer] to a [NavigationDrawer].
 ///
-/// {@example /example/lib/navigation_drawer/navigation_drawer.0.dart}
+// TODO(framework): Replace the following block with a @dartpad directive
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// {@macro material_ui.dartpad_guide}
 ///
-// TODO(framework): End of the @dartpad directive.
+/// {@example /example/lib/navigation_drawer/navigation_drawer.0.dart#body}
+///
+/// </callout-box>
 ///
 /// An open drawer may be closed with a swipe to close gesture, pressing the
 /// escape key, by tapping the scrim, or by calling pop route function such as
@@ -244,7 +252,7 @@ class Drawer extends StatelessWidget {
   ///    value is used.
   final String? semanticLabel;
 
-  /// {@macro flutter.material.Material.clipBehavior}
+  /// {@macro cupertino_ui.Material.clipBehavior}
   ///
   /// The [clipBehavior] argument specifies how to clip the drawer's [shape].
   ///
@@ -333,7 +341,7 @@ class DrawerController extends StatefulWidget {
   ///
   /// The [child] argument is typically a [Drawer].
   const DrawerController({
-    GlobalKey? key,
+    GlobalKey? super.key,
     required this.child,
     required this.alignment,
     this.isDrawerOpen = false,
@@ -343,7 +351,7 @@ class DrawerController extends StatefulWidget {
     this.edgeDragWidth,
     this.enableOpenDragGesture = true,
     this.drawerBarrierDismissible = true,
-  }) : super(key: key);
+  });
 
   /// The widget below this widget in the tree.
   ///
@@ -366,7 +374,7 @@ class DrawerController extends StatefulWidget {
   /// If false, tapping the barrier will not dismiss the drawer.
   final bool drawerBarrierDismissible;
 
-  /// {@template flutter.material.DrawerController.dragStartBehavior}
+  /// {@template material_ui.DrawerController.dragStartBehavior}
   /// Determines the way that drag start behavior is handled.
   ///
   /// If set to [DragStartBehavior.start], the drag behavior used for opening
@@ -422,8 +430,8 @@ class DrawerController extends StatefulWidget {
   /// The closest instance of [DrawerController] that encloses the given
   /// context, or null if none is found.
   ///
-  // TODO(framework): Replace the following block with a blue example container
-  // when it's supported. https://github.com/dart-lang/dartdoc/issues/4243
+  /// <callout-box>
+  ///
   // TODO(framework): Add unit tests to this code snippet.
   // https://github.com/flutter/flutter/issues/188530
   /// Typical usage is as follows:
@@ -432,7 +440,7 @@ class DrawerController extends StatefulWidget {
   /// DrawerController? controller = DrawerController.maybeOf(context);
   /// ```
   ///
-  // TODO(framework): End of the blue example container.
+  /// </callout-box>
   ///
   /// Calling this method will create a dependency on the closest
   /// [DrawerController] in the [context], if there is one.
@@ -454,8 +462,8 @@ class DrawerController extends StatefulWidget {
   /// Calling this method will create a dependency on the closest
   /// [DrawerController] in the [context].
   ///
-  // TODO(framework): Replace the following block with a blue example container
-  // when it's supported. https://github.com/dart-lang/dartdoc/issues/4243
+  /// <callout-box>
+  ///
   // TODO(framework): Add unit tests to this code snippet.
   // https://github.com/flutter/flutter/issues/188530
   /// Typical usage is as follows:
@@ -464,7 +472,7 @@ class DrawerController extends StatefulWidget {
   /// DrawerController controller = DrawerController.of(context);
   /// ```
   ///
-  // TODO(framework): End of the blue example container.
+  /// </callout-box>
   static DrawerController of(BuildContext context) {
     final DrawerController? controller = maybeOf(context);
     assert(() {
@@ -507,10 +515,13 @@ class DrawerControllerState extends State<DrawerController> with SingleTickerPro
       ..addStatusListener(_animationStatusChanged);
   }
 
+  bool _disposed = false;
+
   @protected
   @override
   void dispose() {
-    _historyEntry?.remove();
+    _disposed = true;
+    _removeHistoryEntry();
     _controller.dispose();
     _focusScopeNode.dispose();
     super.dispose();
@@ -552,14 +563,18 @@ class DrawerControllerState extends State<DrawerController> with SingleTickerPro
     }
   }
 
+  void _removeHistoryEntry() {
+    _historyEntry?.remove();
+    _historyEntry = null;
+  }
+
   void _animationStatusChanged(AnimationStatus status) {
     switch (status) {
       case AnimationStatus.forward:
         _ensureHistoryEntry();
       case AnimationStatus.reverse:
-        _historyEntry?.remove();
-        _historyEntry = null;
       case AnimationStatus.dismissed:
+        _removeHistoryEntry();
       case AnimationStatus.completed:
         break;
     }
@@ -567,7 +582,12 @@ class DrawerControllerState extends State<DrawerController> with SingleTickerPro
 
   void _handleHistoryEntryRemoved() {
     _historyEntry = null;
-    close();
+    if (_disposed || !mounted) {
+      return;
+    }
+    if (!_controller.isDismissed && _controller.status != AnimationStatus.reverse) {
+      close();
+    }
   }
 
   late AnimationController _controller;
@@ -626,6 +646,13 @@ class DrawerControllerState extends State<DrawerController> with SingleTickerPro
       final double visualVelocity = xVelocity / _width * _directionFactor;
 
       _controller.fling(velocity: visualVelocity);
+      if (visualVelocity < 0.0) {
+        // We explicitly remove the history entry here because the drawer may already be
+        // animating closed (status == AnimationStatus.reverse) when the drag begins.
+        // In that case, flinging it closed again does not change the animation status,
+        // so the status listener will not fire.
+        _removeHistoryEntry();
+      }
       widget.drawerCallback?.call(visualVelocity > 0.0);
     } else if (_controller.value < 0.5) {
       close();
@@ -645,6 +672,8 @@ class DrawerControllerState extends State<DrawerController> with SingleTickerPro
   /// Starts an animation to close the drawer.
   void close() {
     _controller.fling(velocity: -1.0);
+    // Explicitly removed here for the same reason as in _settle.
+    _removeHistoryEntry();
     widget.drawerCallback?.call(false);
   }
 
@@ -782,52 +811,3 @@ class _DrawerDefaultsM2 extends DrawerThemeData {
   @override
   Color? get shadowColor => Theme.of(context).shadowColor;
 }
-
-// BEGIN GENERATED TOKEN PROPERTIES - Drawer
-
-// Do not edit by hand. The code between the "BEGIN GENERATED" and
-// "END GENERATED" comments are generated from data in the Material
-// Design token database by the script:
-//   dev/tools/gen_defaults/bin/gen_defaults.dart.
-
-// dart format off
-class _DrawerDefaultsM3 extends DrawerThemeData {
-  _DrawerDefaultsM3(this.context)
-      : super(
-          elevation: 1.0,
-          clipBehavior: Clip.hardEdge,
-        );
-
-  final BuildContext context;
-  late final TextDirection direction = Directionality.of(context);
-
-  @override
-  Color? get backgroundColor => Theme.of(context).colorScheme.surfaceContainerLow;
-
-  @override
-  Color? get surfaceTintColor => Colors.transparent;
-
-  @override
-  Color? get shadowColor => Colors.transparent;
-
-  // There isn't currently a token for this value, but it is shown in the spec,
-  // so hard coding here for now.
-  @override
-  ShapeBorder? get shape => RoundedRectangleBorder(
-    borderRadius: const BorderRadiusDirectional.horizontal(
-      end: Radius.circular(16.0),
-    ).resolve(direction),
-  );
-
-  // There isn't currently a token for this value, but it is shown in the spec,
-  // so hard coding here for now.
-  @override
-  ShapeBorder? get endShape => RoundedRectangleBorder(
-    borderRadius: const BorderRadiusDirectional.horizontal(
-      start: Radius.circular(16.0),
-    ).resolve(direction),
-  );
-}
-// dart format on
-
-// END GENERATED TOKEN PROPERTIES - Drawer

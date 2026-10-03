@@ -376,6 +376,43 @@ private let hlsAudioTestURI =
     #expect((inspectableAVPlayer.afterTolerance?.intValue ?? 0) > 0)
   }
 
+  @Test func setPreventsDisplaySleepDuringVideoPlayback() {
+    let stubAVFactory = StubFVPAVFactory(player: AVPlayer())
+    let player = FVPVideoPlayer(
+      playerItem: StubPlayerItem(),
+      avFactory: stubAVFactory,
+      viewProvider: StubViewProvider())
+    let listener = StubEventListener()
+    player.eventListener = listener
+
+    var error: FlutterError?
+    // The setter should update the underlying AVPlayer in both directions.
+    player.setPreventsDisplaySleepDuringVideoPlayback(false, error: &error)
+    #expect(error == nil)
+    #expect(player.player.preventsDisplaySleepDuringVideoPlayback == false)
+
+    player.setPreventsDisplaySleepDuringVideoPlayback(true, error: &error)
+    #expect(error == nil)
+    #expect(player.player.preventsDisplaySleepDuringVideoPlayback == true)
+  }
+
+  #if os(iOS)
+    @Test func externalPlaybackIsEnabledForAirPlay() {
+      let stubAVFactory = StubFVPAVFactory(player: AVPlayer())
+      let player = FVPVideoPlayer(
+        playerItem: StubPlayerItem(),
+        avFactory: stubAVFactory,
+        viewProvider: StubViewProvider())
+
+      // usesExternalPlaybackWhileExternalScreenIsActive defaults to NO, which
+      // keeps the video on the device whenever an external screen is active. An
+      // AirPlay route then moves only the audio, and the receiver shows a
+      // mirrored screen rather than playing the stream itself.
+      #expect(player.player.allowsExternalPlayback == true)
+      #expect(player.player.usesExternalPlaybackWhileExternalScreenIsActive == true)
+    }
+  #endif
+
   /// Sanity checks a video player playing the given URL with the actual AVPlayer. This is essentially
   /// a mini integration test of the player component.
   ///

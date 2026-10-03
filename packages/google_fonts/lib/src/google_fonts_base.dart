@@ -4,15 +4,15 @@
 
 import 'package:crypto/crypto.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
-import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:http/http.dart' as http;
+import 'package:material_ui/material_ui.dart';
 
-import '../google_fonts.dart';
 import 'file_io.dart' // Stubbed implementation by default.
     // Concrete implementation if File IO is available.
     if (dart.library.io) 'file_io_desktop_and_mobile.dart'
     as file_io;
+import 'google_fonts_config.dart';
 import 'google_fonts_descriptor.dart';
 import 'google_fonts_family_with_variant.dart';
 import 'google_fonts_variant.dart';
@@ -28,8 +28,8 @@ void clearCache() => _loadedFonts.clear();
 
 /// Set of [Future]s corresponding to fonts that are loading.
 ///
-/// When a font is loading, a future is added to this set. When it is loaded in
-/// the [FontLoader], that future is removed from this set.
+/// When a font is loading, a future is added to this set. When the load
+/// completes, whether successfully or with an error, that future is removed.
 final Set<Future<void>> pendingFontFutures = <Future<void>>{};
 
 /// Default client used to fetch fonts when one is not supplied.
@@ -106,7 +106,7 @@ TextStyle googleFontsTextStyle({
 
   final Future<void> loadingFuture = loadFontIfNecessary(descriptor);
   pendingFontFutures.add(loadingFuture);
-  loadingFuture.then((_) => pendingFontFutures.remove(loadingFuture));
+  loadingFuture.whenComplete(() => pendingFontFutures.remove(loadingFuture)).ignore();
 
   return textStyle.copyWith(
     fontFamily: familyWithVariant.toString(),
@@ -164,7 +164,7 @@ Future<void> loadFontIfNecessary(GoogleFontsDescriptor descriptor) async {
     }
 
     // Attempt to load this font via http, unless disallowed.
-    if (GoogleFonts.config.allowRuntimeFetching) {
+    if (sharedGoogleFontsConfig.allowRuntimeFetching) {
       byteData = _httpFetchFontAndSaveToDevice(familyWithVariantString, descriptor.file);
       if (await byteData != null) {
         return await loadFontByteData(familyWithVariantString, byteData);
@@ -250,7 +250,7 @@ Future<ByteData> _httpFetchFontAndSaveToDevice(String fontName, GoogleFontsFile 
   }
 
   http.Response response;
-  final http.Client client = GoogleFonts.config.httpClient ?? _httpClient;
+  final http.Client client = sharedGoogleFontsConfig.httpClient ?? _httpClient;
   try {
     response = await client.get(uri);
   } catch (e) {

@@ -37,7 +37,7 @@ import 'input_border.dart';
 ///    except [WidgetState] can be used outside of Material.
 ///  * [MaterialStateProperty], an interface for objects that "resolve" to
 ///    different values depending on a widget's material state.
-/// {@template flutter.material.MaterialStateProperty.implementations}
+/// {@template material_ui.MaterialStateProperty.implementations}
 ///  * [MaterialStateColor], a [Color] that implements `MaterialStateProperty`
 ///    which is used in APIs that need to accept either a [Color] or a
 ///    `MaterialStateProperty<Color>`.
@@ -103,12 +103,12 @@ typedef MaterialPropertyResolver<T> = WidgetPropertyResolver<T>;
 /// value will be used for all states.
 ///
 /// To define a `const` [MaterialStateColor], you'll need to extend
-/// [MaterialStateColor] and override its [resolve] method. You'll also need
-/// to provide a `defaultValue` to the super constructor, so that we can know
-/// at compile-time what its default color is.
+/// [MaterialStateColor] and override its [MaterialStateColor.resolve] method.
+/// You'll also need to provide a `defaultValue` to the super constructor, so
+/// that we can know at compile-time what its default color is.
 ///
-// TODO(framework): Replace the following block with a blue example container
-// when it's supported. https://github.com/dart-lang/dartdoc/issues/4243
+/// <callout-box>
+///
 // TODO(framework): Add unit tests to this code snippet.
 // https://github.com/flutter/flutter/issues/188530
 ///
@@ -134,7 +134,7 @@ typedef MaterialPropertyResolver<T> = WidgetPropertyResolver<T>;
 /// }
 /// ```
 ///
-// TODO(framework): End of the blue example container.
+/// </callout-box>
 ///
 /// See also
 ///
@@ -161,15 +161,18 @@ typedef MaterialStateColor = WidgetStateColor;
 /// To use a [MaterialStateMouseCursor], you should create a subclass of
 /// [MaterialStateMouseCursor] and implement the abstract `resolve` method.
 ///
-// TODO(framework): Replace the following block with a @dartpad directive
-// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// <callout-box>
 ///
 /// This example defines a mouse cursor that resolves to
 /// [SystemMouseCursors.forbidden] when its widget is disabled.
 ///
-/// {@example /example/lib/material_state/material_state_mouse_cursor.0.dart}
+// TODO(framework): Replace the following block with a @dartpad directive
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// {@macro material_ui.dartpad_guide}
 ///
-// TODO(framework): End of the @dartpad directive.
+/// {@example /example/lib/material_state/material_state_mouse_cursor.0.dart#body}
+///
+/// </callout-box>
 ///
 /// This class should only be used for parameters which are documented to take
 /// [MaterialStateMouseCursor], otherwise only the default state will be used.
@@ -199,15 +202,18 @@ typedef MaterialStateMouseCursor = WidgetStateMouseCursor;
 /// property values. [MaterialStateBorderSide] should only be used with widgets that document
 /// their support, like [ActionChip.side].
 ///
-// TODO(framework): Replace the following block with a @dartpad directive
-// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// <callout-box>
 ///
 /// This example defines a subclass of [MaterialStateBorderSide], that resolves
 /// to a red border side when its widget is selected.
 ///
-/// {@example /example/lib/material_state/material_state_border_side.0.dart}
+// TODO(framework): Replace the following block with a @dartpad directive
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// {@macro material_ui.dartpad_guide}
 ///
-// TODO(framework): End of the @dartpad directive.
+/// {@example /example/lib/material_state/material_state_border_side.0.dart#body}
+///
+/// </callout-box>
 ///
 /// This class should only be used for parameters which are documented to take
 /// [MaterialStateBorderSide], otherwise only the default state will be used.
@@ -230,16 +236,19 @@ typedef MaterialStateBorderSide = WidgetStateBorderSide;
 /// [OutlinedBorder] and implement [MaterialStateOutlinedBorder]'s abstract
 /// `resolve` method.
 ///
-// TODO(framework): Replace the following block with a @dartpad directive
-// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// <callout-box>
 ///
 /// This example defines a subclass of [RoundedRectangleBorder] and an
 /// implementation of [MaterialStateOutlinedBorder], that resolves to
 /// [RoundedRectangleBorder] when its widget is selected.
 ///
-/// {@example /example/lib/material_state/material_state_outlined_border.0.dart}
+// TODO(framework): Replace the following block with a @dartpad directive
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// {@macro material_ui.dartpad_guide}
 ///
-// TODO(framework): End of the @dartpad directive.
+/// {@example /example/lib/material_state/material_state_outlined_border.0.dart#body}
+///
+/// </callout-box>
 ///
 /// This class should only be used for parameters which are documented to take
 /// [MaterialStateOutlinedBorder], otherwise only the default state will be used.
@@ -278,9 +287,9 @@ typedef MaterialStateOutlinedBorder = WidgetStateOutlinedBorder;
 /// value will be used for all states.
 ///
 /// To define a `const` [MaterialStateTextStyle], you'll need to extend
-/// [MaterialStateTextStyle] and override its [resolve] method. You'll also need
-/// to provide a `defaultValue` to the super constructor, so that we can know
-/// at compile-time what its default color is.
+/// [MaterialStateTextStyle] and override its [MaterialStateTextStyle.resolve]
+/// method. You'll also need to provide a `defaultValue` to the super
+/// constructor, so that we can know at compile-time what its default color is.
 ///
 /// See also:
 ///
@@ -469,15 +478,18 @@ class _MaterialStateUnderlineInputBorder extends MaterialStateUnderlineInputBord
 ///     resolves the input border in the given states.
 ///  3. Using [WidgetStateInputBorder.fromMap] to assign a border with a [WidgetStateMap].
 ///
-// TODO(framework): Replace the following block with a @dartpad directive
-// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// <callout-box>
 ///
 /// This example shows how to use [WidgetStateInputBorder] to create
 /// a [TextField] with an appearance that responds to user interaction.
 ///
-/// {@example /example/lib/widget_state_input_border/widget_state_input_border.0.dart}
+// TODO(framework): Replace the following block with a @dartpad directive
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// {@macro material_ui.dartpad_guide}
 ///
-// TODO(framework): End of the @dartpad directive.
+/// {@example /example/lib/widget_state_input_border/widget_state_input_border.0.dart#body}
+///
+/// </callout-box>
 abstract interface class WidgetStateInputBorder
     implements InputBorder, WidgetStateProperty<InputBorder> {
   /// Creates a [WidgetStateInputBorder] using a [WidgetPropertyResolver]
@@ -516,28 +528,27 @@ class _WidgetInputBorderMapper extends WidgetStateMapper<InputBorder>
   const _WidgetInputBorderMapper(super.map);
 }
 
-/// Interface for classes that [resolve] to a value of type `T` based
-/// on a widget's interactive "state", which is defined as a set
+/// Interface for classes that [MaterialStateProperty.resolve] to a value of
+/// type `T` based on a widget's interactive "state", which is defined as a set
 /// of [MaterialState]s.
 ///
-/// {@youtube 560 315 https://www.youtube.com/watch?v=CylXr3AF3uU}
+/// Learn more about [WidgetStateProperty] on the [Flutter YouTube channel](https://www.youtube.com/watch?v=CylXr3AF3uU).
 ///
 /// Material state properties represent values that depend on a widget's material
 /// "state". The state is encoded as a set of [MaterialState] values, like
 /// [WidgetState.focused], [WidgetState.hovered], [WidgetState.pressed]. For
 /// example the [InkWell.overlayColor] defines the color that fills the ink well
 /// when it's pressed (the "splash color"), focused, or hovered. The [InkWell]
-/// uses the overlay color's [resolve] method to compute the color for the
-/// ink well's current state.
+/// uses the overlay color's [MaterialStateProperty.resolve] method to compute
+/// the color for the ink well's current state.
 ///
 /// [ButtonStyle], which is used to configure the appearance of
 /// buttons like [TextButton], [ElevatedButton], and [OutlinedButton],
 /// has many material state properties. The button widgets keep track
-/// of their current material state and [resolve] the button style's
-/// material state properties when their value is needed.
+/// of their current material state and [MaterialStateProperty.resolve] the
+/// button style's material state properties when their value is needed.
 ///
-// TODO(framework): Replace the following block with a @dartpad directive
-// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// <callout-box>
 ///
 /// This example shows how you can override the default text and icon
 /// color (the "foreground color") of a [TextButton] with a
@@ -545,15 +556,19 @@ class _WidgetInputBorderMapper extends WidgetStateMapper<InputBorder>
 /// will be `Colors.blue` when the button is being pressed, hovered,
 /// or focused. Otherwise, the text color will be `Colors.red`.
 ///
-/// {@example /example/lib/material_state/material_state_property.0.dart}
+// TODO(framework): Replace the following block with a @dartpad directive
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// {@macro material_ui.dartpad_guide}
 ///
-// TODO(framework): End of the @dartpad directive.
+/// {@example /example/lib/material_state/material_state_property.0.dart#body}
+///
+/// </callout-box>
 ///
 /// See also:
 ///
 ///  * [WidgetStateProperty], the non-Material version that can be used
 ///    interchangeably with `MaterialStateProperty`.
-/// {@macro flutter.material.MaterialStateProperty.implementations}
+/// {@macro material_ui.MaterialStateProperty.implementations}
 @Deprecated(
   'Use WidgetStateProperty instead. '
   'Moved to the Widgets layer to make code available outside of Material. '
@@ -581,25 +596,28 @@ typedef MaterialStatePropertyAll<T> = WidgetStatePropertyAll<T>;
 /// extensions that add support for additional states. See
 /// [TextButton] for an example.
 ///
-/// The controller's [value] is its current set of states. Listeners
-/// are notified whenever the [value] changes. The [value] should only be
-/// changed with [update]; it should not be modified directly.
+/// The controller's [MaterialStatesController.value] is its current set of
+/// states. Listeners are notified whenever the
+/// [MaterialStatesController.value] changes. The
+/// [MaterialStatesController.value] should only be changed with
+/// [MaterialStatesController.update]; it should not be modified directly.
 ///
-/// The controller's [value] represents the set of states that a
-/// widget's visual properties, typically [MaterialStateProperty]
+/// The controller's [MaterialStatesController.value] represents the set of
+/// states that a widget's visual properties, typically [MaterialStateProperty]
 /// values, are resolved against. It is _not_ the intrinsic state of
 /// the widget. The widget is responsible for ensuring that the
-/// controller's [value] tracks its intrinsic state. For example one
-/// cannot request the keyboard focus for a widget by adding
-/// [WidgetState.focused] to its controller. When the widget gains the
-/// or loses the focus it will [update] its controller's [value] and
-/// notify listeners of the change.
+/// controller's [MaterialStatesController.value] tracks its intrinsic state.
+/// For example one cannot request the keyboard focus for a widget by adding
+/// [WidgetState.focused] to its controller. When the widget gains or loses the
+/// focus it will [MaterialStatesController.update] its controller's
+/// [MaterialStatesController.value] and notify listeners of the change.
 ///
 /// When calling `setState` in a [MaterialStatesController] listener, use the
 /// [SchedulerBinding.addPostFrameCallback] to delay the call to `setState` after
 /// the frame has been rendered. It's generally prudent to use the
 /// [SchedulerBinding.addPostFrameCallback] because some of the widgets that
-/// depend on [MaterialStatesController] may call [update] in their build method.
+/// depend on [MaterialStatesController] may call
+/// [MaterialStatesController.update] in their build method.
 /// In such cases, listener's that call `setState` - during the build phase - will cause
 /// an error.
 ///

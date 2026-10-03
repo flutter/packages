@@ -54,6 +54,7 @@ import io.flutter.plugins.camera.features.flash.FlashFeature;
 import io.flutter.plugins.camera.features.flash.FlashMode;
 import io.flutter.plugins.camera.features.focuspoint.FocusPointFeature;
 import io.flutter.plugins.camera.features.fpsrange.FpsRangeFeature;
+import io.flutter.plugins.camera.features.jpegquality.JpegQualityFeature;
 import io.flutter.plugins.camera.features.resolution.ResolutionFeature;
 import io.flutter.plugins.camera.features.resolution.ResolutionPreset;
 import io.flutter.plugins.camera.features.sensororientation.DeviceOrientationManager;
@@ -869,8 +870,9 @@ class Camera
             dartMessenger.error(flutterResult, errorCode, errorMessage, null));
   }
 
-  public void startVideoRecording(@Nullable EventChannel imageStreamChannel) {
-    prepareRecording();
+  public void startVideoRecording(
+      @Nullable EventChannel imageStreamChannel, @Nullable String videoOutputPath) {
+    prepareRecording(videoOutputPath);
 
     if (imageStreamChannel != null) {
       setStreamHandler(imageStreamChannel);
@@ -1296,13 +1298,19 @@ class Camera
   }
 
   @VisibleForTesting
-  void prepareRecording() {
-    final File outputDir = applicationContext.getCacheDir();
-    try {
-      captureFile = File.createTempFile("REC", ".mp4", outputDir);
-    } catch (IOException | SecurityException e) {
-      throw new Messages.FlutterError("cannotCreateFile", e.getMessage(), null);
+  void prepareRecording(@Nullable String videoOutputPath) {
+    if (videoOutputPath != null) {
+      validateOutputPath(videoOutputPath);
+      captureFile = new File(videoOutputPath);
+    } else {
+      final File outputDir = applicationContext.getCacheDir();
+      try {
+        captureFile = File.createTempFile("REC", ".mp4", outputDir);
+      } catch (IOException | SecurityException e) {
+        throw new Messages.FlutterError("cannotCreateFile", e.getMessage(), null);
+      }
     }
+
     try {
       prepareMediaRecorder(captureFile.getAbsolutePath());
     } catch (IOException e) {
@@ -1315,6 +1323,24 @@ class Camera
         cameraFeatureFactory.createAutoFocusFeature(cameraProperties, true));
     // Update camera features with the desired fps range
     setFpsCameraFeatureForRecording(cameraProperties);
+  }
+
+  private void validateOutputPath(String path) {
+    File file = new File(path);
+    if (file.isDirectory()) {
+      throw new Messages.FlutterError("IOError", "The output path is a directory: " + path, null);
+    }
+    File parent = file.getParentFile();
+    if (parent != null && !parent.exists()) {
+      throw new Messages.FlutterError(
+          "IOError", "The parent directory does not exist: " + parent.getAbsolutePath(), null);
+    }
+
+    String lowerPath = path.toLowerCase(Locale.ROOT);
+    if (!lowerPath.endsWith(".mp4")) {
+      throw new Messages.FlutterError(
+          "IOError", "Invalid video extension. Supported extensions: .mp4", null);
+    }
   }
 
   private void setStreamHandler(EventChannel imageStreamChannel) {
@@ -1445,6 +1471,20 @@ class Camera
     } catch (CameraAccessException e) {
       throw new Messages.FlutterError("setDescriptionWhileRecordingFailed", e.getMessage(), null);
     }
+  }
+
+  /**
+   * Sets the JPEG compression quality for still image capture.
+   *
+   * @param quality JPEG quality value between 1 and 100.
+   */
+  public void setJpegImageQuality(@NonNull Long quality) {
+    JpegQualityFeature jpegQualityFeature = cameraFeatures.getJpegQuality();
+    if (jpegQualityFeature == null) {
+      jpegQualityFeature = cameraFeatureFactory.createJpegQualityFeature(cameraProperties);
+      cameraFeatures.setJpegQuality(jpegQualityFeature);
+    }
+    jpegQualityFeature.setValue(quality.intValue());
   }
 
   public void dispose() {

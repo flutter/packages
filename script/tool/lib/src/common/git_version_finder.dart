@@ -35,17 +35,43 @@ class GitVersionFinder {
     final String baseSha = await getBaseSha();
     final io.ProcessResult changedFilesCommand = await baseGitDir.runCommand(<String>[
       'diff',
+      '-z',
       '--name-only',
       baseSha,
       if (!includeUncommitted) 'HEAD',
     ]);
-    final changedFilesStdout = changedFilesCommand.stdout.toString();
-    if (changedFilesStdout.isEmpty) {
+    return _splitDiffOutputs(changedFilesCommand.stdout.toString());
+  }
+
+  /// Get a list of all the staged files.
+  Future<List<String>> getStagedFiles() async {
+    final io.ProcessResult changedFilesCommand = await baseGitDir.runCommand(const <String>[
+      'diff',
+      '--cached',
+      '-z',
+      '--name-only',
+      '--diff-filter=ACM',
+    ]);
+    return _splitDiffOutputs(changedFilesCommand.stdout.toString());
+  }
+
+  /// Splits the stdout of a `git diff` command into a list of file paths.
+  ///
+  /// When `git diff` is run with the `-z` flag, it outputs file paths separated
+  /// by a null byte (`\u0000`, ASCII 0). Otherwise, it outputs file paths
+  /// separated by newlines. This method accounts for that by checking for
+  /// null bytes and falling back to splitting by newlines if none are found.
+  List<String> _splitDiffOutputs(String stdout) {
+    if (stdout.isEmpty) {
       return <String>[];
     }
-    final List<String> changedFiles = changedFilesStdout.split('\n')
-      ..removeWhere((String element) => element.isEmpty);
-    return changedFiles.toList();
+    final List<String> files;
+    if (stdout.contains('\u0000')) {
+      files = stdout.split('\u0000');
+    } else {
+      files = stdout.split('\n');
+    }
+    return files.where((String file) => file.isNotEmpty).toList();
   }
 
   /// Get a list of all the changed files.

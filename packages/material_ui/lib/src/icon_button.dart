@@ -31,6 +31,11 @@ import 'theme.dart';
 import 'theme_data.dart';
 import 'tooltip.dart';
 
+part 'generated/icon_button_defaults_m3e.g.dart';
+part 'generated/filled_icon_button_defaults_m3e.g.dart';
+part 'generated/filled_tonal_icon_button_defaults_m3e.g.dart';
+part 'generated/outlined_icon_button_defaults_m3e.g.dart';
+
 // Examples can assume:
 // late BuildContext context;
 
@@ -61,17 +66,20 @@ enum _IconButtonVariant { standard, filled, filledTonal, outlined }
 /// requirements in the Material Design specification. The [alignment] controls
 /// how the icon itself is positioned within the hit region.
 ///
-// TODO(framework): Replace the following block with a @dartpad directive
-// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// <callout-box>
 ///
 /// This sample shows an [IconButton] that uses the Material icon "volume_up" to
 /// increase the volume.
 ///
 /// ![](https://flutter.github.io/assets-for-api-docs/assets/material/icon_button.png)
 ///
-/// {@example /example/lib/icon_button/icon_button.0.dart}
+// TODO(framework): Replace the following block with a @dartpad directive
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// {@macro material_ui.dartpad_guide}
 ///
-// TODO(framework): End of the @dartpad directive.
+/// {@example /example/lib/icon_button/icon_button.0.dart#body}
+///
+/// </callout-box>
 ///
 /// ### Icon sizes
 ///
@@ -116,8 +124,7 @@ enum _IconButtonVariant { standard, filled, filledTonal, outlined }
 /// the underlying [Material] along with the splash and highlight
 /// [InkResponse] contributed by descendant widgets.
 ///
-// TODO(framework): Replace the following block with a @dartpad directive
-// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// <callout-box>
 ///
 /// In this sample the icon button's background color is defined with an [Ink]
 /// widget whose child is an [IconButton]. The icon button's filled background
@@ -126,9 +133,13 @@ enum _IconButtonVariant { standard, filled, filledTonal, outlined }
 ///
 /// ![](https://flutter.github.io/assets-for-api-docs/assets/material/icon_button_background.png)
 ///
-/// {@example /example/lib/icon_button/icon_button.1.dart}
+// TODO(framework): Replace the following block with a @dartpad directive
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// {@macro material_ui.dartpad_guide}
 ///
-// TODO(framework): End of the @dartpad directive.
+/// {@example /example/lib/icon_button/icon_button.1.dart#body}
+///
+/// </callout-box>
 ///
 /// Material Design 3 introduced new types (standard and contained) of [IconButton]s.
 /// The default [IconButton] is the standard type. To create a filled icon button,
@@ -154,26 +165,32 @@ enum _IconButtonVariant { standard, filled, filledTonal, outlined }
 /// the [IconButton.visualDensity] is set to [VisualDensity.compact]. Users can
 /// customize it by using [IconButtonTheme], [IconButton.style] or [IconButton.visualDensity].
 ///
-// TODO(framework): Replace the following block with a @dartpad directive
-// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// <callout-box>
 ///
 /// This sample shows creation of [IconButton] widgets for standard, filled,
 /// filled tonal and outlined types, as described in: https://m3.material.io/components/icon-buttons/overview
 ///
-/// {@example /example/lib/icon_button/icon_button.2.dart}
-///
-// TODO(framework): End of the @dartpad directive.
-///
 // TODO(framework): Replace the following block with a @dartpad directive
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// {@macro material_ui.dartpad_guide}
+///
+/// {@example /example/lib/icon_button/icon_button.2.dart#body}
+///
+/// </callout-box>
+///
+/// <callout-box>
 ///
 /// This sample shows creation of [IconButton] widgets with toggle feature for
 /// standard, filled, filled tonal and outlined types, as described
 /// in: https://m3.material.io/components/icon-buttons/overview
 ///
-/// {@example /example/lib/icon_button/icon_button.3.dart}
+// TODO(framework): Replace the following block with a @dartpad directive
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// {@macro material_ui.dartpad_guide}
 ///
-// TODO(framework): End of the @dartpad directive.
+/// {@example /example/lib/icon_button/icon_button.3.dart#body}
+///
+/// </callout-box>
 ///
 /// See also:
 ///
@@ -352,7 +369,7 @@ class IconButton extends StatelessWidget {
 
   /// Defines how compact the icon button's layout will be.
   ///
-  /// {@macro flutter.material.themedata.visualDensity}
+  /// {@macro material_ui.themedata.visualDensity}
   ///
   /// This property can be null. If null, it defaults to [VisualDensity.standard]
   /// in Material Design 3 to make sure the button will be circular on all platforms.
@@ -516,7 +533,7 @@ class IconButton extends StatelessWidget {
   /// If onPressed is set to null, the onLongPress callback is not called.
   final VoidCallback? onLongPress;
 
-  /// {@macro flutter.material.RawMaterialButton.mouseCursor}
+  /// {@macro material_ui.RawMaterialButton.mouseCursor}
   ///
   /// If set to null, will default to [SystemMouseCursors.basic] if [onPressed]
   /// is null, otherwise [WidgetStateMouseCursor.adaptiveClickable].
@@ -609,7 +626,7 @@ class IconButton extends StatelessWidget {
   /// * [ImageIcon], for showing icons from [AssetImage]s or other [ImageProvider]s.
   final Widget? selectedIcon;
 
-  /// {@macro flutter.material.inkwell.statesController}
+  /// {@macro material_ui.inkwell.statesController}
   final MaterialStatesController? statesController;
 
   final _IconButtonVariant _variant;
@@ -637,6 +654,17 @@ class IconButton extends StatelessWidget {
   /// All of the other parameters are either used directly or used to
   /// create a [WidgetStateProperty] with a single value for all
   /// states.
+  ///
+  /// The [sizeVariant], [iconButtonWidth], and [shapeVariant] parameters are
+  /// Material 3 Expressive options. They provide extra-small through
+  /// extra-large sizes, narrow through wide widths, and round or square shapes
+  /// through [ButtonStyle.sizeVariant], [ButtonStyle.iconButtonWidth], and
+  /// [ButtonStyle.shapeVariant].
+  ///
+  /// When [IconButtonThemeData.variant] is [StyleVariant.material3Expressive],
+  /// and these properties are null, Material 3 Expressive [IconButton] defaults
+  /// use [ButtonSizeVariant.small], [IconButtonWidthVariant.standard], and
+  /// [ButtonShapeVariant.round].
   ///
   /// All parameters default to null, by default this method returns
   /// a [ButtonStyle] that doesn't override anything.
@@ -682,6 +710,9 @@ class IconButton extends StatelessWidget {
     bool? enableFeedback,
     AlignmentGeometry? alignment,
     InteractiveInkFeatureFactory? splashFactory,
+    ButtonSizeVariant? sizeVariant,
+    IconButtonWidthVariant? iconButtonWidth,
+    ButtonShapeVariant? shapeVariant,
   }) {
     final Color? overlayFallback = overlayColor ?? foregroundColor;
     WidgetStateProperty<Color?>? overlayColorProp;
@@ -722,6 +753,9 @@ class IconButton extends StatelessWidget {
       enableFeedback: enableFeedback,
       alignment: alignment,
       splashFactory: splashFactory,
+      sizeVariant: sizeVariant,
+      iconButtonWidth: iconButtonWidth,
+      shapeVariant: shapeVariant,
     );
   }
 
@@ -730,6 +764,9 @@ class IconButton extends StatelessWidget {
     final ThemeData theme = Theme.of(context);
 
     if (theme.useMaterial3) {
+      final StyleVariant effectiveVariant =
+          IconButtonTheme.of(context).variant ?? StyleVariant.material3;
+
       final Size? minSize = constraints == null
           ? null
           : Size(constraints!.minWidth, constraints!.minHeight);
@@ -773,6 +810,7 @@ class IconButton extends StatelessWidget {
         focusNode: focusNode,
         isSelected: isSelected,
         variant: _variant,
+        styleVariant: effectiveVariant,
         tooltip: tooltip,
         statesController: statesController,
         child: effectiveIcon,
@@ -879,6 +917,7 @@ class _SelectableIconButton extends StatefulWidget {
     this.onHover,
     this.statesController,
     required this.variant,
+    required this.styleVariant,
     required this.autofocus,
     required this.onPressed,
     this.tooltip,
@@ -889,6 +928,7 @@ class _SelectableIconButton extends StatefulWidget {
   final ButtonStyle? style;
   final FocusNode? focusNode;
   final _IconButtonVariant variant;
+  final StyleVariant styleVariant;
   final bool autofocus;
   final VoidCallback? onPressed;
   final String? tooltip;
@@ -957,7 +997,8 @@ class _SelectableIconButtonState extends State<_SelectableIconButton> {
       onPressed: widget.onPressed,
       onHover: widget.onHover,
       onLongPress: widget.onPressed != null ? widget.onLongPress : null,
-      variant: widget.variant,
+      iconButtonVariant: widget.variant,
+      styleVariant: widget.styleVariant,
       toggleable: toggleable,
       tooltip: widget.tooltip,
       child: Semantics(selected: widget.isSelected, child: widget.child),
@@ -980,19 +1021,23 @@ class _IconButtonM3 extends ButtonStyleButton {
     super.onLongPress,
     super.autofocus = false,
     super.statesController,
-    required this.variant,
+    required this.iconButtonVariant,
+    required this.styleVariant,
     required this.toggleable,
     super.tooltip,
     required Widget super.child,
   }) : super(onFocusChange: null, clipBehavior: Clip.none);
 
-  final _IconButtonVariant variant;
+  final _IconButtonVariant iconButtonVariant;
+  final StyleVariant styleVariant;
   final bool toggleable;
 
   /// ## Material 3 defaults
   ///
-  /// If [ThemeData.useMaterial3] is set to true the following defaults will
-  /// be used:
+  // TODO(quncCccccc): Clean up [ThemeData.useMaterial3] once useMaterial3 is deprecated.
+  /// If [ThemeData.useMaterial3] is true and [IconButtonThemeData.variant] is
+  /// [StyleVariant.material3], the following defaults will be
+  /// used:
   ///
   /// * `textStyle` - null
   /// * `backgroundColor` - transparent
@@ -1024,13 +1069,96 @@ class _IconButtonM3 extends ButtonStyleButton {
   /// * `enableFeedback` - true
   /// * `alignment` - Alignment.center
   /// * `splashFactory` - Theme.splashFactory
+  ///
+  /// ## Material 3 Expressive defaults
+  ///
+  /// If [ThemeData.useMaterial3] is true and [IconButtonThemeData.variant] is
+  /// [StyleVariant.material3Expressive], Material 3 Expressive defaults are
+  /// used:
+  ///
+  /// * `textStyle` - null
+  /// * `backgroundColor` - transparent
+  /// * `foregroundColor`
+  ///   * disabled - Theme.colorScheme.onSurface(0.38)
+  ///   * selected - Theme.colorScheme.primary
+  ///   * others - Theme.colorScheme.onSurfaceVariant
+  /// * `overlayColor`
+  ///   * selected
+  ///      * hovered - Theme.colorScheme.primary(0.08)
+  ///      * focused or pressed - Theme.colorScheme.primary(0.1)
+  ///   * hovered - Theme.colorScheme.onSurfaceVariant(0.08)
+  ///   * pressed or focused - Theme.colorScheme.onSurfaceVariant(0.1)
+  ///   * others - transparent
+  /// * `shadowColor` - null
+  /// * `surfaceTintColor` - null
+  /// * `elevation` - 0
+  /// * `padding` - based on [ButtonStyle.sizeVariant] and
+  ///   [ButtonStyle.iconButtonWidth]; defaults to all(8)
+  /// * `minimumSize` - based on [ButtonStyle.sizeVariant] and
+  ///   [ButtonStyle.iconButtonWidth]; defaults to Size(40, 40)
+  /// * `fixedSize` - null
+  /// * `maximumSize` - Size.infinite
+  /// * `iconSize` - based on [ButtonStyle.sizeVariant]; defaults to 24
+  /// * `side` - null
+  /// * `shape` - based on [ButtonStyle.sizeVariant],
+  ///   [ButtonStyle.shapeVariant], and state; defaults to StadiumBorder()
+  /// * `mouseCursor` - WidgetStateMouseCursor.adaptiveClickable
+  /// * `visualDensity` - VisualDensity.standard
+  /// * `tapTargetSize` - MaterialTapTargetSize.padded
+  /// * `animationDuration` - kThemeChangeDuration
+  /// * `enableFeedback` - true
+  /// * `alignment` - Alignment.center
+  /// * `splashFactory` - Theme.splashFactory
+  /// * `sizeVariant` - ButtonSizeVariant.small
+  /// * `iconButtonWidth` - IconButtonWidthVariant.standard
+  /// * `shapeVariant` - ButtonShapeVariant.round
   @override
   ButtonStyle defaultStyleOf(BuildContext context) {
-    return switch (variant) {
-      _IconButtonVariant.filled => _FilledIconButtonDefaultsM3(context, toggleable),
-      _IconButtonVariant.filledTonal => _FilledTonalIconButtonDefaultsM3(context, toggleable),
-      _IconButtonVariant.outlined => _OutlinedIconButtonDefaultsM3(context, toggleable),
-      _IconButtonVariant.standard => _IconButtonDefaultsM3(context, toggleable),
+    final ButtonStyle? iconButtonThemeStyle = IconButtonTheme.of(context).style;
+    final ButtonSizeVariant? effectiveSize =
+        style?.sizeVariant ?? iconButtonThemeStyle?.sizeVariant;
+    final IconButtonWidthVariant? effectiveWidth =
+        style?.iconButtonWidth ?? iconButtonThemeStyle?.iconButtonWidth;
+    final ButtonShapeVariant? effectiveShape =
+        style?.shapeVariant ?? iconButtonThemeStyle?.shapeVariant;
+
+    return switch (styleVariant) {
+      StyleVariant.material3 => switch (iconButtonVariant) {
+        _IconButtonVariant.filled => _FilledIconButtonDefaultsM3(context, toggleable),
+        _IconButtonVariant.filledTonal => _FilledTonalIconButtonDefaultsM3(context, toggleable),
+        _IconButtonVariant.outlined => _OutlinedIconButtonDefaultsM3(context, toggleable),
+        _IconButtonVariant.standard => _IconButtonDefaultsM3(context, toggleable),
+      },
+      StyleVariant.material3Expressive => switch (iconButtonVariant) {
+        _IconButtonVariant.filled => _FilledIconButtonDefaultsM3E(
+          context,
+          toggleable,
+          effectiveSize,
+          effectiveWidth,
+          effectiveShape,
+        ),
+        _IconButtonVariant.filledTonal => _FilledTonalIconButtonDefaultsM3E(
+          context,
+          toggleable,
+          effectiveSize,
+          effectiveWidth,
+          effectiveShape,
+        ),
+        _IconButtonVariant.outlined => _OutlinedIconButtonDefaultsM3E(
+          context,
+          toggleable,
+          effectiveSize,
+          effectiveWidth,
+          effectiveShape,
+        ),
+        _IconButtonVariant.standard => _IconButtonDefaultsM3E(
+          context,
+          toggleable,
+          effectiveSize,
+          effectiveWidth,
+          effectiveShape,
+        ),
+      },
     };
   }
 

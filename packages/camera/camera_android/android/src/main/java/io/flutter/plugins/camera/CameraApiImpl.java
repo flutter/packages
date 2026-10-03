@@ -175,8 +175,8 @@ final class CameraApiImpl implements Messages.CameraApi {
   }
 
   @Override
-  public void startVideoRecording(@NonNull Boolean enableStream) {
-    camera.startVideoRecording(enableStream ? imageStreamChannel : null);
+  public void startVideoRecording(@NonNull Boolean enableStream, @Nullable String videoOutputPath) {
+    camera.startVideoRecording(enableStream ? imageStreamChannel : null, videoOutputPath);
   }
 
   @NonNull
@@ -341,6 +341,11 @@ final class CameraApiImpl implements Messages.CameraApi {
     } catch (CameraAccessException e) {
       throw new Messages.FlutterError("CameraAccessException", e.getMessage(), null);
     }
+  }
+
+  @Override
+  public void setJpegImageQuality(@NonNull Long quality) {
+    camera.setJpegImageQuality(quality);
   }
 
   @Override

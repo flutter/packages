@@ -32,8 +32,8 @@ import 'constants.dart';
 ///
 /// {@animation 700 540 https://flutter.github.io/assets-for-api-docs/assets/material/tabs.mp4}
 ///
-// TODO(framework): Replace the following block with a blue example container
-// when it's supported. https://github.com/dart-lang/dartdoc/issues/4243
+/// <callout-box>
+///
 // TODO(framework): Add unit tests to this code snippet.
 // https://github.com/flutter/flutter/issues/188530
 ///
@@ -92,17 +92,20 @@ import 'constants.dart';
 /// }
 /// ```
 ///
-// TODO(framework): End of the blue example container.
+/// </callout-box>
 ///
-// TODO(framework): Replace the following block with a @dartpad directive
-// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// <callout-box>
 ///
 /// This example shows how to listen to page updates in [TabBar] and [TabBarView]
 /// when using [DefaultTabController].
 ///
-/// {@example /example/lib/tab_controller/tab_controller.1.dart}
+// TODO(framework): Replace the following block with a @dartpad directive
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// {@macro material_ui.dartpad_guide}
 ///
-// TODO(framework): End of the @dartpad directive.
+/// {@example /example/lib/tab_controller/tab_controller.1.dart#body}
+///
+/// </callout-box>
 ///
 class TabController extends ChangeNotifier {
   /// Creates an object that manages the state required by [TabBar] and a
@@ -315,7 +318,7 @@ class _TabControllerScope extends InheritedWidget {
 /// The [TabController] for descendant widgets that don't specify one
 /// explicitly.
 ///
-/// {@youtube 560 315 https://www.youtube.com/watch?v=POtoEH-5l40}
+/// Learn more about [DefaultTabController] on the [Flutter YouTube channel](https://www.youtube.com/watch?v=POtoEH-5l40).
 ///
 /// [DefaultTabController] is an inherited widget that is used to share a
 /// [TabController] with a [TabBar] or a [TabBarView]. It's used when sharing an
@@ -400,8 +403,8 @@ class DefaultTabController extends StatefulWidget {
   /// The closest instance of [DefaultTabController] that encloses the given
   /// context, or null if none is found.
   ///
-  // TODO(framework): Replace the following block with a blue example container
-  // when it's supported. https://github.com/dart-lang/dartdoc/issues/4243
+  /// <callout-box>
+  ///
   // TODO(framework): Add unit tests to this code snippet.
   // https://github.com/flutter/flutter/issues/188530
   /// Typical usage is as follows:
@@ -410,7 +413,7 @@ class DefaultTabController extends StatefulWidget {
   /// TabController? controller = DefaultTabController.maybeOf(context);
   /// ```
   ///
-  // TODO(framework): End of the blue example container.
+  /// </callout-box>
   ///
   /// Calling this method will create a dependency on the closest
   /// [DefaultTabController] in the [context], if there is one.
@@ -432,8 +435,8 @@ class DefaultTabController extends StatefulWidget {
   /// Calling this method will create a dependency on the closest
   /// [DefaultTabController] in the [context].
   ///
-  // TODO(framework): Replace the following block with a blue example container
-  // when it's supported. https://github.com/dart-lang/dartdoc/issues/4243
+  /// <callout-box>
+  ///
   // TODO(framework): Add unit tests to this code snippet.
   // https://github.com/flutter/flutter/issues/188530
   /// Typical usage is as follows:
@@ -442,7 +445,7 @@ class DefaultTabController extends StatefulWidget {
   /// TabController controller = DefaultTabController.of(context);
   /// ```
   ///
-  // TODO(framework): End of the blue example container.
+  /// </callout-box>
   ///
   /// See also:
   ///

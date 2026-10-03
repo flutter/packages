@@ -18,7 +18,7 @@ class SpellCheckSuggestionsToolbarLayoutDelegate extends SingleChildLayoutDelega
   /// Creates an instance of [SpellCheckSuggestionsToolbarLayoutDelegate].
   SpellCheckSuggestionsToolbarLayoutDelegate({required this.anchor});
 
-  /// {@macro flutter.material.SpellCheckSuggestionsToolbar.anchor}
+  /// {@macro material_ui.SpellCheckSuggestionsToolbar.anchor}
   ///
   /// Should be provided in local coordinates.
   final Offset anchor;

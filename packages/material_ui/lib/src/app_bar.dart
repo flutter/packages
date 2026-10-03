@@ -34,6 +34,8 @@ import 'tabs.dart';
 import 'text_theme.dart';
 import 'theme.dart';
 
+part 'generated/app_bar_defaults_m3.g.dart';
+
 // Examples can assume:
 // late String _logoAsset;
 // double _myToolbarHeight = 250.0;
@@ -41,8 +43,7 @@ import 'theme.dart';
 typedef _FlexibleConfigBuilder = _ScrollUnderFlexibleConfig Function(BuildContext);
 
 const double _kLeadingWidth = kToolbarHeight; // So the leading button is square.
-const double _kMaxTitleTextScaleFactor =
-    1.34; // TODO(perc): Add link to Material spec when available, https://github.com/flutter/flutter/issues/58769.
+const double _kMaxTitleTextScaleFactor = 1.34; // TODO(perc): Add link to Material spec when available, https://github.com/flutter/flutter/issues/58769.
 
 enum _SliverAppVariant { small, medium, large }
 
@@ -123,27 +124,34 @@ class _PreferredAppBarSize extends Size {
 /// to suddenly jump. Wrap the [AppBar] in a [MediaQuery] widget, and adjust its
 /// padding such that the animation is smooth.
 ///
-// TODO(framework): Replace the following block with a @dartpad directive
-// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// <callout-box>
 ///
 /// This sample shows an [AppBar] with two simple actions. The first action
 /// opens a [SnackBar], while the second action navigates to a new page.
 ///
-/// {@example /example/lib/app_bar/app_bar.0.dart}
-///
-// TODO(framework): End of the @dartpad directive.
-///
-/// Material Design 3 introduced new types of app bar.
 // TODO(framework): Replace the following block with a @dartpad directive
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// {@macro material_ui.dartpad_guide}
+///
+/// {@example /example/lib/app_bar/app_bar.0.dart#body}
+///
+/// </callout-box>
+///
+/// Material Design 3 introduced new types of app bar.
+///
+/// <callout-box>
 ///
 /// This sample shows the creation of an [AppBar] widget with the [shadowColor] and
 /// [scrolledUnderElevation] properties set, as described in:
 /// https://m3.material.io/components/top-app-bar/overview
 ///
-/// {@example /example/lib/app_bar/app_bar.1.dart}
+// TODO(framework): Replace the following block with a @dartpad directive
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// {@macro material_ui.dartpad_guide}
 ///
-// TODO(framework): End of the @dartpad directive.
+/// {@example /example/lib/app_bar/app_bar.1.dart#body}
+///
+/// </callout-box>
 ///
 /// ## Troubleshooting
 ///
@@ -163,26 +171,32 @@ class _PreferredAppBarSize extends Size {
 /// [ColorScheme.primary]. To remedy the problem, override
 /// [TextButton.style]:
 ///
-// TODO(framework): Replace the following block with a @dartpad directive
-// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// <callout-box>
 ///
 /// This sample shows an [AppBar] with two action buttons with their primary
 /// color set to [ColorScheme.onPrimary].
 ///
-/// {@example /example/lib/app_bar/app_bar.2.dart}
-///
-// TODO(framework): End of the @dartpad directive.
-///
 // TODO(framework): Replace the following block with a @dartpad directive
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// {@macro material_ui.dartpad_guide}
+///
+/// {@example /example/lib/app_bar/app_bar.2.dart#body}
+///
+/// </callout-box>
+///
+/// <callout-box>
 ///
 /// This example shows how to listen to a nested Scrollable's scroll notification
 /// in a nested scroll view using the [notificationPredicate] property and use it
 /// to make [scrolledUnderElevation] take effect.
 ///
-/// {@example /example/lib/app_bar/app_bar.3.dart}
+// TODO(framework): Replace the following block with a @dartpad directive
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// {@macro material_ui.dartpad_guide}
 ///
-// TODO(framework): End of the @dartpad directive.
+/// {@example /example/lib/app_bar/app_bar.3.dart#body}
+///
+/// </callout-box>
 ///
 /// See also:
 ///
@@ -255,7 +269,7 @@ class AppBar extends StatefulWidget implements PreferredSizeWidget {
     return preferredSize.height;
   }
 
-  /// {@template flutter.material.appbar.leading}
+  /// {@template material_ui.appbar.leading}
   /// A widget to display before the toolbar's [title].
   ///
   /// Typically the [leading] widget is an [Icon] or an [IconButton].
@@ -272,29 +286,14 @@ class AppBar extends StatefulWidget implements PreferredSizeWidget {
   /// will use a [BackButton] that calls [Navigator.maybePop].
   /// {@endtemplate}
   ///
-  // TODO(framework): Replace the following block with a blue example container
-  // when it's supported. https://github.com/dart-lang/dartdoc/issues/4243
-  // TODO(framework): Add unit tests to this code snippet.
-  // https://github.com/flutter/flutter/issues/188530
+  /// <callout-box>
   ///
   /// The following code shows how the drawer button could be manually specified
   /// instead of relying on [automaticallyImplyLeading]:
   ///
-  /// ```dart
-  /// AppBar(
-  ///   leading: Builder(
-  ///     builder: (BuildContext context) {
-  ///       return IconButton(
-  ///         icon: const Icon(Icons.menu),
-  ///         onPressed: () { Scaffold.of(context).openDrawer(); },
-  ///         tooltip: MaterialLocalizations.of(context).openAppDrawerTooltip,
-  ///       );
-  ///     },
-  ///   ),
-  /// )
-  /// ```
+  /// {@example /example/lib/app_bar/app_bar.snippet.0.dart#body indent=strip}
   ///
-  // TODO(framework): End of the blue example container.
+  /// </callout-box>
   ///
   /// The [Builder] is used in this example to ensure that the `context` refers
   /// to that part of the subtree. That way this code snippet can be used even
@@ -308,7 +307,7 @@ class AppBar extends StatefulWidget implements PreferredSizeWidget {
   ///  * [Scaffold.drawer], in which the [Drawer] is usually placed.
   final Widget? leading;
 
-  /// {@template flutter.material.appbar.automaticallyImplyLeading}
+  /// {@template material_ui.appbar.automaticallyImplyLeading}
   /// Controls whether we should try to imply the leading widget if null.
   ///
   /// If true and [AppBar.leading] is null, automatically try to deduce what the leading
@@ -317,7 +316,7 @@ class AppBar extends StatefulWidget implements PreferredSizeWidget {
   /// {@endtemplate}
   final bool automaticallyImplyLeading;
 
-  /// {@template flutter.material.appbar.title}
+  /// {@template material_ui.appbar.title}
   /// The primary widget displayed in the app bar.
   ///
   /// Becomes the middle component of the [NavigationToolbar] built by this widget.
@@ -353,7 +352,7 @@ class AppBar extends StatefulWidget implements PreferredSizeWidget {
   /// ```
   final Widget? title;
 
-  /// {@template flutter.material.appbar.actions}
+  /// {@template material_ui.appbar.actions}
   /// A list of Widgets to display in a row after the [title] widget.
   ///
   /// Typically these widgets are [IconButton]s representing common operations.
@@ -373,38 +372,14 @@ class AppBar extends StatefulWidget implements PreferredSizeWidget {
   /// widget with an [IconButton] that opens the end drawer (using [Icons.menu]).
   /// {@endtemplate}
   ///
-  // TODO(framework): Replace the following block with a blue example container
-  // when it's supported. https://github.com/dart-lang/dartdoc/issues/4243
-  // TODO(framework): Add unit tests to this code snippet.
-  // https://github.com/flutter/flutter/issues/188530
+  /// <callout-box>
   ///
-  /// ```dart
-  /// Scaffold(
-  ///   body: CustomScrollView(
-  ///     primary: true,
-  ///     slivers: <Widget>[
-  ///       SliverAppBar(
-  ///         title: const Text('Hello World'),
-  ///         actions: <Widget>[
-  ///           IconButton(
-  ///             icon: const Icon(Icons.shopping_cart),
-  ///             tooltip: 'Open shopping cart',
-  ///             onPressed: () {
-  ///               // handle the press
-  ///             },
-  ///           ),
-  ///         ],
-  ///       ),
-  ///       // ...rest of body...
-  ///     ],
-  ///   ),
-  /// )
-  /// ```
+  /// {@example /example/lib/app_bar/app_bar.snippet.1.dart#body indent=strip}
   ///
-  // TODO(framework): End of the blue example container.
+  /// </callout-box>
   final List<Widget>? actions;
 
-  /// {@template flutter.material.appbar.automaticallyImplyActions}
+  /// {@template material_ui.appbar.automaticallyImplyActions}
   /// Controls whether we should try to imply the actions widget if null.
   ///
   /// If true and [AppBar.actions] is null or empty, automatically try to deduce what the actions
@@ -413,7 +388,7 @@ class AppBar extends StatefulWidget implements PreferredSizeWidget {
   /// {@endtemplate}
   final bool automaticallyImplyActions;
 
-  /// {@template flutter.material.appbar.flexibleSpace}
+  /// {@template material_ui.appbar.flexibleSpace}
   /// This widget is stacked behind the toolbar and the tab bar. Its height will
   /// be the same as the app bar's overall height.
   ///
@@ -425,7 +400,7 @@ class AppBar extends StatefulWidget implements PreferredSizeWidget {
   /// {@endtemplate}
   final Widget? flexibleSpace;
 
-  /// {@template flutter.material.appbar.bottom}
+  /// {@template material_ui.appbar.bottom}
   /// This widget appears across the bottom of the app bar.
   ///
   /// Typically a [TabBar]. Only widgets that implement [PreferredSizeWidget] can
@@ -437,7 +412,7 @@ class AppBar extends StatefulWidget implements PreferredSizeWidget {
   ///  * [PreferredSize], which can be used to give an arbitrary widget a preferred size.
   final PreferredSizeWidget? bottom;
 
-  /// {@template flutter.material.appbar.elevation}
+  /// {@template material_ui.appbar.elevation}
   /// The z-coordinate at which to place this app bar relative to its parent.
   ///
   /// This property controls the size of the shadow below the app bar if
@@ -464,7 +439,7 @@ class AppBar extends StatefulWidget implements PreferredSizeWidget {
   ///    shadow.
   final double? elevation;
 
-  /// {@template flutter.material.appbar.scrolledUnderElevation}
+  /// {@template material_ui.appbar.scrolledUnderElevation}
   /// The elevation that will be used if this app bar has something
   /// scrolled underneath it.
   ///
@@ -492,7 +467,7 @@ class AppBar extends StatefulWidget implements PreferredSizeWidget {
   /// else for more complicated layouts.
   final ScrollNotificationPredicate notificationPredicate;
 
-  /// {@template flutter.material.appbar.shadowColor}
+  /// {@template material_ui.appbar.shadowColor}
   /// The color of the shadow below the app bar.
   ///
   /// If this property is null, then the ambient [AppBarThemeData.shadowColor]
@@ -505,7 +480,7 @@ class AppBar extends StatefulWidget implements PreferredSizeWidget {
   ///  * [shape], which defines the shape of the app bar and its shadow.
   final Color? shadowColor;
 
-  /// {@template flutter.material.appbar.surfaceTintColor}
+  /// {@template material_ui.appbar.surfaceTintColor}
   /// The color of the surface tint overlay applied to the app bar's
   /// background color to indicate elevation.
   ///
@@ -516,7 +491,7 @@ class AppBar extends StatefulWidget implements PreferredSizeWidget {
   ///   * [Material.surfaceTintColor], which described this feature in more detail.
   final Color? surfaceTintColor;
 
-  /// {@template flutter.material.appbar.shape}
+  /// {@template material_ui.appbar.shape}
   /// The shape of the app bar's [Material] as well as its shadow.
   ///
   /// If this property is null, then the ambient [AppBarThemeData.shape]
@@ -528,15 +503,18 @@ class AppBar extends StatefulWidget implements PreferredSizeWidget {
   /// zero.
   /// {@endtemplate}
   ///
-  // TODO(framework): Replace the following block with a @dartpad directive
-  // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+  /// <callout-box>
   ///
   /// This sample demonstrates how to implement a custom app bar shape for the
   /// [shape] property.
   ///
-  /// {@example /example/lib/app_bar/app_bar.4.dart}
+  // TODO(framework): Replace the following block with a @dartpad directive
+  // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+  /// {@macro material_ui.dartpad_guide}
   ///
-  // TODO(framework): End of the @dartpad directive.
+  /// {@example /example/lib/app_bar/app_bar.4.dart#body}
+  ///
+  /// </callout-box>
   ///
   /// See also:
   ///
@@ -544,7 +522,7 @@ class AppBar extends StatefulWidget implements PreferredSizeWidget {
   ///  * [shadowColor], which is the color of the shadow below the app bar.
   final ShapeBorder? shape;
 
-  /// {@template flutter.material.appbar.backgroundColor}
+  /// {@template material_ui.appbar.backgroundColor}
   /// The fill color to use for an app bar's [Material].
   ///
   /// If null, then the [AppBarTheme.backgroundColor] is used. If that value is also
@@ -573,7 +551,7 @@ class AppBar extends StatefulWidget implements PreferredSizeWidget {
   ///    is light or dark.
   final Color? backgroundColor;
 
-  /// {@template flutter.material.appbar.foregroundColor}
+  /// {@template material_ui.appbar.foregroundColor}
   /// The default color for [Text] and [Icon]s within the app bar.
   ///
   /// If null, then [AppBarTheme.foregroundColor] is used. If that
@@ -601,7 +579,7 @@ class AppBar extends StatefulWidget implements PreferredSizeWidget {
   ///    is light or dark.
   final Color? foregroundColor;
 
-  /// {@template flutter.material.appbar.iconTheme}
+  /// {@template material_ui.appbar.iconTheme}
   /// The color, opacity, and size to use for toolbar icons.
   ///
   /// If this property is null, then a copy of [ThemeData.iconTheme]
@@ -615,7 +593,7 @@ class AppBar extends StatefulWidget implements PreferredSizeWidget {
   ///    the [actions] list.
   final IconThemeData? iconTheme;
 
-  /// {@template flutter.material.appbar.actionsIconTheme}
+  /// {@template material_ui.appbar.actionsIconTheme}
   /// The color, opacity, and size to use for the icons that appear in the app
   /// bar's [actions].
   ///
@@ -632,7 +610,7 @@ class AppBar extends StatefulWidget implements PreferredSizeWidget {
   ///  * [iconTheme], which defines the appearance of all of the toolbar icons.
   final IconThemeData? actionsIconTheme;
 
-  /// {@template flutter.material.appbar.primary}
+  /// {@template material_ui.appbar.primary}
   /// Whether this app bar is being displayed at the top of the screen.
   ///
   /// If true, the app bar's toolbar elements and [bottom] widget will be
@@ -641,7 +619,7 @@ class AppBar extends StatefulWidget implements PreferredSizeWidget {
   /// {@endtemplate}
   final bool primary;
 
-  /// {@template flutter.material.appbar.centerTitle}
+  /// {@template material_ui.appbar.centerTitle}
   /// Whether the title should be centered.
   ///
   /// If this property is null, then [AppBarTheme.centerTitle] of
@@ -650,7 +628,7 @@ class AppBar extends StatefulWidget implements PreferredSizeWidget {
   /// {@endtemplate}
   final bool? centerTitle;
 
-  /// {@template flutter.material.appbar.excludeHeaderSemantics}
+  /// {@template material_ui.appbar.excludeHeaderSemantics}
   /// Whether the title should be wrapped with header [Semantics].
   ///
   /// If false, the title will be used as [SemanticsProperties.namesRoute]
@@ -667,7 +645,7 @@ class AppBar extends StatefulWidget implements PreferredSizeWidget {
   /// {@endtemplate}
   final bool excludeHeaderSemantics;
 
-  /// {@template flutter.material.appbar.titleSpacing}
+  /// {@template material_ui.appbar.titleSpacing}
   /// The spacing around [title] content on the horizontal axis. This spacing is
   /// applied even if there is no [leading] content or [actions]. If you want
   /// [title] to take all the space available, set this value to 0.0.
@@ -678,7 +656,7 @@ class AppBar extends StatefulWidget implements PreferredSizeWidget {
   /// {@endtemplate}
   final double? titleSpacing;
 
-  /// {@template flutter.material.appbar.toolbarOpacity}
+  /// {@template material_ui.appbar.toolbarOpacity}
   /// How opaque the toolbar part of the app bar is.
   ///
   /// A value of 1.0 is fully opaque, and a value of 0.0 is fully transparent.
@@ -689,7 +667,7 @@ class AppBar extends StatefulWidget implements PreferredSizeWidget {
   /// {@endtemplate}
   final double toolbarOpacity;
 
-  /// {@template flutter.material.appbar.bottomOpacity}
+  /// {@template material_ui.appbar.bottomOpacity}
   /// How opaque the bottom part of the app bar is.
   ///
   /// A value of 1.0 is fully opaque, and a value of 0.0 is fully transparent.
@@ -700,7 +678,7 @@ class AppBar extends StatefulWidget implements PreferredSizeWidget {
   /// {@endtemplate}
   final double bottomOpacity;
 
-  /// {@template flutter.material.appbar.preferredSize}
+  /// {@template material_ui.appbar.preferredSize}
   /// A size whose height is the sum of [toolbarHeight] and the [bottom] widget's
   /// preferred height.
   ///
@@ -709,21 +687,21 @@ class AppBar extends StatefulWidget implements PreferredSizeWidget {
   @override
   final Size preferredSize;
 
-  /// {@template flutter.material.appbar.toolbarHeight}
+  /// {@template material_ui.appbar.toolbarHeight}
   /// Defines the height of the toolbar component of an [AppBar].
   ///
   /// By default, the value of [toolbarHeight] is [kToolbarHeight].
   /// {@endtemplate}
   final double? toolbarHeight;
 
-  /// {@template flutter.material.appbar.leadingWidth}
+  /// {@template material_ui.appbar.leadingWidth}
   /// Defines the width of [AppBar.leading] widget.
   ///
   /// By default, the value of [AppBar.leadingWidth] is 56.0.
   /// {@endtemplate}
   final double? leadingWidth;
 
-  /// {@template flutter.material.appbar.toolbarTextStyle}
+  /// {@template material_ui.appbar.toolbarTextStyle}
   /// The default text style for the AppBar's [leading], and
   /// [actions] widgets, but not its [title].
   ///
@@ -740,7 +718,7 @@ class AppBar extends StatefulWidget implements PreferredSizeWidget {
   ///    widgets in a subtree.
   final TextStyle? toolbarTextStyle;
 
-  /// {@template flutter.material.appbar.titleTextStyle}
+  /// {@template material_ui.appbar.titleTextStyle}
   /// The default text style for the AppBar's [title] widget.
   ///
   /// If this property is null, then [AppBarTheme.titleTextStyle] of
@@ -758,7 +736,7 @@ class AppBar extends StatefulWidget implements PreferredSizeWidget {
   ///    widgets in a subtree.
   final TextStyle? titleTextStyle;
 
-  /// {@template flutter.material.appbar.systemOverlayStyle}
+  /// {@template material_ui.appbar.systemOverlayStyle}
   /// Specifies the style to use for the system overlays (e.g. the status bar on
   /// Android or iOS, the system navigation bar on Android).
   ///
@@ -780,7 +758,7 @@ class AppBar extends StatefulWidget implements PreferredSizeWidget {
   ///    system overlays style.
   final SystemUiOverlayStyle? systemOverlayStyle;
 
-  /// {@template flutter.material.appbar.forceMaterialTransparency}
+  /// {@template material_ui.appbar.forceMaterialTransparency}
   /// Forces the AppBar's Material widget type to be [MaterialType.transparency]
   /// (instead of Material's default type).
   ///
@@ -795,7 +773,7 @@ class AppBar extends StatefulWidget implements PreferredSizeWidget {
   /// {@endtemplate}
   final bool forceMaterialTransparency;
 
-  /// {@template flutter.material.appbar.useDefaultSemanticsOrder}
+  /// {@template material_ui.appbar.useDefaultSemanticsOrder}
   /// Whether to use the default semantic ordering for the app bar's children for
   /// accessibility traversal order.
   ///
@@ -813,10 +791,10 @@ class AppBar extends StatefulWidget implements PreferredSizeWidget {
   /// {@endtemplate}
   final bool useDefaultSemanticsOrder;
 
-  /// {@macro flutter.material.Material.clipBehavior}
+  /// {@macro cupertino_ui.Material.clipBehavior}
   final Clip? clipBehavior;
 
-  /// {@template flutter.material.appbar.actionsPadding}
+  /// {@template material_ui.appbar.actionsPadding}
   /// The padding between the [actions] and the end of the AppBar.
   ///
   /// Defaults to zero.
@@ -1504,7 +1482,7 @@ class _SliverAppBarDelegate extends SliverPersistentHeaderDelegate {
 /// common actions with [IconButton]s which are optionally followed by a
 /// [PopupMenuButton] for less common operations.
 ///
-/// {@youtube 560 315 https://www.youtube.com/watch?v=R9C5KMJKluE}
+/// Learn more about [SliverAppBar] on the [Flutter YouTube channel](https://www.youtube.com/watch?v=R9C5KMJKluE).
 ///
 /// Sliver app bars are typically used as the first child of a
 /// [CustomScrollView], which lets the app bar integrate with the scroll view so
@@ -1516,51 +1494,39 @@ class _SliverAppBarDelegate extends SliverPersistentHeaderDelegate {
 /// [actions], above the [bottom] (if any). If a [flexibleSpace] widget is
 /// specified then it is stacked behind the toolbar and the bottom widget.
 ///
-// TODO(framework): Replace the following block with a blue example container
-// when it's supported. https://github.com/dart-lang/dartdoc/issues/4243
-// TODO(framework): Add unit tests to this code snippet.
-// https://github.com/flutter/flutter/issues/188530
+/// <callout-box>
 ///
 /// This is an example that could be included in a [CustomScrollView]'s
 /// [CustomScrollView.slivers] list:
 ///
-/// ```dart
-/// SliverAppBar(
-///   expandedHeight: 150.0,
-///   flexibleSpace: const FlexibleSpaceBar(
-///     title: Text('Available seats'),
-///   ),
-///   actions: <Widget>[
-///     IconButton(
-///       icon: const Icon(Icons.add_circle),
-///       tooltip: 'Add new entry',
-///       onPressed: () { /* ... */ },
-///     ),
-///   ]
-/// )
-/// ```
+/// {@example /example/lib/app_bar/sliver_app_bar.snippet.0.dart#body indent=strip}
 ///
-// TODO(framework): End of the blue example container.
+/// </callout-box>
 ///
-// TODO(framework): Replace the following block with a @dartpad directive
-// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// <callout-box>
 ///
 /// Here is an example of [SliverAppBar] when using [stretch] and [onStretchTrigger].
 ///
-/// {@example /example/lib/app_bar/sliver_app_bar.4.dart}
-///
-// TODO(framework): End of the @dartpad directive.
-///
-///
 // TODO(framework): Replace the following block with a @dartpad directive
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// {@macro material_ui.dartpad_guide}
+///
+/// {@example /example/lib/app_bar/sliver_app_bar.4.dart#body}
+///
+/// </callout-box>
+///
+/// <callout-box>
 ///
 /// This sample shows a [SliverAppBar] and its behavior when using the
 /// [pinned], [snap] and [floating] parameters.
 ///
-/// {@example /example/lib/app_bar/sliver_app_bar.1.dart}
+// TODO(framework): Replace the following block with a @dartpad directive
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// {@macro material_ui.dartpad_guide}
 ///
-// TODO(framework): End of the @dartpad directive.
+/// {@example /example/lib/app_bar/sliver_app_bar.1.dart#body}
+///
+/// </callout-box>
 ///
 /// ## Animated Examples
 ///
@@ -1660,14 +1626,17 @@ class SliverAppBar extends StatefulWidget {
   /// title will fade in on the main row. The reverse will happen if it is
   /// expanded again.
   ///
-  // TODO(framework): Replace the following block with a @dartpad directive
-  // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+  /// <callout-box>
   ///
   /// This sample shows how to use [SliverAppBar.medium] in a [CustomScrollView].
   ///
-  /// {@example /example/lib/app_bar/sliver_app_bar.2.dart}
+  // TODO(framework): Replace the following block with a @dartpad directive
+  // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+  /// {@macro material_ui.dartpad_guide}
   ///
-  // TODO(framework): End of the @dartpad directive.
+  /// {@example /example/lib/app_bar/sliver_app_bar.2.dart#body}
+  ///
+  /// </callout-box>
   ///
   /// See also:
   ///
@@ -1734,14 +1703,17 @@ class SliverAppBar extends StatefulWidget {
   /// title will fade in on the main row. The reverse will happen if it is
   /// expanded again.
   ///
-  // TODO(framework): Replace the following block with a @dartpad directive
-  // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+  /// <callout-box>
   ///
   /// This sample shows how to use [SliverAppBar.large] in a [CustomScrollView].
   ///
-  /// {@example /example/lib/app_bar/sliver_app_bar.3.dart}
+  // TODO(framework): Replace the following block with a @dartpad directive
+  // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+  /// {@macro material_ui.dartpad_guide}
   ///
-  // TODO(framework): End of the @dartpad directive.
+  /// {@example /example/lib/app_bar/sliver_app_bar.3.dart#body}
+  ///
+  /// </callout-box>
   ///
   /// See also:
   ///
@@ -1797,57 +1769,57 @@ class SliverAppBar extends StatefulWidget {
        ),
        _variant = _SliverAppVariant.large;
 
-  /// {@macro flutter.material.appbar.leading}
+  /// {@macro material_ui.appbar.leading}
   ///
   /// This property is used to configure an [AppBar].
   final Widget? leading;
 
-  /// {@macro flutter.material.appbar.automaticallyImplyLeading}
+  /// {@macro material_ui.appbar.automaticallyImplyLeading}
   ///
   /// This property is used to configure an [AppBar].
   final bool automaticallyImplyLeading;
 
-  /// {@macro flutter.material.appbar.title}
+  /// {@macro material_ui.appbar.title}
   ///
   /// This property is used to configure an [AppBar].
   final Widget? title;
 
-  /// {@macro flutter.material.appbar.actions}
+  /// {@macro material_ui.appbar.actions}
   ///
   /// This property is used to configure an [AppBar].
   final List<Widget>? actions;
 
-  /// {@macro flutter.material.appbar.automaticallyImplyActions}
+  /// {@macro material_ui.appbar.automaticallyImplyActions}
   ///
   /// This property is used to configure an [AppBar].
   final bool automaticallyImplyActions;
 
-  /// {@macro flutter.material.appbar.flexibleSpace}
+  /// {@macro material_ui.appbar.flexibleSpace}
   ///
   /// This property is used to configure an [AppBar].
   final Widget? flexibleSpace;
 
-  /// {@macro flutter.material.appbar.bottom}
+  /// {@macro material_ui.appbar.bottom}
   ///
   /// This property is used to configure an [AppBar].
   final PreferredSizeWidget? bottom;
 
-  /// {@macro flutter.material.appbar.elevation}
+  /// {@macro material_ui.appbar.elevation}
   ///
   /// This property is used to configure an [AppBar].
   final double? elevation;
 
-  /// {@macro flutter.material.appbar.scrolledUnderElevation}
+  /// {@macro material_ui.appbar.scrolledUnderElevation}
   ///
   /// This property is used to configure an [AppBar].
   final double? scrolledUnderElevation;
 
-  /// {@macro flutter.material.appbar.shadowColor}
+  /// {@macro material_ui.appbar.shadowColor}
   ///
   /// This property is used to configure an [AppBar].
   final Color? shadowColor;
 
-  /// {@macro flutter.material.appbar.surfaceTintColor}
+  /// {@macro material_ui.appbar.surfaceTintColor}
   ///
   /// This property is used to configure an [AppBar].
   final Color? surfaceTintColor;
@@ -1863,42 +1835,42 @@ class SliverAppBar extends StatefulWidget {
   /// Ignored when [elevation] is zero.
   final bool forceElevated;
 
-  /// {@macro flutter.material.appbar.backgroundColor}
+  /// {@macro material_ui.appbar.backgroundColor}
   ///
   /// This property is used to configure an [AppBar].
   final Color? backgroundColor;
 
-  /// {@macro flutter.material.appbar.foregroundColor}
+  /// {@macro material_ui.appbar.foregroundColor}
   ///
   /// This property is used to configure an [AppBar].
   final Color? foregroundColor;
 
-  /// {@macro flutter.material.appbar.iconTheme}
+  /// {@macro material_ui.appbar.iconTheme}
   ///
   /// This property is used to configure an [AppBar].
   final IconThemeData? iconTheme;
 
-  /// {@macro flutter.material.appbar.actionsIconTheme}
+  /// {@macro material_ui.appbar.actionsIconTheme}
   ///
   /// This property is used to configure an [AppBar].
   final IconThemeData? actionsIconTheme;
 
-  /// {@macro flutter.material.appbar.primary}
+  /// {@macro material_ui.appbar.primary}
   ///
   /// This property is used to configure an [AppBar].
   final bool primary;
 
-  /// {@macro flutter.material.appbar.centerTitle}
+  /// {@macro material_ui.appbar.centerTitle}
   ///
   /// This property is used to configure an [AppBar].
   final bool? centerTitle;
 
-  /// {@macro flutter.material.appbar.excludeHeaderSemantics}
+  /// {@macro material_ui.appbar.excludeHeaderSemantics}
   ///
   /// This property is used to configure an [AppBar].
   final bool excludeHeaderSemantics;
 
-  /// {@macro flutter.material.appbar.titleSpacing}
+  /// {@macro material_ui.appbar.titleSpacing}
   ///
   /// This property is used to configure an [AppBar].
   final double? titleSpacing;
@@ -1972,7 +1944,7 @@ class SliverAppBar extends StatefulWidget {
   ///    behavior of the app bar in combination with [floating].
   final bool pinned;
 
-  /// {@macro flutter.material.appbar.shape}
+  /// {@macro material_ui.appbar.shape}
   ///
   /// This property is used to configure an [AppBar].
   final ShapeBorder? shape;
@@ -2024,45 +1996,45 @@ class SliverAppBar extends StatefulWidget {
   /// offset specified by [stretchTriggerOffset].
   final AsyncCallback? onStretchTrigger;
 
-  /// {@macro flutter.material.appbar.toolbarHeight}
+  /// {@macro material_ui.appbar.toolbarHeight}
   ///
   /// This property is used to configure an [AppBar].
   final double toolbarHeight;
 
-  /// {@macro flutter.material.appbar.leadingWidth}
+  /// {@macro material_ui.appbar.leadingWidth}
   ///
   /// This property is used to configure an [AppBar].
   final double? leadingWidth;
 
-  /// {@macro flutter.material.appbar.toolbarTextStyle}
+  /// {@macro material_ui.appbar.toolbarTextStyle}
   ///
   /// This property is used to configure an [AppBar].
   final TextStyle? toolbarTextStyle;
 
-  /// {@macro flutter.material.appbar.titleTextStyle}
+  /// {@macro material_ui.appbar.titleTextStyle}
   ///
   /// This property is used to configure an [AppBar].
   final TextStyle? titleTextStyle;
 
-  /// {@macro flutter.material.appbar.systemOverlayStyle}
+  /// {@macro material_ui.appbar.systemOverlayStyle}
   ///
   /// This property is used to configure an [AppBar].
   final SystemUiOverlayStyle? systemOverlayStyle;
 
-  /// {@macro flutter.material.appbar.forceMaterialTransparency}
+  /// {@macro material_ui.appbar.forceMaterialTransparency}
   ///
   /// This property is used to configure an [AppBar].
   final bool forceMaterialTransparency;
 
-  /// {@macro flutter.material.appbar.useDefaultSemanticsOrder}
+  /// {@macro material_ui.appbar.useDefaultSemanticsOrder}
   ///
   /// This property is used to configure an [AppBar].
   final bool useDefaultSemanticsOrder;
 
-  /// {@macro flutter.material.Material.clipBehavior}
+  /// {@macro cupertino_ui.Material.clipBehavior}
   final Clip? clipBehavior;
 
-  /// {@macro flutter.material.appbar.actionsPadding}
+  /// {@macro material_ui.appbar.actionsPadding}
   ///
   /// This property is used to configure an [AppBar].
   final EdgeInsetsGeometry? actionsPadding;
@@ -2549,112 +2521,3 @@ class _AppBarDefaultsM2 extends AppBarThemeData {
   @override
   EdgeInsets? get actionsPadding => EdgeInsets.zero;
 }
-
-// BEGIN GENERATED TOKEN PROPERTIES - AppBar
-
-// Do not edit by hand. The code between the "BEGIN GENERATED" and
-// "END GENERATED" comments are generated from data in the Material
-// Design token database by the script:
-//   dev/tools/gen_defaults/bin/gen_defaults.dart.
-
-// dart format off
-class _AppBarDefaultsM3 extends AppBarThemeData {
-  _AppBarDefaultsM3(this.context)
-    : super(
-      elevation: 0.0,
-      scrolledUnderElevation: 3.0,
-      titleSpacing: NavigationToolbar.kMiddleSpacing,
-      toolbarHeight: 64.0,
-    );
-
-  final BuildContext context;
-  late final ThemeData _theme = Theme.of(context);
-  late final ColorScheme _colors = _theme.colorScheme;
-  late final TextTheme _textTheme = _theme.textTheme;
-
-  @override
-  Color? get backgroundColor => _colors.surface;
-
-  @override
-  Color? get foregroundColor => _colors.onSurface;
-
-  @override
-  Color? get shadowColor => Colors.transparent;
-
-  @override
-  Color? get surfaceTintColor => Colors.transparent;
-
-  @override
-  IconThemeData? get iconTheme => IconThemeData(
-    color: _colors.onSurface,
-    size: 24.0,
-  );
-
-  @override
-  IconThemeData? get actionsIconTheme => IconThemeData(
-    color: _colors.onSurfaceVariant,
-    size: 24.0,
-  );
-
-  @override
-  TextStyle? get toolbarTextStyle => _textTheme.bodyMedium;
-
-  @override
-  TextStyle? get titleTextStyle => _textTheme.titleLarge;
-
-  // TODO(Craftplacer): Consider using EdgeInsets.only(right: 8.0) instead of
-  // EdgeInsets.zero for Material 3 in the future,
-  // https://github.com/flutter/flutter/issues/155747
-  @override
-  EdgeInsets? get actionsPadding => EdgeInsets.zero;
-}
-
-// Variant configuration
-class _MediumScrollUnderFlexibleConfig with _ScrollUnderFlexibleConfig {
-  _MediumScrollUnderFlexibleConfig(this.context);
-
-  final BuildContext context;
-  late final ThemeData _theme = Theme.of(context);
-  late final ColorScheme _colors = _theme.colorScheme;
-  late final TextTheme _textTheme = _theme.textTheme;
-
-  static const double collapsedHeight = 64.0;
-  static const double expandedHeight = 112.0;
-
-  @override
-  TextStyle? get collapsedTextStyle =>
-    _textTheme.titleLarge?.apply(color: _colors.onSurface);
-
-  @override
-  TextStyle? get expandedTextStyle =>
-    _textTheme.headlineSmall?.apply(color: _colors.onSurface);
-
-  @override
-  EdgeInsetsGeometry get expandedTitlePadding => const EdgeInsets.fromLTRB(16, 0, 16, 20);
-}
-
-class _LargeScrollUnderFlexibleConfig with _ScrollUnderFlexibleConfig {
-  _LargeScrollUnderFlexibleConfig(this.context);
-
-  final BuildContext context;
-  late final ThemeData _theme = Theme.of(context);
-  late final ColorScheme _colors = _theme.colorScheme;
-  late final TextTheme _textTheme = _theme.textTheme;
-
-  static const double collapsedHeight = 64.0;
-  static const double expandedHeight = 152.0;
-
-  @override
-  TextStyle? get collapsedTextStyle =>
-    _textTheme.titleLarge?.apply(color: _colors.onSurface);
-
-  @override
-  TextStyle? get expandedTextStyle =>
-    _textTheme.headlineMedium?.apply(color: _colors.onSurface);
-
-  @override
-  EdgeInsetsGeometry get expandedTitlePadding => const EdgeInsets.fromLTRB(16, 0, 16, 28);
-}
-// dart format on
-
-// END GENERATED TOKEN PROPERTIES - AppBar

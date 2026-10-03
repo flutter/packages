@@ -3,7 +3,7 @@
 // found in the LICENSE file.
 
 import Flutter
-import XCTest
+import Testing
 
 @testable import file_selector_ios
 
@@ -25,8 +25,8 @@ final class StubViewPresenterProvider: ViewPresenterProvider {
   }
 }
 
-class FileSelectorTests: XCTestCase {
-  func testPickerPresents() throws {
+@Suite @MainActor struct FileSelectorTests {
+  @Test func pickerPresents() throws {
     let presenter = TestViewPresenter()
     let plugin = FileSelectorPlugin(
       viewPresenterProvider: StubViewPresenterProvider(viewPresenter: presenter))
@@ -37,58 +37,58 @@ class FileSelectorTests: XCTestCase {
       config: FileSelectorConfig(utis: [], allowMultiSelection: false)
     ) { _ in }
 
-    XCTAssertEqual(plugin.pendingCompletions.count, 1)
-    XCTAssertTrue(picker.delegate === plugin.pendingCompletions.first)
-    XCTAssertTrue(presenter.presentedController === picker)
+    #expect(plugin.pendingCompletions.count == 1)
+    #expect(picker.delegate === plugin.pendingCompletions.first)
+    #expect(presenter.presentedController === picker)
   }
 
-  func testReturnsPickedFiles() throws {
+  @Test func returnsPickedFiles() async throws {
     let plugin = FileSelectorPlugin(
       viewPresenterProvider: StubViewPresenterProvider(viewPresenter: TestViewPresenter()))
     let picker = UIDocumentPickerViewController(documentTypes: [], in: UIDocumentPickerMode.import)
     plugin.documentPickerViewControllerOverride = picker
-    let completionWasCalled = expectation(description: "completion")
 
-    plugin.openFile(
-      config: FileSelectorConfig(utis: [], allowMultiSelection: false)
-    ) { result in
-      switch result {
-      case .success(let paths):
-        XCTAssertEqual(paths, ["/file1.txt", "/file2.txt"])
-      case .failure(let error):
-        XCTFail("\(error)")
+    try await confirmation("completion") { completionWasCalled in
+      plugin.openFile(
+        config: FileSelectorConfig(utis: [], allowMultiSelection: false)
+      ) { result in
+        switch result {
+        case .success(let paths):
+          #expect(paths == ["/file1.txt", "/file2.txt"])
+        case .failure(let error):
+          Issue.record("\(error)")
+        }
+        completionWasCalled()
       }
-      completionWasCalled.fulfill()
+      let pendingCompletion = try #require(plugin.pendingCompletions.first)
+      pendingCompletion.documentPicker(
+        picker,
+        didPickDocumentsAt: [URL(string: "file:///file1.txt")!, URL(string: "file:///file2.txt")!])
     }
-    plugin.pendingCompletions.first!.documentPicker(
-      picker,
-      didPickDocumentsAt: [URL(string: "file:///file1.txt")!, URL(string: "file:///file2.txt")!])
-
-    waitForExpectations(timeout: 30.0)
-    XCTAssertTrue(plugin.pendingCompletions.isEmpty)
+    #expect(plugin.pendingCompletions.isEmpty)
   }
 
-  func testCancellingPickerReturnsEmptyList() throws {
+  @Test func cancellingPickerReturnsEmptyList() async throws {
     let plugin = FileSelectorPlugin(
       viewPresenterProvider: StubViewPresenterProvider(viewPresenter: TestViewPresenter()))
     let picker = UIDocumentPickerViewController(documentTypes: [], in: UIDocumentPickerMode.import)
     plugin.documentPickerViewControllerOverride = picker
-    let completionWasCalled = expectation(description: "completion")
 
-    plugin.openFile(
-      config: FileSelectorConfig(utis: [], allowMultiSelection: false)
-    ) { result in
-      switch result {
-      case .success(let paths):
-        XCTAssertEqual(paths.count, 0)
-      case .failure(let error):
-        XCTFail("\(error)")
+    try await confirmation("completion") { completionWasCalled in
+      plugin.openFile(
+        config: FileSelectorConfig(utis: [], allowMultiSelection: false)
+      ) { result in
+        switch result {
+        case .success(let paths):
+          #expect(paths.count == 0)
+        case .failure(let error):
+          Issue.record("\(error)")
+        }
+        completionWasCalled()
       }
-      completionWasCalled.fulfill()
+      let pendingCompletion = try #require(plugin.pendingCompletions.first)
+      pendingCompletion.documentPickerWasCancelled(picker)
     }
-    plugin.pendingCompletions.first!.documentPickerWasCancelled(picker)
-
-    waitForExpectations(timeout: 30.0)
-    XCTAssertTrue(plugin.pendingCompletions.isEmpty)
+    #expect(plugin.pendingCompletions.isEmpty)
   }
 }

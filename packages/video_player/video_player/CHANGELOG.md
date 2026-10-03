@@ -1,5 +1,25 @@
-## NEXT
+## 2.14.1
 
+* Fixes late position updates after a controller is disposed.
+* Updates the example app to Robolectric 4.17.
+* Updates minimum supported SDK version to Flutter 3.41/Dart 3.11.
+
+## 2.14.0
+
+* Adds video quality selection support for HLS/DASH adaptive streams via
+  `getVideoTracks()`, `selectVideoTrack()`, and
+  `isVideoTrackSupportAvailable()` methods.
+
+## 2.13.0
+
+* Adds `preventsDisplaySleepDuringVideoPlayback` to `VideoPlayerOptions` and
+  `VideoPlayerValue`, and `setPreventsDisplaySleepDuringVideoPlayback` to
+  `VideoPlayerController`, to control whether the display sleeps during playback
+  on iOS and macOS.
+
+## 2.12.0
+
+* Passes `backBufferDurationMs` from `VideoPlayerOptions` to the underlying platform interface.
 * Updates minimum supported SDK version to Flutter 3.38/Dart 3.10.
 
 ## 2.11.1

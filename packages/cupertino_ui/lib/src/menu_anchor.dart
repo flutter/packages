@@ -295,25 +295,27 @@ typedef CupertinoMenuAnimationStatusChangedCallback = void Function(AnimationSta
 /// invoked every time the [AnimationStatus] of the menu animation changes.
 ///
 /// ## Usage
-// TODO(framework): Replace the following block with a blue example container
-// when it's supported. https://github.com/dart-lang/dartdoc/issues/4243
+/// <callout-box>
 ///
 /// This example demonstrates a simple [CupertinoMenuAnchor] that wraps
 /// a button.
 ///
-/// {@example /example/lib/menu_anchor/menu_anchor.0.dart}
+/// {@example /example/lib/menu_anchor/menu_anchor.0.dart#body}
 ///
-// TODO(framework): End of the blue example container.
+/// </callout-box>
 ///
-// TODO(framework): Replace the following block with a @dartpad directive
-// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// <callout-box>
 ///
 /// This example demonstrates a [CupertinoMenuAnchor] that wraps a button and
 /// shows a menu with three [CupertinoMenuItem]s and one [CupertinoMenuDivider].
 ///
-/// {@example /example/lib/menu_anchor/menu_anchor.1.dart}
+// TODO(framework): Replace the following block with a @dartpad directive
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// {@macro cupertino_ui.dartpad_guide}
 ///
-// TODO(framework): End of the @dartpad directive.
+/// {@example /example/lib/menu_anchor/menu_anchor.1.dart#body}
+///
+/// </callout-box>
 ///
 /// See also:
 ///
@@ -909,9 +911,9 @@ class _MenuOverlayState extends State<_MenuOverlay>
     // Behavior of reduce motion is based on iOS 18.5 simulator. Because the
     // disableAnimations accessibility feature is not present on iOS, all
     // animations are disabled when disableAnimations is enabled.
-    final ui.AccessibilityFeatures accessibilityFeatures = View.of(
-      context,
-    ).platformDispatcher.accessibilityFeatures;
+    final ui.AccessibilityFeatures accessibilityFeatures = View.of(context)
+        .platformDispatcher
+        .accessibilityFeatures;
 
     switch (accessibilityFeatures) {
       case ui.AccessibilityFeatures(disableAnimations: true):
@@ -1525,7 +1527,7 @@ class _FocusLastAction extends ContextAction<_FocusLastIntent> {
 ///
 /// The default thickness of the divider is 1 physical pixel.
 class _CupertinoMenuImplicitDivider extends StatelessWidget {
-  /// Draws a [_CupertinoMenuImplicitDivider] below a [child].
+  /// Draws a [_CupertinoMenuImplicitDivider] below a menu item.
   const _CupertinoMenuImplicitDivider();
 
   /// The default color applied to the [_CupertinoMenuImplicitDivider] with
@@ -1701,25 +1703,27 @@ class _CupertinoDividerPainter extends CustomPainter {
 /// will perform a destructive action, and will color the text of the menu item
 /// [CupertinoColors.systemRed].
 ///
-// TODO(framework): Replace the following block with a blue example container
-// when it's supported. https://github.com/dart-lang/dartdoc/issues/4243
+/// <callout-box>
 ///
 /// This example demonstrates a simple [CupertinoMenuAnchor] that wraps
 /// a button.
 ///
-/// {@example /example/lib/menu_anchor/menu_anchor.0.dart}
+/// {@example /example/lib/menu_anchor/menu_anchor.0.dart#body}
 ///
-// TODO(framework): End of the blue example container.
+/// </callout-box>
 ///
-// TODO(framework): Replace the following block with a @dartpad directive
-// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// <callout-box>
 ///
 /// This example demonstrates a [CupertinoMenuAnchor] that wraps a button and
 /// shows a menu with three [CupertinoMenuItem]s and one [CupertinoMenuDivider].
 ///
-/// {@example /example/lib/menu_anchor/menu_anchor.1.dart}
+// TODO(framework): Replace the following block with a @dartpad directive
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// {@macro cupertino_ui.dartpad_guide}
 ///
-// TODO(framework): End of the @dartpad directive.
+/// {@example /example/lib/menu_anchor/menu_anchor.1.dart#body}
+///
+/// </callout-box>
 ///
 /// See also:
 /// * [CupertinoMenuAnchor], a Cupertino-style widget that shows a menu of
@@ -1794,7 +1798,12 @@ class CupertinoMenuItem extends StatelessWidget implements CupertinoMenuEntry {
   /// pointer event, which is always between frames.
   final ValueChanged<bool>? onHover;
 
-  /// {@macro flutter.material.inkwell.onFocusChange}
+  /// {@template cupertino_ui.inkwell.onFocusChange}
+  /// Handler called when the focus changes.
+  ///
+  /// Called with true if this widget's node gains focus, and false if it loses
+  /// focus.
+  /// {@endtemplate}
   final ValueChanged<bool>? onFocusChange;
 
   /// Whether hovering should request focus for this widget.
@@ -1954,7 +1963,8 @@ class CupertinoMenuItem extends StatelessWidget implements CupertinoMenuEntry {
   );
 
   /// Resolves the title [TextStyle] in response to
-  /// [CupertinoThemeData.brightness], [isDestructiveAction], and [enabled].
+  /// [CupertinoThemeData.brightness], [isDestructiveAction], and whether
+  /// [onPressed] is null.
   //
   // Approximated from the iOS and iPadOS 18.5 simulators.
   TextStyle _resolveDefaultTextStyle(BuildContext context, TextScaler textScaler) {

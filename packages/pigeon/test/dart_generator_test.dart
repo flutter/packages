@@ -76,7 +76,47 @@ void main() {
     final code = sink.toString();
     expect(code, contains('enum Foobar'));
     expect(code, contains('  one,'));
-    expect(code, contains('  two,'));
+    expect(code, contains('  two;'));
+  });
+
+  test('gen event channel api with usage docs on the generated method', () {
+    final api = AstEventChannelApi(
+      name: 'EventApi',
+      methods: <Method>[
+        Method(
+          name: 'streamEvents',
+          location: ApiLocation.host,
+          returnType: const TypeDeclaration(baseName: 'int', isNullable: false),
+          parameters: <Parameter>[],
+          documentationComments: <String>[' An example event stream.'],
+        ),
+      ],
+    );
+    final root = Root(apis: <Api>[api], classes: <Class>[], enums: <Enum>[]);
+    final sink = StringBuffer();
+    const generator = DartGenerator();
+    generator.generate(
+      const InternalDartOptions(ignoreLints: false),
+      root,
+      sink,
+      dartPackageName: DEFAULT_PACKAGE_NAME,
+    );
+    final code = sink.toString();
+    expect(code, contains('Stream<int> streamEvents('));
+    // The user's own documentation comments are emitted.
+    expect(code, contains('/// An example event stream.'));
+    // The generated usage documentation explains the channel-owning and
+    // broadcast semantics.
+    expect(
+      code,
+      contains('/// Returns a broadcast [Stream] of events from the `streamEvents` event channel.'),
+    );
+    expect(code, contains('not be called multiple times for the same `instanceName`'));
+    // The usage documentation is attached directly above the generated method.
+    expect(
+      code.indexOf('not be called multiple times'),
+      lessThan(code.indexOf('Stream<int> streamEvents(')),
+    );
   });
 
   test('gen one host api', () {
@@ -2026,5 +2066,204 @@ name: foobar
     final code = sink.toString();
     expect(code, contains('String toString() {'));
     expect(code, contains(r"return 'Foobar(field1: $field1)';"));
+  });
+
+  test('native interop host api unsupported error - getInstance', () {
+    final root = Root(
+      apis: <Api>[
+        AstHostApi(
+          name: 'Api',
+          methods: <Method>[
+            Method(
+              name: 'doSomething',
+              location: ApiLocation.host,
+              parameters: <Parameter>[],
+              returnType: const TypeDeclaration(baseName: 'void', isNullable: false),
+            ),
+          ],
+        ),
+      ],
+      classes: <Class>[],
+      enums: <Enum>[],
+    );
+    final sink = StringBuffer();
+    const generator = DartGenerator();
+    generator.generate(
+      const InternalDartOptions(
+        ignoreLints: false,
+        useFfi: true,
+        useJni: true,
+        dartOut: 'lib/foo.dart',
+      ),
+      root,
+      sink,
+      dartPackageName: DEFAULT_PACKAGE_NAME,
+    );
+    final code = sink.toString();
+
+    expect(code, contains('Native Interop is not supported on this platform. Use Api instead.'));
+  });
+
+  test('native interop host api unsupported error - createWithNativeInteropApi', () {
+    final root = Root(
+      apis: <Api>[
+        AstHostApi(
+          name: 'Api',
+          methods: <Method>[
+            Method(
+              name: 'doSomething',
+              location: ApiLocation.host,
+              parameters: <Parameter>[],
+              returnType: const TypeDeclaration(baseName: 'void', isNullable: false),
+            ),
+          ],
+        ),
+      ],
+      classes: <Class>[],
+      enums: <Enum>[],
+    );
+    final sink = StringBuffer();
+    const generator = DartGenerator();
+    generator.generate(
+      const InternalDartOptions(
+        ignoreLints: false,
+        useFfi: true,
+        useJni: true,
+        dartOut: 'lib/foo.dart',
+      ),
+      root,
+      sink,
+      dartPackageName: DEFAULT_PACKAGE_NAME,
+    );
+    final code = sink.toString();
+
+    expect(
+      code,
+      contains(
+        'Native Interop is not supported on this platform. Use the default constructor of Api instead.',
+      ),
+    );
+  });
+
+  test('gen constants', () {
+    final root = Root(
+      apis: <Api>[],
+      classes: <Class>[],
+      enums: <Enum>[],
+      constants: <Constant>[
+        Constant(
+          name: 'stringConst',
+          type: const TypeDeclaration(baseName: 'String', isNullable: false),
+          value: 'hello',
+        ),
+        Constant(
+          name: 'intConst',
+          type: const TypeDeclaration(baseName: 'int', isNullable: false),
+          value: 42,
+        ),
+        Constant(
+          name: 'doubleConst',
+          type: const TypeDeclaration(baseName: 'double', isNullable: false),
+          value: 3.14,
+        ),
+        Constant(
+          name: 'boolConst',
+          type: const TypeDeclaration(baseName: 'bool', isNullable: false),
+          value: true,
+        ),
+      ],
+    );
+    final sink = StringBuffer();
+    const generator = DartGenerator();
+    generator.generate(
+      const InternalDartOptions(ignoreLints: false),
+      root,
+      sink,
+      dartPackageName: DEFAULT_PACKAGE_NAME,
+    );
+    final code = sink.toString();
+    expect(code, contains("const String stringConst = 'hello';"));
+    expect(code, contains('const int intConst = 42;'));
+    expect(code, contains('const double doubleConst = 3.14;'));
+    expect(code, contains('const bool boolConst = true;'));
+  });
+
+  test('fromJni handles field named type without colliding with static JType member', () {
+    final root = Root(
+      apis: <Api>[],
+      classes: <Class>[
+        Class(
+          name: 'Foo',
+          fields: <NamedType>[
+            NamedType(
+              name: 'type',
+              type: const TypeDeclaration(baseName: 'int', isNullable: false),
+            ),
+          ],
+        ),
+      ],
+      enums: <Enum>[],
+    );
+    final sink = StringBuffer();
+    const generator = DartGenerator();
+    generator.generate(
+      const InternalDartOptions(ignoreLints: false, useJni: true, dartOut: 'lib/foo.dart'),
+      root,
+      sink,
+      dartPackageName: DEFAULT_PACKAGE_NAME,
+    );
+    final code = sink.toString();
+
+    expect(code, contains(r'type: jniClass.type$1'));
+  });
+
+  test('native interop host api invokes jni methods correctly', () {
+    final root = Root(
+      apis: <Api>[
+        AstHostApi(
+          name: 'Api',
+          methods: <Method>[
+            Method(
+              name: 'isGetter',
+              location: ApiLocation.host,
+              parameters: <Parameter>[],
+              returnType: const TypeDeclaration(baseName: 'bool', isNullable: false),
+            ),
+            Method(
+              name: 'getGetter',
+              location: ApiLocation.host,
+              parameters: <Parameter>[],
+              returnType: const TypeDeclaration(baseName: 'int', isNullable: false),
+            ),
+            Method(
+              name: 'setSetter',
+              location: ApiLocation.host,
+              parameters: <Parameter>[
+                Parameter(
+                  name: 'value',
+                  type: const TypeDeclaration(baseName: 'int', isNullable: false),
+                ),
+              ],
+              returnType: const TypeDeclaration(baseName: 'void', isNullable: false),
+            ),
+          ],
+        ),
+      ],
+      classes: <Class>[],
+      enums: <Enum>[],
+    );
+    final sink = StringBuffer();
+    const generator = DartGenerator();
+    generator.generate(
+      const InternalDartOptions(ignoreLints: false, useJni: true, dartOut: 'lib/foo.dart'),
+      root,
+      sink,
+      dartPackageName: DEFAULT_PACKAGE_NAME,
+    );
+    final code = sink.toString();
+
+    expect(code, contains('return _jniApi.isGetter;'));
+    expect(code, contains('return _jniApi.getter;'));
+    expect(code, contains('_jniApi.setter = value;'));
   });
 }

@@ -21,6 +21,8 @@ import 'text_theme.dart';
 import 'theme.dart';
 import 'tooltip.dart';
 
+part 'generated/fab_defaults_m3.g.dart';
+
 class _DefaultHeroTag {
   const _DefaultHeroTag();
   @override
@@ -35,7 +37,7 @@ enum _FloatingActionButtonType { regular, small, large, extended }
 /// to promote a primary action in the application. Floating action buttons are
 /// most commonly used in the [Scaffold.floatingActionButton] field.
 ///
-/// {@youtube 560 315 https://www.youtube.com/watch?v=2uaoEDOgk_I}
+/// Learn more about [FloatingActionButton] on the [Flutter YouTube channel](https://www.youtube.com/watch?v=2uaoEDOgk_I).
 ///
 /// Use at most a single floating action button per screen. Floating action
 /// buttons should be used for positive actions such as "create", "share", or
@@ -49,37 +51,46 @@ enum _FloatingActionButtonType { regular, small, large, extended }
 /// disabled. Consider changing the [backgroundColor] if disabling the floating
 /// action button.
 ///
-// TODO(framework): Replace the following block with a @dartpad directive
-// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// <callout-box>
 ///
 /// This example shows a [FloatingActionButton] in its usual position within a
 /// [Scaffold]. Pressing the button cycles it through a few variations in its
 /// [foregroundColor], [backgroundColor], and [shape]. The button automatically
 /// animates its segue from one set of visual parameters to another.
 ///
-/// {@example /example/lib/floating_action_button/floating_action_button.0.dart}
-///
-// TODO(framework): End of the @dartpad directive.
-///
 // TODO(framework): Replace the following block with a @dartpad directive
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// {@macro material_ui.dartpad_guide}
+///
+/// {@example /example/lib/floating_action_button/floating_action_button.0.dart#body}
+///
+/// </callout-box>
+///
+/// <callout-box>
 ///
 /// This sample shows all the variants of [FloatingActionButton] widget as
 /// described in: https://m3.material.io/components/floating-action-button/overview.
 ///
-/// {@example /example/lib/floating_action_button/floating_action_button.1.dart}
-///
-// TODO(framework): End of the @dartpad directive.
-///
 // TODO(framework): Replace the following block with a @dartpad directive
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// {@macro material_ui.dartpad_guide}
+///
+/// {@example /example/lib/floating_action_button/floating_action_button.1.dart#body}
+///
+/// </callout-box>
+///
+/// <callout-box>
 ///
 /// This sample shows [FloatingActionButton] with additional color mappings as
 /// described in: https://m3.material.io/components/floating-action-button/overview.
 ///
-/// {@example /example/lib/floating_action_button/floating_action_button.2.dart}
+// TODO(framework): Replace the following block with a @dartpad directive
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// {@macro material_ui.dartpad_guide}
 ///
-// TODO(framework): End of the @dartpad directive.
+/// {@example /example/lib/floating_action_button/floating_action_button.2.dart#body}
+///
+/// </callout-box>
 ///
 /// See also:
 ///
@@ -330,7 +341,7 @@ class FloatingActionButton extends StatelessWidget {
   /// If this is set to null, the button will be disabled.
   final VoidCallback? onPressed;
 
-  /// {@macro flutter.material.RawMaterialButton.mouseCursor}
+  /// {@macro material_ui.RawMaterialButton.mouseCursor}
   ///
   /// If this property is null, [FloatingActionButtonThemeData.mouseCursor] is used.
   /// If that is null, [WidgetStateMouseCursor.adaptiveClickable] will be used.
@@ -424,7 +435,7 @@ class FloatingActionButton extends StatelessWidget {
   /// shape as well.
   final ShapeBorder? shape;
 
-  /// {@macro flutter.material.Material.clipBehavior}
+  /// {@macro cupertino_ui.Material.clipBehavior}
   ///
   /// Defaults to [Clip.none].
   final Clip clipBehavior;
@@ -772,74 +783,3 @@ class _FABDefaultsM2 extends FloatingActionButtonThemeData {
   @override
   TextStyle? get extendedTextStyle => _theme.textTheme.labelLarge!.copyWith(letterSpacing: 1.2);
 }
-
-// BEGIN GENERATED TOKEN PROPERTIES - FAB
-
-// Do not edit by hand. The code between the "BEGIN GENERATED" and
-// "END GENERATED" comments are generated from data in the Material
-// Design token database by the script:
-//   dev/tools/gen_defaults/bin/gen_defaults.dart.
-
-// dart format off
-class _FABDefaultsM3 extends FloatingActionButtonThemeData {
-  _FABDefaultsM3(this.context, this.type, this.hasChild)
-    : super(
-        elevation: 6.0,
-        focusElevation: 6.0,
-        hoverElevation: 8.0,
-        highlightElevation: 6.0,
-        enableFeedback: true,
-        sizeConstraints: const BoxConstraints.tightFor(
-          width: 56.0,
-          height: 56.0,
-        ),
-        smallSizeConstraints: const BoxConstraints.tightFor(
-          width: 40.0,
-          height: 40.0,
-        ),
-        largeSizeConstraints: const BoxConstraints.tightFor(
-          width: 96.0,
-          height: 96.0,
-        ),
-        extendedSizeConstraints: const BoxConstraints.tightFor(
-          height: 56.0,
-        ),
-        extendedIconLabelSpacing: 8.0,
-      );
-
-  final BuildContext context;
-  final _FloatingActionButtonType type;
-  final bool hasChild;
-  late final ColorScheme _colors = Theme.of(context).colorScheme;
-  late final TextTheme _textTheme = Theme.of(context).textTheme;
-
-  bool get _isExtended => type == _FloatingActionButtonType.extended;
-
-  @override Color? get foregroundColor => _colors.onPrimaryContainer;
-  @override Color? get backgroundColor => _colors.primaryContainer;
-  @override Color? get splashColor => _colors.onPrimaryContainer.withOpacity(0.1);
-  @override Color? get focusColor => _colors.onPrimaryContainer.withOpacity(0.1);
-  @override Color? get hoverColor => _colors.onPrimaryContainer.withOpacity(0.08);
-
-  @override
-  ShapeBorder? get shape => switch (type) {
-    _FloatingActionButtonType.regular  => const RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(16.0))),
-    _FloatingActionButtonType.small    => const RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(12.0))),
-    _FloatingActionButtonType.large    => const RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(28.0))),
-    _FloatingActionButtonType.extended => const RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(16.0))),
-  };
-
-  @override
-  double? get iconSize => switch (type) {
-    _FloatingActionButtonType.regular  => 24.0,
-    _FloatingActionButtonType.small    => 24.0,
-    _FloatingActionButtonType.large    => 36.0,
-    _FloatingActionButtonType.extended => 24.0,
-  };
-
-  @override EdgeInsetsGeometry? get extendedPadding => EdgeInsetsDirectional.only(start: hasChild && _isExtended ? 16.0 : 20.0, end: 20.0);
-  @override TextStyle? get extendedTextStyle => _textTheme.labelLarge;
-}
-// dart format on
-
-// END GENERATED TOKEN PROPERTIES - FAB

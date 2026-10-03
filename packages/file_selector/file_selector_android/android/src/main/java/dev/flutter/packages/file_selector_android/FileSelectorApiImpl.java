@@ -351,6 +351,13 @@ public class FileSelectorApiImpl implements FileSelectorApi {
 
     final byte[] bytes = new byte[size];
     try (InputStream inputStream = contentResolver.openInputStream(uri)) {
+      if (inputStream == null) {
+        // `ContentResolver#openInputStream()` returns null when the provider cannot serve the
+        // file (for example after the provider crashed). Reading it would throw a
+        // NullPointerException on the activity-result callback, i.e. the main thread.
+        Log.w(TAG, "The content provider returned no stream for the selected file.");
+        return null;
+      }
       final DataInputStream dataInputStream = objectFactory.newDataInputStream(inputStream);
       dataInputStream.readFully(bytes);
     } catch (IOException exception) {
@@ -381,6 +388,16 @@ public class FileSelectorApiImpl implements FileSelectorApi {
           new FileSelectorNativeException(
               FileSelectorExceptionCode.ILLEGAL_ARGUMENT_EXCEPTION,
               e.getMessage() == null ? "" : e.getMessage());
+    }
+
+    if (uriPath == null) {
+      // `getPathFromCopyOfFileFromUri` can fail to produce a path: either by
+      // throwing (handled above by returning a null `uriPath`) or by returning
+      // null directly. Return null so the caller surfaces the failure to Dart,
+      // instead of building a `FileResponse` with a null `path`, which the
+      // non-null field rejects at runtime.
+      // See https://github.com/flutter/flutter/issues/159568.
+      return null;
     }
 
     return new FileResponse(uriPath, contentResolver.getType(uri), name, size, bytes, nativeError);

@@ -2,12 +2,13 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+// #region body
+import 'package:cupertino_ui/cupertino_ui.dart';
 import 'package:flutter/foundation.dart';
-import 'package:material_ui/material_ui.dart';
 
 void main() => runApp(const TextMagnifierExampleApp(text: 'Hello world!'));
 
-class TextMagnifierExampleApp extends StatelessWidget {
+class TextMagnifierExampleApp extends StatefulWidget {
   const TextMagnifierExampleApp({
     super.key,
     this.textDirection = TextDirection.ltr,
@@ -18,27 +19,41 @@ class TextMagnifierExampleApp extends StatelessWidget {
   final String text;
 
   @override
+  State<TextMagnifierExampleApp> createState() =>
+      _TextMagnifierExampleAppState();
+}
+
+class _TextMagnifierExampleAppState extends State<TextMagnifierExampleApp> {
+  late final controller = TextEditingController(text: widget.text);
+
+  @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      home: Scaffold(
-        body: Padding(
+    return CupertinoApp(
+      home: CupertinoPageScaffold(
+        child: Padding(
           padding: const .symmetric(horizontal: 48.0),
           child: Center(
-            child: TextField(
-              textDirection: textDirection,
+            child: CupertinoTextField(
+              textDirection: widget.textDirection,
               // Create a custom magnifier configuration that
-              // this `TextField` will use to build a magnifier with.
+              // this `CupertinoTextField` will use to build a magnifier with.
               magnifierConfiguration: TextMagnifierConfiguration(
                 magnifierBuilder:
                     (_, _, ValueNotifier<MagnifierInfo> magnifierInfo) =>
                         CustomMagnifier(magnifierInfo: magnifierInfo),
               ),
-              controller: TextEditingController(text: text),
+              controller: controller,
             ),
           ),
         ),
       ),
     );
+  }
+
+  @override
+  void dispose() {
+    controller.dispose();
+    super.dispose();
   }
 }
 
@@ -95,7 +110,7 @@ class CustomMagnifier extends StatelessWidget {
             // Decorate it however we'd like!
             decoration: const MagnifierDecoration(
               shape: StarBorder(
-                side: BorderSide(color: Colors.green, width: 2),
+                side: BorderSide(color: CupertinoColors.activeGreen, width: 2),
               ),
             ),
             size: magnifierSize,
@@ -105,3 +120,4 @@ class CustomMagnifier extends StatelessWidget {
     );
   }
 }
+// #endregion body

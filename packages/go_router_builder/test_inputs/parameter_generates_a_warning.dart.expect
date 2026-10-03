@@ -1,5 +1,6 @@
 RouteBase get $myRoute => GoRouteData.$route(
       path: '/product/:id',
+      hasOverriddenOnExit: false,
       factory: $MyRoute._fromState,
     );
 

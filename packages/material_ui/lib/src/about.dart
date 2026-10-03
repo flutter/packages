@@ -2,6 +2,8 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+/// @docImport 'dart:io';
+///
 /// @docImport 'package:cupertino_ui/cupertino_ui.dart';
 ///
 /// @docImport 'drawer.dart';
@@ -9,13 +11,13 @@
 library;
 
 import 'dart:developer' show Flow, Timeline;
-import 'dart:io' show Platform;
 
 import 'package:cupertino_ui/cupertino_ui.dart' show CupertinoDialogAction;
 import 'package:flutter/foundation.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter/widgets.dart' hide Flow;
 
+import '_about_io.dart' if (dart.library.js_interop) '_about_web.dart' as impl;
 import 'app_bar.dart';
 import 'back_button.dart';
 import 'card.dart';
@@ -51,15 +53,18 @@ import 'theme.dart';
 /// If your application does not have a [Drawer], you should provide an
 /// affordance to call [showAboutDialog] or (at least) [showLicensePage].
 ///
-// TODO(framework): Replace the following block with a @dartpad directive
-// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// <callout-box>
 ///
 /// This sample shows two ways to open [AboutDialog]. The first one
 /// uses an [AboutListTile], and the second uses the [showAboutDialog] function.
 ///
-/// {@example /example/lib/about/about_list_tile.0.dart}
+// TODO(framework): Replace the following block with a @dartpad directive
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// {@macro material_ui.dartpad_guide}
 ///
-// TODO(framework): End of the @dartpad directive.
+/// {@example /example/lib/about/about_list_tile.0.dart#body}
+///
+/// </callout-box>
 class AboutListTile extends StatelessWidget {
   /// Creates a list tile for showing an about box.
   ///
@@ -98,7 +103,9 @@ class AboutListTile extends StatelessWidget {
   /// [child]) and as the caption of the [AboutDialog] that is shown.
   ///
   /// Defaults to the value of [Title.title], if a [Title] widget can be found.
-  /// Otherwise, defaults to [Platform.resolvedExecutable].
+  /// Otherwise, defaults to the file name of [Platform.resolvedExecutable] on
+  /// native platforms, or to the empty string on the web, where there is no
+  /// executable.
   final String? applicationName;
 
   /// The version of this build of the application.
@@ -150,9 +157,8 @@ class AboutListTile extends StatelessWidget {
       title:
           child ??
           Text(
-            MaterialLocalizations.of(
-              context,
-            ).aboutListTileTitle(applicationName ?? _defaultApplicationName(context)),
+            MaterialLocalizations.of(context)
+                .aboutListTileTitle(applicationName ?? _defaultApplicationName(context)),
           ),
       dense: dense,
       onTap: () {
@@ -330,7 +336,7 @@ const double _textVerticalSeparation = 18.0;
 ///
 /// To show an [AboutDialog], use [showAboutDialog].
 ///
-/// {@youtube 560 315 https://www.youtube.com/watch?v=YFCSODyFxbE}
+/// Learn more about [AboutDialog] on the [Flutter YouTube channel](https://www.youtube.com/watch?v=YFCSODyFxbE).
 ///
 /// If the application has a [Drawer], the [AboutListTile] widget can make the
 /// process of showing an about dialog simpler.
@@ -380,7 +386,9 @@ class AboutDialog extends StatelessWidget {
   /// The name of the application.
   ///
   /// Defaults to the value of [Title.title], if a [Title] widget can be found.
-  /// Otherwise, defaults to [Platform.resolvedExecutable].
+  /// Otherwise, defaults to the file name of [Platform.resolvedExecutable] on
+  /// native platforms, or to the empty string on the web, where there is no
+  /// executable.
   final String? applicationName;
 
   /// The version of this build of the application.
@@ -629,7 +637,9 @@ class LicensePage extends StatefulWidget {
   /// The name of the application.
   ///
   /// Defaults to the value of [Title.title], if a [Title] widget can be found.
-  /// Otherwise, defaults to [Platform.resolvedExecutable].
+  /// Otherwise, defaults to the file name of [Platform.resolvedExecutable] on
+  /// native platforms, or to the empty string on the web, where there is no
+  /// executable.
   final String? applicationName;
 
   /// The version of this build of the application.
@@ -1198,7 +1208,7 @@ String _defaultApplicationName(BuildContext context) {
   // can provide an explicit applicationName to the widgets defined in this
   // file, instead of relying on the default.
   final Title? ancestorTitle = context.findAncestorWidgetOfExactType<Title>();
-  return ancestorTitle?.title ?? Platform.resolvedExecutable.split(Platform.pathSeparator).last;
+  return ancestorTitle?.title ?? impl.executableName;
 }
 
 String _defaultApplicationVersion(BuildContext context) {
@@ -1225,8 +1235,11 @@ typedef _MasterViewBuilder = Widget Function(BuildContext context, bool isLatera
 ///
 /// scrollController is provided when the page destination is the draggable
 /// sheet in the lateral UI. Otherwise, it is null.
-typedef _DetailPageBuilder =
-    Widget Function(BuildContext context, Object? arguments, ScrollController? scrollController);
+typedef _DetailPageBuilder = Widget Function(
+  BuildContext context,
+  Object? arguments,
+  ScrollController? scrollController,
+);
 
 /// Signature for the builder callback used by [_MasterDetailScaffold.actionBuilder].
 ///

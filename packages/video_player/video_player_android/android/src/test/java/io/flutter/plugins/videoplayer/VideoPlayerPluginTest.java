@@ -81,6 +81,7 @@ public class VideoPlayerPluginTest {
               "https://flutter.github.io/assets-for-api-docs/assets/videos/bee.mp4",
               null,
               new HashMap<>(),
+              null,
               null);
 
       final long playerId = plugin.createForPlatformView(options);
@@ -103,6 +104,7 @@ public class VideoPlayerPluginTest {
               "https://flutter.github.io/assets-for-api-docs/assets/videos/bee.mp4",
               null,
               new HashMap<>(),
+              null,
               null);
 
       final TexturePlayerIds ids = plugin.createForTextureView(options);

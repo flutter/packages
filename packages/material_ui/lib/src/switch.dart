@@ -53,45 +53,57 @@ enum _SwitchType { material, adaptive }
 /// If [ThemeData.useMaterial3] is set to true, users can use [Switch.thumbIcon]
 /// to add optional Icons based on the different [WidgetState]s of the [Switch].
 ///
-// TODO(framework): Replace the following block with a @dartpad directive
-// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// <callout-box>
 ///
 /// This example shows a toggleable [Switch]. When the thumb slides to the other
 /// side of the track, the switch is toggled between on/off.
 ///
-/// {@example /example/lib/switch/switch.0.dart}
-///
-// TODO(framework): End of the @dartpad directive.
-///
 // TODO(framework): Replace the following block with a @dartpad directive
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// {@macro material_ui.dartpad_guide}
+///
+/// {@example /example/lib/switch/switch.0.dart#body}
+///
+/// </callout-box>
+///
+/// <callout-box>
 ///
 /// This example shows how to customize [Switch] using [WidgetStateProperty]
 /// switch properties.
 ///
-/// {@example /example/lib/switch/switch.1.dart}
-///
-// TODO(framework): End of the @dartpad directive.
-///
 // TODO(framework): Replace the following block with a @dartpad directive
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// {@macro material_ui.dartpad_guide}
+///
+/// {@example /example/lib/switch/switch.1.dart#body}
+///
+/// </callout-box>
+///
+/// <callout-box>
 ///
 /// This example shows how to add icons on the thumb of the [Switch] using the
 /// [Switch.thumbIcon] property.
 ///
-/// {@example /example/lib/switch/switch.2.dart}
-///
-// TODO(framework): End of the @dartpad directive.
-///
 // TODO(framework): Replace the following block with a @dartpad directive
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// {@macro material_ui.dartpad_guide}
+///
+/// {@example /example/lib/switch/switch.2.dart#body}
+///
+/// </callout-box>
+///
+/// <callout-box>
 ///
 /// This example shows how to use the ambient [CupertinoThemeData] to style all
 /// widgets which would otherwise use iOS defaults.
 ///
-/// {@example /example/lib/switch/switch.3.dart}
+// TODO(framework): Replace the following block with a @dartpad directive
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// {@macro material_ui.dartpad_guide}
 ///
-// TODO(framework): End of the @dartpad directive.
+/// {@example /example/lib/switch/switch.3.dart#body}
+///
+/// </callout-box>
 ///
 /// See also:
 ///
@@ -166,15 +178,18 @@ class Switch extends StatelessWidget {
   /// where you don't want the overall [ThemeData.switchTheme] to apply when
   /// this adaptive constructor is used.
   ///
-  // TODO(framework): Replace the following block with a @dartpad directive
-  // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+  /// <callout-box>
   ///
   /// This sample shows how to create and use subclasses of [Adaptation] that
   /// define adaptive [SwitchThemeData]s.
   ///
-  /// {@example /example/lib/switch/switch.4.dart}
+  // TODO(framework): Replace the following block with a @dartpad directive
+  // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+  /// {@macro material_ui.dartpad_guide}
   ///
-  // TODO(framework): End of the @dartpad directive.
+  /// {@example /example/lib/switch/switch.4.dart#body}
+  ///
+  /// </callout-box>
   ///
   /// The target platform is based on the current [Theme]: [ThemeData.platform].
   const Switch.adaptive({
@@ -242,7 +257,7 @@ class Switch extends StatelessWidget {
   /// ```
   final ValueChanged<bool>? onChanged;
 
-  /// {@template flutter.material.switch.activeColor}
+  /// {@template material_ui.switch.activeColor}
   /// The color to use when this switch is on.
   /// {@endtemplate}
   ///
@@ -256,7 +271,7 @@ class Switch extends StatelessWidget {
   )
   final Color? activeColor;
 
-  /// {@template flutter.material.switch.activeThumbColor}
+  /// {@template material_ui.switch.activeThumbColor}
   /// The color to use when this switch is on.
   /// {@endtemplate}
   ///
@@ -266,7 +281,7 @@ class Switch extends StatelessWidget {
   /// state, it will be used instead of this color.
   final Color? activeThumbColor;
 
-  /// {@template flutter.material.switch.activeTrackColor}
+  /// {@template material_ui.switch.activeTrackColor}
   /// The color to use on the track when this switch is on.
   /// {@endtemplate}
   ///
@@ -276,7 +291,7 @@ class Switch extends StatelessWidget {
   /// state, it will be used instead of this color.
   final Color? activeTrackColor;
 
-  /// {@template flutter.material.switch.inactiveThumbColor}
+  /// {@template material_ui.switch.inactiveThumbColor}
   /// The color to use on the thumb when this switch is off.
   /// {@endtemplate}
   ///
@@ -286,7 +301,7 @@ class Switch extends StatelessWidget {
   /// used instead of this color.
   final Color? inactiveThumbColor;
 
-  /// {@template flutter.material.switch.inactiveTrackColor}
+  /// {@template material_ui.switch.inactiveTrackColor}
   /// The color to use on the track when this switch is off.
   /// {@endtemplate}
   ///
@@ -296,29 +311,19 @@ class Switch extends StatelessWidget {
   /// used instead of this color.
   final Color? inactiveTrackColor;
 
-  /// {@template flutter.material.switch.activeThumbImage}
-  /// An image to use on the thumb of this switch when the switch is on.
-  /// {@endtemplate}
+  /// {@macro cupertino_ui.switch.activeThumbImage}
   final ImageProvider? activeThumbImage;
 
-  /// {@template flutter.material.switch.onActiveThumbImageError}
-  /// An optional error callback for errors emitted when loading
-  /// [activeThumbImage].
-  /// {@endtemplate}
+  /// {@macro cupertino_ui.switch.onActiveThumbImageError}
   final ImageErrorListener? onActiveThumbImageError;
 
-  /// {@template flutter.material.switch.inactiveThumbImage}
-  /// An image to use on the thumb of this switch when the switch is off.
-  /// {@endtemplate}
+  /// {@macro cupertino_ui.switch.inactiveThumbImage}
   final ImageProvider? inactiveThumbImage;
 
-  /// {@template flutter.material.switch.onInactiveThumbImageError}
-  /// An optional error callback for errors emitted when loading
-  /// [inactiveThumbImage].
-  /// {@endtemplate}
+  /// {@macro cupertino_ui.switch.onInactiveThumbImageError}
   final ImageErrorListener? onInactiveThumbImageError;
 
-  /// {@template flutter.material.switch.thumbColor}
+  /// {@template material_ui.switch.thumbColor}
   /// The color of this [Switch]'s thumb.
   ///
   /// Resolved in the following states:
@@ -327,29 +332,15 @@ class Switch extends StatelessWidget {
   ///  * [WidgetState.focused].
   ///  * [WidgetState.disabled].
   ///
-  // TODO(framework): Replace the following block with a blue example container
-  // when it's supported. https://github.com/dart-lang/dartdoc/issues/4243
-  // TODO(framework): Add unit tests to this code snippet.
-  // https://github.com/flutter/flutter/issues/188530
+  /// <callout-box>
   ///
   /// This example resolves the [thumbColor] based on the current
   /// [WidgetState] of the [Switch], providing a different [Color] when it is
   /// [WidgetState.disabled].
   ///
-  /// ```dart
-  /// Switch(
-  ///   value: true,
-  ///   onChanged: (bool value) { },
-  ///   thumbColor: WidgetStateProperty.resolveWith<Color>((Set<WidgetState> states) {
-  ///     if (states.contains(WidgetState.disabled)) {
-  ///       return Colors.orange.withValues(alpha: .48);
-  ///     }
-  ///     return Colors.orange;
-  ///   }),
-  /// )
-  /// ```
+  /// {@example /example/lib/switch/switch.snippet.0.dart#body indent=strip}
   ///
-  // TODO(framework): End of the blue example container.
+  /// </callout-box>
   /// {@endtemplate}
   ///
   /// If null, then the value of [activeThumbColor] is used in the selected
@@ -364,7 +355,7 @@ class Switch extends StatelessWidget {
   /// | Disabled | `Colors.grey.shade400`            | `Colors.grey.shade800`            |
   final WidgetStateProperty<Color?>? thumbColor;
 
-  /// {@template flutter.material.switch.trackColor}
+  /// {@template material_ui.switch.trackColor}
   /// The color of this [Switch]'s track.
   ///
   /// Resolved in the following states:
@@ -373,29 +364,15 @@ class Switch extends StatelessWidget {
   ///  * [WidgetState.focused].
   ///  * [WidgetState.disabled].
   ///
-  // TODO(framework): Replace the following block with a blue example container
-  // when it's supported. https://github.com/dart-lang/dartdoc/issues/4243
-  // TODO(framework): Add unit tests to this code snippet.
-  // https://github.com/flutter/flutter/issues/188530
+  /// <callout-box>
   ///
   /// This example resolves the [trackColor] based on the current
   /// [WidgetState] of the [Switch], providing a different [Color] when it is
   /// [WidgetState.disabled].
   ///
-  /// ```dart
-  /// Switch(
-  ///   value: true,
-  ///   onChanged: (bool value) { },
-  ///   thumbColor: WidgetStateProperty.resolveWith<Color>((Set<WidgetState> states) {
-  ///     if (states.contains(WidgetState.disabled)) {
-  ///       return Colors.orange.withValues(alpha: .48);
-  ///     }
-  ///     return Colors.orange;
-  ///   }),
-  /// )
-  /// ```
+  /// {@example /example/lib/switch/switch.snippet.1.dart#body indent=strip}
   ///
-  // TODO(framework): End of the blue example container.
+  /// </callout-box>
   /// {@endtemplate}
   ///
   /// If null, then the value of [activeTrackColor] is used in the selected
@@ -410,7 +387,7 @@ class Switch extends StatelessWidget {
   /// | Disabled | `Colors.black12`                | `Colors.white10`                |
   final WidgetStateProperty<Color?>? trackColor;
 
-  /// {@template flutter.material.switch.trackOutlineColor}
+  /// {@template material_ui.switch.trackOutlineColor}
   /// The outline color of this [Switch]'s track.
   ///
   /// Resolved in the following states:
@@ -419,29 +396,15 @@ class Switch extends StatelessWidget {
   ///  * [WidgetState.focused].
   ///  * [WidgetState.disabled].
   ///
-  // TODO(framework): Replace the following block with a blue example container
-  // when it's supported. https://github.com/dart-lang/dartdoc/issues/4243
-  // TODO(framework): Add unit tests to this code snippet.
-  // https://github.com/flutter/flutter/issues/188530
+  /// <callout-box>
   ///
   /// This example resolves the [trackOutlineColor] based on the current
   /// [WidgetState] of the [Switch], providing a different [Color] when it is
   /// [WidgetState.disabled].
   ///
-  /// ```dart
-  /// Switch(
-  ///   value: true,
-  ///   onChanged: (bool value) { },
-  ///   trackOutlineColor: WidgetStateProperty.resolveWith<Color?>((Set<WidgetState> states) {
-  ///     if (states.contains(WidgetState.disabled)) {
-  ///       return Colors.orange.withValues(alpha: .48);
-  ///     }
-  ///     return null; // Use the default color.
-  ///   }),
-  /// )
-  /// ```
+  /// {@example /example/lib/switch/switch.snippet.2.dart#body indent=strip}
   ///
-  // TODO(framework): End of the blue example container.
+  /// </callout-box>
   /// {@endtemplate}
   ///
   /// In Material 3, the outline color defaults to transparent in the selected
@@ -449,7 +412,7 @@ class Switch extends StatelessWidget {
   /// the [Switch] track has no outline by default.
   final WidgetStateProperty<Color?>? trackOutlineColor;
 
-  /// {@template flutter.material.switch.trackOutlineWidth}
+  /// {@template material_ui.switch.trackOutlineWidth}
   /// The outline width of this [Switch]'s track.
   ///
   /// Resolved in the following states:
@@ -458,35 +421,21 @@ class Switch extends StatelessWidget {
   ///  * [WidgetState.focused].
   ///  * [WidgetState.disabled].
   ///
-  // TODO(framework): Replace the following block with a blue example container
-  // when it's supported. https://github.com/dart-lang/dartdoc/issues/4243
-  // TODO(framework): Add unit tests to this code snippet.
-  // https://github.com/flutter/flutter/issues/188530
+  /// <callout-box>
   ///
   /// This example resolves the [trackOutlineWidth] based on the current
   /// [WidgetState] of the [Switch], providing a different outline width when it is
   /// [WidgetState.disabled].
   ///
-  /// ```dart
-  /// Switch(
-  ///   value: true,
-  ///   onChanged: (bool value) { },
-  ///   trackOutlineWidth: WidgetStateProperty.resolveWith<double?>((Set<WidgetState> states) {
-  ///     if (states.contains(WidgetState.disabled)) {
-  ///       return 5.0;
-  ///     }
-  ///     return null; // Use the default width.
-  ///   }),
-  /// )
-  /// ```
+  /// {@example /example/lib/switch/switch.snippet.3.dart#body indent=strip}
   ///
-  // TODO(framework): End of the blue example container.
+  /// </callout-box>
   /// {@endtemplate}
   ///
   /// Defaults to 2.0.
   final WidgetStateProperty<double?>? trackOutlineWidth;
 
-  /// {@template flutter.material.switch.thumbIcon}
+  /// {@template material_ui.switch.thumbIcon}
   /// The icon to use on the thumb of this switch
   ///
   /// Resolved in the following states:
@@ -495,36 +444,22 @@ class Switch extends StatelessWidget {
   ///  * [WidgetState.focused].
   ///  * [WidgetState.disabled].
   ///
-  // TODO(framework): Replace the following block with a blue example container
-  // when it's supported. https://github.com/dart-lang/dartdoc/issues/4243
-  // TODO(framework): Add unit tests to this code snippet.
-  // https://github.com/flutter/flutter/issues/188530
+  /// <callout-box>
   ///
   /// This example resolves the [thumbIcon] based on the current
   /// [WidgetState] of the [Switch], providing a different [Icon] when it is
   /// [WidgetState.disabled].
   ///
-  /// ```dart
-  /// Switch(
-  ///   value: true,
-  ///   onChanged: (bool value) { },
-  ///   thumbIcon: WidgetStateProperty.resolveWith<Icon?>((Set<WidgetState> states) {
-  ///     if (states.contains(WidgetState.disabled)) {
-  ///       return const Icon(Icons.close);
-  ///     }
-  ///     return null; // All other states will use the default thumbIcon.
-  ///   }),
-  /// )
-  /// ```
+  /// {@example /example/lib/switch/switch.snippet.4.dart#body indent=strip}
   ///
-  // TODO(framework): End of the blue example container.
+  /// </callout-box>
   /// {@endtemplate}
   ///
   /// If null, then the value of [SwitchThemeData.thumbIcon] is used. If this is also null,
   /// then the [Switch] does not have any icons on the thumb.
   final WidgetStateProperty<Icon?>? thumbIcon;
 
-  /// {@template flutter.material.switch.materialTapTargetSize}
+  /// {@template material_ui.switch.materialTapTargetSize}
   /// Configures the minimum size of the tap target.
   /// {@endtemplate}
   ///
@@ -539,13 +474,13 @@ class Switch extends StatelessWidget {
 
   final _SwitchType _switchType;
 
-  /// {@macro flutter.cupertino.CupertinoSwitch.applyTheme}
+  /// {@macro cupertino_ui.CupertinoSwitch.applyTheme}
   final bool? applyCupertinoTheme;
 
-  /// {@macro flutter.cupertino.CupertinoSwitch.dragStartBehavior}
+  /// {@macro cupertino_ui.CupertinoSwitch.dragStartBehavior}
   final DragStartBehavior dragStartBehavior;
 
-  /// {@template flutter.material.switch.mouseCursor}
+  /// {@template material_ui.switch.mouseCursor}
   /// The cursor for a mouse pointer when it enters or is hovering over the
   /// widget.
   ///
@@ -582,7 +517,7 @@ class Switch extends StatelessWidget {
   /// [ThemeData.hoverColor] is used.
   final Color? hoverColor;
 
-  /// {@template flutter.material.switch.overlayColor}
+  /// {@template material_ui.switch.overlayColor}
   /// The color for the switch's [Material].
   ///
   /// Resolves in the following states:
@@ -601,7 +536,7 @@ class Switch extends StatelessWidget {
   /// is used in the pressed, focused and hovered state.
   final WidgetStateProperty<Color?>? overlayColor;
 
-  /// {@template flutter.material.switch.splashRadius}
+  /// {@template material_ui.switch.splashRadius}
   /// The splash radius of the circular [Material] ink response.
   /// {@endtemplate}
   ///
@@ -612,7 +547,7 @@ class Switch extends StatelessWidget {
   /// {@macro flutter.widgets.Focus.focusNode}
   final FocusNode? focusNode;
 
-  /// {@macro flutter.material.inkwell.onFocusChange}
+  /// {@macro cupertino_ui.inkwell.onFocusChange}
   final ValueChanged<bool>? onFocusChange;
 
   /// {@macro flutter.widgets.Focus.autofocus}
@@ -1057,9 +992,10 @@ class _MaterialSwitchState extends State<_MaterialSwitch>
         widget.focusColor ??
         switchTheme.overlayColor?.resolve(focusedStates) ??
         (applyCupertinoTheme
-            ? HSLColor.fromColor(
-                cupertinoPrimaryColor.withOpacity(0.80),
-              ).withLightness(0.69).withSaturation(0.835).toColor()
+            ? HSLColor.fromColor(cupertinoPrimaryColor.withOpacity(0.80))
+                  .withLightness(0.69)
+                  .withSaturation(0.835)
+                  .toColor()
             : null) ??
         defaults.overlayColor!.resolve(focusedStates)!;
 

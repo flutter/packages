@@ -1,3 +1,16 @@
+## 0.5.3+1
+
+* Updates Robolectric to 4.17 and adds the JVM arguments it requires for unit tests.
+* Updates minimum supported SDK version to Flutter 3.41/Dart 3.11.
+
+## 0.5.3
+
+* Updates pigeon dev_dependency to ^27.3.2 for analyzer 14 compatibility.
+
+## 0.5.2
+
+* Adds support for passing an obfuscated profile ID in `GooglePlayPurchaseParam`.
+
 ## 0.5.1
 
 * Adds support to overlay billing related messages. See `InAppPurchaseAndroidPlatformAddition.showInAppMessages`.

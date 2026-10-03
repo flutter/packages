@@ -39,21 +39,20 @@ export 'package:flutter/services.dart'
 // late FocusNode myFocusNode;
 
 /// Signature for the [TextField.buildCounter] callback.
-typedef InputCounterWidgetBuilder =
-    Widget? Function(
-      /// The build context for the TextField.
-      BuildContext context, {
+typedef InputCounterWidgetBuilder = Widget? Function(
+  /// The build context for the TextField.
+  BuildContext context, {
 
-      /// The length of the string currently in the input.
-      required int currentLength,
+  /// The length of the string currently in the input.
+  required int currentLength,
 
-      /// The maximum string length that can be entered into the TextField.
-      required int? maxLength,
+  /// The maximum string length that can be entered into the TextField.
+  required int? maxLength,
 
-      /// Whether or not the TextField is currently focused. Mainly provided for
-      /// the [liveRegion] parameter in the [Semantics] widget for accessibility.
-      required bool isFocused,
-    });
+  /// Whether or not the TextField is currently focused. Mainly provided for
+  /// the `liveRegion` parameter in the [Semantics] widget for accessibility.
+  required bool isFocused,
+});
 
 class _TextFieldSelectionGestureDetectorBuilder extends TextSelectionGestureDetectorBuilder {
   _TextFieldSelectionGestureDetectorBuilder({required _TextFieldState state})
@@ -99,12 +98,7 @@ class _TextFieldSelectionGestureDetectorBuilder extends TextSelectionGestureDete
 /// To integrate the [TextField] into a [Form] with other [FormField] widgets,
 /// consider using [TextFormField].
 ///
-/// {@template flutter.material.textfield.wantKeepAlive}
-/// When the widget has focus, it will prevent itself from disposing via its
-/// underlying [EditableText]'s [AutomaticKeepAliveClientMixin.wantKeepAlive] in
-/// order to avoid losing the selection. Removing the focus will allow it to be
-/// disposed.
-/// {@endtemplate}
+/// {@macro cupertino_ui.textfield.wantKeepAlive}
 ///
 /// Remember to call [TextEditingController.dispose] on the [TextEditingController]
 /// when it is no longer needed. This will ensure we discard any resources used
@@ -117,16 +111,19 @@ class _TextFieldSelectionGestureDetectorBuilder extends TextSelectionGestureDete
 ///
 /// ## Obscured Input
 ///
-// TODO(framework): Replace the following block with a @dartpad directive
-// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// <callout-box>
 ///
 /// This example shows how to create a [TextField] that will obscure input. The
 /// [InputDecoration] surrounds the field in a border using [OutlineInputBorder]
 /// and adds a label.
 ///
-/// {@example /example/lib/text_field/text_field.0.dart}
+// TODO(framework): Replace the following block with a @dartpad directive
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// {@macro material_ui.dartpad_guide}
 ///
-// TODO(framework): End of the @dartpad directive.
+/// {@example /example/lib/text_field/text_field.0.dart#body}
+///
+/// </callout-box>
 ///
 /// ## Reading values
 ///
@@ -134,15 +131,18 @@ class _TextFieldSelectionGestureDetectorBuilder extends TextSelectionGestureDete
 /// callback. This callback is applied to the text field's current value when
 /// the user finishes editing.
 ///
-// TODO(framework): Replace the following block with a @dartpad directive
-// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// <callout-box>
 ///
 /// This sample shows how to get a value from a TextField via the [onSubmitted]
 /// callback.
 ///
-/// {@example /example/lib/text_field/text_field.1.dart}
+// TODO(framework): Replace the following block with a @dartpad directive
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// {@macro material_ui.dartpad_guide}
 ///
-// TODO(framework): End of the @dartpad directive.
+/// {@example /example/lib/text_field/text_field.1.dart#body}
+///
+/// </callout-box>
 ///
 /// {@macro flutter.widgets.EditableText.lifeCycle}
 ///
@@ -170,15 +170,18 @@ class _TextFieldSelectionGestureDetectorBuilder extends TextSelectionGestureDete
 ///
 /// {@macro flutter.widgets.editableText.accessibility}
 ///
-// TODO(framework): Replace the following block with a @dartpad directive
-// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// <callout-box>
 ///
 /// This sample shows how to style a text field to match a filled or outlined
 /// Material Design 3 text field.
 ///
-/// {@example /example/lib/text_field/text_field.2.dart}
+// TODO(framework): Replace the following block with a @dartpad directive
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// {@macro material_ui.dartpad_guide}
 ///
-// TODO(framework): End of the @dartpad directive.
+/// {@example /example/lib/text_field/text_field.2.dart#body}
+///
+/// </callout-box>
 ///
 /// ## Scrolling Considerations
 ///
@@ -188,16 +191,19 @@ class _TextFieldSelectionGestureDetectorBuilder extends TextSelectionGestureDete
 /// [TextField] to ensure proper scroll coordination for [TextField] and its
 /// components like [TextSelectionOverlay].
 ///
-// TODO(framework): Replace the following block with a @dartpad directive
-// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// <callout-box>
 ///
 /// This sample demonstrates how to use the [Shortcuts] and [Actions] widgets
 /// to create a custom `Shift+Enter` keyboard shortcut for inserting a new line
 /// in a [TextField].
 ///
-/// {@example /example/lib/text_field/text_field.3.dart}
+// TODO(framework): Replace the following block with a @dartpad directive
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// {@macro material_ui.dartpad_guide}
 ///
-// TODO(framework): End of the @dartpad directive.
+/// {@example /example/lib/text_field/text_field.3.dart#body}
+///
+/// </callout-box>
 ///
 /// See also:
 ///
@@ -359,9 +365,9 @@ class TextField extends StatefulWidget {
        assert(maxLength == null || maxLength == TextField.noMaxLength || maxLength > 0),
        // Assert the following instead of setting it directly to avoid surprising the user by silently changing the value they set.
        assert(
-         !identical(textInputAction, TextInputAction.newline) ||
+         textInputAction != TextInputAction.newline ||
              maxLines == 1 ||
-             !identical(keyboardType, TextInputType.text),
+             keyboardType != TextInputType.text,
          'Use keyboardType TextInputType.multiline when using TextInputAction.newline on a multiline TextField.',
        ),
        keyboardType =
@@ -376,14 +382,17 @@ class TextField extends StatefulWidget {
   ///
   /// {@macro flutter.widgets.magnifier.intro}
   ///
-  // TODO(framework): Replace the following block with a @dartpad directive
-  // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+  /// <callout-box>
   ///
   /// This sample demonstrates how to customize the magnifier that this text field uses.
   ///
-  /// {@example /example/lib/text_field/text_field_magnifier.0.dart}
+  // TODO(framework): Replace the following block with a @dartpad directive
+  // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+  /// {@macro material_ui.dartpad_guide}
   ///
-  // TODO(framework): End of the @dartpad directive.
+  /// {@example /example/lib/text_field/text_field_magnifier.0.dart#body}
+  ///
+  /// </callout-box>
   final TextMagnifierConfiguration? magnifierConfiguration;
 
   /// {@macro flutter.widgets.editableText.groupId}
@@ -439,6 +448,15 @@ class TextField extends StatefulWidget {
   /// By default, draws a horizontal line under the text field but can be
   /// configured to show an icon, label, hint text, and error text.
   ///
+  /// This decoration does not replace the ambient [InputDecorationTheme].
+  /// Instead, it is merged with it by [InputDecoration.applyDefaults]. Only the
+  /// properties that are left null here take their value from the
+  /// [InputDecorationThemeData] returned by [InputDecorationTheme.of], which in
+  /// turn defaults to [ThemeData.inputDecorationTheme]. So, for example, when
+  /// the theme specifies a border, passing an [InputDecoration] that leaves
+  /// [InputDecoration.border] null does not remove that border; pass
+  /// [InputBorder.none] to opt out of it explicitly.
+  ///
   /// Specify null to remove the decoration entirely (including the
   /// extra padding introduced by the decoration to save space for the labels).
   final InputDecoration? decoration;
@@ -446,7 +464,7 @@ class TextField extends StatefulWidget {
   /// {@macro flutter.widgets.editableText.keyboardType}
   final TextInputType keyboardType;
 
-  /// {@template flutter.widgets.TextField.textInputAction}
+  /// {@template material_ui.TextField.textInputAction}
   /// The type of action button to use for the keyboard.
   ///
   /// Defaults to [TextInputAction.newline] if [keyboardType] is
@@ -475,10 +493,22 @@ class TextField extends StatefulWidget {
   /// {@macro flutter.widgets.editableText.textAlign}
   final TextAlign textAlign;
 
-  /// {@macro flutter.material.InputDecorator.textAlignVertical}
+  /// {@macro cupertino_ui.InputDecorator.textAlignVertical}
   final TextAlignVertical? textAlignVertical;
 
   /// {@macro flutter.widgets.editableText.textDirection}
+  ///
+  /// This does not affect the direction of the decoration's
+  /// [InputDecoration.hintText] or [InputDecoration.labelText].
+  ///
+  /// To override the direction for the entire field (including the hint, label,
+  /// and prefix/suffix icons), wrap the [TextField] in a [Directionality] widget.
+  ///
+  /// See also:
+  ///
+  ///  * [InputDecoration.hintTextDirection], which specifically controls the hint.
+  ///  * [InputDecoration.labelTextDirection], which specifically controls the label.
+  ///  * [Directionality], which provides the default direction for the subtree.
   final TextDirection? textDirection;
 
   /// {@macro flutter.widgets.editableText.autofocus}
@@ -597,7 +627,13 @@ class TextField extends StatefulWidget {
   /// {@macro flutter.services.textFormatter.maxLengthEnforcement}
   final MaxLengthEnforcement? maxLengthEnforcement;
 
-  /// {@macro flutter.widgets.editableText.onChanged}
+  /// Called when the user initiates a change to the TextField's
+  /// value: when they have inserted or deleted text.
+  ///
+  /// For more information, see [EditableText.onChanged].
+  // TODO(dkwingsmt): Migrate the doc back to macro
+  // flutter.widgets.editableText.onChanged
+  // https://github.com/flutter/flutter/issues/189629
   ///
   /// See also:
   ///
@@ -724,26 +760,7 @@ class TextField extends StatefulWidget {
   /// {@macro flutter.widgets.editableText.selectionEnabled}
   bool get selectionEnabled => enableInteractiveSelection;
 
-  /// {@template flutter.material.textfield.onTap}
-  /// Called for the first tap in a series of taps.
-  ///
-  /// The text field builds a [GestureDetector] to handle input events like tap,
-  /// to trigger focus requests, to move the caret, adjust the selection, etc.
-  /// Handling some of those events by wrapping the text field with a competing
-  /// GestureDetector is problematic.
-  ///
-  /// To unconditionally handle taps, without interfering with the text field's
-  /// internal gesture detector, provide this callback.
-  ///
-  /// If the text field is created with [enabled] false, taps will not be
-  /// recognized.
-  ///
-  /// To be notified when the text field gains or loses the focus, provide a
-  /// [focusNode] and add a listener to that.
-  ///
-  /// To listen to arbitrary pointer events without competing with the
-  /// text field's internal gesture detector, use a [Listener].
-  /// {@endtemplate}
+  /// {@macro cupertino_ui.textfield.onTap}
   ///
   /// If [onTapAlwaysCalled] is enabled, this will also be called for consecutive
   /// taps.
@@ -757,8 +774,7 @@ class TextField extends StatefulWidget {
 
   /// {@macro flutter.widgets.editableText.onTapOutside}
   ///
-  // TODO(framework): Replace the following block with a @dartpad directive
-  // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+  /// <callout-box>
   ///
   /// This example shows how to use a `TextFieldTapRegion` to wrap a set of
   /// "spinner" buttons that increment and decrement a value in the [TextField]
@@ -767,9 +783,13 @@ class TextField extends StatefulWidget {
   /// This example includes a generic `SpinnerField<T>` class that you can copy
   /// into your own project and customize.
   ///
-  /// {@example /example/lib/text_field/text_field_tap_region.0.dart}
+  // TODO(framework): Replace the following block with a @dartpad directive
+  // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+  /// {@macro material_ui.dartpad_guide}
   ///
-  // TODO(framework): End of the @dartpad directive.
+  /// {@example /example/lib/text_field/text_field_tap_region.0.dart#body}
+  ///
+  /// </callout-box>
   ///
   /// See also:
   ///
@@ -808,8 +828,8 @@ class TextField extends StatefulWidget {
   /// accessibility, but it also needs to be accessible itself. For example,
   /// if returning a Text widget, set the [Text.semanticsLabel] property.
   ///
-  // TODO(framework): Replace the following block with a blue example container
-  // when it's supported. https://github.com/dart-lang/dartdoc/issues/4243
+  /// <callout-box>
+  ///
   // TODO(framework): Add unit tests to this code snippet.
   // https://github.com/flutter/flutter/issues/188530
   ///
@@ -829,7 +849,7 @@ class TextField extends StatefulWidget {
   /// }
   /// ```
   ///
-  // TODO(framework): End of the blue example container.
+  /// </callout-box>
   ///
   /// If buildCounter returns null, then no counter and no Semantics widget will
   /// be created at all.
@@ -845,28 +865,12 @@ class TextField extends StatefulWidget {
   /// {@macro flutter.services.AutofillConfiguration.autofillHints}
   final Iterable<String>? autofillHints;
 
-  /// {@macro flutter.material.Material.clipBehavior}
+  /// {@macro cupertino_ui.Material.clipBehavior}
   ///
   /// Defaults to [Clip.hardEdge].
   final Clip clipBehavior;
 
-  /// {@template flutter.material.textfield.restorationId}
-  /// Restoration ID to save and restore the state of the text field.
-  ///
-  /// If non-null, the text field will persist and restore its current scroll
-  /// offset and - if no [controller] has been provided - the content of the
-  /// text field. If a [controller] has been provided, it is the responsibility
-  /// of the owner of that controller to persist and restore it, e.g. by using
-  /// a [RestorableTextEditingController].
-  ///
-  /// The state of this widget is persisted in a [RestorationBucket] claimed
-  /// from the surrounding [RestorationScope] using the provided restoration ID.
-  ///
-  /// See also:
-  ///
-  ///  * [RestorationManager], which explains how state restoration works in
-  ///    Flutter.
-  /// {@endtemplate}
+  /// {@macro cupertino_ui.textfield.restorationId}
   final String? restorationId;
 
   /// {@macro flutter.widgets.editableText.scribbleEnabled}
@@ -885,7 +889,14 @@ class TextField extends StatefulWidget {
   /// {@macro flutter.services.TextInputConfiguration.enableInlinePrediction}
   final bool? enableInlinePrediction;
 
-  /// {@macro flutter.widgets.editableText.contentInsertionConfiguration}
+  /// Configuration of handler for media content inserted via the system input
+  /// method.
+  ///
+  /// For more information, see
+  /// [EditableText.contentInsertionConfiguration].
+  // TODO(dkwingsmt): Migrate the doc back to macro
+  // flutter.widgets.editableText.contentInsertionConfiguration
+  // https://github.com/flutter/flutter/issues/189629
   final ContentInsertionConfiguration? contentInsertionConfiguration;
 
   /// {@macro flutter.widgets.EditableText.contextMenuBuilder}

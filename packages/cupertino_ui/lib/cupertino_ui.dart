@@ -11,7 +11,7 @@
 /// example the [Material
 /// Design](https://docs.flutter.dev/ui/widgets/material) set.
 ///
-/// {@youtube 560 315 https://www.youtube.com/watch?v=3PdUaidHc-E}
+/// Learn more about Cupertino widgets on the [Flutter YouTube channel](https://www.youtube.com/watch?v=3PdUaidHc-E).
 ///
 /// See also:
 ///
@@ -19,6 +19,7 @@
 ///    for a catalog of all Cupertino widgets.
 ///  * [flutter.dev/widgets](https://docs.flutter.dev/ui/widgets)
 ///    for a catalog of commonly-used Flutter widgets.
+/// @docImport 'package:intl/intl.dart';
 library cupertino_ui;
 
 export 'package:flutter/widgets.dart';
@@ -43,14 +44,17 @@ export 'src/dialog.dart';
 export 'src/expansion_tile.dart';
 export 'src/form_row.dart';
 export 'src/form_section.dart';
+export 'src/global_cupertino_localizations.dart';
 export 'src/icon_theme_data.dart';
 export 'src/icons.dart';
 export 'src/interface_level.dart';
+export 'src/l10n/generated_cupertino_localizations.dart';
 export 'src/list_section.dart';
 export 'src/list_tile.dart';
 export 'src/localizations.dart';
 export 'src/magnifier.dart';
 export 'src/menu_anchor.dart';
+export 'src/migration_utility.dart';
 export 'src/nav_bar.dart';
 export 'src/page_scaffold.dart';
 export 'src/picker.dart';

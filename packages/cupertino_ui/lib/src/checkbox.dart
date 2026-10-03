@@ -48,7 +48,7 @@ const List<double> _kDisabledDarkGradientOpacities = <double>[0.08, 0.14];
 
 /// A macOS style checkbox.
 ///
-/// {@youtube 560 315 https://www.youtube.com/watch?v=ua54JU7k1Us}
+/// Learn more about [CupertinoCheckbox] on the [Flutter YouTube channel](https://www.youtube.com/watch?v=ua54JU7k1Us).
 ///
 /// The checkbox itself does not maintain any state. Instead, when the state of
 /// the checkbox changes, the widget calls the [onChanged] callback. Most
@@ -73,14 +73,17 @@ const List<double> _kDisabledDarkGradientOpacities = <double>[0.08, 0.14];
 ///     [kMinInteractiveDimensionCupertino] pixels to meet accessibility
 ///     guidelines.
 ///
-// TODO(framework): Replace the following block with a @dartpad directive
-// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// <callout-box>
 ///
 /// This example shows a toggleable [CupertinoCheckbox].
 ///
-/// {@example /example/lib/checkbox/cupertino_checkbox.0.dart}
+// TODO(framework): Replace the following block with a @dartpad directive
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// {@macro cupertino_ui.dartpad_guide}
 ///
-// TODO(framework): End of the @dartpad directive.
+/// {@example /example/lib/checkbox/cupertino_checkbox.0.dart#body}
+///
+/// </callout-box>
 ///
 /// See also:
 ///
@@ -196,7 +199,7 @@ class CupertinoCheckbox extends StatefulWidget {
   /// Defaults to [CupertinoColors.activeBlue].
   final Color? activeColor;
 
-  /// {@template flutter.cupertino.CupertinoCheckbox.fillColor}
+  /// {@template cupertino_ui.CupertinoCheckbox.fillColor}
   /// The color used to fill this checkbox.
   ///
   /// Resolves in the following states:
@@ -205,29 +208,15 @@ class CupertinoCheckbox extends StatefulWidget {
   ///  * [WidgetState.focused].
   ///  * [WidgetState.disabled].
   ///
-  // TODO(framework): Replace the following block with a blue example container
-  // when it's supported. https://github.com/dart-lang/dartdoc/issues/4243
-  // TODO(framework): Add unit tests to this code snippet.
-  // https://github.com/flutter/flutter/issues/188530
+  /// <callout-box>
   ///
   /// This example resolves the [fillColor] based on the current [WidgetState]
   /// of the [CupertinoCheckbox], providing a different [Color] when it is
   /// [WidgetState.disabled].
   ///
-  /// ```dart
-  /// CupertinoCheckbox(
-  ///   value: true,
-  ///   onChanged: (_){},
-  ///   fillColor: WidgetStateProperty.resolveWith<Color>((Set<WidgetState> states) {
-  ///     if (states.contains(WidgetState.disabled)) {
-  ///       return Colors.orange.withValues(alpha: .32);
-  ///     }
-  ///     return Colors.orange;
-  ///   })
-  /// )
-  /// ```
+  /// {@example /example/lib/checkbox/cupertino_checkbox.snippet.0.dart#body indent=strip}
   ///
-  // TODO(framework): End of the blue example container.
+  /// </callout-box>
   /// {@endtemplate}
   ///
   /// If [fillColor] resolves to null for the requested state, then the fill color

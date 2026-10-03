@@ -8,6 +8,13 @@ on:
       branch-name:
         required: true
         type: string
+    secrets:
+      USER_NAME:
+        required: true
+      USER_EMAIL:
+        required: true
+      PUB_CREDENTIALS:
+        required: true
 jobs:
   release:
     if: github.repository_owner == 'flutter'
@@ -23,6 +30,7 @@ jobs:
       with:
         fetch-depth: 0 # Fetch all history so the tool can get all the tags to determine version.
         ref: ${{ inputs.branch-name }}
+        persist-credentials: false
     - name: "Install Flutter"
       uses: ./.github/workflows/internals/install_flutter
     - name: Set up tools
@@ -68,6 +76,7 @@ jobs:
 
     - name: run release
       run: |
+        gh auth setup-git
         git config --global user.name "${{ secrets.USER_NAME }}"
         git config --global user.email "${{ secrets.USER_EMAIL }}"
         
@@ -83,4 +92,7 @@ jobs:
           --base-sha=HEAD~ \
           --skip-confirmation \
           --remote=origin
-      env: { PUB_CREDENTIALS: "${{ secrets.PUB_CREDENTIALS }}", INPUTS_BRANCH_NAME: "${{ inputs.branch-name }}" }
+      env:
+        PUB_CREDENTIALS: "${{ secrets.PUB_CREDENTIALS }}"
+        INPUTS_BRANCH_NAME: "${{ inputs.branch-name }}"
+        GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}

@@ -248,6 +248,36 @@ void main() {
         expect(events[4], isA<CameraIdleEvent>());
       });
 
+      testWidgets('emits point of interest tap when click has placeId', (
+        WidgetTester tester,
+      ) async {
+        controller = createController()
+          ..debugSetOverrides(
+            createMap: (_, _) => map,
+            circles: circles,
+            heatmaps: heatmaps,
+            markers: markers,
+            polygons: polygons,
+            polylines: polylines,
+            groundOverlays: groundOverlays,
+          )
+          ..init();
+
+        final Stream<MapEvent<Object?>> capturedEvents = stream.stream.take(1);
+
+        gmaps.event.trigger(
+          map,
+          'click',
+          gmaps.IconMouseEvent(placeId: 'place-123')..latLng = gmaps.LatLng(0, 0),
+        );
+
+        final List<MapEvent<Object?>> events = await capturedEvents.toList();
+
+        expect(events, hasLength(1));
+        expect(events[0], isA<PointOfInterestTapEvent>());
+        expect((events[0] as PointOfInterestTapEvent).value, const PointOfInterestId('place-123'));
+      });
+
       testWidgets('stops listening to map events once disposed', (WidgetTester tester) async {
         controller = createController()
           ..debugSetOverrides(
@@ -495,6 +525,60 @@ void main() {
 
           expect(capturedOptions, isNotNull);
           expect(capturedOptions!.cameraControl, isTrue);
+        });
+
+        testWidgets('translates mapTypeControlEnabled option', (WidgetTester tester) async {
+          gmaps.MapOptions? capturedOptions;
+          controller = createController(
+            mapConfiguration: const MapConfiguration(mapTypeControlEnabled: true),
+          );
+          controller.debugSetOverrides(
+            createMap: (_, gmaps.MapOptions options) {
+              capturedOptions = options;
+              return map;
+            },
+          );
+
+          controller.init();
+
+          expect(capturedOptions, isNotNull);
+          expect(capturedOptions!.mapTypeControl, isTrue);
+        });
+
+        testWidgets('translates fullscreenControlEnabled option', (WidgetTester tester) async {
+          gmaps.MapOptions? capturedOptions;
+          controller = createController(
+            mapConfiguration: const MapConfiguration(fullscreenControlEnabled: true),
+          );
+          controller.debugSetOverrides(
+            createMap: (_, gmaps.MapOptions options) {
+              capturedOptions = options;
+              return map;
+            },
+          );
+
+          controller.init();
+
+          expect(capturedOptions, isNotNull);
+          expect(capturedOptions!.fullscreenControl, isTrue);
+        });
+
+        testWidgets('translates streetViewControlEnabled option', (WidgetTester tester) async {
+          gmaps.MapOptions? capturedOptions;
+          controller = createController(
+            mapConfiguration: const MapConfiguration(streetViewControlEnabled: true),
+          );
+          controller.debugSetOverrides(
+            createMap: (_, gmaps.MapOptions options) {
+              capturedOptions = options;
+              return map;
+            },
+          );
+
+          controller.init();
+
+          expect(capturedOptions, isNotNull);
+          expect(capturedOptions!.streetViewControl, isTrue);
         });
 
         testWidgets('translates webCameraControlPosition option', (WidgetTester tester) async {

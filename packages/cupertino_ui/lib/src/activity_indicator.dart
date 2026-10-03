@@ -19,16 +19,19 @@ const Color _kActiveTickColor = CupertinoDynamicColor.withBrightness(
 
 /// An iOS-style activity indicator that spins clockwise.
 ///
-/// {@youtube 560 315 https://www.youtube.com/watch?v=AENVH-ZqKDQ}
+/// Learn more about [CupertinoActivityIndicator] on the [Flutter YouTube channel](https://www.youtube.com/watch?v=AENVH-ZqKDQ).
 ///
-// TODO(framework): Replace the following block with a @dartpad directive
-// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// <callout-box>
 ///
 /// This example shows how [CupertinoActivityIndicator] can be customized.
 ///
-/// {@example /example/lib/activity_indicator/cupertino_activity_indicator.0.dart}
+// TODO(framework): Replace the following block with a @dartpad directive
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// {@macro cupertino_ui.dartpad_guide}
 ///
-// TODO(framework): End of the @dartpad directive.
+/// {@example /example/lib/activity_indicator/cupertino_activity_indicator.0.dart#body}
+///
+/// </callout-box>
 ///
 /// See also:
 ///
@@ -204,14 +207,17 @@ class _CupertinoActivityIndicatorPainter extends CustomPainter {
 /// The [CupertinoLinearActivityIndicator] is a linear progress bar that
 /// displays a colored bar to indicate the progress of an ongoing task.
 ///
-// TODO(framework): Replace the following block with a @dartpad directive
-// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// <callout-box>
 ///
 /// This example shows how [CupertinoLinearActivityIndicator] can be customized.
 ///
-/// {@example /example/lib/activity_indicator/cupertino_linear_activity_indicator.0.dart}
+// TODO(framework): Replace the following block with a @dartpad directive
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// {@macro cupertino_ui.dartpad_guide}
 ///
-// TODO(framework): End of the @dartpad directive.
+/// {@example /example/lib/activity_indicator/cupertino_linear_activity_indicator.0.dart#body}
+///
+/// </callout-box>
 ///
 /// See also:
 ///
@@ -291,9 +297,8 @@ class _CupertinoLinearActivityIndicator extends CustomPainter {
     // Draw the progress portion of the bar.
     if (progress > 0) {
       canvas.drawRRect(
-        BorderRadius.all(
-          Radius.circular(size.height / 2),
-        ).toRRect(Offset.zero & Size(clampDouble(progress, 0.0, 1.0) * size.width, size.height)),
+        BorderRadius.all(Radius.circular(size.height / 2))
+            .toRRect(Offset.zero & Size(clampDouble(progress, 0.0, 1.0) * size.width, size.height)),
         _progressPaint,
       );
     }

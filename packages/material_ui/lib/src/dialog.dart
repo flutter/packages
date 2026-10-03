@@ -25,6 +25,9 @@ import 'material_localizations.dart';
 import 'text_theme.dart';
 import 'theme.dart';
 
+part 'generated/dialog_defaults_m3.g.dart';
+part 'generated/dialog_fullscreen_defaults_m3.g.dart';
+
 // Examples can assume:
 // enum Department { treasury, state }
 // late BuildContext context;
@@ -38,23 +41,26 @@ const EdgeInsets _defaultInsetPadding = EdgeInsets.symmetric(horizontal: 40.0, v
 /// or [SimpleDialog], which implement specific kinds of Material Design
 /// dialogs.
 ///
-// TODO(framework): Replace the following block with a @dartpad directive
-// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// <callout-box>
 ///
 /// This sample shows the creation of [Dialog] and [Dialog.fullscreen] widgets.
 ///
-/// {@example /example/lib/dialog/dialog.0.dart}
+// TODO(framework): Replace the following block with a @dartpad directive
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// {@macro material_ui.dartpad_guide}
 ///
-// TODO(framework): End of the @dartpad directive.
+/// {@example /example/lib/dialog/dialog.0.dart#body}
 ///
-/// ## Contraints
+/// </callout-box>
+///
+/// ## Constraints
 /// The Material 3 guideline recommends that a dialog should have a maximal width of 560dp.
 /// For historical reasons, Flutter's [Dialog] widget does not come with this constraint by default.
 /// For applications targeting large screens such as desktop or Web, it is recommended to
 /// set the [constraints] property.
 ///
-// TODO(framework): Replace the following block with a blue example container
-// when it's supported. https://github.com/dart-lang/dartdoc/issues/4243
+/// <callout-box>
+///
 // TODO(framework): Add unit tests to this code snippet.
 // https://github.com/flutter/flutter/issues/188530
 ///
@@ -64,7 +70,7 @@ const EdgeInsets _defaultInsetPadding = EdgeInsets.symmetric(horizontal: 40.0, v
 /// const Dialog(constraints: BoxConstraints(maxWidth: 560, minHeight: 280));
 /// ```
 ///
-// TODO(framework): End of the blue example container.
+/// </callout-box>
 ///
 /// See also:
 ///
@@ -114,7 +120,7 @@ class Dialog extends StatelessWidget {
        constraints = null,
        _fullscreen = true;
 
-  /// {@template flutter.material.dialog.backgroundColor}
+  /// {@template material_ui.dialog.backgroundColor}
   /// The background color of the surface of this [Dialog].
   ///
   /// This sets the [Material.color] on this [Dialog]'s [Material].
@@ -128,7 +134,7 @@ class Dialog extends StatelessWidget {
   /// {@endtemplate}
   final Color? backgroundColor;
 
-  /// {@template flutter.material.dialog.elevation}
+  /// {@template material_ui.dialog.elevation}
   /// The z-coordinate of this [Dialog].
   ///
   /// Controls how far above the parent the dialog will appear. Elevation is
@@ -150,7 +156,7 @@ class Dialog extends StatelessWidget {
   /// {@endtemplate}
   final double? elevation;
 
-  /// {@template flutter.material.dialog.shadowColor}
+  /// {@template material_ui.dialog.shadowColor}
   /// The color used to paint a drop shadow under the dialog's [Material],
   /// which reflects the dialog's [elevation].
   ///
@@ -168,7 +174,7 @@ class Dialog extends StatelessWidget {
   /// {@endtemplate}
   final Color? shadowColor;
 
-  /// {@template flutter.material.dialog.surfaceTintColor}
+  /// {@template material_ui.dialog.surfaceTintColor}
   /// The color used as a surface tint overlay on the dialog's background color,
   /// which reflects the dialog's [elevation].
   ///
@@ -192,24 +198,13 @@ class Dialog extends StatelessWidget {
   /// {@endtemplate}
   final Color? surfaceTintColor;
 
-  /// {@template flutter.material.dialog.insetAnimationDuration}
-  /// The duration of the animation to show when the system keyboard intrudes
-  /// into the space that the dialog is placed in.
-  ///
-  /// Defaults to 100 milliseconds when [Dialog] is used, and [Duration.zero]
-  /// when [Dialog.fullscreen] is used.
-  /// {@endtemplate}
+  /// {@macro cupertino_ui.dialog.insetAnimationDuration}
   final Duration insetAnimationDuration;
 
-  /// {@template flutter.material.dialog.insetAnimationCurve}
-  /// The curve to use for the animation shown when the system keyboard intrudes
-  /// into the space that the dialog is placed in.
-  ///
-  /// Defaults to [Curves.decelerate].
-  /// {@endtemplate}
+  /// {@macro cupertino_ui.dialog.insetAnimationCurve}
   final Curve insetAnimationCurve;
 
-  /// {@template flutter.material.dialog.insetPadding}
+  /// {@template material_ui.dialog.insetPadding}
   /// The amount of padding added to [MediaQueryData.viewInsets] on the outside
   /// of the dialog. This defines the minimum space between the screen's edges
   /// and the dialog.
@@ -218,7 +213,7 @@ class Dialog extends StatelessWidget {
   /// {@endtemplate}
   final EdgeInsets? insetPadding;
 
-  /// {@template flutter.material.dialog.clipBehavior}
+  /// {@template material_ui.dialog.clipBehavior}
   /// Controls how the contents of the dialog are clipped (or not) to the given
   /// [shape].
   ///
@@ -230,7 +225,7 @@ class Dialog extends StatelessWidget {
   /// {@endtemplate}
   final Clip? clipBehavior;
 
-  /// {@template flutter.material.dialog.shape}
+  /// {@template material_ui.dialog.shape}
   /// The shape of this dialog's border.
   ///
   /// Defines the dialog's [Material.shape].
@@ -239,7 +234,7 @@ class Dialog extends StatelessWidget {
   /// {@endtemplate}
   final ShapeBorder? shape;
 
-  /// {@template flutter.material.dialog.alignment}
+  /// {@template material_ui.dialog.alignment}
   /// How to align the [Dialog].
   ///
   /// If null, then [DialogThemeData.alignment] is used. If that is also null, the
@@ -260,7 +255,7 @@ class Dialog extends StatelessWidget {
   /// Defaults to [SemanticsRole.dialog].
   final SemanticsRole semanticsRole;
 
-  /// {@template flutter.material.dialog.constraints}
+  /// {@template material_ui.dialog.constraints}
   /// Constrains the size of the dialog.
   ///
   /// If null, then [DialogThemeData.constraints] is used. If that is also null, the
@@ -335,7 +330,7 @@ class Dialog extends StatelessWidget {
 /// title and an optional list of actions. The title is displayed above the
 /// content and the actions are displayed below the content.
 ///
-/// {@youtube 560 315 https://www.youtube.com/watch?v=75CsnyRXf5I}
+/// Learn more about [AlertDialog] on the [Flutter YouTube channel](https://www.youtube.com/watch?v=75CsnyRXf5I).
 ///
 /// For dialogs that offer the user a choice between several options, consider
 /// using a [SimpleDialog].
@@ -345,8 +340,8 @@ class Dialog extends StatelessWidget {
 ///
 /// {@animation 350 622 https://flutter.github.io/assets-for-api-docs/assets/material/alert_dialog.mp4}
 ///
-// TODO(framework): Replace the following block with a blue example container
-// when it's supported. https://github.com/dart-lang/dartdoc/issues/4243
+/// <callout-box>
+///
 // TODO(framework): Add unit tests to this code snippet.
 // https://github.com/flutter/flutter/issues/188530
 ///
@@ -383,28 +378,34 @@ class Dialog extends StatelessWidget {
 /// }
 /// ```
 ///
-// TODO(framework): End of the blue example container.
+/// </callout-box>
 ///
-// TODO(framework): Replace the following block with a @dartpad directive
-// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// <callout-box>
 ///
 /// This demo shows a [TextButton] which when pressed, calls [showDialog]. When called, this method
 /// displays a Material dialog above the current contents of the app and returns
 /// a [Future] that completes when the dialog is dismissed.
 ///
-/// {@example /example/lib/dialog/alert_dialog.0.dart}
-///
-// TODO(framework): End of the @dartpad directive.
-///
 // TODO(framework): Replace the following block with a @dartpad directive
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// {@macro material_ui.dartpad_guide}
+///
+/// {@example /example/lib/dialog/alert_dialog.0.dart#body}
+///
+/// </callout-box>
+///
+/// <callout-box>
 ///
 /// This sample shows the creation of [AlertDialog], as described in:
 /// https://m3.material.io/components/dialogs/overview
 ///
-/// {@example /example/lib/dialog/alert_dialog.1.dart}
+// TODO(framework): Replace the following block with a @dartpad directive
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// {@macro material_ui.dartpad_guide}
 ///
-// TODO(framework): End of the @dartpad directive.
+/// {@example /example/lib/dialog/alert_dialog.1.dart#body}
+///
+/// </callout-box>
 ///
 /// ## Alert dialogs and scrolling
 ///
@@ -490,8 +491,7 @@ class AlertDialog extends StatelessWidget {
   ///
   /// The target platform is based on the current [Theme]: [ThemeData.platform].
   ///
-  // TODO(framework): Replace the following block with a @dartpad directive
-  // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+  /// <callout-box>
   ///
   /// This demo shows a [TextButton] which when pressed, calls [showAdaptiveDialog].
   /// When called, this method displays an adaptive dialog above the current
@@ -500,9 +500,13 @@ class AlertDialog extends StatelessWidget {
   /// [CupertinoDialogAction] is conditionally used as the child to show more
   /// platform specific design.
   ///
-  /// {@example /example/lib/dialog/adaptive_alert_dialog.0.dart}
+  // TODO(framework): Replace the following block with a @dartpad directive
+  // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+  /// {@macro material_ui.dartpad_guide}
   ///
-  // TODO(framework): End of the @dartpad directive.
+  /// {@example /example/lib/dialog/adaptive_alert_dialog.0.dart#body}
+  ///
+  /// </callout-box>
   const factory AlertDialog.adaptive({
     Key? key,
     Widget? icon,
@@ -646,8 +650,8 @@ class AlertDialog extends StatelessWidget {
   ///
   /// If there are no [actions], then no padding will be included.
   ///
-  // TODO(framework): Replace the following block with a blue example container
-  // when it's supported. https://github.com/dart-lang/dartdoc/issues/4243
+  /// <callout-box>
+  ///
   // TODO(framework): Add unit tests to this code snippet.
   // https://github.com/flutter/flutter/issues/188530
   ///
@@ -664,7 +668,7 @@ class AlertDialog extends StatelessWidget {
   /// )
   /// ```
   ///
-  // TODO(framework): End of the blue example container.
+  /// </callout-box>
   ///
   /// See also:
   ///
@@ -736,16 +740,16 @@ class AlertDialog extends StatelessWidget {
   /// 8.0 logical pixels on the left and right.
   final EdgeInsetsGeometry? buttonPadding;
 
-  /// {@macro flutter.material.dialog.backgroundColor}
+  /// {@macro material_ui.dialog.backgroundColor}
   final Color? backgroundColor;
 
-  /// {@macro flutter.material.dialog.elevation}
+  /// {@macro material_ui.dialog.elevation}
   final double? elevation;
 
-  /// {@macro flutter.material.dialog.shadowColor}
+  /// {@macro material_ui.dialog.shadowColor}
   final Color? shadowColor;
 
-  /// {@macro flutter.material.dialog.surfaceTintColor}
+  /// {@macro material_ui.dialog.surfaceTintColor}
   final Color? surfaceTintColor;
 
   /// The semantic label of the dialog used by accessibility frameworks to
@@ -763,19 +767,19 @@ class AlertDialog extends StatelessWidget {
   ///    value is used.
   final String? semanticLabel;
 
-  /// {@macro flutter.material.dialog.insetPadding}
+  /// {@macro material_ui.dialog.insetPadding}
   final EdgeInsets? insetPadding;
 
-  /// {@macro flutter.material.dialog.clipBehavior}
+  /// {@macro material_ui.dialog.clipBehavior}
   final Clip? clipBehavior;
 
-  /// {@macro flutter.material.dialog.shape}
+  /// {@macro material_ui.dialog.shape}
   final ShapeBorder? shape;
 
-  /// {@macro flutter.material.dialog.alignment}
+  /// {@macro material_ui.dialog.alignment}
   final AlignmentGeometry? alignment;
 
-  /// {@macro flutter.material.dialog.constraints}
+  /// {@macro material_ui.dialog.constraints}
   final BoxConstraints? constraints;
 
   /// Determines whether the [title] and [content] widgets are wrapped in a
@@ -1061,8 +1065,8 @@ class _AdaptiveAlertDialog extends AlertDialog {
 /// title and the first option, and 24 pixels of spacing between the last option
 /// and the bottom of the dialog.
 ///
-// TODO(framework): Replace the following block with a blue example container
-// when it's supported. https://github.com/dart-lang/dartdoc/issues/4243
+/// <callout-box>
+///
 // TODO(framework): Add unit tests to this code snippet.
 // https://github.com/flutter/flutter/issues/188530
 ///
@@ -1073,7 +1077,7 @@ class _AdaptiveAlertDialog extends AlertDialog {
 /// )
 /// ```
 ///
-// TODO(framework): End of the blue example container.
+/// </callout-box>
 ///
 /// See also:
 ///
@@ -1133,8 +1137,8 @@ class SimpleDialogOption extends StatelessWidget {
 ///
 /// {@animation 350 622 https://flutter.github.io/assets-for-api-docs/assets/material/simple_dialog.mp4}
 ///
-// TODO(framework): Replace the following block with a blue example container
-// when it's supported. https://github.com/dart-lang/dartdoc/issues/4243
+/// <callout-box>
+///
 // TODO(framework): Add unit tests to this code snippet.
 // https://github.com/flutter/flutter/issues/188530
 ///
@@ -1183,7 +1187,7 @@ class SimpleDialogOption extends StatelessWidget {
 /// }
 /// ```
 ///
-// TODO(framework): End of the blue example container.
+/// </callout-box>
 ///
 /// See also:
 ///
@@ -1259,16 +1263,16 @@ class SimpleDialog extends StatelessWidget {
   /// the top padding ends up being 24 pixels.
   final EdgeInsetsGeometry contentPadding;
 
-  /// {@macro flutter.material.dialog.backgroundColor}
+  /// {@macro material_ui.dialog.backgroundColor}
   final Color? backgroundColor;
 
-  /// {@macro flutter.material.dialog.elevation}
+  /// {@macro material_ui.dialog.elevation}
   final double? elevation;
 
-  /// {@macro flutter.material.dialog.shadowColor}
+  /// {@macro material_ui.dialog.shadowColor}
   final Color? shadowColor;
 
-  /// {@macro flutter.material.dialog.surfaceTintColor}
+  /// {@macro material_ui.dialog.surfaceTintColor}
   final Color? surfaceTintColor;
 
   /// Style for the text in the [children] of this [SimpleDialog].
@@ -1291,19 +1295,19 @@ class SimpleDialog extends StatelessWidget {
   ///    value is used.
   final String? semanticLabel;
 
-  /// {@macro flutter.material.dialog.insetPadding}
+  /// {@macro material_ui.dialog.insetPadding}
   final EdgeInsets? insetPadding;
 
-  /// {@macro flutter.material.dialog.clipBehavior}
+  /// {@macro material_ui.dialog.clipBehavior}
   final Clip? clipBehavior;
 
-  /// {@macro flutter.material.dialog.shape}
+  /// {@macro material_ui.dialog.shape}
   final ShapeBorder? shape;
 
-  /// {@macro flutter.material.dialog.shape}
+  /// {@macro material_ui.dialog.shape}
   final AlignmentGeometry? alignment;
 
-  /// {@macro flutter.material.dialog.constraints}
+  /// {@macro material_ui.dialog.constraints}
   final BoxConstraints? constraints;
 
   @override
@@ -1439,8 +1443,7 @@ class _FullWindowDialogWrapper extends StatelessWidget {
       insetPadding: EdgeInsets.zero,
       shape: const RoundedRectangleBorder(), // No rounded corners.
       alignment: Alignment.topLeft, // Align to top-left so it fills from corner.
-      constraints:
-          const BoxConstraints.expand(), // Remove default constraints so dialog can expand to fill available space.
+      constraints: const BoxConstraints.expand(), // Remove default constraints so dialog can expand to fill available space.
     );
 
     return DialogTheme(
@@ -1591,10 +1594,7 @@ class _DialogContentPage extends Page<void> {
 /// argument is ignored as dialogs are displayed in their own windows which
 /// manage focus traversal independently.
 ///
-/// {@template flutter.material.dialog.requestFocus}
-/// The `requestFocus` argument is used to specify whether the dialog should
-/// request focus when shown.
-/// {@endtemplate}
+/// {@macro cupertino_ui.dialog.requestFocus}
 /// {@macro flutter.widgets.navigator.Route.requestFocus}
 /// If windowing is enabled via `flutter config --enable-windowing`, then this
 /// argument is ignored as dialogs are displayed in their own windows which are
@@ -1609,24 +1609,30 @@ class _DialogContentPage extends Page<void> {
 /// Returns a [Future] that resolves to the value (if any) that was passed to
 /// [Navigator.pop] when the dialog was closed.
 ///
-// TODO(framework): Replace the following block with a @dartpad directive
-// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// <callout-box>
 ///
 /// This sample demonstrates how to use [showDialog] to display a dialog box.
 ///
-/// {@example /example/lib/dialog/show_dialog.0.dart}
-///
-// TODO(framework): End of the @dartpad directive.
-///
 // TODO(framework): Replace the following block with a @dartpad directive
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// {@macro material_ui.dartpad_guide}
+///
+/// {@example /example/lib/dialog/show_dialog.0.dart#body}
+///
+/// </callout-box>
+///
+/// <callout-box>
 ///
 /// This sample shows the creation of [showDialog], as described in:
 /// https://m3.material.io/components/dialogs/overview
 ///
-/// {@example /example/lib/dialog/show_dialog.1.dart}
+// TODO(framework): Replace the following block with a @dartpad directive
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// {@macro material_ui.dartpad_guide}
 ///
-// TODO(framework): End of the @dartpad directive.
+/// {@example /example/lib/dialog/show_dialog.1.dart#body}
+///
+/// </callout-box>
 ///
 /// ### State Restoration in Dialogs
 ///
@@ -1636,8 +1642,7 @@ class _DialogContentPage extends Page<void> {
 ///
 /// For more information about state restoration, see [RestorationManager].
 ///
-// TODO(framework): Replace the following block with a @dartpad directive
-// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// <callout-box>
 ///
 /// This sample demonstrates how to create a restorable Material dialog. This is
 /// accomplished by enabling state restoration by specifying
@@ -1646,9 +1651,13 @@ class _DialogContentPage extends Page<void> {
 ///
 /// {@macro flutter.widgets.RestorationManager}
 ///
-/// {@example /example/lib/dialog/show_dialog.2.dart}
+// TODO(framework): Replace the following block with a @dartpad directive
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// {@macro material_ui.dartpad_guide}
 ///
-// TODO(framework): End of the @dartpad directive.
+/// {@example /example/lib/dialog/show_dialog.2.dart#body}
+///
+/// </callout-box>
 ///
 /// See also:
 ///
@@ -1662,6 +1671,7 @@ class _DialogContentPage extends Page<void> {
 ///    [DisplayFeature]s can split the screen into sub-screens.
 ///  * <https://material.io/design/components/dialogs.html>
 ///  * <https://m3.material.io/components/dialogs>
+@awaitNotRequired
 Future<T?> showDialog<T>({
   required BuildContext context,
   required WidgetBuilder builder,
@@ -1747,6 +1757,7 @@ Future<T?> showDialog<T>({
 ///
 /// On Cupertino platforms, [barrierColor], [useSafeArea], and
 /// [traversalEdgeBehavior] are ignored.
+@awaitNotRequired
 Future<T?> showAdaptiveDialog<T>({
   required BuildContext context,
   required WidgetBuilder builder,
@@ -1973,69 +1984,3 @@ class _DialogDefaultsM2 extends DialogThemeData {
   @override
   EdgeInsetsGeometry? get actionsPadding => EdgeInsets.zero;
 }
-
-// BEGIN GENERATED TOKEN PROPERTIES - DialogFullscreen
-
-// Do not edit by hand. The code between the "BEGIN GENERATED" and
-// "END GENERATED" comments are generated from data in the Material
-// Design token database by the script:
-//   dev/tools/gen_defaults/bin/gen_defaults.dart.
-
-// dart format off
-class _DialogFullscreenDefaultsM3 extends DialogThemeData {
-  const _DialogFullscreenDefaultsM3(this.context): super(clipBehavior: Clip.none);
-
-  final BuildContext context;
-
-  @override
-  Color? get backgroundColor => Theme.of(context).colorScheme.surface;
-}
-// dart format on
-
-// END GENERATED TOKEN PROPERTIES - DialogFullscreen
-
-// BEGIN GENERATED TOKEN PROPERTIES - Dialog
-
-// Do not edit by hand. The code between the "BEGIN GENERATED" and
-// "END GENERATED" comments are generated from data in the Material
-// Design token database by the script:
-//   dev/tools/gen_defaults/bin/gen_defaults.dart.
-
-// dart format off
-class _DialogDefaultsM3 extends DialogThemeData {
-  _DialogDefaultsM3(this.context)
-    : super(
-        alignment: Alignment.center,
-        elevation: 6.0,
-        shape: const RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(28.0))),
-        clipBehavior: Clip.none,
-      );
-
-  final BuildContext context;
-  late final ColorScheme _colors = Theme.of(context).colorScheme;
-  late final TextTheme _textTheme = Theme.of(context).textTheme;
-
-  @override
-  Color? get iconColor => _colors.secondary;
-
-  @override
-  Color? get backgroundColor => _colors.surfaceContainerHigh;
-
-  @override
-  Color? get shadowColor => Colors.transparent;
-
-  @override
-  Color? get surfaceTintColor => Colors.transparent;
-
-  @override
-  TextStyle? get titleTextStyle => _textTheme.headlineSmall;
-
-  @override
-  TextStyle? get contentTextStyle => _textTheme.bodyMedium;
-
-  @override
-  EdgeInsetsGeometry? get actionsPadding => const EdgeInsets.only(left: 24.0, right: 24.0, bottom: 24.0);
-}
-// dart format on
-
-// END GENERATED TOKEN PROPERTIES - Dialog

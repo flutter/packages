@@ -1,3 +1,11 @@
+## NEXT
+
+* Updates minimum supported SDK version to Flutter 3.41/Dart 3.11.
+
+## 4.14.1
+
+* Adds documentation for `NavigationDelegate` callback parameters.
+
 ## 4.14.0
 
 * Add method to retrieve cookies. See `WebViewCookieManager.getCookies`.

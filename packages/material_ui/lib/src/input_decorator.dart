@@ -6,6 +6,7 @@
 ///
 /// @docImport 'dropdown.dart';
 /// @docImport 'ink_well.dart';
+/// @docImport 'tabs.dart';
 /// @docImport 'text_field.dart';
 /// @docImport 'text_form_field.dart';
 library;
@@ -29,6 +30,8 @@ import 'material_state.dart';
 import 'text_theme.dart';
 import 'theme.dart';
 import 'theme_data.dart';
+
+part 'generated/input_decorator_defaults_m3.g.dart';
 
 // Examples can assume:
 // late Widget _myIcon;
@@ -113,7 +116,7 @@ class _InputBorderTween extends Tween<InputBorder> {
 // Passes the _InputBorderGap parameters along to an InputBorder's paint method.
 class _InputBorderPainter extends CustomPainter {
   _InputBorderPainter({
-    required Listenable repaint,
+    required super.repaint,
     required this.borderAnimation,
     required this.border,
     required this.gapAnimation,
@@ -122,7 +125,7 @@ class _InputBorderPainter extends CustomPainter {
     required this.fillColor,
     required this.hoverAnimation,
     required this.hoverColorTween,
-  }) : super(repaint: repaint);
+  });
 
   final Animation<double> borderAnimation;
   final _InputBorderTween border;
@@ -1893,18 +1896,7 @@ class InputDecorator extends StatefulWidget {
   /// How the text in the decoration should be aligned horizontally.
   final TextAlign? textAlign;
 
-  /// {@template flutter.material.InputDecorator.textAlignVertical}
-  /// How the text should be aligned vertically.
-  ///
-  /// Determines the alignment of the baseline within the available space of
-  /// the input (typically a TextField). For example, TextAlignVertical.top will
-  /// place the baseline such that the text, and any attached decoration like
-  /// prefix and suffix, is as close to the top of the input as possible without
-  /// overflowing. The heights of the prefix and suffix are similarly included
-  /// for other alignment values. If the height is greater than the height
-  /// available, then the prefix and suffix will be allowed to overflow first
-  /// before the text scrolls.
-  /// {@endtemplate}
+  /// {@macro cupertino_ui.InputDecorator.textAlignVertical}
   final TextAlignVertical? textAlignVertical;
 
   /// Whether the input field has focus.
@@ -2396,7 +2388,12 @@ class _InputDecoratorState extends State<InputDecorator> with TickerProviderStat
             style: labelShouldWithdraw ? _getFloatingLabelStyle(themeData, defaults) : labelStyle,
             child:
                 decoration.label ??
-                Text(decoration.labelText!, overflow: TextOverflow.ellipsis, textAlign: textAlign),
+                Text(
+                  decoration.labelText!,
+                  overflow: TextOverflow.ellipsis,
+                  textAlign: textAlign,
+                  textDirection: decoration.labelTextDirection,
+                ),
           ),
         ),
       );
@@ -2590,9 +2587,8 @@ class _InputDecoratorState extends State<InputDecorator> with TickerProviderStat
       contentPadding = decorationContentPadding ?? EdgeInsetsDirectional.zero;
     } else if (!border.isOutline) {
       // 4.0: the vertical gap between the inline elements and the floating label.
-      floatingLabelHeight = MediaQuery.textScalerOf(
-        context,
-      ).scale(4.0 + 0.75 * labelStyle.fontSize!);
+      floatingLabelHeight = MediaQuery.textScalerOf(context)
+          .scale(4.0 + 0.75 * labelStyle.fontSize!);
       if (decoration.filled ?? false) {
         contentPadding =
             decorationContentPadding ??
@@ -2702,8 +2698,7 @@ class _InputDecoratorState extends State<InputDecorator> with TickerProviderStat
 /// to describe their decoration. (In fact, this class is merely the
 /// configuration of an [InputDecorator], which does all the heavy lifting.)
 ///
-// TODO(framework): Replace the following block with a @dartpad directive
-// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// <callout-box>
 ///
 /// This sample shows how to style a `TextField` using an `InputDecorator`. The
 /// TextField displays a "send message" icon to the left of the input area,
@@ -2713,12 +2708,15 @@ class _InputDecoratorState extends State<InputDecorator> with TickerProviderStat
 ///
 /// ![](https://flutter.github.io/assets-for-api-docs/assets/material/input_decoration.png)
 ///
-/// {@example /example/lib/input_decorator/input_decoration.0.dart}
-///
-// TODO(framework): End of the @dartpad directive.
-///
 // TODO(framework): Replace the following block with a @dartpad directive
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// {@macro material_ui.dartpad_guide}
+///
+/// {@example /example/lib/input_decorator/input_decoration.0.dart#body}
+///
+/// </callout-box>
+///
+/// <callout-box>
 ///
 /// This sample shows how to style a "collapsed" `TextField` using an
 /// `InputDecorator`. The collapsed `TextField` surrounds the hint text and
@@ -2726,12 +2724,15 @@ class _InputDecoratorState extends State<InputDecorator> with TickerProviderStat
 ///
 /// ![](https://flutter.github.io/assets-for-api-docs/assets/material/input_decoration_collapsed.png)
 ///
-/// {@example /example/lib/input_decorator/input_decoration.1.dart}
-///
-// TODO(framework): End of the @dartpad directive.
-///
 // TODO(framework): Replace the following block with a @dartpad directive
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// {@macro material_ui.dartpad_guide}
+///
+/// {@example /example/lib/input_decorator/input_decoration.1.dart#body}
+///
+/// </callout-box>
+///
+/// <callout-box>
 ///
 /// This sample shows how to create a `TextField` with hint text, a red border
 /// on all sides, and an error message. To display a red border and error
@@ -2739,12 +2740,15 @@ class _InputDecoratorState extends State<InputDecorator> with TickerProviderStat
 ///
 /// ![](https://flutter.github.io/assets-for-api-docs/assets/material/input_decoration_error.png)
 ///
-/// {@example /example/lib/input_decorator/input_decoration.2.dart}
-///
-// TODO(framework): End of the @dartpad directive.
-///
 // TODO(framework): Replace the following block with a @dartpad directive
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// {@macro material_ui.dartpad_guide}
+///
+/// {@example /example/lib/input_decorator/input_decoration.2.dart#body}
+///
+/// </callout-box>
+///
+/// <callout-box>
 ///
 /// This sample shows how to style a `TextField` with a round border and
 /// additional text before and after the input area. It displays "Prefix" before
@@ -2752,30 +2756,40 @@ class _InputDecoratorState extends State<InputDecorator> with TickerProviderStat
 ///
 /// ![](https://flutter.github.io/assets-for-api-docs/assets/material/input_decoration_prefix_suffix.png)
 ///
-/// {@example /example/lib/input_decorator/input_decoration.3.dart}
-///
-// TODO(framework): End of the @dartpad directive.
-///
 // TODO(framework): Replace the following block with a @dartpad directive
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// {@macro material_ui.dartpad_guide}
+///
+/// {@example /example/lib/input_decorator/input_decoration.3.dart#body}
+///
+/// </callout-box>
+///
+/// <callout-box>
 ///
 /// This sample shows how to style a `TextField` with a prefixIcon that changes color
 /// based on the `WidgetState`. The color defaults to gray and is green while focused.
 ///
-/// {@example /example/lib/input_decorator/input_decoration.widget_state.0.dart}
-///
-// TODO(framework): End of the @dartpad directive.
-///
 // TODO(framework): Replace the following block with a @dartpad directive
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// {@macro material_ui.dartpad_guide}
+///
+/// {@example /example/lib/input_decorator/input_decoration.widget_state.0.dart#body}
+///
+/// </callout-box>
+///
+/// <callout-box>
 ///
 /// This sample shows how to style a `TextField` with a prefixIcon that changes color
 /// based on the `WidgetState` through the use of `ThemeData`. The color defaults
 /// to gray, be blue while focused and red if in an error state.
 ///
-/// {@example /example/lib/input_decorator/input_decoration.widget_state.1.dart}
+// TODO(framework): Replace the following block with a @dartpad directive
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// {@macro material_ui.dartpad_guide}
 ///
-// TODO(framework): End of the @dartpad directive.
+/// {@example /example/lib/input_decorator/input_decoration.widget_state.1.dart#body}
+///
+/// </callout-box>
 ///
 /// See also:
 ///
@@ -2805,6 +2819,7 @@ class InputDecoration {
     this.labelText,
     this.labelStyle,
     this.floatingLabelStyle,
+    this.labelTextDirection,
     this.helper,
     this.helperText,
     this.helperStyle,
@@ -2934,6 +2949,7 @@ class InputDecoration {
        labelText = null,
        labelStyle = null,
        floatingLabelStyle = null,
+       labelTextDirection = null,
        helper = null,
        helperText = null,
        helperStyle = null,
@@ -2999,7 +3015,7 @@ class InputDecoration {
 
   /// Optional widget that describes the input field.
   ///
-  /// {@template flutter.material.inputDecoration.label}
+  /// {@template material_ui.inputDecoration.label}
   /// When the input field is empty and unfocused, the label is displayed on
   /// top of the input field (i.e., at the same location on the screen where
   /// text may be entered in the input field). When the input field receives
@@ -3011,28 +3027,31 @@ class InputDecoration {
   /// This can be used, for example, to add multiple [TextStyle]'s to a label that would
   /// otherwise be specified using [labelText], which only takes one [TextStyle].
   ///
-  // TODO(framework): Replace the following block with a @dartpad directive
-  // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+  /// <callout-box>
   ///
   /// This example shows a `TextField` with a [Text.rich] widget as the [label].
   /// The widget contains multiple [Text] widgets with different [TextStyle]'s.
   ///
-  /// {@example /example/lib/input_decorator/input_decoration.label.0.dart}
+  // TODO(framework): Replace the following block with a @dartpad directive
+  // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+  /// {@macro material_ui.dartpad_guide}
   ///
-  // TODO(framework): End of the @dartpad directive.
+  /// {@example /example/lib/input_decorator/input_decoration.label.0.dart#body}
+  ///
+  /// </callout-box>
   ///
   /// Only one of [label] and [labelText] can be specified.
   final Widget? label;
 
   /// Optional text that describes the input field.
   ///
-  /// {@macro flutter.material.inputDecoration.label}
+  /// {@macro material_ui.inputDecoration.label}
   ///
   /// If a more elaborate label is required, consider using [label] instead.
   /// Only one of [label] and [labelText] can be specified.
   final String? labelText;
 
-  /// {@template flutter.material.inputDecoration.labelStyle}
+  /// {@template material_ui.inputDecoration.labelStyle}
   /// The style to use for [InputDecoration.labelText] when the label is on top
   /// of the input field.
   ///
@@ -3050,8 +3069,7 @@ class InputDecoration {
   /// of [InputDecoration] that changes the color of the label to the
   /// [InputDecoration.errorStyle] color or [ColorScheme.error].
   ///
-  // TODO(framework): Replace the following block with a @dartpad directive
-  // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+  /// <callout-box>
   ///
   /// It's possible to override the label style for just the error state, or
   /// just the default state, or both.
@@ -3060,13 +3078,17 @@ class InputDecoration {
   /// which resolves to a text style whose color depends on the decorator's
   /// error state.
   ///
-  /// {@example /example/lib/input_decorator/input_decoration.label_style_error.0.dart}
+  // TODO(framework): Replace the following block with a @dartpad directive
+  // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+  /// {@macro material_ui.dartpad_guide}
   ///
-  // TODO(framework): End of the @dartpad directive.
+  /// {@example /example/lib/input_decorator/input_decoration.label_style_error.0.dart#body}
+  ///
+  /// </callout-box>
   /// {@endtemplate}
   final TextStyle? labelStyle;
 
-  /// {@template flutter.material.inputDecoration.floatingLabelStyle}
+  /// {@template material_ui.inputDecoration.floatingLabelStyle}
   /// The style to use for [InputDecoration.labelText] when the label is
   /// above (i.e., vertically adjacent to) the input field.
   ///
@@ -3086,8 +3108,7 @@ class InputDecoration {
   /// When the input field receives focus, the font size of [InputDecoration.label] is
   /// scaled down by 75%.
   ///
-  // TODO(framework): Replace the following block with a @dartpad directive
-  // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+  /// <callout-box>
   ///
   /// It's possible to override the label style for just the error state, or
   /// just the default state, or both.
@@ -3096,11 +3117,26 @@ class InputDecoration {
   /// [WidgetStateProperty] which resolves to a text style whose color depends
   /// on the decorator's error state.
   ///
-  /// {@example /example/lib/input_decorator/input_decoration.floating_label_style_error.0.dart}
+  // TODO(framework): Replace the following block with a @dartpad directive
+  // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+  /// {@macro material_ui.dartpad_guide}
   ///
-  // TODO(framework): End of the @dartpad directive.
+  /// {@example /example/lib/input_decorator/input_decoration.floating_label_style_error.0.dart#body}
+  ///
+  /// </callout-box>
   /// {@endtemplate}
   final TextStyle? floatingLabelStyle;
+
+  /// The direction to use for the [labelText].
+  ///
+  /// If null, defaults to a value derived from [Directionality] for the
+  /// input field and the current context.
+  ///
+  /// This is ignored if [label] is provided instead of [labelText].
+  /// If you need to set the direction for a custom [label] widget,
+  /// wrap that widget in a [Directionality] widget or use a [Text]
+  /// widget with its own [Text.textDirection] property.
+  final TextDirection? labelTextDirection;
 
   /// Optional widget that appears below the [InputDecorator.child].
   ///
@@ -3108,15 +3144,18 @@ class InputDecoration {
   /// the same location as [error]. If a non-null [error] or [errorText] value is
   /// specified then the [helper] is not shown.
   ///
-  // TODO(framework): Replace the following block with a @dartpad directive
-  // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+  /// <callout-box>
   ///
   /// This example shows a `TextField` with a [Text.rich] widget as the [helper].
   /// The widget contains [Text] and [Icon] widgets with different styles.
   ///
-  /// {@example /example/lib/input_decorator/input_decoration.helper.0.dart}
+  // TODO(framework): Replace the following block with a @dartpad directive
+  // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+  /// {@macro material_ui.dartpad_guide}
   ///
-  // TODO(framework): End of the @dartpad directive.
+  /// {@example /example/lib/input_decorator/input_decoration.helper.0.dart#body}
+  ///
+  /// </callout-box>
   ///
   /// Only one of [helper] and [helperText] can be specified.
   final Widget? helper;
@@ -3191,6 +3230,11 @@ class InputDecoration {
   ///
   /// If null, defaults to a value derived from [Directionality] for the
   /// input field and the current context.
+  ///
+  /// This is ignored if [hint] is provided instead of [hintText].
+  /// If you need to set the direction for a custom [hint] widget,
+  /// wrap that widget in a [Directionality] widget or use a [Text]
+  /// widget with its own [Text.textDirection] property.
   final TextDirection? hintTextDirection;
 
   /// The maximum number of lines the [hintText] can occupy.
@@ -3260,7 +3304,7 @@ class InputDecoration {
   /// Only one of [error] and [errorText] can be specified.
   final String? errorText;
 
-  /// {@template flutter.material.inputDecoration.errorStyle}
+  /// {@template material_ui.inputDecoration.errorStyle}
   /// The style to use for the [InputDecoration.errorText].
   ///
   /// If null, defaults of a value derived from the base [TextStyle] for the
@@ -3294,7 +3338,7 @@ class InputDecoration {
   ///  * [helperMaxLines], the equivalent but for the [helperText].
   final int? errorMaxLines;
 
-  /// {@template flutter.material.inputDecoration.floatingLabelBehavior}
+  /// {@template material_ui.inputDecoration.floatingLabelBehavior}
   /// Defines **how** the floating label should behave.
   ///
   /// When [FloatingLabelBehavior.auto] the label will float to the top only when
@@ -3316,7 +3360,7 @@ class InputDecoration {
   ///    should be displayed.
   final FloatingLabelBehavior? floatingLabelBehavior;
 
-  /// {@template flutter.material.inputDecoration.floatingLabelAlignment}
+  /// {@template material_ui.inputDecoration.floatingLabelAlignment}
   /// Defines **where** the floating label should be displayed.
   ///
   /// [FloatingLabelAlignment.start] aligns the floating label to the leftmost
@@ -3344,7 +3388,7 @@ class InputDecoration {
 
   /// The padding for the input decoration's container.
   ///
-  /// {@macro flutter.material.input_decorator.container_description}
+  /// {@macro material_ui.input_decorator.container_description}
   ///
   /// By default the [contentPadding] reflects [isDense] and the type of the
   /// [border].
@@ -3409,20 +3453,23 @@ class InputDecoration {
   /// )
   /// ```
   ///
-  /// {@macro flutter.material.input_decorator.container_description}
+  /// {@macro material_ui.input_decorator.container_description}
   ///
   /// The prefix icon alignment can be changed using [Align] with a fixed `widthFactor` and
   /// `heightFactor`.
   ///
-  // TODO(framework): Replace the following block with a @dartpad directive
-  // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+  /// <callout-box>
   ///
   /// This example shows how the prefix icon alignment can be changed using [Align] with
   /// a fixed `widthFactor` and `heightFactor`.
   ///
-  /// {@example /example/lib/input_decorator/input_decoration.prefix_icon.0.dart}
+  // TODO(framework): Replace the following block with a @dartpad directive
+  // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+  /// {@macro material_ui.dartpad_guide}
   ///
-  // TODO(framework): End of the @dartpad directive.
+  /// {@example /example/lib/input_decorator/input_decoration.prefix_icon.0.dart#body}
+  ///
+  /// </callout-box>
   ///
   /// See also:
   ///
@@ -3444,8 +3491,7 @@ class InputDecoration {
   /// setting [isDense] to true and setting the constraints' minimum height
   /// and width to a value lower than the minimum tappable size.
   ///
-  // TODO(framework): Replace the following block with a @dartpad directive
-  // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+  /// <callout-box>
   ///
   /// This example shows the differences between two `TextField` widgets when
   /// [prefixIconConstraints] is set to the default value and when one is not.
@@ -3456,9 +3502,13 @@ class InputDecoration {
   /// If null, [BoxConstraints] with a minimum width and height of 48px is
   /// used.
   ///
-  /// {@example /example/lib/input_decorator/input_decoration.prefix_icon_constraints.0.dart}
+  // TODO(framework): Replace the following block with a @dartpad directive
+  // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+  /// {@macro material_ui.dartpad_guide}
   ///
-  // TODO(framework): End of the @dartpad directive.
+  /// {@example /example/lib/input_decorator/input_decoration.prefix_icon_constraints.0.dart#body}
+  ///
+  /// </callout-box>
   final BoxConstraints? prefixIconConstraints;
 
   /// Optional widget to place on the line before the input.
@@ -3543,15 +3593,18 @@ class InputDecoration {
   /// The suffix icon alignment can be changed using [Align] with a fixed `widthFactor` and
   /// `heightFactor`.
   ///
-  // TODO(framework): Replace the following block with a @dartpad directive
-  // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+  /// <callout-box>
   ///
   /// This example shows how the suffix icon alignment can be changed using [Align] with
   /// a fixed `widthFactor` and `heightFactor`.
   ///
-  /// {@example /example/lib/input_decorator/input_decoration.suffix_icon.0.dart}
+  // TODO(framework): Replace the following block with a @dartpad directive
+  // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+  /// {@macro material_ui.dartpad_guide}
   ///
-  // TODO(framework): End of the @dartpad directive.
+  /// {@example /example/lib/input_decorator/input_decoration.suffix_icon.0.dart#body}
+  ///
+  /// </callout-box>
   ///
   /// See also:
   ///
@@ -3628,8 +3681,7 @@ class InputDecoration {
   /// If null, a [BoxConstraints] with a minimum width and height of 48px is
   /// used.
   ///
-  // TODO(framework): Replace the following block with a @dartpad directive
-  // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+  /// <callout-box>
   ///
   /// This example shows the differences between two `TextField` widgets when
   /// [suffixIconConstraints] is set to the default value and when one is not.
@@ -3640,9 +3692,13 @@ class InputDecoration {
   /// If null, [BoxConstraints] with a minimum width and height of 48px is
   /// used.
   ///
-  /// {@example /example/lib/input_decorator/input_decoration.suffix_icon_constraints.0.dart}
+  // TODO(framework): Replace the following block with a @dartpad directive
+  // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+  /// {@macro material_ui.dartpad_guide}
   ///
-  // TODO(framework): End of the @dartpad directive.
+  /// {@example /example/lib/input_decorator/input_decoration.suffix_icon_constraints.0.dart#body}
+  ///
+  /// </callout-box>
   final BoxConstraints? suffixIconConstraints;
 
   /// Optional text to place below the line as a character count.
@@ -3677,7 +3733,7 @@ class InputDecoration {
   ///
   /// Typically this field set to true if [border] is an [UnderlineInputBorder].
   ///
-  /// {@template flutter.material.input_decorator.container_description}
+  /// {@template material_ui.input_decorator.container_description}
   /// The decoration's container is the area which is filled if [filled] is true
   /// and bordered per the [border]. It's the area adjacent to [icon] and above
   /// the widgets that contain [helperText], [errorText], and [counterText].
@@ -3694,7 +3750,7 @@ class InputDecoration {
   /// By default the [fillColor] is based on the current
   /// [InputDecorationThemeData.fillColor].
   ///
-  /// {@macro flutter.material.input_decorator.container_description}
+  /// {@macro material_ui.input_decorator.container_description}
   final Color? fillColor;
 
   /// The fill color of the decoration's container when it has the input focus.
@@ -3707,7 +3763,7 @@ class InputDecoration {
   /// container color, they respond by changing their border to the
   /// [focusedBorder], which you can change the color of.
   ///
-  /// {@macro flutter.material.input_decorator.container_description}
+  /// {@macro material_ui.input_decorator.container_description}
   final Color? focusColor;
 
   /// The color of the highlight for the decoration shown if the container
@@ -3721,7 +3777,7 @@ class InputDecoration {
   ///
   /// By default the [hoverColor] is based on the current [Theme].
   ///
-  /// {@macro flutter.material.input_decorator.container_description}
+  /// {@macro material_ui.input_decorator.container_description}
   final Color? hoverColor;
 
   /// The border to display when the [InputDecorator] does not have the focus and
@@ -3951,6 +4007,7 @@ class InputDecoration {
     String? labelText,
     TextStyle? labelStyle,
     TextStyle? floatingLabelStyle,
+    TextDirection? labelTextDirection,
     Widget? helper,
     String? helperText,
     TextStyle? helperStyle,
@@ -4012,6 +4069,7 @@ class InputDecoration {
       labelText: labelText ?? this.labelText,
       labelStyle: labelStyle ?? this.labelStyle,
       floatingLabelStyle: floatingLabelStyle ?? this.floatingLabelStyle,
+      labelTextDirection: labelTextDirection ?? this.labelTextDirection,
       helper: helper ?? this.helper,
       helperText: helperText ?? this.helperText,
       helperStyle: helperStyle ?? this.helperStyle,
@@ -4137,6 +4195,7 @@ class InputDecoration {
         other.labelText == labelText &&
         other.labelStyle == labelStyle &&
         other.floatingLabelStyle == floatingLabelStyle &&
+        other.labelTextDirection == labelTextDirection &&
         other.helper == helper &&
         other.helperText == helperText &&
         other.helperStyle == helperStyle &&
@@ -4199,6 +4258,7 @@ class InputDecoration {
       label,
       labelText,
       floatingLabelStyle,
+      labelTextDirection,
       labelStyle,
       helper,
       helperText,
@@ -4981,10 +5041,10 @@ class InputDecorationThemeData with Diagnosticable {
     this.visualDensity,
   });
 
-  /// {@macro flutter.material.inputDecoration.labelStyle}
+  /// {@macro material_ui.inputDecoration.labelStyle}
   final TextStyle? labelStyle;
 
-  /// {@macro flutter.material.inputDecoration.floatingLabelStyle}
+  /// {@macro material_ui.inputDecoration.floatingLabelStyle}
   final TextStyle? floatingLabelStyle;
 
   /// The style to use for [InputDecoration.helperText].
@@ -5034,7 +5094,7 @@ class InputDecorationThemeData with Diagnosticable {
   /// of the [Text] widget used to display the hint text.
   final int? hintMaxLines;
 
-  /// {@macro flutter.material.inputDecoration.errorStyle}
+  /// {@macro material_ui.inputDecoration.errorStyle}
   final TextStyle? errorStyle;
 
   /// The maximum number of lines the [InputDecoration.errorText] can occupy.
@@ -5050,12 +5110,12 @@ class InputDecorationThemeData with Diagnosticable {
   ///  * [helperMaxLines], the equivalent but for the [InputDecoration.helperText].
   final int? errorMaxLines;
 
-  /// {@macro flutter.material.inputDecoration.floatingLabelBehavior}
+  /// {@macro material_ui.inputDecoration.floatingLabelBehavior}
   ///
   /// Defaults to [FloatingLabelBehavior.auto].
   final FloatingLabelBehavior floatingLabelBehavior;
 
-  /// {@macro flutter.material.inputDecoration.floatingLabelAlignment}
+  /// {@macro material_ui.inputDecoration.floatingLabelAlignment}
   ///
   /// Defaults to [FloatingLabelAlignment.start].
   final FloatingLabelAlignment floatingLabelAlignment;
@@ -5637,7 +5697,6 @@ class InputDecorationThemeData with Diagnosticable {
         other.hintMaxLines == hintMaxLines &&
         other.alignLabelWithHint == alignLabelWithHint &&
         other.constraints == constraints &&
-        other.disabledBorder == disabledBorder &&
         other.visualDensity == visualDensity;
   }
 
@@ -5960,184 +6019,3 @@ class _InputDecoratorDefaultsM2 extends InputDecorationThemeData {
     };
   });
 }
-
-// BEGIN GENERATED TOKEN PROPERTIES - InputDecorator
-
-// Do not edit by hand. The code between the "BEGIN GENERATED" and
-// "END GENERATED" comments are generated from data in the Material
-// Design token database by the script:
-//   dev/tools/gen_defaults/bin/gen_defaults.dart.
-
-// dart format off
-class _InputDecoratorDefaultsM3 extends InputDecorationThemeData {
-   _InputDecoratorDefaultsM3(this.context)
-    : super();
-
-  final BuildContext context;
-
-  late final ColorScheme _colors = Theme.of(context).colorScheme;
-  late final TextTheme _textTheme = Theme.of(context).textTheme;
-
-  // For InputDecorator, focused state should take precedence over hovered state.
-  // For instance, the focused state increases border width (2dp) and applies bright
-  // colors (primary color or error color) while the hovered state has the same border
-  // than the non-focused state (1dp) and uses a color a little darker than non-focused
-  // state. On desktop, it is also very common that a text field is focused and hovered
-  // because users often rely on mouse selection.
-  // For other widgets, hovered state takes precedence over focused state, because it
-  // is mainly used to determine the overlay color,
-  // see https://github.com/flutter/flutter/pull/125905.
-
-  @override
-  TextStyle? get hintStyle => WidgetStateTextStyle.resolveWith((Set<WidgetState> states) {
-    if (states.contains(WidgetState.disabled)) {
-      return TextStyle(color: _colors.onSurface.withOpacity(0.38));
-    }
-    return TextStyle(color: _colors.onSurfaceVariant);
-  });
-
-  @override
-  Color? get fillColor => WidgetStateColor.resolveWith((Set<WidgetState> states) {
-    if (states.contains(WidgetState.disabled)) {
-      return _colors.onSurface.withOpacity(0.04);
-    }
-    return _colors.surfaceContainerHighest;
-  });
-
-  @override
-  BorderSide? get activeIndicatorBorder => WidgetStateBorderSide.resolveWith((Set<WidgetState> states) {
-    if (states.contains(WidgetState.disabled)) {
-      return BorderSide(color: _colors.onSurface.withOpacity(0.38));
-    }
-    if (states.contains(WidgetState.error)) {
-      if (states.contains(WidgetState.focused)) {
-        return BorderSide(color: _colors.error, width: 2.0);
-      }
-      if (states.contains(WidgetState.hovered)) {
-        return BorderSide(color: _colors.onErrorContainer);
-      }
-      return BorderSide(color: _colors.error);
-    }
-    if (states.contains(WidgetState.focused)) {
-      return BorderSide(color: _colors.primary, width: 2.0);
-    }
-    if (states.contains(WidgetState.hovered)) {
-      return BorderSide(color: _colors.onSurface);
-    }
-    return BorderSide(color: _colors.onSurfaceVariant);
-    });
-
-  @override
-  BorderSide? get outlineBorder => WidgetStateBorderSide.resolveWith((Set<WidgetState> states) {
-    if (states.contains(WidgetState.disabled)) {
-      return BorderSide(color: _colors.onSurface.withOpacity(0.12));
-    }
-    if (states.contains(WidgetState.error)) {
-      if (states.contains(WidgetState.focused)) {
-        return BorderSide(color: _colors.error, width: 2.0);
-      }
-      if (states.contains(WidgetState.hovered)) {
-        return BorderSide(color: _colors.onErrorContainer);
-      }
-      return BorderSide(color: _colors.error);
-    }
-    if (states.contains(WidgetState.focused)) {
-      return BorderSide(color: _colors.primary, width: 2.0);
-    }
-    if (states.contains(WidgetState.hovered)) {
-      return BorderSide(color: _colors.onSurface);
-    }
-    return BorderSide(color: _colors.outline);
-  });
-
-  @override
-  Color? get iconColor => _colors.onSurfaceVariant;
-
-  @override
-  Color? get prefixIconColor => WidgetStateColor.resolveWith((Set<WidgetState> states) {
-    if (states.contains(WidgetState.disabled)) {
-      return _colors.onSurface.withOpacity(0.38);
-    }
-    return _colors.onSurfaceVariant;
-  });
-
-  @override
-  Color? get suffixIconColor => WidgetStateColor.resolveWith((Set<WidgetState> states) {
-    if (states.contains(WidgetState.disabled)) {
-      return _colors.onSurface.withOpacity(0.38);
-    }
-    if (states.contains(WidgetState.error)) {
-      if (states.contains(WidgetState.hovered)) {
-        return _colors.onErrorContainer;
-      }
-      return _colors.error;
-    }
-    return _colors.onSurfaceVariant;
-  });
-
-  @override
-  TextStyle? get labelStyle => WidgetStateTextStyle.resolveWith((Set<WidgetState> states) {
-    final TextStyle textStyle = _textTheme.bodyLarge ?? const TextStyle();
-    if (states.contains(WidgetState.disabled)) {
-      return textStyle.copyWith(color: _colors.onSurface.withOpacity(0.38));
-    }
-    if (states.contains(WidgetState.error)) {
-      if (states.contains(WidgetState.focused)) {
-        return textStyle.copyWith(color: _colors.error);
-      }
-      if (states.contains(WidgetState.hovered)) {
-        return textStyle.copyWith(color: _colors.onErrorContainer);
-      }
-      return textStyle.copyWith(color: _colors.error);
-    }
-    if (states.contains(WidgetState.focused)) {
-      return textStyle.copyWith(color: _colors.primary);
-    }
-    if (states.contains(WidgetState.hovered)) {
-      return textStyle.copyWith(color: _colors.onSurfaceVariant);
-    }
-    return textStyle.copyWith(color: _colors.onSurfaceVariant);
-  });
-
-  @override
-  TextStyle? get floatingLabelStyle => WidgetStateTextStyle.resolveWith((Set<WidgetState> states) {
-    final TextStyle textStyle = _textTheme.bodyLarge ?? const TextStyle();
-    if (states.contains(WidgetState.disabled)) {
-      return textStyle.copyWith(color: _colors.onSurface.withOpacity(0.38));
-    }
-    if (states.contains(WidgetState.error)) {
-      if (states.contains(WidgetState.focused)) {
-        return textStyle.copyWith(color: _colors.error);
-      }
-      if (states.contains(WidgetState.hovered)) {
-        return textStyle.copyWith(color: _colors.onErrorContainer);
-      }
-      return textStyle.copyWith(color: _colors.error);
-    }
-    if (states.contains(WidgetState.focused)) {
-      return textStyle.copyWith(color: _colors.primary);
-    }
-    if (states.contains(WidgetState.hovered)) {
-      return textStyle.copyWith(color: _colors.onSurfaceVariant);
-    }
-    return textStyle.copyWith(color: _colors.onSurfaceVariant);
-  });
-
-  @override
-  TextStyle? get helperStyle => WidgetStateTextStyle.resolveWith((Set<WidgetState> states) {
-    final TextStyle textStyle = _textTheme.bodySmall ?? const TextStyle();
-    if (states.contains(WidgetState.disabled)) {
-      return textStyle.copyWith(color: _colors.onSurface.withOpacity(0.38));
-    }
-    return textStyle.copyWith(color: _colors.onSurfaceVariant);
-  });
-
-  @override
-  TextStyle? get errorStyle => WidgetStateTextStyle.resolveWith((Set<WidgetState> states) {
-    final TextStyle textStyle = _textTheme.bodySmall ?? const TextStyle();
-    return textStyle.copyWith(color: _colors.error);
-  });
-}
-// dart format on
-
-// END GENERATED TOKEN PROPERTIES - InputDecorator

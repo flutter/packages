@@ -19,6 +19,8 @@ import 'package:pigeon/pigeon.dart';
     kotlinOptions: KotlinOptions(),
     javaOut: 'android/app/src/main/java/io/flutter/plugins/Messages.java',
     javaOptions: JavaOptions(),
+    // Note that swiftOut can also be a list to output to separate iOS and macOS
+    // locations if required.
     swiftOut: 'ios/Runner/Messages.g.swift',
     swiftOptions: SwiftOptions(),
     objcHeaderOut: 'macos/Runner/messages.g.h',
@@ -63,3 +65,10 @@ abstract class MessageFlutterApi {
 }
 
 // #enddocregion flutter-definitions
+
+// #docregion constants
+const String aStringConstant = 'stringConstantValue';
+const int anIntConstant = 42;
+const double aDoubleConstant = 3.14;
+const bool aBoolConstant = true;
+// #enddocregion constants

@@ -36,6 +36,7 @@ class Method extends Node {
     required this.location,
     this.isRequired = true,
     this.isAsynchronous = false,
+    this.isAsynchronousCallback = false,
     this.isStatic = false,
     this.offset,
     this.objcSelector = '',
@@ -55,6 +56,9 @@ class Method extends Node {
 
   /// Whether the receiver of this method is expected to return synchronously or not.
   bool isAsynchronous;
+
+  /// Whether this asynchronous method uses callback-based completions instead of native async/await or suspend functions.
+  bool isAsynchronousCallback;
 
   /// The offset in the source file where the field appears.
   int? offset;
@@ -493,6 +497,25 @@ class TypeDeclaration {
   /// Associated [AstProxyApi], if any.
   final AstProxyApi? associatedProxyApi;
 
+  /// Returns the full annotated name of the type.
+  String getFullName({bool withNullable = true}) {
+    return '$baseName$typeArgumentsString${isNullable && withNullable ? '?' : ''}';
+  }
+
+  /// Returns the Type Arguments in annotation form.
+  String get typeArgumentsString {
+    final String typeArgumentString;
+    if (baseName == 'List') {
+      typeArgumentString = typeArguments.firstOrNull?.getFullName() ?? 'Object?';
+    } else if (baseName == 'Map') {
+      typeArgumentString =
+          '${typeArguments.firstOrNull?.getFullName() ?? 'Object?'}, ${typeArguments.lastOrNull?.getFullName() ?? 'Object?'}';
+    } else {
+      return '';
+    }
+    return '<$typeArgumentString>';
+  }
+
   @override
   int get hashCode {
     // This has to be implemented because TypeDeclaration is used as a Key to a
@@ -785,6 +808,38 @@ class EnumMember extends Node {
   }
 }
 
+/// Represents a constant.
+class Constant extends Node {
+  /// Parametric constructor for [Constant].
+  Constant({
+    required this.name,
+    required this.type,
+    required this.value,
+    this.offset,
+    this.documentationComments = const <String>[],
+  });
+
+  /// The name of the constant.
+  final String name;
+
+  /// The type of the constant.
+  final TypeDeclaration type;
+
+  /// The value of the constant.
+  final Object value;
+
+  /// The offset in the source file where the constant appears.
+  final int? offset;
+
+  /// List of documentation comments, separated by line.
+  final List<String> documentationComments;
+
+  @override
+  String toString() {
+    return '(Constant name:$name type:$type value:$value documentationComments:$documentationComments)';
+  }
+}
+
 /// Top-level node for the AST.
 class Root extends Node {
   /// Parametric constructor for [Root].
@@ -792,6 +847,9 @@ class Root extends Node {
     required this.classes,
     required this.apis,
     required this.enums,
+    this.lists = const <String, TypeDeclaration>{},
+    this.maps = const <String, TypeDeclaration>{},
+    this.constants = const <Constant>[],
     this.containsHostApi = false,
     this.containsFlutterApi = false,
     this.containsProxyApi = false,
@@ -800,9 +858,18 @@ class Root extends Node {
 
   /// Factory function for generating an empty root, usually used when early errors are encountered.
   factory Root.makeEmpty() {
-    return Root(apis: <Api>[], classes: <Class>[], enums: <Enum>[]);
+    return Root(
+      apis: <Api>[],
+      classes: <Class>[],
+      enums: <Enum>[],
+      lists: <String, TypeDeclaration>{},
+      maps: <String, TypeDeclaration>{},
+      constants: <Constant>[],
+    );
   }
 
+  // TODO(tarrinneal): Ensure classes are sorted in topological dependency order; see
+  // https://github.com/flutter/flutter/issues/128330.
   /// All the classes contained in the AST.
   List<Class> classes;
 
@@ -811,6 +878,15 @@ class Root extends Node {
 
   /// All of the enums contained in the AST.
   List<Enum> enums;
+
+  /// All of the lists contained in the AST.
+  Map<String, TypeDeclaration> lists;
+
+  /// All of the maps contained in the AST.
+  Map<String, TypeDeclaration> maps;
+
+  /// All of the constants contained in the AST.
+  List<Constant> constants;
 
   /// Whether the root has any Host API definitions.
   bool containsHostApi;
@@ -833,6 +909,6 @@ class Root extends Node {
 
   @override
   String toString() {
-    return '(Root classes:$classes apis:$apis enums:$enums)';
+    return '(Root classes:$classes apis:$apis enums:$enums lists:$lists maps:$maps containsHostApi:$containsHostApi containsFlutterApi:$containsFlutterApi containsProxyApi:$containsProxyApi constants:$constants)';
   }
 }

@@ -38,7 +38,7 @@ class CameraValue {
     required this.isRecordingVideo,
     required this.isTakingPicture,
     required this.isStreamingImages,
-    required bool isRecordingPaused,
+    required this._isRecordingPaused,
     required this.flashMode,
     required this.exposureMode,
     required this.focusMode,
@@ -51,7 +51,7 @@ class CameraValue {
     this.isPreviewPaused = false,
     this.previewPauseOrientation,
     this.videoStabilizationMode = VideoStabilizationMode.off,
-  }) : _isRecordingPaused = isRecordingPaused;
+  });
 
   /// Creates a new camera controller state for an uninitialized controller.
   const CameraValue.uninitialized(CameraDescription description)
@@ -337,7 +337,9 @@ class CameraController extends ValueNotifier<CameraValue> {
       _deviceOrientationSubscription ??= CameraPlatform.instance
           .onDeviceOrientationChanged()
           .listen((DeviceOrientationChangedEvent event) {
-            value = value.copyWith(deviceOrientation: event.orientation);
+            if (!_isDisposed) {
+              value = value.copyWith(deviceOrientation: event.orientation);
+            }
           });
 
       _cameraId = await CameraPlatform.instance.createCameraWithSettings(
@@ -355,7 +357,9 @@ class CameraController extends ValueNotifier<CameraValue> {
 
       unawaited(
         CameraPlatform.instance.onCameraError(_cameraId).first.then((CameraErrorEvent event) {
-          value = value.copyWith(errorDescription: event.description);
+          if (!_isDisposed) {
+            value = value.copyWith(errorDescription: event.description);
+          }
         }),
       );
 
@@ -364,25 +368,20 @@ class CameraController extends ValueNotifier<CameraValue> {
         imageFormatGroup: imageFormatGroup ?? ImageFormatGroup.unknown,
       );
 
-      value = value.copyWith(
-        isInitialized: true,
-        description: description,
-        previewSize: await initializeCompleter.future.then(
-          (CameraInitializedEvent event) => Size(event.previewWidth, event.previewHeight),
-        ),
-        exposureMode: await initializeCompleter.future.then(
-          (CameraInitializedEvent event) => event.exposureMode,
-        ),
-        focusMode: await initializeCompleter.future.then(
-          (CameraInitializedEvent event) => event.focusMode,
-        ),
-        exposurePointSupported: await initializeCompleter.future.then(
-          (CameraInitializedEvent event) => event.exposurePointSupported,
-        ),
-        focusPointSupported: await initializeCompleter.future.then(
-          (CameraInitializedEvent event) => event.focusPointSupported,
-        ),
-      );
+      final CameraInitializedEvent event = await initializeCompleter.future;
+
+      // The controller may be disposed while awaiting initialization above.
+      if (!_isDisposed) {
+        value = value.copyWith(
+          isInitialized: true,
+          description: description,
+          previewSize: Size(event.previewWidth, event.previewHeight),
+          exposureMode: event.exposureMode,
+          focusMode: event.focusMode,
+          exposurePointSupported: event.exposurePointSupported,
+          focusPointSupported: event.focusPointSupported,
+        );
+      }
     } on PlatformException catch (e) {
       throw CameraException(e.code, e.message);
     } finally {
@@ -965,6 +964,26 @@ class CameraController extends ValueNotifier<CameraValue> {
         _cameraId,
         point == null ? null : Point<double>(point.dx, point.dy),
       );
+    } on PlatformException catch (e) {
+      throw CameraException(e.code, e.message);
+    }
+  }
+
+  /// Sets the JPEG compression quality for still image capture.
+  ///
+  /// This only applies to images captured in JPEG format.
+  /// The [quality] must be between 1 (lowest) and 100 (highest).
+  ///
+  /// This is a best-effort setting: platforms that do not support controlling
+  /// the JPEG quality ignore it rather than throwing. See
+  /// https://github.com/flutter/flutter/issues/191790 for the current state of
+  /// platform support.
+  Future<void> setJpegImageQuality(int quality) async {
+    if (quality < 1 || quality > 100) {
+      throw ArgumentError.value(quality, 'quality', 'Must be between 1 and 100.');
+    }
+    try {
+      await CameraPlatform.instance.setJpegImageQuality(_cameraId, quality);
     } on PlatformException catch (e) {
       throw CameraException(e.code, e.message);
     }

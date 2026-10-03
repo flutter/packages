@@ -3,13 +3,31 @@ on:
   push:
     branches:
       - 'release-go_router-*'
-permissions:
-  # Release needs to push a tag back to the repo.
-  contents: write
+      - 'release-cupertino_ui-*'
+      - 'release-material_ui-*'
 jobs:
   release:
+    permissions:
+      # Release needs to push a tag back to the repo.
+      contents: write
     uses: ./.github/workflows/reusable_release.yml
     with:
       is-batch-release: true
       branch-name: '${{ github.ref_name }}'
-    secrets: inherit
+    secrets:
+      USER_NAME: ${{ secrets.USER_NAME }}
+      USER_EMAIL: ${{ secrets.USER_EMAIL }}
+      PUB_CREDENTIALS: ${{ secrets.PUB_CREDENTIALS }}
+
+  sync_to_main:
+    needs: release
+    if: needs.release.result == 'success'
+    permissions:
+      # Need write permission to create PR.
+      contents: write
+      pull-requests: write
+    uses: ./.github/workflows/reusable_sync_to_main.yml
+    with:
+      branch-name: '${{ github.ref_name }}'
+    secrets:
+      BOT_TOKEN: ${{ secrets.FLUTTERGITHUBBOT_TOKEN }}

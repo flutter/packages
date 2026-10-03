@@ -1,3 +1,65 @@
+## 0.7.5+2
+
+* Updates Robolectric to 4.17 and adds the JVM arguments it requires for unit tests.
+
+## 0.7.5+1
+
+* Fix exposure offset slider freezing camera preview and fix setExposureOffset return value.
+
+## 0.7.5
+
+* Adds support for custom video output path in video recording.
+* Updates minimum supported SDK version to Flutter 3.41/Dart 3.11.
+
+## 0.7.4+8
+
+* Bumps cameraxVersion from 1.6.1 to 1.6.2.
+* Removes the explicit `androidx.concurrent:concurrent-futures` dependency
+  workaround, as camera-core 1.6.2 includes an
+  upstream fix that makes it unnecessary.
+
+## 0.7.4+7
+
+* Updates pigeon dev_dependency to ^27.3.2 for analyzer 14 compatibility.
+
+## 0.7.4+6
+
+* Adds explicit `androidx.concurrent:concurrent-futures:1.2.0` dependency to fix
+  `compileDebugJavaWithJavac` failing with "class file for
+  androidx.concurrent.futures.CallbackToFutureAdapter not found" when
+  `camera-core`'s Jspecify type annotations are resolved during compilation.
+  
+## 0.7.4+5
+
+* Fixes a leaked thread per capture by dispatching the `takePicture` result callback on the main
+  executor.
+
+## 0.7.4+4
+
+* Fix `NullPointerException` when disposing camera during active video recording.
+
+## 0.7.4+3
+
+* Updates `ResolutionPreset.max` to prefer higher resolution over capture rate
+  for CameraX `ResolutionSelector` use cases on Android.
+
+## 0.7.4+2
+
+* Bumps cameraxVersion from 1.6.0 to 1.6.1.
+* Updates androidx.camera:camera-core from 1.6.0 to 1.6.1.
+* Updates androidx.camera:camera-camera2 from 1.6.0 to 1.6.1.
+* Updates androidx.camera:camera-lifecycle from 1.6.0 to 1.6.1.
+* Updates androidx.camera:camera-video from 1.6.0 to 1.6.1.
+
+## 0.7.4+1
+
+* Fixes a `StateError` ("Bad state: No element") in `setFocusMode(FocusMode.auto)`
+  when the current focus and metering action has no auto-focus points.
+
+## 0.7.4
+
+* Adds `setJpegImageQuality` for controlling JPEG compression quality.
+
 ## 0.7.3
 
 * Fixes `videoBitrate` configuration being ignored during video recording.

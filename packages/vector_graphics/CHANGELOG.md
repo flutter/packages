@@ -1,6 +1,13 @@
 ## NEXT
 
+* Updates minimum supported SDK version to Flutter 3.41/Dart 3.11.
+* Removes unnecessary Material imports.
+* Fixes deprecation lints.
+
+## 1.2.3
+
 * Updates minimum supported SDK version to Flutter 3.38/Dart 3.10.
+* Fixes a crash when a `semanticsLabel` is provided without an ambient `Directionality` (flutter/flutter#175532).
 
 ## 1.2.2
 

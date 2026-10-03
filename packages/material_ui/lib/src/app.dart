@@ -107,7 +107,7 @@ enum ThemeMode {
 /// This widget also configures the observer of the top-level [Navigator] (if
 /// any) to perform [Hero] animations.
 ///
-/// {@template flutter.material.MaterialApp.defaultSelectionStyle}
+/// {@template material_ui.MaterialApp.defaultSelectionStyle}
 /// The [MaterialApp] automatically creates a [DefaultSelectionStyle]. It uses
 /// the colors in the [ThemeData.textSelectionTheme] if they are not null;
 /// otherwise, the [MaterialApp] sets [DefaultSelectionStyle.selectionColor] to
@@ -118,85 +118,36 @@ enum ThemeMode {
 /// If [home], [routes], [onGenerateRoute], and [onUnknownRoute] are all null,
 /// and [builder] is not null, then no [Navigator] is created.
 ///
-// TODO(framework): Replace the following block with a blue example container
-// when it's supported. https://github.com/dart-lang/dartdoc/issues/4243
-// TODO(framework): Add unit tests to this code snippet.
-// https://github.com/flutter/flutter/issues/188530
+/// <callout-box>
 ///
 /// This example shows how to create a [MaterialApp] that disables the "debug"
 /// banner with a [home] route that will be displayed when the app is launched.
 ///
 /// ![The MaterialApp displays a Scaffold ](https://flutter.github.io/assets-for-api-docs/assets/material/basic_material_app.png)
 ///
-/// ```dart
-/// MaterialApp(
-///   home: Scaffold(
-///     appBar: AppBar(
-///       title: const Text('Home'),
-///     ),
-///   ),
-///   debugShowCheckedModeBanner: false,
-/// )
-/// ```
+/// {@example /example/lib/app/app.snippet.0.dart#body indent=strip}
 ///
-// TODO(framework): End of the blue example container.
+/// </callout-box>
 ///
-// TODO(framework): Replace the following block with a blue example container
-// when it's supported. https://github.com/dart-lang/dartdoc/issues/4243
-// TODO(framework): Add unit tests to this code snippet.
-// https://github.com/flutter/flutter/issues/188530
+/// <callout-box>
 ///
 /// This example shows how to create a [MaterialApp] that uses the [routes]
 /// `Map` to define the "home" route and an "about" route.
 ///
-/// ```dart
-/// MaterialApp(
-///   routes: <String, WidgetBuilder>{
-///     '/': (BuildContext context) {
-///       return Scaffold(
-///         appBar: AppBar(
-///           title: const Text('Home Route'),
-///         ),
-///       );
-///     },
-///     '/about': (BuildContext context) {
-///       return Scaffold(
-///         appBar: AppBar(
-///           title: const Text('About Route'),
-///         ),
-///       );
-///      }
-///    },
-/// )
-/// ```
+/// {@example /example/lib/app/app.snippet.1.dart#body indent=strip}
 ///
-// TODO(framework): End of the blue example container.
+/// </callout-box>
 ///
-// TODO(framework): Replace the following block with a blue example container
-// when it's supported. https://github.com/dart-lang/dartdoc/issues/4243
-// TODO(framework): Add unit tests to this code snippet.
-// https://github.com/flutter/flutter/issues/188530
+/// <callout-box>
 ///
 /// This example shows how to create a [MaterialApp] that defines a [theme] that
 /// will be used for material widgets in the app.
 ///
 /// ![The MaterialApp displays a Scaffold with a dark background and a blue / grey AppBar at the top](https://flutter.github.io/assets-for-api-docs/assets/material/theme_material_app.png)
 ///
-/// ```dart
-/// MaterialApp(
-///   theme: ThemeData(
-///     brightness: Brightness.dark,
-///     primaryColor: Colors.blueGrey
-///   ),
-///   home: Scaffold(
-///     appBar: AppBar(
-///       title: const Text('MaterialApp Theme'),
-///     ),
-///   ),
-/// )
-/// ```
+/// {@example /example/lib/app/app.snippet.2.dart#body indent=strip}
 ///
-// TODO(framework): End of the blue example container.
+/// </callout-box>
 ///
 /// ## Troubleshooting
 ///
@@ -553,8 +504,7 @@ class MaterialApp extends StatefulWidget {
   /// and list the [supportedLocales] that the application can handle.
   ///
   /// ```dart
-  /// // The GlobalMaterialLocalizations and GlobalWidgetsLocalizations
-  /// // classes require the following import:
+  /// // The GlobalWidgetsLocalizations class requires the following import:
   /// // import 'package:flutter_localizations/flutter_localizations.dart';
   ///
   /// const MaterialApp(
@@ -694,43 +644,24 @@ class MaterialApp extends StatefulWidget {
   final bool debugShowCheckedModeBanner;
 
   /// {@macro flutter.widgets.widgetsApp.shortcuts}
-  // TODO(framework): Replace the following block with a blue example container
-  // when it's supported. https://github.com/dart-lang/dartdoc/issues/4243
-  // TODO(framework): Add unit tests to this code snippet.
-  // https://github.com/flutter/flutter/issues/188530
+  /// <callout-box>
   ///
   /// This example shows how to add a single shortcut for
-  /// [LogicalKeyboardKey.select] to the default shortcuts without needing to
+  /// [LogicalKeyboardKey.keyE] to the default shortcuts without needing to
   /// add your own [Shortcuts] widget.
   ///
   /// Alternatively, you could insert a [Shortcuts] widget with just the mapping
   /// you want to add between the [WidgetsApp] and its child and get the same
   /// effect.
   ///
-  /// ```dart
-  /// Widget build(BuildContext context) {
-  ///   return WidgetsApp(
-  ///     shortcuts: <ShortcutActivator, Intent>{
-  ///       ... WidgetsApp.defaultShortcuts,
-  ///       const SingleActivator(LogicalKeyboardKey.select): const ActivateIntent(),
-  ///     },
-  ///     color: const Color(0xFFFF0000),
-  ///     builder: (BuildContext context, Widget? child) {
-  ///       return const Placeholder();
-  ///     },
-  ///   );
-  /// }
-  /// ```
+  /// {@example /example/lib/app/app.snippet.3.dart#body indent=strip}
   ///
-  // TODO(framework): End of the blue example container.
+  /// </callout-box>
   /// {@macro flutter.widgets.widgetsApp.shortcuts.seeAlso}
   final Map<ShortcutActivator, Intent>? shortcuts;
 
   /// {@macro flutter.widgets.widgetsApp.actions}
-  // TODO(framework): Replace the following block with a blue example container
-  // when it's supported. https://github.com/dart-lang/dartdoc/issues/4243
-  // TODO(framework): Add unit tests to this code snippet.
-  // https://github.com/flutter/flutter/issues/188530
+  /// <callout-box>
   ///
   /// This example shows how to add a single action handling an
   /// [ActivateAction] to the default actions without needing to
@@ -740,41 +671,16 @@ class MaterialApp extends StatefulWidget {
   /// you want to add between the [WidgetsApp] and its child and get the same
   /// effect.
   ///
-  /// ```dart
-  /// Widget build(BuildContext context) {
-  ///   return WidgetsApp(
-  ///     actions: <Type, Action<Intent>>{
-  ///       ... WidgetsApp.defaultActions,
-  ///       ActivateAction: CallbackAction<Intent>(
-  ///         onInvoke: (Intent intent) {
-  ///           // Do something here...
-  ///           return null;
-  ///         },
-  ///       ),
-  ///     },
-  ///     color: const Color(0xFFFF0000),
-  ///     builder: (BuildContext context, Widget? child) {
-  ///       return const Placeholder();
-  ///     },
-  ///   );
-  /// }
-  /// ```
+  /// {@example /example/lib/app/app.snippet.4.dart#body indent=strip}
   ///
-  // TODO(framework): End of the blue example container.
+  /// </callout-box>
   /// {@macro flutter.widgets.widgetsApp.actions.seeAlso}
   final Map<Type, Action<Intent>>? actions;
 
   /// {@macro flutter.widgets.widgetsApp.restorationScopeId}
   final String? restorationScopeId;
 
-  /// {@template flutter.material.materialApp.scrollBehavior}
-  /// The default [ScrollBehavior] for the application.
-  ///
-  /// [ScrollBehavior]s describe how [Scrollable] widgets behave. Providing
-  /// a [ScrollBehavior] can set the default [ScrollPhysics] across
-  /// an application, and manage [Scrollable] decorations like [Scrollbar]s and
-  /// [GlowingOverscrollIndicator]s.
-  /// {@endtemplate}
+  /// {@macro cupertino_ui.materialApp.scrollBehavior}
   ///
   /// When null, defaults to [MaterialScrollBehavior].
   ///
@@ -816,15 +722,24 @@ class MaterialApp extends StatefulWidget {
   ///
   /// To disable the theme animation, use [AnimationStyle.noAnimation].
   ///
-  // TODO(framework): Replace the following block with a @dartpad directive
-  // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+  /// <callout-box>
   ///
   /// This sample showcases how to override the theme animation curve and
   /// duration in the [MaterialApp] widget using [AnimationStyle].
   ///
-  /// {@example /example/lib/app/app.0.dart}
+  // TODO(framework): Replace the following block with a @dartpad directive
+  // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+  /// {@template material_ui.dartpad_guide}
+  /// <small>
   ///
-  // TODO(framework): End of the @dartpad directive.
+  /// To see it in action, copy and run this code snippet on [DartPad](https://dartpad.dev/).
+  ///
+  /// </small>
+  /// {@endtemplate}
+  ///
+  /// {@example /example/lib/app/app.0.dart#body}
+  ///
+  /// </callout-box>
   final AnimationStyle? themeAnimationStyle;
 
   @override

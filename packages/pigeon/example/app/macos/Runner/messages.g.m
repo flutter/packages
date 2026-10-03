@@ -12,6 +12,10 @@
 @import Flutter;
 #endif
 
+NSString *const PGNAStringConstant = @"stringConstantValue";
+const NSInteger PGNAnIntConstant = 42;
+const double PGNADoubleConstant = 3.14;
+const BOOL PGNABoolConstant = YES;
 static BOOL __attribute__((unused)) FLTPigeonDeepEquals(id _Nullable a, id _Nullable b) {
   if (a == b) {
     return YES;

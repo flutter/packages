@@ -41,6 +41,28 @@ typedef _ErrorBuilderForAppType = Widget Function(BuildContext context, GoRouter
 typedef PopPageWithRouteMatchCallback =
     bool Function(Route<dynamic> route, dynamic result, RouteMatchBase match);
 
+/// The clip behavior of the [Navigator] identified by [navigatorKey].
+///
+/// A [ShellRoute] builds a single Navigator and carries the clip behavior
+/// itself, while a [StatefulShellRoute] builds one per branch, so the branch
+/// owning [navigatorKey] carries it. [ShellRouteBase] cannot be subclassed
+/// outside of this library, so those are the only two cases.
+Clip _clipBehaviorFor(ShellRouteBase route, GlobalKey<NavigatorState> navigatorKey) {
+  switch (route) {
+    case ShellRoute():
+      return route.clipBehavior;
+    case StatefulShellRoute():
+      for (final StatefulShellBranch branch in route.branches) {
+        if (branch.navigatorKey == navigatorKey) {
+          return branch.clipBehavior;
+        }
+      }
+      return Clip.hardEdge;
+    default:
+      return Clip.hardEdge;
+  }
+}
+
 /// Builds the top-level Navigator for GoRouter.
 class RouteBuilder {
   /// [RouteBuilder] constructor.
@@ -113,6 +135,7 @@ class RouteBuilder {
         onPopPageWithRouteMatch: onPopPageWithRouteMatch,
         matchList: matchList,
         matches: matchList.matches,
+        inheritedMetadata: const <String, dynamic>{},
         configuration: configuration,
         errorBuilder: errorBuilder,
         errorPageBuilder: errorPageBuilder,
@@ -131,14 +154,30 @@ class _CustomNavigator extends StatefulWidget {
     required this.onPopPageWithRouteMatch,
     required this.matchList,
     required this.matches,
+    required this.inheritedMetadata,
     required this.configuration,
     required this.errorBuilder,
     required this.errorPageBuilder,
     required this.requestFocus,
+    this.isShellNavigator = false,
+    this.clipBehavior = Clip.hardEdge,
   });
 
   final GlobalKey<NavigatorState> navigatorKey;
   final List<NavigatorObserver> observers;
+
+  /// Whether this navigator builds the nested Navigator for a
+  /// [ShellRoute]/[StatefulShellRoute] branch, as opposed to the root
+  /// [GoRouter] navigator.
+  ///
+  /// Shell navigators are wrapped in `Semantics(container: true)` so that
+  /// each route's [ModalBarrier] (which blocks the semantics of
+  /// previously-painted siblings up to the nearest semantics boundary)
+  /// cannot reach past the shell's Navigator and drop shell chrome that
+  /// paints before it (e.g. a side rail or app bar in a `Row`/`Column`
+  /// shell). The root navigator has no earlier-painted siblings by
+  /// construction, so it does not need the same containment.
+  final bool isShellNavigator;
 
   /// The actual [RouteMatchBase]s to be built.
   ///
@@ -146,6 +185,7 @@ class _CustomNavigator extends StatefulWidget {
   /// to build navigator in shell route. In this case, these matches come from
   /// the [ShellRouteMatch.matches].
   final List<RouteMatchBase> matches;
+  final Map<String, dynamic> inheritedMetadata;
   final RouteMatchList matchList;
   final RouteConfiguration configuration;
   final PopPageWithRouteMatchCallback onPopPageWithRouteMatch;
@@ -153,6 +193,11 @@ class _CustomNavigator extends StatefulWidget {
   final GoRouterWidgetBuilder? errorBuilder;
   final GoRouterPageBuilder? errorPageBuilder;
   final bool requestFocus;
+
+  /// The clip behavior of the [Navigator] built by this widget.
+  ///
+  /// {@macro go_router.ShellRoute.clipBehavior}
+  final Clip clipBehavior;
 
   @override
   State<StatefulWidget> createState() => _CustomNavigatorState();
@@ -167,7 +212,8 @@ class _CustomNavigatorState extends State<_CustomNavigator> {
   @override
   void didUpdateWidget(_CustomNavigator oldWidget) {
     super.didUpdateWidget(oldWidget);
-    if (widget.matchList != oldWidget.matchList) {
+    if (widget.matchList != oldWidget.matchList ||
+        widget.inheritedMetadata != oldWidget.inheritedMetadata) {
       _pages = null;
     }
   }
@@ -205,14 +251,24 @@ class _CustomNavigatorState extends State<_CustomNavigator> {
     if (widget.matchList.isError) {
       pages.add(_buildErrorPage(context, widget.matchList));
     } else {
+      Map<String, dynamic> currentInheritedMetadata = widget.inheritedMetadata;
       for (final RouteMatchBase match in widget.matches) {
-        final Page<Object?>? page = _buildPage(context, match);
+        final Map<String, dynamic> metadata = match is ImperativeRouteMatch
+            ? match.matches.topRouteMetadata
+            : RouteMatchList.mergeMetadata(currentInheritedMetadata, match.route.metadata);
+        final GoRouterState state = match.buildState(
+          widget.configuration,
+          widget.matchList,
+          metadata: metadata,
+        );
+        final Page<Object?>? page = _buildPage(context, match, state);
+        currentInheritedMetadata = metadata;
         if (page == null) {
           continue;
         }
         pages.add(page);
         pageToRouteMatchBase[page] = match;
-        registry[page] = match.buildState(widget.configuration, widget.matchList);
+        registry[page] = state;
       }
     }
     _pages = pages;
@@ -220,23 +276,22 @@ class _CustomNavigatorState extends State<_CustomNavigator> {
     _pageToRouteMatchBase = pageToRouteMatchBase;
   }
 
-  Page<Object?>? _buildPage(BuildContext context, RouteMatchBase match) {
+  Page<Object?>? _buildPage(BuildContext context, RouteMatchBase match, GoRouterState state) {
     if (match is RouteMatch) {
       if (match is ImperativeRouteMatch && match.matches.isError) {
         return _buildErrorPage(context, match.matches);
       }
-      return _buildPageForGoRoute(context, match);
+      return _buildPageForGoRoute(context, match, state);
     }
     if (match is ShellRouteMatch) {
-      return _buildPageForShellRoute(context, match);
+      return _buildPageForShellRoute(context, match, state);
     }
     throw GoError('unknown match type ${match.runtimeType}');
   }
 
   /// Builds a [Page] for a [RouteMatch]
-  Page<Object?>? _buildPageForGoRoute(BuildContext context, RouteMatch match) {
+  Page<Object?>? _buildPageForGoRoute(BuildContext context, RouteMatch match, GoRouterState state) {
     final GoRouterPageBuilder? pageBuilder = match.route.pageBuilder;
-    final GoRouterState state = match.buildState(widget.configuration, widget.matchList);
     if (pageBuilder != null) {
       final Page<Object?> page = pageBuilder(context, state);
       if (page is! NoOpPage) {
@@ -261,8 +316,11 @@ class _CustomNavigatorState extends State<_CustomNavigator> {
   }
 
   /// Builds a [Page] for a [ShellRouteMatch]
-  Page<Object?> _buildPageForShellRoute(BuildContext context, ShellRouteMatch match) {
-    final GoRouterState state = match.buildState(widget.configuration, widget.matchList);
+  Page<Object?> _buildPageForShellRoute(
+    BuildContext context,
+    ShellRouteMatch match,
+    GoRouterState state,
+  ) {
     final GlobalKey<NavigatorState> navigatorKey = match.navigatorKey;
     final shellRouteContext = ShellRouteContext(
       route: match.route,
@@ -291,6 +349,7 @@ class _CustomNavigatorState extends State<_CustomNavigator> {
                 navigatorKey: navigatorKey,
                 matches: match.matches,
                 matchList: matchList,
+                inheritedMetadata: state.metadata,
                 configuration: widget.configuration,
                 observers: observers ?? const <NavigatorObserver>[],
                 onPopPageWithRouteMatch: widget.onPopPageWithRouteMatch,
@@ -298,6 +357,8 @@ class _CustomNavigatorState extends State<_CustomNavigator> {
                 errorBuilder: widget.errorBuilder,
                 errorPageBuilder: widget.errorPageBuilder,
                 requestFocus: widget.requestFocus,
+                isShellNavigator: true,
+                clipBehavior: _clipBehaviorFor(match.route, navigatorKey),
               ),
             );
           },
@@ -388,6 +449,7 @@ class _CustomNavigatorState extends State<_CustomNavigator> {
       error: matchList.error,
       pageKey: ValueKey<String>('${matchList.uri}(error)'),
       topRoute: matchList.lastOrNull?.route,
+      metadata: matchList.topRouteMetadata,
     );
   }
 
@@ -425,18 +487,25 @@ class _CustomNavigatorState extends State<_CustomNavigator> {
       _updatePages(context);
     }
     assert(_pages != null);
+    final navigator = Navigator(
+      key: widget.navigatorKey,
+      requestFocus: widget.requestFocus,
+      restorationScopeId: widget.navigatorRestorationId,
+      pages: _pages!,
+      observers: widget.observers,
+      onPopPage: _handlePopPage,
+      clipBehavior: widget.clipBehavior,
+    );
     return GoRouterStateRegistryScope(
       registry: _registry,
       child: HeroControllerScope(
         controller: _controller!,
-        child: Navigator(
-          key: widget.navigatorKey,
-          requestFocus: widget.requestFocus,
-          restorationScopeId: widget.navigatorRestorationId,
-          pages: _pages!,
-          observers: widget.observers,
-          onPopPage: _handlePopPage,
-        ),
+        // A Navigator does not establish a semantics boundary, so a route's
+        // ModalBarrier (wrapped in BlockSemantics) can otherwise drop the
+        // semantics of shell chrome painted before this navigator (e.g. a
+        // side rail in a Row-based ShellRoute shell). See
+        // https://github.com/flutter/flutter/issues/135656.
+        child: widget.isShellNavigator ? Semantics(container: true, child: navigator) : navigator,
       ),
     );
   }

@@ -415,6 +415,34 @@ void main() {
       expect(result.productID, productDetails.productId);
     });
 
+    test('buyNonConsumable passes obfuscatedProfileId', () async {
+      const profileId = 'hashedProfileId';
+      const accountId = 'hashedAccountId';
+      const expectedBillingResult = BillingResultWrapper(
+        responseCode: BillingResponse.ok,
+        debugMessage: 'dummy message',
+      );
+      when(
+        mockApi.launchBillingFlow(any),
+      ).thenAnswer((_) async => convertToPigeonResult(expectedBillingResult));
+
+      final bool launchResult = await iapAndroidPlatform.buyNonConsumable(
+        purchaseParam: GooglePlayPurchaseParam(
+          productDetails: GooglePlayProductDetails.fromProductDetails(
+            dummyOneTimeProductDetails,
+          ).first,
+          applicationUserName: accountId,
+          obfuscatedProfileId: profileId,
+        ),
+      );
+
+      final VerificationResult result = verify(mockApi.launchBillingFlow(captureAny));
+      final params = result.captured.single as PlatformBillingFlowParams;
+      expect(launchResult, isTrue);
+      expect(params.accountId, accountId);
+      expect(params.obfuscatedProfileId, profileId);
+    });
+
     test('handles an error with an empty purchases list', () async {
       const ProductDetailsWrapper productDetails = dummyOneTimeProductDetails;
       const accountId = 'hashedAccountId';

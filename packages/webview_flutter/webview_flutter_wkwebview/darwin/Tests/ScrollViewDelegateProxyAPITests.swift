@@ -2,7 +2,8 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import XCTest
+import Foundation
+import Testing
 
 @testable import webview_flutter_wkwebview
 
@@ -10,17 +11,17 @@ import XCTest
   import UIKit
 #endif
 
-class ScrollViewDelegateProxyAPITests: XCTestCase {
+@Suite struct ScrollViewDelegateProxyAPITests {
   #if os(iOS)
-    func testPigeonDefaultConstructor() {
+    @Test func pigeonDefaultConstructor() {
       let registrar = TestProxyApiRegistrar()
       let api = registrar.apiDelegate.pigeonApiUIScrollViewDelegate(registrar)
 
       let instance = try? api.pigeonDelegate.pigeonDefaultConstructor(pigeonApi: api)
-      XCTAssertNotNil(instance)
+      #expect(instance != nil)
     }
 
-    @MainActor func testScrollViewDidScroll() {
+    @MainActor @Test func scrollViewDidScroll() throws {
       let api = TestScrollViewDelegateApi()
       let registrar = TestProxyApiRegistrar()
       let instance = ScrollViewDelegateImpl(api: api, registrar: registrar)
@@ -30,7 +31,7 @@ class ScrollViewDelegateProxyAPITests: XCTestCase {
       scrollView.contentOffset = CGPoint(x: x, y: y)
       instance.scrollViewDidScroll(scrollView)
 
-      XCTAssertEqual(api.scrollViewDidScrollArgs, [scrollView, x, y])
+      #expect(api.scrollViewDidScrollArgs == [scrollView, x, y])
     }
   #endif
 }

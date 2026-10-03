@@ -63,7 +63,7 @@ class BottomSheetThemeData with Diagnosticable {
 
   /// Overrides the default value for [BottomSheet.elevation].
   ///
-  /// {@macro flutter.material.material.elevation}
+  /// {@macro material_ui.material.elevation}
   ///
   /// If null, [BottomSheet] defaults to 0.0.
   final double? elevation;

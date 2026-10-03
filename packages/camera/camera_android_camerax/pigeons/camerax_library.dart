@@ -533,7 +533,7 @@ enum CameraXFlashMode {
 /// See https://developer.android.com/reference/kotlin/androidx/camera/core/ImageCapture.
 @ProxyApi(kotlinOptions: KotlinProxyApiOptions(fullClassName: 'androidx.camera.core.ImageCapture'))
 abstract class ImageCapture extends UseCase {
-  ImageCapture(int? targetRotation, CameraXFlashMode? flashMode);
+  ImageCapture(int? targetRotation, CameraXFlashMode? flashMode, int? jpegQuality);
 
   late final ResolutionSelector? resolutionSelector;
 
@@ -621,6 +621,11 @@ abstract class ResolutionSelector {
 
   /// The resolution selection strategy for the `UseCase`.
   late final ResolutionStrategy? resolutionStrategy;
+
+  /// The allowed resolution mode for the `UseCase`.
+  ///
+  /// See [ResolutionSelectorAllowedResolutionMode].
+  late final int? allowedResolutionMode;
 
   /// Returns the specified `AspectRatioStrategy`, or
   /// `AspectRatioStrategy.ratio_4_3FallbackAutoStrategy` if none is specified

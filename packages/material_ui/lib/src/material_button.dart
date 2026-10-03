@@ -4,6 +4,8 @@
 
 /// @docImport 'elevated_button.dart';
 /// @docImport 'elevated_button_theme.dart';
+/// @docImport 'filled_button.dart';
+/// @docImport 'filled_button_theme.dart';
 /// @docImport 'icon_button.dart';
 /// @docImport 'outlined_button.dart';
 /// @docImport 'outlined_button_theme.dart';
@@ -121,7 +123,7 @@ class MaterialButton extends StatelessWidget {
   /// [State.setState] is not allowed).
   final ValueChanged<bool>? onHighlightChanged;
 
-  /// {@macro flutter.material.RawMaterialButton.mouseCursor}
+  /// {@macro material_ui.RawMaterialButton.mouseCursor}
   ///
   /// If this property is null, [WidgetStateMouseCursor.adaptiveClickable] will be used.
   final MouseCursor? mouseCursor;
@@ -325,7 +327,7 @@ class MaterialButton extends StatelessWidget {
 
   /// Defines how compact the button's layout will be.
   ///
-  /// {@macro flutter.material.themedata.visualDensity}
+  /// {@macro material_ui.themedata.visualDensity}
   ///
   /// See also:
   ///
@@ -343,7 +345,7 @@ class MaterialButton extends StatelessWidget {
   /// [ButtonThemeData.shape].
   final ShapeBorder? shape;
 
-  /// {@macro flutter.material.Material.clipBehavior}
+  /// {@macro cupertino_ui.Material.clipBehavior}
   ///
   /// Defaults to [Clip.none].
   final Clip clipBehavior;

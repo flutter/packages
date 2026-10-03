@@ -10,6 +10,7 @@ library;
 
 import 'dart:math' as math;
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
@@ -100,7 +101,7 @@ const double _fontSizeToScale = 14.0;
 /// or [DatePickerEntryMode.input] (a text input field) mode.
 /// It defaults to [DatePickerEntryMode.calendar].
 ///
-/// {@template flutter.material.date_picker.switchToInputEntryModeIcon}
+/// {@template material_ui.date_picker.switchToInputEntryModeIcon}
 /// An optional [switchToInputEntryModeIcon] argument can be used to
 /// display a custom Icon in the corner of the dialog
 /// when [DatePickerEntryMode] is [DatePickerEntryMode.calendar]. Clicking on
@@ -108,7 +109,7 @@ const double _fontSizeToScale = 14.0;
 /// If null, `Icon(useMaterial3 ? Icons.edit_outlined : Icons.edit)` is used.
 /// {@endtemplate}
 ///
-/// {@template flutter.material.date_picker.switchToCalendarEntryModeIcon}
+/// {@template material_ui.date_picker.switchToCalendarEntryModeIcon}
 /// An optional [switchToCalendarEntryModeIcon] argument can be used to
 /// display a custom Icon in the corner of the dialog
 /// when [DatePickerEntryMode] is [DatePickerEntryMode.input]. Clicking on
@@ -122,7 +123,22 @@ const double _fontSizeToScale = 14.0;
 /// this can be used to only allow weekdays for selection. If provided, it must
 /// return true for [initialDate].
 ///
-/// {@macro flutter.material.calendar_date_picker.calendarDelegate}
+/// {@macro material_ui.calendar_date_picker.calendarDelegate}
+///
+/// Use a custom [CalendarDelegate.keyboardInputFormatters] to customize
+/// how dates are entered and formatted in [DatePickerEntryMode.input].
+///
+/// A custom delegate can define specific date input conventions, such as
+/// ordering, separators, or formatting rules (for example, `dd.MM.yyyy`), and
+/// is responsible for keeping text input parsing and calendar selection
+/// synchronized.
+///
+/// {@tool dartpad}
+/// This sample shows how to customize the text input behavior of
+/// [showDatePicker] using a custom [CalendarDelegate].
+///
+/// ** See code in examples/api/lib/material/date_picker/show_date_picker.2.dart **
+/// {@end-tool}
 ///
 /// The following optional string parameters allow you to override the default
 /// text used for various parts of the dialog:
@@ -157,15 +173,18 @@ const double _fontSizeToScale = 14.0;
 ///
 /// {@macro flutter.widgets.RawDialogRoute}
 ///
-// TODO(framework): Replace the following block with a @dartpad directive
-// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// <callout-box>
 ///
 /// This sample demonstrates how to create a basic date picker.
 /// Tapping the button displays a date picker which returns the selected date.
 ///
-/// {@example /example/lib/date_picker/show_date_picker.1.dart}
+// TODO(framework): Replace the following block with a @dartpad directive
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// {@macro material_ui.dartpad_guide}
 ///
-// TODO(framework): End of the @dartpad directive.
+/// {@example /example/lib/date_picker/show_date_picker.1.dart#body}
+///
+/// </callout-box>
 ///
 /// ### State Restoration
 ///
@@ -178,17 +197,20 @@ const double _fontSizeToScale = 14.0;
 ///
 /// {@macro flutter.widgets.RestorationManager}
 ///
-// TODO(framework): Replace the following block with a @dartpad directive
-// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// <callout-box>
 ///
 /// This sample demonstrates how to create a restorable Material date picker.
 /// This is accomplished by enabling state restoration by specifying
 /// [MaterialApp.restorationScopeId] and using [Navigator.restorablePush] to
 /// push [DatePickerDialog] when the button is tapped.
 ///
-/// {@example /example/lib/date_picker/show_date_picker.0.dart}
+// TODO(framework): Replace the following block with a @dartpad directive
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// {@macro material_ui.dartpad_guide}
 ///
-// TODO(framework): End of the @dartpad directive.
+/// {@example /example/lib/date_picker/show_date_picker.0.dart#body}
+///
+/// </callout-box>
 ///
 /// See also:
 ///
@@ -199,6 +221,7 @@ const double _fontSizeToScale = 14.0;
 ///  * [DisplayFeatureSubScreen], which documents the specifics of how
 ///    [DisplayFeature]s can split the screen into sub-screens.
 ///  * [showTimePicker], which shows a dialog that contains a Material Design time picker.
+@awaitNotRequired
 Future<DateTime?> showDatePicker({
   required BuildContext context,
   DateTime? initialDate,
@@ -421,7 +444,7 @@ class DatePickerDialog extends StatefulWidget {
   /// string. For example, 'Month, Day, Year' for en_US.
   final String? fieldLabelText;
 
-  /// {@template flutter.material.datePickerDialog}
+  /// {@template material_ui.datePickerDialog}
   /// The keyboard type of the [TextField].
   ///
   /// If this is null, it will default to [TextInputType.datetime]
@@ -450,10 +473,10 @@ class DatePickerDialog extends StatefulWidget {
   /// `initialEntryMode` parameter the next time the date picker is shown.
   final ValueChanged<DatePickerEntryMode>? onDatePickerModeChange;
 
-  /// {@macro flutter.material.date_picker.switchToInputEntryModeIcon}
+  /// {@macro material_ui.date_picker.switchToInputEntryModeIcon}
   final Icon? switchToInputEntryModeIcon;
 
-  /// {@macro flutter.material.date_picker.switchToCalendarEntryModeIcon}
+  /// {@macro material_ui.date_picker.switchToCalendarEntryModeIcon}
   final Icon? switchToCalendarEntryModeIcon;
 
   /// The amount of padding added to [MediaQueryData.viewInsets] on the outside
@@ -463,7 +486,7 @@ class DatePickerDialog extends StatefulWidget {
   /// Defaults to `EdgeInsets.symmetric(horizontal: 16.0, vertical: 24.0)`.
   final EdgeInsets insetPadding;
 
-  /// {@macro flutter.material.calendar_date_picker.calendarDelegate}
+  /// {@macro material_ui.calendar_date_picker.calendarDelegate}
   final CalendarDelegate<DateTime> calendarDelegate;
 
   @override
@@ -741,9 +764,9 @@ class _DatePickerDialogState extends State<DatePickerDialog> with RestorationMix
     // Constrain the textScaleFactor to the largest supported value to prevent
     // layout issues.
     final double textScaleFactor =
-        MediaQuery.textScalerOf(
-          context,
-        ).clamp(maxScaleFactor: _kMaxTextScaleFactor).scale(_fontSizeToScale) /
+        MediaQuery.textScalerOf(context)
+            .clamp(maxScaleFactor: _kMaxTextScaleFactor)
+            .scale(_fontSizeToScale) /
         _fontSizeToScale;
     final Size dialogSize = _dialogSize(context) * textScaleFactor;
     final DialogThemeData dialogTheme = theme.dialogTheme;
@@ -945,13 +968,12 @@ class _DatePickerHeader extends StatelessWidget {
       entryModeButton != null ? _kMaxHeaderWithEntryTextScaleFactor : _kMaxHeaderTextScaleFactor,
     );
     final double textScaleFactor =
-        MediaQuery.textScalerOf(
-          context,
-        ).clamp(maxScaleFactor: maxHeaderTextScaleFactor).scale(_fontSizeToScale) /
+        MediaQuery.textScalerOf(context)
+            .clamp(maxScaleFactor: maxHeaderTextScaleFactor)
+            .scale(_fontSizeToScale) /
         _fontSizeToScale;
-    final double scaledFontSize = MediaQuery.textScalerOf(
-      context,
-    ).scale(titleStyle?.fontSize ?? 32);
+    final double scaledFontSize = MediaQuery.textScalerOf(context)
+        .scale(titleStyle?.fontSize ?? 32);
     final headerScaleFactor = textScaleFactor > 1 ? textScaleFactor : 1.0;
 
     final help = Text(
@@ -1065,8 +1087,11 @@ class _DatePickerHeader extends StatelessWidget {
 ///
 /// See [showDateRangePicker], which has a [SelectableDayForRangePredicate]
 /// parameter used to specify allowable days in the date range picker.
-typedef SelectableDayForRangePredicate =
-    bool Function(DateTime day, DateTime? selectedStartDay, DateTime? selectedEndDay);
+typedef SelectableDayForRangePredicate = bool Function(
+  DateTime day,
+  DateTime? selectedStartDay,
+  DateTime? selectedEndDay,
+);
 
 /// Shows a full screen modal dialog containing a Material Design date range
 /// picker.
@@ -1096,11 +1121,11 @@ typedef SelectableDayForRangePredicate =
 /// grid) or [DatePickerEntryMode.input] (two text input fields) mode.
 /// It defaults to [DatePickerEntryMode.calendar].
 ///
-/// {@macro flutter.material.date_picker.switchToInputEntryModeIcon}
+/// {@macro material_ui.date_picker.switchToInputEntryModeIcon}
 ///
-/// {@macro flutter.material.date_picker.switchToCalendarEntryModeIcon}
+/// {@macro material_ui.date_picker.switchToCalendarEntryModeIcon}
 ///
-/// {@macro flutter.material.calendar_date_picker.calendarDelegate}
+/// {@macro material_ui.calendar_date_picker.calendarDelegate}
 ///
 /// The following optional string parameters allow you to override the default
 /// text used for various parts of the dialog:
@@ -1152,17 +1177,20 @@ typedef SelectableDayForRangePredicate =
 ///
 /// {@macro flutter.widgets.RestorationManager}
 ///
-// TODO(framework): Replace the following block with a @dartpad directive
-// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// <callout-box>
 ///
 /// This sample demonstrates how to create a restorable Material date range picker.
 /// This is accomplished by enabling state restoration by specifying
 /// [MaterialApp.restorationScopeId] and using [Navigator.restorablePush] to
 /// push [DateRangePickerDialog] when the button is tapped.
 ///
-/// {@example /example/lib/date_picker/show_date_range_picker.0.dart}
+// TODO(framework): Replace the following block with a @dartpad directive
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// {@macro material_ui.dartpad_guide}
 ///
-// TODO(framework): End of the @dartpad directive.
+/// {@example /example/lib/date_picker/show_date_range_picker.0.dart#body}
+///
+/// </callout-box>
 ///
 /// See also:
 ///
@@ -1171,6 +1199,7 @@ typedef SelectableDayForRangePredicate =
 ///  * [DateTimeRange], which is used to describe a date range.
 ///  * [DisplayFeatureSubScreen], which documents the specifics of how
 ///    [DisplayFeature]s can split the screen into sub-screens.
+@awaitNotRequired
 Future<DateTimeRange?> showDateRangePicker({
   required BuildContext context,
   DateTimeRange? initialDateRange,
@@ -1476,7 +1505,7 @@ class DateRangePickerDialog extends StatefulWidget {
   /// is used.
   final String? fieldEndLabelText;
 
-  /// {@macro flutter.material.datePickerDialog}
+  /// {@macro material_ui.datePickerDialog}
   final TextInputType keyboardType;
 
   /// Restoration ID to save and restore the state of the [DateRangePickerDialog].
@@ -1493,16 +1522,16 @@ class DateRangePickerDialog extends StatefulWidget {
   ///    Flutter.
   final String? restorationId;
 
-  /// {@macro flutter.material.date_picker.switchToInputEntryModeIcon}
+  /// {@macro material_ui.date_picker.switchToInputEntryModeIcon}
   final Icon? switchToInputEntryModeIcon;
 
-  /// {@macro flutter.material.date_picker.switchToCalendarEntryModeIcon}
+  /// {@macro material_ui.date_picker.switchToCalendarEntryModeIcon}
   final Icon? switchToCalendarEntryModeIcon;
 
   /// Function to provide full control over which [DateTime] can be selected.
   final SelectableDayForRangePredicate? selectableDayPredicate;
 
-  /// {@macro flutter.material.calendar_date_picker.calendarDelegate}
+  /// {@macro material_ui.calendar_date_picker.calendarDelegate}
   final CalendarDelegate<DateTime> calendarDelegate;
 
   @override
@@ -2015,7 +2044,7 @@ class _CalendarDateRangePicker extends StatefulWidget {
   /// Called when the user changes the end date of the selected range.
   final ValueChanged<DateTime?>? onEndDateChanged;
 
-  /// {@macro flutter.material.calendar_date_picker.calendarDelegate}
+  /// {@macro material_ui.calendar_date_picker.calendarDelegate}
   final CalendarDelegate<DateTime> calendarDelegate;
 
   @override
@@ -2570,7 +2599,7 @@ class _MonthItem extends StatefulWidget {
 
   final SelectableDayForRangePredicate? selectableDayPredicate;
 
-  /// {@macro flutter.material.calendar_date_picker.calendarDelegate}
+  /// {@macro material_ui.calendar_date_picker.calendarDelegate}
   final CalendarDelegate<DateTime> calendarDelegate;
 
   @override
@@ -3173,9 +3202,9 @@ class _InputDateRangePickerDialog extends StatelessWidget {
     );
 
     final double textScaleFactor =
-        MediaQuery.textScalerOf(
-          context,
-        ).clamp(maxScaleFactor: _kMaxRangeTextScaleFactor).scale(_fontSizeToScale) /
+        MediaQuery.textScalerOf(context)
+            .clamp(maxScaleFactor: _kMaxRangeTextScaleFactor)
+            .scale(_fontSizeToScale) /
         _fontSizeToScale;
     final Size dialogSize =
         (useMaterial3 ? _inputPortraitDialogSizeM3 : _inputPortraitDialogSizeM2) * textScaleFactor;
@@ -3313,12 +3342,12 @@ class _InputDateRangePicker extends StatefulWidget {
   /// [_InputDateRangePickerState.validate] to validate.
   final bool autovalidate;
 
-  /// {@macro flutter.material.datePickerDialog}
+  /// {@macro material_ui.datePickerDialog}
   final TextInputType keyboardType;
 
   final SelectableDayForRangePredicate? selectableDayPredicate;
 
-  /// {@macro flutter.material.calendar_date_picker.calendarDelegate}
+  /// {@macro material_ui.calendar_date_picker.calendarDelegate}
   final CalendarDelegate<DateTime> calendarDelegate;
 
   @override
@@ -3395,6 +3424,7 @@ class _InputDateRangePickerState extends State<_InputDateRangePicker> {
 
   DateTime? _parseDate(String? text) {
     final MaterialLocalizations localizations = MaterialLocalizations.of(context);
+
     return widget.calendarDelegate.parseCompactDate(text, localizations);
   }
 
@@ -3476,6 +3506,7 @@ class _InputDateRangePickerState extends State<_InputDateRangePicker> {
             keyboardType: widget.keyboardType,
             onChanged: _handleStartChanged,
             autofocus: widget.autofocus,
+            inputFormatters: widget.calendarDelegate.keyboardInputFormatters(localizations),
           ),
         ),
         const SizedBox(width: 8),
@@ -3492,6 +3523,7 @@ class _InputDateRangePickerState extends State<_InputDateRangePicker> {
             ),
             keyboardType: widget.keyboardType,
             onChanged: _handleEndChanged,
+            inputFormatters: widget.calendarDelegate.keyboardInputFormatters(localizations),
           ),
         ),
       ],

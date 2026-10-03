@@ -4,6 +4,9 @@ on:
   repository_dispatch:
     types: [batch-release-pr]
 
+# Declare default permissions as read only.
+permissions: read-all
+
 env:
   HEAD_BRANCH_NAME: ${{ github.event.client_payload.package }}-${{ github.run_id }}-${{ github.run_attempt }}
 
@@ -15,29 +18,40 @@ jobs:
     outputs:
       head_branch_created: ${{ steps.check-branch-exists.outputs.exists }}
       release_branch: ${{ steps.create-branch.outputs.release_branch }} # e.g. release-go_router-17.2.2, returned by branches-for-batch-release tool.
-    env:
-      GITHUB_TOKEN: ${{ secrets.FLUTTERGITHUBBOT_TOKEN }}
+      blocking_branch: ${{ steps.check-in-flight.outputs.blocking_branch }} # Set only when an earlier release hasn't been merged back to main yet.
     steps:
       - name: checkout repository
         uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0
         with:
           token: ${{ secrets.FLUTTERGITHUBBOT_TOKEN }}
+          persist-credentials: false
       - name: "Install Flutter"
         uses: ./.github/workflows/internals/install_flutter
       - name: Set up tools
         run: dart pub get
         working-directory: ${{ github.workspace }}/script/tool
+      # A new release can't be cut while an earlier one is still in flight. This
+      # only reports that; the unblock_sync and report_blocked_release jobs act
+      # on it.
+      - name: check for an in-flight release
+        id: check-in-flight
+        run: dart ./script/tool/lib/src/main.dart in-flight-release-check --packages=${GITHUB_EVENT_CLIENT_PAYLOAD_PACKAGE} --remote=origin
+        env:
+          GITHUB_EVENT_CLIENT_PAYLOAD_PACKAGE: ${{ github.event.client_payload.package }}
       # This step is to create branches for a batch release
       # Branches may not be created if there is nothing to release.
       # In that case, the workflow will exit and complete successfully.
       - name: create batch release branch
         id: create-branch
+        if: steps.check-in-flight.outputs.blocking_branch == ''
         run: |
+          gh auth setup-git
           git config --global user.name "flutteractionsbot"
           git config --global user.email "fluttergithubbot@gmail.com"
           dart ./script/tool/lib/src/main.dart branches-for-batch-release --packages=${GITHUB_EVENT_CLIENT_PAYLOAD_PACKAGE} --branch=${HEAD_BRANCH_NAME} --remote=origin
         env:
           GITHUB_EVENT_CLIENT_PAYLOAD_PACKAGE: ${{ github.event.client_payload.package }}
+          GH_TOKEN: ${{ secrets.FLUTTERGITHUBBOT_TOKEN }}
       - name: Check if branch was created
         id: check-branch-exists
         run: |
@@ -55,20 +69,58 @@ jobs:
       # The create-pull-request action needs both content and pull-requests permissions.
       pull-requests: write
       contents: write
-    env:
-      GITHUB_TOKEN: ${{ secrets.FLUTTERGITHUBBOT_TOKEN }}
     steps:
       - name: checkout repository
         uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0
         with:
           ref: ${{ env.HEAD_BRANCH_NAME }}
+          persist-credentials: false
       - name: Create batch release PR
         run: |
+          gh auth setup-git
           gh pr create \
-            --base "${{ needs.create_batch_release_branch.outputs.release_branch }}" \
-            --head "${{ env.HEAD_BRANCH_NAME }}" \
-            --title "[${{ github.event.client_payload.package }}] Batch release" \
-            --body "This PR was created automatically to batch release the \`${{ github.event.client_payload.package }}\`." \
-            --label "override: skip-batch-release-repo-check-${{ github.event.client_payload.package }}"
+            --base "${NEEDS_CREATE_BATCH_RELEASE_BRANCH_OUTPUTS_RELEASE_BRANCH}" \
+            --head "${HEAD_BRANCH_NAME}" \
+            --title "[${GITHUB_EVENT_CLIENT_PAYLOAD_PACKAGE}] Batch release" \
+            --body "This PR was created automatically to batch release the \`${GITHUB_EVENT_CLIENT_PAYLOAD_PACKAGE}\`." \
+            --label "override: batch-${GITHUB_EVENT_CLIENT_PAYLOAD_PACKAGE}"
+        env:
+          NEEDS_CREATE_BATCH_RELEASE_BRANCH_OUTPUTS_RELEASE_BRANCH: ${{ needs.create_batch_release_branch.outputs.release_branch }}
+          GITHUB_EVENT_CLIENT_PAYLOAD_PACKAGE: ${{ github.event.client_payload.package }}
+          GH_TOKEN: ${{ secrets.FLUTTERGITHUBBOT_TOKEN }}
 
+  # If a previous release hasn't been merged back yet, no new release can be
+  # cut. Make sure the sync PR for it exists, and nudge it if it does.
+  unblock_sync:
+    needs: create_batch_release_branch
+    if: needs.create_batch_release_branch.outputs.blocking_branch != ''
+    permissions:
+      contents: write
+      pull-requests: write
+    uses: ./.github/workflows/reusable_sync_to_main.yml
+    with:
+      branch-name: ${{ needs.create_batch_release_branch.outputs.blocking_branch }}
+      comment-if-exists: >-
+        This PR is blocking the next batch release: no new release branch can be
+        cut until the version bump and changelog on
+        `${{ needs.create_batch_release_branch.outputs.blocking_branch }}` are on
+        `main`. That release is already published, so these changes have to
+        land. If this PR can't be landed as-is, apply the same version bump and
+        changelog to `main` by hand.
+    secrets:
+      BOT_TOKEN: ${{ secrets.FLUTTERGITHUBBOT_TOKEN }}
 
+  # Surface the skipped release, since a silently green scheduled run would hide
+  # it until someone noticed the missing release.
+  report_blocked_release:
+    needs: [create_batch_release_branch, unblock_sync]
+    if: ${{ !cancelled() && needs.create_batch_release_branch.outputs.blocking_branch != '' }}
+    permissions: {} # Only writes a log annotation.
+    runs-on: ubuntu-latest
+    steps:
+      - name: Report blocked release
+        run: |
+          echo "::error::No batch release was created: ${BLOCKING_BRANCH} has not been merged back into main."
+          exit 1
+        env:
+          BLOCKING_BRANCH: ${{ needs.create_batch_release_branch.outputs.blocking_branch }}

@@ -476,6 +476,15 @@ void main() {
       verify(mockCameraApi.startVideoRecording(false)).called(1);
     });
 
+    test('Should pass videoOutputPath when starting recording a video', () async {
+      // Arrange
+      // Act
+      await camera.startVideoRecording(cameraId, videoOutputPath: '/test/path.mp4');
+
+      // Assert
+      verify(mockCameraApi.startVideoRecording(false, videoOutputPath: '/test/path.mp4')).called(1);
+    });
+
     test(
       'Should pass enableStream if callback is passed when starting recording a video',
       () async {
@@ -751,6 +760,15 @@ void main() {
       // Assert
       verify(mockCameraApi.startImageStream()).called(1);
       verify(mockCameraApi.stopImageStream()).called(1);
+    });
+
+    test('Should set the image quality', () async {
+      // Arrange
+      // Act
+      await camera.setJpegImageQuality(cameraId, 50);
+
+      // Assert
+      verify(mockCameraApi.setJpegImageQuality(50)).called(1);
     });
   });
 }

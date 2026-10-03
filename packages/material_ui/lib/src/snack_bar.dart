@@ -21,6 +21,8 @@ import 'text_button.dart';
 import 'text_button_theme.dart';
 import 'theme.dart';
 
+part 'generated/snackbar_defaults_m3.g.dart';
+
 // Examples can assume:
 // late BuildContext context;
 
@@ -217,7 +219,7 @@ class _SnackBarActionState extends State<SnackBarAction> {
 /// A lightweight message with an optional action which briefly displays at the
 /// bottom of the screen.
 ///
-/// {@youtube 560 315 https://www.youtube.com/watch?v=zpO6n_oZWw0}
+/// Learn more about [SnackBar] on the [Flutter YouTube channel](https://www.youtube.com/watch?v=zpO6n_oZWw0).
 ///
 /// To display a snack bar, call `ScaffoldMessenger.of(context).showSnackBar()`,
 /// passing an instance of [SnackBar] that describes the message.
@@ -234,36 +236,45 @@ class _SnackBarActionState extends State<SnackBarAction> {
 /// the floating action button. It also works in the case of a back gesture
 /// transition.
 ///
-// TODO(framework): Replace the following block with a @dartpad directive
-// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// <callout-box>
 ///
 /// Here is an example of a [SnackBar] with an [action] button implemented using
 /// [SnackBarAction].
 ///
-/// {@example /example/lib/snack_bar/snack_bar.0.dart}
-///
-// TODO(framework): End of the @dartpad directive.
-///
 // TODO(framework): Replace the following block with a @dartpad directive
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// {@macro material_ui.dartpad_guide}
+///
+/// {@example /example/lib/snack_bar/snack_bar.0.dart#body}
+///
+/// </callout-box>
+///
+/// <callout-box>
 ///
 /// Here is an example of a customized [SnackBar]. It utilizes
 /// [behavior], [shape], [padding], [width], and [duration] to customize the
 /// location, appearance, and the duration for which the [SnackBar] is visible.
 ///
-/// {@example /example/lib/snack_bar/snack_bar.1.dart}
-///
-// TODO(framework): End of the @dartpad directive.
-///
 // TODO(framework): Replace the following block with a @dartpad directive
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// {@macro material_ui.dartpad_guide}
+///
+/// {@example /example/lib/snack_bar/snack_bar.1.dart#body}
+///
+/// </callout-box>
+///
+/// <callout-box>
 ///
 /// This example demonstrates the various [SnackBar] widget components,
 /// including an optional icon, in either floating or fixed format.
 ///
-/// {@example /example/lib/snack_bar/snack_bar.2.dart}
+// TODO(framework): Replace the following block with a @dartpad directive
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// {@macro material_ui.dartpad_guide}
 ///
-// TODO(framework): End of the @dartpad directive.
+/// {@example /example/lib/snack_bar/snack_bar.2.dart#body}
+///
+/// </callout-box>
 ///
 /// See also:
 ///
@@ -497,7 +508,7 @@ class SnackBar extends StatefulWidget {
   /// is used. If that is null, then the default is [DismissDirection.down].
   final DismissDirection? dismissDirection;
 
-  /// {@macro flutter.material.Material.clipBehavior}
+  /// {@macro cupertino_ui.Material.clipBehavior}
   ///
   /// Defaults to [Clip.hardEdge].
   final Clip clipBehavior;
@@ -712,9 +723,9 @@ class _SnackBarState extends State<SnackBar> {
             icon: const Icon(Icons.close),
             iconSize: 24.0,
             color: widget.closeIconColor ?? snackBarTheme.closeIconColor ?? defaults.closeIconColor,
-            onPressed: () => ScaffoldMessenger.of(
-              context,
-            ).hideCurrentSnackBar(reason: SnackBarClosedReason.dismiss),
+            onPressed: () =>
+                ScaffoldMessenger.of(context)
+                    .hideCurrentSnackBar(reason: SnackBarClosedReason.dismiss),
             tooltip: MaterialLocalizations.of(context).closeButtonTooltip,
           )
         : null;
@@ -938,74 +949,3 @@ class _SnackbarDefaultsM2 extends SnackBarThemeData {
   @override
   double get actionOverflowThreshold => 0.25;
 }
-
-// BEGIN GENERATED TOKEN PROPERTIES - Snackbar
-
-// Do not edit by hand. The code between the "BEGIN GENERATED" and
-// "END GENERATED" comments are generated from data in the Material
-// Design token database by the script:
-//   dev/tools/gen_defaults/bin/gen_defaults.dart.
-
-// dart format off
-class _SnackbarDefaultsM3 extends SnackBarThemeData {
-    _SnackbarDefaultsM3(this.context);
-
-  final BuildContext context;
-  late final ThemeData _theme = Theme.of(context);
-  late final ColorScheme _colors = _theme.colorScheme;
-
-  @override
-  Color get backgroundColor => _colors.inverseSurface;
-
-  @override
-  Color get actionTextColor =>  WidgetStateColor.resolveWith((Set<WidgetState> states) {
-    if (states.contains(WidgetState.disabled)) {
-      return _colors.inversePrimary;
-    }
-    if (states.contains(WidgetState.pressed)) {
-      return _colors.inversePrimary;
-    }
-    if (states.contains(WidgetState.hovered)) {
-      return _colors.inversePrimary;
-    }
-    if (states.contains(WidgetState.focused)) {
-      return _colors.inversePrimary;
-    }
-    return _colors.inversePrimary;
-  });
-
-  @override
-  Color get disabledActionTextColor =>
-    _colors.inversePrimary;
-
-
-  @override
-  TextStyle get contentTextStyle =>
-    Theme.of(context).textTheme.bodyMedium!.copyWith
-      (color:  _colors.onInverseSurface,
-    );
-
-  @override
-  double get elevation => 6.0;
-
-  @override
-  ShapeBorder get shape => const RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(4.0)));
-
-  @override
-  SnackBarBehavior get behavior => SnackBarBehavior.fixed;
-
-  @override
-  EdgeInsets get insetPadding => const EdgeInsets.fromLTRB(15.0, 5.0, 15.0, 10.0);
-
-  @override
-  bool get showCloseIcon => false;
-
-  @override
-  Color? get closeIconColor => _colors.onInverseSurface;
-
-  @override
-  double get actionOverflowThreshold => 0.25;
-}
-// dart format on
-
-// END GENERATED TOKEN PROPERTIES - Snackbar

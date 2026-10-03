@@ -12,6 +12,7 @@ import 'analyze_command.dart';
 import 'branches_for_batch_release_command.dart';
 import 'build_examples_command.dart';
 import 'common/core.dart';
+import 'coverage_check_command.dart';
 import 'create_all_packages_app_command.dart';
 import 'custom_test_command.dart';
 import 'dart_test_command.dart';
@@ -21,6 +22,7 @@ import 'fetch_deps_command.dart';
 import 'firebase_test_lab_command.dart';
 import 'fix_command.dart';
 import 'format_command.dart';
+import 'in_flight_release_check_command.dart';
 import 'license_check_command.dart';
 import 'list_command.dart';
 import 'make_deps_path_based_command.dart';
@@ -29,6 +31,7 @@ import 'podspec_check_command.dart';
 import 'publish_check_command.dart';
 import 'publish_command.dart';
 import 'remove_dev_dependencies_command.dart';
+import 'test_dart_fixes_command.dart';
 import 'update_dependency_command.dart';
 import 'update_excerpts_command.dart';
 import 'update_min_sdk_command.dart';
@@ -57,6 +60,7 @@ void main(List<String> args) {
         ..addCommand(BranchesForBatchReleaseCommand(packagesDir))
         ..addCommand(BuildExamplesCommand(packagesDir))
         ..addCommand(CreateAllPackagesAppCommand(packagesDir))
+        ..addCommand(CoverageCheckCommand(packagesDir))
         ..addCommand(CustomTestCommand(packagesDir))
         ..addCommand(DartTestCommand(packagesDir))
         ..addCommand(DriveExamplesCommand(packagesDir))
@@ -65,6 +69,7 @@ void main(List<String> args) {
         ..addCommand(FirebaseTestLabCommand(packagesDir))
         ..addCommand(FixCommand(packagesDir))
         ..addCommand(FormatCommand(packagesDir))
+        ..addCommand(InFlightReleaseCheckCommand(packagesDir))
         ..addCommand(LicenseCheckCommand(packagesDir))
         ..addCommand(ListCommand(packagesDir))
         ..addCommand(MakeDepsPathBasedCommand(packagesDir))
@@ -73,6 +78,7 @@ void main(List<String> args) {
         ..addCommand(PublishCheckCommand(packagesDir))
         ..addCommand(PublishCommand(packagesDir))
         ..addCommand(RemoveDevDependenciesCommand(packagesDir))
+        ..addCommand(TestDartFixesCommand(packagesDir))
         ..addCommand(UpdateDependencyCommand(packagesDir))
         ..addCommand(UpdateExcerptsCommand(packagesDir))
         ..addCommand(UpdateMinSdkCommand(packagesDir))
