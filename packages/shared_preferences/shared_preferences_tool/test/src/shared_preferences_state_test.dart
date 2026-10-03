@@ -16,7 +16,7 @@ void main() {
         ),
       );
 
-      expect(state.copyWith(), equals(const SharedPreferencesState()));
+      expect(state.copyWith(selectedKey: null), equals(const SharedPreferencesState()));
     });
   });
 

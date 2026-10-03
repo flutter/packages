@@ -29,7 +29,7 @@ class SharedPreferencesStateNotifier extends ValueNotifier<SharedPreferencesStat
   ///
   /// If this is called when data already exists, it will update the list of keys.
   Future<void> fetchAllKeys() async {
-    value = value.copyWith(allKeys: const AsyncState<List<String>>.loading());
+    value = value.copyWith(selectedKey: null, allKeys: const AsyncState<List<String>>.loading());
 
     try {
       final KeysResult allKeys = await _eval.fetchAllKeys();
