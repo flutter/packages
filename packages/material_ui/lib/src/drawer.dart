@@ -401,7 +401,8 @@ class DrawerController extends StatefulWidget {
   /// a drawer is open.
   ///
   /// If this is null, then [DrawerThemeData.scrimColor] is used. If that
-  /// is also null, then [ThemeData.fallbackScrimColor] is used.
+  /// is also null, then [ColorScheme.scrim] at 32% opacity is used in
+  /// Material 3, and [Colors.black54] in Material 2.
   final Color? scrimColor;
 
   /// Determines if the [Drawer] can be opened with a drag gesture.
@@ -736,10 +737,12 @@ class DrawerControllerState extends State<DrawerController> with SingleTickerPro
         TargetPlatform.windows => false,
       };
 
+      final ThemeData theme = Theme.of(context);
+      final Color defaultScrimColor = theme.useMaterial3
+          ? theme.colorScheme.scrim.withValues(alpha: 0.32)
+          : Colors.black54;
       final Color scrimColor =
-          widget.scrimColor ??
-          DrawerTheme.of(context).scrimColor ??
-          Theme.of(context).fallbackScrimColor;
+          widget.scrimColor ?? DrawerTheme.of(context).scrimColor ?? defaultScrimColor;
       final Color effectiveScrimColor = scrimColor.withValues(
         alpha: scrimColor.a * _controller.value,
       );

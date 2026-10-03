@@ -588,7 +588,7 @@ void main() {
     await tester.pumpAndSettle();
     expect(
       tester.widget<ModalBarrier>(find.byType(ModalBarrier).last).color,
-      Theme.of(context).fallbackScrimColor,
+      Theme.of(context).colorScheme.scrim.withValues(alpha: 0.32),
     );
 
     // Dismiss it and test a custom barrier color
@@ -629,7 +629,7 @@ void main() {
     await tester.pumpAndSettle();
     expect(
       tester.widget<ModalBarrier>(find.byType(ModalBarrier).last).color,
-      Theme.of(context).fallbackScrimColor,
+      scrim.withValues(alpha: 0.32),
     );
   });
 
@@ -746,7 +746,7 @@ void main() {
     await tester.pumpAndSettle();
     expect(
       tester.widget<ModalBarrier>(find.byType(ModalBarrier).last).color,
-      Theme.of(tester.element(find.text('Open'))).fallbackScrimColor,
+      scrim.withValues(alpha: 0.32),
     );
   });
 

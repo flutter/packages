@@ -975,7 +975,8 @@ class ModalBottomSheetRoute<T> extends PopupRoute<T> {
   /// bottom sheet.
   ///
   /// If this is null, then [BottomSheetThemeData.modalBarrierColor] is used.
-  /// If that is also null, then [ThemeData.fallbackScrimColor] is used.
+  /// If that is also null, then [ColorScheme.scrim] at 32% opacity is used in
+  /// Material 3, and [Colors.black54] in Material 2.
   final Color? modalBarrierColor;
 
   /// Specifies whether the bottom sheet will be dismissed
@@ -1113,7 +1114,7 @@ class ModalBottomSheetRoute<T> extends PopupRoute<T> {
     }
     if (navigator != null) {
       final ThemeData theme = Theme.of(navigator!.context);
-      return theme.bottomSheetTheme.modalBarrierColor ?? theme.fallbackScrimColor;
+      return theme.bottomSheetTheme.modalBarrierColor ?? _defaultModalBarrierColor(theme);
     }
     // The route is not in the tree yet, so there is no theme to read.
     return Colors.black54;
@@ -1361,7 +1362,7 @@ Future<T?> showModalBottomSheet<T>({
       modalBarrierColor:
           barrierColor ??
           Theme.of(context).bottomSheetTheme.modalBarrierColor ??
-          Theme.of(context).fallbackScrimColor,
+          _defaultModalBarrierColor(Theme.of(context)),
       enableDrag: enableDrag,
       showDragHandle: showDragHandle,
       settings: routeSettings,
@@ -1372,6 +1373,13 @@ Future<T?> showModalBottomSheet<T>({
       requestFocus: requestFocus,
     ),
   );
+}
+
+// The default barrier color used when neither the widget nor its component
+// theme provides one: [ColorScheme.scrim] at 32% opacity in Material 3, and
+// [Colors.black54] in Material 2.
+Color _defaultModalBarrierColor(ThemeData theme) {
+  return theme.useMaterial3 ? theme.colorScheme.scrim.withValues(alpha: 0.32) : Colors.black54;
 }
 
 /// Shows a Material Design bottom sheet in the nearest [Scaffold] ancestor. To

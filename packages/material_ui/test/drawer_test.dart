@@ -339,7 +339,9 @@ void main() {
 
     // Default drawerScrimColor
     await tester.pumpWidget(buildFrame());
-    await checkScrim(Theme.of(tester.element(find.byType(Scaffold))).fallbackScrimColor);
+    await checkScrim(
+      Theme.of(tester.element(find.byType(Scaffold))).colorScheme.scrim.withValues(alpha: 0.32),
+    );
 
     // Specific drawerScrimColor
     await tester.pumpWidget(buildFrame(drawerScrimColor: const Color(0xFF323232)));
@@ -377,10 +379,7 @@ void main() {
 
     scaffoldKey.currentState!.openDrawer();
     await tester.pumpAndSettle();
-    expect(
-      (getScrim() as ColoredBox).color,
-      isSameColorAs(Theme.of(tester.element(find.byType(Scaffold))).fallbackScrimColor),
-    );
+    expect((getScrim() as ColoredBox).color, isSameColorAs(scrim.withValues(alpha: 0.32)));
   });
 
   testWidgets('DrawerTheme.scrimColor takes precedence over ColorScheme.scrim', (

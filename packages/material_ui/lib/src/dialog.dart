@@ -1573,7 +1573,8 @@ class _DialogContentPage extends Page<void> {
 /// The `barrierColor` argument is used to specify the color of the modal
 /// barrier that darkens everything below the dialog. If `null` the `barrierColor`
 /// field from `DialogThemeData` is used. If that is also `null`,
-/// [ThemeData.fallbackScrimColor] is used.
+/// [ColorScheme.scrim] at 32% opacity is used in Material 3, and
+/// [Colors.black54] in Material 2.
 /// If windowing is enabled via `flutter config --enable-windowing`, then this
 /// argument is ignored as dialogs are displayed in their own windows which do
 /// not have a modal barrier.
@@ -1711,7 +1712,7 @@ Future<T?> showDialog<T>({
             barrierColor ??
             DialogTheme.of(context).barrierColor ??
             Theme.of(context).dialogTheme.barrierColor ??
-            Theme.of(context).fallbackScrimColor,
+            _defaultBarrierColor(Theme.of(context)),
         barrierDismissible: barrierDismissible,
         barrierLabel: barrierLabel,
         useSafeArea: useSafeArea,
@@ -1749,6 +1750,13 @@ Future<T?> showDialog<T>({
       );
     },
   );
+}
+
+// The default barrier color used when neither the widget nor its component
+// theme provides one: [ColorScheme.scrim] at 32% opacity in Material 3, and
+// [Colors.black54] in Material 2.
+Color _defaultBarrierColor(ThemeData theme) {
+  return theme.useMaterial3 ? theme.colorScheme.scrim.withValues(alpha: 0.32) : Colors.black54;
 }
 
 /// Displays either a Material or Cupertino dialog depending on platform.
@@ -1851,7 +1859,8 @@ bool _debugIsActive(BuildContext context) {
 /// The `barrierColor` argument is used to specify the color of the modal
 /// barrier that darkens everything below the dialog. If `null`, the
 /// `barrierColor` field from [DialogThemeData] is used. If that is also `null`,
-/// [ThemeData.fallbackScrimColor] is used.
+/// [ColorScheme.scrim] at 32% opacity is used in Material 3, and
+/// [Colors.black54] in Material 2.
 ///
 /// The `useSafeArea` argument is used to indicate if the dialog should only
 /// display in 'safe' areas of the screen not used by the operating system
@@ -1895,7 +1904,7 @@ class DialogRoute<T> extends RawDialogRoute<T> {
              barrierColor ??
              DialogTheme.of(context).barrierColor ??
              Theme.of(context).dialogTheme.barrierColor ??
-             Theme.of(context).fallbackScrimColor,
+             _defaultBarrierColor(Theme.of(context)),
          pageBuilder:
              (
                BuildContext buildContext,

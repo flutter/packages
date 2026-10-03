@@ -922,7 +922,7 @@ void main() {
         await tester.pumpAndSettle();
         expect(
           tester.widget<ModalBarrier>(find.byType(ModalBarrier).last).color,
-          Theme.of(tester.element(find.byType(ElevatedButton))).fallbackScrimColor,
+          Theme.of(tester.element(find.byType(ElevatedButton))).colorScheme.scrim.withValues(alpha: 0.32),
         );
 
         // Dismiss the dialog.
