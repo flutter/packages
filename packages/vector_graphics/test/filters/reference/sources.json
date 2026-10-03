@@ -307,6 +307,66 @@
     "kind": "browser",
     "input": "integration_pattern_contains_nested.svg"
   },
+  "merge_alpha": {
+    "kind": "browser",
+    "input": "merge_alpha.svg"
+  },
+  "merge_chain": {
+    "kind": "browser",
+    "input": "merge_chain.svg"
+  },
+  "merge_default": {
+    "kind": "browser",
+    "input": "merge_default.svg"
+  },
+  "merge_empty": {
+    "kind": "browser",
+    "input": "merge_empty.svg"
+  },
+  "merge_linear": {
+    "kind": "browser",
+    "input": "merge_linear.svg"
+  },
+  "merge_nested": {
+    "kind": "browser",
+    "input": "merge_nested.svg"
+  },
+  "merge_repeat": {
+    "kind": "browser",
+    "input": "merge_repeat.svg"
+  },
+  "merge_reverse": {
+    "kind": "browser",
+    "input": "merge_reverse.svg"
+  },
+  "merge_single": {
+    "kind": "browser",
+    "input": "merge_single.svg"
+  },
+  "merge_source": {
+    "kind": "browser",
+    "input": "merge_source.svg"
+  },
+  "merge_subregion": {
+    "kind": "browser",
+    "input": "merge_subregion.svg"
+  },
+  "merge_transform": {
+    "kind": "browser",
+    "input": "merge_transform.svg"
+  },
+  "merge_two": {
+    "kind": "browser",
+    "input": "merge_two.svg"
+  },
+  "merge_unknown": {
+    "kind": "browser",
+    "input": "merge_unknown.svg"
+  },
+  "merge_zero": {
+    "kind": "browser",
+    "input": "merge_zero.svg"
+  },
   "offset_alpha": {
     "kind": "browser",
     "input": "offset_alpha.svg"

@@ -9,6 +9,7 @@ import 'package:vector_graphics_codec/vector_graphics_codec.dart';
 import 'color_matrix.dart';
 import 'filter_context.dart';
 import 'flood.dart';
+import 'merge.dart';
 import 'offset.dart';
 
 /// Evaluates the contributing graph in document order, preserving named results.
@@ -31,6 +32,8 @@ FilterImage executePrimitive(FilterContext context, VectorFilter primitive) {
       return colorMatrix(context, primitive);
     case 'feFlood':
       return flood(context, primitive);
+    case 'feMerge':
+      return merge(context, primitive);
     default:
       throw UnsupportedError('SVG filter primitive ${primitive.name} is not implemented');
   }
