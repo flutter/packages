@@ -342,6 +342,8 @@ class MockMyLocationController extends _i1.Mock implements _i4.MyLocationControl
       super.noSuchMethod(Invocation.method(#removeBlueDot, []), returnValueForMissingStub: null);
 
   @override
-  void dispose() =>
-      super.noSuchMethod(Invocation.method(#dispose, []), returnValueForMissingStub: null);
+  void stopWatchingMyLocation() => super.noSuchMethod(
+    Invocation.method(#stopWatchingMyLocation, []),
+    returnValueForMissingStub: null,
+  );
 }
