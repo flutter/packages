@@ -135,7 +135,18 @@ class Camera
   /** True when the preview is paused. */
   @VisibleForTesting boolean pausedPreview;
 
-  private File captureFile;
+  /** File used for still image capture (takePicture). */
+  @VisibleForTesting
+  File captureFile;
+
+  /**
+   * File used for video recording. Kept separate from {@link #captureFile} so
+   * that calling
+   * takePicture() during an active recording does not overwrite the video path
+   * returned by
+   * stopVideoRecording().
+   */
+  private File videoCaptureFile;
 
   /** Holds the current capture timeouts */
   private CaptureTimeoutsWrapper captureTimeouts;
@@ -883,7 +894,7 @@ class Camera
       startCapture(true, imageStreamChannel != null);
     } catch (CameraAccessException e) {
       recordingVideo = false;
-      captureFile = null;
+      videoCaptureFile = null;
       throw new Messages.FlutterError("videoRecordingFailed", e.getMessage(), null);
     }
   }
@@ -920,8 +931,14 @@ class Camera
     } catch (CameraAccessException | IllegalStateException | InterruptedException e) {
       throw new Messages.FlutterError("videoRecordingFailed", e.getMessage(), null);
     }
-    String path = captureFile.getAbsolutePath();
-    captureFile = null;
+    if (videoCaptureFile == null) {
+      throw new Messages.FlutterError(
+          "videoRecordingFailed",
+          "stopVideoRecording was called but videoCaptureFile was null.",
+          null);
+    }
+    String path = videoCaptureFile.getAbsolutePath();
+    videoCaptureFile = null;
     return path;
   }
 
@@ -1301,21 +1318,21 @@ class Camera
   void prepareRecording(@Nullable String videoOutputPath) {
     if (videoOutputPath != null) {
       validateOutputPath(videoOutputPath);
-      captureFile = new File(videoOutputPath);
+      videoCaptureFile = new File(videoOutputPath);
     } else {
       final File outputDir = applicationContext.getCacheDir();
       try {
-        captureFile = File.createTempFile("REC", ".mp4", outputDir);
+        videoCaptureFile = File.createTempFile("REC", ".mp4", outputDir);
       } catch (IOException | SecurityException e) {
         throw new Messages.FlutterError("cannotCreateFile", e.getMessage(), null);
       }
     }
 
     try {
-      prepareMediaRecorder(captureFile.getAbsolutePath());
+      prepareMediaRecorder(videoCaptureFile.getAbsolutePath());
     } catch (IOException e) {
       recordingVideo = false;
-      captureFile = null;
+      videoCaptureFile = null;
       throw new Messages.FlutterError("videoRecordingFailed", e.getMessage(), null);
     }
     // Re-create autofocus feature so it's using video focus mode now.
