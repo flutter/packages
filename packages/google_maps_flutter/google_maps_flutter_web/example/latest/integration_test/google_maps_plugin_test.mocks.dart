@@ -311,15 +311,10 @@ class MockMyLocationController extends _i1.Mock implements _i4.MyLocationControl
   );
 
   @override
-  _i3.Future<void> displayAndWatchMyLocation(
-    _i4.MarkersController<Object?, Object>? markersController,
-  ) =>
-      (super.noSuchMethod(
-            Invocation.method(#displayAndWatchMyLocation, [markersController]),
-            returnValue: _i3.Future<void>.value(),
-            returnValueForMissingStub: _i3.Future<void>.value(),
-          )
-          as _i3.Future<void>);
+  void displayAndWatchMyLocation(_i5.Map? map) => super.noSuchMethod(
+    Invocation.method(#displayAndWatchMyLocation, [map]),
+    returnValueForMissingStub: null,
+  );
 
   @override
   _i3.Future<void> centerMyCurrentLocation(_i4.GoogleMapController? controller) =>
@@ -343,11 +338,8 @@ class MockMyLocationController extends _i1.Mock implements _i4.MyLocationControl
   );
 
   @override
-  void removeBlueDot(_i4.MarkersController<Object?, Object?>? markersController) =>
-      super.noSuchMethod(
-        Invocation.method(#removeBlueDot, [markersController]),
-        returnValueForMissingStub: null,
-      );
+  void removeBlueDot() =>
+      super.noSuchMethod(Invocation.method(#removeBlueDot, []), returnValueForMissingStub: null);
 
   @override
   void dispose() =>
