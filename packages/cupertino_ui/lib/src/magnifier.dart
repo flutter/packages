@@ -353,7 +353,7 @@ class CupertinoMagnifier extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    var focalPointOffset = Offset(0, (kDefaultSize.height / 2) - kMagnifierAboveFocalPoint);
+    var focalPointOffset = Offset(0, (size.height / 2) - kMagnifierAboveFocalPoint);
     focalPointOffset.scale(1, inOutAnimation?.value ?? 1);
     focalPointOffset += additionalFocalPointOffset;
 

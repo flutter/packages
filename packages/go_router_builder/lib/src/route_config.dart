@@ -459,9 +459,8 @@ class GoRouteConfig extends RouteBaseConfig with _GoRouteMixin {
   @override
   String get _mixinDefinition {
     final bool hasMixin =
-        getNodeDeclaration<ClassDeclaration>(
-          routeDataClass,
-        )?.withClause?.mixinTypes.any((NamedType e) => e.name.toString() == _mixinName) ??
+        getNodeDeclaration<ClassDeclaration>(routeDataClass)?.withClause?.mixinTypes
+            .any((NamedType e) => e.name.toString() == _mixinName) ??
         false;
 
     if (!hasMixin) {
@@ -544,9 +543,8 @@ class RelativeGoRouteConfig extends RouteBaseConfig with _GoRouteMixin {
   @override
   String get _mixinDefinition {
     final bool hasMixin =
-        getNodeDeclaration<ClassDeclaration>(
-          routeDataClass,
-        )?.withClause?.mixinTypes.any((NamedType e) => e.name.toString() == _mixinName) ??
+        getNodeDeclaration<ClassDeclaration>(routeDataClass)?.withClause?.mixinTypes
+            .any((NamedType e) => e.name.toString() == _mixinName) ??
         false;
 
     if (!hasMixin) {

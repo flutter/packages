@@ -1,5 +1,10 @@
-## NEXT
+## 0.8.13+9
 
+* Adds injectable protocol seams for camera, photo library, and PHPicker APIs.
+
+## 0.8.13+8
+
+* Fixes scaling 10-bit images on iOS.
 * Updates minimum supported SDK version to Flutter 3.41/Dart 3.11.
 
 ## 0.8.13+7
