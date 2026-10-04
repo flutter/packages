@@ -90,19 +90,21 @@ class _GoRouteParameters {
     this.onExit,
   });
 
-  final GoRouterWidgetBuilder builder;
-  final GoRouterPageBuilder pageBuilder;
+  final GoRouterWidgetBuilder? builder;
+  final GoRouterPageBuilder? pageBuilder;
   final GoRouterRedirect redirect;
   final ExitCallback? onExit;
 }
 
 /// Helper to create [GoRoute] parameters from a factory function and an Expando.
 ///
-/// When [hasOverriddenOnExit] is null, treat it the same as true for backward compatibility.
+/// When [hasOverriddenOnExit] is null, enable it for page-building routes for
+/// backward compatibility.
 _GoRouteParameters _createGoRouteParameters<T extends _GoRouteDataBase>({
   required T Function(GoRouterState) factory,
   required Expando<_GoRouteDataBase> expando,
   bool? hasOverriddenOnExit,
+  bool redirectOnly = false,
 }) {
   T factoryImpl(GoRouterState state) {
     final Object? extra = state.extra;
@@ -117,13 +119,16 @@ _GoRouteParameters _createGoRouteParameters<T extends _GoRouteDataBase>({
   }
 
   return _GoRouteParameters(
-    builder: (BuildContext context, GoRouterState state) =>
-        factoryImpl(state).build(context, state),
-    pageBuilder: (BuildContext context, GoRouterState state) =>
-        factoryImpl(state).buildPage(context, state),
+    builder: redirectOnly
+        ? null
+        : (BuildContext context, GoRouterState state) => factoryImpl(state).build(context, state),
+    pageBuilder: redirectOnly
+        ? null
+        : (BuildContext context, GoRouterState state) =>
+              factoryImpl(state).buildPage(context, state),
     redirect: (BuildContext context, GoRouterState state) =>
         factoryImpl(state).redirect(context, state),
-    onExit: hasOverriddenOnExit == null || hasOverriddenOnExit
+    onExit: hasOverriddenOnExit ?? !redirectOnly
         ? (BuildContext context, GoRouterState state) => factoryImpl(state).onExit(context, state)
         : null,
   );
@@ -150,6 +155,8 @@ abstract class GoRouteData extends _GoRouteDataBase {
   /// A helper function used by generated code.
   ///
   /// Should not be used directly.
+  ///
+  /// When [redirectOnly] is true, no builder or page builder is provided.
   static GoRoute $route<T extends GoRouteData>({
     required String path,
     String? name,
@@ -158,11 +165,13 @@ abstract class GoRouteData extends _GoRouteDataBase {
     GlobalKey<NavigatorState>? parentNavigatorKey,
     List<RouteBase> routes = const <RouteBase>[],
     bool? hasOverriddenOnExit,
+    bool redirectOnly = false,
   }) {
     final _GoRouteParameters params = _createGoRouteParameters<T>(
       factory: factory,
       expando: _GoRouteDataBase.stateObjectExpando,
       hasOverriddenOnExit: hasOverriddenOnExit,
+      redirectOnly: redirectOnly,
     );
 
     return GoRoute(
@@ -220,6 +229,8 @@ abstract class RelativeGoRouteData extends _GoRouteDataBase {
   /// A helper function used by generated code.
   ///
   /// Should not be used directly.
+  ///
+  /// When [redirectOnly] is true, no builder or page builder is provided.
   static GoRoute $route<T extends RelativeGoRouteData>({
     required String path,
     bool caseSensitive = true,
@@ -227,11 +238,13 @@ abstract class RelativeGoRouteData extends _GoRouteDataBase {
     GlobalKey<NavigatorState>? parentNavigatorKey,
     List<RouteBase> routes = const <RouteBase>[],
     bool? hasOverriddenOnExit,
+    bool redirectOnly = false,
   }) {
     final _GoRouteParameters params = _createGoRouteParameters<T>(
       factory: factory,
       expando: _GoRouteDataBase.stateObjectExpando,
       hasOverriddenOnExit: hasOverriddenOnExit,
+      redirectOnly: redirectOnly,
     );
 
     return GoRoute(
