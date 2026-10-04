@@ -35,55 +35,6 @@ void main() {
       expect(p3, arcCubic.anchor1);
     });
 
-    test('div', () {
-      CubicBezier divCubic = cubic / 1;
-      expectCubicsEqualish(cubic, divCubic);
-      divCubic = cubic / 1;
-      expectCubicsEqualish(cubic, divCubic);
-      divCubic = cubic / 2;
-      expectPointsEqualish(p0 / 2, divCubic.anchor0);
-      expectPointsEqualish(p1 / 2, divCubic.control0);
-      expectPointsEqualish(p2 / 2, divCubic.control1);
-      expectPointsEqualish(p3 / 2, divCubic.anchor1);
-      divCubic = cubic / 2;
-      expectPointsEqualish(p0 / 2, divCubic.anchor0);
-      expectPointsEqualish(p1 / 2, divCubic.control0);
-      expectPointsEqualish(p2 / 2, divCubic.control1);
-      expectPointsEqualish(p3 / 2, divCubic.anchor1);
-    });
-
-    test('times', () {
-      CubicBezier timesCubic = cubic * 1;
-      expect(p0, timesCubic.anchor0);
-      expect(p1, timesCubic.control0);
-      expect(p2, timesCubic.control1);
-      expect(p3, timesCubic.anchor1);
-      timesCubic = cubic * 1;
-      expect(p0, timesCubic.anchor0);
-      expect(p1, timesCubic.control0);
-      expect(p2, timesCubic.control1);
-      expect(p3, timesCubic.anchor1);
-      timesCubic = cubic * 2;
-      expectPointsEqualish(p0 * 2, timesCubic.anchor0);
-      expectPointsEqualish(p1 * 2, timesCubic.control0);
-      expectPointsEqualish(p2 * 2, timesCubic.control1);
-      expectPointsEqualish(p3 * 2, timesCubic.anchor1);
-      timesCubic = cubic * 2;
-      expectPointsEqualish(p0 * 2, timesCubic.anchor0);
-      expectPointsEqualish(p1 * 2, timesCubic.control0);
-      expectPointsEqualish(p2 * 2, timesCubic.control1);
-      expectPointsEqualish(p3 * 2, timesCubic.anchor1);
-    });
-
-    test('plus', () {
-      final CubicBezier offsetCubic = cubic * 2;
-      final CubicBezier plusCubic = cubic + offsetCubic;
-      expectPointsEqualish(p0 + offsetCubic.anchor0, plusCubic.anchor0);
-      expectPointsEqualish(p1 + offsetCubic.control0, plusCubic.control0);
-      expectPointsEqualish(p2 + offsetCubic.control1, plusCubic.control1);
-      expectPointsEqualish(p3 + offsetCubic.anchor1, plusCubic.anchor1);
-    });
-
     test('reversed', () {
       final CubicBezier reverseCubic = cubic.reversed;
       expect(p3, reverseCubic.anchor0);
@@ -135,7 +86,10 @@ void main() {
 
       transform = scaleTransform(3, 3);
       transformedCubic = cubic.transformed(transform);
-      expectCubicsEqualish(cubic * 3, transformedCubic);
+      expectPointsEqualish(p0 * 3, transformedCubic.anchor0);
+      expectPointsEqualish(p1 * 3, transformedCubic.control0);
+      expectPointsEqualish(p2 * 3, transformedCubic.control1);
+      expectPointsEqualish(p3 * 3, transformedCubic.anchor1);
 
       const tx = 200.0;
       const ty = 300.0;

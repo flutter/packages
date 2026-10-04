@@ -366,34 +366,6 @@ class CubicBezier {
     anchor0Y,
   );
 
-  /// Returns a curve whose coordinates are the sums of this curve's and [o]'s
-  /// corresponding coordinates.
-  CubicBezier operator +(CubicBezier o) => CubicBezier.raw(
-    anchor0X + o.anchor0X,
-    anchor0Y + o.anchor0Y,
-    control0X + o.control0X,
-    control0Y + o.control0Y,
-    control1X + o.control1X,
-    control1Y + o.control1Y,
-    anchor1X + o.anchor1X,
-    anchor1Y + o.anchor1Y,
-  );
-
-  /// Returns a curve whose coordinates are this curve's multiplied by [x].
-  CubicBezier operator *(double x) => CubicBezier.raw(
-    anchor0X * x,
-    anchor0Y * x,
-    control0X * x,
-    control0Y * x,
-    control1X * x,
-    control1Y * x,
-    anchor1X * x,
-    anchor1Y * x,
-  );
-
-  /// Returns a curve whose coordinates are this curve's divided by [x].
-  CubicBezier operator /(double x) => this * (1.0 / x);
-
   /// Returns a copy of this curve with [transformer] applied to each of its
   /// anchor and control points.
   CubicBezier transformed(ShapePointTransformer transformer) {
