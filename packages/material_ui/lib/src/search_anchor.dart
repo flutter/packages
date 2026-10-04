@@ -192,6 +192,12 @@ class SearchAnchor extends StatefulWidget {
   /// All the barX parameters are used to customize the anchor. Similarly, all the
   /// viewX parameters are used to override the view's defaults.
   ///
+  /// If `barFocusNode` is non-null, it is passed to the search bar as
+  /// [SearchBar.focusNode]. The search bar does not dispose it, so the caller
+  /// is responsible for calling [FocusNode.dispose] when it is no longer
+  /// needed. If null, the search bar creates and manages its own focus node.
+  /// The text field in the search view always uses its own focus node.
+  ///
   /// <callout-box>
   ///
   /// This example shows how to use a [SearchAnchor.bar] which uses a default search
