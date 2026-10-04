@@ -3,7 +3,6 @@
 // found in the LICENSE file.
 
 import 'dart:math' as math;
-import 'dart:typed_data';
 
 import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/src/shapes/corner_rounding.dart';
@@ -220,7 +219,7 @@ void main() {
       // The smallest double above the boundary. The cut then falls on the
       // second cubic, and the first one ends a rounding error before it, so
       // close that its shifted end wraps around to 0 instead of 1.
-      final double cut = _nextUp(boundary);
+      final double cut = boundary + 1e-16;
       expect(cut, greaterThan(boundary));
       expect(positiveModulo(boundary - cut, 1), 0);
 
@@ -247,11 +246,4 @@ void main() {
       expect(measurer.findCubicCutPoint(line, 0), 0);
     });
   });
-}
-
-/// The smallest double greater than [value].
-double _nextUp(double value) {
-  final data = ByteData(8)..setFloat64(0, value);
-  data.setInt64(0, data.getInt64(0) + 1);
-  return data.getFloat64(0);
 }
