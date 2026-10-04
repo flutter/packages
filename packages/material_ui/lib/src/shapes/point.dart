@@ -18,7 +18,7 @@ import 'package:vector_math/vector_math_64.dart' show Matrix4;
 ///
 /// This is used by [CubicBezier.transformed], [PolygonFeature.transformed] and
 /// [RoundedPolygon.transformed] to apply arbitrary transformations to a shape.
-typedef PointTransformer = (double, double) Function(double x, double y);
+typedef ShapePointTransformer = (double, double) Function(double x, double y);
 
 /// A two dimensional coordinate pair used by the shape algorithms.
 @internal
@@ -65,15 +65,15 @@ extension PointGeometry on Offset {
   }
 
   /// Returns a copy of this point with [f] applied to it.
-  Point transformed(PointTransformer f) {
+  Point transformed(ShapePointTransformer f) {
     final (double, double) result = f(x, y);
     return Point(result.$1, result.$2);
   }
 }
 
-/// Adapts a [Matrix4] into a [PointTransformer].
-extension Matrix4PointTransformer on Matrix4 {
-  /// Returns a [PointTransformer] that applies this matrix.
+/// Adapts a [Matrix4] into a [ShapePointTransformer].
+extension Matrix4ShapePointTransformer on Matrix4 {
+  /// Returns a [ShapePointTransformer] that applies this matrix.
   ///
   /// This is the bridge between the transformation types Flutter already uses
   /// and the shape transformation methods, so that a matrix built with the
@@ -89,7 +89,7 @@ extension Matrix4PointTransformer on Matrix4 {
   ///
   /// Only the X and Y components of the result are used, so the Z translation
   /// and perspective rows of the matrix have no effect.
-  PointTransformer asPointTransformer() {
+  ShapePointTransformer asPointTransformer() {
     final Float64List m = storage;
     return (x, y) => (m[0] * x + m[4] * y + m[12], m[1] * x + m[5] * y + m[13]);
   }

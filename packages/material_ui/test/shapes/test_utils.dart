@@ -98,17 +98,17 @@ void expectInBounds(List<CubicBezier> shape, Point minPoint, Point maxPoint) {
 // The point a path starts drawing from.
 Point pathStartPoint(Path path) => path.computeMetrics().first.getTangentForOffset(0)!.position;
 
-PointTransformer identityTransform() =>
+ShapePointTransformer identityTransform() =>
     (x, y) => (x, y);
 
-PointTransformer pointRotator(double angleDegrees) {
+ShapePointTransformer pointRotator(double angleDegrees) {
   final double angleRadians = angleDegrees * math.pi / 180;
   final matrix = Matrix4.identity()..rotateZ(angleRadians);
   return matrix.asPointTransformer();
 }
 
-PointTransformer scaleTransform(double sx, double sy) =>
+ShapePointTransformer scaleTransform(double sx, double sy) =>
     (x, y) => (x * sx, y * sy);
 
-PointTransformer translateTransform(double dx, double dy) =>
+ShapePointTransformer translateTransform(double dx, double dy) =>
     (x, y) => (x + dx, y + dy);

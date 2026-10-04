@@ -130,7 +130,7 @@ abstract class PolygonFeature {
 
   /// Transforms the points in this [PolygonFeature] with the given
   /// [transformer] and returns a new [PolygonFeature].
-  PolygonFeature transformed(PointTransformer transformer);
+  PolygonFeature transformed(ShapePointTransformer transformer);
 
   /// A new [PolygonFeature] with the points that define the shape of this
   /// [PolygonFeature] in reversed order.
@@ -160,7 +160,7 @@ class EdgeFeature extends PolygonFeature {
   EdgeFeature(super._cubics) : super._();
 
   @override
-  PolygonFeature transformed(PointTransformer transformer) =>
+  PolygonFeature transformed(ShapePointTransformer transformer) =>
       EdgeFeature(List.generate(_cubics.length, (i) => _cubics[i].transformed(transformer)));
 
   @override
@@ -199,7 +199,7 @@ class CornerFeature extends PolygonFeature {
   final bool convex;
 
   @override
-  PolygonFeature transformed(PointTransformer transformer) => CornerFeature(
+  PolygonFeature transformed(ShapePointTransformer transformer) => CornerFeature(
     List.generate(_cubics.length, (i) => _cubics[i].transformed(transformer)),
     convex: convex,
   );

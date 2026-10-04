@@ -416,7 +416,7 @@ class CubicBezier {
 
   /// Returns a copy of this curve with [transformer] applied to each of its
   /// anchor and control points.
-  CubicBezier transformed(PointTransformer transformer) {
+  CubicBezier transformed(ShapePointTransformer transformer) {
     final (double a0X, double a0Y) = transformer(anchor0X, anchor0Y);
     final (double c0X, double c0Y) = transformer(control0X, control0Y);
     final (double c1X, double c1Y) = transformer(control1X, control1Y);

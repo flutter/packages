@@ -555,7 +555,7 @@ class RoundedPolygon {
 
   /// Returns a new [RoundedPolygon] with every point of this one, including
   /// its [center], mapped through [transformer].
-  RoundedPolygon transformed(PointTransformer transformer) {
+  RoundedPolygon transformed(ShapePointTransformer transformer) {
     return RoundedPolygon._raw([
       for (var i = 0; i < features.length; i++) features[i].transformed(transformer),
     ], _center.transformed(transformer));

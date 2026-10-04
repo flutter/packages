@@ -129,7 +129,7 @@ void main() {
     });
 
     test('transform', () {
-      PointTransformer transform = identityTransform();
+      ShapePointTransformer transform = identityTransform();
       CubicBezier transformedCubic = cubic.transformed(transform);
       expectCubicsEqualish(cubic, transformedCubic);
 
