@@ -8,12 +8,12 @@ To use `go_router_builder`, you need to have the following dependencies in
 ```yaml
 dependencies:
   # ...along with your other dependencies
-  go_router: ^16.2.0
+  go_router: ^18.1.0
 
 dev_dependencies:
   # ...along with your other dev-dependencies
   build_runner: ^2.6.0
-  go_router_builder: ^4.0.1
+  go_router_builder: ^4.5.2
 ```
 
 ### Source code
@@ -387,6 +387,15 @@ class RedirectRoute extends GoRouteData {
 }
 
 ```
+
+When a route overrides `redirect` but neither `build` nor `buildPage`, the
+generated route is redirect-only with `go_router` 18.1.0 or later. Older
+`go_router` versions retain the existing generated callbacks. A conditional
+redirect can return `null` for
+a descendant location to let the child route render without building its
+parent. Implementations inherited from a superclass or mixin are also taken
+into account. Redirect-only routes cannot override `onExit`, since they do not
+have a page to exit.
 
 ## Type conversions
 

@@ -1,3 +1,7 @@
+## 18.1.0
+
+- Adds support for generated redirect-only routes that conditionally allow child routes to render.
+
 ## 18.0.2
 
 - Fixes `ShellRoute`/`StatefulShellRoute` shell chrome (e.g. a side rail or app bar painted before the routed child) being dropped from the semantics tree by the active route's `ModalBarrier`.

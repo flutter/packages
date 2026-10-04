@@ -1,0 +1,1 @@
+A redirect-only route cannot override onExit. Implement build or buildPage to use onExit.

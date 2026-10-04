@@ -1,3 +1,8 @@
+## 4.5.2
+
+- Fixes conditional redirect-only parent routes throwing when a descendant is matched.
+- Supports conditional redirect-only routes with go_router 18.1.0 or later while preserving generated output with older go_router versions.
+
 ## 4.5.1
 
 - Migrates examples to `material_ui` package (1.4.0).
