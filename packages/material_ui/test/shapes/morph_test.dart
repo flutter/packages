@@ -153,7 +153,17 @@ void main() {
 
         for (final progress in [0.0, 0.5, 1.0]) {
           for (final CubicBezier cubic in morph.toCubics(progress)) {
-            for (final double coordinate in cubic.points) {
+            final coordinates = <double>[
+              cubic.anchor0X,
+              cubic.anchor0Y,
+              cubic.control0X,
+              cubic.control0Y,
+              cubic.control1X,
+              cubic.control1Y,
+              cubic.anchor1X,
+              cubic.anchor1Y,
+            ];
+            for (final coordinate in coordinates) {
               expect(coordinate.isFinite, isTrue);
             }
           }

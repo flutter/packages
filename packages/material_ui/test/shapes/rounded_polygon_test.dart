@@ -184,7 +184,17 @@ void main() {
       final RoundedPolygon normalized = degenerate.normalized();
 
       for (final CubicBezier cubic in normalized.cubics) {
-        for (final double coordinate in cubic.points) {
+        final coordinates = <double>[
+          cubic.anchor0X,
+          cubic.anchor0Y,
+          cubic.control0X,
+          cubic.control0Y,
+          cubic.control1X,
+          cubic.control1Y,
+          cubic.anchor1X,
+          cubic.anchor1Y,
+        ];
+        for (final coordinate in coordinates) {
           expect(coordinate.isNaN, isFalse);
         }
       }

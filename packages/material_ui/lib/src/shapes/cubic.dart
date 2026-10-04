@@ -113,26 +113,6 @@ class CubicBezier {
   CubicBezier.point(Offset point)
     : this.raw(point.x, point.y, point.x, point.y, point.x, point.y, point.x, point.y);
 
-  /// The eight coordinates of this curve as a flat, unmodifiable list, ordered
-  /// as anchor0, control0, control1, anchor1.
-  ///
-  /// Equivalent to reading [anchor0X] through [anchor1Y] in order, and more
-  /// convenient when serializing a curve or handing its coordinates to code
-  /// that expects a coordinate buffer.
-  ///
-  /// A new list is created on every access. Prefer the individual coordinate
-  /// fields when reading single values.
-  List<double> get points => List<double>.unmodifiable(<double>[
-    anchor0X,
-    anchor0Y,
-    control0X,
-    control0Y,
-    control1X,
-    control1Y,
-    anchor1X,
-    anchor1Y,
-  ]);
-
   /// The anchor point at the start of the curve.
   Offset get anchor0 => Offset(anchor0X, anchor0Y);
 
