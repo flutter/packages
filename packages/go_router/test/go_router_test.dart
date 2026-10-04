@@ -2063,6 +2063,43 @@ void main() {
       expect(find.text('should not reach here'), findsNothing);
     });
 
+    testWidgets('unrelated async errors started during redirect are not wrapped', (
+      WidgetTester tester,
+    ) async {
+      final Object expectedTopError = StateError('top-level background failure');
+      final Object expectedRouteError = StateError('route-level background failure');
+      final caughtErrors = <Object>[];
+
+      await runZonedGuarded<Future<void>>(
+        () async {
+          await createRouter(
+            <RouteBase>[
+              GoRoute(
+                path: '/',
+                builder: (BuildContext context, GoRouterState state) => const HomeScreen(),
+                redirect: (BuildContext context, GoRouterState state) {
+                  Future<void>.error(expectedRouteError);
+                  return null;
+                },
+              ),
+            ],
+            tester,
+            redirect: (BuildContext context, GoRouterState state) {
+              Future<void>.error(expectedTopError);
+              return null;
+            },
+          );
+
+          await tester.pump();
+        },
+        (Object error, StackTrace stackTrace) {
+          caughtErrors.add(error);
+        },
+      );
+
+      expect(caughtErrors, <Object>[expectedTopError, expectedRouteError]);
+    });
+
     testWidgets('context extension methods work in redirects', (WidgetTester tester) async {
       String? capturedNamedLocation;
       final routes = <GoRoute>[
