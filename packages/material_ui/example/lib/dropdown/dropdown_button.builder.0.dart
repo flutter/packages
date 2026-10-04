@@ -31,13 +31,12 @@ class DropdownButtonBuilderExample extends StatefulWidget {
 }
 
 class _DropdownButtonBuilderExampleState extends State<DropdownButtonBuilderExample> {
-  int? dropdownValue = 0;
+  int? dropdownValue = 100;
 
   @override
   Widget build(BuildContext context) {
     return DropdownButton<int>.builder(
-      value: dropdownValue,
-      selectedItemIndex: 100,
+      selectedItemIndex: dropdownValue,
       itemCount: 10000,
       itemBuilder: (BuildContext context, int index) {
         return DropdownMenuItem<int>(value: index, child: Text('Item $index'));

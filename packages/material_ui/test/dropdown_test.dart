@@ -5027,7 +5027,6 @@ void main() {
           home: Scaffold(
             body: Center(
               child: DropdownButton<int>.builder(
-                value: 0,
                 selectedItemIndex: 0,
                 itemCount: 1000,
                 itemBuilder: (BuildContext context, int index) {
@@ -5046,7 +5045,10 @@ void main() {
 
       // Initial state: menu is closed.
       expect(find.text('Selected: 0'), findsOneWidget);
-      expect(buildCount, 0); // No items built yet because menu is closed
+      // We expect 1 widget build here because when DropdownButton renders its closed state,
+      // it calls itemBuilder for the selectedItemIndex (0) in order to get the item's value 
+      // (which is then passed to customSelectedItemBuilder).
+      expect(buildCount, 1);
 
       // Tap to open menu
       await tester.tap(find.text('Selected: 0'));
@@ -5076,7 +5078,7 @@ void main() {
               return Scaffold(
                 body: Center(
                   child: DropdownButton<int>.builder(
-                    value: selectedValue,
+                    selectedItemIndex: selectedValue,
                     itemCount: 10,
                     itemBuilder: (BuildContext context, int index) {
                       return DropdownMenuItem<int>(value: index, child: Text('Item $index'));
@@ -5116,7 +5118,7 @@ void main() {
           home: Scaffold(
             body: Center(
               child: DropdownButton<int>.builder(
-                value: 0,
+                selectedItemIndex: 0,
                 itemCount: 0,
                 hint: const Text('Empty Hint'),
                 itemBuilder: (BuildContext context, int index) {
@@ -5133,7 +5135,7 @@ void main() {
       expect(find.text('Empty Hint'), findsOneWidget);
     });
 
-    testWidgets('falls back to value.toString() when customSelectedItemBuilder is null', (
+    testWidgets('falls back to item child when customSelectedItemBuilder is null', (
       WidgetTester tester,
     ) async {
       await tester.pumpWidget(
@@ -5141,7 +5143,7 @@ void main() {
           home: Scaffold(
             body: Center(
               child: DropdownButton<String>.builder(
-                value: 'My String Value',
+                selectedItemIndex: 0,
                 itemCount: 10,
                 itemBuilder: (BuildContext context, int index) {
                   return DropdownMenuItem<String>(
@@ -5156,8 +5158,8 @@ void main() {
         ),
       );
 
-      // Should automatically use the value stringified if no customSelectedItemBuilder is provided
-      expect(find.text('My String Value'), findsOneWidget);
+      // Should automatically use the item's child if no customSelectedItemBuilder is provided
+      expect(find.text('Item 0'), findsOneWidget);
     });
   });
 }

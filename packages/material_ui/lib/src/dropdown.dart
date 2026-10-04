@@ -1103,11 +1103,31 @@ class DropdownButton<T> extends StatefulWidget {
        _inputDecoration = null,
        _isEmpty = false;
 
-  /// Creates a dropdown button that builds its items lazily.
+  /// Creates a dropdown button that builds its items lazily on demand.
   ///
-  /// This constructor is useful when the dropdown menu contains a large number
-  /// of items, as it only creates the widgets for the items that are currently
-  /// visible in the menu, significantly improving performance.
+  /// This constructor is appropriate for dropdown menus with a large (or infinite)
+  /// number of items because the [itemBuilder] is called only for those items
+  /// that are actually visible in the dropdown menu.
+  ///
+  /// Providing a non-null [itemCount] improves the ability of the internal
+  /// [ListView] to estimate the maximum scroll extent and accurately compute
+  /// the scrollbar's thumb size.
+  ///
+  /// The [itemBuilder] callback will be called only with indices greater than
+  /// or equal to zero and less than [itemCount]. It must return a valid
+  /// [DropdownMenuItem] of type [T].
+  ///
+  /// Unlike the default [DropdownButton] constructor, which uses a `value`
+  /// parameter to find the selected item via a linear search (O(N)), this
+  /// constructor requires a [selectedItemIndex].
+  ///
+  /// Passing the index directly guarantees O(1) performance, as the dropdown
+  /// can instantly scroll to the correct position and extract the selected value
+  /// by calling the [itemBuilder] exactly once for that index.
+  ///
+  /// If the underlying data changes (e.g. the list is filtered, sorted, or
+  /// items are added/removed), the developer is responsible for updating the
+  /// [selectedItemIndex] to reflect the item's new position.
   ///
   /// <callout-box>
   ///
@@ -1128,7 +1148,6 @@ class DropdownButton<T> extends StatefulWidget {
     this.selectedItemIndex,
     this.customSelectedItemBuilder,
     this.selectedItemBuilder,
-    this.value,
     this.hint,
     this.disabledHint,
     required this.onChanged,
@@ -1157,6 +1176,7 @@ class DropdownButton<T> extends StatefulWidget {
     this.mouseCursor,
     this.dropdownMenuItemMouseCursor,
   }) : items = null,
+       value = null,
        assert(itemHeight == null || itemHeight >= kMinInteractiveDimension),
        isVerticallyExpanded = true,
        _inputDecoration = null,
@@ -1635,6 +1655,14 @@ class _DropdownButtonState<T> extends State<DropdownButton<T>> with WidgetsBindi
     }
   }
 
+  T? get _effectiveValue {
+    if (widget.itemBuilder != null && _selectedIndex != null) {
+      final DropdownMenuItem<T> item = widget.itemBuilder!(context, _selectedIndex!);
+      return item.value;
+    }
+    return widget.value;
+  }
+
   TextStyle? get _textStyle => widget.style ?? Theme.of(context).textTheme.titleMedium;
 
   void _handleTap() {
@@ -1814,8 +1842,7 @@ class _DropdownButtonState<T> extends State<DropdownButton<T>> with WidgetsBindi
     // If value is null (then _selectedIndex is null) then we
     // display the hint or nothing at all.
     final Widget innerItemsWidget;
-    final bool showHint =
-        (!_enabled) || (widget.itemBuilder != null ? widget.value == null : _selectedIndex == null);
+    final bool showHint = (!_enabled) || _selectedIndex == null;
 
     if (showHint && hintIndex != null) {
       innerItemsWidget = IndexedStack(
@@ -1830,13 +1857,16 @@ class _DropdownButtonState<T> extends State<DropdownButton<T>> with WidgetsBindi
               }).toList(),
       );
     } else if (widget.itemBuilder != null) {
-      if (!_enabled) {
+      if (!_enabled || _selectedIndex == null) {
         innerItemsWidget = const SizedBox.shrink();
       } else {
         if (widget.customSelectedItemBuilder != null) {
-          innerItemsWidget = widget.customSelectedItemBuilder!(context, widget.value);
+          innerItemsWidget = widget.customSelectedItemBuilder!(context, _effectiveValue);
         } else {
-          innerItemsWidget = Text(widget.value?.toString() ?? '');
+          final DropdownMenuItem<T> item = widget.itemBuilder!(context, _selectedIndex!);
+          innerItemsWidget = widget.itemHeight != null
+              ? SizedBox(height: widget.itemHeight, child: item)
+              : Column(mainAxisSize: MainAxisSize.min, children: <Widget>[item]);
         }
       }
     } else if (items.isEmpty) {
