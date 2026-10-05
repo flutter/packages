@@ -19,29 +19,24 @@ class OutputStreamTest {
     val bytes = byteArrayOf(1, 2, 3)
 
     api.write(instance, bytes)
-
     verify(instance).write(bytes)
   }
 
   @Test
   fun close() {
     val api = TestProxyApiRegistrar().getPigeonApiOutputStream()
-
     val instance = mock<OutputStream>()
 
     api.close(instance)
-
     verify(instance).close()
   }
 
   @Test
   fun flush() {
     val api = TestProxyApiRegistrar().getPigeonApiOutputStream()
-
     val instance = mock<OutputStream>()
 
     api.flush(instance)
-
     verify(instance).flush()
   }
 }
