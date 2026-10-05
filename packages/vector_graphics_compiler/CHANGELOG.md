@@ -1,5 +1,7 @@
-## NEXT
+## 1.3.1
 
+* Fixes a `tspan` without its own position being drawn with its parent group
+  transform applied twice.
 * Updates minimum supported SDK version to Flutter 3.41/Dart 3.11.
 
 ## 1.3.0

@@ -25,6 +25,9 @@ class ResolvingVisitor extends Visitor<Node, AffineMatrix> {
   final Set<String> _activePatterns = <String>{};
   int _deferredExpansionCount = 0;
 
+  /// The position of the text or tspan currently being resolved, if any.
+  TextPosition? _currentTextPosition;
+
   @override
   Node visitClipNode(ClipNode clipNode, AffineMatrix data) {
     final AffineMatrix childTransform = clipNode.concatTransform(data);
@@ -132,11 +135,22 @@ class ResolvingVisitor extends Visitor<Node, AffineMatrix> {
   @override
   Node visitTextPositionNode(TextPositionNode textPositionNode, AffineMatrix data) {
     final AffineMatrix nextTransform = textPositionNode.concatTransform(data);
+    final TextPosition? parentTextPosition = _currentTextPosition;
+    final TextPosition textPosition = textPositionNode.computeTextPosition(
+      _bounds,
+      data,
+      parent: parentTextPosition,
+    );
 
-    return ResolvedTextPositionNode(textPositionNode.computeTextPosition(_bounds, data), <Node>[
-      for (final Node child in textPositionNode.children)
-        child.applyAttributes(textPositionNode.attributes).accept(this, nextTransform),
-    ]);
+    _currentTextPosition = textPosition;
+    try {
+      return ResolvedTextPositionNode(textPosition, <Node>[
+        for (final Node child in textPositionNode.children)
+          child.applyAttributes(textPositionNode.attributes).accept(this, nextTransform),
+      ]);
+    } finally {
+      _currentTextPosition = parentTextPosition;
+    }
   }
 
   @override
