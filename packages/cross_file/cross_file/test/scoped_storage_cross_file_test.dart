@@ -140,6 +140,7 @@ void main() {
 
     test('writeAsString', () async {
       const testString = 'Hello, World!';
+
       CrossFilePlatform.instance = TestCrossFilePlatform(
         onCreatePlatformScopedStorageXFile: (PlatformScopedStorageXFileCreationParams params) =>
             TestScopedStorageXFile(
@@ -158,7 +159,9 @@ void main() {
     });
 
     test('openWrite', () async {
-      final mockSink = StreamController<Uint8List>().sink;
+      final StreamSink<Uint8List> mockSink = StreamController<Uint8List>().sink;
+      addTearDown(() async => mockSink.close());
+
       CrossFilePlatform.instance = TestCrossFilePlatform(
         onCreatePlatformScopedStorageXFile: (PlatformScopedStorageXFileCreationParams params) =>
             TestScopedStorageXFile(
