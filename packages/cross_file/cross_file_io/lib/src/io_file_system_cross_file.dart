@@ -115,6 +115,8 @@ mixin IOFileSystemXFileExtension implements PlatformFileSystemXFileExtension {
   File get file;
 }
 
+// A wrapper is necessary because the `IOSink` returned from File.openWrite
+// can't be casted to a `StreamSink<Uint8List>`.
 class _IOSinkWrapper implements StreamSink<Uint8List> {
   _IOSinkWrapper(this._ioSink);
 
