@@ -225,3 +225,146 @@ abstract final class Easing {
   /// * [M3 guidelines: Applying easing and duration](https://m3.material.io/styles/motion/easing-and-duration/applying-easing-and-duration)
   static const Curve legacy = Cubic(0.4, 0.0, 0.2, 1.0);
 }
+
+/// The set of spring descriptions in the Material specification.
+///
+/// Material spring tokens do not include mass. These constants use unit mass
+/// to convert Material's damping ratio and stiffness tokens to Flutter's
+/// [SpringDescription].
+///
+/// See also:
+///
+/// * [M3 guidelines: Spring tokens](https://m3.material.io/styles/motion/overview/specs)
+abstract final class MotionSprings {
+  /// The standard default spatial spring description in the Material specification.
+  ///
+  /// See also:
+  ///
+  /// * [M3 guidelines: Spring tokens](https://m3.material.io/styles/motion/overview/specs)
+  static const SpringDescription standardDefaultSpatial = SpringDescription(
+    mass: 1.0,
+    stiffness: 700.0,
+    damping: 47.62352359916263,
+  );
+
+  /// The standard fast spatial spring description in the Material specification.
+  ///
+  /// See also:
+  ///
+  /// * [M3 guidelines: Spring tokens](https://m3.material.io/styles/motion/overview/specs)
+  static const SpringDescription standardFastSpatial = SpringDescription(
+    mass: 1.0,
+    stiffness: 1400.0,
+    damping: 67.34983296193096,
+  );
+
+  /// The standard slow spatial spring description in the Material specification.
+  ///
+  /// See also:
+  ///
+  /// * [M3 guidelines: Spring tokens](https://m3.material.io/styles/motion/overview/specs)
+  static const SpringDescription standardSlowSpatial = SpringDescription(
+    mass: 1.0,
+    stiffness: 300.0,
+    damping: 31.176914536239796,
+  );
+
+  /// The standard default effects spring description in the Material specification.
+  ///
+  /// See also:
+  ///
+  /// * [M3 guidelines: Spring tokens](https://m3.material.io/styles/motion/overview/specs)
+  static const SpringDescription standardDefaultEffects = SpringDescription(
+    mass: 1.0,
+    stiffness: 1600.0,
+    damping: 80.0,
+  );
+
+  /// The standard fast effects spring description in the Material specification.
+  ///
+  /// See also:
+  ///
+  /// * [M3 guidelines: Spring tokens](https://m3.material.io/styles/motion/overview/specs)
+  static const SpringDescription standardFastEffects = SpringDescription(
+    mass: 1.0,
+    stiffness: 3800.0,
+    damping: 123.28828005937953,
+  );
+
+  /// The standard slow effects spring description in the Material specification.
+  ///
+  /// See also:
+  ///
+  /// * [M3 guidelines: Spring tokens](https://m3.material.io/styles/motion/overview/specs)
+  static const SpringDescription standardSlowEffects = SpringDescription(
+    mass: 1.0,
+    stiffness: 800.0,
+    damping: 56.568542494923804,
+  );
+
+  /// The expressive default spatial spring description in the Material specification.
+  ///
+  /// See also:
+  ///
+  /// * [M3 guidelines: Spring tokens](https://m3.material.io/styles/motion/overview/specs)
+  static const SpringDescription expressiveDefaultSpatial = SpringDescription(
+    mass: 1.0,
+    stiffness: 380.0,
+    damping: 31.189741903388683,
+  );
+
+  /// The expressive fast spatial spring description in the Material specification.
+  ///
+  /// See also:
+  ///
+  /// * [M3 guidelines: Spring tokens](https://m3.material.io/styles/motion/overview/specs)
+  static const SpringDescription expressiveFastSpatial = SpringDescription(
+    mass: 1.0,
+    stiffness: 800.0,
+    damping: 33.94112549695428,
+  );
+
+  /// The expressive slow spatial spring description in the Material specification.
+  ///
+  /// See also:
+  ///
+  /// * [M3 guidelines: Spring tokens](https://m3.material.io/styles/motion/overview/specs)
+  static const SpringDescription expressiveSlowSpatial = SpringDescription(
+    mass: 1.0,
+    stiffness: 200.0,
+    damping: 22.627416997969522,
+  );
+
+  /// The expressive default effects spring description in the Material specification.
+  ///
+  /// See also:
+  ///
+  /// * [M3 guidelines: Spring tokens](https://m3.material.io/styles/motion/overview/specs)
+  static const SpringDescription expressiveDefaultEffects = SpringDescription(
+    mass: 1.0,
+    stiffness: 1600.0,
+    damping: 80.0,
+  );
+
+  /// The expressive fast effects spring description in the Material specification.
+  ///
+  /// See also:
+  ///
+  /// * [M3 guidelines: Spring tokens](https://m3.material.io/styles/motion/overview/specs)
+  static const SpringDescription expressiveFastEffects = SpringDescription(
+    mass: 1.0,
+    stiffness: 3800.0,
+    damping: 123.28828005937953,
+  );
+
+  /// The expressive slow effects spring description in the Material specification.
+  ///
+  /// See also:
+  ///
+  /// * [M3 guidelines: Spring tokens](https://m3.material.io/styles/motion/overview/specs)
+  static const SpringDescription expressiveSlowEffects = SpringDescription(
+    mass: 1.0,
+    stiffness: 800.0,
+    damping: 56.568542494923804,
+  );
+}

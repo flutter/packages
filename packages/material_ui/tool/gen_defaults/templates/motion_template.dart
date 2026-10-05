@@ -2,8 +2,11 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'dart:math' as math;
+
 import '../data/cubic_struct.dart';
 import '../data/motion.dart';
+import '../data/motion_expressive.dart';
 import 'template.dart';
 
 class MotionTemplateM3 extends TokenTemplateM3 {
@@ -41,6 +44,26 @@ class MotionTemplateM3 extends TokenTemplateM3 {
   /// * [M3 guidelines: Applying easing and duration](https://m3.material.io/styles/motion/easing-and-duration/applying-easing-and-duration)
   static const Curve $tokenName = Cubic(${tokenValue.a}, ${tokenValue.b}, ${tokenValue.c}, ${tokenValue.d});
 ''';
+
+  String _springDescriptionTokenString({
+    required String tokenName,
+    required double dampingRatio,
+    required double stiffness,
+  }) {
+    final String tokenDescription = tokenName.replaceAllMapped(
+      RegExp('[A-Z]'),
+      (Match match) => ' ${match.group(0)!.toLowerCase()}',
+    );
+    final double damping = dampingRatio * 2.0 * math.sqrt(stiffness);
+    return '''
+  /// The $tokenDescription spring description in the Material specification.
+  ///
+  /// See also:
+  ///
+  /// * [M3 guidelines: Spring tokens](https://m3.material.io/styles/motion/overview/specs)
+  static const SpringDescription $tokenName = SpringDescription(mass: 1.0, stiffness: ${number(stiffness)}, damping: ${number(damping)});
+''';
+  }
 
   @override
   String generateContents(String className) =>
@@ -89,6 +112,30 @@ ${_easingCurveTokenString('standardDecelerate', TokenMotion.easingStandardDecele
 ${_easingCurveTokenString('legacyDecelerate', TokenMotion.easingLegacyDecelerate)}
 ${_easingCurveTokenString('legacyAccelerate', TokenMotion.easingLegacyAccelerate)}
 ${_easingCurveTokenString('legacy', TokenMotion.easingLegacy).trimRight()}
+}
+
+/// The set of spring descriptions in the Material specification.
+///
+/// Material spring tokens do not include mass. These constants use unit mass
+/// to convert Material's damping ratio and stiffness tokens to Flutter's
+/// [SpringDescription].
+///
+/// See also:
+///
+/// * [M3 guidelines: Spring tokens](https://m3.material.io/styles/motion/overview/specs)
+abstract final class MotionSprings {
+${_springDescriptionTokenString(tokenName: 'standardDefaultSpatial', dampingRatio: TokenMotion.springDefaultSpatialDamping, stiffness: TokenMotion.springDefaultSpatialStiffness)}
+${_springDescriptionTokenString(tokenName: 'standardFastSpatial', dampingRatio: TokenMotion.springFastSpatialDamping, stiffness: TokenMotion.springFastSpatialStiffness)}
+${_springDescriptionTokenString(tokenName: 'standardSlowSpatial', dampingRatio: TokenMotion.springSlowSpatialDamping, stiffness: TokenMotion.springSlowSpatialStiffness)}
+${_springDescriptionTokenString(tokenName: 'standardDefaultEffects', dampingRatio: TokenMotion.springDefaultEffectsDamping, stiffness: TokenMotion.springDefaultEffectsStiffness)}
+${_springDescriptionTokenString(tokenName: 'standardFastEffects', dampingRatio: TokenMotion.springFastEffectsDamping, stiffness: TokenMotion.springFastEffectsStiffness)}
+${_springDescriptionTokenString(tokenName: 'standardSlowEffects', dampingRatio: TokenMotion.springSlowEffectsDamping, stiffness: TokenMotion.springSlowEffectsStiffness)}
+${_springDescriptionTokenString(tokenName: 'expressiveDefaultSpatial', dampingRatio: TokenMotionExpressive.springDefaultSpatialDamping, stiffness: TokenMotionExpressive.springDefaultSpatialStiffness)}
+${_springDescriptionTokenString(tokenName: 'expressiveFastSpatial', dampingRatio: TokenMotionExpressive.springFastSpatialDamping, stiffness: TokenMotionExpressive.springFastSpatialStiffness)}
+${_springDescriptionTokenString(tokenName: 'expressiveSlowSpatial', dampingRatio: TokenMotionExpressive.springSlowSpatialDamping, stiffness: TokenMotionExpressive.springSlowSpatialStiffness)}
+${_springDescriptionTokenString(tokenName: 'expressiveDefaultEffects', dampingRatio: TokenMotionExpressive.springDefaultEffectsDamping, stiffness: TokenMotionExpressive.springDefaultEffectsStiffness)}
+${_springDescriptionTokenString(tokenName: 'expressiveFastEffects', dampingRatio: TokenMotionExpressive.springFastEffectsDamping, stiffness: TokenMotionExpressive.springFastEffectsStiffness)}
+${_springDescriptionTokenString(tokenName: 'expressiveSlowEffects', dampingRatio: TokenMotionExpressive.springSlowEffectsDamping, stiffness: TokenMotionExpressive.springSlowEffectsStiffness).trimRight()}
 }
 ''';
 }
