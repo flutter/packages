@@ -27,9 +27,9 @@ class ContentResolverProxyApi(override val pigeonRegistrar: ProxyApiRegistrar) :
   }
 
   override fun openOutputStream(
-    pigeon_instance: ContentResolver,
-    uri: String,
-    mode: String
+      pigeon_instance: ContentResolver,
+      uri: String,
+      mode: String
   ): OutputStream? {
     return pigeon_instance.openOutputStream(uri.toUri(), mode)
   }

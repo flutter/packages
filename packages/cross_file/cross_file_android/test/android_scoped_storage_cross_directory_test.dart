@@ -130,9 +130,7 @@ void main() {
       const PlatformScopedStorageXDirectoryCreationParams(uri: uri),
     );
 
-    final PlatformXFile file = await directory.createFile(
-      const PlatformCreateParams(fileName),
-    );
+    final PlatformXFile file = await directory.createFile(const PlatformCreateParams(fileName));
 
     expect(file.params.uri, fileUri);
     verify(mockDirectory.createFile(fileName)).called(1);

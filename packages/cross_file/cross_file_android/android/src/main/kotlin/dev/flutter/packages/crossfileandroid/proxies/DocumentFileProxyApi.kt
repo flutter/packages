@@ -71,10 +71,7 @@ class DocumentFileProxyApi(override val pigeonRegistrar: ProxyApiRegistrar) :
     return pigeon_instance.name
   }
 
-  override fun createFile(
-    pigeon_instance: DocumentFile,
-    displayName: String
-  ): DocumentFile? {
+  override fun createFile(pigeon_instance: DocumentFile, displayName: String): DocumentFile? {
     // Returns an empty String if there is no extension.
     val fileExtension = MimeTypeMap.getFileExtensionFromUrl(displayName) ?: ""
 
@@ -88,10 +85,7 @@ class DocumentFileProxyApi(override val pigeonRegistrar: ProxyApiRegistrar) :
     return pigeon_instance.createFile("application/octet-stream", displayName)
   }
 
-  override fun createDirectory(
-    pigeon_instance: DocumentFile,
-    displayName: String
-  ): DocumentFile? {
+  override fun createDirectory(pigeon_instance: DocumentFile, displayName: String): DocumentFile? {
     return pigeon_instance.createDirectory(displayName)
   }
 }

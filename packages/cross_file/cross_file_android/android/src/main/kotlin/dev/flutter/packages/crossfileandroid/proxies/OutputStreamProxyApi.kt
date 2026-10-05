@@ -15,16 +15,15 @@ import java.io.OutputStream
  */
 class OutputStreamProxyApi(override val pigeonRegistrar: ProxyApiRegistrar) :
     PigeonApiOutputStream(pigeonRegistrar) {
-    override fun write(pigeon_instance: OutputStream, bytes: ByteArray) {
-        pigeon_instance.write(bytes)
-    }
+  override fun write(pigeon_instance: OutputStream, bytes: ByteArray) {
+    pigeon_instance.write(bytes)
+  }
 
-    override fun close(pigeon_instance: OutputStream) {
-        pigeon_instance.close()
-    }
+  override fun close(pigeon_instance: OutputStream) {
+    pigeon_instance.close()
+  }
 
-    override fun flush(pigeon_instance: OutputStream) {
-        pigeon_instance.flush()
-    }
-
+  override fun flush(pigeon_instance: OutputStream) {
+    pigeon_instance.flush()
+  }
 }
