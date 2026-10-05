@@ -1,6 +1,6 @@
 ## 1.1.0
 
-* Adds support to modify a files and directories. See `XFile.openWrite`, `XFile.writeAsString`,
+* Adds support to modify files and directories. See `XFile.openWrite`, `XFile.writeAsString`,
   `XFile.delete`, `XDirectory.createFile`, `XDirectory.createDirectory`, `XDirectory.delete`, 
   `ScopedStorageXFile.canWrite`, and `ScopedStorageXDirectory.canWrite`.
 * Updates documentation to more consistently use `resource` and `container`.
