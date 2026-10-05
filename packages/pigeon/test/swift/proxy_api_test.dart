@@ -98,6 +98,13 @@ void main() {
           'private class MyFilePigeonInternalProxyApiCodecReaderWriter: FlutterStandardReaderWriter',
         ),
       );
+      expect(code, contains('  let pigeonRegistrar: MyFilePigeonProxyApiRegistrar'));
+      expect(
+        collapsedCode,
+        contains('if pigeonRegistrar.ignoreCallsToDart { super.writeValue(NSNull()) return }'),
+      );
+      expect(collapsedCode, contains('func tearDown() {'));
+      expect(collapsedCode, contains('_codec = nil'));
 
       // Delegate and class
       expect(code, contains('protocol PigeonApiDelegateApi'));

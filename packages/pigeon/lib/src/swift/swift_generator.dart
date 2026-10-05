@@ -1777,7 +1777,10 @@ if (wrapped == nil) {
       'private class ${proxyApiReaderWriterName(generatorOptions)}: FlutterStandardReaderWriter {',
       '}',
       () {
-        indent.writeln('unowned let pigeonRegistrar: $registrarName');
+        // The codec can outlive the registrar's owner while an asynchronous
+        // reply is being encoded. Keep the registrar alive until that codec is
+        // released; tearDown breaks the registrar's own codec reference.
+        indent.writeln('let pigeonRegistrar: $registrarName');
         indent.newln();
 
         indent.writeScoped(
@@ -1849,6 +1852,12 @@ if (wrapped == nil) {
               // classes above extend.
               indent.writeScoped('if $isBuiltinExpression {', '}', () {
                 indent.writeln('super.writeValue(value)');
+                indent.writeln('return');
+              });
+              indent.newln();
+
+              indent.writeScoped('if pigeonRegistrar.ignoreCallsToDart {', '}', () {
+                indent.writeln('super.writeValue(NSNull())');
                 indent.writeln('return');
               });
               indent.newln();
@@ -3005,6 +3014,7 @@ enum ${_classNamePrefix}PigeonInternalNumberType: Int {
             );
           }
         }
+        indent.writeln('_codec = nil');
       });
     });
   }
