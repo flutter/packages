@@ -41,10 +41,14 @@ void main() {
     CalendarDatePickerWeekdayBuilder? weekdayBuilder,
     TextDirection textDirection = TextDirection.ltr,
     ThemeData? theme,
+    Locale? locale,
     bool? useMaterial3,
   }) {
     return MaterialApp(
       theme: theme ?? ThemeData(useMaterial3: useMaterial3),
+      locale: locale,
+      supportedLocales: <Locale>[locale ?? const Locale('en', 'US')],
+      localizationsDelegates: locale == null ? null : GlobalMaterialLocalizations.delegates,
       home: Material(
         child: Directionality(
           textDirection: textDirection,
@@ -649,6 +653,42 @@ void main() {
       expect(find.bySemanticsLabel('Custom Sunday'), findsOneWidget);
       semantics.dispose();
     });
+
+    // Verify weekday order for both Sunday-first and Monday-first locales.
+    for (final locale in <Locale>[const Locale('en', 'US'), const Locale('en', 'GB')]) {
+      final expectedWeekdays = <int>[
+        DateTime.monday,
+        DateTime.tuesday,
+        DateTime.wednesday,
+        DateTime.thursday,
+        DateTime.friday,
+        DateTime.saturday,
+        DateTime.sunday,
+      ];
+
+      if (locale.countryCode != 'GB') {
+        expectedWeekdays.removeLast();
+        expectedWeekdays.insert(0, DateTime.sunday);
+      }
+
+      testWidgets('weekdayBuilder receives weekdays in locale order for $locale', (
+        WidgetTester tester,
+      ) async {
+        final weekdays = <int>[];
+
+        await tester.pumpWidget(
+          calendarDatePicker(
+            locale: locale,
+            weekdayBuilder: (BuildContext context, CalendarDatePickerWeekdayDetails details) {
+              weekdays.add(details.weekday);
+              return details.child;
+            },
+          ),
+        );
+
+        expect(weekdays, expectedWeekdays);
+      });
+    }
 
     testWidgets('Material2 - currentDate is highlighted', (WidgetTester tester) async {
       await tester.pumpWidget(

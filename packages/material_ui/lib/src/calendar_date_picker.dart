@@ -79,8 +79,10 @@ const double _fontSizeToScale = 14.0;
 ///
 /// The date picker's semantics, focus, and tap handling are applied to the
 /// widget returned by this function.
-typedef CalendarDatePickerDayBuilder =
-    Widget Function(BuildContext context, CalendarDatePickerDayDetails details);
+typedef CalendarDatePickerDayBuilder = Widget Function(
+  BuildContext context,
+  CalendarDatePickerDayDetails details,
+);
 
 /// Details for building a day in a [CalendarDatePickerDayBuilder].
 final class CalendarDatePickerDayDetails {
@@ -106,8 +108,10 @@ final class CalendarDatePickerDayDetails {
 ///
 /// The [details] contain the weekday and the default localized weekday header
 /// built by the date picker.
-typedef CalendarDatePickerWeekdayBuilder =
-    Widget Function(BuildContext context, CalendarDatePickerWeekdayDetails details);
+typedef CalendarDatePickerWeekdayBuilder = Widget Function(
+  BuildContext context,
+  CalendarDatePickerWeekdayDetails details,
+);
 
 /// Details for building a weekday header in a [CalendarDatePickerWeekdayBuilder].
 final class CalendarDatePickerWeekdayDetails {
