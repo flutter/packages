@@ -342,7 +342,7 @@ void main() {
     );
 
     final PlatformXFile result = await file.writeAsString(
-      const PlatformWriteAsStringParams(testString, encoding: utf8),
+      const PlatformWriteAsStringParams(testString),
     );
 
     expect(result, file);
