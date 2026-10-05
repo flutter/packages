@@ -4035,15 +4035,38 @@ class InputDecoration {
   final VisualDensity? visualDensity;
 
   /// {@template material_ui.inputDecoration.supportingTextPadding}
-  /// The padding applied to the supporting text row.
+  /// The padding around the supporting text row, which contains the helper
+  /// text, the error text, and the counter.
   ///
-  /// This padding is applied specifically to supporting text and is independent of [contentPadding].
-  /// If [supportingTextPadding] is null, the value of [contentPadding] will be used
-  /// for all supporting text widgets including [InputDecoration.helper], [InputDecoration.counter]
-  /// and [InputDecoration.error].
-  /// When non-null, it completely overrides the default behavior, including the default
-  /// vertical gap between the input container and the supporting text row.
+  /// The start and end values set the horizontal position of the row, the
+  /// same way [InputDecoration.contentPadding] does for the input. The top
+  /// value is the gap between the bottom of the decoration's container and
+  /// the row, and the bottom value is the space below the row.
+  ///
+  /// If null, the row uses these defaults:
+  ///
+  ///  * start and end: the start and end values of
+  ///    [InputDecoration.contentPadding].
+  ///  * top: 4.0 for Material 3, 8.0 for Material 2.
+  ///  * bottom: 0.0.
+  ///
+  /// If non-null, every side of this value is used as is, including sides
+  /// that are zero. For example, `EdgeInsetsDirectional.only(start: 24.0)`
+  /// sets the top gap to zero, so the supporting text sits directly against
+  /// the container. To change the horizontal padding while keeping the
+  /// default Material 3 gap, set the top value explicitly:
+  ///
+  /// ```dart
+  /// const InputDecoration(
+  ///   helperText: 'Helper text',
+  ///   supportingTextPadding: EdgeInsetsDirectional.fromSTEB(24.0, 4.0, 24.0, 0.0),
+  /// )
+  /// ```
   /// {@endtemplate}
+  ///
+  /// If both this and [InputDecorationThemeData.supportingTextPadding] are
+  /// non-null, this value replaces the theme value entirely. The two are not
+  /// merged side by side.
   final EdgeInsetsGeometry? supportingTextPadding;
 
   /// Creates a copy of this input decoration with the given fields replaced
