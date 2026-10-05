@@ -15957,4 +15957,142 @@ void main() {
     expect(tester.getTopRight(helperFinder).dx, inputWidth - themePaddingStart - inputGap);
     expect(tester.getTopLeft(counterFinder).dx, themePaddingEnd + inputGap);
   });
+
+  testWidgets(
+    'supportingTextPadding with an icon positions supporting text correctly in LTR and RTL',
+    (WidgetTester tester) async {
+      const customPaddingStart = 32.0;
+      const customPaddingEnd = 24.0;
+      const inputWidth = 300.0;
+      const errorText = 'error';
+      const counterText = 'counter';
+
+      Future<void> buildDecorator({required TextDirection direction, bool withIcon = false}) async {
+        await tester.pumpWidget(
+          MaterialApp(
+            theme: ThemeData(useMaterial3: true),
+            home: Scaffold(
+              body: Directionality(
+                textDirection: direction,
+                child: SizedBox(
+                  width: inputWidth,
+                  child: InputDecorator(
+                    decoration: InputDecoration(
+                      filled: true,
+                      icon: withIcon ? const SizedBox(width: 24, height: 24) : null,
+                      errorText: errorText,
+                      counterText: counterText,
+                      supportingTextPadding: const EdgeInsetsDirectional.only(
+                        start: customPaddingStart,
+                        end: customPaddingEnd,
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ),
+        );
+        await tester.pumpAndSettle();
+      }
+
+      final Finder errorFinder = find.text(errorText);
+      final Finder counterFinder = find.text(counterText);
+
+      // Measure baseline start/end offsets without icon in LTR.
+      await buildDecorator(direction: TextDirection.ltr);
+      final double ltrStartWithoutIcon = tester.getTopLeft(errorFinder).dx;
+      final double ltrEndWithoutIcon = tester.getTopRight(counterFinder).dx;
+
+      // With icon in LTR: start offset increases by _boxSize(icon).width; end is unaffected.
+      await buildDecorator(direction: TextDirection.ltr, withIcon: true);
+      final double ltrStartWithIcon = tester.getTopLeft(errorFinder).dx;
+      final double ltrEndWithIcon = tester.getTopRight(counterFinder).dx;
+      // The delta is the actual _boxSize(icon).width added by the layout.
+      final double iconBoxWidth = ltrStartWithIcon - ltrStartWithoutIcon;
+      expect(iconBoxWidth, greaterThan(0)); // Icon shifts start offset right in LTR.
+      expect(ltrEndWithIcon, ltrEndWithoutIcon); // End (counter) is unaffected by icon.
+
+      // Measure baseline start/end offsets without icon in RTL.
+      await buildDecorator(direction: TextDirection.rtl);
+      final double rtlStartWithoutIcon = tester.getTopRight(errorFinder).dx;
+      final double rtlEndWithoutIcon = tester.getTopLeft(counterFinder).dx;
+
+      // With icon in RTL: start offset decreases by _boxSize(icon).width; end is unaffected.
+      await buildDecorator(direction: TextDirection.rtl, withIcon: true);
+      final double rtlStartWithIcon = tester.getTopRight(errorFinder).dx;
+      final double rtlEndWithIcon = tester.getTopLeft(counterFinder).dx;
+      // In RTL the icon is on the right, so it reduces the start offset from the right.
+      expect(rtlStartWithoutIcon - rtlStartWithIcon, iconBoxWidth);
+      expect(rtlEndWithIcon, rtlEndWithoutIcon); // End (counter) is unaffected by icon.
+    },
+  );
+
+  testWidgets('supportingTextPadding in Material 2 (the 8.0 gap)', (WidgetTester tester) async {
+    const errorText = 'error';
+    const helperText = 'helper';
+
+    Future<void> buildDecorator({
+      EdgeInsetsGeometry? supportingTextPadding,
+      String? errorText,
+      String? helperText,
+    }) async {
+      await tester.pumpWidget(
+        MaterialApp(
+          theme: ThemeData(useMaterial3: false),
+          home: Scaffold(
+            body: Align(
+              alignment: Alignment.topLeft,
+              child: SizedBox(
+                width: 300.0,
+                child: InputDecorator(
+                  decoration: InputDecoration(
+                    filled: true,
+                    errorText: errorText,
+                    helperText: helperText,
+                    supportingTextPadding: supportingTextPadding,
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+    }
+
+    final Finder helperFinder = find.text(helperText);
+    final Finder errorFinder = find.text(errorText);
+
+    // Default Material 2 behavior: gap between container bottom and helper text is 8.0.
+    await buildDecorator(helperText: helperText);
+    final double defaultHelperContainerBottom = getBorderBottom(tester);
+    final double defaultHelperTop = tester.getTopLeft(helperFinder).dy;
+    expect(defaultHelperTop - defaultHelperContainerBottom, 8.0);
+
+    // Default Material 2 behavior: gap between container bottom and error text is 8.0.
+    await buildDecorator(errorText: errorText);
+    final double defaultErrorContainerBottom = getBorderBottom(tester);
+    final double defaultErrorTop = tester.getTopLeft(errorFinder).dy;
+    expect(defaultErrorTop - defaultErrorContainerBottom, 8.0);
+
+    // Custom supportingTextPadding with explicit top overrides the 8.0 gap.
+    const customTopPadding = 16.0;
+    await buildDecorator(
+      helperText: helperText,
+      supportingTextPadding: const EdgeInsetsDirectional.only(top: customTopPadding),
+    );
+    final double customTopContainerBottom = getBorderBottom(tester);
+    final double customTopHelperTop = tester.getTopLeft(helperFinder).dy;
+    expect(customTopHelperTop - customTopContainerBottom, customTopPadding);
+
+    // Custom supportingTextPadding with only horizontal padding removes the 8.0 gap (top defaults to 0.0).
+    await buildDecorator(
+      helperText: helperText,
+      supportingTextPadding: const EdgeInsetsDirectional.only(start: 24.0),
+    );
+    final double horizontalOnlyContainerBottom = getBorderBottom(tester);
+    final double horizontalOnlyHelperTop = tester.getTopLeft(helperFinder).dy;
+    expect(horizontalOnlyHelperTop - horizontalOnlyContainerBottom, 0.0);
+  });
 }
