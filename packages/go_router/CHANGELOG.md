@@ -1,3 +1,7 @@
+## 18.1.0
+
+- Adds `clipBehavior` to `ShellRoute` and `StatefulShellBranch`, forwarded to the nested `Navigator`.
+
 ## 18.0.2
 
 - Fixes `ShellRoute`/`StatefulShellRoute` shell chrome (e.g. a side rail or app bar painted before the routed child) being dropped from the semantics tree by the active route's `ModalBarrier`.
