@@ -104,8 +104,8 @@ abstract base class PlatformScopedStorageXDirectory extends PlatformXDirectory {
   /// viewed.
   Future<bool> canRead();
 
-  /// Whether the files in this directory represented by this reference can be
-  /// modified or written to.
+  /// Whether the entities in this directory represented by this reference can
+  /// be modified or written to.
   Future<bool> canWrite() {
     throw UnimplementedError('`canWrite` is not implemented on the current platform.');
   }
