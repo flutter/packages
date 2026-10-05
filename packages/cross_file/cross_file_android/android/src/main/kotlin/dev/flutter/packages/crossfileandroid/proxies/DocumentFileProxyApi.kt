@@ -72,8 +72,7 @@ class DocumentFileProxyApi(override val pigeonRegistrar: ProxyApiRegistrar) :
   }
 
   override fun createFile(pigeon_instance: DocumentFile, displayName: String): DocumentFile? {
-    // Returns an empty String if there is no extension.
-    val fileExtension = MimeTypeMap.getFileExtensionFromUrl(displayName) ?: ""
+    val fileExtension = displayName.substringAfterLast('.', "")
 
     if (fileExtension.isNotEmpty()) {
       val mimeType = MimeTypeMap.getSingleton().getMimeTypeFromExtension(fileExtension.lowercase())
