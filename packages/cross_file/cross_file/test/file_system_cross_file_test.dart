@@ -141,7 +141,7 @@ void main() {
     });
 
     test('openWrite', () async {
-      final mockSink = StreamController<Uint8List>().sink;
+      final StreamSink<Uint8List> mockSink = StreamController<Uint8List>().sink;
       CrossFilePlatform.instance = TestCrossFilePlatform(
         onCreatePlatformFileSystemXFile: (PlatformFileSystemXFileCreationParams params) =>
             TestFileSystemXFile(
