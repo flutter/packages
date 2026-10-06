@@ -71,9 +71,7 @@ base class FileSelectorMacOS extends FileSelectorPlatform {
   }
 
   @override
-  Future<XDirectory?> getDirectoryPath([
-    FileDialogOptions options = const FileDialogOptions(),
-  ]) async {
+  Future<XDirectory?> getDirectory([FileDialogOptions options = const FileDialogOptions()]) async {
     final List<String?> uris = await _hostApi.displayOpenPanel(
       OpenPanelOptions(
         allowsMultipleSelection: false,
@@ -90,7 +88,7 @@ base class FileSelectorMacOS extends FileSelectorPlatform {
   }
 
   @override
-  Future<List<XDirectory>> getDirectoryPaths([
+  Future<List<XDirectory>> getDirectories([
     FileDialogOptions options = const FileDialogOptions(),
   ]) async {
     final List<String> uris = await _hostApi.displayOpenPanel(

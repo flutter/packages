@@ -282,19 +282,19 @@ void main() {
       await plugin.getSaveLocation(
         const SaveLocationOptions(
           acceptedTypeGroups: <XTypeGroup>[
-            const XTypeGroup(
+            XTypeGroup(
               label: 'text',
               extensions: <String>['txt'],
               mimeTypes: <String>['text/plain'],
               uniformTypeIdentifiers: <String>['public.text'],
             ),
-            const XTypeGroup(
+            XTypeGroup(
               label: 'image',
               extensions: <String>['jpg'],
               mimeTypes: <String>['image/jpg'],
               uniformTypeIdentifiers: <String>['public.image'],
             ),
-            const XTypeGroup(label: 'any'),
+            XTypeGroup(label: 'any'),
           ],
         ),
       );
@@ -304,11 +304,11 @@ void main() {
     });
   });
 
-  group('getDirectoryPath', () {
+  group('getDirectory', () {
     test('works as expected with no arguments', () async {
       api.result = <String>['foo'];
 
-      final XDirectory? dir = await plugin.getDirectoryPath();
+      final XDirectory? dir = await plugin.getDirectory();
 
       expect(dir?.uri, 'foo');
       final OpenPanelOptions options = api.passedOpenPanelOptions!;
@@ -324,33 +324,31 @@ void main() {
     test('handles cancel', () async {
       api.result = <String>[];
 
-      final XDirectory? dir = await plugin.getDirectoryPath();
+      final XDirectory? dir = await plugin.getDirectory();
 
       expect(dir?.uri, null);
     });
 
     test('passes initialDirectory correctly', () async {
-      await plugin.getDirectoryPath(
-        const FileDialogOptions(initialDirectory: '/example/directory'),
-      );
+      await plugin.getDirectory(const FileDialogOptions(initialDirectory: '/example/directory'));
 
       final OpenPanelOptions options = api.passedOpenPanelOptions!;
       expect(options.baseOptions.directoryPath, '/example/directory');
     });
 
     test('passes confirmButtonText correctly', () async {
-      await plugin.getDirectoryPath(const FileDialogOptions(confirmButtonText: 'Open File'));
+      await plugin.getDirectory(const FileDialogOptions(confirmButtonText: 'Open File'));
 
       final OpenPanelOptions options = api.passedOpenPanelOptions!;
       expect(options.baseOptions.prompt, 'Open File');
     });
   });
 
-  group('getDirectoryPaths', () {
+  group('getDirectories', () {
     test('works as expected with no arguments', () async {
       api.result = <String>['firstDirectory', 'secondDirectory', 'thirdDirectory'];
 
-      final List<XDirectory> dirs = await plugin.getDirectoryPaths();
+      final List<XDirectory> dirs = await plugin.getDirectories();
 
       expect(dirs.map((XDirectory dir) => dir.uri).toList(), <String>[
         'firstDirectory',
@@ -370,24 +368,20 @@ void main() {
     test('handles cancel', () async {
       api.result = <String>[];
 
-      final List<XDirectory> uris = await plugin.getDirectoryPaths();
+      final List<XDirectory> uris = await plugin.getDirectories();
 
       expect(uris, isEmpty);
     });
 
     test('passes confirmButtonText correctly', () async {
-      await plugin.getDirectoryPaths(
-        const FileDialogOptions(confirmButtonText: 'Select directories'),
-      );
+      await plugin.getDirectories(const FileDialogOptions(confirmButtonText: 'Select directories'));
 
       final OpenPanelOptions options = api.passedOpenPanelOptions!;
       expect(options.baseOptions.prompt, 'Select directories');
     });
 
     test('passes initialDirectory correctly', () async {
-      await plugin.getDirectoryPaths(
-        const FileDialogOptions(initialDirectory: '/example/directory'),
-      );
+      await plugin.getDirectories(const FileDialogOptions(initialDirectory: '/example/directory'));
 
       final OpenPanelOptions options = api.passedOpenPanelOptions!;
       expect(options.baseOptions.directoryPath, '/example/directory');
