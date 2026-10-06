@@ -9,6 +9,10 @@
 # NOTE: camera_android is semi-excluded via special casing in the repo tools.
 # See create_all_packages_app_command.dart.
 
+# Excluded due to breaking changes in the plugin. First-party apps depending
+# on it must be updated to support the new changes.
+# See https://github.com/flutter/flutter/issues/193154
+- cross_file
 # This is a permanent entry, as it should never be a direct app dependency.
 - plugin_platform_interface
 # An application cannot depend directly on multiple federated implementations

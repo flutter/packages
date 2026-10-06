@@ -1,3 +1,12 @@
+## 18.0.2
+
+- Fixes `ShellRoute`/`StatefulShellRoute` shell chrome (e.g. a side rail or app bar painted before the routed child) being dropped from the semantics tree by the active route's `ModalBarrier`.
+Fixes pushed routes nested within a shell being lost when a dynamic routing configuration changes.
+
+## 18.0.1
+
+Clarifies `onEnter` documentation regarding evaluation order relative to `redirect:` chains.
+
 ## 18.0.0
 
 - Migrates to material_ui and cupertino_ui.

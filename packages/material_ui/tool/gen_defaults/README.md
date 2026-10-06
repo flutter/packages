@@ -14,7 +14,7 @@ This updates generated component theming files under
 ## Templates
 
 There is a template file for every component that needs defaults from the token
-database. These templates are implemented as subclasses of either `M3TokenTemplate` or `M3ETokenTemplate`.
+database. These templates are implemented as subclasses of either `TokenTemplateM3` or `TokenTemplateM3E`.
 
 Templates need to override the `generateContents` method to provide the
 generated code block as a string.

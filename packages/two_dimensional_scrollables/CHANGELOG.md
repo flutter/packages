@@ -1,3 +1,13 @@
+## 0.5.5
+
+* Fixes `TableView` laying out and painting trailing pinned rows and columns twice, which could throw when the table was scrolled to the end.
+* Fixes `TableView` losing its regular rows or columns on scroll when more than one row or column is trailing pinned.
+* Updates minimum supported SDK version to Flutter 3.41/Dart 3.11.
+
+## 0.5.4
+
+* Fixes memory leaks.
+
 ## 0.5.3
 
 * Fixes hit testing for `TreeView` row content and gestures after horizontal scrolling.

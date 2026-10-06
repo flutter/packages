@@ -1,3 +1,27 @@
+## 0.7.5+2
+
+* Updates Robolectric to 4.17 and adds the JVM arguments it requires for unit tests.
+
+## 0.7.5+1
+
+* Fix exposure offset slider freezing camera preview and fix setExposureOffset return value.
+
+## 0.7.5
+
+* Adds support for custom video output path in video recording.
+* Updates minimum supported SDK version to Flutter 3.41/Dart 3.11.
+
+## 0.7.4+8
+
+* Bumps cameraxVersion from 1.6.1 to 1.6.2.
+* Removes the explicit `androidx.concurrent:concurrent-futures` dependency
+  workaround, as camera-core 1.6.2 includes an
+  upstream fix that makes it unnecessary.
+
+## 0.7.4+7
+
+* Updates pigeon dev_dependency to ^27.3.2 for analyzer 14 compatibility.
+
 ## 0.7.4+6
 
 * Adds explicit `androidx.concurrent:concurrent-futures:1.2.0` dependency to fix

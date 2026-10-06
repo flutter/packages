@@ -10,6 +10,7 @@ library;
 
 import 'dart:math' as math;
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
@@ -124,6 +125,21 @@ const double _fontSizeToScale = 14.0;
 ///
 /// {@macro material_ui.calendar_date_picker.calendarDelegate}
 ///
+/// Use a custom [CalendarDelegate.keyboardInputFormatters] to customize
+/// how dates are entered and formatted in [DatePickerEntryMode.input].
+///
+/// A custom delegate can define specific date input conventions, such as
+/// ordering, separators, or formatting rules (for example, `dd.MM.yyyy`), and
+/// is responsible for keeping text input parsing and calendar selection
+/// synchronized.
+///
+/// {@tool dartpad}
+/// This sample shows how to customize the text input behavior of
+/// [showDatePicker] using a custom [CalendarDelegate].
+///
+/// ** See code in examples/api/lib/material/date_picker/show_date_picker.2.dart **
+/// {@end-tool}
+///
 /// The following optional string parameters allow you to override the default
 /// text used for various parts of the dialog:
 ///
@@ -205,6 +221,7 @@ const double _fontSizeToScale = 14.0;
 ///  * [DisplayFeatureSubScreen], which documents the specifics of how
 ///    [DisplayFeature]s can split the screen into sub-screens.
 ///  * [showTimePicker], which shows a dialog that contains a Material Design time picker.
+@awaitNotRequired
 Future<DateTime?> showDatePicker({
   required BuildContext context,
   DateTime? initialDate,
@@ -747,9 +764,9 @@ class _DatePickerDialogState extends State<DatePickerDialog> with RestorationMix
     // Constrain the textScaleFactor to the largest supported value to prevent
     // layout issues.
     final double textScaleFactor =
-        MediaQuery.textScalerOf(
-          context,
-        ).clamp(maxScaleFactor: _kMaxTextScaleFactor).scale(_fontSizeToScale) /
+        MediaQuery.textScalerOf(context)
+            .clamp(maxScaleFactor: _kMaxTextScaleFactor)
+            .scale(_fontSizeToScale) /
         _fontSizeToScale;
     final Size dialogSize = _dialogSize(context) * textScaleFactor;
     final DialogThemeData dialogTheme = theme.dialogTheme;
@@ -951,13 +968,12 @@ class _DatePickerHeader extends StatelessWidget {
       entryModeButton != null ? _kMaxHeaderWithEntryTextScaleFactor : _kMaxHeaderTextScaleFactor,
     );
     final double textScaleFactor =
-        MediaQuery.textScalerOf(
-          context,
-        ).clamp(maxScaleFactor: maxHeaderTextScaleFactor).scale(_fontSizeToScale) /
+        MediaQuery.textScalerOf(context)
+            .clamp(maxScaleFactor: maxHeaderTextScaleFactor)
+            .scale(_fontSizeToScale) /
         _fontSizeToScale;
-    final double scaledFontSize = MediaQuery.textScalerOf(
-      context,
-    ).scale(titleStyle?.fontSize ?? 32);
+    final double scaledFontSize = MediaQuery.textScalerOf(context)
+        .scale(titleStyle?.fontSize ?? 32);
     final headerScaleFactor = textScaleFactor > 1 ? textScaleFactor : 1.0;
 
     final help = Text(
@@ -1071,8 +1087,11 @@ class _DatePickerHeader extends StatelessWidget {
 ///
 /// See [showDateRangePicker], which has a [SelectableDayForRangePredicate]
 /// parameter used to specify allowable days in the date range picker.
-typedef SelectableDayForRangePredicate =
-    bool Function(DateTime day, DateTime? selectedStartDay, DateTime? selectedEndDay);
+typedef SelectableDayForRangePredicate = bool Function(
+  DateTime day,
+  DateTime? selectedStartDay,
+  DateTime? selectedEndDay,
+);
 
 /// Shows a full screen modal dialog containing a Material Design date range
 /// picker.
@@ -1180,6 +1199,7 @@ typedef SelectableDayForRangePredicate =
 ///  * [DateTimeRange], which is used to describe a date range.
 ///  * [DisplayFeatureSubScreen], which documents the specifics of how
 ///    [DisplayFeature]s can split the screen into sub-screens.
+@awaitNotRequired
 Future<DateTimeRange?> showDateRangePicker({
   required BuildContext context,
   DateTimeRange? initialDateRange,
@@ -3182,9 +3202,9 @@ class _InputDateRangePickerDialog extends StatelessWidget {
     );
 
     final double textScaleFactor =
-        MediaQuery.textScalerOf(
-          context,
-        ).clamp(maxScaleFactor: _kMaxRangeTextScaleFactor).scale(_fontSizeToScale) /
+        MediaQuery.textScalerOf(context)
+            .clamp(maxScaleFactor: _kMaxRangeTextScaleFactor)
+            .scale(_fontSizeToScale) /
         _fontSizeToScale;
     final Size dialogSize =
         (useMaterial3 ? _inputPortraitDialogSizeM3 : _inputPortraitDialogSizeM2) * textScaleFactor;
@@ -3404,6 +3424,7 @@ class _InputDateRangePickerState extends State<_InputDateRangePicker> {
 
   DateTime? _parseDate(String? text) {
     final MaterialLocalizations localizations = MaterialLocalizations.of(context);
+
     return widget.calendarDelegate.parseCompactDate(text, localizations);
   }
 
@@ -3485,6 +3506,7 @@ class _InputDateRangePickerState extends State<_InputDateRangePicker> {
             keyboardType: widget.keyboardType,
             onChanged: _handleStartChanged,
             autofocus: widget.autofocus,
+            inputFormatters: widget.calendarDelegate.keyboardInputFormatters(localizations),
           ),
         ),
         const SizedBox(width: 8),
@@ -3501,6 +3523,7 @@ class _InputDateRangePickerState extends State<_InputDateRangePicker> {
             ),
             keyboardType: widget.keyboardType,
             onChanged: _handleEndChanged,
+            inputFormatters: widget.calendarDelegate.keyboardInputFormatters(localizations),
           ),
         ),
       ],
