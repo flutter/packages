@@ -105,8 +105,7 @@ Future<void> main(List<String> args) async {
   // const NavigationDrawerTemplateM3().generateFile(verbose: verbose);
   // const NavigationRailTemplateM3().generateFile(verbose: verbose);
   // const PopupMenuTemplateM3().generateFile(verbose: verbose);
-  const ProgressIndicatorTemplateM3('Circular Progress Indicator').generateFile(verbose: verbose);
-  const ProgressIndicatorTemplateM3('Linear Progress Indicator').generateFile(verbose: verbose);
+  const ProgressIndicatorTemplateM3().generateFile(verbose: verbose);
   // const RadioTemplateM3().generateFile(verbose: verbose);
   // const RangeSliderTemplateM3().generateFile(verbose: verbose);
   // const SearchBarTemplateM3().generateFile(verbose: verbose);

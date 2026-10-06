@@ -7,35 +7,23 @@ import '../data/progress_indicator_circular.dart';
 import '../data/progress_indicator_linear.dart';
 import 'template.dart';
 
-enum _ProgressIndicatorVariant { circular, linear }
-
 class ProgressIndicatorTemplateM3 extends TokenTemplateM3 {
-  const ProgressIndicatorTemplateM3(this.name);
+  const ProgressIndicatorTemplateM3();
 
   @override
-  final String name;
+  String get name => 'Progress Indicator';
 
   @override
   String get parentFilePath => 'progress_indicator.dart';
 
-  _ProgressIndicatorVariant get _variant => switch (name) {
-    'Circular Progress Indicator' => _ProgressIndicatorVariant.circular,
-    'Linear Progress Indicator' => _ProgressIndicatorVariant.linear,
-    _ => throw UnsupportedError('Unsupported progress indicator template name: $name'),
-  };
+  @override
+  String get className => '';
 
   @override
-  String generateContents(String className) {
-    return switch (_variant) {
-      _ProgressIndicatorVariant.circular => _generateCircular(className),
-      _ProgressIndicatorVariant.linear => _generateLinear(className),
-    };
-  }
-
-  String _generateCircular(String className) =>
+  String generateContents(String className) =>
       '''
-class $className extends ProgressIndicatorThemeData {
-  $className(this.context, { required this.indeterminate });
+class _CircularProgressIndicatorDefaultsM3 extends ProgressIndicatorThemeData {
+  _CircularProgressIndicatorDefaultsM3(this.context, { required this.indeterminate });
 
   final BuildContext context;
   late final ColorScheme _colors = Theme.of(context).colorScheme;
@@ -65,12 +53,9 @@ class $className extends ProgressIndicatorThemeData {
   @override
   EdgeInsetsGeometry? get circularTrackPadding => const EdgeInsets.all(4.0);
 }
-''';
 
-  String _generateLinear(String className) =>
-      '''
-class $className extends ProgressIndicatorThemeData {
-  $className(this.context);
+class _LinearProgressIndicatorDefaultsM3 extends ProgressIndicatorThemeData {
+  _LinearProgressIndicatorDefaultsM3(this.context);
 
   final BuildContext context;
   late final ColorScheme _colors = Theme.of(context).colorScheme;

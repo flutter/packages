@@ -749,50 +749,42 @@ void main() {
     });
 
     test('ProgressIndicatorTemplateM3 emits M3 ProgressIndicator defaults from tokens', () {
-      final String circularContents = _generateContents(
-        const ProgressIndicatorTemplateM3('Circular Progress Indicator'),
-      );
+      final String contents = _generateContents(const ProgressIndicatorTemplateM3());
       expect(
-        circularContents,
+        contents,
         contains('class _CircularProgressIndicatorDefaultsM3 extends ProgressIndicatorThemeData'),
       );
-      expect(circularContents, contains('Color get color => _colors.primary'));
+      expect(contents, contains('Color get color => _colors.primary'));
       expect(
-        circularContents,
+        contents,
         contains(
           'Color? get circularTrackColor => indeterminate ? null : _colors.secondaryContainer',
         ),
       );
-      expect(circularContents, contains('double get strokeWidth => 4.0'));
+      expect(contents, contains('double get strokeWidth => 4.0'));
       expect(
-        circularContents,
+        contents,
         contains('double? get strokeAlign => CircularProgressIndicator.strokeAlignInside;'),
       );
-      expect(circularContents, contains('double? get trackGap => 4.0'));
+      expect(contents, contains('double? get trackGap => 4.0'));
       expect(
-        circularContents,
+        contents,
         contains('EdgeInsetsGeometry? get circularTrackPadding => const EdgeInsets.all(4.0)'),
       );
-
-      final String linearContents = _generateContents(
-        const ProgressIndicatorTemplateM3('Linear Progress Indicator'),
-      );
       expect(
-        linearContents,
+        contents,
         contains('class _LinearProgressIndicatorDefaultsM3 extends ProgressIndicatorThemeData'),
       );
-      expect(linearContents, contains('Color get color => _colors.primary'));
-      expect(linearContents, contains('Color get linearTrackColor => _colors.secondaryContainer'));
-      expect(linearContents, contains('double get linearMinHeight => 4.0'));
+      expect(contents, contains('Color get linearTrackColor => _colors.secondaryContainer'));
+      expect(contents, contains('double get linearMinHeight => 4.0'));
       expect(
-        linearContents,
+        contents,
         contains(
           'BorderRadius get borderRadius => const BorderRadius.all(Radius.circular(4.0 / 2))',
         ),
       );
-      expect(linearContents, contains('Color get stopIndicatorColor => _colors.primary'));
-      expect(linearContents, contains('double? get stopIndicatorRadius => 4.0 / 2'));
-      expect(linearContents, contains('double? get trackGap => 4.0'));
+      expect(contents, contains('Color get stopIndicatorColor => _colors.primary'));
+      expect(contents, contains('double? get stopIndicatorRadius => 4.0 / 2'));
     });
 
     test('RadioTemplateM3 emits M3 Radio defaults from tokens', () {
