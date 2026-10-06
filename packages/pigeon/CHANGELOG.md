@@ -1,3 +1,7 @@
+## 29.0.7
+
+* [swift] Fixes a crash when a proxy API codec outlives its registrar during teardown.
+
 ## 29.0.6
 
 * Updates native interop guides and migration skill with SwiftPM `<plugin_name>_objc_gen` target guidance.
