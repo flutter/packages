@@ -41,6 +41,28 @@ typedef _ErrorBuilderForAppType = Widget Function(BuildContext context, GoRouter
 typedef PopPageWithRouteMatchCallback =
     bool Function(Route<dynamic> route, dynamic result, RouteMatchBase match);
 
+/// The clip behavior of the [Navigator] identified by [navigatorKey].
+///
+/// A [ShellRoute] builds a single Navigator and carries the clip behavior
+/// itself, while a [StatefulShellRoute] builds one per branch, so the branch
+/// owning [navigatorKey] carries it. [ShellRouteBase] cannot be subclassed
+/// outside of this library, so those are the only two cases.
+Clip _clipBehaviorFor(ShellRouteBase route, GlobalKey<NavigatorState> navigatorKey) {
+  switch (route) {
+    case ShellRoute():
+      return route.clipBehavior;
+    case StatefulShellRoute():
+      for (final StatefulShellBranch branch in route.branches) {
+        if (branch.navigatorKey == navigatorKey) {
+          return branch.clipBehavior;
+        }
+      }
+      return Clip.hardEdge;
+    default:
+      return Clip.hardEdge;
+  }
+}
+
 /// Builds the top-level Navigator for GoRouter.
 class RouteBuilder {
   /// [RouteBuilder] constructor.
@@ -137,10 +159,25 @@ class _CustomNavigator extends StatefulWidget {
     required this.errorBuilder,
     required this.errorPageBuilder,
     required this.requestFocus,
+    this.isShellNavigator = false,
+    this.clipBehavior = Clip.hardEdge,
   });
 
   final GlobalKey<NavigatorState> navigatorKey;
   final List<NavigatorObserver> observers;
+
+  /// Whether this navigator builds the nested Navigator for a
+  /// [ShellRoute]/[StatefulShellRoute] branch, as opposed to the root
+  /// [GoRouter] navigator.
+  ///
+  /// Shell navigators are wrapped in `Semantics(container: true)` so that
+  /// each route's [ModalBarrier] (which blocks the semantics of
+  /// previously-painted siblings up to the nearest semantics boundary)
+  /// cannot reach past the shell's Navigator and drop shell chrome that
+  /// paints before it (e.g. a side rail or app bar in a `Row`/`Column`
+  /// shell). The root navigator has no earlier-painted siblings by
+  /// construction, so it does not need the same containment.
+  final bool isShellNavigator;
 
   /// The actual [RouteMatchBase]s to be built.
   ///
@@ -156,6 +193,11 @@ class _CustomNavigator extends StatefulWidget {
   final GoRouterWidgetBuilder? errorBuilder;
   final GoRouterPageBuilder? errorPageBuilder;
   final bool requestFocus;
+
+  /// The clip behavior of the [Navigator] built by this widget.
+  ///
+  /// {@macro go_router.ShellRoute.clipBehavior}
+  final Clip clipBehavior;
 
   @override
   State<StatefulWidget> createState() => _CustomNavigatorState();
@@ -315,6 +357,8 @@ class _CustomNavigatorState extends State<_CustomNavigator> {
                 errorBuilder: widget.errorBuilder,
                 errorPageBuilder: widget.errorPageBuilder,
                 requestFocus: widget.requestFocus,
+                isShellNavigator: true,
+                clipBehavior: _clipBehaviorFor(match.route, navigatorKey),
               ),
             );
           },
@@ -443,18 +487,25 @@ class _CustomNavigatorState extends State<_CustomNavigator> {
       _updatePages(context);
     }
     assert(_pages != null);
+    final navigator = Navigator(
+      key: widget.navigatorKey,
+      requestFocus: widget.requestFocus,
+      restorationScopeId: widget.navigatorRestorationId,
+      pages: _pages!,
+      observers: widget.observers,
+      onPopPage: _handlePopPage,
+      clipBehavior: widget.clipBehavior,
+    );
     return GoRouterStateRegistryScope(
       registry: _registry,
       child: HeroControllerScope(
         controller: _controller!,
-        child: Navigator(
-          key: widget.navigatorKey,
-          requestFocus: widget.requestFocus,
-          restorationScopeId: widget.navigatorRestorationId,
-          pages: _pages!,
-          observers: widget.observers,
-          onPopPage: _handlePopPage,
-        ),
+        // A Navigator does not establish a semantics boundary, so a route's
+        // ModalBarrier (wrapped in BlockSemantics) can otherwise drop the
+        // semantics of shell chrome painted before this navigator (e.g. a
+        // side rail in a Row-based ShellRoute shell). See
+        // https://github.com/flutter/flutter/issues/135656.
+        child: widget.isShellNavigator ? Semantics(container: true, child: navigator) : navigator,
       ),
     );
   }

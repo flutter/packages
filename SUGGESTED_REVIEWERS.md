@@ -5,53 +5,53 @@ These names are just suggestions. It is fine to have your changes
 reviewed by someone else.
 
 `animations`:
-  - @hannah-hyj
+  - @elliette
 
 `camera`:
   - **Cross-platform**: @bparrishMines
   - **Android**: @camsim99
   - **iOS**: @hellohuanlin, @louisehsu
   - **Web**: @mdebbar
-  - **Windows**: @stuartmorgan-g
+  - **Windows**: @flutter/windows-reviewers
 
 `cross_file`:
-  - @stuartmorgan-g
+  - @bparrishMines
 
 `cupertino_icons`:
-  - @victorsanni
+  - @dkwingsmt
 
 `cupertino_ui`:
-  - @dkwingsmt
+  - @dkwingsmt, @pjkammer
 
 `espresso`:
   - @jesswrd
 
 `extension_google_sign_in_as_googleapis_auth`:
-  - @stuartmorgan-g
+  - @elliette
 
 `file_selector`:
-  - **Cross-platform**: @stuartmorgan-g
+  - **Cross-platform**: @loic-sharma
   - **Android**: @mboetger
   - **iOS**: @okorohelijah, @vashworth
-  - **Linux**: @robert-ancell, @stuartmorgan-g
+  - **Linux**: @robert-ancell
   - **macOS**: @okorohelijah, @vashworth
   - **Web**: @mdebbar
-  - **Windows**: @stuartmorgan-g
+  - **Windows**: @flutter/windows-reviewers
 
 `flutter_lints`:
-  - @chunhtai
+  - @loic-sharma
 
 `flutter_plugin_android_lifecycle`:
-  - @reidbaker
+  - @camsim99
 
 `flutter_svg, flutter_svg_test`:
   - @domesticmouse
 
 `flutter_template_images`:
-  - @stuartmorgan-g
+  - @loic-sharma
 
 `go_router / go_router_builder`:
-  - @chunhtai
+  - @Piinks
 
 `google_adsense`:
   - @sokoloff06, @ditman
@@ -63,14 +63,14 @@ reviewed by someone else.
   - @Piinks
 
 `google_maps_flutter`:
-  - **Cross-platform**: @stuartmorgan-g
-  - **Android**: @reidbaker
+  - **Cross-platform**: @tarrinneal, @bparrishMines
+  - **Android**: @gmackall
   - **iOS**: @vashworth, @LongCatIsLooong
   - **Web**: @mdebbar
 
 `google_sign_in`:
-  - **Cross-platform**: @stuartmorgan-g
-  - **Android**: @reidbaker
+  - **Cross-platform**: @elliette
+  - **Android**: @mboetger
   - **iOS**: @LongCatIsLooong, @okorohelijah
   - **Web**: @mdebbar
 
@@ -78,27 +78,27 @@ reviewed by someone else.
   - **Cross-platform**: @tarrinneal
   - **Android**: @gmackall
   - **iOS**: @okorohelijah, @vashworth
-  - **Linux**: @robert-ancell, @stuartmorgan-g
+  - **Linux**: @robert-ancell
   - **macOS**: @okorohelijah, @vashworth
   - **Web**: @mdebbar
-  - **Windows**: @stuartmorgan-g
+  - **Windows**: @flutter/windows-reviewers
 
 `interactive_media_ads`:
-  - @bparrishMines
+  - @dkwingsmt
 
 `in_app_purchase`:
-  - **Cross-platform**: @bparrishMines
+  - **Cross-platform**: @pjkammer
   - **Android**: @gmackall
-  - **iOS**: @louisehsu, @LongCatIsLooong
+  - **iOS**: @louisehsu, @cbracken
 
 `local_auth`:
-  - **Cross-platform**: @stuartmorgan-g
+  - **Cross-platform**: @loic-sharma
   - **Android**: @mboetger
-  - **iOS/macOS**: @louisehsu, @okorohelijah
-  - **Windows**: @stuartmorgan-g
+  - **iOS/macOS**: @louisehsu, @cbracken
+  - **Windows**: @flutter/windows-reviewers
 
 `material_ui`:
-  - @qunccccccc
+  - @qunccccccc, @elliette
 
 `metrics_center`:
   - @bkonyi
@@ -113,20 +113,17 @@ reviewed by someone else.
   - @domesticmouse
 
 `path_provider`:
-  - **Cross-platform**: @stuartmorgan-g
+  - **Cross-platform**: @pjkammer
   - **Android**: @camsim99
-  - **iOS/macOS**: @LongCatIsLooong, @vashworth
-  - **Linux**: @robert-ancell, @stuartmorgan-g
-  - **Windows**: @stuartmorgan-g
+  - **iOS/macOS**: @cbracken, @okorohelijah
+  - **Linux**: @robert-ancell
+  - **Windows**: @flutter/windows-reviewers
 
 `pigeon`:
   - @tarrinneal
 
-`platform`:
-  - @stuartmorgan-g
-
 `plugin_platform_interface`:
-  - @stuartmorgan-g
+  - @qunccccccc
 
 `pointer_interceptor`:
   - **Cross-platform**: @ditman
@@ -134,9 +131,9 @@ reviewed by someone else.
   - **Web**: @mdebbar
 
 `quick_actions`:
-  - **Cross-platform**: @bparrishMines
+  - **Cross-platform**: @Piinks
   - **Android**: @jesswrd
-  - **iOS**: @louisehsu, @LongCatIsLooong
+  - **iOS**: @hellohuanlin, @louisehsu
 
 `rfw`:
   - @Hixie
@@ -145,24 +142,24 @@ reviewed by someone else.
   - **Cross-platform**: @tarrinneal
   - **Android**: @jesswrd
   - **iOS/macOS**: @tarrinneal
-  - **Linux**: @robert-ancell, @stuartmorgan-g
-  - **Windows**: @stuartmorgan-g
+  - **Linux**: @robert-ancell
+  - **Windows**: @flutter/windows-reviewers
   - **Web**: @mdebbar
   - **Devtools**: @adsonpleal
 
 `standard_message_codec`:
-  - @stuartmorgan-g
+  - @Piinks
 
 `two_dimensional_scrollables`:
   - @Piinks
 
 `url_launcher`:
-  - **Cross-platform**: @stuartmorgan-g
+  - **Cross-platform**: @qunccccccc
   - **Android**: @gmackall
-  - **iOS**: @vashworth, @LongCatIsLooong
-  - **Linux**: @robert-ancell, @stuartmorgan-g
+  - **iOS**: @vashworth, @hellohuanlin
+  - **Linux**: @robert-ancell
   - **macOS**: @vashworth, @LongCatIsLooong
-  - **Windows**: @stuartmorgan-g
+  - **Windows**: @flutter/windows-reviewers
   - **Web**: @mdebbar
 
 `vector_graphics, vector_graphics_codec, vector_graphics_compiler`:
@@ -171,7 +168,7 @@ reviewed by someone else.
 `video_player`:
   - **Cross-platform**: @tarrinneal
   - **Android**: @mboetger
-  - **iOS/macOS**: @hellohuanlin, @louisehsu
+  - **iOS/macOS**: @LongCatIsLooong, @hellohuanlin
   - **Web**: @mdebbar
 
 `web_benchmarks`:
@@ -180,8 +177,8 @@ reviewed by someone else.
 `webview_flutter`:
   - **Cross-platform**: @bparrishMines
   - **Android**: @bparrishMines
-  - **iOS/macOS**: @bparrishMines, @LongCatIsLooong, @hellohuanlin
+  - **iOS/macOS**: @bparrishMines, @cbracken, @LongCatIsLooong
   - **Web**: @mdebbar
 
 `xdg_directories`:
-  - @stuartmorgan-g
+  - @flutter/linux-reviewers

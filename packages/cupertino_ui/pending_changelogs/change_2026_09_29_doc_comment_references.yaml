@@ -1,0 +1,3 @@
+changelog: |
+  - Fixes unresolved doc comment references.
+version: patch
