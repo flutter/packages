@@ -169,13 +169,13 @@ void main() {
     });
   });
 
-  group('getDirectoryPath', () {
+  group('getDirectory', () {
     setUp(() {
       api.result = <String>['foo'];
     });
 
     test('simple call works', () async {
-      final XDirectory? dir = await plugin.getDirectoryPath();
+      final XDirectory? dir = await plugin.getDirectory();
 
       expect(dir?.uri, 'foo/');
       expect(api.passedOptions!.allowMultiple, false);
@@ -183,7 +183,7 @@ void main() {
     });
 
     test('passes initialDirectory correctly', () async {
-      await plugin.getDirectoryPath(
+      await plugin.getDirectory(
         const FileDialogOptions(initialDirectory: '/example/directory'),
       );
 
@@ -191,19 +191,19 @@ void main() {
     });
 
     test('passes confirmButtonText correctly', () async {
-      await plugin.getDirectoryPath(const FileDialogOptions(confirmButtonText: 'Open Directory'));
+      await plugin.getDirectory(const FileDialogOptions(confirmButtonText: 'Open Directory'));
 
       expect(api.passedConfirmButtonText, 'Open Directory');
     });
   });
 
-  group('getDirectoryPaths', () {
+  group('getDirectories', () {
     setUp(() {
       api.result = <String>['foo', 'bar'];
     });
 
     test('simple call works', () async {
-      final List<XDirectory> dirs = await plugin.getDirectoryPaths();
+      final List<XDirectory> dirs = await plugin.getDirectories();
 
       expect(dirs[0].uri, 'foo/');
       expect(dirs[1].uri, 'bar/');
@@ -212,7 +212,7 @@ void main() {
     });
 
     test('passes initialDirectory correctly', () async {
-      await plugin.getDirectoryPaths(
+      await plugin.getDirectories(
         const FileDialogOptions(initialDirectory: '/example/directory'),
       );
 
@@ -220,7 +220,7 @@ void main() {
     });
 
     test('passes confirmButtonText correctly', () async {
-      await plugin.getDirectoryPaths(const FileDialogOptions(confirmButtonText: 'Open Directory'));
+      await plugin.getDirectories(const FileDialogOptions(confirmButtonText: 'Open Directory'));
 
       expect(api.passedConfirmButtonText, 'Open Directory');
     });

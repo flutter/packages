@@ -63,7 +63,7 @@ base class FileSelectorWindows extends FileSelectorPlatform {
   }
 
   @override
-  Future<XDirectory?> getDirectoryPath([
+  Future<XDirectory?> getDirectory([
     FileDialogOptions options = const FileDialogOptions(),
   ]) async {
     final FileDialogResult result = await _hostApi.showOpenDialog(
@@ -75,7 +75,7 @@ base class FileSelectorWindows extends FileSelectorPlatform {
   }
 
   @override
-  Future<List<XDirectory>> getDirectoryPaths([
+  Future<List<XDirectory>> getDirectories([
     FileDialogOptions options = const FileDialogOptions(),
   ]) async {
     final FileDialogResult result = await _hostApi.showOpenDialog(
