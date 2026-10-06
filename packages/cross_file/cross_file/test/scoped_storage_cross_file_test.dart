@@ -160,7 +160,6 @@ void main() {
 
     test('openWrite', () async {
       final StreamSink<Uint8List> mockSink = StreamController<Uint8List>().sink;
-      addTearDown(() async => mockSink.close());
 
       CrossFilePlatform.instance = TestCrossFilePlatform(
         onCreatePlatformScopedStorageXFile: (PlatformScopedStorageXFileCreationParams params) =>

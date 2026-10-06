@@ -28,7 +28,7 @@ dependencies:
   flutter:
     sdk: flutter
   meta: ^1.17.0
-  objective_c: ^9.6.2
+  objective_c: ^9.5.0
   path: ^1.9.1
 
 dev_dependencies:
