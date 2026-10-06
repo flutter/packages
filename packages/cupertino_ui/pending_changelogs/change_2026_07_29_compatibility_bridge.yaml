@@ -1,3 +1,0 @@
-changelog: |
-  - Adds CupertinoUiCompatibilityBridge for legacy flutter/cupertino.dart compatibility.
-version: minor

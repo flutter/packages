@@ -57,7 +57,7 @@ void main() {
   ) async {
     await tester.pumpWidget(const example.NavigationRailExampleApp());
 
-    // initial group alignment set top top.
+    // initial group alignment set to top.
     expect(find.text('Group alignment: -1.0'), findsOneWidget);
 
     // switch to center alignment

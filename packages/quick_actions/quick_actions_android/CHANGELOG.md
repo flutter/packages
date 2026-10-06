@@ -1,6 +1,11 @@
+## 1.0.34
+
+* Updates minimum supported SDK version to Flutter 3.41/Dart 3.11.
+* Fixes `getLaunchAction` throwing when there is no attached activity.
+
 ## 1.0.33
 
-* Fixes `getLaunchAction` throwing when there is no attached activity.
+* Updates pigeon dev_dependency to ^27.3.2 for analyzer 14 compatibility.
 
 ## 1.0.32
 

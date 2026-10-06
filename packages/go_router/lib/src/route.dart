@@ -2,6 +2,8 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+// ignore_for_file: doc_directive_unknown
+
 import 'dart:async';
 
 import 'package:collection/collection.dart';
@@ -151,7 +153,12 @@ typedef ExitCallback = FutureOr<bool> Function(BuildContext context, GoRouterSta
 /// See [main.dart](https://github.com/flutter/packages/blob/main/packages/go_router/example/lib/main.dart)
 @immutable
 abstract class RouteBase with Diagnosticable {
-  const RouteBase._({this.redirect, required this.routes, required this.parentNavigatorKey});
+  const RouteBase._({
+    this.redirect,
+    this.metadata,
+    required this.routes,
+    required this.parentNavigatorKey,
+  });
 
   /// An optional redirect function for this route.
   ///
@@ -219,6 +226,17 @@ abstract class RouteBase with Diagnosticable {
   /// Navigator instead of the nearest ShellRoute ancestor.
   final GlobalKey<NavigatorState>? parentNavigatorKey;
 
+  /// Application-defined metadata associated with this route.
+  ///
+  /// This can be used to attach static information that is useful while
+  /// building the matched page, such as analytics labels, page titles,
+  /// permissions, or feature flags. The merged metadata for the current match
+  /// is available from [GoRouterState.metadata].
+  ///
+  /// Metadata is inherited from parent routes and child route values override
+  /// parent values with the same key.
+  final Map<String, dynamic>? metadata;
+
   /// Builds a lists containing the provided routes along with all their
   /// descendant [routes].
   static Iterable<RouteBase> routesRecursively(Iterable<RouteBase> routes) {
@@ -263,6 +281,7 @@ class GoRoute extends RouteBase {
     this.pageBuilder,
     super.parentNavigatorKey,
     super.redirect,
+    super.metadata,
     this.onExit,
     this.caseSensitive = true,
     super.routes = const <RouteBase>[],
@@ -340,6 +359,19 @@ class GoRoute extends RouteBase {
   /// matches all URIs start with `/family/...`, e.g. `/family/123`,
   /// `/family/456` and etc. The parameter values are stored in [GoRouterState]
   /// that are passed into [pageBuilder] and [builder].
+  ///
+  /// A path parameter may optionally be constrained to a regular expression
+  /// by appending the expression in parentheses after the parameter name:
+  /// `:paramName(regex)`.
+  ///
+  /// {@example /example/lib/path_parameter_regex.dart}
+  ///
+  /// The path matches `/users/42` but not `/users/settings`. If a path segment
+  /// does not satisfy the regular expression, route matching continues with
+  /// other route candidates.
+  ///
+  /// The regular expression is interpreted as a Dart [RegExp] pattern and must
+  /// not contain nested parentheses.
   ///
   /// The query parameter are also capture during the route parsing and stored
   /// in [GoRouterState].
@@ -476,6 +508,7 @@ abstract class ShellRouteBase extends RouteBase {
     super.redirect,
     required super.routes,
     required super.parentNavigatorKey,
+    super.metadata,
     this.notifyRootObserver = true,
   }) : super._();
 
@@ -690,10 +723,12 @@ class ShellRoute extends ShellRouteBase {
     this.pageBuilder,
     super.notifyRootObserver,
     this.observers,
+    super.metadata,
     required super.routes,
     super.parentNavigatorKey,
     GlobalKey<NavigatorState>? navigatorKey,
     this.restorationScopeId,
+    this.clipBehavior = Clip.hardEdge,
   }) : assert(routes.isNotEmpty),
        navigatorKey = navigatorKey ?? GlobalKey<NavigatorState>(),
        super._() {
@@ -770,6 +805,20 @@ class ShellRoute extends ShellRouteBase {
   /// its history.
   final String? restorationScopeId;
 
+  /// The clip behavior of the [Navigator] built for this route.
+  ///
+  /// {@template go_router.ShellRoute.clipBehavior}
+  /// The nested Navigator clips its contents by default, so that the route
+  /// transitions of its sub-routes are not painted outside the bounds the
+  /// shell lays out for them. Set this to [Clip.none] when a sub-route needs
+  /// to paint outside those bounds, for example to render a box shadow or an
+  /// overflowing menu. Note that this also allows route transition animations
+  /// to paint outside the bounds of the shell.
+  ///
+  /// Defaults to [Clip.hardEdge].
+  /// {@endtemplate}
+  final Clip clipBehavior;
+
   @override
   GlobalKey<NavigatorState> navigatorKeyForSubRoute(RouteBase subRoute) {
     assert(routes.contains(subRoute));
@@ -780,6 +829,7 @@ class ShellRoute extends ShellRouteBase {
   void debugFillProperties(DiagnosticPropertiesBuilder properties) {
     super.debugFillProperties(properties);
     properties.add(DiagnosticsProperty<GlobalKey<NavigatorState>>('navigatorKey', navigatorKey));
+    properties.add(EnumProperty<Clip>('clipBehavior', clipBehavior, defaultValue: Clip.hardEdge));
   }
 }
 
@@ -867,6 +917,7 @@ class StatefulShellRoute extends ShellRouteBase {
     super.notifyRootObserver,
     required this.navigatorContainerBuilder,
     super.parentNavigatorKey,
+    super.metadata,
     this.restorationScopeId,
     GlobalKey<StatefulNavigationShellState>? key,
   }) : assert(branches.isNotEmpty),
@@ -1092,6 +1143,7 @@ class StatefulShellBranch {
     this.restorationScopeId,
     this.observers,
     this.preload = false,
+    this.clipBehavior = Clip.hardEdge,
   }) : navigatorKey = navigatorKey ?? GlobalKey<NavigatorState>() {
     assert(() {
       ShellRouteBase._debugCheckSubRouteParentNavigatorKeys(routes, this.navigatorKey);
@@ -1126,6 +1178,14 @@ class StatefulShellBranch {
   ///
   /// The observers parameter is used by the [Navigator] built for this branch.
   final List<NavigatorObserver>? observers;
+
+  /// The clip behavior of the [Navigator] built for this branch.
+  ///
+  /// Each branch of a [StatefulShellRoute] builds its own [Navigator], so the
+  /// clip behavior is configured per branch rather than on the shell route.
+  ///
+  /// {@macro go_router.ShellRoute.clipBehavior}
+  final Clip clipBehavior;
 
   /// Whether this route branch should be eagerly loaded when navigating to the
   /// associated StatefulShellRoute for the first time.
@@ -1181,10 +1241,9 @@ class StatefulNavigationShell extends StatefulWidget {
   /// Constructs an [StatefulNavigationShell].
   StatefulNavigationShell({
     required this.shellRouteContext,
-    required GoRouter router,
+    required this._router,
     required this.containerBuilder,
   }) : assert(shellRouteContext.route is StatefulShellRoute),
-       _router = router,
        currentIndex = _indexOfBranchNavigatorKey(
          shellRouteContext.route as StatefulShellRoute,
          shellRouteContext.navigatorKey,

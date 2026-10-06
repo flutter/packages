@@ -1,3 +1,15 @@
+## 2.14.1
+
+* Fixes late position updates after a controller is disposed.
+* Updates the example app to Robolectric 4.17.
+* Updates minimum supported SDK version to Flutter 3.41/Dart 3.11.
+
+## 2.14.0
+
+* Adds video quality selection support for HLS/DASH adaptive streams via
+  `getVideoTracks()`, `selectVideoTrack()`, and
+  `isVideoTrackSupportAvailable()` methods.
+
 ## 2.13.0
 
 * Adds `preventsDisplaySleepDuringVideoPlayback` to `VideoPlayerOptions` and

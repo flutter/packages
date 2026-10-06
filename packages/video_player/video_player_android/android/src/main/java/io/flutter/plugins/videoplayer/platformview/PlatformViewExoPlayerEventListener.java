@@ -30,12 +30,23 @@ public final class PlatformViewExoPlayerEventListener extends ExoPlayerEventList
     int width = videoFormat.width;
     int height = videoFormat.height;
 
+    // Anamorphic content is stored with non-square pixels, so the coded width has to be
+    // scaled by the pixel aspect ratio to obtain the display width. This is applied before
+    // the rotation swap below, because Format reports the ratio for the unrotated frame.
+    // Width is only scaled when it is known (Format.NO_VALUE is negative), and is clamped to at
+    // least one pixel so that a malformed ratio cannot report a zero width.
+    float pixelWidthHeightRatio = videoFormat.pixelWidthHeightRatio;
+    if (width > 0 && pixelWidthHeightRatio > 0 && pixelWidthHeightRatio != 1f) {
+      width = Math.max(1, Math.round(width * pixelWidthHeightRatio));
+    }
+
     // Switch the width/height if video was taken in portrait mode and a rotation
     // correction was detected.
     if (rotationCorrection == RotationDegrees.ROTATE_90
         || rotationCorrection == RotationDegrees.ROTATE_270) {
-      width = videoFormat.height;
-      height = videoFormat.width;
+      int displayWidth = width;
+      width = height;
+      height = displayWidth;
 
       rotationCorrection = RotationDegrees.fromDegrees(0);
     }

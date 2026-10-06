@@ -323,16 +323,14 @@ class GoRouteInformationParser extends RouteInformationParser<RouteMatchList> {
 class _OnEnterHandler {
   /// Creates an [_OnEnterHandler] instance.
   ///
-  /// * [configuration] is the current route configuration containing all route definitions.
-  /// * [router] is the [GoRouter] instance used for navigation actions.
-  /// * [onParserException] is an optional exception handler invoked on route parsing errors.
+  /// * [_configuration] is the current route configuration containing all route definitions.
+  /// * [_router] is the [GoRouter] instance used for navigation actions.
+  /// * [_onParserException] is an optional exception handler invoked on route parsing errors.
   _OnEnterHandler({
-    required RouteConfiguration configuration,
-    required GoRouter router,
-    required ParserExceptionHandler? onParserException,
-  }) : _onParserException = onParserException,
-       _configuration = configuration,
-       _router = router;
+    required this._configuration,
+    required this._router,
+    required this._onParserException,
+  });
 
   /// The current route configuration.
   ///
@@ -556,6 +554,7 @@ class _OnEnterHandler {
       pageKey: const ValueKey<String>('topLevel'),
       topRoute: matchList.lastOrNull?.route,
       error: matchList.error,
+      metadata: matchList.topRouteMetadata,
     );
   }
 

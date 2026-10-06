@@ -17,6 +17,12 @@
 @property(nonatomic, strong) UIWindow *interactionBlockerWindow;
 @property(nonatomic, weak) UIWindow *previousKeyWindow;
 - (void)removeInteractionBlocker;
+- (void)launchUIImagePickerWithSource:(FLTSourceSpecification *)source
+                              context:(FLTImagePickerMethodCallContext *)context;
+- (void)showCamera:(UIImagePickerControllerCameraDevice)device
+    withImagePicker:(UIImagePickerController *)imagePickerController;
+- (UIViewController *)presentingViewControllerForImagePickerInNewWindow;
+- (NSNumber *)getDesiredImageQuality:(NSNumber *)imageQuality;
 @end
 
 @interface MockViewController : UIViewController
@@ -813,6 +819,766 @@
                    }];
 
   OCMVerifyAll(mockPickerViewController);
+}
+
+- (void)testPickImageInvalidResultWhenMultiplePathsReturned {
+  FLTImagePickerPlugin *plugin =
+      [[FLTImagePickerPlugin alloc] initWithViewProvider:[[StubViewProvider alloc] init]];
+  XCTestExpectation *resultExpectation = [self expectationWithDescription:@"invalid_result"];
+  __block NSInteger completionCount = 0;
+  [plugin pickImageWithSource:[FLTSourceSpecification makeWithType:FLTSourceTypeGallery
+                                                            camera:FLTSourceCameraRear]
+                      maxSize:[[FLTMaxSize alloc] init]
+                      quality:nil
+                 fullMetadata:NO
+                   completion:^(NSString *result, FlutterError *error) {
+                     completionCount += 1;
+                     if (completionCount == 1) {
+                       // Current behavior: the invalid_result error is sent, then the adapter
+                       // also forwards paths.firstObject.
+                       XCTAssertNil(result);
+                       XCTAssertEqualObjects(error.code, @"invalid_result");
+                     } else {
+                       XCTAssertEqualObjects(result, @"a");
+                       [resultExpectation fulfill];
+                     }
+                   }];
+  [plugin sendCallResultWithSavedPathList:@[ @"a", @"b" ]];
+  [self waitForExpectationsWithTimeout:30 handler:nil];
+  XCTAssertEqual(completionCount, 2);
+}
+
+- (void)testPickVideoInvalidResultWhenMultiplePathsReturned {
+  FLTImagePickerPlugin *plugin =
+      [[FLTImagePickerPlugin alloc] initWithViewProvider:[[StubViewProvider alloc] init]];
+  XCTestExpectation *resultExpectation = [self expectationWithDescription:@"invalid_result"];
+  __block NSInteger completionCount = 0;
+  [plugin pickVideoWithSource:[FLTSourceSpecification makeWithType:FLTSourceTypeGallery
+                                                            camera:FLTSourceCameraRear]
+                  maxDuration:nil
+                   completion:^(NSString *result, FlutterError *error) {
+                     completionCount += 1;
+                     if (completionCount == 1) {
+                       XCTAssertNil(result);
+                       XCTAssertEqualObjects(error.code, @"invalid_result");
+                     } else {
+                       XCTAssertEqualObjects(result, @"a");
+                       [resultExpectation fulfill];
+                     }
+                   }];
+  [plugin sendCallResultWithSavedPathList:@[ @"a", @"b" ]];
+  [self waitForExpectationsWithTimeout:30 handler:nil];
+  XCTAssertEqual(completionCount, 2);
+}
+
+- (void)testPHPickerCancelSendsEmptyPathList API_AVAILABLE(ios(14)) {
+  id mockPickerViewController = OCMClassMock([PHPickerViewController class]);
+  FLTImagePickerPlugin *plugin =
+      [[FLTImagePickerPlugin alloc] initWithViewProvider:[[StubViewProvider alloc] init]];
+  XCTestExpectation *resultExpectation = [self expectationWithDescription:@"cancelled"];
+  plugin.callContext = [[FLTImagePickerMethodCallContext alloc]
+      initWithResult:^(NSArray<NSString *> *result, FlutterError *error) {
+        XCTAssertEqualObjects(result, @[]);
+        XCTAssertNil(error);
+        [resultExpectation fulfill];
+      }];
+  [plugin picker:mockPickerViewController didFinishPicking:@[]];
+  [self waitForExpectationsWithTimeout:30 handler:nil];
+}
+
+- (void)testPresentationControllerDidDismissSendsEmptyPathList {
+  FLTImagePickerPlugin *plugin =
+      [[FLTImagePickerPlugin alloc] initWithViewProvider:[[StubViewProvider alloc] init]];
+  XCTestExpectation *resultExpectation = [self expectationWithDescription:@"dismissed"];
+  plugin.callContext = [[FLTImagePickerMethodCallContext alloc]
+      initWithResult:^(NSArray<NSString *> *result, FlutterError *error) {
+        XCTAssertEqualObjects(result, @[]);
+        XCTAssertNil(error);
+        [resultExpectation fulfill];
+      }];
+  id mockPresentationController = OCMClassMock([UIPresentationController class]);
+  [plugin presentationControllerDidDismiss:mockPresentationController];
+  [self waitForExpectationsWithTimeout:30 handler:nil];
+}
+
+- (void)testDesiredImageQualityClampsOutOfRangeValues {
+  FLTImagePickerPlugin *plugin =
+      [[FLTImagePickerPlugin alloc] initWithViewProvider:[[StubViewProvider alloc] init]];
+  XCTAssertEqualWithAccuracy([plugin getDesiredImageQuality:@(-1)].doubleValue, 1.0, 0.0001);
+}
+
+- (void)testDesiredImageQualityScalesValidPercent {
+  FLTImagePickerPlugin *plugin =
+      [[FLTImagePickerPlugin alloc] initWithViewProvider:[[StubViewProvider alloc] init]];
+  XCTAssertEqualWithAccuracy([plugin getDesiredImageQuality:@50].doubleValue, 0.5, 0.0001);
+}
+
+- (void)testDesiredImageQualityOver100IsClamped {
+  FLTImagePickerPlugin *plugin =
+      [[FLTImagePickerPlugin alloc] initWithViewProvider:[[StubViewProvider alloc] init]];
+  XCTAssertEqualWithAccuracy([plugin getDesiredImageQuality:@150].doubleValue, 1.0, 0.0001);
+}
+
+- (void)testCameraAccessDeniedReturnsError {
+  id mockAVCaptureDevice = OCMClassMock([AVCaptureDevice class]);
+  OCMStub([mockAVCaptureDevice authorizationStatusForMediaType:AVMediaTypeVideo])
+      .andReturn(AVAuthorizationStatusDenied);
+
+  FLTImagePickerPlugin *plugin =
+      [[FLTImagePickerPlugin alloc] initWithViewProvider:[[StubViewProvider alloc] init]];
+  [plugin setImagePickerControllerOverrides:@[ [[UIImagePickerController alloc] init] ]];
+
+  XCTestExpectation *resultExpectation = [self expectationWithDescription:@"denied"];
+  [plugin pickImageWithSource:[FLTSourceSpecification makeWithType:FLTSourceTypeCamera
+                                                            camera:FLTSourceCameraRear]
+                      maxSize:[[FLTMaxSize alloc] init]
+                      quality:nil
+                 fullMetadata:YES
+                   completion:^(NSString *result, FlutterError *error) {
+                     XCTAssertEqualObjects(error.code, @"camera_access_denied");
+                     [resultExpectation fulfill];
+                   }];
+  [self waitForExpectationsWithTimeout:30 handler:nil];
+}
+
+- (void)testCameraAccessRestrictedReturnsError {
+  id mockAVCaptureDevice = OCMClassMock([AVCaptureDevice class]);
+  OCMStub([mockAVCaptureDevice authorizationStatusForMediaType:AVMediaTypeVideo])
+      .andReturn(AVAuthorizationStatusRestricted);
+
+  FLTImagePickerPlugin *plugin =
+      [[FLTImagePickerPlugin alloc] initWithViewProvider:[[StubViewProvider alloc] init]];
+  [plugin setImagePickerControllerOverrides:@[ [[UIImagePickerController alloc] init] ]];
+
+  XCTestExpectation *resultExpectation = [self expectationWithDescription:@"restricted"];
+  [plugin pickImageWithSource:[FLTSourceSpecification makeWithType:FLTSourceTypeCamera
+                                                            camera:FLTSourceCameraRear]
+                      maxSize:[[FLTMaxSize alloc] init]
+                      quality:nil
+                 fullMetadata:YES
+                   completion:^(NSString *result, FlutterError *error) {
+                     XCTAssertEqualObjects(error.code, @"camera_access_restricted");
+                     [resultExpectation fulfill];
+                   }];
+  [self waitForExpectationsWithTimeout:30 handler:nil];
+}
+
+- (void)testCameraAccessNotDeterminedDenied {
+  id mockAVCaptureDevice = OCMClassMock([AVCaptureDevice class]);
+  OCMStub([mockAVCaptureDevice authorizationStatusForMediaType:AVMediaTypeVideo])
+      .andReturn(AVAuthorizationStatusNotDetermined);
+  OCMStub([mockAVCaptureDevice requestAccessForMediaType:AVMediaTypeVideo
+                                       completionHandler:OCMOCK_ANY])
+      .andDo(^(NSInvocation *invocation) {
+        __unsafe_unretained void (^handler)(BOOL granted);
+        [invocation getArgument:&handler atIndex:3];
+        handler(NO);
+      });
+
+  FLTImagePickerPlugin *plugin =
+      [[FLTImagePickerPlugin alloc] initWithViewProvider:[[StubViewProvider alloc] init]];
+  [plugin setImagePickerControllerOverrides:@[ [[UIImagePickerController alloc] init] ]];
+
+  XCTestExpectation *resultExpectation = [self expectationWithDescription:@"request denied"];
+  [plugin pickImageWithSource:[FLTSourceSpecification makeWithType:FLTSourceTypeCamera
+                                                            camera:FLTSourceCameraRear]
+                      maxSize:[[FLTMaxSize alloc] init]
+                      quality:nil
+                 fullMetadata:YES
+                   completion:^(NSString *result, FlutterError *error) {
+                     XCTAssertEqualObjects(error.code, @"camera_access_denied");
+                     [resultExpectation fulfill];
+                   }];
+  [self waitForExpectationsWithTimeout:30 handler:nil];
+}
+
+- (void)testCameraAccessNotDeterminedGrantedPresentsCamera {
+  id mockUIImagePicker = OCMClassMock([UIImagePickerController class]);
+  id mockAVCaptureDevice = OCMClassMock([AVCaptureDevice class]);
+  OCMStub(ClassMethod(
+              [mockUIImagePicker isSourceTypeAvailable:UIImagePickerControllerSourceTypeCamera]))
+      .andReturn(YES);
+  OCMStub(ClassMethod(
+              [mockUIImagePicker isCameraDeviceAvailable:UIImagePickerControllerCameraDeviceRear]))
+      .andReturn(YES);
+  OCMStub([mockAVCaptureDevice authorizationStatusForMediaType:AVMediaTypeVideo])
+      .andReturn(AVAuthorizationStatusNotDetermined);
+  OCMStub([mockAVCaptureDevice requestAccessForMediaType:AVMediaTypeVideo
+                                       completionHandler:OCMOCK_ANY])
+      .andDo(^(NSInvocation *invocation) {
+        __unsafe_unretained void (^handler)(BOOL granted);
+        [invocation getArgument:&handler atIndex:3];
+        handler(YES);
+      });
+
+  FLTImagePickerPlugin *plugin =
+      [[FLTImagePickerPlugin alloc] initWithViewProvider:[[StubViewProvider alloc] init]];
+  UIImagePickerController *controller = [[UIImagePickerController alloc] init];
+  [plugin setImagePickerControllerOverrides:@[ controller ]];
+
+  XCTestExpectation *presented = [self expectationWithDescription:@"camera presented"];
+  [plugin pickImageWithSource:[FLTSourceSpecification makeWithType:FLTSourceTypeCamera
+                                                            camera:FLTSourceCameraRear]
+                      maxSize:[[FLTMaxSize alloc] init]
+                      quality:nil
+                 fullMetadata:YES
+                   completion:^(NSString *result, FlutterError *error){
+                   }];
+  dispatch_async(dispatch_get_main_queue(), ^{
+    XCTAssertEqual(controller.sourceType, UIImagePickerControllerSourceTypeCamera);
+    [presented fulfill];
+  });
+  [self waitForExpectationsWithTimeout:30 handler:nil];
+}
+
+- (void)testShowCameraWhenUnavailableSendsNilPathList {
+  id mockUIImagePicker = OCMClassMock([UIImagePickerController class]);
+  id mockAVCaptureDevice = OCMClassMock([AVCaptureDevice class]);
+  OCMStub(ClassMethod(
+              [mockUIImagePicker isSourceTypeAvailable:UIImagePickerControllerSourceTypeCamera]))
+      .andReturn(NO);
+  OCMStub([mockAVCaptureDevice authorizationStatusForMediaType:AVMediaTypeVideo])
+      .andReturn(AVAuthorizationStatusAuthorized);
+
+  FLTImagePickerPlugin *plugin =
+      [[FLTImagePickerPlugin alloc] initWithViewProvider:[[StubViewProvider alloc] init]];
+  [plugin setImagePickerControllerOverrides:@[ [[UIImagePickerController alloc] init] ]];
+
+  XCTestExpectation *resultExpectation = [self expectationWithDescription:@"unavailable"];
+  [plugin pickImageWithSource:[FLTSourceSpecification makeWithType:FLTSourceTypeCamera
+                                                            camera:FLTSourceCameraRear]
+                      maxSize:[[FLTMaxSize alloc] init]
+                      quality:nil
+                 fullMetadata:YES
+                   completion:^(NSString *result, FlutterError *error) {
+                     XCTAssertNil(result);
+                     XCTAssertNil(error);
+                     [resultExpectation fulfill];
+                   }];
+  [self waitForExpectationsWithTimeout:30 handler:nil];
+}
+
+- (void)testShowCameraReturnsEarlyWhenAlreadyBeingPresented {
+  id mockPicker = OCMClassMock([UIImagePickerController class]);
+  OCMStub([mockPicker isBeingPresented]).andReturn(YES);
+
+  FLTImagePickerPlugin *plugin =
+      [[FLTImagePickerPlugin alloc] initWithViewProvider:[[StubViewProvider alloc] init]];
+  [plugin showCamera:UIImagePickerControllerCameraDeviceRear withImagePicker:mockPicker];
+  OCMVerify(times(0), [mockPicker setSourceType:UIImagePickerControllerSourceTypeCamera]);
+}
+
+- (void)testCameraAccessUnknownStatusTreatedAsDenied {
+  id mockAVCaptureDevice = OCMClassMock([AVCaptureDevice class]);
+  OCMStub([mockAVCaptureDevice authorizationStatusForMediaType:AVMediaTypeVideo])
+      .andReturn((AVAuthorizationStatus)999);
+
+  FLTImagePickerPlugin *plugin =
+      [[FLTImagePickerPlugin alloc] initWithViewProvider:[[StubViewProvider alloc] init]];
+  [plugin setImagePickerControllerOverrides:@[ [[UIImagePickerController alloc] init] ]];
+
+  XCTestExpectation *resultExpectation = [self expectationWithDescription:@"unknown denied"];
+  [plugin pickImageWithSource:[FLTSourceSpecification makeWithType:FLTSourceTypeCamera
+                                                            camera:FLTSourceCameraRear]
+                      maxSize:[[FLTMaxSize alloc] init]
+                      quality:nil
+                 fullMetadata:YES
+                   completion:^(NSString *result, FlutterError *error) {
+                     XCTAssertEqualObjects(error.code, @"camera_access_denied");
+                     [resultExpectation fulfill];
+                   }];
+  [self waitForExpectationsWithTimeout:30 handler:nil];
+}
+
+- (void)testShowCameraUnavailableAlertOKHandler {
+  id mockUIImagePicker = OCMClassMock([UIImagePickerController class]);
+  id mockAVCaptureDevice = OCMClassMock([AVCaptureDevice class]);
+  OCMStub(ClassMethod(
+              [mockUIImagePicker isSourceTypeAvailable:UIImagePickerControllerSourceTypeCamera]))
+      .andReturn(NO);
+  OCMStub([mockAVCaptureDevice authorizationStatusForMediaType:AVMediaTypeVideo])
+      .andReturn(AVAuthorizationStatusAuthorized);
+
+  id mockViewController = OCMClassMock([UIViewController class]);
+  __block UIAlertController *alert = nil;
+  OCMStub([mockViewController presentViewController:[OCMArg any] animated:YES completion:nil])
+      .andDo(^(NSInvocation *invocation) {
+        __unsafe_unretained UIAlertController *presented = nil;
+        [invocation getArgument:&presented atIndex:2];
+        alert = presented;
+      });
+
+  FLTImagePickerPlugin *plugin = [[FLTImagePickerPlugin alloc]
+      initWithViewProvider:[[StubViewProvider alloc] initWithViewController:mockViewController]];
+  [plugin setImagePickerControllerOverrides:@[ [[UIImagePickerController alloc] init] ]];
+
+  XCTestExpectation *resultExpectation = [self expectationWithDescription:@"unavailable"];
+  [plugin pickImageWithSource:[FLTSourceSpecification makeWithType:FLTSourceTypeCamera
+                                                            camera:FLTSourceCameraRear]
+                      maxSize:[[FLTMaxSize alloc] init]
+                      quality:nil
+                 fullMetadata:YES
+                   completion:^(NSString *result, FlutterError *error) {
+                     XCTAssertNil(result);
+                     XCTAssertNil(error);
+                     [resultExpectation fulfill];
+                   }];
+  [self waitForExpectationsWithTimeout:30 handler:nil];
+
+  XCTAssertTrue([alert isKindOfClass:[UIAlertController class]]);
+  void (^handler)(UIAlertAction *) = [alert.actions.firstObject valueForKey:@"handler"];
+  if (handler) {
+    handler(alert.actions.firstObject);
+  }
+}
+
+- (void)testPresentingViewControllerWithoutWindowReturnsHostController {
+  UIViewController *host = [[UIViewController alloc] init];
+  FLTImagePickerPlugin *plugin = [[FLTImagePickerPlugin alloc]
+      initWithViewProvider:[[StubViewProvider alloc] initWithViewController:host]];
+  UIViewController *presented = [plugin presentingViewControllerForImagePickerInNewWindow];
+  XCTAssertEqual(presented, host);
+}
+
+- (void)testPresentingViewControllerReusesExistingBlockerWindow {
+  UIWindow *window = [[UIWindow alloc] initWithFrame:CGRectMake(0, 0, 320, 480)];
+  UIViewController *rootViewController = [[UIViewController alloc] init];
+  window.rootViewController = rootViewController;
+  [rootViewController loadViewIfNeeded];
+
+  FLTImagePickerPlugin *plugin = [[FLTImagePickerPlugin alloc]
+      initWithViewProvider:[[StubViewProvider alloc] initWithViewController:rootViewController]];
+  UIViewController *first = [plugin presentingViewControllerForImagePickerInNewWindow];
+  UIViewController *second = [plugin presentingViewControllerForImagePickerInNewWindow];
+  XCTAssertEqual(first, second);
+  [plugin removeInteractionBlocker];
+}
+
+- (void)testPresentingViewControllerWithoutWindowSceneUsesFrame {
+  UIWindow *window = [[UIWindow alloc] initWithFrame:CGRectMake(0, 0, 320, 480)];
+  UIViewController *rootViewController = [[UIViewController alloc] init];
+  window.rootViewController = rootViewController;
+  [rootViewController loadViewIfNeeded];
+
+  FLTImagePickerPlugin *plugin = [[FLTImagePickerPlugin alloc]
+      initWithViewProvider:[[StubViewProvider alloc] initWithViewController:rootViewController]];
+  XCTAssertNotNil([plugin presentingViewControllerForImagePickerInNewWindow]);
+  [plugin removeInteractionBlocker];
+}
+
+- (void)testDefaultViewProviderReturnsRegistrarViewController {
+  UIViewController *host = [[UIViewController alloc] init];
+  id registrar = OCMProtocolMock(@protocol(FlutterPluginRegistrar));
+  OCMStub([registrar viewController]).andReturn(host);
+  FIPDefaultViewProvider *provider = [[FIPDefaultViewProvider alloc] initWithRegistrar:registrar];
+  XCTAssertEqual(provider.viewController, host);
+}
+
+- (void)testLaunchUIImagePickerGalleryWithoutFullMetadataSkipsAuthorization {
+  id photoLibrary = OCMClassMock([PHPhotoLibrary class]);
+  FLTImagePickerPlugin *plugin =
+      [[FLTImagePickerPlugin alloc] initWithViewProvider:[[StubViewProvider alloc] init]];
+  UIImagePickerController *controller = [[UIImagePickerController alloc] init];
+  [plugin setImagePickerControllerOverrides:@[ controller ]];
+
+  FLTImagePickerMethodCallContext *context = [[FLTImagePickerMethodCallContext alloc]
+      initWithResult:^(NSArray<NSString *> *result, FlutterError *error){
+      }];
+  context.includeImages = YES;
+  context.requestFullMetadata = NO;
+
+  [plugin launchUIImagePickerWithSource:[FLTSourceSpecification makeWithType:FLTSourceTypeGallery
+                                                                      camera:FLTSourceCameraRear]
+                                context:context];
+  XCTAssertEqual(controller.sourceType, UIImagePickerControllerSourceTypePhotoLibrary);
+  OCMVerify(times(0), [photoLibrary authorizationStatus]);
+}
+
+- (void)testPhotoAccessDeniedReturnsError {
+  id photoLibrary = OCMClassMock([PHPhotoLibrary class]);
+  OCMStub(ClassMethod([photoLibrary authorizationStatus])).andReturn(PHAuthorizationStatusDenied);
+
+  FLTImagePickerPlugin *plugin =
+      [[FLTImagePickerPlugin alloc] initWithViewProvider:[[StubViewProvider alloc] init]];
+  [plugin setImagePickerControllerOverrides:@[ [[UIImagePickerController alloc] init] ]];
+
+  XCTestExpectation *resultExpectation = [self expectationWithDescription:@"photo denied"];
+  FLTImagePickerMethodCallContext *context = [[FLTImagePickerMethodCallContext alloc]
+      initWithResult:^(NSArray<NSString *> *result, FlutterError *error) {
+        XCTAssertEqualObjects(error.code, @"photo_access_denied");
+        [resultExpectation fulfill];
+      }];
+  context.includeImages = YES;
+  context.requestFullMetadata = YES;
+  [plugin launchUIImagePickerWithSource:[FLTSourceSpecification makeWithType:FLTSourceTypeGallery
+                                                                      camera:FLTSourceCameraRear]
+                                context:context];
+  [self waitForExpectationsWithTimeout:30 handler:nil];
+}
+
+- (void)testPhotoAccessRestrictedReturnsError {
+  id photoLibrary = OCMClassMock([PHPhotoLibrary class]);
+  OCMStub(ClassMethod([photoLibrary authorizationStatus]))
+      .andReturn(PHAuthorizationStatusRestricted);
+
+  FLTImagePickerPlugin *plugin =
+      [[FLTImagePickerPlugin alloc] initWithViewProvider:[[StubViewProvider alloc] init]];
+  [plugin setImagePickerControllerOverrides:@[ [[UIImagePickerController alloc] init] ]];
+
+  XCTestExpectation *resultExpectation = [self expectationWithDescription:@"photo restricted"];
+  FLTImagePickerMethodCallContext *context = [[FLTImagePickerMethodCallContext alloc]
+      initWithResult:^(NSArray<NSString *> *result, FlutterError *error) {
+        XCTAssertEqualObjects(error.code, @"photo_access_restricted");
+        [resultExpectation fulfill];
+      }];
+  context.includeImages = YES;
+  context.requestFullMetadata = YES;
+  [plugin launchUIImagePickerWithSource:[FLTSourceSpecification makeWithType:FLTSourceTypeGallery
+                                                                      camera:FLTSourceCameraRear]
+                                context:context];
+  [self waitForExpectationsWithTimeout:30 handler:nil];
+}
+
+- (void)testPhotoAccessAuthorizedShowsLibrary {
+  id photoLibrary = OCMClassMock([PHPhotoLibrary class]);
+  OCMStub(ClassMethod([photoLibrary authorizationStatus]))
+      .andReturn(PHAuthorizationStatusAuthorized);
+
+  FLTImagePickerPlugin *plugin =
+      [[FLTImagePickerPlugin alloc] initWithViewProvider:[[StubViewProvider alloc] init]];
+  UIImagePickerController *controller = [[UIImagePickerController alloc] init];
+  [plugin setImagePickerControllerOverrides:@[ controller ]];
+
+  FLTImagePickerMethodCallContext *context = [[FLTImagePickerMethodCallContext alloc]
+      initWithResult:^(NSArray<NSString *> *result, FlutterError *error){
+      }];
+  context.includeImages = YES;
+  context.requestFullMetadata = YES;
+  [plugin launchUIImagePickerWithSource:[FLTSourceSpecification makeWithType:FLTSourceTypeGallery
+                                                                      camera:FLTSourceCameraRear]
+                                context:context];
+  XCTAssertEqual(controller.sourceType, UIImagePickerControllerSourceTypePhotoLibrary);
+}
+
+- (void)testPhotoAccessNotDeterminedGrantedShowsLibrary {
+  id photoLibrary = OCMClassMock([PHPhotoLibrary class]);
+  OCMStub(ClassMethod([photoLibrary authorizationStatus]))
+      .andReturn(PHAuthorizationStatusNotDetermined);
+  OCMStub(ClassMethod([photoLibrary requestAuthorization:OCMOCK_ANY]))
+      .andDo(^(NSInvocation *invocation) {
+        __unsafe_unretained void (^handler)(PHAuthorizationStatus status);
+        [invocation getArgument:&handler atIndex:2];
+        handler(PHAuthorizationStatusAuthorized);
+      });
+
+  FLTImagePickerPlugin *plugin =
+      [[FLTImagePickerPlugin alloc] initWithViewProvider:[[StubViewProvider alloc] init]];
+  UIImagePickerController *controller = [[UIImagePickerController alloc] init];
+  [plugin setImagePickerControllerOverrides:@[ controller ]];
+
+  XCTestExpectation *shown = [self expectationWithDescription:@"library shown"];
+  FLTImagePickerMethodCallContext *context = [[FLTImagePickerMethodCallContext alloc]
+      initWithResult:^(NSArray<NSString *> *result, FlutterError *error){
+      }];
+  context.includeImages = YES;
+  context.requestFullMetadata = YES;
+  [plugin launchUIImagePickerWithSource:[FLTSourceSpecification makeWithType:FLTSourceTypeGallery
+                                                                      camera:FLTSourceCameraRear]
+                                context:context];
+  dispatch_async(dispatch_get_main_queue(), ^{
+    XCTAssertEqual(controller.sourceType, UIImagePickerControllerSourceTypePhotoLibrary);
+    [shown fulfill];
+  });
+  [self waitForExpectationsWithTimeout:30 handler:nil];
+}
+
+- (void)testPhotoAccessNotDeterminedDeniedReturnsError {
+  id photoLibrary = OCMClassMock([PHPhotoLibrary class]);
+  OCMStub(ClassMethod([photoLibrary authorizationStatus]))
+      .andReturn(PHAuthorizationStatusNotDetermined);
+  OCMStub(ClassMethod([photoLibrary requestAuthorization:OCMOCK_ANY]))
+      .andDo(^(NSInvocation *invocation) {
+        __unsafe_unretained void (^handler)(PHAuthorizationStatus status);
+        [invocation getArgument:&handler atIndex:2];
+        handler(PHAuthorizationStatusDenied);
+      });
+
+  FLTImagePickerPlugin *plugin =
+      [[FLTImagePickerPlugin alloc] initWithViewProvider:[[StubViewProvider alloc] init]];
+  [plugin setImagePickerControllerOverrides:@[ [[UIImagePickerController alloc] init] ]];
+
+  XCTestExpectation *resultExpectation = [self expectationWithDescription:@"denied after prompt"];
+  FLTImagePickerMethodCallContext *context = [[FLTImagePickerMethodCallContext alloc]
+      initWithResult:^(NSArray<NSString *> *result, FlutterError *error) {
+        XCTAssertEqualObjects(error.code, @"photo_access_denied");
+        [resultExpectation fulfill];
+      }];
+  context.includeImages = YES;
+  context.requestFullMetadata = YES;
+  [plugin launchUIImagePickerWithSource:[FLTSourceSpecification makeWithType:FLTSourceTypeGallery
+                                                                      camera:FLTSourceCameraRear]
+                                context:context];
+  [self waitForExpectationsWithTimeout:30 handler:nil];
+}
+
+- (void)testPhotoAccessLimitedReturnsDeniedError API_AVAILABLE(ios(14)) {
+  // Current behavior: Limited is not handled explicitly and falls through to the default
+  // denied error. Documented here so a later migration does not change it silently.
+  id photoLibrary = OCMClassMock([PHPhotoLibrary class]);
+  OCMStub(ClassMethod([photoLibrary authorizationStatus])).andReturn(PHAuthorizationStatusLimited);
+
+  FLTImagePickerPlugin *plugin =
+      [[FLTImagePickerPlugin alloc] initWithViewProvider:[[StubViewProvider alloc] init]];
+  [plugin setImagePickerControllerOverrides:@[ [[UIImagePickerController alloc] init] ]];
+
+  XCTestExpectation *resultExpectation = [self expectationWithDescription:@"limited"];
+  FLTImagePickerMethodCallContext *context = [[FLTImagePickerMethodCallContext alloc]
+      initWithResult:^(NSArray<NSString *> *result, FlutterError *error) {
+        XCTAssertEqualObjects(error.code, @"photo_access_denied");
+        [resultExpectation fulfill];
+      }];
+  context.includeImages = YES;
+  context.requestFullMetadata = YES;
+  [plugin launchUIImagePickerWithSource:[FLTSourceSpecification makeWithType:FLTSourceTypeGallery
+                                                                      camera:FLTSourceCameraRear]
+                                context:context];
+  [self waitForExpectationsWithTimeout:30 handler:nil];
+}
+
+- (void)testPhotoAccessUnknownStatusTreatedAsDenied {
+  id photoLibrary = OCMClassMock([PHPhotoLibrary class]);
+  OCMStub(ClassMethod([photoLibrary authorizationStatus])).andReturn((PHAuthorizationStatus)999);
+
+  FLTImagePickerPlugin *plugin =
+      [[FLTImagePickerPlugin alloc] initWithViewProvider:[[StubViewProvider alloc] init]];
+  [plugin setImagePickerControllerOverrides:@[ [[UIImagePickerController alloc] init] ]];
+
+  XCTestExpectation *resultExpectation = [self expectationWithDescription:@"unknown photo denied"];
+  FLTImagePickerMethodCallContext *context = [[FLTImagePickerMethodCallContext alloc]
+      initWithResult:^(NSArray<NSString *> *result, FlutterError *error) {
+        XCTAssertEqualObjects(error.code, @"photo_access_denied");
+        [resultExpectation fulfill];
+      }];
+  context.includeImages = YES;
+  context.requestFullMetadata = YES;
+  [plugin launchUIImagePickerWithSource:[FLTSourceSpecification makeWithType:FLTSourceTypeGallery
+                                                                      camera:FLTSourceCameraRear]
+                                context:context];
+  [self waitForExpectationsWithTimeout:30 handler:nil];
+}
+
+- (void)testLaunchUIImagePickerInvalidSourceReturnsError {
+  FLTImagePickerPlugin *plugin =
+      [[FLTImagePickerPlugin alloc] initWithViewProvider:[[StubViewProvider alloc] init]];
+  [plugin setImagePickerControllerOverrides:@[ [[UIImagePickerController alloc] init] ]];
+
+  XCTestExpectation *resultExpectation = [self expectationWithDescription:@"invalid source"];
+  FLTImagePickerMethodCallContext *context = [[FLTImagePickerMethodCallContext alloc]
+      initWithResult:^(NSArray<NSString *> *result, FlutterError *error) {
+        XCTAssertEqualObjects(error.code, @"invalid_source");
+        [resultExpectation fulfill];
+      }];
+  context.includeImages = YES;
+  FLTSourceSpecification *source = [FLTSourceSpecification makeWithType:FLTSourceTypeGallery
+                                                                 camera:FLTSourceCameraRear];
+  source.type = (FLTSourceType)99;
+  [plugin launchUIImagePickerWithSource:source context:context];
+  [self waitForExpectationsWithTimeout:30 handler:nil];
+}
+
+- (void)testLaunchUIImagePickerSetsImageAndVideoMediaTypes API_AVAILABLE(ios(14)) {
+  id mockAVCaptureDevice = OCMClassMock([AVCaptureDevice class]);
+  OCMStub([mockAVCaptureDevice authorizationStatusForMediaType:AVMediaTypeVideo])
+      .andReturn(AVAuthorizationStatusDenied);
+
+  FLTImagePickerPlugin *plugin =
+      [[FLTImagePickerPlugin alloc] initWithViewProvider:[[StubViewProvider alloc] init]];
+  UIImagePickerController *controller = [[UIImagePickerController alloc] init];
+  [plugin setImagePickerControllerOverrides:@[ controller ]];
+
+  FLTImagePickerMethodCallContext *context = [[FLTImagePickerMethodCallContext alloc]
+      initWithResult:^(NSArray<NSString *> *result, FlutterError *error){
+      }];
+  context.includeImages = YES;
+  context.includeVideo = YES;
+  context.maxDuration = 42;
+  [plugin launchUIImagePickerWithSource:[FLTSourceSpecification makeWithType:FLTSourceTypeCamera
+                                                                      camera:FLTSourceCameraRear]
+                                context:context];
+  XCTAssertEqual(controller.videoMaximumDuration, 42);
+  XCTAssertEqual(controller.videoQuality, UIImagePickerControllerQualityTypeHigh);
+  XCTAssertTrue([controller.mediaTypes containsObject:UTTypeImage.identifier]);
+  XCTAssertTrue([controller.mediaTypes containsObject:UTTypeMovie.identifier]);
+}
+
+- (void)testImagePickerDidFinishPickingOriginalImage {
+  FLTImagePickerPlugin *plugin =
+      [[FLTImagePickerPlugin alloc] initWithViewProvider:[[StubViewProvider alloc] init]];
+  UIImage *image = [UIImage imageWithData:ImagePickerTestImages.JPGTestData];
+  XCTestExpectation *resultExpectation = [self expectationWithDescription:@"image saved"];
+  plugin.callContext = [[FLTImagePickerMethodCallContext alloc]
+      initWithResult:^(NSArray<NSString *> *result, FlutterError *error) {
+        XCTAssertEqual(result.count, 1);
+        XCTAssertTrue([[NSFileManager defaultManager] fileExistsAtPath:result.firstObject]);
+        [resultExpectation fulfill];
+      }];
+  plugin.callContext.maxSize = [[FLTMaxSize alloc] init];
+  plugin.callContext.requestFullMetadata = NO;
+  UIImagePickerController *picker = [[UIImagePickerController alloc] init];
+  [plugin imagePickerController:picker
+      didFinishPickingMediaWithInfo:@{UIImagePickerControllerOriginalImage : image}];
+  [self waitForExpectationsWithTimeout:30 handler:nil];
+}
+
+- (void)testImagePickerDidFinishPickingPrefersEditedImage {
+  FLTImagePickerPlugin *plugin =
+      [[FLTImagePickerPlugin alloc] initWithViewProvider:[[StubViewProvider alloc] init]];
+  UIImage *original = [UIImage imageWithData:ImagePickerTestImages.JPGTestData];
+  UIImage *edited = [UIImage imageWithData:ImagePickerTestImages.PNGTestData];
+  XCTestExpectation *resultExpectation = [self expectationWithDescription:@"edited saved"];
+  plugin.callContext = [[FLTImagePickerMethodCallContext alloc]
+      initWithResult:^(NSArray<NSString *> *result, FlutterError *error) {
+        XCTAssertEqual(result.count, 1);
+        [resultExpectation fulfill];
+      }];
+  plugin.callContext.maxSize = [[FLTMaxSize alloc] init];
+  plugin.callContext.requestFullMetadata = NO;
+  UIImagePickerController *picker = [[UIImagePickerController alloc] init];
+  [plugin imagePickerController:picker
+      didFinishPickingMediaWithInfo:@{
+        UIImagePickerControllerOriginalImage : original,
+        UIImagePickerControllerEditedImage : edited
+      }];
+  [self waitForExpectationsWithTimeout:30 handler:nil];
+}
+
+- (void)testImagePickerDidFinishPickingScalesImage {
+  FLTImagePickerPlugin *plugin =
+      [[FLTImagePickerPlugin alloc] initWithViewProvider:[[StubViewProvider alloc] init]];
+  UIImage *image = [UIImage imageWithData:ImagePickerTestImages.JPGTestData];
+  XCTestExpectation *resultExpectation = [self expectationWithDescription:@"scaled"];
+  plugin.callContext = [[FLTImagePickerMethodCallContext alloc]
+      initWithResult:^(NSArray<NSString *> *result, FlutterError *error) {
+        XCTAssertEqual(result.count, 1);
+        UIImage *saved = [UIImage imageWithContentsOfFile:result.firstObject];
+        XCTAssertEqual(saved.size.width, 3);
+        XCTAssertEqual(saved.size.height, 2);
+        [resultExpectation fulfill];
+      }];
+  plugin.callContext.maxSize = [FLTMaxSize makeWithWidth:@3 height:@2];
+  plugin.callContext.requestFullMetadata = NO;
+  UIImagePickerController *picker = [[UIImagePickerController alloc] init];
+  [plugin imagePickerController:picker
+      didFinishPickingMediaWithInfo:@{UIImagePickerControllerOriginalImage : image}];
+  [self waitForExpectationsWithTimeout:30 handler:nil];
+}
+
+- (void)testImagePickerDidFinishPickingWithFullMetadataAsset {
+  UIImage *image = [UIImage imageWithData:ImagePickerTestImages.JPGTestData];
+  id mockAsset = OCMClassMock([PHAsset class]);
+  id mockManager = OCMClassMock([PHImageManager class]);
+  OCMStub(ClassMethod([mockManager defaultManager])).andReturn(mockManager);
+  OCMStub([mockManager requestImageDataAndOrientationForAsset:OCMOCK_ANY
+                                                      options:OCMOCK_ANY
+                                                resultHandler:OCMOCK_ANY])
+      .andDo(^(NSInvocation *invocation) {
+        __unsafe_unretained void (^handler)(NSData *, NSString *, CGImagePropertyOrientation,
+                                            NSDictionary *);
+        [invocation getArgument:&handler atIndex:4];
+        handler(ImagePickerTestImages.JPGTestData, @"public.jpeg", kCGImagePropertyOrientationUp,
+                nil);
+      });
+
+  FLTImagePickerPlugin *plugin =
+      [[FLTImagePickerPlugin alloc] initWithViewProvider:[[StubViewProvider alloc] init]];
+  XCTestExpectation *resultExpectation = [self expectationWithDescription:@"asset saved"];
+  plugin.callContext = [[FLTImagePickerMethodCallContext alloc]
+      initWithResult:^(NSArray<NSString *> *result, FlutterError *error) {
+        XCTAssertEqual(result.count, 1);
+        [resultExpectation fulfill];
+      }];
+  plugin.callContext.maxSize = [[FLTMaxSize alloc] init];
+  plugin.callContext.requestFullMetadata = YES;
+
+  UIImagePickerController *picker = [[UIImagePickerController alloc] init];
+  [plugin imagePickerController:picker
+      didFinishPickingMediaWithInfo:@{
+        UIImagePickerControllerOriginalImage : image,
+        UIImagePickerControllerPHAsset : mockAsset
+      }];
+  [self waitForExpectationsWithTimeout:30 handler:nil];
+}
+
+- (void)testImagePickerDidFinishPickingFullMetadataWithoutAsset {
+  FLTImagePickerPlugin *plugin =
+      [[FLTImagePickerPlugin alloc] initWithViewProvider:[[StubViewProvider alloc] init]];
+  UIImage *image = [UIImage imageWithData:ImagePickerTestImages.JPGTestData];
+  XCTestExpectation *resultExpectation = [self expectationWithDescription:@"saved without asset"];
+  plugin.callContext = [[FLTImagePickerMethodCallContext alloc]
+      initWithResult:^(NSArray<NSString *> *result, FlutterError *error) {
+        XCTAssertEqual(result.count, 1);
+        [resultExpectation fulfill];
+      }];
+  plugin.callContext.maxSize = [[FLTMaxSize alloc] init];
+  plugin.callContext.requestFullMetadata = YES;
+  UIImagePickerController *picker = [[UIImagePickerController alloc] init];
+  [plugin imagePickerController:picker
+      didFinishPickingMediaWithInfo:@{UIImagePickerControllerOriginalImage : image}];
+  [self waitForExpectationsWithTimeout:30 handler:nil];
+}
+
+- (void)testImagePickerDidFinishPickingVideo {
+  NSString *sourcePath = [NSTemporaryDirectory()
+      stringByAppendingPathComponent:[[NSUUID UUID].UUIDString
+                                         stringByAppendingPathExtension:@"mov"]];
+  XCTAssertTrue([[NSFileManager defaultManager]
+      createFileAtPath:sourcePath
+              contents:[@"video" dataUsingEncoding:NSUTF8StringEncoding]
+            attributes:nil]);
+
+  FLTImagePickerPlugin *plugin =
+      [[FLTImagePickerPlugin alloc] initWithViewProvider:[[StubViewProvider alloc] init]];
+  XCTestExpectation *resultExpectation = [self expectationWithDescription:@"video saved"];
+  plugin.callContext = [[FLTImagePickerMethodCallContext alloc]
+      initWithResult:^(NSArray<NSString *> *result, FlutterError *error) {
+        XCTAssertEqual(result.count, 1);
+        XCTAssertTrue([[NSFileManager defaultManager] fileExistsAtPath:result.firstObject]);
+        [resultExpectation fulfill];
+      }];
+  UIImagePickerController *picker = [[UIImagePickerController alloc] init];
+  [plugin imagePickerController:picker
+      didFinishPickingMediaWithInfo:@{
+        UIImagePickerControllerMediaURL : [NSURL fileURLWithPath:sourcePath]
+      }];
+  [self waitForExpectationsWithTimeout:30 handler:nil];
+  [[NSFileManager defaultManager] removeItemAtPath:sourcePath error:nil];
+}
+
+- (void)testImagePickerDidFinishPickingVideoCopyFailure {
+  FLTImagePickerPlugin *plugin =
+      [[FLTImagePickerPlugin alloc] initWithViewProvider:[[StubViewProvider alloc] init]];
+  XCTestExpectation *resultExpectation = [self expectationWithDescription:@"copy failed"];
+  plugin.callContext = [[FLTImagePickerMethodCallContext alloc]
+      initWithResult:^(NSArray<NSString *> *result, FlutterError *error) {
+        XCTAssertEqualObjects(error.code, @"flutter_image_picker_copy_video_error");
+        [resultExpectation fulfill];
+      }];
+  UIImagePickerController *picker = [[UIImagePickerController alloc] init];
+  [plugin imagePickerController:picker
+      didFinishPickingMediaWithInfo:@{
+        UIImagePickerControllerMediaURL :
+            [NSURL fileURLWithPath:@"/this/path/does/not/exist.mov"]
+      }];
+  [self waitForExpectationsWithTimeout:30 handler:nil];
+}
+
+- (void)testImagePickerDidFinishPickingIgnoredWhenNoCallContext {
+  FLTImagePickerPlugin *plugin =
+      [[FLTImagePickerPlugin alloc] initWithViewProvider:[[StubViewProvider alloc] init]];
+  UIImage *image = [UIImage imageWithData:ImagePickerTestImages.JPGTestData];
+  UIImagePickerController *picker = [[UIImagePickerController alloc] init];
+  [plugin imagePickerController:picker
+      didFinishPickingMediaWithInfo:@{UIImagePickerControllerOriginalImage : image}];
 }
 
 @end

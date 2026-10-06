@@ -13,6 +13,7 @@ import '../common/tool_config.dart';
 
 const int _exitBadTableEntry = 3;
 const int _exitUnknownPackageEntry = 4;
+const int _exitUnsortedTable = 5;
 
 /// Validates that a package has all of the expected repository-level entries.
 class RepoInfoValidator {
@@ -45,6 +46,7 @@ class RepoInfoValidator {
   }) {
     final entries = <String, List<String>>{};
     final namePattern = RegExp(r'\[(.*?)\]\(');
+    String? previousName;
     for (final String line in repoRoot.childFile('README.md').readAsLinesSync()) {
       // Find all the table entries, skipping the header.
       if (line.startsWith('|') && !line.startsWith('| Package') && !line.startsWith('|-')) {
@@ -59,13 +61,20 @@ class RepoInfoValidator {
           printError('Unexpected README table line:\n  $line');
           throw ToolExit(_exitBadTableEntry);
         }
-        entries[name] = cells;
-
         if (!(packagesDir.childDirectory(name).existsSync() ||
             thirdPartyPackagesDir.childDirectory(name).existsSync())) {
           printError('Unknown package "$name" in root README.md table.');
           throw ToolExit(_exitUnknownPackageEntry);
         }
+        if (previousName != null && name.compareTo(previousName) < 0) {
+          printError(
+            'README package table is not sorted alphabetically: '
+            '"$name" must appear before "$previousName".',
+          );
+          throw ToolExit(_exitUnsortedTable);
+        }
+        previousName = name;
+        entries[name] = cells;
       }
     }
     return entries;
@@ -234,14 +243,6 @@ class RepoInfoValidator {
         packageName: packageName,
       ),
     );
-    errors.addAll(
-      _validateGlobalWorkflowTrigger(
-        'sync_release_pr.yml',
-        workflowDir: workflowDir,
-        isBatchRelease: isBatchRelease,
-        packageName: packageName,
-      ),
-    );
 
     errors.addAll(
       _validateCiYamlEnabledBranches(
@@ -403,18 +404,20 @@ class RepoInfoValidator {
     final enabledBranches = yaml['enabled_branches'] as YamlList?;
     final bool hasBranchPattern =
         enabledBranches != null &&
-        enabledBranches.contains(r'release-' + packageName + r'-\d+\.\d+\.\d+');
+        enabledBranches.contains(
+          r'release-' + packageName + r'-\d+\.\d+\.\d+(?:-[\w.]+)?(?:\+[\w.]+)?',
+        );
 
     if (isBatchRelease && !hasBranchPattern) {
       printError(
-        '${_indentation}Missing release branch pattern release-$packageName-\\d+\\.\\d+\\.\\d+ '
+        '${_indentation}Missing release branch pattern release-$packageName-\\d+\\.\\d+\\.\\d+(?:-[\\w.]+)?(?:\\+[\\w.]+)? '
         'in enabled_branches in .ci.yaml\n'
         '${_indentation}See https://github.com/flutter/flutter/blob/master/docs/ecosystem/release/README.md#batch-release',
       );
       errors.add('Unexpected branch handling in .ci.yaml');
     } else if (!isBatchRelease && hasBranchPattern) {
       printError(
-        '${_indentation}Unexpected release branch pattern release-$packageName-\\d+\\.\\d+\\.\\d+ '
+        '${_indentation}Unexpected release branch pattern release-$packageName-\\d+\\.\\d+\\.\\d+(?:-[\\w.]+)?(?:\\+[\\w.]+)? '
         'in enabled_branches in .ci.yaml',
       );
       errors.add('Unexpected branch handling in .ci.yaml');
