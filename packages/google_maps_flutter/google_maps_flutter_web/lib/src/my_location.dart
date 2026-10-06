@@ -58,7 +58,8 @@ class MyLocationController {
           ..url = ui_web.assetManager.getAssetUrl(
             'packages/google_maps_flutter_web/assets/blue-dot.png',
           )
-          ..scaledSize = gmaps.Size(18, 18)),
+          ..scaledSize = gmaps.Size(18, 18)
+          ..anchor = gmaps.Point(9, 9)),
     );
   }
 
