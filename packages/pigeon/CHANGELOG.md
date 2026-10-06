@@ -1,3 +1,16 @@
+## 29.0.6
+
+* Updates native interop guides and migration skill with SwiftPM `<plugin_name>_objc_gen` target guidance.
+* Updates FFI and JNI dependencies and pins code generation `dev_dependencies` (`ffigen`, `jnigen`, `swift2objc`, and `swiftgen`).
+
+## 29.0.5
+
+* [dart] Fixes JNI typed data arrays being backed by native memory that is freed when
+  the isolate that read them exits.
+* [dart] Fixes a potential use-after-free when reading FFI typed data arrays.
+* Updates native interop guides and migration skill for `jnigen` 1.0.0 and
+  current tooling requirements.
+
 ## 29.0.4
 
 * [swift] Fixes FFI number wrapping for Objective-C `CFBoolean` and floating-point `NSNumber` values.
