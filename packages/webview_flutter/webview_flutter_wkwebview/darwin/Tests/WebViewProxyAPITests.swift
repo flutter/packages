@@ -32,6 +32,22 @@ import WebKit
     #expect(instance != nil)
   }
 
+  @MainActor @Test func handlesKVOCallbackAfterRegistrarOwnerIsReleased() {
+    var registrar: TestProxyApiRegistrar? = TestProxyApiRegistrar()
+    let api = webViewProxyAPI(forRegistrar: registrar!)
+    let instance = WebViewImpl(
+      api: api.pigeonApiWKWebView, registrar: registrar!, frame: .zero,
+      configuration: WKWebViewConfiguration())
+    let registrarReference = WeakTestReference(registrar)
+    registrar!.ignoreCallsToDart = true
+
+    registrar = nil
+    #expect(registrarReference.value != nil)
+
+    instance.observeValue(
+      forKeyPath: "estimatedProgress", of: instance, change: nil, context: nil)
+  }
+
   @MainActor @Test func configuration() throws {
     let registrar = TestProxyApiRegistrar()
     let api = webViewProxyAPI(forRegistrar: registrar)

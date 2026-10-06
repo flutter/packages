@@ -7,7 +7,7 @@ import Foundation
 /// Implementation of `NSObject` that calls to Dart in callback methods.
 class NSObjectImpl: NSObject {
   let api: PigeonApiProtocolNSObject
-  unowned let registrar: ProxyAPIRegistrar
+  let registrar: ProxyAPIRegistrar
 
   init(api: PigeonApiProtocolNSObject, registrar: ProxyAPIRegistrar) {
     self.api = api

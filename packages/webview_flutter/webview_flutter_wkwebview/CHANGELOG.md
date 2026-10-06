@@ -1,3 +1,7 @@
+## 3.27.1
+
+* Fixes crashes when WebKit callbacks outlive plugin teardown.
+
 ## 3.27.0
 
 * Adds `WebKitWebViewWidgetCreationParams.uiKitGestureBlockingPolicy` for choosing the gesture
