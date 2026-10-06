@@ -140,7 +140,25 @@ void main() {
 
     codec.decode(buffer.done(), listener);
 
-    expect(listener.commands, contains(OnPaintBlur(paintId, 2.5, 3.5)));
+    expect(listener.commands, <Object>[
+      OnPaintObject(
+        color: 23,
+        strokeCap: null,
+        strokeJoin: null,
+        blendMode: 0,
+        strokeMiterLimit: null,
+        strokeWidth: null,
+        paintStyle: 0,
+        id: paintId,
+        shaderId: null,
+      ),
+      OnPaintBlur(paintId, 2.5, 3.5),
+      OnPathStart(pathId, 0),
+      const OnPathMoveTo(1, 2),
+      const OnPathClose(),
+      const OnPathFinished(),
+      OnDrawPath(pathId, paintId, null),
+    ]);
   });
 
   test('Basic message encode and decode with shaded path', () {

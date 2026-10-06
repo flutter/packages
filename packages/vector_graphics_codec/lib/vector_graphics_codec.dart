@@ -966,6 +966,9 @@ class VectorGraphicsCodec {
 
   /// Write a paint blur command to the buffer.
   void writePaintBlur(VectorGraphicsBuffer buffer, int paintId, double sigmaX, double sigmaY) {
+    assert(paintId >= 0 && paintId < kMaxId);
+    assert(sigmaX >= 0.0);
+    assert(sigmaY >= 0.0);
     buffer._checkPhase(_CurrentSection.paints);
     buffer._putUint8(_paintBlurTag);
     buffer._putUint16(paintId);
