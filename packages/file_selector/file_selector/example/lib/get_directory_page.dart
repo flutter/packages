@@ -6,14 +6,14 @@ import 'package:file_selector/file_selector.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
-/// Screen that shows an example of getDirectoryPath
+/// Screen that shows an example of getDirectory
 class GetDirectoryPage extends StatelessWidget {
   /// Default Constructor
   GetDirectoryPage({super.key});
 
   final bool _isIOS = !kIsWeb && defaultTargetPlatform == TargetPlatform.iOS;
 
-  Future<void> _getDirectoryPath(BuildContext context) async {
+  Future<void> _getDirectory(BuildContext context) async {
     const confirmButtonText = 'Choose';
     final XDirectory? directory = await getDirectory(confirmButtonText: confirmButtonText);
     if (directory == null) {
@@ -41,7 +41,7 @@ class GetDirectoryPage extends StatelessWidget {
                 backgroundColor: Colors.blue,
                 foregroundColor: Colors.white,
               ),
-              onPressed: _isIOS ? null : () => _getDirectoryPath(context),
+              onPressed: _isIOS ? null : () => _getDirectory(context),
               child: const Text('Press to ask user to choose a directory.'),
             ),
           ],

@@ -43,7 +43,7 @@ Future<XFile?> openFile({
   String? initialDirectory,
   String? confirmButtonText,
 }) {
-  return _assertInstanceIsSet().openFile(
+  return _assertInstanceIsNotNull().openFile(
     OpenDialogOptions(
       acceptedTypeGroups: acceptedTypeGroups,
       initialDirectory: initialDirectory,
@@ -77,7 +77,7 @@ Future<List<XFile>> openFiles({
   String? initialDirectory,
   String? confirmButtonText,
 }) {
-  return _assertInstanceIsSet().openFiles(
+  return _assertInstanceIsNotNull().openFiles(
     OpenDialogOptions(
       acceptedTypeGroups: acceptedTypeGroups,
       initialDirectory: initialDirectory,
@@ -118,7 +118,7 @@ Future<FileSaveLocation?> getSaveLocation({
   String? confirmButtonText,
   bool? canCreateDirectories,
 }) async {
-  return _assertInstanceIsSet().getSaveLocation(
+  return _assertInstanceIsNotNull().getSaveLocation(
     SaveLocationOptions(
       acceptedTypeGroups: acceptedTypeGroups,
       initialDirectory: initialDirectory,
@@ -150,7 +150,7 @@ Future<XDirectory?> getDirectory({
   String? confirmButtonText,
   bool? canCreateDirectories,
 }) async {
-  return _assertInstanceIsSet().getDirectory(
+  return _assertInstanceIsNotNull().getDirectory(
     FileDialogOptions(
       initialDirectory: initialDirectory,
       confirmButtonText: confirmButtonText,
@@ -181,7 +181,7 @@ Future<List<XDirectory>> getDirectories({
   String? confirmButtonText,
   bool? canCreateDirectories,
 }) async {
-  return _assertInstanceIsSet().getDirectories(
+  return _assertInstanceIsNotNull().getDirectories(
     FileDialogOptions(
       initialDirectory: initialDirectory,
       confirmButtonText: confirmButtonText,
@@ -190,7 +190,7 @@ Future<List<XDirectory>> getDirectories({
   );
 }
 
-FileSelectorPlatform _assertInstanceIsSet() {
+FileSelectorPlatform _assertInstanceIsNotNull() {
   assert(
     FileSelectorPlatform.instance != null,
     'A platform implementation for `file_selector` has not been set. Please '
