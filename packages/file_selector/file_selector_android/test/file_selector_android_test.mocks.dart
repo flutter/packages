@@ -46,7 +46,10 @@ class MockFileSelectorApi extends _i1.Mock implements _i2.FileSelectorApi {
           as String);
 
   @override
-  _i4.Future<String?> openFile(String? initialDirectory, _i2.FileTypes? allowedTypes) =>
+  _i4.Future<String?> openFile(
+    String? initialDirectory,
+    _i2.FileTypes? allowedTypes,
+  ) =>
       (super.noSuchMethod(
             Invocation.method(#openFile, [initialDirectory, allowedTypes]),
             returnValue: _i4.Future<String?>.value(),
@@ -54,7 +57,10 @@ class MockFileSelectorApi extends _i1.Mock implements _i2.FileSelectorApi {
           as _i4.Future<String?>);
 
   @override
-  _i4.Future<List<String>> openFiles(String? initialDirectory, _i2.FileTypes? allowedTypes) =>
+  _i4.Future<List<String>> openFiles(
+    String? initialDirectory,
+    _i2.FileTypes? allowedTypes,
+  ) =>
       (super.noSuchMethod(
             Invocation.method(#openFiles, [initialDirectory, allowedTypes]),
             returnValue: _i4.Future<List<String>>.value(<String>[]),

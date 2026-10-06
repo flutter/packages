@@ -30,7 +30,7 @@ void main() {
     }, throwsA(isA<UnimplementedError>()));
   });
 
-  test('getDirectoryPath should throw unimplemented exception error', () async {
+  test('getDirectories should throw unimplemented exception error', () async {
     final FileSelectorPlatform fileSelector = ExtendsFileSelectorPlatform();
 
     await expectLater(() async {
@@ -38,7 +38,7 @@ void main() {
     }, throwsA(isA<UnimplementedError>()));
   });
 
-  test('getDirectoryPaths should throw unimplemented exception error', () async {
+  test('getDirectories should throw unimplemented exception error', () async {
     final FileSelectorPlatform fileSelector = ExtendsFileSelectorPlatform();
 
     await expectLater(() async {

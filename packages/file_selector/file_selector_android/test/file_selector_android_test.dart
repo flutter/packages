@@ -102,7 +102,7 @@ void main() {
     });
   });
 
-  test('getDirectoryPath', () async {
+  test('getDirectory', () async {
     when(
       mockApi.getDirectoryPath('some/path'),
     ).thenAnswer((_) => Future<String?>.value('some/path/chosen/'));
