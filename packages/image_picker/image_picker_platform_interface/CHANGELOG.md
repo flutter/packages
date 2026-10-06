@@ -1,10 +1,7 @@
-## 2.11.3
+## 2.11.2
 
 * Documents that `getLostData` must clear the stored lost data once it is
   returned, so subsequent calls return an empty result.
-
-## 2.11.2
-
 * Updates minimum supported SDK version to Flutter 3.41/Dart 3.11.
 
 ## 2.11.1
