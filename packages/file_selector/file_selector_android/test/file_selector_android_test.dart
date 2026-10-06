@@ -107,7 +107,7 @@ void main() {
       mockApi.getDirectoryPath('some/path'),
     ).thenAnswer((_) => Future<String?>.value('some/path/chosen/'));
 
-    final XDirectory? dir = await plugin.getDirectoryPath(
+    final XDirectory? dir = await plugin.getDirectory(
       const FileDialogOptions(initialDirectory: 'some/path'),
     );
 

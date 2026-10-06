@@ -12,7 +12,7 @@ class GetDirectoryPathPage extends StatelessWidget {
   const GetDirectoryPathPage({super.key});
 
   Future<void> _getDirectoryPath(BuildContext context) async {
-    final XDirectory? directory = await FileSelectorPlatform.instance!.getDirectoryPath();
+    final XDirectory? directory = await FileSelectorPlatform.instance!.getDirectory();
     if (directory == null) {
       // Operation was canceled by the user.
       return;
