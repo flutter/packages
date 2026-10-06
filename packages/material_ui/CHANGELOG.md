@@ -1,3 +1,14 @@
+## 1.6.0
+
+- Documents that `TextField.decoration` is merged with the ambient
+  `InputDecorationTheme` rather than replacing it.
+- Fixes unresolved doc comment references.
+- Fixes `NavigationIndicator` not repainting when the selected destination changes without pointer interaction.
+- Removes the unconditional `dart:io` import from `AboutDialog`, so that `material_ui` is correctly detected as supporting the web platform and `showAboutDialog` no longer throws on the web when no application name is available.
+- Fix DropdownButtonFormField underline alignment at bottom.
+- Fixes floating-point rounding errors when calculating values for discrete `Slider` and `RangeSlider`.
+- Added `fontFeatures` and `fontVariations` parameters to `TextTheme.apply()`.
+
 ## 1.5.0
 
 - Adds Material 3 Expressive support for IconButton.
