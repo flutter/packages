@@ -40,9 +40,17 @@ base class FileSelectorWeb extends FileSelectorPlatform {
   }
 
   @override
-  Future<XDirectory?> getDirectoryPath([
-    FileDialogOptions options = const FileDialogOptions(),
-  ]) async => null;
+  Future<FileSaveLocation?> getSaveLocation([
+    SaveLocationOptions options = const SaveLocationOptions(),
+  ]) async {
+    // This is intended to be passed to XFile, which ignores the path, so
+    // provide a non-null dummy value.
+    return FileSaveLocation(XFile.fileSystem(path: ''));
+  }
+
+  @override
+  Future<XDirectory?> getDirectory([FileDialogOptions options = const FileDialogOptions()]) async =>
+      null;
 
   Future<List<XFile>> _openFiles({
     OpenDialogOptions options = const OpenDialogOptions(),
