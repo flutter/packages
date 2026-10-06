@@ -40,7 +40,7 @@ base class FileSelectorWindows extends FileSelectorPlatform {
       options.initialDirectory,
       options.confirmButtonText,
     );
-    return result.paths.map((String? path) => XFile.fileSystem(path: path!)).toList();
+    return result.paths.map((String path) => XFile.fileSystem(path: path)).toList();
   }
 
   @override

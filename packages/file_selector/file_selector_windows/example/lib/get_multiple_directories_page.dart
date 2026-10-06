@@ -5,13 +5,13 @@
 import 'package:file_selector_platform_interface/file_selector_platform_interface.dart';
 import 'package:flutter/material.dart';
 
-/// Screen that allows the user to select one or more directories using `getDirectoryPaths`,
+/// Screen that allows the user to select one or more directories using `getDirectories`,
 /// then displays the selected directories in a dialog.
 class GetMultipleDirectoriesPage extends StatelessWidget {
   /// Default Constructor
   const GetMultipleDirectoriesPage({super.key});
 
-  Future<void> _getDirectoryPaths(BuildContext context) async {
+  Future<void> _getDirectories(BuildContext context) async {
     const confirmButtonText = 'Choose';
     final List<XDirectory> directories = await FileSelectorPlatform.instance!.getDirectories(
       const FileDialogOptions(confirmButtonText: confirmButtonText),
@@ -42,7 +42,7 @@ class GetMultipleDirectoriesPage extends StatelessWidget {
                 foregroundColor: Colors.white,
               ),
               child: const Text('Press to ask user to choose multiple directories'),
-              onPressed: () => _getDirectoryPaths(context),
+              onPressed: () => _getDirectories(context),
             ),
           ],
         ),

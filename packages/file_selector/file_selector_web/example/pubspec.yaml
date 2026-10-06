@@ -6,7 +6,7 @@ environment:
   flutter: ">=3.41.0"
 
 dependencies:
-  file_selector_platform_interface: ^2.6.0
+  file_selector_platform_interface: ^3.0.0
   file_selector_web:
     path: ../
   flutter:
