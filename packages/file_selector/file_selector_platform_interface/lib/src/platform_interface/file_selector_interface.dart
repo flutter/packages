@@ -39,7 +39,7 @@ base class FileSelectorPlatform {
   /// file dialog. See [FileDialogOptions] for more details.
   ///
   /// Returns `null` if the user cancels the operation.
-  Future<XDirectory?> getDirectoryPath([FileDialogOptions options = const FileDialogOptions()]) {
+  Future<XDirectory?> getDirectory([FileDialogOptions options = const FileDialogOptions()]) {
     throw UnimplementedError('getDirectoryPath() has not been implemented.');
   }
 
@@ -50,9 +50,7 @@ base class FileSelectorPlatform {
   /// the file dialog. See [FileDialogOptions] for more details.
   ///
   /// Returns an empty list if the user cancels the operation.
-  Future<List<XDirectory>> getDirectoryPaths([
-    FileDialogOptions options = const FileDialogOptions(),
-  ]) {
+  Future<List<XDirectory>> getDirectories([FileDialogOptions options = const FileDialogOptions()]) {
     throw UnimplementedError('getDirectoryPaths() has not been implemented.');
   }
 }

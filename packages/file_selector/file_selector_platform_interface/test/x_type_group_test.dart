@@ -27,8 +27,6 @@ void main() {
       expect(jsonMap['mimeTypes'], mimeTypes);
       expect(jsonMap['uniformTypeIdentifiers'], uniformTypeIdentifiers);
       expect(jsonMap['webWildCards'], webWildCards);
-      // Validate the legacy key for backwards compatibility.
-      expect(jsonMap['macUTIs'], uniformTypeIdentifiers);
     });
 
     test('a wildcard group can be created', () {

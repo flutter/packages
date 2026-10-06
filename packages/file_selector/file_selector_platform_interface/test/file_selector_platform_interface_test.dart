@@ -34,7 +34,7 @@ void main() {
     final FileSelectorPlatform fileSelector = ExtendsFileSelectorPlatform();
 
     await expectLater(() async {
-      return fileSelector.getDirectoryPath();
+      return fileSelector.getDirectory();
     }, throwsA(isA<UnimplementedError>()));
   });
 
@@ -42,7 +42,7 @@ void main() {
     final FileSelectorPlatform fileSelector = ExtendsFileSelectorPlatform();
 
     await expectLater(() async {
-      return fileSelector.getDirectoryPaths();
+      return fileSelector.getDirectories();
     }, throwsA(isA<UnimplementedError>()));
   });
 }
