@@ -630,8 +630,6 @@ class GoogleMapController {
       return;
     }
 
-    assert(_markersController != null, 'Cannot render my location after dispose().');
-
     _myLocationController?.displayAndWatchMyLocation(map);
 
     if (mapConfiguration.myLocationButtonEnabled != true) {
