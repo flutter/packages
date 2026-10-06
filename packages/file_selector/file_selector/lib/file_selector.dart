@@ -145,12 +145,12 @@ Future<FileSaveLocation?> getSaveLocation({
 /// May not be supported on all platforms.
 ///
 /// Returns `null` if the user cancels the operation.
-Future<XDirectory?> getDirectoryPath({
+Future<XDirectory?> getDirectory({
   String? initialDirectory,
   String? confirmButtonText,
   bool? canCreateDirectories,
 }) async {
-  return _assertInstanceIsSet().getDirectoryPath(
+  return _assertInstanceIsSet().getDirectory(
     FileDialogOptions(
       initialDirectory: initialDirectory,
       confirmButtonText: confirmButtonText,
@@ -176,12 +176,12 @@ Future<XDirectory?> getDirectoryPath({
 /// May not be supported on all platforms.
 ///
 /// Returns an empty array if the user cancels the operation.
-Future<List<XDirectory>> getDirectoryPaths({
+Future<List<XDirectory>> getDirectories({
   String? initialDirectory,
   String? confirmButtonText,
   bool? canCreateDirectories,
 }) async {
-  return _assertInstanceIsSet().getDirectoryPaths(
+  return _assertInstanceIsSet().getDirectories(
     FileDialogOptions(
       initialDirectory: initialDirectory,
       confirmButtonText: confirmButtonText,

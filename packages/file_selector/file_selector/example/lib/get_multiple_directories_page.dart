@@ -13,9 +13,7 @@ class GetMultipleDirectoriesPage extends StatelessWidget {
 
   Future<void> _getDirectoryPaths(BuildContext context) async {
     const confirmButtonText = 'Choose';
-    final List<XDirectory> directories = await getDirectoryPaths(
-      confirmButtonText: confirmButtonText,
-    );
+    final List<XDirectory> directories = await getDirectories(confirmButtonText: confirmButtonText);
     if (directories.isEmpty) {
       // Operation was canceled by the user.
       return;

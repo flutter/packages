@@ -230,7 +230,7 @@ void main() {
     });
   });
 
-  group('getDirectoryPath', () {
+  group('getDirectory', () {
     final expectedDirectory = FileSystemXDirectory('/example/path');
 
     test('works', () async {
@@ -238,7 +238,7 @@ void main() {
         ..setExpectations(initialDirectory: initialDirectory, confirmButtonText: confirmButtonText)
         ..directories = <XDirectory>[expectedDirectory];
 
-      final XDirectory? directory = await getDirectoryPath(
+      final XDirectory? directory = await getDirectory(
         initialDirectory: initialDirectory,
         confirmButtonText: confirmButtonText,
       );
@@ -249,7 +249,7 @@ void main() {
     test('works with no arguments', () async {
       fakePlatformImplementation.directories = <XDirectory>[expectedDirectory];
 
-      final XDirectory? directory = await getDirectoryPath();
+      final XDirectory? directory = await getDirectory();
       expect(directory?.uri, expectedDirectory.uri);
     });
 
@@ -258,7 +258,7 @@ void main() {
         ..setExpectations(initialDirectory: initialDirectory)
         ..directories = <XDirectory>[expectedDirectory];
 
-      final XDirectory? directory = await getDirectoryPath(initialDirectory: initialDirectory);
+      final XDirectory? directory = await getDirectory(initialDirectory: initialDirectory);
       expect(directory?.uri, expectedDirectory.uri);
     });
 
@@ -267,7 +267,7 @@ void main() {
         ..setExpectations(confirmButtonText: confirmButtonText)
         ..directories = <XDirectory>[expectedDirectory];
 
-      final XDirectory? directory = await getDirectoryPath(confirmButtonText: confirmButtonText);
+      final XDirectory? directory = await getDirectory(confirmButtonText: confirmButtonText);
       expect(directory?.uri, expectedDirectory.uri);
     });
 
@@ -277,14 +277,12 @@ void main() {
         ..setExpectations(canCreateDirectories: canCreateDirectories)
         ..directories = <XDirectory>[expectedDirectory];
 
-      final XDirectory? directory = await getDirectoryPath(
-        canCreateDirectories: canCreateDirectories,
-      );
+      final XDirectory? directory = await getDirectory(canCreateDirectories: canCreateDirectories);
       expect(directory?.uri, expectedDirectory.uri);
     });
   });
 
-  group('getDirectoryPaths', () {
+  group('getDirectories', () {
     final expectedDirectories = <XDirectory>[
       XDirectory.fileSystem(path: '/example/path'),
       XDirectory.fileSystem(path: '/example/2/path'),
@@ -295,7 +293,7 @@ void main() {
         ..setExpectations(initialDirectory: initialDirectory, confirmButtonText: confirmButtonText)
         ..directories = expectedDirectories;
 
-      final List<XDirectory> directories = await getDirectoryPaths(
+      final List<XDirectory> directories = await getDirectories(
         initialDirectory: initialDirectory,
         confirmButtonText: confirmButtonText,
       );
@@ -309,7 +307,7 @@ void main() {
     test('works with no arguments', () async {
       fakePlatformImplementation.directories = expectedDirectories;
 
-      final List<XDirectory> directories = await getDirectoryPaths();
+      final List<XDirectory> directories = await getDirectories();
       expect(
         directories.map((XDirectory directory) => directory.uri),
         expectedDirectories.map((XDirectory directory) => directory.uri),
@@ -321,9 +319,7 @@ void main() {
         ..setExpectations(initialDirectory: initialDirectory)
         ..directories = expectedDirectories;
 
-      final List<XDirectory> directories = await getDirectoryPaths(
-        initialDirectory: initialDirectory,
-      );
+      final List<XDirectory> directories = await getDirectories(initialDirectory: initialDirectory);
       expect(
         directories.map((XDirectory directory) => directory.uri),
         expectedDirectories.map((XDirectory directory) => directory.uri),
@@ -335,7 +331,7 @@ void main() {
         ..setExpectations(confirmButtonText: confirmButtonText)
         ..directories = expectedDirectories;
 
-      final List<XDirectory> directories = await getDirectoryPaths(
+      final List<XDirectory> directories = await getDirectories(
         confirmButtonText: confirmButtonText,
       );
       expect(
@@ -349,7 +345,7 @@ void main() {
         ..setExpectations(canCreateDirectories: canCreateDirectories)
         ..directories = expectedDirectories;
 
-      final List<XDirectory> directories = await getDirectoryPaths(
+      final List<XDirectory> directories = await getDirectories(
         canCreateDirectories: canCreateDirectories,
       );
       expect(
@@ -425,9 +421,7 @@ final class FakeFileSelector extends FileSelectorPlatform {
   }
 
   @override
-  Future<XDirectory?> getDirectoryPath([
-    FileDialogOptions options = const FileDialogOptions(),
-  ]) async {
+  Future<XDirectory?> getDirectory([FileDialogOptions options = const FileDialogOptions()]) async {
     expect(options.initialDirectory, initialDirectory);
     expect(options.confirmButtonText, confirmButtonText);
     expect(options.canCreateDirectories, canCreateDirectories);
@@ -435,7 +429,7 @@ final class FakeFileSelector extends FileSelectorPlatform {
   }
 
   @override
-  Future<List<XDirectory>> getDirectoryPaths([
+  Future<List<XDirectory>> getDirectories([
     FileDialogOptions options = const FileDialogOptions(),
   ]) async {
     expect(options.initialDirectory, initialDirectory);

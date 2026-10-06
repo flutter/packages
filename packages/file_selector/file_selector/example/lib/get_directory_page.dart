@@ -15,7 +15,7 @@ class GetDirectoryPage extends StatelessWidget {
 
   Future<void> _getDirectoryPath(BuildContext context) async {
     const confirmButtonText = 'Choose';
-    final XDirectory? directory = await getDirectoryPath(confirmButtonText: confirmButtonText);
+    final XDirectory? directory = await getDirectory(confirmButtonText: confirmButtonText);
     if (directory == null) {
       // Operation was canceled by the user.
       return;
