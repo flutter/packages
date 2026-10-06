@@ -1147,7 +1147,7 @@ void main() {
         await tester.pumpAndSettle();
 
         expect(myLocationController.myLocationButton, isNull);
-        expect(map.controls[gmaps.ControlPosition.RIGHT_BOTTOM as int].length, equals(0));
+        expect(map.getControlsAt(gmaps.ControlPosition.RIGHT_BOTTOM).length, equals(0));
       });
 
       testWidgets('initializes with my location & display my location button', (
@@ -1182,7 +1182,7 @@ void main() {
         controller.init();
         await tester.pumpAndSettle();
 
-        expect(map.controls[gmaps.ControlPosition.RIGHT_BOTTOM as int].length, equals(1));
+        expect(map.getControlsAt(gmaps.ControlPosition.RIGHT_BOTTOM).length, equals(1));
       });
 
       testWidgets('initializes with my location only', (WidgetTester tester) async {
@@ -1215,7 +1215,7 @@ void main() {
         controller.init();
         await tester.pumpAndSettle();
 
-        expect(map.controls[gmaps.ControlPosition.RIGHT_BOTTOM as int].length, equals(0));
+        expect(map.getControlsAt(gmaps.ControlPosition.RIGHT_BOTTOM).length, equals(0));
       });
     });
   });

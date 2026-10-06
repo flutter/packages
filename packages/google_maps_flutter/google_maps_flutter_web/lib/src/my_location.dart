@@ -125,14 +125,14 @@ class MyLocationController {
       }.toJS,
     );
     if (myLocationButton != null) {
-      map.controls[gmaps.ControlPosition.RIGHT_BOTTOM as int].push(myLocationButton!.getButton);
+      map.getControlsAt(gmaps.ControlPosition.RIGHT_BOTTOM).push(myLocationButton!.getButton);
     }
   }
 
   /// Remove my location button from map
   void removeMyLocationButton(gmaps.Map map) {
     if (myLocationButton != null) {
-      map.controls[gmaps.ControlPosition.RIGHT_BOTTOM as int].pop();
+      map.getControlsAt(gmaps.ControlPosition.RIGHT_BOTTOM).pop();
       myLocationButton = null;
     }
     _dragEndListener?.remove();
