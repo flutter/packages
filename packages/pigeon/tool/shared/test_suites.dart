@@ -301,25 +301,26 @@ Future<int> _runIntegrationTestsInReleaseMode(
     }),
   );
 
-  final int testExitCode = await result.future.timeout(
-    timeout,
-    onTimeout: () {
-      print('Timed out after $timeout waiting for the tests to finish.');
-      return 1;
-    },
-  );
-
-  // `flutter run` stays attached to the app until it's stopped.
-  process.kill();
-  await process.exitCode.timeout(
-    const Duration(minutes: 1),
-    onTimeout: () {
-      process.kill(ProcessSignal.sigkill);
-      return process.exitCode;
-    },
-  );
-  await Future.wait(subscriptions.map((StreamSubscription<String> s) => s.cancel()));
-  return testExitCode;
+  try {
+    return await result.future.timeout(
+      timeout,
+      onTimeout: () {
+        print('Timed out after $timeout waiting for the tests to finish.');
+        return 1;
+      },
+    );
+  } finally {
+    // `flutter run` stays attached to the app until it's stopped.
+    process.kill();
+    await process.exitCode.timeout(
+      const Duration(minutes: 1),
+      onTimeout: () {
+        process.kill(ProcessSignal.sigkill);
+        return process.exitCode;
+      },
+    );
+    await Future.wait(subscriptions.map((StreamSubscription<String> s) => s.cancel()));
+  }
 }
 
 Future<int> _runDartUnitTests({bool ciMode = false}) async {
