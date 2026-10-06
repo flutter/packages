@@ -16,6 +16,9 @@ class TypographyTemplateM3 extends TokenTemplateM3 {
   String get parentFilePath => 'typography.dart';
 
   @override
+  String get className => '_M3Typography';
+
+  @override
   String generateContents(String className) =>
       '''
 abstract final class $className {

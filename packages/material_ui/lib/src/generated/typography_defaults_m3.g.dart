@@ -7,7 +7,7 @@
 //   packages/material_ui/tool/gen_defaults/bin/gen_defaults.dart.
 part of '../typography.dart';
 
-abstract final class _TypographyDefaultsM3 {
+abstract final class _M3Typography {
   static const TextTheme englishLike = TextTheme(
     displayLarge: TextStyle(
       debugLabel: 'englishLike displayLarge 2021',
