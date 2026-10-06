@@ -831,6 +831,20 @@ void main() {
       expect(contents, contains('abstract final class _M3Typography'));
       expect(contents, contains('displayLarge: TextStyle('));
       expect(contents, contains("debugLabel: 'englishLike displayLarge 2021'"));
+      expect(contents, contains('static const TextTheme englishLike = TextTheme('));
+      expect(contents, contains('static const TextTheme dense = TextTheme('));
+      expect(contents, contains('static const TextTheme tall = TextTheme('));
+      expect(
+        contents,
+        contains(
+          "displayLarge: TextStyle(debugLabel: 'englishLike displayLarge 2021', inherit: false, "
+          'fontSize: 57.0, fontWeight: FontWeight.w400, letterSpacing: -0.25, height: 1.12, '
+          'textBaseline: TextBaseline.alphabetic, leadingDistribution: TextLeadingDistribution.even)',
+        ),
+      );
+      expect(contents, contains("debugLabel: 'dense bodySmall 2021'"));
+      expect(contents, contains('textBaseline: TextBaseline.ideographic'));
+      expect(contents, contains('fontWeight: FontWeight.w500'));
     });
 
     test('will run dart format over the generated file', () {
