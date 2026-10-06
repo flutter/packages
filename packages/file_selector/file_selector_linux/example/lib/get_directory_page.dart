@@ -5,13 +5,13 @@
 import 'package:file_selector_platform_interface/file_selector_platform_interface.dart';
 import 'package:flutter/material.dart';
 
-/// Screen that allows the user to select a directory using `getDirectoryPath`,
+/// Screen that allows the user to select a directory using `getDirectory`,
 ///  then displays the selected directory in a dialog.
 class GetDirectoryPage extends StatelessWidget {
   /// Default Constructor
   const GetDirectoryPage({super.key});
 
-  Future<void> _getDirectoryPath(BuildContext context) async {
+  Future<void> _getDirectory(BuildContext context) async {
     const confirmButtonText = 'Choose';
     final XDirectory? directory = await FileSelectorPlatform.instance!.getDirectory(
       const FileDialogOptions(confirmButtonText: confirmButtonText),
@@ -42,7 +42,7 @@ class GetDirectoryPage extends StatelessWidget {
                 foregroundColor: Colors.white,
               ),
               child: const Text('Press to ask user to choose a directory'),
-              onPressed: () => _getDirectoryPath(context),
+              onPressed: () => _getDirectory(context),
             ),
           ],
         ),
