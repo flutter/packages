@@ -126,6 +126,7 @@ class VectorGraphicsCodec {
   static const int _textPositionTag = 50;
   static const int _updateTextPositionTag = 51;
   static const int _pathTagHalfPrecision = 52;
+  static const int _paintBlurTag = 53;
 
   static const int _version = 1;
   static const int _magicNumber = 0x00882d62;
@@ -229,6 +230,9 @@ class VectorGraphicsCodec {
           continue;
         case _updateTextPositionTag:
           _readUpdateTextPosition(buffer, listener);
+          continue;
+        case _paintBlurTag:
+          _readPaintBlur(buffer, listener);
           continue;
         default:
           throw StateError('Unknown type tag $type');
@@ -959,6 +963,22 @@ class VectorGraphicsCodec {
     final Float64List? transform = buffer.getTransform();
     listener?.onPatternStart(patternId, x, y, width, height, transform!);
   }
+
+  /// Write a paint blur command to the buffer.
+  void writePaintBlur(VectorGraphicsBuffer buffer, int paintId, double sigmaX, double sigmaY) {
+    buffer._checkPhase(_CurrentSection.paints);
+    buffer._putUint8(_paintBlurTag);
+    buffer._putUint16(paintId);
+    buffer._putFloat32(sigmaX);
+    buffer._putFloat32(sigmaY);
+  }
+
+  void _readPaintBlur(_ReadBuffer buffer, VectorGraphicsCodecListener? listener) {
+    final int paintId = buffer.getUint16();
+    final double sigmaX = buffer.getFloat32();
+    final double sigmaY = buffer.getFloat32();
+    listener?.onPaintBlur(paintId, sigmaX, sigmaY);
+  }
 }
 
 /// Implement this listener class to support decoding of vector_graphics binary
@@ -1027,6 +1047,9 @@ abstract class VectorGraphicsCodecListener {
 
   /// Prepare to draw a new mask, until the next [onRestoreLayer] command.
   void onMask();
+
+  /// A paint blur has been decoded.
+  void onPaintBlur(int paintId, double sigmaX, double sigmaY) {}
 
   /// A radial gradient shader has been parsed.
   ///
