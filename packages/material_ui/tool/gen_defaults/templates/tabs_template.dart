@@ -2,22 +2,25 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import '../data/divider.dart';
+import '../data/primary_navigation_tab.dart';
+import '../data/secondary_navigation_tab.dart';
 import 'template.dart';
 
-class TabsTemplate extends TokenTemplate {
-  const TabsTemplate(
-    super.blockName,
-    super.fileName,
-    super.tokens, {
-    super.colorSchemePrefix = '_colors.',
-    super.textThemePrefix = '_textTheme.',
-  });
+class TabsTemplateM3 extends TokenTemplateM3 {
+  const TabsTemplateM3();
 
   @override
-  String generate() =>
+  String get name => 'Tabs';
+
+  @override
+  String get parentFilePath => 'tabs.dart';
+
+  @override
+  String generateContents(String className) =>
       '''
-class _${blockName}PrimaryDefaultsM3 extends TabBarThemeData {
-  _${blockName}PrimaryDefaultsM3(this.context, this.isScrollable)
+class _TabsPrimaryDefaultsM3 extends TabBarThemeData {
+  _TabsPrimaryDefaultsM3(this.context, this.isScrollable)
     : super(indicatorSize: TabBarIndicatorSize.label);
 
   final BuildContext context;
@@ -27,50 +30,50 @@ class _${blockName}PrimaryDefaultsM3 extends TabBarThemeData {
 
   // This value comes from Divider widget defaults. Token db deprecated 'primary-navigation-tab.divider.color' token.
   @override
-  Color? get dividerColor => ${componentColor("md.comp.divider")};
+  Color? get dividerColor => ${color(TokenDivider.color)};
 
   // This value comes from Divider widget defaults. Token db deprecated 'primary-navigation-tab.divider.height' token.
   @override
-  double? get dividerHeight => ${getToken("md.comp.divider.thickness")};
+  double? get dividerHeight => ${number(TokenDivider.thickness)};
 
   @override
-  Color? get indicatorColor => ${componentColor("md.comp.primary-navigation-tab.active-indicator")};
+  Color? get indicatorColor => ${colorWithOpacity(TokenPrimaryNavigationTab.activeFocusStateLayerColor, TokenPrimaryNavigationTab.activeFocusStateLayerOpacity)};
 
   @override
-  Color? get labelColor => ${componentColor("md.comp.primary-navigation-tab.with-label-text.active.label-text")};
+  Color? get labelColor => ${color(TokenPrimaryNavigationTab.withLabelTextActiveLabelTextColor)};
 
   @override
-  TextStyle? get labelStyle => ${textStyle("md.comp.primary-navigation-tab.with-label-text.label-text")};
+  TextStyle? get labelStyle => ${textStyle(TokenPrimaryNavigationTab.withLabelTextLabelTextType, '_textTheme')};
 
   @override
-  Color? get unselectedLabelColor => ${componentColor("md.comp.primary-navigation-tab.with-label-text.inactive.label-text")};
+  Color? get unselectedLabelColor => ${color(TokenPrimaryNavigationTab.withLabelTextInactiveLabelTextColor)};
 
   @override
-  TextStyle? get unselectedLabelStyle => ${textStyle("md.comp.primary-navigation-tab.with-label-text.label-text")};
+  TextStyle? get unselectedLabelStyle => ${textStyle(TokenPrimaryNavigationTab.withLabelTextLabelTextType, '_textTheme')};
 
   @override
   WidgetStateProperty<Color?> get overlayColor {
     return WidgetStateProperty.resolveWith((Set<WidgetState> states) {
       if (states.contains(WidgetState.selected)) {
         if (states.contains(WidgetState.pressed)) {
-          return ${componentColor('md.comp.primary-navigation-tab.active.pressed.state-layer')};
+          return ${colorWithOpacity(TokenPrimaryNavigationTab.activePressedStateLayerColor, TokenPrimaryNavigationTab.activePressedStateLayerOpacity)};
         }
         if (states.contains(WidgetState.hovered)) {
-          return ${componentColor('md.comp.primary-navigation-tab.active.hover.state-layer')};
+          return ${colorWithOpacity(TokenPrimaryNavigationTab.activeHoverStateLayerColor, TokenPrimaryNavigationTab.activeHoverStateLayerOpacity)};
         }
         if (states.contains(WidgetState.focused)) {
-          return ${componentColor('md.comp.primary-navigation-tab.active.focus.state-layer')};
+          return ${colorWithOpacity(TokenPrimaryNavigationTab.activeFocusStateLayerColor, TokenPrimaryNavigationTab.activeFocusStateLayerOpacity)};
         }
         return null;
       }
       if (states.contains(WidgetState.pressed)) {
-        return ${componentColor('md.comp.primary-navigation-tab.inactive.pressed.state-layer')};
+        return ${colorWithOpacity(TokenPrimaryNavigationTab.inactivePressedStateLayerColor, TokenPrimaryNavigationTab.inactivePressedStateLayerOpacity)};
       }
       if (states.contains(WidgetState.hovered)) {
-        return ${componentColor('md.comp.primary-navigation-tab.inactive.hover.state-layer')};
+        return ${colorWithOpacity(TokenPrimaryNavigationTab.inactiveHoverStateLayerColor, TokenPrimaryNavigationTab.inactiveHoverStateLayerOpacity)};
       }
       if (states.contains(WidgetState.focused)) {
-        return ${componentColor('md.comp.primary-navigation-tab.inactive.focus.state-layer')};
+        return ${colorWithOpacity(TokenPrimaryNavigationTab.inactiveFocusStateLayerColor, TokenPrimaryNavigationTab.inactiveFocusStateLayerOpacity)};
       }
       return null;
     });
@@ -84,8 +87,8 @@ class _${blockName}PrimaryDefaultsM3 extends TabBarThemeData {
 
   static double indicatorWeight(TabBarIndicatorSize indicatorSize) {
     return switch (indicatorSize) {
-      TabBarIndicatorSize.label => ${getToken('md.comp.primary-navigation-tab.active-indicator.height')},
-      TabBarIndicatorSize.tab   => ${getToken('md.comp.secondary-navigation-tab.active-indicator.height')},
+      TabBarIndicatorSize.label => ${number(TokenPrimaryNavigationTab.activeIndicatorHeight)},
+      TabBarIndicatorSize.tab   => ${number(TokenSecondaryNavigationTab.activeIndicatorHeight)},
     };
   }
 
@@ -95,8 +98,8 @@ class _${blockName}PrimaryDefaultsM3 extends TabBarThemeData {
   static const EdgeInsetsGeometry iconMargin = EdgeInsets.only(bottom: 2);
 }
 
-class _${blockName}SecondaryDefaultsM3 extends TabBarThemeData {
-  _${blockName}SecondaryDefaultsM3(this.context, this.isScrollable)
+class _TabsSecondaryDefaultsM3 extends TabBarThemeData {
+  _TabsSecondaryDefaultsM3(this.context, this.isScrollable)
     : super(indicatorSize: TabBarIndicatorSize.tab);
 
   final BuildContext context;
@@ -106,50 +109,50 @@ class _${blockName}SecondaryDefaultsM3 extends TabBarThemeData {
 
   // This value comes from Divider widget defaults. Token db deprecated 'secondary-navigation-tab.divider.color' token.
   @override
-  Color? get dividerColor => ${componentColor("md.comp.divider")};
+  Color? get dividerColor => ${color(TokenDivider.color)};
 
   // This value comes from Divider widget defaults. Token db deprecated 'secondary-navigation-tab.divider.height' token.
   @override
-  double? get dividerHeight => ${getToken("md.comp.divider.thickness")};
+  double? get dividerHeight => ${number(TokenDivider.thickness)};
 
   @override
-  Color? get indicatorColor => ${componentColor("md.comp.secondary-navigation-tab.active-indicator")};
+  Color? get indicatorColor => ${color(TokenSecondaryNavigationTab.activeIndicatorColor)};
 
   @override
-  Color? get labelColor => ${componentColor("md.comp.secondary-navigation-tab.active.label-text")};
+  Color? get labelColor => ${color(TokenSecondaryNavigationTab.activeLabelTextColor)};
 
   @override
-  TextStyle? get labelStyle => ${textStyle("md.comp.secondary-navigation-tab.label-text")};
+  TextStyle? get labelStyle => ${textStyle(TokenSecondaryNavigationTab.labelTextType, '_textTheme')};
 
   @override
-  Color? get unselectedLabelColor => ${componentColor("md.comp.secondary-navigation-tab.inactive.label-text")};
+  Color? get unselectedLabelColor => ${color(TokenSecondaryNavigationTab.inactiveLabelTextColor)};
 
   @override
-  TextStyle? get unselectedLabelStyle => ${textStyle("md.comp.secondary-navigation-tab.label-text")};
+  TextStyle? get unselectedLabelStyle => ${textStyle(TokenSecondaryNavigationTab.labelTextType, '_textTheme')};
 
   @override
   WidgetStateProperty<Color?> get overlayColor {
     return WidgetStateProperty.resolveWith((Set<WidgetState> states) {
       if (states.contains(WidgetState.selected)) {
         if (states.contains(WidgetState.pressed)) {
-          return ${componentColor('md.comp.secondary-navigation-tab.pressed.state-layer')};
+          return ${colorWithOpacity(TokenSecondaryNavigationTab.pressedStateLayerColor, TokenSecondaryNavigationTab.pressedStateLayerOpacity)};
         }
         if (states.contains(WidgetState.hovered)) {
-          return ${componentColor('md.comp.secondary-navigation-tab.hover.state-layer')};
+          return ${colorWithOpacity(TokenSecondaryNavigationTab.hoverStateLayerColor, TokenSecondaryNavigationTab.hoverStateLayerOpacity)};
         }
         if (states.contains(WidgetState.focused)) {
-          return ${componentColor('md.comp.secondary-navigation-tab.focus.state-layer')};
+          return ${colorWithOpacity(TokenSecondaryNavigationTab.focusStateLayerColor, TokenSecondaryNavigationTab.focusStateLayerOpacity)};
         }
         return null;
       }
       if (states.contains(WidgetState.pressed)) {
-        return ${componentColor('md.comp.secondary-navigation-tab.pressed.state-layer')};
+        return ${colorWithOpacity(TokenSecondaryNavigationTab.pressedStateLayerColor, TokenSecondaryNavigationTab.pressedStateLayerOpacity)};
       }
       if (states.contains(WidgetState.hovered)) {
-        return ${componentColor('md.comp.secondary-navigation-tab.hover.state-layer')};
+        return ${colorWithOpacity(TokenSecondaryNavigationTab.hoverStateLayerColor, TokenSecondaryNavigationTab.hoverStateLayerOpacity)};
       }
       if (states.contains(WidgetState.focused)) {
-        return ${componentColor('md.comp.secondary-navigation-tab.focus.state-layer')};
+        return ${colorWithOpacity(TokenSecondaryNavigationTab.focusStateLayerColor, TokenSecondaryNavigationTab.focusStateLayerOpacity)};
       }
       return null;
     });
@@ -161,7 +164,7 @@ class _${blockName}SecondaryDefaultsM3 extends TabBarThemeData {
   @override
   TabAlignment? get tabAlignment => isScrollable ? TabAlignment.startOffset : TabAlignment.fill;
 
-  static double indicatorWeight = ${getToken('md.comp.secondary-navigation-tab.active-indicator.height')};
+  static double indicatorWeight = ${number(TokenSecondaryNavigationTab.activeIndicatorHeight)};
 }
 ''';
 }
