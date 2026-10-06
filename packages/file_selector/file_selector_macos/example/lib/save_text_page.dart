@@ -30,7 +30,7 @@ class SaveTextPage extends StatelessWidget {
     final String text = _contentController.text;
     final fileData = Uint8List.fromList(text.codeUnits);
     // TODO(bparrishMines): Change this to use XFile.openWrite once
-    // https://github.com/flutter/packages/pull/13133 lands
+    // https://github.com/flutter/packages/pull/13133 lands.
     final file = File(path.join(Uri.file(result.file.uri).toFilePath(), fileName));
     await file.writeAsBytes(fileData);
   }
