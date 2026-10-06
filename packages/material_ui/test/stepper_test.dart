@@ -532,7 +532,7 @@ void main() {
         'https://material.io/archive/guidelines/components/steppers.html#steppers-usage',
       ),
     );
-  });
+  }, tags: 'reduced-web-test-set');
 
   ///https://github.com/flutter/flutter/issues/16920
   testWidgets('Stepper icons size test', (WidgetTester tester) async {

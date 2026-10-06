@@ -728,6 +728,7 @@ class ShellRoute extends ShellRouteBase {
     super.parentNavigatorKey,
     GlobalKey<NavigatorState>? navigatorKey,
     this.restorationScopeId,
+    this.clipBehavior = Clip.hardEdge,
   }) : assert(routes.isNotEmpty),
        navigatorKey = navigatorKey ?? GlobalKey<NavigatorState>(),
        super._() {
@@ -804,6 +805,20 @@ class ShellRoute extends ShellRouteBase {
   /// its history.
   final String? restorationScopeId;
 
+  /// The clip behavior of the [Navigator] built for this route.
+  ///
+  /// {@template go_router.ShellRoute.clipBehavior}
+  /// The nested Navigator clips its contents by default, so that the route
+  /// transitions of its sub-routes are not painted outside the bounds the
+  /// shell lays out for them. Set this to [Clip.none] when a sub-route needs
+  /// to paint outside those bounds, for example to render a box shadow or an
+  /// overflowing menu. Note that this also allows route transition animations
+  /// to paint outside the bounds of the shell.
+  ///
+  /// Defaults to [Clip.hardEdge].
+  /// {@endtemplate}
+  final Clip clipBehavior;
+
   @override
   GlobalKey<NavigatorState> navigatorKeyForSubRoute(RouteBase subRoute) {
     assert(routes.contains(subRoute));
@@ -814,6 +829,7 @@ class ShellRoute extends ShellRouteBase {
   void debugFillProperties(DiagnosticPropertiesBuilder properties) {
     super.debugFillProperties(properties);
     properties.add(DiagnosticsProperty<GlobalKey<NavigatorState>>('navigatorKey', navigatorKey));
+    properties.add(EnumProperty<Clip>('clipBehavior', clipBehavior, defaultValue: Clip.hardEdge));
   }
 }
 
@@ -1127,6 +1143,7 @@ class StatefulShellBranch {
     this.restorationScopeId,
     this.observers,
     this.preload = false,
+    this.clipBehavior = Clip.hardEdge,
   }) : navigatorKey = navigatorKey ?? GlobalKey<NavigatorState>() {
     assert(() {
       ShellRouteBase._debugCheckSubRouteParentNavigatorKeys(routes, this.navigatorKey);
@@ -1161,6 +1178,14 @@ class StatefulShellBranch {
   ///
   /// The observers parameter is used by the [Navigator] built for this branch.
   final List<NavigatorObserver>? observers;
+
+  /// The clip behavior of the [Navigator] built for this branch.
+  ///
+  /// Each branch of a [StatefulShellRoute] builds its own [Navigator], so the
+  /// clip behavior is configured per branch rather than on the shell route.
+  ///
+  /// {@macro go_router.ShellRoute.clipBehavior}
+  final Clip clipBehavior;
 
   /// Whether this route branch should be eagerly loaded when navigating to the
   /// associated StatefulShellRoute for the first time.

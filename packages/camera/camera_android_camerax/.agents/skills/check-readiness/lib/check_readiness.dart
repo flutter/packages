@@ -15,9 +15,9 @@ class ReadinessChecker {
     FileSystem? fileSystem,
     ProcessManager? processManager,
     void Function(Object?)? log,
-  })  : _fileSystem = fileSystem ?? const LocalFileSystem(),
-        _processManager = processManager ?? const LocalProcessManager(),
-        _log = log ?? ((Object? msg) => stdout.writeln(msg));
+  }) : _fileSystem = fileSystem ?? const LocalFileSystem(),
+       _processManager = processManager ?? const LocalProcessManager(),
+       _log = log ?? ((Object? msg) => stdout.writeln(msg));
 
   final FileSystem _fileSystem;
   final ProcessManager _processManager;
@@ -61,8 +61,9 @@ class ReadinessChecker {
 
   Future<bool> _checkSymlinks(String workspaceRoot) async {
     _log('1. Checking skill symlinks...');
-    final Directory agentsDir =
-        _fileSystem.directory(_fileSystem.path.join(workspaceRoot, '.agents', 'skills'));
+    final Directory agentsDir = _fileSystem.directory(
+      _fileSystem.path.join(workspaceRoot, '.agents', 'skills'),
+    );
     if (!agentsDir.existsSync()) {
       // If it doesn't exist, there are no broken symlinks.
       _log('All symlinks resolve correctly.');
@@ -70,8 +71,10 @@ class ReadinessChecker {
     }
 
     final brokenLinks = <String>[];
-    await for (final FileSystemEntity entity
-        in agentsDir.list(recursive: true, followLinks: false)) {
+    await for (final FileSystemEntity entity in agentsDir.list(
+      recursive: true,
+      followLinks: false,
+    )) {
       if (entity is Link) {
         if (_fileSystem.typeSync(entity.path) == FileSystemEntityType.notFound) {
           brokenLinks.add(entity.path);
@@ -93,10 +96,11 @@ class ReadinessChecker {
     _log('2. Checking git state...');
     final ProcessResult result;
     try {
-      result = await _processManager.run(
-        <String>['git', 'status', '--porcelain'],
-        workingDirectory: workspaceRoot,
-      );
+      result = await _processManager.run(<String>[
+        'git',
+        'status',
+        '--porcelain',
+      ], workingDirectory: workspaceRoot);
     } on ProcessException catch (e) {
       _log('Error: Failed to run git status. Is git installed and on the PATH?');
       _log(e.toString());
@@ -109,7 +113,8 @@ class ReadinessChecker {
     final String stdoutStr = (result.stdout as String).trim();
     if (stdoutStr.isNotEmpty) {
       _log(
-          'Error: Git working directory is not clean. Please commit or stash your changes before starting new work.');
+        'Error: Git working directory is not clean. Please commit or stash your changes before starting new work.',
+      );
       return false;
     }
     _log('Git working directory is clean.');
@@ -120,10 +125,12 @@ class ReadinessChecker {
     _log('3. Checking Git hooks configuration...');
     final ProcessResult result;
     try {
-      result = await _processManager.run(
-        <String>['git', 'config', '--get', 'core.hooksPath'],
-        workingDirectory: workspaceRoot,
-      );
+      result = await _processManager.run(<String>[
+        'git',
+        'config',
+        '--get',
+        'core.hooksPath',
+      ], workingDirectory: workspaceRoot);
     } on ProcessException catch (e) {
       _log('Error: Failed to check git config. Is git installed and on the PATH?');
       _log(e.toString());
@@ -166,10 +173,11 @@ class ReadinessChecker {
 
   Future<bool> _checkDependencies(String workspaceRoot) async {
     _log('5. Checking dependencies in camera_android_camerax...');
-    final ProcessResult result = await _processManager.run(
-      <String>['flutter', 'pub', 'get'],
-      workingDirectory: workspaceRoot,
-    );
+    final ProcessResult result = await _processManager.run(<String>[
+      'flutter',
+      'pub',
+      'get',
+    ], workingDirectory: workspaceRoot);
     if (result.exitCode != 0) {
       _log('Error: Failed to resolve dependencies.');
       return false;
@@ -185,18 +193,15 @@ class ReadinessChecker {
       _log('Error: Failed to find repository root (no .git directory found).');
       return false;
     }
-    final ProcessResult activateResult = await _processManager.run(
-      [
-        'dart',
-        'pub',
-        'global',
-        'activate',
-        '--source',
-        'path',
-        _fileSystem.path.join(repoRoot, 'script', 'tool')
-      ],
-      workingDirectory: workspaceRoot,
-    );
+    final ProcessResult activateResult = await _processManager.run([
+      'dart',
+      'pub',
+      'global',
+      'activate',
+      '--source',
+      'path',
+      _fileSystem.path.join(repoRoot, 'script', 'tool'),
+    ], workingDirectory: workspaceRoot);
     if (activateResult.exitCode != 0) {
       _log('Error: Failed to globally activate flutter_plugin_tools.');
       _log(activateResult.stderr);
