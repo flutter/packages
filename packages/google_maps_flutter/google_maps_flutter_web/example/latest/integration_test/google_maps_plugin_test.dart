@@ -15,10 +15,7 @@ import 'package:integration_test/integration_test.dart';
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
 
-@GenerateNiceMocks(<MockSpec<dynamic>>[
-  MockSpec<GoogleMapController>(),
-  MockSpec<MyLocationController>(),
-])
+@GenerateNiceMocks(<MockSpec<dynamic>>[MockSpec<GoogleMapController>()])
 import 'google_maps_plugin_test.mocks.dart';
 
 /// Test GoogleMapsPlugin
