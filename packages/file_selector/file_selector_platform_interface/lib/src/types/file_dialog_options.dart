@@ -4,7 +4,7 @@
 
 import 'package:flutter/foundation.dart' show immutable;
 
-import '../../file_selector_platform_interface.dart';
+import 'x_type_group.dart';
 
 /// Configuration options for any file selector dialog.
 @immutable

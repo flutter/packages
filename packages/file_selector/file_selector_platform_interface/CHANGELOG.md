@@ -1,8 +1,16 @@
 ## 3.0.0
 
-* New Selector
-* **Breaking Changes**
-  * A Thing
+* **BREAKING CHANGES**:
+  * Updates `cross_file` dependency to `0.4.0`. 
+  * Removes `MethodChannel` implementation.
+  * Replaces `FileSelectorPlatform`'s of implementation `PlatformInterface` with the `base` keyword.
+  * Changes `openFile` and `openFiles` to take a `OpenDialogOptions`.
+  * Removes `getSavePath`. Replaced by `getSaveLocation`.
+  * Changes `getSaveLocation` to take a `SaveLocationOptions`.
+  * Replaces `FileSaveLocation.path` with `FileSaveLocation.file`.
+  * Replaces `getDirectoryPath` with `getDirectory` and now returns a `XDirectory`.
+  * Replaces `getDirectoryPaths` with `getDirectories` and now returns `List<XDirectory`.
+  * Removes `XTypeGroup.macUTIs`. Use `XTypeGroup.uniformTypeIdentifiers` instead.
 * Updates minimum supported SDK version to Flutter 3.41/Dart 3.11.
 
 ## 2.7.0

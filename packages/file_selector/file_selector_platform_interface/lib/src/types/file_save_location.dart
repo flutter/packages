@@ -2,9 +2,10 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'package:cross_file/cross_file.dart';
 import 'package:flutter/foundation.dart' show immutable;
 
-import 'types.dart';
+import 'x_type_group.dart';
 
 /// The response from a save dialog.
 @immutable
