@@ -116,7 +116,12 @@ void main() {
     final semantics = SemanticsTester(tester);
 
     await tester.pumpWidget(
-      Semantics(container: true, label: 'label', textDirection: TextDirection.ltr, child: Container()),
+      Semantics(
+        container: true,
+        label: 'label',
+        textDirection: TextDirection.ltr,
+        child: Container(),
+      ),
     );
 
     expect(semantics, includesNodeWith(textDirection: TextDirection.ltr));
