@@ -752,16 +752,12 @@ class AndroidCameraCameraX extends CameraPlatform {
       );
 
       if (newIndex == null) {
-        cameraErrorStreamController.add(
-          'Setting exposure compensation index was canceled due to the camera being closed or a new request being submitted.',
-        );
-        throw CameraException(
-          setExposureOffsetFailedErrorCode,
-          'Setting exposure compensation index was canceled due to the camera being closed or a new request being submitted.',
-        );
+        // The operation to set exposure was cancelled. Return rounded exposure
+        // compensation index so the UI doesn't revert.
+        return roundedExposureCompensationIndex * exposureOffsetStepSize;
       }
 
-      return newIndex.toDouble();
+      return newIndex * exposureOffsetStepSize;
     } on PlatformException catch (e) {
       cameraErrorStreamController.add(
         e.message ?? 'Setting the camera exposure compensation index failed.',
@@ -1778,12 +1774,6 @@ class AndroidCameraCameraX extends CameraPlatform {
       final FocusMeteringResult? result = await cameraControl.startFocusAndMetering(
         currentFocusMeteringAction!,
       );
-
-      if (result == null) {
-        cameraErrorStreamController.add(
-          'Starting focus and metering was canceled due to the camera being closed or a new request being submitted.',
-        );
-      }
 
       return result?.isFocusSuccessful ?? false;
     } on PlatformException catch (e) {

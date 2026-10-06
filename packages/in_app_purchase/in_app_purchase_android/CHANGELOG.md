@@ -3,6 +3,10 @@
 * Fixes a crash (`IllegalStateException: Reply already submitted`) when the
   Play Billing library invokes a response listener more than once for a single
   call.
+
+## 0.5.3+1
+
+* Updates Robolectric to 4.17 and adds the JVM arguments it requires for unit tests.
 * Updates minimum supported SDK version to Flutter 3.41/Dart 3.11.
 
 ## 0.5.3
