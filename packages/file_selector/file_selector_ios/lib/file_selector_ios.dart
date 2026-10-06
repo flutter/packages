@@ -19,6 +19,12 @@ base class FileSelectorIOS extends FileSelectorPlatform {
     FileSelectorPlatform.instance = FileSelectorIOS();
   }
 
+  // TODO(bparrishMines): Add an iOS `OpenDialogOptions` implementation option
+  // to configure the flag passed to the native
+  // UIDocumentPickerViewController:(documenttypes:in:). The plugin currently
+  // passes `UIDocumentPickerMode.import` which "essentially` creates a copy of
+  // the file. So this returns a `FileSystemXFile` instead of a
+  // `ScopedStorageXFile`. See https://github.com/flutter/flutter/issues/193925
   @override
   Future<XFile?> openFile([OpenDialogOptions options = const OpenDialogOptions()]) async {
     final List<String> path = await _hostApi.openFile(
@@ -27,6 +33,12 @@ base class FileSelectorIOS extends FileSelectorPlatform {
     return path.isEmpty ? null : XFile.fileSystem(path: path.first);
   }
 
+  // TODO(bparrishMines): Add an iOS `OpenDialogOptions` implementation option
+  // to configure the flag passed to the native
+  // UIDocumentPickerViewController:(documenttypes:in:). The plugin currently
+  // passes `UIDocumentPickerMode.import` which "essentially` creates a copy of
+  // the file. So this returns a `FileSystemXFile` instead of a
+  // `ScopedStorageXFile`. See https://github.com/flutter/flutter/issues/193925
   @override
   Future<List<XFile>> openFiles([OpenDialogOptions options = const OpenDialogOptions()]) async {
     final List<String> pathList = await _hostApi.openFile(
