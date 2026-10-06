@@ -1,6 +1,7 @@
 ## 1.1.1
 
 - Updates minimum supported SDK version to Flutter 3.47/Dart 3.13.
+- Fixes the installation command in README.md
 
 ## 1.1.0
 
