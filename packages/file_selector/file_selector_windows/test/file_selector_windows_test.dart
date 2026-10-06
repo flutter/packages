@@ -183,9 +183,7 @@ void main() {
     });
 
     test('passes initialDirectory correctly', () async {
-      await plugin.getDirectory(
-        const FileDialogOptions(initialDirectory: '/example/directory'),
-      );
+      await plugin.getDirectory(const FileDialogOptions(initialDirectory: '/example/directory'));
 
       expect(api.passedInitialDirectory, '/example/directory');
     });
@@ -212,9 +210,7 @@ void main() {
     });
 
     test('passes initialDirectory correctly', () async {
-      await plugin.getDirectories(
-        const FileDialogOptions(initialDirectory: '/example/directory'),
-      );
+      await plugin.getDirectories(const FileDialogOptions(initialDirectory: '/example/directory'));
 
       expect(api.passedInitialDirectory, '/example/directory');
     });
