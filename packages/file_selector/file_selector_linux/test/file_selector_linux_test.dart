@@ -246,12 +246,12 @@ void main() {
     });
   });
 
-  group('getDirectoryPath', () {
+  group('getDirectory', () {
     test('passes the core flags correctly', () async {
       const path = '/foo/bar';
       api.result = <String>[path];
 
-      final dir = (await plugin.getDirectoryPath())! as FileSystemXDirectory;
+      final dir = (await plugin.getDirectory())! as FileSystemXDirectory;
       expect(dir.path, path);
 
       expect(api.passedType, PlatformFileChooserActionType.chooseDirectory);
@@ -260,24 +260,24 @@ void main() {
 
     test('passes initialDirectory correctly', () async {
       const path = '/example/directory';
-      await plugin.getDirectoryPath(const OpenDialogOptions(initialDirectory: path));
+      await plugin.getDirectory(const OpenDialogOptions(initialDirectory: path));
 
       expect(api.passedOptions?.currentFolderPath, path);
     });
 
     test('passes confirmButtonText correctly', () async {
       const button = 'Select Folder';
-      await plugin.getDirectoryPath(const OpenDialogOptions(confirmButtonText: button));
+      await plugin.getDirectory(const OpenDialogOptions(confirmButtonText: button));
 
       expect(api.passedOptions?.acceptButtonLabel, button);
     });
   });
 
-  group('getDirectoryPaths', () {
+  group('getDirectories', () {
     test('passes the core flags correctly', () async {
       api.result = <String>['/foo/bar', 'baz'];
 
-      final List<XDirectory> dirs = await plugin.getDirectoryPaths();
+      final List<XDirectory> dirs = await plugin.getDirectories();
       expect(dirs.map((XDirectory dir) => (dir as FileSystemXDirectory).path), api.result);
 
       expect(api.passedType, PlatformFileChooserActionType.chooseDirectory);
@@ -286,20 +286,20 @@ void main() {
 
     test('passes initialDirectory correctly', () async {
       const path = '/example/directory';
-      await plugin.getDirectoryPaths(const OpenDialogOptions(initialDirectory: path));
+      await plugin.getDirectory(const OpenDialogOptions(initialDirectory: path));
 
       expect(api.passedOptions?.currentFolderPath, path);
     });
 
     test('passes confirmButtonText correctly', () async {
       const button = 'Select one or mode folders';
-      await plugin.getDirectoryPaths(const OpenDialogOptions(confirmButtonText: button));
+      await plugin.getDirectory(const OpenDialogOptions(confirmButtonText: button));
 
       expect(api.passedOptions?.acceptButtonLabel, button);
     });
 
     test('passes multiple flag correctly', () async {
-      await plugin.getDirectoryPaths();
+      await plugin.getDirectories();
 
       expect(api.passedOptions?.selectMultiple, true);
     });
