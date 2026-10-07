@@ -1,0 +1,42 @@
+// Copyright 2013 The Flutter Authors
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
+import 'dart:async';
+
+import 'package:flutter_test/flutter_test.dart';
+import 'package:material_ui/material_ui.dart';
+import 'package:material_ui_examples/chip_theme/chip_theme.snippet.0.dart'
+    as example;
+
+void main() {
+  testWidgets(
+    'Spaceship applies red backgroundColor via ChipTheme.of and handles tap',
+    (WidgetTester tester) async {
+      final List<String> log = <String>[];
+      await runZoned(
+        () async {
+          await tester.pumpWidget(
+            const MaterialApp(home: Scaffold(body: example.Spaceship())),
+          );
+
+          expect(find.widgetWithText(ActionChip, 'Launch'), findsOneWidget);
+          expect(
+            find.byType(ActionChip),
+            paints..rrect(color: Colors.red.shade500),
+          );
+
+          await tester.tap(find.byType(ActionChip));
+          await tester.pump();
+        },
+        zoneSpecification: ZoneSpecification(
+          print: (Zone self, ZoneDelegate parent, Zone zone, String line) {
+            log.add(line);
+          },
+        ),
+      );
+
+      expect(log, <String>['We have liftoff!']);
+    },
+  );
+}
