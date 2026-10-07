@@ -97,4 +97,10 @@ class _TextDisplayState extends State<TextDisplay> {
       ],
     );
   }
+
+  @override
+  void dispose() {
+    scrollController.dispose();
+    super.dispose();
+  }
 }
