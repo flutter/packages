@@ -61,14 +61,9 @@ const EdgeInsets _defaultInsetPadding = EdgeInsets.symmetric(horizontal: 40.0, v
 ///
 /// <callout-box>
 ///
-// TODO(framework): Add unit tests to this code snippet.
-// https://github.com/flutter/flutter/issues/188530
-///
 /// This sample shows a [Dialog] using [BoxConstraints] defined by the Material 3 specification.
 ///
-/// ```dart
-/// const Dialog(constraints: BoxConstraints(maxWidth: 560, minHeight: 280));
-/// ```
+/// {@example /example/lib/dialog/dialog.snippet.0.dart#body indent=strip}
 ///
 /// </callout-box>
 ///
@@ -365,41 +360,10 @@ class Dialog extends StatelessWidget {
 ///
 /// <callout-box>
 ///
-// TODO(framework): Add unit tests to this code snippet.
-// https://github.com/flutter/flutter/issues/188530
-///
 /// This snippet shows a method in a [State] which, when called, displays a dialog box
 /// and returns a [Future] that completes when the dialog is dismissed.
 ///
-/// ```dart
-/// Future<void> _showMyDialog() async {
-///   return showDialog<void>(
-///     context: context,
-///     barrierDismissible: false, // user must tap button!
-///     builder: (BuildContext context) {
-///       return AlertDialog(
-///         title: const Text('AlertDialog Title'),
-///         content: const SingleChildScrollView(
-///           child: ListBody(
-///             children: <Widget>[
-///               Text('This is a demo alert dialog.'),
-///               Text('Would you like to approve of this message?'),
-///             ],
-///           ),
-///         ),
-///         actions: <Widget>[
-///           TextButton(
-///             child: const Text('Approve'),
-///             onPressed: () {
-///               Navigator.of(context).pop();
-///             },
-///           ),
-///         ],
-///       );
-///     },
-///   );
-/// }
-/// ```
+/// {@example /example/lib/dialog/alert_dialog.snippet.0.dart#body indent=strip}
 ///
 /// </callout-box>
 ///
@@ -675,21 +639,9 @@ class AlertDialog extends StatelessWidget {
   ///
   /// <callout-box>
   ///
-  // TODO(framework): Add unit tests to this code snippet.
-  // https://github.com/flutter/flutter/issues/188530
-  ///
   /// This is an example of a set of actions aligned with the content widget.
-  /// ```dart
-  /// AlertDialog(
-  ///   title: const Text('Title'),
-  ///   content: Container(width: 200, height: 200, color: Colors.green),
-  ///   actions: <Widget>[
-  ///     ElevatedButton(onPressed: () {}, child: const Text('Button 1')),
-  ///     ElevatedButton(onPressed: () {}, child: const Text('Button 2')),
-  ///   ],
-  ///   actionsPadding: const EdgeInsets.symmetric(horizontal: 8.0),
-  /// )
-  /// ```
+  ///
+  /// {@example /example/lib/dialog/alert_dialog.snippet.1.dart#body indent=strip}
   ///
   /// </callout-box>
   ///
@@ -1090,15 +1042,7 @@ class _AdaptiveAlertDialog extends AlertDialog {
 ///
 /// <callout-box>
 ///
-// TODO(framework): Add unit tests to this code snippet.
-// https://github.com/flutter/flutter/issues/188530
-///
-/// ```dart
-/// SimpleDialogOption(
-///   onPressed: () { Navigator.pop(context, Department.treasury); },
-///   child: const Text('Treasury department'),
-/// )
-/// ```
+/// {@example /example/lib/dialog/simple_dialog_option.snippet.0.dart#body indent=strip}
 ///
 /// </callout-box>
 ///
@@ -1162,9 +1106,6 @@ class SimpleDialogOption extends StatelessWidget {
 ///
 /// <callout-box>
 ///
-// TODO(framework): Add unit tests to this code snippet.
-// https://github.com/flutter/flutter/issues/188530
-///
 /// In this example, the user is asked to select between two options. These
 /// options are represented as an enum. The [showDialog] method here returns
 /// a [Future] that completes to a value of that enum. If the user cancels
@@ -1176,39 +1117,7 @@ class SimpleDialogOption extends StatelessWidget {
 /// drive a switch statement is that the analyzer will flag any switch statement
 /// that doesn't mention every value in the enum.
 ///
-/// ```dart
-/// Future<void> _askedToLead() async {
-///   switch (await showDialog<Department>(
-///     context: context,
-///     builder: (BuildContext context) {
-///       return SimpleDialog(
-///         title: const Text('Select assignment'),
-///         children: <Widget>[
-///           SimpleDialogOption(
-///             onPressed: () { Navigator.pop(context, Department.treasury); },
-///             child: const Text('Treasury department'),
-///           ),
-///           SimpleDialogOption(
-///             onPressed: () { Navigator.pop(context, Department.state); },
-///             child: const Text('State department'),
-///           ),
-///         ],
-///       );
-///     }
-///   )) {
-///     case Department.treasury:
-///       // Let's go.
-///       // ...
-///     break;
-///     case Department.state:
-///       // ...
-///     break;
-///     case null:
-///       // dialog dismissed
-///     break;
-///   }
-/// }
-/// ```
+/// {@example /example/lib/dialog/simple_dialog.snippet.0.dart#body indent=strip}
 ///
 /// </callout-box>
 ///
