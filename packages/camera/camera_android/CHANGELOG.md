@@ -1,5 +1,10 @@
-## NEXT
+## 0.10.12+1
 
+* Updates Robolectric to 4.17 and adds the JVM arguments it requires for unit tests.
+
+## 0.10.12
+
+* Adds support for custom video output path in video recording.
 * Updates minimum supported SDK version to Flutter 3.41/Dart 3.11.
 
 ## 0.10.11+1
