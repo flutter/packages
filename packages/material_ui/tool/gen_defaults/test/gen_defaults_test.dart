@@ -5,6 +5,7 @@
 import 'dart:io';
 
 import 'package:test/test.dart';
+
 import '../data/color_role.dart';
 import '../data/shape_struct.dart';
 import '../data/typescale.dart';
@@ -47,7 +48,7 @@ import '../templates/motion_template.dart';
 import '../templates/snackbar_template.dart';
 // import '../templates/surface_tint_template.dart';
 // import '../templates/switch_template.dart';
-// import '../templates/tabs_template.dart';
+import '../templates/tabs_template.dart';
 // import '../templates/text_field_template.dart';
 // import '../templates/time_picker_template.dart';
 // import '../templates/typography_template.dart';
@@ -810,8 +811,14 @@ void main() {
     });
 
     test('TabsTemplateM3 emits M3 Tabs defaults from tokens', () {
-      // Intentionally empty, will be implemented during migration. See:
-      // https://github.com/flutter/flutter/issues/187899
+      final String contents = const TabsTemplateM3().generateContents('_TabsDefaultsM3');
+      expect(contents, contains('class _TabsPrimaryDefaultsM3 extends TabBarThemeData'));
+      expect(contents, contains('Color? get indicatorColor => _colors.primary;'));
+      expect(contents, contains('Color? get labelColor => _colors.primary;'));
+
+      expect(contents, contains('class _TabsSecondaryDefaultsM3 extends TabBarThemeData'));
+      expect(contents, contains('Color? get indicatorColor => _colors.primary;'));
+      expect(contents, contains('Color? get labelColor => _colors.onSurface;'));
     });
 
     test('TextFieldTemplateM3 emits M3 TextField defaults from tokens', () {
