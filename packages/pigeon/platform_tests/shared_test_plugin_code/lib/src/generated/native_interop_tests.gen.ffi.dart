@@ -2541,12 +2541,12 @@ extension NativeInteropFlutterIntegrationCoreApiBridge$Methods
     on NativeInteropFlutterIntegrationCoreApiBridge {
   /// echoAnotherAsyncEnumWithAnotherEnum:error:completionHandler:
   void echoAnotherAsyncEnumWithAnotherEnum(
-    objc.NSNumber? anotherEnum, {
+    objc.NSNumber? anotherEnumArg, {
     required NativeInteropTestsError error,
     required objc.ObjCBlock<ffi.Void Function(objc.NSNumber?)> completionHandler,
   }) {
     final _$$ref = object$.ref;
-    final _$$ref$1 = anotherEnum?.ref;
+    final _$$ref$1 = anotherEnumArg?.ref;
     final _$$ref$2 = error.ref;
     final _$$ref$3 = completionHandler.ref;
     _objc_msgSend_18qun1e(
@@ -2560,12 +2560,12 @@ extension NativeInteropFlutterIntegrationCoreApiBridge$Methods
 
   /// echoAnotherAsyncNullableEnumWithAnotherEnum:error:completionHandler:
   void echoAnotherAsyncNullableEnumWithAnotherEnum(
-    objc.NSNumber? anotherEnum, {
+    objc.NSNumber? anotherEnumArg, {
     required NativeInteropTestsError error,
     required objc.ObjCBlock<ffi.Void Function(objc.NSNumber?)> completionHandler,
   }) {
     final _$$ref = object$.ref;
-    final _$$ref$1 = anotherEnum?.ref;
+    final _$$ref$1 = anotherEnumArg?.ref;
     final _$$ref$2 = error.ref;
     final _$$ref$3 = completionHandler.ref;
     _objc_msgSend_18qun1e(
@@ -2579,11 +2579,11 @@ extension NativeInteropFlutterIntegrationCoreApiBridge$Methods
 
   /// Returns the passed enum to test serialization and deserialization.
   objc.NSNumber? echoAnotherNullableEnumWithAnotherEnum(
-    objc.NSNumber? anotherEnum, {
+    objc.NSNumber? anotherEnumArg, {
     required NativeInteropTestsError error,
   }) {
     final _$$ref = object$.ref;
-    final _$$ref$1 = anotherEnum?.ref;
+    final _$$ref$1 = anotherEnumArg?.ref;
     final _$$ref$2 = error.ref;
     final $ret = _objc_msgSend_15qeuct(
       _$$ref.pointer,
@@ -2596,12 +2596,12 @@ extension NativeInteropFlutterIntegrationCoreApiBridge$Methods
 
   /// echoAsyncBoolWithABool:error:completionHandler:
   void echoAsyncBoolWithABool(
-    objc.NSNumber? aBool, {
+    objc.NSNumber? aBoolArg, {
     required NativeInteropTestsError error,
     required objc.ObjCBlock<ffi.Void Function(objc.NSNumber?)> completionHandler,
   }) {
     final _$$ref = object$.ref;
-    final _$$ref$1 = aBool?.ref;
+    final _$$ref$1 = aBoolArg?.ref;
     final _$$ref$2 = error.ref;
     final _$$ref$3 = completionHandler.ref;
     _objc_msgSend_18qun1e(
@@ -2615,12 +2615,12 @@ extension NativeInteropFlutterIntegrationCoreApiBridge$Methods
 
   /// echoAsyncClassListWithClassList:error:completionHandler:
   void echoAsyncClassListWithClassList(
-    objc.NSArray? classList, {
+    objc.NSArray? classListArg, {
     required NativeInteropTestsError error,
     required objc.ObjCBlock<ffi.Void Function(objc.NSArray?)> completionHandler,
   }) {
     final _$$ref = object$.ref;
-    final _$$ref$1 = classList?.ref;
+    final _$$ref$1 = classListArg?.ref;
     final _$$ref$2 = error.ref;
     final _$$ref$3 = completionHandler.ref;
     _objc_msgSend_18qun1e(
@@ -2634,12 +2634,12 @@ extension NativeInteropFlutterIntegrationCoreApiBridge$Methods
 
   /// echoAsyncClassMapWithClassMap:error:completionHandler:
   void echoAsyncClassMapWithClassMap(
-    objc.NSDictionary? classMap, {
+    objc.NSDictionary? classMapArg, {
     required NativeInteropTestsError error,
     required objc.ObjCBlock<ffi.Void Function(objc.NSDictionary?)> completionHandler,
   }) {
     final _$$ref = object$.ref;
-    final _$$ref$1 = classMap?.ref;
+    final _$$ref$1 = classMapArg?.ref;
     final _$$ref$2 = error.ref;
     final _$$ref$3 = completionHandler.ref;
     _objc_msgSend_18qun1e(
@@ -2653,12 +2653,12 @@ extension NativeInteropFlutterIntegrationCoreApiBridge$Methods
 
   /// echoAsyncDoubleWithADouble:error:completionHandler:
   void echoAsyncDoubleWithADouble(
-    objc.NSNumber? aDouble, {
+    objc.NSNumber? aDoubleArg, {
     required NativeInteropTestsError error,
     required objc.ObjCBlock<ffi.Void Function(objc.NSNumber?)> completionHandler,
   }) {
     final _$$ref = object$.ref;
-    final _$$ref$1 = aDouble?.ref;
+    final _$$ref$1 = aDoubleArg?.ref;
     final _$$ref$2 = error.ref;
     final _$$ref$3 = completionHandler.ref;
     _objc_msgSend_18qun1e(
@@ -2672,12 +2672,12 @@ extension NativeInteropFlutterIntegrationCoreApiBridge$Methods
 
   /// echoAsyncEnumListWithEnumList:error:completionHandler:
   void echoAsyncEnumListWithEnumList(
-    objc.NSArray? enumList, {
+    objc.NSArray? enumListArg, {
     required NativeInteropTestsError error,
     required objc.ObjCBlock<ffi.Void Function(objc.NSArray?)> completionHandler,
   }) {
     final _$$ref = object$.ref;
-    final _$$ref$1 = enumList?.ref;
+    final _$$ref$1 = enumListArg?.ref;
     final _$$ref$2 = error.ref;
     final _$$ref$3 = completionHandler.ref;
     _objc_msgSend_18qun1e(
@@ -2691,12 +2691,12 @@ extension NativeInteropFlutterIntegrationCoreApiBridge$Methods
 
   /// echoAsyncEnumMapWithEnumMap:error:completionHandler:
   void echoAsyncEnumMapWithEnumMap(
-    objc.NSDictionary? enumMap, {
+    objc.NSDictionary? enumMapArg, {
     required NativeInteropTestsError error,
     required objc.ObjCBlock<ffi.Void Function(objc.NSDictionary?)> completionHandler,
   }) {
     final _$$ref = object$.ref;
-    final _$$ref$1 = enumMap?.ref;
+    final _$$ref$1 = enumMapArg?.ref;
     final _$$ref$2 = error.ref;
     final _$$ref$3 = completionHandler.ref;
     _objc_msgSend_18qun1e(
@@ -2710,12 +2710,12 @@ extension NativeInteropFlutterIntegrationCoreApiBridge$Methods
 
   /// echoAsyncEnumWithAnEnum:error:completionHandler:
   void echoAsyncEnumWithAnEnum(
-    objc.NSNumber? anEnum, {
+    objc.NSNumber? anEnumArg, {
     required NativeInteropTestsError error,
     required objc.ObjCBlock<ffi.Void Function(objc.NSNumber?)> completionHandler,
   }) {
     final _$$ref = object$.ref;
-    final _$$ref$1 = anEnum?.ref;
+    final _$$ref$1 = anEnumArg?.ref;
     final _$$ref$2 = error.ref;
     final _$$ref$3 = completionHandler.ref;
     _objc_msgSend_18qun1e(
@@ -2729,13 +2729,13 @@ extension NativeInteropFlutterIntegrationCoreApiBridge$Methods
 
   /// echoAsyncFloat64ListWithList:error:completionHandler:
   void echoAsyncFloat64ListWithList(
-    NativeInteropTestsPigeonTypedData? list, {
+    NativeInteropTestsPigeonTypedData? listArg, {
     required NativeInteropTestsError error,
     required objc.ObjCBlock<ffi.Void Function(NativeInteropTestsPigeonTypedData?)>
     completionHandler,
   }) {
     final _$$ref = object$.ref;
-    final _$$ref$1 = list?.ref;
+    final _$$ref$1 = listArg?.ref;
     final _$$ref$2 = error.ref;
     final _$$ref$3 = completionHandler.ref;
     _objc_msgSend_18qun1e(
@@ -2749,13 +2749,13 @@ extension NativeInteropFlutterIntegrationCoreApiBridge$Methods
 
   /// echoAsyncInt32ListWithList:error:completionHandler:
   void echoAsyncInt32ListWithList(
-    NativeInteropTestsPigeonTypedData? list, {
+    NativeInteropTestsPigeonTypedData? listArg, {
     required NativeInteropTestsError error,
     required objc.ObjCBlock<ffi.Void Function(NativeInteropTestsPigeonTypedData?)>
     completionHandler,
   }) {
     final _$$ref = object$.ref;
-    final _$$ref$1 = list?.ref;
+    final _$$ref$1 = listArg?.ref;
     final _$$ref$2 = error.ref;
     final _$$ref$3 = completionHandler.ref;
     _objc_msgSend_18qun1e(
@@ -2769,13 +2769,13 @@ extension NativeInteropFlutterIntegrationCoreApiBridge$Methods
 
   /// echoAsyncInt64ListWithList:error:completionHandler:
   void echoAsyncInt64ListWithList(
-    NativeInteropTestsPigeonTypedData? list, {
+    NativeInteropTestsPigeonTypedData? listArg, {
     required NativeInteropTestsError error,
     required objc.ObjCBlock<ffi.Void Function(NativeInteropTestsPigeonTypedData?)>
     completionHandler,
   }) {
     final _$$ref = object$.ref;
-    final _$$ref$1 = list?.ref;
+    final _$$ref$1 = listArg?.ref;
     final _$$ref$2 = error.ref;
     final _$$ref$3 = completionHandler.ref;
     _objc_msgSend_18qun1e(
@@ -2789,12 +2789,12 @@ extension NativeInteropFlutterIntegrationCoreApiBridge$Methods
 
   /// echoAsyncIntMapWithIntMap:error:completionHandler:
   void echoAsyncIntMapWithIntMap(
-    objc.NSDictionary? intMap, {
+    objc.NSDictionary? intMapArg, {
     required NativeInteropTestsError error,
     required objc.ObjCBlock<ffi.Void Function(objc.NSDictionary?)> completionHandler,
   }) {
     final _$$ref = object$.ref;
-    final _$$ref$1 = intMap?.ref;
+    final _$$ref$1 = intMapArg?.ref;
     final _$$ref$2 = error.ref;
     final _$$ref$3 = completionHandler.ref;
     _objc_msgSend_18qun1e(
@@ -2808,12 +2808,12 @@ extension NativeInteropFlutterIntegrationCoreApiBridge$Methods
 
   /// echoAsyncIntWithAnInt:error:completionHandler:
   void echoAsyncIntWithAnInt(
-    objc.NSNumber? anInt, {
+    objc.NSNumber? anIntArg, {
     required NativeInteropTestsError error,
     required objc.ObjCBlock<ffi.Void Function(objc.NSNumber?)> completionHandler,
   }) {
     final _$$ref = object$.ref;
-    final _$$ref$1 = anInt?.ref;
+    final _$$ref$1 = anIntArg?.ref;
     final _$$ref$2 = error.ref;
     final _$$ref$3 = completionHandler.ref;
     _objc_msgSend_18qun1e(
@@ -2827,12 +2827,12 @@ extension NativeInteropFlutterIntegrationCoreApiBridge$Methods
 
   /// echoAsyncListWithList:error:completionHandler:
   void echoAsyncListWithList(
-    objc.NSArray? list, {
+    objc.NSArray? listArg, {
     required NativeInteropTestsError error,
     required objc.ObjCBlock<ffi.Void Function(objc.NSArray?)> completionHandler,
   }) {
     final _$$ref = object$.ref;
-    final _$$ref$1 = list?.ref;
+    final _$$ref$1 = listArg?.ref;
     final _$$ref$2 = error.ref;
     final _$$ref$3 = completionHandler.ref;
     _objc_msgSend_18qun1e(
@@ -2846,12 +2846,12 @@ extension NativeInteropFlutterIntegrationCoreApiBridge$Methods
 
   /// echoAsyncMapWithMap:error:completionHandler:
   void echoAsyncMapWithMap(
-    objc.NSDictionary? map, {
+    objc.NSDictionary? mapArg, {
     required NativeInteropTestsError error,
     required objc.ObjCBlock<ffi.Void Function(objc.NSDictionary?)> completionHandler,
   }) {
     final _$$ref = object$.ref;
-    final _$$ref$1 = map?.ref;
+    final _$$ref$1 = mapArg?.ref;
     final _$$ref$2 = error.ref;
     final _$$ref$3 = completionHandler.ref;
     _objc_msgSend_18qun1e(
@@ -2865,12 +2865,12 @@ extension NativeInteropFlutterIntegrationCoreApiBridge$Methods
 
   /// echoAsyncNativeInteropAllTypesWithEverything:error:completionHandler:
   void echoAsyncNativeInteropAllTypesWithEverything(
-    NativeInteropAllTypesBridge? everything, {
+    NativeInteropAllTypesBridge? everythingArg, {
     required NativeInteropTestsError error,
     required objc.ObjCBlock<ffi.Void Function(NativeInteropAllTypesBridge?)> completionHandler,
   }) {
     final _$$ref = object$.ref;
-    final _$$ref$1 = everything?.ref;
+    final _$$ref$1 = everythingArg?.ref;
     final _$$ref$2 = error.ref;
     final _$$ref$3 = completionHandler.ref;
     _objc_msgSend_18qun1e(
@@ -2884,12 +2884,12 @@ extension NativeInteropFlutterIntegrationCoreApiBridge$Methods
 
   /// echoAsyncNonNullClassListWithClassList:error:completionHandler:
   void echoAsyncNonNullClassListWithClassList(
-    objc.NSArray? classList, {
+    objc.NSArray? classListArg, {
     required NativeInteropTestsError error,
     required objc.ObjCBlock<ffi.Void Function(objc.NSArray?)> completionHandler,
   }) {
     final _$$ref = object$.ref;
-    final _$$ref$1 = classList?.ref;
+    final _$$ref$1 = classListArg?.ref;
     final _$$ref$2 = error.ref;
     final _$$ref$3 = completionHandler.ref;
     _objc_msgSend_18qun1e(
@@ -2903,12 +2903,12 @@ extension NativeInteropFlutterIntegrationCoreApiBridge$Methods
 
   /// echoAsyncNonNullEnumListWithEnumList:error:completionHandler:
   void echoAsyncNonNullEnumListWithEnumList(
-    objc.NSArray? enumList, {
+    objc.NSArray? enumListArg, {
     required NativeInteropTestsError error,
     required objc.ObjCBlock<ffi.Void Function(objc.NSArray?)> completionHandler,
   }) {
     final _$$ref = object$.ref;
-    final _$$ref$1 = enumList?.ref;
+    final _$$ref$1 = enumListArg?.ref;
     final _$$ref$2 = error.ref;
     final _$$ref$3 = completionHandler.ref;
     _objc_msgSend_18qun1e(
@@ -2922,12 +2922,12 @@ extension NativeInteropFlutterIntegrationCoreApiBridge$Methods
 
   /// echoAsyncNullableBoolWithABool:error:completionHandler:
   void echoAsyncNullableBoolWithABool(
-    objc.NSNumber? aBool, {
+    objc.NSNumber? aBoolArg, {
     required NativeInteropTestsError error,
     required objc.ObjCBlock<ffi.Void Function(objc.NSNumber?)> completionHandler,
   }) {
     final _$$ref = object$.ref;
-    final _$$ref$1 = aBool?.ref;
+    final _$$ref$1 = aBoolArg?.ref;
     final _$$ref$2 = error.ref;
     final _$$ref$3 = completionHandler.ref;
     _objc_msgSend_18qun1e(
@@ -2941,12 +2941,12 @@ extension NativeInteropFlutterIntegrationCoreApiBridge$Methods
 
   /// echoAsyncNullableClassListWithClassList:error:completionHandler:
   void echoAsyncNullableClassListWithClassList(
-    objc.NSArray? classList, {
+    objc.NSArray? classListArg, {
     required NativeInteropTestsError error,
     required objc.ObjCBlock<ffi.Void Function(objc.NSArray?)> completionHandler,
   }) {
     final _$$ref = object$.ref;
-    final _$$ref$1 = classList?.ref;
+    final _$$ref$1 = classListArg?.ref;
     final _$$ref$2 = error.ref;
     final _$$ref$3 = completionHandler.ref;
     _objc_msgSend_18qun1e(
@@ -2960,12 +2960,12 @@ extension NativeInteropFlutterIntegrationCoreApiBridge$Methods
 
   /// echoAsyncNullableClassMapWithClassMap:error:completionHandler:
   void echoAsyncNullableClassMapWithClassMap(
-    objc.NSDictionary? classMap, {
+    objc.NSDictionary? classMapArg, {
     required NativeInteropTestsError error,
     required objc.ObjCBlock<ffi.Void Function(objc.NSDictionary?)> completionHandler,
   }) {
     final _$$ref = object$.ref;
-    final _$$ref$1 = classMap?.ref;
+    final _$$ref$1 = classMapArg?.ref;
     final _$$ref$2 = error.ref;
     final _$$ref$3 = completionHandler.ref;
     _objc_msgSend_18qun1e(
@@ -2979,12 +2979,12 @@ extension NativeInteropFlutterIntegrationCoreApiBridge$Methods
 
   /// echoAsyncNullableDoubleWithADouble:error:completionHandler:
   void echoAsyncNullableDoubleWithADouble(
-    objc.NSNumber? aDouble, {
+    objc.NSNumber? aDoubleArg, {
     required NativeInteropTestsError error,
     required objc.ObjCBlock<ffi.Void Function(objc.NSNumber?)> completionHandler,
   }) {
     final _$$ref = object$.ref;
-    final _$$ref$1 = aDouble?.ref;
+    final _$$ref$1 = aDoubleArg?.ref;
     final _$$ref$2 = error.ref;
     final _$$ref$3 = completionHandler.ref;
     _objc_msgSend_18qun1e(
@@ -2998,12 +2998,12 @@ extension NativeInteropFlutterIntegrationCoreApiBridge$Methods
 
   /// echoAsyncNullableEnumListWithEnumList:error:completionHandler:
   void echoAsyncNullableEnumListWithEnumList(
-    objc.NSArray? enumList, {
+    objc.NSArray? enumListArg, {
     required NativeInteropTestsError error,
     required objc.ObjCBlock<ffi.Void Function(objc.NSArray?)> completionHandler,
   }) {
     final _$$ref = object$.ref;
-    final _$$ref$1 = enumList?.ref;
+    final _$$ref$1 = enumListArg?.ref;
     final _$$ref$2 = error.ref;
     final _$$ref$3 = completionHandler.ref;
     _objc_msgSend_18qun1e(
@@ -3017,12 +3017,12 @@ extension NativeInteropFlutterIntegrationCoreApiBridge$Methods
 
   /// echoAsyncNullableEnumMapWithEnumMap:error:completionHandler:
   void echoAsyncNullableEnumMapWithEnumMap(
-    objc.NSDictionary? enumMap, {
+    objc.NSDictionary? enumMapArg, {
     required NativeInteropTestsError error,
     required objc.ObjCBlock<ffi.Void Function(objc.NSDictionary?)> completionHandler,
   }) {
     final _$$ref = object$.ref;
-    final _$$ref$1 = enumMap?.ref;
+    final _$$ref$1 = enumMapArg?.ref;
     final _$$ref$2 = error.ref;
     final _$$ref$3 = completionHandler.ref;
     _objc_msgSend_18qun1e(
@@ -3036,12 +3036,12 @@ extension NativeInteropFlutterIntegrationCoreApiBridge$Methods
 
   /// echoAsyncNullableEnumWithAnEnum:error:completionHandler:
   void echoAsyncNullableEnumWithAnEnum(
-    objc.NSNumber? anEnum, {
+    objc.NSNumber? anEnumArg, {
     required NativeInteropTestsError error,
     required objc.ObjCBlock<ffi.Void Function(objc.NSNumber?)> completionHandler,
   }) {
     final _$$ref = object$.ref;
-    final _$$ref$1 = anEnum?.ref;
+    final _$$ref$1 = anEnumArg?.ref;
     final _$$ref$2 = error.ref;
     final _$$ref$3 = completionHandler.ref;
     _objc_msgSend_18qun1e(
@@ -3055,13 +3055,13 @@ extension NativeInteropFlutterIntegrationCoreApiBridge$Methods
 
   /// echoAsyncNullableFloat64ListWithList:error:completionHandler:
   void echoAsyncNullableFloat64ListWithList(
-    NativeInteropTestsPigeonTypedData? list, {
+    NativeInteropTestsPigeonTypedData? listArg, {
     required NativeInteropTestsError error,
     required objc.ObjCBlock<ffi.Void Function(NativeInteropTestsPigeonTypedData?)>
     completionHandler,
   }) {
     final _$$ref = object$.ref;
-    final _$$ref$1 = list?.ref;
+    final _$$ref$1 = listArg?.ref;
     final _$$ref$2 = error.ref;
     final _$$ref$3 = completionHandler.ref;
     _objc_msgSend_18qun1e(
@@ -3075,13 +3075,13 @@ extension NativeInteropFlutterIntegrationCoreApiBridge$Methods
 
   /// echoAsyncNullableInt32ListWithList:error:completionHandler:
   void echoAsyncNullableInt32ListWithList(
-    NativeInteropTestsPigeonTypedData? list, {
+    NativeInteropTestsPigeonTypedData? listArg, {
     required NativeInteropTestsError error,
     required objc.ObjCBlock<ffi.Void Function(NativeInteropTestsPigeonTypedData?)>
     completionHandler,
   }) {
     final _$$ref = object$.ref;
-    final _$$ref$1 = list?.ref;
+    final _$$ref$1 = listArg?.ref;
     final _$$ref$2 = error.ref;
     final _$$ref$3 = completionHandler.ref;
     _objc_msgSend_18qun1e(
@@ -3095,13 +3095,13 @@ extension NativeInteropFlutterIntegrationCoreApiBridge$Methods
 
   /// echoAsyncNullableInt64ListWithList:error:completionHandler:
   void echoAsyncNullableInt64ListWithList(
-    NativeInteropTestsPigeonTypedData? list, {
+    NativeInteropTestsPigeonTypedData? listArg, {
     required NativeInteropTestsError error,
     required objc.ObjCBlock<ffi.Void Function(NativeInteropTestsPigeonTypedData?)>
     completionHandler,
   }) {
     final _$$ref = object$.ref;
-    final _$$ref$1 = list?.ref;
+    final _$$ref$1 = listArg?.ref;
     final _$$ref$2 = error.ref;
     final _$$ref$3 = completionHandler.ref;
     _objc_msgSend_18qun1e(
@@ -3115,12 +3115,12 @@ extension NativeInteropFlutterIntegrationCoreApiBridge$Methods
 
   /// echoAsyncNullableIntMapWithIntMap:error:completionHandler:
   void echoAsyncNullableIntMapWithIntMap(
-    objc.NSDictionary? intMap, {
+    objc.NSDictionary? intMapArg, {
     required NativeInteropTestsError error,
     required objc.ObjCBlock<ffi.Void Function(objc.NSDictionary?)> completionHandler,
   }) {
     final _$$ref = object$.ref;
-    final _$$ref$1 = intMap?.ref;
+    final _$$ref$1 = intMapArg?.ref;
     final _$$ref$2 = error.ref;
     final _$$ref$3 = completionHandler.ref;
     _objc_msgSend_18qun1e(
@@ -3134,12 +3134,12 @@ extension NativeInteropFlutterIntegrationCoreApiBridge$Methods
 
   /// echoAsyncNullableIntWithAnInt:error:completionHandler:
   void echoAsyncNullableIntWithAnInt(
-    objc.NSNumber? anInt, {
+    objc.NSNumber? anIntArg, {
     required NativeInteropTestsError error,
     required objc.ObjCBlock<ffi.Void Function(objc.NSNumber?)> completionHandler,
   }) {
     final _$$ref = object$.ref;
-    final _$$ref$1 = anInt?.ref;
+    final _$$ref$1 = anIntArg?.ref;
     final _$$ref$2 = error.ref;
     final _$$ref$3 = completionHandler.ref;
     _objc_msgSend_18qun1e(
@@ -3153,12 +3153,12 @@ extension NativeInteropFlutterIntegrationCoreApiBridge$Methods
 
   /// echoAsyncNullableListWithList:error:completionHandler:
   void echoAsyncNullableListWithList(
-    objc.NSArray? list, {
+    objc.NSArray? listArg, {
     required NativeInteropTestsError error,
     required objc.ObjCBlock<ffi.Void Function(objc.NSArray?)> completionHandler,
   }) {
     final _$$ref = object$.ref;
-    final _$$ref$1 = list?.ref;
+    final _$$ref$1 = listArg?.ref;
     final _$$ref$2 = error.ref;
     final _$$ref$3 = completionHandler.ref;
     _objc_msgSend_18qun1e(
@@ -3172,12 +3172,12 @@ extension NativeInteropFlutterIntegrationCoreApiBridge$Methods
 
   /// echoAsyncNullableMapWithMap:error:completionHandler:
   void echoAsyncNullableMapWithMap(
-    objc.NSDictionary? map, {
+    objc.NSDictionary? mapArg, {
     required NativeInteropTestsError error,
     required objc.ObjCBlock<ffi.Void Function(objc.NSDictionary?)> completionHandler,
   }) {
     final _$$ref = object$.ref;
-    final _$$ref$1 = map?.ref;
+    final _$$ref$1 = mapArg?.ref;
     final _$$ref$2 = error.ref;
     final _$$ref$3 = completionHandler.ref;
     _objc_msgSend_18qun1e(
@@ -3191,13 +3191,13 @@ extension NativeInteropFlutterIntegrationCoreApiBridge$Methods
 
   /// echoAsyncNullableNativeInteropAllNullableTypesWithEverything:error:completionHandler:
   void echoAsyncNullableNativeInteropAllNullableTypesWithEverything(
-    NativeInteropAllNullableTypesBridge? everything, {
+    NativeInteropAllNullableTypesBridge? everythingArg, {
     required NativeInteropTestsError error,
     required objc.ObjCBlock<ffi.Void Function(NativeInteropAllNullableTypesBridge?)>
     completionHandler,
   }) {
     final _$$ref = object$.ref;
-    final _$$ref$1 = everything?.ref;
+    final _$$ref$1 = everythingArg?.ref;
     final _$$ref$2 = error.ref;
     final _$$ref$3 = completionHandler.ref;
     _objc_msgSend_18qun1e(
@@ -3211,13 +3211,13 @@ extension NativeInteropFlutterIntegrationCoreApiBridge$Methods
 
   /// echoAsyncNullableNativeInteropAllNullableTypesWithoutRecursionWithEverything:error:completionHandler:
   void echoAsyncNullableNativeInteropAllNullableTypesWithoutRecursionWithEverything(
-    NativeInteropAllNullableTypesWithoutRecursionBridge? everything, {
+    NativeInteropAllNullableTypesWithoutRecursionBridge? everythingArg, {
     required NativeInteropTestsError error,
     required objc.ObjCBlock<ffi.Void Function(NativeInteropAllNullableTypesWithoutRecursionBridge?)>
     completionHandler,
   }) {
     final _$$ref = object$.ref;
-    final _$$ref$1 = everything?.ref;
+    final _$$ref$1 = everythingArg?.ref;
     final _$$ref$2 = error.ref;
     final _$$ref$3 = completionHandler.ref;
     _objc_msgSend_18qun1e(
@@ -3231,12 +3231,12 @@ extension NativeInteropFlutterIntegrationCoreApiBridge$Methods
 
   /// echoAsyncNullableNonNullClassListWithClassList:error:completionHandler:
   void echoAsyncNullableNonNullClassListWithClassList(
-    objc.NSArray? classList, {
+    objc.NSArray? classListArg, {
     required NativeInteropTestsError error,
     required objc.ObjCBlock<ffi.Void Function(objc.NSArray?)> completionHandler,
   }) {
     final _$$ref = object$.ref;
-    final _$$ref$1 = classList?.ref;
+    final _$$ref$1 = classListArg?.ref;
     final _$$ref$2 = error.ref;
     final _$$ref$3 = completionHandler.ref;
     _objc_msgSend_18qun1e(
@@ -3250,12 +3250,12 @@ extension NativeInteropFlutterIntegrationCoreApiBridge$Methods
 
   /// echoAsyncNullableNonNullEnumListWithEnumList:error:completionHandler:
   void echoAsyncNullableNonNullEnumListWithEnumList(
-    objc.NSArray? enumList, {
+    objc.NSArray? enumListArg, {
     required NativeInteropTestsError error,
     required objc.ObjCBlock<ffi.Void Function(objc.NSArray?)> completionHandler,
   }) {
     final _$$ref = object$.ref;
-    final _$$ref$1 = enumList?.ref;
+    final _$$ref$1 = enumListArg?.ref;
     final _$$ref$2 = error.ref;
     final _$$ref$3 = completionHandler.ref;
     _objc_msgSend_18qun1e(
@@ -3269,12 +3269,12 @@ extension NativeInteropFlutterIntegrationCoreApiBridge$Methods
 
   /// echoAsyncNullableObjectWithAnObject:error:completionHandler:
   void echoAsyncNullableObjectWithAnObject(
-    objc.NSObject? anObject, {
+    objc.NSObject? anObjectArg, {
     required NativeInteropTestsError error,
     required objc.ObjCBlock<ffi.Void Function(objc.NSObject?)> completionHandler,
   }) {
     final _$$ref = object$.ref;
-    final _$$ref$1 = anObject?.ref;
+    final _$$ref$1 = anObjectArg?.ref;
     final _$$ref$2 = error.ref;
     final _$$ref$3 = completionHandler.ref;
     _objc_msgSend_18qun1e(
@@ -3288,12 +3288,12 @@ extension NativeInteropFlutterIntegrationCoreApiBridge$Methods
 
   /// echoAsyncNullableStringMapWithStringMap:error:completionHandler:
   void echoAsyncNullableStringMapWithStringMap(
-    objc.NSDictionary? stringMap, {
+    objc.NSDictionary? stringMapArg, {
     required NativeInteropTestsError error,
     required objc.ObjCBlock<ffi.Void Function(objc.NSDictionary?)> completionHandler,
   }) {
     final _$$ref = object$.ref;
-    final _$$ref$1 = stringMap?.ref;
+    final _$$ref$1 = stringMapArg?.ref;
     final _$$ref$2 = error.ref;
     final _$$ref$3 = completionHandler.ref;
     _objc_msgSend_18qun1e(
@@ -3307,12 +3307,12 @@ extension NativeInteropFlutterIntegrationCoreApiBridge$Methods
 
   /// echoAsyncNullableStringWithAString:error:completionHandler:
   void echoAsyncNullableStringWithAString(
-    objc.NSString? aString, {
+    objc.NSString? aStringArg, {
     required NativeInteropTestsError error,
     required objc.ObjCBlock<ffi.Void Function(objc.NSString?)> completionHandler,
   }) {
     final _$$ref = object$.ref;
-    final _$$ref$1 = aString?.ref;
+    final _$$ref$1 = aStringArg?.ref;
     final _$$ref$2 = error.ref;
     final _$$ref$3 = completionHandler.ref;
     _objc_msgSend_18qun1e(
@@ -3326,13 +3326,13 @@ extension NativeInteropFlutterIntegrationCoreApiBridge$Methods
 
   /// echoAsyncNullableUint8ListWithList:error:completionHandler:
   void echoAsyncNullableUint8ListWithList(
-    NativeInteropTestsPigeonTypedData? list, {
+    NativeInteropTestsPigeonTypedData? listArg, {
     required NativeInteropTestsError error,
     required objc.ObjCBlock<ffi.Void Function(NativeInteropTestsPigeonTypedData?)>
     completionHandler,
   }) {
     final _$$ref = object$.ref;
-    final _$$ref$1 = list?.ref;
+    final _$$ref$1 = listArg?.ref;
     final _$$ref$2 = error.ref;
     final _$$ref$3 = completionHandler.ref;
     _objc_msgSend_18qun1e(
@@ -3346,12 +3346,12 @@ extension NativeInteropFlutterIntegrationCoreApiBridge$Methods
 
   /// echoAsyncObjectWithAnObject:error:completionHandler:
   void echoAsyncObjectWithAnObject(
-    objc.NSObject? anObject, {
+    objc.NSObject? anObjectArg, {
     required NativeInteropTestsError error,
     required objc.ObjCBlock<ffi.Void Function(objc.NSObject?)> completionHandler,
   }) {
     final _$$ref = object$.ref;
-    final _$$ref$1 = anObject?.ref;
+    final _$$ref$1 = anObjectArg?.ref;
     final _$$ref$2 = error.ref;
     final _$$ref$3 = completionHandler.ref;
     _objc_msgSend_18qun1e(
@@ -3365,12 +3365,12 @@ extension NativeInteropFlutterIntegrationCoreApiBridge$Methods
 
   /// echoAsyncStringMapWithStringMap:error:completionHandler:
   void echoAsyncStringMapWithStringMap(
-    objc.NSDictionary? stringMap, {
+    objc.NSDictionary? stringMapArg, {
     required NativeInteropTestsError error,
     required objc.ObjCBlock<ffi.Void Function(objc.NSDictionary?)> completionHandler,
   }) {
     final _$$ref = object$.ref;
-    final _$$ref$1 = stringMap?.ref;
+    final _$$ref$1 = stringMapArg?.ref;
     final _$$ref$2 = error.ref;
     final _$$ref$3 = completionHandler.ref;
     _objc_msgSend_18qun1e(
@@ -3384,12 +3384,12 @@ extension NativeInteropFlutterIntegrationCoreApiBridge$Methods
 
   /// echoAsyncStringWithAString:error:completionHandler:
   void echoAsyncStringWithAString(
-    objc.NSString? aString, {
+    objc.NSString? aStringArg, {
     required NativeInteropTestsError error,
     required objc.ObjCBlock<ffi.Void Function(objc.NSString?)> completionHandler,
   }) {
     final _$$ref = object$.ref;
-    final _$$ref$1 = aString?.ref;
+    final _$$ref$1 = aStringArg?.ref;
     final _$$ref$2 = error.ref;
     final _$$ref$3 = completionHandler.ref;
     _objc_msgSend_18qun1e(
@@ -3403,13 +3403,13 @@ extension NativeInteropFlutterIntegrationCoreApiBridge$Methods
 
   /// echoAsyncUint8ListWithList:error:completionHandler:
   void echoAsyncUint8ListWithList(
-    NativeInteropTestsPigeonTypedData? list, {
+    NativeInteropTestsPigeonTypedData? listArg, {
     required NativeInteropTestsError error,
     required objc.ObjCBlock<ffi.Void Function(NativeInteropTestsPigeonTypedData?)>
     completionHandler,
   }) {
     final _$$ref = object$.ref;
-    final _$$ref$1 = list?.ref;
+    final _$$ref$1 = listArg?.ref;
     final _$$ref$2 = error.ref;
     final _$$ref$3 = completionHandler.ref;
     _objc_msgSend_18qun1e(
@@ -3422,9 +3422,12 @@ extension NativeInteropFlutterIntegrationCoreApiBridge$Methods
   }
 
   /// Returns the passed boolean, to test serialization and deserialization.
-  objc.NSNumber? echoBoolWithABool(objc.NSNumber? aBool, {required NativeInteropTestsError error}) {
+  objc.NSNumber? echoBoolWithABool(
+    objc.NSNumber? aBoolArg, {
+    required NativeInteropTestsError error,
+  }) {
     final _$$ref = object$.ref;
-    final _$$ref$1 = aBool?.ref;
+    final _$$ref$1 = aBoolArg?.ref;
     final _$$ref$2 = error.ref;
     final $ret = _objc_msgSend_15qeuct(
       _$$ref.pointer,
@@ -3437,11 +3440,11 @@ extension NativeInteropFlutterIntegrationCoreApiBridge$Methods
 
   /// Returns the passed list, to test serialization and deserialization.
   objc.NSArray? echoClassListWithClassList(
-    objc.NSArray? classList, {
+    objc.NSArray? classListArg, {
     required NativeInteropTestsError error,
   }) {
     final _$$ref = object$.ref;
-    final _$$ref$1 = classList?.ref;
+    final _$$ref$1 = classListArg?.ref;
     final _$$ref$2 = error.ref;
     final $ret = _objc_msgSend_15qeuct(
       _$$ref.pointer,
@@ -3454,11 +3457,11 @@ extension NativeInteropFlutterIntegrationCoreApiBridge$Methods
 
   /// Returns the passed map, to test serialization and deserialization.
   objc.NSDictionary? echoClassMapWithClassMap(
-    objc.NSDictionary? classMap, {
+    objc.NSDictionary? classMapArg, {
     required NativeInteropTestsError error,
   }) {
     final _$$ref = object$.ref;
-    final _$$ref$1 = classMap?.ref;
+    final _$$ref$1 = classMapArg?.ref;
     final _$$ref$2 = error.ref;
     final $ret = _objc_msgSend_15qeuct(
       _$$ref.pointer,
@@ -3473,11 +3476,11 @@ extension NativeInteropFlutterIntegrationCoreApiBridge$Methods
 
   /// Returns the passed double, to test serialization and deserialization.
   objc.NSNumber? echoDoubleWithADouble(
-    objc.NSNumber? aDouble, {
+    objc.NSNumber? aDoubleArg, {
     required NativeInteropTestsError error,
   }) {
     final _$$ref = object$.ref;
-    final _$$ref$1 = aDouble?.ref;
+    final _$$ref$1 = aDoubleArg?.ref;
     final _$$ref$2 = error.ref;
     final $ret = _objc_msgSend_15qeuct(
       _$$ref.pointer,
@@ -3490,11 +3493,11 @@ extension NativeInteropFlutterIntegrationCoreApiBridge$Methods
 
   /// Returns the passed list, to test serialization and deserialization.
   objc.NSArray? echoEnumListWithEnumList(
-    objc.NSArray? enumList, {
+    objc.NSArray? enumListArg, {
     required NativeInteropTestsError error,
   }) {
     final _$$ref = object$.ref;
-    final _$$ref$1 = enumList?.ref;
+    final _$$ref$1 = enumListArg?.ref;
     final _$$ref$2 = error.ref;
     final $ret = _objc_msgSend_15qeuct(
       _$$ref.pointer,
@@ -3507,11 +3510,11 @@ extension NativeInteropFlutterIntegrationCoreApiBridge$Methods
 
   /// Returns the passed map, to test serialization and deserialization.
   objc.NSDictionary? echoEnumMapWithEnumMap(
-    objc.NSDictionary? enumMap, {
+    objc.NSDictionary? enumMapArg, {
     required NativeInteropTestsError error,
   }) {
     final _$$ref = object$.ref;
-    final _$$ref$1 = enumMap?.ref;
+    final _$$ref$1 = enumMapArg?.ref;
     final _$$ref$2 = error.ref;
     final $ret = _objc_msgSend_15qeuct(
       _$$ref.pointer,
@@ -3526,11 +3529,11 @@ extension NativeInteropFlutterIntegrationCoreApiBridge$Methods
 
   /// Returns the passed enum to test serialization and deserialization.
   objc.NSNumber? echoEnumWithAnEnum(
-    objc.NSNumber? anEnum, {
+    objc.NSNumber? anEnumArg, {
     required NativeInteropTestsError error,
   }) {
     final _$$ref = object$.ref;
-    final _$$ref$1 = anEnum?.ref;
+    final _$$ref$1 = anEnumArg?.ref;
     final _$$ref$2 = error.ref;
     final $ret = _objc_msgSend_15qeuct(
       _$$ref.pointer,
@@ -3543,11 +3546,11 @@ extension NativeInteropFlutterIntegrationCoreApiBridge$Methods
 
   /// Returns the passed float64 list, to test serialization and deserialization.
   NativeInteropTestsPigeonTypedData? echoFloat64ListWithList(
-    NativeInteropTestsPigeonTypedData? list, {
+    NativeInteropTestsPigeonTypedData? listArg, {
     required NativeInteropTestsError error,
   }) {
     final _$$ref = object$.ref;
-    final _$$ref$1 = list?.ref;
+    final _$$ref$1 = listArg?.ref;
     final _$$ref$2 = error.ref;
     final $ret = _objc_msgSend_15qeuct(
       _$$ref.pointer,
@@ -3562,11 +3565,11 @@ extension NativeInteropFlutterIntegrationCoreApiBridge$Methods
 
   /// Returns the passed int32 list, to test serialization and deserialization.
   NativeInteropTestsPigeonTypedData? echoInt32ListWithList(
-    NativeInteropTestsPigeonTypedData? list, {
+    NativeInteropTestsPigeonTypedData? listArg, {
     required NativeInteropTestsError error,
   }) {
     final _$$ref = object$.ref;
-    final _$$ref$1 = list?.ref;
+    final _$$ref$1 = listArg?.ref;
     final _$$ref$2 = error.ref;
     final $ret = _objc_msgSend_15qeuct(
       _$$ref.pointer,
@@ -3581,11 +3584,11 @@ extension NativeInteropFlutterIntegrationCoreApiBridge$Methods
 
   /// Returns the passed int64 list, to test serialization and deserialization.
   NativeInteropTestsPigeonTypedData? echoInt64ListWithList(
-    NativeInteropTestsPigeonTypedData? list, {
+    NativeInteropTestsPigeonTypedData? listArg, {
     required NativeInteropTestsError error,
   }) {
     final _$$ref = object$.ref;
-    final _$$ref$1 = list?.ref;
+    final _$$ref$1 = listArg?.ref;
     final _$$ref$2 = error.ref;
     final $ret = _objc_msgSend_15qeuct(
       _$$ref.pointer,
@@ -3600,11 +3603,11 @@ extension NativeInteropFlutterIntegrationCoreApiBridge$Methods
 
   /// Returns the passed map, to test serialization and deserialization.
   objc.NSDictionary? echoIntMapWithIntMap(
-    objc.NSDictionary? intMap, {
+    objc.NSDictionary? intMapArg, {
     required NativeInteropTestsError error,
   }) {
     final _$$ref = object$.ref;
-    final _$$ref$1 = intMap?.ref;
+    final _$$ref$1 = intMapArg?.ref;
     final _$$ref$2 = error.ref;
     final $ret = _objc_msgSend_15qeuct(
       _$$ref.pointer,
@@ -3618,9 +3621,12 @@ extension NativeInteropFlutterIntegrationCoreApiBridge$Methods
   }
 
   /// Returns the passed int, to test serialization and deserialization.
-  objc.NSNumber? echoIntWithAnInt(objc.NSNumber? anInt, {required NativeInteropTestsError error}) {
+  objc.NSNumber? echoIntWithAnInt(
+    objc.NSNumber? anIntArg, {
+    required NativeInteropTestsError error,
+  }) {
     final _$$ref = object$.ref;
-    final _$$ref$1 = anInt?.ref;
+    final _$$ref$1 = anIntArg?.ref;
     final _$$ref$2 = error.ref;
     final $ret = _objc_msgSend_15qeuct(
       _$$ref.pointer,
@@ -3632,9 +3638,9 @@ extension NativeInteropFlutterIntegrationCoreApiBridge$Methods
   }
 
   /// Returns the passed list, to test serialization and deserialization.
-  objc.NSArray? echoListWithList(objc.NSArray? list, {required NativeInteropTestsError error}) {
+  objc.NSArray? echoListWithList(objc.NSArray? listArg, {required NativeInteropTestsError error}) {
     final _$$ref = object$.ref;
-    final _$$ref$1 = list?.ref;
+    final _$$ref$1 = listArg?.ref;
     final _$$ref$2 = error.ref;
     final $ret = _objc_msgSend_15qeuct(
       _$$ref.pointer,
@@ -3647,11 +3653,11 @@ extension NativeInteropFlutterIntegrationCoreApiBridge$Methods
 
   /// Returns the passed map, to test serialization and deserialization.
   objc.NSDictionary? echoMapWithMap(
-    objc.NSDictionary? map, {
+    objc.NSDictionary? mapArg, {
     required NativeInteropTestsError error,
   }) {
     final _$$ref = object$.ref;
-    final _$$ref$1 = map?.ref;
+    final _$$ref$1 = mapArg?.ref;
     final _$$ref$2 = error.ref;
     final $ret = _objc_msgSend_15qeuct(
       _$$ref.pointer,
@@ -3666,11 +3672,11 @@ extension NativeInteropFlutterIntegrationCoreApiBridge$Methods
 
   /// Returns the passed object, to test serialization and deserialization.
   NativeInteropAllNullableTypesBridge? echoNativeInteropAllNullableTypesWithEverything(
-    NativeInteropAllNullableTypesBridge? everything, {
+    NativeInteropAllNullableTypesBridge? everythingArg, {
     required NativeInteropTestsError error,
   }) {
     final _$$ref = object$.ref;
-    final _$$ref$1 = everything?.ref;
+    final _$$ref$1 = everythingArg?.ref;
     final _$$ref$2 = error.ref;
     final $ret = _objc_msgSend_15qeuct(
       _$$ref.pointer,
@@ -3686,11 +3692,11 @@ extension NativeInteropFlutterIntegrationCoreApiBridge$Methods
   /// Returns the passed object, to test serialization and deserialization.
   NativeInteropAllNullableTypesWithoutRecursionBridge?
   echoNativeInteropAllNullableTypesWithoutRecursionWithEverything(
-    NativeInteropAllNullableTypesWithoutRecursionBridge? everything, {
+    NativeInteropAllNullableTypesWithoutRecursionBridge? everythingArg, {
     required NativeInteropTestsError error,
   }) {
     final _$$ref = object$.ref;
-    final _$$ref$1 = everything?.ref;
+    final _$$ref$1 = everythingArg?.ref;
     final _$$ref$2 = error.ref;
     final $ret = _objc_msgSend_15qeuct(
       _$$ref.pointer,
@@ -3709,11 +3715,11 @@ extension NativeInteropFlutterIntegrationCoreApiBridge$Methods
 
   /// Returns the passed object, to test serialization and deserialization.
   NativeInteropAllTypesBridge? echoNativeInteropAllTypesWithEverything(
-    NativeInteropAllTypesBridge? everything, {
+    NativeInteropAllTypesBridge? everythingArg, {
     required NativeInteropTestsError error,
   }) {
     final _$$ref = object$.ref;
-    final _$$ref$1 = everything?.ref;
+    final _$$ref$1 = everythingArg?.ref;
     final _$$ref$2 = error.ref;
     final $ret = _objc_msgSend_15qeuct(
       _$$ref.pointer,
@@ -3728,11 +3734,11 @@ extension NativeInteropFlutterIntegrationCoreApiBridge$Methods
 
   /// Returns the passed enum to test serialization and deserialization.
   objc.NSNumber? echoNativeInteropAnotherEnumWithAnotherEnum(
-    objc.NSNumber? anotherEnum, {
+    objc.NSNumber? anotherEnumArg, {
     required NativeInteropTestsError error,
   }) {
     final _$$ref = object$.ref;
-    final _$$ref$1 = anotherEnum?.ref;
+    final _$$ref$1 = anotherEnumArg?.ref;
     final _$$ref$2 = error.ref;
     final $ret = _objc_msgSend_15qeuct(
       _$$ref.pointer,
@@ -3745,11 +3751,11 @@ extension NativeInteropFlutterIntegrationCoreApiBridge$Methods
 
   /// Returns the passed list, to test serialization and deserialization.
   objc.NSArray? echoNonNullClassListWithClassList(
-    objc.NSArray? classList, {
+    objc.NSArray? classListArg, {
     required NativeInteropTestsError error,
   }) {
     final _$$ref = object$.ref;
-    final _$$ref$1 = classList?.ref;
+    final _$$ref$1 = classListArg?.ref;
     final _$$ref$2 = error.ref;
     final $ret = _objc_msgSend_15qeuct(
       _$$ref.pointer,
@@ -3762,11 +3768,11 @@ extension NativeInteropFlutterIntegrationCoreApiBridge$Methods
 
   /// Returns the passed map, to test serialization and deserialization.
   objc.NSDictionary? echoNonNullClassMapWithClassMap(
-    objc.NSDictionary? classMap, {
+    objc.NSDictionary? classMapArg, {
     required NativeInteropTestsError error,
   }) {
     final _$$ref = object$.ref;
-    final _$$ref$1 = classMap?.ref;
+    final _$$ref$1 = classMapArg?.ref;
     final _$$ref$2 = error.ref;
     final $ret = _objc_msgSend_15qeuct(
       _$$ref.pointer,
@@ -3781,11 +3787,11 @@ extension NativeInteropFlutterIntegrationCoreApiBridge$Methods
 
   /// Returns the passed list, to test serialization and deserialization.
   objc.NSArray? echoNonNullEnumListWithEnumList(
-    objc.NSArray? enumList, {
+    objc.NSArray? enumListArg, {
     required NativeInteropTestsError error,
   }) {
     final _$$ref = object$.ref;
-    final _$$ref$1 = enumList?.ref;
+    final _$$ref$1 = enumListArg?.ref;
     final _$$ref$2 = error.ref;
     final $ret = _objc_msgSend_15qeuct(
       _$$ref.pointer,
@@ -3798,11 +3804,11 @@ extension NativeInteropFlutterIntegrationCoreApiBridge$Methods
 
   /// Returns the passed map, to test serialization and deserialization.
   objc.NSDictionary? echoNonNullEnumMapWithEnumMap(
-    objc.NSDictionary? enumMap, {
+    objc.NSDictionary? enumMapArg, {
     required NativeInteropTestsError error,
   }) {
     final _$$ref = object$.ref;
-    final _$$ref$1 = enumMap?.ref;
+    final _$$ref$1 = enumMapArg?.ref;
     final _$$ref$2 = error.ref;
     final $ret = _objc_msgSend_15qeuct(
       _$$ref.pointer,
@@ -3817,11 +3823,11 @@ extension NativeInteropFlutterIntegrationCoreApiBridge$Methods
 
   /// Returns the passed map, to test serialization and deserialization.
   objc.NSDictionary? echoNonNullIntMapWithIntMap(
-    objc.NSDictionary? intMap, {
+    objc.NSDictionary? intMapArg, {
     required NativeInteropTestsError error,
   }) {
     final _$$ref = object$.ref;
-    final _$$ref$1 = intMap?.ref;
+    final _$$ref$1 = intMapArg?.ref;
     final _$$ref$2 = error.ref;
     final $ret = _objc_msgSend_15qeuct(
       _$$ref.pointer,
@@ -3836,11 +3842,11 @@ extension NativeInteropFlutterIntegrationCoreApiBridge$Methods
 
   /// Returns the passed map, to test serialization and deserialization.
   objc.NSDictionary? echoNonNullStringMapWithStringMap(
-    objc.NSDictionary? stringMap, {
+    objc.NSDictionary? stringMapArg, {
     required NativeInteropTestsError error,
   }) {
     final _$$ref = object$.ref;
-    final _$$ref$1 = stringMap?.ref;
+    final _$$ref$1 = stringMapArg?.ref;
     final _$$ref$2 = error.ref;
     final $ret = _objc_msgSend_15qeuct(
       _$$ref.pointer,
@@ -3855,11 +3861,11 @@ extension NativeInteropFlutterIntegrationCoreApiBridge$Methods
 
   /// Returns the passed boolean, to test serialization and deserialization.
   objc.NSNumber? echoNullableBoolWithABool(
-    objc.NSNumber? aBool, {
+    objc.NSNumber? aBoolArg, {
     required NativeInteropTestsError error,
   }) {
     final _$$ref = object$.ref;
-    final _$$ref$1 = aBool?.ref;
+    final _$$ref$1 = aBoolArg?.ref;
     final _$$ref$2 = error.ref;
     final $ret = _objc_msgSend_15qeuct(
       _$$ref.pointer,
@@ -3872,11 +3878,11 @@ extension NativeInteropFlutterIntegrationCoreApiBridge$Methods
 
   /// Returns the passed list, to test serialization and deserialization.
   objc.NSArray? echoNullableClassListWithClassList(
-    objc.NSArray? classList, {
+    objc.NSArray? classListArg, {
     required NativeInteropTestsError error,
   }) {
     final _$$ref = object$.ref;
-    final _$$ref$1 = classList?.ref;
+    final _$$ref$1 = classListArg?.ref;
     final _$$ref$2 = error.ref;
     final $ret = _objc_msgSend_15qeuct(
       _$$ref.pointer,
@@ -3889,11 +3895,11 @@ extension NativeInteropFlutterIntegrationCoreApiBridge$Methods
 
   /// Returns the passed map, to test serialization and deserialization.
   objc.NSDictionary? echoNullableClassMapWithClassMap(
-    objc.NSDictionary? classMap, {
+    objc.NSDictionary? classMapArg, {
     required NativeInteropTestsError error,
   }) {
     final _$$ref = object$.ref;
-    final _$$ref$1 = classMap?.ref;
+    final _$$ref$1 = classMapArg?.ref;
     final _$$ref$2 = error.ref;
     final $ret = _objc_msgSend_15qeuct(
       _$$ref.pointer,
@@ -3908,11 +3914,11 @@ extension NativeInteropFlutterIntegrationCoreApiBridge$Methods
 
   /// Returns the passed double, to test serialization and deserialization.
   objc.NSNumber? echoNullableDoubleWithADouble(
-    objc.NSNumber? aDouble, {
+    objc.NSNumber? aDoubleArg, {
     required NativeInteropTestsError error,
   }) {
     final _$$ref = object$.ref;
-    final _$$ref$1 = aDouble?.ref;
+    final _$$ref$1 = aDoubleArg?.ref;
     final _$$ref$2 = error.ref;
     final $ret = _objc_msgSend_15qeuct(
       _$$ref.pointer,
@@ -3925,11 +3931,11 @@ extension NativeInteropFlutterIntegrationCoreApiBridge$Methods
 
   /// Returns the passed list, to test serialization and deserialization.
   objc.NSArray? echoNullableEnumListWithEnumList(
-    objc.NSArray? enumList, {
+    objc.NSArray? enumListArg, {
     required NativeInteropTestsError error,
   }) {
     final _$$ref = object$.ref;
-    final _$$ref$1 = enumList?.ref;
+    final _$$ref$1 = enumListArg?.ref;
     final _$$ref$2 = error.ref;
     final $ret = _objc_msgSend_15qeuct(
       _$$ref.pointer,
@@ -3942,11 +3948,11 @@ extension NativeInteropFlutterIntegrationCoreApiBridge$Methods
 
   /// Returns the passed map, to test serialization and deserialization.
   objc.NSDictionary? echoNullableEnumMapWithEnumMap(
-    objc.NSDictionary? enumMap, {
+    objc.NSDictionary? enumMapArg, {
     required NativeInteropTestsError error,
   }) {
     final _$$ref = object$.ref;
-    final _$$ref$1 = enumMap?.ref;
+    final _$$ref$1 = enumMapArg?.ref;
     final _$$ref$2 = error.ref;
     final $ret = _objc_msgSend_15qeuct(
       _$$ref.pointer,
@@ -3961,11 +3967,11 @@ extension NativeInteropFlutterIntegrationCoreApiBridge$Methods
 
   /// Returns the passed enum to test serialization and deserialization.
   objc.NSNumber? echoNullableEnumWithAnEnum(
-    objc.NSNumber? anEnum, {
+    objc.NSNumber? anEnumArg, {
     required NativeInteropTestsError error,
   }) {
     final _$$ref = object$.ref;
-    final _$$ref$1 = anEnum?.ref;
+    final _$$ref$1 = anEnumArg?.ref;
     final _$$ref$2 = error.ref;
     final $ret = _objc_msgSend_15qeuct(
       _$$ref.pointer,
@@ -3978,11 +3984,11 @@ extension NativeInteropFlutterIntegrationCoreApiBridge$Methods
 
   /// Returns the passed float64 list, to test serialization and deserialization.
   NativeInteropTestsPigeonTypedData? echoNullableFloat64ListWithList(
-    NativeInteropTestsPigeonTypedData? list, {
+    NativeInteropTestsPigeonTypedData? listArg, {
     required NativeInteropTestsError error,
   }) {
     final _$$ref = object$.ref;
-    final _$$ref$1 = list?.ref;
+    final _$$ref$1 = listArg?.ref;
     final _$$ref$2 = error.ref;
     final $ret = _objc_msgSend_15qeuct(
       _$$ref.pointer,
@@ -3997,11 +4003,11 @@ extension NativeInteropFlutterIntegrationCoreApiBridge$Methods
 
   /// Returns the passed int32 list, to test serialization and deserialization.
   NativeInteropTestsPigeonTypedData? echoNullableInt32ListWithList(
-    NativeInteropTestsPigeonTypedData? list, {
+    NativeInteropTestsPigeonTypedData? listArg, {
     required NativeInteropTestsError error,
   }) {
     final _$$ref = object$.ref;
-    final _$$ref$1 = list?.ref;
+    final _$$ref$1 = listArg?.ref;
     final _$$ref$2 = error.ref;
     final $ret = _objc_msgSend_15qeuct(
       _$$ref.pointer,
@@ -4016,11 +4022,11 @@ extension NativeInteropFlutterIntegrationCoreApiBridge$Methods
 
   /// Returns the passed int64 list, to test serialization and deserialization.
   NativeInteropTestsPigeonTypedData? echoNullableInt64ListWithList(
-    NativeInteropTestsPigeonTypedData? list, {
+    NativeInteropTestsPigeonTypedData? listArg, {
     required NativeInteropTestsError error,
   }) {
     final _$$ref = object$.ref;
-    final _$$ref$1 = list?.ref;
+    final _$$ref$1 = listArg?.ref;
     final _$$ref$2 = error.ref;
     final $ret = _objc_msgSend_15qeuct(
       _$$ref.pointer,
@@ -4035,11 +4041,11 @@ extension NativeInteropFlutterIntegrationCoreApiBridge$Methods
 
   /// Returns the passed map, to test serialization and deserialization.
   objc.NSDictionary? echoNullableIntMapWithIntMap(
-    objc.NSDictionary? intMap, {
+    objc.NSDictionary? intMapArg, {
     required NativeInteropTestsError error,
   }) {
     final _$$ref = object$.ref;
-    final _$$ref$1 = intMap?.ref;
+    final _$$ref$1 = intMapArg?.ref;
     final _$$ref$2 = error.ref;
     final $ret = _objc_msgSend_15qeuct(
       _$$ref.pointer,
@@ -4054,11 +4060,11 @@ extension NativeInteropFlutterIntegrationCoreApiBridge$Methods
 
   /// Returns the passed int, to test serialization and deserialization.
   objc.NSNumber? echoNullableIntWithAnInt(
-    objc.NSNumber? anInt, {
+    objc.NSNumber? anIntArg, {
     required NativeInteropTestsError error,
   }) {
     final _$$ref = object$.ref;
-    final _$$ref$1 = anInt?.ref;
+    final _$$ref$1 = anIntArg?.ref;
     final _$$ref$2 = error.ref;
     final $ret = _objc_msgSend_15qeuct(
       _$$ref.pointer,
@@ -4071,11 +4077,11 @@ extension NativeInteropFlutterIntegrationCoreApiBridge$Methods
 
   /// Returns the passed list, to test serialization and deserialization.
   objc.NSArray? echoNullableListWithList(
-    objc.NSArray? list, {
+    objc.NSArray? listArg, {
     required NativeInteropTestsError error,
   }) {
     final _$$ref = object$.ref;
-    final _$$ref$1 = list?.ref;
+    final _$$ref$1 = listArg?.ref;
     final _$$ref$2 = error.ref;
     final $ret = _objc_msgSend_15qeuct(
       _$$ref.pointer,
@@ -4088,11 +4094,11 @@ extension NativeInteropFlutterIntegrationCoreApiBridge$Methods
 
   /// Returns the passed map, to test serialization and deserialization.
   objc.NSDictionary? echoNullableMapWithMap(
-    objc.NSDictionary? map, {
+    objc.NSDictionary? mapArg, {
     required NativeInteropTestsError error,
   }) {
     final _$$ref = object$.ref;
-    final _$$ref$1 = map?.ref;
+    final _$$ref$1 = mapArg?.ref;
     final _$$ref$2 = error.ref;
     final $ret = _objc_msgSend_15qeuct(
       _$$ref.pointer,
@@ -4107,11 +4113,11 @@ extension NativeInteropFlutterIntegrationCoreApiBridge$Methods
 
   /// Returns the passed list, to test serialization and deserialization.
   objc.NSArray? echoNullableNonNullClassListWithClassList(
-    objc.NSArray? classList, {
+    objc.NSArray? classListArg, {
     required NativeInteropTestsError error,
   }) {
     final _$$ref = object$.ref;
-    final _$$ref$1 = classList?.ref;
+    final _$$ref$1 = classListArg?.ref;
     final _$$ref$2 = error.ref;
     final $ret = _objc_msgSend_15qeuct(
       _$$ref.pointer,
@@ -4124,11 +4130,11 @@ extension NativeInteropFlutterIntegrationCoreApiBridge$Methods
 
   /// Returns the passed map, to test serialization and deserialization.
   objc.NSDictionary? echoNullableNonNullClassMapWithClassMap(
-    objc.NSDictionary? classMap, {
+    objc.NSDictionary? classMapArg, {
     required NativeInteropTestsError error,
   }) {
     final _$$ref = object$.ref;
-    final _$$ref$1 = classMap?.ref;
+    final _$$ref$1 = classMapArg?.ref;
     final _$$ref$2 = error.ref;
     final $ret = _objc_msgSend_15qeuct(
       _$$ref.pointer,
@@ -4143,11 +4149,11 @@ extension NativeInteropFlutterIntegrationCoreApiBridge$Methods
 
   /// Returns the passed list, to test serialization and deserialization.
   objc.NSArray? echoNullableNonNullEnumListWithEnumList(
-    objc.NSArray? enumList, {
+    objc.NSArray? enumListArg, {
     required NativeInteropTestsError error,
   }) {
     final _$$ref = object$.ref;
-    final _$$ref$1 = enumList?.ref;
+    final _$$ref$1 = enumListArg?.ref;
     final _$$ref$2 = error.ref;
     final $ret = _objc_msgSend_15qeuct(
       _$$ref.pointer,
@@ -4160,11 +4166,11 @@ extension NativeInteropFlutterIntegrationCoreApiBridge$Methods
 
   /// Returns the passed map, to test serialization and deserialization.
   objc.NSDictionary? echoNullableNonNullEnumMapWithEnumMap(
-    objc.NSDictionary? enumMap, {
+    objc.NSDictionary? enumMapArg, {
     required NativeInteropTestsError error,
   }) {
     final _$$ref = object$.ref;
-    final _$$ref$1 = enumMap?.ref;
+    final _$$ref$1 = enumMapArg?.ref;
     final _$$ref$2 = error.ref;
     final $ret = _objc_msgSend_15qeuct(
       _$$ref.pointer,
@@ -4179,11 +4185,11 @@ extension NativeInteropFlutterIntegrationCoreApiBridge$Methods
 
   /// Returns the passed map, to test serialization and deserialization.
   objc.NSDictionary? echoNullableNonNullIntMapWithIntMap(
-    objc.NSDictionary? intMap, {
+    objc.NSDictionary? intMapArg, {
     required NativeInteropTestsError error,
   }) {
     final _$$ref = object$.ref;
-    final _$$ref$1 = intMap?.ref;
+    final _$$ref$1 = intMapArg?.ref;
     final _$$ref$2 = error.ref;
     final $ret = _objc_msgSend_15qeuct(
       _$$ref.pointer,
@@ -4198,11 +4204,11 @@ extension NativeInteropFlutterIntegrationCoreApiBridge$Methods
 
   /// Returns the passed map, to test serialization and deserialization.
   objc.NSDictionary? echoNullableNonNullStringMapWithStringMap(
-    objc.NSDictionary? stringMap, {
+    objc.NSDictionary? stringMapArg, {
     required NativeInteropTestsError error,
   }) {
     final _$$ref = object$.ref;
-    final _$$ref$1 = stringMap?.ref;
+    final _$$ref$1 = stringMapArg?.ref;
     final _$$ref$2 = error.ref;
     final $ret = _objc_msgSend_15qeuct(
       _$$ref.pointer,
@@ -4217,11 +4223,11 @@ extension NativeInteropFlutterIntegrationCoreApiBridge$Methods
 
   /// Returns the passed map, to test serialization and deserialization.
   objc.NSDictionary? echoNullableStringMapWithStringMap(
-    objc.NSDictionary? stringMap, {
+    objc.NSDictionary? stringMapArg, {
     required NativeInteropTestsError error,
   }) {
     final _$$ref = object$.ref;
-    final _$$ref$1 = stringMap?.ref;
+    final _$$ref$1 = stringMapArg?.ref;
     final _$$ref$2 = error.ref;
     final $ret = _objc_msgSend_15qeuct(
       _$$ref.pointer,
@@ -4236,11 +4242,11 @@ extension NativeInteropFlutterIntegrationCoreApiBridge$Methods
 
   /// Returns the passed string, to test serialization and deserialization.
   objc.NSString? echoNullableStringWithAString(
-    objc.NSString? aString, {
+    objc.NSString? aStringArg, {
     required NativeInteropTestsError error,
   }) {
     final _$$ref = object$.ref;
-    final _$$ref$1 = aString?.ref;
+    final _$$ref$1 = aStringArg?.ref;
     final _$$ref$2 = error.ref;
     final $ret = _objc_msgSend_15qeuct(
       _$$ref.pointer,
@@ -4253,11 +4259,11 @@ extension NativeInteropFlutterIntegrationCoreApiBridge$Methods
 
   /// Returns the passed byte list, to test serialization and deserialization.
   NativeInteropTestsPigeonTypedData? echoNullableUint8ListWithList(
-    NativeInteropTestsPigeonTypedData? list, {
+    NativeInteropTestsPigeonTypedData? listArg, {
     required NativeInteropTestsError error,
   }) {
     final _$$ref = object$.ref;
-    final _$$ref$1 = list?.ref;
+    final _$$ref$1 = listArg?.ref;
     final _$$ref$2 = error.ref;
     final $ret = _objc_msgSend_15qeuct(
       _$$ref.pointer,
@@ -4272,11 +4278,11 @@ extension NativeInteropFlutterIntegrationCoreApiBridge$Methods
 
   /// Returns the passed map, to test serialization and deserialization.
   objc.NSDictionary? echoStringMapWithStringMap(
-    objc.NSDictionary? stringMap, {
+    objc.NSDictionary? stringMapArg, {
     required NativeInteropTestsError error,
   }) {
     final _$$ref = object$.ref;
-    final _$$ref$1 = stringMap?.ref;
+    final _$$ref$1 = stringMapArg?.ref;
     final _$$ref$2 = error.ref;
     final $ret = _objc_msgSend_15qeuct(
       _$$ref.pointer,
@@ -4291,11 +4297,11 @@ extension NativeInteropFlutterIntegrationCoreApiBridge$Methods
 
   /// Returns the passed string, to test serialization and deserialization.
   objc.NSString? echoStringWithAString(
-    objc.NSString? aString, {
+    objc.NSString? aStringArg, {
     required NativeInteropTestsError error,
   }) {
     final _$$ref = object$.ref;
-    final _$$ref$1 = aString?.ref;
+    final _$$ref$1 = aStringArg?.ref;
     final _$$ref$2 = error.ref;
     final $ret = _objc_msgSend_15qeuct(
       _$$ref.pointer,
@@ -4308,11 +4314,11 @@ extension NativeInteropFlutterIntegrationCoreApiBridge$Methods
 
   /// Returns the passed byte list, to test serialization and deserialization.
   NativeInteropTestsPigeonTypedData? echoUint8ListWithList(
-    NativeInteropTestsPigeonTypedData? list, {
+    NativeInteropTestsPigeonTypedData? listArg, {
     required NativeInteropTestsError error,
   }) {
     final _$$ref = object$.ref;
-    final _$$ref$1 = list?.ref;
+    final _$$ref$1 = listArg?.ref;
     final _$$ref$2 = error.ref;
     final $ret = _objc_msgSend_15qeuct(
       _$$ref.pointer,
@@ -4353,13 +4359,13 @@ extension NativeInteropFlutterIntegrationCoreApiBridge$Methods
   /// Returns passed in arguments of multiple types.
   /// Tests multiple-arity FlutterApi handling.
   NativeInteropAllNullableTypesBridge? sendMultipleNullableTypesWithANullableBool(
-    objc.NSNumber? aNullableBool, {
+    objc.NSNumber? aNullableBoolArg, {
     objc.NSNumber? aNullableInt,
     objc.NSString? aNullableString,
     required NativeInteropTestsError error,
   }) {
     final _$$ref = object$.ref;
-    final _$$ref$1 = aNullableBool?.ref;
+    final _$$ref$1 = aNullableBoolArg?.ref;
     final _$$ref$2 = aNullableInt?.ref;
     final _$$ref$3 = aNullableString?.ref;
     final _$$ref$4 = error.ref;
@@ -4380,13 +4386,13 @@ extension NativeInteropFlutterIntegrationCoreApiBridge$Methods
   /// Tests multiple-arity FlutterApi handling.
   NativeInteropAllNullableTypesWithoutRecursionBridge?
   sendMultipleNullableTypesWithoutRecursionWithANullableBool(
-    objc.NSNumber? aNullableBool, {
+    objc.NSNumber? aNullableBoolArg, {
     objc.NSNumber? aNullableInt,
     objc.NSString? aNullableString,
     required NativeInteropTestsError error,
   }) {
     final _$$ref = object$.ref;
-    final _$$ref$1 = aNullableBool?.ref;
+    final _$$ref$1 = aNullableBoolArg?.ref;
     final _$$ref$2 = aNullableInt?.ref;
     final _$$ref$3 = aNullableString?.ref;
     final _$$ref$4 = error.ref;
@@ -14896,7 +14902,7 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
 
   /// callFlutterEchoAnotherAsyncEnumWithAnotherEnum:wrappedError:completionHandler:
   void callFlutterEchoAnotherAsyncEnumWithAnotherEnum(
-    NativeInteropAnotherEnum anotherEnum, {
+    NativeInteropAnotherEnum anotherEnumArg, {
     required NativeInteropTestsError wrappedError,
     required objc.ObjCBlock<ffi.Void Function(objc.NSNumber?)> completionHandler,
   }) {
@@ -14906,7 +14912,7 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
     _objc_msgSend_1p6535m(
       _$$ref.pointer,
       _sel_callFlutterEchoAnotherAsyncEnumWithAnotherEnum_wrappedError_completionHandler_,
-      anotherEnum.value,
+      anotherEnumArg.value,
       _$$ref$1.pointer,
       _$$ref$2.pointer,
     );
@@ -14914,12 +14920,12 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
 
   /// callFlutterEchoAnotherAsyncNullableEnumWithAnotherEnum:wrappedError:completionHandler:
   void callFlutterEchoAnotherAsyncNullableEnumWithAnotherEnum(
-    objc.NSNumber? anotherEnum, {
+    objc.NSNumber? anotherEnumArg, {
     required NativeInteropTestsError wrappedError,
     required objc.ObjCBlock<ffi.Void Function(objc.NSNumber?)> completionHandler,
   }) {
     final _$$ref = object$.ref;
-    final _$$ref$1 = anotherEnum?.ref;
+    final _$$ref$1 = anotherEnumArg?.ref;
     final _$$ref$2 = wrappedError.ref;
     final _$$ref$3 = completionHandler.ref;
     _objc_msgSend_18qun1e(
@@ -14933,11 +14939,11 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
 
   /// callFlutterEchoAnotherNullableEnumWithAnotherEnum:wrappedError:
   objc.NSNumber? callFlutterEchoAnotherNullableEnumWithAnotherEnum(
-    objc.NSNumber? anotherEnum, {
+    objc.NSNumber? anotherEnumArg, {
     required NativeInteropTestsError wrappedError,
   }) {
     final _$$ref = object$.ref;
-    final _$$ref$1 = anotherEnum?.ref;
+    final _$$ref$1 = anotherEnumArg?.ref;
     final _$$ref$2 = wrappedError.ref;
     final $ret = _objc_msgSend_15qeuct(
       _$$ref.pointer,
@@ -14950,7 +14956,7 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
 
   /// callFlutterEchoAsyncBoolWithABool:wrappedError:completionHandler:
   void callFlutterEchoAsyncBoolWithABool(
-    bool aBool, {
+    bool aBoolArg, {
     required NativeInteropTestsError wrappedError,
     required objc.ObjCBlock<ffi.Void Function(objc.NSNumber?)> completionHandler,
   }) {
@@ -14960,7 +14966,7 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
     _objc_msgSend_1oby3xk(
       _$$ref.pointer,
       _sel_callFlutterEchoAsyncBoolWithABool_wrappedError_completionHandler_,
-      aBool,
+      aBoolArg,
       _$$ref$1.pointer,
       _$$ref$2.pointer,
     );
@@ -14968,12 +14974,12 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
 
   /// callFlutterEchoAsyncClassListWithClassList:wrappedError:completionHandler:
   void callFlutterEchoAsyncClassListWithClassList(
-    objc.NSArray classList, {
+    objc.NSArray classListArg, {
     required NativeInteropTestsError wrappedError,
     required objc.ObjCBlock<ffi.Void Function(objc.NSArray?)> completionHandler,
   }) {
     final _$$ref = object$.ref;
-    final _$$ref$1 = classList.ref;
+    final _$$ref$1 = classListArg.ref;
     final _$$ref$2 = wrappedError.ref;
     final _$$ref$3 = completionHandler.ref;
     _objc_msgSend_18qun1e(
@@ -14987,12 +14993,12 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
 
   /// callFlutterEchoAsyncClassMapWithClassMap:wrappedError:completionHandler:
   void callFlutterEchoAsyncClassMapWithClassMap(
-    objc.NSDictionary classMap, {
+    objc.NSDictionary classMapArg, {
     required NativeInteropTestsError wrappedError,
     required objc.ObjCBlock<ffi.Void Function(objc.NSDictionary?)> completionHandler,
   }) {
     final _$$ref = object$.ref;
-    final _$$ref$1 = classMap.ref;
+    final _$$ref$1 = classMapArg.ref;
     final _$$ref$2 = wrappedError.ref;
     final _$$ref$3 = completionHandler.ref;
     _objc_msgSend_18qun1e(
@@ -15006,7 +15012,7 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
 
   /// callFlutterEchoAsyncDoubleWithADouble:wrappedError:completionHandler:
   void callFlutterEchoAsyncDoubleWithADouble(
-    double aDouble, {
+    double aDoubleArg, {
     required NativeInteropTestsError wrappedError,
     required objc.ObjCBlock<ffi.Void Function(objc.NSNumber?)> completionHandler,
   }) {
@@ -15016,7 +15022,7 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
     _objc_msgSend_f15nnv(
       _$$ref.pointer,
       _sel_callFlutterEchoAsyncDoubleWithADouble_wrappedError_completionHandler_,
-      aDouble,
+      aDoubleArg,
       _$$ref$1.pointer,
       _$$ref$2.pointer,
     );
@@ -15024,12 +15030,12 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
 
   /// callFlutterEchoAsyncEnumListWithEnumList:wrappedError:completionHandler:
   void callFlutterEchoAsyncEnumListWithEnumList(
-    objc.NSArray enumList, {
+    objc.NSArray enumListArg, {
     required NativeInteropTestsError wrappedError,
     required objc.ObjCBlock<ffi.Void Function(objc.NSArray?)> completionHandler,
   }) {
     final _$$ref = object$.ref;
-    final _$$ref$1 = enumList.ref;
+    final _$$ref$1 = enumListArg.ref;
     final _$$ref$2 = wrappedError.ref;
     final _$$ref$3 = completionHandler.ref;
     _objc_msgSend_18qun1e(
@@ -15043,12 +15049,12 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
 
   /// callFlutterEchoAsyncEnumMapWithEnumMap:wrappedError:completionHandler:
   void callFlutterEchoAsyncEnumMapWithEnumMap(
-    objc.NSDictionary enumMap, {
+    objc.NSDictionary enumMapArg, {
     required NativeInteropTestsError wrappedError,
     required objc.ObjCBlock<ffi.Void Function(objc.NSDictionary?)> completionHandler,
   }) {
     final _$$ref = object$.ref;
-    final _$$ref$1 = enumMap.ref;
+    final _$$ref$1 = enumMapArg.ref;
     final _$$ref$2 = wrappedError.ref;
     final _$$ref$3 = completionHandler.ref;
     _objc_msgSend_18qun1e(
@@ -15062,7 +15068,7 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
 
   /// callFlutterEchoAsyncEnumWithAnEnum:wrappedError:completionHandler:
   void callFlutterEchoAsyncEnumWithAnEnum(
-    NativeInteropAnEnum anEnum, {
+    NativeInteropAnEnum anEnumArg, {
     required NativeInteropTestsError wrappedError,
     required objc.ObjCBlock<ffi.Void Function(objc.NSNumber?)> completionHandler,
   }) {
@@ -15072,7 +15078,7 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
     _objc_msgSend_gthscw(
       _$$ref.pointer,
       _sel_callFlutterEchoAsyncEnumWithAnEnum_wrappedError_completionHandler_,
-      anEnum.value,
+      anEnumArg.value,
       _$$ref$1.pointer,
       _$$ref$2.pointer,
     );
@@ -15080,13 +15086,13 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
 
   /// callFlutterEchoAsyncFloat64ListWithList:wrappedError:completionHandler:
   void callFlutterEchoAsyncFloat64ListWithList(
-    NativeInteropTestsPigeonTypedData list, {
+    NativeInteropTestsPigeonTypedData listArg, {
     required NativeInteropTestsError wrappedError,
     required objc.ObjCBlock<ffi.Void Function(NativeInteropTestsPigeonTypedData?)>
     completionHandler,
   }) {
     final _$$ref = object$.ref;
-    final _$$ref$1 = list.ref;
+    final _$$ref$1 = listArg.ref;
     final _$$ref$2 = wrappedError.ref;
     final _$$ref$3 = completionHandler.ref;
     _objc_msgSend_18qun1e(
@@ -15100,13 +15106,13 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
 
   /// callFlutterEchoAsyncInt32ListWithList:wrappedError:completionHandler:
   void callFlutterEchoAsyncInt32ListWithList(
-    NativeInteropTestsPigeonTypedData list, {
+    NativeInteropTestsPigeonTypedData listArg, {
     required NativeInteropTestsError wrappedError,
     required objc.ObjCBlock<ffi.Void Function(NativeInteropTestsPigeonTypedData?)>
     completionHandler,
   }) {
     final _$$ref = object$.ref;
-    final _$$ref$1 = list.ref;
+    final _$$ref$1 = listArg.ref;
     final _$$ref$2 = wrappedError.ref;
     final _$$ref$3 = completionHandler.ref;
     _objc_msgSend_18qun1e(
@@ -15120,13 +15126,13 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
 
   /// callFlutterEchoAsyncInt64ListWithList:wrappedError:completionHandler:
   void callFlutterEchoAsyncInt64ListWithList(
-    NativeInteropTestsPigeonTypedData list, {
+    NativeInteropTestsPigeonTypedData listArg, {
     required NativeInteropTestsError wrappedError,
     required objc.ObjCBlock<ffi.Void Function(NativeInteropTestsPigeonTypedData?)>
     completionHandler,
   }) {
     final _$$ref = object$.ref;
-    final _$$ref$1 = list.ref;
+    final _$$ref$1 = listArg.ref;
     final _$$ref$2 = wrappedError.ref;
     final _$$ref$3 = completionHandler.ref;
     _objc_msgSend_18qun1e(
@@ -15140,12 +15146,12 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
 
   /// callFlutterEchoAsyncIntMapWithIntMap:wrappedError:completionHandler:
   void callFlutterEchoAsyncIntMapWithIntMap(
-    objc.NSDictionary intMap, {
+    objc.NSDictionary intMapArg, {
     required NativeInteropTestsError wrappedError,
     required objc.ObjCBlock<ffi.Void Function(objc.NSDictionary?)> completionHandler,
   }) {
     final _$$ref = object$.ref;
-    final _$$ref$1 = intMap.ref;
+    final _$$ref$1 = intMapArg.ref;
     final _$$ref$2 = wrappedError.ref;
     final _$$ref$3 = completionHandler.ref;
     _objc_msgSend_18qun1e(
@@ -15159,7 +15165,7 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
 
   /// callFlutterEchoAsyncIntWithAnInt:wrappedError:completionHandler:
   void callFlutterEchoAsyncIntWithAnInt(
-    int anInt, {
+    int anIntArg, {
     required NativeInteropTestsError wrappedError,
     required objc.ObjCBlock<ffi.Void Function(objc.NSNumber?)> completionHandler,
   }) {
@@ -15169,7 +15175,7 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
     _objc_msgSend_1bf2hie(
       _$$ref.pointer,
       _sel_callFlutterEchoAsyncIntWithAnInt_wrappedError_completionHandler_,
-      anInt,
+      anIntArg,
       _$$ref$1.pointer,
       _$$ref$2.pointer,
     );
@@ -15177,12 +15183,12 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
 
   /// callFlutterEchoAsyncListWithList:wrappedError:completionHandler:
   void callFlutterEchoAsyncListWithList(
-    objc.NSArray list, {
+    objc.NSArray listArg, {
     required NativeInteropTestsError wrappedError,
     required objc.ObjCBlock<ffi.Void Function(objc.NSArray?)> completionHandler,
   }) {
     final _$$ref = object$.ref;
-    final _$$ref$1 = list.ref;
+    final _$$ref$1 = listArg.ref;
     final _$$ref$2 = wrappedError.ref;
     final _$$ref$3 = completionHandler.ref;
     _objc_msgSend_18qun1e(
@@ -15196,12 +15202,12 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
 
   /// callFlutterEchoAsyncMapWithMap:wrappedError:completionHandler:
   void callFlutterEchoAsyncMapWithMap(
-    objc.NSDictionary map, {
+    objc.NSDictionary mapArg, {
     required NativeInteropTestsError wrappedError,
     required objc.ObjCBlock<ffi.Void Function(objc.NSDictionary?)> completionHandler,
   }) {
     final _$$ref = object$.ref;
-    final _$$ref$1 = map.ref;
+    final _$$ref$1 = mapArg.ref;
     final _$$ref$2 = wrappedError.ref;
     final _$$ref$3 = completionHandler.ref;
     _objc_msgSend_18qun1e(
@@ -15215,12 +15221,12 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
 
   /// callFlutterEchoAsyncNativeInteropAllTypesWithEverything:wrappedError:completionHandler:
   void callFlutterEchoAsyncNativeInteropAllTypesWithEverything(
-    NativeInteropAllTypesBridge everything, {
+    NativeInteropAllTypesBridge everythingArg, {
     required NativeInteropTestsError wrappedError,
     required objc.ObjCBlock<ffi.Void Function(NativeInteropAllTypesBridge?)> completionHandler,
   }) {
     final _$$ref = object$.ref;
-    final _$$ref$1 = everything.ref;
+    final _$$ref$1 = everythingArg.ref;
     final _$$ref$2 = wrappedError.ref;
     final _$$ref$3 = completionHandler.ref;
     _objc_msgSend_18qun1e(
@@ -15234,12 +15240,12 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
 
   /// callFlutterEchoAsyncNonNullClassListWithClassList:wrappedError:completionHandler:
   void callFlutterEchoAsyncNonNullClassListWithClassList(
-    objc.NSArray classList, {
+    objc.NSArray classListArg, {
     required NativeInteropTestsError wrappedError,
     required objc.ObjCBlock<ffi.Void Function(objc.NSArray?)> completionHandler,
   }) {
     final _$$ref = object$.ref;
-    final _$$ref$1 = classList.ref;
+    final _$$ref$1 = classListArg.ref;
     final _$$ref$2 = wrappedError.ref;
     final _$$ref$3 = completionHandler.ref;
     _objc_msgSend_18qun1e(
@@ -15253,12 +15259,12 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
 
   /// callFlutterEchoAsyncNonNullEnumListWithEnumList:wrappedError:completionHandler:
   void callFlutterEchoAsyncNonNullEnumListWithEnumList(
-    objc.NSArray enumList, {
+    objc.NSArray enumListArg, {
     required NativeInteropTestsError wrappedError,
     required objc.ObjCBlock<ffi.Void Function(objc.NSArray?)> completionHandler,
   }) {
     final _$$ref = object$.ref;
-    final _$$ref$1 = enumList.ref;
+    final _$$ref$1 = enumListArg.ref;
     final _$$ref$2 = wrappedError.ref;
     final _$$ref$3 = completionHandler.ref;
     _objc_msgSend_18qun1e(
@@ -15272,12 +15278,12 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
 
   /// callFlutterEchoAsyncNullableBoolWithABool:wrappedError:completionHandler:
   void callFlutterEchoAsyncNullableBoolWithABool(
-    objc.NSNumber? aBool, {
+    objc.NSNumber? aBoolArg, {
     required NativeInteropTestsError wrappedError,
     required objc.ObjCBlock<ffi.Void Function(objc.NSNumber?)> completionHandler,
   }) {
     final _$$ref = object$.ref;
-    final _$$ref$1 = aBool?.ref;
+    final _$$ref$1 = aBoolArg?.ref;
     final _$$ref$2 = wrappedError.ref;
     final _$$ref$3 = completionHandler.ref;
     _objc_msgSend_18qun1e(
@@ -15291,12 +15297,12 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
 
   /// callFlutterEchoAsyncNullableClassListWithClassList:wrappedError:completionHandler:
   void callFlutterEchoAsyncNullableClassListWithClassList(
-    objc.NSArray? classList, {
+    objc.NSArray? classListArg, {
     required NativeInteropTestsError wrappedError,
     required objc.ObjCBlock<ffi.Void Function(objc.NSArray?)> completionHandler,
   }) {
     final _$$ref = object$.ref;
-    final _$$ref$1 = classList?.ref;
+    final _$$ref$1 = classListArg?.ref;
     final _$$ref$2 = wrappedError.ref;
     final _$$ref$3 = completionHandler.ref;
     _objc_msgSend_18qun1e(
@@ -15310,12 +15316,12 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
 
   /// callFlutterEchoAsyncNullableClassMapWithClassMap:wrappedError:completionHandler:
   void callFlutterEchoAsyncNullableClassMapWithClassMap(
-    objc.NSDictionary? classMap, {
+    objc.NSDictionary? classMapArg, {
     required NativeInteropTestsError wrappedError,
     required objc.ObjCBlock<ffi.Void Function(objc.NSDictionary?)> completionHandler,
   }) {
     final _$$ref = object$.ref;
-    final _$$ref$1 = classMap?.ref;
+    final _$$ref$1 = classMapArg?.ref;
     final _$$ref$2 = wrappedError.ref;
     final _$$ref$3 = completionHandler.ref;
     _objc_msgSend_18qun1e(
@@ -15329,12 +15335,12 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
 
   /// callFlutterEchoAsyncNullableDoubleWithADouble:wrappedError:completionHandler:
   void callFlutterEchoAsyncNullableDoubleWithADouble(
-    objc.NSNumber? aDouble, {
+    objc.NSNumber? aDoubleArg, {
     required NativeInteropTestsError wrappedError,
     required objc.ObjCBlock<ffi.Void Function(objc.NSNumber?)> completionHandler,
   }) {
     final _$$ref = object$.ref;
-    final _$$ref$1 = aDouble?.ref;
+    final _$$ref$1 = aDoubleArg?.ref;
     final _$$ref$2 = wrappedError.ref;
     final _$$ref$3 = completionHandler.ref;
     _objc_msgSend_18qun1e(
@@ -15348,12 +15354,12 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
 
   /// callFlutterEchoAsyncNullableEnumListWithEnumList:wrappedError:completionHandler:
   void callFlutterEchoAsyncNullableEnumListWithEnumList(
-    objc.NSArray? enumList, {
+    objc.NSArray? enumListArg, {
     required NativeInteropTestsError wrappedError,
     required objc.ObjCBlock<ffi.Void Function(objc.NSArray?)> completionHandler,
   }) {
     final _$$ref = object$.ref;
-    final _$$ref$1 = enumList?.ref;
+    final _$$ref$1 = enumListArg?.ref;
     final _$$ref$2 = wrappedError.ref;
     final _$$ref$3 = completionHandler.ref;
     _objc_msgSend_18qun1e(
@@ -15367,12 +15373,12 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
 
   /// callFlutterEchoAsyncNullableEnumMapWithEnumMap:wrappedError:completionHandler:
   void callFlutterEchoAsyncNullableEnumMapWithEnumMap(
-    objc.NSDictionary? enumMap, {
+    objc.NSDictionary? enumMapArg, {
     required NativeInteropTestsError wrappedError,
     required objc.ObjCBlock<ffi.Void Function(objc.NSDictionary?)> completionHandler,
   }) {
     final _$$ref = object$.ref;
-    final _$$ref$1 = enumMap?.ref;
+    final _$$ref$1 = enumMapArg?.ref;
     final _$$ref$2 = wrappedError.ref;
     final _$$ref$3 = completionHandler.ref;
     _objc_msgSend_18qun1e(
@@ -15386,12 +15392,12 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
 
   /// callFlutterEchoAsyncNullableEnumWithAnEnum:wrappedError:completionHandler:
   void callFlutterEchoAsyncNullableEnumWithAnEnum(
-    objc.NSNumber? anEnum, {
+    objc.NSNumber? anEnumArg, {
     required NativeInteropTestsError wrappedError,
     required objc.ObjCBlock<ffi.Void Function(objc.NSNumber?)> completionHandler,
   }) {
     final _$$ref = object$.ref;
-    final _$$ref$1 = anEnum?.ref;
+    final _$$ref$1 = anEnumArg?.ref;
     final _$$ref$2 = wrappedError.ref;
     final _$$ref$3 = completionHandler.ref;
     _objc_msgSend_18qun1e(
@@ -15405,13 +15411,13 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
 
   /// callFlutterEchoAsyncNullableFloat64ListWithList:wrappedError:completionHandler:
   void callFlutterEchoAsyncNullableFloat64ListWithList(
-    NativeInteropTestsPigeonTypedData? list, {
+    NativeInteropTestsPigeonTypedData? listArg, {
     required NativeInteropTestsError wrappedError,
     required objc.ObjCBlock<ffi.Void Function(NativeInteropTestsPigeonTypedData?)>
     completionHandler,
   }) {
     final _$$ref = object$.ref;
-    final _$$ref$1 = list?.ref;
+    final _$$ref$1 = listArg?.ref;
     final _$$ref$2 = wrappedError.ref;
     final _$$ref$3 = completionHandler.ref;
     _objc_msgSend_18qun1e(
@@ -15425,13 +15431,13 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
 
   /// callFlutterEchoAsyncNullableInt32ListWithList:wrappedError:completionHandler:
   void callFlutterEchoAsyncNullableInt32ListWithList(
-    NativeInteropTestsPigeonTypedData? list, {
+    NativeInteropTestsPigeonTypedData? listArg, {
     required NativeInteropTestsError wrappedError,
     required objc.ObjCBlock<ffi.Void Function(NativeInteropTestsPigeonTypedData?)>
     completionHandler,
   }) {
     final _$$ref = object$.ref;
-    final _$$ref$1 = list?.ref;
+    final _$$ref$1 = listArg?.ref;
     final _$$ref$2 = wrappedError.ref;
     final _$$ref$3 = completionHandler.ref;
     _objc_msgSend_18qun1e(
@@ -15445,13 +15451,13 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
 
   /// callFlutterEchoAsyncNullableInt64ListWithList:wrappedError:completionHandler:
   void callFlutterEchoAsyncNullableInt64ListWithList(
-    NativeInteropTestsPigeonTypedData? list, {
+    NativeInteropTestsPigeonTypedData? listArg, {
     required NativeInteropTestsError wrappedError,
     required objc.ObjCBlock<ffi.Void Function(NativeInteropTestsPigeonTypedData?)>
     completionHandler,
   }) {
     final _$$ref = object$.ref;
-    final _$$ref$1 = list?.ref;
+    final _$$ref$1 = listArg?.ref;
     final _$$ref$2 = wrappedError.ref;
     final _$$ref$3 = completionHandler.ref;
     _objc_msgSend_18qun1e(
@@ -15465,12 +15471,12 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
 
   /// callFlutterEchoAsyncNullableIntMapWithIntMap:wrappedError:completionHandler:
   void callFlutterEchoAsyncNullableIntMapWithIntMap(
-    objc.NSDictionary? intMap, {
+    objc.NSDictionary? intMapArg, {
     required NativeInteropTestsError wrappedError,
     required objc.ObjCBlock<ffi.Void Function(objc.NSDictionary?)> completionHandler,
   }) {
     final _$$ref = object$.ref;
-    final _$$ref$1 = intMap?.ref;
+    final _$$ref$1 = intMapArg?.ref;
     final _$$ref$2 = wrappedError.ref;
     final _$$ref$3 = completionHandler.ref;
     _objc_msgSend_18qun1e(
@@ -15484,12 +15490,12 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
 
   /// callFlutterEchoAsyncNullableIntWithAnInt:wrappedError:completionHandler:
   void callFlutterEchoAsyncNullableIntWithAnInt(
-    objc.NSNumber? anInt, {
+    objc.NSNumber? anIntArg, {
     required NativeInteropTestsError wrappedError,
     required objc.ObjCBlock<ffi.Void Function(objc.NSNumber?)> completionHandler,
   }) {
     final _$$ref = object$.ref;
-    final _$$ref$1 = anInt?.ref;
+    final _$$ref$1 = anIntArg?.ref;
     final _$$ref$2 = wrappedError.ref;
     final _$$ref$3 = completionHandler.ref;
     _objc_msgSend_18qun1e(
@@ -15503,12 +15509,12 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
 
   /// callFlutterEchoAsyncNullableListWithList:wrappedError:completionHandler:
   void callFlutterEchoAsyncNullableListWithList(
-    objc.NSArray? list, {
+    objc.NSArray? listArg, {
     required NativeInteropTestsError wrappedError,
     required objc.ObjCBlock<ffi.Void Function(objc.NSArray?)> completionHandler,
   }) {
     final _$$ref = object$.ref;
-    final _$$ref$1 = list?.ref;
+    final _$$ref$1 = listArg?.ref;
     final _$$ref$2 = wrappedError.ref;
     final _$$ref$3 = completionHandler.ref;
     _objc_msgSend_18qun1e(
@@ -15522,12 +15528,12 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
 
   /// callFlutterEchoAsyncNullableMapWithMap:wrappedError:completionHandler:
   void callFlutterEchoAsyncNullableMapWithMap(
-    objc.NSDictionary? map, {
+    objc.NSDictionary? mapArg, {
     required NativeInteropTestsError wrappedError,
     required objc.ObjCBlock<ffi.Void Function(objc.NSDictionary?)> completionHandler,
   }) {
     final _$$ref = object$.ref;
-    final _$$ref$1 = map?.ref;
+    final _$$ref$1 = mapArg?.ref;
     final _$$ref$2 = wrappedError.ref;
     final _$$ref$3 = completionHandler.ref;
     _objc_msgSend_18qun1e(
@@ -15541,13 +15547,13 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
 
   /// callFlutterEchoAsyncNullableNativeInteropAllNullableTypesWithEverything:wrappedError:completionHandler:
   void callFlutterEchoAsyncNullableNativeInteropAllNullableTypesWithEverything(
-    NativeInteropAllNullableTypesBridge? everything, {
+    NativeInteropAllNullableTypesBridge? everythingArg, {
     required NativeInteropTestsError wrappedError,
     required objc.ObjCBlock<ffi.Void Function(NativeInteropAllNullableTypesBridge?)>
     completionHandler,
   }) {
     final _$$ref = object$.ref;
-    final _$$ref$1 = everything?.ref;
+    final _$$ref$1 = everythingArg?.ref;
     final _$$ref$2 = wrappedError.ref;
     final _$$ref$3 = completionHandler.ref;
     _objc_msgSend_18qun1e(
@@ -15561,13 +15567,13 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
 
   /// callFlutterEchoAsyncNullableNativeInteropAllNullableTypesWithoutRecursionWithEverything:wrappedError:completionHandler:
   void callFlutterEchoAsyncNullableNativeInteropAllNullableTypesWithoutRecursionWithEverything(
-    NativeInteropAllNullableTypesWithoutRecursionBridge? everything, {
+    NativeInteropAllNullableTypesWithoutRecursionBridge? everythingArg, {
     required NativeInteropTestsError wrappedError,
     required objc.ObjCBlock<ffi.Void Function(NativeInteropAllNullableTypesWithoutRecursionBridge?)>
     completionHandler,
   }) {
     final _$$ref = object$.ref;
-    final _$$ref$1 = everything?.ref;
+    final _$$ref$1 = everythingArg?.ref;
     final _$$ref$2 = wrappedError.ref;
     final _$$ref$3 = completionHandler.ref;
     _objc_msgSend_18qun1e(
@@ -15581,12 +15587,12 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
 
   /// callFlutterEchoAsyncNullableNonNullClassListWithClassList:wrappedError:completionHandler:
   void callFlutterEchoAsyncNullableNonNullClassListWithClassList(
-    objc.NSArray? classList, {
+    objc.NSArray? classListArg, {
     required NativeInteropTestsError wrappedError,
     required objc.ObjCBlock<ffi.Void Function(objc.NSArray?)> completionHandler,
   }) {
     final _$$ref = object$.ref;
-    final _$$ref$1 = classList?.ref;
+    final _$$ref$1 = classListArg?.ref;
     final _$$ref$2 = wrappedError.ref;
     final _$$ref$3 = completionHandler.ref;
     _objc_msgSend_18qun1e(
@@ -15600,12 +15606,12 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
 
   /// callFlutterEchoAsyncNullableNonNullEnumListWithEnumList:wrappedError:completionHandler:
   void callFlutterEchoAsyncNullableNonNullEnumListWithEnumList(
-    objc.NSArray? enumList, {
+    objc.NSArray? enumListArg, {
     required NativeInteropTestsError wrappedError,
     required objc.ObjCBlock<ffi.Void Function(objc.NSArray?)> completionHandler,
   }) {
     final _$$ref = object$.ref;
-    final _$$ref$1 = enumList?.ref;
+    final _$$ref$1 = enumListArg?.ref;
     final _$$ref$2 = wrappedError.ref;
     final _$$ref$3 = completionHandler.ref;
     _objc_msgSend_18qun1e(
@@ -15619,12 +15625,12 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
 
   /// callFlutterEchoAsyncNullableObjectWithAnObject:wrappedError:completionHandler:
   void callFlutterEchoAsyncNullableObjectWithAnObject(
-    objc.NSObject anObject, {
+    objc.NSObject anObjectArg, {
     required NativeInteropTestsError wrappedError,
     required objc.ObjCBlock<ffi.Void Function(objc.NSObject?)> completionHandler,
   }) {
     final _$$ref = object$.ref;
-    final _$$ref$1 = anObject.ref;
+    final _$$ref$1 = anObjectArg.ref;
     final _$$ref$2 = wrappedError.ref;
     final _$$ref$3 = completionHandler.ref;
     _objc_msgSend_18qun1e(
@@ -15638,12 +15644,12 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
 
   /// callFlutterEchoAsyncNullableStringMapWithStringMap:wrappedError:completionHandler:
   void callFlutterEchoAsyncNullableStringMapWithStringMap(
-    objc.NSDictionary? stringMap, {
+    objc.NSDictionary? stringMapArg, {
     required NativeInteropTestsError wrappedError,
     required objc.ObjCBlock<ffi.Void Function(objc.NSDictionary?)> completionHandler,
   }) {
     final _$$ref = object$.ref;
-    final _$$ref$1 = stringMap?.ref;
+    final _$$ref$1 = stringMapArg?.ref;
     final _$$ref$2 = wrappedError.ref;
     final _$$ref$3 = completionHandler.ref;
     _objc_msgSend_18qun1e(
@@ -15657,12 +15663,12 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
 
   /// callFlutterEchoAsyncNullableStringWithAString:wrappedError:completionHandler:
   void callFlutterEchoAsyncNullableStringWithAString(
-    objc.NSString? aString, {
+    objc.NSString? aStringArg, {
     required NativeInteropTestsError wrappedError,
     required objc.ObjCBlock<ffi.Void Function(objc.NSString?)> completionHandler,
   }) {
     final _$$ref = object$.ref;
-    final _$$ref$1 = aString?.ref;
+    final _$$ref$1 = aStringArg?.ref;
     final _$$ref$2 = wrappedError.ref;
     final _$$ref$3 = completionHandler.ref;
     _objc_msgSend_18qun1e(
@@ -15676,13 +15682,13 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
 
   /// callFlutterEchoAsyncNullableUint8ListWithList:wrappedError:completionHandler:
   void callFlutterEchoAsyncNullableUint8ListWithList(
-    NativeInteropTestsPigeonTypedData? list, {
+    NativeInteropTestsPigeonTypedData? listArg, {
     required NativeInteropTestsError wrappedError,
     required objc.ObjCBlock<ffi.Void Function(NativeInteropTestsPigeonTypedData?)>
     completionHandler,
   }) {
     final _$$ref = object$.ref;
-    final _$$ref$1 = list?.ref;
+    final _$$ref$1 = listArg?.ref;
     final _$$ref$2 = wrappedError.ref;
     final _$$ref$3 = completionHandler.ref;
     _objc_msgSend_18qun1e(
@@ -15696,12 +15702,12 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
 
   /// callFlutterEchoAsyncObjectWithAnObject:wrappedError:completionHandler:
   void callFlutterEchoAsyncObjectWithAnObject(
-    objc.NSObject anObject, {
+    objc.NSObject anObjectArg, {
     required NativeInteropTestsError wrappedError,
     required objc.ObjCBlock<ffi.Void Function(objc.NSObject?)> completionHandler,
   }) {
     final _$$ref = object$.ref;
-    final _$$ref$1 = anObject.ref;
+    final _$$ref$1 = anObjectArg.ref;
     final _$$ref$2 = wrappedError.ref;
     final _$$ref$3 = completionHandler.ref;
     _objc_msgSend_18qun1e(
@@ -15715,12 +15721,12 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
 
   /// callFlutterEchoAsyncStringMapWithStringMap:wrappedError:completionHandler:
   void callFlutterEchoAsyncStringMapWithStringMap(
-    objc.NSDictionary stringMap, {
+    objc.NSDictionary stringMapArg, {
     required NativeInteropTestsError wrappedError,
     required objc.ObjCBlock<ffi.Void Function(objc.NSDictionary?)> completionHandler,
   }) {
     final _$$ref = object$.ref;
-    final _$$ref$1 = stringMap.ref;
+    final _$$ref$1 = stringMapArg.ref;
     final _$$ref$2 = wrappedError.ref;
     final _$$ref$3 = completionHandler.ref;
     _objc_msgSend_18qun1e(
@@ -15734,12 +15740,12 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
 
   /// callFlutterEchoAsyncStringWithAString:wrappedError:completionHandler:
   void callFlutterEchoAsyncStringWithAString(
-    objc.NSString aString, {
+    objc.NSString aStringArg, {
     required NativeInteropTestsError wrappedError,
     required objc.ObjCBlock<ffi.Void Function(objc.NSString?)> completionHandler,
   }) {
     final _$$ref = object$.ref;
-    final _$$ref$1 = aString.ref;
+    final _$$ref$1 = aStringArg.ref;
     final _$$ref$2 = wrappedError.ref;
     final _$$ref$3 = completionHandler.ref;
     _objc_msgSend_18qun1e(
@@ -15753,13 +15759,13 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
 
   /// callFlutterEchoAsyncUint8ListWithList:wrappedError:completionHandler:
   void callFlutterEchoAsyncUint8ListWithList(
-    NativeInteropTestsPigeonTypedData list, {
+    NativeInteropTestsPigeonTypedData listArg, {
     required NativeInteropTestsError wrappedError,
     required objc.ObjCBlock<ffi.Void Function(NativeInteropTestsPigeonTypedData?)>
     completionHandler,
   }) {
     final _$$ref = object$.ref;
-    final _$$ref$1 = list.ref;
+    final _$$ref$1 = listArg.ref;
     final _$$ref$2 = wrappedError.ref;
     final _$$ref$3 = completionHandler.ref;
     _objc_msgSend_18qun1e(
@@ -15773,7 +15779,7 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
 
   /// callFlutterEchoBoolWithABool:wrappedError:
   objc.NSNumber? callFlutterEchoBoolWithABool(
-    bool aBool, {
+    bool aBoolArg, {
     required NativeInteropTestsError wrappedError,
   }) {
     final _$$ref = object$.ref;
@@ -15781,7 +15787,7 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
     final $ret = _objc_msgSend_w1rg4f(
       _$$ref.pointer,
       _sel_callFlutterEchoBoolWithABool_wrappedError_,
-      aBool,
+      aBoolArg,
       _$$ref$1.pointer,
     );
     return $ret.address == 0 ? null : objc.NSNumber.fromPointer($ret, retain: true, release: true);
@@ -15789,11 +15795,11 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
 
   /// callFlutterEchoClassListWithClassList:wrappedError:
   objc.NSArray? callFlutterEchoClassListWithClassList(
-    objc.NSArray classList, {
+    objc.NSArray classListArg, {
     required NativeInteropTestsError wrappedError,
   }) {
     final _$$ref = object$.ref;
-    final _$$ref$1 = classList.ref;
+    final _$$ref$1 = classListArg.ref;
     final _$$ref$2 = wrappedError.ref;
     final $ret = _objc_msgSend_15qeuct(
       _$$ref.pointer,
@@ -15806,11 +15812,11 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
 
   /// callFlutterEchoClassMapWithClassMap:wrappedError:
   objc.NSDictionary? callFlutterEchoClassMapWithClassMap(
-    objc.NSDictionary classMap, {
+    objc.NSDictionary classMapArg, {
     required NativeInteropTestsError wrappedError,
   }) {
     final _$$ref = object$.ref;
-    final _$$ref$1 = classMap.ref;
+    final _$$ref$1 = classMapArg.ref;
     final _$$ref$2 = wrappedError.ref;
     final $ret = _objc_msgSend_15qeuct(
       _$$ref.pointer,
@@ -15825,7 +15831,7 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
 
   /// callFlutterEchoDoubleWithADouble:wrappedError:
   objc.NSNumber? callFlutterEchoDoubleWithADouble(
-    double aDouble, {
+    double aDoubleArg, {
     required NativeInteropTestsError wrappedError,
   }) {
     final _$$ref = object$.ref;
@@ -15833,7 +15839,7 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
     final $ret = _objc_msgSend_1ozwf6k(
       _$$ref.pointer,
       _sel_callFlutterEchoDoubleWithADouble_wrappedError_,
-      aDouble,
+      aDoubleArg,
       _$$ref$1.pointer,
     );
     return $ret.address == 0 ? null : objc.NSNumber.fromPointer($ret, retain: true, release: true);
@@ -15841,11 +15847,11 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
 
   /// callFlutterEchoEnumListWithEnumList:wrappedError:
   objc.NSArray? callFlutterEchoEnumListWithEnumList(
-    objc.NSArray enumList, {
+    objc.NSArray enumListArg, {
     required NativeInteropTestsError wrappedError,
   }) {
     final _$$ref = object$.ref;
-    final _$$ref$1 = enumList.ref;
+    final _$$ref$1 = enumListArg.ref;
     final _$$ref$2 = wrappedError.ref;
     final $ret = _objc_msgSend_15qeuct(
       _$$ref.pointer,
@@ -15858,11 +15864,11 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
 
   /// callFlutterEchoEnumMapWithEnumMap:wrappedError:
   objc.NSDictionary? callFlutterEchoEnumMapWithEnumMap(
-    objc.NSDictionary enumMap, {
+    objc.NSDictionary enumMapArg, {
     required NativeInteropTestsError wrappedError,
   }) {
     final _$$ref = object$.ref;
-    final _$$ref$1 = enumMap.ref;
+    final _$$ref$1 = enumMapArg.ref;
     final _$$ref$2 = wrappedError.ref;
     final $ret = _objc_msgSend_15qeuct(
       _$$ref.pointer,
@@ -15877,7 +15883,7 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
 
   /// callFlutterEchoEnumWithAnEnum:wrappedError:
   objc.NSNumber? callFlutterEchoEnumWithAnEnum(
-    NativeInteropAnEnum anEnum, {
+    NativeInteropAnEnum anEnumArg, {
     required NativeInteropTestsError wrappedError,
   }) {
     final _$$ref = object$.ref;
@@ -15885,7 +15891,7 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
     final $ret = _objc_msgSend_1dnmby7(
       _$$ref.pointer,
       _sel_callFlutterEchoEnumWithAnEnum_wrappedError_,
-      anEnum.value,
+      anEnumArg.value,
       _$$ref$1.pointer,
     );
     return $ret.address == 0 ? null : objc.NSNumber.fromPointer($ret, retain: true, release: true);
@@ -15893,11 +15899,11 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
 
   /// callFlutterEchoFloat64ListWithList:wrappedError:
   NativeInteropTestsPigeonTypedData? callFlutterEchoFloat64ListWithList(
-    NativeInteropTestsPigeonTypedData list, {
+    NativeInteropTestsPigeonTypedData listArg, {
     required NativeInteropTestsError wrappedError,
   }) {
     final _$$ref = object$.ref;
-    final _$$ref$1 = list.ref;
+    final _$$ref$1 = listArg.ref;
     final _$$ref$2 = wrappedError.ref;
     final $ret = _objc_msgSend_15qeuct(
       _$$ref.pointer,
@@ -15912,11 +15918,11 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
 
   /// callFlutterEchoInt32ListWithList:wrappedError:
   NativeInteropTestsPigeonTypedData? callFlutterEchoInt32ListWithList(
-    NativeInteropTestsPigeonTypedData list, {
+    NativeInteropTestsPigeonTypedData listArg, {
     required NativeInteropTestsError wrappedError,
   }) {
     final _$$ref = object$.ref;
-    final _$$ref$1 = list.ref;
+    final _$$ref$1 = listArg.ref;
     final _$$ref$2 = wrappedError.ref;
     final $ret = _objc_msgSend_15qeuct(
       _$$ref.pointer,
@@ -15931,11 +15937,11 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
 
   /// callFlutterEchoInt64ListWithList:wrappedError:
   NativeInteropTestsPigeonTypedData? callFlutterEchoInt64ListWithList(
-    NativeInteropTestsPigeonTypedData list, {
+    NativeInteropTestsPigeonTypedData listArg, {
     required NativeInteropTestsError wrappedError,
   }) {
     final _$$ref = object$.ref;
-    final _$$ref$1 = list.ref;
+    final _$$ref$1 = listArg.ref;
     final _$$ref$2 = wrappedError.ref;
     final $ret = _objc_msgSend_15qeuct(
       _$$ref.pointer,
@@ -15950,11 +15956,11 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
 
   /// callFlutterEchoIntMapWithIntMap:wrappedError:
   objc.NSDictionary? callFlutterEchoIntMapWithIntMap(
-    objc.NSDictionary intMap, {
+    objc.NSDictionary intMapArg, {
     required NativeInteropTestsError wrappedError,
   }) {
     final _$$ref = object$.ref;
-    final _$$ref$1 = intMap.ref;
+    final _$$ref$1 = intMapArg.ref;
     final _$$ref$2 = wrappedError.ref;
     final $ret = _objc_msgSend_15qeuct(
       _$$ref.pointer,
@@ -15969,7 +15975,7 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
 
   /// callFlutterEchoIntWithAnInt:wrappedError:
   objc.NSNumber? callFlutterEchoIntWithAnInt(
-    int anInt, {
+    int anIntArg, {
     required NativeInteropTestsError wrappedError,
   }) {
     final _$$ref = object$.ref;
@@ -15977,7 +15983,7 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
     final $ret = _objc_msgSend_1j962g9(
       _$$ref.pointer,
       _sel_callFlutterEchoIntWithAnInt_wrappedError_,
-      anInt,
+      anIntArg,
       _$$ref$1.pointer,
     );
     return $ret.address == 0 ? null : objc.NSNumber.fromPointer($ret, retain: true, release: true);
@@ -15985,11 +15991,11 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
 
   /// callFlutterEchoListWithList:wrappedError:
   objc.NSArray? callFlutterEchoListWithList(
-    objc.NSArray list, {
+    objc.NSArray listArg, {
     required NativeInteropTestsError wrappedError,
   }) {
     final _$$ref = object$.ref;
-    final _$$ref$1 = list.ref;
+    final _$$ref$1 = listArg.ref;
     final _$$ref$2 = wrappedError.ref;
     final $ret = _objc_msgSend_15qeuct(
       _$$ref.pointer,
@@ -16002,11 +16008,11 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
 
   /// callFlutterEchoMapWithMap:wrappedError:
   objc.NSDictionary? callFlutterEchoMapWithMap(
-    objc.NSDictionary map, {
+    objc.NSDictionary mapArg, {
     required NativeInteropTestsError wrappedError,
   }) {
     final _$$ref = object$.ref;
-    final _$$ref$1 = map.ref;
+    final _$$ref$1 = mapArg.ref;
     final _$$ref$2 = wrappedError.ref;
     final $ret = _objc_msgSend_15qeuct(
       _$$ref.pointer,
@@ -16021,11 +16027,11 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
 
   /// callFlutterEchoNativeInteropAllNullableTypesWithEverything:wrappedError:
   NativeInteropAllNullableTypesBridge? callFlutterEchoNativeInteropAllNullableTypesWithEverything(
-    NativeInteropAllNullableTypesBridge? everything, {
+    NativeInteropAllNullableTypesBridge? everythingArg, {
     required NativeInteropTestsError wrappedError,
   }) {
     final _$$ref = object$.ref;
-    final _$$ref$1 = everything?.ref;
+    final _$$ref$1 = everythingArg?.ref;
     final _$$ref$2 = wrappedError.ref;
     final $ret = _objc_msgSend_15qeuct(
       _$$ref.pointer,
@@ -16041,11 +16047,11 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
   /// callFlutterEchoNativeInteropAllNullableTypesWithoutRecursionWithEverything:wrappedError:
   NativeInteropAllNullableTypesWithoutRecursionBridge?
   callFlutterEchoNativeInteropAllNullableTypesWithoutRecursionWithEverything(
-    NativeInteropAllNullableTypesWithoutRecursionBridge? everything, {
+    NativeInteropAllNullableTypesWithoutRecursionBridge? everythingArg, {
     required NativeInteropTestsError wrappedError,
   }) {
     final _$$ref = object$.ref;
-    final _$$ref$1 = everything?.ref;
+    final _$$ref$1 = everythingArg?.ref;
     final _$$ref$2 = wrappedError.ref;
     final $ret = _objc_msgSend_15qeuct(
       _$$ref.pointer,
@@ -16064,11 +16070,11 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
 
   /// callFlutterEchoNativeInteropAllTypesWithEverything:wrappedError:
   NativeInteropAllTypesBridge? callFlutterEchoNativeInteropAllTypesWithEverything(
-    NativeInteropAllTypesBridge everything, {
+    NativeInteropAllTypesBridge everythingArg, {
     required NativeInteropTestsError wrappedError,
   }) {
     final _$$ref = object$.ref;
-    final _$$ref$1 = everything.ref;
+    final _$$ref$1 = everythingArg.ref;
     final _$$ref$2 = wrappedError.ref;
     final $ret = _objc_msgSend_15qeuct(
       _$$ref.pointer,
@@ -16083,7 +16089,7 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
 
   /// callFlutterEchoNativeInteropAnotherEnumWithAnotherEnum:wrappedError:
   objc.NSNumber? callFlutterEchoNativeInteropAnotherEnumWithAnotherEnum(
-    NativeInteropAnotherEnum anotherEnum, {
+    NativeInteropAnotherEnum anotherEnumArg, {
     required NativeInteropTestsError wrappedError,
   }) {
     final _$$ref = object$.ref;
@@ -16091,7 +16097,7 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
     final $ret = _objc_msgSend_15mcegd(
       _$$ref.pointer,
       _sel_callFlutterEchoNativeInteropAnotherEnumWithAnotherEnum_wrappedError_,
-      anotherEnum.value,
+      anotherEnumArg.value,
       _$$ref$1.pointer,
     );
     return $ret.address == 0 ? null : objc.NSNumber.fromPointer($ret, retain: true, release: true);
@@ -16099,11 +16105,11 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
 
   /// callFlutterEchoNonNullClassListWithClassList:wrappedError:
   objc.NSArray? callFlutterEchoNonNullClassListWithClassList(
-    objc.NSArray classList, {
+    objc.NSArray classListArg, {
     required NativeInteropTestsError wrappedError,
   }) {
     final _$$ref = object$.ref;
-    final _$$ref$1 = classList.ref;
+    final _$$ref$1 = classListArg.ref;
     final _$$ref$2 = wrappedError.ref;
     final $ret = _objc_msgSend_15qeuct(
       _$$ref.pointer,
@@ -16116,11 +16122,11 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
 
   /// callFlutterEchoNonNullClassMapWithClassMap:wrappedError:
   objc.NSDictionary? callFlutterEchoNonNullClassMapWithClassMap(
-    objc.NSDictionary classMap, {
+    objc.NSDictionary classMapArg, {
     required NativeInteropTestsError wrappedError,
   }) {
     final _$$ref = object$.ref;
-    final _$$ref$1 = classMap.ref;
+    final _$$ref$1 = classMapArg.ref;
     final _$$ref$2 = wrappedError.ref;
     final $ret = _objc_msgSend_15qeuct(
       _$$ref.pointer,
@@ -16135,11 +16141,11 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
 
   /// callFlutterEchoNonNullEnumListWithEnumList:wrappedError:
   objc.NSArray? callFlutterEchoNonNullEnumListWithEnumList(
-    objc.NSArray enumList, {
+    objc.NSArray enumListArg, {
     required NativeInteropTestsError wrappedError,
   }) {
     final _$$ref = object$.ref;
-    final _$$ref$1 = enumList.ref;
+    final _$$ref$1 = enumListArg.ref;
     final _$$ref$2 = wrappedError.ref;
     final $ret = _objc_msgSend_15qeuct(
       _$$ref.pointer,
@@ -16152,11 +16158,11 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
 
   /// callFlutterEchoNonNullEnumMapWithEnumMap:wrappedError:
   objc.NSDictionary? callFlutterEchoNonNullEnumMapWithEnumMap(
-    objc.NSDictionary enumMap, {
+    objc.NSDictionary enumMapArg, {
     required NativeInteropTestsError wrappedError,
   }) {
     final _$$ref = object$.ref;
-    final _$$ref$1 = enumMap.ref;
+    final _$$ref$1 = enumMapArg.ref;
     final _$$ref$2 = wrappedError.ref;
     final $ret = _objc_msgSend_15qeuct(
       _$$ref.pointer,
@@ -16171,11 +16177,11 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
 
   /// callFlutterEchoNonNullIntMapWithIntMap:wrappedError:
   objc.NSDictionary? callFlutterEchoNonNullIntMapWithIntMap(
-    objc.NSDictionary intMap, {
+    objc.NSDictionary intMapArg, {
     required NativeInteropTestsError wrappedError,
   }) {
     final _$$ref = object$.ref;
-    final _$$ref$1 = intMap.ref;
+    final _$$ref$1 = intMapArg.ref;
     final _$$ref$2 = wrappedError.ref;
     final $ret = _objc_msgSend_15qeuct(
       _$$ref.pointer,
@@ -16190,11 +16196,11 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
 
   /// callFlutterEchoNonNullStringMapWithStringMap:wrappedError:
   objc.NSDictionary? callFlutterEchoNonNullStringMapWithStringMap(
-    objc.NSDictionary stringMap, {
+    objc.NSDictionary stringMapArg, {
     required NativeInteropTestsError wrappedError,
   }) {
     final _$$ref = object$.ref;
-    final _$$ref$1 = stringMap.ref;
+    final _$$ref$1 = stringMapArg.ref;
     final _$$ref$2 = wrappedError.ref;
     final $ret = _objc_msgSend_15qeuct(
       _$$ref.pointer,
@@ -16209,11 +16215,11 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
 
   /// callFlutterEchoNullableBoolWithABool:wrappedError:
   objc.NSNumber? callFlutterEchoNullableBoolWithABool(
-    objc.NSNumber? aBool, {
+    objc.NSNumber? aBoolArg, {
     required NativeInteropTestsError wrappedError,
   }) {
     final _$$ref = object$.ref;
-    final _$$ref$1 = aBool?.ref;
+    final _$$ref$1 = aBoolArg?.ref;
     final _$$ref$2 = wrappedError.ref;
     final $ret = _objc_msgSend_15qeuct(
       _$$ref.pointer,
@@ -16226,11 +16232,11 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
 
   /// callFlutterEchoNullableClassListWithClassList:wrappedError:
   objc.NSArray? callFlutterEchoNullableClassListWithClassList(
-    objc.NSArray? classList, {
+    objc.NSArray? classListArg, {
     required NativeInteropTestsError wrappedError,
   }) {
     final _$$ref = object$.ref;
-    final _$$ref$1 = classList?.ref;
+    final _$$ref$1 = classListArg?.ref;
     final _$$ref$2 = wrappedError.ref;
     final $ret = _objc_msgSend_15qeuct(
       _$$ref.pointer,
@@ -16243,11 +16249,11 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
 
   /// callFlutterEchoNullableClassMapWithClassMap:wrappedError:
   objc.NSDictionary? callFlutterEchoNullableClassMapWithClassMap(
-    objc.NSDictionary? classMap, {
+    objc.NSDictionary? classMapArg, {
     required NativeInteropTestsError wrappedError,
   }) {
     final _$$ref = object$.ref;
-    final _$$ref$1 = classMap?.ref;
+    final _$$ref$1 = classMapArg?.ref;
     final _$$ref$2 = wrappedError.ref;
     final $ret = _objc_msgSend_15qeuct(
       _$$ref.pointer,
@@ -16262,11 +16268,11 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
 
   /// callFlutterEchoNullableDoubleWithADouble:wrappedError:
   objc.NSNumber? callFlutterEchoNullableDoubleWithADouble(
-    objc.NSNumber? aDouble, {
+    objc.NSNumber? aDoubleArg, {
     required NativeInteropTestsError wrappedError,
   }) {
     final _$$ref = object$.ref;
-    final _$$ref$1 = aDouble?.ref;
+    final _$$ref$1 = aDoubleArg?.ref;
     final _$$ref$2 = wrappedError.ref;
     final $ret = _objc_msgSend_15qeuct(
       _$$ref.pointer,
@@ -16279,11 +16285,11 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
 
   /// callFlutterEchoNullableEnumListWithEnumList:wrappedError:
   objc.NSArray? callFlutterEchoNullableEnumListWithEnumList(
-    objc.NSArray? enumList, {
+    objc.NSArray? enumListArg, {
     required NativeInteropTestsError wrappedError,
   }) {
     final _$$ref = object$.ref;
-    final _$$ref$1 = enumList?.ref;
+    final _$$ref$1 = enumListArg?.ref;
     final _$$ref$2 = wrappedError.ref;
     final $ret = _objc_msgSend_15qeuct(
       _$$ref.pointer,
@@ -16296,11 +16302,11 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
 
   /// callFlutterEchoNullableEnumMapWithEnumMap:wrappedError:
   objc.NSDictionary? callFlutterEchoNullableEnumMapWithEnumMap(
-    objc.NSDictionary? enumMap, {
+    objc.NSDictionary? enumMapArg, {
     required NativeInteropTestsError wrappedError,
   }) {
     final _$$ref = object$.ref;
-    final _$$ref$1 = enumMap?.ref;
+    final _$$ref$1 = enumMapArg?.ref;
     final _$$ref$2 = wrappedError.ref;
     final $ret = _objc_msgSend_15qeuct(
       _$$ref.pointer,
@@ -16315,11 +16321,11 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
 
   /// callFlutterEchoNullableEnumWithAnEnum:wrappedError:
   objc.NSNumber? callFlutterEchoNullableEnumWithAnEnum(
-    objc.NSNumber? anEnum, {
+    objc.NSNumber? anEnumArg, {
     required NativeInteropTestsError wrappedError,
   }) {
     final _$$ref = object$.ref;
-    final _$$ref$1 = anEnum?.ref;
+    final _$$ref$1 = anEnumArg?.ref;
     final _$$ref$2 = wrappedError.ref;
     final $ret = _objc_msgSend_15qeuct(
       _$$ref.pointer,
@@ -16332,11 +16338,11 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
 
   /// callFlutterEchoNullableFloat64ListWithList:wrappedError:
   NativeInteropTestsPigeonTypedData? callFlutterEchoNullableFloat64ListWithList(
-    NativeInteropTestsPigeonTypedData? list, {
+    NativeInteropTestsPigeonTypedData? listArg, {
     required NativeInteropTestsError wrappedError,
   }) {
     final _$$ref = object$.ref;
-    final _$$ref$1 = list?.ref;
+    final _$$ref$1 = listArg?.ref;
     final _$$ref$2 = wrappedError.ref;
     final $ret = _objc_msgSend_15qeuct(
       _$$ref.pointer,
@@ -16351,11 +16357,11 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
 
   /// callFlutterEchoNullableInt32ListWithList:wrappedError:
   NativeInteropTestsPigeonTypedData? callFlutterEchoNullableInt32ListWithList(
-    NativeInteropTestsPigeonTypedData? list, {
+    NativeInteropTestsPigeonTypedData? listArg, {
     required NativeInteropTestsError wrappedError,
   }) {
     final _$$ref = object$.ref;
-    final _$$ref$1 = list?.ref;
+    final _$$ref$1 = listArg?.ref;
     final _$$ref$2 = wrappedError.ref;
     final $ret = _objc_msgSend_15qeuct(
       _$$ref.pointer,
@@ -16370,11 +16376,11 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
 
   /// callFlutterEchoNullableInt64ListWithList:wrappedError:
   NativeInteropTestsPigeonTypedData? callFlutterEchoNullableInt64ListWithList(
-    NativeInteropTestsPigeonTypedData? list, {
+    NativeInteropTestsPigeonTypedData? listArg, {
     required NativeInteropTestsError wrappedError,
   }) {
     final _$$ref = object$.ref;
-    final _$$ref$1 = list?.ref;
+    final _$$ref$1 = listArg?.ref;
     final _$$ref$2 = wrappedError.ref;
     final $ret = _objc_msgSend_15qeuct(
       _$$ref.pointer,
@@ -16389,11 +16395,11 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
 
   /// callFlutterEchoNullableIntMapWithIntMap:wrappedError:
   objc.NSDictionary? callFlutterEchoNullableIntMapWithIntMap(
-    objc.NSDictionary? intMap, {
+    objc.NSDictionary? intMapArg, {
     required NativeInteropTestsError wrappedError,
   }) {
     final _$$ref = object$.ref;
-    final _$$ref$1 = intMap?.ref;
+    final _$$ref$1 = intMapArg?.ref;
     final _$$ref$2 = wrappedError.ref;
     final $ret = _objc_msgSend_15qeuct(
       _$$ref.pointer,
@@ -16408,11 +16414,11 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
 
   /// callFlutterEchoNullableIntWithAnInt:wrappedError:
   objc.NSNumber? callFlutterEchoNullableIntWithAnInt(
-    objc.NSNumber? anInt, {
+    objc.NSNumber? anIntArg, {
     required NativeInteropTestsError wrappedError,
   }) {
     final _$$ref = object$.ref;
-    final _$$ref$1 = anInt?.ref;
+    final _$$ref$1 = anIntArg?.ref;
     final _$$ref$2 = wrappedError.ref;
     final $ret = _objc_msgSend_15qeuct(
       _$$ref.pointer,
@@ -16425,11 +16431,11 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
 
   /// callFlutterEchoNullableListWithList:wrappedError:
   objc.NSArray? callFlutterEchoNullableListWithList(
-    objc.NSArray? list, {
+    objc.NSArray? listArg, {
     required NativeInteropTestsError wrappedError,
   }) {
     final _$$ref = object$.ref;
-    final _$$ref$1 = list?.ref;
+    final _$$ref$1 = listArg?.ref;
     final _$$ref$2 = wrappedError.ref;
     final $ret = _objc_msgSend_15qeuct(
       _$$ref.pointer,
@@ -16442,11 +16448,11 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
 
   /// callFlutterEchoNullableMapWithMap:wrappedError:
   objc.NSDictionary? callFlutterEchoNullableMapWithMap(
-    objc.NSDictionary? map, {
+    objc.NSDictionary? mapArg, {
     required NativeInteropTestsError wrappedError,
   }) {
     final _$$ref = object$.ref;
-    final _$$ref$1 = map?.ref;
+    final _$$ref$1 = mapArg?.ref;
     final _$$ref$2 = wrappedError.ref;
     final $ret = _objc_msgSend_15qeuct(
       _$$ref.pointer,
@@ -16461,11 +16467,11 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
 
   /// callFlutterEchoNullableNonNullClassListWithClassList:wrappedError:
   objc.NSArray? callFlutterEchoNullableNonNullClassListWithClassList(
-    objc.NSArray? classList, {
+    objc.NSArray? classListArg, {
     required NativeInteropTestsError wrappedError,
   }) {
     final _$$ref = object$.ref;
-    final _$$ref$1 = classList?.ref;
+    final _$$ref$1 = classListArg?.ref;
     final _$$ref$2 = wrappedError.ref;
     final $ret = _objc_msgSend_15qeuct(
       _$$ref.pointer,
@@ -16478,11 +16484,11 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
 
   /// callFlutterEchoNullableNonNullClassMapWithClassMap:wrappedError:
   objc.NSDictionary? callFlutterEchoNullableNonNullClassMapWithClassMap(
-    objc.NSDictionary? classMap, {
+    objc.NSDictionary? classMapArg, {
     required NativeInteropTestsError wrappedError,
   }) {
     final _$$ref = object$.ref;
-    final _$$ref$1 = classMap?.ref;
+    final _$$ref$1 = classMapArg?.ref;
     final _$$ref$2 = wrappedError.ref;
     final $ret = _objc_msgSend_15qeuct(
       _$$ref.pointer,
@@ -16497,11 +16503,11 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
 
   /// callFlutterEchoNullableNonNullEnumListWithEnumList:wrappedError:
   objc.NSArray? callFlutterEchoNullableNonNullEnumListWithEnumList(
-    objc.NSArray? enumList, {
+    objc.NSArray? enumListArg, {
     required NativeInteropTestsError wrappedError,
   }) {
     final _$$ref = object$.ref;
-    final _$$ref$1 = enumList?.ref;
+    final _$$ref$1 = enumListArg?.ref;
     final _$$ref$2 = wrappedError.ref;
     final $ret = _objc_msgSend_15qeuct(
       _$$ref.pointer,
@@ -16514,11 +16520,11 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
 
   /// callFlutterEchoNullableNonNullEnumMapWithEnumMap:wrappedError:
   objc.NSDictionary? callFlutterEchoNullableNonNullEnumMapWithEnumMap(
-    objc.NSDictionary? enumMap, {
+    objc.NSDictionary? enumMapArg, {
     required NativeInteropTestsError wrappedError,
   }) {
     final _$$ref = object$.ref;
-    final _$$ref$1 = enumMap?.ref;
+    final _$$ref$1 = enumMapArg?.ref;
     final _$$ref$2 = wrappedError.ref;
     final $ret = _objc_msgSend_15qeuct(
       _$$ref.pointer,
@@ -16533,11 +16539,11 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
 
   /// callFlutterEchoNullableNonNullIntMapWithIntMap:wrappedError:
   objc.NSDictionary? callFlutterEchoNullableNonNullIntMapWithIntMap(
-    objc.NSDictionary? intMap, {
+    objc.NSDictionary? intMapArg, {
     required NativeInteropTestsError wrappedError,
   }) {
     final _$$ref = object$.ref;
-    final _$$ref$1 = intMap?.ref;
+    final _$$ref$1 = intMapArg?.ref;
     final _$$ref$2 = wrappedError.ref;
     final $ret = _objc_msgSend_15qeuct(
       _$$ref.pointer,
@@ -16552,11 +16558,11 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
 
   /// callFlutterEchoNullableNonNullStringMapWithStringMap:wrappedError:
   objc.NSDictionary? callFlutterEchoNullableNonNullStringMapWithStringMap(
-    objc.NSDictionary? stringMap, {
+    objc.NSDictionary? stringMapArg, {
     required NativeInteropTestsError wrappedError,
   }) {
     final _$$ref = object$.ref;
-    final _$$ref$1 = stringMap?.ref;
+    final _$$ref$1 = stringMapArg?.ref;
     final _$$ref$2 = wrappedError.ref;
     final $ret = _objc_msgSend_15qeuct(
       _$$ref.pointer,
@@ -16571,11 +16577,11 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
 
   /// callFlutterEchoNullableStringMapWithStringMap:wrappedError:
   objc.NSDictionary? callFlutterEchoNullableStringMapWithStringMap(
-    objc.NSDictionary? stringMap, {
+    objc.NSDictionary? stringMapArg, {
     required NativeInteropTestsError wrappedError,
   }) {
     final _$$ref = object$.ref;
-    final _$$ref$1 = stringMap?.ref;
+    final _$$ref$1 = stringMapArg?.ref;
     final _$$ref$2 = wrappedError.ref;
     final $ret = _objc_msgSend_15qeuct(
       _$$ref.pointer,
@@ -16590,11 +16596,11 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
 
   /// callFlutterEchoNullableStringWithAString:wrappedError:
   objc.NSString? callFlutterEchoNullableStringWithAString(
-    objc.NSString? aString, {
+    objc.NSString? aStringArg, {
     required NativeInteropTestsError wrappedError,
   }) {
     final _$$ref = object$.ref;
-    final _$$ref$1 = aString?.ref;
+    final _$$ref$1 = aStringArg?.ref;
     final _$$ref$2 = wrappedError.ref;
     final $ret = _objc_msgSend_15qeuct(
       _$$ref.pointer,
@@ -16607,11 +16613,11 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
 
   /// callFlutterEchoNullableUint8ListWithList:wrappedError:
   NativeInteropTestsPigeonTypedData? callFlutterEchoNullableUint8ListWithList(
-    NativeInteropTestsPigeonTypedData? list, {
+    NativeInteropTestsPigeonTypedData? listArg, {
     required NativeInteropTestsError wrappedError,
   }) {
     final _$$ref = object$.ref;
-    final _$$ref$1 = list?.ref;
+    final _$$ref$1 = listArg?.ref;
     final _$$ref$2 = wrappedError.ref;
     final $ret = _objc_msgSend_15qeuct(
       _$$ref.pointer,
@@ -16626,11 +16632,11 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
 
   /// callFlutterEchoStringMapWithStringMap:wrappedError:
   objc.NSDictionary? callFlutterEchoStringMapWithStringMap(
-    objc.NSDictionary stringMap, {
+    objc.NSDictionary stringMapArg, {
     required NativeInteropTestsError wrappedError,
   }) {
     final _$$ref = object$.ref;
-    final _$$ref$1 = stringMap.ref;
+    final _$$ref$1 = stringMapArg.ref;
     final _$$ref$2 = wrappedError.ref;
     final $ret = _objc_msgSend_15qeuct(
       _$$ref.pointer,
@@ -16645,11 +16651,11 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
 
   /// callFlutterEchoStringWithAString:wrappedError:
   objc.NSString? callFlutterEchoStringWithAString(
-    objc.NSString aString, {
+    objc.NSString aStringArg, {
     required NativeInteropTestsError wrappedError,
   }) {
     final _$$ref = object$.ref;
-    final _$$ref$1 = aString.ref;
+    final _$$ref$1 = aStringArg.ref;
     final _$$ref$2 = wrappedError.ref;
     final $ret = _objc_msgSend_15qeuct(
       _$$ref.pointer,
@@ -16662,11 +16668,11 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
 
   /// callFlutterEchoUint8ListWithList:wrappedError:
   NativeInteropTestsPigeonTypedData? callFlutterEchoUint8ListWithList(
-    NativeInteropTestsPigeonTypedData list, {
+    NativeInteropTestsPigeonTypedData listArg, {
     required NativeInteropTestsError wrappedError,
   }) {
     final _$$ref = object$.ref;
-    final _$$ref$1 = list.ref;
+    final _$$ref$1 = listArg.ref;
     final _$$ref$2 = wrappedError.ref;
     final $ret = _objc_msgSend_15qeuct(
       _$$ref.pointer,
@@ -16721,13 +16727,13 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
 
   /// callFlutterSendMultipleNullableTypesWithANullableBool:aNullableInt:aNullableString:wrappedError:
   NativeInteropAllNullableTypesBridge? callFlutterSendMultipleNullableTypesWithANullableBool(
-    objc.NSNumber? aNullableBool, {
+    objc.NSNumber? aNullableBoolArg, {
     objc.NSNumber? aNullableInt,
     objc.NSString? aNullableString,
     required NativeInteropTestsError wrappedError,
   }) {
     final _$$ref = object$.ref;
-    final _$$ref$1 = aNullableBool?.ref;
+    final _$$ref$1 = aNullableBoolArg?.ref;
     final _$$ref$2 = aNullableInt?.ref;
     final _$$ref$3 = aNullableString?.ref;
     final _$$ref$4 = wrappedError.ref;
@@ -16747,13 +16753,13 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
   /// callFlutterSendMultipleNullableTypesWithoutRecursionWithANullableBool:aNullableInt:aNullableString:wrappedError:
   NativeInteropAllNullableTypesWithoutRecursionBridge?
   callFlutterSendMultipleNullableTypesWithoutRecursionWithANullableBool(
-    objc.NSNumber? aNullableBool, {
+    objc.NSNumber? aNullableBoolArg, {
     objc.NSNumber? aNullableInt,
     objc.NSString? aNullableString,
     required NativeInteropTestsError wrappedError,
   }) {
     final _$$ref = object$.ref;
-    final _$$ref$1 = aNullableBool?.ref;
+    final _$$ref$1 = aNullableBoolArg?.ref;
     final _$$ref$2 = aNullableInt?.ref;
     final _$$ref$3 = aNullableString?.ref;
     final _$$ref$4 = wrappedError.ref;
@@ -16816,11 +16822,11 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
   /// Returns the inner <code>aString</code> value from the wrapped object, to test
   /// sending of nested objects.
   NativeInteropAllClassesWrapperBridge? createNestedNullableStringWithNullableString(
-    objc.NSString? nullableString, {
+    objc.NSString? nullableStringArg, {
     required NativeInteropTestsError wrappedError,
   }) {
     final _$$ref = object$.ref;
-    final _$$ref$1 = nullableString?.ref;
+    final _$$ref$1 = nullableStringArg?.ref;
     final _$$ref$2 = wrappedError.ref;
     final $ret = _objc_msgSend_15qeuct(
       _$$ref.pointer,
@@ -16835,11 +16841,11 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
 
   /// Returns the passed object, to test serialization and deserialization.
   NativeInteropAllNullableTypesBridge? echoAllNullableTypesWithEverything(
-    NativeInteropAllNullableTypesBridge? everything, {
+    NativeInteropAllNullableTypesBridge? everythingArg, {
     required NativeInteropTestsError wrappedError,
   }) {
     final _$$ref = object$.ref;
-    final _$$ref$1 = everything?.ref;
+    final _$$ref$1 = everythingArg?.ref;
     final _$$ref$2 = wrappedError.ref;
     final $ret = _objc_msgSend_15qeuct(
       _$$ref.pointer,
@@ -16855,11 +16861,11 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
   /// Returns the passed object, to test serialization and deserialization.
   NativeInteropAllNullableTypesWithoutRecursionBridge?
   echoAllNullableTypesWithoutRecursionWithEverything(
-    NativeInteropAllNullableTypesWithoutRecursionBridge? everything, {
+    NativeInteropAllNullableTypesWithoutRecursionBridge? everythingArg, {
     required NativeInteropTestsError wrappedError,
   }) {
     final _$$ref = object$.ref;
-    final _$$ref$1 = everything?.ref;
+    final _$$ref$1 = everythingArg?.ref;
     final _$$ref$2 = wrappedError.ref;
     final $ret = _objc_msgSend_15qeuct(
       _$$ref.pointer,
@@ -16878,11 +16884,11 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
 
   /// Returns the passed object, to test serialization and deserialization.
   NativeInteropAllTypesBridge? echoAllTypesWithEverything(
-    NativeInteropAllTypesBridge everything, {
+    NativeInteropAllTypesBridge everythingArg, {
     required NativeInteropTestsError wrappedError,
   }) {
     final _$$ref = object$.ref;
-    final _$$ref$1 = everything.ref;
+    final _$$ref$1 = everythingArg.ref;
     final _$$ref$2 = wrappedError.ref;
     final $ret = _objc_msgSend_15qeuct(
       _$$ref.pointer,
@@ -16897,7 +16903,7 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
 
   /// Returns the passed enum, to test asynchronous serialization and deserialization.
   void echoAnotherAsyncEnumWithAnotherEnum(
-    NativeInteropAnotherEnum anotherEnum, {
+    NativeInteropAnotherEnum anotherEnumArg, {
     required NativeInteropTestsError wrappedError,
     required objc.ObjCBlock<ffi.Void Function(objc.NSNumber?)> completionHandler,
   }) {
@@ -16907,7 +16913,7 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
     _objc_msgSend_1p6535m(
       _$$ref.pointer,
       _sel_echoAnotherAsyncEnumWithAnotherEnum_wrappedError_completionHandler_,
-      anotherEnum.value,
+      anotherEnumArg.value,
       _$$ref$1.pointer,
       _$$ref$2.pointer,
     );
@@ -16915,12 +16921,12 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
 
   /// Returns the passed enum, to test asynchronous serialization and deserialization.
   void echoAnotherAsyncNullableEnumWithAnotherEnum(
-    objc.NSNumber? anotherEnum, {
+    objc.NSNumber? anotherEnumArg, {
     required NativeInteropTestsError wrappedError,
     required objc.ObjCBlock<ffi.Void Function(objc.NSNumber?)> completionHandler,
   }) {
     final _$$ref = object$.ref;
-    final _$$ref$1 = anotherEnum?.ref;
+    final _$$ref$1 = anotherEnumArg?.ref;
     final _$$ref$2 = wrappedError.ref;
     final _$$ref$3 = completionHandler.ref;
     _objc_msgSend_18qun1e(
@@ -16934,7 +16940,7 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
 
   /// Returns the passed enum to test serialization and deserialization.
   objc.NSNumber? echoAnotherEnumWithAnotherEnum(
-    NativeInteropAnotherEnum anotherEnum, {
+    NativeInteropAnotherEnum anotherEnumArg, {
     required NativeInteropTestsError wrappedError,
   }) {
     final _$$ref = object$.ref;
@@ -16942,7 +16948,7 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
     final $ret = _objc_msgSend_15mcegd(
       _$$ref.pointer,
       _sel_echoAnotherEnumWithAnotherEnum_wrappedError_,
-      anotherEnum.value,
+      anotherEnumArg.value,
       _$$ref$1.pointer,
     );
     return $ret.address == 0 ? null : objc.NSNumber.fromPointer($ret, retain: true, release: true);
@@ -16950,11 +16956,11 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
 
   /// echoAnotherNullableEnumWithAnotherEnum:wrappedError:
   objc.NSNumber? echoAnotherNullableEnumWithAnotherEnum(
-    objc.NSNumber? anotherEnum, {
+    objc.NSNumber? anotherEnumArg, {
     required NativeInteropTestsError wrappedError,
   }) {
     final _$$ref = object$.ref;
-    final _$$ref$1 = anotherEnum?.ref;
+    final _$$ref$1 = anotherEnumArg?.ref;
     final _$$ref$2 = wrappedError.ref;
     final $ret = _objc_msgSend_15qeuct(
       _$$ref.pointer,
@@ -16967,7 +16973,7 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
 
   /// Returns the passed in boolean asynchronously.
   void echoAsyncBoolWithABool(
-    bool aBool, {
+    bool aBoolArg, {
     required NativeInteropTestsError wrappedError,
     required objc.ObjCBlock<ffi.Void Function(objc.NSNumber?)> completionHandler,
   }) {
@@ -16977,7 +16983,7 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
     _objc_msgSend_1oby3xk(
       _$$ref.pointer,
       _sel_echoAsyncBoolWithABool_wrappedError_completionHandler_,
-      aBool,
+      aBoolArg,
       _$$ref$1.pointer,
       _$$ref$2.pointer,
     );
@@ -16985,12 +16991,12 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
 
   /// Returns the passed list, to test asynchronous serialization and deserialization.
   void echoAsyncClassListWithClassList(
-    objc.NSArray classList, {
+    objc.NSArray classListArg, {
     required NativeInteropTestsError wrappedError,
     required objc.ObjCBlock<ffi.Void Function(objc.NSArray?)> completionHandler,
   }) {
     final _$$ref = object$.ref;
-    final _$$ref$1 = classList.ref;
+    final _$$ref$1 = classListArg.ref;
     final _$$ref$2 = wrappedError.ref;
     final _$$ref$3 = completionHandler.ref;
     _objc_msgSend_18qun1e(
@@ -17004,12 +17010,12 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
 
   /// Returns the passed map, to test asynchronous serialization and deserialization.
   void echoAsyncClassMapWithClassMap(
-    objc.NSDictionary classMap, {
+    objc.NSDictionary classMapArg, {
     required NativeInteropTestsError wrappedError,
     required objc.ObjCBlock<ffi.Void Function(objc.NSDictionary?)> completionHandler,
   }) {
     final _$$ref = object$.ref;
-    final _$$ref$1 = classMap.ref;
+    final _$$ref$1 = classMapArg.ref;
     final _$$ref$2 = wrappedError.ref;
     final _$$ref$3 = completionHandler.ref;
     _objc_msgSend_18qun1e(
@@ -17023,7 +17029,7 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
 
   /// Returns passed in double asynchronously.
   void echoAsyncDoubleWithADouble(
-    double aDouble, {
+    double aDoubleArg, {
     required NativeInteropTestsError wrappedError,
     required objc.ObjCBlock<ffi.Void Function(objc.NSNumber?)> completionHandler,
   }) {
@@ -17033,7 +17039,7 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
     _objc_msgSend_f15nnv(
       _$$ref.pointer,
       _sel_echoAsyncDoubleWithADouble_wrappedError_completionHandler_,
-      aDouble,
+      aDoubleArg,
       _$$ref$1.pointer,
       _$$ref$2.pointer,
     );
@@ -17041,12 +17047,12 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
 
   /// Returns the passed list, to test asynchronous serialization and deserialization.
   void echoAsyncEnumListWithEnumList(
-    objc.NSArray enumList, {
+    objc.NSArray enumListArg, {
     required NativeInteropTestsError wrappedError,
     required objc.ObjCBlock<ffi.Void Function(objc.NSArray?)> completionHandler,
   }) {
     final _$$ref = object$.ref;
-    final _$$ref$1 = enumList.ref;
+    final _$$ref$1 = enumListArg.ref;
     final _$$ref$2 = wrappedError.ref;
     final _$$ref$3 = completionHandler.ref;
     _objc_msgSend_18qun1e(
@@ -17060,12 +17066,12 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
 
   /// Returns the passed map, to test asynchronous serialization and deserialization.
   void echoAsyncEnumMapWithEnumMap(
-    objc.NSDictionary enumMap, {
+    objc.NSDictionary enumMapArg, {
     required NativeInteropTestsError wrappedError,
     required objc.ObjCBlock<ffi.Void Function(objc.NSDictionary?)> completionHandler,
   }) {
     final _$$ref = object$.ref;
-    final _$$ref$1 = enumMap.ref;
+    final _$$ref$1 = enumMapArg.ref;
     final _$$ref$2 = wrappedError.ref;
     final _$$ref$3 = completionHandler.ref;
     _objc_msgSend_18qun1e(
@@ -17079,7 +17085,7 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
 
   /// Returns the passed enum, to test asynchronous serialization and deserialization.
   void echoAsyncEnumWithAnEnum(
-    NativeInteropAnEnum anEnum, {
+    NativeInteropAnEnum anEnumArg, {
     required NativeInteropTestsError wrappedError,
     required objc.ObjCBlock<ffi.Void Function(objc.NSNumber?)> completionHandler,
   }) {
@@ -17089,7 +17095,7 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
     _objc_msgSend_gthscw(
       _$$ref.pointer,
       _sel_echoAsyncEnumWithAnEnum_wrappedError_completionHandler_,
-      anEnum.value,
+      anEnumArg.value,
       _$$ref$1.pointer,
       _$$ref$2.pointer,
     );
@@ -17097,13 +17103,13 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
 
   /// Returns the passed in Float64List asynchronously.
   void echoAsyncFloat64ListWithAFloat64List(
-    NativeInteropTestsPigeonTypedData aFloat64List, {
+    NativeInteropTestsPigeonTypedData aFloat64ListArg, {
     required NativeInteropTestsError wrappedError,
     required objc.ObjCBlock<ffi.Void Function(NativeInteropTestsPigeonTypedData?)>
     completionHandler,
   }) {
     final _$$ref = object$.ref;
-    final _$$ref$1 = aFloat64List.ref;
+    final _$$ref$1 = aFloat64ListArg.ref;
     final _$$ref$2 = wrappedError.ref;
     final _$$ref$3 = completionHandler.ref;
     _objc_msgSend_18qun1e(
@@ -17117,13 +17123,13 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
 
   /// Returns the passed in Int32List asynchronously.
   void echoAsyncInt32ListWithAInt32List(
-    NativeInteropTestsPigeonTypedData aInt32List, {
+    NativeInteropTestsPigeonTypedData aInt32ListArg, {
     required NativeInteropTestsError wrappedError,
     required objc.ObjCBlock<ffi.Void Function(NativeInteropTestsPigeonTypedData?)>
     completionHandler,
   }) {
     final _$$ref = object$.ref;
-    final _$$ref$1 = aInt32List.ref;
+    final _$$ref$1 = aInt32ListArg.ref;
     final _$$ref$2 = wrappedError.ref;
     final _$$ref$3 = completionHandler.ref;
     _objc_msgSend_18qun1e(
@@ -17137,13 +17143,13 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
 
   /// Returns the passed in Int64List asynchronously.
   void echoAsyncInt64ListWithAInt64List(
-    NativeInteropTestsPigeonTypedData aInt64List, {
+    NativeInteropTestsPigeonTypedData aInt64ListArg, {
     required NativeInteropTestsError wrappedError,
     required objc.ObjCBlock<ffi.Void Function(NativeInteropTestsPigeonTypedData?)>
     completionHandler,
   }) {
     final _$$ref = object$.ref;
-    final _$$ref$1 = aInt64List.ref;
+    final _$$ref$1 = aInt64ListArg.ref;
     final _$$ref$2 = wrappedError.ref;
     final _$$ref$3 = completionHandler.ref;
     _objc_msgSend_18qun1e(
@@ -17157,12 +17163,12 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
 
   /// Returns the passed map, to test asynchronous serialization and deserialization.
   void echoAsyncIntMapWithIntMap(
-    objc.NSDictionary intMap, {
+    objc.NSDictionary intMapArg, {
     required NativeInteropTestsError wrappedError,
     required objc.ObjCBlock<ffi.Void Function(objc.NSDictionary?)> completionHandler,
   }) {
     final _$$ref = object$.ref;
-    final _$$ref$1 = intMap.ref;
+    final _$$ref$1 = intMapArg.ref;
     final _$$ref$2 = wrappedError.ref;
     final _$$ref$3 = completionHandler.ref;
     _objc_msgSend_18qun1e(
@@ -17176,7 +17182,7 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
 
   /// Returns passed in int asynchronously.
   void echoAsyncIntWithAnInt(
-    int anInt, {
+    int anIntArg, {
     required NativeInteropTestsError wrappedError,
     required objc.ObjCBlock<ffi.Void Function(objc.NSNumber?)> completionHandler,
   }) {
@@ -17186,7 +17192,7 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
     _objc_msgSend_1bf2hie(
       _$$ref.pointer,
       _sel_echoAsyncIntWithAnInt_wrappedError_completionHandler_,
-      anInt,
+      anIntArg,
       _$$ref$1.pointer,
       _$$ref$2.pointer,
     );
@@ -17194,12 +17200,12 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
 
   /// Returns the passed list, to test asynchronous serialization and deserialization.
   void echoAsyncListWithList(
-    objc.NSArray list, {
+    objc.NSArray listArg, {
     required NativeInteropTestsError wrappedError,
     required objc.ObjCBlock<ffi.Void Function(objc.NSArray?)> completionHandler,
   }) {
     final _$$ref = object$.ref;
-    final _$$ref$1 = list.ref;
+    final _$$ref$1 = listArg.ref;
     final _$$ref$2 = wrappedError.ref;
     final _$$ref$3 = completionHandler.ref;
     _objc_msgSend_18qun1e(
@@ -17213,12 +17219,12 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
 
   /// Returns the passed map, to test asynchronous serialization and deserialization.
   void echoAsyncMapWithMap(
-    objc.NSDictionary map, {
+    objc.NSDictionary mapArg, {
     required NativeInteropTestsError wrappedError,
     required objc.ObjCBlock<ffi.Void Function(objc.NSDictionary?)> completionHandler,
   }) {
     final _$$ref = object$.ref;
-    final _$$ref$1 = map.ref;
+    final _$$ref$1 = mapArg.ref;
     final _$$ref$2 = wrappedError.ref;
     final _$$ref$3 = completionHandler.ref;
     _objc_msgSend_18qun1e(
@@ -17232,12 +17238,12 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
 
   /// Returns the passed object, to test async serialization and deserialization.
   void echoAsyncNativeInteropAllTypesWithEverything(
-    NativeInteropAllTypesBridge everything, {
+    NativeInteropAllTypesBridge everythingArg, {
     required NativeInteropTestsError wrappedError,
     required objc.ObjCBlock<ffi.Void Function(NativeInteropAllTypesBridge?)> completionHandler,
   }) {
     final _$$ref = object$.ref;
-    final _$$ref$1 = everything.ref;
+    final _$$ref$1 = everythingArg.ref;
     final _$$ref$2 = wrappedError.ref;
     final _$$ref$3 = completionHandler.ref;
     _objc_msgSend_18qun1e(
@@ -17251,12 +17257,12 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
 
   /// Returns the passed in boolean asynchronously.
   void echoAsyncNullableBoolWithABool(
-    objc.NSNumber? aBool, {
+    objc.NSNumber? aBoolArg, {
     required NativeInteropTestsError wrappedError,
     required objc.ObjCBlock<ffi.Void Function(objc.NSNumber?)> completionHandler,
   }) {
     final _$$ref = object$.ref;
-    final _$$ref$1 = aBool?.ref;
+    final _$$ref$1 = aBoolArg?.ref;
     final _$$ref$2 = wrappedError.ref;
     final _$$ref$3 = completionHandler.ref;
     _objc_msgSend_18qun1e(
@@ -17270,12 +17276,12 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
 
   /// Returns the passed list, to test asynchronous serialization and deserialization.
   void echoAsyncNullableClassListWithClassList(
-    objc.NSArray? classList, {
+    objc.NSArray? classListArg, {
     required NativeInteropTestsError wrappedError,
     required objc.ObjCBlock<ffi.Void Function(objc.NSArray?)> completionHandler,
   }) {
     final _$$ref = object$.ref;
-    final _$$ref$1 = classList?.ref;
+    final _$$ref$1 = classListArg?.ref;
     final _$$ref$2 = wrappedError.ref;
     final _$$ref$3 = completionHandler.ref;
     _objc_msgSend_18qun1e(
@@ -17289,12 +17295,12 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
 
   /// Returns the passed map, to test asynchronous serialization and deserialization.
   void echoAsyncNullableClassMapWithClassMap(
-    objc.NSDictionary? classMap, {
+    objc.NSDictionary? classMapArg, {
     required NativeInteropTestsError wrappedError,
     required objc.ObjCBlock<ffi.Void Function(objc.NSDictionary?)> completionHandler,
   }) {
     final _$$ref = object$.ref;
-    final _$$ref$1 = classMap?.ref;
+    final _$$ref$1 = classMapArg?.ref;
     final _$$ref$2 = wrappedError.ref;
     final _$$ref$3 = completionHandler.ref;
     _objc_msgSend_18qun1e(
@@ -17308,12 +17314,12 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
 
   /// Returns passed in double asynchronously.
   void echoAsyncNullableDoubleWithADouble(
-    objc.NSNumber? aDouble, {
+    objc.NSNumber? aDoubleArg, {
     required NativeInteropTestsError wrappedError,
     required objc.ObjCBlock<ffi.Void Function(objc.NSNumber?)> completionHandler,
   }) {
     final _$$ref = object$.ref;
-    final _$$ref$1 = aDouble?.ref;
+    final _$$ref$1 = aDoubleArg?.ref;
     final _$$ref$2 = wrappedError.ref;
     final _$$ref$3 = completionHandler.ref;
     _objc_msgSend_18qun1e(
@@ -17327,12 +17333,12 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
 
   /// Returns the passed list, to test asynchronous serialization and deserialization.
   void echoAsyncNullableEnumListWithEnumList(
-    objc.NSArray? enumList, {
+    objc.NSArray? enumListArg, {
     required NativeInteropTestsError wrappedError,
     required objc.ObjCBlock<ffi.Void Function(objc.NSArray?)> completionHandler,
   }) {
     final _$$ref = object$.ref;
-    final _$$ref$1 = enumList?.ref;
+    final _$$ref$1 = enumListArg?.ref;
     final _$$ref$2 = wrappedError.ref;
     final _$$ref$3 = completionHandler.ref;
     _objc_msgSend_18qun1e(
@@ -17346,12 +17352,12 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
 
   /// Returns the passed map, to test asynchronous serialization and deserialization.
   void echoAsyncNullableEnumMapWithEnumMap(
-    objc.NSDictionary? enumMap, {
+    objc.NSDictionary? enumMapArg, {
     required NativeInteropTestsError wrappedError,
     required objc.ObjCBlock<ffi.Void Function(objc.NSDictionary?)> completionHandler,
   }) {
     final _$$ref = object$.ref;
-    final _$$ref$1 = enumMap?.ref;
+    final _$$ref$1 = enumMapArg?.ref;
     final _$$ref$2 = wrappedError.ref;
     final _$$ref$3 = completionHandler.ref;
     _objc_msgSend_18qun1e(
@@ -17365,12 +17371,12 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
 
   /// Returns the passed enum, to test asynchronous serialization and deserialization.
   void echoAsyncNullableEnumWithAnEnum(
-    objc.NSNumber? anEnum, {
+    objc.NSNumber? anEnumArg, {
     required NativeInteropTestsError wrappedError,
     required objc.ObjCBlock<ffi.Void Function(objc.NSNumber?)> completionHandler,
   }) {
     final _$$ref = object$.ref;
-    final _$$ref$1 = anEnum?.ref;
+    final _$$ref$1 = anEnumArg?.ref;
     final _$$ref$2 = wrappedError.ref;
     final _$$ref$3 = completionHandler.ref;
     _objc_msgSend_18qun1e(
@@ -17384,13 +17390,13 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
 
   /// Returns the passed in Float64List asynchronously.
   void echoAsyncNullableFloat64ListWithAFloat64List(
-    NativeInteropTestsPigeonTypedData? aFloat64List, {
+    NativeInteropTestsPigeonTypedData? aFloat64ListArg, {
     required NativeInteropTestsError wrappedError,
     required objc.ObjCBlock<ffi.Void Function(NativeInteropTestsPigeonTypedData?)>
     completionHandler,
   }) {
     final _$$ref = object$.ref;
-    final _$$ref$1 = aFloat64List?.ref;
+    final _$$ref$1 = aFloat64ListArg?.ref;
     final _$$ref$2 = wrappedError.ref;
     final _$$ref$3 = completionHandler.ref;
     _objc_msgSend_18qun1e(
@@ -17404,13 +17410,13 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
 
   /// Returns the passed in Int32List asynchronously.
   void echoAsyncNullableInt32ListWithAInt32List(
-    NativeInteropTestsPigeonTypedData? aInt32List, {
+    NativeInteropTestsPigeonTypedData? aInt32ListArg, {
     required NativeInteropTestsError wrappedError,
     required objc.ObjCBlock<ffi.Void Function(NativeInteropTestsPigeonTypedData?)>
     completionHandler,
   }) {
     final _$$ref = object$.ref;
-    final _$$ref$1 = aInt32List?.ref;
+    final _$$ref$1 = aInt32ListArg?.ref;
     final _$$ref$2 = wrappedError.ref;
     final _$$ref$3 = completionHandler.ref;
     _objc_msgSend_18qun1e(
@@ -17424,13 +17430,13 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
 
   /// Returns the passed in Int64List asynchronously.
   void echoAsyncNullableInt64ListWithAInt64List(
-    NativeInteropTestsPigeonTypedData? aInt64List, {
+    NativeInteropTestsPigeonTypedData? aInt64ListArg, {
     required NativeInteropTestsError wrappedError,
     required objc.ObjCBlock<ffi.Void Function(NativeInteropTestsPigeonTypedData?)>
     completionHandler,
   }) {
     final _$$ref = object$.ref;
-    final _$$ref$1 = aInt64List?.ref;
+    final _$$ref$1 = aInt64ListArg?.ref;
     final _$$ref$2 = wrappedError.ref;
     final _$$ref$3 = completionHandler.ref;
     _objc_msgSend_18qun1e(
@@ -17444,12 +17450,12 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
 
   /// Returns the passed map, to test asynchronous serialization and deserialization.
   void echoAsyncNullableIntMapWithIntMap(
-    objc.NSDictionary? intMap, {
+    objc.NSDictionary? intMapArg, {
     required NativeInteropTestsError wrappedError,
     required objc.ObjCBlock<ffi.Void Function(objc.NSDictionary?)> completionHandler,
   }) {
     final _$$ref = object$.ref;
-    final _$$ref$1 = intMap?.ref;
+    final _$$ref$1 = intMapArg?.ref;
     final _$$ref$2 = wrappedError.ref;
     final _$$ref$3 = completionHandler.ref;
     _objc_msgSend_18qun1e(
@@ -17463,12 +17469,12 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
 
   /// Returns passed in int asynchronously.
   void echoAsyncNullableIntWithAnInt(
-    objc.NSNumber? anInt, {
+    objc.NSNumber? anIntArg, {
     required NativeInteropTestsError wrappedError,
     required objc.ObjCBlock<ffi.Void Function(objc.NSNumber?)> completionHandler,
   }) {
     final _$$ref = object$.ref;
-    final _$$ref$1 = anInt?.ref;
+    final _$$ref$1 = anIntArg?.ref;
     final _$$ref$2 = wrappedError.ref;
     final _$$ref$3 = completionHandler.ref;
     _objc_msgSend_18qun1e(
@@ -17482,12 +17488,12 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
 
   /// Returns the passed list, to test asynchronous serialization and deserialization.
   void echoAsyncNullableListWithList(
-    objc.NSArray? list, {
+    objc.NSArray? listArg, {
     required NativeInteropTestsError wrappedError,
     required objc.ObjCBlock<ffi.Void Function(objc.NSArray?)> completionHandler,
   }) {
     final _$$ref = object$.ref;
-    final _$$ref$1 = list?.ref;
+    final _$$ref$1 = listArg?.ref;
     final _$$ref$2 = wrappedError.ref;
     final _$$ref$3 = completionHandler.ref;
     _objc_msgSend_18qun1e(
@@ -17501,12 +17507,12 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
 
   /// Returns the passed map, to test asynchronous serialization and deserialization.
   void echoAsyncNullableMapWithMap(
-    objc.NSDictionary? map, {
+    objc.NSDictionary? mapArg, {
     required NativeInteropTestsError wrappedError,
     required objc.ObjCBlock<ffi.Void Function(objc.NSDictionary?)> completionHandler,
   }) {
     final _$$ref = object$.ref;
-    final _$$ref$1 = map?.ref;
+    final _$$ref$1 = mapArg?.ref;
     final _$$ref$2 = wrappedError.ref;
     final _$$ref$3 = completionHandler.ref;
     _objc_msgSend_18qun1e(
@@ -17520,13 +17526,13 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
 
   /// Returns the passed object, to test serialization and deserialization.
   void echoAsyncNullableNativeInteropAllNullableTypesWithEverything(
-    NativeInteropAllNullableTypesBridge? everything, {
+    NativeInteropAllNullableTypesBridge? everythingArg, {
     required NativeInteropTestsError wrappedError,
     required objc.ObjCBlock<ffi.Void Function(NativeInteropAllNullableTypesBridge?)>
     completionHandler,
   }) {
     final _$$ref = object$.ref;
-    final _$$ref$1 = everything?.ref;
+    final _$$ref$1 = everythingArg?.ref;
     final _$$ref$2 = wrappedError.ref;
     final _$$ref$3 = completionHandler.ref;
     _objc_msgSend_18qun1e(
@@ -17540,13 +17546,13 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
 
   /// Returns the passed object, to test serialization and deserialization.
   void echoAsyncNullableNativeInteropAllNullableTypesWithoutRecursionWithEverything(
-    NativeInteropAllNullableTypesWithoutRecursionBridge? everything, {
+    NativeInteropAllNullableTypesWithoutRecursionBridge? everythingArg, {
     required NativeInteropTestsError wrappedError,
     required objc.ObjCBlock<ffi.Void Function(NativeInteropAllNullableTypesWithoutRecursionBridge?)>
     completionHandler,
   }) {
     final _$$ref = object$.ref;
-    final _$$ref$1 = everything?.ref;
+    final _$$ref$1 = everythingArg?.ref;
     final _$$ref$2 = wrappedError.ref;
     final _$$ref$3 = completionHandler.ref;
     _objc_msgSend_18qun1e(
@@ -17560,12 +17566,12 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
 
   /// Returns the passed in generic Object asynchronously.
   void echoAsyncNullableObjectWithAnObject(
-    objc.NSObject anObject, {
+    objc.NSObject anObjectArg, {
     required NativeInteropTestsError wrappedError,
     required objc.ObjCBlock<ffi.Void Function(objc.NSObject?)> completionHandler,
   }) {
     final _$$ref = object$.ref;
-    final _$$ref$1 = anObject.ref;
+    final _$$ref$1 = anObjectArg.ref;
     final _$$ref$2 = wrappedError.ref;
     final _$$ref$3 = completionHandler.ref;
     _objc_msgSend_18qun1e(
@@ -17579,12 +17585,12 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
 
   /// Returns the passed map, to test asynchronous serialization and deserialization.
   void echoAsyncNullableStringMapWithStringMap(
-    objc.NSDictionary? stringMap, {
+    objc.NSDictionary? stringMapArg, {
     required NativeInteropTestsError wrappedError,
     required objc.ObjCBlock<ffi.Void Function(objc.NSDictionary?)> completionHandler,
   }) {
     final _$$ref = object$.ref;
-    final _$$ref$1 = stringMap?.ref;
+    final _$$ref$1 = stringMapArg?.ref;
     final _$$ref$2 = wrappedError.ref;
     final _$$ref$3 = completionHandler.ref;
     _objc_msgSend_18qun1e(
@@ -17598,12 +17604,12 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
 
   /// Returns the passed string asynchronously.
   void echoAsyncNullableStringWithAString(
-    objc.NSString? aString, {
+    objc.NSString? aStringArg, {
     required NativeInteropTestsError wrappedError,
     required objc.ObjCBlock<ffi.Void Function(objc.NSString?)> completionHandler,
   }) {
     final _$$ref = object$.ref;
-    final _$$ref$1 = aString?.ref;
+    final _$$ref$1 = aStringArg?.ref;
     final _$$ref$2 = wrappedError.ref;
     final _$$ref$3 = completionHandler.ref;
     _objc_msgSend_18qun1e(
@@ -17617,13 +17623,13 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
 
   /// Returns the passed in Uint8List asynchronously.
   void echoAsyncNullableUint8ListWithAUint8List(
-    NativeInteropTestsPigeonTypedData? aUint8List, {
+    NativeInteropTestsPigeonTypedData? aUint8ListArg, {
     required NativeInteropTestsError wrappedError,
     required objc.ObjCBlock<ffi.Void Function(NativeInteropTestsPigeonTypedData?)>
     completionHandler,
   }) {
     final _$$ref = object$.ref;
-    final _$$ref$1 = aUint8List?.ref;
+    final _$$ref$1 = aUint8ListArg?.ref;
     final _$$ref$2 = wrappedError.ref;
     final _$$ref$3 = completionHandler.ref;
     _objc_msgSend_18qun1e(
@@ -17637,12 +17643,12 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
 
   /// Returns the passed in generic Object asynchronously.
   void echoAsyncObjectWithAnObject(
-    objc.NSObject anObject, {
+    objc.NSObject anObjectArg, {
     required NativeInteropTestsError wrappedError,
     required objc.ObjCBlock<ffi.Void Function(objc.NSObject?)> completionHandler,
   }) {
     final _$$ref = object$.ref;
-    final _$$ref$1 = anObject.ref;
+    final _$$ref$1 = anObjectArg.ref;
     final _$$ref$2 = wrappedError.ref;
     final _$$ref$3 = completionHandler.ref;
     _objc_msgSend_18qun1e(
@@ -17656,12 +17662,12 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
 
   /// Returns the passed map, to test asynchronous serialization and deserialization.
   void echoAsyncStringMapWithStringMap(
-    objc.NSDictionary stringMap, {
+    objc.NSDictionary stringMapArg, {
     required NativeInteropTestsError wrappedError,
     required objc.ObjCBlock<ffi.Void Function(objc.NSDictionary?)> completionHandler,
   }) {
     final _$$ref = object$.ref;
-    final _$$ref$1 = stringMap.ref;
+    final _$$ref$1 = stringMapArg.ref;
     final _$$ref$2 = wrappedError.ref;
     final _$$ref$3 = completionHandler.ref;
     _objc_msgSend_18qun1e(
@@ -17675,12 +17681,12 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
 
   /// Returns the passed string asynchronously.
   void echoAsyncStringWithAString(
-    objc.NSString aString, {
+    objc.NSString aStringArg, {
     required NativeInteropTestsError wrappedError,
     required objc.ObjCBlock<ffi.Void Function(objc.NSString?)> completionHandler,
   }) {
     final _$$ref = object$.ref;
-    final _$$ref$1 = aString.ref;
+    final _$$ref$1 = aStringArg.ref;
     final _$$ref$2 = wrappedError.ref;
     final _$$ref$3 = completionHandler.ref;
     _objc_msgSend_18qun1e(
@@ -17694,13 +17700,13 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
 
   /// Returns the passed in Uint8List asynchronously.
   void echoAsyncUint8ListWithAUint8List(
-    NativeInteropTestsPigeonTypedData aUint8List, {
+    NativeInteropTestsPigeonTypedData aUint8ListArg, {
     required NativeInteropTestsError wrappedError,
     required objc.ObjCBlock<ffi.Void Function(NativeInteropTestsPigeonTypedData?)>
     completionHandler,
   }) {
     final _$$ref = object$.ref;
-    final _$$ref$1 = aUint8List.ref;
+    final _$$ref$1 = aUint8ListArg.ref;
     final _$$ref$2 = wrappedError.ref;
     final _$$ref$3 = completionHandler.ref;
     _objc_msgSend_18qun1e(
@@ -17714,11 +17720,11 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
 
   /// Returns the passed list, to test serialization and deserialization.
   objc.NSArray? echoBoolListWithBoolList(
-    objc.NSArray boolList, {
+    objc.NSArray boolListArg, {
     required NativeInteropTestsError wrappedError,
   }) {
     final _$$ref = object$.ref;
-    final _$$ref$1 = boolList.ref;
+    final _$$ref$1 = boolListArg.ref;
     final _$$ref$2 = wrappedError.ref;
     final $ret = _objc_msgSend_15qeuct(
       _$$ref.pointer,
@@ -17730,13 +17736,13 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
   }
 
   /// Returns the passed in boolean.
-  objc.NSNumber? echoBoolWithABool(bool aBool, {required NativeInteropTestsError wrappedError}) {
+  objc.NSNumber? echoBoolWithABool(bool aBoolArg, {required NativeInteropTestsError wrappedError}) {
     final _$$ref = object$.ref;
     final _$$ref$1 = wrappedError.ref;
     final $ret = _objc_msgSend_w1rg4f(
       _$$ref.pointer,
       _sel_echoBoolWithABool_wrappedError_,
-      aBool,
+      aBoolArg,
       _$$ref$1.pointer,
     );
     return $ret.address == 0 ? null : objc.NSNumber.fromPointer($ret, retain: true, release: true);
@@ -17744,11 +17750,11 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
 
   /// Returns the passed list, to test serialization and deserialization.
   objc.NSArray? echoClassListWithClassList(
-    objc.NSArray classList, {
+    objc.NSArray classListArg, {
     required NativeInteropTestsError wrappedError,
   }) {
     final _$$ref = object$.ref;
-    final _$$ref$1 = classList.ref;
+    final _$$ref$1 = classListArg.ref;
     final _$$ref$2 = wrappedError.ref;
     final $ret = _objc_msgSend_15qeuct(
       _$$ref.pointer,
@@ -17761,11 +17767,11 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
 
   /// Returns the passed map, to test serialization and deserialization.
   objc.NSDictionary? echoClassMapWithClassMap(
-    objc.NSDictionary classMap, {
+    objc.NSDictionary classMapArg, {
     required NativeInteropTestsError wrappedError,
   }) {
     final _$$ref = object$.ref;
-    final _$$ref$1 = classMap.ref;
+    final _$$ref$1 = classMapArg.ref;
     final _$$ref$2 = wrappedError.ref;
     final $ret = _objc_msgSend_15qeuct(
       _$$ref.pointer,
@@ -17780,11 +17786,11 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
 
   /// Returns the passed class to test nested class serialization and deserialization.
   NativeInteropAllClassesWrapperBridge? echoClassWrapperWithWrapper(
-    NativeInteropAllClassesWrapperBridge wrapper, {
+    NativeInteropAllClassesWrapperBridge wrapperArg, {
     required NativeInteropTestsError wrappedError,
   }) {
     final _$$ref = object$.ref;
-    final _$$ref$1 = wrapper.ref;
+    final _$$ref$1 = wrapperArg.ref;
     final _$$ref$2 = wrappedError.ref;
     final $ret = _objc_msgSend_15qeuct(
       _$$ref.pointer,
@@ -17799,11 +17805,11 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
 
   /// Returns the passed list, to test serialization and deserialization.
   objc.NSArray? echoDoubleListWithDoubleList(
-    objc.NSArray doubleList, {
+    objc.NSArray doubleListArg, {
     required NativeInteropTestsError wrappedError,
   }) {
     final _$$ref = object$.ref;
-    final _$$ref$1 = doubleList.ref;
+    final _$$ref$1 = doubleListArg.ref;
     final _$$ref$2 = wrappedError.ref;
     final $ret = _objc_msgSend_15qeuct(
       _$$ref.pointer,
@@ -17816,7 +17822,7 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
 
   /// Returns passed in double.
   objc.NSNumber? echoDoubleWithADouble(
-    double aDouble, {
+    double aDoubleArg, {
     required NativeInteropTestsError wrappedError,
   }) {
     final _$$ref = object$.ref;
@@ -17824,7 +17830,7 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
     final $ret = _objc_msgSend_1ozwf6k(
       _$$ref.pointer,
       _sel_echoDoubleWithADouble_wrappedError_,
-      aDouble,
+      aDoubleArg,
       _$$ref$1.pointer,
     );
     return $ret.address == 0 ? null : objc.NSNumber.fromPointer($ret, retain: true, release: true);
@@ -17832,11 +17838,11 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
 
   /// Returns the passed list, to test serialization and deserialization.
   objc.NSArray? echoEnumListWithEnumList(
-    objc.NSArray enumList, {
+    objc.NSArray enumListArg, {
     required NativeInteropTestsError wrappedError,
   }) {
     final _$$ref = object$.ref;
-    final _$$ref$1 = enumList.ref;
+    final _$$ref$1 = enumListArg.ref;
     final _$$ref$2 = wrappedError.ref;
     final $ret = _objc_msgSend_15qeuct(
       _$$ref.pointer,
@@ -17849,11 +17855,11 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
 
   /// Returns the passed map, to test serialization and deserialization.
   objc.NSDictionary? echoEnumMapWithEnumMap(
-    objc.NSDictionary enumMap, {
+    objc.NSDictionary enumMapArg, {
     required NativeInteropTestsError wrappedError,
   }) {
     final _$$ref = object$.ref;
-    final _$$ref$1 = enumMap.ref;
+    final _$$ref$1 = enumMapArg.ref;
     final _$$ref$2 = wrappedError.ref;
     final $ret = _objc_msgSend_15qeuct(
       _$$ref.pointer,
@@ -17868,7 +17874,7 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
 
   /// Returns the passed enum to test serialization and deserialization.
   objc.NSNumber? echoEnumWithAnEnum(
-    NativeInteropAnEnum anEnum, {
+    NativeInteropAnEnum anEnumArg, {
     required NativeInteropTestsError wrappedError,
   }) {
     final _$$ref = object$.ref;
@@ -17876,7 +17882,7 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
     final $ret = _objc_msgSend_1dnmby7(
       _$$ref.pointer,
       _sel_echoEnumWithAnEnum_wrappedError_,
-      anEnum.value,
+      anEnumArg.value,
       _$$ref$1.pointer,
     );
     return $ret.address == 0 ? null : objc.NSNumber.fromPointer($ret, retain: true, release: true);
@@ -17884,11 +17890,11 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
 
   /// Returns the passed in Float64List.
   NativeInteropTestsPigeonTypedData? echoFloat64ListWithAFloat64List(
-    NativeInteropTestsPigeonTypedData aFloat64List, {
+    NativeInteropTestsPigeonTypedData aFloat64ListArg, {
     required NativeInteropTestsError wrappedError,
   }) {
     final _$$ref = object$.ref;
-    final _$$ref$1 = aFloat64List.ref;
+    final _$$ref$1 = aFloat64ListArg.ref;
     final _$$ref$2 = wrappedError.ref;
     final $ret = _objc_msgSend_15qeuct(
       _$$ref.pointer,
@@ -17903,11 +17909,11 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
 
   /// Returns the passed in Int32List.
   NativeInteropTestsPigeonTypedData? echoInt32ListWithAInt32List(
-    NativeInteropTestsPigeonTypedData aInt32List, {
+    NativeInteropTestsPigeonTypedData aInt32ListArg, {
     required NativeInteropTestsError wrappedError,
   }) {
     final _$$ref = object$.ref;
-    final _$$ref$1 = aInt32List.ref;
+    final _$$ref$1 = aInt32ListArg.ref;
     final _$$ref$2 = wrappedError.ref;
     final $ret = _objc_msgSend_15qeuct(
       _$$ref.pointer,
@@ -17922,11 +17928,11 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
 
   /// Returns the passed in Int64List.
   NativeInteropTestsPigeonTypedData? echoInt64ListWithAInt64List(
-    NativeInteropTestsPigeonTypedData aInt64List, {
+    NativeInteropTestsPigeonTypedData aInt64ListArg, {
     required NativeInteropTestsError wrappedError,
   }) {
     final _$$ref = object$.ref;
-    final _$$ref$1 = aInt64List.ref;
+    final _$$ref$1 = aInt64ListArg.ref;
     final _$$ref$2 = wrappedError.ref;
     final $ret = _objc_msgSend_15qeuct(
       _$$ref.pointer,
@@ -17941,11 +17947,11 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
 
   /// Returns the passed list, to test serialization and deserialization.
   objc.NSArray? echoIntListWithIntList(
-    objc.NSArray intList, {
+    objc.NSArray intListArg, {
     required NativeInteropTestsError wrappedError,
   }) {
     final _$$ref = object$.ref;
-    final _$$ref$1 = intList.ref;
+    final _$$ref$1 = intListArg.ref;
     final _$$ref$2 = wrappedError.ref;
     final $ret = _objc_msgSend_15qeuct(
       _$$ref.pointer,
@@ -17958,11 +17964,11 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
 
   /// Returns the passed map, to test serialization and deserialization.
   objc.NSDictionary? echoIntMapWithIntMap(
-    objc.NSDictionary intMap, {
+    objc.NSDictionary intMapArg, {
     required NativeInteropTestsError wrappedError,
   }) {
     final _$$ref = object$.ref;
-    final _$$ref$1 = intMap.ref;
+    final _$$ref$1 = intMapArg.ref;
     final _$$ref$2 = wrappedError.ref;
     final $ret = _objc_msgSend_15qeuct(
       _$$ref.pointer,
@@ -17976,13 +17982,13 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
   }
 
   /// Returns passed in int.
-  objc.NSNumber? echoIntWithAnInt(int anInt, {required NativeInteropTestsError wrappedError}) {
+  objc.NSNumber? echoIntWithAnInt(int anIntArg, {required NativeInteropTestsError wrappedError}) {
     final _$$ref = object$.ref;
     final _$$ref$1 = wrappedError.ref;
     final $ret = _objc_msgSend_1j962g9(
       _$$ref.pointer,
       _sel_echoIntWithAnInt_wrappedError_,
-      anInt,
+      anIntArg,
       _$$ref$1.pointer,
     );
     return $ret.address == 0 ? null : objc.NSNumber.fromPointer($ret, retain: true, release: true);
@@ -17990,11 +17996,11 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
 
   /// Returns the passed list, to test serialization and deserialization.
   objc.NSArray? echoListWithList(
-    objc.NSArray list, {
+    objc.NSArray listArg, {
     required NativeInteropTestsError wrappedError,
   }) {
     final _$$ref = object$.ref;
-    final _$$ref$1 = list.ref;
+    final _$$ref$1 = listArg.ref;
     final _$$ref$2 = wrappedError.ref;
     final $ret = _objc_msgSend_15qeuct(
       _$$ref.pointer,
@@ -18007,11 +18013,11 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
 
   /// Returns the passed map, to test serialization and deserialization.
   objc.NSDictionary? echoMapWithMap(
-    objc.NSDictionary map, {
+    objc.NSDictionary mapArg, {
     required NativeInteropTestsError wrappedError,
   }) {
     final _$$ref = object$.ref;
-    final _$$ref$1 = map.ref;
+    final _$$ref$1 = mapArg.ref;
     final _$$ref$2 = wrappedError.ref;
     final $ret = _objc_msgSend_15qeuct(
       _$$ref.pointer,
@@ -18026,11 +18032,11 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
 
   /// Returns the default string.
   objc.NSString? echoNamedDefaultStringWithAString(
-    objc.NSString aString, {
+    objc.NSString aStringArg, {
     required NativeInteropTestsError wrappedError,
   }) {
     final _$$ref = object$.ref;
-    final _$$ref$1 = aString.ref;
+    final _$$ref$1 = aStringArg.ref;
     final _$$ref$2 = wrappedError.ref;
     final $ret = _objc_msgSend_15qeuct(
       _$$ref.pointer,
@@ -18043,11 +18049,11 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
 
   /// Returns the passed in string.
   objc.NSString? echoNamedNullableStringWithANullableString(
-    objc.NSString? aNullableString, {
+    objc.NSString? aNullableStringArg, {
     required NativeInteropTestsError wrappedError,
   }) {
     final _$$ref = object$.ref;
-    final _$$ref$1 = aNullableString?.ref;
+    final _$$ref$1 = aNullableStringArg?.ref;
     final _$$ref$2 = wrappedError.ref;
     final $ret = _objc_msgSend_15qeuct(
       _$$ref.pointer,
@@ -18060,11 +18066,11 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
 
   /// Returns the passed list, to test serialization and deserialization.
   objc.NSArray? echoNonNullClassListWithClassList(
-    objc.NSArray classList, {
+    objc.NSArray classListArg, {
     required NativeInteropTestsError wrappedError,
   }) {
     final _$$ref = object$.ref;
-    final _$$ref$1 = classList.ref;
+    final _$$ref$1 = classListArg.ref;
     final _$$ref$2 = wrappedError.ref;
     final $ret = _objc_msgSend_15qeuct(
       _$$ref.pointer,
@@ -18077,11 +18083,11 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
 
   /// Returns the passed map, to test serialization and deserialization.
   objc.NSDictionary? echoNonNullClassMapWithClassMap(
-    objc.NSDictionary classMap, {
+    objc.NSDictionary classMapArg, {
     required NativeInteropTestsError wrappedError,
   }) {
     final _$$ref = object$.ref;
-    final _$$ref$1 = classMap.ref;
+    final _$$ref$1 = classMapArg.ref;
     final _$$ref$2 = wrappedError.ref;
     final $ret = _objc_msgSend_15qeuct(
       _$$ref.pointer,
@@ -18096,11 +18102,11 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
 
   /// Returns the passed list, to test serialization and deserialization.
   objc.NSArray? echoNonNullEnumListWithEnumList(
-    objc.NSArray enumList, {
+    objc.NSArray enumListArg, {
     required NativeInteropTestsError wrappedError,
   }) {
     final _$$ref = object$.ref;
-    final _$$ref$1 = enumList.ref;
+    final _$$ref$1 = enumListArg.ref;
     final _$$ref$2 = wrappedError.ref;
     final $ret = _objc_msgSend_15qeuct(
       _$$ref.pointer,
@@ -18113,11 +18119,11 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
 
   /// Returns the passed map, to test serialization and deserialization.
   objc.NSDictionary? echoNonNullEnumMapWithEnumMap(
-    objc.NSDictionary enumMap, {
+    objc.NSDictionary enumMapArg, {
     required NativeInteropTestsError wrappedError,
   }) {
     final _$$ref = object$.ref;
-    final _$$ref$1 = enumMap.ref;
+    final _$$ref$1 = enumMapArg.ref;
     final _$$ref$2 = wrappedError.ref;
     final $ret = _objc_msgSend_15qeuct(
       _$$ref.pointer,
@@ -18132,11 +18138,11 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
 
   /// Returns the passed map, to test serialization and deserialization.
   objc.NSDictionary? echoNonNullIntMapWithIntMap(
-    objc.NSDictionary intMap, {
+    objc.NSDictionary intMapArg, {
     required NativeInteropTestsError wrappedError,
   }) {
     final _$$ref = object$.ref;
-    final _$$ref$1 = intMap.ref;
+    final _$$ref$1 = intMapArg.ref;
     final _$$ref$2 = wrappedError.ref;
     final $ret = _objc_msgSend_15qeuct(
       _$$ref.pointer,
@@ -18151,11 +18157,11 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
 
   /// Returns the passed map, to test serialization and deserialization.
   objc.NSDictionary? echoNonNullStringMapWithStringMap(
-    objc.NSDictionary stringMap, {
+    objc.NSDictionary stringMapArg, {
     required NativeInteropTestsError wrappedError,
   }) {
     final _$$ref = object$.ref;
-    final _$$ref$1 = stringMap.ref;
+    final _$$ref$1 = stringMapArg.ref;
     final _$$ref$2 = wrappedError.ref;
     final $ret = _objc_msgSend_15qeuct(
       _$$ref.pointer,
@@ -18170,11 +18176,11 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
 
   /// Returns the passed in boolean.
   objc.NSNumber? echoNullableBoolWithANullableBool(
-    objc.NSNumber? aNullableBool, {
+    objc.NSNumber? aNullableBoolArg, {
     required NativeInteropTestsError wrappedError,
   }) {
     final _$$ref = object$.ref;
-    final _$$ref$1 = aNullableBool?.ref;
+    final _$$ref$1 = aNullableBoolArg?.ref;
     final _$$ref$2 = wrappedError.ref;
     final $ret = _objc_msgSend_15qeuct(
       _$$ref.pointer,
@@ -18187,11 +18193,11 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
 
   /// Returns the passed list, to test serialization and deserialization.
   objc.NSArray? echoNullableClassListWithClassList(
-    objc.NSArray? classList, {
+    objc.NSArray? classListArg, {
     required NativeInteropTestsError wrappedError,
   }) {
     final _$$ref = object$.ref;
-    final _$$ref$1 = classList?.ref;
+    final _$$ref$1 = classListArg?.ref;
     final _$$ref$2 = wrappedError.ref;
     final $ret = _objc_msgSend_15qeuct(
       _$$ref.pointer,
@@ -18204,11 +18210,11 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
 
   /// Returns the passed map, to test serialization and deserialization.
   objc.NSDictionary? echoNullableClassMapWithClassMap(
-    objc.NSDictionary? classMap, {
+    objc.NSDictionary? classMapArg, {
     required NativeInteropTestsError wrappedError,
   }) {
     final _$$ref = object$.ref;
-    final _$$ref$1 = classMap?.ref;
+    final _$$ref$1 = classMapArg?.ref;
     final _$$ref$2 = wrappedError.ref;
     final $ret = _objc_msgSend_15qeuct(
       _$$ref.pointer,
@@ -18223,11 +18229,11 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
 
   /// Returns passed in double.
   objc.NSNumber? echoNullableDoubleWithANullableDouble(
-    objc.NSNumber? aNullableDouble, {
+    objc.NSNumber? aNullableDoubleArg, {
     required NativeInteropTestsError wrappedError,
   }) {
     final _$$ref = object$.ref;
-    final _$$ref$1 = aNullableDouble?.ref;
+    final _$$ref$1 = aNullableDoubleArg?.ref;
     final _$$ref$2 = wrappedError.ref;
     final $ret = _objc_msgSend_15qeuct(
       _$$ref.pointer,
@@ -18240,11 +18246,11 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
 
   /// Returns the passed list, to test serialization and deserialization.
   objc.NSArray? echoNullableEnumListWithEnumList(
-    objc.NSArray? enumList, {
+    objc.NSArray? enumListArg, {
     required NativeInteropTestsError wrappedError,
   }) {
     final _$$ref = object$.ref;
-    final _$$ref$1 = enumList?.ref;
+    final _$$ref$1 = enumListArg?.ref;
     final _$$ref$2 = wrappedError.ref;
     final $ret = _objc_msgSend_15qeuct(
       _$$ref.pointer,
@@ -18257,11 +18263,11 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
 
   /// Returns the passed map, to test serialization and deserialization.
   objc.NSDictionary? echoNullableEnumMapWithEnumMap(
-    objc.NSDictionary? enumMap, {
+    objc.NSDictionary? enumMapArg, {
     required NativeInteropTestsError wrappedError,
   }) {
     final _$$ref = object$.ref;
-    final _$$ref$1 = enumMap?.ref;
+    final _$$ref$1 = enumMapArg?.ref;
     final _$$ref$2 = wrappedError.ref;
     final $ret = _objc_msgSend_15qeuct(
       _$$ref.pointer,
@@ -18276,11 +18282,11 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
 
   /// echoNullableEnumWithAnEnum:wrappedError:
   objc.NSNumber? echoNullableEnumWithAnEnum(
-    objc.NSNumber? anEnum, {
+    objc.NSNumber? anEnumArg, {
     required NativeInteropTestsError wrappedError,
   }) {
     final _$$ref = object$.ref;
-    final _$$ref$1 = anEnum?.ref;
+    final _$$ref$1 = anEnumArg?.ref;
     final _$$ref$2 = wrappedError.ref;
     final $ret = _objc_msgSend_15qeuct(
       _$$ref.pointer,
@@ -18293,11 +18299,11 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
 
   /// Returns the passed in Float64List.
   NativeInteropTestsPigeonTypedData? echoNullableFloat64ListWithANullableFloat64List(
-    NativeInteropTestsPigeonTypedData? aNullableFloat64List, {
+    NativeInteropTestsPigeonTypedData? aNullableFloat64ListArg, {
     required NativeInteropTestsError wrappedError,
   }) {
     final _$$ref = object$.ref;
-    final _$$ref$1 = aNullableFloat64List?.ref;
+    final _$$ref$1 = aNullableFloat64ListArg?.ref;
     final _$$ref$2 = wrappedError.ref;
     final $ret = _objc_msgSend_15qeuct(
       _$$ref.pointer,
@@ -18312,11 +18318,11 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
 
   /// Returns the passed in Int32List.
   NativeInteropTestsPigeonTypedData? echoNullableInt32ListWithANullableInt32List(
-    NativeInteropTestsPigeonTypedData? aNullableInt32List, {
+    NativeInteropTestsPigeonTypedData? aNullableInt32ListArg, {
     required NativeInteropTestsError wrappedError,
   }) {
     final _$$ref = object$.ref;
-    final _$$ref$1 = aNullableInt32List?.ref;
+    final _$$ref$1 = aNullableInt32ListArg?.ref;
     final _$$ref$2 = wrappedError.ref;
     final $ret = _objc_msgSend_15qeuct(
       _$$ref.pointer,
@@ -18331,11 +18337,11 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
 
   /// Returns the passed in Int64List.
   NativeInteropTestsPigeonTypedData? echoNullableInt64ListWithANullableInt64List(
-    NativeInteropTestsPigeonTypedData? aNullableInt64List, {
+    NativeInteropTestsPigeonTypedData? aNullableInt64ListArg, {
     required NativeInteropTestsError wrappedError,
   }) {
     final _$$ref = object$.ref;
-    final _$$ref$1 = aNullableInt64List?.ref;
+    final _$$ref$1 = aNullableInt64ListArg?.ref;
     final _$$ref$2 = wrappedError.ref;
     final $ret = _objc_msgSend_15qeuct(
       _$$ref.pointer,
@@ -18350,11 +18356,11 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
 
   /// Returns the passed map, to test serialization and deserialization.
   objc.NSDictionary? echoNullableIntMapWithIntMap(
-    objc.NSDictionary? intMap, {
+    objc.NSDictionary? intMapArg, {
     required NativeInteropTestsError wrappedError,
   }) {
     final _$$ref = object$.ref;
-    final _$$ref$1 = intMap?.ref;
+    final _$$ref$1 = intMapArg?.ref;
     final _$$ref$2 = wrappedError.ref;
     final $ret = _objc_msgSend_15qeuct(
       _$$ref.pointer,
@@ -18369,11 +18375,11 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
 
   /// Returns passed in int.
   objc.NSNumber? echoNullableIntWithANullableInt(
-    objc.NSNumber? aNullableInt, {
+    objc.NSNumber? aNullableIntArg, {
     required NativeInteropTestsError wrappedError,
   }) {
     final _$$ref = object$.ref;
-    final _$$ref$1 = aNullableInt?.ref;
+    final _$$ref$1 = aNullableIntArg?.ref;
     final _$$ref$2 = wrappedError.ref;
     final $ret = _objc_msgSend_15qeuct(
       _$$ref.pointer,
@@ -18386,11 +18392,11 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
 
   /// Returns the passed list, to test serialization and deserialization.
   objc.NSArray? echoNullableListWithANullableList(
-    objc.NSArray? aNullableList, {
+    objc.NSArray? aNullableListArg, {
     required NativeInteropTestsError wrappedError,
   }) {
     final _$$ref = object$.ref;
-    final _$$ref$1 = aNullableList?.ref;
+    final _$$ref$1 = aNullableListArg?.ref;
     final _$$ref$2 = wrappedError.ref;
     final $ret = _objc_msgSend_15qeuct(
       _$$ref.pointer,
@@ -18403,11 +18409,11 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
 
   /// Returns the passed map, to test serialization and deserialization.
   objc.NSDictionary? echoNullableMapWithMap(
-    objc.NSDictionary? map, {
+    objc.NSDictionary? mapArg, {
     required NativeInteropTestsError wrappedError,
   }) {
     final _$$ref = object$.ref;
-    final _$$ref$1 = map?.ref;
+    final _$$ref$1 = mapArg?.ref;
     final _$$ref$2 = wrappedError.ref;
     final $ret = _objc_msgSend_15qeuct(
       _$$ref.pointer,
@@ -18422,11 +18428,11 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
 
   /// Returns the passed list, to test serialization and deserialization.
   objc.NSArray? echoNullableNonNullClassListWithClassList(
-    objc.NSArray? classList, {
+    objc.NSArray? classListArg, {
     required NativeInteropTestsError wrappedError,
   }) {
     final _$$ref = object$.ref;
-    final _$$ref$1 = classList?.ref;
+    final _$$ref$1 = classListArg?.ref;
     final _$$ref$2 = wrappedError.ref;
     final $ret = _objc_msgSend_15qeuct(
       _$$ref.pointer,
@@ -18439,11 +18445,11 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
 
   /// Returns the passed map, to test serialization and deserialization.
   objc.NSDictionary? echoNullableNonNullClassMapWithClassMap(
-    objc.NSDictionary? classMap, {
+    objc.NSDictionary? classMapArg, {
     required NativeInteropTestsError wrappedError,
   }) {
     final _$$ref = object$.ref;
-    final _$$ref$1 = classMap?.ref;
+    final _$$ref$1 = classMapArg?.ref;
     final _$$ref$2 = wrappedError.ref;
     final $ret = _objc_msgSend_15qeuct(
       _$$ref.pointer,
@@ -18458,11 +18464,11 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
 
   /// Returns the passed list, to test serialization and deserialization.
   objc.NSArray? echoNullableNonNullEnumListWithEnumList(
-    objc.NSArray? enumList, {
+    objc.NSArray? enumListArg, {
     required NativeInteropTestsError wrappedError,
   }) {
     final _$$ref = object$.ref;
-    final _$$ref$1 = enumList?.ref;
+    final _$$ref$1 = enumListArg?.ref;
     final _$$ref$2 = wrappedError.ref;
     final $ret = _objc_msgSend_15qeuct(
       _$$ref.pointer,
@@ -18475,11 +18481,11 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
 
   /// Returns the passed map, to test serialization and deserialization.
   objc.NSDictionary? echoNullableNonNullEnumMapWithEnumMap(
-    objc.NSDictionary? enumMap, {
+    objc.NSDictionary? enumMapArg, {
     required NativeInteropTestsError wrappedError,
   }) {
     final _$$ref = object$.ref;
-    final _$$ref$1 = enumMap?.ref;
+    final _$$ref$1 = enumMapArg?.ref;
     final _$$ref$2 = wrappedError.ref;
     final $ret = _objc_msgSend_15qeuct(
       _$$ref.pointer,
@@ -18494,11 +18500,11 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
 
   /// Returns the passed map, to test serialization and deserialization.
   objc.NSDictionary? echoNullableNonNullIntMapWithIntMap(
-    objc.NSDictionary? intMap, {
+    objc.NSDictionary? intMapArg, {
     required NativeInteropTestsError wrappedError,
   }) {
     final _$$ref = object$.ref;
-    final _$$ref$1 = intMap?.ref;
+    final _$$ref$1 = intMapArg?.ref;
     final _$$ref$2 = wrappedError.ref;
     final $ret = _objc_msgSend_15qeuct(
       _$$ref.pointer,
@@ -18513,11 +18519,11 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
 
   /// Returns the passed map, to test serialization and deserialization.
   objc.NSDictionary? echoNullableNonNullStringMapWithStringMap(
-    objc.NSDictionary? stringMap, {
+    objc.NSDictionary? stringMapArg, {
     required NativeInteropTestsError wrappedError,
   }) {
     final _$$ref = object$.ref;
-    final _$$ref$1 = stringMap?.ref;
+    final _$$ref$1 = stringMapArg?.ref;
     final _$$ref$2 = wrappedError.ref;
     final $ret = _objc_msgSend_15qeuct(
       _$$ref.pointer,
@@ -18532,11 +18538,11 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
 
   /// Returns the passed in generic Object.
   objc.NSObject? echoNullableObjectWithANullableObject(
-    objc.NSObject aNullableObject, {
+    objc.NSObject aNullableObjectArg, {
     required NativeInteropTestsError wrappedError,
   }) {
     final _$$ref = object$.ref;
-    final _$$ref$1 = aNullableObject.ref;
+    final _$$ref$1 = aNullableObjectArg.ref;
     final _$$ref$2 = wrappedError.ref;
     final $ret = _objc_msgSend_15qeuct(
       _$$ref.pointer,
@@ -18549,11 +18555,11 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
 
   /// Returns the passed map, to test serialization and deserialization.
   objc.NSDictionary? echoNullableStringMapWithStringMap(
-    objc.NSDictionary? stringMap, {
+    objc.NSDictionary? stringMapArg, {
     required NativeInteropTestsError wrappedError,
   }) {
     final _$$ref = object$.ref;
-    final _$$ref$1 = stringMap?.ref;
+    final _$$ref$1 = stringMapArg?.ref;
     final _$$ref$2 = wrappedError.ref;
     final $ret = _objc_msgSend_15qeuct(
       _$$ref.pointer,
@@ -18568,11 +18574,11 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
 
   /// Returns the passed in string.
   objc.NSString? echoNullableStringWithANullableString(
-    objc.NSString? aNullableString, {
+    objc.NSString? aNullableStringArg, {
     required NativeInteropTestsError wrappedError,
   }) {
     final _$$ref = object$.ref;
-    final _$$ref$1 = aNullableString?.ref;
+    final _$$ref$1 = aNullableStringArg?.ref;
     final _$$ref$2 = wrappedError.ref;
     final $ret = _objc_msgSend_15qeuct(
       _$$ref.pointer,
@@ -18585,11 +18591,11 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
 
   /// Returns the passed in Uint8List.
   NativeInteropTestsPigeonTypedData? echoNullableUint8ListWithANullableUint8List(
-    NativeInteropTestsPigeonTypedData? aNullableUint8List, {
+    NativeInteropTestsPigeonTypedData? aNullableUint8ListArg, {
     required NativeInteropTestsError wrappedError,
   }) {
     final _$$ref = object$.ref;
-    final _$$ref$1 = aNullableUint8List?.ref;
+    final _$$ref$1 = aNullableUint8ListArg?.ref;
     final _$$ref$2 = wrappedError.ref;
     final $ret = _objc_msgSend_15qeuct(
       _$$ref.pointer,
@@ -18604,11 +18610,11 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
 
   /// Returns the passed in generic Object.
   objc.NSObject? echoObjectWithAnObject(
-    objc.NSObject anObject, {
+    objc.NSObject anObjectArg, {
     required NativeInteropTestsError wrappedError,
   }) {
     final _$$ref = object$.ref;
-    final _$$ref$1 = anObject.ref;
+    final _$$ref$1 = anObjectArg.ref;
     final _$$ref$2 = wrappedError.ref;
     final $ret = _objc_msgSend_15qeuct(
       _$$ref.pointer,
@@ -18621,7 +18627,7 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
 
   /// Returns passed in double.
   objc.NSNumber? echoOptionalDefaultDoubleWithADouble(
-    double aDouble, {
+    double aDoubleArg, {
     required NativeInteropTestsError wrappedError,
   }) {
     final _$$ref = object$.ref;
@@ -18629,7 +18635,7 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
     final $ret = _objc_msgSend_1ozwf6k(
       _$$ref.pointer,
       _sel_echoOptionalDefaultDoubleWithADouble_wrappedError_,
-      aDouble,
+      aDoubleArg,
       _$$ref$1.pointer,
     );
     return $ret.address == 0 ? null : objc.NSNumber.fromPointer($ret, retain: true, release: true);
@@ -18637,11 +18643,11 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
 
   /// Returns passed in int.
   objc.NSNumber? echoOptionalNullableIntWithANullableInt(
-    objc.NSNumber? aNullableInt, {
+    objc.NSNumber? aNullableIntArg, {
     required NativeInteropTestsError wrappedError,
   }) {
     final _$$ref = object$.ref;
-    final _$$ref$1 = aNullableInt?.ref;
+    final _$$ref$1 = aNullableIntArg?.ref;
     final _$$ref$2 = wrappedError.ref;
     final $ret = _objc_msgSend_15qeuct(
       _$$ref.pointer,
@@ -18654,7 +18660,7 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
 
   /// Returns passed in int.
   objc.NSNumber? echoRequiredIntWithAnInt(
-    int anInt, {
+    int anIntArg, {
     required NativeInteropTestsError wrappedError,
   }) {
     final _$$ref = object$.ref;
@@ -18662,7 +18668,7 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
     final $ret = _objc_msgSend_1j962g9(
       _$$ref.pointer,
       _sel_echoRequiredIntWithAnInt_wrappedError_,
-      anInt,
+      anIntArg,
       _$$ref$1.pointer,
     );
     return $ret.address == 0 ? null : objc.NSNumber.fromPointer($ret, retain: true, release: true);
@@ -18670,11 +18676,11 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
 
   /// Returns the passed list, to test serialization and deserialization.
   objc.NSArray? echoStringListWithStringList(
-    objc.NSArray stringList, {
+    objc.NSArray stringListArg, {
     required NativeInteropTestsError wrappedError,
   }) {
     final _$$ref = object$.ref;
-    final _$$ref$1 = stringList.ref;
+    final _$$ref$1 = stringListArg.ref;
     final _$$ref$2 = wrappedError.ref;
     final $ret = _objc_msgSend_15qeuct(
       _$$ref.pointer,
@@ -18687,11 +18693,11 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
 
   /// Returns the passed map, to test serialization and deserialization.
   objc.NSDictionary? echoStringMapWithStringMap(
-    objc.NSDictionary stringMap, {
+    objc.NSDictionary stringMapArg, {
     required NativeInteropTestsError wrappedError,
   }) {
     final _$$ref = object$.ref;
-    final _$$ref$1 = stringMap.ref;
+    final _$$ref$1 = stringMapArg.ref;
     final _$$ref$2 = wrappedError.ref;
     final $ret = _objc_msgSend_15qeuct(
       _$$ref.pointer,
@@ -18706,11 +18712,11 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
 
   /// Returns the passed in string.
   objc.NSString? echoStringWithAString(
-    objc.NSString aString, {
+    objc.NSString aStringArg, {
     required NativeInteropTestsError wrappedError,
   }) {
     final _$$ref = object$.ref;
-    final _$$ref$1 = aString.ref;
+    final _$$ref$1 = aStringArg.ref;
     final _$$ref$2 = wrappedError.ref;
     final $ret = _objc_msgSend_15qeuct(
       _$$ref.pointer,
@@ -18723,11 +18729,11 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
 
   /// Returns the passed in Uint8List.
   NativeInteropTestsPigeonTypedData? echoUint8ListWithAUint8List(
-    NativeInteropTestsPigeonTypedData aUint8List, {
+    NativeInteropTestsPigeonTypedData aUint8ListArg, {
     required NativeInteropTestsError wrappedError,
   }) {
     final _$$ref = object$.ref;
-    final _$$ref$1 = aUint8List.ref;
+    final _$$ref$1 = aUint8ListArg.ref;
     final _$$ref$2 = wrappedError.ref;
     final $ret = _objc_msgSend_15qeuct(
       _$$ref.pointer,
@@ -18743,11 +18749,11 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
   /// Returns the inner <code>aString</code> value from the wrapped object, to test
   /// sending of nested objects.
   objc.NSString? extractNestedNullableStringWithWrapper(
-    NativeInteropAllClassesWrapperBridge wrapper, {
+    NativeInteropAllClassesWrapperBridge wrapperArg, {
     required NativeInteropTestsError wrappedError,
   }) {
     final _$$ref = object$.ref;
-    final _$$ref$1 = wrapper.ref;
+    final _$$ref$1 = wrapperArg.ref;
     final _$$ref$2 = wrappedError.ref;
     final $ret = _objc_msgSend_15qeuct(
       _$$ref.pointer,
@@ -18835,11 +18841,11 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
 
   /// Registers and immediately deregisters a Host API under [name].
   void registerAndImmediatelyDeregisterHostApiWithName(
-    objc.NSString name, {
+    objc.NSString nameArg, {
     required NativeInteropTestsError wrappedError,
   }) {
     final _$$ref = object$.ref;
-    final _$$ref$1 = name.ref;
+    final _$$ref$1 = nameArg.ref;
     final _$$ref$2 = wrappedError.ref;
     _objc_msgSend_pfv6jd(
       _$$ref.pointer,
@@ -18851,13 +18857,13 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
 
   /// sendMultipleNullableTypesWithANullableBool:aNullableInt:aNullableString:wrappedError:
   NativeInteropAllNullableTypesBridge? sendMultipleNullableTypesWithANullableBool(
-    objc.NSNumber? aNullableBool, {
+    objc.NSNumber? aNullableBoolArg, {
     objc.NSNumber? aNullableInt,
     objc.NSString? aNullableString,
     required NativeInteropTestsError wrappedError,
   }) {
     final _$$ref = object$.ref;
-    final _$$ref$1 = aNullableBool?.ref;
+    final _$$ref$1 = aNullableBoolArg?.ref;
     final _$$ref$2 = aNullableInt?.ref;
     final _$$ref$3 = aNullableString?.ref;
     final _$$ref$4 = wrappedError.ref;
@@ -18877,13 +18883,13 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
   /// Returns passed in arguments of multiple types.
   NativeInteropAllNullableTypesWithoutRecursionBridge?
   sendMultipleNullableTypesWithoutRecursionWithANullableBool(
-    objc.NSNumber? aNullableBool, {
+    objc.NSNumber? aNullableBoolArg, {
     objc.NSNumber? aNullableInt,
     objc.NSString? aNullableString,
     required NativeInteropTestsError wrappedError,
   }) {
     final _$$ref = object$.ref;
-    final _$$ref$1 = aNullableBool?.ref;
+    final _$$ref$1 = aNullableBoolArg?.ref;
     final _$$ref$2 = aNullableInt?.ref;
     final _$$ref$3 = aNullableString?.ref;
     final _$$ref$4 = wrappedError.ref;
@@ -18906,24 +18912,24 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
 
   /// Tests that single-argument void methods starting with ‘set’ are correctly
   /// invoked as JNI property setters with decapitalized names (e.g., <code>_jniApi.setter = value</code>).
-  void setSetterWithValue(int value, {required NativeInteropTestsError wrappedError}) {
+  void setSetterWithValue(int valueArg, {required NativeInteropTestsError wrappedError}) {
     final _$$ref = object$.ref;
     final _$$ref$1 = wrappedError.ref;
     _objc_msgSend_mpxix1(
       _$$ref.pointer,
       _sel_setSetterWithValue_wrappedError_,
-      value,
+      valueArg,
       _$$ref$1.pointer,
     );
   }
 
   /// Tests that calling a deregistered Flutter API under [name] fails / returns null.
   objc.NSNumber? testCallDeregisteredFlutterApiWithName(
-    objc.NSString name, {
+    objc.NSString nameArg, {
     required NativeInteropTestsError wrappedError,
   }) {
     final _$$ref = object$.ref;
-    final _$$ref$1 = name.ref;
+    final _$$ref$1 = nameArg.ref;
     final _$$ref$2 = wrappedError.ref;
     final $ret = _objc_msgSend_15qeuct(
       _$$ref.pointer,
