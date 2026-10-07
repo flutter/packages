@@ -1441,8 +1441,9 @@ class StatefulNavigationShellState extends State<StatefulNavigationShell> with R
           branch.restorationScopeId,
         );
 
+        // Leaving the location unset makes goBranch keep the matches outside of
+        // this shell route the first time it shows this branch.
         final _StatefulShellBranchState branchState = _branchStateFor(branch, false);
-        branchState.location.value = matchList;
         branchState.navigator = navigator;
       }
     }
@@ -1494,10 +1495,21 @@ class StatefulNavigationShellState extends State<StatefulNavigationShell> with R
   /// for the initial branch location into the current match list instead of
   /// navigating from scratch. See
   /// https://github.com/flutter/flutter/issues/188295.
+  ///
+  /// Returns null if a redirect leads out of this shell route or does not
+  /// complete synchronously.
   RouteMatchList? _initialMatchListForBranch(int index) {
-    final RouteMatchList initialMatchList = _router.configuration.findMatch(
-      Uri.parse(widget._effectiveInitialBranchLocation(index)),
+    // Redirects are applied here because a restored match list is discarded
+    // when a redirect changes its location.
+    final FutureOr<RouteMatchList> redirected = _router.configuration.redirect(
+      context,
+      _router.configuration.findMatch(Uri.parse(widget._effectiveInitialBranchLocation(index))),
+      redirectHistory: <RouteMatchList>[],
     );
+    if (redirected is! RouteMatchList) {
+      return null;
+    }
+    final RouteMatchList initialMatchList = redirected;
     ShellRouteMatch? newShellMatch;
     initialMatchList.visitRouteMatches((RouteMatchBase match) {
       if (match is ShellRouteMatch && match.route == route) {

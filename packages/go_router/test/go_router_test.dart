@@ -3317,6 +3317,158 @@ void main() {
       expect(router.routerDelegate.currentConfiguration.uri.toString(), '/b');
     });
 
+    testWidgets('StatefulShellRoute keeps parent navigator pages when switching '
+        'to a preloaded branch', (WidgetTester tester) async {
+      StatefulNavigationShell? routeState;
+      final routes = <RouteBase>[
+        GoRoute(
+          path: '/',
+          builder: (BuildContext context, GoRouterState state) => const Text('Home'),
+        ),
+        StatefulShellRoute.indexedStack(
+          builder:
+              (BuildContext context, GoRouterState state, StatefulNavigationShell navigationShell) {
+                routeState = navigationShell;
+                return navigationShell;
+              },
+          branches: <StatefulShellBranch>[
+            StatefulShellBranch(
+              routes: <RouteBase>[
+                GoRoute(
+                  path: '/a',
+                  builder: (BuildContext context, GoRouterState state) => const Text('Screen A'),
+                ),
+              ],
+            ),
+            StatefulShellBranch(
+              preload: true,
+              routes: <RouteBase>[
+                GoRoute(
+                  path: '/b',
+                  builder: (BuildContext context, GoRouterState state) => const Text('Screen B'),
+                ),
+              ],
+            ),
+          ],
+        ),
+      ];
+
+      final GoRouter router = await createRouter(routes, tester);
+      router.push('/a');
+      await tester.pumpAndSettle();
+      expect(router.canPop(), isTrue);
+
+      routeState!.goBranch(1);
+      await tester.pumpAndSettle();
+      expect(find.text('Screen B'), findsOneWidget);
+      expect(router.canPop(), isTrue);
+
+      router.pop();
+      await tester.pumpAndSettle();
+      expect(find.text('Home'), findsOneWidget);
+    });
+
+    testWidgets('StatefulShellRoute keeps parent navigator pages when unloaded '
+        'branch redirects', (WidgetTester tester) async {
+      StatefulNavigationShell? routeState;
+      final routes = <RouteBase>[
+        GoRoute(
+          path: '/',
+          builder: (BuildContext context, GoRouterState state) => const Text('Home'),
+        ),
+        StatefulShellRoute.indexedStack(
+          builder:
+              (BuildContext context, GoRouterState state, StatefulNavigationShell navigationShell) {
+                routeState = navigationShell;
+                return navigationShell;
+              },
+          branches: <StatefulShellBranch>[
+            StatefulShellBranch(
+              routes: <RouteBase>[
+                GoRoute(
+                  path: '/a',
+                  builder: (BuildContext context, GoRouterState state) => const Text('Screen A'),
+                ),
+              ],
+            ),
+            StatefulShellBranch(
+              routes: <RouteBase>[
+                GoRoute(path: '/b', redirect: (_, _) => '/b/sub'),
+                GoRoute(
+                  path: '/b/sub',
+                  builder: (BuildContext context, GoRouterState state) =>
+                      const Text('Screen B Sub'),
+                ),
+              ],
+            ),
+          ],
+        ),
+      ];
+
+      final GoRouter router = await createRouter(routes, tester);
+      router.push('/a');
+      await tester.pumpAndSettle();
+      expect(router.canPop(), isTrue);
+
+      routeState!.goBranch(1);
+      await tester.pumpAndSettle();
+      expect(find.text('Screen B Sub'), findsOneWidget);
+      expect(router.routerDelegate.currentConfiguration.uri.toString(), '/b/sub');
+      expect(router.canPop(), isTrue);
+
+      router.pop();
+      await tester.pumpAndSettle();
+      expect(find.text('Home'), findsOneWidget);
+    });
+
+    testWidgets('StatefulShellRoute switches to an unloaded branch whose initial '
+        'location redirects asynchronously', (WidgetTester tester) async {
+      StatefulNavigationShell? routeState;
+      final routes = <RouteBase>[
+        GoRoute(
+          path: '/',
+          builder: (BuildContext context, GoRouterState state) => const Text('Home'),
+        ),
+        StatefulShellRoute.indexedStack(
+          builder:
+              (BuildContext context, GoRouterState state, StatefulNavigationShell navigationShell) {
+                routeState = navigationShell;
+                return navigationShell;
+              },
+          branches: <StatefulShellBranch>[
+            StatefulShellBranch(
+              routes: <RouteBase>[
+                GoRoute(
+                  path: '/a',
+                  builder: (BuildContext context, GoRouterState state) => const Text('Screen A'),
+                ),
+              ],
+            ),
+            StatefulShellBranch(
+              routes: <RouteBase>[
+                GoRoute(path: '/b', redirect: (_, _) async => '/b/sub'),
+                GoRoute(
+                  path: '/b/sub',
+                  builder: (BuildContext context, GoRouterState state) =>
+                      const Text('Screen B Sub'),
+                ),
+              ],
+            ),
+          ],
+        ),
+      ];
+
+      final GoRouter router = await createRouter(routes, tester);
+      router.push('/a');
+      await tester.pumpAndSettle();
+      expect(router.canPop(), isTrue);
+
+      routeState!.goBranch(1);
+      await tester.pumpAndSettle();
+      expect(find.text('Screen B Sub'), findsOneWidget);
+      expect(router.routerDelegate.currentConfiguration.uri.toString(), '/b/sub');
+    });
+
     testWidgets('StatefulShellRoute preserve extra when switching branch', (
       WidgetTester tester,
     ) async {
