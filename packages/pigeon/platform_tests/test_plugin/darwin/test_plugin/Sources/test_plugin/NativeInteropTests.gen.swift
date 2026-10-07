@@ -1876,6 +1876,225 @@ struct NativeInteropAllClassesWrapper: Hashable, CustomStringConvertible {
   }
 }
 
+/// A class whose field names collide with members of the bindings that JNIgen
+/// generates, so JNIgen renames their accessors.
+///
+/// The Dart generator has to predict those names, since it is generated before
+/// JNIgen runs.
+///
+/// Generated class from Pigeon that represents data sent in messages.
+struct NativeInteropReservedNames: Hashable, CustomStringConvertible {
+  var type: String? = nil
+  var use: String? = nil
+  var reference: String? = nil
+  var releasedBy: String? = nil
+  var fromReference: String? = nil
+  var jClass: String? = nil
+  var isInstanceOf: String? = nil
+  var isNull: String? = nil
+  var isReleased: Bool
+  var equals: String? = nil
+  var isEnabled: Bool
+  var isMaybe: Bool? = nil
+  var isCount: Int64? = nil
+  var getValue: String? = nil
+
+  // swift-format-ignore: AlwaysUseLowerCamelCase
+  static func fromList(_ pigeonVar_list: [Any?]) -> NativeInteropReservedNames? {
+    let type: String? = nilOrValue(pigeonVar_list[0])
+    let use: String? = nilOrValue(pigeonVar_list[1])
+    let reference: String? = nilOrValue(pigeonVar_list[2])
+    let releasedBy: String? = nilOrValue(pigeonVar_list[3])
+    let fromReference: String? = nilOrValue(pigeonVar_list[4])
+    let jClass: String? = nilOrValue(pigeonVar_list[5])
+    let isInstanceOf: String? = nilOrValue(pigeonVar_list[6])
+    let isNull: String? = nilOrValue(pigeonVar_list[7])
+    let isReleased = pigeonVar_list[8] as! Bool
+    let equals: String? = nilOrValue(pigeonVar_list[9])
+    let isEnabled = pigeonVar_list[10] as! Bool
+    let isMaybe: Bool? = nilOrValue(pigeonVar_list[11])
+    let isCount: Int64? = nilOrValue(pigeonVar_list[12])
+    let getValue: String? = nilOrValue(pigeonVar_list[13])
+
+    return NativeInteropReservedNames(
+      type: type,
+      use: use,
+      reference: reference,
+      releasedBy: releasedBy,
+      fromReference: fromReference,
+      jClass: jClass,
+      isInstanceOf: isInstanceOf,
+      isNull: isNull,
+      isReleased: isReleased,
+      equals: equals,
+      isEnabled: isEnabled,
+      isMaybe: isMaybe,
+      isCount: isCount,
+      getValue: getValue
+    )
+  }
+  func toList() -> [Any?] {
+    return [
+      type,
+      use,
+      reference,
+      releasedBy,
+      fromReference,
+      jClass,
+      isInstanceOf,
+      isNull,
+      isReleased,
+      equals,
+      isEnabled,
+      isMaybe,
+      isCount,
+      getValue,
+    ]
+  }
+  static func == (lhs: NativeInteropReservedNames, rhs: NativeInteropReservedNames) -> Bool {
+    if Swift.type(of: lhs) != Swift.type(of: rhs) {
+      return false
+    }
+    return NativeInteropTestsPigeonInternal.deepEquals(lhs.type, rhs.type)
+      && NativeInteropTestsPigeonInternal.deepEquals(lhs.use, rhs.use)
+      && NativeInteropTestsPigeonInternal.deepEquals(lhs.reference, rhs.reference)
+      && NativeInteropTestsPigeonInternal.deepEquals(lhs.releasedBy, rhs.releasedBy)
+      && NativeInteropTestsPigeonInternal.deepEquals(lhs.fromReference, rhs.fromReference)
+      && NativeInteropTestsPigeonInternal.deepEquals(lhs.jClass, rhs.jClass)
+      && NativeInteropTestsPigeonInternal.deepEquals(lhs.isInstanceOf, rhs.isInstanceOf)
+      && NativeInteropTestsPigeonInternal.deepEquals(lhs.isNull, rhs.isNull)
+      && NativeInteropTestsPigeonInternal.deepEquals(lhs.isReleased, rhs.isReleased)
+      && NativeInteropTestsPigeonInternal.deepEquals(lhs.equals, rhs.equals)
+      && NativeInteropTestsPigeonInternal.deepEquals(lhs.isEnabled, rhs.isEnabled)
+      && NativeInteropTestsPigeonInternal.deepEquals(lhs.isMaybe, rhs.isMaybe)
+      && NativeInteropTestsPigeonInternal.deepEquals(lhs.isCount, rhs.isCount)
+      && NativeInteropTestsPigeonInternal.deepEquals(lhs.getValue, rhs.getValue)
+  }
+
+  func hash(into hasher: inout Hasher) {
+    hasher.combine("NativeInteropReservedNames")
+    NativeInteropTestsPigeonInternal.deepHash(value: type, hasher: &hasher)
+    NativeInteropTestsPigeonInternal.deepHash(value: use, hasher: &hasher)
+    NativeInteropTestsPigeonInternal.deepHash(value: reference, hasher: &hasher)
+    NativeInteropTestsPigeonInternal.deepHash(value: releasedBy, hasher: &hasher)
+    NativeInteropTestsPigeonInternal.deepHash(value: fromReference, hasher: &hasher)
+    NativeInteropTestsPigeonInternal.deepHash(value: jClass, hasher: &hasher)
+    NativeInteropTestsPigeonInternal.deepHash(value: isInstanceOf, hasher: &hasher)
+    NativeInteropTestsPigeonInternal.deepHash(value: isNull, hasher: &hasher)
+    NativeInteropTestsPigeonInternal.deepHash(value: isReleased, hasher: &hasher)
+    NativeInteropTestsPigeonInternal.deepHash(value: equals, hasher: &hasher)
+    NativeInteropTestsPigeonInternal.deepHash(value: isEnabled, hasher: &hasher)
+    NativeInteropTestsPigeonInternal.deepHash(value: isMaybe, hasher: &hasher)
+    NativeInteropTestsPigeonInternal.deepHash(value: isCount, hasher: &hasher)
+    NativeInteropTestsPigeonInternal.deepHash(value: getValue, hasher: &hasher)
+  }
+
+  public var description: String {
+    return
+      "NativeInteropReservedNames(type: \(String(describing: type)), use: \(String(describing: use)), reference: \(String(describing: reference)), releasedBy: \(String(describing: releasedBy)), fromReference: \(String(describing: fromReference)), jClass: \(String(describing: jClass)), isInstanceOf: \(String(describing: isInstanceOf)), isNull: \(String(describing: isNull)), isReleased: \(String(describing: isReleased)), equals: \(String(describing: equals)), isEnabled: \(String(describing: isEnabled)), isMaybe: \(String(describing: isMaybe)), isCount: \(String(describing: isCount)), getValue: \(String(describing: getValue)))"
+  }
+}
+
+/// A class whose field names collide with members of the bindings that JNIgen
+/// generates, so JNIgen renames their accessors.
+///
+/// The Dart generator has to predict those names, since it is generated before
+/// JNIgen runs.
+///
+/// Generated bridge class from Pigeon that moves data from Swift to Objective-C.
+@objc class NativeInteropReservedNamesBridge: NSObject {
+  @objc init(
+    type: NSString? = nil,
+    use: NSString? = nil,
+    reference: NSString? = nil,
+    releasedBy: NSString? = nil,
+    fromReference: NSString? = nil,
+    jClass: NSString? = nil,
+    isInstanceOf: NSString? = nil,
+    isNull: NSString? = nil,
+    isReleased: Bool,
+    equals: NSString? = nil,
+    isEnabled: Bool,
+    isMaybe: NSNumber? = nil,
+    isCount: NSNumber? = nil,
+    getValue: NSString? = nil
+  ) {
+    self.type = type
+    self.use = use
+    self.reference = reference
+    self.releasedBy = releasedBy
+    self.fromReference = fromReference
+    self.jClass = jClass
+    self.isInstanceOf = isInstanceOf
+    self.isNull = isNull
+    self.isReleased = isReleased
+    self.equals = equals
+    self.isEnabled = isEnabled
+    self.isMaybe = isMaybe
+    self.isCount = isCount
+    self.getValue = getValue
+  }
+  @objc var type: NSString? = nil
+  @objc var use: NSString? = nil
+  @objc var reference: NSString? = nil
+  @objc var releasedBy: NSString? = nil
+  @objc var fromReference: NSString? = nil
+  @objc var jClass: NSString? = nil
+  @objc var isInstanceOf: NSString? = nil
+  @objc var isNull: NSString? = nil
+  @objc var isReleased: Bool
+  @objc var equals: NSString? = nil
+  @objc var isEnabled: Bool
+  @objc var isMaybe: NSNumber? = nil
+  @objc var isCount: NSNumber? = nil
+  @objc var getValue: NSString? = nil
+
+  // swift-format-ignore: AlwaysUseLowerCamelCase
+  static func fromSwift(_ pigeonVar_Class: NativeInteropReservedNames?)
+    -> NativeInteropReservedNamesBridge?
+  {
+    if NativeInteropTestsPigeonInternal.isNullish(pigeonVar_Class) {
+      return nil
+    }
+    return NativeInteropReservedNamesBridge(
+      type: pigeonVar_Class!.type as NSString?,
+      use: pigeonVar_Class!.use as NSString?,
+      reference: pigeonVar_Class!.reference as NSString?,
+      releasedBy: pigeonVar_Class!.releasedBy as NSString?,
+      fromReference: pigeonVar_Class!.fromReference as NSString?,
+      jClass: pigeonVar_Class!.jClass as NSString?,
+      isInstanceOf: pigeonVar_Class!.isInstanceOf as NSString?,
+      isNull: pigeonVar_Class!.isNull as NSString?,
+      isReleased: pigeonVar_Class!.isReleased,
+      equals: pigeonVar_Class!.equals as NSString?,
+      isEnabled: pigeonVar_Class!.isEnabled,
+      isMaybe: NativeInteropTestsPigeonInternal.isNullish(pigeonVar_Class!.isMaybe)
+        ? nil : NSNumber(value: pigeonVar_Class!.isMaybe!),
+      isCount: NativeInteropTestsPigeonInternal.isNullish(pigeonVar_Class!.isCount)
+        ? nil : NSNumber(value: pigeonVar_Class!.isCount!),
+      getValue: pigeonVar_Class!.getValue as NSString?,
+    )
+  }
+  func toSwift() -> NativeInteropReservedNames {
+    return NativeInteropReservedNames(
+      type: type as String?,
+      use: use as String?,
+      reference: reference as String?,
+      releasedBy: releasedBy as String?,
+      fromReference: fromReference as String?,
+      jClass: jClass as String?,
+      isInstanceOf: isInstanceOf as String?,
+      isNull: isNull as String?,
+      isReleased: isReleased,
+      equals: equals as String?,
+      isEnabled: isEnabled,
+      isMaybe: NativeInteropTestsPigeonInternal.isNullish(isMaybe) ? nil : isMaybe!.boolValue,
+      isCount: NativeInteropTestsPigeonInternal.isNullish(isCount) ? nil : isCount!.int64Value,
+      getValue: getValue as String?,
+    )
+  }
+}
+
 @objc class NativeInteropTestsPigeonInternalNull: NSObject {}
 
 private class _PigeonFfiCodec {
@@ -1945,6 +2164,8 @@ private class _PigeonFfiCodec {
       return (value! as! NativeInteropAllNullableTypesWithoutRecursionBridge).toSwift()
     } else if value is NativeInteropAllClassesWrapperBridge {
       return (value! as! NativeInteropAllClassesWrapperBridge).toSwift()
+    } else if value is NativeInteropReservedNamesBridge {
+      return (value! as! NativeInteropReservedNamesBridge).toSwift()
 
     }
     return value
@@ -2024,6 +2245,8 @@ private class _PigeonFfiCodec {
     } else if value is NativeInteropAllClassesWrapper {
       return NativeInteropAllClassesWrapperBridge.fromSwift(
         value as? NativeInteropAllClassesWrapper)
+    } else if value is NativeInteropReservedNames {
+      return NativeInteropReservedNamesBridge.fromSwift(value as? NativeInteropReservedNames)
 
     }
     return value
@@ -8514,5 +8737,448 @@ class NativeInteropFlutterIntegrationCoreApi {
     }
     return _PigeonFfiCodec.readValue(value: (res), type: "NativeInteropAnotherEnum")
       as! NativeInteropAnotherEnum?
+  }
+}
+class NativeInteropReservedNamesHostApiInstanceTracker {
+  static var instancesOfNativeInteropReservedNamesHostApi = [
+    String: NativeInteropReservedNamesHostApiSetup?
+  ]()
+}
+
+/// Methods whose names collide with members of the bindings that JNIgen
+/// generates, or that JNIgen turns into Dart properties.
+///
+/// Generated protocol from Pigeon that represents a handler of messages from Flutter.
+protocol NativeInteropReservedNamesHostApi {
+  /// Collides with `JObject.release`.
+  func release(value: String) throws -> String
+  /// Collides with `JObject.use`.
+  func use(value: Int64) throws -> Int64
+  /// Collides with the static `type` field that JNIgen adds to every class.
+  func type() throws -> String
+  /// JNIgen makes this a getter, which collides with `JObject.isNull`.
+  func isNull() throws -> Bool
+  /// JNIgen keeps this a method, since nullable booleans are boxed on the JVM.
+  func isNullable() throws -> Bool?
+  /// JNIgen makes this a getter.
+  func isOpen() throws -> Bool
+  /// JNIgen combines this and [setReference] into a property, which collides
+  /// with `JObject.reference`.
+  func getReference() throws -> String
+  /// See [getReference].
+  func setReference(value: String) throws
+  /// JNIgen makes this a getter named after a Dart keyword, `default`.
+  func getDefault() throws -> String
+  /// JNIgen keeps suspend functions as methods.
+  func getValueAsync() async throws -> String
+  /// Returns the passed object, to test serialization and deserialization.
+  func echoReservedNames(names: NativeInteropReservedNames) throws -> NativeInteropReservedNames
+  /// Returns the result of calling [NativeInteropReservedNamesFlutterApi.release].
+  func callFlutterRelease(value: String) throws -> String
+  /// Returns the result of calling [NativeInteropReservedNamesFlutterApi.type].
+  func callFlutterType() throws -> String
+  /// Returns the result of calling [NativeInteropReservedNamesFlutterApi.implementIn].
+  func callFlutterImplementIn(value: String) throws -> String
+  /// Returns the result of calling [NativeInteropReservedNamesFlutterApi.isNull].
+  func callFlutterIsNull() throws -> Bool
+  /// Returns the result of calling [NativeInteropReservedNamesFlutterApi.getReference].
+  func callFlutterGetReference() throws -> String
+}
+
+/// Generated setup class from Pigeon to register implemented NativeInteropReservedNamesHostApi classes.
+@objc class NativeInteropReservedNamesHostApiSetup: NSObject {
+  private var api: NativeInteropReservedNamesHostApi?
+  override init() {}
+  static func register(
+    api: NativeInteropReservedNamesHostApi?,
+    name: String = NativeInteropTestsPigeonInternal.defaultInstanceName
+  ) {
+    if let api = api {
+      let wrapper = NativeInteropReservedNamesHostApiSetup()
+      wrapper.api = api
+      NativeInteropReservedNamesHostApiInstanceTracker.instancesOfNativeInteropReservedNamesHostApi[
+        name] = wrapper
+    } else {
+      NativeInteropReservedNamesHostApiInstanceTracker.instancesOfNativeInteropReservedNamesHostApi
+        .removeValue(forKey: name)
+    }
+  }
+  @objc static func getInstance(name: String) -> NativeInteropReservedNamesHostApiSetup? {
+    return
+      NativeInteropReservedNamesHostApiInstanceTracker.instancesOfNativeInteropReservedNamesHostApi[
+        name] ?? nil
+  }
+  /// Collides with `JObject.release`.
+  @objc func release(value valueArg: NSString, wrappedError: NativeInteropTestsError) -> NSString? {
+    do {
+      let res: String = try api!.release(value: valueArg as String)
+      return res as NSString?
+    } catch let error as NativeInteropTestsError {
+      wrappedError.code = error.code
+      wrappedError.message = error.message
+      wrappedError.details = error.details
+    } catch let error {
+      wrappedError.code = "\(error)"
+      wrappedError.message = "\(Swift.type(of: error))"
+      wrappedError.details = "Stacktrace: \(Thread.callStackSymbols)"
+    }
+    return nil
+  }
+  /// Collides with `JObject.use`.
+  @objc func use(value valueArg: Int64, wrappedError: NativeInteropTestsError) -> NSNumber? {
+    do {
+      let res: Int64 = try api!.use(value: valueArg)
+      return NSNumber(value: res)
+    } catch let error as NativeInteropTestsError {
+      wrappedError.code = error.code
+      wrappedError.message = error.message
+      wrappedError.details = error.details
+    } catch let error {
+      wrappedError.code = "\(error)"
+      wrappedError.message = "\(Swift.type(of: error))"
+      wrappedError.details = "Stacktrace: \(Thread.callStackSymbols)"
+    }
+    return nil
+  }
+  /// Collides with the static `type` field that JNIgen adds to every class.
+  @objc func type(wrappedError: NativeInteropTestsError) -> NSString? {
+    do {
+      let res: String = try api!.type()
+      return res as NSString?
+    } catch let error as NativeInteropTestsError {
+      wrappedError.code = error.code
+      wrappedError.message = error.message
+      wrappedError.details = error.details
+    } catch let error {
+      wrappedError.code = "\(error)"
+      wrappedError.message = "\(Swift.type(of: error))"
+      wrappedError.details = "Stacktrace: \(Thread.callStackSymbols)"
+    }
+    return nil
+  }
+  /// JNIgen makes this a getter, which collides with `JObject.isNull`.
+  @objc func isNull(wrappedError: NativeInteropTestsError) -> NSNumber? {
+    do {
+      let res: Bool = try api!.isNull()
+      return NSNumber(value: res)
+    } catch let error as NativeInteropTestsError {
+      wrappedError.code = error.code
+      wrappedError.message = error.message
+      wrappedError.details = error.details
+    } catch let error {
+      wrappedError.code = "\(error)"
+      wrappedError.message = "\(Swift.type(of: error))"
+      wrappedError.details = "Stacktrace: \(Thread.callStackSymbols)"
+    }
+    return nil
+  }
+  /// JNIgen keeps this a method, since nullable booleans are boxed on the JVM.
+  @objc func isNullable(wrappedError: NativeInteropTestsError) -> NSNumber? {
+    do {
+      let res: Bool? = try api!.isNullable()
+      return NativeInteropTestsPigeonInternal.isNullish(res) ? nil : NSNumber(value: res!)
+    } catch let error as NativeInteropTestsError {
+      wrappedError.code = error.code
+      wrappedError.message = error.message
+      wrappedError.details = error.details
+    } catch let error {
+      wrappedError.code = "\(error)"
+      wrappedError.message = "\(Swift.type(of: error))"
+      wrappedError.details = "Stacktrace: \(Thread.callStackSymbols)"
+    }
+    return nil
+  }
+  /// JNIgen makes this a getter.
+  @objc func isOpen(wrappedError: NativeInteropTestsError) -> NSNumber? {
+    do {
+      let res: Bool = try api!.isOpen()
+      return NSNumber(value: res)
+    } catch let error as NativeInteropTestsError {
+      wrappedError.code = error.code
+      wrappedError.message = error.message
+      wrappedError.details = error.details
+    } catch let error {
+      wrappedError.code = "\(error)"
+      wrappedError.message = "\(Swift.type(of: error))"
+      wrappedError.details = "Stacktrace: \(Thread.callStackSymbols)"
+    }
+    return nil
+  }
+  /// JNIgen combines this and [setReference] into a property, which collides
+  /// with `JObject.reference`.
+  @objc func getReference(wrappedError: NativeInteropTestsError) -> NSString? {
+    do {
+      let res: String = try api!.getReference()
+      return res as NSString?
+    } catch let error as NativeInteropTestsError {
+      wrappedError.code = error.code
+      wrappedError.message = error.message
+      wrappedError.details = error.details
+    } catch let error {
+      wrappedError.code = "\(error)"
+      wrappedError.message = "\(Swift.type(of: error))"
+      wrappedError.details = "Stacktrace: \(Thread.callStackSymbols)"
+    }
+    return nil
+  }
+  /// See [getReference].
+  @objc func setReference(value valueArg: NSString, wrappedError: NativeInteropTestsError) {
+    do {
+      try api!.setReference(value: valueArg as String)
+      return
+    } catch let error as NativeInteropTestsError {
+      wrappedError.code = error.code
+      wrappedError.message = error.message
+      wrappedError.details = error.details
+    } catch let error {
+      wrappedError.code = "\(error)"
+      wrappedError.message = "\(Swift.type(of: error))"
+      wrappedError.details = "Stacktrace: \(Thread.callStackSymbols)"
+    }
+    return
+  }
+  /// JNIgen makes this a getter named after a Dart keyword, `default`.
+  @objc func getDefault(wrappedError: NativeInteropTestsError) -> NSString? {
+    do {
+      let res: String = try api!.getDefault()
+      return res as NSString?
+    } catch let error as NativeInteropTestsError {
+      wrappedError.code = error.code
+      wrappedError.message = error.message
+      wrappedError.details = error.details
+    } catch let error {
+      wrappedError.code = "\(error)"
+      wrappedError.message = "\(Swift.type(of: error))"
+      wrappedError.details = "Stacktrace: \(Thread.callStackSymbols)"
+    }
+    return nil
+  }
+  /// JNIgen keeps suspend functions as methods.
+  @objc func getValueAsync(wrappedError: NativeInteropTestsError) async -> NSString? {
+    do {
+      let res: String = try await api!.getValueAsync()
+      return res as NSString?
+    } catch let error as NativeInteropTestsError {
+      wrappedError.code = error.code
+      wrappedError.message = error.message
+      wrappedError.details = error.details
+    } catch let error {
+      wrappedError.code = "\(error)"
+      wrappedError.message = "\(Swift.type(of: error))"
+      wrappedError.details = "Stacktrace: \(Thread.callStackSymbols)"
+    }
+    return nil
+  }
+  /// Returns the passed object, to test serialization and deserialization.
+  @objc func echoReservedNames(
+    names namesArg: NativeInteropReservedNamesBridge, wrappedError: NativeInteropTestsError
+  ) -> NativeInteropReservedNamesBridge? {
+    do {
+      let res: NativeInteropReservedNames = try api!.echoReservedNames(names: namesArg.toSwift())
+      return NativeInteropReservedNamesBridge.fromSwift(res)!
+    } catch let error as NativeInteropTestsError {
+      wrappedError.code = error.code
+      wrappedError.message = error.message
+      wrappedError.details = error.details
+    } catch let error {
+      wrappedError.code = "\(error)"
+      wrappedError.message = "\(Swift.type(of: error))"
+      wrappedError.details = "Stacktrace: \(Thread.callStackSymbols)"
+    }
+    return nil
+  }
+  /// Returns the result of calling [NativeInteropReservedNamesFlutterApi.release].
+  @objc func callFlutterRelease(value valueArg: NSString, wrappedError: NativeInteropTestsError)
+    -> NSString?
+  {
+    do {
+      let res: String = try api!.callFlutterRelease(value: valueArg as String)
+      return res as NSString?
+    } catch let error as NativeInteropTestsError {
+      wrappedError.code = error.code
+      wrappedError.message = error.message
+      wrappedError.details = error.details
+    } catch let error {
+      wrappedError.code = "\(error)"
+      wrappedError.message = "\(Swift.type(of: error))"
+      wrappedError.details = "Stacktrace: \(Thread.callStackSymbols)"
+    }
+    return nil
+  }
+  /// Returns the result of calling [NativeInteropReservedNamesFlutterApi.type].
+  @objc func callFlutterType(wrappedError: NativeInteropTestsError) -> NSString? {
+    do {
+      let res: String = try api!.callFlutterType()
+      return res as NSString?
+    } catch let error as NativeInteropTestsError {
+      wrappedError.code = error.code
+      wrappedError.message = error.message
+      wrappedError.details = error.details
+    } catch let error {
+      wrappedError.code = "\(error)"
+      wrappedError.message = "\(Swift.type(of: error))"
+      wrappedError.details = "Stacktrace: \(Thread.callStackSymbols)"
+    }
+    return nil
+  }
+  /// Returns the result of calling [NativeInteropReservedNamesFlutterApi.implementIn].
+  @objc func callFlutterImplementIn(value valueArg: NSString, wrappedError: NativeInteropTestsError)
+    -> NSString?
+  {
+    do {
+      let res: String = try api!.callFlutterImplementIn(value: valueArg as String)
+      return res as NSString?
+    } catch let error as NativeInteropTestsError {
+      wrappedError.code = error.code
+      wrappedError.message = error.message
+      wrappedError.details = error.details
+    } catch let error {
+      wrappedError.code = "\(error)"
+      wrappedError.message = "\(Swift.type(of: error))"
+      wrappedError.details = "Stacktrace: \(Thread.callStackSymbols)"
+    }
+    return nil
+  }
+  /// Returns the result of calling [NativeInteropReservedNamesFlutterApi.isNull].
+  @objc func callFlutterIsNull(wrappedError: NativeInteropTestsError) -> NSNumber? {
+    do {
+      let res: Bool = try api!.callFlutterIsNull()
+      return NSNumber(value: res)
+    } catch let error as NativeInteropTestsError {
+      wrappedError.code = error.code
+      wrappedError.message = error.message
+      wrappedError.details = error.details
+    } catch let error {
+      wrappedError.code = "\(error)"
+      wrappedError.message = "\(Swift.type(of: error))"
+      wrappedError.details = "Stacktrace: \(Thread.callStackSymbols)"
+    }
+    return nil
+  }
+  /// Returns the result of calling [NativeInteropReservedNamesFlutterApi.getReference].
+  @objc func callFlutterGetReference(wrappedError: NativeInteropTestsError) -> NSString? {
+    do {
+      let res: String = try api!.callFlutterGetReference()
+      return res as NSString?
+    } catch let error as NativeInteropTestsError {
+      wrappedError.code = error.code
+      wrappedError.message = error.message
+      wrappedError.details = error.details
+    } catch let error {
+      wrappedError.code = "\(error)"
+      wrappedError.message = "\(Swift.type(of: error))"
+      wrappedError.details = "Stacktrace: \(Thread.callStackSymbols)"
+    }
+    return nil
+  }
+}
+
+/// The Flutter API counterpart of [NativeInteropReservedNamesHostApi].
+///
+/// JNIgen generates interfaces for Flutter APIs, which it renames differently
+/// than classes.
+///
+/// Generated protocol from Pigeon that represents Flutter messages that can be called from Swift.
+@objc protocol NativeInteropReservedNamesFlutterApiBridge {
+  /// Collides with `JObject.release`.
+  @objc func release(value valueArg: NSString?, error: NativeInteropTestsError) -> NSString?
+  /// Collides with the static `type` field that JNIgen adds to every class.
+  @objc func type(error: NativeInteropTestsError) -> NSString?
+  /// Collides with the `implementIn` method that JNIgen adds to interfaces.
+  @objc func implementIn(value valueArg: NSString?, error: NativeInteropTestsError) -> NSString?
+  /// Collides with `JObject.isNull`.
+  @objc func isNull(error: NativeInteropTestsError) -> NSNumber?
+  /// JNIgen doesn't turn interface methods into properties.
+  @objc func getReference(error: NativeInteropTestsError) -> NSString?
+}
+
+@objc class NativeInteropReservedNamesFlutterApiRegistrar: NSObject {
+  static var registeredNativeInteropReservedNamesFlutterApi = [
+    String: NativeInteropReservedNamesFlutterApi
+  ]()
+
+  @objc static func registerInstance(
+    api: NativeInteropReservedNamesFlutterApiBridge?,
+    name: String = NativeInteropTestsPigeonInternal.defaultInstanceName
+  ) {
+    if let api = api {
+      NativeInteropReservedNamesFlutterApiRegistrar.registeredNativeInteropReservedNamesFlutterApi[
+        name] = NativeInteropReservedNamesFlutterApi(api: api)
+    } else {
+      NativeInteropReservedNamesFlutterApiRegistrar.registeredNativeInteropReservedNamesFlutterApi
+        .removeValue(forKey: name)
+    }
+  }
+
+  static func getInstance(name: String = NativeInteropTestsPigeonInternal.defaultInstanceName)
+    -> NativeInteropReservedNamesFlutterApi?
+  {
+    return
+      NativeInteropReservedNamesFlutterApiRegistrar.registeredNativeInteropReservedNamesFlutterApi[
+        name]
+  }
+}
+
+class NativeInteropReservedNamesFlutterApi {
+  private let api: NativeInteropReservedNamesFlutterApiBridge
+
+  fileprivate init(api: NativeInteropReservedNamesFlutterApiBridge) {
+    self.api = api
+  }
+
+  static func getInstance(name: String = NativeInteropTestsPigeonInternal.defaultInstanceName)
+    -> NativeInteropReservedNamesFlutterApi?
+  {
+    return NativeInteropReservedNamesFlutterApiRegistrar.getInstance(name: name)
+  }
+
+  /// Collides with `JObject.release`.
+  func release(value valueArg: String) throws -> String {
+    let error = NativeInteropTestsError()
+    let res = api.release(value: valueArg as NSString?, error: error)
+    if error.code != nil {
+      throw error
+    }
+    return _PigeonFfiCodec.readValue(value: (res), type: "String") as! String
+  }
+
+  /// Collides with the static `type` field that JNIgen adds to every class.
+  func type() throws -> String {
+    let error = NativeInteropTestsError()
+    let res = api.type(error: error)
+    if error.code != nil {
+      throw error
+    }
+    return _PigeonFfiCodec.readValue(value: (res), type: "String") as! String
+  }
+
+  /// Collides with the `implementIn` method that JNIgen adds to interfaces.
+  func implementIn(value valueArg: String) throws -> String {
+    let error = NativeInteropTestsError()
+    let res = api.implementIn(value: valueArg as NSString?, error: error)
+    if error.code != nil {
+      throw error
+    }
+    return _PigeonFfiCodec.readValue(value: (res), type: "String") as! String
+  }
+
+  /// Collides with `JObject.isNull`.
+  func isNull() throws -> Bool {
+    let error = NativeInteropTestsError()
+    let res = api.isNull(error: error)
+    if error.code != nil {
+      throw error
+    }
+    return _PigeonFfiCodec.readValue(value: (res), type: "bool") as! Bool
+  }
+
+  /// JNIgen doesn't turn interface methods into properties.
+  func getReference() throws -> String {
+    let error = NativeInteropTestsError()
+    let res = api.getReference(error: error)
+    if error.code != nil {
+      throw error
+    }
+    return _PigeonFfiCodec.readValue(value: (res), type: "String") as! String
   }
 }

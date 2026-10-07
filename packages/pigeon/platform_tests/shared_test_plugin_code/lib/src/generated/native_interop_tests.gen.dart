@@ -190,6 +190,12 @@ class _PigeonJniCodec {
       return NativeInteropAllClassesWrapper.fromJni(
         value.as(jni_bridge.NativeInteropAllClassesWrapper.type),
       );
+    } else if (value.isA<jni_bridge.NativeInteropReservedNames>(
+      jni_bridge.NativeInteropReservedNames.type,
+    )) {
+      return NativeInteropReservedNames.fromJni(
+        value.as(jni_bridge.NativeInteropReservedNames.type),
+      );
     } else if (value.isA<jni_bridge.NativeInteropAnEnum>(jni_bridge.NativeInteropAnEnum.type)) {
       return NativeInteropAnEnum.fromJni(value.as(jni_bridge.NativeInteropAnEnum.type));
     } else if (value.isA<jni_bridge.NativeInteropAnotherEnum>(
@@ -453,6 +459,8 @@ class _PigeonJniCodec {
       return value.toJni() as T;
     } else if (value is NativeInteropAllClassesWrapper) {
       return value.toJni() as T;
+    } else if (value is NativeInteropReservedNames) {
+      return value.toJni() as T;
     } else if (value is NativeInteropAnEnum) {
       return value.toJni() as T;
     } else if (value is NativeInteropAnotherEnum) {
@@ -517,6 +525,10 @@ class _PigeonFfiCodec {
     } else if (ffi_bridge.NativeInteropAllClassesWrapperBridge.isA(value)) {
       return NativeInteropAllClassesWrapper.fromFfi(
         ffi_bridge.NativeInteropAllClassesWrapperBridge.as(value),
+      );
+    } else if (ffi_bridge.NativeInteropReservedNamesBridge.isA(value)) {
+      return NativeInteropReservedNames.fromFfi(
+        ffi_bridge.NativeInteropReservedNamesBridge.as(value),
       );
     } else {
       throw ArgumentError.value(value);
@@ -869,6 +881,8 @@ class _PigeonFfiCodec {
     } else if (value is NativeInteropAllNullableTypesWithoutRecursion) {
       return value.toFfi() as T;
     } else if (value is NativeInteropAllClassesWrapper) {
+      return value.toFfi() as T;
+    } else if (value is NativeInteropReservedNames) {
       return value.toFfi() as T;
     } else {
       throw ArgumentError.value(value);
@@ -2608,6 +2622,217 @@ class NativeInteropAllClassesWrapper {
   }
 }
 
+/// A class whose field names collide with members of the bindings that JNIgen
+/// generates, so JNIgen renames their accessors.
+///
+/// The Dart generator has to predict those names, since it is generated before
+/// JNIgen runs.
+class NativeInteropReservedNames {
+  NativeInteropReservedNames({
+    this.type,
+    this.use,
+    this.reference,
+    this.releasedBy,
+    this.fromReference,
+    this.jClass,
+    this.isInstanceOf,
+    this.isNull,
+    this.isReleased = false,
+    this.equals,
+    this.isEnabled = false,
+    this.isMaybe,
+    this.isCount,
+    this.getValue,
+  });
+
+  String? type;
+
+  String? use;
+
+  String? reference;
+
+  String? releasedBy;
+
+  String? fromReference;
+
+  String? jClass;
+
+  String? isInstanceOf;
+
+  String? isNull;
+
+  bool isReleased;
+
+  String? equals;
+
+  bool isEnabled;
+
+  bool? isMaybe;
+
+  int? isCount;
+
+  String? getValue;
+
+  List<Object?> _toList() {
+    return <Object?>[
+      type,
+      use,
+      reference,
+      releasedBy,
+      fromReference,
+      jClass,
+      isInstanceOf,
+      isNull,
+      isReleased,
+      equals,
+      isEnabled,
+      isMaybe,
+      isCount,
+      getValue,
+    ];
+  }
+
+  jni_bridge.NativeInteropReservedNames toJni() {
+    return jni_bridge.NativeInteropReservedNames(
+      _PigeonJniCodec.writeValue<JString?>(type),
+      _PigeonJniCodec.writeValue<JString?>(use),
+      _PigeonJniCodec.writeValue<JString?>(reference),
+      _PigeonJniCodec.writeValue<JString?>(releasedBy),
+      _PigeonJniCodec.writeValue<JString?>(fromReference),
+      _PigeonJniCodec.writeValue<JString?>(jClass),
+      _PigeonJniCodec.writeValue<JString?>(isInstanceOf),
+      _PigeonJniCodec.writeValue<JString?>(isNull),
+      isReleased,
+      _PigeonJniCodec.writeValue<JString?>(equals),
+      isEnabled,
+      _PigeonJniCodec.writeValue<JBoolean?>(isMaybe),
+      _PigeonJniCodec.writeValue<JLong?>(isCount),
+      _PigeonJniCodec.writeValue<JString?>(getValue),
+    );
+  }
+
+  ffi_bridge.NativeInteropReservedNamesBridge toFfi() {
+    return ffi_bridge.NativeInteropReservedNamesBridge.alloc().initWithType(
+      _PigeonFfiCodec.writeValue<NSString?>(type),
+      use: _PigeonFfiCodec.writeValue<NSString?>(use),
+      reference: _PigeonFfiCodec.writeValue<NSString?>(reference),
+      releasedBy: _PigeonFfiCodec.writeValue<NSString?>(releasedBy),
+      fromReference: _PigeonFfiCodec.writeValue<NSString?>(fromReference),
+      jClass: _PigeonFfiCodec.writeValue<NSString?>(jClass),
+      isInstanceOf: _PigeonFfiCodec.writeValue<NSString?>(isInstanceOf),
+      isNull: _PigeonFfiCodec.writeValue<NSString?>(isNull),
+      isReleased: isReleased,
+      equals: _PigeonFfiCodec.writeValue<NSString?>(equals),
+      isEnabled: isEnabled,
+      isMaybe: _PigeonFfiCodec.writeValue<NSNumber?>(isMaybe),
+      isCount: _PigeonFfiCodec.writeValue<NSNumber?>(isCount),
+      getValue: _PigeonFfiCodec.writeValue<NSString?>(getValue),
+    );
+  }
+
+  Object encode() {
+    return _toList();
+  }
+
+  static NativeInteropReservedNames? fromJni(jni_bridge.NativeInteropReservedNames? jniClass) {
+    return jniClass == null
+        ? null
+        : NativeInteropReservedNames(
+            type: jniClass.type$1?.toDartString(releaseOriginal: true),
+            use: jniClass.use$1?.toDartString(releaseOriginal: true),
+            reference: jniClass.reference$1?.toDartString(releaseOriginal: true),
+            releasedBy: jniClass.releasedBy$1?.toDartString(releaseOriginal: true),
+            fromReference: jniClass.fromReference$1?.toDartString(releaseOriginal: true),
+            jClass: jniClass.jClass$1?.toDartString(releaseOriginal: true),
+            isInstanceOf: jniClass.isInstanceOf$1()?.toDartString(releaseOriginal: true),
+            isNull: jniClass.isNull$1()?.toDartString(releaseOriginal: true),
+            isReleased: jniClass.isReleased$1,
+            equals: jniClass.equals?.toDartString(releaseOriginal: true),
+            isEnabled: jniClass.isEnabled,
+            isMaybe: jniClass.isMaybe()?.toDartBool(releaseOriginal: true),
+            isCount: jniClass.isCount()?.toDartInt(releaseOriginal: true),
+            getValue: jniClass.getValue?.toDartString(releaseOriginal: true),
+          );
+  }
+
+  static NativeInteropReservedNames? fromFfi(
+    ffi_bridge.NativeInteropReservedNamesBridge? ffiClass,
+  ) {
+    return ffiClass == null
+        ? null
+        : NativeInteropReservedNames(
+            type: ffiClass.type?.toDartString(),
+            use: ffiClass.use?.toDartString(),
+            reference: ffiClass.reference?.toDartString(),
+            releasedBy: ffiClass.releasedBy?.toDartString(),
+            fromReference: ffiClass.fromReference?.toDartString(),
+            jClass: ffiClass.jClass?.toDartString(),
+            isInstanceOf: ffiClass.isInstanceOf?.toDartString(),
+            isNull: ffiClass.isNull?.toDartString(),
+            isReleased: ffiClass.isReleased,
+            equals: ffiClass.equals?.toDartString(),
+            isEnabled: ffiClass.isEnabled,
+            isMaybe: ffiClass.isMaybe?.boolValue,
+            isCount: ffiClass.isCount?.longValue,
+            getValue: ffiClass.getValue?.toDartString(),
+          );
+  }
+
+  static NativeInteropReservedNames decode(Object result) {
+    result as List<Object?>;
+    return NativeInteropReservedNames(
+      type: result[0] as String?,
+      use: result[1] as String?,
+      reference: result[2] as String?,
+      releasedBy: result[3] as String?,
+      fromReference: result[4] as String?,
+      jClass: result[5] as String?,
+      isInstanceOf: result[6] as String?,
+      isNull: result[7] as String?,
+      isReleased: result[8]! as bool,
+      equals: result[9] as String?,
+      isEnabled: result[10]! as bool,
+      isMaybe: result[11] as bool?,
+      isCount: result[12] as int?,
+      getValue: result[13] as String?,
+    );
+  }
+
+  @override
+  // ignore: avoid_equals_and_hash_code_on_mutable_classes
+  bool operator ==(Object other) {
+    if (other is! NativeInteropReservedNames || other.runtimeType != runtimeType) {
+      return false;
+    }
+    if (identical(this, other)) {
+      return true;
+    }
+    return _deepEquals(type, other.type) &&
+        _deepEquals(use, other.use) &&
+        _deepEquals(reference, other.reference) &&
+        _deepEquals(releasedBy, other.releasedBy) &&
+        _deepEquals(fromReference, other.fromReference) &&
+        _deepEquals(jClass, other.jClass) &&
+        _deepEquals(isInstanceOf, other.isInstanceOf) &&
+        _deepEquals(isNull, other.isNull) &&
+        _deepEquals(isReleased, other.isReleased) &&
+        _deepEquals(equals, other.equals) &&
+        _deepEquals(isEnabled, other.isEnabled) &&
+        _deepEquals(isMaybe, other.isMaybe) &&
+        _deepEquals(isCount, other.isCount) &&
+        _deepEquals(getValue, other.getValue);
+  }
+
+  @override
+  // ignore: avoid_equals_and_hash_code_on_mutable_classes
+  int get hashCode => _deepHash(<Object?>[runtimeType, ..._toList()]);
+
+  @override
+  String toString() {
+    return 'NativeInteropReservedNames(type: $type, use: $use, reference: $reference, releasedBy: $releasedBy, fromReference: $fromReference, jClass: $jClass, isInstanceOf: $isInstanceOf, isNull: $isNull, isReleased: $isReleased, equals: $equals, isEnabled: $isEnabled, isMaybe: $isMaybe, isCount: $isCount, getValue: $getValue)';
+  }
+}
+
 class _PigeonCodec extends StandardMessageCodec {
   const _PigeonCodec();
   @override
@@ -2636,6 +2861,9 @@ class _PigeonCodec extends StandardMessageCodec {
     } else if (value is NativeInteropAllClassesWrapper) {
       buffer.putUint8(135);
       writeValue(buffer, value.encode());
+    } else if (value is NativeInteropReservedNames) {
+      buffer.putUint8(136);
+      writeValue(buffer, value.encode());
     } else {
       super.writeValue(buffer, value);
     }
@@ -2660,6 +2888,8 @@ class _PigeonCodec extends StandardMessageCodec {
         return NativeInteropAllNullableTypesWithoutRecursion.decode(readValue(buffer)!);
       case 135:
         return NativeInteropAllClassesWrapper.decode(readValue(buffer)!);
+      case 136:
+        return NativeInteropReservedNames.decode(readValue(buffer)!);
       default:
         return super.readValueOfType(type, buffer);
     }
@@ -23362,5 +23592,1163 @@ abstract class NativeInteropFlutterIntegrationCoreApi {
     String name = '',
   }) {
     return NativeInteropFlutterIntegrationCoreApiRegistrar().register(api, name: name);
+  }
+}
+
+class NativeInteropReservedNamesHostApiForNativeInterop {
+  NativeInteropReservedNamesHostApiForNativeInterop._withRegistrar({
+    jni_bridge.NativeInteropReservedNamesHostApiRegistrar? jniApi,
+    ffi_bridge.NativeInteropReservedNamesHostApiSetup? ffiApi,
+  }) : _jniApi = jniApi,
+       _ffiApi = ffiApi;
+
+  /// Returns instance of NativeInteropReservedNamesHostApiForNativeInterop with specified [channelName] if one has been registered.
+  static NativeInteropReservedNamesHostApiForNativeInterop? getInstance({
+    String channelName = defaultInstanceName,
+  }) {
+    final NativeInteropReservedNamesHostApiForNativeInterop res;
+    if (Platform.isAndroid) {
+      final jni_bridge.NativeInteropReservedNamesHostApiRegistrar? link =
+          jni_bridge.NativeInteropReservedNamesHostApiRegistrar().getInstance(
+            channelName.toJString(),
+          );
+      if (link == null) {
+        _throwNoInstanceError(channelName);
+      }
+      res = NativeInteropReservedNamesHostApiForNativeInterop._withRegistrar(jniApi: link);
+    } else if (Platform.isIOS || Platform.isMacOS) {
+      final ffi_bridge.NativeInteropReservedNamesHostApiSetup? link = ffi_bridge
+          .NativeInteropReservedNamesHostApiSetup.getInstanceWithName(NSString(channelName));
+      if (link == null) {
+        _throwNoInstanceError(channelName);
+      }
+      res = NativeInteropReservedNamesHostApiForNativeInterop._withRegistrar(ffiApi: link);
+    } else {
+      throw UnsupportedError(
+        'Native Interop is not supported on this platform. Use NativeInteropReservedNamesHostApi instead.',
+      );
+    }
+    return res;
+  }
+
+  late final jni_bridge.NativeInteropReservedNamesHostApiRegistrar? _jniApi;
+  late final ffi_bridge.NativeInteropReservedNamesHostApiSetup? _ffiApi;
+
+  String release(String value) {
+    try {
+      if (_jniApi != null) {
+        final JString pigeonVar_res = _jniApi.release$1(_PigeonJniCodec.writeValue<JString>(value));
+        final String dartTypeRes = pigeonVar_res.toDartString(releaseOriginal: true);
+        return dartTypeRes;
+      } else if (_ffiApi != null) {
+        final pigeonVar_error = ffi_bridge.NativeInteropTestsError();
+        final NSString? pigeonVar_res = _ffiApi.releaseWithValue(
+          _PigeonFfiCodec.writeValue<NSString>(value),
+          wrappedError: pigeonVar_error,
+        );
+        _throwIfFfiError(pigeonVar_error);
+        final String dartTypeRes = pigeonVar_res!.toDartString();
+        return dartTypeRes;
+      } else {
+        throw Exception('No JNI or FFI api available');
+      }
+    } on JThrowable catch (e) {
+      throw _wrapJniException(e);
+    }
+  }
+
+  int use(int value) {
+    try {
+      if (_jniApi != null) {
+        return _jniApi.use$1(value);
+      } else if (_ffiApi != null) {
+        final pigeonVar_error = ffi_bridge.NativeInteropTestsError();
+        final NSNumber? pigeonVar_res = _ffiApi.useWithValue(value, wrappedError: pigeonVar_error);
+        _throwIfFfiError(pigeonVar_error);
+        final int dartTypeRes = pigeonVar_res!.longValue;
+        return dartTypeRes;
+      } else {
+        throw Exception('No JNI or FFI api available');
+      }
+    } on JThrowable catch (e) {
+      throw _wrapJniException(e);
+    }
+  }
+
+  String type() {
+    try {
+      if (_jniApi != null) {
+        final JString pigeonVar_res = _jniApi.type$1();
+        final String dartTypeRes = pigeonVar_res.toDartString(releaseOriginal: true);
+        return dartTypeRes;
+      } else if (_ffiApi != null) {
+        final pigeonVar_error = ffi_bridge.NativeInteropTestsError();
+        final NSString? pigeonVar_res = _ffiApi.typeWithWrappedError(pigeonVar_error);
+        _throwIfFfiError(pigeonVar_error);
+        final String dartTypeRes = pigeonVar_res!.toDartString();
+        return dartTypeRes;
+      } else {
+        throw Exception('No JNI or FFI api available');
+      }
+    } on JThrowable catch (e) {
+      throw _wrapJniException(e);
+    }
+  }
+
+  bool isNull() {
+    try {
+      if (_jniApi != null) {
+        return _jniApi.isNull$1;
+      } else if (_ffiApi != null) {
+        final pigeonVar_error = ffi_bridge.NativeInteropTestsError();
+        final NSNumber? pigeonVar_res = _ffiApi.isNullWithWrappedError(pigeonVar_error);
+        _throwIfFfiError(pigeonVar_error);
+        final bool dartTypeRes = pigeonVar_res!.boolValue;
+        return dartTypeRes;
+      } else {
+        throw Exception('No JNI or FFI api available');
+      }
+    } on JThrowable catch (e) {
+      throw _wrapJniException(e);
+    }
+  }
+
+  bool? isNullable() {
+    try {
+      if (_jniApi != null) {
+        final JBoolean? pigeonVar_res = _jniApi.isNullable();
+        final bool? dartTypeRes = pigeonVar_res?.toDartBool(releaseOriginal: true);
+        return dartTypeRes;
+      } else if (_ffiApi != null) {
+        final pigeonVar_error = ffi_bridge.NativeInteropTestsError();
+        final NSNumber? pigeonVar_res = _ffiApi.isNullableWithWrappedError(pigeonVar_error);
+        _throwIfFfiError(pigeonVar_error);
+        final bool? dartTypeRes = pigeonVar_res?.boolValue;
+        return dartTypeRes;
+      } else {
+        throw Exception('No JNI or FFI api available');
+      }
+    } on JThrowable catch (e) {
+      throw _wrapJniException(e);
+    }
+  }
+
+  bool isOpen() {
+    try {
+      if (_jniApi != null) {
+        return _jniApi.isOpen;
+      } else if (_ffiApi != null) {
+        final pigeonVar_error = ffi_bridge.NativeInteropTestsError();
+        final NSNumber? pigeonVar_res = _ffiApi.isOpenWithWrappedError(pigeonVar_error);
+        _throwIfFfiError(pigeonVar_error);
+        final bool dartTypeRes = pigeonVar_res!.boolValue;
+        return dartTypeRes;
+      } else {
+        throw Exception('No JNI or FFI api available');
+      }
+    } on JThrowable catch (e) {
+      throw _wrapJniException(e);
+    }
+  }
+
+  String getReference() {
+    try {
+      if (_jniApi != null) {
+        final JString pigeonVar_res = _jniApi.reference$1;
+        final String dartTypeRes = pigeonVar_res.toDartString(releaseOriginal: true);
+        return dartTypeRes;
+      } else if (_ffiApi != null) {
+        final pigeonVar_error = ffi_bridge.NativeInteropTestsError();
+        final NSString? pigeonVar_res = _ffiApi.getReferenceWithWrappedError(pigeonVar_error);
+        _throwIfFfiError(pigeonVar_error);
+        final String dartTypeRes = pigeonVar_res!.toDartString();
+        return dartTypeRes;
+      } else {
+        throw Exception('No JNI or FFI api available');
+      }
+    } on JThrowable catch (e) {
+      throw _wrapJniException(e);
+    }
+  }
+
+  void setReference(String value) {
+    try {
+      if (_jniApi != null) {
+        _jniApi.reference$1 = _PigeonJniCodec.writeValue<JString>(value);
+      } else if (_ffiApi != null) {
+        final pigeonVar_error = ffi_bridge.NativeInteropTestsError();
+        _ffiApi.setReferenceWithValue(
+          _PigeonFfiCodec.writeValue<NSString>(value),
+          wrappedError: pigeonVar_error,
+        );
+        _throwIfFfiError(pigeonVar_error);
+        return;
+      } else {
+        throw Exception('No JNI or FFI api available');
+      }
+    } on JThrowable catch (e) {
+      throw _wrapJniException(e);
+    }
+  }
+
+  String getDefault() {
+    try {
+      if (_jniApi != null) {
+        final JString pigeonVar_res = _jniApi.default$;
+        final String dartTypeRes = pigeonVar_res.toDartString(releaseOriginal: true);
+        return dartTypeRes;
+      } else if (_ffiApi != null) {
+        final pigeonVar_error = ffi_bridge.NativeInteropTestsError();
+        final NSString? pigeonVar_res = _ffiApi.getDefaultWithWrappedError(pigeonVar_error);
+        _throwIfFfiError(pigeonVar_error);
+        final String dartTypeRes = pigeonVar_res!.toDartString();
+        return dartTypeRes;
+      } else {
+        throw Exception('No JNI or FFI api available');
+      }
+    } on JThrowable catch (e) {
+      throw _wrapJniException(e);
+    }
+  }
+
+  Future<String> getValueAsync() async {
+    try {
+      if (_jniApi != null) {
+        final JString pigeonVar_res = await _jniApi.getValueAsync();
+        final String dartTypeRes = pigeonVar_res.toDartString(releaseOriginal: true);
+        return dartTypeRes;
+      } else if (_ffiApi != null) {
+        final pigeonVar_error = ffi_bridge.NativeInteropTestsError();
+        final Completer<String> pigeonVar_completer = Completer<String>();
+        _ffiApi.getValueAsyncWithWrappedError(
+          pigeonVar_error,
+          completionHandler: ffi_bridge.ObjCBlock_ffiVoid_NSString.listener((
+            NSString? pigeonVar_res,
+          ) {
+            if (pigeonVar_error.code != null) {
+              pigeonVar_completer.completeError(_wrapFfiError(pigeonVar_error));
+            } else {
+              pigeonVar_completer.complete(pigeonVar_res!.toDartString());
+            }
+          }),
+        );
+        return await pigeonVar_completer.future;
+      } else {
+        throw Exception('No JNI or FFI api available');
+      }
+    } on JThrowable catch (e) {
+      throw _wrapJniException(e);
+    }
+  }
+
+  NativeInteropReservedNames echoReservedNames(NativeInteropReservedNames names) {
+    try {
+      if (_jniApi != null) {
+        final jni_bridge.NativeInteropReservedNames pigeonVar_res = _jniApi.echoReservedNames(
+          names.toJni(),
+        );
+        final NativeInteropReservedNames dartTypeRes = NativeInteropReservedNames.fromJni(
+          pigeonVar_res,
+        )!;
+        return dartTypeRes;
+      } else if (_ffiApi != null) {
+        final pigeonVar_error = ffi_bridge.NativeInteropTestsError();
+        final ffi_bridge.NativeInteropReservedNamesBridge? pigeonVar_res = _ffiApi
+            .echoReservedNamesWithNames(names.toFfi(), wrappedError: pigeonVar_error);
+        _throwIfFfiError(pigeonVar_error);
+        final NativeInteropReservedNames dartTypeRes = NativeInteropReservedNames.fromFfi(
+          pigeonVar_res,
+        )!;
+        return dartTypeRes;
+      } else {
+        throw Exception('No JNI or FFI api available');
+      }
+    } on JThrowable catch (e) {
+      throw _wrapJniException(e);
+    }
+  }
+
+  String callFlutterRelease(String value) {
+    try {
+      if (_jniApi != null) {
+        final JString pigeonVar_res = _jniApi.callFlutterRelease(
+          _PigeonJniCodec.writeValue<JString>(value),
+        );
+        final String dartTypeRes = pigeonVar_res.toDartString(releaseOriginal: true);
+        return dartTypeRes;
+      } else if (_ffiApi != null) {
+        final pigeonVar_error = ffi_bridge.NativeInteropTestsError();
+        final NSString? pigeonVar_res = _ffiApi.callFlutterReleaseWithValue(
+          _PigeonFfiCodec.writeValue<NSString>(value),
+          wrappedError: pigeonVar_error,
+        );
+        _throwIfFfiError(pigeonVar_error);
+        final String dartTypeRes = pigeonVar_res!.toDartString();
+        return dartTypeRes;
+      } else {
+        throw Exception('No JNI or FFI api available');
+      }
+    } on JThrowable catch (e) {
+      throw _wrapJniException(e);
+    }
+  }
+
+  String callFlutterType() {
+    try {
+      if (_jniApi != null) {
+        final JString pigeonVar_res = _jniApi.callFlutterType();
+        final String dartTypeRes = pigeonVar_res.toDartString(releaseOriginal: true);
+        return dartTypeRes;
+      } else if (_ffiApi != null) {
+        final pigeonVar_error = ffi_bridge.NativeInteropTestsError();
+        final NSString? pigeonVar_res = _ffiApi.callFlutterTypeWithWrappedError(pigeonVar_error);
+        _throwIfFfiError(pigeonVar_error);
+        final String dartTypeRes = pigeonVar_res!.toDartString();
+        return dartTypeRes;
+      } else {
+        throw Exception('No JNI or FFI api available');
+      }
+    } on JThrowable catch (e) {
+      throw _wrapJniException(e);
+    }
+  }
+
+  String callFlutterImplementIn(String value) {
+    try {
+      if (_jniApi != null) {
+        final JString pigeonVar_res = _jniApi.callFlutterImplementIn(
+          _PigeonJniCodec.writeValue<JString>(value),
+        );
+        final String dartTypeRes = pigeonVar_res.toDartString(releaseOriginal: true);
+        return dartTypeRes;
+      } else if (_ffiApi != null) {
+        final pigeonVar_error = ffi_bridge.NativeInteropTestsError();
+        final NSString? pigeonVar_res = _ffiApi.callFlutterImplementInValue(
+          _PigeonFfiCodec.writeValue<NSString>(value),
+          wrappedError: pigeonVar_error,
+        );
+        _throwIfFfiError(pigeonVar_error);
+        final String dartTypeRes = pigeonVar_res!.toDartString();
+        return dartTypeRes;
+      } else {
+        throw Exception('No JNI or FFI api available');
+      }
+    } on JThrowable catch (e) {
+      throw _wrapJniException(e);
+    }
+  }
+
+  bool callFlutterIsNull() {
+    try {
+      if (_jniApi != null) {
+        return _jniApi.callFlutterIsNull();
+      } else if (_ffiApi != null) {
+        final pigeonVar_error = ffi_bridge.NativeInteropTestsError();
+        final NSNumber? pigeonVar_res = _ffiApi.callFlutterIsNullWithWrappedError(pigeonVar_error);
+        _throwIfFfiError(pigeonVar_error);
+        final bool dartTypeRes = pigeonVar_res!.boolValue;
+        return dartTypeRes;
+      } else {
+        throw Exception('No JNI or FFI api available');
+      }
+    } on JThrowable catch (e) {
+      throw _wrapJniException(e);
+    }
+  }
+
+  String callFlutterGetReference() {
+    try {
+      if (_jniApi != null) {
+        final JString pigeonVar_res = _jniApi.callFlutterGetReference();
+        final String dartTypeRes = pigeonVar_res.toDartString(releaseOriginal: true);
+        return dartTypeRes;
+      } else if (_ffiApi != null) {
+        final pigeonVar_error = ffi_bridge.NativeInteropTestsError();
+        final NSString? pigeonVar_res = _ffiApi.callFlutterGetReferenceWithWrappedError(
+          pigeonVar_error,
+        );
+        _throwIfFfiError(pigeonVar_error);
+        final String dartTypeRes = pigeonVar_res!.toDartString();
+        return dartTypeRes;
+      } else {
+        throw Exception('No JNI or FFI api available');
+      }
+    } on JThrowable catch (e) {
+      throw _wrapJniException(e);
+    }
+  }
+}
+
+/// Methods whose names collide with members of the bindings that JNIgen
+/// generates, or that JNIgen turns into Dart properties.
+class NativeInteropReservedNamesHostApi {
+  /// Constructor for [NativeInteropReservedNamesHostApi]. The [binaryMessenger] named argument is
+  /// available for dependency injection. If it is left null, the default
+  /// BinaryMessenger will be used which routes to the host platform.
+  NativeInteropReservedNamesHostApi({
+    BinaryMessenger? binaryMessenger,
+    String messageChannelSuffix = '',
+    NativeInteropReservedNamesHostApiForNativeInterop? nativeInteropApi,
+  }) : pigeonVar_binaryMessenger = binaryMessenger,
+       pigeonVar_messageChannelSuffix = messageChannelSuffix.isNotEmpty
+           ? '.$messageChannelSuffix'
+           : '',
+       _nativeInteropApi = nativeInteropApi;
+
+  /// Creates an instance of [NativeInteropReservedNamesHostApi] that requests an instance of
+  /// [NativeInteropReservedNamesHostApiForNativeInterop] from the host platform with a matching instance name
+  /// to [messageChannelSuffix] or the default instance.
+  ///
+  /// Throws [ArgumentError] if no matching instance can be found.
+  factory NativeInteropReservedNamesHostApi.createWithNativeInteropApi({
+    BinaryMessenger? binaryMessenger,
+    String messageChannelSuffix = '',
+  }) {
+    NativeInteropReservedNamesHostApiForNativeInterop? nativeInteropApi;
+    String nativeInteropApiInstanceName = '';
+    if (Platform.isAndroid || Platform.isIOS || Platform.isMacOS) {
+      if (messageChannelSuffix.isEmpty) {
+        nativeInteropApi = NativeInteropReservedNamesHostApiForNativeInterop.getInstance();
+      } else {
+        nativeInteropApiInstanceName = messageChannelSuffix;
+        nativeInteropApi = NativeInteropReservedNamesHostApiForNativeInterop.getInstance(
+          channelName: messageChannelSuffix,
+        );
+      }
+    } else {
+      throw UnsupportedError(
+        'Native Interop is not supported on this platform. Use the default constructor of NativeInteropReservedNamesHostApi instead.',
+      );
+    }
+    if (nativeInteropApi == null) {
+      throw ArgumentError(
+        'No NativeInteropReservedNamesHostApi instance with ${nativeInteropApiInstanceName.isEmpty ? 'no ' : ''} instance name ${nativeInteropApiInstanceName.isNotEmpty ? '"$nativeInteropApiInstanceName" ' : ''}found.',
+      );
+    }
+    return NativeInteropReservedNamesHostApi(
+      binaryMessenger: binaryMessenger,
+      messageChannelSuffix: messageChannelSuffix,
+      nativeInteropApi: nativeInteropApi,
+    );
+  }
+
+  final BinaryMessenger? pigeonVar_binaryMessenger;
+  static const MessageCodec<Object?> pigeonChannelCodec = _PigeonCodec();
+
+  final String pigeonVar_messageChannelSuffix;
+
+  final NativeInteropReservedNamesHostApiForNativeInterop? _nativeInteropApi;
+
+  /// Collides with `JObject.release`.
+  Future<String> release(String value) async {
+    if (_nativeInteropApi != null) {
+      return _nativeInteropApi.release(value);
+    }
+    final pigeonVar_channelName =
+        'dev.flutter.pigeon.pigeon_integration_tests.NativeInteropReservedNamesHostApi.release$pigeonVar_messageChannelSuffix';
+    final pigeonVar_channel = BasicMessageChannel<Object?>(
+      pigeonVar_channelName,
+      pigeonChannelCodec,
+      binaryMessenger: pigeonVar_binaryMessenger,
+    );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[value]);
+    final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
+
+    final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
+      pigeonVar_replyList,
+      pigeonVar_channelName,
+      isNullValid: false,
+    );
+    return pigeonVar_replyValue! as String;
+  }
+
+  /// Collides with `JObject.use`.
+  Future<int> use(int value) async {
+    if (_nativeInteropApi != null) {
+      return _nativeInteropApi.use(value);
+    }
+    final pigeonVar_channelName =
+        'dev.flutter.pigeon.pigeon_integration_tests.NativeInteropReservedNamesHostApi.use$pigeonVar_messageChannelSuffix';
+    final pigeonVar_channel = BasicMessageChannel<Object?>(
+      pigeonVar_channelName,
+      pigeonChannelCodec,
+      binaryMessenger: pigeonVar_binaryMessenger,
+    );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[value]);
+    final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
+
+    final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
+      pigeonVar_replyList,
+      pigeonVar_channelName,
+      isNullValid: false,
+    );
+    return pigeonVar_replyValue! as int;
+  }
+
+  /// Collides with the static `type` field that JNIgen adds to every class.
+  Future<String> type() async {
+    if (_nativeInteropApi != null) {
+      return _nativeInteropApi.type();
+    }
+    final pigeonVar_channelName =
+        'dev.flutter.pigeon.pigeon_integration_tests.NativeInteropReservedNamesHostApi.type$pigeonVar_messageChannelSuffix';
+    final pigeonVar_channel = BasicMessageChannel<Object?>(
+      pigeonVar_channelName,
+      pigeonChannelCodec,
+      binaryMessenger: pigeonVar_binaryMessenger,
+    );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(null);
+    final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
+
+    final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
+      pigeonVar_replyList,
+      pigeonVar_channelName,
+      isNullValid: false,
+    );
+    return pigeonVar_replyValue! as String;
+  }
+
+  /// JNIgen makes this a getter, which collides with `JObject.isNull`.
+  Future<bool> isNull() async {
+    if (_nativeInteropApi != null) {
+      return _nativeInteropApi.isNull();
+    }
+    final pigeonVar_channelName =
+        'dev.flutter.pigeon.pigeon_integration_tests.NativeInteropReservedNamesHostApi.isNull$pigeonVar_messageChannelSuffix';
+    final pigeonVar_channel = BasicMessageChannel<Object?>(
+      pigeonVar_channelName,
+      pigeonChannelCodec,
+      binaryMessenger: pigeonVar_binaryMessenger,
+    );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(null);
+    final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
+
+    final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
+      pigeonVar_replyList,
+      pigeonVar_channelName,
+      isNullValid: false,
+    );
+    return pigeonVar_replyValue! as bool;
+  }
+
+  /// JNIgen keeps this a method, since nullable booleans are boxed on the JVM.
+  Future<bool?> isNullable() async {
+    if (_nativeInteropApi != null) {
+      return _nativeInteropApi.isNullable();
+    }
+    final pigeonVar_channelName =
+        'dev.flutter.pigeon.pigeon_integration_tests.NativeInteropReservedNamesHostApi.isNullable$pigeonVar_messageChannelSuffix';
+    final pigeonVar_channel = BasicMessageChannel<Object?>(
+      pigeonVar_channelName,
+      pigeonChannelCodec,
+      binaryMessenger: pigeonVar_binaryMessenger,
+    );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(null);
+    final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
+
+    final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
+      pigeonVar_replyList,
+      pigeonVar_channelName,
+      isNullValid: true,
+    );
+    return pigeonVar_replyValue as bool?;
+  }
+
+  /// JNIgen makes this a getter.
+  Future<bool> isOpen() async {
+    if (_nativeInteropApi != null) {
+      return _nativeInteropApi.isOpen();
+    }
+    final pigeonVar_channelName =
+        'dev.flutter.pigeon.pigeon_integration_tests.NativeInteropReservedNamesHostApi.isOpen$pigeonVar_messageChannelSuffix';
+    final pigeonVar_channel = BasicMessageChannel<Object?>(
+      pigeonVar_channelName,
+      pigeonChannelCodec,
+      binaryMessenger: pigeonVar_binaryMessenger,
+    );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(null);
+    final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
+
+    final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
+      pigeonVar_replyList,
+      pigeonVar_channelName,
+      isNullValid: false,
+    );
+    return pigeonVar_replyValue! as bool;
+  }
+
+  /// JNIgen combines this and [setReference] into a property, which collides
+  /// with `JObject.reference`.
+  Future<String> getReference() async {
+    if (_nativeInteropApi != null) {
+      return _nativeInteropApi.getReference();
+    }
+    final pigeonVar_channelName =
+        'dev.flutter.pigeon.pigeon_integration_tests.NativeInteropReservedNamesHostApi.getReference$pigeonVar_messageChannelSuffix';
+    final pigeonVar_channel = BasicMessageChannel<Object?>(
+      pigeonVar_channelName,
+      pigeonChannelCodec,
+      binaryMessenger: pigeonVar_binaryMessenger,
+    );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(null);
+    final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
+
+    final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
+      pigeonVar_replyList,
+      pigeonVar_channelName,
+      isNullValid: false,
+    );
+    return pigeonVar_replyValue! as String;
+  }
+
+  /// See [getReference].
+  Future<void> setReference(String value) async {
+    if (_nativeInteropApi != null) {
+      return _nativeInteropApi.setReference(value);
+    }
+    final pigeonVar_channelName =
+        'dev.flutter.pigeon.pigeon_integration_tests.NativeInteropReservedNamesHostApi.setReference$pigeonVar_messageChannelSuffix';
+    final pigeonVar_channel = BasicMessageChannel<Object?>(
+      pigeonVar_channelName,
+      pigeonChannelCodec,
+      binaryMessenger: pigeonVar_binaryMessenger,
+    );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[value]);
+    final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
+
+    _extractReplyValueOrThrow(pigeonVar_replyList, pigeonVar_channelName, isNullValid: true);
+  }
+
+  /// JNIgen makes this a getter named after a Dart keyword, `default`.
+  Future<String> getDefault() async {
+    if (_nativeInteropApi != null) {
+      return _nativeInteropApi.getDefault();
+    }
+    final pigeonVar_channelName =
+        'dev.flutter.pigeon.pigeon_integration_tests.NativeInteropReservedNamesHostApi.getDefault$pigeonVar_messageChannelSuffix';
+    final pigeonVar_channel = BasicMessageChannel<Object?>(
+      pigeonVar_channelName,
+      pigeonChannelCodec,
+      binaryMessenger: pigeonVar_binaryMessenger,
+    );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(null);
+    final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
+
+    final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
+      pigeonVar_replyList,
+      pigeonVar_channelName,
+      isNullValid: false,
+    );
+    return pigeonVar_replyValue! as String;
+  }
+
+  /// JNIgen keeps suspend functions as methods.
+  Future<String> getValueAsync() async {
+    if (_nativeInteropApi != null) {
+      return _nativeInteropApi.getValueAsync();
+    }
+    final pigeonVar_channelName =
+        'dev.flutter.pigeon.pigeon_integration_tests.NativeInteropReservedNamesHostApi.getValueAsync$pigeonVar_messageChannelSuffix';
+    final pigeonVar_channel = BasicMessageChannel<Object?>(
+      pigeonVar_channelName,
+      pigeonChannelCodec,
+      binaryMessenger: pigeonVar_binaryMessenger,
+    );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(null);
+    final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
+
+    final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
+      pigeonVar_replyList,
+      pigeonVar_channelName,
+      isNullValid: false,
+    );
+    return pigeonVar_replyValue! as String;
+  }
+
+  /// Returns the passed object, to test serialization and deserialization.
+  Future<NativeInteropReservedNames> echoReservedNames(NativeInteropReservedNames names) async {
+    if (_nativeInteropApi != null) {
+      return _nativeInteropApi.echoReservedNames(names);
+    }
+    final pigeonVar_channelName =
+        'dev.flutter.pigeon.pigeon_integration_tests.NativeInteropReservedNamesHostApi.echoReservedNames$pigeonVar_messageChannelSuffix';
+    final pigeonVar_channel = BasicMessageChannel<Object?>(
+      pigeonVar_channelName,
+      pigeonChannelCodec,
+      binaryMessenger: pigeonVar_binaryMessenger,
+    );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[names]);
+    final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
+
+    final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
+      pigeonVar_replyList,
+      pigeonVar_channelName,
+      isNullValid: false,
+    );
+    return pigeonVar_replyValue! as NativeInteropReservedNames;
+  }
+
+  /// Returns the result of calling [NativeInteropReservedNamesFlutterApi.release].
+  Future<String> callFlutterRelease(String value) async {
+    if (_nativeInteropApi != null) {
+      return _nativeInteropApi.callFlutterRelease(value);
+    }
+    final pigeonVar_channelName =
+        'dev.flutter.pigeon.pigeon_integration_tests.NativeInteropReservedNamesHostApi.callFlutterRelease$pigeonVar_messageChannelSuffix';
+    final pigeonVar_channel = BasicMessageChannel<Object?>(
+      pigeonVar_channelName,
+      pigeonChannelCodec,
+      binaryMessenger: pigeonVar_binaryMessenger,
+    );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[value]);
+    final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
+
+    final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
+      pigeonVar_replyList,
+      pigeonVar_channelName,
+      isNullValid: false,
+    );
+    return pigeonVar_replyValue! as String;
+  }
+
+  /// Returns the result of calling [NativeInteropReservedNamesFlutterApi.type].
+  Future<String> callFlutterType() async {
+    if (_nativeInteropApi != null) {
+      return _nativeInteropApi.callFlutterType();
+    }
+    final pigeonVar_channelName =
+        'dev.flutter.pigeon.pigeon_integration_tests.NativeInteropReservedNamesHostApi.callFlutterType$pigeonVar_messageChannelSuffix';
+    final pigeonVar_channel = BasicMessageChannel<Object?>(
+      pigeonVar_channelName,
+      pigeonChannelCodec,
+      binaryMessenger: pigeonVar_binaryMessenger,
+    );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(null);
+    final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
+
+    final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
+      pigeonVar_replyList,
+      pigeonVar_channelName,
+      isNullValid: false,
+    );
+    return pigeonVar_replyValue! as String;
+  }
+
+  /// Returns the result of calling [NativeInteropReservedNamesFlutterApi.implementIn].
+  Future<String> callFlutterImplementIn(String value) async {
+    if (_nativeInteropApi != null) {
+      return _nativeInteropApi.callFlutterImplementIn(value);
+    }
+    final pigeonVar_channelName =
+        'dev.flutter.pigeon.pigeon_integration_tests.NativeInteropReservedNamesHostApi.callFlutterImplementIn$pigeonVar_messageChannelSuffix';
+    final pigeonVar_channel = BasicMessageChannel<Object?>(
+      pigeonVar_channelName,
+      pigeonChannelCodec,
+      binaryMessenger: pigeonVar_binaryMessenger,
+    );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[value]);
+    final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
+
+    final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
+      pigeonVar_replyList,
+      pigeonVar_channelName,
+      isNullValid: false,
+    );
+    return pigeonVar_replyValue! as String;
+  }
+
+  /// Returns the result of calling [NativeInteropReservedNamesFlutterApi.isNull].
+  Future<bool> callFlutterIsNull() async {
+    if (_nativeInteropApi != null) {
+      return _nativeInteropApi.callFlutterIsNull();
+    }
+    final pigeonVar_channelName =
+        'dev.flutter.pigeon.pigeon_integration_tests.NativeInteropReservedNamesHostApi.callFlutterIsNull$pigeonVar_messageChannelSuffix';
+    final pigeonVar_channel = BasicMessageChannel<Object?>(
+      pigeonVar_channelName,
+      pigeonChannelCodec,
+      binaryMessenger: pigeonVar_binaryMessenger,
+    );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(null);
+    final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
+
+    final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
+      pigeonVar_replyList,
+      pigeonVar_channelName,
+      isNullValid: false,
+    );
+    return pigeonVar_replyValue! as bool;
+  }
+
+  /// Returns the result of calling [NativeInteropReservedNamesFlutterApi.getReference].
+  Future<String> callFlutterGetReference() async {
+    if (_nativeInteropApi != null) {
+      return _nativeInteropApi.callFlutterGetReference();
+    }
+    final pigeonVar_channelName =
+        'dev.flutter.pigeon.pigeon_integration_tests.NativeInteropReservedNamesHostApi.callFlutterGetReference$pigeonVar_messageChannelSuffix';
+    final pigeonVar_channel = BasicMessageChannel<Object?>(
+      pigeonVar_channelName,
+      pigeonChannelCodec,
+      binaryMessenger: pigeonVar_binaryMessenger,
+    );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(null);
+    final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
+
+    final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
+      pigeonVar_replyList,
+      pigeonVar_channelName,
+      isNullValid: false,
+    );
+    return pigeonVar_replyValue! as String;
+  }
+}
+
+/// The Flutter API counterpart of [NativeInteropReservedNamesHostApi].
+///
+/// JNIgen generates interfaces for Flutter APIs, which it renames differently
+/// than classes.
+final class NativeInteropReservedNamesFlutterApiRegistrar
+    with jni_bridge.$NativeInteropReservedNamesFlutterApi {
+  NativeInteropReservedNamesFlutterApi? dartApi;
+
+  NativeInteropReservedNamesFlutterApi register(
+    NativeInteropReservedNamesFlutterApi api, {
+    String name = defaultInstanceName,
+  }) {
+    dartApi = api;
+
+    if (Platform.isAndroid) {
+      final jni_bridge.NativeInteropReservedNamesFlutterApi impl =
+          jni_bridge.NativeInteropReservedNamesFlutterApi.implement(this);
+      jni_bridge.NativeInteropReservedNamesFlutterApiRegistrar().registerInstance(
+        impl,
+        name.toJString(),
+      );
+    }
+    if (Platform.isIOS || Platform.isMacOS) {
+      final ObjCProtocolBuilder builder = ObjCProtocolBuilder(
+        debugName: 'NativeInteropReservedNamesFlutterApiBridge',
+      );
+      ffi_bridge.NativeInteropReservedNamesFlutterApiBridge$Builder.releaseWithValue_error_
+          .implement(builder, (NSString? arg_value, ffi_bridge.NativeInteropTestsError errorOut) {
+            try {
+              if (dartApi != null) {
+                final String response = dartApi!.release(arg_value!.toDartString());
+                return _PigeonFfiCodec.writeValue<NSString>(response);
+              } else {
+                _reportFfiError(
+                  errorOut,
+                  'ArgumentError: NativeInteropReservedNamesFlutterApi was not registered.',
+                );
+                return null;
+              }
+            } catch (e) {
+              _reportFfiError(errorOut, e);
+              return null;
+            }
+          });
+      ffi_bridge.NativeInteropReservedNamesFlutterApiBridge$Builder.typeWithError_.implement(
+        builder,
+        (ffi_bridge.NativeInteropTestsError errorOut) {
+          try {
+            if (dartApi != null) {
+              final String response = dartApi!.type();
+              return _PigeonFfiCodec.writeValue<NSString>(response);
+            } else {
+              _reportFfiError(
+                errorOut,
+                'ArgumentError: NativeInteropReservedNamesFlutterApi was not registered.',
+              );
+              return null;
+            }
+          } catch (e) {
+            _reportFfiError(errorOut, e);
+            return null;
+          }
+        },
+      );
+      ffi_bridge.NativeInteropReservedNamesFlutterApiBridge$Builder.implementInValue_error_
+          .implement(builder, (NSString? arg_value, ffi_bridge.NativeInteropTestsError errorOut) {
+            try {
+              if (dartApi != null) {
+                final String response = dartApi!.implementIn(arg_value!.toDartString());
+                return _PigeonFfiCodec.writeValue<NSString>(response);
+              } else {
+                _reportFfiError(
+                  errorOut,
+                  'ArgumentError: NativeInteropReservedNamesFlutterApi was not registered.',
+                );
+                return null;
+              }
+            } catch (e) {
+              _reportFfiError(errorOut, e);
+              return null;
+            }
+          });
+      ffi_bridge.NativeInteropReservedNamesFlutterApiBridge$Builder.isNullWithError_.implement(
+        builder,
+        (ffi_bridge.NativeInteropTestsError errorOut) {
+          try {
+            if (dartApi != null) {
+              final bool response = dartApi!.isNull();
+              return _PigeonFfiCodec.writeValue<NSNumber>(response);
+            } else {
+              _reportFfiError(
+                errorOut,
+                'ArgumentError: NativeInteropReservedNamesFlutterApi was not registered.',
+              );
+              return null;
+            }
+          } catch (e) {
+            _reportFfiError(errorOut, e);
+            return null;
+          }
+        },
+      );
+      ffi_bridge.NativeInteropReservedNamesFlutterApiBridge$Builder.getReferenceWithError_
+          .implement(builder, (ffi_bridge.NativeInteropTestsError errorOut) {
+            try {
+              if (dartApi != null) {
+                final String response = dartApi!.getReference();
+                return _PigeonFfiCodec.writeValue<NSString>(response);
+              } else {
+                _reportFfiError(
+                  errorOut,
+                  'ArgumentError: NativeInteropReservedNamesFlutterApi was not registered.',
+                );
+                return null;
+              }
+            } catch (e) {
+              _reportFfiError(errorOut, e);
+              return null;
+            }
+          });
+      builder.addProtocol(ffi_bridge.NativeInteropReservedNamesFlutterApiBridge$Builder.$protocol);
+      final ffi_bridge.NativeInteropReservedNamesFlutterApiBridge impl =
+          ffi_bridge.NativeInteropReservedNamesFlutterApiBridge.as(builder.build());
+      ffi_bridge.NativeInteropReservedNamesFlutterApiRegistrar.registerInstanceWithApi(
+        impl,
+        name: NSString(name),
+      );
+    }
+    return api;
+  }
+
+  @override
+  JString release$1(JString arg_value) {
+    if (dartApi != null) {
+      final String response = dartApi!.release(arg_value.toDartString(releaseOriginal: true));
+      return _PigeonJniCodec.writeValue<JString>(response);
+    } else {
+      throw ArgumentError('NativeInteropReservedNamesFlutterApi was not registered.');
+    }
+  }
+
+  @override
+  JString type$1() {
+    if (dartApi != null) {
+      final String response = dartApi!.type();
+      return _PigeonJniCodec.writeValue<JString>(response);
+    } else {
+      throw ArgumentError('NativeInteropReservedNamesFlutterApi was not registered.');
+    }
+  }
+
+  @override
+  JString implementIn$1(JString arg_value) {
+    if (dartApi != null) {
+      final String response = dartApi!.implementIn(arg_value.toDartString(releaseOriginal: true));
+      return _PigeonJniCodec.writeValue<JString>(response);
+    } else {
+      throw ArgumentError('NativeInteropReservedNamesFlutterApi was not registered.');
+    }
+  }
+
+  @override
+  bool isNull$1() {
+    if (dartApi != null) {
+      final bool response = dartApi!.isNull();
+      return response;
+    } else {
+      throw ArgumentError('NativeInteropReservedNamesFlutterApi was not registered.');
+    }
+  }
+
+  @override
+  JString getReference() {
+    if (dartApi != null) {
+      final String response = dartApi!.getReference();
+      return _PigeonJniCodec.writeValue<JString>(response);
+    } else {
+      throw ArgumentError('NativeInteropReservedNamesFlutterApi was not registered.');
+    }
+  }
+}
+
+abstract class NativeInteropReservedNamesFlutterApi {
+  static const MessageCodec<Object?> pigeonChannelCodec = _PigeonCodec();
+
+  /// Collides with `JObject.release`.
+  String release(String value);
+
+  /// Collides with the static `type` field that JNIgen adds to every class.
+  String type();
+
+  /// Collides with the `implementIn` method that JNIgen adds to interfaces.
+  String implementIn(String value);
+
+  /// Collides with `JObject.isNull`.
+  bool isNull();
+
+  /// JNIgen doesn't turn interface methods into properties.
+  String getReference();
+
+  static void setUp(
+    NativeInteropReservedNamesFlutterApi? api, {
+    BinaryMessenger? binaryMessenger,
+    String messageChannelSuffix = '',
+  }) {
+    if (Platform.isAndroid && api != null) {
+      NativeInteropReservedNamesFlutterApiRegistrar().register(
+        api,
+        name: messageChannelSuffix.isEmpty ? defaultInstanceName : messageChannelSuffix,
+      );
+    }
+
+    if ((Platform.isIOS || Platform.isMacOS) && api != null) {
+      NativeInteropReservedNamesFlutterApiRegistrar().register(
+        api,
+        name: messageChannelSuffix.isEmpty ? defaultInstanceName : messageChannelSuffix,
+      );
+    }
+
+    messageChannelSuffix = messageChannelSuffix.isNotEmpty ? '.$messageChannelSuffix' : '';
+    {
+      final pigeonVar_channel = BasicMessageChannel<Object?>(
+        'dev.flutter.pigeon.pigeon_integration_tests.NativeInteropReservedNamesFlutterApi.release$messageChannelSuffix',
+        pigeonChannelCodec,
+        binaryMessenger: binaryMessenger,
+      );
+      if (api == null) {
+        pigeonVar_channel.setMessageHandler(null);
+      } else {
+        pigeonVar_channel.setMessageHandler((Object? message) async {
+          final List<Object?> args = message! as List<Object?>;
+          final String arg_value = args[0]! as String;
+          try {
+            final String output = api.release(arg_value);
+            return wrapResponse(result: output);
+          } on PlatformException catch (e) {
+            return wrapResponse(error: e);
+          } catch (e) {
+            return wrapResponse(
+              error: PlatformException(code: 'error', message: e.toString()),
+            );
+          }
+        });
+      }
+    }
+    {
+      final pigeonVar_channel = BasicMessageChannel<Object?>(
+        'dev.flutter.pigeon.pigeon_integration_tests.NativeInteropReservedNamesFlutterApi.type$messageChannelSuffix',
+        pigeonChannelCodec,
+        binaryMessenger: binaryMessenger,
+      );
+      if (api == null) {
+        pigeonVar_channel.setMessageHandler(null);
+      } else {
+        pigeonVar_channel.setMessageHandler((Object? message) async {
+          try {
+            final String output = api.type();
+            return wrapResponse(result: output);
+          } on PlatformException catch (e) {
+            return wrapResponse(error: e);
+          } catch (e) {
+            return wrapResponse(
+              error: PlatformException(code: 'error', message: e.toString()),
+            );
+          }
+        });
+      }
+    }
+    {
+      final pigeonVar_channel = BasicMessageChannel<Object?>(
+        'dev.flutter.pigeon.pigeon_integration_tests.NativeInteropReservedNamesFlutterApi.implementIn$messageChannelSuffix',
+        pigeonChannelCodec,
+        binaryMessenger: binaryMessenger,
+      );
+      if (api == null) {
+        pigeonVar_channel.setMessageHandler(null);
+      } else {
+        pigeonVar_channel.setMessageHandler((Object? message) async {
+          final List<Object?> args = message! as List<Object?>;
+          final String arg_value = args[0]! as String;
+          try {
+            final String output = api.implementIn(arg_value);
+            return wrapResponse(result: output);
+          } on PlatformException catch (e) {
+            return wrapResponse(error: e);
+          } catch (e) {
+            return wrapResponse(
+              error: PlatformException(code: 'error', message: e.toString()),
+            );
+          }
+        });
+      }
+    }
+    {
+      final pigeonVar_channel = BasicMessageChannel<Object?>(
+        'dev.flutter.pigeon.pigeon_integration_tests.NativeInteropReservedNamesFlutterApi.isNull$messageChannelSuffix',
+        pigeonChannelCodec,
+        binaryMessenger: binaryMessenger,
+      );
+      if (api == null) {
+        pigeonVar_channel.setMessageHandler(null);
+      } else {
+        pigeonVar_channel.setMessageHandler((Object? message) async {
+          try {
+            final bool output = api.isNull();
+            return wrapResponse(result: output);
+          } on PlatformException catch (e) {
+            return wrapResponse(error: e);
+          } catch (e) {
+            return wrapResponse(
+              error: PlatformException(code: 'error', message: e.toString()),
+            );
+          }
+        });
+      }
+    }
+    {
+      final pigeonVar_channel = BasicMessageChannel<Object?>(
+        'dev.flutter.pigeon.pigeon_integration_tests.NativeInteropReservedNamesFlutterApi.getReference$messageChannelSuffix',
+        pigeonChannelCodec,
+        binaryMessenger: binaryMessenger,
+      );
+      if (api == null) {
+        pigeonVar_channel.setMessageHandler(null);
+      } else {
+        pigeonVar_channel.setMessageHandler((Object? message) async {
+          try {
+            final String output = api.getReference();
+            return wrapResponse(result: output);
+          } on PlatformException catch (e) {
+            return wrapResponse(error: e);
+          } catch (e) {
+            return wrapResponse(
+              error: PlatformException(code: 'error', message: e.toString()),
+            );
+          }
+        });
+      }
+    }
+  }
+
+  static NativeInteropReservedNamesFlutterApi implement(
+    NativeInteropReservedNamesFlutterApi api, {
+    String name = '',
+  }) {
+    return NativeInteropReservedNamesFlutterApiRegistrar().register(api, name: name);
   }
 }

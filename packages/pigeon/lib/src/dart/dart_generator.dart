@@ -978,7 +978,7 @@ class DartGenerator extends StructuredGenerator<InternalDartOptions> {
         return;
       }
       indent.writeScoped(
-        'return ${ffiClass.getFfiName()}.alloc().initWith${toUpperCamelCase(fields.first.name)}(',
+        'return ${ffiClass.getFfiName()}.alloc().${_swiftObjcSelectorFirstPiece('init', fields.first.name)}(',
         ');',
         () {
           var needsName = false;
@@ -1798,7 +1798,10 @@ return ${generatorOptions.useJni ? 'await ' : ''}$completerVar.future;
   }
 
   String _getFfiMethodCallName(Method method) {
-    return '${method.name}${method.parameters.isNotEmpty ? 'With${toUpperCamelCase(method.parameters.first.name)}' : 'WithWrappedError'}';
+    return _swiftObjcSelectorFirstPiece(
+      method.name,
+      method.parameters.isNotEmpty ? method.parameters.first.name : 'wrappedError',
+    );
   }
 
   String _getJniMethodCallArguments(Iterable<Parameter> parameters) {
@@ -1812,9 +1815,9 @@ return ${generatorOptions.useJni ? 'await ' : ''}$completerVar.future;
 
   String _getFfiCallbackName(Method method) {
     if (method.parameters.isEmpty) {
-      return '${method.name}WithError_${method.isAsynchronous ? 'completionHandler_' : ''}';
+      return '${_swiftObjcSelectorFirstPiece(method.name, 'error')}_${method.isAsynchronous ? 'completionHandler_' : ''}';
     }
-    var name = '${method.name}With${toUpperCamelCase(method.parameters.first.name)}';
+    String name = _swiftObjcSelectorFirstPiece(method.name, method.parameters.first.name);
     for (final Parameter parameter in method.parameters.skip(1)) {
       name += '_${parameter.name}';
     }
@@ -3596,6 +3599,114 @@ class _JniBindingNamer {
     final boxed = type.isNullable && primitives.contains(type.baseName) ? '?' : '';
     return '${type.getFullName(withNullable: false)}$boxed';
   }
+}
+
+/// The words that stop Swift from adding `With` when it infers an
+/// Objective-C selector.
+///
+/// From https://github.com/swiftlang/swift/blob/main/lib/Basic/PartsOfSpeech.def.
+const Set<String> _swiftPrepositions = <String>{
+  'above',
+  'after',
+  'along',
+  'alongside',
+  'as',
+  'at',
+  'before',
+  'below',
+  'by',
+  'following',
+  'for',
+  'from',
+  'given',
+  'in',
+  'including',
+  'inside',
+  'into',
+  'matching',
+  'of',
+  'on',
+  'passing',
+  'preceding',
+  'since',
+  'to',
+  'until',
+  'using',
+  'via',
+  'when',
+  'with',
+  'within',
+};
+
+/// Returns the first piece of the Objective-C selector that Swift infers for
+/// an `@objc` method or initializer named [baseName] whose first argument
+/// label is [label], which FFIgen uses as the name of the Dart binding.
+///
+/// Swift joins them with `With`, unless the last word of [baseName] or the
+/// first word of [label] is a preposition. For example, `signIn(value:)`
+/// becomes `signInValue:`, but `signOut(value:)` becomes `signOutWithValue:`.
+String _swiftObjcSelectorFirstPiece(String baseName, String label) {
+  if (label.isEmpty) {
+    return baseName;
+  }
+  final bool addWith =
+      !_swiftPrepositions.contains(_swiftLastWord(baseName).toLowerCase()) &&
+      !_swiftPrepositions.contains(_swiftFirstWord(label).toLowerCase());
+  return '$baseName${addWith ? 'With' : ''}${label[0].toUpperCase()}${label.substring(1)}';
+}
+
+bool _isAsciiUppercase(String text, int index) {
+  final int codeUnit = text.codeUnitAt(index);
+  return codeUnit >= 0x41 && codeUnit <= 0x5A;
+}
+
+bool _isAsciiLowercase(String text, int index) {
+  final int codeUnit = text.codeUnitAt(index);
+  return codeUnit >= 0x61 && codeUnit <= 0x7A;
+}
+
+/// Returns the first word of [name], split like Swift's
+/// `camel_case::getFirstWord`.
+String _swiftFirstWord(String name) {
+  if (name.isEmpty || name.startsWith('_')) {
+    return name.isEmpty ? '' : '_';
+  }
+  var end = 0;
+  while (end < name.length && _isAsciiUppercase(name, end)) {
+    end++;
+  }
+  if (end > 1) {
+    // An acronym ends before its last capital letter when that letter starts
+    // the next word, like `URL` in `URLFor`.
+    return name.substring(0, end < name.length && _isAsciiLowercase(name, end) ? end - 1 : end);
+  }
+  while (end < name.length && !_isAsciiUppercase(name, end) && name[end] != '_') {
+    end++;
+  }
+  return name.substring(0, end);
+}
+
+/// Returns the last word of [name], split like Swift's
+/// `camel_case::getLastWord`.
+String _swiftLastWord(String name) {
+  int start = name.length;
+  while (start > 0 && !_isAsciiUppercase(name, start - 1) && name[start - 1] != '_') {
+    start--;
+  }
+  if (start == 0) {
+    return name;
+  }
+  if (name[start - 1] == '_') {
+    return start == name.length ? '_' : name.substring(start);
+  }
+  if (start < name.length) {
+    return name.substring(start - 1);
+  }
+  // The name ends with an acronym, like `ID` in `lookUpID`.
+  while (start > 0 && _isAsciiUppercase(name, start - 1)) {
+    start--;
+  }
+  return name.substring(start);
 }
 
 /// Returns an argument name that can be used in a context where it is possible to collide.

@@ -48,6 +48,7 @@ class TestPlugin : FlutterPlugin, HostIntegrationCoreApi, HostCallbackCoreApi {
     testSuffixApiTwo.setUp(binding, "suffixTwo")
     niMessageApi =
         NativeInteropHostIntegrationCoreApiRegistrar().register(NativeInteropIntegrationTests())
+    NativeInteropReservedNamesHostApiRegistrar().register(NativeInteropReservedNamesHostApiImpl())
     flutterApi = FlutterIntegrationCoreApi(binding.binaryMessenger)
     flutterCallbackApi = FlutterCallbackCoreApi(binding.binaryMessenger)
     flutterSmallApiOne = FlutterSmallApi(binding.binaryMessenger, "suffixOne")
@@ -2155,6 +2156,78 @@ class NativeInteropIntegrationTests : NativeInteropHostIntegrationCoreApi {
   override fun testCallDeregisteredFlutterApi(name: String): Boolean {
     NativeInteropFlutterIntegrationCoreApiRegistrar().registerInstance(null, name = name)
     return NativeInteropFlutterIntegrationCoreApiRegistrar().getInstance(name) == null
+  }
+}
+
+class NativeInteropReservedNamesHostApiImpl : NativeInteropReservedNamesHostApi {
+  private var storedReference = ""
+
+  override fun release(value: String): String {
+    return value
+  }
+
+  override fun use(value: Long): Long {
+    return value
+  }
+
+  override fun type(): String {
+    return "type"
+  }
+
+  override fun isNull(): Boolean {
+    return true
+  }
+
+  override fun isNullable(): Boolean? {
+    return true
+  }
+
+  override fun isOpen(): Boolean {
+    return true
+  }
+
+  override fun getReference(): String {
+    return storedReference
+  }
+
+  override fun setReference(value: String) {
+    storedReference = value
+  }
+
+  override fun getDefault(): String {
+    return "default"
+  }
+
+  override suspend fun getValueAsync(): String {
+    return "value"
+  }
+
+  override fun echoReservedNames(names: NativeInteropReservedNames): NativeInteropReservedNames {
+    return names
+  }
+
+  private fun flutterApi(): NativeInteropReservedNamesFlutterApi {
+    return NativeInteropReservedNamesFlutterApiRegistrar().getInstance()!!
+  }
+
+  override fun callFlutterRelease(value: String): String {
+    return flutterApi().release(value)
+  }
+
+  override fun callFlutterType(): String {
+    return flutterApi().type()
+  }
+
+  override fun callFlutterImplementIn(value: String): String {
+    return flutterApi().implementIn(value)
+  }
+
+  override fun callFlutterIsNull(): Boolean {
+    return flutterApi().isNull()
+  }
+
+  override fun callFlutterGetReference(): String {
+    return flutterApi().getReference()
   }
 }
 

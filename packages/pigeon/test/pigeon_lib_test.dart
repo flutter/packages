@@ -2706,22 +2706,41 @@ abstract class Api {
       expect(errors[0].message, contains('Swift FFI requires `includeErrorClass: true`'));
     });
 
-    test('Kotlin JNI rejects sealed classes', () {
+    test('Kotlin JNI rejects event channels and sealed classes', () {
       final List<Error> errors = validate(
         const KotlinGeneratorAdapter(),
         unsupportedFeaturesSource,
       );
-      expect(errors, hasLength(1));
-      expect(errors[0].message, contains('Kotlin JNI does not support sealed classes yet'));
+      expect(
+        errors.map((Error e) => e.message),
+        containsAll(<Matcher>[
+          contains('Kotlin JNI does not support event channels yet (in API "Events")'),
+          contains('Kotlin JNI does not support sealed classes yet (class "Shape")'),
+        ]),
+      );
     });
 
-    test('Kotlin without JNI allows sealed classes', () {
+    test('Kotlin without JNI allows event channels and sealed classes', () {
       final List<Error> errors = validate(
         const KotlinGeneratorAdapter(),
         unsupportedFeaturesSource,
         kotlinOptions: const KotlinOptions(),
       );
       expect(errors, isEmpty);
+    });
+
+    test('Kotlin JNI rejects ProxyApis', () {
+      final List<Error> errors = validate(const KotlinGeneratorAdapter(), '''
+@ProxyApi()
+abstract class Proxy {
+  Proxy();
+}
+''');
+      expect(errors, hasLength(1));
+      expect(
+        errors[0].message,
+        contains('Kotlin JNI does not support ProxyApis yet (in API "Proxy")'),
+      );
     });
 
     const reservedMethodNamesSource = '''

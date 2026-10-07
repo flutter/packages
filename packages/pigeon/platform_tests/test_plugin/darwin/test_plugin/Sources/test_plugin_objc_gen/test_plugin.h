@@ -2960,6 +2960,158 @@ SWIFT_CLASS("_TtC11test_plugin40NativeInteropHostIntegrationCoreApiSetup")
     SWIFT_WARN_UNUSED_RESULT;
 @end
 
+/// A class whose field names collide with members of the bindings that JNIgen
+/// generates, so JNIgen renames their accessors.
+/// The Dart generator has to predict those names, since it is generated before
+/// JNIgen runs.
+/// Generated bridge class from Pigeon that moves data from Swift to
+/// Objective-C.
+SWIFT_CLASS("_TtC11test_plugin32NativeInteropReservedNamesBridge")
+@interface NativeInteropReservedNamesBridge : NSObject
+- (nonnull instancetype)initWithType:(NSString* _Nullable)type
+                                 use:(NSString* _Nullable)use
+                           reference:(NSString* _Nullable)reference
+                          releasedBy:(NSString* _Nullable)releasedBy
+                       fromReference:(NSString* _Nullable)fromReference
+                              jClass:(NSString* _Nullable)jClass
+                        isInstanceOf:(NSString* _Nullable)isInstanceOf
+                              isNull:(NSString* _Nullable)isNull
+                          isReleased:(BOOL)isReleased
+                              equals:(NSString* _Nullable)equals
+                           isEnabled:(BOOL)isEnabled
+                             isMaybe:(NSNumber* _Nullable)isMaybe
+                             isCount:(NSNumber* _Nullable)isCount
+                            getValue:(NSString* _Nullable)getValue
+    OBJC_DESIGNATED_INITIALIZER;
+@property(nonatomic, strong) NSString* _Nullable type;
+@property(nonatomic, strong) NSString* _Nullable use;
+@property(nonatomic, strong) NSString* _Nullable reference;
+@property(nonatomic, strong) NSString* _Nullable releasedBy;
+@property(nonatomic, strong) NSString* _Nullable fromReference;
+@property(nonatomic, strong) NSString* _Nullable jClass;
+@property(nonatomic, strong) NSString* _Nullable isInstanceOf;
+@property(nonatomic, strong) NSString* _Nullable isNull;
+@property(nonatomic) BOOL isReleased;
+@property(nonatomic, strong) NSString* _Nullable equals;
+@property(nonatomic) BOOL isEnabled;
+@property(nonatomic, strong) NSNumber* _Nullable isMaybe;
+@property(nonatomic, strong) NSNumber* _Nullable isCount;
+@property(nonatomic, strong) NSString* _Nullable getValue;
+- (nonnull instancetype)init SWIFT_UNAVAILABLE;
++ (nonnull instancetype)new SWIFT_UNAVAILABLE_MSG("-init is unavailable");
+@end
+
+/// The Flutter API counterpart of [NativeInteropReservedNamesHostApi].
+/// JNIgen generates interfaces for Flutter APIs, which it renames differently
+/// than classes.
+/// Generated protocol from Pigeon that represents Flutter messages that can be
+/// called from Swift.
+SWIFT_PROTOCOL("_TtP11test_plugin42NativeInteropReservedNamesFlutterApiBridge_")
+@protocol NativeInteropReservedNamesFlutterApiBridge
+/// Collides with <code>JObject.release</code>.
+- (NSString* _Nullable)releaseWithValue:(NSString* _Nullable)valueArg
+                                  error:(NativeInteropTestsError* _Nonnull)error
+    SWIFT_WARN_UNUSED_RESULT;
+/// Collides with the static <code>type</code> field that JNIgen adds to every
+/// class.
+- (NSString* _Nullable)typeWithError:(NativeInteropTestsError* _Nonnull)error
+    SWIFT_WARN_UNUSED_RESULT;
+/// Collides with the <code>implementIn</code> method that JNIgen adds to
+/// interfaces.
+- (NSString* _Nullable)implementInValue:(NSString* _Nullable)valueArg
+                                  error:(NativeInteropTestsError* _Nonnull)error
+    SWIFT_WARN_UNUSED_RESULT;
+/// Collides with <code>JObject.isNull</code>.
+- (NSNumber* _Nullable)isNullWithError:(NativeInteropTestsError* _Nonnull)error
+    SWIFT_WARN_UNUSED_RESULT;
+/// JNIgen doesn’t turn interface methods into properties.
+- (NSString* _Nullable)getReferenceWithError:
+    (NativeInteropTestsError* _Nonnull)error SWIFT_WARN_UNUSED_RESULT;
+@end
+
+SWIFT_CLASS("_TtC11test_plugin45NativeInteropReservedNamesFlutterApiRegistrar")
+@interface NativeInteropReservedNamesFlutterApiRegistrar : NSObject
++ (void)registerInstanceWithApi:
+            (id<NativeInteropReservedNamesFlutterApiBridge> _Nullable)api
+                           name:(NSString* _Nonnull)name;
+- (nonnull instancetype)init OBJC_DESIGNATED_INITIALIZER;
+@end
+
+/// Generated setup class from Pigeon to register implemented
+/// NativeInteropReservedNamesHostApi classes.
+SWIFT_CLASS("_TtC11test_plugin38NativeInteropReservedNamesHostApiSetup")
+@interface NativeInteropReservedNamesHostApiSetup : NSObject
+- (nonnull instancetype)init OBJC_DESIGNATED_INITIALIZER;
++ (NativeInteropReservedNamesHostApiSetup* _Nullable)getInstanceWithName:
+    (NSString* _Nonnull)name SWIFT_WARN_UNUSED_RESULT;
+/// Collides with <code>JObject.release</code>.
+- (NSString* _Nullable)releaseWithValue:(NSString* _Nonnull)valueArg
+                           wrappedError:
+                               (NativeInteropTestsError* _Nonnull)wrappedError
+    SWIFT_WARN_UNUSED_RESULT;
+/// Collides with <code>JObject.use</code>.
+- (NSNumber* _Nullable)useWithValue:(int64_t)valueArg
+                       wrappedError:
+                           (NativeInteropTestsError* _Nonnull)wrappedError
+    SWIFT_WARN_UNUSED_RESULT;
+/// Collides with the static <code>type</code> field that JNIgen adds to every
+/// class.
+- (NSString* _Nullable)typeWithWrappedError:
+    (NativeInteropTestsError* _Nonnull)wrappedError SWIFT_WARN_UNUSED_RESULT;
+/// JNIgen makes this a getter, which collides with <code>JObject.isNull</code>.
+- (NSNumber* _Nullable)isNullWithWrappedError:
+    (NativeInteropTestsError* _Nonnull)wrappedError SWIFT_WARN_UNUSED_RESULT;
+/// JNIgen keeps this a method, since nullable booleans are boxed on the JVM.
+- (NSNumber* _Nullable)isNullableWithWrappedError:
+    (NativeInteropTestsError* _Nonnull)wrappedError SWIFT_WARN_UNUSED_RESULT;
+/// JNIgen makes this a getter.
+- (NSNumber* _Nullable)isOpenWithWrappedError:
+    (NativeInteropTestsError* _Nonnull)wrappedError SWIFT_WARN_UNUSED_RESULT;
+/// JNIgen combines this and [setReference] into a property, which collides
+/// with <code>JObject.reference</code>.
+- (NSString* _Nullable)getReferenceWithWrappedError:
+    (NativeInteropTestsError* _Nonnull)wrappedError SWIFT_WARN_UNUSED_RESULT;
+/// See [getReference].
+- (void)setReferenceWithValue:(NSString* _Nonnull)valueArg
+                 wrappedError:(NativeInteropTestsError* _Nonnull)wrappedError;
+/// JNIgen makes this a getter named after a Dart keyword, <code>default</code>.
+- (NSString* _Nullable)getDefaultWithWrappedError:
+    (NativeInteropTestsError* _Nonnull)wrappedError SWIFT_WARN_UNUSED_RESULT;
+/// JNIgen keeps suspend functions as methods.
+- (void)getValueAsyncWithWrappedError:
+            (NativeInteropTestsError* _Nonnull)wrappedError
+                    completionHandler:(void (^_Nonnull)(NSString* _Nullable))
+                                          completionHandler;
+/// Returns the passed object, to test serialization and deserialization.
+- (NativeInteropReservedNamesBridge* _Nullable)
+    echoReservedNamesWithNames:
+        (NativeInteropReservedNamesBridge* _Nonnull)namesArg
+                  wrappedError:(NativeInteropTestsError* _Nonnull)wrappedError
+    SWIFT_WARN_UNUSED_RESULT;
+/// Returns the result of calling
+/// [NativeInteropReservedNamesFlutterApi.release].
+- (NSString* _Nullable)
+    callFlutterReleaseWithValue:(NSString* _Nonnull)valueArg
+                   wrappedError:(NativeInteropTestsError* _Nonnull)wrappedError
+    SWIFT_WARN_UNUSED_RESULT;
+/// Returns the result of calling [NativeInteropReservedNamesFlutterApi.type].
+- (NSString* _Nullable)callFlutterTypeWithWrappedError:
+    (NativeInteropTestsError* _Nonnull)wrappedError SWIFT_WARN_UNUSED_RESULT;
+/// Returns the result of calling
+/// [NativeInteropReservedNamesFlutterApi.implementIn].
+- (NSString* _Nullable)
+    callFlutterImplementInValue:(NSString* _Nonnull)valueArg
+                   wrappedError:(NativeInteropTestsError* _Nonnull)wrappedError
+    SWIFT_WARN_UNUSED_RESULT;
+/// Returns the result of calling [NativeInteropReservedNamesFlutterApi.isNull].
+- (NSNumber* _Nullable)callFlutterIsNullWithWrappedError:
+    (NativeInteropTestsError* _Nonnull)wrappedError SWIFT_WARN_UNUSED_RESULT;
+/// Returns the result of calling
+/// [NativeInteropReservedNamesFlutterApi.getReference].
+- (NSString* _Nullable)callFlutterGetReferenceWithWrappedError:
+    (NativeInteropTestsError* _Nonnull)wrappedError SWIFT_WARN_UNUSED_RESULT;
+@end
+
 /// Error class for passing custom error details to Dart side.
 SWIFT_CLASS("_TtC11test_plugin23NativeInteropTestsError")
 @interface NativeInteropTestsError : NSObject

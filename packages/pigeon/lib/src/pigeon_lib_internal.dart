@@ -466,6 +466,37 @@ void _errorOnSwiftFfiUnsupportedFeatures(
   }
 }
 
+const String _moveToNonJniFileSuggestion =
+    "Move them to a separate pigeon file that doesn't use Kotlin JNI (`kotlin_use_jni`).";
+
+void _errorOnKotlinJniUnsupportedFeatures(List<Error> errors, Root root) {
+  for (final Api api in root.apis) {
+    if (api is AstEventChannelApi) {
+      errors.add(
+        Error(
+          message:
+              'Kotlin JNI does not support event channels yet (in API "${api.name}"). $_moveToNonJniFileSuggestion',
+        ),
+      );
+    } else if (api is AstProxyApi) {
+      errors.add(
+        Error(
+          message:
+              'Kotlin JNI does not support ProxyApis yet (in API "${api.name}"). $_moveToNonJniFileSuggestion',
+        ),
+      );
+    }
+  }
+  for (final Class classDefinition in root.classes.where((Class c) => c.isSealed)) {
+    errors.add(
+      Error(
+        message:
+            'Kotlin JNI does not support sealed classes yet (class "${classDefinition.name}"). $_moveToNonJniFileSuggestion',
+      ),
+    );
+  }
+}
+
 /// A [GeneratorAdapter] that generates the AST.
 class AstGeneratorAdapter implements GeneratorAdapter {
   /// Constructor for [AstGeneratorAdapter].
@@ -926,14 +957,7 @@ class KotlinGeneratorAdapter implements GeneratorAdapter {
     if (options.kotlinOptions?.useJni ?? false) {
       _errorOnTaskQueueInNativeInterop(errors, 'Kotlin JNI', root);
       _errorOnJniPropertyCollisions(errors, root);
-      for (final Class classDefinition in root.classes.where((Class c) => c.isSealed)) {
-        errors.add(
-          Error(
-            message:
-                'Kotlin JNI does not support sealed classes yet (class "${classDefinition.name}"). Move them to a separate pigeon file that doesn\'t use Kotlin JNI (`kotlin_use_jni`).',
-          ),
-        );
-      }
+      _errorOnKotlinJniUnsupportedFeatures(errors, root);
     }
     return errors;
   }

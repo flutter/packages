@@ -2578,4 +2578,100 @@ name: foobar
     expect(code, contains('class _PigeonFfiCodec'));
     expect(code, isNot(contains('There is something wrong')));
   });
+
+  test('ffi code uses the selectors that Swift infers', () {
+    const string = TypeDeclaration(baseName: 'String', isNullable: false);
+    final root = Root(
+      apis: <Api>[
+        AstHostApi(
+          name: 'Api',
+          methods: <Method>[
+            Method(
+              name: 'signIn',
+              location: ApiLocation.host,
+              parameters: <Parameter>[Parameter(name: 'value', type: string)],
+              returnType: string,
+            ),
+            Method(
+              name: 'signOut',
+              location: ApiLocation.host,
+              parameters: <Parameter>[Parameter(name: 'value', type: string)],
+              returnType: string,
+            ),
+            Method(
+              name: 'lookUp',
+              location: ApiLocation.host,
+              parameters: <Parameter>[Parameter(name: 'inList', type: string)],
+              returnType: string,
+            ),
+            Method(
+              name: 'goTo',
+              location: ApiLocation.host,
+              parameters: <Parameter>[],
+              returnType: string,
+            ),
+          ],
+        ),
+        AstFlutterApi(
+          name: 'Callbacks',
+          methods: <Method>[
+            Method(
+              name: 'implementIn',
+              location: ApiLocation.flutter,
+              parameters: <Parameter>[Parameter(name: 'value', type: string)],
+              returnType: string,
+            ),
+            Method(
+              name: 'goTo',
+              location: ApiLocation.flutter,
+              parameters: <Parameter>[],
+              returnType: string,
+            ),
+            Method(
+              name: 'goToAsync',
+              location: ApiLocation.flutter,
+              isAsynchronous: true,
+              parameters: <Parameter>[],
+              returnType: string,
+            ),
+          ],
+        ),
+      ],
+      classes: <Class>[
+        Class(
+          name: 'Data',
+          fields: <NamedType>[
+            NamedType(
+              name: 'forKey',
+              type: const TypeDeclaration(baseName: 'String', isNullable: true),
+            ),
+          ],
+        ),
+      ],
+      enums: <Enum>[],
+    );
+    final sink = StringBuffer();
+    const generator = DartGenerator();
+    generator.generate(
+      const InternalDartOptions(
+        ignoreLints: false,
+        useFfi: true,
+        ffiErrorClassName: 'PigeonError',
+        dartOut: 'lib/foo.dart',
+      ),
+      root,
+      sink,
+      dartPackageName: DEFAULT_PACKAGE_NAME,
+    );
+    final code = sink.toString();
+
+    expect(code, contains('_ffiApi.signInValue('));
+    expect(code, contains('_ffiApi.signOutWithValue('));
+    expect(code, contains('_ffiApi.lookUpInList('));
+    expect(code, contains('_ffiApi.goToWrappedError('));
+    expect(code, contains('.implementInValue_error_'));
+    expect(code, contains('.goToError_'));
+    expect(code, contains('.goToAsyncWithError_completionHandler_'));
+    expect(code, contains('DataBridge.alloc().initForKey('));
+  });
 }

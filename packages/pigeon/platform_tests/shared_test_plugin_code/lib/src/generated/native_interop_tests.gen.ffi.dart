@@ -19048,6 +19048,1025 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
   }
 }
 
+/// A class whose field names collide with members of the bindings that JNIgen
+/// generates, so JNIgen renames their accessors.
+/// The Dart generator has to predict those names, since it is generated before
+/// JNIgen runs.
+/// Generated bridge class from Pigeon that moves data from Swift to Objective-C.
+extension type NativeInteropReservedNamesBridge._(objc.ObjCObject object$)
+    implements objc.ObjCObject, objc.NSObject {
+  /// Constructs a [NativeInteropReservedNamesBridge] that points to the same underlying object as [other].
+  NativeInteropReservedNamesBridge.as(objc.ObjCObject other) : object$ = other {
+    assert(isA(object$));
+  }
+
+  /// Constructs a [NativeInteropReservedNamesBridge] that wraps the given raw object pointer.
+  NativeInteropReservedNamesBridge.fromPointer(
+    ffi.Pointer<objc.ObjCObjectImpl> other, {
+    bool retain = false,
+    bool release = false,
+  }) : object$ = objc.ObjCObject(other, retain: retain, release: release) {
+    assert(isA(object$));
+  }
+
+  /// Returns whether [obj] is an instance of [NativeInteropReservedNamesBridge].
+  static bool isA(objc.ObjCObject? obj) => obj == null
+      ? false
+      : _objc_msgSend_19nvye5(
+          obj.ref.pointer,
+          _sel_isKindOfClass_,
+          _class_NativeInteropReservedNamesBridge,
+        );
+
+  /// alloc
+  static NativeInteropReservedNamesBridge alloc() {
+    final $ret = _objc_msgSend_151sglz(_class_NativeInteropReservedNamesBridge, _sel_alloc);
+    return NativeInteropReservedNamesBridge.fromPointer($ret, retain: false, release: true);
+  }
+
+  /// allocWithZone:
+  static NativeInteropReservedNamesBridge allocWithZone(ffi.Pointer<objc.NSZone> zone) {
+    final $ret = _objc_msgSend_1cwp428(
+      _class_NativeInteropReservedNamesBridge,
+      _sel_allocWithZone_,
+      zone,
+    );
+    return NativeInteropReservedNamesBridge.fromPointer($ret, retain: false, release: true);
+  }
+}
+
+extension NativeInteropReservedNamesBridge$Methods on NativeInteropReservedNamesBridge {
+  /// equals
+  objc.NSString? get equals {
+    final _$$ref = object$.ref;
+    final $ret = _objc_msgSend_151sglz(_$$ref.pointer, _sel_equals);
+    return $ret.address == 0 ? null : objc.NSString.fromPointer($ret, retain: true, release: true);
+  }
+
+  /// fromReference
+  objc.NSString? get fromReference {
+    final _$$ref = object$.ref;
+    final $ret = _objc_msgSend_151sglz(_$$ref.pointer, _sel_fromReference);
+    return $ret.address == 0 ? null : objc.NSString.fromPointer($ret, retain: true, release: true);
+  }
+
+  /// getValue
+  objc.NSString? get getValue {
+    final _$$ref = object$.ref;
+    final $ret = _objc_msgSend_151sglz(_$$ref.pointer, _sel_getValue);
+    return $ret.address == 0 ? null : objc.NSString.fromPointer($ret, retain: true, release: true);
+  }
+
+  /// initWithType:use:reference:releasedBy:fromReference:jClass:isInstanceOf:isNull:isReleased:equals:isEnabled:isMaybe:isCount:getValue:
+  NativeInteropReservedNamesBridge initWithType(
+    objc.NSString? type, {
+    objc.NSString? use,
+    objc.NSString? reference,
+    objc.NSString? releasedBy,
+    objc.NSString? fromReference,
+    objc.NSString? jClass,
+    objc.NSString? isInstanceOf,
+    objc.NSString? isNull,
+    required bool isReleased,
+    objc.NSString? equals,
+    required bool isEnabled,
+    objc.NSNumber? isMaybe,
+    objc.NSNumber? isCount,
+    objc.NSString? getValue,
+  }) {
+    final _$$ref = object$.ref;
+    final _$$ref$1 = type?.ref;
+    final _$$ref$2 = use?.ref;
+    final _$$ref$3 = reference?.ref;
+    final _$$ref$4 = releasedBy?.ref;
+    final _$$ref$5 = fromReference?.ref;
+    final _$$ref$6 = jClass?.ref;
+    final _$$ref$7 = isInstanceOf?.ref;
+    final _$$ref$8 = isNull?.ref;
+    final _$$ref$9 = equals?.ref;
+    final _$$ref$10 = isMaybe?.ref;
+    final _$$ref$11 = isCount?.ref;
+    final _$$ref$12 = getValue?.ref;
+    final $ret = _objc_msgSend_3auj9p(
+      _$$ref.retainAndReturnPointer(),
+      _sel_initWithType_use_reference_releasedBy_fromReference_jClass_isInstanceOf_isNull_isReleased_equals_isEnabled_isMaybe_isCount_getValue_,
+      _$$ref$1?.pointer ?? ffi.nullptr,
+      _$$ref$2?.pointer ?? ffi.nullptr,
+      _$$ref$3?.pointer ?? ffi.nullptr,
+      _$$ref$4?.pointer ?? ffi.nullptr,
+      _$$ref$5?.pointer ?? ffi.nullptr,
+      _$$ref$6?.pointer ?? ffi.nullptr,
+      _$$ref$7?.pointer ?? ffi.nullptr,
+      _$$ref$8?.pointer ?? ffi.nullptr,
+      isReleased,
+      _$$ref$9?.pointer ?? ffi.nullptr,
+      isEnabled,
+      _$$ref$10?.pointer ?? ffi.nullptr,
+      _$$ref$11?.pointer ?? ffi.nullptr,
+      _$$ref$12?.pointer ?? ffi.nullptr,
+    );
+    return NativeInteropReservedNamesBridge.fromPointer($ret, retain: false, release: true);
+  }
+
+  /// isCount
+  objc.NSNumber? get isCount {
+    final _$$ref = object$.ref;
+    final $ret = _objc_msgSend_151sglz(_$$ref.pointer, _sel_isCount);
+    return $ret.address == 0 ? null : objc.NSNumber.fromPointer($ret, retain: true, release: true);
+  }
+
+  /// isEnabled
+  bool get isEnabled {
+    final _$$ref = object$.ref;
+    return _objc_msgSend_91o635(_$$ref.pointer, _sel_isEnabled);
+  }
+
+  /// isInstanceOf
+  objc.NSString? get isInstanceOf {
+    final _$$ref = object$.ref;
+    final $ret = _objc_msgSend_151sglz(_$$ref.pointer, _sel_isInstanceOf);
+    return $ret.address == 0 ? null : objc.NSString.fromPointer($ret, retain: true, release: true);
+  }
+
+  /// isMaybe
+  objc.NSNumber? get isMaybe {
+    final _$$ref = object$.ref;
+    final $ret = _objc_msgSend_151sglz(_$$ref.pointer, _sel_isMaybe);
+    return $ret.address == 0 ? null : objc.NSNumber.fromPointer($ret, retain: true, release: true);
+  }
+
+  /// isNull
+  objc.NSString? get isNull {
+    final _$$ref = object$.ref;
+    final $ret = _objc_msgSend_151sglz(_$$ref.pointer, _sel_isNull);
+    return $ret.address == 0 ? null : objc.NSString.fromPointer($ret, retain: true, release: true);
+  }
+
+  /// isReleased
+  bool get isReleased {
+    final _$$ref = object$.ref;
+    return _objc_msgSend_91o635(_$$ref.pointer, _sel_isReleased);
+  }
+
+  /// jClass
+  objc.NSString? get jClass {
+    final _$$ref = object$.ref;
+    final $ret = _objc_msgSend_151sglz(_$$ref.pointer, _sel_jClass);
+    return $ret.address == 0 ? null : objc.NSString.fromPointer($ret, retain: true, release: true);
+  }
+
+  /// reference
+  objc.NSString? get reference {
+    final _$$ref = object$.ref;
+    final $ret = _objc_msgSend_151sglz(_$$ref.pointer, _sel_reference);
+    return $ret.address == 0 ? null : objc.NSString.fromPointer($ret, retain: true, release: true);
+  }
+
+  /// releasedBy
+  objc.NSString? get releasedBy {
+    final _$$ref = object$.ref;
+    final $ret = _objc_msgSend_151sglz(_$$ref.pointer, _sel_releasedBy);
+    return $ret.address == 0 ? null : objc.NSString.fromPointer($ret, retain: true, release: true);
+  }
+
+  /// setEquals:
+  set equals(objc.NSString? value) {
+    final _$$ref = object$.ref;
+    final _$$ref$1 = value?.ref;
+    _objc_msgSend_xtuoz7(_$$ref.pointer, _sel_setEquals_, _$$ref$1?.pointer ?? ffi.nullptr);
+  }
+
+  /// setFromReference:
+  set fromReference(objc.NSString? value) {
+    final _$$ref = object$.ref;
+    final _$$ref$1 = value?.ref;
+    _objc_msgSend_xtuoz7(_$$ref.pointer, _sel_setFromReference_, _$$ref$1?.pointer ?? ffi.nullptr);
+  }
+
+  /// setGetValue:
+  set getValue(objc.NSString? value) {
+    final _$$ref = object$.ref;
+    final _$$ref$1 = value?.ref;
+    _objc_msgSend_xtuoz7(_$$ref.pointer, _sel_setGetValue_, _$$ref$1?.pointer ?? ffi.nullptr);
+  }
+
+  /// setIsCount:
+  set isCount(objc.NSNumber? value) {
+    final _$$ref = object$.ref;
+    final _$$ref$1 = value?.ref;
+    _objc_msgSend_xtuoz7(_$$ref.pointer, _sel_setIsCount_, _$$ref$1?.pointer ?? ffi.nullptr);
+  }
+
+  /// setIsEnabled:
+  set isEnabled(bool value) {
+    final _$$ref = object$.ref;
+    _objc_msgSend_1s56lr9(_$$ref.pointer, _sel_setIsEnabled_, value);
+  }
+
+  /// setIsInstanceOf:
+  set isInstanceOf(objc.NSString? value) {
+    final _$$ref = object$.ref;
+    final _$$ref$1 = value?.ref;
+    _objc_msgSend_xtuoz7(_$$ref.pointer, _sel_setIsInstanceOf_, _$$ref$1?.pointer ?? ffi.nullptr);
+  }
+
+  /// setIsMaybe:
+  set isMaybe(objc.NSNumber? value) {
+    final _$$ref = object$.ref;
+    final _$$ref$1 = value?.ref;
+    _objc_msgSend_xtuoz7(_$$ref.pointer, _sel_setIsMaybe_, _$$ref$1?.pointer ?? ffi.nullptr);
+  }
+
+  /// setIsNull:
+  set isNull(objc.NSString? value) {
+    final _$$ref = object$.ref;
+    final _$$ref$1 = value?.ref;
+    _objc_msgSend_xtuoz7(_$$ref.pointer, _sel_setIsNull_, _$$ref$1?.pointer ?? ffi.nullptr);
+  }
+
+  /// setIsReleased:
+  set isReleased(bool value) {
+    final _$$ref = object$.ref;
+    _objc_msgSend_1s56lr9(_$$ref.pointer, _sel_setIsReleased_, value);
+  }
+
+  /// setJClass:
+  set jClass(objc.NSString? value) {
+    final _$$ref = object$.ref;
+    final _$$ref$1 = value?.ref;
+    _objc_msgSend_xtuoz7(_$$ref.pointer, _sel_setJClass_, _$$ref$1?.pointer ?? ffi.nullptr);
+  }
+
+  /// setReference:
+  set reference(objc.NSString? value) {
+    final _$$ref = object$.ref;
+    final _$$ref$1 = value?.ref;
+    _objc_msgSend_xtuoz7(_$$ref.pointer, _sel_setReference_, _$$ref$1?.pointer ?? ffi.nullptr);
+  }
+
+  /// setReleasedBy:
+  set releasedBy(objc.NSString? value) {
+    final _$$ref = object$.ref;
+    final _$$ref$1 = value?.ref;
+    _objc_msgSend_xtuoz7(_$$ref.pointer, _sel_setReleasedBy_, _$$ref$1?.pointer ?? ffi.nullptr);
+  }
+
+  /// setType:
+  set type(objc.NSString? value) {
+    final _$$ref = object$.ref;
+    final _$$ref$1 = value?.ref;
+    _objc_msgSend_xtuoz7(_$$ref.pointer, _sel_setType_, _$$ref$1?.pointer ?? ffi.nullptr);
+  }
+
+  /// setUse:
+  set use(objc.NSString? value) {
+    final _$$ref = object$.ref;
+    final _$$ref$1 = value?.ref;
+    _objc_msgSend_xtuoz7(_$$ref.pointer, _sel_setUse_, _$$ref$1?.pointer ?? ffi.nullptr);
+  }
+
+  /// type
+  objc.NSString? get type {
+    final _$$ref = object$.ref;
+    final $ret = _objc_msgSend_151sglz(_$$ref.pointer, _sel_type);
+    return $ret.address == 0 ? null : objc.NSString.fromPointer($ret, retain: true, release: true);
+  }
+
+  /// use
+  objc.NSString? get use {
+    final _$$ref = object$.ref;
+    final $ret = _objc_msgSend_151sglz(_$$ref.pointer, _sel_use);
+    return $ret.address == 0 ? null : objc.NSString.fromPointer($ret, retain: true, release: true);
+  }
+}
+
+/// The Flutter API counterpart of [NativeInteropReservedNamesHostApi].
+/// JNIgen generates interfaces for Flutter APIs, which it renames differently
+/// than classes.
+/// Generated protocol from Pigeon that represents Flutter messages that can be called from Swift.
+extension type NativeInteropReservedNamesFlutterApiBridge._(objc.ObjCProtocol object$)
+    implements objc.ObjCProtocol {
+  /// Constructs a [NativeInteropReservedNamesFlutterApiBridge] that points to the same underlying object as [other].
+  NativeInteropReservedNamesFlutterApiBridge.as(objc.ObjCObject other) : object$ = other;
+
+  /// Constructs a [NativeInteropReservedNamesFlutterApiBridge] that wraps the given raw object pointer.
+  NativeInteropReservedNamesFlutterApiBridge.fromPointer(
+    ffi.Pointer<objc.ObjCObjectImpl> other, {
+    bool retain = false,
+    bool release = false,
+  }) : object$ = objc.ObjCProtocol(other, retain: retain, release: release);
+
+  /// Returns whether [obj] is an instance of [NativeInteropReservedNamesFlutterApiBridge].
+  static bool conformsTo(objc.ObjCObject obj) {
+    return _objc_msgSend_e3qsqz(
+      obj.ref.pointer,
+      _sel_conformsToProtocol_,
+      _protocol_NativeInteropReservedNamesFlutterApiBridge,
+    );
+  }
+}
+
+extension NativeInteropReservedNamesFlutterApiBridge$Methods
+    on NativeInteropReservedNamesFlutterApiBridge {
+  /// JNIgen doesn’t turn interface methods into properties.
+  objc.NSString? getReferenceWithError(NativeInteropTestsError error) {
+    final _$$ref = object$.ref;
+    final _$$ref$1 = error.ref;
+    final $ret = _objc_msgSend_1sotr3r(
+      _$$ref.pointer,
+      _sel_getReferenceWithError_,
+      _$$ref$1.pointer,
+    );
+    return $ret.address == 0 ? null : objc.NSString.fromPointer($ret, retain: true, release: true);
+  }
+
+  /// Collides with the <code>implementIn</code> method that JNIgen adds to interfaces.
+  objc.NSString? implementInValue(
+    objc.NSString? valueArg, {
+    required NativeInteropTestsError error,
+  }) {
+    final _$$ref = object$.ref;
+    final _$$ref$1 = valueArg?.ref;
+    final _$$ref$2 = error.ref;
+    final $ret = _objc_msgSend_15qeuct(
+      _$$ref.pointer,
+      _sel_implementInValue_error_,
+      _$$ref$1?.pointer ?? ffi.nullptr,
+      _$$ref$2.pointer,
+    );
+    return $ret.address == 0 ? null : objc.NSString.fromPointer($ret, retain: true, release: true);
+  }
+
+  /// Collides with <code>JObject.isNull</code>.
+  objc.NSNumber? isNullWithError(NativeInteropTestsError error) {
+    final _$$ref = object$.ref;
+    final _$$ref$1 = error.ref;
+    final $ret = _objc_msgSend_1sotr3r(_$$ref.pointer, _sel_isNullWithError_, _$$ref$1.pointer);
+    return $ret.address == 0 ? null : objc.NSNumber.fromPointer($ret, retain: true, release: true);
+  }
+
+  /// Collides with <code>JObject.release</code>.
+  objc.NSString? releaseWithValue(
+    objc.NSString? valueArg, {
+    required NativeInteropTestsError error,
+  }) {
+    final _$$ref = object$.ref;
+    final _$$ref$1 = valueArg?.ref;
+    final _$$ref$2 = error.ref;
+    final $ret = _objc_msgSend_15qeuct(
+      _$$ref.pointer,
+      _sel_releaseWithValue_error_,
+      _$$ref$1?.pointer ?? ffi.nullptr,
+      _$$ref$2.pointer,
+    );
+    return $ret.address == 0 ? null : objc.NSString.fromPointer($ret, retain: true, release: true);
+  }
+
+  /// Collides with the static <code>type</code> field that JNIgen adds to every class.
+  objc.NSString? typeWithError(NativeInteropTestsError error) {
+    final _$$ref = object$.ref;
+    final _$$ref$1 = error.ref;
+    final $ret = _objc_msgSend_1sotr3r(_$$ref.pointer, _sel_typeWithError_, _$$ref$1.pointer);
+    return $ret.address == 0 ? null : objc.NSString.fromPointer($ret, retain: true, release: true);
+  }
+}
+
+interface class NativeInteropReservedNamesFlutterApiBridge$Builder {
+  /// Returns the [objc.Protocol] object for this protocol.
+  static objc.Protocol get $protocol =>
+      objc.Protocol.fromPointer(_protocol_NativeInteropReservedNamesFlutterApiBridge.cast());
+
+  /// Builds an object that implements the NativeInteropReservedNamesFlutterApiBridge protocol. To implement
+  /// multiple protocols, use [addToBuilder] or [objc.ObjCProtocolBuilder] directly.
+  ///
+  /// If `$keepIsolateAlive` is true, this protocol will keep this isolate
+  /// alive until it is garbage collected by both Dart and ObjC.
+  static NativeInteropReservedNamesFlutterApiBridge implement({
+    required objc.NSString? Function(NativeInteropTestsError) getReferenceWithError_,
+    required objc.NSString? Function(objc.NSString?, NativeInteropTestsError)
+    implementInValue_error_,
+    required objc.NSNumber? Function(NativeInteropTestsError) isNullWithError_,
+    required objc.NSString? Function(objc.NSString?, NativeInteropTestsError)
+    releaseWithValue_error_,
+    required objc.NSString? Function(NativeInteropTestsError) typeWithError_,
+    bool $keepIsolateAlive = true,
+  }) {
+    final builder = objc.ObjCProtocolBuilder(
+      debugName: 'NativeInteropReservedNamesFlutterApiBridge',
+    );
+    NativeInteropReservedNamesFlutterApiBridge$Builder.getReferenceWithError_.implement(
+      builder,
+      getReferenceWithError_,
+    );
+    NativeInteropReservedNamesFlutterApiBridge$Builder.implementInValue_error_.implement(
+      builder,
+      implementInValue_error_,
+    );
+    NativeInteropReservedNamesFlutterApiBridge$Builder.isNullWithError_.implement(
+      builder,
+      isNullWithError_,
+    );
+    NativeInteropReservedNamesFlutterApiBridge$Builder.releaseWithValue_error_.implement(
+      builder,
+      releaseWithValue_error_,
+    );
+    NativeInteropReservedNamesFlutterApiBridge$Builder.typeWithError_.implement(
+      builder,
+      typeWithError_,
+    );
+    builder.addProtocol($protocol);
+    return NativeInteropReservedNamesFlutterApiBridge.as(
+      builder.build(keepIsolateAlive: $keepIsolateAlive),
+    );
+  }
+
+  /// Adds the implementation of the NativeInteropReservedNamesFlutterApiBridge protocol to an existing
+  /// [objc.ObjCProtocolBuilder].
+  ///
+  /// Note: You cannot call this method after you have called `builder.build`.
+  static void addToBuilder(
+    objc.ObjCProtocolBuilder builder, {
+    required objc.NSString? Function(NativeInteropTestsError) getReferenceWithError_,
+    required objc.NSString? Function(objc.NSString?, NativeInteropTestsError)
+    implementInValue_error_,
+    required objc.NSNumber? Function(NativeInteropTestsError) isNullWithError_,
+    required objc.NSString? Function(objc.NSString?, NativeInteropTestsError)
+    releaseWithValue_error_,
+    required objc.NSString? Function(NativeInteropTestsError) typeWithError_,
+    bool $keepIsolateAlive = true,
+  }) {
+    NativeInteropReservedNamesFlutterApiBridge$Builder.getReferenceWithError_.implement(
+      builder,
+      getReferenceWithError_,
+    );
+    NativeInteropReservedNamesFlutterApiBridge$Builder.implementInValue_error_.implement(
+      builder,
+      implementInValue_error_,
+    );
+    NativeInteropReservedNamesFlutterApiBridge$Builder.isNullWithError_.implement(
+      builder,
+      isNullWithError_,
+    );
+    NativeInteropReservedNamesFlutterApiBridge$Builder.releaseWithValue_error_.implement(
+      builder,
+      releaseWithValue_error_,
+    );
+    NativeInteropReservedNamesFlutterApiBridge$Builder.typeWithError_.implement(
+      builder,
+      typeWithError_,
+    );
+    builder.addProtocol($protocol);
+  }
+
+  /// JNIgen doesn’t turn interface methods into properties.
+  static final getReferenceWithError_ =
+      objc.ObjCProtocolMethod<objc.NSString? Function(NativeInteropTestsError)>(
+        _protocol_NativeInteropReservedNamesFlutterApiBridge,
+        _sel_getReferenceWithError_,
+        ffi.Native.addressOf<
+              ffi.NativeFunction<
+                ffi.Pointer<objc.ObjCObjectImpl> Function(
+                  ffi.Pointer<objc.ObjCObjectImpl>,
+                  ffi.Pointer<ffi.Void>,
+                  ffi.Pointer<objc.ObjCObjectImpl>,
+                )
+              >
+            >(_julz8q_protocolTrampoline_xr62hr)
+            .cast(),
+        objc.getProtocolMethodSignature(
+          _protocol_NativeInteropReservedNamesFlutterApiBridge,
+          _sel_getReferenceWithError_,
+          isRequired: true,
+          isInstanceMethod: true,
+        ),
+        (objc.NSString? Function(NativeInteropTestsError) func) =>
+            ObjCBlock_NSString_ffiVoid_NativeInteropTestsError.fromFunction(
+              (ffi.Pointer<ffi.Void> _, NativeInteropTestsError arg1) => func(arg1),
+            ),
+      );
+
+  /// Collides with the <code>implementIn</code> method that JNIgen adds to interfaces.
+  static final implementInValue_error_ =
+      objc.ObjCProtocolMethod<objc.NSString? Function(objc.NSString?, NativeInteropTestsError)>(
+        _protocol_NativeInteropReservedNamesFlutterApiBridge,
+        _sel_implementInValue_error_,
+        ffi.Native.addressOf<
+              ffi.NativeFunction<
+                ffi.Pointer<objc.ObjCObjectImpl> Function(
+                  ffi.Pointer<objc.ObjCObjectImpl>,
+                  ffi.Pointer<ffi.Void>,
+                  ffi.Pointer<objc.ObjCObjectImpl>,
+                  ffi.Pointer<objc.ObjCObjectImpl>,
+                )
+              >
+            >(_julz8q_protocolTrampoline_zi5eed)
+            .cast(),
+        objc.getProtocolMethodSignature(
+          _protocol_NativeInteropReservedNamesFlutterApiBridge,
+          _sel_implementInValue_error_,
+          isRequired: true,
+          isInstanceMethod: true,
+        ),
+        (objc.NSString? Function(objc.NSString?, NativeInteropTestsError) func) =>
+            ObjCBlock_NSString_ffiVoid_NSString_NativeInteropTestsError.fromFunction(
+              (ffi.Pointer<ffi.Void> _, objc.NSString? arg1, NativeInteropTestsError arg2) =>
+                  func(arg1, arg2),
+            ),
+      );
+
+  /// Collides with <code>JObject.isNull</code>.
+  static final isNullWithError_ =
+      objc.ObjCProtocolMethod<objc.NSNumber? Function(NativeInteropTestsError)>(
+        _protocol_NativeInteropReservedNamesFlutterApiBridge,
+        _sel_isNullWithError_,
+        ffi.Native.addressOf<
+              ffi.NativeFunction<
+                ffi.Pointer<objc.ObjCObjectImpl> Function(
+                  ffi.Pointer<objc.ObjCObjectImpl>,
+                  ffi.Pointer<ffi.Void>,
+                  ffi.Pointer<objc.ObjCObjectImpl>,
+                )
+              >
+            >(_julz8q_protocolTrampoline_xr62hr)
+            .cast(),
+        objc.getProtocolMethodSignature(
+          _protocol_NativeInteropReservedNamesFlutterApiBridge,
+          _sel_isNullWithError_,
+          isRequired: true,
+          isInstanceMethod: true,
+        ),
+        (objc.NSNumber? Function(NativeInteropTestsError) func) =>
+            ObjCBlock_NSNumber_ffiVoid_NativeInteropTestsError.fromFunction(
+              (ffi.Pointer<ffi.Void> _, NativeInteropTestsError arg1) => func(arg1),
+            ),
+      );
+
+  /// Collides with <code>JObject.release</code>.
+  static final releaseWithValue_error_ =
+      objc.ObjCProtocolMethod<objc.NSString? Function(objc.NSString?, NativeInteropTestsError)>(
+        _protocol_NativeInteropReservedNamesFlutterApiBridge,
+        _sel_releaseWithValue_error_,
+        ffi.Native.addressOf<
+              ffi.NativeFunction<
+                ffi.Pointer<objc.ObjCObjectImpl> Function(
+                  ffi.Pointer<objc.ObjCObjectImpl>,
+                  ffi.Pointer<ffi.Void>,
+                  ffi.Pointer<objc.ObjCObjectImpl>,
+                  ffi.Pointer<objc.ObjCObjectImpl>,
+                )
+              >
+            >(_julz8q_protocolTrampoline_zi5eed)
+            .cast(),
+        objc.getProtocolMethodSignature(
+          _protocol_NativeInteropReservedNamesFlutterApiBridge,
+          _sel_releaseWithValue_error_,
+          isRequired: true,
+          isInstanceMethod: true,
+        ),
+        (objc.NSString? Function(objc.NSString?, NativeInteropTestsError) func) =>
+            ObjCBlock_NSString_ffiVoid_NSString_NativeInteropTestsError.fromFunction(
+              (ffi.Pointer<ffi.Void> _, objc.NSString? arg1, NativeInteropTestsError arg2) =>
+                  func(arg1, arg2),
+            ),
+      );
+
+  /// Collides with the static <code>type</code> field that JNIgen adds to every class.
+  static final typeWithError_ =
+      objc.ObjCProtocolMethod<objc.NSString? Function(NativeInteropTestsError)>(
+        _protocol_NativeInteropReservedNamesFlutterApiBridge,
+        _sel_typeWithError_,
+        ffi.Native.addressOf<
+              ffi.NativeFunction<
+                ffi.Pointer<objc.ObjCObjectImpl> Function(
+                  ffi.Pointer<objc.ObjCObjectImpl>,
+                  ffi.Pointer<ffi.Void>,
+                  ffi.Pointer<objc.ObjCObjectImpl>,
+                )
+              >
+            >(_julz8q_protocolTrampoline_xr62hr)
+            .cast(),
+        objc.getProtocolMethodSignature(
+          _protocol_NativeInteropReservedNamesFlutterApiBridge,
+          _sel_typeWithError_,
+          isRequired: true,
+          isInstanceMethod: true,
+        ),
+        (objc.NSString? Function(NativeInteropTestsError) func) =>
+            ObjCBlock_NSString_ffiVoid_NativeInteropTestsError.fromFunction(
+              (ffi.Pointer<ffi.Void> _, NativeInteropTestsError arg1) => func(arg1),
+            ),
+      );
+}
+
+/// NativeInteropReservedNamesFlutterApiRegistrar
+extension type NativeInteropReservedNamesFlutterApiRegistrar._(objc.ObjCObject object$)
+    implements objc.ObjCObject, objc.NSObject {
+  /// Constructs a [NativeInteropReservedNamesFlutterApiRegistrar] that points to the same underlying object as [other].
+  NativeInteropReservedNamesFlutterApiRegistrar.as(objc.ObjCObject other) : object$ = other {
+    assert(isA(object$));
+  }
+
+  /// Constructs a [NativeInteropReservedNamesFlutterApiRegistrar] that wraps the given raw object pointer.
+  NativeInteropReservedNamesFlutterApiRegistrar.fromPointer(
+    ffi.Pointer<objc.ObjCObjectImpl> other, {
+    bool retain = false,
+    bool release = false,
+  }) : object$ = objc.ObjCObject(other, retain: retain, release: release) {
+    assert(isA(object$));
+  }
+
+  /// Returns whether [obj] is an instance of [NativeInteropReservedNamesFlutterApiRegistrar].
+  static bool isA(objc.ObjCObject? obj) => obj == null
+      ? false
+      : _objc_msgSend_19nvye5(
+          obj.ref.pointer,
+          _sel_isKindOfClass_,
+          _class_NativeInteropReservedNamesFlutterApiRegistrar,
+        );
+
+  /// alloc
+  static NativeInteropReservedNamesFlutterApiRegistrar alloc() {
+    final $ret = _objc_msgSend_151sglz(
+      _class_NativeInteropReservedNamesFlutterApiRegistrar,
+      _sel_alloc,
+    );
+    return NativeInteropReservedNamesFlutterApiRegistrar.fromPointer(
+      $ret,
+      retain: false,
+      release: true,
+    );
+  }
+
+  /// allocWithZone:
+  static NativeInteropReservedNamesFlutterApiRegistrar allocWithZone(
+    ffi.Pointer<objc.NSZone> zone,
+  ) {
+    final $ret = _objc_msgSend_1cwp428(
+      _class_NativeInteropReservedNamesFlutterApiRegistrar,
+      _sel_allocWithZone_,
+      zone,
+    );
+    return NativeInteropReservedNamesFlutterApiRegistrar.fromPointer(
+      $ret,
+      retain: false,
+      release: true,
+    );
+  }
+
+  /// new
+  static NativeInteropReservedNamesFlutterApiRegistrar new$() {
+    final $ret = _objc_msgSend_151sglz(
+      _class_NativeInteropReservedNamesFlutterApiRegistrar,
+      _sel_new,
+    );
+    return NativeInteropReservedNamesFlutterApiRegistrar.fromPointer(
+      $ret,
+      retain: false,
+      release: true,
+    );
+  }
+
+  /// registerInstanceWithApi:name:
+  static void registerInstanceWithApi(
+    NativeInteropReservedNamesFlutterApiBridge? api, {
+    required objc.NSString name,
+  }) {
+    final _$$ref = api?.ref;
+    final _$$ref$1 = name.ref;
+    _objc_msgSend_pfv6jd(
+      _class_NativeInteropReservedNamesFlutterApiRegistrar,
+      _sel_registerInstanceWithApi_name_,
+      _$$ref?.pointer ?? ffi.nullptr,
+      _$$ref$1.pointer,
+    );
+  }
+
+  /// Returns a new instance of NativeInteropReservedNamesFlutterApiRegistrar constructed with the default `new` method.
+  NativeInteropReservedNamesFlutterApiRegistrar() : this.as(new$().object$);
+}
+
+extension NativeInteropReservedNamesFlutterApiRegistrar$Methods
+    on NativeInteropReservedNamesFlutterApiRegistrar {
+  /// init
+  NativeInteropReservedNamesFlutterApiRegistrar init() {
+    final _$$ref = object$.ref;
+    objc.checkOsVersionInternal(
+      'NativeInteropReservedNamesFlutterApiRegistrar.init',
+      iOS: (false, (2, 0, 0)),
+      macOS: (false, (10, 0, 0)),
+    );
+    final $ret = _objc_msgSend_151sglz(_$$ref.retainAndReturnPointer(), _sel_init);
+    return NativeInteropReservedNamesFlutterApiRegistrar.fromPointer(
+      $ret,
+      retain: false,
+      release: true,
+    );
+  }
+}
+
+/// Generated setup class from Pigeon to register implemented NativeInteropReservedNamesHostApi classes.
+extension type NativeInteropReservedNamesHostApiSetup._(objc.ObjCObject object$)
+    implements objc.ObjCObject, objc.NSObject {
+  /// Constructs a [NativeInteropReservedNamesHostApiSetup] that points to the same underlying object as [other].
+  NativeInteropReservedNamesHostApiSetup.as(objc.ObjCObject other) : object$ = other {
+    assert(isA(object$));
+  }
+
+  /// Constructs a [NativeInteropReservedNamesHostApiSetup] that wraps the given raw object pointer.
+  NativeInteropReservedNamesHostApiSetup.fromPointer(
+    ffi.Pointer<objc.ObjCObjectImpl> other, {
+    bool retain = false,
+    bool release = false,
+  }) : object$ = objc.ObjCObject(other, retain: retain, release: release) {
+    assert(isA(object$));
+  }
+
+  /// Returns whether [obj] is an instance of [NativeInteropReservedNamesHostApiSetup].
+  static bool isA(objc.ObjCObject? obj) => obj == null
+      ? false
+      : _objc_msgSend_19nvye5(
+          obj.ref.pointer,
+          _sel_isKindOfClass_,
+          _class_NativeInteropReservedNamesHostApiSetup,
+        );
+
+  /// alloc
+  static NativeInteropReservedNamesHostApiSetup alloc() {
+    final $ret = _objc_msgSend_151sglz(_class_NativeInteropReservedNamesHostApiSetup, _sel_alloc);
+    return NativeInteropReservedNamesHostApiSetup.fromPointer($ret, retain: false, release: true);
+  }
+
+  /// allocWithZone:
+  static NativeInteropReservedNamesHostApiSetup allocWithZone(ffi.Pointer<objc.NSZone> zone) {
+    final $ret = _objc_msgSend_1cwp428(
+      _class_NativeInteropReservedNamesHostApiSetup,
+      _sel_allocWithZone_,
+      zone,
+    );
+    return NativeInteropReservedNamesHostApiSetup.fromPointer($ret, retain: false, release: true);
+  }
+
+  /// getInstanceWithName:
+  static NativeInteropReservedNamesHostApiSetup? getInstanceWithName(objc.NSString name) {
+    final _$$ref = name.ref;
+    final $ret = _objc_msgSend_1sotr3r(
+      _class_NativeInteropReservedNamesHostApiSetup,
+      _sel_getInstanceWithName_,
+      _$$ref.pointer,
+    );
+    return $ret.address == 0
+        ? null
+        : NativeInteropReservedNamesHostApiSetup.fromPointer($ret, retain: true, release: true);
+  }
+
+  /// new
+  static NativeInteropReservedNamesHostApiSetup new$() {
+    final $ret = _objc_msgSend_151sglz(_class_NativeInteropReservedNamesHostApiSetup, _sel_new);
+    return NativeInteropReservedNamesHostApiSetup.fromPointer($ret, retain: false, release: true);
+  }
+
+  /// Returns a new instance of NativeInteropReservedNamesHostApiSetup constructed with the default `new` method.
+  NativeInteropReservedNamesHostApiSetup() : this.as(new$().object$);
+}
+
+extension NativeInteropReservedNamesHostApiSetup$Methods on NativeInteropReservedNamesHostApiSetup {
+  /// Returns the result of calling [NativeInteropReservedNamesFlutterApi.getReference].
+  objc.NSString? callFlutterGetReferenceWithWrappedError(NativeInteropTestsError wrappedError) {
+    final _$$ref = object$.ref;
+    final _$$ref$1 = wrappedError.ref;
+    final $ret = _objc_msgSend_1sotr3r(
+      _$$ref.pointer,
+      _sel_callFlutterGetReferenceWithWrappedError_,
+      _$$ref$1.pointer,
+    );
+    return $ret.address == 0 ? null : objc.NSString.fromPointer($ret, retain: true, release: true);
+  }
+
+  /// Returns the result of calling [NativeInteropReservedNamesFlutterApi.implementIn].
+  objc.NSString? callFlutterImplementInValue(
+    objc.NSString valueArg, {
+    required NativeInteropTestsError wrappedError,
+  }) {
+    final _$$ref = object$.ref;
+    final _$$ref$1 = valueArg.ref;
+    final _$$ref$2 = wrappedError.ref;
+    final $ret = _objc_msgSend_15qeuct(
+      _$$ref.pointer,
+      _sel_callFlutterImplementInValue_wrappedError_,
+      _$$ref$1.pointer,
+      _$$ref$2.pointer,
+    );
+    return $ret.address == 0 ? null : objc.NSString.fromPointer($ret, retain: true, release: true);
+  }
+
+  /// Returns the result of calling [NativeInteropReservedNamesFlutterApi.isNull].
+  objc.NSNumber? callFlutterIsNullWithWrappedError(NativeInteropTestsError wrappedError) {
+    final _$$ref = object$.ref;
+    final _$$ref$1 = wrappedError.ref;
+    final $ret = _objc_msgSend_1sotr3r(
+      _$$ref.pointer,
+      _sel_callFlutterIsNullWithWrappedError_,
+      _$$ref$1.pointer,
+    );
+    return $ret.address == 0 ? null : objc.NSNumber.fromPointer($ret, retain: true, release: true);
+  }
+
+  /// Returns the result of calling [NativeInteropReservedNamesFlutterApi.release].
+  objc.NSString? callFlutterReleaseWithValue(
+    objc.NSString valueArg, {
+    required NativeInteropTestsError wrappedError,
+  }) {
+    final _$$ref = object$.ref;
+    final _$$ref$1 = valueArg.ref;
+    final _$$ref$2 = wrappedError.ref;
+    final $ret = _objc_msgSend_15qeuct(
+      _$$ref.pointer,
+      _sel_callFlutterReleaseWithValue_wrappedError_,
+      _$$ref$1.pointer,
+      _$$ref$2.pointer,
+    );
+    return $ret.address == 0 ? null : objc.NSString.fromPointer($ret, retain: true, release: true);
+  }
+
+  /// Returns the result of calling [NativeInteropReservedNamesFlutterApi.type].
+  objc.NSString? callFlutterTypeWithWrappedError(NativeInteropTestsError wrappedError) {
+    final _$$ref = object$.ref;
+    final _$$ref$1 = wrappedError.ref;
+    final $ret = _objc_msgSend_1sotr3r(
+      _$$ref.pointer,
+      _sel_callFlutterTypeWithWrappedError_,
+      _$$ref$1.pointer,
+    );
+    return $ret.address == 0 ? null : objc.NSString.fromPointer($ret, retain: true, release: true);
+  }
+
+  /// Returns the passed object, to test serialization and deserialization.
+  NativeInteropReservedNamesBridge? echoReservedNamesWithNames(
+    NativeInteropReservedNamesBridge namesArg, {
+    required NativeInteropTestsError wrappedError,
+  }) {
+    final _$$ref = object$.ref;
+    final _$$ref$1 = namesArg.ref;
+    final _$$ref$2 = wrappedError.ref;
+    final $ret = _objc_msgSend_15qeuct(
+      _$$ref.pointer,
+      _sel_echoReservedNamesWithNames_wrappedError_,
+      _$$ref$1.pointer,
+      _$$ref$2.pointer,
+    );
+    return $ret.address == 0
+        ? null
+        : NativeInteropReservedNamesBridge.fromPointer($ret, retain: true, release: true);
+  }
+
+  /// JNIgen makes this a getter named after a Dart keyword, <code>default</code>.
+  objc.NSString? getDefaultWithWrappedError(NativeInteropTestsError wrappedError) {
+    final _$$ref = object$.ref;
+    final _$$ref$1 = wrappedError.ref;
+    final $ret = _objc_msgSend_1sotr3r(
+      _$$ref.pointer,
+      _sel_getDefaultWithWrappedError_,
+      _$$ref$1.pointer,
+    );
+    return $ret.address == 0 ? null : objc.NSString.fromPointer($ret, retain: true, release: true);
+  }
+
+  /// JNIgen combines this and [setReference] into a property, which collides
+  /// with <code>JObject.reference</code>.
+  objc.NSString? getReferenceWithWrappedError(NativeInteropTestsError wrappedError) {
+    final _$$ref = object$.ref;
+    final _$$ref$1 = wrappedError.ref;
+    final $ret = _objc_msgSend_1sotr3r(
+      _$$ref.pointer,
+      _sel_getReferenceWithWrappedError_,
+      _$$ref$1.pointer,
+    );
+    return $ret.address == 0 ? null : objc.NSString.fromPointer($ret, retain: true, release: true);
+  }
+
+  /// JNIgen keeps suspend functions as methods.
+  void getValueAsyncWithWrappedError(
+    NativeInteropTestsError wrappedError, {
+    required objc.ObjCBlock<ffi.Void Function(objc.NSString?)> completionHandler,
+  }) {
+    final _$$ref = object$.ref;
+    final _$$ref$1 = wrappedError.ref;
+    final _$$ref$2 = completionHandler.ref;
+    _objc_msgSend_o762yo(
+      _$$ref.pointer,
+      _sel_getValueAsyncWithWrappedError_completionHandler_,
+      _$$ref$1.pointer,
+      _$$ref$2.pointer,
+    );
+  }
+
+  /// init
+  NativeInteropReservedNamesHostApiSetup init() {
+    final _$$ref = object$.ref;
+    objc.checkOsVersionInternal(
+      'NativeInteropReservedNamesHostApiSetup.init',
+      iOS: (false, (2, 0, 0)),
+      macOS: (false, (10, 0, 0)),
+    );
+    final $ret = _objc_msgSend_151sglz(_$$ref.retainAndReturnPointer(), _sel_init);
+    return NativeInteropReservedNamesHostApiSetup.fromPointer($ret, retain: false, release: true);
+  }
+
+  /// JNIgen makes this a getter, which collides with <code>JObject.isNull</code>.
+  objc.NSNumber? isNullWithWrappedError(NativeInteropTestsError wrappedError) {
+    final _$$ref = object$.ref;
+    final _$$ref$1 = wrappedError.ref;
+    final $ret = _objc_msgSend_1sotr3r(
+      _$$ref.pointer,
+      _sel_isNullWithWrappedError_,
+      _$$ref$1.pointer,
+    );
+    return $ret.address == 0 ? null : objc.NSNumber.fromPointer($ret, retain: true, release: true);
+  }
+
+  /// JNIgen keeps this a method, since nullable booleans are boxed on the JVM.
+  objc.NSNumber? isNullableWithWrappedError(NativeInteropTestsError wrappedError) {
+    final _$$ref = object$.ref;
+    final _$$ref$1 = wrappedError.ref;
+    final $ret = _objc_msgSend_1sotr3r(
+      _$$ref.pointer,
+      _sel_isNullableWithWrappedError_,
+      _$$ref$1.pointer,
+    );
+    return $ret.address == 0 ? null : objc.NSNumber.fromPointer($ret, retain: true, release: true);
+  }
+
+  /// JNIgen makes this a getter.
+  objc.NSNumber? isOpenWithWrappedError(NativeInteropTestsError wrappedError) {
+    final _$$ref = object$.ref;
+    final _$$ref$1 = wrappedError.ref;
+    final $ret = _objc_msgSend_1sotr3r(
+      _$$ref.pointer,
+      _sel_isOpenWithWrappedError_,
+      _$$ref$1.pointer,
+    );
+    return $ret.address == 0 ? null : objc.NSNumber.fromPointer($ret, retain: true, release: true);
+  }
+
+  /// Collides with <code>JObject.release</code>.
+  objc.NSString? releaseWithValue(
+    objc.NSString valueArg, {
+    required NativeInteropTestsError wrappedError,
+  }) {
+    final _$$ref = object$.ref;
+    final _$$ref$1 = valueArg.ref;
+    final _$$ref$2 = wrappedError.ref;
+    final $ret = _objc_msgSend_15qeuct(
+      _$$ref.pointer,
+      _sel_releaseWithValue_wrappedError_,
+      _$$ref$1.pointer,
+      _$$ref$2.pointer,
+    );
+    return $ret.address == 0 ? null : objc.NSString.fromPointer($ret, retain: true, release: true);
+  }
+
+  /// See [getReference].
+  void setReferenceWithValue(
+    objc.NSString valueArg, {
+    required NativeInteropTestsError wrappedError,
+  }) {
+    final _$$ref = object$.ref;
+    final _$$ref$1 = valueArg.ref;
+    final _$$ref$2 = wrappedError.ref;
+    _objc_msgSend_pfv6jd(
+      _$$ref.pointer,
+      _sel_setReferenceWithValue_wrappedError_,
+      _$$ref$1.pointer,
+      _$$ref$2.pointer,
+    );
+  }
+
+  /// Collides with the static <code>type</code> field that JNIgen adds to every class.
+  objc.NSString? typeWithWrappedError(NativeInteropTestsError wrappedError) {
+    final _$$ref = object$.ref;
+    final _$$ref$1 = wrappedError.ref;
+    final $ret = _objc_msgSend_1sotr3r(
+      _$$ref.pointer,
+      _sel_typeWithWrappedError_,
+      _$$ref$1.pointer,
+    );
+    return $ret.address == 0 ? null : objc.NSString.fromPointer($ret, retain: true, release: true);
+  }
+
+  /// Collides with <code>JObject.use</code>.
+  objc.NSNumber? useWithValue(int valueArg, {required NativeInteropTestsError wrappedError}) {
+    final _$$ref = object$.ref;
+    final _$$ref$1 = wrappedError.ref;
+    final $ret = _objc_msgSend_1j962g9(
+      _$$ref.pointer,
+      _sel_useWithValue_wrappedError_,
+      valueArg,
+      _$$ref$1.pointer,
+    );
+    return $ret.address == 0 ? null : objc.NSNumber.fromPointer($ret, retain: true, release: true);
+  }
+}
+
 /// Error class for passing custom error details to Dart side.
 extension type NativeInteropTestsError._(objc.ObjCObject object$)
     implements objc.ObjCObject, objc.NSObject {
@@ -20065,6 +21084,167 @@ extension ObjCBlock_NSNumber_ffiVoid_NSNumber_NativeInteropTestsError$CallExtens
   }
 }
 
+/// Construction methods for `objc.ObjCBlock<objc.NSNumber? Function(ffi.Pointer<ffi.Void>, NativeInteropTestsError)>`.
+abstract final class ObjCBlock_NSNumber_ffiVoid_NativeInteropTestsError {
+  /// Returns a block that wraps the given raw block pointer.
+  static objc.ObjCBlock<objc.NSNumber? Function(ffi.Pointer<ffi.Void>, NativeInteropTestsError)>
+  fromPointer(
+    ffi.Pointer<objc.ObjCBlockImpl> pointer, {
+    bool retain = false,
+    bool release = false,
+  }) => objc.ObjCBlock<objc.NSNumber? Function(ffi.Pointer<ffi.Void>, NativeInteropTestsError)>(
+    pointer,
+    retain: retain,
+    release: release,
+  );
+
+  /// Creates a block from a C function pointer.
+  ///
+  /// This block must be invoked by native code running on the same thread as
+  /// the isolate that registered it. Invoking the block on the wrong thread
+  /// will result in a crash.
+  static objc.ObjCBlock<objc.NSNumber? Function(ffi.Pointer<ffi.Void>, NativeInteropTestsError)>
+  fromFunctionPointer(
+    ffi.Pointer<
+      ffi.NativeFunction<
+        ffi.Pointer<objc.ObjCObjectImpl> Function(
+          ffi.Pointer<ffi.Void> arg0,
+          ffi.Pointer<objc.ObjCObjectImpl> arg1,
+        )
+      >
+    >
+    ptr,
+  ) => objc.ObjCBlock<objc.NSNumber? Function(ffi.Pointer<ffi.Void>, NativeInteropTestsError)>(
+    objc.newPointerBlock(_fnPtrCallable, ptr.cast()),
+    retain: false,
+    release: true,
+  );
+
+  /// Creates a block from a Dart function.
+  ///
+  /// This block must be invoked by native code running on the same thread as
+  /// the isolate that registered it. Invoking the block on the wrong thread
+  /// will result in a crash.
+  ///
+  /// If `keepIsolateAlive` is true, this block will keep this isolate alive
+  /// until it is garbage collected by both Dart and ObjC.
+  static objc.ObjCBlock<objc.NSNumber? Function(ffi.Pointer<ffi.Void>, NativeInteropTestsError)>
+  fromFunction(
+    objc.NSNumber? Function(ffi.Pointer<ffi.Void>, NativeInteropTestsError) fn, {
+    bool keepIsolateAlive = true,
+  }) => objc.ObjCBlock<objc.NSNumber? Function(ffi.Pointer<ffi.Void>, NativeInteropTestsError)>(
+    objc.newClosureBlock(_closureCallable, (
+      ffi.Pointer<ffi.Void> arg0,
+      ffi.Pointer<objc.ObjCObjectImpl> arg1,
+    ) {
+      final _$$ref = fn(
+        arg0,
+        NativeInteropTestsError.fromPointer(arg1, retain: true, release: true),
+      )?.ref;
+      return _$$ref?.retainAndAutorelease() ?? ffi.nullptr;
+    }, keepIsolateAlive),
+    retain: false,
+    release: true,
+  );
+
+  static ffi.Pointer<objc.ObjCObjectImpl> _fnPtrTrampoline(
+    ffi.Pointer<objc.ObjCBlockImpl> block,
+    ffi.Pointer<ffi.Void> arg0,
+    ffi.Pointer<objc.ObjCObjectImpl> arg1,
+  ) => block.ref.target
+      .cast<
+        ffi.NativeFunction<
+          ffi.Pointer<objc.ObjCObjectImpl> Function(
+            ffi.Pointer<ffi.Void> arg0,
+            ffi.Pointer<objc.ObjCObjectImpl> arg1,
+          )
+        >
+      >()
+      .asFunction<
+        ffi.Pointer<objc.ObjCObjectImpl> Function(
+          ffi.Pointer<ffi.Void>,
+          ffi.Pointer<objc.ObjCObjectImpl>,
+        )
+      >()(arg0, arg1);
+  static ffi.Pointer<ffi.Void> _fnPtrCallable =
+      ffi.Pointer.fromFunction<
+            ffi.Pointer<objc.ObjCObjectImpl> Function(
+              ffi.Pointer<objc.ObjCBlockImpl>,
+              ffi.Pointer<ffi.Void>,
+              ffi.Pointer<objc.ObjCObjectImpl>,
+            )
+          >(_fnPtrTrampoline)
+          .cast();
+  static ffi.Pointer<objc.ObjCObjectImpl> _closureTrampoline(
+    ffi.Pointer<objc.ObjCBlockImpl> block,
+    ffi.Pointer<ffi.Void> arg0,
+    ffi.Pointer<objc.ObjCObjectImpl> arg1,
+  ) =>
+      (objc.getBlockClosure(block)
+          as ffi.Pointer<objc.ObjCObjectImpl> Function(
+            ffi.Pointer<ffi.Void>,
+            ffi.Pointer<objc.ObjCObjectImpl>,
+          ))(arg0, arg1);
+  static ffi.Pointer<ffi.Void> _closureCallable =
+      ffi.Pointer.fromFunction<
+            ffi.Pointer<objc.ObjCObjectImpl> Function(
+              ffi.Pointer<objc.ObjCBlockImpl>,
+              ffi.Pointer<ffi.Void>,
+              ffi.Pointer<objc.ObjCObjectImpl>,
+            )
+          >(_closureTrampoline)
+          .cast();
+}
+
+/// Call operator for `objc.ObjCBlock<objc.NSNumber? Function(ffi.Pointer<ffi.Void>, NativeInteropTestsError)>`.
+extension ObjCBlock_NSNumber_ffiVoid_NativeInteropTestsError$CallExtension
+    on objc.ObjCBlock<objc.NSNumber? Function(ffi.Pointer<ffi.Void>, NativeInteropTestsError)> {
+  objc.NSNumber? call(ffi.Pointer<ffi.Void> arg0, NativeInteropTestsError arg1) {
+    final _$$ref$1 = arg1.ref;
+    return ref.pointer.ref.invoke
+                .cast<
+                  ffi.NativeFunction<
+                    ffi.Pointer<objc.ObjCObjectImpl> Function(
+                      ffi.Pointer<objc.ObjCBlockImpl> block,
+                      ffi.Pointer<ffi.Void> arg0,
+                      ffi.Pointer<objc.ObjCObjectImpl> arg1,
+                    )
+                  >
+                >()
+                .asFunction<
+                  ffi.Pointer<objc.ObjCObjectImpl> Function(
+                    ffi.Pointer<objc.ObjCBlockImpl>,
+                    ffi.Pointer<ffi.Void>,
+                    ffi.Pointer<objc.ObjCObjectImpl>,
+                  )
+                >()(ref.pointer, arg0, _$$ref$1.pointer)
+                .address ==
+            0
+        ? null
+        : objc.NSNumber.fromPointer(
+            ref.pointer.ref.invoke
+                .cast<
+                  ffi.NativeFunction<
+                    ffi.Pointer<objc.ObjCObjectImpl> Function(
+                      ffi.Pointer<objc.ObjCBlockImpl> block,
+                      ffi.Pointer<ffi.Void> arg0,
+                      ffi.Pointer<objc.ObjCObjectImpl> arg1,
+                    )
+                  >
+                >()
+                .asFunction<
+                  ffi.Pointer<objc.ObjCObjectImpl> Function(
+                    ffi.Pointer<objc.ObjCBlockImpl>,
+                    ffi.Pointer<ffi.Void>,
+                    ffi.Pointer<objc.ObjCObjectImpl>,
+                  )
+                >()(ref.pointer, arg0, _$$ref$1.pointer),
+            retain: true,
+            release: true,
+          );
+  }
+}
+
 /// Construction methods for `objc.ObjCBlock<objc.NSObject? Function(ffi.Pointer<ffi.Void>, NativeInteropTestsError)>`.
 abstract final class ObjCBlock_NSObject_ffiVoid_NativeInteropTestsError {
   /// Returns a block that wraps the given raw block pointer.
@@ -20410,6 +21590,167 @@ extension ObjCBlock_NSString_ffiVoid_NSString_NativeInteropTestsError$CallExtens
                     ffi.Pointer<objc.ObjCObjectImpl>,
                   )
                 >()(ref.pointer, arg0, _$$ref$1?.pointer ?? ffi.nullptr, _$$ref$2.pointer),
+            retain: true,
+            release: true,
+          );
+  }
+}
+
+/// Construction methods for `objc.ObjCBlock<objc.NSString? Function(ffi.Pointer<ffi.Void>, NativeInteropTestsError)>`.
+abstract final class ObjCBlock_NSString_ffiVoid_NativeInteropTestsError {
+  /// Returns a block that wraps the given raw block pointer.
+  static objc.ObjCBlock<objc.NSString? Function(ffi.Pointer<ffi.Void>, NativeInteropTestsError)>
+  fromPointer(
+    ffi.Pointer<objc.ObjCBlockImpl> pointer, {
+    bool retain = false,
+    bool release = false,
+  }) => objc.ObjCBlock<objc.NSString? Function(ffi.Pointer<ffi.Void>, NativeInteropTestsError)>(
+    pointer,
+    retain: retain,
+    release: release,
+  );
+
+  /// Creates a block from a C function pointer.
+  ///
+  /// This block must be invoked by native code running on the same thread as
+  /// the isolate that registered it. Invoking the block on the wrong thread
+  /// will result in a crash.
+  static objc.ObjCBlock<objc.NSString? Function(ffi.Pointer<ffi.Void>, NativeInteropTestsError)>
+  fromFunctionPointer(
+    ffi.Pointer<
+      ffi.NativeFunction<
+        ffi.Pointer<objc.ObjCObjectImpl> Function(
+          ffi.Pointer<ffi.Void> arg0,
+          ffi.Pointer<objc.ObjCObjectImpl> arg1,
+        )
+      >
+    >
+    ptr,
+  ) => objc.ObjCBlock<objc.NSString? Function(ffi.Pointer<ffi.Void>, NativeInteropTestsError)>(
+    objc.newPointerBlock(_fnPtrCallable, ptr.cast()),
+    retain: false,
+    release: true,
+  );
+
+  /// Creates a block from a Dart function.
+  ///
+  /// This block must be invoked by native code running on the same thread as
+  /// the isolate that registered it. Invoking the block on the wrong thread
+  /// will result in a crash.
+  ///
+  /// If `keepIsolateAlive` is true, this block will keep this isolate alive
+  /// until it is garbage collected by both Dart and ObjC.
+  static objc.ObjCBlock<objc.NSString? Function(ffi.Pointer<ffi.Void>, NativeInteropTestsError)>
+  fromFunction(
+    objc.NSString? Function(ffi.Pointer<ffi.Void>, NativeInteropTestsError) fn, {
+    bool keepIsolateAlive = true,
+  }) => objc.ObjCBlock<objc.NSString? Function(ffi.Pointer<ffi.Void>, NativeInteropTestsError)>(
+    objc.newClosureBlock(_closureCallable, (
+      ffi.Pointer<ffi.Void> arg0,
+      ffi.Pointer<objc.ObjCObjectImpl> arg1,
+    ) {
+      final _$$ref = fn(
+        arg0,
+        NativeInteropTestsError.fromPointer(arg1, retain: true, release: true),
+      )?.ref;
+      return _$$ref?.retainAndAutorelease() ?? ffi.nullptr;
+    }, keepIsolateAlive),
+    retain: false,
+    release: true,
+  );
+
+  static ffi.Pointer<objc.ObjCObjectImpl> _fnPtrTrampoline(
+    ffi.Pointer<objc.ObjCBlockImpl> block,
+    ffi.Pointer<ffi.Void> arg0,
+    ffi.Pointer<objc.ObjCObjectImpl> arg1,
+  ) => block.ref.target
+      .cast<
+        ffi.NativeFunction<
+          ffi.Pointer<objc.ObjCObjectImpl> Function(
+            ffi.Pointer<ffi.Void> arg0,
+            ffi.Pointer<objc.ObjCObjectImpl> arg1,
+          )
+        >
+      >()
+      .asFunction<
+        ffi.Pointer<objc.ObjCObjectImpl> Function(
+          ffi.Pointer<ffi.Void>,
+          ffi.Pointer<objc.ObjCObjectImpl>,
+        )
+      >()(arg0, arg1);
+  static ffi.Pointer<ffi.Void> _fnPtrCallable =
+      ffi.Pointer.fromFunction<
+            ffi.Pointer<objc.ObjCObjectImpl> Function(
+              ffi.Pointer<objc.ObjCBlockImpl>,
+              ffi.Pointer<ffi.Void>,
+              ffi.Pointer<objc.ObjCObjectImpl>,
+            )
+          >(_fnPtrTrampoline)
+          .cast();
+  static ffi.Pointer<objc.ObjCObjectImpl> _closureTrampoline(
+    ffi.Pointer<objc.ObjCBlockImpl> block,
+    ffi.Pointer<ffi.Void> arg0,
+    ffi.Pointer<objc.ObjCObjectImpl> arg1,
+  ) =>
+      (objc.getBlockClosure(block)
+          as ffi.Pointer<objc.ObjCObjectImpl> Function(
+            ffi.Pointer<ffi.Void>,
+            ffi.Pointer<objc.ObjCObjectImpl>,
+          ))(arg0, arg1);
+  static ffi.Pointer<ffi.Void> _closureCallable =
+      ffi.Pointer.fromFunction<
+            ffi.Pointer<objc.ObjCObjectImpl> Function(
+              ffi.Pointer<objc.ObjCBlockImpl>,
+              ffi.Pointer<ffi.Void>,
+              ffi.Pointer<objc.ObjCObjectImpl>,
+            )
+          >(_closureTrampoline)
+          .cast();
+}
+
+/// Call operator for `objc.ObjCBlock<objc.NSString? Function(ffi.Pointer<ffi.Void>, NativeInteropTestsError)>`.
+extension ObjCBlock_NSString_ffiVoid_NativeInteropTestsError$CallExtension
+    on objc.ObjCBlock<objc.NSString? Function(ffi.Pointer<ffi.Void>, NativeInteropTestsError)> {
+  objc.NSString? call(ffi.Pointer<ffi.Void> arg0, NativeInteropTestsError arg1) {
+    final _$$ref$1 = arg1.ref;
+    return ref.pointer.ref.invoke
+                .cast<
+                  ffi.NativeFunction<
+                    ffi.Pointer<objc.ObjCObjectImpl> Function(
+                      ffi.Pointer<objc.ObjCBlockImpl> block,
+                      ffi.Pointer<ffi.Void> arg0,
+                      ffi.Pointer<objc.ObjCObjectImpl> arg1,
+                    )
+                  >
+                >()
+                .asFunction<
+                  ffi.Pointer<objc.ObjCObjectImpl> Function(
+                    ffi.Pointer<objc.ObjCBlockImpl>,
+                    ffi.Pointer<ffi.Void>,
+                    ffi.Pointer<objc.ObjCObjectImpl>,
+                  )
+                >()(ref.pointer, arg0, _$$ref$1.pointer)
+                .address ==
+            0
+        ? null
+        : objc.NSString.fromPointer(
+            ref.pointer.ref.invoke
+                .cast<
+                  ffi.NativeFunction<
+                    ffi.Pointer<objc.ObjCObjectImpl> Function(
+                      ffi.Pointer<objc.ObjCBlockImpl> block,
+                      ffi.Pointer<ffi.Void> arg0,
+                      ffi.Pointer<objc.ObjCObjectImpl> arg1,
+                    )
+                  >
+                >()
+                .asFunction<
+                  ffi.Pointer<objc.ObjCObjectImpl> Function(
+                    ffi.Pointer<objc.ObjCBlockImpl>,
+                    ffi.Pointer<ffi.Void>,
+                    ffi.Pointer<objc.ObjCObjectImpl>,
+                  )
+                >()(ref.pointer, arg0, _$$ref$1.pointer),
             retain: true,
             release: true,
           );
@@ -27797,6 +29138,36 @@ final _class_NativeInteropHostIntegrationCoreApiSetup = objc.getClass(
   ).cast(),
 );
 @ffi.Native<ffi.Pointer<objc.ObjCObjectImpl>>(
+  symbol: 'OBJC_CLASS_\$__TtC11test_plugin32NativeInteropReservedNamesBridge',
+)
+external ffi.Pointer<objc.ObjCObjectImpl> _class_NativeInteropReservedNamesBridge_raw;
+final _class_NativeInteropReservedNamesBridge = objc.getClass(
+  "test_plugin.NativeInteropReservedNamesBridge",
+  () => ffi.Native.addressOf<ffi.Pointer<objc.ObjCObjectImpl>>(
+    _class_NativeInteropReservedNamesBridge_raw,
+  ).cast(),
+);
+@ffi.Native<ffi.Pointer<objc.ObjCObjectImpl>>(
+  symbol: 'OBJC_CLASS_\$__TtC11test_plugin45NativeInteropReservedNamesFlutterApiRegistrar',
+)
+external ffi.Pointer<objc.ObjCObjectImpl> _class_NativeInteropReservedNamesFlutterApiRegistrar_raw;
+final _class_NativeInteropReservedNamesFlutterApiRegistrar = objc.getClass(
+  "test_plugin.NativeInteropReservedNamesFlutterApiRegistrar",
+  () => ffi.Native.addressOf<ffi.Pointer<objc.ObjCObjectImpl>>(
+    _class_NativeInteropReservedNamesFlutterApiRegistrar_raw,
+  ).cast(),
+);
+@ffi.Native<ffi.Pointer<objc.ObjCObjectImpl>>(
+  symbol: 'OBJC_CLASS_\$__TtC11test_plugin38NativeInteropReservedNamesHostApiSetup',
+)
+external ffi.Pointer<objc.ObjCObjectImpl> _class_NativeInteropReservedNamesHostApiSetup_raw;
+final _class_NativeInteropReservedNamesHostApiSetup = objc.getClass(
+  "test_plugin.NativeInteropReservedNamesHostApiSetup",
+  () => ffi.Native.addressOf<ffi.Pointer<objc.ObjCObjectImpl>>(
+    _class_NativeInteropReservedNamesHostApiSetup_raw,
+  ).cast(),
+);
+@ffi.Native<ffi.Pointer<objc.ObjCObjectImpl>>(
   symbol: 'OBJC_CLASS_\$__TtC11test_plugin23NativeInteropTestsError',
 )
 external ffi.Pointer<objc.ObjCObjectImpl> _class_NativeInteropTestsError_raw;
@@ -28466,6 +29837,49 @@ final _objc_msgSend_1ukqyt8Fpret = objc.msgSendFpretPointer
     .asFunction<
       double Function(ffi.Pointer<objc.ObjCObjectImpl>, ffi.Pointer<objc.ObjCSelector>)
     >();
+final _objc_msgSend_3auj9p = objc.msgSendPointer
+    .cast<
+      ffi.NativeFunction<
+        ffi.Pointer<objc.ObjCObjectImpl> Function(
+          ffi.Pointer<objc.ObjCObjectImpl>,
+          ffi.Pointer<objc.ObjCSelector>,
+          ffi.Pointer<objc.ObjCObjectImpl>,
+          ffi.Pointer<objc.ObjCObjectImpl>,
+          ffi.Pointer<objc.ObjCObjectImpl>,
+          ffi.Pointer<objc.ObjCObjectImpl>,
+          ffi.Pointer<objc.ObjCObjectImpl>,
+          ffi.Pointer<objc.ObjCObjectImpl>,
+          ffi.Pointer<objc.ObjCObjectImpl>,
+          ffi.Pointer<objc.ObjCObjectImpl>,
+          ffi.Bool,
+          ffi.Pointer<objc.ObjCObjectImpl>,
+          ffi.Bool,
+          ffi.Pointer<objc.ObjCObjectImpl>,
+          ffi.Pointer<objc.ObjCObjectImpl>,
+          ffi.Pointer<objc.ObjCObjectImpl>,
+        )
+      >
+    >()
+    .asFunction<
+      ffi.Pointer<objc.ObjCObjectImpl> Function(
+        ffi.Pointer<objc.ObjCObjectImpl>,
+        ffi.Pointer<objc.ObjCSelector>,
+        ffi.Pointer<objc.ObjCObjectImpl>,
+        ffi.Pointer<objc.ObjCObjectImpl>,
+        ffi.Pointer<objc.ObjCObjectImpl>,
+        ffi.Pointer<objc.ObjCObjectImpl>,
+        ffi.Pointer<objc.ObjCObjectImpl>,
+        ffi.Pointer<objc.ObjCObjectImpl>,
+        ffi.Pointer<objc.ObjCObjectImpl>,
+        ffi.Pointer<objc.ObjCObjectImpl>,
+        bool,
+        ffi.Pointer<objc.ObjCObjectImpl>,
+        bool,
+        ffi.Pointer<objc.ObjCObjectImpl>,
+        ffi.Pointer<objc.ObjCObjectImpl>,
+        ffi.Pointer<objc.ObjCObjectImpl>,
+      )
+    >();
 final _objc_msgSend_4sp4xj = objc.msgSendPointer
     .cast<
       ffi.NativeFunction<
@@ -28959,6 +30373,15 @@ final _protocol_NativeInteropFlutterIntegrationCoreApiBridge = objc.getProtocol(
   "test_plugin.NativeInteropFlutterIntegrationCoreApiBridge",
   _protocol_NativeInteropFlutterIntegrationCoreApiBridge_raw,
 );
+@ffi.Native<ffi.Pointer<objc.ObjCProtocolImpl> Function()>(
+  symbol: '_julz8q_NativeInteropReservedNamesFlutterApiBridge',
+)
+external ffi.Pointer<objc.ObjCProtocolImpl>
+_protocol_NativeInteropReservedNamesFlutterApiBridge_raw();
+final _protocol_NativeInteropReservedNamesFlutterApiBridge = objc.getProtocol(
+  "test_plugin.NativeInteropReservedNamesFlutterApiBridge",
+  _protocol_NativeInteropReservedNamesFlutterApiBridge_raw,
+);
 late final _sel_a4ByteArray = objc.registerName("a4ByteArray");
 late final _sel_a8ByteArray = objc.registerName("a8ByteArray");
 late final _sel_aBool = objc.registerName("aBool");
@@ -29269,6 +30692,15 @@ late final _sel_callFlutterEchoStringWithAString_wrappedError_ = objc.registerNa
 late final _sel_callFlutterEchoUint8ListWithList_wrappedError_ = objc.registerName(
   "callFlutterEchoUint8ListWithList:wrappedError:",
 );
+late final _sel_callFlutterGetReferenceWithWrappedError_ = objc.registerName(
+  "callFlutterGetReferenceWithWrappedError:",
+);
+late final _sel_callFlutterImplementInValue_wrappedError_ = objc.registerName(
+  "callFlutterImplementInValue:wrappedError:",
+);
+late final _sel_callFlutterIsNullWithWrappedError_ = objc.registerName(
+  "callFlutterIsNullWithWrappedError:",
+);
 late final _sel_callFlutterNoopAsyncWithWrappedError_completionHandler_ = objc.registerName(
   "callFlutterNoopAsyncWithWrappedError:completionHandler:",
 );
@@ -29276,6 +30708,9 @@ late final _sel_callFlutterNoopOnBackgroundThreadWithWrappedError_completionHand
     .registerName("callFlutterNoopOnBackgroundThreadWithWrappedError:completionHandler:");
 late final _sel_callFlutterNoopWithWrappedError_ = objc.registerName(
   "callFlutterNoopWithWrappedError:",
+);
+late final _sel_callFlutterReleaseWithValue_wrappedError_ = objc.registerName(
+  "callFlutterReleaseWithValue:wrappedError:",
 );
 late final _sel_callFlutterSendMultipleNullableTypesWithANullableBool_aNullableInt_aNullableString_wrappedError_ =
     objc.registerName(
@@ -29293,6 +30728,9 @@ late final _sel_callFlutterThrowErrorWithWrappedError_ = objc.registerName(
 );
 late final _sel_callFlutterThrowFlutterErrorAsyncWithWrappedError_completionHandler_ = objc
     .registerName("callFlutterThrowFlutterErrorAsyncWithWrappedError:completionHandler:");
+late final _sel_callFlutterTypeWithWrappedError_ = objc.registerName(
+  "callFlutterTypeWithWrappedError:",
+);
 late final _sel_certificates = objc.registerName("certificates");
 late final _sel_classList = objc.registerName("classList");
 late final _sel_classMap = objc.registerName("classMap");
@@ -29843,6 +31281,9 @@ late final _sel_echoOptionalNullableIntWithANullableInt_wrappedError_ = objc.reg
 late final _sel_echoRequiredIntWithAnInt_wrappedError_ = objc.registerName(
   "echoRequiredIntWithAnInt:wrappedError:",
 );
+late final _sel_echoReservedNamesWithNames_wrappedError_ = objc.registerName(
+  "echoReservedNamesWithNames:wrappedError:",
+);
 late final _sel_echoStringListWithStringList_wrappedError_ = objc.registerName(
   "echoStringListWithStringList:wrappedError:",
 );
@@ -29863,14 +31304,24 @@ late final _sel_echoUint8ListWithList_error_ = objc.registerName("echoUint8ListW
 late final _sel_encodeWithCoder_ = objc.registerName("encodeWithCoder:");
 late final _sel_enumList = objc.registerName("enumList");
 late final _sel_enumMap = objc.registerName("enumMap");
+late final _sel_equals = objc.registerName("equals");
 late final _sel_extractNestedNullableStringWithWrapper_wrappedError_ = objc.registerName(
   "extractNestedNullableStringWithWrapper:wrappedError:",
 );
+late final _sel_fromReference = objc.registerName("fromReference");
+late final _sel_getDefaultWithWrappedError_ = objc.registerName("getDefaultWithWrappedError:");
 late final _sel_getGetterWithWrappedError_ = objc.registerName("getGetterWithWrappedError:");
 late final _sel_getInstanceWithName_ = objc.registerName("getInstanceWithName:");
+late final _sel_getReferenceWithError_ = objc.registerName("getReferenceWithError:");
+late final _sel_getReferenceWithWrappedError_ = objc.registerName("getReferenceWithWrappedError:");
+late final _sel_getValue = objc.registerName("getValue");
+late final _sel_getValueAsyncWithWrappedError_completionHandler_ = objc.registerName(
+  "getValueAsyncWithWrappedError:completionHandler:",
+);
 late final _sel_hasPassword = objc.registerName("hasPassword");
 late final _sel_hash = objc.registerName("hash");
 late final _sel_identity = objc.registerName("identity");
+late final _sel_implementInValue_error_ = objc.registerName("implementInValue:error:");
 late final _sel_init = objc.registerName("init");
 late final _sel_initWithABool_anInt_anInt64_aDouble_aByteArray_a4ByteArray_a8ByteArray_aFloatArray_anEnum_anotherEnum_aString_anObject_list_stringList_intList_doubleList_boolList_enumList_objectList_listList_mapList_map_stringMap_intMap_enumMap_objectMap_listMap_mapMap_ =
     objc.registerName(
@@ -29893,12 +31344,27 @@ late final _sel_initWithCode_message_details_ = objc.registerName("initWithCode:
 late final _sel_initWithCoder_ = objc.registerName("initWithCoder:");
 late final _sel_initWithData_type_ = objc.registerName("initWithData:type:");
 late final _sel_initWithNumber_type_ = objc.registerName("initWithNumber:type:");
+late final _sel_initWithType_use_reference_releasedBy_fromReference_jClass_isInstanceOf_isNull_isReleased_equals_isEnabled_isMaybe_isCount_getValue_ =
+    objc.registerName(
+      "initWithType:use:reference:releasedBy:fromReference:jClass:isInstanceOf:isNull:isReleased:equals:isEnabled:isMaybe:isCount:getValue:",
+    );
 late final _sel_intList = objc.registerName("intList");
 late final _sel_intMap = objc.registerName("intMap");
+late final _sel_isCount = objc.registerName("isCount");
+late final _sel_isEnabled = objc.registerName("isEnabled");
 late final _sel_isEqual_ = objc.registerName("isEqual:");
 late final _sel_isGetterWithWrappedError_ = objc.registerName("isGetterWithWrappedError:");
+late final _sel_isInstanceOf = objc.registerName("isInstanceOf");
 late final _sel_isKindOfClass_ = objc.registerName("isKindOfClass:");
 late final _sel_isMainThreadWithWrappedError_ = objc.registerName("isMainThreadWithWrappedError:");
+late final _sel_isMaybe = objc.registerName("isMaybe");
+late final _sel_isNull = objc.registerName("isNull");
+late final _sel_isNullWithError_ = objc.registerName("isNullWithError:");
+late final _sel_isNullWithWrappedError_ = objc.registerName("isNullWithWrappedError:");
+late final _sel_isNullableWithWrappedError_ = objc.registerName("isNullableWithWrappedError:");
+late final _sel_isOpenWithWrappedError_ = objc.registerName("isOpenWithWrappedError:");
+late final _sel_isReleased = objc.registerName("isReleased");
+late final _sel_jClass = objc.registerName("jClass");
 late final _sel_list = objc.registerName("list");
 late final _sel_listList = objc.registerName("listList");
 late final _sel_listMap = objc.registerName("listMap");
@@ -29924,10 +31390,16 @@ late final _sel_password = objc.registerName("password");
 late final _sel_persistence = objc.registerName("persistence");
 late final _sel_recursiveClassList = objc.registerName("recursiveClassList");
 late final _sel_recursiveClassMap = objc.registerName("recursiveClassMap");
+late final _sel_reference = objc.registerName("reference");
 late final _sel_registerAndImmediatelyDeregisterHostApiWithName_wrappedError_ = objc.registerName(
   "registerAndImmediatelyDeregisterHostApiWithName:wrappedError:",
 );
 late final _sel_registerInstanceWithApi_name_ = objc.registerName("registerInstanceWithApi:name:");
+late final _sel_releaseWithValue_error_ = objc.registerName("releaseWithValue:error:");
+late final _sel_releaseWithValue_wrappedError_ = objc.registerName(
+  "releaseWithValue:wrappedError:",
+);
+late final _sel_releasedBy = objc.registerName("releasedBy");
 late final _sel_sendMultipleNullableTypesWithANullableBool_aNullableInt_aNullableString_error_ =
     objc.registerName(
       "sendMultipleNullableTypesWithANullableBool:aNullableInt:aNullableString:error:",
@@ -29982,8 +31454,18 @@ late final _sel_setDetails_ = objc.registerName("setDetails:");
 late final _sel_setDoubleList_ = objc.registerName("setDoubleList:");
 late final _sel_setEnumList_ = objc.registerName("setEnumList:");
 late final _sel_setEnumMap_ = objc.registerName("setEnumMap:");
+late final _sel_setEquals_ = objc.registerName("setEquals:");
+late final _sel_setFromReference_ = objc.registerName("setFromReference:");
+late final _sel_setGetValue_ = objc.registerName("setGetValue:");
 late final _sel_setIntList_ = objc.registerName("setIntList:");
 late final _sel_setIntMap_ = objc.registerName("setIntMap:");
+late final _sel_setIsCount_ = objc.registerName("setIsCount:");
+late final _sel_setIsEnabled_ = objc.registerName("setIsEnabled:");
+late final _sel_setIsInstanceOf_ = objc.registerName("setIsInstanceOf:");
+late final _sel_setIsMaybe_ = objc.registerName("setIsMaybe:");
+late final _sel_setIsNull_ = objc.registerName("setIsNull:");
+late final _sel_setIsReleased_ = objc.registerName("setIsReleased:");
+late final _sel_setJClass_ = objc.registerName("setJClass:");
 late final _sel_setListList_ = objc.registerName("setListList:");
 late final _sel_setListMap_ = objc.registerName("setListMap:");
 late final _sel_setList_ = objc.registerName("setList:");
@@ -29998,12 +31480,18 @@ late final _sel_setObjectList_ = objc.registerName("setObjectList:");
 late final _sel_setObjectMap_ = objc.registerName("setObjectMap:");
 late final _sel_setRecursiveClassList_ = objc.registerName("setRecursiveClassList:");
 late final _sel_setRecursiveClassMap_ = objc.registerName("setRecursiveClassMap:");
+late final _sel_setReferenceWithValue_wrappedError_ = objc.registerName(
+  "setReferenceWithValue:wrappedError:",
+);
+late final _sel_setReference_ = objc.registerName("setReference:");
+late final _sel_setReleasedBy_ = objc.registerName("setReleasedBy:");
 late final _sel_setSetterWithValue_wrappedError_ = objc.registerName(
   "setSetterWithValue:wrappedError:",
 );
 late final _sel_setStringList_ = objc.registerName("setStringList:");
 late final _sel_setStringMap_ = objc.registerName("setStringMap:");
 late final _sel_setType_ = objc.registerName("setType:");
+late final _sel_setUse_ = objc.registerName("setUse:");
 late final _sel_stringList = objc.registerName("stringList");
 late final _sel_stringMap = objc.registerName("stringMap");
 late final _sel_supportsSecureCoding = objc.registerName("supportsSecureCoding");
@@ -30039,6 +31527,10 @@ late final _sel_throwFlutterErrorWithWrappedError_ = objc.registerName(
   "throwFlutterErrorWithWrappedError:",
 );
 late final _sel_type = objc.registerName("type");
+late final _sel_typeWithError_ = objc.registerName("typeWithError:");
+late final _sel_typeWithWrappedError_ = objc.registerName("typeWithWrappedError:");
+late final _sel_use = objc.registerName("use");
+late final _sel_useWithValue_wrappedError_ = objc.registerName("useWithValue:wrappedError:");
 late final _sel_user = objc.registerName("user");
 typedef instancetype = ffi.Pointer<objc.ObjCObjectImpl>;
 typedef Dartinstancetype = objc.ObjCObject;

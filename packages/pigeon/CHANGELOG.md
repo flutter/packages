@@ -7,7 +7,8 @@
 * [swift] Fixes Swift FFI code that didn't compile for classes without fields,
   `@asyncCallback` methods, `@SwiftFunction` overloads, methods named `type`,
   parameters named `error`, and multiple FFI files in the same module.
-* [kotlin] Adds a validation error for sealed classes with Kotlin JNI.
+* [kotlin] Adds validation errors for code that Kotlin JNI doesn't support:
+  event channels, ProxyApis, and sealed classes.
 * [dart] Adds a validation error for API method names that conflict with
   generated native interop members.
 * [dart] Fixes native interop code that didn't compile for JNI member names that
@@ -15,6 +16,9 @@
   maps of ProxyApis, a `fileSpecificClassNameComponent` that isn't
   UpperCamelCase or is set only in `SwiftOptions`, and Dart test files.
 * [dart] Fixes a crash converting classes without fields with Swift FFI.
+* [dart] Fixes Swift FFI code that didn't compile for method names that end
+  with a preposition, like `signIn`, or first parameter and field names that
+  start with one, like `forKey`.
 
 ## 29.0.6
 
