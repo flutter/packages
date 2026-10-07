@@ -1,4 +1,4 @@
-## 29.0.7
+## 29.0.8
 
 * [swift] Adds validation errors for code that Swift FFI doesn't support:
   event channels, ProxyApis, sealed classes, data class fields that conflict with
@@ -19,6 +19,13 @@
 * [dart] Fixes Swift FFI code that didn't compile for method names that end
   with a preposition, like `signIn`, or first parameter and field names that
   start with one, like `forKey`.
+
+## 29.0.7
+
+* [kotlin] Fixes native interop calls failing with `ClassNotFoundException` in minified
+  Android release builds, by adding `@Keep` to every generated class that JNI reaches by name.
+* Updates native interop guides and migration skill with the keep rules that Android
+  release builds need for the Kotlin classes that `package:jni` looks up by name.
 
 ## 29.0.6
 

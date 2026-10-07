@@ -315,6 +315,18 @@ class KotlinGenerator extends StructuredGenerator<InternalKotlinOptions> {
     }
   }
 
+  /// Writes `@Keep` if generating for JNI.
+  ///
+  /// The generated Dart code reaches these types and their members by name
+  /// through JNI. Flutter enables R8 for Android release builds by default,
+  /// and without `@Keep` R8 can remove, rename, or merge them, which breaks
+  /// those lookups at runtime.
+  void _writeKeepAnnotationForJni(InternalKotlinOptions generatorOptions, Indent indent) {
+    if (generatorOptions.useJni) {
+      indent.writeln('@Keep');
+    }
+  }
+
   @override
   void writeConstants(
     InternalKotlinOptions generatorOptions,
@@ -350,6 +362,7 @@ class KotlinGenerator extends StructuredGenerator<InternalKotlinOptions> {
   }) {
     indent.newln();
     addDocumentationComments(indent, anEnum.documentationComments, _docCommentSpec);
+    _writeKeepAnnotationForJni(generatorOptions, indent);
     indent.write('enum class ${anEnum.name}(val raw: Int) ');
     indent.addScoped('{', '}', () {
       enumerate(anEnum.members, (int index, EnumMember member) {
@@ -364,6 +377,7 @@ class KotlinGenerator extends StructuredGenerator<InternalKotlinOptions> {
       });
 
       indent.newln();
+      _writeKeepAnnotationForJni(generatorOptions, indent);
       indent.write('companion object ');
       indent.addScoped('{', '}', () {
         indent.write('fun ofRaw(raw: Int): ${anEnum.name}? ');
@@ -397,6 +411,7 @@ class KotlinGenerator extends StructuredGenerator<InternalKotlinOptions> {
       _docCommentSpec,
       generatorComments: generatedMessages,
     );
+    _writeKeepAnnotationForJni(generatorOptions, indent);
     _writeDataClassSignature(indent, classDefinition);
     if (classDefinition.isSealed) {
       return;
@@ -800,6 +815,7 @@ if (wrapped == null) {
 val registered${api.name}: MutableMap<String, ${api.name}> = mutableMapOf()
 
 /// Class that stores instances
+@Keep
 class ${api.name}Registrar() {
 
   /// Registers an instance with the given name.
@@ -817,6 +833,7 @@ class ${api.name}Registrar() {
   }
 }
 ''');
+    indent.writeln('@Keep');
     indent.writeScoped('interface ${api.name} {', '}', () {
       for (final Method method in api.methods) {
         _writeMethodDeclaration(
@@ -1519,6 +1536,7 @@ class ${api.name}Registrar() {
       ' * @property details The error details. Must be a datatype supported by the api codec.',
     );
     indent.writeln(' */');
+    _writeKeepAnnotationForJni(generatorOptions, indent);
     indent.write('class ${_getErrorClassName(generatorOptions)} ');
     indent.addScoped('(', ')', () {
       indent.writeln('val code: String,');

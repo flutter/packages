@@ -185,6 +185,7 @@ private object NativeInteropTestsPigeonUtils {
  * @property message The error message.
  * @property details The error details. Must be a datatype supported by the api codec.
  */
+@Keep
 class NativeInteropTestsError(
     val code: String,
     override val message: String? = null,
@@ -193,6 +194,7 @@ class NativeInteropTestsError(
 
 private const val defaultInstanceName = "PigeonDefaultClassName32uh4ui3lh445uh4h3l2l455g4y34u"
 
+@Keep
 enum class NativeInteropAnEnum(val raw: Int) {
   ONE(0),
   TWO(1),
@@ -200,6 +202,7 @@ enum class NativeInteropAnEnum(val raw: Int) {
   FORTY_TWO(3),
   FOUR_HUNDRED_TWENTY_TWO(4);
 
+  @Keep
   companion object {
     fun ofRaw(raw: Int): NativeInteropAnEnum? {
       return values().firstOrNull { it.raw == raw }
@@ -207,9 +210,11 @@ enum class NativeInteropAnEnum(val raw: Int) {
   }
 }
 
+@Keep
 enum class NativeInteropAnotherEnum(val raw: Int) {
   JUST_IN_CASE(0);
 
+  @Keep
   companion object {
     fun ofRaw(raw: Int): NativeInteropAnotherEnum? {
       return values().firstOrNull { it.raw == raw }
@@ -218,6 +223,7 @@ enum class NativeInteropAnotherEnum(val raw: Int) {
 }
 
 /** Generated class from Pigeon that represents data sent in messages. */
+@Keep
 data class NativeInteropUnusedClass(val aField: Any? = null) {
   companion object {
     fun fromList(pigeonVar_list: List<Any?>): NativeInteropUnusedClass {
@@ -259,6 +265,7 @@ data class NativeInteropUnusedClass(val aField: Any? = null) {
  *
  * Generated class from Pigeon that represents data sent in messages.
  */
+@Keep
 data class NativeInteropAllTypes(
     val aBool: Boolean,
     val anInt: Long,
@@ -465,6 +472,7 @@ data class NativeInteropAllTypes(
  *
  * Generated class from Pigeon that represents data sent in messages.
  */
+@Keep
 data class NativeInteropAllNullableTypes(
     val aNullableBool: Boolean? = null,
     val aNullableInt: Long? = null,
@@ -696,6 +704,7 @@ data class NativeInteropAllNullableTypes(
  *
  * Generated class from Pigeon that represents data sent in messages.
  */
+@Keep
 data class NativeInteropAllNullableTypesWithoutRecursion(
     val aNullableBool: Boolean? = null,
     val aNullableInt: Long? = null,
@@ -917,6 +926,7 @@ data class NativeInteropAllNullableTypesWithoutRecursion(
  *
  * Generated class from Pigeon that represents data sent in messages.
  */
+@Keep
 data class NativeInteropAllClassesWrapper(
     val allNullableTypes: NativeInteropAllNullableTypes,
     val allNullableTypesWithoutRecursion: NativeInteropAllNullableTypesWithoutRecursion? = null,
@@ -1006,6 +1016,7 @@ data class NativeInteropAllClassesWrapper(
  *
  * Generated class from Pigeon that represents data sent in messages.
  */
+@Keep
 data class NativeInteropReservedNames(
     val type: String? = null,
     val use: String? = null,
@@ -4493,6 +4504,7 @@ val registeredNativeInteropFlutterIntegrationCoreApi:
     mutableMapOf()
 
 /// Class that stores instances
+@Keep
 class NativeInteropFlutterIntegrationCoreApiRegistrar() {
 
   /// Registers an instance with the given name.
@@ -4513,6 +4525,7 @@ class NativeInteropFlutterIntegrationCoreApiRegistrar() {
   }
 }
 
+@Keep
 interface NativeInteropFlutterIntegrationCoreApi {
   /** A no-op function taking no arguments and returning no value, to sanity test basic calling. */
   fun noop()
@@ -5058,6 +5071,7 @@ val registeredNativeInteropReservedNamesFlutterApi:
     mutableMapOf()
 
 /// Class that stores instances
+@Keep
 class NativeInteropReservedNamesFlutterApiRegistrar() {
 
   /// Registers an instance with the given name.
@@ -5078,6 +5092,7 @@ class NativeInteropReservedNamesFlutterApiRegistrar() {
   }
 }
 
+@Keep
 interface NativeInteropReservedNamesFlutterApi {
   /** Collides with `JObject.release`. */
   fun release(value: String): String
