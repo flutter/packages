@@ -3,6 +3,7 @@
 // found in the LICENSE file.
 
 import 'package:a11y_assessments/use_cases/navigation_rail.dart';
+import 'package:flutter/semantics.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';
 
@@ -43,5 +44,58 @@ void main() {
     await tester.tap(find.text('Hide Trailing'));
     await tester.pump();
     expect(findTrailing, findsNothing);
+  });
+
+  testWidgets('navigation rail options are grouped with their labels', (WidgetTester tester) async {
+    await pumpsUseCase(tester, NavigationRailUseCase());
+    await tester.pumpAndSettle();
+
+    final SemanticsNode labelTypeGroup = find.semantics
+        .byLabel(RegExp('^Label type'))
+        .evaluate()
+        .single;
+    expect(
+      descendantSemanticsLabels(labelTypeGroup),
+      containsAll(<String>['None', 'Selected', 'All']),
+    );
+
+    final SemanticsNode groupAlignmentGroup = find.semantics
+        .byLabel(RegExp('^Group alignment'))
+        .evaluate()
+        .single;
+    expect(
+      descendantSemanticsLabels(groupAlignmentGroup),
+      containsAll(<String>['Top', 'Center', 'Bottom']),
+    );
+  });
+
+  testWidgets('navigation rail options expose the selected state', (WidgetTester tester) async {
+    await pumpsUseCase(tester, NavigationRailUseCase());
+    await tester.pumpAndSettle();
+
+    expect(
+      tester.getSemantics(find.text('All')),
+      containsSemantics(hasSelectedState: true, isSelected: true),
+    );
+    expect(
+      tester.getSemantics(find.text('None')),
+      containsSemantics(hasSelectedState: true, isSelected: false),
+    );
+    expect(
+      tester.getSemantics(find.text('Top')),
+      containsSemantics(hasSelectedState: true, isSelected: true),
+    );
+
+    await tester.tap(find.text('None'));
+    await tester.pumpAndSettle();
+
+    expect(
+      tester.getSemantics(find.text('None')),
+      containsSemantics(hasSelectedState: true, isSelected: true),
+    );
+    expect(
+      tester.getSemantics(find.text('All')),
+      containsSemantics(hasSelectedState: true, isSelected: false),
+    );
   });
 }

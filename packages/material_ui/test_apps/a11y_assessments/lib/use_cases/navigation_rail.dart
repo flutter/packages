@@ -97,68 +97,59 @@ class _NavRailExampleState extends State<NavRailExample> {
               children: <Widget>[
                 Text('selectedIndex: $_selectedIndex'),
                 const SizedBox(height: 20),
-                Text('Label type: ${labelType.name}'),
-                const SizedBox(height: 10),
-                OverflowBar(
-                  spacing: 10.0,
-                  children: <Widget>[
-                    ElevatedButton(
-                      onPressed: () {
-                        setState(() {
-                          labelType = NavigationRailLabelType.none;
-                        });
-                      },
-                      child: const Text('None'),
-                    ),
-                    ElevatedButton(
-                      onPressed: () {
-                        setState(() {
-                          labelType = NavigationRailLabelType.selected;
-                        });
-                      },
-                      child: const Text('Selected'),
-                    ),
-                    ElevatedButton(
-                      onPressed: () {
-                        setState(() {
-                          labelType = NavigationRailLabelType.all;
-                        });
-                      },
-                      child: const Text('All'),
-                    ),
-                  ],
+                Semantics(
+                  container: true,
+                  child: Column(
+                    children: <Widget>[
+                      Text('Label type: ${labelType.name}'),
+                      const SizedBox(height: 10),
+                      SegmentedButton<NavigationRailLabelType>(
+                        segments: const <ButtonSegment<NavigationRailLabelType>>[
+                          ButtonSegment<NavigationRailLabelType>(
+                            value: NavigationRailLabelType.none,
+                            label: Text('None'),
+                          ),
+                          ButtonSegment<NavigationRailLabelType>(
+                            value: NavigationRailLabelType.selected,
+                            label: Text('Selected'),
+                          ),
+                          ButtonSegment<NavigationRailLabelType>(
+                            value: NavigationRailLabelType.all,
+                            label: Text('All'),
+                          ),
+                        ],
+                        selected: <NavigationRailLabelType>{labelType},
+                        onSelectionChanged: (Set<NavigationRailLabelType> newSelection) {
+                          setState(() {
+                            labelType = newSelection.single;
+                          });
+                        },
+                      ),
+                    ],
+                  ),
                 ),
                 const SizedBox(height: 20),
-                Text('Group alignment: $groupAlignment'),
-                const SizedBox(height: 10),
-                OverflowBar(
-                  spacing: 10.0,
-                  children: <Widget>[
-                    ElevatedButton(
-                      onPressed: () {
-                        setState(() {
-                          groupAlignment = -1.0;
-                        });
-                      },
-                      child: const Text('Top'),
-                    ),
-                    ElevatedButton(
-                      onPressed: () {
-                        setState(() {
-                          groupAlignment = 0.0;
-                        });
-                      },
-                      child: const Text('Center'),
-                    ),
-                    ElevatedButton(
-                      onPressed: () {
-                        setState(() {
-                          groupAlignment = 1.0;
-                        });
-                      },
-                      child: const Text('Bottom'),
-                    ),
-                  ],
+                Semantics(
+                  container: true,
+                  child: Column(
+                    children: <Widget>[
+                      Text('Group alignment: $groupAlignment'),
+                      const SizedBox(height: 10),
+                      SegmentedButton<double>(
+                        segments: const <ButtonSegment<double>>[
+                          ButtonSegment<double>(value: -1.0, label: Text('Top')),
+                          ButtonSegment<double>(value: 0.0, label: Text('Center')),
+                          ButtonSegment<double>(value: 1.0, label: Text('Bottom')),
+                        ],
+                        selected: <double>{groupAlignment},
+                        onSelectionChanged: (Set<double> newSelection) {
+                          setState(() {
+                            groupAlignment = newSelection.single;
+                          });
+                        },
+                      ),
+                    ],
+                  ),
                 ),
                 const SizedBox(height: 20),
                 OverflowBar(
