@@ -43,8 +43,6 @@ flutter pub add jni
 flutter pub add dev:jnigen dev:logging dev:path
 ```
 
-*Note: Ensure the resolved `objective_c` version in `pubspec.yaml` matches the version expected by your `ffigen` version (e.g., `ffigen: ^22.0.0` generates bindings that require `objective_c: ^9.6.0`).*
-
 ### 2.2 Update Pigeon Configuration Options
 
 In your Pigeon Dart definition file, update `@ConfigurePigeon` to enable `useJni: true` for Kotlin and/or `useFfi: true` for Swift:
@@ -171,17 +169,46 @@ From the Dart side, instantiate your generated Host API using `<MyApi>.createWit
 
 ## 5. iOS/macOS Build System Configuration (FFI)
 
-For Swift FFI, the toolchain generates an Objective-C bridging target under `<swift_output_dir>_objc_gen`. Ensure your build system includes these Objective-C files:
+For Swift FFI, the toolchain generates an Objective-C bridging directory under `<swift_output_dir>_objc_gen`:
+- **`.h` (Headers)**: Always generated to declare module interfaces and types for `ffigen`.
+- **`.m` (Bridging Implementation)**: Only generated when the schema contains async callbacks, closures, `@FlutterApi`, or Objective-C blocks requiring trampoline implementations.
+- **`.o` (Temporary Object Files)**: Intermediate binary files generated during `ffigen`/`swiftgen` AST parsing. These are **not** needed after code generation and must **not** be committed to version control.
+
+Ensure your build system is configured appropriately:
 
 - **CocoaPods**: Ensure `s.source_files = 'Sources/**/*.{swift,m,h}'` in your `.podspec`.
-- **SwiftPM**: Add a separate Objective-C target for `my_plugin_objc_gen` in `Package.swift` and depend on it from your main Swift target.
+- **SwiftPM (`Package.swift`)**:
+  - **Only if a `.m` file is generated** in `<swift_output_dir>_objc_gen`: Add a separate Objective-C target for `<plugin_name>_objc_gen` in `Package.swift` and depend on it from your main Swift target.
+  - **If no `.m` file is generated** (e.g., your schema only has synchronous `@HostApi()` methods and `<swift_output_dir>_objc_gen` only contains a `.h` header): **Do not** add the `<plugin_name>_objc_gen` target to `Package.swift`. SwiftPM requires at least one compilable source file (`.m`, `.c`, or `.swift`) per target; an empty/header-only target causes Xcode builds to fail with `Build input file cannot be found: '.../<plugin_name>_objc_gen.o'`.
 - **Application & Example App Targets**:
   - **Swift Module Name**: Set `ffiModuleName` in `SwiftOptions` to match your application's Swift module name (defaults to `'Runner'`). If iOS and macOS share the same generated Dart FFI file, both platforms must compile under that same module name. Since Flutter's default macOS template sets the module name to the app name rather than `Runner`, you can unify them by setting `PRODUCT_MODULE_NAME = Runner` in `macos/Runner/Configs/AppInfo.xcconfig` (or by matching whatever module name you configure). If iOS and macOS use separate Pigeon generation outputs or you only target one platform, unifying module names across platforms is not required.
   - **Native Registration**: Register the native API implementation in native code (e.g., `MainFlutterWindow.swift` in `awakeFromNib()` on macOS, or `AppDelegate.swift` on iOS via `MyApiSetup.register(api: api)`). This also ensures the setup class is referenced so the Xcode linker does not strip it (`-dead_strip`).
 
 ---
 
-## 6. Environment Prerequisites & Tooling Versions
+## 6. Android Release Build Configuration (JNI)
+
+<!-- TODO(tarrinneal): Remove this section, and renumber the next one, once package:jni ships these keep rules: https://github.com/dart-lang/native/issues/3732 -->
+
+Flutter enables R8 for Android release builds by default, and R8 removes or renames classes that JNI looks up by name. Pigeon adds `@Keep` to the generated Kotlin classes that JNI reaches, but `package:jni` and the generated Dart code also look up Kotlin standard library classes by name to call and implement `suspend` functions. Until `package:jni` includes rules for these classes, add them to a `consumer-rules.pro` file in your plugin's `android/` directory:
+
+```text
+# Kotlin classes that package:jni and the generated Dart code look up by name.
+-keep class kotlin.Unit { *; }
+-keep class kotlin.Result { *; }
+-keep class kotlin.Result$Failure { *; }
+-keep class kotlin.coroutines.Continuation { *; }
+-keep class kotlin.coroutines.intrinsics.CoroutineSingletons { *; }
+-keep class kotlin.coroutines.intrinsics.IntrinsicsKt { *; }
+```
+
+Then add `consumerProguardFiles("consumer-rules.pro")` to `android.defaultConfig` in the plugin's `android/build.gradle` or `android/build.gradle.kts`, so that every app using the plugin applies the rules. For a standalone application, add the rules to `android/app/proguard-rules.pro` instead.
+
+Debug builds are not minified, so test a release build (for example, by running the example app with `flutter run --release`) after migrating. See [Step 5 of the Native Interop Guide](./native_interop_guide.md#step-5-android-release-build-configuration-jni) for details.
+
+---
+
+## 7. Environment Prerequisites & Tooling Versions
 
 To use Native Interop and its external code generators:
 - **`jnigen` 1.0.0 or later**: Earlier versions of JNIgen cannot parse metadata from newer Kotlin compilers and fail with `IllegalArgumentException: Provided Metadata instance has version ... while maximum supported version is ...`. `jnigen` 1.0.0 supports Kotlin metadata up to 2.4, and uses the JDK bundled with Flutter by default.

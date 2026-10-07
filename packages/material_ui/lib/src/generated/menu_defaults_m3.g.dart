@@ -2,29 +2,22 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import 'template.dart';
+// Do not edit by hand. The code is generated from data in the Material
+// Design token database by the script:
+//   packages/material_ui/tool/gen_defaults/bin/gen_defaults.dart.
+part of '../menu_anchor.dart';
 
-class MenuTemplate extends TokenTemplate {
-  const MenuTemplate(
-    super.blockName,
-    super.fileName,
-    super.tokens, {
-    super.colorSchemePrefix = '_colors.',
-  });
-
-  @override
-  String generate() =>
-      '''
 class _MenuBarDefaultsM3 extends MenuStyle {
   _MenuBarDefaultsM3(this.context)
     : super(
-      elevation: const MaterialStatePropertyAll<double?>(${elevation('md.comp.menu.container')}),
-      shape: const MaterialStatePropertyAll<OutlinedBorder>(_defaultMenuBorder),
-      alignment: AlignmentDirectional.bottomStart,
-    );
+        elevation: const MaterialStatePropertyAll<double?>(3.0),
+        shape: const MaterialStatePropertyAll<OutlinedBorder>(_defaultMenuBorder),
+        alignment: AlignmentDirectional.bottomStart,
+      );
 
-  static const RoundedRectangleBorder _defaultMenuBorder =
-    ${shape('md.comp.menu.container', '')};
+  static const RoundedRectangleBorder _defaultMenuBorder = RoundedRectangleBorder(
+    borderRadius: BorderRadius.all(Radius.circular(4.0)),
+  );
 
   final BuildContext context;
 
@@ -32,25 +25,23 @@ class _MenuBarDefaultsM3 extends MenuStyle {
 
   @override
   WidgetStateProperty<Color?> get backgroundColor {
-    return MaterialStatePropertyAll<Color?>(${componentColor('md.comp.menu.container')});
+    return MaterialStatePropertyAll<Color?>(_colors.surfaceContainer);
   }
 
   @override
   WidgetStateProperty<Color?>? get shadowColor {
-    return MaterialStatePropertyAll<Color?>(${color('md.comp.menu.container.shadow-color')});
+    return MaterialStatePropertyAll<Color?>(_colors.shadow);
   }
 
   @override
   WidgetStateProperty<Color?>? get surfaceTintColor {
-    return const MaterialStatePropertyAll<Color?>(${colorOrTransparent('md.comp.menu.container.surface-tint-layer')});
+    return const MaterialStatePropertyAll<Color?>(Colors.transparent);
   }
 
   @override
   WidgetStateProperty<EdgeInsetsGeometry?>? get padding {
     return const MaterialStatePropertyAll<EdgeInsetsGeometry>(
-      EdgeInsetsDirectional.symmetric(
-        horizontal: _kTopLevelMenuHorizontalMinPadding
-      ),
+      EdgeInsetsDirectional.symmetric(horizontal: _kTopLevelMenuHorizontalMinPadding),
     );
   }
 
@@ -61,10 +52,10 @@ class _MenuBarDefaultsM3 extends MenuStyle {
 class _MenuButtonDefaultsM3 extends ButtonStyle {
   _MenuButtonDefaultsM3(this.context)
     : super(
-      animationDuration: kThemeChangeDuration,
-      enableFeedback: true,
-      alignment: AlignmentDirectional.centerStart,
-    );
+        animationDuration: kThemeChangeDuration,
+        enableFeedback: true,
+        alignment: AlignmentDirectional.centerStart,
+      );
 
   final BuildContext context;
 
@@ -89,18 +80,18 @@ class _MenuButtonDefaultsM3 extends ButtonStyle {
   WidgetStateProperty<Color?>? get foregroundColor {
     return WidgetStateProperty.resolveWith((Set<WidgetState> states) {
       if (states.contains(WidgetState.disabled)) {
-        return ${componentColor('md.comp.list.list-item.disabled.label-text')};
+        return _colors.onSurface.withOpacity(0.38);
       }
       if (states.contains(WidgetState.pressed)) {
-        return ${componentColor('md.comp.list.list-item.pressed.label-text')};
+        return _colors.onSurface;
       }
       if (states.contains(WidgetState.hovered)) {
-        return ${componentColor('md.comp.list.list-item.hover.label-text')};
+        return _colors.onSurface;
       }
       if (states.contains(WidgetState.focused)) {
-        return ${componentColor('md.comp.list.list-item.focus.label-text')};
+        return _colors.onSurface;
       }
-      return ${componentColor('md.comp.list.list-item.label-text')};
+      return _colors.onSurface;
     });
   }
 
@@ -108,18 +99,18 @@ class _MenuButtonDefaultsM3 extends ButtonStyle {
   WidgetStateProperty<Color?>? get iconColor {
     return WidgetStateProperty.resolveWith((Set<WidgetState> states) {
       if (states.contains(WidgetState.disabled)) {
-        return ${componentColor('md.comp.list.list-item.disabled.leading-icon')};
+        return _colors.onSurface.withOpacity(0.38);
       }
       if (states.contains(WidgetState.pressed)) {
-        return ${componentColor('md.comp.list.list-item.pressed.leading-icon.icon')};
+        return _colors.onSurfaceVariant;
       }
       if (states.contains(WidgetState.hovered)) {
-        return ${componentColor('md.comp.list.list-item.hover.leading-icon.icon')};
+        return _colors.onSurfaceVariant;
       }
       if (states.contains(WidgetState.focused)) {
-        return ${componentColor('md.comp.list.list-item.focus.leading-icon.icon')};
+        return _colors.onSurfaceVariant;
       }
-      return ${componentColor('md.comp.list.list-item.leading-icon')};
+      return _colors.onSurfaceVariant;
     });
   }
 
@@ -127,7 +118,7 @@ class _MenuButtonDefaultsM3 extends ButtonStyle {
 
   @override
   WidgetStateProperty<double>? get iconSize {
-    return const MaterialStatePropertyAll<double>(${getToken("md.comp.list.list-item.leading-icon.size")});
+    return const MaterialStatePropertyAll<double>(24.0);
   }
 
   @override
@@ -145,20 +136,18 @@ class _MenuButtonDefaultsM3 extends ButtonStyle {
 
   @override
   WidgetStateProperty<Color?>? get overlayColor {
-    return WidgetStateProperty.resolveWith(
-      (Set<WidgetState> states) {
-        if (states.contains(WidgetState.pressed)) {
-          return ${componentColor('md.comp.list.list-item.pressed.state-layer')};
-        }
-        if (states.contains(WidgetState.hovered)) {
-          return ${componentColor('md.comp.list.list-item.hover.state-layer')};
-        }
-        if (states.contains(WidgetState.focused)) {
-          return ${componentColor('md.comp.list.list-item.focus.state-layer')};
-        }
-        return Colors.transparent;
-      },
-    );
+    return WidgetStateProperty.resolveWith((Set<WidgetState> states) {
+      if (states.contains(WidgetState.pressed)) {
+        return _colors.onSurface.withOpacity(0.1);
+      }
+      if (states.contains(WidgetState.hovered)) {
+        return _colors.onSurface.withOpacity(0.08);
+      }
+      if (states.contains(WidgetState.focused)) {
+        return _colors.onSurface.withOpacity(0.1);
+      }
+      return Colors.transparent;
+    });
   }
 
   @override
@@ -206,14 +195,15 @@ class _MenuButtonDefaultsM3 extends ButtonStyle {
     final double fontSize = Theme.of(context).textTheme.labelLarge?.fontSize ?? 14.0;
     final double fontSizeRatio = MediaQuery.textScalerOf(context).scale(fontSize) / 14.0;
     return ButtonStyleButton.scaledPadding(
-      EdgeInsets.symmetric(horizontal: math.max(
-        _kMenuViewPadding,
-        _kLabelItemDefaultSpacing + visualDensity.baseSizeAdjustment.dx,
-      )),
-      EdgeInsets.symmetric(horizontal: math.max(
-        _kMenuViewPadding,
-        8 + visualDensity.baseSizeAdjustment.dx,
-      )),
+      EdgeInsets.symmetric(
+        horizontal: math.max(
+          _kMenuViewPadding,
+          _kLabelItemDefaultSpacing + visualDensity.baseSizeAdjustment.dx,
+        ),
+      ),
+      EdgeInsets.symmetric(
+        horizontal: math.max(_kMenuViewPadding, 8 + visualDensity.baseSizeAdjustment.dx),
+      ),
       const EdgeInsets.symmetric(horizontal: _kMenuViewPadding),
       fontSizeRatio,
     );
@@ -223,13 +213,14 @@ class _MenuButtonDefaultsM3 extends ButtonStyle {
 class _MenuDefaultsM3 extends MenuStyle {
   _MenuDefaultsM3(this.context)
     : super(
-      elevation: const MaterialStatePropertyAll<double?>(${elevation('md.comp.menu.container')}),
-      shape: const MaterialStatePropertyAll<OutlinedBorder>(_defaultMenuBorder),
-      alignment: AlignmentDirectional.topEnd,
-    );
+        elevation: const MaterialStatePropertyAll<double?>(3.0),
+        shape: const MaterialStatePropertyAll<OutlinedBorder>(_defaultMenuBorder),
+        alignment: AlignmentDirectional.topEnd,
+      );
 
-  static const RoundedRectangleBorder _defaultMenuBorder =
-    ${shape('md.comp.menu.container', '')};
+  static const RoundedRectangleBorder _defaultMenuBorder = RoundedRectangleBorder(
+    borderRadius: BorderRadius.all(Radius.circular(4.0)),
+  );
 
   final BuildContext context;
 
@@ -237,17 +228,17 @@ class _MenuDefaultsM3 extends MenuStyle {
 
   @override
   WidgetStateProperty<Color?> get backgroundColor {
-    return MaterialStatePropertyAll<Color?>(${componentColor('md.comp.menu.container')});
+    return MaterialStatePropertyAll<Color?>(_colors.surfaceContainer);
   }
 
   @override
   WidgetStateProperty<Color?>? get surfaceTintColor {
-    return ${componentColor('md.comp.menu.container.surface-tint-layer') == 'null' ? 'const MaterialStatePropertyAll<Color?>(Colors.transparent)' : 'MaterialStatePropertyAll<Color?>(${componentColor('md.comp.menu.container.surface-tint-layer')})'};
+    return const MaterialStatePropertyAll<Color?>(Colors.transparent);
   }
 
   @override
   WidgetStateProperty<Color?>? get shadowColor {
-    return MaterialStatePropertyAll<Color?>(${color('md.comp.menu.container.shadow-color')});
+    return MaterialStatePropertyAll<Color?>(_colors.shadow);
   }
 
   @override
@@ -259,6 +250,4 @@ class _MenuDefaultsM3 extends MenuStyle {
 
   @override
   VisualDensity get visualDensity => Theme.of(context).visualDensity;
-}
-''';
 }
