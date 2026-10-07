@@ -1673,6 +1673,91 @@ void main() {
     expect(code, contains(': RuntimeException()'));
   });
 
+  group('native interop @Keep', () {
+    final anEnum = Enum(
+      name: 'AnEnum',
+      members: <EnumMember>[
+        EnumMember(name: 'one'),
+        EnumMember(name: 'two'),
+      ],
+    );
+    final dataClass = Class(
+      name: 'DataClass',
+      fields: <NamedType>[
+        NamedType(
+          name: 'anEnum',
+          type: TypeDeclaration(baseName: 'AnEnum', isNullable: true, associatedEnum: anEnum),
+        ),
+      ],
+    );
+    final dataClassType = TypeDeclaration(
+      baseName: 'DataClass',
+      isNullable: false,
+      associatedClass: dataClass,
+    );
+    final root = Root(
+      apis: <Api>[
+        AstHostApi(
+          name: 'HostApi',
+          methods: <Method>[
+            Method(
+              name: 'echo',
+              location: ApiLocation.host,
+              returnType: dataClassType,
+              parameters: <Parameter>[Parameter(name: 'value', type: dataClassType)],
+            ),
+          ],
+        ),
+        AstFlutterApi(
+          name: 'FlutterApi',
+          methods: <Method>[
+            Method(
+              name: 'onEvent',
+              location: ApiLocation.flutter,
+              returnType: const TypeDeclaration.voidDeclaration(),
+              parameters: <Parameter>[],
+            ),
+          ],
+        ),
+      ],
+      classes: <Class>[dataClass],
+      enums: <Enum>[anEnum],
+    );
+
+    String generate({required bool useJni}) {
+      final sink = StringBuffer();
+      const KotlinGenerator().generate(
+        InternalKotlinOptions(errorClassName: 'FooError', kotlinOut: '', useJni: useJni),
+        root,
+        sink,
+        dartPackageName: DEFAULT_PACKAGE_NAME,
+      );
+      return sink.toString();
+    }
+
+    test('is added to every type the generated Dart reaches through JNI', () {
+      final String code = generate(useJni: true);
+      expect(code, contains('import androidx.annotation.Keep'));
+      expect(code, contains('@Keep\nclass FooError ('));
+      expect(code, contains('@Keep\nenum class AnEnum('));
+      expect(code, contains('@Keep\n  companion object {\n    fun ofRaw(raw: Int): AnEnum?'));
+      expect(code, contains('@Keep\ndata class DataClass ('));
+      expect(code, contains('@Keep\ninterface HostApi {'));
+      expect(code, contains('@Keep\nclass HostApiRegistrar : HostApi {'));
+      expect(code, contains('@Keep\ninterface FlutterApi {'));
+      expect(code, contains('@Keep\nclass FlutterApiRegistrar() {'));
+    });
+
+    test('is not added when not using JNI', () {
+      final String code = generate(useJni: false);
+      expect(code, contains('class FooError ('));
+      expect(code, contains('enum class AnEnum('));
+      expect(code, contains('data class DataClass ('));
+      expect(code, isNot(contains('@Keep')));
+      expect(code, isNot(contains('import androidx.annotation.Keep')));
+    });
+  });
+
   test('do not generate duplicated entries in writeValue', () {
     final root = Root(
       apis: <Api>[
