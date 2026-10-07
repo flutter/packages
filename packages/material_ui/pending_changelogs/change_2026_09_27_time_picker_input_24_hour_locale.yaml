@@ -1,0 +1,3 @@
+changelog: |
+  - Fixes showTimePicker input mode rejecting or misreading hours in locales that use a 24-hour format.
+version: patch
