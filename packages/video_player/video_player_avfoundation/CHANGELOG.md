@@ -1,7 +1,3 @@
-## NEXT
-
-* Updates minimum supported SDK version to Flutter 3.41/Dart 3.11.
-
 ## 2.12.1
 
 * Fixes a crash when a video track reports a zero `minFrameDuration`.
