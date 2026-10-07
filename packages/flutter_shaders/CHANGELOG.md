@@ -1,3 +1,7 @@
+## 0.1.5
+
+* Updates minimum supported SDK version to Flutter 3.41/Dart 3.11.
+
 ## 0.1.4
 
 * Transfers the package source from https://github.com/jonahwilliams/flutter_shaders
