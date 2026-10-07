@@ -74,14 +74,13 @@ end
 }
 
 void main() {
-  group('PodspecCheckCommand', () {
+  group('non-macOS', () {
     late Directory packagesDir;
     late CommandRunner<void> runner;
-    late MockPlatform mockPlatform;
     late RecordingProcessRunner processRunner;
 
     setUp(() {
-      mockPlatform = MockPlatform(isMacOS: true);
+      final NativePlatform mockPlatform = createMockPlatform(isLinux: true);
       final GitDir gitDir;
       (:packagesDir, :processRunner, gitProcessRunner: _, :gitDir) = configureBaseCommandMocks(
         platform: mockPlatform,
@@ -97,9 +96,8 @@ void main() {
       runner.addCommand(command);
     });
 
-    test('only runs on macOS', () async {
+    test('fails when not on macOS', () async {
       createFakePlugin('plugin1', packagesDir, extraFiles: <String>['plugin1.podspec']);
-      mockPlatform.isMacOS = false;
 
       Error? commandError;
       final List<String> output = await runCapturingPrint(
@@ -115,6 +113,29 @@ void main() {
       expect(processRunner.recordedCalls, equals(<ProcessCall>[]));
 
       expect(output, containsAllInOrder(<Matcher>[contains('only supported on macOS')]));
+    });
+  });
+
+  group('macOS', () {
+    late Directory packagesDir;
+    late CommandRunner<void> runner;
+    late RecordingProcessRunner processRunner;
+
+    setUp(() {
+      final NativePlatform mockPlatform = createMockPlatform(isMacOS: true);
+      final GitDir gitDir;
+      (:packagesDir, :processRunner, gitProcessRunner: _, :gitDir) = configureBaseCommandMocks(
+        platform: mockPlatform,
+      );
+      final command = PodspecCheckCommand(
+        packagesDir,
+        processRunner: processRunner,
+        platform: mockPlatform,
+        gitDir: gitDir,
+      );
+
+      runner = CommandRunner<void>('podspec_test', 'Test for $PodspecCheckCommand');
+      runner.addCommand(command);
     });
 
     test('runs pod lib lint on a podspec', () async {

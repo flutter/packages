@@ -1062,13 +1062,13 @@ void main() {
     await tester.sendKeyEvent(LogicalKeyboardKey.space);
     await tester.pumpAndSettle();
     expect(value, isTrue);
-  });
+  }, tags: 'reduced-web-test-set');
 
   testWidgets(
-    'Material3 - Checkbox visual density cannot be overriden by ThemeData.visualDensity',
+    'Material3 - Checkbox visual density cannot be overridden by ThemeData.visualDensity',
     (WidgetTester tester) async {
       const key = Key('test');
-      Widget buldCheckbox() {
+      Widget buildCheckbox() {
         return MaterialApp(
           theme: theme.copyWith(visualDensity: VisualDensity.compact),
           home: Material(
@@ -1079,7 +1079,7 @@ void main() {
         );
       }
 
-      await tester.pumpWidget(buldCheckbox());
+      await tester.pumpWidget(buildCheckbox());
       await tester.pumpAndSettle();
       final RenderBox box = tester.renderObject(find.byKey(key));
       expect(box.size, equals(const Size(48, 48)));
@@ -1328,7 +1328,7 @@ void main() {
     );
 
     await tester.pumpAndSettle();
-  });
+  }, tags: 'reduced-web-test-set');
 
   testWidgets('Checkbox fill color resolves in enabled/disabled states', (
     WidgetTester tester,
@@ -2383,6 +2383,7 @@ void main() {
       TargetPlatform.iOS,
       TargetPlatform.macOS,
     }),
+    tags: 'reduced-web-test-set',
   );
 
   testWidgets('Material2 - Checkbox respects fillColor when it is unchecked', (

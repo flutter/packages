@@ -1,0 +1,51 @@
+// Copyright 2013 The Flutter Authors
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
+import 'package:material_ui/material_ui.dart';
+import '../utils.dart';
+import 'use_cases.dart';
+
+class CardUseCase extends UseCase {
+  CardUseCase();
+
+  @override
+  String get name => 'Card';
+
+  @override
+  String get route => '/card';
+
+  @override
+  List<Tag> get tags => <Tag>[Tag.batch1, Tag.core];
+
+  @override
+  Widget build(BuildContext context) => const MainWidget();
+}
+
+class MainWidget extends StatefulWidget {
+  const MainWidget({super.key});
+
+  @override
+  State<MainWidget> createState() => MainWidgetState();
+}
+
+class MainWidgetState extends State<MainWidget> {
+  String pageTitle = getUseCaseName(CardUseCase());
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: Semantics(headingLevel: 1, child: Text('$pageTitle Demo'))),
+      body: const Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            Card(
+              child: Padding(padding: EdgeInsets.all(16), child: Text('Card')),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
