@@ -1594,7 +1594,9 @@ void main() {
       'PageRoute.allowSnapshotting = false disables snapshotting for that route only',
       (WidgetTester tester) async {
         final observer = TransitionDurationObserver();
-        await tester.pumpWidget(fadeForwardsApp(observer: observer, secondRouteAllowSnapshotting: false));
+        await tester.pumpWidget(
+          fadeForwardsApp(observer: observer, secondRouteAllowSnapshotting: false),
+        );
 
         tester.state<NavigatorState>(find.byType(Navigator)).pushNamed('/2');
         await tester.pump();
