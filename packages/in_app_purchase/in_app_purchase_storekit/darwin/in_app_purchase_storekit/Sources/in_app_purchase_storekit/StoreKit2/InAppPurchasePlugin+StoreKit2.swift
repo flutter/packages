@@ -92,6 +92,12 @@ extension InAppPurchasePlugin: InAppPurchase2API {
           purchaseOptions.insert(.introductoryOfferEligibility(compactJWS: compactJWS))
         }
 
+        if #available(iOS 26.4, macOS 26.4, tvOS 26.4, visionOS 26.4, *) {
+          if let billingPlanType = options?.billingPlanType {
+            purchaseOptions.insert(.billingPlanType(billingPlanType.convertFromPigeon))
+          }
+        }
+
         for await verificationResult in Transaction.unfinished {
           switch verificationResult {
           case .verified(let transaction):

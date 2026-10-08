@@ -128,6 +128,11 @@ enum SK2SubscriptionOfferPaymentModeMessage { payAsYouGo, payUpFront, freeTrial 
 
 enum SK2SubscriptionPeriodUnitMessage { day, week, month, year }
 
+/// The way a subscription bills: up front for the whole period, or monthly
+/// under a 12-month commitment.
+/// https://developer.apple.com/documentation/storekit/product/subscriptioninfo/billingplantype
+enum SK2BillingPlanTypeMessage { upFront, monthly }
+
 enum SK2ProductPurchaseResultMessage { success, unverified, userCancelled, pending }
 
 /// The status of a purchase transaction.
@@ -262,11 +267,151 @@ class SK2SubscriptionPeriodMessage {
   }
 }
 
+/// Details of the 12-month commitment attached to a monthly billing plan.
+/// https://developer.apple.com/documentation/storekit/product/subscriptioninfo/commitmentinfo
+class SK2CommitmentInfoMessage {
+  SK2CommitmentInfoMessage({required this.price, required this.displayPrice, required this.period});
+
+  /// The total price of the full commitment.
+  double price;
+
+  /// The localized total price of the full commitment, suitable for display.
+  String displayPrice;
+
+  /// How long the commitment lasts.
+  SK2SubscriptionPeriodMessage period;
+
+  List<Object?> _toList() {
+    return <Object?>[price, displayPrice, period];
+  }
+
+  Object encode() {
+    return _toList();
+  }
+
+  static SK2CommitmentInfoMessage decode(Object result) {
+    result as List<Object?>;
+    return SK2CommitmentInfoMessage(
+      price: result[0]! as double,
+      displayPrice: result[1]! as String,
+      period: result[2]! as SK2SubscriptionPeriodMessage,
+    );
+  }
+
+  @override
+  // ignore: avoid_equals_and_hash_code_on_mutable_classes
+  bool operator ==(Object other) {
+    if (other is! SK2CommitmentInfoMessage || other.runtimeType != runtimeType) {
+      return false;
+    }
+    if (identical(this, other)) {
+      return true;
+    }
+    return _deepEquals(price, other.price) &&
+        _deepEquals(displayPrice, other.displayPrice) &&
+        _deepEquals(period, other.period);
+  }
+
+  @override
+  // ignore: avoid_equals_and_hash_code_on_mutable_classes
+  int get hashCode => _deepHash(<Object?>[runtimeType, ..._toList()]);
+
+  @override
+  String toString() {
+    return 'SK2CommitmentInfoMessage(price: $price, displayPrice: $displayPrice, period: $period)';
+  }
+}
+
+/// One billing plan available for a subscription.
+/// https://developer.apple.com/documentation/storekit/product/subscriptioninfo/pricingterms-swift.struct
+class SK2PricingTermsMessage {
+  SK2PricingTermsMessage({
+    required this.billingPlanType,
+    required this.billingPrice,
+    required this.billingDisplayPrice,
+    required this.billingPeriod,
+    required this.subscriptionOffers,
+    this.commitmentInfo,
+  });
+
+  /// Whether this plan bills up front or monthly.
+  SK2BillingPlanTypeMessage billingPlanType;
+
+  /// The price charged for each billing period.
+  double billingPrice;
+
+  /// The localized price charged for each billing period, suitable for display.
+  String billingDisplayPrice;
+
+  /// How often this plan bills.
+  SK2SubscriptionPeriodMessage billingPeriod;
+
+  /// The offers available on this billing plan specifically.
+  List<SK2SubscriptionOfferMessage> subscriptionOffers;
+
+  /// Only set when [billingPlanType] is [SK2BillingPlanTypeMessage.monthly].
+  SK2CommitmentInfoMessage? commitmentInfo;
+
+  List<Object?> _toList() {
+    return <Object?>[
+      billingPlanType,
+      billingPrice,
+      billingDisplayPrice,
+      billingPeriod,
+      subscriptionOffers,
+      commitmentInfo,
+    ];
+  }
+
+  Object encode() {
+    return _toList();
+  }
+
+  static SK2PricingTermsMessage decode(Object result) {
+    result as List<Object?>;
+    return SK2PricingTermsMessage(
+      billingPlanType: result[0]! as SK2BillingPlanTypeMessage,
+      billingPrice: result[1]! as double,
+      billingDisplayPrice: result[2]! as String,
+      billingPeriod: result[3]! as SK2SubscriptionPeriodMessage,
+      subscriptionOffers: (result[4]! as List<Object?>).cast<SK2SubscriptionOfferMessage>(),
+      commitmentInfo: result[5] as SK2CommitmentInfoMessage?,
+    );
+  }
+
+  @override
+  // ignore: avoid_equals_and_hash_code_on_mutable_classes
+  bool operator ==(Object other) {
+    if (other is! SK2PricingTermsMessage || other.runtimeType != runtimeType) {
+      return false;
+    }
+    if (identical(this, other)) {
+      return true;
+    }
+    return _deepEquals(billingPlanType, other.billingPlanType) &&
+        _deepEquals(billingPrice, other.billingPrice) &&
+        _deepEquals(billingDisplayPrice, other.billingDisplayPrice) &&
+        _deepEquals(billingPeriod, other.billingPeriod) &&
+        _deepEquals(subscriptionOffers, other.subscriptionOffers) &&
+        _deepEquals(commitmentInfo, other.commitmentInfo);
+  }
+
+  @override
+  // ignore: avoid_equals_and_hash_code_on_mutable_classes
+  int get hashCode => _deepHash(<Object?>[runtimeType, ..._toList()]);
+
+  @override
+  String toString() {
+    return 'SK2PricingTermsMessage(billingPlanType: $billingPlanType, billingPrice: $billingPrice, billingDisplayPrice: $billingDisplayPrice, billingPeriod: $billingPeriod, subscriptionOffers: $subscriptionOffers, commitmentInfo: $commitmentInfo)';
+  }
+}
+
 class SK2SubscriptionInfoMessage {
   SK2SubscriptionInfoMessage({
     required this.promotionalOffers,
     required this.subscriptionGroupID,
     required this.subscriptionPeriod,
+    this.pricingTerms,
   });
 
   /// An array of all the promotional offers configured for this subscription.
@@ -278,8 +423,12 @@ class SK2SubscriptionInfoMessage {
   /// The duration that this subscription lasts before auto-renewing.
   SK2SubscriptionPeriodMessage subscriptionPeriod;
 
+  /// Every billing plan available for this subscription in the current
+  /// storefront. `null` below iOS 26.4, where the API does not exist.
+  List<SK2PricingTermsMessage>? pricingTerms;
+
   List<Object?> _toList() {
-    return <Object?>[promotionalOffers, subscriptionGroupID, subscriptionPeriod];
+    return <Object?>[promotionalOffers, subscriptionGroupID, subscriptionPeriod, pricingTerms];
   }
 
   Object encode() {
@@ -292,6 +441,7 @@ class SK2SubscriptionInfoMessage {
       promotionalOffers: (result[0]! as List<Object?>).cast<SK2SubscriptionOfferMessage>(),
       subscriptionGroupID: result[1]! as String,
       subscriptionPeriod: result[2]! as SK2SubscriptionPeriodMessage,
+      pricingTerms: (result[3] as List<Object?>?)?.cast<SK2PricingTermsMessage>(),
     );
   }
 
@@ -306,7 +456,8 @@ class SK2SubscriptionInfoMessage {
     }
     return _deepEquals(promotionalOffers, other.promotionalOffers) &&
         _deepEquals(subscriptionGroupID, other.subscriptionGroupID) &&
-        _deepEquals(subscriptionPeriod, other.subscriptionPeriod);
+        _deepEquals(subscriptionPeriod, other.subscriptionPeriod) &&
+        _deepEquals(pricingTerms, other.pricingTerms);
   }
 
   @override
@@ -315,7 +466,7 @@ class SK2SubscriptionInfoMessage {
 
   @override
   String toString() {
-    return 'SK2SubscriptionInfoMessage(promotionalOffers: $promotionalOffers, subscriptionGroupID: $subscriptionGroupID, subscriptionPeriod: $subscriptionPeriod)';
+    return 'SK2SubscriptionInfoMessage(promotionalOffers: $promotionalOffers, subscriptionGroupID: $subscriptionGroupID, subscriptionPeriod: $subscriptionPeriod, pricingTerms: $pricingTerms)';
   }
 }
 
@@ -580,6 +731,7 @@ class SK2ProductPurchaseOptionsMessage {
     this.promotionalOffer,
     this.winBackOfferId,
     this.introductoryOfferEligibilityCompactJWS,
+    this.billingPlanType,
   });
 
   String? appAccountToken;
@@ -597,6 +749,9 @@ class SK2ProductPurchaseOptionsMessage {
   /// client-side.
   String? introductoryOfferEligibilityCompactJWS;
 
+  /// Which billing plan to purchase. `null` selects the default, up-front plan.
+  SK2BillingPlanTypeMessage? billingPlanType;
+
   List<Object?> _toList() {
     return <Object?>[
       appAccountToken,
@@ -604,6 +759,7 @@ class SK2ProductPurchaseOptionsMessage {
       promotionalOffer,
       winBackOfferId,
       introductoryOfferEligibilityCompactJWS,
+      billingPlanType,
     ];
   }
 
@@ -619,6 +775,7 @@ class SK2ProductPurchaseOptionsMessage {
       promotionalOffer: result[2] as SK2SubscriptionOfferPurchaseMessage?,
       winBackOfferId: result[3] as String?,
       introductoryOfferEligibilityCompactJWS: result[4] as String?,
+      billingPlanType: result[5] as SK2BillingPlanTypeMessage?,
     );
   }
 
@@ -638,7 +795,8 @@ class SK2ProductPurchaseOptionsMessage {
         _deepEquals(
           introductoryOfferEligibilityCompactJWS,
           other.introductoryOfferEligibilityCompactJWS,
-        );
+        ) &&
+        _deepEquals(billingPlanType, other.billingPlanType);
   }
 
   @override
@@ -647,7 +805,7 @@ class SK2ProductPurchaseOptionsMessage {
 
   @override
   String toString() {
-    return 'SK2ProductPurchaseOptionsMessage(appAccountToken: $appAccountToken, quantity: $quantity, promotionalOffer: $promotionalOffer, winBackOfferId: $winBackOfferId, introductoryOfferEligibilityCompactJWS: $introductoryOfferEligibilityCompactJWS)';
+    return 'SK2ProductPurchaseOptionsMessage(appAccountToken: $appAccountToken, quantity: $quantity, promotionalOffer: $promotionalOffer, winBackOfferId: $winBackOfferId, introductoryOfferEligibilityCompactJWS: $introductoryOfferEligibilityCompactJWS, billingPlanType: $billingPlanType)';
   }
 }
 
@@ -828,41 +986,50 @@ class _PigeonCodec extends StandardMessageCodec {
     } else if (value is SK2SubscriptionPeriodUnitMessage) {
       buffer.putUint8(132);
       writeValue(buffer, value.index);
-    } else if (value is SK2ProductPurchaseResultMessage) {
+    } else if (value is SK2BillingPlanTypeMessage) {
       buffer.putUint8(133);
       writeValue(buffer, value.index);
-    } else if (value is SK2PurchaseStatusMessage) {
+    } else if (value is SK2ProductPurchaseResultMessage) {
       buffer.putUint8(134);
       writeValue(buffer, value.index);
-    } else if (value is SK2SubscriptionOfferMessage) {
+    } else if (value is SK2PurchaseStatusMessage) {
       buffer.putUint8(135);
-      writeValue(buffer, value.encode());
-    } else if (value is SK2SubscriptionPeriodMessage) {
+      writeValue(buffer, value.index);
+    } else if (value is SK2SubscriptionOfferMessage) {
       buffer.putUint8(136);
       writeValue(buffer, value.encode());
-    } else if (value is SK2SubscriptionInfoMessage) {
+    } else if (value is SK2SubscriptionPeriodMessage) {
       buffer.putUint8(137);
       writeValue(buffer, value.encode());
-    } else if (value is SK2ProductMessage) {
+    } else if (value is SK2CommitmentInfoMessage) {
       buffer.putUint8(138);
       writeValue(buffer, value.encode());
-    } else if (value is SK2PriceLocaleMessage) {
+    } else if (value is SK2PricingTermsMessage) {
       buffer.putUint8(139);
       writeValue(buffer, value.encode());
-    } else if (value is SK2SubscriptionOfferSignatureMessage) {
+    } else if (value is SK2SubscriptionInfoMessage) {
       buffer.putUint8(140);
       writeValue(buffer, value.encode());
-    } else if (value is SK2SubscriptionOfferPurchaseMessage) {
+    } else if (value is SK2ProductMessage) {
       buffer.putUint8(141);
       writeValue(buffer, value.encode());
-    } else if (value is SK2ProductPurchaseOptionsMessage) {
+    } else if (value is SK2PriceLocaleMessage) {
       buffer.putUint8(142);
       writeValue(buffer, value.encode());
-    } else if (value is SK2TransactionMessage) {
+    } else if (value is SK2SubscriptionOfferSignatureMessage) {
       buffer.putUint8(143);
       writeValue(buffer, value.encode());
-    } else if (value is SK2ErrorMessage) {
+    } else if (value is SK2SubscriptionOfferPurchaseMessage) {
       buffer.putUint8(144);
+      writeValue(buffer, value.encode());
+    } else if (value is SK2ProductPurchaseOptionsMessage) {
+      buffer.putUint8(145);
+      writeValue(buffer, value.encode());
+    } else if (value is SK2TransactionMessage) {
+      buffer.putUint8(146);
+      writeValue(buffer, value.encode());
+    } else if (value is SK2ErrorMessage) {
+      buffer.putUint8(147);
       writeValue(buffer, value.encode());
     } else {
       super.writeValue(buffer, value);
@@ -886,29 +1053,36 @@ class _PigeonCodec extends StandardMessageCodec {
         return value == null ? null : SK2SubscriptionPeriodUnitMessage.values[value];
       case 133:
         final value = readValue(buffer) as int?;
-        return value == null ? null : SK2ProductPurchaseResultMessage.values[value];
+        return value == null ? null : SK2BillingPlanTypeMessage.values[value];
       case 134:
         final value = readValue(buffer) as int?;
-        return value == null ? null : SK2PurchaseStatusMessage.values[value];
+        return value == null ? null : SK2ProductPurchaseResultMessage.values[value];
       case 135:
-        return SK2SubscriptionOfferMessage.decode(readValue(buffer)!);
+        final value = readValue(buffer) as int?;
+        return value == null ? null : SK2PurchaseStatusMessage.values[value];
       case 136:
-        return SK2SubscriptionPeriodMessage.decode(readValue(buffer)!);
+        return SK2SubscriptionOfferMessage.decode(readValue(buffer)!);
       case 137:
-        return SK2SubscriptionInfoMessage.decode(readValue(buffer)!);
+        return SK2SubscriptionPeriodMessage.decode(readValue(buffer)!);
       case 138:
-        return SK2ProductMessage.decode(readValue(buffer)!);
+        return SK2CommitmentInfoMessage.decode(readValue(buffer)!);
       case 139:
-        return SK2PriceLocaleMessage.decode(readValue(buffer)!);
+        return SK2PricingTermsMessage.decode(readValue(buffer)!);
       case 140:
-        return SK2SubscriptionOfferSignatureMessage.decode(readValue(buffer)!);
+        return SK2SubscriptionInfoMessage.decode(readValue(buffer)!);
       case 141:
-        return SK2SubscriptionOfferPurchaseMessage.decode(readValue(buffer)!);
+        return SK2ProductMessage.decode(readValue(buffer)!);
       case 142:
-        return SK2ProductPurchaseOptionsMessage.decode(readValue(buffer)!);
+        return SK2PriceLocaleMessage.decode(readValue(buffer)!);
       case 143:
-        return SK2TransactionMessage.decode(readValue(buffer)!);
+        return SK2SubscriptionOfferSignatureMessage.decode(readValue(buffer)!);
       case 144:
+        return SK2SubscriptionOfferPurchaseMessage.decode(readValue(buffer)!);
+      case 145:
+        return SK2ProductPurchaseOptionsMessage.decode(readValue(buffer)!);
+      case 146:
+        return SK2TransactionMessage.decode(readValue(buffer)!);
+      case 147:
         return SK2ErrorMessage.decode(readValue(buffer)!);
       default:
         return super.readValueOfType(type, buffer);
