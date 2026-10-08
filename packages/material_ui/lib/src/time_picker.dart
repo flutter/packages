@@ -1787,7 +1787,7 @@ class _TimePickerInputState extends State<_TimePickerInput> with RestorationMixi
       return null;
     }
 
-    if (MediaQuery.alwaysUse24HourFormatOf(context)) {
+    if (_TimePickerModel.hourDialTypeOf(context) != _HourDialType.twelveHour) {
       if (newHour >= 0 && newHour < 24) {
         return newHour;
       }
