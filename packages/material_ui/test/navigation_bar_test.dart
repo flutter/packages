@@ -14,6 +14,7 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';
+
 import 'finders.dart';
 
 void main() {
@@ -1688,12 +1689,13 @@ void main() {
     const disabledTextStyle = TextStyle(fontSize: 16, color: Color(0xFFFF0000));
     await tester.pumpWidget(
       buildNavigationBar(
-        labelTextStyle:
-            const WidgetStateProperty<TextStyle?>.fromMap(<WidgetStatesConstraint, TextStyle?>{
-              WidgetState.disabled: disabledTextStyle,
-              WidgetState.selected: selectedTextStyle,
-              WidgetState.any: unselectedTextStyle,
-            }),
+        labelTextStyle: const WidgetStateProperty<TextStyle?>.fromMap(
+          <WidgetStatesConstraint, TextStyle?>{
+            WidgetState.disabled: disabledTextStyle,
+            WidgetState.selected: selectedTextStyle,
+            WidgetState.any: unselectedTextStyle,
+          },
+        ),
       ),
     );
 
@@ -1792,9 +1794,8 @@ class IconWithRandomColor extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final Color randomColor = Color(
-      (Random().nextDouble() * 0xFFFFFF).toInt(),
-    ).withValues(alpha: 1.0);
+    final Color randomColor = Color((Random().nextDouble() * 0xFFFFFF).toInt())
+        .withValues(alpha: 1.0);
     return Icon(icon, color: randomColor);
   }
 }

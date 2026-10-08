@@ -33,9 +33,8 @@ void main() {
                       dragStarted = true;
                     },
                     child: MediaQuery(
-                      data: MediaQuery.of(
-                        context,
-                      ).copyWith(gestureSettings: const DeviceGestureSettings(touchSlop: 20)),
+                      data: MediaQuery.of(context)
+                          .copyWith(gestureSettings: const DeviceGestureSettings(touchSlop: 20)),
                       child: RangeSlider(
                         key: sliderKey,
                         values: values,
@@ -89,9 +88,8 @@ void main() {
                       dragStarted = true;
                     },
                     child: MediaQuery(
-                      data: MediaQuery.of(
-                        context,
-                      ).copyWith(gestureSettings: const DeviceGestureSettings(touchSlop: 10)),
+                      data: MediaQuery.of(context)
+                          .copyWith(gestureSettings: const DeviceGestureSettings(touchSlop: 10)),
                       child: RangeSlider(
                         key: sliderKey,
                         values: values,
@@ -838,6 +836,50 @@ void main() {
       expect(values.start, moreOrLessEquals(20, epsilon: 0.01));
     },
   );
+
+  testWidgets('Discrete range slider has no floating-point rounding errors', (
+    WidgetTester tester,
+  ) async {
+    final valuesList = <RangeValues>[];
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Directionality(
+          textDirection: TextDirection.ltr,
+          child: Material(
+            child: Center(
+              child: SizedBox(
+                width: 200.0,
+                child: RangeSlider(
+                  max: 35.0,
+                  divisions: 35,
+                  values: const RangeValues(0.0, 35.0),
+                  onChanged: (RangeValues newValues) {
+                    valuesList.add(newValues);
+                  },
+                ),
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+
+    final Offset topLeft = tester.getTopLeft(find.byType(RangeSlider)).translate(24, 0);
+    final Offset bottomRight = tester.getBottomRight(find.byType(RangeSlider)).translate(-24, 0);
+    final double activeTrackWidth = bottomRight.dx - topLeft.dx;
+
+    final startThumb = topLeft;
+    final TestGesture gesture = await tester.startGesture(startThumb);
+    await gesture.moveTo(topLeft + Offset(activeTrackWidth * 29.0 / 35.0, 0.0));
+    await gesture.up();
+
+    expect(valuesList.isNotEmpty, isTrue);
+    expect(valuesList.last, const RangeValues(29.0, 35.0));
+    for (final val in valuesList) {
+      expect(val.start, equals(val.start.roundToDouble()));
+      expect(val.end, equals(val.end.roundToDouble()));
+    }
+  });
 
   testWidgets(
     'Range Slider thumbs can be dragged together and the end thumb can be dragged apart (continuous LTR)',
@@ -3669,9 +3711,8 @@ void main() {
 
     RenderBox sliderRenderBox() {
       return tester.allRenderObjects.firstWhere(
-            (RenderObject object) => object.runtimeType.toString() == '_RenderRangeSlider',
-          )
-          as RenderBox;
+        (RenderObject object) => object.runtimeType.toString() == '_RenderRangeSlider',
+      ) as RenderBox;
     }
 
     // Test RangeSlider height and tracks spacing with zero padding.

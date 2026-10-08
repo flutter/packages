@@ -1,3 +1,0 @@
-changelog: |
-  - Fix `PopupMenuButton` not announcing button semantics (enabled state, expanded state) when built with a `child` instead of the default icon.
-version: patch

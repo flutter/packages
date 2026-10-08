@@ -1,3 +1,7 @@
+## NEXT
+
+* Updates minimum supported SDK version to Flutter 3.41/Dart 3.11.
+
 ## 3.3.1
 
 * Updates README examples and doc excerpts to match the current package API and extraction workflow.

@@ -520,8 +520,7 @@ void main() {
         ),
       ),
     );
-    await tester
-        .pump(); // this would fail if heroTag was the same on both FloatingActionButtons (see below).
+    await tester.pump(); // this would fail if heroTag was the same on both FloatingActionButtons (see below).
   });
 
   testWidgets('Floating Action Button heroTag - with duplicate', (WidgetTester tester) async {
