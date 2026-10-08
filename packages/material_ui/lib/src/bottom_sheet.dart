@@ -749,9 +749,8 @@ class _ModalBottomSheetState<T> extends State<_ModalBottomSheet<T>> {
 
     // Rebind the animation using CurvedAnimation and Split so the
     // remaining transition continues smoothly from the exact point
-    // where the drag gesture ended. Dispose any previous drag-end
-    // CurvedAnimation before replacing it to avoid leaking listeners.
-    _dragEndCurvedAnimation?.dispose();
+    // where the drag gesture ended.
+    final CurvedAnimation? oldDragEndCurvedAnimation = _dragEndCurvedAnimation;
     _dragEndCurvedAnimation = CurvedAnimation(
       parent: widget.route.animation!,
       curve: Split(
@@ -764,6 +763,9 @@ class _ModalBottomSheetState<T> extends State<_ModalBottomSheet<T>> {
       ),
     );
     _sheetAnimation.parent = _dragEndCurvedAnimation;
+    // Dispose the previous drag-end CurvedAnimation only after detaching it
+    // from [_sheetAnimation], so it is never disposed while still in use.
+    oldDragEndCurvedAnimation?.dispose();
   }
 
   @override
