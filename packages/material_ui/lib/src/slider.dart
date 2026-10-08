@@ -430,7 +430,7 @@ class Slider extends StatefulWidget {
   /// If null, the slider is continuous.
   final int? divisions;
 
-  /// A label to display as part of the slider's value indicator.
+  /// A label to show inside the value indicator above the slider's thumb.
   ///
   /// By default, the label is shown while dragging a discrete slider, where
   /// [divisions] is non-null. It can also be shown for a continuous slider, where
