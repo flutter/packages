@@ -7,8 +7,6 @@
 #import "FGMImageUtils.h"
 #import "FGMConversionUtils.h"
 
-#import <CommonCrypto/CommonDigest.h>
-
 @import Foundation;
 
 /// This method is deprecated within the context of `BitmapDescriptor.fromBytes` handling in the
@@ -48,6 +46,61 @@ static UIImage *scaledImageWithSize(UIImage *image, CGSize size);
 static UIImage *scaledImageWithWidthHeight(UIImage *image, NSNumber *width, NSNumber *height,
                                            CGFloat screenScale);
 
+/// Cache key for icons created from `FGMPlatformBitmapBytesMap` bitmaps.
+///
+/// Covers every input of the icon, so that bitmaps that would produce different images never share
+/// one. The bytes are compared directly instead of hashed: every marker update looks up its icon,
+/// and hashing the full image each time is several times slower than comparing it.
+@interface FGMBytesMapIconCacheKey : NSObject
+- (instancetype)initWithBitmap:(FGMPlatformBitmapBytesMap *)bitmap screenScale:(CGFloat)screenScale;
+@end
+
+@implementation FGMBytesMapIconCacheKey {
+  NSData *_data;
+  FGMPlatformMapBitmapScaling _bitmapScaling;
+  double _imagePixelRatio;
+  NSNumber *_width;
+  NSNumber *_height;
+  CGFloat _screenScale;
+}
+
+- (instancetype)initWithBitmap:(FGMPlatformBitmapBytesMap *)bitmap
+                   screenScale:(CGFloat)screenScale {
+  self = [super init];
+  if (self) {
+    _data = bitmap.byteData.data;
+    _bitmapScaling = bitmap.bitmapScaling;
+    _imagePixelRatio = bitmap.imagePixelRatio;
+    _width = bitmap.width;
+    _height = bitmap.height;
+    _screenScale = screenScale;
+  }
+  return self;
+}
+
+- (BOOL)isEqual:(id)object {
+  if (self == object) {
+    return YES;
+  }
+  if (![object isKindOfClass:[FGMBytesMapIconCacheKey class]]) {
+    return NO;
+  }
+  FGMBytesMapIconCacheKey *other = object;
+  // Compare the cheap fields first, so that the bytes are only compared when everything else
+  // matches.
+  return _bitmapScaling == other->_bitmapScaling && _imagePixelRatio == other->_imagePixelRatio &&
+         _screenScale == other->_screenScale &&
+         (_width == other->_width || [_width isEqual:other->_width]) &&
+         (_height == other->_height || [_height isEqual:other->_height]) &&
+         [_data isEqualToData:other->_data];
+}
+
+- (NSUInteger)hash {
+  return _data.hash;
+}
+
+@end
+
 /// Returns the cache that shares one UIImage between all bitmaps that describe the same image.
 ///
 /// The Maps SDK allocates marker texture space per UIImage instance instead of per image content,
@@ -57,11 +110,7 @@ static UIImage *scaledImageWithWidthHeight(UIImage *image, NSNumber *width, NSNu
 /// UIImage is immutable.
 ///
 /// NSCache is thread-safe, and releases its contents when the system is under memory pressure.
-static NSCache<NSString *, UIImage *> *FGMBytesMapIconCache(void);
-
-/// Returns a key that covers every input of the icon created for [bitmap], so that bitmaps that
-/// would produce different images never share one.
-static NSString *FGMBytesMapIconCacheKey(FGMPlatformBitmapBytesMap *bitmap, CGFloat screenScale);
+static NSCache<FGMBytesMapIconCacheKey *, UIImage *> *FGMBytesMapIconCache(void);
 
 UIImage *FGMIconFromBitmap(FGMPlatformBitmap *platformBitmap,
                            NSObject<FGMAssetProvider> *assetProvider, CGFloat screenScale) {
@@ -123,7 +172,8 @@ UIImage *FGMIconFromBitmap(FGMPlatformBitmap *platformBitmap,
     FGMPlatformBitmapBytesMap *bitmapBytesMap = bitmap;
     FlutterStandardTypedData *bytes = bitmapBytesMap.byteData;
 
-    NSString *cacheKey = FGMBytesMapIconCacheKey(bitmapBytesMap, screenScale);
+    FGMBytesMapIconCacheKey *cacheKey =
+        [[FGMBytesMapIconCacheKey alloc] initWithBitmap:bitmapBytesMap screenScale:screenScale];
     UIImage *cachedIcon = [FGMBytesMapIconCache() objectForKey:cacheKey];
     if (cachedIcon) {
       return cachedIcon;
@@ -193,25 +243,13 @@ UIImage *FGMIconFromBitmap(FGMPlatformBitmap *platformBitmap,
   return image;
 }
 
-static NSCache<NSString *, UIImage *> *FGMBytesMapIconCache(void) {
-  static NSCache<NSString *, UIImage *> *cache;
+static NSCache<FGMBytesMapIconCacheKey *, UIImage *> *FGMBytesMapIconCache(void) {
+  static NSCache<FGMBytesMapIconCacheKey *, UIImage *> *cache;
   static dispatch_once_t onceToken;
   dispatch_once(&onceToken, ^{
     cache = [[NSCache alloc] init];
   });
   return cache;
-}
-
-static NSString *FGMBytesMapIconCacheKey(FGMPlatformBitmapBytesMap *bitmap, CGFloat screenScale) {
-  NSData *data = bitmap.byteData.data;
-  unsigned char digest[CC_SHA256_DIGEST_LENGTH];
-  CC_SHA256(data.bytes, (CC_LONG)data.length, digest);
-  NSData *digestData = [NSData dataWithBytes:digest length:CC_SHA256_DIGEST_LENGTH];
-  NSString *contentHash = [digestData base64EncodedStringWithOptions:0];
-  long scaling = (long)bitmap.bitmapScaling;
-  return
-      [NSString stringWithFormat:@"%@|%ld|%f|%@|%@|%f", contentHash, scaling,
-                                 bitmap.imagePixelRatio, bitmap.width, bitmap.height, screenScale];
 }
 
 UIImage *scaledImage(UIImage *image, double scale) {

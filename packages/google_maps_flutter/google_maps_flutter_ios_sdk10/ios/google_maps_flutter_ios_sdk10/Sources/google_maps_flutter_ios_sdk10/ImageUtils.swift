@@ -2,7 +2,6 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import CryptoKit
 import Flutter
 import GoogleMaps
 import UIKit
@@ -64,7 +63,7 @@ extension PlatformBitmap {
         }
       }
     case let bitmap as PlatformBitmapBytesMap:
-      let cacheKey = bitmap.iconCacheKey(screenScale: screenScale)
+      let cacheKey = BytesMapIconCacheKey(bitmap: bitmap, screenScale: screenScale)
       if let cachedIcon = bytesMapIconCache.object(forKey: cacheKey) {
         return cachedIcon
       }
@@ -137,18 +136,43 @@ extension PlatformBitmap {
 /// safe because `UIImage` is immutable.
 ///
 /// `NSCache` is thread-safe, and releases its contents when the system is under memory pressure.
-private let bytesMapIconCache = NSCache<NSString, UIImage>()
+private let bytesMapIconCache = NSCache<BytesMapIconCacheKey, UIImage>()
 
-extension PlatformBitmapBytesMap {
-  /// Returns a key that covers every input of the icon created from this bitmap, so that bitmaps
-  /// that would produce different images never share one.
-  fileprivate func iconCacheKey(screenScale: CGFloat) -> NSString {
-    let contentHash = Data(SHA256.hash(data: byteData.data)).base64EncodedString()
-    let widthKey = width?.description ?? "nil"
-    let heightKey = height?.description ?? "nil"
-    return
-      "\(contentHash)|\(bitmapScaling.rawValue)|\(imagePixelRatio)|\(widthKey)|\(heightKey)|\(screenScale)"
-      as NSString
+/// Cache key for icons created from `PlatformBitmapBytesMap` bitmaps.
+///
+/// Covers every input of the icon, so that bitmaps that would produce different images never share
+/// one. The bytes are compared directly instead of hashed: every marker update looks up its icon,
+/// and hashing the full image each time is several times slower than comparing it.
+private final class BytesMapIconCacheKey: NSObject {
+  private let data: NSData
+  private let bitmapScaling: PlatformMapBitmapScaling
+  private let imagePixelRatio: Double
+  private let width: Double?
+  private let height: Double?
+  private let screenScale: CGFloat
+
+  init(bitmap: PlatformBitmapBytesMap, screenScale: CGFloat) {
+    data = bitmap.byteData.data as NSData
+    bitmapScaling = bitmap.bitmapScaling
+    imagePixelRatio = bitmap.imagePixelRatio
+    width = bitmap.width
+    height = bitmap.height
+    self.screenScale = screenScale
+  }
+
+  override func isEqual(_ object: Any?) -> Bool {
+    guard let other = object as? BytesMapIconCacheKey else {
+      return false
+    }
+    // Compare the cheap fields first, so that the bytes are only compared when everything else
+    // matches.
+    return bitmapScaling == other.bitmapScaling && imagePixelRatio == other.imagePixelRatio
+      && width == other.width && height == other.height && screenScale == other.screenScale
+      && data.isEqual(to: other.data as Data)
+  }
+
+  override var hash: Int {
+    data.hash
   }
 }
 
