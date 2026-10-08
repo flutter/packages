@@ -1,3 +1,9 @@
+## 1.1.2
+
+- Fixes `CupertinoMagnifier` focal point not being vertically centered when a custom `size` is used.
+- Fixes unresolved doc comment references.
+- Fixes `showCupertinoSheet` ignoring `showDragHandle` by forwarding it to `CupertinoSheetRoute`.
+
 ## 1.1.1
 
 - Updates minimum supported SDK version to Flutter 3.47/Dart 3.13.

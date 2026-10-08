@@ -36,7 +36,6 @@ import '../templates/input_decorator_template.dart';
 import '../templates/list_tile_template.dart';
 import '../templates/menu_template.dart';
 import '../templates/motion_template.dart';
-
 // import '../templates/navigation_bar_template.dart';
 // import '../templates/navigation_drawer_template.dart';
 // import '../templates/navigation_rail_template.dart';
@@ -50,13 +49,12 @@ import '../templates/progress_indicator_template.dart';
 // import '../templates/segmented_button_template.dart';
 // import '../templates/slider_template.dart';
 import '../templates/snackbar_template.dart';
-
 // import '../templates/surface_tint_template.dart';
 // import '../templates/switch_template.dart';
 // import '../templates/tabs_template.dart';
 // import '../templates/text_field_template.dart';
 // import '../templates/time_picker_template.dart';
-// import '../templates/typography_template.dart';
+import '../templates/typography_template.dart';
 
 Future<void> main(List<String> args) async {
   // Parse arguments
@@ -118,5 +116,5 @@ Future<void> main(List<String> args) async {
   // const TabsTemplateM3().generateFile(verbose: verbose);
   // const TextFieldTemplateM3().generateFile(verbose: verbose);
   // const TimePickerTemplateM3().generateFile(verbose: verbose);
-  // const TypographyTemplateM3().generateFile(verbose: verbose);
+  const TypographyTemplateM3().generateFile(verbose: verbose);
 }
