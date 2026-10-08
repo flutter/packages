@@ -1,3 +1,0 @@
-changelog: |
-  - Fixes floating-point rounding errors when calculating values for discrete `Slider` and `RangeSlider`.
-version: patch
