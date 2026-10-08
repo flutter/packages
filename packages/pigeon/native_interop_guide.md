@@ -36,7 +36,7 @@ Using Native Interop in pigeon follows the standard pigeon workflow, with a few 
 3. **Configure Options**: Configure `kotlinOptions.useJni` or `swiftOptions.useFfi` in your `PigeonOptions` (see [Step 2: Configure Pigeon Options](#step-2-configure-pigeon-options) below).
 4. **Prerequisites**: Ensure your local environment meets the toolchain prerequisites for `jnigen` and `ffigen` (see [Section 3: Prerequisites](#3-prerequisites) below).
 5. **Run Code Generation**: Run the `pigeon` tool to generate the native bridge code and interop bindings (see [Step 3: Run Code Generation](#step-3-run-code-generation) below).
-6. **Configure Build Systems**: For Swift FFI, configure CocoaPods or Swift Package Manager (SwiftPM) to compile the intermediate Objective-C bridge files (see [Step 4: iOS/macOS Build System Configuration (FFI)](#step-4-iosmacos-build-system-configuration-ffi) below).
+6. **Configure Build Systems**: For Swift FFI, configure CocoaPods or Swift Package Manager (SwiftPM) to compile the intermediate Objective-C bridge files (see [Step 4: iOS/macOS Build System Configuration (FFI)](#step-4-iosmacos-build-system-configuration-ffi) below). For Kotlin JNI, add keep rules so that Android release builds work (see [Step 5: Android Release Build Configuration (JNI)](#step-5-android-release-build-configuration-jni) below). <!-- TODO(tarrinneal): Remove this JNI sentence once package:jni ships these keep rules: https://github.com/dart-lang/native/issues/3732 -->
 7. **Implement and Call**: Implement the generated protocol/class interface in your native codebase and call the generated Dart methods from your Flutter application.
 
 ---
@@ -46,12 +46,8 @@ Using Native Interop in pigeon follows the standard pigeon workflow, with a few 
 To use Native Interop, your development environment and the corresponding external tools must be configured:
 
 ### Android (JNI / JNIgen)
-- **Java 17**: Required specifically by the Android build tools and JNIgen.
-- **Android SDK**: Must be installed and configured in your path.
-- **Kotlin Version (`<= 2.1.0`)**: JNIgen uses `kotlinx-metadata-jvm` to parse Kotlin class metadata. It currently supports Kotlin metadata versions up to **2.1.0**. If the Android Gradle project uses a higher Kotlin plugin version (e.g. Kotlin 2.4.0), JNIgen will throw `IllegalArgumentException: Provided Metadata instance has version ... while maximum supported version is ...`. Ensure `settings.gradle.kts` sets Kotlin to `2.1.0`:
-  ```kotlin
-  id("org.jetbrains.kotlin.android") version "2.1.0" apply false
-  ```
+- **Android SDK**: Must be installed and configured in your path. JNIgen uses the JDK bundled with Flutter by default, so a separate JDK installation is not required.
+- **`jnigen` 1.0.0 or later**: Earlier versions of JNIgen cannot parse metadata from newer Kotlin compilers and fail with `IllegalArgumentException: Provided Metadata instance has version ... while maximum supported version is ...`. `jnigen` 1.0.0 supports Kotlin metadata up to 2.4.
 
 ### iOS/macOS (FFI / FFIgen)
 - **LLVM (version 9+) / Xcode Command Line Tools**: Required by FFIgen to parse C/Objective-C headers (`xcode-select --install`).
@@ -62,22 +58,23 @@ To use Native Interop, your development environment and the corresponding extern
 
 ### Step 1: Add Dependencies
 
-Add the required runtime dependencies to `dependencies` and code generators to `dev_dependencies`. Using `flutter pub add` ensures runtime packages resolve to the latest compatible versions:
+Add the required runtime dependencies to `dependencies` and code generators/config-script dependencies to `dev_dependencies` in the package where Pigeon runs (for a plugin package, add these to the **plugin's** `pubspec.yaml`, not `example/pubspec.yaml`, unless the example app runs Pigeon directly).
+
+Because Pigeon generates helper scripts in `tool/pigeon/` (`*_ffigen_config.dart` and `*_jnigen_config.dart`), `dart pub publish --dry-run` requires every package imported by `lib/` or `tool/` to be explicitly declared in `pubspec.yaml`:
 
 ```bash
 # Add Pigeon:
 flutter pub add dev:pigeon
 
 # For iOS/macOS Swift FFI:
-flutter pub add ffi
-flutter pub add objective_c
-# Pigeon requires this specific version for compatibility with its generated FFIgen configuration:
-flutter pub add dev:ffigen@21.0.0
+flutter pub add ffi objective_c meta
+# Code generators and packages imported by tool/pigeon/*_ffigen_config.dart:
+flutter pub add dev:ffigen dev:swift2objc dev:swiftgen dev:path dev:pub_semver
 
 # For Android Kotlin JNI:
 flutter pub add jni
-# Pigeon requires this specific version for compatibility with its generated JNIgen configuration:
-flutter pub add dev:jnigen@1.0.0
+# Code generator and packages imported by tool/pigeon/*_jnigen_config.dart:
+flutter pub add dev:jnigen dev:logging dev:path
 ```
 
 ### Step 2: Configure Pigeon Options
@@ -133,11 +130,11 @@ dart run pigeon --input <path/to/pigeon_file.dart>
 When Native Interop options (`useJni` or `useFfi`) are enabled, Pigeon automatically orchestrates running `jnigen` and `ffigen` as part of the generation process:
 
 - **Android (JNI)**: When `kotlinOptions.useJni` is enabled:
-  1. Generates the JNI-compatible Kotlin bridge and the `jnigen_config.dart` script in `tool/pigeon/`.
+  1. Generates the JNI-compatible Kotlin bridge and the `<input_name>_jnigen_config.dart` script in `tool/pigeon/`.
   2. Runs `jnigen` via the config script to parse the Kotlin bridge and produce Dart JNI bindings.
   3. Generates the final pigeon Dart output that wraps and imports those JNI bindings.
 - **iOS/macOS (FFI)**: When `swiftOptions.useFfi` is enabled:
-  1. Generates the Objective-C compatible Swift bridge and the `ffigen_config.dart` script in `tool/pigeon/`.
+  1. Generates the Objective-C compatible Swift bridge and the `<input_name>_ffigen_config.dart` script in `tool/pigeon/`.
   2. Runs `ffigen` via the config script to parse the Objective-C bridge and produce Dart FFI bindings.
   3. Generates the final pigeon Dart output that wraps and imports those FFI bindings.
 
@@ -158,11 +155,14 @@ s.source_files = 'Sources/**/*.{swift,m,h}'
 This allows CocoaPods to automatically compile the generated Objective-C bridging files into the framework.
 
 #### Swift Package Manager (SwiftPM) Configuration
-Because Swift and Objective-C files cannot reside within the same SwiftPM target, you must define two separate targets in your `Package.swift` file:
+**Only if a `.m` file is generated** in `<swift_output_dir>_objc_gen`, you must configure a separate Objective-C target in your `Package.swift` file. Because Swift and Objective-C files cannot reside within the same SwiftPM target, define two separate targets:
 1. An Objective-C target for the generated bridge files (e.g., `my_plugin_objc_gen`).
 2. The main Swift target that depends on the Objective-C target.
 
-Example configuration:
+> **Important:** If your Pigeon schema only uses synchronous `@HostApi()` methods (and does not generate a `.m` file in `<swift_output_dir>_objc_gen`), **do not** add the `<plugin_name>_objc_gen` target to `Package.swift`. SwiftPM requires every `.target` to contain at least one compilable source file (`.m`, `.c`, or `.swift`). Declaring a `<plugin_name>_objc_gen` target when the directory only contains a `.h` header (or temporary `.o` file) will cause Xcode builds to fail with:
+> `Build input file cannot be found: '.../<plugin_name>_objc_gen.o'`
+
+Example configuration (when `<plugin_name>_objc_gen` contains a generated `.m` file):
 <?code-excerpt "platform_tests/test_plugin/darwin/test_plugin/Package.swift (swiftpm-targets)"?>
 ```swift
 targets: [
@@ -201,11 +201,41 @@ When implementing Native Interop host APIs directly in an application target rat
   ```
   Calling `register(api:)` in native code also prevents the Xcode linker (`-dead_strip`) from stripping the setup class from the compiled binary.
 
+### Step 5: Android Release Build Configuration (JNI)
+
+<!-- TODO(tarrinneal): Remove this section once package:jni ships these keep rules: https://github.com/dart-lang/native/issues/3732 -->
+
+Flutter enables R8 for Android release builds by default. R8 removes, renames, and merges classes and members that it doesn't see being used. JNI looks up classes and members by name at runtime, so everything that JNI reaches must keep its original name.
+
+Pigeon adds `@Keep` to every generated Kotlin class that the generated Dart code reaches through JNI, so the generated code needs no extra rules. However, `package:jni` and the generated Dart code also look up several Kotlin standard library classes by name to call Kotlin `suspend` functions (`@async` methods) and to implement them from Dart. Library classes can't be annotated, so until `package:jni` includes rules for these classes, you must add them yourself:
+
+```text
+# Kotlin classes that package:jni and the generated Dart code look up by name.
+-keep class kotlin.Unit { *; }
+-keep class kotlin.Result { *; }
+-keep class kotlin.Result$Failure { *; }
+-keep class kotlin.coroutines.Continuation { *; }
+-keep class kotlin.coroutines.intrinsics.CoroutineSingletons { *; }
+-keep class kotlin.coroutines.intrinsics.IntrinsicsKt { *; }
+```
+
+* **Plugins**: Add the rules to a file in the plugin's `android/` directory, such as `consumer-rules.pro`, and list it in `consumerProguardFiles` in the plugin's `android/build.gradle` or `android/build.gradle.kts`. R8 then applies the rules to every application that uses the plugin:
+  ```gradle
+  android {
+      defaultConfig {
+          consumerProguardFiles("consumer-rules.pro")
+      }
+  }
+  ```
+* **Applications**: Add the rules to `android/app/proguard-rules.pro`. Flutter applies this file to release builds when it exists.
+
+Debug and profile builds are not minified, so test a release build (for example, with `flutter run --release`) to verify the configuration.
+
 ---
 
 ## 5. Troubleshooting Automated Generation
 
-If `dart run pigeon` encounters errors while running `jnigen` or `ffigen`, review the following troubleshooting steps:
+If `dart run pigeon` or your platform build encounters errors, review the following troubleshooting steps:
 
 ### 5.1 Unupdated Native Implementation or Uncompiled Code (JNI)
 
@@ -231,15 +261,15 @@ For standalone Flutter Applications, JNIgen defaults to searching `build/app/tmp
 
 ### 5.3 Manual Configuration Script Execution
 
-Pigeon writes the interop configuration scripts to `tool/pigeon/jnigen_config.dart` and `tool/pigeon/ffigen_config.dart`.
+Pigeon writes the interop configuration scripts to `tool/pigeon/<input_name>_jnigen_config.dart` and `tool/pigeon/<input_name>_ffigen_config.dart`.
 
 - **Solution**: Run the generated config scripts directly to view verbose stderr logs and diagnose toolchain errors:
   ```bash
   # Debug JNIgen (Android):
-  dart run tool/pigeon/jnigen_config.dart
+  dart run tool/pigeon/<input_name>_jnigen_config.dart
 
   # Debug FFIgen (iOS/macOS):
-  dart run tool/pigeon/ffigen_config.dart
+  dart run tool/pigeon/<input_name>_ffigen_config.dart
   ```
 
 ### 5.4 Failed to Load Objective-C Class (`<ffiModuleName>.<Api>Setup`)
@@ -247,6 +277,30 @@ Pigeon writes the interop configuration scripts to `tool/pigeon/jnigen_config.da
 If your app crashes at startup with `FailedToLoadClassException: Failed to load Objective-C class`:
 - **Module Name Mismatch**: Ensure `ffiModuleName` matches your app's Swift module name. If iOS and macOS share the same generated Dart FFI file, ensure both platforms use the same module name (e.g., align macOS by setting `PRODUCT_MODULE_NAME` in `macos/Runner/Configs/AppInfo.xcconfig`).
 - **Linker Dead-Code Stripping**: Ensure your native host code instantiates and registers the implementation (e.g. `MyApiSetup.register(api: api)` in `MainFlutterWindow.swift` on macOS or `AppDelegate.swift` on iOS) so the linker does not strip the class.
+
+### 5.5 Startup Crash on Android (`VmServiceDisappearedException` / `JNI is not initialized`)
+
+If your app or integration test crashes at startup on Android with `adb logcat` showing:
+```text
+F DartJNI : JNI is not initialized. Are you trying to invoke a Java API from Dart code too early, before 'main()' (such as during Dart plugin class registration)?
+```
+- **Cause**: Your plugin's `registerWith()` method (invoked by Flutter's `_PluginRegistrant.register()` before `main()`) constructed your Dart plugin class, and its constructor eagerly called `<MyApi>.createWithNativeInteropApi()` before `JniPlugin` initialized `DartJNI`.
+- **Solution**: Initialize `<MyApi>.createWithNativeInteropApi()` lazily using `late final` rather than eagerly in the constructor initializer list (see [Section 4 of the Migration Guide](./native_interop_migration_guide.md#4-dart-client-adaptation)).
+
+### 5.6 Xcode Error: `Build input file cannot be found: '.../<plugin_name>_objc_gen.o'`
+
+If an iOS or macOS SwiftPM build fails because `<plugin_name>_objc_gen.o` cannot be found:
+- **Cause**: `Package.swift` defines a `<plugin_name>_objc_gen` target, but `ffigen` did not generate a `.m` implementation file in `Sources/<plugin_name>_objc_gen/` (because the Pigeon schema has no async callbacks, closures, or `@FlutterApi` methods requiring Objective-C trampolines). Without a `.m` source file, SwiftPM does not produce an object file for the target. (Note: any `.o` file produced inside `Sources/<plugin_name>_objc_gen/` during `ffigen` execution is a temporary `swiftc` artifact and must not be committed or used.)
+- **Solution**: Remove the `<plugin_name>_objc_gen` target and its dependency entry from `Package.swift`.
+
+### 5.7 `ClassNotFoundException` or `NoSuchMethodError` in Android Release Builds (JNI)
+
+If native interop calls work in debug builds but fail in release builds with `java.lang.ClassNotFoundException` or `java.lang.NoSuchMethodError`:
+- **Cause**: R8 removed or renamed a class or member that JNI looks up by name.
+- **Solution**:
+  - If the error names a class generated by Pigeon, regenerate your Pigeon output with Pigeon 29.0.7 or later, which adds `@Keep` to every generated class that JNI reaches.
+  - If the error names a class in the `kotlin` package (for example, `kotlin/coroutines/Continuation` in the signature of a `suspend` method), add the keep rules from [Step 5](#step-5-android-release-build-configuration-jni). <!-- TODO(tarrinneal): Remove this bullet once package:jni ships these keep rules: https://github.com/dart-lang/native/issues/3732 -->
+  - To see what R8 removed or renamed, check `build/app/outputs/mapping/release/mapping.txt` in the application directory.
 
 ---
 
