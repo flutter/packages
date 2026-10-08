@@ -439,7 +439,7 @@ class _FadeForwardsPageTransition extends StatelessWidget {
 }
 
 // Paints a snapshot of its child instead of the live child while `animation`
-// is running.
+// is running, for performance purposes.
 //
 // The child is rasterized once at the start of the animation. On each
 // following frame, the enclosing FadeTransition and SlideTransition only have

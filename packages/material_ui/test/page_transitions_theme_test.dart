@@ -1505,9 +1505,13 @@ void main() {
     expect(find.text('go back'), findsOneWidget);
   }, variant: TargetPlatformVariant.only(TargetPlatform.android));
 
- group('FadeForwardsPageTransitionsBuilder snapshotting', () {
-    Widget fadeForwardsApp({bool secondRouteAllowSnapshotting = true}) {
+  group('FadeForwardsPageTransitionsBuilder snapshotting', () {
+    Widget fadeForwardsApp({
+      bool secondRouteAllowSnapshotting = true,
+      NavigatorObserver? observer,
+    }) {
       return MaterialApp(
+        navigatorObservers: <NavigatorObserver>[if (observer != null) observer],
         theme: ThemeData(
           pageTransitionsTheme: const PageTransitionsTheme(
             builders: <TargetPlatform, PageTransitionsBuilder>{
@@ -1552,14 +1556,15 @@ void main() {
     testWidgets(
       'snapshots the entering and exiting routes only while animating',
       (WidgetTester tester) async {
-        await tester.pumpWidget(fadeForwardsApp());
+        final observer = TransitionDurationObserver();
+        await tester.pumpWidget(fadeForwardsApp(observer: observer));
         expect(isSnapshotting(tester, 'Page 1'), isFalse);
 
-        // Push. 50ms into the 450ms transition, both pages are partially
+        // Push. Part way into the transition, both pages are partially
         // transparent.
         tester.state<NavigatorState>(find.byType(Navigator)).pushNamed('/2');
         await tester.pump();
-        await tester.pump(const Duration(milliseconds: 50));
+        await tester.pump(observer.transitionDuration * .1);
         expect(isSnapshotting(tester, 'Page 1'), isTrue);
         expect(isSnapshotting(tester, 'Page 2'), isTrue);
         expect(fadingLayers(tester), hasLength(2));
@@ -1571,7 +1576,7 @@ void main() {
         // Pop.
         tester.state<NavigatorState>(find.byType(Navigator)).pop();
         await tester.pump();
-        await tester.pump(const Duration(milliseconds: 50));
+        await tester.pump(observer.transitionDuration * .1);
         expect(isSnapshotting(tester, 'Page 1'), isTrue);
         expect(isSnapshotting(tester, 'Page 2'), isTrue);
         expect(fadingLayers(tester), hasLength(2));
@@ -1588,11 +1593,12 @@ void main() {
     testWidgets(
       'PageRoute.allowSnapshotting = false disables snapshotting for that route only',
       (WidgetTester tester) async {
-        await tester.pumpWidget(fadeForwardsApp(secondRouteAllowSnapshotting: false));
+        final observer = TransitionDurationObserver();
+        await tester.pumpWidget(fadeForwardsApp(observer: observer, secondRouteAllowSnapshotting: false));
 
         tester.state<NavigatorState>(find.byType(Navigator)).pushNamed('/2');
         await tester.pump();
-        await tester.pump(const Duration(milliseconds: 50));
+        await tester.pump(observer.transitionDuration * .1);
         expect(isSnapshotting(tester, 'Page 1'), isTrue);
         expect(isSnapshotting(tester, 'Page 2'), isFalse);
 
