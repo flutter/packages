@@ -2,16 +2,11 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import '../data/time_picker.dart';
 import 'template.dart';
 
-class TimePickerTemplate extends TokenTemplate {
-  const TimePickerTemplate(
-    super.blockName,
-    super.fileName,
-    super.tokens, {
-    super.colorSchemePrefix = '_colors.',
-    super.textThemePrefix = '_textTheme.',
-  });
+class TimePickerTemplateM3 extends TokenTemplateM3 {
+  const TimePickerTemplateM3();
 
   static const String tokenGroup = 'md.comp.time-picker';
   static const String hourMinuteComponent = '$tokenGroup.time-selector';
@@ -20,10 +15,16 @@ class TimePickerTemplate extends TokenTemplate {
   static const String variant = '';
 
   @override
-  String generate() =>
+  String get name => 'Time Picker';
+
+  @override
+  String get parentFilePath => 'time_picker.dart';
+
+  @override
+  String generateContents(String className) =>
       '''
-class _${blockName}DefaultsM3 extends _TimePickerDefaults {
-  _${blockName}DefaultsM3(this.context, { this.entryMode = TimePickerEntryMode.dial });
+class $className extends _TimePickerDefaults {
+  $className(this.context, { this.entryMode = TimePickerEntryMode.dial });
 
   final BuildContext context;
   final TimePickerEntryMode entryMode;
@@ -33,7 +34,7 @@ class _${blockName}DefaultsM3 extends _TimePickerDefaults {
 
   @override
   Color get backgroundColor {
-    return ${componentColor("$tokenGroup.container")};
+    return ${color(TokenTimePicker.containerColor)};
   }
 
   @override
@@ -48,14 +49,14 @@ class _${blockName}DefaultsM3 extends _TimePickerDefaults {
 
   @override
   BorderSide get dayPeriodBorderSide {
-    return ${border('$dayPeriodComponent.outline')};
+    return ${border(color(TokenTimePicker.periodSelectorOutlineColor), width: TokenTimePicker.periodSelectorOutlineWidth)};
   }
 
   @override
   Color get dayPeriodColor {
     return WidgetStateColor.resolveWith((Set<WidgetState> states) {
       if (states.contains(WidgetState.selected)) {
-        return ${componentColor("$dayPeriodComponent.selected.container")};
+        return ${color(TokenTimePicker.periodSelectorSelectedContainerColor)};
       }
       // The unselected day period should match the overall picker dialog color.
       // Making it transparent enables that without being redundant and allows
@@ -66,17 +67,17 @@ class _${blockName}DefaultsM3 extends _TimePickerDefaults {
 
   @override
   OutlinedBorder get dayPeriodShape {
-    return ${shape("$dayPeriodComponent.container")}.copyWith(side: dayPeriodBorderSide);
+    return ${shape(TokenTimePicker.periodSelectorContainerShape)}.copyWith(side: dayPeriodBorderSide);
   }
 
   @override
   Size get dayPeriodPortraitSize {
-    return ${size('$dayPeriodComponent.vertical.container')};
+    return const Size(${number(TokenTimePicker.periodSelectorVerticalContainerWidth)}, ${number(TokenTimePicker.periodSelectorVerticalContainerHeight)});
   }
 
   @override
   Size get dayPeriodLandscapeSize {
-    return ${size('$dayPeriodComponent.horizontal.container')};
+    return const Size(${number(TokenTimePicker.periodSelectorHorizontalContainerWidth)}, ${number(TokenTimePicker.periodSelectorHorizontalContainerHeight)});
   }
 
   @override
@@ -91,82 +92,82 @@ class _${blockName}DefaultsM3 extends _TimePickerDefaults {
     return WidgetStateColor.resolveWith((Set<WidgetState> states) {
       if (states.contains(WidgetState.selected)) {
         if (states.contains(WidgetState.focused)) {
-          return ${componentColor("$dayPeriodComponent.selected.focus.label-text")};
+          return ${color(TokenTimePicker.periodSelectorSelectedFocusLabelTextColor)};
         }
         if (states.contains(WidgetState.hovered)) {
-          return ${componentColor("$dayPeriodComponent.selected.hover.label-text")};
+          return ${color(TokenTimePicker.periodSelectorSelectedHoverLabelTextColor)};
         }
         if (states.contains(WidgetState.pressed)) {
-          return ${componentColor("$dayPeriodComponent.selected.pressed.label-text")};
+          return ${color(TokenTimePicker.periodSelectorSelectedPressedLabelTextColor)};
         }
-        return ${componentColor("$dayPeriodComponent.selected.label-text")};
+        return ${color(TokenTimePicker.periodSelectorSelectedLabelTextColor)};
       }
       if (states.contains(WidgetState.focused)) {
-        return ${componentColor("$dayPeriodComponent.unselected.focus.label-text")};
+        return ${color(TokenTimePicker.periodSelectorUnselectedFocusLabelTextColor)};
       }
       if (states.contains(WidgetState.hovered)) {
-        return ${componentColor("$dayPeriodComponent.unselected.hover.label-text")};
+        return ${color(TokenTimePicker.periodSelectorUnselectedHoverLabelTextColor)};
       }
       if (states.contains(WidgetState.pressed)) {
-        return ${componentColor("$dayPeriodComponent.unselected.pressed.label-text")};
+        return ${color(TokenTimePicker.periodSelectorUnselectedPressedLabelTextColor)};
       }
-      return ${componentColor("$dayPeriodComponent.unselected.label-text")};
+      return ${color(TokenTimePicker.periodSelectorUnselectedLabelTextColor)};
     });
   }
 
   @override
   TextStyle get dayPeriodTextStyle {
-    return ${textStyle("$dayPeriodComponent.label-text")}!.copyWith(color: dayPeriodTextColor);
+    return ${textStyle(TokenTimePicker.periodSelectorLabelTextType, '_textTheme')}!.copyWith(color: dayPeriodTextColor);
   }
 
   @override
   Color get dialBackgroundColor {
-    return ${componentColor(dialComponent)};
+    return ${color(TokenTimePicker.clockDialColor)};
   }
 
   @override
   Color get dialHandColor {
-    return ${componentColor('$dialComponent.selector.handle.container')};
+    return ${color(TokenTimePicker.clockDialSelectorHandleContainerColor)};
   }
 
   @override
   Size get dialSize {
-    return ${size("$dialComponent.container")};
+    return const Size.square(${number(TokenTimePicker.clockDialContainerSize)});
   }
 
   @override
   double get handWidth {
-    return ${size("$dialComponent.selector.track.container")}.width;
+    return ${number(TokenTimePicker.clockDialSelectorTrackContainerWidth)};
   }
 
   @override
   double get dotRadius {
-    return ${size("$dialComponent.selector.handle.container")}.width / 2;
+    return ${number(TokenTimePicker.clockDialSelectorHandleContainerSize)} / 2;
   }
 
   @override
   double get centerRadius {
-    return ${size("$dialComponent.selector.center.container")}.width / 2;
+    return ${number(TokenTimePicker.clockDialSelectorCenterContainerSize)} / 2;
   }
 
   @override
   Color get dialTextColor {
     return WidgetStateColor.resolveWith((Set<WidgetState> states) {
       if (states.contains(WidgetState.selected)) {
-        return ${componentColor('$dialComponent.selected.label-text')};
+        return ${color(TokenTimePicker.clockDialSelectedLabelTextColor)};
       }
-      return ${componentColor('$dialComponent.unselected.label-text')};
+      return ${color(TokenTimePicker.clockDialUnselectedLabelTextColor)};
     });
   }
 
   @override
   TextStyle get dialTextStyle {
-    return ${textStyle('$dialComponent.label-text')}!;
+    return ${textStyle(TokenTimePicker.clockDialLabelTextType, '_textTheme')}!;
   }
 
   @override
   double get elevation {
-    return ${elevation("$tokenGroup.container")};
+    return ${number(TokenTimePicker.containerElevation)};
   }
 
   @override
@@ -177,8 +178,8 @@ class _${blockName}DefaultsM3 extends _TimePickerDefaults {
   @override
   TextStyle get helpTextStyle {
     return WidgetStateTextStyle.resolveWith((Set<WidgetState> states) {
-      final TextStyle textStyle = ${textStyle('$tokenGroup.headline')}!;
-      return textStyle.copyWith(color: ${componentColor('$tokenGroup.headline')});
+      final TextStyle textStyle = ${textStyle(TokenTimePicker.headlineType, '_textTheme')}!;
+      return textStyle.copyWith(color: ${color(TokenTimePicker.headlineColor)});
     });
   }
 
@@ -191,46 +192,42 @@ class _${blockName}DefaultsM3 extends _TimePickerDefaults {
   Color get hourMinuteColor {
     return WidgetStateColor.resolveWith((Set<WidgetState> states) {
       if (states.contains(WidgetState.selected)) {
-        Color overlayColor = ${componentColor('$hourMinuteComponent.selected.container')};
+        Color overlayColor = ${color(TokenTimePicker.timeSelectorSelectedContainerColor)};
         if (states.contains(WidgetState.pressed)) {
-          overlayColor = ${componentColor('$hourMinuteComponent.selected.pressed.state-layer')};
+          overlayColor = ${color(TokenTimePicker.timeSelectorSelectedPressedStateLayerColor)};
         } else if (states.contains(WidgetState.hovered)) {
-          const hoverOpacity = ${opacity('$hourMinuteComponent.hover.state-layer.opacity')};
-          overlayColor = ${componentColor('$hourMinuteComponent.selected.hover.state-layer')}.withOpacity(hoverOpacity);
+          overlayColor = ${colorWithOpacity(TokenTimePicker.timeSelectorSelectedHoverStateLayerColor, TokenTimePicker.timeSelectorHoverStateLayerOpacity)};
         } else if (states.contains(WidgetState.focused)) {
-          const focusOpacity = ${opacity('$hourMinuteComponent.focus.state-layer.opacity')};
-          overlayColor = ${componentColor('$hourMinuteComponent.selected.focus.state-layer')}.withOpacity(focusOpacity);
+          overlayColor = ${colorWithOpacity(TokenTimePicker.timeSelectorSelectedFocusStateLayerColor, TokenTimePicker.timeSelectorFocusStateLayerOpacity)};
         }
-        return Color.alphaBlend(overlayColor, ${componentColor('$hourMinuteComponent.selected.container')});
+        return Color.alphaBlend(overlayColor, ${color(TokenTimePicker.timeSelectorSelectedContainerColor)});
       } else {
-        Color overlayColor = ${componentColor('$hourMinuteComponent.unselected.container')};
+        Color overlayColor = ${color(TokenTimePicker.timeSelectorUnselectedContainerColor)};
         if (states.contains(WidgetState.pressed)) {
-          overlayColor = ${componentColor('$hourMinuteComponent.unselected.pressed.state-layer')};
+          overlayColor = ${color(TokenTimePicker.timeSelectorUnselectedPressedStateLayerColor)};
         } else if (states.contains(WidgetState.hovered)) {
-          const hoverOpacity = ${opacity('$hourMinuteComponent.hover.state-layer.opacity')};
-          overlayColor = ${componentColor('$hourMinuteComponent.unselected.hover.state-layer')}.withOpacity(hoverOpacity);
+          overlayColor = ${colorWithOpacity(TokenTimePicker.timeSelectorUnselectedHoverStateLayerColor, TokenTimePicker.timeSelectorHoverStateLayerOpacity)};
         } else if (states.contains(WidgetState.focused)) {
-          const focusOpacity = ${opacity('$hourMinuteComponent.focus.state-layer.opacity')};
-          overlayColor = ${componentColor('$hourMinuteComponent.unselected.focus.state-layer')}.withOpacity(focusOpacity);
+          overlayColor = ${colorWithOpacity(TokenTimePicker.timeSelectorUnselectedFocusStateLayerColor, TokenTimePicker.timeSelectorFocusStateLayerOpacity)};
         }
-        return Color.alphaBlend(overlayColor, ${componentColor('$hourMinuteComponent.unselected.container')});
+        return Color.alphaBlend(overlayColor, ${color(TokenTimePicker.timeSelectorUnselectedContainerColor)});
       }
     });
   }
 
   @override
   ShapeBorder get hourMinuteShape {
-    return ${shape('$hourMinuteComponent.container')};
+    return ${shape(TokenTimePicker.timeSelectorContainerShape)};
   }
 
   @override
   Size get hourMinuteSize {
-    return ${size('$hourMinuteComponent.container')};
+    return const Size(${number(TokenTimePicker.timeSelectorContainerWidth)}, ${number(TokenTimePicker.timeSelectorContainerHeight)});
   }
 
   @override
   Size get hourMinuteSize24Hour {
-    return Size(${size('$hourMinuteComponent.24h-vertical.container')}.width, hourMinuteSize.height);
+    return Size(${number(TokenTimePicker.timeSelector24hVerticalContainerWidth)}, hourMinuteSize.height);
   }
 
   @override
@@ -258,27 +255,27 @@ class _${blockName}DefaultsM3 extends _TimePickerDefaults {
     return WidgetStateProperty.resolveWith((Set<WidgetState> states) {
       if (states.contains(WidgetState.selected)) {
         if (states.contains(WidgetState.pressed)) {
-          return ${componentColor("$hourMinuteComponent.selected.pressed.label-text")};
+          return ${color(TokenTimePicker.timeSelectorSelectedPressedLabelTextColor)};
         }
         if (states.contains(WidgetState.hovered)) {
-          return ${componentColor("$hourMinuteComponent.selected.hover.label-text")};
+          return ${color(TokenTimePicker.timeSelectorSelectedHoverLabelTextColor)};
         }
         if (states.contains(WidgetState.focused)) {
-          return ${componentColor("$hourMinuteComponent.selected.focus.label-text")};
+          return ${color(TokenTimePicker.timeSelectorSelectedFocusLabelTextColor)};
         }
-        return ${componentColor("$hourMinuteComponent.selected.label-text")};
+        return ${color(TokenTimePicker.timeSelectorSelectedLabelTextColor)};
       } else {
         // unselected
         if (states.contains(WidgetState.pressed)) {
-          return ${componentColor("$hourMinuteComponent.unselected.pressed.label-text")};
+          return ${color(TokenTimePicker.timeSelectorUnselectedPressedLabelTextColor)};
         }
         if (states.contains(WidgetState.hovered)) {
-          return ${componentColor("$hourMinuteComponent.unselected.hover.label-text")};
+          return ${color(TokenTimePicker.timeSelectorUnselectedHoverLabelTextColor)};
         }
         if (states.contains(WidgetState.focused)) {
-          return ${componentColor("$hourMinuteComponent.unselected.focus.label-text")};
+          return ${color(TokenTimePicker.timeSelectorUnselectedFocusLabelTextColor)};
         }
-        return ${componentColor("$hourMinuteComponent.unselected.label-text")};
+        return ${color(TokenTimePicker.timeSelectorUnselectedLabelTextColor)};
       }
     });
   }
@@ -304,7 +301,7 @@ class _${blockName}DefaultsM3 extends _TimePickerDefaults {
     // 'time-input.container.shape', so this is using the radius from the shape
     // for the hour/minute selector. It's a BorderRadiusGeometry, so we have to
     // resolve it before we can use it.
-    final BorderRadius selectorRadius = ${shape('$hourMinuteComponent.container')}
+    final BorderRadius selectorRadius = ${shape(TokenTimePicker.timeSelectorContainerShape)}
       .borderRadius
       .resolve(Directionality.of(context));
     return InputDecorationThemeData(
@@ -341,7 +338,7 @@ class _${blockName}DefaultsM3 extends _TimePickerDefaults {
 
   @override
   ShapeBorder get shape {
-    return ${shape("$tokenGroup.container")};
+    return ${shape(TokenTimePicker.containerShape)};
   }
 
   @override
