@@ -473,6 +473,7 @@ class VideoPlayerOptions {
     this.preventsDisplaySleepDuringVideoPlayback = true,
     this.webOptions,
     this.backBufferDurationMs,
+    this.preferredAudioLanguage,
   }) : assert(
          backBufferDurationMs == null || backBufferDurationMs >= 0,
          'backBufferDurationMs must be zero or greater',
@@ -504,6 +505,9 @@ class VideoPlayerOptions {
   ///
   /// Ignored on platforms that do not support controlling the back buffer.
   final int? backBufferDurationMs;
+
+  /// Preferred audio language for the video.
+  final String? preferredAudioLanguage;
 }
 
 /// [VideoPlayerWebOptions] can be optionally used to set additional web settings
