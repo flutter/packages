@@ -141,6 +141,13 @@ API_AVAILABLE(ios(14))
                                                           maxWidth:self.maxWidth
                                                          maxHeight:self.maxHeight
                                                       imageQuality:self.desiredImageQuality];
+  if (savedPath == nil) {
+    [self completeOperationWithPath:nil
+                              error:[FlutterError errorWithCode:@"invalid_image"
+                                                        message:@"Could not save the image."
+                                                        details:nil]];
+    return;
+  }
   [self completeOperationWithPath:savedPath error:nil];
 }
 

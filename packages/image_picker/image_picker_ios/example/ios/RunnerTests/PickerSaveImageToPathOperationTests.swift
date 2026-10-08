@@ -5,6 +5,7 @@
 import ImageIO
 import Testing
 import UIKit
+import UniformTypeIdentifiers
 
 @testable import image_picker_ios
 
@@ -145,6 +146,22 @@ struct PickerSaveImageToPathOperationTests {
     #expect(savedError?.code == "invalid_image")
     #expect(savedError?.message == loadDataError.localizedDescription)
     #expect(savedError?.details as? String == "PHPickerDomain")
+  }
+
+  @Test func saveImageFailsWhenImageCannotBeDecoded() async throws {
+    let dataJPG = ImagePickerTestImages.jpgTestData
+    let truncatedJPG = Data(dataJPG.prefix(dataJPG.count / 2))
+    #expect(UIImage(data: truncatedJPG) == nil)
+    let itemProvider = NSItemProvider(
+      item: truncatedJPG as NSData, typeIdentifier: UTType.jpeg.identifier)
+    let result = FakePickerItem(itemProvider: itemProvider, assetIdentifier: nil)
+
+    let (savedPath, savedError) = try await runSaveOperation(result: result, fullMetadata: true)
+    let savedData = savedPath.flatMap { FileManager.default.contents(atPath: $0) }
+    #expect(savedPath == nil, "Returned a path to a \(savedData?.count ?? 0)-byte file.")
+    #expect(savedError?.code == "invalid_image")
+    #expect(savedError?.message == "Could not save the image.")
+    if let savedPath { try? FileManager.default.removeItem(atPath: savedPath) }
   }
 
   @Test func initWithNilResultReturnsNil() {
