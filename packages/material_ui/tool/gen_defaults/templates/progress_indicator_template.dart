@@ -36,7 +36,7 @@ class _CircularProgressIndicatorDefaultsM3 extends ProgressIndicatorThemeData {
   Color? get circularTrackColor => indeterminate ? null : ${color(TokenProgressIndicator.trackColor)};
 
   @override
-  double get strokeWidth => ${number(TokenProgressIndicatorCircular.trackThickness)};
+  double get strokeWidth => ${TokenProgressIndicatorCircular.trackThickness};
 
   @override
   double? get strokeAlign => CircularProgressIndicator.strokeAlignInside;
@@ -48,7 +48,7 @@ class _CircularProgressIndicatorDefaultsM3 extends ProgressIndicatorThemeData {
   );
 
   @override
-  double? get trackGap => ${number(TokenProgressIndicatorCircular.trackActiveIndicatorSpace)};
+  double? get trackGap => ${TokenProgressIndicatorCircular.trackActiveIndicatorSpace};
 
   @override
   EdgeInsetsGeometry? get circularTrackPadding => const EdgeInsets.all(4.0);
@@ -67,19 +67,19 @@ class _LinearProgressIndicatorDefaultsM3 extends ProgressIndicatorThemeData {
   Color get linearTrackColor => ${color(TokenProgressIndicator.trackColor)};
 
   @override
-  double get linearMinHeight => ${number(TokenProgressIndicatorLinear.trackThickness)};
+  double get linearMinHeight => ${TokenProgressIndicatorLinear.trackThickness};
 
   @override
-  BorderRadius get borderRadius => const BorderRadius.all(Radius.circular(${number(TokenProgressIndicatorLinear.trackThickness)} / 2));
+  BorderRadius get borderRadius => const BorderRadius.all(Radius.circular(${TokenProgressIndicatorLinear.trackThickness} / 2));
 
   @override
   Color get stopIndicatorColor => ${color(TokenProgressIndicator.stopIndicatorColor)};
 
   @override
-  double? get stopIndicatorRadius => ${number(TokenProgressIndicatorLinear.stopIndicatorSize)} / 2;
+  double? get stopIndicatorRadius => ${TokenProgressIndicatorLinear.stopIndicatorSize} / 2;
 
   @override
-  double? get trackGap => ${number(TokenProgressIndicatorLinear.trackActiveIndicatorSpace)};
+  double? get trackGap => ${TokenProgressIndicatorLinear.trackActiveIndicatorSpace};
 }
 ''';
 }
