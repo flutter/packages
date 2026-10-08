@@ -1690,6 +1690,7 @@ class DartGenerator extends StructuredGenerator<InternalDartOptions> {
                 indent.writeScoped('if (_jniApi != null) {', '}', () {
                   final _JniType returnType = _JniType.fromTypeDeclaration(method.returnType);
                   const resultVar = '${varNamePrefix}res';
+                  const dartResultVar = '${varNamePrefix}dartTypeRes';
                   final String methodCallReturnString = switch (jniMember.kind) {
                     _JniMemberKind.setter => '',
                     _JniMemberKind.getter =>
@@ -1718,9 +1719,9 @@ class DartGenerator extends StructuredGenerator<InternalDartOptions> {
                           returnType.nonNullableNeedsUnwrapping) &&
                       returnType.type.baseName != 'void') {
                     indent.writeln(
-                      'final ${returnType.getDartReturnType(method.isAsynchronous)} dartTypeRes = ${returnType.getToDartCall(method.returnType, varName: resultVar, forceConversion: method.isAsynchronous)};',
+                      'final ${returnType.getDartReturnType(method.isAsynchronous)} $dartResultVar = ${returnType.getToDartCall(method.returnType, varName: resultVar, forceConversion: method.isAsynchronous)};',
                     );
-                    indent.writeln('return dartTypeRes;');
+                    indent.writeln('return $dartResultVar;');
                   }
                 }, addTrailingNewline: false);
                 isFirstBranch = false;
@@ -1730,6 +1731,7 @@ class DartGenerator extends StructuredGenerator<InternalDartOptions> {
                 indent.addScoped('$elseStr if (_ffiApi != null) {', '}', () {
                   const errorVar = '${varNamePrefix}error';
                   const resultVar = '${varNamePrefix}res';
+                  const dartResultVar = '${varNamePrefix}dartTypeRes';
                   const completerVar = '${varNamePrefix}completer';
                   final _FfiType returnType = _FfiType.fromTypeDeclaration(method.returnType);
                   final methodCallReturnString = returnType.type.isVoid || method.isAsynchronous
@@ -1767,9 +1769,9 @@ return ${generatorOptions.useJni ? 'await ' : ''}$completerVar.future;
                     indent.writeln('_throwIfFfiError($errorVar);');
                     if (!returnType.type.isVoid) {
                       indent.writeln(
-                        'final ${returnType.getDartReturnType(method.isAsynchronous)} dartTypeRes = ${returnType.getToDartCall(method.returnType, varName: '$resultVar$forceRes')};',
+                        'final ${returnType.getDartReturnType(method.isAsynchronous)} $dartResultVar = ${returnType.getToDartCall(method.returnType, varName: '$resultVar$forceRes')};',
                       );
-                      indent.writeln('return dartTypeRes;');
+                      indent.writeln('return $dartResultVar;');
                     } else {
                       indent.writeln('return;');
                     }
@@ -3483,8 +3485,8 @@ class _JniMember {
 
 /// Predicts the names JNIgen gives the Dart members of one binding class.
 ///
-/// This mirrors JNIgen's renamer
-/// (https://github.com/dart-lang/native/blob/main/pkgs/jnigen/lib/src/bindings/renamer.dart):
+/// This mirrors JNIgen 1.0.1's renamer
+/// (https://github.com/dart-lang/native/blob/jnigen-v1.0.1/pkgs/jnigen/lib/src/bindings/renamer.dart):
 /// members are named in declaration order, Java getters and setters on classes
 /// (but not interfaces) become Dart properties, names that are already taken
 /// get a `$<count>` suffix, and Dart reserved words get a `$` suffix.

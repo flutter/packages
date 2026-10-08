@@ -8,7 +8,9 @@
   `@asyncCallback` methods, `@SwiftFunction` overloads, methods named `type`,
   parameters named `error`, and multiple FFI files in the same module.
 * [kotlin] Adds validation errors for code that Kotlin JNI doesn't support:
-  event channels, ProxyApis, and sealed classes.
+  event channels, ProxyApis, and sealed classes. Files that use Kotlin JNI
+  previously generated method channel code for event channels and ProxyApis;
+  move them to a separate pigeon file that doesn't use Kotlin JNI.
 * [dart] Adds a validation error for API method names that conflict with
   generated native interop members.
 * [dart] Fixes native interop code that didn't compile for JNI member names that

@@ -2407,6 +2407,12 @@ name: foobar
               parameters: <Parameter>[Parameter(name: 'completer', type: string)],
               returnType: string,
             ),
+            Method(
+              name: 'convert',
+              location: ApiLocation.host,
+              parameters: <Parameter>[Parameter(name: 'dartTypeRes', type: string)],
+              returnType: string,
+            ),
           ],
         ),
         AstFlutterApi(
@@ -2457,6 +2463,13 @@ name: foobar
       ),
     );
     expect(code, contains('final Completer<String> pigeonVar_completer = Completer<String>();'));
+    expect(code, contains('_jniApi.convert(_PigeonJniCodec.writeValue<JString>(dartTypeRes))'));
+    expect(
+      code,
+      contains('_PigeonFfiCodec.writeValue<NSString>(dartTypeRes), wrappedError: pigeonVar_error)'),
+    );
+    expect(code, contains('return pigeonVar_dartTypeRes;'));
+    expect(code, isNot(contains(' dartTypeRes = ')));
     expect(code, contains('JString send(JString arg_response,JString arg_errorOut,)'));
     expect(
       code,

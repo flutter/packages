@@ -400,7 +400,7 @@ const Set<String> _swiftFfiReservedFieldNames = <String>{
 };
 
 const String _moveToNonFfiFileSuggestion =
-    "Move them to a separate pigeon file that doesn't use Swift FFI (`swift_use_ffi`).";
+    "Move them to a separate pigeon file that doesn't use Swift FFI (`SwiftOptions.useFfi` or `--swift_use_ffi`).";
 
 void _errorOnSwiftFfiUnsupportedFeatures(
   List<Error> errors,
@@ -467,7 +467,7 @@ void _errorOnSwiftFfiUnsupportedFeatures(
 }
 
 const String _moveToNonJniFileSuggestion =
-    "Move them to a separate pigeon file that doesn't use Kotlin JNI (`kotlin_use_jni`).";
+    "Move them to a separate pigeon file that doesn't use Kotlin JNI (`KotlinOptions.useJni` or `--kotlin_use_jni`).";
 
 void _errorOnKotlinJniUnsupportedFeatures(List<Error> errors, Root root) {
   for (final Api api in root.apis) {
