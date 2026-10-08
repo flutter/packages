@@ -262,24 +262,11 @@ class Radio<T> extends StatefulWidget {
   ///
   /// <callout-box>
   ///
-  // TODO(framework): Add unit tests to this code snippet.
-  // https://github.com/flutter/flutter/issues/188530
-  ///
   /// This example resolves the [fillColor] based on the current [WidgetState]
   /// of the [Radio], providing a different [Color] when it is
   /// [WidgetState.disabled].
   ///
-  /// ```dart
-  /// Radio<int>(
-  ///   value: 1,
-  ///   fillColor: WidgetStateProperty.resolveWith<Color>((Set<WidgetState> states) {
-  ///     if (states.contains(WidgetState.disabled)) {
-  ///       return Colors.orange.withValues(alpha: .32);
-  ///     }
-  ///     return Colors.orange;
-  ///   })
-  /// )
-  /// ```
+  /// {@example /example/lib/radio/radio.snippet.0.dart#body indent=strip}
   ///
   /// </callout-box>
   /// {@endtemplate}

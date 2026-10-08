@@ -1,3 +1,10 @@
+## 29.0.7
+
+* [kotlin] Fixes native interop calls failing with `ClassNotFoundException` in minified
+  Android release builds, by adding `@Keep` to every generated class that JNI reaches by name.
+* Updates native interop guides and migration skill with the keep rules that Android
+  release builds need for the Kotlin classes that `package:jni` looks up by name.
+
 ## 29.0.6
 
 * Updates native interop guides and migration skill with SwiftPM `<plugin_name>_objc_gen` target guidance.
