@@ -403,7 +403,11 @@ class _FadeForwardsPageTransition extends StatelessWidget {
           opacity: FadeForwardsPageTransitionsBuilder._fadeInTransition.animate(animation),
           child: SlideTransition(
             position: _forwardTranslationTween.animate(animation),
-            child: child,
+            child: _FadeForwardsSnapshot(
+              animation: animation,
+              allowSnapshotting: allowSnapshotting,
+              child: child,
+            ),
           ),
         );
       },
