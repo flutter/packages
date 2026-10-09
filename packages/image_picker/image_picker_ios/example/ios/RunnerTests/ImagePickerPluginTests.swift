@@ -10,7 +10,9 @@ import UniformTypeIdentifiers
 
 @testable import image_picker_ios
 
-@Suite
+// These tests share UIApplication, windows, and the main queue. Running them
+// together deadlocks a test that is waiting for a main-queue callback.
+@Suite(.serialized)
 @MainActor
 struct ImagePickerPluginTests {
   private func pluginWithAuthorizedCamera() -> (
