@@ -655,6 +655,22 @@ typedef SWIFT_ENUM(NSInteger, NativeInteropAnotherEnum, closed){
     NativeInteropAnotherEnumJustInCase = 0,
 };
 
+/// A sealed class, to test sealed class handling.
+/// Generated bridge class from Pigeon that moves data from Swift to
+/// Objective-C.
+SWIFT_CLASS("_TtC11test_plugin30NativeInteropSealedClassBridge")
+@interface NativeInteropSealedClassBridge : NSObject
+- (nonnull instancetype)init OBJC_DESIGNATED_INITIALIZER;
+@end
+
+/// A subclass of <code>NativeInteropSealedClass</code> without fields.
+/// Generated bridge class from Pigeon that moves data from Swift to
+/// Objective-C.
+SWIFT_CLASS("_TtC11test_plugin35NativeInteropEmptySealedClassBridge")
+@interface NativeInteropEmptySealedClassBridge : NativeInteropSealedClassBridge
+- (nonnull instancetype)init OBJC_DESIGNATED_INITIALIZER;
+@end
+
 @class NativeInteropTestsError;
 /// The core interface that the Dart platform_test code implements for host
 /// integration tests to call into.
@@ -687,6 +703,14 @@ SWIFT_PROTOCOL(
                                               error:
                                                   (NativeInteropTestsError* _Nonnull)
                                                       error
+    SWIFT_WARN_UNUSED_RESULT;
+/// Returns the passed sealed class, to test sealed class handling.
+- (NativeInteropSealedClassBridge* _Nullable)
+    echoNativeInteropSealedClassWithSealedClass:
+        (NativeInteropSealedClassBridge* _Nullable)sealedClass
+                                          error:
+                                              (NativeInteropTestsError* _Nonnull)
+                                                  error
     SWIFT_WARN_UNUSED_RESULT;
 /// Returns passed in arguments of multiple types.
 /// Tests multiple-arity FlutterApi handling.
@@ -1311,6 +1335,7 @@ SWIFT_CLASS(
 - (nonnull instancetype)init OBJC_DESIGNATED_INITIALIZER;
 @end
 
+@class NativeInteropSealedClassWrapperBridge;
 /// Generated setup class from Pigeon to register implemented
 /// NativeInteropHostIntegrationCoreApi classes.
 SWIFT_CLASS("_TtC11test_plugin40NativeInteropHostIntegrationCoreApiSetup")
@@ -1494,6 +1519,34 @@ SWIFT_CLASS("_TtC11test_plugin40NativeInteropHostIntegrationCoreApiSetup")
     echoClassWrapperWithWrapper:
         (NativeInteropAllClassesWrapperBridge* _Nonnull)wrapper
                    wrappedError:(NativeInteropTestsError* _Nonnull)wrappedError
+    SWIFT_WARN_UNUSED_RESULT;
+/// Returns the passed sealed class, to test sealed class handling.
+- (NativeInteropSealedClassBridge* _Nullable)
+    echoSealedClassWithSealedClass:
+        (NativeInteropSealedClassBridge* _Nonnull)sealedClass
+                      wrappedError:
+                          (NativeInteropTestsError* _Nonnull)wrappedError
+    SWIFT_WARN_UNUSED_RESULT;
+/// Returns the passed sealed class, to test nullable sealed class handling.
+- (NativeInteropSealedClassBridge* _Nullable)
+    echoNullableSealedClassWithSealedClass:
+        (NativeInteropSealedClassBridge* _Nullable)sealedClass
+                              wrappedError:(NativeInteropTestsError* _Nonnull)
+                                               wrappedError
+    SWIFT_WARN_UNUSED_RESULT;
+/// Returns the passed list, to test sealed classes in lists.
+- (NSArray<NSObject*>* _Nullable)
+    echoSealedClassListWithSealedClassList:
+        (NSArray<NSObject*>* _Nonnull)sealedClassList
+                              wrappedError:(NativeInteropTestsError* _Nonnull)
+                                               wrappedError
+    SWIFT_WARN_UNUSED_RESULT;
+/// Returns the passed wrapper, to test sealed classes in class fields.
+- (NativeInteropSealedClassWrapperBridge* _Nullable)
+    echoSealedClassWrapperWithWrapper:
+        (NativeInteropSealedClassWrapperBridge* _Nonnull)wrapper
+                         wrappedError:
+                             (NativeInteropTestsError* _Nonnull)wrappedError
     SWIFT_WARN_UNUSED_RESULT;
 /// Returns the passed enum to test serialization and deserialization.
 - (NSNumber* _Nullable)echoEnumWithAnEnum:(enum NativeInteropAnEnum)anEnum
@@ -1940,6 +1993,15 @@ SWIFT_CLASS("_TtC11test_plugin40NativeInteropHostIntegrationCoreApiSetup")
                                    (void (^_Nonnull)(
                                        NativeInteropAllTypesBridge* _Nullable))
                                        completionHandler;
+/// Returns the passed sealed class asynchronously.
+- (void)echoAsyncSealedClassWithSealedClass:
+            (NativeInteropSealedClassBridge* _Nonnull)sealedClass
+                               wrappedError:(NativeInteropTestsError* _Nonnull)
+                                                wrappedError
+                          completionHandler:
+                              (void (^_Nonnull)(
+                                  NativeInteropSealedClassBridge* _Nullable))
+                                  completionHandler;
 /// Returns the passed object, to test serialization and deserialization.
 - (void)
     echoAsyncNullableNativeInteropAllNullableTypesWithEverything:
@@ -2159,6 +2221,12 @@ SWIFT_CLASS("_TtC11test_plugin40NativeInteropHostIntegrationCoreApiSetup")
                                                       (NativeInteropTestsError* _Nonnull)
                                                           wrappedError
     SWIFT_WARN_UNUSED_RESULT;
+- (NativeInteropSealedClassBridge* _Nullable)
+    callFlutterEchoSealedClassWithSealedClass:
+        (NativeInteropSealedClassBridge* _Nonnull)sealedClass
+                                 wrappedError:
+                                     (NativeInteropTestsError* _Nonnull)
+                                         wrappedError SWIFT_WARN_UNUSED_RESULT;
 - (NativeInteropAllNullableTypesBridge* _Nullable)
     callFlutterSendMultipleNullableTypesWithANullableBool:
         (NSNumber* _Nullable)aNullableBool
@@ -2940,6 +3008,49 @@ SWIFT_CLASS("_TtC11test_plugin40NativeInteropHostIntegrationCoreApiSetup")
                               wrappedError:(NativeInteropTestsError* _Nonnull)
                                                wrappedError
     SWIFT_WARN_UNUSED_RESULT;
+@end
+
+/// A subclass of <code>NativeInteropSealedClass</code> with fields.
+/// Generated bridge class from Pigeon that moves data from Swift to
+/// Objective-C.
+SWIFT_CLASS("_TtC11test_plugin40NativeInteropSealedClassWithFieldsBridge")
+@interface NativeInteropSealedClassWithFieldsBridge
+    : NativeInteropSealedClassBridge
+- (nonnull instancetype)
+    initWithAString:(NSString* _Nonnull)aString
+       aNullableInt:(NSNumber* _Nullable)aNullableInt
+             anEnum:(enum NativeInteropAnEnum)anEnum
+             aClass:
+                 (NativeInteropAllNullableTypesWithoutRecursionBridge* _Nullable)
+                     aClass OBJC_DESIGNATED_INITIALIZER;
+@property(nonatomic, strong) NSString* _Nonnull aString;
+@property(nonatomic, strong) NSNumber* _Nullable aNullableInt;
+@property(nonatomic) enum NativeInteropAnEnum anEnum;
+@property(nonatomic, strong)
+    NativeInteropAllNullableTypesWithoutRecursionBridge* _Nullable aClass;
+- (nonnull instancetype)init SWIFT_UNAVAILABLE;
++ (nonnull instancetype)new SWIFT_UNAVAILABLE_MSG("-init is unavailable");
+@end
+
+/// A class with sealed class fields, to test sealed classes nested in classes
+/// and lists.
+/// Generated bridge class from Pigeon that moves data from Swift to
+/// Objective-C.
+SWIFT_CLASS("_TtC11test_plugin37NativeInteropSealedClassWrapperBridge")
+@interface NativeInteropSealedClassWrapperBridge : NSObject
+- (nonnull instancetype)
+    initWithSealedClass:(NativeInteropSealedClassBridge* _Nonnull)sealedClass
+    nullableSealedClass:
+        (NativeInteropSealedClassBridge* _Nullable)nullableSealedClass
+        sealedClassList:(NSArray<NSObject*>* _Nonnull)sealedClassList
+    OBJC_DESIGNATED_INITIALIZER;
+@property(nonatomic, strong)
+    NativeInteropSealedClassBridge* _Nonnull sealedClass;
+@property(nonatomic, strong)
+    NativeInteropSealedClassBridge* _Nullable nullableSealedClass;
+@property(nonatomic, copy) NSArray<NSObject*>* _Nonnull sealedClassList;
+- (nonnull instancetype)init SWIFT_UNAVAILABLE;
++ (nonnull instancetype)new SWIFT_UNAVAILABLE_MSG("-init is unavailable");
 @end
 
 /// Error class for passing custom error details to Dart side.

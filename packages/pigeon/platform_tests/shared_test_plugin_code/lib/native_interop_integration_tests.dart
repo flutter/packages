@@ -256,6 +256,49 @@ void runPigeonNativeInteropIntegrationTests(TargetGenerator targetGenerator) {
       expect(classWrapper, receivedClassWrapper);
     });
 
+    testWidgets('sealed classes serialize and deserialize correctly', (WidgetTester _) async {
+      final NativeInteropHostIntegrationCoreApiForNativeInterop? api =
+          NativeInteropHostIntegrationCoreApiForNativeInterop.getInstance();
+
+      for (final NativeInteropSealedClass sealedClass in sealedClasses) {
+        expect(api!.echoSealedClass(sealedClass), sealedClass);
+      }
+    });
+
+    testWidgets('nullable sealed classes serialize and deserialize correctly', (
+      WidgetTester _,
+    ) async {
+      final NativeInteropHostIntegrationCoreApiForNativeInterop? api =
+          NativeInteropHostIntegrationCoreApiForNativeInterop.getInstance();
+
+      for (final NativeInteropSealedClass sealedClass in sealedClasses) {
+        expect(api!.echoNullableSealedClass(sealedClass), sealedClass);
+      }
+      expect(api!.echoNullableSealedClass(null), isNull);
+    });
+
+    testWidgets('sealed classes in lists serialize and deserialize correctly', (
+      WidgetTester _,
+    ) async {
+      final NativeInteropHostIntegrationCoreApiForNativeInterop? api =
+          NativeInteropHostIntegrationCoreApiForNativeInterop.getInstance();
+
+      expect(api!.echoSealedClassList(sealedClasses), sealedClasses);
+    });
+
+    testWidgets('sealed classes in class fields serialize and deserialize correctly', (
+      WidgetTester _,
+    ) async {
+      final NativeInteropHostIntegrationCoreApiForNativeInterop? api =
+          NativeInteropHostIntegrationCoreApiForNativeInterop.getInstance();
+      final NativeInteropSealedClassWrapper wrapper = sealedClassWrapperMaker();
+
+      expect(api!.echoSealedClassWrapper(wrapper), wrapper);
+
+      wrapper.nullableSealedClass = null;
+      expect(api.echoSealedClassWrapper(wrapper), wrapper);
+    });
+
     testWidgets('Arguments of multiple types serialize and deserialize correctly', (
       WidgetTester _,
     ) async {
@@ -1170,6 +1213,15 @@ void runPigeonNativeInteropIntegrationTests(TargetGenerator targetGenerator) {
       expect(api!.noopAsync(), completes);
     });
 
+    testWidgets('sealed classes serialize and deserialize correctly', (WidgetTester _) async {
+      final NativeInteropHostIntegrationCoreApiForNativeInterop? api =
+          NativeInteropHostIntegrationCoreApiForNativeInterop.getInstance();
+
+      for (final NativeInteropSealedClass sealedClass in sealedClasses) {
+        expect(await api!.echoAsyncSealedClass(sealedClass), sealedClass);
+      }
+    });
+
     testWidgets('async errors are returned from non void methods correctly', (
       WidgetTester _,
     ) async {
@@ -1826,6 +1878,12 @@ void runPigeonNativeInteropIntegrationTests(TargetGenerator targetGenerator) {
       );
 
       expect(echoObject, genericNativeInteropAllTypes);
+    });
+
+    testWidgets('sealed classes serialize and deserialize correctly', (WidgetTester _) async {
+      for (final NativeInteropSealedClass sealedClass in sealedClasses) {
+        expect(api.callFlutterEchoSealedClass(sealedClass), sealedClass);
+      }
     });
 
     testWidgets('all nullable datatypes serialize and deserialize correctly', (
@@ -3242,6 +3300,11 @@ class NativeInteropFlutterIntegrationCoreApiImpl extends NativeInteropFlutterInt
     NativeInteropAllNullableTypes? everything,
   ) {
     return everything;
+  }
+
+  @override
+  NativeInteropSealedClass echoNativeInteropSealedClass(NativeInteropSealedClass sealedClass) {
+    return sealedClass;
   }
 
   @override

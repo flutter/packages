@@ -284,6 +284,32 @@ class NativeInteropAllClassesWrapper {
   Map<int?, NativeInteropAllNullableTypesWithoutRecursion?>? nullableClassMap;
 }
 
+/// A sealed class, to test sealed class handling.
+sealed class NativeInteropSealedClass {}
+
+/// A subclass of `NativeInteropSealedClass` with fields.
+class NativeInteropSealedClassWithFields extends NativeInteropSealedClass {
+  NativeInteropSealedClassWithFields(this.aString, this.aNullableInt, this.anEnum, this.aClass);
+
+  String aString;
+  int? aNullableInt;
+  NativeInteropAnEnum anEnum;
+  NativeInteropAllNullableTypesWithoutRecursion? aClass;
+}
+
+/// A subclass of `NativeInteropSealedClass` without fields.
+class NativeInteropEmptySealedClass extends NativeInteropSealedClass {}
+
+/// A class with sealed class fields, to test sealed classes nested in classes
+/// and lists.
+class NativeInteropSealedClassWrapper {
+  NativeInteropSealedClassWrapper(this.sealedClass, this.nullableSealedClass, this.sealedClassList);
+
+  NativeInteropSealedClass sealedClass;
+  NativeInteropSealedClass? nullableSealedClass;
+  List<NativeInteropSealedClass> sealedClassList;
+}
+
 /// The core interface that each host language plugin must implement in
 /// platform_test integration tests.
 @HostApi()
@@ -459,6 +485,28 @@ abstract class NativeInteropHostIntegrationCoreApi {
   @ObjCSelector('echoClassWrapper:')
   @SwiftFunction('echo(_:)')
   NativeInteropAllClassesWrapper echoClassWrapper(NativeInteropAllClassesWrapper wrapper);
+
+  /// Returns the passed sealed class, to test sealed class handling.
+  @ObjCSelector('echoSealedClass:')
+  @SwiftFunction('echo(sealedClass:)')
+  NativeInteropSealedClass echoSealedClass(NativeInteropSealedClass sealedClass);
+
+  /// Returns the passed sealed class, to test nullable sealed class handling.
+  @ObjCSelector('echoNullableSealedClass:')
+  @SwiftFunction('echoNullable(sealedClass:)')
+  NativeInteropSealedClass? echoNullableSealedClass(NativeInteropSealedClass? sealedClass);
+
+  /// Returns the passed list, to test sealed classes in lists.
+  @ObjCSelector('echoSealedClassList:')
+  @SwiftFunction('echo(sealedClassList:)')
+  List<NativeInteropSealedClass> echoSealedClassList(
+    List<NativeInteropSealedClass> sealedClassList,
+  );
+
+  /// Returns the passed wrapper, to test sealed classes in class fields.
+  @ObjCSelector('echoSealedClassWrapper:')
+  @SwiftFunction('echo(sealedClassWrapper:)')
+  NativeInteropSealedClassWrapper echoSealedClassWrapper(NativeInteropSealedClassWrapper wrapper);
 
   /// Returns the passed enum to test serialization and deserialization.
   @ObjCSelector('echoEnum:')
@@ -819,6 +867,12 @@ abstract class NativeInteropHostIntegrationCoreApi {
   @SwiftFunction('echoAsync(_:)')
   NativeInteropAllTypes echoAsyncNativeInteropAllTypes(NativeInteropAllTypes everything);
 
+  /// Returns the passed sealed class asynchronously.
+  @async
+  @ObjCSelector('echoAsyncSealedClass:')
+  @SwiftFunction('echoAsync(sealedClass:)')
+  NativeInteropSealedClass echoAsyncSealedClass(NativeInteropSealedClass sealedClass);
+
   /// Returns the passed object, to test serialization and deserialization.
   @async
   @ObjCSelector('echoAsyncNullableNativeInteropAllNullableTypes:')
@@ -971,6 +1025,10 @@ abstract class NativeInteropHostIntegrationCoreApi {
   NativeInteropAllNullableTypes? callFlutterEchoNativeInteropAllNullableTypes(
     NativeInteropAllNullableTypes? everything,
   );
+
+  @ObjCSelector('callFlutterEchoSealedClass:')
+  @SwiftFunction('callFlutterEcho(sealedClass:)')
+  NativeInteropSealedClass callFlutterEchoSealedClass(NativeInteropSealedClass sealedClass);
 
   @ObjCSelector('callFlutterSendMultipleNullableTypesABool:anInt:aString:')
   @SwiftFunction('callFlutterSendMultipleNullableTypes(aBool:anInt:aString:)')
@@ -1456,6 +1514,11 @@ abstract class NativeInteropFlutterIntegrationCoreApi {
   NativeInteropAllNullableTypes? echoNativeInteropAllNullableTypes(
     NativeInteropAllNullableTypes? everything,
   );
+
+  /// Returns the passed sealed class, to test sealed class handling.
+  @ObjCSelector('echoNativeInteropSealedClass:')
+  @SwiftFunction('echo(sealedClass:)')
+  NativeInteropSealedClass echoNativeInteropSealedClass(NativeInteropSealedClass sealedClass);
 
   /// Returns passed in arguments of multiple types.
   ///

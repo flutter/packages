@@ -378,6 +378,9 @@ class SwiftGenerator extends StructuredGenerator<InternalSwiftOptions> {
   }
 
   void _writeFfiCodec(Indent indent, Root root) {
+    // Sealed classes have no bridge object of their own, and the branches for
+    // their subclasses already match every value they can hold.
+    final Iterable<Class> concreteClasses = root.classes.where((Class c) => !c.isSealed);
     indent.newln();
     indent.format('''
 @objc class ${_classNamePrefix}PigeonInternalNull: NSObject {}
@@ -440,7 +443,7 @@ class _PigeonFfiCodec {
     }
     if (value is NSString) {
       return value as! NSString
-    ${root.classes.map((Class dataClass) {
+    ${concreteClasses.map((Class dataClass) {
       return '''
       } else if (value is ${dataClass.name}Bridge) {
         return (value! as! ${dataClass.name}Bridge).toSwift();
@@ -507,7 +510,7 @@ class _PigeonFfiCodec {
     }
     if (value is String) {
       return value as! NSString
-    ${root.classes.map((Class dataClass) {
+    ${concreteClasses.map((Class dataClass) {
       return '''
       } else if (value is ${dataClass.name}) {
         return ${dataClass.name}Bridge.fromSwift(value as? ${dataClass.name});
@@ -679,11 +682,17 @@ class _PigeonFfiCodec {
     final bridge = useFfi ? 'Bridge' : '';
     final protocols = <String>[];
     if (useFfi) {
-      protocols.add('NSObject');
-    }
-    if (classDefinition.superClass != null) {
+      // A subclass's bridge extends its sealed parent's bridge, so it can cross
+      // wherever the sealed class can.
+      protocols.add(
+        classDefinition.superClass == null
+            ? 'NSObject'
+            : '${classDefinition.superClass!.name}Bridge',
+      );
+    } else if (classDefinition.superClass != null) {
       protocols.add(classDefinition.superClass!.name);
-    } else {
+    }
+    if (classDefinition.superClass == null) {
       if (hashable) {
         protocols.add('Hashable');
       }
@@ -705,7 +714,9 @@ class _PigeonFfiCodec {
     indent.addScoped('{', '', () {
       final Iterable<NamedType> fields = getFieldsInSerializationOrder(classDefinition);
 
-      if (classDefinition.isSwiftClass || useFfi) {
+      // A bridge without fields inherits `init()`; declaring it again would
+      // need `override`.
+      if (useFfi ? fields.isNotEmpty : classDefinition.isSwiftClass) {
         _writeClassInit(
           indent,
           fields.toList(),
@@ -894,6 +905,7 @@ if (wrapped == nil) {
     _writeDataClassSignature(indent, classDefinition, useFfi: true, hashable: false);
     indent.writeScoped('', '}', () {
       if (classDefinition.isSealed) {
+        _writeSealedFfiBridgeConversions(indent, classDefinition);
         return;
       }
       indent.writeln('// swift-format-ignore: AlwaysUseLowerCamelCase');
@@ -925,6 +937,53 @@ if (wrapped == nil) {
         });
       });
     });
+  }
+
+  /// Writes the conversions of a sealed class's bridge.
+  ///
+  /// Both pick the subclass by its runtime type. `toSwift` is static because an
+  /// instance method would make each subclass bridge's own `toSwift()`
+  /// ambiguous wherever the expected type isn't that subclass.
+  void _writeSealedFfiBridgeConversions(Indent indent, Class classDefinition) {
+    final String name = classDefinition.name;
+    indent.writeln('// swift-format-ignore: AlwaysUseLowerCamelCase');
+    indent.writeScoped(
+      'static func fromSwift(_ ${varNamePrefix}Class: $name?) -> ${name}Bridge? {',
+      '}',
+      () {
+        indent.writeScoped('switch ${varNamePrefix}Class {', '}', () {
+          for (final Class child in classDefinition.children) {
+            indent.writeln('case let ${varNamePrefix}value as ${child.name}:');
+            indent.nest(1, () {
+              indent.writeln('return ${child.name}Bridge.fromSwift(${varNamePrefix}value)');
+            });
+          }
+          indent.writeln('default:');
+          indent.nest(1, () {
+            indent.writeln('return nil');
+          });
+        });
+      },
+    );
+    indent.writeln('// swift-format-ignore: AlwaysUseLowerCamelCase');
+    indent.writeScoped(
+      'static func toSwift(_ ${varNamePrefix}bridge: ${name}Bridge?) -> $name? {',
+      '}',
+      () {
+        indent.writeScoped('switch ${varNamePrefix}bridge {', '}', () {
+          for (final Class child in classDefinition.children) {
+            indent.writeln('case let ${varNamePrefix}value as ${child.name}Bridge:');
+            indent.nest(1, () {
+              indent.writeln('return ${varNamePrefix}value.toSwift()');
+            });
+          }
+          indent.writeln('default:');
+          indent.nest(1, () {
+            indent.writeln('return nil');
+          });
+        });
+      },
+    );
   }
 
   String _varToObjc(String varName, TypeDeclaration type, {bool forceNullable = false}) {
@@ -1022,6 +1081,9 @@ if (wrapped == nil) {
               : varName;
         }
         if (type.isClass) {
+          if (type.associatedClass!.isSealed) {
+            return '${type.baseName}Bridge.toSwift($varName)${type.isNullable || forceNullable ? '' : '!'}';
+          }
           return '$checkNullish$varName${nullable.isEmpty ? '' : '!'}.toSwift()';
         }
         return varName;

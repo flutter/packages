@@ -2512,6 +2512,73 @@ enum NativeInteropAnotherEnum {
   };
 }
 
+/// A subclass of <code>NativeInteropSealedClass</code> without fields.
+/// Generated bridge class from Pigeon that moves data from Swift to Objective-C.
+extension type NativeInteropEmptySealedClassBridge._(objc.ObjCObject object$)
+    implements objc.ObjCObject, NativeInteropSealedClassBridge {
+  /// Constructs a [NativeInteropEmptySealedClassBridge] that points to the same underlying object as [other].
+  NativeInteropEmptySealedClassBridge.as(objc.ObjCObject other) : object$ = other {
+    assert(isA(object$));
+  }
+
+  /// Constructs a [NativeInteropEmptySealedClassBridge] that wraps the given raw object pointer.
+  NativeInteropEmptySealedClassBridge.fromPointer(
+    ffi.Pointer<objc.ObjCObjectImpl> other, {
+    bool retain = false,
+    bool release = false,
+  }) : object$ = objc.ObjCObject(other, retain: retain, release: release) {
+    assert(isA(object$));
+  }
+
+  /// Returns whether [obj] is an instance of [NativeInteropEmptySealedClassBridge].
+  static bool isA(objc.ObjCObject? obj) => obj == null
+      ? false
+      : _objc_msgSend_19nvye5(
+          obj.ref.pointer,
+          _sel_isKindOfClass_,
+          _class_NativeInteropEmptySealedClassBridge,
+        );
+
+  /// alloc
+  static NativeInteropEmptySealedClassBridge alloc() {
+    final $ret = _objc_msgSend_151sglz(_class_NativeInteropEmptySealedClassBridge, _sel_alloc);
+    return NativeInteropEmptySealedClassBridge.fromPointer($ret, retain: false, release: true);
+  }
+
+  /// allocWithZone:
+  static NativeInteropEmptySealedClassBridge allocWithZone(ffi.Pointer<objc.NSZone> zone) {
+    final $ret = _objc_msgSend_1cwp428(
+      _class_NativeInteropEmptySealedClassBridge,
+      _sel_allocWithZone_,
+      zone,
+    );
+    return NativeInteropEmptySealedClassBridge.fromPointer($ret, retain: false, release: true);
+  }
+
+  /// new
+  static NativeInteropEmptySealedClassBridge new$() {
+    final $ret = _objc_msgSend_151sglz(_class_NativeInteropEmptySealedClassBridge, _sel_new);
+    return NativeInteropEmptySealedClassBridge.fromPointer($ret, retain: false, release: true);
+  }
+
+  /// Returns a new instance of NativeInteropEmptySealedClassBridge constructed with the default `new` method.
+  NativeInteropEmptySealedClassBridge() : this.as(new$().object$);
+}
+
+extension NativeInteropEmptySealedClassBridge$Methods on NativeInteropEmptySealedClassBridge {
+  /// init
+  NativeInteropEmptySealedClassBridge init() {
+    final _$$ref = object$.ref;
+    objc.checkOsVersionInternal(
+      'NativeInteropEmptySealedClassBridge.init',
+      iOS: (false, (2, 0, 0)),
+      macOS: (false, (10, 0, 0)),
+    );
+    final $ret = _objc_msgSend_151sglz(_$$ref.retainAndReturnPointer(), _sel_init);
+    return NativeInteropEmptySealedClassBridge.fromPointer($ret, retain: false, release: true);
+  }
+}
+
 /// The core interface that the Dart platform_test code implements for host
 /// integration tests to call into.
 /// Generated protocol from Pigeon that represents Flutter messages that can be called from Swift.
@@ -3743,6 +3810,25 @@ extension NativeInteropFlutterIntegrationCoreApiBridge$Methods
     return $ret.address == 0 ? null : objc.NSNumber.fromPointer($ret, retain: true, release: true);
   }
 
+  /// Returns the passed sealed class, to test sealed class handling.
+  NativeInteropSealedClassBridge? echoNativeInteropSealedClassWithSealedClass(
+    NativeInteropSealedClassBridge? sealedClass, {
+    required NativeInteropTestsError error,
+  }) {
+    final _$$ref = object$.ref;
+    final _$$ref$1 = sealedClass?.ref;
+    final _$$ref$2 = error.ref;
+    final $ret = _objc_msgSend_15qeuct(
+      _$$ref.pointer,
+      _sel_echoNativeInteropSealedClassWithSealedClass_error_,
+      _$$ref$1?.pointer ?? ffi.nullptr,
+      _$$ref$2.pointer,
+    );
+    return $ret.address == 0
+        ? null
+        : NativeInteropSealedClassBridge.fromPointer($ret, retain: true, release: true);
+  }
+
   /// Returns the passed list, to test serialization and deserialization.
   objc.NSArray? echoNonNullClassListWithClassList(
     objc.NSArray? classList, {
@@ -4787,6 +4873,11 @@ interface class NativeInteropFlutterIntegrationCoreApiBridge$Builder {
     echoNativeInteropAllTypesWithEverything_error_,
     required objc.NSNumber? Function(objc.NSNumber?, NativeInteropTestsError)
     echoNativeInteropAnotherEnumWithAnotherEnum_error_,
+    required NativeInteropSealedClassBridge? Function(
+      NativeInteropSealedClassBridge?,
+      NativeInteropTestsError,
+    )
+    echoNativeInteropSealedClassWithSealedClass_error_,
     required objc.NSArray? Function(objc.NSArray?, NativeInteropTestsError)
     echoNonNullClassListWithClassList_error_,
     required objc.NSDictionary? Function(objc.NSDictionary?, NativeInteropTestsError)
@@ -5109,6 +5200,9 @@ interface class NativeInteropFlutterIntegrationCoreApiBridge$Builder {
     NativeInteropFlutterIntegrationCoreApiBridge$Builder
         .echoNativeInteropAnotherEnumWithAnotherEnum_error_
         .implement(builder, echoNativeInteropAnotherEnumWithAnotherEnum_error_);
+    NativeInteropFlutterIntegrationCoreApiBridge$Builder
+        .echoNativeInteropSealedClassWithSealedClass_error_
+        .implement(builder, echoNativeInteropSealedClassWithSealedClass_error_);
     NativeInteropFlutterIntegrationCoreApiBridge$Builder.echoNonNullClassListWithClassList_error_
         .implement(builder, echoNonNullClassListWithClassList_error_);
     NativeInteropFlutterIntegrationCoreApiBridge$Builder.echoNonNullClassMapWithClassMap_error_
@@ -5560,6 +5654,11 @@ interface class NativeInteropFlutterIntegrationCoreApiBridge$Builder {
     echoNativeInteropAllTypesWithEverything_error_,
     required objc.NSNumber? Function(objc.NSNumber?, NativeInteropTestsError)
     echoNativeInteropAnotherEnumWithAnotherEnum_error_,
+    required NativeInteropSealedClassBridge? Function(
+      NativeInteropSealedClassBridge?,
+      NativeInteropTestsError,
+    )
+    echoNativeInteropSealedClassWithSealedClass_error_,
     required objc.NSArray? Function(objc.NSArray?, NativeInteropTestsError)
     echoNonNullClassListWithClassList_error_,
     required objc.NSDictionary? Function(objc.NSDictionary?, NativeInteropTestsError)
@@ -5879,6 +5978,9 @@ interface class NativeInteropFlutterIntegrationCoreApiBridge$Builder {
     NativeInteropFlutterIntegrationCoreApiBridge$Builder
         .echoNativeInteropAnotherEnumWithAnotherEnum_error_
         .implement(builder, echoNativeInteropAnotherEnumWithAnotherEnum_error_);
+    NativeInteropFlutterIntegrationCoreApiBridge$Builder
+        .echoNativeInteropSealedClassWithSealedClass_error_
+        .implement(builder, echoNativeInteropSealedClassWithSealedClass_error_);
     NativeInteropFlutterIntegrationCoreApiBridge$Builder.echoNonNullClassListWithClassList_error_
         .implement(builder, echoNonNullClassListWithClassList_error_);
     NativeInteropFlutterIntegrationCoreApiBridge$Builder.echoNonNullClassMapWithClassMap_error_
@@ -6328,6 +6430,11 @@ interface class NativeInteropFlutterIntegrationCoreApiBridge$Builder {
     echoNativeInteropAllTypesWithEverything_error_,
     required objc.NSNumber? Function(objc.NSNumber?, NativeInteropTestsError)
     echoNativeInteropAnotherEnumWithAnotherEnum_error_,
+    required NativeInteropSealedClassBridge? Function(
+      NativeInteropSealedClassBridge?,
+      NativeInteropTestsError,
+    )
+    echoNativeInteropSealedClassWithSealedClass_error_,
     required objc.NSArray? Function(objc.NSArray?, NativeInteropTestsError)
     echoNonNullClassListWithClassList_error_,
     required objc.NSDictionary? Function(objc.NSDictionary?, NativeInteropTestsError)
@@ -6680,6 +6787,9 @@ interface class NativeInteropFlutterIntegrationCoreApiBridge$Builder {
     NativeInteropFlutterIntegrationCoreApiBridge$Builder
         .echoNativeInteropAnotherEnumWithAnotherEnum_error_
         .implement(builder, echoNativeInteropAnotherEnumWithAnotherEnum_error_);
+    NativeInteropFlutterIntegrationCoreApiBridge$Builder
+        .echoNativeInteropSealedClassWithSealedClass_error_
+        .implement(builder, echoNativeInteropSealedClassWithSealedClass_error_);
     NativeInteropFlutterIntegrationCoreApiBridge$Builder.echoNonNullClassListWithClassList_error_
         .implement(builder, echoNonNullClassListWithClassList_error_);
     NativeInteropFlutterIntegrationCoreApiBridge$Builder.echoNonNullClassMapWithClassMap_error_
@@ -7130,6 +7240,11 @@ interface class NativeInteropFlutterIntegrationCoreApiBridge$Builder {
     echoNativeInteropAllTypesWithEverything_error_,
     required objc.NSNumber? Function(objc.NSNumber?, NativeInteropTestsError)
     echoNativeInteropAnotherEnumWithAnotherEnum_error_,
+    required NativeInteropSealedClassBridge? Function(
+      NativeInteropSealedClassBridge?,
+      NativeInteropTestsError,
+    )
+    echoNativeInteropSealedClassWithSealedClass_error_,
     required objc.NSArray? Function(objc.NSArray?, NativeInteropTestsError)
     echoNonNullClassListWithClassList_error_,
     required objc.NSDictionary? Function(objc.NSDictionary?, NativeInteropTestsError)
@@ -7479,6 +7594,9 @@ interface class NativeInteropFlutterIntegrationCoreApiBridge$Builder {
     NativeInteropFlutterIntegrationCoreApiBridge$Builder
         .echoNativeInteropAnotherEnumWithAnotherEnum_error_
         .implement(builder, echoNativeInteropAnotherEnumWithAnotherEnum_error_);
+    NativeInteropFlutterIntegrationCoreApiBridge$Builder
+        .echoNativeInteropSealedClassWithSealedClass_error_
+        .implement(builder, echoNativeInteropSealedClassWithSealedClass_error_);
     NativeInteropFlutterIntegrationCoreApiBridge$Builder.echoNonNullClassListWithClassList_error_
         .implement(builder, echoNonNullClassListWithClassList_error_);
     NativeInteropFlutterIntegrationCoreApiBridge$Builder.echoNonNullClassMapWithClassMap_error_
@@ -7926,6 +8044,11 @@ interface class NativeInteropFlutterIntegrationCoreApiBridge$Builder {
     echoNativeInteropAllTypesWithEverything_error_,
     required objc.NSNumber? Function(objc.NSNumber?, NativeInteropTestsError)
     echoNativeInteropAnotherEnumWithAnotherEnum_error_,
+    required NativeInteropSealedClassBridge? Function(
+      NativeInteropSealedClassBridge?,
+      NativeInteropTestsError,
+    )
+    echoNativeInteropSealedClassWithSealedClass_error_,
     required objc.NSArray? Function(objc.NSArray?, NativeInteropTestsError)
     echoNonNullClassListWithClassList_error_,
     required objc.NSDictionary? Function(objc.NSDictionary?, NativeInteropTestsError)
@@ -8278,6 +8401,9 @@ interface class NativeInteropFlutterIntegrationCoreApiBridge$Builder {
     NativeInteropFlutterIntegrationCoreApiBridge$Builder
         .echoNativeInteropAnotherEnumWithAnotherEnum_error_
         .implement(builder, echoNativeInteropAnotherEnumWithAnotherEnum_error_);
+    NativeInteropFlutterIntegrationCoreApiBridge$Builder
+        .echoNativeInteropSealedClassWithSealedClass_error_
+        .implement(builder, echoNativeInteropSealedClassWithSealedClass_error_);
     NativeInteropFlutterIntegrationCoreApiBridge$Builder.echoNonNullClassListWithClassList_error_
         .implement(builder, echoNonNullClassListWithClassList_error_);
     NativeInteropFlutterIntegrationCoreApiBridge$Builder.echoNonNullClassMapWithClassMap_error_
@@ -8728,6 +8854,11 @@ interface class NativeInteropFlutterIntegrationCoreApiBridge$Builder {
     echoNativeInteropAllTypesWithEverything_error_,
     required objc.NSNumber? Function(objc.NSNumber?, NativeInteropTestsError)
     echoNativeInteropAnotherEnumWithAnotherEnum_error_,
+    required NativeInteropSealedClassBridge? Function(
+      NativeInteropSealedClassBridge?,
+      NativeInteropTestsError,
+    )
+    echoNativeInteropSealedClassWithSealedClass_error_,
     required objc.NSArray? Function(objc.NSArray?, NativeInteropTestsError)
     echoNonNullClassListWithClassList_error_,
     required objc.NSDictionary? Function(objc.NSDictionary?, NativeInteropTestsError)
@@ -9077,6 +9208,9 @@ interface class NativeInteropFlutterIntegrationCoreApiBridge$Builder {
     NativeInteropFlutterIntegrationCoreApiBridge$Builder
         .echoNativeInteropAnotherEnumWithAnotherEnum_error_
         .implement(builder, echoNativeInteropAnotherEnumWithAnotherEnum_error_);
+    NativeInteropFlutterIntegrationCoreApiBridge$Builder
+        .echoNativeInteropSealedClassWithSealedClass_error_
+        .implement(builder, echoNativeInteropSealedClassWithSealedClass_error_);
     NativeInteropFlutterIntegrationCoreApiBridge$Builder.echoNonNullClassListWithClassList_error_
         .implement(builder, echoNonNullClassListWithClassList_error_);
     NativeInteropFlutterIntegrationCoreApiBridge$Builder.echoNonNullClassMapWithClassMap_error_
@@ -13342,6 +13476,49 @@ interface class NativeInteropFlutterIntegrationCoreApiBridge$Builder {
             ),
       );
 
+  /// Returns the passed sealed class, to test sealed class handling.
+  static final echoNativeInteropSealedClassWithSealedClass_error_ =
+      objc.ObjCProtocolMethod<
+        NativeInteropSealedClassBridge? Function(
+          NativeInteropSealedClassBridge?,
+          NativeInteropTestsError,
+        )
+      >(
+        _protocol_NativeInteropFlutterIntegrationCoreApiBridge,
+        _sel_echoNativeInteropSealedClassWithSealedClass_error_,
+        ffi.Native.addressOf<
+              ffi.NativeFunction<
+                ffi.Pointer<objc.ObjCObjectImpl> Function(
+                  ffi.Pointer<objc.ObjCObjectImpl>,
+                  ffi.Pointer<ffi.Void>,
+                  ffi.Pointer<objc.ObjCObjectImpl>,
+                  ffi.Pointer<objc.ObjCObjectImpl>,
+                )
+              >
+            >(_julz8q_protocolTrampoline_zi5eed)
+            .cast(),
+        objc.getProtocolMethodSignature(
+          _protocol_NativeInteropFlutterIntegrationCoreApiBridge,
+          _sel_echoNativeInteropSealedClassWithSealedClass_error_,
+          isRequired: true,
+          isInstanceMethod: true,
+        ),
+        (
+          NativeInteropSealedClassBridge? Function(
+            NativeInteropSealedClassBridge?,
+            NativeInteropTestsError,
+          )
+          func,
+        ) =>
+            ObjCBlock_NativeInteropSealedClassBridge_ffiVoid_NativeInteropSealedClassBridge_NativeInteropTestsError.fromFunction(
+              (
+                ffi.Pointer<ffi.Void> _,
+                NativeInteropSealedClassBridge? arg1,
+                NativeInteropTestsError arg2,
+              ) => func(arg1, arg2),
+            ),
+      );
+
   /// Returns the passed list, to test serialization and deserialization.
   static final echoNonNullClassListWithClassList_error_ =
       objc.ObjCProtocolMethod<objc.NSArray? Function(objc.NSArray?, NativeInteropTestsError)>(
@@ -16624,6 +16801,25 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
         : NativeInteropTestsPigeonTypedData.fromPointer($ret, retain: true, release: true);
   }
 
+  /// callFlutterEchoSealedClassWithSealedClass:wrappedError:
+  NativeInteropSealedClassBridge? callFlutterEchoSealedClassWithSealedClass(
+    NativeInteropSealedClassBridge sealedClass, {
+    required NativeInteropTestsError wrappedError,
+  }) {
+    final _$$ref = object$.ref;
+    final _$$ref$1 = sealedClass.ref;
+    final _$$ref$2 = wrappedError.ref;
+    final $ret = _objc_msgSend_15qeuct(
+      _$$ref.pointer,
+      _sel_callFlutterEchoSealedClassWithSealedClass_wrappedError_,
+      _$$ref$1.pointer,
+      _$$ref$2.pointer,
+    );
+    return $ret.address == 0
+        ? null
+        : NativeInteropSealedClassBridge.fromPointer($ret, retain: true, release: true);
+  }
+
   /// callFlutterEchoStringMapWithStringMap:wrappedError:
   objc.NSDictionary? callFlutterEchoStringMapWithStringMap(
     objc.NSDictionary stringMap, {
@@ -17654,6 +17850,25 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
     );
   }
 
+  /// Returns the passed sealed class asynchronously.
+  void echoAsyncSealedClassWithSealedClass(
+    NativeInteropSealedClassBridge sealedClass, {
+    required NativeInteropTestsError wrappedError,
+    required objc.ObjCBlock<ffi.Void Function(NativeInteropSealedClassBridge?)> completionHandler,
+  }) {
+    final _$$ref = object$.ref;
+    final _$$ref$1 = sealedClass.ref;
+    final _$$ref$2 = wrappedError.ref;
+    final _$$ref$3 = completionHandler.ref;
+    _objc_msgSend_18qun1e(
+      _$$ref.pointer,
+      _sel_echoAsyncSealedClassWithSealedClass_wrappedError_completionHandler_,
+      _$$ref$1.pointer,
+      _$$ref$2.pointer,
+      _$$ref$3.pointer,
+    );
+  }
+
   /// Returns the passed map, to test asynchronous serialization and deserialization.
   void echoAsyncStringMapWithStringMap(
     objc.NSDictionary stringMap, {
@@ -18547,6 +18762,25 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
     return $ret.address == 0 ? null : objc.NSObject.fromPointer($ret, retain: true, release: true);
   }
 
+  /// Returns the passed sealed class, to test nullable sealed class handling.
+  NativeInteropSealedClassBridge? echoNullableSealedClassWithSealedClass(
+    NativeInteropSealedClassBridge? sealedClass, {
+    required NativeInteropTestsError wrappedError,
+  }) {
+    final _$$ref = object$.ref;
+    final _$$ref$1 = sealedClass?.ref;
+    final _$$ref$2 = wrappedError.ref;
+    final $ret = _objc_msgSend_15qeuct(
+      _$$ref.pointer,
+      _sel_echoNullableSealedClassWithSealedClass_wrappedError_,
+      _$$ref$1?.pointer ?? ffi.nullptr,
+      _$$ref$2.pointer,
+    );
+    return $ret.address == 0
+        ? null
+        : NativeInteropSealedClassBridge.fromPointer($ret, retain: true, release: true);
+  }
+
   /// Returns the passed map, to test serialization and deserialization.
   objc.NSDictionary? echoNullableStringMapWithStringMap(
     objc.NSDictionary? stringMap, {
@@ -18666,6 +18900,61 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
       _$$ref$1.pointer,
     );
     return $ret.address == 0 ? null : objc.NSNumber.fromPointer($ret, retain: true, release: true);
+  }
+
+  /// Returns the passed list, to test sealed classes in lists.
+  objc.NSArray? echoSealedClassListWithSealedClassList(
+    objc.NSArray sealedClassList, {
+    required NativeInteropTestsError wrappedError,
+  }) {
+    final _$$ref = object$.ref;
+    final _$$ref$1 = sealedClassList.ref;
+    final _$$ref$2 = wrappedError.ref;
+    final $ret = _objc_msgSend_15qeuct(
+      _$$ref.pointer,
+      _sel_echoSealedClassListWithSealedClassList_wrappedError_,
+      _$$ref$1.pointer,
+      _$$ref$2.pointer,
+    );
+    return $ret.address == 0 ? null : objc.NSArray.fromPointer($ret, retain: true, release: true);
+  }
+
+  /// Returns the passed sealed class, to test sealed class handling.
+  NativeInteropSealedClassBridge? echoSealedClassWithSealedClass(
+    NativeInteropSealedClassBridge sealedClass, {
+    required NativeInteropTestsError wrappedError,
+  }) {
+    final _$$ref = object$.ref;
+    final _$$ref$1 = sealedClass.ref;
+    final _$$ref$2 = wrappedError.ref;
+    final $ret = _objc_msgSend_15qeuct(
+      _$$ref.pointer,
+      _sel_echoSealedClassWithSealedClass_wrappedError_,
+      _$$ref$1.pointer,
+      _$$ref$2.pointer,
+    );
+    return $ret.address == 0
+        ? null
+        : NativeInteropSealedClassBridge.fromPointer($ret, retain: true, release: true);
+  }
+
+  /// Returns the passed wrapper, to test sealed classes in class fields.
+  NativeInteropSealedClassWrapperBridge? echoSealedClassWrapperWithWrapper(
+    NativeInteropSealedClassWrapperBridge wrapper, {
+    required NativeInteropTestsError wrappedError,
+  }) {
+    final _$$ref = object$.ref;
+    final _$$ref$1 = wrapper.ref;
+    final _$$ref$2 = wrappedError.ref;
+    final $ret = _objc_msgSend_15qeuct(
+      _$$ref.pointer,
+      _sel_echoSealedClassWrapperWithWrapper_wrappedError_,
+      _$$ref$1.pointer,
+      _$$ref$2.pointer,
+    );
+    return $ret.address == 0
+        ? null
+        : NativeInteropSealedClassWrapperBridge.fromPointer($ret, retain: true, release: true);
   }
 
   /// Returns the passed list, to test serialization and deserialization.
@@ -19039,6 +19328,318 @@ extension NativeInteropHostIntegrationCoreApiSetup$Methods
       _$$ref$1.pointer,
     );
     return $ret.address == 0 ? null : objc.NSObject.fromPointer($ret, retain: true, release: true);
+  }
+}
+
+/// A sealed class, to test sealed class handling.
+/// Generated bridge class from Pigeon that moves data from Swift to Objective-C.
+extension type NativeInteropSealedClassBridge._(objc.ObjCObject object$)
+    implements objc.ObjCObject, objc.NSObject {
+  /// Constructs a [NativeInteropSealedClassBridge] that points to the same underlying object as [other].
+  NativeInteropSealedClassBridge.as(objc.ObjCObject other) : object$ = other {
+    assert(isA(object$));
+  }
+
+  /// Constructs a [NativeInteropSealedClassBridge] that wraps the given raw object pointer.
+  NativeInteropSealedClassBridge.fromPointer(
+    ffi.Pointer<objc.ObjCObjectImpl> other, {
+    bool retain = false,
+    bool release = false,
+  }) : object$ = objc.ObjCObject(other, retain: retain, release: release) {
+    assert(isA(object$));
+  }
+
+  /// Returns whether [obj] is an instance of [NativeInteropSealedClassBridge].
+  static bool isA(objc.ObjCObject? obj) => obj == null
+      ? false
+      : _objc_msgSend_19nvye5(
+          obj.ref.pointer,
+          _sel_isKindOfClass_,
+          _class_NativeInteropSealedClassBridge,
+        );
+
+  /// alloc
+  static NativeInteropSealedClassBridge alloc() {
+    final $ret = _objc_msgSend_151sglz(_class_NativeInteropSealedClassBridge, _sel_alloc);
+    return NativeInteropSealedClassBridge.fromPointer($ret, retain: false, release: true);
+  }
+
+  /// allocWithZone:
+  static NativeInteropSealedClassBridge allocWithZone(ffi.Pointer<objc.NSZone> zone) {
+    final $ret = _objc_msgSend_1cwp428(
+      _class_NativeInteropSealedClassBridge,
+      _sel_allocWithZone_,
+      zone,
+    );
+    return NativeInteropSealedClassBridge.fromPointer($ret, retain: false, release: true);
+  }
+
+  /// new
+  static NativeInteropSealedClassBridge new$() {
+    final $ret = _objc_msgSend_151sglz(_class_NativeInteropSealedClassBridge, _sel_new);
+    return NativeInteropSealedClassBridge.fromPointer($ret, retain: false, release: true);
+  }
+
+  /// Returns a new instance of NativeInteropSealedClassBridge constructed with the default `new` method.
+  NativeInteropSealedClassBridge() : this.as(new$().object$);
+}
+
+extension NativeInteropSealedClassBridge$Methods on NativeInteropSealedClassBridge {
+  /// init
+  NativeInteropSealedClassBridge init() {
+    final _$$ref = object$.ref;
+    objc.checkOsVersionInternal(
+      'NativeInteropSealedClassBridge.init',
+      iOS: (false, (2, 0, 0)),
+      macOS: (false, (10, 0, 0)),
+    );
+    final $ret = _objc_msgSend_151sglz(_$$ref.retainAndReturnPointer(), _sel_init);
+    return NativeInteropSealedClassBridge.fromPointer($ret, retain: false, release: true);
+  }
+}
+
+/// A subclass of <code>NativeInteropSealedClass</code> with fields.
+/// Generated bridge class from Pigeon that moves data from Swift to Objective-C.
+extension type NativeInteropSealedClassWithFieldsBridge._(objc.ObjCObject object$)
+    implements objc.ObjCObject, NativeInteropSealedClassBridge {
+  /// Constructs a [NativeInteropSealedClassWithFieldsBridge] that points to the same underlying object as [other].
+  NativeInteropSealedClassWithFieldsBridge.as(objc.ObjCObject other) : object$ = other {
+    assert(isA(object$));
+  }
+
+  /// Constructs a [NativeInteropSealedClassWithFieldsBridge] that wraps the given raw object pointer.
+  NativeInteropSealedClassWithFieldsBridge.fromPointer(
+    ffi.Pointer<objc.ObjCObjectImpl> other, {
+    bool retain = false,
+    bool release = false,
+  }) : object$ = objc.ObjCObject(other, retain: retain, release: release) {
+    assert(isA(object$));
+  }
+
+  /// Returns whether [obj] is an instance of [NativeInteropSealedClassWithFieldsBridge].
+  static bool isA(objc.ObjCObject? obj) => obj == null
+      ? false
+      : _objc_msgSend_19nvye5(
+          obj.ref.pointer,
+          _sel_isKindOfClass_,
+          _class_NativeInteropSealedClassWithFieldsBridge,
+        );
+
+  /// alloc
+  static NativeInteropSealedClassWithFieldsBridge alloc() {
+    final $ret = _objc_msgSend_151sglz(_class_NativeInteropSealedClassWithFieldsBridge, _sel_alloc);
+    return NativeInteropSealedClassWithFieldsBridge.fromPointer($ret, retain: false, release: true);
+  }
+
+  /// allocWithZone:
+  static NativeInteropSealedClassWithFieldsBridge allocWithZone(ffi.Pointer<objc.NSZone> zone) {
+    final $ret = _objc_msgSend_1cwp428(
+      _class_NativeInteropSealedClassWithFieldsBridge,
+      _sel_allocWithZone_,
+      zone,
+    );
+    return NativeInteropSealedClassWithFieldsBridge.fromPointer($ret, retain: false, release: true);
+  }
+}
+
+extension NativeInteropSealedClassWithFieldsBridge$Methods
+    on NativeInteropSealedClassWithFieldsBridge {
+  /// aClass
+  NativeInteropAllNullableTypesWithoutRecursionBridge? get aClass {
+    final _$$ref = object$.ref;
+    final $ret = _objc_msgSend_151sglz(_$$ref.pointer, _sel_aClass);
+    return $ret.address == 0
+        ? null
+        : NativeInteropAllNullableTypesWithoutRecursionBridge.fromPointer(
+            $ret,
+            retain: true,
+            release: true,
+          );
+  }
+
+  /// aNullableInt
+  objc.NSNumber? get aNullableInt {
+    final _$$ref = object$.ref;
+    final $ret = _objc_msgSend_151sglz(_$$ref.pointer, _sel_aNullableInt);
+    return $ret.address == 0 ? null : objc.NSNumber.fromPointer($ret, retain: true, release: true);
+  }
+
+  /// aString
+  objc.NSString get aString {
+    final _$$ref = object$.ref;
+    final $ret = _objc_msgSend_151sglz(_$$ref.pointer, _sel_aString);
+    return objc.NSString.fromPointer($ret, retain: true, release: true);
+  }
+
+  /// anEnum
+  NativeInteropAnEnum get anEnum {
+    final _$$ref = object$.ref;
+    final $ret = _objc_msgSend_13e57b1(_$$ref.pointer, _sel_anEnum);
+    return NativeInteropAnEnum.fromValue($ret);
+  }
+
+  /// initWithAString:aNullableInt:anEnum:aClass:
+  NativeInteropSealedClassWithFieldsBridge initWithAString(
+    objc.NSString aString, {
+    objc.NSNumber? aNullableInt,
+    required NativeInteropAnEnum anEnum,
+    NativeInteropAllNullableTypesWithoutRecursionBridge? aClass,
+  }) {
+    final _$$ref = object$.ref;
+    final _$$ref$1 = aString.ref;
+    final _$$ref$2 = aNullableInt?.ref;
+    final _$$ref$3 = aClass?.ref;
+    final $ret = _objc_msgSend_18arvtv(
+      _$$ref.retainAndReturnPointer(),
+      _sel_initWithAString_aNullableInt_anEnum_aClass_,
+      _$$ref$1.pointer,
+      _$$ref$2?.pointer ?? ffi.nullptr,
+      anEnum.value,
+      _$$ref$3?.pointer ?? ffi.nullptr,
+    );
+    return NativeInteropSealedClassWithFieldsBridge.fromPointer($ret, retain: false, release: true);
+  }
+
+  /// setAClass:
+  set aClass(NativeInteropAllNullableTypesWithoutRecursionBridge? value) {
+    final _$$ref = object$.ref;
+    final _$$ref$1 = value?.ref;
+    _objc_msgSend_xtuoz7(_$$ref.pointer, _sel_setAClass_, _$$ref$1?.pointer ?? ffi.nullptr);
+  }
+
+  /// setANullableInt:
+  set aNullableInt(objc.NSNumber? value) {
+    final _$$ref = object$.ref;
+    final _$$ref$1 = value?.ref;
+    _objc_msgSend_xtuoz7(_$$ref.pointer, _sel_setANullableInt_, _$$ref$1?.pointer ?? ffi.nullptr);
+  }
+
+  /// setAString:
+  set aString(objc.NSString value) {
+    final _$$ref = object$.ref;
+    final _$$ref$1 = value.ref;
+    _objc_msgSend_xtuoz7(_$$ref.pointer, _sel_setAString_, _$$ref$1.pointer);
+  }
+
+  /// setAnEnum:
+  set anEnum(NativeInteropAnEnum value) {
+    final _$$ref = object$.ref;
+    _objc_msgSend_wqpzrx(_$$ref.pointer, _sel_setAnEnum_, value.value);
+  }
+}
+
+/// A class with sealed class fields, to test sealed classes nested in classes
+/// and lists.
+/// Generated bridge class from Pigeon that moves data from Swift to Objective-C.
+extension type NativeInteropSealedClassWrapperBridge._(objc.ObjCObject object$)
+    implements objc.ObjCObject, objc.NSObject {
+  /// Constructs a [NativeInteropSealedClassWrapperBridge] that points to the same underlying object as [other].
+  NativeInteropSealedClassWrapperBridge.as(objc.ObjCObject other) : object$ = other {
+    assert(isA(object$));
+  }
+
+  /// Constructs a [NativeInteropSealedClassWrapperBridge] that wraps the given raw object pointer.
+  NativeInteropSealedClassWrapperBridge.fromPointer(
+    ffi.Pointer<objc.ObjCObjectImpl> other, {
+    bool retain = false,
+    bool release = false,
+  }) : object$ = objc.ObjCObject(other, retain: retain, release: release) {
+    assert(isA(object$));
+  }
+
+  /// Returns whether [obj] is an instance of [NativeInteropSealedClassWrapperBridge].
+  static bool isA(objc.ObjCObject? obj) => obj == null
+      ? false
+      : _objc_msgSend_19nvye5(
+          obj.ref.pointer,
+          _sel_isKindOfClass_,
+          _class_NativeInteropSealedClassWrapperBridge,
+        );
+
+  /// alloc
+  static NativeInteropSealedClassWrapperBridge alloc() {
+    final $ret = _objc_msgSend_151sglz(_class_NativeInteropSealedClassWrapperBridge, _sel_alloc);
+    return NativeInteropSealedClassWrapperBridge.fromPointer($ret, retain: false, release: true);
+  }
+
+  /// allocWithZone:
+  static NativeInteropSealedClassWrapperBridge allocWithZone(ffi.Pointer<objc.NSZone> zone) {
+    final $ret = _objc_msgSend_1cwp428(
+      _class_NativeInteropSealedClassWrapperBridge,
+      _sel_allocWithZone_,
+      zone,
+    );
+    return NativeInteropSealedClassWrapperBridge.fromPointer($ret, retain: false, release: true);
+  }
+}
+
+extension NativeInteropSealedClassWrapperBridge$Methods on NativeInteropSealedClassWrapperBridge {
+  /// initWithSealedClass:nullableSealedClass:sealedClassList:
+  NativeInteropSealedClassWrapperBridge initWithSealedClass(
+    NativeInteropSealedClassBridge sealedClass, {
+    NativeInteropSealedClassBridge? nullableSealedClass,
+    required objc.NSArray sealedClassList,
+  }) {
+    final _$$ref = object$.ref;
+    final _$$ref$1 = sealedClass.ref;
+    final _$$ref$2 = nullableSealedClass?.ref;
+    final _$$ref$3 = sealedClassList.ref;
+    final $ret = _objc_msgSend_11spmsz(
+      _$$ref.retainAndReturnPointer(),
+      _sel_initWithSealedClass_nullableSealedClass_sealedClassList_,
+      _$$ref$1.pointer,
+      _$$ref$2?.pointer ?? ffi.nullptr,
+      _$$ref$3.pointer,
+    );
+    return NativeInteropSealedClassWrapperBridge.fromPointer($ret, retain: false, release: true);
+  }
+
+  /// nullableSealedClass
+  NativeInteropSealedClassBridge? get nullableSealedClass {
+    final _$$ref = object$.ref;
+    final $ret = _objc_msgSend_151sglz(_$$ref.pointer, _sel_nullableSealedClass);
+    return $ret.address == 0
+        ? null
+        : NativeInteropSealedClassBridge.fromPointer($ret, retain: true, release: true);
+  }
+
+  /// sealedClass
+  NativeInteropSealedClassBridge get sealedClass {
+    final _$$ref = object$.ref;
+    final $ret = _objc_msgSend_151sglz(_$$ref.pointer, _sel_sealedClass);
+    return NativeInteropSealedClassBridge.fromPointer($ret, retain: true, release: true);
+  }
+
+  /// sealedClassList
+  objc.NSArray get sealedClassList {
+    final _$$ref = object$.ref;
+    final $ret = _objc_msgSend_151sglz(_$$ref.pointer, _sel_sealedClassList);
+    return objc.NSArray.fromPointer($ret, retain: true, release: true);
+  }
+
+  /// setNullableSealedClass:
+  set nullableSealedClass(NativeInteropSealedClassBridge? value) {
+    final _$$ref = object$.ref;
+    final _$$ref$1 = value?.ref;
+    _objc_msgSend_xtuoz7(
+      _$$ref.pointer,
+      _sel_setNullableSealedClass_,
+      _$$ref$1?.pointer ?? ffi.nullptr,
+    );
+  }
+
+  /// setSealedClass:
+  set sealedClass(NativeInteropSealedClassBridge value) {
+    final _$$ref = object$.ref;
+    final _$$ref$1 = value.ref;
+    _objc_msgSend_xtuoz7(_$$ref.pointer, _sel_setSealedClass_, _$$ref$1.pointer);
+  }
+
+  /// setSealedClassList:
+  set sealedClassList(objc.NSArray value) {
+    final _$$ref = object$.ref;
+    final _$$ref$1 = value.ref;
+    _objc_msgSend_xtuoz7(_$$ref.pointer, _sel_setSealedClassList_, _$$ref$1.pointer);
   }
 }
 
@@ -21663,6 +22264,231 @@ extension ObjCBlock_NativeInteropAllTypesBridge_ffiVoid_NativeInteropAllTypesBri
   }
 }
 
+/// Construction methods for `objc.ObjCBlock<NativeInteropSealedClassBridge? Function(ffi.Pointer<ffi.Void>, NativeInteropSealedClassBridge?, NativeInteropTestsError)>`.
+abstract final class ObjCBlock_NativeInteropSealedClassBridge_ffiVoid_NativeInteropSealedClassBridge_NativeInteropTestsError {
+  /// Returns a block that wraps the given raw block pointer.
+  static objc.ObjCBlock<
+    NativeInteropSealedClassBridge? Function(
+      ffi.Pointer<ffi.Void>,
+      NativeInteropSealedClassBridge?,
+      NativeInteropTestsError,
+    )
+  >
+  fromPointer(
+    ffi.Pointer<objc.ObjCBlockImpl> pointer, {
+    bool retain = false,
+    bool release = false,
+  }) =>
+      objc.ObjCBlock<
+        NativeInteropSealedClassBridge? Function(
+          ffi.Pointer<ffi.Void>,
+          NativeInteropSealedClassBridge?,
+          NativeInteropTestsError,
+        )
+      >(pointer, retain: retain, release: release);
+
+  /// Creates a block from a C function pointer.
+  ///
+  /// This block must be invoked by native code running on the same thread as
+  /// the isolate that registered it. Invoking the block on the wrong thread
+  /// will result in a crash.
+  static objc.ObjCBlock<
+    NativeInteropSealedClassBridge? Function(
+      ffi.Pointer<ffi.Void>,
+      NativeInteropSealedClassBridge?,
+      NativeInteropTestsError,
+    )
+  >
+  fromFunctionPointer(
+    ffi.Pointer<
+      ffi.NativeFunction<
+        ffi.Pointer<objc.ObjCObjectImpl> Function(
+          ffi.Pointer<ffi.Void> arg0,
+          ffi.Pointer<objc.ObjCObjectImpl> arg1,
+          ffi.Pointer<objc.ObjCObjectImpl> arg2,
+        )
+      >
+    >
+    ptr,
+  ) =>
+      objc.ObjCBlock<
+        NativeInteropSealedClassBridge? Function(
+          ffi.Pointer<ffi.Void>,
+          NativeInteropSealedClassBridge?,
+          NativeInteropTestsError,
+        )
+      >(objc.newPointerBlock(_fnPtrCallable, ptr.cast()), retain: false, release: true);
+
+  /// Creates a block from a Dart function.
+  ///
+  /// This block must be invoked by native code running on the same thread as
+  /// the isolate that registered it. Invoking the block on the wrong thread
+  /// will result in a crash.
+  ///
+  /// If `keepIsolateAlive` is true, this block will keep this isolate alive
+  /// until it is garbage collected by both Dart and ObjC.
+  static objc.ObjCBlock<
+    NativeInteropSealedClassBridge? Function(
+      ffi.Pointer<ffi.Void>,
+      NativeInteropSealedClassBridge?,
+      NativeInteropTestsError,
+    )
+  >
+  fromFunction(
+    NativeInteropSealedClassBridge? Function(
+      ffi.Pointer<ffi.Void>,
+      NativeInteropSealedClassBridge?,
+      NativeInteropTestsError,
+    )
+    fn, {
+    bool keepIsolateAlive = true,
+  }) =>
+      objc.ObjCBlock<
+        NativeInteropSealedClassBridge? Function(
+          ffi.Pointer<ffi.Void>,
+          NativeInteropSealedClassBridge?,
+          NativeInteropTestsError,
+        )
+      >(
+        objc.newClosureBlock(_closureCallable, (
+          ffi.Pointer<ffi.Void> arg0,
+          ffi.Pointer<objc.ObjCObjectImpl> arg1,
+          ffi.Pointer<objc.ObjCObjectImpl> arg2,
+        ) {
+          final _$$ref = fn(
+            arg0,
+            arg1.address == 0
+                ? null
+                : NativeInteropSealedClassBridge.fromPointer(arg1, retain: true, release: true),
+            NativeInteropTestsError.fromPointer(arg2, retain: true, release: true),
+          )?.ref;
+          return _$$ref?.retainAndAutorelease() ?? ffi.nullptr;
+        }, keepIsolateAlive),
+        retain: false,
+        release: true,
+      );
+
+  static ffi.Pointer<objc.ObjCObjectImpl> _fnPtrTrampoline(
+    ffi.Pointer<objc.ObjCBlockImpl> block,
+    ffi.Pointer<ffi.Void> arg0,
+    ffi.Pointer<objc.ObjCObjectImpl> arg1,
+    ffi.Pointer<objc.ObjCObjectImpl> arg2,
+  ) => block.ref.target
+      .cast<
+        ffi.NativeFunction<
+          ffi.Pointer<objc.ObjCObjectImpl> Function(
+            ffi.Pointer<ffi.Void> arg0,
+            ffi.Pointer<objc.ObjCObjectImpl> arg1,
+            ffi.Pointer<objc.ObjCObjectImpl> arg2,
+          )
+        >
+      >()
+      .asFunction<
+        ffi.Pointer<objc.ObjCObjectImpl> Function(
+          ffi.Pointer<ffi.Void>,
+          ffi.Pointer<objc.ObjCObjectImpl>,
+          ffi.Pointer<objc.ObjCObjectImpl>,
+        )
+      >()(arg0, arg1, arg2);
+  static ffi.Pointer<ffi.Void> _fnPtrCallable =
+      ffi.Pointer.fromFunction<
+            ffi.Pointer<objc.ObjCObjectImpl> Function(
+              ffi.Pointer<objc.ObjCBlockImpl>,
+              ffi.Pointer<ffi.Void>,
+              ffi.Pointer<objc.ObjCObjectImpl>,
+              ffi.Pointer<objc.ObjCObjectImpl>,
+            )
+          >(_fnPtrTrampoline)
+          .cast();
+  static ffi.Pointer<objc.ObjCObjectImpl> _closureTrampoline(
+    ffi.Pointer<objc.ObjCBlockImpl> block,
+    ffi.Pointer<ffi.Void> arg0,
+    ffi.Pointer<objc.ObjCObjectImpl> arg1,
+    ffi.Pointer<objc.ObjCObjectImpl> arg2,
+  ) =>
+      (objc.getBlockClosure(block)
+          as ffi.Pointer<objc.ObjCObjectImpl> Function(
+            ffi.Pointer<ffi.Void>,
+            ffi.Pointer<objc.ObjCObjectImpl>,
+            ffi.Pointer<objc.ObjCObjectImpl>,
+          ))(arg0, arg1, arg2);
+  static ffi.Pointer<ffi.Void> _closureCallable =
+      ffi.Pointer.fromFunction<
+            ffi.Pointer<objc.ObjCObjectImpl> Function(
+              ffi.Pointer<objc.ObjCBlockImpl>,
+              ffi.Pointer<ffi.Void>,
+              ffi.Pointer<objc.ObjCObjectImpl>,
+              ffi.Pointer<objc.ObjCObjectImpl>,
+            )
+          >(_closureTrampoline)
+          .cast();
+}
+
+/// Call operator for `objc.ObjCBlock<NativeInteropSealedClassBridge? Function(ffi.Pointer<ffi.Void>, NativeInteropSealedClassBridge?, NativeInteropTestsError)>`.
+extension ObjCBlock_NativeInteropSealedClassBridge_ffiVoid_NativeInteropSealedClassBridge_NativeInteropTestsError$CallExtension
+    on
+        objc.ObjCBlock<
+          NativeInteropSealedClassBridge? Function(
+            ffi.Pointer<ffi.Void>,
+            NativeInteropSealedClassBridge?,
+            NativeInteropTestsError,
+          )
+        > {
+  NativeInteropSealedClassBridge? call(
+    ffi.Pointer<ffi.Void> arg0,
+    NativeInteropSealedClassBridge? arg1,
+    NativeInteropTestsError arg2,
+  ) {
+    final _$$ref$1 = arg1?.ref;
+    final _$$ref$2 = arg2.ref;
+    return ref.pointer.ref.invoke
+                .cast<
+                  ffi.NativeFunction<
+                    ffi.Pointer<objc.ObjCObjectImpl> Function(
+                      ffi.Pointer<objc.ObjCBlockImpl> block,
+                      ffi.Pointer<ffi.Void> arg0,
+                      ffi.Pointer<objc.ObjCObjectImpl> arg1,
+                      ffi.Pointer<objc.ObjCObjectImpl> arg2,
+                    )
+                  >
+                >()
+                .asFunction<
+                  ffi.Pointer<objc.ObjCObjectImpl> Function(
+                    ffi.Pointer<objc.ObjCBlockImpl>,
+                    ffi.Pointer<ffi.Void>,
+                    ffi.Pointer<objc.ObjCObjectImpl>,
+                    ffi.Pointer<objc.ObjCObjectImpl>,
+                  )
+                >()(ref.pointer, arg0, _$$ref$1?.pointer ?? ffi.nullptr, _$$ref$2.pointer)
+                .address ==
+            0
+        ? null
+        : NativeInteropSealedClassBridge.fromPointer(
+            ref.pointer.ref.invoke
+                .cast<
+                  ffi.NativeFunction<
+                    ffi.Pointer<objc.ObjCObjectImpl> Function(
+                      ffi.Pointer<objc.ObjCBlockImpl> block,
+                      ffi.Pointer<ffi.Void> arg0,
+                      ffi.Pointer<objc.ObjCObjectImpl> arg1,
+                      ffi.Pointer<objc.ObjCObjectImpl> arg2,
+                    )
+                  >
+                >()
+                .asFunction<
+                  ffi.Pointer<objc.ObjCObjectImpl> Function(
+                    ffi.Pointer<objc.ObjCBlockImpl>,
+                    ffi.Pointer<ffi.Void>,
+                    ffi.Pointer<objc.ObjCObjectImpl>,
+                    ffi.Pointer<objc.ObjCObjectImpl>,
+                  )
+                >()(ref.pointer, arg0, _$$ref$1?.pointer ?? ffi.nullptr, _$$ref$2.pointer),
+            retain: true,
+            release: true,
+          );
+  }
+}
+
 /// Construction methods for `objc.ObjCBlock<NativeInteropTestsPigeonTypedData? Function(ffi.Pointer<ffi.Void>, NativeInteropTestsPigeonTypedData?, NativeInteropTestsError)>`.
 abstract final class ObjCBlock_NativeInteropTestsPigeonTypedData_ffiVoid_NativeInteropTestsPigeonTypedData_NativeInteropTestsError {
   /// Returns a block that wraps the given raw block pointer.
@@ -23116,6 +23942,149 @@ abstract final class ObjCBlock_ffiVoid_NativeInteropAllTypesBridge {
 extension ObjCBlock_ffiVoid_NativeInteropAllTypesBridge$CallExtension
     on objc.ObjCBlock<ffi.Void Function(NativeInteropAllTypesBridge?)> {
   void call(NativeInteropAllTypesBridge? arg0) {
+    final _$$ref = arg0?.ref;
+    return ref.pointer.ref.invoke
+        .cast<
+          ffi.NativeFunction<
+            ffi.Void Function(
+              ffi.Pointer<objc.ObjCBlockImpl> block,
+              ffi.Pointer<objc.ObjCObjectImpl> arg0,
+            )
+          >
+        >()
+        .asFunction<
+          void Function(ffi.Pointer<objc.ObjCBlockImpl>, ffi.Pointer<objc.ObjCObjectImpl>)
+        >()(ref.pointer, _$$ref?.pointer ?? ffi.nullptr);
+  }
+}
+
+/// Construction methods for `objc.ObjCBlock<ffi.Void Function(NativeInteropSealedClassBridge?)>`.
+abstract final class ObjCBlock_ffiVoid_NativeInteropSealedClassBridge {
+  /// Returns a block that wraps the given raw block pointer.
+  static objc.ObjCBlock<ffi.Void Function(NativeInteropSealedClassBridge?)> fromPointer(
+    ffi.Pointer<objc.ObjCBlockImpl> pointer, {
+    bool retain = false,
+    bool release = false,
+  }) => objc.ObjCBlock<ffi.Void Function(NativeInteropSealedClassBridge?)>(
+    pointer,
+    retain: retain,
+    release: release,
+  );
+
+  /// Creates a block from a C function pointer.
+  ///
+  /// This block must be invoked by native code running on the same thread as
+  /// the isolate that registered it. Invoking the block on the wrong thread
+  /// will result in a crash.
+  static objc.ObjCBlock<ffi.Void Function(NativeInteropSealedClassBridge?)> fromFunctionPointer(
+    ffi.Pointer<ffi.NativeFunction<ffi.Void Function(ffi.Pointer<objc.ObjCObjectImpl> arg0)>> ptr,
+  ) => objc.ObjCBlock<ffi.Void Function(NativeInteropSealedClassBridge?)>(
+    objc.newPointerBlock(_fnPtrCallable, ptr.cast()),
+    retain: false,
+    release: true,
+  );
+
+  /// Creates a block from a Dart function.
+  ///
+  /// This block must be invoked by native code running on the same thread as
+  /// the isolate that registered it. Invoking the block on the wrong thread
+  /// will result in a crash.
+  ///
+  /// If `keepIsolateAlive` is true, this block will keep this isolate alive
+  /// until it is garbage collected by both Dart and ObjC.
+  static objc.ObjCBlock<ffi.Void Function(NativeInteropSealedClassBridge?)> fromFunction(
+    void Function(NativeInteropSealedClassBridge?) fn, {
+    bool keepIsolateAlive = true,
+  }) => objc.ObjCBlock<ffi.Void Function(NativeInteropSealedClassBridge?)>(
+    objc.newClosureBlock(_closureCallable, (ffi.Pointer<objc.ObjCObjectImpl> arg0) {
+      return fn(
+        arg0.address == 0
+            ? null
+            : NativeInteropSealedClassBridge.fromPointer(arg0, retain: true, release: true),
+      );
+    }, keepIsolateAlive),
+    retain: false,
+    release: true,
+  );
+
+  /// Creates a listener block from a Dart function.
+  ///
+  /// This block can be invoked from any thread, but only supports void
+  /// functions, and is not run synchronously. Async functions (ie returning
+  /// Future<void>) are not supported.
+  ///
+  /// If `keepIsolateAlive` is true, this block will keep this isolate alive
+  /// until it is garbage collected by both Dart and ObjC.
+  static objc.ObjCBlock<ffi.Void Function(NativeInteropSealedClassBridge?)> listener(
+    void Function(NativeInteropSealedClassBridge?) fn, {
+    bool keepIsolateAlive = true,
+  }) {
+    return objc.ObjCBlock<ffi.Void Function(NativeInteropSealedClassBridge?)>(
+      objc.newBlockPort(_julz8q_wrapListenerBlock_xtuoz7, (
+        ffi.Pointer<objc.ObjCObjectImpl> rawArgs,
+      ) {
+        final args = _BlockArgs_1i0xiiq.fromPointer(rawArgs, retain: false, release: false);
+
+        fn(args.arg0);
+      }, keepIsolateAlive),
+      retain: false,
+      release: true,
+    );
+  }
+
+  /// Creates a blocking block from a Dart function.
+  ///
+  /// This callback can be invoked from any native thread, and will block the
+  /// caller until the callback is handled by the Dart isolate that created
+  /// the block. Async functions (ie returning Future<void>) are not supported.
+  ///
+  /// If `keepIsolateAlive` is true, this block will keep this isolate alive
+  /// until it is garbage collected by both Dart and ObjC. If the owner isolate
+  /// has shut down, and the block is invoked by native code, it may block
+  /// indefinitely, or have other undefined behavior.
+  static objc.ObjCBlock<ffi.Void Function(NativeInteropSealedClassBridge?)> blocking(
+    void Function(NativeInteropSealedClassBridge?) fn, {
+    bool keepIsolateAlive = true,
+  }) {
+    return objc.ObjCBlock<ffi.Void Function(NativeInteropSealedClassBridge?)>(
+      objc.newBlockingBlockPort(_julz8q_wrapBlockingBlock_xtuoz7, (
+        ffi.Pointer<objc.ObjCObjectImpl> rawArgs,
+      ) {
+        final args = _BlockArgs_1i0xiiq.fromPointer(rawArgs, retain: false, release: false);
+
+        fn(args.arg0);
+      }, keepIsolateAlive),
+      retain: false,
+      release: true,
+    );
+  }
+
+  static void _fnPtrTrampoline(
+    ffi.Pointer<objc.ObjCBlockImpl> block,
+    ffi.Pointer<objc.ObjCObjectImpl> arg0,
+  ) => block.ref.target
+      .cast<ffi.NativeFunction<ffi.Void Function(ffi.Pointer<objc.ObjCObjectImpl> arg0)>>()
+      .asFunction<void Function(ffi.Pointer<objc.ObjCObjectImpl>)>()(arg0);
+  static ffi.Pointer<ffi.Void> _fnPtrCallable =
+      ffi.Pointer.fromFunction<
+            ffi.Void Function(ffi.Pointer<objc.ObjCBlockImpl>, ffi.Pointer<objc.ObjCObjectImpl>)
+          >(_fnPtrTrampoline)
+          .cast();
+  static void _closureTrampoline(
+    ffi.Pointer<objc.ObjCBlockImpl> block,
+    ffi.Pointer<objc.ObjCObjectImpl> arg0,
+  ) => (objc.getBlockClosure(block) as void Function(ffi.Pointer<objc.ObjCObjectImpl>))(arg0);
+  static ffi.Pointer<ffi.Void> _closureCallable =
+      ffi.Pointer.fromFunction<
+            ffi.Void Function(ffi.Pointer<objc.ObjCBlockImpl>, ffi.Pointer<objc.ObjCObjectImpl>)
+          >(_closureTrampoline)
+          .cast();
+}
+
+/// Call operator for `objc.ObjCBlock<ffi.Void Function(NativeInteropSealedClassBridge?)>`.
+extension ObjCBlock_ffiVoid_NativeInteropSealedClassBridge$CallExtension
+    on objc.ObjCBlock<ffi.Void Function(NativeInteropSealedClassBridge?)> {
+  void call(NativeInteropSealedClassBridge? arg0) {
     final _$$ref = arg0?.ref;
     return ref.pointer.ref.invoke
         .cast<
@@ -27070,6 +28039,37 @@ extension _BlockArgs_1hr4mm2$Methods on _BlockArgs_1hr4mm2 {
   }
 }
 
+extension type _BlockArgs_1i0xiiq._(objc.ObjCObject object$) implements objc.ObjCObject {
+  /// Constructs a [_BlockArgs_1i0xiiq] that points to the same underlying object as [other].
+  _BlockArgs_1i0xiiq.as(objc.ObjCObject other) : object$ = other {
+    assert(isA(object$));
+  }
+
+  /// Constructs a [_BlockArgs_1i0xiiq] that wraps the given raw object pointer.
+  _BlockArgs_1i0xiiq.fromPointer(
+    ffi.Pointer<objc.ObjCObjectImpl> other, {
+    bool retain = false,
+    bool release = false,
+  }) : object$ = objc.ObjCObject(other, retain: retain, release: release) {
+    assert(isA(object$));
+  }
+
+  /// Returns whether [obj] is an instance of [_BlockArgs_1i0xiiq].
+  static bool isA(objc.ObjCObject? obj) => obj == null
+      ? false
+      : _objc_msgSend_19nvye5(obj.ref.pointer, _sel_isKindOfClass_, _class__BlockArgs_1i0xiiq);
+}
+
+extension _BlockArgs_1i0xiiq$Methods on _BlockArgs_1i0xiiq {
+  NativeInteropSealedClassBridge? get arg0 {
+    final _$$ref = object$.ref;
+    final $ret = _objc_msgSend_151sglz(_$$ref.pointer, _sel_arg0);
+    return $ret.address == 0
+        ? null
+        : NativeInteropSealedClassBridge.fromPointer($ret, retain: true, release: true);
+  }
+}
+
 extension type _BlockArgs_1ifujqa._(objc.ObjCObject object$) implements objc.ObjCObject {
   /// Constructs a [_BlockArgs_1ifujqa] that points to the same underlying object as [other].
   _BlockArgs_1ifujqa.as(objc.ObjCObject other) : object$ = other {
@@ -27770,6 +28770,16 @@ final _class_NativeInteropAllTypesBridge = objc.getClass(
   ).cast(),
 );
 @ffi.Native<ffi.Pointer<objc.ObjCObjectImpl>>(
+  symbol: 'OBJC_CLASS_\$__TtC11test_plugin35NativeInteropEmptySealedClassBridge',
+)
+external ffi.Pointer<objc.ObjCObjectImpl> _class_NativeInteropEmptySealedClassBridge_raw;
+final _class_NativeInteropEmptySealedClassBridge = objc.getClass(
+  "test_plugin.NativeInteropEmptySealedClassBridge",
+  () => ffi.Native.addressOf<ffi.Pointer<objc.ObjCObjectImpl>>(
+    _class_NativeInteropEmptySealedClassBridge_raw,
+  ).cast(),
+);
+@ffi.Native<ffi.Pointer<objc.ObjCObjectImpl>>(
   symbol: 'OBJC_CLASS_\$__TtC11test_plugin47NativeInteropFlutterIntegrationCoreApiRegistrar',
 )
 external ffi.Pointer<objc.ObjCObjectImpl>
@@ -27788,6 +28798,36 @@ final _class_NativeInteropHostIntegrationCoreApiSetup = objc.getClass(
   "test_plugin.NativeInteropHostIntegrationCoreApiSetup",
   () => ffi.Native.addressOf<ffi.Pointer<objc.ObjCObjectImpl>>(
     _class_NativeInteropHostIntegrationCoreApiSetup_raw,
+  ).cast(),
+);
+@ffi.Native<ffi.Pointer<objc.ObjCObjectImpl>>(
+  symbol: 'OBJC_CLASS_\$__TtC11test_plugin30NativeInteropSealedClassBridge',
+)
+external ffi.Pointer<objc.ObjCObjectImpl> _class_NativeInteropSealedClassBridge_raw;
+final _class_NativeInteropSealedClassBridge = objc.getClass(
+  "test_plugin.NativeInteropSealedClassBridge",
+  () => ffi.Native.addressOf<ffi.Pointer<objc.ObjCObjectImpl>>(
+    _class_NativeInteropSealedClassBridge_raw,
+  ).cast(),
+);
+@ffi.Native<ffi.Pointer<objc.ObjCObjectImpl>>(
+  symbol: 'OBJC_CLASS_\$__TtC11test_plugin40NativeInteropSealedClassWithFieldsBridge',
+)
+external ffi.Pointer<objc.ObjCObjectImpl> _class_NativeInteropSealedClassWithFieldsBridge_raw;
+final _class_NativeInteropSealedClassWithFieldsBridge = objc.getClass(
+  "test_plugin.NativeInteropSealedClassWithFieldsBridge",
+  () => ffi.Native.addressOf<ffi.Pointer<objc.ObjCObjectImpl>>(
+    _class_NativeInteropSealedClassWithFieldsBridge_raw,
+  ).cast(),
+);
+@ffi.Native<ffi.Pointer<objc.ObjCObjectImpl>>(
+  symbol: 'OBJC_CLASS_\$__TtC11test_plugin37NativeInteropSealedClassWrapperBridge',
+)
+external ffi.Pointer<objc.ObjCObjectImpl> _class_NativeInteropSealedClassWrapperBridge_raw;
+final _class_NativeInteropSealedClassWrapperBridge = objc.getClass(
+  "test_plugin.NativeInteropSealedClassWrapperBridge",
+  () => ffi.Native.addressOf<ffi.Pointer<objc.ObjCObjectImpl>>(
+    _class_NativeInteropSealedClassWrapperBridge_raw,
   ).cast(),
 );
 @ffi.Native<ffi.Pointer<objc.ObjCObjectImpl>>(
@@ -27874,6 +28914,13 @@ final _class__BlockArgs_1hr4mm2 = objc.getClass(
   "_julz8q_BlockArgs_bklti2",
   () =>
       ffi.Native.addressOf<ffi.Pointer<objc.ObjCObjectImpl>>(_class__BlockArgs_1hr4mm2_raw).cast(),
+);
+@ffi.Native<ffi.Pointer<objc.ObjCObjectImpl>>(symbol: 'OBJC_CLASS_\$__julz8q_BlockArgs_xtuoz7')
+external ffi.Pointer<objc.ObjCObjectImpl> _class__BlockArgs_1i0xiiq_raw;
+final _class__BlockArgs_1i0xiiq = objc.getClass(
+  "_julz8q_BlockArgs_xtuoz7",
+  () =>
+      ffi.Native.addressOf<ffi.Pointer<objc.ObjCObjectImpl>>(_class__BlockArgs_1i0xiiq_raw).cast(),
 );
 @ffi.Native<ffi.Pointer<objc.ObjCObjectImpl>>(symbol: 'OBJC_CLASS_\$__julz8q_BlockArgs_bklti2')
 external ffi.Pointer<objc.ObjCObjectImpl> _class__BlockArgs_1ifujqa_raw;
@@ -28127,6 +29174,29 @@ final _objc_msgSend_17ns785 = objc.msgSendPointer
         ffi.Pointer<objc.ObjCObjectImpl>,
         ffi.Pointer<objc.ObjCObjectImpl>,
         int,
+      )
+    >();
+final _objc_msgSend_18arvtv = objc.msgSendPointer
+    .cast<
+      ffi.NativeFunction<
+        ffi.Pointer<objc.ObjCObjectImpl> Function(
+          ffi.Pointer<objc.ObjCObjectImpl>,
+          ffi.Pointer<objc.ObjCSelector>,
+          ffi.Pointer<objc.ObjCObjectImpl>,
+          ffi.Pointer<objc.ObjCObjectImpl>,
+          ffi.Long,
+          ffi.Pointer<objc.ObjCObjectImpl>,
+        )
+      >
+    >()
+    .asFunction<
+      ffi.Pointer<objc.ObjCObjectImpl> Function(
+        ffi.Pointer<objc.ObjCObjectImpl>,
+        ffi.Pointer<objc.ObjCSelector>,
+        ffi.Pointer<objc.ObjCObjectImpl>,
+        ffi.Pointer<objc.ObjCObjectImpl>,
+        int,
+        ffi.Pointer<objc.ObjCObjectImpl>,
       )
     >();
 final _objc_msgSend_18qun1e = objc.msgSendPointer
@@ -28957,6 +30027,7 @@ late final _sel_a4ByteArray = objc.registerName("a4ByteArray");
 late final _sel_a8ByteArray = objc.registerName("a8ByteArray");
 late final _sel_aBool = objc.registerName("aBool");
 late final _sel_aByteArray = objc.registerName("aByteArray");
+late final _sel_aClass = objc.registerName("aClass");
 late final _sel_aDouble = objc.registerName("aDouble");
 late final _sel_aField = objc.registerName("aField");
 late final _sel_aFloatArray = objc.registerName("aFloatArray");
@@ -29254,6 +30325,9 @@ late final _sel_callFlutterEchoNullableStringWithAString_wrappedError_ = objc.re
 late final _sel_callFlutterEchoNullableUint8ListWithList_wrappedError_ = objc.registerName(
   "callFlutterEchoNullableUint8ListWithList:wrappedError:",
 );
+late final _sel_callFlutterEchoSealedClassWithSealedClass_wrappedError_ = objc.registerName(
+  "callFlutterEchoSealedClassWithSealedClass:wrappedError:",
+);
 late final _sel_callFlutterEchoStringMapWithStringMap_wrappedError_ = objc.registerName(
   "callFlutterEchoStringMapWithStringMap:wrappedError:",
 );
@@ -29542,6 +30616,8 @@ late final _sel_echoAsyncObjectWithAnObject_error_completionHandler_ = objc.regi
 late final _sel_echoAsyncObjectWithAnObject_wrappedError_completionHandler_ = objc.registerName(
   "echoAsyncObjectWithAnObject:wrappedError:completionHandler:",
 );
+late final _sel_echoAsyncSealedClassWithSealedClass_wrappedError_completionHandler_ = objc
+    .registerName("echoAsyncSealedClassWithSealedClass:wrappedError:completionHandler:");
 late final _sel_echoAsyncStringMapWithStringMap_error_completionHandler_ = objc.registerName(
   "echoAsyncStringMapWithStringMap:error:completionHandler:",
 );
@@ -29649,6 +30725,9 @@ late final _sel_echoNativeInteropAllTypesWithEverything_error_ = objc.registerNa
 );
 late final _sel_echoNativeInteropAnotherEnumWithAnotherEnum_error_ = objc.registerName(
   "echoNativeInteropAnotherEnumWithAnotherEnum:error:",
+);
+late final _sel_echoNativeInteropSealedClassWithSealedClass_error_ = objc.registerName(
+  "echoNativeInteropSealedClassWithSealedClass:error:",
 );
 late final _sel_echoNonNullClassListWithClassList_error_ = objc.registerName(
   "echoNonNullClassListWithClassList:error:",
@@ -29807,6 +30886,9 @@ late final _sel_echoNullableNonNullStringMapWithStringMap_wrappedError_ = objc.r
 late final _sel_echoNullableObjectWithANullableObject_wrappedError_ = objc.registerName(
   "echoNullableObjectWithANullableObject:wrappedError:",
 );
+late final _sel_echoNullableSealedClassWithSealedClass_wrappedError_ = objc.registerName(
+  "echoNullableSealedClassWithSealedClass:wrappedError:",
+);
 late final _sel_echoNullableStringMapWithStringMap_error_ = objc.registerName(
   "echoNullableStringMapWithStringMap:error:",
 );
@@ -29836,6 +30918,15 @@ late final _sel_echoOptionalNullableIntWithANullableInt_wrappedError_ = objc.reg
 );
 late final _sel_echoRequiredIntWithAnInt_wrappedError_ = objc.registerName(
   "echoRequiredIntWithAnInt:wrappedError:",
+);
+late final _sel_echoSealedClassListWithSealedClassList_wrappedError_ = objc.registerName(
+  "echoSealedClassListWithSealedClassList:wrappedError:",
+);
+late final _sel_echoSealedClassWithSealedClass_wrappedError_ = objc.registerName(
+  "echoSealedClassWithSealedClass:wrappedError:",
+);
+late final _sel_echoSealedClassWrapperWithWrapper_wrappedError_ = objc.registerName(
+  "echoSealedClassWrapperWithWrapper:wrappedError:",
 );
 late final _sel_echoStringListWithStringList_wrappedError_ = objc.registerName(
   "echoStringListWithStringList:wrappedError:",
@@ -29879,6 +30970,9 @@ late final _sel_initWithANullableBool_aNullableInt_aNullableInt64_aNullableDoubl
     objc.registerName(
       "initWithANullableBool:aNullableInt:aNullableInt64:aNullableDouble:aNullableByteArray:aNullable4ByteArray:aNullable8ByteArray:aNullableFloatArray:aNullableEnum:anotherNullableEnum:aNullableString:aNullableObject:type:list:stringList:intList:doubleList:boolList:enumList:objectList:listList:mapList:map:stringMap:intMap:enumMap:objectMap:listMap:mapMap:",
     );
+late final _sel_initWithAString_aNullableInt_anEnum_aClass_ = objc.registerName(
+  "initWithAString:aNullableInt:anEnum:aClass:",
+);
 late final _sel_initWithAllNullableTypes_allNullableTypesWithoutRecursion_allTypes_classList_nullableClassList_classMap_nullableClassMap_ =
     objc.registerName(
       "initWithAllNullableTypes:allNullableTypesWithoutRecursion:allTypes:classList:nullableClassList:classMap:nullableClassMap:",
@@ -29887,6 +30981,9 @@ late final _sel_initWithCode_message_details_ = objc.registerName("initWithCode:
 late final _sel_initWithCoder_ = objc.registerName("initWithCoder:");
 late final _sel_initWithData_type_ = objc.registerName("initWithData:type:");
 late final _sel_initWithNumber_type_ = objc.registerName("initWithNumber:type:");
+late final _sel_initWithSealedClass_nullableSealedClass_sealedClassList_ = objc.registerName(
+  "initWithSealedClass:nullableSealedClass:sealedClassList:",
+);
 late final _sel_intList = objc.registerName("intList");
 late final _sel_intMap = objc.registerName("intMap");
 late final _sel_isEqual_ = objc.registerName("isEqual:");
@@ -29911,6 +31008,7 @@ late final _sel_noopWithError_ = objc.registerName("noopWithError:");
 late final _sel_noopWithWrappedError_ = objc.registerName("noopWithWrappedError:");
 late final _sel_nullableClassList = objc.registerName("nullableClassList");
 late final _sel_nullableClassMap = objc.registerName("nullableClassMap");
+late final _sel_nullableSealedClass = objc.registerName("nullableSealedClass");
 late final _sel_number = objc.registerName("number");
 late final _sel_objectList = objc.registerName("objectList");
 late final _sel_objectMap = objc.registerName("objectMap");
@@ -29922,6 +31020,8 @@ late final _sel_registerAndImmediatelyDeregisterHostApiWithName_wrappedError_ = 
   "registerAndImmediatelyDeregisterHostApiWithName:wrappedError:",
 );
 late final _sel_registerInstanceWithApi_name_ = objc.registerName("registerInstanceWithApi:name:");
+late final _sel_sealedClass = objc.registerName("sealedClass");
+late final _sel_sealedClassList = objc.registerName("sealedClassList");
 late final _sel_sendMultipleNullableTypesWithANullableBool_aNullableInt_aNullableString_error_ =
     objc.registerName(
       "sendMultipleNullableTypesWithANullableBool:aNullableInt:aNullableString:error:",
@@ -29942,6 +31042,7 @@ late final _sel_setA4ByteArray_ = objc.registerName("setA4ByteArray:");
 late final _sel_setA8ByteArray_ = objc.registerName("setA8ByteArray:");
 late final _sel_setABool_ = objc.registerName("setABool:");
 late final _sel_setAByteArray_ = objc.registerName("setAByteArray:");
+late final _sel_setAClass_ = objc.registerName("setAClass:");
 late final _sel_setADouble_ = objc.registerName("setADouble:");
 late final _sel_setAField_ = objc.registerName("setAField:");
 late final _sel_setAFloatArray_ = objc.registerName("setAFloatArray:");
@@ -29987,11 +31088,14 @@ late final _sel_setMap_ = objc.registerName("setMap:");
 late final _sel_setMessage_ = objc.registerName("setMessage:");
 late final _sel_setNullableClassList_ = objc.registerName("setNullableClassList:");
 late final _sel_setNullableClassMap_ = objc.registerName("setNullableClassMap:");
+late final _sel_setNullableSealedClass_ = objc.registerName("setNullableSealedClass:");
 late final _sel_setNumber_ = objc.registerName("setNumber:");
 late final _sel_setObjectList_ = objc.registerName("setObjectList:");
 late final _sel_setObjectMap_ = objc.registerName("setObjectMap:");
 late final _sel_setRecursiveClassList_ = objc.registerName("setRecursiveClassList:");
 late final _sel_setRecursiveClassMap_ = objc.registerName("setRecursiveClassMap:");
+late final _sel_setSealedClassList_ = objc.registerName("setSealedClassList:");
+late final _sel_setSealedClass_ = objc.registerName("setSealedClass:");
 late final _sel_setSetterWithValue_wrappedError_ = objc.registerName(
   "setSetterWithValue:wrappedError:",
 );

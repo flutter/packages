@@ -1,3 +1,9 @@
+## 29.0.8
+
+* [dart] [swift] Fixes sealed classes in native interop files, which generated code that
+  didn't compile. They now convert through their subclasses over both JNI and FFI.
+* [dart] [swift] Fixes FFI generation for data classes without fields.
+
 ## 29.0.7
 
 * [kotlin] Fixes native interop calls failing with `ClassNotFoundException` in minified

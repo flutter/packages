@@ -190,6 +190,24 @@ class _PigeonJniCodec {
       return NativeInteropAllClassesWrapper.fromJni(
         value.as(jni_bridge.NativeInteropAllClassesWrapper.type),
       );
+    } else if (value.isA<jni_bridge.NativeInteropSealedClassWithFields>(
+      jni_bridge.NativeInteropSealedClassWithFields.type,
+    )) {
+      return NativeInteropSealedClassWithFields.fromJni(
+        value.as(jni_bridge.NativeInteropSealedClassWithFields.type),
+      );
+    } else if (value.isA<jni_bridge.NativeInteropEmptySealedClass>(
+      jni_bridge.NativeInteropEmptySealedClass.type,
+    )) {
+      return NativeInteropEmptySealedClass.fromJni(
+        value.as(jni_bridge.NativeInteropEmptySealedClass.type),
+      );
+    } else if (value.isA<jni_bridge.NativeInteropSealedClassWrapper>(
+      jni_bridge.NativeInteropSealedClassWrapper.type,
+    )) {
+      return NativeInteropSealedClassWrapper.fromJni(
+        value.as(jni_bridge.NativeInteropSealedClassWrapper.type),
+      );
     } else if (value.isA<jni_bridge.NativeInteropAnEnum>(jni_bridge.NativeInteropAnEnum.type)) {
       return NativeInteropAnEnum.fromJni(value.as(jni_bridge.NativeInteropAnEnum.type));
     } else if (value.isA<jni_bridge.NativeInteropAnotherEnum>(
@@ -234,6 +252,13 @@ class _PigeonJniCodec {
       final JDoubleArray array = JDoubleArray(value.length);
       array.setRange(0, value.length, value);
       return array as T;
+    } else if (value is List<NativeInteropSealedClass>) {
+      return value
+              .map<jni_bridge.NativeInteropSealedClass>(
+                (e) => writeValue<jni_bridge.NativeInteropSealedClass>(e),
+              )
+              .toJList()
+          as T;
     } else if (value is List<String>) {
       return value.map<JString>((e) => writeValue<JString>(e)).toJList() as T;
     } else if (value is List<int>) {
@@ -453,6 +478,12 @@ class _PigeonJniCodec {
       return value.toJni() as T;
     } else if (value is NativeInteropAllClassesWrapper) {
       return value.toJni() as T;
+    } else if (value is NativeInteropSealedClassWithFields) {
+      return value.toJni() as T;
+    } else if (value is NativeInteropEmptySealedClass) {
+      return value.toJni() as T;
+    } else if (value is NativeInteropSealedClassWrapper) {
+      return value.toJni() as T;
     } else if (value is NativeInteropAnEnum) {
       return value.toJni() as T;
     } else if (value is NativeInteropAnotherEnum) {
@@ -518,6 +549,18 @@ class _PigeonFfiCodec {
       return NativeInteropAllClassesWrapper.fromFfi(
         ffi_bridge.NativeInteropAllClassesWrapperBridge.as(value),
       );
+    } else if (ffi_bridge.NativeInteropSealedClassWithFieldsBridge.isA(value)) {
+      return NativeInteropSealedClassWithFields.fromFfi(
+        ffi_bridge.NativeInteropSealedClassWithFieldsBridge.as(value),
+      );
+    } else if (ffi_bridge.NativeInteropEmptySealedClassBridge.isA(value)) {
+      return NativeInteropEmptySealedClass.fromFfi(
+        ffi_bridge.NativeInteropEmptySealedClassBridge.as(value),
+      );
+    } else if (ffi_bridge.NativeInteropSealedClassWrapperBridge.isA(value)) {
+      return NativeInteropSealedClassWrapper.fromFfi(
+        ffi_bridge.NativeInteropSealedClassWrapperBridge.as(value),
+      );
     } else {
       throw ArgumentError.value(value);
     }
@@ -551,6 +594,13 @@ class _PigeonFfiCodec {
       return NSString(value) as T;
     } else if (value is TypedData) {
       return _toPigeonTypedData(value) as T;
+    } else if (value is List<NativeInteropSealedClass> &&
+        _isTypeOrNullableType<NSMutableArray>(T)) {
+      final NSMutableArray res = NSMutableArray();
+      for (final NativeInteropSealedClass entry in value) {
+        res.addObject(writeValue<ffi_bridge.NativeInteropSealedClassBridge>(entry, generic: true));
+      }
+      return res as T;
     } else if (value is List<String> && _isTypeOrNullableType<NSMutableArray>(T)) {
       final NSMutableArray res = NSMutableArray();
       for (final String entry in value) {
@@ -869,6 +919,12 @@ class _PigeonFfiCodec {
     } else if (value is NativeInteropAllNullableTypesWithoutRecursion) {
       return value.toFfi() as T;
     } else if (value is NativeInteropAllClassesWrapper) {
+      return value.toFfi() as T;
+    } else if (value is NativeInteropSealedClassWithFields) {
+      return value.toFfi() as T;
+    } else if (value is NativeInteropEmptySealedClass) {
+      return value.toFfi() as T;
+    } else if (value is NativeInteropSealedClassWrapper) {
       return value.toFfi() as T;
     } else {
       throw ArgumentError.value(value);
@@ -2608,6 +2664,313 @@ class NativeInteropAllClassesWrapper {
   }
 }
 
+/// A sealed class, to test sealed class handling.
+sealed class NativeInteropSealedClass {
+  jni_bridge.NativeInteropSealedClass toJni();
+
+  static NativeInteropSealedClass? fromJni(jni_bridge.NativeInteropSealedClass? jniClass) {
+    if (jniClass == null) {
+      return null;
+    }
+    if (jniClass.isA<jni_bridge.NativeInteropSealedClassWithFields>(
+      jni_bridge.NativeInteropSealedClassWithFields.type,
+    )) {
+      return NativeInteropSealedClassWithFields.fromJni(
+        jniClass.as(jni_bridge.NativeInteropSealedClassWithFields.type),
+      );
+    }
+    if (jniClass.isA<jni_bridge.NativeInteropEmptySealedClass>(
+      jni_bridge.NativeInteropEmptySealedClass.type,
+    )) {
+      return NativeInteropEmptySealedClass.fromJni(
+        jniClass.as(jni_bridge.NativeInteropEmptySealedClass.type),
+      );
+    }
+    throw ArgumentError.value(jniClass);
+  }
+
+  ffi_bridge.NativeInteropSealedClassBridge toFfi();
+
+  static NativeInteropSealedClass? fromFfi(ffi_bridge.NativeInteropSealedClassBridge? ffiClass) {
+    if (ffiClass == null) {
+      return null;
+    }
+    if (ffi_bridge.NativeInteropSealedClassWithFieldsBridge.isA(ffiClass)) {
+      return NativeInteropSealedClassWithFields.fromFfi(
+        ffi_bridge.NativeInteropSealedClassWithFieldsBridge.as(ffiClass),
+      );
+    }
+    if (ffi_bridge.NativeInteropEmptySealedClassBridge.isA(ffiClass)) {
+      return NativeInteropEmptySealedClass.fromFfi(
+        ffi_bridge.NativeInteropEmptySealedClassBridge.as(ffiClass),
+      );
+    }
+    throw ArgumentError.value(ffiClass);
+  }
+}
+
+/// A subclass of `NativeInteropSealedClass` with fields.
+class NativeInteropSealedClassWithFields extends NativeInteropSealedClass {
+  NativeInteropSealedClassWithFields({
+    required this.aString,
+    this.aNullableInt,
+    required this.anEnum,
+    this.aClass,
+  });
+
+  String aString;
+
+  int? aNullableInt;
+
+  NativeInteropAnEnum anEnum;
+
+  NativeInteropAllNullableTypesWithoutRecursion? aClass;
+
+  List<Object?> _toList() {
+    return <Object?>[aString, aNullableInt, anEnum, aClass];
+  }
+
+  @override
+  jni_bridge.NativeInteropSealedClassWithFields toJni() {
+    return jni_bridge.NativeInteropSealedClassWithFields(
+      _PigeonJniCodec.writeValue<JString>(aString),
+      _PigeonJniCodec.writeValue<JLong?>(aNullableInt),
+      anEnum.toJni(),
+      aClass?.toJni(),
+    );
+  }
+
+  @override
+  ffi_bridge.NativeInteropSealedClassWithFieldsBridge toFfi() {
+    return ffi_bridge.NativeInteropSealedClassWithFieldsBridge.alloc().initWithAString(
+      _PigeonFfiCodec.writeValue<NSString>(aString),
+      aNullableInt: _PigeonFfiCodec.writeValue<NSNumber?>(aNullableInt),
+      anEnum: ffi_bridge.NativeInteropAnEnum.values[anEnum.index],
+      aClass: aClass?.toFfi(),
+    );
+  }
+
+  Object encode() {
+    return _toList();
+  }
+
+  static NativeInteropSealedClassWithFields? fromJni(
+    jni_bridge.NativeInteropSealedClassWithFields? jniClass,
+  ) {
+    return jniClass == null
+        ? null
+        : NativeInteropSealedClassWithFields(
+            aString: jniClass.aString.toDartString(releaseOriginal: true),
+            aNullableInt: jniClass.aNullableInt?.toDartInt(releaseOriginal: true),
+            anEnum: NativeInteropAnEnum.fromJni(jniClass.anEnum)!,
+            aClass: NativeInteropAllNullableTypesWithoutRecursion.fromJni(jniClass.aClass),
+          );
+  }
+
+  static NativeInteropSealedClassWithFields? fromFfi(
+    ffi_bridge.NativeInteropSealedClassWithFieldsBridge? ffiClass,
+  ) {
+    return ffiClass == null
+        ? null
+        : NativeInteropSealedClassWithFields(
+            aString: ffiClass.aString.toDartString(),
+            aNullableInt: ffiClass.aNullableInt?.longValue,
+            anEnum: NativeInteropAnEnum.values[ffiClass.anEnum.index],
+            aClass: NativeInteropAllNullableTypesWithoutRecursion.fromFfi(ffiClass.aClass),
+          );
+  }
+
+  static NativeInteropSealedClassWithFields decode(Object result) {
+    result as List<Object?>;
+    return NativeInteropSealedClassWithFields(
+      aString: result[0]! as String,
+      aNullableInt: result[1] as int?,
+      anEnum: result[2]! as NativeInteropAnEnum,
+      aClass: result[3] as NativeInteropAllNullableTypesWithoutRecursion?,
+    );
+  }
+
+  @override
+  // ignore: avoid_equals_and_hash_code_on_mutable_classes
+  bool operator ==(Object other) {
+    if (other is! NativeInteropSealedClassWithFields || other.runtimeType != runtimeType) {
+      return false;
+    }
+    if (identical(this, other)) {
+      return true;
+    }
+    return _deepEquals(aString, other.aString) &&
+        _deepEquals(aNullableInt, other.aNullableInt) &&
+        _deepEquals(anEnum, other.anEnum) &&
+        _deepEquals(aClass, other.aClass);
+  }
+
+  @override
+  // ignore: avoid_equals_and_hash_code_on_mutable_classes
+  int get hashCode => _deepHash(<Object?>[runtimeType, ..._toList()]);
+
+  @override
+  String toString() {
+    return 'NativeInteropSealedClassWithFields(aString: $aString, aNullableInt: $aNullableInt, anEnum: $anEnum, aClass: $aClass)';
+  }
+}
+
+/// A subclass of `NativeInteropSealedClass` without fields.
+class NativeInteropEmptySealedClass extends NativeInteropSealedClass {
+  NativeInteropEmptySealedClass();
+
+  List<Object?> _toList() {
+    return <Object?>[];
+  }
+
+  @override
+  jni_bridge.NativeInteropEmptySealedClass toJni() {
+    return jni_bridge.NativeInteropEmptySealedClass();
+  }
+
+  @override
+  ffi_bridge.NativeInteropEmptySealedClassBridge toFfi() {
+    return ffi_bridge.NativeInteropEmptySealedClassBridge();
+  }
+
+  Object encode() {
+    return _toList();
+  }
+
+  static NativeInteropEmptySealedClass? fromJni(
+    jni_bridge.NativeInteropEmptySealedClass? jniClass,
+  ) {
+    return jniClass == null ? null : NativeInteropEmptySealedClass();
+  }
+
+  static NativeInteropEmptySealedClass? fromFfi(
+    ffi_bridge.NativeInteropEmptySealedClassBridge? ffiClass,
+  ) {
+    return ffiClass == null ? null : NativeInteropEmptySealedClass();
+  }
+
+  static NativeInteropEmptySealedClass decode(Object result) {
+    result as List<Object?>;
+    return NativeInteropEmptySealedClass();
+  }
+
+  @override
+  // ignore: avoid_equals_and_hash_code_on_mutable_classes
+  bool operator ==(Object other) {
+    if (other is! NativeInteropEmptySealedClass || other.runtimeType != runtimeType) {
+      return false;
+    }
+    return true;
+  }
+
+  @override
+  // ignore: avoid_equals_and_hash_code_on_mutable_classes
+  int get hashCode => _deepHash(<Object?>[runtimeType, ..._toList()]);
+
+  @override
+  String toString() {
+    return 'NativeInteropEmptySealedClass()';
+  }
+}
+
+/// A class with sealed class fields, to test sealed classes nested in classes
+/// and lists.
+class NativeInteropSealedClassWrapper {
+  NativeInteropSealedClassWrapper({
+    required this.sealedClass,
+    this.nullableSealedClass,
+    required this.sealedClassList,
+  });
+
+  NativeInteropSealedClass sealedClass;
+
+  NativeInteropSealedClass? nullableSealedClass;
+
+  List<NativeInteropSealedClass> sealedClassList;
+
+  List<Object?> _toList() {
+    return <Object?>[sealedClass, nullableSealedClass, sealedClassList];
+  }
+
+  jni_bridge.NativeInteropSealedClassWrapper toJni() {
+    return jni_bridge.NativeInteropSealedClassWrapper(
+      sealedClass.toJni(),
+      nullableSealedClass?.toJni(),
+      _PigeonJniCodec.writeValue<JList<jni_bridge.NativeInteropSealedClass>>(sealedClassList),
+    );
+  }
+
+  ffi_bridge.NativeInteropSealedClassWrapperBridge toFfi() {
+    return ffi_bridge.NativeInteropSealedClassWrapperBridge.alloc().initWithSealedClass(
+      sealedClass.toFfi(),
+      nullableSealedClass: nullableSealedClass?.toFfi(),
+      sealedClassList: _PigeonFfiCodec.writeValue<NSMutableArray>(sealedClassList),
+    );
+  }
+
+  Object encode() {
+    return _toList();
+  }
+
+  static NativeInteropSealedClassWrapper? fromJni(
+    jni_bridge.NativeInteropSealedClassWrapper? jniClass,
+  ) {
+    return jniClass == null
+        ? null
+        : NativeInteropSealedClassWrapper(
+            sealedClass: NativeInteropSealedClass.fromJni(jniClass.sealedClass)!,
+            nullableSealedClass: NativeInteropSealedClass.fromJni(jniClass.nullableSealedClass),
+            sealedClassList: (_PigeonJniCodec.readValue(jniClass.sealedClassList)! as List<Object?>)
+                .cast<NativeInteropSealedClass>(),
+          );
+  }
+
+  static NativeInteropSealedClassWrapper? fromFfi(
+    ffi_bridge.NativeInteropSealedClassWrapperBridge? ffiClass,
+  ) {
+    return ffiClass == null
+        ? null
+        : NativeInteropSealedClassWrapper(
+            sealedClass: NativeInteropSealedClass.fromFfi(ffiClass.sealedClass)!,
+            nullableSealedClass: NativeInteropSealedClass.fromFfi(ffiClass.nullableSealedClass),
+            sealedClassList: (_PigeonFfiCodec.readValue(ffiClass.sealedClassList)! as List<Object?>)
+                .cast<NativeInteropSealedClass>(),
+          );
+  }
+
+  static NativeInteropSealedClassWrapper decode(Object result) {
+    result as List<Object?>;
+    return NativeInteropSealedClassWrapper(
+      sealedClass: result[0]! as NativeInteropSealedClass,
+      nullableSealedClass: result[1] as NativeInteropSealedClass?,
+      sealedClassList: (result[2]! as List<Object?>).cast<NativeInteropSealedClass>(),
+    );
+  }
+
+  @override
+  // ignore: avoid_equals_and_hash_code_on_mutable_classes
+  bool operator ==(Object other) {
+    if (other is! NativeInteropSealedClassWrapper || other.runtimeType != runtimeType) {
+      return false;
+    }
+    if (identical(this, other)) {
+      return true;
+    }
+    return _deepEquals(sealedClass, other.sealedClass) &&
+        _deepEquals(nullableSealedClass, other.nullableSealedClass) &&
+        _deepEquals(sealedClassList, other.sealedClassList);
+  }
+
+  @override
+  // ignore: avoid_equals_and_hash_code_on_mutable_classes
+  int get hashCode => _deepHash(<Object?>[runtimeType, ..._toList()]);
+
+  @override
+  String toString() {
+    return 'NativeInteropSealedClassWrapper(sealedClass: $sealedClass, nullableSealedClass: $nullableSealedClass, sealedClassList: $sealedClassList)';
+  }
+}
+
 class _PigeonCodec extends StandardMessageCodec {
   const _PigeonCodec();
   @override
@@ -2636,6 +2999,15 @@ class _PigeonCodec extends StandardMessageCodec {
     } else if (value is NativeInteropAllClassesWrapper) {
       buffer.putUint8(135);
       writeValue(buffer, value.encode());
+    } else if (value is NativeInteropSealedClassWithFields) {
+      buffer.putUint8(136);
+      writeValue(buffer, value.encode());
+    } else if (value is NativeInteropEmptySealedClass) {
+      buffer.putUint8(137);
+      writeValue(buffer, value.encode());
+    } else if (value is NativeInteropSealedClassWrapper) {
+      buffer.putUint8(138);
+      writeValue(buffer, value.encode());
     } else {
       super.writeValue(buffer, value);
     }
@@ -2660,6 +3032,12 @@ class _PigeonCodec extends StandardMessageCodec {
         return NativeInteropAllNullableTypesWithoutRecursion.decode(readValue(buffer)!);
       case 135:
         return NativeInteropAllClassesWrapper.decode(readValue(buffer)!);
+      case 136:
+        return NativeInteropSealedClassWithFields.decode(readValue(buffer)!);
+      case 137:
+        return NativeInteropEmptySealedClass.decode(readValue(buffer)!);
+      case 138:
+        return NativeInteropSealedClassWrapper.decode(readValue(buffer)!);
       default:
         return super.readValueOfType(type, buffer);
     }
@@ -3551,6 +3929,108 @@ class NativeInteropHostIntegrationCoreApiForNativeInterop {
             .echoClassWrapperWithWrapper(wrapper.toFfi(), wrappedError: error);
         _throwIfFfiError(error);
         final NativeInteropAllClassesWrapper dartTypeRes = NativeInteropAllClassesWrapper.fromFfi(
+          res,
+        )!;
+        return dartTypeRes;
+      } else {
+        throw Exception('No JNI or FFI api available');
+      }
+    } on JThrowable catch (e) {
+      throw _wrapJniException(e);
+    }
+  }
+
+  NativeInteropSealedClass echoSealedClass(NativeInteropSealedClass sealedClass) {
+    try {
+      if (_jniApi != null) {
+        final jni_bridge.NativeInteropSealedClass res = _jniApi.echoSealedClass(
+          sealedClass.toJni(),
+        );
+        final NativeInteropSealedClass dartTypeRes = NativeInteropSealedClass.fromJni(res)!;
+        return dartTypeRes;
+      } else if (_ffiApi != null) {
+        final error = ffi_bridge.NativeInteropTestsError();
+        final ffi_bridge.NativeInteropSealedClassBridge? res = _ffiApi
+            .echoSealedClassWithSealedClass(sealedClass.toFfi(), wrappedError: error);
+        _throwIfFfiError(error);
+        final NativeInteropSealedClass dartTypeRes = NativeInteropSealedClass.fromFfi(res)!;
+        return dartTypeRes;
+      } else {
+        throw Exception('No JNI or FFI api available');
+      }
+    } on JThrowable catch (e) {
+      throw _wrapJniException(e);
+    }
+  }
+
+  NativeInteropSealedClass? echoNullableSealedClass(NativeInteropSealedClass? sealedClass) {
+    try {
+      if (_jniApi != null) {
+        final jni_bridge.NativeInteropSealedClass? res = _jniApi.echoNullableSealedClass(
+          sealedClass?.toJni(),
+        );
+        final NativeInteropSealedClass? dartTypeRes = NativeInteropSealedClass.fromJni(res);
+        return dartTypeRes;
+      } else if (_ffiApi != null) {
+        final error = ffi_bridge.NativeInteropTestsError();
+        final ffi_bridge.NativeInteropSealedClassBridge? res = _ffiApi
+            .echoNullableSealedClassWithSealedClass(sealedClass?.toFfi(), wrappedError: error);
+        _throwIfFfiError(error);
+        final NativeInteropSealedClass? dartTypeRes = NativeInteropSealedClass.fromFfi(res);
+        return dartTypeRes;
+      } else {
+        throw Exception('No JNI or FFI api available');
+      }
+    } on JThrowable catch (e) {
+      throw _wrapJniException(e);
+    }
+  }
+
+  List<NativeInteropSealedClass> echoSealedClassList(
+    List<NativeInteropSealedClass> sealedClassList,
+  ) {
+    try {
+      if (_jniApi != null) {
+        final JList<jni_bridge.NativeInteropSealedClass> res = _jniApi.echoSealedClassList(
+          _PigeonJniCodec.writeValue<JList<jni_bridge.NativeInteropSealedClass>>(sealedClassList),
+        );
+        final List<NativeInteropSealedClass> dartTypeRes =
+            (_PigeonJniCodec.readValue(res)! as List<Object?>).cast<NativeInteropSealedClass>();
+        return dartTypeRes;
+      } else if (_ffiApi != null) {
+        final error = ffi_bridge.NativeInteropTestsError();
+        final NSArray? res = _ffiApi.echoSealedClassListWithSealedClassList(
+          _PigeonFfiCodec.writeValue<NSMutableArray>(sealedClassList),
+          wrappedError: error,
+        );
+        _throwIfFfiError(error);
+        final List<NativeInteropSealedClass> dartTypeRes =
+            (_PigeonFfiCodec.readValue(res)! as List<Object?>).cast<NativeInteropSealedClass>();
+        return dartTypeRes;
+      } else {
+        throw Exception('No JNI or FFI api available');
+      }
+    } on JThrowable catch (e) {
+      throw _wrapJniException(e);
+    }
+  }
+
+  NativeInteropSealedClassWrapper echoSealedClassWrapper(NativeInteropSealedClassWrapper wrapper) {
+    try {
+      if (_jniApi != null) {
+        final jni_bridge.NativeInteropSealedClassWrapper res = _jniApi.echoSealedClassWrapper(
+          wrapper.toJni(),
+        );
+        final NativeInteropSealedClassWrapper dartTypeRes = NativeInteropSealedClassWrapper.fromJni(
+          res,
+        )!;
+        return dartTypeRes;
+      } else if (_ffiApi != null) {
+        final error = ffi_bridge.NativeInteropTestsError();
+        final ffi_bridge.NativeInteropSealedClassWrapperBridge? res = _ffiApi
+            .echoSealedClassWrapperWithWrapper(wrapper.toFfi(), wrappedError: error);
+        _throwIfFfiError(error);
+        final NativeInteropSealedClassWrapper dartTypeRes = NativeInteropSealedClassWrapper.fromFfi(
           res,
         )!;
         return dartTypeRes;
@@ -5424,6 +5904,41 @@ class NativeInteropHostIntegrationCoreApiForNativeInterop {
     }
   }
 
+  Future<NativeInteropSealedClass> echoAsyncSealedClass(
+    NativeInteropSealedClass sealedClass,
+  ) async {
+    try {
+      if (_jniApi != null) {
+        final jni_bridge.NativeInteropSealedClass res = await _jniApi.echoAsyncSealedClass(
+          sealedClass.toJni(),
+        );
+        final NativeInteropSealedClass dartTypeRes = NativeInteropSealedClass.fromJni(res)!;
+        return dartTypeRes;
+      } else if (_ffiApi != null) {
+        final error = ffi_bridge.NativeInteropTestsError();
+        final Completer<NativeInteropSealedClass> completer = Completer<NativeInteropSealedClass>();
+        _ffiApi.echoAsyncSealedClassWithSealedClass(
+          sealedClass.toFfi(),
+          wrappedError: error,
+          completionHandler: ffi_bridge.ObjCBlock_ffiVoid_NativeInteropSealedClassBridge.listener((
+            ffi_bridge.NativeInteropSealedClassBridge? res,
+          ) {
+            if (error.code != null) {
+              completer.completeError(_wrapFfiError(error));
+            } else {
+              completer.complete(NativeInteropSealedClass.fromFfi(res)!);
+            }
+          }),
+        );
+        return await completer.future;
+      } else {
+        throw Exception('No JNI or FFI api available');
+      }
+    } on JThrowable catch (e) {
+      throw _wrapJniException(e);
+    }
+  }
+
   Future<NativeInteropAllNullableTypes?> echoAsyncNullableNativeInteropAllNullableTypes(
     NativeInteropAllNullableTypes? everything,
   ) async {
@@ -6280,6 +6795,29 @@ class NativeInteropHostIntegrationCoreApiForNativeInterop {
         final NativeInteropAllNullableTypes? dartTypeRes = NativeInteropAllNullableTypes.fromFfi(
           res,
         );
+        return dartTypeRes;
+      } else {
+        throw Exception('No JNI or FFI api available');
+      }
+    } on JThrowable catch (e) {
+      throw _wrapJniException(e);
+    }
+  }
+
+  NativeInteropSealedClass callFlutterEchoSealedClass(NativeInteropSealedClass sealedClass) {
+    try {
+      if (_jniApi != null) {
+        final jni_bridge.NativeInteropSealedClass res = _jniApi.callFlutterEchoSealedClass(
+          sealedClass.toJni(),
+        );
+        final NativeInteropSealedClass dartTypeRes = NativeInteropSealedClass.fromJni(res)!;
+        return dartTypeRes;
+      } else if (_ffiApi != null) {
+        final error = ffi_bridge.NativeInteropTestsError();
+        final ffi_bridge.NativeInteropSealedClassBridge? res = _ffiApi
+            .callFlutterEchoSealedClassWithSealedClass(sealedClass.toFfi(), wrappedError: error);
+        _throwIfFfiError(error);
+        final NativeInteropSealedClass dartTypeRes = NativeInteropSealedClass.fromFfi(res)!;
         return dartTypeRes;
       } else {
         throw Exception('No JNI or FFI api available');
@@ -10457,6 +10995,104 @@ class NativeInteropHostIntegrationCoreApi {
     return pigeonVar_replyValue! as NativeInteropAllClassesWrapper;
   }
 
+  /// Returns the passed sealed class, to test sealed class handling.
+  Future<NativeInteropSealedClass> echoSealedClass(NativeInteropSealedClass sealedClass) async {
+    if (_nativeInteropApi != null) {
+      return _nativeInteropApi.echoSealedClass(sealedClass);
+    }
+    final pigeonVar_channelName =
+        'dev.flutter.pigeon.pigeon_integration_tests.NativeInteropHostIntegrationCoreApi.echoSealedClass$pigeonVar_messageChannelSuffix';
+    final pigeonVar_channel = BasicMessageChannel<Object?>(
+      pigeonVar_channelName,
+      pigeonChannelCodec,
+      binaryMessenger: pigeonVar_binaryMessenger,
+    );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[sealedClass]);
+    final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
+
+    final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
+      pigeonVar_replyList,
+      pigeonVar_channelName,
+      isNullValid: false,
+    );
+    return pigeonVar_replyValue! as NativeInteropSealedClass;
+  }
+
+  /// Returns the passed sealed class, to test nullable sealed class handling.
+  Future<NativeInteropSealedClass?> echoNullableSealedClass(
+    NativeInteropSealedClass? sealedClass,
+  ) async {
+    if (_nativeInteropApi != null) {
+      return _nativeInteropApi.echoNullableSealedClass(sealedClass);
+    }
+    final pigeonVar_channelName =
+        'dev.flutter.pigeon.pigeon_integration_tests.NativeInteropHostIntegrationCoreApi.echoNullableSealedClass$pigeonVar_messageChannelSuffix';
+    final pigeonVar_channel = BasicMessageChannel<Object?>(
+      pigeonVar_channelName,
+      pigeonChannelCodec,
+      binaryMessenger: pigeonVar_binaryMessenger,
+    );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[sealedClass]);
+    final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
+
+    final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
+      pigeonVar_replyList,
+      pigeonVar_channelName,
+      isNullValid: true,
+    );
+    return pigeonVar_replyValue as NativeInteropSealedClass?;
+  }
+
+  /// Returns the passed list, to test sealed classes in lists.
+  Future<List<NativeInteropSealedClass>> echoSealedClassList(
+    List<NativeInteropSealedClass> sealedClassList,
+  ) async {
+    if (_nativeInteropApi != null) {
+      return _nativeInteropApi.echoSealedClassList(sealedClassList);
+    }
+    final pigeonVar_channelName =
+        'dev.flutter.pigeon.pigeon_integration_tests.NativeInteropHostIntegrationCoreApi.echoSealedClassList$pigeonVar_messageChannelSuffix';
+    final pigeonVar_channel = BasicMessageChannel<Object?>(
+      pigeonVar_channelName,
+      pigeonChannelCodec,
+      binaryMessenger: pigeonVar_binaryMessenger,
+    );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[sealedClassList]);
+    final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
+
+    final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
+      pigeonVar_replyList,
+      pigeonVar_channelName,
+      isNullValid: false,
+    );
+    return (pigeonVar_replyValue! as List<Object?>).cast<NativeInteropSealedClass>();
+  }
+
+  /// Returns the passed wrapper, to test sealed classes in class fields.
+  Future<NativeInteropSealedClassWrapper> echoSealedClassWrapper(
+    NativeInteropSealedClassWrapper wrapper,
+  ) async {
+    if (_nativeInteropApi != null) {
+      return _nativeInteropApi.echoSealedClassWrapper(wrapper);
+    }
+    final pigeonVar_channelName =
+        'dev.flutter.pigeon.pigeon_integration_tests.NativeInteropHostIntegrationCoreApi.echoSealedClassWrapper$pigeonVar_messageChannelSuffix';
+    final pigeonVar_channel = BasicMessageChannel<Object?>(
+      pigeonVar_channelName,
+      pigeonChannelCodec,
+      binaryMessenger: pigeonVar_binaryMessenger,
+    );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[wrapper]);
+    final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
+
+    final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
+      pigeonVar_replyList,
+      pigeonVar_channelName,
+      isNullValid: false,
+    );
+    return pigeonVar_replyValue! as NativeInteropSealedClassWrapper;
+  }
+
   /// Returns the passed enum to test serialization and deserialization.
   Future<NativeInteropAnEnum> echoEnum(NativeInteropAnEnum anEnum) async {
     if (_nativeInteropApi != null) {
@@ -11943,6 +12579,31 @@ class NativeInteropHostIntegrationCoreApi {
     return pigeonVar_replyValue! as NativeInteropAllTypes;
   }
 
+  /// Returns the passed sealed class asynchronously.
+  Future<NativeInteropSealedClass> echoAsyncSealedClass(
+    NativeInteropSealedClass sealedClass,
+  ) async {
+    if (_nativeInteropApi != null) {
+      return _nativeInteropApi.echoAsyncSealedClass(sealedClass);
+    }
+    final pigeonVar_channelName =
+        'dev.flutter.pigeon.pigeon_integration_tests.NativeInteropHostIntegrationCoreApi.echoAsyncSealedClass$pigeonVar_messageChannelSuffix';
+    final pigeonVar_channel = BasicMessageChannel<Object?>(
+      pigeonVar_channelName,
+      pigeonChannelCodec,
+      binaryMessenger: pigeonVar_binaryMessenger,
+    );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[sealedClass]);
+    final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
+
+    final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
+      pigeonVar_replyList,
+      pigeonVar_channelName,
+      isNullValid: false,
+    );
+    return pigeonVar_replyValue! as NativeInteropSealedClass;
+  }
+
   /// Returns the passed object, to test serialization and deserialization.
   Future<NativeInteropAllNullableTypes?> echoAsyncNullableNativeInteropAllNullableTypes(
     NativeInteropAllNullableTypes? everything,
@@ -12549,6 +13210,30 @@ class NativeInteropHostIntegrationCoreApi {
       isNullValid: true,
     );
     return pigeonVar_replyValue as NativeInteropAllNullableTypes?;
+  }
+
+  Future<NativeInteropSealedClass> callFlutterEchoSealedClass(
+    NativeInteropSealedClass sealedClass,
+  ) async {
+    if (_nativeInteropApi != null) {
+      return _nativeInteropApi.callFlutterEchoSealedClass(sealedClass);
+    }
+    final pigeonVar_channelName =
+        'dev.flutter.pigeon.pigeon_integration_tests.NativeInteropHostIntegrationCoreApi.callFlutterEchoSealedClass$pigeonVar_messageChannelSuffix';
+    final pigeonVar_channel = BasicMessageChannel<Object?>(
+      pigeonVar_channelName,
+      pigeonChannelCodec,
+      binaryMessenger: pigeonVar_binaryMessenger,
+    );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[sealedClass]);
+    final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
+
+    final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
+      pigeonVar_replyList,
+      pigeonVar_channelName,
+      isNullValid: false,
+    );
+    return pigeonVar_replyValue! as NativeInteropSealedClass;
   }
 
   Future<NativeInteropAllNullableTypes> callFlutterSendMultipleNullableTypes(
@@ -15189,6 +15874,31 @@ final class NativeInteropFlutterIntegrationCoreApiRegistrar
                       NativeInteropAllNullableTypes.fromFfi(everything),
                     );
                 return response?.toFfi();
+              } else {
+                _reportFfiError(
+                  errorOut,
+                  'ArgumentError: NativeInteropFlutterIntegrationCoreApi was not registered.',
+                );
+                return null;
+              }
+            } catch (e) {
+              _reportFfiError(errorOut, e);
+              return null;
+            }
+          });
+      ffi_bridge
+          .NativeInteropFlutterIntegrationCoreApiBridge$Builder
+          .echoNativeInteropSealedClassWithSealedClass_error_
+          .implement(builder, (
+            ffi_bridge.NativeInteropSealedClassBridge? sealedClass,
+            ffi_bridge.NativeInteropTestsError errorOut,
+          ) {
+            try {
+              if (dartApi != null) {
+                final NativeInteropSealedClass response = dartApi!.echoNativeInteropSealedClass(
+                  NativeInteropSealedClass.fromFfi(sealedClass)!,
+                );
+                return response.toFfi();
               } else {
                 _reportFfiError(
                   errorOut,
@@ -18539,6 +19249,20 @@ final class NativeInteropFlutterIntegrationCoreApiRegistrar
   }
 
   @override
+  jni_bridge.NativeInteropSealedClass echoNativeInteropSealedClass(
+    jni_bridge.NativeInteropSealedClass sealedClass,
+  ) {
+    if (dartApi != null) {
+      final NativeInteropSealedClass response = dartApi!.echoNativeInteropSealedClass(
+        NativeInteropSealedClass.fromJni(sealedClass)!,
+      );
+      return response.toJni();
+    } else {
+      throw ArgumentError('NativeInteropFlutterIntegrationCoreApi was not registered.');
+    }
+  }
+
+  @override
   jni_bridge.NativeInteropAllNullableTypes sendMultipleNullableTypes(
     JBoolean? aNullableBool,
     JLong? aNullableInt,
@@ -19947,6 +20671,9 @@ abstract class NativeInteropFlutterIntegrationCoreApi {
     NativeInteropAllNullableTypes? everything,
   );
 
+  /// Returns the passed sealed class, to test sealed class handling.
+  NativeInteropSealedClass echoNativeInteropSealedClass(NativeInteropSealedClass sealedClass);
+
   /// Returns passed in arguments of multiple types.
   ///
   /// Tests multiple-arity FlutterApi handling.
@@ -20414,6 +21141,33 @@ abstract class NativeInteropFlutterIntegrationCoreApi {
           try {
             final NativeInteropAllNullableTypes? output = api.echoNativeInteropAllNullableTypes(
               arg_everything,
+            );
+            return wrapResponse(result: output);
+          } on PlatformException catch (e) {
+            return wrapResponse(error: e);
+          } catch (e) {
+            return wrapResponse(
+              error: PlatformException(code: 'error', message: e.toString()),
+            );
+          }
+        });
+      }
+    }
+    {
+      final pigeonVar_channel = BasicMessageChannel<Object?>(
+        'dev.flutter.pigeon.pigeon_integration_tests.NativeInteropFlutterIntegrationCoreApi.echoNativeInteropSealedClass$messageChannelSuffix',
+        pigeonChannelCodec,
+        binaryMessenger: binaryMessenger,
+      );
+      if (api == null) {
+        pigeonVar_channel.setMessageHandler(null);
+      } else {
+        pigeonVar_channel.setMessageHandler((Object? message) async {
+          final List<Object?> args = message! as List<Object?>;
+          final NativeInteropSealedClass arg_sealedClass = args[0]! as NativeInteropSealedClass;
+          try {
+            final NativeInteropSealedClass output = api.echoNativeInteropSealedClass(
+              arg_sealedClass,
             );
             return wrapResponse(result: output);
           } on PlatformException catch (e) {

@@ -1037,6 +1037,28 @@ class NativeInteropIntegrationTests : NativeInteropHostIntegrationCoreApi {
     return wrapper
   }
 
+  override fun echoSealedClass(sealedClass: NativeInteropSealedClass): NativeInteropSealedClass {
+    return sealedClass
+  }
+
+  override fun echoNullableSealedClass(
+      sealedClass: NativeInteropSealedClass?
+  ): NativeInteropSealedClass? {
+    return sealedClass
+  }
+
+  override fun echoSealedClassList(
+      sealedClassList: List<NativeInteropSealedClass>
+  ): List<NativeInteropSealedClass> {
+    return sealedClassList
+  }
+
+  override fun echoSealedClassWrapper(
+      wrapper: NativeInteropSealedClassWrapper
+  ): NativeInteropSealedClassWrapper {
+    return wrapper
+  }
+
   override fun echoEnum(anEnum: NativeInteropAnEnum): NativeInteropAnEnum {
     return anEnum
   }
@@ -1336,6 +1358,12 @@ class NativeInteropIntegrationTests : NativeInteropHostIntegrationCoreApi {
     return everything
   }
 
+  override suspend fun echoAsyncSealedClass(
+      sealedClass: NativeInteropSealedClass
+  ): NativeInteropSealedClass {
+    return sealedClass
+  }
+
   override suspend fun echoAsyncNullableNativeInteropAllNullableTypes(
       everything: NativeInteropAllNullableTypes?
   ): NativeInteropAllNullableTypes? {
@@ -1462,6 +1490,14 @@ class NativeInteropIntegrationTests : NativeInteropHostIntegrationCoreApi {
     return NativeInteropFlutterIntegrationCoreApiRegistrar()
         .getInstance()!!
         .echoNativeInteropAllNullableTypes(everything)
+  }
+
+  override fun callFlutterEchoSealedClass(
+      sealedClass: NativeInteropSealedClass
+  ): NativeInteropSealedClass {
+    return NativeInteropFlutterIntegrationCoreApiRegistrar()
+        .getInstance()!!
+        .echoNativeInteropSealedClass(sealedClass)
   }
 
   override fun callFlutterSendMultipleNullableTypes(

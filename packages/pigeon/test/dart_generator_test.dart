@@ -2266,4 +2266,125 @@ name: foobar
     expect(code, contains('return _jniApi.getter;'));
     expect(code, contains('_jniApi.setter = value;'));
   });
+
+  test('native interop converts sealed classes through their subclasses', () {
+    final sink = StringBuffer();
+    const generator = DartGenerator();
+    generator.generate(
+      const InternalDartOptions(
+        ignoreLints: false,
+        useJni: true,
+        useFfi: true,
+        dartOut: 'lib/foo.dart',
+      ),
+      buildSealedClassRoot(),
+      sink,
+      dartPackageName: DEFAULT_PACKAGE_NAME,
+    );
+    final code = sink.toString();
+
+    expect(code, contains('jni_bridge.Shape toJni();'));
+    expect(code, contains('static Shape? fromJni(jni_bridge.Shape? jniClass) {'));
+    expect(code, contains('if (jniClass.isA<jni_bridge.Circle>(jni_bridge.Circle.type)) {'));
+    expect(code, contains('return Circle.fromJni(jniClass.as(jni_bridge.Circle.type));'));
+    expect(code, contains('ffi_bridge.ShapeBridge toFfi();'));
+    expect(code, contains('static Shape? fromFfi(ffi_bridge.ShapeBridge? ffiClass) {'));
+    expect(code, contains('if (ffi_bridge.CircleBridge.isA(ffiClass)) {'));
+    expect(code, contains('return Circle.fromFfi(ffi_bridge.CircleBridge.as(ffiClass));'));
+    expect(code, contains(RegExp(r'@override\s+jni_bridge\.Circle toJni\(\)')));
+    expect(code, contains(RegExp(r'@override\s+ffi_bridge\.CircleBridge toFfi\(\)')));
+    expect(code, contains('final jni_bridge.Shape res = _jniApi.echoShape(shape.toJni());'));
+    expect(code, contains('final Shape dartTypeRes = Shape.fromJni(res)!;'));
+  });
+
+  test('native interop codecs have no branch for sealed classes', () {
+    final sink = StringBuffer();
+    const generator = DartGenerator();
+    generator.generate(
+      const InternalDartOptions(
+        ignoreLints: false,
+        useJni: true,
+        useFfi: true,
+        dartOut: 'lib/foo.dart',
+      ),
+      buildSealedClassRoot(),
+      sink,
+      dartPackageName: DEFAULT_PACKAGE_NAME,
+    );
+    final code = sink.toString();
+
+    expect(code, contains('value.isA<jni_bridge.Circle>('));
+    expect(code, isNot(contains('value.isA<jni_bridge.Shape>(')));
+    expect(code, contains('ffi_bridge.CircleBridge.isA(value)'));
+    expect(code, isNot(contains('ffi_bridge.ShapeBridge.isA(value)')));
+    expect(code, contains('value is Circle)'));
+    expect(code, isNot(contains('value is Shape)')));
+  });
+
+  test('ffi toFfi of a class without fields uses the default constructor', () {
+    final sink = StringBuffer();
+    const generator = DartGenerator();
+    generator.generate(
+      const InternalDartOptions(ignoreLints: false, useFfi: true, dartOut: 'lib/foo.dart'),
+      buildSealedClassRoot(),
+      sink,
+      dartPackageName: DEFAULT_PACKAGE_NAME,
+    );
+    final code = sink.toString();
+
+    expect(code, contains('return ffi_bridge.EmptyShapeBridge();'));
+  });
+}
+
+/// Builds a root with a sealed class `Shape`, its subclasses `Circle` (one
+/// field) and `EmptyShape` (no fields), and a host API that echoes `Shape`.
+Root buildSealedClassRoot() {
+  final shape = Class(name: 'Shape', fields: <NamedType>[], isSealed: true);
+  final circle = Class(
+    name: 'Circle',
+    fields: <NamedType>[
+      NamedType(
+        name: 'radius',
+        type: const TypeDeclaration(baseName: 'double', isNullable: false),
+      ),
+    ],
+    superClassName: 'Shape',
+    superClass: shape,
+  );
+  final emptyShape = Class(
+    name: 'EmptyShape',
+    fields: <NamedType>[],
+    superClassName: 'Shape',
+    superClass: shape,
+  );
+  shape.children.addAll(<Class>[circle, emptyShape]);
+  final shapeType = TypeDeclaration(baseName: 'Shape', isNullable: false, associatedClass: shape);
+  final nullableShapeType = TypeDeclaration(
+    baseName: 'Shape',
+    isNullable: true,
+    associatedClass: shape,
+  );
+  return Root(
+    apis: <Api>[
+      AstHostApi(
+        name: 'Api',
+        methods: <Method>[
+          Method(
+            name: 'echoShape',
+            location: ApiLocation.host,
+            parameters: <Parameter>[Parameter(name: 'shape', type: shapeType)],
+            returnType: shapeType,
+          ),
+          Method(
+            name: 'echoNullableShape',
+            location: ApiLocation.host,
+            parameters: <Parameter>[Parameter(name: 'shape', type: nullableShapeType)],
+            returnType: nullableShapeType,
+          ),
+        ],
+      ),
+    ],
+    classes: <Class>[shape, circle, emptyShape],
+    enums: <Enum>[],
+  );
 }
