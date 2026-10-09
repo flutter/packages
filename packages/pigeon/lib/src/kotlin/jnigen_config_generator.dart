@@ -127,8 +127,8 @@ class JnigenConfigGenerator extends Generator<InternalJnigenConfigOptions> {
             for (final Api api in root.apis) {
               if (api is AstFlutterApi) {
                 indent.writeln("'$packagePrefix${api.name}',");
-              }
-              if (api is AstHostApi || api is AstFlutterApi) {
+                indent.writeln("'$packagePrefix${api.name}Registrar',");
+              } else if (api is AstHostApi) {
                 indent.writeln("'$packagePrefix${api.name}Registrar',");
               }
             }
