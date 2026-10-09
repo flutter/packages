@@ -1828,7 +1828,7 @@ void main() {
     final code = sink.toString();
 
     expect(code, contains('protocol Shape {'));
-    expect(code, contains('struct Circle: Shape {'));
+    expect(code, contains('struct Circle: Shape, Hashable, CustomStringConvertible {'));
     expect(code, contains('@objc class ShapeBridge: NSObject {'));
     expect(code, contains('@objc class CircleBridge: ShapeBridge {'));
     expect(code, contains('@objc class EmptyShapeBridge: ShapeBridge {'));

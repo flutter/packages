@@ -1920,7 +1920,9 @@ protocol NativeInteropSealedClass {
 /// A subclass of `NativeInteropSealedClass` with fields.
 ///
 /// Generated class from Pigeon that represents data sent in messages.
-struct NativeInteropSealedClassWithFields: NativeInteropSealedClass {
+struct NativeInteropSealedClassWithFields: NativeInteropSealedClass, Hashable,
+  CustomStringConvertible
+{
   var aString: String
   var aNullableInt: Int64? = nil
   var anEnum: NativeInteropAnEnum
@@ -2024,7 +2026,9 @@ struct NativeInteropSealedClassWithFields: NativeInteropSealedClass {
 /// A subclass of `NativeInteropSealedClass` without fields.
 ///
 /// Generated class from Pigeon that represents data sent in messages.
-struct NativeInteropEmptySealedClass: NativeInteropSealedClass {
+struct NativeInteropEmptySealedClass: NativeInteropSealedClass, Hashable,
+  CustomStringConvertible
+{
 
   // swift-format-ignore: AlwaysUseLowerCamelCase
   static func fromList(_ pigeonVar_list: [Any?]) -> NativeInteropEmptySealedClass? {

@@ -689,14 +689,14 @@ class _PigeonFfiCodec {
             ? 'NSObject'
             : '${classDefinition.superClass!.name}Bridge',
       );
-    } else if (classDefinition.superClass != null) {
-      protocols.add(classDefinition.superClass!.name);
-    }
-    if (classDefinition.superClass == null) {
+    } else {
+      if (classDefinition.superClass != null) {
+        protocols.add(classDefinition.superClass!.name);
+      }
       if (hashable) {
         protocols.add('Hashable');
       }
-      if (customStringConvertible && !useFfi) {
+      if (customStringConvertible) {
         protocols.add('CustomStringConvertible');
       }
     }
