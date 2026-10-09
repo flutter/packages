@@ -1507,15 +1507,20 @@ void main() {
 
   group('FadeForwardsPageTransitionsBuilder snapshotting', () {
     Widget fadeForwardsApp({
+      bool builderAllowSnapshotting = true,
+      bool builderAllowEnterRouteSnapshotting = true,
       bool secondRouteAllowSnapshotting = true,
       NavigatorObserver? observer,
     }) {
       return MaterialApp(
         navigatorObservers: <NavigatorObserver>[if (observer != null) observer],
         theme: ThemeData(
-          pageTransitionsTheme: const PageTransitionsTheme(
+          pageTransitionsTheme: PageTransitionsTheme(
             builders: <TargetPlatform, PageTransitionsBuilder>{
-              TargetPlatform.android: FadeForwardsPageTransitionsBuilder(),
+              TargetPlatform.android: FadeForwardsPageTransitionsBuilder(
+                allowSnapshotting: builderAllowSnapshotting,
+                allowEnterRouteSnapshotting: builderAllowEnterRouteSnapshotting,
+              ),
             },
           ),
         ),
@@ -1609,6 +1614,107 @@ void main() {
         expect(fadingLayers(tester).where(containsOnlyAPicture), hasLength(1));
 
         await tester.pumpAndSettle();
+      },
+      variant: TargetPlatformVariant.only(TargetPlatform.android),
+      skip: kIsWeb, // [intended] rasterization is not used on the web.
+    );
+
+    testWidgets(
+      'FadeForwardsPageTransitionsBuilder.allowSnapshotting = false disables snapshotting for all routes',
+      (WidgetTester tester) async {
+        final observer = TransitionDurationObserver();
+        await tester.pumpWidget(
+          fadeForwardsApp(observer: observer, builderAllowSnapshotting: false),
+        );
+
+        // Push.
+        tester.state<NavigatorState>(find.byType(Navigator)).pushNamed('/2');
+        await tester.pump();
+        await tester.pump(observer.transitionDuration * .1);
+        expect(isSnapshotting(tester, 'Page 1'), isFalse);
+        expect(isSnapshotting(tester, 'Page 2'), isFalse);
+        expect(fadingLayers(tester), hasLength(2));
+        expect(fadingLayers(tester).where(containsOnlyAPicture), isEmpty);
+
+        await tester.pumpAndSettle();
+
+        // Pop.
+        tester.state<NavigatorState>(find.byType(Navigator)).pop();
+        await tester.pump();
+        await tester.pump(observer.transitionDuration * .1);
+        expect(isSnapshotting(tester, 'Page 1'), isFalse);
+        expect(isSnapshotting(tester, 'Page 2'), isFalse);
+        expect(fadingLayers(tester), hasLength(2));
+        expect(fadingLayers(tester).where(containsOnlyAPicture), isEmpty);
+
+        await tester.pumpAndSettle();
+      },
+      variant: TargetPlatformVariant.only(TargetPlatform.android),
+      skip: kIsWeb, // [intended] rasterization is not used on the web.
+    );
+
+    testWidgets(
+      'FadeForwardsPageTransitionsBuilder.allowSnapshotting = false takes precedence over allowEnterRouteSnapshotting = true',
+      (WidgetTester tester) async {
+        final observer = TransitionDurationObserver();
+        await tester.pumpWidget(
+          fadeForwardsApp(
+            observer: observer,
+            builderAllowSnapshotting: false,
+            // ignore: avoid_redundant_argument_values
+            builderAllowEnterRouteSnapshotting: true,
+          ),
+        );
+
+        tester.state<NavigatorState>(find.byType(Navigator)).pushNamed('/2');
+        await tester.pump();
+        await tester.pump(observer.transitionDuration * .1);
+        expect(isSnapshotting(tester, 'Page 1'), isFalse);
+        expect(isSnapshotting(tester, 'Page 2'), isFalse);
+
+        await tester.pumpAndSettle();
+      },
+      variant: TargetPlatformVariant.only(TargetPlatform.android),
+      skip: kIsWeb, // [intended] rasterization is not used on the web.
+    );
+
+    testWidgets(
+      'FadeForwardsPageTransitionsBuilder.allowEnterRouteSnapshotting = false disables snapshotting for the entering route only',
+      (WidgetTester tester) async {
+        final observer = TransitionDurationObserver();
+        await tester.pumpWidget(
+          fadeForwardsApp(observer: observer, builderAllowEnterRouteSnapshotting: false),
+        );
+
+        // Page 1 on top.
+        expect(isSnapshotting(tester, 'Page 1'), isFalse);
+
+        // Push. Page 2 is entering and Page 1 is exiting.
+        tester.state<NavigatorState>(find.byType(Navigator)).pushNamed('/2');
+        await tester.pump();
+        await tester.pump(observer.transitionDuration * .1);
+        expect(isSnapshotting(tester, 'Page 1'), isTrue);
+        expect(isSnapshotting(tester, 'Page 2'), isFalse);
+        expect(fadingLayers(tester), hasLength(2));
+        expect(fadingLayers(tester).where(containsOnlyAPicture), hasLength(1));
+
+        // Page 2 on top.
+        await tester.pumpAndSettle();
+        expect(isSnapshotting(tester, 'Page 2'), isFalse);
+
+        // Pop. Page 1 is entering and Page 2 is exiting.
+        tester.state<NavigatorState>(find.byType(Navigator)).pop();
+        await tester.pump();
+        await tester.pump(observer.transitionDuration * .1);
+        expect(isSnapshotting(tester, 'Page 1'), isFalse);
+        expect(isSnapshotting(tester, 'Page 2'), isTrue);
+        expect(fadingLayers(tester), hasLength(2));
+        expect(fadingLayers(tester).where(containsOnlyAPicture), hasLength(1));
+
+        // Page 1 on top.
+        await tester.pumpAndSettle();
+        expect(find.text('Page 2'), findsNothing);
+        expect(isSnapshotting(tester, 'Page 1'), isFalse);
       },
       variant: TargetPlatformVariant.only(TargetPlatform.android),
       skip: kIsWeb, // [intended] rasterization is not used on the web.
