@@ -2391,6 +2391,31 @@ dev_dependencies:
       expect(output, contains("classPath: [Uri.directory('foo/bar'), Uri.file('baz.jar')]"));
     });
 
+    test('JnigenConfigGenerator only binds the Registrar for host APIs', () {
+      final root = Root(
+        apis: <Api>[
+          AstHostApi(name: 'MyHostApi', methods: <Method>[]),
+          AstFlutterApi(name: 'MyFlutterApi', methods: <Method>[]),
+        ],
+        classes: <Class>[],
+        enums: <Enum>[],
+      );
+      final sink = StringBuffer();
+      final generator = JnigenConfigGenerator();
+      final options = InternalJnigenConfigOptions(
+        const InternalDartOptions(dartOut: 'lib/messages.dart', ignoreLints: false),
+        const InternalKotlinOptions(kotlinOut: 'android/Messages.kt', package: 'com.example'),
+        null,
+        null,
+      );
+      generator.generate(options, root, sink, dartPackageName: 'foo_package');
+      final output = sink.toString();
+      expect(output, isNot(contains("'com.example.MyHostApi',")));
+      expect(output, contains("'com.example.MyHostApiRegistrar',"));
+      expect(output, contains("'com.example.MyFlutterApi',"));
+      expect(output, contains("'com.example.MyFlutterApiRegistrar',"));
+    });
+
     test(
       'JnigenConfigGeneratorAdapter resolves relative output path using kotlinOptions.appDirectory',
       () {
@@ -2434,6 +2459,30 @@ dev_dependencies:
         expect(code, contains("dartFile: Uri.file('../lib/src/messages.g.ffi.dart')"));
       },
     );
+
+    test('FfigenConfigGeneratorAdapter only lists the Setup class for host APIs', () {
+      final root = Root(
+        apis: <Api>[AstHostApi(name: 'MyHostApi', methods: <Method>[])],
+        classes: <Class>[],
+        enums: <Enum>[],
+      );
+      final sink = StringBuffer();
+      const adapter = FfigenConfigGeneratorAdapter();
+      final InternalPigeonOptions options = InternalPigeonOptions.fromPigeonOptions(
+        const PigeonOptions(
+          input: 'pigeons/messages.dart',
+          dartOut: 'lib/src/messages.g.dart',
+          swiftOut: 'darwin/Messages.g.swift',
+          swiftOptions: SwiftOptions(useFfi: true, appDirectory: 'example/'),
+        ),
+      );
+
+      adapter.generate(sink, options, root, FileType.na);
+      final code = sink.toString();
+
+      expect(code, isNot(contains("'MyHostApi',")));
+      expect(code, contains("'MyHostApiSetup',"));
+    });
 
     test('SwiftGeneratorAdapter errors on TaskQueue when useFfi is true', () {
       final root = Root(

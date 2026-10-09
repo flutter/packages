@@ -21,7 +21,6 @@ void main() async {
     input: Input(
       classes: [
         'dev.flutter.pigeonnativeinteropapp.FlutterError',
-        'dev.flutter.pigeonnativeinteropapp.NativeInteropExampleApi',
         'dev.flutter.pigeonnativeinteropapp.NativeInteropExampleApiRegistrar',
       ],
       androidSdk: AndroidSdk(addGradleDeps: true, androidExample: Uri.directory('.')),

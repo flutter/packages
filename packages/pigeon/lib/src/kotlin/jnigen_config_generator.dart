@@ -125,8 +125,10 @@ class JnigenConfigGenerator extends Generator<InternalJnigenConfigOptions> {
               "'$packagePrefix${generatorOptions.kotlinOptions.errorClassName ?? 'FlutterError'}',",
             );
             for (final Api api in root.apis) {
-              if (api is AstHostApi || api is AstFlutterApi) {
+              if (api is AstFlutterApi) {
                 indent.writeln("'$packagePrefix${api.name}',");
+              }
+              if (api is AstHostApi || api is AstFlutterApi) {
                 indent.writeln("'$packagePrefix${api.name}Registrar',");
               }
             }

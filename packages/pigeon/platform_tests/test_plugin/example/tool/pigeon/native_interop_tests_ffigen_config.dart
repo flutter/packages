@@ -40,7 +40,6 @@ Future<void> main(List<String> args) async {
     'NativeInteropTestsPigeonTypedData',
     'NativeInteropTestsNumberWrapper',
     'NSURLCredential',
-    'NativeInteropHostIntegrationCoreApi',
     'NativeInteropHostIntegrationCoreApiSetup',
     'NativeInteropFlutterIntegrationCoreApiBridge',
     'NativeInteropFlutterIntegrationCoreApiRegistrar',
