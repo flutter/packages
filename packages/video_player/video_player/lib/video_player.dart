@@ -613,7 +613,7 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
 
     _playerId =
         (await _videoPlayerPlatform.createWithOptions(creationOptions)) ?? kUninitializedPlayerId;
-    _creatingCompleter!.complete(null);
+    _creatingCompleter!.complete();
     final initializingCompleter = Completer<void>();
 
     await _videoPlayerPlatform.setPreventsDisplaySleepDuringVideoPlayback(
@@ -651,7 +651,7 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
           if (initializingCompleter.isCompleted) {
             throw StateError('VideoPlayerController already initialized');
           }
-          initializingCompleter.complete(null);
+          initializingCompleter.complete();
           _applyLooping();
           _applyVolume();
           _applyPlayPause();
@@ -978,6 +978,10 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
   }
 
   void _updatePosition(Duration position) {
+    // A pending platform seek or position request can complete after disposal.
+    if (_isDisposed) {
+      return;
+    }
     // The underlying native implementation on some platforms sometimes reports
     // a position slightly past the reported max duration. Clamp to the duration
     // to insulate clients from this behavior.
