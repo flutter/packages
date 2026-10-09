@@ -49,9 +49,10 @@ HRESULT BuildMediaTypeForVideoPreview(IMFMediaType* src_media_type,
   return hr;
 }
 
-HRESULT PreviewHandler::InitPreviewSink(
-    IMFCaptureEngine* capture_engine, IMFMediaType* base_media_type,
-    CaptureEngineListener* sample_callback, DWORD source_stream_index) {
+HRESULT PreviewHandler::InitPreviewSink(IMFCaptureEngine* capture_engine,
+                                        IMFMediaType* base_media_type,
+                                        CaptureEngineListener* sample_callback,
+                                        DWORD source_stream_index) {
   assert(capture_engine);
   assert(base_media_type);
   assert(sample_callback);

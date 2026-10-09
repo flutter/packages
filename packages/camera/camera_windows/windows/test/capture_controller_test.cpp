@@ -567,7 +567,8 @@ TEST(CaptureController, StartPreviewStartsProcessingSamples) {
   texture_registrar = nullptr;
 }
 
-TEST(CaptureController, StartPreviewFallsBackToPhysicalStreamWhenSelectorRejected) {
+TEST(CaptureController,
+     StartPreviewFallsBackToPhysicalStreamWhenSelectorRejected) {
   ComPtr<MockCaptureEngine> engine = new MockCaptureEngine();
   std::unique_ptr<MockCamera> camera =
       std::make_unique<MockCamera>(MOCK_DEVICE_ID);
@@ -584,8 +585,8 @@ TEST(CaptureController, StartPreviewFallsBackToPhysicalStreamWhenSelectorRejecte
   ComPtr<MockCaptureSource> capture_source = new MockCaptureSource();
   EXPECT_CALL(*engine.Get(), GetSource)
       .Times(1)
-      .WillOnce([src_source = capture_source.Get()](
-                    IMFCaptureSource** target_source) {
+      .WillOnce([src_source =
+                     capture_source.Get()](IMFCaptureSource** target_source) {
         *target_source = src_source;
         src_source->AddRef();
         return S_OK;
@@ -629,16 +630,16 @@ TEST(CaptureController, StartPreviewFallsBackToPhysicalStreamWhenSelectorRejecte
       });
   EXPECT_CALL(*capture_source.Get(),
               GetAvailableDeviceMediaType(Eq(kPhysicalStreamIndex), _, _))
-      .WillRepeatedly([mock_preview_width, mock_preview_height](
-                          DWORD, DWORD media_type_index,
-                          IMFMediaType** media_type) {
-        if (media_type_index != 0) return MF_E_NO_MORE_TYPES;
-        *media_type =
-            new FakeMediaType(MFMediaType_Video, MFVideoFormat_RGB32,
-                              mock_preview_width, mock_preview_height);
-        (*media_type)->AddRef();
-        return S_OK;
-      });
+      .WillRepeatedly(
+          [mock_preview_width, mock_preview_height](
+              DWORD, DWORD media_type_index, IMFMediaType** media_type) {
+            if (media_type_index != 0) return MF_E_NO_MORE_TYPES;
+            *media_type =
+                new FakeMediaType(MFMediaType_Video, MFVideoFormat_RGB32,
+                                  mock_preview_width, mock_preview_height);
+            (*media_type)->AddRef();
+            return S_OK;
+          });
 
   // The resolved physical stream must be used from here on, not the rejected
   // selector.
@@ -650,9 +651,8 @@ TEST(CaptureController, StartPreviewFallsBackToPhysicalStreamWhenSelectorRejecte
   ComPtr<MockCapturePreviewSink> preview_sink = new MockCapturePreviewSink();
   EXPECT_CALL(*engine.Get(), GetSink(MF_CAPTURE_ENGINE_SINK_TYPE_PREVIEW, _))
       .Times(1)
-      .WillOnce([src_sink = preview_sink.Get()](
-                    MF_CAPTURE_ENGINE_SINK_TYPE,
-                    IMFCaptureSink** target_sink) {
+      .WillOnce([src_sink = preview_sink.Get()](MF_CAPTURE_ENGINE_SINK_TYPE,
+                                                IMFCaptureSink** target_sink) {
         *target_sink = src_sink;
         src_sink->AddRef();
         return S_OK;
@@ -662,11 +662,11 @@ TEST(CaptureController, StartPreviewFallsBackToPhysicalStreamWhenSelectorRejecte
       .WillOnce(Return(S_OK));
   EXPECT_CALL(*preview_sink.Get(), AddStream(Eq(kPhysicalStreamIndex), _, _, _))
       .Times(1)
-      .WillOnce([](DWORD, IMFMediaType*, IMFAttributes*,
-                   DWORD* sink_stream_index) {
-        *sink_stream_index = 0;
-        return S_OK;
-      });
+      .WillOnce(
+          [](DWORD, IMFMediaType*, IMFAttributes*, DWORD* sink_stream_index) {
+            *sink_stream_index = 0;
+            return S_OK;
+          });
   EXPECT_CALL(*preview_sink.Get(), SetSampleCallback)
       .Times(1)
       .WillOnce(Return(S_OK));

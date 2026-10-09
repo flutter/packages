@@ -50,8 +50,7 @@ class PhotoHandler {
   // source_stream_index: The source stream to connect to the photo sink.
   HRESULT TakePhoto(const std::string& file_path,
                     IMFCaptureEngine* capture_engine,
-                    IMFMediaType* base_media_type,
-                    DWORD source_stream_index);
+                    IMFMediaType* base_media_type, DWORD source_stream_index);
 
   // Set the photo handler recording state to: kIdle.
   void OnPhotoTaken();

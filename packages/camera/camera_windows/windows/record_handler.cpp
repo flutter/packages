@@ -190,8 +190,9 @@ HRESULT RecordHandler::InitRecordSink(IMFCaptureEngine* capture_engine,
   }
 
   DWORD video_record_sink_stream_index;
-  hr = record_sink_->AddStream(source_stream_index, video_record_media_type.Get(),
-                               nullptr, &video_record_sink_stream_index);
+  hr = record_sink_->AddStream(source_stream_index,
+                               video_record_media_type.Get(), nullptr,
+                               &video_record_sink_stream_index);
   if (FAILED(hr)) {
     return hr;
   }

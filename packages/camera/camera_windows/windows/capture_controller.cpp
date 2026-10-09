@@ -482,8 +482,8 @@ void CaptureControllerImpl::ResolveSourceStreamIndices(
   // Devices that don't support the preferred-stream selectors fail this probe,
   // typically with MF_E_INVALIDSTREAMNUMBER.
   ComPtr<IMFMediaType> probe;
-  HRESULT hr = source->GetAvailableDeviceMediaType(
-      preview_source_stream_index_, 0, probe.GetAddressOf());
+  HRESULT hr = source->GetAvailableDeviceMediaType(preview_source_stream_index_,
+                                                   0, probe.GetAddressOf());
   if (SUCCEEDED(hr)) {
     return;
   }
@@ -697,10 +697,9 @@ void CaptureControllerImpl::StartPreview() {
 
   // Check MF_CAPTURE_ENGINE_PREVIEW_STARTED event handling for response
   // process.
-  hr = preview_handler_->StartPreview(capture_engine_.Get(),
-                                      base_preview_media_type_.Get(),
-                                      capture_engine_callback_handler_.Get(),
-                                      preview_source_stream_index_);
+  hr = preview_handler_->StartPreview(
+      capture_engine_.Get(), base_preview_media_type_.Get(),
+      capture_engine_callback_handler_.Get(), preview_source_stream_index_);
 
   if (FAILED(hr)) {
     // Destroy preview handler on error cases to make sure state is resetted.
