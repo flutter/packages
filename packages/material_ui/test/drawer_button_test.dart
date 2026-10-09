@@ -172,7 +172,6 @@ void main() {
         isButton: true,
         hasEnabledState: true,
         isEnabled: true,
-        hasExpandedState: true,
         hasTapAction: true,
         hasFocusAction: defaultTargetPlatform != TargetPlatform.iOS,
         isFocusable: true,
@@ -184,8 +183,7 @@ void main() {
   testWidgets('DrawerButton and EndDrawerButton semantics reflect Scaffold drawer open state', (
     WidgetTester tester,
   ) async {
-    final SemanticsHandle handle = tester.ensureSemantics();
-    final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
+    final scaffoldKey = GlobalKey<ScaffoldState>();
 
     await tester.pumpWidget(
       MaterialApp(
@@ -268,8 +266,6 @@ void main() {
         isFocusable: true,
       ),
     );
-
-    handle.dispose();
   });
 
   testWidgets('EndDrawerButton control test', (WidgetTester tester) async {
@@ -318,7 +314,6 @@ void main() {
         isButton: true,
         hasEnabledState: true,
         isEnabled: true,
-        hasExpandedState: true,
         hasTapAction: true,
         hasFocusAction: defaultTargetPlatform != TargetPlatform.iOS,
         isFocusable: true,
