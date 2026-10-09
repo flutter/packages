@@ -249,9 +249,9 @@ class TextPositionNode extends ParentNode {
     final bool hasXY = x != null && y != null;
     final bool hasDxDy = dx != null && dy != null;
     // A tspan without its own position continues from the parent's position.
-    // If the parent already applied the transform to its position, the
-    // transform must not be applied again.
-    final bool continuesTransformedParent =
+    // If the parent already applied the transform to its position (its
+    // `transform` is null), the transform must not be applied again.
+    final bool inheritsConsumedTransform =
         parent != null &&
         parent.transform == null &&
         x == null &&
@@ -260,7 +260,7 @@ class TextPositionNode extends ParentNode {
         dy == null;
     final bool consumeTransform =
         computedTransform == AffineMatrix.identity ||
-        (computedTransform.encodableInRect && (hasXY || hasDxDy || continuesTransformedParent));
+        (computedTransform.encodableInRect && (hasXY || hasDxDy || inheritsConsumedTransform));
 
     if (hasXY) {
       final Point baseline = consumeTransform
