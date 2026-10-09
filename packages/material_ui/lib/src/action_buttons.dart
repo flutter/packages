@@ -292,14 +292,19 @@ class DrawerButtonIcon extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return _ActionIcon(
-      iconBuilderCallback: (ActionIconThemeData? actionIconTheme) {
-        return actionIconTheme?.drawerButtonIconBuilder;
-      },
-      getIcon: (BuildContext context) => Icons.menu,
-      getAndroidSemanticsLabel: (MaterialLocalizations materialLocalization) {
-        return materialLocalization.openAppDrawerTooltip;
-      },
+    final ScaffoldState? scaffold = Scaffold.maybeOf(context);
+    final bool? isExpanded = (scaffold?.hasDrawer ?? false) ? scaffold!.isDrawerOpen : null;
+    return Semantics(
+      expanded: isExpanded,
+      child: _ActionIcon(
+        iconBuilderCallback: (ActionIconThemeData? actionIconTheme) {
+          return actionIconTheme?.drawerButtonIconBuilder;
+        },
+        getIcon: (BuildContext context) => Icons.menu,
+        getAndroidSemanticsLabel: (MaterialLocalizations materialLocalization) {
+          return materialLocalization.openAppDrawerTooltip;
+        },
+      ),
     );
   }
 }
@@ -354,14 +359,19 @@ class EndDrawerButtonIcon extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return _ActionIcon(
-      iconBuilderCallback: (ActionIconThemeData? actionIconTheme) {
-        return actionIconTheme?.endDrawerButtonIconBuilder;
-      },
-      getIcon: (BuildContext context) => Icons.menu,
-      getAndroidSemanticsLabel: (MaterialLocalizations materialLocalization) {
-        return materialLocalization.openAppDrawerTooltip;
-      },
+    final ScaffoldState? scaffold = Scaffold.maybeOf(context);
+    final bool? isExpanded = (scaffold?.hasEndDrawer ?? false) ? scaffold!.isEndDrawerOpen : null;
+    return Semantics(
+      expanded: isExpanded,
+      child: _ActionIcon(
+        iconBuilderCallback: (ActionIconThemeData? actionIconTheme) {
+          return actionIconTheme?.endDrawerButtonIconBuilder;
+        },
+        getIcon: (BuildContext context) => Icons.menu,
+        getAndroidSemanticsLabel: (MaterialLocalizations materialLocalization) {
+          return materialLocalization.openAppDrawerTooltip;
+        },
+      ),
     );
   }
 }

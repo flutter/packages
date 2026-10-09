@@ -180,6 +180,94 @@ void main() {
     handle.dispose();
   }, variant: TargetPlatformVariant.all());
 
+  testWidgets('DrawerButton and EndDrawerButton semantics reflect Scaffold drawer open state', (
+    WidgetTester tester,
+  ) async {
+    final scaffoldKey = GlobalKey<ScaffoldState>();
+
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Scaffold(
+          key: scaffoldKey,
+          body: const Column(children: <Widget>[DrawerButton(), EndDrawerButton()]),
+          drawer: const Drawer(child: DrawerButton()),
+          endDrawer: const Drawer(child: EndDrawerButton()),
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    expect(
+      tester.getSemantics(find.byType(DrawerButton)),
+      matchesSemantics(
+        tooltip: 'Open navigation menu',
+        isButton: true,
+        hasEnabledState: true,
+        isEnabled: true,
+        hasExpandedState: true,
+        hasTapAction: true,
+        hasFocusAction: true,
+        isFocusable: true,
+      ),
+    );
+    expect(
+      tester.getSemantics(find.byType(EndDrawerButton)),
+      matchesSemantics(
+        tooltip: 'Open navigation menu',
+        isButton: true,
+        hasEnabledState: true,
+        isEnabled: true,
+        hasExpandedState: true,
+        hasTapAction: true,
+        hasFocusAction: true,
+        isFocusable: true,
+      ),
+    );
+
+    scaffoldKey.currentState!.openDrawer();
+    await tester.pumpAndSettle();
+
+    expect(
+      tester.getSemantics(
+        find.descendant(of: find.byType(Drawer), matching: find.byType(DrawerButton)),
+      ),
+      matchesSemantics(
+        tooltip: 'Open navigation menu',
+        isButton: true,
+        hasEnabledState: true,
+        isEnabled: true,
+        hasExpandedState: true,
+        isExpanded: true,
+        hasTapAction: true,
+        hasFocusAction: true,
+        isFocusable: true,
+      ),
+    );
+
+    Navigator.of(scaffoldKey.currentContext!).pop();
+    await tester.pumpAndSettle();
+
+    scaffoldKey.currentState!.openEndDrawer();
+    await tester.pumpAndSettle();
+
+    expect(
+      tester.getSemantics(
+        find.descendant(of: find.byType(Drawer), matching: find.byType(EndDrawerButton)),
+      ),
+      matchesSemantics(
+        tooltip: 'Open navigation menu',
+        isButton: true,
+        hasEnabledState: true,
+        isEnabled: true,
+        hasExpandedState: true,
+        isExpanded: true,
+        hasTapAction: true,
+        hasFocusAction: true,
+        isFocusable: true,
+      ),
+    );
+  });
+
   testWidgets('EndDrawerButton control test', (WidgetTester tester) async {
     await tester.pumpWidget(
       const MaterialApp(

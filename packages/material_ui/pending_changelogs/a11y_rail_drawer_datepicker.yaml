@@ -1,0 +1,4 @@
+changelog: |
+  - Adds `SemanticsRole.tabBar` and `SemanticsRole.tab` semantics to `NavigationRail` and its destinations.
+  - Exposes `expanded` state semantics on `DrawerButton`, `EndDrawerButton`, and the `CalendarDatePicker` year-mode toggle button.
+version: minor

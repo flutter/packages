@@ -1004,6 +1004,7 @@ void main() {
           matchesSemantics(
             label: 'Select year\nJanuary 2016',
             isButton: true,
+            hasExpandedState: true,
             hasTapAction: true,
             hasFocusAction: true,
             isFocusable: true,
@@ -1495,6 +1496,8 @@ void main() {
           matchesSemantics(
             label: 'Select year\nJanuary 2016',
             isButton: true,
+            hasExpandedState: true,
+            isExpanded: true,
             hasTapAction: true,
             hasFocusAction: true,
             isFocusable: true,
