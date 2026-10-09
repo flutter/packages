@@ -1,0 +1,3 @@
+changelog: |
+  - Fixes pages on parent navigators being dropped when switching to a branch of a `StatefulShellRoute` that has not been visited yet.
+version: patch

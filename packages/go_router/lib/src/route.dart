@@ -1465,8 +1465,9 @@ class StatefulNavigationShellState extends State<StatefulNavigationShell> with R
           branch.restorationScopeId,
         );
 
+        // Leaving the location unset makes goBranch keep the matches outside of
+        // this shell route the first time it shows this branch.
         final _StatefulShellBranchState branchState = _branchStateFor(branch, false);
-        branchState.location.value = matchList;
         branchState.navigator = navigator;
       }
     }
@@ -1500,8 +1501,78 @@ class StatefulNavigationShellState extends State<StatefulNavigationShell> with R
     if (matchList != null && matchList.isNotEmpty) {
       _router.restore(matchList);
     } else {
-      _router.go(widget._effectiveInitialBranchLocation(index));
+      final RouteMatchList? initialMatchList = _initialMatchListForBranch(index);
+      if (initialMatchList != null) {
+        _router.restore(initialMatchList);
+      } else {
+        _router.go(widget._effectiveInitialBranchLocation(index));
+      }
     }
+  }
+
+  /// Builds the match list for the initial location of the branch at [index],
+  /// keeping the parts of the current match list that lie outside this shell
+  /// route.
+  ///
+  /// Switching to a branch without preserved state must not drop pages the
+  /// parent Navigators have below the shell route. This grafts the shell match
+  /// for the initial branch location into the current match list instead of
+  /// navigating from scratch. See
+  /// https://github.com/flutter/flutter/issues/188295.
+  ///
+  /// Returns null if a redirect leads out of this shell route or does not
+  /// complete synchronously.
+  RouteMatchList? _initialMatchListForBranch(int index) {
+    // Redirects are applied here because a restored match list is discarded
+    // when a redirect changes its location.
+    final FutureOr<RouteMatchList> redirected = _router.configuration.redirect(
+      context,
+      _router.configuration.findMatch(Uri.parse(widget._effectiveInitialBranchLocation(index))),
+      redirectHistory: <RouteMatchList>[],
+    );
+    if (redirected is! RouteMatchList) {
+      return null;
+    }
+    final RouteMatchList initialMatchList = redirected;
+    ShellRouteMatch? newShellMatch;
+    initialMatchList.visitRouteMatches((RouteMatchBase match) {
+      if (match is ShellRouteMatch && match.route == route) {
+        newShellMatch = match;
+        return false;
+      }
+      return true;
+    });
+    if (newShellMatch == null) {
+      return null;
+    }
+
+    List<RouteMatchBase> replaceShellMatch(List<RouteMatchBase> matches) {
+      return matches.map((RouteMatchBase match) {
+        if (match is ShellRouteMatch) {
+          if (match.route == route) {
+            return newShellMatch!;
+          }
+          return match.copyWith(matches: replaceShellMatch(match.matches));
+        }
+        return match;
+      }).toList();
+    }
+
+    final RouteMatchList currentMatchList = _scopedMatchList(
+      widget.shellRouteContext.routeMatchList,
+    );
+    final List<RouteMatchBase> matches = replaceShellMatch(currentMatchList.matches);
+    return RouteMatchList(
+      matches: matches,
+      uri: initialMatchList.uri,
+      // The branch is navigated to as if by [GoRouter.go], which carries no
+      // extra. The object the outer location was given must not leak into it.
+      extra: initialMatchList.extra,
+      pathParameters: <String, String>{
+        ...currentMatchList.pathParameters,
+        ...initialMatchList.pathParameters,
+      },
+    );
   }
 
   @override
