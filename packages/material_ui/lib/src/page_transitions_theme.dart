@@ -602,7 +602,9 @@ class _FadeForwardsSnapshotState extends State<_FadeForwardsSnapshot> {
 ///  * [FadeForwardsPageTransitionsBuilder], which defines a page transition
 ///    that's similar to the one provided by Android U.
 ///  * [PageRoute.allowSnapshotting], which enables or disables snapshotting on
-///    a per route basis.
+///    a per route basis similar to the `allowSnapshotting` parameter.
+///  * [ZoomPageTransitionsBuilder.allowSnapshotting], which is similar to the
+///    `allowSnapshotting` parameter.
 class FadeForwardsPageTransitionsBuilder extends PageTransitionsBuilder {
   /// Constructs a page transition animation that matches the transition used on
   /// Android U.
@@ -624,19 +626,13 @@ class FadeForwardsPageTransitionsBuilder extends PageTransitionsBuilder {
   /// Generally this means that animations that occur on the entering/exiting route
   /// while the route animation plays may appear frozen - unless they are a hero
   /// animation or something that is drawn in a separate overlay.
-  ///
-  /// See also:
-  ///
-  ///  * [PageRoute.allowSnapshotting], which enables or disables snapshotting
-  ///    on a per route basis.
-  ///  * [ZoomPageTransitionsBuilder.allowSnapshotting], which is similar, but
-  ///    for zoom page transitions, and includes a code example.
   final bool _allowSnapshotting;
 
   /// Whether to enable snapshotting on the entering route during the
   /// transition animation.
   ///
   /// If not specified, defaults to true.
+  ///
   /// If false, the route snapshotting will not be applied to the route being
   /// animating into, e.g. when transitioning from route A to route B, B will
   /// not be snapshotted.
