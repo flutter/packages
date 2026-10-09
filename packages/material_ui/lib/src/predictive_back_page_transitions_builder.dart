@@ -40,13 +40,43 @@ import 'page_transitions_theme.dart';
 ///    that's similar to the one provided by Android 8.
 ///  * [CupertinoPageTransitionsBuilder], which defines a horizontal page
 ///    transition that matches native iOS page transitions.
+///  * [PageRoute.allowSnapshotting], which enables or disables snapshotting on
+///    a per route basis similar to the `allowSnapshotting` parameter.
 ///  * https://developer.android.com/design/ui/mobile/guides/patterns/predictive-back#shared-element-transition,
 ///    which is the Android spec for this page transition, called the Shared
 ///    Element page transition.
 class PredictiveBackPageTransitionsBuilder extends PageTransitionsBuilder {
   /// Creates an instance of a [PageTransitionsBuilder] that matches Android U's
   /// predictive back transition.
-  const PredictiveBackPageTransitionsBuilder({this.fallbackColor});
+  const PredictiveBackPageTransitionsBuilder({
+    this.fallbackColor,
+    this._allowSnapshotting = true,
+    this._allowEnterRouteSnapshotting = true,
+  });
+
+  /// Whether page transitions will prefer to animate a snapshot of the entering
+  /// and exiting routes.
+  ///
+  /// If not specified, defaults to true.
+  ///
+  /// When this value is true, page transitions will snapshot the entering and
+  /// exiting routes. These snapshots are then animated in place of the
+  /// underlying widgets to improve performance of the transition.
+  ///
+  /// Generally this means that animations that occur on the entering/exiting route
+  /// while the route animation plays may appear frozen - unless they are a hero
+  /// animation or something that is drawn in a separate overlay.
+  final bool _allowSnapshotting;
+
+  /// Whether to enable snapshotting on the entering route during the
+  /// transition animation.
+  ///
+  /// If not specified, defaults to true.
+  ///
+  /// If false, the route snapshotting will not be applied to the route being
+  /// animating into, e.g. when transitioning from route A to route B, B will
+  /// not be snapshotted.
+  final bool _allowEnterRouteSnapshotting;
 
   /// The color of the scrim (background) when the predictive back transition is
   /// not supported.
@@ -92,8 +122,11 @@ class PredictiveBackPageTransitionsBuilder extends PageTransitionsBuilder {
               );
             }
 
-            return FadeForwardsPageTransitionsBuilder(backgroundColor: fallbackColor)
-                .buildTransitions(route, context, animation, secondaryAnimation, child);
+            return FadeForwardsPageTransitionsBuilder(
+              allowSnapshotting: _allowSnapshotting,
+              allowEnterRouteSnapshotting: _allowEnterRouteSnapshotting,
+              backgroundColor: fallbackColor,
+            ).buildTransitions(route, context, animation, secondaryAnimation, child);
           },
     );
   }

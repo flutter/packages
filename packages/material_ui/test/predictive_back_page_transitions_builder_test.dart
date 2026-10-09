@@ -773,6 +773,123 @@ void main() {
 
     await tester.pumpAndSettle();
   }, variant: TargetPlatformVariant.all());
+
+  group('PredictiveBackPageTransitionsBuilder fallback snapshotting', () {
+    Widget buildApp(PredictiveBackPageTransitionsBuilder builder) {
+      return MaterialApp(
+        theme: ThemeData(
+          pageTransitionsTheme: PageTransitionsTheme(
+            builders: <TargetPlatform, PageTransitionsBuilder>{TargetPlatform.android: builder},
+          ),
+        ),
+        onGenerateRoute: (RouteSettings settings) {
+          if (settings.name == '/') {
+            return MaterialPageRoute<void>(builder: (_) => const Material(child: Text('Page 1')));
+          }
+          return MaterialPageRoute<void>(builder: (_) => const Material(child: Text('Page 2')));
+        },
+      );
+    }
+
+    // Whether any SnapshotWidget above `text` is currently snapshotting.
+    bool isSnapshotting(WidgetTester tester, String text) {
+      return tester
+          .widgetList<SnapshotWidget>(
+            find.ancestor(of: find.text(text), matching: find.byType(SnapshotWidget)),
+          )
+          .any((SnapshotWidget widget) => widget.controller.allowSnapshotting);
+    }
+
+    // Pushes '/2', pumps part way into the transition, and returns whether
+    // Page 1 (exiting) and Page 2 (entering) are snapshotting. Then pops, pumps
+    // part way into the transition, and returns whether Page 2 (exiting) and
+    // Page 1 (entering) are snapshotting.
+    Future<({bool pushExiting, bool pushEntering, bool popExiting, bool popEntering})> pushAndPop(
+      WidgetTester tester,
+    ) async {
+      final NavigatorState navigator = tester.state<NavigatorState>(find.byType(Navigator));
+      const partway = Duration(
+        milliseconds: FadeForwardsPageTransitionsBuilder.kTransitionMilliseconds ~/ 10,
+      );
+
+      navigator.pushNamed('/2');
+      await tester.pump();
+      await tester.pump(partway);
+      expect(
+        _findFallbackPageTransition(const PredictiveBackPageTransitionsBuilder()),
+        findsWidgets,
+      );
+      final bool pushExiting = isSnapshotting(tester, 'Page 1');
+      final bool pushEntering = isSnapshotting(tester, 'Page 2');
+      await tester.pumpAndSettle();
+
+      navigator.pop();
+      await tester.pump();
+      await tester.pump(partway);
+      final bool popExiting = isSnapshotting(tester, 'Page 2');
+      final bool popEntering = isSnapshotting(tester, 'Page 1');
+      await tester.pumpAndSettle();
+
+      return (
+        pushExiting: pushExiting,
+        pushEntering: pushEntering,
+        popExiting: popExiting,
+        popEntering: popEntering,
+      );
+    }
+
+    testWidgets(
+      'snapshots the entering and exiting routes by default',
+      (WidgetTester tester) async {
+        await tester.pumpWidget(buildApp(const PredictiveBackPageTransitionsBuilder()));
+
+        expect(await pushAndPop(tester), (
+          pushExiting: true,
+          pushEntering: true,
+          popExiting: true,
+          popEntering: true,
+        ));
+      },
+      variant: TargetPlatformVariant.only(TargetPlatform.android),
+      skip: kIsWeb, // [intended] rasterization is not used on the web.
+    );
+
+    testWidgets(
+      'passes allowSnapshotting to FadeForwardsPageTransitionsBuilder',
+      (WidgetTester tester) async {
+        await tester.pumpWidget(
+          buildApp(const PredictiveBackPageTransitionsBuilder(allowSnapshotting: false)),
+        );
+
+        expect(await pushAndPop(tester), (
+          pushExiting: false,
+          pushEntering: false,
+          popExiting: false,
+          popEntering: false,
+        ));
+      },
+      variant: TargetPlatformVariant.only(TargetPlatform.android),
+      skip: kIsWeb, // [intended] rasterization is not used on the web.
+    );
+
+    testWidgets(
+      'passes allowEnterRouteSnapshotting to FadeForwardsPageTransitionsBuilder',
+      (WidgetTester tester) async {
+        await tester.pumpWidget(
+          buildApp(const PredictiveBackPageTransitionsBuilder(allowEnterRouteSnapshotting: false)),
+        );
+
+        expect(await pushAndPop(tester), (
+          pushExiting: true,
+          pushEntering: false,
+          popExiting: true,
+          popEntering: false,
+        ));
+      },
+      variant: TargetPlatformVariant.only(TargetPlatform.android),
+      skip: kIsWeb, // [intended] rasterization is not used on the web.
+    );
+  });
 }
 
 String _getTransitionsString(PageTransitionsBuilder pageTransitionsBuilder) {
