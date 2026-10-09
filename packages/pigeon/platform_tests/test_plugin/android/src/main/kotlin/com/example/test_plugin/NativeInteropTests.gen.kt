@@ -1008,6 +1008,132 @@ data class NativeInteropAllClassesWrapper(
   }
 }
 
+/**
+ * A class whose field names collide with members of the bindings that JNIgen generates, so JNIgen
+ * renames their accessors.
+ *
+ * The Dart generator has to predict those names, since it is generated before JNIgen runs.
+ *
+ * Generated class from Pigeon that represents data sent in messages.
+ */
+@Keep
+data class NativeInteropReservedNames(
+    val type: String? = null,
+    val use: String? = null,
+    val reference: String? = null,
+    val releasedBy: String? = null,
+    val fromReference: String? = null,
+    val jClass: String? = null,
+    val isInstanceOf: String? = null,
+    val isNull: String? = null,
+    val isReleased: Boolean,
+    val equals: String? = null,
+    val isEnabled: Boolean,
+    val isMaybe: Boolean? = null,
+    val isCount: Long? = null,
+    val getValue: String? = null
+) {
+  companion object {
+    fun fromList(pigeonVar_list: List<Any?>): NativeInteropReservedNames {
+      val type = pigeonVar_list[0] as String?
+      val use = pigeonVar_list[1] as String?
+      val reference = pigeonVar_list[2] as String?
+      val releasedBy = pigeonVar_list[3] as String?
+      val fromReference = pigeonVar_list[4] as String?
+      val jClass = pigeonVar_list[5] as String?
+      val isInstanceOf = pigeonVar_list[6] as String?
+      val isNull = pigeonVar_list[7] as String?
+      val isReleased = pigeonVar_list[8] as Boolean
+      val equals = pigeonVar_list[9] as String?
+      val isEnabled = pigeonVar_list[10] as Boolean
+      val isMaybe = pigeonVar_list[11] as Boolean?
+      val isCount = pigeonVar_list[12] as Long?
+      val getValue = pigeonVar_list[13] as String?
+      return NativeInteropReservedNames(
+          type,
+          use,
+          reference,
+          releasedBy,
+          fromReference,
+          jClass,
+          isInstanceOf,
+          isNull,
+          isReleased,
+          equals,
+          isEnabled,
+          isMaybe,
+          isCount,
+          getValue)
+    }
+  }
+
+  fun toList(): List<Any?> {
+    return listOf(
+        type,
+        use,
+        reference,
+        releasedBy,
+        fromReference,
+        jClass,
+        isInstanceOf,
+        isNull,
+        isReleased,
+        equals,
+        isEnabled,
+        isMaybe,
+        isCount,
+        getValue,
+    )
+  }
+
+  override fun equals(other: Any?): Boolean {
+    if (other == null || other.javaClass != javaClass) {
+      return false
+    }
+    if (this === other) {
+      return true
+    }
+    val other = other as NativeInteropReservedNames
+    return NativeInteropTestsPigeonUtils.deepEquals(this.type, other.type) &&
+        NativeInteropTestsPigeonUtils.deepEquals(this.use, other.use) &&
+        NativeInteropTestsPigeonUtils.deepEquals(this.reference, other.reference) &&
+        NativeInteropTestsPigeonUtils.deepEquals(this.releasedBy, other.releasedBy) &&
+        NativeInteropTestsPigeonUtils.deepEquals(this.fromReference, other.fromReference) &&
+        NativeInteropTestsPigeonUtils.deepEquals(this.jClass, other.jClass) &&
+        NativeInteropTestsPigeonUtils.deepEquals(this.isInstanceOf, other.isInstanceOf) &&
+        NativeInteropTestsPigeonUtils.deepEquals(this.isNull, other.isNull) &&
+        NativeInteropTestsPigeonUtils.deepEquals(this.isReleased, other.isReleased) &&
+        NativeInteropTestsPigeonUtils.deepEquals(this.equals, other.equals) &&
+        NativeInteropTestsPigeonUtils.deepEquals(this.isEnabled, other.isEnabled) &&
+        NativeInteropTestsPigeonUtils.deepEquals(this.isMaybe, other.isMaybe) &&
+        NativeInteropTestsPigeonUtils.deepEquals(this.isCount, other.isCount) &&
+        NativeInteropTestsPigeonUtils.deepEquals(this.getValue, other.getValue)
+  }
+
+  override fun hashCode(): Int {
+    var result = javaClass.hashCode()
+    result = 31 * result + NativeInteropTestsPigeonUtils.deepHash(this.type)
+    result = 31 * result + NativeInteropTestsPigeonUtils.deepHash(this.use)
+    result = 31 * result + NativeInteropTestsPigeonUtils.deepHash(this.reference)
+    result = 31 * result + NativeInteropTestsPigeonUtils.deepHash(this.releasedBy)
+    result = 31 * result + NativeInteropTestsPigeonUtils.deepHash(this.fromReference)
+    result = 31 * result + NativeInteropTestsPigeonUtils.deepHash(this.jClass)
+    result = 31 * result + NativeInteropTestsPigeonUtils.deepHash(this.isInstanceOf)
+    result = 31 * result + NativeInteropTestsPigeonUtils.deepHash(this.isNull)
+    result = 31 * result + NativeInteropTestsPigeonUtils.deepHash(this.isReleased)
+    result = 31 * result + NativeInteropTestsPigeonUtils.deepHash(this.equals)
+    result = 31 * result + NativeInteropTestsPigeonUtils.deepHash(this.isEnabled)
+    result = 31 * result + NativeInteropTestsPigeonUtils.deepHash(this.isMaybe)
+    result = 31 * result + NativeInteropTestsPigeonUtils.deepHash(this.isCount)
+    result = 31 * result + NativeInteropTestsPigeonUtils.deepHash(this.getValue)
+    return result
+  }
+
+  override fun toString(): String {
+    return "NativeInteropReservedNames(type=$type, use=$use, reference=$reference, releasedBy=$releasedBy, fromReference=$fromReference, jClass=$jClass, isInstanceOf=$isInstanceOf, isNull=$isNull, isReleased=$isReleased, equals=$equals, isEnabled=$isEnabled, isMaybe=$isMaybe, isCount=$isCount, getValue=$getValue)"
+  }
+}
+
 val NativeInteropHostIntegrationCoreApiInstances:
     MutableMap<String, NativeInteropHostIntegrationCoreApiRegistrar> =
     mutableMapOf()
@@ -4686,4 +4812,296 @@ interface NativeInteropFlutterIntegrationCoreApi {
   suspend fun echoAnotherAsyncNullableEnum(
       anotherEnum: NativeInteropAnotherEnum?
   ): NativeInteropAnotherEnum?
+}
+
+val NativeInteropReservedNamesHostApiInstances:
+    MutableMap<String, NativeInteropReservedNamesHostApiRegistrar> =
+    mutableMapOf()
+
+@Keep
+interface NativeInteropReservedNamesHostApi {
+  /** Collides with `JObject.release`. */
+  fun release(value: String): String
+  /** Collides with `JObject.use`. */
+  fun use(value: Long): Long
+  /** Collides with the static `type` field that JNIgen adds to every class. */
+  fun type(): String
+  /** JNIgen makes this a getter, which collides with `JObject.isNull`. */
+  fun isNull(): Boolean
+  /** JNIgen keeps this a method, since nullable booleans are boxed on the JVM. */
+  fun isNullable(): Boolean?
+  /** JNIgen makes this a getter. */
+  fun isOpen(): Boolean
+  /**
+   * JNIgen combines this and [setReference] into a property, which collides with
+   * `JObject.reference`.
+   */
+  fun getReference(): String
+  /** See [getReference]. */
+  fun setReference(value: String)
+  /** JNIgen makes this a getter named after a Dart keyword, `default`. */
+  fun getDefault(): String
+  /** JNIgen keeps suspend functions as methods. */
+  suspend fun getValueAsync(): String
+  /** Returns the passed object, to test serialization and deserialization. */
+  fun echoReservedNames(names: NativeInteropReservedNames): NativeInteropReservedNames
+  /** Returns the result of calling [NativeInteropReservedNamesFlutterApi.release]. */
+  fun callFlutterRelease(value: String): String
+  /** Returns the result of calling [NativeInteropReservedNamesFlutterApi.type]. */
+  fun callFlutterType(): String
+  /** Returns the result of calling [NativeInteropReservedNamesFlutterApi.implementIn]. */
+  fun callFlutterImplementIn(value: String): String
+  /** Returns the result of calling [NativeInteropReservedNamesFlutterApi.isNull]. */
+  fun callFlutterIsNull(): Boolean
+  /** Returns the result of calling [NativeInteropReservedNamesFlutterApi.getReference]. */
+  fun callFlutterGetReference(): String
+}
+
+@Keep
+class NativeInteropReservedNamesHostApiRegistrar : NativeInteropReservedNamesHostApi {
+  private var api: NativeInteropReservedNamesHostApi? = null
+
+  fun register(
+      api: NativeInteropReservedNamesHostApi?,
+      name: String = defaultInstanceName
+  ): NativeInteropReservedNamesHostApiRegistrar {
+    if (api != null) {
+      this.api = api
+      NativeInteropReservedNamesHostApiInstances[name] = this
+    } else {
+      NativeInteropReservedNamesHostApiInstances.remove(name)
+    }
+    return this
+  }
+
+  @Keep
+  fun getInstance(name: String): NativeInteropReservedNamesHostApiRegistrar? {
+    return NativeInteropReservedNamesHostApiInstances[name]
+  }
+  /** Collides with `JObject.release`. */
+  override fun release(value: String): String {
+    api?.let {
+      try {
+        return it.release(value)
+      } catch (e: Exception) {
+        throw e
+      }
+    }
+    error("NativeInteropReservedNamesHostApi has not been registered")
+  }
+  /** Collides with `JObject.use`. */
+  override fun use(value: Long): Long {
+    api?.let {
+      try {
+        return it.use(value)
+      } catch (e: Exception) {
+        throw e
+      }
+    }
+    error("NativeInteropReservedNamesHostApi has not been registered")
+  }
+  /** Collides with the static `type` field that JNIgen adds to every class. */
+  override fun type(): String {
+    api?.let {
+      try {
+        return it.type()
+      } catch (e: Exception) {
+        throw e
+      }
+    }
+    error("NativeInteropReservedNamesHostApi has not been registered")
+  }
+  /** JNIgen makes this a getter, which collides with `JObject.isNull`. */
+  override fun isNull(): Boolean {
+    api?.let {
+      try {
+        return it.isNull()
+      } catch (e: Exception) {
+        throw e
+      }
+    }
+    error("NativeInteropReservedNamesHostApi has not been registered")
+  }
+  /** JNIgen keeps this a method, since nullable booleans are boxed on the JVM. */
+  override fun isNullable(): Boolean? {
+    api?.let {
+      try {
+        return it.isNullable()
+      } catch (e: Exception) {
+        throw e
+      }
+    }
+    error("NativeInteropReservedNamesHostApi has not been registered")
+  }
+  /** JNIgen makes this a getter. */
+  override fun isOpen(): Boolean {
+    api?.let {
+      try {
+        return it.isOpen()
+      } catch (e: Exception) {
+        throw e
+      }
+    }
+    error("NativeInteropReservedNamesHostApi has not been registered")
+  }
+  /**
+   * JNIgen combines this and [setReference] into a property, which collides with
+   * `JObject.reference`.
+   */
+  override fun getReference(): String {
+    api?.let {
+      try {
+        return it.getReference()
+      } catch (e: Exception) {
+        throw e
+      }
+    }
+    error("NativeInteropReservedNamesHostApi has not been registered")
+  }
+  /** See [getReference]. */
+  override fun setReference(value: String) {
+    api?.let {
+      try {
+        return it.setReference(value)
+      } catch (e: Exception) {
+        throw e
+      }
+    }
+    error("NativeInteropReservedNamesHostApi has not been registered")
+  }
+  /** JNIgen makes this a getter named after a Dart keyword, `default`. */
+  override fun getDefault(): String {
+    api?.let {
+      try {
+        return it.getDefault()
+      } catch (e: Exception) {
+        throw e
+      }
+    }
+    error("NativeInteropReservedNamesHostApi has not been registered")
+  }
+  /** JNIgen keeps suspend functions as methods. */
+  override suspend fun getValueAsync(): String {
+    api?.let {
+      try {
+        return it.getValueAsync()
+      } catch (e: Exception) {
+        throw e
+      }
+    }
+    error("NativeInteropReservedNamesHostApi has not been registered")
+  }
+  /** Returns the passed object, to test serialization and deserialization. */
+  override fun echoReservedNames(names: NativeInteropReservedNames): NativeInteropReservedNames {
+    api?.let {
+      try {
+        return it.echoReservedNames(names)
+      } catch (e: Exception) {
+        throw e
+      }
+    }
+    error("NativeInteropReservedNamesHostApi has not been registered")
+  }
+  /** Returns the result of calling [NativeInteropReservedNamesFlutterApi.release]. */
+  override fun callFlutterRelease(value: String): String {
+    api?.let {
+      try {
+        return it.callFlutterRelease(value)
+      } catch (e: Exception) {
+        throw e
+      }
+    }
+    error("NativeInteropReservedNamesHostApi has not been registered")
+  }
+  /** Returns the result of calling [NativeInteropReservedNamesFlutterApi.type]. */
+  override fun callFlutterType(): String {
+    api?.let {
+      try {
+        return it.callFlutterType()
+      } catch (e: Exception) {
+        throw e
+      }
+    }
+    error("NativeInteropReservedNamesHostApi has not been registered")
+  }
+  /** Returns the result of calling [NativeInteropReservedNamesFlutterApi.implementIn]. */
+  override fun callFlutterImplementIn(value: String): String {
+    api?.let {
+      try {
+        return it.callFlutterImplementIn(value)
+      } catch (e: Exception) {
+        throw e
+      }
+    }
+    error("NativeInteropReservedNamesHostApi has not been registered")
+  }
+  /** Returns the result of calling [NativeInteropReservedNamesFlutterApi.isNull]. */
+  override fun callFlutterIsNull(): Boolean {
+    api?.let {
+      try {
+        return it.callFlutterIsNull()
+      } catch (e: Exception) {
+        throw e
+      }
+    }
+    error("NativeInteropReservedNamesHostApi has not been registered")
+  }
+  /** Returns the result of calling [NativeInteropReservedNamesFlutterApi.getReference]. */
+  override fun callFlutterGetReference(): String {
+    api?.let {
+      try {
+        return it.callFlutterGetReference()
+      } catch (e: Exception) {
+        throw e
+      }
+    }
+    error("NativeInteropReservedNamesHostApi has not been registered")
+  }
+}
+/**
+ * The Flutter API counterpart of [NativeInteropReservedNamesHostApi].
+ *
+ * JNIgen generates interfaces for Flutter APIs, which it renames differently than classes.
+ *
+ * Generated class from Pigeon that represents Flutter messages that can be called from Kotlin.
+ */
+/// Map that stores instances
+val registeredNativeInteropReservedNamesFlutterApi:
+    MutableMap<String, NativeInteropReservedNamesFlutterApi> =
+    mutableMapOf()
+
+/// Class that stores instances
+@Keep
+class NativeInteropReservedNamesFlutterApiRegistrar() {
+
+  /// Registers an instance with the given name.
+  fun registerInstance(
+      api: NativeInteropReservedNamesFlutterApi?,
+      name: String = defaultInstanceName
+  ) {
+    if (api != null) {
+      registeredNativeInteropReservedNamesFlutterApi[name] = api
+    } else {
+      registeredNativeInteropReservedNamesFlutterApi.remove(name)
+    }
+  }
+
+  /// Gets an instance with the given name.
+  fun getInstance(name: String = defaultInstanceName): NativeInteropReservedNamesFlutterApi? {
+    return registeredNativeInteropReservedNamesFlutterApi[name]
+  }
+}
+
+@Keep
+interface NativeInteropReservedNamesFlutterApi {
+  /** Collides with `JObject.release`. */
+  fun release(value: String): String
+  /** Collides with the static `type` field that JNIgen adds to every class. */
+  fun type(): String
+  /** Collides with the `implementIn` method that JNIgen adds to interfaces. */
+  fun implementIn(value: String): String
+  /** Collides with `JObject.isNull`. */
+  fun isNull(): Boolean
+  /** JNIgen doesn't turn interface methods into properties. */
+  fun getReference(): String
 }
