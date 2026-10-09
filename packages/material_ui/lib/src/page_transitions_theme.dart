@@ -562,9 +562,9 @@ class _FadeForwardsSnapshotState extends State<_FadeForwardsSnapshot> {
   }
 }
 
-/// Used by [PageTransitionsTheme] to define a horizontal [MaterialPageRoute] page
-/// transition animation that looks like the default page transition
-/// used on Android U.
+/// Used by [PageTransitionsTheme] to define a horizontal [MaterialPageRoute]
+/// page transition animation that looks like the default page transition used
+/// on Android U.
 ///
 /// <callout-box>
 ///
@@ -577,6 +577,15 @@ class _FadeForwardsSnapshotState extends State<_FadeForwardsSnapshot> {
 /// {@example /example/lib/page_transitions_theme/page_transitions_theme.3.dart#body}
 ///
 /// </callout-box>
+///
+/// Use `allowSnapshotting` to enable snapshotting via [SnapshotWidget] for all
+/// routes, or `allowEnterRouteSnapshotting` to enable it for only the entering
+/// route. When enabled, the child will be rasterized once at the start of the
+/// animation so that the transitions only have to composite a single image.
+/// This often improves performance at the expense of freezing any animations
+/// that exist within the child for the duration of the animation. If the child
+/// contains a platform view, the live child is painted instead (see
+/// [SnapshotMode.permissive]).
 ///
 /// See also:
 ///
@@ -592,6 +601,8 @@ class _FadeForwardsSnapshotState extends State<_FadeForwardsSnapshot> {
 ///    transition that allows peeking behind the current route on Android.
 ///  * [FadeForwardsPageTransitionsBuilder], which defines a page transition
 ///    that's similar to the one provided by Android U.
+///  * [PageRoute.allowSnapshotting], which enables or disables snapshotting on
+///    a per route basis.
 class FadeForwardsPageTransitionsBuilder extends PageTransitionsBuilder {
   /// Constructs a page transition animation that matches the transition used on
   /// Android U.
@@ -666,7 +677,7 @@ class FadeForwardsPageTransitionsBuilder extends PageTransitionsBuilder {
             allowSnapshotting &&
             _allowSnapshotting,
         !ZoomPageTransitionsBuilder._kProfileForceDisableSnapshotting &&
-        _allowEnterRouteSnapshotting,
+            _allowEnterRouteSnapshotting,
         child,
       );
 
