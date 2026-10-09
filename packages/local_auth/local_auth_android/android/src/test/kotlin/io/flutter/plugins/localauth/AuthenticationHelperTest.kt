@@ -354,6 +354,21 @@ class AuthenticationHelperTest {
   }
 
   @Test
+  fun onAuthenticationError_withSticky_returnsUserCanceledIfActivityIsFinishing() {
+    val result = ArrayList<AuthResult>()
+    val activity = buildMockActivityWithContext(mock<FragmentActivity>())
+    whenever(activity.isFinishing).thenReturn(true)
+    val observer = mockViewTreeObserver(activity)
+    val helper = buildStickyHelper(activity, result)
+
+    helper.onAuthenticationError(BiometricPrompt.ERROR_USER_CANCELED, "")
+
+    Assert.assertEquals(1, result.size)
+    Assert.assertEquals(AuthResultCode.USER_CANCELED, result[0].code)
+    verify(observer, never()).addOnWindowFocusChangeListener(any())
+  }
+
+  @Test
   fun onAuthenticationError_withSticky_returnsCanceledImmediatelyAfterStopAuthentication() {
     val result = ArrayList<AuthResult>()
     val activity = buildMockActivityWithContext(mock<FragmentActivity>())

@@ -103,7 +103,8 @@ internal class AuthenticationHelper(
       // keeps it resumed). The prompt window holds focus while shown, so focus only returns to
       // the activity if the user dismissed the prompt.
       // See https://github.com/flutter/flutter/issues/125293
-      if (!activity.hasWindowFocus()) {
+      // Focus can't return to an activity that is going away, so report the error in that case.
+      if (!activity.hasWindowFocus() && !activity.isFinishing && !activity.isDestroyed) {
         waitForFocus(errorCode, errString)
         return
       }
