@@ -28,7 +28,7 @@ class _TestAppState extends State<TestApp> {
         DefaultMaterialLocalizations.delegate,
       ],
       child: MediaQuery(
-        data: MediaQuery.of(context).copyWith(size: widget.mediaSize),
+        data: MediaQueryData.fromView(View.of(context)).copyWith(size: widget.mediaSize),
         child: Directionality(
           textDirection: widget.textDirection,
           child: Navigator(
