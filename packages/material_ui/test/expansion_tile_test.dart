@@ -2243,7 +2243,7 @@ void main() {
         ),
       );
 
-      // Initially collapsed - live region label is "Collapsed".
+      // Initially collapsed - live region hint is "Collapsed".
 
       SemanticsNode liveRegionSemantics = tester.getSemantics(
         find.ancestor(
@@ -2253,7 +2253,7 @@ void main() {
           ),
         ),
       );
-      expect(liveRegionSemantics.label, localizations.expandedHint);
+      expect(liveRegionSemantics.hint, localizations.expandedHint);
 
       // Tap to expand.
       await tester.tap(find.text('Test Tile'));
@@ -2268,7 +2268,7 @@ void main() {
           ),
         ),
       );
-      expect(liveRegionSemantics.label, localizations.collapsedHint);
+      expect(liveRegionSemantics.hint, localizations.collapsedHint);
 
       // Tap to collapse.
       await tester.tap(find.text('Test Tile'));
@@ -2283,7 +2283,35 @@ void main() {
           ),
         ),
       );
-      expect(liveRegionSemantics.label, localizations.expandedHint);
+      expect(liveRegionSemantics.hint, localizations.expandedHint);
+
+      handle.dispose();
+    }, variant: const TargetPlatformVariant(<TargetPlatform>{TargetPlatform.android}));
+
+    // Regression test for https://github.com/flutter/flutter/issues/190601.
+    testWidgets('Android header uses a single live-region Semantics node', (
+      WidgetTester tester,
+    ) async {
+      final SemanticsHandle handle = tester.ensureSemantics();
+      await tester.pumpWidget(
+        const MaterialApp(
+          home: Material(
+            child: ExpansionTile(title: Text('Filter'), children: <Widget>[Text('Child')]),
+          ),
+        ),
+      );
+
+      final Finder liveRegionSemantics = find.ancestor(
+        of: find.byType(ListTile),
+        matching: find.byWidgetPredicate(
+          (Widget widget) => widget is Semantics && (widget.properties.liveRegion ?? false),
+        ),
+      );
+      expect(liveRegionSemantics, findsOneWidget);
+
+      final Semantics widget = tester.widget<Semantics>(liveRegionSemantics);
+      expect(widget.properties.hint, isNotNull);
+      expect(widget.properties.accessibilityFocusBlockType, isNull);
 
       handle.dispose();
     }, variant: const TargetPlatformVariant(<TargetPlatform>{TargetPlatform.android}));
