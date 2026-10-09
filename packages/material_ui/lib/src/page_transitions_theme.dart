@@ -566,7 +566,9 @@ class _FadeForwardsSnapshotState extends State<_FadeForwardsSnapshot> {
 class FadeForwardsPageTransitionsBuilder extends PageTransitionsBuilder {
   /// Constructs a page transition animation that matches the transition used on
   /// Android U.
-  const FadeForwardsPageTransitionsBuilder({this.backgroundColor});
+  const FadeForwardsPageTransitionsBuilder({this._allowSnapshotting, this.backgroundColor});
+
+  final bool? _allowSnapshotting;
 
   /// The background color during transition between two routes.
   ///
@@ -694,6 +696,7 @@ class FadeForwardsPageTransitionsBuilder extends PageTransitionsBuilder {
       animation: animation,
       secondaryAnimation: secondaryAnimation,
       allowSnapshotting:
+      // TODO(justinmc): Use the _allowSnapshotting parameter here.
           !ZoomPageTransitionsBuilder._kProfileForceDisableSnapshotting &&
           (route?.allowSnapshotting ?? true),
       backgroundColor: backgroundColor,
