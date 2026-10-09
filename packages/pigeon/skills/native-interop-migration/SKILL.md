@@ -58,6 +58,7 @@ In your Pigeon Dart definition file (`pigeons/<messages_file>.dart`), update `@C
       appDirectory: 'example/', // <-- ADD/UPDATE: Application directory (e.g. 'example/' for plugins, './' for apps)
     ),
     copyrightHeader: 'pigeons/copyright.txt',
+    nativeInteropTransport: NativeInteropTransport.hybrid, // <-- ADD: Passes data classes and collections in one buffer per call
   ),
 )
 ```
@@ -66,6 +67,7 @@ In your Pigeon Dart definition file (`pigeons/<messages_file>.dart`), update `@C
 - **`swiftOptions: SwiftOptions(useFfi: true)`**: Enables Swift FFI code generation.
 - **`kotlinOptions: KotlinOptions(useJni: true)`**: Enables Kotlin JNI code generation.
 - **`appDirectory`**: Root path of the compiled Flutter **application** context required by `ffigen` and `jnigen` (use `'example/'` for plugins with an example app, or `'./'` for standalone Flutter apps).
+- **`nativeInteropTransport: NativeInteropTransport.hybrid`**: Recommended whenever the API passes data classes, lists, maps or `Object` values. The default transport converts each field and collection element with its own call across the language boundary, which is slower than platform channels for large values; the hybrid transport encodes them into one buffer per call and also supports sealed classes. The user-facing Kotlin and Swift APIs don't change. See [Performance of Data Classes and Collections](../../native_interop_guide.md#performance-of-data-classes-and-collections).
 
 > [!WARNING]
 > **Threading, Isolates & TaskQueue**: Native Interop calls execute directly on the calling isolate's OS thread (the main UI thread when called from the root isolate, unless the application developer has opted out of thread merging, which [is still possible on macOS](https://github.com/flutter/flutter/issues/181874)).

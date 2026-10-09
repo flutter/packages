@@ -11,7 +11,7 @@ For a comprehensive walkthrough on setting up Native Interop from scratch, see t
 
 | Feature | Platform Channels | Native Interop (FFI / JNI) |
 | :--- | :--- | :--- |
-| **Data Serialization** | Serialized to binary format (`StandardMessageCodec`) | Direct memory mapping or native references |
+| **Data Serialization** | Serialized to binary format (`StandardMessageCodec`) | Scalars, strings, enums and typed data are passed directly. Data classes and collections are converted to native objects, or with `NativeInteropTransport.hybrid`, encoded into one buffer per call ([details](./native_interop_guide.md#performance-of-data-classes-and-collections)) |
 | **Threading Model** | Main UI thread or custom background `TaskQueue` | Direct execution on caller thread (`TaskQueue` is not supported) |
 | **Isolate Support** | Requires `BackgroundIsolateBinaryMessenger` | Supported for Host APIs |
 | **Synchronous Calls** | Asynchronous only | Supports both synchronous and asynchronous calls |

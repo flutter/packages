@@ -655,7 +655,19 @@ typedef SWIFT_ENUM(NSInteger, NativeInteropAnotherEnum, closed){
     NativeInteropAnotherEnumJustInCase = 0,
 };
 
+/// Generated bridge class from Pigeon that moves data from Swift to
+/// Objective-C.
+SWIFT_CLASS("_TtC11test_plugin25NativeInteropCircleBridge")
+@interface NativeInteropCircleBridge : NSObject
+- (nonnull instancetype)initWithRadius:(double)radius
+    OBJC_DESIGNATED_INITIALIZER;
+@property(nonatomic) double radius;
+- (nonnull instancetype)init SWIFT_UNAVAILABLE;
++ (nonnull instancetype)new SWIFT_UNAVAILABLE_MSG("-init is unavailable");
+@end
+
 @class NativeInteropTestsError;
+@class NSData;
 /// The core interface that the Dart platform_test code implements for host
 /// integration tests to call into.
 /// Generated protocol from Pigeon that represents Flutter messages that can be
@@ -665,649 +677,501 @@ SWIFT_PROTOCOL(
 @protocol NativeInteropFlutterIntegrationCoreApiBridge
 /// A no-op function taking no arguments and returning no value, to sanity
 /// test basic calling.
-- (void)noopWithError:(NativeInteropTestsError* _Nonnull)error;
+- (void)pigeon_noop:(NativeInteropTestsError* _Nonnull)error;
 /// Returns a Flutter error, to test error handling.
-- (NSObject* _Nullable)throwFlutterErrorWithError:
+- (NSData* _Nullable)pigeon_throwFlutterError:
     (NativeInteropTestsError* _Nonnull)error SWIFT_WARN_UNUSED_RESULT;
 /// Responds with an error from an async function returning a value.
-- (NSObject* _Nullable)throwErrorWithError:
-    (NativeInteropTestsError* _Nonnull)error SWIFT_WARN_UNUSED_RESULT;
+- (NSData* _Nullable)pigeon_throwError:(NativeInteropTestsError* _Nonnull)error
+    SWIFT_WARN_UNUSED_RESULT;
 /// Responds with an error from an async void function.
-- (void)throwErrorFromVoidWithError:(NativeInteropTestsError* _Nonnull)error;
+- (void)pigeon_throwErrorFromVoid:(NativeInteropTestsError* _Nonnull)error;
 /// Returns the passed object, to test serialization and deserialization.
-- (NativeInteropAllTypesBridge* _Nullable)
-    echoNativeInteropAllTypesWithEverything:
-        (NativeInteropAllTypesBridge* _Nullable)everythingArg
-                                      error:(NativeInteropTestsError* _Nonnull)
-                                                error SWIFT_WARN_UNUSED_RESULT;
-/// Returns the passed object, to test serialization and deserialization.
-- (NativeInteropAllNullableTypesBridge* _Nullable)
-    echoNativeInteropAllNullableTypesWithEverything:
-        (NativeInteropAllNullableTypesBridge* _Nullable)everythingArg
-                                              error:
-                                                  (NativeInteropTestsError* _Nonnull)
-                                                      error
+- (NSData* _Nullable)
+    pigeon_echoNativeInteropAllTypes:(NSData* _Nonnull)pigeonVar_args
+                               error:(NativeInteropTestsError* _Nonnull)error
     SWIFT_WARN_UNUSED_RESULT;
-/// Returns passed in arguments of multiple types.
-/// Tests multiple-arity FlutterApi handling.
-- (NativeInteropAllNullableTypesBridge* _Nullable)
-    sendMultipleNullableTypesWithANullableBool:
-        (NSNumber* _Nullable)aNullableBoolArg
-                                  aNullableInt:
-                                      (NSNumber* _Nullable)aNullableIntArg
-                               aNullableString:
-                                   (NSString* _Nullable)aNullableStringArg
-                                         error:
-                                             (NativeInteropTestsError* _Nonnull)
+/// Returns the passed object, to test serialization and deserialization.
+- (NSData* _Nullable)
+    pigeon_echoNativeInteropAllNullableTypes:(NSData* _Nonnull)pigeonVar_args
+                                       error:(NativeInteropTestsError* _Nonnull)
                                                  error SWIFT_WARN_UNUSED_RESULT;
+/// Returns passed in arguments of multiple types.
+/// Tests multiple-arity FlutterApi handling.
+- (NSData* _Nullable)
+    pigeon_sendMultipleNullableTypes:(NSNumber* _Nullable)aNullableBoolArg
+                        aNullableInt:(NSNumber* _Nullable)aNullableIntArg
+                     aNullableString:(NSString* _Nullable)aNullableStringArg
+                               error:(NativeInteropTestsError* _Nonnull)error
+    SWIFT_WARN_UNUSED_RESULT;
 /// Returns the passed object, to test serialization and deserialization.
-- (NativeInteropAllNullableTypesWithoutRecursionBridge* _Nullable)
-    echoNativeInteropAllNullableTypesWithoutRecursionWithEverything:
-        (NativeInteropAllNullableTypesWithoutRecursionBridge* _Nullable)
-            everythingArg
-                                                              error:
-                                                                  (NativeInteropTestsError* _Nonnull)
-                                                                      error
+- (NSData* _Nullable)
+    pigeon_echoNativeInteropAllNullableTypesWithoutRecursion:
+        (NSData* _Nonnull)pigeonVar_args
+                                                       error:
+                                                           (NativeInteropTestsError* _Nonnull)
+                                                               error
     SWIFT_WARN_UNUSED_RESULT;
 /// Returns passed in arguments of multiple types.
 /// Tests multiple-arity FlutterApi handling.
-- (NativeInteropAllNullableTypesWithoutRecursionBridge* _Nullable)
-    sendMultipleNullableTypesWithoutRecursionWithANullableBool:
+- (NSData* _Nullable)
+    pigeon_sendMultipleNullableTypesWithoutRecursion:
         (NSNumber* _Nullable)aNullableBoolArg
-                                                  aNullableInt:
-                                                      (NSNumber* _Nullable)
-                                                          aNullableIntArg
-                                               aNullableString:
-                                                   (NSString* _Nullable)
-                                                       aNullableStringArg
-                                                         error:
-                                                             (NativeInteropTestsError* _Nonnull)
-                                                                 error
+                                        aNullableInt:
+                                            (NSNumber* _Nullable)aNullableIntArg
+                                     aNullableString:
+                                         (NSString* _Nullable)aNullableStringArg
+                                               error:
+                                                   (NativeInteropTestsError* _Nonnull)
+                                                       error
     SWIFT_WARN_UNUSED_RESULT;
 /// Returns the passed boolean, to test serialization and deserialization.
-- (NSNumber* _Nullable)echoBoolWithABool:(NSNumber* _Nullable)aBoolArg
+- (NSNumber* _Nullable)pigeon_echoBool:(BOOL)aBoolArg
+                                 error:(NativeInteropTestsError* _Nonnull)error
+    SWIFT_WARN_UNUSED_RESULT;
+/// Returns the passed int, to test serialization and deserialization.
+- (NSNumber* _Nullable)pigeon_echoInt:(int64_t)anIntArg
+                                error:(NativeInteropTestsError* _Nonnull)error
+    SWIFT_WARN_UNUSED_RESULT;
+/// Returns the passed double, to test serialization and deserialization.
+- (NSNumber* _Nullable)pigeon_echoDouble:(double)aDoubleArg
                                    error:
                                        (NativeInteropTestsError* _Nonnull)error
     SWIFT_WARN_UNUSED_RESULT;
-/// Returns the passed int, to test serialization and deserialization.
-- (NSNumber* _Nullable)echoIntWithAnInt:(NSNumber* _Nullable)anIntArg
-                                  error:(NativeInteropTestsError* _Nonnull)error
-    SWIFT_WARN_UNUSED_RESULT;
-/// Returns the passed double, to test serialization and deserialization.
-- (NSNumber* _Nullable)echoDoubleWithADouble:(NSNumber* _Nullable)aDoubleArg
-                                       error:(NativeInteropTestsError* _Nonnull)
-                                                 error SWIFT_WARN_UNUSED_RESULT;
 /// Returns the passed string, to test serialization and deserialization.
-- (NSString* _Nullable)echoStringWithAString:(NSString* _Nullable)aStringArg
-                                       error:(NativeInteropTestsError* _Nonnull)
-                                                 error SWIFT_WARN_UNUSED_RESULT;
+- (NSString* _Nullable)pigeon_echoString:(NSString* _Nonnull)aStringArg
+                                   error:
+                                       (NativeInteropTestsError* _Nonnull)error
+    SWIFT_WARN_UNUSED_RESULT;
 /// Returns the passed byte list, to test serialization and deserialization.
-- (NativeInteropTestsPigeonTypedData* _Nullable)
-    echoUint8ListWithList:(NativeInteropTestsPigeonTypedData* _Nullable)listArg
-                    error:(NativeInteropTestsError* _Nonnull)error
-    SWIFT_WARN_UNUSED_RESULT;
-/// Returns the passed int32 list, to test serialization and deserialization.
-- (NativeInteropTestsPigeonTypedData* _Nullable)
-    echoInt32ListWithList:(NativeInteropTestsPigeonTypedData* _Nullable)listArg
-                    error:(NativeInteropTestsError* _Nonnull)error
-    SWIFT_WARN_UNUSED_RESULT;
-/// Returns the passed int64 list, to test serialization and deserialization.
-- (NativeInteropTestsPigeonTypedData* _Nullable)
-    echoInt64ListWithList:(NativeInteropTestsPigeonTypedData* _Nullable)listArg
-                    error:(NativeInteropTestsError* _Nonnull)error
-    SWIFT_WARN_UNUSED_RESULT;
-/// Returns the passed float64 list, to test serialization and deserialization.
-- (NativeInteropTestsPigeonTypedData* _Nullable)
-    echoFloat64ListWithList:
-        (NativeInteropTestsPigeonTypedData* _Nullable)listArg
-                      error:(NativeInteropTestsError* _Nonnull)error
-    SWIFT_WARN_UNUSED_RESULT;
-/// Returns the passed list, to test serialization and deserialization.
-- (NSArray<NSObject*>* _Nullable)
-    echoListWithList:(NSArray<NSObject*>* _Nullable)listArg
-               error:(NativeInteropTestsError* _Nonnull)error
-    SWIFT_WARN_UNUSED_RESULT;
-/// Returns the passed list, to test serialization and deserialization.
-- (NSArray<NSObject*>* _Nullable)
-    echoEnumListWithEnumList:(NSArray<NSObject*>* _Nullable)enumListArg
-                       error:(NativeInteropTestsError* _Nonnull)error
-    SWIFT_WARN_UNUSED_RESULT;
-/// Returns the passed list, to test serialization and deserialization.
-- (NSArray<NSObject*>* _Nullable)
-    echoClassListWithClassList:(NSArray<NSObject*>* _Nullable)classListArg
-                         error:(NativeInteropTestsError* _Nonnull)error
-    SWIFT_WARN_UNUSED_RESULT;
-/// Returns the passed list, to test serialization and deserialization.
-- (NSArray<NSObject*>* _Nullable)
-    echoNonNullEnumListWithEnumList:(NSArray<NSObject*>* _Nullable)enumListArg
-                              error:(NativeInteropTestsError* _Nonnull)error
-    SWIFT_WARN_UNUSED_RESULT;
-/// Returns the passed list, to test serialization and deserialization.
-- (NSArray<NSObject*>* _Nullable)
-    echoNonNullClassListWithClassList:
-        (NSArray<NSObject*>* _Nullable)classListArg
-                                error:(NativeInteropTestsError* _Nonnull)error
-    SWIFT_WARN_UNUSED_RESULT;
-/// Returns the passed map, to test serialization and deserialization.
-- (NSDictionary<id<NSCopying>, NSObject*>* _Nullable)
-    echoMapWithMap:(NSDictionary<id<NSCopying>, NSObject*>* _Nullable)mapArg
-             error:(NativeInteropTestsError* _Nonnull)error
-    SWIFT_WARN_UNUSED_RESULT;
-/// Returns the passed map, to test serialization and deserialization.
-- (NSDictionary<id<NSCopying>, NSObject*>* _Nullable)
-    echoStringMapWithStringMap:
-        (NSDictionary<id<NSCopying>, NSObject*>* _Nullable)stringMapArg
-                         error:(NativeInteropTestsError* _Nonnull)error
-    SWIFT_WARN_UNUSED_RESULT;
-/// Returns the passed map, to test serialization and deserialization.
-- (NSDictionary<id<NSCopying>, NSObject*>* _Nullable)
-    echoIntMapWithIntMap:
-        (NSDictionary<id<NSCopying>, NSObject*>* _Nullable)intMapArg
-                   error:(NativeInteropTestsError* _Nonnull)error
-    SWIFT_WARN_UNUSED_RESULT;
-/// Returns the passed map, to test serialization and deserialization.
-- (NSDictionary<id<NSCopying>, NSObject*>* _Nullable)
-    echoEnumMapWithEnumMap:
-        (NSDictionary<id<NSCopying>, NSObject*>* _Nullable)enumMapArg
-                     error:(NativeInteropTestsError* _Nonnull)error
-    SWIFT_WARN_UNUSED_RESULT;
-/// Returns the passed map, to test serialization and deserialization.
-- (NSDictionary<id<NSCopying>, NSObject*>* _Nullable)
-    echoClassMapWithClassMap:
-        (NSDictionary<id<NSCopying>, NSObject*>* _Nullable)classMapArg
-                       error:(NativeInteropTestsError* _Nonnull)error
-    SWIFT_WARN_UNUSED_RESULT;
-/// Returns the passed map, to test serialization and deserialization.
-- (NSDictionary<id<NSCopying>, NSObject*>* _Nullable)
-    echoNonNullStringMapWithStringMap:
-        (NSDictionary<id<NSCopying>, NSObject*>* _Nullable)stringMapArg
-                                error:(NativeInteropTestsError* _Nonnull)error
-    SWIFT_WARN_UNUSED_RESULT;
-/// Returns the passed map, to test serialization and deserialization.
-- (NSDictionary<id<NSCopying>, NSObject*>* _Nullable)
-    echoNonNullIntMapWithIntMap:
-        (NSDictionary<id<NSCopying>, NSObject*>* _Nullable)intMapArg
-                          error:(NativeInteropTestsError* _Nonnull)error
-    SWIFT_WARN_UNUSED_RESULT;
-/// Returns the passed map, to test serialization and deserialization.
-- (NSDictionary<id<NSCopying>, NSObject*>* _Nullable)
-    echoNonNullEnumMapWithEnumMap:
-        (NSDictionary<id<NSCopying>, NSObject*>* _Nullable)enumMapArg
-                            error:(NativeInteropTestsError* _Nonnull)error
-    SWIFT_WARN_UNUSED_RESULT;
-/// Returns the passed map, to test serialization and deserialization.
-- (NSDictionary<id<NSCopying>, NSObject*>* _Nullable)
-    echoNonNullClassMapWithClassMap:
-        (NSDictionary<id<NSCopying>, NSObject*>* _Nullable)classMapArg
-                              error:(NativeInteropTestsError* _Nonnull)error
-    SWIFT_WARN_UNUSED_RESULT;
-/// Returns the passed enum to test serialization and deserialization.
-- (NSNumber* _Nullable)echoEnumWithAnEnum:(NSNumber* _Nullable)anEnumArg
+- (NSData* _Nullable)pigeon_echoUint8List:(NSData* _Nonnull)listArg
                                     error:
                                         (NativeInteropTestsError* _Nonnull)error
     SWIFT_WARN_UNUSED_RESULT;
+/// Returns the passed int32 list, to test serialization and deserialization.
+- (NSData* _Nullable)pigeon_echoInt32List:(NSData* _Nonnull)listArg
+                                    error:
+                                        (NativeInteropTestsError* _Nonnull)error
+    SWIFT_WARN_UNUSED_RESULT;
+/// Returns the passed int64 list, to test serialization and deserialization.
+- (NSData* _Nullable)pigeon_echoInt64List:(NSData* _Nonnull)listArg
+                                    error:
+                                        (NativeInteropTestsError* _Nonnull)error
+    SWIFT_WARN_UNUSED_RESULT;
+/// Returns the passed float64 list, to test serialization and deserialization.
+- (NSData* _Nullable)pigeon_echoFloat64List:(NSData* _Nonnull)listArg
+                                      error:(NativeInteropTestsError* _Nonnull)
+                                                error SWIFT_WARN_UNUSED_RESULT;
+/// Returns the passed list, to test serialization and deserialization.
+- (NSData* _Nullable)pigeon_echoList:(NSData* _Nonnull)pigeonVar_args
+                               error:(NativeInteropTestsError* _Nonnull)error
+    SWIFT_WARN_UNUSED_RESULT;
+/// Returns the passed list, to test serialization and deserialization.
+- (NSData* _Nullable)pigeon_echoEnumList:(NSData* _Nonnull)pigeonVar_args
+                                   error:
+                                       (NativeInteropTestsError* _Nonnull)error
+    SWIFT_WARN_UNUSED_RESULT;
+/// Returns the passed list, to test serialization and deserialization.
+- (NSData* _Nullable)pigeon_echoClassList:(NSData* _Nonnull)pigeonVar_args
+                                    error:
+                                        (NativeInteropTestsError* _Nonnull)error
+    SWIFT_WARN_UNUSED_RESULT;
+/// Returns the passed list, to test serialization and deserialization.
+- (NSData* _Nullable)
+    pigeon_echoNonNullEnumList:(NSData* _Nonnull)pigeonVar_args
+                         error:(NativeInteropTestsError* _Nonnull)error
+    SWIFT_WARN_UNUSED_RESULT;
+/// Returns the passed list, to test serialization and deserialization.
+- (NSData* _Nullable)
+    pigeon_echoNonNullClassList:(NSData* _Nonnull)pigeonVar_args
+                          error:(NativeInteropTestsError* _Nonnull)error
+    SWIFT_WARN_UNUSED_RESULT;
+/// Returns the passed map, to test serialization and deserialization.
+- (NSData* _Nullable)pigeon_echoMap:(NSData* _Nonnull)pigeonVar_args
+                              error:(NativeInteropTestsError* _Nonnull)error
+    SWIFT_WARN_UNUSED_RESULT;
+/// Returns the passed map, to test serialization and deserialization.
+- (NSData* _Nullable)pigeon_echoStringMap:(NSData* _Nonnull)pigeonVar_args
+                                    error:
+                                        (NativeInteropTestsError* _Nonnull)error
+    SWIFT_WARN_UNUSED_RESULT;
+/// Returns the passed map, to test serialization and deserialization.
+- (NSData* _Nullable)pigeon_echoIntMap:(NSData* _Nonnull)pigeonVar_args
+                                 error:(NativeInteropTestsError* _Nonnull)error
+    SWIFT_WARN_UNUSED_RESULT;
+/// Returns the passed map, to test serialization and deserialization.
+- (NSData* _Nullable)pigeon_echoEnumMap:(NSData* _Nonnull)pigeonVar_args
+                                  error:(NativeInteropTestsError* _Nonnull)error
+    SWIFT_WARN_UNUSED_RESULT;
+/// Returns the passed map, to test serialization and deserialization.
+- (NSData* _Nullable)pigeon_echoClassMap:(NSData* _Nonnull)pigeonVar_args
+                                   error:
+                                       (NativeInteropTestsError* _Nonnull)error
+    SWIFT_WARN_UNUSED_RESULT;
+/// Returns the passed map, to test serialization and deserialization.
+- (NSData* _Nullable)
+    pigeon_echoNonNullStringMap:(NSData* _Nonnull)pigeonVar_args
+                          error:(NativeInteropTestsError* _Nonnull)error
+    SWIFT_WARN_UNUSED_RESULT;
+/// Returns the passed map, to test serialization and deserialization.
+- (NSData* _Nullable)
+    pigeon_echoNonNullIntMap:(NSData* _Nonnull)pigeonVar_args
+                       error:(NativeInteropTestsError* _Nonnull)error
+    SWIFT_WARN_UNUSED_RESULT;
+/// Returns the passed map, to test serialization and deserialization.
+- (NSData* _Nullable)
+    pigeon_echoNonNullEnumMap:(NSData* _Nonnull)pigeonVar_args
+                        error:(NativeInteropTestsError* _Nonnull)error
+    SWIFT_WARN_UNUSED_RESULT;
+/// Returns the passed map, to test serialization and deserialization.
+- (NSData* _Nullable)
+    pigeon_echoNonNullClassMap:(NSData* _Nonnull)pigeonVar_args
+                         error:(NativeInteropTestsError* _Nonnull)error
+    SWIFT_WARN_UNUSED_RESULT;
+/// Returns the passed enum to test serialization and deserialization.
+- (NSNumber* _Nullable)pigeon_echoEnum:(int64_t)anEnumArg
+                                 error:(NativeInteropTestsError* _Nonnull)error
+    SWIFT_WARN_UNUSED_RESULT;
 /// Returns the passed enum to test serialization and deserialization.
 - (NSNumber* _Nullable)
-    echoNativeInteropAnotherEnumWithAnotherEnum:
-        (NSNumber* _Nullable)anotherEnumArg
-                                          error:
-                                              (NativeInteropTestsError* _Nonnull)
-                                                  error
+    pigeon_echoNativeInteropAnotherEnum:(int64_t)anotherEnumArg
+                                  error:(NativeInteropTestsError* _Nonnull)error
     SWIFT_WARN_UNUSED_RESULT;
 /// Returns the passed boolean, to test serialization and deserialization.
 - (NSNumber* _Nullable)
-    echoNullableBoolWithABool:(NSNumber* _Nullable)aBoolArg
-                        error:(NativeInteropTestsError* _Nonnull)error
+    pigeon_echoNullableBool:(NSNumber* _Nullable)aBoolArg
+                      error:(NativeInteropTestsError* _Nonnull)error
     SWIFT_WARN_UNUSED_RESULT;
 /// Returns the passed int, to test serialization and deserialization.
 - (NSNumber* _Nullable)
-    echoNullableIntWithAnInt:(NSNumber* _Nullable)anIntArg
-                       error:(NativeInteropTestsError* _Nonnull)error
+    pigeon_echoNullableInt:(NSNumber* _Nullable)anIntArg
+                     error:(NativeInteropTestsError* _Nonnull)error
     SWIFT_WARN_UNUSED_RESULT;
 /// Returns the passed double, to test serialization and deserialization.
 - (NSNumber* _Nullable)
-    echoNullableDoubleWithADouble:(NSNumber* _Nullable)aDoubleArg
-                            error:(NativeInteropTestsError* _Nonnull)error
+    pigeon_echoNullableDouble:(NSNumber* _Nullable)aDoubleArg
+                        error:(NativeInteropTestsError* _Nonnull)error
     SWIFT_WARN_UNUSED_RESULT;
 /// Returns the passed string, to test serialization and deserialization.
 - (NSString* _Nullable)
-    echoNullableStringWithAString:(NSString* _Nullable)aStringArg
-                            error:(NativeInteropTestsError* _Nonnull)error
+    pigeon_echoNullableString:(NSString* _Nullable)aStringArg
+                        error:(NativeInteropTestsError* _Nonnull)error
     SWIFT_WARN_UNUSED_RESULT;
 /// Returns the passed byte list, to test serialization and deserialization.
-- (NativeInteropTestsPigeonTypedData* _Nullable)
-    echoNullableUint8ListWithList:
-        (NativeInteropTestsPigeonTypedData* _Nullable)listArg
-                            error:(NativeInteropTestsError* _Nonnull)error
+- (NSData* _Nullable)
+    pigeon_echoNullableUint8List:(NSData* _Nullable)listArg
+                           error:(NativeInteropTestsError* _Nonnull)error
     SWIFT_WARN_UNUSED_RESULT;
 /// Returns the passed int32 list, to test serialization and deserialization.
-- (NativeInteropTestsPigeonTypedData* _Nullable)
-    echoNullableInt32ListWithList:
-        (NativeInteropTestsPigeonTypedData* _Nullable)listArg
-                            error:(NativeInteropTestsError* _Nonnull)error
+- (NSData* _Nullable)
+    pigeon_echoNullableInt32List:(NSData* _Nullable)listArg
+                           error:(NativeInteropTestsError* _Nonnull)error
     SWIFT_WARN_UNUSED_RESULT;
 /// Returns the passed int64 list, to test serialization and deserialization.
-- (NativeInteropTestsPigeonTypedData* _Nullable)
-    echoNullableInt64ListWithList:
-        (NativeInteropTestsPigeonTypedData* _Nullable)listArg
-                            error:(NativeInteropTestsError* _Nonnull)error
+- (NSData* _Nullable)
+    pigeon_echoNullableInt64List:(NSData* _Nullable)listArg
+                           error:(NativeInteropTestsError* _Nonnull)error
     SWIFT_WARN_UNUSED_RESULT;
 /// Returns the passed float64 list, to test serialization and deserialization.
-- (NativeInteropTestsPigeonTypedData* _Nullable)
-    echoNullableFloat64ListWithList:
-        (NativeInteropTestsPigeonTypedData* _Nullable)listArg
-                              error:(NativeInteropTestsError* _Nonnull)error
+- (NSData* _Nullable)
+    pigeon_echoNullableFloat64List:(NSData* _Nullable)listArg
+                             error:(NativeInteropTestsError* _Nonnull)error
     SWIFT_WARN_UNUSED_RESULT;
 /// Returns the passed list, to test serialization and deserialization.
-- (NSArray<NSObject*>* _Nullable)
-    echoNullableListWithList:(NSArray<NSObject*>* _Nullable)listArg
-                       error:(NativeInteropTestsError* _Nonnull)error
+- (NSData* _Nullable)pigeon_echoNullableList:(NSData* _Nonnull)pigeonVar_args
+                                       error:(NativeInteropTestsError* _Nonnull)
+                                                 error SWIFT_WARN_UNUSED_RESULT;
+/// Returns the passed list, to test serialization and deserialization.
+- (NSData* _Nullable)
+    pigeon_echoNullableEnumList:(NSData* _Nonnull)pigeonVar_args
+                          error:(NativeInteropTestsError* _Nonnull)error
     SWIFT_WARN_UNUSED_RESULT;
 /// Returns the passed list, to test serialization and deserialization.
-- (NSArray<NSObject*>* _Nullable)
-    echoNullableEnumListWithEnumList:(NSArray<NSObject*>* _Nullable)enumListArg
-                               error:(NativeInteropTestsError* _Nonnull)error
+- (NSData* _Nullable)
+    pigeon_echoNullableClassList:(NSData* _Nonnull)pigeonVar_args
+                           error:(NativeInteropTestsError* _Nonnull)error
     SWIFT_WARN_UNUSED_RESULT;
 /// Returns the passed list, to test serialization and deserialization.
-- (NSArray<NSObject*>* _Nullable)
-    echoNullableClassListWithClassList:
-        (NSArray<NSObject*>* _Nullable)classListArg
+- (NSData* _Nullable)
+    pigeon_echoNullableNonNullEnumList:(NSData* _Nonnull)pigeonVar_args
                                  error:(NativeInteropTestsError* _Nonnull)error
     SWIFT_WARN_UNUSED_RESULT;
 /// Returns the passed list, to test serialization and deserialization.
-- (NSArray<NSObject*>* _Nullable)
-    echoNullableNonNullEnumListWithEnumList:
-        (NSArray<NSObject*>* _Nullable)enumListArg
+- (NSData* _Nullable)
+    pigeon_echoNullableNonNullClassList:(NSData* _Nonnull)pigeonVar_args
+                                  error:(NativeInteropTestsError* _Nonnull)error
+    SWIFT_WARN_UNUSED_RESULT;
+/// Returns the passed map, to test serialization and deserialization.
+- (NSData* _Nullable)pigeon_echoNullableMap:(NSData* _Nonnull)pigeonVar_args
                                       error:(NativeInteropTestsError* _Nonnull)
                                                 error SWIFT_WARN_UNUSED_RESULT;
-/// Returns the passed list, to test serialization and deserialization.
-- (NSArray<NSObject*>* _Nullable)
-    echoNullableNonNullClassListWithClassList:
-        (NSArray<NSObject*>* _Nullable)classListArg
-                                        error:
-                                            (NativeInteropTestsError* _Nonnull)
-                                                error SWIFT_WARN_UNUSED_RESULT;
 /// Returns the passed map, to test serialization and deserialization.
-- (NSDictionary<id<NSCopying>, NSObject*>* _Nullable)
-    echoNullableMapWithMap:
-        (NSDictionary<id<NSCopying>, NSObject*>* _Nullable)mapArg
-                     error:(NativeInteropTestsError* _Nonnull)error
-    SWIFT_WARN_UNUSED_RESULT;
-/// Returns the passed map, to test serialization and deserialization.
-- (NSDictionary<id<NSCopying>, NSObject*>* _Nullable)
-    echoNullableStringMapWithStringMap:
-        (NSDictionary<id<NSCopying>, NSObject*>* _Nullable)stringMapArg
-                                 error:(NativeInteropTestsError* _Nonnull)error
-    SWIFT_WARN_UNUSED_RESULT;
-/// Returns the passed map, to test serialization and deserialization.
-- (NSDictionary<id<NSCopying>, NSObject*>* _Nullable)
-    echoNullableIntMapWithIntMap:
-        (NSDictionary<id<NSCopying>, NSObject*>* _Nullable)intMapArg
+- (NSData* _Nullable)
+    pigeon_echoNullableStringMap:(NSData* _Nonnull)pigeonVar_args
                            error:(NativeInteropTestsError* _Nonnull)error
     SWIFT_WARN_UNUSED_RESULT;
 /// Returns the passed map, to test serialization and deserialization.
-- (NSDictionary<id<NSCopying>, NSObject*>* _Nullable)
-    echoNullableEnumMapWithEnumMap:
-        (NSDictionary<id<NSCopying>, NSObject*>* _Nullable)enumMapArg
-                             error:(NativeInteropTestsError* _Nonnull)error
+- (NSData* _Nullable)
+    pigeon_echoNullableIntMap:(NSData* _Nonnull)pigeonVar_args
+                        error:(NativeInteropTestsError* _Nonnull)error
     SWIFT_WARN_UNUSED_RESULT;
 /// Returns the passed map, to test serialization and deserialization.
-- (NSDictionary<id<NSCopying>, NSObject*>* _Nullable)
-    echoNullableClassMapWithClassMap:
-        (NSDictionary<id<NSCopying>, NSObject*>* _Nullable)classMapArg
-                               error:(NativeInteropTestsError* _Nonnull)error
+- (NSData* _Nullable)
+    pigeon_echoNullableEnumMap:(NSData* _Nonnull)pigeonVar_args
+                         error:(NativeInteropTestsError* _Nonnull)error
     SWIFT_WARN_UNUSED_RESULT;
 /// Returns the passed map, to test serialization and deserialization.
-- (NSDictionary<id<NSCopying>, NSObject*>* _Nullable)
-    echoNullableNonNullStringMapWithStringMap:
-        (NSDictionary<id<NSCopying>, NSObject*>* _Nullable)stringMapArg
-                                        error:
-                                            (NativeInteropTestsError* _Nonnull)
-                                                error SWIFT_WARN_UNUSED_RESULT;
+- (NSData* _Nullable)
+    pigeon_echoNullableClassMap:(NSData* _Nonnull)pigeonVar_args
+                          error:(NativeInteropTestsError* _Nonnull)error
+    SWIFT_WARN_UNUSED_RESULT;
 /// Returns the passed map, to test serialization and deserialization.
-- (NSDictionary<id<NSCopying>, NSObject*>* _Nullable)
-    echoNullableNonNullIntMapWithIntMap:
-        (NSDictionary<id<NSCopying>, NSObject*>* _Nullable)intMapArg
+- (NSData* _Nullable)
+    pigeon_echoNullableNonNullStringMap:(NSData* _Nonnull)pigeonVar_args
                                   error:(NativeInteropTestsError* _Nonnull)error
     SWIFT_WARN_UNUSED_RESULT;
 /// Returns the passed map, to test serialization and deserialization.
-- (NSDictionary<id<NSCopying>, NSObject*>* _Nullable)
-    echoNullableNonNullEnumMapWithEnumMap:
-        (NSDictionary<id<NSCopying>, NSObject*>* _Nullable)enumMapArg
-                                    error:
-                                        (NativeInteropTestsError* _Nonnull)error
+- (NSData* _Nullable)
+    pigeon_echoNullableNonNullIntMap:(NSData* _Nonnull)pigeonVar_args
+                               error:(NativeInteropTestsError* _Nonnull)error
     SWIFT_WARN_UNUSED_RESULT;
 /// Returns the passed map, to test serialization and deserialization.
-- (NSDictionary<id<NSCopying>, NSObject*>* _Nullable)
-    echoNullableNonNullClassMapWithClassMap:
-        (NSDictionary<id<NSCopying>, NSObject*>* _Nullable)classMapArg
-                                      error:(NativeInteropTestsError* _Nonnull)
-                                                error SWIFT_WARN_UNUSED_RESULT;
-/// Returns the passed enum to test serialization and deserialization.
-- (NSNumber* _Nullable)
-    echoNullableEnumWithAnEnum:(NSNumber* _Nullable)anEnumArg
-                         error:(NativeInteropTestsError* _Nonnull)error
+- (NSData* _Nullable)
+    pigeon_echoNullableNonNullEnumMap:(NSData* _Nonnull)pigeonVar_args
+                                error:(NativeInteropTestsError* _Nonnull)error
+    SWIFT_WARN_UNUSED_RESULT;
+/// Returns the passed map, to test serialization and deserialization.
+- (NSData* _Nullable)
+    pigeon_echoNullableNonNullClassMap:(NSData* _Nonnull)pigeonVar_args
+                                 error:(NativeInteropTestsError* _Nonnull)error
     SWIFT_WARN_UNUSED_RESULT;
 /// Returns the passed enum to test serialization and deserialization.
 - (NSNumber* _Nullable)
-    echoAnotherNullableEnumWithAnotherEnum:(NSNumber* _Nullable)anotherEnumArg
-                                     error:(NativeInteropTestsError* _Nonnull)
-                                               error SWIFT_WARN_UNUSED_RESULT;
+    pigeon_echoNullableEnum:(int64_t)anEnumArg
+                      error:(NativeInteropTestsError* _Nonnull)error
+    SWIFT_WARN_UNUSED_RESULT;
+/// Returns the passed enum to test serialization and deserialization.
+- (NSNumber* _Nullable)
+    pigeon_echoAnotherNullableEnum:(int64_t)anotherEnumArg
+                             error:(NativeInteropTestsError* _Nonnull)error
+    SWIFT_WARN_UNUSED_RESULT;
 /// A no-op function taking no arguments and returning no value, to sanity
 /// test basic asynchronous calling.
-- (void)noopAsyncWithError:(NativeInteropTestsError* _Nonnull)error
-         completionHandler:(void (^_Nonnull)(void))completionHandler;
-- (void)throwFlutterErrorAsyncWithError:(NativeInteropTestsError* _Nonnull)error
-                      completionHandler:(void (^_Nonnull)(NSObject* _Nullable))
-                                            completionHandler;
+- (void)pigeon_noopAsync:(NativeInteropTestsError* _Nonnull)error
+       completionHandler:(void (^_Nonnull)(void))completionHandler;
+- (void)pigeon_throwFlutterErrorAsync:(NativeInteropTestsError* _Nonnull)error
+                    completionHandler:
+                        (void (^_Nonnull)(NSData* _Nullable))completionHandler;
 - (void)
-    echoAsyncNativeInteropAllTypesWithEverything:
-        (NativeInteropAllTypesBridge* _Nullable)everythingArg
-                                           error:
-                                               (NativeInteropTestsError* _Nonnull)
-                                                   error
-                               completionHandler:
-                                   (void (^_Nonnull)(
-                                       NativeInteropAllTypesBridge* _Nullable))
-                                       completionHandler;
+    pigeon_echoAsyncNativeInteropAllTypes:(NSData* _Nonnull)pigeonVar_args
+                                    error:
+                                        (NativeInteropTestsError* _Nonnull)error
+                        completionHandler:(void (^_Nonnull)(NSData* _Nullable))
+                                              completionHandler;
 - (void)
-    echoAsyncNullableNativeInteropAllNullableTypesWithEverything:
-        (NativeInteropAllNullableTypesBridge* _Nullable)everythingArg
-                                                           error:
-                                                               (NativeInteropTestsError* _Nonnull)
-                                                                   error
-                                               completionHandler:
-                                                   (void (^_Nonnull)(
-                                                       NativeInteropAllNullableTypesBridge* _Nullable))
-                                                       completionHandler;
+    pigeon_echoAsyncNullableNativeInteropAllNullableTypes:
+        (NSData* _Nonnull)pigeonVar_args
+                                                    error:
+                                                        (NativeInteropTestsError* _Nonnull)
+                                                            error
+                                        completionHandler:
+                                            (void (^_Nonnull)(
+                                                NSData* _Nullable))
+                                                completionHandler;
 - (void)
-    echoAsyncNullableNativeInteropAllNullableTypesWithoutRecursionWithEverything:
-        (NativeInteropAllNullableTypesWithoutRecursionBridge* _Nullable)
-            everythingArg
-                                                                           error:
-                                                                               (NativeInteropTestsError* _Nonnull)
-                                                                                   error
-                                                               completionHandler:
-                                                                   (void (
-                                                                       ^_Nonnull)(
-                                                                       NativeInteropAllNullableTypesWithoutRecursionBridge* _Nullable))
-                                                                       completionHandler;
-- (void)echoAsyncBoolWithABool:(NSNumber* _Nullable)aBoolArg
+    pigeon_echoAsyncNullableNativeInteropAllNullableTypesWithoutRecursion:
+        (NSData* _Nonnull)pigeonVar_args
+                                                                    error:
+                                                                        (NativeInteropTestsError* _Nonnull)
+                                                                            error
+                                                        completionHandler:
+                                                            (void (^_Nonnull)(
+                                                                NSData* _Nullable))
+                                                                completionHandler;
+- (void)pigeon_echoAsyncBool:(BOOL)aBoolArg
+                       error:(NativeInteropTestsError* _Nonnull)error
+           completionHandler:
+               (void (^_Nonnull)(NSNumber* _Nullable))completionHandler;
+- (void)pigeon_echoAsyncInt:(int64_t)anIntArg
+                      error:(NativeInteropTestsError* _Nonnull)error
+          completionHandler:
+              (void (^_Nonnull)(NSNumber* _Nullable))completionHandler;
+- (void)pigeon_echoAsyncDouble:(double)aDoubleArg
                          error:(NativeInteropTestsError* _Nonnull)error
              completionHandler:
                  (void (^_Nonnull)(NSNumber* _Nullable))completionHandler;
-- (void)echoAsyncIntWithAnInt:(NSNumber* _Nullable)anIntArg
-                        error:(NativeInteropTestsError* _Nonnull)error
-            completionHandler:
-                (void (^_Nonnull)(NSNumber* _Nullable))completionHandler;
-- (void)echoAsyncDoubleWithADouble:(NSNumber* _Nullable)aDoubleArg
-                             error:(NativeInteropTestsError* _Nonnull)error
-                 completionHandler:
-                     (void (^_Nonnull)(NSNumber* _Nullable))completionHandler;
-- (void)echoAsyncStringWithAString:(NSString* _Nullable)aStringArg
-                             error:(NativeInteropTestsError* _Nonnull)error
-                 completionHandler:
-                     (void (^_Nonnull)(NSString* _Nullable))completionHandler;
-- (void)echoAsyncUint8ListWithList:
-            (NativeInteropTestsPigeonTypedData* _Nullable)listArg
-                             error:(NativeInteropTestsError* _Nonnull)error
-                 completionHandler:
-                     (void (^_Nonnull)(
-                         NativeInteropTestsPigeonTypedData* _Nullable))
-                         completionHandler;
-- (void)echoAsyncInt32ListWithList:
-            (NativeInteropTestsPigeonTypedData* _Nullable)listArg
-                             error:(NativeInteropTestsError* _Nonnull)error
-                 completionHandler:
-                     (void (^_Nonnull)(
-                         NativeInteropTestsPigeonTypedData* _Nullable))
-                         completionHandler;
-- (void)echoAsyncInt64ListWithList:
-            (NativeInteropTestsPigeonTypedData* _Nullable)listArg
-                             error:(NativeInteropTestsError* _Nonnull)error
-                 completionHandler:
-                     (void (^_Nonnull)(
-                         NativeInteropTestsPigeonTypedData* _Nullable))
-                         completionHandler;
-- (void)echoAsyncFloat64ListWithList:
-            (NativeInteropTestsPigeonTypedData* _Nullable)listArg
-                               error:(NativeInteropTestsError* _Nonnull)error
-                   completionHandler:
-                       (void (^_Nonnull)(
-                           NativeInteropTestsPigeonTypedData* _Nullable))
-                           completionHandler;
-- (void)echoAsyncObjectWithAnObject:(NSObject* _Nullable)anObjectArg
-                              error:(NativeInteropTestsError* _Nonnull)error
-                  completionHandler:
-                      (void (^_Nonnull)(NSObject* _Nullable))completionHandler;
-- (void)echoAsyncListWithList:(NSArray<NSObject*>* _Nullable)listArg
-                        error:(NativeInteropTestsError* _Nonnull)error
-            completionHandler:(void (^_Nonnull)(NSArray<NSObject*>* _Nullable))
-                                  completionHandler;
-- (void)echoAsyncEnumListWithEnumList:(NSArray<NSObject*>* _Nullable)enumListArg
-                                error:(NativeInteropTestsError* _Nonnull)error
-                    completionHandler:
-                        (void (^_Nonnull)(NSArray<NSObject*>* _Nullable))
-                            completionHandler;
-- (void)echoAsyncClassListWithClassList:
-            (NSArray<NSObject*>* _Nullable)classListArg
-                                  error:(NativeInteropTestsError* _Nonnull)error
-                      completionHandler:
-                          (void (^_Nonnull)(NSArray<NSObject*>* _Nullable))
-                              completionHandler;
-- (void)echoAsyncNonNullEnumListWithEnumList:
-            (NSArray<NSObject*>* _Nullable)enumListArg
-                                       error:(NativeInteropTestsError* _Nonnull)
-                                                 error
-                           completionHandler:
-                               (void (^_Nonnull)(NSArray<NSObject*>* _Nullable))
-                                   completionHandler;
-- (void)
-    echoAsyncNonNullClassListWithClassList:
-        (NSArray<NSObject*>* _Nullable)classListArg
-                                     error:(NativeInteropTestsError* _Nonnull)
-                                               error
-                         completionHandler:
-                             (void (^_Nonnull)(NSArray<NSObject*>* _Nullable))
-                                 completionHandler;
-- (void)
-    echoAsyncMapWithMap:
-        (NSDictionary<id<NSCopying>, NSObject*>* _Nullable)mapArg
-                  error:(NativeInteropTestsError* _Nonnull)error
-      completionHandler:
-          (void (^_Nonnull)(NSDictionary<id<NSCopying>, NSObject*>* _Nullable))
-              completionHandler;
-- (void)
-    echoAsyncStringMapWithStringMap:
-        (NSDictionary<id<NSCopying>, NSObject*>* _Nullable)stringMapArg
-                              error:(NativeInteropTestsError* _Nonnull)error
-                  completionHandler:
-                      (void (^_Nonnull)(
-                          NSDictionary<id<NSCopying>, NSObject*>* _Nullable))
-                          completionHandler;
-- (void)echoAsyncIntMapWithIntMap:
-            (NSDictionary<id<NSCopying>, NSObject*>* _Nullable)intMapArg
+- (void)pigeon_echoAsyncString:(NSString* _Nonnull)aStringArg
+                         error:(NativeInteropTestsError* _Nonnull)error
+             completionHandler:
+                 (void (^_Nonnull)(NSString* _Nullable))completionHandler;
+- (void)pigeon_echoAsyncUint8List:(NSData* _Nonnull)listArg
                             error:(NativeInteropTestsError* _Nonnull)error
                 completionHandler:
-                    (void (^_Nonnull)(
-                        NSDictionary<id<NSCopying>, NSObject*>* _Nullable))
-                        completionHandler;
-- (void)echoAsyncEnumMapWithEnumMap:
-            (NSDictionary<id<NSCopying>, NSObject*>* _Nullable)enumMapArg
+                    (void (^_Nonnull)(NSData* _Nullable))completionHandler;
+- (void)pigeon_echoAsyncInt32List:(NSData* _Nonnull)listArg
+                            error:(NativeInteropTestsError* _Nonnull)error
+                completionHandler:
+                    (void (^_Nonnull)(NSData* _Nullable))completionHandler;
+- (void)pigeon_echoAsyncInt64List:(NSData* _Nonnull)listArg
+                            error:(NativeInteropTestsError* _Nonnull)error
+                completionHandler:
+                    (void (^_Nonnull)(NSData* _Nullable))completionHandler;
+- (void)pigeon_echoAsyncFloat64List:(NSData* _Nonnull)listArg
                               error:(NativeInteropTestsError* _Nonnull)error
                   completionHandler:
-                      (void (^_Nonnull)(
-                          NSDictionary<id<NSCopying>, NSObject*>* _Nullable))
-                          completionHandler;
-- (void)echoAsyncClassMapWithClassMap:
-            (NSDictionary<id<NSCopying>, NSObject*>* _Nullable)classMapArg
-                                error:(NativeInteropTestsError* _Nonnull)error
-                    completionHandler:
-                        (void (^_Nonnull)(
-                            NSDictionary<id<NSCopying>, NSObject*>* _Nullable))
-                            completionHandler;
-- (void)echoAsyncEnumWithAnEnum:(NSNumber* _Nullable)anEnumArg
+                      (void (^_Nonnull)(NSData* _Nullable))completionHandler;
+- (void)pigeon_echoAsyncObject:(NSData* _Nonnull)pigeonVar_args
+                         error:(NativeInteropTestsError* _Nonnull)error
+             completionHandler:
+                 (void (^_Nonnull)(NSData* _Nullable))completionHandler;
+- (void)pigeon_echoAsyncList:(NSData* _Nonnull)pigeonVar_args
+                       error:(NativeInteropTestsError* _Nonnull)error
+           completionHandler:
+               (void (^_Nonnull)(NSData* _Nullable))completionHandler;
+- (void)pigeon_echoAsyncEnumList:(NSData* _Nonnull)pigeonVar_args
+                           error:(NativeInteropTestsError* _Nonnull)error
+               completionHandler:
+                   (void (^_Nonnull)(NSData* _Nullable))completionHandler;
+- (void)pigeon_echoAsyncClassList:(NSData* _Nonnull)pigeonVar_args
+                            error:(NativeInteropTestsError* _Nonnull)error
+                completionHandler:
+                    (void (^_Nonnull)(NSData* _Nullable))completionHandler;
+- (void)pigeon_echoAsyncNonNullEnumList:(NSData* _Nonnull)pigeonVar_args
+                                  error:(NativeInteropTestsError* _Nonnull)error
+                      completionHandler:(void (^_Nonnull)(NSData* _Nullable))
+                                            completionHandler;
+- (void)
+    pigeon_echoAsyncNonNullClassList:(NSData* _Nonnull)pigeonVar_args
+                               error:(NativeInteropTestsError* _Nonnull)error
+                   completionHandler:
+                       (void (^_Nonnull)(NSData* _Nullable))completionHandler;
+- (void)pigeon_echoAsyncMap:(NSData* _Nonnull)pigeonVar_args
+                      error:(NativeInteropTestsError* _Nonnull)error
+          completionHandler:
+              (void (^_Nonnull)(NSData* _Nullable))completionHandler;
+- (void)pigeon_echoAsyncStringMap:(NSData* _Nonnull)pigeonVar_args
+                            error:(NativeInteropTestsError* _Nonnull)error
+                completionHandler:
+                    (void (^_Nonnull)(NSData* _Nullable))completionHandler;
+- (void)pigeon_echoAsyncIntMap:(NSData* _Nonnull)pigeonVar_args
+                         error:(NativeInteropTestsError* _Nonnull)error
+             completionHandler:
+                 (void (^_Nonnull)(NSData* _Nullable))completionHandler;
+- (void)pigeon_echoAsyncEnumMap:(NSData* _Nonnull)pigeonVar_args
                           error:(NativeInteropTestsError* _Nonnull)error
               completionHandler:
-                  (void (^_Nonnull)(NSNumber* _Nullable))completionHandler;
-- (void)
-    echoAnotherAsyncEnumWithAnotherEnum:(NSNumber* _Nullable)anotherEnumArg
-                                  error:(NativeInteropTestsError* _Nonnull)error
-                      completionHandler:(void (^_Nonnull)(NSNumber* _Nullable))
-                                            completionHandler;
-- (void)echoAsyncNullableBoolWithABool:(NSNumber* _Nullable)aBoolArg
+                  (void (^_Nonnull)(NSData* _Nullable))completionHandler;
+- (void)pigeon_echoAsyncClassMap:(NSData* _Nonnull)pigeonVar_args
+                           error:(NativeInteropTestsError* _Nonnull)error
+               completionHandler:
+                   (void (^_Nonnull)(NSData* _Nullable))completionHandler;
+- (void)pigeon_echoAsyncEnum:(int64_t)anEnumArg
+                       error:(NativeInteropTestsError* _Nonnull)error
+           completionHandler:
+               (void (^_Nonnull)(NSNumber* _Nullable))completionHandler;
+- (void)pigeon_echoAnotherAsyncEnum:(int64_t)anotherEnumArg
+                              error:(NativeInteropTestsError* _Nonnull)error
+                  completionHandler:
+                      (void (^_Nonnull)(NSNumber* _Nullable))completionHandler;
+- (void)pigeon_echoAsyncNullableBool:(NSNumber* _Nullable)aBoolArg
+                               error:(NativeInteropTestsError* _Nonnull)error
+                   completionHandler:
+                       (void (^_Nonnull)(NSNumber* _Nullable))completionHandler;
+- (void)pigeon_echoAsyncNullableInt:(NSNumber* _Nullable)anIntArg
+                              error:(NativeInteropTestsError* _Nonnull)error
+                  completionHandler:
+                      (void (^_Nonnull)(NSNumber* _Nullable))completionHandler;
+- (void)pigeon_echoAsyncNullableDouble:(NSNumber* _Nullable)aDoubleArg
                                  error:(NativeInteropTestsError* _Nonnull)error
                      completionHandler:(void (^_Nonnull)(NSNumber* _Nullable))
                                            completionHandler;
-- (void)echoAsyncNullableIntWithAnInt:(NSNumber* _Nullable)anIntArg
-                                error:(NativeInteropTestsError* _Nonnull)error
-                    completionHandler:(void (^_Nonnull)(NSNumber* _Nullable))
-                                          completionHandler;
-- (void)
-    echoAsyncNullableDoubleWithADouble:(NSNumber* _Nullable)aDoubleArg
-                                 error:(NativeInteropTestsError* _Nonnull)error
-                     completionHandler:(void (^_Nonnull)(NSNumber* _Nullable))
-                                           completionHandler;
-- (void)
-    echoAsyncNullableStringWithAString:(NSString* _Nullable)aStringArg
+- (void)pigeon_echoAsyncNullableString:(NSString* _Nullable)aStringArg
                                  error:(NativeInteropTestsError* _Nonnull)error
                      completionHandler:(void (^_Nonnull)(NSString* _Nullable))
                                            completionHandler;
 - (void)
-    echoAsyncNullableUint8ListWithList:
-        (NativeInteropTestsPigeonTypedData* _Nullable)listArg
-                                 error:(NativeInteropTestsError* _Nonnull)error
-                     completionHandler:
-                         (void (^_Nonnull)(
-                             NativeInteropTestsPigeonTypedData* _Nullable))
-                             completionHandler;
-- (void)
-    echoAsyncNullableInt32ListWithList:
-        (NativeInteropTestsPigeonTypedData* _Nullable)listArg
-                                 error:(NativeInteropTestsError* _Nonnull)error
-                     completionHandler:
-                         (void (^_Nonnull)(
-                             NativeInteropTestsPigeonTypedData* _Nullable))
-                             completionHandler;
-- (void)
-    echoAsyncNullableInt64ListWithList:
-        (NativeInteropTestsPigeonTypedData* _Nullable)listArg
-                                 error:(NativeInteropTestsError* _Nonnull)error
-                     completionHandler:
-                         (void (^_Nonnull)(
-                             NativeInteropTestsPigeonTypedData* _Nullable))
-                             completionHandler;
-- (void)
-    echoAsyncNullableFloat64ListWithList:
-        (NativeInteropTestsPigeonTypedData* _Nullable)listArg
-                                   error:
-                                       (NativeInteropTestsError* _Nonnull)error
-                       completionHandler:
-                           (void (^_Nonnull)(
-                               NativeInteropTestsPigeonTypedData* _Nullable))
-                               completionHandler;
-- (void)
-    echoAsyncNullableObjectWithAnObject:(NSObject* _Nullable)anObjectArg
-                                  error:(NativeInteropTestsError* _Nonnull)error
-                      completionHandler:(void (^_Nonnull)(NSObject* _Nullable))
-                                            completionHandler;
-- (void)echoAsyncNullableListWithList:(NSArray<NSObject*>* _Nullable)listArg
+    pigeon_echoAsyncNullableUint8List:(NSData* _Nullable)listArg
                                 error:(NativeInteropTestsError* _Nonnull)error
                     completionHandler:
-                        (void (^_Nonnull)(NSArray<NSObject*>* _Nullable))
-                            completionHandler;
+                        (void (^_Nonnull)(NSData* _Nullable))completionHandler;
 - (void)
-    echoAsyncNullableEnumListWithEnumList:
-        (NSArray<NSObject*>* _Nullable)enumListArg
-                                    error:
-                                        (NativeInteropTestsError* _Nonnull)error
-                        completionHandler:
-                            (void (^_Nonnull)(NSArray<NSObject*>* _Nullable))
-                                completionHandler;
+    pigeon_echoAsyncNullableInt32List:(NSData* _Nullable)listArg
+                                error:(NativeInteropTestsError* _Nonnull)error
+                    completionHandler:
+                        (void (^_Nonnull)(NSData* _Nullable))completionHandler;
 - (void)
-    echoAsyncNullableClassListWithClassList:
-        (NSArray<NSObject*>* _Nullable)classListArg
+    pigeon_echoAsyncNullableInt64List:(NSData* _Nullable)listArg
+                                error:(NativeInteropTestsError* _Nonnull)error
+                    completionHandler:
+                        (void (^_Nonnull)(NSData* _Nullable))completionHandler;
+- (void)
+    pigeon_echoAsyncNullableFloat64List:(NSData* _Nullable)listArg
+                                  error:(NativeInteropTestsError* _Nonnull)error
+                      completionHandler:(void (^_Nonnull)(NSData* _Nullable))
+                                            completionHandler;
+- (void)pigeon_echoAsyncNullableObject:(NSData* _Nonnull)pigeonVar_args
+                                 error:(NativeInteropTestsError* _Nonnull)error
+                     completionHandler:
+                         (void (^_Nonnull)(NSData* _Nullable))completionHandler;
+- (void)pigeon_echoAsyncNullableList:(NSData* _Nonnull)pigeonVar_args
+                               error:(NativeInteropTestsError* _Nonnull)error
+                   completionHandler:
+                       (void (^_Nonnull)(NSData* _Nullable))completionHandler;
+- (void)
+    pigeon_echoAsyncNullableEnumList:(NSData* _Nonnull)pigeonVar_args
+                               error:(NativeInteropTestsError* _Nonnull)error
+                   completionHandler:
+                       (void (^_Nonnull)(NSData* _Nullable))completionHandler;
+- (void)
+    pigeon_echoAsyncNullableClassList:(NSData* _Nonnull)pigeonVar_args
+                                error:(NativeInteropTestsError* _Nonnull)error
+                    completionHandler:
+                        (void (^_Nonnull)(NSData* _Nullable))completionHandler;
+- (void)
+    pigeon_echoAsyncNullableNonNullEnumList:(NSData* _Nonnull)pigeonVar_args
                                       error:(NativeInteropTestsError* _Nonnull)
                                                 error
                           completionHandler:
-                              (void (^_Nonnull)(NSArray<NSObject*>* _Nullable))
+                              (void (^_Nonnull)(NSData* _Nullable))
                                   completionHandler;
 - (void)
-    echoAsyncNullableNonNullEnumListWithEnumList:
-        (NSArray<NSObject*>* _Nullable)enumListArg
-                                           error:
-                                               (NativeInteropTestsError* _Nonnull)
-                                                   error
-                               completionHandler:
-                                   (void (^_Nonnull)(
-                                       NSArray<NSObject*>* _Nullable))
-                                       completionHandler;
-- (void)
-    echoAsyncNullableNonNullClassListWithClassList:
-        (NSArray<NSObject*>* _Nullable)classListArg
-                                             error:
-                                                 (NativeInteropTestsError* _Nonnull)
-                                                     error
-                                 completionHandler:
-                                     (void (^_Nonnull)(
-                                         NSArray<NSObject*>* _Nullable))
-                                         completionHandler;
-- (void)echoAsyncNullableMapWithMap:
-            (NSDictionary<id<NSCopying>, NSObject*>* _Nullable)mapArg
+    pigeon_echoAsyncNullableNonNullClassList:(NSData* _Nonnull)pigeonVar_args
+                                       error:(NativeInteropTestsError* _Nonnull)
+                                                 error
+                           completionHandler:
+                               (void (^_Nonnull)(NSData* _Nullable))
+                                   completionHandler;
+- (void)pigeon_echoAsyncNullableMap:(NSData* _Nonnull)pigeonVar_args
                               error:(NativeInteropTestsError* _Nonnull)error
                   completionHandler:
-                      (void (^_Nonnull)(
-                          NSDictionary<id<NSCopying>, NSObject*>* _Nullable))
-                          completionHandler;
+                      (void (^_Nonnull)(NSData* _Nullable))completionHandler;
 - (void)
-    echoAsyncNullableStringMapWithStringMap:
-        (NSDictionary<id<NSCopying>, NSObject*>* _Nullable)stringMapArg
-                                      error:(NativeInteropTestsError* _Nonnull)
-                                                error
-                          completionHandler:
-                              (void (^_Nonnull)(
-                                  NSDictionary<id<NSCopying>,
-                                               NSObject*>* _Nullable))
-                                  completionHandler;
-- (void)
-    echoAsyncNullableIntMapWithIntMap:
-        (NSDictionary<id<NSCopying>, NSObject*>* _Nullable)intMapArg
+    pigeon_echoAsyncNullableStringMap:(NSData* _Nonnull)pigeonVar_args
                                 error:(NativeInteropTestsError* _Nonnull)error
                     completionHandler:
-                        (void (^_Nonnull)(
-                            NSDictionary<id<NSCopying>, NSObject*>* _Nullable))
-                            completionHandler;
-- (void)
-    echoAsyncNullableEnumMapWithEnumMap:
-        (NSDictionary<id<NSCopying>, NSObject*>* _Nullable)enumMapArg
+                        (void (^_Nonnull)(NSData* _Nullable))completionHandler;
+- (void)pigeon_echoAsyncNullableIntMap:(NSData* _Nonnull)pigeonVar_args
+                                 error:(NativeInteropTestsError* _Nonnull)error
+                     completionHandler:
+                         (void (^_Nonnull)(NSData* _Nullable))completionHandler;
+- (void)pigeon_echoAsyncNullableEnumMap:(NSData* _Nonnull)pigeonVar_args
                                   error:(NativeInteropTestsError* _Nonnull)error
-                      completionHandler:
-                          (void (^_Nonnull)(NSDictionary<id<NSCopying>,
-                                                         NSObject*>* _Nullable))
-                              completionHandler;
-- (void)echoAsyncNullableClassMapWithClassMap:
-            (NSDictionary<id<NSCopying>, NSObject*>* _Nullable)classMapArg
-                                        error:
-                                            (NativeInteropTestsError* _Nonnull)
-                                                error
-                            completionHandler:
-                                (void (^_Nonnull)(
-                                    NSDictionary<id<NSCopying>,
-                                                 NSObject*>* _Nullable))
-                                    completionHandler;
-- (void)echoAsyncNullableEnumWithAnEnum:(NSNumber* _Nullable)anEnumArg
+                      completionHandler:(void (^_Nonnull)(NSData* _Nullable))
+                                            completionHandler;
+- (void)
+    pigeon_echoAsyncNullableClassMap:(NSData* _Nonnull)pigeonVar_args
+                               error:(NativeInteropTestsError* _Nonnull)error
+                   completionHandler:
+                       (void (^_Nonnull)(NSData* _Nullable))completionHandler;
+- (void)pigeon_echoAsyncNullableEnum:(int64_t)anEnumArg
+                               error:(NativeInteropTestsError* _Nonnull)error
+                   completionHandler:
+                       (void (^_Nonnull)(NSNumber* _Nullable))completionHandler;
+- (void)
+    pigeon_echoAnotherAsyncNullableEnum:(int64_t)anotherEnumArg
                                   error:(NativeInteropTestsError* _Nonnull)error
                       completionHandler:(void (^_Nonnull)(NSNumber* _Nullable))
                                             completionHandler;
-- (void)
-    echoAnotherAsyncNullableEnumWithAnotherEnum:
-        (NSNumber* _Nullable)anotherEnumArg
-                                          error:
-                                              (NativeInteropTestsError* _Nonnull)
-                                                  error
-                              completionHandler:
-                                  (void (^_Nonnull)(NSNumber* _Nullable))
-                                      completionHandler;
 @end
 
 SWIFT_CLASS(
@@ -1328,1635 +1192,1325 @@ SWIFT_CLASS("_TtC11test_plugin40NativeInteropHostIntegrationCoreApiSetup")
     (NSString* _Nonnull)name SWIFT_WARN_UNUSED_RESULT;
 /// A no-op function taking no arguments and returning no value, to sanity
 /// test basic calling.
-- (void)noopWithWrappedError:(NativeInteropTestsError* _Nonnull)wrappedError;
+- (void)pigeon_noop:(NativeInteropTestsError* _Nonnull)wrappedError;
 /// Returns the passed object, to test serialization and deserialization.
-- (NativeInteropAllTypesBridge* _Nullable)
-    echoAllTypesWithEverything:
-        (NativeInteropAllTypesBridge* _Nonnull)everythingArg
-                  wrappedError:(NativeInteropTestsError* _Nonnull)wrappedError
-    SWIFT_WARN_UNUSED_RESULT;
-/// Returns an error, to test error handling.
-- (NSObject* _Nullable)throwErrorWithWrappedError:
-    (NativeInteropTestsError* _Nonnull)wrappedError SWIFT_WARN_UNUSED_RESULT;
-/// Returns an error from a void function, to test error handling.
-- (void)throwErrorFromVoidWithWrappedError:
-    (NativeInteropTestsError* _Nonnull)wrappedError;
-/// Returns a Flutter error, to test error handling.
-- (NSObject* _Nullable)throwFlutterErrorWithWrappedError:
-    (NativeInteropTestsError* _Nonnull)wrappedError SWIFT_WARN_UNUSED_RESULT;
-/// Returns passed in int.
-- (NSNumber* _Nullable)echoIntWithAnInt:(int64_t)anIntArg
-                           wrappedError:
-                               (NativeInteropTestsError* _Nonnull)wrappedError
-    SWIFT_WARN_UNUSED_RESULT;
-/// Returns passed in double.
-- (NSNumber* _Nullable)echoDoubleWithADouble:(double)aDoubleArg
-                                wrappedError:(NativeInteropTestsError* _Nonnull)
-                                                 wrappedError
-    SWIFT_WARN_UNUSED_RESULT;
-/// Returns the passed in boolean.
-- (NSNumber* _Nullable)echoBoolWithABool:(BOOL)aBoolArg
+- (NSData* _Nullable)pigeon_echoAllTypes:(NSData* _Nonnull)pigeonVar_args
                             wrappedError:
                                 (NativeInteropTestsError* _Nonnull)wrappedError
     SWIFT_WARN_UNUSED_RESULT;
+/// Returns an error, to test error handling.
+- (NSData* _Nullable)pigeon_throwError:
+    (NativeInteropTestsError* _Nonnull)wrappedError SWIFT_WARN_UNUSED_RESULT;
+/// Returns an error from a void function, to test error handling.
+- (void)pigeon_throwErrorFromVoid:
+    (NativeInteropTestsError* _Nonnull)wrappedError;
+/// Returns a Flutter error, to test error handling.
+- (NSData* _Nullable)pigeon_throwFlutterError:
+    (NativeInteropTestsError* _Nonnull)wrappedError SWIFT_WARN_UNUSED_RESULT;
+/// Returns passed in int.
+- (NSNumber* _Nullable)pigeon_echoInt:(int64_t)anIntArg
+                         wrappedError:
+                             (NativeInteropTestsError* _Nonnull)wrappedError
+    SWIFT_WARN_UNUSED_RESULT;
+/// Returns passed in double.
+- (NSNumber* _Nullable)pigeon_echoDouble:(double)aDoubleArg
+                            wrappedError:
+                                (NativeInteropTestsError* _Nonnull)wrappedError
+    SWIFT_WARN_UNUSED_RESULT;
+/// Returns the passed in boolean.
+- (NSNumber* _Nullable)pigeon_echoBool:(BOOL)aBoolArg
+                          wrappedError:
+                              (NativeInteropTestsError* _Nonnull)wrappedError
+    SWIFT_WARN_UNUSED_RESULT;
 /// Returns the passed in string.
-- (NSString* _Nullable)echoStringWithAString:(NSString* _Nonnull)aStringArg
-                                wrappedError:(NativeInteropTestsError* _Nonnull)
-                                                 wrappedError
+- (NSString* _Nullable)pigeon_echoString:(NSString* _Nonnull)aStringArg
+                            wrappedError:
+                                (NativeInteropTestsError* _Nonnull)wrappedError
     SWIFT_WARN_UNUSED_RESULT;
 /// Returns the passed in Uint8List.
-- (NativeInteropTestsPigeonTypedData* _Nullable)
-    echoUint8ListWithAUint8List:
-        (NativeInteropTestsPigeonTypedData* _Nonnull)aUint8ListArg
-                   wrappedError:(NativeInteropTestsError* _Nonnull)wrappedError
+- (NSData* _Nullable)pigeon_echoUint8List:(NSData* _Nonnull)aUint8ListArg
+                             wrappedError:
+                                 (NativeInteropTestsError* _Nonnull)wrappedError
     SWIFT_WARN_UNUSED_RESULT;
 /// Returns the passed in Int32List.
-- (NativeInteropTestsPigeonTypedData* _Nullable)
-    echoInt32ListWithAInt32List:
-        (NativeInteropTestsPigeonTypedData* _Nonnull)aInt32ListArg
-                   wrappedError:(NativeInteropTestsError* _Nonnull)wrappedError
+- (NSData* _Nullable)pigeon_echoInt32List:(NSData* _Nonnull)aInt32ListArg
+                             wrappedError:
+                                 (NativeInteropTestsError* _Nonnull)wrappedError
     SWIFT_WARN_UNUSED_RESULT;
 /// Returns the passed in Int64List.
-- (NativeInteropTestsPigeonTypedData* _Nullable)
-    echoInt64ListWithAInt64List:
-        (NativeInteropTestsPigeonTypedData* _Nonnull)aInt64ListArg
-                   wrappedError:(NativeInteropTestsError* _Nonnull)wrappedError
+- (NSData* _Nullable)pigeon_echoInt64List:(NSData* _Nonnull)aInt64ListArg
+                             wrappedError:
+                                 (NativeInteropTestsError* _Nonnull)wrappedError
     SWIFT_WARN_UNUSED_RESULT;
 /// Returns the passed in Float64List.
-- (NativeInteropTestsPigeonTypedData* _Nullable)
-    echoFloat64ListWithAFloat64List:
-        (NativeInteropTestsPigeonTypedData* _Nonnull)aFloat64ListArg
-                       wrappedError:
-                           (NativeInteropTestsError* _Nonnull)wrappedError
+- (NSData* _Nullable)pigeon_echoFloat64List:(NSData* _Nonnull)aFloat64ListArg
+                               wrappedError:(NativeInteropTestsError* _Nonnull)
+                                                wrappedError
     SWIFT_WARN_UNUSED_RESULT;
 /// Returns the passed in generic Object.
-- (NSObject* _Nullable)
-    echoObjectWithAnObject:(NSObject* _Nonnull)anObjectArg
-              wrappedError:(NativeInteropTestsError* _Nonnull)wrappedError
+- (NSData* _Nullable)pigeon_echoObject:(NSData* _Nonnull)pigeonVar_args
+                          wrappedError:
+                              (NativeInteropTestsError* _Nonnull)wrappedError
     SWIFT_WARN_UNUSED_RESULT;
 /// Returns the passed list, to test serialization and deserialization.
-- (NSArray<NSObject*>* _Nullable)
-    echoListWithList:(NSArray<NSObject*>* _Nonnull)listArg
-        wrappedError:(NativeInteropTestsError* _Nonnull)wrappedError
+- (NSData* _Nullable)pigeon_echoList:(NSData* _Nonnull)pigeonVar_args
+                        wrappedError:
+                            (NativeInteropTestsError* _Nonnull)wrappedError
     SWIFT_WARN_UNUSED_RESULT;
 /// Returns the passed list, to test serialization and deserialization.
-- (NSArray<NSObject*>* _Nullable)
-    echoStringListWithStringList:(NSArray<NSObject*>* _Nonnull)stringListArg
-                    wrappedError:(NativeInteropTestsError* _Nonnull)wrappedError
+- (NSData* _Nullable)pigeon_echoStringList:(NSData* _Nonnull)pigeonVar_args
+                              wrappedError:(NativeInteropTestsError* _Nonnull)
+                                               wrappedError
     SWIFT_WARN_UNUSED_RESULT;
 /// Returns the passed list, to test serialization and deserialization.
-- (NSArray<NSObject*>* _Nullable)
-    echoIntListWithIntList:(NSArray<NSObject*>* _Nonnull)intListArg
-              wrappedError:(NativeInteropTestsError* _Nonnull)wrappedError
+- (NSData* _Nullable)pigeon_echoIntList:(NSData* _Nonnull)pigeonVar_args
+                           wrappedError:
+                               (NativeInteropTestsError* _Nonnull)wrappedError
     SWIFT_WARN_UNUSED_RESULT;
 /// Returns the passed list, to test serialization and deserialization.
-- (NSArray<NSObject*>* _Nullable)
-    echoDoubleListWithDoubleList:(NSArray<NSObject*>* _Nonnull)doubleListArg
-                    wrappedError:(NativeInteropTestsError* _Nonnull)wrappedError
+- (NSData* _Nullable)pigeon_echoDoubleList:(NSData* _Nonnull)pigeonVar_args
+                              wrappedError:(NativeInteropTestsError* _Nonnull)
+                                               wrappedError
     SWIFT_WARN_UNUSED_RESULT;
 /// Returns the passed list, to test serialization and deserialization.
-- (NSArray<NSObject*>* _Nullable)
-    echoBoolListWithBoolList:(NSArray<NSObject*>* _Nonnull)boolListArg
-                wrappedError:(NativeInteropTestsError* _Nonnull)wrappedError
+- (NSData* _Nullable)pigeon_echoBoolList:(NSData* _Nonnull)pigeonVar_args
+                            wrappedError:
+                                (NativeInteropTestsError* _Nonnull)wrappedError
     SWIFT_WARN_UNUSED_RESULT;
 /// Returns the passed list, to test serialization and deserialization.
-- (NSArray<NSObject*>* _Nullable)
-    echoEnumListWithEnumList:(NSArray<NSObject*>* _Nonnull)enumListArg
-                wrappedError:(NativeInteropTestsError* _Nonnull)wrappedError
+- (NSData* _Nullable)pigeon_echoEnumList:(NSData* _Nonnull)pigeonVar_args
+                            wrappedError:
+                                (NativeInteropTestsError* _Nonnull)wrappedError
     SWIFT_WARN_UNUSED_RESULT;
 /// Returns the passed list, to test serialization and deserialization.
-- (NSArray<NSObject*>* _Nullable)
-    echoClassListWithClassList:(NSArray<NSObject*>* _Nonnull)classListArg
+- (NSData* _Nullable)pigeon_echoClassList:(NSData* _Nonnull)pigeonVar_args
+                             wrappedError:
+                                 (NativeInteropTestsError* _Nonnull)wrappedError
+    SWIFT_WARN_UNUSED_RESULT;
+/// Returns the passed list, to test serialization and deserialization.
+- (NSData* _Nullable)
+    pigeon_echoNonNullEnumList:(NSData* _Nonnull)pigeonVar_args
                   wrappedError:(NativeInteropTestsError* _Nonnull)wrappedError
     SWIFT_WARN_UNUSED_RESULT;
 /// Returns the passed list, to test serialization and deserialization.
-- (NSArray<NSObject*>* _Nullable)
-    echoNonNullEnumListWithEnumList:(NSArray<NSObject*>* _Nonnull)enumListArg
-                       wrappedError:
-                           (NativeInteropTestsError* _Nonnull)wrappedError
-    SWIFT_WARN_UNUSED_RESULT;
-/// Returns the passed list, to test serialization and deserialization.
-- (NSArray<NSObject*>* _Nullable)
-    echoNonNullClassListWithClassList:(NSArray<NSObject*>* _Nonnull)classListArg
-                         wrappedError:
-                             (NativeInteropTestsError* _Nonnull)wrappedError
-    SWIFT_WARN_UNUSED_RESULT;
-/// Returns the passed map, to test serialization and deserialization.
-- (NSDictionary<id<NSCopying>, NSObject*>* _Nullable)
-    echoMapWithMap:(NSDictionary<id<NSCopying>, NSObject*>* _Nonnull)mapArg
-      wrappedError:(NativeInteropTestsError* _Nonnull)wrappedError
-    SWIFT_WARN_UNUSED_RESULT;
-/// Returns the passed map, to test serialization and deserialization.
-- (NSDictionary<id<NSCopying>, NSObject*>* _Nullable)
-    echoStringMapWithStringMap:
-        (NSDictionary<id<NSCopying>, NSObject*>* _Nonnull)stringMapArg
-                  wrappedError:(NativeInteropTestsError* _Nonnull)wrappedError
-    SWIFT_WARN_UNUSED_RESULT;
-/// Returns the passed map, to test serialization and deserialization.
-- (NSDictionary<id<NSCopying>, NSObject*>* _Nullable)
-    echoIntMapWithIntMap:
-        (NSDictionary<id<NSCopying>, NSObject*>* _Nonnull)intMapArg
-            wrappedError:(NativeInteropTestsError* _Nonnull)wrappedError
-    SWIFT_WARN_UNUSED_RESULT;
-/// Returns the passed map, to test serialization and deserialization.
-- (NSDictionary<id<NSCopying>, NSObject*>* _Nullable)
-    echoEnumMapWithEnumMap:
-        (NSDictionary<id<NSCopying>, NSObject*>* _Nonnull)enumMapArg
-              wrappedError:(NativeInteropTestsError* _Nonnull)wrappedError
-    SWIFT_WARN_UNUSED_RESULT;
-/// Returns the passed map, to test serialization and deserialization.
-- (NSDictionary<id<NSCopying>, NSObject*>* _Nullable)
-    echoClassMapWithClassMap:
-        (NSDictionary<id<NSCopying>, NSObject*>* _Nonnull)classMapArg
-                wrappedError:(NativeInteropTestsError* _Nonnull)wrappedError
-    SWIFT_WARN_UNUSED_RESULT;
-/// Returns the passed map, to test serialization and deserialization.
-- (NSDictionary<id<NSCopying>, NSObject*>* _Nullable)
-    echoNonNullStringMapWithStringMap:
-        (NSDictionary<id<NSCopying>, NSObject*>* _Nonnull)stringMapArg
-                         wrappedError:
-                             (NativeInteropTestsError* _Nonnull)wrappedError
-    SWIFT_WARN_UNUSED_RESULT;
-/// Returns the passed map, to test serialization and deserialization.
-- (NSDictionary<id<NSCopying>, NSObject*>* _Nullable)
-    echoNonNullIntMapWithIntMap:
-        (NSDictionary<id<NSCopying>, NSObject*>* _Nonnull)intMapArg
+- (NSData* _Nullable)
+    pigeon_echoNonNullClassList:(NSData* _Nonnull)pigeonVar_args
                    wrappedError:(NativeInteropTestsError* _Nonnull)wrappedError
     SWIFT_WARN_UNUSED_RESULT;
 /// Returns the passed map, to test serialization and deserialization.
-- (NSDictionary<id<NSCopying>, NSObject*>* _Nullable)
-    echoNonNullEnumMapWithEnumMap:
-        (NSDictionary<id<NSCopying>, NSObject*>* _Nonnull)enumMapArg
-                     wrappedError:
-                         (NativeInteropTestsError* _Nonnull)wrappedError
-    SWIFT_WARN_UNUSED_RESULT;
-/// Returns the passed map, to test serialization and deserialization.
-- (NSDictionary<id<NSCopying>, NSObject*>* _Nullable)
-    echoNonNullClassMapWithClassMap:
-        (NSDictionary<id<NSCopying>, NSObject*>* _Nonnull)classMapArg
+- (NSData* _Nullable)pigeon_echoMap:(NSData* _Nonnull)pigeonVar_args
                        wrappedError:
                            (NativeInteropTestsError* _Nonnull)wrappedError
+    SWIFT_WARN_UNUSED_RESULT;
+/// Returns the passed map, to test serialization and deserialization.
+- (NSData* _Nullable)pigeon_echoStringMap:(NSData* _Nonnull)pigeonVar_args
+                             wrappedError:
+                                 (NativeInteropTestsError* _Nonnull)wrappedError
+    SWIFT_WARN_UNUSED_RESULT;
+/// Returns the passed map, to test serialization and deserialization.
+- (NSData* _Nullable)pigeon_echoIntMap:(NSData* _Nonnull)pigeonVar_args
+                          wrappedError:
+                              (NativeInteropTestsError* _Nonnull)wrappedError
+    SWIFT_WARN_UNUSED_RESULT;
+/// Returns the passed map, to test serialization and deserialization.
+- (NSData* _Nullable)pigeon_echoEnumMap:(NSData* _Nonnull)pigeonVar_args
+                           wrappedError:
+                               (NativeInteropTestsError* _Nonnull)wrappedError
+    SWIFT_WARN_UNUSED_RESULT;
+/// Returns the passed map, to test serialization and deserialization.
+- (NSData* _Nullable)pigeon_echoClassMap:(NSData* _Nonnull)pigeonVar_args
+                            wrappedError:
+                                (NativeInteropTestsError* _Nonnull)wrappedError
+    SWIFT_WARN_UNUSED_RESULT;
+/// Returns the passed map, to test serialization and deserialization.
+- (NSData* _Nullable)
+    pigeon_echoNonNullStringMap:(NSData* _Nonnull)pigeonVar_args
+                   wrappedError:(NativeInteropTestsError* _Nonnull)wrappedError
+    SWIFT_WARN_UNUSED_RESULT;
+/// Returns the passed map, to test serialization and deserialization.
+- (NSData* _Nullable)
+    pigeon_echoNonNullIntMap:(NSData* _Nonnull)pigeonVar_args
+                wrappedError:(NativeInteropTestsError* _Nonnull)wrappedError
+    SWIFT_WARN_UNUSED_RESULT;
+/// Returns the passed map, to test serialization and deserialization.
+- (NSData* _Nullable)
+    pigeon_echoNonNullEnumMap:(NSData* _Nonnull)pigeonVar_args
+                 wrappedError:(NativeInteropTestsError* _Nonnull)wrappedError
+    SWIFT_WARN_UNUSED_RESULT;
+/// Returns the passed map, to test serialization and deserialization.
+- (NSData* _Nullable)
+    pigeon_echoNonNullClassMap:(NSData* _Nonnull)pigeonVar_args
+                  wrappedError:(NativeInteropTestsError* _Nonnull)wrappedError
     SWIFT_WARN_UNUSED_RESULT;
 /// Returns the passed class to test nested class serialization and
 /// deserialization.
-- (NativeInteropAllClassesWrapperBridge* _Nullable)
-    echoClassWrapperWithWrapper:
-        (NativeInteropAllClassesWrapperBridge* _Nonnull)wrapperArg
-                   wrappedError:(NativeInteropTestsError* _Nonnull)wrappedError
+- (NSData* _Nullable)pigeon_echoClassWrapper:(NSData* _Nonnull)pigeonVar_args
+                                wrappedError:(NativeInteropTestsError* _Nonnull)
+                                                 wrappedError
     SWIFT_WARN_UNUSED_RESULT;
 /// Returns the passed enum to test serialization and deserialization.
-- (NSNumber* _Nullable)echoEnumWithAnEnum:(enum NativeInteropAnEnum)anEnumArg
-                             wrappedError:
-                                 (NativeInteropTestsError* _Nonnull)wrappedError
+- (NSNumber* _Nullable)pigeon_echoEnum:(int64_t)anEnumArg
+                          wrappedError:
+                              (NativeInteropTestsError* _Nonnull)wrappedError
     SWIFT_WARN_UNUSED_RESULT;
 /// Returns the passed enum to test serialization and deserialization.
 - (NSNumber* _Nullable)
-    echoAnotherEnumWithAnotherEnum:(enum NativeInteropAnotherEnum)anotherEnumArg
-                      wrappedError:
-                          (NativeInteropTestsError* _Nonnull)wrappedError
+    pigeon_echoAnotherEnum:(int64_t)anotherEnumArg
+              wrappedError:(NativeInteropTestsError* _Nonnull)wrappedError
     SWIFT_WARN_UNUSED_RESULT;
 /// Returns the default string.
 - (NSString* _Nullable)
-    echoNamedDefaultStringWithAString:(NSString* _Nonnull)aStringArg
-                         wrappedError:
-                             (NativeInteropTestsError* _Nonnull)wrappedError
+    pigeon_echoNamedDefaultString:(NSString* _Nonnull)aStringArg
+                     wrappedError:
+                         (NativeInteropTestsError* _Nonnull)wrappedError
     SWIFT_WARN_UNUSED_RESULT;
 /// Returns passed in double.
 - (NSNumber* _Nullable)
-    echoOptionalDefaultDoubleWithADouble:(double)aDoubleArg
-                            wrappedError:
-                                (NativeInteropTestsError* _Nonnull)wrappedError
+    pigeon_echoOptionalDefaultDouble:(double)aDoubleArg
+                        wrappedError:
+                            (NativeInteropTestsError* _Nonnull)wrappedError
     SWIFT_WARN_UNUSED_RESULT;
 /// Returns passed in int.
 - (NSNumber* _Nullable)
-    echoRequiredIntWithAnInt:(int64_t)anIntArg
-                wrappedError:(NativeInteropTestsError* _Nonnull)wrappedError
+    pigeon_echoRequiredInt:(int64_t)anIntArg
+              wrappedError:(NativeInteropTestsError* _Nonnull)wrappedError
     SWIFT_WARN_UNUSED_RESULT;
 /// Returns the passed object, to test serialization and deserialization.
-- (NativeInteropAllNullableTypesBridge* _Nullable)
-    echoAllNullableTypesWithEverything:
-        (NativeInteropAllNullableTypesBridge* _Nullable)everythingArg
-                          wrappedError:
-                              (NativeInteropTestsError* _Nonnull)wrappedError
+- (NSData* _Nullable)
+    pigeon_echoAllNullableTypes:(NSData* _Nonnull)pigeonVar_args
+                   wrappedError:(NativeInteropTestsError* _Nonnull)wrappedError
     SWIFT_WARN_UNUSED_RESULT;
 /// Returns the passed object, to test serialization and deserialization.
-- (NativeInteropAllNullableTypesWithoutRecursionBridge* _Nullable)
-    echoAllNullableTypesWithoutRecursionWithEverything:
-        (NativeInteropAllNullableTypesWithoutRecursionBridge* _Nullable)
-            everythingArg
-                                          wrappedError:
-                                              (NativeInteropTestsError* _Nonnull)
-                                                  wrappedError
+- (NSData* _Nullable)
+    pigeon_echoAllNullableTypesWithoutRecursion:(NSData* _Nonnull)pigeonVar_args
+                                   wrappedError:
+                                       (NativeInteropTestsError* _Nonnull)
+                                           wrappedError
     SWIFT_WARN_UNUSED_RESULT;
 /// Returns the inner <code>aString</code> value from the wrapped object, to
 /// test sending of nested objects.
 - (NSString* _Nullable)
-    extractNestedNullableStringWithWrapper:
-        (NativeInteropAllClassesWrapperBridge* _Nonnull)wrapperArg
-                              wrappedError:(NativeInteropTestsError* _Nonnull)
-                                               wrappedError
+    pigeon_extractNestedNullableString:(NSData* _Nonnull)pigeonVar_args
+                          wrappedError:
+                              (NativeInteropTestsError* _Nonnull)wrappedError
     SWIFT_WARN_UNUSED_RESULT;
 /// Returns the inner <code>aString</code> value from the wrapped object, to
 /// test sending of nested objects.
-- (NativeInteropAllClassesWrapperBridge* _Nullable)
-    createNestedNullableStringWithNullableString:
-        (NSString* _Nullable)nullableStringArg
-                                    wrappedError:
-                                        (NativeInteropTestsError* _Nonnull)
-                                            wrappedError
+- (NSData* _Nullable)
+    pigeon_createNestedNullableString:(NSString* _Nullable)nullableStringArg
+                         wrappedError:
+                             (NativeInteropTestsError* _Nonnull)wrappedError
     SWIFT_WARN_UNUSED_RESULT;
-- (NativeInteropAllNullableTypesBridge* _Nullable)
-    sendMultipleNullableTypesWithANullableBool:
-        (NSNumber* _Nullable)aNullableBoolArg
-                                  aNullableInt:
-                                      (NSNumber* _Nullable)aNullableIntArg
-                               aNullableString:
-                                   (NSString* _Nullable)aNullableStringArg
-                                  wrappedError:
-                                      (NativeInteropTestsError* _Nonnull)
-                                          wrappedError SWIFT_WARN_UNUSED_RESULT;
+- (NSData* _Nullable)
+    pigeon_sendMultipleNullableTypes:(NSNumber* _Nullable)aNullableBoolArg
+                        aNullableInt:(NSNumber* _Nullable)aNullableIntArg
+                     aNullableString:(NSString* _Nullable)aNullableStringArg
+                        wrappedError:
+                            (NativeInteropTestsError* _Nonnull)wrappedError
+    SWIFT_WARN_UNUSED_RESULT;
 /// Returns passed in arguments of multiple types.
-- (NativeInteropAllNullableTypesWithoutRecursionBridge* _Nullable)
-    sendMultipleNullableTypesWithoutRecursionWithANullableBool:
+- (NSData* _Nullable)
+    pigeon_sendMultipleNullableTypesWithoutRecursion:
         (NSNumber* _Nullable)aNullableBoolArg
-                                                  aNullableInt:
-                                                      (NSNumber* _Nullable)
-                                                          aNullableIntArg
-                                               aNullableString:
-                                                   (NSString* _Nullable)
-                                                       aNullableStringArg
-                                                  wrappedError:
-                                                      (NativeInteropTestsError* _Nonnull)
-                                                          wrappedError
+                                        aNullableInt:
+                                            (NSNumber* _Nullable)aNullableIntArg
+                                     aNullableString:
+                                         (NSString* _Nullable)aNullableStringArg
+                                        wrappedError:
+                                            (NativeInteropTestsError* _Nonnull)
+                                                wrappedError
     SWIFT_WARN_UNUSED_RESULT;
 /// Returns passed in int.
 - (NSNumber* _Nullable)
-    echoNullableIntWithANullableInt:(NSNumber* _Nullable)aNullableIntArg
-                       wrappedError:
-                           (NativeInteropTestsError* _Nonnull)wrappedError
+    pigeon_echoNullableInt:(NSNumber* _Nullable)aNullableIntArg
+              wrappedError:(NativeInteropTestsError* _Nonnull)wrappedError
     SWIFT_WARN_UNUSED_RESULT;
 /// Returns passed in double.
 - (NSNumber* _Nullable)
-    echoNullableDoubleWithANullableDouble:
-        (NSNumber* _Nullable)aNullableDoubleArg
-                             wrappedError:
-                                 (NativeInteropTestsError* _Nonnull)wrappedError
+    pigeon_echoNullableDouble:(NSNumber* _Nullable)aNullableDoubleArg
+                 wrappedError:(NativeInteropTestsError* _Nonnull)wrappedError
     SWIFT_WARN_UNUSED_RESULT;
 /// Returns the passed in boolean.
 - (NSNumber* _Nullable)
-    echoNullableBoolWithANullableBool:(NSNumber* _Nullable)aNullableBoolArg
-                         wrappedError:
-                             (NativeInteropTestsError* _Nonnull)wrappedError
+    pigeon_echoNullableBool:(NSNumber* _Nullable)aNullableBoolArg
+               wrappedError:(NativeInteropTestsError* _Nonnull)wrappedError
     SWIFT_WARN_UNUSED_RESULT;
 /// Returns the passed in string.
 - (NSString* _Nullable)
-    echoNullableStringWithANullableString:
-        (NSString* _Nullable)aNullableStringArg
-                             wrappedError:
-                                 (NativeInteropTestsError* _Nonnull)wrappedError
+    pigeon_echoNullableString:(NSString* _Nullable)aNullableStringArg
+                 wrappedError:(NativeInteropTestsError* _Nonnull)wrappedError
     SWIFT_WARN_UNUSED_RESULT;
 /// Returns the passed in Uint8List.
-- (NativeInteropTestsPigeonTypedData* _Nullable)
-    echoNullableUint8ListWithANullableUint8List:
-        (NativeInteropTestsPigeonTypedData* _Nullable)aNullableUint8ListArg
-                                   wrappedError:
-                                       (NativeInteropTestsError* _Nonnull)
-                                           wrappedError
+- (NSData* _Nullable)
+    pigeon_echoNullableUint8List:(NSData* _Nullable)aNullableUint8ListArg
+                    wrappedError:(NativeInteropTestsError* _Nonnull)wrappedError
     SWIFT_WARN_UNUSED_RESULT;
 /// Returns the passed in Int32List.
-- (NativeInteropTestsPigeonTypedData* _Nullable)
-    echoNullableInt32ListWithANullableInt32List:
-        (NativeInteropTestsPigeonTypedData* _Nullable)aNullableInt32ListArg
-                                   wrappedError:
-                                       (NativeInteropTestsError* _Nonnull)
-                                           wrappedError
+- (NSData* _Nullable)
+    pigeon_echoNullableInt32List:(NSData* _Nullable)aNullableInt32ListArg
+                    wrappedError:(NativeInteropTestsError* _Nonnull)wrappedError
     SWIFT_WARN_UNUSED_RESULT;
 /// Returns the passed in Int64List.
-- (NativeInteropTestsPigeonTypedData* _Nullable)
-    echoNullableInt64ListWithANullableInt64List:
-        (NativeInteropTestsPigeonTypedData* _Nullable)aNullableInt64ListArg
-                                   wrappedError:
-                                       (NativeInteropTestsError* _Nonnull)
-                                           wrappedError
+- (NSData* _Nullable)
+    pigeon_echoNullableInt64List:(NSData* _Nullable)aNullableInt64ListArg
+                    wrappedError:(NativeInteropTestsError* _Nonnull)wrappedError
     SWIFT_WARN_UNUSED_RESULT;
 /// Returns the passed in Float64List.
-- (NativeInteropTestsPigeonTypedData* _Nullable)
-    echoNullableFloat64ListWithANullableFloat64List:
-        (NativeInteropTestsPigeonTypedData* _Nullable)aNullableFloat64ListArg
-                                       wrappedError:
-                                           (NativeInteropTestsError* _Nonnull)
-                                               wrappedError
+- (NSData* _Nullable)
+    pigeon_echoNullableFloat64List:(NSData* _Nullable)aNullableFloat64ListArg
+                      wrappedError:
+                          (NativeInteropTestsError* _Nonnull)wrappedError
     SWIFT_WARN_UNUSED_RESULT;
 /// Returns the passed in generic Object.
-- (NSObject* _Nullable)
-    echoNullableObjectWithANullableObject:(NSObject* _Nonnull)aNullableObjectArg
-                             wrappedError:
-                                 (NativeInteropTestsError* _Nonnull)wrappedError
+- (NSData* _Nullable)
+    pigeon_echoNullableObject:(NSData* _Nonnull)pigeonVar_args
+                 wrappedError:(NativeInteropTestsError* _Nonnull)wrappedError
     SWIFT_WARN_UNUSED_RESULT;
 /// Returns the passed list, to test serialization and deserialization.
-- (NSArray<NSObject*>* _Nullable)
-    echoNullableListWithANullableList:
-        (NSArray<NSObject*>* _Nullable)aNullableListArg
-                         wrappedError:
-                             (NativeInteropTestsError* _Nonnull)wrappedError
+- (NSData* _Nullable)pigeon_echoNullableList:(NSData* _Nonnull)pigeonVar_args
+                                wrappedError:(NativeInteropTestsError* _Nonnull)
+                                                 wrappedError
     SWIFT_WARN_UNUSED_RESULT;
 /// Returns the passed list, to test serialization and deserialization.
-- (NSArray<NSObject*>* _Nullable)
-    echoNullableEnumListWithEnumList:(NSArray<NSObject*>* _Nullable)enumListArg
-                        wrappedError:
-                            (NativeInteropTestsError* _Nonnull)wrappedError
+- (NSData* _Nullable)
+    pigeon_echoNullableEnumList:(NSData* _Nonnull)pigeonVar_args
+                   wrappedError:(NativeInteropTestsError* _Nonnull)wrappedError
     SWIFT_WARN_UNUSED_RESULT;
 /// Returns the passed list, to test serialization and deserialization.
-- (NSArray<NSObject*>* _Nullable)
-    echoNullableClassListWithClassList:
-        (NSArray<NSObject*>* _Nullable)classListArg
+- (NSData* _Nullable)
+    pigeon_echoNullableClassList:(NSData* _Nonnull)pigeonVar_args
+                    wrappedError:(NativeInteropTestsError* _Nonnull)wrappedError
+    SWIFT_WARN_UNUSED_RESULT;
+/// Returns the passed list, to test serialization and deserialization.
+- (NSData* _Nullable)
+    pigeon_echoNullableNonNullEnumList:(NSData* _Nonnull)pigeonVar_args
                           wrappedError:
                               (NativeInteropTestsError* _Nonnull)wrappedError
     SWIFT_WARN_UNUSED_RESULT;
 /// Returns the passed list, to test serialization and deserialization.
-- (NSArray<NSObject*>* _Nullable)
-    echoNullableNonNullEnumListWithEnumList:
-        (NSArray<NSObject*>* _Nullable)enumListArg
+- (NSData* _Nullable)
+    pigeon_echoNullableNonNullClassList:(NSData* _Nonnull)pigeonVar_args
+                           wrappedError:
+                               (NativeInteropTestsError* _Nonnull)wrappedError
+    SWIFT_WARN_UNUSED_RESULT;
+/// Returns the passed map, to test serialization and deserialization.
+- (NSData* _Nullable)pigeon_echoNullableMap:(NSData* _Nonnull)pigeonVar_args
                                wrappedError:(NativeInteropTestsError* _Nonnull)
                                                 wrappedError
     SWIFT_WARN_UNUSED_RESULT;
-/// Returns the passed list, to test serialization and deserialization.
-- (NSArray<NSObject*>* _Nullable)
-    echoNullableNonNullClassListWithClassList:
-        (NSArray<NSObject*>* _Nullable)classListArg
-                                 wrappedError:
-                                     (NativeInteropTestsError* _Nonnull)
-                                         wrappedError SWIFT_WARN_UNUSED_RESULT;
 /// Returns the passed map, to test serialization and deserialization.
-- (NSDictionary<id<NSCopying>, NSObject*>* _Nullable)
-    echoNullableMapWithMap:
-        (NSDictionary<id<NSCopying>, NSObject*>* _Nullable)mapArg
-              wrappedError:(NativeInteropTestsError* _Nonnull)wrappedError
-    SWIFT_WARN_UNUSED_RESULT;
-/// Returns the passed map, to test serialization and deserialization.
-- (NSDictionary<id<NSCopying>, NSObject*>* _Nullable)
-    echoNullableStringMapWithStringMap:
-        (NSDictionary<id<NSCopying>, NSObject*>* _Nullable)stringMapArg
-                          wrappedError:
-                              (NativeInteropTestsError* _Nonnull)wrappedError
-    SWIFT_WARN_UNUSED_RESULT;
-/// Returns the passed map, to test serialization and deserialization.
-- (NSDictionary<id<NSCopying>, NSObject*>* _Nullable)
-    echoNullableIntMapWithIntMap:
-        (NSDictionary<id<NSCopying>, NSObject*>* _Nullable)intMapArg
+- (NSData* _Nullable)
+    pigeon_echoNullableStringMap:(NSData* _Nonnull)pigeonVar_args
                     wrappedError:(NativeInteropTestsError* _Nonnull)wrappedError
     SWIFT_WARN_UNUSED_RESULT;
 /// Returns the passed map, to test serialization and deserialization.
-- (NSDictionary<id<NSCopying>, NSObject*>* _Nullable)
-    echoNullableEnumMapWithEnumMap:
-        (NSDictionary<id<NSCopying>, NSObject*>* _Nullable)enumMapArg
-                      wrappedError:
-                          (NativeInteropTestsError* _Nonnull)wrappedError
+- (NSData* _Nullable)
+    pigeon_echoNullableIntMap:(NSData* _Nonnull)pigeonVar_args
+                 wrappedError:(NativeInteropTestsError* _Nonnull)wrappedError
     SWIFT_WARN_UNUSED_RESULT;
 /// Returns the passed map, to test serialization and deserialization.
-- (NSDictionary<id<NSCopying>, NSObject*>* _Nullable)
-    echoNullableClassMapWithClassMap:
-        (NSDictionary<id<NSCopying>, NSObject*>* _Nullable)classMapArg
+- (NSData* _Nullable)
+    pigeon_echoNullableEnumMap:(NSData* _Nonnull)pigeonVar_args
+                  wrappedError:(NativeInteropTestsError* _Nonnull)wrappedError
+    SWIFT_WARN_UNUSED_RESULT;
+/// Returns the passed map, to test serialization and deserialization.
+- (NSData* _Nullable)
+    pigeon_echoNullableClassMap:(NSData* _Nonnull)pigeonVar_args
+                   wrappedError:(NativeInteropTestsError* _Nonnull)wrappedError
+    SWIFT_WARN_UNUSED_RESULT;
+/// Returns the passed map, to test serialization and deserialization.
+- (NSData* _Nullable)
+    pigeon_echoNullableNonNullStringMap:(NSData* _Nonnull)pigeonVar_args
+                           wrappedError:
+                               (NativeInteropTestsError* _Nonnull)wrappedError
+    SWIFT_WARN_UNUSED_RESULT;
+/// Returns the passed map, to test serialization and deserialization.
+- (NSData* _Nullable)
+    pigeon_echoNullableNonNullIntMap:(NSData* _Nonnull)pigeonVar_args
                         wrappedError:
                             (NativeInteropTestsError* _Nonnull)wrappedError
     SWIFT_WARN_UNUSED_RESULT;
 /// Returns the passed map, to test serialization and deserialization.
-- (NSDictionary<id<NSCopying>, NSObject*>* _Nullable)
-    echoNullableNonNullStringMapWithStringMap:
-        (NSDictionary<id<NSCopying>, NSObject*>* _Nullable)stringMapArg
-                                 wrappedError:
-                                     (NativeInteropTestsError* _Nonnull)
-                                         wrappedError SWIFT_WARN_UNUSED_RESULT;
-/// Returns the passed map, to test serialization and deserialization.
-- (NSDictionary<id<NSCopying>, NSObject*>* _Nullable)
-    echoNullableNonNullIntMapWithIntMap:
-        (NSDictionary<id<NSCopying>, NSObject*>* _Nullable)intMapArg
-                           wrappedError:
-                               (NativeInteropTestsError* _Nonnull)wrappedError
+- (NSData* _Nullable)
+    pigeon_echoNullableNonNullEnumMap:(NSData* _Nonnull)pigeonVar_args
+                         wrappedError:
+                             (NativeInteropTestsError* _Nonnull)wrappedError
     SWIFT_WARN_UNUSED_RESULT;
 /// Returns the passed map, to test serialization and deserialization.
-- (NSDictionary<id<NSCopying>, NSObject*>* _Nullable)
-    echoNullableNonNullEnumMapWithEnumMap:
-        (NSDictionary<id<NSCopying>, NSObject*>* _Nullable)enumMapArg
-                             wrappedError:
-                                 (NativeInteropTestsError* _Nonnull)wrappedError
-    SWIFT_WARN_UNUSED_RESULT;
-/// Returns the passed map, to test serialization and deserialization.
-- (NSDictionary<id<NSCopying>, NSObject*>* _Nullable)
-    echoNullableNonNullClassMapWithClassMap:
-        (NSDictionary<id<NSCopying>, NSObject*>* _Nullable)classMapArg
-                               wrappedError:(NativeInteropTestsError* _Nonnull)
-                                                wrappedError
+- (NSData* _Nullable)
+    pigeon_echoNullableNonNullClassMap:(NSData* _Nonnull)pigeonVar_args
+                          wrappedError:
+                              (NativeInteropTestsError* _Nonnull)wrappedError
     SWIFT_WARN_UNUSED_RESULT;
 - (NSNumber* _Nullable)
-    echoNullableEnumWithAnEnum:(NSNumber* _Nullable)anEnumArg
-                  wrappedError:(NativeInteropTestsError* _Nonnull)wrappedError
+    pigeon_echoNullableEnum:(int64_t)anEnumArg
+               wrappedError:(NativeInteropTestsError* _Nonnull)wrappedError
     SWIFT_WARN_UNUSED_RESULT;
-- (NSNumber* _Nullable)
-    echoAnotherNullableEnumWithAnotherEnum:(NSNumber* _Nullable)anotherEnumArg
-                              wrappedError:(NativeInteropTestsError* _Nonnull)
-                                               wrappedError
+- (NSNumber* _Nullable)pigeon_echoAnotherNullableEnum:(int64_t)anotherEnumArg
+                                         wrappedError:
+                                             (NativeInteropTestsError* _Nonnull)
+                                                 wrappedError
     SWIFT_WARN_UNUSED_RESULT;
 /// Returns passed in int.
 - (NSNumber* _Nullable)
-    echoOptionalNullableIntWithANullableInt:(NSNumber* _Nullable)aNullableIntArg
-                               wrappedError:(NativeInteropTestsError* _Nonnull)
-                                                wrappedError
+    pigeon_echoOptionalNullableInt:(NSNumber* _Nullable)aNullableIntArg
+                      wrappedError:
+                          (NativeInteropTestsError* _Nonnull)wrappedError
     SWIFT_WARN_UNUSED_RESULT;
 /// Returns the passed in string.
 - (NSString* _Nullable)
-    echoNamedNullableStringWithANullableString:
-        (NSString* _Nullable)aNullableStringArg
-                                  wrappedError:
-                                      (NativeInteropTestsError* _Nonnull)
-                                          wrappedError SWIFT_WARN_UNUSED_RESULT;
-/// A no-op function taking no arguments and returning no value, to sanity
-/// test basic asynchronous calling.
-- (void)noopAsyncWithWrappedError:
-            (NativeInteropTestsError* _Nonnull)wrappedError
-                completionHandler:(void (^_Nonnull)(void))completionHandler;
-/// Returns passed in int asynchronously.
-- (void)echoAsyncIntWithAnInt:(int64_t)anIntArg
-                 wrappedError:(NativeInteropTestsError* _Nonnull)wrappedError
-            completionHandler:
-                (void (^_Nonnull)(NSNumber* _Nullable))completionHandler;
-/// Returns passed in double asynchronously.
-- (void)echoAsyncDoubleWithADouble:(double)aDoubleArg
+    pigeon_echoNamedNullableString:(NSString* _Nullable)aNullableStringArg
                       wrappedError:
                           (NativeInteropTestsError* _Nonnull)wrappedError
-                 completionHandler:
-                     (void (^_Nonnull)(NSNumber* _Nullable))completionHandler;
-/// Returns the passed in boolean asynchronously.
-- (void)echoAsyncBoolWithABool:(BOOL)aBoolArg
+    SWIFT_WARN_UNUSED_RESULT;
+/// A no-op function taking no arguments and returning no value, to sanity
+/// test basic asynchronous calling.
+- (void)pigeon_noopAsync:(NativeInteropTestsError* _Nonnull)wrappedError
+       completionHandler:(void (^_Nonnull)(void))completionHandler;
+/// Returns passed in int asynchronously.
+- (void)pigeon_echoAsyncInt:(int64_t)anIntArg
+               wrappedError:(NativeInteropTestsError* _Nonnull)wrappedError
+          completionHandler:
+              (void (^_Nonnull)(NSNumber* _Nullable))completionHandler;
+/// Returns passed in double asynchronously.
+- (void)pigeon_echoAsyncDouble:(double)aDoubleArg
                   wrappedError:(NativeInteropTestsError* _Nonnull)wrappedError
              completionHandler:
                  (void (^_Nonnull)(NSNumber* _Nullable))completionHandler;
+/// Returns the passed in boolean asynchronously.
+- (void)pigeon_echoAsyncBool:(BOOL)aBoolArg
+                wrappedError:(NativeInteropTestsError* _Nonnull)wrappedError
+           completionHandler:
+               (void (^_Nonnull)(NSNumber* _Nullable))completionHandler;
 /// Returns the passed string asynchronously.
-- (void)echoAsyncStringWithAString:(NSString* _Nonnull)aStringArg
-                      wrappedError:
-                          (NativeInteropTestsError* _Nonnull)wrappedError
-                 completionHandler:
-                     (void (^_Nonnull)(NSString* _Nullable))completionHandler;
+- (void)pigeon_echoAsyncString:(NSString* _Nonnull)aStringArg
+                  wrappedError:(NativeInteropTestsError* _Nonnull)wrappedError
+             completionHandler:
+                 (void (^_Nonnull)(NSString* _Nullable))completionHandler;
 /// Returns the passed in Uint8List asynchronously.
-- (void)echoAsyncUint8ListWithAUint8List:
-            (NativeInteropTestsPigeonTypedData* _Nonnull)aUint8ListArg
-                            wrappedError:
-                                (NativeInteropTestsError* _Nonnull)wrappedError
-                       completionHandler:
-                           (void (^_Nonnull)(
-                               NativeInteropTestsPigeonTypedData* _Nullable))
-                               completionHandler;
-/// Returns the passed in Int32List asynchronously.
-- (void)echoAsyncInt32ListWithAInt32List:
-            (NativeInteropTestsPigeonTypedData* _Nonnull)aInt32ListArg
-                            wrappedError:
-                                (NativeInteropTestsError* _Nonnull)wrappedError
-                       completionHandler:
-                           (void (^_Nonnull)(
-                               NativeInteropTestsPigeonTypedData* _Nullable))
-                               completionHandler;
-/// Returns the passed in Int64List asynchronously.
-- (void)echoAsyncInt64ListWithAInt64List:
-            (NativeInteropTestsPigeonTypedData* _Nonnull)aInt64ListArg
-                            wrappedError:
-                                (NativeInteropTestsError* _Nonnull)wrappedError
-                       completionHandler:
-                           (void (^_Nonnull)(
-                               NativeInteropTestsPigeonTypedData* _Nullable))
-                               completionHandler;
-/// Returns the passed in Float64List asynchronously.
-- (void)
-    echoAsyncFloat64ListWithAFloat64List:
-        (NativeInteropTestsPigeonTypedData* _Nonnull)aFloat64ListArg
-                            wrappedError:
-                                (NativeInteropTestsError* _Nonnull)wrappedError
-                       completionHandler:
-                           (void (^_Nonnull)(
-                               NativeInteropTestsPigeonTypedData* _Nullable))
-                               completionHandler;
-/// Returns the passed in generic Object asynchronously.
-- (void)echoAsyncObjectWithAnObject:(NSObject* _Nonnull)anObjectArg
-                       wrappedError:
-                           (NativeInteropTestsError* _Nonnull)wrappedError
-                  completionHandler:
-                      (void (^_Nonnull)(NSObject* _Nullable))completionHandler;
-/// Returns the passed list, to test asynchronous serialization and
-/// deserialization.
-- (void)echoAsyncListWithList:(NSArray<NSObject*>* _Nonnull)listArg
-                 wrappedError:(NativeInteropTestsError* _Nonnull)wrappedError
-            completionHandler:(void (^_Nonnull)(NSArray<NSObject*>* _Nullable))
-                                  completionHandler;
-/// Returns the passed list, to test asynchronous serialization and
-/// deserialization.
-- (void)echoAsyncEnumListWithEnumList:(NSArray<NSObject*>* _Nonnull)enumListArg
-                         wrappedError:
-                             (NativeInteropTestsError* _Nonnull)wrappedError
-                    completionHandler:
-                        (void (^_Nonnull)(NSArray<NSObject*>* _Nullable))
-                            completionHandler;
-/// Returns the passed list, to test asynchronous serialization and
-/// deserialization.
-- (void)echoAsyncClassListWithClassList:
-            (NSArray<NSObject*>* _Nonnull)classListArg
-                           wrappedError:
-                               (NativeInteropTestsError* _Nonnull)wrappedError
-                      completionHandler:
-                          (void (^_Nonnull)(NSArray<NSObject*>* _Nullable))
-                              completionHandler;
-/// Returns the passed map, to test asynchronous serialization and
-/// deserialization.
-- (void)
-    echoAsyncMapWithMap:(NSDictionary<id<NSCopying>, NSObject*>* _Nonnull)mapArg
-           wrappedError:(NativeInteropTestsError* _Nonnull)wrappedError
-      completionHandler:
-          (void (^_Nonnull)(NSDictionary<id<NSCopying>, NSObject*>* _Nullable))
-              completionHandler;
-/// Returns the passed map, to test asynchronous serialization and
-/// deserialization.
-- (void)
-    echoAsyncStringMapWithStringMap:
-        (NSDictionary<id<NSCopying>, NSObject*>* _Nonnull)stringMapArg
-                       wrappedError:
-                           (NativeInteropTestsError* _Nonnull)wrappedError
-                  completionHandler:
-                      (void (^_Nonnull)(
-                          NSDictionary<id<NSCopying>, NSObject*>* _Nullable))
-                          completionHandler;
-/// Returns the passed map, to test asynchronous serialization and
-/// deserialization.
-- (void)echoAsyncIntMapWithIntMap:
-            (NSDictionary<id<NSCopying>, NSObject*>* _Nonnull)intMapArg
+- (void)pigeon_echoAsyncUint8List:(NSData* _Nonnull)aUint8ListArg
                      wrappedError:
                          (NativeInteropTestsError* _Nonnull)wrappedError
                 completionHandler:
-                    (void (^_Nonnull)(
-                        NSDictionary<id<NSCopying>, NSObject*>* _Nullable))
-                        completionHandler;
-/// Returns the passed map, to test asynchronous serialization and
-/// deserialization.
-- (void)echoAsyncEnumMapWithEnumMap:
-            (NSDictionary<id<NSCopying>, NSObject*>* _Nonnull)enumMapArg
+                    (void (^_Nonnull)(NSData* _Nullable))completionHandler;
+/// Returns the passed in Int32List asynchronously.
+- (void)pigeon_echoAsyncInt32List:(NSData* _Nonnull)aInt32ListArg
+                     wrappedError:
+                         (NativeInteropTestsError* _Nonnull)wrappedError
+                completionHandler:
+                    (void (^_Nonnull)(NSData* _Nullable))completionHandler;
+/// Returns the passed in Int64List asynchronously.
+- (void)pigeon_echoAsyncInt64List:(NSData* _Nonnull)aInt64ListArg
+                     wrappedError:
+                         (NativeInteropTestsError* _Nonnull)wrappedError
+                completionHandler:
+                    (void (^_Nonnull)(NSData* _Nullable))completionHandler;
+/// Returns the passed in Float64List asynchronously.
+- (void)pigeon_echoAsyncFloat64List:(NSData* _Nonnull)aFloat64ListArg
                        wrappedError:
                            (NativeInteropTestsError* _Nonnull)wrappedError
                   completionHandler:
-                      (void (^_Nonnull)(
-                          NSDictionary<id<NSCopying>, NSObject*>* _Nullable))
-                          completionHandler;
+                      (void (^_Nonnull)(NSData* _Nullable))completionHandler;
+/// Returns the passed in generic Object asynchronously.
+- (void)pigeon_echoAsyncObject:(NSData* _Nonnull)pigeonVar_args
+                  wrappedError:(NativeInteropTestsError* _Nonnull)wrappedError
+             completionHandler:
+                 (void (^_Nonnull)(NSData* _Nullable))completionHandler;
+/// Returns the passed list, to test asynchronous serialization and
+/// deserialization.
+- (void)pigeon_echoAsyncList:(NSData* _Nonnull)pigeonVar_args
+                wrappedError:(NativeInteropTestsError* _Nonnull)wrappedError
+           completionHandler:
+               (void (^_Nonnull)(NSData* _Nullable))completionHandler;
+/// Returns the passed list, to test asynchronous serialization and
+/// deserialization.
+- (void)pigeon_echoAsyncEnumList:(NSData* _Nonnull)pigeonVar_args
+                    wrappedError:(NativeInteropTestsError* _Nonnull)wrappedError
+               completionHandler:
+                   (void (^_Nonnull)(NSData* _Nullable))completionHandler;
+/// Returns the passed list, to test asynchronous serialization and
+/// deserialization.
+- (void)pigeon_echoAsyncClassList:(NSData* _Nonnull)pigeonVar_args
+                     wrappedError:
+                         (NativeInteropTestsError* _Nonnull)wrappedError
+                completionHandler:
+                    (void (^_Nonnull)(NSData* _Nullable))completionHandler;
 /// Returns the passed map, to test asynchronous serialization and
 /// deserialization.
-- (void)echoAsyncClassMapWithClassMap:
-            (NSDictionary<id<NSCopying>, NSObject*>* _Nonnull)classMapArg
-                         wrappedError:
-                             (NativeInteropTestsError* _Nonnull)wrappedError
-                    completionHandler:
-                        (void (^_Nonnull)(
-                            NSDictionary<id<NSCopying>, NSObject*>* _Nullable))
-                            completionHandler;
-/// Returns the passed enum, to test asynchronous serialization and
+- (void)pigeon_echoAsyncMap:(NSData* _Nonnull)pigeonVar_args
+               wrappedError:(NativeInteropTestsError* _Nonnull)wrappedError
+          completionHandler:
+              (void (^_Nonnull)(NSData* _Nullable))completionHandler;
+/// Returns the passed map, to test asynchronous serialization and
 /// deserialization.
-- (void)echoAsyncEnumWithAnEnum:(enum NativeInteropAnEnum)anEnumArg
+- (void)pigeon_echoAsyncStringMap:(NSData* _Nonnull)pigeonVar_args
+                     wrappedError:
+                         (NativeInteropTestsError* _Nonnull)wrappedError
+                completionHandler:
+                    (void (^_Nonnull)(NSData* _Nullable))completionHandler;
+/// Returns the passed map, to test asynchronous serialization and
+/// deserialization.
+- (void)pigeon_echoAsyncIntMap:(NSData* _Nonnull)pigeonVar_args
+                  wrappedError:(NativeInteropTestsError* _Nonnull)wrappedError
+             completionHandler:
+                 (void (^_Nonnull)(NSData* _Nullable))completionHandler;
+/// Returns the passed map, to test asynchronous serialization and
+/// deserialization.
+- (void)pigeon_echoAsyncEnumMap:(NSData* _Nonnull)pigeonVar_args
                    wrappedError:(NativeInteropTestsError* _Nonnull)wrappedError
               completionHandler:
-                  (void (^_Nonnull)(NSNumber* _Nullable))completionHandler;
+                  (void (^_Nonnull)(NSData* _Nullable))completionHandler;
+/// Returns the passed map, to test asynchronous serialization and
+/// deserialization.
+- (void)pigeon_echoAsyncClassMap:(NSData* _Nonnull)pigeonVar_args
+                    wrappedError:(NativeInteropTestsError* _Nonnull)wrappedError
+               completionHandler:
+                   (void (^_Nonnull)(NSData* _Nullable))completionHandler;
 /// Returns the passed enum, to test asynchronous serialization and
 /// deserialization.
-- (void)echoAnotherAsyncEnumWithAnotherEnum:
-            (enum NativeInteropAnotherEnum)anotherEnumArg
+- (void)pigeon_echoAsyncEnum:(int64_t)anEnumArg
+                wrappedError:(NativeInteropTestsError* _Nonnull)wrappedError
+           completionHandler:
+               (void (^_Nonnull)(NSNumber* _Nullable))completionHandler;
+/// Returns the passed enum, to test asynchronous serialization and
+/// deserialization.
+- (void)pigeon_echoAnotherAsyncEnum:(int64_t)anotherEnumArg
+                       wrappedError:
+                           (NativeInteropTestsError* _Nonnull)wrappedError
+                  completionHandler:
+                      (void (^_Nonnull)(NSNumber* _Nullable))completionHandler;
+/// Responds with an error from an async function returning a value.
+- (void)pigeon_throwAsyncError:(NativeInteropTestsError* _Nonnull)wrappedError
+             completionHandler:
+                 (void (^_Nonnull)(NSData* _Nullable))completionHandler;
+/// Responds with an error from an async void function.
+- (void)pigeon_throwAsyncErrorFromVoid:
+            (NativeInteropTestsError* _Nonnull)wrappedError
+                     completionHandler:
+                         (void (^_Nonnull)(void))completionHandler;
+/// Responds with a Flutter error from an async function returning a value.
+- (void)pigeon_throwAsyncFlutterError:
+            (NativeInteropTestsError* _Nonnull)wrappedError
+                    completionHandler:
+                        (void (^_Nonnull)(NSData* _Nullable))completionHandler;
+/// Returns the passed object, to test async serialization and deserialization.
+- (void)
+    pigeon_echoAsyncNativeInteropAllTypes:(NSData* _Nonnull)pigeonVar_args
+                             wrappedError:
+                                 (NativeInteropTestsError* _Nonnull)wrappedError
+                        completionHandler:(void (^_Nonnull)(NSData* _Nullable))
+                                              completionHandler;
+/// Returns the passed object, to test serialization and deserialization.
+- (void)
+    pigeon_echoAsyncNullableNativeInteropAllNullableTypes:
+        (NSData* _Nonnull)pigeonVar_args
+                                             wrappedError:
+                                                 (NativeInteropTestsError* _Nonnull)
+                                                     wrappedError
+                                        completionHandler:
+                                            (void (^_Nonnull)(
+                                                NSData* _Nullable))
+                                                completionHandler;
+/// Returns the passed object, to test serialization and deserialization.
+- (void)
+    pigeon_echoAsyncNullableNativeInteropAllNullableTypesWithoutRecursion:
+        (NSData* _Nonnull)pigeonVar_args
+                                                             wrappedError:
+                                                                 (NativeInteropTestsError* _Nonnull)
+                                                                     wrappedError
+                                                        completionHandler:
+                                                            (void (^_Nonnull)(
+                                                                NSData* _Nullable))
+                                                                completionHandler;
+/// Returns passed in int asynchronously.
+- (void)pigeon_echoAsyncNullableInt:(NSNumber* _Nullable)anIntArg
+                       wrappedError:
+                           (NativeInteropTestsError* _Nonnull)wrappedError
+                  completionHandler:
+                      (void (^_Nonnull)(NSNumber* _Nullable))completionHandler;
+/// Returns passed in double asynchronously.
+- (void)pigeon_echoAsyncNullableDouble:(NSNumber* _Nullable)aDoubleArg
+                          wrappedError:
+                              (NativeInteropTestsError* _Nonnull)wrappedError
+                     completionHandler:(void (^_Nonnull)(NSNumber* _Nullable))
+                                           completionHandler;
+/// Returns the passed in boolean asynchronously.
+- (void)pigeon_echoAsyncNullableBool:(NSNumber* _Nullable)aBoolArg
+                        wrappedError:
+                            (NativeInteropTestsError* _Nonnull)wrappedError
+                   completionHandler:
+                       (void (^_Nonnull)(NSNumber* _Nullable))completionHandler;
+/// Returns the passed string asynchronously.
+- (void)pigeon_echoAsyncNullableString:(NSString* _Nullable)aStringArg
+                          wrappedError:
+                              (NativeInteropTestsError* _Nonnull)wrappedError
+                     completionHandler:(void (^_Nonnull)(NSString* _Nullable))
+                                           completionHandler;
+/// Returns the passed in Uint8List asynchronously.
+- (void)pigeon_echoAsyncNullableUint8List:(NSData* _Nullable)aUint8ListArg
+                             wrappedError:
+                                 (NativeInteropTestsError* _Nonnull)wrappedError
+                        completionHandler:(void (^_Nonnull)(NSData* _Nullable))
+                                              completionHandler;
+/// Returns the passed in Int32List asynchronously.
+- (void)pigeon_echoAsyncNullableInt32List:(NSData* _Nullable)aInt32ListArg
+                             wrappedError:
+                                 (NativeInteropTestsError* _Nonnull)wrappedError
+                        completionHandler:(void (^_Nonnull)(NSData* _Nullable))
+                                              completionHandler;
+/// Returns the passed in Int64List asynchronously.
+- (void)pigeon_echoAsyncNullableInt64List:(NSData* _Nullable)aInt64ListArg
+                             wrappedError:
+                                 (NativeInteropTestsError* _Nonnull)wrappedError
+                        completionHandler:(void (^_Nonnull)(NSData* _Nullable))
+                                              completionHandler;
+/// Returns the passed in Float64List asynchronously.
+- (void)pigeon_echoAsyncNullableFloat64List:(NSData* _Nullable)aFloat64ListArg
+                               wrappedError:(NativeInteropTestsError* _Nonnull)
+                                                wrappedError
+                          completionHandler:
+                              (void (^_Nonnull)(NSData* _Nullable))
+                                  completionHandler;
+/// Returns the passed in generic Object asynchronously.
+- (void)pigeon_echoAsyncNullableObject:(NSData* _Nonnull)pigeonVar_args
+                          wrappedError:
+                              (NativeInteropTestsError* _Nonnull)wrappedError
+                     completionHandler:
+                         (void (^_Nonnull)(NSData* _Nullable))completionHandler;
+/// Returns the passed list, to test asynchronous serialization and
+/// deserialization.
+- (void)pigeon_echoAsyncNullableList:(NSData* _Nonnull)pigeonVar_args
+                        wrappedError:
+                            (NativeInteropTestsError* _Nonnull)wrappedError
+                   completionHandler:
+                       (void (^_Nonnull)(NSData* _Nullable))completionHandler;
+/// Returns the passed list, to test asynchronous serialization and
+/// deserialization.
+- (void)pigeon_echoAsyncNullableEnumList:(NSData* _Nonnull)pigeonVar_args
+                            wrappedError:
+                                (NativeInteropTestsError* _Nonnull)wrappedError
+                       completionHandler:(void (^_Nonnull)(NSData* _Nullable))
+                                             completionHandler;
+/// Returns the passed list, to test asynchronous serialization and
+/// deserialization.
+- (void)pigeon_echoAsyncNullableClassList:(NSData* _Nonnull)pigeonVar_args
+                             wrappedError:
+                                 (NativeInteropTestsError* _Nonnull)wrappedError
+                        completionHandler:(void (^_Nonnull)(NSData* _Nullable))
+                                              completionHandler;
+/// Returns the passed map, to test asynchronous serialization and
+/// deserialization.
+- (void)pigeon_echoAsyncNullableMap:(NSData* _Nonnull)pigeonVar_args
+                       wrappedError:
+                           (NativeInteropTestsError* _Nonnull)wrappedError
+                  completionHandler:
+                      (void (^_Nonnull)(NSData* _Nullable))completionHandler;
+/// Returns the passed map, to test asynchronous serialization and
+/// deserialization.
+- (void)pigeon_echoAsyncNullableStringMap:(NSData* _Nonnull)pigeonVar_args
+                             wrappedError:
+                                 (NativeInteropTestsError* _Nonnull)wrappedError
+                        completionHandler:(void (^_Nonnull)(NSData* _Nullable))
+                                              completionHandler;
+/// Returns the passed map, to test asynchronous serialization and
+/// deserialization.
+- (void)pigeon_echoAsyncNullableIntMap:(NSData* _Nonnull)pigeonVar_args
+                          wrappedError:
+                              (NativeInteropTestsError* _Nonnull)wrappedError
+                     completionHandler:
+                         (void (^_Nonnull)(NSData* _Nullable))completionHandler;
+/// Returns the passed map, to test asynchronous serialization and
+/// deserialization.
+- (void)pigeon_echoAsyncNullableEnumMap:(NSData* _Nonnull)pigeonVar_args
+                           wrappedError:
+                               (NativeInteropTestsError* _Nonnull)wrappedError
+                      completionHandler:(void (^_Nonnull)(NSData* _Nullable))
+                                            completionHandler;
+/// Returns the passed map, to test asynchronous serialization and
+/// deserialization.
+- (void)pigeon_echoAsyncNullableClassMap:(NSData* _Nonnull)pigeonVar_args
+                            wrappedError:
+                                (NativeInteropTestsError* _Nonnull)wrappedError
+                       completionHandler:(void (^_Nonnull)(NSData* _Nullable))
+                                             completionHandler;
+/// Returns the passed enum, to test asynchronous serialization and
+/// deserialization.
+- (void)pigeon_echoAsyncNullableEnum:(int64_t)anEnumArg
+                        wrappedError:
+                            (NativeInteropTestsError* _Nonnull)wrappedError
+                   completionHandler:
+                       (void (^_Nonnull)(NSNumber* _Nullable))completionHandler;
+/// Returns the passed enum, to test asynchronous serialization and
+/// deserialization.
+- (void)pigeon_echoAnotherAsyncNullableEnum:(int64_t)anotherEnumArg
                                wrappedError:(NativeInteropTestsError* _Nonnull)
                                                 wrappedError
                           completionHandler:
                               (void (^_Nonnull)(NSNumber* _Nullable))
                                   completionHandler;
-/// Responds with an error from an async function returning a value.
-- (void)throwAsyncErrorWithWrappedError:
-            (NativeInteropTestsError* _Nonnull)wrappedError
-                      completionHandler:(void (^_Nonnull)(NSObject* _Nullable))
-                                            completionHandler;
-/// Responds with an error from an async void function.
-- (void)throwAsyncErrorFromVoidWithWrappedError:
-            (NativeInteropTestsError* _Nonnull)wrappedError
-                              completionHandler:
-                                  (void (^_Nonnull)(void))completionHandler;
-/// Responds with a Flutter error from an async function returning a value.
-- (void)throwAsyncFlutterErrorWithWrappedError:
-            (NativeInteropTestsError* _Nonnull)wrappedError
-                             completionHandler:
-                                 (void (^_Nonnull)(NSObject* _Nullable))
-                                     completionHandler;
-/// Returns the passed object, to test async serialization and deserialization.
-- (void)
-    echoAsyncNativeInteropAllTypesWithEverything:
-        (NativeInteropAllTypesBridge* _Nonnull)everythingArg
-                                    wrappedError:
-                                        (NativeInteropTestsError* _Nonnull)
-                                            wrappedError
-                               completionHandler:
-                                   (void (^_Nonnull)(
-                                       NativeInteropAllTypesBridge* _Nullable))
-                                       completionHandler;
-/// Returns the passed object, to test serialization and deserialization.
-- (void)
-    echoAsyncNullableNativeInteropAllNullableTypesWithEverything:
-        (NativeInteropAllNullableTypesBridge* _Nullable)everythingArg
-                                                    wrappedError:
-                                                        (NativeInteropTestsError* _Nonnull)
-                                                            wrappedError
-                                               completionHandler:
-                                                   (void (^_Nonnull)(
-                                                       NativeInteropAllNullableTypesBridge* _Nullable))
-                                                       completionHandler;
-/// Returns the passed object, to test serialization and deserialization.
-- (void)
-    echoAsyncNullableNativeInteropAllNullableTypesWithoutRecursionWithEverything:
-        (NativeInteropAllNullableTypesWithoutRecursionBridge* _Nullable)
-            everythingArg
-                                                                    wrappedError:
-                                                                        (NativeInteropTestsError* _Nonnull)
-                                                                            wrappedError
-                                                               completionHandler:
-                                                                   (void (
-                                                                       ^_Nonnull)(
-                                                                       NativeInteropAllNullableTypesWithoutRecursionBridge* _Nullable))
-                                                                       completionHandler;
-/// Returns passed in int asynchronously.
-- (void)echoAsyncNullableIntWithAnInt:(NSNumber* _Nullable)anIntArg
-                         wrappedError:
-                             (NativeInteropTestsError* _Nonnull)wrappedError
-                    completionHandler:(void (^_Nonnull)(NSNumber* _Nullable))
-                                          completionHandler;
-/// Returns passed in double asynchronously.
-- (void)echoAsyncNullableDoubleWithADouble:(NSNumber* _Nullable)aDoubleArg
-                              wrappedError:(NativeInteropTestsError* _Nonnull)
-                                               wrappedError
-                         completionHandler:
-                             (void (^_Nonnull)(NSNumber* _Nullable))
-                                 completionHandler;
-/// Returns the passed in boolean asynchronously.
-- (void)echoAsyncNullableBoolWithABool:(NSNumber* _Nullable)aBoolArg
-                          wrappedError:
-                              (NativeInteropTestsError* _Nonnull)wrappedError
-                     completionHandler:(void (^_Nonnull)(NSNumber* _Nullable))
-                                           completionHandler;
-/// Returns the passed string asynchronously.
-- (void)echoAsyncNullableStringWithAString:(NSString* _Nullable)aStringArg
-                              wrappedError:(NativeInteropTestsError* _Nonnull)
-                                               wrappedError
-                         completionHandler:
-                             (void (^_Nonnull)(NSString* _Nullable))
-                                 completionHandler;
-/// Returns the passed in Uint8List asynchronously.
-- (void)
-    echoAsyncNullableUint8ListWithAUint8List:
-        (NativeInteropTestsPigeonTypedData* _Nullable)aUint8ListArg
-                                wrappedError:(NativeInteropTestsError* _Nonnull)
-                                                 wrappedError
-                           completionHandler:
-                               (void (^_Nonnull)(
-                                   NativeInteropTestsPigeonTypedData* _Nullable))
-                                   completionHandler;
-/// Returns the passed in Int32List asynchronously.
-- (void)
-    echoAsyncNullableInt32ListWithAInt32List:
-        (NativeInteropTestsPigeonTypedData* _Nullable)aInt32ListArg
-                                wrappedError:(NativeInteropTestsError* _Nonnull)
-                                                 wrappedError
-                           completionHandler:
-                               (void (^_Nonnull)(
-                                   NativeInteropTestsPigeonTypedData* _Nullable))
-                                   completionHandler;
-/// Returns the passed in Int64List asynchronously.
-- (void)
-    echoAsyncNullableInt64ListWithAInt64List:
-        (NativeInteropTestsPigeonTypedData* _Nullable)aInt64ListArg
-                                wrappedError:(NativeInteropTestsError* _Nonnull)
-                                                 wrappedError
-                           completionHandler:
-                               (void (^_Nonnull)(
-                                   NativeInteropTestsPigeonTypedData* _Nullable))
-                                   completionHandler;
-/// Returns the passed in Float64List asynchronously.
-- (void)
-    echoAsyncNullableFloat64ListWithAFloat64List:
-        (NativeInteropTestsPigeonTypedData* _Nullable)aFloat64ListArg
-                                    wrappedError:
-                                        (NativeInteropTestsError* _Nonnull)
-                                            wrappedError
-                               completionHandler:
-                                   (void (^_Nonnull)(
-                                       NativeInteropTestsPigeonTypedData* _Nullable))
-                                       completionHandler;
-/// Returns the passed in generic Object asynchronously.
-- (void)echoAsyncNullableObjectWithAnObject:(NSObject* _Nonnull)anObjectArg
-                               wrappedError:(NativeInteropTestsError* _Nonnull)
-                                                wrappedError
-                          completionHandler:
-                              (void (^_Nonnull)(NSObject* _Nullable))
-                                  completionHandler;
-/// Returns the passed list, to test asynchronous serialization and
-/// deserialization.
-- (void)echoAsyncNullableListWithList:(NSArray<NSObject*>* _Nullable)listArg
-                         wrappedError:
-                             (NativeInteropTestsError* _Nonnull)wrappedError
-                    completionHandler:
-                        (void (^_Nonnull)(NSArray<NSObject*>* _Nullable))
-                            completionHandler;
-/// Returns the passed list, to test asynchronous serialization and
-/// deserialization.
-- (void)
-    echoAsyncNullableEnumListWithEnumList:
-        (NSArray<NSObject*>* _Nullable)enumListArg
-                             wrappedError:
-                                 (NativeInteropTestsError* _Nonnull)wrappedError
-                        completionHandler:
-                            (void (^_Nonnull)(NSArray<NSObject*>* _Nullable))
-                                completionHandler;
-/// Returns the passed list, to test asynchronous serialization and
-/// deserialization.
-- (void)
-    echoAsyncNullableClassListWithClassList:
-        (NSArray<NSObject*>* _Nullable)classListArg
-                               wrappedError:(NativeInteropTestsError* _Nonnull)
-                                                wrappedError
-                          completionHandler:
-                              (void (^_Nonnull)(NSArray<NSObject*>* _Nullable))
-                                  completionHandler;
-/// Returns the passed map, to test asynchronous serialization and
-/// deserialization.
-- (void)echoAsyncNullableMapWithMap:
-            (NSDictionary<id<NSCopying>, NSObject*>* _Nullable)mapArg
-                       wrappedError:
-                           (NativeInteropTestsError* _Nonnull)wrappedError
-                  completionHandler:
-                      (void (^_Nonnull)(
-                          NSDictionary<id<NSCopying>, NSObject*>* _Nullable))
-                          completionHandler;
-/// Returns the passed map, to test asynchronous serialization and
-/// deserialization.
-- (void)echoAsyncNullableStringMapWithStringMap:
-            (NSDictionary<id<NSCopying>, NSObject*>* _Nullable)stringMapArg
+- (void)pigeon_callFlutterNoop:(NativeInteropTestsError* _Nonnull)wrappedError;
+- (NSData* _Nullable)pigeon_callFlutterThrowError:
+    (NativeInteropTestsError* _Nonnull)wrappedError SWIFT_WARN_UNUSED_RESULT;
+- (void)pigeon_callFlutterThrowErrorFromVoid:
+    (NativeInteropTestsError* _Nonnull)wrappedError;
+- (NSData* _Nullable)
+    pigeon_callFlutterEchoNativeInteropAllTypes:(NSData* _Nonnull)pigeonVar_args
                                    wrappedError:
                                        (NativeInteropTestsError* _Nonnull)
                                            wrappedError
-                              completionHandler:
-                                  (void (^_Nonnull)(
-                                      NSDictionary<id<NSCopying>,
-                                                   NSObject*>* _Nullable))
-                                      completionHandler;
-/// Returns the passed map, to test asynchronous serialization and
-/// deserialization.
-- (void)
-    echoAsyncNullableIntMapWithIntMap:
-        (NSDictionary<id<NSCopying>, NSObject*>* _Nullable)intMapArg
-                         wrappedError:
-                             (NativeInteropTestsError* _Nonnull)wrappedError
-                    completionHandler:
-                        (void (^_Nonnull)(
-                            NSDictionary<id<NSCopying>, NSObject*>* _Nullable))
-                            completionHandler;
-/// Returns the passed map, to test asynchronous serialization and
-/// deserialization.
-- (void)
-    echoAsyncNullableEnumMapWithEnumMap:
-        (NSDictionary<id<NSCopying>, NSObject*>* _Nullable)enumMapArg
-                           wrappedError:
-                               (NativeInteropTestsError* _Nonnull)wrappedError
-                      completionHandler:
-                          (void (^_Nonnull)(NSDictionary<id<NSCopying>,
-                                                         NSObject*>* _Nullable))
-                              completionHandler;
-/// Returns the passed map, to test asynchronous serialization and
-/// deserialization.
-- (void)echoAsyncNullableClassMapWithClassMap:
-            (NSDictionary<id<NSCopying>, NSObject*>* _Nullable)classMapArg
-                                 wrappedError:
-                                     (NativeInteropTestsError* _Nonnull)
-                                         wrappedError
-                            completionHandler:
-                                (void (^_Nonnull)(
-                                    NSDictionary<id<NSCopying>,
-                                                 NSObject*>* _Nullable))
-                                    completionHandler;
-/// Returns the passed enum, to test asynchronous serialization and
-/// deserialization.
-- (void)echoAsyncNullableEnumWithAnEnum:(NSNumber* _Nullable)anEnumArg
-                           wrappedError:
-                               (NativeInteropTestsError* _Nonnull)wrappedError
-                      completionHandler:(void (^_Nonnull)(NSNumber* _Nullable))
-                                            completionHandler;
-/// Returns the passed enum, to test asynchronous serialization and
-/// deserialization.
-- (void)echoAnotherAsyncNullableEnumWithAnotherEnum:
-            (NSNumber* _Nullable)anotherEnumArg
-                                       wrappedError:
-                                           (NativeInteropTestsError* _Nonnull)
-                                               wrappedError
-                                  completionHandler:
-                                      (void (^_Nonnull)(NSNumber* _Nullable))
-                                          completionHandler;
-- (void)callFlutterNoopWithWrappedError:
-    (NativeInteropTestsError* _Nonnull)wrappedError;
-- (NSObject* _Nullable)callFlutterThrowErrorWithWrappedError:
-    (NativeInteropTestsError* _Nonnull)wrappedError SWIFT_WARN_UNUSED_RESULT;
-- (void)callFlutterThrowErrorFromVoidWithWrappedError:
-    (NativeInteropTestsError* _Nonnull)wrappedError;
-- (NativeInteropAllTypesBridge* _Nullable)
-    callFlutterEchoNativeInteropAllTypesWithEverything:
-        (NativeInteropAllTypesBridge* _Nonnull)everythingArg
-                                          wrappedError:
-                                              (NativeInteropTestsError* _Nonnull)
-                                                  wrappedError
     SWIFT_WARN_UNUSED_RESULT;
-- (NativeInteropAllNullableTypesBridge* _Nullable)
-    callFlutterEchoNativeInteropAllNullableTypesWithEverything:
-        (NativeInteropAllNullableTypesBridge* _Nullable)everythingArg
-                                                  wrappedError:
-                                                      (NativeInteropTestsError* _Nonnull)
-                                                          wrappedError
+- (NSData* _Nullable)
+    pigeon_callFlutterEchoNativeInteropAllNullableTypes:
+        (NSData* _Nonnull)pigeonVar_args
+                                           wrappedError:
+                                               (NativeInteropTestsError* _Nonnull)
+                                                   wrappedError
     SWIFT_WARN_UNUSED_RESULT;
-- (NativeInteropAllNullableTypesBridge* _Nullable)
-    callFlutterSendMultipleNullableTypesWithANullableBool:
+- (NSData* _Nullable)
+    pigeon_callFlutterSendMultipleNullableTypes:
         (NSNumber* _Nullable)aNullableBoolArg
-                                             aNullableInt:(NSNumber* _Nullable)
-                                                              aNullableIntArg
-                                          aNullableString:(NSString* _Nullable)
-                                                              aNullableStringArg
-                                             wrappedError:
-                                                 (NativeInteropTestsError* _Nonnull)
-                                                     wrappedError
+                                   aNullableInt:
+                                       (NSNumber* _Nullable)aNullableIntArg
+                                aNullableString:
+                                    (NSString* _Nullable)aNullableStringArg
+                                   wrappedError:
+                                       (NativeInteropTestsError* _Nonnull)
+                                           wrappedError
     SWIFT_WARN_UNUSED_RESULT;
-- (NativeInteropAllNullableTypesWithoutRecursionBridge* _Nullable)
-    callFlutterEchoNativeInteropAllNullableTypesWithoutRecursionWithEverything:
-        (NativeInteropAllNullableTypesWithoutRecursionBridge* _Nullable)
-            everythingArg
-                                                                  wrappedError:
-                                                                      (NativeInteropTestsError* _Nonnull)
-                                                                          wrappedError
+- (NSData* _Nullable)
+    pigeon_callFlutterEchoNativeInteropAllNullableTypesWithoutRecursion:
+        (NSData* _Nonnull)pigeonVar_args
+                                                           wrappedError:
+                                                               (NativeInteropTestsError* _Nonnull)
+                                                                   wrappedError
     SWIFT_WARN_UNUSED_RESULT;
-- (NativeInteropAllNullableTypesWithoutRecursionBridge* _Nullable)
-    callFlutterSendMultipleNullableTypesWithoutRecursionWithANullableBool:
+- (NSData* _Nullable)
+    pigeon_callFlutterSendMultipleNullableTypesWithoutRecursion:
         (NSNumber* _Nullable)aNullableBoolArg
-                                                             aNullableInt:
-                                                                 (NSNumber* _Nullable)
-                                                                     aNullableIntArg
-                                                          aNullableString:
-                                                              (NSString* _Nullable)
-                                                                  aNullableStringArg
-                                                             wrappedError:
-                                                                 (NativeInteropTestsError* _Nonnull)
-                                                                     wrappedError
+                                                   aNullableInt:
+                                                       (NSNumber* _Nullable)
+                                                           aNullableIntArg
+                                                aNullableString:
+                                                    (NSString* _Nullable)
+                                                        aNullableStringArg
+                                                   wrappedError:
+                                                       (NativeInteropTestsError* _Nonnull)
+                                                           wrappedError
     SWIFT_WARN_UNUSED_RESULT;
 - (NSNumber* _Nullable)
-    callFlutterEchoBoolWithABool:(BOOL)aBoolArg
-                    wrappedError:(NativeInteropTestsError* _Nonnull)wrappedError
+    pigeon_callFlutterEchoBool:(BOOL)aBoolArg
+                  wrappedError:(NativeInteropTestsError* _Nonnull)wrappedError
     SWIFT_WARN_UNUSED_RESULT;
 - (NSNumber* _Nullable)
-    callFlutterEchoIntWithAnInt:(int64_t)anIntArg
-                   wrappedError:(NativeInteropTestsError* _Nonnull)wrappedError
-    SWIFT_WARN_UNUSED_RESULT;
-- (NSNumber* _Nullable)
-    callFlutterEchoDoubleWithADouble:(double)aDoubleArg
-                        wrappedError:
-                            (NativeInteropTestsError* _Nonnull)wrappedError
-    SWIFT_WARN_UNUSED_RESULT;
-- (NSString* _Nullable)
-    callFlutterEchoStringWithAString:(NSString* _Nonnull)aStringArg
-                        wrappedError:
-                            (NativeInteropTestsError* _Nonnull)wrappedError
-    SWIFT_WARN_UNUSED_RESULT;
-- (NativeInteropTestsPigeonTypedData* _Nullable)
-    callFlutterEchoUint8ListWithList:
-        (NativeInteropTestsPigeonTypedData* _Nonnull)listArg
-                        wrappedError:
-                            (NativeInteropTestsError* _Nonnull)wrappedError
-    SWIFT_WARN_UNUSED_RESULT;
-- (NativeInteropTestsPigeonTypedData* _Nullable)
-    callFlutterEchoInt32ListWithList:
-        (NativeInteropTestsPigeonTypedData* _Nonnull)listArg
-                        wrappedError:
-                            (NativeInteropTestsError* _Nonnull)wrappedError
-    SWIFT_WARN_UNUSED_RESULT;
-- (NativeInteropTestsPigeonTypedData* _Nullable)
-    callFlutterEchoInt64ListWithList:
-        (NativeInteropTestsPigeonTypedData* _Nonnull)listArg
-                        wrappedError:
-                            (NativeInteropTestsError* _Nonnull)wrappedError
-    SWIFT_WARN_UNUSED_RESULT;
-- (NativeInteropTestsPigeonTypedData* _Nullable)
-    callFlutterEchoFloat64ListWithList:
-        (NativeInteropTestsPigeonTypedData* _Nonnull)listArg
-                          wrappedError:
-                              (NativeInteropTestsError* _Nonnull)wrappedError
-    SWIFT_WARN_UNUSED_RESULT;
-- (NSArray<NSObject*>* _Nullable)
-    callFlutterEchoListWithList:(NSArray<NSObject*>* _Nonnull)listArg
-                   wrappedError:(NativeInteropTestsError* _Nonnull)wrappedError
-    SWIFT_WARN_UNUSED_RESULT;
-- (NSArray<NSObject*>* _Nullable)
-    callFlutterEchoEnumListWithEnumList:
-        (NSArray<NSObject*>* _Nonnull)enumListArg
-                           wrappedError:
-                               (NativeInteropTestsError* _Nonnull)wrappedError
-    SWIFT_WARN_UNUSED_RESULT;
-- (NSArray<NSObject*>* _Nullable)
-    callFlutterEchoClassListWithClassList:
-        (NSArray<NSObject*>* _Nonnull)classListArg
-                             wrappedError:
-                                 (NativeInteropTestsError* _Nonnull)wrappedError
-    SWIFT_WARN_UNUSED_RESULT;
-- (NSArray<NSObject*>* _Nullable)
-    callFlutterEchoNonNullEnumListWithEnumList:
-        (NSArray<NSObject*>* _Nonnull)enumListArg
-                                  wrappedError:
-                                      (NativeInteropTestsError* _Nonnull)
-                                          wrappedError SWIFT_WARN_UNUSED_RESULT;
-- (NSArray<NSObject*>* _Nullable)
-    callFlutterEchoNonNullClassListWithClassList:
-        (NSArray<NSObject*>* _Nonnull)classListArg
-                                    wrappedError:
-                                        (NativeInteropTestsError* _Nonnull)
-                                            wrappedError
-    SWIFT_WARN_UNUSED_RESULT;
-- (NSDictionary<id<NSCopying>, NSObject*>* _Nullable)
-    callFlutterEchoMapWithMap:
-        (NSDictionary<id<NSCopying>, NSObject*>* _Nonnull)mapArg
+    pigeon_callFlutterEchoInt:(int64_t)anIntArg
                  wrappedError:(NativeInteropTestsError* _Nonnull)wrappedError
     SWIFT_WARN_UNUSED_RESULT;
-- (NSDictionary<id<NSCopying>, NSObject*>* _Nullable)
-    callFlutterEchoStringMapWithStringMap:
-        (NSDictionary<id<NSCopying>, NSObject*>* _Nonnull)stringMapArg
-                             wrappedError:
-                                 (NativeInteropTestsError* _Nonnull)wrappedError
-    SWIFT_WARN_UNUSED_RESULT;
-- (NSDictionary<id<NSCopying>, NSObject*>* _Nullable)
-    callFlutterEchoIntMapWithIntMap:
-        (NSDictionary<id<NSCopying>, NSObject*>* _Nonnull)intMapArg
-                       wrappedError:
-                           (NativeInteropTestsError* _Nonnull)wrappedError
-    SWIFT_WARN_UNUSED_RESULT;
-- (NSDictionary<id<NSCopying>, NSObject*>* _Nullable)
-    callFlutterEchoEnumMapWithEnumMap:
-        (NSDictionary<id<NSCopying>, NSObject*>* _Nonnull)enumMapArg
-                         wrappedError:
-                             (NativeInteropTestsError* _Nonnull)wrappedError
-    SWIFT_WARN_UNUSED_RESULT;
-- (NSDictionary<id<NSCopying>, NSObject*>* _Nullable)
-    callFlutterEchoClassMapWithClassMap:
-        (NSDictionary<id<NSCopying>, NSObject*>* _Nonnull)classMapArg
-                           wrappedError:
-                               (NativeInteropTestsError* _Nonnull)wrappedError
-    SWIFT_WARN_UNUSED_RESULT;
-- (NSDictionary<id<NSCopying>, NSObject*>* _Nullable)
-    callFlutterEchoNonNullStringMapWithStringMap:
-        (NSDictionary<id<NSCopying>, NSObject*>* _Nonnull)stringMapArg
-                                    wrappedError:
-                                        (NativeInteropTestsError* _Nonnull)
-                                            wrappedError
-    SWIFT_WARN_UNUSED_RESULT;
-- (NSDictionary<id<NSCopying>, NSObject*>* _Nullable)
-    callFlutterEchoNonNullIntMapWithIntMap:
-        (NSDictionary<id<NSCopying>, NSObject*>* _Nonnull)intMapArg
-                              wrappedError:(NativeInteropTestsError* _Nonnull)
-                                               wrappedError
-    SWIFT_WARN_UNUSED_RESULT;
-- (NSDictionary<id<NSCopying>, NSObject*>* _Nullable)
-    callFlutterEchoNonNullEnumMapWithEnumMap:
-        (NSDictionary<id<NSCopying>, NSObject*>* _Nonnull)enumMapArg
-                                wrappedError:(NativeInteropTestsError* _Nonnull)
-                                                 wrappedError
-    SWIFT_WARN_UNUSED_RESULT;
-- (NSDictionary<id<NSCopying>, NSObject*>* _Nullable)
-    callFlutterEchoNonNullClassMapWithClassMap:
-        (NSDictionary<id<NSCopying>, NSObject*>* _Nonnull)classMapArg
-                                  wrappedError:
-                                      (NativeInteropTestsError* _Nonnull)
-                                          wrappedError SWIFT_WARN_UNUSED_RESULT;
 - (NSNumber* _Nullable)
-    callFlutterEchoEnumWithAnEnum:(enum NativeInteropAnEnum)anEnumArg
-                     wrappedError:
-                         (NativeInteropTestsError* _Nonnull)wrappedError
-    SWIFT_WARN_UNUSED_RESULT;
-- (NSNumber* _Nullable)
-    callFlutterEchoNativeInteropAnotherEnumWithAnotherEnum:
-        (enum NativeInteropAnotherEnum)anotherEnumArg
-                                              wrappedError:
-                                                  (NativeInteropTestsError* _Nonnull)
-                                                      wrappedError
-    SWIFT_WARN_UNUSED_RESULT;
-- (NSNumber* _Nullable)
-    callFlutterEchoNullableBoolWithABool:(NSNumber* _Nullable)aBoolArg
-                            wrappedError:
-                                (NativeInteropTestsError* _Nonnull)wrappedError
-    SWIFT_WARN_UNUSED_RESULT;
-- (NSNumber* _Nullable)
-    callFlutterEchoNullableIntWithAnInt:(NSNumber* _Nullable)anIntArg
-                           wrappedError:
-                               (NativeInteropTestsError* _Nonnull)wrappedError
-    SWIFT_WARN_UNUSED_RESULT;
-- (NSNumber* _Nullable)
-    callFlutterEchoNullableDoubleWithADouble:(NSNumber* _Nullable)aDoubleArg
-                                wrappedError:(NativeInteropTestsError* _Nonnull)
-                                                 wrappedError
+    pigeon_callFlutterEchoDouble:(double)aDoubleArg
+                    wrappedError:(NativeInteropTestsError* _Nonnull)wrappedError
     SWIFT_WARN_UNUSED_RESULT;
 - (NSString* _Nullable)
-    callFlutterEchoNullableStringWithAString:(NSString* _Nullable)aStringArg
-                                wrappedError:(NativeInteropTestsError* _Nonnull)
-                                                 wrappedError
+    pigeon_callFlutterEchoString:(NSString* _Nonnull)aStringArg
+                    wrappedError:(NativeInteropTestsError* _Nonnull)wrappedError
     SWIFT_WARN_UNUSED_RESULT;
-- (NativeInteropTestsPigeonTypedData* _Nullable)
-    callFlutterEchoNullableUint8ListWithList:
-        (NativeInteropTestsPigeonTypedData* _Nullable)listArg
-                                wrappedError:(NativeInteropTestsError* _Nonnull)
-                                                 wrappedError
-    SWIFT_WARN_UNUSED_RESULT;
-- (NativeInteropTestsPigeonTypedData* _Nullable)
-    callFlutterEchoNullableInt32ListWithList:
-        (NativeInteropTestsPigeonTypedData* _Nullable)listArg
-                                wrappedError:(NativeInteropTestsError* _Nonnull)
-                                                 wrappedError
-    SWIFT_WARN_UNUSED_RESULT;
-- (NativeInteropTestsPigeonTypedData* _Nullable)
-    callFlutterEchoNullableInt64ListWithList:
-        (NativeInteropTestsPigeonTypedData* _Nullable)listArg
-                                wrappedError:(NativeInteropTestsError* _Nonnull)
-                                                 wrappedError
-    SWIFT_WARN_UNUSED_RESULT;
-- (NativeInteropTestsPigeonTypedData* _Nullable)
-    callFlutterEchoNullableFloat64ListWithList:
-        (NativeInteropTestsPigeonTypedData* _Nullable)listArg
-                                  wrappedError:
-                                      (NativeInteropTestsError* _Nonnull)
-                                          wrappedError SWIFT_WARN_UNUSED_RESULT;
-- (NSArray<NSObject*>* _Nullable)
-    callFlutterEchoNullableListWithList:(NSArray<NSObject*>* _Nullable)listArg
-                           wrappedError:
-                               (NativeInteropTestsError* _Nonnull)wrappedError
-    SWIFT_WARN_UNUSED_RESULT;
-- (NSArray<NSObject*>* _Nullable)
-    callFlutterEchoNullableEnumListWithEnumList:
-        (NSArray<NSObject*>* _Nullable)enumListArg
-                                   wrappedError:
-                                       (NativeInteropTestsError* _Nonnull)
-                                           wrappedError
-    SWIFT_WARN_UNUSED_RESULT;
-- (NSArray<NSObject*>* _Nullable)
-    callFlutterEchoNullableClassListWithClassList:
-        (NSArray<NSObject*>* _Nullable)classListArg
-                                     wrappedError:
-                                         (NativeInteropTestsError* _Nonnull)
-                                             wrappedError
-    SWIFT_WARN_UNUSED_RESULT;
-- (NSArray<NSObject*>* _Nullable)
-    callFlutterEchoNullableNonNullEnumListWithEnumList:
-        (NSArray<NSObject*>* _Nullable)enumListArg
-                                          wrappedError:
-                                              (NativeInteropTestsError* _Nonnull)
-                                                  wrappedError
-    SWIFT_WARN_UNUSED_RESULT;
-- (NSArray<NSObject*>* _Nullable)
-    callFlutterEchoNullableNonNullClassListWithClassList:
-        (NSArray<NSObject*>* _Nullable)classListArg
-                                            wrappedError:
-                                                (NativeInteropTestsError* _Nonnull)
-                                                    wrappedError
-    SWIFT_WARN_UNUSED_RESULT;
-- (NSDictionary<id<NSCopying>, NSObject*>* _Nullable)
-    callFlutterEchoNullableMapWithMap:
-        (NSDictionary<id<NSCopying>, NSObject*>* _Nullable)mapArg
-                         wrappedError:
-                             (NativeInteropTestsError* _Nonnull)wrappedError
-    SWIFT_WARN_UNUSED_RESULT;
-- (NSDictionary<id<NSCopying>, NSObject*>* _Nullable)
-    callFlutterEchoNullableStringMapWithStringMap:
-        (NSDictionary<id<NSCopying>, NSObject*>* _Nullable)stringMapArg
-                                     wrappedError:
-                                         (NativeInteropTestsError* _Nonnull)
-                                             wrappedError
-    SWIFT_WARN_UNUSED_RESULT;
-- (NSDictionary<id<NSCopying>, NSObject*>* _Nullable)
-    callFlutterEchoNullableIntMapWithIntMap:
-        (NSDictionary<id<NSCopying>, NSObject*>* _Nullable)intMapArg
-                               wrappedError:(NativeInteropTestsError* _Nonnull)
-                                                wrappedError
-    SWIFT_WARN_UNUSED_RESULT;
-- (NSDictionary<id<NSCopying>, NSObject*>* _Nullable)
-    callFlutterEchoNullableEnumMapWithEnumMap:
-        (NSDictionary<id<NSCopying>, NSObject*>* _Nullable)enumMapArg
-                                 wrappedError:
-                                     (NativeInteropTestsError* _Nonnull)
-                                         wrappedError SWIFT_WARN_UNUSED_RESULT;
-- (NSDictionary<id<NSCopying>, NSObject*>* _Nullable)
-    callFlutterEchoNullableClassMapWithClassMap:
-        (NSDictionary<id<NSCopying>, NSObject*>* _Nullable)classMapArg
-                                   wrappedError:
-                                       (NativeInteropTestsError* _Nonnull)
-                                           wrappedError
-    SWIFT_WARN_UNUSED_RESULT;
-- (NSDictionary<id<NSCopying>, NSObject*>* _Nullable)
-    callFlutterEchoNullableNonNullStringMapWithStringMap:
-        (NSDictionary<id<NSCopying>, NSObject*>* _Nullable)stringMapArg
-                                            wrappedError:
-                                                (NativeInteropTestsError* _Nonnull)
-                                                    wrappedError
-    SWIFT_WARN_UNUSED_RESULT;
-- (NSDictionary<id<NSCopying>, NSObject*>* _Nullable)
-    callFlutterEchoNullableNonNullIntMapWithIntMap:
-        (NSDictionary<id<NSCopying>, NSObject*>* _Nullable)intMapArg
-                                      wrappedError:
-                                          (NativeInteropTestsError* _Nonnull)
-                                              wrappedError
-    SWIFT_WARN_UNUSED_RESULT;
-- (NSDictionary<id<NSCopying>, NSObject*>* _Nullable)
-    callFlutterEchoNullableNonNullEnumMapWithEnumMap:
-        (NSDictionary<id<NSCopying>, NSObject*>* _Nullable)enumMapArg
+- (NSData* _Nullable)pigeon_callFlutterEchoUint8List:(NSData* _Nonnull)listArg
                                         wrappedError:
                                             (NativeInteropTestsError* _Nonnull)
                                                 wrappedError
     SWIFT_WARN_UNUSED_RESULT;
-- (NSDictionary<id<NSCopying>, NSObject*>* _Nullable)
-    callFlutterEchoNullableNonNullClassMapWithClassMap:
-        (NSDictionary<id<NSCopying>, NSObject*>* _Nullable)classMapArg
-                                          wrappedError:
-                                              (NativeInteropTestsError* _Nonnull)
-                                                  wrappedError
+- (NSData* _Nullable)pigeon_callFlutterEchoInt32List:(NSData* _Nonnull)listArg
+                                        wrappedError:
+                                            (NativeInteropTestsError* _Nonnull)
+                                                wrappedError
     SWIFT_WARN_UNUSED_RESULT;
-- (NSNumber* _Nullable)
-    callFlutterEchoNullableEnumWithAnEnum:(NSNumber* _Nullable)anEnumArg
+- (NSData* _Nullable)pigeon_callFlutterEchoInt64List:(NSData* _Nonnull)listArg
+                                        wrappedError:
+                                            (NativeInteropTestsError* _Nonnull)
+                                                wrappedError
+    SWIFT_WARN_UNUSED_RESULT;
+- (NSData* _Nullable)
+    pigeon_callFlutterEchoFloat64List:(NSData* _Nonnull)listArg
+                         wrappedError:
+                             (NativeInteropTestsError* _Nonnull)wrappedError
+    SWIFT_WARN_UNUSED_RESULT;
+- (NSData* _Nullable)
+    pigeon_callFlutterEchoList:(NSData* _Nonnull)pigeonVar_args
+                  wrappedError:(NativeInteropTestsError* _Nonnull)wrappedError
+    SWIFT_WARN_UNUSED_RESULT;
+- (NSData* _Nullable)
+    pigeon_callFlutterEchoEnumList:(NSData* _Nonnull)pigeonVar_args
+                      wrappedError:
+                          (NativeInteropTestsError* _Nonnull)wrappedError
+    SWIFT_WARN_UNUSED_RESULT;
+- (NSData* _Nullable)
+    pigeon_callFlutterEchoClassList:(NSData* _Nonnull)pigeonVar_args
+                       wrappedError:
+                           (NativeInteropTestsError* _Nonnull)wrappedError
+    SWIFT_WARN_UNUSED_RESULT;
+- (NSData* _Nullable)
+    pigeon_callFlutterEchoNonNullEnumList:(NSData* _Nonnull)pigeonVar_args
+                             wrappedError:
+                                 (NativeInteropTestsError* _Nonnull)wrappedError
+    SWIFT_WARN_UNUSED_RESULT;
+- (NSData* _Nullable)
+    pigeon_callFlutterEchoNonNullClassList:(NSData* _Nonnull)pigeonVar_args
+                              wrappedError:(NativeInteropTestsError* _Nonnull)
+                                               wrappedError
+    SWIFT_WARN_UNUSED_RESULT;
+- (NSData* _Nullable)
+    pigeon_callFlutterEchoMap:(NSData* _Nonnull)pigeonVar_args
+                 wrappedError:(NativeInteropTestsError* _Nonnull)wrappedError
+    SWIFT_WARN_UNUSED_RESULT;
+- (NSData* _Nullable)
+    pigeon_callFlutterEchoStringMap:(NSData* _Nonnull)pigeonVar_args
+                       wrappedError:
+                           (NativeInteropTestsError* _Nonnull)wrappedError
+    SWIFT_WARN_UNUSED_RESULT;
+- (NSData* _Nullable)
+    pigeon_callFlutterEchoIntMap:(NSData* _Nonnull)pigeonVar_args
+                    wrappedError:(NativeInteropTestsError* _Nonnull)wrappedError
+    SWIFT_WARN_UNUSED_RESULT;
+- (NSData* _Nullable)
+    pigeon_callFlutterEchoEnumMap:(NSData* _Nonnull)pigeonVar_args
+                     wrappedError:
+                         (NativeInteropTestsError* _Nonnull)wrappedError
+    SWIFT_WARN_UNUSED_RESULT;
+- (NSData* _Nullable)
+    pigeon_callFlutterEchoClassMap:(NSData* _Nonnull)pigeonVar_args
+                      wrappedError:
+                          (NativeInteropTestsError* _Nonnull)wrappedError
+    SWIFT_WARN_UNUSED_RESULT;
+- (NSData* _Nullable)
+    pigeon_callFlutterEchoNonNullStringMap:(NSData* _Nonnull)pigeonVar_args
+                              wrappedError:(NativeInteropTestsError* _Nonnull)
+                                               wrappedError
+    SWIFT_WARN_UNUSED_RESULT;
+- (NSData* _Nullable)
+    pigeon_callFlutterEchoNonNullIntMap:(NSData* _Nonnull)pigeonVar_args
+                           wrappedError:
+                               (NativeInteropTestsError* _Nonnull)wrappedError
+    SWIFT_WARN_UNUSED_RESULT;
+- (NSData* _Nullable)
+    pigeon_callFlutterEchoNonNullEnumMap:(NSData* _Nonnull)pigeonVar_args
+                            wrappedError:
+                                (NativeInteropTestsError* _Nonnull)wrappedError
+    SWIFT_WARN_UNUSED_RESULT;
+- (NSData* _Nullable)
+    pigeon_callFlutterEchoNonNullClassMap:(NSData* _Nonnull)pigeonVar_args
                              wrappedError:
                                  (NativeInteropTestsError* _Nonnull)wrappedError
     SWIFT_WARN_UNUSED_RESULT;
 - (NSNumber* _Nullable)
-    callFlutterEchoAnotherNullableEnumWithAnotherEnum:
-        (NSNumber* _Nullable)anotherEnumArg
-                                         wrappedError:
-                                             (NativeInteropTestsError* _Nonnull)
-                                                 wrappedError
+    pigeon_callFlutterEchoEnum:(int64_t)anEnumArg
+                  wrappedError:(NativeInteropTestsError* _Nonnull)wrappedError
     SWIFT_WARN_UNUSED_RESULT;
-- (void)callFlutterNoopAsyncWithWrappedError:
+- (NSNumber* _Nullable)
+    pigeon_callFlutterEchoNativeInteropAnotherEnum:(int64_t)anotherEnumArg
+                                      wrappedError:
+                                          (NativeInteropTestsError* _Nonnull)
+                                              wrappedError
+    SWIFT_WARN_UNUSED_RESULT;
+- (NSNumber* _Nullable)
+    pigeon_callFlutterEchoNullableBool:(NSNumber* _Nullable)aBoolArg
+                          wrappedError:
+                              (NativeInteropTestsError* _Nonnull)wrappedError
+    SWIFT_WARN_UNUSED_RESULT;
+- (NSNumber* _Nullable)
+    pigeon_callFlutterEchoNullableInt:(NSNumber* _Nullable)anIntArg
+                         wrappedError:
+                             (NativeInteropTestsError* _Nonnull)wrappedError
+    SWIFT_WARN_UNUSED_RESULT;
+- (NSNumber* _Nullable)
+    pigeon_callFlutterEchoNullableDouble:(NSNumber* _Nullable)aDoubleArg
+                            wrappedError:
+                                (NativeInteropTestsError* _Nonnull)wrappedError
+    SWIFT_WARN_UNUSED_RESULT;
+- (NSString* _Nullable)
+    pigeon_callFlutterEchoNullableString:(NSString* _Nullable)aStringArg
+                            wrappedError:
+                                (NativeInteropTestsError* _Nonnull)wrappedError
+    SWIFT_WARN_UNUSED_RESULT;
+- (NSData* _Nullable)
+    pigeon_callFlutterEchoNullableUint8List:(NSData* _Nullable)listArg
+                               wrappedError:(NativeInteropTestsError* _Nonnull)
+                                                wrappedError
+    SWIFT_WARN_UNUSED_RESULT;
+- (NSData* _Nullable)
+    pigeon_callFlutterEchoNullableInt32List:(NSData* _Nullable)listArg
+                               wrappedError:(NativeInteropTestsError* _Nonnull)
+                                                wrappedError
+    SWIFT_WARN_UNUSED_RESULT;
+- (NSData* _Nullable)
+    pigeon_callFlutterEchoNullableInt64List:(NSData* _Nullable)listArg
+                               wrappedError:(NativeInteropTestsError* _Nonnull)
+                                                wrappedError
+    SWIFT_WARN_UNUSED_RESULT;
+- (NSData* _Nullable)
+    pigeon_callFlutterEchoNullableFloat64List:(NSData* _Nullable)listArg
+                                 wrappedError:
+                                     (NativeInteropTestsError* _Nonnull)
+                                         wrappedError SWIFT_WARN_UNUSED_RESULT;
+- (NSData* _Nullable)
+    pigeon_callFlutterEchoNullableList:(NSData* _Nonnull)pigeonVar_args
+                          wrappedError:
+                              (NativeInteropTestsError* _Nonnull)wrappedError
+    SWIFT_WARN_UNUSED_RESULT;
+- (NSData* _Nullable)
+    pigeon_callFlutterEchoNullableEnumList:(NSData* _Nonnull)pigeonVar_args
+                              wrappedError:(NativeInteropTestsError* _Nonnull)
+                                               wrappedError
+    SWIFT_WARN_UNUSED_RESULT;
+- (NSData* _Nullable)
+    pigeon_callFlutterEchoNullableClassList:(NSData* _Nonnull)pigeonVar_args
+                               wrappedError:(NativeInteropTestsError* _Nonnull)
+                                                wrappedError
+    SWIFT_WARN_UNUSED_RESULT;
+- (NSData* _Nullable)
+    pigeon_callFlutterEchoNullableNonNullEnumList:
+        (NSData* _Nonnull)pigeonVar_args
+                                     wrappedError:
+                                         (NativeInteropTestsError* _Nonnull)
+                                             wrappedError
+    SWIFT_WARN_UNUSED_RESULT;
+- (NSData* _Nullable)
+    pigeon_callFlutterEchoNullableNonNullClassList:
+        (NSData* _Nonnull)pigeonVar_args
+                                      wrappedError:
+                                          (NativeInteropTestsError* _Nonnull)
+                                              wrappedError
+    SWIFT_WARN_UNUSED_RESULT;
+- (NSData* _Nullable)
+    pigeon_callFlutterEchoNullableMap:(NSData* _Nonnull)pigeonVar_args
+                         wrappedError:
+                             (NativeInteropTestsError* _Nonnull)wrappedError
+    SWIFT_WARN_UNUSED_RESULT;
+- (NSData* _Nullable)
+    pigeon_callFlutterEchoNullableStringMap:(NSData* _Nonnull)pigeonVar_args
+                               wrappedError:(NativeInteropTestsError* _Nonnull)
+                                                wrappedError
+    SWIFT_WARN_UNUSED_RESULT;
+- (NSData* _Nullable)
+    pigeon_callFlutterEchoNullableIntMap:(NSData* _Nonnull)pigeonVar_args
+                            wrappedError:
+                                (NativeInteropTestsError* _Nonnull)wrappedError
+    SWIFT_WARN_UNUSED_RESULT;
+- (NSData* _Nullable)
+    pigeon_callFlutterEchoNullableEnumMap:(NSData* _Nonnull)pigeonVar_args
+                             wrappedError:
+                                 (NativeInteropTestsError* _Nonnull)wrappedError
+    SWIFT_WARN_UNUSED_RESULT;
+- (NSData* _Nullable)
+    pigeon_callFlutterEchoNullableClassMap:(NSData* _Nonnull)pigeonVar_args
+                              wrappedError:(NativeInteropTestsError* _Nonnull)
+                                               wrappedError
+    SWIFT_WARN_UNUSED_RESULT;
+- (NSData* _Nullable)
+    pigeon_callFlutterEchoNullableNonNullStringMap:
+        (NSData* _Nonnull)pigeonVar_args
+                                      wrappedError:
+                                          (NativeInteropTestsError* _Nonnull)
+                                              wrappedError
+    SWIFT_WARN_UNUSED_RESULT;
+- (NSData* _Nullable)
+    pigeon_callFlutterEchoNullableNonNullIntMap:(NSData* _Nonnull)pigeonVar_args
+                                   wrappedError:
+                                       (NativeInteropTestsError* _Nonnull)
+                                           wrappedError
+    SWIFT_WARN_UNUSED_RESULT;
+- (NSData* _Nullable)
+    pigeon_callFlutterEchoNullableNonNullEnumMap:
+        (NSData* _Nonnull)pigeonVar_args
+                                    wrappedError:
+                                        (NativeInteropTestsError* _Nonnull)
+                                            wrappedError
+    SWIFT_WARN_UNUSED_RESULT;
+- (NSData* _Nullable)
+    pigeon_callFlutterEchoNullableNonNullClassMap:
+        (NSData* _Nonnull)pigeonVar_args
+                                     wrappedError:
+                                         (NativeInteropTestsError* _Nonnull)
+                                             wrappedError
+    SWIFT_WARN_UNUSED_RESULT;
+- (NSNumber* _Nullable)
+    pigeon_callFlutterEchoNullableEnum:(int64_t)anEnumArg
+                          wrappedError:
+                              (NativeInteropTestsError* _Nonnull)wrappedError
+    SWIFT_WARN_UNUSED_RESULT;
+- (NSNumber* _Nullable)
+    pigeon_callFlutterEchoAnotherNullableEnum:(int64_t)anotherEnumArg
+                                 wrappedError:
+                                     (NativeInteropTestsError* _Nonnull)
+                                         wrappedError SWIFT_WARN_UNUSED_RESULT;
+- (void)pigeon_callFlutterNoopAsync:
             (NativeInteropTestsError* _Nonnull)wrappedError
-                           completionHandler:
-                               (void (^_Nonnull)(void))completionHandler;
+                  completionHandler:(void (^_Nonnull)(void))completionHandler;
 - (void)
-    callFlutterEchoAsyncNativeInteropAllTypesWithEverything:
-        (NativeInteropAllTypesBridge* _Nonnull)everythingArg
-                                               wrappedError:
-                                                   (NativeInteropTestsError* _Nonnull)
-                                                       wrappedError
-                                          completionHandler:
-                                              (void (^_Nonnull)(
-                                                  NativeInteropAllTypesBridge* _Nullable))
-                                                  completionHandler;
+    pigeon_callFlutterEchoAsyncNativeInteropAllTypes:
+        (NSData* _Nonnull)pigeonVar_args
+                                        wrappedError:
+                                            (NativeInteropTestsError* _Nonnull)
+                                                wrappedError
+                                   completionHandler:
+                                       (void (^_Nonnull)(NSData* _Nullable))
+                                           completionHandler;
 - (void)
-    callFlutterEchoAsyncNullableNativeInteropAllNullableTypesWithEverything:
-        (NativeInteropAllNullableTypesBridge* _Nullable)everythingArg
-                                                               wrappedError:
-                                                                   (NativeInteropTestsError* _Nonnull)
-                                                                       wrappedError
-                                                          completionHandler:
-                                                              (void (^_Nonnull)(
-                                                                  NativeInteropAllNullableTypesBridge* _Nullable))
-                                                                  completionHandler;
+    pigeon_callFlutterEchoAsyncNullableNativeInteropAllNullableTypes:
+        (NSData* _Nonnull)pigeonVar_args
+                                                        wrappedError:
+                                                            (NativeInteropTestsError* _Nonnull)
+                                                                wrappedError
+                                                   completionHandler:
+                                                       (void (^_Nonnull)(
+                                                           NSData* _Nullable))
+                                                           completionHandler;
 - (void)
-    callFlutterEchoAsyncNullableNativeInteropAllNullableTypesWithoutRecursionWithEverything:
-        (NativeInteropAllNullableTypesWithoutRecursionBridge* _Nullable)
-            everythingArg
-                                                                               wrappedError:
-                                                                                   (NativeInteropTestsError* _Nonnull)
-                                                                                       wrappedError
-                                                                          completionHandler:
-                                                                              (void (
-                                                                                  ^_Nonnull)(
-                                                                                  NativeInteropAllNullableTypesWithoutRecursionBridge* _Nullable))
-                                                                                  completionHandler;
-- (void)callFlutterEchoAsyncBoolWithABool:(BOOL)aBoolArg
+    pigeon_callFlutterEchoAsyncNullableNativeInteropAllNullableTypesWithoutRecursion:
+        (NSData* _Nonnull)pigeonVar_args
+                                                                        wrappedError:
+                                                                            (NativeInteropTestsError* _Nonnull)
+                                                                                wrappedError
+                                                                   completionHandler:
+                                                                       (void (
+                                                                           ^_Nonnull)(
+                                                                           NSData* _Nullable))
+                                                                           completionHandler;
+- (void)pigeon_callFlutterEchoAsyncBool:(BOOL)aBoolArg
+                           wrappedError:
+                               (NativeInteropTestsError* _Nonnull)wrappedError
+                      completionHandler:(void (^_Nonnull)(NSNumber* _Nullable))
+                                            completionHandler;
+- (void)pigeon_callFlutterEchoAsyncInt:(int64_t)anIntArg
+                          wrappedError:
+                              (NativeInteropTestsError* _Nonnull)wrappedError
+                     completionHandler:(void (^_Nonnull)(NSNumber* _Nullable))
+                                           completionHandler;
+- (void)pigeon_callFlutterEchoAsyncDouble:(double)aDoubleArg
                              wrappedError:
                                  (NativeInteropTestsError* _Nonnull)wrappedError
                         completionHandler:
                             (void (^_Nonnull)(NSNumber* _Nullable))
                                 completionHandler;
-- (void)callFlutterEchoAsyncIntWithAnInt:(int64_t)anIntArg
-                            wrappedError:
-                                (NativeInteropTestsError* _Nonnull)wrappedError
-                       completionHandler:(void (^_Nonnull)(NSNumber* _Nullable))
-                                             completionHandler;
-- (void)callFlutterEchoAsyncDoubleWithADouble:(double)aDoubleArg
-                                 wrappedError:
-                                     (NativeInteropTestsError* _Nonnull)
-                                         wrappedError
-                            completionHandler:
-                                (void (^_Nonnull)(NSNumber* _Nullable))
-                                    completionHandler;
-- (void)callFlutterEchoAsyncStringWithAString:(NSString* _Nonnull)aStringArg
-                                 wrappedError:
-                                     (NativeInteropTestsError* _Nonnull)
-                                         wrappedError
-                            completionHandler:
-                                (void (^_Nonnull)(NSString* _Nullable))
-                                    completionHandler;
-- (void)
-    callFlutterEchoAsyncUint8ListWithList:
-        (NativeInteropTestsPigeonTypedData* _Nonnull)listArg
+- (void)pigeon_callFlutterEchoAsyncString:(NSString* _Nonnull)aStringArg
                              wrappedError:
                                  (NativeInteropTestsError* _Nonnull)wrappedError
                         completionHandler:
-                            (void (^_Nonnull)(
-                                NativeInteropTestsPigeonTypedData* _Nullable))
+                            (void (^_Nonnull)(NSString* _Nullable))
                                 completionHandler;
-- (void)
-    callFlutterEchoAsyncInt32ListWithList:
-        (NativeInteropTestsPigeonTypedData* _Nonnull)listArg
-                             wrappedError:
-                                 (NativeInteropTestsError* _Nonnull)wrappedError
-                        completionHandler:
-                            (void (^_Nonnull)(
-                                NativeInteropTestsPigeonTypedData* _Nullable))
-                                completionHandler;
-- (void)
-    callFlutterEchoAsyncInt64ListWithList:
-        (NativeInteropTestsPigeonTypedData* _Nonnull)listArg
-                             wrappedError:
-                                 (NativeInteropTestsError* _Nonnull)wrappedError
-                        completionHandler:
-                            (void (^_Nonnull)(
-                                NativeInteropTestsPigeonTypedData* _Nullable))
-                                completionHandler;
-- (void)
-    callFlutterEchoAsyncFloat64ListWithList:
-        (NativeInteropTestsPigeonTypedData* _Nonnull)listArg
-                               wrappedError:(NativeInteropTestsError* _Nonnull)
-                                                wrappedError
-                          completionHandler:
-                              (void (^_Nonnull)(
-                                  NativeInteropTestsPigeonTypedData* _Nullable))
-                                  completionHandler;
-- (void)callFlutterEchoAsyncObjectWithAnObject:(NSObject* _Nonnull)anObjectArg
-                                  wrappedError:
-                                      (NativeInteropTestsError* _Nonnull)
-                                          wrappedError
-                             completionHandler:
-                                 (void (^_Nonnull)(NSObject* _Nullable))
-                                     completionHandler;
-- (void)callFlutterEchoAsyncListWithList:(NSArray<NSObject*>* _Nonnull)listArg
-                            wrappedError:
-                                (NativeInteropTestsError* _Nonnull)wrappedError
-                       completionHandler:
-                           (void (^_Nonnull)(NSArray<NSObject*>* _Nullable))
-                               completionHandler;
-- (void)
-    callFlutterEchoAsyncEnumListWithEnumList:
-        (NSArray<NSObject*>* _Nonnull)enumListArg
+- (void)pigeon_callFlutterEchoAsyncUint8List:(NSData* _Nonnull)listArg
                                 wrappedError:(NativeInteropTestsError* _Nonnull)
                                                  wrappedError
                            completionHandler:
-                               (void (^_Nonnull)(NSArray<NSObject*>* _Nullable))
+                               (void (^_Nonnull)(NSData* _Nullable))
                                    completionHandler;
-- (void)callFlutterEchoAsyncClassListWithClassList:
-            (NSArray<NSObject*>* _Nonnull)classListArg
+- (void)pigeon_callFlutterEchoAsyncInt32List:(NSData* _Nonnull)listArg
+                                wrappedError:(NativeInteropTestsError* _Nonnull)
+                                                 wrappedError
+                           completionHandler:
+                               (void (^_Nonnull)(NSData* _Nullable))
+                                   completionHandler;
+- (void)pigeon_callFlutterEchoAsyncInt64List:(NSData* _Nonnull)listArg
+                                wrappedError:(NativeInteropTestsError* _Nonnull)
+                                                 wrappedError
+                           completionHandler:
+                               (void (^_Nonnull)(NSData* _Nullable))
+                                   completionHandler;
+- (void)
+    pigeon_callFlutterEchoAsyncFloat64List:(NSData* _Nonnull)listArg
+                              wrappedError:(NativeInteropTestsError* _Nonnull)
+                                               wrappedError
+                         completionHandler:(void (^_Nonnull)(NSData* _Nullable))
+                                               completionHandler;
+- (void)pigeon_callFlutterEchoAsyncObject:(NSData* _Nonnull)pigeonVar_args
+                             wrappedError:
+                                 (NativeInteropTestsError* _Nonnull)wrappedError
+                        completionHandler:(void (^_Nonnull)(NSData* _Nullable))
+                                              completionHandler;
+- (void)pigeon_callFlutterEchoAsyncList:(NSData* _Nonnull)pigeonVar_args
+                           wrappedError:
+                               (NativeInteropTestsError* _Nonnull)wrappedError
+                      completionHandler:(void (^_Nonnull)(NSData* _Nullable))
+                                            completionHandler;
+- (void)pigeon_callFlutterEchoAsyncEnumList:(NSData* _Nonnull)pigeonVar_args
+                               wrappedError:(NativeInteropTestsError* _Nonnull)
+                                                wrappedError
+                          completionHandler:
+                              (void (^_Nonnull)(NSData* _Nullable))
+                                  completionHandler;
+- (void)pigeon_callFlutterEchoAsyncClassList:(NSData* _Nonnull)pigeonVar_args
+                                wrappedError:(NativeInteropTestsError* _Nonnull)
+                                                 wrappedError
+                           completionHandler:
+                               (void (^_Nonnull)(NSData* _Nullable))
+                                   completionHandler;
+- (void)pigeon_callFlutterEchoAsyncNonNullEnumList:
+            (NSData* _Nonnull)pigeonVar_args
                                       wrappedError:
                                           (NativeInteropTestsError* _Nonnull)
                                               wrappedError
                                  completionHandler:
-                                     (void (^_Nonnull)(
-                                         NSArray<NSObject*>* _Nullable))
+                                     (void (^_Nonnull)(NSData* _Nullable))
                                          completionHandler;
-- (void)
-    callFlutterEchoAsyncNonNullEnumListWithEnumList:
-        (NSArray<NSObject*>* _Nonnull)enumListArg
+- (void)pigeon_callFlutterEchoAsyncNonNullClassList:
+            (NSData* _Nonnull)pigeonVar_args
                                        wrappedError:
                                            (NativeInteropTestsError* _Nonnull)
                                                wrappedError
                                   completionHandler:
-                                      (void (^_Nonnull)(
-                                          NSArray<NSObject*>* _Nullable))
+                                      (void (^_Nonnull)(NSData* _Nullable))
                                           completionHandler;
-- (void)
-    callFlutterEchoAsyncNonNullClassListWithClassList:
-        (NSArray<NSObject*>* _Nonnull)classListArg
-                                         wrappedError:
-                                             (NativeInteropTestsError* _Nonnull)
-                                                 wrappedError
-                                    completionHandler:
-                                        (void (^_Nonnull)(
-                                            NSArray<NSObject*>* _Nullable))
-                                            completionHandler;
-- (void)callFlutterEchoAsyncMapWithMap:
-            (NSDictionary<id<NSCopying>, NSObject*>* _Nonnull)mapArg
+- (void)pigeon_callFlutterEchoAsyncMap:(NSData* _Nonnull)pigeonVar_args
                           wrappedError:
                               (NativeInteropTestsError* _Nonnull)wrappedError
                      completionHandler:
-                         (void (^_Nonnull)(
-                             NSDictionary<id<NSCopying>, NSObject*>* _Nullable))
-                             completionHandler;
-- (void)callFlutterEchoAsyncStringMapWithStringMap:
-            (NSDictionary<id<NSCopying>, NSObject*>* _Nonnull)stringMapArg
-                                      wrappedError:
-                                          (NativeInteropTestsError* _Nonnull)
-                                              wrappedError
-                                 completionHandler:
-                                     (void (^_Nonnull)(
-                                         NSDictionary<id<NSCopying>,
-                                                      NSObject*>* _Nullable))
-                                         completionHandler;
-- (void)callFlutterEchoAsyncIntMapWithIntMap:
-            (NSDictionary<id<NSCopying>, NSObject*>* _Nonnull)intMapArg
+                         (void (^_Nonnull)(NSData* _Nullable))completionHandler;
+- (void)pigeon_callFlutterEchoAsyncStringMap:(NSData* _Nonnull)pigeonVar_args
                                 wrappedError:(NativeInteropTestsError* _Nonnull)
                                                  wrappedError
                            completionHandler:
-                               (void (^_Nonnull)(
-                                   NSDictionary<id<NSCopying>,
-                                                NSObject*>* _Nullable))
+                               (void (^_Nonnull)(NSData* _Nullable))
                                    completionHandler;
-- (void)callFlutterEchoAsyncEnumMapWithEnumMap:
-            (NSDictionary<id<NSCopying>, NSObject*>* _Nonnull)enumMapArg
+- (void)pigeon_callFlutterEchoAsyncIntMap:(NSData* _Nonnull)pigeonVar_args
+                             wrappedError:
+                                 (NativeInteropTestsError* _Nonnull)wrappedError
+                        completionHandler:(void (^_Nonnull)(NSData* _Nullable))
+                                              completionHandler;
+- (void)pigeon_callFlutterEchoAsyncEnumMap:(NSData* _Nonnull)pigeonVar_args
+                              wrappedError:(NativeInteropTestsError* _Nonnull)
+                                               wrappedError
+                         completionHandler:(void (^_Nonnull)(NSData* _Nullable))
+                                               completionHandler;
+- (void)pigeon_callFlutterEchoAsyncClassMap:(NSData* _Nonnull)pigeonVar_args
+                               wrappedError:(NativeInteropTestsError* _Nonnull)
+                                                wrappedError
+                          completionHandler:
+                              (void (^_Nonnull)(NSData* _Nullable))
+                                  completionHandler;
+- (void)pigeon_callFlutterEchoAsyncEnum:(int64_t)anEnumArg
+                           wrappedError:
+                               (NativeInteropTestsError* _Nonnull)wrappedError
+                      completionHandler:(void (^_Nonnull)(NSNumber* _Nullable))
+                                            completionHandler;
+- (void)pigeon_callFlutterEchoAnotherAsyncEnum:(int64_t)anotherEnumArg
                                   wrappedError:
                                       (NativeInteropTestsError* _Nonnull)
                                           wrappedError
                              completionHandler:
-                                 (void (^_Nonnull)(
-                                     NSDictionary<id<NSCopying>,
-                                                  NSObject*>* _Nullable))
+                                 (void (^_Nonnull)(NSNumber* _Nullable))
                                      completionHandler;
-- (void)callFlutterEchoAsyncClassMapWithClassMap:
-            (NSDictionary<id<NSCopying>, NSObject*>* _Nonnull)classMapArg
-                                    wrappedError:
-                                        (NativeInteropTestsError* _Nonnull)
-                                            wrappedError
-                               completionHandler:
-                                   (void (^_Nonnull)(
-                                       NSDictionary<id<NSCopying>,
-                                                    NSObject*>* _Nullable))
-                                       completionHandler;
-- (void)callFlutterEchoAsyncEnumWithAnEnum:(enum NativeInteropAnEnum)anEnumArg
-                              wrappedError:(NativeInteropTestsError* _Nonnull)
-                                               wrappedError
-                         completionHandler:
-                             (void (^_Nonnull)(NSNumber* _Nullable))
-                                 completionHandler;
-- (void)
-    callFlutterEchoAnotherAsyncEnumWithAnotherEnum:
-        (enum NativeInteropAnotherEnum)anotherEnumArg
-                                      wrappedError:
-                                          (NativeInteropTestsError* _Nonnull)
-                                              wrappedError
-                                 completionHandler:
-                                     (void (^_Nonnull)(NSNumber* _Nullable))
-                                         completionHandler;
-- (void)callFlutterEchoAsyncNullableBoolWithABool:(NSNumber* _Nullable)aBoolArg
+- (void)pigeon_callFlutterEchoAsyncNullableBool:(NSNumber* _Nullable)aBoolArg
+                                   wrappedError:
+                                       (NativeInteropTestsError* _Nonnull)
+                                           wrappedError
+                              completionHandler:
+                                  (void (^_Nonnull)(NSNumber* _Nullable))
+                                      completionHandler;
+- (void)pigeon_callFlutterEchoAsyncNullableInt:(NSNumber* _Nullable)anIntArg
+                                  wrappedError:
+                                      (NativeInteropTestsError* _Nonnull)
+                                          wrappedError
+                             completionHandler:
+                                 (void (^_Nonnull)(NSNumber* _Nullable))
+                                     completionHandler;
+- (void)pigeon_callFlutterEchoAsyncNullableDouble:
+            (NSNumber* _Nullable)aDoubleArg
                                      wrappedError:
                                          (NativeInteropTestsError* _Nonnull)
                                              wrappedError
                                 completionHandler:
                                     (void (^_Nonnull)(NSNumber* _Nullable))
                                         completionHandler;
-- (void)callFlutterEchoAsyncNullableIntWithAnInt:(NSNumber* _Nullable)anIntArg
-                                    wrappedError:
-                                        (NativeInteropTestsError* _Nonnull)
-                                            wrappedError
-                               completionHandler:
-                                   (void (^_Nonnull)(NSNumber* _Nullable))
-                                       completionHandler;
-- (void)callFlutterEchoAsyncNullableDoubleWithADouble:
-            (NSNumber* _Nullable)aDoubleArg
-                                         wrappedError:
-                                             (NativeInteropTestsError* _Nonnull)
-                                                 wrappedError
-                                    completionHandler:
-                                        (void (^_Nonnull)(NSNumber* _Nullable))
-                                            completionHandler;
-- (void)callFlutterEchoAsyncNullableStringWithAString:
+- (void)pigeon_callFlutterEchoAsyncNullableString:
             (NSString* _Nullable)aStringArg
-                                         wrappedError:
-                                             (NativeInteropTestsError* _Nonnull)
-                                                 wrappedError
-                                    completionHandler:
-                                        (void (^_Nonnull)(NSString* _Nullable))
-                                            completionHandler;
-- (void)
-    callFlutterEchoAsyncNullableUint8ListWithList:
-        (NativeInteropTestsPigeonTypedData* _Nullable)listArg
                                      wrappedError:
                                          (NativeInteropTestsError* _Nonnull)
                                              wrappedError
                                 completionHandler:
-                                    (void (^_Nonnull)(
-                                        NativeInteropTestsPigeonTypedData* _Nullable))
+                                    (void (^_Nonnull)(NSString* _Nullable))
                                         completionHandler;
+- (void)pigeon_callFlutterEchoAsyncNullableUint8List:(NSData* _Nullable)listArg
+                                        wrappedError:
+                                            (NativeInteropTestsError* _Nonnull)
+                                                wrappedError
+                                   completionHandler:
+                                       (void (^_Nonnull)(NSData* _Nullable))
+                                           completionHandler;
+- (void)pigeon_callFlutterEchoAsyncNullableInt32List:(NSData* _Nullable)listArg
+                                        wrappedError:
+                                            (NativeInteropTestsError* _Nonnull)
+                                                wrappedError
+                                   completionHandler:
+                                       (void (^_Nonnull)(NSData* _Nullable))
+                                           completionHandler;
+- (void)pigeon_callFlutterEchoAsyncNullableInt64List:(NSData* _Nullable)listArg
+                                        wrappedError:
+                                            (NativeInteropTestsError* _Nonnull)
+                                                wrappedError
+                                   completionHandler:
+                                       (void (^_Nonnull)(NSData* _Nullable))
+                                           completionHandler;
 - (void)
-    callFlutterEchoAsyncNullableInt32ListWithList:
-        (NativeInteropTestsPigeonTypedData* _Nullable)listArg
+    pigeon_callFlutterEchoAsyncNullableFloat64List:(NSData* _Nullable)listArg
+                                      wrappedError:
+                                          (NativeInteropTestsError* _Nonnull)
+                                              wrappedError
+                                 completionHandler:
+                                     (void (^_Nonnull)(NSData* _Nullable))
+                                         completionHandler;
+- (void)pigeon_callFlutterThrowFlutterErrorAsync:
+            (NativeInteropTestsError* _Nonnull)wrappedError
+                               completionHandler:
+                                   (void (^_Nonnull)(NSData* _Nullable))
+                                       completionHandler;
+- (void)pigeon_callFlutterEchoAsyncNullableObject:
+            (NSData* _Nonnull)pigeonVar_args
                                      wrappedError:
                                          (NativeInteropTestsError* _Nonnull)
                                              wrappedError
                                 completionHandler:
-                                    (void (^_Nonnull)(
-                                        NativeInteropTestsPigeonTypedData* _Nullable))
+                                    (void (^_Nonnull)(NSData* _Nullable))
                                         completionHandler;
-- (void)
-    callFlutterEchoAsyncNullableInt64ListWithList:
-        (NativeInteropTestsPigeonTypedData* _Nullable)listArg
-                                     wrappedError:
-                                         (NativeInteropTestsError* _Nonnull)
-                                             wrappedError
-                                completionHandler:
-                                    (void (^_Nonnull)(
-                                        NativeInteropTestsPigeonTypedData* _Nullable))
-                                        completionHandler;
-- (void)
-    callFlutterEchoAsyncNullableFloat64ListWithList:
-        (NativeInteropTestsPigeonTypedData* _Nullable)listArg
+- (void)pigeon_callFlutterEchoAsyncNullableList:(NSData* _Nonnull)pigeonVar_args
+                                   wrappedError:
+                                       (NativeInteropTestsError* _Nonnull)
+                                           wrappedError
+                              completionHandler:
+                                  (void (^_Nonnull)(NSData* _Nullable))
+                                      completionHandler;
+- (void)pigeon_callFlutterEchoAsyncNullableEnumList:
+            (NSData* _Nonnull)pigeonVar_args
                                        wrappedError:
                                            (NativeInteropTestsError* _Nonnull)
                                                wrappedError
                                   completionHandler:
-                                      (void (^_Nonnull)(
-                                          NativeInteropTestsPigeonTypedData* _Nullable))
+                                      (void (^_Nonnull)(NSData* _Nullable))
                                           completionHandler;
-- (void)
-    callFlutterThrowFlutterErrorAsyncWithWrappedError:
-        (NativeInteropTestsError* _Nonnull)wrappedError
-                                    completionHandler:
-                                        (void (^_Nonnull)(NSObject* _Nullable))
-                                            completionHandler;
-- (void)
-    callFlutterEchoAsyncNullableObjectWithAnObject:
-        (NSObject* _Nonnull)anObjectArg
-                                      wrappedError:
-                                          (NativeInteropTestsError* _Nonnull)
-                                              wrappedError
-                                 completionHandler:
-                                     (void (^_Nonnull)(NSObject* _Nullable))
-                                         completionHandler;
-- (void)
-    callFlutterEchoAsyncNullableListWithList:
-        (NSArray<NSObject*>* _Nullable)listArg
-                                wrappedError:(NativeInteropTestsError* _Nonnull)
-                                                 wrappedError
-                           completionHandler:
-                               (void (^_Nonnull)(NSArray<NSObject*>* _Nullable))
-                                   completionHandler;
-- (void)
-    callFlutterEchoAsyncNullableEnumListWithEnumList:
-        (NSArray<NSObject*>* _Nullable)enumListArg
+- (void)pigeon_callFlutterEchoAsyncNullableClassList:
+            (NSData* _Nonnull)pigeonVar_args
                                         wrappedError:
                                             (NativeInteropTestsError* _Nonnull)
                                                 wrappedError
                                    completionHandler:
-                                       (void (^_Nonnull)(
-                                           NSArray<NSObject*>* _Nullable))
+                                       (void (^_Nonnull)(NSData* _Nullable))
                                            completionHandler;
 - (void)
-    callFlutterEchoAsyncNullableClassListWithClassList:
-        (NSArray<NSObject*>* _Nullable)classListArg
+    pigeon_callFlutterEchoAsyncNullableNonNullEnumList:
+        (NSData* _Nonnull)pigeonVar_args
                                           wrappedError:
                                               (NativeInteropTestsError* _Nonnull)
                                                   wrappedError
                                      completionHandler:
-                                         (void (^_Nonnull)(
-                                             NSArray<NSObject*>* _Nullable))
+                                         (void (^_Nonnull)(NSData* _Nullable))
                                              completionHandler;
 - (void)
-    callFlutterEchoAsyncNullableNonNullEnumListWithEnumList:
-        (NSArray<NSObject*>* _Nullable)enumListArg
-                                               wrappedError:
-                                                   (NativeInteropTestsError* _Nonnull)
-                                                       wrappedError
-                                          completionHandler:
-                                              (void (^_Nonnull)(
-                                                  NSArray<
-                                                      NSObject*>* _Nullable))
-                                                  completionHandler;
+    pigeon_callFlutterEchoAsyncNullableNonNullClassList:
+        (NSData* _Nonnull)pigeonVar_args
+                                           wrappedError:
+                                               (NativeInteropTestsError* _Nonnull)
+                                                   wrappedError
+                                      completionHandler:
+                                          (void (^_Nonnull)(NSData* _Nullable))
+                                              completionHandler;
 - (void)
-    callFlutterEchoAsyncNullableNonNullClassListWithClassList:
-        (NSArray<NSObject*>* _Nullable)classListArg
-                                                 wrappedError:
-                                                     (NativeInteropTestsError* _Nonnull)
-                                                         wrappedError
-                                            completionHandler:
-                                                (void (^_Nonnull)(
-                                                    NSArray<
-                                                        NSObject*>* _Nullable))
-                                                    completionHandler;
-- (void)callFlutterEchoAsyncNullableMapWithMap:
-            (NSDictionary<id<NSCopying>, NSObject*>* _Nullable)mapArg
-                                  wrappedError:
-                                      (NativeInteropTestsError* _Nonnull)
-                                          wrappedError
-                             completionHandler:
-                                 (void (^_Nonnull)(
-                                     NSDictionary<id<NSCopying>,
-                                                  NSObject*>* _Nullable))
-                                     completionHandler;
-- (void)
-    callFlutterEchoAsyncNullableStringMapWithStringMap:
-        (NSDictionary<id<NSCopying>, NSObject*>* _Nullable)stringMapArg
-                                          wrappedError:
-                                              (NativeInteropTestsError* _Nonnull)
-                                                  wrappedError
-                                     completionHandler:
-                                         (void (^_Nonnull)(
-                                             NSDictionary<
-                                                 id<NSCopying>,
-                                                 NSObject*>* _Nullable))
-                                             completionHandler;
-- (void)callFlutterEchoAsyncNullableIntMapWithIntMap:
-            (NSDictionary<id<NSCopying>, NSObject*>* _Nullable)intMapArg
+    pigeon_callFlutterEchoAsyncNullableMap:(NSData* _Nonnull)pigeonVar_args
+                              wrappedError:(NativeInteropTestsError* _Nonnull)
+                                               wrappedError
+                         completionHandler:(void (^_Nonnull)(NSData* _Nullable))
+                                               completionHandler;
+- (void)pigeon_callFlutterEchoAsyncNullableStringMap:
+            (NSData* _Nonnull)pigeonVar_args
                                         wrappedError:
                                             (NativeInteropTestsError* _Nonnull)
                                                 wrappedError
                                    completionHandler:
-                                       (void (^_Nonnull)(
-                                           NSDictionary<id<NSCopying>,
-                                                        NSObject*>* _Nullable))
+                                       (void (^_Nonnull)(NSData* _Nullable))
                                            completionHandler;
-- (void)
-    callFlutterEchoAsyncNullableEnumMapWithEnumMap:
-        (NSDictionary<id<NSCopying>, NSObject*>* _Nullable)enumMapArg
+- (void)pigeon_callFlutterEchoAsyncNullableIntMap:
+            (NSData* _Nonnull)pigeonVar_args
+                                     wrappedError:
+                                         (NativeInteropTestsError* _Nonnull)
+                                             wrappedError
+                                completionHandler:
+                                    (void (^_Nonnull)(NSData* _Nullable))
+                                        completionHandler;
+- (void)pigeon_callFlutterEchoAsyncNullableEnumMap:
+            (NSData* _Nonnull)pigeonVar_args
                                       wrappedError:
                                           (NativeInteropTestsError* _Nonnull)
                                               wrappedError
                                  completionHandler:
-                                     (void (^_Nonnull)(
-                                         NSDictionary<id<NSCopying>,
-                                                      NSObject*>* _Nullable))
+                                     (void (^_Nonnull)(NSData* _Nullable))
                                          completionHandler;
+- (void)pigeon_callFlutterEchoAsyncNullableClassMap:
+            (NSData* _Nonnull)pigeonVar_args
+                                       wrappedError:
+                                           (NativeInteropTestsError* _Nonnull)
+                                               wrappedError
+                                  completionHandler:
+                                      (void (^_Nonnull)(NSData* _Nullable))
+                                          completionHandler;
+- (void)pigeon_callFlutterEchoAsyncNullableEnum:(int64_t)anEnumArg
+                                   wrappedError:
+                                       (NativeInteropTestsError* _Nonnull)
+                                           wrappedError
+                              completionHandler:
+                                  (void (^_Nonnull)(NSNumber* _Nullable))
+                                      completionHandler;
 - (void)
-    callFlutterEchoAsyncNullableClassMapWithClassMap:
-        (NSDictionary<id<NSCopying>, NSObject*>* _Nullable)classMapArg
-                                        wrappedError:
-                                            (NativeInteropTestsError* _Nonnull)
-                                                wrappedError
-                                   completionHandler:
-                                       (void (^_Nonnull)(
-                                           NSDictionary<id<NSCopying>,
-                                                        NSObject*>* _Nullable))
-                                           completionHandler;
-- (void)callFlutterEchoAsyncNullableEnumWithAnEnum:
-            (NSNumber* _Nullable)anEnumArg
+    pigeon_callFlutterEchoAnotherAsyncNullableEnum:(int64_t)anotherEnumArg
                                       wrappedError:
                                           (NativeInteropTestsError* _Nonnull)
                                               wrappedError
                                  completionHandler:
                                      (void (^_Nonnull)(NSNumber* _Nullable))
                                          completionHandler;
-- (void)
-    callFlutterEchoAnotherAsyncNullableEnumWithAnotherEnum:
-        (NSNumber* _Nullable)anotherEnumArg
-                                              wrappedError:
-                                                  (NativeInteropTestsError* _Nonnull)
-                                                      wrappedError
-                                         completionHandler:
-                                             (void (^_Nonnull)(
-                                                 NSNumber* _Nullable))
-                                                 completionHandler;
 /// Returns true if the handler is run on a main thread.
-- (NSNumber* _Nullable)isMainThreadWithWrappedError:
+- (NSNumber* _Nullable)pigeon_isMainThread:
     (NativeInteropTestsError* _Nonnull)wrappedError SWIFT_WARN_UNUSED_RESULT;
 /// Returns true if the async handler runs on a background thread.
-- (void)asyncIsBackgroundThreadWithWrappedError:
+- (void)pigeon_asyncIsBackgroundThread:
             (NativeInteropTestsError* _Nonnull)wrappedError
-                              completionHandler:
-                                  (void (^_Nonnull)(NSNumber* _Nullable))
-                                      completionHandler;
+                     completionHandler:(void (^_Nonnull)(NSNumber* _Nullable))
+                                           completionHandler;
 /// Tests that zero-argument boolean methods starting with ‘is’ are correctly
 /// invoked as JNI property getters (e.g., <code>_jniApi.isGetter</code>).
-- (NSNumber* _Nullable)isGetterWithWrappedError:
+- (NSNumber* _Nullable)pigeon_isGetter:
     (NativeInteropTestsError* _Nonnull)wrappedError SWIFT_WARN_UNUSED_RESULT;
 /// Tests that zero-argument methods starting with ‘get’ are correctly
 /// invoked as JNI property getters with decapitalized names (e.g.,
 /// <code>_jniApi.getter</code>).
-- (NSNumber* _Nullable)getGetterWithWrappedError:
+- (NSNumber* _Nullable)pigeon_getGetter:
     (NativeInteropTestsError* _Nonnull)wrappedError SWIFT_WARN_UNUSED_RESULT;
 /// Tests that single-argument void methods starting with ‘set’ are correctly
 /// invoked as JNI property setters with decapitalized names (e.g.,
 /// <code>_jniApi.setter = value</code>).
-- (void)setSetterWithValue:(int64_t)valueArg
-              wrappedError:(NativeInteropTestsError* _Nonnull)wrappedError;
+- (void)pigeon_setSetter:(int64_t)valueArg
+            wrappedError:(NativeInteropTestsError* _Nonnull)wrappedError;
 /// Spawns a background thread and calls <code>noop</code> on the
 /// [NativeInteropFlutterIntegrationCoreApi]. Returns the result of whether the
 /// flutter call was successful.
-- (void)
-    callFlutterNoopOnBackgroundThreadWithWrappedError:
-        (NativeInteropTestsError* _Nonnull)wrappedError
-                                    completionHandler:
-                                        (void (^_Nonnull)(NSNumber* _Nullable))
-                                            completionHandler;
+- (void)pigeon_callFlutterNoopOnBackgroundThread:
+            (NativeInteropTestsError* _Nonnull)wrappedError
+                               completionHandler:
+                                   (void (^_Nonnull)(NSNumber* _Nullable))
+                                       completionHandler;
 /// Tests deregistering a Host API natively.
-- (NSNumber* _Nullable)testDeregisterHostApiWithWrappedError:
+- (NSNumber* _Nullable)pigeon_testDeregisterHostApi:
     (NativeInteropTestsError* _Nonnull)wrappedError SWIFT_WARN_UNUSED_RESULT;
 /// Tests deregistering a Flutter API natively.
-- (NSNumber* _Nullable)testDeregisterFlutterApiWithWrappedError:
+- (NSNumber* _Nullable)pigeon_testDeregisterFlutterApi:
     (NativeInteropTestsError* _Nonnull)wrappedError SWIFT_WARN_UNUSED_RESULT;
 /// Registers and immediately deregisters a Host API under [name].
 - (void)
-    registerAndImmediatelyDeregisterHostApiWithName:(NSString* _Nonnull)nameArg
-                                       wrappedError:
-                                           (NativeInteropTestsError* _Nonnull)
-                                               wrappedError;
+    pigeon_registerAndImmediatelyDeregisterHostApi:(NSString* _Nonnull)nameArg
+                                      wrappedError:
+                                          (NativeInteropTestsError* _Nonnull)
+                                              wrappedError;
 /// Tests that calling a deregistered Flutter API under [name] fails / returns
 /// null.
 - (NSNumber* _Nullable)
-    testCallDeregisteredFlutterApiWithName:(NSString* _Nonnull)nameArg
-                              wrappedError:(NativeInteropTestsError* _Nonnull)
-                                               wrappedError
+    pigeon_testCallDeregisteredFlutterApi:(NSString* _Nonnull)nameArg
+                             wrappedError:
+                                 (NativeInteropTestsError* _Nonnull)wrappedError
     SWIFT_WARN_UNUSED_RESULT;
 @end
 
@@ -3009,23 +2563,24 @@ SWIFT_CLASS("_TtC11test_plugin32NativeInteropReservedNamesBridge")
 SWIFT_PROTOCOL("_TtP11test_plugin42NativeInteropReservedNamesFlutterApiBridge_")
 @protocol NativeInteropReservedNamesFlutterApiBridge
 /// Collides with <code>JObject.release</code>.
-- (NSString* _Nullable)releaseWithValue:(NSString* _Nullable)valueArg
-                                  error:(NativeInteropTestsError* _Nonnull)error
+- (NSString* _Nullable)pigeon_release:(NSString* _Nonnull)valueArg
+                                error:(NativeInteropTestsError* _Nonnull)error
     SWIFT_WARN_UNUSED_RESULT;
 /// Collides with the static <code>type</code> field that JNIgen adds to every
 /// class.
-- (NSString* _Nullable)typeWithError:(NativeInteropTestsError* _Nonnull)error
+- (NSString* _Nullable)pigeon_type:(NativeInteropTestsError* _Nonnull)error
     SWIFT_WARN_UNUSED_RESULT;
 /// Collides with the <code>implementIn</code> method that JNIgen adds to
 /// interfaces.
-- (NSString* _Nullable)implementInValue:(NSString* _Nullable)valueArg
-                                  error:(NativeInteropTestsError* _Nonnull)error
+- (NSString* _Nullable)pigeon_implementIn:(NSString* _Nonnull)valueArg
+                                    error:
+                                        (NativeInteropTestsError* _Nonnull)error
     SWIFT_WARN_UNUSED_RESULT;
 /// Collides with <code>JObject.isNull</code>.
-- (NSNumber* _Nullable)isNullWithError:(NativeInteropTestsError* _Nonnull)error
+- (NSNumber* _Nullable)pigeon_isNull:(NativeInteropTestsError* _Nonnull)error
     SWIFT_WARN_UNUSED_RESULT;
 /// JNIgen doesn’t turn interface methods into properties.
-- (NSString* _Nullable)getReferenceWithError:
+- (NSString* _Nullable)pigeon_getReference:
     (NativeInteropTestsError* _Nonnull)error SWIFT_WARN_UNUSED_RESULT;
 @end
 
@@ -3045,71 +2600,143 @@ SWIFT_CLASS("_TtC11test_plugin38NativeInteropReservedNamesHostApiSetup")
 + (NativeInteropReservedNamesHostApiSetup* _Nullable)getInstanceWithName:
     (NSString* _Nonnull)name SWIFT_WARN_UNUSED_RESULT;
 /// Collides with <code>JObject.release</code>.
-- (NSString* _Nullable)releaseWithValue:(NSString* _Nonnull)valueArg
-                           wrappedError:
-                               (NativeInteropTestsError* _Nonnull)wrappedError
+- (NSString* _Nullable)pigeon_release:(NSString* _Nonnull)valueArg
+                         wrappedError:
+                             (NativeInteropTestsError* _Nonnull)wrappedError
     SWIFT_WARN_UNUSED_RESULT;
 /// Collides with <code>JObject.use</code>.
-- (NSNumber* _Nullable)useWithValue:(int64_t)valueArg
-                       wrappedError:
-                           (NativeInteropTestsError* _Nonnull)wrappedError
+- (NSNumber* _Nullable)pigeon_use:(int64_t)valueArg
+                     wrappedError:
+                         (NativeInteropTestsError* _Nonnull)wrappedError
     SWIFT_WARN_UNUSED_RESULT;
 /// Collides with the static <code>type</code> field that JNIgen adds to every
 /// class.
-- (NSString* _Nullable)typeWithWrappedError:
+- (NSString* _Nullable)pigeon_type:
     (NativeInteropTestsError* _Nonnull)wrappedError SWIFT_WARN_UNUSED_RESULT;
 /// JNIgen makes this a getter, which collides with <code>JObject.isNull</code>.
-- (NSNumber* _Nullable)isNullWithWrappedError:
+- (NSNumber* _Nullable)pigeon_isNull:
     (NativeInteropTestsError* _Nonnull)wrappedError SWIFT_WARN_UNUSED_RESULT;
 /// JNIgen keeps this a method, since nullable booleans are boxed on the JVM.
-- (NSNumber* _Nullable)isNullableWithWrappedError:
+- (NSNumber* _Nullable)pigeon_isNullable:
     (NativeInteropTestsError* _Nonnull)wrappedError SWIFT_WARN_UNUSED_RESULT;
 /// JNIgen makes this a getter.
-- (NSNumber* _Nullable)isOpenWithWrappedError:
+- (NSNumber* _Nullable)pigeon_isOpen:
     (NativeInteropTestsError* _Nonnull)wrappedError SWIFT_WARN_UNUSED_RESULT;
 /// JNIgen combines this and [setReference] into a property, which collides
 /// with <code>JObject.reference</code>.
-- (NSString* _Nullable)getReferenceWithWrappedError:
+- (NSString* _Nullable)pigeon_getReference:
     (NativeInteropTestsError* _Nonnull)wrappedError SWIFT_WARN_UNUSED_RESULT;
 /// See [getReference].
-- (void)setReferenceWithValue:(NSString* _Nonnull)valueArg
-                 wrappedError:(NativeInteropTestsError* _Nonnull)wrappedError;
+- (void)pigeon_setReference:(NSString* _Nonnull)valueArg
+               wrappedError:(NativeInteropTestsError* _Nonnull)wrappedError;
 /// JNIgen makes this a getter named after a Dart keyword, <code>default</code>.
-- (NSString* _Nullable)getDefaultWithWrappedError:
+- (NSString* _Nullable)pigeon_getDefault:
     (NativeInteropTestsError* _Nonnull)wrappedError SWIFT_WARN_UNUSED_RESULT;
 /// JNIgen keeps suspend functions as methods.
-- (void)getValueAsyncWithWrappedError:
-            (NativeInteropTestsError* _Nonnull)wrappedError
-                    completionHandler:(void (^_Nonnull)(NSString* _Nullable))
-                                          completionHandler;
+- (void)pigeon_getValueAsync:(NativeInteropTestsError* _Nonnull)wrappedError
+           completionHandler:
+               (void (^_Nonnull)(NSString* _Nullable))completionHandler;
 /// Returns the passed object, to test serialization and deserialization.
-- (NativeInteropReservedNamesBridge* _Nullable)
-    echoReservedNamesWithNames:
-        (NativeInteropReservedNamesBridge* _Nonnull)namesArg
-                  wrappedError:(NativeInteropTestsError* _Nonnull)wrappedError
+- (NSData* _Nullable)
+    pigeon_echoReservedNames:(NSData* _Nonnull)pigeonVar_args
+                wrappedError:(NativeInteropTestsError* _Nonnull)wrappedError
     SWIFT_WARN_UNUSED_RESULT;
 /// Returns the result of calling
 /// [NativeInteropReservedNamesFlutterApi.release].
 - (NSString* _Nullable)
-    callFlutterReleaseWithValue:(NSString* _Nonnull)valueArg
-                   wrappedError:(NativeInteropTestsError* _Nonnull)wrappedError
+    pigeon_callFlutterRelease:(NSString* _Nonnull)valueArg
+                 wrappedError:(NativeInteropTestsError* _Nonnull)wrappedError
     SWIFT_WARN_UNUSED_RESULT;
 /// Returns the result of calling [NativeInteropReservedNamesFlutterApi.type].
-- (NSString* _Nullable)callFlutterTypeWithWrappedError:
+- (NSString* _Nullable)pigeon_callFlutterType:
     (NativeInteropTestsError* _Nonnull)wrappedError SWIFT_WARN_UNUSED_RESULT;
 /// Returns the result of calling
 /// [NativeInteropReservedNamesFlutterApi.implementIn].
 - (NSString* _Nullable)
-    callFlutterImplementInValue:(NSString* _Nonnull)valueArg
-                   wrappedError:(NativeInteropTestsError* _Nonnull)wrappedError
+    pigeon_callFlutterImplementIn:(NSString* _Nonnull)valueArg
+                     wrappedError:
+                         (NativeInteropTestsError* _Nonnull)wrappedError
     SWIFT_WARN_UNUSED_RESULT;
 /// Returns the result of calling [NativeInteropReservedNamesFlutterApi.isNull].
-- (NSNumber* _Nullable)callFlutterIsNullWithWrappedError:
+- (NSNumber* _Nullable)pigeon_callFlutterIsNull:
     (NativeInteropTestsError* _Nonnull)wrappedError SWIFT_WARN_UNUSED_RESULT;
 /// Returns the result of calling
 /// [NativeInteropReservedNamesFlutterApi.getReference].
-- (NSString* _Nullable)callFlutterGetReferenceWithWrappedError:
+- (NSString* _Nullable)pigeon_callFlutterGetReference:
     (NativeInteropTestsError* _Nonnull)wrappedError SWIFT_WARN_UNUSED_RESULT;
+@end
+
+/// The Flutter API counterpart of [NativeInteropSealedClassHostApi].
+/// Generated protocol from Pigeon that represents Flutter messages that can be
+/// called from Swift.
+SWIFT_PROTOCOL("_TtP11test_plugin40NativeInteropSealedClassFlutterApiBridge_")
+@protocol NativeInteropSealedClassFlutterApiBridge
+- (NSData* _Nullable)pigeon_echoShape:(NSData* _Nonnull)pigeonVar_args
+                                error:(NativeInteropTestsError* _Nonnull)error
+    SWIFT_WARN_UNUSED_RESULT;
+@end
+
+SWIFT_CLASS("_TtC11test_plugin43NativeInteropSealedClassFlutterApiRegistrar")
+@interface NativeInteropSealedClassFlutterApiRegistrar : NSObject
++ (void)registerInstanceWithApi:
+            (id<NativeInteropSealedClassFlutterApiBridge> _Nullable)api
+                           name:(NSString* _Nonnull)name;
+- (nonnull instancetype)init OBJC_DESIGNATED_INITIALIZER;
+@end
+
+/// Generated setup class from Pigeon to register implemented
+/// NativeInteropSealedClassHostApi classes.
+SWIFT_CLASS("_TtC11test_plugin36NativeInteropSealedClassHostApiSetup")
+@interface NativeInteropSealedClassHostApiSetup : NSObject
+- (nonnull instancetype)init OBJC_DESIGNATED_INITIALIZER;
++ (NativeInteropSealedClassHostApiSetup* _Nullable)getInstanceWithName:
+    (NSString* _Nonnull)name SWIFT_WARN_UNUSED_RESULT;
+- (NSData* _Nullable)pigeon_echoShape:(NSData* _Nonnull)pigeonVar_args
+                         wrappedError:
+                             (NativeInteropTestsError* _Nonnull)wrappedError
+    SWIFT_WARN_UNUSED_RESULT;
+- (NSData* _Nullable)
+    pigeon_echoNullableShape:(NSData* _Nonnull)pigeonVar_args
+                wrappedError:(NativeInteropTestsError* _Nonnull)wrappedError
+    SWIFT_WARN_UNUSED_RESULT;
+- (NSData* _Nullable)pigeon_echoShapeList:(NSData* _Nonnull)pigeonVar_args
+                             wrappedError:
+                                 (NativeInteropTestsError* _Nonnull)wrappedError
+    SWIFT_WARN_UNUSED_RESULT;
+- (NSData* _Nullable)pigeon_echoShapeMap:(NSData* _Nonnull)pigeonVar_args
+                            wrappedError:
+                                (NativeInteropTestsError* _Nonnull)wrappedError
+    SWIFT_WARN_UNUSED_RESULT;
+- (void)pigeon_echoAsyncShape:(NSData* _Nonnull)pigeonVar_args
+                 wrappedError:(NativeInteropTestsError* _Nonnull)wrappedError
+            completionHandler:
+                (void (^_Nonnull)(NSData* _Nullable))completionHandler;
+- (NSData* _Nullable)
+    pigeon_callFlutterEchoShape:(NSData* _Nonnull)pigeonVar_args
+                   wrappedError:(NativeInteropTestsError* _Nonnull)wrappedError
+    SWIFT_WARN_UNUSED_RESULT;
+@end
+
+/// A sealed class, which native interop passes only with the hybrid
+/// transport, in the call’s buffer.
+/// Generated bridge class from Pigeon that moves data from Swift to
+/// Objective-C.
+SWIFT_CLASS("_TtC11test_plugin24NativeInteropShapeBridge")
+@interface NativeInteropShapeBridge : NSObject
+- (nonnull instancetype)init OBJC_DESIGNATED_INITIALIZER;
+@end
+
+/// Generated bridge class from Pigeon that moves data from Swift to
+/// Objective-C.
+SWIFT_CLASS("_TtC11test_plugin25NativeInteropSquareBridge")
+@interface NativeInteropSquareBridge : NSObject
+- (nonnull instancetype)initWithSide:(double)side
+                               label:(NSString* _Nullable)label
+    OBJC_DESIGNATED_INITIALIZER;
+@property(nonatomic) double side;
+@property(nonatomic, strong) NSString* _Nullable label;
+- (nonnull instancetype)init SWIFT_UNAVAILABLE;
++ (nonnull instancetype)new SWIFT_UNAVAILABLE_MSG("-init is unavailable");
 @end
 
 /// Error class for passing custom error details to Dart side.
@@ -3145,7 +2772,6 @@ SWIFT_CLASS("_TtC11test_plugin36NativeInteropTestsPigeonInternalNull")
 - (nonnull instancetype)init OBJC_DESIGNATED_INITIALIZER;
 @end
 
-@class NSData;
 SWIFT_CLASS("_TtC11test_plugin33NativeInteropTestsPigeonTypedData")
 @interface NativeInteropTestsPigeonTypedData : NSObject
 @property(nonatomic, readonly, strong) NSData* _Nonnull data;

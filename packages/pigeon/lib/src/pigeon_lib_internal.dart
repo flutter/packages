@@ -93,6 +93,8 @@ class InternalPigeonOptions {
               fileSpecificClassNameComponent:
                   options.swiftOptions?.fileSpecificClassNameComponent ??
                   options.fileSpecificClassNameComponent,
+              nativeInteropTransport:
+                  options.nativeInteropTransport ?? NativeInteropTransport.objects,
             ),
       kotlinOptions = options.kotlinOut == null
           ? null
@@ -103,6 +105,8 @@ class InternalPigeonOptions {
               fileSpecificClassNameComponent:
                   options.kotlinOptions?.fileSpecificClassNameComponent ??
                   options.fileSpecificClassNameComponent,
+              nativeInteropTransport:
+                  options.nativeInteropTransport ?? NativeInteropTransport.objects,
             ),
       cppOptions = (options.cppHeaderOut == null || options.cppSourceOut == null)
           ? null
@@ -132,6 +136,8 @@ class InternalPigeonOptions {
               ffiErrorClassName: options.swiftOptions?.errorClassName ?? 'PigeonError',
               jniErrorClassName: options.kotlinOptions?.errorClassName ?? 'FlutterError',
               fileSpecificClassNameComponent: _dartNativeInteropClassNameComponent(options),
+              nativeInteropTransport:
+                  options.nativeInteropTransport ?? NativeInteropTransport.objects,
             ),
       copyrightHeader = options.copyrightHeader != null
           ? _lineReader(path.posix.join(options.basePath ?? '', options.copyrightHeader))
@@ -436,11 +442,11 @@ void _errorOnSwiftFfiUnsupportedFeatures(
     }
   }
   for (final Class classDefinition in root.classes) {
-    if (classDefinition.isSealed) {
+    if (classDefinition.isSealed && !swiftOptions.useFfiHybrid) {
       errors.add(
         Error(
           message:
-              'Swift FFI does not support sealed classes yet (class "${classDefinition.name}"). $_moveToNonFfiFileSuggestion',
+              'Swift FFI supports sealed classes only with `nativeInteropTransport: NativeInteropTransport.hybrid` (class "${classDefinition.name}"). $_moveToNonFfiFileSuggestion',
         ),
       );
     }
@@ -469,7 +475,7 @@ void _errorOnSwiftFfiUnsupportedFeatures(
 const String _moveToNonJniFileSuggestion =
     "Move them to a separate pigeon file that doesn't use Kotlin JNI (`KotlinOptions.useJni` or `--kotlin_use_jni`).";
 
-void _errorOnKotlinJniUnsupportedFeatures(List<Error> errors, Root root) {
+void _errorOnKotlinJniUnsupportedFeatures(List<Error> errors, Root root, {required bool hybrid}) {
   for (final Api api in root.apis) {
     if (api is AstEventChannelApi) {
       errors.add(
@@ -487,11 +493,15 @@ void _errorOnKotlinJniUnsupportedFeatures(List<Error> errors, Root root) {
       );
     }
   }
+  if (hybrid) {
+    // Sealed classes cross in the hybrid transport's buffers, like on channels.
+    return;
+  }
   for (final Class classDefinition in root.classes.where((Class c) => c.isSealed)) {
     errors.add(
       Error(
         message:
-            'Kotlin JNI does not support sealed classes yet (class "${classDefinition.name}"). $_moveToNonJniFileSuggestion',
+            'Kotlin JNI supports sealed classes only with `nativeInteropTransport: NativeInteropTransport.hybrid` (class "${classDefinition.name}"). $_moveToNonJniFileSuggestion',
       ),
     );
   }
@@ -957,7 +967,11 @@ class KotlinGeneratorAdapter implements GeneratorAdapter {
     if (options.kotlinOptions?.useJni ?? false) {
       _errorOnTaskQueueInNativeInterop(errors, 'Kotlin JNI', root);
       _errorOnJniPropertyCollisions(errors, root);
-      _errorOnKotlinJniUnsupportedFeatures(errors, root);
+      _errorOnKotlinJniUnsupportedFeatures(
+        errors,
+        root,
+        hybrid: options.kotlinOptions!.useJniHybrid,
+      );
     }
     return errors;
   }
@@ -1823,6 +1837,10 @@ class RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
       return expression.value;
     } else if (expression is dart_ast.SimpleIdentifier) {
       return expression.name;
+    } else if (expression is dart_ast.PrefixedIdentifier) {
+      // Enum values, such as `NativeInteropTransport.hybrid`, are stored by
+      // name.
+      return expression.identifier.name;
     } else if (expression is dart_ast.ListLiteral) {
       final list = <dynamic>[];
       for (final dart_ast.CollectionElement element in expression.elements) {

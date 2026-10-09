@@ -209,8 +209,10 @@ enum class Code(val raw: Int) {
   TWO(1);
 
   companion object {
+    private val pigeonValues = values()
+
     fun ofRaw(raw: Int): Code? {
-      return values().firstOrNull { it.raw == raw }
+      return pigeonValues.getOrNull(raw)
     }
   }
 }

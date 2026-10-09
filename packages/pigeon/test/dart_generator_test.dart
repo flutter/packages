@@ -2687,4 +2687,173 @@ name: foobar
     expect(code, contains('.goToAsyncWithError_completionHandler_'));
     expect(code, contains('DataBridge.alloc().initForKey('));
   });
+
+  group('hybrid native interop transport', () {
+    final dataClass = Class(
+      name: 'Data',
+      fields: <NamedType>[
+        NamedType(
+          name: 'value',
+          type: const TypeDeclaration(baseName: 'int', isNullable: false),
+        ),
+      ],
+    );
+    final anEnum = Enum(
+      name: 'Color',
+      members: <EnumMember>[
+        EnumMember(name: 'red'),
+        EnumMember(name: 'green'),
+      ],
+    );
+    TypeDeclaration dataType({bool isNullable = false}) =>
+        TypeDeclaration(baseName: 'Data', isNullable: isNullable, associatedClass: dataClass);
+    TypeDeclaration enumType({bool isNullable = false}) =>
+        TypeDeclaration(baseName: 'Color', isNullable: isNullable, associatedEnum: anEnum);
+    const intType = TypeDeclaration(baseName: 'int', isNullable: false);
+
+    List<Method> methods(ApiLocation location) => <Method>[
+      Method(
+        name: 'echoData',
+        location: location,
+        parameters: <Parameter>[
+          Parameter(name: 'count', type: intType),
+          Parameter(name: 'data', type: dataType()),
+          Parameter(
+            name: 'list',
+            type: TypeDeclaration(
+              baseName: 'List',
+              isNullable: false,
+              typeArguments: <TypeDeclaration>[dataType(isNullable: true)],
+            ),
+          ),
+        ],
+        returnType: dataType(isNullable: true),
+      ),
+      Method(
+        name: 'add',
+        location: location,
+        parameters: <Parameter>[
+          Parameter(name: 'a', type: intType),
+          Parameter(name: 'b', type: intType),
+        ],
+        returnType: intType,
+      ),
+      Method(
+        name: 'echoColor',
+        location: location,
+        parameters: <Parameter>[Parameter(name: 'color', type: enumType(isNullable: true))],
+        returnType: enumType(isNullable: true),
+      ),
+    ];
+
+    String generate({required bool useJni, required bool useFfi, bool hybrid = true}) {
+      final root = Root(
+        apis: <Api>[
+          AstHostApi(name: 'HostApi', methods: methods(ApiLocation.host)),
+          AstFlutterApi(name: 'FlutterApi', methods: methods(ApiLocation.flutter)),
+        ],
+        classes: <Class>[dataClass],
+        enums: <Enum>[anEnum],
+      );
+      final sink = StringBuffer();
+      const DartGenerator().generate(
+        InternalDartOptions(
+          ignoreLints: false,
+          useJni: useJni,
+          useFfi: useFfi,
+          ffiErrorClassName: 'PigeonError',
+          jniErrorClassName: 'FlutterError',
+          dartOut: 'lib/foo.dart',
+          nativeInteropTransport: hybrid
+              ? NativeInteropTransport.hybrid
+              : NativeInteropTransport.objects,
+        ),
+        root,
+        sink,
+        dartPackageName: DEFAULT_PACKAGE_NAME,
+      );
+      return sink.toString();
+    }
+
+    test('jni host methods encode structured arguments into one buffer', () {
+      final String code = generate(useJni: true, useFfi: false);
+      expect(
+        code,
+        contains(
+          'final JByteArray pigeonVar_args = _PigeonJniBuffers.encode(<Object?>[data, list]);',
+        ),
+      );
+      expect(code, contains('_jniApi.pigeon_echoData(count, pigeonVar_args)'));
+      expect(code, contains('return _PigeonJniBuffers.decode(pigeonVar_res) as Data?;'));
+      expect(code, contains('pigeonVar_args.release();'));
+    });
+
+    test('jni host methods pass scalars and enums directly', () {
+      final String code = generate(useJni: true, useFfi: false);
+      expect(code, contains('return _jniApi.pigeon_add(a, b);'));
+      expect(code, contains('_jniApi.pigeon_echoColor(color?.index ?? -1)'));
+      expect(code, contains('return pigeonVar_res == -1 ? null : Color.values[pigeonVar_res];'));
+    });
+
+    test('jni flutter api implements the buffer bridge', () {
+      final String code = generate(useJni: true, useFfi: false);
+      expect(code, contains(r'final class FlutterApiRegistrar with jni_bridge.$FlutterApiBridge'));
+      expect(code, contains('jni_bridge.FlutterApiBridge.implement(this)'));
+      expect(
+        code,
+        contains('JByteArray? pigeon_echoData(int arg_count, JByteArray pigeonVar_args)'),
+      );
+      expect(code, contains('return _PigeonJniBuffers.encodeOrNull(response);'));
+      expect(code, contains('int pigeon_add(int arg_a, int arg_b)'));
+    });
+
+    test('jni error details are decoded from the buffer', () {
+      final String code = generate(useJni: true, useFfi: false);
+      expect(
+        code,
+        contains('details: _PigeonJniBuffers.decode(pigeonError.details as JByteArray?)'),
+      );
+    });
+
+    test('ffi host methods encode structured arguments into one buffer', () {
+      final String code = generate(useJni: false, useFfi: true);
+      expect(
+        code,
+        contains('final NSData pigeonVar_args = _PigeonFfiBuffers.encode(<Object?>[data, list]);'),
+      );
+      expect(
+        code,
+        contains(
+          '_ffiApi.pigeon_echoData(count, pigeonVar_args: pigeonVar_args, wrappedError: pigeonVar_error)',
+        ),
+      );
+      expect(code, contains('return _PigeonFfiBuffers.decode(pigeonVar_res) as Data?;'));
+      expect(code, contains('_ffiApi.pigeon_add(a, b: b, wrappedError: pigeonVar_error)'));
+    });
+
+    test('ffi flutter api implements the buffer protocol', () {
+      final String code = generate(useJni: false, useFfi: true);
+      expect(
+        code,
+        contains(r'FlutterApiBridge$Builder.pigeon_echoData_pigeonVar_args_error_.implement('),
+      );
+      expect(code, contains(r'FlutterApiBridge$Builder.pigeon_add_b_error_.implement('));
+      expect(code, contains('return _PigeonFfiBuffers.encodeOrNull(response);'));
+    });
+
+    test('objects transport does not generate buffer helpers', () {
+      final String code = generate(useJni: true, useFfi: true, hybrid: false);
+      expect(code, isNot(contains('_PigeonJniBuffers')));
+      expect(code, isNot(contains('_PigeonFfiBuffers')));
+      expect(code, isNot(contains('pigeon_echoData')));
+    });
+
+    test('jni codec looks up each class once', () {
+      final String code = generate(useJni: true, useFfi: false, hybrid: false);
+      expect(code, contains('static final JClass _longClass = JLong.type.jClass;'));
+      expect(code, contains('static final JClass _classData = jni_bridge.Data.type.jClass;'));
+      expect(code, contains('if (value.isInstanceOf(_longClass)) {'));
+      expect(code, isNot(contains('value.isA<')));
+    });
+  });
 }

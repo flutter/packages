@@ -1,3 +1,18 @@
+## 29.1.0
+
+* Adds `NativeInteropTransport` and `PigeonOptions.nativeInteropTransport`
+  (`--native_interop_transport`). With `NativeInteropTransport.hybrid`, Kotlin
+  JNI and Swift FFI calls pass all data class, `List`, `Map` and `Object` values
+  of a call in one buffer, instead of making a call across the language boundary
+  for every field and collection element. This makes calls with large data
+  classes and collections many times faster. Scalars, strings, enums and typed
+  data are still passed directly, and the user-facing Kotlin and Swift APIs
+  don't change. The hybrid transport also supports sealed classes.
+* [dart] Speeds up native interop with the default transport: JNI type checks
+  look up each class once instead of on every check, typed data return values
+  are read without the dynamic converter, and FFI typed data is copied once.
+* [kotlin] Makes enum `ofRaw` constant time.
+
 ## 29.0.8
 
 * [swift] Adds validation errors for code that Swift FFI doesn't support:

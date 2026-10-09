@@ -116,6 +116,84 @@ int _deepHash(Object? value) {
   return value.hashCode;
 }
 
+Uint8List? _jByteArrayToDart(JByteArray? array, {bool release = false}) {
+  if (array == null) {
+    return null;
+  }
+  try {
+    final Int8List range = array.getRange(0, array.length);
+    return Uint8List.fromList(range.buffer.asUint8List(range.offsetInBytes, range.length));
+  } finally {
+    if (release) {
+      array.release();
+    }
+  }
+}
+
+Int32List? _jIntArrayToDart(JIntArray? array, {bool release = false}) {
+  if (array == null) {
+    return null;
+  }
+  try {
+    return Int32List.fromList(array.getRange(0, array.length));
+  } finally {
+    if (release) {
+      array.release();
+    }
+  }
+}
+
+Int64List? _jLongArrayToDart(JLongArray? array, {bool release = false}) {
+  if (array == null) {
+    return null;
+  }
+  try {
+    return Int64List.fromList(array.getRange(0, array.length));
+  } finally {
+    if (release) {
+      array.release();
+    }
+  }
+}
+
+Float64List? _jDoubleArrayToDart(JDoubleArray? array, {bool release = false}) {
+  if (array == null) {
+    return null;
+  }
+  try {
+    return Float64List.fromList(array.getRange(0, array.length));
+  } finally {
+    if (release) {
+      array.release();
+    }
+  }
+}
+
+JByteArray _uint8ListToJni(Uint8List value) {
+  final JByteArray array = JByteArray(value.length);
+  array.setRange(0, value.length, Int8List.view(value.buffer, value.offsetInBytes, value.length));
+  return array;
+}
+
+JIntArray _int32ListToJni(Int32List value) {
+  final JIntArray array = JIntArray(value.length);
+  array.setRange(0, value.length, value);
+  return array;
+}
+
+JLongArray _int64ListToJni(Int64List value) {
+  final JLongArray array = JLongArray(value.length);
+  array.setRange(0, value.length, value);
+  return array;
+}
+
+JDoubleArray _float64ListToJni(Float64List value) {
+  final JDoubleArray array = JDoubleArray(value.length);
+  array.setRange(0, value.length, value);
+  return array;
+}
+
+// ignore: unused_element
 class _PigeonJniCodec {
   static JObject get _kotlinUnit {
     final JClass unitClass = JClass.forName('kotlin/Unit');
@@ -126,82 +204,101 @@ class _PigeonJniCodec {
     }
   }
 
+  static final JClass _longClass = JLong.type.jClass;
+  static final JClass _doubleClass = JDouble.type.jClass;
+  static final JClass _stringClass = JString.type.jClass;
+  static final JClass _booleanClass = JBoolean.type.jClass;
+  static final JClass _byteArrayClass = JByteArray.type.jClass;
+  static final JClass _intArrayClass = JIntArray.type.jClass;
+  static final JClass _longArrayClass = JLongArray.type.jClass;
+  static final JClass _doubleArrayClass = JDoubleArray.type.jClass;
+  static final JClass _listClass = JList.type.jClass;
+  static final JClass _mapClass = JMap.type.jClass;
+  static final JClass _classNativeInteropUnusedClass =
+      jni_bridge.NativeInteropUnusedClass.type.jClass;
+  static final JClass _classNativeInteropAllTypes = jni_bridge.NativeInteropAllTypes.type.jClass;
+  static final JClass _classNativeInteropAllNullableTypes =
+      jni_bridge.NativeInteropAllNullableTypes.type.jClass;
+  static final JClass _classNativeInteropAllNullableTypesWithoutRecursion =
+      jni_bridge.NativeInteropAllNullableTypesWithoutRecursion.type.jClass;
+  static final JClass _classNativeInteropAllClassesWrapper =
+      jni_bridge.NativeInteropAllClassesWrapper.type.jClass;
+  static final JClass _classNativeInteropReservedNames =
+      jni_bridge.NativeInteropReservedNames.type.jClass;
+  static final JClass _classNativeInteropCircle = jni_bridge.NativeInteropCircle.type.jClass;
+  static final JClass _classNativeInteropSquare = jni_bridge.NativeInteropSquare.type.jClass;
+  static final JClass _classNativeInteropAnEnum = jni_bridge.NativeInteropAnEnum.type.jClass;
+  static final JClass _classNativeInteropAnotherEnum =
+      jni_bridge.NativeInteropAnotherEnum.type.jClass;
+
   static Object? readValue(JObject? value) {
     if (value == null) {
       return null;
     }
-    if (value.isA<JLong>(JLong.type)) {
-      return value.as(JLong.type).longValue();
-    } else if (value.isA<JDouble>(JDouble.type)) {
-      return value.as(JDouble.type).doubleValue();
-    } else if (value.isA<JString>(JString.type)) {
-      return value.as(JString.type).toDartString();
-    } else if (value.isA<JBoolean>(JBoolean.type)) {
-      return value.as(JBoolean.type).booleanValue();
-    } else if (value.isA<JByteArray>(JByteArray.type)) {
-      final JByteArray array = value.as(JByteArray.type);
-      return Uint8List.fromList(array.getRange(0, array.length).buffer.asUint8List());
-    } else if (value.isA<JIntArray>(JIntArray.type)) {
-      final JIntArray array = value.as(JIntArray.type);
-      return Int32List.fromList(array.getRange(0, array.length));
-    } else if (value.isA<JLongArray>(JLongArray.type)) {
-      final JLongArray array = value.as(JLongArray.type);
-      return Int64List.fromList(array.getRange(0, array.length));
-    } else if (value.isA<JDoubleArray>(JDoubleArray.type)) {
-      final JDoubleArray array = value.as(JDoubleArray.type);
-      return Float64List.fromList(array.getRange(0, array.length));
-    } else if (value.isA<JList<JObject>>(JList.type as JType<JList<JObject>>)) {
-      final List<JObject?> list = value.as(JList.type).asDart();
+    if (value.isInstanceOf(_longClass)) {
+      return (value as JLong).longValue();
+    } else if (value.isInstanceOf(_doubleClass)) {
+      return (value as JDouble).doubleValue();
+    } else if (value.isInstanceOf(_stringClass)) {
+      return (value as JString).toDartString();
+    } else if (value.isInstanceOf(_booleanClass)) {
+      return (value as JBoolean).booleanValue();
+    } else if (value.isInstanceOf(_byteArrayClass)) {
+      return _jByteArrayToDart(value as JByteArray);
+    } else if (value.isInstanceOf(_intArrayClass)) {
+      return _jIntArrayToDart(value as JIntArray);
+    } else if (value.isInstanceOf(_longArrayClass)) {
+      return _jLongArrayToDart(value as JLongArray);
+    } else if (value.isInstanceOf(_doubleArrayClass)) {
+      return _jDoubleArrayToDart(value as JDoubleArray);
+    } else if (value.isInstanceOf(_listClass)) {
+      final List<JObject?> list = (value as JList<JObject?>).asDart();
       final res = <Object?>[];
       // Cache the length before iterating to avoid a JNI hop per iteration.
       final int len = list.length;
       for (int i = 0; i < len; i++) {
-        res.add(readValue(list[i]));
+        final JObject? element = list[i];
+        res.add(readValue(element));
+        element?.release();
       }
       return res;
-    } else if (value.isA<JMap<JObject, JObject>>(JMap.type as JType<JMap<JObject, JObject>>)) {
-      final Map<JObject?, JObject?> map = value.as(JMap.type).asDart();
+    } else if (value.isInstanceOf(_mapClass)) {
+      final Map<JObject?, JObject?> map = (value as JMap<JObject?, JObject?>).asDart();
       final res = <Object?, Object?>{};
       for (final MapEntry<JObject?, JObject?> entry in map.entries) {
-        res[readValue(entry.key)] = readValue(entry.value);
+        final JObject? key = entry.key;
+        final JObject? entryValue = entry.value;
+        res[readValue(key)] = readValue(entryValue);
+        key?.release();
+        entryValue?.release();
       }
       return res;
-    } else if (value.isA<jni_bridge.NativeInteropUnusedClass>(
-      jni_bridge.NativeInteropUnusedClass.type,
-    )) {
-      return NativeInteropUnusedClass.fromJni(value.as(jni_bridge.NativeInteropUnusedClass.type));
-    } else if (value.isA<jni_bridge.NativeInteropAllTypes>(jni_bridge.NativeInteropAllTypes.type)) {
-      return NativeInteropAllTypes.fromJni(value.as(jni_bridge.NativeInteropAllTypes.type));
-    } else if (value.isA<jni_bridge.NativeInteropAllNullableTypes>(
-      jni_bridge.NativeInteropAllNullableTypes.type,
-    )) {
+    } else if (value.isInstanceOf(_classNativeInteropUnusedClass)) {
+      return NativeInteropUnusedClass.fromJni(value as jni_bridge.NativeInteropUnusedClass);
+    } else if (value.isInstanceOf(_classNativeInteropAllTypes)) {
+      return NativeInteropAllTypes.fromJni(value as jni_bridge.NativeInteropAllTypes);
+    } else if (value.isInstanceOf(_classNativeInteropAllNullableTypes)) {
       return NativeInteropAllNullableTypes.fromJni(
-        value.as(jni_bridge.NativeInteropAllNullableTypes.type),
+        value as jni_bridge.NativeInteropAllNullableTypes,
       );
-    } else if (value.isA<jni_bridge.NativeInteropAllNullableTypesWithoutRecursion>(
-      jni_bridge.NativeInteropAllNullableTypesWithoutRecursion.type,
-    )) {
+    } else if (value.isInstanceOf(_classNativeInteropAllNullableTypesWithoutRecursion)) {
       return NativeInteropAllNullableTypesWithoutRecursion.fromJni(
-        value.as(jni_bridge.NativeInteropAllNullableTypesWithoutRecursion.type),
+        value as jni_bridge.NativeInteropAllNullableTypesWithoutRecursion,
       );
-    } else if (value.isA<jni_bridge.NativeInteropAllClassesWrapper>(
-      jni_bridge.NativeInteropAllClassesWrapper.type,
-    )) {
+    } else if (value.isInstanceOf(_classNativeInteropAllClassesWrapper)) {
       return NativeInteropAllClassesWrapper.fromJni(
-        value.as(jni_bridge.NativeInteropAllClassesWrapper.type),
+        value as jni_bridge.NativeInteropAllClassesWrapper,
       );
-    } else if (value.isA<jni_bridge.NativeInteropReservedNames>(
-      jni_bridge.NativeInteropReservedNames.type,
-    )) {
-      return NativeInteropReservedNames.fromJni(
-        value.as(jni_bridge.NativeInteropReservedNames.type),
-      );
-    } else if (value.isA<jni_bridge.NativeInteropAnEnum>(jni_bridge.NativeInteropAnEnum.type)) {
-      return NativeInteropAnEnum.fromJni(value.as(jni_bridge.NativeInteropAnEnum.type));
-    } else if (value.isA<jni_bridge.NativeInteropAnotherEnum>(
-      jni_bridge.NativeInteropAnotherEnum.type,
-    )) {
-      return NativeInteropAnotherEnum.fromJni(value.as(jni_bridge.NativeInteropAnotherEnum.type));
+    } else if (value.isInstanceOf(_classNativeInteropReservedNames)) {
+      return NativeInteropReservedNames.fromJni(value as jni_bridge.NativeInteropReservedNames);
+    } else if (value.isInstanceOf(_classNativeInteropCircle)) {
+      return NativeInteropCircle.fromJni(value as jni_bridge.NativeInteropCircle);
+    } else if (value.isInstanceOf(_classNativeInteropSquare)) {
+      return NativeInteropSquare.fromJni(value as jni_bridge.NativeInteropSquare);
+    } else if (value.isInstanceOf(_classNativeInteropAnEnum)) {
+      return NativeInteropAnEnum.fromJni(value as jni_bridge.NativeInteropAnEnum);
+    } else if (value.isInstanceOf(_classNativeInteropAnotherEnum)) {
+      return NativeInteropAnotherEnum.fromJni(value as jni_bridge.NativeInteropAnotherEnum);
     } else {
       throw ArgumentError.value(value);
     }
@@ -221,25 +318,20 @@ class _PigeonJniCodec {
     } else if (value is String) {
       return value.toJString() as T;
     } else if (value is Uint8List) {
-      final JByteArray array = JByteArray(value.length);
-      array.setRange(
-        0,
-        value.length,
-        Int8List.view(value.buffer, value.offsetInBytes, value.length),
-      );
-      return array as T;
+      return _uint8ListToJni(value) as T;
     } else if (value is Int32List) {
-      final JIntArray array = JIntArray(value.length);
-      array.setRange(0, value.length, value);
-      return array as T;
+      return _int32ListToJni(value) as T;
     } else if (value is Int64List) {
-      final JLongArray array = JLongArray(value.length);
-      array.setRange(0, value.length, value);
-      return array as T;
+      return _int64ListToJni(value) as T;
     } else if (value is Float64List) {
-      final JDoubleArray array = JDoubleArray(value.length);
-      array.setRange(0, value.length, value);
-      return array as T;
+      return _float64ListToJni(value) as T;
+    } else if (value is List<NativeInteropShape>) {
+      return value
+              .map<jni_bridge.NativeInteropShape>(
+                (e) => writeValue<jni_bridge.NativeInteropShape>(e),
+              )
+              .toJList()
+          as T;
     } else if (value is List<String>) {
       return value.map<JString>((e) => writeValue<JString>(e)).toJList() as T;
     } else if (value is List<int>) {
@@ -316,6 +408,14 @@ class _PigeonJniCodec {
       return value.map<JObject>((e) => writeValue<JObject>(e)).toJList() as T;
     } else if (value is List) {
       return value.map<JObject?>((e) => writeValue<JObject?>(e)).toJList() as T;
+    } else if (value is Map<String, NativeInteropShape>) {
+      return value
+              .map<JString, jni_bridge.NativeInteropShape>(
+                (k, v) =>
+                    MapEntry(writeValue<JString>(k), writeValue<jni_bridge.NativeInteropShape>(v)),
+              )
+              .toJMap()
+          as T;
     } else if (value is Map<String, String>) {
       return value
               .map<JString, JString>(
@@ -461,6 +561,10 @@ class _PigeonJniCodec {
       return value.toJni() as T;
     } else if (value is NativeInteropReservedNames) {
       return value.toJni() as T;
+    } else if (value is NativeInteropCircle) {
+      return value.toJni() as T;
+    } else if (value is NativeInteropSquare) {
+      return value.toJni() as T;
     } else if (value is NativeInteropAnEnum) {
       return value.toJni() as T;
     } else if (value is NativeInteropAnotherEnum) {
@@ -471,7 +575,35 @@ class _PigeonJniCodec {
   }
 }
 
+// ignore: unused_element
+class _PigeonJniBuffers {
+  static JByteArray encode(Object? value) {
+    final ByteData data = const _PigeonCodec().encodeMessage(value)!;
+    final JByteArray array = JByteArray(data.lengthInBytes);
+    array.setRange(
+      0,
+      data.lengthInBytes,
+      data.buffer.asInt8List(data.offsetInBytes, data.lengthInBytes),
+    );
+    return array;
+  }
+
+  static JByteArray? encodeOrNull(Object? value) {
+    return value == null ? null : encode(value);
+  }
+
+  static Object? decode(JByteArray? array) {
+    final Uint8List? bytes = _jByteArrayToDart(array, release: true);
+    return bytes == null ? null : const _PigeonCodec().decodeMessage(ByteData.sublistView(bytes));
+  }
+}
+
+// ignore: unused_element
 class _PigeonFfiCodec {
+  static Object? readTypedData(ffi_bridge.NativeInteropTestsPigeonTypedData? value) {
+    return value == null ? null : _getValueFromPigeonTypedData(value);
+  }
+
   static Object? readValue(ObjCObject? value, [Type? type, Type? type2]) {
     if (value == null || ffi_bridge.NativeInteropTestsPigeonInternalNull.isA(value)) {
       return null;
@@ -530,6 +662,10 @@ class _PigeonFfiCodec {
       return NativeInteropReservedNames.fromFfi(
         ffi_bridge.NativeInteropReservedNamesBridge.as(value),
       );
+    } else if (ffi_bridge.NativeInteropCircleBridge.isA(value)) {
+      return NativeInteropCircle.fromFfi(ffi_bridge.NativeInteropCircleBridge.as(value));
+    } else if (ffi_bridge.NativeInteropSquareBridge.isA(value)) {
+      return NativeInteropSquare.fromFfi(ffi_bridge.NativeInteropSquareBridge.as(value));
     } else {
       throw ArgumentError.value(value);
     }
@@ -563,6 +699,12 @@ class _PigeonFfiCodec {
       return NSString(value) as T;
     } else if (value is TypedData) {
       return _toPigeonTypedData(value) as T;
+    } else if (value is List<NativeInteropShape> && _isTypeOrNullableType<NSMutableArray>(T)) {
+      final NSMutableArray res = NSMutableArray();
+      for (final NativeInteropShape entry in value) {
+        res.addObject(writeValue<ffi_bridge.NativeInteropShapeBridge>(entry, generic: true));
+      }
+      return res as T;
     } else if (value is List<String> && _isTypeOrNullableType<NSMutableArray>(T)) {
       final NSMutableArray res = NSMutableArray();
       for (final String entry in value) {
@@ -729,6 +871,15 @@ class _PigeonFfiCodec {
         );
       }
       return res as T;
+    } else if (value is Map<String, NativeInteropShape> && _isTypeOrNullableType<NSDictionary>(T)) {
+      final NSMutableDictionary res = NSMutableDictionary();
+      for (final MapEntry<String, NativeInteropShape> entry in value.entries) {
+        res.setObject(
+          writeValue(entry.value, generic: true),
+          forKey: NSCopying.as(writeValue(entry.key, generic: true)),
+        );
+      }
+      return res as T;
     } else if (value is Map<String, String> && _isTypeOrNullableType<NSDictionary>(T)) {
       final NSMutableDictionary res = NSMutableDictionary();
       for (final MapEntry<String, String> entry in value.entries) {
@@ -884,51 +1035,44 @@ class _PigeonFfiCodec {
       return value.toFfi() as T;
     } else if (value is NativeInteropReservedNames) {
       return value.toFfi() as T;
+    } else if (value is NativeInteropCircle) {
+      return value.toFfi() as T;
+    } else if (value is NativeInteropSquare) {
+      return value.toFfi() as T;
     } else {
       throw ArgumentError.value(value);
     }
   }
 }
 
-ffi_bridge.NativeInteropTestsPigeonTypedData _toPigeonTypedData(TypedData value) {
+/// Copies [value] into a buffer that the returned [NSData] owns and frees.
+NSData _typedDataToNSData(TypedData value) {
   final int lengthInBytes = value.lengthInBytes;
-  if (value is Uint8List) {
-    final int length = value.length;
-    final Pointer<Uint8> ptr = calloc<Uint8>(length);
-    ptr.asTypedList(length).setAll(0, value);
-    final NSData nsData = NSData.dataWithBytes(ptr.cast<Void>(), length: lengthInBytes);
-    calloc.free(ptr);
-    return ffi_bridge.NativeInteropTestsPigeonTypedData.alloc().initWithData(nsData, type: 0);
-  } else if (value is Int32List) {
-    final int length = value.length;
-    final Pointer<Int32> ptr = calloc<Int32>(length);
-    ptr.asTypedList(length).setAll(0, value);
-    final NSData nsData = NSData.dataWithBytes(ptr.cast<Void>(), length: lengthInBytes);
-    calloc.free(ptr);
-    return ffi_bridge.NativeInteropTestsPigeonTypedData.alloc().initWithData(nsData, type: 1);
-  } else if (value is Int64List) {
-    final int length = value.length;
-    final Pointer<Int64> ptr = calloc<Int64>(length);
-    ptr.asTypedList(length).setAll(0, value);
-    final NSData nsData = NSData.dataWithBytes(ptr.cast<Void>(), length: lengthInBytes);
-    calloc.free(ptr);
-    return ffi_bridge.NativeInteropTestsPigeonTypedData.alloc().initWithData(nsData, type: 2);
-  } else if (value is Float32List) {
-    final int length = value.length;
-    final Pointer<Float> ptr = calloc<Float>(length);
-    ptr.asTypedList(length).setAll(0, value);
-    final NSData nsData = NSData.dataWithBytes(ptr.cast<Void>(), length: lengthInBytes);
-    calloc.free(ptr);
-    return ffi_bridge.NativeInteropTestsPigeonTypedData.alloc().initWithData(nsData, type: 3);
-  } else if (value is Float64List) {
-    final int length = value.length;
-    final Pointer<Double> ptr = calloc<Double>(length);
-    ptr.asTypedList(length).setAll(0, value);
-    final NSData nsData = NSData.dataWithBytes(ptr.cast<Void>(), length: lengthInBytes);
-    calloc.free(ptr);
-    return ffi_bridge.NativeInteropTestsPigeonTypedData.alloc().initWithData(nsData, type: 4);
-  }
-  throw ArgumentError.value(value);
+  // `malloc(0)` may return null, which `NSData` can't own.
+  final Pointer<Uint8> bytes = malloc<Uint8>(lengthInBytes == 0 ? 1 : lengthInBytes);
+  bytes
+      .asTypedList(lengthInBytes)
+      .setAll(0, value.buffer.asUint8List(value.offsetInBytes, lengthInBytes));
+  return NSData.dataWithBytesNoCopy$1(
+    bytes.cast<Void>(),
+    length: lengthInBytes,
+    freeWhenDone: true,
+  );
+}
+
+ffi_bridge.NativeInteropTestsPigeonTypedData _toPigeonTypedData(TypedData value) {
+  final int type = switch (value) {
+    Uint8List() => 0,
+    Int32List() => 1,
+    Int64List() => 2,
+    Float32List() => 3,
+    Float64List() => 4,
+    _ => throw ArgumentError.value(value),
+  };
+  return ffi_bridge.NativeInteropTestsPigeonTypedData.alloc().initWithData(
+    _typedDataToNSData(value),
+    type: type,
+  );
 }
 
 Object? _getValueFromPigeonTypedData(ffi_bridge.NativeInteropTestsPigeonTypedData value) {
@@ -957,6 +1101,39 @@ Object? _getValueFromPigeonTypedData(ffi_bridge.NativeInteropTestsPigeonTypedDat
     };
   } finally {
     dataRef.release();
+  }
+}
+
+// ignore: unused_element
+class _PigeonFfiBuffers {
+  static Uint8List? toUint8List(NSData? data) {
+    if (data == null) {
+      return null;
+    }
+    final ObjCObjectRef dataRef = data.object$.ref;
+    try {
+      final int length = data.length;
+      if (length == 0) {
+        return Uint8List(0);
+      }
+      return Uint8List.fromList(data.bytes.cast<Uint8>().asTypedList(length));
+    } finally {
+      dataRef.release();
+    }
+  }
+
+  static NSData encode(Object? value) {
+    final ByteData data = const _PigeonCodec().encodeMessage(value)!;
+    return _typedDataToNSData(data.buffer.asUint8List(data.offsetInBytes, data.lengthInBytes));
+  }
+
+  static NSData? encodeOrNull(Object? value) {
+    return value == null ? null : encode(value);
+  }
+
+  static Object? decode(NSData? data) {
+    final Uint8List? bytes = toUint8List(data);
+    return bytes == null ? null : const _PigeonCodec().decodeMessage(ByteData.sublistView(bytes));
   }
 }
 
@@ -1053,9 +1230,7 @@ PlatformException _wrapJniException(JThrowable e) {
     return PlatformException(
       code: pigeonError.code.toDartString(),
       message: pigeonError.message?.toDartString(),
-      details: pigeonError.details?.isA<JString>(JString.type) ?? false
-          ? pigeonError.details!.as(JString.type).toDartString()
-          : pigeonError.details,
+      details: _PigeonJniBuffers.decode(pigeonError.details as JByteArray?),
       stacktrace: e.javaStackTrace,
     );
   }
@@ -1391,10 +1566,10 @@ class NativeInteropAllTypes {
             anInt: jniClass.anInt,
             anInt64: jniClass.anInt64,
             aDouble: jniClass.aDouble,
-            aByteArray: _PigeonJniCodec.readValue(jniClass.aByteArray)! as Uint8List,
-            a4ByteArray: _PigeonJniCodec.readValue(jniClass.a4ByteArray)! as Int32List,
-            a8ByteArray: _PigeonJniCodec.readValue(jniClass.a8ByteArray)! as Int64List,
-            aFloatArray: _PigeonJniCodec.readValue(jniClass.aFloatArray)! as Float64List,
+            aByteArray: _jByteArrayToDart(jniClass.aByteArray, release: true)!,
+            a4ByteArray: _jIntArrayToDart(jniClass.a4ByteArray, release: true)!,
+            a8ByteArray: _jLongArrayToDart(jniClass.a8ByteArray, release: true)!,
+            aFloatArray: _jDoubleArrayToDart(jniClass.aFloatArray, release: true)!,
             anEnum: NativeInteropAnEnum.fromJni(jniClass.anEnum)!,
             anotherEnum: NativeInteropAnotherEnum.fromJni(jniClass.anotherEnum)!,
             aString: jniClass.aString.toDartString(releaseOriginal: true),
@@ -1439,10 +1614,10 @@ class NativeInteropAllTypes {
             anInt: ffiClass.anInt,
             anInt64: ffiClass.anInt64,
             aDouble: ffiClass.aDouble,
-            aByteArray: _PigeonFfiCodec.readValue(ffiClass.aByteArray)! as Uint8List,
-            a4ByteArray: _PigeonFfiCodec.readValue(ffiClass.a4ByteArray)! as Int32List,
-            a8ByteArray: _PigeonFfiCodec.readValue(ffiClass.a8ByteArray)! as Int64List,
-            aFloatArray: _PigeonFfiCodec.readValue(ffiClass.aFloatArray)! as Float64List,
+            aByteArray: _PigeonFfiCodec.readTypedData(ffiClass.aByteArray)! as Uint8List,
+            a4ByteArray: _PigeonFfiCodec.readTypedData(ffiClass.a4ByteArray)! as Int32List,
+            a8ByteArray: _PigeonFfiCodec.readTypedData(ffiClass.a8ByteArray)! as Int64List,
+            aFloatArray: _PigeonFfiCodec.readTypedData(ffiClass.aFloatArray)! as Float64List,
             anEnum: NativeInteropAnEnum.values[ffiClass.anEnum.index],
             anotherEnum: NativeInteropAnotherEnum.values[ffiClass.anotherEnum.index],
             aString: ffiClass.aString.toDartString(),
@@ -1810,14 +1985,10 @@ class NativeInteropAllNullableTypes {
             aNullableInt: jniClass.aNullableInt?.toDartInt(releaseOriginal: true),
             aNullableInt64: jniClass.aNullableInt64?.toDartInt(releaseOriginal: true),
             aNullableDouble: jniClass.aNullableDouble?.toDartDouble(releaseOriginal: true),
-            aNullableByteArray:
-                _PigeonJniCodec.readValue(jniClass.aNullableByteArray) as Uint8List?,
-            aNullable4ByteArray:
-                _PigeonJniCodec.readValue(jniClass.aNullable4ByteArray) as Int32List?,
-            aNullable8ByteArray:
-                _PigeonJniCodec.readValue(jniClass.aNullable8ByteArray) as Int64List?,
-            aNullableFloatArray:
-                _PigeonJniCodec.readValue(jniClass.aNullableFloatArray) as Float64List?,
+            aNullableByteArray: _jByteArrayToDart(jniClass.aNullableByteArray, release: true),
+            aNullable4ByteArray: _jIntArrayToDart(jniClass.aNullable4ByteArray, release: true),
+            aNullable8ByteArray: _jLongArrayToDart(jniClass.aNullable8ByteArray, release: true),
+            aNullableFloatArray: _jDoubleArrayToDart(jniClass.aNullableFloatArray, release: true),
             aNullableEnum: NativeInteropAnEnum.fromJni(jniClass.aNullableEnum),
             anotherNullableEnum: NativeInteropAnotherEnum.fromJni(jniClass.anotherNullableEnum),
             aNullableString: jniClass.aNullableString?.toDartString(releaseOriginal: true),
@@ -1873,13 +2044,13 @@ class NativeInteropAllNullableTypes {
             aNullableInt64: ffiClass.aNullableInt64?.longValue,
             aNullableDouble: ffiClass.aNullableDouble?.doubleValue,
             aNullableByteArray:
-                _PigeonFfiCodec.readValue(ffiClass.aNullableByteArray) as Uint8List?,
+                _PigeonFfiCodec.readTypedData(ffiClass.aNullableByteArray) as Uint8List?,
             aNullable4ByteArray:
-                _PigeonFfiCodec.readValue(ffiClass.aNullable4ByteArray) as Int32List?,
+                _PigeonFfiCodec.readTypedData(ffiClass.aNullable4ByteArray) as Int32List?,
             aNullable8ByteArray:
-                _PigeonFfiCodec.readValue(ffiClass.aNullable8ByteArray) as Int64List?,
+                _PigeonFfiCodec.readTypedData(ffiClass.aNullable8ByteArray) as Int64List?,
             aNullableFloatArray:
-                _PigeonFfiCodec.readValue(ffiClass.aNullableFloatArray) as Float64List?,
+                _PigeonFfiCodec.readTypedData(ffiClass.aNullableFloatArray) as Float64List?,
             aNullableEnum: ffiClass.aNullableEnum == null
                 ? null
                 : NativeInteropAnEnum.values[ffiClass.aNullableEnum!.longValue],
@@ -2254,14 +2425,10 @@ class NativeInteropAllNullableTypesWithoutRecursion {
             aNullableInt: jniClass.aNullableInt?.toDartInt(releaseOriginal: true),
             aNullableInt64: jniClass.aNullableInt64?.toDartInt(releaseOriginal: true),
             aNullableDouble: jniClass.aNullableDouble?.toDartDouble(releaseOriginal: true),
-            aNullableByteArray:
-                _PigeonJniCodec.readValue(jniClass.aNullableByteArray) as Uint8List?,
-            aNullable4ByteArray:
-                _PigeonJniCodec.readValue(jniClass.aNullable4ByteArray) as Int32List?,
-            aNullable8ByteArray:
-                _PigeonJniCodec.readValue(jniClass.aNullable8ByteArray) as Int64List?,
-            aNullableFloatArray:
-                _PigeonJniCodec.readValue(jniClass.aNullableFloatArray) as Float64List?,
+            aNullableByteArray: _jByteArrayToDart(jniClass.aNullableByteArray, release: true),
+            aNullable4ByteArray: _jIntArrayToDart(jniClass.aNullable4ByteArray, release: true),
+            aNullable8ByteArray: _jLongArrayToDart(jniClass.aNullable8ByteArray, release: true),
+            aNullableFloatArray: _jDoubleArrayToDart(jniClass.aNullableFloatArray, release: true),
             aNullableEnum: NativeInteropAnEnum.fromJni(jniClass.aNullableEnum),
             anotherNullableEnum: NativeInteropAnotherEnum.fromJni(jniClass.anotherNullableEnum),
             aNullableString: jniClass.aNullableString?.toDartString(releaseOriginal: true),
@@ -2311,13 +2478,13 @@ class NativeInteropAllNullableTypesWithoutRecursion {
             aNullableInt64: ffiClass.aNullableInt64?.longValue,
             aNullableDouble: ffiClass.aNullableDouble?.doubleValue,
             aNullableByteArray:
-                _PigeonFfiCodec.readValue(ffiClass.aNullableByteArray) as Uint8List?,
+                _PigeonFfiCodec.readTypedData(ffiClass.aNullableByteArray) as Uint8List?,
             aNullable4ByteArray:
-                _PigeonFfiCodec.readValue(ffiClass.aNullable4ByteArray) as Int32List?,
+                _PigeonFfiCodec.readTypedData(ffiClass.aNullable4ByteArray) as Int32List?,
             aNullable8ByteArray:
-                _PigeonFfiCodec.readValue(ffiClass.aNullable8ByteArray) as Int64List?,
+                _PigeonFfiCodec.readTypedData(ffiClass.aNullable8ByteArray) as Int64List?,
             aNullableFloatArray:
-                _PigeonFfiCodec.readValue(ffiClass.aNullableFloatArray) as Float64List?,
+                _PigeonFfiCodec.readTypedData(ffiClass.aNullableFloatArray) as Float64List?,
             aNullableEnum: ffiClass.aNullableEnum == null
                 ? null
                 : NativeInteropAnEnum.values[ffiClass.aNullableEnum!.longValue],
@@ -2833,6 +3000,134 @@ class NativeInteropReservedNames {
   }
 }
 
+/// A sealed class, which native interop passes only with the hybrid
+/// transport, in the call's buffer.
+sealed class NativeInteropShape {}
+
+class NativeInteropCircle extends NativeInteropShape {
+  NativeInteropCircle({required this.radius});
+
+  double radius;
+
+  List<Object?> _toList() {
+    return <Object?>[radius];
+  }
+
+  jni_bridge.NativeInteropCircle toJni() {
+    return jni_bridge.NativeInteropCircle(radius);
+  }
+
+  ffi_bridge.NativeInteropCircleBridge toFfi() {
+    return ffi_bridge.NativeInteropCircleBridge.alloc().initWithRadius(radius);
+  }
+
+  Object encode() {
+    return _toList();
+  }
+
+  static NativeInteropCircle? fromJni(jni_bridge.NativeInteropCircle? jniClass) {
+    return jniClass == null ? null : NativeInteropCircle(radius: jniClass.radius);
+  }
+
+  static NativeInteropCircle? fromFfi(ffi_bridge.NativeInteropCircleBridge? ffiClass) {
+    return ffiClass == null ? null : NativeInteropCircle(radius: ffiClass.radius);
+  }
+
+  static NativeInteropCircle decode(Object result) {
+    result as List<Object?>;
+    return NativeInteropCircle(radius: result[0]! as double);
+  }
+
+  @override
+  // ignore: avoid_equals_and_hash_code_on_mutable_classes
+  bool operator ==(Object other) {
+    if (other is! NativeInteropCircle || other.runtimeType != runtimeType) {
+      return false;
+    }
+    if (identical(this, other)) {
+      return true;
+    }
+    return _deepEquals(radius, other.radius);
+  }
+
+  @override
+  // ignore: avoid_equals_and_hash_code_on_mutable_classes
+  int get hashCode => _deepHash(<Object?>[runtimeType, ..._toList()]);
+
+  @override
+  String toString() {
+    return 'NativeInteropCircle(radius: $radius)';
+  }
+}
+
+class NativeInteropSquare extends NativeInteropShape {
+  NativeInteropSquare({required this.side, this.label});
+
+  double side;
+
+  String? label;
+
+  List<Object?> _toList() {
+    return <Object?>[side, label];
+  }
+
+  jni_bridge.NativeInteropSquare toJni() {
+    return jni_bridge.NativeInteropSquare(side, _PigeonJniCodec.writeValue<JString?>(label));
+  }
+
+  ffi_bridge.NativeInteropSquareBridge toFfi() {
+    return ffi_bridge.NativeInteropSquareBridge.alloc().initWithSide(
+      side,
+      label: _PigeonFfiCodec.writeValue<NSString?>(label),
+    );
+  }
+
+  Object encode() {
+    return _toList();
+  }
+
+  static NativeInteropSquare? fromJni(jni_bridge.NativeInteropSquare? jniClass) {
+    return jniClass == null
+        ? null
+        : NativeInteropSquare(
+            side: jniClass.side,
+            label: jniClass.label?.toDartString(releaseOriginal: true),
+          );
+  }
+
+  static NativeInteropSquare? fromFfi(ffi_bridge.NativeInteropSquareBridge? ffiClass) {
+    return ffiClass == null
+        ? null
+        : NativeInteropSquare(side: ffiClass.side, label: ffiClass.label?.toDartString());
+  }
+
+  static NativeInteropSquare decode(Object result) {
+    result as List<Object?>;
+    return NativeInteropSquare(side: result[0]! as double, label: result[1] as String?);
+  }
+
+  @override
+  // ignore: avoid_equals_and_hash_code_on_mutable_classes
+  bool operator ==(Object other) {
+    if (other is! NativeInteropSquare || other.runtimeType != runtimeType) {
+      return false;
+    }
+    if (identical(this, other)) {
+      return true;
+    }
+    return _deepEquals(side, other.side) && _deepEquals(label, other.label);
+  }
+
+  @override
+  // ignore: avoid_equals_and_hash_code_on_mutable_classes
+  int get hashCode => _deepHash(<Object?>[runtimeType, ..._toList()]);
+
+  @override
+  String toString() {
+    return 'NativeInteropSquare(side: $side, label: $label)';
+  }
+}
+
 class _PigeonCodec extends StandardMessageCodec {
   const _PigeonCodec();
   @override
@@ -2864,6 +3159,12 @@ class _PigeonCodec extends StandardMessageCodec {
     } else if (value is NativeInteropReservedNames) {
       buffer.putUint8(136);
       writeValue(buffer, value.encode());
+    } else if (value is NativeInteropCircle) {
+      buffer.putUint8(137);
+      writeValue(buffer, value.encode());
+    } else if (value is NativeInteropSquare) {
+      buffer.putUint8(138);
+      writeValue(buffer, value.encode());
     } else {
       super.writeValue(buffer, value);
     }
@@ -2890,6 +3191,10 @@ class _PigeonCodec extends StandardMessageCodec {
         return NativeInteropAllClassesWrapper.decode(readValue(buffer)!);
       case 136:
         return NativeInteropReservedNames.decode(readValue(buffer)!);
+      case 137:
+        return NativeInteropCircle.decode(readValue(buffer)!);
+      case 138:
+        return NativeInteropSquare.decode(readValue(buffer)!);
       default:
         return super.readValueOfType(type, buffer);
     }
@@ -2940,10 +3245,11 @@ class NativeInteropHostIntegrationCoreApiForNativeInterop {
   void noop() {
     try {
       if (_jniApi != null) {
-        return _jniApi.noop();
+        _jniApi.pigeon_noop();
+        return;
       } else if (_ffiApi != null) {
         final pigeonVar_error = ffi_bridge.NativeInteropTestsError();
-        _ffiApi.noopWithWrappedError(pigeonVar_error);
+        _ffiApi.pigeon_noop(pigeonVar_error);
         _throwIfFfiError(pigeonVar_error);
         return;
       } else {
@@ -2957,22 +3263,22 @@ class NativeInteropHostIntegrationCoreApiForNativeInterop {
   NativeInteropAllTypes echoAllTypes(NativeInteropAllTypes everything) {
     try {
       if (_jniApi != null) {
-        final jni_bridge.NativeInteropAllTypes pigeonVar_res = _jniApi.echoAllTypes(
-          everything.toJni(),
-        );
-        final NativeInteropAllTypes pigeonVar_dartTypeRes = NativeInteropAllTypes.fromJni(
-          pigeonVar_res,
-        )!;
-        return pigeonVar_dartTypeRes;
+        final JByteArray pigeonVar_args = _PigeonJniBuffers.encode(<Object?>[everything]);
+        try {
+          final JByteArray? pigeonVar_res = _jniApi.pigeon_echoAllTypes(pigeonVar_args);
+          return _PigeonJniBuffers.decode(pigeonVar_res)! as NativeInteropAllTypes;
+        } finally {
+          pigeonVar_args.release();
+        }
       } else if (_ffiApi != null) {
         final pigeonVar_error = ffi_bridge.NativeInteropTestsError();
-        final ffi_bridge.NativeInteropAllTypesBridge? pigeonVar_res = _ffiApi
-            .echoAllTypesWithEverything(everything.toFfi(), wrappedError: pigeonVar_error);
+        final NSData pigeonVar_args = _PigeonFfiBuffers.encode(<Object?>[everything]);
+        final NSData? pigeonVar_res = _ffiApi.pigeon_echoAllTypes(
+          pigeonVar_args,
+          wrappedError: pigeonVar_error,
+        );
         _throwIfFfiError(pigeonVar_error);
-        final NativeInteropAllTypes pigeonVar_dartTypeRes = NativeInteropAllTypes.fromFfi(
-          pigeonVar_res,
-        )!;
-        return pigeonVar_dartTypeRes;
+        return _PigeonFfiBuffers.decode(pigeonVar_res)! as NativeInteropAllTypes;
       } else {
         throw Exception('No JNI or FFI api available');
       }
@@ -2984,15 +3290,13 @@ class NativeInteropHostIntegrationCoreApiForNativeInterop {
   Object? throwError() {
     try {
       if (_jniApi != null) {
-        final JObject? pigeonVar_res = _jniApi.throwError();
-        final Object? pigeonVar_dartTypeRes = _PigeonJniCodec.readValue(pigeonVar_res);
-        return pigeonVar_dartTypeRes;
+        final JByteArray? pigeonVar_res = _jniApi.pigeon_throwError();
+        return _PigeonJniBuffers.decode(pigeonVar_res);
       } else if (_ffiApi != null) {
         final pigeonVar_error = ffi_bridge.NativeInteropTestsError();
-        final NSObject? pigeonVar_res = _ffiApi.throwErrorWithWrappedError(pigeonVar_error);
+        final NSData? pigeonVar_res = _ffiApi.pigeon_throwError(pigeonVar_error);
         _throwIfFfiError(pigeonVar_error);
-        final Object? pigeonVar_dartTypeRes = _PigeonFfiCodec.readValue(pigeonVar_res);
-        return pigeonVar_dartTypeRes;
+        return _PigeonFfiBuffers.decode(pigeonVar_res);
       } else {
         throw Exception('No JNI or FFI api available');
       }
@@ -3004,10 +3308,11 @@ class NativeInteropHostIntegrationCoreApiForNativeInterop {
   void throwErrorFromVoid() {
     try {
       if (_jniApi != null) {
-        return _jniApi.throwErrorFromVoid();
+        _jniApi.pigeon_throwErrorFromVoid();
+        return;
       } else if (_ffiApi != null) {
         final pigeonVar_error = ffi_bridge.NativeInteropTestsError();
-        _ffiApi.throwErrorFromVoidWithWrappedError(pigeonVar_error);
+        _ffiApi.pigeon_throwErrorFromVoid(pigeonVar_error);
         _throwIfFfiError(pigeonVar_error);
         return;
       } else {
@@ -3021,15 +3326,13 @@ class NativeInteropHostIntegrationCoreApiForNativeInterop {
   Object? throwFlutterError() {
     try {
       if (_jniApi != null) {
-        final JObject? pigeonVar_res = _jniApi.throwFlutterError();
-        final Object? pigeonVar_dartTypeRes = _PigeonJniCodec.readValue(pigeonVar_res);
-        return pigeonVar_dartTypeRes;
+        final JByteArray? pigeonVar_res = _jniApi.pigeon_throwFlutterError();
+        return _PigeonJniBuffers.decode(pigeonVar_res);
       } else if (_ffiApi != null) {
         final pigeonVar_error = ffi_bridge.NativeInteropTestsError();
-        final NSObject? pigeonVar_res = _ffiApi.throwFlutterErrorWithWrappedError(pigeonVar_error);
+        final NSData? pigeonVar_res = _ffiApi.pigeon_throwFlutterError(pigeonVar_error);
         _throwIfFfiError(pigeonVar_error);
-        final Object? pigeonVar_dartTypeRes = _PigeonFfiCodec.readValue(pigeonVar_res);
-        return pigeonVar_dartTypeRes;
+        return _PigeonFfiBuffers.decode(pigeonVar_res);
       } else {
         throw Exception('No JNI or FFI api available');
       }
@@ -3041,16 +3344,15 @@ class NativeInteropHostIntegrationCoreApiForNativeInterop {
   int echoInt(int anInt) {
     try {
       if (_jniApi != null) {
-        return _jniApi.echoInt(anInt);
+        return _jniApi.pigeon_echoInt(anInt);
       } else if (_ffiApi != null) {
         final pigeonVar_error = ffi_bridge.NativeInteropTestsError();
-        final NSNumber? pigeonVar_res = _ffiApi.echoIntWithAnInt(
+        final NSNumber? pigeonVar_res = _ffiApi.pigeon_echoInt(
           anInt,
           wrappedError: pigeonVar_error,
         );
         _throwIfFfiError(pigeonVar_error);
-        final int pigeonVar_dartTypeRes = pigeonVar_res!.longValue;
-        return pigeonVar_dartTypeRes;
+        return pigeonVar_res!.longValue;
       } else {
         throw Exception('No JNI or FFI api available');
       }
@@ -3062,16 +3364,15 @@ class NativeInteropHostIntegrationCoreApiForNativeInterop {
   double echoDouble(double aDouble) {
     try {
       if (_jniApi != null) {
-        return _jniApi.echoDouble(aDouble);
+        return _jniApi.pigeon_echoDouble(aDouble);
       } else if (_ffiApi != null) {
         final pigeonVar_error = ffi_bridge.NativeInteropTestsError();
-        final NSNumber? pigeonVar_res = _ffiApi.echoDoubleWithADouble(
+        final NSNumber? pigeonVar_res = _ffiApi.pigeon_echoDouble(
           aDouble,
           wrappedError: pigeonVar_error,
         );
         _throwIfFfiError(pigeonVar_error);
-        final double pigeonVar_dartTypeRes = pigeonVar_res!.doubleValue;
-        return pigeonVar_dartTypeRes;
+        return pigeonVar_res!.doubleValue;
       } else {
         throw Exception('No JNI or FFI api available');
       }
@@ -3083,16 +3384,15 @@ class NativeInteropHostIntegrationCoreApiForNativeInterop {
   bool echoBool(bool aBool) {
     try {
       if (_jniApi != null) {
-        return _jniApi.echoBool(aBool);
+        return _jniApi.pigeon_echoBool(aBool);
       } else if (_ffiApi != null) {
         final pigeonVar_error = ffi_bridge.NativeInteropTestsError();
-        final NSNumber? pigeonVar_res = _ffiApi.echoBoolWithABool(
+        final NSNumber? pigeonVar_res = _ffiApi.pigeon_echoBool(
           aBool,
           wrappedError: pigeonVar_error,
         );
         _throwIfFfiError(pigeonVar_error);
-        final bool pigeonVar_dartTypeRes = pigeonVar_res!.boolValue;
-        return pigeonVar_dartTypeRes;
+        return pigeonVar_res!.boolValue;
       } else {
         throw Exception('No JNI or FFI api available');
       }
@@ -3104,20 +3404,21 @@ class NativeInteropHostIntegrationCoreApiForNativeInterop {
   String echoString(String aString) {
     try {
       if (_jniApi != null) {
-        final JString pigeonVar_res = _jniApi.echoString(
-          _PigeonJniCodec.writeValue<JString>(aString),
-        );
-        final String pigeonVar_dartTypeRes = pigeonVar_res.toDartString(releaseOriginal: true);
-        return pigeonVar_dartTypeRes;
+        final JString pigeonVar_aString = aString.toJString();
+        try {
+          final JString pigeonVar_res = _jniApi.pigeon_echoString(pigeonVar_aString);
+          return pigeonVar_res.toDartString(releaseOriginal: true);
+        } finally {
+          pigeonVar_aString.release();
+        }
       } else if (_ffiApi != null) {
         final pigeonVar_error = ffi_bridge.NativeInteropTestsError();
-        final NSString? pigeonVar_res = _ffiApi.echoStringWithAString(
-          _PigeonFfiCodec.writeValue<NSString>(aString),
+        final NSString? pigeonVar_res = _ffiApi.pigeon_echoString(
+          NSString(aString),
           wrappedError: pigeonVar_error,
         );
         _throwIfFfiError(pigeonVar_error);
-        final String pigeonVar_dartTypeRes = pigeonVar_res!.toDartString();
-        return pigeonVar_dartTypeRes;
+        return pigeonVar_res!.toDartString();
       } else {
         throw Exception('No JNI or FFI api available');
       }
@@ -3129,23 +3430,21 @@ class NativeInteropHostIntegrationCoreApiForNativeInterop {
   Uint8List echoUint8List(Uint8List aUint8List) {
     try {
       if (_jniApi != null) {
-        final JByteArray pigeonVar_res = _jniApi.echoUint8List(
-          _PigeonJniCodec.writeValue<JByteArray>(aUint8List),
-        );
-        final Uint8List pigeonVar_dartTypeRes =
-            _PigeonJniCodec.readValue(pigeonVar_res)! as Uint8List;
-        return pigeonVar_dartTypeRes;
+        final JByteArray pigeonVar_aUint8List = _uint8ListToJni(aUint8List);
+        try {
+          final JByteArray pigeonVar_res = _jniApi.pigeon_echoUint8List(pigeonVar_aUint8List);
+          return _jByteArrayToDart(pigeonVar_res, release: true)!;
+        } finally {
+          pigeonVar_aUint8List.release();
+        }
       } else if (_ffiApi != null) {
         final pigeonVar_error = ffi_bridge.NativeInteropTestsError();
-        final ffi_bridge.NativeInteropTestsPigeonTypedData? pigeonVar_res = _ffiApi
-            .echoUint8ListWithAUint8List(
-              _PigeonFfiCodec.writeValue<ffi_bridge.NativeInteropTestsPigeonTypedData>(aUint8List),
-              wrappedError: pigeonVar_error,
-            );
+        final NSData? pigeonVar_res = _ffiApi.pigeon_echoUint8List(
+          _typedDataToNSData(aUint8List),
+          wrappedError: pigeonVar_error,
+        );
         _throwIfFfiError(pigeonVar_error);
-        final Uint8List pigeonVar_dartTypeRes =
-            _PigeonFfiCodec.readValue(pigeonVar_res)! as Uint8List;
-        return pigeonVar_dartTypeRes;
+        return _PigeonFfiBuffers.toUint8List(pigeonVar_res)!;
       } else {
         throw Exception('No JNI or FFI api available');
       }
@@ -3157,23 +3456,21 @@ class NativeInteropHostIntegrationCoreApiForNativeInterop {
   Int32List echoInt32List(Int32List aInt32List) {
     try {
       if (_jniApi != null) {
-        final JIntArray pigeonVar_res = _jniApi.echoInt32List(
-          _PigeonJniCodec.writeValue<JIntArray>(aInt32List),
-        );
-        final Int32List pigeonVar_dartTypeRes =
-            _PigeonJniCodec.readValue(pigeonVar_res)! as Int32List;
-        return pigeonVar_dartTypeRes;
+        final JIntArray pigeonVar_aInt32List = _int32ListToJni(aInt32List);
+        try {
+          final JIntArray pigeonVar_res = _jniApi.pigeon_echoInt32List(pigeonVar_aInt32List);
+          return _jIntArrayToDart(pigeonVar_res, release: true)!;
+        } finally {
+          pigeonVar_aInt32List.release();
+        }
       } else if (_ffiApi != null) {
         final pigeonVar_error = ffi_bridge.NativeInteropTestsError();
-        final ffi_bridge.NativeInteropTestsPigeonTypedData? pigeonVar_res = _ffiApi
-            .echoInt32ListWithAInt32List(
-              _PigeonFfiCodec.writeValue<ffi_bridge.NativeInteropTestsPigeonTypedData>(aInt32List),
-              wrappedError: pigeonVar_error,
-            );
+        final NSData? pigeonVar_res = _ffiApi.pigeon_echoInt32List(
+          _typedDataToNSData(aInt32List),
+          wrappedError: pigeonVar_error,
+        );
         _throwIfFfiError(pigeonVar_error);
-        final Int32List pigeonVar_dartTypeRes =
-            _PigeonFfiCodec.readValue(pigeonVar_res)! as Int32List;
-        return pigeonVar_dartTypeRes;
+        return _PigeonFfiBuffers.toUint8List(pigeonVar_res)!.buffer.asInt32List();
       } else {
         throw Exception('No JNI or FFI api available');
       }
@@ -3185,23 +3482,21 @@ class NativeInteropHostIntegrationCoreApiForNativeInterop {
   Int64List echoInt64List(Int64List aInt64List) {
     try {
       if (_jniApi != null) {
-        final JLongArray pigeonVar_res = _jniApi.echoInt64List(
-          _PigeonJniCodec.writeValue<JLongArray>(aInt64List),
-        );
-        final Int64List pigeonVar_dartTypeRes =
-            _PigeonJniCodec.readValue(pigeonVar_res)! as Int64List;
-        return pigeonVar_dartTypeRes;
+        final JLongArray pigeonVar_aInt64List = _int64ListToJni(aInt64List);
+        try {
+          final JLongArray pigeonVar_res = _jniApi.pigeon_echoInt64List(pigeonVar_aInt64List);
+          return _jLongArrayToDart(pigeonVar_res, release: true)!;
+        } finally {
+          pigeonVar_aInt64List.release();
+        }
       } else if (_ffiApi != null) {
         final pigeonVar_error = ffi_bridge.NativeInteropTestsError();
-        final ffi_bridge.NativeInteropTestsPigeonTypedData? pigeonVar_res = _ffiApi
-            .echoInt64ListWithAInt64List(
-              _PigeonFfiCodec.writeValue<ffi_bridge.NativeInteropTestsPigeonTypedData>(aInt64List),
-              wrappedError: pigeonVar_error,
-            );
+        final NSData? pigeonVar_res = _ffiApi.pigeon_echoInt64List(
+          _typedDataToNSData(aInt64List),
+          wrappedError: pigeonVar_error,
+        );
         _throwIfFfiError(pigeonVar_error);
-        final Int64List pigeonVar_dartTypeRes =
-            _PigeonFfiCodec.readValue(pigeonVar_res)! as Int64List;
-        return pigeonVar_dartTypeRes;
+        return _PigeonFfiBuffers.toUint8List(pigeonVar_res)!.buffer.asInt64List();
       } else {
         throw Exception('No JNI or FFI api available');
       }
@@ -3213,25 +3508,21 @@ class NativeInteropHostIntegrationCoreApiForNativeInterop {
   Float64List echoFloat64List(Float64List aFloat64List) {
     try {
       if (_jniApi != null) {
-        final JDoubleArray pigeonVar_res = _jniApi.echoFloat64List(
-          _PigeonJniCodec.writeValue<JDoubleArray>(aFloat64List),
-        );
-        final Float64List pigeonVar_dartTypeRes =
-            _PigeonJniCodec.readValue(pigeonVar_res)! as Float64List;
-        return pigeonVar_dartTypeRes;
+        final JDoubleArray pigeonVar_aFloat64List = _float64ListToJni(aFloat64List);
+        try {
+          final JDoubleArray pigeonVar_res = _jniApi.pigeon_echoFloat64List(pigeonVar_aFloat64List);
+          return _jDoubleArrayToDart(pigeonVar_res, release: true)!;
+        } finally {
+          pigeonVar_aFloat64List.release();
+        }
       } else if (_ffiApi != null) {
         final pigeonVar_error = ffi_bridge.NativeInteropTestsError();
-        final ffi_bridge.NativeInteropTestsPigeonTypedData? pigeonVar_res = _ffiApi
-            .echoFloat64ListWithAFloat64List(
-              _PigeonFfiCodec.writeValue<ffi_bridge.NativeInteropTestsPigeonTypedData>(
-                aFloat64List,
-              ),
-              wrappedError: pigeonVar_error,
-            );
+        final NSData? pigeonVar_res = _ffiApi.pigeon_echoFloat64List(
+          _typedDataToNSData(aFloat64List),
+          wrappedError: pigeonVar_error,
+        );
         _throwIfFfiError(pigeonVar_error);
-        final Float64List pigeonVar_dartTypeRes =
-            _PigeonFfiCodec.readValue(pigeonVar_res)! as Float64List;
-        return pigeonVar_dartTypeRes;
+        return _PigeonFfiBuffers.toUint8List(pigeonVar_res)!.buffer.asFloat64List();
       } else {
         throw Exception('No JNI or FFI api available');
       }
@@ -3243,20 +3534,22 @@ class NativeInteropHostIntegrationCoreApiForNativeInterop {
   Object echoObject(Object anObject) {
     try {
       if (_jniApi != null) {
-        final JObject pigeonVar_res = _jniApi.echoObject(
-          _PigeonJniCodec.writeValue<JObject>(anObject),
-        );
-        final Object pigeonVar_dartTypeRes = _PigeonJniCodec.readValue(pigeonVar_res)!;
-        return pigeonVar_dartTypeRes;
+        final JByteArray pigeonVar_args = _PigeonJniBuffers.encode(<Object?>[anObject]);
+        try {
+          final JByteArray? pigeonVar_res = _jniApi.pigeon_echoObject(pigeonVar_args);
+          return _PigeonJniBuffers.decode(pigeonVar_res)!;
+        } finally {
+          pigeonVar_args.release();
+        }
       } else if (_ffiApi != null) {
         final pigeonVar_error = ffi_bridge.NativeInteropTestsError();
-        final NSObject? pigeonVar_res = _ffiApi.echoObjectWithAnObject(
-          _PigeonFfiCodec.writeValue<NSObject>(anObject, generic: true),
+        final NSData pigeonVar_args = _PigeonFfiBuffers.encode(<Object?>[anObject]);
+        final NSData? pigeonVar_res = _ffiApi.pigeon_echoObject(
+          pigeonVar_args,
           wrappedError: pigeonVar_error,
         );
         _throwIfFfiError(pigeonVar_error);
-        final Object pigeonVar_dartTypeRes = _PigeonFfiCodec.readValue(pigeonVar_res)!;
-        return pigeonVar_dartTypeRes;
+        return _PigeonFfiBuffers.decode(pigeonVar_res)!;
       } else {
         throw Exception('No JNI or FFI api available');
       }
@@ -3268,22 +3561,22 @@ class NativeInteropHostIntegrationCoreApiForNativeInterop {
   List<Object?> echoList(List<Object?> list) {
     try {
       if (_jniApi != null) {
-        final JList<JObject?> pigeonVar_res = _jniApi.echoList(
-          _PigeonJniCodec.writeValue<JList<JObject?>>(list),
-        );
-        final List<Object?> pigeonVar_dartTypeRes =
-            (_PigeonJniCodec.readValue(pigeonVar_res)! as List<Object?>).cast<Object?>();
-        return pigeonVar_dartTypeRes;
+        final JByteArray pigeonVar_args = _PigeonJniBuffers.encode(<Object?>[list]);
+        try {
+          final JByteArray? pigeonVar_res = _jniApi.pigeon_echoList(pigeonVar_args);
+          return _PigeonJniBuffers.decode(pigeonVar_res)! as List<Object?>;
+        } finally {
+          pigeonVar_args.release();
+        }
       } else if (_ffiApi != null) {
         final pigeonVar_error = ffi_bridge.NativeInteropTestsError();
-        final NSArray? pigeonVar_res = _ffiApi.echoListWithList(
-          _PigeonFfiCodec.writeValue<NSMutableArray>(list),
+        final NSData pigeonVar_args = _PigeonFfiBuffers.encode(<Object?>[list]);
+        final NSData? pigeonVar_res = _ffiApi.pigeon_echoList(
+          pigeonVar_args,
           wrappedError: pigeonVar_error,
         );
         _throwIfFfiError(pigeonVar_error);
-        final List<Object?> pigeonVar_dartTypeRes =
-            (_PigeonFfiCodec.readValue(pigeonVar_res)! as List<Object?>).cast<Object?>();
-        return pigeonVar_dartTypeRes;
+        return _PigeonFfiBuffers.decode(pigeonVar_res)! as List<Object?>;
       } else {
         throw Exception('No JNI or FFI api available');
       }
@@ -3295,22 +3588,22 @@ class NativeInteropHostIntegrationCoreApiForNativeInterop {
   List<String?> echoStringList(List<String?> stringList) {
     try {
       if (_jniApi != null) {
-        final JList<JString?> pigeonVar_res = _jniApi.echoStringList(
-          _PigeonJniCodec.writeValue<JList<JString?>>(stringList),
-        );
-        final List<String?> pigeonVar_dartTypeRes =
-            (_PigeonJniCodec.readValue(pigeonVar_res)! as List<Object?>).cast<String?>();
-        return pigeonVar_dartTypeRes;
+        final JByteArray pigeonVar_args = _PigeonJniBuffers.encode(<Object?>[stringList]);
+        try {
+          final JByteArray? pigeonVar_res = _jniApi.pigeon_echoStringList(pigeonVar_args);
+          return (_PigeonJniBuffers.decode(pigeonVar_res)! as List<Object?>).cast<String?>();
+        } finally {
+          pigeonVar_args.release();
+        }
       } else if (_ffiApi != null) {
         final pigeonVar_error = ffi_bridge.NativeInteropTestsError();
-        final NSArray? pigeonVar_res = _ffiApi.echoStringListWithStringList(
-          _PigeonFfiCodec.writeValue<NSMutableArray>(stringList),
+        final NSData pigeonVar_args = _PigeonFfiBuffers.encode(<Object?>[stringList]);
+        final NSData? pigeonVar_res = _ffiApi.pigeon_echoStringList(
+          pigeonVar_args,
           wrappedError: pigeonVar_error,
         );
         _throwIfFfiError(pigeonVar_error);
-        final List<String?> pigeonVar_dartTypeRes =
-            (_PigeonFfiCodec.readValue(pigeonVar_res)! as List<Object?>).cast<String?>();
-        return pigeonVar_dartTypeRes;
+        return (_PigeonFfiBuffers.decode(pigeonVar_res)! as List<Object?>).cast<String?>();
       } else {
         throw Exception('No JNI or FFI api available');
       }
@@ -3322,22 +3615,22 @@ class NativeInteropHostIntegrationCoreApiForNativeInterop {
   List<int?> echoIntList(List<int?> intList) {
     try {
       if (_jniApi != null) {
-        final JList<JLong?> pigeonVar_res = _jniApi.echoIntList(
-          _PigeonJniCodec.writeValue<JList<JLong?>>(intList),
-        );
-        final List<int?> pigeonVar_dartTypeRes =
-            (_PigeonJniCodec.readValue(pigeonVar_res)! as List<Object?>).cast<int?>();
-        return pigeonVar_dartTypeRes;
+        final JByteArray pigeonVar_args = _PigeonJniBuffers.encode(<Object?>[intList]);
+        try {
+          final JByteArray? pigeonVar_res = _jniApi.pigeon_echoIntList(pigeonVar_args);
+          return (_PigeonJniBuffers.decode(pigeonVar_res)! as List<Object?>).cast<int?>();
+        } finally {
+          pigeonVar_args.release();
+        }
       } else if (_ffiApi != null) {
         final pigeonVar_error = ffi_bridge.NativeInteropTestsError();
-        final NSArray? pigeonVar_res = _ffiApi.echoIntListWithIntList(
-          _PigeonFfiCodec.writeValue<NSMutableArray>(intList),
+        final NSData pigeonVar_args = _PigeonFfiBuffers.encode(<Object?>[intList]);
+        final NSData? pigeonVar_res = _ffiApi.pigeon_echoIntList(
+          pigeonVar_args,
           wrappedError: pigeonVar_error,
         );
         _throwIfFfiError(pigeonVar_error);
-        final List<int?> pigeonVar_dartTypeRes =
-            (_PigeonFfiCodec.readValue(pigeonVar_res, int)! as List<Object?>).cast<int?>();
-        return pigeonVar_dartTypeRes;
+        return (_PigeonFfiBuffers.decode(pigeonVar_res)! as List<Object?>).cast<int?>();
       } else {
         throw Exception('No JNI or FFI api available');
       }
@@ -3349,22 +3642,22 @@ class NativeInteropHostIntegrationCoreApiForNativeInterop {
   List<double?> echoDoubleList(List<double?> doubleList) {
     try {
       if (_jniApi != null) {
-        final JList<JDouble?> pigeonVar_res = _jniApi.echoDoubleList(
-          _PigeonJniCodec.writeValue<JList<JDouble?>>(doubleList),
-        );
-        final List<double?> pigeonVar_dartTypeRes =
-            (_PigeonJniCodec.readValue(pigeonVar_res)! as List<Object?>).cast<double?>();
-        return pigeonVar_dartTypeRes;
+        final JByteArray pigeonVar_args = _PigeonJniBuffers.encode(<Object?>[doubleList]);
+        try {
+          final JByteArray? pigeonVar_res = _jniApi.pigeon_echoDoubleList(pigeonVar_args);
+          return (_PigeonJniBuffers.decode(pigeonVar_res)! as List<Object?>).cast<double?>();
+        } finally {
+          pigeonVar_args.release();
+        }
       } else if (_ffiApi != null) {
         final pigeonVar_error = ffi_bridge.NativeInteropTestsError();
-        final NSArray? pigeonVar_res = _ffiApi.echoDoubleListWithDoubleList(
-          _PigeonFfiCodec.writeValue<NSMutableArray>(doubleList),
+        final NSData pigeonVar_args = _PigeonFfiBuffers.encode(<Object?>[doubleList]);
+        final NSData? pigeonVar_res = _ffiApi.pigeon_echoDoubleList(
+          pigeonVar_args,
           wrappedError: pigeonVar_error,
         );
         _throwIfFfiError(pigeonVar_error);
-        final List<double?> pigeonVar_dartTypeRes =
-            (_PigeonFfiCodec.readValue(pigeonVar_res, double)! as List<Object?>).cast<double?>();
-        return pigeonVar_dartTypeRes;
+        return (_PigeonFfiBuffers.decode(pigeonVar_res)! as List<Object?>).cast<double?>();
       } else {
         throw Exception('No JNI or FFI api available');
       }
@@ -3376,22 +3669,22 @@ class NativeInteropHostIntegrationCoreApiForNativeInterop {
   List<bool?> echoBoolList(List<bool?> boolList) {
     try {
       if (_jniApi != null) {
-        final JList<JBoolean?> pigeonVar_res = _jniApi.echoBoolList(
-          _PigeonJniCodec.writeValue<JList<JBoolean?>>(boolList),
-        );
-        final List<bool?> pigeonVar_dartTypeRes =
-            (_PigeonJniCodec.readValue(pigeonVar_res)! as List<Object?>).cast<bool?>();
-        return pigeonVar_dartTypeRes;
+        final JByteArray pigeonVar_args = _PigeonJniBuffers.encode(<Object?>[boolList]);
+        try {
+          final JByteArray? pigeonVar_res = _jniApi.pigeon_echoBoolList(pigeonVar_args);
+          return (_PigeonJniBuffers.decode(pigeonVar_res)! as List<Object?>).cast<bool?>();
+        } finally {
+          pigeonVar_args.release();
+        }
       } else if (_ffiApi != null) {
         final pigeonVar_error = ffi_bridge.NativeInteropTestsError();
-        final NSArray? pigeonVar_res = _ffiApi.echoBoolListWithBoolList(
-          _PigeonFfiCodec.writeValue<NSMutableArray>(boolList),
+        final NSData pigeonVar_args = _PigeonFfiBuffers.encode(<Object?>[boolList]);
+        final NSData? pigeonVar_res = _ffiApi.pigeon_echoBoolList(
+          pigeonVar_args,
           wrappedError: pigeonVar_error,
         );
         _throwIfFfiError(pigeonVar_error);
-        final List<bool?> pigeonVar_dartTypeRes =
-            (_PigeonFfiCodec.readValue(pigeonVar_res, bool)! as List<Object?>).cast<bool?>();
-        return pigeonVar_dartTypeRes;
+        return (_PigeonFfiBuffers.decode(pigeonVar_res)! as List<Object?>).cast<bool?>();
       } else {
         throw Exception('No JNI or FFI api available');
       }
@@ -3403,24 +3696,24 @@ class NativeInteropHostIntegrationCoreApiForNativeInterop {
   List<NativeInteropAnEnum?> echoEnumList(List<NativeInteropAnEnum?> enumList) {
     try {
       if (_jniApi != null) {
-        final JList<jni_bridge.NativeInteropAnEnum?> pigeonVar_res = _jniApi.echoEnumList(
-          _PigeonJniCodec.writeValue<JList<jni_bridge.NativeInteropAnEnum?>>(enumList),
-        );
-        final List<NativeInteropAnEnum?> pigeonVar_dartTypeRes =
-            (_PigeonJniCodec.readValue(pigeonVar_res)! as List<Object?>)
-                .cast<NativeInteropAnEnum?>();
-        return pigeonVar_dartTypeRes;
+        final JByteArray pigeonVar_args = _PigeonJniBuffers.encode(<Object?>[enumList]);
+        try {
+          final JByteArray? pigeonVar_res = _jniApi.pigeon_echoEnumList(pigeonVar_args);
+          return (_PigeonJniBuffers.decode(pigeonVar_res)! as List<Object?>)
+              .cast<NativeInteropAnEnum?>();
+        } finally {
+          pigeonVar_args.release();
+        }
       } else if (_ffiApi != null) {
         final pigeonVar_error = ffi_bridge.NativeInteropTestsError();
-        final NSArray? pigeonVar_res = _ffiApi.echoEnumListWithEnumList(
-          _PigeonFfiCodec.writeValue<NSMutableArray>(enumList),
+        final NSData pigeonVar_args = _PigeonFfiBuffers.encode(<Object?>[enumList]);
+        final NSData? pigeonVar_res = _ffiApi.pigeon_echoEnumList(
+          pigeonVar_args,
           wrappedError: pigeonVar_error,
         );
         _throwIfFfiError(pigeonVar_error);
-        final List<NativeInteropAnEnum?> pigeonVar_dartTypeRes =
-            (_PigeonFfiCodec.readValue(pigeonVar_res, NativeInteropAnEnum)! as List<Object?>)
-                .cast<NativeInteropAnEnum?>();
-        return pigeonVar_dartTypeRes;
+        return (_PigeonFfiBuffers.decode(pigeonVar_res)! as List<Object?>)
+            .cast<NativeInteropAnEnum?>();
       } else {
         throw Exception('No JNI or FFI api available');
       }
@@ -3434,27 +3727,24 @@ class NativeInteropHostIntegrationCoreApiForNativeInterop {
   ) {
     try {
       if (_jniApi != null) {
-        final JList<jni_bridge.NativeInteropAllNullableTypes?> pigeonVar_res = _jniApi
-            .echoClassList(
-              _PigeonJniCodec.writeValue<JList<jni_bridge.NativeInteropAllNullableTypes?>>(
-                classList,
-              ),
-            );
-        final List<NativeInteropAllNullableTypes?> pigeonVar_dartTypeRes =
-            (_PigeonJniCodec.readValue(pigeonVar_res)! as List<Object?>)
-                .cast<NativeInteropAllNullableTypes?>();
-        return pigeonVar_dartTypeRes;
+        final JByteArray pigeonVar_args = _PigeonJniBuffers.encode(<Object?>[classList]);
+        try {
+          final JByteArray? pigeonVar_res = _jniApi.pigeon_echoClassList(pigeonVar_args);
+          return (_PigeonJniBuffers.decode(pigeonVar_res)! as List<Object?>)
+              .cast<NativeInteropAllNullableTypes?>();
+        } finally {
+          pigeonVar_args.release();
+        }
       } else if (_ffiApi != null) {
         final pigeonVar_error = ffi_bridge.NativeInteropTestsError();
-        final NSArray? pigeonVar_res = _ffiApi.echoClassListWithClassList(
-          _PigeonFfiCodec.writeValue<NSMutableArray>(classList),
+        final NSData pigeonVar_args = _PigeonFfiBuffers.encode(<Object?>[classList]);
+        final NSData? pigeonVar_res = _ffiApi.pigeon_echoClassList(
+          pigeonVar_args,
           wrappedError: pigeonVar_error,
         );
         _throwIfFfiError(pigeonVar_error);
-        final List<NativeInteropAllNullableTypes?> pigeonVar_dartTypeRes =
-            (_PigeonFfiCodec.readValue(pigeonVar_res)! as List<Object?>)
-                .cast<NativeInteropAllNullableTypes?>();
-        return pigeonVar_dartTypeRes;
+        return (_PigeonFfiBuffers.decode(pigeonVar_res)! as List<Object?>)
+            .cast<NativeInteropAllNullableTypes?>();
       } else {
         throw Exception('No JNI or FFI api available');
       }
@@ -3466,24 +3756,24 @@ class NativeInteropHostIntegrationCoreApiForNativeInterop {
   List<NativeInteropAnEnum> echoNonNullEnumList(List<NativeInteropAnEnum> enumList) {
     try {
       if (_jniApi != null) {
-        final JList<jni_bridge.NativeInteropAnEnum> pigeonVar_res = _jniApi.echoNonNullEnumList(
-          _PigeonJniCodec.writeValue<JList<jni_bridge.NativeInteropAnEnum>>(enumList),
-        );
-        final List<NativeInteropAnEnum> pigeonVar_dartTypeRes =
-            (_PigeonJniCodec.readValue(pigeonVar_res)! as List<Object?>)
-                .cast<NativeInteropAnEnum>();
-        return pigeonVar_dartTypeRes;
+        final JByteArray pigeonVar_args = _PigeonJniBuffers.encode(<Object?>[enumList]);
+        try {
+          final JByteArray? pigeonVar_res = _jniApi.pigeon_echoNonNullEnumList(pigeonVar_args);
+          return (_PigeonJniBuffers.decode(pigeonVar_res)! as List<Object?>)
+              .cast<NativeInteropAnEnum>();
+        } finally {
+          pigeonVar_args.release();
+        }
       } else if (_ffiApi != null) {
         final pigeonVar_error = ffi_bridge.NativeInteropTestsError();
-        final NSArray? pigeonVar_res = _ffiApi.echoNonNullEnumListWithEnumList(
-          _PigeonFfiCodec.writeValue<NSMutableArray>(enumList),
+        final NSData pigeonVar_args = _PigeonFfiBuffers.encode(<Object?>[enumList]);
+        final NSData? pigeonVar_res = _ffiApi.pigeon_echoNonNullEnumList(
+          pigeonVar_args,
           wrappedError: pigeonVar_error,
         );
         _throwIfFfiError(pigeonVar_error);
-        final List<NativeInteropAnEnum> pigeonVar_dartTypeRes =
-            (_PigeonFfiCodec.readValue(pigeonVar_res, NativeInteropAnEnum)! as List<Object?>)
-                .cast<NativeInteropAnEnum>();
-        return pigeonVar_dartTypeRes;
+        return (_PigeonFfiBuffers.decode(pigeonVar_res)! as List<Object?>)
+            .cast<NativeInteropAnEnum>();
       } else {
         throw Exception('No JNI or FFI api available');
       }
@@ -3497,27 +3787,24 @@ class NativeInteropHostIntegrationCoreApiForNativeInterop {
   ) {
     try {
       if (_jniApi != null) {
-        final JList<jni_bridge.NativeInteropAllNullableTypes> pigeonVar_res = _jniApi
-            .echoNonNullClassList(
-              _PigeonJniCodec.writeValue<JList<jni_bridge.NativeInteropAllNullableTypes>>(
-                classList,
-              ),
-            );
-        final List<NativeInteropAllNullableTypes> pigeonVar_dartTypeRes =
-            (_PigeonJniCodec.readValue(pigeonVar_res)! as List<Object?>)
-                .cast<NativeInteropAllNullableTypes>();
-        return pigeonVar_dartTypeRes;
+        final JByteArray pigeonVar_args = _PigeonJniBuffers.encode(<Object?>[classList]);
+        try {
+          final JByteArray? pigeonVar_res = _jniApi.pigeon_echoNonNullClassList(pigeonVar_args);
+          return (_PigeonJniBuffers.decode(pigeonVar_res)! as List<Object?>)
+              .cast<NativeInteropAllNullableTypes>();
+        } finally {
+          pigeonVar_args.release();
+        }
       } else if (_ffiApi != null) {
         final pigeonVar_error = ffi_bridge.NativeInteropTestsError();
-        final NSArray? pigeonVar_res = _ffiApi.echoNonNullClassListWithClassList(
-          _PigeonFfiCodec.writeValue<NSMutableArray>(classList),
+        final NSData pigeonVar_args = _PigeonFfiBuffers.encode(<Object?>[classList]);
+        final NSData? pigeonVar_res = _ffiApi.pigeon_echoNonNullClassList(
+          pigeonVar_args,
           wrappedError: pigeonVar_error,
         );
         _throwIfFfiError(pigeonVar_error);
-        final List<NativeInteropAllNullableTypes> pigeonVar_dartTypeRes =
-            (_PigeonFfiCodec.readValue(pigeonVar_res)! as List<Object?>)
-                .cast<NativeInteropAllNullableTypes>();
-        return pigeonVar_dartTypeRes;
+        return (_PigeonFfiBuffers.decode(pigeonVar_res)! as List<Object?>)
+            .cast<NativeInteropAllNullableTypes>();
       } else {
         throw Exception('No JNI or FFI api available');
       }
@@ -3529,24 +3816,22 @@ class NativeInteropHostIntegrationCoreApiForNativeInterop {
   Map<Object?, Object?> echoMap(Map<Object?, Object?> map) {
     try {
       if (_jniApi != null) {
-        final JMap<JObject?, JObject?> pigeonVar_res = _jniApi.echoMap(
-          _PigeonJniCodec.writeValue<JMap<JObject?, JObject?>>(map),
-        );
-        final Map<Object?, Object?> pigeonVar_dartTypeRes =
-            (_PigeonJniCodec.readValue(pigeonVar_res)! as Map<Object?, Object?>)
-                .cast<Object?, Object?>();
-        return pigeonVar_dartTypeRes;
+        final JByteArray pigeonVar_args = _PigeonJniBuffers.encode(<Object?>[map]);
+        try {
+          final JByteArray? pigeonVar_res = _jniApi.pigeon_echoMap(pigeonVar_args);
+          return _PigeonJniBuffers.decode(pigeonVar_res)! as Map<Object?, Object?>;
+        } finally {
+          pigeonVar_args.release();
+        }
       } else if (_ffiApi != null) {
         final pigeonVar_error = ffi_bridge.NativeInteropTestsError();
-        final NSDictionary? pigeonVar_res = _ffiApi.echoMapWithMap(
-          _PigeonFfiCodec.writeValue<NSDictionary>(map),
+        final NSData pigeonVar_args = _PigeonFfiBuffers.encode(<Object?>[map]);
+        final NSData? pigeonVar_res = _ffiApi.pigeon_echoMap(
+          pigeonVar_args,
           wrappedError: pigeonVar_error,
         );
         _throwIfFfiError(pigeonVar_error);
-        final Map<Object?, Object?> pigeonVar_dartTypeRes =
-            (_PigeonFfiCodec.readValue(pigeonVar_res)! as Map<Object?, Object?>)
-                .cast<Object?, Object?>();
-        return pigeonVar_dartTypeRes;
+        return _PigeonFfiBuffers.decode(pigeonVar_res)! as Map<Object?, Object?>;
       } else {
         throw Exception('No JNI or FFI api available');
       }
@@ -3558,24 +3843,24 @@ class NativeInteropHostIntegrationCoreApiForNativeInterop {
   Map<String?, String?> echoStringMap(Map<String?, String?> stringMap) {
     try {
       if (_jniApi != null) {
-        final JMap<JString?, JString?> pigeonVar_res = _jniApi.echoStringMap(
-          _PigeonJniCodec.writeValue<JMap<JString?, JString?>>(stringMap),
-        );
-        final Map<String?, String?> pigeonVar_dartTypeRes =
-            (_PigeonJniCodec.readValue(pigeonVar_res)! as Map<Object?, Object?>)
-                .cast<String?, String?>();
-        return pigeonVar_dartTypeRes;
+        final JByteArray pigeonVar_args = _PigeonJniBuffers.encode(<Object?>[stringMap]);
+        try {
+          final JByteArray? pigeonVar_res = _jniApi.pigeon_echoStringMap(pigeonVar_args);
+          return (_PigeonJniBuffers.decode(pigeonVar_res)! as Map<Object?, Object?>)
+              .cast<String?, String?>();
+        } finally {
+          pigeonVar_args.release();
+        }
       } else if (_ffiApi != null) {
         final pigeonVar_error = ffi_bridge.NativeInteropTestsError();
-        final NSDictionary? pigeonVar_res = _ffiApi.echoStringMapWithStringMap(
-          _PigeonFfiCodec.writeValue<NSDictionary>(stringMap),
+        final NSData pigeonVar_args = _PigeonFfiBuffers.encode(<Object?>[stringMap]);
+        final NSData? pigeonVar_res = _ffiApi.pigeon_echoStringMap(
+          pigeonVar_args,
           wrappedError: pigeonVar_error,
         );
         _throwIfFfiError(pigeonVar_error);
-        final Map<String?, String?> pigeonVar_dartTypeRes =
-            (_PigeonFfiCodec.readValue(pigeonVar_res)! as Map<Object?, Object?>)
-                .cast<String?, String?>();
-        return pigeonVar_dartTypeRes;
+        return (_PigeonFfiBuffers.decode(pigeonVar_res)! as Map<Object?, Object?>)
+            .cast<String?, String?>();
       } else {
         throw Exception('No JNI or FFI api available');
       }
@@ -3587,23 +3872,24 @@ class NativeInteropHostIntegrationCoreApiForNativeInterop {
   Map<int?, int?> echoIntMap(Map<int?, int?> intMap) {
     try {
       if (_jniApi != null) {
-        final JMap<JLong?, JLong?> pigeonVar_res = _jniApi.echoIntMap(
-          _PigeonJniCodec.writeValue<JMap<JLong?, JLong?>>(intMap),
-        );
-        final Map<int?, int?> pigeonVar_dartTypeRes =
-            (_PigeonJniCodec.readValue(pigeonVar_res)! as Map<Object?, Object?>).cast<int?, int?>();
-        return pigeonVar_dartTypeRes;
+        final JByteArray pigeonVar_args = _PigeonJniBuffers.encode(<Object?>[intMap]);
+        try {
+          final JByteArray? pigeonVar_res = _jniApi.pigeon_echoIntMap(pigeonVar_args);
+          return (_PigeonJniBuffers.decode(pigeonVar_res)! as Map<Object?, Object?>)
+              .cast<int?, int?>();
+        } finally {
+          pigeonVar_args.release();
+        }
       } else if (_ffiApi != null) {
         final pigeonVar_error = ffi_bridge.NativeInteropTestsError();
-        final NSDictionary? pigeonVar_res = _ffiApi.echoIntMapWithIntMap(
-          _PigeonFfiCodec.writeValue<NSDictionary>(intMap),
+        final NSData pigeonVar_args = _PigeonFfiBuffers.encode(<Object?>[intMap]);
+        final NSData? pigeonVar_res = _ffiApi.pigeon_echoIntMap(
+          pigeonVar_args,
           wrappedError: pigeonVar_error,
         );
         _throwIfFfiError(pigeonVar_error);
-        final Map<int?, int?> pigeonVar_dartTypeRes =
-            (_PigeonFfiCodec.readValue(pigeonVar_res, int, int)! as Map<Object?, Object?>)
-                .cast<int?, int?>();
-        return pigeonVar_dartTypeRes;
+        return (_PigeonFfiBuffers.decode(pigeonVar_res)! as Map<Object?, Object?>)
+            .cast<int?, int?>();
       } else {
         throw Exception('No JNI or FFI api available');
       }
@@ -3617,28 +3903,24 @@ class NativeInteropHostIntegrationCoreApiForNativeInterop {
   ) {
     try {
       if (_jniApi != null) {
-        final JMap<jni_bridge.NativeInteropAnEnum?, jni_bridge.NativeInteropAnEnum?> pigeonVar_res =
-            _jniApi.echoEnumMap(
-              _PigeonJniCodec.writeValue<
-                JMap<jni_bridge.NativeInteropAnEnum?, jni_bridge.NativeInteropAnEnum?>
-              >(enumMap),
-            );
-        final Map<NativeInteropAnEnum?, NativeInteropAnEnum?> pigeonVar_dartTypeRes =
-            (_PigeonJniCodec.readValue(pigeonVar_res)! as Map<Object?, Object?>)
-                .cast<NativeInteropAnEnum?, NativeInteropAnEnum?>();
-        return pigeonVar_dartTypeRes;
+        final JByteArray pigeonVar_args = _PigeonJniBuffers.encode(<Object?>[enumMap]);
+        try {
+          final JByteArray? pigeonVar_res = _jniApi.pigeon_echoEnumMap(pigeonVar_args);
+          return (_PigeonJniBuffers.decode(pigeonVar_res)! as Map<Object?, Object?>)
+              .cast<NativeInteropAnEnum?, NativeInteropAnEnum?>();
+        } finally {
+          pigeonVar_args.release();
+        }
       } else if (_ffiApi != null) {
         final pigeonVar_error = ffi_bridge.NativeInteropTestsError();
-        final NSDictionary? pigeonVar_res = _ffiApi.echoEnumMapWithEnumMap(
-          _PigeonFfiCodec.writeValue<NSDictionary>(enumMap),
+        final NSData pigeonVar_args = _PigeonFfiBuffers.encode(<Object?>[enumMap]);
+        final NSData? pigeonVar_res = _ffiApi.pigeon_echoEnumMap(
+          pigeonVar_args,
           wrappedError: pigeonVar_error,
         );
         _throwIfFfiError(pigeonVar_error);
-        final Map<NativeInteropAnEnum?, NativeInteropAnEnum?> pigeonVar_dartTypeRes =
-            (_PigeonFfiCodec.readValue(pigeonVar_res, NativeInteropAnEnum, NativeInteropAnEnum)!
-                    as Map<Object?, Object?>)
-                .cast<NativeInteropAnEnum?, NativeInteropAnEnum?>();
-        return pigeonVar_dartTypeRes;
+        return (_PigeonFfiBuffers.decode(pigeonVar_res)! as Map<Object?, Object?>)
+            .cast<NativeInteropAnEnum?, NativeInteropAnEnum?>();
       } else {
         throw Exception('No JNI or FFI api available');
       }
@@ -3652,27 +3934,24 @@ class NativeInteropHostIntegrationCoreApiForNativeInterop {
   ) {
     try {
       if (_jniApi != null) {
-        final JMap<JLong?, jni_bridge.NativeInteropAllNullableTypes?> pigeonVar_res = _jniApi
-            .echoClassMap(
-              _PigeonJniCodec.writeValue<JMap<JLong?, jni_bridge.NativeInteropAllNullableTypes?>>(
-                classMap,
-              ),
-            );
-        final Map<int?, NativeInteropAllNullableTypes?> pigeonVar_dartTypeRes =
-            (_PigeonJniCodec.readValue(pigeonVar_res)! as Map<Object?, Object?>)
-                .cast<int?, NativeInteropAllNullableTypes?>();
-        return pigeonVar_dartTypeRes;
+        final JByteArray pigeonVar_args = _PigeonJniBuffers.encode(<Object?>[classMap]);
+        try {
+          final JByteArray? pigeonVar_res = _jniApi.pigeon_echoClassMap(pigeonVar_args);
+          return (_PigeonJniBuffers.decode(pigeonVar_res)! as Map<Object?, Object?>)
+              .cast<int?, NativeInteropAllNullableTypes?>();
+        } finally {
+          pigeonVar_args.release();
+        }
       } else if (_ffiApi != null) {
         final pigeonVar_error = ffi_bridge.NativeInteropTestsError();
-        final NSDictionary? pigeonVar_res = _ffiApi.echoClassMapWithClassMap(
-          _PigeonFfiCodec.writeValue<NSDictionary>(classMap),
+        final NSData pigeonVar_args = _PigeonFfiBuffers.encode(<Object?>[classMap]);
+        final NSData? pigeonVar_res = _ffiApi.pigeon_echoClassMap(
+          pigeonVar_args,
           wrappedError: pigeonVar_error,
         );
         _throwIfFfiError(pigeonVar_error);
-        final Map<int?, NativeInteropAllNullableTypes?> pigeonVar_dartTypeRes =
-            (_PigeonFfiCodec.readValue(pigeonVar_res, int)! as Map<Object?, Object?>)
-                .cast<int?, NativeInteropAllNullableTypes?>();
-        return pigeonVar_dartTypeRes;
+        return (_PigeonFfiBuffers.decode(pigeonVar_res)! as Map<Object?, Object?>)
+            .cast<int?, NativeInteropAllNullableTypes?>();
       } else {
         throw Exception('No JNI or FFI api available');
       }
@@ -3684,24 +3963,24 @@ class NativeInteropHostIntegrationCoreApiForNativeInterop {
   Map<String, String> echoNonNullStringMap(Map<String, String> stringMap) {
     try {
       if (_jniApi != null) {
-        final JMap<JString, JString> pigeonVar_res = _jniApi.echoNonNullStringMap(
-          _PigeonJniCodec.writeValue<JMap<JString, JString>>(stringMap),
-        );
-        final Map<String, String> pigeonVar_dartTypeRes =
-            (_PigeonJniCodec.readValue(pigeonVar_res)! as Map<Object?, Object?>)
-                .cast<String, String>();
-        return pigeonVar_dartTypeRes;
+        final JByteArray pigeonVar_args = _PigeonJniBuffers.encode(<Object?>[stringMap]);
+        try {
+          final JByteArray? pigeonVar_res = _jniApi.pigeon_echoNonNullStringMap(pigeonVar_args);
+          return (_PigeonJniBuffers.decode(pigeonVar_res)! as Map<Object?, Object?>)
+              .cast<String, String>();
+        } finally {
+          pigeonVar_args.release();
+        }
       } else if (_ffiApi != null) {
         final pigeonVar_error = ffi_bridge.NativeInteropTestsError();
-        final NSDictionary? pigeonVar_res = _ffiApi.echoNonNullStringMapWithStringMap(
-          _PigeonFfiCodec.writeValue<NSDictionary>(stringMap),
+        final NSData pigeonVar_args = _PigeonFfiBuffers.encode(<Object?>[stringMap]);
+        final NSData? pigeonVar_res = _ffiApi.pigeon_echoNonNullStringMap(
+          pigeonVar_args,
           wrappedError: pigeonVar_error,
         );
         _throwIfFfiError(pigeonVar_error);
-        final Map<String, String> pigeonVar_dartTypeRes =
-            (_PigeonFfiCodec.readValue(pigeonVar_res)! as Map<Object?, Object?>)
-                .cast<String, String>();
-        return pigeonVar_dartTypeRes;
+        return (_PigeonFfiBuffers.decode(pigeonVar_res)! as Map<Object?, Object?>)
+            .cast<String, String>();
       } else {
         throw Exception('No JNI or FFI api available');
       }
@@ -3713,23 +3992,23 @@ class NativeInteropHostIntegrationCoreApiForNativeInterop {
   Map<int, int> echoNonNullIntMap(Map<int, int> intMap) {
     try {
       if (_jniApi != null) {
-        final JMap<JLong, JLong> pigeonVar_res = _jniApi.echoNonNullIntMap(
-          _PigeonJniCodec.writeValue<JMap<JLong, JLong>>(intMap),
-        );
-        final Map<int, int> pigeonVar_dartTypeRes =
-            (_PigeonJniCodec.readValue(pigeonVar_res)! as Map<Object?, Object?>).cast<int, int>();
-        return pigeonVar_dartTypeRes;
+        final JByteArray pigeonVar_args = _PigeonJniBuffers.encode(<Object?>[intMap]);
+        try {
+          final JByteArray? pigeonVar_res = _jniApi.pigeon_echoNonNullIntMap(pigeonVar_args);
+          return (_PigeonJniBuffers.decode(pigeonVar_res)! as Map<Object?, Object?>)
+              .cast<int, int>();
+        } finally {
+          pigeonVar_args.release();
+        }
       } else if (_ffiApi != null) {
         final pigeonVar_error = ffi_bridge.NativeInteropTestsError();
-        final NSDictionary? pigeonVar_res = _ffiApi.echoNonNullIntMapWithIntMap(
-          _PigeonFfiCodec.writeValue<NSDictionary>(intMap),
+        final NSData pigeonVar_args = _PigeonFfiBuffers.encode(<Object?>[intMap]);
+        final NSData? pigeonVar_res = _ffiApi.pigeon_echoNonNullIntMap(
+          pigeonVar_args,
           wrappedError: pigeonVar_error,
         );
         _throwIfFfiError(pigeonVar_error);
-        final Map<int, int> pigeonVar_dartTypeRes =
-            (_PigeonFfiCodec.readValue(pigeonVar_res, int, int)! as Map<Object?, Object?>)
-                .cast<int, int>();
-        return pigeonVar_dartTypeRes;
+        return (_PigeonFfiBuffers.decode(pigeonVar_res)! as Map<Object?, Object?>).cast<int, int>();
       } else {
         throw Exception('No JNI or FFI api available');
       }
@@ -3743,28 +4022,24 @@ class NativeInteropHostIntegrationCoreApiForNativeInterop {
   ) {
     try {
       if (_jniApi != null) {
-        final JMap<jni_bridge.NativeInteropAnEnum, jni_bridge.NativeInteropAnEnum> pigeonVar_res =
-            _jniApi.echoNonNullEnumMap(
-              _PigeonJniCodec.writeValue<
-                JMap<jni_bridge.NativeInteropAnEnum, jni_bridge.NativeInteropAnEnum>
-              >(enumMap),
-            );
-        final Map<NativeInteropAnEnum, NativeInteropAnEnum> pigeonVar_dartTypeRes =
-            (_PigeonJniCodec.readValue(pigeonVar_res)! as Map<Object?, Object?>)
-                .cast<NativeInteropAnEnum, NativeInteropAnEnum>();
-        return pigeonVar_dartTypeRes;
+        final JByteArray pigeonVar_args = _PigeonJniBuffers.encode(<Object?>[enumMap]);
+        try {
+          final JByteArray? pigeonVar_res = _jniApi.pigeon_echoNonNullEnumMap(pigeonVar_args);
+          return (_PigeonJniBuffers.decode(pigeonVar_res)! as Map<Object?, Object?>)
+              .cast<NativeInteropAnEnum, NativeInteropAnEnum>();
+        } finally {
+          pigeonVar_args.release();
+        }
       } else if (_ffiApi != null) {
         final pigeonVar_error = ffi_bridge.NativeInteropTestsError();
-        final NSDictionary? pigeonVar_res = _ffiApi.echoNonNullEnumMapWithEnumMap(
-          _PigeonFfiCodec.writeValue<NSDictionary>(enumMap),
+        final NSData pigeonVar_args = _PigeonFfiBuffers.encode(<Object?>[enumMap]);
+        final NSData? pigeonVar_res = _ffiApi.pigeon_echoNonNullEnumMap(
+          pigeonVar_args,
           wrappedError: pigeonVar_error,
         );
         _throwIfFfiError(pigeonVar_error);
-        final Map<NativeInteropAnEnum, NativeInteropAnEnum> pigeonVar_dartTypeRes =
-            (_PigeonFfiCodec.readValue(pigeonVar_res, NativeInteropAnEnum, NativeInteropAnEnum)!
-                    as Map<Object?, Object?>)
-                .cast<NativeInteropAnEnum, NativeInteropAnEnum>();
-        return pigeonVar_dartTypeRes;
+        return (_PigeonFfiBuffers.decode(pigeonVar_res)! as Map<Object?, Object?>)
+            .cast<NativeInteropAnEnum, NativeInteropAnEnum>();
       } else {
         throw Exception('No JNI or FFI api available');
       }
@@ -3778,27 +4053,24 @@ class NativeInteropHostIntegrationCoreApiForNativeInterop {
   ) {
     try {
       if (_jniApi != null) {
-        final JMap<JLong, jni_bridge.NativeInteropAllNullableTypes> pigeonVar_res = _jniApi
-            .echoNonNullClassMap(
-              _PigeonJniCodec.writeValue<JMap<JLong, jni_bridge.NativeInteropAllNullableTypes>>(
-                classMap,
-              ),
-            );
-        final Map<int, NativeInteropAllNullableTypes> pigeonVar_dartTypeRes =
-            (_PigeonJniCodec.readValue(pigeonVar_res)! as Map<Object?, Object?>)
-                .cast<int, NativeInteropAllNullableTypes>();
-        return pigeonVar_dartTypeRes;
+        final JByteArray pigeonVar_args = _PigeonJniBuffers.encode(<Object?>[classMap]);
+        try {
+          final JByteArray? pigeonVar_res = _jniApi.pigeon_echoNonNullClassMap(pigeonVar_args);
+          return (_PigeonJniBuffers.decode(pigeonVar_res)! as Map<Object?, Object?>)
+              .cast<int, NativeInteropAllNullableTypes>();
+        } finally {
+          pigeonVar_args.release();
+        }
       } else if (_ffiApi != null) {
         final pigeonVar_error = ffi_bridge.NativeInteropTestsError();
-        final NSDictionary? pigeonVar_res = _ffiApi.echoNonNullClassMapWithClassMap(
-          _PigeonFfiCodec.writeValue<NSDictionary>(classMap),
+        final NSData pigeonVar_args = _PigeonFfiBuffers.encode(<Object?>[classMap]);
+        final NSData? pigeonVar_res = _ffiApi.pigeon_echoNonNullClassMap(
+          pigeonVar_args,
           wrappedError: pigeonVar_error,
         );
         _throwIfFfiError(pigeonVar_error);
-        final Map<int, NativeInteropAllNullableTypes> pigeonVar_dartTypeRes =
-            (_PigeonFfiCodec.readValue(pigeonVar_res, int)! as Map<Object?, Object?>)
-                .cast<int, NativeInteropAllNullableTypes>();
-        return pigeonVar_dartTypeRes;
+        return (_PigeonFfiBuffers.decode(pigeonVar_res)! as Map<Object?, Object?>)
+            .cast<int, NativeInteropAllNullableTypes>();
       } else {
         throw Exception('No JNI or FFI api available');
       }
@@ -3810,20 +4082,22 @@ class NativeInteropHostIntegrationCoreApiForNativeInterop {
   NativeInteropAllClassesWrapper echoClassWrapper(NativeInteropAllClassesWrapper wrapper) {
     try {
       if (_jniApi != null) {
-        final jni_bridge.NativeInteropAllClassesWrapper pigeonVar_res = _jniApi.echoClassWrapper(
-          wrapper.toJni(),
-        );
-        final NativeInteropAllClassesWrapper pigeonVar_dartTypeRes =
-            NativeInteropAllClassesWrapper.fromJni(pigeonVar_res)!;
-        return pigeonVar_dartTypeRes;
+        final JByteArray pigeonVar_args = _PigeonJniBuffers.encode(<Object?>[wrapper]);
+        try {
+          final JByteArray? pigeonVar_res = _jniApi.pigeon_echoClassWrapper(pigeonVar_args);
+          return _PigeonJniBuffers.decode(pigeonVar_res)! as NativeInteropAllClassesWrapper;
+        } finally {
+          pigeonVar_args.release();
+        }
       } else if (_ffiApi != null) {
         final pigeonVar_error = ffi_bridge.NativeInteropTestsError();
-        final ffi_bridge.NativeInteropAllClassesWrapperBridge? pigeonVar_res = _ffiApi
-            .echoClassWrapperWithWrapper(wrapper.toFfi(), wrappedError: pigeonVar_error);
+        final NSData pigeonVar_args = _PigeonFfiBuffers.encode(<Object?>[wrapper]);
+        final NSData? pigeonVar_res = _ffiApi.pigeon_echoClassWrapper(
+          pigeonVar_args,
+          wrappedError: pigeonVar_error,
+        );
         _throwIfFfiError(pigeonVar_error);
-        final NativeInteropAllClassesWrapper pigeonVar_dartTypeRes =
-            NativeInteropAllClassesWrapper.fromFfi(pigeonVar_res)!;
-        return pigeonVar_dartTypeRes;
+        return _PigeonFfiBuffers.decode(pigeonVar_res)! as NativeInteropAllClassesWrapper;
       } else {
         throw Exception('No JNI or FFI api available');
       }
@@ -3835,21 +4109,16 @@ class NativeInteropHostIntegrationCoreApiForNativeInterop {
   NativeInteropAnEnum echoEnum(NativeInteropAnEnum anEnum) {
     try {
       if (_jniApi != null) {
-        final jni_bridge.NativeInteropAnEnum pigeonVar_res = _jniApi.echoEnum(anEnum.toJni());
-        final NativeInteropAnEnum pigeonVar_dartTypeRes = NativeInteropAnEnum.fromJni(
-          pigeonVar_res,
-        )!;
-        return pigeonVar_dartTypeRes;
+        final int pigeonVar_res = _jniApi.pigeon_echoEnum(anEnum.index);
+        return NativeInteropAnEnum.values[pigeonVar_res];
       } else if (_ffiApi != null) {
         final pigeonVar_error = ffi_bridge.NativeInteropTestsError();
-        final NSNumber? pigeonVar_res = _ffiApi.echoEnumWithAnEnum(
-          ffi_bridge.NativeInteropAnEnum.values[anEnum.index],
+        final NSNumber? pigeonVar_res = _ffiApi.pigeon_echoEnum(
+          anEnum.index,
           wrappedError: pigeonVar_error,
         );
         _throwIfFfiError(pigeonVar_error);
-        final NativeInteropAnEnum pigeonVar_dartTypeRes =
-            _PigeonFfiCodec.readValue(pigeonVar_res, NativeInteropAnEnum)! as NativeInteropAnEnum;
-        return pigeonVar_dartTypeRes;
+        return NativeInteropAnEnum.values[pigeonVar_res!.longValue];
       } else {
         throw Exception('No JNI or FFI api available');
       }
@@ -3861,24 +4130,16 @@ class NativeInteropHostIntegrationCoreApiForNativeInterop {
   NativeInteropAnotherEnum echoAnotherEnum(NativeInteropAnotherEnum anotherEnum) {
     try {
       if (_jniApi != null) {
-        final jni_bridge.NativeInteropAnotherEnum pigeonVar_res = _jniApi.echoAnotherEnum(
-          anotherEnum.toJni(),
-        );
-        final NativeInteropAnotherEnum pigeonVar_dartTypeRes = NativeInteropAnotherEnum.fromJni(
-          pigeonVar_res,
-        )!;
-        return pigeonVar_dartTypeRes;
+        final int pigeonVar_res = _jniApi.pigeon_echoAnotherEnum(anotherEnum.index);
+        return NativeInteropAnotherEnum.values[pigeonVar_res];
       } else if (_ffiApi != null) {
         final pigeonVar_error = ffi_bridge.NativeInteropTestsError();
-        final NSNumber? pigeonVar_res = _ffiApi.echoAnotherEnumWithAnotherEnum(
-          ffi_bridge.NativeInteropAnotherEnum.values[anotherEnum.index],
+        final NSNumber? pigeonVar_res = _ffiApi.pigeon_echoAnotherEnum(
+          anotherEnum.index,
           wrappedError: pigeonVar_error,
         );
         _throwIfFfiError(pigeonVar_error);
-        final NativeInteropAnotherEnum pigeonVar_dartTypeRes =
-            _PigeonFfiCodec.readValue(pigeonVar_res, NativeInteropAnotherEnum)!
-                as NativeInteropAnotherEnum;
-        return pigeonVar_dartTypeRes;
+        return NativeInteropAnotherEnum.values[pigeonVar_res!.longValue];
       } else {
         throw Exception('No JNI or FFI api available');
       }
@@ -3890,20 +4151,21 @@ class NativeInteropHostIntegrationCoreApiForNativeInterop {
   String echoNamedDefaultString({String aString = 'default'}) {
     try {
       if (_jniApi != null) {
-        final JString pigeonVar_res = _jniApi.echoNamedDefaultString(
-          _PigeonJniCodec.writeValue<JString>(aString),
-        );
-        final String pigeonVar_dartTypeRes = pigeonVar_res.toDartString(releaseOriginal: true);
-        return pigeonVar_dartTypeRes;
+        final JString pigeonVar_aString = aString.toJString();
+        try {
+          final JString pigeonVar_res = _jniApi.pigeon_echoNamedDefaultString(pigeonVar_aString);
+          return pigeonVar_res.toDartString(releaseOriginal: true);
+        } finally {
+          pigeonVar_aString.release();
+        }
       } else if (_ffiApi != null) {
         final pigeonVar_error = ffi_bridge.NativeInteropTestsError();
-        final NSString? pigeonVar_res = _ffiApi.echoNamedDefaultStringWithAString(
-          _PigeonFfiCodec.writeValue<NSString>(aString),
+        final NSString? pigeonVar_res = _ffiApi.pigeon_echoNamedDefaultString(
+          NSString(aString),
           wrappedError: pigeonVar_error,
         );
         _throwIfFfiError(pigeonVar_error);
-        final String pigeonVar_dartTypeRes = pigeonVar_res!.toDartString();
-        return pigeonVar_dartTypeRes;
+        return pigeonVar_res!.toDartString();
       } else {
         throw Exception('No JNI or FFI api available');
       }
@@ -3915,16 +4177,15 @@ class NativeInteropHostIntegrationCoreApiForNativeInterop {
   double echoOptionalDefaultDouble([double aDouble = 3.14]) {
     try {
       if (_jniApi != null) {
-        return _jniApi.echoOptionalDefaultDouble(aDouble);
+        return _jniApi.pigeon_echoOptionalDefaultDouble(aDouble);
       } else if (_ffiApi != null) {
         final pigeonVar_error = ffi_bridge.NativeInteropTestsError();
-        final NSNumber? pigeonVar_res = _ffiApi.echoOptionalDefaultDoubleWithADouble(
+        final NSNumber? pigeonVar_res = _ffiApi.pigeon_echoOptionalDefaultDouble(
           aDouble,
           wrappedError: pigeonVar_error,
         );
         _throwIfFfiError(pigeonVar_error);
-        final double pigeonVar_dartTypeRes = pigeonVar_res!.doubleValue;
-        return pigeonVar_dartTypeRes;
+        return pigeonVar_res!.doubleValue;
       } else {
         throw Exception('No JNI or FFI api available');
       }
@@ -3936,16 +4197,15 @@ class NativeInteropHostIntegrationCoreApiForNativeInterop {
   int echoRequiredInt({required int anInt}) {
     try {
       if (_jniApi != null) {
-        return _jniApi.echoRequiredInt(anInt);
+        return _jniApi.pigeon_echoRequiredInt(anInt);
       } else if (_ffiApi != null) {
         final pigeonVar_error = ffi_bridge.NativeInteropTestsError();
-        final NSNumber? pigeonVar_res = _ffiApi.echoRequiredIntWithAnInt(
+        final NSNumber? pigeonVar_res = _ffiApi.pigeon_echoRequiredInt(
           anInt,
           wrappedError: pigeonVar_error,
         );
         _throwIfFfiError(pigeonVar_error);
-        final int pigeonVar_dartTypeRes = pigeonVar_res!.longValue;
-        return pigeonVar_dartTypeRes;
+        return pigeonVar_res!.longValue;
       } else {
         throw Exception('No JNI or FFI api available');
       }
@@ -3957,19 +4217,22 @@ class NativeInteropHostIntegrationCoreApiForNativeInterop {
   NativeInteropAllNullableTypes? echoAllNullableTypes(NativeInteropAllNullableTypes? everything) {
     try {
       if (_jniApi != null) {
-        final jni_bridge.NativeInteropAllNullableTypes? pigeonVar_res = _jniApi
-            .echoAllNullableTypes(everything?.toJni());
-        final NativeInteropAllNullableTypes? pigeonVar_dartTypeRes =
-            NativeInteropAllNullableTypes.fromJni(pigeonVar_res);
-        return pigeonVar_dartTypeRes;
+        final JByteArray pigeonVar_args = _PigeonJniBuffers.encode(<Object?>[everything]);
+        try {
+          final JByteArray? pigeonVar_res = _jniApi.pigeon_echoAllNullableTypes(pigeonVar_args);
+          return _PigeonJniBuffers.decode(pigeonVar_res) as NativeInteropAllNullableTypes?;
+        } finally {
+          pigeonVar_args.release();
+        }
       } else if (_ffiApi != null) {
         final pigeonVar_error = ffi_bridge.NativeInteropTestsError();
-        final ffi_bridge.NativeInteropAllNullableTypesBridge? pigeonVar_res = _ffiApi
-            .echoAllNullableTypesWithEverything(everything?.toFfi(), wrappedError: pigeonVar_error);
+        final NSData pigeonVar_args = _PigeonFfiBuffers.encode(<Object?>[everything]);
+        final NSData? pigeonVar_res = _ffiApi.pigeon_echoAllNullableTypes(
+          pigeonVar_args,
+          wrappedError: pigeonVar_error,
+        );
         _throwIfFfiError(pigeonVar_error);
-        final NativeInteropAllNullableTypes? pigeonVar_dartTypeRes =
-            NativeInteropAllNullableTypes.fromFfi(pigeonVar_res);
-        return pigeonVar_dartTypeRes;
+        return _PigeonFfiBuffers.decode(pigeonVar_res) as NativeInteropAllNullableTypes?;
       } else {
         throw Exception('No JNI or FFI api available');
       }
@@ -3983,22 +4246,26 @@ class NativeInteropHostIntegrationCoreApiForNativeInterop {
   ) {
     try {
       if (_jniApi != null) {
-        final jni_bridge.NativeInteropAllNullableTypesWithoutRecursion? pigeonVar_res = _jniApi
-            .echoAllNullableTypesWithoutRecursion(everything?.toJni());
-        final NativeInteropAllNullableTypesWithoutRecursion? pigeonVar_dartTypeRes =
-            NativeInteropAllNullableTypesWithoutRecursion.fromJni(pigeonVar_res);
-        return pigeonVar_dartTypeRes;
+        final JByteArray pigeonVar_args = _PigeonJniBuffers.encode(<Object?>[everything]);
+        try {
+          final JByteArray? pigeonVar_res = _jniApi.pigeon_echoAllNullableTypesWithoutRecursion(
+            pigeonVar_args,
+          );
+          return _PigeonJniBuffers.decode(pigeonVar_res)
+              as NativeInteropAllNullableTypesWithoutRecursion?;
+        } finally {
+          pigeonVar_args.release();
+        }
       } else if (_ffiApi != null) {
         final pigeonVar_error = ffi_bridge.NativeInteropTestsError();
-        final ffi_bridge.NativeInteropAllNullableTypesWithoutRecursionBridge? pigeonVar_res =
-            _ffiApi.echoAllNullableTypesWithoutRecursionWithEverything(
-              everything?.toFfi(),
-              wrappedError: pigeonVar_error,
-            );
+        final NSData pigeonVar_args = _PigeonFfiBuffers.encode(<Object?>[everything]);
+        final NSData? pigeonVar_res = _ffiApi.pigeon_echoAllNullableTypesWithoutRecursion(
+          pigeonVar_args,
+          wrappedError: pigeonVar_error,
+        );
         _throwIfFfiError(pigeonVar_error);
-        final NativeInteropAllNullableTypesWithoutRecursion? pigeonVar_dartTypeRes =
-            NativeInteropAllNullableTypesWithoutRecursion.fromFfi(pigeonVar_res);
-        return pigeonVar_dartTypeRes;
+        return _PigeonFfiBuffers.decode(pigeonVar_res)
+            as NativeInteropAllNullableTypesWithoutRecursion?;
       } else {
         throw Exception('No JNI or FFI api available');
       }
@@ -4010,18 +4277,22 @@ class NativeInteropHostIntegrationCoreApiForNativeInterop {
   String? extractNestedNullableString(NativeInteropAllClassesWrapper wrapper) {
     try {
       if (_jniApi != null) {
-        final JString? pigeonVar_res = _jniApi.extractNestedNullableString(wrapper.toJni());
-        final String? pigeonVar_dartTypeRes = pigeonVar_res?.toDartString(releaseOriginal: true);
-        return pigeonVar_dartTypeRes;
+        final JByteArray pigeonVar_args = _PigeonJniBuffers.encode(<Object?>[wrapper]);
+        try {
+          final JString? pigeonVar_res = _jniApi.pigeon_extractNestedNullableString(pigeonVar_args);
+          return pigeonVar_res?.toDartString(releaseOriginal: true);
+        } finally {
+          pigeonVar_args.release();
+        }
       } else if (_ffiApi != null) {
         final pigeonVar_error = ffi_bridge.NativeInteropTestsError();
-        final NSString? pigeonVar_res = _ffiApi.extractNestedNullableStringWithWrapper(
-          wrapper.toFfi(),
+        final NSData pigeonVar_args = _PigeonFfiBuffers.encode(<Object?>[wrapper]);
+        final NSString? pigeonVar_res = _ffiApi.pigeon_extractNestedNullableString(
+          pigeonVar_args,
           wrappedError: pigeonVar_error,
         );
         _throwIfFfiError(pigeonVar_error);
-        final String? pigeonVar_dartTypeRes = pigeonVar_res?.toDartString();
-        return pigeonVar_dartTypeRes;
+        return pigeonVar_res?.toDartString();
       } else {
         throw Exception('No JNI or FFI api available');
       }
@@ -4033,22 +4304,23 @@ class NativeInteropHostIntegrationCoreApiForNativeInterop {
   NativeInteropAllClassesWrapper createNestedNullableString(String? nullableString) {
     try {
       if (_jniApi != null) {
-        final jni_bridge.NativeInteropAllClassesWrapper pigeonVar_res = _jniApi
-            .createNestedNullableString(_PigeonJniCodec.writeValue<JString?>(nullableString));
-        final NativeInteropAllClassesWrapper pigeonVar_dartTypeRes =
-            NativeInteropAllClassesWrapper.fromJni(pigeonVar_res)!;
-        return pigeonVar_dartTypeRes;
+        final JString? pigeonVar_nullableString = nullableString?.toJString();
+        try {
+          final JByteArray? pigeonVar_res = _jniApi.pigeon_createNestedNullableString(
+            pigeonVar_nullableString,
+          );
+          return _PigeonJniBuffers.decode(pigeonVar_res)! as NativeInteropAllClassesWrapper;
+        } finally {
+          pigeonVar_nullableString?.release();
+        }
       } else if (_ffiApi != null) {
         final pigeonVar_error = ffi_bridge.NativeInteropTestsError();
-        final ffi_bridge.NativeInteropAllClassesWrapperBridge? pigeonVar_res = _ffiApi
-            .createNestedNullableStringWithNullableString(
-              _PigeonFfiCodec.writeValue<NSString?>(nullableString),
-              wrappedError: pigeonVar_error,
-            );
+        final NSData? pigeonVar_res = _ffiApi.pigeon_createNestedNullableString(
+          nullableString == null ? null : NSString(nullableString),
+          wrappedError: pigeonVar_error,
+        );
         _throwIfFfiError(pigeonVar_error);
-        final NativeInteropAllClassesWrapper pigeonVar_dartTypeRes =
-            NativeInteropAllClassesWrapper.fromFfi(pigeonVar_res)!;
-        return pigeonVar_dartTypeRes;
+        return _PigeonFfiBuffers.decode(pigeonVar_res)! as NativeInteropAllClassesWrapper;
       } else {
         throw Exception('No JNI or FFI api available');
       }
@@ -4064,28 +4336,33 @@ class NativeInteropHostIntegrationCoreApiForNativeInterop {
   ) {
     try {
       if (_jniApi != null) {
-        final jni_bridge.NativeInteropAllNullableTypes pigeonVar_res = _jniApi
-            .sendMultipleNullableTypes(
-              _PigeonJniCodec.writeValue<JBoolean?>(aNullableBool),
-              _PigeonJniCodec.writeValue<JLong?>(aNullableInt),
-              _PigeonJniCodec.writeValue<JString?>(aNullableString),
-            );
-        final NativeInteropAllNullableTypes pigeonVar_dartTypeRes =
-            NativeInteropAllNullableTypes.fromJni(pigeonVar_res)!;
-        return pigeonVar_dartTypeRes;
+        final JBoolean? pigeonVar_aNullableBool = aNullableBool == null
+            ? null
+            : JBoolean(aNullableBool);
+        final JLong? pigeonVar_aNullableInt = aNullableInt == null ? null : JLong(aNullableInt);
+        final JString? pigeonVar_aNullableString = aNullableString?.toJString();
+        try {
+          final JByteArray? pigeonVar_res = _jniApi.pigeon_sendMultipleNullableTypes(
+            pigeonVar_aNullableBool,
+            pigeonVar_aNullableInt,
+            pigeonVar_aNullableString,
+          );
+          return _PigeonJniBuffers.decode(pigeonVar_res)! as NativeInteropAllNullableTypes;
+        } finally {
+          pigeonVar_aNullableBool?.release();
+          pigeonVar_aNullableInt?.release();
+          pigeonVar_aNullableString?.release();
+        }
       } else if (_ffiApi != null) {
         final pigeonVar_error = ffi_bridge.NativeInteropTestsError();
-        final ffi_bridge.NativeInteropAllNullableTypesBridge? pigeonVar_res = _ffiApi
-            .sendMultipleNullableTypesWithANullableBool(
-              _PigeonFfiCodec.writeValue<NSNumber?>(aNullableBool),
-              aNullableInt: _PigeonFfiCodec.writeValue<NSNumber?>(aNullableInt),
-              aNullableString: _PigeonFfiCodec.writeValue<NSString?>(aNullableString),
-              wrappedError: pigeonVar_error,
-            );
+        final NSData? pigeonVar_res = _ffiApi.pigeon_sendMultipleNullableTypes(
+          _PigeonFfiCodec.writeValue<NSNumber?>(aNullableBool),
+          aNullableInt: _PigeonFfiCodec.writeValue<NSNumber?>(aNullableInt),
+          aNullableString: aNullableString == null ? null : NSString(aNullableString),
+          wrappedError: pigeonVar_error,
+        );
         _throwIfFfiError(pigeonVar_error);
-        final NativeInteropAllNullableTypes pigeonVar_dartTypeRes =
-            NativeInteropAllNullableTypes.fromFfi(pigeonVar_res)!;
-        return pigeonVar_dartTypeRes;
+        return _PigeonFfiBuffers.decode(pigeonVar_res)! as NativeInteropAllNullableTypes;
       } else {
         throw Exception('No JNI or FFI api available');
       }
@@ -4101,28 +4378,36 @@ class NativeInteropHostIntegrationCoreApiForNativeInterop {
   ) {
     try {
       if (_jniApi != null) {
-        final jni_bridge.NativeInteropAllNullableTypesWithoutRecursion pigeonVar_res = _jniApi
-            .sendMultipleNullableTypesWithoutRecursion(
-              _PigeonJniCodec.writeValue<JBoolean?>(aNullableBool),
-              _PigeonJniCodec.writeValue<JLong?>(aNullableInt),
-              _PigeonJniCodec.writeValue<JString?>(aNullableString),
-            );
-        final NativeInteropAllNullableTypesWithoutRecursion pigeonVar_dartTypeRes =
-            NativeInteropAllNullableTypesWithoutRecursion.fromJni(pigeonVar_res)!;
-        return pigeonVar_dartTypeRes;
+        final JBoolean? pigeonVar_aNullableBool = aNullableBool == null
+            ? null
+            : JBoolean(aNullableBool);
+        final JLong? pigeonVar_aNullableInt = aNullableInt == null ? null : JLong(aNullableInt);
+        final JString? pigeonVar_aNullableString = aNullableString?.toJString();
+        try {
+          final JByteArray? pigeonVar_res = _jniApi
+              .pigeon_sendMultipleNullableTypesWithoutRecursion(
+                pigeonVar_aNullableBool,
+                pigeonVar_aNullableInt,
+                pigeonVar_aNullableString,
+              );
+          return _PigeonJniBuffers.decode(pigeonVar_res)!
+              as NativeInteropAllNullableTypesWithoutRecursion;
+        } finally {
+          pigeonVar_aNullableBool?.release();
+          pigeonVar_aNullableInt?.release();
+          pigeonVar_aNullableString?.release();
+        }
       } else if (_ffiApi != null) {
         final pigeonVar_error = ffi_bridge.NativeInteropTestsError();
-        final ffi_bridge.NativeInteropAllNullableTypesWithoutRecursionBridge? pigeonVar_res =
-            _ffiApi.sendMultipleNullableTypesWithoutRecursionWithANullableBool(
-              _PigeonFfiCodec.writeValue<NSNumber?>(aNullableBool),
-              aNullableInt: _PigeonFfiCodec.writeValue<NSNumber?>(aNullableInt),
-              aNullableString: _PigeonFfiCodec.writeValue<NSString?>(aNullableString),
-              wrappedError: pigeonVar_error,
-            );
+        final NSData? pigeonVar_res = _ffiApi.pigeon_sendMultipleNullableTypesWithoutRecursion(
+          _PigeonFfiCodec.writeValue<NSNumber?>(aNullableBool),
+          aNullableInt: _PigeonFfiCodec.writeValue<NSNumber?>(aNullableInt),
+          aNullableString: aNullableString == null ? null : NSString(aNullableString),
+          wrappedError: pigeonVar_error,
+        );
         _throwIfFfiError(pigeonVar_error);
-        final NativeInteropAllNullableTypesWithoutRecursion pigeonVar_dartTypeRes =
-            NativeInteropAllNullableTypesWithoutRecursion.fromFfi(pigeonVar_res)!;
-        return pigeonVar_dartTypeRes;
+        return _PigeonFfiBuffers.decode(pigeonVar_res)!
+            as NativeInteropAllNullableTypesWithoutRecursion;
       } else {
         throw Exception('No JNI or FFI api available');
       }
@@ -4134,20 +4419,21 @@ class NativeInteropHostIntegrationCoreApiForNativeInterop {
   int? echoNullableInt(int? aNullableInt) {
     try {
       if (_jniApi != null) {
-        final JLong? pigeonVar_res = _jniApi.echoNullableInt(
-          _PigeonJniCodec.writeValue<JLong?>(aNullableInt),
-        );
-        final int? pigeonVar_dartTypeRes = pigeonVar_res?.toDartInt(releaseOriginal: true);
-        return pigeonVar_dartTypeRes;
+        final JLong? pigeonVar_aNullableInt = aNullableInt == null ? null : JLong(aNullableInt);
+        try {
+          final JLong? pigeonVar_res = _jniApi.pigeon_echoNullableInt(pigeonVar_aNullableInt);
+          return pigeonVar_res?.toDartInt(releaseOriginal: true);
+        } finally {
+          pigeonVar_aNullableInt?.release();
+        }
       } else if (_ffiApi != null) {
         final pigeonVar_error = ffi_bridge.NativeInteropTestsError();
-        final NSNumber? pigeonVar_res = _ffiApi.echoNullableIntWithANullableInt(
+        final NSNumber? pigeonVar_res = _ffiApi.pigeon_echoNullableInt(
           _PigeonFfiCodec.writeValue<NSNumber?>(aNullableInt),
           wrappedError: pigeonVar_error,
         );
         _throwIfFfiError(pigeonVar_error);
-        final int? pigeonVar_dartTypeRes = pigeonVar_res?.longValue;
-        return pigeonVar_dartTypeRes;
+        return pigeonVar_res?.longValue;
       } else {
         throw Exception('No JNI or FFI api available');
       }
@@ -4159,20 +4445,25 @@ class NativeInteropHostIntegrationCoreApiForNativeInterop {
   double? echoNullableDouble(double? aNullableDouble) {
     try {
       if (_jniApi != null) {
-        final JDouble? pigeonVar_res = _jniApi.echoNullableDouble(
-          _PigeonJniCodec.writeValue<JDouble?>(aNullableDouble),
-        );
-        final double? pigeonVar_dartTypeRes = pigeonVar_res?.toDartDouble(releaseOriginal: true);
-        return pigeonVar_dartTypeRes;
+        final JDouble? pigeonVar_aNullableDouble = aNullableDouble == null
+            ? null
+            : JDouble(aNullableDouble);
+        try {
+          final JDouble? pigeonVar_res = _jniApi.pigeon_echoNullableDouble(
+            pigeonVar_aNullableDouble,
+          );
+          return pigeonVar_res?.toDartDouble(releaseOriginal: true);
+        } finally {
+          pigeonVar_aNullableDouble?.release();
+        }
       } else if (_ffiApi != null) {
         final pigeonVar_error = ffi_bridge.NativeInteropTestsError();
-        final NSNumber? pigeonVar_res = _ffiApi.echoNullableDoubleWithANullableDouble(
+        final NSNumber? pigeonVar_res = _ffiApi.pigeon_echoNullableDouble(
           _PigeonFfiCodec.writeValue<NSNumber?>(aNullableDouble),
           wrappedError: pigeonVar_error,
         );
         _throwIfFfiError(pigeonVar_error);
-        final double? pigeonVar_dartTypeRes = pigeonVar_res?.doubleValue;
-        return pigeonVar_dartTypeRes;
+        return pigeonVar_res?.doubleValue;
       } else {
         throw Exception('No JNI or FFI api available');
       }
@@ -4184,20 +4475,23 @@ class NativeInteropHostIntegrationCoreApiForNativeInterop {
   bool? echoNullableBool(bool? aNullableBool) {
     try {
       if (_jniApi != null) {
-        final JBoolean? pigeonVar_res = _jniApi.echoNullableBool(
-          _PigeonJniCodec.writeValue<JBoolean?>(aNullableBool),
-        );
-        final bool? pigeonVar_dartTypeRes = pigeonVar_res?.toDartBool(releaseOriginal: true);
-        return pigeonVar_dartTypeRes;
+        final JBoolean? pigeonVar_aNullableBool = aNullableBool == null
+            ? null
+            : JBoolean(aNullableBool);
+        try {
+          final JBoolean? pigeonVar_res = _jniApi.pigeon_echoNullableBool(pigeonVar_aNullableBool);
+          return pigeonVar_res?.toDartBool(releaseOriginal: true);
+        } finally {
+          pigeonVar_aNullableBool?.release();
+        }
       } else if (_ffiApi != null) {
         final pigeonVar_error = ffi_bridge.NativeInteropTestsError();
-        final NSNumber? pigeonVar_res = _ffiApi.echoNullableBoolWithANullableBool(
+        final NSNumber? pigeonVar_res = _ffiApi.pigeon_echoNullableBool(
           _PigeonFfiCodec.writeValue<NSNumber?>(aNullableBool),
           wrappedError: pigeonVar_error,
         );
         _throwIfFfiError(pigeonVar_error);
-        final bool? pigeonVar_dartTypeRes = pigeonVar_res?.boolValue;
-        return pigeonVar_dartTypeRes;
+        return pigeonVar_res?.boolValue;
       } else {
         throw Exception('No JNI or FFI api available');
       }
@@ -4209,20 +4503,23 @@ class NativeInteropHostIntegrationCoreApiForNativeInterop {
   String? echoNullableString(String? aNullableString) {
     try {
       if (_jniApi != null) {
-        final JString? pigeonVar_res = _jniApi.echoNullableString(
-          _PigeonJniCodec.writeValue<JString?>(aNullableString),
-        );
-        final String? pigeonVar_dartTypeRes = pigeonVar_res?.toDartString(releaseOriginal: true);
-        return pigeonVar_dartTypeRes;
+        final JString? pigeonVar_aNullableString = aNullableString?.toJString();
+        try {
+          final JString? pigeonVar_res = _jniApi.pigeon_echoNullableString(
+            pigeonVar_aNullableString,
+          );
+          return pigeonVar_res?.toDartString(releaseOriginal: true);
+        } finally {
+          pigeonVar_aNullableString?.release();
+        }
       } else if (_ffiApi != null) {
         final pigeonVar_error = ffi_bridge.NativeInteropTestsError();
-        final NSString? pigeonVar_res = _ffiApi.echoNullableStringWithANullableString(
-          _PigeonFfiCodec.writeValue<NSString?>(aNullableString),
+        final NSString? pigeonVar_res = _ffiApi.pigeon_echoNullableString(
+          aNullableString == null ? null : NSString(aNullableString),
           wrappedError: pigeonVar_error,
         );
         _throwIfFfiError(pigeonVar_error);
-        final String? pigeonVar_dartTypeRes = pigeonVar_res?.toDartString();
-        return pigeonVar_dartTypeRes;
+        return pigeonVar_res?.toDartString();
       } else {
         throw Exception('No JNI or FFI api available');
       }
@@ -4234,25 +4531,25 @@ class NativeInteropHostIntegrationCoreApiForNativeInterop {
   Uint8List? echoNullableUint8List(Uint8List? aNullableUint8List) {
     try {
       if (_jniApi != null) {
-        final JByteArray? pigeonVar_res = _jniApi.echoNullableUint8List(
-          _PigeonJniCodec.writeValue<JByteArray?>(aNullableUint8List),
-        );
-        final Uint8List? pigeonVar_dartTypeRes =
-            _PigeonJniCodec.readValue(pigeonVar_res) as Uint8List?;
-        return pigeonVar_dartTypeRes;
+        final JByteArray? pigeonVar_aNullableUint8List = aNullableUint8List == null
+            ? null
+            : _uint8ListToJni(aNullableUint8List);
+        try {
+          final JByteArray? pigeonVar_res = _jniApi.pigeon_echoNullableUint8List(
+            pigeonVar_aNullableUint8List,
+          );
+          return _jByteArrayToDart(pigeonVar_res, release: true);
+        } finally {
+          pigeonVar_aNullableUint8List?.release();
+        }
       } else if (_ffiApi != null) {
         final pigeonVar_error = ffi_bridge.NativeInteropTestsError();
-        final ffi_bridge.NativeInteropTestsPigeonTypedData? pigeonVar_res = _ffiApi
-            .echoNullableUint8ListWithANullableUint8List(
-              _PigeonFfiCodec.writeValue<ffi_bridge.NativeInteropTestsPigeonTypedData?>(
-                aNullableUint8List,
-              ),
-              wrappedError: pigeonVar_error,
-            );
+        final NSData? pigeonVar_res = _ffiApi.pigeon_echoNullableUint8List(
+          aNullableUint8List == null ? null : _typedDataToNSData(aNullableUint8List),
+          wrappedError: pigeonVar_error,
+        );
         _throwIfFfiError(pigeonVar_error);
-        final Uint8List? pigeonVar_dartTypeRes =
-            _PigeonFfiCodec.readValue(pigeonVar_res) as Uint8List?;
-        return pigeonVar_dartTypeRes;
+        return _PigeonFfiBuffers.toUint8List(pigeonVar_res);
       } else {
         throw Exception('No JNI or FFI api available');
       }
@@ -4264,25 +4561,25 @@ class NativeInteropHostIntegrationCoreApiForNativeInterop {
   Int32List? echoNullableInt32List(Int32List? aNullableInt32List) {
     try {
       if (_jniApi != null) {
-        final JIntArray? pigeonVar_res = _jniApi.echoNullableInt32List(
-          _PigeonJniCodec.writeValue<JIntArray?>(aNullableInt32List),
-        );
-        final Int32List? pigeonVar_dartTypeRes =
-            _PigeonJniCodec.readValue(pigeonVar_res) as Int32List?;
-        return pigeonVar_dartTypeRes;
+        final JIntArray? pigeonVar_aNullableInt32List = aNullableInt32List == null
+            ? null
+            : _int32ListToJni(aNullableInt32List);
+        try {
+          final JIntArray? pigeonVar_res = _jniApi.pigeon_echoNullableInt32List(
+            pigeonVar_aNullableInt32List,
+          );
+          return _jIntArrayToDart(pigeonVar_res, release: true);
+        } finally {
+          pigeonVar_aNullableInt32List?.release();
+        }
       } else if (_ffiApi != null) {
         final pigeonVar_error = ffi_bridge.NativeInteropTestsError();
-        final ffi_bridge.NativeInteropTestsPigeonTypedData? pigeonVar_res = _ffiApi
-            .echoNullableInt32ListWithANullableInt32List(
-              _PigeonFfiCodec.writeValue<ffi_bridge.NativeInteropTestsPigeonTypedData?>(
-                aNullableInt32List,
-              ),
-              wrappedError: pigeonVar_error,
-            );
+        final NSData? pigeonVar_res = _ffiApi.pigeon_echoNullableInt32List(
+          aNullableInt32List == null ? null : _typedDataToNSData(aNullableInt32List),
+          wrappedError: pigeonVar_error,
+        );
         _throwIfFfiError(pigeonVar_error);
-        final Int32List? pigeonVar_dartTypeRes =
-            _PigeonFfiCodec.readValue(pigeonVar_res) as Int32List?;
-        return pigeonVar_dartTypeRes;
+        return _PigeonFfiBuffers.toUint8List(pigeonVar_res)?.buffer.asInt32List();
       } else {
         throw Exception('No JNI or FFI api available');
       }
@@ -4294,25 +4591,25 @@ class NativeInteropHostIntegrationCoreApiForNativeInterop {
   Int64List? echoNullableInt64List(Int64List? aNullableInt64List) {
     try {
       if (_jniApi != null) {
-        final JLongArray? pigeonVar_res = _jniApi.echoNullableInt64List(
-          _PigeonJniCodec.writeValue<JLongArray?>(aNullableInt64List),
-        );
-        final Int64List? pigeonVar_dartTypeRes =
-            _PigeonJniCodec.readValue(pigeonVar_res) as Int64List?;
-        return pigeonVar_dartTypeRes;
+        final JLongArray? pigeonVar_aNullableInt64List = aNullableInt64List == null
+            ? null
+            : _int64ListToJni(aNullableInt64List);
+        try {
+          final JLongArray? pigeonVar_res = _jniApi.pigeon_echoNullableInt64List(
+            pigeonVar_aNullableInt64List,
+          );
+          return _jLongArrayToDart(pigeonVar_res, release: true);
+        } finally {
+          pigeonVar_aNullableInt64List?.release();
+        }
       } else if (_ffiApi != null) {
         final pigeonVar_error = ffi_bridge.NativeInteropTestsError();
-        final ffi_bridge.NativeInteropTestsPigeonTypedData? pigeonVar_res = _ffiApi
-            .echoNullableInt64ListWithANullableInt64List(
-              _PigeonFfiCodec.writeValue<ffi_bridge.NativeInteropTestsPigeonTypedData?>(
-                aNullableInt64List,
-              ),
-              wrappedError: pigeonVar_error,
-            );
+        final NSData? pigeonVar_res = _ffiApi.pigeon_echoNullableInt64List(
+          aNullableInt64List == null ? null : _typedDataToNSData(aNullableInt64List),
+          wrappedError: pigeonVar_error,
+        );
         _throwIfFfiError(pigeonVar_error);
-        final Int64List? pigeonVar_dartTypeRes =
-            _PigeonFfiCodec.readValue(pigeonVar_res) as Int64List?;
-        return pigeonVar_dartTypeRes;
+        return _PigeonFfiBuffers.toUint8List(pigeonVar_res)?.buffer.asInt64List();
       } else {
         throw Exception('No JNI or FFI api available');
       }
@@ -4324,25 +4621,25 @@ class NativeInteropHostIntegrationCoreApiForNativeInterop {
   Float64List? echoNullableFloat64List(Float64List? aNullableFloat64List) {
     try {
       if (_jniApi != null) {
-        final JDoubleArray? pigeonVar_res = _jniApi.echoNullableFloat64List(
-          _PigeonJniCodec.writeValue<JDoubleArray?>(aNullableFloat64List),
-        );
-        final Float64List? pigeonVar_dartTypeRes =
-            _PigeonJniCodec.readValue(pigeonVar_res) as Float64List?;
-        return pigeonVar_dartTypeRes;
+        final JDoubleArray? pigeonVar_aNullableFloat64List = aNullableFloat64List == null
+            ? null
+            : _float64ListToJni(aNullableFloat64List);
+        try {
+          final JDoubleArray? pigeonVar_res = _jniApi.pigeon_echoNullableFloat64List(
+            pigeonVar_aNullableFloat64List,
+          );
+          return _jDoubleArrayToDart(pigeonVar_res, release: true);
+        } finally {
+          pigeonVar_aNullableFloat64List?.release();
+        }
       } else if (_ffiApi != null) {
         final pigeonVar_error = ffi_bridge.NativeInteropTestsError();
-        final ffi_bridge.NativeInteropTestsPigeonTypedData? pigeonVar_res = _ffiApi
-            .echoNullableFloat64ListWithANullableFloat64List(
-              _PigeonFfiCodec.writeValue<ffi_bridge.NativeInteropTestsPigeonTypedData?>(
-                aNullableFloat64List,
-              ),
-              wrappedError: pigeonVar_error,
-            );
+        final NSData? pigeonVar_res = _ffiApi.pigeon_echoNullableFloat64List(
+          aNullableFloat64List == null ? null : _typedDataToNSData(aNullableFloat64List),
+          wrappedError: pigeonVar_error,
+        );
         _throwIfFfiError(pigeonVar_error);
-        final Float64List? pigeonVar_dartTypeRes =
-            _PigeonFfiCodec.readValue(pigeonVar_res) as Float64List?;
-        return pigeonVar_dartTypeRes;
+        return _PigeonFfiBuffers.toUint8List(pigeonVar_res)?.buffer.asFloat64List();
       } else {
         throw Exception('No JNI or FFI api available');
       }
@@ -4354,20 +4651,22 @@ class NativeInteropHostIntegrationCoreApiForNativeInterop {
   Object? echoNullableObject(Object? aNullableObject) {
     try {
       if (_jniApi != null) {
-        final JObject? pigeonVar_res = _jniApi.echoNullableObject(
-          _PigeonJniCodec.writeValue<JObject?>(aNullableObject),
-        );
-        final Object? pigeonVar_dartTypeRes = _PigeonJniCodec.readValue(pigeonVar_res);
-        return pigeonVar_dartTypeRes;
+        final JByteArray pigeonVar_args = _PigeonJniBuffers.encode(<Object?>[aNullableObject]);
+        try {
+          final JByteArray? pigeonVar_res = _jniApi.pigeon_echoNullableObject(pigeonVar_args);
+          return _PigeonJniBuffers.decode(pigeonVar_res);
+        } finally {
+          pigeonVar_args.release();
+        }
       } else if (_ffiApi != null) {
         final pigeonVar_error = ffi_bridge.NativeInteropTestsError();
-        final NSObject? pigeonVar_res = _ffiApi.echoNullableObjectWithANullableObject(
-          _PigeonFfiCodec.writeValue<NSObject>(aNullableObject, generic: true),
+        final NSData pigeonVar_args = _PigeonFfiBuffers.encode(<Object?>[aNullableObject]);
+        final NSData? pigeonVar_res = _ffiApi.pigeon_echoNullableObject(
+          pigeonVar_args,
           wrappedError: pigeonVar_error,
         );
         _throwIfFfiError(pigeonVar_error);
-        final Object? pigeonVar_dartTypeRes = _PigeonFfiCodec.readValue(pigeonVar_res);
-        return pigeonVar_dartTypeRes;
+        return _PigeonFfiBuffers.decode(pigeonVar_res);
       } else {
         throw Exception('No JNI or FFI api available');
       }
@@ -4379,22 +4678,22 @@ class NativeInteropHostIntegrationCoreApiForNativeInterop {
   List<Object?>? echoNullableList(List<Object?>? aNullableList) {
     try {
       if (_jniApi != null) {
-        final JList<JObject?>? pigeonVar_res = _jniApi.echoNullableList(
-          _PigeonJniCodec.writeValue<JList<JObject?>?>(aNullableList),
-        );
-        final List<Object?>? pigeonVar_dartTypeRes =
-            (_PigeonJniCodec.readValue(pigeonVar_res) as List<Object?>?)?.cast<Object?>();
-        return pigeonVar_dartTypeRes;
+        final JByteArray pigeonVar_args = _PigeonJniBuffers.encode(<Object?>[aNullableList]);
+        try {
+          final JByteArray? pigeonVar_res = _jniApi.pigeon_echoNullableList(pigeonVar_args);
+          return _PigeonJniBuffers.decode(pigeonVar_res) as List<Object?>?;
+        } finally {
+          pigeonVar_args.release();
+        }
       } else if (_ffiApi != null) {
         final pigeonVar_error = ffi_bridge.NativeInteropTestsError();
-        final NSArray? pigeonVar_res = _ffiApi.echoNullableListWithANullableList(
-          _PigeonFfiCodec.writeValue<NSMutableArray?>(aNullableList),
+        final NSData pigeonVar_args = _PigeonFfiBuffers.encode(<Object?>[aNullableList]);
+        final NSData? pigeonVar_res = _ffiApi.pigeon_echoNullableList(
+          pigeonVar_args,
           wrappedError: pigeonVar_error,
         );
         _throwIfFfiError(pigeonVar_error);
-        final List<Object?>? pigeonVar_dartTypeRes =
-            (_PigeonFfiCodec.readValue(pigeonVar_res) as List<Object?>?)?.cast<Object?>();
-        return pigeonVar_dartTypeRes;
+        return _PigeonFfiBuffers.decode(pigeonVar_res) as List<Object?>?;
       } else {
         throw Exception('No JNI or FFI api available');
       }
@@ -4406,24 +4705,24 @@ class NativeInteropHostIntegrationCoreApiForNativeInterop {
   List<NativeInteropAnEnum?>? echoNullableEnumList(List<NativeInteropAnEnum?>? enumList) {
     try {
       if (_jniApi != null) {
-        final JList<jni_bridge.NativeInteropAnEnum?>? pigeonVar_res = _jniApi.echoNullableEnumList(
-          _PigeonJniCodec.writeValue<JList<jni_bridge.NativeInteropAnEnum?>?>(enumList),
-        );
-        final List<NativeInteropAnEnum?>? pigeonVar_dartTypeRes =
-            (_PigeonJniCodec.readValue(pigeonVar_res) as List<Object?>?)
-                ?.cast<NativeInteropAnEnum?>();
-        return pigeonVar_dartTypeRes;
+        final JByteArray pigeonVar_args = _PigeonJniBuffers.encode(<Object?>[enumList]);
+        try {
+          final JByteArray? pigeonVar_res = _jniApi.pigeon_echoNullableEnumList(pigeonVar_args);
+          return (_PigeonJniBuffers.decode(pigeonVar_res) as List<Object?>?)
+              ?.cast<NativeInteropAnEnum?>();
+        } finally {
+          pigeonVar_args.release();
+        }
       } else if (_ffiApi != null) {
         final pigeonVar_error = ffi_bridge.NativeInteropTestsError();
-        final NSArray? pigeonVar_res = _ffiApi.echoNullableEnumListWithEnumList(
-          _PigeonFfiCodec.writeValue<NSMutableArray?>(enumList),
+        final NSData pigeonVar_args = _PigeonFfiBuffers.encode(<Object?>[enumList]);
+        final NSData? pigeonVar_res = _ffiApi.pigeon_echoNullableEnumList(
+          pigeonVar_args,
           wrappedError: pigeonVar_error,
         );
         _throwIfFfiError(pigeonVar_error);
-        final List<NativeInteropAnEnum?>? pigeonVar_dartTypeRes =
-            (_PigeonFfiCodec.readValue(pigeonVar_res, NativeInteropAnEnum) as List<Object?>?)
-                ?.cast<NativeInteropAnEnum?>();
-        return pigeonVar_dartTypeRes;
+        return (_PigeonFfiBuffers.decode(pigeonVar_res) as List<Object?>?)
+            ?.cast<NativeInteropAnEnum?>();
       } else {
         throw Exception('No JNI or FFI api available');
       }
@@ -4437,27 +4736,24 @@ class NativeInteropHostIntegrationCoreApiForNativeInterop {
   ) {
     try {
       if (_jniApi != null) {
-        final JList<jni_bridge.NativeInteropAllNullableTypes?>? pigeonVar_res = _jniApi
-            .echoNullableClassList(
-              _PigeonJniCodec.writeValue<JList<jni_bridge.NativeInteropAllNullableTypes?>?>(
-                classList,
-              ),
-            );
-        final List<NativeInteropAllNullableTypes?>? pigeonVar_dartTypeRes =
-            (_PigeonJniCodec.readValue(pigeonVar_res) as List<Object?>?)
-                ?.cast<NativeInteropAllNullableTypes?>();
-        return pigeonVar_dartTypeRes;
+        final JByteArray pigeonVar_args = _PigeonJniBuffers.encode(<Object?>[classList]);
+        try {
+          final JByteArray? pigeonVar_res = _jniApi.pigeon_echoNullableClassList(pigeonVar_args);
+          return (_PigeonJniBuffers.decode(pigeonVar_res) as List<Object?>?)
+              ?.cast<NativeInteropAllNullableTypes?>();
+        } finally {
+          pigeonVar_args.release();
+        }
       } else if (_ffiApi != null) {
         final pigeonVar_error = ffi_bridge.NativeInteropTestsError();
-        final NSArray? pigeonVar_res = _ffiApi.echoNullableClassListWithClassList(
-          _PigeonFfiCodec.writeValue<NSMutableArray?>(classList),
+        final NSData pigeonVar_args = _PigeonFfiBuffers.encode(<Object?>[classList]);
+        final NSData? pigeonVar_res = _ffiApi.pigeon_echoNullableClassList(
+          pigeonVar_args,
           wrappedError: pigeonVar_error,
         );
         _throwIfFfiError(pigeonVar_error);
-        final List<NativeInteropAllNullableTypes?>? pigeonVar_dartTypeRes =
-            (_PigeonFfiCodec.readValue(pigeonVar_res) as List<Object?>?)
-                ?.cast<NativeInteropAllNullableTypes?>();
-        return pigeonVar_dartTypeRes;
+        return (_PigeonFfiBuffers.decode(pigeonVar_res) as List<Object?>?)
+            ?.cast<NativeInteropAllNullableTypes?>();
       } else {
         throw Exception('No JNI or FFI api available');
       }
@@ -4469,25 +4765,26 @@ class NativeInteropHostIntegrationCoreApiForNativeInterop {
   List<NativeInteropAnEnum>? echoNullableNonNullEnumList(List<NativeInteropAnEnum>? enumList) {
     try {
       if (_jniApi != null) {
-        final JList<jni_bridge.NativeInteropAnEnum>? pigeonVar_res = _jniApi
-            .echoNullableNonNullEnumList(
-              _PigeonJniCodec.writeValue<JList<jni_bridge.NativeInteropAnEnum>?>(enumList),
-            );
-        final List<NativeInteropAnEnum>? pigeonVar_dartTypeRes =
-            (_PigeonJniCodec.readValue(pigeonVar_res) as List<Object?>?)
-                ?.cast<NativeInteropAnEnum>();
-        return pigeonVar_dartTypeRes;
+        final JByteArray pigeonVar_args = _PigeonJniBuffers.encode(<Object?>[enumList]);
+        try {
+          final JByteArray? pigeonVar_res = _jniApi.pigeon_echoNullableNonNullEnumList(
+            pigeonVar_args,
+          );
+          return (_PigeonJniBuffers.decode(pigeonVar_res) as List<Object?>?)
+              ?.cast<NativeInteropAnEnum>();
+        } finally {
+          pigeonVar_args.release();
+        }
       } else if (_ffiApi != null) {
         final pigeonVar_error = ffi_bridge.NativeInteropTestsError();
-        final NSArray? pigeonVar_res = _ffiApi.echoNullableNonNullEnumListWithEnumList(
-          _PigeonFfiCodec.writeValue<NSMutableArray?>(enumList),
+        final NSData pigeonVar_args = _PigeonFfiBuffers.encode(<Object?>[enumList]);
+        final NSData? pigeonVar_res = _ffiApi.pigeon_echoNullableNonNullEnumList(
+          pigeonVar_args,
           wrappedError: pigeonVar_error,
         );
         _throwIfFfiError(pigeonVar_error);
-        final List<NativeInteropAnEnum>? pigeonVar_dartTypeRes =
-            (_PigeonFfiCodec.readValue(pigeonVar_res, NativeInteropAnEnum) as List<Object?>?)
-                ?.cast<NativeInteropAnEnum>();
-        return pigeonVar_dartTypeRes;
+        return (_PigeonFfiBuffers.decode(pigeonVar_res) as List<Object?>?)
+            ?.cast<NativeInteropAnEnum>();
       } else {
         throw Exception('No JNI or FFI api available');
       }
@@ -4501,27 +4798,26 @@ class NativeInteropHostIntegrationCoreApiForNativeInterop {
   ) {
     try {
       if (_jniApi != null) {
-        final JList<jni_bridge.NativeInteropAllNullableTypes>? pigeonVar_res = _jniApi
-            .echoNullableNonNullClassList(
-              _PigeonJniCodec.writeValue<JList<jni_bridge.NativeInteropAllNullableTypes>?>(
-                classList,
-              ),
-            );
-        final List<NativeInteropAllNullableTypes>? pigeonVar_dartTypeRes =
-            (_PigeonJniCodec.readValue(pigeonVar_res) as List<Object?>?)
-                ?.cast<NativeInteropAllNullableTypes>();
-        return pigeonVar_dartTypeRes;
+        final JByteArray pigeonVar_args = _PigeonJniBuffers.encode(<Object?>[classList]);
+        try {
+          final JByteArray? pigeonVar_res = _jniApi.pigeon_echoNullableNonNullClassList(
+            pigeonVar_args,
+          );
+          return (_PigeonJniBuffers.decode(pigeonVar_res) as List<Object?>?)
+              ?.cast<NativeInteropAllNullableTypes>();
+        } finally {
+          pigeonVar_args.release();
+        }
       } else if (_ffiApi != null) {
         final pigeonVar_error = ffi_bridge.NativeInteropTestsError();
-        final NSArray? pigeonVar_res = _ffiApi.echoNullableNonNullClassListWithClassList(
-          _PigeonFfiCodec.writeValue<NSMutableArray?>(classList),
+        final NSData pigeonVar_args = _PigeonFfiBuffers.encode(<Object?>[classList]);
+        final NSData? pigeonVar_res = _ffiApi.pigeon_echoNullableNonNullClassList(
+          pigeonVar_args,
           wrappedError: pigeonVar_error,
         );
         _throwIfFfiError(pigeonVar_error);
-        final List<NativeInteropAllNullableTypes>? pigeonVar_dartTypeRes =
-            (_PigeonFfiCodec.readValue(pigeonVar_res) as List<Object?>?)
-                ?.cast<NativeInteropAllNullableTypes>();
-        return pigeonVar_dartTypeRes;
+        return (_PigeonFfiBuffers.decode(pigeonVar_res) as List<Object?>?)
+            ?.cast<NativeInteropAllNullableTypes>();
       } else {
         throw Exception('No JNI or FFI api available');
       }
@@ -4533,24 +4829,22 @@ class NativeInteropHostIntegrationCoreApiForNativeInterop {
   Map<Object?, Object?>? echoNullableMap(Map<Object?, Object?>? map) {
     try {
       if (_jniApi != null) {
-        final JMap<JObject?, JObject?>? pigeonVar_res = _jniApi.echoNullableMap(
-          _PigeonJniCodec.writeValue<JMap<JObject?, JObject?>?>(map),
-        );
-        final Map<Object?, Object?>? pigeonVar_dartTypeRes =
-            (_PigeonJniCodec.readValue(pigeonVar_res) as Map<Object?, Object?>?)
-                ?.cast<Object?, Object?>();
-        return pigeonVar_dartTypeRes;
+        final JByteArray pigeonVar_args = _PigeonJniBuffers.encode(<Object?>[map]);
+        try {
+          final JByteArray? pigeonVar_res = _jniApi.pigeon_echoNullableMap(pigeonVar_args);
+          return _PigeonJniBuffers.decode(pigeonVar_res) as Map<Object?, Object?>?;
+        } finally {
+          pigeonVar_args.release();
+        }
       } else if (_ffiApi != null) {
         final pigeonVar_error = ffi_bridge.NativeInteropTestsError();
-        final NSDictionary? pigeonVar_res = _ffiApi.echoNullableMapWithMap(
-          _PigeonFfiCodec.writeValue<NSDictionary?>(map),
+        final NSData pigeonVar_args = _PigeonFfiBuffers.encode(<Object?>[map]);
+        final NSData? pigeonVar_res = _ffiApi.pigeon_echoNullableMap(
+          pigeonVar_args,
           wrappedError: pigeonVar_error,
         );
         _throwIfFfiError(pigeonVar_error);
-        final Map<Object?, Object?>? pigeonVar_dartTypeRes =
-            (_PigeonFfiCodec.readValue(pigeonVar_res) as Map<Object?, Object?>?)
-                ?.cast<Object?, Object?>();
-        return pigeonVar_dartTypeRes;
+        return _PigeonFfiBuffers.decode(pigeonVar_res) as Map<Object?, Object?>?;
       } else {
         throw Exception('No JNI or FFI api available');
       }
@@ -4562,24 +4856,24 @@ class NativeInteropHostIntegrationCoreApiForNativeInterop {
   Map<String?, String?>? echoNullableStringMap(Map<String?, String?>? stringMap) {
     try {
       if (_jniApi != null) {
-        final JMap<JString?, JString?>? pigeonVar_res = _jniApi.echoNullableStringMap(
-          _PigeonJniCodec.writeValue<JMap<JString?, JString?>?>(stringMap),
-        );
-        final Map<String?, String?>? pigeonVar_dartTypeRes =
-            (_PigeonJniCodec.readValue(pigeonVar_res) as Map<Object?, Object?>?)
-                ?.cast<String?, String?>();
-        return pigeonVar_dartTypeRes;
+        final JByteArray pigeonVar_args = _PigeonJniBuffers.encode(<Object?>[stringMap]);
+        try {
+          final JByteArray? pigeonVar_res = _jniApi.pigeon_echoNullableStringMap(pigeonVar_args);
+          return (_PigeonJniBuffers.decode(pigeonVar_res) as Map<Object?, Object?>?)
+              ?.cast<String?, String?>();
+        } finally {
+          pigeonVar_args.release();
+        }
       } else if (_ffiApi != null) {
         final pigeonVar_error = ffi_bridge.NativeInteropTestsError();
-        final NSDictionary? pigeonVar_res = _ffiApi.echoNullableStringMapWithStringMap(
-          _PigeonFfiCodec.writeValue<NSDictionary?>(stringMap),
+        final NSData pigeonVar_args = _PigeonFfiBuffers.encode(<Object?>[stringMap]);
+        final NSData? pigeonVar_res = _ffiApi.pigeon_echoNullableStringMap(
+          pigeonVar_args,
           wrappedError: pigeonVar_error,
         );
         _throwIfFfiError(pigeonVar_error);
-        final Map<String?, String?>? pigeonVar_dartTypeRes =
-            (_PigeonFfiCodec.readValue(pigeonVar_res) as Map<Object?, Object?>?)
-                ?.cast<String?, String?>();
-        return pigeonVar_dartTypeRes;
+        return (_PigeonFfiBuffers.decode(pigeonVar_res) as Map<Object?, Object?>?)
+            ?.cast<String?, String?>();
       } else {
         throw Exception('No JNI or FFI api available');
       }
@@ -4591,24 +4885,24 @@ class NativeInteropHostIntegrationCoreApiForNativeInterop {
   Map<int?, int?>? echoNullableIntMap(Map<int?, int?>? intMap) {
     try {
       if (_jniApi != null) {
-        final JMap<JLong?, JLong?>? pigeonVar_res = _jniApi.echoNullableIntMap(
-          _PigeonJniCodec.writeValue<JMap<JLong?, JLong?>?>(intMap),
-        );
-        final Map<int?, int?>? pigeonVar_dartTypeRes =
-            (_PigeonJniCodec.readValue(pigeonVar_res) as Map<Object?, Object?>?)
-                ?.cast<int?, int?>();
-        return pigeonVar_dartTypeRes;
+        final JByteArray pigeonVar_args = _PigeonJniBuffers.encode(<Object?>[intMap]);
+        try {
+          final JByteArray? pigeonVar_res = _jniApi.pigeon_echoNullableIntMap(pigeonVar_args);
+          return (_PigeonJniBuffers.decode(pigeonVar_res) as Map<Object?, Object?>?)
+              ?.cast<int?, int?>();
+        } finally {
+          pigeonVar_args.release();
+        }
       } else if (_ffiApi != null) {
         final pigeonVar_error = ffi_bridge.NativeInteropTestsError();
-        final NSDictionary? pigeonVar_res = _ffiApi.echoNullableIntMapWithIntMap(
-          _PigeonFfiCodec.writeValue<NSDictionary?>(intMap),
+        final NSData pigeonVar_args = _PigeonFfiBuffers.encode(<Object?>[intMap]);
+        final NSData? pigeonVar_res = _ffiApi.pigeon_echoNullableIntMap(
+          pigeonVar_args,
           wrappedError: pigeonVar_error,
         );
         _throwIfFfiError(pigeonVar_error);
-        final Map<int?, int?>? pigeonVar_dartTypeRes =
-            (_PigeonFfiCodec.readValue(pigeonVar_res, int, int) as Map<Object?, Object?>?)
-                ?.cast<int?, int?>();
-        return pigeonVar_dartTypeRes;
+        return (_PigeonFfiBuffers.decode(pigeonVar_res) as Map<Object?, Object?>?)
+            ?.cast<int?, int?>();
       } else {
         throw Exception('No JNI or FFI api available');
       }
@@ -4622,28 +4916,24 @@ class NativeInteropHostIntegrationCoreApiForNativeInterop {
   ) {
     try {
       if (_jniApi != null) {
-        final JMap<jni_bridge.NativeInteropAnEnum?, jni_bridge.NativeInteropAnEnum?>?
-        pigeonVar_res = _jniApi.echoNullableEnumMap(
-          _PigeonJniCodec.writeValue<
-            JMap<jni_bridge.NativeInteropAnEnum?, jni_bridge.NativeInteropAnEnum?>?
-          >(enumMap),
-        );
-        final Map<NativeInteropAnEnum?, NativeInteropAnEnum?>? pigeonVar_dartTypeRes =
-            (_PigeonJniCodec.readValue(pigeonVar_res) as Map<Object?, Object?>?)
-                ?.cast<NativeInteropAnEnum?, NativeInteropAnEnum?>();
-        return pigeonVar_dartTypeRes;
+        final JByteArray pigeonVar_args = _PigeonJniBuffers.encode(<Object?>[enumMap]);
+        try {
+          final JByteArray? pigeonVar_res = _jniApi.pigeon_echoNullableEnumMap(pigeonVar_args);
+          return (_PigeonJniBuffers.decode(pigeonVar_res) as Map<Object?, Object?>?)
+              ?.cast<NativeInteropAnEnum?, NativeInteropAnEnum?>();
+        } finally {
+          pigeonVar_args.release();
+        }
       } else if (_ffiApi != null) {
         final pigeonVar_error = ffi_bridge.NativeInteropTestsError();
-        final NSDictionary? pigeonVar_res = _ffiApi.echoNullableEnumMapWithEnumMap(
-          _PigeonFfiCodec.writeValue<NSDictionary?>(enumMap),
+        final NSData pigeonVar_args = _PigeonFfiBuffers.encode(<Object?>[enumMap]);
+        final NSData? pigeonVar_res = _ffiApi.pigeon_echoNullableEnumMap(
+          pigeonVar_args,
           wrappedError: pigeonVar_error,
         );
         _throwIfFfiError(pigeonVar_error);
-        final Map<NativeInteropAnEnum?, NativeInteropAnEnum?>? pigeonVar_dartTypeRes =
-            (_PigeonFfiCodec.readValue(pigeonVar_res, NativeInteropAnEnum, NativeInteropAnEnum)
-                    as Map<Object?, Object?>?)
-                ?.cast<NativeInteropAnEnum?, NativeInteropAnEnum?>();
-        return pigeonVar_dartTypeRes;
+        return (_PigeonFfiBuffers.decode(pigeonVar_res) as Map<Object?, Object?>?)
+            ?.cast<NativeInteropAnEnum?, NativeInteropAnEnum?>();
       } else {
         throw Exception('No JNI or FFI api available');
       }
@@ -4657,27 +4947,24 @@ class NativeInteropHostIntegrationCoreApiForNativeInterop {
   ) {
     try {
       if (_jniApi != null) {
-        final JMap<JLong?, jni_bridge.NativeInteropAllNullableTypes?>? pigeonVar_res = _jniApi
-            .echoNullableClassMap(
-              _PigeonJniCodec.writeValue<JMap<JLong?, jni_bridge.NativeInteropAllNullableTypes?>?>(
-                classMap,
-              ),
-            );
-        final Map<int?, NativeInteropAllNullableTypes?>? pigeonVar_dartTypeRes =
-            (_PigeonJniCodec.readValue(pigeonVar_res) as Map<Object?, Object?>?)
-                ?.cast<int?, NativeInteropAllNullableTypes?>();
-        return pigeonVar_dartTypeRes;
+        final JByteArray pigeonVar_args = _PigeonJniBuffers.encode(<Object?>[classMap]);
+        try {
+          final JByteArray? pigeonVar_res = _jniApi.pigeon_echoNullableClassMap(pigeonVar_args);
+          return (_PigeonJniBuffers.decode(pigeonVar_res) as Map<Object?, Object?>?)
+              ?.cast<int?, NativeInteropAllNullableTypes?>();
+        } finally {
+          pigeonVar_args.release();
+        }
       } else if (_ffiApi != null) {
         final pigeonVar_error = ffi_bridge.NativeInteropTestsError();
-        final NSDictionary? pigeonVar_res = _ffiApi.echoNullableClassMapWithClassMap(
-          _PigeonFfiCodec.writeValue<NSDictionary?>(classMap),
+        final NSData pigeonVar_args = _PigeonFfiBuffers.encode(<Object?>[classMap]);
+        final NSData? pigeonVar_res = _ffiApi.pigeon_echoNullableClassMap(
+          pigeonVar_args,
           wrappedError: pigeonVar_error,
         );
         _throwIfFfiError(pigeonVar_error);
-        final Map<int?, NativeInteropAllNullableTypes?>? pigeonVar_dartTypeRes =
-            (_PigeonFfiCodec.readValue(pigeonVar_res, int) as Map<Object?, Object?>?)
-                ?.cast<int?, NativeInteropAllNullableTypes?>();
-        return pigeonVar_dartTypeRes;
+        return (_PigeonFfiBuffers.decode(pigeonVar_res) as Map<Object?, Object?>?)
+            ?.cast<int?, NativeInteropAllNullableTypes?>();
       } else {
         throw Exception('No JNI or FFI api available');
       }
@@ -4689,24 +4976,26 @@ class NativeInteropHostIntegrationCoreApiForNativeInterop {
   Map<String, String>? echoNullableNonNullStringMap(Map<String, String>? stringMap) {
     try {
       if (_jniApi != null) {
-        final JMap<JString, JString>? pigeonVar_res = _jniApi.echoNullableNonNullStringMap(
-          _PigeonJniCodec.writeValue<JMap<JString, JString>?>(stringMap),
-        );
-        final Map<String, String>? pigeonVar_dartTypeRes =
-            (_PigeonJniCodec.readValue(pigeonVar_res) as Map<Object?, Object?>?)
-                ?.cast<String, String>();
-        return pigeonVar_dartTypeRes;
+        final JByteArray pigeonVar_args = _PigeonJniBuffers.encode(<Object?>[stringMap]);
+        try {
+          final JByteArray? pigeonVar_res = _jniApi.pigeon_echoNullableNonNullStringMap(
+            pigeonVar_args,
+          );
+          return (_PigeonJniBuffers.decode(pigeonVar_res) as Map<Object?, Object?>?)
+              ?.cast<String, String>();
+        } finally {
+          pigeonVar_args.release();
+        }
       } else if (_ffiApi != null) {
         final pigeonVar_error = ffi_bridge.NativeInteropTestsError();
-        final NSDictionary? pigeonVar_res = _ffiApi.echoNullableNonNullStringMapWithStringMap(
-          _PigeonFfiCodec.writeValue<NSDictionary?>(stringMap),
+        final NSData pigeonVar_args = _PigeonFfiBuffers.encode(<Object?>[stringMap]);
+        final NSData? pigeonVar_res = _ffiApi.pigeon_echoNullableNonNullStringMap(
+          pigeonVar_args,
           wrappedError: pigeonVar_error,
         );
         _throwIfFfiError(pigeonVar_error);
-        final Map<String, String>? pigeonVar_dartTypeRes =
-            (_PigeonFfiCodec.readValue(pigeonVar_res) as Map<Object?, Object?>?)
-                ?.cast<String, String>();
-        return pigeonVar_dartTypeRes;
+        return (_PigeonFfiBuffers.decode(pigeonVar_res) as Map<Object?, Object?>?)
+            ?.cast<String, String>();
       } else {
         throw Exception('No JNI or FFI api available');
       }
@@ -4718,23 +5007,26 @@ class NativeInteropHostIntegrationCoreApiForNativeInterop {
   Map<int, int>? echoNullableNonNullIntMap(Map<int, int>? intMap) {
     try {
       if (_jniApi != null) {
-        final JMap<JLong, JLong>? pigeonVar_res = _jniApi.echoNullableNonNullIntMap(
-          _PigeonJniCodec.writeValue<JMap<JLong, JLong>?>(intMap),
-        );
-        final Map<int, int>? pigeonVar_dartTypeRes =
-            (_PigeonJniCodec.readValue(pigeonVar_res) as Map<Object?, Object?>?)?.cast<int, int>();
-        return pigeonVar_dartTypeRes;
+        final JByteArray pigeonVar_args = _PigeonJniBuffers.encode(<Object?>[intMap]);
+        try {
+          final JByteArray? pigeonVar_res = _jniApi.pigeon_echoNullableNonNullIntMap(
+            pigeonVar_args,
+          );
+          return (_PigeonJniBuffers.decode(pigeonVar_res) as Map<Object?, Object?>?)
+              ?.cast<int, int>();
+        } finally {
+          pigeonVar_args.release();
+        }
       } else if (_ffiApi != null) {
         final pigeonVar_error = ffi_bridge.NativeInteropTestsError();
-        final NSDictionary? pigeonVar_res = _ffiApi.echoNullableNonNullIntMapWithIntMap(
-          _PigeonFfiCodec.writeValue<NSDictionary?>(intMap),
+        final NSData pigeonVar_args = _PigeonFfiBuffers.encode(<Object?>[intMap]);
+        final NSData? pigeonVar_res = _ffiApi.pigeon_echoNullableNonNullIntMap(
+          pigeonVar_args,
           wrappedError: pigeonVar_error,
         );
         _throwIfFfiError(pigeonVar_error);
-        final Map<int, int>? pigeonVar_dartTypeRes =
-            (_PigeonFfiCodec.readValue(pigeonVar_res, int, int) as Map<Object?, Object?>?)
-                ?.cast<int, int>();
-        return pigeonVar_dartTypeRes;
+        return (_PigeonFfiBuffers.decode(pigeonVar_res) as Map<Object?, Object?>?)
+            ?.cast<int, int>();
       } else {
         throw Exception('No JNI or FFI api available');
       }
@@ -4748,28 +5040,26 @@ class NativeInteropHostIntegrationCoreApiForNativeInterop {
   ) {
     try {
       if (_jniApi != null) {
-        final JMap<jni_bridge.NativeInteropAnEnum, jni_bridge.NativeInteropAnEnum>? pigeonVar_res =
-            _jniApi.echoNullableNonNullEnumMap(
-              _PigeonJniCodec.writeValue<
-                JMap<jni_bridge.NativeInteropAnEnum, jni_bridge.NativeInteropAnEnum>?
-              >(enumMap),
-            );
-        final Map<NativeInteropAnEnum, NativeInteropAnEnum>? pigeonVar_dartTypeRes =
-            (_PigeonJniCodec.readValue(pigeonVar_res) as Map<Object?, Object?>?)
-                ?.cast<NativeInteropAnEnum, NativeInteropAnEnum>();
-        return pigeonVar_dartTypeRes;
+        final JByteArray pigeonVar_args = _PigeonJniBuffers.encode(<Object?>[enumMap]);
+        try {
+          final JByteArray? pigeonVar_res = _jniApi.pigeon_echoNullableNonNullEnumMap(
+            pigeonVar_args,
+          );
+          return (_PigeonJniBuffers.decode(pigeonVar_res) as Map<Object?, Object?>?)
+              ?.cast<NativeInteropAnEnum, NativeInteropAnEnum>();
+        } finally {
+          pigeonVar_args.release();
+        }
       } else if (_ffiApi != null) {
         final pigeonVar_error = ffi_bridge.NativeInteropTestsError();
-        final NSDictionary? pigeonVar_res = _ffiApi.echoNullableNonNullEnumMapWithEnumMap(
-          _PigeonFfiCodec.writeValue<NSDictionary?>(enumMap),
+        final NSData pigeonVar_args = _PigeonFfiBuffers.encode(<Object?>[enumMap]);
+        final NSData? pigeonVar_res = _ffiApi.pigeon_echoNullableNonNullEnumMap(
+          pigeonVar_args,
           wrappedError: pigeonVar_error,
         );
         _throwIfFfiError(pigeonVar_error);
-        final Map<NativeInteropAnEnum, NativeInteropAnEnum>? pigeonVar_dartTypeRes =
-            (_PigeonFfiCodec.readValue(pigeonVar_res, NativeInteropAnEnum, NativeInteropAnEnum)
-                    as Map<Object?, Object?>?)
-                ?.cast<NativeInteropAnEnum, NativeInteropAnEnum>();
-        return pigeonVar_dartTypeRes;
+        return (_PigeonFfiBuffers.decode(pigeonVar_res) as Map<Object?, Object?>?)
+            ?.cast<NativeInteropAnEnum, NativeInteropAnEnum>();
       } else {
         throw Exception('No JNI or FFI api available');
       }
@@ -4783,27 +5073,26 @@ class NativeInteropHostIntegrationCoreApiForNativeInterop {
   ) {
     try {
       if (_jniApi != null) {
-        final JMap<JLong, jni_bridge.NativeInteropAllNullableTypes>? pigeonVar_res = _jniApi
-            .echoNullableNonNullClassMap(
-              _PigeonJniCodec.writeValue<JMap<JLong, jni_bridge.NativeInteropAllNullableTypes>?>(
-                classMap,
-              ),
-            );
-        final Map<int, NativeInteropAllNullableTypes>? pigeonVar_dartTypeRes =
-            (_PigeonJniCodec.readValue(pigeonVar_res) as Map<Object?, Object?>?)
-                ?.cast<int, NativeInteropAllNullableTypes>();
-        return pigeonVar_dartTypeRes;
+        final JByteArray pigeonVar_args = _PigeonJniBuffers.encode(<Object?>[classMap]);
+        try {
+          final JByteArray? pigeonVar_res = _jniApi.pigeon_echoNullableNonNullClassMap(
+            pigeonVar_args,
+          );
+          return (_PigeonJniBuffers.decode(pigeonVar_res) as Map<Object?, Object?>?)
+              ?.cast<int, NativeInteropAllNullableTypes>();
+        } finally {
+          pigeonVar_args.release();
+        }
       } else if (_ffiApi != null) {
         final pigeonVar_error = ffi_bridge.NativeInteropTestsError();
-        final NSDictionary? pigeonVar_res = _ffiApi.echoNullableNonNullClassMapWithClassMap(
-          _PigeonFfiCodec.writeValue<NSDictionary?>(classMap),
+        final NSData pigeonVar_args = _PigeonFfiBuffers.encode(<Object?>[classMap]);
+        final NSData? pigeonVar_res = _ffiApi.pigeon_echoNullableNonNullClassMap(
+          pigeonVar_args,
           wrappedError: pigeonVar_error,
         );
         _throwIfFfiError(pigeonVar_error);
-        final Map<int, NativeInteropAllNullableTypes>? pigeonVar_dartTypeRes =
-            (_PigeonFfiCodec.readValue(pigeonVar_res, int) as Map<Object?, Object?>?)
-                ?.cast<int, NativeInteropAllNullableTypes>();
-        return pigeonVar_dartTypeRes;
+        return (_PigeonFfiBuffers.decode(pigeonVar_res) as Map<Object?, Object?>?)
+            ?.cast<int, NativeInteropAllNullableTypes>();
       } else {
         throw Exception('No JNI or FFI api available');
       }
@@ -4815,23 +5104,16 @@ class NativeInteropHostIntegrationCoreApiForNativeInterop {
   NativeInteropAnEnum? echoNullableEnum(NativeInteropAnEnum? anEnum) {
     try {
       if (_jniApi != null) {
-        final jni_bridge.NativeInteropAnEnum? pigeonVar_res = _jniApi.echoNullableEnum(
-          anEnum?.toJni(),
-        );
-        final NativeInteropAnEnum? pigeonVar_dartTypeRes = NativeInteropAnEnum.fromJni(
-          pigeonVar_res,
-        );
-        return pigeonVar_dartTypeRes;
+        final int pigeonVar_res = _jniApi.pigeon_echoNullableEnum(anEnum?.index ?? -1);
+        return pigeonVar_res == -1 ? null : NativeInteropAnEnum.values[pigeonVar_res];
       } else if (_ffiApi != null) {
         final pigeonVar_error = ffi_bridge.NativeInteropTestsError();
-        final NSNumber? pigeonVar_res = _ffiApi.echoNullableEnumWithAnEnum(
-          _PigeonFfiCodec.writeValue<NSNumber?>(anEnum),
+        final NSNumber? pigeonVar_res = _ffiApi.pigeon_echoNullableEnum(
+          anEnum?.index ?? -1,
           wrappedError: pigeonVar_error,
         );
         _throwIfFfiError(pigeonVar_error);
-        final NativeInteropAnEnum? pigeonVar_dartTypeRes =
-            _PigeonFfiCodec.readValue(pigeonVar_res, NativeInteropAnEnum) as NativeInteropAnEnum?;
-        return pigeonVar_dartTypeRes;
+        return pigeonVar_res == null ? null : NativeInteropAnEnum.values[pigeonVar_res.longValue];
       } else {
         throw Exception('No JNI or FFI api available');
       }
@@ -4843,24 +5125,18 @@ class NativeInteropHostIntegrationCoreApiForNativeInterop {
   NativeInteropAnotherEnum? echoAnotherNullableEnum(NativeInteropAnotherEnum? anotherEnum) {
     try {
       if (_jniApi != null) {
-        final jni_bridge.NativeInteropAnotherEnum? pigeonVar_res = _jniApi.echoAnotherNullableEnum(
-          anotherEnum?.toJni(),
-        );
-        final NativeInteropAnotherEnum? pigeonVar_dartTypeRes = NativeInteropAnotherEnum.fromJni(
-          pigeonVar_res,
-        );
-        return pigeonVar_dartTypeRes;
+        final int pigeonVar_res = _jniApi.pigeon_echoAnotherNullableEnum(anotherEnum?.index ?? -1);
+        return pigeonVar_res == -1 ? null : NativeInteropAnotherEnum.values[pigeonVar_res];
       } else if (_ffiApi != null) {
         final pigeonVar_error = ffi_bridge.NativeInteropTestsError();
-        final NSNumber? pigeonVar_res = _ffiApi.echoAnotherNullableEnumWithAnotherEnum(
-          _PigeonFfiCodec.writeValue<NSNumber?>(anotherEnum),
+        final NSNumber? pigeonVar_res = _ffiApi.pigeon_echoAnotherNullableEnum(
+          anotherEnum?.index ?? -1,
           wrappedError: pigeonVar_error,
         );
         _throwIfFfiError(pigeonVar_error);
-        final NativeInteropAnotherEnum? pigeonVar_dartTypeRes =
-            _PigeonFfiCodec.readValue(pigeonVar_res, NativeInteropAnotherEnum)
-                as NativeInteropAnotherEnum?;
-        return pigeonVar_dartTypeRes;
+        return pigeonVar_res == null
+            ? null
+            : NativeInteropAnotherEnum.values[pigeonVar_res.longValue];
       } else {
         throw Exception('No JNI or FFI api available');
       }
@@ -4872,20 +5148,23 @@ class NativeInteropHostIntegrationCoreApiForNativeInterop {
   int? echoOptionalNullableInt([int? aNullableInt]) {
     try {
       if (_jniApi != null) {
-        final JLong? pigeonVar_res = _jniApi.echoOptionalNullableInt(
-          _PigeonJniCodec.writeValue<JLong?>(aNullableInt),
-        );
-        final int? pigeonVar_dartTypeRes = pigeonVar_res?.toDartInt(releaseOriginal: true);
-        return pigeonVar_dartTypeRes;
+        final JLong? pigeonVar_aNullableInt = aNullableInt == null ? null : JLong(aNullableInt);
+        try {
+          final JLong? pigeonVar_res = _jniApi.pigeon_echoOptionalNullableInt(
+            pigeonVar_aNullableInt,
+          );
+          return pigeonVar_res?.toDartInt(releaseOriginal: true);
+        } finally {
+          pigeonVar_aNullableInt?.release();
+        }
       } else if (_ffiApi != null) {
         final pigeonVar_error = ffi_bridge.NativeInteropTestsError();
-        final NSNumber? pigeonVar_res = _ffiApi.echoOptionalNullableIntWithANullableInt(
+        final NSNumber? pigeonVar_res = _ffiApi.pigeon_echoOptionalNullableInt(
           _PigeonFfiCodec.writeValue<NSNumber?>(aNullableInt),
           wrappedError: pigeonVar_error,
         );
         _throwIfFfiError(pigeonVar_error);
-        final int? pigeonVar_dartTypeRes = pigeonVar_res?.longValue;
-        return pigeonVar_dartTypeRes;
+        return pigeonVar_res?.longValue;
       } else {
         throw Exception('No JNI or FFI api available');
       }
@@ -4897,20 +5176,23 @@ class NativeInteropHostIntegrationCoreApiForNativeInterop {
   String? echoNamedNullableString({String? aNullableString}) {
     try {
       if (_jniApi != null) {
-        final JString? pigeonVar_res = _jniApi.echoNamedNullableString(
-          _PigeonJniCodec.writeValue<JString?>(aNullableString),
-        );
-        final String? pigeonVar_dartTypeRes = pigeonVar_res?.toDartString(releaseOriginal: true);
-        return pigeonVar_dartTypeRes;
+        final JString? pigeonVar_aNullableString = aNullableString?.toJString();
+        try {
+          final JString? pigeonVar_res = _jniApi.pigeon_echoNamedNullableString(
+            pigeonVar_aNullableString,
+          );
+          return pigeonVar_res?.toDartString(releaseOriginal: true);
+        } finally {
+          pigeonVar_aNullableString?.release();
+        }
       } else if (_ffiApi != null) {
         final pigeonVar_error = ffi_bridge.NativeInteropTestsError();
-        final NSString? pigeonVar_res = _ffiApi.echoNamedNullableStringWithANullableString(
-          _PigeonFfiCodec.writeValue<NSString?>(aNullableString),
+        final NSString? pigeonVar_res = _ffiApi.pigeon_echoNamedNullableString(
+          aNullableString == null ? null : NSString(aNullableString),
           wrappedError: pigeonVar_error,
         );
         _throwIfFfiError(pigeonVar_error);
-        final String? pigeonVar_dartTypeRes = pigeonVar_res?.toDartString();
-        return pigeonVar_dartTypeRes;
+        return pigeonVar_res?.toDartString();
       } else {
         throw Exception('No JNI or FFI api available');
       }
@@ -4922,11 +5204,12 @@ class NativeInteropHostIntegrationCoreApiForNativeInterop {
   Future<void> noopAsync() async {
     try {
       if (_jniApi != null) {
-        await _jniApi.noopAsync();
+        await _jniApi.pigeon_noopAsync();
+        return;
       } else if (_ffiApi != null) {
         final pigeonVar_error = ffi_bridge.NativeInteropTestsError();
         final Completer<void> pigeonVar_completer = Completer<void>();
-        _ffiApi.noopAsyncWithWrappedError(
+        _ffiApi.pigeon_noopAsync(
           pigeonVar_error,
           completionHandler: ffi_bridge.ObjCBlock_ffiVoid.listener(() {
             if (pigeonVar_error.code != null) {
@@ -4936,6 +5219,7 @@ class NativeInteropHostIntegrationCoreApiForNativeInterop {
             }
           }),
         );
+
         return await pigeonVar_completer.future;
       } else {
         throw Exception('No JNI or FFI api available');
@@ -4948,13 +5232,12 @@ class NativeInteropHostIntegrationCoreApiForNativeInterop {
   Future<int> echoAsyncInt(int anInt) async {
     try {
       if (_jniApi != null) {
-        final JLong pigeonVar_res = await _jniApi.echoAsyncInt(anInt);
-        final int pigeonVar_dartTypeRes = pigeonVar_res.toDartInt(releaseOriginal: true);
-        return pigeonVar_dartTypeRes;
+        final JLong pigeonVar_res = await _jniApi.pigeon_echoAsyncInt(anInt);
+        return pigeonVar_res.toDartInt(releaseOriginal: true);
       } else if (_ffiApi != null) {
         final pigeonVar_error = ffi_bridge.NativeInteropTestsError();
         final Completer<int> pigeonVar_completer = Completer<int>();
-        _ffiApi.echoAsyncIntWithAnInt(
+        _ffiApi.pigeon_echoAsyncInt(
           anInt,
           wrappedError: pigeonVar_error,
           completionHandler: ffi_bridge.ObjCBlock_ffiVoid_NSNumber.listener((
@@ -4967,6 +5250,7 @@ class NativeInteropHostIntegrationCoreApiForNativeInterop {
             }
           }),
         );
+
         return await pigeonVar_completer.future;
       } else {
         throw Exception('No JNI or FFI api available');
@@ -4979,13 +5263,12 @@ class NativeInteropHostIntegrationCoreApiForNativeInterop {
   Future<double> echoAsyncDouble(double aDouble) async {
     try {
       if (_jniApi != null) {
-        final JDouble pigeonVar_res = await _jniApi.echoAsyncDouble(aDouble);
-        final double pigeonVar_dartTypeRes = pigeonVar_res.toDartDouble(releaseOriginal: true);
-        return pigeonVar_dartTypeRes;
+        final JDouble pigeonVar_res = await _jniApi.pigeon_echoAsyncDouble(aDouble);
+        return pigeonVar_res.toDartDouble(releaseOriginal: true);
       } else if (_ffiApi != null) {
         final pigeonVar_error = ffi_bridge.NativeInteropTestsError();
         final Completer<double> pigeonVar_completer = Completer<double>();
-        _ffiApi.echoAsyncDoubleWithADouble(
+        _ffiApi.pigeon_echoAsyncDouble(
           aDouble,
           wrappedError: pigeonVar_error,
           completionHandler: ffi_bridge.ObjCBlock_ffiVoid_NSNumber.listener((
@@ -4998,6 +5281,7 @@ class NativeInteropHostIntegrationCoreApiForNativeInterop {
             }
           }),
         );
+
         return await pigeonVar_completer.future;
       } else {
         throw Exception('No JNI or FFI api available');
@@ -5010,13 +5294,12 @@ class NativeInteropHostIntegrationCoreApiForNativeInterop {
   Future<bool> echoAsyncBool(bool aBool) async {
     try {
       if (_jniApi != null) {
-        final JBoolean pigeonVar_res = await _jniApi.echoAsyncBool(aBool);
-        final bool pigeonVar_dartTypeRes = pigeonVar_res.toDartBool(releaseOriginal: true);
-        return pigeonVar_dartTypeRes;
+        final JBoolean pigeonVar_res = await _jniApi.pigeon_echoAsyncBool(aBool);
+        return pigeonVar_res.toDartBool(releaseOriginal: true);
       } else if (_ffiApi != null) {
         final pigeonVar_error = ffi_bridge.NativeInteropTestsError();
         final Completer<bool> pigeonVar_completer = Completer<bool>();
-        _ffiApi.echoAsyncBoolWithABool(
+        _ffiApi.pigeon_echoAsyncBool(
           aBool,
           wrappedError: pigeonVar_error,
           completionHandler: ffi_bridge.ObjCBlock_ffiVoid_NSNumber.listener((
@@ -5029,6 +5312,7 @@ class NativeInteropHostIntegrationCoreApiForNativeInterop {
             }
           }),
         );
+
         return await pigeonVar_completer.future;
       } else {
         throw Exception('No JNI or FFI api available');
@@ -5041,16 +5325,18 @@ class NativeInteropHostIntegrationCoreApiForNativeInterop {
   Future<String> echoAsyncString(String aString) async {
     try {
       if (_jniApi != null) {
-        final JString pigeonVar_res = await _jniApi.echoAsyncString(
-          _PigeonJniCodec.writeValue<JString>(aString),
-        );
-        final String pigeonVar_dartTypeRes = pigeonVar_res.toDartString(releaseOriginal: true);
-        return pigeonVar_dartTypeRes;
+        final JString pigeonVar_aString = aString.toJString();
+        try {
+          final JString pigeonVar_res = await _jniApi.pigeon_echoAsyncString(pigeonVar_aString);
+          return pigeonVar_res.toDartString(releaseOriginal: true);
+        } finally {
+          pigeonVar_aString.release();
+        }
       } else if (_ffiApi != null) {
         final pigeonVar_error = ffi_bridge.NativeInteropTestsError();
         final Completer<String> pigeonVar_completer = Completer<String>();
-        _ffiApi.echoAsyncStringWithAString(
-          _PigeonFfiCodec.writeValue<NSString>(aString),
+        _ffiApi.pigeon_echoAsyncString(
+          NSString(aString),
           wrappedError: pigeonVar_error,
           completionHandler: ffi_bridge.ObjCBlock_ffiVoid_NSString.listener((
             NSString? pigeonVar_res,
@@ -5062,6 +5348,7 @@ class NativeInteropHostIntegrationCoreApiForNativeInterop {
             }
           }),
         );
+
         return await pigeonVar_completer.future;
       } else {
         throw Exception('No JNI or FFI api available');
@@ -5074,31 +5361,30 @@ class NativeInteropHostIntegrationCoreApiForNativeInterop {
   Future<Uint8List> echoAsyncUint8List(Uint8List aUint8List) async {
     try {
       if (_jniApi != null) {
-        final JByteArray pigeonVar_res = await _jniApi.echoAsyncUint8List(
-          _PigeonJniCodec.writeValue<JByteArray>(aUint8List),
-        );
-        final Uint8List pigeonVar_dartTypeRes =
-            _PigeonJniCodec.readValue(pigeonVar_res)! as Uint8List;
-        return pigeonVar_dartTypeRes;
+        final JByteArray pigeonVar_aUint8List = _uint8ListToJni(aUint8List);
+        try {
+          final JByteArray pigeonVar_res = await _jniApi.pigeon_echoAsyncUint8List(
+            pigeonVar_aUint8List,
+          );
+          return _jByteArrayToDart(pigeonVar_res, release: true)!;
+        } finally {
+          pigeonVar_aUint8List.release();
+        }
       } else if (_ffiApi != null) {
         final pigeonVar_error = ffi_bridge.NativeInteropTestsError();
         final Completer<Uint8List> pigeonVar_completer = Completer<Uint8List>();
-        _ffiApi.echoAsyncUint8ListWithAUint8List(
-          _PigeonFfiCodec.writeValue<ffi_bridge.NativeInteropTestsPigeonTypedData>(aUint8List),
+        _ffiApi.pigeon_echoAsyncUint8List(
+          _typedDataToNSData(aUint8List),
           wrappedError: pigeonVar_error,
-          completionHandler:
-              ffi_bridge.ObjCBlock_ffiVoid_NativeInteropTestsPigeonTypedData.listener((
-                ffi_bridge.NativeInteropTestsPigeonTypedData? pigeonVar_res,
-              ) {
-                if (pigeonVar_error.code != null) {
-                  pigeonVar_completer.completeError(_wrapFfiError(pigeonVar_error));
-                } else {
-                  pigeonVar_completer.complete(
-                    _PigeonFfiCodec.readValue(pigeonVar_res)! as Uint8List,
-                  );
-                }
-              }),
+          completionHandler: ffi_bridge.ObjCBlock_ffiVoid_NSData.listener((NSData? pigeonVar_res) {
+            if (pigeonVar_error.code != null) {
+              pigeonVar_completer.completeError(_wrapFfiError(pigeonVar_error));
+            } else {
+              pigeonVar_completer.complete(_PigeonFfiBuffers.toUint8List(pigeonVar_res)!);
+            }
+          }),
         );
+
         return await pigeonVar_completer.future;
       } else {
         throw Exception('No JNI or FFI api available');
@@ -5111,31 +5397,32 @@ class NativeInteropHostIntegrationCoreApiForNativeInterop {
   Future<Int32List> echoAsyncInt32List(Int32List aInt32List) async {
     try {
       if (_jniApi != null) {
-        final JIntArray pigeonVar_res = await _jniApi.echoAsyncInt32List(
-          _PigeonJniCodec.writeValue<JIntArray>(aInt32List),
-        );
-        final Int32List pigeonVar_dartTypeRes =
-            _PigeonJniCodec.readValue(pigeonVar_res)! as Int32List;
-        return pigeonVar_dartTypeRes;
+        final JIntArray pigeonVar_aInt32List = _int32ListToJni(aInt32List);
+        try {
+          final JIntArray pigeonVar_res = await _jniApi.pigeon_echoAsyncInt32List(
+            pigeonVar_aInt32List,
+          );
+          return _jIntArrayToDart(pigeonVar_res, release: true)!;
+        } finally {
+          pigeonVar_aInt32List.release();
+        }
       } else if (_ffiApi != null) {
         final pigeonVar_error = ffi_bridge.NativeInteropTestsError();
         final Completer<Int32List> pigeonVar_completer = Completer<Int32List>();
-        _ffiApi.echoAsyncInt32ListWithAInt32List(
-          _PigeonFfiCodec.writeValue<ffi_bridge.NativeInteropTestsPigeonTypedData>(aInt32List),
+        _ffiApi.pigeon_echoAsyncInt32List(
+          _typedDataToNSData(aInt32List),
           wrappedError: pigeonVar_error,
-          completionHandler:
-              ffi_bridge.ObjCBlock_ffiVoid_NativeInteropTestsPigeonTypedData.listener((
-                ffi_bridge.NativeInteropTestsPigeonTypedData? pigeonVar_res,
-              ) {
-                if (pigeonVar_error.code != null) {
-                  pigeonVar_completer.completeError(_wrapFfiError(pigeonVar_error));
-                } else {
-                  pigeonVar_completer.complete(
-                    _PigeonFfiCodec.readValue(pigeonVar_res)! as Int32List,
-                  );
-                }
-              }),
+          completionHandler: ffi_bridge.ObjCBlock_ffiVoid_NSData.listener((NSData? pigeonVar_res) {
+            if (pigeonVar_error.code != null) {
+              pigeonVar_completer.completeError(_wrapFfiError(pigeonVar_error));
+            } else {
+              pigeonVar_completer.complete(
+                _PigeonFfiBuffers.toUint8List(pigeonVar_res)!.buffer.asInt32List(),
+              );
+            }
+          }),
         );
+
         return await pigeonVar_completer.future;
       } else {
         throw Exception('No JNI or FFI api available');
@@ -5148,31 +5435,32 @@ class NativeInteropHostIntegrationCoreApiForNativeInterop {
   Future<Int64List> echoAsyncInt64List(Int64List aInt64List) async {
     try {
       if (_jniApi != null) {
-        final JLongArray pigeonVar_res = await _jniApi.echoAsyncInt64List(
-          _PigeonJniCodec.writeValue<JLongArray>(aInt64List),
-        );
-        final Int64List pigeonVar_dartTypeRes =
-            _PigeonJniCodec.readValue(pigeonVar_res)! as Int64List;
-        return pigeonVar_dartTypeRes;
+        final JLongArray pigeonVar_aInt64List = _int64ListToJni(aInt64List);
+        try {
+          final JLongArray pigeonVar_res = await _jniApi.pigeon_echoAsyncInt64List(
+            pigeonVar_aInt64List,
+          );
+          return _jLongArrayToDart(pigeonVar_res, release: true)!;
+        } finally {
+          pigeonVar_aInt64List.release();
+        }
       } else if (_ffiApi != null) {
         final pigeonVar_error = ffi_bridge.NativeInteropTestsError();
         final Completer<Int64List> pigeonVar_completer = Completer<Int64List>();
-        _ffiApi.echoAsyncInt64ListWithAInt64List(
-          _PigeonFfiCodec.writeValue<ffi_bridge.NativeInteropTestsPigeonTypedData>(aInt64List),
+        _ffiApi.pigeon_echoAsyncInt64List(
+          _typedDataToNSData(aInt64List),
           wrappedError: pigeonVar_error,
-          completionHandler:
-              ffi_bridge.ObjCBlock_ffiVoid_NativeInteropTestsPigeonTypedData.listener((
-                ffi_bridge.NativeInteropTestsPigeonTypedData? pigeonVar_res,
-              ) {
-                if (pigeonVar_error.code != null) {
-                  pigeonVar_completer.completeError(_wrapFfiError(pigeonVar_error));
-                } else {
-                  pigeonVar_completer.complete(
-                    _PigeonFfiCodec.readValue(pigeonVar_res)! as Int64List,
-                  );
-                }
-              }),
+          completionHandler: ffi_bridge.ObjCBlock_ffiVoid_NSData.listener((NSData? pigeonVar_res) {
+            if (pigeonVar_error.code != null) {
+              pigeonVar_completer.completeError(_wrapFfiError(pigeonVar_error));
+            } else {
+              pigeonVar_completer.complete(
+                _PigeonFfiBuffers.toUint8List(pigeonVar_res)!.buffer.asInt64List(),
+              );
+            }
+          }),
         );
+
         return await pigeonVar_completer.future;
       } else {
         throw Exception('No JNI or FFI api available');
@@ -5185,31 +5473,32 @@ class NativeInteropHostIntegrationCoreApiForNativeInterop {
   Future<Float64List> echoAsyncFloat64List(Float64List aFloat64List) async {
     try {
       if (_jniApi != null) {
-        final JDoubleArray pigeonVar_res = await _jniApi.echoAsyncFloat64List(
-          _PigeonJniCodec.writeValue<JDoubleArray>(aFloat64List),
-        );
-        final Float64List pigeonVar_dartTypeRes =
-            _PigeonJniCodec.readValue(pigeonVar_res)! as Float64List;
-        return pigeonVar_dartTypeRes;
+        final JDoubleArray pigeonVar_aFloat64List = _float64ListToJni(aFloat64List);
+        try {
+          final JDoubleArray pigeonVar_res = await _jniApi.pigeon_echoAsyncFloat64List(
+            pigeonVar_aFloat64List,
+          );
+          return _jDoubleArrayToDart(pigeonVar_res, release: true)!;
+        } finally {
+          pigeonVar_aFloat64List.release();
+        }
       } else if (_ffiApi != null) {
         final pigeonVar_error = ffi_bridge.NativeInteropTestsError();
         final Completer<Float64List> pigeonVar_completer = Completer<Float64List>();
-        _ffiApi.echoAsyncFloat64ListWithAFloat64List(
-          _PigeonFfiCodec.writeValue<ffi_bridge.NativeInteropTestsPigeonTypedData>(aFloat64List),
+        _ffiApi.pigeon_echoAsyncFloat64List(
+          _typedDataToNSData(aFloat64List),
           wrappedError: pigeonVar_error,
-          completionHandler:
-              ffi_bridge.ObjCBlock_ffiVoid_NativeInteropTestsPigeonTypedData.listener((
-                ffi_bridge.NativeInteropTestsPigeonTypedData? pigeonVar_res,
-              ) {
-                if (pigeonVar_error.code != null) {
-                  pigeonVar_completer.completeError(_wrapFfiError(pigeonVar_error));
-                } else {
-                  pigeonVar_completer.complete(
-                    _PigeonFfiCodec.readValue(pigeonVar_res)! as Float64List,
-                  );
-                }
-              }),
+          completionHandler: ffi_bridge.ObjCBlock_ffiVoid_NSData.listener((NSData? pigeonVar_res) {
+            if (pigeonVar_error.code != null) {
+              pigeonVar_completer.completeError(_wrapFfiError(pigeonVar_error));
+            } else {
+              pigeonVar_completer.complete(
+                _PigeonFfiBuffers.toUint8List(pigeonVar_res)!.buffer.asFloat64List(),
+              );
+            }
+          }),
         );
+
         return await pigeonVar_completer.future;
       } else {
         throw Exception('No JNI or FFI api available');
@@ -5222,27 +5511,29 @@ class NativeInteropHostIntegrationCoreApiForNativeInterop {
   Future<Object> echoAsyncObject(Object anObject) async {
     try {
       if (_jniApi != null) {
-        final JObject pigeonVar_res = await _jniApi.echoAsyncObject(
-          _PigeonJniCodec.writeValue<JObject>(anObject),
-        );
-        final Object pigeonVar_dartTypeRes = _PigeonJniCodec.readValue(pigeonVar_res)!;
-        return pigeonVar_dartTypeRes;
+        final JByteArray pigeonVar_args = _PigeonJniBuffers.encode(<Object?>[anObject]);
+        try {
+          final JByteArray? pigeonVar_res = await _jniApi.pigeon_echoAsyncObject(pigeonVar_args);
+          return _PigeonJniBuffers.decode(pigeonVar_res)!;
+        } finally {
+          pigeonVar_args.release();
+        }
       } else if (_ffiApi != null) {
         final pigeonVar_error = ffi_bridge.NativeInteropTestsError();
+        final NSData pigeonVar_args = _PigeonFfiBuffers.encode(<Object?>[anObject]);
         final Completer<Object> pigeonVar_completer = Completer<Object>();
-        _ffiApi.echoAsyncObjectWithAnObject(
-          _PigeonFfiCodec.writeValue<NSObject>(anObject, generic: true),
+        _ffiApi.pigeon_echoAsyncObject(
+          pigeonVar_args,
           wrappedError: pigeonVar_error,
-          completionHandler: ffi_bridge.ObjCBlock_ffiVoid_NSObject.listener((
-            NSObject? pigeonVar_res,
-          ) {
+          completionHandler: ffi_bridge.ObjCBlock_ffiVoid_NSData.listener((NSData? pigeonVar_res) {
             if (pigeonVar_error.code != null) {
               pigeonVar_completer.completeError(_wrapFfiError(pigeonVar_error));
             } else {
-              pigeonVar_completer.complete(_PigeonFfiCodec.readValue(pigeonVar_res)!);
+              pigeonVar_completer.complete(_PigeonFfiBuffers.decode(pigeonVar_res)!);
             }
           }),
         );
+
         return await pigeonVar_completer.future;
       } else {
         throw Exception('No JNI or FFI api available');
@@ -5255,30 +5546,31 @@ class NativeInteropHostIntegrationCoreApiForNativeInterop {
   Future<List<Object?>> echoAsyncList(List<Object?> list) async {
     try {
       if (_jniApi != null) {
-        final JList<JObject?> pigeonVar_res = await _jniApi.echoAsyncList(
-          _PigeonJniCodec.writeValue<JList<JObject?>>(list),
-        );
-        final List<Object?> pigeonVar_dartTypeRes =
-            (_PigeonJniCodec.readValue(pigeonVar_res)! as List<Object?>).cast<Object?>();
-        return pigeonVar_dartTypeRes;
+        final JByteArray pigeonVar_args = _PigeonJniBuffers.encode(<Object?>[list]);
+        try {
+          final JByteArray? pigeonVar_res = await _jniApi.pigeon_echoAsyncList(pigeonVar_args);
+          return _PigeonJniBuffers.decode(pigeonVar_res)! as List<Object?>;
+        } finally {
+          pigeonVar_args.release();
+        }
       } else if (_ffiApi != null) {
         final pigeonVar_error = ffi_bridge.NativeInteropTestsError();
+        final NSData pigeonVar_args = _PigeonFfiBuffers.encode(<Object?>[list]);
         final Completer<List<Object?>> pigeonVar_completer = Completer<List<Object?>>();
-        _ffiApi.echoAsyncListWithList(
-          _PigeonFfiCodec.writeValue<NSMutableArray>(list),
+        _ffiApi.pigeon_echoAsyncList(
+          pigeonVar_args,
           wrappedError: pigeonVar_error,
-          completionHandler: ffi_bridge.ObjCBlock_ffiVoid_NSArray.listener((
-            NSArray? pigeonVar_res,
-          ) {
+          completionHandler: ffi_bridge.ObjCBlock_ffiVoid_NSData.listener((NSData? pigeonVar_res) {
             if (pigeonVar_error.code != null) {
               pigeonVar_completer.completeError(_wrapFfiError(pigeonVar_error));
             } else {
               pigeonVar_completer.complete(
-                (_PigeonFfiCodec.readValue(pigeonVar_res)! as List<Object?>).cast<Object?>(),
+                _PigeonFfiBuffers.decode(pigeonVar_res)! as List<Object?>,
               );
             }
           }),
         );
+
         return await pigeonVar_completer.future;
       } else {
         throw Exception('No JNI or FFI api available');
@@ -5291,34 +5583,34 @@ class NativeInteropHostIntegrationCoreApiForNativeInterop {
   Future<List<NativeInteropAnEnum?>> echoAsyncEnumList(List<NativeInteropAnEnum?> enumList) async {
     try {
       if (_jniApi != null) {
-        final JList<jni_bridge.NativeInteropAnEnum?> pigeonVar_res = await _jniApi
-            .echoAsyncEnumList(
-              _PigeonJniCodec.writeValue<JList<jni_bridge.NativeInteropAnEnum?>>(enumList),
-            );
-        final List<NativeInteropAnEnum?> pigeonVar_dartTypeRes =
-            (_PigeonJniCodec.readValue(pigeonVar_res)! as List<Object?>)
-                .cast<NativeInteropAnEnum?>();
-        return pigeonVar_dartTypeRes;
+        final JByteArray pigeonVar_args = _PigeonJniBuffers.encode(<Object?>[enumList]);
+        try {
+          final JByteArray? pigeonVar_res = await _jniApi.pigeon_echoAsyncEnumList(pigeonVar_args);
+          return (_PigeonJniBuffers.decode(pigeonVar_res)! as List<Object?>)
+              .cast<NativeInteropAnEnum?>();
+        } finally {
+          pigeonVar_args.release();
+        }
       } else if (_ffiApi != null) {
         final pigeonVar_error = ffi_bridge.NativeInteropTestsError();
+        final NSData pigeonVar_args = _PigeonFfiBuffers.encode(<Object?>[enumList]);
         final Completer<List<NativeInteropAnEnum?>> pigeonVar_completer =
             Completer<List<NativeInteropAnEnum?>>();
-        _ffiApi.echoAsyncEnumListWithEnumList(
-          _PigeonFfiCodec.writeValue<NSMutableArray>(enumList),
+        _ffiApi.pigeon_echoAsyncEnumList(
+          pigeonVar_args,
           wrappedError: pigeonVar_error,
-          completionHandler: ffi_bridge.ObjCBlock_ffiVoid_NSArray.listener((
-            NSArray? pigeonVar_res,
-          ) {
+          completionHandler: ffi_bridge.ObjCBlock_ffiVoid_NSData.listener((NSData? pigeonVar_res) {
             if (pigeonVar_error.code != null) {
               pigeonVar_completer.completeError(_wrapFfiError(pigeonVar_error));
             } else {
               pigeonVar_completer.complete(
-                (_PigeonFfiCodec.readValue(pigeonVar_res, NativeInteropAnEnum)! as List<Object?>)
+                (_PigeonFfiBuffers.decode(pigeonVar_res)! as List<Object?>)
                     .cast<NativeInteropAnEnum?>(),
               );
             }
           }),
         );
+
         return await pigeonVar_completer.future;
       } else {
         throw Exception('No JNI or FFI api available');
@@ -5333,36 +5625,34 @@ class NativeInteropHostIntegrationCoreApiForNativeInterop {
   ) async {
     try {
       if (_jniApi != null) {
-        final JList<jni_bridge.NativeInteropAllNullableTypes?> pigeonVar_res = await _jniApi
-            .echoAsyncClassList(
-              _PigeonJniCodec.writeValue<JList<jni_bridge.NativeInteropAllNullableTypes?>>(
-                classList,
-              ),
-            );
-        final List<NativeInteropAllNullableTypes?> pigeonVar_dartTypeRes =
-            (_PigeonJniCodec.readValue(pigeonVar_res)! as List<Object?>)
-                .cast<NativeInteropAllNullableTypes?>();
-        return pigeonVar_dartTypeRes;
+        final JByteArray pigeonVar_args = _PigeonJniBuffers.encode(<Object?>[classList]);
+        try {
+          final JByteArray? pigeonVar_res = await _jniApi.pigeon_echoAsyncClassList(pigeonVar_args);
+          return (_PigeonJniBuffers.decode(pigeonVar_res)! as List<Object?>)
+              .cast<NativeInteropAllNullableTypes?>();
+        } finally {
+          pigeonVar_args.release();
+        }
       } else if (_ffiApi != null) {
         final pigeonVar_error = ffi_bridge.NativeInteropTestsError();
+        final NSData pigeonVar_args = _PigeonFfiBuffers.encode(<Object?>[classList]);
         final Completer<List<NativeInteropAllNullableTypes?>> pigeonVar_completer =
             Completer<List<NativeInteropAllNullableTypes?>>();
-        _ffiApi.echoAsyncClassListWithClassList(
-          _PigeonFfiCodec.writeValue<NSMutableArray>(classList),
+        _ffiApi.pigeon_echoAsyncClassList(
+          pigeonVar_args,
           wrappedError: pigeonVar_error,
-          completionHandler: ffi_bridge.ObjCBlock_ffiVoid_NSArray.listener((
-            NSArray? pigeonVar_res,
-          ) {
+          completionHandler: ffi_bridge.ObjCBlock_ffiVoid_NSData.listener((NSData? pigeonVar_res) {
             if (pigeonVar_error.code != null) {
               pigeonVar_completer.completeError(_wrapFfiError(pigeonVar_error));
             } else {
               pigeonVar_completer.complete(
-                (_PigeonFfiCodec.readValue(pigeonVar_res)! as List<Object?>)
+                (_PigeonFfiBuffers.decode(pigeonVar_res)! as List<Object?>)
                     .cast<NativeInteropAllNullableTypes?>(),
               );
             }
           }),
         );
+
         return await pigeonVar_completer.future;
       } else {
         throw Exception('No JNI or FFI api available');
@@ -5375,33 +5665,32 @@ class NativeInteropHostIntegrationCoreApiForNativeInterop {
   Future<Map<Object?, Object?>> echoAsyncMap(Map<Object?, Object?> map) async {
     try {
       if (_jniApi != null) {
-        final JMap<JObject?, JObject?> pigeonVar_res = await _jniApi.echoAsyncMap(
-          _PigeonJniCodec.writeValue<JMap<JObject?, JObject?>>(map),
-        );
-        final Map<Object?, Object?> pigeonVar_dartTypeRes =
-            (_PigeonJniCodec.readValue(pigeonVar_res)! as Map<Object?, Object?>)
-                .cast<Object?, Object?>();
-        return pigeonVar_dartTypeRes;
+        final JByteArray pigeonVar_args = _PigeonJniBuffers.encode(<Object?>[map]);
+        try {
+          final JByteArray? pigeonVar_res = await _jniApi.pigeon_echoAsyncMap(pigeonVar_args);
+          return _PigeonJniBuffers.decode(pigeonVar_res)! as Map<Object?, Object?>;
+        } finally {
+          pigeonVar_args.release();
+        }
       } else if (_ffiApi != null) {
         final pigeonVar_error = ffi_bridge.NativeInteropTestsError();
+        final NSData pigeonVar_args = _PigeonFfiBuffers.encode(<Object?>[map]);
         final Completer<Map<Object?, Object?>> pigeonVar_completer =
             Completer<Map<Object?, Object?>>();
-        _ffiApi.echoAsyncMapWithMap(
-          _PigeonFfiCodec.writeValue<NSDictionary>(map),
+        _ffiApi.pigeon_echoAsyncMap(
+          pigeonVar_args,
           wrappedError: pigeonVar_error,
-          completionHandler: ffi_bridge.ObjCBlock_ffiVoid_NSDictionary.listener((
-            NSDictionary? pigeonVar_res,
-          ) {
+          completionHandler: ffi_bridge.ObjCBlock_ffiVoid_NSData.listener((NSData? pigeonVar_res) {
             if (pigeonVar_error.code != null) {
               pigeonVar_completer.completeError(_wrapFfiError(pigeonVar_error));
             } else {
               pigeonVar_completer.complete(
-                (_PigeonFfiCodec.readValue(pigeonVar_res)! as Map<Object?, Object?>)
-                    .cast<Object?, Object?>(),
+                _PigeonFfiBuffers.decode(pigeonVar_res)! as Map<Object?, Object?>,
               );
             }
           }),
         );
+
         return await pigeonVar_completer.future;
       } else {
         throw Exception('No JNI or FFI api available');
@@ -5414,33 +5703,34 @@ class NativeInteropHostIntegrationCoreApiForNativeInterop {
   Future<Map<String?, String?>> echoAsyncStringMap(Map<String?, String?> stringMap) async {
     try {
       if (_jniApi != null) {
-        final JMap<JString?, JString?> pigeonVar_res = await _jniApi.echoAsyncStringMap(
-          _PigeonJniCodec.writeValue<JMap<JString?, JString?>>(stringMap),
-        );
-        final Map<String?, String?> pigeonVar_dartTypeRes =
-            (_PigeonJniCodec.readValue(pigeonVar_res)! as Map<Object?, Object?>)
-                .cast<String?, String?>();
-        return pigeonVar_dartTypeRes;
+        final JByteArray pigeonVar_args = _PigeonJniBuffers.encode(<Object?>[stringMap]);
+        try {
+          final JByteArray? pigeonVar_res = await _jniApi.pigeon_echoAsyncStringMap(pigeonVar_args);
+          return (_PigeonJniBuffers.decode(pigeonVar_res)! as Map<Object?, Object?>)
+              .cast<String?, String?>();
+        } finally {
+          pigeonVar_args.release();
+        }
       } else if (_ffiApi != null) {
         final pigeonVar_error = ffi_bridge.NativeInteropTestsError();
+        final NSData pigeonVar_args = _PigeonFfiBuffers.encode(<Object?>[stringMap]);
         final Completer<Map<String?, String?>> pigeonVar_completer =
             Completer<Map<String?, String?>>();
-        _ffiApi.echoAsyncStringMapWithStringMap(
-          _PigeonFfiCodec.writeValue<NSDictionary>(stringMap),
+        _ffiApi.pigeon_echoAsyncStringMap(
+          pigeonVar_args,
           wrappedError: pigeonVar_error,
-          completionHandler: ffi_bridge.ObjCBlock_ffiVoid_NSDictionary.listener((
-            NSDictionary? pigeonVar_res,
-          ) {
+          completionHandler: ffi_bridge.ObjCBlock_ffiVoid_NSData.listener((NSData? pigeonVar_res) {
             if (pigeonVar_error.code != null) {
               pigeonVar_completer.completeError(_wrapFfiError(pigeonVar_error));
             } else {
               pigeonVar_completer.complete(
-                (_PigeonFfiCodec.readValue(pigeonVar_res)! as Map<Object?, Object?>)
+                (_PigeonFfiBuffers.decode(pigeonVar_res)! as Map<Object?, Object?>)
                     .cast<String?, String?>(),
               );
             }
           }),
         );
+
         return await pigeonVar_completer.future;
       } else {
         throw Exception('No JNI or FFI api available');
@@ -5453,31 +5743,33 @@ class NativeInteropHostIntegrationCoreApiForNativeInterop {
   Future<Map<int?, int?>> echoAsyncIntMap(Map<int?, int?> intMap) async {
     try {
       if (_jniApi != null) {
-        final JMap<JLong?, JLong?> pigeonVar_res = await _jniApi.echoAsyncIntMap(
-          _PigeonJniCodec.writeValue<JMap<JLong?, JLong?>>(intMap),
-        );
-        final Map<int?, int?> pigeonVar_dartTypeRes =
-            (_PigeonJniCodec.readValue(pigeonVar_res)! as Map<Object?, Object?>).cast<int?, int?>();
-        return pigeonVar_dartTypeRes;
+        final JByteArray pigeonVar_args = _PigeonJniBuffers.encode(<Object?>[intMap]);
+        try {
+          final JByteArray? pigeonVar_res = await _jniApi.pigeon_echoAsyncIntMap(pigeonVar_args);
+          return (_PigeonJniBuffers.decode(pigeonVar_res)! as Map<Object?, Object?>)
+              .cast<int?, int?>();
+        } finally {
+          pigeonVar_args.release();
+        }
       } else if (_ffiApi != null) {
         final pigeonVar_error = ffi_bridge.NativeInteropTestsError();
+        final NSData pigeonVar_args = _PigeonFfiBuffers.encode(<Object?>[intMap]);
         final Completer<Map<int?, int?>> pigeonVar_completer = Completer<Map<int?, int?>>();
-        _ffiApi.echoAsyncIntMapWithIntMap(
-          _PigeonFfiCodec.writeValue<NSDictionary>(intMap),
+        _ffiApi.pigeon_echoAsyncIntMap(
+          pigeonVar_args,
           wrappedError: pigeonVar_error,
-          completionHandler: ffi_bridge.ObjCBlock_ffiVoid_NSDictionary.listener((
-            NSDictionary? pigeonVar_res,
-          ) {
+          completionHandler: ffi_bridge.ObjCBlock_ffiVoid_NSData.listener((NSData? pigeonVar_res) {
             if (pigeonVar_error.code != null) {
               pigeonVar_completer.completeError(_wrapFfiError(pigeonVar_error));
             } else {
               pigeonVar_completer.complete(
-                (_PigeonFfiCodec.readValue(pigeonVar_res, int, int)! as Map<Object?, Object?>)
+                (_PigeonFfiBuffers.decode(pigeonVar_res)! as Map<Object?, Object?>)
                     .cast<int?, int?>(),
               );
             }
           }),
         );
+
         return await pigeonVar_completer.future;
       } else {
         throw Exception('No JNI or FFI api available');
@@ -5492,37 +5784,34 @@ class NativeInteropHostIntegrationCoreApiForNativeInterop {
   ) async {
     try {
       if (_jniApi != null) {
-        final JMap<jni_bridge.NativeInteropAnEnum?, jni_bridge.NativeInteropAnEnum?> pigeonVar_res =
-            await _jniApi.echoAsyncEnumMap(
-              _PigeonJniCodec.writeValue<
-                JMap<jni_bridge.NativeInteropAnEnum?, jni_bridge.NativeInteropAnEnum?>
-              >(enumMap),
-            );
-        final Map<NativeInteropAnEnum?, NativeInteropAnEnum?> pigeonVar_dartTypeRes =
-            (_PigeonJniCodec.readValue(pigeonVar_res)! as Map<Object?, Object?>)
-                .cast<NativeInteropAnEnum?, NativeInteropAnEnum?>();
-        return pigeonVar_dartTypeRes;
+        final JByteArray pigeonVar_args = _PigeonJniBuffers.encode(<Object?>[enumMap]);
+        try {
+          final JByteArray? pigeonVar_res = await _jniApi.pigeon_echoAsyncEnumMap(pigeonVar_args);
+          return (_PigeonJniBuffers.decode(pigeonVar_res)! as Map<Object?, Object?>)
+              .cast<NativeInteropAnEnum?, NativeInteropAnEnum?>();
+        } finally {
+          pigeonVar_args.release();
+        }
       } else if (_ffiApi != null) {
         final pigeonVar_error = ffi_bridge.NativeInteropTestsError();
+        final NSData pigeonVar_args = _PigeonFfiBuffers.encode(<Object?>[enumMap]);
         final Completer<Map<NativeInteropAnEnum?, NativeInteropAnEnum?>> pigeonVar_completer =
             Completer<Map<NativeInteropAnEnum?, NativeInteropAnEnum?>>();
-        _ffiApi.echoAsyncEnumMapWithEnumMap(
-          _PigeonFfiCodec.writeValue<NSDictionary>(enumMap),
+        _ffiApi.pigeon_echoAsyncEnumMap(
+          pigeonVar_args,
           wrappedError: pigeonVar_error,
-          completionHandler: ffi_bridge.ObjCBlock_ffiVoid_NSDictionary.listener((
-            NSDictionary? pigeonVar_res,
-          ) {
+          completionHandler: ffi_bridge.ObjCBlock_ffiVoid_NSData.listener((NSData? pigeonVar_res) {
             if (pigeonVar_error.code != null) {
               pigeonVar_completer.completeError(_wrapFfiError(pigeonVar_error));
             } else {
               pigeonVar_completer.complete(
-                (_PigeonFfiCodec.readValue(pigeonVar_res, NativeInteropAnEnum, NativeInteropAnEnum)!
-                        as Map<Object?, Object?>)
+                (_PigeonFfiBuffers.decode(pigeonVar_res)! as Map<Object?, Object?>)
                     .cast<NativeInteropAnEnum?, NativeInteropAnEnum?>(),
               );
             }
           }),
         );
+
         return await pigeonVar_completer.future;
       } else {
         throw Exception('No JNI or FFI api available');
@@ -5537,36 +5826,34 @@ class NativeInteropHostIntegrationCoreApiForNativeInterop {
   ) async {
     try {
       if (_jniApi != null) {
-        final JMap<JLong?, jni_bridge.NativeInteropAllNullableTypes?> pigeonVar_res = await _jniApi
-            .echoAsyncClassMap(
-              _PigeonJniCodec.writeValue<JMap<JLong?, jni_bridge.NativeInteropAllNullableTypes?>>(
-                classMap,
-              ),
-            );
-        final Map<int?, NativeInteropAllNullableTypes?> pigeonVar_dartTypeRes =
-            (_PigeonJniCodec.readValue(pigeonVar_res)! as Map<Object?, Object?>)
-                .cast<int?, NativeInteropAllNullableTypes?>();
-        return pigeonVar_dartTypeRes;
+        final JByteArray pigeonVar_args = _PigeonJniBuffers.encode(<Object?>[classMap]);
+        try {
+          final JByteArray? pigeonVar_res = await _jniApi.pigeon_echoAsyncClassMap(pigeonVar_args);
+          return (_PigeonJniBuffers.decode(pigeonVar_res)! as Map<Object?, Object?>)
+              .cast<int?, NativeInteropAllNullableTypes?>();
+        } finally {
+          pigeonVar_args.release();
+        }
       } else if (_ffiApi != null) {
         final pigeonVar_error = ffi_bridge.NativeInteropTestsError();
+        final NSData pigeonVar_args = _PigeonFfiBuffers.encode(<Object?>[classMap]);
         final Completer<Map<int?, NativeInteropAllNullableTypes?>> pigeonVar_completer =
             Completer<Map<int?, NativeInteropAllNullableTypes?>>();
-        _ffiApi.echoAsyncClassMapWithClassMap(
-          _PigeonFfiCodec.writeValue<NSDictionary>(classMap),
+        _ffiApi.pigeon_echoAsyncClassMap(
+          pigeonVar_args,
           wrappedError: pigeonVar_error,
-          completionHandler: ffi_bridge.ObjCBlock_ffiVoid_NSDictionary.listener((
-            NSDictionary? pigeonVar_res,
-          ) {
+          completionHandler: ffi_bridge.ObjCBlock_ffiVoid_NSData.listener((NSData? pigeonVar_res) {
             if (pigeonVar_error.code != null) {
               pigeonVar_completer.completeError(_wrapFfiError(pigeonVar_error));
             } else {
               pigeonVar_completer.complete(
-                (_PigeonFfiCodec.readValue(pigeonVar_res, int)! as Map<Object?, Object?>)
+                (_PigeonFfiBuffers.decode(pigeonVar_res)! as Map<Object?, Object?>)
                     .cast<int?, NativeInteropAllNullableTypes?>(),
               );
             }
           }),
         );
+
         return await pigeonVar_completer.future;
       } else {
         throw Exception('No JNI or FFI api available');
@@ -5579,18 +5866,15 @@ class NativeInteropHostIntegrationCoreApiForNativeInterop {
   Future<NativeInteropAnEnum> echoAsyncEnum(NativeInteropAnEnum anEnum) async {
     try {
       if (_jniApi != null) {
-        final jni_bridge.NativeInteropAnEnum pigeonVar_res = await _jniApi.echoAsyncEnum(
-          anEnum.toJni(),
-        );
-        final NativeInteropAnEnum pigeonVar_dartTypeRes = NativeInteropAnEnum.fromJni(
-          pigeonVar_res,
-        )!;
-        return pigeonVar_dartTypeRes;
+        final int pigeonVar_res = (await _jniApi.pigeon_echoAsyncEnum(
+          anEnum.index,
+        )).toDartInt(releaseOriginal: true);
+        return NativeInteropAnEnum.values[pigeonVar_res];
       } else if (_ffiApi != null) {
         final pigeonVar_error = ffi_bridge.NativeInteropTestsError();
         final Completer<NativeInteropAnEnum> pigeonVar_completer = Completer<NativeInteropAnEnum>();
-        _ffiApi.echoAsyncEnumWithAnEnum(
-          ffi_bridge.NativeInteropAnEnum.values[anEnum.index],
+        _ffiApi.pigeon_echoAsyncEnum(
+          anEnum.index,
           wrappedError: pigeonVar_error,
           completionHandler: ffi_bridge.ObjCBlock_ffiVoid_NSNumber.listener((
             NSNumber? pigeonVar_res,
@@ -5598,13 +5882,11 @@ class NativeInteropHostIntegrationCoreApiForNativeInterop {
             if (pigeonVar_error.code != null) {
               pigeonVar_completer.completeError(_wrapFfiError(pigeonVar_error));
             } else {
-              pigeonVar_completer.complete(
-                _PigeonFfiCodec.readValue(pigeonVar_res, NativeInteropAnEnum)!
-                    as NativeInteropAnEnum,
-              );
+              pigeonVar_completer.complete(NativeInteropAnEnum.values[pigeonVar_res!.longValue]);
             }
           }),
         );
+
         return await pigeonVar_completer.future;
       } else {
         throw Exception('No JNI or FFI api available');
@@ -5619,18 +5901,16 @@ class NativeInteropHostIntegrationCoreApiForNativeInterop {
   ) async {
     try {
       if (_jniApi != null) {
-        final jni_bridge.NativeInteropAnotherEnum pigeonVar_res = await _jniApi
-            .echoAnotherAsyncEnum(anotherEnum.toJni());
-        final NativeInteropAnotherEnum pigeonVar_dartTypeRes = NativeInteropAnotherEnum.fromJni(
-          pigeonVar_res,
-        )!;
-        return pigeonVar_dartTypeRes;
+        final int pigeonVar_res = (await _jniApi.pigeon_echoAnotherAsyncEnum(
+          anotherEnum.index,
+        )).toDartInt(releaseOriginal: true);
+        return NativeInteropAnotherEnum.values[pigeonVar_res];
       } else if (_ffiApi != null) {
         final pigeonVar_error = ffi_bridge.NativeInteropTestsError();
         final Completer<NativeInteropAnotherEnum> pigeonVar_completer =
             Completer<NativeInteropAnotherEnum>();
-        _ffiApi.echoAnotherAsyncEnumWithAnotherEnum(
-          ffi_bridge.NativeInteropAnotherEnum.values[anotherEnum.index],
+        _ffiApi.pigeon_echoAnotherAsyncEnum(
+          anotherEnum.index,
           wrappedError: pigeonVar_error,
           completionHandler: ffi_bridge.ObjCBlock_ffiVoid_NSNumber.listener((
             NSNumber? pigeonVar_res,
@@ -5639,12 +5919,12 @@ class NativeInteropHostIntegrationCoreApiForNativeInterop {
               pigeonVar_completer.completeError(_wrapFfiError(pigeonVar_error));
             } else {
               pigeonVar_completer.complete(
-                _PigeonFfiCodec.readValue(pigeonVar_res, NativeInteropAnotherEnum)!
-                    as NativeInteropAnotherEnum,
+                NativeInteropAnotherEnum.values[pigeonVar_res!.longValue],
               );
             }
           }),
         );
+
         return await pigeonVar_completer.future;
       } else {
         throw Exception('No JNI or FFI api available');
@@ -5657,24 +5937,22 @@ class NativeInteropHostIntegrationCoreApiForNativeInterop {
   Future<Object?> throwAsyncError() async {
     try {
       if (_jniApi != null) {
-        final JObject? pigeonVar_res = await _jniApi.throwAsyncError();
-        final Object? pigeonVar_dartTypeRes = _PigeonJniCodec.readValue(pigeonVar_res);
-        return pigeonVar_dartTypeRes;
+        final JByteArray? pigeonVar_res = await _jniApi.pigeon_throwAsyncError();
+        return _PigeonJniBuffers.decode(pigeonVar_res);
       } else if (_ffiApi != null) {
         final pigeonVar_error = ffi_bridge.NativeInteropTestsError();
         final Completer<Object?> pigeonVar_completer = Completer<Object?>();
-        _ffiApi.throwAsyncErrorWithWrappedError(
+        _ffiApi.pigeon_throwAsyncError(
           pigeonVar_error,
-          completionHandler: ffi_bridge.ObjCBlock_ffiVoid_NSObject.listener((
-            NSObject? pigeonVar_res,
-          ) {
+          completionHandler: ffi_bridge.ObjCBlock_ffiVoid_NSData.listener((NSData? pigeonVar_res) {
             if (pigeonVar_error.code != null) {
               pigeonVar_completer.completeError(_wrapFfiError(pigeonVar_error));
             } else {
-              pigeonVar_completer.complete(_PigeonFfiCodec.readValue(pigeonVar_res));
+              pigeonVar_completer.complete(_PigeonFfiBuffers.decode(pigeonVar_res));
             }
           }),
         );
+
         return await pigeonVar_completer.future;
       } else {
         throw Exception('No JNI or FFI api available');
@@ -5687,11 +5965,12 @@ class NativeInteropHostIntegrationCoreApiForNativeInterop {
   Future<void> throwAsyncErrorFromVoid() async {
     try {
       if (_jniApi != null) {
-        await _jniApi.throwAsyncErrorFromVoid();
+        await _jniApi.pigeon_throwAsyncErrorFromVoid();
+        return;
       } else if (_ffiApi != null) {
         final pigeonVar_error = ffi_bridge.NativeInteropTestsError();
         final Completer<void> pigeonVar_completer = Completer<void>();
-        _ffiApi.throwAsyncErrorFromVoidWithWrappedError(
+        _ffiApi.pigeon_throwAsyncErrorFromVoid(
           pigeonVar_error,
           completionHandler: ffi_bridge.ObjCBlock_ffiVoid.listener(() {
             if (pigeonVar_error.code != null) {
@@ -5701,6 +5980,7 @@ class NativeInteropHostIntegrationCoreApiForNativeInterop {
             }
           }),
         );
+
         return await pigeonVar_completer.future;
       } else {
         throw Exception('No JNI or FFI api available');
@@ -5713,24 +5993,22 @@ class NativeInteropHostIntegrationCoreApiForNativeInterop {
   Future<Object?> throwAsyncFlutterError() async {
     try {
       if (_jniApi != null) {
-        final JObject? pigeonVar_res = await _jniApi.throwAsyncFlutterError();
-        final Object? pigeonVar_dartTypeRes = _PigeonJniCodec.readValue(pigeonVar_res);
-        return pigeonVar_dartTypeRes;
+        final JByteArray? pigeonVar_res = await _jniApi.pigeon_throwAsyncFlutterError();
+        return _PigeonJniBuffers.decode(pigeonVar_res);
       } else if (_ffiApi != null) {
         final pigeonVar_error = ffi_bridge.NativeInteropTestsError();
         final Completer<Object?> pigeonVar_completer = Completer<Object?>();
-        _ffiApi.throwAsyncFlutterErrorWithWrappedError(
+        _ffiApi.pigeon_throwAsyncFlutterError(
           pigeonVar_error,
-          completionHandler: ffi_bridge.ObjCBlock_ffiVoid_NSObject.listener((
-            NSObject? pigeonVar_res,
-          ) {
+          completionHandler: ffi_bridge.ObjCBlock_ffiVoid_NSData.listener((NSData? pigeonVar_res) {
             if (pigeonVar_error.code != null) {
               pigeonVar_completer.completeError(_wrapFfiError(pigeonVar_error));
             } else {
-              pigeonVar_completer.complete(_PigeonFfiCodec.readValue(pigeonVar_res));
+              pigeonVar_completer.complete(_PigeonFfiBuffers.decode(pigeonVar_res));
             }
           }),
         );
+
         return await pigeonVar_completer.future;
       } else {
         throw Exception('No JNI or FFI api available');
@@ -5745,29 +6023,34 @@ class NativeInteropHostIntegrationCoreApiForNativeInterop {
   ) async {
     try {
       if (_jniApi != null) {
-        final jni_bridge.NativeInteropAllTypes pigeonVar_res = await _jniApi
-            .echoAsyncNativeInteropAllTypes(everything.toJni());
-        final NativeInteropAllTypes pigeonVar_dartTypeRes = NativeInteropAllTypes.fromJni(
-          pigeonVar_res,
-        )!;
-        return pigeonVar_dartTypeRes;
+        final JByteArray pigeonVar_args = _PigeonJniBuffers.encode(<Object?>[everything]);
+        try {
+          final JByteArray? pigeonVar_res = await _jniApi.pigeon_echoAsyncNativeInteropAllTypes(
+            pigeonVar_args,
+          );
+          return _PigeonJniBuffers.decode(pigeonVar_res)! as NativeInteropAllTypes;
+        } finally {
+          pigeonVar_args.release();
+        }
       } else if (_ffiApi != null) {
         final pigeonVar_error = ffi_bridge.NativeInteropTestsError();
+        final NSData pigeonVar_args = _PigeonFfiBuffers.encode(<Object?>[everything]);
         final Completer<NativeInteropAllTypes> pigeonVar_completer =
             Completer<NativeInteropAllTypes>();
-        _ffiApi.echoAsyncNativeInteropAllTypesWithEverything(
-          everything.toFfi(),
+        _ffiApi.pigeon_echoAsyncNativeInteropAllTypes(
+          pigeonVar_args,
           wrappedError: pigeonVar_error,
-          completionHandler: ffi_bridge.ObjCBlock_ffiVoid_NativeInteropAllTypesBridge.listener((
-            ffi_bridge.NativeInteropAllTypesBridge? pigeonVar_res,
-          ) {
+          completionHandler: ffi_bridge.ObjCBlock_ffiVoid_NSData.listener((NSData? pigeonVar_res) {
             if (pigeonVar_error.code != null) {
               pigeonVar_completer.completeError(_wrapFfiError(pigeonVar_error));
             } else {
-              pigeonVar_completer.complete(NativeInteropAllTypes.fromFfi(pigeonVar_res)!);
+              pigeonVar_completer.complete(
+                _PigeonFfiBuffers.decode(pigeonVar_res)! as NativeInteropAllTypes,
+              );
             }
           }),
         );
+
         return await pigeonVar_completer.future;
       } else {
         throw Exception('No JNI or FFI api available');
@@ -5782,31 +6065,33 @@ class NativeInteropHostIntegrationCoreApiForNativeInterop {
   ) async {
     try {
       if (_jniApi != null) {
-        final jni_bridge.NativeInteropAllNullableTypes? pigeonVar_res = await _jniApi
-            .echoAsyncNullableNativeInteropAllNullableTypes(everything?.toJni());
-        final NativeInteropAllNullableTypes? pigeonVar_dartTypeRes =
-            NativeInteropAllNullableTypes.fromJni(pigeonVar_res);
-        return pigeonVar_dartTypeRes;
+        final JByteArray pigeonVar_args = _PigeonJniBuffers.encode(<Object?>[everything]);
+        try {
+          final JByteArray? pigeonVar_res = await _jniApi
+              .pigeon_echoAsyncNullableNativeInteropAllNullableTypes(pigeonVar_args);
+          return _PigeonJniBuffers.decode(pigeonVar_res) as NativeInteropAllNullableTypes?;
+        } finally {
+          pigeonVar_args.release();
+        }
       } else if (_ffiApi != null) {
         final pigeonVar_error = ffi_bridge.NativeInteropTestsError();
+        final NSData pigeonVar_args = _PigeonFfiBuffers.encode(<Object?>[everything]);
         final Completer<NativeInteropAllNullableTypes?> pigeonVar_completer =
             Completer<NativeInteropAllNullableTypes?>();
-        _ffiApi.echoAsyncNullableNativeInteropAllNullableTypesWithEverything(
-          everything?.toFfi(),
+        _ffiApi.pigeon_echoAsyncNullableNativeInteropAllNullableTypes(
+          pigeonVar_args,
           wrappedError: pigeonVar_error,
-          completionHandler:
-              ffi_bridge.ObjCBlock_ffiVoid_NativeInteropAllNullableTypesBridge.listener((
-                ffi_bridge.NativeInteropAllNullableTypesBridge? pigeonVar_res,
-              ) {
-                if (pigeonVar_error.code != null) {
-                  pigeonVar_completer.completeError(_wrapFfiError(pigeonVar_error));
-                } else {
-                  pigeonVar_completer.complete(
-                    NativeInteropAllNullableTypes.fromFfi(pigeonVar_res),
-                  );
-                }
-              }),
+          completionHandler: ffi_bridge.ObjCBlock_ffiVoid_NSData.listener((NSData? pigeonVar_res) {
+            if (pigeonVar_error.code != null) {
+              pigeonVar_completer.completeError(_wrapFfiError(pigeonVar_error));
+            } else {
+              pigeonVar_completer.complete(
+                _PigeonFfiBuffers.decode(pigeonVar_res) as NativeInteropAllNullableTypes?,
+              );
+            }
+          }),
         );
+
         return await pigeonVar_completer.future;
       } else {
         throw Exception('No JNI or FFI api available');
@@ -5822,34 +6107,37 @@ class NativeInteropHostIntegrationCoreApiForNativeInterop {
   ) async {
     try {
       if (_jniApi != null) {
-        final jni_bridge.NativeInteropAllNullableTypesWithoutRecursion? pigeonVar_res =
-            await _jniApi.echoAsyncNullableNativeInteropAllNullableTypesWithoutRecursion(
-              everything?.toJni(),
-            );
-        final NativeInteropAllNullableTypesWithoutRecursion? pigeonVar_dartTypeRes =
-            NativeInteropAllNullableTypesWithoutRecursion.fromJni(pigeonVar_res);
-        return pigeonVar_dartTypeRes;
+        final JByteArray pigeonVar_args = _PigeonJniBuffers.encode(<Object?>[everything]);
+        try {
+          final JByteArray? pigeonVar_res = await _jniApi
+              .pigeon_echoAsyncNullableNativeInteropAllNullableTypesWithoutRecursion(
+                pigeonVar_args,
+              );
+          return _PigeonJniBuffers.decode(pigeonVar_res)
+              as NativeInteropAllNullableTypesWithoutRecursion?;
+        } finally {
+          pigeonVar_args.release();
+        }
       } else if (_ffiApi != null) {
         final pigeonVar_error = ffi_bridge.NativeInteropTestsError();
+        final NSData pigeonVar_args = _PigeonFfiBuffers.encode(<Object?>[everything]);
         final Completer<NativeInteropAllNullableTypesWithoutRecursion?> pigeonVar_completer =
             Completer<NativeInteropAllNullableTypesWithoutRecursion?>();
-        _ffiApi.echoAsyncNullableNativeInteropAllNullableTypesWithoutRecursionWithEverything(
-          everything?.toFfi(),
+        _ffiApi.pigeon_echoAsyncNullableNativeInteropAllNullableTypesWithoutRecursion(
+          pigeonVar_args,
           wrappedError: pigeonVar_error,
-          completionHandler:
-              ffi_bridge
-                  .ObjCBlock_ffiVoid_NativeInteropAllNullableTypesWithoutRecursionBridge.listener((
-                ffi_bridge.NativeInteropAllNullableTypesWithoutRecursionBridge? pigeonVar_res,
-              ) {
-                if (pigeonVar_error.code != null) {
-                  pigeonVar_completer.completeError(_wrapFfiError(pigeonVar_error));
-                } else {
-                  pigeonVar_completer.complete(
-                    NativeInteropAllNullableTypesWithoutRecursion.fromFfi(pigeonVar_res),
-                  );
-                }
-              }),
+          completionHandler: ffi_bridge.ObjCBlock_ffiVoid_NSData.listener((NSData? pigeonVar_res) {
+            if (pigeonVar_error.code != null) {
+              pigeonVar_completer.completeError(_wrapFfiError(pigeonVar_error));
+            } else {
+              pigeonVar_completer.complete(
+                _PigeonFfiBuffers.decode(pigeonVar_res)
+                    as NativeInteropAllNullableTypesWithoutRecursion?,
+              );
+            }
+          }),
         );
+
         return await pigeonVar_completer.future;
       } else {
         throw Exception('No JNI or FFI api available');
@@ -5862,15 +6150,17 @@ class NativeInteropHostIntegrationCoreApiForNativeInterop {
   Future<int?> echoAsyncNullableInt(int? anInt) async {
     try {
       if (_jniApi != null) {
-        final JLong? pigeonVar_res = await _jniApi.echoAsyncNullableInt(
-          _PigeonJniCodec.writeValue<JLong?>(anInt),
-        );
-        final int? pigeonVar_dartTypeRes = pigeonVar_res?.toDartInt(releaseOriginal: true);
-        return pigeonVar_dartTypeRes;
+        final JLong? pigeonVar_anInt = anInt == null ? null : JLong(anInt);
+        try {
+          final JLong? pigeonVar_res = await _jniApi.pigeon_echoAsyncNullableInt(pigeonVar_anInt);
+          return pigeonVar_res?.toDartInt(releaseOriginal: true);
+        } finally {
+          pigeonVar_anInt?.release();
+        }
       } else if (_ffiApi != null) {
         final pigeonVar_error = ffi_bridge.NativeInteropTestsError();
         final Completer<int?> pigeonVar_completer = Completer<int?>();
-        _ffiApi.echoAsyncNullableIntWithAnInt(
+        _ffiApi.pigeon_echoAsyncNullableInt(
           _PigeonFfiCodec.writeValue<NSNumber?>(anInt),
           wrappedError: pigeonVar_error,
           completionHandler: ffi_bridge.ObjCBlock_ffiVoid_NSNumber.listener((
@@ -5883,6 +6173,7 @@ class NativeInteropHostIntegrationCoreApiForNativeInterop {
             }
           }),
         );
+
         return await pigeonVar_completer.future;
       } else {
         throw Exception('No JNI or FFI api available');
@@ -5895,15 +6186,19 @@ class NativeInteropHostIntegrationCoreApiForNativeInterop {
   Future<double?> echoAsyncNullableDouble(double? aDouble) async {
     try {
       if (_jniApi != null) {
-        final JDouble? pigeonVar_res = await _jniApi.echoAsyncNullableDouble(
-          _PigeonJniCodec.writeValue<JDouble?>(aDouble),
-        );
-        final double? pigeonVar_dartTypeRes = pigeonVar_res?.toDartDouble(releaseOriginal: true);
-        return pigeonVar_dartTypeRes;
+        final JDouble? pigeonVar_aDouble = aDouble == null ? null : JDouble(aDouble);
+        try {
+          final JDouble? pigeonVar_res = await _jniApi.pigeon_echoAsyncNullableDouble(
+            pigeonVar_aDouble,
+          );
+          return pigeonVar_res?.toDartDouble(releaseOriginal: true);
+        } finally {
+          pigeonVar_aDouble?.release();
+        }
       } else if (_ffiApi != null) {
         final pigeonVar_error = ffi_bridge.NativeInteropTestsError();
         final Completer<double?> pigeonVar_completer = Completer<double?>();
-        _ffiApi.echoAsyncNullableDoubleWithADouble(
+        _ffiApi.pigeon_echoAsyncNullableDouble(
           _PigeonFfiCodec.writeValue<NSNumber?>(aDouble),
           wrappedError: pigeonVar_error,
           completionHandler: ffi_bridge.ObjCBlock_ffiVoid_NSNumber.listener((
@@ -5916,6 +6211,7 @@ class NativeInteropHostIntegrationCoreApiForNativeInterop {
             }
           }),
         );
+
         return await pigeonVar_completer.future;
       } else {
         throw Exception('No JNI or FFI api available');
@@ -5928,15 +6224,19 @@ class NativeInteropHostIntegrationCoreApiForNativeInterop {
   Future<bool?> echoAsyncNullableBool(bool? aBool) async {
     try {
       if (_jniApi != null) {
-        final JBoolean? pigeonVar_res = await _jniApi.echoAsyncNullableBool(
-          _PigeonJniCodec.writeValue<JBoolean?>(aBool),
-        );
-        final bool? pigeonVar_dartTypeRes = pigeonVar_res?.toDartBool(releaseOriginal: true);
-        return pigeonVar_dartTypeRes;
+        final JBoolean? pigeonVar_aBool = aBool == null ? null : JBoolean(aBool);
+        try {
+          final JBoolean? pigeonVar_res = await _jniApi.pigeon_echoAsyncNullableBool(
+            pigeonVar_aBool,
+          );
+          return pigeonVar_res?.toDartBool(releaseOriginal: true);
+        } finally {
+          pigeonVar_aBool?.release();
+        }
       } else if (_ffiApi != null) {
         final pigeonVar_error = ffi_bridge.NativeInteropTestsError();
         final Completer<bool?> pigeonVar_completer = Completer<bool?>();
-        _ffiApi.echoAsyncNullableBoolWithABool(
+        _ffiApi.pigeon_echoAsyncNullableBool(
           _PigeonFfiCodec.writeValue<NSNumber?>(aBool),
           wrappedError: pigeonVar_error,
           completionHandler: ffi_bridge.ObjCBlock_ffiVoid_NSNumber.listener((
@@ -5949,6 +6249,7 @@ class NativeInteropHostIntegrationCoreApiForNativeInterop {
             }
           }),
         );
+
         return await pigeonVar_completer.future;
       } else {
         throw Exception('No JNI or FFI api available');
@@ -5961,16 +6262,20 @@ class NativeInteropHostIntegrationCoreApiForNativeInterop {
   Future<String?> echoAsyncNullableString(String? aString) async {
     try {
       if (_jniApi != null) {
-        final JString? pigeonVar_res = await _jniApi.echoAsyncNullableString(
-          _PigeonJniCodec.writeValue<JString?>(aString),
-        );
-        final String? pigeonVar_dartTypeRes = pigeonVar_res?.toDartString(releaseOriginal: true);
-        return pigeonVar_dartTypeRes;
+        final JString? pigeonVar_aString = aString?.toJString();
+        try {
+          final JString? pigeonVar_res = await _jniApi.pigeon_echoAsyncNullableString(
+            pigeonVar_aString,
+          );
+          return pigeonVar_res?.toDartString(releaseOriginal: true);
+        } finally {
+          pigeonVar_aString?.release();
+        }
       } else if (_ffiApi != null) {
         final pigeonVar_error = ffi_bridge.NativeInteropTestsError();
         final Completer<String?> pigeonVar_completer = Completer<String?>();
-        _ffiApi.echoAsyncNullableStringWithAString(
-          _PigeonFfiCodec.writeValue<NSString?>(aString),
+        _ffiApi.pigeon_echoAsyncNullableString(
+          aString == null ? null : NSString(aString),
           wrappedError: pigeonVar_error,
           completionHandler: ffi_bridge.ObjCBlock_ffiVoid_NSString.listener((
             NSString? pigeonVar_res,
@@ -5982,6 +6287,7 @@ class NativeInteropHostIntegrationCoreApiForNativeInterop {
             }
           }),
         );
+
         return await pigeonVar_completer.future;
       } else {
         throw Exception('No JNI or FFI api available');
@@ -5994,31 +6300,32 @@ class NativeInteropHostIntegrationCoreApiForNativeInterop {
   Future<Uint8List?> echoAsyncNullableUint8List(Uint8List? aUint8List) async {
     try {
       if (_jniApi != null) {
-        final JByteArray? pigeonVar_res = await _jniApi.echoAsyncNullableUint8List(
-          _PigeonJniCodec.writeValue<JByteArray?>(aUint8List),
-        );
-        final Uint8List? pigeonVar_dartTypeRes =
-            _PigeonJniCodec.readValue(pigeonVar_res) as Uint8List?;
-        return pigeonVar_dartTypeRes;
+        final JByteArray? pigeonVar_aUint8List = aUint8List == null
+            ? null
+            : _uint8ListToJni(aUint8List);
+        try {
+          final JByteArray? pigeonVar_res = await _jniApi.pigeon_echoAsyncNullableUint8List(
+            pigeonVar_aUint8List,
+          );
+          return _jByteArrayToDart(pigeonVar_res, release: true);
+        } finally {
+          pigeonVar_aUint8List?.release();
+        }
       } else if (_ffiApi != null) {
         final pigeonVar_error = ffi_bridge.NativeInteropTestsError();
         final Completer<Uint8List?> pigeonVar_completer = Completer<Uint8List?>();
-        _ffiApi.echoAsyncNullableUint8ListWithAUint8List(
-          _PigeonFfiCodec.writeValue<ffi_bridge.NativeInteropTestsPigeonTypedData?>(aUint8List),
+        _ffiApi.pigeon_echoAsyncNullableUint8List(
+          aUint8List == null ? null : _typedDataToNSData(aUint8List),
           wrappedError: pigeonVar_error,
-          completionHandler:
-              ffi_bridge.ObjCBlock_ffiVoid_NativeInteropTestsPigeonTypedData.listener((
-                ffi_bridge.NativeInteropTestsPigeonTypedData? pigeonVar_res,
-              ) {
-                if (pigeonVar_error.code != null) {
-                  pigeonVar_completer.completeError(_wrapFfiError(pigeonVar_error));
-                } else {
-                  pigeonVar_completer.complete(
-                    _PigeonFfiCodec.readValue(pigeonVar_res) as Uint8List?,
-                  );
-                }
-              }),
+          completionHandler: ffi_bridge.ObjCBlock_ffiVoid_NSData.listener((NSData? pigeonVar_res) {
+            if (pigeonVar_error.code != null) {
+              pigeonVar_completer.completeError(_wrapFfiError(pigeonVar_error));
+            } else {
+              pigeonVar_completer.complete(_PigeonFfiBuffers.toUint8List(pigeonVar_res));
+            }
+          }),
         );
+
         return await pigeonVar_completer.future;
       } else {
         throw Exception('No JNI or FFI api available');
@@ -6031,31 +6338,34 @@ class NativeInteropHostIntegrationCoreApiForNativeInterop {
   Future<Int32List?> echoAsyncNullableInt32List(Int32List? aInt32List) async {
     try {
       if (_jniApi != null) {
-        final JIntArray? pigeonVar_res = await _jniApi.echoAsyncNullableInt32List(
-          _PigeonJniCodec.writeValue<JIntArray?>(aInt32List),
-        );
-        final Int32List? pigeonVar_dartTypeRes =
-            _PigeonJniCodec.readValue(pigeonVar_res) as Int32List?;
-        return pigeonVar_dartTypeRes;
+        final JIntArray? pigeonVar_aInt32List = aInt32List == null
+            ? null
+            : _int32ListToJni(aInt32List);
+        try {
+          final JIntArray? pigeonVar_res = await _jniApi.pigeon_echoAsyncNullableInt32List(
+            pigeonVar_aInt32List,
+          );
+          return _jIntArrayToDart(pigeonVar_res, release: true);
+        } finally {
+          pigeonVar_aInt32List?.release();
+        }
       } else if (_ffiApi != null) {
         final pigeonVar_error = ffi_bridge.NativeInteropTestsError();
         final Completer<Int32List?> pigeonVar_completer = Completer<Int32List?>();
-        _ffiApi.echoAsyncNullableInt32ListWithAInt32List(
-          _PigeonFfiCodec.writeValue<ffi_bridge.NativeInteropTestsPigeonTypedData?>(aInt32List),
+        _ffiApi.pigeon_echoAsyncNullableInt32List(
+          aInt32List == null ? null : _typedDataToNSData(aInt32List),
           wrappedError: pigeonVar_error,
-          completionHandler:
-              ffi_bridge.ObjCBlock_ffiVoid_NativeInteropTestsPigeonTypedData.listener((
-                ffi_bridge.NativeInteropTestsPigeonTypedData? pigeonVar_res,
-              ) {
-                if (pigeonVar_error.code != null) {
-                  pigeonVar_completer.completeError(_wrapFfiError(pigeonVar_error));
-                } else {
-                  pigeonVar_completer.complete(
-                    _PigeonFfiCodec.readValue(pigeonVar_res) as Int32List?,
-                  );
-                }
-              }),
+          completionHandler: ffi_bridge.ObjCBlock_ffiVoid_NSData.listener((NSData? pigeonVar_res) {
+            if (pigeonVar_error.code != null) {
+              pigeonVar_completer.completeError(_wrapFfiError(pigeonVar_error));
+            } else {
+              pigeonVar_completer.complete(
+                _PigeonFfiBuffers.toUint8List(pigeonVar_res)?.buffer.asInt32List(),
+              );
+            }
+          }),
         );
+
         return await pigeonVar_completer.future;
       } else {
         throw Exception('No JNI or FFI api available');
@@ -6068,31 +6378,34 @@ class NativeInteropHostIntegrationCoreApiForNativeInterop {
   Future<Int64List?> echoAsyncNullableInt64List(Int64List? aInt64List) async {
     try {
       if (_jniApi != null) {
-        final JLongArray? pigeonVar_res = await _jniApi.echoAsyncNullableInt64List(
-          _PigeonJniCodec.writeValue<JLongArray?>(aInt64List),
-        );
-        final Int64List? pigeonVar_dartTypeRes =
-            _PigeonJniCodec.readValue(pigeonVar_res) as Int64List?;
-        return pigeonVar_dartTypeRes;
+        final JLongArray? pigeonVar_aInt64List = aInt64List == null
+            ? null
+            : _int64ListToJni(aInt64List);
+        try {
+          final JLongArray? pigeonVar_res = await _jniApi.pigeon_echoAsyncNullableInt64List(
+            pigeonVar_aInt64List,
+          );
+          return _jLongArrayToDart(pigeonVar_res, release: true);
+        } finally {
+          pigeonVar_aInt64List?.release();
+        }
       } else if (_ffiApi != null) {
         final pigeonVar_error = ffi_bridge.NativeInteropTestsError();
         final Completer<Int64List?> pigeonVar_completer = Completer<Int64List?>();
-        _ffiApi.echoAsyncNullableInt64ListWithAInt64List(
-          _PigeonFfiCodec.writeValue<ffi_bridge.NativeInteropTestsPigeonTypedData?>(aInt64List),
+        _ffiApi.pigeon_echoAsyncNullableInt64List(
+          aInt64List == null ? null : _typedDataToNSData(aInt64List),
           wrappedError: pigeonVar_error,
-          completionHandler:
-              ffi_bridge.ObjCBlock_ffiVoid_NativeInteropTestsPigeonTypedData.listener((
-                ffi_bridge.NativeInteropTestsPigeonTypedData? pigeonVar_res,
-              ) {
-                if (pigeonVar_error.code != null) {
-                  pigeonVar_completer.completeError(_wrapFfiError(pigeonVar_error));
-                } else {
-                  pigeonVar_completer.complete(
-                    _PigeonFfiCodec.readValue(pigeonVar_res) as Int64List?,
-                  );
-                }
-              }),
+          completionHandler: ffi_bridge.ObjCBlock_ffiVoid_NSData.listener((NSData? pigeonVar_res) {
+            if (pigeonVar_error.code != null) {
+              pigeonVar_completer.completeError(_wrapFfiError(pigeonVar_error));
+            } else {
+              pigeonVar_completer.complete(
+                _PigeonFfiBuffers.toUint8List(pigeonVar_res)?.buffer.asInt64List(),
+              );
+            }
+          }),
         );
+
         return await pigeonVar_completer.future;
       } else {
         throw Exception('No JNI or FFI api available');
@@ -6105,31 +6418,34 @@ class NativeInteropHostIntegrationCoreApiForNativeInterop {
   Future<Float64List?> echoAsyncNullableFloat64List(Float64List? aFloat64List) async {
     try {
       if (_jniApi != null) {
-        final JDoubleArray? pigeonVar_res = await _jniApi.echoAsyncNullableFloat64List(
-          _PigeonJniCodec.writeValue<JDoubleArray?>(aFloat64List),
-        );
-        final Float64List? pigeonVar_dartTypeRes =
-            _PigeonJniCodec.readValue(pigeonVar_res) as Float64List?;
-        return pigeonVar_dartTypeRes;
+        final JDoubleArray? pigeonVar_aFloat64List = aFloat64List == null
+            ? null
+            : _float64ListToJni(aFloat64List);
+        try {
+          final JDoubleArray? pigeonVar_res = await _jniApi.pigeon_echoAsyncNullableFloat64List(
+            pigeonVar_aFloat64List,
+          );
+          return _jDoubleArrayToDart(pigeonVar_res, release: true);
+        } finally {
+          pigeonVar_aFloat64List?.release();
+        }
       } else if (_ffiApi != null) {
         final pigeonVar_error = ffi_bridge.NativeInteropTestsError();
         final Completer<Float64List?> pigeonVar_completer = Completer<Float64List?>();
-        _ffiApi.echoAsyncNullableFloat64ListWithAFloat64List(
-          _PigeonFfiCodec.writeValue<ffi_bridge.NativeInteropTestsPigeonTypedData?>(aFloat64List),
+        _ffiApi.pigeon_echoAsyncNullableFloat64List(
+          aFloat64List == null ? null : _typedDataToNSData(aFloat64List),
           wrappedError: pigeonVar_error,
-          completionHandler:
-              ffi_bridge.ObjCBlock_ffiVoid_NativeInteropTestsPigeonTypedData.listener((
-                ffi_bridge.NativeInteropTestsPigeonTypedData? pigeonVar_res,
-              ) {
-                if (pigeonVar_error.code != null) {
-                  pigeonVar_completer.completeError(_wrapFfiError(pigeonVar_error));
-                } else {
-                  pigeonVar_completer.complete(
-                    _PigeonFfiCodec.readValue(pigeonVar_res) as Float64List?,
-                  );
-                }
-              }),
+          completionHandler: ffi_bridge.ObjCBlock_ffiVoid_NSData.listener((NSData? pigeonVar_res) {
+            if (pigeonVar_error.code != null) {
+              pigeonVar_completer.completeError(_wrapFfiError(pigeonVar_error));
+            } else {
+              pigeonVar_completer.complete(
+                _PigeonFfiBuffers.toUint8List(pigeonVar_res)?.buffer.asFloat64List(),
+              );
+            }
+          }),
         );
+
         return await pigeonVar_completer.future;
       } else {
         throw Exception('No JNI or FFI api available');
@@ -6142,27 +6458,31 @@ class NativeInteropHostIntegrationCoreApiForNativeInterop {
   Future<Object?> echoAsyncNullableObject(Object? anObject) async {
     try {
       if (_jniApi != null) {
-        final JObject? pigeonVar_res = await _jniApi.echoAsyncNullableObject(
-          _PigeonJniCodec.writeValue<JObject?>(anObject),
-        );
-        final Object? pigeonVar_dartTypeRes = _PigeonJniCodec.readValue(pigeonVar_res);
-        return pigeonVar_dartTypeRes;
+        final JByteArray pigeonVar_args = _PigeonJniBuffers.encode(<Object?>[anObject]);
+        try {
+          final JByteArray? pigeonVar_res = await _jniApi.pigeon_echoAsyncNullableObject(
+            pigeonVar_args,
+          );
+          return _PigeonJniBuffers.decode(pigeonVar_res);
+        } finally {
+          pigeonVar_args.release();
+        }
       } else if (_ffiApi != null) {
         final pigeonVar_error = ffi_bridge.NativeInteropTestsError();
+        final NSData pigeonVar_args = _PigeonFfiBuffers.encode(<Object?>[anObject]);
         final Completer<Object?> pigeonVar_completer = Completer<Object?>();
-        _ffiApi.echoAsyncNullableObjectWithAnObject(
-          _PigeonFfiCodec.writeValue<NSObject>(anObject, generic: true),
+        _ffiApi.pigeon_echoAsyncNullableObject(
+          pigeonVar_args,
           wrappedError: pigeonVar_error,
-          completionHandler: ffi_bridge.ObjCBlock_ffiVoid_NSObject.listener((
-            NSObject? pigeonVar_res,
-          ) {
+          completionHandler: ffi_bridge.ObjCBlock_ffiVoid_NSData.listener((NSData? pigeonVar_res) {
             if (pigeonVar_error.code != null) {
               pigeonVar_completer.completeError(_wrapFfiError(pigeonVar_error));
             } else {
-              pigeonVar_completer.complete(_PigeonFfiCodec.readValue(pigeonVar_res));
+              pigeonVar_completer.complete(_PigeonFfiBuffers.decode(pigeonVar_res));
             }
           }),
         );
+
         return await pigeonVar_completer.future;
       } else {
         throw Exception('No JNI or FFI api available');
@@ -6175,30 +6495,33 @@ class NativeInteropHostIntegrationCoreApiForNativeInterop {
   Future<List<Object?>?> echoAsyncNullableList(List<Object?>? list) async {
     try {
       if (_jniApi != null) {
-        final JList<JObject?>? pigeonVar_res = await _jniApi.echoAsyncNullableList(
-          _PigeonJniCodec.writeValue<JList<JObject?>?>(list),
-        );
-        final List<Object?>? pigeonVar_dartTypeRes =
-            (_PigeonJniCodec.readValue(pigeonVar_res) as List<Object?>?)?.cast<Object?>();
-        return pigeonVar_dartTypeRes;
+        final JByteArray pigeonVar_args = _PigeonJniBuffers.encode(<Object?>[list]);
+        try {
+          final JByteArray? pigeonVar_res = await _jniApi.pigeon_echoAsyncNullableList(
+            pigeonVar_args,
+          );
+          return _PigeonJniBuffers.decode(pigeonVar_res) as List<Object?>?;
+        } finally {
+          pigeonVar_args.release();
+        }
       } else if (_ffiApi != null) {
         final pigeonVar_error = ffi_bridge.NativeInteropTestsError();
+        final NSData pigeonVar_args = _PigeonFfiBuffers.encode(<Object?>[list]);
         final Completer<List<Object?>?> pigeonVar_completer = Completer<List<Object?>?>();
-        _ffiApi.echoAsyncNullableListWithList(
-          _PigeonFfiCodec.writeValue<NSMutableArray?>(list),
+        _ffiApi.pigeon_echoAsyncNullableList(
+          pigeonVar_args,
           wrappedError: pigeonVar_error,
-          completionHandler: ffi_bridge.ObjCBlock_ffiVoid_NSArray.listener((
-            NSArray? pigeonVar_res,
-          ) {
+          completionHandler: ffi_bridge.ObjCBlock_ffiVoid_NSData.listener((NSData? pigeonVar_res) {
             if (pigeonVar_error.code != null) {
               pigeonVar_completer.completeError(_wrapFfiError(pigeonVar_error));
             } else {
               pigeonVar_completer.complete(
-                (_PigeonFfiCodec.readValue(pigeonVar_res) as List<Object?>?)?.cast<Object?>(),
+                _PigeonFfiBuffers.decode(pigeonVar_res) as List<Object?>?,
               );
             }
           }),
         );
+
         return await pigeonVar_completer.future;
       } else {
         throw Exception('No JNI or FFI api available');
@@ -6213,34 +6536,36 @@ class NativeInteropHostIntegrationCoreApiForNativeInterop {
   ) async {
     try {
       if (_jniApi != null) {
-        final JList<jni_bridge.NativeInteropAnEnum?>? pigeonVar_res = await _jniApi
-            .echoAsyncNullableEnumList(
-              _PigeonJniCodec.writeValue<JList<jni_bridge.NativeInteropAnEnum?>?>(enumList),
-            );
-        final List<NativeInteropAnEnum?>? pigeonVar_dartTypeRes =
-            (_PigeonJniCodec.readValue(pigeonVar_res) as List<Object?>?)
-                ?.cast<NativeInteropAnEnum?>();
-        return pigeonVar_dartTypeRes;
+        final JByteArray pigeonVar_args = _PigeonJniBuffers.encode(<Object?>[enumList]);
+        try {
+          final JByteArray? pigeonVar_res = await _jniApi.pigeon_echoAsyncNullableEnumList(
+            pigeonVar_args,
+          );
+          return (_PigeonJniBuffers.decode(pigeonVar_res) as List<Object?>?)
+              ?.cast<NativeInteropAnEnum?>();
+        } finally {
+          pigeonVar_args.release();
+        }
       } else if (_ffiApi != null) {
         final pigeonVar_error = ffi_bridge.NativeInteropTestsError();
+        final NSData pigeonVar_args = _PigeonFfiBuffers.encode(<Object?>[enumList]);
         final Completer<List<NativeInteropAnEnum?>?> pigeonVar_completer =
             Completer<List<NativeInteropAnEnum?>?>();
-        _ffiApi.echoAsyncNullableEnumListWithEnumList(
-          _PigeonFfiCodec.writeValue<NSMutableArray?>(enumList),
+        _ffiApi.pigeon_echoAsyncNullableEnumList(
+          pigeonVar_args,
           wrappedError: pigeonVar_error,
-          completionHandler: ffi_bridge.ObjCBlock_ffiVoid_NSArray.listener((
-            NSArray? pigeonVar_res,
-          ) {
+          completionHandler: ffi_bridge.ObjCBlock_ffiVoid_NSData.listener((NSData? pigeonVar_res) {
             if (pigeonVar_error.code != null) {
               pigeonVar_completer.completeError(_wrapFfiError(pigeonVar_error));
             } else {
               pigeonVar_completer.complete(
-                (_PigeonFfiCodec.readValue(pigeonVar_res, NativeInteropAnEnum) as List<Object?>?)
+                (_PigeonFfiBuffers.decode(pigeonVar_res) as List<Object?>?)
                     ?.cast<NativeInteropAnEnum?>(),
               );
             }
           }),
         );
+
         return await pigeonVar_completer.future;
       } else {
         throw Exception('No JNI or FFI api available');
@@ -6255,36 +6580,36 @@ class NativeInteropHostIntegrationCoreApiForNativeInterop {
   ) async {
     try {
       if (_jniApi != null) {
-        final JList<jni_bridge.NativeInteropAllNullableTypes?>? pigeonVar_res = await _jniApi
-            .echoAsyncNullableClassList(
-              _PigeonJniCodec.writeValue<JList<jni_bridge.NativeInteropAllNullableTypes?>?>(
-                classList,
-              ),
-            );
-        final List<NativeInteropAllNullableTypes?>? pigeonVar_dartTypeRes =
-            (_PigeonJniCodec.readValue(pigeonVar_res) as List<Object?>?)
-                ?.cast<NativeInteropAllNullableTypes?>();
-        return pigeonVar_dartTypeRes;
+        final JByteArray pigeonVar_args = _PigeonJniBuffers.encode(<Object?>[classList]);
+        try {
+          final JByteArray? pigeonVar_res = await _jniApi.pigeon_echoAsyncNullableClassList(
+            pigeonVar_args,
+          );
+          return (_PigeonJniBuffers.decode(pigeonVar_res) as List<Object?>?)
+              ?.cast<NativeInteropAllNullableTypes?>();
+        } finally {
+          pigeonVar_args.release();
+        }
       } else if (_ffiApi != null) {
         final pigeonVar_error = ffi_bridge.NativeInteropTestsError();
+        final NSData pigeonVar_args = _PigeonFfiBuffers.encode(<Object?>[classList]);
         final Completer<List<NativeInteropAllNullableTypes?>?> pigeonVar_completer =
             Completer<List<NativeInteropAllNullableTypes?>?>();
-        _ffiApi.echoAsyncNullableClassListWithClassList(
-          _PigeonFfiCodec.writeValue<NSMutableArray?>(classList),
+        _ffiApi.pigeon_echoAsyncNullableClassList(
+          pigeonVar_args,
           wrappedError: pigeonVar_error,
-          completionHandler: ffi_bridge.ObjCBlock_ffiVoid_NSArray.listener((
-            NSArray? pigeonVar_res,
-          ) {
+          completionHandler: ffi_bridge.ObjCBlock_ffiVoid_NSData.listener((NSData? pigeonVar_res) {
             if (pigeonVar_error.code != null) {
               pigeonVar_completer.completeError(_wrapFfiError(pigeonVar_error));
             } else {
               pigeonVar_completer.complete(
-                (_PigeonFfiCodec.readValue(pigeonVar_res) as List<Object?>?)
+                (_PigeonFfiBuffers.decode(pigeonVar_res) as List<Object?>?)
                     ?.cast<NativeInteropAllNullableTypes?>(),
               );
             }
           }),
         );
+
         return await pigeonVar_completer.future;
       } else {
         throw Exception('No JNI or FFI api available');
@@ -6297,33 +6622,34 @@ class NativeInteropHostIntegrationCoreApiForNativeInterop {
   Future<Map<Object?, Object?>?> echoAsyncNullableMap(Map<Object?, Object?>? map) async {
     try {
       if (_jniApi != null) {
-        final JMap<JObject?, JObject?>? pigeonVar_res = await _jniApi.echoAsyncNullableMap(
-          _PigeonJniCodec.writeValue<JMap<JObject?, JObject?>?>(map),
-        );
-        final Map<Object?, Object?>? pigeonVar_dartTypeRes =
-            (_PigeonJniCodec.readValue(pigeonVar_res) as Map<Object?, Object?>?)
-                ?.cast<Object?, Object?>();
-        return pigeonVar_dartTypeRes;
+        final JByteArray pigeonVar_args = _PigeonJniBuffers.encode(<Object?>[map]);
+        try {
+          final JByteArray? pigeonVar_res = await _jniApi.pigeon_echoAsyncNullableMap(
+            pigeonVar_args,
+          );
+          return _PigeonJniBuffers.decode(pigeonVar_res) as Map<Object?, Object?>?;
+        } finally {
+          pigeonVar_args.release();
+        }
       } else if (_ffiApi != null) {
         final pigeonVar_error = ffi_bridge.NativeInteropTestsError();
+        final NSData pigeonVar_args = _PigeonFfiBuffers.encode(<Object?>[map]);
         final Completer<Map<Object?, Object?>?> pigeonVar_completer =
             Completer<Map<Object?, Object?>?>();
-        _ffiApi.echoAsyncNullableMapWithMap(
-          _PigeonFfiCodec.writeValue<NSDictionary?>(map),
+        _ffiApi.pigeon_echoAsyncNullableMap(
+          pigeonVar_args,
           wrappedError: pigeonVar_error,
-          completionHandler: ffi_bridge.ObjCBlock_ffiVoid_NSDictionary.listener((
-            NSDictionary? pigeonVar_res,
-          ) {
+          completionHandler: ffi_bridge.ObjCBlock_ffiVoid_NSData.listener((NSData? pigeonVar_res) {
             if (pigeonVar_error.code != null) {
               pigeonVar_completer.completeError(_wrapFfiError(pigeonVar_error));
             } else {
               pigeonVar_completer.complete(
-                (_PigeonFfiCodec.readValue(pigeonVar_res) as Map<Object?, Object?>?)
-                    ?.cast<Object?, Object?>(),
+                _PigeonFfiBuffers.decode(pigeonVar_res) as Map<Object?, Object?>?,
               );
             }
           }),
         );
+
         return await pigeonVar_completer.future;
       } else {
         throw Exception('No JNI or FFI api available');
@@ -6338,33 +6664,36 @@ class NativeInteropHostIntegrationCoreApiForNativeInterop {
   ) async {
     try {
       if (_jniApi != null) {
-        final JMap<JString?, JString?>? pigeonVar_res = await _jniApi.echoAsyncNullableStringMap(
-          _PigeonJniCodec.writeValue<JMap<JString?, JString?>?>(stringMap),
-        );
-        final Map<String?, String?>? pigeonVar_dartTypeRes =
-            (_PigeonJniCodec.readValue(pigeonVar_res) as Map<Object?, Object?>?)
-                ?.cast<String?, String?>();
-        return pigeonVar_dartTypeRes;
+        final JByteArray pigeonVar_args = _PigeonJniBuffers.encode(<Object?>[stringMap]);
+        try {
+          final JByteArray? pigeonVar_res = await _jniApi.pigeon_echoAsyncNullableStringMap(
+            pigeonVar_args,
+          );
+          return (_PigeonJniBuffers.decode(pigeonVar_res) as Map<Object?, Object?>?)
+              ?.cast<String?, String?>();
+        } finally {
+          pigeonVar_args.release();
+        }
       } else if (_ffiApi != null) {
         final pigeonVar_error = ffi_bridge.NativeInteropTestsError();
+        final NSData pigeonVar_args = _PigeonFfiBuffers.encode(<Object?>[stringMap]);
         final Completer<Map<String?, String?>?> pigeonVar_completer =
             Completer<Map<String?, String?>?>();
-        _ffiApi.echoAsyncNullableStringMapWithStringMap(
-          _PigeonFfiCodec.writeValue<NSDictionary?>(stringMap),
+        _ffiApi.pigeon_echoAsyncNullableStringMap(
+          pigeonVar_args,
           wrappedError: pigeonVar_error,
-          completionHandler: ffi_bridge.ObjCBlock_ffiVoid_NSDictionary.listener((
-            NSDictionary? pigeonVar_res,
-          ) {
+          completionHandler: ffi_bridge.ObjCBlock_ffiVoid_NSData.listener((NSData? pigeonVar_res) {
             if (pigeonVar_error.code != null) {
               pigeonVar_completer.completeError(_wrapFfiError(pigeonVar_error));
             } else {
               pigeonVar_completer.complete(
-                (_PigeonFfiCodec.readValue(pigeonVar_res) as Map<Object?, Object?>?)
+                (_PigeonFfiBuffers.decode(pigeonVar_res) as Map<Object?, Object?>?)
                     ?.cast<String?, String?>(),
               );
             }
           }),
         );
+
         return await pigeonVar_completer.future;
       } else {
         throw Exception('No JNI or FFI api available');
@@ -6377,32 +6706,35 @@ class NativeInteropHostIntegrationCoreApiForNativeInterop {
   Future<Map<int?, int?>?> echoAsyncNullableIntMap(Map<int?, int?>? intMap) async {
     try {
       if (_jniApi != null) {
-        final JMap<JLong?, JLong?>? pigeonVar_res = await _jniApi.echoAsyncNullableIntMap(
-          _PigeonJniCodec.writeValue<JMap<JLong?, JLong?>?>(intMap),
-        );
-        final Map<int?, int?>? pigeonVar_dartTypeRes =
-            (_PigeonJniCodec.readValue(pigeonVar_res) as Map<Object?, Object?>?)
-                ?.cast<int?, int?>();
-        return pigeonVar_dartTypeRes;
+        final JByteArray pigeonVar_args = _PigeonJniBuffers.encode(<Object?>[intMap]);
+        try {
+          final JByteArray? pigeonVar_res = await _jniApi.pigeon_echoAsyncNullableIntMap(
+            pigeonVar_args,
+          );
+          return (_PigeonJniBuffers.decode(pigeonVar_res) as Map<Object?, Object?>?)
+              ?.cast<int?, int?>();
+        } finally {
+          pigeonVar_args.release();
+        }
       } else if (_ffiApi != null) {
         final pigeonVar_error = ffi_bridge.NativeInteropTestsError();
+        final NSData pigeonVar_args = _PigeonFfiBuffers.encode(<Object?>[intMap]);
         final Completer<Map<int?, int?>?> pigeonVar_completer = Completer<Map<int?, int?>?>();
-        _ffiApi.echoAsyncNullableIntMapWithIntMap(
-          _PigeonFfiCodec.writeValue<NSDictionary?>(intMap),
+        _ffiApi.pigeon_echoAsyncNullableIntMap(
+          pigeonVar_args,
           wrappedError: pigeonVar_error,
-          completionHandler: ffi_bridge.ObjCBlock_ffiVoid_NSDictionary.listener((
-            NSDictionary? pigeonVar_res,
-          ) {
+          completionHandler: ffi_bridge.ObjCBlock_ffiVoid_NSData.listener((NSData? pigeonVar_res) {
             if (pigeonVar_error.code != null) {
               pigeonVar_completer.completeError(_wrapFfiError(pigeonVar_error));
             } else {
               pigeonVar_completer.complete(
-                (_PigeonFfiCodec.readValue(pigeonVar_res, int, int) as Map<Object?, Object?>?)
+                (_PigeonFfiBuffers.decode(pigeonVar_res) as Map<Object?, Object?>?)
                     ?.cast<int?, int?>(),
               );
             }
           }),
         );
+
         return await pigeonVar_completer.future;
       } else {
         throw Exception('No JNI or FFI api available');
@@ -6417,37 +6749,36 @@ class NativeInteropHostIntegrationCoreApiForNativeInterop {
   ) async {
     try {
       if (_jniApi != null) {
-        final JMap<jni_bridge.NativeInteropAnEnum?, jni_bridge.NativeInteropAnEnum?>?
-        pigeonVar_res = await _jniApi.echoAsyncNullableEnumMap(
-          _PigeonJniCodec.writeValue<
-            JMap<jni_bridge.NativeInteropAnEnum?, jni_bridge.NativeInteropAnEnum?>?
-          >(enumMap),
-        );
-        final Map<NativeInteropAnEnum?, NativeInteropAnEnum?>? pigeonVar_dartTypeRes =
-            (_PigeonJniCodec.readValue(pigeonVar_res) as Map<Object?, Object?>?)
-                ?.cast<NativeInteropAnEnum?, NativeInteropAnEnum?>();
-        return pigeonVar_dartTypeRes;
+        final JByteArray pigeonVar_args = _PigeonJniBuffers.encode(<Object?>[enumMap]);
+        try {
+          final JByteArray? pigeonVar_res = await _jniApi.pigeon_echoAsyncNullableEnumMap(
+            pigeonVar_args,
+          );
+          return (_PigeonJniBuffers.decode(pigeonVar_res) as Map<Object?, Object?>?)
+              ?.cast<NativeInteropAnEnum?, NativeInteropAnEnum?>();
+        } finally {
+          pigeonVar_args.release();
+        }
       } else if (_ffiApi != null) {
         final pigeonVar_error = ffi_bridge.NativeInteropTestsError();
+        final NSData pigeonVar_args = _PigeonFfiBuffers.encode(<Object?>[enumMap]);
         final Completer<Map<NativeInteropAnEnum?, NativeInteropAnEnum?>?> pigeonVar_completer =
             Completer<Map<NativeInteropAnEnum?, NativeInteropAnEnum?>?>();
-        _ffiApi.echoAsyncNullableEnumMapWithEnumMap(
-          _PigeonFfiCodec.writeValue<NSDictionary?>(enumMap),
+        _ffiApi.pigeon_echoAsyncNullableEnumMap(
+          pigeonVar_args,
           wrappedError: pigeonVar_error,
-          completionHandler: ffi_bridge.ObjCBlock_ffiVoid_NSDictionary.listener((
-            NSDictionary? pigeonVar_res,
-          ) {
+          completionHandler: ffi_bridge.ObjCBlock_ffiVoid_NSData.listener((NSData? pigeonVar_res) {
             if (pigeonVar_error.code != null) {
               pigeonVar_completer.completeError(_wrapFfiError(pigeonVar_error));
             } else {
               pigeonVar_completer.complete(
-                (_PigeonFfiCodec.readValue(pigeonVar_res, NativeInteropAnEnum, NativeInteropAnEnum)
-                        as Map<Object?, Object?>?)
+                (_PigeonFfiBuffers.decode(pigeonVar_res) as Map<Object?, Object?>?)
                     ?.cast<NativeInteropAnEnum?, NativeInteropAnEnum?>(),
               );
             }
           }),
         );
+
         return await pigeonVar_completer.future;
       } else {
         throw Exception('No JNI or FFI api available');
@@ -6462,36 +6793,36 @@ class NativeInteropHostIntegrationCoreApiForNativeInterop {
   ) async {
     try {
       if (_jniApi != null) {
-        final JMap<JLong?, jni_bridge.NativeInteropAllNullableTypes?>? pigeonVar_res = await _jniApi
-            .echoAsyncNullableClassMap(
-              _PigeonJniCodec.writeValue<JMap<JLong?, jni_bridge.NativeInteropAllNullableTypes?>?>(
-                classMap,
-              ),
-            );
-        final Map<int?, NativeInteropAllNullableTypes?>? pigeonVar_dartTypeRes =
-            (_PigeonJniCodec.readValue(pigeonVar_res) as Map<Object?, Object?>?)
-                ?.cast<int?, NativeInteropAllNullableTypes?>();
-        return pigeonVar_dartTypeRes;
+        final JByteArray pigeonVar_args = _PigeonJniBuffers.encode(<Object?>[classMap]);
+        try {
+          final JByteArray? pigeonVar_res = await _jniApi.pigeon_echoAsyncNullableClassMap(
+            pigeonVar_args,
+          );
+          return (_PigeonJniBuffers.decode(pigeonVar_res) as Map<Object?, Object?>?)
+              ?.cast<int?, NativeInteropAllNullableTypes?>();
+        } finally {
+          pigeonVar_args.release();
+        }
       } else if (_ffiApi != null) {
         final pigeonVar_error = ffi_bridge.NativeInteropTestsError();
+        final NSData pigeonVar_args = _PigeonFfiBuffers.encode(<Object?>[classMap]);
         final Completer<Map<int?, NativeInteropAllNullableTypes?>?> pigeonVar_completer =
             Completer<Map<int?, NativeInteropAllNullableTypes?>?>();
-        _ffiApi.echoAsyncNullableClassMapWithClassMap(
-          _PigeonFfiCodec.writeValue<NSDictionary?>(classMap),
+        _ffiApi.pigeon_echoAsyncNullableClassMap(
+          pigeonVar_args,
           wrappedError: pigeonVar_error,
-          completionHandler: ffi_bridge.ObjCBlock_ffiVoid_NSDictionary.listener((
-            NSDictionary? pigeonVar_res,
-          ) {
+          completionHandler: ffi_bridge.ObjCBlock_ffiVoid_NSData.listener((NSData? pigeonVar_res) {
             if (pigeonVar_error.code != null) {
               pigeonVar_completer.completeError(_wrapFfiError(pigeonVar_error));
             } else {
               pigeonVar_completer.complete(
-                (_PigeonFfiCodec.readValue(pigeonVar_res, int) as Map<Object?, Object?>?)
+                (_PigeonFfiBuffers.decode(pigeonVar_res) as Map<Object?, Object?>?)
                     ?.cast<int?, NativeInteropAllNullableTypes?>(),
               );
             }
           }),
         );
+
         return await pigeonVar_completer.future;
       } else {
         throw Exception('No JNI or FFI api available');
@@ -6504,19 +6835,16 @@ class NativeInteropHostIntegrationCoreApiForNativeInterop {
   Future<NativeInteropAnEnum?> echoAsyncNullableEnum(NativeInteropAnEnum? anEnum) async {
     try {
       if (_jniApi != null) {
-        final jni_bridge.NativeInteropAnEnum? pigeonVar_res = await _jniApi.echoAsyncNullableEnum(
-          anEnum?.toJni(),
-        );
-        final NativeInteropAnEnum? pigeonVar_dartTypeRes = NativeInteropAnEnum.fromJni(
-          pigeonVar_res,
-        );
-        return pigeonVar_dartTypeRes;
+        final int pigeonVar_res = (await _jniApi.pigeon_echoAsyncNullableEnum(
+          anEnum?.index ?? -1,
+        )).toDartInt(releaseOriginal: true);
+        return pigeonVar_res == -1 ? null : NativeInteropAnEnum.values[pigeonVar_res];
       } else if (_ffiApi != null) {
         final pigeonVar_error = ffi_bridge.NativeInteropTestsError();
         final Completer<NativeInteropAnEnum?> pigeonVar_completer =
             Completer<NativeInteropAnEnum?>();
-        _ffiApi.echoAsyncNullableEnumWithAnEnum(
-          _PigeonFfiCodec.writeValue<NSNumber?>(anEnum),
+        _ffiApi.pigeon_echoAsyncNullableEnum(
+          anEnum?.index ?? -1,
           wrappedError: pigeonVar_error,
           completionHandler: ffi_bridge.ObjCBlock_ffiVoid_NSNumber.listener((
             NSNumber? pigeonVar_res,
@@ -6525,12 +6853,12 @@ class NativeInteropHostIntegrationCoreApiForNativeInterop {
               pigeonVar_completer.completeError(_wrapFfiError(pigeonVar_error));
             } else {
               pigeonVar_completer.complete(
-                _PigeonFfiCodec.readValue(pigeonVar_res, NativeInteropAnEnum)
-                    as NativeInteropAnEnum?,
+                pigeonVar_res == null ? null : NativeInteropAnEnum.values[pigeonVar_res.longValue],
               );
             }
           }),
         );
+
         return await pigeonVar_completer.future;
       } else {
         throw Exception('No JNI or FFI api available');
@@ -6545,18 +6873,16 @@ class NativeInteropHostIntegrationCoreApiForNativeInterop {
   ) async {
     try {
       if (_jniApi != null) {
-        final jni_bridge.NativeInteropAnotherEnum? pigeonVar_res = await _jniApi
-            .echoAnotherAsyncNullableEnum(anotherEnum?.toJni());
-        final NativeInteropAnotherEnum? pigeonVar_dartTypeRes = NativeInteropAnotherEnum.fromJni(
-          pigeonVar_res,
-        );
-        return pigeonVar_dartTypeRes;
+        final int pigeonVar_res = (await _jniApi.pigeon_echoAnotherAsyncNullableEnum(
+          anotherEnum?.index ?? -1,
+        )).toDartInt(releaseOriginal: true);
+        return pigeonVar_res == -1 ? null : NativeInteropAnotherEnum.values[pigeonVar_res];
       } else if (_ffiApi != null) {
         final pigeonVar_error = ffi_bridge.NativeInteropTestsError();
         final Completer<NativeInteropAnotherEnum?> pigeonVar_completer =
             Completer<NativeInteropAnotherEnum?>();
-        _ffiApi.echoAnotherAsyncNullableEnumWithAnotherEnum(
-          _PigeonFfiCodec.writeValue<NSNumber?>(anotherEnum),
+        _ffiApi.pigeon_echoAnotherAsyncNullableEnum(
+          anotherEnum?.index ?? -1,
           wrappedError: pigeonVar_error,
           completionHandler: ffi_bridge.ObjCBlock_ffiVoid_NSNumber.listener((
             NSNumber? pigeonVar_res,
@@ -6565,12 +6891,14 @@ class NativeInteropHostIntegrationCoreApiForNativeInterop {
               pigeonVar_completer.completeError(_wrapFfiError(pigeonVar_error));
             } else {
               pigeonVar_completer.complete(
-                _PigeonFfiCodec.readValue(pigeonVar_res, NativeInteropAnotherEnum)
-                    as NativeInteropAnotherEnum?,
+                pigeonVar_res == null
+                    ? null
+                    : NativeInteropAnotherEnum.values[pigeonVar_res.longValue],
               );
             }
           }),
         );
+
         return await pigeonVar_completer.future;
       } else {
         throw Exception('No JNI or FFI api available');
@@ -6583,10 +6911,11 @@ class NativeInteropHostIntegrationCoreApiForNativeInterop {
   void callFlutterNoop() {
     try {
       if (_jniApi != null) {
-        return _jniApi.callFlutterNoop();
+        _jniApi.pigeon_callFlutterNoop();
+        return;
       } else if (_ffiApi != null) {
         final pigeonVar_error = ffi_bridge.NativeInteropTestsError();
-        _ffiApi.callFlutterNoopWithWrappedError(pigeonVar_error);
+        _ffiApi.pigeon_callFlutterNoop(pigeonVar_error);
         _throwIfFfiError(pigeonVar_error);
         return;
       } else {
@@ -6600,17 +6929,13 @@ class NativeInteropHostIntegrationCoreApiForNativeInterop {
   Object? callFlutterThrowError() {
     try {
       if (_jniApi != null) {
-        final JObject? pigeonVar_res = _jniApi.callFlutterThrowError();
-        final Object? pigeonVar_dartTypeRes = _PigeonJniCodec.readValue(pigeonVar_res);
-        return pigeonVar_dartTypeRes;
+        final JByteArray? pigeonVar_res = _jniApi.pigeon_callFlutterThrowError();
+        return _PigeonJniBuffers.decode(pigeonVar_res);
       } else if (_ffiApi != null) {
         final pigeonVar_error = ffi_bridge.NativeInteropTestsError();
-        final NSObject? pigeonVar_res = _ffiApi.callFlutterThrowErrorWithWrappedError(
-          pigeonVar_error,
-        );
+        final NSData? pigeonVar_res = _ffiApi.pigeon_callFlutterThrowError(pigeonVar_error);
         _throwIfFfiError(pigeonVar_error);
-        final Object? pigeonVar_dartTypeRes = _PigeonFfiCodec.readValue(pigeonVar_res);
-        return pigeonVar_dartTypeRes;
+        return _PigeonFfiBuffers.decode(pigeonVar_res);
       } else {
         throw Exception('No JNI or FFI api available');
       }
@@ -6622,10 +6947,11 @@ class NativeInteropHostIntegrationCoreApiForNativeInterop {
   void callFlutterThrowErrorFromVoid() {
     try {
       if (_jniApi != null) {
-        return _jniApi.callFlutterThrowErrorFromVoid();
+        _jniApi.pigeon_callFlutterThrowErrorFromVoid();
+        return;
       } else if (_ffiApi != null) {
         final pigeonVar_error = ffi_bridge.NativeInteropTestsError();
-        _ffiApi.callFlutterThrowErrorFromVoidWithWrappedError(pigeonVar_error);
+        _ffiApi.pigeon_callFlutterThrowErrorFromVoid(pigeonVar_error);
         _throwIfFfiError(pigeonVar_error);
         return;
       } else {
@@ -6639,24 +6965,24 @@ class NativeInteropHostIntegrationCoreApiForNativeInterop {
   NativeInteropAllTypes callFlutterEchoNativeInteropAllTypes(NativeInteropAllTypes everything) {
     try {
       if (_jniApi != null) {
-        final jni_bridge.NativeInteropAllTypes pigeonVar_res = _jniApi
-            .callFlutterEchoNativeInteropAllTypes(everything.toJni());
-        final NativeInteropAllTypes pigeonVar_dartTypeRes = NativeInteropAllTypes.fromJni(
-          pigeonVar_res,
-        )!;
-        return pigeonVar_dartTypeRes;
+        final JByteArray pigeonVar_args = _PigeonJniBuffers.encode(<Object?>[everything]);
+        try {
+          final JByteArray? pigeonVar_res = _jniApi.pigeon_callFlutterEchoNativeInteropAllTypes(
+            pigeonVar_args,
+          );
+          return _PigeonJniBuffers.decode(pigeonVar_res)! as NativeInteropAllTypes;
+        } finally {
+          pigeonVar_args.release();
+        }
       } else if (_ffiApi != null) {
         final pigeonVar_error = ffi_bridge.NativeInteropTestsError();
-        final ffi_bridge.NativeInteropAllTypesBridge? pigeonVar_res = _ffiApi
-            .callFlutterEchoNativeInteropAllTypesWithEverything(
-              everything.toFfi(),
-              wrappedError: pigeonVar_error,
-            );
+        final NSData pigeonVar_args = _PigeonFfiBuffers.encode(<Object?>[everything]);
+        final NSData? pigeonVar_res = _ffiApi.pigeon_callFlutterEchoNativeInteropAllTypes(
+          pigeonVar_args,
+          wrappedError: pigeonVar_error,
+        );
         _throwIfFfiError(pigeonVar_error);
-        final NativeInteropAllTypes pigeonVar_dartTypeRes = NativeInteropAllTypes.fromFfi(
-          pigeonVar_res,
-        )!;
-        return pigeonVar_dartTypeRes;
+        return _PigeonFfiBuffers.decode(pigeonVar_res)! as NativeInteropAllTypes;
       } else {
         throw Exception('No JNI or FFI api available');
       }
@@ -6670,22 +6996,23 @@ class NativeInteropHostIntegrationCoreApiForNativeInterop {
   ) {
     try {
       if (_jniApi != null) {
-        final jni_bridge.NativeInteropAllNullableTypes? pigeonVar_res = _jniApi
-            .callFlutterEchoNativeInteropAllNullableTypes(everything?.toJni());
-        final NativeInteropAllNullableTypes? pigeonVar_dartTypeRes =
-            NativeInteropAllNullableTypes.fromJni(pigeonVar_res);
-        return pigeonVar_dartTypeRes;
+        final JByteArray pigeonVar_args = _PigeonJniBuffers.encode(<Object?>[everything]);
+        try {
+          final JByteArray? pigeonVar_res = _jniApi
+              .pigeon_callFlutterEchoNativeInteropAllNullableTypes(pigeonVar_args);
+          return _PigeonJniBuffers.decode(pigeonVar_res) as NativeInteropAllNullableTypes?;
+        } finally {
+          pigeonVar_args.release();
+        }
       } else if (_ffiApi != null) {
         final pigeonVar_error = ffi_bridge.NativeInteropTestsError();
-        final ffi_bridge.NativeInteropAllNullableTypesBridge? pigeonVar_res = _ffiApi
-            .callFlutterEchoNativeInteropAllNullableTypesWithEverything(
-              everything?.toFfi(),
-              wrappedError: pigeonVar_error,
-            );
+        final NSData pigeonVar_args = _PigeonFfiBuffers.encode(<Object?>[everything]);
+        final NSData? pigeonVar_res = _ffiApi.pigeon_callFlutterEchoNativeInteropAllNullableTypes(
+          pigeonVar_args,
+          wrappedError: pigeonVar_error,
+        );
         _throwIfFfiError(pigeonVar_error);
-        final NativeInteropAllNullableTypes? pigeonVar_dartTypeRes =
-            NativeInteropAllNullableTypes.fromFfi(pigeonVar_res);
-        return pigeonVar_dartTypeRes;
+        return _PigeonFfiBuffers.decode(pigeonVar_res) as NativeInteropAllNullableTypes?;
       } else {
         throw Exception('No JNI or FFI api available');
       }
@@ -6701,28 +7028,33 @@ class NativeInteropHostIntegrationCoreApiForNativeInterop {
   ) {
     try {
       if (_jniApi != null) {
-        final jni_bridge.NativeInteropAllNullableTypes pigeonVar_res = _jniApi
-            .callFlutterSendMultipleNullableTypes(
-              _PigeonJniCodec.writeValue<JBoolean?>(aNullableBool),
-              _PigeonJniCodec.writeValue<JLong?>(aNullableInt),
-              _PigeonJniCodec.writeValue<JString?>(aNullableString),
-            );
-        final NativeInteropAllNullableTypes pigeonVar_dartTypeRes =
-            NativeInteropAllNullableTypes.fromJni(pigeonVar_res)!;
-        return pigeonVar_dartTypeRes;
+        final JBoolean? pigeonVar_aNullableBool = aNullableBool == null
+            ? null
+            : JBoolean(aNullableBool);
+        final JLong? pigeonVar_aNullableInt = aNullableInt == null ? null : JLong(aNullableInt);
+        final JString? pigeonVar_aNullableString = aNullableString?.toJString();
+        try {
+          final JByteArray? pigeonVar_res = _jniApi.pigeon_callFlutterSendMultipleNullableTypes(
+            pigeonVar_aNullableBool,
+            pigeonVar_aNullableInt,
+            pigeonVar_aNullableString,
+          );
+          return _PigeonJniBuffers.decode(pigeonVar_res)! as NativeInteropAllNullableTypes;
+        } finally {
+          pigeonVar_aNullableBool?.release();
+          pigeonVar_aNullableInt?.release();
+          pigeonVar_aNullableString?.release();
+        }
       } else if (_ffiApi != null) {
         final pigeonVar_error = ffi_bridge.NativeInteropTestsError();
-        final ffi_bridge.NativeInteropAllNullableTypesBridge? pigeonVar_res = _ffiApi
-            .callFlutterSendMultipleNullableTypesWithANullableBool(
-              _PigeonFfiCodec.writeValue<NSNumber?>(aNullableBool),
-              aNullableInt: _PigeonFfiCodec.writeValue<NSNumber?>(aNullableInt),
-              aNullableString: _PigeonFfiCodec.writeValue<NSString?>(aNullableString),
-              wrappedError: pigeonVar_error,
-            );
+        final NSData? pigeonVar_res = _ffiApi.pigeon_callFlutterSendMultipleNullableTypes(
+          _PigeonFfiCodec.writeValue<NSNumber?>(aNullableBool),
+          aNullableInt: _PigeonFfiCodec.writeValue<NSNumber?>(aNullableInt),
+          aNullableString: aNullableString == null ? null : NSString(aNullableString),
+          wrappedError: pigeonVar_error,
+        );
         _throwIfFfiError(pigeonVar_error);
-        final NativeInteropAllNullableTypes pigeonVar_dartTypeRes =
-            NativeInteropAllNullableTypes.fromFfi(pigeonVar_res)!;
-        return pigeonVar_dartTypeRes;
+        return _PigeonFfiBuffers.decode(pigeonVar_res)! as NativeInteropAllNullableTypes;
       } else {
         throw Exception('No JNI or FFI api available');
       }
@@ -6737,22 +7069,26 @@ class NativeInteropHostIntegrationCoreApiForNativeInterop {
   ) {
     try {
       if (_jniApi != null) {
-        final jni_bridge.NativeInteropAllNullableTypesWithoutRecursion? pigeonVar_res = _jniApi
-            .callFlutterEchoNativeInteropAllNullableTypesWithoutRecursion(everything?.toJni());
-        final NativeInteropAllNullableTypesWithoutRecursion? pigeonVar_dartTypeRes =
-            NativeInteropAllNullableTypesWithoutRecursion.fromJni(pigeonVar_res);
-        return pigeonVar_dartTypeRes;
+        final JByteArray pigeonVar_args = _PigeonJniBuffers.encode(<Object?>[everything]);
+        try {
+          final JByteArray? pigeonVar_res = _jniApi
+              .pigeon_callFlutterEchoNativeInteropAllNullableTypesWithoutRecursion(pigeonVar_args);
+          return _PigeonJniBuffers.decode(pigeonVar_res)
+              as NativeInteropAllNullableTypesWithoutRecursion?;
+        } finally {
+          pigeonVar_args.release();
+        }
       } else if (_ffiApi != null) {
         final pigeonVar_error = ffi_bridge.NativeInteropTestsError();
-        final ffi_bridge.NativeInteropAllNullableTypesWithoutRecursionBridge? pigeonVar_res =
-            _ffiApi.callFlutterEchoNativeInteropAllNullableTypesWithoutRecursionWithEverything(
-              everything?.toFfi(),
+        final NSData pigeonVar_args = _PigeonFfiBuffers.encode(<Object?>[everything]);
+        final NSData? pigeonVar_res = _ffiApi
+            .pigeon_callFlutterEchoNativeInteropAllNullableTypesWithoutRecursion(
+              pigeonVar_args,
               wrappedError: pigeonVar_error,
             );
         _throwIfFfiError(pigeonVar_error);
-        final NativeInteropAllNullableTypesWithoutRecursion? pigeonVar_dartTypeRes =
-            NativeInteropAllNullableTypesWithoutRecursion.fromFfi(pigeonVar_res);
-        return pigeonVar_dartTypeRes;
+        return _PigeonFfiBuffers.decode(pigeonVar_res)
+            as NativeInteropAllNullableTypesWithoutRecursion?;
       } else {
         throw Exception('No JNI or FFI api available');
       }
@@ -6769,28 +7105,37 @@ class NativeInteropHostIntegrationCoreApiForNativeInterop {
   ) {
     try {
       if (_jniApi != null) {
-        final jni_bridge.NativeInteropAllNullableTypesWithoutRecursion pigeonVar_res = _jniApi
-            .callFlutterSendMultipleNullableTypesWithoutRecursion(
-              _PigeonJniCodec.writeValue<JBoolean?>(aNullableBool),
-              _PigeonJniCodec.writeValue<JLong?>(aNullableInt),
-              _PigeonJniCodec.writeValue<JString?>(aNullableString),
-            );
-        final NativeInteropAllNullableTypesWithoutRecursion pigeonVar_dartTypeRes =
-            NativeInteropAllNullableTypesWithoutRecursion.fromJni(pigeonVar_res)!;
-        return pigeonVar_dartTypeRes;
+        final JBoolean? pigeonVar_aNullableBool = aNullableBool == null
+            ? null
+            : JBoolean(aNullableBool);
+        final JLong? pigeonVar_aNullableInt = aNullableInt == null ? null : JLong(aNullableInt);
+        final JString? pigeonVar_aNullableString = aNullableString?.toJString();
+        try {
+          final JByteArray? pigeonVar_res = _jniApi
+              .pigeon_callFlutterSendMultipleNullableTypesWithoutRecursion(
+                pigeonVar_aNullableBool,
+                pigeonVar_aNullableInt,
+                pigeonVar_aNullableString,
+              );
+          return _PigeonJniBuffers.decode(pigeonVar_res)!
+              as NativeInteropAllNullableTypesWithoutRecursion;
+        } finally {
+          pigeonVar_aNullableBool?.release();
+          pigeonVar_aNullableInt?.release();
+          pigeonVar_aNullableString?.release();
+        }
       } else if (_ffiApi != null) {
         final pigeonVar_error = ffi_bridge.NativeInteropTestsError();
-        final ffi_bridge.NativeInteropAllNullableTypesWithoutRecursionBridge? pigeonVar_res =
-            _ffiApi.callFlutterSendMultipleNullableTypesWithoutRecursionWithANullableBool(
+        final NSData? pigeonVar_res = _ffiApi
+            .pigeon_callFlutterSendMultipleNullableTypesWithoutRecursion(
               _PigeonFfiCodec.writeValue<NSNumber?>(aNullableBool),
               aNullableInt: _PigeonFfiCodec.writeValue<NSNumber?>(aNullableInt),
-              aNullableString: _PigeonFfiCodec.writeValue<NSString?>(aNullableString),
+              aNullableString: aNullableString == null ? null : NSString(aNullableString),
               wrappedError: pigeonVar_error,
             );
         _throwIfFfiError(pigeonVar_error);
-        final NativeInteropAllNullableTypesWithoutRecursion pigeonVar_dartTypeRes =
-            NativeInteropAllNullableTypesWithoutRecursion.fromFfi(pigeonVar_res)!;
-        return pigeonVar_dartTypeRes;
+        return _PigeonFfiBuffers.decode(pigeonVar_res)!
+            as NativeInteropAllNullableTypesWithoutRecursion;
       } else {
         throw Exception('No JNI or FFI api available');
       }
@@ -6802,16 +7147,15 @@ class NativeInteropHostIntegrationCoreApiForNativeInterop {
   bool callFlutterEchoBool(bool aBool) {
     try {
       if (_jniApi != null) {
-        return _jniApi.callFlutterEchoBool(aBool);
+        return _jniApi.pigeon_callFlutterEchoBool(aBool);
       } else if (_ffiApi != null) {
         final pigeonVar_error = ffi_bridge.NativeInteropTestsError();
-        final NSNumber? pigeonVar_res = _ffiApi.callFlutterEchoBoolWithABool(
+        final NSNumber? pigeonVar_res = _ffiApi.pigeon_callFlutterEchoBool(
           aBool,
           wrappedError: pigeonVar_error,
         );
         _throwIfFfiError(pigeonVar_error);
-        final bool pigeonVar_dartTypeRes = pigeonVar_res!.boolValue;
-        return pigeonVar_dartTypeRes;
+        return pigeonVar_res!.boolValue;
       } else {
         throw Exception('No JNI or FFI api available');
       }
@@ -6823,16 +7167,15 @@ class NativeInteropHostIntegrationCoreApiForNativeInterop {
   int callFlutterEchoInt(int anInt) {
     try {
       if (_jniApi != null) {
-        return _jniApi.callFlutterEchoInt(anInt);
+        return _jniApi.pigeon_callFlutterEchoInt(anInt);
       } else if (_ffiApi != null) {
         final pigeonVar_error = ffi_bridge.NativeInteropTestsError();
-        final NSNumber? pigeonVar_res = _ffiApi.callFlutterEchoIntWithAnInt(
+        final NSNumber? pigeonVar_res = _ffiApi.pigeon_callFlutterEchoInt(
           anInt,
           wrappedError: pigeonVar_error,
         );
         _throwIfFfiError(pigeonVar_error);
-        final int pigeonVar_dartTypeRes = pigeonVar_res!.longValue;
-        return pigeonVar_dartTypeRes;
+        return pigeonVar_res!.longValue;
       } else {
         throw Exception('No JNI or FFI api available');
       }
@@ -6844,16 +7187,15 @@ class NativeInteropHostIntegrationCoreApiForNativeInterop {
   double callFlutterEchoDouble(double aDouble) {
     try {
       if (_jniApi != null) {
-        return _jniApi.callFlutterEchoDouble(aDouble);
+        return _jniApi.pigeon_callFlutterEchoDouble(aDouble);
       } else if (_ffiApi != null) {
         final pigeonVar_error = ffi_bridge.NativeInteropTestsError();
-        final NSNumber? pigeonVar_res = _ffiApi.callFlutterEchoDoubleWithADouble(
+        final NSNumber? pigeonVar_res = _ffiApi.pigeon_callFlutterEchoDouble(
           aDouble,
           wrappedError: pigeonVar_error,
         );
         _throwIfFfiError(pigeonVar_error);
-        final double pigeonVar_dartTypeRes = pigeonVar_res!.doubleValue;
-        return pigeonVar_dartTypeRes;
+        return pigeonVar_res!.doubleValue;
       } else {
         throw Exception('No JNI or FFI api available');
       }
@@ -6865,20 +7207,21 @@ class NativeInteropHostIntegrationCoreApiForNativeInterop {
   String callFlutterEchoString(String aString) {
     try {
       if (_jniApi != null) {
-        final JString pigeonVar_res = _jniApi.callFlutterEchoString(
-          _PigeonJniCodec.writeValue<JString>(aString),
-        );
-        final String pigeonVar_dartTypeRes = pigeonVar_res.toDartString(releaseOriginal: true);
-        return pigeonVar_dartTypeRes;
+        final JString pigeonVar_aString = aString.toJString();
+        try {
+          final JString pigeonVar_res = _jniApi.pigeon_callFlutterEchoString(pigeonVar_aString);
+          return pigeonVar_res.toDartString(releaseOriginal: true);
+        } finally {
+          pigeonVar_aString.release();
+        }
       } else if (_ffiApi != null) {
         final pigeonVar_error = ffi_bridge.NativeInteropTestsError();
-        final NSString? pigeonVar_res = _ffiApi.callFlutterEchoStringWithAString(
-          _PigeonFfiCodec.writeValue<NSString>(aString),
+        final NSString? pigeonVar_res = _ffiApi.pigeon_callFlutterEchoString(
+          NSString(aString),
           wrappedError: pigeonVar_error,
         );
         _throwIfFfiError(pigeonVar_error);
-        final String pigeonVar_dartTypeRes = pigeonVar_res!.toDartString();
-        return pigeonVar_dartTypeRes;
+        return pigeonVar_res!.toDartString();
       } else {
         throw Exception('No JNI or FFI api available');
       }
@@ -6890,23 +7233,21 @@ class NativeInteropHostIntegrationCoreApiForNativeInterop {
   Uint8List callFlutterEchoUint8List(Uint8List list) {
     try {
       if (_jniApi != null) {
-        final JByteArray pigeonVar_res = _jniApi.callFlutterEchoUint8List(
-          _PigeonJniCodec.writeValue<JByteArray>(list),
-        );
-        final Uint8List pigeonVar_dartTypeRes =
-            _PigeonJniCodec.readValue(pigeonVar_res)! as Uint8List;
-        return pigeonVar_dartTypeRes;
+        final JByteArray pigeonVar_list = _uint8ListToJni(list);
+        try {
+          final JByteArray pigeonVar_res = _jniApi.pigeon_callFlutterEchoUint8List(pigeonVar_list);
+          return _jByteArrayToDart(pigeonVar_res, release: true)!;
+        } finally {
+          pigeonVar_list.release();
+        }
       } else if (_ffiApi != null) {
         final pigeonVar_error = ffi_bridge.NativeInteropTestsError();
-        final ffi_bridge.NativeInteropTestsPigeonTypedData? pigeonVar_res = _ffiApi
-            .callFlutterEchoUint8ListWithList(
-              _PigeonFfiCodec.writeValue<ffi_bridge.NativeInteropTestsPigeonTypedData>(list),
-              wrappedError: pigeonVar_error,
-            );
+        final NSData? pigeonVar_res = _ffiApi.pigeon_callFlutterEchoUint8List(
+          _typedDataToNSData(list),
+          wrappedError: pigeonVar_error,
+        );
         _throwIfFfiError(pigeonVar_error);
-        final Uint8List pigeonVar_dartTypeRes =
-            _PigeonFfiCodec.readValue(pigeonVar_res)! as Uint8List;
-        return pigeonVar_dartTypeRes;
+        return _PigeonFfiBuffers.toUint8List(pigeonVar_res)!;
       } else {
         throw Exception('No JNI or FFI api available');
       }
@@ -6918,23 +7259,21 @@ class NativeInteropHostIntegrationCoreApiForNativeInterop {
   Int32List callFlutterEchoInt32List(Int32List list) {
     try {
       if (_jniApi != null) {
-        final JIntArray pigeonVar_res = _jniApi.callFlutterEchoInt32List(
-          _PigeonJniCodec.writeValue<JIntArray>(list),
-        );
-        final Int32List pigeonVar_dartTypeRes =
-            _PigeonJniCodec.readValue(pigeonVar_res)! as Int32List;
-        return pigeonVar_dartTypeRes;
+        final JIntArray pigeonVar_list = _int32ListToJni(list);
+        try {
+          final JIntArray pigeonVar_res = _jniApi.pigeon_callFlutterEchoInt32List(pigeonVar_list);
+          return _jIntArrayToDart(pigeonVar_res, release: true)!;
+        } finally {
+          pigeonVar_list.release();
+        }
       } else if (_ffiApi != null) {
         final pigeonVar_error = ffi_bridge.NativeInteropTestsError();
-        final ffi_bridge.NativeInteropTestsPigeonTypedData? pigeonVar_res = _ffiApi
-            .callFlutterEchoInt32ListWithList(
-              _PigeonFfiCodec.writeValue<ffi_bridge.NativeInteropTestsPigeonTypedData>(list),
-              wrappedError: pigeonVar_error,
-            );
+        final NSData? pigeonVar_res = _ffiApi.pigeon_callFlutterEchoInt32List(
+          _typedDataToNSData(list),
+          wrappedError: pigeonVar_error,
+        );
         _throwIfFfiError(pigeonVar_error);
-        final Int32List pigeonVar_dartTypeRes =
-            _PigeonFfiCodec.readValue(pigeonVar_res)! as Int32List;
-        return pigeonVar_dartTypeRes;
+        return _PigeonFfiBuffers.toUint8List(pigeonVar_res)!.buffer.asInt32List();
       } else {
         throw Exception('No JNI or FFI api available');
       }
@@ -6946,23 +7285,21 @@ class NativeInteropHostIntegrationCoreApiForNativeInterop {
   Int64List callFlutterEchoInt64List(Int64List list) {
     try {
       if (_jniApi != null) {
-        final JLongArray pigeonVar_res = _jniApi.callFlutterEchoInt64List(
-          _PigeonJniCodec.writeValue<JLongArray>(list),
-        );
-        final Int64List pigeonVar_dartTypeRes =
-            _PigeonJniCodec.readValue(pigeonVar_res)! as Int64List;
-        return pigeonVar_dartTypeRes;
+        final JLongArray pigeonVar_list = _int64ListToJni(list);
+        try {
+          final JLongArray pigeonVar_res = _jniApi.pigeon_callFlutterEchoInt64List(pigeonVar_list);
+          return _jLongArrayToDart(pigeonVar_res, release: true)!;
+        } finally {
+          pigeonVar_list.release();
+        }
       } else if (_ffiApi != null) {
         final pigeonVar_error = ffi_bridge.NativeInteropTestsError();
-        final ffi_bridge.NativeInteropTestsPigeonTypedData? pigeonVar_res = _ffiApi
-            .callFlutterEchoInt64ListWithList(
-              _PigeonFfiCodec.writeValue<ffi_bridge.NativeInteropTestsPigeonTypedData>(list),
-              wrappedError: pigeonVar_error,
-            );
+        final NSData? pigeonVar_res = _ffiApi.pigeon_callFlutterEchoInt64List(
+          _typedDataToNSData(list),
+          wrappedError: pigeonVar_error,
+        );
         _throwIfFfiError(pigeonVar_error);
-        final Int64List pigeonVar_dartTypeRes =
-            _PigeonFfiCodec.readValue(pigeonVar_res)! as Int64List;
-        return pigeonVar_dartTypeRes;
+        return _PigeonFfiBuffers.toUint8List(pigeonVar_res)!.buffer.asInt64List();
       } else {
         throw Exception('No JNI or FFI api available');
       }
@@ -6974,23 +7311,23 @@ class NativeInteropHostIntegrationCoreApiForNativeInterop {
   Float64List callFlutterEchoFloat64List(Float64List list) {
     try {
       if (_jniApi != null) {
-        final JDoubleArray pigeonVar_res = _jniApi.callFlutterEchoFloat64List(
-          _PigeonJniCodec.writeValue<JDoubleArray>(list),
-        );
-        final Float64List pigeonVar_dartTypeRes =
-            _PigeonJniCodec.readValue(pigeonVar_res)! as Float64List;
-        return pigeonVar_dartTypeRes;
+        final JDoubleArray pigeonVar_list = _float64ListToJni(list);
+        try {
+          final JDoubleArray pigeonVar_res = _jniApi.pigeon_callFlutterEchoFloat64List(
+            pigeonVar_list,
+          );
+          return _jDoubleArrayToDart(pigeonVar_res, release: true)!;
+        } finally {
+          pigeonVar_list.release();
+        }
       } else if (_ffiApi != null) {
         final pigeonVar_error = ffi_bridge.NativeInteropTestsError();
-        final ffi_bridge.NativeInteropTestsPigeonTypedData? pigeonVar_res = _ffiApi
-            .callFlutterEchoFloat64ListWithList(
-              _PigeonFfiCodec.writeValue<ffi_bridge.NativeInteropTestsPigeonTypedData>(list),
-              wrappedError: pigeonVar_error,
-            );
+        final NSData? pigeonVar_res = _ffiApi.pigeon_callFlutterEchoFloat64List(
+          _typedDataToNSData(list),
+          wrappedError: pigeonVar_error,
+        );
         _throwIfFfiError(pigeonVar_error);
-        final Float64List pigeonVar_dartTypeRes =
-            _PigeonFfiCodec.readValue(pigeonVar_res)! as Float64List;
-        return pigeonVar_dartTypeRes;
+        return _PigeonFfiBuffers.toUint8List(pigeonVar_res)!.buffer.asFloat64List();
       } else {
         throw Exception('No JNI or FFI api available');
       }
@@ -7002,22 +7339,22 @@ class NativeInteropHostIntegrationCoreApiForNativeInterop {
   List<Object?> callFlutterEchoList(List<Object?> list) {
     try {
       if (_jniApi != null) {
-        final JList<JObject?> pigeonVar_res = _jniApi.callFlutterEchoList(
-          _PigeonJniCodec.writeValue<JList<JObject?>>(list),
-        );
-        final List<Object?> pigeonVar_dartTypeRes =
-            (_PigeonJniCodec.readValue(pigeonVar_res)! as List<Object?>).cast<Object?>();
-        return pigeonVar_dartTypeRes;
+        final JByteArray pigeonVar_args = _PigeonJniBuffers.encode(<Object?>[list]);
+        try {
+          final JByteArray? pigeonVar_res = _jniApi.pigeon_callFlutterEchoList(pigeonVar_args);
+          return _PigeonJniBuffers.decode(pigeonVar_res)! as List<Object?>;
+        } finally {
+          pigeonVar_args.release();
+        }
       } else if (_ffiApi != null) {
         final pigeonVar_error = ffi_bridge.NativeInteropTestsError();
-        final NSArray? pigeonVar_res = _ffiApi.callFlutterEchoListWithList(
-          _PigeonFfiCodec.writeValue<NSMutableArray>(list),
+        final NSData pigeonVar_args = _PigeonFfiBuffers.encode(<Object?>[list]);
+        final NSData? pigeonVar_res = _ffiApi.pigeon_callFlutterEchoList(
+          pigeonVar_args,
           wrappedError: pigeonVar_error,
         );
         _throwIfFfiError(pigeonVar_error);
-        final List<Object?> pigeonVar_dartTypeRes =
-            (_PigeonFfiCodec.readValue(pigeonVar_res)! as List<Object?>).cast<Object?>();
-        return pigeonVar_dartTypeRes;
+        return _PigeonFfiBuffers.decode(pigeonVar_res)! as List<Object?>;
       } else {
         throw Exception('No JNI or FFI api available');
       }
@@ -7029,25 +7366,24 @@ class NativeInteropHostIntegrationCoreApiForNativeInterop {
   List<NativeInteropAnEnum?> callFlutterEchoEnumList(List<NativeInteropAnEnum?> enumList) {
     try {
       if (_jniApi != null) {
-        final JList<jni_bridge.NativeInteropAnEnum?> pigeonVar_res = _jniApi
-            .callFlutterEchoEnumList(
-              _PigeonJniCodec.writeValue<JList<jni_bridge.NativeInteropAnEnum?>>(enumList),
-            );
-        final List<NativeInteropAnEnum?> pigeonVar_dartTypeRes =
-            (_PigeonJniCodec.readValue(pigeonVar_res)! as List<Object?>)
-                .cast<NativeInteropAnEnum?>();
-        return pigeonVar_dartTypeRes;
+        final JByteArray pigeonVar_args = _PigeonJniBuffers.encode(<Object?>[enumList]);
+        try {
+          final JByteArray? pigeonVar_res = _jniApi.pigeon_callFlutterEchoEnumList(pigeonVar_args);
+          return (_PigeonJniBuffers.decode(pigeonVar_res)! as List<Object?>)
+              .cast<NativeInteropAnEnum?>();
+        } finally {
+          pigeonVar_args.release();
+        }
       } else if (_ffiApi != null) {
         final pigeonVar_error = ffi_bridge.NativeInteropTestsError();
-        final NSArray? pigeonVar_res = _ffiApi.callFlutterEchoEnumListWithEnumList(
-          _PigeonFfiCodec.writeValue<NSMutableArray>(enumList),
+        final NSData pigeonVar_args = _PigeonFfiBuffers.encode(<Object?>[enumList]);
+        final NSData? pigeonVar_res = _ffiApi.pigeon_callFlutterEchoEnumList(
+          pigeonVar_args,
           wrappedError: pigeonVar_error,
         );
         _throwIfFfiError(pigeonVar_error);
-        final List<NativeInteropAnEnum?> pigeonVar_dartTypeRes =
-            (_PigeonFfiCodec.readValue(pigeonVar_res, NativeInteropAnEnum)! as List<Object?>)
-                .cast<NativeInteropAnEnum?>();
-        return pigeonVar_dartTypeRes;
+        return (_PigeonFfiBuffers.decode(pigeonVar_res)! as List<Object?>)
+            .cast<NativeInteropAnEnum?>();
       } else {
         throw Exception('No JNI or FFI api available');
       }
@@ -7061,27 +7397,24 @@ class NativeInteropHostIntegrationCoreApiForNativeInterop {
   ) {
     try {
       if (_jniApi != null) {
-        final JList<jni_bridge.NativeInteropAllNullableTypes?> pigeonVar_res = _jniApi
-            .callFlutterEchoClassList(
-              _PigeonJniCodec.writeValue<JList<jni_bridge.NativeInteropAllNullableTypes?>>(
-                classList,
-              ),
-            );
-        final List<NativeInteropAllNullableTypes?> pigeonVar_dartTypeRes =
-            (_PigeonJniCodec.readValue(pigeonVar_res)! as List<Object?>)
-                .cast<NativeInteropAllNullableTypes?>();
-        return pigeonVar_dartTypeRes;
+        final JByteArray pigeonVar_args = _PigeonJniBuffers.encode(<Object?>[classList]);
+        try {
+          final JByteArray? pigeonVar_res = _jniApi.pigeon_callFlutterEchoClassList(pigeonVar_args);
+          return (_PigeonJniBuffers.decode(pigeonVar_res)! as List<Object?>)
+              .cast<NativeInteropAllNullableTypes?>();
+        } finally {
+          pigeonVar_args.release();
+        }
       } else if (_ffiApi != null) {
         final pigeonVar_error = ffi_bridge.NativeInteropTestsError();
-        final NSArray? pigeonVar_res = _ffiApi.callFlutterEchoClassListWithClassList(
-          _PigeonFfiCodec.writeValue<NSMutableArray>(classList),
+        final NSData pigeonVar_args = _PigeonFfiBuffers.encode(<Object?>[classList]);
+        final NSData? pigeonVar_res = _ffiApi.pigeon_callFlutterEchoClassList(
+          pigeonVar_args,
           wrappedError: pigeonVar_error,
         );
         _throwIfFfiError(pigeonVar_error);
-        final List<NativeInteropAllNullableTypes?> pigeonVar_dartTypeRes =
-            (_PigeonFfiCodec.readValue(pigeonVar_res)! as List<Object?>)
-                .cast<NativeInteropAllNullableTypes?>();
-        return pigeonVar_dartTypeRes;
+        return (_PigeonFfiBuffers.decode(pigeonVar_res)! as List<Object?>)
+            .cast<NativeInteropAllNullableTypes?>();
       } else {
         throw Exception('No JNI or FFI api available');
       }
@@ -7093,25 +7426,26 @@ class NativeInteropHostIntegrationCoreApiForNativeInterop {
   List<NativeInteropAnEnum> callFlutterEchoNonNullEnumList(List<NativeInteropAnEnum> enumList) {
     try {
       if (_jniApi != null) {
-        final JList<jni_bridge.NativeInteropAnEnum> pigeonVar_res = _jniApi
-            .callFlutterEchoNonNullEnumList(
-              _PigeonJniCodec.writeValue<JList<jni_bridge.NativeInteropAnEnum>>(enumList),
-            );
-        final List<NativeInteropAnEnum> pigeonVar_dartTypeRes =
-            (_PigeonJniCodec.readValue(pigeonVar_res)! as List<Object?>)
-                .cast<NativeInteropAnEnum>();
-        return pigeonVar_dartTypeRes;
+        final JByteArray pigeonVar_args = _PigeonJniBuffers.encode(<Object?>[enumList]);
+        try {
+          final JByteArray? pigeonVar_res = _jniApi.pigeon_callFlutterEchoNonNullEnumList(
+            pigeonVar_args,
+          );
+          return (_PigeonJniBuffers.decode(pigeonVar_res)! as List<Object?>)
+              .cast<NativeInteropAnEnum>();
+        } finally {
+          pigeonVar_args.release();
+        }
       } else if (_ffiApi != null) {
         final pigeonVar_error = ffi_bridge.NativeInteropTestsError();
-        final NSArray? pigeonVar_res = _ffiApi.callFlutterEchoNonNullEnumListWithEnumList(
-          _PigeonFfiCodec.writeValue<NSMutableArray>(enumList),
+        final NSData pigeonVar_args = _PigeonFfiBuffers.encode(<Object?>[enumList]);
+        final NSData? pigeonVar_res = _ffiApi.pigeon_callFlutterEchoNonNullEnumList(
+          pigeonVar_args,
           wrappedError: pigeonVar_error,
         );
         _throwIfFfiError(pigeonVar_error);
-        final List<NativeInteropAnEnum> pigeonVar_dartTypeRes =
-            (_PigeonFfiCodec.readValue(pigeonVar_res, NativeInteropAnEnum)! as List<Object?>)
-                .cast<NativeInteropAnEnum>();
-        return pigeonVar_dartTypeRes;
+        return (_PigeonFfiBuffers.decode(pigeonVar_res)! as List<Object?>)
+            .cast<NativeInteropAnEnum>();
       } else {
         throw Exception('No JNI or FFI api available');
       }
@@ -7125,27 +7459,26 @@ class NativeInteropHostIntegrationCoreApiForNativeInterop {
   ) {
     try {
       if (_jniApi != null) {
-        final JList<jni_bridge.NativeInteropAllNullableTypes> pigeonVar_res = _jniApi
-            .callFlutterEchoNonNullClassList(
-              _PigeonJniCodec.writeValue<JList<jni_bridge.NativeInteropAllNullableTypes>>(
-                classList,
-              ),
-            );
-        final List<NativeInteropAllNullableTypes> pigeonVar_dartTypeRes =
-            (_PigeonJniCodec.readValue(pigeonVar_res)! as List<Object?>)
-                .cast<NativeInteropAllNullableTypes>();
-        return pigeonVar_dartTypeRes;
+        final JByteArray pigeonVar_args = _PigeonJniBuffers.encode(<Object?>[classList]);
+        try {
+          final JByteArray? pigeonVar_res = _jniApi.pigeon_callFlutterEchoNonNullClassList(
+            pigeonVar_args,
+          );
+          return (_PigeonJniBuffers.decode(pigeonVar_res)! as List<Object?>)
+              .cast<NativeInteropAllNullableTypes>();
+        } finally {
+          pigeonVar_args.release();
+        }
       } else if (_ffiApi != null) {
         final pigeonVar_error = ffi_bridge.NativeInteropTestsError();
-        final NSArray? pigeonVar_res = _ffiApi.callFlutterEchoNonNullClassListWithClassList(
-          _PigeonFfiCodec.writeValue<NSMutableArray>(classList),
+        final NSData pigeonVar_args = _PigeonFfiBuffers.encode(<Object?>[classList]);
+        final NSData? pigeonVar_res = _ffiApi.pigeon_callFlutterEchoNonNullClassList(
+          pigeonVar_args,
           wrappedError: pigeonVar_error,
         );
         _throwIfFfiError(pigeonVar_error);
-        final List<NativeInteropAllNullableTypes> pigeonVar_dartTypeRes =
-            (_PigeonFfiCodec.readValue(pigeonVar_res)! as List<Object?>)
-                .cast<NativeInteropAllNullableTypes>();
-        return pigeonVar_dartTypeRes;
+        return (_PigeonFfiBuffers.decode(pigeonVar_res)! as List<Object?>)
+            .cast<NativeInteropAllNullableTypes>();
       } else {
         throw Exception('No JNI or FFI api available');
       }
@@ -7157,24 +7490,22 @@ class NativeInteropHostIntegrationCoreApiForNativeInterop {
   Map<Object?, Object?> callFlutterEchoMap(Map<Object?, Object?> map) {
     try {
       if (_jniApi != null) {
-        final JMap<JObject?, JObject?> pigeonVar_res = _jniApi.callFlutterEchoMap(
-          _PigeonJniCodec.writeValue<JMap<JObject?, JObject?>>(map),
-        );
-        final Map<Object?, Object?> pigeonVar_dartTypeRes =
-            (_PigeonJniCodec.readValue(pigeonVar_res)! as Map<Object?, Object?>)
-                .cast<Object?, Object?>();
-        return pigeonVar_dartTypeRes;
+        final JByteArray pigeonVar_args = _PigeonJniBuffers.encode(<Object?>[map]);
+        try {
+          final JByteArray? pigeonVar_res = _jniApi.pigeon_callFlutterEchoMap(pigeonVar_args);
+          return _PigeonJniBuffers.decode(pigeonVar_res)! as Map<Object?, Object?>;
+        } finally {
+          pigeonVar_args.release();
+        }
       } else if (_ffiApi != null) {
         final pigeonVar_error = ffi_bridge.NativeInteropTestsError();
-        final NSDictionary? pigeonVar_res = _ffiApi.callFlutterEchoMapWithMap(
-          _PigeonFfiCodec.writeValue<NSDictionary>(map),
+        final NSData pigeonVar_args = _PigeonFfiBuffers.encode(<Object?>[map]);
+        final NSData? pigeonVar_res = _ffiApi.pigeon_callFlutterEchoMap(
+          pigeonVar_args,
           wrappedError: pigeonVar_error,
         );
         _throwIfFfiError(pigeonVar_error);
-        final Map<Object?, Object?> pigeonVar_dartTypeRes =
-            (_PigeonFfiCodec.readValue(pigeonVar_res)! as Map<Object?, Object?>)
-                .cast<Object?, Object?>();
-        return pigeonVar_dartTypeRes;
+        return _PigeonFfiBuffers.decode(pigeonVar_res)! as Map<Object?, Object?>;
       } else {
         throw Exception('No JNI or FFI api available');
       }
@@ -7186,24 +7517,24 @@ class NativeInteropHostIntegrationCoreApiForNativeInterop {
   Map<String?, String?> callFlutterEchoStringMap(Map<String?, String?> stringMap) {
     try {
       if (_jniApi != null) {
-        final JMap<JString?, JString?> pigeonVar_res = _jniApi.callFlutterEchoStringMap(
-          _PigeonJniCodec.writeValue<JMap<JString?, JString?>>(stringMap),
-        );
-        final Map<String?, String?> pigeonVar_dartTypeRes =
-            (_PigeonJniCodec.readValue(pigeonVar_res)! as Map<Object?, Object?>)
-                .cast<String?, String?>();
-        return pigeonVar_dartTypeRes;
+        final JByteArray pigeonVar_args = _PigeonJniBuffers.encode(<Object?>[stringMap]);
+        try {
+          final JByteArray? pigeonVar_res = _jniApi.pigeon_callFlutterEchoStringMap(pigeonVar_args);
+          return (_PigeonJniBuffers.decode(pigeonVar_res)! as Map<Object?, Object?>)
+              .cast<String?, String?>();
+        } finally {
+          pigeonVar_args.release();
+        }
       } else if (_ffiApi != null) {
         final pigeonVar_error = ffi_bridge.NativeInteropTestsError();
-        final NSDictionary? pigeonVar_res = _ffiApi.callFlutterEchoStringMapWithStringMap(
-          _PigeonFfiCodec.writeValue<NSDictionary>(stringMap),
+        final NSData pigeonVar_args = _PigeonFfiBuffers.encode(<Object?>[stringMap]);
+        final NSData? pigeonVar_res = _ffiApi.pigeon_callFlutterEchoStringMap(
+          pigeonVar_args,
           wrappedError: pigeonVar_error,
         );
         _throwIfFfiError(pigeonVar_error);
-        final Map<String?, String?> pigeonVar_dartTypeRes =
-            (_PigeonFfiCodec.readValue(pigeonVar_res)! as Map<Object?, Object?>)
-                .cast<String?, String?>();
-        return pigeonVar_dartTypeRes;
+        return (_PigeonFfiBuffers.decode(pigeonVar_res)! as Map<Object?, Object?>)
+            .cast<String?, String?>();
       } else {
         throw Exception('No JNI or FFI api available');
       }
@@ -7215,23 +7546,24 @@ class NativeInteropHostIntegrationCoreApiForNativeInterop {
   Map<int?, int?> callFlutterEchoIntMap(Map<int?, int?> intMap) {
     try {
       if (_jniApi != null) {
-        final JMap<JLong?, JLong?> pigeonVar_res = _jniApi.callFlutterEchoIntMap(
-          _PigeonJniCodec.writeValue<JMap<JLong?, JLong?>>(intMap),
-        );
-        final Map<int?, int?> pigeonVar_dartTypeRes =
-            (_PigeonJniCodec.readValue(pigeonVar_res)! as Map<Object?, Object?>).cast<int?, int?>();
-        return pigeonVar_dartTypeRes;
+        final JByteArray pigeonVar_args = _PigeonJniBuffers.encode(<Object?>[intMap]);
+        try {
+          final JByteArray? pigeonVar_res = _jniApi.pigeon_callFlutterEchoIntMap(pigeonVar_args);
+          return (_PigeonJniBuffers.decode(pigeonVar_res)! as Map<Object?, Object?>)
+              .cast<int?, int?>();
+        } finally {
+          pigeonVar_args.release();
+        }
       } else if (_ffiApi != null) {
         final pigeonVar_error = ffi_bridge.NativeInteropTestsError();
-        final NSDictionary? pigeonVar_res = _ffiApi.callFlutterEchoIntMapWithIntMap(
-          _PigeonFfiCodec.writeValue<NSDictionary>(intMap),
+        final NSData pigeonVar_args = _PigeonFfiBuffers.encode(<Object?>[intMap]);
+        final NSData? pigeonVar_res = _ffiApi.pigeon_callFlutterEchoIntMap(
+          pigeonVar_args,
           wrappedError: pigeonVar_error,
         );
         _throwIfFfiError(pigeonVar_error);
-        final Map<int?, int?> pigeonVar_dartTypeRes =
-            (_PigeonFfiCodec.readValue(pigeonVar_res, int, int)! as Map<Object?, Object?>)
-                .cast<int?, int?>();
-        return pigeonVar_dartTypeRes;
+        return (_PigeonFfiBuffers.decode(pigeonVar_res)! as Map<Object?, Object?>)
+            .cast<int?, int?>();
       } else {
         throw Exception('No JNI or FFI api available');
       }
@@ -7245,28 +7577,24 @@ class NativeInteropHostIntegrationCoreApiForNativeInterop {
   ) {
     try {
       if (_jniApi != null) {
-        final JMap<jni_bridge.NativeInteropAnEnum?, jni_bridge.NativeInteropAnEnum?> pigeonVar_res =
-            _jniApi.callFlutterEchoEnumMap(
-              _PigeonJniCodec.writeValue<
-                JMap<jni_bridge.NativeInteropAnEnum?, jni_bridge.NativeInteropAnEnum?>
-              >(enumMap),
-            );
-        final Map<NativeInteropAnEnum?, NativeInteropAnEnum?> pigeonVar_dartTypeRes =
-            (_PigeonJniCodec.readValue(pigeonVar_res)! as Map<Object?, Object?>)
-                .cast<NativeInteropAnEnum?, NativeInteropAnEnum?>();
-        return pigeonVar_dartTypeRes;
+        final JByteArray pigeonVar_args = _PigeonJniBuffers.encode(<Object?>[enumMap]);
+        try {
+          final JByteArray? pigeonVar_res = _jniApi.pigeon_callFlutterEchoEnumMap(pigeonVar_args);
+          return (_PigeonJniBuffers.decode(pigeonVar_res)! as Map<Object?, Object?>)
+              .cast<NativeInteropAnEnum?, NativeInteropAnEnum?>();
+        } finally {
+          pigeonVar_args.release();
+        }
       } else if (_ffiApi != null) {
         final pigeonVar_error = ffi_bridge.NativeInteropTestsError();
-        final NSDictionary? pigeonVar_res = _ffiApi.callFlutterEchoEnumMapWithEnumMap(
-          _PigeonFfiCodec.writeValue<NSDictionary>(enumMap),
+        final NSData pigeonVar_args = _PigeonFfiBuffers.encode(<Object?>[enumMap]);
+        final NSData? pigeonVar_res = _ffiApi.pigeon_callFlutterEchoEnumMap(
+          pigeonVar_args,
           wrappedError: pigeonVar_error,
         );
         _throwIfFfiError(pigeonVar_error);
-        final Map<NativeInteropAnEnum?, NativeInteropAnEnum?> pigeonVar_dartTypeRes =
-            (_PigeonFfiCodec.readValue(pigeonVar_res, NativeInteropAnEnum, NativeInteropAnEnum)!
-                    as Map<Object?, Object?>)
-                .cast<NativeInteropAnEnum?, NativeInteropAnEnum?>();
-        return pigeonVar_dartTypeRes;
+        return (_PigeonFfiBuffers.decode(pigeonVar_res)! as Map<Object?, Object?>)
+            .cast<NativeInteropAnEnum?, NativeInteropAnEnum?>();
       } else {
         throw Exception('No JNI or FFI api available');
       }
@@ -7280,27 +7608,24 @@ class NativeInteropHostIntegrationCoreApiForNativeInterop {
   ) {
     try {
       if (_jniApi != null) {
-        final JMap<JLong?, jni_bridge.NativeInteropAllNullableTypes?> pigeonVar_res = _jniApi
-            .callFlutterEchoClassMap(
-              _PigeonJniCodec.writeValue<JMap<JLong?, jni_bridge.NativeInteropAllNullableTypes?>>(
-                classMap,
-              ),
-            );
-        final Map<int?, NativeInteropAllNullableTypes?> pigeonVar_dartTypeRes =
-            (_PigeonJniCodec.readValue(pigeonVar_res)! as Map<Object?, Object?>)
-                .cast<int?, NativeInteropAllNullableTypes?>();
-        return pigeonVar_dartTypeRes;
+        final JByteArray pigeonVar_args = _PigeonJniBuffers.encode(<Object?>[classMap]);
+        try {
+          final JByteArray? pigeonVar_res = _jniApi.pigeon_callFlutterEchoClassMap(pigeonVar_args);
+          return (_PigeonJniBuffers.decode(pigeonVar_res)! as Map<Object?, Object?>)
+              .cast<int?, NativeInteropAllNullableTypes?>();
+        } finally {
+          pigeonVar_args.release();
+        }
       } else if (_ffiApi != null) {
         final pigeonVar_error = ffi_bridge.NativeInteropTestsError();
-        final NSDictionary? pigeonVar_res = _ffiApi.callFlutterEchoClassMapWithClassMap(
-          _PigeonFfiCodec.writeValue<NSDictionary>(classMap),
+        final NSData pigeonVar_args = _PigeonFfiBuffers.encode(<Object?>[classMap]);
+        final NSData? pigeonVar_res = _ffiApi.pigeon_callFlutterEchoClassMap(
+          pigeonVar_args,
           wrappedError: pigeonVar_error,
         );
         _throwIfFfiError(pigeonVar_error);
-        final Map<int?, NativeInteropAllNullableTypes?> pigeonVar_dartTypeRes =
-            (_PigeonFfiCodec.readValue(pigeonVar_res, int)! as Map<Object?, Object?>)
-                .cast<int?, NativeInteropAllNullableTypes?>();
-        return pigeonVar_dartTypeRes;
+        return (_PigeonFfiBuffers.decode(pigeonVar_res)! as Map<Object?, Object?>)
+            .cast<int?, NativeInteropAllNullableTypes?>();
       } else {
         throw Exception('No JNI or FFI api available');
       }
@@ -7312,24 +7637,26 @@ class NativeInteropHostIntegrationCoreApiForNativeInterop {
   Map<String, String> callFlutterEchoNonNullStringMap(Map<String, String> stringMap) {
     try {
       if (_jniApi != null) {
-        final JMap<JString, JString> pigeonVar_res = _jniApi.callFlutterEchoNonNullStringMap(
-          _PigeonJniCodec.writeValue<JMap<JString, JString>>(stringMap),
-        );
-        final Map<String, String> pigeonVar_dartTypeRes =
-            (_PigeonJniCodec.readValue(pigeonVar_res)! as Map<Object?, Object?>)
-                .cast<String, String>();
-        return pigeonVar_dartTypeRes;
+        final JByteArray pigeonVar_args = _PigeonJniBuffers.encode(<Object?>[stringMap]);
+        try {
+          final JByteArray? pigeonVar_res = _jniApi.pigeon_callFlutterEchoNonNullStringMap(
+            pigeonVar_args,
+          );
+          return (_PigeonJniBuffers.decode(pigeonVar_res)! as Map<Object?, Object?>)
+              .cast<String, String>();
+        } finally {
+          pigeonVar_args.release();
+        }
       } else if (_ffiApi != null) {
         final pigeonVar_error = ffi_bridge.NativeInteropTestsError();
-        final NSDictionary? pigeonVar_res = _ffiApi.callFlutterEchoNonNullStringMapWithStringMap(
-          _PigeonFfiCodec.writeValue<NSDictionary>(stringMap),
+        final NSData pigeonVar_args = _PigeonFfiBuffers.encode(<Object?>[stringMap]);
+        final NSData? pigeonVar_res = _ffiApi.pigeon_callFlutterEchoNonNullStringMap(
+          pigeonVar_args,
           wrappedError: pigeonVar_error,
         );
         _throwIfFfiError(pigeonVar_error);
-        final Map<String, String> pigeonVar_dartTypeRes =
-            (_PigeonFfiCodec.readValue(pigeonVar_res)! as Map<Object?, Object?>)
-                .cast<String, String>();
-        return pigeonVar_dartTypeRes;
+        return (_PigeonFfiBuffers.decode(pigeonVar_res)! as Map<Object?, Object?>)
+            .cast<String, String>();
       } else {
         throw Exception('No JNI or FFI api available');
       }
@@ -7341,23 +7668,25 @@ class NativeInteropHostIntegrationCoreApiForNativeInterop {
   Map<int, int> callFlutterEchoNonNullIntMap(Map<int, int> intMap) {
     try {
       if (_jniApi != null) {
-        final JMap<JLong, JLong> pigeonVar_res = _jniApi.callFlutterEchoNonNullIntMap(
-          _PigeonJniCodec.writeValue<JMap<JLong, JLong>>(intMap),
-        );
-        final Map<int, int> pigeonVar_dartTypeRes =
-            (_PigeonJniCodec.readValue(pigeonVar_res)! as Map<Object?, Object?>).cast<int, int>();
-        return pigeonVar_dartTypeRes;
+        final JByteArray pigeonVar_args = _PigeonJniBuffers.encode(<Object?>[intMap]);
+        try {
+          final JByteArray? pigeonVar_res = _jniApi.pigeon_callFlutterEchoNonNullIntMap(
+            pigeonVar_args,
+          );
+          return (_PigeonJniBuffers.decode(pigeonVar_res)! as Map<Object?, Object?>)
+              .cast<int, int>();
+        } finally {
+          pigeonVar_args.release();
+        }
       } else if (_ffiApi != null) {
         final pigeonVar_error = ffi_bridge.NativeInteropTestsError();
-        final NSDictionary? pigeonVar_res = _ffiApi.callFlutterEchoNonNullIntMapWithIntMap(
-          _PigeonFfiCodec.writeValue<NSDictionary>(intMap),
+        final NSData pigeonVar_args = _PigeonFfiBuffers.encode(<Object?>[intMap]);
+        final NSData? pigeonVar_res = _ffiApi.pigeon_callFlutterEchoNonNullIntMap(
+          pigeonVar_args,
           wrappedError: pigeonVar_error,
         );
         _throwIfFfiError(pigeonVar_error);
-        final Map<int, int> pigeonVar_dartTypeRes =
-            (_PigeonFfiCodec.readValue(pigeonVar_res, int, int)! as Map<Object?, Object?>)
-                .cast<int, int>();
-        return pigeonVar_dartTypeRes;
+        return (_PigeonFfiBuffers.decode(pigeonVar_res)! as Map<Object?, Object?>).cast<int, int>();
       } else {
         throw Exception('No JNI or FFI api available');
       }
@@ -7371,28 +7700,26 @@ class NativeInteropHostIntegrationCoreApiForNativeInterop {
   ) {
     try {
       if (_jniApi != null) {
-        final JMap<jni_bridge.NativeInteropAnEnum, jni_bridge.NativeInteropAnEnum> pigeonVar_res =
-            _jniApi.callFlutterEchoNonNullEnumMap(
-              _PigeonJniCodec.writeValue<
-                JMap<jni_bridge.NativeInteropAnEnum, jni_bridge.NativeInteropAnEnum>
-              >(enumMap),
-            );
-        final Map<NativeInteropAnEnum, NativeInteropAnEnum> pigeonVar_dartTypeRes =
-            (_PigeonJniCodec.readValue(pigeonVar_res)! as Map<Object?, Object?>)
-                .cast<NativeInteropAnEnum, NativeInteropAnEnum>();
-        return pigeonVar_dartTypeRes;
+        final JByteArray pigeonVar_args = _PigeonJniBuffers.encode(<Object?>[enumMap]);
+        try {
+          final JByteArray? pigeonVar_res = _jniApi.pigeon_callFlutterEchoNonNullEnumMap(
+            pigeonVar_args,
+          );
+          return (_PigeonJniBuffers.decode(pigeonVar_res)! as Map<Object?, Object?>)
+              .cast<NativeInteropAnEnum, NativeInteropAnEnum>();
+        } finally {
+          pigeonVar_args.release();
+        }
       } else if (_ffiApi != null) {
         final pigeonVar_error = ffi_bridge.NativeInteropTestsError();
-        final NSDictionary? pigeonVar_res = _ffiApi.callFlutterEchoNonNullEnumMapWithEnumMap(
-          _PigeonFfiCodec.writeValue<NSDictionary>(enumMap),
+        final NSData pigeonVar_args = _PigeonFfiBuffers.encode(<Object?>[enumMap]);
+        final NSData? pigeonVar_res = _ffiApi.pigeon_callFlutterEchoNonNullEnumMap(
+          pigeonVar_args,
           wrappedError: pigeonVar_error,
         );
         _throwIfFfiError(pigeonVar_error);
-        final Map<NativeInteropAnEnum, NativeInteropAnEnum> pigeonVar_dartTypeRes =
-            (_PigeonFfiCodec.readValue(pigeonVar_res, NativeInteropAnEnum, NativeInteropAnEnum)!
-                    as Map<Object?, Object?>)
-                .cast<NativeInteropAnEnum, NativeInteropAnEnum>();
-        return pigeonVar_dartTypeRes;
+        return (_PigeonFfiBuffers.decode(pigeonVar_res)! as Map<Object?, Object?>)
+            .cast<NativeInteropAnEnum, NativeInteropAnEnum>();
       } else {
         throw Exception('No JNI or FFI api available');
       }
@@ -7406,27 +7733,26 @@ class NativeInteropHostIntegrationCoreApiForNativeInterop {
   ) {
     try {
       if (_jniApi != null) {
-        final JMap<JLong, jni_bridge.NativeInteropAllNullableTypes> pigeonVar_res = _jniApi
-            .callFlutterEchoNonNullClassMap(
-              _PigeonJniCodec.writeValue<JMap<JLong, jni_bridge.NativeInteropAllNullableTypes>>(
-                classMap,
-              ),
-            );
-        final Map<int, NativeInteropAllNullableTypes> pigeonVar_dartTypeRes =
-            (_PigeonJniCodec.readValue(pigeonVar_res)! as Map<Object?, Object?>)
-                .cast<int, NativeInteropAllNullableTypes>();
-        return pigeonVar_dartTypeRes;
+        final JByteArray pigeonVar_args = _PigeonJniBuffers.encode(<Object?>[classMap]);
+        try {
+          final JByteArray? pigeonVar_res = _jniApi.pigeon_callFlutterEchoNonNullClassMap(
+            pigeonVar_args,
+          );
+          return (_PigeonJniBuffers.decode(pigeonVar_res)! as Map<Object?, Object?>)
+              .cast<int, NativeInteropAllNullableTypes>();
+        } finally {
+          pigeonVar_args.release();
+        }
       } else if (_ffiApi != null) {
         final pigeonVar_error = ffi_bridge.NativeInteropTestsError();
-        final NSDictionary? pigeonVar_res = _ffiApi.callFlutterEchoNonNullClassMapWithClassMap(
-          _PigeonFfiCodec.writeValue<NSDictionary>(classMap),
+        final NSData pigeonVar_args = _PigeonFfiBuffers.encode(<Object?>[classMap]);
+        final NSData? pigeonVar_res = _ffiApi.pigeon_callFlutterEchoNonNullClassMap(
+          pigeonVar_args,
           wrappedError: pigeonVar_error,
         );
         _throwIfFfiError(pigeonVar_error);
-        final Map<int, NativeInteropAllNullableTypes> pigeonVar_dartTypeRes =
-            (_PigeonFfiCodec.readValue(pigeonVar_res, int)! as Map<Object?, Object?>)
-                .cast<int, NativeInteropAllNullableTypes>();
-        return pigeonVar_dartTypeRes;
+        return (_PigeonFfiBuffers.decode(pigeonVar_res)! as Map<Object?, Object?>)
+            .cast<int, NativeInteropAllNullableTypes>();
       } else {
         throw Exception('No JNI or FFI api available');
       }
@@ -7438,23 +7764,16 @@ class NativeInteropHostIntegrationCoreApiForNativeInterop {
   NativeInteropAnEnum callFlutterEchoEnum(NativeInteropAnEnum anEnum) {
     try {
       if (_jniApi != null) {
-        final jni_bridge.NativeInteropAnEnum pigeonVar_res = _jniApi.callFlutterEchoEnum(
-          anEnum.toJni(),
-        );
-        final NativeInteropAnEnum pigeonVar_dartTypeRes = NativeInteropAnEnum.fromJni(
-          pigeonVar_res,
-        )!;
-        return pigeonVar_dartTypeRes;
+        final int pigeonVar_res = _jniApi.pigeon_callFlutterEchoEnum(anEnum.index);
+        return NativeInteropAnEnum.values[pigeonVar_res];
       } else if (_ffiApi != null) {
         final pigeonVar_error = ffi_bridge.NativeInteropTestsError();
-        final NSNumber? pigeonVar_res = _ffiApi.callFlutterEchoEnumWithAnEnum(
-          ffi_bridge.NativeInteropAnEnum.values[anEnum.index],
+        final NSNumber? pigeonVar_res = _ffiApi.pigeon_callFlutterEchoEnum(
+          anEnum.index,
           wrappedError: pigeonVar_error,
         );
         _throwIfFfiError(pigeonVar_error);
-        final NativeInteropAnEnum pigeonVar_dartTypeRes =
-            _PigeonFfiCodec.readValue(pigeonVar_res, NativeInteropAnEnum)! as NativeInteropAnEnum;
-        return pigeonVar_dartTypeRes;
+        return NativeInteropAnEnum.values[pigeonVar_res!.longValue];
       } else {
         throw Exception('No JNI or FFI api available');
       }
@@ -7468,24 +7787,18 @@ class NativeInteropHostIntegrationCoreApiForNativeInterop {
   ) {
     try {
       if (_jniApi != null) {
-        final jni_bridge.NativeInteropAnotherEnum pigeonVar_res = _jniApi
-            .callFlutterEchoNativeInteropAnotherEnum(anotherEnum.toJni());
-        final NativeInteropAnotherEnum pigeonVar_dartTypeRes = NativeInteropAnotherEnum.fromJni(
-          pigeonVar_res,
-        )!;
-        return pigeonVar_dartTypeRes;
+        final int pigeonVar_res = _jniApi.pigeon_callFlutterEchoNativeInteropAnotherEnum(
+          anotherEnum.index,
+        );
+        return NativeInteropAnotherEnum.values[pigeonVar_res];
       } else if (_ffiApi != null) {
         final pigeonVar_error = ffi_bridge.NativeInteropTestsError();
-        final NSNumber? pigeonVar_res = _ffiApi
-            .callFlutterEchoNativeInteropAnotherEnumWithAnotherEnum(
-              ffi_bridge.NativeInteropAnotherEnum.values[anotherEnum.index],
-              wrappedError: pigeonVar_error,
-            );
+        final NSNumber? pigeonVar_res = _ffiApi.pigeon_callFlutterEchoNativeInteropAnotherEnum(
+          anotherEnum.index,
+          wrappedError: pigeonVar_error,
+        );
         _throwIfFfiError(pigeonVar_error);
-        final NativeInteropAnotherEnum pigeonVar_dartTypeRes =
-            _PigeonFfiCodec.readValue(pigeonVar_res, NativeInteropAnotherEnum)!
-                as NativeInteropAnotherEnum;
-        return pigeonVar_dartTypeRes;
+        return NativeInteropAnotherEnum.values[pigeonVar_res!.longValue];
       } else {
         throw Exception('No JNI or FFI api available');
       }
@@ -7497,20 +7810,23 @@ class NativeInteropHostIntegrationCoreApiForNativeInterop {
   bool? callFlutterEchoNullableBool(bool? aBool) {
     try {
       if (_jniApi != null) {
-        final JBoolean? pigeonVar_res = _jniApi.callFlutterEchoNullableBool(
-          _PigeonJniCodec.writeValue<JBoolean?>(aBool),
-        );
-        final bool? pigeonVar_dartTypeRes = pigeonVar_res?.toDartBool(releaseOriginal: true);
-        return pigeonVar_dartTypeRes;
+        final JBoolean? pigeonVar_aBool = aBool == null ? null : JBoolean(aBool);
+        try {
+          final JBoolean? pigeonVar_res = _jniApi.pigeon_callFlutterEchoNullableBool(
+            pigeonVar_aBool,
+          );
+          return pigeonVar_res?.toDartBool(releaseOriginal: true);
+        } finally {
+          pigeonVar_aBool?.release();
+        }
       } else if (_ffiApi != null) {
         final pigeonVar_error = ffi_bridge.NativeInteropTestsError();
-        final NSNumber? pigeonVar_res = _ffiApi.callFlutterEchoNullableBoolWithABool(
+        final NSNumber? pigeonVar_res = _ffiApi.pigeon_callFlutterEchoNullableBool(
           _PigeonFfiCodec.writeValue<NSNumber?>(aBool),
           wrappedError: pigeonVar_error,
         );
         _throwIfFfiError(pigeonVar_error);
-        final bool? pigeonVar_dartTypeRes = pigeonVar_res?.boolValue;
-        return pigeonVar_dartTypeRes;
+        return pigeonVar_res?.boolValue;
       } else {
         throw Exception('No JNI or FFI api available');
       }
@@ -7522,20 +7838,21 @@ class NativeInteropHostIntegrationCoreApiForNativeInterop {
   int? callFlutterEchoNullableInt(int? anInt) {
     try {
       if (_jniApi != null) {
-        final JLong? pigeonVar_res = _jniApi.callFlutterEchoNullableInt(
-          _PigeonJniCodec.writeValue<JLong?>(anInt),
-        );
-        final int? pigeonVar_dartTypeRes = pigeonVar_res?.toDartInt(releaseOriginal: true);
-        return pigeonVar_dartTypeRes;
+        final JLong? pigeonVar_anInt = anInt == null ? null : JLong(anInt);
+        try {
+          final JLong? pigeonVar_res = _jniApi.pigeon_callFlutterEchoNullableInt(pigeonVar_anInt);
+          return pigeonVar_res?.toDartInt(releaseOriginal: true);
+        } finally {
+          pigeonVar_anInt?.release();
+        }
       } else if (_ffiApi != null) {
         final pigeonVar_error = ffi_bridge.NativeInteropTestsError();
-        final NSNumber? pigeonVar_res = _ffiApi.callFlutterEchoNullableIntWithAnInt(
+        final NSNumber? pigeonVar_res = _ffiApi.pigeon_callFlutterEchoNullableInt(
           _PigeonFfiCodec.writeValue<NSNumber?>(anInt),
           wrappedError: pigeonVar_error,
         );
         _throwIfFfiError(pigeonVar_error);
-        final int? pigeonVar_dartTypeRes = pigeonVar_res?.longValue;
-        return pigeonVar_dartTypeRes;
+        return pigeonVar_res?.longValue;
       } else {
         throw Exception('No JNI or FFI api available');
       }
@@ -7547,20 +7864,23 @@ class NativeInteropHostIntegrationCoreApiForNativeInterop {
   double? callFlutterEchoNullableDouble(double? aDouble) {
     try {
       if (_jniApi != null) {
-        final JDouble? pigeonVar_res = _jniApi.callFlutterEchoNullableDouble(
-          _PigeonJniCodec.writeValue<JDouble?>(aDouble),
-        );
-        final double? pigeonVar_dartTypeRes = pigeonVar_res?.toDartDouble(releaseOriginal: true);
-        return pigeonVar_dartTypeRes;
+        final JDouble? pigeonVar_aDouble = aDouble == null ? null : JDouble(aDouble);
+        try {
+          final JDouble? pigeonVar_res = _jniApi.pigeon_callFlutterEchoNullableDouble(
+            pigeonVar_aDouble,
+          );
+          return pigeonVar_res?.toDartDouble(releaseOriginal: true);
+        } finally {
+          pigeonVar_aDouble?.release();
+        }
       } else if (_ffiApi != null) {
         final pigeonVar_error = ffi_bridge.NativeInteropTestsError();
-        final NSNumber? pigeonVar_res = _ffiApi.callFlutterEchoNullableDoubleWithADouble(
+        final NSNumber? pigeonVar_res = _ffiApi.pigeon_callFlutterEchoNullableDouble(
           _PigeonFfiCodec.writeValue<NSNumber?>(aDouble),
           wrappedError: pigeonVar_error,
         );
         _throwIfFfiError(pigeonVar_error);
-        final double? pigeonVar_dartTypeRes = pigeonVar_res?.doubleValue;
-        return pigeonVar_dartTypeRes;
+        return pigeonVar_res?.doubleValue;
       } else {
         throw Exception('No JNI or FFI api available');
       }
@@ -7572,20 +7892,23 @@ class NativeInteropHostIntegrationCoreApiForNativeInterop {
   String? callFlutterEchoNullableString(String? aString) {
     try {
       if (_jniApi != null) {
-        final JString? pigeonVar_res = _jniApi.callFlutterEchoNullableString(
-          _PigeonJniCodec.writeValue<JString?>(aString),
-        );
-        final String? pigeonVar_dartTypeRes = pigeonVar_res?.toDartString(releaseOriginal: true);
-        return pigeonVar_dartTypeRes;
+        final JString? pigeonVar_aString = aString?.toJString();
+        try {
+          final JString? pigeonVar_res = _jniApi.pigeon_callFlutterEchoNullableString(
+            pigeonVar_aString,
+          );
+          return pigeonVar_res?.toDartString(releaseOriginal: true);
+        } finally {
+          pigeonVar_aString?.release();
+        }
       } else if (_ffiApi != null) {
         final pigeonVar_error = ffi_bridge.NativeInteropTestsError();
-        final NSString? pigeonVar_res = _ffiApi.callFlutterEchoNullableStringWithAString(
-          _PigeonFfiCodec.writeValue<NSString?>(aString),
+        final NSString? pigeonVar_res = _ffiApi.pigeon_callFlutterEchoNullableString(
+          aString == null ? null : NSString(aString),
           wrappedError: pigeonVar_error,
         );
         _throwIfFfiError(pigeonVar_error);
-        final String? pigeonVar_dartTypeRes = pigeonVar_res?.toDartString();
-        return pigeonVar_dartTypeRes;
+        return pigeonVar_res?.toDartString();
       } else {
         throw Exception('No JNI or FFI api available');
       }
@@ -7597,23 +7920,23 @@ class NativeInteropHostIntegrationCoreApiForNativeInterop {
   Uint8List? callFlutterEchoNullableUint8List(Uint8List? list) {
     try {
       if (_jniApi != null) {
-        final JByteArray? pigeonVar_res = _jniApi.callFlutterEchoNullableUint8List(
-          _PigeonJniCodec.writeValue<JByteArray?>(list),
-        );
-        final Uint8List? pigeonVar_dartTypeRes =
-            _PigeonJniCodec.readValue(pigeonVar_res) as Uint8List?;
-        return pigeonVar_dartTypeRes;
+        final JByteArray? pigeonVar_list = list == null ? null : _uint8ListToJni(list);
+        try {
+          final JByteArray? pigeonVar_res = _jniApi.pigeon_callFlutterEchoNullableUint8List(
+            pigeonVar_list,
+          );
+          return _jByteArrayToDart(pigeonVar_res, release: true);
+        } finally {
+          pigeonVar_list?.release();
+        }
       } else if (_ffiApi != null) {
         final pigeonVar_error = ffi_bridge.NativeInteropTestsError();
-        final ffi_bridge.NativeInteropTestsPigeonTypedData? pigeonVar_res = _ffiApi
-            .callFlutterEchoNullableUint8ListWithList(
-              _PigeonFfiCodec.writeValue<ffi_bridge.NativeInteropTestsPigeonTypedData?>(list),
-              wrappedError: pigeonVar_error,
-            );
+        final NSData? pigeonVar_res = _ffiApi.pigeon_callFlutterEchoNullableUint8List(
+          list == null ? null : _typedDataToNSData(list),
+          wrappedError: pigeonVar_error,
+        );
         _throwIfFfiError(pigeonVar_error);
-        final Uint8List? pigeonVar_dartTypeRes =
-            _PigeonFfiCodec.readValue(pigeonVar_res) as Uint8List?;
-        return pigeonVar_dartTypeRes;
+        return _PigeonFfiBuffers.toUint8List(pigeonVar_res);
       } else {
         throw Exception('No JNI or FFI api available');
       }
@@ -7625,23 +7948,23 @@ class NativeInteropHostIntegrationCoreApiForNativeInterop {
   Int32List? callFlutterEchoNullableInt32List(Int32List? list) {
     try {
       if (_jniApi != null) {
-        final JIntArray? pigeonVar_res = _jniApi.callFlutterEchoNullableInt32List(
-          _PigeonJniCodec.writeValue<JIntArray?>(list),
-        );
-        final Int32List? pigeonVar_dartTypeRes =
-            _PigeonJniCodec.readValue(pigeonVar_res) as Int32List?;
-        return pigeonVar_dartTypeRes;
+        final JIntArray? pigeonVar_list = list == null ? null : _int32ListToJni(list);
+        try {
+          final JIntArray? pigeonVar_res = _jniApi.pigeon_callFlutterEchoNullableInt32List(
+            pigeonVar_list,
+          );
+          return _jIntArrayToDart(pigeonVar_res, release: true);
+        } finally {
+          pigeonVar_list?.release();
+        }
       } else if (_ffiApi != null) {
         final pigeonVar_error = ffi_bridge.NativeInteropTestsError();
-        final ffi_bridge.NativeInteropTestsPigeonTypedData? pigeonVar_res = _ffiApi
-            .callFlutterEchoNullableInt32ListWithList(
-              _PigeonFfiCodec.writeValue<ffi_bridge.NativeInteropTestsPigeonTypedData?>(list),
-              wrappedError: pigeonVar_error,
-            );
+        final NSData? pigeonVar_res = _ffiApi.pigeon_callFlutterEchoNullableInt32List(
+          list == null ? null : _typedDataToNSData(list),
+          wrappedError: pigeonVar_error,
+        );
         _throwIfFfiError(pigeonVar_error);
-        final Int32List? pigeonVar_dartTypeRes =
-            _PigeonFfiCodec.readValue(pigeonVar_res) as Int32List?;
-        return pigeonVar_dartTypeRes;
+        return _PigeonFfiBuffers.toUint8List(pigeonVar_res)?.buffer.asInt32List();
       } else {
         throw Exception('No JNI or FFI api available');
       }
@@ -7653,23 +7976,23 @@ class NativeInteropHostIntegrationCoreApiForNativeInterop {
   Int64List? callFlutterEchoNullableInt64List(Int64List? list) {
     try {
       if (_jniApi != null) {
-        final JLongArray? pigeonVar_res = _jniApi.callFlutterEchoNullableInt64List(
-          _PigeonJniCodec.writeValue<JLongArray?>(list),
-        );
-        final Int64List? pigeonVar_dartTypeRes =
-            _PigeonJniCodec.readValue(pigeonVar_res) as Int64List?;
-        return pigeonVar_dartTypeRes;
+        final JLongArray? pigeonVar_list = list == null ? null : _int64ListToJni(list);
+        try {
+          final JLongArray? pigeonVar_res = _jniApi.pigeon_callFlutterEchoNullableInt64List(
+            pigeonVar_list,
+          );
+          return _jLongArrayToDart(pigeonVar_res, release: true);
+        } finally {
+          pigeonVar_list?.release();
+        }
       } else if (_ffiApi != null) {
         final pigeonVar_error = ffi_bridge.NativeInteropTestsError();
-        final ffi_bridge.NativeInteropTestsPigeonTypedData? pigeonVar_res = _ffiApi
-            .callFlutterEchoNullableInt64ListWithList(
-              _PigeonFfiCodec.writeValue<ffi_bridge.NativeInteropTestsPigeonTypedData?>(list),
-              wrappedError: pigeonVar_error,
-            );
+        final NSData? pigeonVar_res = _ffiApi.pigeon_callFlutterEchoNullableInt64List(
+          list == null ? null : _typedDataToNSData(list),
+          wrappedError: pigeonVar_error,
+        );
         _throwIfFfiError(pigeonVar_error);
-        final Int64List? pigeonVar_dartTypeRes =
-            _PigeonFfiCodec.readValue(pigeonVar_res) as Int64List?;
-        return pigeonVar_dartTypeRes;
+        return _PigeonFfiBuffers.toUint8List(pigeonVar_res)?.buffer.asInt64List();
       } else {
         throw Exception('No JNI or FFI api available');
       }
@@ -7681,23 +8004,23 @@ class NativeInteropHostIntegrationCoreApiForNativeInterop {
   Float64List? callFlutterEchoNullableFloat64List(Float64List? list) {
     try {
       if (_jniApi != null) {
-        final JDoubleArray? pigeonVar_res = _jniApi.callFlutterEchoNullableFloat64List(
-          _PigeonJniCodec.writeValue<JDoubleArray?>(list),
-        );
-        final Float64List? pigeonVar_dartTypeRes =
-            _PigeonJniCodec.readValue(pigeonVar_res) as Float64List?;
-        return pigeonVar_dartTypeRes;
+        final JDoubleArray? pigeonVar_list = list == null ? null : _float64ListToJni(list);
+        try {
+          final JDoubleArray? pigeonVar_res = _jniApi.pigeon_callFlutterEchoNullableFloat64List(
+            pigeonVar_list,
+          );
+          return _jDoubleArrayToDart(pigeonVar_res, release: true);
+        } finally {
+          pigeonVar_list?.release();
+        }
       } else if (_ffiApi != null) {
         final pigeonVar_error = ffi_bridge.NativeInteropTestsError();
-        final ffi_bridge.NativeInteropTestsPigeonTypedData? pigeonVar_res = _ffiApi
-            .callFlutterEchoNullableFloat64ListWithList(
-              _PigeonFfiCodec.writeValue<ffi_bridge.NativeInteropTestsPigeonTypedData?>(list),
-              wrappedError: pigeonVar_error,
-            );
+        final NSData? pigeonVar_res = _ffiApi.pigeon_callFlutterEchoNullableFloat64List(
+          list == null ? null : _typedDataToNSData(list),
+          wrappedError: pigeonVar_error,
+        );
         _throwIfFfiError(pigeonVar_error);
-        final Float64List? pigeonVar_dartTypeRes =
-            _PigeonFfiCodec.readValue(pigeonVar_res) as Float64List?;
-        return pigeonVar_dartTypeRes;
+        return _PigeonFfiBuffers.toUint8List(pigeonVar_res)?.buffer.asFloat64List();
       } else {
         throw Exception('No JNI or FFI api available');
       }
@@ -7709,22 +8032,24 @@ class NativeInteropHostIntegrationCoreApiForNativeInterop {
   List<Object?>? callFlutterEchoNullableList(List<Object?>? list) {
     try {
       if (_jniApi != null) {
-        final JList<JObject?>? pigeonVar_res = _jniApi.callFlutterEchoNullableList(
-          _PigeonJniCodec.writeValue<JList<JObject?>?>(list),
-        );
-        final List<Object?>? pigeonVar_dartTypeRes =
-            (_PigeonJniCodec.readValue(pigeonVar_res) as List<Object?>?)?.cast<Object?>();
-        return pigeonVar_dartTypeRes;
+        final JByteArray pigeonVar_args = _PigeonJniBuffers.encode(<Object?>[list]);
+        try {
+          final JByteArray? pigeonVar_res = _jniApi.pigeon_callFlutterEchoNullableList(
+            pigeonVar_args,
+          );
+          return _PigeonJniBuffers.decode(pigeonVar_res) as List<Object?>?;
+        } finally {
+          pigeonVar_args.release();
+        }
       } else if (_ffiApi != null) {
         final pigeonVar_error = ffi_bridge.NativeInteropTestsError();
-        final NSArray? pigeonVar_res = _ffiApi.callFlutterEchoNullableListWithList(
-          _PigeonFfiCodec.writeValue<NSMutableArray?>(list),
+        final NSData pigeonVar_args = _PigeonFfiBuffers.encode(<Object?>[list]);
+        final NSData? pigeonVar_res = _ffiApi.pigeon_callFlutterEchoNullableList(
+          pigeonVar_args,
           wrappedError: pigeonVar_error,
         );
         _throwIfFfiError(pigeonVar_error);
-        final List<Object?>? pigeonVar_dartTypeRes =
-            (_PigeonFfiCodec.readValue(pigeonVar_res) as List<Object?>?)?.cast<Object?>();
-        return pigeonVar_dartTypeRes;
+        return _PigeonFfiBuffers.decode(pigeonVar_res) as List<Object?>?;
       } else {
         throw Exception('No JNI or FFI api available');
       }
@@ -7738,25 +8063,26 @@ class NativeInteropHostIntegrationCoreApiForNativeInterop {
   ) {
     try {
       if (_jniApi != null) {
-        final JList<jni_bridge.NativeInteropAnEnum?>? pigeonVar_res = _jniApi
-            .callFlutterEchoNullableEnumList(
-              _PigeonJniCodec.writeValue<JList<jni_bridge.NativeInteropAnEnum?>?>(enumList),
-            );
-        final List<NativeInteropAnEnum?>? pigeonVar_dartTypeRes =
-            (_PigeonJniCodec.readValue(pigeonVar_res) as List<Object?>?)
-                ?.cast<NativeInteropAnEnum?>();
-        return pigeonVar_dartTypeRes;
+        final JByteArray pigeonVar_args = _PigeonJniBuffers.encode(<Object?>[enumList]);
+        try {
+          final JByteArray? pigeonVar_res = _jniApi.pigeon_callFlutterEchoNullableEnumList(
+            pigeonVar_args,
+          );
+          return (_PigeonJniBuffers.decode(pigeonVar_res) as List<Object?>?)
+              ?.cast<NativeInteropAnEnum?>();
+        } finally {
+          pigeonVar_args.release();
+        }
       } else if (_ffiApi != null) {
         final pigeonVar_error = ffi_bridge.NativeInteropTestsError();
-        final NSArray? pigeonVar_res = _ffiApi.callFlutterEchoNullableEnumListWithEnumList(
-          _PigeonFfiCodec.writeValue<NSMutableArray?>(enumList),
+        final NSData pigeonVar_args = _PigeonFfiBuffers.encode(<Object?>[enumList]);
+        final NSData? pigeonVar_res = _ffiApi.pigeon_callFlutterEchoNullableEnumList(
+          pigeonVar_args,
           wrappedError: pigeonVar_error,
         );
         _throwIfFfiError(pigeonVar_error);
-        final List<NativeInteropAnEnum?>? pigeonVar_dartTypeRes =
-            (_PigeonFfiCodec.readValue(pigeonVar_res, NativeInteropAnEnum) as List<Object?>?)
-                ?.cast<NativeInteropAnEnum?>();
-        return pigeonVar_dartTypeRes;
+        return (_PigeonFfiBuffers.decode(pigeonVar_res) as List<Object?>?)
+            ?.cast<NativeInteropAnEnum?>();
       } else {
         throw Exception('No JNI or FFI api available');
       }
@@ -7770,27 +8096,26 @@ class NativeInteropHostIntegrationCoreApiForNativeInterop {
   ) {
     try {
       if (_jniApi != null) {
-        final JList<jni_bridge.NativeInteropAllNullableTypes?>? pigeonVar_res = _jniApi
-            .callFlutterEchoNullableClassList(
-              _PigeonJniCodec.writeValue<JList<jni_bridge.NativeInteropAllNullableTypes?>?>(
-                classList,
-              ),
-            );
-        final List<NativeInteropAllNullableTypes?>? pigeonVar_dartTypeRes =
-            (_PigeonJniCodec.readValue(pigeonVar_res) as List<Object?>?)
-                ?.cast<NativeInteropAllNullableTypes?>();
-        return pigeonVar_dartTypeRes;
+        final JByteArray pigeonVar_args = _PigeonJniBuffers.encode(<Object?>[classList]);
+        try {
+          final JByteArray? pigeonVar_res = _jniApi.pigeon_callFlutterEchoNullableClassList(
+            pigeonVar_args,
+          );
+          return (_PigeonJniBuffers.decode(pigeonVar_res) as List<Object?>?)
+              ?.cast<NativeInteropAllNullableTypes?>();
+        } finally {
+          pigeonVar_args.release();
+        }
       } else if (_ffiApi != null) {
         final pigeonVar_error = ffi_bridge.NativeInteropTestsError();
-        final NSArray? pigeonVar_res = _ffiApi.callFlutterEchoNullableClassListWithClassList(
-          _PigeonFfiCodec.writeValue<NSMutableArray?>(classList),
+        final NSData pigeonVar_args = _PigeonFfiBuffers.encode(<Object?>[classList]);
+        final NSData? pigeonVar_res = _ffiApi.pigeon_callFlutterEchoNullableClassList(
+          pigeonVar_args,
           wrappedError: pigeonVar_error,
         );
         _throwIfFfiError(pigeonVar_error);
-        final List<NativeInteropAllNullableTypes?>? pigeonVar_dartTypeRes =
-            (_PigeonFfiCodec.readValue(pigeonVar_res) as List<Object?>?)
-                ?.cast<NativeInteropAllNullableTypes?>();
-        return pigeonVar_dartTypeRes;
+        return (_PigeonFfiBuffers.decode(pigeonVar_res) as List<Object?>?)
+            ?.cast<NativeInteropAllNullableTypes?>();
       } else {
         throw Exception('No JNI or FFI api available');
       }
@@ -7804,25 +8129,26 @@ class NativeInteropHostIntegrationCoreApiForNativeInterop {
   ) {
     try {
       if (_jniApi != null) {
-        final JList<jni_bridge.NativeInteropAnEnum>? pigeonVar_res = _jniApi
-            .callFlutterEchoNullableNonNullEnumList(
-              _PigeonJniCodec.writeValue<JList<jni_bridge.NativeInteropAnEnum>?>(enumList),
-            );
-        final List<NativeInteropAnEnum>? pigeonVar_dartTypeRes =
-            (_PigeonJniCodec.readValue(pigeonVar_res) as List<Object?>?)
-                ?.cast<NativeInteropAnEnum>();
-        return pigeonVar_dartTypeRes;
+        final JByteArray pigeonVar_args = _PigeonJniBuffers.encode(<Object?>[enumList]);
+        try {
+          final JByteArray? pigeonVar_res = _jniApi.pigeon_callFlutterEchoNullableNonNullEnumList(
+            pigeonVar_args,
+          );
+          return (_PigeonJniBuffers.decode(pigeonVar_res) as List<Object?>?)
+              ?.cast<NativeInteropAnEnum>();
+        } finally {
+          pigeonVar_args.release();
+        }
       } else if (_ffiApi != null) {
         final pigeonVar_error = ffi_bridge.NativeInteropTestsError();
-        final NSArray? pigeonVar_res = _ffiApi.callFlutterEchoNullableNonNullEnumListWithEnumList(
-          _PigeonFfiCodec.writeValue<NSMutableArray?>(enumList),
+        final NSData pigeonVar_args = _PigeonFfiBuffers.encode(<Object?>[enumList]);
+        final NSData? pigeonVar_res = _ffiApi.pigeon_callFlutterEchoNullableNonNullEnumList(
+          pigeonVar_args,
           wrappedError: pigeonVar_error,
         );
         _throwIfFfiError(pigeonVar_error);
-        final List<NativeInteropAnEnum>? pigeonVar_dartTypeRes =
-            (_PigeonFfiCodec.readValue(pigeonVar_res, NativeInteropAnEnum) as List<Object?>?)
-                ?.cast<NativeInteropAnEnum>();
-        return pigeonVar_dartTypeRes;
+        return (_PigeonFfiBuffers.decode(pigeonVar_res) as List<Object?>?)
+            ?.cast<NativeInteropAnEnum>();
       } else {
         throw Exception('No JNI or FFI api available');
       }
@@ -7836,27 +8162,26 @@ class NativeInteropHostIntegrationCoreApiForNativeInterop {
   ) {
     try {
       if (_jniApi != null) {
-        final JList<jni_bridge.NativeInteropAllNullableTypes>? pigeonVar_res = _jniApi
-            .callFlutterEchoNullableNonNullClassList(
-              _PigeonJniCodec.writeValue<JList<jni_bridge.NativeInteropAllNullableTypes>?>(
-                classList,
-              ),
-            );
-        final List<NativeInteropAllNullableTypes>? pigeonVar_dartTypeRes =
-            (_PigeonJniCodec.readValue(pigeonVar_res) as List<Object?>?)
-                ?.cast<NativeInteropAllNullableTypes>();
-        return pigeonVar_dartTypeRes;
+        final JByteArray pigeonVar_args = _PigeonJniBuffers.encode(<Object?>[classList]);
+        try {
+          final JByteArray? pigeonVar_res = _jniApi.pigeon_callFlutterEchoNullableNonNullClassList(
+            pigeonVar_args,
+          );
+          return (_PigeonJniBuffers.decode(pigeonVar_res) as List<Object?>?)
+              ?.cast<NativeInteropAllNullableTypes>();
+        } finally {
+          pigeonVar_args.release();
+        }
       } else if (_ffiApi != null) {
         final pigeonVar_error = ffi_bridge.NativeInteropTestsError();
-        final NSArray? pigeonVar_res = _ffiApi.callFlutterEchoNullableNonNullClassListWithClassList(
-          _PigeonFfiCodec.writeValue<NSMutableArray?>(classList),
+        final NSData pigeonVar_args = _PigeonFfiBuffers.encode(<Object?>[classList]);
+        final NSData? pigeonVar_res = _ffiApi.pigeon_callFlutterEchoNullableNonNullClassList(
+          pigeonVar_args,
           wrappedError: pigeonVar_error,
         );
         _throwIfFfiError(pigeonVar_error);
-        final List<NativeInteropAllNullableTypes>? pigeonVar_dartTypeRes =
-            (_PigeonFfiCodec.readValue(pigeonVar_res) as List<Object?>?)
-                ?.cast<NativeInteropAllNullableTypes>();
-        return pigeonVar_dartTypeRes;
+        return (_PigeonFfiBuffers.decode(pigeonVar_res) as List<Object?>?)
+            ?.cast<NativeInteropAllNullableTypes>();
       } else {
         throw Exception('No JNI or FFI api available');
       }
@@ -7868,24 +8193,24 @@ class NativeInteropHostIntegrationCoreApiForNativeInterop {
   Map<Object?, Object?>? callFlutterEchoNullableMap(Map<Object?, Object?>? map) {
     try {
       if (_jniApi != null) {
-        final JMap<JObject?, JObject?>? pigeonVar_res = _jniApi.callFlutterEchoNullableMap(
-          _PigeonJniCodec.writeValue<JMap<JObject?, JObject?>?>(map),
-        );
-        final Map<Object?, Object?>? pigeonVar_dartTypeRes =
-            (_PigeonJniCodec.readValue(pigeonVar_res) as Map<Object?, Object?>?)
-                ?.cast<Object?, Object?>();
-        return pigeonVar_dartTypeRes;
+        final JByteArray pigeonVar_args = _PigeonJniBuffers.encode(<Object?>[map]);
+        try {
+          final JByteArray? pigeonVar_res = _jniApi.pigeon_callFlutterEchoNullableMap(
+            pigeonVar_args,
+          );
+          return _PigeonJniBuffers.decode(pigeonVar_res) as Map<Object?, Object?>?;
+        } finally {
+          pigeonVar_args.release();
+        }
       } else if (_ffiApi != null) {
         final pigeonVar_error = ffi_bridge.NativeInteropTestsError();
-        final NSDictionary? pigeonVar_res = _ffiApi.callFlutterEchoNullableMapWithMap(
-          _PigeonFfiCodec.writeValue<NSDictionary?>(map),
+        final NSData pigeonVar_args = _PigeonFfiBuffers.encode(<Object?>[map]);
+        final NSData? pigeonVar_res = _ffiApi.pigeon_callFlutterEchoNullableMap(
+          pigeonVar_args,
           wrappedError: pigeonVar_error,
         );
         _throwIfFfiError(pigeonVar_error);
-        final Map<Object?, Object?>? pigeonVar_dartTypeRes =
-            (_PigeonFfiCodec.readValue(pigeonVar_res) as Map<Object?, Object?>?)
-                ?.cast<Object?, Object?>();
-        return pigeonVar_dartTypeRes;
+        return _PigeonFfiBuffers.decode(pigeonVar_res) as Map<Object?, Object?>?;
       } else {
         throw Exception('No JNI or FFI api available');
       }
@@ -7897,24 +8222,26 @@ class NativeInteropHostIntegrationCoreApiForNativeInterop {
   Map<String?, String?>? callFlutterEchoNullableStringMap(Map<String?, String?>? stringMap) {
     try {
       if (_jniApi != null) {
-        final JMap<JString?, JString?>? pigeonVar_res = _jniApi.callFlutterEchoNullableStringMap(
-          _PigeonJniCodec.writeValue<JMap<JString?, JString?>?>(stringMap),
-        );
-        final Map<String?, String?>? pigeonVar_dartTypeRes =
-            (_PigeonJniCodec.readValue(pigeonVar_res) as Map<Object?, Object?>?)
-                ?.cast<String?, String?>();
-        return pigeonVar_dartTypeRes;
+        final JByteArray pigeonVar_args = _PigeonJniBuffers.encode(<Object?>[stringMap]);
+        try {
+          final JByteArray? pigeonVar_res = _jniApi.pigeon_callFlutterEchoNullableStringMap(
+            pigeonVar_args,
+          );
+          return (_PigeonJniBuffers.decode(pigeonVar_res) as Map<Object?, Object?>?)
+              ?.cast<String?, String?>();
+        } finally {
+          pigeonVar_args.release();
+        }
       } else if (_ffiApi != null) {
         final pigeonVar_error = ffi_bridge.NativeInteropTestsError();
-        final NSDictionary? pigeonVar_res = _ffiApi.callFlutterEchoNullableStringMapWithStringMap(
-          _PigeonFfiCodec.writeValue<NSDictionary?>(stringMap),
+        final NSData pigeonVar_args = _PigeonFfiBuffers.encode(<Object?>[stringMap]);
+        final NSData? pigeonVar_res = _ffiApi.pigeon_callFlutterEchoNullableStringMap(
+          pigeonVar_args,
           wrappedError: pigeonVar_error,
         );
         _throwIfFfiError(pigeonVar_error);
-        final Map<String?, String?>? pigeonVar_dartTypeRes =
-            (_PigeonFfiCodec.readValue(pigeonVar_res) as Map<Object?, Object?>?)
-                ?.cast<String?, String?>();
-        return pigeonVar_dartTypeRes;
+        return (_PigeonFfiBuffers.decode(pigeonVar_res) as Map<Object?, Object?>?)
+            ?.cast<String?, String?>();
       } else {
         throw Exception('No JNI or FFI api available');
       }
@@ -7926,24 +8253,26 @@ class NativeInteropHostIntegrationCoreApiForNativeInterop {
   Map<int?, int?>? callFlutterEchoNullableIntMap(Map<int?, int?>? intMap) {
     try {
       if (_jniApi != null) {
-        final JMap<JLong?, JLong?>? pigeonVar_res = _jniApi.callFlutterEchoNullableIntMap(
-          _PigeonJniCodec.writeValue<JMap<JLong?, JLong?>?>(intMap),
-        );
-        final Map<int?, int?>? pigeonVar_dartTypeRes =
-            (_PigeonJniCodec.readValue(pigeonVar_res) as Map<Object?, Object?>?)
-                ?.cast<int?, int?>();
-        return pigeonVar_dartTypeRes;
+        final JByteArray pigeonVar_args = _PigeonJniBuffers.encode(<Object?>[intMap]);
+        try {
+          final JByteArray? pigeonVar_res = _jniApi.pigeon_callFlutterEchoNullableIntMap(
+            pigeonVar_args,
+          );
+          return (_PigeonJniBuffers.decode(pigeonVar_res) as Map<Object?, Object?>?)
+              ?.cast<int?, int?>();
+        } finally {
+          pigeonVar_args.release();
+        }
       } else if (_ffiApi != null) {
         final pigeonVar_error = ffi_bridge.NativeInteropTestsError();
-        final NSDictionary? pigeonVar_res = _ffiApi.callFlutterEchoNullableIntMapWithIntMap(
-          _PigeonFfiCodec.writeValue<NSDictionary?>(intMap),
+        final NSData pigeonVar_args = _PigeonFfiBuffers.encode(<Object?>[intMap]);
+        final NSData? pigeonVar_res = _ffiApi.pigeon_callFlutterEchoNullableIntMap(
+          pigeonVar_args,
           wrappedError: pigeonVar_error,
         );
         _throwIfFfiError(pigeonVar_error);
-        final Map<int?, int?>? pigeonVar_dartTypeRes =
-            (_PigeonFfiCodec.readValue(pigeonVar_res, int, int) as Map<Object?, Object?>?)
-                ?.cast<int?, int?>();
-        return pigeonVar_dartTypeRes;
+        return (_PigeonFfiBuffers.decode(pigeonVar_res) as Map<Object?, Object?>?)
+            ?.cast<int?, int?>();
       } else {
         throw Exception('No JNI or FFI api available');
       }
@@ -7957,28 +8286,26 @@ class NativeInteropHostIntegrationCoreApiForNativeInterop {
   ) {
     try {
       if (_jniApi != null) {
-        final JMap<jni_bridge.NativeInteropAnEnum?, jni_bridge.NativeInteropAnEnum?>?
-        pigeonVar_res = _jniApi.callFlutterEchoNullableEnumMap(
-          _PigeonJniCodec.writeValue<
-            JMap<jni_bridge.NativeInteropAnEnum?, jni_bridge.NativeInteropAnEnum?>?
-          >(enumMap),
-        );
-        final Map<NativeInteropAnEnum?, NativeInteropAnEnum?>? pigeonVar_dartTypeRes =
-            (_PigeonJniCodec.readValue(pigeonVar_res) as Map<Object?, Object?>?)
-                ?.cast<NativeInteropAnEnum?, NativeInteropAnEnum?>();
-        return pigeonVar_dartTypeRes;
+        final JByteArray pigeonVar_args = _PigeonJniBuffers.encode(<Object?>[enumMap]);
+        try {
+          final JByteArray? pigeonVar_res = _jniApi.pigeon_callFlutterEchoNullableEnumMap(
+            pigeonVar_args,
+          );
+          return (_PigeonJniBuffers.decode(pigeonVar_res) as Map<Object?, Object?>?)
+              ?.cast<NativeInteropAnEnum?, NativeInteropAnEnum?>();
+        } finally {
+          pigeonVar_args.release();
+        }
       } else if (_ffiApi != null) {
         final pigeonVar_error = ffi_bridge.NativeInteropTestsError();
-        final NSDictionary? pigeonVar_res = _ffiApi.callFlutterEchoNullableEnumMapWithEnumMap(
-          _PigeonFfiCodec.writeValue<NSDictionary?>(enumMap),
+        final NSData pigeonVar_args = _PigeonFfiBuffers.encode(<Object?>[enumMap]);
+        final NSData? pigeonVar_res = _ffiApi.pigeon_callFlutterEchoNullableEnumMap(
+          pigeonVar_args,
           wrappedError: pigeonVar_error,
         );
         _throwIfFfiError(pigeonVar_error);
-        final Map<NativeInteropAnEnum?, NativeInteropAnEnum?>? pigeonVar_dartTypeRes =
-            (_PigeonFfiCodec.readValue(pigeonVar_res, NativeInteropAnEnum, NativeInteropAnEnum)
-                    as Map<Object?, Object?>?)
-                ?.cast<NativeInteropAnEnum?, NativeInteropAnEnum?>();
-        return pigeonVar_dartTypeRes;
+        return (_PigeonFfiBuffers.decode(pigeonVar_res) as Map<Object?, Object?>?)
+            ?.cast<NativeInteropAnEnum?, NativeInteropAnEnum?>();
       } else {
         throw Exception('No JNI or FFI api available');
       }
@@ -7992,27 +8319,26 @@ class NativeInteropHostIntegrationCoreApiForNativeInterop {
   ) {
     try {
       if (_jniApi != null) {
-        final JMap<JLong?, jni_bridge.NativeInteropAllNullableTypes?>? pigeonVar_res = _jniApi
-            .callFlutterEchoNullableClassMap(
-              _PigeonJniCodec.writeValue<JMap<JLong?, jni_bridge.NativeInteropAllNullableTypes?>?>(
-                classMap,
-              ),
-            );
-        final Map<int?, NativeInteropAllNullableTypes?>? pigeonVar_dartTypeRes =
-            (_PigeonJniCodec.readValue(pigeonVar_res) as Map<Object?, Object?>?)
-                ?.cast<int?, NativeInteropAllNullableTypes?>();
-        return pigeonVar_dartTypeRes;
+        final JByteArray pigeonVar_args = _PigeonJniBuffers.encode(<Object?>[classMap]);
+        try {
+          final JByteArray? pigeonVar_res = _jniApi.pigeon_callFlutterEchoNullableClassMap(
+            pigeonVar_args,
+          );
+          return (_PigeonJniBuffers.decode(pigeonVar_res) as Map<Object?, Object?>?)
+              ?.cast<int?, NativeInteropAllNullableTypes?>();
+        } finally {
+          pigeonVar_args.release();
+        }
       } else if (_ffiApi != null) {
         final pigeonVar_error = ffi_bridge.NativeInteropTestsError();
-        final NSDictionary? pigeonVar_res = _ffiApi.callFlutterEchoNullableClassMapWithClassMap(
-          _PigeonFfiCodec.writeValue<NSDictionary?>(classMap),
+        final NSData pigeonVar_args = _PigeonFfiBuffers.encode(<Object?>[classMap]);
+        final NSData? pigeonVar_res = _ffiApi.pigeon_callFlutterEchoNullableClassMap(
+          pigeonVar_args,
           wrappedError: pigeonVar_error,
         );
         _throwIfFfiError(pigeonVar_error);
-        final Map<int?, NativeInteropAllNullableTypes?>? pigeonVar_dartTypeRes =
-            (_PigeonFfiCodec.readValue(pigeonVar_res, int) as Map<Object?, Object?>?)
-                ?.cast<int?, NativeInteropAllNullableTypes?>();
-        return pigeonVar_dartTypeRes;
+        return (_PigeonFfiBuffers.decode(pigeonVar_res) as Map<Object?, Object?>?)
+            ?.cast<int?, NativeInteropAllNullableTypes?>();
       } else {
         throw Exception('No JNI or FFI api available');
       }
@@ -8024,26 +8350,26 @@ class NativeInteropHostIntegrationCoreApiForNativeInterop {
   Map<String, String>? callFlutterEchoNullableNonNullStringMap(Map<String, String>? stringMap) {
     try {
       if (_jniApi != null) {
-        final JMap<JString, JString>? pigeonVar_res = _jniApi
-            .callFlutterEchoNullableNonNullStringMap(
-              _PigeonJniCodec.writeValue<JMap<JString, JString>?>(stringMap),
-            );
-        final Map<String, String>? pigeonVar_dartTypeRes =
-            (_PigeonJniCodec.readValue(pigeonVar_res) as Map<Object?, Object?>?)
-                ?.cast<String, String>();
-        return pigeonVar_dartTypeRes;
+        final JByteArray pigeonVar_args = _PigeonJniBuffers.encode(<Object?>[stringMap]);
+        try {
+          final JByteArray? pigeonVar_res = _jniApi.pigeon_callFlutterEchoNullableNonNullStringMap(
+            pigeonVar_args,
+          );
+          return (_PigeonJniBuffers.decode(pigeonVar_res) as Map<Object?, Object?>?)
+              ?.cast<String, String>();
+        } finally {
+          pigeonVar_args.release();
+        }
       } else if (_ffiApi != null) {
         final pigeonVar_error = ffi_bridge.NativeInteropTestsError();
-        final NSDictionary? pigeonVar_res = _ffiApi
-            .callFlutterEchoNullableNonNullStringMapWithStringMap(
-              _PigeonFfiCodec.writeValue<NSDictionary?>(stringMap),
-              wrappedError: pigeonVar_error,
-            );
+        final NSData pigeonVar_args = _PigeonFfiBuffers.encode(<Object?>[stringMap]);
+        final NSData? pigeonVar_res = _ffiApi.pigeon_callFlutterEchoNullableNonNullStringMap(
+          pigeonVar_args,
+          wrappedError: pigeonVar_error,
+        );
         _throwIfFfiError(pigeonVar_error);
-        final Map<String, String>? pigeonVar_dartTypeRes =
-            (_PigeonFfiCodec.readValue(pigeonVar_res) as Map<Object?, Object?>?)
-                ?.cast<String, String>();
-        return pigeonVar_dartTypeRes;
+        return (_PigeonFfiBuffers.decode(pigeonVar_res) as Map<Object?, Object?>?)
+            ?.cast<String, String>();
       } else {
         throw Exception('No JNI or FFI api available');
       }
@@ -8055,23 +8381,26 @@ class NativeInteropHostIntegrationCoreApiForNativeInterop {
   Map<int, int>? callFlutterEchoNullableNonNullIntMap(Map<int, int>? intMap) {
     try {
       if (_jniApi != null) {
-        final JMap<JLong, JLong>? pigeonVar_res = _jniApi.callFlutterEchoNullableNonNullIntMap(
-          _PigeonJniCodec.writeValue<JMap<JLong, JLong>?>(intMap),
-        );
-        final Map<int, int>? pigeonVar_dartTypeRes =
-            (_PigeonJniCodec.readValue(pigeonVar_res) as Map<Object?, Object?>?)?.cast<int, int>();
-        return pigeonVar_dartTypeRes;
+        final JByteArray pigeonVar_args = _PigeonJniBuffers.encode(<Object?>[intMap]);
+        try {
+          final JByteArray? pigeonVar_res = _jniApi.pigeon_callFlutterEchoNullableNonNullIntMap(
+            pigeonVar_args,
+          );
+          return (_PigeonJniBuffers.decode(pigeonVar_res) as Map<Object?, Object?>?)
+              ?.cast<int, int>();
+        } finally {
+          pigeonVar_args.release();
+        }
       } else if (_ffiApi != null) {
         final pigeonVar_error = ffi_bridge.NativeInteropTestsError();
-        final NSDictionary? pigeonVar_res = _ffiApi.callFlutterEchoNullableNonNullIntMapWithIntMap(
-          _PigeonFfiCodec.writeValue<NSDictionary?>(intMap),
+        final NSData pigeonVar_args = _PigeonFfiBuffers.encode(<Object?>[intMap]);
+        final NSData? pigeonVar_res = _ffiApi.pigeon_callFlutterEchoNullableNonNullIntMap(
+          pigeonVar_args,
           wrappedError: pigeonVar_error,
         );
         _throwIfFfiError(pigeonVar_error);
-        final Map<int, int>? pigeonVar_dartTypeRes =
-            (_PigeonFfiCodec.readValue(pigeonVar_res, int, int) as Map<Object?, Object?>?)
-                ?.cast<int, int>();
-        return pigeonVar_dartTypeRes;
+        return (_PigeonFfiBuffers.decode(pigeonVar_res) as Map<Object?, Object?>?)
+            ?.cast<int, int>();
       } else {
         throw Exception('No JNI or FFI api available');
       }
@@ -8085,29 +8414,26 @@ class NativeInteropHostIntegrationCoreApiForNativeInterop {
   ) {
     try {
       if (_jniApi != null) {
-        final JMap<jni_bridge.NativeInteropAnEnum, jni_bridge.NativeInteropAnEnum>? pigeonVar_res =
-            _jniApi.callFlutterEchoNullableNonNullEnumMap(
-              _PigeonJniCodec.writeValue<
-                JMap<jni_bridge.NativeInteropAnEnum, jni_bridge.NativeInteropAnEnum>?
-              >(enumMap),
-            );
-        final Map<NativeInteropAnEnum, NativeInteropAnEnum>? pigeonVar_dartTypeRes =
-            (_PigeonJniCodec.readValue(pigeonVar_res) as Map<Object?, Object?>?)
-                ?.cast<NativeInteropAnEnum, NativeInteropAnEnum>();
-        return pigeonVar_dartTypeRes;
+        final JByteArray pigeonVar_args = _PigeonJniBuffers.encode(<Object?>[enumMap]);
+        try {
+          final JByteArray? pigeonVar_res = _jniApi.pigeon_callFlutterEchoNullableNonNullEnumMap(
+            pigeonVar_args,
+          );
+          return (_PigeonJniBuffers.decode(pigeonVar_res) as Map<Object?, Object?>?)
+              ?.cast<NativeInteropAnEnum, NativeInteropAnEnum>();
+        } finally {
+          pigeonVar_args.release();
+        }
       } else if (_ffiApi != null) {
         final pigeonVar_error = ffi_bridge.NativeInteropTestsError();
-        final NSDictionary? pigeonVar_res = _ffiApi
-            .callFlutterEchoNullableNonNullEnumMapWithEnumMap(
-              _PigeonFfiCodec.writeValue<NSDictionary?>(enumMap),
-              wrappedError: pigeonVar_error,
-            );
+        final NSData pigeonVar_args = _PigeonFfiBuffers.encode(<Object?>[enumMap]);
+        final NSData? pigeonVar_res = _ffiApi.pigeon_callFlutterEchoNullableNonNullEnumMap(
+          pigeonVar_args,
+          wrappedError: pigeonVar_error,
+        );
         _throwIfFfiError(pigeonVar_error);
-        final Map<NativeInteropAnEnum, NativeInteropAnEnum>? pigeonVar_dartTypeRes =
-            (_PigeonFfiCodec.readValue(pigeonVar_res, NativeInteropAnEnum, NativeInteropAnEnum)
-                    as Map<Object?, Object?>?)
-                ?.cast<NativeInteropAnEnum, NativeInteropAnEnum>();
-        return pigeonVar_dartTypeRes;
+        return (_PigeonFfiBuffers.decode(pigeonVar_res) as Map<Object?, Object?>?)
+            ?.cast<NativeInteropAnEnum, NativeInteropAnEnum>();
       } else {
         throw Exception('No JNI or FFI api available');
       }
@@ -8121,28 +8447,26 @@ class NativeInteropHostIntegrationCoreApiForNativeInterop {
   ) {
     try {
       if (_jniApi != null) {
-        final JMap<JLong, jni_bridge.NativeInteropAllNullableTypes>? pigeonVar_res = _jniApi
-            .callFlutterEchoNullableNonNullClassMap(
-              _PigeonJniCodec.writeValue<JMap<JLong, jni_bridge.NativeInteropAllNullableTypes>?>(
-                classMap,
-              ),
-            );
-        final Map<int, NativeInteropAllNullableTypes>? pigeonVar_dartTypeRes =
-            (_PigeonJniCodec.readValue(pigeonVar_res) as Map<Object?, Object?>?)
-                ?.cast<int, NativeInteropAllNullableTypes>();
-        return pigeonVar_dartTypeRes;
+        final JByteArray pigeonVar_args = _PigeonJniBuffers.encode(<Object?>[classMap]);
+        try {
+          final JByteArray? pigeonVar_res = _jniApi.pigeon_callFlutterEchoNullableNonNullClassMap(
+            pigeonVar_args,
+          );
+          return (_PigeonJniBuffers.decode(pigeonVar_res) as Map<Object?, Object?>?)
+              ?.cast<int, NativeInteropAllNullableTypes>();
+        } finally {
+          pigeonVar_args.release();
+        }
       } else if (_ffiApi != null) {
         final pigeonVar_error = ffi_bridge.NativeInteropTestsError();
-        final NSDictionary? pigeonVar_res = _ffiApi
-            .callFlutterEchoNullableNonNullClassMapWithClassMap(
-              _PigeonFfiCodec.writeValue<NSDictionary?>(classMap),
-              wrappedError: pigeonVar_error,
-            );
+        final NSData pigeonVar_args = _PigeonFfiBuffers.encode(<Object?>[classMap]);
+        final NSData? pigeonVar_res = _ffiApi.pigeon_callFlutterEchoNullableNonNullClassMap(
+          pigeonVar_args,
+          wrappedError: pigeonVar_error,
+        );
         _throwIfFfiError(pigeonVar_error);
-        final Map<int, NativeInteropAllNullableTypes>? pigeonVar_dartTypeRes =
-            (_PigeonFfiCodec.readValue(pigeonVar_res, int) as Map<Object?, Object?>?)
-                ?.cast<int, NativeInteropAllNullableTypes>();
-        return pigeonVar_dartTypeRes;
+        return (_PigeonFfiBuffers.decode(pigeonVar_res) as Map<Object?, Object?>?)
+            ?.cast<int, NativeInteropAllNullableTypes>();
       } else {
         throw Exception('No JNI or FFI api available');
       }
@@ -8154,23 +8478,16 @@ class NativeInteropHostIntegrationCoreApiForNativeInterop {
   NativeInteropAnEnum? callFlutterEchoNullableEnum(NativeInteropAnEnum? anEnum) {
     try {
       if (_jniApi != null) {
-        final jni_bridge.NativeInteropAnEnum? pigeonVar_res = _jniApi.callFlutterEchoNullableEnum(
-          anEnum?.toJni(),
-        );
-        final NativeInteropAnEnum? pigeonVar_dartTypeRes = NativeInteropAnEnum.fromJni(
-          pigeonVar_res,
-        );
-        return pigeonVar_dartTypeRes;
+        final int pigeonVar_res = _jniApi.pigeon_callFlutterEchoNullableEnum(anEnum?.index ?? -1);
+        return pigeonVar_res == -1 ? null : NativeInteropAnEnum.values[pigeonVar_res];
       } else if (_ffiApi != null) {
         final pigeonVar_error = ffi_bridge.NativeInteropTestsError();
-        final NSNumber? pigeonVar_res = _ffiApi.callFlutterEchoNullableEnumWithAnEnum(
-          _PigeonFfiCodec.writeValue<NSNumber?>(anEnum),
+        final NSNumber? pigeonVar_res = _ffiApi.pigeon_callFlutterEchoNullableEnum(
+          anEnum?.index ?? -1,
           wrappedError: pigeonVar_error,
         );
         _throwIfFfiError(pigeonVar_error);
-        final NativeInteropAnEnum? pigeonVar_dartTypeRes =
-            _PigeonFfiCodec.readValue(pigeonVar_res, NativeInteropAnEnum) as NativeInteropAnEnum?;
-        return pigeonVar_dartTypeRes;
+        return pigeonVar_res == null ? null : NativeInteropAnEnum.values[pigeonVar_res.longValue];
       } else {
         throw Exception('No JNI or FFI api available');
       }
@@ -8184,23 +8501,20 @@ class NativeInteropHostIntegrationCoreApiForNativeInterop {
   ) {
     try {
       if (_jniApi != null) {
-        final jni_bridge.NativeInteropAnotherEnum? pigeonVar_res = _jniApi
-            .callFlutterEchoAnotherNullableEnum(anotherEnum?.toJni());
-        final NativeInteropAnotherEnum? pigeonVar_dartTypeRes = NativeInteropAnotherEnum.fromJni(
-          pigeonVar_res,
+        final int pigeonVar_res = _jniApi.pigeon_callFlutterEchoAnotherNullableEnum(
+          anotherEnum?.index ?? -1,
         );
-        return pigeonVar_dartTypeRes;
+        return pigeonVar_res == -1 ? null : NativeInteropAnotherEnum.values[pigeonVar_res];
       } else if (_ffiApi != null) {
         final pigeonVar_error = ffi_bridge.NativeInteropTestsError();
-        final NSNumber? pigeonVar_res = _ffiApi.callFlutterEchoAnotherNullableEnumWithAnotherEnum(
-          _PigeonFfiCodec.writeValue<NSNumber?>(anotherEnum),
+        final NSNumber? pigeonVar_res = _ffiApi.pigeon_callFlutterEchoAnotherNullableEnum(
+          anotherEnum?.index ?? -1,
           wrappedError: pigeonVar_error,
         );
         _throwIfFfiError(pigeonVar_error);
-        final NativeInteropAnotherEnum? pigeonVar_dartTypeRes =
-            _PigeonFfiCodec.readValue(pigeonVar_res, NativeInteropAnotherEnum)
-                as NativeInteropAnotherEnum?;
-        return pigeonVar_dartTypeRes;
+        return pigeonVar_res == null
+            ? null
+            : NativeInteropAnotherEnum.values[pigeonVar_res.longValue];
       } else {
         throw Exception('No JNI or FFI api available');
       }
@@ -8212,11 +8526,12 @@ class NativeInteropHostIntegrationCoreApiForNativeInterop {
   Future<void> callFlutterNoopAsync() async {
     try {
       if (_jniApi != null) {
-        await _jniApi.callFlutterNoopAsync();
+        await _jniApi.pigeon_callFlutterNoopAsync();
+        return;
       } else if (_ffiApi != null) {
         final pigeonVar_error = ffi_bridge.NativeInteropTestsError();
         final Completer<void> pigeonVar_completer = Completer<void>();
-        _ffiApi.callFlutterNoopAsyncWithWrappedError(
+        _ffiApi.pigeon_callFlutterNoopAsync(
           pigeonVar_error,
           completionHandler: ffi_bridge.ObjCBlock_ffiVoid.listener(() {
             if (pigeonVar_error.code != null) {
@@ -8226,6 +8541,7 @@ class NativeInteropHostIntegrationCoreApiForNativeInterop {
             }
           }),
         );
+
         return await pigeonVar_completer.future;
       } else {
         throw Exception('No JNI or FFI api available');
@@ -8240,29 +8556,33 @@ class NativeInteropHostIntegrationCoreApiForNativeInterop {
   ) async {
     try {
       if (_jniApi != null) {
-        final jni_bridge.NativeInteropAllTypes pigeonVar_res = await _jniApi
-            .callFlutterEchoAsyncNativeInteropAllTypes(everything.toJni());
-        final NativeInteropAllTypes pigeonVar_dartTypeRes = NativeInteropAllTypes.fromJni(
-          pigeonVar_res,
-        )!;
-        return pigeonVar_dartTypeRes;
+        final JByteArray pigeonVar_args = _PigeonJniBuffers.encode(<Object?>[everything]);
+        try {
+          final JByteArray? pigeonVar_res = await _jniApi
+              .pigeon_callFlutterEchoAsyncNativeInteropAllTypes(pigeonVar_args);
+          return _PigeonJniBuffers.decode(pigeonVar_res)! as NativeInteropAllTypes;
+        } finally {
+          pigeonVar_args.release();
+        }
       } else if (_ffiApi != null) {
         final pigeonVar_error = ffi_bridge.NativeInteropTestsError();
+        final NSData pigeonVar_args = _PigeonFfiBuffers.encode(<Object?>[everything]);
         final Completer<NativeInteropAllTypes> pigeonVar_completer =
             Completer<NativeInteropAllTypes>();
-        _ffiApi.callFlutterEchoAsyncNativeInteropAllTypesWithEverything(
-          everything.toFfi(),
+        _ffiApi.pigeon_callFlutterEchoAsyncNativeInteropAllTypes(
+          pigeonVar_args,
           wrappedError: pigeonVar_error,
-          completionHandler: ffi_bridge.ObjCBlock_ffiVoid_NativeInteropAllTypesBridge.listener((
-            ffi_bridge.NativeInteropAllTypesBridge? pigeonVar_res,
-          ) {
+          completionHandler: ffi_bridge.ObjCBlock_ffiVoid_NSData.listener((NSData? pigeonVar_res) {
             if (pigeonVar_error.code != null) {
               pigeonVar_completer.completeError(_wrapFfiError(pigeonVar_error));
             } else {
-              pigeonVar_completer.complete(NativeInteropAllTypes.fromFfi(pigeonVar_res)!);
+              pigeonVar_completer.complete(
+                _PigeonFfiBuffers.decode(pigeonVar_res)! as NativeInteropAllTypes,
+              );
             }
           }),
         );
+
         return await pigeonVar_completer.future;
       } else {
         throw Exception('No JNI or FFI api available');
@@ -8277,31 +8597,33 @@ class NativeInteropHostIntegrationCoreApiForNativeInterop {
   ) async {
     try {
       if (_jniApi != null) {
-        final jni_bridge.NativeInteropAllNullableTypes? pigeonVar_res = await _jniApi
-            .callFlutterEchoAsyncNullableNativeInteropAllNullableTypes(everything?.toJni());
-        final NativeInteropAllNullableTypes? pigeonVar_dartTypeRes =
-            NativeInteropAllNullableTypes.fromJni(pigeonVar_res);
-        return pigeonVar_dartTypeRes;
+        final JByteArray pigeonVar_args = _PigeonJniBuffers.encode(<Object?>[everything]);
+        try {
+          final JByteArray? pigeonVar_res = await _jniApi
+              .pigeon_callFlutterEchoAsyncNullableNativeInteropAllNullableTypes(pigeonVar_args);
+          return _PigeonJniBuffers.decode(pigeonVar_res) as NativeInteropAllNullableTypes?;
+        } finally {
+          pigeonVar_args.release();
+        }
       } else if (_ffiApi != null) {
         final pigeonVar_error = ffi_bridge.NativeInteropTestsError();
+        final NSData pigeonVar_args = _PigeonFfiBuffers.encode(<Object?>[everything]);
         final Completer<NativeInteropAllNullableTypes?> pigeonVar_completer =
             Completer<NativeInteropAllNullableTypes?>();
-        _ffiApi.callFlutterEchoAsyncNullableNativeInteropAllNullableTypesWithEverything(
-          everything?.toFfi(),
+        _ffiApi.pigeon_callFlutterEchoAsyncNullableNativeInteropAllNullableTypes(
+          pigeonVar_args,
           wrappedError: pigeonVar_error,
-          completionHandler:
-              ffi_bridge.ObjCBlock_ffiVoid_NativeInteropAllNullableTypesBridge.listener((
-                ffi_bridge.NativeInteropAllNullableTypesBridge? pigeonVar_res,
-              ) {
-                if (pigeonVar_error.code != null) {
-                  pigeonVar_completer.completeError(_wrapFfiError(pigeonVar_error));
-                } else {
-                  pigeonVar_completer.complete(
-                    NativeInteropAllNullableTypes.fromFfi(pigeonVar_res),
-                  );
-                }
-              }),
+          completionHandler: ffi_bridge.ObjCBlock_ffiVoid_NSData.listener((NSData? pigeonVar_res) {
+            if (pigeonVar_error.code != null) {
+              pigeonVar_completer.completeError(_wrapFfiError(pigeonVar_error));
+            } else {
+              pigeonVar_completer.complete(
+                _PigeonFfiBuffers.decode(pigeonVar_res) as NativeInteropAllNullableTypes?,
+              );
+            }
+          }),
         );
+
         return await pigeonVar_completer.future;
       } else {
         throw Exception('No JNI or FFI api available');
@@ -8317,37 +8639,37 @@ class NativeInteropHostIntegrationCoreApiForNativeInterop {
   ) async {
     try {
       if (_jniApi != null) {
-        final jni_bridge.NativeInteropAllNullableTypesWithoutRecursion? pigeonVar_res =
-            await _jniApi.callFlutterEchoAsyncNullableNativeInteropAllNullableTypesWithoutRecursion(
-              everything?.toJni(),
-            );
-        final NativeInteropAllNullableTypesWithoutRecursion? pigeonVar_dartTypeRes =
-            NativeInteropAllNullableTypesWithoutRecursion.fromJni(pigeonVar_res);
-        return pigeonVar_dartTypeRes;
+        final JByteArray pigeonVar_args = _PigeonJniBuffers.encode(<Object?>[everything]);
+        try {
+          final JByteArray? pigeonVar_res = await _jniApi
+              .pigeon_callFlutterEchoAsyncNullableNativeInteropAllNullableTypesWithoutRecursion(
+                pigeonVar_args,
+              );
+          return _PigeonJniBuffers.decode(pigeonVar_res)
+              as NativeInteropAllNullableTypesWithoutRecursion?;
+        } finally {
+          pigeonVar_args.release();
+        }
       } else if (_ffiApi != null) {
         final pigeonVar_error = ffi_bridge.NativeInteropTestsError();
+        final NSData pigeonVar_args = _PigeonFfiBuffers.encode(<Object?>[everything]);
         final Completer<NativeInteropAllNullableTypesWithoutRecursion?> pigeonVar_completer =
             Completer<NativeInteropAllNullableTypesWithoutRecursion?>();
-        _ffiApi
-            .callFlutterEchoAsyncNullableNativeInteropAllNullableTypesWithoutRecursionWithEverything(
-              everything?.toFfi(),
-              wrappedError: pigeonVar_error,
-              completionHandler:
-                  ffi_bridge
-                      .ObjCBlock_ffiVoid_NativeInteropAllNullableTypesWithoutRecursionBridge.listener(
-                    (
-                      ffi_bridge.NativeInteropAllNullableTypesWithoutRecursionBridge? pigeonVar_res,
-                    ) {
-                      if (pigeonVar_error.code != null) {
-                        pigeonVar_completer.completeError(_wrapFfiError(pigeonVar_error));
-                      } else {
-                        pigeonVar_completer.complete(
-                          NativeInteropAllNullableTypesWithoutRecursion.fromFfi(pigeonVar_res),
-                        );
-                      }
-                    },
-                  ),
-            );
+        _ffiApi.pigeon_callFlutterEchoAsyncNullableNativeInteropAllNullableTypesWithoutRecursion(
+          pigeonVar_args,
+          wrappedError: pigeonVar_error,
+          completionHandler: ffi_bridge.ObjCBlock_ffiVoid_NSData.listener((NSData? pigeonVar_res) {
+            if (pigeonVar_error.code != null) {
+              pigeonVar_completer.completeError(_wrapFfiError(pigeonVar_error));
+            } else {
+              pigeonVar_completer.complete(
+                _PigeonFfiBuffers.decode(pigeonVar_res)
+                    as NativeInteropAllNullableTypesWithoutRecursion?,
+              );
+            }
+          }),
+        );
+
         return await pigeonVar_completer.future;
       } else {
         throw Exception('No JNI or FFI api available');
@@ -8360,13 +8682,12 @@ class NativeInteropHostIntegrationCoreApiForNativeInterop {
   Future<bool> callFlutterEchoAsyncBool(bool aBool) async {
     try {
       if (_jniApi != null) {
-        final JBoolean pigeonVar_res = await _jniApi.callFlutterEchoAsyncBool(aBool);
-        final bool pigeonVar_dartTypeRes = pigeonVar_res.toDartBool(releaseOriginal: true);
-        return pigeonVar_dartTypeRes;
+        final JBoolean pigeonVar_res = await _jniApi.pigeon_callFlutterEchoAsyncBool(aBool);
+        return pigeonVar_res.toDartBool(releaseOriginal: true);
       } else if (_ffiApi != null) {
         final pigeonVar_error = ffi_bridge.NativeInteropTestsError();
         final Completer<bool> pigeonVar_completer = Completer<bool>();
-        _ffiApi.callFlutterEchoAsyncBoolWithABool(
+        _ffiApi.pigeon_callFlutterEchoAsyncBool(
           aBool,
           wrappedError: pigeonVar_error,
           completionHandler: ffi_bridge.ObjCBlock_ffiVoid_NSNumber.listener((
@@ -8379,6 +8700,7 @@ class NativeInteropHostIntegrationCoreApiForNativeInterop {
             }
           }),
         );
+
         return await pigeonVar_completer.future;
       } else {
         throw Exception('No JNI or FFI api available');
@@ -8391,13 +8713,12 @@ class NativeInteropHostIntegrationCoreApiForNativeInterop {
   Future<int> callFlutterEchoAsyncInt(int anInt) async {
     try {
       if (_jniApi != null) {
-        final JLong pigeonVar_res = await _jniApi.callFlutterEchoAsyncInt(anInt);
-        final int pigeonVar_dartTypeRes = pigeonVar_res.toDartInt(releaseOriginal: true);
-        return pigeonVar_dartTypeRes;
+        final JLong pigeonVar_res = await _jniApi.pigeon_callFlutterEchoAsyncInt(anInt);
+        return pigeonVar_res.toDartInt(releaseOriginal: true);
       } else if (_ffiApi != null) {
         final pigeonVar_error = ffi_bridge.NativeInteropTestsError();
         final Completer<int> pigeonVar_completer = Completer<int>();
-        _ffiApi.callFlutterEchoAsyncIntWithAnInt(
+        _ffiApi.pigeon_callFlutterEchoAsyncInt(
           anInt,
           wrappedError: pigeonVar_error,
           completionHandler: ffi_bridge.ObjCBlock_ffiVoid_NSNumber.listener((
@@ -8410,6 +8731,7 @@ class NativeInteropHostIntegrationCoreApiForNativeInterop {
             }
           }),
         );
+
         return await pigeonVar_completer.future;
       } else {
         throw Exception('No JNI or FFI api available');
@@ -8422,13 +8744,12 @@ class NativeInteropHostIntegrationCoreApiForNativeInterop {
   Future<double> callFlutterEchoAsyncDouble(double aDouble) async {
     try {
       if (_jniApi != null) {
-        final JDouble pigeonVar_res = await _jniApi.callFlutterEchoAsyncDouble(aDouble);
-        final double pigeonVar_dartTypeRes = pigeonVar_res.toDartDouble(releaseOriginal: true);
-        return pigeonVar_dartTypeRes;
+        final JDouble pigeonVar_res = await _jniApi.pigeon_callFlutterEchoAsyncDouble(aDouble);
+        return pigeonVar_res.toDartDouble(releaseOriginal: true);
       } else if (_ffiApi != null) {
         final pigeonVar_error = ffi_bridge.NativeInteropTestsError();
         final Completer<double> pigeonVar_completer = Completer<double>();
-        _ffiApi.callFlutterEchoAsyncDoubleWithADouble(
+        _ffiApi.pigeon_callFlutterEchoAsyncDouble(
           aDouble,
           wrappedError: pigeonVar_error,
           completionHandler: ffi_bridge.ObjCBlock_ffiVoid_NSNumber.listener((
@@ -8441,6 +8762,7 @@ class NativeInteropHostIntegrationCoreApiForNativeInterop {
             }
           }),
         );
+
         return await pigeonVar_completer.future;
       } else {
         throw Exception('No JNI or FFI api available');
@@ -8453,16 +8775,20 @@ class NativeInteropHostIntegrationCoreApiForNativeInterop {
   Future<String> callFlutterEchoAsyncString(String aString) async {
     try {
       if (_jniApi != null) {
-        final JString pigeonVar_res = await _jniApi.callFlutterEchoAsyncString(
-          _PigeonJniCodec.writeValue<JString>(aString),
-        );
-        final String pigeonVar_dartTypeRes = pigeonVar_res.toDartString(releaseOriginal: true);
-        return pigeonVar_dartTypeRes;
+        final JString pigeonVar_aString = aString.toJString();
+        try {
+          final JString pigeonVar_res = await _jniApi.pigeon_callFlutterEchoAsyncString(
+            pigeonVar_aString,
+          );
+          return pigeonVar_res.toDartString(releaseOriginal: true);
+        } finally {
+          pigeonVar_aString.release();
+        }
       } else if (_ffiApi != null) {
         final pigeonVar_error = ffi_bridge.NativeInteropTestsError();
         final Completer<String> pigeonVar_completer = Completer<String>();
-        _ffiApi.callFlutterEchoAsyncStringWithAString(
-          _PigeonFfiCodec.writeValue<NSString>(aString),
+        _ffiApi.pigeon_callFlutterEchoAsyncString(
+          NSString(aString),
           wrappedError: pigeonVar_error,
           completionHandler: ffi_bridge.ObjCBlock_ffiVoid_NSString.listener((
             NSString? pigeonVar_res,
@@ -8474,6 +8800,7 @@ class NativeInteropHostIntegrationCoreApiForNativeInterop {
             }
           }),
         );
+
         return await pigeonVar_completer.future;
       } else {
         throw Exception('No JNI or FFI api available');
@@ -8486,31 +8813,30 @@ class NativeInteropHostIntegrationCoreApiForNativeInterop {
   Future<Uint8List> callFlutterEchoAsyncUint8List(Uint8List list) async {
     try {
       if (_jniApi != null) {
-        final JByteArray pigeonVar_res = await _jniApi.callFlutterEchoAsyncUint8List(
-          _PigeonJniCodec.writeValue<JByteArray>(list),
-        );
-        final Uint8List pigeonVar_dartTypeRes =
-            _PigeonJniCodec.readValue(pigeonVar_res)! as Uint8List;
-        return pigeonVar_dartTypeRes;
+        final JByteArray pigeonVar_list = _uint8ListToJni(list);
+        try {
+          final JByteArray pigeonVar_res = await _jniApi.pigeon_callFlutterEchoAsyncUint8List(
+            pigeonVar_list,
+          );
+          return _jByteArrayToDart(pigeonVar_res, release: true)!;
+        } finally {
+          pigeonVar_list.release();
+        }
       } else if (_ffiApi != null) {
         final pigeonVar_error = ffi_bridge.NativeInteropTestsError();
         final Completer<Uint8List> pigeonVar_completer = Completer<Uint8List>();
-        _ffiApi.callFlutterEchoAsyncUint8ListWithList(
-          _PigeonFfiCodec.writeValue<ffi_bridge.NativeInteropTestsPigeonTypedData>(list),
+        _ffiApi.pigeon_callFlutterEchoAsyncUint8List(
+          _typedDataToNSData(list),
           wrappedError: pigeonVar_error,
-          completionHandler:
-              ffi_bridge.ObjCBlock_ffiVoid_NativeInteropTestsPigeonTypedData.listener((
-                ffi_bridge.NativeInteropTestsPigeonTypedData? pigeonVar_res,
-              ) {
-                if (pigeonVar_error.code != null) {
-                  pigeonVar_completer.completeError(_wrapFfiError(pigeonVar_error));
-                } else {
-                  pigeonVar_completer.complete(
-                    _PigeonFfiCodec.readValue(pigeonVar_res)! as Uint8List,
-                  );
-                }
-              }),
+          completionHandler: ffi_bridge.ObjCBlock_ffiVoid_NSData.listener((NSData? pigeonVar_res) {
+            if (pigeonVar_error.code != null) {
+              pigeonVar_completer.completeError(_wrapFfiError(pigeonVar_error));
+            } else {
+              pigeonVar_completer.complete(_PigeonFfiBuffers.toUint8List(pigeonVar_res)!);
+            }
+          }),
         );
+
         return await pigeonVar_completer.future;
       } else {
         throw Exception('No JNI or FFI api available');
@@ -8523,31 +8849,32 @@ class NativeInteropHostIntegrationCoreApiForNativeInterop {
   Future<Int32List> callFlutterEchoAsyncInt32List(Int32List list) async {
     try {
       if (_jniApi != null) {
-        final JIntArray pigeonVar_res = await _jniApi.callFlutterEchoAsyncInt32List(
-          _PigeonJniCodec.writeValue<JIntArray>(list),
-        );
-        final Int32List pigeonVar_dartTypeRes =
-            _PigeonJniCodec.readValue(pigeonVar_res)! as Int32List;
-        return pigeonVar_dartTypeRes;
+        final JIntArray pigeonVar_list = _int32ListToJni(list);
+        try {
+          final JIntArray pigeonVar_res = await _jniApi.pigeon_callFlutterEchoAsyncInt32List(
+            pigeonVar_list,
+          );
+          return _jIntArrayToDart(pigeonVar_res, release: true)!;
+        } finally {
+          pigeonVar_list.release();
+        }
       } else if (_ffiApi != null) {
         final pigeonVar_error = ffi_bridge.NativeInteropTestsError();
         final Completer<Int32List> pigeonVar_completer = Completer<Int32List>();
-        _ffiApi.callFlutterEchoAsyncInt32ListWithList(
-          _PigeonFfiCodec.writeValue<ffi_bridge.NativeInteropTestsPigeonTypedData>(list),
+        _ffiApi.pigeon_callFlutterEchoAsyncInt32List(
+          _typedDataToNSData(list),
           wrappedError: pigeonVar_error,
-          completionHandler:
-              ffi_bridge.ObjCBlock_ffiVoid_NativeInteropTestsPigeonTypedData.listener((
-                ffi_bridge.NativeInteropTestsPigeonTypedData? pigeonVar_res,
-              ) {
-                if (pigeonVar_error.code != null) {
-                  pigeonVar_completer.completeError(_wrapFfiError(pigeonVar_error));
-                } else {
-                  pigeonVar_completer.complete(
-                    _PigeonFfiCodec.readValue(pigeonVar_res)! as Int32List,
-                  );
-                }
-              }),
+          completionHandler: ffi_bridge.ObjCBlock_ffiVoid_NSData.listener((NSData? pigeonVar_res) {
+            if (pigeonVar_error.code != null) {
+              pigeonVar_completer.completeError(_wrapFfiError(pigeonVar_error));
+            } else {
+              pigeonVar_completer.complete(
+                _PigeonFfiBuffers.toUint8List(pigeonVar_res)!.buffer.asInt32List(),
+              );
+            }
+          }),
         );
+
         return await pigeonVar_completer.future;
       } else {
         throw Exception('No JNI or FFI api available');
@@ -8560,31 +8887,32 @@ class NativeInteropHostIntegrationCoreApiForNativeInterop {
   Future<Int64List> callFlutterEchoAsyncInt64List(Int64List list) async {
     try {
       if (_jniApi != null) {
-        final JLongArray pigeonVar_res = await _jniApi.callFlutterEchoAsyncInt64List(
-          _PigeonJniCodec.writeValue<JLongArray>(list),
-        );
-        final Int64List pigeonVar_dartTypeRes =
-            _PigeonJniCodec.readValue(pigeonVar_res)! as Int64List;
-        return pigeonVar_dartTypeRes;
+        final JLongArray pigeonVar_list = _int64ListToJni(list);
+        try {
+          final JLongArray pigeonVar_res = await _jniApi.pigeon_callFlutterEchoAsyncInt64List(
+            pigeonVar_list,
+          );
+          return _jLongArrayToDart(pigeonVar_res, release: true)!;
+        } finally {
+          pigeonVar_list.release();
+        }
       } else if (_ffiApi != null) {
         final pigeonVar_error = ffi_bridge.NativeInteropTestsError();
         final Completer<Int64List> pigeonVar_completer = Completer<Int64List>();
-        _ffiApi.callFlutterEchoAsyncInt64ListWithList(
-          _PigeonFfiCodec.writeValue<ffi_bridge.NativeInteropTestsPigeonTypedData>(list),
+        _ffiApi.pigeon_callFlutterEchoAsyncInt64List(
+          _typedDataToNSData(list),
           wrappedError: pigeonVar_error,
-          completionHandler:
-              ffi_bridge.ObjCBlock_ffiVoid_NativeInteropTestsPigeonTypedData.listener((
-                ffi_bridge.NativeInteropTestsPigeonTypedData? pigeonVar_res,
-              ) {
-                if (pigeonVar_error.code != null) {
-                  pigeonVar_completer.completeError(_wrapFfiError(pigeonVar_error));
-                } else {
-                  pigeonVar_completer.complete(
-                    _PigeonFfiCodec.readValue(pigeonVar_res)! as Int64List,
-                  );
-                }
-              }),
+          completionHandler: ffi_bridge.ObjCBlock_ffiVoid_NSData.listener((NSData? pigeonVar_res) {
+            if (pigeonVar_error.code != null) {
+              pigeonVar_completer.completeError(_wrapFfiError(pigeonVar_error));
+            } else {
+              pigeonVar_completer.complete(
+                _PigeonFfiBuffers.toUint8List(pigeonVar_res)!.buffer.asInt64List(),
+              );
+            }
+          }),
         );
+
         return await pigeonVar_completer.future;
       } else {
         throw Exception('No JNI or FFI api available');
@@ -8597,31 +8925,32 @@ class NativeInteropHostIntegrationCoreApiForNativeInterop {
   Future<Float64List> callFlutterEchoAsyncFloat64List(Float64List list) async {
     try {
       if (_jniApi != null) {
-        final JDoubleArray pigeonVar_res = await _jniApi.callFlutterEchoAsyncFloat64List(
-          _PigeonJniCodec.writeValue<JDoubleArray>(list),
-        );
-        final Float64List pigeonVar_dartTypeRes =
-            _PigeonJniCodec.readValue(pigeonVar_res)! as Float64List;
-        return pigeonVar_dartTypeRes;
+        final JDoubleArray pigeonVar_list = _float64ListToJni(list);
+        try {
+          final JDoubleArray pigeonVar_res = await _jniApi.pigeon_callFlutterEchoAsyncFloat64List(
+            pigeonVar_list,
+          );
+          return _jDoubleArrayToDart(pigeonVar_res, release: true)!;
+        } finally {
+          pigeonVar_list.release();
+        }
       } else if (_ffiApi != null) {
         final pigeonVar_error = ffi_bridge.NativeInteropTestsError();
         final Completer<Float64List> pigeonVar_completer = Completer<Float64List>();
-        _ffiApi.callFlutterEchoAsyncFloat64ListWithList(
-          _PigeonFfiCodec.writeValue<ffi_bridge.NativeInteropTestsPigeonTypedData>(list),
+        _ffiApi.pigeon_callFlutterEchoAsyncFloat64List(
+          _typedDataToNSData(list),
           wrappedError: pigeonVar_error,
-          completionHandler:
-              ffi_bridge.ObjCBlock_ffiVoid_NativeInteropTestsPigeonTypedData.listener((
-                ffi_bridge.NativeInteropTestsPigeonTypedData? pigeonVar_res,
-              ) {
-                if (pigeonVar_error.code != null) {
-                  pigeonVar_completer.completeError(_wrapFfiError(pigeonVar_error));
-                } else {
-                  pigeonVar_completer.complete(
-                    _PigeonFfiCodec.readValue(pigeonVar_res)! as Float64List,
-                  );
-                }
-              }),
+          completionHandler: ffi_bridge.ObjCBlock_ffiVoid_NSData.listener((NSData? pigeonVar_res) {
+            if (pigeonVar_error.code != null) {
+              pigeonVar_completer.completeError(_wrapFfiError(pigeonVar_error));
+            } else {
+              pigeonVar_completer.complete(
+                _PigeonFfiBuffers.toUint8List(pigeonVar_res)!.buffer.asFloat64List(),
+              );
+            }
+          }),
         );
+
         return await pigeonVar_completer.future;
       } else {
         throw Exception('No JNI or FFI api available');
@@ -8634,27 +8963,31 @@ class NativeInteropHostIntegrationCoreApiForNativeInterop {
   Future<Object> callFlutterEchoAsyncObject(Object anObject) async {
     try {
       if (_jniApi != null) {
-        final JObject pigeonVar_res = await _jniApi.callFlutterEchoAsyncObject(
-          _PigeonJniCodec.writeValue<JObject>(anObject),
-        );
-        final Object pigeonVar_dartTypeRes = _PigeonJniCodec.readValue(pigeonVar_res)!;
-        return pigeonVar_dartTypeRes;
+        final JByteArray pigeonVar_args = _PigeonJniBuffers.encode(<Object?>[anObject]);
+        try {
+          final JByteArray? pigeonVar_res = await _jniApi.pigeon_callFlutterEchoAsyncObject(
+            pigeonVar_args,
+          );
+          return _PigeonJniBuffers.decode(pigeonVar_res)!;
+        } finally {
+          pigeonVar_args.release();
+        }
       } else if (_ffiApi != null) {
         final pigeonVar_error = ffi_bridge.NativeInteropTestsError();
+        final NSData pigeonVar_args = _PigeonFfiBuffers.encode(<Object?>[anObject]);
         final Completer<Object> pigeonVar_completer = Completer<Object>();
-        _ffiApi.callFlutterEchoAsyncObjectWithAnObject(
-          _PigeonFfiCodec.writeValue<NSObject>(anObject, generic: true),
+        _ffiApi.pigeon_callFlutterEchoAsyncObject(
+          pigeonVar_args,
           wrappedError: pigeonVar_error,
-          completionHandler: ffi_bridge.ObjCBlock_ffiVoid_NSObject.listener((
-            NSObject? pigeonVar_res,
-          ) {
+          completionHandler: ffi_bridge.ObjCBlock_ffiVoid_NSData.listener((NSData? pigeonVar_res) {
             if (pigeonVar_error.code != null) {
               pigeonVar_completer.completeError(_wrapFfiError(pigeonVar_error));
             } else {
-              pigeonVar_completer.complete(_PigeonFfiCodec.readValue(pigeonVar_res)!);
+              pigeonVar_completer.complete(_PigeonFfiBuffers.decode(pigeonVar_res)!);
             }
           }),
         );
+
         return await pigeonVar_completer.future;
       } else {
         throw Exception('No JNI or FFI api available');
@@ -8667,30 +9000,33 @@ class NativeInteropHostIntegrationCoreApiForNativeInterop {
   Future<List<Object?>> callFlutterEchoAsyncList(List<Object?> list) async {
     try {
       if (_jniApi != null) {
-        final JList<JObject?> pigeonVar_res = await _jniApi.callFlutterEchoAsyncList(
-          _PigeonJniCodec.writeValue<JList<JObject?>>(list),
-        );
-        final List<Object?> pigeonVar_dartTypeRes =
-            (_PigeonJniCodec.readValue(pigeonVar_res)! as List<Object?>).cast<Object?>();
-        return pigeonVar_dartTypeRes;
+        final JByteArray pigeonVar_args = _PigeonJniBuffers.encode(<Object?>[list]);
+        try {
+          final JByteArray? pigeonVar_res = await _jniApi.pigeon_callFlutterEchoAsyncList(
+            pigeonVar_args,
+          );
+          return _PigeonJniBuffers.decode(pigeonVar_res)! as List<Object?>;
+        } finally {
+          pigeonVar_args.release();
+        }
       } else if (_ffiApi != null) {
         final pigeonVar_error = ffi_bridge.NativeInteropTestsError();
+        final NSData pigeonVar_args = _PigeonFfiBuffers.encode(<Object?>[list]);
         final Completer<List<Object?>> pigeonVar_completer = Completer<List<Object?>>();
-        _ffiApi.callFlutterEchoAsyncListWithList(
-          _PigeonFfiCodec.writeValue<NSMutableArray>(list),
+        _ffiApi.pigeon_callFlutterEchoAsyncList(
+          pigeonVar_args,
           wrappedError: pigeonVar_error,
-          completionHandler: ffi_bridge.ObjCBlock_ffiVoid_NSArray.listener((
-            NSArray? pigeonVar_res,
-          ) {
+          completionHandler: ffi_bridge.ObjCBlock_ffiVoid_NSData.listener((NSData? pigeonVar_res) {
             if (pigeonVar_error.code != null) {
               pigeonVar_completer.completeError(_wrapFfiError(pigeonVar_error));
             } else {
               pigeonVar_completer.complete(
-                (_PigeonFfiCodec.readValue(pigeonVar_res)! as List<Object?>).cast<Object?>(),
+                _PigeonFfiBuffers.decode(pigeonVar_res)! as List<Object?>,
               );
             }
           }),
         );
+
         return await pigeonVar_completer.future;
       } else {
         throw Exception('No JNI or FFI api available');
@@ -8705,34 +9041,36 @@ class NativeInteropHostIntegrationCoreApiForNativeInterop {
   ) async {
     try {
       if (_jniApi != null) {
-        final JList<jni_bridge.NativeInteropAnEnum?> pigeonVar_res = await _jniApi
-            .callFlutterEchoAsyncEnumList(
-              _PigeonJniCodec.writeValue<JList<jni_bridge.NativeInteropAnEnum?>>(enumList),
-            );
-        final List<NativeInteropAnEnum?> pigeonVar_dartTypeRes =
-            (_PigeonJniCodec.readValue(pigeonVar_res)! as List<Object?>)
-                .cast<NativeInteropAnEnum?>();
-        return pigeonVar_dartTypeRes;
+        final JByteArray pigeonVar_args = _PigeonJniBuffers.encode(<Object?>[enumList]);
+        try {
+          final JByteArray? pigeonVar_res = await _jniApi.pigeon_callFlutterEchoAsyncEnumList(
+            pigeonVar_args,
+          );
+          return (_PigeonJniBuffers.decode(pigeonVar_res)! as List<Object?>)
+              .cast<NativeInteropAnEnum?>();
+        } finally {
+          pigeonVar_args.release();
+        }
       } else if (_ffiApi != null) {
         final pigeonVar_error = ffi_bridge.NativeInteropTestsError();
+        final NSData pigeonVar_args = _PigeonFfiBuffers.encode(<Object?>[enumList]);
         final Completer<List<NativeInteropAnEnum?>> pigeonVar_completer =
             Completer<List<NativeInteropAnEnum?>>();
-        _ffiApi.callFlutterEchoAsyncEnumListWithEnumList(
-          _PigeonFfiCodec.writeValue<NSMutableArray>(enumList),
+        _ffiApi.pigeon_callFlutterEchoAsyncEnumList(
+          pigeonVar_args,
           wrappedError: pigeonVar_error,
-          completionHandler: ffi_bridge.ObjCBlock_ffiVoid_NSArray.listener((
-            NSArray? pigeonVar_res,
-          ) {
+          completionHandler: ffi_bridge.ObjCBlock_ffiVoid_NSData.listener((NSData? pigeonVar_res) {
             if (pigeonVar_error.code != null) {
               pigeonVar_completer.completeError(_wrapFfiError(pigeonVar_error));
             } else {
               pigeonVar_completer.complete(
-                (_PigeonFfiCodec.readValue(pigeonVar_res, NativeInteropAnEnum)! as List<Object?>)
+                (_PigeonFfiBuffers.decode(pigeonVar_res)! as List<Object?>)
                     .cast<NativeInteropAnEnum?>(),
               );
             }
           }),
         );
+
         return await pigeonVar_completer.future;
       } else {
         throw Exception('No JNI or FFI api available');
@@ -8747,36 +9085,36 @@ class NativeInteropHostIntegrationCoreApiForNativeInterop {
   ) async {
     try {
       if (_jniApi != null) {
-        final JList<jni_bridge.NativeInteropAllNullableTypes?> pigeonVar_res = await _jniApi
-            .callFlutterEchoAsyncClassList(
-              _PigeonJniCodec.writeValue<JList<jni_bridge.NativeInteropAllNullableTypes?>>(
-                classList,
-              ),
-            );
-        final List<NativeInteropAllNullableTypes?> pigeonVar_dartTypeRes =
-            (_PigeonJniCodec.readValue(pigeonVar_res)! as List<Object?>)
-                .cast<NativeInteropAllNullableTypes?>();
-        return pigeonVar_dartTypeRes;
+        final JByteArray pigeonVar_args = _PigeonJniBuffers.encode(<Object?>[classList]);
+        try {
+          final JByteArray? pigeonVar_res = await _jniApi.pigeon_callFlutterEchoAsyncClassList(
+            pigeonVar_args,
+          );
+          return (_PigeonJniBuffers.decode(pigeonVar_res)! as List<Object?>)
+              .cast<NativeInteropAllNullableTypes?>();
+        } finally {
+          pigeonVar_args.release();
+        }
       } else if (_ffiApi != null) {
         final pigeonVar_error = ffi_bridge.NativeInteropTestsError();
+        final NSData pigeonVar_args = _PigeonFfiBuffers.encode(<Object?>[classList]);
         final Completer<List<NativeInteropAllNullableTypes?>> pigeonVar_completer =
             Completer<List<NativeInteropAllNullableTypes?>>();
-        _ffiApi.callFlutterEchoAsyncClassListWithClassList(
-          _PigeonFfiCodec.writeValue<NSMutableArray>(classList),
+        _ffiApi.pigeon_callFlutterEchoAsyncClassList(
+          pigeonVar_args,
           wrappedError: pigeonVar_error,
-          completionHandler: ffi_bridge.ObjCBlock_ffiVoid_NSArray.listener((
-            NSArray? pigeonVar_res,
-          ) {
+          completionHandler: ffi_bridge.ObjCBlock_ffiVoid_NSData.listener((NSData? pigeonVar_res) {
             if (pigeonVar_error.code != null) {
               pigeonVar_completer.completeError(_wrapFfiError(pigeonVar_error));
             } else {
               pigeonVar_completer.complete(
-                (_PigeonFfiCodec.readValue(pigeonVar_res)! as List<Object?>)
+                (_PigeonFfiBuffers.decode(pigeonVar_res)! as List<Object?>)
                     .cast<NativeInteropAllNullableTypes?>(),
               );
             }
           }),
         );
+
         return await pigeonVar_completer.future;
       } else {
         throw Exception('No JNI or FFI api available');
@@ -8791,34 +9129,35 @@ class NativeInteropHostIntegrationCoreApiForNativeInterop {
   ) async {
     try {
       if (_jniApi != null) {
-        final JList<jni_bridge.NativeInteropAnEnum> pigeonVar_res = await _jniApi
-            .callFlutterEchoAsyncNonNullEnumList(
-              _PigeonJniCodec.writeValue<JList<jni_bridge.NativeInteropAnEnum>>(enumList),
-            );
-        final List<NativeInteropAnEnum> pigeonVar_dartTypeRes =
-            (_PigeonJniCodec.readValue(pigeonVar_res)! as List<Object?>)
-                .cast<NativeInteropAnEnum>();
-        return pigeonVar_dartTypeRes;
+        final JByteArray pigeonVar_args = _PigeonJniBuffers.encode(<Object?>[enumList]);
+        try {
+          final JByteArray? pigeonVar_res = await _jniApi
+              .pigeon_callFlutterEchoAsyncNonNullEnumList(pigeonVar_args);
+          return (_PigeonJniBuffers.decode(pigeonVar_res)! as List<Object?>)
+              .cast<NativeInteropAnEnum>();
+        } finally {
+          pigeonVar_args.release();
+        }
       } else if (_ffiApi != null) {
         final pigeonVar_error = ffi_bridge.NativeInteropTestsError();
+        final NSData pigeonVar_args = _PigeonFfiBuffers.encode(<Object?>[enumList]);
         final Completer<List<NativeInteropAnEnum>> pigeonVar_completer =
             Completer<List<NativeInteropAnEnum>>();
-        _ffiApi.callFlutterEchoAsyncNonNullEnumListWithEnumList(
-          _PigeonFfiCodec.writeValue<NSMutableArray>(enumList),
+        _ffiApi.pigeon_callFlutterEchoAsyncNonNullEnumList(
+          pigeonVar_args,
           wrappedError: pigeonVar_error,
-          completionHandler: ffi_bridge.ObjCBlock_ffiVoid_NSArray.listener((
-            NSArray? pigeonVar_res,
-          ) {
+          completionHandler: ffi_bridge.ObjCBlock_ffiVoid_NSData.listener((NSData? pigeonVar_res) {
             if (pigeonVar_error.code != null) {
               pigeonVar_completer.completeError(_wrapFfiError(pigeonVar_error));
             } else {
               pigeonVar_completer.complete(
-                (_PigeonFfiCodec.readValue(pigeonVar_res, NativeInteropAnEnum)! as List<Object?>)
+                (_PigeonFfiBuffers.decode(pigeonVar_res)! as List<Object?>)
                     .cast<NativeInteropAnEnum>(),
               );
             }
           }),
         );
+
         return await pigeonVar_completer.future;
       } else {
         throw Exception('No JNI or FFI api available');
@@ -8833,36 +9172,35 @@ class NativeInteropHostIntegrationCoreApiForNativeInterop {
   ) async {
     try {
       if (_jniApi != null) {
-        final JList<jni_bridge.NativeInteropAllNullableTypes> pigeonVar_res = await _jniApi
-            .callFlutterEchoAsyncNonNullClassList(
-              _PigeonJniCodec.writeValue<JList<jni_bridge.NativeInteropAllNullableTypes>>(
-                classList,
-              ),
-            );
-        final List<NativeInteropAllNullableTypes> pigeonVar_dartTypeRes =
-            (_PigeonJniCodec.readValue(pigeonVar_res)! as List<Object?>)
-                .cast<NativeInteropAllNullableTypes>();
-        return pigeonVar_dartTypeRes;
+        final JByteArray pigeonVar_args = _PigeonJniBuffers.encode(<Object?>[classList]);
+        try {
+          final JByteArray? pigeonVar_res = await _jniApi
+              .pigeon_callFlutterEchoAsyncNonNullClassList(pigeonVar_args);
+          return (_PigeonJniBuffers.decode(pigeonVar_res)! as List<Object?>)
+              .cast<NativeInteropAllNullableTypes>();
+        } finally {
+          pigeonVar_args.release();
+        }
       } else if (_ffiApi != null) {
         final pigeonVar_error = ffi_bridge.NativeInteropTestsError();
+        final NSData pigeonVar_args = _PigeonFfiBuffers.encode(<Object?>[classList]);
         final Completer<List<NativeInteropAllNullableTypes>> pigeonVar_completer =
             Completer<List<NativeInteropAllNullableTypes>>();
-        _ffiApi.callFlutterEchoAsyncNonNullClassListWithClassList(
-          _PigeonFfiCodec.writeValue<NSMutableArray>(classList),
+        _ffiApi.pigeon_callFlutterEchoAsyncNonNullClassList(
+          pigeonVar_args,
           wrappedError: pigeonVar_error,
-          completionHandler: ffi_bridge.ObjCBlock_ffiVoid_NSArray.listener((
-            NSArray? pigeonVar_res,
-          ) {
+          completionHandler: ffi_bridge.ObjCBlock_ffiVoid_NSData.listener((NSData? pigeonVar_res) {
             if (pigeonVar_error.code != null) {
               pigeonVar_completer.completeError(_wrapFfiError(pigeonVar_error));
             } else {
               pigeonVar_completer.complete(
-                (_PigeonFfiCodec.readValue(pigeonVar_res)! as List<Object?>)
+                (_PigeonFfiBuffers.decode(pigeonVar_res)! as List<Object?>)
                     .cast<NativeInteropAllNullableTypes>(),
               );
             }
           }),
         );
+
         return await pigeonVar_completer.future;
       } else {
         throw Exception('No JNI or FFI api available');
@@ -8875,33 +9213,34 @@ class NativeInteropHostIntegrationCoreApiForNativeInterop {
   Future<Map<Object?, Object?>> callFlutterEchoAsyncMap(Map<Object?, Object?> map) async {
     try {
       if (_jniApi != null) {
-        final JMap<JObject?, JObject?> pigeonVar_res = await _jniApi.callFlutterEchoAsyncMap(
-          _PigeonJniCodec.writeValue<JMap<JObject?, JObject?>>(map),
-        );
-        final Map<Object?, Object?> pigeonVar_dartTypeRes =
-            (_PigeonJniCodec.readValue(pigeonVar_res)! as Map<Object?, Object?>)
-                .cast<Object?, Object?>();
-        return pigeonVar_dartTypeRes;
+        final JByteArray pigeonVar_args = _PigeonJniBuffers.encode(<Object?>[map]);
+        try {
+          final JByteArray? pigeonVar_res = await _jniApi.pigeon_callFlutterEchoAsyncMap(
+            pigeonVar_args,
+          );
+          return _PigeonJniBuffers.decode(pigeonVar_res)! as Map<Object?, Object?>;
+        } finally {
+          pigeonVar_args.release();
+        }
       } else if (_ffiApi != null) {
         final pigeonVar_error = ffi_bridge.NativeInteropTestsError();
+        final NSData pigeonVar_args = _PigeonFfiBuffers.encode(<Object?>[map]);
         final Completer<Map<Object?, Object?>> pigeonVar_completer =
             Completer<Map<Object?, Object?>>();
-        _ffiApi.callFlutterEchoAsyncMapWithMap(
-          _PigeonFfiCodec.writeValue<NSDictionary>(map),
+        _ffiApi.pigeon_callFlutterEchoAsyncMap(
+          pigeonVar_args,
           wrappedError: pigeonVar_error,
-          completionHandler: ffi_bridge.ObjCBlock_ffiVoid_NSDictionary.listener((
-            NSDictionary? pigeonVar_res,
-          ) {
+          completionHandler: ffi_bridge.ObjCBlock_ffiVoid_NSData.listener((NSData? pigeonVar_res) {
             if (pigeonVar_error.code != null) {
               pigeonVar_completer.completeError(_wrapFfiError(pigeonVar_error));
             } else {
               pigeonVar_completer.complete(
-                (_PigeonFfiCodec.readValue(pigeonVar_res)! as Map<Object?, Object?>)
-                    .cast<Object?, Object?>(),
+                _PigeonFfiBuffers.decode(pigeonVar_res)! as Map<Object?, Object?>,
               );
             }
           }),
         );
+
         return await pigeonVar_completer.future;
       } else {
         throw Exception('No JNI or FFI api available');
@@ -8916,33 +9255,36 @@ class NativeInteropHostIntegrationCoreApiForNativeInterop {
   ) async {
     try {
       if (_jniApi != null) {
-        final JMap<JString?, JString?> pigeonVar_res = await _jniApi.callFlutterEchoAsyncStringMap(
-          _PigeonJniCodec.writeValue<JMap<JString?, JString?>>(stringMap),
-        );
-        final Map<String?, String?> pigeonVar_dartTypeRes =
-            (_PigeonJniCodec.readValue(pigeonVar_res)! as Map<Object?, Object?>)
-                .cast<String?, String?>();
-        return pigeonVar_dartTypeRes;
+        final JByteArray pigeonVar_args = _PigeonJniBuffers.encode(<Object?>[stringMap]);
+        try {
+          final JByteArray? pigeonVar_res = await _jniApi.pigeon_callFlutterEchoAsyncStringMap(
+            pigeonVar_args,
+          );
+          return (_PigeonJniBuffers.decode(pigeonVar_res)! as Map<Object?, Object?>)
+              .cast<String?, String?>();
+        } finally {
+          pigeonVar_args.release();
+        }
       } else if (_ffiApi != null) {
         final pigeonVar_error = ffi_bridge.NativeInteropTestsError();
+        final NSData pigeonVar_args = _PigeonFfiBuffers.encode(<Object?>[stringMap]);
         final Completer<Map<String?, String?>> pigeonVar_completer =
             Completer<Map<String?, String?>>();
-        _ffiApi.callFlutterEchoAsyncStringMapWithStringMap(
-          _PigeonFfiCodec.writeValue<NSDictionary>(stringMap),
+        _ffiApi.pigeon_callFlutterEchoAsyncStringMap(
+          pigeonVar_args,
           wrappedError: pigeonVar_error,
-          completionHandler: ffi_bridge.ObjCBlock_ffiVoid_NSDictionary.listener((
-            NSDictionary? pigeonVar_res,
-          ) {
+          completionHandler: ffi_bridge.ObjCBlock_ffiVoid_NSData.listener((NSData? pigeonVar_res) {
             if (pigeonVar_error.code != null) {
               pigeonVar_completer.completeError(_wrapFfiError(pigeonVar_error));
             } else {
               pigeonVar_completer.complete(
-                (_PigeonFfiCodec.readValue(pigeonVar_res)! as Map<Object?, Object?>)
+                (_PigeonFfiBuffers.decode(pigeonVar_res)! as Map<Object?, Object?>)
                     .cast<String?, String?>(),
               );
             }
           }),
         );
+
         return await pigeonVar_completer.future;
       } else {
         throw Exception('No JNI or FFI api available');
@@ -8955,31 +9297,35 @@ class NativeInteropHostIntegrationCoreApiForNativeInterop {
   Future<Map<int?, int?>> callFlutterEchoAsyncIntMap(Map<int?, int?> intMap) async {
     try {
       if (_jniApi != null) {
-        final JMap<JLong?, JLong?> pigeonVar_res = await _jniApi.callFlutterEchoAsyncIntMap(
-          _PigeonJniCodec.writeValue<JMap<JLong?, JLong?>>(intMap),
-        );
-        final Map<int?, int?> pigeonVar_dartTypeRes =
-            (_PigeonJniCodec.readValue(pigeonVar_res)! as Map<Object?, Object?>).cast<int?, int?>();
-        return pigeonVar_dartTypeRes;
+        final JByteArray pigeonVar_args = _PigeonJniBuffers.encode(<Object?>[intMap]);
+        try {
+          final JByteArray? pigeonVar_res = await _jniApi.pigeon_callFlutterEchoAsyncIntMap(
+            pigeonVar_args,
+          );
+          return (_PigeonJniBuffers.decode(pigeonVar_res)! as Map<Object?, Object?>)
+              .cast<int?, int?>();
+        } finally {
+          pigeonVar_args.release();
+        }
       } else if (_ffiApi != null) {
         final pigeonVar_error = ffi_bridge.NativeInteropTestsError();
+        final NSData pigeonVar_args = _PigeonFfiBuffers.encode(<Object?>[intMap]);
         final Completer<Map<int?, int?>> pigeonVar_completer = Completer<Map<int?, int?>>();
-        _ffiApi.callFlutterEchoAsyncIntMapWithIntMap(
-          _PigeonFfiCodec.writeValue<NSDictionary>(intMap),
+        _ffiApi.pigeon_callFlutterEchoAsyncIntMap(
+          pigeonVar_args,
           wrappedError: pigeonVar_error,
-          completionHandler: ffi_bridge.ObjCBlock_ffiVoid_NSDictionary.listener((
-            NSDictionary? pigeonVar_res,
-          ) {
+          completionHandler: ffi_bridge.ObjCBlock_ffiVoid_NSData.listener((NSData? pigeonVar_res) {
             if (pigeonVar_error.code != null) {
               pigeonVar_completer.completeError(_wrapFfiError(pigeonVar_error));
             } else {
               pigeonVar_completer.complete(
-                (_PigeonFfiCodec.readValue(pigeonVar_res, int, int)! as Map<Object?, Object?>)
+                (_PigeonFfiBuffers.decode(pigeonVar_res)! as Map<Object?, Object?>)
                     .cast<int?, int?>(),
               );
             }
           }),
         );
+
         return await pigeonVar_completer.future;
       } else {
         throw Exception('No JNI or FFI api available');
@@ -8994,37 +9340,36 @@ class NativeInteropHostIntegrationCoreApiForNativeInterop {
   ) async {
     try {
       if (_jniApi != null) {
-        final JMap<jni_bridge.NativeInteropAnEnum?, jni_bridge.NativeInteropAnEnum?> pigeonVar_res =
-            await _jniApi.callFlutterEchoAsyncEnumMap(
-              _PigeonJniCodec.writeValue<
-                JMap<jni_bridge.NativeInteropAnEnum?, jni_bridge.NativeInteropAnEnum?>
-              >(enumMap),
-            );
-        final Map<NativeInteropAnEnum?, NativeInteropAnEnum?> pigeonVar_dartTypeRes =
-            (_PigeonJniCodec.readValue(pigeonVar_res)! as Map<Object?, Object?>)
-                .cast<NativeInteropAnEnum?, NativeInteropAnEnum?>();
-        return pigeonVar_dartTypeRes;
+        final JByteArray pigeonVar_args = _PigeonJniBuffers.encode(<Object?>[enumMap]);
+        try {
+          final JByteArray? pigeonVar_res = await _jniApi.pigeon_callFlutterEchoAsyncEnumMap(
+            pigeonVar_args,
+          );
+          return (_PigeonJniBuffers.decode(pigeonVar_res)! as Map<Object?, Object?>)
+              .cast<NativeInteropAnEnum?, NativeInteropAnEnum?>();
+        } finally {
+          pigeonVar_args.release();
+        }
       } else if (_ffiApi != null) {
         final pigeonVar_error = ffi_bridge.NativeInteropTestsError();
+        final NSData pigeonVar_args = _PigeonFfiBuffers.encode(<Object?>[enumMap]);
         final Completer<Map<NativeInteropAnEnum?, NativeInteropAnEnum?>> pigeonVar_completer =
             Completer<Map<NativeInteropAnEnum?, NativeInteropAnEnum?>>();
-        _ffiApi.callFlutterEchoAsyncEnumMapWithEnumMap(
-          _PigeonFfiCodec.writeValue<NSDictionary>(enumMap),
+        _ffiApi.pigeon_callFlutterEchoAsyncEnumMap(
+          pigeonVar_args,
           wrappedError: pigeonVar_error,
-          completionHandler: ffi_bridge.ObjCBlock_ffiVoid_NSDictionary.listener((
-            NSDictionary? pigeonVar_res,
-          ) {
+          completionHandler: ffi_bridge.ObjCBlock_ffiVoid_NSData.listener((NSData? pigeonVar_res) {
             if (pigeonVar_error.code != null) {
               pigeonVar_completer.completeError(_wrapFfiError(pigeonVar_error));
             } else {
               pigeonVar_completer.complete(
-                (_PigeonFfiCodec.readValue(pigeonVar_res, NativeInteropAnEnum, NativeInteropAnEnum)!
-                        as Map<Object?, Object?>)
+                (_PigeonFfiBuffers.decode(pigeonVar_res)! as Map<Object?, Object?>)
                     .cast<NativeInteropAnEnum?, NativeInteropAnEnum?>(),
               );
             }
           }),
         );
+
         return await pigeonVar_completer.future;
       } else {
         throw Exception('No JNI or FFI api available');
@@ -9039,36 +9384,36 @@ class NativeInteropHostIntegrationCoreApiForNativeInterop {
   ) async {
     try {
       if (_jniApi != null) {
-        final JMap<JLong?, jni_bridge.NativeInteropAllNullableTypes?> pigeonVar_res = await _jniApi
-            .callFlutterEchoAsyncClassMap(
-              _PigeonJniCodec.writeValue<JMap<JLong?, jni_bridge.NativeInteropAllNullableTypes?>>(
-                classMap,
-              ),
-            );
-        final Map<int?, NativeInteropAllNullableTypes?> pigeonVar_dartTypeRes =
-            (_PigeonJniCodec.readValue(pigeonVar_res)! as Map<Object?, Object?>)
-                .cast<int?, NativeInteropAllNullableTypes?>();
-        return pigeonVar_dartTypeRes;
+        final JByteArray pigeonVar_args = _PigeonJniBuffers.encode(<Object?>[classMap]);
+        try {
+          final JByteArray? pigeonVar_res = await _jniApi.pigeon_callFlutterEchoAsyncClassMap(
+            pigeonVar_args,
+          );
+          return (_PigeonJniBuffers.decode(pigeonVar_res)! as Map<Object?, Object?>)
+              .cast<int?, NativeInteropAllNullableTypes?>();
+        } finally {
+          pigeonVar_args.release();
+        }
       } else if (_ffiApi != null) {
         final pigeonVar_error = ffi_bridge.NativeInteropTestsError();
+        final NSData pigeonVar_args = _PigeonFfiBuffers.encode(<Object?>[classMap]);
         final Completer<Map<int?, NativeInteropAllNullableTypes?>> pigeonVar_completer =
             Completer<Map<int?, NativeInteropAllNullableTypes?>>();
-        _ffiApi.callFlutterEchoAsyncClassMapWithClassMap(
-          _PigeonFfiCodec.writeValue<NSDictionary>(classMap),
+        _ffiApi.pigeon_callFlutterEchoAsyncClassMap(
+          pigeonVar_args,
           wrappedError: pigeonVar_error,
-          completionHandler: ffi_bridge.ObjCBlock_ffiVoid_NSDictionary.listener((
-            NSDictionary? pigeonVar_res,
-          ) {
+          completionHandler: ffi_bridge.ObjCBlock_ffiVoid_NSData.listener((NSData? pigeonVar_res) {
             if (pigeonVar_error.code != null) {
               pigeonVar_completer.completeError(_wrapFfiError(pigeonVar_error));
             } else {
               pigeonVar_completer.complete(
-                (_PigeonFfiCodec.readValue(pigeonVar_res, int)! as Map<Object?, Object?>)
+                (_PigeonFfiBuffers.decode(pigeonVar_res)! as Map<Object?, Object?>)
                     .cast<int?, NativeInteropAllNullableTypes?>(),
               );
             }
           }),
         );
+
         return await pigeonVar_completer.future;
       } else {
         throw Exception('No JNI or FFI api available');
@@ -9081,18 +9426,15 @@ class NativeInteropHostIntegrationCoreApiForNativeInterop {
   Future<NativeInteropAnEnum> callFlutterEchoAsyncEnum(NativeInteropAnEnum anEnum) async {
     try {
       if (_jniApi != null) {
-        final jni_bridge.NativeInteropAnEnum pigeonVar_res = await _jniApi.callFlutterEchoAsyncEnum(
-          anEnum.toJni(),
-        );
-        final NativeInteropAnEnum pigeonVar_dartTypeRes = NativeInteropAnEnum.fromJni(
-          pigeonVar_res,
-        )!;
-        return pigeonVar_dartTypeRes;
+        final int pigeonVar_res = (await _jniApi.pigeon_callFlutterEchoAsyncEnum(
+          anEnum.index,
+        )).toDartInt(releaseOriginal: true);
+        return NativeInteropAnEnum.values[pigeonVar_res];
       } else if (_ffiApi != null) {
         final pigeonVar_error = ffi_bridge.NativeInteropTestsError();
         final Completer<NativeInteropAnEnum> pigeonVar_completer = Completer<NativeInteropAnEnum>();
-        _ffiApi.callFlutterEchoAsyncEnumWithAnEnum(
-          ffi_bridge.NativeInteropAnEnum.values[anEnum.index],
+        _ffiApi.pigeon_callFlutterEchoAsyncEnum(
+          anEnum.index,
           wrappedError: pigeonVar_error,
           completionHandler: ffi_bridge.ObjCBlock_ffiVoid_NSNumber.listener((
             NSNumber? pigeonVar_res,
@@ -9100,13 +9442,11 @@ class NativeInteropHostIntegrationCoreApiForNativeInterop {
             if (pigeonVar_error.code != null) {
               pigeonVar_completer.completeError(_wrapFfiError(pigeonVar_error));
             } else {
-              pigeonVar_completer.complete(
-                _PigeonFfiCodec.readValue(pigeonVar_res, NativeInteropAnEnum)!
-                    as NativeInteropAnEnum,
-              );
+              pigeonVar_completer.complete(NativeInteropAnEnum.values[pigeonVar_res!.longValue]);
             }
           }),
         );
+
         return await pigeonVar_completer.future;
       } else {
         throw Exception('No JNI or FFI api available');
@@ -9121,18 +9461,16 @@ class NativeInteropHostIntegrationCoreApiForNativeInterop {
   ) async {
     try {
       if (_jniApi != null) {
-        final jni_bridge.NativeInteropAnotherEnum pigeonVar_res = await _jniApi
-            .callFlutterEchoAnotherAsyncEnum(anotherEnum.toJni());
-        final NativeInteropAnotherEnum pigeonVar_dartTypeRes = NativeInteropAnotherEnum.fromJni(
-          pigeonVar_res,
-        )!;
-        return pigeonVar_dartTypeRes;
+        final int pigeonVar_res = (await _jniApi.pigeon_callFlutterEchoAnotherAsyncEnum(
+          anotherEnum.index,
+        )).toDartInt(releaseOriginal: true);
+        return NativeInteropAnotherEnum.values[pigeonVar_res];
       } else if (_ffiApi != null) {
         final pigeonVar_error = ffi_bridge.NativeInteropTestsError();
         final Completer<NativeInteropAnotherEnum> pigeonVar_completer =
             Completer<NativeInteropAnotherEnum>();
-        _ffiApi.callFlutterEchoAnotherAsyncEnumWithAnotherEnum(
-          ffi_bridge.NativeInteropAnotherEnum.values[anotherEnum.index],
+        _ffiApi.pigeon_callFlutterEchoAnotherAsyncEnum(
+          anotherEnum.index,
           wrappedError: pigeonVar_error,
           completionHandler: ffi_bridge.ObjCBlock_ffiVoid_NSNumber.listener((
             NSNumber? pigeonVar_res,
@@ -9141,12 +9479,12 @@ class NativeInteropHostIntegrationCoreApiForNativeInterop {
               pigeonVar_completer.completeError(_wrapFfiError(pigeonVar_error));
             } else {
               pigeonVar_completer.complete(
-                _PigeonFfiCodec.readValue(pigeonVar_res, NativeInteropAnotherEnum)!
-                    as NativeInteropAnotherEnum,
+                NativeInteropAnotherEnum.values[pigeonVar_res!.longValue],
               );
             }
           }),
         );
+
         return await pigeonVar_completer.future;
       } else {
         throw Exception('No JNI or FFI api available');
@@ -9159,15 +9497,19 @@ class NativeInteropHostIntegrationCoreApiForNativeInterop {
   Future<bool?> callFlutterEchoAsyncNullableBool(bool? aBool) async {
     try {
       if (_jniApi != null) {
-        final JBoolean? pigeonVar_res = await _jniApi.callFlutterEchoAsyncNullableBool(
-          _PigeonJniCodec.writeValue<JBoolean?>(aBool),
-        );
-        final bool? pigeonVar_dartTypeRes = pigeonVar_res?.toDartBool(releaseOriginal: true);
-        return pigeonVar_dartTypeRes;
+        final JBoolean? pigeonVar_aBool = aBool == null ? null : JBoolean(aBool);
+        try {
+          final JBoolean? pigeonVar_res = await _jniApi.pigeon_callFlutterEchoAsyncNullableBool(
+            pigeonVar_aBool,
+          );
+          return pigeonVar_res?.toDartBool(releaseOriginal: true);
+        } finally {
+          pigeonVar_aBool?.release();
+        }
       } else if (_ffiApi != null) {
         final pigeonVar_error = ffi_bridge.NativeInteropTestsError();
         final Completer<bool?> pigeonVar_completer = Completer<bool?>();
-        _ffiApi.callFlutterEchoAsyncNullableBoolWithABool(
+        _ffiApi.pigeon_callFlutterEchoAsyncNullableBool(
           _PigeonFfiCodec.writeValue<NSNumber?>(aBool),
           wrappedError: pigeonVar_error,
           completionHandler: ffi_bridge.ObjCBlock_ffiVoid_NSNumber.listener((
@@ -9180,6 +9522,7 @@ class NativeInteropHostIntegrationCoreApiForNativeInterop {
             }
           }),
         );
+
         return await pigeonVar_completer.future;
       } else {
         throw Exception('No JNI or FFI api available');
@@ -9192,15 +9535,19 @@ class NativeInteropHostIntegrationCoreApiForNativeInterop {
   Future<int?> callFlutterEchoAsyncNullableInt(int? anInt) async {
     try {
       if (_jniApi != null) {
-        final JLong? pigeonVar_res = await _jniApi.callFlutterEchoAsyncNullableInt(
-          _PigeonJniCodec.writeValue<JLong?>(anInt),
-        );
-        final int? pigeonVar_dartTypeRes = pigeonVar_res?.toDartInt(releaseOriginal: true);
-        return pigeonVar_dartTypeRes;
+        final JLong? pigeonVar_anInt = anInt == null ? null : JLong(anInt);
+        try {
+          final JLong? pigeonVar_res = await _jniApi.pigeon_callFlutterEchoAsyncNullableInt(
+            pigeonVar_anInt,
+          );
+          return pigeonVar_res?.toDartInt(releaseOriginal: true);
+        } finally {
+          pigeonVar_anInt?.release();
+        }
       } else if (_ffiApi != null) {
         final pigeonVar_error = ffi_bridge.NativeInteropTestsError();
         final Completer<int?> pigeonVar_completer = Completer<int?>();
-        _ffiApi.callFlutterEchoAsyncNullableIntWithAnInt(
+        _ffiApi.pigeon_callFlutterEchoAsyncNullableInt(
           _PigeonFfiCodec.writeValue<NSNumber?>(anInt),
           wrappedError: pigeonVar_error,
           completionHandler: ffi_bridge.ObjCBlock_ffiVoid_NSNumber.listener((
@@ -9213,6 +9560,7 @@ class NativeInteropHostIntegrationCoreApiForNativeInterop {
             }
           }),
         );
+
         return await pigeonVar_completer.future;
       } else {
         throw Exception('No JNI or FFI api available');
@@ -9225,15 +9573,19 @@ class NativeInteropHostIntegrationCoreApiForNativeInterop {
   Future<double?> callFlutterEchoAsyncNullableDouble(double? aDouble) async {
     try {
       if (_jniApi != null) {
-        final JDouble? pigeonVar_res = await _jniApi.callFlutterEchoAsyncNullableDouble(
-          _PigeonJniCodec.writeValue<JDouble?>(aDouble),
-        );
-        final double? pigeonVar_dartTypeRes = pigeonVar_res?.toDartDouble(releaseOriginal: true);
-        return pigeonVar_dartTypeRes;
+        final JDouble? pigeonVar_aDouble = aDouble == null ? null : JDouble(aDouble);
+        try {
+          final JDouble? pigeonVar_res = await _jniApi.pigeon_callFlutterEchoAsyncNullableDouble(
+            pigeonVar_aDouble,
+          );
+          return pigeonVar_res?.toDartDouble(releaseOriginal: true);
+        } finally {
+          pigeonVar_aDouble?.release();
+        }
       } else if (_ffiApi != null) {
         final pigeonVar_error = ffi_bridge.NativeInteropTestsError();
         final Completer<double?> pigeonVar_completer = Completer<double?>();
-        _ffiApi.callFlutterEchoAsyncNullableDoubleWithADouble(
+        _ffiApi.pigeon_callFlutterEchoAsyncNullableDouble(
           _PigeonFfiCodec.writeValue<NSNumber?>(aDouble),
           wrappedError: pigeonVar_error,
           completionHandler: ffi_bridge.ObjCBlock_ffiVoid_NSNumber.listener((
@@ -9246,6 +9598,7 @@ class NativeInteropHostIntegrationCoreApiForNativeInterop {
             }
           }),
         );
+
         return await pigeonVar_completer.future;
       } else {
         throw Exception('No JNI or FFI api available');
@@ -9258,16 +9611,20 @@ class NativeInteropHostIntegrationCoreApiForNativeInterop {
   Future<String?> callFlutterEchoAsyncNullableString(String? aString) async {
     try {
       if (_jniApi != null) {
-        final JString? pigeonVar_res = await _jniApi.callFlutterEchoAsyncNullableString(
-          _PigeonJniCodec.writeValue<JString?>(aString),
-        );
-        final String? pigeonVar_dartTypeRes = pigeonVar_res?.toDartString(releaseOriginal: true);
-        return pigeonVar_dartTypeRes;
+        final JString? pigeonVar_aString = aString?.toJString();
+        try {
+          final JString? pigeonVar_res = await _jniApi.pigeon_callFlutterEchoAsyncNullableString(
+            pigeonVar_aString,
+          );
+          return pigeonVar_res?.toDartString(releaseOriginal: true);
+        } finally {
+          pigeonVar_aString?.release();
+        }
       } else if (_ffiApi != null) {
         final pigeonVar_error = ffi_bridge.NativeInteropTestsError();
         final Completer<String?> pigeonVar_completer = Completer<String?>();
-        _ffiApi.callFlutterEchoAsyncNullableStringWithAString(
-          _PigeonFfiCodec.writeValue<NSString?>(aString),
+        _ffiApi.pigeon_callFlutterEchoAsyncNullableString(
+          aString == null ? null : NSString(aString),
           wrappedError: pigeonVar_error,
           completionHandler: ffi_bridge.ObjCBlock_ffiVoid_NSString.listener((
             NSString? pigeonVar_res,
@@ -9279,6 +9636,7 @@ class NativeInteropHostIntegrationCoreApiForNativeInterop {
             }
           }),
         );
+
         return await pigeonVar_completer.future;
       } else {
         throw Exception('No JNI or FFI api available');
@@ -9291,31 +9649,29 @@ class NativeInteropHostIntegrationCoreApiForNativeInterop {
   Future<Uint8List?> callFlutterEchoAsyncNullableUint8List(Uint8List? list) async {
     try {
       if (_jniApi != null) {
-        final JByteArray? pigeonVar_res = await _jniApi.callFlutterEchoAsyncNullableUint8List(
-          _PigeonJniCodec.writeValue<JByteArray?>(list),
-        );
-        final Uint8List? pigeonVar_dartTypeRes =
-            _PigeonJniCodec.readValue(pigeonVar_res) as Uint8List?;
-        return pigeonVar_dartTypeRes;
+        final JByteArray? pigeonVar_list = list == null ? null : _uint8ListToJni(list);
+        try {
+          final JByteArray? pigeonVar_res = await _jniApi
+              .pigeon_callFlutterEchoAsyncNullableUint8List(pigeonVar_list);
+          return _jByteArrayToDart(pigeonVar_res, release: true);
+        } finally {
+          pigeonVar_list?.release();
+        }
       } else if (_ffiApi != null) {
         final pigeonVar_error = ffi_bridge.NativeInteropTestsError();
         final Completer<Uint8List?> pigeonVar_completer = Completer<Uint8List?>();
-        _ffiApi.callFlutterEchoAsyncNullableUint8ListWithList(
-          _PigeonFfiCodec.writeValue<ffi_bridge.NativeInteropTestsPigeonTypedData?>(list),
+        _ffiApi.pigeon_callFlutterEchoAsyncNullableUint8List(
+          list == null ? null : _typedDataToNSData(list),
           wrappedError: pigeonVar_error,
-          completionHandler:
-              ffi_bridge.ObjCBlock_ffiVoid_NativeInteropTestsPigeonTypedData.listener((
-                ffi_bridge.NativeInteropTestsPigeonTypedData? pigeonVar_res,
-              ) {
-                if (pigeonVar_error.code != null) {
-                  pigeonVar_completer.completeError(_wrapFfiError(pigeonVar_error));
-                } else {
-                  pigeonVar_completer.complete(
-                    _PigeonFfiCodec.readValue(pigeonVar_res) as Uint8List?,
-                  );
-                }
-              }),
+          completionHandler: ffi_bridge.ObjCBlock_ffiVoid_NSData.listener((NSData? pigeonVar_res) {
+            if (pigeonVar_error.code != null) {
+              pigeonVar_completer.completeError(_wrapFfiError(pigeonVar_error));
+            } else {
+              pigeonVar_completer.complete(_PigeonFfiBuffers.toUint8List(pigeonVar_res));
+            }
+          }),
         );
+
         return await pigeonVar_completer.future;
       } else {
         throw Exception('No JNI or FFI api available');
@@ -9328,31 +9684,31 @@ class NativeInteropHostIntegrationCoreApiForNativeInterop {
   Future<Int32List?> callFlutterEchoAsyncNullableInt32List(Int32List? list) async {
     try {
       if (_jniApi != null) {
-        final JIntArray? pigeonVar_res = await _jniApi.callFlutterEchoAsyncNullableInt32List(
-          _PigeonJniCodec.writeValue<JIntArray?>(list),
-        );
-        final Int32List? pigeonVar_dartTypeRes =
-            _PigeonJniCodec.readValue(pigeonVar_res) as Int32List?;
-        return pigeonVar_dartTypeRes;
+        final JIntArray? pigeonVar_list = list == null ? null : _int32ListToJni(list);
+        try {
+          final JIntArray? pigeonVar_res = await _jniApi
+              .pigeon_callFlutterEchoAsyncNullableInt32List(pigeonVar_list);
+          return _jIntArrayToDart(pigeonVar_res, release: true);
+        } finally {
+          pigeonVar_list?.release();
+        }
       } else if (_ffiApi != null) {
         final pigeonVar_error = ffi_bridge.NativeInteropTestsError();
         final Completer<Int32List?> pigeonVar_completer = Completer<Int32List?>();
-        _ffiApi.callFlutterEchoAsyncNullableInt32ListWithList(
-          _PigeonFfiCodec.writeValue<ffi_bridge.NativeInteropTestsPigeonTypedData?>(list),
+        _ffiApi.pigeon_callFlutterEchoAsyncNullableInt32List(
+          list == null ? null : _typedDataToNSData(list),
           wrappedError: pigeonVar_error,
-          completionHandler:
-              ffi_bridge.ObjCBlock_ffiVoid_NativeInteropTestsPigeonTypedData.listener((
-                ffi_bridge.NativeInteropTestsPigeonTypedData? pigeonVar_res,
-              ) {
-                if (pigeonVar_error.code != null) {
-                  pigeonVar_completer.completeError(_wrapFfiError(pigeonVar_error));
-                } else {
-                  pigeonVar_completer.complete(
-                    _PigeonFfiCodec.readValue(pigeonVar_res) as Int32List?,
-                  );
-                }
-              }),
+          completionHandler: ffi_bridge.ObjCBlock_ffiVoid_NSData.listener((NSData? pigeonVar_res) {
+            if (pigeonVar_error.code != null) {
+              pigeonVar_completer.completeError(_wrapFfiError(pigeonVar_error));
+            } else {
+              pigeonVar_completer.complete(
+                _PigeonFfiBuffers.toUint8List(pigeonVar_res)?.buffer.asInt32List(),
+              );
+            }
+          }),
         );
+
         return await pigeonVar_completer.future;
       } else {
         throw Exception('No JNI or FFI api available');
@@ -9365,31 +9721,31 @@ class NativeInteropHostIntegrationCoreApiForNativeInterop {
   Future<Int64List?> callFlutterEchoAsyncNullableInt64List(Int64List? list) async {
     try {
       if (_jniApi != null) {
-        final JLongArray? pigeonVar_res = await _jniApi.callFlutterEchoAsyncNullableInt64List(
-          _PigeonJniCodec.writeValue<JLongArray?>(list),
-        );
-        final Int64List? pigeonVar_dartTypeRes =
-            _PigeonJniCodec.readValue(pigeonVar_res) as Int64List?;
-        return pigeonVar_dartTypeRes;
+        final JLongArray? pigeonVar_list = list == null ? null : _int64ListToJni(list);
+        try {
+          final JLongArray? pigeonVar_res = await _jniApi
+              .pigeon_callFlutterEchoAsyncNullableInt64List(pigeonVar_list);
+          return _jLongArrayToDart(pigeonVar_res, release: true);
+        } finally {
+          pigeonVar_list?.release();
+        }
       } else if (_ffiApi != null) {
         final pigeonVar_error = ffi_bridge.NativeInteropTestsError();
         final Completer<Int64List?> pigeonVar_completer = Completer<Int64List?>();
-        _ffiApi.callFlutterEchoAsyncNullableInt64ListWithList(
-          _PigeonFfiCodec.writeValue<ffi_bridge.NativeInteropTestsPigeonTypedData?>(list),
+        _ffiApi.pigeon_callFlutterEchoAsyncNullableInt64List(
+          list == null ? null : _typedDataToNSData(list),
           wrappedError: pigeonVar_error,
-          completionHandler:
-              ffi_bridge.ObjCBlock_ffiVoid_NativeInteropTestsPigeonTypedData.listener((
-                ffi_bridge.NativeInteropTestsPigeonTypedData? pigeonVar_res,
-              ) {
-                if (pigeonVar_error.code != null) {
-                  pigeonVar_completer.completeError(_wrapFfiError(pigeonVar_error));
-                } else {
-                  pigeonVar_completer.complete(
-                    _PigeonFfiCodec.readValue(pigeonVar_res) as Int64List?,
-                  );
-                }
-              }),
+          completionHandler: ffi_bridge.ObjCBlock_ffiVoid_NSData.listener((NSData? pigeonVar_res) {
+            if (pigeonVar_error.code != null) {
+              pigeonVar_completer.completeError(_wrapFfiError(pigeonVar_error));
+            } else {
+              pigeonVar_completer.complete(
+                _PigeonFfiBuffers.toUint8List(pigeonVar_res)?.buffer.asInt64List(),
+              );
+            }
+          }),
         );
+
         return await pigeonVar_completer.future;
       } else {
         throw Exception('No JNI or FFI api available');
@@ -9402,31 +9758,31 @@ class NativeInteropHostIntegrationCoreApiForNativeInterop {
   Future<Float64List?> callFlutterEchoAsyncNullableFloat64List(Float64List? list) async {
     try {
       if (_jniApi != null) {
-        final JDoubleArray? pigeonVar_res = await _jniApi.callFlutterEchoAsyncNullableFloat64List(
-          _PigeonJniCodec.writeValue<JDoubleArray?>(list),
-        );
-        final Float64List? pigeonVar_dartTypeRes =
-            _PigeonJniCodec.readValue(pigeonVar_res) as Float64List?;
-        return pigeonVar_dartTypeRes;
+        final JDoubleArray? pigeonVar_list = list == null ? null : _float64ListToJni(list);
+        try {
+          final JDoubleArray? pigeonVar_res = await _jniApi
+              .pigeon_callFlutterEchoAsyncNullableFloat64List(pigeonVar_list);
+          return _jDoubleArrayToDart(pigeonVar_res, release: true);
+        } finally {
+          pigeonVar_list?.release();
+        }
       } else if (_ffiApi != null) {
         final pigeonVar_error = ffi_bridge.NativeInteropTestsError();
         final Completer<Float64List?> pigeonVar_completer = Completer<Float64List?>();
-        _ffiApi.callFlutterEchoAsyncNullableFloat64ListWithList(
-          _PigeonFfiCodec.writeValue<ffi_bridge.NativeInteropTestsPigeonTypedData?>(list),
+        _ffiApi.pigeon_callFlutterEchoAsyncNullableFloat64List(
+          list == null ? null : _typedDataToNSData(list),
           wrappedError: pigeonVar_error,
-          completionHandler:
-              ffi_bridge.ObjCBlock_ffiVoid_NativeInteropTestsPigeonTypedData.listener((
-                ffi_bridge.NativeInteropTestsPigeonTypedData? pigeonVar_res,
-              ) {
-                if (pigeonVar_error.code != null) {
-                  pigeonVar_completer.completeError(_wrapFfiError(pigeonVar_error));
-                } else {
-                  pigeonVar_completer.complete(
-                    _PigeonFfiCodec.readValue(pigeonVar_res) as Float64List?,
-                  );
-                }
-              }),
+          completionHandler: ffi_bridge.ObjCBlock_ffiVoid_NSData.listener((NSData? pigeonVar_res) {
+            if (pigeonVar_error.code != null) {
+              pigeonVar_completer.completeError(_wrapFfiError(pigeonVar_error));
+            } else {
+              pigeonVar_completer.complete(
+                _PigeonFfiBuffers.toUint8List(pigeonVar_res)?.buffer.asFloat64List(),
+              );
+            }
+          }),
         );
+
         return await pigeonVar_completer.future;
       } else {
         throw Exception('No JNI or FFI api available');
@@ -9439,24 +9795,22 @@ class NativeInteropHostIntegrationCoreApiForNativeInterop {
   Future<Object?> callFlutterThrowFlutterErrorAsync() async {
     try {
       if (_jniApi != null) {
-        final JObject? pigeonVar_res = await _jniApi.callFlutterThrowFlutterErrorAsync();
-        final Object? pigeonVar_dartTypeRes = _PigeonJniCodec.readValue(pigeonVar_res);
-        return pigeonVar_dartTypeRes;
+        final JByteArray? pigeonVar_res = await _jniApi.pigeon_callFlutterThrowFlutterErrorAsync();
+        return _PigeonJniBuffers.decode(pigeonVar_res);
       } else if (_ffiApi != null) {
         final pigeonVar_error = ffi_bridge.NativeInteropTestsError();
         final Completer<Object?> pigeonVar_completer = Completer<Object?>();
-        _ffiApi.callFlutterThrowFlutterErrorAsyncWithWrappedError(
+        _ffiApi.pigeon_callFlutterThrowFlutterErrorAsync(
           pigeonVar_error,
-          completionHandler: ffi_bridge.ObjCBlock_ffiVoid_NSObject.listener((
-            NSObject? pigeonVar_res,
-          ) {
+          completionHandler: ffi_bridge.ObjCBlock_ffiVoid_NSData.listener((NSData? pigeonVar_res) {
             if (pigeonVar_error.code != null) {
               pigeonVar_completer.completeError(_wrapFfiError(pigeonVar_error));
             } else {
-              pigeonVar_completer.complete(_PigeonFfiCodec.readValue(pigeonVar_res));
+              pigeonVar_completer.complete(_PigeonFfiBuffers.decode(pigeonVar_res));
             }
           }),
         );
+
         return await pigeonVar_completer.future;
       } else {
         throw Exception('No JNI or FFI api available');
@@ -9469,27 +9823,31 @@ class NativeInteropHostIntegrationCoreApiForNativeInterop {
   Future<Object?> callFlutterEchoAsyncNullableObject(Object? anObject) async {
     try {
       if (_jniApi != null) {
-        final JObject? pigeonVar_res = await _jniApi.callFlutterEchoAsyncNullableObject(
-          _PigeonJniCodec.writeValue<JObject?>(anObject),
-        );
-        final Object? pigeonVar_dartTypeRes = _PigeonJniCodec.readValue(pigeonVar_res);
-        return pigeonVar_dartTypeRes;
+        final JByteArray pigeonVar_args = _PigeonJniBuffers.encode(<Object?>[anObject]);
+        try {
+          final JByteArray? pigeonVar_res = await _jniApi.pigeon_callFlutterEchoAsyncNullableObject(
+            pigeonVar_args,
+          );
+          return _PigeonJniBuffers.decode(pigeonVar_res);
+        } finally {
+          pigeonVar_args.release();
+        }
       } else if (_ffiApi != null) {
         final pigeonVar_error = ffi_bridge.NativeInteropTestsError();
+        final NSData pigeonVar_args = _PigeonFfiBuffers.encode(<Object?>[anObject]);
         final Completer<Object?> pigeonVar_completer = Completer<Object?>();
-        _ffiApi.callFlutterEchoAsyncNullableObjectWithAnObject(
-          _PigeonFfiCodec.writeValue<NSObject>(anObject, generic: true),
+        _ffiApi.pigeon_callFlutterEchoAsyncNullableObject(
+          pigeonVar_args,
           wrappedError: pigeonVar_error,
-          completionHandler: ffi_bridge.ObjCBlock_ffiVoid_NSObject.listener((
-            NSObject? pigeonVar_res,
-          ) {
+          completionHandler: ffi_bridge.ObjCBlock_ffiVoid_NSData.listener((NSData? pigeonVar_res) {
             if (pigeonVar_error.code != null) {
               pigeonVar_completer.completeError(_wrapFfiError(pigeonVar_error));
             } else {
-              pigeonVar_completer.complete(_PigeonFfiCodec.readValue(pigeonVar_res));
+              pigeonVar_completer.complete(_PigeonFfiBuffers.decode(pigeonVar_res));
             }
           }),
         );
+
         return await pigeonVar_completer.future;
       } else {
         throw Exception('No JNI or FFI api available');
@@ -9502,30 +9860,33 @@ class NativeInteropHostIntegrationCoreApiForNativeInterop {
   Future<List<Object?>?> callFlutterEchoAsyncNullableList(List<Object?>? list) async {
     try {
       if (_jniApi != null) {
-        final JList<JObject?>? pigeonVar_res = await _jniApi.callFlutterEchoAsyncNullableList(
-          _PigeonJniCodec.writeValue<JList<JObject?>?>(list),
-        );
-        final List<Object?>? pigeonVar_dartTypeRes =
-            (_PigeonJniCodec.readValue(pigeonVar_res) as List<Object?>?)?.cast<Object?>();
-        return pigeonVar_dartTypeRes;
+        final JByteArray pigeonVar_args = _PigeonJniBuffers.encode(<Object?>[list]);
+        try {
+          final JByteArray? pigeonVar_res = await _jniApi.pigeon_callFlutterEchoAsyncNullableList(
+            pigeonVar_args,
+          );
+          return _PigeonJniBuffers.decode(pigeonVar_res) as List<Object?>?;
+        } finally {
+          pigeonVar_args.release();
+        }
       } else if (_ffiApi != null) {
         final pigeonVar_error = ffi_bridge.NativeInteropTestsError();
+        final NSData pigeonVar_args = _PigeonFfiBuffers.encode(<Object?>[list]);
         final Completer<List<Object?>?> pigeonVar_completer = Completer<List<Object?>?>();
-        _ffiApi.callFlutterEchoAsyncNullableListWithList(
-          _PigeonFfiCodec.writeValue<NSMutableArray?>(list),
+        _ffiApi.pigeon_callFlutterEchoAsyncNullableList(
+          pigeonVar_args,
           wrappedError: pigeonVar_error,
-          completionHandler: ffi_bridge.ObjCBlock_ffiVoid_NSArray.listener((
-            NSArray? pigeonVar_res,
-          ) {
+          completionHandler: ffi_bridge.ObjCBlock_ffiVoid_NSData.listener((NSData? pigeonVar_res) {
             if (pigeonVar_error.code != null) {
               pigeonVar_completer.completeError(_wrapFfiError(pigeonVar_error));
             } else {
               pigeonVar_completer.complete(
-                (_PigeonFfiCodec.readValue(pigeonVar_res) as List<Object?>?)?.cast<Object?>(),
+                _PigeonFfiBuffers.decode(pigeonVar_res) as List<Object?>?,
               );
             }
           }),
         );
+
         return await pigeonVar_completer.future;
       } else {
         throw Exception('No JNI or FFI api available');
@@ -9540,34 +9901,35 @@ class NativeInteropHostIntegrationCoreApiForNativeInterop {
   ) async {
     try {
       if (_jniApi != null) {
-        final JList<jni_bridge.NativeInteropAnEnum?>? pigeonVar_res = await _jniApi
-            .callFlutterEchoAsyncNullableEnumList(
-              _PigeonJniCodec.writeValue<JList<jni_bridge.NativeInteropAnEnum?>?>(enumList),
-            );
-        final List<NativeInteropAnEnum?>? pigeonVar_dartTypeRes =
-            (_PigeonJniCodec.readValue(pigeonVar_res) as List<Object?>?)
-                ?.cast<NativeInteropAnEnum?>();
-        return pigeonVar_dartTypeRes;
+        final JByteArray pigeonVar_args = _PigeonJniBuffers.encode(<Object?>[enumList]);
+        try {
+          final JByteArray? pigeonVar_res = await _jniApi
+              .pigeon_callFlutterEchoAsyncNullableEnumList(pigeonVar_args);
+          return (_PigeonJniBuffers.decode(pigeonVar_res) as List<Object?>?)
+              ?.cast<NativeInteropAnEnum?>();
+        } finally {
+          pigeonVar_args.release();
+        }
       } else if (_ffiApi != null) {
         final pigeonVar_error = ffi_bridge.NativeInteropTestsError();
+        final NSData pigeonVar_args = _PigeonFfiBuffers.encode(<Object?>[enumList]);
         final Completer<List<NativeInteropAnEnum?>?> pigeonVar_completer =
             Completer<List<NativeInteropAnEnum?>?>();
-        _ffiApi.callFlutterEchoAsyncNullableEnumListWithEnumList(
-          _PigeonFfiCodec.writeValue<NSMutableArray?>(enumList),
+        _ffiApi.pigeon_callFlutterEchoAsyncNullableEnumList(
+          pigeonVar_args,
           wrappedError: pigeonVar_error,
-          completionHandler: ffi_bridge.ObjCBlock_ffiVoid_NSArray.listener((
-            NSArray? pigeonVar_res,
-          ) {
+          completionHandler: ffi_bridge.ObjCBlock_ffiVoid_NSData.listener((NSData? pigeonVar_res) {
             if (pigeonVar_error.code != null) {
               pigeonVar_completer.completeError(_wrapFfiError(pigeonVar_error));
             } else {
               pigeonVar_completer.complete(
-                (_PigeonFfiCodec.readValue(pigeonVar_res, NativeInteropAnEnum) as List<Object?>?)
+                (_PigeonFfiBuffers.decode(pigeonVar_res) as List<Object?>?)
                     ?.cast<NativeInteropAnEnum?>(),
               );
             }
           }),
         );
+
         return await pigeonVar_completer.future;
       } else {
         throw Exception('No JNI or FFI api available');
@@ -9582,36 +9944,35 @@ class NativeInteropHostIntegrationCoreApiForNativeInterop {
   ) async {
     try {
       if (_jniApi != null) {
-        final JList<jni_bridge.NativeInteropAllNullableTypes?>? pigeonVar_res = await _jniApi
-            .callFlutterEchoAsyncNullableClassList(
-              _PigeonJniCodec.writeValue<JList<jni_bridge.NativeInteropAllNullableTypes?>?>(
-                classList,
-              ),
-            );
-        final List<NativeInteropAllNullableTypes?>? pigeonVar_dartTypeRes =
-            (_PigeonJniCodec.readValue(pigeonVar_res) as List<Object?>?)
-                ?.cast<NativeInteropAllNullableTypes?>();
-        return pigeonVar_dartTypeRes;
+        final JByteArray pigeonVar_args = _PigeonJniBuffers.encode(<Object?>[classList]);
+        try {
+          final JByteArray? pigeonVar_res = await _jniApi
+              .pigeon_callFlutterEchoAsyncNullableClassList(pigeonVar_args);
+          return (_PigeonJniBuffers.decode(pigeonVar_res) as List<Object?>?)
+              ?.cast<NativeInteropAllNullableTypes?>();
+        } finally {
+          pigeonVar_args.release();
+        }
       } else if (_ffiApi != null) {
         final pigeonVar_error = ffi_bridge.NativeInteropTestsError();
+        final NSData pigeonVar_args = _PigeonFfiBuffers.encode(<Object?>[classList]);
         final Completer<List<NativeInteropAllNullableTypes?>?> pigeonVar_completer =
             Completer<List<NativeInteropAllNullableTypes?>?>();
-        _ffiApi.callFlutterEchoAsyncNullableClassListWithClassList(
-          _PigeonFfiCodec.writeValue<NSMutableArray?>(classList),
+        _ffiApi.pigeon_callFlutterEchoAsyncNullableClassList(
+          pigeonVar_args,
           wrappedError: pigeonVar_error,
-          completionHandler: ffi_bridge.ObjCBlock_ffiVoid_NSArray.listener((
-            NSArray? pigeonVar_res,
-          ) {
+          completionHandler: ffi_bridge.ObjCBlock_ffiVoid_NSData.listener((NSData? pigeonVar_res) {
             if (pigeonVar_error.code != null) {
               pigeonVar_completer.completeError(_wrapFfiError(pigeonVar_error));
             } else {
               pigeonVar_completer.complete(
-                (_PigeonFfiCodec.readValue(pigeonVar_res) as List<Object?>?)
+                (_PigeonFfiBuffers.decode(pigeonVar_res) as List<Object?>?)
                     ?.cast<NativeInteropAllNullableTypes?>(),
               );
             }
           }),
         );
+
         return await pigeonVar_completer.future;
       } else {
         throw Exception('No JNI or FFI api available');
@@ -9626,34 +9987,35 @@ class NativeInteropHostIntegrationCoreApiForNativeInterop {
   ) async {
     try {
       if (_jniApi != null) {
-        final JList<jni_bridge.NativeInteropAnEnum>? pigeonVar_res = await _jniApi
-            .callFlutterEchoAsyncNullableNonNullEnumList(
-              _PigeonJniCodec.writeValue<JList<jni_bridge.NativeInteropAnEnum>?>(enumList),
-            );
-        final List<NativeInteropAnEnum>? pigeonVar_dartTypeRes =
-            (_PigeonJniCodec.readValue(pigeonVar_res) as List<Object?>?)
-                ?.cast<NativeInteropAnEnum>();
-        return pigeonVar_dartTypeRes;
+        final JByteArray pigeonVar_args = _PigeonJniBuffers.encode(<Object?>[enumList]);
+        try {
+          final JByteArray? pigeonVar_res = await _jniApi
+              .pigeon_callFlutterEchoAsyncNullableNonNullEnumList(pigeonVar_args);
+          return (_PigeonJniBuffers.decode(pigeonVar_res) as List<Object?>?)
+              ?.cast<NativeInteropAnEnum>();
+        } finally {
+          pigeonVar_args.release();
+        }
       } else if (_ffiApi != null) {
         final pigeonVar_error = ffi_bridge.NativeInteropTestsError();
+        final NSData pigeonVar_args = _PigeonFfiBuffers.encode(<Object?>[enumList]);
         final Completer<List<NativeInteropAnEnum>?> pigeonVar_completer =
             Completer<List<NativeInteropAnEnum>?>();
-        _ffiApi.callFlutterEchoAsyncNullableNonNullEnumListWithEnumList(
-          _PigeonFfiCodec.writeValue<NSMutableArray?>(enumList),
+        _ffiApi.pigeon_callFlutterEchoAsyncNullableNonNullEnumList(
+          pigeonVar_args,
           wrappedError: pigeonVar_error,
-          completionHandler: ffi_bridge.ObjCBlock_ffiVoid_NSArray.listener((
-            NSArray? pigeonVar_res,
-          ) {
+          completionHandler: ffi_bridge.ObjCBlock_ffiVoid_NSData.listener((NSData? pigeonVar_res) {
             if (pigeonVar_error.code != null) {
               pigeonVar_completer.completeError(_wrapFfiError(pigeonVar_error));
             } else {
               pigeonVar_completer.complete(
-                (_PigeonFfiCodec.readValue(pigeonVar_res, NativeInteropAnEnum) as List<Object?>?)
+                (_PigeonFfiBuffers.decode(pigeonVar_res) as List<Object?>?)
                     ?.cast<NativeInteropAnEnum>(),
               );
             }
           }),
         );
+
         return await pigeonVar_completer.future;
       } else {
         throw Exception('No JNI or FFI api available');
@@ -9668,36 +10030,35 @@ class NativeInteropHostIntegrationCoreApiForNativeInterop {
   ) async {
     try {
       if (_jniApi != null) {
-        final JList<jni_bridge.NativeInteropAllNullableTypes>? pigeonVar_res = await _jniApi
-            .callFlutterEchoAsyncNullableNonNullClassList(
-              _PigeonJniCodec.writeValue<JList<jni_bridge.NativeInteropAllNullableTypes>?>(
-                classList,
-              ),
-            );
-        final List<NativeInteropAllNullableTypes>? pigeonVar_dartTypeRes =
-            (_PigeonJniCodec.readValue(pigeonVar_res) as List<Object?>?)
-                ?.cast<NativeInteropAllNullableTypes>();
-        return pigeonVar_dartTypeRes;
+        final JByteArray pigeonVar_args = _PigeonJniBuffers.encode(<Object?>[classList]);
+        try {
+          final JByteArray? pigeonVar_res = await _jniApi
+              .pigeon_callFlutterEchoAsyncNullableNonNullClassList(pigeonVar_args);
+          return (_PigeonJniBuffers.decode(pigeonVar_res) as List<Object?>?)
+              ?.cast<NativeInteropAllNullableTypes>();
+        } finally {
+          pigeonVar_args.release();
+        }
       } else if (_ffiApi != null) {
         final pigeonVar_error = ffi_bridge.NativeInteropTestsError();
+        final NSData pigeonVar_args = _PigeonFfiBuffers.encode(<Object?>[classList]);
         final Completer<List<NativeInteropAllNullableTypes>?> pigeonVar_completer =
             Completer<List<NativeInteropAllNullableTypes>?>();
-        _ffiApi.callFlutterEchoAsyncNullableNonNullClassListWithClassList(
-          _PigeonFfiCodec.writeValue<NSMutableArray?>(classList),
+        _ffiApi.pigeon_callFlutterEchoAsyncNullableNonNullClassList(
+          pigeonVar_args,
           wrappedError: pigeonVar_error,
-          completionHandler: ffi_bridge.ObjCBlock_ffiVoid_NSArray.listener((
-            NSArray? pigeonVar_res,
-          ) {
+          completionHandler: ffi_bridge.ObjCBlock_ffiVoid_NSData.listener((NSData? pigeonVar_res) {
             if (pigeonVar_error.code != null) {
               pigeonVar_completer.completeError(_wrapFfiError(pigeonVar_error));
             } else {
               pigeonVar_completer.complete(
-                (_PigeonFfiCodec.readValue(pigeonVar_res) as List<Object?>?)
+                (_PigeonFfiBuffers.decode(pigeonVar_res) as List<Object?>?)
                     ?.cast<NativeInteropAllNullableTypes>(),
               );
             }
           }),
         );
+
         return await pigeonVar_completer.future;
       } else {
         throw Exception('No JNI or FFI api available');
@@ -9710,34 +10071,34 @@ class NativeInteropHostIntegrationCoreApiForNativeInterop {
   Future<Map<Object?, Object?>?> callFlutterEchoAsyncNullableMap(Map<Object?, Object?>? map) async {
     try {
       if (_jniApi != null) {
-        final JMap<JObject?, JObject?>? pigeonVar_res = await _jniApi
-            .callFlutterEchoAsyncNullableMap(
-              _PigeonJniCodec.writeValue<JMap<JObject?, JObject?>?>(map),
-            );
-        final Map<Object?, Object?>? pigeonVar_dartTypeRes =
-            (_PigeonJniCodec.readValue(pigeonVar_res) as Map<Object?, Object?>?)
-                ?.cast<Object?, Object?>();
-        return pigeonVar_dartTypeRes;
+        final JByteArray pigeonVar_args = _PigeonJniBuffers.encode(<Object?>[map]);
+        try {
+          final JByteArray? pigeonVar_res = await _jniApi.pigeon_callFlutterEchoAsyncNullableMap(
+            pigeonVar_args,
+          );
+          return _PigeonJniBuffers.decode(pigeonVar_res) as Map<Object?, Object?>?;
+        } finally {
+          pigeonVar_args.release();
+        }
       } else if (_ffiApi != null) {
         final pigeonVar_error = ffi_bridge.NativeInteropTestsError();
+        final NSData pigeonVar_args = _PigeonFfiBuffers.encode(<Object?>[map]);
         final Completer<Map<Object?, Object?>?> pigeonVar_completer =
             Completer<Map<Object?, Object?>?>();
-        _ffiApi.callFlutterEchoAsyncNullableMapWithMap(
-          _PigeonFfiCodec.writeValue<NSDictionary?>(map),
+        _ffiApi.pigeon_callFlutterEchoAsyncNullableMap(
+          pigeonVar_args,
           wrappedError: pigeonVar_error,
-          completionHandler: ffi_bridge.ObjCBlock_ffiVoid_NSDictionary.listener((
-            NSDictionary? pigeonVar_res,
-          ) {
+          completionHandler: ffi_bridge.ObjCBlock_ffiVoid_NSData.listener((NSData? pigeonVar_res) {
             if (pigeonVar_error.code != null) {
               pigeonVar_completer.completeError(_wrapFfiError(pigeonVar_error));
             } else {
               pigeonVar_completer.complete(
-                (_PigeonFfiCodec.readValue(pigeonVar_res) as Map<Object?, Object?>?)
-                    ?.cast<Object?, Object?>(),
+                _PigeonFfiBuffers.decode(pigeonVar_res) as Map<Object?, Object?>?,
               );
             }
           }),
         );
+
         return await pigeonVar_completer.future;
       } else {
         throw Exception('No JNI or FFI api available');
@@ -9752,34 +10113,35 @@ class NativeInteropHostIntegrationCoreApiForNativeInterop {
   ) async {
     try {
       if (_jniApi != null) {
-        final JMap<JString?, JString?>? pigeonVar_res = await _jniApi
-            .callFlutterEchoAsyncNullableStringMap(
-              _PigeonJniCodec.writeValue<JMap<JString?, JString?>?>(stringMap),
-            );
-        final Map<String?, String?>? pigeonVar_dartTypeRes =
-            (_PigeonJniCodec.readValue(pigeonVar_res) as Map<Object?, Object?>?)
-                ?.cast<String?, String?>();
-        return pigeonVar_dartTypeRes;
+        final JByteArray pigeonVar_args = _PigeonJniBuffers.encode(<Object?>[stringMap]);
+        try {
+          final JByteArray? pigeonVar_res = await _jniApi
+              .pigeon_callFlutterEchoAsyncNullableStringMap(pigeonVar_args);
+          return (_PigeonJniBuffers.decode(pigeonVar_res) as Map<Object?, Object?>?)
+              ?.cast<String?, String?>();
+        } finally {
+          pigeonVar_args.release();
+        }
       } else if (_ffiApi != null) {
         final pigeonVar_error = ffi_bridge.NativeInteropTestsError();
+        final NSData pigeonVar_args = _PigeonFfiBuffers.encode(<Object?>[stringMap]);
         final Completer<Map<String?, String?>?> pigeonVar_completer =
             Completer<Map<String?, String?>?>();
-        _ffiApi.callFlutterEchoAsyncNullableStringMapWithStringMap(
-          _PigeonFfiCodec.writeValue<NSDictionary?>(stringMap),
+        _ffiApi.pigeon_callFlutterEchoAsyncNullableStringMap(
+          pigeonVar_args,
           wrappedError: pigeonVar_error,
-          completionHandler: ffi_bridge.ObjCBlock_ffiVoid_NSDictionary.listener((
-            NSDictionary? pigeonVar_res,
-          ) {
+          completionHandler: ffi_bridge.ObjCBlock_ffiVoid_NSData.listener((NSData? pigeonVar_res) {
             if (pigeonVar_error.code != null) {
               pigeonVar_completer.completeError(_wrapFfiError(pigeonVar_error));
             } else {
               pigeonVar_completer.complete(
-                (_PigeonFfiCodec.readValue(pigeonVar_res) as Map<Object?, Object?>?)
+                (_PigeonFfiBuffers.decode(pigeonVar_res) as Map<Object?, Object?>?)
                     ?.cast<String?, String?>(),
               );
             }
           }),
         );
+
         return await pigeonVar_completer.future;
       } else {
         throw Exception('No JNI or FFI api available');
@@ -9792,33 +10154,35 @@ class NativeInteropHostIntegrationCoreApiForNativeInterop {
   Future<Map<int?, int?>?> callFlutterEchoAsyncNullableIntMap(Map<int?, int?>? intMap) async {
     try {
       if (_jniApi != null) {
-        final JMap<JLong?, JLong?>? pigeonVar_res = await _jniApi
-            .callFlutterEchoAsyncNullableIntMap(
-              _PigeonJniCodec.writeValue<JMap<JLong?, JLong?>?>(intMap),
-            );
-        final Map<int?, int?>? pigeonVar_dartTypeRes =
-            (_PigeonJniCodec.readValue(pigeonVar_res) as Map<Object?, Object?>?)
-                ?.cast<int?, int?>();
-        return pigeonVar_dartTypeRes;
+        final JByteArray pigeonVar_args = _PigeonJniBuffers.encode(<Object?>[intMap]);
+        try {
+          final JByteArray? pigeonVar_res = await _jniApi.pigeon_callFlutterEchoAsyncNullableIntMap(
+            pigeonVar_args,
+          );
+          return (_PigeonJniBuffers.decode(pigeonVar_res) as Map<Object?, Object?>?)
+              ?.cast<int?, int?>();
+        } finally {
+          pigeonVar_args.release();
+        }
       } else if (_ffiApi != null) {
         final pigeonVar_error = ffi_bridge.NativeInteropTestsError();
+        final NSData pigeonVar_args = _PigeonFfiBuffers.encode(<Object?>[intMap]);
         final Completer<Map<int?, int?>?> pigeonVar_completer = Completer<Map<int?, int?>?>();
-        _ffiApi.callFlutterEchoAsyncNullableIntMapWithIntMap(
-          _PigeonFfiCodec.writeValue<NSDictionary?>(intMap),
+        _ffiApi.pigeon_callFlutterEchoAsyncNullableIntMap(
+          pigeonVar_args,
           wrappedError: pigeonVar_error,
-          completionHandler: ffi_bridge.ObjCBlock_ffiVoid_NSDictionary.listener((
-            NSDictionary? pigeonVar_res,
-          ) {
+          completionHandler: ffi_bridge.ObjCBlock_ffiVoid_NSData.listener((NSData? pigeonVar_res) {
             if (pigeonVar_error.code != null) {
               pigeonVar_completer.completeError(_wrapFfiError(pigeonVar_error));
             } else {
               pigeonVar_completer.complete(
-                (_PigeonFfiCodec.readValue(pigeonVar_res, int, int) as Map<Object?, Object?>?)
+                (_PigeonFfiBuffers.decode(pigeonVar_res) as Map<Object?, Object?>?)
                     ?.cast<int?, int?>(),
               );
             }
           }),
         );
+
         return await pigeonVar_completer.future;
       } else {
         throw Exception('No JNI or FFI api available');
@@ -9833,37 +10197,35 @@ class NativeInteropHostIntegrationCoreApiForNativeInterop {
   ) async {
     try {
       if (_jniApi != null) {
-        final JMap<jni_bridge.NativeInteropAnEnum?, jni_bridge.NativeInteropAnEnum?>?
-        pigeonVar_res = await _jniApi.callFlutterEchoAsyncNullableEnumMap(
-          _PigeonJniCodec.writeValue<
-            JMap<jni_bridge.NativeInteropAnEnum?, jni_bridge.NativeInteropAnEnum?>?
-          >(enumMap),
-        );
-        final Map<NativeInteropAnEnum?, NativeInteropAnEnum?>? pigeonVar_dartTypeRes =
-            (_PigeonJniCodec.readValue(pigeonVar_res) as Map<Object?, Object?>?)
-                ?.cast<NativeInteropAnEnum?, NativeInteropAnEnum?>();
-        return pigeonVar_dartTypeRes;
+        final JByteArray pigeonVar_args = _PigeonJniBuffers.encode(<Object?>[enumMap]);
+        try {
+          final JByteArray? pigeonVar_res = await _jniApi
+              .pigeon_callFlutterEchoAsyncNullableEnumMap(pigeonVar_args);
+          return (_PigeonJniBuffers.decode(pigeonVar_res) as Map<Object?, Object?>?)
+              ?.cast<NativeInteropAnEnum?, NativeInteropAnEnum?>();
+        } finally {
+          pigeonVar_args.release();
+        }
       } else if (_ffiApi != null) {
         final pigeonVar_error = ffi_bridge.NativeInteropTestsError();
+        final NSData pigeonVar_args = _PigeonFfiBuffers.encode(<Object?>[enumMap]);
         final Completer<Map<NativeInteropAnEnum?, NativeInteropAnEnum?>?> pigeonVar_completer =
             Completer<Map<NativeInteropAnEnum?, NativeInteropAnEnum?>?>();
-        _ffiApi.callFlutterEchoAsyncNullableEnumMapWithEnumMap(
-          _PigeonFfiCodec.writeValue<NSDictionary?>(enumMap),
+        _ffiApi.pigeon_callFlutterEchoAsyncNullableEnumMap(
+          pigeonVar_args,
           wrappedError: pigeonVar_error,
-          completionHandler: ffi_bridge.ObjCBlock_ffiVoid_NSDictionary.listener((
-            NSDictionary? pigeonVar_res,
-          ) {
+          completionHandler: ffi_bridge.ObjCBlock_ffiVoid_NSData.listener((NSData? pigeonVar_res) {
             if (pigeonVar_error.code != null) {
               pigeonVar_completer.completeError(_wrapFfiError(pigeonVar_error));
             } else {
               pigeonVar_completer.complete(
-                (_PigeonFfiCodec.readValue(pigeonVar_res, NativeInteropAnEnum, NativeInteropAnEnum)
-                        as Map<Object?, Object?>?)
+                (_PigeonFfiBuffers.decode(pigeonVar_res) as Map<Object?, Object?>?)
                     ?.cast<NativeInteropAnEnum?, NativeInteropAnEnum?>(),
               );
             }
           }),
         );
+
         return await pigeonVar_completer.future;
       } else {
         throw Exception('No JNI or FFI api available');
@@ -9878,36 +10240,35 @@ class NativeInteropHostIntegrationCoreApiForNativeInterop {
   ) async {
     try {
       if (_jniApi != null) {
-        final JMap<JLong?, jni_bridge.NativeInteropAllNullableTypes?>? pigeonVar_res = await _jniApi
-            .callFlutterEchoAsyncNullableClassMap(
-              _PigeonJniCodec.writeValue<JMap<JLong?, jni_bridge.NativeInteropAllNullableTypes?>?>(
-                classMap,
-              ),
-            );
-        final Map<int?, NativeInteropAllNullableTypes?>? pigeonVar_dartTypeRes =
-            (_PigeonJniCodec.readValue(pigeonVar_res) as Map<Object?, Object?>?)
-                ?.cast<int?, NativeInteropAllNullableTypes?>();
-        return pigeonVar_dartTypeRes;
+        final JByteArray pigeonVar_args = _PigeonJniBuffers.encode(<Object?>[classMap]);
+        try {
+          final JByteArray? pigeonVar_res = await _jniApi
+              .pigeon_callFlutterEchoAsyncNullableClassMap(pigeonVar_args);
+          return (_PigeonJniBuffers.decode(pigeonVar_res) as Map<Object?, Object?>?)
+              ?.cast<int?, NativeInteropAllNullableTypes?>();
+        } finally {
+          pigeonVar_args.release();
+        }
       } else if (_ffiApi != null) {
         final pigeonVar_error = ffi_bridge.NativeInteropTestsError();
+        final NSData pigeonVar_args = _PigeonFfiBuffers.encode(<Object?>[classMap]);
         final Completer<Map<int?, NativeInteropAllNullableTypes?>?> pigeonVar_completer =
             Completer<Map<int?, NativeInteropAllNullableTypes?>?>();
-        _ffiApi.callFlutterEchoAsyncNullableClassMapWithClassMap(
-          _PigeonFfiCodec.writeValue<NSDictionary?>(classMap),
+        _ffiApi.pigeon_callFlutterEchoAsyncNullableClassMap(
+          pigeonVar_args,
           wrappedError: pigeonVar_error,
-          completionHandler: ffi_bridge.ObjCBlock_ffiVoid_NSDictionary.listener((
-            NSDictionary? pigeonVar_res,
-          ) {
+          completionHandler: ffi_bridge.ObjCBlock_ffiVoid_NSData.listener((NSData? pigeonVar_res) {
             if (pigeonVar_error.code != null) {
               pigeonVar_completer.completeError(_wrapFfiError(pigeonVar_error));
             } else {
               pigeonVar_completer.complete(
-                (_PigeonFfiCodec.readValue(pigeonVar_res, int) as Map<Object?, Object?>?)
+                (_PigeonFfiBuffers.decode(pigeonVar_res) as Map<Object?, Object?>?)
                     ?.cast<int?, NativeInteropAllNullableTypes?>(),
               );
             }
           }),
         );
+
         return await pigeonVar_completer.future;
       } else {
         throw Exception('No JNI or FFI api available');
@@ -9920,18 +10281,16 @@ class NativeInteropHostIntegrationCoreApiForNativeInterop {
   Future<NativeInteropAnEnum?> callFlutterEchoAsyncNullableEnum(NativeInteropAnEnum? anEnum) async {
     try {
       if (_jniApi != null) {
-        final jni_bridge.NativeInteropAnEnum? pigeonVar_res = await _jniApi
-            .callFlutterEchoAsyncNullableEnum(anEnum?.toJni());
-        final NativeInteropAnEnum? pigeonVar_dartTypeRes = NativeInteropAnEnum.fromJni(
-          pigeonVar_res,
-        );
-        return pigeonVar_dartTypeRes;
+        final int pigeonVar_res = (await _jniApi.pigeon_callFlutterEchoAsyncNullableEnum(
+          anEnum?.index ?? -1,
+        )).toDartInt(releaseOriginal: true);
+        return pigeonVar_res == -1 ? null : NativeInteropAnEnum.values[pigeonVar_res];
       } else if (_ffiApi != null) {
         final pigeonVar_error = ffi_bridge.NativeInteropTestsError();
         final Completer<NativeInteropAnEnum?> pigeonVar_completer =
             Completer<NativeInteropAnEnum?>();
-        _ffiApi.callFlutterEchoAsyncNullableEnumWithAnEnum(
-          _PigeonFfiCodec.writeValue<NSNumber?>(anEnum),
+        _ffiApi.pigeon_callFlutterEchoAsyncNullableEnum(
+          anEnum?.index ?? -1,
           wrappedError: pigeonVar_error,
           completionHandler: ffi_bridge.ObjCBlock_ffiVoid_NSNumber.listener((
             NSNumber? pigeonVar_res,
@@ -9940,12 +10299,12 @@ class NativeInteropHostIntegrationCoreApiForNativeInterop {
               pigeonVar_completer.completeError(_wrapFfiError(pigeonVar_error));
             } else {
               pigeonVar_completer.complete(
-                _PigeonFfiCodec.readValue(pigeonVar_res, NativeInteropAnEnum)
-                    as NativeInteropAnEnum?,
+                pigeonVar_res == null ? null : NativeInteropAnEnum.values[pigeonVar_res.longValue],
               );
             }
           }),
         );
+
         return await pigeonVar_completer.future;
       } else {
         throw Exception('No JNI or FFI api available');
@@ -9960,18 +10319,16 @@ class NativeInteropHostIntegrationCoreApiForNativeInterop {
   ) async {
     try {
       if (_jniApi != null) {
-        final jni_bridge.NativeInteropAnotherEnum? pigeonVar_res = await _jniApi
-            .callFlutterEchoAnotherAsyncNullableEnum(anotherEnum?.toJni());
-        final NativeInteropAnotherEnum? pigeonVar_dartTypeRes = NativeInteropAnotherEnum.fromJni(
-          pigeonVar_res,
-        );
-        return pigeonVar_dartTypeRes;
+        final int pigeonVar_res = (await _jniApi.pigeon_callFlutterEchoAnotherAsyncNullableEnum(
+          anotherEnum?.index ?? -1,
+        )).toDartInt(releaseOriginal: true);
+        return pigeonVar_res == -1 ? null : NativeInteropAnotherEnum.values[pigeonVar_res];
       } else if (_ffiApi != null) {
         final pigeonVar_error = ffi_bridge.NativeInteropTestsError();
         final Completer<NativeInteropAnotherEnum?> pigeonVar_completer =
             Completer<NativeInteropAnotherEnum?>();
-        _ffiApi.callFlutterEchoAnotherAsyncNullableEnumWithAnotherEnum(
-          _PigeonFfiCodec.writeValue<NSNumber?>(anotherEnum),
+        _ffiApi.pigeon_callFlutterEchoAnotherAsyncNullableEnum(
+          anotherEnum?.index ?? -1,
           wrappedError: pigeonVar_error,
           completionHandler: ffi_bridge.ObjCBlock_ffiVoid_NSNumber.listener((
             NSNumber? pigeonVar_res,
@@ -9980,12 +10337,14 @@ class NativeInteropHostIntegrationCoreApiForNativeInterop {
               pigeonVar_completer.completeError(_wrapFfiError(pigeonVar_error));
             } else {
               pigeonVar_completer.complete(
-                _PigeonFfiCodec.readValue(pigeonVar_res, NativeInteropAnotherEnum)
-                    as NativeInteropAnotherEnum?,
+                pigeonVar_res == null
+                    ? null
+                    : NativeInteropAnotherEnum.values[pigeonVar_res.longValue],
               );
             }
           }),
         );
+
         return await pigeonVar_completer.future;
       } else {
         throw Exception('No JNI or FFI api available');
@@ -9998,13 +10357,12 @@ class NativeInteropHostIntegrationCoreApiForNativeInterop {
   bool isMainThread() {
     try {
       if (_jniApi != null) {
-        return _jniApi.isMainThread;
+        return _jniApi.pigeon_isMainThread();
       } else if (_ffiApi != null) {
         final pigeonVar_error = ffi_bridge.NativeInteropTestsError();
-        final NSNumber? pigeonVar_res = _ffiApi.isMainThreadWithWrappedError(pigeonVar_error);
+        final NSNumber? pigeonVar_res = _ffiApi.pigeon_isMainThread(pigeonVar_error);
         _throwIfFfiError(pigeonVar_error);
-        final bool pigeonVar_dartTypeRes = pigeonVar_res!.boolValue;
-        return pigeonVar_dartTypeRes;
+        return pigeonVar_res!.boolValue;
       } else {
         throw Exception('No JNI or FFI api available');
       }
@@ -10016,13 +10374,12 @@ class NativeInteropHostIntegrationCoreApiForNativeInterop {
   Future<bool> asyncIsBackgroundThread() async {
     try {
       if (_jniApi != null) {
-        final JBoolean pigeonVar_res = await _jniApi.asyncIsBackgroundThread();
-        final bool pigeonVar_dartTypeRes = pigeonVar_res.toDartBool(releaseOriginal: true);
-        return pigeonVar_dartTypeRes;
+        final JBoolean pigeonVar_res = await _jniApi.pigeon_asyncIsBackgroundThread();
+        return pigeonVar_res.toDartBool(releaseOriginal: true);
       } else if (_ffiApi != null) {
         final pigeonVar_error = ffi_bridge.NativeInteropTestsError();
         final Completer<bool> pigeonVar_completer = Completer<bool>();
-        _ffiApi.asyncIsBackgroundThreadWithWrappedError(
+        _ffiApi.pigeon_asyncIsBackgroundThread(
           pigeonVar_error,
           completionHandler: ffi_bridge.ObjCBlock_ffiVoid_NSNumber.listener((
             NSNumber? pigeonVar_res,
@@ -10034,6 +10391,7 @@ class NativeInteropHostIntegrationCoreApiForNativeInterop {
             }
           }),
         );
+
         return await pigeonVar_completer.future;
       } else {
         throw Exception('No JNI or FFI api available');
@@ -10046,13 +10404,12 @@ class NativeInteropHostIntegrationCoreApiForNativeInterop {
   bool isGetter() {
     try {
       if (_jniApi != null) {
-        return _jniApi.isGetter;
+        return _jniApi.pigeon_isGetter();
       } else if (_ffiApi != null) {
         final pigeonVar_error = ffi_bridge.NativeInteropTestsError();
-        final NSNumber? pigeonVar_res = _ffiApi.isGetterWithWrappedError(pigeonVar_error);
+        final NSNumber? pigeonVar_res = _ffiApi.pigeon_isGetter(pigeonVar_error);
         _throwIfFfiError(pigeonVar_error);
-        final bool pigeonVar_dartTypeRes = pigeonVar_res!.boolValue;
-        return pigeonVar_dartTypeRes;
+        return pigeonVar_res!.boolValue;
       } else {
         throw Exception('No JNI or FFI api available');
       }
@@ -10064,13 +10421,12 @@ class NativeInteropHostIntegrationCoreApiForNativeInterop {
   int getGetter() {
     try {
       if (_jniApi != null) {
-        return _jniApi.getter;
+        return _jniApi.pigeon_getGetter();
       } else if (_ffiApi != null) {
         final pigeonVar_error = ffi_bridge.NativeInteropTestsError();
-        final NSNumber? pigeonVar_res = _ffiApi.getGetterWithWrappedError(pigeonVar_error);
+        final NSNumber? pigeonVar_res = _ffiApi.pigeon_getGetter(pigeonVar_error);
         _throwIfFfiError(pigeonVar_error);
-        final int pigeonVar_dartTypeRes = pigeonVar_res!.longValue;
-        return pigeonVar_dartTypeRes;
+        return pigeonVar_res!.longValue;
       } else {
         throw Exception('No JNI or FFI api available');
       }
@@ -10082,10 +10438,11 @@ class NativeInteropHostIntegrationCoreApiForNativeInterop {
   void setSetter(int value) {
     try {
       if (_jniApi != null) {
-        _jniApi.setter = value;
+        _jniApi.pigeon_setSetter(value);
+        return;
       } else if (_ffiApi != null) {
         final pigeonVar_error = ffi_bridge.NativeInteropTestsError();
-        _ffiApi.setSetterWithValue(value, wrappedError: pigeonVar_error);
+        _ffiApi.pigeon_setSetter(value, wrappedError: pigeonVar_error);
         _throwIfFfiError(pigeonVar_error);
         return;
       } else {
@@ -10099,13 +10456,12 @@ class NativeInteropHostIntegrationCoreApiForNativeInterop {
   Future<bool> callFlutterNoopOnBackgroundThread() async {
     try {
       if (_jniApi != null) {
-        final JBoolean pigeonVar_res = await _jniApi.callFlutterNoopOnBackgroundThread();
-        final bool pigeonVar_dartTypeRes = pigeonVar_res.toDartBool(releaseOriginal: true);
-        return pigeonVar_dartTypeRes;
+        final JBoolean pigeonVar_res = await _jniApi.pigeon_callFlutterNoopOnBackgroundThread();
+        return pigeonVar_res.toDartBool(releaseOriginal: true);
       } else if (_ffiApi != null) {
         final pigeonVar_error = ffi_bridge.NativeInteropTestsError();
         final Completer<bool> pigeonVar_completer = Completer<bool>();
-        _ffiApi.callFlutterNoopOnBackgroundThreadWithWrappedError(
+        _ffiApi.pigeon_callFlutterNoopOnBackgroundThread(
           pigeonVar_error,
           completionHandler: ffi_bridge.ObjCBlock_ffiVoid_NSNumber.listener((
             NSNumber? pigeonVar_res,
@@ -10117,6 +10473,7 @@ class NativeInteropHostIntegrationCoreApiForNativeInterop {
             }
           }),
         );
+
         return await pigeonVar_completer.future;
       } else {
         throw Exception('No JNI or FFI api available');
@@ -10129,15 +10486,12 @@ class NativeInteropHostIntegrationCoreApiForNativeInterop {
   bool testDeregisterHostApi() {
     try {
       if (_jniApi != null) {
-        return _jniApi.testDeregisterHostApi();
+        return _jniApi.pigeon_testDeregisterHostApi();
       } else if (_ffiApi != null) {
         final pigeonVar_error = ffi_bridge.NativeInteropTestsError();
-        final NSNumber? pigeonVar_res = _ffiApi.testDeregisterHostApiWithWrappedError(
-          pigeonVar_error,
-        );
+        final NSNumber? pigeonVar_res = _ffiApi.pigeon_testDeregisterHostApi(pigeonVar_error);
         _throwIfFfiError(pigeonVar_error);
-        final bool pigeonVar_dartTypeRes = pigeonVar_res!.boolValue;
-        return pigeonVar_dartTypeRes;
+        return pigeonVar_res!.boolValue;
       } else {
         throw Exception('No JNI or FFI api available');
       }
@@ -10149,15 +10503,12 @@ class NativeInteropHostIntegrationCoreApiForNativeInterop {
   bool testDeregisterFlutterApi() {
     try {
       if (_jniApi != null) {
-        return _jniApi.testDeregisterFlutterApi();
+        return _jniApi.pigeon_testDeregisterFlutterApi();
       } else if (_ffiApi != null) {
         final pigeonVar_error = ffi_bridge.NativeInteropTestsError();
-        final NSNumber? pigeonVar_res = _ffiApi.testDeregisterFlutterApiWithWrappedError(
-          pigeonVar_error,
-        );
+        final NSNumber? pigeonVar_res = _ffiApi.pigeon_testDeregisterFlutterApi(pigeonVar_error);
         _throwIfFfiError(pigeonVar_error);
-        final bool pigeonVar_dartTypeRes = pigeonVar_res!.boolValue;
-        return pigeonVar_dartTypeRes;
+        return pigeonVar_res!.boolValue;
       } else {
         throw Exception('No JNI or FFI api available');
       }
@@ -10169,13 +10520,17 @@ class NativeInteropHostIntegrationCoreApiForNativeInterop {
   void registerAndImmediatelyDeregisterHostApi(String name) {
     try {
       if (_jniApi != null) {
-        return _jniApi.registerAndImmediatelyDeregisterHostApi(
-          _PigeonJniCodec.writeValue<JString>(name),
-        );
+        final JString pigeonVar_name = name.toJString();
+        try {
+          _jniApi.pigeon_registerAndImmediatelyDeregisterHostApi(pigeonVar_name);
+          return;
+        } finally {
+          pigeonVar_name.release();
+        }
       } else if (_ffiApi != null) {
         final pigeonVar_error = ffi_bridge.NativeInteropTestsError();
-        _ffiApi.registerAndImmediatelyDeregisterHostApiWithName(
-          _PigeonFfiCodec.writeValue<NSString>(name),
+        _ffiApi.pigeon_registerAndImmediatelyDeregisterHostApi(
+          NSString(name),
           wrappedError: pigeonVar_error,
         );
         _throwIfFfiError(pigeonVar_error);
@@ -10191,16 +10546,20 @@ class NativeInteropHostIntegrationCoreApiForNativeInterop {
   bool testCallDeregisteredFlutterApi(String name) {
     try {
       if (_jniApi != null) {
-        return _jniApi.testCallDeregisteredFlutterApi(_PigeonJniCodec.writeValue<JString>(name));
+        final JString pigeonVar_name = name.toJString();
+        try {
+          return _jniApi.pigeon_testCallDeregisteredFlutterApi(pigeonVar_name);
+        } finally {
+          pigeonVar_name.release();
+        }
       } else if (_ffiApi != null) {
         final pigeonVar_error = ffi_bridge.NativeInteropTestsError();
-        final NSNumber? pigeonVar_res = _ffiApi.testCallDeregisteredFlutterApiWithName(
-          _PigeonFfiCodec.writeValue<NSString>(name),
+        final NSNumber? pigeonVar_res = _ffiApi.pigeon_testCallDeregisteredFlutterApi(
+          NSString(name),
           wrappedError: pigeonVar_error,
         );
         _throwIfFfiError(pigeonVar_error);
-        final bool pigeonVar_dartTypeRes = pigeonVar_res!.boolValue;
-        return pigeonVar_dartTypeRes;
+        return pigeonVar_res!.boolValue;
       } else {
         throw Exception('No JNI or FFI api available');
       }
@@ -15636,7 +15995,7 @@ class NativeInteropHostIntegrationCoreApi {
 /// The core interface that the Dart platform_test code implements for host
 /// integration tests to call into.
 final class NativeInteropFlutterIntegrationCoreApiRegistrar
-    with jni_bridge.$NativeInteropFlutterIntegrationCoreApi {
+    with jni_bridge.$NativeInteropFlutterIntegrationCoreApiBridge {
   NativeInteropFlutterIntegrationCoreApi? dartApi;
 
   NativeInteropFlutterIntegrationCoreApi register(
@@ -15646,8 +16005,8 @@ final class NativeInteropFlutterIntegrationCoreApiRegistrar
     dartApi = api;
 
     if (Platform.isAndroid) {
-      final jni_bridge.NativeInteropFlutterIntegrationCoreApi impl =
-          jni_bridge.NativeInteropFlutterIntegrationCoreApi.implement(this);
+      final jni_bridge.NativeInteropFlutterIntegrationCoreApiBridge impl =
+          jni_bridge.NativeInteropFlutterIntegrationCoreApiBridge.implement(this);
       jni_bridge.NativeInteropFlutterIntegrationCoreApiRegistrar().registerInstance(
         impl,
         name.toJString(),
@@ -15657,75 +16016,73 @@ final class NativeInteropFlutterIntegrationCoreApiRegistrar
       final ObjCProtocolBuilder builder = ObjCProtocolBuilder(
         debugName: 'NativeInteropFlutterIntegrationCoreApiBridge',
       );
-      ffi_bridge.NativeInteropFlutterIntegrationCoreApiBridge$Builder.noopWithError_.implement(
+      ffi_bridge.NativeInteropFlutterIntegrationCoreApiBridge$Builder.pigeon_noop_.implement(
         builder,
         (ffi_bridge.NativeInteropTestsError errorOut) {
           try {
-            if (dartApi != null) {
-              dartApi!.noop();
-              return;
-            } else {
+            if (dartApi == null) {
               _reportFfiError(
                 errorOut,
                 'ArgumentError: NativeInteropFlutterIntegrationCoreApi was not registered.',
               );
               return;
             }
+            dartApi!.noop();
+            return;
           } catch (e) {
             _reportFfiError(errorOut, e);
             return;
           }
         },
       );
-      ffi_bridge.NativeInteropFlutterIntegrationCoreApiBridge$Builder.throwFlutterErrorWithError_
+      ffi_bridge.NativeInteropFlutterIntegrationCoreApiBridge$Builder.pigeon_throwFlutterError_
           .implement(builder, (ffi_bridge.NativeInteropTestsError errorOut) {
             try {
-              if (dartApi != null) {
-                final Object? response = dartApi!.throwFlutterError();
-                return _PigeonFfiCodec.writeValue<NSObject>(response, generic: true);
-              } else {
+              if (dartApi == null) {
                 _reportFfiError(
                   errorOut,
                   'ArgumentError: NativeInteropFlutterIntegrationCoreApi was not registered.',
                 );
                 return null;
               }
+              final Object? response = dartApi!.throwFlutterError();
+              return _PigeonFfiBuffers.encodeOrNull(response);
             } catch (e) {
               _reportFfiError(errorOut, e);
               return null;
             }
           });
-      ffi_bridge.NativeInteropFlutterIntegrationCoreApiBridge$Builder.throwErrorWithError_
-          .implement(builder, (ffi_bridge.NativeInteropTestsError errorOut) {
-            try {
-              if (dartApi != null) {
-                final Object? response = dartApi!.throwError();
-                return _PigeonFfiCodec.writeValue<NSObject>(response, generic: true);
-              } else {
-                _reportFfiError(
-                  errorOut,
-                  'ArgumentError: NativeInteropFlutterIntegrationCoreApi was not registered.',
-                );
-                return null;
-              }
-            } catch (e) {
-              _reportFfiError(errorOut, e);
+      ffi_bridge.NativeInteropFlutterIntegrationCoreApiBridge$Builder.pigeon_throwError_.implement(
+        builder,
+        (ffi_bridge.NativeInteropTestsError errorOut) {
+          try {
+            if (dartApi == null) {
+              _reportFfiError(
+                errorOut,
+                'ArgumentError: NativeInteropFlutterIntegrationCoreApi was not registered.',
+              );
               return null;
             }
-          });
-      ffi_bridge.NativeInteropFlutterIntegrationCoreApiBridge$Builder.throwErrorFromVoidWithError_
+            final Object? response = dartApi!.throwError();
+            return _PigeonFfiBuffers.encodeOrNull(response);
+          } catch (e) {
+            _reportFfiError(errorOut, e);
+            return null;
+          }
+        },
+      );
+      ffi_bridge.NativeInteropFlutterIntegrationCoreApiBridge$Builder.pigeon_throwErrorFromVoid_
           .implement(builder, (ffi_bridge.NativeInteropTestsError errorOut) {
             try {
-              if (dartApi != null) {
-                dartApi!.throwErrorFromVoid();
-                return;
-              } else {
+              if (dartApi == null) {
                 _reportFfiError(
                   errorOut,
                   'ArgumentError: NativeInteropFlutterIntegrationCoreApi was not registered.',
                 );
                 return;
               }
+              dartApi!.throwErrorFromVoid();
+              return;
             } catch (e) {
               _reportFfiError(errorOut, e);
               return;
@@ -15733,24 +16090,22 @@ final class NativeInteropFlutterIntegrationCoreApiRegistrar
           });
       ffi_bridge
           .NativeInteropFlutterIntegrationCoreApiBridge$Builder
-          .echoNativeInteropAllTypesWithEverything_error_
-          .implement(builder, (
-            ffi_bridge.NativeInteropAllTypesBridge? arg_everything,
-            ffi_bridge.NativeInteropTestsError errorOut,
-          ) {
+          .pigeon_echoNativeInteropAllTypes_error_
+          .implement(builder, (NSData pigeonVar_args, ffi_bridge.NativeInteropTestsError errorOut) {
             try {
-              if (dartApi != null) {
-                final NativeInteropAllTypes response = dartApi!.echoNativeInteropAllTypes(
-                  NativeInteropAllTypes.fromFfi(arg_everything)!,
-                );
-                return response.toFfi();
-              } else {
+              if (dartApi == null) {
                 _reportFfiError(
                   errorOut,
                   'ArgumentError: NativeInteropFlutterIntegrationCoreApi was not registered.',
                 );
                 return null;
               }
+              final List<Object?> pigeonVar_decodedArgs =
+                  _PigeonFfiBuffers.decode(pigeonVar_args)! as List<Object?>;
+              final NativeInteropAllTypes response = dartApi!.echoNativeInteropAllTypes(
+                pigeonVar_decodedArgs[0]! as NativeInteropAllTypes,
+              );
+              return _PigeonFfiBuffers.encodeOrNull(response);
             } catch (e) {
               _reportFfiError(errorOut, e);
               return null;
@@ -15758,25 +16113,23 @@ final class NativeInteropFlutterIntegrationCoreApiRegistrar
           });
       ffi_bridge
           .NativeInteropFlutterIntegrationCoreApiBridge$Builder
-          .echoNativeInteropAllNullableTypesWithEverything_error_
-          .implement(builder, (
-            ffi_bridge.NativeInteropAllNullableTypesBridge? arg_everything,
-            ffi_bridge.NativeInteropTestsError errorOut,
-          ) {
+          .pigeon_echoNativeInteropAllNullableTypes_error_
+          .implement(builder, (NSData pigeonVar_args, ffi_bridge.NativeInteropTestsError errorOut) {
             try {
-              if (dartApi != null) {
-                final NativeInteropAllNullableTypes? response = dartApi!
-                    .echoNativeInteropAllNullableTypes(
-                      NativeInteropAllNullableTypes.fromFfi(arg_everything),
-                    );
-                return response?.toFfi();
-              } else {
+              if (dartApi == null) {
                 _reportFfiError(
                   errorOut,
                   'ArgumentError: NativeInteropFlutterIntegrationCoreApi was not registered.',
                 );
                 return null;
               }
+              final List<Object?> pigeonVar_decodedArgs =
+                  _PigeonFfiBuffers.decode(pigeonVar_args)! as List<Object?>;
+              final NativeInteropAllNullableTypes? response = dartApi!
+                  .echoNativeInteropAllNullableTypes(
+                    pigeonVar_decodedArgs[0] as NativeInteropAllNullableTypes?,
+                  );
+              return _PigeonFfiBuffers.encodeOrNull(response);
             } catch (e) {
               _reportFfiError(errorOut, e);
               return null;
@@ -15784,7 +16137,7 @@ final class NativeInteropFlutterIntegrationCoreApiRegistrar
           });
       ffi_bridge
           .NativeInteropFlutterIntegrationCoreApiBridge$Builder
-          .sendMultipleNullableTypesWithANullableBool_aNullableInt_aNullableString_error_
+          .pigeon_sendMultipleNullableTypes_aNullableInt_aNullableString_error_
           .implement(builder, (
             NSNumber? arg_aNullableBool,
             NSNumber? arg_aNullableInt,
@@ -15792,20 +16145,19 @@ final class NativeInteropFlutterIntegrationCoreApiRegistrar
             ffi_bridge.NativeInteropTestsError errorOut,
           ) {
             try {
-              if (dartApi != null) {
-                final NativeInteropAllNullableTypes response = dartApi!.sendMultipleNullableTypes(
-                  arg_aNullableBool?.boolValue,
-                  arg_aNullableInt?.longValue,
-                  arg_aNullableString?.toDartString(),
-                );
-                return response.toFfi();
-              } else {
+              if (dartApi == null) {
                 _reportFfiError(
                   errorOut,
                   'ArgumentError: NativeInteropFlutterIntegrationCoreApi was not registered.',
                 );
                 return null;
               }
+              final NativeInteropAllNullableTypes response = dartApi!.sendMultipleNullableTypes(
+                arg_aNullableBool?.boolValue,
+                arg_aNullableInt?.longValue,
+                arg_aNullableString?.toDartString(),
+              );
+              return _PigeonFfiBuffers.encodeOrNull(response);
             } catch (e) {
               _reportFfiError(errorOut, e);
               return null;
@@ -15813,25 +16165,23 @@ final class NativeInteropFlutterIntegrationCoreApiRegistrar
           });
       ffi_bridge
           .NativeInteropFlutterIntegrationCoreApiBridge$Builder
-          .echoNativeInteropAllNullableTypesWithoutRecursionWithEverything_error_
-          .implement(builder, (
-            ffi_bridge.NativeInteropAllNullableTypesWithoutRecursionBridge? arg_everything,
-            ffi_bridge.NativeInteropTestsError errorOut,
-          ) {
+          .pigeon_echoNativeInteropAllNullableTypesWithoutRecursion_error_
+          .implement(builder, (NSData pigeonVar_args, ffi_bridge.NativeInteropTestsError errorOut) {
             try {
-              if (dartApi != null) {
-                final NativeInteropAllNullableTypesWithoutRecursion? response = dartApi!
-                    .echoNativeInteropAllNullableTypesWithoutRecursion(
-                      NativeInteropAllNullableTypesWithoutRecursion.fromFfi(arg_everything),
-                    );
-                return response?.toFfi();
-              } else {
+              if (dartApi == null) {
                 _reportFfiError(
                   errorOut,
                   'ArgumentError: NativeInteropFlutterIntegrationCoreApi was not registered.',
                 );
                 return null;
               }
+              final List<Object?> pigeonVar_decodedArgs =
+                  _PigeonFfiBuffers.decode(pigeonVar_args)! as List<Object?>;
+              final NativeInteropAllNullableTypesWithoutRecursion? response = dartApi!
+                  .echoNativeInteropAllNullableTypesWithoutRecursion(
+                    pigeonVar_decodedArgs[0] as NativeInteropAllNullableTypesWithoutRecursion?,
+                  );
+              return _PigeonFfiBuffers.encodeOrNull(response);
             } catch (e) {
               _reportFfiError(errorOut, e);
               return null;
@@ -15839,7 +16189,7 @@ final class NativeInteropFlutterIntegrationCoreApiRegistrar
           });
       ffi_bridge
           .NativeInteropFlutterIntegrationCoreApiBridge$Builder
-          .sendMultipleNullableTypesWithoutRecursionWithANullableBool_aNullableInt_aNullableString_error_
+          .pigeon_sendMultipleNullableTypesWithoutRecursion_aNullableInt_aNullableString_error_
           .implement(builder, (
             NSNumber? arg_aNullableBool,
             NSNumber? arg_aNullableInt,
@@ -15847,213 +16197,587 @@ final class NativeInteropFlutterIntegrationCoreApiRegistrar
             ffi_bridge.NativeInteropTestsError errorOut,
           ) {
             try {
-              if (dartApi != null) {
-                final NativeInteropAllNullableTypesWithoutRecursion response = dartApi!
-                    .sendMultipleNullableTypesWithoutRecursion(
-                      arg_aNullableBool?.boolValue,
-                      arg_aNullableInt?.longValue,
-                      arg_aNullableString?.toDartString(),
-                    );
-                return response.toFfi();
-              } else {
+              if (dartApi == null) {
                 _reportFfiError(
                   errorOut,
                   'ArgumentError: NativeInteropFlutterIntegrationCoreApi was not registered.',
                 );
                 return null;
               }
+              final NativeInteropAllNullableTypesWithoutRecursion response = dartApi!
+                  .sendMultipleNullableTypesWithoutRecursion(
+                    arg_aNullableBool?.boolValue,
+                    arg_aNullableInt?.longValue,
+                    arg_aNullableString?.toDartString(),
+                  );
+              return _PigeonFfiBuffers.encodeOrNull(response);
             } catch (e) {
               _reportFfiError(errorOut, e);
               return null;
             }
           });
-      ffi_bridge.NativeInteropFlutterIntegrationCoreApiBridge$Builder.echoBoolWithABool_error_
+      ffi_bridge.NativeInteropFlutterIntegrationCoreApiBridge$Builder.pigeon_echoBool_error_
+          .implement(builder, (bool arg_aBool, ffi_bridge.NativeInteropTestsError errorOut) {
+            try {
+              if (dartApi == null) {
+                _reportFfiError(
+                  errorOut,
+                  'ArgumentError: NativeInteropFlutterIntegrationCoreApi was not registered.',
+                );
+                return null;
+              }
+              final bool response = dartApi!.echoBool(arg_aBool);
+              return _PigeonFfiCodec.writeValue<NSNumber?>(response);
+            } catch (e) {
+              _reportFfiError(errorOut, e);
+              return null;
+            }
+          });
+      ffi_bridge.NativeInteropFlutterIntegrationCoreApiBridge$Builder.pigeon_echoInt_error_
+          .implement(builder, (int arg_anInt, ffi_bridge.NativeInteropTestsError errorOut) {
+            try {
+              if (dartApi == null) {
+                _reportFfiError(
+                  errorOut,
+                  'ArgumentError: NativeInteropFlutterIntegrationCoreApi was not registered.',
+                );
+                return null;
+              }
+              final int response = dartApi!.echoInt(arg_anInt);
+              return _PigeonFfiCodec.writeValue<NSNumber?>(response);
+            } catch (e) {
+              _reportFfiError(errorOut, e);
+              return null;
+            }
+          });
+      ffi_bridge.NativeInteropFlutterIntegrationCoreApiBridge$Builder.pigeon_echoDouble_error_
+          .implement(builder, (double arg_aDouble, ffi_bridge.NativeInteropTestsError errorOut) {
+            try {
+              if (dartApi == null) {
+                _reportFfiError(
+                  errorOut,
+                  'ArgumentError: NativeInteropFlutterIntegrationCoreApi was not registered.',
+                );
+                return null;
+              }
+              final double response = dartApi!.echoDouble(arg_aDouble);
+              return _PigeonFfiCodec.writeValue<NSNumber?>(response);
+            } catch (e) {
+              _reportFfiError(errorOut, e);
+              return null;
+            }
+          });
+      ffi_bridge.NativeInteropFlutterIntegrationCoreApiBridge$Builder.pigeon_echoString_error_
+          .implement(builder, (NSString arg_aString, ffi_bridge.NativeInteropTestsError errorOut) {
+            try {
+              if (dartApi == null) {
+                _reportFfiError(
+                  errorOut,
+                  'ArgumentError: NativeInteropFlutterIntegrationCoreApi was not registered.',
+                );
+                return null;
+              }
+              final String response = dartApi!.echoString(arg_aString.toDartString());
+              return NSString(response);
+            } catch (e) {
+              _reportFfiError(errorOut, e);
+              return null;
+            }
+          });
+      ffi_bridge.NativeInteropFlutterIntegrationCoreApiBridge$Builder.pigeon_echoUint8List_error_
+          .implement(builder, (NSData arg_list, ffi_bridge.NativeInteropTestsError errorOut) {
+            try {
+              if (dartApi == null) {
+                _reportFfiError(
+                  errorOut,
+                  'ArgumentError: NativeInteropFlutterIntegrationCoreApi was not registered.',
+                );
+                return null;
+              }
+              final Uint8List response = dartApi!.echoUint8List(
+                _PigeonFfiBuffers.toUint8List(arg_list)!,
+              );
+              return _typedDataToNSData(response);
+            } catch (e) {
+              _reportFfiError(errorOut, e);
+              return null;
+            }
+          });
+      ffi_bridge.NativeInteropFlutterIntegrationCoreApiBridge$Builder.pigeon_echoInt32List_error_
+          .implement(builder, (NSData arg_list, ffi_bridge.NativeInteropTestsError errorOut) {
+            try {
+              if (dartApi == null) {
+                _reportFfiError(
+                  errorOut,
+                  'ArgumentError: NativeInteropFlutterIntegrationCoreApi was not registered.',
+                );
+                return null;
+              }
+              final Int32List response = dartApi!.echoInt32List(
+                _PigeonFfiBuffers.toUint8List(arg_list)!.buffer.asInt32List(),
+              );
+              return _typedDataToNSData(response);
+            } catch (e) {
+              _reportFfiError(errorOut, e);
+              return null;
+            }
+          });
+      ffi_bridge.NativeInteropFlutterIntegrationCoreApiBridge$Builder.pigeon_echoInt64List_error_
+          .implement(builder, (NSData arg_list, ffi_bridge.NativeInteropTestsError errorOut) {
+            try {
+              if (dartApi == null) {
+                _reportFfiError(
+                  errorOut,
+                  'ArgumentError: NativeInteropFlutterIntegrationCoreApi was not registered.',
+                );
+                return null;
+              }
+              final Int64List response = dartApi!.echoInt64List(
+                _PigeonFfiBuffers.toUint8List(arg_list)!.buffer.asInt64List(),
+              );
+              return _typedDataToNSData(response);
+            } catch (e) {
+              _reportFfiError(errorOut, e);
+              return null;
+            }
+          });
+      ffi_bridge.NativeInteropFlutterIntegrationCoreApiBridge$Builder.pigeon_echoFloat64List_error_
+          .implement(builder, (NSData arg_list, ffi_bridge.NativeInteropTestsError errorOut) {
+            try {
+              if (dartApi == null) {
+                _reportFfiError(
+                  errorOut,
+                  'ArgumentError: NativeInteropFlutterIntegrationCoreApi was not registered.',
+                );
+                return null;
+              }
+              final Float64List response = dartApi!.echoFloat64List(
+                _PigeonFfiBuffers.toUint8List(arg_list)!.buffer.asFloat64List(),
+              );
+              return _typedDataToNSData(response);
+            } catch (e) {
+              _reportFfiError(errorOut, e);
+              return null;
+            }
+          });
+      ffi_bridge.NativeInteropFlutterIntegrationCoreApiBridge$Builder.pigeon_echoList_error_
+          .implement(builder, (NSData pigeonVar_args, ffi_bridge.NativeInteropTestsError errorOut) {
+            try {
+              if (dartApi == null) {
+                _reportFfiError(
+                  errorOut,
+                  'ArgumentError: NativeInteropFlutterIntegrationCoreApi was not registered.',
+                );
+                return null;
+              }
+              final List<Object?> pigeonVar_decodedArgs =
+                  _PigeonFfiBuffers.decode(pigeonVar_args)! as List<Object?>;
+              final List<Object?> response = dartApi!.echoList(
+                pigeonVar_decodedArgs[0]! as List<Object?>,
+              );
+              return _PigeonFfiBuffers.encodeOrNull(response);
+            } catch (e) {
+              _reportFfiError(errorOut, e);
+              return null;
+            }
+          });
+      ffi_bridge.NativeInteropFlutterIntegrationCoreApiBridge$Builder.pigeon_echoEnumList_error_
+          .implement(builder, (NSData pigeonVar_args, ffi_bridge.NativeInteropTestsError errorOut) {
+            try {
+              if (dartApi == null) {
+                _reportFfiError(
+                  errorOut,
+                  'ArgumentError: NativeInteropFlutterIntegrationCoreApi was not registered.',
+                );
+                return null;
+              }
+              final List<Object?> pigeonVar_decodedArgs =
+                  _PigeonFfiBuffers.decode(pigeonVar_args)! as List<Object?>;
+              final List<NativeInteropAnEnum?> response = dartApi!.echoEnumList(
+                (pigeonVar_decodedArgs[0]! as List<Object?>).cast<NativeInteropAnEnum?>(),
+              );
+              return _PigeonFfiBuffers.encodeOrNull(response);
+            } catch (e) {
+              _reportFfiError(errorOut, e);
+              return null;
+            }
+          });
+      ffi_bridge.NativeInteropFlutterIntegrationCoreApiBridge$Builder.pigeon_echoClassList_error_
+          .implement(builder, (NSData pigeonVar_args, ffi_bridge.NativeInteropTestsError errorOut) {
+            try {
+              if (dartApi == null) {
+                _reportFfiError(
+                  errorOut,
+                  'ArgumentError: NativeInteropFlutterIntegrationCoreApi was not registered.',
+                );
+                return null;
+              }
+              final List<Object?> pigeonVar_decodedArgs =
+                  _PigeonFfiBuffers.decode(pigeonVar_args)! as List<Object?>;
+              final List<NativeInteropAllNullableTypes?> response = dartApi!.echoClassList(
+                (pigeonVar_decodedArgs[0]! as List<Object?>).cast<NativeInteropAllNullableTypes?>(),
+              );
+              return _PigeonFfiBuffers.encodeOrNull(response);
+            } catch (e) {
+              _reportFfiError(errorOut, e);
+              return null;
+            }
+          });
+      ffi_bridge
+          .NativeInteropFlutterIntegrationCoreApiBridge$Builder
+          .pigeon_echoNonNullEnumList_error_
+          .implement(builder, (NSData pigeonVar_args, ffi_bridge.NativeInteropTestsError errorOut) {
+            try {
+              if (dartApi == null) {
+                _reportFfiError(
+                  errorOut,
+                  'ArgumentError: NativeInteropFlutterIntegrationCoreApi was not registered.',
+                );
+                return null;
+              }
+              final List<Object?> pigeonVar_decodedArgs =
+                  _PigeonFfiBuffers.decode(pigeonVar_args)! as List<Object?>;
+              final List<NativeInteropAnEnum> response = dartApi!.echoNonNullEnumList(
+                (pigeonVar_decodedArgs[0]! as List<Object?>).cast<NativeInteropAnEnum>(),
+              );
+              return _PigeonFfiBuffers.encodeOrNull(response);
+            } catch (e) {
+              _reportFfiError(errorOut, e);
+              return null;
+            }
+          });
+      ffi_bridge
+          .NativeInteropFlutterIntegrationCoreApiBridge$Builder
+          .pigeon_echoNonNullClassList_error_
+          .implement(builder, (NSData pigeonVar_args, ffi_bridge.NativeInteropTestsError errorOut) {
+            try {
+              if (dartApi == null) {
+                _reportFfiError(
+                  errorOut,
+                  'ArgumentError: NativeInteropFlutterIntegrationCoreApi was not registered.',
+                );
+                return null;
+              }
+              final List<Object?> pigeonVar_decodedArgs =
+                  _PigeonFfiBuffers.decode(pigeonVar_args)! as List<Object?>;
+              final List<NativeInteropAllNullableTypes> response = dartApi!.echoNonNullClassList(
+                (pigeonVar_decodedArgs[0]! as List<Object?>).cast<NativeInteropAllNullableTypes>(),
+              );
+              return _PigeonFfiBuffers.encodeOrNull(response);
+            } catch (e) {
+              _reportFfiError(errorOut, e);
+              return null;
+            }
+          });
+      ffi_bridge.NativeInteropFlutterIntegrationCoreApiBridge$Builder.pigeon_echoMap_error_
+          .implement(builder, (NSData pigeonVar_args, ffi_bridge.NativeInteropTestsError errorOut) {
+            try {
+              if (dartApi == null) {
+                _reportFfiError(
+                  errorOut,
+                  'ArgumentError: NativeInteropFlutterIntegrationCoreApi was not registered.',
+                );
+                return null;
+              }
+              final List<Object?> pigeonVar_decodedArgs =
+                  _PigeonFfiBuffers.decode(pigeonVar_args)! as List<Object?>;
+              final Map<Object?, Object?> response = dartApi!.echoMap(
+                pigeonVar_decodedArgs[0]! as Map<Object?, Object?>,
+              );
+              return _PigeonFfiBuffers.encodeOrNull(response);
+            } catch (e) {
+              _reportFfiError(errorOut, e);
+              return null;
+            }
+          });
+      ffi_bridge.NativeInteropFlutterIntegrationCoreApiBridge$Builder.pigeon_echoStringMap_error_
+          .implement(builder, (NSData pigeonVar_args, ffi_bridge.NativeInteropTestsError errorOut) {
+            try {
+              if (dartApi == null) {
+                _reportFfiError(
+                  errorOut,
+                  'ArgumentError: NativeInteropFlutterIntegrationCoreApi was not registered.',
+                );
+                return null;
+              }
+              final List<Object?> pigeonVar_decodedArgs =
+                  _PigeonFfiBuffers.decode(pigeonVar_args)! as List<Object?>;
+              final Map<String?, String?> response = dartApi!.echoStringMap(
+                (pigeonVar_decodedArgs[0]! as Map<Object?, Object?>).cast<String?, String?>(),
+              );
+              return _PigeonFfiBuffers.encodeOrNull(response);
+            } catch (e) {
+              _reportFfiError(errorOut, e);
+              return null;
+            }
+          });
+      ffi_bridge.NativeInteropFlutterIntegrationCoreApiBridge$Builder.pigeon_echoIntMap_error_
+          .implement(builder, (NSData pigeonVar_args, ffi_bridge.NativeInteropTestsError errorOut) {
+            try {
+              if (dartApi == null) {
+                _reportFfiError(
+                  errorOut,
+                  'ArgumentError: NativeInteropFlutterIntegrationCoreApi was not registered.',
+                );
+                return null;
+              }
+              final List<Object?> pigeonVar_decodedArgs =
+                  _PigeonFfiBuffers.decode(pigeonVar_args)! as List<Object?>;
+              final Map<int?, int?> response = dartApi!.echoIntMap(
+                (pigeonVar_decodedArgs[0]! as Map<Object?, Object?>).cast<int?, int?>(),
+              );
+              return _PigeonFfiBuffers.encodeOrNull(response);
+            } catch (e) {
+              _reportFfiError(errorOut, e);
+              return null;
+            }
+          });
+      ffi_bridge.NativeInteropFlutterIntegrationCoreApiBridge$Builder.pigeon_echoEnumMap_error_
+          .implement(builder, (NSData pigeonVar_args, ffi_bridge.NativeInteropTestsError errorOut) {
+            try {
+              if (dartApi == null) {
+                _reportFfiError(
+                  errorOut,
+                  'ArgumentError: NativeInteropFlutterIntegrationCoreApi was not registered.',
+                );
+                return null;
+              }
+              final List<Object?> pigeonVar_decodedArgs =
+                  _PigeonFfiBuffers.decode(pigeonVar_args)! as List<Object?>;
+              final Map<NativeInteropAnEnum?, NativeInteropAnEnum?> response = dartApi!.echoEnumMap(
+                (pigeonVar_decodedArgs[0]! as Map<Object?, Object?>)
+                    .cast<NativeInteropAnEnum?, NativeInteropAnEnum?>(),
+              );
+              return _PigeonFfiBuffers.encodeOrNull(response);
+            } catch (e) {
+              _reportFfiError(errorOut, e);
+              return null;
+            }
+          });
+      ffi_bridge.NativeInteropFlutterIntegrationCoreApiBridge$Builder.pigeon_echoClassMap_error_
+          .implement(builder, (NSData pigeonVar_args, ffi_bridge.NativeInteropTestsError errorOut) {
+            try {
+              if (dartApi == null) {
+                _reportFfiError(
+                  errorOut,
+                  'ArgumentError: NativeInteropFlutterIntegrationCoreApi was not registered.',
+                );
+                return null;
+              }
+              final List<Object?> pigeonVar_decodedArgs =
+                  _PigeonFfiBuffers.decode(pigeonVar_args)! as List<Object?>;
+              final Map<int?, NativeInteropAllNullableTypes?> response = dartApi!.echoClassMap(
+                (pigeonVar_decodedArgs[0]! as Map<Object?, Object?>)
+                    .cast<int?, NativeInteropAllNullableTypes?>(),
+              );
+              return _PigeonFfiBuffers.encodeOrNull(response);
+            } catch (e) {
+              _reportFfiError(errorOut, e);
+              return null;
+            }
+          });
+      ffi_bridge
+          .NativeInteropFlutterIntegrationCoreApiBridge$Builder
+          .pigeon_echoNonNullStringMap_error_
+          .implement(builder, (NSData pigeonVar_args, ffi_bridge.NativeInteropTestsError errorOut) {
+            try {
+              if (dartApi == null) {
+                _reportFfiError(
+                  errorOut,
+                  'ArgumentError: NativeInteropFlutterIntegrationCoreApi was not registered.',
+                );
+                return null;
+              }
+              final List<Object?> pigeonVar_decodedArgs =
+                  _PigeonFfiBuffers.decode(pigeonVar_args)! as List<Object?>;
+              final Map<String, String> response = dartApi!.echoNonNullStringMap(
+                (pigeonVar_decodedArgs[0]! as Map<Object?, Object?>).cast<String, String>(),
+              );
+              return _PigeonFfiBuffers.encodeOrNull(response);
+            } catch (e) {
+              _reportFfiError(errorOut, e);
+              return null;
+            }
+          });
+      ffi_bridge
+          .NativeInteropFlutterIntegrationCoreApiBridge$Builder
+          .pigeon_echoNonNullIntMap_error_
+          .implement(builder, (NSData pigeonVar_args, ffi_bridge.NativeInteropTestsError errorOut) {
+            try {
+              if (dartApi == null) {
+                _reportFfiError(
+                  errorOut,
+                  'ArgumentError: NativeInteropFlutterIntegrationCoreApi was not registered.',
+                );
+                return null;
+              }
+              final List<Object?> pigeonVar_decodedArgs =
+                  _PigeonFfiBuffers.decode(pigeonVar_args)! as List<Object?>;
+              final Map<int, int> response = dartApi!.echoNonNullIntMap(
+                (pigeonVar_decodedArgs[0]! as Map<Object?, Object?>).cast<int, int>(),
+              );
+              return _PigeonFfiBuffers.encodeOrNull(response);
+            } catch (e) {
+              _reportFfiError(errorOut, e);
+              return null;
+            }
+          });
+      ffi_bridge
+          .NativeInteropFlutterIntegrationCoreApiBridge$Builder
+          .pigeon_echoNonNullEnumMap_error_
+          .implement(builder, (NSData pigeonVar_args, ffi_bridge.NativeInteropTestsError errorOut) {
+            try {
+              if (dartApi == null) {
+                _reportFfiError(
+                  errorOut,
+                  'ArgumentError: NativeInteropFlutterIntegrationCoreApi was not registered.',
+                );
+                return null;
+              }
+              final List<Object?> pigeonVar_decodedArgs =
+                  _PigeonFfiBuffers.decode(pigeonVar_args)! as List<Object?>;
+              final Map<NativeInteropAnEnum, NativeInteropAnEnum> response = dartApi!
+                  .echoNonNullEnumMap(
+                    (pigeonVar_decodedArgs[0]! as Map<Object?, Object?>)
+                        .cast<NativeInteropAnEnum, NativeInteropAnEnum>(),
+                  );
+              return _PigeonFfiBuffers.encodeOrNull(response);
+            } catch (e) {
+              _reportFfiError(errorOut, e);
+              return null;
+            }
+          });
+      ffi_bridge
+          .NativeInteropFlutterIntegrationCoreApiBridge$Builder
+          .pigeon_echoNonNullClassMap_error_
+          .implement(builder, (NSData pigeonVar_args, ffi_bridge.NativeInteropTestsError errorOut) {
+            try {
+              if (dartApi == null) {
+                _reportFfiError(
+                  errorOut,
+                  'ArgumentError: NativeInteropFlutterIntegrationCoreApi was not registered.',
+                );
+                return null;
+              }
+              final List<Object?> pigeonVar_decodedArgs =
+                  _PigeonFfiBuffers.decode(pigeonVar_args)! as List<Object?>;
+              final Map<int, NativeInteropAllNullableTypes> response = dartApi!.echoNonNullClassMap(
+                (pigeonVar_decodedArgs[0]! as Map<Object?, Object?>)
+                    .cast<int, NativeInteropAllNullableTypes>(),
+              );
+              return _PigeonFfiBuffers.encodeOrNull(response);
+            } catch (e) {
+              _reportFfiError(errorOut, e);
+              return null;
+            }
+          });
+      ffi_bridge.NativeInteropFlutterIntegrationCoreApiBridge$Builder.pigeon_echoEnum_error_
+          .implement(builder, (int arg_anEnum, ffi_bridge.NativeInteropTestsError errorOut) {
+            try {
+              if (dartApi == null) {
+                _reportFfiError(
+                  errorOut,
+                  'ArgumentError: NativeInteropFlutterIntegrationCoreApi was not registered.',
+                );
+                return null;
+              }
+              final NativeInteropAnEnum response = dartApi!.echoEnum(
+                NativeInteropAnEnum.values[arg_anEnum],
+              );
+              return NSNumber.alloc().initWithLong(response.index);
+            } catch (e) {
+              _reportFfiError(errorOut, e);
+              return null;
+            }
+          });
+      ffi_bridge
+          .NativeInteropFlutterIntegrationCoreApiBridge$Builder
+          .pigeon_echoNativeInteropAnotherEnum_error_
+          .implement(builder, (int arg_anotherEnum, ffi_bridge.NativeInteropTestsError errorOut) {
+            try {
+              if (dartApi == null) {
+                _reportFfiError(
+                  errorOut,
+                  'ArgumentError: NativeInteropFlutterIntegrationCoreApi was not registered.',
+                );
+                return null;
+              }
+              final NativeInteropAnotherEnum response = dartApi!.echoNativeInteropAnotherEnum(
+                NativeInteropAnotherEnum.values[arg_anotherEnum],
+              );
+              return NSNumber.alloc().initWithLong(response.index);
+            } catch (e) {
+              _reportFfiError(errorOut, e);
+              return null;
+            }
+          });
+      ffi_bridge.NativeInteropFlutterIntegrationCoreApiBridge$Builder.pigeon_echoNullableBool_error_
           .implement(builder, (NSNumber? arg_aBool, ffi_bridge.NativeInteropTestsError errorOut) {
             try {
-              if (dartApi != null) {
-                final bool response = dartApi!.echoBool(arg_aBool!.boolValue);
-                return _PigeonFfiCodec.writeValue<NSNumber>(response);
-              } else {
+              if (dartApi == null) {
                 _reportFfiError(
                   errorOut,
                   'ArgumentError: NativeInteropFlutterIntegrationCoreApi was not registered.',
                 );
                 return null;
               }
+              final bool? response = dartApi!.echoNullableBool(arg_aBool?.boolValue);
+              return _PigeonFfiCodec.writeValue<NSNumber?>(response);
             } catch (e) {
               _reportFfiError(errorOut, e);
               return null;
             }
           });
-      ffi_bridge.NativeInteropFlutterIntegrationCoreApiBridge$Builder.echoIntWithAnInt_error_
+      ffi_bridge.NativeInteropFlutterIntegrationCoreApiBridge$Builder.pigeon_echoNullableInt_error_
           .implement(builder, (NSNumber? arg_anInt, ffi_bridge.NativeInteropTestsError errorOut) {
             try {
-              if (dartApi != null) {
-                final int response = dartApi!.echoInt(arg_anInt!.longValue);
-                return _PigeonFfiCodec.writeValue<NSNumber>(response);
-              } else {
+              if (dartApi == null) {
                 _reportFfiError(
                   errorOut,
                   'ArgumentError: NativeInteropFlutterIntegrationCoreApi was not registered.',
                 );
                 return null;
               }
+              final int? response = dartApi!.echoNullableInt(arg_anInt?.longValue);
+              return _PigeonFfiCodec.writeValue<NSNumber?>(response);
             } catch (e) {
               _reportFfiError(errorOut, e);
               return null;
             }
           });
-      ffi_bridge.NativeInteropFlutterIntegrationCoreApiBridge$Builder.echoDoubleWithADouble_error_
+      ffi_bridge
+          .NativeInteropFlutterIntegrationCoreApiBridge$Builder
+          .pigeon_echoNullableDouble_error_
           .implement(builder, (NSNumber? arg_aDouble, ffi_bridge.NativeInteropTestsError errorOut) {
             try {
-              if (dartApi != null) {
-                final double response = dartApi!.echoDouble(arg_aDouble!.doubleValue);
-                return _PigeonFfiCodec.writeValue<NSNumber>(response);
-              } else {
+              if (dartApi == null) {
                 _reportFfiError(
                   errorOut,
                   'ArgumentError: NativeInteropFlutterIntegrationCoreApi was not registered.',
                 );
                 return null;
               }
+              final double? response = dartApi!.echoNullableDouble(arg_aDouble?.doubleValue);
+              return _PigeonFfiCodec.writeValue<NSNumber?>(response);
             } catch (e) {
               _reportFfiError(errorOut, e);
               return null;
             }
           });
-      ffi_bridge.NativeInteropFlutterIntegrationCoreApiBridge$Builder.echoStringWithAString_error_
+      ffi_bridge
+          .NativeInteropFlutterIntegrationCoreApiBridge$Builder
+          .pigeon_echoNullableString_error_
           .implement(builder, (NSString? arg_aString, ffi_bridge.NativeInteropTestsError errorOut) {
             try {
-              if (dartApi != null) {
-                final String response = dartApi!.echoString(arg_aString!.toDartString());
-                return _PigeonFfiCodec.writeValue<NSString>(response);
-              } else {
+              if (dartApi == null) {
                 _reportFfiError(
                   errorOut,
                   'ArgumentError: NativeInteropFlutterIntegrationCoreApi was not registered.',
                 );
                 return null;
               }
-            } catch (e) {
-              _reportFfiError(errorOut, e);
-              return null;
-            }
-          });
-      ffi_bridge.NativeInteropFlutterIntegrationCoreApiBridge$Builder.echoUint8ListWithList_error_
-          .implement(builder, (
-            ffi_bridge.NativeInteropTestsPigeonTypedData? arg_list,
-            ffi_bridge.NativeInteropTestsError errorOut,
-          ) {
-            try {
-              if (dartApi != null) {
-                final Uint8List response = dartApi!.echoUint8List(
-                  _PigeonFfiCodec.readValue(arg_list)! as Uint8List,
-                );
-                return _PigeonFfiCodec.writeValue<ffi_bridge.NativeInteropTestsPigeonTypedData>(
-                  response,
-                );
-              } else {
-                _reportFfiError(
-                  errorOut,
-                  'ArgumentError: NativeInteropFlutterIntegrationCoreApi was not registered.',
-                );
-                return null;
-              }
-            } catch (e) {
-              _reportFfiError(errorOut, e);
-              return null;
-            }
-          });
-      ffi_bridge.NativeInteropFlutterIntegrationCoreApiBridge$Builder.echoInt32ListWithList_error_
-          .implement(builder, (
-            ffi_bridge.NativeInteropTestsPigeonTypedData? arg_list,
-            ffi_bridge.NativeInteropTestsError errorOut,
-          ) {
-            try {
-              if (dartApi != null) {
-                final Int32List response = dartApi!.echoInt32List(
-                  _PigeonFfiCodec.readValue(arg_list)! as Int32List,
-                );
-                return _PigeonFfiCodec.writeValue<ffi_bridge.NativeInteropTestsPigeonTypedData>(
-                  response,
-                );
-              } else {
-                _reportFfiError(
-                  errorOut,
-                  'ArgumentError: NativeInteropFlutterIntegrationCoreApi was not registered.',
-                );
-                return null;
-              }
-            } catch (e) {
-              _reportFfiError(errorOut, e);
-              return null;
-            }
-          });
-      ffi_bridge.NativeInteropFlutterIntegrationCoreApiBridge$Builder.echoInt64ListWithList_error_
-          .implement(builder, (
-            ffi_bridge.NativeInteropTestsPigeonTypedData? arg_list,
-            ffi_bridge.NativeInteropTestsError errorOut,
-          ) {
-            try {
-              if (dartApi != null) {
-                final Int64List response = dartApi!.echoInt64List(
-                  _PigeonFfiCodec.readValue(arg_list)! as Int64List,
-                );
-                return _PigeonFfiCodec.writeValue<ffi_bridge.NativeInteropTestsPigeonTypedData>(
-                  response,
-                );
-              } else {
-                _reportFfiError(
-                  errorOut,
-                  'ArgumentError: NativeInteropFlutterIntegrationCoreApi was not registered.',
-                );
-                return null;
-              }
-            } catch (e) {
-              _reportFfiError(errorOut, e);
-              return null;
-            }
-          });
-      ffi_bridge.NativeInteropFlutterIntegrationCoreApiBridge$Builder.echoFloat64ListWithList_error_
-          .implement(builder, (
-            ffi_bridge.NativeInteropTestsPigeonTypedData? arg_list,
-            ffi_bridge.NativeInteropTestsError errorOut,
-          ) {
-            try {
-              if (dartApi != null) {
-                final Float64List response = dartApi!.echoFloat64List(
-                  _PigeonFfiCodec.readValue(arg_list)! as Float64List,
-                );
-                return _PigeonFfiCodec.writeValue<ffi_bridge.NativeInteropTestsPigeonTypedData>(
-                  response,
-                );
-              } else {
-                _reportFfiError(
-                  errorOut,
-                  'ArgumentError: NativeInteropFlutterIntegrationCoreApi was not registered.',
-                );
-                return null;
-              }
-            } catch (e) {
-              _reportFfiError(errorOut, e);
-              return null;
-            }
-          });
-      ffi_bridge.NativeInteropFlutterIntegrationCoreApiBridge$Builder.echoListWithList_error_
-          .implement(builder, (NSArray? arg_list, ffi_bridge.NativeInteropTestsError errorOut) {
-            try {
-              if (dartApi != null) {
-                final List<Object?> response = dartApi!.echoList(
-                  (_PigeonFfiCodec.readValue(arg_list)! as List<Object?>).cast<Object?>(),
-                );
-                return _PigeonFfiCodec.writeValue<NSMutableArray>(response);
-              } else {
-                _reportFfiError(
-                  errorOut,
-                  'ArgumentError: NativeInteropFlutterIntegrationCoreApi was not registered.',
-                );
-                return null;
-              }
+              final String? response = dartApi!.echoNullableString(arg_aString?.toDartString());
+              return response == null ? null : NSString(response);
             } catch (e) {
               _reportFfiError(errorOut, e);
               return null;
@@ -16061,22 +16785,20 @@ final class NativeInteropFlutterIntegrationCoreApiRegistrar
           });
       ffi_bridge
           .NativeInteropFlutterIntegrationCoreApiBridge$Builder
-          .echoEnumListWithEnumList_error_
-          .implement(builder, (NSArray? arg_enumList, ffi_bridge.NativeInteropTestsError errorOut) {
+          .pigeon_echoNullableUint8List_error_
+          .implement(builder, (NSData? arg_list, ffi_bridge.NativeInteropTestsError errorOut) {
             try {
-              if (dartApi != null) {
-                final List<NativeInteropAnEnum?> response = dartApi!.echoEnumList(
-                  (_PigeonFfiCodec.readValue(arg_enumList, NativeInteropAnEnum)! as List<Object?>)
-                      .cast<NativeInteropAnEnum?>(),
-                );
-                return _PigeonFfiCodec.writeValue<NSMutableArray>(response);
-              } else {
+              if (dartApi == null) {
                 _reportFfiError(
                   errorOut,
                   'ArgumentError: NativeInteropFlutterIntegrationCoreApi was not registered.',
                 );
                 return null;
               }
+              final Uint8List? response = dartApi!.echoNullableUint8List(
+                _PigeonFfiBuffers.toUint8List(arg_list),
+              );
+              return response == null ? null : _typedDataToNSData(response);
             } catch (e) {
               _reportFfiError(errorOut, e);
               return null;
@@ -16084,25 +16806,20 @@ final class NativeInteropFlutterIntegrationCoreApiRegistrar
           });
       ffi_bridge
           .NativeInteropFlutterIntegrationCoreApiBridge$Builder
-          .echoClassListWithClassList_error_
-          .implement(builder, (
-            NSArray? arg_classList,
-            ffi_bridge.NativeInteropTestsError errorOut,
-          ) {
+          .pigeon_echoNullableInt32List_error_
+          .implement(builder, (NSData? arg_list, ffi_bridge.NativeInteropTestsError errorOut) {
             try {
-              if (dartApi != null) {
-                final List<NativeInteropAllNullableTypes?> response = dartApi!.echoClassList(
-                  (_PigeonFfiCodec.readValue(arg_classList)! as List<Object?>)
-                      .cast<NativeInteropAllNullableTypes?>(),
-                );
-                return _PigeonFfiCodec.writeValue<NSMutableArray>(response);
-              } else {
+              if (dartApi == null) {
                 _reportFfiError(
                   errorOut,
                   'ArgumentError: NativeInteropFlutterIntegrationCoreApi was not registered.',
                 );
                 return null;
               }
+              final Int32List? response = dartApi!.echoNullableInt32List(
+                _PigeonFfiBuffers.toUint8List(arg_list)?.buffer.asInt32List(),
+              );
+              return response == null ? null : _typedDataToNSData(response);
             } catch (e) {
               _reportFfiError(errorOut, e);
               return null;
@@ -16110,22 +16827,20 @@ final class NativeInteropFlutterIntegrationCoreApiRegistrar
           });
       ffi_bridge
           .NativeInteropFlutterIntegrationCoreApiBridge$Builder
-          .echoNonNullEnumListWithEnumList_error_
-          .implement(builder, (NSArray? arg_enumList, ffi_bridge.NativeInteropTestsError errorOut) {
+          .pigeon_echoNullableInt64List_error_
+          .implement(builder, (NSData? arg_list, ffi_bridge.NativeInteropTestsError errorOut) {
             try {
-              if (dartApi != null) {
-                final List<NativeInteropAnEnum> response = dartApi!.echoNonNullEnumList(
-                  (_PigeonFfiCodec.readValue(arg_enumList, NativeInteropAnEnum)! as List<Object?>)
-                      .cast<NativeInteropAnEnum>(),
-                );
-                return _PigeonFfiCodec.writeValue<NSMutableArray>(response);
-              } else {
+              if (dartApi == null) {
                 _reportFfiError(
                   errorOut,
                   'ArgumentError: NativeInteropFlutterIntegrationCoreApi was not registered.',
                 );
                 return null;
               }
+              final Int64List? response = dartApi!.echoNullableInt64List(
+                _PigeonFfiBuffers.toUint8List(arg_list)?.buffer.asInt64List(),
+              );
+              return response == null ? null : _typedDataToNSData(response);
             } catch (e) {
               _reportFfiError(errorOut, e);
               return null;
@@ -16133,126 +16848,41 @@ final class NativeInteropFlutterIntegrationCoreApiRegistrar
           });
       ffi_bridge
           .NativeInteropFlutterIntegrationCoreApiBridge$Builder
-          .echoNonNullClassListWithClassList_error_
-          .implement(builder, (
-            NSArray? arg_classList,
-            ffi_bridge.NativeInteropTestsError errorOut,
-          ) {
+          .pigeon_echoNullableFloat64List_error_
+          .implement(builder, (NSData? arg_list, ffi_bridge.NativeInteropTestsError errorOut) {
             try {
-              if (dartApi != null) {
-                final List<NativeInteropAllNullableTypes> response = dartApi!.echoNonNullClassList(
-                  (_PigeonFfiCodec.readValue(arg_classList)! as List<Object?>)
-                      .cast<NativeInteropAllNullableTypes>(),
-                );
-                return _PigeonFfiCodec.writeValue<NSMutableArray>(response);
-              } else {
+              if (dartApi == null) {
                 _reportFfiError(
                   errorOut,
                   'ArgumentError: NativeInteropFlutterIntegrationCoreApi was not registered.',
                 );
                 return null;
               }
+              final Float64List? response = dartApi!.echoNullableFloat64List(
+                _PigeonFfiBuffers.toUint8List(arg_list)?.buffer.asFloat64List(),
+              );
+              return response == null ? null : _typedDataToNSData(response);
             } catch (e) {
               _reportFfiError(errorOut, e);
               return null;
             }
           });
-      ffi_bridge.NativeInteropFlutterIntegrationCoreApiBridge$Builder.echoMapWithMap_error_
-          .implement(builder, (NSDictionary? arg_map, ffi_bridge.NativeInteropTestsError errorOut) {
+      ffi_bridge.NativeInteropFlutterIntegrationCoreApiBridge$Builder.pigeon_echoNullableList_error_
+          .implement(builder, (NSData pigeonVar_args, ffi_bridge.NativeInteropTestsError errorOut) {
             try {
-              if (dartApi != null) {
-                final Map<Object?, Object?> response = dartApi!.echoMap(
-                  (_PigeonFfiCodec.readValue(arg_map)! as Map<Object?, Object?>)
-                      .cast<Object?, Object?>(),
-                );
-                return _PigeonFfiCodec.writeValue<NSDictionary>(response);
-              } else {
+              if (dartApi == null) {
                 _reportFfiError(
                   errorOut,
                   'ArgumentError: NativeInteropFlutterIntegrationCoreApi was not registered.',
                 );
                 return null;
               }
-            } catch (e) {
-              _reportFfiError(errorOut, e);
-              return null;
-            }
-          });
-      ffi_bridge
-          .NativeInteropFlutterIntegrationCoreApiBridge$Builder
-          .echoStringMapWithStringMap_error_
-          .implement(builder, (
-            NSDictionary? arg_stringMap,
-            ffi_bridge.NativeInteropTestsError errorOut,
-          ) {
-            try {
-              if (dartApi != null) {
-                final Map<String?, String?> response = dartApi!.echoStringMap(
-                  (_PigeonFfiCodec.readValue(arg_stringMap)! as Map<Object?, Object?>)
-                      .cast<String?, String?>(),
-                );
-                return _PigeonFfiCodec.writeValue<NSDictionary>(response);
-              } else {
-                _reportFfiError(
-                  errorOut,
-                  'ArgumentError: NativeInteropFlutterIntegrationCoreApi was not registered.',
-                );
-                return null;
-              }
-            } catch (e) {
-              _reportFfiError(errorOut, e);
-              return null;
-            }
-          });
-      ffi_bridge.NativeInteropFlutterIntegrationCoreApiBridge$Builder.echoIntMapWithIntMap_error_
-          .implement(builder, (
-            NSDictionary? arg_intMap,
-            ffi_bridge.NativeInteropTestsError errorOut,
-          ) {
-            try {
-              if (dartApi != null) {
-                final Map<int?, int?> response = dartApi!.echoIntMap(
-                  (_PigeonFfiCodec.readValue(arg_intMap, int, int)! as Map<Object?, Object?>)
-                      .cast<int?, int?>(),
-                );
-                return _PigeonFfiCodec.writeValue<NSDictionary>(response);
-              } else {
-                _reportFfiError(
-                  errorOut,
-                  'ArgumentError: NativeInteropFlutterIntegrationCoreApi was not registered.',
-                );
-                return null;
-              }
-            } catch (e) {
-              _reportFfiError(errorOut, e);
-              return null;
-            }
-          });
-      ffi_bridge.NativeInteropFlutterIntegrationCoreApiBridge$Builder.echoEnumMapWithEnumMap_error_
-          .implement(builder, (
-            NSDictionary? arg_enumMap,
-            ffi_bridge.NativeInteropTestsError errorOut,
-          ) {
-            try {
-              if (dartApi != null) {
-                final Map<NativeInteropAnEnum?, NativeInteropAnEnum?> response = dartApi!
-                    .echoEnumMap(
-                      (_PigeonFfiCodec.readValue(
-                                arg_enumMap,
-                                NativeInteropAnEnum,
-                                NativeInteropAnEnum,
-                              )!
-                              as Map<Object?, Object?>)
-                          .cast<NativeInteropAnEnum?, NativeInteropAnEnum?>(),
-                    );
-                return _PigeonFfiCodec.writeValue<NSDictionary>(response);
-              } else {
-                _reportFfiError(
-                  errorOut,
-                  'ArgumentError: NativeInteropFlutterIntegrationCoreApi was not registered.',
-                );
-                return null;
-              }
+              final List<Object?> pigeonVar_decodedArgs =
+                  _PigeonFfiBuffers.decode(pigeonVar_args)! as List<Object?>;
+              final List<Object?>? response = dartApi!.echoNullableList(
+                pigeonVar_decodedArgs[0] as List<Object?>?,
+              );
+              return _PigeonFfiBuffers.encodeOrNull(response);
             } catch (e) {
               _reportFfiError(errorOut, e);
               return null;
@@ -16260,25 +16890,22 @@ final class NativeInteropFlutterIntegrationCoreApiRegistrar
           });
       ffi_bridge
           .NativeInteropFlutterIntegrationCoreApiBridge$Builder
-          .echoClassMapWithClassMap_error_
-          .implement(builder, (
-            NSDictionary? arg_classMap,
-            ffi_bridge.NativeInteropTestsError errorOut,
-          ) {
+          .pigeon_echoNullableEnumList_error_
+          .implement(builder, (NSData pigeonVar_args, ffi_bridge.NativeInteropTestsError errorOut) {
             try {
-              if (dartApi != null) {
-                final Map<int?, NativeInteropAllNullableTypes?> response = dartApi!.echoClassMap(
-                  (_PigeonFfiCodec.readValue(arg_classMap, int)! as Map<Object?, Object?>)
-                      .cast<int?, NativeInteropAllNullableTypes?>(),
-                );
-                return _PigeonFfiCodec.writeValue<NSDictionary>(response);
-              } else {
+              if (dartApi == null) {
                 _reportFfiError(
                   errorOut,
                   'ArgumentError: NativeInteropFlutterIntegrationCoreApi was not registered.',
                 );
                 return null;
               }
+              final List<Object?> pigeonVar_decodedArgs =
+                  _PigeonFfiBuffers.decode(pigeonVar_args)! as List<Object?>;
+              final List<NativeInteropAnEnum?>? response = dartApi!.echoNullableEnumList(
+                (pigeonVar_decodedArgs[0] as List<Object?>?)?.cast<NativeInteropAnEnum?>(),
+              );
+              return _PigeonFfiBuffers.encodeOrNull(response);
             } catch (e) {
               _reportFfiError(errorOut, e);
               return null;
@@ -16286,25 +16913,23 @@ final class NativeInteropFlutterIntegrationCoreApiRegistrar
           });
       ffi_bridge
           .NativeInteropFlutterIntegrationCoreApiBridge$Builder
-          .echoNonNullStringMapWithStringMap_error_
-          .implement(builder, (
-            NSDictionary? arg_stringMap,
-            ffi_bridge.NativeInteropTestsError errorOut,
-          ) {
+          .pigeon_echoNullableClassList_error_
+          .implement(builder, (NSData pigeonVar_args, ffi_bridge.NativeInteropTestsError errorOut) {
             try {
-              if (dartApi != null) {
-                final Map<String, String> response = dartApi!.echoNonNullStringMap(
-                  (_PigeonFfiCodec.readValue(arg_stringMap)! as Map<Object?, Object?>)
-                      .cast<String, String>(),
-                );
-                return _PigeonFfiCodec.writeValue<NSDictionary>(response);
-              } else {
+              if (dartApi == null) {
                 _reportFfiError(
                   errorOut,
                   'ArgumentError: NativeInteropFlutterIntegrationCoreApi was not registered.',
                 );
                 return null;
               }
+              final List<Object?> pigeonVar_decodedArgs =
+                  _PigeonFfiBuffers.decode(pigeonVar_args)! as List<Object?>;
+              final List<NativeInteropAllNullableTypes?>? response = dartApi!.echoNullableClassList(
+                (pigeonVar_decodedArgs[0] as List<Object?>?)
+                    ?.cast<NativeInteropAllNullableTypes?>(),
+              );
+              return _PigeonFfiBuffers.encodeOrNull(response);
             } catch (e) {
               _reportFfiError(errorOut, e);
               return null;
@@ -16312,25 +16937,22 @@ final class NativeInteropFlutterIntegrationCoreApiRegistrar
           });
       ffi_bridge
           .NativeInteropFlutterIntegrationCoreApiBridge$Builder
-          .echoNonNullIntMapWithIntMap_error_
-          .implement(builder, (
-            NSDictionary? arg_intMap,
-            ffi_bridge.NativeInteropTestsError errorOut,
-          ) {
+          .pigeon_echoNullableNonNullEnumList_error_
+          .implement(builder, (NSData pigeonVar_args, ffi_bridge.NativeInteropTestsError errorOut) {
             try {
-              if (dartApi != null) {
-                final Map<int, int> response = dartApi!.echoNonNullIntMap(
-                  (_PigeonFfiCodec.readValue(arg_intMap, int, int)! as Map<Object?, Object?>)
-                      .cast<int, int>(),
-                );
-                return _PigeonFfiCodec.writeValue<NSDictionary>(response);
-              } else {
+              if (dartApi == null) {
                 _reportFfiError(
                   errorOut,
                   'ArgumentError: NativeInteropFlutterIntegrationCoreApi was not registered.',
                 );
                 return null;
               }
+              final List<Object?> pigeonVar_decodedArgs =
+                  _PigeonFfiBuffers.decode(pigeonVar_args)! as List<Object?>;
+              final List<NativeInteropAnEnum>? response = dartApi!.echoNullableNonNullEnumList(
+                (pigeonVar_decodedArgs[0] as List<Object?>?)?.cast<NativeInteropAnEnum>(),
+              );
+              return _PigeonFfiBuffers.encodeOrNull(response);
             } catch (e) {
               _reportFfiError(errorOut, e);
               return null;
@@ -16338,31 +16960,45 @@ final class NativeInteropFlutterIntegrationCoreApiRegistrar
           });
       ffi_bridge
           .NativeInteropFlutterIntegrationCoreApiBridge$Builder
-          .echoNonNullEnumMapWithEnumMap_error_
-          .implement(builder, (
-            NSDictionary? arg_enumMap,
-            ffi_bridge.NativeInteropTestsError errorOut,
-          ) {
+          .pigeon_echoNullableNonNullClassList_error_
+          .implement(builder, (NSData pigeonVar_args, ffi_bridge.NativeInteropTestsError errorOut) {
             try {
-              if (dartApi != null) {
-                final Map<NativeInteropAnEnum, NativeInteropAnEnum> response = dartApi!
-                    .echoNonNullEnumMap(
-                      (_PigeonFfiCodec.readValue(
-                                arg_enumMap,
-                                NativeInteropAnEnum,
-                                NativeInteropAnEnum,
-                              )!
-                              as Map<Object?, Object?>)
-                          .cast<NativeInteropAnEnum, NativeInteropAnEnum>(),
-                    );
-                return _PigeonFfiCodec.writeValue<NSDictionary>(response);
-              } else {
+              if (dartApi == null) {
                 _reportFfiError(
                   errorOut,
                   'ArgumentError: NativeInteropFlutterIntegrationCoreApi was not registered.',
                 );
                 return null;
               }
+              final List<Object?> pigeonVar_decodedArgs =
+                  _PigeonFfiBuffers.decode(pigeonVar_args)! as List<Object?>;
+              final List<NativeInteropAllNullableTypes>? response = dartApi!
+                  .echoNullableNonNullClassList(
+                    (pigeonVar_decodedArgs[0] as List<Object?>?)
+                        ?.cast<NativeInteropAllNullableTypes>(),
+                  );
+              return _PigeonFfiBuffers.encodeOrNull(response);
+            } catch (e) {
+              _reportFfiError(errorOut, e);
+              return null;
+            }
+          });
+      ffi_bridge.NativeInteropFlutterIntegrationCoreApiBridge$Builder.pigeon_echoNullableMap_error_
+          .implement(builder, (NSData pigeonVar_args, ffi_bridge.NativeInteropTestsError errorOut) {
+            try {
+              if (dartApi == null) {
+                _reportFfiError(
+                  errorOut,
+                  'ArgumentError: NativeInteropFlutterIntegrationCoreApi was not registered.',
+                );
+                return null;
+              }
+              final List<Object?> pigeonVar_decodedArgs =
+                  _PigeonFfiBuffers.decode(pigeonVar_args)! as List<Object?>;
+              final Map<Object?, Object?>? response = dartApi!.echoNullableMap(
+                pigeonVar_decodedArgs[0] as Map<Object?, Object?>?,
+              );
+              return _PigeonFfiBuffers.encodeOrNull(response);
             } catch (e) {
               _reportFfiError(errorOut, e);
               return null;
@@ -16370,47 +17006,22 @@ final class NativeInteropFlutterIntegrationCoreApiRegistrar
           });
       ffi_bridge
           .NativeInteropFlutterIntegrationCoreApiBridge$Builder
-          .echoNonNullClassMapWithClassMap_error_
-          .implement(builder, (
-            NSDictionary? arg_classMap,
-            ffi_bridge.NativeInteropTestsError errorOut,
-          ) {
+          .pigeon_echoNullableStringMap_error_
+          .implement(builder, (NSData pigeonVar_args, ffi_bridge.NativeInteropTestsError errorOut) {
             try {
-              if (dartApi != null) {
-                final Map<int, NativeInteropAllNullableTypes> response = dartApi!
-                    .echoNonNullClassMap(
-                      (_PigeonFfiCodec.readValue(arg_classMap, int)! as Map<Object?, Object?>)
-                          .cast<int, NativeInteropAllNullableTypes>(),
-                    );
-                return _PigeonFfiCodec.writeValue<NSDictionary>(response);
-              } else {
+              if (dartApi == null) {
                 _reportFfiError(
                   errorOut,
                   'ArgumentError: NativeInteropFlutterIntegrationCoreApi was not registered.',
                 );
                 return null;
               }
-            } catch (e) {
-              _reportFfiError(errorOut, e);
-              return null;
-            }
-          });
-      ffi_bridge.NativeInteropFlutterIntegrationCoreApiBridge$Builder.echoEnumWithAnEnum_error_
-          .implement(builder, (NSNumber? arg_anEnum, ffi_bridge.NativeInteropTestsError errorOut) {
-            try {
-              if (dartApi != null) {
-                final NativeInteropAnEnum response = dartApi!.echoEnum(
-                  _PigeonFfiCodec.readValue(arg_anEnum, NativeInteropAnEnum)!
-                      as NativeInteropAnEnum,
-                );
-                return _PigeonFfiCodec.writeValue<NSNumber>(response);
-              } else {
-                _reportFfiError(
-                  errorOut,
-                  'ArgumentError: NativeInteropFlutterIntegrationCoreApi was not registered.',
-                );
-                return null;
-              }
+              final List<Object?> pigeonVar_decodedArgs =
+                  _PigeonFfiBuffers.decode(pigeonVar_args)! as List<Object?>;
+              final Map<String?, String?>? response = dartApi!.echoNullableStringMap(
+                (pigeonVar_decodedArgs[0] as Map<Object?, Object?>?)?.cast<String?, String?>(),
+              );
+              return _PigeonFfiBuffers.encodeOrNull(response);
             } catch (e) {
               _reportFfiError(errorOut, e);
               return null;
@@ -16418,25 +17029,22 @@ final class NativeInteropFlutterIntegrationCoreApiRegistrar
           });
       ffi_bridge
           .NativeInteropFlutterIntegrationCoreApiBridge$Builder
-          .echoNativeInteropAnotherEnumWithAnotherEnum_error_
-          .implement(builder, (
-            NSNumber? arg_anotherEnum,
-            ffi_bridge.NativeInteropTestsError errorOut,
-          ) {
+          .pigeon_echoNullableIntMap_error_
+          .implement(builder, (NSData pigeonVar_args, ffi_bridge.NativeInteropTestsError errorOut) {
             try {
-              if (dartApi != null) {
-                final NativeInteropAnotherEnum response = dartApi!.echoNativeInteropAnotherEnum(
-                  _PigeonFfiCodec.readValue(arg_anotherEnum, NativeInteropAnotherEnum)!
-                      as NativeInteropAnotherEnum,
-                );
-                return _PigeonFfiCodec.writeValue<NSNumber>(response);
-              } else {
+              if (dartApi == null) {
                 _reportFfiError(
                   errorOut,
                   'ArgumentError: NativeInteropFlutterIntegrationCoreApi was not registered.',
                 );
                 return null;
               }
+              final List<Object?> pigeonVar_decodedArgs =
+                  _PigeonFfiBuffers.decode(pigeonVar_args)! as List<Object?>;
+              final Map<int?, int?>? response = dartApi!.echoNullableIntMap(
+                (pigeonVar_decodedArgs[0] as Map<Object?, Object?>?)?.cast<int?, int?>(),
+              );
+              return _PigeonFfiBuffers.encodeOrNull(response);
             } catch (e) {
               _reportFfiError(errorOut, e);
               return null;
@@ -16444,19 +17052,24 @@ final class NativeInteropFlutterIntegrationCoreApiRegistrar
           });
       ffi_bridge
           .NativeInteropFlutterIntegrationCoreApiBridge$Builder
-          .echoNullableBoolWithABool_error_
-          .implement(builder, (NSNumber? arg_aBool, ffi_bridge.NativeInteropTestsError errorOut) {
+          .pigeon_echoNullableEnumMap_error_
+          .implement(builder, (NSData pigeonVar_args, ffi_bridge.NativeInteropTestsError errorOut) {
             try {
-              if (dartApi != null) {
-                final bool? response = dartApi!.echoNullableBool(arg_aBool?.boolValue);
-                return _PigeonFfiCodec.writeValue<NSNumber?>(response);
-              } else {
+              if (dartApi == null) {
                 _reportFfiError(
                   errorOut,
                   'ArgumentError: NativeInteropFlutterIntegrationCoreApi was not registered.',
                 );
                 return null;
               }
+              final List<Object?> pigeonVar_decodedArgs =
+                  _PigeonFfiBuffers.decode(pigeonVar_args)! as List<Object?>;
+              final Map<NativeInteropAnEnum?, NativeInteropAnEnum?>? response = dartApi!
+                  .echoNullableEnumMap(
+                    (pigeonVar_decodedArgs[0] as Map<Object?, Object?>?)
+                        ?.cast<NativeInteropAnEnum?, NativeInteropAnEnum?>(),
+                  );
+              return _PigeonFfiBuffers.encodeOrNull(response);
             } catch (e) {
               _reportFfiError(errorOut, e);
               return null;
@@ -16464,19 +17077,24 @@ final class NativeInteropFlutterIntegrationCoreApiRegistrar
           });
       ffi_bridge
           .NativeInteropFlutterIntegrationCoreApiBridge$Builder
-          .echoNullableIntWithAnInt_error_
-          .implement(builder, (NSNumber? arg_anInt, ffi_bridge.NativeInteropTestsError errorOut) {
+          .pigeon_echoNullableClassMap_error_
+          .implement(builder, (NSData pigeonVar_args, ffi_bridge.NativeInteropTestsError errorOut) {
             try {
-              if (dartApi != null) {
-                final int? response = dartApi!.echoNullableInt(arg_anInt?.longValue);
-                return _PigeonFfiCodec.writeValue<NSNumber?>(response);
-              } else {
+              if (dartApi == null) {
                 _reportFfiError(
                   errorOut,
                   'ArgumentError: NativeInteropFlutterIntegrationCoreApi was not registered.',
                 );
                 return null;
               }
+              final List<Object?> pigeonVar_decodedArgs =
+                  _PigeonFfiBuffers.decode(pigeonVar_args)! as List<Object?>;
+              final Map<int?, NativeInteropAllNullableTypes?>? response = dartApi!
+                  .echoNullableClassMap(
+                    (pigeonVar_decodedArgs[0] as Map<Object?, Object?>?)
+                        ?.cast<int?, NativeInteropAllNullableTypes?>(),
+                  );
+              return _PigeonFfiBuffers.encodeOrNull(response);
             } catch (e) {
               _reportFfiError(errorOut, e);
               return null;
@@ -16484,19 +17102,22 @@ final class NativeInteropFlutterIntegrationCoreApiRegistrar
           });
       ffi_bridge
           .NativeInteropFlutterIntegrationCoreApiBridge$Builder
-          .echoNullableDoubleWithADouble_error_
-          .implement(builder, (NSNumber? arg_aDouble, ffi_bridge.NativeInteropTestsError errorOut) {
+          .pigeon_echoNullableNonNullStringMap_error_
+          .implement(builder, (NSData pigeonVar_args, ffi_bridge.NativeInteropTestsError errorOut) {
             try {
-              if (dartApi != null) {
-                final double? response = dartApi!.echoNullableDouble(arg_aDouble?.doubleValue);
-                return _PigeonFfiCodec.writeValue<NSNumber?>(response);
-              } else {
+              if (dartApi == null) {
                 _reportFfiError(
                   errorOut,
                   'ArgumentError: NativeInteropFlutterIntegrationCoreApi was not registered.',
                 );
                 return null;
               }
+              final List<Object?> pigeonVar_decodedArgs =
+                  _PigeonFfiBuffers.decode(pigeonVar_args)! as List<Object?>;
+              final Map<String, String>? response = dartApi!.echoNullableNonNullStringMap(
+                (pigeonVar_decodedArgs[0] as Map<Object?, Object?>?)?.cast<String, String>(),
+              );
+              return _PigeonFfiBuffers.encodeOrNull(response);
             } catch (e) {
               _reportFfiError(errorOut, e);
               return null;
@@ -16504,19 +17125,22 @@ final class NativeInteropFlutterIntegrationCoreApiRegistrar
           });
       ffi_bridge
           .NativeInteropFlutterIntegrationCoreApiBridge$Builder
-          .echoNullableStringWithAString_error_
-          .implement(builder, (NSString? arg_aString, ffi_bridge.NativeInteropTestsError errorOut) {
+          .pigeon_echoNullableNonNullIntMap_error_
+          .implement(builder, (NSData pigeonVar_args, ffi_bridge.NativeInteropTestsError errorOut) {
             try {
-              if (dartApi != null) {
-                final String? response = dartApi!.echoNullableString(arg_aString?.toDartString());
-                return _PigeonFfiCodec.writeValue<NSString?>(response);
-              } else {
+              if (dartApi == null) {
                 _reportFfiError(
                   errorOut,
                   'ArgumentError: NativeInteropFlutterIntegrationCoreApi was not registered.',
                 );
                 return null;
               }
+              final List<Object?> pigeonVar_decodedArgs =
+                  _PigeonFfiBuffers.decode(pigeonVar_args)! as List<Object?>;
+              final Map<int, int>? response = dartApi!.echoNullableNonNullIntMap(
+                (pigeonVar_decodedArgs[0] as Map<Object?, Object?>?)?.cast<int, int>(),
+              );
+              return _PigeonFfiBuffers.encodeOrNull(response);
             } catch (e) {
               _reportFfiError(errorOut, e);
               return null;
@@ -16524,26 +17148,24 @@ final class NativeInteropFlutterIntegrationCoreApiRegistrar
           });
       ffi_bridge
           .NativeInteropFlutterIntegrationCoreApiBridge$Builder
-          .echoNullableUint8ListWithList_error_
-          .implement(builder, (
-            ffi_bridge.NativeInteropTestsPigeonTypedData? arg_list,
-            ffi_bridge.NativeInteropTestsError errorOut,
-          ) {
+          .pigeon_echoNullableNonNullEnumMap_error_
+          .implement(builder, (NSData pigeonVar_args, ffi_bridge.NativeInteropTestsError errorOut) {
             try {
-              if (dartApi != null) {
-                final Uint8List? response = dartApi!.echoNullableUint8List(
-                  _PigeonFfiCodec.readValue(arg_list) as Uint8List?,
-                );
-                return _PigeonFfiCodec.writeValue<ffi_bridge.NativeInteropTestsPigeonTypedData?>(
-                  response,
-                );
-              } else {
+              if (dartApi == null) {
                 _reportFfiError(
                   errorOut,
                   'ArgumentError: NativeInteropFlutterIntegrationCoreApi was not registered.',
                 );
                 return null;
               }
+              final List<Object?> pigeonVar_decodedArgs =
+                  _PigeonFfiBuffers.decode(pigeonVar_args)! as List<Object?>;
+              final Map<NativeInteropAnEnum, NativeInteropAnEnum>? response = dartApi!
+                  .echoNullableNonNullEnumMap(
+                    (pigeonVar_decodedArgs[0] as Map<Object?, Object?>?)
+                        ?.cast<NativeInteropAnEnum, NativeInteropAnEnum>(),
+                  );
+              return _PigeonFfiBuffers.encodeOrNull(response);
             } catch (e) {
               _reportFfiError(errorOut, e);
               return null;
@@ -16551,26 +17173,43 @@ final class NativeInteropFlutterIntegrationCoreApiRegistrar
           });
       ffi_bridge
           .NativeInteropFlutterIntegrationCoreApiBridge$Builder
-          .echoNullableInt32ListWithList_error_
-          .implement(builder, (
-            ffi_bridge.NativeInteropTestsPigeonTypedData? arg_list,
-            ffi_bridge.NativeInteropTestsError errorOut,
-          ) {
+          .pigeon_echoNullableNonNullClassMap_error_
+          .implement(builder, (NSData pigeonVar_args, ffi_bridge.NativeInteropTestsError errorOut) {
             try {
-              if (dartApi != null) {
-                final Int32List? response = dartApi!.echoNullableInt32List(
-                  _PigeonFfiCodec.readValue(arg_list) as Int32List?,
-                );
-                return _PigeonFfiCodec.writeValue<ffi_bridge.NativeInteropTestsPigeonTypedData?>(
-                  response,
-                );
-              } else {
+              if (dartApi == null) {
                 _reportFfiError(
                   errorOut,
                   'ArgumentError: NativeInteropFlutterIntegrationCoreApi was not registered.',
                 );
                 return null;
               }
+              final List<Object?> pigeonVar_decodedArgs =
+                  _PigeonFfiBuffers.decode(pigeonVar_args)! as List<Object?>;
+              final Map<int, NativeInteropAllNullableTypes>? response = dartApi!
+                  .echoNullableNonNullClassMap(
+                    (pigeonVar_decodedArgs[0] as Map<Object?, Object?>?)
+                        ?.cast<int, NativeInteropAllNullableTypes>(),
+                  );
+              return _PigeonFfiBuffers.encodeOrNull(response);
+            } catch (e) {
+              _reportFfiError(errorOut, e);
+              return null;
+            }
+          });
+      ffi_bridge.NativeInteropFlutterIntegrationCoreApiBridge$Builder.pigeon_echoNullableEnum_error_
+          .implement(builder, (int arg_anEnum, ffi_bridge.NativeInteropTestsError errorOut) {
+            try {
+              if (dartApi == null) {
+                _reportFfiError(
+                  errorOut,
+                  'ArgumentError: NativeInteropFlutterIntegrationCoreApi was not registered.',
+                );
+                return null;
+              }
+              final NativeInteropAnEnum? response = dartApi!.echoNullableEnum(
+                arg_anEnum == -1 ? null : NativeInteropAnEnum.values[arg_anEnum],
+              );
+              return response == null ? null : NSNumber.alloc().initWithLong(response.index);
             } catch (e) {
               _reportFfiError(errorOut, e);
               return null;
@@ -16578,26 +17217,20 @@ final class NativeInteropFlutterIntegrationCoreApiRegistrar
           });
       ffi_bridge
           .NativeInteropFlutterIntegrationCoreApiBridge$Builder
-          .echoNullableInt64ListWithList_error_
-          .implement(builder, (
-            ffi_bridge.NativeInteropTestsPigeonTypedData? arg_list,
-            ffi_bridge.NativeInteropTestsError errorOut,
-          ) {
+          .pigeon_echoAnotherNullableEnum_error_
+          .implement(builder, (int arg_anotherEnum, ffi_bridge.NativeInteropTestsError errorOut) {
             try {
-              if (dartApi != null) {
-                final Int64List? response = dartApi!.echoNullableInt64List(
-                  _PigeonFfiCodec.readValue(arg_list) as Int64List?,
-                );
-                return _PigeonFfiCodec.writeValue<ffi_bridge.NativeInteropTestsPigeonTypedData?>(
-                  response,
-                );
-              } else {
+              if (dartApi == null) {
                 _reportFfiError(
                   errorOut,
                   'ArgumentError: NativeInteropFlutterIntegrationCoreApi was not registered.',
                 );
                 return null;
               }
+              final NativeInteropAnotherEnum? response = dartApi!.echoAnotherNullableEnum(
+                arg_anotherEnum == -1 ? null : NativeInteropAnotherEnum.values[arg_anotherEnum],
+              );
+              return response == null ? null : NSNumber.alloc().initWithLong(response.index);
             } catch (e) {
               _reportFfiError(errorOut, e);
               return null;
@@ -16605,465 +17238,13 @@ final class NativeInteropFlutterIntegrationCoreApiRegistrar
           });
       ffi_bridge
           .NativeInteropFlutterIntegrationCoreApiBridge$Builder
-          .echoNullableFloat64ListWithList_error_
-          .implement(builder, (
-            ffi_bridge.NativeInteropTestsPigeonTypedData? arg_list,
-            ffi_bridge.NativeInteropTestsError errorOut,
-          ) {
-            try {
-              if (dartApi != null) {
-                final Float64List? response = dartApi!.echoNullableFloat64List(
-                  _PigeonFfiCodec.readValue(arg_list) as Float64List?,
-                );
-                return _PigeonFfiCodec.writeValue<ffi_bridge.NativeInteropTestsPigeonTypedData?>(
-                  response,
-                );
-              } else {
-                _reportFfiError(
-                  errorOut,
-                  'ArgumentError: NativeInteropFlutterIntegrationCoreApi was not registered.',
-                );
-                return null;
-              }
-            } catch (e) {
-              _reportFfiError(errorOut, e);
-              return null;
-            }
-          });
-      ffi_bridge
-          .NativeInteropFlutterIntegrationCoreApiBridge$Builder
-          .echoNullableListWithList_error_
-          .implement(builder, (NSArray? arg_list, ffi_bridge.NativeInteropTestsError errorOut) {
-            try {
-              if (dartApi != null) {
-                final List<Object?>? response = dartApi!.echoNullableList(
-                  (_PigeonFfiCodec.readValue(arg_list) as List<Object?>?)?.cast<Object?>(),
-                );
-                return _PigeonFfiCodec.writeValue<NSMutableArray?>(response);
-              } else {
-                _reportFfiError(
-                  errorOut,
-                  'ArgumentError: NativeInteropFlutterIntegrationCoreApi was not registered.',
-                );
-                return null;
-              }
-            } catch (e) {
-              _reportFfiError(errorOut, e);
-              return null;
-            }
-          });
-      ffi_bridge
-          .NativeInteropFlutterIntegrationCoreApiBridge$Builder
-          .echoNullableEnumListWithEnumList_error_
-          .implement(builder, (NSArray? arg_enumList, ffi_bridge.NativeInteropTestsError errorOut) {
-            try {
-              if (dartApi != null) {
-                final List<NativeInteropAnEnum?>? response = dartApi!.echoNullableEnumList(
-                  (_PigeonFfiCodec.readValue(arg_enumList, NativeInteropAnEnum) as List<Object?>?)
-                      ?.cast<NativeInteropAnEnum?>(),
-                );
-                return _PigeonFfiCodec.writeValue<NSMutableArray?>(response);
-              } else {
-                _reportFfiError(
-                  errorOut,
-                  'ArgumentError: NativeInteropFlutterIntegrationCoreApi was not registered.',
-                );
-                return null;
-              }
-            } catch (e) {
-              _reportFfiError(errorOut, e);
-              return null;
-            }
-          });
-      ffi_bridge
-          .NativeInteropFlutterIntegrationCoreApiBridge$Builder
-          .echoNullableClassListWithClassList_error_
-          .implement(builder, (
-            NSArray? arg_classList,
-            ffi_bridge.NativeInteropTestsError errorOut,
-          ) {
-            try {
-              if (dartApi != null) {
-                final List<NativeInteropAllNullableTypes?>? response = dartApi!
-                    .echoNullableClassList(
-                      (_PigeonFfiCodec.readValue(arg_classList) as List<Object?>?)
-                          ?.cast<NativeInteropAllNullableTypes?>(),
-                    );
-                return _PigeonFfiCodec.writeValue<NSMutableArray?>(response);
-              } else {
-                _reportFfiError(
-                  errorOut,
-                  'ArgumentError: NativeInteropFlutterIntegrationCoreApi was not registered.',
-                );
-                return null;
-              }
-            } catch (e) {
-              _reportFfiError(errorOut, e);
-              return null;
-            }
-          });
-      ffi_bridge
-          .NativeInteropFlutterIntegrationCoreApiBridge$Builder
-          .echoNullableNonNullEnumListWithEnumList_error_
-          .implement(builder, (NSArray? arg_enumList, ffi_bridge.NativeInteropTestsError errorOut) {
-            try {
-              if (dartApi != null) {
-                final List<NativeInteropAnEnum>? response = dartApi!.echoNullableNonNullEnumList(
-                  (_PigeonFfiCodec.readValue(arg_enumList, NativeInteropAnEnum) as List<Object?>?)
-                      ?.cast<NativeInteropAnEnum>(),
-                );
-                return _PigeonFfiCodec.writeValue<NSMutableArray?>(response);
-              } else {
-                _reportFfiError(
-                  errorOut,
-                  'ArgumentError: NativeInteropFlutterIntegrationCoreApi was not registered.',
-                );
-                return null;
-              }
-            } catch (e) {
-              _reportFfiError(errorOut, e);
-              return null;
-            }
-          });
-      ffi_bridge
-          .NativeInteropFlutterIntegrationCoreApiBridge$Builder
-          .echoNullableNonNullClassListWithClassList_error_
-          .implement(builder, (
-            NSArray? arg_classList,
-            ffi_bridge.NativeInteropTestsError errorOut,
-          ) {
-            try {
-              if (dartApi != null) {
-                final List<NativeInteropAllNullableTypes>? response = dartApi!
-                    .echoNullableNonNullClassList(
-                      (_PigeonFfiCodec.readValue(arg_classList) as List<Object?>?)
-                          ?.cast<NativeInteropAllNullableTypes>(),
-                    );
-                return _PigeonFfiCodec.writeValue<NSMutableArray?>(response);
-              } else {
-                _reportFfiError(
-                  errorOut,
-                  'ArgumentError: NativeInteropFlutterIntegrationCoreApi was not registered.',
-                );
-                return null;
-              }
-            } catch (e) {
-              _reportFfiError(errorOut, e);
-              return null;
-            }
-          });
-      ffi_bridge.NativeInteropFlutterIntegrationCoreApiBridge$Builder.echoNullableMapWithMap_error_
-          .implement(builder, (NSDictionary? arg_map, ffi_bridge.NativeInteropTestsError errorOut) {
-            try {
-              if (dartApi != null) {
-                final Map<Object?, Object?>? response = dartApi!.echoNullableMap(
-                  (_PigeonFfiCodec.readValue(arg_map) as Map<Object?, Object?>?)
-                      ?.cast<Object?, Object?>(),
-                );
-                return _PigeonFfiCodec.writeValue<NSDictionary?>(response);
-              } else {
-                _reportFfiError(
-                  errorOut,
-                  'ArgumentError: NativeInteropFlutterIntegrationCoreApi was not registered.',
-                );
-                return null;
-              }
-            } catch (e) {
-              _reportFfiError(errorOut, e);
-              return null;
-            }
-          });
-      ffi_bridge
-          .NativeInteropFlutterIntegrationCoreApiBridge$Builder
-          .echoNullableStringMapWithStringMap_error_
-          .implement(builder, (
-            NSDictionary? arg_stringMap,
-            ffi_bridge.NativeInteropTestsError errorOut,
-          ) {
-            try {
-              if (dartApi != null) {
-                final Map<String?, String?>? response = dartApi!.echoNullableStringMap(
-                  (_PigeonFfiCodec.readValue(arg_stringMap) as Map<Object?, Object?>?)
-                      ?.cast<String?, String?>(),
-                );
-                return _PigeonFfiCodec.writeValue<NSDictionary?>(response);
-              } else {
-                _reportFfiError(
-                  errorOut,
-                  'ArgumentError: NativeInteropFlutterIntegrationCoreApi was not registered.',
-                );
-                return null;
-              }
-            } catch (e) {
-              _reportFfiError(errorOut, e);
-              return null;
-            }
-          });
-      ffi_bridge
-          .NativeInteropFlutterIntegrationCoreApiBridge$Builder
-          .echoNullableIntMapWithIntMap_error_
-          .implement(builder, (
-            NSDictionary? arg_intMap,
-            ffi_bridge.NativeInteropTestsError errorOut,
-          ) {
-            try {
-              if (dartApi != null) {
-                final Map<int?, int?>? response = dartApi!.echoNullableIntMap(
-                  (_PigeonFfiCodec.readValue(arg_intMap, int, int) as Map<Object?, Object?>?)
-                      ?.cast<int?, int?>(),
-                );
-                return _PigeonFfiCodec.writeValue<NSDictionary?>(response);
-              } else {
-                _reportFfiError(
-                  errorOut,
-                  'ArgumentError: NativeInteropFlutterIntegrationCoreApi was not registered.',
-                );
-                return null;
-              }
-            } catch (e) {
-              _reportFfiError(errorOut, e);
-              return null;
-            }
-          });
-      ffi_bridge
-          .NativeInteropFlutterIntegrationCoreApiBridge$Builder
-          .echoNullableEnumMapWithEnumMap_error_
-          .implement(builder, (
-            NSDictionary? arg_enumMap,
-            ffi_bridge.NativeInteropTestsError errorOut,
-          ) {
-            try {
-              if (dartApi != null) {
-                final Map<NativeInteropAnEnum?, NativeInteropAnEnum?>? response = dartApi!
-                    .echoNullableEnumMap(
-                      (_PigeonFfiCodec.readValue(
-                                arg_enumMap,
-                                NativeInteropAnEnum,
-                                NativeInteropAnEnum,
-                              )
-                              as Map<Object?, Object?>?)
-                          ?.cast<NativeInteropAnEnum?, NativeInteropAnEnum?>(),
-                    );
-                return _PigeonFfiCodec.writeValue<NSDictionary?>(response);
-              } else {
-                _reportFfiError(
-                  errorOut,
-                  'ArgumentError: NativeInteropFlutterIntegrationCoreApi was not registered.',
-                );
-                return null;
-              }
-            } catch (e) {
-              _reportFfiError(errorOut, e);
-              return null;
-            }
-          });
-      ffi_bridge
-          .NativeInteropFlutterIntegrationCoreApiBridge$Builder
-          .echoNullableClassMapWithClassMap_error_
-          .implement(builder, (
-            NSDictionary? arg_classMap,
-            ffi_bridge.NativeInteropTestsError errorOut,
-          ) {
-            try {
-              if (dartApi != null) {
-                final Map<int?, NativeInteropAllNullableTypes?>? response = dartApi!
-                    .echoNullableClassMap(
-                      (_PigeonFfiCodec.readValue(arg_classMap, int) as Map<Object?, Object?>?)
-                          ?.cast<int?, NativeInteropAllNullableTypes?>(),
-                    );
-                return _PigeonFfiCodec.writeValue<NSDictionary?>(response);
-              } else {
-                _reportFfiError(
-                  errorOut,
-                  'ArgumentError: NativeInteropFlutterIntegrationCoreApi was not registered.',
-                );
-                return null;
-              }
-            } catch (e) {
-              _reportFfiError(errorOut, e);
-              return null;
-            }
-          });
-      ffi_bridge
-          .NativeInteropFlutterIntegrationCoreApiBridge$Builder
-          .echoNullableNonNullStringMapWithStringMap_error_
-          .implement(builder, (
-            NSDictionary? arg_stringMap,
-            ffi_bridge.NativeInteropTestsError errorOut,
-          ) {
-            try {
-              if (dartApi != null) {
-                final Map<String, String>? response = dartApi!.echoNullableNonNullStringMap(
-                  (_PigeonFfiCodec.readValue(arg_stringMap) as Map<Object?, Object?>?)
-                      ?.cast<String, String>(),
-                );
-                return _PigeonFfiCodec.writeValue<NSDictionary?>(response);
-              } else {
-                _reportFfiError(
-                  errorOut,
-                  'ArgumentError: NativeInteropFlutterIntegrationCoreApi was not registered.',
-                );
-                return null;
-              }
-            } catch (e) {
-              _reportFfiError(errorOut, e);
-              return null;
-            }
-          });
-      ffi_bridge
-          .NativeInteropFlutterIntegrationCoreApiBridge$Builder
-          .echoNullableNonNullIntMapWithIntMap_error_
-          .implement(builder, (
-            NSDictionary? arg_intMap,
-            ffi_bridge.NativeInteropTestsError errorOut,
-          ) {
-            try {
-              if (dartApi != null) {
-                final Map<int, int>? response = dartApi!.echoNullableNonNullIntMap(
-                  (_PigeonFfiCodec.readValue(arg_intMap, int, int) as Map<Object?, Object?>?)
-                      ?.cast<int, int>(),
-                );
-                return _PigeonFfiCodec.writeValue<NSDictionary?>(response);
-              } else {
-                _reportFfiError(
-                  errorOut,
-                  'ArgumentError: NativeInteropFlutterIntegrationCoreApi was not registered.',
-                );
-                return null;
-              }
-            } catch (e) {
-              _reportFfiError(errorOut, e);
-              return null;
-            }
-          });
-      ffi_bridge
-          .NativeInteropFlutterIntegrationCoreApiBridge$Builder
-          .echoNullableNonNullEnumMapWithEnumMap_error_
-          .implement(builder, (
-            NSDictionary? arg_enumMap,
-            ffi_bridge.NativeInteropTestsError errorOut,
-          ) {
-            try {
-              if (dartApi != null) {
-                final Map<NativeInteropAnEnum, NativeInteropAnEnum>? response = dartApi!
-                    .echoNullableNonNullEnumMap(
-                      (_PigeonFfiCodec.readValue(
-                                arg_enumMap,
-                                NativeInteropAnEnum,
-                                NativeInteropAnEnum,
-                              )
-                              as Map<Object?, Object?>?)
-                          ?.cast<NativeInteropAnEnum, NativeInteropAnEnum>(),
-                    );
-                return _PigeonFfiCodec.writeValue<NSDictionary?>(response);
-              } else {
-                _reportFfiError(
-                  errorOut,
-                  'ArgumentError: NativeInteropFlutterIntegrationCoreApi was not registered.',
-                );
-                return null;
-              }
-            } catch (e) {
-              _reportFfiError(errorOut, e);
-              return null;
-            }
-          });
-      ffi_bridge
-          .NativeInteropFlutterIntegrationCoreApiBridge$Builder
-          .echoNullableNonNullClassMapWithClassMap_error_
-          .implement(builder, (
-            NSDictionary? arg_classMap,
-            ffi_bridge.NativeInteropTestsError errorOut,
-          ) {
-            try {
-              if (dartApi != null) {
-                final Map<int, NativeInteropAllNullableTypes>? response = dartApi!
-                    .echoNullableNonNullClassMap(
-                      (_PigeonFfiCodec.readValue(arg_classMap, int) as Map<Object?, Object?>?)
-                          ?.cast<int, NativeInteropAllNullableTypes>(),
-                    );
-                return _PigeonFfiCodec.writeValue<NSDictionary?>(response);
-              } else {
-                _reportFfiError(
-                  errorOut,
-                  'ArgumentError: NativeInteropFlutterIntegrationCoreApi was not registered.',
-                );
-                return null;
-              }
-            } catch (e) {
-              _reportFfiError(errorOut, e);
-              return null;
-            }
-          });
-      ffi_bridge
-          .NativeInteropFlutterIntegrationCoreApiBridge$Builder
-          .echoNullableEnumWithAnEnum_error_
-          .implement(builder, (NSNumber? arg_anEnum, ffi_bridge.NativeInteropTestsError errorOut) {
-            try {
-              if (dartApi != null) {
-                final NativeInteropAnEnum? response = dartApi!.echoNullableEnum(
-                  _PigeonFfiCodec.readValue(arg_anEnum, NativeInteropAnEnum)
-                      as NativeInteropAnEnum?,
-                );
-                return _PigeonFfiCodec.writeValue<NSNumber?>(response);
-              } else {
-                _reportFfiError(
-                  errorOut,
-                  'ArgumentError: NativeInteropFlutterIntegrationCoreApi was not registered.',
-                );
-                return null;
-              }
-            } catch (e) {
-              _reportFfiError(errorOut, e);
-              return null;
-            }
-          });
-      ffi_bridge
-          .NativeInteropFlutterIntegrationCoreApiBridge$Builder
-          .echoAnotherNullableEnumWithAnotherEnum_error_
-          .implement(builder, (
-            NSNumber? arg_anotherEnum,
-            ffi_bridge.NativeInteropTestsError errorOut,
-          ) {
-            try {
-              if (dartApi != null) {
-                final NativeInteropAnotherEnum? response = dartApi!.echoAnotherNullableEnum(
-                  _PigeonFfiCodec.readValue(arg_anotherEnum, NativeInteropAnotherEnum)
-                      as NativeInteropAnotherEnum?,
-                );
-                return _PigeonFfiCodec.writeValue<NSNumber?>(response);
-              } else {
-                _reportFfiError(
-                  errorOut,
-                  'ArgumentError: NativeInteropFlutterIntegrationCoreApi was not registered.',
-                );
-                return null;
-              }
-            } catch (e) {
-              _reportFfiError(errorOut, e);
-              return null;
-            }
-          });
-      ffi_bridge
-          .NativeInteropFlutterIntegrationCoreApiBridge$Builder
-          .noopAsyncWithError_completionHandler_
+          .pigeon_noopAsync_completionHandler_
           .implementAsListener(builder, (
             ffi_bridge.NativeInteropTestsError errorOut,
             ObjCBlock<Void Function()> completionHandler,
           ) {
             try {
-              if (dartApi != null) {
-                dartApi!.noopAsync().then(
-                  (response) {
-                    ffi_bridge.ObjCBlock_ffiVoid$CallExtension(completionHandler).call();
-                  },
-                  onError: (Object e) {
-                    _reportFfiError(errorOut, e);
-                    ffi_bridge.ObjCBlock_ffiVoid$CallExtension(completionHandler).call();
-                  },
-                );
-                return;
-              } else {
+              if (dartApi == null) {
                 _reportFfiError(
                   errorOut,
                   'ArgumentError: NativeInteropFlutterIntegrationCoreApi was not registered.',
@@ -17071,6 +17252,16 @@ final class NativeInteropFlutterIntegrationCoreApiRegistrar
                 ffi_bridge.ObjCBlock_ffiVoid$CallExtension(completionHandler).call();
                 return;
               }
+              dartApi!.noopAsync().then(
+                (response) {
+                  ffi_bridge.ObjCBlock_ffiVoid$CallExtension(completionHandler).call();
+                },
+                onError: (Object e) {
+                  _reportFfiError(errorOut, e);
+                  ffi_bridge.ObjCBlock_ffiVoid$CallExtension(completionHandler).call();
+                },
+              );
+              return;
             } catch (e) {
               _reportFfiError(errorOut, e);
               ffi_bridge.ObjCBlock_ffiVoid$CallExtension(completionHandler).call();
@@ -17079,208 +17270,177 @@ final class NativeInteropFlutterIntegrationCoreApiRegistrar
           });
       ffi_bridge
           .NativeInteropFlutterIntegrationCoreApiBridge$Builder
-          .throwFlutterErrorAsyncWithError_completionHandler_
+          .pigeon_throwFlutterErrorAsync_completionHandler_
           .implementAsListener(builder, (
             ffi_bridge.NativeInteropTestsError errorOut,
-            ObjCBlock<Void Function(NSObject?)> completionHandler,
+            ObjCBlock<Void Function(NSData?)> completionHandler,
           ) {
             try {
-              if (dartApi != null) {
-                dartApi!.throwFlutterErrorAsync().then(
-                  (response) {
-                    ffi_bridge.ObjCBlock_ffiVoid_NSObject$CallExtension(
-                      completionHandler,
-                    ).call(_PigeonFfiCodec.writeValue<NSObject>(response, generic: true));
-                  },
-                  onError: (Object e) {
-                    _reportFfiError(errorOut, e);
-                    ffi_bridge.ObjCBlock_ffiVoid_NSObject$CallExtension(
-                      completionHandler,
-                    ).call(null);
-                  },
-                );
-                return;
-              } else {
+              if (dartApi == null) {
                 _reportFfiError(
                   errorOut,
                   'ArgumentError: NativeInteropFlutterIntegrationCoreApi was not registered.',
                 );
-                ffi_bridge.ObjCBlock_ffiVoid_NSObject$CallExtension(completionHandler).call(null);
+                ffi_bridge.ObjCBlock_ffiVoid_NSData$CallExtension(completionHandler).call(null);
                 return;
               }
+              dartApi!.throwFlutterErrorAsync().then(
+                (response) {
+                  ffi_bridge.ObjCBlock_ffiVoid_NSData$CallExtension(
+                    completionHandler,
+                  ).call(_PigeonFfiBuffers.encodeOrNull(response));
+                },
+                onError: (Object e) {
+                  _reportFfiError(errorOut, e);
+                  ffi_bridge.ObjCBlock_ffiVoid_NSData$CallExtension(completionHandler).call(null);
+                },
+              );
+              return;
             } catch (e) {
               _reportFfiError(errorOut, e);
-              ffi_bridge.ObjCBlock_ffiVoid_NSObject$CallExtension(completionHandler).call(null);
+              ffi_bridge.ObjCBlock_ffiVoid_NSData$CallExtension(completionHandler).call(null);
               return;
             }
           });
       ffi_bridge
           .NativeInteropFlutterIntegrationCoreApiBridge$Builder
-          .echoAsyncNativeInteropAllTypesWithEverything_error_completionHandler_
+          .pigeon_echoAsyncNativeInteropAllTypes_error_completionHandler_
           .implementAsListener(builder, (
-            ffi_bridge.NativeInteropAllTypesBridge? arg_everything,
+            NSData pigeonVar_args,
             ffi_bridge.NativeInteropTestsError errorOut,
-            ObjCBlock<Void Function(ffi_bridge.NativeInteropAllTypesBridge?)> completionHandler,
+            ObjCBlock<Void Function(NSData?)> completionHandler,
           ) {
             try {
-              if (dartApi != null) {
-                dartApi!
-                    .echoAsyncNativeInteropAllTypes(NativeInteropAllTypes.fromFfi(arg_everything)!)
-                    .then(
-                      (response) {
-                        ffi_bridge.ObjCBlock_ffiVoid_NativeInteropAllTypesBridge$CallExtension(
-                          completionHandler,
-                        ).call(response.toFfi());
-                      },
-                      onError: (Object e) {
-                        _reportFfiError(errorOut, e);
-                        ffi_bridge.ObjCBlock_ffiVoid_NativeInteropAllTypesBridge$CallExtension(
-                          completionHandler,
-                        ).call(null);
-                      },
-                    );
-                return;
-              } else {
+              if (dartApi == null) {
                 _reportFfiError(
                   errorOut,
                   'ArgumentError: NativeInteropFlutterIntegrationCoreApi was not registered.',
                 );
-                ffi_bridge.ObjCBlock_ffiVoid_NativeInteropAllTypesBridge$CallExtension(
-                  completionHandler,
-                ).call(null);
+                ffi_bridge.ObjCBlock_ffiVoid_NSData$CallExtension(completionHandler).call(null);
                 return;
               }
+              final List<Object?> pigeonVar_decodedArgs =
+                  _PigeonFfiBuffers.decode(pigeonVar_args)! as List<Object?>;
+              dartApi!
+                  .echoAsyncNativeInteropAllTypes(
+                    pigeonVar_decodedArgs[0]! as NativeInteropAllTypes,
+                  )
+                  .then(
+                    (response) {
+                      ffi_bridge.ObjCBlock_ffiVoid_NSData$CallExtension(
+                        completionHandler,
+                      ).call(_PigeonFfiBuffers.encodeOrNull(response));
+                    },
+                    onError: (Object e) {
+                      _reportFfiError(errorOut, e);
+                      ffi_bridge.ObjCBlock_ffiVoid_NSData$CallExtension(
+                        completionHandler,
+                      ).call(null);
+                    },
+                  );
+              return;
             } catch (e) {
               _reportFfiError(errorOut, e);
-              ffi_bridge.ObjCBlock_ffiVoid_NativeInteropAllTypesBridge$CallExtension(
-                completionHandler,
-              ).call(null);
+              ffi_bridge.ObjCBlock_ffiVoid_NSData$CallExtension(completionHandler).call(null);
               return;
             }
           });
       ffi_bridge
           .NativeInteropFlutterIntegrationCoreApiBridge$Builder
-          .echoAsyncNullableNativeInteropAllNullableTypesWithEverything_error_completionHandler_
+          .pigeon_echoAsyncNullableNativeInteropAllNullableTypes_error_completionHandler_
           .implementAsListener(builder, (
-            ffi_bridge.NativeInteropAllNullableTypesBridge? arg_everything,
+            NSData pigeonVar_args,
             ffi_bridge.NativeInteropTestsError errorOut,
-            ObjCBlock<Void Function(ffi_bridge.NativeInteropAllNullableTypesBridge?)>
-            completionHandler,
+            ObjCBlock<Void Function(NSData?)> completionHandler,
           ) {
             try {
-              if (dartApi != null) {
-                dartApi!
-                    .echoAsyncNullableNativeInteropAllNullableTypes(
-                      NativeInteropAllNullableTypes.fromFfi(arg_everything),
-                    )
-                    .then(
-                      (response) {
-                        ffi_bridge.ObjCBlock_ffiVoid_NativeInteropAllNullableTypesBridge$CallExtension(
-                          completionHandler,
-                        ).call(response?.toFfi());
-                      },
-                      onError: (Object e) {
-                        _reportFfiError(errorOut, e);
-                        ffi_bridge.ObjCBlock_ffiVoid_NativeInteropAllNullableTypesBridge$CallExtension(
-                          completionHandler,
-                        ).call(null);
-                      },
-                    );
-                return;
-              } else {
+              if (dartApi == null) {
                 _reportFfiError(
                   errorOut,
                   'ArgumentError: NativeInteropFlutterIntegrationCoreApi was not registered.',
                 );
-                ffi_bridge.ObjCBlock_ffiVoid_NativeInteropAllNullableTypesBridge$CallExtension(
-                  completionHandler,
-                ).call(null);
+                ffi_bridge.ObjCBlock_ffiVoid_NSData$CallExtension(completionHandler).call(null);
                 return;
               }
+              final List<Object?> pigeonVar_decodedArgs =
+                  _PigeonFfiBuffers.decode(pigeonVar_args)! as List<Object?>;
+              dartApi!
+                  .echoAsyncNullableNativeInteropAllNullableTypes(
+                    pigeonVar_decodedArgs[0] as NativeInteropAllNullableTypes?,
+                  )
+                  .then(
+                    (response) {
+                      ffi_bridge.ObjCBlock_ffiVoid_NSData$CallExtension(
+                        completionHandler,
+                      ).call(_PigeonFfiBuffers.encodeOrNull(response));
+                    },
+                    onError: (Object e) {
+                      _reportFfiError(errorOut, e);
+                      ffi_bridge.ObjCBlock_ffiVoid_NSData$CallExtension(
+                        completionHandler,
+                      ).call(null);
+                    },
+                  );
+              return;
             } catch (e) {
               _reportFfiError(errorOut, e);
-              ffi_bridge.ObjCBlock_ffiVoid_NativeInteropAllNullableTypesBridge$CallExtension(
-                completionHandler,
-              ).call(null);
+              ffi_bridge.ObjCBlock_ffiVoid_NSData$CallExtension(completionHandler).call(null);
               return;
             }
           });
       ffi_bridge
           .NativeInteropFlutterIntegrationCoreApiBridge$Builder
-          .echoAsyncNullableNativeInteropAllNullableTypesWithoutRecursionWithEverything_error_completionHandler_
+          .pigeon_echoAsyncNullableNativeInteropAllNullableTypesWithoutRecursion_error_completionHandler_
           .implementAsListener(builder, (
-            ffi_bridge.NativeInteropAllNullableTypesWithoutRecursionBridge? arg_everything,
+            NSData pigeonVar_args,
             ffi_bridge.NativeInteropTestsError errorOut,
-            ObjCBlock<
-              Void Function(ffi_bridge.NativeInteropAllNullableTypesWithoutRecursionBridge?)
-            >
-            completionHandler,
+            ObjCBlock<Void Function(NSData?)> completionHandler,
           ) {
             try {
-              if (dartApi != null) {
-                dartApi!
-                    .echoAsyncNullableNativeInteropAllNullableTypesWithoutRecursion(
-                      NativeInteropAllNullableTypesWithoutRecursion.fromFfi(arg_everything),
-                    )
-                    .then(
-                      (response) {
-                        ffi_bridge.ObjCBlock_ffiVoid_NativeInteropAllNullableTypesWithoutRecursionBridge$CallExtension(
-                          completionHandler,
-                        ).call(response?.toFfi());
-                      },
-                      onError: (Object e) {
-                        _reportFfiError(errorOut, e);
-                        ffi_bridge.ObjCBlock_ffiVoid_NativeInteropAllNullableTypesWithoutRecursionBridge$CallExtension(
-                          completionHandler,
-                        ).call(null);
-                      },
-                    );
-                return;
-              } else {
+              if (dartApi == null) {
                 _reportFfiError(
                   errorOut,
                   'ArgumentError: NativeInteropFlutterIntegrationCoreApi was not registered.',
                 );
-                ffi_bridge.ObjCBlock_ffiVoid_NativeInteropAllNullableTypesWithoutRecursionBridge$CallExtension(
-                  completionHandler,
-                ).call(null);
+                ffi_bridge.ObjCBlock_ffiVoid_NSData$CallExtension(completionHandler).call(null);
                 return;
               }
+              final List<Object?> pigeonVar_decodedArgs =
+                  _PigeonFfiBuffers.decode(pigeonVar_args)! as List<Object?>;
+              dartApi!
+                  .echoAsyncNullableNativeInteropAllNullableTypesWithoutRecursion(
+                    pigeonVar_decodedArgs[0] as NativeInteropAllNullableTypesWithoutRecursion?,
+                  )
+                  .then(
+                    (response) {
+                      ffi_bridge.ObjCBlock_ffiVoid_NSData$CallExtension(
+                        completionHandler,
+                      ).call(_PigeonFfiBuffers.encodeOrNull(response));
+                    },
+                    onError: (Object e) {
+                      _reportFfiError(errorOut, e);
+                      ffi_bridge.ObjCBlock_ffiVoid_NSData$CallExtension(
+                        completionHandler,
+                      ).call(null);
+                    },
+                  );
+              return;
             } catch (e) {
               _reportFfiError(errorOut, e);
-              ffi_bridge.ObjCBlock_ffiVoid_NativeInteropAllNullableTypesWithoutRecursionBridge$CallExtension(
-                completionHandler,
-              ).call(null);
+              ffi_bridge.ObjCBlock_ffiVoid_NSData$CallExtension(completionHandler).call(null);
               return;
             }
           });
       ffi_bridge
           .NativeInteropFlutterIntegrationCoreApiBridge$Builder
-          .echoAsyncBoolWithABool_error_completionHandler_
+          .pigeon_echoAsyncBool_error_completionHandler_
           .implementAsListener(builder, (
-            NSNumber? arg_aBool,
+            bool arg_aBool,
             ffi_bridge.NativeInteropTestsError errorOut,
             ObjCBlock<Void Function(NSNumber?)> completionHandler,
           ) {
             try {
-              if (dartApi != null) {
-                dartApi!
-                    .echoAsyncBool(arg_aBool!.boolValue)
-                    .then(
-                      (response) {
-                        ffi_bridge.ObjCBlock_ffiVoid_NSNumber$CallExtension(
-                          completionHandler,
-                        ).call(_PigeonFfiCodec.writeValue<NSNumber>(response));
-                      },
-                      onError: (Object e) {
-                        _reportFfiError(errorOut, e);
-                        ffi_bridge.ObjCBlock_ffiVoid_NSNumber$CallExtension(
-                          completionHandler,
-                        ).call(null);
-                      },
-                    );
-                return;
-              } else {
+              if (dartApi == null) {
                 _reportFfiError(
                   errorOut,
                   'ArgumentError: NativeInteropFlutterIntegrationCoreApi was not registered.',
@@ -17288,6 +17448,22 @@ final class NativeInteropFlutterIntegrationCoreApiRegistrar
                 ffi_bridge.ObjCBlock_ffiVoid_NSNumber$CallExtension(completionHandler).call(null);
                 return;
               }
+              dartApi!
+                  .echoAsyncBool(arg_aBool)
+                  .then(
+                    (response) {
+                      ffi_bridge.ObjCBlock_ffiVoid_NSNumber$CallExtension(
+                        completionHandler,
+                      ).call(_PigeonFfiCodec.writeValue<NSNumber?>(response));
+                    },
+                    onError: (Object e) {
+                      _reportFfiError(errorOut, e);
+                      ffi_bridge.ObjCBlock_ffiVoid_NSNumber$CallExtension(
+                        completionHandler,
+                      ).call(null);
+                    },
+                  );
+              return;
             } catch (e) {
               _reportFfiError(errorOut, e);
               ffi_bridge.ObjCBlock_ffiVoid_NSNumber$CallExtension(completionHandler).call(null);
@@ -17296,31 +17472,14 @@ final class NativeInteropFlutterIntegrationCoreApiRegistrar
           });
       ffi_bridge
           .NativeInteropFlutterIntegrationCoreApiBridge$Builder
-          .echoAsyncIntWithAnInt_error_completionHandler_
+          .pigeon_echoAsyncInt_error_completionHandler_
           .implementAsListener(builder, (
-            NSNumber? arg_anInt,
+            int arg_anInt,
             ffi_bridge.NativeInteropTestsError errorOut,
             ObjCBlock<Void Function(NSNumber?)> completionHandler,
           ) {
             try {
-              if (dartApi != null) {
-                dartApi!
-                    .echoAsyncInt(arg_anInt!.longValue)
-                    .then(
-                      (response) {
-                        ffi_bridge.ObjCBlock_ffiVoid_NSNumber$CallExtension(
-                          completionHandler,
-                        ).call(_PigeonFfiCodec.writeValue<NSNumber>(response));
-                      },
-                      onError: (Object e) {
-                        _reportFfiError(errorOut, e);
-                        ffi_bridge.ObjCBlock_ffiVoid_NSNumber$CallExtension(
-                          completionHandler,
-                        ).call(null);
-                      },
-                    );
-                return;
-              } else {
+              if (dartApi == null) {
                 _reportFfiError(
                   errorOut,
                   'ArgumentError: NativeInteropFlutterIntegrationCoreApi was not registered.',
@@ -17328,6 +17487,22 @@ final class NativeInteropFlutterIntegrationCoreApiRegistrar
                 ffi_bridge.ObjCBlock_ffiVoid_NSNumber$CallExtension(completionHandler).call(null);
                 return;
               }
+              dartApi!
+                  .echoAsyncInt(arg_anInt)
+                  .then(
+                    (response) {
+                      ffi_bridge.ObjCBlock_ffiVoid_NSNumber$CallExtension(
+                        completionHandler,
+                      ).call(_PigeonFfiCodec.writeValue<NSNumber?>(response));
+                    },
+                    onError: (Object e) {
+                      _reportFfiError(errorOut, e);
+                      ffi_bridge.ObjCBlock_ffiVoid_NSNumber$CallExtension(
+                        completionHandler,
+                      ).call(null);
+                    },
+                  );
+              return;
             } catch (e) {
               _reportFfiError(errorOut, e);
               ffi_bridge.ObjCBlock_ffiVoid_NSNumber$CallExtension(completionHandler).call(null);
@@ -17336,31 +17511,14 @@ final class NativeInteropFlutterIntegrationCoreApiRegistrar
           });
       ffi_bridge
           .NativeInteropFlutterIntegrationCoreApiBridge$Builder
-          .echoAsyncDoubleWithADouble_error_completionHandler_
+          .pigeon_echoAsyncDouble_error_completionHandler_
           .implementAsListener(builder, (
-            NSNumber? arg_aDouble,
+            double arg_aDouble,
             ffi_bridge.NativeInteropTestsError errorOut,
             ObjCBlock<Void Function(NSNumber?)> completionHandler,
           ) {
             try {
-              if (dartApi != null) {
-                dartApi!
-                    .echoAsyncDouble(arg_aDouble!.doubleValue)
-                    .then(
-                      (response) {
-                        ffi_bridge.ObjCBlock_ffiVoid_NSNumber$CallExtension(
-                          completionHandler,
-                        ).call(_PigeonFfiCodec.writeValue<NSNumber>(response));
-                      },
-                      onError: (Object e) {
-                        _reportFfiError(errorOut, e);
-                        ffi_bridge.ObjCBlock_ffiVoid_NSNumber$CallExtension(
-                          completionHandler,
-                        ).call(null);
-                      },
-                    );
-                return;
-              } else {
+              if (dartApi == null) {
                 _reportFfiError(
                   errorOut,
                   'ArgumentError: NativeInteropFlutterIntegrationCoreApi was not registered.',
@@ -17368,6 +17526,22 @@ final class NativeInteropFlutterIntegrationCoreApiRegistrar
                 ffi_bridge.ObjCBlock_ffiVoid_NSNumber$CallExtension(completionHandler).call(null);
                 return;
               }
+              dartApi!
+                  .echoAsyncDouble(arg_aDouble)
+                  .then(
+                    (response) {
+                      ffi_bridge.ObjCBlock_ffiVoid_NSNumber$CallExtension(
+                        completionHandler,
+                      ).call(_PigeonFfiCodec.writeValue<NSNumber?>(response));
+                    },
+                    onError: (Object e) {
+                      _reportFfiError(errorOut, e);
+                      ffi_bridge.ObjCBlock_ffiVoid_NSNumber$CallExtension(
+                        completionHandler,
+                      ).call(null);
+                    },
+                  );
+              return;
             } catch (e) {
               _reportFfiError(errorOut, e);
               ffi_bridge.ObjCBlock_ffiVoid_NSNumber$CallExtension(completionHandler).call(null);
@@ -17376,31 +17550,14 @@ final class NativeInteropFlutterIntegrationCoreApiRegistrar
           });
       ffi_bridge
           .NativeInteropFlutterIntegrationCoreApiBridge$Builder
-          .echoAsyncStringWithAString_error_completionHandler_
+          .pigeon_echoAsyncString_error_completionHandler_
           .implementAsListener(builder, (
-            NSString? arg_aString,
+            NSString arg_aString,
             ffi_bridge.NativeInteropTestsError errorOut,
             ObjCBlock<Void Function(NSString?)> completionHandler,
           ) {
             try {
-              if (dartApi != null) {
-                dartApi!
-                    .echoAsyncString(arg_aString!.toDartString())
-                    .then(
-                      (response) {
-                        ffi_bridge.ObjCBlock_ffiVoid_NSString$CallExtension(
-                          completionHandler,
-                        ).call(_PigeonFfiCodec.writeValue<NSString>(response));
-                      },
-                      onError: (Object e) {
-                        _reportFfiError(errorOut, e);
-                        ffi_bridge.ObjCBlock_ffiVoid_NSString$CallExtension(
-                          completionHandler,
-                        ).call(null);
-                      },
-                    );
-                return;
-              } else {
+              if (dartApi == null) {
                 _reportFfiError(
                   errorOut,
                   'ArgumentError: NativeInteropFlutterIntegrationCoreApi was not registered.',
@@ -17408,6 +17565,22 @@ final class NativeInteropFlutterIntegrationCoreApiRegistrar
                 ffi_bridge.ObjCBlock_ffiVoid_NSString$CallExtension(completionHandler).call(null);
                 return;
               }
+              dartApi!
+                  .echoAsyncString(arg_aString.toDartString())
+                  .then(
+                    (response) {
+                      ffi_bridge.ObjCBlock_ffiVoid_NSString$CallExtension(
+                        completionHandler,
+                      ).call(NSString(response));
+                    },
+                    onError: (Object e) {
+                      _reportFfiError(errorOut, e);
+                      ffi_bridge.ObjCBlock_ffiVoid_NSString$CallExtension(
+                        completionHandler,
+                      ).call(null);
+                    },
+                  );
+              return;
             } catch (e) {
               _reportFfiError(errorOut, e);
               ffi_bridge.ObjCBlock_ffiVoid_NSString$CallExtension(completionHandler).call(null);
@@ -17416,716 +17589,643 @@ final class NativeInteropFlutterIntegrationCoreApiRegistrar
           });
       ffi_bridge
           .NativeInteropFlutterIntegrationCoreApiBridge$Builder
-          .echoAsyncUint8ListWithList_error_completionHandler_
+          .pigeon_echoAsyncUint8List_error_completionHandler_
           .implementAsListener(builder, (
-            ffi_bridge.NativeInteropTestsPigeonTypedData? arg_list,
+            NSData arg_list,
             ffi_bridge.NativeInteropTestsError errorOut,
-            ObjCBlock<Void Function(ffi_bridge.NativeInteropTestsPigeonTypedData?)>
-            completionHandler,
+            ObjCBlock<Void Function(NSData?)> completionHandler,
           ) {
             try {
-              if (dartApi != null) {
-                dartApi!
-                    .echoAsyncUint8List(_PigeonFfiCodec.readValue(arg_list)! as Uint8List)
-                    .then(
-                      (response) {
-                        ffi_bridge.ObjCBlock_ffiVoid_NativeInteropTestsPigeonTypedData$CallExtension(
-                          completionHandler,
-                        ).call(
-                          _PigeonFfiCodec.writeValue<ffi_bridge.NativeInteropTestsPigeonTypedData>(
-                            response,
-                          ),
-                        );
-                      },
-                      onError: (Object e) {
-                        _reportFfiError(errorOut, e);
-                        ffi_bridge.ObjCBlock_ffiVoid_NativeInteropTestsPigeonTypedData$CallExtension(
-                          completionHandler,
-                        ).call(null);
-                      },
-                    );
-                return;
-              } else {
+              if (dartApi == null) {
                 _reportFfiError(
                   errorOut,
                   'ArgumentError: NativeInteropFlutterIntegrationCoreApi was not registered.',
                 );
-                ffi_bridge.ObjCBlock_ffiVoid_NativeInteropTestsPigeonTypedData$CallExtension(
-                  completionHandler,
-                ).call(null);
+                ffi_bridge.ObjCBlock_ffiVoid_NSData$CallExtension(completionHandler).call(null);
                 return;
               }
+              dartApi!
+                  .echoAsyncUint8List(_PigeonFfiBuffers.toUint8List(arg_list)!)
+                  .then(
+                    (response) {
+                      ffi_bridge.ObjCBlock_ffiVoid_NSData$CallExtension(
+                        completionHandler,
+                      ).call(_typedDataToNSData(response));
+                    },
+                    onError: (Object e) {
+                      _reportFfiError(errorOut, e);
+                      ffi_bridge.ObjCBlock_ffiVoid_NSData$CallExtension(
+                        completionHandler,
+                      ).call(null);
+                    },
+                  );
+              return;
             } catch (e) {
               _reportFfiError(errorOut, e);
-              ffi_bridge.ObjCBlock_ffiVoid_NativeInteropTestsPigeonTypedData$CallExtension(
-                completionHandler,
-              ).call(null);
+              ffi_bridge.ObjCBlock_ffiVoid_NSData$CallExtension(completionHandler).call(null);
               return;
             }
           });
       ffi_bridge
           .NativeInteropFlutterIntegrationCoreApiBridge$Builder
-          .echoAsyncInt32ListWithList_error_completionHandler_
+          .pigeon_echoAsyncInt32List_error_completionHandler_
           .implementAsListener(builder, (
-            ffi_bridge.NativeInteropTestsPigeonTypedData? arg_list,
+            NSData arg_list,
             ffi_bridge.NativeInteropTestsError errorOut,
-            ObjCBlock<Void Function(ffi_bridge.NativeInteropTestsPigeonTypedData?)>
-            completionHandler,
+            ObjCBlock<Void Function(NSData?)> completionHandler,
           ) {
             try {
-              if (dartApi != null) {
-                dartApi!
-                    .echoAsyncInt32List(_PigeonFfiCodec.readValue(arg_list)! as Int32List)
-                    .then(
-                      (response) {
-                        ffi_bridge.ObjCBlock_ffiVoid_NativeInteropTestsPigeonTypedData$CallExtension(
-                          completionHandler,
-                        ).call(
-                          _PigeonFfiCodec.writeValue<ffi_bridge.NativeInteropTestsPigeonTypedData>(
-                            response,
-                          ),
-                        );
-                      },
-                      onError: (Object e) {
-                        _reportFfiError(errorOut, e);
-                        ffi_bridge.ObjCBlock_ffiVoid_NativeInteropTestsPigeonTypedData$CallExtension(
-                          completionHandler,
-                        ).call(null);
-                      },
-                    );
-                return;
-              } else {
+              if (dartApi == null) {
                 _reportFfiError(
                   errorOut,
                   'ArgumentError: NativeInteropFlutterIntegrationCoreApi was not registered.',
                 );
-                ffi_bridge.ObjCBlock_ffiVoid_NativeInteropTestsPigeonTypedData$CallExtension(
-                  completionHandler,
-                ).call(null);
+                ffi_bridge.ObjCBlock_ffiVoid_NSData$CallExtension(completionHandler).call(null);
                 return;
               }
+              dartApi!
+                  .echoAsyncInt32List(_PigeonFfiBuffers.toUint8List(arg_list)!.buffer.asInt32List())
+                  .then(
+                    (response) {
+                      ffi_bridge.ObjCBlock_ffiVoid_NSData$CallExtension(
+                        completionHandler,
+                      ).call(_typedDataToNSData(response));
+                    },
+                    onError: (Object e) {
+                      _reportFfiError(errorOut, e);
+                      ffi_bridge.ObjCBlock_ffiVoid_NSData$CallExtension(
+                        completionHandler,
+                      ).call(null);
+                    },
+                  );
+              return;
             } catch (e) {
               _reportFfiError(errorOut, e);
-              ffi_bridge.ObjCBlock_ffiVoid_NativeInteropTestsPigeonTypedData$CallExtension(
-                completionHandler,
-              ).call(null);
+              ffi_bridge.ObjCBlock_ffiVoid_NSData$CallExtension(completionHandler).call(null);
               return;
             }
           });
       ffi_bridge
           .NativeInteropFlutterIntegrationCoreApiBridge$Builder
-          .echoAsyncInt64ListWithList_error_completionHandler_
+          .pigeon_echoAsyncInt64List_error_completionHandler_
           .implementAsListener(builder, (
-            ffi_bridge.NativeInteropTestsPigeonTypedData? arg_list,
+            NSData arg_list,
             ffi_bridge.NativeInteropTestsError errorOut,
-            ObjCBlock<Void Function(ffi_bridge.NativeInteropTestsPigeonTypedData?)>
-            completionHandler,
+            ObjCBlock<Void Function(NSData?)> completionHandler,
           ) {
             try {
-              if (dartApi != null) {
-                dartApi!
-                    .echoAsyncInt64List(_PigeonFfiCodec.readValue(arg_list)! as Int64List)
-                    .then(
-                      (response) {
-                        ffi_bridge.ObjCBlock_ffiVoid_NativeInteropTestsPigeonTypedData$CallExtension(
-                          completionHandler,
-                        ).call(
-                          _PigeonFfiCodec.writeValue<ffi_bridge.NativeInteropTestsPigeonTypedData>(
-                            response,
-                          ),
-                        );
-                      },
-                      onError: (Object e) {
-                        _reportFfiError(errorOut, e);
-                        ffi_bridge.ObjCBlock_ffiVoid_NativeInteropTestsPigeonTypedData$CallExtension(
-                          completionHandler,
-                        ).call(null);
-                      },
-                    );
-                return;
-              } else {
+              if (dartApi == null) {
                 _reportFfiError(
                   errorOut,
                   'ArgumentError: NativeInteropFlutterIntegrationCoreApi was not registered.',
                 );
-                ffi_bridge.ObjCBlock_ffiVoid_NativeInteropTestsPigeonTypedData$CallExtension(
-                  completionHandler,
-                ).call(null);
+                ffi_bridge.ObjCBlock_ffiVoid_NSData$CallExtension(completionHandler).call(null);
                 return;
               }
+              dartApi!
+                  .echoAsyncInt64List(_PigeonFfiBuffers.toUint8List(arg_list)!.buffer.asInt64List())
+                  .then(
+                    (response) {
+                      ffi_bridge.ObjCBlock_ffiVoid_NSData$CallExtension(
+                        completionHandler,
+                      ).call(_typedDataToNSData(response));
+                    },
+                    onError: (Object e) {
+                      _reportFfiError(errorOut, e);
+                      ffi_bridge.ObjCBlock_ffiVoid_NSData$CallExtension(
+                        completionHandler,
+                      ).call(null);
+                    },
+                  );
+              return;
             } catch (e) {
               _reportFfiError(errorOut, e);
-              ffi_bridge.ObjCBlock_ffiVoid_NativeInteropTestsPigeonTypedData$CallExtension(
-                completionHandler,
-              ).call(null);
+              ffi_bridge.ObjCBlock_ffiVoid_NSData$CallExtension(completionHandler).call(null);
               return;
             }
           });
       ffi_bridge
           .NativeInteropFlutterIntegrationCoreApiBridge$Builder
-          .echoAsyncFloat64ListWithList_error_completionHandler_
+          .pigeon_echoAsyncFloat64List_error_completionHandler_
           .implementAsListener(builder, (
-            ffi_bridge.NativeInteropTestsPigeonTypedData? arg_list,
+            NSData arg_list,
             ffi_bridge.NativeInteropTestsError errorOut,
-            ObjCBlock<Void Function(ffi_bridge.NativeInteropTestsPigeonTypedData?)>
-            completionHandler,
+            ObjCBlock<Void Function(NSData?)> completionHandler,
           ) {
             try {
-              if (dartApi != null) {
-                dartApi!
-                    .echoAsyncFloat64List(_PigeonFfiCodec.readValue(arg_list)! as Float64List)
-                    .then(
-                      (response) {
-                        ffi_bridge.ObjCBlock_ffiVoid_NativeInteropTestsPigeonTypedData$CallExtension(
-                          completionHandler,
-                        ).call(
-                          _PigeonFfiCodec.writeValue<ffi_bridge.NativeInteropTestsPigeonTypedData>(
-                            response,
-                          ),
-                        );
-                      },
-                      onError: (Object e) {
-                        _reportFfiError(errorOut, e);
-                        ffi_bridge.ObjCBlock_ffiVoid_NativeInteropTestsPigeonTypedData$CallExtension(
-                          completionHandler,
-                        ).call(null);
-                      },
-                    );
-                return;
-              } else {
+              if (dartApi == null) {
                 _reportFfiError(
                   errorOut,
                   'ArgumentError: NativeInteropFlutterIntegrationCoreApi was not registered.',
                 );
-                ffi_bridge.ObjCBlock_ffiVoid_NativeInteropTestsPigeonTypedData$CallExtension(
-                  completionHandler,
-                ).call(null);
+                ffi_bridge.ObjCBlock_ffiVoid_NSData$CallExtension(completionHandler).call(null);
                 return;
               }
+              dartApi!
+                  .echoAsyncFloat64List(
+                    _PigeonFfiBuffers.toUint8List(arg_list)!.buffer.asFloat64List(),
+                  )
+                  .then(
+                    (response) {
+                      ffi_bridge.ObjCBlock_ffiVoid_NSData$CallExtension(
+                        completionHandler,
+                      ).call(_typedDataToNSData(response));
+                    },
+                    onError: (Object e) {
+                      _reportFfiError(errorOut, e);
+                      ffi_bridge.ObjCBlock_ffiVoid_NSData$CallExtension(
+                        completionHandler,
+                      ).call(null);
+                    },
+                  );
+              return;
             } catch (e) {
               _reportFfiError(errorOut, e);
-              ffi_bridge.ObjCBlock_ffiVoid_NativeInteropTestsPigeonTypedData$CallExtension(
-                completionHandler,
-              ).call(null);
+              ffi_bridge.ObjCBlock_ffiVoid_NSData$CallExtension(completionHandler).call(null);
               return;
             }
           });
       ffi_bridge
           .NativeInteropFlutterIntegrationCoreApiBridge$Builder
-          .echoAsyncObjectWithAnObject_error_completionHandler_
+          .pigeon_echoAsyncObject_error_completionHandler_
           .implementAsListener(builder, (
-            NSObject? arg_anObject,
+            NSData pigeonVar_args,
             ffi_bridge.NativeInteropTestsError errorOut,
-            ObjCBlock<Void Function(NSObject?)> completionHandler,
+            ObjCBlock<Void Function(NSData?)> completionHandler,
           ) {
             try {
-              if (dartApi != null) {
-                dartApi!
-                    .echoAsyncObject(_PigeonFfiCodec.readValue(arg_anObject)!)
-                    .then(
-                      (response) {
-                        ffi_bridge.ObjCBlock_ffiVoid_NSObject$CallExtension(
-                          completionHandler,
-                        ).call(_PigeonFfiCodec.writeValue<NSObject>(response, generic: true));
-                      },
-                      onError: (Object e) {
-                        _reportFfiError(errorOut, e);
-                        ffi_bridge.ObjCBlock_ffiVoid_NSObject$CallExtension(
-                          completionHandler,
-                        ).call(null);
-                      },
-                    );
-                return;
-              } else {
+              if (dartApi == null) {
                 _reportFfiError(
                   errorOut,
                   'ArgumentError: NativeInteropFlutterIntegrationCoreApi was not registered.',
                 );
-                ffi_bridge.ObjCBlock_ffiVoid_NSObject$CallExtension(completionHandler).call(null);
+                ffi_bridge.ObjCBlock_ffiVoid_NSData$CallExtension(completionHandler).call(null);
                 return;
               }
+              final List<Object?> pigeonVar_decodedArgs =
+                  _PigeonFfiBuffers.decode(pigeonVar_args)! as List<Object?>;
+              dartApi!
+                  .echoAsyncObject(pigeonVar_decodedArgs[0]!)
+                  .then(
+                    (response) {
+                      ffi_bridge.ObjCBlock_ffiVoid_NSData$CallExtension(
+                        completionHandler,
+                      ).call(_PigeonFfiBuffers.encodeOrNull(response));
+                    },
+                    onError: (Object e) {
+                      _reportFfiError(errorOut, e);
+                      ffi_bridge.ObjCBlock_ffiVoid_NSData$CallExtension(
+                        completionHandler,
+                      ).call(null);
+                    },
+                  );
+              return;
             } catch (e) {
               _reportFfiError(errorOut, e);
-              ffi_bridge.ObjCBlock_ffiVoid_NSObject$CallExtension(completionHandler).call(null);
+              ffi_bridge.ObjCBlock_ffiVoid_NSData$CallExtension(completionHandler).call(null);
               return;
             }
           });
       ffi_bridge
           .NativeInteropFlutterIntegrationCoreApiBridge$Builder
-          .echoAsyncListWithList_error_completionHandler_
+          .pigeon_echoAsyncList_error_completionHandler_
           .implementAsListener(builder, (
-            NSArray? arg_list,
+            NSData pigeonVar_args,
             ffi_bridge.NativeInteropTestsError errorOut,
-            ObjCBlock<Void Function(NSArray?)> completionHandler,
+            ObjCBlock<Void Function(NSData?)> completionHandler,
           ) {
             try {
-              if (dartApi != null) {
-                dartApi!
-                    .echoAsyncList(
-                      (_PigeonFfiCodec.readValue(arg_list)! as List<Object?>).cast<Object?>(),
-                    )
-                    .then(
-                      (response) {
-                        ffi_bridge.ObjCBlock_ffiVoid_NSArray$CallExtension(
-                          completionHandler,
-                        ).call(_PigeonFfiCodec.writeValue<NSMutableArray>(response));
-                      },
-                      onError: (Object e) {
-                        _reportFfiError(errorOut, e);
-                        ffi_bridge.ObjCBlock_ffiVoid_NSArray$CallExtension(
-                          completionHandler,
-                        ).call(null);
-                      },
-                    );
-                return;
-              } else {
+              if (dartApi == null) {
                 _reportFfiError(
                   errorOut,
                   'ArgumentError: NativeInteropFlutterIntegrationCoreApi was not registered.',
                 );
-                ffi_bridge.ObjCBlock_ffiVoid_NSArray$CallExtension(completionHandler).call(null);
+                ffi_bridge.ObjCBlock_ffiVoid_NSData$CallExtension(completionHandler).call(null);
                 return;
               }
+              final List<Object?> pigeonVar_decodedArgs =
+                  _PigeonFfiBuffers.decode(pigeonVar_args)! as List<Object?>;
+              dartApi!
+                  .echoAsyncList(pigeonVar_decodedArgs[0]! as List<Object?>)
+                  .then(
+                    (response) {
+                      ffi_bridge.ObjCBlock_ffiVoid_NSData$CallExtension(
+                        completionHandler,
+                      ).call(_PigeonFfiBuffers.encodeOrNull(response));
+                    },
+                    onError: (Object e) {
+                      _reportFfiError(errorOut, e);
+                      ffi_bridge.ObjCBlock_ffiVoid_NSData$CallExtension(
+                        completionHandler,
+                      ).call(null);
+                    },
+                  );
+              return;
             } catch (e) {
               _reportFfiError(errorOut, e);
-              ffi_bridge.ObjCBlock_ffiVoid_NSArray$CallExtension(completionHandler).call(null);
+              ffi_bridge.ObjCBlock_ffiVoid_NSData$CallExtension(completionHandler).call(null);
               return;
             }
           });
       ffi_bridge
           .NativeInteropFlutterIntegrationCoreApiBridge$Builder
-          .echoAsyncEnumListWithEnumList_error_completionHandler_
+          .pigeon_echoAsyncEnumList_error_completionHandler_
           .implementAsListener(builder, (
-            NSArray? arg_enumList,
+            NSData pigeonVar_args,
             ffi_bridge.NativeInteropTestsError errorOut,
-            ObjCBlock<Void Function(NSArray?)> completionHandler,
+            ObjCBlock<Void Function(NSData?)> completionHandler,
           ) {
             try {
-              if (dartApi != null) {
-                dartApi!
-                    .echoAsyncEnumList(
-                      (_PigeonFfiCodec.readValue(arg_enumList, NativeInteropAnEnum)!
-                              as List<Object?>)
-                          .cast<NativeInteropAnEnum?>(),
-                    )
-                    .then(
-                      (response) {
-                        ffi_bridge.ObjCBlock_ffiVoid_NSArray$CallExtension(
-                          completionHandler,
-                        ).call(_PigeonFfiCodec.writeValue<NSMutableArray>(response));
-                      },
-                      onError: (Object e) {
-                        _reportFfiError(errorOut, e);
-                        ffi_bridge.ObjCBlock_ffiVoid_NSArray$CallExtension(
-                          completionHandler,
-                        ).call(null);
-                      },
-                    );
-                return;
-              } else {
+              if (dartApi == null) {
                 _reportFfiError(
                   errorOut,
                   'ArgumentError: NativeInteropFlutterIntegrationCoreApi was not registered.',
                 );
-                ffi_bridge.ObjCBlock_ffiVoid_NSArray$CallExtension(completionHandler).call(null);
+                ffi_bridge.ObjCBlock_ffiVoid_NSData$CallExtension(completionHandler).call(null);
                 return;
               }
+              final List<Object?> pigeonVar_decodedArgs =
+                  _PigeonFfiBuffers.decode(pigeonVar_args)! as List<Object?>;
+              dartApi!
+                  .echoAsyncEnumList(
+                    (pigeonVar_decodedArgs[0]! as List<Object?>).cast<NativeInteropAnEnum?>(),
+                  )
+                  .then(
+                    (response) {
+                      ffi_bridge.ObjCBlock_ffiVoid_NSData$CallExtension(
+                        completionHandler,
+                      ).call(_PigeonFfiBuffers.encodeOrNull(response));
+                    },
+                    onError: (Object e) {
+                      _reportFfiError(errorOut, e);
+                      ffi_bridge.ObjCBlock_ffiVoid_NSData$CallExtension(
+                        completionHandler,
+                      ).call(null);
+                    },
+                  );
+              return;
             } catch (e) {
               _reportFfiError(errorOut, e);
-              ffi_bridge.ObjCBlock_ffiVoid_NSArray$CallExtension(completionHandler).call(null);
+              ffi_bridge.ObjCBlock_ffiVoid_NSData$CallExtension(completionHandler).call(null);
               return;
             }
           });
       ffi_bridge
           .NativeInteropFlutterIntegrationCoreApiBridge$Builder
-          .echoAsyncClassListWithClassList_error_completionHandler_
+          .pigeon_echoAsyncClassList_error_completionHandler_
           .implementAsListener(builder, (
-            NSArray? arg_classList,
+            NSData pigeonVar_args,
             ffi_bridge.NativeInteropTestsError errorOut,
-            ObjCBlock<Void Function(NSArray?)> completionHandler,
+            ObjCBlock<Void Function(NSData?)> completionHandler,
           ) {
             try {
-              if (dartApi != null) {
-                dartApi!
-                    .echoAsyncClassList(
-                      (_PigeonFfiCodec.readValue(arg_classList)! as List<Object?>)
-                          .cast<NativeInteropAllNullableTypes?>(),
-                    )
-                    .then(
-                      (response) {
-                        ffi_bridge.ObjCBlock_ffiVoid_NSArray$CallExtension(
-                          completionHandler,
-                        ).call(_PigeonFfiCodec.writeValue<NSMutableArray>(response));
-                      },
-                      onError: (Object e) {
-                        _reportFfiError(errorOut, e);
-                        ffi_bridge.ObjCBlock_ffiVoid_NSArray$CallExtension(
-                          completionHandler,
-                        ).call(null);
-                      },
-                    );
-                return;
-              } else {
+              if (dartApi == null) {
                 _reportFfiError(
                   errorOut,
                   'ArgumentError: NativeInteropFlutterIntegrationCoreApi was not registered.',
                 );
-                ffi_bridge.ObjCBlock_ffiVoid_NSArray$CallExtension(completionHandler).call(null);
+                ffi_bridge.ObjCBlock_ffiVoid_NSData$CallExtension(completionHandler).call(null);
                 return;
               }
+              final List<Object?> pigeonVar_decodedArgs =
+                  _PigeonFfiBuffers.decode(pigeonVar_args)! as List<Object?>;
+              dartApi!
+                  .echoAsyncClassList(
+                    (pigeonVar_decodedArgs[0]! as List<Object?>)
+                        .cast<NativeInteropAllNullableTypes?>(),
+                  )
+                  .then(
+                    (response) {
+                      ffi_bridge.ObjCBlock_ffiVoid_NSData$CallExtension(
+                        completionHandler,
+                      ).call(_PigeonFfiBuffers.encodeOrNull(response));
+                    },
+                    onError: (Object e) {
+                      _reportFfiError(errorOut, e);
+                      ffi_bridge.ObjCBlock_ffiVoid_NSData$CallExtension(
+                        completionHandler,
+                      ).call(null);
+                    },
+                  );
+              return;
             } catch (e) {
               _reportFfiError(errorOut, e);
-              ffi_bridge.ObjCBlock_ffiVoid_NSArray$CallExtension(completionHandler).call(null);
+              ffi_bridge.ObjCBlock_ffiVoid_NSData$CallExtension(completionHandler).call(null);
               return;
             }
           });
       ffi_bridge
           .NativeInteropFlutterIntegrationCoreApiBridge$Builder
-          .echoAsyncNonNullEnumListWithEnumList_error_completionHandler_
+          .pigeon_echoAsyncNonNullEnumList_error_completionHandler_
           .implementAsListener(builder, (
-            NSArray? arg_enumList,
+            NSData pigeonVar_args,
             ffi_bridge.NativeInteropTestsError errorOut,
-            ObjCBlock<Void Function(NSArray?)> completionHandler,
+            ObjCBlock<Void Function(NSData?)> completionHandler,
           ) {
             try {
-              if (dartApi != null) {
-                dartApi!
-                    .echoAsyncNonNullEnumList(
-                      (_PigeonFfiCodec.readValue(arg_enumList, NativeInteropAnEnum)!
-                              as List<Object?>)
-                          .cast<NativeInteropAnEnum>(),
-                    )
-                    .then(
-                      (response) {
-                        ffi_bridge.ObjCBlock_ffiVoid_NSArray$CallExtension(
-                          completionHandler,
-                        ).call(_PigeonFfiCodec.writeValue<NSMutableArray>(response));
-                      },
-                      onError: (Object e) {
-                        _reportFfiError(errorOut, e);
-                        ffi_bridge.ObjCBlock_ffiVoid_NSArray$CallExtension(
-                          completionHandler,
-                        ).call(null);
-                      },
-                    );
-                return;
-              } else {
+              if (dartApi == null) {
                 _reportFfiError(
                   errorOut,
                   'ArgumentError: NativeInteropFlutterIntegrationCoreApi was not registered.',
                 );
-                ffi_bridge.ObjCBlock_ffiVoid_NSArray$CallExtension(completionHandler).call(null);
+                ffi_bridge.ObjCBlock_ffiVoid_NSData$CallExtension(completionHandler).call(null);
                 return;
               }
+              final List<Object?> pigeonVar_decodedArgs =
+                  _PigeonFfiBuffers.decode(pigeonVar_args)! as List<Object?>;
+              dartApi!
+                  .echoAsyncNonNullEnumList(
+                    (pigeonVar_decodedArgs[0]! as List<Object?>).cast<NativeInteropAnEnum>(),
+                  )
+                  .then(
+                    (response) {
+                      ffi_bridge.ObjCBlock_ffiVoid_NSData$CallExtension(
+                        completionHandler,
+                      ).call(_PigeonFfiBuffers.encodeOrNull(response));
+                    },
+                    onError: (Object e) {
+                      _reportFfiError(errorOut, e);
+                      ffi_bridge.ObjCBlock_ffiVoid_NSData$CallExtension(
+                        completionHandler,
+                      ).call(null);
+                    },
+                  );
+              return;
             } catch (e) {
               _reportFfiError(errorOut, e);
-              ffi_bridge.ObjCBlock_ffiVoid_NSArray$CallExtension(completionHandler).call(null);
+              ffi_bridge.ObjCBlock_ffiVoid_NSData$CallExtension(completionHandler).call(null);
               return;
             }
           });
       ffi_bridge
           .NativeInteropFlutterIntegrationCoreApiBridge$Builder
-          .echoAsyncNonNullClassListWithClassList_error_completionHandler_
+          .pigeon_echoAsyncNonNullClassList_error_completionHandler_
           .implementAsListener(builder, (
-            NSArray? arg_classList,
+            NSData pigeonVar_args,
             ffi_bridge.NativeInteropTestsError errorOut,
-            ObjCBlock<Void Function(NSArray?)> completionHandler,
+            ObjCBlock<Void Function(NSData?)> completionHandler,
           ) {
             try {
-              if (dartApi != null) {
-                dartApi!
-                    .echoAsyncNonNullClassList(
-                      (_PigeonFfiCodec.readValue(arg_classList)! as List<Object?>)
-                          .cast<NativeInteropAllNullableTypes>(),
-                    )
-                    .then(
-                      (response) {
-                        ffi_bridge.ObjCBlock_ffiVoid_NSArray$CallExtension(
-                          completionHandler,
-                        ).call(_PigeonFfiCodec.writeValue<NSMutableArray>(response));
-                      },
-                      onError: (Object e) {
-                        _reportFfiError(errorOut, e);
-                        ffi_bridge.ObjCBlock_ffiVoid_NSArray$CallExtension(
-                          completionHandler,
-                        ).call(null);
-                      },
-                    );
-                return;
-              } else {
+              if (dartApi == null) {
                 _reportFfiError(
                   errorOut,
                   'ArgumentError: NativeInteropFlutterIntegrationCoreApi was not registered.',
                 );
-                ffi_bridge.ObjCBlock_ffiVoid_NSArray$CallExtension(completionHandler).call(null);
+                ffi_bridge.ObjCBlock_ffiVoid_NSData$CallExtension(completionHandler).call(null);
                 return;
               }
+              final List<Object?> pigeonVar_decodedArgs =
+                  _PigeonFfiBuffers.decode(pigeonVar_args)! as List<Object?>;
+              dartApi!
+                  .echoAsyncNonNullClassList(
+                    (pigeonVar_decodedArgs[0]! as List<Object?>)
+                        .cast<NativeInteropAllNullableTypes>(),
+                  )
+                  .then(
+                    (response) {
+                      ffi_bridge.ObjCBlock_ffiVoid_NSData$CallExtension(
+                        completionHandler,
+                      ).call(_PigeonFfiBuffers.encodeOrNull(response));
+                    },
+                    onError: (Object e) {
+                      _reportFfiError(errorOut, e);
+                      ffi_bridge.ObjCBlock_ffiVoid_NSData$CallExtension(
+                        completionHandler,
+                      ).call(null);
+                    },
+                  );
+              return;
             } catch (e) {
               _reportFfiError(errorOut, e);
-              ffi_bridge.ObjCBlock_ffiVoid_NSArray$CallExtension(completionHandler).call(null);
+              ffi_bridge.ObjCBlock_ffiVoid_NSData$CallExtension(completionHandler).call(null);
               return;
             }
           });
       ffi_bridge
           .NativeInteropFlutterIntegrationCoreApiBridge$Builder
-          .echoAsyncMapWithMap_error_completionHandler_
+          .pigeon_echoAsyncMap_error_completionHandler_
           .implementAsListener(builder, (
-            NSDictionary? arg_map,
+            NSData pigeonVar_args,
             ffi_bridge.NativeInteropTestsError errorOut,
-            ObjCBlock<Void Function(NSDictionary?)> completionHandler,
+            ObjCBlock<Void Function(NSData?)> completionHandler,
           ) {
             try {
-              if (dartApi != null) {
-                dartApi!
-                    .echoAsyncMap(
-                      (_PigeonFfiCodec.readValue(arg_map)! as Map<Object?, Object?>)
-                          .cast<Object?, Object?>(),
-                    )
-                    .then(
-                      (response) {
-                        ffi_bridge.ObjCBlock_ffiVoid_NSDictionary$CallExtension(
-                          completionHandler,
-                        ).call(_PigeonFfiCodec.writeValue<NSDictionary>(response));
-                      },
-                      onError: (Object e) {
-                        _reportFfiError(errorOut, e);
-                        ffi_bridge.ObjCBlock_ffiVoid_NSDictionary$CallExtension(
-                          completionHandler,
-                        ).call(null);
-                      },
-                    );
-                return;
-              } else {
+              if (dartApi == null) {
                 _reportFfiError(
                   errorOut,
                   'ArgumentError: NativeInteropFlutterIntegrationCoreApi was not registered.',
                 );
-                ffi_bridge.ObjCBlock_ffiVoid_NSDictionary$CallExtension(
-                  completionHandler,
-                ).call(null);
+                ffi_bridge.ObjCBlock_ffiVoid_NSData$CallExtension(completionHandler).call(null);
                 return;
               }
+              final List<Object?> pigeonVar_decodedArgs =
+                  _PigeonFfiBuffers.decode(pigeonVar_args)! as List<Object?>;
+              dartApi!
+                  .echoAsyncMap(pigeonVar_decodedArgs[0]! as Map<Object?, Object?>)
+                  .then(
+                    (response) {
+                      ffi_bridge.ObjCBlock_ffiVoid_NSData$CallExtension(
+                        completionHandler,
+                      ).call(_PigeonFfiBuffers.encodeOrNull(response));
+                    },
+                    onError: (Object e) {
+                      _reportFfiError(errorOut, e);
+                      ffi_bridge.ObjCBlock_ffiVoid_NSData$CallExtension(
+                        completionHandler,
+                      ).call(null);
+                    },
+                  );
+              return;
             } catch (e) {
               _reportFfiError(errorOut, e);
-              ffi_bridge.ObjCBlock_ffiVoid_NSDictionary$CallExtension(completionHandler).call(null);
+              ffi_bridge.ObjCBlock_ffiVoid_NSData$CallExtension(completionHandler).call(null);
               return;
             }
           });
       ffi_bridge
           .NativeInteropFlutterIntegrationCoreApiBridge$Builder
-          .echoAsyncStringMapWithStringMap_error_completionHandler_
+          .pigeon_echoAsyncStringMap_error_completionHandler_
           .implementAsListener(builder, (
-            NSDictionary? arg_stringMap,
+            NSData pigeonVar_args,
             ffi_bridge.NativeInteropTestsError errorOut,
-            ObjCBlock<Void Function(NSDictionary?)> completionHandler,
+            ObjCBlock<Void Function(NSData?)> completionHandler,
           ) {
             try {
-              if (dartApi != null) {
-                dartApi!
-                    .echoAsyncStringMap(
-                      (_PigeonFfiCodec.readValue(arg_stringMap)! as Map<Object?, Object?>)
-                          .cast<String?, String?>(),
-                    )
-                    .then(
-                      (response) {
-                        ffi_bridge.ObjCBlock_ffiVoid_NSDictionary$CallExtension(
-                          completionHandler,
-                        ).call(_PigeonFfiCodec.writeValue<NSDictionary>(response));
-                      },
-                      onError: (Object e) {
-                        _reportFfiError(errorOut, e);
-                        ffi_bridge.ObjCBlock_ffiVoid_NSDictionary$CallExtension(
-                          completionHandler,
-                        ).call(null);
-                      },
-                    );
-                return;
-              } else {
+              if (dartApi == null) {
                 _reportFfiError(
                   errorOut,
                   'ArgumentError: NativeInteropFlutterIntegrationCoreApi was not registered.',
                 );
-                ffi_bridge.ObjCBlock_ffiVoid_NSDictionary$CallExtension(
-                  completionHandler,
-                ).call(null);
+                ffi_bridge.ObjCBlock_ffiVoid_NSData$CallExtension(completionHandler).call(null);
                 return;
               }
+              final List<Object?> pigeonVar_decodedArgs =
+                  _PigeonFfiBuffers.decode(pigeonVar_args)! as List<Object?>;
+              dartApi!
+                  .echoAsyncStringMap(
+                    (pigeonVar_decodedArgs[0]! as Map<Object?, Object?>).cast<String?, String?>(),
+                  )
+                  .then(
+                    (response) {
+                      ffi_bridge.ObjCBlock_ffiVoid_NSData$CallExtension(
+                        completionHandler,
+                      ).call(_PigeonFfiBuffers.encodeOrNull(response));
+                    },
+                    onError: (Object e) {
+                      _reportFfiError(errorOut, e);
+                      ffi_bridge.ObjCBlock_ffiVoid_NSData$CallExtension(
+                        completionHandler,
+                      ).call(null);
+                    },
+                  );
+              return;
             } catch (e) {
               _reportFfiError(errorOut, e);
-              ffi_bridge.ObjCBlock_ffiVoid_NSDictionary$CallExtension(completionHandler).call(null);
+              ffi_bridge.ObjCBlock_ffiVoid_NSData$CallExtension(completionHandler).call(null);
               return;
             }
           });
       ffi_bridge
           .NativeInteropFlutterIntegrationCoreApiBridge$Builder
-          .echoAsyncIntMapWithIntMap_error_completionHandler_
+          .pigeon_echoAsyncIntMap_error_completionHandler_
           .implementAsListener(builder, (
-            NSDictionary? arg_intMap,
+            NSData pigeonVar_args,
             ffi_bridge.NativeInteropTestsError errorOut,
-            ObjCBlock<Void Function(NSDictionary?)> completionHandler,
+            ObjCBlock<Void Function(NSData?)> completionHandler,
           ) {
             try {
-              if (dartApi != null) {
-                dartApi!
-                    .echoAsyncIntMap(
-                      (_PigeonFfiCodec.readValue(arg_intMap, int, int)! as Map<Object?, Object?>)
-                          .cast<int?, int?>(),
-                    )
-                    .then(
-                      (response) {
-                        ffi_bridge.ObjCBlock_ffiVoid_NSDictionary$CallExtension(
-                          completionHandler,
-                        ).call(_PigeonFfiCodec.writeValue<NSDictionary>(response));
-                      },
-                      onError: (Object e) {
-                        _reportFfiError(errorOut, e);
-                        ffi_bridge.ObjCBlock_ffiVoid_NSDictionary$CallExtension(
-                          completionHandler,
-                        ).call(null);
-                      },
-                    );
-                return;
-              } else {
+              if (dartApi == null) {
                 _reportFfiError(
                   errorOut,
                   'ArgumentError: NativeInteropFlutterIntegrationCoreApi was not registered.',
                 );
-                ffi_bridge.ObjCBlock_ffiVoid_NSDictionary$CallExtension(
-                  completionHandler,
-                ).call(null);
+                ffi_bridge.ObjCBlock_ffiVoid_NSData$CallExtension(completionHandler).call(null);
                 return;
               }
+              final List<Object?> pigeonVar_decodedArgs =
+                  _PigeonFfiBuffers.decode(pigeonVar_args)! as List<Object?>;
+              dartApi!
+                  .echoAsyncIntMap(
+                    (pigeonVar_decodedArgs[0]! as Map<Object?, Object?>).cast<int?, int?>(),
+                  )
+                  .then(
+                    (response) {
+                      ffi_bridge.ObjCBlock_ffiVoid_NSData$CallExtension(
+                        completionHandler,
+                      ).call(_PigeonFfiBuffers.encodeOrNull(response));
+                    },
+                    onError: (Object e) {
+                      _reportFfiError(errorOut, e);
+                      ffi_bridge.ObjCBlock_ffiVoid_NSData$CallExtension(
+                        completionHandler,
+                      ).call(null);
+                    },
+                  );
+              return;
             } catch (e) {
               _reportFfiError(errorOut, e);
-              ffi_bridge.ObjCBlock_ffiVoid_NSDictionary$CallExtension(completionHandler).call(null);
+              ffi_bridge.ObjCBlock_ffiVoid_NSData$CallExtension(completionHandler).call(null);
               return;
             }
           });
       ffi_bridge
           .NativeInteropFlutterIntegrationCoreApiBridge$Builder
-          .echoAsyncEnumMapWithEnumMap_error_completionHandler_
+          .pigeon_echoAsyncEnumMap_error_completionHandler_
           .implementAsListener(builder, (
-            NSDictionary? arg_enumMap,
+            NSData pigeonVar_args,
             ffi_bridge.NativeInteropTestsError errorOut,
-            ObjCBlock<Void Function(NSDictionary?)> completionHandler,
+            ObjCBlock<Void Function(NSData?)> completionHandler,
           ) {
             try {
-              if (dartApi != null) {
-                dartApi!
-                    .echoAsyncEnumMap(
-                      (_PigeonFfiCodec.readValue(
-                                arg_enumMap,
-                                NativeInteropAnEnum,
-                                NativeInteropAnEnum,
-                              )!
-                              as Map<Object?, Object?>)
-                          .cast<NativeInteropAnEnum?, NativeInteropAnEnum?>(),
-                    )
-                    .then(
-                      (response) {
-                        ffi_bridge.ObjCBlock_ffiVoid_NSDictionary$CallExtension(
-                          completionHandler,
-                        ).call(_PigeonFfiCodec.writeValue<NSDictionary>(response));
-                      },
-                      onError: (Object e) {
-                        _reportFfiError(errorOut, e);
-                        ffi_bridge.ObjCBlock_ffiVoid_NSDictionary$CallExtension(
-                          completionHandler,
-                        ).call(null);
-                      },
-                    );
-                return;
-              } else {
+              if (dartApi == null) {
                 _reportFfiError(
                   errorOut,
                   'ArgumentError: NativeInteropFlutterIntegrationCoreApi was not registered.',
                 );
-                ffi_bridge.ObjCBlock_ffiVoid_NSDictionary$CallExtension(
-                  completionHandler,
-                ).call(null);
+                ffi_bridge.ObjCBlock_ffiVoid_NSData$CallExtension(completionHandler).call(null);
                 return;
               }
+              final List<Object?> pigeonVar_decodedArgs =
+                  _PigeonFfiBuffers.decode(pigeonVar_args)! as List<Object?>;
+              dartApi!
+                  .echoAsyncEnumMap(
+                    (pigeonVar_decodedArgs[0]! as Map<Object?, Object?>)
+                        .cast<NativeInteropAnEnum?, NativeInteropAnEnum?>(),
+                  )
+                  .then(
+                    (response) {
+                      ffi_bridge.ObjCBlock_ffiVoid_NSData$CallExtension(
+                        completionHandler,
+                      ).call(_PigeonFfiBuffers.encodeOrNull(response));
+                    },
+                    onError: (Object e) {
+                      _reportFfiError(errorOut, e);
+                      ffi_bridge.ObjCBlock_ffiVoid_NSData$CallExtension(
+                        completionHandler,
+                      ).call(null);
+                    },
+                  );
+              return;
             } catch (e) {
               _reportFfiError(errorOut, e);
-              ffi_bridge.ObjCBlock_ffiVoid_NSDictionary$CallExtension(completionHandler).call(null);
+              ffi_bridge.ObjCBlock_ffiVoid_NSData$CallExtension(completionHandler).call(null);
               return;
             }
           });
       ffi_bridge
           .NativeInteropFlutterIntegrationCoreApiBridge$Builder
-          .echoAsyncClassMapWithClassMap_error_completionHandler_
+          .pigeon_echoAsyncClassMap_error_completionHandler_
           .implementAsListener(builder, (
-            NSDictionary? arg_classMap,
+            NSData pigeonVar_args,
             ffi_bridge.NativeInteropTestsError errorOut,
-            ObjCBlock<Void Function(NSDictionary?)> completionHandler,
+            ObjCBlock<Void Function(NSData?)> completionHandler,
           ) {
             try {
-              if (dartApi != null) {
-                dartApi!
-                    .echoAsyncClassMap(
-                      (_PigeonFfiCodec.readValue(arg_classMap, int)! as Map<Object?, Object?>)
-                          .cast<int?, NativeInteropAllNullableTypes?>(),
-                    )
-                    .then(
-                      (response) {
-                        ffi_bridge.ObjCBlock_ffiVoid_NSDictionary$CallExtension(
-                          completionHandler,
-                        ).call(_PigeonFfiCodec.writeValue<NSDictionary>(response));
-                      },
-                      onError: (Object e) {
-                        _reportFfiError(errorOut, e);
-                        ffi_bridge.ObjCBlock_ffiVoid_NSDictionary$CallExtension(
-                          completionHandler,
-                        ).call(null);
-                      },
-                    );
-                return;
-              } else {
+              if (dartApi == null) {
                 _reportFfiError(
                   errorOut,
                   'ArgumentError: NativeInteropFlutterIntegrationCoreApi was not registered.',
                 );
-                ffi_bridge.ObjCBlock_ffiVoid_NSDictionary$CallExtension(
-                  completionHandler,
-                ).call(null);
+                ffi_bridge.ObjCBlock_ffiVoid_NSData$CallExtension(completionHandler).call(null);
                 return;
               }
+              final List<Object?> pigeonVar_decodedArgs =
+                  _PigeonFfiBuffers.decode(pigeonVar_args)! as List<Object?>;
+              dartApi!
+                  .echoAsyncClassMap(
+                    (pigeonVar_decodedArgs[0]! as Map<Object?, Object?>)
+                        .cast<int?, NativeInteropAllNullableTypes?>(),
+                  )
+                  .then(
+                    (response) {
+                      ffi_bridge.ObjCBlock_ffiVoid_NSData$CallExtension(
+                        completionHandler,
+                      ).call(_PigeonFfiBuffers.encodeOrNull(response));
+                    },
+                    onError: (Object e) {
+                      _reportFfiError(errorOut, e);
+                      ffi_bridge.ObjCBlock_ffiVoid_NSData$CallExtension(
+                        completionHandler,
+                      ).call(null);
+                    },
+                  );
+              return;
             } catch (e) {
               _reportFfiError(errorOut, e);
-              ffi_bridge.ObjCBlock_ffiVoid_NSDictionary$CallExtension(completionHandler).call(null);
+              ffi_bridge.ObjCBlock_ffiVoid_NSData$CallExtension(completionHandler).call(null);
               return;
             }
           });
       ffi_bridge
           .NativeInteropFlutterIntegrationCoreApiBridge$Builder
-          .echoAsyncEnumWithAnEnum_error_completionHandler_
+          .pigeon_echoAsyncEnum_error_completionHandler_
           .implementAsListener(builder, (
-            NSNumber? arg_anEnum,
+            int arg_anEnum,
             ffi_bridge.NativeInteropTestsError errorOut,
             ObjCBlock<Void Function(NSNumber?)> completionHandler,
           ) {
             try {
-              if (dartApi != null) {
-                dartApi!
-                    .echoAsyncEnum(
-                      _PigeonFfiCodec.readValue(arg_anEnum, NativeInteropAnEnum)!
-                          as NativeInteropAnEnum,
-                    )
-                    .then(
-                      (response) {
-                        ffi_bridge.ObjCBlock_ffiVoid_NSNumber$CallExtension(
-                          completionHandler,
-                        ).call(_PigeonFfiCodec.writeValue<NSNumber>(response));
-                      },
-                      onError: (Object e) {
-                        _reportFfiError(errorOut, e);
-                        ffi_bridge.ObjCBlock_ffiVoid_NSNumber$CallExtension(
-                          completionHandler,
-                        ).call(null);
-                      },
-                    );
-                return;
-              } else {
+              if (dartApi == null) {
                 _reportFfiError(
                   errorOut,
                   'ArgumentError: NativeInteropFlutterIntegrationCoreApi was not registered.',
@@ -18133,6 +18233,22 @@ final class NativeInteropFlutterIntegrationCoreApiRegistrar
                 ffi_bridge.ObjCBlock_ffiVoid_NSNumber$CallExtension(completionHandler).call(null);
                 return;
               }
+              dartApi!
+                  .echoAsyncEnum(NativeInteropAnEnum.values[arg_anEnum])
+                  .then(
+                    (response) {
+                      ffi_bridge.ObjCBlock_ffiVoid_NSNumber$CallExtension(
+                        completionHandler,
+                      ).call(NSNumber.alloc().initWithLong(response.index));
+                    },
+                    onError: (Object e) {
+                      _reportFfiError(errorOut, e);
+                      ffi_bridge.ObjCBlock_ffiVoid_NSNumber$CallExtension(
+                        completionHandler,
+                      ).call(null);
+                    },
+                  );
+              return;
             } catch (e) {
               _reportFfiError(errorOut, e);
               ffi_bridge.ObjCBlock_ffiVoid_NSNumber$CallExtension(completionHandler).call(null);
@@ -18141,34 +18257,14 @@ final class NativeInteropFlutterIntegrationCoreApiRegistrar
           });
       ffi_bridge
           .NativeInteropFlutterIntegrationCoreApiBridge$Builder
-          .echoAnotherAsyncEnumWithAnotherEnum_error_completionHandler_
+          .pigeon_echoAnotherAsyncEnum_error_completionHandler_
           .implementAsListener(builder, (
-            NSNumber? arg_anotherEnum,
+            int arg_anotherEnum,
             ffi_bridge.NativeInteropTestsError errorOut,
             ObjCBlock<Void Function(NSNumber?)> completionHandler,
           ) {
             try {
-              if (dartApi != null) {
-                dartApi!
-                    .echoAnotherAsyncEnum(
-                      _PigeonFfiCodec.readValue(arg_anotherEnum, NativeInteropAnotherEnum)!
-                          as NativeInteropAnotherEnum,
-                    )
-                    .then(
-                      (response) {
-                        ffi_bridge.ObjCBlock_ffiVoid_NSNumber$CallExtension(
-                          completionHandler,
-                        ).call(_PigeonFfiCodec.writeValue<NSNumber>(response));
-                      },
-                      onError: (Object e) {
-                        _reportFfiError(errorOut, e);
-                        ffi_bridge.ObjCBlock_ffiVoid_NSNumber$CallExtension(
-                          completionHandler,
-                        ).call(null);
-                      },
-                    );
-                return;
-              } else {
+              if (dartApi == null) {
                 _reportFfiError(
                   errorOut,
                   'ArgumentError: NativeInteropFlutterIntegrationCoreApi was not registered.',
@@ -18176,6 +18272,22 @@ final class NativeInteropFlutterIntegrationCoreApiRegistrar
                 ffi_bridge.ObjCBlock_ffiVoid_NSNumber$CallExtension(completionHandler).call(null);
                 return;
               }
+              dartApi!
+                  .echoAnotherAsyncEnum(NativeInteropAnotherEnum.values[arg_anotherEnum])
+                  .then(
+                    (response) {
+                      ffi_bridge.ObjCBlock_ffiVoid_NSNumber$CallExtension(
+                        completionHandler,
+                      ).call(NSNumber.alloc().initWithLong(response.index));
+                    },
+                    onError: (Object e) {
+                      _reportFfiError(errorOut, e);
+                      ffi_bridge.ObjCBlock_ffiVoid_NSNumber$CallExtension(
+                        completionHandler,
+                      ).call(null);
+                    },
+                  );
+              return;
             } catch (e) {
               _reportFfiError(errorOut, e);
               ffi_bridge.ObjCBlock_ffiVoid_NSNumber$CallExtension(completionHandler).call(null);
@@ -18184,31 +18296,14 @@ final class NativeInteropFlutterIntegrationCoreApiRegistrar
           });
       ffi_bridge
           .NativeInteropFlutterIntegrationCoreApiBridge$Builder
-          .echoAsyncNullableBoolWithABool_error_completionHandler_
+          .pigeon_echoAsyncNullableBool_error_completionHandler_
           .implementAsListener(builder, (
             NSNumber? arg_aBool,
             ffi_bridge.NativeInteropTestsError errorOut,
             ObjCBlock<Void Function(NSNumber?)> completionHandler,
           ) {
             try {
-              if (dartApi != null) {
-                dartApi!
-                    .echoAsyncNullableBool(arg_aBool?.boolValue)
-                    .then(
-                      (response) {
-                        ffi_bridge.ObjCBlock_ffiVoid_NSNumber$CallExtension(
-                          completionHandler,
-                        ).call(_PigeonFfiCodec.writeValue<NSNumber?>(response));
-                      },
-                      onError: (Object e) {
-                        _reportFfiError(errorOut, e);
-                        ffi_bridge.ObjCBlock_ffiVoid_NSNumber$CallExtension(
-                          completionHandler,
-                        ).call(null);
-                      },
-                    );
-                return;
-              } else {
+              if (dartApi == null) {
                 _reportFfiError(
                   errorOut,
                   'ArgumentError: NativeInteropFlutterIntegrationCoreApi was not registered.',
@@ -18216,6 +18311,22 @@ final class NativeInteropFlutterIntegrationCoreApiRegistrar
                 ffi_bridge.ObjCBlock_ffiVoid_NSNumber$CallExtension(completionHandler).call(null);
                 return;
               }
+              dartApi!
+                  .echoAsyncNullableBool(arg_aBool?.boolValue)
+                  .then(
+                    (response) {
+                      ffi_bridge.ObjCBlock_ffiVoid_NSNumber$CallExtension(
+                        completionHandler,
+                      ).call(_PigeonFfiCodec.writeValue<NSNumber?>(response));
+                    },
+                    onError: (Object e) {
+                      _reportFfiError(errorOut, e);
+                      ffi_bridge.ObjCBlock_ffiVoid_NSNumber$CallExtension(
+                        completionHandler,
+                      ).call(null);
+                    },
+                  );
+              return;
             } catch (e) {
               _reportFfiError(errorOut, e);
               ffi_bridge.ObjCBlock_ffiVoid_NSNumber$CallExtension(completionHandler).call(null);
@@ -18224,31 +18335,14 @@ final class NativeInteropFlutterIntegrationCoreApiRegistrar
           });
       ffi_bridge
           .NativeInteropFlutterIntegrationCoreApiBridge$Builder
-          .echoAsyncNullableIntWithAnInt_error_completionHandler_
+          .pigeon_echoAsyncNullableInt_error_completionHandler_
           .implementAsListener(builder, (
             NSNumber? arg_anInt,
             ffi_bridge.NativeInteropTestsError errorOut,
             ObjCBlock<Void Function(NSNumber?)> completionHandler,
           ) {
             try {
-              if (dartApi != null) {
-                dartApi!
-                    .echoAsyncNullableInt(arg_anInt?.longValue)
-                    .then(
-                      (response) {
-                        ffi_bridge.ObjCBlock_ffiVoid_NSNumber$CallExtension(
-                          completionHandler,
-                        ).call(_PigeonFfiCodec.writeValue<NSNumber?>(response));
-                      },
-                      onError: (Object e) {
-                        _reportFfiError(errorOut, e);
-                        ffi_bridge.ObjCBlock_ffiVoid_NSNumber$CallExtension(
-                          completionHandler,
-                        ).call(null);
-                      },
-                    );
-                return;
-              } else {
+              if (dartApi == null) {
                 _reportFfiError(
                   errorOut,
                   'ArgumentError: NativeInteropFlutterIntegrationCoreApi was not registered.',
@@ -18256,6 +18350,22 @@ final class NativeInteropFlutterIntegrationCoreApiRegistrar
                 ffi_bridge.ObjCBlock_ffiVoid_NSNumber$CallExtension(completionHandler).call(null);
                 return;
               }
+              dartApi!
+                  .echoAsyncNullableInt(arg_anInt?.longValue)
+                  .then(
+                    (response) {
+                      ffi_bridge.ObjCBlock_ffiVoid_NSNumber$CallExtension(
+                        completionHandler,
+                      ).call(_PigeonFfiCodec.writeValue<NSNumber?>(response));
+                    },
+                    onError: (Object e) {
+                      _reportFfiError(errorOut, e);
+                      ffi_bridge.ObjCBlock_ffiVoid_NSNumber$CallExtension(
+                        completionHandler,
+                      ).call(null);
+                    },
+                  );
+              return;
             } catch (e) {
               _reportFfiError(errorOut, e);
               ffi_bridge.ObjCBlock_ffiVoid_NSNumber$CallExtension(completionHandler).call(null);
@@ -18264,31 +18374,14 @@ final class NativeInteropFlutterIntegrationCoreApiRegistrar
           });
       ffi_bridge
           .NativeInteropFlutterIntegrationCoreApiBridge$Builder
-          .echoAsyncNullableDoubleWithADouble_error_completionHandler_
+          .pigeon_echoAsyncNullableDouble_error_completionHandler_
           .implementAsListener(builder, (
             NSNumber? arg_aDouble,
             ffi_bridge.NativeInteropTestsError errorOut,
             ObjCBlock<Void Function(NSNumber?)> completionHandler,
           ) {
             try {
-              if (dartApi != null) {
-                dartApi!
-                    .echoAsyncNullableDouble(arg_aDouble?.doubleValue)
-                    .then(
-                      (response) {
-                        ffi_bridge.ObjCBlock_ffiVoid_NSNumber$CallExtension(
-                          completionHandler,
-                        ).call(_PigeonFfiCodec.writeValue<NSNumber?>(response));
-                      },
-                      onError: (Object e) {
-                        _reportFfiError(errorOut, e);
-                        ffi_bridge.ObjCBlock_ffiVoid_NSNumber$CallExtension(
-                          completionHandler,
-                        ).call(null);
-                      },
-                    );
-                return;
-              } else {
+              if (dartApi == null) {
                 _reportFfiError(
                   errorOut,
                   'ArgumentError: NativeInteropFlutterIntegrationCoreApi was not registered.',
@@ -18296,6 +18389,22 @@ final class NativeInteropFlutterIntegrationCoreApiRegistrar
                 ffi_bridge.ObjCBlock_ffiVoid_NSNumber$CallExtension(completionHandler).call(null);
                 return;
               }
+              dartApi!
+                  .echoAsyncNullableDouble(arg_aDouble?.doubleValue)
+                  .then(
+                    (response) {
+                      ffi_bridge.ObjCBlock_ffiVoid_NSNumber$CallExtension(
+                        completionHandler,
+                      ).call(_PigeonFfiCodec.writeValue<NSNumber?>(response));
+                    },
+                    onError: (Object e) {
+                      _reportFfiError(errorOut, e);
+                      ffi_bridge.ObjCBlock_ffiVoid_NSNumber$CallExtension(
+                        completionHandler,
+                      ).call(null);
+                    },
+                  );
+              return;
             } catch (e) {
               _reportFfiError(errorOut, e);
               ffi_bridge.ObjCBlock_ffiVoid_NSNumber$CallExtension(completionHandler).call(null);
@@ -18304,31 +18413,14 @@ final class NativeInteropFlutterIntegrationCoreApiRegistrar
           });
       ffi_bridge
           .NativeInteropFlutterIntegrationCoreApiBridge$Builder
-          .echoAsyncNullableStringWithAString_error_completionHandler_
+          .pigeon_echoAsyncNullableString_error_completionHandler_
           .implementAsListener(builder, (
             NSString? arg_aString,
             ffi_bridge.NativeInteropTestsError errorOut,
             ObjCBlock<Void Function(NSString?)> completionHandler,
           ) {
             try {
-              if (dartApi != null) {
-                dartApi!
-                    .echoAsyncNullableString(arg_aString?.toDartString())
-                    .then(
-                      (response) {
-                        ffi_bridge.ObjCBlock_ffiVoid_NSString$CallExtension(
-                          completionHandler,
-                        ).call(_PigeonFfiCodec.writeValue<NSString?>(response));
-                      },
-                      onError: (Object e) {
-                        _reportFfiError(errorOut, e);
-                        ffi_bridge.ObjCBlock_ffiVoid_NSString$CallExtension(
-                          completionHandler,
-                        ).call(null);
-                      },
-                    );
-                return;
-              } else {
+              if (dartApi == null) {
                 _reportFfiError(
                   errorOut,
                   'ArgumentError: NativeInteropFlutterIntegrationCoreApi was not registered.',
@@ -18336,6 +18428,22 @@ final class NativeInteropFlutterIntegrationCoreApiRegistrar
                 ffi_bridge.ObjCBlock_ffiVoid_NSString$CallExtension(completionHandler).call(null);
                 return;
               }
+              dartApi!
+                  .echoAsyncNullableString(arg_aString?.toDartString())
+                  .then(
+                    (response) {
+                      ffi_bridge.ObjCBlock_ffiVoid_NSString$CallExtension(
+                        completionHandler,
+                      ).call(response == null ? null : NSString(response));
+                    },
+                    onError: (Object e) {
+                      _reportFfiError(errorOut, e);
+                      ffi_bridge.ObjCBlock_ffiVoid_NSString$CallExtension(
+                        completionHandler,
+                      ).call(null);
+                    },
+                  );
+              return;
             } catch (e) {
               _reportFfiError(errorOut, e);
               ffi_bridge.ObjCBlock_ffiVoid_NSString$CallExtension(completionHandler).call(null);
@@ -18344,718 +18452,647 @@ final class NativeInteropFlutterIntegrationCoreApiRegistrar
           });
       ffi_bridge
           .NativeInteropFlutterIntegrationCoreApiBridge$Builder
-          .echoAsyncNullableUint8ListWithList_error_completionHandler_
+          .pigeon_echoAsyncNullableUint8List_error_completionHandler_
           .implementAsListener(builder, (
-            ffi_bridge.NativeInteropTestsPigeonTypedData? arg_list,
+            NSData? arg_list,
             ffi_bridge.NativeInteropTestsError errorOut,
-            ObjCBlock<Void Function(ffi_bridge.NativeInteropTestsPigeonTypedData?)>
-            completionHandler,
+            ObjCBlock<Void Function(NSData?)> completionHandler,
           ) {
             try {
-              if (dartApi != null) {
-                dartApi!
-                    .echoAsyncNullableUint8List(_PigeonFfiCodec.readValue(arg_list) as Uint8List?)
-                    .then(
-                      (response) {
-                        ffi_bridge.ObjCBlock_ffiVoid_NativeInteropTestsPigeonTypedData$CallExtension(
-                          completionHandler,
-                        ).call(
-                          _PigeonFfiCodec.writeValue<ffi_bridge.NativeInteropTestsPigeonTypedData?>(
-                            response,
-                          ),
-                        );
-                      },
-                      onError: (Object e) {
-                        _reportFfiError(errorOut, e);
-                        ffi_bridge.ObjCBlock_ffiVoid_NativeInteropTestsPigeonTypedData$CallExtension(
-                          completionHandler,
-                        ).call(null);
-                      },
-                    );
-                return;
-              } else {
+              if (dartApi == null) {
                 _reportFfiError(
                   errorOut,
                   'ArgumentError: NativeInteropFlutterIntegrationCoreApi was not registered.',
                 );
-                ffi_bridge.ObjCBlock_ffiVoid_NativeInteropTestsPigeonTypedData$CallExtension(
-                  completionHandler,
-                ).call(null);
+                ffi_bridge.ObjCBlock_ffiVoid_NSData$CallExtension(completionHandler).call(null);
                 return;
               }
+              dartApi!
+                  .echoAsyncNullableUint8List(_PigeonFfiBuffers.toUint8List(arg_list))
+                  .then(
+                    (response) {
+                      ffi_bridge.ObjCBlock_ffiVoid_NSData$CallExtension(
+                        completionHandler,
+                      ).call(response == null ? null : _typedDataToNSData(response));
+                    },
+                    onError: (Object e) {
+                      _reportFfiError(errorOut, e);
+                      ffi_bridge.ObjCBlock_ffiVoid_NSData$CallExtension(
+                        completionHandler,
+                      ).call(null);
+                    },
+                  );
+              return;
             } catch (e) {
               _reportFfiError(errorOut, e);
-              ffi_bridge.ObjCBlock_ffiVoid_NativeInteropTestsPigeonTypedData$CallExtension(
-                completionHandler,
-              ).call(null);
+              ffi_bridge.ObjCBlock_ffiVoid_NSData$CallExtension(completionHandler).call(null);
               return;
             }
           });
       ffi_bridge
           .NativeInteropFlutterIntegrationCoreApiBridge$Builder
-          .echoAsyncNullableInt32ListWithList_error_completionHandler_
+          .pigeon_echoAsyncNullableInt32List_error_completionHandler_
           .implementAsListener(builder, (
-            ffi_bridge.NativeInteropTestsPigeonTypedData? arg_list,
+            NSData? arg_list,
             ffi_bridge.NativeInteropTestsError errorOut,
-            ObjCBlock<Void Function(ffi_bridge.NativeInteropTestsPigeonTypedData?)>
-            completionHandler,
+            ObjCBlock<Void Function(NSData?)> completionHandler,
           ) {
             try {
-              if (dartApi != null) {
-                dartApi!
-                    .echoAsyncNullableInt32List(_PigeonFfiCodec.readValue(arg_list) as Int32List?)
-                    .then(
-                      (response) {
-                        ffi_bridge.ObjCBlock_ffiVoid_NativeInteropTestsPigeonTypedData$CallExtension(
-                          completionHandler,
-                        ).call(
-                          _PigeonFfiCodec.writeValue<ffi_bridge.NativeInteropTestsPigeonTypedData?>(
-                            response,
-                          ),
-                        );
-                      },
-                      onError: (Object e) {
-                        _reportFfiError(errorOut, e);
-                        ffi_bridge.ObjCBlock_ffiVoid_NativeInteropTestsPigeonTypedData$CallExtension(
-                          completionHandler,
-                        ).call(null);
-                      },
-                    );
-                return;
-              } else {
+              if (dartApi == null) {
                 _reportFfiError(
                   errorOut,
                   'ArgumentError: NativeInteropFlutterIntegrationCoreApi was not registered.',
                 );
-                ffi_bridge.ObjCBlock_ffiVoid_NativeInteropTestsPigeonTypedData$CallExtension(
-                  completionHandler,
-                ).call(null);
+                ffi_bridge.ObjCBlock_ffiVoid_NSData$CallExtension(completionHandler).call(null);
                 return;
               }
+              dartApi!
+                  .echoAsyncNullableInt32List(
+                    _PigeonFfiBuffers.toUint8List(arg_list)?.buffer.asInt32List(),
+                  )
+                  .then(
+                    (response) {
+                      ffi_bridge.ObjCBlock_ffiVoid_NSData$CallExtension(
+                        completionHandler,
+                      ).call(response == null ? null : _typedDataToNSData(response));
+                    },
+                    onError: (Object e) {
+                      _reportFfiError(errorOut, e);
+                      ffi_bridge.ObjCBlock_ffiVoid_NSData$CallExtension(
+                        completionHandler,
+                      ).call(null);
+                    },
+                  );
+              return;
             } catch (e) {
               _reportFfiError(errorOut, e);
-              ffi_bridge.ObjCBlock_ffiVoid_NativeInteropTestsPigeonTypedData$CallExtension(
-                completionHandler,
-              ).call(null);
+              ffi_bridge.ObjCBlock_ffiVoid_NSData$CallExtension(completionHandler).call(null);
               return;
             }
           });
       ffi_bridge
           .NativeInteropFlutterIntegrationCoreApiBridge$Builder
-          .echoAsyncNullableInt64ListWithList_error_completionHandler_
+          .pigeon_echoAsyncNullableInt64List_error_completionHandler_
           .implementAsListener(builder, (
-            ffi_bridge.NativeInteropTestsPigeonTypedData? arg_list,
+            NSData? arg_list,
             ffi_bridge.NativeInteropTestsError errorOut,
-            ObjCBlock<Void Function(ffi_bridge.NativeInteropTestsPigeonTypedData?)>
-            completionHandler,
+            ObjCBlock<Void Function(NSData?)> completionHandler,
           ) {
             try {
-              if (dartApi != null) {
-                dartApi!
-                    .echoAsyncNullableInt64List(_PigeonFfiCodec.readValue(arg_list) as Int64List?)
-                    .then(
-                      (response) {
-                        ffi_bridge.ObjCBlock_ffiVoid_NativeInteropTestsPigeonTypedData$CallExtension(
-                          completionHandler,
-                        ).call(
-                          _PigeonFfiCodec.writeValue<ffi_bridge.NativeInteropTestsPigeonTypedData?>(
-                            response,
-                          ),
-                        );
-                      },
-                      onError: (Object e) {
-                        _reportFfiError(errorOut, e);
-                        ffi_bridge.ObjCBlock_ffiVoid_NativeInteropTestsPigeonTypedData$CallExtension(
-                          completionHandler,
-                        ).call(null);
-                      },
-                    );
-                return;
-              } else {
+              if (dartApi == null) {
                 _reportFfiError(
                   errorOut,
                   'ArgumentError: NativeInteropFlutterIntegrationCoreApi was not registered.',
                 );
-                ffi_bridge.ObjCBlock_ffiVoid_NativeInteropTestsPigeonTypedData$CallExtension(
-                  completionHandler,
-                ).call(null);
+                ffi_bridge.ObjCBlock_ffiVoid_NSData$CallExtension(completionHandler).call(null);
                 return;
               }
+              dartApi!
+                  .echoAsyncNullableInt64List(
+                    _PigeonFfiBuffers.toUint8List(arg_list)?.buffer.asInt64List(),
+                  )
+                  .then(
+                    (response) {
+                      ffi_bridge.ObjCBlock_ffiVoid_NSData$CallExtension(
+                        completionHandler,
+                      ).call(response == null ? null : _typedDataToNSData(response));
+                    },
+                    onError: (Object e) {
+                      _reportFfiError(errorOut, e);
+                      ffi_bridge.ObjCBlock_ffiVoid_NSData$CallExtension(
+                        completionHandler,
+                      ).call(null);
+                    },
+                  );
+              return;
             } catch (e) {
               _reportFfiError(errorOut, e);
-              ffi_bridge.ObjCBlock_ffiVoid_NativeInteropTestsPigeonTypedData$CallExtension(
-                completionHandler,
-              ).call(null);
+              ffi_bridge.ObjCBlock_ffiVoid_NSData$CallExtension(completionHandler).call(null);
               return;
             }
           });
       ffi_bridge
           .NativeInteropFlutterIntegrationCoreApiBridge$Builder
-          .echoAsyncNullableFloat64ListWithList_error_completionHandler_
+          .pigeon_echoAsyncNullableFloat64List_error_completionHandler_
           .implementAsListener(builder, (
-            ffi_bridge.NativeInteropTestsPigeonTypedData? arg_list,
+            NSData? arg_list,
             ffi_bridge.NativeInteropTestsError errorOut,
-            ObjCBlock<Void Function(ffi_bridge.NativeInteropTestsPigeonTypedData?)>
-            completionHandler,
+            ObjCBlock<Void Function(NSData?)> completionHandler,
           ) {
             try {
-              if (dartApi != null) {
-                dartApi!
-                    .echoAsyncNullableFloat64List(
-                      _PigeonFfiCodec.readValue(arg_list) as Float64List?,
-                    )
-                    .then(
-                      (response) {
-                        ffi_bridge.ObjCBlock_ffiVoid_NativeInteropTestsPigeonTypedData$CallExtension(
-                          completionHandler,
-                        ).call(
-                          _PigeonFfiCodec.writeValue<ffi_bridge.NativeInteropTestsPigeonTypedData?>(
-                            response,
-                          ),
-                        );
-                      },
-                      onError: (Object e) {
-                        _reportFfiError(errorOut, e);
-                        ffi_bridge.ObjCBlock_ffiVoid_NativeInteropTestsPigeonTypedData$CallExtension(
-                          completionHandler,
-                        ).call(null);
-                      },
-                    );
-                return;
-              } else {
+              if (dartApi == null) {
                 _reportFfiError(
                   errorOut,
                   'ArgumentError: NativeInteropFlutterIntegrationCoreApi was not registered.',
                 );
-                ffi_bridge.ObjCBlock_ffiVoid_NativeInteropTestsPigeonTypedData$CallExtension(
-                  completionHandler,
-                ).call(null);
+                ffi_bridge.ObjCBlock_ffiVoid_NSData$CallExtension(completionHandler).call(null);
                 return;
               }
+              dartApi!
+                  .echoAsyncNullableFloat64List(
+                    _PigeonFfiBuffers.toUint8List(arg_list)?.buffer.asFloat64List(),
+                  )
+                  .then(
+                    (response) {
+                      ffi_bridge.ObjCBlock_ffiVoid_NSData$CallExtension(
+                        completionHandler,
+                      ).call(response == null ? null : _typedDataToNSData(response));
+                    },
+                    onError: (Object e) {
+                      _reportFfiError(errorOut, e);
+                      ffi_bridge.ObjCBlock_ffiVoid_NSData$CallExtension(
+                        completionHandler,
+                      ).call(null);
+                    },
+                  );
+              return;
             } catch (e) {
               _reportFfiError(errorOut, e);
-              ffi_bridge.ObjCBlock_ffiVoid_NativeInteropTestsPigeonTypedData$CallExtension(
-                completionHandler,
-              ).call(null);
+              ffi_bridge.ObjCBlock_ffiVoid_NSData$CallExtension(completionHandler).call(null);
               return;
             }
           });
       ffi_bridge
           .NativeInteropFlutterIntegrationCoreApiBridge$Builder
-          .echoAsyncNullableObjectWithAnObject_error_completionHandler_
+          .pigeon_echoAsyncNullableObject_error_completionHandler_
           .implementAsListener(builder, (
-            NSObject? arg_anObject,
+            NSData pigeonVar_args,
             ffi_bridge.NativeInteropTestsError errorOut,
-            ObjCBlock<Void Function(NSObject?)> completionHandler,
+            ObjCBlock<Void Function(NSData?)> completionHandler,
           ) {
             try {
-              if (dartApi != null) {
-                dartApi!
-                    .echoAsyncNullableObject(_PigeonFfiCodec.readValue(arg_anObject))
-                    .then(
-                      (response) {
-                        ffi_bridge.ObjCBlock_ffiVoid_NSObject$CallExtension(
-                          completionHandler,
-                        ).call(_PigeonFfiCodec.writeValue<NSObject>(response, generic: true));
-                      },
-                      onError: (Object e) {
-                        _reportFfiError(errorOut, e);
-                        ffi_bridge.ObjCBlock_ffiVoid_NSObject$CallExtension(
-                          completionHandler,
-                        ).call(null);
-                      },
-                    );
-                return;
-              } else {
+              if (dartApi == null) {
                 _reportFfiError(
                   errorOut,
                   'ArgumentError: NativeInteropFlutterIntegrationCoreApi was not registered.',
                 );
-                ffi_bridge.ObjCBlock_ffiVoid_NSObject$CallExtension(completionHandler).call(null);
+                ffi_bridge.ObjCBlock_ffiVoid_NSData$CallExtension(completionHandler).call(null);
                 return;
               }
+              final List<Object?> pigeonVar_decodedArgs =
+                  _PigeonFfiBuffers.decode(pigeonVar_args)! as List<Object?>;
+              dartApi!
+                  .echoAsyncNullableObject(pigeonVar_decodedArgs[0])
+                  .then(
+                    (response) {
+                      ffi_bridge.ObjCBlock_ffiVoid_NSData$CallExtension(
+                        completionHandler,
+                      ).call(_PigeonFfiBuffers.encodeOrNull(response));
+                    },
+                    onError: (Object e) {
+                      _reportFfiError(errorOut, e);
+                      ffi_bridge.ObjCBlock_ffiVoid_NSData$CallExtension(
+                        completionHandler,
+                      ).call(null);
+                    },
+                  );
+              return;
             } catch (e) {
               _reportFfiError(errorOut, e);
-              ffi_bridge.ObjCBlock_ffiVoid_NSObject$CallExtension(completionHandler).call(null);
+              ffi_bridge.ObjCBlock_ffiVoid_NSData$CallExtension(completionHandler).call(null);
               return;
             }
           });
       ffi_bridge
           .NativeInteropFlutterIntegrationCoreApiBridge$Builder
-          .echoAsyncNullableListWithList_error_completionHandler_
+          .pigeon_echoAsyncNullableList_error_completionHandler_
           .implementAsListener(builder, (
-            NSArray? arg_list,
+            NSData pigeonVar_args,
             ffi_bridge.NativeInteropTestsError errorOut,
-            ObjCBlock<Void Function(NSArray?)> completionHandler,
+            ObjCBlock<Void Function(NSData?)> completionHandler,
           ) {
             try {
-              if (dartApi != null) {
-                dartApi!
-                    .echoAsyncNullableList(
-                      (_PigeonFfiCodec.readValue(arg_list) as List<Object?>?)?.cast<Object?>(),
-                    )
-                    .then(
-                      (response) {
-                        ffi_bridge.ObjCBlock_ffiVoid_NSArray$CallExtension(
-                          completionHandler,
-                        ).call(_PigeonFfiCodec.writeValue<NSMutableArray?>(response));
-                      },
-                      onError: (Object e) {
-                        _reportFfiError(errorOut, e);
-                        ffi_bridge.ObjCBlock_ffiVoid_NSArray$CallExtension(
-                          completionHandler,
-                        ).call(null);
-                      },
-                    );
-                return;
-              } else {
+              if (dartApi == null) {
                 _reportFfiError(
                   errorOut,
                   'ArgumentError: NativeInteropFlutterIntegrationCoreApi was not registered.',
                 );
-                ffi_bridge.ObjCBlock_ffiVoid_NSArray$CallExtension(completionHandler).call(null);
+                ffi_bridge.ObjCBlock_ffiVoid_NSData$CallExtension(completionHandler).call(null);
                 return;
               }
+              final List<Object?> pigeonVar_decodedArgs =
+                  _PigeonFfiBuffers.decode(pigeonVar_args)! as List<Object?>;
+              dartApi!
+                  .echoAsyncNullableList(pigeonVar_decodedArgs[0] as List<Object?>?)
+                  .then(
+                    (response) {
+                      ffi_bridge.ObjCBlock_ffiVoid_NSData$CallExtension(
+                        completionHandler,
+                      ).call(_PigeonFfiBuffers.encodeOrNull(response));
+                    },
+                    onError: (Object e) {
+                      _reportFfiError(errorOut, e);
+                      ffi_bridge.ObjCBlock_ffiVoid_NSData$CallExtension(
+                        completionHandler,
+                      ).call(null);
+                    },
+                  );
+              return;
             } catch (e) {
               _reportFfiError(errorOut, e);
-              ffi_bridge.ObjCBlock_ffiVoid_NSArray$CallExtension(completionHandler).call(null);
+              ffi_bridge.ObjCBlock_ffiVoid_NSData$CallExtension(completionHandler).call(null);
               return;
             }
           });
       ffi_bridge
           .NativeInteropFlutterIntegrationCoreApiBridge$Builder
-          .echoAsyncNullableEnumListWithEnumList_error_completionHandler_
+          .pigeon_echoAsyncNullableEnumList_error_completionHandler_
           .implementAsListener(builder, (
-            NSArray? arg_enumList,
+            NSData pigeonVar_args,
             ffi_bridge.NativeInteropTestsError errorOut,
-            ObjCBlock<Void Function(NSArray?)> completionHandler,
+            ObjCBlock<Void Function(NSData?)> completionHandler,
           ) {
             try {
-              if (dartApi != null) {
-                dartApi!
-                    .echoAsyncNullableEnumList(
-                      (_PigeonFfiCodec.readValue(arg_enumList, NativeInteropAnEnum)
-                              as List<Object?>?)
-                          ?.cast<NativeInteropAnEnum?>(),
-                    )
-                    .then(
-                      (response) {
-                        ffi_bridge.ObjCBlock_ffiVoid_NSArray$CallExtension(
-                          completionHandler,
-                        ).call(_PigeonFfiCodec.writeValue<NSMutableArray?>(response));
-                      },
-                      onError: (Object e) {
-                        _reportFfiError(errorOut, e);
-                        ffi_bridge.ObjCBlock_ffiVoid_NSArray$CallExtension(
-                          completionHandler,
-                        ).call(null);
-                      },
-                    );
-                return;
-              } else {
+              if (dartApi == null) {
                 _reportFfiError(
                   errorOut,
                   'ArgumentError: NativeInteropFlutterIntegrationCoreApi was not registered.',
                 );
-                ffi_bridge.ObjCBlock_ffiVoid_NSArray$CallExtension(completionHandler).call(null);
+                ffi_bridge.ObjCBlock_ffiVoid_NSData$CallExtension(completionHandler).call(null);
                 return;
               }
+              final List<Object?> pigeonVar_decodedArgs =
+                  _PigeonFfiBuffers.decode(pigeonVar_args)! as List<Object?>;
+              dartApi!
+                  .echoAsyncNullableEnumList(
+                    (pigeonVar_decodedArgs[0] as List<Object?>?)?.cast<NativeInteropAnEnum?>(),
+                  )
+                  .then(
+                    (response) {
+                      ffi_bridge.ObjCBlock_ffiVoid_NSData$CallExtension(
+                        completionHandler,
+                      ).call(_PigeonFfiBuffers.encodeOrNull(response));
+                    },
+                    onError: (Object e) {
+                      _reportFfiError(errorOut, e);
+                      ffi_bridge.ObjCBlock_ffiVoid_NSData$CallExtension(
+                        completionHandler,
+                      ).call(null);
+                    },
+                  );
+              return;
             } catch (e) {
               _reportFfiError(errorOut, e);
-              ffi_bridge.ObjCBlock_ffiVoid_NSArray$CallExtension(completionHandler).call(null);
+              ffi_bridge.ObjCBlock_ffiVoid_NSData$CallExtension(completionHandler).call(null);
               return;
             }
           });
       ffi_bridge
           .NativeInteropFlutterIntegrationCoreApiBridge$Builder
-          .echoAsyncNullableClassListWithClassList_error_completionHandler_
+          .pigeon_echoAsyncNullableClassList_error_completionHandler_
           .implementAsListener(builder, (
-            NSArray? arg_classList,
+            NSData pigeonVar_args,
             ffi_bridge.NativeInteropTestsError errorOut,
-            ObjCBlock<Void Function(NSArray?)> completionHandler,
+            ObjCBlock<Void Function(NSData?)> completionHandler,
           ) {
             try {
-              if (dartApi != null) {
-                dartApi!
-                    .echoAsyncNullableClassList(
-                      (_PigeonFfiCodec.readValue(arg_classList) as List<Object?>?)
-                          ?.cast<NativeInteropAllNullableTypes?>(),
-                    )
-                    .then(
-                      (response) {
-                        ffi_bridge.ObjCBlock_ffiVoid_NSArray$CallExtension(
-                          completionHandler,
-                        ).call(_PigeonFfiCodec.writeValue<NSMutableArray?>(response));
-                      },
-                      onError: (Object e) {
-                        _reportFfiError(errorOut, e);
-                        ffi_bridge.ObjCBlock_ffiVoid_NSArray$CallExtension(
-                          completionHandler,
-                        ).call(null);
-                      },
-                    );
-                return;
-              } else {
+              if (dartApi == null) {
                 _reportFfiError(
                   errorOut,
                   'ArgumentError: NativeInteropFlutterIntegrationCoreApi was not registered.',
                 );
-                ffi_bridge.ObjCBlock_ffiVoid_NSArray$CallExtension(completionHandler).call(null);
+                ffi_bridge.ObjCBlock_ffiVoid_NSData$CallExtension(completionHandler).call(null);
                 return;
               }
+              final List<Object?> pigeonVar_decodedArgs =
+                  _PigeonFfiBuffers.decode(pigeonVar_args)! as List<Object?>;
+              dartApi!
+                  .echoAsyncNullableClassList(
+                    (pigeonVar_decodedArgs[0] as List<Object?>?)
+                        ?.cast<NativeInteropAllNullableTypes?>(),
+                  )
+                  .then(
+                    (response) {
+                      ffi_bridge.ObjCBlock_ffiVoid_NSData$CallExtension(
+                        completionHandler,
+                      ).call(_PigeonFfiBuffers.encodeOrNull(response));
+                    },
+                    onError: (Object e) {
+                      _reportFfiError(errorOut, e);
+                      ffi_bridge.ObjCBlock_ffiVoid_NSData$CallExtension(
+                        completionHandler,
+                      ).call(null);
+                    },
+                  );
+              return;
             } catch (e) {
               _reportFfiError(errorOut, e);
-              ffi_bridge.ObjCBlock_ffiVoid_NSArray$CallExtension(completionHandler).call(null);
+              ffi_bridge.ObjCBlock_ffiVoid_NSData$CallExtension(completionHandler).call(null);
               return;
             }
           });
       ffi_bridge
           .NativeInteropFlutterIntegrationCoreApiBridge$Builder
-          .echoAsyncNullableNonNullEnumListWithEnumList_error_completionHandler_
+          .pigeon_echoAsyncNullableNonNullEnumList_error_completionHandler_
           .implementAsListener(builder, (
-            NSArray? arg_enumList,
+            NSData pigeonVar_args,
             ffi_bridge.NativeInteropTestsError errorOut,
-            ObjCBlock<Void Function(NSArray?)> completionHandler,
+            ObjCBlock<Void Function(NSData?)> completionHandler,
           ) {
             try {
-              if (dartApi != null) {
-                dartApi!
-                    .echoAsyncNullableNonNullEnumList(
-                      (_PigeonFfiCodec.readValue(arg_enumList, NativeInteropAnEnum)
-                              as List<Object?>?)
-                          ?.cast<NativeInteropAnEnum>(),
-                    )
-                    .then(
-                      (response) {
-                        ffi_bridge.ObjCBlock_ffiVoid_NSArray$CallExtension(
-                          completionHandler,
-                        ).call(_PigeonFfiCodec.writeValue<NSMutableArray?>(response));
-                      },
-                      onError: (Object e) {
-                        _reportFfiError(errorOut, e);
-                        ffi_bridge.ObjCBlock_ffiVoid_NSArray$CallExtension(
-                          completionHandler,
-                        ).call(null);
-                      },
-                    );
-                return;
-              } else {
+              if (dartApi == null) {
                 _reportFfiError(
                   errorOut,
                   'ArgumentError: NativeInteropFlutterIntegrationCoreApi was not registered.',
                 );
-                ffi_bridge.ObjCBlock_ffiVoid_NSArray$CallExtension(completionHandler).call(null);
+                ffi_bridge.ObjCBlock_ffiVoid_NSData$CallExtension(completionHandler).call(null);
                 return;
               }
+              final List<Object?> pigeonVar_decodedArgs =
+                  _PigeonFfiBuffers.decode(pigeonVar_args)! as List<Object?>;
+              dartApi!
+                  .echoAsyncNullableNonNullEnumList(
+                    (pigeonVar_decodedArgs[0] as List<Object?>?)?.cast<NativeInteropAnEnum>(),
+                  )
+                  .then(
+                    (response) {
+                      ffi_bridge.ObjCBlock_ffiVoid_NSData$CallExtension(
+                        completionHandler,
+                      ).call(_PigeonFfiBuffers.encodeOrNull(response));
+                    },
+                    onError: (Object e) {
+                      _reportFfiError(errorOut, e);
+                      ffi_bridge.ObjCBlock_ffiVoid_NSData$CallExtension(
+                        completionHandler,
+                      ).call(null);
+                    },
+                  );
+              return;
             } catch (e) {
               _reportFfiError(errorOut, e);
-              ffi_bridge.ObjCBlock_ffiVoid_NSArray$CallExtension(completionHandler).call(null);
+              ffi_bridge.ObjCBlock_ffiVoid_NSData$CallExtension(completionHandler).call(null);
               return;
             }
           });
       ffi_bridge
           .NativeInteropFlutterIntegrationCoreApiBridge$Builder
-          .echoAsyncNullableNonNullClassListWithClassList_error_completionHandler_
+          .pigeon_echoAsyncNullableNonNullClassList_error_completionHandler_
           .implementAsListener(builder, (
-            NSArray? arg_classList,
+            NSData pigeonVar_args,
             ffi_bridge.NativeInteropTestsError errorOut,
-            ObjCBlock<Void Function(NSArray?)> completionHandler,
+            ObjCBlock<Void Function(NSData?)> completionHandler,
           ) {
             try {
-              if (dartApi != null) {
-                dartApi!
-                    .echoAsyncNullableNonNullClassList(
-                      (_PigeonFfiCodec.readValue(arg_classList) as List<Object?>?)
-                          ?.cast<NativeInteropAllNullableTypes>(),
-                    )
-                    .then(
-                      (response) {
-                        ffi_bridge.ObjCBlock_ffiVoid_NSArray$CallExtension(
-                          completionHandler,
-                        ).call(_PigeonFfiCodec.writeValue<NSMutableArray?>(response));
-                      },
-                      onError: (Object e) {
-                        _reportFfiError(errorOut, e);
-                        ffi_bridge.ObjCBlock_ffiVoid_NSArray$CallExtension(
-                          completionHandler,
-                        ).call(null);
-                      },
-                    );
-                return;
-              } else {
+              if (dartApi == null) {
                 _reportFfiError(
                   errorOut,
                   'ArgumentError: NativeInteropFlutterIntegrationCoreApi was not registered.',
                 );
-                ffi_bridge.ObjCBlock_ffiVoid_NSArray$CallExtension(completionHandler).call(null);
+                ffi_bridge.ObjCBlock_ffiVoid_NSData$CallExtension(completionHandler).call(null);
                 return;
               }
+              final List<Object?> pigeonVar_decodedArgs =
+                  _PigeonFfiBuffers.decode(pigeonVar_args)! as List<Object?>;
+              dartApi!
+                  .echoAsyncNullableNonNullClassList(
+                    (pigeonVar_decodedArgs[0] as List<Object?>?)
+                        ?.cast<NativeInteropAllNullableTypes>(),
+                  )
+                  .then(
+                    (response) {
+                      ffi_bridge.ObjCBlock_ffiVoid_NSData$CallExtension(
+                        completionHandler,
+                      ).call(_PigeonFfiBuffers.encodeOrNull(response));
+                    },
+                    onError: (Object e) {
+                      _reportFfiError(errorOut, e);
+                      ffi_bridge.ObjCBlock_ffiVoid_NSData$CallExtension(
+                        completionHandler,
+                      ).call(null);
+                    },
+                  );
+              return;
             } catch (e) {
               _reportFfiError(errorOut, e);
-              ffi_bridge.ObjCBlock_ffiVoid_NSArray$CallExtension(completionHandler).call(null);
+              ffi_bridge.ObjCBlock_ffiVoid_NSData$CallExtension(completionHandler).call(null);
               return;
             }
           });
       ffi_bridge
           .NativeInteropFlutterIntegrationCoreApiBridge$Builder
-          .echoAsyncNullableMapWithMap_error_completionHandler_
+          .pigeon_echoAsyncNullableMap_error_completionHandler_
           .implementAsListener(builder, (
-            NSDictionary? arg_map,
+            NSData pigeonVar_args,
             ffi_bridge.NativeInteropTestsError errorOut,
-            ObjCBlock<Void Function(NSDictionary?)> completionHandler,
+            ObjCBlock<Void Function(NSData?)> completionHandler,
           ) {
             try {
-              if (dartApi != null) {
-                dartApi!
-                    .echoAsyncNullableMap(
-                      (_PigeonFfiCodec.readValue(arg_map) as Map<Object?, Object?>?)
-                          ?.cast<Object?, Object?>(),
-                    )
-                    .then(
-                      (response) {
-                        ffi_bridge.ObjCBlock_ffiVoid_NSDictionary$CallExtension(
-                          completionHandler,
-                        ).call(_PigeonFfiCodec.writeValue<NSDictionary?>(response));
-                      },
-                      onError: (Object e) {
-                        _reportFfiError(errorOut, e);
-                        ffi_bridge.ObjCBlock_ffiVoid_NSDictionary$CallExtension(
-                          completionHandler,
-                        ).call(null);
-                      },
-                    );
-                return;
-              } else {
+              if (dartApi == null) {
                 _reportFfiError(
                   errorOut,
                   'ArgumentError: NativeInteropFlutterIntegrationCoreApi was not registered.',
                 );
-                ffi_bridge.ObjCBlock_ffiVoid_NSDictionary$CallExtension(
-                  completionHandler,
-                ).call(null);
+                ffi_bridge.ObjCBlock_ffiVoid_NSData$CallExtension(completionHandler).call(null);
                 return;
               }
+              final List<Object?> pigeonVar_decodedArgs =
+                  _PigeonFfiBuffers.decode(pigeonVar_args)! as List<Object?>;
+              dartApi!
+                  .echoAsyncNullableMap(pigeonVar_decodedArgs[0] as Map<Object?, Object?>?)
+                  .then(
+                    (response) {
+                      ffi_bridge.ObjCBlock_ffiVoid_NSData$CallExtension(
+                        completionHandler,
+                      ).call(_PigeonFfiBuffers.encodeOrNull(response));
+                    },
+                    onError: (Object e) {
+                      _reportFfiError(errorOut, e);
+                      ffi_bridge.ObjCBlock_ffiVoid_NSData$CallExtension(
+                        completionHandler,
+                      ).call(null);
+                    },
+                  );
+              return;
             } catch (e) {
               _reportFfiError(errorOut, e);
-              ffi_bridge.ObjCBlock_ffiVoid_NSDictionary$CallExtension(completionHandler).call(null);
+              ffi_bridge.ObjCBlock_ffiVoid_NSData$CallExtension(completionHandler).call(null);
               return;
             }
           });
       ffi_bridge
           .NativeInteropFlutterIntegrationCoreApiBridge$Builder
-          .echoAsyncNullableStringMapWithStringMap_error_completionHandler_
+          .pigeon_echoAsyncNullableStringMap_error_completionHandler_
           .implementAsListener(builder, (
-            NSDictionary? arg_stringMap,
+            NSData pigeonVar_args,
             ffi_bridge.NativeInteropTestsError errorOut,
-            ObjCBlock<Void Function(NSDictionary?)> completionHandler,
+            ObjCBlock<Void Function(NSData?)> completionHandler,
           ) {
             try {
-              if (dartApi != null) {
-                dartApi!
-                    .echoAsyncNullableStringMap(
-                      (_PigeonFfiCodec.readValue(arg_stringMap) as Map<Object?, Object?>?)
-                          ?.cast<String?, String?>(),
-                    )
-                    .then(
-                      (response) {
-                        ffi_bridge.ObjCBlock_ffiVoid_NSDictionary$CallExtension(
-                          completionHandler,
-                        ).call(_PigeonFfiCodec.writeValue<NSDictionary?>(response));
-                      },
-                      onError: (Object e) {
-                        _reportFfiError(errorOut, e);
-                        ffi_bridge.ObjCBlock_ffiVoid_NSDictionary$CallExtension(
-                          completionHandler,
-                        ).call(null);
-                      },
-                    );
-                return;
-              } else {
+              if (dartApi == null) {
                 _reportFfiError(
                   errorOut,
                   'ArgumentError: NativeInteropFlutterIntegrationCoreApi was not registered.',
                 );
-                ffi_bridge.ObjCBlock_ffiVoid_NSDictionary$CallExtension(
-                  completionHandler,
-                ).call(null);
+                ffi_bridge.ObjCBlock_ffiVoid_NSData$CallExtension(completionHandler).call(null);
                 return;
               }
+              final List<Object?> pigeonVar_decodedArgs =
+                  _PigeonFfiBuffers.decode(pigeonVar_args)! as List<Object?>;
+              dartApi!
+                  .echoAsyncNullableStringMap(
+                    (pigeonVar_decodedArgs[0] as Map<Object?, Object?>?)?.cast<String?, String?>(),
+                  )
+                  .then(
+                    (response) {
+                      ffi_bridge.ObjCBlock_ffiVoid_NSData$CallExtension(
+                        completionHandler,
+                      ).call(_PigeonFfiBuffers.encodeOrNull(response));
+                    },
+                    onError: (Object e) {
+                      _reportFfiError(errorOut, e);
+                      ffi_bridge.ObjCBlock_ffiVoid_NSData$CallExtension(
+                        completionHandler,
+                      ).call(null);
+                    },
+                  );
+              return;
             } catch (e) {
               _reportFfiError(errorOut, e);
-              ffi_bridge.ObjCBlock_ffiVoid_NSDictionary$CallExtension(completionHandler).call(null);
+              ffi_bridge.ObjCBlock_ffiVoid_NSData$CallExtension(completionHandler).call(null);
               return;
             }
           });
       ffi_bridge
           .NativeInteropFlutterIntegrationCoreApiBridge$Builder
-          .echoAsyncNullableIntMapWithIntMap_error_completionHandler_
+          .pigeon_echoAsyncNullableIntMap_error_completionHandler_
           .implementAsListener(builder, (
-            NSDictionary? arg_intMap,
+            NSData pigeonVar_args,
             ffi_bridge.NativeInteropTestsError errorOut,
-            ObjCBlock<Void Function(NSDictionary?)> completionHandler,
+            ObjCBlock<Void Function(NSData?)> completionHandler,
           ) {
             try {
-              if (dartApi != null) {
-                dartApi!
-                    .echoAsyncNullableIntMap(
-                      (_PigeonFfiCodec.readValue(arg_intMap, int, int) as Map<Object?, Object?>?)
-                          ?.cast<int?, int?>(),
-                    )
-                    .then(
-                      (response) {
-                        ffi_bridge.ObjCBlock_ffiVoid_NSDictionary$CallExtension(
-                          completionHandler,
-                        ).call(_PigeonFfiCodec.writeValue<NSDictionary?>(response));
-                      },
-                      onError: (Object e) {
-                        _reportFfiError(errorOut, e);
-                        ffi_bridge.ObjCBlock_ffiVoid_NSDictionary$CallExtension(
-                          completionHandler,
-                        ).call(null);
-                      },
-                    );
-                return;
-              } else {
+              if (dartApi == null) {
                 _reportFfiError(
                   errorOut,
                   'ArgumentError: NativeInteropFlutterIntegrationCoreApi was not registered.',
                 );
-                ffi_bridge.ObjCBlock_ffiVoid_NSDictionary$CallExtension(
-                  completionHandler,
-                ).call(null);
+                ffi_bridge.ObjCBlock_ffiVoid_NSData$CallExtension(completionHandler).call(null);
                 return;
               }
+              final List<Object?> pigeonVar_decodedArgs =
+                  _PigeonFfiBuffers.decode(pigeonVar_args)! as List<Object?>;
+              dartApi!
+                  .echoAsyncNullableIntMap(
+                    (pigeonVar_decodedArgs[0] as Map<Object?, Object?>?)?.cast<int?, int?>(),
+                  )
+                  .then(
+                    (response) {
+                      ffi_bridge.ObjCBlock_ffiVoid_NSData$CallExtension(
+                        completionHandler,
+                      ).call(_PigeonFfiBuffers.encodeOrNull(response));
+                    },
+                    onError: (Object e) {
+                      _reportFfiError(errorOut, e);
+                      ffi_bridge.ObjCBlock_ffiVoid_NSData$CallExtension(
+                        completionHandler,
+                      ).call(null);
+                    },
+                  );
+              return;
             } catch (e) {
               _reportFfiError(errorOut, e);
-              ffi_bridge.ObjCBlock_ffiVoid_NSDictionary$CallExtension(completionHandler).call(null);
+              ffi_bridge.ObjCBlock_ffiVoid_NSData$CallExtension(completionHandler).call(null);
               return;
             }
           });
       ffi_bridge
           .NativeInteropFlutterIntegrationCoreApiBridge$Builder
-          .echoAsyncNullableEnumMapWithEnumMap_error_completionHandler_
+          .pigeon_echoAsyncNullableEnumMap_error_completionHandler_
           .implementAsListener(builder, (
-            NSDictionary? arg_enumMap,
+            NSData pigeonVar_args,
             ffi_bridge.NativeInteropTestsError errorOut,
-            ObjCBlock<Void Function(NSDictionary?)> completionHandler,
+            ObjCBlock<Void Function(NSData?)> completionHandler,
           ) {
             try {
-              if (dartApi != null) {
-                dartApi!
-                    .echoAsyncNullableEnumMap(
-                      (_PigeonFfiCodec.readValue(
-                                arg_enumMap,
-                                NativeInteropAnEnum,
-                                NativeInteropAnEnum,
-                              )
-                              as Map<Object?, Object?>?)
-                          ?.cast<NativeInteropAnEnum?, NativeInteropAnEnum?>(),
-                    )
-                    .then(
-                      (response) {
-                        ffi_bridge.ObjCBlock_ffiVoid_NSDictionary$CallExtension(
-                          completionHandler,
-                        ).call(_PigeonFfiCodec.writeValue<NSDictionary?>(response));
-                      },
-                      onError: (Object e) {
-                        _reportFfiError(errorOut, e);
-                        ffi_bridge.ObjCBlock_ffiVoid_NSDictionary$CallExtension(
-                          completionHandler,
-                        ).call(null);
-                      },
-                    );
-                return;
-              } else {
+              if (dartApi == null) {
                 _reportFfiError(
                   errorOut,
                   'ArgumentError: NativeInteropFlutterIntegrationCoreApi was not registered.',
                 );
-                ffi_bridge.ObjCBlock_ffiVoid_NSDictionary$CallExtension(
-                  completionHandler,
-                ).call(null);
+                ffi_bridge.ObjCBlock_ffiVoid_NSData$CallExtension(completionHandler).call(null);
                 return;
               }
+              final List<Object?> pigeonVar_decodedArgs =
+                  _PigeonFfiBuffers.decode(pigeonVar_args)! as List<Object?>;
+              dartApi!
+                  .echoAsyncNullableEnumMap(
+                    (pigeonVar_decodedArgs[0] as Map<Object?, Object?>?)
+                        ?.cast<NativeInteropAnEnum?, NativeInteropAnEnum?>(),
+                  )
+                  .then(
+                    (response) {
+                      ffi_bridge.ObjCBlock_ffiVoid_NSData$CallExtension(
+                        completionHandler,
+                      ).call(_PigeonFfiBuffers.encodeOrNull(response));
+                    },
+                    onError: (Object e) {
+                      _reportFfiError(errorOut, e);
+                      ffi_bridge.ObjCBlock_ffiVoid_NSData$CallExtension(
+                        completionHandler,
+                      ).call(null);
+                    },
+                  );
+              return;
             } catch (e) {
               _reportFfiError(errorOut, e);
-              ffi_bridge.ObjCBlock_ffiVoid_NSDictionary$CallExtension(completionHandler).call(null);
+              ffi_bridge.ObjCBlock_ffiVoid_NSData$CallExtension(completionHandler).call(null);
               return;
             }
           });
       ffi_bridge
           .NativeInteropFlutterIntegrationCoreApiBridge$Builder
-          .echoAsyncNullableClassMapWithClassMap_error_completionHandler_
+          .pigeon_echoAsyncNullableClassMap_error_completionHandler_
           .implementAsListener(builder, (
-            NSDictionary? arg_classMap,
+            NSData pigeonVar_args,
             ffi_bridge.NativeInteropTestsError errorOut,
-            ObjCBlock<Void Function(NSDictionary?)> completionHandler,
+            ObjCBlock<Void Function(NSData?)> completionHandler,
           ) {
             try {
-              if (dartApi != null) {
-                dartApi!
-                    .echoAsyncNullableClassMap(
-                      (_PigeonFfiCodec.readValue(arg_classMap, int) as Map<Object?, Object?>?)
-                          ?.cast<int?, NativeInteropAllNullableTypes?>(),
-                    )
-                    .then(
-                      (response) {
-                        ffi_bridge.ObjCBlock_ffiVoid_NSDictionary$CallExtension(
-                          completionHandler,
-                        ).call(_PigeonFfiCodec.writeValue<NSDictionary?>(response));
-                      },
-                      onError: (Object e) {
-                        _reportFfiError(errorOut, e);
-                        ffi_bridge.ObjCBlock_ffiVoid_NSDictionary$CallExtension(
-                          completionHandler,
-                        ).call(null);
-                      },
-                    );
-                return;
-              } else {
+              if (dartApi == null) {
                 _reportFfiError(
                   errorOut,
                   'ArgumentError: NativeInteropFlutterIntegrationCoreApi was not registered.',
                 );
-                ffi_bridge.ObjCBlock_ffiVoid_NSDictionary$CallExtension(
-                  completionHandler,
-                ).call(null);
+                ffi_bridge.ObjCBlock_ffiVoid_NSData$CallExtension(completionHandler).call(null);
                 return;
               }
+              final List<Object?> pigeonVar_decodedArgs =
+                  _PigeonFfiBuffers.decode(pigeonVar_args)! as List<Object?>;
+              dartApi!
+                  .echoAsyncNullableClassMap(
+                    (pigeonVar_decodedArgs[0] as Map<Object?, Object?>?)
+                        ?.cast<int?, NativeInteropAllNullableTypes?>(),
+                  )
+                  .then(
+                    (response) {
+                      ffi_bridge.ObjCBlock_ffiVoid_NSData$CallExtension(
+                        completionHandler,
+                      ).call(_PigeonFfiBuffers.encodeOrNull(response));
+                    },
+                    onError: (Object e) {
+                      _reportFfiError(errorOut, e);
+                      ffi_bridge.ObjCBlock_ffiVoid_NSData$CallExtension(
+                        completionHandler,
+                      ).call(null);
+                    },
+                  );
+              return;
             } catch (e) {
               _reportFfiError(errorOut, e);
-              ffi_bridge.ObjCBlock_ffiVoid_NSDictionary$CallExtension(completionHandler).call(null);
+              ffi_bridge.ObjCBlock_ffiVoid_NSData$CallExtension(completionHandler).call(null);
               return;
             }
           });
       ffi_bridge
           .NativeInteropFlutterIntegrationCoreApiBridge$Builder
-          .echoAsyncNullableEnumWithAnEnum_error_completionHandler_
+          .pigeon_echoAsyncNullableEnum_error_completionHandler_
           .implementAsListener(builder, (
-            NSNumber? arg_anEnum,
+            int arg_anEnum,
             ffi_bridge.NativeInteropTestsError errorOut,
             ObjCBlock<Void Function(NSNumber?)> completionHandler,
           ) {
             try {
-              if (dartApi != null) {
-                dartApi!
-                    .echoAsyncNullableEnum(
-                      _PigeonFfiCodec.readValue(arg_anEnum, NativeInteropAnEnum)
-                          as NativeInteropAnEnum?,
-                    )
-                    .then(
-                      (response) {
-                        ffi_bridge.ObjCBlock_ffiVoid_NSNumber$CallExtension(
-                          completionHandler,
-                        ).call(_PigeonFfiCodec.writeValue<NSNumber?>(response));
-                      },
-                      onError: (Object e) {
-                        _reportFfiError(errorOut, e);
-                        ffi_bridge.ObjCBlock_ffiVoid_NSNumber$CallExtension(
-                          completionHandler,
-                        ).call(null);
-                      },
-                    );
-                return;
-              } else {
+              if (dartApi == null) {
                 _reportFfiError(
                   errorOut,
                   'ArgumentError: NativeInteropFlutterIntegrationCoreApi was not registered.',
@@ -19063,6 +19100,24 @@ final class NativeInteropFlutterIntegrationCoreApiRegistrar
                 ffi_bridge.ObjCBlock_ffiVoid_NSNumber$CallExtension(completionHandler).call(null);
                 return;
               }
+              dartApi!
+                  .echoAsyncNullableEnum(
+                    arg_anEnum == -1 ? null : NativeInteropAnEnum.values[arg_anEnum],
+                  )
+                  .then(
+                    (response) {
+                      ffi_bridge.ObjCBlock_ffiVoid_NSNumber$CallExtension(completionHandler).call(
+                        response == null ? null : NSNumber.alloc().initWithLong(response.index),
+                      );
+                    },
+                    onError: (Object e) {
+                      _reportFfiError(errorOut, e);
+                      ffi_bridge.ObjCBlock_ffiVoid_NSNumber$CallExtension(
+                        completionHandler,
+                      ).call(null);
+                    },
+                  );
+              return;
             } catch (e) {
               _reportFfiError(errorOut, e);
               ffi_bridge.ObjCBlock_ffiVoid_NSNumber$CallExtension(completionHandler).call(null);
@@ -19071,34 +19126,14 @@ final class NativeInteropFlutterIntegrationCoreApiRegistrar
           });
       ffi_bridge
           .NativeInteropFlutterIntegrationCoreApiBridge$Builder
-          .echoAnotherAsyncNullableEnumWithAnotherEnum_error_completionHandler_
+          .pigeon_echoAnotherAsyncNullableEnum_error_completionHandler_
           .implementAsListener(builder, (
-            NSNumber? arg_anotherEnum,
+            int arg_anotherEnum,
             ffi_bridge.NativeInteropTestsError errorOut,
             ObjCBlock<Void Function(NSNumber?)> completionHandler,
           ) {
             try {
-              if (dartApi != null) {
-                dartApi!
-                    .echoAnotherAsyncNullableEnum(
-                      _PigeonFfiCodec.readValue(arg_anotherEnum, NativeInteropAnotherEnum)
-                          as NativeInteropAnotherEnum?,
-                    )
-                    .then(
-                      (response) {
-                        ffi_bridge.ObjCBlock_ffiVoid_NSNumber$CallExtension(
-                          completionHandler,
-                        ).call(_PigeonFfiCodec.writeValue<NSNumber?>(response));
-                      },
-                      onError: (Object e) {
-                        _reportFfiError(errorOut, e);
-                        ffi_bridge.ObjCBlock_ffiVoid_NSNumber$CallExtension(
-                          completionHandler,
-                        ).call(null);
-                      },
-                    );
-                return;
-              } else {
+              if (dartApi == null) {
                 _reportFfiError(
                   errorOut,
                   'ArgumentError: NativeInteropFlutterIntegrationCoreApi was not registered.',
@@ -19106,6 +19141,24 @@ final class NativeInteropFlutterIntegrationCoreApiRegistrar
                 ffi_bridge.ObjCBlock_ffiVoid_NSNumber$CallExtension(completionHandler).call(null);
                 return;
               }
+              dartApi!
+                  .echoAnotherAsyncNullableEnum(
+                    arg_anotherEnum == -1 ? null : NativeInteropAnotherEnum.values[arg_anotherEnum],
+                  )
+                  .then(
+                    (response) {
+                      ffi_bridge.ObjCBlock_ffiVoid_NSNumber$CallExtension(completionHandler).call(
+                        response == null ? null : NSNumber.alloc().initWithLong(response.index),
+                      );
+                    },
+                    onError: (Object e) {
+                      _reportFfiError(errorOut, e);
+                      ffi_bridge.ObjCBlock_ffiVoid_NSNumber$CallExtension(
+                        completionHandler,
+                      ).call(null);
+                    },
+                  );
+              return;
             } catch (e) {
               _reportFfiError(errorOut, e);
               ffi_bridge.ObjCBlock_ffiVoid_NSNumber$CallExtension(completionHandler).call(null);
@@ -19126,1472 +19179,1321 @@ final class NativeInteropFlutterIntegrationCoreApiRegistrar
   }
 
   @override
-  void noop() {
-    if (dartApi != null) {
-      dartApi!.noop();
-      return;
-    } else {
+  void pigeon_noop() {
+    if (dartApi == null) {
       throw ArgumentError('NativeInteropFlutterIntegrationCoreApi was not registered.');
     }
+    dartApi!.noop();
   }
 
   @override
-  JObject? throwFlutterError() {
-    if (dartApi != null) {
-      final Object? response = dartApi!.throwFlutterError();
-      return _PigeonJniCodec.writeValue<JObject?>(response);
-    } else {
+  JByteArray? pigeon_throwFlutterError() {
+    if (dartApi == null) {
       throw ArgumentError('NativeInteropFlutterIntegrationCoreApi was not registered.');
     }
+    final Object? response = dartApi!.throwFlutterError();
+    return _PigeonJniBuffers.encodeOrNull(response);
   }
 
   @override
-  JObject? throwError() {
-    if (dartApi != null) {
-      final Object? response = dartApi!.throwError();
-      return _PigeonJniCodec.writeValue<JObject?>(response);
-    } else {
+  JByteArray? pigeon_throwError() {
+    if (dartApi == null) {
       throw ArgumentError('NativeInteropFlutterIntegrationCoreApi was not registered.');
     }
+    final Object? response = dartApi!.throwError();
+    return _PigeonJniBuffers.encodeOrNull(response);
   }
 
   @override
-  void throwErrorFromVoid() {
-    if (dartApi != null) {
-      dartApi!.throwErrorFromVoid();
-      return;
-    } else {
+  void pigeon_throwErrorFromVoid() {
+    if (dartApi == null) {
       throw ArgumentError('NativeInteropFlutterIntegrationCoreApi was not registered.');
     }
+    dartApi!.throwErrorFromVoid();
   }
 
   @override
-  jni_bridge.NativeInteropAllTypes echoNativeInteropAllTypes(
-    jni_bridge.NativeInteropAllTypes arg_everything,
-  ) {
-    if (dartApi != null) {
-      final NativeInteropAllTypes response = dartApi!.echoNativeInteropAllTypes(
-        NativeInteropAllTypes.fromJni(arg_everything)!,
-      );
-      return response.toJni();
-    } else {
+  JByteArray? pigeon_echoNativeInteropAllTypes(JByteArray pigeonVar_args) {
+    if (dartApi == null) {
       throw ArgumentError('NativeInteropFlutterIntegrationCoreApi was not registered.');
     }
+    final List<Object?> pigeonVar_decodedArgs =
+        _PigeonJniBuffers.decode(pigeonVar_args)! as List<Object?>;
+    final NativeInteropAllTypes response = dartApi!.echoNativeInteropAllTypes(
+      pigeonVar_decodedArgs[0]! as NativeInteropAllTypes,
+    );
+    return _PigeonJniBuffers.encodeOrNull(response);
   }
 
   @override
-  jni_bridge.NativeInteropAllNullableTypes? echoNativeInteropAllNullableTypes(
-    jni_bridge.NativeInteropAllNullableTypes? arg_everything,
-  ) {
-    if (dartApi != null) {
-      final NativeInteropAllNullableTypes? response = dartApi!.echoNativeInteropAllNullableTypes(
-        NativeInteropAllNullableTypes.fromJni(arg_everything),
-      );
-      return response?.toJni();
-    } else {
+  JByteArray? pigeon_echoNativeInteropAllNullableTypes(JByteArray pigeonVar_args) {
+    if (dartApi == null) {
       throw ArgumentError('NativeInteropFlutterIntegrationCoreApi was not registered.');
     }
+    final List<Object?> pigeonVar_decodedArgs =
+        _PigeonJniBuffers.decode(pigeonVar_args)! as List<Object?>;
+    final NativeInteropAllNullableTypes? response = dartApi!.echoNativeInteropAllNullableTypes(
+      pigeonVar_decodedArgs[0] as NativeInteropAllNullableTypes?,
+    );
+    return _PigeonJniBuffers.encodeOrNull(response);
   }
 
   @override
-  jni_bridge.NativeInteropAllNullableTypes sendMultipleNullableTypes(
+  JByteArray? pigeon_sendMultipleNullableTypes(
     JBoolean? arg_aNullableBool,
     JLong? arg_aNullableInt,
     JString? arg_aNullableString,
   ) {
-    if (dartApi != null) {
-      final NativeInteropAllNullableTypes response = dartApi!.sendMultipleNullableTypes(
-        arg_aNullableBool?.toDartBool(releaseOriginal: true),
-        arg_aNullableInt?.toDartInt(releaseOriginal: true),
-        arg_aNullableString?.toDartString(releaseOriginal: true),
-      );
-      return response.toJni();
-    } else {
+    if (dartApi == null) {
       throw ArgumentError('NativeInteropFlutterIntegrationCoreApi was not registered.');
     }
+    final NativeInteropAllNullableTypes response = dartApi!.sendMultipleNullableTypes(
+      arg_aNullableBool?.toDartBool(releaseOriginal: true),
+      arg_aNullableInt?.toDartInt(releaseOriginal: true),
+      arg_aNullableString?.toDartString(releaseOriginal: true),
+    );
+    return _PigeonJniBuffers.encodeOrNull(response);
   }
 
   @override
-  jni_bridge.NativeInteropAllNullableTypesWithoutRecursion?
-  echoNativeInteropAllNullableTypesWithoutRecursion(
-    jni_bridge.NativeInteropAllNullableTypesWithoutRecursion? arg_everything,
-  ) {
-    if (dartApi != null) {
-      final NativeInteropAllNullableTypesWithoutRecursion? response = dartApi!
-          .echoNativeInteropAllNullableTypesWithoutRecursion(
-            NativeInteropAllNullableTypesWithoutRecursion.fromJni(arg_everything),
-          );
-      return response?.toJni();
-    } else {
+  JByteArray? pigeon_echoNativeInteropAllNullableTypesWithoutRecursion(JByteArray pigeonVar_args) {
+    if (dartApi == null) {
       throw ArgumentError('NativeInteropFlutterIntegrationCoreApi was not registered.');
     }
+    final List<Object?> pigeonVar_decodedArgs =
+        _PigeonJniBuffers.decode(pigeonVar_args)! as List<Object?>;
+    final NativeInteropAllNullableTypesWithoutRecursion? response = dartApi!
+        .echoNativeInteropAllNullableTypesWithoutRecursion(
+          pigeonVar_decodedArgs[0] as NativeInteropAllNullableTypesWithoutRecursion?,
+        );
+    return _PigeonJniBuffers.encodeOrNull(response);
   }
 
   @override
-  jni_bridge.NativeInteropAllNullableTypesWithoutRecursion
-  sendMultipleNullableTypesWithoutRecursion(
+  JByteArray? pigeon_sendMultipleNullableTypesWithoutRecursion(
     JBoolean? arg_aNullableBool,
     JLong? arg_aNullableInt,
     JString? arg_aNullableString,
   ) {
-    if (dartApi != null) {
-      final NativeInteropAllNullableTypesWithoutRecursion response = dartApi!
-          .sendMultipleNullableTypesWithoutRecursion(
-            arg_aNullableBool?.toDartBool(releaseOriginal: true),
-            arg_aNullableInt?.toDartInt(releaseOriginal: true),
-            arg_aNullableString?.toDartString(releaseOriginal: true),
-          );
-      return response.toJni();
-    } else {
+    if (dartApi == null) {
       throw ArgumentError('NativeInteropFlutterIntegrationCoreApi was not registered.');
     }
+    final NativeInteropAllNullableTypesWithoutRecursion response = dartApi!
+        .sendMultipleNullableTypesWithoutRecursion(
+          arg_aNullableBool?.toDartBool(releaseOriginal: true),
+          arg_aNullableInt?.toDartInt(releaseOriginal: true),
+          arg_aNullableString?.toDartString(releaseOriginal: true),
+        );
+    return _PigeonJniBuffers.encodeOrNull(response);
   }
 
   @override
-  bool echoBool(bool arg_aBool) {
-    if (dartApi != null) {
-      final bool response = dartApi!.echoBool(arg_aBool);
-      return response;
-    } else {
+  bool pigeon_echoBool(bool arg_aBool) {
+    if (dartApi == null) {
       throw ArgumentError('NativeInteropFlutterIntegrationCoreApi was not registered.');
     }
+    final bool response = dartApi!.echoBool(arg_aBool);
+    return response;
   }
 
   @override
-  int echoInt(int arg_anInt) {
-    if (dartApi != null) {
-      final int response = dartApi!.echoInt(arg_anInt);
-      return response;
-    } else {
+  int pigeon_echoInt(int arg_anInt) {
+    if (dartApi == null) {
       throw ArgumentError('NativeInteropFlutterIntegrationCoreApi was not registered.');
     }
+    final int response = dartApi!.echoInt(arg_anInt);
+    return response;
   }
 
   @override
-  double echoDouble(double arg_aDouble) {
-    if (dartApi != null) {
-      final double response = dartApi!.echoDouble(arg_aDouble);
-      return response;
-    } else {
+  double pigeon_echoDouble(double arg_aDouble) {
+    if (dartApi == null) {
       throw ArgumentError('NativeInteropFlutterIntegrationCoreApi was not registered.');
     }
+    final double response = dartApi!.echoDouble(arg_aDouble);
+    return response;
   }
 
   @override
-  JString echoString(JString arg_aString) {
-    if (dartApi != null) {
-      final String response = dartApi!.echoString(arg_aString.toDartString(releaseOriginal: true));
+  JString pigeon_echoString(JString arg_aString) {
+    if (dartApi == null) {
+      throw ArgumentError('NativeInteropFlutterIntegrationCoreApi was not registered.');
+    }
+    final String response = dartApi!.echoString(arg_aString.toDartString(releaseOriginal: true));
+    return _PigeonJniCodec.writeValue<JString>(response);
+  }
+
+  @override
+  JByteArray pigeon_echoUint8List(JByteArray arg_list) {
+    if (dartApi == null) {
+      throw ArgumentError('NativeInteropFlutterIntegrationCoreApi was not registered.');
+    }
+    final Uint8List response = dartApi!.echoUint8List(_jByteArrayToDart(arg_list, release: true)!);
+    return _PigeonJniCodec.writeValue<JByteArray>(response);
+  }
+
+  @override
+  JIntArray pigeon_echoInt32List(JIntArray arg_list) {
+    if (dartApi == null) {
+      throw ArgumentError('NativeInteropFlutterIntegrationCoreApi was not registered.');
+    }
+    final Int32List response = dartApi!.echoInt32List(_jIntArrayToDart(arg_list, release: true)!);
+    return _PigeonJniCodec.writeValue<JIntArray>(response);
+  }
+
+  @override
+  JLongArray pigeon_echoInt64List(JLongArray arg_list) {
+    if (dartApi == null) {
+      throw ArgumentError('NativeInteropFlutterIntegrationCoreApi was not registered.');
+    }
+    final Int64List response = dartApi!.echoInt64List(_jLongArrayToDart(arg_list, release: true)!);
+    return _PigeonJniCodec.writeValue<JLongArray>(response);
+  }
+
+  @override
+  JDoubleArray pigeon_echoFloat64List(JDoubleArray arg_list) {
+    if (dartApi == null) {
+      throw ArgumentError('NativeInteropFlutterIntegrationCoreApi was not registered.');
+    }
+    final Float64List response = dartApi!.echoFloat64List(
+      _jDoubleArrayToDart(arg_list, release: true)!,
+    );
+    return _PigeonJniCodec.writeValue<JDoubleArray>(response);
+  }
+
+  @override
+  JByteArray? pigeon_echoList(JByteArray pigeonVar_args) {
+    if (dartApi == null) {
+      throw ArgumentError('NativeInteropFlutterIntegrationCoreApi was not registered.');
+    }
+    final List<Object?> pigeonVar_decodedArgs =
+        _PigeonJniBuffers.decode(pigeonVar_args)! as List<Object?>;
+    final List<Object?> response = dartApi!.echoList(pigeonVar_decodedArgs[0]! as List<Object?>);
+    return _PigeonJniBuffers.encodeOrNull(response);
+  }
+
+  @override
+  JByteArray? pigeon_echoEnumList(JByteArray pigeonVar_args) {
+    if (dartApi == null) {
+      throw ArgumentError('NativeInteropFlutterIntegrationCoreApi was not registered.');
+    }
+    final List<Object?> pigeonVar_decodedArgs =
+        _PigeonJniBuffers.decode(pigeonVar_args)! as List<Object?>;
+    final List<NativeInteropAnEnum?> response = dartApi!.echoEnumList(
+      (pigeonVar_decodedArgs[0]! as List<Object?>).cast<NativeInteropAnEnum?>(),
+    );
+    return _PigeonJniBuffers.encodeOrNull(response);
+  }
+
+  @override
+  JByteArray? pigeon_echoClassList(JByteArray pigeonVar_args) {
+    if (dartApi == null) {
+      throw ArgumentError('NativeInteropFlutterIntegrationCoreApi was not registered.');
+    }
+    final List<Object?> pigeonVar_decodedArgs =
+        _PigeonJniBuffers.decode(pigeonVar_args)! as List<Object?>;
+    final List<NativeInteropAllNullableTypes?> response = dartApi!.echoClassList(
+      (pigeonVar_decodedArgs[0]! as List<Object?>).cast<NativeInteropAllNullableTypes?>(),
+    );
+    return _PigeonJniBuffers.encodeOrNull(response);
+  }
+
+  @override
+  JByteArray? pigeon_echoNonNullEnumList(JByteArray pigeonVar_args) {
+    if (dartApi == null) {
+      throw ArgumentError('NativeInteropFlutterIntegrationCoreApi was not registered.');
+    }
+    final List<Object?> pigeonVar_decodedArgs =
+        _PigeonJniBuffers.decode(pigeonVar_args)! as List<Object?>;
+    final List<NativeInteropAnEnum> response = dartApi!.echoNonNullEnumList(
+      (pigeonVar_decodedArgs[0]! as List<Object?>).cast<NativeInteropAnEnum>(),
+    );
+    return _PigeonJniBuffers.encodeOrNull(response);
+  }
+
+  @override
+  JByteArray? pigeon_echoNonNullClassList(JByteArray pigeonVar_args) {
+    if (dartApi == null) {
+      throw ArgumentError('NativeInteropFlutterIntegrationCoreApi was not registered.');
+    }
+    final List<Object?> pigeonVar_decodedArgs =
+        _PigeonJniBuffers.decode(pigeonVar_args)! as List<Object?>;
+    final List<NativeInteropAllNullableTypes> response = dartApi!.echoNonNullClassList(
+      (pigeonVar_decodedArgs[0]! as List<Object?>).cast<NativeInteropAllNullableTypes>(),
+    );
+    return _PigeonJniBuffers.encodeOrNull(response);
+  }
+
+  @override
+  JByteArray? pigeon_echoMap(JByteArray pigeonVar_args) {
+    if (dartApi == null) {
+      throw ArgumentError('NativeInteropFlutterIntegrationCoreApi was not registered.');
+    }
+    final List<Object?> pigeonVar_decodedArgs =
+        _PigeonJniBuffers.decode(pigeonVar_args)! as List<Object?>;
+    final Map<Object?, Object?> response = dartApi!.echoMap(
+      pigeonVar_decodedArgs[0]! as Map<Object?, Object?>,
+    );
+    return _PigeonJniBuffers.encodeOrNull(response);
+  }
+
+  @override
+  JByteArray? pigeon_echoStringMap(JByteArray pigeonVar_args) {
+    if (dartApi == null) {
+      throw ArgumentError('NativeInteropFlutterIntegrationCoreApi was not registered.');
+    }
+    final List<Object?> pigeonVar_decodedArgs =
+        _PigeonJniBuffers.decode(pigeonVar_args)! as List<Object?>;
+    final Map<String?, String?> response = dartApi!.echoStringMap(
+      (pigeonVar_decodedArgs[0]! as Map<Object?, Object?>).cast<String?, String?>(),
+    );
+    return _PigeonJniBuffers.encodeOrNull(response);
+  }
+
+  @override
+  JByteArray? pigeon_echoIntMap(JByteArray pigeonVar_args) {
+    if (dartApi == null) {
+      throw ArgumentError('NativeInteropFlutterIntegrationCoreApi was not registered.');
+    }
+    final List<Object?> pigeonVar_decodedArgs =
+        _PigeonJniBuffers.decode(pigeonVar_args)! as List<Object?>;
+    final Map<int?, int?> response = dartApi!.echoIntMap(
+      (pigeonVar_decodedArgs[0]! as Map<Object?, Object?>).cast<int?, int?>(),
+    );
+    return _PigeonJniBuffers.encodeOrNull(response);
+  }
+
+  @override
+  JByteArray? pigeon_echoEnumMap(JByteArray pigeonVar_args) {
+    if (dartApi == null) {
+      throw ArgumentError('NativeInteropFlutterIntegrationCoreApi was not registered.');
+    }
+    final List<Object?> pigeonVar_decodedArgs =
+        _PigeonJniBuffers.decode(pigeonVar_args)! as List<Object?>;
+    final Map<NativeInteropAnEnum?, NativeInteropAnEnum?> response = dartApi!.echoEnumMap(
+      (pigeonVar_decodedArgs[0]! as Map<Object?, Object?>)
+          .cast<NativeInteropAnEnum?, NativeInteropAnEnum?>(),
+    );
+    return _PigeonJniBuffers.encodeOrNull(response);
+  }
+
+  @override
+  JByteArray? pigeon_echoClassMap(JByteArray pigeonVar_args) {
+    if (dartApi == null) {
+      throw ArgumentError('NativeInteropFlutterIntegrationCoreApi was not registered.');
+    }
+    final List<Object?> pigeonVar_decodedArgs =
+        _PigeonJniBuffers.decode(pigeonVar_args)! as List<Object?>;
+    final Map<int?, NativeInteropAllNullableTypes?> response = dartApi!.echoClassMap(
+      (pigeonVar_decodedArgs[0]! as Map<Object?, Object?>)
+          .cast<int?, NativeInteropAllNullableTypes?>(),
+    );
+    return _PigeonJniBuffers.encodeOrNull(response);
+  }
+
+  @override
+  JByteArray? pigeon_echoNonNullStringMap(JByteArray pigeonVar_args) {
+    if (dartApi == null) {
+      throw ArgumentError('NativeInteropFlutterIntegrationCoreApi was not registered.');
+    }
+    final List<Object?> pigeonVar_decodedArgs =
+        _PigeonJniBuffers.decode(pigeonVar_args)! as List<Object?>;
+    final Map<String, String> response = dartApi!.echoNonNullStringMap(
+      (pigeonVar_decodedArgs[0]! as Map<Object?, Object?>).cast<String, String>(),
+    );
+    return _PigeonJniBuffers.encodeOrNull(response);
+  }
+
+  @override
+  JByteArray? pigeon_echoNonNullIntMap(JByteArray pigeonVar_args) {
+    if (dartApi == null) {
+      throw ArgumentError('NativeInteropFlutterIntegrationCoreApi was not registered.');
+    }
+    final List<Object?> pigeonVar_decodedArgs =
+        _PigeonJniBuffers.decode(pigeonVar_args)! as List<Object?>;
+    final Map<int, int> response = dartApi!.echoNonNullIntMap(
+      (pigeonVar_decodedArgs[0]! as Map<Object?, Object?>).cast<int, int>(),
+    );
+    return _PigeonJniBuffers.encodeOrNull(response);
+  }
+
+  @override
+  JByteArray? pigeon_echoNonNullEnumMap(JByteArray pigeonVar_args) {
+    if (dartApi == null) {
+      throw ArgumentError('NativeInteropFlutterIntegrationCoreApi was not registered.');
+    }
+    final List<Object?> pigeonVar_decodedArgs =
+        _PigeonJniBuffers.decode(pigeonVar_args)! as List<Object?>;
+    final Map<NativeInteropAnEnum, NativeInteropAnEnum> response = dartApi!.echoNonNullEnumMap(
+      (pigeonVar_decodedArgs[0]! as Map<Object?, Object?>)
+          .cast<NativeInteropAnEnum, NativeInteropAnEnum>(),
+    );
+    return _PigeonJniBuffers.encodeOrNull(response);
+  }
+
+  @override
+  JByteArray? pigeon_echoNonNullClassMap(JByteArray pigeonVar_args) {
+    if (dartApi == null) {
+      throw ArgumentError('NativeInteropFlutterIntegrationCoreApi was not registered.');
+    }
+    final List<Object?> pigeonVar_decodedArgs =
+        _PigeonJniBuffers.decode(pigeonVar_args)! as List<Object?>;
+    final Map<int, NativeInteropAllNullableTypes> response = dartApi!.echoNonNullClassMap(
+      (pigeonVar_decodedArgs[0]! as Map<Object?, Object?>)
+          .cast<int, NativeInteropAllNullableTypes>(),
+    );
+    return _PigeonJniBuffers.encodeOrNull(response);
+  }
+
+  @override
+  int pigeon_echoEnum(int arg_anEnum) {
+    if (dartApi == null) {
+      throw ArgumentError('NativeInteropFlutterIntegrationCoreApi was not registered.');
+    }
+    final NativeInteropAnEnum response = dartApi!.echoEnum(NativeInteropAnEnum.values[arg_anEnum]);
+    return response.index;
+  }
+
+  @override
+  int pigeon_echoNativeInteropAnotherEnum(int arg_anotherEnum) {
+    if (dartApi == null) {
+      throw ArgumentError('NativeInteropFlutterIntegrationCoreApi was not registered.');
+    }
+    final NativeInteropAnotherEnum response = dartApi!.echoNativeInteropAnotherEnum(
+      NativeInteropAnotherEnum.values[arg_anotherEnum],
+    );
+    return response.index;
+  }
+
+  @override
+  JBoolean? pigeon_echoNullableBool(JBoolean? arg_aBool) {
+    if (dartApi == null) {
+      throw ArgumentError('NativeInteropFlutterIntegrationCoreApi was not registered.');
+    }
+    final bool? response = dartApi!.echoNullableBool(arg_aBool?.toDartBool(releaseOriginal: true));
+    return _PigeonJniCodec.writeValue<JBoolean?>(response);
+  }
+
+  @override
+  JLong? pigeon_echoNullableInt(JLong? arg_anInt) {
+    if (dartApi == null) {
+      throw ArgumentError('NativeInteropFlutterIntegrationCoreApi was not registered.');
+    }
+    final int? response = dartApi!.echoNullableInt(arg_anInt?.toDartInt(releaseOriginal: true));
+    return _PigeonJniCodec.writeValue<JLong?>(response);
+  }
+
+  @override
+  JDouble? pigeon_echoNullableDouble(JDouble? arg_aDouble) {
+    if (dartApi == null) {
+      throw ArgumentError('NativeInteropFlutterIntegrationCoreApi was not registered.');
+    }
+    final double? response = dartApi!.echoNullableDouble(
+      arg_aDouble?.toDartDouble(releaseOriginal: true),
+    );
+    return _PigeonJniCodec.writeValue<JDouble?>(response);
+  }
+
+  @override
+  JString? pigeon_echoNullableString(JString? arg_aString) {
+    if (dartApi == null) {
+      throw ArgumentError('NativeInteropFlutterIntegrationCoreApi was not registered.');
+    }
+    final String? response = dartApi!.echoNullableString(
+      arg_aString?.toDartString(releaseOriginal: true),
+    );
+    return _PigeonJniCodec.writeValue<JString?>(response);
+  }
+
+  @override
+  JByteArray? pigeon_echoNullableUint8List(JByteArray? arg_list) {
+    if (dartApi == null) {
+      throw ArgumentError('NativeInteropFlutterIntegrationCoreApi was not registered.');
+    }
+    final Uint8List? response = dartApi!.echoNullableUint8List(
+      _jByteArrayToDart(arg_list, release: true),
+    );
+    return _PigeonJniCodec.writeValue<JByteArray?>(response);
+  }
+
+  @override
+  JIntArray? pigeon_echoNullableInt32List(JIntArray? arg_list) {
+    if (dartApi == null) {
+      throw ArgumentError('NativeInteropFlutterIntegrationCoreApi was not registered.');
+    }
+    final Int32List? response = dartApi!.echoNullableInt32List(
+      _jIntArrayToDart(arg_list, release: true),
+    );
+    return _PigeonJniCodec.writeValue<JIntArray?>(response);
+  }
+
+  @override
+  JLongArray? pigeon_echoNullableInt64List(JLongArray? arg_list) {
+    if (dartApi == null) {
+      throw ArgumentError('NativeInteropFlutterIntegrationCoreApi was not registered.');
+    }
+    final Int64List? response = dartApi!.echoNullableInt64List(
+      _jLongArrayToDart(arg_list, release: true),
+    );
+    return _PigeonJniCodec.writeValue<JLongArray?>(response);
+  }
+
+  @override
+  JDoubleArray? pigeon_echoNullableFloat64List(JDoubleArray? arg_list) {
+    if (dartApi == null) {
+      throw ArgumentError('NativeInteropFlutterIntegrationCoreApi was not registered.');
+    }
+    final Float64List? response = dartApi!.echoNullableFloat64List(
+      _jDoubleArrayToDart(arg_list, release: true),
+    );
+    return _PigeonJniCodec.writeValue<JDoubleArray?>(response);
+  }
+
+  @override
+  JByteArray? pigeon_echoNullableList(JByteArray pigeonVar_args) {
+    if (dartApi == null) {
+      throw ArgumentError('NativeInteropFlutterIntegrationCoreApi was not registered.');
+    }
+    final List<Object?> pigeonVar_decodedArgs =
+        _PigeonJniBuffers.decode(pigeonVar_args)! as List<Object?>;
+    final List<Object?>? response = dartApi!.echoNullableList(
+      pigeonVar_decodedArgs[0] as List<Object?>?,
+    );
+    return _PigeonJniBuffers.encodeOrNull(response);
+  }
+
+  @override
+  JByteArray? pigeon_echoNullableEnumList(JByteArray pigeonVar_args) {
+    if (dartApi == null) {
+      throw ArgumentError('NativeInteropFlutterIntegrationCoreApi was not registered.');
+    }
+    final List<Object?> pigeonVar_decodedArgs =
+        _PigeonJniBuffers.decode(pigeonVar_args)! as List<Object?>;
+    final List<NativeInteropAnEnum?>? response = dartApi!.echoNullableEnumList(
+      (pigeonVar_decodedArgs[0] as List<Object?>?)?.cast<NativeInteropAnEnum?>(),
+    );
+    return _PigeonJniBuffers.encodeOrNull(response);
+  }
+
+  @override
+  JByteArray? pigeon_echoNullableClassList(JByteArray pigeonVar_args) {
+    if (dartApi == null) {
+      throw ArgumentError('NativeInteropFlutterIntegrationCoreApi was not registered.');
+    }
+    final List<Object?> pigeonVar_decodedArgs =
+        _PigeonJniBuffers.decode(pigeonVar_args)! as List<Object?>;
+    final List<NativeInteropAllNullableTypes?>? response = dartApi!.echoNullableClassList(
+      (pigeonVar_decodedArgs[0] as List<Object?>?)?.cast<NativeInteropAllNullableTypes?>(),
+    );
+    return _PigeonJniBuffers.encodeOrNull(response);
+  }
+
+  @override
+  JByteArray? pigeon_echoNullableNonNullEnumList(JByteArray pigeonVar_args) {
+    if (dartApi == null) {
+      throw ArgumentError('NativeInteropFlutterIntegrationCoreApi was not registered.');
+    }
+    final List<Object?> pigeonVar_decodedArgs =
+        _PigeonJniBuffers.decode(pigeonVar_args)! as List<Object?>;
+    final List<NativeInteropAnEnum>? response = dartApi!.echoNullableNonNullEnumList(
+      (pigeonVar_decodedArgs[0] as List<Object?>?)?.cast<NativeInteropAnEnum>(),
+    );
+    return _PigeonJniBuffers.encodeOrNull(response);
+  }
+
+  @override
+  JByteArray? pigeon_echoNullableNonNullClassList(JByteArray pigeonVar_args) {
+    if (dartApi == null) {
+      throw ArgumentError('NativeInteropFlutterIntegrationCoreApi was not registered.');
+    }
+    final List<Object?> pigeonVar_decodedArgs =
+        _PigeonJniBuffers.decode(pigeonVar_args)! as List<Object?>;
+    final List<NativeInteropAllNullableTypes>? response = dartApi!.echoNullableNonNullClassList(
+      (pigeonVar_decodedArgs[0] as List<Object?>?)?.cast<NativeInteropAllNullableTypes>(),
+    );
+    return _PigeonJniBuffers.encodeOrNull(response);
+  }
+
+  @override
+  JByteArray? pigeon_echoNullableMap(JByteArray pigeonVar_args) {
+    if (dartApi == null) {
+      throw ArgumentError('NativeInteropFlutterIntegrationCoreApi was not registered.');
+    }
+    final List<Object?> pigeonVar_decodedArgs =
+        _PigeonJniBuffers.decode(pigeonVar_args)! as List<Object?>;
+    final Map<Object?, Object?>? response = dartApi!.echoNullableMap(
+      pigeonVar_decodedArgs[0] as Map<Object?, Object?>?,
+    );
+    return _PigeonJniBuffers.encodeOrNull(response);
+  }
+
+  @override
+  JByteArray? pigeon_echoNullableStringMap(JByteArray pigeonVar_args) {
+    if (dartApi == null) {
+      throw ArgumentError('NativeInteropFlutterIntegrationCoreApi was not registered.');
+    }
+    final List<Object?> pigeonVar_decodedArgs =
+        _PigeonJniBuffers.decode(pigeonVar_args)! as List<Object?>;
+    final Map<String?, String?>? response = dartApi!.echoNullableStringMap(
+      (pigeonVar_decodedArgs[0] as Map<Object?, Object?>?)?.cast<String?, String?>(),
+    );
+    return _PigeonJniBuffers.encodeOrNull(response);
+  }
+
+  @override
+  JByteArray? pigeon_echoNullableIntMap(JByteArray pigeonVar_args) {
+    if (dartApi == null) {
+      throw ArgumentError('NativeInteropFlutterIntegrationCoreApi was not registered.');
+    }
+    final List<Object?> pigeonVar_decodedArgs =
+        _PigeonJniBuffers.decode(pigeonVar_args)! as List<Object?>;
+    final Map<int?, int?>? response = dartApi!.echoNullableIntMap(
+      (pigeonVar_decodedArgs[0] as Map<Object?, Object?>?)?.cast<int?, int?>(),
+    );
+    return _PigeonJniBuffers.encodeOrNull(response);
+  }
+
+  @override
+  JByteArray? pigeon_echoNullableEnumMap(JByteArray pigeonVar_args) {
+    if (dartApi == null) {
+      throw ArgumentError('NativeInteropFlutterIntegrationCoreApi was not registered.');
+    }
+    final List<Object?> pigeonVar_decodedArgs =
+        _PigeonJniBuffers.decode(pigeonVar_args)! as List<Object?>;
+    final Map<NativeInteropAnEnum?, NativeInteropAnEnum?>? response = dartApi!.echoNullableEnumMap(
+      (pigeonVar_decodedArgs[0] as Map<Object?, Object?>?)
+          ?.cast<NativeInteropAnEnum?, NativeInteropAnEnum?>(),
+    );
+    return _PigeonJniBuffers.encodeOrNull(response);
+  }
+
+  @override
+  JByteArray? pigeon_echoNullableClassMap(JByteArray pigeonVar_args) {
+    if (dartApi == null) {
+      throw ArgumentError('NativeInteropFlutterIntegrationCoreApi was not registered.');
+    }
+    final List<Object?> pigeonVar_decodedArgs =
+        _PigeonJniBuffers.decode(pigeonVar_args)! as List<Object?>;
+    final Map<int?, NativeInteropAllNullableTypes?>? response = dartApi!.echoNullableClassMap(
+      (pigeonVar_decodedArgs[0] as Map<Object?, Object?>?)
+          ?.cast<int?, NativeInteropAllNullableTypes?>(),
+    );
+    return _PigeonJniBuffers.encodeOrNull(response);
+  }
+
+  @override
+  JByteArray? pigeon_echoNullableNonNullStringMap(JByteArray pigeonVar_args) {
+    if (dartApi == null) {
+      throw ArgumentError('NativeInteropFlutterIntegrationCoreApi was not registered.');
+    }
+    final List<Object?> pigeonVar_decodedArgs =
+        _PigeonJniBuffers.decode(pigeonVar_args)! as List<Object?>;
+    final Map<String, String>? response = dartApi!.echoNullableNonNullStringMap(
+      (pigeonVar_decodedArgs[0] as Map<Object?, Object?>?)?.cast<String, String>(),
+    );
+    return _PigeonJniBuffers.encodeOrNull(response);
+  }
+
+  @override
+  JByteArray? pigeon_echoNullableNonNullIntMap(JByteArray pigeonVar_args) {
+    if (dartApi == null) {
+      throw ArgumentError('NativeInteropFlutterIntegrationCoreApi was not registered.');
+    }
+    final List<Object?> pigeonVar_decodedArgs =
+        _PigeonJniBuffers.decode(pigeonVar_args)! as List<Object?>;
+    final Map<int, int>? response = dartApi!.echoNullableNonNullIntMap(
+      (pigeonVar_decodedArgs[0] as Map<Object?, Object?>?)?.cast<int, int>(),
+    );
+    return _PigeonJniBuffers.encodeOrNull(response);
+  }
+
+  @override
+  JByteArray? pigeon_echoNullableNonNullEnumMap(JByteArray pigeonVar_args) {
+    if (dartApi == null) {
+      throw ArgumentError('NativeInteropFlutterIntegrationCoreApi was not registered.');
+    }
+    final List<Object?> pigeonVar_decodedArgs =
+        _PigeonJniBuffers.decode(pigeonVar_args)! as List<Object?>;
+    final Map<NativeInteropAnEnum, NativeInteropAnEnum>? response = dartApi!
+        .echoNullableNonNullEnumMap(
+          (pigeonVar_decodedArgs[0] as Map<Object?, Object?>?)
+              ?.cast<NativeInteropAnEnum, NativeInteropAnEnum>(),
+        );
+    return _PigeonJniBuffers.encodeOrNull(response);
+  }
+
+  @override
+  JByteArray? pigeon_echoNullableNonNullClassMap(JByteArray pigeonVar_args) {
+    if (dartApi == null) {
+      throw ArgumentError('NativeInteropFlutterIntegrationCoreApi was not registered.');
+    }
+    final List<Object?> pigeonVar_decodedArgs =
+        _PigeonJniBuffers.decode(pigeonVar_args)! as List<Object?>;
+    final Map<int, NativeInteropAllNullableTypes>? response = dartApi!.echoNullableNonNullClassMap(
+      (pigeonVar_decodedArgs[0] as Map<Object?, Object?>?)
+          ?.cast<int, NativeInteropAllNullableTypes>(),
+    );
+    return _PigeonJniBuffers.encodeOrNull(response);
+  }
+
+  @override
+  int pigeon_echoNullableEnum(int arg_anEnum) {
+    if (dartApi == null) {
+      throw ArgumentError('NativeInteropFlutterIntegrationCoreApi was not registered.');
+    }
+    final NativeInteropAnEnum? response = dartApi!.echoNullableEnum(
+      arg_anEnum == -1 ? null : NativeInteropAnEnum.values[arg_anEnum],
+    );
+    return response?.index ?? -1;
+  }
+
+  @override
+  int pigeon_echoAnotherNullableEnum(int arg_anotherEnum) {
+    if (dartApi == null) {
+      throw ArgumentError('NativeInteropFlutterIntegrationCoreApi was not registered.');
+    }
+    final NativeInteropAnotherEnum? response = dartApi!.echoAnotherNullableEnum(
+      arg_anotherEnum == -1 ? null : NativeInteropAnotherEnum.values[arg_anotherEnum],
+    );
+    return response?.index ?? -1;
+  }
+
+  @override
+  Future<JObject> pigeon_noopAsync() {
+    if (dartApi == null) {
+      throw ArgumentError('NativeInteropFlutterIntegrationCoreApi was not registered.');
+    }
+    return dartApi!.noopAsync().then((response) {
+      return _PigeonJniCodec._kotlinUnit;
+    });
+  }
+
+  @override
+  Future<JByteArray?> pigeon_throwFlutterErrorAsync() {
+    if (dartApi == null) {
+      throw ArgumentError('NativeInteropFlutterIntegrationCoreApi was not registered.');
+    }
+    return dartApi!.throwFlutterErrorAsync().then((response) {
+      return _PigeonJniBuffers.encodeOrNull(response);
+    });
+  }
+
+  @override
+  Future<JByteArray?> pigeon_echoAsyncNativeInteropAllTypes(JByteArray pigeonVar_args) {
+    if (dartApi == null) {
+      throw ArgumentError('NativeInteropFlutterIntegrationCoreApi was not registered.');
+    }
+    final List<Object?> pigeonVar_decodedArgs =
+        _PigeonJniBuffers.decode(pigeonVar_args)! as List<Object?>;
+    return dartApi!
+        .echoAsyncNativeInteropAllTypes(pigeonVar_decodedArgs[0]! as NativeInteropAllTypes)
+        .then((response) {
+          return _PigeonJniBuffers.encodeOrNull(response);
+        });
+  }
+
+  @override
+  Future<JByteArray?> pigeon_echoAsyncNullableNativeInteropAllNullableTypes(
+    JByteArray pigeonVar_args,
+  ) {
+    if (dartApi == null) {
+      throw ArgumentError('NativeInteropFlutterIntegrationCoreApi was not registered.');
+    }
+    final List<Object?> pigeonVar_decodedArgs =
+        _PigeonJniBuffers.decode(pigeonVar_args)! as List<Object?>;
+    return dartApi!
+        .echoAsyncNullableNativeInteropAllNullableTypes(
+          pigeonVar_decodedArgs[0] as NativeInteropAllNullableTypes?,
+        )
+        .then((response) {
+          return _PigeonJniBuffers.encodeOrNull(response);
+        });
+  }
+
+  @override
+  Future<JByteArray?> pigeon_echoAsyncNullableNativeInteropAllNullableTypesWithoutRecursion(
+    JByteArray pigeonVar_args,
+  ) {
+    if (dartApi == null) {
+      throw ArgumentError('NativeInteropFlutterIntegrationCoreApi was not registered.');
+    }
+    final List<Object?> pigeonVar_decodedArgs =
+        _PigeonJniBuffers.decode(pigeonVar_args)! as List<Object?>;
+    return dartApi!
+        .echoAsyncNullableNativeInteropAllNullableTypesWithoutRecursion(
+          pigeonVar_decodedArgs[0] as NativeInteropAllNullableTypesWithoutRecursion?,
+        )
+        .then((response) {
+          return _PigeonJniBuffers.encodeOrNull(response);
+        });
+  }
+
+  @override
+  Future<JBoolean> pigeon_echoAsyncBool(bool arg_aBool) {
+    if (dartApi == null) {
+      throw ArgumentError('NativeInteropFlutterIntegrationCoreApi was not registered.');
+    }
+    return dartApi!.echoAsyncBool(arg_aBool).then((response) {
+      return _PigeonJniCodec.writeValue<JBoolean>(response);
+    });
+  }
+
+  @override
+  Future<JLong> pigeon_echoAsyncInt(int arg_anInt) {
+    if (dartApi == null) {
+      throw ArgumentError('NativeInteropFlutterIntegrationCoreApi was not registered.');
+    }
+    return dartApi!.echoAsyncInt(arg_anInt).then((response) {
+      return _PigeonJniCodec.writeValue<JLong>(response);
+    });
+  }
+
+  @override
+  Future<JDouble> pigeon_echoAsyncDouble(double arg_aDouble) {
+    if (dartApi == null) {
+      throw ArgumentError('NativeInteropFlutterIntegrationCoreApi was not registered.');
+    }
+    return dartApi!.echoAsyncDouble(arg_aDouble).then((response) {
+      return _PigeonJniCodec.writeValue<JDouble>(response);
+    });
+  }
+
+  @override
+  Future<JString> pigeon_echoAsyncString(JString arg_aString) {
+    if (dartApi == null) {
+      throw ArgumentError('NativeInteropFlutterIntegrationCoreApi was not registered.');
+    }
+    return dartApi!.echoAsyncString(arg_aString.toDartString(releaseOriginal: true)).then((
+      response,
+    ) {
       return _PigeonJniCodec.writeValue<JString>(response);
-    } else {
-      throw ArgumentError('NativeInteropFlutterIntegrationCoreApi was not registered.');
-    }
+    });
   }
 
   @override
-  JByteArray echoUint8List(JByteArray arg_list) {
-    if (dartApi != null) {
-      final Uint8List response = dartApi!.echoUint8List(
-        _PigeonJniCodec.readValue(arg_list)! as Uint8List,
-      );
+  Future<JByteArray> pigeon_echoAsyncUint8List(JByteArray arg_list) {
+    if (dartApi == null) {
+      throw ArgumentError('NativeInteropFlutterIntegrationCoreApi was not registered.');
+    }
+    return dartApi!.echoAsyncUint8List(_jByteArrayToDart(arg_list, release: true)!).then((
+      response,
+    ) {
       return _PigeonJniCodec.writeValue<JByteArray>(response);
-    } else {
-      throw ArgumentError('NativeInteropFlutterIntegrationCoreApi was not registered.');
-    }
+    });
   }
 
   @override
-  JIntArray echoInt32List(JIntArray arg_list) {
-    if (dartApi != null) {
-      final Int32List response = dartApi!.echoInt32List(
-        _PigeonJniCodec.readValue(arg_list)! as Int32List,
-      );
+  Future<JIntArray> pigeon_echoAsyncInt32List(JIntArray arg_list) {
+    if (dartApi == null) {
+      throw ArgumentError('NativeInteropFlutterIntegrationCoreApi was not registered.');
+    }
+    return dartApi!.echoAsyncInt32List(_jIntArrayToDart(arg_list, release: true)!).then((response) {
       return _PigeonJniCodec.writeValue<JIntArray>(response);
-    } else {
-      throw ArgumentError('NativeInteropFlutterIntegrationCoreApi was not registered.');
-    }
+    });
   }
 
   @override
-  JLongArray echoInt64List(JLongArray arg_list) {
-    if (dartApi != null) {
-      final Int64List response = dartApi!.echoInt64List(
-        _PigeonJniCodec.readValue(arg_list)! as Int64List,
-      );
+  Future<JLongArray> pigeon_echoAsyncInt64List(JLongArray arg_list) {
+    if (dartApi == null) {
+      throw ArgumentError('NativeInteropFlutterIntegrationCoreApi was not registered.');
+    }
+    return dartApi!.echoAsyncInt64List(_jLongArrayToDart(arg_list, release: true)!).then((
+      response,
+    ) {
       return _PigeonJniCodec.writeValue<JLongArray>(response);
-    } else {
-      throw ArgumentError('NativeInteropFlutterIntegrationCoreApi was not registered.');
-    }
+    });
   }
 
   @override
-  JDoubleArray echoFloat64List(JDoubleArray arg_list) {
-    if (dartApi != null) {
-      final Float64List response = dartApi!.echoFloat64List(
-        _PigeonJniCodec.readValue(arg_list)! as Float64List,
-      );
+  Future<JDoubleArray> pigeon_echoAsyncFloat64List(JDoubleArray arg_list) {
+    if (dartApi == null) {
+      throw ArgumentError('NativeInteropFlutterIntegrationCoreApi was not registered.');
+    }
+    return dartApi!.echoAsyncFloat64List(_jDoubleArrayToDart(arg_list, release: true)!).then((
+      response,
+    ) {
       return _PigeonJniCodec.writeValue<JDoubleArray>(response);
-    } else {
-      throw ArgumentError('NativeInteropFlutterIntegrationCoreApi was not registered.');
-    }
+    });
   }
 
   @override
-  JList<JObject?> echoList(JList<JObject?> arg_list) {
-    if (dartApi != null) {
-      final List<Object?> response = dartApi!.echoList(
-        (_PigeonJniCodec.readValue(arg_list)! as List<Object?>).cast<Object?>(),
-      );
-      return _PigeonJniCodec.writeValue<JList<JObject?>>(response);
-    } else {
+  Future<JByteArray?> pigeon_echoAsyncObject(JByteArray pigeonVar_args) {
+    if (dartApi == null) {
       throw ArgumentError('NativeInteropFlutterIntegrationCoreApi was not registered.');
     }
+    final List<Object?> pigeonVar_decodedArgs =
+        _PigeonJniBuffers.decode(pigeonVar_args)! as List<Object?>;
+    return dartApi!.echoAsyncObject(pigeonVar_decodedArgs[0]!).then((response) {
+      return _PigeonJniBuffers.encodeOrNull(response);
+    });
   }
 
   @override
-  JList<jni_bridge.NativeInteropAnEnum?> echoEnumList(
-    JList<jni_bridge.NativeInteropAnEnum?> arg_enumList,
-  ) {
-    if (dartApi != null) {
-      final List<NativeInteropAnEnum?> response = dartApi!.echoEnumList(
-        (_PigeonJniCodec.readValue(arg_enumList)! as List<Object?>).cast<NativeInteropAnEnum?>(),
-      );
-      return _PigeonJniCodec.writeValue<JList<jni_bridge.NativeInteropAnEnum?>>(response);
-    } else {
+  Future<JByteArray?> pigeon_echoAsyncList(JByteArray pigeonVar_args) {
+    if (dartApi == null) {
       throw ArgumentError('NativeInteropFlutterIntegrationCoreApi was not registered.');
     }
+    final List<Object?> pigeonVar_decodedArgs =
+        _PigeonJniBuffers.decode(pigeonVar_args)! as List<Object?>;
+    return dartApi!.echoAsyncList(pigeonVar_decodedArgs[0]! as List<Object?>).then((response) {
+      return _PigeonJniBuffers.encodeOrNull(response);
+    });
   }
 
   @override
-  JList<jni_bridge.NativeInteropAllNullableTypes?> echoClassList(
-    JList<jni_bridge.NativeInteropAllNullableTypes?> arg_classList,
-  ) {
-    if (dartApi != null) {
-      final List<NativeInteropAllNullableTypes?> response = dartApi!.echoClassList(
-        (_PigeonJniCodec.readValue(arg_classList)! as List<Object?>)
-            .cast<NativeInteropAllNullableTypes?>(),
-      );
-      return _PigeonJniCodec.writeValue<JList<jni_bridge.NativeInteropAllNullableTypes?>>(response);
-    } else {
+  Future<JByteArray?> pigeon_echoAsyncEnumList(JByteArray pigeonVar_args) {
+    if (dartApi == null) {
       throw ArgumentError('NativeInteropFlutterIntegrationCoreApi was not registered.');
     }
+    final List<Object?> pigeonVar_decodedArgs =
+        _PigeonJniBuffers.decode(pigeonVar_args)! as List<Object?>;
+    return dartApi!
+        .echoAsyncEnumList(
+          (pigeonVar_decodedArgs[0]! as List<Object?>).cast<NativeInteropAnEnum?>(),
+        )
+        .then((response) {
+          return _PigeonJniBuffers.encodeOrNull(response);
+        });
   }
 
   @override
-  JList<jni_bridge.NativeInteropAnEnum> echoNonNullEnumList(
-    JList<jni_bridge.NativeInteropAnEnum> arg_enumList,
-  ) {
-    if (dartApi != null) {
-      final List<NativeInteropAnEnum> response = dartApi!.echoNonNullEnumList(
-        (_PigeonJniCodec.readValue(arg_enumList)! as List<Object?>).cast<NativeInteropAnEnum>(),
-      );
-      return _PigeonJniCodec.writeValue<JList<jni_bridge.NativeInteropAnEnum>>(response);
-    } else {
+  Future<JByteArray?> pigeon_echoAsyncClassList(JByteArray pigeonVar_args) {
+    if (dartApi == null) {
       throw ArgumentError('NativeInteropFlutterIntegrationCoreApi was not registered.');
     }
+    final List<Object?> pigeonVar_decodedArgs =
+        _PigeonJniBuffers.decode(pigeonVar_args)! as List<Object?>;
+    return dartApi!
+        .echoAsyncClassList(
+          (pigeonVar_decodedArgs[0]! as List<Object?>).cast<NativeInteropAllNullableTypes?>(),
+        )
+        .then((response) {
+          return _PigeonJniBuffers.encodeOrNull(response);
+        });
   }
 
   @override
-  JList<jni_bridge.NativeInteropAllNullableTypes> echoNonNullClassList(
-    JList<jni_bridge.NativeInteropAllNullableTypes> arg_classList,
-  ) {
-    if (dartApi != null) {
-      final List<NativeInteropAllNullableTypes> response = dartApi!.echoNonNullClassList(
-        (_PigeonJniCodec.readValue(arg_classList)! as List<Object?>)
-            .cast<NativeInteropAllNullableTypes>(),
-      );
-      return _PigeonJniCodec.writeValue<JList<jni_bridge.NativeInteropAllNullableTypes>>(response);
-    } else {
+  Future<JByteArray?> pigeon_echoAsyncNonNullEnumList(JByteArray pigeonVar_args) {
+    if (dartApi == null) {
       throw ArgumentError('NativeInteropFlutterIntegrationCoreApi was not registered.');
     }
+    final List<Object?> pigeonVar_decodedArgs =
+        _PigeonJniBuffers.decode(pigeonVar_args)! as List<Object?>;
+    return dartApi!
+        .echoAsyncNonNullEnumList(
+          (pigeonVar_decodedArgs[0]! as List<Object?>).cast<NativeInteropAnEnum>(),
+        )
+        .then((response) {
+          return _PigeonJniBuffers.encodeOrNull(response);
+        });
   }
 
   @override
-  JMap<JObject?, JObject?> echoMap(JMap<JObject?, JObject?> arg_map) {
-    if (dartApi != null) {
-      final Map<Object?, Object?> response = dartApi!.echoMap(
-        (_PigeonJniCodec.readValue(arg_map)! as Map<Object?, Object?>).cast<Object?, Object?>(),
-      );
-      return _PigeonJniCodec.writeValue<JMap<JObject?, JObject?>>(response);
-    } else {
+  Future<JByteArray?> pigeon_echoAsyncNonNullClassList(JByteArray pigeonVar_args) {
+    if (dartApi == null) {
       throw ArgumentError('NativeInteropFlutterIntegrationCoreApi was not registered.');
     }
+    final List<Object?> pigeonVar_decodedArgs =
+        _PigeonJniBuffers.decode(pigeonVar_args)! as List<Object?>;
+    return dartApi!
+        .echoAsyncNonNullClassList(
+          (pigeonVar_decodedArgs[0]! as List<Object?>).cast<NativeInteropAllNullableTypes>(),
+        )
+        .then((response) {
+          return _PigeonJniBuffers.encodeOrNull(response);
+        });
   }
 
   @override
-  JMap<JString?, JString?> echoStringMap(JMap<JString?, JString?> arg_stringMap) {
-    if (dartApi != null) {
-      final Map<String?, String?> response = dartApi!.echoStringMap(
-        (_PigeonJniCodec.readValue(arg_stringMap)! as Map<Object?, Object?>)
-            .cast<String?, String?>(),
-      );
-      return _PigeonJniCodec.writeValue<JMap<JString?, JString?>>(response);
-    } else {
+  Future<JByteArray?> pigeon_echoAsyncMap(JByteArray pigeonVar_args) {
+    if (dartApi == null) {
       throw ArgumentError('NativeInteropFlutterIntegrationCoreApi was not registered.');
     }
+    final List<Object?> pigeonVar_decodedArgs =
+        _PigeonJniBuffers.decode(pigeonVar_args)! as List<Object?>;
+    return dartApi!.echoAsyncMap(pigeonVar_decodedArgs[0]! as Map<Object?, Object?>).then((
+      response,
+    ) {
+      return _PigeonJniBuffers.encodeOrNull(response);
+    });
   }
 
   @override
-  JMap<JLong?, JLong?> echoIntMap(JMap<JLong?, JLong?> arg_intMap) {
-    if (dartApi != null) {
-      final Map<int?, int?> response = dartApi!.echoIntMap(
-        (_PigeonJniCodec.readValue(arg_intMap)! as Map<Object?, Object?>).cast<int?, int?>(),
-      );
-      return _PigeonJniCodec.writeValue<JMap<JLong?, JLong?>>(response);
-    } else {
+  Future<JByteArray?> pigeon_echoAsyncStringMap(JByteArray pigeonVar_args) {
+    if (dartApi == null) {
       throw ArgumentError('NativeInteropFlutterIntegrationCoreApi was not registered.');
     }
+    final List<Object?> pigeonVar_decodedArgs =
+        _PigeonJniBuffers.decode(pigeonVar_args)! as List<Object?>;
+    return dartApi!
+        .echoAsyncStringMap(
+          (pigeonVar_decodedArgs[0]! as Map<Object?, Object?>).cast<String?, String?>(),
+        )
+        .then((response) {
+          return _PigeonJniBuffers.encodeOrNull(response);
+        });
   }
 
   @override
-  JMap<jni_bridge.NativeInteropAnEnum?, jni_bridge.NativeInteropAnEnum?> echoEnumMap(
-    JMap<jni_bridge.NativeInteropAnEnum?, jni_bridge.NativeInteropAnEnum?> arg_enumMap,
-  ) {
-    if (dartApi != null) {
-      final Map<NativeInteropAnEnum?, NativeInteropAnEnum?> response = dartApi!.echoEnumMap(
-        (_PigeonJniCodec.readValue(arg_enumMap)! as Map<Object?, Object?>)
-            .cast<NativeInteropAnEnum?, NativeInteropAnEnum?>(),
-      );
-      return _PigeonJniCodec.writeValue<
-        JMap<jni_bridge.NativeInteropAnEnum?, jni_bridge.NativeInteropAnEnum?>
-      >(response);
-    } else {
+  Future<JByteArray?> pigeon_echoAsyncIntMap(JByteArray pigeonVar_args) {
+    if (dartApi == null) {
       throw ArgumentError('NativeInteropFlutterIntegrationCoreApi was not registered.');
     }
+    final List<Object?> pigeonVar_decodedArgs =
+        _PigeonJniBuffers.decode(pigeonVar_args)! as List<Object?>;
+    return dartApi!
+        .echoAsyncIntMap((pigeonVar_decodedArgs[0]! as Map<Object?, Object?>).cast<int?, int?>())
+        .then((response) {
+          return _PigeonJniBuffers.encodeOrNull(response);
+        });
   }
 
   @override
-  JMap<JLong?, jni_bridge.NativeInteropAllNullableTypes?> echoClassMap(
-    JMap<JLong?, jni_bridge.NativeInteropAllNullableTypes?> arg_classMap,
-  ) {
-    if (dartApi != null) {
-      final Map<int?, NativeInteropAllNullableTypes?> response = dartApi!.echoClassMap(
-        (_PigeonJniCodec.readValue(arg_classMap)! as Map<Object?, Object?>)
-            .cast<int?, NativeInteropAllNullableTypes?>(),
-      );
-      return _PigeonJniCodec.writeValue<JMap<JLong?, jni_bridge.NativeInteropAllNullableTypes?>>(
-        response,
-      );
-    } else {
+  Future<JByteArray?> pigeon_echoAsyncEnumMap(JByteArray pigeonVar_args) {
+    if (dartApi == null) {
       throw ArgumentError('NativeInteropFlutterIntegrationCoreApi was not registered.');
     }
+    final List<Object?> pigeonVar_decodedArgs =
+        _PigeonJniBuffers.decode(pigeonVar_args)! as List<Object?>;
+    return dartApi!
+        .echoAsyncEnumMap(
+          (pigeonVar_decodedArgs[0]! as Map<Object?, Object?>)
+              .cast<NativeInteropAnEnum?, NativeInteropAnEnum?>(),
+        )
+        .then((response) {
+          return _PigeonJniBuffers.encodeOrNull(response);
+        });
   }
 
   @override
-  JMap<JString, JString> echoNonNullStringMap(JMap<JString, JString> arg_stringMap) {
-    if (dartApi != null) {
-      final Map<String, String> response = dartApi!.echoNonNullStringMap(
-        (_PigeonJniCodec.readValue(arg_stringMap)! as Map<Object?, Object?>).cast<String, String>(),
-      );
-      return _PigeonJniCodec.writeValue<JMap<JString, JString>>(response);
-    } else {
+  Future<JByteArray?> pigeon_echoAsyncClassMap(JByteArray pigeonVar_args) {
+    if (dartApi == null) {
       throw ArgumentError('NativeInteropFlutterIntegrationCoreApi was not registered.');
     }
+    final List<Object?> pigeonVar_decodedArgs =
+        _PigeonJniBuffers.decode(pigeonVar_args)! as List<Object?>;
+    return dartApi!
+        .echoAsyncClassMap(
+          (pigeonVar_decodedArgs[0]! as Map<Object?, Object?>)
+              .cast<int?, NativeInteropAllNullableTypes?>(),
+        )
+        .then((response) {
+          return _PigeonJniBuffers.encodeOrNull(response);
+        });
   }
 
   @override
-  JMap<JLong, JLong> echoNonNullIntMap(JMap<JLong, JLong> arg_intMap) {
-    if (dartApi != null) {
-      final Map<int, int> response = dartApi!.echoNonNullIntMap(
-        (_PigeonJniCodec.readValue(arg_intMap)! as Map<Object?, Object?>).cast<int, int>(),
-      );
-      return _PigeonJniCodec.writeValue<JMap<JLong, JLong>>(response);
-    } else {
+  Future<JLong> pigeon_echoAsyncEnum(int arg_anEnum) {
+    if (dartApi == null) {
       throw ArgumentError('NativeInteropFlutterIntegrationCoreApi was not registered.');
     }
+    return dartApi!.echoAsyncEnum(NativeInteropAnEnum.values[arg_anEnum]).then((response) {
+      return JLong(response.index);
+    });
   }
 
   @override
-  JMap<jni_bridge.NativeInteropAnEnum, jni_bridge.NativeInteropAnEnum> echoNonNullEnumMap(
-    JMap<jni_bridge.NativeInteropAnEnum, jni_bridge.NativeInteropAnEnum> arg_enumMap,
-  ) {
-    if (dartApi != null) {
-      final Map<NativeInteropAnEnum, NativeInteropAnEnum> response = dartApi!.echoNonNullEnumMap(
-        (_PigeonJniCodec.readValue(arg_enumMap)! as Map<Object?, Object?>)
-            .cast<NativeInteropAnEnum, NativeInteropAnEnum>(),
-      );
-      return _PigeonJniCodec.writeValue<
-        JMap<jni_bridge.NativeInteropAnEnum, jni_bridge.NativeInteropAnEnum>
-      >(response);
-    } else {
+  Future<JLong> pigeon_echoAnotherAsyncEnum(int arg_anotherEnum) {
+    if (dartApi == null) {
       throw ArgumentError('NativeInteropFlutterIntegrationCoreApi was not registered.');
     }
+    return dartApi!.echoAnotherAsyncEnum(NativeInteropAnotherEnum.values[arg_anotherEnum]).then((
+      response,
+    ) {
+      return JLong(response.index);
+    });
   }
 
   @override
-  JMap<JLong, jni_bridge.NativeInteropAllNullableTypes> echoNonNullClassMap(
-    JMap<JLong, jni_bridge.NativeInteropAllNullableTypes> arg_classMap,
-  ) {
-    if (dartApi != null) {
-      final Map<int, NativeInteropAllNullableTypes> response = dartApi!.echoNonNullClassMap(
-        (_PigeonJniCodec.readValue(arg_classMap)! as Map<Object?, Object?>)
-            .cast<int, NativeInteropAllNullableTypes>(),
-      );
-      return _PigeonJniCodec.writeValue<JMap<JLong, jni_bridge.NativeInteropAllNullableTypes>>(
-        response,
-      );
-    } else {
+  Future<JBoolean?> pigeon_echoAsyncNullableBool(JBoolean? arg_aBool) {
+    if (dartApi == null) {
       throw ArgumentError('NativeInteropFlutterIntegrationCoreApi was not registered.');
     }
-  }
-
-  @override
-  jni_bridge.NativeInteropAnEnum echoEnum(jni_bridge.NativeInteropAnEnum arg_anEnum) {
-    if (dartApi != null) {
-      final NativeInteropAnEnum response = dartApi!.echoEnum(
-        NativeInteropAnEnum.fromJni(arg_anEnum)!,
-      );
-      return response.toJni();
-    } else {
-      throw ArgumentError('NativeInteropFlutterIntegrationCoreApi was not registered.');
-    }
-  }
-
-  @override
-  jni_bridge.NativeInteropAnotherEnum echoNativeInteropAnotherEnum(
-    jni_bridge.NativeInteropAnotherEnum arg_anotherEnum,
-  ) {
-    if (dartApi != null) {
-      final NativeInteropAnotherEnum response = dartApi!.echoNativeInteropAnotherEnum(
-        NativeInteropAnotherEnum.fromJni(arg_anotherEnum)!,
-      );
-      return response.toJni();
-    } else {
-      throw ArgumentError('NativeInteropFlutterIntegrationCoreApi was not registered.');
-    }
-  }
-
-  @override
-  JBoolean? echoNullableBool(JBoolean? arg_aBool) {
-    if (dartApi != null) {
-      final bool? response = dartApi!.echoNullableBool(
-        arg_aBool?.toDartBool(releaseOriginal: true),
-      );
+    return dartApi!.echoAsyncNullableBool(arg_aBool?.toDartBool(releaseOriginal: true)).then((
+      response,
+    ) {
       return _PigeonJniCodec.writeValue<JBoolean?>(response);
-    } else {
-      throw ArgumentError('NativeInteropFlutterIntegrationCoreApi was not registered.');
-    }
+    });
   }
 
   @override
-  JLong? echoNullableInt(JLong? arg_anInt) {
-    if (dartApi != null) {
-      final int? response = dartApi!.echoNullableInt(arg_anInt?.toDartInt(releaseOriginal: true));
+  Future<JLong?> pigeon_echoAsyncNullableInt(JLong? arg_anInt) {
+    if (dartApi == null) {
+      throw ArgumentError('NativeInteropFlutterIntegrationCoreApi was not registered.');
+    }
+    return dartApi!.echoAsyncNullableInt(arg_anInt?.toDartInt(releaseOriginal: true)).then((
+      response,
+    ) {
       return _PigeonJniCodec.writeValue<JLong?>(response);
-    } else {
-      throw ArgumentError('NativeInteropFlutterIntegrationCoreApi was not registered.');
-    }
+    });
   }
 
   @override
-  JDouble? echoNullableDouble(JDouble? arg_aDouble) {
-    if (dartApi != null) {
-      final double? response = dartApi!.echoNullableDouble(
-        arg_aDouble?.toDartDouble(releaseOriginal: true),
-      );
+  Future<JDouble?> pigeon_echoAsyncNullableDouble(JDouble? arg_aDouble) {
+    if (dartApi == null) {
+      throw ArgumentError('NativeInteropFlutterIntegrationCoreApi was not registered.');
+    }
+    return dartApi!.echoAsyncNullableDouble(arg_aDouble?.toDartDouble(releaseOriginal: true)).then((
+      response,
+    ) {
       return _PigeonJniCodec.writeValue<JDouble?>(response);
-    } else {
-      throw ArgumentError('NativeInteropFlutterIntegrationCoreApi was not registered.');
-    }
+    });
   }
 
   @override
-  JString? echoNullableString(JString? arg_aString) {
-    if (dartApi != null) {
-      final String? response = dartApi!.echoNullableString(
-        arg_aString?.toDartString(releaseOriginal: true),
-      );
+  Future<JString?> pigeon_echoAsyncNullableString(JString? arg_aString) {
+    if (dartApi == null) {
+      throw ArgumentError('NativeInteropFlutterIntegrationCoreApi was not registered.');
+    }
+    return dartApi!.echoAsyncNullableString(arg_aString?.toDartString(releaseOriginal: true)).then((
+      response,
+    ) {
       return _PigeonJniCodec.writeValue<JString?>(response);
-    } else {
-      throw ArgumentError('NativeInteropFlutterIntegrationCoreApi was not registered.');
-    }
+    });
   }
 
   @override
-  JByteArray? echoNullableUint8List(JByteArray? arg_list) {
-    if (dartApi != null) {
-      final Uint8List? response = dartApi!.echoNullableUint8List(
-        _PigeonJniCodec.readValue(arg_list) as Uint8List?,
-      );
+  Future<JByteArray?> pigeon_echoAsyncNullableUint8List(JByteArray? arg_list) {
+    if (dartApi == null) {
+      throw ArgumentError('NativeInteropFlutterIntegrationCoreApi was not registered.');
+    }
+    return dartApi!.echoAsyncNullableUint8List(_jByteArrayToDart(arg_list, release: true)).then((
+      response,
+    ) {
       return _PigeonJniCodec.writeValue<JByteArray?>(response);
-    } else {
-      throw ArgumentError('NativeInteropFlutterIntegrationCoreApi was not registered.');
-    }
+    });
   }
 
   @override
-  JIntArray? echoNullableInt32List(JIntArray? arg_list) {
-    if (dartApi != null) {
-      final Int32List? response = dartApi!.echoNullableInt32List(
-        _PigeonJniCodec.readValue(arg_list) as Int32List?,
-      );
+  Future<JIntArray?> pigeon_echoAsyncNullableInt32List(JIntArray? arg_list) {
+    if (dartApi == null) {
+      throw ArgumentError('NativeInteropFlutterIntegrationCoreApi was not registered.');
+    }
+    return dartApi!.echoAsyncNullableInt32List(_jIntArrayToDart(arg_list, release: true)).then((
+      response,
+    ) {
       return _PigeonJniCodec.writeValue<JIntArray?>(response);
-    } else {
-      throw ArgumentError('NativeInteropFlutterIntegrationCoreApi was not registered.');
-    }
+    });
   }
 
   @override
-  JLongArray? echoNullableInt64List(JLongArray? arg_list) {
-    if (dartApi != null) {
-      final Int64List? response = dartApi!.echoNullableInt64List(
-        _PigeonJniCodec.readValue(arg_list) as Int64List?,
-      );
+  Future<JLongArray?> pigeon_echoAsyncNullableInt64List(JLongArray? arg_list) {
+    if (dartApi == null) {
+      throw ArgumentError('NativeInteropFlutterIntegrationCoreApi was not registered.');
+    }
+    return dartApi!.echoAsyncNullableInt64List(_jLongArrayToDart(arg_list, release: true)).then((
+      response,
+    ) {
       return _PigeonJniCodec.writeValue<JLongArray?>(response);
-    } else {
-      throw ArgumentError('NativeInteropFlutterIntegrationCoreApi was not registered.');
-    }
-  }
-
-  @override
-  JDoubleArray? echoNullableFloat64List(JDoubleArray? arg_list) {
-    if (dartApi != null) {
-      final Float64List? response = dartApi!.echoNullableFloat64List(
-        _PigeonJniCodec.readValue(arg_list) as Float64List?,
-      );
-      return _PigeonJniCodec.writeValue<JDoubleArray?>(response);
-    } else {
-      throw ArgumentError('NativeInteropFlutterIntegrationCoreApi was not registered.');
-    }
-  }
-
-  @override
-  JList<JObject?>? echoNullableList(JList<JObject?>? arg_list) {
-    if (dartApi != null) {
-      final List<Object?>? response = dartApi!.echoNullableList(
-        (_PigeonJniCodec.readValue(arg_list) as List<Object?>?)?.cast<Object?>(),
-      );
-      return _PigeonJniCodec.writeValue<JList<JObject?>?>(response);
-    } else {
-      throw ArgumentError('NativeInteropFlutterIntegrationCoreApi was not registered.');
-    }
-  }
-
-  @override
-  JList<jni_bridge.NativeInteropAnEnum?>? echoNullableEnumList(
-    JList<jni_bridge.NativeInteropAnEnum?>? arg_enumList,
-  ) {
-    if (dartApi != null) {
-      final List<NativeInteropAnEnum?>? response = dartApi!.echoNullableEnumList(
-        (_PigeonJniCodec.readValue(arg_enumList) as List<Object?>?)?.cast<NativeInteropAnEnum?>(),
-      );
-      return _PigeonJniCodec.writeValue<JList<jni_bridge.NativeInteropAnEnum?>?>(response);
-    } else {
-      throw ArgumentError('NativeInteropFlutterIntegrationCoreApi was not registered.');
-    }
-  }
-
-  @override
-  JList<jni_bridge.NativeInteropAllNullableTypes?>? echoNullableClassList(
-    JList<jni_bridge.NativeInteropAllNullableTypes?>? arg_classList,
-  ) {
-    if (dartApi != null) {
-      final List<NativeInteropAllNullableTypes?>? response = dartApi!.echoNullableClassList(
-        (_PigeonJniCodec.readValue(arg_classList) as List<Object?>?)
-            ?.cast<NativeInteropAllNullableTypes?>(),
-      );
-      return _PigeonJniCodec.writeValue<JList<jni_bridge.NativeInteropAllNullableTypes?>?>(
-        response,
-      );
-    } else {
-      throw ArgumentError('NativeInteropFlutterIntegrationCoreApi was not registered.');
-    }
-  }
-
-  @override
-  JList<jni_bridge.NativeInteropAnEnum>? echoNullableNonNullEnumList(
-    JList<jni_bridge.NativeInteropAnEnum>? arg_enumList,
-  ) {
-    if (dartApi != null) {
-      final List<NativeInteropAnEnum>? response = dartApi!.echoNullableNonNullEnumList(
-        (_PigeonJniCodec.readValue(arg_enumList) as List<Object?>?)?.cast<NativeInteropAnEnum>(),
-      );
-      return _PigeonJniCodec.writeValue<JList<jni_bridge.NativeInteropAnEnum>?>(response);
-    } else {
-      throw ArgumentError('NativeInteropFlutterIntegrationCoreApi was not registered.');
-    }
-  }
-
-  @override
-  JList<jni_bridge.NativeInteropAllNullableTypes>? echoNullableNonNullClassList(
-    JList<jni_bridge.NativeInteropAllNullableTypes>? arg_classList,
-  ) {
-    if (dartApi != null) {
-      final List<NativeInteropAllNullableTypes>? response = dartApi!.echoNullableNonNullClassList(
-        (_PigeonJniCodec.readValue(arg_classList) as List<Object?>?)
-            ?.cast<NativeInteropAllNullableTypes>(),
-      );
-      return _PigeonJniCodec.writeValue<JList<jni_bridge.NativeInteropAllNullableTypes>?>(response);
-    } else {
-      throw ArgumentError('NativeInteropFlutterIntegrationCoreApi was not registered.');
-    }
-  }
-
-  @override
-  JMap<JObject?, JObject?>? echoNullableMap(JMap<JObject?, JObject?>? arg_map) {
-    if (dartApi != null) {
-      final Map<Object?, Object?>? response = dartApi!.echoNullableMap(
-        (_PigeonJniCodec.readValue(arg_map) as Map<Object?, Object?>?)?.cast<Object?, Object?>(),
-      );
-      return _PigeonJniCodec.writeValue<JMap<JObject?, JObject?>?>(response);
-    } else {
-      throw ArgumentError('NativeInteropFlutterIntegrationCoreApi was not registered.');
-    }
-  }
-
-  @override
-  JMap<JString?, JString?>? echoNullableStringMap(JMap<JString?, JString?>? arg_stringMap) {
-    if (dartApi != null) {
-      final Map<String?, String?>? response = dartApi!.echoNullableStringMap(
-        (_PigeonJniCodec.readValue(arg_stringMap) as Map<Object?, Object?>?)
-            ?.cast<String?, String?>(),
-      );
-      return _PigeonJniCodec.writeValue<JMap<JString?, JString?>?>(response);
-    } else {
-      throw ArgumentError('NativeInteropFlutterIntegrationCoreApi was not registered.');
-    }
-  }
-
-  @override
-  JMap<JLong?, JLong?>? echoNullableIntMap(JMap<JLong?, JLong?>? arg_intMap) {
-    if (dartApi != null) {
-      final Map<int?, int?>? response = dartApi!.echoNullableIntMap(
-        (_PigeonJniCodec.readValue(arg_intMap) as Map<Object?, Object?>?)?.cast<int?, int?>(),
-      );
-      return _PigeonJniCodec.writeValue<JMap<JLong?, JLong?>?>(response);
-    } else {
-      throw ArgumentError('NativeInteropFlutterIntegrationCoreApi was not registered.');
-    }
-  }
-
-  @override
-  JMap<jni_bridge.NativeInteropAnEnum?, jni_bridge.NativeInteropAnEnum?>? echoNullableEnumMap(
-    JMap<jni_bridge.NativeInteropAnEnum?, jni_bridge.NativeInteropAnEnum?>? arg_enumMap,
-  ) {
-    if (dartApi != null) {
-      final Map<NativeInteropAnEnum?, NativeInteropAnEnum?>? response = dartApi!
-          .echoNullableEnumMap(
-            (_PigeonJniCodec.readValue(arg_enumMap) as Map<Object?, Object?>?)
-                ?.cast<NativeInteropAnEnum?, NativeInteropAnEnum?>(),
-          );
-      return _PigeonJniCodec.writeValue<
-        JMap<jni_bridge.NativeInteropAnEnum?, jni_bridge.NativeInteropAnEnum?>?
-      >(response);
-    } else {
-      throw ArgumentError('NativeInteropFlutterIntegrationCoreApi was not registered.');
-    }
-  }
-
-  @override
-  JMap<JLong?, jni_bridge.NativeInteropAllNullableTypes?>? echoNullableClassMap(
-    JMap<JLong?, jni_bridge.NativeInteropAllNullableTypes?>? arg_classMap,
-  ) {
-    if (dartApi != null) {
-      final Map<int?, NativeInteropAllNullableTypes?>? response = dartApi!.echoNullableClassMap(
-        (_PigeonJniCodec.readValue(arg_classMap) as Map<Object?, Object?>?)
-            ?.cast<int?, NativeInteropAllNullableTypes?>(),
-      );
-      return _PigeonJniCodec.writeValue<JMap<JLong?, jni_bridge.NativeInteropAllNullableTypes?>?>(
-        response,
-      );
-    } else {
-      throw ArgumentError('NativeInteropFlutterIntegrationCoreApi was not registered.');
-    }
-  }
-
-  @override
-  JMap<JString, JString>? echoNullableNonNullStringMap(JMap<JString, JString>? arg_stringMap) {
-    if (dartApi != null) {
-      final Map<String, String>? response = dartApi!.echoNullableNonNullStringMap(
-        (_PigeonJniCodec.readValue(arg_stringMap) as Map<Object?, Object?>?)
-            ?.cast<String, String>(),
-      );
-      return _PigeonJniCodec.writeValue<JMap<JString, JString>?>(response);
-    } else {
-      throw ArgumentError('NativeInteropFlutterIntegrationCoreApi was not registered.');
-    }
-  }
-
-  @override
-  JMap<JLong, JLong>? echoNullableNonNullIntMap(JMap<JLong, JLong>? arg_intMap) {
-    if (dartApi != null) {
-      final Map<int, int>? response = dartApi!.echoNullableNonNullIntMap(
-        (_PigeonJniCodec.readValue(arg_intMap) as Map<Object?, Object?>?)?.cast<int, int>(),
-      );
-      return _PigeonJniCodec.writeValue<JMap<JLong, JLong>?>(response);
-    } else {
-      throw ArgumentError('NativeInteropFlutterIntegrationCoreApi was not registered.');
-    }
-  }
-
-  @override
-  JMap<jni_bridge.NativeInteropAnEnum, jni_bridge.NativeInteropAnEnum>? echoNullableNonNullEnumMap(
-    JMap<jni_bridge.NativeInteropAnEnum, jni_bridge.NativeInteropAnEnum>? arg_enumMap,
-  ) {
-    if (dartApi != null) {
-      final Map<NativeInteropAnEnum, NativeInteropAnEnum>? response = dartApi!
-          .echoNullableNonNullEnumMap(
-            (_PigeonJniCodec.readValue(arg_enumMap) as Map<Object?, Object?>?)
-                ?.cast<NativeInteropAnEnum, NativeInteropAnEnum>(),
-          );
-      return _PigeonJniCodec.writeValue<
-        JMap<jni_bridge.NativeInteropAnEnum, jni_bridge.NativeInteropAnEnum>?
-      >(response);
-    } else {
-      throw ArgumentError('NativeInteropFlutterIntegrationCoreApi was not registered.');
-    }
-  }
-
-  @override
-  JMap<JLong, jni_bridge.NativeInteropAllNullableTypes>? echoNullableNonNullClassMap(
-    JMap<JLong, jni_bridge.NativeInteropAllNullableTypes>? arg_classMap,
-  ) {
-    if (dartApi != null) {
-      final Map<int, NativeInteropAllNullableTypes>? response = dartApi!
-          .echoNullableNonNullClassMap(
-            (_PigeonJniCodec.readValue(arg_classMap) as Map<Object?, Object?>?)
-                ?.cast<int, NativeInteropAllNullableTypes>(),
-          );
-      return _PigeonJniCodec.writeValue<JMap<JLong, jni_bridge.NativeInteropAllNullableTypes>?>(
-        response,
-      );
-    } else {
-      throw ArgumentError('NativeInteropFlutterIntegrationCoreApi was not registered.');
-    }
-  }
-
-  @override
-  jni_bridge.NativeInteropAnEnum? echoNullableEnum(jni_bridge.NativeInteropAnEnum? arg_anEnum) {
-    if (dartApi != null) {
-      final NativeInteropAnEnum? response = dartApi!.echoNullableEnum(
-        NativeInteropAnEnum.fromJni(arg_anEnum),
-      );
-      return response?.toJni();
-    } else {
-      throw ArgumentError('NativeInteropFlutterIntegrationCoreApi was not registered.');
-    }
-  }
-
-  @override
-  jni_bridge.NativeInteropAnotherEnum? echoAnotherNullableEnum(
-    jni_bridge.NativeInteropAnotherEnum? arg_anotherEnum,
-  ) {
-    if (dartApi != null) {
-      final NativeInteropAnotherEnum? response = dartApi!.echoAnotherNullableEnum(
-        NativeInteropAnotherEnum.fromJni(arg_anotherEnum),
-      );
-      return response?.toJni();
-    } else {
-      throw ArgumentError('NativeInteropFlutterIntegrationCoreApi was not registered.');
-    }
-  }
-
-  @override
-  Future<JObject> noopAsync() {
-    if (dartApi != null) {
-      return dartApi!.noopAsync().then((response) {
-        return _PigeonJniCodec._kotlinUnit;
-      });
-    } else {
-      throw ArgumentError('NativeInteropFlutterIntegrationCoreApi was not registered.');
-    }
-  }
-
-  @override
-  Future<JObject?> throwFlutterErrorAsync() {
-    if (dartApi != null) {
-      return dartApi!.throwFlutterErrorAsync().then((response) {
-        return _PigeonJniCodec.writeValue<JObject?>(response);
-      });
-    } else {
-      throw ArgumentError('NativeInteropFlutterIntegrationCoreApi was not registered.');
-    }
-  }
-
-  @override
-  Future<jni_bridge.NativeInteropAllTypes> echoAsyncNativeInteropAllTypes(
-    jni_bridge.NativeInteropAllTypes arg_everything,
-  ) {
-    if (dartApi != null) {
-      return dartApi!
-          .echoAsyncNativeInteropAllTypes(NativeInteropAllTypes.fromJni(arg_everything)!)
-          .then((response) {
-            return response.toJni();
-          });
-    } else {
-      throw ArgumentError('NativeInteropFlutterIntegrationCoreApi was not registered.');
-    }
-  }
-
-  @override
-  Future<jni_bridge.NativeInteropAllNullableTypes?> echoAsyncNullableNativeInteropAllNullableTypes(
-    jni_bridge.NativeInteropAllNullableTypes? arg_everything,
-  ) {
-    if (dartApi != null) {
-      return dartApi!
-          .echoAsyncNullableNativeInteropAllNullableTypes(
-            NativeInteropAllNullableTypes.fromJni(arg_everything),
-          )
-          .then((response) {
-            return response?.toJni();
-          });
-    } else {
-      throw ArgumentError('NativeInteropFlutterIntegrationCoreApi was not registered.');
-    }
-  }
-
-  @override
-  Future<jni_bridge.NativeInteropAllNullableTypesWithoutRecursion?>
-  echoAsyncNullableNativeInteropAllNullableTypesWithoutRecursion(
-    jni_bridge.NativeInteropAllNullableTypesWithoutRecursion? arg_everything,
-  ) {
-    if (dartApi != null) {
-      return dartApi!
-          .echoAsyncNullableNativeInteropAllNullableTypesWithoutRecursion(
-            NativeInteropAllNullableTypesWithoutRecursion.fromJni(arg_everything),
-          )
-          .then((response) {
-            return response?.toJni();
-          });
-    } else {
-      throw ArgumentError('NativeInteropFlutterIntegrationCoreApi was not registered.');
-    }
-  }
-
-  @override
-  Future<JBoolean> echoAsyncBool(bool arg_aBool) {
-    if (dartApi != null) {
-      return dartApi!.echoAsyncBool(arg_aBool).then((response) {
-        return _PigeonJniCodec.writeValue<JBoolean>(response);
-      });
-    } else {
-      throw ArgumentError('NativeInteropFlutterIntegrationCoreApi was not registered.');
-    }
-  }
-
-  @override
-  Future<JLong> echoAsyncInt(int arg_anInt) {
-    if (dartApi != null) {
-      return dartApi!.echoAsyncInt(arg_anInt).then((response) {
-        return _PigeonJniCodec.writeValue<JLong>(response);
-      });
-    } else {
-      throw ArgumentError('NativeInteropFlutterIntegrationCoreApi was not registered.');
-    }
-  }
-
-  @override
-  Future<JDouble> echoAsyncDouble(double arg_aDouble) {
-    if (dartApi != null) {
-      return dartApi!.echoAsyncDouble(arg_aDouble).then((response) {
-        return _PigeonJniCodec.writeValue<JDouble>(response);
-      });
-    } else {
-      throw ArgumentError('NativeInteropFlutterIntegrationCoreApi was not registered.');
-    }
-  }
-
-  @override
-  Future<JString> echoAsyncString(JString arg_aString) {
-    if (dartApi != null) {
-      return dartApi!.echoAsyncString(arg_aString.toDartString(releaseOriginal: true)).then((
-        response,
-      ) {
-        return _PigeonJniCodec.writeValue<JString>(response);
-      });
-    } else {
-      throw ArgumentError('NativeInteropFlutterIntegrationCoreApi was not registered.');
-    }
-  }
-
-  @override
-  Future<JByteArray> echoAsyncUint8List(JByteArray arg_list) {
-    if (dartApi != null) {
-      return dartApi!.echoAsyncUint8List(_PigeonJniCodec.readValue(arg_list)! as Uint8List).then((
-        response,
-      ) {
-        return _PigeonJniCodec.writeValue<JByteArray>(response);
-      });
-    } else {
-      throw ArgumentError('NativeInteropFlutterIntegrationCoreApi was not registered.');
-    }
-  }
-
-  @override
-  Future<JIntArray> echoAsyncInt32List(JIntArray arg_list) {
-    if (dartApi != null) {
-      return dartApi!.echoAsyncInt32List(_PigeonJniCodec.readValue(arg_list)! as Int32List).then((
-        response,
-      ) {
-        return _PigeonJniCodec.writeValue<JIntArray>(response);
-      });
-    } else {
-      throw ArgumentError('NativeInteropFlutterIntegrationCoreApi was not registered.');
-    }
-  }
-
-  @override
-  Future<JLongArray> echoAsyncInt64List(JLongArray arg_list) {
-    if (dartApi != null) {
-      return dartApi!.echoAsyncInt64List(_PigeonJniCodec.readValue(arg_list)! as Int64List).then((
-        response,
-      ) {
-        return _PigeonJniCodec.writeValue<JLongArray>(response);
-      });
-    } else {
-      throw ArgumentError('NativeInteropFlutterIntegrationCoreApi was not registered.');
-    }
-  }
-
-  @override
-  Future<JDoubleArray> echoAsyncFloat64List(JDoubleArray arg_list) {
-    if (dartApi != null) {
-      return dartApi!
-          .echoAsyncFloat64List(_PigeonJniCodec.readValue(arg_list)! as Float64List)
-          .then((response) {
-            return _PigeonJniCodec.writeValue<JDoubleArray>(response);
-          });
-    } else {
-      throw ArgumentError('NativeInteropFlutterIntegrationCoreApi was not registered.');
-    }
-  }
-
-  @override
-  Future<JObject> echoAsyncObject(JObject arg_anObject) {
-    if (dartApi != null) {
-      return dartApi!.echoAsyncObject(_PigeonJniCodec.readValue(arg_anObject)!).then((response) {
-        return _PigeonJniCodec.writeValue<JObject>(response);
-      });
-    } else {
-      throw ArgumentError('NativeInteropFlutterIntegrationCoreApi was not registered.');
-    }
-  }
-
-  @override
-  Future<JList<JObject?>> echoAsyncList(JList<JObject?> arg_list) {
-    if (dartApi != null) {
-      return dartApi!
-          .echoAsyncList((_PigeonJniCodec.readValue(arg_list)! as List<Object?>).cast<Object?>())
-          .then((response) {
-            return _PigeonJniCodec.writeValue<JList<JObject?>>(response);
-          });
-    } else {
-      throw ArgumentError('NativeInteropFlutterIntegrationCoreApi was not registered.');
-    }
-  }
-
-  @override
-  Future<JList<jni_bridge.NativeInteropAnEnum?>> echoAsyncEnumList(
-    JList<jni_bridge.NativeInteropAnEnum?> arg_enumList,
-  ) {
-    if (dartApi != null) {
-      return dartApi!
-          .echoAsyncEnumList(
-            (_PigeonJniCodec.readValue(arg_enumList)! as List<Object?>)
-                .cast<NativeInteropAnEnum?>(),
-          )
-          .then((response) {
-            return _PigeonJniCodec.writeValue<JList<jni_bridge.NativeInteropAnEnum?>>(response);
-          });
-    } else {
-      throw ArgumentError('NativeInteropFlutterIntegrationCoreApi was not registered.');
-    }
-  }
-
-  @override
-  Future<JList<jni_bridge.NativeInteropAllNullableTypes?>> echoAsyncClassList(
-    JList<jni_bridge.NativeInteropAllNullableTypes?> arg_classList,
-  ) {
-    if (dartApi != null) {
-      return dartApi!
-          .echoAsyncClassList(
-            (_PigeonJniCodec.readValue(arg_classList)! as List<Object?>)
-                .cast<NativeInteropAllNullableTypes?>(),
-          )
-          .then((response) {
-            return _PigeonJniCodec.writeValue<JList<jni_bridge.NativeInteropAllNullableTypes?>>(
-              response,
-            );
-          });
-    } else {
-      throw ArgumentError('NativeInteropFlutterIntegrationCoreApi was not registered.');
-    }
-  }
-
-  @override
-  Future<JList<jni_bridge.NativeInteropAnEnum>> echoAsyncNonNullEnumList(
-    JList<jni_bridge.NativeInteropAnEnum?> arg_enumList,
-  ) {
-    if (dartApi != null) {
-      return dartApi!
-          .echoAsyncNonNullEnumList(
-            (_PigeonJniCodec.readValue(arg_enumList)! as List<Object?>).cast<NativeInteropAnEnum>(),
-          )
-          .then((response) {
-            return _PigeonJniCodec.writeValue<JList<jni_bridge.NativeInteropAnEnum>>(response);
-          });
-    } else {
-      throw ArgumentError('NativeInteropFlutterIntegrationCoreApi was not registered.');
-    }
-  }
-
-  @override
-  Future<JList<jni_bridge.NativeInteropAllNullableTypes>> echoAsyncNonNullClassList(
-    JList<jni_bridge.NativeInteropAllNullableTypes?> arg_classList,
-  ) {
-    if (dartApi != null) {
-      return dartApi!
-          .echoAsyncNonNullClassList(
-            (_PigeonJniCodec.readValue(arg_classList)! as List<Object?>)
-                .cast<NativeInteropAllNullableTypes>(),
-          )
-          .then((response) {
-            return _PigeonJniCodec.writeValue<JList<jni_bridge.NativeInteropAllNullableTypes>>(
-              response,
-            );
-          });
-    } else {
-      throw ArgumentError('NativeInteropFlutterIntegrationCoreApi was not registered.');
-    }
-  }
-
-  @override
-  Future<JMap<JObject?, JObject?>> echoAsyncMap(JMap<JObject?, JObject?> arg_map) {
-    if (dartApi != null) {
-      return dartApi!
-          .echoAsyncMap(
-            (_PigeonJniCodec.readValue(arg_map)! as Map<Object?, Object?>).cast<Object?, Object?>(),
-          )
-          .then((response) {
-            return _PigeonJniCodec.writeValue<JMap<JObject?, JObject?>>(response);
-          });
-    } else {
-      throw ArgumentError('NativeInteropFlutterIntegrationCoreApi was not registered.');
-    }
-  }
-
-  @override
-  Future<JMap<JString?, JString?>> echoAsyncStringMap(JMap<JString?, JString?> arg_stringMap) {
-    if (dartApi != null) {
-      return dartApi!
-          .echoAsyncStringMap(
-            (_PigeonJniCodec.readValue(arg_stringMap)! as Map<Object?, Object?>)
-                .cast<String?, String?>(),
-          )
-          .then((response) {
-            return _PigeonJniCodec.writeValue<JMap<JString?, JString?>>(response);
-          });
-    } else {
-      throw ArgumentError('NativeInteropFlutterIntegrationCoreApi was not registered.');
-    }
-  }
-
-  @override
-  Future<JMap<JLong?, JLong?>> echoAsyncIntMap(JMap<JLong?, JLong?> arg_intMap) {
-    if (dartApi != null) {
-      return dartApi!
-          .echoAsyncIntMap(
-            (_PigeonJniCodec.readValue(arg_intMap)! as Map<Object?, Object?>).cast<int?, int?>(),
-          )
-          .then((response) {
-            return _PigeonJniCodec.writeValue<JMap<JLong?, JLong?>>(response);
-          });
-    } else {
-      throw ArgumentError('NativeInteropFlutterIntegrationCoreApi was not registered.');
-    }
-  }
-
-  @override
-  Future<JMap<jni_bridge.NativeInteropAnEnum?, jni_bridge.NativeInteropAnEnum?>> echoAsyncEnumMap(
-    JMap<jni_bridge.NativeInteropAnEnum?, jni_bridge.NativeInteropAnEnum?> arg_enumMap,
-  ) {
-    if (dartApi != null) {
-      return dartApi!
-          .echoAsyncEnumMap(
-            (_PigeonJniCodec.readValue(arg_enumMap)! as Map<Object?, Object?>)
-                .cast<NativeInteropAnEnum?, NativeInteropAnEnum?>(),
-          )
-          .then((response) {
-            return _PigeonJniCodec.writeValue<
-              JMap<jni_bridge.NativeInteropAnEnum?, jni_bridge.NativeInteropAnEnum?>
-            >(response);
-          });
-    } else {
-      throw ArgumentError('NativeInteropFlutterIntegrationCoreApi was not registered.');
-    }
-  }
-
-  @override
-  Future<JMap<JLong?, jni_bridge.NativeInteropAllNullableTypes?>> echoAsyncClassMap(
-    JMap<JLong?, jni_bridge.NativeInteropAllNullableTypes?> arg_classMap,
-  ) {
-    if (dartApi != null) {
-      return dartApi!
-          .echoAsyncClassMap(
-            (_PigeonJniCodec.readValue(arg_classMap)! as Map<Object?, Object?>)
-                .cast<int?, NativeInteropAllNullableTypes?>(),
-          )
-          .then((response) {
-            return _PigeonJniCodec.writeValue<
-              JMap<JLong?, jni_bridge.NativeInteropAllNullableTypes?>
-            >(response);
-          });
-    } else {
-      throw ArgumentError('NativeInteropFlutterIntegrationCoreApi was not registered.');
-    }
-  }
-
-  @override
-  Future<jni_bridge.NativeInteropAnEnum> echoAsyncEnum(jni_bridge.NativeInteropAnEnum arg_anEnum) {
-    if (dartApi != null) {
-      return dartApi!.echoAsyncEnum(NativeInteropAnEnum.fromJni(arg_anEnum)!).then((response) {
-        return response.toJni();
-      });
-    } else {
-      throw ArgumentError('NativeInteropFlutterIntegrationCoreApi was not registered.');
-    }
-  }
-
-  @override
-  Future<jni_bridge.NativeInteropAnotherEnum> echoAnotherAsyncEnum(
-    jni_bridge.NativeInteropAnotherEnum arg_anotherEnum,
-  ) {
-    if (dartApi != null) {
-      return dartApi!.echoAnotherAsyncEnum(NativeInteropAnotherEnum.fromJni(arg_anotherEnum)!).then(
-        (response) {
-          return response.toJni();
-        },
-      );
-    } else {
-      throw ArgumentError('NativeInteropFlutterIntegrationCoreApi was not registered.');
-    }
-  }
-
-  @override
-  Future<JBoolean?> echoAsyncNullableBool(JBoolean? arg_aBool) {
-    if (dartApi != null) {
-      return dartApi!.echoAsyncNullableBool(arg_aBool?.toDartBool(releaseOriginal: true)).then((
-        response,
-      ) {
-        return _PigeonJniCodec.writeValue<JBoolean?>(response);
-      });
-    } else {
-      throw ArgumentError('NativeInteropFlutterIntegrationCoreApi was not registered.');
-    }
-  }
-
-  @override
-  Future<JLong?> echoAsyncNullableInt(JLong? arg_anInt) {
-    if (dartApi != null) {
-      return dartApi!.echoAsyncNullableInt(arg_anInt?.toDartInt(releaseOriginal: true)).then((
-        response,
-      ) {
-        return _PigeonJniCodec.writeValue<JLong?>(response);
-      });
-    } else {
-      throw ArgumentError('NativeInteropFlutterIntegrationCoreApi was not registered.');
-    }
-  }
-
-  @override
-  Future<JDouble?> echoAsyncNullableDouble(JDouble? arg_aDouble) {
-    if (dartApi != null) {
-      return dartApi!
-          .echoAsyncNullableDouble(arg_aDouble?.toDartDouble(releaseOriginal: true))
-          .then((response) {
-            return _PigeonJniCodec.writeValue<JDouble?>(response);
-          });
-    } else {
-      throw ArgumentError('NativeInteropFlutterIntegrationCoreApi was not registered.');
-    }
-  }
-
-  @override
-  Future<JString?> echoAsyncNullableString(JString? arg_aString) {
-    if (dartApi != null) {
-      return dartApi!
-          .echoAsyncNullableString(arg_aString?.toDartString(releaseOriginal: true))
-          .then((response) {
-            return _PigeonJniCodec.writeValue<JString?>(response);
-          });
-    } else {
-      throw ArgumentError('NativeInteropFlutterIntegrationCoreApi was not registered.');
-    }
-  }
-
-  @override
-  Future<JByteArray?> echoAsyncNullableUint8List(JByteArray? arg_list) {
-    if (dartApi != null) {
-      return dartApi!
-          .echoAsyncNullableUint8List(_PigeonJniCodec.readValue(arg_list) as Uint8List?)
-          .then((response) {
-            return _PigeonJniCodec.writeValue<JByteArray?>(response);
-          });
-    } else {
-      throw ArgumentError('NativeInteropFlutterIntegrationCoreApi was not registered.');
-    }
-  }
-
-  @override
-  Future<JIntArray?> echoAsyncNullableInt32List(JIntArray? arg_list) {
-    if (dartApi != null) {
-      return dartApi!
-          .echoAsyncNullableInt32List(_PigeonJniCodec.readValue(arg_list) as Int32List?)
-          .then((response) {
-            return _PigeonJniCodec.writeValue<JIntArray?>(response);
-          });
-    } else {
-      throw ArgumentError('NativeInteropFlutterIntegrationCoreApi was not registered.');
-    }
-  }
-
-  @override
-  Future<JLongArray?> echoAsyncNullableInt64List(JLongArray? arg_list) {
-    if (dartApi != null) {
-      return dartApi!
-          .echoAsyncNullableInt64List(_PigeonJniCodec.readValue(arg_list) as Int64List?)
-          .then((response) {
-            return _PigeonJniCodec.writeValue<JLongArray?>(response);
-          });
-    } else {
-      throw ArgumentError('NativeInteropFlutterIntegrationCoreApi was not registered.');
-    }
+    });
   }
 
   @override
-  Future<JDoubleArray?> echoAsyncNullableFloat64List(JDoubleArray? arg_list) {
-    if (dartApi != null) {
-      return dartApi!
-          .echoAsyncNullableFloat64List(_PigeonJniCodec.readValue(arg_list) as Float64List?)
-          .then((response) {
-            return _PigeonJniCodec.writeValue<JDoubleArray?>(response);
-          });
-    } else {
+  Future<JDoubleArray?> pigeon_echoAsyncNullableFloat64List(JDoubleArray? arg_list) {
+    if (dartApi == null) {
       throw ArgumentError('NativeInteropFlutterIntegrationCoreApi was not registered.');
     }
+    return dartApi!.echoAsyncNullableFloat64List(_jDoubleArrayToDart(arg_list, release: true)).then(
+      (response) {
+        return _PigeonJniCodec.writeValue<JDoubleArray?>(response);
+      },
+    );
   }
 
   @override
-  Future<JObject?> echoAsyncNullableObject(JObject? arg_anObject) {
-    if (dartApi != null) {
-      return dartApi!.echoAsyncNullableObject(_PigeonJniCodec.readValue(arg_anObject)).then((
-        response,
-      ) {
-        return _PigeonJniCodec.writeValue<JObject?>(response);
-      });
-    } else {
+  Future<JByteArray?> pigeon_echoAsyncNullableObject(JByteArray pigeonVar_args) {
+    if (dartApi == null) {
       throw ArgumentError('NativeInteropFlutterIntegrationCoreApi was not registered.');
     }
+    final List<Object?> pigeonVar_decodedArgs =
+        _PigeonJniBuffers.decode(pigeonVar_args)! as List<Object?>;
+    return dartApi!.echoAsyncNullableObject(pigeonVar_decodedArgs[0]).then((response) {
+      return _PigeonJniBuffers.encodeOrNull(response);
+    });
   }
 
   @override
-  Future<JList<JObject?>?> echoAsyncNullableList(JList<JObject?>? arg_list) {
-    if (dartApi != null) {
-      return dartApi!
-          .echoAsyncNullableList(
-            (_PigeonJniCodec.readValue(arg_list) as List<Object?>?)?.cast<Object?>(),
-          )
-          .then((response) {
-            return _PigeonJniCodec.writeValue<JList<JObject?>?>(response);
-          });
-    } else {
+  Future<JByteArray?> pigeon_echoAsyncNullableList(JByteArray pigeonVar_args) {
+    if (dartApi == null) {
       throw ArgumentError('NativeInteropFlutterIntegrationCoreApi was not registered.');
     }
+    final List<Object?> pigeonVar_decodedArgs =
+        _PigeonJniBuffers.decode(pigeonVar_args)! as List<Object?>;
+    return dartApi!.echoAsyncNullableList(pigeonVar_decodedArgs[0] as List<Object?>?).then((
+      response,
+    ) {
+      return _PigeonJniBuffers.encodeOrNull(response);
+    });
   }
 
   @override
-  Future<JList<jni_bridge.NativeInteropAnEnum?>?> echoAsyncNullableEnumList(
-    JList<jni_bridge.NativeInteropAnEnum?>? arg_enumList,
-  ) {
-    if (dartApi != null) {
-      return dartApi!
-          .echoAsyncNullableEnumList(
-            (_PigeonJniCodec.readValue(arg_enumList) as List<Object?>?)
-                ?.cast<NativeInteropAnEnum?>(),
-          )
-          .then((response) {
-            return _PigeonJniCodec.writeValue<JList<jni_bridge.NativeInteropAnEnum?>?>(response);
-          });
-    } else {
+  Future<JByteArray?> pigeon_echoAsyncNullableEnumList(JByteArray pigeonVar_args) {
+    if (dartApi == null) {
       throw ArgumentError('NativeInteropFlutterIntegrationCoreApi was not registered.');
     }
+    final List<Object?> pigeonVar_decodedArgs =
+        _PigeonJniBuffers.decode(pigeonVar_args)! as List<Object?>;
+    return dartApi!
+        .echoAsyncNullableEnumList(
+          (pigeonVar_decodedArgs[0] as List<Object?>?)?.cast<NativeInteropAnEnum?>(),
+        )
+        .then((response) {
+          return _PigeonJniBuffers.encodeOrNull(response);
+        });
   }
 
   @override
-  Future<JList<jni_bridge.NativeInteropAllNullableTypes?>?> echoAsyncNullableClassList(
-    JList<jni_bridge.NativeInteropAllNullableTypes?>? arg_classList,
-  ) {
-    if (dartApi != null) {
-      return dartApi!
-          .echoAsyncNullableClassList(
-            (_PigeonJniCodec.readValue(arg_classList) as List<Object?>?)
-                ?.cast<NativeInteropAllNullableTypes?>(),
-          )
-          .then((response) {
-            return _PigeonJniCodec.writeValue<JList<jni_bridge.NativeInteropAllNullableTypes?>?>(
-              response,
-            );
-          });
-    } else {
+  Future<JByteArray?> pigeon_echoAsyncNullableClassList(JByteArray pigeonVar_args) {
+    if (dartApi == null) {
       throw ArgumentError('NativeInteropFlutterIntegrationCoreApi was not registered.');
     }
+    final List<Object?> pigeonVar_decodedArgs =
+        _PigeonJniBuffers.decode(pigeonVar_args)! as List<Object?>;
+    return dartApi!
+        .echoAsyncNullableClassList(
+          (pigeonVar_decodedArgs[0] as List<Object?>?)?.cast<NativeInteropAllNullableTypes?>(),
+        )
+        .then((response) {
+          return _PigeonJniBuffers.encodeOrNull(response);
+        });
   }
 
   @override
-  Future<JList<jni_bridge.NativeInteropAnEnum>?> echoAsyncNullableNonNullEnumList(
-    JList<jni_bridge.NativeInteropAnEnum?>? arg_enumList,
-  ) {
-    if (dartApi != null) {
-      return dartApi!
-          .echoAsyncNullableNonNullEnumList(
-            (_PigeonJniCodec.readValue(arg_enumList) as List<Object?>?)
-                ?.cast<NativeInteropAnEnum>(),
-          )
-          .then((response) {
-            return _PigeonJniCodec.writeValue<JList<jni_bridge.NativeInteropAnEnum>?>(response);
-          });
-    } else {
+  Future<JByteArray?> pigeon_echoAsyncNullableNonNullEnumList(JByteArray pigeonVar_args) {
+    if (dartApi == null) {
       throw ArgumentError('NativeInteropFlutterIntegrationCoreApi was not registered.');
     }
+    final List<Object?> pigeonVar_decodedArgs =
+        _PigeonJniBuffers.decode(pigeonVar_args)! as List<Object?>;
+    return dartApi!
+        .echoAsyncNullableNonNullEnumList(
+          (pigeonVar_decodedArgs[0] as List<Object?>?)?.cast<NativeInteropAnEnum>(),
+        )
+        .then((response) {
+          return _PigeonJniBuffers.encodeOrNull(response);
+        });
   }
 
   @override
-  Future<JList<jni_bridge.NativeInteropAllNullableTypes>?> echoAsyncNullableNonNullClassList(
-    JList<jni_bridge.NativeInteropAllNullableTypes?>? arg_classList,
-  ) {
-    if (dartApi != null) {
-      return dartApi!
-          .echoAsyncNullableNonNullClassList(
-            (_PigeonJniCodec.readValue(arg_classList) as List<Object?>?)
-                ?.cast<NativeInteropAllNullableTypes>(),
-          )
-          .then((response) {
-            return _PigeonJniCodec.writeValue<JList<jni_bridge.NativeInteropAllNullableTypes>?>(
-              response,
-            );
-          });
-    } else {
+  Future<JByteArray?> pigeon_echoAsyncNullableNonNullClassList(JByteArray pigeonVar_args) {
+    if (dartApi == null) {
       throw ArgumentError('NativeInteropFlutterIntegrationCoreApi was not registered.');
     }
+    final List<Object?> pigeonVar_decodedArgs =
+        _PigeonJniBuffers.decode(pigeonVar_args)! as List<Object?>;
+    return dartApi!
+        .echoAsyncNullableNonNullClassList(
+          (pigeonVar_decodedArgs[0] as List<Object?>?)?.cast<NativeInteropAllNullableTypes>(),
+        )
+        .then((response) {
+          return _PigeonJniBuffers.encodeOrNull(response);
+        });
   }
 
   @override
-  Future<JMap<JObject?, JObject?>?> echoAsyncNullableMap(JMap<JObject?, JObject?>? arg_map) {
-    if (dartApi != null) {
-      return dartApi!
-          .echoAsyncNullableMap(
-            (_PigeonJniCodec.readValue(arg_map) as Map<Object?, Object?>?)
-                ?.cast<Object?, Object?>(),
-          )
-          .then((response) {
-            return _PigeonJniCodec.writeValue<JMap<JObject?, JObject?>?>(response);
-          });
-    } else {
+  Future<JByteArray?> pigeon_echoAsyncNullableMap(JByteArray pigeonVar_args) {
+    if (dartApi == null) {
       throw ArgumentError('NativeInteropFlutterIntegrationCoreApi was not registered.');
     }
+    final List<Object?> pigeonVar_decodedArgs =
+        _PigeonJniBuffers.decode(pigeonVar_args)! as List<Object?>;
+    return dartApi!.echoAsyncNullableMap(pigeonVar_decodedArgs[0] as Map<Object?, Object?>?).then((
+      response,
+    ) {
+      return _PigeonJniBuffers.encodeOrNull(response);
+    });
   }
 
   @override
-  Future<JMap<JString?, JString?>?> echoAsyncNullableStringMap(
-    JMap<JString?, JString?>? arg_stringMap,
-  ) {
-    if (dartApi != null) {
-      return dartApi!
-          .echoAsyncNullableStringMap(
-            (_PigeonJniCodec.readValue(arg_stringMap) as Map<Object?, Object?>?)
-                ?.cast<String?, String?>(),
-          )
-          .then((response) {
-            return _PigeonJniCodec.writeValue<JMap<JString?, JString?>?>(response);
-          });
-    } else {
+  Future<JByteArray?> pigeon_echoAsyncNullableStringMap(JByteArray pigeonVar_args) {
+    if (dartApi == null) {
       throw ArgumentError('NativeInteropFlutterIntegrationCoreApi was not registered.');
     }
+    final List<Object?> pigeonVar_decodedArgs =
+        _PigeonJniBuffers.decode(pigeonVar_args)! as List<Object?>;
+    return dartApi!
+        .echoAsyncNullableStringMap(
+          (pigeonVar_decodedArgs[0] as Map<Object?, Object?>?)?.cast<String?, String?>(),
+        )
+        .then((response) {
+          return _PigeonJniBuffers.encodeOrNull(response);
+        });
   }
 
   @override
-  Future<JMap<JLong?, JLong?>?> echoAsyncNullableIntMap(JMap<JLong?, JLong?>? arg_intMap) {
-    if (dartApi != null) {
-      return dartApi!
-          .echoAsyncNullableIntMap(
-            (_PigeonJniCodec.readValue(arg_intMap) as Map<Object?, Object?>?)?.cast<int?, int?>(),
-          )
-          .then((response) {
-            return _PigeonJniCodec.writeValue<JMap<JLong?, JLong?>?>(response);
-          });
-    } else {
+  Future<JByteArray?> pigeon_echoAsyncNullableIntMap(JByteArray pigeonVar_args) {
+    if (dartApi == null) {
       throw ArgumentError('NativeInteropFlutterIntegrationCoreApi was not registered.');
     }
+    final List<Object?> pigeonVar_decodedArgs =
+        _PigeonJniBuffers.decode(pigeonVar_args)! as List<Object?>;
+    return dartApi!
+        .echoAsyncNullableIntMap(
+          (pigeonVar_decodedArgs[0] as Map<Object?, Object?>?)?.cast<int?, int?>(),
+        )
+        .then((response) {
+          return _PigeonJniBuffers.encodeOrNull(response);
+        });
   }
 
   @override
-  Future<JMap<jni_bridge.NativeInteropAnEnum?, jni_bridge.NativeInteropAnEnum?>?>
-  echoAsyncNullableEnumMap(
-    JMap<jni_bridge.NativeInteropAnEnum?, jni_bridge.NativeInteropAnEnum?>? arg_enumMap,
-  ) {
-    if (dartApi != null) {
-      return dartApi!
-          .echoAsyncNullableEnumMap(
-            (_PigeonJniCodec.readValue(arg_enumMap) as Map<Object?, Object?>?)
-                ?.cast<NativeInteropAnEnum?, NativeInteropAnEnum?>(),
-          )
-          .then((response) {
-            return _PigeonJniCodec.writeValue<
-              JMap<jni_bridge.NativeInteropAnEnum?, jni_bridge.NativeInteropAnEnum?>?
-            >(response);
-          });
-    } else {
+  Future<JByteArray?> pigeon_echoAsyncNullableEnumMap(JByteArray pigeonVar_args) {
+    if (dartApi == null) {
       throw ArgumentError('NativeInteropFlutterIntegrationCoreApi was not registered.');
     }
+    final List<Object?> pigeonVar_decodedArgs =
+        _PigeonJniBuffers.decode(pigeonVar_args)! as List<Object?>;
+    return dartApi!
+        .echoAsyncNullableEnumMap(
+          (pigeonVar_decodedArgs[0] as Map<Object?, Object?>?)
+              ?.cast<NativeInteropAnEnum?, NativeInteropAnEnum?>(),
+        )
+        .then((response) {
+          return _PigeonJniBuffers.encodeOrNull(response);
+        });
   }
 
   @override
-  Future<JMap<JLong?, jni_bridge.NativeInteropAllNullableTypes?>?> echoAsyncNullableClassMap(
-    JMap<JLong?, jni_bridge.NativeInteropAllNullableTypes?>? arg_classMap,
-  ) {
-    if (dartApi != null) {
-      return dartApi!
-          .echoAsyncNullableClassMap(
-            (_PigeonJniCodec.readValue(arg_classMap) as Map<Object?, Object?>?)
-                ?.cast<int?, NativeInteropAllNullableTypes?>(),
-          )
-          .then((response) {
-            return _PigeonJniCodec.writeValue<
-              JMap<JLong?, jni_bridge.NativeInteropAllNullableTypes?>?
-            >(response);
-          });
-    } else {
+  Future<JByteArray?> pigeon_echoAsyncNullableClassMap(JByteArray pigeonVar_args) {
+    if (dartApi == null) {
       throw ArgumentError('NativeInteropFlutterIntegrationCoreApi was not registered.');
     }
+    final List<Object?> pigeonVar_decodedArgs =
+        _PigeonJniBuffers.decode(pigeonVar_args)! as List<Object?>;
+    return dartApi!
+        .echoAsyncNullableClassMap(
+          (pigeonVar_decodedArgs[0] as Map<Object?, Object?>?)
+              ?.cast<int?, NativeInteropAllNullableTypes?>(),
+        )
+        .then((response) {
+          return _PigeonJniBuffers.encodeOrNull(response);
+        });
   }
 
   @override
-  Future<jni_bridge.NativeInteropAnEnum?> echoAsyncNullableEnum(
-    jni_bridge.NativeInteropAnEnum? arg_anEnum,
-  ) {
-    if (dartApi != null) {
-      return dartApi!.echoAsyncNullableEnum(NativeInteropAnEnum.fromJni(arg_anEnum)).then((
-        response,
-      ) {
-        return response?.toJni();
-      });
-    } else {
+  Future<JLong> pigeon_echoAsyncNullableEnum(int arg_anEnum) {
+    if (dartApi == null) {
       throw ArgumentError('NativeInteropFlutterIntegrationCoreApi was not registered.');
     }
+    return dartApi!
+        .echoAsyncNullableEnum(arg_anEnum == -1 ? null : NativeInteropAnEnum.values[arg_anEnum])
+        .then((response) {
+          return JLong(response?.index ?? -1);
+        });
   }
 
   @override
-  Future<jni_bridge.NativeInteropAnotherEnum?> echoAnotherAsyncNullableEnum(
-    jni_bridge.NativeInteropAnotherEnum? arg_anotherEnum,
-  ) {
-    if (dartApi != null) {
-      return dartApi!
-          .echoAnotherAsyncNullableEnum(NativeInteropAnotherEnum.fromJni(arg_anotherEnum))
-          .then((response) {
-            return response?.toJni();
-          });
-    } else {
+  Future<JLong> pigeon_echoAnotherAsyncNullableEnum(int arg_anotherEnum) {
+    if (dartApi == null) {
       throw ArgumentError('NativeInteropFlutterIntegrationCoreApi was not registered.');
     }
+    return dartApi!
+        .echoAnotherAsyncNullableEnum(
+          arg_anotherEnum == -1 ? null : NativeInteropAnotherEnum.values[arg_anotherEnum],
+        )
+        .then((response) {
+          return JLong(response?.index ?? -1);
+        });
   }
 }
 
@@ -23699,18 +23601,21 @@ class NativeInteropReservedNamesHostApiForNativeInterop {
   String release(String value) {
     try {
       if (_jniApi != null) {
-        final JString pigeonVar_res = _jniApi.release$1(_PigeonJniCodec.writeValue<JString>(value));
-        final String pigeonVar_dartTypeRes = pigeonVar_res.toDartString(releaseOriginal: true);
-        return pigeonVar_dartTypeRes;
+        final JString pigeonVar_value = value.toJString();
+        try {
+          final JString pigeonVar_res = _jniApi.pigeon_release(pigeonVar_value);
+          return pigeonVar_res.toDartString(releaseOriginal: true);
+        } finally {
+          pigeonVar_value.release();
+        }
       } else if (_ffiApi != null) {
         final pigeonVar_error = ffi_bridge.NativeInteropTestsError();
-        final NSString? pigeonVar_res = _ffiApi.releaseWithValue(
-          _PigeonFfiCodec.writeValue<NSString>(value),
+        final NSString? pigeonVar_res = _ffiApi.pigeon_release(
+          NSString(value),
           wrappedError: pigeonVar_error,
         );
         _throwIfFfiError(pigeonVar_error);
-        final String pigeonVar_dartTypeRes = pigeonVar_res!.toDartString();
-        return pigeonVar_dartTypeRes;
+        return pigeonVar_res!.toDartString();
       } else {
         throw Exception('No JNI or FFI api available');
       }
@@ -23722,13 +23627,12 @@ class NativeInteropReservedNamesHostApiForNativeInterop {
   int use(int value) {
     try {
       if (_jniApi != null) {
-        return _jniApi.use$1(value);
+        return _jniApi.pigeon_use(value);
       } else if (_ffiApi != null) {
         final pigeonVar_error = ffi_bridge.NativeInteropTestsError();
-        final NSNumber? pigeonVar_res = _ffiApi.useWithValue(value, wrappedError: pigeonVar_error);
+        final NSNumber? pigeonVar_res = _ffiApi.pigeon_use(value, wrappedError: pigeonVar_error);
         _throwIfFfiError(pigeonVar_error);
-        final int pigeonVar_dartTypeRes = pigeonVar_res!.longValue;
-        return pigeonVar_dartTypeRes;
+        return pigeonVar_res!.longValue;
       } else {
         throw Exception('No JNI or FFI api available');
       }
@@ -23740,15 +23644,13 @@ class NativeInteropReservedNamesHostApiForNativeInterop {
   String type() {
     try {
       if (_jniApi != null) {
-        final JString pigeonVar_res = _jniApi.type$1();
-        final String pigeonVar_dartTypeRes = pigeonVar_res.toDartString(releaseOriginal: true);
-        return pigeonVar_dartTypeRes;
+        final JString pigeonVar_res = _jniApi.pigeon_type();
+        return pigeonVar_res.toDartString(releaseOriginal: true);
       } else if (_ffiApi != null) {
         final pigeonVar_error = ffi_bridge.NativeInteropTestsError();
-        final NSString? pigeonVar_res = _ffiApi.typeWithWrappedError(pigeonVar_error);
+        final NSString? pigeonVar_res = _ffiApi.pigeon_type(pigeonVar_error);
         _throwIfFfiError(pigeonVar_error);
-        final String pigeonVar_dartTypeRes = pigeonVar_res!.toDartString();
-        return pigeonVar_dartTypeRes;
+        return pigeonVar_res!.toDartString();
       } else {
         throw Exception('No JNI or FFI api available');
       }
@@ -23760,13 +23662,12 @@ class NativeInteropReservedNamesHostApiForNativeInterop {
   bool isNull() {
     try {
       if (_jniApi != null) {
-        return _jniApi.isNull$1;
+        return _jniApi.pigeon_isNull();
       } else if (_ffiApi != null) {
         final pigeonVar_error = ffi_bridge.NativeInteropTestsError();
-        final NSNumber? pigeonVar_res = _ffiApi.isNullWithWrappedError(pigeonVar_error);
+        final NSNumber? pigeonVar_res = _ffiApi.pigeon_isNull(pigeonVar_error);
         _throwIfFfiError(pigeonVar_error);
-        final bool pigeonVar_dartTypeRes = pigeonVar_res!.boolValue;
-        return pigeonVar_dartTypeRes;
+        return pigeonVar_res!.boolValue;
       } else {
         throw Exception('No JNI or FFI api available');
       }
@@ -23778,15 +23679,13 @@ class NativeInteropReservedNamesHostApiForNativeInterop {
   bool? isNullable() {
     try {
       if (_jniApi != null) {
-        final JBoolean? pigeonVar_res = _jniApi.isNullable();
-        final bool? pigeonVar_dartTypeRes = pigeonVar_res?.toDartBool(releaseOriginal: true);
-        return pigeonVar_dartTypeRes;
+        final JBoolean? pigeonVar_res = _jniApi.pigeon_isNullable();
+        return pigeonVar_res?.toDartBool(releaseOriginal: true);
       } else if (_ffiApi != null) {
         final pigeonVar_error = ffi_bridge.NativeInteropTestsError();
-        final NSNumber? pigeonVar_res = _ffiApi.isNullableWithWrappedError(pigeonVar_error);
+        final NSNumber? pigeonVar_res = _ffiApi.pigeon_isNullable(pigeonVar_error);
         _throwIfFfiError(pigeonVar_error);
-        final bool? pigeonVar_dartTypeRes = pigeonVar_res?.boolValue;
-        return pigeonVar_dartTypeRes;
+        return pigeonVar_res?.boolValue;
       } else {
         throw Exception('No JNI or FFI api available');
       }
@@ -23798,13 +23697,12 @@ class NativeInteropReservedNamesHostApiForNativeInterop {
   bool isOpen() {
     try {
       if (_jniApi != null) {
-        return _jniApi.isOpen;
+        return _jniApi.pigeon_isOpen();
       } else if (_ffiApi != null) {
         final pigeonVar_error = ffi_bridge.NativeInteropTestsError();
-        final NSNumber? pigeonVar_res = _ffiApi.isOpenWithWrappedError(pigeonVar_error);
+        final NSNumber? pigeonVar_res = _ffiApi.pigeon_isOpen(pigeonVar_error);
         _throwIfFfiError(pigeonVar_error);
-        final bool pigeonVar_dartTypeRes = pigeonVar_res!.boolValue;
-        return pigeonVar_dartTypeRes;
+        return pigeonVar_res!.boolValue;
       } else {
         throw Exception('No JNI or FFI api available');
       }
@@ -23816,15 +23714,13 @@ class NativeInteropReservedNamesHostApiForNativeInterop {
   String getReference() {
     try {
       if (_jniApi != null) {
-        final JString pigeonVar_res = _jniApi.reference$1;
-        final String pigeonVar_dartTypeRes = pigeonVar_res.toDartString(releaseOriginal: true);
-        return pigeonVar_dartTypeRes;
+        final JString pigeonVar_res = _jniApi.pigeon_getReference();
+        return pigeonVar_res.toDartString(releaseOriginal: true);
       } else if (_ffiApi != null) {
         final pigeonVar_error = ffi_bridge.NativeInteropTestsError();
-        final NSString? pigeonVar_res = _ffiApi.getReferenceWithWrappedError(pigeonVar_error);
+        final NSString? pigeonVar_res = _ffiApi.pigeon_getReference(pigeonVar_error);
         _throwIfFfiError(pigeonVar_error);
-        final String pigeonVar_dartTypeRes = pigeonVar_res!.toDartString();
-        return pigeonVar_dartTypeRes;
+        return pigeonVar_res!.toDartString();
       } else {
         throw Exception('No JNI or FFI api available');
       }
@@ -23836,13 +23732,16 @@ class NativeInteropReservedNamesHostApiForNativeInterop {
   void setReference(String value) {
     try {
       if (_jniApi != null) {
-        _jniApi.reference$1 = _PigeonJniCodec.writeValue<JString>(value);
+        final JString pigeonVar_value = value.toJString();
+        try {
+          _jniApi.pigeon_setReference(pigeonVar_value);
+          return;
+        } finally {
+          pigeonVar_value.release();
+        }
       } else if (_ffiApi != null) {
         final pigeonVar_error = ffi_bridge.NativeInteropTestsError();
-        _ffiApi.setReferenceWithValue(
-          _PigeonFfiCodec.writeValue<NSString>(value),
-          wrappedError: pigeonVar_error,
-        );
+        _ffiApi.pigeon_setReference(NSString(value), wrappedError: pigeonVar_error);
         _throwIfFfiError(pigeonVar_error);
         return;
       } else {
@@ -23856,15 +23755,13 @@ class NativeInteropReservedNamesHostApiForNativeInterop {
   String getDefault() {
     try {
       if (_jniApi != null) {
-        final JString pigeonVar_res = _jniApi.default$;
-        final String pigeonVar_dartTypeRes = pigeonVar_res.toDartString(releaseOriginal: true);
-        return pigeonVar_dartTypeRes;
+        final JString pigeonVar_res = _jniApi.pigeon_getDefault();
+        return pigeonVar_res.toDartString(releaseOriginal: true);
       } else if (_ffiApi != null) {
         final pigeonVar_error = ffi_bridge.NativeInteropTestsError();
-        final NSString? pigeonVar_res = _ffiApi.getDefaultWithWrappedError(pigeonVar_error);
+        final NSString? pigeonVar_res = _ffiApi.pigeon_getDefault(pigeonVar_error);
         _throwIfFfiError(pigeonVar_error);
-        final String pigeonVar_dartTypeRes = pigeonVar_res!.toDartString();
-        return pigeonVar_dartTypeRes;
+        return pigeonVar_res!.toDartString();
       } else {
         throw Exception('No JNI or FFI api available');
       }
@@ -23876,13 +23773,12 @@ class NativeInteropReservedNamesHostApiForNativeInterop {
   Future<String> getValueAsync() async {
     try {
       if (_jniApi != null) {
-        final JString pigeonVar_res = await _jniApi.getValueAsync();
-        final String pigeonVar_dartTypeRes = pigeonVar_res.toDartString(releaseOriginal: true);
-        return pigeonVar_dartTypeRes;
+        final JString pigeonVar_res = await _jniApi.pigeon_getValueAsync();
+        return pigeonVar_res.toDartString(releaseOriginal: true);
       } else if (_ffiApi != null) {
         final pigeonVar_error = ffi_bridge.NativeInteropTestsError();
         final Completer<String> pigeonVar_completer = Completer<String>();
-        _ffiApi.getValueAsyncWithWrappedError(
+        _ffiApi.pigeon_getValueAsync(
           pigeonVar_error,
           completionHandler: ffi_bridge.ObjCBlock_ffiVoid_NSString.listener((
             NSString? pigeonVar_res,
@@ -23894,6 +23790,7 @@ class NativeInteropReservedNamesHostApiForNativeInterop {
             }
           }),
         );
+
         return await pigeonVar_completer.future;
       } else {
         throw Exception('No JNI or FFI api available');
@@ -23906,22 +23803,22 @@ class NativeInteropReservedNamesHostApiForNativeInterop {
   NativeInteropReservedNames echoReservedNames(NativeInteropReservedNames names) {
     try {
       if (_jniApi != null) {
-        final jni_bridge.NativeInteropReservedNames pigeonVar_res = _jniApi.echoReservedNames(
-          names.toJni(),
-        );
-        final NativeInteropReservedNames pigeonVar_dartTypeRes = NativeInteropReservedNames.fromJni(
-          pigeonVar_res,
-        )!;
-        return pigeonVar_dartTypeRes;
+        final JByteArray pigeonVar_args = _PigeonJniBuffers.encode(<Object?>[names]);
+        try {
+          final JByteArray? pigeonVar_res = _jniApi.pigeon_echoReservedNames(pigeonVar_args);
+          return _PigeonJniBuffers.decode(pigeonVar_res)! as NativeInteropReservedNames;
+        } finally {
+          pigeonVar_args.release();
+        }
       } else if (_ffiApi != null) {
         final pigeonVar_error = ffi_bridge.NativeInteropTestsError();
-        final ffi_bridge.NativeInteropReservedNamesBridge? pigeonVar_res = _ffiApi
-            .echoReservedNamesWithNames(names.toFfi(), wrappedError: pigeonVar_error);
+        final NSData pigeonVar_args = _PigeonFfiBuffers.encode(<Object?>[names]);
+        final NSData? pigeonVar_res = _ffiApi.pigeon_echoReservedNames(
+          pigeonVar_args,
+          wrappedError: pigeonVar_error,
+        );
         _throwIfFfiError(pigeonVar_error);
-        final NativeInteropReservedNames pigeonVar_dartTypeRes = NativeInteropReservedNames.fromFfi(
-          pigeonVar_res,
-        )!;
-        return pigeonVar_dartTypeRes;
+        return _PigeonFfiBuffers.decode(pigeonVar_res)! as NativeInteropReservedNames;
       } else {
         throw Exception('No JNI or FFI api available');
       }
@@ -23933,20 +23830,21 @@ class NativeInteropReservedNamesHostApiForNativeInterop {
   String callFlutterRelease(String value) {
     try {
       if (_jniApi != null) {
-        final JString pigeonVar_res = _jniApi.callFlutterRelease(
-          _PigeonJniCodec.writeValue<JString>(value),
-        );
-        final String pigeonVar_dartTypeRes = pigeonVar_res.toDartString(releaseOriginal: true);
-        return pigeonVar_dartTypeRes;
+        final JString pigeonVar_value = value.toJString();
+        try {
+          final JString pigeonVar_res = _jniApi.pigeon_callFlutterRelease(pigeonVar_value);
+          return pigeonVar_res.toDartString(releaseOriginal: true);
+        } finally {
+          pigeonVar_value.release();
+        }
       } else if (_ffiApi != null) {
         final pigeonVar_error = ffi_bridge.NativeInteropTestsError();
-        final NSString? pigeonVar_res = _ffiApi.callFlutterReleaseWithValue(
-          _PigeonFfiCodec.writeValue<NSString>(value),
+        final NSString? pigeonVar_res = _ffiApi.pigeon_callFlutterRelease(
+          NSString(value),
           wrappedError: pigeonVar_error,
         );
         _throwIfFfiError(pigeonVar_error);
-        final String pigeonVar_dartTypeRes = pigeonVar_res!.toDartString();
-        return pigeonVar_dartTypeRes;
+        return pigeonVar_res!.toDartString();
       } else {
         throw Exception('No JNI or FFI api available');
       }
@@ -23958,15 +23856,13 @@ class NativeInteropReservedNamesHostApiForNativeInterop {
   String callFlutterType() {
     try {
       if (_jniApi != null) {
-        final JString pigeonVar_res = _jniApi.callFlutterType();
-        final String pigeonVar_dartTypeRes = pigeonVar_res.toDartString(releaseOriginal: true);
-        return pigeonVar_dartTypeRes;
+        final JString pigeonVar_res = _jniApi.pigeon_callFlutterType();
+        return pigeonVar_res.toDartString(releaseOriginal: true);
       } else if (_ffiApi != null) {
         final pigeonVar_error = ffi_bridge.NativeInteropTestsError();
-        final NSString? pigeonVar_res = _ffiApi.callFlutterTypeWithWrappedError(pigeonVar_error);
+        final NSString? pigeonVar_res = _ffiApi.pigeon_callFlutterType(pigeonVar_error);
         _throwIfFfiError(pigeonVar_error);
-        final String pigeonVar_dartTypeRes = pigeonVar_res!.toDartString();
-        return pigeonVar_dartTypeRes;
+        return pigeonVar_res!.toDartString();
       } else {
         throw Exception('No JNI or FFI api available');
       }
@@ -23978,20 +23874,21 @@ class NativeInteropReservedNamesHostApiForNativeInterop {
   String callFlutterImplementIn(String value) {
     try {
       if (_jniApi != null) {
-        final JString pigeonVar_res = _jniApi.callFlutterImplementIn(
-          _PigeonJniCodec.writeValue<JString>(value),
-        );
-        final String pigeonVar_dartTypeRes = pigeonVar_res.toDartString(releaseOriginal: true);
-        return pigeonVar_dartTypeRes;
+        final JString pigeonVar_value = value.toJString();
+        try {
+          final JString pigeonVar_res = _jniApi.pigeon_callFlutterImplementIn(pigeonVar_value);
+          return pigeonVar_res.toDartString(releaseOriginal: true);
+        } finally {
+          pigeonVar_value.release();
+        }
       } else if (_ffiApi != null) {
         final pigeonVar_error = ffi_bridge.NativeInteropTestsError();
-        final NSString? pigeonVar_res = _ffiApi.callFlutterImplementInValue(
-          _PigeonFfiCodec.writeValue<NSString>(value),
+        final NSString? pigeonVar_res = _ffiApi.pigeon_callFlutterImplementIn(
+          NSString(value),
           wrappedError: pigeonVar_error,
         );
         _throwIfFfiError(pigeonVar_error);
-        final String pigeonVar_dartTypeRes = pigeonVar_res!.toDartString();
-        return pigeonVar_dartTypeRes;
+        return pigeonVar_res!.toDartString();
       } else {
         throw Exception('No JNI or FFI api available');
       }
@@ -24003,13 +23900,12 @@ class NativeInteropReservedNamesHostApiForNativeInterop {
   bool callFlutterIsNull() {
     try {
       if (_jniApi != null) {
-        return _jniApi.callFlutterIsNull();
+        return _jniApi.pigeon_callFlutterIsNull();
       } else if (_ffiApi != null) {
         final pigeonVar_error = ffi_bridge.NativeInteropTestsError();
-        final NSNumber? pigeonVar_res = _ffiApi.callFlutterIsNullWithWrappedError(pigeonVar_error);
+        final NSNumber? pigeonVar_res = _ffiApi.pigeon_callFlutterIsNull(pigeonVar_error);
         _throwIfFfiError(pigeonVar_error);
-        final bool pigeonVar_dartTypeRes = pigeonVar_res!.boolValue;
-        return pigeonVar_dartTypeRes;
+        return pigeonVar_res!.boolValue;
       } else {
         throw Exception('No JNI or FFI api available');
       }
@@ -24021,17 +23917,13 @@ class NativeInteropReservedNamesHostApiForNativeInterop {
   String callFlutterGetReference() {
     try {
       if (_jniApi != null) {
-        final JString pigeonVar_res = _jniApi.callFlutterGetReference();
-        final String pigeonVar_dartTypeRes = pigeonVar_res.toDartString(releaseOriginal: true);
-        return pigeonVar_dartTypeRes;
+        final JString pigeonVar_res = _jniApi.pigeon_callFlutterGetReference();
+        return pigeonVar_res.toDartString(releaseOriginal: true);
       } else if (_ffiApi != null) {
         final pigeonVar_error = ffi_bridge.NativeInteropTestsError();
-        final NSString? pigeonVar_res = _ffiApi.callFlutterGetReferenceWithWrappedError(
-          pigeonVar_error,
-        );
+        final NSString? pigeonVar_res = _ffiApi.pigeon_callFlutterGetReference(pigeonVar_error);
         _throwIfFfiError(pigeonVar_error);
-        final String pigeonVar_dartTypeRes = pigeonVar_res!.toDartString();
-        return pigeonVar_dartTypeRes;
+        return pigeonVar_res!.toDartString();
       } else {
         throw Exception('No JNI or FFI api available');
       }
@@ -24471,7 +24363,7 @@ class NativeInteropReservedNamesHostApi {
 /// JNIgen generates interfaces for Flutter APIs, which it renames differently
 /// than classes.
 final class NativeInteropReservedNamesFlutterApiRegistrar
-    with jni_bridge.$NativeInteropReservedNamesFlutterApi {
+    with jni_bridge.$NativeInteropReservedNamesFlutterApiBridge {
   NativeInteropReservedNamesFlutterApi? dartApi;
 
   NativeInteropReservedNamesFlutterApi register(
@@ -24481,8 +24373,8 @@ final class NativeInteropReservedNamesFlutterApiRegistrar
     dartApi = api;
 
     if (Platform.isAndroid) {
-      final jni_bridge.NativeInteropReservedNamesFlutterApi impl =
-          jni_bridge.NativeInteropReservedNamesFlutterApi.implement(this);
+      final jni_bridge.NativeInteropReservedNamesFlutterApiBridge impl =
+          jni_bridge.NativeInteropReservedNamesFlutterApiBridge.implement(this);
       jni_bridge.NativeInteropReservedNamesFlutterApiRegistrar().registerInstance(
         impl,
         name.toJString(),
@@ -24492,100 +24384,99 @@ final class NativeInteropReservedNamesFlutterApiRegistrar
       final ObjCProtocolBuilder builder = ObjCProtocolBuilder(
         debugName: 'NativeInteropReservedNamesFlutterApiBridge',
       );
-      ffi_bridge.NativeInteropReservedNamesFlutterApiBridge$Builder.releaseWithValue_error_
-          .implement(builder, (NSString? arg_value, ffi_bridge.NativeInteropTestsError errorOut) {
-            try {
-              if (dartApi != null) {
-                final String response = dartApi!.release(arg_value!.toDartString());
-                return _PigeonFfiCodec.writeValue<NSString>(response);
-              } else {
-                _reportFfiError(
-                  errorOut,
-                  'ArgumentError: NativeInteropReservedNamesFlutterApi was not registered.',
-                );
-                return null;
-              }
-            } catch (e) {
-              _reportFfiError(errorOut, e);
-              return null;
-            }
-          });
-      ffi_bridge.NativeInteropReservedNamesFlutterApiBridge$Builder.typeWithError_.implement(
+      ffi_bridge.NativeInteropReservedNamesFlutterApiBridge$Builder.pigeon_release_error_.implement(
         builder,
-        (ffi_bridge.NativeInteropTestsError errorOut) {
+        (NSString arg_value, ffi_bridge.NativeInteropTestsError errorOut) {
           try {
-            if (dartApi != null) {
-              final String response = dartApi!.type();
-              return _PigeonFfiCodec.writeValue<NSString>(response);
-            } else {
+            if (dartApi == null) {
               _reportFfiError(
                 errorOut,
                 'ArgumentError: NativeInteropReservedNamesFlutterApi was not registered.',
               );
               return null;
             }
+            final String response = dartApi!.release(arg_value.toDartString());
+            return NSString(response);
           } catch (e) {
             _reportFfiError(errorOut, e);
             return null;
           }
         },
       );
-      ffi_bridge.NativeInteropReservedNamesFlutterApiBridge$Builder.implementInValue_error_
-          .implement(builder, (NSString? arg_value, ffi_bridge.NativeInteropTestsError errorOut) {
-            try {
-              if (dartApi != null) {
-                final String response = dartApi!.implementIn(arg_value!.toDartString());
-                return _PigeonFfiCodec.writeValue<NSString>(response);
-              } else {
-                _reportFfiError(
-                  errorOut,
-                  'ArgumentError: NativeInteropReservedNamesFlutterApi was not registered.',
-                );
-                return null;
-              }
-            } catch (e) {
-              _reportFfiError(errorOut, e);
-              return null;
-            }
-          });
-      ffi_bridge.NativeInteropReservedNamesFlutterApiBridge$Builder.isNullWithError_.implement(
+      ffi_bridge.NativeInteropReservedNamesFlutterApiBridge$Builder.pigeon_type_.implement(
         builder,
         (ffi_bridge.NativeInteropTestsError errorOut) {
           try {
-            if (dartApi != null) {
-              final bool response = dartApi!.isNull();
-              return _PigeonFfiCodec.writeValue<NSNumber>(response);
-            } else {
+            if (dartApi == null) {
               _reportFfiError(
                 errorOut,
                 'ArgumentError: NativeInteropReservedNamesFlutterApi was not registered.',
               );
               return null;
             }
+            final String response = dartApi!.type();
+            return NSString(response);
           } catch (e) {
             _reportFfiError(errorOut, e);
             return null;
           }
         },
       );
-      ffi_bridge.NativeInteropReservedNamesFlutterApiBridge$Builder.getReferenceWithError_
-          .implement(builder, (ffi_bridge.NativeInteropTestsError errorOut) {
+      ffi_bridge.NativeInteropReservedNamesFlutterApiBridge$Builder.pigeon_implementIn_error_
+          .implement(builder, (NSString arg_value, ffi_bridge.NativeInteropTestsError errorOut) {
             try {
-              if (dartApi != null) {
-                final String response = dartApi!.getReference();
-                return _PigeonFfiCodec.writeValue<NSString>(response);
-              } else {
+              if (dartApi == null) {
                 _reportFfiError(
                   errorOut,
                   'ArgumentError: NativeInteropReservedNamesFlutterApi was not registered.',
                 );
                 return null;
               }
+              final String response = dartApi!.implementIn(arg_value.toDartString());
+              return NSString(response);
             } catch (e) {
               _reportFfiError(errorOut, e);
               return null;
             }
           });
+      ffi_bridge.NativeInteropReservedNamesFlutterApiBridge$Builder.pigeon_isNull_.implement(
+        builder,
+        (ffi_bridge.NativeInteropTestsError errorOut) {
+          try {
+            if (dartApi == null) {
+              _reportFfiError(
+                errorOut,
+                'ArgumentError: NativeInteropReservedNamesFlutterApi was not registered.',
+              );
+              return null;
+            }
+            final bool response = dartApi!.isNull();
+            return _PigeonFfiCodec.writeValue<NSNumber?>(response);
+          } catch (e) {
+            _reportFfiError(errorOut, e);
+            return null;
+          }
+        },
+      );
+      ffi_bridge.NativeInteropReservedNamesFlutterApiBridge$Builder.pigeon_getReference_.implement(
+        builder,
+        (ffi_bridge.NativeInteropTestsError errorOut) {
+          try {
+            if (dartApi == null) {
+              _reportFfiError(
+                errorOut,
+                'ArgumentError: NativeInteropReservedNamesFlutterApi was not registered.',
+              );
+              return null;
+            }
+            final String response = dartApi!.getReference();
+            return NSString(response);
+          } catch (e) {
+            _reportFfiError(errorOut, e);
+            return null;
+          }
+        },
+      );
       builder.addProtocol(ffi_bridge.NativeInteropReservedNamesFlutterApiBridge$Builder.$protocol);
       final ffi_bridge.NativeInteropReservedNamesFlutterApiBridge impl =
           ffi_bridge.NativeInteropReservedNamesFlutterApiBridge.as(builder.build());
@@ -24598,53 +24489,48 @@ final class NativeInteropReservedNamesFlutterApiRegistrar
   }
 
   @override
-  JString release$1(JString arg_value) {
-    if (dartApi != null) {
-      final String response = dartApi!.release(arg_value.toDartString(releaseOriginal: true));
-      return _PigeonJniCodec.writeValue<JString>(response);
-    } else {
+  JString pigeon_release(JString arg_value) {
+    if (dartApi == null) {
       throw ArgumentError('NativeInteropReservedNamesFlutterApi was not registered.');
     }
+    final String response = dartApi!.release(arg_value.toDartString(releaseOriginal: true));
+    return _PigeonJniCodec.writeValue<JString>(response);
   }
 
   @override
-  JString type$1() {
-    if (dartApi != null) {
-      final String response = dartApi!.type();
-      return _PigeonJniCodec.writeValue<JString>(response);
-    } else {
+  JString pigeon_type() {
+    if (dartApi == null) {
       throw ArgumentError('NativeInteropReservedNamesFlutterApi was not registered.');
     }
+    final String response = dartApi!.type();
+    return _PigeonJniCodec.writeValue<JString>(response);
   }
 
   @override
-  JString implementIn$1(JString arg_value) {
-    if (dartApi != null) {
-      final String response = dartApi!.implementIn(arg_value.toDartString(releaseOriginal: true));
-      return _PigeonJniCodec.writeValue<JString>(response);
-    } else {
+  JString pigeon_implementIn(JString arg_value) {
+    if (dartApi == null) {
       throw ArgumentError('NativeInteropReservedNamesFlutterApi was not registered.');
     }
+    final String response = dartApi!.implementIn(arg_value.toDartString(releaseOriginal: true));
+    return _PigeonJniCodec.writeValue<JString>(response);
   }
 
   @override
-  bool isNull$1() {
-    if (dartApi != null) {
-      final bool response = dartApi!.isNull();
-      return response;
-    } else {
+  bool pigeon_isNull() {
+    if (dartApi == null) {
       throw ArgumentError('NativeInteropReservedNamesFlutterApi was not registered.');
     }
+    final bool response = dartApi!.isNull();
+    return response;
   }
 
   @override
-  JString getReference() {
-    if (dartApi != null) {
-      final String response = dartApi!.getReference();
-      return _PigeonJniCodec.writeValue<JString>(response);
-    } else {
+  JString pigeon_getReference() {
+    if (dartApi == null) {
       throw ArgumentError('NativeInteropReservedNamesFlutterApi was not registered.');
     }
+    final String response = dartApi!.getReference();
+    return _PigeonJniCodec.writeValue<JString>(response);
   }
 }
 
@@ -24812,5 +24698,547 @@ abstract class NativeInteropReservedNamesFlutterApi {
     String name = '',
   }) {
     return NativeInteropReservedNamesFlutterApiRegistrar().register(api, name: name);
+  }
+}
+
+class NativeInteropSealedClassHostApiForNativeInterop {
+  NativeInteropSealedClassHostApiForNativeInterop._withRegistrar({
+    jni_bridge.NativeInteropSealedClassHostApiRegistrar? jniApi,
+    ffi_bridge.NativeInteropSealedClassHostApiSetup? ffiApi,
+  }) : _jniApi = jniApi,
+       _ffiApi = ffiApi;
+
+  /// Returns instance of NativeInteropSealedClassHostApiForNativeInterop with specified [channelName] if one has been registered.
+  static NativeInteropSealedClassHostApiForNativeInterop? getInstance({
+    String channelName = defaultInstanceName,
+  }) {
+    final NativeInteropSealedClassHostApiForNativeInterop res;
+    if (Platform.isAndroid) {
+      final jni_bridge.NativeInteropSealedClassHostApiRegistrar? link =
+          jni_bridge.NativeInteropSealedClassHostApiRegistrar().getInstance(
+            channelName.toJString(),
+          );
+      if (link == null) {
+        _throwNoInstanceError(channelName);
+      }
+      res = NativeInteropSealedClassHostApiForNativeInterop._withRegistrar(jniApi: link);
+    } else if (Platform.isIOS || Platform.isMacOS) {
+      final ffi_bridge.NativeInteropSealedClassHostApiSetup? link = ffi_bridge
+          .NativeInteropSealedClassHostApiSetup.getInstanceWithName(NSString(channelName));
+      if (link == null) {
+        _throwNoInstanceError(channelName);
+      }
+      res = NativeInteropSealedClassHostApiForNativeInterop._withRegistrar(ffiApi: link);
+    } else {
+      throw UnsupportedError(
+        'Native Interop is not supported on this platform. Use NativeInteropSealedClassHostApi instead.',
+      );
+    }
+    return res;
+  }
+
+  late final jni_bridge.NativeInteropSealedClassHostApiRegistrar? _jniApi;
+  late final ffi_bridge.NativeInteropSealedClassHostApiSetup? _ffiApi;
+
+  NativeInteropShape echoShape(NativeInteropShape shape) {
+    try {
+      if (_jniApi != null) {
+        final JByteArray pigeonVar_args = _PigeonJniBuffers.encode(<Object?>[shape]);
+        try {
+          final JByteArray? pigeonVar_res = _jniApi.pigeon_echoShape(pigeonVar_args);
+          return _PigeonJniBuffers.decode(pigeonVar_res)! as NativeInteropShape;
+        } finally {
+          pigeonVar_args.release();
+        }
+      } else if (_ffiApi != null) {
+        final pigeonVar_error = ffi_bridge.NativeInteropTestsError();
+        final NSData pigeonVar_args = _PigeonFfiBuffers.encode(<Object?>[shape]);
+        final NSData? pigeonVar_res = _ffiApi.pigeon_echoShape(
+          pigeonVar_args,
+          wrappedError: pigeonVar_error,
+        );
+        _throwIfFfiError(pigeonVar_error);
+        return _PigeonFfiBuffers.decode(pigeonVar_res)! as NativeInteropShape;
+      } else {
+        throw Exception('No JNI or FFI api available');
+      }
+    } on JThrowable catch (e) {
+      throw _wrapJniException(e);
+    }
+  }
+
+  NativeInteropShape? echoNullableShape(NativeInteropShape? shape) {
+    try {
+      if (_jniApi != null) {
+        final JByteArray pigeonVar_args = _PigeonJniBuffers.encode(<Object?>[shape]);
+        try {
+          final JByteArray? pigeonVar_res = _jniApi.pigeon_echoNullableShape(pigeonVar_args);
+          return _PigeonJniBuffers.decode(pigeonVar_res) as NativeInteropShape?;
+        } finally {
+          pigeonVar_args.release();
+        }
+      } else if (_ffiApi != null) {
+        final pigeonVar_error = ffi_bridge.NativeInteropTestsError();
+        final NSData pigeonVar_args = _PigeonFfiBuffers.encode(<Object?>[shape]);
+        final NSData? pigeonVar_res = _ffiApi.pigeon_echoNullableShape(
+          pigeonVar_args,
+          wrappedError: pigeonVar_error,
+        );
+        _throwIfFfiError(pigeonVar_error);
+        return _PigeonFfiBuffers.decode(pigeonVar_res) as NativeInteropShape?;
+      } else {
+        throw Exception('No JNI or FFI api available');
+      }
+    } on JThrowable catch (e) {
+      throw _wrapJniException(e);
+    }
+  }
+
+  List<NativeInteropShape> echoShapeList(List<NativeInteropShape> shapes) {
+    try {
+      if (_jniApi != null) {
+        final JByteArray pigeonVar_args = _PigeonJniBuffers.encode(<Object?>[shapes]);
+        try {
+          final JByteArray? pigeonVar_res = _jniApi.pigeon_echoShapeList(pigeonVar_args);
+          return (_PigeonJniBuffers.decode(pigeonVar_res)! as List<Object?>)
+              .cast<NativeInteropShape>();
+        } finally {
+          pigeonVar_args.release();
+        }
+      } else if (_ffiApi != null) {
+        final pigeonVar_error = ffi_bridge.NativeInteropTestsError();
+        final NSData pigeonVar_args = _PigeonFfiBuffers.encode(<Object?>[shapes]);
+        final NSData? pigeonVar_res = _ffiApi.pigeon_echoShapeList(
+          pigeonVar_args,
+          wrappedError: pigeonVar_error,
+        );
+        _throwIfFfiError(pigeonVar_error);
+        return (_PigeonFfiBuffers.decode(pigeonVar_res)! as List<Object?>)
+            .cast<NativeInteropShape>();
+      } else {
+        throw Exception('No JNI or FFI api available');
+      }
+    } on JThrowable catch (e) {
+      throw _wrapJniException(e);
+    }
+  }
+
+  Map<String, NativeInteropShape> echoShapeMap(Map<String, NativeInteropShape> shapes) {
+    try {
+      if (_jniApi != null) {
+        final JByteArray pigeonVar_args = _PigeonJniBuffers.encode(<Object?>[shapes]);
+        try {
+          final JByteArray? pigeonVar_res = _jniApi.pigeon_echoShapeMap(pigeonVar_args);
+          return (_PigeonJniBuffers.decode(pigeonVar_res)! as Map<Object?, Object?>)
+              .cast<String, NativeInteropShape>();
+        } finally {
+          pigeonVar_args.release();
+        }
+      } else if (_ffiApi != null) {
+        final pigeonVar_error = ffi_bridge.NativeInteropTestsError();
+        final NSData pigeonVar_args = _PigeonFfiBuffers.encode(<Object?>[shapes]);
+        final NSData? pigeonVar_res = _ffiApi.pigeon_echoShapeMap(
+          pigeonVar_args,
+          wrappedError: pigeonVar_error,
+        );
+        _throwIfFfiError(pigeonVar_error);
+        return (_PigeonFfiBuffers.decode(pigeonVar_res)! as Map<Object?, Object?>)
+            .cast<String, NativeInteropShape>();
+      } else {
+        throw Exception('No JNI or FFI api available');
+      }
+    } on JThrowable catch (e) {
+      throw _wrapJniException(e);
+    }
+  }
+
+  Future<NativeInteropShape> echoAsyncShape(NativeInteropShape shape) async {
+    try {
+      if (_jniApi != null) {
+        final JByteArray pigeonVar_args = _PigeonJniBuffers.encode(<Object?>[shape]);
+        try {
+          final JByteArray? pigeonVar_res = await _jniApi.pigeon_echoAsyncShape(pigeonVar_args);
+          return _PigeonJniBuffers.decode(pigeonVar_res)! as NativeInteropShape;
+        } finally {
+          pigeonVar_args.release();
+        }
+      } else if (_ffiApi != null) {
+        final pigeonVar_error = ffi_bridge.NativeInteropTestsError();
+        final NSData pigeonVar_args = _PigeonFfiBuffers.encode(<Object?>[shape]);
+        final Completer<NativeInteropShape> pigeonVar_completer = Completer<NativeInteropShape>();
+        _ffiApi.pigeon_echoAsyncShape(
+          pigeonVar_args,
+          wrappedError: pigeonVar_error,
+          completionHandler: ffi_bridge.ObjCBlock_ffiVoid_NSData.listener((NSData? pigeonVar_res) {
+            if (pigeonVar_error.code != null) {
+              pigeonVar_completer.completeError(_wrapFfiError(pigeonVar_error));
+            } else {
+              pigeonVar_completer.complete(
+                _PigeonFfiBuffers.decode(pigeonVar_res)! as NativeInteropShape,
+              );
+            }
+          }),
+        );
+
+        return await pigeonVar_completer.future;
+      } else {
+        throw Exception('No JNI or FFI api available');
+      }
+    } on JThrowable catch (e) {
+      throw _wrapJniException(e);
+    }
+  }
+
+  NativeInteropShape callFlutterEchoShape(NativeInteropShape shape) {
+    try {
+      if (_jniApi != null) {
+        final JByteArray pigeonVar_args = _PigeonJniBuffers.encode(<Object?>[shape]);
+        try {
+          final JByteArray? pigeonVar_res = _jniApi.pigeon_callFlutterEchoShape(pigeonVar_args);
+          return _PigeonJniBuffers.decode(pigeonVar_res)! as NativeInteropShape;
+        } finally {
+          pigeonVar_args.release();
+        }
+      } else if (_ffiApi != null) {
+        final pigeonVar_error = ffi_bridge.NativeInteropTestsError();
+        final NSData pigeonVar_args = _PigeonFfiBuffers.encode(<Object?>[shape]);
+        final NSData? pigeonVar_res = _ffiApi.pigeon_callFlutterEchoShape(
+          pigeonVar_args,
+          wrappedError: pigeonVar_error,
+        );
+        _throwIfFfiError(pigeonVar_error);
+        return _PigeonFfiBuffers.decode(pigeonVar_res)! as NativeInteropShape;
+      } else {
+        throw Exception('No JNI or FFI api available');
+      }
+    } on JThrowable catch (e) {
+      throw _wrapJniException(e);
+    }
+  }
+}
+
+/// Echoes sealed classes, which native interop supports only with the hybrid
+/// transport.
+class NativeInteropSealedClassHostApi {
+  /// Constructor for [NativeInteropSealedClassHostApi]. The [binaryMessenger] named argument is
+  /// available for dependency injection. If it is left null, the default
+  /// BinaryMessenger will be used which routes to the host platform.
+  NativeInteropSealedClassHostApi({
+    BinaryMessenger? binaryMessenger,
+    String messageChannelSuffix = '',
+    NativeInteropSealedClassHostApiForNativeInterop? nativeInteropApi,
+  }) : pigeonVar_binaryMessenger = binaryMessenger,
+       pigeonVar_messageChannelSuffix = messageChannelSuffix.isNotEmpty
+           ? '.$messageChannelSuffix'
+           : '',
+       _nativeInteropApi = nativeInteropApi;
+
+  /// Creates an instance of [NativeInteropSealedClassHostApi] that requests an instance of
+  /// [NativeInteropSealedClassHostApiForNativeInterop] from the host platform with a matching instance name
+  /// to [messageChannelSuffix] or the default instance.
+  ///
+  /// Throws [ArgumentError] if no matching instance can be found.
+  factory NativeInteropSealedClassHostApi.createWithNativeInteropApi({
+    BinaryMessenger? binaryMessenger,
+    String messageChannelSuffix = '',
+  }) {
+    NativeInteropSealedClassHostApiForNativeInterop? nativeInteropApi;
+    String nativeInteropApiInstanceName = '';
+    if (Platform.isAndroid || Platform.isIOS || Platform.isMacOS) {
+      if (messageChannelSuffix.isEmpty) {
+        nativeInteropApi = NativeInteropSealedClassHostApiForNativeInterop.getInstance();
+      } else {
+        nativeInteropApiInstanceName = messageChannelSuffix;
+        nativeInteropApi = NativeInteropSealedClassHostApiForNativeInterop.getInstance(
+          channelName: messageChannelSuffix,
+        );
+      }
+    } else {
+      throw UnsupportedError(
+        'Native Interop is not supported on this platform. Use the default constructor of NativeInteropSealedClassHostApi instead.',
+      );
+    }
+    if (nativeInteropApi == null) {
+      throw ArgumentError(
+        'No NativeInteropSealedClassHostApi instance with ${nativeInteropApiInstanceName.isEmpty ? 'no ' : ''} instance name ${nativeInteropApiInstanceName.isNotEmpty ? '"$nativeInteropApiInstanceName" ' : ''}found.',
+      );
+    }
+    return NativeInteropSealedClassHostApi(
+      binaryMessenger: binaryMessenger,
+      messageChannelSuffix: messageChannelSuffix,
+      nativeInteropApi: nativeInteropApi,
+    );
+  }
+
+  final BinaryMessenger? pigeonVar_binaryMessenger;
+  static const MessageCodec<Object?> pigeonChannelCodec = _PigeonCodec();
+
+  final String pigeonVar_messageChannelSuffix;
+
+  final NativeInteropSealedClassHostApiForNativeInterop? _nativeInteropApi;
+
+  Future<NativeInteropShape> echoShape(NativeInteropShape shape) async {
+    if (_nativeInteropApi != null) {
+      return _nativeInteropApi.echoShape(shape);
+    }
+    final pigeonVar_channelName =
+        'dev.flutter.pigeon.pigeon_integration_tests.NativeInteropSealedClassHostApi.echoShape$pigeonVar_messageChannelSuffix';
+    final pigeonVar_channel = BasicMessageChannel<Object?>(
+      pigeonVar_channelName,
+      pigeonChannelCodec,
+      binaryMessenger: pigeonVar_binaryMessenger,
+    );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[shape]);
+    final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
+
+    final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
+      pigeonVar_replyList,
+      pigeonVar_channelName,
+      isNullValid: false,
+    );
+    return pigeonVar_replyValue! as NativeInteropShape;
+  }
+
+  Future<NativeInteropShape?> echoNullableShape(NativeInteropShape? shape) async {
+    if (_nativeInteropApi != null) {
+      return _nativeInteropApi.echoNullableShape(shape);
+    }
+    final pigeonVar_channelName =
+        'dev.flutter.pigeon.pigeon_integration_tests.NativeInteropSealedClassHostApi.echoNullableShape$pigeonVar_messageChannelSuffix';
+    final pigeonVar_channel = BasicMessageChannel<Object?>(
+      pigeonVar_channelName,
+      pigeonChannelCodec,
+      binaryMessenger: pigeonVar_binaryMessenger,
+    );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[shape]);
+    final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
+
+    final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
+      pigeonVar_replyList,
+      pigeonVar_channelName,
+      isNullValid: true,
+    );
+    return pigeonVar_replyValue as NativeInteropShape?;
+  }
+
+  Future<List<NativeInteropShape>> echoShapeList(List<NativeInteropShape> shapes) async {
+    if (_nativeInteropApi != null) {
+      return _nativeInteropApi.echoShapeList(shapes);
+    }
+    final pigeonVar_channelName =
+        'dev.flutter.pigeon.pigeon_integration_tests.NativeInteropSealedClassHostApi.echoShapeList$pigeonVar_messageChannelSuffix';
+    final pigeonVar_channel = BasicMessageChannel<Object?>(
+      pigeonVar_channelName,
+      pigeonChannelCodec,
+      binaryMessenger: pigeonVar_binaryMessenger,
+    );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[shapes]);
+    final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
+
+    final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
+      pigeonVar_replyList,
+      pigeonVar_channelName,
+      isNullValid: false,
+    );
+    return (pigeonVar_replyValue! as List<Object?>).cast<NativeInteropShape>();
+  }
+
+  Future<Map<String, NativeInteropShape>> echoShapeMap(
+    Map<String, NativeInteropShape> shapes,
+  ) async {
+    if (_nativeInteropApi != null) {
+      return _nativeInteropApi.echoShapeMap(shapes);
+    }
+    final pigeonVar_channelName =
+        'dev.flutter.pigeon.pigeon_integration_tests.NativeInteropSealedClassHostApi.echoShapeMap$pigeonVar_messageChannelSuffix';
+    final pigeonVar_channel = BasicMessageChannel<Object?>(
+      pigeonVar_channelName,
+      pigeonChannelCodec,
+      binaryMessenger: pigeonVar_binaryMessenger,
+    );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[shapes]);
+    final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
+
+    final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
+      pigeonVar_replyList,
+      pigeonVar_channelName,
+      isNullValid: false,
+    );
+    return (pigeonVar_replyValue! as Map<Object?, Object?>).cast<String, NativeInteropShape>();
+  }
+
+  Future<NativeInteropShape> echoAsyncShape(NativeInteropShape shape) async {
+    if (_nativeInteropApi != null) {
+      return _nativeInteropApi.echoAsyncShape(shape);
+    }
+    final pigeonVar_channelName =
+        'dev.flutter.pigeon.pigeon_integration_tests.NativeInteropSealedClassHostApi.echoAsyncShape$pigeonVar_messageChannelSuffix';
+    final pigeonVar_channel = BasicMessageChannel<Object?>(
+      pigeonVar_channelName,
+      pigeonChannelCodec,
+      binaryMessenger: pigeonVar_binaryMessenger,
+    );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[shape]);
+    final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
+
+    final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
+      pigeonVar_replyList,
+      pigeonVar_channelName,
+      isNullValid: false,
+    );
+    return pigeonVar_replyValue! as NativeInteropShape;
+  }
+
+  Future<NativeInteropShape> callFlutterEchoShape(NativeInteropShape shape) async {
+    if (_nativeInteropApi != null) {
+      return _nativeInteropApi.callFlutterEchoShape(shape);
+    }
+    final pigeonVar_channelName =
+        'dev.flutter.pigeon.pigeon_integration_tests.NativeInteropSealedClassHostApi.callFlutterEchoShape$pigeonVar_messageChannelSuffix';
+    final pigeonVar_channel = BasicMessageChannel<Object?>(
+      pigeonVar_channelName,
+      pigeonChannelCodec,
+      binaryMessenger: pigeonVar_binaryMessenger,
+    );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[shape]);
+    final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
+
+    final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
+      pigeonVar_replyList,
+      pigeonVar_channelName,
+      isNullValid: false,
+    );
+    return pigeonVar_replyValue! as NativeInteropShape;
+  }
+}
+
+/// The Flutter API counterpart of [NativeInteropSealedClassHostApi].
+final class NativeInteropSealedClassFlutterApiRegistrar
+    with jni_bridge.$NativeInteropSealedClassFlutterApiBridge {
+  NativeInteropSealedClassFlutterApi? dartApi;
+
+  NativeInteropSealedClassFlutterApi register(
+    NativeInteropSealedClassFlutterApi api, {
+    String name = defaultInstanceName,
+  }) {
+    dartApi = api;
+
+    if (Platform.isAndroid) {
+      final jni_bridge.NativeInteropSealedClassFlutterApiBridge impl =
+          jni_bridge.NativeInteropSealedClassFlutterApiBridge.implement(this);
+      jni_bridge.NativeInteropSealedClassFlutterApiRegistrar().registerInstance(
+        impl,
+        name.toJString(),
+      );
+    }
+    if (Platform.isIOS || Platform.isMacOS) {
+      final ObjCProtocolBuilder builder = ObjCProtocolBuilder(
+        debugName: 'NativeInteropSealedClassFlutterApiBridge',
+      );
+      ffi_bridge.NativeInteropSealedClassFlutterApiBridge$Builder.pigeon_echoShape_error_.implement(
+        builder,
+        (NSData pigeonVar_args, ffi_bridge.NativeInteropTestsError errorOut) {
+          try {
+            if (dartApi == null) {
+              _reportFfiError(
+                errorOut,
+                'ArgumentError: NativeInteropSealedClassFlutterApi was not registered.',
+              );
+              return null;
+            }
+            final List<Object?> pigeonVar_decodedArgs =
+                _PigeonFfiBuffers.decode(pigeonVar_args)! as List<Object?>;
+            final NativeInteropShape response = dartApi!.echoShape(
+              pigeonVar_decodedArgs[0]! as NativeInteropShape,
+            );
+            return _PigeonFfiBuffers.encodeOrNull(response);
+          } catch (e) {
+            _reportFfiError(errorOut, e);
+            return null;
+          }
+        },
+      );
+      builder.addProtocol(ffi_bridge.NativeInteropSealedClassFlutterApiBridge$Builder.$protocol);
+      final ffi_bridge.NativeInteropSealedClassFlutterApiBridge impl =
+          ffi_bridge.NativeInteropSealedClassFlutterApiBridge.as(builder.build());
+      ffi_bridge.NativeInteropSealedClassFlutterApiRegistrar.registerInstanceWithApi(
+        impl,
+        name: NSString(name),
+      );
+    }
+    return api;
+  }
+
+  @override
+  JByteArray? pigeon_echoShape(JByteArray pigeonVar_args) {
+    if (dartApi == null) {
+      throw ArgumentError('NativeInteropSealedClassFlutterApi was not registered.');
+    }
+    final List<Object?> pigeonVar_decodedArgs =
+        _PigeonJniBuffers.decode(pigeonVar_args)! as List<Object?>;
+    final NativeInteropShape response = dartApi!.echoShape(
+      pigeonVar_decodedArgs[0]! as NativeInteropShape,
+    );
+    return _PigeonJniBuffers.encodeOrNull(response);
+  }
+}
+
+abstract class NativeInteropSealedClassFlutterApi {
+  static const MessageCodec<Object?> pigeonChannelCodec = _PigeonCodec();
+
+  NativeInteropShape echoShape(NativeInteropShape shape);
+
+  static void setUp(
+    NativeInteropSealedClassFlutterApi? api, {
+    BinaryMessenger? binaryMessenger,
+    String messageChannelSuffix = '',
+  }) {
+    if (Platform.isAndroid && api != null) {
+      NativeInteropSealedClassFlutterApiRegistrar().register(
+        api,
+        name: messageChannelSuffix.isEmpty ? defaultInstanceName : messageChannelSuffix,
+      );
+    }
+
+    if ((Platform.isIOS || Platform.isMacOS) && api != null) {
+      NativeInteropSealedClassFlutterApiRegistrar().register(
+        api,
+        name: messageChannelSuffix.isEmpty ? defaultInstanceName : messageChannelSuffix,
+      );
+    }
+
+    messageChannelSuffix = messageChannelSuffix.isNotEmpty ? '.$messageChannelSuffix' : '';
+    {
+      final pigeonVar_channel = BasicMessageChannel<Object?>(
+        'dev.flutter.pigeon.pigeon_integration_tests.NativeInteropSealedClassFlutterApi.echoShape$messageChannelSuffix',
+        pigeonChannelCodec,
+        binaryMessenger: binaryMessenger,
+      );
+      if (api == null) {
+        pigeonVar_channel.setMessageHandler(null);
+      } else {
+        pigeonVar_channel.setMessageHandler((Object? message) async {
+          final List<Object?> args = message! as List<Object?>;
+          final NativeInteropShape arg_shape = args[0]! as NativeInteropShape;
+          try {
+            final NativeInteropShape output = api.echoShape(arg_shape);
+            return wrapResponse(result: output);
+          } on PlatformException catch (e) {
+            return wrapResponse(error: e);
+          } catch (e) {
+            return wrapResponse(
+              error: PlatformException(code: 'error', message: e.toString()),
+            );
+          }
+        });
+      }
+    }
+  }
+
+  static NativeInteropSealedClassFlutterApi implement(
+    NativeInteropSealedClassFlutterApi api, {
+    String name = '',
+  }) {
+    return NativeInteropSealedClassFlutterApiRegistrar().register(api, name: name);
   }
 }

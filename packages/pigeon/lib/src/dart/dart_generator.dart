@@ -341,6 +341,8 @@ class _FfiType extends _NativeInteropType<_FfiType> {
     switch (type.baseName) {
       case 'String' || 'int' || 'double' || 'bool':
         return primitiveGetter(primitiveToDartMethodName, classField);
+      case 'Uint8List' || 'Int32List' || 'Int64List' || 'Float64List':
+        return '_PigeonFfiCodec.readTypedData($varName)${getForceNonNullSymbol(!type.isNullable)} as ${type.baseName}${getNullabilitySymbol(type.isNullable)}';
       case 'Object':
         asType = '';
       case 'List':
@@ -491,6 +493,8 @@ class _JniType extends _NativeInteropType<_JniType> {
           primitiveToDartMethodName,
           type.baseName == 'String' || type.isNullable || forceConversion,
         );
+      case 'Uint8List' || 'Int32List' || 'Int64List' || 'Float64List':
+        return '${_jniTypedDataToDartFunction(type.baseName)}($varName, release: true)${getForceNonNullSymbol(!type.isNullable)}';
       case 'Object':
         asType = '';
       case 'List':
@@ -584,6 +588,160 @@ String _wrapInNullCheckIfNullable({
   String ifNull = 'null',
 }) => nullable ? '$varName == null ? $ifNull : $code' : code;
 
+/// Converts the Dart value [name] of a type that the hybrid transport passes
+/// directly, other than enums and non-null primitives, to its JNI type.
+String _dartToJniDirect(String name, TypeDeclaration type) {
+  final nullCheck = type.isNullable ? '$name == null ? null : ' : '';
+  return switch (type.baseName) {
+    'String' => type.isNullable ? '$name?.toJString()' : '$name.toJString()',
+    'bool' => '${nullCheck}JBoolean($name)',
+    'int' => '${nullCheck}JLong($name)',
+    'double' => '${nullCheck}JDouble($name)',
+    'Uint8List' => '${nullCheck}_uint8ListToJni($name)',
+    'Int32List' => '${nullCheck}_int32ListToJni($name)',
+    'Int64List' => '${nullCheck}_int64ListToJni($name)',
+    'Float64List' => '${nullCheck}_float64ListToJni($name)',
+    _ => throw ArgumentError.value(type.baseName),
+  };
+}
+
+/// The Dart type of a parameter of [type] that the FFI hybrid transport
+/// passes directly, as FFIgen binds it.
+String _ffiHybridParameterType(TypeDeclaration type) {
+  final nullable = type.isNullable ? '?' : '';
+  if (type.isEnum) {
+    return 'int';
+  }
+  return switch (type.baseName) {
+    'bool' || 'int' || 'double' => type.isNullable ? 'NSNumber?' : type.baseName,
+    'String' => 'NSString$nullable',
+    'Uint8List' || 'Int32List' || 'Int64List' || 'Float64List' => 'NSData$nullable',
+    _ => throw ArgumentError.value(type.baseName),
+  };
+}
+
+/// The Dart type of a return value of [type] from an FFI hybrid transport
+/// entry point, as FFIgen binds it.
+String _ffiHybridReturnType(TypeDeclaration type) {
+  if (type.isVoid) {
+    return 'void';
+  }
+  if (nativeInteropReturnsBuffer(type)) {
+    return 'NSData?';
+  }
+  if (type.isEnum || isPrimitiveType(type)) {
+    return 'NSNumber?';
+  }
+  return switch (type.baseName) {
+    'String' => 'NSString?',
+    'Uint8List' || 'Int32List' || 'Int64List' || 'Float64List' => 'NSData?',
+    _ => throw ArgumentError.value(type.baseName),
+  };
+}
+
+/// Converts the Dart value [name] of a type that the FFI hybrid transport
+/// passes directly to its Objective-C parameter type.
+String _dartToFfiDirect(String name, TypeDeclaration type) {
+  if (type.isEnum) {
+    return type.isNullable ? '$name?.index ?? $nativeInteropNullEnumIndex' : '$name.index';
+  }
+  final nullCheck = type.isNullable ? '$name == null ? null : ' : '';
+  return switch (type.baseName) {
+    'bool' ||
+    'int' ||
+    'double' => type.isNullable ? '_PigeonFfiCodec.writeValue<NSNumber?>($name)' : name,
+    'String' => '${nullCheck}NSString($name)',
+    'Uint8List' ||
+    'Int32List' ||
+    'Int64List' ||
+    'Float64List' => '${nullCheck}_typedDataToNSData($name)',
+    _ => throw ArgumentError.value(type.baseName),
+  };
+}
+
+/// Converts the Dart value [name] of a type that the FFI hybrid transport
+/// passes directly to its Objective-C return type.
+String _dartToFfiDirectReturn(String name, TypeDeclaration type) {
+  final nullCheck = type.isNullable ? '$name == null ? null : ' : '';
+  if (type.isEnum) {
+    return '${nullCheck}NSNumber.alloc().initWithLong($name.index)';
+  }
+  return switch (type.baseName) {
+    'bool' || 'int' || 'double' => '_PigeonFfiCodec.writeValue<NSNumber?>($name)',
+    'String' => '${nullCheck}NSString($name)',
+    'Uint8List' ||
+    'Int32List' ||
+    'Int64List' ||
+    'Float64List' => '${nullCheck}_typedDataToNSData($name)',
+    _ => throw ArgumentError.value(type.baseName),
+  };
+}
+
+/// Converts [value], a parameter of [type] that the FFI hybrid transport
+/// passes directly, to its Dart value.
+String _ffiDirectParameterToDart(String value, TypeDeclaration type) {
+  if (type.isEnum) {
+    return _enumFromIndex(value, type);
+  }
+  final nullAware = type.isNullable ? '?' : '';
+  return switch (type.baseName) {
+    'bool' => type.isNullable ? '$value?.boolValue' : value,
+    'int' => type.isNullable ? '$value?.longValue' : value,
+    'double' => type.isNullable ? '$value?.doubleValue' : value,
+    'String' => '$value$nullAware.toDartString()',
+    'Uint8List' || 'Int32List' || 'Int64List' || 'Float64List' => _nsDataToTypedData(value, type),
+    _ => throw ArgumentError.value(type.baseName),
+  };
+}
+
+/// Converts [value], a return value of [type] from an FFI hybrid transport
+/// entry point, to its Dart value.
+String _ffiDirectReturnToDart(String value, TypeDeclaration type) {
+  final unwrap = type.isNullable ? '?' : '!';
+  if (type.isEnum) {
+    return type.isNullable
+        ? '$value == null ? null : ${type.baseName}.values[$value.longValue]'
+        : '${type.baseName}.values[$value!.longValue]';
+  }
+  return switch (type.baseName) {
+    'bool' => '$value$unwrap.boolValue',
+    'int' => '$value$unwrap.longValue',
+    'double' => '$value$unwrap.doubleValue',
+    'String' => '$value$unwrap.toDartString()',
+    'Uint8List' || 'Int32List' || 'Int64List' || 'Float64List' => _nsDataToTypedData(value, type),
+    _ => throw ArgumentError.value(type.baseName),
+  };
+}
+
+/// Copies the `NSData?` [value] into Dart typed data of [type].
+String _nsDataToTypedData(String value, TypeDeclaration type) {
+  final bytes = '_PigeonFfiBuffers.toUint8List($value)${type.isNullable ? '?' : '!'}';
+  return switch (type.baseName) {
+    'Uint8List' => '_PigeonFfiBuffers.toUint8List($value)${type.isNullable ? '' : '!'}',
+    'Int32List' => '$bytes.buffer.asInt32List()',
+    'Int64List' => '$bytes.buffer.asInt64List()',
+    'Float64List' => '$bytes.buffer.asFloat64List()',
+    _ => throw ArgumentError.value(type.baseName),
+  };
+}
+
+/// Converts the raw index [index] that the hybrid transport passes for an
+/// enum of [type] to the enum value.
+String _enumFromIndex(String index, TypeDeclaration type) {
+  final value = '${type.baseName}.values[$index]';
+  return type.isNullable ? '$index == $nativeInteropNullEnumIndex ? null : $value' : value;
+}
+
+/// The generated helper that copies a JNI primitive array into a Dart typed
+/// data list of type [typedDataName].
+String _jniTypedDataToDartFunction(String typedDataName) => switch (typedDataName) {
+  'Uint8List' => '_jByteArrayToDart',
+  'Int32List' => '_jIntArrayToDart',
+  'Int64List' => '_jLongArrayToDart',
+  'Float64List' => '_jDoubleArrayToDart',
+  _ => throw ArgumentError.value(typedDataName),
+};
+
 /// Options that control how Dart code will be generated.
 class InternalDartOptions extends InternalOptions {
   /// Constructor for InternalDartOptions.
@@ -596,6 +754,7 @@ class InternalDartOptions extends InternalOptions {
     this.useFfi = false,
     this.ffiErrorClassName,
     this.jniErrorClassName,
+    this.nativeInteropTransport = NativeInteropTransport.objects,
     required bool ignoreLints,
   }) : _ignoreLints = ignoreLints;
 
@@ -610,6 +769,7 @@ class InternalDartOptions extends InternalOptions {
     this.ffiErrorClassName,
     this.jniErrorClassName,
     this.fileSpecificClassNameComponent,
+    this.nativeInteropTransport = NativeInteropTransport.objects,
   }) : copyrightHeader = copyrightHeader ?? options.copyrightHeader,
        dartOut = (dartOut ?? options.sourceOutPath)!,
        testOut = testOut ?? options.testOutPath,
@@ -638,6 +798,15 @@ class InternalDartOptions extends InternalOptions {
 
   /// The error class name used for JNI methods.
   final String? jniErrorClassName;
+
+  /// How native interop moves values between Dart and the host platform.
+  final NativeInteropTransport nativeInteropTransport;
+
+  /// Whether JNI calls use the hybrid transport.
+  bool get useJniHybrid => useJni && nativeInteropTransport == NativeInteropTransport.hybrid;
+
+  /// Whether FFI calls use the hybrid transport.
+  bool get useFfiHybrid => useFfi && nativeInteropTransport == NativeInteropTransport.hybrid;
 
   /// Whether to ignore lint violations in generated Dart code.
   final bool _ignoreLints;
@@ -1234,7 +1403,8 @@ class DartGenerator extends StructuredGenerator<InternalDartOptions> {
     AstFlutterApi api, {
     required String dartPackageName,
   }) {
-    final mixin = generatorOptions.useJni ? ' with $_jniBridgePrefix.\$${api.name}' : '';
+    final String jniInterfaceName = generatorOptions.useJniHybrid ? '${api.name}Bridge' : api.name;
+    final mixin = generatorOptions.useJni ? ' with $_jniBridgePrefix.\$$jniInterfaceName' : '';
     indent.writeScoped('final class ${api.name}Registrar$mixin {', '}', () {
       indent.writeln('${api.name}? dartApi;');
       indent.newln();
@@ -1249,7 +1419,7 @@ class DartGenerator extends StructuredGenerator<InternalDartOptions> {
         if (generatorOptions.useJni) {
           indent.writeScoped('if (Platform.isAndroid) {', '}', () {
             indent.writeln(
-              'final $_jniBridgePrefix.${api.name} impl = $_jniBridgePrefix.${api.name}.implement(this);',
+              'final $_jniBridgePrefix.$jniInterfaceName impl = $_jniBridgePrefix.$jniInterfaceName.implement(this);',
             );
             indent.writeln('$_jniBridgePrefix.${api.name}Registrar().registerInstance(');
             indent.writeln('  impl,');
@@ -1264,6 +1434,10 @@ class DartGenerator extends StructuredGenerator<InternalDartOptions> {
               "final ObjCProtocolBuilder builder = ObjCProtocolBuilder(debugName: '${api.name}Bridge');",
             );
             for (final Method method in api.methods) {
+              if (generatorOptions.useFfiHybrid) {
+                _writeFfiHybridFlutterCallback(indent, api, method, generatorOptions);
+                continue;
+              }
               final registrationMethod = method.isAsynchronous
                   ? 'implementAsListener'
                   : 'implement';
@@ -1388,7 +1562,11 @@ class DartGenerator extends StructuredGenerator<InternalDartOptions> {
         indent.writeln('return api;');
       });
 
-      if (generatorOptions.useJni) {
+      if (generatorOptions.useJniHybrid) {
+        for (final Method method in api.methods) {
+          _writeJniHybridFlutterMethod(indent, api, method);
+        }
+      } else if (generatorOptions.useJni) {
         final jniNamer = _JniBindingNamer(isInterface: true);
         for (final Method method
             in root.apis
@@ -1688,6 +1866,10 @@ class DartGenerator extends StructuredGenerator<InternalDartOptions> {
               var isFirstBranch = true;
               if (generatorOptions.useJni) {
                 indent.writeScoped('if (_jniApi != null) {', '}', () {
+                  if (generatorOptions.useJniHybrid) {
+                    _writeJniHybridHostCall(indent, method);
+                    return;
+                  }
                   final _JniType returnType = _JniType.fromTypeDeclaration(method.returnType);
                   const resultVar = '${varNamePrefix}res';
                   const dartResultVar = '${varNamePrefix}dartTypeRes';
@@ -1729,6 +1911,10 @@ class DartGenerator extends StructuredGenerator<InternalDartOptions> {
               if (generatorOptions.useFfi) {
                 final elseStr = isFirstBranch ? '' : ' else';
                 indent.addScoped('$elseStr if (_ffiApi != null) {', '}', () {
+                  if (generatorOptions.useFfiHybrid) {
+                    _writeFfiHybridHostCall(indent, method, generatorOptions);
+                    return;
+                  }
                   const errorVar = '${varNamePrefix}error';
                   const resultVar = '${varNamePrefix}res';
                   const dartResultVar = '${varNamePrefix}dartTypeRes';
@@ -1797,6 +1983,343 @@ return ${generatorOptions.useJni ? 'await ' : ''}$completerVar.future;
         indent.newln();
       }
     });
+  }
+
+  /// Writes the body of the JNI branch of a host API [method] for the hybrid
+  /// transport: one call to the method's `pigeon_` entry point.
+  void _writeJniHybridHostCall(Indent indent, Method method) {
+    const String argsVar = nativeInteropArgsParameterName;
+    const resultVar = '${varNamePrefix}res';
+    final temporaries = <(String, bool)>[];
+    final callArguments = <String>[];
+    for (final Parameter parameter in method.parameters) {
+      final TypeDeclaration type = parameter.type;
+      if (!isNativeInteropDirectType(type)) {
+        continue;
+      }
+      if (type.isEnum) {
+        callArguments.add(
+          type.isNullable
+              ? '${parameter.name}?.index ?? $nativeInteropNullEnumIndex'
+              : '${parameter.name}.index',
+        );
+      } else if (isPrimitiveType(type) && !type.isNullable) {
+        callArguments.add(parameter.name);
+      } else {
+        final _JniType jniType = _JniType.fromTypeDeclaration(type);
+        final local = '$varNamePrefix${parameter.name}';
+        indent.writeln(
+          'final ${jniType.getJniCallReturnType(true)} $local = ${_dartToJniDirect(parameter.name, type)};',
+        );
+        temporaries.add((local, type.isNullable));
+        callArguments.add(local);
+      }
+    }
+    final List<Parameter> encodedParameters = nativeInteropEncodedParameters(method.parameters);
+    if (encodedParameters.isNotEmpty) {
+      indent.writeln(
+        'final JByteArray $argsVar = _PigeonJniBuffers.encode(<Object?>[${encodedParameters.map((Parameter p) => p.name).join(', ')}]);',
+      );
+      temporaries.add((argsVar, false));
+      callArguments.add(argsVar);
+    }
+    final await = method.isAsynchronous ? 'await ' : '';
+    final call =
+        '${await}_jniApi.${nativeInteropEntryPointName(method.name)}(${callArguments.join(', ')})';
+
+    void writeCallAndReturn() {
+      final TypeDeclaration returnType = method.returnType;
+      if (returnType.isVoid) {
+        indent.writeln('$call;');
+        indent.writeln('return;');
+      } else if (nativeInteropReturnsBuffer(returnType)) {
+        indent.writeln('final JByteArray? $resultVar = $call;');
+        indent.writeln('return ${_castValue('_PigeonJniBuffers.decode($resultVar)', returnType)};');
+      } else if (returnType.isEnum) {
+        final index = method.isAsynchronous ? '($call).toDartInt(releaseOriginal: true)' : call;
+        indent.writeln('final int $resultVar = $index;');
+        indent.writeln('return ${_enumFromIndex(resultVar, returnType)};');
+      } else {
+        final _JniType jniReturnType = _JniType.fromTypeDeclaration(returnType);
+        if (!method.isAsynchronous && isPrimitiveType(returnType) && !returnType.isNullable) {
+          indent.writeln('return $call;');
+        } else {
+          indent.writeln(
+            'final ${jniReturnType.getJniCallReturnType(method.isAsynchronous)} $resultVar = $call;',
+          );
+          indent.writeln(
+            'return ${jniReturnType.getToDartCall(returnType, varName: resultVar, forceConversion: method.isAsynchronous)};',
+          );
+        }
+      }
+    }
+
+    if (temporaries.isEmpty) {
+      writeCallAndReturn();
+      return;
+    }
+    indent.writeScoped('try {', '}', writeCallAndReturn, addTrailingNewline: false);
+    indent.addScoped(' finally {', '}', () {
+      for (final (String name, bool isNullable) in temporaries) {
+        indent.writeln('$name${isNullable ? '?' : ''}.release();');
+      }
+    });
+  }
+
+  /// Writes the Dart implementation of the hybrid transport bridge method
+  /// for the Flutter API [method], which Kotlin calls through JNI.
+  void _writeJniHybridFlutterMethod(Indent indent, AstFlutterApi api, Method method) {
+    const decodedArgsVar = '${varNamePrefix}decodedArgs';
+    final TypeDeclaration returnType = method.returnType;
+    final String entryReturnType;
+    if (method.isAsynchronous) {
+      entryReturnType = returnType.isVoid
+          ? 'Future<JObject>'
+          : nativeInteropReturnsBuffer(returnType)
+          ? 'Future<JByteArray?>'
+          : returnType.isEnum
+          ? 'Future<JLong>'
+          : 'Future<${_JniType.fromTypeDeclaration(returnType).getJniCallReturnType(true)}>';
+    } else {
+      entryReturnType = returnType.isVoid
+          ? 'void'
+          : nativeInteropReturnsBuffer(returnType)
+          ? 'JByteArray?'
+          : returnType.isEnum
+          ? 'int'
+          : _JniType.fromTypeDeclaration(returnType).getJniCallReturnType(false);
+    }
+    final parameters = <String>[
+      for (final (int index, Parameter parameter) in method.parameters.indexed)
+        if (isNativeInteropDirectType(parameter.type))
+          '${parameter.type.isEnum ? 'int' : _JniType.fromTypeDeclaration(parameter.type).getJniCallReturnType(false, isParameter: true, isAsynchronous: method.isAsynchronous)} ${_getSafeArgumentName(index, parameter)}',
+      if (nativeInteropEncodedParameters(method.parameters).isNotEmpty)
+        'JByteArray $nativeInteropArgsParameterName',
+    ];
+    indent.newln();
+    indent.writeln('@override');
+    indent.writeScoped(
+      '$entryReturnType ${nativeInteropEntryPointName(method.name)}(${parameters.join(', ')}) {',
+      '}',
+      () {
+        indent.writeScoped('if (dartApi == null) {', '}', () {
+          indent.writeln("throw ArgumentError('${api.name} was not registered.');");
+        });
+        if (nativeInteropEncodedParameters(method.parameters).isNotEmpty) {
+          indent.writeln(
+            'final List<Object?> $decodedArgsVar = _PigeonJniBuffers.decode($nativeInteropArgsParameterName)! as List<Object?>;',
+          );
+        }
+        var encodedIndex = 0;
+        final arguments = <String>[];
+        for (final (int index, Parameter parameter) in method.parameters.indexed) {
+          final String argName = _getSafeArgumentName(index, parameter);
+          if (!isNativeInteropDirectType(parameter.type)) {
+            arguments.add(_castValue('$decodedArgsVar[${encodedIndex++}]', parameter.type));
+          } else if (parameter.type.isEnum) {
+            arguments.add(_enumFromIndex(argName, parameter.type));
+          } else {
+            arguments.add(
+              _JniType.fromTypeDeclaration(
+                parameter.type,
+              ).getToDartCall(parameter.type, varName: argName),
+            );
+          }
+        }
+        final methodCall = 'dartApi!.${method.name}(${arguments.join(', ')})';
+
+        String toEntryReturn(String value) {
+          if (nativeInteropReturnsBuffer(returnType)) {
+            return '_PigeonJniBuffers.encodeOrNull($value)';
+          }
+          if (returnType.isEnum) {
+            final index = returnType.isNullable
+                ? '$value?.index ?? $nativeInteropNullEnumIndex'
+                : '$value.index';
+            return method.isAsynchronous ? 'JLong($index)' : index;
+          }
+          final _JniType jniReturnType = _JniType.fromTypeDeclaration(returnType);
+          if (isPrimitiveType(returnType) && !returnType.isNullable) {
+            return method.isAsynchronous
+                ? '_PigeonJniCodec.writeValue<${jniReturnType.jniName}>($value)'
+                : value;
+          }
+          return jniReturnType.getToJniCall(returnType, value, jniReturnType);
+        }
+
+        if (method.isAsynchronous) {
+          indent.writeScoped('return $methodCall.then((response) {', '});', () {
+            if (returnType.isVoid) {
+              indent.writeln('return _PigeonJniCodec._kotlinUnit;');
+            } else {
+              indent.writeln('return ${toEntryReturn('response')};');
+            }
+          });
+        } else if (returnType.isVoid) {
+          indent.writeln('$methodCall;');
+        } else {
+          indent.writeln('final ${addGenericTypes(returnType)} response = $methodCall;');
+          indent.writeln('return ${toEntryReturn('response')};');
+        }
+      },
+    );
+  }
+
+  /// Writes the body of the FFI branch of a host API [method] for the hybrid
+  /// transport: one call to the method's `pigeon_` entry point.
+  void _writeFfiHybridHostCall(Indent indent, Method method, InternalDartOptions generatorOptions) {
+    const errorVar = '${varNamePrefix}error';
+    const resultVar = '${varNamePrefix}res';
+    const completerVar = '${varNamePrefix}completer';
+    const String argsVar = nativeInteropArgsParameterName;
+    indent.writeln('final $errorVar = $_ffiBridgePrefix.${generatorOptions.ffiErrorClassName}();');
+    final List<Parameter> encodedParameters = nativeInteropEncodedParameters(method.parameters);
+    if (encodedParameters.isNotEmpty) {
+      indent.writeln(
+        'final NSData $argsVar = _PigeonFfiBuffers.encode(<Object?>[${encodedParameters.map((Parameter p) => p.name).join(', ')}]);',
+      );
+    }
+    final arguments = <(String, String)>[
+      for (final Parameter parameter in method.parameters)
+        if (isNativeInteropDirectType(parameter.type))
+          (parameter.name, _dartToFfiDirect(parameter.name, parameter.type)),
+      if (encodedParameters.isNotEmpty) (argsVar, argsVar),
+      ('wrappedError', errorVar),
+    ];
+    final String returnObjCType = _ffiHybridReturnType(method.returnType);
+    String callWith([String? completionHandler]) {
+      final values = <String>[
+        for (final (int index, (String label, String value)) in arguments.indexed)
+          if (index == 0) value else '$label: $value',
+        if (completionHandler != null) 'completionHandler: $completionHandler',
+      ];
+      return '_ffiApi.${nativeInteropEntryPointName(method.name)}(${values.join(', ')})';
+    }
+
+    String toDart(String value) => nativeInteropReturnsBuffer(method.returnType)
+        ? _castValue('_PigeonFfiBuffers.decode($value)', method.returnType)
+        : _ffiDirectReturnToDart(value, method.returnType);
+
+    if (method.isAsynchronous) {
+      final blockName = method.returnType.isVoid
+          ? 'ObjCBlock_ffiVoid'
+          : 'ObjCBlock_ffiVoid_${returnObjCType.replaceAll('?', '')}';
+      final resultParameter = method.returnType.isVoid ? '' : '$returnObjCType $resultVar';
+      final String completion = method.returnType.isVoid ? '' : toDart(resultVar);
+      indent.writeln(
+        'final Completer<${addGenericTypes(method.returnType)}> $completerVar = Completer<${addGenericTypes(method.returnType)}>();',
+      );
+      indent.format('''
+${callWith('$_ffiBridgePrefix.$blockName.listener(($resultParameter) {\n  if ($errorVar.code != null) {\n    $completerVar.completeError(_wrapFfiError($errorVar));\n  } else {\n    $completerVar.complete($completion);\n  }\n})')};
+''');
+      indent.writeln('return ${generatorOptions.useJni ? 'await ' : ''}$completerVar.future;');
+      return;
+    }
+    if (method.returnType.isVoid) {
+      indent.writeln('${callWith()};');
+      indent.writeln('_throwIfFfiError($errorVar);');
+      indent.writeln('return;');
+      return;
+    }
+    indent.writeln('final $returnObjCType $resultVar = ${callWith()};');
+    indent.writeln('_throwIfFfiError($errorVar);');
+    indent.writeln('return ${toDart(resultVar)};');
+  }
+
+  /// Writes the Dart implementation of the hybrid transport bridge method for
+  /// the Flutter API [method], which Swift calls through FFI.
+  void _writeFfiHybridFlutterCallback(
+    Indent indent,
+    AstFlutterApi api,
+    Method method,
+    InternalDartOptions generatorOptions,
+  ) {
+    const decodedArgsVar = '${varNamePrefix}decodedArgs';
+    final String selector = nativeInteropHybridSelector(
+      method.name,
+      method.parameters,
+      errorLabel: 'error',
+      isAsynchronous: method.isAsynchronous,
+    );
+    final String builderMember = selector.replaceAll(':', '_');
+    final List<Parameter> encodedParameters = nativeInteropEncodedParameters(method.parameters);
+    final String returnObjCType = _ffiHybridReturnType(method.returnType);
+    final parameters = <String>[
+      for (final (int index, Parameter parameter) in method.parameters.indexed)
+        if (isNativeInteropDirectType(parameter.type))
+          '${_ffiHybridParameterType(parameter.type)} ${_getSafeArgumentName(index, parameter)}',
+      if (encodedParameters.isNotEmpty) 'NSData $nativeInteropArgsParameterName',
+      '$_ffiBridgePrefix.${generatorOptions.ffiErrorClassName} errorOut',
+      if (method.isAsynchronous)
+        'ObjCBlock<Void Function(${method.returnType.isVoid ? '' : returnObjCType})> completionHandler',
+    ];
+    final completionExtension = method.returnType.isVoid
+        ? r'ObjCBlock_ffiVoid$CallExtension'
+        : 'ObjCBlock_ffiVoid_${returnObjCType.replaceAll('?', '')}\$CallExtension';
+    String complete(String value) =>
+        '$_ffiBridgePrefix.$completionExtension(completionHandler).call($value);';
+    final registrationMethod = method.isAsynchronous ? 'implementAsListener' : 'implement';
+    final failureReturn = method.isAsynchronous || method.returnType.isVoid
+        ? 'return;'
+        : 'return null;';
+
+    indent.writeScoped(
+      '$_ffiBridgePrefix.${api.name}Bridge\$Builder.$builderMember.$registrationMethod(builder, (${parameters.join(', ')}) {',
+      '});',
+      () {
+        indent.writeScoped('try {', '}', () {
+          indent.writeScoped('if (dartApi == null) {', '}', () {
+            indent.writeln(
+              "_reportFfiError(errorOut, 'ArgumentError: ${api.name} was not registered.');",
+            );
+            if (method.isAsynchronous) {
+              indent.writeln(complete(method.returnType.isVoid ? '' : 'null'));
+            }
+            indent.writeln(failureReturn);
+          });
+          if (encodedParameters.isNotEmpty) {
+            indent.writeln(
+              'final List<Object?> $decodedArgsVar = _PigeonFfiBuffers.decode($nativeInteropArgsParameterName)! as List<Object?>;',
+            );
+          }
+          var encodedIndex = 0;
+          final arguments = <String>[
+            for (final (int index, Parameter parameter) in method.parameters.indexed)
+              if (isNativeInteropDirectType(parameter.type))
+                _ffiDirectParameterToDart(_getSafeArgumentName(index, parameter), parameter.type)
+              else
+                _castValue('$decodedArgsVar[${encodedIndex++}]', parameter.type),
+          ];
+          final methodCall = 'dartApi!.${method.name}(${arguments.join(', ')})';
+          String toObjC(String value) => nativeInteropReturnsBuffer(method.returnType)
+              ? '_PigeonFfiBuffers.encodeOrNull($value)'
+              : _dartToFfiDirectReturn(value, method.returnType);
+          if (method.isAsynchronous) {
+            indent.writeScoped('$methodCall.then((response) {', '},', () {
+              indent.writeln(complete(method.returnType.isVoid ? '' : toObjC('response')));
+            });
+            indent.writeScoped('onError: (Object e) {', '});', () {
+              indent.writeln('_reportFfiError(errorOut, e);');
+              indent.writeln(complete(method.returnType.isVoid ? '' : 'null'));
+            });
+            indent.writeln('return;');
+          } else if (method.returnType.isVoid) {
+            indent.writeln('$methodCall;');
+            indent.writeln('return;');
+          } else {
+            indent.writeln('final ${addGenericTypes(method.returnType)} response = $methodCall;');
+            indent.writeln('return ${toObjC('response')};');
+          }
+        }, addTrailingNewline: false);
+        indent.addScoped(' catch (e) {', '}', () {
+          indent.writeln('_reportFfiError(errorOut, e);');
+          if (method.isAsynchronous) {
+            indent.writeln(complete(method.returnType.isVoid ? '' : 'null'));
+          }
+          indent.writeln(failureReturn);
+        });
+      },
+    );
   }
 
   String _getFfiMethodCallName(Method method) {
@@ -1877,6 +2400,13 @@ return ${generatorOptions.useJni ? 'await ' : ''}$completerVar.future;
 ''');
     }
     if (generatorOptions.useJni) {
+      // The hybrid transport's entry points encode error details with the
+      // codec before they cross.
+      final details = generatorOptions.useJniHybrid
+          ? '_PigeonJniBuffers.decode(pigeonError.details as JByteArray?)'
+          : 'pigeonError.details?.isA<JString>(JString.type) ?? false\n'
+                '            ? pigeonError.details!.as(JString.type).toDartString()\n'
+                '            : pigeonError.details';
       indent.format('''
   PlatformException _wrapJniException(JThrowable e) {
     if (e.isA<$_jniBridgePrefix.${generatorOptions.jniErrorClassName}>($_jniBridgePrefix.${generatorOptions.jniErrorClassName}.type)) {
@@ -1884,9 +2414,7 @@ return ${generatorOptions.useJni ? 'await ' : ''}$completerVar.future;
       return PlatformException(
         code: pigeonError.code.toDartString(),
         message: pigeonError.message?.toDartString(),
-        details: pigeonError.details?.isA<JString>(JString.type) ?? false
-            ? pigeonError.details!.as(JString.type).toDartString()
-            : pigeonError.details,
+        details: $details,
         stacktrace: e.javaStackTrace,
       );
     }
@@ -2499,9 +3027,15 @@ ${api.name}({
     if (usesNativeInterop(generatorOptions)) {
       if (generatorOptions.useJni) {
         _writeJniCodec(indent, root);
+        if (generatorOptions.useJniHybrid) {
+          _writeJniBufferHelpers(indent);
+        }
       }
       if (generatorOptions.useFfi) {
         _writeFfiCodec(indent, root);
+        if (generatorOptions.useFfiHybrid) {
+          _writeFfiBufferHelpers(indent);
+        }
         _writeConvertNumberWrapper(indent, root);
       }
 
@@ -2526,7 +3060,93 @@ ${api.name}({
 
   void _writeJniCodec(Indent indent, Root root) {
     indent.newln();
+    // Each `JObject.isA` call looks up the class through the class loader and
+    // `as` does it again, which dominates the cost of reading values. The
+    // classes are looked up once per isolate instead, and values are cast to
+    // the extension types directly, which doesn't create a new reference.
+    //
+    // Arrays are copied into Dart memory, because the native memory that
+    // `getRange` returns is freed when the isolate that read it exits.
+    indent.format(r'''
+Uint8List? _jByteArrayToDart(JByteArray? array, {bool release = false}) {
+  if (array == null) {
+    return null;
+  }
+  try {
+    final Int8List range = array.getRange(0, array.length);
+    return Uint8List.fromList(range.buffer.asUint8List(range.offsetInBytes, range.length));
+  } finally {
+    if (release) {
+      array.release();
+    }
+  }
+}
+
+Int32List? _jIntArrayToDart(JIntArray? array, {bool release = false}) {
+  if (array == null) {
+    return null;
+  }
+  try {
+    return Int32List.fromList(array.getRange(0, array.length));
+  } finally {
+    if (release) {
+      array.release();
+    }
+  }
+}
+
+Int64List? _jLongArrayToDart(JLongArray? array, {bool release = false}) {
+  if (array == null) {
+    return null;
+  }
+  try {
+    return Int64List.fromList(array.getRange(0, array.length));
+  } finally {
+    if (release) {
+      array.release();
+    }
+  }
+}
+
+Float64List? _jDoubleArrayToDart(JDoubleArray? array, {bool release = false}) {
+  if (array == null) {
+    return null;
+  }
+  try {
+    return Float64List.fromList(array.getRange(0, array.length));
+  } finally {
+    if (release) {
+      array.release();
+    }
+  }
+}
+
+JByteArray _uint8ListToJni(Uint8List value) {
+  final JByteArray array = JByteArray(value.length);
+  array.setRange(0, value.length, Int8List.view(value.buffer, value.offsetInBytes, value.length));
+  return array;
+}
+
+JIntArray _int32ListToJni(Int32List value) {
+  final JIntArray array = JIntArray(value.length);
+  array.setRange(0, value.length, value);
+  return array;
+}
+
+JLongArray _int64ListToJni(Int64List value) {
+  final JLongArray array = JLongArray(value.length);
+  array.setRange(0, value.length, value);
+  return array;
+}
+
+JDoubleArray _float64ListToJni(Float64List value) {
+  final JDoubleArray array = JDoubleArray(value.length);
+  array.setRange(0, value.length, value);
+  return array;
+}
+''');
     indent.format('''
+// ignore: unused_element
 class _PigeonJniCodec {
   static JObject get _kotlinUnit {
     final JClass unitClass = JClass.forName('kotlin/Unit');
@@ -2539,62 +3159,71 @@ class _PigeonJniCodec {
     }
   }
 
+  static final JClass _longClass = JLong.type.jClass;
+  static final JClass _doubleClass = JDouble.type.jClass;
+  static final JClass _stringClass = JString.type.jClass;
+  static final JClass _booleanClass = JBoolean.type.jClass;
+  static final JClass _byteArrayClass = JByteArray.type.jClass;
+  static final JClass _intArrayClass = JIntArray.type.jClass;
+  static final JClass _longArrayClass = JLongArray.type.jClass;
+  static final JClass _doubleArrayClass = JDoubleArray.type.jClass;
+  static final JClass _listClass = JList.type.jClass;
+  static final JClass _mapClass = JMap.type.jClass;
+${root.classes.where((Class c) => !c.isSealed).map((Class dataClass) => '  static final JClass _class${dataClass.name} = ${_JniType.fromClass(dataClass).jniName}.type.jClass;\n').join()}${root.enums.map((Enum anEnum) => '  static final JClass _class${anEnum.name} = ${_JniType.fromEnum(anEnum).jniName}.type.jClass;\n').join()}
   static Object? readValue(JObject? value) {
     if (value == null) {
       return null;
     }
-    if (value.isA<JLong>(JLong.type)) {
-      return value.as(JLong.type).longValue();
-    } else if (value.isA<JDouble>(JDouble.type)) {
-      return value.as(JDouble.type).doubleValue();
-    } else if (value.isA<JString>(JString.type)) {
-      return value.as(JString.type).toDartString();
-    } else if (value.isA<JBoolean>(JBoolean.type)) {
-      return value.as(JBoolean.type).booleanValue();
-    } else if (value.isA<JByteArray>(JByteArray.type)) {
-      final JByteArray array = value.as(JByteArray.type);
-      return Uint8List.fromList(array.getRange(0, array.length).buffer.asUint8List());
-    } else if (value.isA<JIntArray>(JIntArray.type)) {
-      final JIntArray array = value.as(JIntArray.type);
-      return Int32List.fromList(array.getRange(0, array.length));
-    } else if (value.isA<JLongArray>(JLongArray.type)) {
-      final JLongArray array = value.as(JLongArray.type);
-      return Int64List.fromList(array.getRange(0, array.length));
-    } else if (value.isA<JDoubleArray>(JDoubleArray.type)) {
-      final JDoubleArray array = value.as(JDoubleArray.type);
-      return Float64List.fromList(array.getRange(0, array.length));
-    } else if (value.isA<JList<JObject>>(JList.type as JType<JList<JObject>>)) {
-      final List<JObject?> list = value.as(JList.type).asDart();
+    if (value.isInstanceOf(_longClass)) {
+      return (value as JLong).longValue();
+    } else if (value.isInstanceOf(_doubleClass)) {
+      return (value as JDouble).doubleValue();
+    } else if (value.isInstanceOf(_stringClass)) {
+      return (value as JString).toDartString();
+    } else if (value.isInstanceOf(_booleanClass)) {
+      return (value as JBoolean).booleanValue();
+    } else if (value.isInstanceOf(_byteArrayClass)) {
+      return _jByteArrayToDart(value as JByteArray);
+    } else if (value.isInstanceOf(_intArrayClass)) {
+      return _jIntArrayToDart(value as JIntArray);
+    } else if (value.isInstanceOf(_longArrayClass)) {
+      return _jLongArrayToDart(value as JLongArray);
+    } else if (value.isInstanceOf(_doubleArrayClass)) {
+      return _jDoubleArrayToDart(value as JDoubleArray);
+    } else if (value.isInstanceOf(_listClass)) {
+      final List<JObject?> list = (value as JList<JObject?>).asDart();
       final res = <Object?>[];
       // Cache the length before iterating to avoid a JNI hop per iteration.
       final int len = list.length;
       for (int i = 0; i < len; i++) {
-        res.add(readValue(list[i]));
+        final JObject? element = list[i];
+        res.add(readValue(element));
+        element?.release();
       }
       return res;
-    } else if (value.isA<JMap<JObject, JObject>>(
-        JMap.type as JType<JMap<JObject, JObject>>)) {
-      final Map<JObject?, JObject?> map =
-          value.as(JMap.type).asDart();
+    } else if (value.isInstanceOf(_mapClass)) {
+      final Map<JObject?, JObject?> map = (value as JMap<JObject?, JObject?>).asDart();
       final res = <Object?, Object?>{};
       for (final MapEntry<JObject?, JObject?> entry in map.entries) {
-        res[readValue(entry.key)] = readValue(entry.value);
+        final JObject? key = entry.key;
+        final JObject? entryValue = entry.value;
+        res[readValue(key)] = readValue(entryValue);
+        key?.release();
+        entryValue?.release();
       }
       return res;
-    ${root.classes.map((Class dataClass) {
+    ${root.classes.where((Class c) => !c.isSealed).map((Class dataClass) {
       final _JniType jniType = _JniType.fromClass(dataClass);
       return '''
-      } else if (value.isA<${jniType.jniName}>(
-          ${jniType.jniName}.type)) {
-      return ${jniType.type.baseName}.fromJni(value.as(${jniType.jniName}.type));
+      } else if (value.isInstanceOf(_class${dataClass.name})) {
+      return ${jniType.type.baseName}.fromJni(value as ${jniType.jniName});
         ''';
     }).join()}
     ${root.enums.map((Enum enumDefinition) {
       final _JniType jniType = _JniType.fromEnum(enumDefinition);
       return '''
-      } else if (value.isA<${jniType.jniName}>(
-          ${jniType.jniName}.type)) {
-      return ${jniType.type.baseName}.fromJni(value.as(${jniType.jniName}.type));
+      } else if (value.isInstanceOf(_class${enumDefinition.name})) {
+      return ${jniType.type.baseName}.fromJni(value as ${jniType.jniName});
         ''';
     }).join()}
     } else {
@@ -2616,21 +3245,13 @@ class _PigeonJniCodec {
     } else if (value is String) {
       return value.toJString() as T;
     } else if (value is Uint8List) {
-      final JByteArray array = JByteArray(value.length);
-      array.setRange(0, value.length, Int8List.view(value.buffer, value.offsetInBytes, value.length));
-      return array as T;
+      return _uint8ListToJni(value) as T;
     } else if (value is Int32List) {
-      final JIntArray array = JIntArray(value.length);
-      array.setRange(0, value.length, value);
-      return array as T;
+      return _int32ListToJni(value) as T;
     } else if (value is Int64List) {
-      final JLongArray array = JLongArray(value.length);
-      array.setRange(0, value.length, value);
-      return array as T;
+      return _int64ListToJni(value) as T;
     } else if (value is Float64List) {
-      final JDoubleArray array = JDoubleArray(value.length);
-      array.setRange(0, value.length, value);
-      return array as T;
+      return _float64ListToJni(value) as T;
     ${root.lists.values.sorted(sortByObjectCount).map((TypeDeclaration list) {
       if (list.typeArguments.isEmpty || list.typeArguments.first.baseName == 'Object' || _containsProxyApi(list)) {
         return '';
@@ -2675,7 +3296,7 @@ class _PigeonJniCodec {
           .map<JObject?, JObject?>((k, v) =>
               MapEntry(writeValue<JObject?>(k), writeValue<JObject?>(v)))
           .toJMap() as T;
-    ${root.classes.map((Class dataClass) {
+    ${root.classes.where((Class c) => !c.isSealed).map((Class dataClass) {
       final _JniType jniType = _JniType.fromClass(dataClass);
       return '''
       } else if (value is ${jniType.type.baseName}) {
@@ -2695,6 +3316,80 @@ class _PigeonJniCodec {
   }
 }
     ''');
+  }
+
+  /// Writes the helpers that move the buffers of the hybrid transport between
+  /// Dart and JNI.
+  void _writeJniBufferHelpers(Indent indent) {
+    indent.newln();
+    // Decoding returns typed data as views into the buffer it decodes, so the
+    // buffer must be Dart memory. `_jByteArrayToDart` copies it out of the
+    // JNI array once.
+    indent.format('''
+// ignore: unused_element
+class _PigeonJniBuffers {
+  static JByteArray encode(Object? value) {
+    final ByteData data = const $_pigeonMessageCodec().encodeMessage(value)!;
+    final JByteArray array = JByteArray(data.lengthInBytes);
+    array.setRange(0, data.lengthInBytes, data.buffer.asInt8List(data.offsetInBytes, data.lengthInBytes));
+    return array;
+  }
+
+  static JByteArray? encodeOrNull(Object? value) {
+    return value == null ? null : encode(value);
+  }
+
+  static Object? decode(JByteArray? array) {
+    final Uint8List? bytes = _jByteArrayToDart(array, release: true);
+    return bytes == null ? null : const $_pigeonMessageCodec().decodeMessage(ByteData.sublistView(bytes));
+  }
+}
+''');
+  }
+
+  /// Writes the helpers that move the buffers of the hybrid transport between
+  /// Dart and Objective-C.
+  void _writeFfiBufferHelpers(Indent indent) {
+    indent.newln();
+    // Decoding returns typed data as views into the buffer it decodes, so the
+    // buffer must be Dart memory. `_PigeonFfiBuffers.toUint8List` copies it out of the
+    // `NSData` once. `NSData` isn't `Finalizable`, so holding its
+    // `ObjCObjectRef` and releasing it in `finally` keeps `bytes` alive until
+    // the copy is complete.
+    indent.format('''
+// ignore: unused_element
+class _PigeonFfiBuffers {
+  static Uint8List? toUint8List(NSData? data) {
+    if (data == null) {
+      return null;
+    }
+    final ObjCObjectRef dataRef = data.object\$.ref;
+    try {
+      final int length = data.length;
+      if (length == 0) {
+        return Uint8List(0);
+      }
+      return Uint8List.fromList(data.bytes.cast<Uint8>().asTypedList(length));
+    } finally {
+      dataRef.release();
+    }
+  }
+
+  static NSData encode(Object? value) {
+    final ByteData data = const $_pigeonMessageCodec().encodeMessage(value)!;
+    return _typedDataToNSData(data.buffer.asUint8List(data.offsetInBytes, data.lengthInBytes));
+  }
+
+  static NSData? encodeOrNull(Object? value) {
+    return value == null ? null : encode(value);
+  }
+
+  static Object? decode(NSData? data) {
+    final Uint8List? bytes = toUint8List(data);
+    return bytes == null ? null : const $_pigeonMessageCodec().decodeMessage(ByteData.sublistView(bytes));
+  }
+}
+''');
   }
 
   void _writeConvertNumberWrapper(Indent indent, Root root) {
@@ -2752,7 +3447,12 @@ class _PigeonJniCodec {
   void _writeFfiCodec(Indent indent, Root root) {
     indent.newln();
     indent.format('''
+// ignore: unused_element
 class _PigeonFfiCodec {
+  static Object? readTypedData($_ffiBridgePrefix.${_classNamePrefix}PigeonTypedData? value) {
+    return value == null ? null : _getValueFromPigeonTypedData(value);
+  }
+
   static Object? readValue(ObjCObject? value, [Type? type, Type? type2]) {
     if (value == null || $_ffiBridgePrefix.${_classNamePrefix}PigeonInternalNull.isA(value)) {
       return null;
@@ -2791,7 +3491,7 @@ class _PigeonFfiCodec {
       return res;
     } else if ($_ffiBridgePrefix.${_classNamePrefix}NumberWrapper.isA(value)) {
       return _convertNumberWrapperToDart($_ffiBridgePrefix.${_classNamePrefix}NumberWrapper.as(value));
-    ${root.classes.map((Class dataClass) {
+    ${root.classes.where((Class c) => !c.isSealed).map((Class dataClass) {
       final _FfiType ffiType = _FfiType.fromClass(dataClass);
       return '''
       } else if (${ffiType.getFfiName()}.isA(value)) {
@@ -2876,7 +3576,7 @@ class _PigeonFfiCodec {
         res.setObject(writeValue(entry.value, generic: true), forKey: NSCopying.as(writeValue(entry.key, generic: true)));
       }
       return res as T;
-    ${root.classes.map((Class dataClass) {
+    ${root.classes.where((Class c) => !c.isSealed).map((Class dataClass) {
       final _FfiType ffiType = _FfiType.fromClass(dataClass);
       return '''
       } else if (value is ${ffiType.type.baseName}) {
@@ -2889,50 +3589,34 @@ class _PigeonFfiCodec {
   }
 }
 
-$_ffiBridgePrefix.${_classNamePrefix}PigeonTypedData _toPigeonTypedData(TypedData value) {
+/// Copies [value] into a buffer that the returned [NSData] owns and frees.
+NSData _typedDataToNSData(TypedData value) {
   final int lengthInBytes = value.lengthInBytes;
-  if (value is Uint8List) {
-    final int length = value.length;
-    final Pointer<Uint8> ptr = calloc<Uint8>(length);
-    ptr.asTypedList(length).setAll(0, value);
-    final NSData nsData =
-        NSData.dataWithBytes(ptr.cast<Void>(), length: lengthInBytes);
-    calloc.free(ptr);
-    return $_ffiBridgePrefix.${_classNamePrefix}PigeonTypedData.alloc().initWithData(nsData, type: 0);
-  } else if (value is Int32List) {
-    final int length = value.length;
-    final Pointer<Int32> ptr = calloc<Int32>(length);
-    ptr.asTypedList(length).setAll(0, value);
-    final NSData nsData =
-        NSData.dataWithBytes(ptr.cast<Void>(), length: lengthInBytes);
-    calloc.free(ptr);
-    return $_ffiBridgePrefix.${_classNamePrefix}PigeonTypedData.alloc().initWithData(nsData, type: 1);
-  } else if (value is Int64List) {
-    final int length = value.length;
-    final Pointer<Int64> ptr = calloc<Int64>(length);
-    ptr.asTypedList(length).setAll(0, value);
-    final NSData nsData =
-        NSData.dataWithBytes(ptr.cast<Void>(), length: lengthInBytes);
-    calloc.free(ptr);
-    return $_ffiBridgePrefix.${_classNamePrefix}PigeonTypedData.alloc().initWithData(nsData, type: 2);
-  } else if (value is Float32List) {
-    final int length = value.length;
-    final Pointer<Float> ptr = calloc<Float>(length);
-    ptr.asTypedList(length).setAll(0, value);
-    final NSData nsData =
-        NSData.dataWithBytes(ptr.cast<Void>(), length: lengthInBytes);
-    calloc.free(ptr);
-    return $_ffiBridgePrefix.${_classNamePrefix}PigeonTypedData.alloc().initWithData(nsData, type: 3);
-  } else if (value is Float64List) {
-    final int length = value.length;
-    final Pointer<Double> ptr = calloc<Double>(length);
-    ptr.asTypedList(length).setAll(0, value);
-    final NSData nsData =
-        NSData.dataWithBytes(ptr.cast<Void>(), length: lengthInBytes);
-    calloc.free(ptr);
-    return $_ffiBridgePrefix.${_classNamePrefix}PigeonTypedData.alloc().initWithData(nsData, type: 4);
-  }
-  throw ArgumentError.value(value);
+  // `malloc(0)` may return null, which `NSData` can't own.
+  final Pointer<Uint8> bytes = malloc<Uint8>(lengthInBytes == 0 ? 1 : lengthInBytes);
+  bytes
+      .asTypedList(lengthInBytes)
+      .setAll(0, value.buffer.asUint8List(value.offsetInBytes, lengthInBytes));
+  return NSData.dataWithBytesNoCopy\$1(
+    bytes.cast<Void>(),
+    length: lengthInBytes,
+    freeWhenDone: true,
+  );
+}
+
+$_ffiBridgePrefix.${_classNamePrefix}PigeonTypedData _toPigeonTypedData(TypedData value) {
+  final int type = switch (value) {
+    Uint8List() => 0,
+    Int32List() => 1,
+    Int64List() => 2,
+    Float32List() => 3,
+    Float64List() => 4,
+    _ => throw ArgumentError.value(value),
+  };
+  return $_ffiBridgePrefix.${_classNamePrefix}PigeonTypedData.alloc().initWithData(
+    _typedDataToNSData(value),
+    type: type,
+  );
 }
 
 

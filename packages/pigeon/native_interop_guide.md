@@ -7,8 +7,36 @@ This guide describes Pigeon's Native Interop feature, which allows for direct, h
 
 ## 1. Overview
 
-Pigeon Native Interop allows Dart code to make direct function calls into native platform code, and vice versa, without the overhead of platform-channel-based message passing. Instead of serializing data into binary buffers, Native Interop establishes direct memory-bound bridges using native pointers and JVM references.
+Pigeon Native Interop allows Dart code to make direct function calls into native platform code, and vice versa, without the overhead of platform-channel-based message passing. Scalars, strings, enums and typed data cross the language boundary directly. How data classes, lists and maps cross depends on the transport; see [Performance of Data Classes and Collections](#performance-of-data-classes-and-collections).
 For a detailed comparison between platform-channel-based communication and Native Interop—including advantages, limitations, and recommended use cases—see the [Pigeon README](./README.md#communication-options-platform-channels-vs-native-interop).
+
+### Performance of Data Classes and Collections
+
+Native interop has two transports, which you choose with the `nativeInteropTransport` option:
+
+* **`NativeInteropTransport.objects`** (the default) converts every data class, list and map into a graph of JVM or Objective-C objects. Each field and each collection element costs at least one call across the language boundary, so a call that passes a large data class or collection can be many times slower than the same call over platform channels.
+* **`NativeInteropTransport.hybrid`** makes exactly one call across the language boundary for each API call. Values of type `bool`, `int`, `double`, `String`, enums, `Uint8List`, `Int32List`, `Int64List` and `Float64List` (nullable or not) are passed directly, as their own arguments and return values. All data class, `List`, `Map` and `Object` arguments of a call are encoded together into one buffer with the same format as `StandardMessageCodec`, and decoded on the other side. Calls that pass only direct values are exactly as fast as with the default transport, and calls that pass data classes and collections cost about the same as platform channels, without their scheduling overhead.
+
+```dart
+@ConfigurePigeon(
+  PigeonOptions(
+    kotlinOptions: KotlinOptions(useJni: true),
+    swiftOptions: SwiftOptions(useFfi: true),
+    nativeInteropTransport: NativeInteropTransport.hybrid,
+  ),
+)
+```
+
+The hybrid transport also supports sealed classes, and in Kotlin it passes the `details` of errors as any value the codec supports, the same as platform channels. The user-facing Kotlin and Swift APIs are the same with both transports, so you only need to regenerate your code. The hybrid transport is planned to become the only transport in a future major version.
+
+Until you can use the hybrid transport:
+
+1. **Split files.** Each pigeon file uses one mode, so put bulk-data APIs in a file that doesn't use native interop.
+2. **Prefer typed data for bulk numbers,** such as a `Float64List` of coordinate pairs instead of a list of data classes.
+3. **Flatten small, frequently passed classes into scalar parameters.** This is also the fastest shape with the hybrid transport.
+4. **Send changes rather than snapshots** of large collections.
+5. **Avoid returning large collections, data classes or `Object` values over JNI.** Reading them back is the slowest path.
+6. **Measure in profile or release mode.** Debug builds exaggerate every cost.
 
 ### Threading & Isolates Model
 
@@ -101,6 +129,8 @@ Enable Native Interop for your target platforms by setting the configuration opt
 #### General Options
 * **`appDirectory`**: The path to the compiled Flutter **application** directory (e.g., `example/` when developing a plugin, or `./` for a standalone application). FFIgen and JNIgen require a compiled application context to locate class files and build outputs. If omitted when running Pigeon from an app root, it defaults to `./`.
   - *CLI Equivalent*: `--app_directory <path>`.
+* **`nativeInteropTransport`**: (Optional) How native interop moves values between Dart and native code. `NativeInteropTransport.hybrid` passes data classes and collections in one buffer per call; see [Performance of Data Classes and Collections](#performance-of-data-classes-and-collections). Defaults to `NativeInteropTransport.objects`.
+  - *CLI Equivalent*: `--native_interop_transport <objects|hybrid>`.
 
 #### Kotlin Options for JNI
 * **`useJni`**: Set to `true` to enable Kotlin JNI code generation and automated JNIgen orchestration.

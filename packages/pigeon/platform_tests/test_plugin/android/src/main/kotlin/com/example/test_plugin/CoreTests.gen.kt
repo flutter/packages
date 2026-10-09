@@ -216,8 +216,10 @@ enum class AnEnum(val raw: Int) {
   FOUR_HUNDRED_TWENTY_TWO(4);
 
   companion object {
+    private val pigeonValues = values()
+
     fun ofRaw(raw: Int): AnEnum? {
-      return values().firstOrNull { it.raw == raw }
+      return pigeonValues.getOrNull(raw)
     }
   }
 }
@@ -226,8 +228,10 @@ enum class AnotherEnum(val raw: Int) {
   JUST_IN_CASE(0);
 
   companion object {
+    private val pigeonValues = values()
+
     fun ofRaw(raw: Int): AnotherEnum? {
-      return values().firstOrNull { it.raw == raw }
+      return pigeonValues.getOrNull(raw)
     }
   }
 }

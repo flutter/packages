@@ -15,6 +15,7 @@ import 'package:pigeon/pigeon.dart';
       ffiModuleName: 'test_plugin',
       appDirectory: 'platform_tests/test_plugin/example/',
     ),
+    nativeInteropTransport: NativeInteropTransport.hybrid,
   ),
 )
 enum NativeInteropAnEnum { one, two, three, fortyTwo, fourHundredTwentyTwo }
@@ -2047,4 +2048,45 @@ abstract class NativeInteropReservedNamesFlutterApi {
 
   /// JNIgen doesn't turn interface methods into properties.
   String getReference();
+}
+
+/// A sealed class, which native interop passes only with the hybrid
+/// transport, in the call's buffer.
+sealed class NativeInteropShape {}
+
+class NativeInteropCircle extends NativeInteropShape {
+  NativeInteropCircle({required this.radius});
+
+  double radius;
+}
+
+class NativeInteropSquare extends NativeInteropShape {
+  NativeInteropSquare({required this.side, this.label});
+
+  double side;
+  String? label;
+}
+
+/// Echoes sealed classes, which native interop supports only with the hybrid
+/// transport.
+@HostApi()
+abstract class NativeInteropSealedClassHostApi {
+  NativeInteropShape echoShape(NativeInteropShape shape);
+
+  NativeInteropShape? echoNullableShape(NativeInteropShape? shape);
+
+  List<NativeInteropShape> echoShapeList(List<NativeInteropShape> shapes);
+
+  Map<String, NativeInteropShape> echoShapeMap(Map<String, NativeInteropShape> shapes);
+
+  @async
+  NativeInteropShape echoAsyncShape(NativeInteropShape shape);
+
+  NativeInteropShape callFlutterEchoShape(NativeInteropShape shape);
+}
+
+/// The Flutter API counterpart of [NativeInteropSealedClassHostApi].
+@FlutterApi()
+abstract class NativeInteropSealedClassFlutterApi {
+  NativeInteropShape echoShape(NativeInteropShape shape);
 }
