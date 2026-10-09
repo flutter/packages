@@ -4441,7 +4441,7 @@ void main() {
   testWidgets('SnackBar does not allocate 40% empty space on right when action overflows', (
     WidgetTester tester,
   ) async {
-    const double screenWidth = 500.0;
+    const screenWidth = 500.0;
     tester.view.physicalSize = const Size(screenWidth, 800.0);
     tester.view.devicePixelRatio = 1.0;
     addTearDown(tester.view.reset);
@@ -4492,8 +4492,8 @@ void main() {
   testWidgets('SnackBar respects custom padding when action overflows', (
     WidgetTester tester,
   ) async {
-    const double screenWidth = 500.0;
-    const EdgeInsets customPadding = EdgeInsets.only(left: 36, right: 48);
+    const screenWidth = 500.0;
+    const customPadding = EdgeInsets.only(left: 36, right: 48);
     tester.view.physicalSize = const Size(screenWidth, 800.0);
     tester.view.devicePixelRatio = 1.0;
     addTearDown(tester.view.reset);
