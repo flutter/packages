@@ -16,6 +16,7 @@
 #include <functional>
 #include <memory>
 #include <string>
+#include <vector>
 
 #include "mocks.h"
 #include "string_utils.h"
@@ -567,120 +568,287 @@ TEST(CaptureController, StartPreviewStartsProcessingSamples) {
   texture_registrar = nullptr;
 }
 
-TEST(CaptureController,
-     StartPreviewFallsBackToPhysicalStreamWhenSelectorRejected) {
-  ComPtr<MockCaptureEngine> engine = new MockCaptureEngine();
-  std::unique_ptr<MockCamera> camera =
-      std::make_unique<MockCamera>(MOCK_DEVICE_ID);
-  std::unique_ptr<CaptureControllerImpl> capture_controller =
-      std::make_unique<CaptureControllerImpl>(camera.get());
-  std::unique_ptr<MockTextureRegistrar> texture_registrar =
-      std::make_unique<MockTextureRegistrar>();
-
-  int64_t mock_texture_id = 1234;
-
-  MockInitCaptureController(capture_controller.get(), texture_registrar.get(),
-                            engine.Get(), camera.get(), mock_texture_id);
-
-  ComPtr<MockCaptureSource> capture_source = new MockCaptureSource();
-  EXPECT_CALL(*engine.Get(), GetSource)
+// Mocks a source that rejects the preferred-stream selectors and reports
+// |categories| for its streams.
+void MockSourceRejectingPreferredStreams(
+    MockCaptureEngine* engine, MockCaptureSource* capture_source,
+    std::vector<MF_CAPTURE_ENGINE_STREAM_CATEGORY> categories) {
+  EXPECT_CALL(*engine, GetSource)
       .Times(1)
-      .WillOnce([src_source =
-                     capture_source.Get()](IMFCaptureSource** target_source) {
-        *target_source = src_source;
-        src_source->AddRef();
-        return S_OK;
-      });
+      .WillOnce(
+          [src_source = capture_source](IMFCaptureSource** target_source) {
+            *target_source = src_source;
+            src_source->AddRef();
+            return S_OK;
+          });
 
-  const DWORD kPhysicalStreamIndex = 1;
-  uint32_t mock_preview_width = 2;
-  uint32_t mock_preview_height = 1;
-
-  // The device rejects the preferred-stream selectors...
   EXPECT_CALL(
-      *capture_source.Get(),
+      *capture_source,
       GetAvailableDeviceMediaType(
           Eq((DWORD)
                  MF_CAPTURE_ENGINE_PREFERRED_SOURCE_STREAM_FOR_VIDEO_PREVIEW),
           _, _))
       .WillRepeatedly(Return(MF_E_INVALIDSTREAMNUMBER));
   EXPECT_CALL(
-      *capture_source.Get(),
+      *capture_source,
       GetAvailableDeviceMediaType(
           Eq((DWORD)MF_CAPTURE_ENGINE_PREFERRED_SOURCE_STREAM_FOR_VIDEO_RECORD),
           _, _))
       .WillRepeatedly(Return(MF_E_INVALIDSTREAMNUMBER));
 
-  // ...so it falls back to the stream reported as video-capture.
-  EXPECT_CALL(*capture_source.Get(), GetDeviceStreamCount)
-      .WillRepeatedly([](DWORD* count) {
-        *count = 2;
-        return S_OK;
-      });
-  EXPECT_CALL(*capture_source.Get(), GetDeviceStreamCategory(Eq(0u), _))
-      .WillRepeatedly([](DWORD, MF_CAPTURE_ENGINE_STREAM_CATEGORY* category) {
-        *category = MF_CAPTURE_ENGINE_STREAM_CATEGORY_PHOTO_DEPENDENT;
-        return S_OK;
-      });
-  EXPECT_CALL(*capture_source.Get(),
-              GetDeviceStreamCategory(Eq(kPhysicalStreamIndex), _))
-      .WillRepeatedly([](DWORD, MF_CAPTURE_ENGINE_STREAM_CATEGORY* category) {
-        *category = MF_CAPTURE_ENGINE_STREAM_CATEGORY_VIDEO_CAPTURE;
-        return S_OK;
-      });
-  EXPECT_CALL(*capture_source.Get(),
-              GetAvailableDeviceMediaType(Eq(kPhysicalStreamIndex), _, _))
+  EXPECT_CALL(*capture_source, GetDeviceStreamCount)
       .WillRepeatedly(
-          [mock_preview_width, mock_preview_height](
-              DWORD, DWORD media_type_index, IMFMediaType** media_type) {
-            if (media_type_index != 0) return MF_E_NO_MORE_TYPES;
-            *media_type =
-                new FakeMediaType(MFMediaType_Video, MFVideoFormat_RGB32,
-                                  mock_preview_width, mock_preview_height);
-            (*media_type)->AddRef();
+          [count = static_cast<DWORD>(categories.size())](DWORD* stream_count) {
+            *stream_count = count;
             return S_OK;
           });
+  for (DWORD i = 0; i < categories.size(); i++) {
+    EXPECT_CALL(*capture_source, GetDeviceStreamCategory(Eq(i), _))
+        .WillRepeatedly([category = categories[i]](
+                            DWORD, MF_CAPTURE_ENGINE_STREAM_CATEGORY* target) {
+          *target = category;
+          return S_OK;
+        });
+  }
+}
 
-  // The resolved physical stream must be used from here on, not the rejected
-  // selector.
-  EXPECT_CALL(*capture_source.Get(),
-              SetCurrentDeviceMediaType(Eq(kPhysicalStreamIndex), _))
+// Mocks one video media type on |stream_index|.
+void MockStreamMediaType(MockCaptureSource* capture_source, DWORD stream_index,
+                         uint32_t mock_width, uint32_t mock_height) {
+  EXPECT_CALL(*capture_source,
+              GetAvailableDeviceMediaType(Eq(stream_index), _, _))
+      .WillRepeatedly([mock_width, mock_height](DWORD, DWORD media_type_index,
+                                                IMFMediaType** media_type) {
+        if (media_type_index != 0) return MF_E_NO_MORE_TYPES;
+        *media_type = new FakeMediaType(MFMediaType_Video, MFVideoFormat_RGB32,
+                                        mock_width, mock_height);
+        (*media_type)->AddRef();
+        return S_OK;
+      });
+}
+
+// Expects the preview to start on |stream_index|.
+void ExpectPreviewStartsOnStream(MockCaptureEngine* engine,
+                                 MockCaptureSource* capture_source,
+                                 MockCapturePreviewSink* preview_sink,
+                                 MockCamera* camera, DWORD stream_index) {
+  EXPECT_CALL(*capture_source, SetCurrentDeviceMediaType(Eq(stream_index), _))
       .Times(1)
       .WillOnce(Return(S_OK));
 
-  ComPtr<MockCapturePreviewSink> preview_sink = new MockCapturePreviewSink();
-  EXPECT_CALL(*engine.Get(), GetSink(MF_CAPTURE_ENGINE_SINK_TYPE_PREVIEW, _))
+  EXPECT_CALL(*engine, GetSink(MF_CAPTURE_ENGINE_SINK_TYPE_PREVIEW, _))
       .Times(1)
-      .WillOnce([src_sink = preview_sink.Get()](MF_CAPTURE_ENGINE_SINK_TYPE,
-                                                IMFCaptureSink** target_sink) {
+      .WillOnce([src_sink = preview_sink](MF_CAPTURE_ENGINE_SINK_TYPE,
+                                          IMFCaptureSink** target_sink) {
         *target_sink = src_sink;
         src_sink->AddRef();
         return S_OK;
       });
-  EXPECT_CALL(*preview_sink.Get(), RemoveAllStreams)
+  EXPECT_CALL(*preview_sink, RemoveAllStreams).Times(1).WillOnce(Return(S_OK));
+  EXPECT_CALL(*preview_sink, AddStream(Eq(stream_index), _, _, _))
       .Times(1)
       .WillOnce(Return(S_OK));
-  EXPECT_CALL(*preview_sink.Get(), AddStream(Eq(kPhysicalStreamIndex), _, _, _))
-      .Times(1)
-      .WillOnce(
-          [](DWORD, IMFMediaType*, IMFAttributes*, DWORD* sink_stream_index) {
-            *sink_stream_index = 0;
-            return S_OK;
-          });
-  EXPECT_CALL(*preview_sink.Get(), SetSampleCallback)
-      .Times(1)
-      .WillOnce(Return(S_OK));
+  EXPECT_CALL(*preview_sink, SetSampleCallback).Times(1).WillOnce(Return(S_OK));
 
-  EXPECT_CALL(*engine.Get(), StartPreview()).Times(1).WillOnce(Return(S_OK));
-  EXPECT_CALL(*engine.Get(), StopPreview()).Times(1).WillOnce(Return(S_OK));
+  EXPECT_CALL(*engine, StartPreview()).Times(1).WillOnce(Return(S_OK));
+  // Called by destructor
+  EXPECT_CALL(*engine, StopPreview()).Times(1).WillOnce(Return(S_OK));
   EXPECT_CALL(*camera, OnStartPreviewFailed).Times(0);
+}
 
-  capture_controller->StartPreview();
+// Declares the controller last, so it is destroyed before the registrar and
+// camera it uses.
+class CaptureControllerStreamSelection : public ::testing::Test {
+ protected:
+  void SetUp() override {
+    MockInitCaptureController(capture_controller_.get(),
+                              texture_registrar_.get(), engine_.Get(),
+                              camera_.get(), kMockTextureId);
+  }
 
-  capture_controller = nullptr;
-  engine = nullptr;
-  camera = nullptr;
-  texture_registrar = nullptr;
+  static constexpr int64_t kMockTextureId = 1234;
+  static constexpr uint32_t kMockWidth = 2;
+  static constexpr uint32_t kMockHeight = 1;
+
+  ComPtr<MockCaptureEngine> engine_ = new MockCaptureEngine();
+  ComPtr<MockCaptureSource> capture_source_ = new MockCaptureSource();
+  std::unique_ptr<MockTextureRegistrar> texture_registrar_ =
+      std::make_unique<MockTextureRegistrar>();
+  std::unique_ptr<MockCamera> camera_ =
+      std::make_unique<MockCamera>(MOCK_DEVICE_ID);
+  std::unique_ptr<CaptureControllerImpl> capture_controller_ =
+      std::make_unique<CaptureControllerImpl>(camera_.get());
+};
+
+TEST_F(CaptureControllerStreamSelection, UsesPreferredStreamWhenSupported) {
+  MockAvailableMediaTypes(engine_.Get(), capture_source_.Get(), kMockWidth,
+                          kMockHeight);
+  EXPECT_CALL(*capture_source_.Get(), GetDeviceStreamCount).Times(0);
+
+  ComPtr<MockCapturePreviewSink> preview_sink = new MockCapturePreviewSink();
+  ExpectPreviewStartsOnStream(
+      engine_.Get(), capture_source_.Get(), preview_sink.Get(), camera_.get(),
+      (DWORD)MF_CAPTURE_ENGINE_PREFERRED_SOURCE_STREAM_FOR_VIDEO_PREVIEW);
+
+  capture_controller_->StartPreview();
+}
+
+TEST_F(CaptureControllerStreamSelection, FallsBackToFirstVideoPreviewStream) {
+  // Preview wins over an earlier capture stream.
+  MockSourceRejectingPreferredStreams(
+      engine_.Get(), capture_source_.Get(),
+      {MF_CAPTURE_ENGINE_STREAM_CATEGORY_VIDEO_CAPTURE,
+       MF_CAPTURE_ENGINE_STREAM_CATEGORY_VIDEO_PREVIEW,
+       MF_CAPTURE_ENGINE_STREAM_CATEGORY_VIDEO_PREVIEW});
+  MockStreamMediaType(capture_source_.Get(), 1, kMockWidth, kMockHeight);
+
+  ComPtr<MockCapturePreviewSink> preview_sink = new MockCapturePreviewSink();
+  ExpectPreviewStartsOnStream(engine_.Get(), capture_source_.Get(),
+                              preview_sink.Get(), camera_.get(), 1);
+
+  capture_controller_->StartPreview();
+}
+
+TEST_F(CaptureControllerStreamSelection, FallsBackToFirstVideoCaptureStream) {
+  MockSourceRejectingPreferredStreams(
+      engine_.Get(), capture_source_.Get(),
+      {MF_CAPTURE_ENGINE_STREAM_CATEGORY_PHOTO_DEPENDENT,
+       MF_CAPTURE_ENGINE_STREAM_CATEGORY_VIDEO_CAPTURE,
+       MF_CAPTURE_ENGINE_STREAM_CATEGORY_VIDEO_CAPTURE});
+  MockStreamMediaType(capture_source_.Get(), 1, kMockWidth, kMockHeight);
+
+  ComPtr<MockCapturePreviewSink> preview_sink = new MockCapturePreviewSink();
+  ExpectPreviewStartsOnStream(engine_.Get(), capture_source_.Get(),
+                              preview_sink.Get(), camera_.get(), 1);
+
+  capture_controller_->StartPreview();
+}
+
+TEST_F(CaptureControllerStreamSelection, SkipsStreamsWithUnreadableCategory) {
+  MockSourceRejectingPreferredStreams(
+      engine_.Get(), capture_source_.Get(),
+      {MF_CAPTURE_ENGINE_STREAM_CATEGORY_VIDEO_PREVIEW,
+       MF_CAPTURE_ENGINE_STREAM_CATEGORY_VIDEO_CAPTURE});
+  // Fails the category query for stream 0.
+  EXPECT_CALL(*capture_source_.Get(), GetDeviceStreamCategory(Eq(0u), _))
+      .WillRepeatedly(Return(E_FAIL));
+  MockStreamMediaType(capture_source_.Get(), 1, kMockWidth, kMockHeight);
+
+  ComPtr<MockCapturePreviewSink> preview_sink = new MockCapturePreviewSink();
+  ExpectPreviewStartsOnStream(engine_.Get(), capture_source_.Get(),
+                              preview_sink.Get(), camera_.get(), 1);
+
+  capture_controller_->StartPreview();
+}
+
+TEST_F(CaptureControllerStreamSelection, ReportsErrorWhenNoVideoStreamFound) {
+  MockSourceRejectingPreferredStreams(
+      engine_.Get(), capture_source_.Get(),
+      {MF_CAPTURE_ENGINE_STREAM_CATEGORY_AUDIO,
+       MF_CAPTURE_ENGINE_STREAM_CATEGORY_PHOTO_INDEPENDENT});
+
+  EXPECT_CALL(*capture_source_.Get(), SetCurrentDeviceMediaType).Times(0);
+  EXPECT_CALL(*engine_.Get(), StartPreview).Times(0);
+  EXPECT_CALL(*camera_,
+              OnStartPreviewFailed(Eq(CameraResult::kError),
+                                   Eq("Failed to initialize video preview")))
+      .Times(1);
+
+  capture_controller_->StartPreview();
+}
+
+TEST_F(CaptureControllerStreamSelection,
+       ReportsErrorWhenStreamCountUnavailable) {
+  MockSourceRejectingPreferredStreams(engine_.Get(), capture_source_.Get(), {});
+  // Fails the stream count query.
+  EXPECT_CALL(*capture_source_.Get(), GetDeviceStreamCount)
+      .WillRepeatedly(Return(E_FAIL));
+  EXPECT_CALL(*capture_source_.Get(), GetDeviceStreamCategory).Times(0);
+
+  EXPECT_CALL(*capture_source_.Get(), SetCurrentDeviceMediaType).Times(0);
+  EXPECT_CALL(*engine_.Get(), StartPreview).Times(0);
+  EXPECT_CALL(*camera_,
+              OnStartPreviewFailed(Eq(CameraResult::kError),
+                                   Eq("Failed to initialize video preview")))
+      .Times(1);
+
+  capture_controller_->StartPreview();
+}
+
+TEST_F(CaptureControllerStreamSelection, StartRecordUsesResolvedStream) {
+  MockSourceRejectingPreferredStreams(
+      engine_.Get(), capture_source_.Get(),
+      {MF_CAPTURE_ENGINE_STREAM_CATEGORY_PHOTO_DEPENDENT,
+       MF_CAPTURE_ENGINE_STREAM_CATEGORY_VIDEO_CAPTURE});
+  MockStreamMediaType(capture_source_.Get(), 1, kMockWidth, kMockHeight);
+
+  ComPtr<MockCaptureRecordSink> record_sink = new MockCaptureRecordSink();
+  EXPECT_CALL(*engine_.Get(), GetSink(MF_CAPTURE_ENGINE_SINK_TYPE_RECORD, _))
+      .Times(1)
+      .WillOnce([src_sink = record_sink.Get()](MF_CAPTURE_ENGINE_SINK_TYPE,
+                                               IMFCaptureSink** target_sink) {
+        *target_sink = src_sink;
+        src_sink->AddRef();
+        return S_OK;
+      });
+  EXPECT_CALL(*record_sink.Get(), RemoveAllStreams)
+      .Times(1)
+      .WillOnce(Return(S_OK));
+  EXPECT_CALL(*record_sink.Get(), AddStream(Eq(1u), _, _, _))
+      .Times(1)
+      .WillOnce(Return(S_OK));
+  EXPECT_CALL(
+      *record_sink.Get(),
+      AddStream(Eq((DWORD)MF_CAPTURE_ENGINE_PREFERRED_SOURCE_STREAM_FOR_AUDIO),
+                _, _, _))
+      .Times(1)
+      .WillOnce(Return(S_OK));
+  EXPECT_CALL(*record_sink.Get(), SetOutputFileName)
+      .Times(1)
+      .WillOnce(Return(S_OK));
+  EXPECT_CALL(*engine_.Get(), StartRecord()).Times(1).WillOnce(Return(S_OK));
+  EXPECT_CALL(*camera_, OnStartRecordFailed).Times(0);
+
+  capture_controller_->StartRecord("mock_path_to_video.mp4");
+
+  EXPECT_CALL(*camera_, OnStartRecordSucceeded()).Times(1);
+  engine_->CreateFakeEvent(S_OK, MF_CAPTURE_ENGINE_RECORD_STARTED);
+
+  // Called by destructor
+  EXPECT_CALL(*engine_.Get(), StopRecord(true, false))
+      .Times(1)
+      .WillOnce(Return(S_OK));
+}
+
+TEST_F(CaptureControllerStreamSelection, TakePictureUsesResolvedStream) {
+  MockSourceRejectingPreferredStreams(
+      engine_.Get(), capture_source_.Get(),
+      {MF_CAPTURE_ENGINE_STREAM_CATEGORY_PHOTO_DEPENDENT,
+       MF_CAPTURE_ENGINE_STREAM_CATEGORY_VIDEO_CAPTURE});
+  MockStreamMediaType(capture_source_.Get(), 1, kMockWidth, kMockHeight);
+
+  ComPtr<MockCapturePhotoSink> photo_sink = new MockCapturePhotoSink();
+  EXPECT_CALL(*engine_.Get(), GetSink(MF_CAPTURE_ENGINE_SINK_TYPE_PHOTO, _))
+      .Times(1)
+      .WillOnce([src_sink = photo_sink.Get()](MF_CAPTURE_ENGINE_SINK_TYPE,
+                                              IMFCaptureSink** target_sink) {
+        *target_sink = src_sink;
+        src_sink->AddRef();
+        return S_OK;
+      });
+  EXPECT_CALL(*photo_sink.Get(), RemoveAllStreams)
+      .Times(1)
+      .WillOnce(Return(S_OK));
+  EXPECT_CALL(*photo_sink.Get(), AddStream(Eq(1u), _, _, _))
+      .Times(1)
+      .WillOnce(Return(S_OK));
+  EXPECT_CALL(*photo_sink.Get(), SetOutputFileName)
+      .Times(1)
+      .WillOnce(Return(S_OK));
+  EXPECT_CALL(*engine_.Get(), TakePhoto()).Times(1).WillOnce(Return(S_OK));
+  EXPECT_CALL(*camera_, OnTakePictureFailed).Times(0);
+
+  capture_controller_->TakePicture("mock_path_to_photo");
 }
 
 TEST(CaptureController, ReportsStartPreviewError) {
