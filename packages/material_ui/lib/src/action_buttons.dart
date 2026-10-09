@@ -331,6 +331,14 @@ class DrawerButton extends _ActionButton {
   String _getTooltip(BuildContext context) {
     return MaterialLocalizations.of(context).openAppDrawerTooltip;
   }
+
+  @override
+  Widget build(BuildContext context) {
+    final ScaffoldState? scaffold = Scaffold.maybeOf(context);
+    return MergeSemantics(
+      child: Semantics(expanded: scaffold?.isDrawerOpen ?? false, child: super.build(context)),
+    );
+  }
 }
 
 /// A "end drawer" icon that's appropriate for the current [TargetPlatform].
@@ -392,5 +400,13 @@ class EndDrawerButton extends _ActionButton {
   @override
   String _getTooltip(BuildContext context) {
     return MaterialLocalizations.of(context).openAppDrawerTooltip;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final ScaffoldState? scaffold = Scaffold.maybeOf(context);
+    return MergeSemantics(
+      child: Semantics(expanded: scaffold?.isEndDrawerOpen ?? false, child: super.build(context)),
+    );
   }
 }
