@@ -12,6 +12,7 @@ void main() {
     await pumpsUseCase(tester, RadioListTileUseCase());
     expect(find.text('Lafayette'), findsOneWidget);
     expect(find.text('Jefferson'), findsOneWidget);
+    expect(find.bySemanticsLabel('Singing character'), findsOneWidget);
   });
 
   testWidgets('radio list tile demo page has one h1 tag', (WidgetTester tester) async {

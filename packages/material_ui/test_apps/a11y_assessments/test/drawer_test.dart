@@ -19,6 +19,10 @@ void main() {
     await tester.pump(const Duration(seconds: 1));
 
     expect(find.byType(Drawer), findsExactly(1));
+    final List<ListTile> tiles = tester.widgetList<ListTile>(find.byType(ListTile)).toList();
+    expect(tiles[0].selected, isTrue);
+    expect(tiles[1].selected, isFalse);
+    expect(tiles[2].selected, isFalse);
   });
 
   testWidgets('drawer has one h1 tag', (WidgetTester tester) async {
