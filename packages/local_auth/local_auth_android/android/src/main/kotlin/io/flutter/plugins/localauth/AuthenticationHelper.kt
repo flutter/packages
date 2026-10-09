@@ -9,6 +9,7 @@ import android.app.Application.ActivityLifecycleCallbacks
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
+import android.view.ViewTreeObserver
 import androidx.biometric.BiometricManager
 import androidx.biometric.BiometricPrompt
 import androidx.biometric.BiometricPrompt.PromptInfo
@@ -35,6 +36,10 @@ internal class AuthenticationHelper(
   private val isAuthSticky: Boolean = options.sticky
   private val uiThreadExecutor: UiThreadExecutor = UiThreadExecutor()
   private var activityPaused = false
+  private var stoppedByClient = false
+  private var focusListener: ViewTreeObserver.OnWindowFocusChangeListener? = null
+  private var focusTimeout: Runnable? = null
+  private var repromptOnFocus = false
   private var biometricPrompt: BiometricPrompt? = null
   private val promptInfo: PromptInfo =
       PromptInfo.Builder()
@@ -70,12 +75,15 @@ internal class AuthenticationHelper(
 
   /** Cancels the biometric authentication. */
   fun stopAuthentication() {
+    stoppedByClient = true
+    stop()
     biometricPrompt?.cancelAuthentication()
     biometricPrompt = null
   }
 
   /** Stops the biometric listener. */
   private fun stop() {
+    stopWaitingForFocus()
     if (lifecycle != null) {
       lifecycle.removeObserver(this)
       return
@@ -85,9 +93,63 @@ internal class AuthenticationHelper(
 
   @SuppressLint("SwitchIntDef")
   override fun onAuthenticationError(errorCode: Int, errString: CharSequence) {
-    // If we are doing sticky auth and the activity has been paused,
-    // ignore this error. We will start listening again when resumed.
-    if (errorCode == BiometricPrompt.ERROR_CANCELED && activityPaused && isAuthSticky) return
+    if (isAuthSticky && !stoppedByClient && isCancellation(errorCode)) {
+      // If we are doing sticky auth and the activity has been paused,
+      // ignore this error. We will start listening again when resumed.
+      if (activityPaused) return
+      // Android 12+ reports ERROR_USER_CANCELED both when the user dismisses the prompt and when
+      // SystemUI dismisses it because the app left the foreground, and the error can arrive
+      // before the activity is paused, or without it being paused at all (e.g. the app switcher
+      // keeps it resumed). The prompt window holds focus while shown, so focus only returns to
+      // the activity if the user dismissed the prompt.
+      // See https://github.com/flutter/flutter/issues/125293
+      if (!activity.hasWindowFocus()) {
+        waitForFocus(errorCode, errString)
+        return
+      }
+    }
+    completeWithError(errorCode, errString)
+  }
+
+  private fun isCancellation(errorCode: Int): Boolean =
+      errorCode == BiometricPrompt.ERROR_CANCELED ||
+          errorCode == BiometricPrompt.ERROR_USER_CANCELED
+
+  /**
+   * Reports the cancellation if the activity regains focus shortly, otherwise treats the app as
+   * backgrounded and prompts again once the activity regains focus or is resumed.
+   */
+  private fun waitForFocus(errorCode: Int, errString: CharSequence) {
+    stopWaitingForFocus()
+    val listener =
+        ViewTreeObserver.OnWindowFocusChangeListener { hasFocus ->
+          if (!hasFocus) return@OnWindowFocusChangeListener
+          val reprompt = repromptOnFocus
+          stopWaitingForFocus()
+          if (reprompt) {
+            showPromptAgain()
+          } else {
+            completeWithError(errorCode, errString)
+          }
+        }
+    val timeout = Runnable { repromptOnFocus = true }
+    focusListener = listener
+    focusTimeout = timeout
+    activity.window.decorView.viewTreeObserver.addOnWindowFocusChangeListener(listener)
+    uiThreadExecutor.handler.postDelayed(timeout, FOCUS_RETURN_TIMEOUT_MS)
+  }
+
+  private fun stopWaitingForFocus() {
+    focusListener?.let {
+      activity.window?.decorView?.viewTreeObserver?.removeOnWindowFocusChangeListener(it)
+    }
+    focusTimeout?.let { uiThreadExecutor.handler.removeCallbacks(it) }
+    focusListener = null
+    focusTimeout = null
+    repromptOnFocus = false
+  }
+
+  private fun completeWithError(errorCode: Int, errString: CharSequence) {
     val code =
         when (errorCode) {
           BiometricPrompt.ERROR_USER_CANCELED -> AuthResultCode.USER_CANCELED
@@ -125,19 +187,25 @@ internal class AuthenticationHelper(
   private fun handlePause() {
     if (isAuthSticky) {
       activityPaused = true
+      // Resuming will show the prompt again.
+      stopWaitingForFocus()
     }
   }
 
   private fun handleResume() {
     if (isAuthSticky) {
       activityPaused = false
-      // TODO(stuartmorgan): This should be assigning to biometricPrompt instead; see
-      // https://github.com/flutter/flutter/issues/191804
-      val prompt = BiometricPrompt(activity, uiThreadExecutor, this)
-      // When activity is resuming, we cannot show the prompt right away. We need to post it to the
-      // UI queue.
-      uiThreadExecutor.handler.post { prompt.authenticate(promptInfo) }
+      showPromptAgain()
     }
+  }
+
+  private fun showPromptAgain() {
+    // TODO(stuartmorgan): This should be assigning to biometricPrompt instead; see
+    // https://github.com/flutter/flutter/issues/191804
+    val prompt = BiometricPrompt(activity, uiThreadExecutor, this)
+    // When activity is resuming, we cannot show the prompt right away. We need to post it to the
+    // UI queue.
+    uiThreadExecutor.handler.post { prompt.authenticate(promptInfo) }
   }
 
   override fun onActivityPaused(ignored: Activity) {
@@ -166,6 +234,11 @@ internal class AuthenticationHelper(
   override fun onActivitySaveInstanceState(activity: Activity, bundle: Bundle) {}
 
   override fun onActivityDestroyed(activity: Activity) {}
+
+  companion object {
+    /** How long to wait for the activity to regain focus after the prompt is canceled. */
+    internal const val FOCUS_RETURN_TIMEOUT_MS = 500L
+  }
 
   internal class UiThreadExecutor : Executor {
     val handler: Handler = Handler(Looper.getMainLooper())
