@@ -47,14 +47,10 @@ class _MainWidgetState extends State<_MainWidget> {
             },
             title: const Text('a check box list title'),
           ),
-          CheckboxListTile(
-            value: _checked,
-            onChanged: (bool? value) {
-              setState(() {
-                _checked = value!;
-              });
-            },
-            title: const Text('a disabled check box list title'),
+          const CheckboxListTile(
+            value: false,
+            onChanged: null,
+            title: Text('a disabled check box list title'),
             enabled: false,
           ),
         ],

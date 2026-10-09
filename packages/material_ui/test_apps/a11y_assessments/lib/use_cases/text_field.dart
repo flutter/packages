@@ -29,16 +29,19 @@ class _MainWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final int? maxLines = MediaQuery.textScalerOf(context).scale(1.0) > 1.0 ? null : 1;
     return Scaffold(
       appBar: AppBar(title: Semantics(headingLevel: 1, child: Text('$pageTitle Demo'))),
       body: ListView(
         children: <Widget>[
           Semantics(
             label: 'Input field with suffix @gmail.com',
-            child: const TextField(
-              key: Key('enabled text field'),
-              maxLines: null,
-              decoration: InputDecoration(
+            child: TextField(
+              key: const Key('enabled text field'),
+              maxLines: maxLines,
+              keyboardType: TextInputType.emailAddress,
+              autofillHints: const <String>[AutofillHints.email],
+              decoration: const InputDecoration(
                 labelText: 'Email',
                 suffixText: '@gmail.com',
                 hintText: 'Enter your email',
@@ -49,7 +52,9 @@ class _MainWidget extends StatelessWidget {
             label: 'Input field with suffix @gmail.com',
             child: TextField(
               key: const Key('disabled text field'),
-              maxLines: null,
+              maxLines: maxLines,
+              keyboardType: TextInputType.emailAddress,
+              autofillHints: const <String>[AutofillHints.email],
               decoration: const InputDecoration(
                 labelText: 'Email',
                 suffixText: '@gmail.com',

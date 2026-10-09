@@ -19,6 +19,7 @@ void main() {
     await tester.pump(const Duration(seconds: 1));
 
     expect(find.byType(NavigationDrawer), findsExactly(1));
+    expect(tester.getSemantics(find.text('Header')).headingLevel, 2);
   });
 
   testWidgets('navigation drawer has one h1 tag', (WidgetTester tester) async {

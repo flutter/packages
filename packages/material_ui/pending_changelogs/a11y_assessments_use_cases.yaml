@@ -1,0 +1,3 @@
+changelog: |
+  - Improves accessibility semantics in `a11y_assessments` use cases (`drawer`, `navigation_drawer`, `text_field`, `text_field_password`, `radio_list_tile`, and `check_box_list_tile`).
+version: patch
