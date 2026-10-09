@@ -222,96 +222,83 @@ struct ImagePickerPluginTests {
     #expect(plugin.callContext?.maxDuration == 95)
   }
 
-  @Test func pluginMultiImagePathHasNullItem() async {
-    let plugin = FLTImagePickerPlugin(viewProvider: StubViewProvider())
-    await confirmation("result") { confirmed in
-      plugin.callContext = FLTImagePickerMethodCallContext { _, error in
-        #expect(error?.code == "create_error")
-        confirmed()
-      }
-      plugin.sendCallResult(withSavedPathList: [NSNull()])
+  /// Returns the arguments `sendCallResult` passes to the context callback.
+  ///
+  /// That callback runs synchronously on this thread.
+  private func captureSendResult(
+    _ plugin: FLTImagePickerPlugin, pathList: [Any]?
+  ) -> (result: [String]?, error: FlutterError?) {
+    var received: [String]?
+    var receivedError: FlutterError?
+    plugin.callContext = FLTImagePickerMethodCallContext { result, error in
+      received = result
+      receivedError = error
     }
+    plugin.sendCallResult(withSavedPathList: pathList)
+    return (received, receivedError)
   }
 
-  @Test func pluginMultiImagePathHasItem() async {
+  @Test func pluginMultiImagePathHasNullItem() {
+    let plugin = FLTImagePickerPlugin(viewProvider: StubViewProvider())
+    let (_, error) = captureSendResult(plugin, pathList: [NSNull()])
+    #expect(error?.code == "create_error")
+  }
+
+  @Test func pluginMultiImagePathHasItem() {
     let plugin = FLTImagePickerPlugin(viewProvider: StubViewProvider())
     let pathList = ["test"]
-    await confirmation("result") { confirmed in
-      plugin.callContext = FLTImagePickerMethodCallContext { result, _ in
-        #expect(result as? [String] == pathList)
-        confirmed()
-      }
-      plugin.sendCallResult(withSavedPathList: pathList)
-    }
+    let (result, _) = captureSendResult(plugin, pathList: pathList)
+    #expect(result == pathList)
   }
 
-  @Test func pluginMediaPathHasNoItem() async {
+  @Test func pluginMediaPathHasNoItem() {
     let plugin = FLTImagePickerPlugin(viewProvider: StubViewProvider())
-    await confirmation("result") { confirmed in
-      plugin.callContext = FLTImagePickerMethodCallContext { result, _ in
-        #expect(result as? [String] == [])
-        confirmed()
-      }
-      plugin.sendCallResult(withSavedPathList: [])
-    }
+    let (result, _) = captureSendResult(plugin, pathList: [])
+    #expect(result == [])
   }
 
-  @Test func pluginMediaPathConvertsNilToEmptyList() async {
+  @Test func pluginMediaPathConvertsNilToEmptyList() {
     let plugin = FLTImagePickerPlugin(viewProvider: StubViewProvider())
-    await confirmation("result") { confirmed in
-      plugin.callContext = FLTImagePickerMethodCallContext { result, _ in
-        #expect(result as? [String] == [])
-        confirmed()
-      }
-      plugin.sendCallResult(withSavedPathList: nil)
-    }
+    let (result, _) = captureSendResult(plugin, pathList: nil)
+    #expect(result == [])
   }
 
-  @Test func pluginMediaPathHasItem() async {
+  @Test func pluginMediaPathHasItem() {
     let plugin = FLTImagePickerPlugin(viewProvider: StubViewProvider())
     let pathList = ["test"]
-    await confirmation("result") { confirmed in
-      plugin.callContext = FLTImagePickerMethodCallContext { result, _ in
-        #expect(result as? [String] == pathList)
-        confirmed()
-      }
-      plugin.sendCallResult(withSavedPathList: pathList)
-    }
+    let (result, _) = captureSendResult(plugin, pathList: pathList)
+    #expect(result == pathList)
   }
 
   /// Captures `processPickerItems` completion.
   ///
-  /// `#expect` inside that callback is not attributed to the test: the
-  /// picker delivers results off the calling thread, so those expectations
-  /// cannot fail `xcodebuild`. Capture here and assert after `confirmation`.
+  /// Saves run on a background queue and the result is delivered later on the
+  /// main queue, so `confirmation` would return before the callback runs.
+  /// `#expect` on that queue is not recorded on this test.
   private func processPickerItems(
     _ items: [any PickerItem], using plugin: FLTImagePickerPlugin
-  ) async -> (paths: [String]?, error: FlutterError?, onMainThread: Bool) {
+  ) async -> (paths: [String]?, error: FlutterError?) {
     let picker = PHPickerViewController(configuration: PHPickerConfiguration())
-    nonisolated(unsafe) var received: [String]?
-    nonisolated(unsafe) var receivedError: FlutterError?
-    nonisolated(unsafe) var onMainThread = false
-    await confirmation("result") { confirmed in
-      await withCheckedContinuation { (continuation: CheckedContinuation<Void, Never>) in
-        plugin.callContext = FLTImagePickerMethodCallContext { result, error in
-          onMainThread = Thread.isMainThread
-          received = result
-          receivedError = error
-          confirmed()
-          continuation.resume()
-        }
-        plugin.processPickerItems(items, fromPicker: picker)
+    let (paths, error, onMainThread) = await withCheckedContinuation {
+      (
+        continuation: CheckedContinuation<
+          (paths: [String]?, error: FlutterError?, onMainThread: Bool), Never
+        >
+      ) in
+      plugin.callContext = FLTImagePickerMethodCallContext { result, error in
+        continuation.resume(returning: (result, error, Thread.isMainThread))
       }
+      plugin.processPickerItems(items, fromPicker: picker)
     }
-    return (received, receivedError, onMainThread)
+    #expect(onMainThread)
+    return (paths, error)
   }
 
   @Test func sendsImageInvalidSourceError() async {
     let plugin = FLTImagePickerPlugin(viewProvider: StubViewProvider())
     let failItem = FakePickerItem(itemProvider: NSItemProvider(), assetIdentifier: nil)
-    let (paths, error, onMainThread) = await processPickerItems(
+    let (paths, error) = await processPickerItems(
       [failItem, failItem], using: plugin)
-    #expect(onMainThread)
     #expect(paths == nil)
     #expect(error?.code == "invalid_source")
   }
@@ -325,9 +312,8 @@ struct ImagePickerPluginTests {
     let tiffItem = FakePickerItem(
       itemProvider: NSItemProvider(contentsOf: tiffURL)!, assetIdentifier: nil)
     let plugin = FLTImagePickerPlugin(viewProvider: StubViewProvider())
-    let (paths, error, onMainThread) = await processPickerItems(
+    let (paths, error) = await processPickerItems(
       [failItem, tiffItem], using: plugin)
-    #expect(onMainThread)
     #expect(paths == nil)
     #expect(error?.code == "invalid_image")
   }
@@ -342,9 +328,8 @@ struct ImagePickerPluginTests {
     let pngItem = FakePickerItem(
       itemProvider: NSItemProvider(contentsOf: pngURL)!, assetIdentifier: nil)
     let plugin = FLTImagePickerPlugin(viewProvider: StubViewProvider())
-    let (paths, error, onMainThread) = await processPickerItems(
+    let (paths, error) = await processPickerItems(
       [tiffItem, pngItem], using: plugin)
-    #expect(onMainThread)
     #expect(paths?.count == 2)
     #expect(error == nil)
   }
@@ -495,8 +480,8 @@ struct ImagePickerPluginTests {
 
   @Test func pickImageInvalidResultWhenMultiplePathsReturned() async {
     let plugin = FLTImagePickerPlugin(viewProvider: StubViewProvider())
-    var completionCount = 0
-    await withCheckedContinuation { (continuation: CheckedContinuation<Void, Never>) in
+    await confirmation("two results", expectedCount: 2) { confirmed in
+      var completionCount = 0
       plugin.pickImage(
         withSource: FLTSourceSpecification.make(with: .gallery, camera: .rear),
         maxSize: FLTMaxSize(),
@@ -509,18 +494,17 @@ struct ImagePickerPluginTests {
           #expect(error?.code == "invalid_result")
         } else {
           #expect(result == "a")
-          continuation.resume()
         }
+        confirmed()
       }
       plugin.sendCallResult(withSavedPathList: ["a", "b"])
     }
-    #expect(completionCount == 2)
   }
 
   @Test func pickVideoInvalidResultWhenMultiplePathsReturned() async {
     let plugin = FLTImagePickerPlugin(viewProvider: StubViewProvider())
-    var completionCount = 0
-    await withCheckedContinuation { (continuation: CheckedContinuation<Void, Never>) in
+    await confirmation("two results", expectedCount: 2) { confirmed in
+      var completionCount = 0
       plugin.pickVideo(
         withSource: FLTSourceSpecification.make(with: .gallery, camera: .rear),
         maxDuration: nil
@@ -531,12 +515,11 @@ struct ImagePickerPluginTests {
           #expect(error?.code == "invalid_result")
         } else {
           #expect(result == "a")
-          continuation.resume()
         }
+        confirmed()
       }
       plugin.sendCallResult(withSavedPathList: ["a", "b"])
     }
-    #expect(completionCount == 2)
   }
 
   @Test func phPickerCancelSendsEmptyPathList() async {

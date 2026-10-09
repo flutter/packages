@@ -33,7 +33,7 @@ enum ImagePickerTestImages {
     {
       return loaded
     }
-    return Data(base64Encoded: fallback) ?? Data()
+    return Data(base64Encoded: fallback)!
   }
 }
 
