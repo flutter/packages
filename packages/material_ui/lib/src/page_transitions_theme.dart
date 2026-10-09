@@ -104,6 +104,7 @@ class _ZoomPageTransition extends StatelessWidget {
   /// transition animation.
   ///
   /// If not specified, defaults to true.
+  ///
   /// If false, the route snapshotting will not be applied to the route being
   /// animating into, e.g. when transitioning from route A to route B, B will
   /// not be snapshotted.
@@ -365,7 +366,8 @@ class _FadeForwardsPageTransition extends StatelessWidget {
   const _FadeForwardsPageTransition({
     required this.animation,
     required this.secondaryAnimation,
-    required this.allowSnapshotting,
+    required this._allowSnapshotting,
+    required this._allowEnterRouteSnapshotting,
     this.backgroundColor,
     this.child,
   });
@@ -374,9 +376,35 @@ class _FadeForwardsPageTransition extends StatelessWidget {
 
   final Animation<double> secondaryAnimation;
 
-  // Whether the entering and exiting pages may be painted from a snapshot
-  // while animating. See [_FadeForwardsSnapshot].
-  final bool allowSnapshotting;
+  /// Whether the [SnapshotWidget] will be used.
+  ///
+  /// When this value is true, performance is improved by disabling animations
+  /// on both the outgoing and incoming route. This also implies that
+  /// ink-splashes or similar animations will not animate during the transition.
+  ///
+  /// See also:
+  ///
+  ///  * [TransitionRoute.allowSnapshotting], which defines whether the route
+  ///    transition will prefer to animate a snapshot of the entering and exiting
+  ///    routes.
+  ///  * [_FadeForwardsSnapshot], which implements the snapshotting for this
+  ///    transition.
+  ///  * [_allowEnterRouteSnapshotting], which is the same but only for the
+  ///    entering route.
+  final bool _allowSnapshotting;
+
+  /// Whether to enable snapshotting on the entering route during the
+  /// transition animation.
+  ///
+  /// If not specified, defaults to true.
+  ///
+  /// If false, the route snapshotting will not be applied to the route being
+  /// animating into, e.g. when transitioning from route A to route B, B will
+  /// not be snapshotted.
+  /// See also:
+  ///
+  ///  * [_allowSnapshotting], which is the same but for both routes.
+  final bool _allowEnterRouteSnapshotting;
 
   final Color? backgroundColor;
 
@@ -405,7 +433,7 @@ class _FadeForwardsPageTransition extends StatelessWidget {
             position: _forwardTranslationTween.animate(animation),
             child: _FadeForwardsSnapshot(
               animation: animation,
-              allowSnapshotting: allowSnapshotting,
+              allowSnapshotting: _allowSnapshotting && _allowEnterRouteSnapshotting,
               child: child,
             ),
           ),
@@ -420,18 +448,19 @@ class _FadeForwardsPageTransition extends StatelessWidget {
               position: _backwardTranslationTween.animate(animation),
               child: _FadeForwardsSnapshot(
                 animation: animation,
-                allowSnapshotting: allowSnapshotting,
+                allowSnapshotting: _allowSnapshotting,
                 child: child,
               ),
             ),
           ),
         );
       },
-      child: FadeForwardsPageTransitionsBuilder._delegatedTransition(
+      child: FadeForwardsPageTransitionsBuilder._snapshotAwareDelegatedTransition(
         context,
         secondaryAnimation,
         backgroundColor,
-        allowSnapshotting,
+        _allowSnapshotting,
+        _allowEnterRouteSnapshotting,
         child,
       ),
     );
@@ -566,9 +595,41 @@ class _FadeForwardsSnapshotState extends State<_FadeForwardsSnapshot> {
 class FadeForwardsPageTransitionsBuilder extends PageTransitionsBuilder {
   /// Constructs a page transition animation that matches the transition used on
   /// Android U.
-  const FadeForwardsPageTransitionsBuilder({this._allowSnapshotting, this.backgroundColor});
+  const FadeForwardsPageTransitionsBuilder({
+    this._allowSnapshotting = true,
+    this._allowEnterRouteSnapshotting = true,
+    this.backgroundColor,
+  });
 
-  final bool? _allowSnapshotting;
+  /// Whether FadeForwards page transitions will prefer to animate a snapshot of
+  /// the entering and exiting routes.
+  ///
+  /// If not specified, defaults to true.
+  ///
+  /// When this value is true, FadeForwards page transitions will snapshot the
+  /// entering and exiting routes. These snapshots are then animated in place of
+  /// the underlying widgets to improve performance of the transition.
+  ///
+  /// Generally this means that animations that occur on the entering/exiting route
+  /// while the route animation plays may appear frozen - unless they are a hero
+  /// animation or something that is drawn in a separate overlay.
+  ///
+  /// See also:
+  ///
+  ///  * [PageRoute.allowSnapshotting], which enables or disables snapshotting
+  ///    on a per route basis.
+  ///  * [ZoomPageTransitionsBuilder.allowSnapshotting], which is similar, but
+  ///    for zoom page transitions, and includes a code example.
+  final bool _allowSnapshotting;
+
+  /// Whether to enable snapshotting on the entering route during the
+  /// transition animation.
+  ///
+  /// If not specified, defaults to true.
+  /// If false, the route snapshotting will not be applied to the route being
+  /// animating into, e.g. when transitioning from route A to route B, B will
+  /// not be snapshotted.
+  final bool _allowEnterRouteSnapshotting;
 
   /// The background color during transition between two routes.
   ///
@@ -597,11 +658,15 @@ class FadeForwardsPageTransitionsBuilder extends PageTransitionsBuilder {
         Animation<double> secondaryAnimation,
         bool allowSnapshotting,
         Widget? child,
-      ) => _delegatedTransition(
+      ) => _snapshotAwareDelegatedTransition(
         context,
         secondaryAnimation,
         backgroundColor,
-        !ZoomPageTransitionsBuilder._kProfileForceDisableSnapshotting && allowSnapshotting,
+        !ZoomPageTransitionsBuilder._kProfileForceDisableSnapshotting &&
+            allowSnapshotting &&
+            _allowSnapshotting,
+        !ZoomPageTransitionsBuilder._kProfileForceDisableSnapshotting &&
+        _allowEnterRouteSnapshotting,
         child,
       );
 
@@ -632,11 +697,14 @@ class FadeForwardsPageTransitionsBuilder extends PageTransitionsBuilder {
     end: 0.0,
   ).chain(CurveTween(curve: const Interval(0.0, 0.25)));
 
-  static Widget _delegatedTransition(
+  // A transition builder that takes into account the snapshotting properties of
+  // FadeForwardsPageTransitionsBuilder.
+  static Widget _snapshotAwareDelegatedTransition(
     BuildContext context,
     Animation<double> secondaryAnimation,
     Color? backgroundColor,
     bool allowSnapshotting,
+    bool allowEnterRouteSnapshotting,
     Widget? child,
   ) {
     final Widget builder = DualTransitionBuilder(
@@ -648,7 +716,7 @@ class FadeForwardsPageTransitionsBuilder extends PageTransitionsBuilder {
             position: _secondaryForwardTranslationTween.animate(animation),
             child: _FadeForwardsSnapshot(
               animation: animation,
-              allowSnapshotting: allowSnapshotting,
+              allowSnapshotting: allowSnapshotting && allowEnterRouteSnapshotting,
               child: child,
             ),
           ),
@@ -696,9 +764,10 @@ class FadeForwardsPageTransitionsBuilder extends PageTransitionsBuilder {
       animation: animation,
       secondaryAnimation: secondaryAnimation,
       allowSnapshotting:
-      // TODO(justinmc): Use the _allowSnapshotting parameter here.
           !ZoomPageTransitionsBuilder._kProfileForceDisableSnapshotting &&
+          _allowSnapshotting &&
           (route?.allowSnapshotting ?? true),
+      allowEnterRouteSnapshotting: _allowEnterRouteSnapshotting,
       backgroundColor: backgroundColor,
       child: child,
     );
