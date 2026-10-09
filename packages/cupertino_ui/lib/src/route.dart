@@ -1188,6 +1188,7 @@ class CupertinoModalPopupRoute<T> extends PopupRoute<T> {
     super.settings,
     super.requestFocus,
     this.anchorPoint,
+    this.animationBehavior = AnimationBehavior.normal,
   });
 
   /// A builder that builds the widget tree for the [CupertinoModalPopupRoute].
@@ -1221,6 +1222,11 @@ class CupertinoModalPopupRoute<T> extends PopupRoute<T> {
 
   /// {@macro flutter.widgets.DisplayFeatureSubScreen.anchorPoint}
   final Offset? anchorPoint;
+
+  /// The behavior of the animation relative to the device's clock.
+  ///
+  /// Defaults to [AnimationBehavior.normal].
+  final AnimationBehavior animationBehavior;
 
   @override
   Simulation createSimulation({required bool forward}) {
@@ -1356,6 +1362,7 @@ Future<T?> showCupertinoModalPopup<T>({
   RouteSettings? routeSettings,
   Offset? anchorPoint,
   bool? requestFocus,
+  AnimationBehavior animationBehavior = AnimationBehavior.normal,
 }) {
   return Navigator.of(context, rootNavigator: useRootNavigator).push(
     CupertinoModalPopupRoute<T>(
@@ -1367,6 +1374,7 @@ Future<T?> showCupertinoModalPopup<T>({
       settings: routeSettings,
       anchorPoint: anchorPoint,
       requestFocus: requestFocus,
+      animationBehavior: animationBehavior,
     ),
   );
 }
@@ -1459,6 +1467,7 @@ Future<T?> showCupertinoDialog<T>({
   RouteSettings? routeSettings,
   Offset? anchorPoint,
   bool? requestFocus,
+  AnimationBehavior animationBehavior = AnimationBehavior.normal,
 }) {
   return Navigator.of(context, rootNavigator: useRootNavigator).push<T>(
     CupertinoDialogRoute<T>(
@@ -1470,6 +1479,7 @@ Future<T?> showCupertinoDialog<T>({
       settings: routeSettings,
       anchorPoint: anchorPoint,
       requestFocus: requestFocus,
+      animationBehavior: animationBehavior,
     ),
   );
 }
@@ -1525,6 +1535,7 @@ class CupertinoDialogRoute<T> extends RawDialogRoute<T> {
     super.settings,
     super.requestFocus,
     super.anchorPoint,
+    this.animationBehavior = AnimationBehavior.normal,
   }) : super(
          pageBuilder:
              (
@@ -1542,6 +1553,25 @@ class CupertinoDialogRoute<T> extends RawDialogRoute<T> {
 
   /// Custom transition builder
   RouteTransitionsBuilder? transitionBuilder;
+
+  /// The behavior of the animation relative to the device's clock.
+  ///
+  /// Defaults to [AnimationBehavior.normal].
+  final AnimationBehavior animationBehavior;
+
+  @override
+  AnimationController createAnimationController() {
+    final Duration duration = transitionDuration;
+    final Duration reverseDuration = reverseTransitionDuration;
+    assert(duration >= Duration.zero);
+    return AnimationController(
+      duration: duration,
+      reverseDuration: reverseDuration,
+      debugLabel: debugLabel,
+      vsync: navigator!,
+      animationBehavior: animationBehavior,
+    );
+  }
 
   CurvedAnimation? _fadeAnimation;
 

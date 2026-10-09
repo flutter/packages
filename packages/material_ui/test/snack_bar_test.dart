@@ -4385,6 +4385,42 @@ void main() {
     );
     expect(tester.getSize(find.byType(SnackBarAction)), Size.zero);
   });
+
+  testWidgets('SnackBar respects animationBehavior', (WidgetTester tester) async {
+    late ScaffoldMessengerState messenger;
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Scaffold(
+          body: Builder(
+            builder: (BuildContext context) {
+              messenger = ScaffoldMessenger.of(context);
+              return ElevatedButton(
+                onPressed: () {
+                  messenger.showSnackBar(
+                    const SnackBar(
+                      content: Text('Test SnackBar'),
+                      animationBehavior: AnimationBehavior.preserve,
+                    ),
+                  );
+                },
+                child: const Text('Show'),
+              );
+            },
+          ),
+        ),
+      ),
+    );
+
+    const snackBar = SnackBar(
+      content: Text('Test SnackBar'),
+      animationBehavior: AnimationBehavior.preserve,
+    );
+    expect(snackBar.animationBehavior, AnimationBehavior.preserve);
+
+    await tester.tap(find.text('Show'));
+    await tester.pump();
+    expect(find.text('Test SnackBar'), findsOneWidget);
+  });
 }
 
 /// Start test for "SnackBar dismiss test".
