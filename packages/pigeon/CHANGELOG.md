@@ -1,3 +1,8 @@
+## 29.0.8
+
+* [kotlin] Stops generating unused JNI bindings for host API interfaces, significantly
+  reducing the size of the generated `.jni.dart` file.
+
 ## 29.0.7
 
 * [kotlin] Fixes native interop calls failing with `ClassNotFoundException` in minified
