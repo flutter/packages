@@ -627,6 +627,42 @@ void main() {
       expect(contents, contains('BorderSide(color: _colors.outlineVariant)'));
     });
 
+    test('IconButtonTemplateM3 emits M3 IconButton defaults from tokens', () {
+      const template = icon_button.IconButtonTemplateM3('Icon Button');
+      final String contents = _generateContents(template);
+      expect(contents, contains('class _IconButtonDefaultsM3 extends ButtonStyle'));
+      expect(contents, contains('return _colors.onSurface.withOpacity(0.38);'));
+      expect(contents, contains('return _colors.primary;'));
+      expect(contents, contains('return _colors.primary.withOpacity(0.1);'));
+    });
+
+    test('IconButtonTemplateM3 emits M3 FilledIconButton defaults from tokens', () {
+      const template = icon_button.IconButtonTemplateM3('Filled Icon Button');
+      final String contents = _generateContents(template);
+      expect(contents, contains('class _FilledIconButtonDefaultsM3 extends ButtonStyle'));
+      expect(contents, contains('return _colors.onSurface.withOpacity(0.12);'));
+      expect(contents, contains('return _colors.surfaceContainerHighest;'));
+      expect(contents, contains('return _colors.primary.withOpacity(0.1);'));
+    });
+
+    test('IconButtonTemplateM3 emits M3 FilledTonalIconButton defaults from tokens', () {
+      const template = icon_button.IconButtonTemplateM3('Filled Tonal Icon Button');
+      final String contents = _generateContents(template);
+      expect(contents, contains('class _FilledTonalIconButtonDefaultsM3 extends ButtonStyle'));
+      expect(contents, contains('return _colors.secondaryContainer;'));
+      expect(contents, contains('return _colors.onSurfaceVariant;'));
+      expect(contents, contains('return _colors.onSecondaryContainer.withOpacity(0.1);'));
+    });
+
+    test('IconButtonTemplateM3 emits M3 OutlinedIconButton defaults from tokens', () {
+      const template = icon_button.IconButtonTemplateM3('Outlined Icon Button');
+      final String contents = _generateContents(template);
+      expect(contents, contains('class _OutlinedIconButtonDefaultsM3 extends ButtonStyle'));
+      expect(contents, contains('return _colors.inverseSurface;'));
+      expect(contents, contains('return _colors.onInverseSurface.withOpacity(0.1);'));
+      expect(contents, contains('return BorderSide(color: _colors.onSurface.withOpacity(0.12));'));
+    });
+
     test('IconButtonTemplateM3E emits M3E IconButton defaults from tokens', () {
       const template = icon_button.IconButtonTemplateM3E('Icon Button');
       final String contents = _generateContents(template);
