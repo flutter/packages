@@ -20,6 +20,7 @@ import 'constants.dart';
 import 'debug.dart';
 import 'divider.dart';
 import 'icon_button.dart';
+import 'icon_button_theme.dart';
 import 'icons.dart';
 import 'ink_well.dart';
 import 'list_tile.dart';
@@ -1374,7 +1375,7 @@ class PopupMenuButton<T> extends StatefulWidget {
     this.elevation,
     this.shadowColor,
     this.surfaceTintColor,
-    this.padding = const EdgeInsets.all(8.0),
+    this.padding,
     this.menuPadding,
     this.child,
     this.borderRadius,
@@ -1450,10 +1451,17 @@ class PopupMenuButton<T> extends StatefulWidget {
   /// overlay is applied.
   final Color? surfaceTintColor;
 
-  /// Matches IconButton's 8 dps padding by default. In some cases, notably where
-  /// this button appears as the trailing element of a list item, it's useful to be able
-  /// to set the padding to zero.
-  final EdgeInsetsGeometry padding;
+  /// The padding around the icon of the [IconButton] this button builds when
+  /// [child] is null.
+  ///
+  /// In some cases, notably where this button appears as the trailing element
+  /// of a list item, it's useful to be able to set the padding to zero.
+  ///
+  /// If null, the padding is resolved by the [IconButton], from [style], then
+  /// the closest [IconButtonTheme], then its defaults. This allows
+  /// [ButtonStyle.iconButtonWidth] and [ButtonStyle.sizeVariant] to affect
+  /// the padding. The default is 8 dps on all sides.
+  final EdgeInsetsGeometry? padding;
 
   /// If provided, menu padding is used for empty space around the outside
   /// of the popup menu.
@@ -1666,6 +1674,17 @@ class PopupMenuButtonState<T> extends State<PopupMenuButton<T>> {
     }
   }
 
+  // Mirrors how the IconButton resolves its padding so that the menu is offset
+  // by the padding the button actually has. The padding of the Material 3
+  // Expressive size variants is private to IconButton and is not accounted for.
+  EdgeInsetsGeometry _effectiveIconPadding(BuildContext context) {
+    final states = <WidgetState>{};
+    return widget.style?.padding?.resolve(states) ??
+        widget.padding ??
+        IconButtonTheme.of(context).style?.padding?.resolve(states) ??
+        const EdgeInsets.all(8.0);
+  }
+
   RelativeRect _getDefaultPosition(BoxConstraints constraints) {
     return _lastPosition ?? RelativeRect.fromSize(Rect.zero, constraints.biggest);
   }
@@ -1700,7 +1719,7 @@ class PopupMenuButtonState<T> extends State<PopupMenuButton<T>> {
         offset = Offset(0.0, button.size.height) + widget.offset;
         if (widget.child == null) {
           // Remove the padding of the icon button.
-          offset -= Offset(0.0, widget.padding.vertical / 2);
+          offset -= Offset(0.0, _effectiveIconPadding(context).vertical / 2);
         }
     }
     final position = RelativeRect.fromRect(
