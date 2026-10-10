@@ -19,6 +19,7 @@
 - Introduces labelTextDirection property to InputDecoration.
 - Adds support for standard, medium, and high contrast Material 3 color scheme baselines.
 - Fixes LocalHistoryEntry leak when double tapping Drawer scrim
+- Fixes the installation command in README.md
 
 ## 1.4.0
 
