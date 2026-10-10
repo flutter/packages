@@ -1362,8 +1362,6 @@ class DropdownButton<T> extends StatefulWidget {
   /// If this property is null, [WidgetStateMouseCursor.adaptiveClickable] will be used.
   final MouseCursor? dropdownMenuItemMouseCursor;
 
-
-
   /// Whether the dropdown's inner contents expand to fill the
   /// available vertical space.
   ///
@@ -1890,6 +1888,7 @@ class DropdownButtonFormField<T> extends FormField<T> {
     super.validator,
     super.errorBuilder,
     super.forceErrorText,
+
     /// Whether the form field is enabled.
     ///
     /// When [enabled] is false, the field is disabled and does not allow user
@@ -1941,7 +1940,8 @@ class DropdownButtonFormField<T> extends FormField<T> {
            final bool showSelectedItem =
                items != null &&
                items.where((DropdownMenuItem<T> item) => item.value == state.value).isNotEmpty;
-           final bool isDropdownEnabled = (enabled ?? onChanged != null) && items != null && items.isNotEmpty;
+           final bool isDropdownEnabled =
+               (enabled ?? onChanged != null) && items != null && items.isNotEmpty;
            // If decoration hintText is provided, use it as the default value for both hint and disabledHint.
            final Widget? decorationHint = effectiveDecoration.hintText != null
                ? Text(effectiveDecoration.hintText!)
