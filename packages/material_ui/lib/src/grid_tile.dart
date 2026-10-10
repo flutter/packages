@@ -96,6 +96,9 @@ class _RenderFillBoundedAxes extends RenderProxyBox {
   @override
   Size computeDryLayout(BoxConstraints constraints) {
     final BoxConstraints childConstraints = _fillBoundedAxes(constraints);
+    if (childConstraints.isTight) {
+      return childConstraints.smallest;
+    }
     return constraints.constrain(
       child?.getDryLayout(childConstraints) ?? childConstraints.smallest,
     );
