@@ -38,12 +38,7 @@ class MainWidgetState extends State<MainWidget> {
       appBar: AppBar(title: Semantics(headingLevel: 1, child: Text('$pageTitle Demo'))),
       body: const Center(
         child: Badge(
-          label: Text(
-            '5',
-            semanticsLabel: '5 new messages',
-            style: TextStyle(color: Colors.white),
-          ),
-          backgroundColor: Colors.green,
+          label: Text('5', semanticsLabel: '5 new messages'),
           child: Icon(Icons.mail, semanticLabel: 'Messages'),
         ),
       ),
