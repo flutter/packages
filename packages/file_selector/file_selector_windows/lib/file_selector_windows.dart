@@ -8,7 +8,7 @@ import 'package:flutter/foundation.dart' show visibleForTesting;
 import 'src/messages.g.dart';
 
 /// An implementation of [FileSelectorPlatform] for Windows.
-class FileSelectorWindows extends FileSelectorPlatform {
+base class FileSelectorWindows extends FileSelectorPlatform {
   /// Creates a new plugin implementation instance.
   FileSelectorWindows({@visibleForTesting FileSelectorApi? api})
     : _hostApi = api ?? FileSelectorApi();
@@ -21,61 +21,34 @@ class FileSelectorWindows extends FileSelectorPlatform {
   }
 
   @override
-  Future<XFile?> openFile({
-    List<XTypeGroup>? acceptedTypeGroups,
-    String? initialDirectory,
-    String? confirmButtonText,
-  }) async {
+  Future<XFile?> openFile([OpenDialogOptions options = const OpenDialogOptions()]) async {
     final FileDialogResult result = await _hostApi.showOpenDialog(
-      SelectionOptions(allowedTypes: _typeGroupsFromXTypeGroups(acceptedTypeGroups)),
-      initialDirectory,
-      confirmButtonText,
+      SelectionOptions(allowedTypes: _typeGroupsFromXTypeGroups(options.acceptedTypeGroups)),
+      options.initialDirectory,
+      options.confirmButtonText,
     );
-    return result.paths.isEmpty ? null : XFile(result.paths.first);
+    return result.paths.isEmpty ? null : XFile.fileSystem(path: result.paths.first);
   }
 
   @override
-  Future<List<XFile>> openFiles({
-    List<XTypeGroup>? acceptedTypeGroups,
-    String? initialDirectory,
-    String? confirmButtonText,
-  }) async {
+  Future<List<XFile>> openFiles([OpenDialogOptions options = const OpenDialogOptions()]) async {
     final FileDialogResult result = await _hostApi.showOpenDialog(
       SelectionOptions(
         allowMultiple: true,
-        allowedTypes: _typeGroupsFromXTypeGroups(acceptedTypeGroups),
+        allowedTypes: _typeGroupsFromXTypeGroups(options.acceptedTypeGroups),
       ),
-      initialDirectory,
-      confirmButtonText,
+      options.initialDirectory,
+      options.confirmButtonText,
     );
-    return result.paths.map((String? path) => XFile(path!)).toList();
+    return result.paths.map((String path) => XFile.fileSystem(path: path)).toList();
   }
 
   @override
-  Future<String?> getSavePath({
-    List<XTypeGroup>? acceptedTypeGroups,
-    String? initialDirectory,
-    String? suggestedName,
-    String? confirmButtonText,
-  }) async {
-    final FileSaveLocation? location = await getSaveLocation(
-      acceptedTypeGroups: acceptedTypeGroups,
-      options: SaveDialogOptions(
-        initialDirectory: initialDirectory,
-        suggestedName: suggestedName,
-        confirmButtonText: confirmButtonText,
-      ),
-    );
-    return location?.path;
-  }
-
-  @override
-  Future<FileSaveLocation?> getSaveLocation({
-    List<XTypeGroup>? acceptedTypeGroups,
-    SaveDialogOptions options = const SaveDialogOptions(),
-  }) async {
+  Future<FileSaveLocation?> getSaveLocation([
+    SaveLocationOptions options = const SaveLocationOptions(),
+  ]) async {
     final FileDialogResult result = await _hostApi.showSaveDialog(
-      SelectionOptions(allowedTypes: _typeGroupsFromXTypeGroups(acceptedTypeGroups)),
+      SelectionOptions(allowedTypes: _typeGroupsFromXTypeGroups(options.acceptedTypeGroups)),
       options.initialDirectory,
       options.suggestedName,
       options.confirmButtonText,
@@ -84,32 +57,31 @@ class FileSelectorWindows extends FileSelectorPlatform {
     return result.paths.isEmpty
         ? null
         : FileSaveLocation(
-            result.paths.first,
-            activeFilter: groupIndex == null ? null : acceptedTypeGroups?[groupIndex],
+            XFile.fileSystem(path: result.paths.first),
+            activeFilter: groupIndex == null ? null : options.acceptedTypeGroups?[groupIndex],
           );
   }
 
   @override
-  Future<String?> getDirectoryPath({String? initialDirectory, String? confirmButtonText}) async {
+  Future<XDirectory?> getDirectory([FileDialogOptions options = const FileDialogOptions()]) async {
     final FileDialogResult result = await _hostApi.showOpenDialog(
       SelectionOptions(selectFolders: true, allowedTypes: <TypeGroup>[]),
-      initialDirectory,
-      confirmButtonText,
+      options.initialDirectory,
+      options.confirmButtonText,
     );
-    return result.paths.isEmpty ? null : result.paths.first;
+    return result.paths.isEmpty ? null : XDirectory.fileSystem(path: result.paths.first);
   }
 
   @override
-  Future<List<String>> getDirectoryPaths({
-    String? initialDirectory,
-    String? confirmButtonText,
-  }) async {
+  Future<List<XDirectory>> getDirectories([
+    FileDialogOptions options = const FileDialogOptions(),
+  ]) async {
     final FileDialogResult result = await _hostApi.showOpenDialog(
       SelectionOptions(allowMultiple: true, selectFolders: true, allowedTypes: <TypeGroup>[]),
-      initialDirectory,
-      confirmButtonText,
+      options.initialDirectory,
+      options.confirmButtonText,
     );
-    return result.paths.isEmpty ? <String>[] : List<String>.from(result.paths);
+    return result.paths.map((String path) => XDirectory.fileSystem(path: path)).toList();
   }
 }
 

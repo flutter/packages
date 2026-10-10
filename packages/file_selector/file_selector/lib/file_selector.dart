@@ -7,7 +7,16 @@ import 'dart:async';
 import 'package:file_selector_platform_interface/file_selector_platform_interface.dart';
 
 export 'package:file_selector_platform_interface/file_selector_platform_interface.dart'
-    show FileSaveLocation, XFile, XTypeGroup;
+    show
+        FileSaveLocation,
+        FileSystemXDirectory,
+        FileSystemXFile,
+        ScopedStorageXDirectory,
+        ScopedStorageXFile,
+        XDirectory,
+        XEntity,
+        XFile,
+        XTypeGroup;
 
 /// Opens a file selection dialog and returns the path chosen by the user.
 ///
@@ -34,10 +43,12 @@ Future<XFile?> openFile({
   String? initialDirectory,
   String? confirmButtonText,
 }) {
-  return FileSelectorPlatform.instance.openFile(
-    acceptedTypeGroups: acceptedTypeGroups,
-    initialDirectory: initialDirectory,
-    confirmButtonText: confirmButtonText,
+  return _assertInstanceIsNotNull().openFile(
+    OpenDialogOptions(
+      acceptedTypeGroups: acceptedTypeGroups,
+      initialDirectory: initialDirectory,
+      confirmButtonText: confirmButtonText,
+    ),
   );
 }
 
@@ -66,10 +77,12 @@ Future<List<XFile>> openFiles({
   String? initialDirectory,
   String? confirmButtonText,
 }) {
-  return FileSelectorPlatform.instance.openFiles(
-    acceptedTypeGroups: acceptedTypeGroups,
-    initialDirectory: initialDirectory,
-    confirmButtonText: confirmButtonText,
+  return _assertInstanceIsNotNull().openFiles(
+    OpenDialogOptions(
+      acceptedTypeGroups: acceptedTypeGroups,
+      initialDirectory: initialDirectory,
+      confirmButtonText: confirmButtonText,
+    ),
   );
 }
 
@@ -105,9 +118,9 @@ Future<FileSaveLocation?> getSaveLocation({
   String? confirmButtonText,
   bool? canCreateDirectories,
 }) async {
-  return FileSelectorPlatform.instance.getSaveLocation(
-    acceptedTypeGroups: acceptedTypeGroups,
-    options: SaveDialogOptions(
+  return _assertInstanceIsNotNull().getSaveLocation(
+    SaveLocationOptions(
+      acceptedTypeGroups: acceptedTypeGroups,
       initialDirectory: initialDirectory,
       suggestedName: suggestedName,
       confirmButtonText: confirmButtonText,
@@ -132,12 +145,12 @@ Future<FileSaveLocation?> getSaveLocation({
 /// May not be supported on all platforms.
 ///
 /// Returns `null` if the user cancels the operation.
-Future<String?> getDirectoryPath({
+Future<XDirectory?> getDirectory({
   String? initialDirectory,
   String? confirmButtonText,
   bool? canCreateDirectories,
 }) async {
-  return FileSelectorPlatform.instance.getDirectoryPathWithOptions(
+  return _assertInstanceIsNotNull().getDirectory(
     FileDialogOptions(
       initialDirectory: initialDirectory,
       confirmButtonText: confirmButtonText,
@@ -163,16 +176,27 @@ Future<String?> getDirectoryPath({
 /// May not be supported on all platforms.
 ///
 /// Returns an empty array if the user cancels the operation.
-Future<List<String?>> getDirectoryPaths({
+Future<List<XDirectory>> getDirectories({
   String? initialDirectory,
   String? confirmButtonText,
   bool? canCreateDirectories,
 }) async {
-  return FileSelectorPlatform.instance.getDirectoryPathsWithOptions(
+  return _assertInstanceIsNotNull().getDirectories(
     FileDialogOptions(
       initialDirectory: initialDirectory,
       confirmButtonText: confirmButtonText,
       canCreateDirectories: canCreateDirectories,
     ),
   );
+}
+
+FileSelectorPlatform _assertInstanceIsNotNull() {
+  assert(
+    FileSelectorPlatform.instance != null,
+    'A platform implementation for `file_selector` has not been set. Please '
+    'ensure that an implementation of `FileSelectorPlatform` has been set to '
+    '`FileSelectorPlatform.instance` before use. For unit testing, '
+    '`FileSelectorPlatform.instance` can be set with your own test implementation.',
+  );
+  return FileSelectorPlatform.instance!;
 }

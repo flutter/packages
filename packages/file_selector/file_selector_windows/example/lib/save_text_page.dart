@@ -18,18 +18,20 @@ class SaveTextPage extends StatelessWidget {
 
   Future<void> _saveFile() async {
     final String fileName = _nameController.text;
-    final FileSaveLocation? result = await FileSelectorPlatform.instance.getSaveLocation(
-      options: SaveDialogOptions(suggestedName: fileName),
-      acceptedTypeGroups: const <XTypeGroup>[
-        XTypeGroup(label: 'Plain text', extensions: <String>['txt']),
-        XTypeGroup(label: 'JSON', extensions: <String>['json']),
-      ],
+    final FileSaveLocation? result = await FileSelectorPlatform.instance!.getSaveLocation(
+      SaveLocationOptions(
+        suggestedName: fileName,
+        acceptedTypeGroups: const <XTypeGroup>[
+          XTypeGroup(label: 'Plain text', extensions: <String>['txt']),
+          XTypeGroup(label: 'JSON', extensions: <String>['json']),
+        ],
+      ),
     );
     // Operation was canceled by the user.
     if (result == null) {
       return;
     }
-    String path = result.path;
+    String path = (result.file as FileSystemXFile).path;
     // Append an extension based on the selected type group if the user didn't
     // include one.
     if (!path.split(Platform.pathSeparator).last.contains('.')) {
@@ -42,8 +44,7 @@ class SaveTextPage extends StatelessWidget {
     }
     final String text = _contentController.text;
     final fileData = Uint8List.fromList(text.codeUnits);
-    final textFile = XFile.fromData(fileData, name: fileName);
-    await textFile.saveTo(result.path);
+    await (result.file as FileSystemXFile).writeAsBytes(fileData);
   }
 
   @override

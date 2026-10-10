@@ -12,16 +12,17 @@ class OpenAnyPage extends StatelessWidget {
   const OpenAnyPage({super.key});
 
   Future<void> _openTextFile(BuildContext context) async {
-    final XFile? file = await FileSelectorPlatform.instance.openFile();
+    final XFile? file = await FileSelectorPlatform.instance!.openFile();
     if (file == null) {
       // Operation was canceled by the user.
       return;
     }
 
+    final String? name = await file.name();
     if (context.mounted) {
       await showDialog<void>(
         context: context,
-        builder: (BuildContext context) => PathDisplay(file.name, file.path),
+        builder: (BuildContext context) => PathDisplay(name ?? 'Unknown Filename', file.uri),
       );
     }
   }

@@ -2,11 +2,10 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import 'package:file_selector_android/file_selector_android.dart';
-import 'package:file_selector_platform_interface/file_selector_platform_interface.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_driver/driver_extension.dart';
 
+import 'get_directory_path_page.dart';
 import 'home_page.dart';
 import 'open_image_page.dart';
 import 'open_multiple_images_page.dart';
@@ -20,7 +19,6 @@ void integrationTestMain() {
 }
 
 void main() {
-  FileSelectorPlatform.instance = FileSelectorAndroid();
   runApp(const MyApp());
 }
 
@@ -39,6 +37,7 @@ class MyApp extends StatelessWidget {
       ),
       home: const HomePage(),
       routes: <String, WidgetBuilder>{
+        '/get/directory': (BuildContext context) => const GetDirectoryPathPage(),
         '/open/image': (BuildContext context) => const OpenImagePage(),
         '/open/images': (BuildContext context) => const OpenMultipleImagesPage(),
         '/open/text': (BuildContext context) => const OpenTextPage(),

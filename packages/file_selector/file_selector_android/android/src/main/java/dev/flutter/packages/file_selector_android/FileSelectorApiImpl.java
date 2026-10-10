@@ -4,27 +4,20 @@
 
 package dev.flutter.packages.file_selector_android;
 
-import static dev.flutter.packages.file_selector_android.FileUtils.FILE_SELECTOR_EXCEPTION_PLACEHOLDER_PATH;
-
 import android.app.Activity;
 import android.content.ClipData;
-import android.content.ContentResolver;
 import android.content.Intent;
-import android.database.Cursor;
 import android.net.Uri;
 import android.os.Build;
 import android.provider.DocumentsContract;
-import android.provider.OpenableColumns;
 import android.util.Log;
 import android.webkit.MimeTypeMap;
-import androidx.annotation.ChecksSdkIntAtLeast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.VisibleForTesting;
 import io.flutter.embedding.engine.plugins.activity.ActivityPluginBinding;
 import io.flutter.plugin.common.PluginRegistry;
 import java.io.DataInputStream;
-import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -46,7 +39,7 @@ public class FileSelectorApiImpl implements FileSelectorApi {
   private static final int OPEN_DIR = 223;
 
   private final @NonNull NativeObjectFactory objectFactory;
-  private final @NonNull AndroidSdkChecker sdkChecker;
+
   @Nullable ActivityPluginBinding activityPluginBinding;
 
   private abstract static class OnResultListener {
@@ -68,35 +61,23 @@ public class FileSelectorApiImpl implements FileSelectorApi {
     }
   }
 
-  // Interface for an injectable SDK version checker.
-  @VisibleForTesting
-  interface AndroidSdkChecker {
-    @ChecksSdkIntAtLeast(parameter = 0)
-    boolean sdkIsAtLeast(int version);
-  }
-
   public FileSelectorApiImpl(@NonNull ActivityPluginBinding activityPluginBinding) {
-    this(
-        activityPluginBinding,
-        new NativeObjectFactory(),
-        (int version) -> Build.VERSION.SDK_INT >= version);
+    this(activityPluginBinding, new NativeObjectFactory());
   }
 
   @VisibleForTesting
   FileSelectorApiImpl(
       @NonNull ActivityPluginBinding activityPluginBinding,
-      @NonNull NativeObjectFactory objectFactory,
-      @NonNull AndroidSdkChecker sdkChecker) {
+      @NonNull NativeObjectFactory objectFactory) {
     this.activityPluginBinding = activityPluginBinding;
     this.objectFactory = objectFactory;
-    this.sdkChecker = sdkChecker;
   }
 
   @Override
   public void openFile(
       @Nullable String initialDirectory,
       @NonNull FileTypes allowedTypes,
-      @NonNull Function1<? super Result<FileResponse>, Unit> callback) {
+      @NonNull Function1<? super Result<String>, Unit> callback) {
     final Intent intent = objectFactory.newIntent(Intent.ACTION_OPEN_DOCUMENT);
     intent.addCategory(Intent.CATEGORY_OPENABLE);
 
@@ -112,19 +93,11 @@ public class FileSelectorApiImpl implements FileSelectorApi {
             public void onResult(int resultCode, @Nullable Intent data) {
               if (resultCode == Activity.RESULT_OK && data != null) {
                 final Uri uri = data.getData();
-                if (uri == null) {
-                  // No data retrieved from opening file.
-                  ResultUtilsKt.<FileResponse>completeWithError(
-                      callback, new Exception("Failed to retrieve data from opening file."));
-                  return;
-                }
-
-                final FileResponse file = toFileResponse(uri);
-                if (file != null) {
-                  ResultUtilsKt.<FileResponse>completeWithValue(callback, file);
+                if (uri != null) {
+                  ResultUtilsKt.completeWithValue(callback, uri.toString());
                 } else {
                   ResultUtilsKt.completeWithError(
-                      callback, new Exception("Failed to read file: " + uri));
+                      callback, new Exception("Failed to retrieve file uri."));
                 }
               } else {
                 ResultUtilsKt.completeWithValue(callback, null);
@@ -142,8 +115,7 @@ public class FileSelectorApiImpl implements FileSelectorApi {
       @NonNull FileTypes allowedTypes,
       @NonNull
           Function1<
-                  ? super @NotNull Result<? extends @NotNull List<@NotNull FileResponse>>,
-                  @NotNull Unit>
+                  ? super @NotNull Result<? extends @NotNull List<@NotNull String>>, @NotNull Unit>
               callback) {
     final Intent intent = objectFactory.newIntent(Intent.ACTION_OPEN_DOCUMENT);
     intent.addCategory(Intent.CATEGORY_OPENABLE);
@@ -163,29 +135,17 @@ public class FileSelectorApiImpl implements FileSelectorApi {
                 // Only one file was returned.
                 final Uri uri = data.getData();
                 if (uri != null) {
-                  final FileResponse file = toFileResponse(uri);
-                  if (file != null) {
-                    ResultUtilsKt.completeWithValue(callback, Collections.singletonList(file));
-                  } else {
-                    ResultUtilsKt.completeWithError(
-                        callback, new Exception("Failed to read file: " + uri));
-                  }
+                  ResultUtilsKt.completeWithValue(
+                      callback, Collections.singletonList(uri.toString()));
                 }
 
                 // Multiple files were returned.
                 final ClipData clipData = data.getClipData();
                 if (clipData != null) {
-                  final List<FileResponse> files = new ArrayList<>(clipData.getItemCount());
+                  final List<String> files = new ArrayList<>(clipData.getItemCount());
                   for (int i = 0; i < clipData.getItemCount(); i++) {
                     final ClipData.Item clipItem = clipData.getItemAt(i);
-                    final FileResponse file = toFileResponse(clipItem.getUri());
-                    if (file != null) {
-                      files.add(file);
-                    } else {
-                      ResultUtilsKt.completeWithError(
-                          callback, new Exception("Failed to read file: " + uri));
-                      return;
-                    }
+                    files.add(clipItem.getUri().toString());
                   }
                   ResultUtilsKt.completeWithValue(callback, files);
                 }
@@ -215,25 +175,15 @@ public class FileSelectorApiImpl implements FileSelectorApi {
             public void onResult(int resultCode, @Nullable Intent data) {
               if (resultCode == Activity.RESULT_OK && data != null) {
                 final Uri uri = data.getData();
-                if (uri == null) {
+                if (uri != null) {
+                  ResultUtilsKt.completeWithValue(callback, uri.toString());
+                } else {
                   // No data retrieved from opening directory.
                   ResultUtilsKt.completeWithError(
                       callback, new Exception("Failed to retrieve data from opening directory."));
-                  return;
-                }
-
-                final Uri docUri =
-                    DocumentsContract.buildDocumentUriUsingTree(
-                        uri, DocumentsContract.getTreeDocumentId(uri));
-                try {
-                  final String path =
-                      FileUtils.getPathFromUri(activityPluginBinding.getActivity(), docUri);
-                  ResultUtilsKt.completeWithValue(callback, path);
-                } catch (UnsupportedOperationException exception) {
-                  ResultUtilsKt.completeWithError(callback, exception);
                 }
               } else {
-                ResultUtilsKt.<String>completeWithValue(callback, null);
+                ResultUtilsKt.completeWithValue(callback, null);
               }
             }
           });
@@ -312,94 +262,5 @@ public class FileSelectorApiImpl implements FileSelectorApi {
           }
         });
     activityPluginBinding.getActivity().startActivityForResult(intent, attemptRequestCode);
-  }
-
-  @Nullable
-  FileResponse toFileResponse(@NonNull Uri uri) {
-    if (activityPluginBinding == null) {
-      Log.d(TAG, "Activity is not available.");
-      return null;
-    }
-
-    final ContentResolver contentResolver =
-        activityPluginBinding.getActivity().getContentResolver();
-
-    String name = null;
-    Integer size = null;
-    try (Cursor cursor = contentResolver.query(uri, null, null, null, null, null)) {
-      if (cursor != null && cursor.moveToFirst()) {
-        // Note it's called "Display Name". This is
-        // provider-specific, and might not necessarily be the file name.
-        final int nameIndex = cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME);
-        if (nameIndex >= 0) {
-          name = cursor.getString(nameIndex);
-        }
-
-        final int sizeIndex = cursor.getColumnIndex(OpenableColumns.SIZE);
-        // If the size is unknown, the value stored is null. This will
-        // happen often: The storage API allows for remote files, whose
-        // size might not be locally known.
-        if (!cursor.isNull(sizeIndex)) {
-          size = cursor.getInt(sizeIndex);
-        }
-      }
-    }
-
-    if (size == null) {
-      return null;
-    }
-
-    final byte[] bytes = new byte[size];
-    try (InputStream inputStream = contentResolver.openInputStream(uri)) {
-      if (inputStream == null) {
-        // `ContentResolver#openInputStream()` returns null when the provider cannot serve the
-        // file (for example after the provider crashed). Reading it would throw a
-        // NullPointerException on the activity-result callback, i.e. the main thread.
-        Log.w(TAG, "The content provider returned no stream for the selected file.");
-        return null;
-      }
-      final DataInputStream dataInputStream = objectFactory.newDataInputStream(inputStream);
-      dataInputStream.readFully(bytes);
-    } catch (IOException exception) {
-      Log.w(TAG, exception.getMessage());
-      return null;
-    }
-
-    String uriPath;
-    FileSelectorNativeException nativeError = null;
-
-    try {
-      uriPath = FileUtils.getPathFromCopyOfFileFromUri(activityPluginBinding.getActivity(), uri);
-    } catch (IOException e) {
-      // If closing the output stream fails, we cannot be sure that the
-      // target file was written in full. Flushing the stream merely moves
-      // the bytes into the OS, not necessarily to the file.
-      uriPath = null;
-    } catch (SecurityException e) {
-      // Calling `ContentResolver#openInputStream()` has been reported to throw a
-      // `SecurityException` on some devices in certain circumstances. Instead of crashing, we
-      // return `null`.
-      //
-      // See https://github.com/flutter/flutter/issues/100025 for more details.
-      uriPath = null;
-    } catch (IllegalArgumentException e) {
-      uriPath = FILE_SELECTOR_EXCEPTION_PLACEHOLDER_PATH;
-      nativeError =
-          new FileSelectorNativeException(
-              FileSelectorExceptionCode.ILLEGAL_ARGUMENT_EXCEPTION,
-              e.getMessage() == null ? "" : e.getMessage());
-    }
-
-    if (uriPath == null) {
-      // `getPathFromCopyOfFileFromUri` can fail to produce a path: either by
-      // throwing (handled above by returning a null `uriPath`) or by returning
-      // null directly. Return null so the caller surfaces the failure to Dart,
-      // instead of building a `FileResponse` with a null `path`, which the
-      // non-null field rejects at runtime.
-      // See https://github.com/flutter/flutter/issues/159568.
-      return null;
-    }
-
-    return new FileResponse(uriPath, contentResolver.getType(uri), name, size, bytes, nativeError);
   }
 }

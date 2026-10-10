@@ -2,9 +2,12 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'dart:io';
 import 'dart:typed_data';
+
 import 'package:file_selector_platform_interface/file_selector_platform_interface.dart';
 import 'package:flutter/material.dart';
+import 'package:path/path.dart' as path;
 
 /// Screen that allows the user to select a save location using `getSavePath`,
 /// then writes text to a file at that location.
@@ -17,8 +20,8 @@ class SaveTextPage extends StatelessWidget {
 
   Future<void> _saveFile() async {
     final String fileName = _nameController.text;
-    final FileSaveLocation? result = await FileSelectorPlatform.instance.getSaveLocation(
-      options: SaveDialogOptions(suggestedName: fileName),
+    final FileSaveLocation? result = await FileSelectorPlatform.instance!.getSaveLocation(
+      SaveLocationOptions(suggestedName: fileName),
     );
     if (result == null) {
       // Operation was canceled by the user.
@@ -26,9 +29,10 @@ class SaveTextPage extends StatelessWidget {
     }
     final String text = _contentController.text;
     final fileData = Uint8List.fromList(text.codeUnits);
-    const fileMimeType = 'text/plain';
-    final textFile = XFile.fromData(fileData, mimeType: fileMimeType, name: fileName);
-    await textFile.saveTo(result.path);
+    // TODO(bparrishMines): Change this to use XFile.openWrite once
+    // https://github.com/flutter/packages/pull/13133 lands.
+    final file = File(path.join(Uri.parse(result.file.uri).toFilePath(), fileName));
+    await file.writeAsBytes(fileData);
   }
 
   @override

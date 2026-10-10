@@ -18,6 +18,7 @@ dependencies:
   file_selector_platform_interface: ^2.7.0
   flutter:
     sdk: flutter
+  path: ^1.9.1
 
 dev_dependencies:
   flutter_test:
@@ -25,3 +26,8 @@ dev_dependencies:
 
 flutter:
   uses-material-design: true
+# FOR TESTING AND INITIAL REVIEW ONLY. DO NOT MERGE.
+# See https://github.com/flutter/flutter/blob/master/docs/ecosystem/contributing/README.md#changing-federated-plugins
+dependency_overrides:
+  file_selector_macos: {path: ../../../../packages/file_selector/file_selector_macos}
+  file_selector_platform_interface: {path: ../../../../packages/file_selector/file_selector_platform_interface}

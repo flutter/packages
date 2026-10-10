@@ -18,8 +18,8 @@ class OpenImagePage extends StatelessWidget {
       extensions: <String>['jpg', 'png'],
       uniformTypeIdentifiers: <String>['public.image'],
     );
-    final XFile? file = await FileSelectorPlatform.instance.openFile(
-      acceptedTypeGroups: <XTypeGroup>[typeGroup],
+    final XFile? file = await FileSelectorPlatform.instance!.openFile(
+      const OpenDialogOptions(acceptedTypeGroups: <XTypeGroup>[typeGroup]),
     );
     if (file == null) {
       // Operation was canceled by the user.
@@ -31,7 +31,7 @@ class OpenImagePage extends StatelessWidget {
     if (context.mounted) {
       await showDialog<void>(
         context: context,
-        builder: (BuildContext context) => ImageDisplay(file.path, bytes),
+        builder: (BuildContext context) => ImageDisplay(file.uri, bytes),
       );
     }
   }

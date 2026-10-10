@@ -8,7 +8,7 @@ import 'package:flutter/foundation.dart' show visibleForTesting;
 import 'src/messages.g.dart';
 
 /// An implementation of [FileSelectorPlatform] for macOS.
-class FileSelectorMacOS extends FileSelectorPlatform {
+base class FileSelectorMacOS extends FileSelectorPlatform {
   /// Creates a new plugin implementation instance.
   FileSelectorMacOS({@visibleForTesting FileSelectorApi? api})
     : _hostApi = api ?? FileSelectorApi();
@@ -21,92 +21,58 @@ class FileSelectorMacOS extends FileSelectorPlatform {
   }
 
   @override
-  Future<XFile?> openFile({
-    List<XTypeGroup>? acceptedTypeGroups,
-    String? initialDirectory,
-    String? confirmButtonText,
-  }) async {
+  Future<XFile?> openFile([OpenDialogOptions options = const OpenDialogOptions()]) async {
     final List<String?> paths = await _hostApi.displayOpenPanel(
       OpenPanelOptions(
         allowsMultipleSelection: false,
         canChooseDirectories: false,
         canChooseFiles: true,
         baseOptions: SavePanelOptions(
-          allowedFileTypes: _allowedTypesFromTypeGroups(acceptedTypeGroups),
-          directoryPath: initialDirectory,
-          prompt: confirmButtonText,
+          allowedFileTypes: _allowedTypesFromTypeGroups(options.acceptedTypeGroups),
+          directoryPath: options.initialDirectory,
+          prompt: options.confirmButtonText,
         ),
       ),
     );
-    return paths.isEmpty ? null : XFile(paths.first!);
+    return paths.isEmpty ? null : XFile.scopedStorage(uri: paths.first!);
   }
 
   @override
-  Future<List<XFile>> openFiles({
-    List<XTypeGroup>? acceptedTypeGroups,
-    String? initialDirectory,
-    String? confirmButtonText,
-  }) async {
+  Future<List<XFile>> openFiles([OpenDialogOptions options = const OpenDialogOptions()]) async {
     final List<String?> paths = await _hostApi.displayOpenPanel(
       OpenPanelOptions(
         allowsMultipleSelection: true,
         canChooseDirectories: false,
         canChooseFiles: true,
         baseOptions: SavePanelOptions(
-          allowedFileTypes: _allowedTypesFromTypeGroups(acceptedTypeGroups),
-          directoryPath: initialDirectory,
-          prompt: confirmButtonText,
+          allowedFileTypes: _allowedTypesFromTypeGroups(options.acceptedTypeGroups),
+          directoryPath: options.initialDirectory,
+          prompt: options.confirmButtonText,
         ),
       ),
     );
-    return paths.map((String? path) => XFile(path!)).toList();
+    return paths.map((String? path) => XFile.scopedStorage(uri: path!)).toList();
   }
 
   @override
-  Future<String?> getSavePath({
-    List<XTypeGroup>? acceptedTypeGroups,
-    String? initialDirectory,
-    String? suggestedName,
-    String? confirmButtonText,
-  }) async {
-    final FileSaveLocation? location = await getSaveLocation(
-      acceptedTypeGroups: acceptedTypeGroups,
-      options: SaveDialogOptions(
-        initialDirectory: initialDirectory,
-        suggestedName: suggestedName,
-        confirmButtonText: confirmButtonText,
-      ),
-    );
-    return location?.path;
-  }
-
-  @override
-  Future<FileSaveLocation?> getSaveLocation({
-    List<XTypeGroup>? acceptedTypeGroups,
-    SaveDialogOptions options = const SaveDialogOptions(),
-  }) async {
-    final String? path = await _hostApi.displaySavePanel(
+  Future<FileSaveLocation?> getSaveLocation([
+    SaveLocationOptions options = const SaveLocationOptions(),
+  ]) async {
+    final String? uri = await _hostApi.displaySavePanel(
       SavePanelOptions(
-        allowedFileTypes: _allowedTypesFromTypeGroups(acceptedTypeGroups),
+        allowedFileTypes: _allowedTypesFromTypeGroups(options.acceptedTypeGroups),
         directoryPath: options.initialDirectory,
         nameFieldStringValue: options.suggestedName,
         prompt: options.confirmButtonText,
         canCreateDirectories: options.canCreateDirectories,
       ),
     );
-    return path == null ? null : FileSaveLocation(path);
+    return uri == null ? null : FileSaveLocation(XFile.scopedStorage(uri: uri));
   }
 
   @override
-  Future<String?> getDirectoryPath({String? initialDirectory, String? confirmButtonText}) async {
-    return getDirectoryPathWithOptions(
-      FileDialogOptions(initialDirectory: initialDirectory, confirmButtonText: confirmButtonText),
-    );
-  }
-
-  @override
-  Future<String?> getDirectoryPathWithOptions(FileDialogOptions options) async {
-    final List<String?> paths = await _hostApi.displayOpenPanel(
+  Future<XDirectory?> getDirectory([FileDialogOptions options = const FileDialogOptions()]) async {
+    final List<String?> uris = await _hostApi.displayOpenPanel(
       OpenPanelOptions(
         allowsMultipleSelection: false,
         canChooseDirectories: true,
@@ -118,22 +84,14 @@ class FileSelectorMacOS extends FileSelectorPlatform {
         ),
       ),
     );
-    return paths.isEmpty ? null : paths.first;
+    return uris.isEmpty ? null : XDirectory.scopedStorage(uri: uris.first!);
   }
 
   @override
-  Future<List<String>> getDirectoryPaths({
-    String? initialDirectory,
-    String? confirmButtonText,
-  }) async {
-    return getDirectoryPathsWithOptions(
-      FileDialogOptions(initialDirectory: initialDirectory, confirmButtonText: confirmButtonText),
-    );
-  }
-
-  @override
-  Future<List<String>> getDirectoryPathsWithOptions(FileDialogOptions options) async {
-    final List<String?> paths = await _hostApi.displayOpenPanel(
+  Future<List<XDirectory>> getDirectories([
+    FileDialogOptions options = const FileDialogOptions(),
+  ]) async {
+    final List<String> uris = await _hostApi.displayOpenPanel(
       OpenPanelOptions(
         allowsMultipleSelection: true,
         canChooseDirectories: true,
@@ -145,7 +103,7 @@ class FileSelectorMacOS extends FileSelectorPlatform {
         ),
       ),
     );
-    return paths.isEmpty ? <String>[] : List<String>.from(paths);
+    return uris.map((String uri) => XDirectory.scopedStorage(uri: uri)).toList();
   }
 
   // Converts the type group list into a flat list of all allowed types, since

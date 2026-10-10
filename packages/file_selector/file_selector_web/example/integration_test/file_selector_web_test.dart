@@ -2,8 +2,11 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'dart:convert';
+import 'dart:js_interop';
 import 'dart:typed_data';
 
+import 'package:cross_file_web/cross_file_web.dart';
 import 'package:file_selector_platform_interface/file_selector_platform_interface.dart';
 import 'package:file_selector_web/file_selector_web.dart';
 import 'package:file_selector_web/src/dom_helper.dart';
@@ -17,7 +20,7 @@ void main() {
 
     group('openFile', () {
       testWidgets('works', (WidgetTester _) async {
-        final XFile mockFile = createXFile('1001', 'identity.png', mimeType: 'image/png');
+        final XFile mockFile = createXFile('1001', 'identity.png');
 
         final mockDomHelper = MockDomHelper(
           files: <XFile>[mockFile],
@@ -33,11 +36,12 @@ void main() {
           webWildCards: <String>['image/*'],
         );
 
-        final XFile? file = await plugin.openFile(acceptedTypeGroups: <XTypeGroup>[typeGroup]);
+        final XFile? file = await plugin.openFile(
+          const OpenDialogOptions(acceptedTypeGroups: <XTypeGroup>[typeGroup]),
+        );
 
         expect(file, isNotNull);
         expect(file!.name, mockFile.name);
-        expect(file.mimeType, 'image/png');
         expect(await file.length(), 4);
         expect(await file.readAsString(), '1001');
         expect(await file.lastModified(), isNotNull);
@@ -71,7 +75,7 @@ void main() {
         const typeGroup = XTypeGroup(label: 'files', extensions: <String>['.txt']);
 
         final List<XFile> files = await plugin.openFiles(
-          acceptedTypeGroups: <XTypeGroup>[typeGroup],
+          const OpenDialogOptions(acceptedTypeGroups: <XTypeGroup>[typeGroup]),
         );
 
         expect(files.length, 2);
@@ -85,14 +89,6 @@ void main() {
         expect(await files[1].length(), 0);
         expect(await files[1].readAsString(), '');
         expect(await files[1].lastModified(), isNotNull);
-      });
-    });
-
-    group('getSavePath', () {
-      testWidgets('returns non-null', (WidgetTester _) async {
-        final plugin = FileSelectorWeb();
-        final Future<String?> savePath = plugin.getSavePath();
-        expect(await savePath, isNotNull);
       });
     });
   });
@@ -123,7 +119,11 @@ class MockDomHelper implements DomHelper {
   }
 }
 
-XFile createXFile(String content, String name, {String mimeType = 'text/plain'}) {
-  final data = Uint8List.fromList(content.codeUnits);
-  return XFile.fromData(data, name: name, lastModified: DateTime.now(), mimeType: mimeType);
+XFile createXFile(String content, String name) {
+  final testFileBytes = Uint8List.fromList(utf8.encode(content));
+  final testFile = File(<JSUint8Array>[testFileBytes.toJS].toJS, name);
+
+  return ScopedStorageXFile.fromCreationParams(
+    WebScopedStorageXFileCreationParams.fromBlob(testFile),
+  );
 }

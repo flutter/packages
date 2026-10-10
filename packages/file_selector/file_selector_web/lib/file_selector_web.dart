@@ -14,7 +14,7 @@ import 'src/utils.dart';
 /// The web implementation of [FileSelectorPlatform].
 ///
 /// This class implements the `package:file_selector` functionality for the web.
-class FileSelectorWeb extends FileSelectorPlatform {
+base class FileSelectorWeb extends FileSelectorPlatform {
   /// Default constructor, initializes _domHelper that we can use
   /// to interact with the DOM.
   /// overrides parameter allows for testing to override functions
@@ -29,54 +29,34 @@ class FileSelectorWeb extends FileSelectorPlatform {
   }
 
   @override
-  Future<XFile?> openFile({
-    List<XTypeGroup>? acceptedTypeGroups,
-    String? initialDirectory,
-    String? confirmButtonText,
-  }) async {
-    final List<XFile> files = await _openFiles(acceptedTypeGroups: acceptedTypeGroups);
+  Future<XFile?> openFile([OpenDialogOptions options = const OpenDialogOptions()]) async {
+    final List<XFile> files = await _openFiles(options: options);
     return files.isNotEmpty ? files.first : null;
   }
 
   @override
-  Future<List<XFile>> openFiles({
-    List<XTypeGroup>? acceptedTypeGroups,
-    String? initialDirectory,
-    String? confirmButtonText,
-  }) async {
-    return _openFiles(acceptedTypeGroups: acceptedTypeGroups, multiple: true);
+  Future<List<XFile>> openFiles([OpenDialogOptions options = const OpenDialogOptions()]) async {
+    return _openFiles(options: options, multiple: true);
   }
 
-  // This is intended to be passed to XFile, which ignores the path, but 'null'
-  // indicates a canceled save on other platforms, so provide a non-null dummy
-  // value.
   @override
-  Future<String?> getSavePath({
-    List<XTypeGroup>? acceptedTypeGroups,
-    String? initialDirectory,
-    String? suggestedName,
-    String? confirmButtonText,
-  }) async => '';
-
-  @override
-  Future<FileSaveLocation?> getSaveLocation({
-    List<XTypeGroup>? acceptedTypeGroups,
-    SaveDialogOptions options = const SaveDialogOptions(),
-  }) async {
+  Future<FileSaveLocation?> getSaveLocation([
+    SaveLocationOptions options = const SaveLocationOptions(),
+  ]) async {
     // This is intended to be passed to XFile, which ignores the path, so
     // provide a non-null dummy value.
-    return const FileSaveLocation('');
+    return FileSaveLocation(XFile.fileSystem(path: ''));
   }
 
   @override
-  Future<String?> getDirectoryPath({String? initialDirectory, String? confirmButtonText}) async =>
+  Future<XDirectory?> getDirectory([FileDialogOptions options = const FileDialogOptions()]) async =>
       null;
 
   Future<List<XFile>> _openFiles({
-    List<XTypeGroup>? acceptedTypeGroups,
+    OpenDialogOptions options = const OpenDialogOptions(),
     bool multiple = false,
   }) async {
-    final String accept = acceptedTypesToString(acceptedTypeGroups);
+    final String accept = acceptedTypesToString(options.acceptedTypeGroups);
     return _domHelper.getFiles(accept: accept, multiple: multiple);
   }
 }

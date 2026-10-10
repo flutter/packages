@@ -4,6 +4,8 @@
 
 import 'package:flutter/foundation.dart' show immutable;
 
+import 'x_type_group.dart';
+
 /// Configuration options for any file selector dialog.
 @immutable
 class FileDialogOptions {
@@ -28,16 +30,35 @@ class FileDialogOptions {
   final bool? canCreateDirectories;
 }
 
-/// Configuration options for a save dialog.
+/// Configuration options to open a file.
 @immutable
-class SaveDialogOptions extends FileDialogOptions {
+class OpenDialogOptions extends FileDialogOptions {
   /// Creates a new options set with the given settings.
-  const SaveDialogOptions({
+  const OpenDialogOptions({
     super.initialDirectory,
     super.confirmButtonText,
     super.canCreateDirectories,
+    this.acceptedTypeGroups,
+  });
+
+  /// A set of allowed XTypes.
+  final List<XTypeGroup>? acceptedTypeGroups;
+}
+
+/// Configuration options for a save location.
+@immutable
+class SaveLocationOptions extends FileDialogOptions {
+  /// Creates a new options set with the given settings.
+  const SaveLocationOptions({
+    super.initialDirectory,
+    super.confirmButtonText,
+    super.canCreateDirectories,
+    this.acceptedTypeGroups,
     this.suggestedName,
   });
+
+  /// A set of allowed XTypes.
+  final List<XTypeGroup>? acceptedTypeGroups;
 
   /// The suggested name of the file to save or open.
   final String? suggestedName;
