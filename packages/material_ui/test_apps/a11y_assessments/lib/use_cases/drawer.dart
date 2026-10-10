@@ -42,13 +42,20 @@ class _DrawerExampleState extends State<DrawerExample> {
         child: ListView(
           padding: EdgeInsets.zero,
           children: <Widget>[
-            const DrawerHeader(
-              decoration: BoxDecoration(color: Colors.blue),
-              child: Text('Drawer Header', style: TextStyle(color: Colors.white, fontSize: 24)),
+            DrawerHeader(
+              decoration: const BoxDecoration(color: Colors.blue),
+              child: Semantics(
+                headingLevel: 2,
+                child: const Text(
+                  'Drawer Header',
+                  style: TextStyle(color: Colors.white, fontSize: 24),
+                ),
+              ),
             ),
             ListTile(
               leading: const Icon(Icons.message),
               title: const Text('Messages'),
+              selected: selectedPage == 'Messages',
               onTap: () {
                 setState(() {
                   selectedPage = 'Messages';
@@ -58,6 +65,7 @@ class _DrawerExampleState extends State<DrawerExample> {
             ListTile(
               leading: const Icon(Icons.account_circle),
               title: const Text('Profile'),
+              selected: selectedPage == 'Profile',
               onTap: () {
                 setState(() {
                   selectedPage = 'Profile';
@@ -67,6 +75,7 @@ class _DrawerExampleState extends State<DrawerExample> {
             ListTile(
               leading: const Icon(Icons.settings),
               title: const Text('Settings'),
+              selected: selectedPage == 'Settings',
               onTap: () {
                 setState(() {
                   selectedPage = 'Settings';
