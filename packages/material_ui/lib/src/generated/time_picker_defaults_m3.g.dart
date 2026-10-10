@@ -2,6 +2,11 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+// Do not edit by hand. The code is generated from data in the Material
+// Design token database by the script:
+//   packages/material_ui/tool/gen_defaults/bin/gen_defaults.dart.
+part of '../time_picker.dart';
+
 class _TimePickerDefaultsM3 extends _TimePickerDefaults {
   _TimePickerDefaultsM3(this.context, {this.entryMode = TimePickerEntryMode.dial});
 
@@ -46,19 +51,18 @@ class _TimePickerDefaultsM3 extends _TimePickerDefaults {
 
   @override
   OutlinedBorder get dayPeriodShape {
-    return const RoundedRectangleBorder(
-      borderRadius: BorderRadius.all(Radius.circular(8.0)),
-    ).copyWith(side: dayPeriodBorderSide);
+    return const RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(8.0)))
+        .copyWith(side: dayPeriodBorderSide);
   }
 
   @override
   Size get dayPeriodPortraitSize {
-    return const Size(52, 80);
+    return const Size(52.0, 80.0);
   }
 
   @override
   Size get dayPeriodLandscapeSize {
-    return const Size(216, 38);
+    return const Size(216.0, 38.0);
   }
 
   @override
@@ -118,17 +122,17 @@ class _TimePickerDefaultsM3 extends _TimePickerDefaults {
 
   @override
   double get handWidth {
-    return const Size(2, double.infinity).width;
+    return 2.0;
   }
 
   @override
   double get dotRadius {
-    return const Size.square(48.0).width / 2;
+    return 48.0 / 2;
   }
 
   @override
   double get centerRadius {
-    return const Size.square(8.0).width / 2;
+    return 8.0 / 2;
   }
 
   @override
@@ -177,11 +181,9 @@ class _TimePickerDefaultsM3 extends _TimePickerDefaults {
         if (states.contains(WidgetState.pressed)) {
           overlayColor = _colors.onPrimaryContainer;
         } else if (states.contains(WidgetState.hovered)) {
-          const hoverOpacity = 0.08;
-          overlayColor = _colors.onPrimaryContainer.withOpacity(hoverOpacity);
+          overlayColor = _colors.onPrimaryContainer.withOpacity(0.08);
         } else if (states.contains(WidgetState.focused)) {
-          const focusOpacity = 0.1;
-          overlayColor = _colors.onPrimaryContainer.withOpacity(focusOpacity);
+          overlayColor = _colors.onPrimaryContainer.withOpacity(0.1);
         }
         return Color.alphaBlend(overlayColor, _colors.primaryContainer);
       } else {
@@ -189,11 +191,9 @@ class _TimePickerDefaultsM3 extends _TimePickerDefaults {
         if (states.contains(WidgetState.pressed)) {
           overlayColor = _colors.onSurface;
         } else if (states.contains(WidgetState.hovered)) {
-          const hoverOpacity = 0.08;
-          overlayColor = _colors.onSurface.withOpacity(hoverOpacity);
+          overlayColor = _colors.onSurface.withOpacity(0.08);
         } else if (states.contains(WidgetState.focused)) {
-          const focusOpacity = 0.1;
-          overlayColor = _colors.onSurface.withOpacity(focusOpacity);
+          overlayColor = _colors.onSurface.withOpacity(0.1);
         }
         return Color.alphaBlend(overlayColor, _colors.surfaceContainerHighest);
       }
@@ -207,12 +207,12 @@ class _TimePickerDefaultsM3 extends _TimePickerDefaults {
 
   @override
   Size get hourMinuteSize {
-    return const Size(96, 80);
+    return const Size(96.0, 80.0);
   }
 
   @override
   Size get hourMinuteSize24Hour {
-    return Size(const Size(114, double.infinity).width, hourMinuteSize.height);
+    return Size(114.0, hourMinuteSize.height);
   }
 
   @override
