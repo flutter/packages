@@ -1,3 +1,9 @@
+## 2.2.2
+
+* Fixes sticky authentication (`persistAcrossBackgrounding`) completing with a
+  cancellation error instead of prompting again when the app is backgrounded
+  on Android 12+.
+
 ## 2.2.1
 
 * Updates Robolectric to 4.17 and adds the JVM arguments it requires for unit tests.
