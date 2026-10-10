@@ -56,7 +56,12 @@ class ResolvingVisitor extends Visitor<Node, AffineMatrix> {
       final AffineMatrix childTransform = maskNode.concatTransform(data);
       final Node mask = resolvedMask.accept(this, childTransform);
 
-      return ResolvedMaskNode(child: child, mask: mask, blendMode: maskNode.blendMode);
+      return ResolvedMaskNode(
+        child: child,
+        mask: mask,
+        blendMode: maskNode.blendMode,
+        maskType: resolvedMask.attributes.maskType,
+      );
     } finally {
       _activeMasks.remove(maskNode.maskId);
     }
@@ -441,9 +446,18 @@ class ResolvedClipNode extends Node {
 /// A mask node with child and mask fully resolved.
 ///
 /// This should only be constructed from a [MaskNode] in a [ResolvingVisitor].
+///
+/// The [mask] node tree is evaluated to generate a mask layer that is applied to
+/// [child]. The [maskType] indicates whether opacity is derived from the mask's
+/// alpha channel ([MaskType.alpha]) or luminance ([MaskType.luminance]).
 class ResolvedMaskNode extends Node {
   /// Create a new [ResolvedMaskNode].
-  ResolvedMaskNode({required this.child, required this.mask, required this.blendMode});
+  ResolvedMaskNode({
+    required this.child,
+    required this.mask,
+    required this.blendMode,
+    this.maskType,
+  });
 
   /// The child to apply as a mask.
   final Node mask;
@@ -453,6 +467,9 @@ class ResolvedMaskNode extends Node {
 
   /// The blend mode to apply when saving a layer for the mask, if any.
   final BlendMode? blendMode;
+
+  /// The mask type ([MaskType.alpha] or [MaskType.luminance]) of this mask layer, if any.
+  final MaskType? maskType;
 
   @override
   S accept<S, V>(Visitor<S, V> visitor, V data) {
