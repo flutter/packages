@@ -1,0 +1,3 @@
+changelog: |
+  - Fixes DropdownMenu text cursor getting lost when disabled and re-enabled.
+version: patch
