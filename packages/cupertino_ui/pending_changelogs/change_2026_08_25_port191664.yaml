@@ -1,0 +1,3 @@
+changelog: |
+  - Add regression coverage for a `CupertinoTextField` in a `CupertinoNavigationBar` becoming unfocusable after a hero transition, fixed in the framework's `Focus` widget.
+version: patch
