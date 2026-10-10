@@ -1,3 +1,7 @@
+## 2.19.0
+
+* Adds a `GoogleMap.backgroundColor` option for the color displayed behind unloaded map tiles.
+
 ## 2.18.2
 
 * Updates README to indicate that `google_maps_flutter_ios` is a legacy
