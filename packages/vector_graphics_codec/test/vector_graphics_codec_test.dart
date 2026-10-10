@@ -125,6 +125,42 @@ void main() {
     ]);
   });
 
+  test('Can encode and decode paint blur', () {
+    final buffer = VectorGraphicsBuffer();
+    final listener = TestListener();
+    final int paintId = codec.writeFill(buffer, 23, 0);
+    codec.writePaintBlur(buffer, paintId, 2.5, 3.5);
+    final int pathId = codec.writePath(
+      buffer,
+      Uint8List.fromList(<int>[ControlPointTypes.moveTo, ControlPointTypes.close]),
+      Float32List.fromList(<double>[1, 2]),
+      0,
+    );
+    codec.writeDrawPath(buffer, pathId, paintId, null);
+
+    codec.decode(buffer.done(), listener);
+
+    expect(listener.commands, <Object>[
+      OnPaintObject(
+        color: 23,
+        strokeCap: null,
+        strokeJoin: null,
+        blendMode: 0,
+        strokeMiterLimit: null,
+        strokeWidth: null,
+        paintStyle: 0,
+        id: paintId,
+        shaderId: null,
+      ),
+      OnPaintBlur(paintId, 2.5, 3.5),
+      OnPathStart(pathId, 0),
+      const OnPathMoveTo(1, 2),
+      const OnPathClose(),
+      const OnPathFinished(),
+      OnDrawPath(pathId, paintId, null),
+    ]);
+  });
+
   test('Basic message encode and decode with shaded path', () {
     final buffer = VectorGraphicsBuffer();
     final listener = TestListener();
@@ -876,6 +912,12 @@ class TestListener extends VectorGraphicsCodecListener {
   }
 
   @override
+  void onPaintBlur(int paintId, double sigmaX, double sigmaY) {
+    super.onPaintBlur(paintId, sigmaX, sigmaY);
+    commands.add(OnPaintBlur(paintId, sigmaX, sigmaY));
+  }
+
+  @override
   void onPathClose() {
     commands.add(const OnPathClose());
   }
@@ -1337,6 +1379,28 @@ class OnPaintObject {
       'OnPaintObject(color: $color, strokeCap: $strokeCap, strokeJoin: $strokeJoin, '
       'blendMode: $blendMode, strokeMiterLimit: $strokeMiterLimit, strokeWidth: $strokeWidth, '
       'paintStyle: $paintStyle, id: $id, shaderId: $shaderId)';
+}
+
+@immutable
+class OnPaintBlur {
+  const OnPaintBlur(this.paintId, this.sigmaX, this.sigmaY);
+
+  final int paintId;
+  final double sigmaX;
+  final double sigmaY;
+
+  @override
+  int get hashCode => Object.hash(paintId, sigmaX, sigmaY);
+
+  @override
+  bool operator ==(Object other) =>
+      other is OnPaintBlur &&
+      other.paintId == paintId &&
+      other.sigmaX == sigmaX &&
+      other.sigmaY == sigmaY;
+
+  @override
+  String toString() => 'OnPaintBlur(paintId: $paintId, sigmaX: $sigmaX, sigmaY: $sigmaY)';
 }
 
 @immutable
