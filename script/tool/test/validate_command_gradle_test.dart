@@ -45,7 +45,7 @@ void main() {
     bool includeNamespace = true,
     bool commentNamespace = false,
     bool warningsConfigured = true,
-    String compileSdk = '36',
+    String compileSdk = '37',
     bool includeKotlinCompilerOptions = true,
     bool commentKotlinCompilerOptions = false,
     bool useDeprecatedJvmTargetStyle = false,
@@ -1078,8 +1078,8 @@ flutter {
         packagesDir,
         isFlutter: true,
       );
-      // Current flutter.compileSdkVersion is 36.
-      writeFakePluginBuildGradle(package, includeLanguageVersion: true, compileSdk: '37');
+      // The minimum hardcoded compileSdk accepted by the validator is 37.
+      writeFakePluginBuildGradle(package, includeLanguageVersion: true, compileSdk: '38');
       writeFakeManifest(package);
       final RepositoryPackage example = package.getExamples().first;
       writeFakeExampleBuildGradles(example, pluginName: packageName);
@@ -1126,9 +1126,9 @@ flutter {
         packagesDir,
         isFlutter: true,
       );
-      // Current flutter.compileSdkVersion is 36.
-      const minCompileSdkVersion = '36';
-      const testCompileSdkVersion = '35';
+      // The minimum hardcoded compileSdk accepted by the validator is 37.
+      const minCompileSdkVersion = '37';
+      const testCompileSdkVersion = '36';
       writeFakePluginBuildGradle(
         package,
         includeLanguageVersion: true,
