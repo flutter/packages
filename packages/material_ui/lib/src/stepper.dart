@@ -190,6 +190,11 @@ class Step {
 /// to this widget based on some logic triggered by the three callbacks that it
 /// provides.
 ///
+/// The [steps] should generally be created from the state of the parent widget,
+/// rather than being stored and mutated directly. For example, to change the
+/// [Step.state] when an operation is completed, store the operation's state in
+/// the parent widget and rebuild the [Step]s when that state changes:
+///
 /// <callout-box>
 ///
 /// An example the shows how to use the [Stepper], and the [Stepper] UI
@@ -200,6 +205,18 @@ class Step {
 /// {@macro material_ui.dartpad_guide}
 ///
 /// {@example /example/lib/stepper/stepper.0.dart#body}
+/// </callout-box>
+///
+/// <callout-box>
+///
+/// An example that shows how to use the [Stepper] and rebuild its [Step]s
+/// when the state maintained by the parent widget changes.
+///
+// TODO(framework): Replace the following block with a @dartpad directive
+// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
+/// {@macro material_ui.dartpad_guide}
+///
+/// {@example /example/lib/stepper/stepper.state.0.dart#body}
 ///
 /// </callout-box>
 ///

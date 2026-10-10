@@ -1,0 +1,3 @@
+changelog: |
+  - Update stepper documentation to explain why Stepper.steps is final and add a correct example usage
+version: minor
