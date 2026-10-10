@@ -1,6 +1,7 @@
-## NEXT
+## 1.2.0
 
-* Updates minimum supported SDK version to Flutter 3.41/Dart 3.11.
+* Migrates to material_ui.
+* Updates minimum supported SDK version to Flutter 3.44/Dart 3.12.
 
 ## 1.1.4
 
