@@ -1,0 +1,3 @@
+changelog: |
+  - Makes `InputDecorator` label a separate semantics node on Android.
+version: patch
