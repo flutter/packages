@@ -1055,7 +1055,7 @@ class DropdownButton<T> extends StatefulWidget {
     this.value,
     this.hint,
     this.disabledHint,
-    this.onChanged,
+    required this.onChanged,
     this.onTap,
     this.elevation = 8,
     this.style,
