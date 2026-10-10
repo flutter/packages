@@ -236,7 +236,9 @@ class TextPositionNode extends ParentNode {
   final bool reset;
 
   /// Computes a [TextPosition] to encode for this node.
-  TextPosition computeTextPosition(Rect bounds, AffineMatrix transform) {
+  ///
+  /// [parent] is the [TextPosition] of the enclosing text or tspan, if any.
+  TextPosition computeTextPosition(Rect bounds, AffineMatrix transform, {TextPosition? parent}) {
     final AffineMatrix computedTransform = concatTransform(transform);
 
     double? x = attributes.x?.calculate(bounds.width);
@@ -246,9 +248,19 @@ class TextPositionNode extends ParentNode {
 
     final bool hasXY = x != null && y != null;
     final bool hasDxDy = dx != null && dy != null;
+    // A tspan without its own position continues from the parent's position.
+    // If the parent already applied the transform to its position (its
+    // `transform` is null), the transform must not be applied again.
+    final bool inheritsConsumedTransform =
+        parent != null &&
+        parent.transform == null &&
+        x == null &&
+        y == null &&
+        dx == null &&
+        dy == null;
     final bool consumeTransform =
         computedTransform == AffineMatrix.identity ||
-        (computedTransform.encodableInRect && (hasXY || hasDxDy));
+        (computedTransform.encodableInRect && (hasXY || hasDxDy || inheritsConsumedTransform));
 
     if (hasXY) {
       final Point baseline = consumeTransform
