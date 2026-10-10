@@ -184,6 +184,7 @@ class PigeonInstanceManager {
     DocumentFile.pigeon_setUpMessageHandlers(pigeon_instanceManager: instanceManager);
     ContentResolver.pigeon_setUpMessageHandlers(pigeon_instanceManager: instanceManager);
     InputStream.pigeon_setUpMessageHandlers(pigeon_instanceManager: instanceManager);
+    OutputStream.pigeon_setUpMessageHandlers(pigeon_instanceManager: instanceManager);
     return instanceManager;
   }
 
@@ -603,6 +604,27 @@ class DocumentFile extends PigeonInternalProxyApiBaseClass {
     return pigeonVar_replyValue! as bool;
   }
 
+  /// Indicates whether the current context is allowed to write to this file.
+  Future<bool> canWrite() async {
+    final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec = _pigeonVar_codecDocumentFile;
+    final BinaryMessenger? pigeonVar_binaryMessenger = pigeon_binaryMessenger;
+    const pigeonVar_channelName = 'dev.flutter.pigeon.cross_file_android.DocumentFile.canWrite';
+    final pigeonVar_channel = BasicMessageChannel<Object?>(
+      pigeonVar_channelName,
+      pigeonChannelCodec,
+      binaryMessenger: pigeonVar_binaryMessenger,
+    );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[this]);
+    final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
+
+    final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
+      pigeonVar_replyList,
+      pigeonVar_channelName,
+      isNullValid: false,
+    );
+    return pigeonVar_replyValue! as bool;
+  }
+
   /// Deletes this file.
   Future<bool> delete() async {
     final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec = _pigeonVar_codecDocumentFile;
@@ -794,6 +816,55 @@ class DocumentFile extends PigeonInternalProxyApiBaseClass {
     return pigeonVar_replyValue as String?;
   }
 
+  /// Create a new document as a direct child of this directory.
+  Future<DocumentFile?> createFile(String displayName) async {
+    final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec = _pigeonVar_codecDocumentFile;
+    final BinaryMessenger? pigeonVar_binaryMessenger = pigeon_binaryMessenger;
+    const pigeonVar_channelName = 'dev.flutter.pigeon.cross_file_android.DocumentFile.createFile';
+    final pigeonVar_channel = BasicMessageChannel<Object?>(
+      pigeonVar_channelName,
+      pigeonChannelCodec,
+      binaryMessenger: pigeonVar_binaryMessenger,
+    );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[
+      this,
+      displayName,
+    ]);
+    final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
+
+    final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
+      pigeonVar_replyList,
+      pigeonVar_channelName,
+      isNullValid: true,
+    );
+    return pigeonVar_replyValue as DocumentFile?;
+  }
+
+  /// Create a new directory as a direct child of this directory.
+  Future<DocumentFile?> createDirectory(String displayName) async {
+    final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec = _pigeonVar_codecDocumentFile;
+    final BinaryMessenger? pigeonVar_binaryMessenger = pigeon_binaryMessenger;
+    const pigeonVar_channelName =
+        'dev.flutter.pigeon.cross_file_android.DocumentFile.createDirectory';
+    final pigeonVar_channel = BasicMessageChannel<Object?>(
+      pigeonVar_channelName,
+      pigeonChannelCodec,
+      binaryMessenger: pigeonVar_binaryMessenger,
+    );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[
+      this,
+      displayName,
+    ]);
+    final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
+
+    final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
+      pigeonVar_replyList,
+      pigeonVar_channelName,
+      isNullValid: true,
+    );
+    return pigeonVar_replyValue as DocumentFile?;
+  }
+
   @override
   DocumentFile pigeon_copy() {
     return DocumentFile.pigeon_detached(
@@ -917,6 +988,28 @@ class ContentResolver extends PigeonInternalProxyApiBaseClass {
       isNullValid: true,
     );
     return pigeonVar_replyValue as InputStream?;
+  }
+
+  /// Open a stream on to the content associated with a content URI.
+  Future<OutputStream?> openOutputStream(String uri, String mode) async {
+    final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec = _pigeonVar_codecContentResolver;
+    final BinaryMessenger? pigeonVar_binaryMessenger = pigeon_binaryMessenger;
+    const pigeonVar_channelName =
+        'dev.flutter.pigeon.cross_file_android.ContentResolver.openOutputStream';
+    final pigeonVar_channel = BasicMessageChannel<Object?>(
+      pigeonVar_channelName,
+      pigeonChannelCodec,
+      binaryMessenger: pigeonVar_binaryMessenger,
+    );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[this, uri, mode]);
+    final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
+
+    final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
+      pigeonVar_replyList,
+      pigeonVar_channelName,
+      isNullValid: true,
+    );
+    return pigeonVar_replyValue as OutputStream?;
   }
 
   @override
@@ -1056,6 +1149,124 @@ class InputStream extends PigeonInternalProxyApiBaseClass {
   @override
   InputStream pigeon_copy() {
     return InputStream.pigeon_detached(
+      pigeon_binaryMessenger: pigeon_binaryMessenger,
+      pigeon_instanceManager: pigeon_instanceManager,
+    );
+  }
+}
+
+/// This abstract class is the superclass of all classes representing an output
+/// stream of bytes.
+///
+/// See https://developer.android.com/reference/java/io/OutputStream
+class OutputStream extends PigeonInternalProxyApiBaseClass {
+  /// Constructs [OutputStream] without creating the associated native object.
+  ///
+  /// This should only be used by subclasses created by this library or to
+  /// create copies for an [PigeonInstanceManager].
+  @protected
+  OutputStream.pigeon_detached({super.pigeon_binaryMessenger, super.pigeon_instanceManager});
+
+  late final _PigeonInternalProxyApiBaseCodec _pigeonVar_codecOutputStream =
+      _PigeonInternalProxyApiBaseCodec(pigeon_instanceManager);
+
+  static void pigeon_setUpMessageHandlers({
+    bool pigeon_clearHandlers = false,
+    BinaryMessenger? pigeon_binaryMessenger,
+    PigeonInstanceManager? pigeon_instanceManager,
+    OutputStream Function()? pigeon_newInstance,
+  }) {
+    final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec = _PigeonInternalProxyApiBaseCodec(
+      pigeon_instanceManager ?? PigeonInstanceManager.instance,
+    );
+    final BinaryMessenger? binaryMessenger = pigeon_binaryMessenger;
+    {
+      final pigeonVar_channel = BasicMessageChannel<Object?>(
+        'dev.flutter.pigeon.cross_file_android.OutputStream.pigeon_newInstance',
+        pigeonChannelCodec,
+        binaryMessenger: binaryMessenger,
+      );
+      if (pigeon_clearHandlers) {
+        pigeonVar_channel.setMessageHandler(null);
+      } else {
+        pigeonVar_channel.setMessageHandler((Object? message) async {
+          final List<Object?> args = message! as List<Object?>;
+          final int arg_pigeon_instanceIdentifier = args[0]! as int;
+          try {
+            (pigeon_instanceManager ?? PigeonInstanceManager.instance).addHostCreatedInstance(
+              pigeon_newInstance?.call() ??
+                  OutputStream.pigeon_detached(
+                    pigeon_binaryMessenger: pigeon_binaryMessenger,
+                    pigeon_instanceManager: pigeon_instanceManager,
+                  ),
+              arg_pigeon_instanceIdentifier,
+            );
+            return wrapResponse(empty: true);
+          } on PlatformException catch (e) {
+            return wrapResponse(error: e);
+          } catch (e) {
+            return wrapResponse(
+              error: PlatformException(code: 'error', message: e.toString()),
+            );
+          }
+        });
+      }
+    }
+  }
+
+  /// Writes bytes from the specified byte array to this output stream.
+  Future<void> write(Uint8List bytes) async {
+    final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec = _pigeonVar_codecOutputStream;
+    final BinaryMessenger? pigeonVar_binaryMessenger = pigeon_binaryMessenger;
+    const pigeonVar_channelName = 'dev.flutter.pigeon.cross_file_android.OutputStream.write';
+    final pigeonVar_channel = BasicMessageChannel<Object?>(
+      pigeonVar_channelName,
+      pigeonChannelCodec,
+      binaryMessenger: pigeonVar_binaryMessenger,
+    );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[this, bytes]);
+    final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
+
+    _extractReplyValueOrThrow(pigeonVar_replyList, pigeonVar_channelName, isNullValid: true);
+  }
+
+  /// Closes this output stream and releases any system resources associated
+  /// with this stream.
+  Future<void> close() async {
+    final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec = _pigeonVar_codecOutputStream;
+    final BinaryMessenger? pigeonVar_binaryMessenger = pigeon_binaryMessenger;
+    const pigeonVar_channelName = 'dev.flutter.pigeon.cross_file_android.OutputStream.close';
+    final pigeonVar_channel = BasicMessageChannel<Object?>(
+      pigeonVar_channelName,
+      pigeonChannelCodec,
+      binaryMessenger: pigeonVar_binaryMessenger,
+    );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[this]);
+    final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
+
+    _extractReplyValueOrThrow(pigeonVar_replyList, pigeonVar_channelName, isNullValid: true);
+  }
+
+  /// Flushes this output stream and forces any buffered output bytes to be
+  /// written out.
+  Future<void> flush() async {
+    final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec = _pigeonVar_codecOutputStream;
+    final BinaryMessenger? pigeonVar_binaryMessenger = pigeon_binaryMessenger;
+    const pigeonVar_channelName = 'dev.flutter.pigeon.cross_file_android.OutputStream.flush';
+    final pigeonVar_channel = BasicMessageChannel<Object?>(
+      pigeonVar_channelName,
+      pigeonChannelCodec,
+      binaryMessenger: pigeonVar_binaryMessenger,
+    );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[this]);
+    final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
+
+    _extractReplyValueOrThrow(pigeonVar_replyList, pigeonVar_channelName, isNullValid: true);
+  }
+
+  @override
+  OutputStream pigeon_copy() {
+    return OutputStream.pigeon_detached(
       pigeon_binaryMessenger: pigeon_binaryMessenger,
       pigeon_instanceManager: pigeon_instanceManager,
     );

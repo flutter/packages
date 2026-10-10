@@ -35,6 +35,9 @@ abstract class DocumentFile {
   /// Indicates whether the current context is allowed to read from this file.
   bool canRead();
 
+  /// Indicates whether the current context is allowed to write to this file.
+  bool canWrite();
+
   /// Deletes this file.
   bool delete();
 
@@ -63,6 +66,12 @@ abstract class DocumentFile {
 
   /// Returns the display name of this document.
   String? getName();
+
+  /// Create a new document as a direct child of this directory.
+  DocumentFile? createFile(String displayName);
+
+  /// Create a new directory as a direct child of this directory.
+  DocumentFile? createDirectory(String displayName);
 }
 
 /// This class provides applications access to the content model.
@@ -77,6 +86,9 @@ abstract class ContentResolver {
 
   /// Open a stream on to the content associated with a content URI.
   InputStream? openInputStream(String uri);
+
+  /// Open a stream on to the content associated with a content URI.
+  OutputStream? openOutputStream(String uri, String mode);
 }
 
 /// This abstract class is the superclass of all classes representing an input
@@ -96,4 +108,22 @@ abstract class InputStream {
 
   /// Skips over and discards n bytes of data from this input stream.
   int skip(int n);
+}
+
+/// This abstract class is the superclass of all classes representing an output
+/// stream of bytes.
+///
+/// See https://developer.android.com/reference/java/io/OutputStream
+@ProxyApi(kotlinOptions: KotlinProxyApiOptions(fullClassName: 'java.io.OutputStream'))
+abstract class OutputStream {
+  /// Writes bytes from the specified byte array to this output stream.
+  void write(Uint8List bytes);
+
+  /// Closes this output stream and releases any system resources associated
+  /// with this stream.
+  void close();
+
+  /// Flushes this output stream and forces any buffered output bytes to be
+  /// written out.
+  void flush();
 }

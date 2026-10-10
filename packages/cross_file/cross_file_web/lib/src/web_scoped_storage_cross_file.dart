@@ -178,6 +178,9 @@ base class WebScopedStorageXFile extends PlatformScopedStorageXFile
   }
 
   @override
+  Future<bool> canWrite() async => false;
+
+  @override
   Future<void> dispose() async {
     // Only revoke the object URL if the XFile was the one that created it.
     if (params is BlobWebScopedStorageXFileCreationParams) {

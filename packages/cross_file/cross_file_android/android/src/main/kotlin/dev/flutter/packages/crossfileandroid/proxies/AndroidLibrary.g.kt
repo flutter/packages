@@ -425,11 +425,18 @@ abstract class AndroidLibraryPigeonProxyApiRegistrar(val binaryMessenger: Binary
    */
   abstract fun getPigeonApiInputStream(): PigeonApiInputStream
 
+  /**
+   * An implementation of [PigeonApiOutputStream] used to add a new Dart instance of `OutputStream`
+   * to the Dart `InstanceManager`.
+   */
+  abstract fun getPigeonApiOutputStream(): PigeonApiOutputStream
+
   fun setUp() {
     AndroidLibraryPigeonInstanceManagerApi.setUpMessageHandlers(binaryMessenger, instanceManager)
     PigeonApiDocumentFile.setUpMessageHandlers(binaryMessenger, getPigeonApiDocumentFile())
     PigeonApiContentResolver.setUpMessageHandlers(binaryMessenger, getPigeonApiContentResolver())
     PigeonApiInputStream.setUpMessageHandlers(binaryMessenger, getPigeonApiInputStream())
+    PigeonApiOutputStream.setUpMessageHandlers(binaryMessenger, getPigeonApiOutputStream())
   }
 
   fun tearDown() {
@@ -437,6 +444,7 @@ abstract class AndroidLibraryPigeonProxyApiRegistrar(val binaryMessenger: Binary
     PigeonApiDocumentFile.setUpMessageHandlers(binaryMessenger, null)
     PigeonApiContentResolver.setUpMessageHandlers(binaryMessenger, null)
     PigeonApiInputStream.setUpMessageHandlers(binaryMessenger, null)
+    PigeonApiOutputStream.setUpMessageHandlers(binaryMessenger, null)
   }
 }
 
@@ -499,6 +507,12 @@ private class AndroidLibraryPigeonProxyApiBaseCodec(
           logNewInstanceFailure("InputStream", value, it.exceptionOrNull())
         }
       }
+    } else if (value is java.io.OutputStream) {
+      registrar.getPigeonApiOutputStream().pigeon_newInstance(value) {
+        if (it.isFailure) {
+          logNewInstanceFailure("OutputStream", value, it.exceptionOrNull())
+        }
+      }
     }
 
     when {
@@ -542,6 +556,9 @@ abstract class PigeonApiDocumentFile(
   /** Indicates whether the current context is allowed to read from this file. */
   abstract fun canRead(pigeon_instance: androidx.documentfile.provider.DocumentFile): Boolean
 
+  /** Indicates whether the current context is allowed to write to this file. */
+  abstract fun canWrite(pigeon_instance: androidx.documentfile.provider.DocumentFile): Boolean
+
   /** Deletes this file. */
   abstract fun delete(pigeon_instance: androidx.documentfile.provider.DocumentFile): Boolean
 
@@ -573,6 +590,18 @@ abstract class PigeonApiDocumentFile(
 
   /** Returns the display name of this document. */
   abstract fun getName(pigeon_instance: androidx.documentfile.provider.DocumentFile): String?
+
+  /** Create a new document as a direct child of this directory. */
+  abstract fun createFile(
+      pigeon_instance: androidx.documentfile.provider.DocumentFile,
+      displayName: String
+  ): androidx.documentfile.provider.DocumentFile?
+
+  /** Create a new directory as a direct child of this directory. */
+  abstract fun createDirectory(
+      pigeon_instance: androidx.documentfile.provider.DocumentFile,
+      displayName: String
+  ): androidx.documentfile.provider.DocumentFile?
 
   companion object {
     @Suppress("LocalVariableName")
@@ -641,6 +670,28 @@ abstract class PigeonApiDocumentFile(
             val wrapped: List<Any?> =
                 try {
                   listOf(api.canRead(pigeon_instanceArg))
+                } catch (exception: Throwable) {
+                  AndroidLibraryPigeonUtils.wrapError(exception)
+                }
+            reply.reply(wrapped)
+          }
+        } else {
+          channel.setMessageHandler(null)
+        }
+      }
+      run {
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.cross_file_android.DocumentFile.canWrite",
+                codec)
+        if (api != null) {
+          channel.setMessageHandler { message, reply ->
+            val args = message as List<Any?>
+            val pigeon_instanceArg = args[0] as androidx.documentfile.provider.DocumentFile
+            val wrapped: List<Any?> =
+                try {
+                  listOf(api.canWrite(pigeon_instanceArg))
                 } catch (exception: Throwable) {
                   AndroidLibraryPigeonUtils.wrapError(exception)
                 }
@@ -838,6 +889,52 @@ abstract class PigeonApiDocumentFile(
           channel.setMessageHandler(null)
         }
       }
+      run {
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.cross_file_android.DocumentFile.createFile",
+                codec)
+        if (api != null) {
+          channel.setMessageHandler { message, reply ->
+            val args = message as List<Any?>
+            val pigeon_instanceArg = args[0] as androidx.documentfile.provider.DocumentFile
+            val displayNameArg = args[1] as String
+            val wrapped: List<Any?> =
+                try {
+                  listOf(api.createFile(pigeon_instanceArg, displayNameArg))
+                } catch (exception: Throwable) {
+                  AndroidLibraryPigeonUtils.wrapError(exception)
+                }
+            reply.reply(wrapped)
+          }
+        } else {
+          channel.setMessageHandler(null)
+        }
+      }
+      run {
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.cross_file_android.DocumentFile.createDirectory",
+                codec)
+        if (api != null) {
+          channel.setMessageHandler { message, reply ->
+            val args = message as List<Any?>
+            val pigeon_instanceArg = args[0] as androidx.documentfile.provider.DocumentFile
+            val displayNameArg = args[1] as String
+            val wrapped: List<Any?> =
+                try {
+                  listOf(api.createDirectory(pigeon_instanceArg, displayNameArg))
+                } catch (exception: Throwable) {
+                  AndroidLibraryPigeonUtils.wrapError(exception)
+                }
+            reply.reply(wrapped)
+          }
+        } else {
+          channel.setMessageHandler(null)
+        }
+      }
     }
   }
 
@@ -893,6 +990,13 @@ abstract class PigeonApiContentResolver(
       uri: String
   ): java.io.InputStream?
 
+  /** Open a stream on to the content associated with a content URI. */
+  abstract fun openOutputStream(
+      pigeon_instance: android.content.ContentResolver,
+      uri: String,
+      mode: String
+  ): java.io.OutputStream?
+
   companion object {
     @Suppress("LocalVariableName")
     fun setUpMessageHandlers(binaryMessenger: BinaryMessenger, api: PigeonApiContentResolver?) {
@@ -935,6 +1039,30 @@ abstract class PigeonApiContentResolver(
             val wrapped: List<Any?> =
                 try {
                   listOf(api.openInputStream(pigeon_instanceArg, uriArg))
+                } catch (exception: Throwable) {
+                  AndroidLibraryPigeonUtils.wrapError(exception)
+                }
+            reply.reply(wrapped)
+          }
+        } else {
+          channel.setMessageHandler(null)
+        }
+      }
+      run {
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.cross_file_android.ContentResolver.openOutputStream",
+                codec)
+        if (api != null) {
+          channel.setMessageHandler { message, reply ->
+            val args = message as List<Any?>
+            val pigeon_instanceArg = args[0] as android.content.ContentResolver
+            val uriArg = args[1] as String
+            val modeArg = args[2] as String
+            val wrapped: List<Any?> =
+                try {
+                  listOf(api.openOutputStream(pigeon_instanceArg, uriArg, modeArg))
                 } catch (exception: Throwable) {
                   AndroidLibraryPigeonUtils.wrapError(exception)
                 }
@@ -1094,6 +1222,129 @@ abstract class PigeonApiInputStream(
       val binaryMessenger = pigeonRegistrar.binaryMessenger
       val codec = pigeonRegistrar.codec
       val channelName = "dev.flutter.pigeon.cross_file_android.InputStream.pigeon_newInstance"
+      val channel = BasicMessageChannel<Any?>(binaryMessenger, channelName, codec)
+      channel.send(listOf(pigeon_identifierArg)) {
+        if (it is List<*>) {
+          if (it.size > 1) {
+            callback(
+                Result.failure(FlutterError(it[0] as String, it[1] as String, it[2] as String?)))
+          } else {
+            callback(Result.success(Unit))
+          }
+        } else {
+          callback(Result.failure(AndroidLibraryPigeonUtils.createConnectionError(channelName)))
+        }
+      }
+    }
+  }
+}
+/**
+ * This abstract class is the superclass of all classes representing an output stream of bytes.
+ *
+ * See https://developer.android.com/reference/java/io/OutputStream
+ */
+@Suppress("UNCHECKED_CAST")
+abstract class PigeonApiOutputStream(
+    open val pigeonRegistrar: AndroidLibraryPigeonProxyApiRegistrar
+) {
+  /** Writes bytes from the specified byte array to this output stream. */
+  abstract fun write(pigeon_instance: java.io.OutputStream, bytes: ByteArray)
+
+  /** Closes this output stream and releases any system resources associated with this stream. */
+  abstract fun close(pigeon_instance: java.io.OutputStream)
+
+  /** Flushes this output stream and forces any buffered output bytes to be written out. */
+  abstract fun flush(pigeon_instance: java.io.OutputStream)
+
+  companion object {
+    @Suppress("LocalVariableName")
+    fun setUpMessageHandlers(binaryMessenger: BinaryMessenger, api: PigeonApiOutputStream?) {
+      val codec = api?.pigeonRegistrar?.codec ?: AndroidLibraryPigeonCodec()
+      run {
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger, "dev.flutter.pigeon.cross_file_android.OutputStream.write", codec)
+        if (api != null) {
+          channel.setMessageHandler { message, reply ->
+            val args = message as List<Any?>
+            val pigeon_instanceArg = args[0] as java.io.OutputStream
+            val bytesArg = args[1] as ByteArray
+            val wrapped: List<Any?> =
+                try {
+                  api.write(pigeon_instanceArg, bytesArg)
+                  listOf(null)
+                } catch (exception: Throwable) {
+                  AndroidLibraryPigeonUtils.wrapError(exception)
+                }
+            reply.reply(wrapped)
+          }
+        } else {
+          channel.setMessageHandler(null)
+        }
+      }
+      run {
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger, "dev.flutter.pigeon.cross_file_android.OutputStream.close", codec)
+        if (api != null) {
+          channel.setMessageHandler { message, reply ->
+            val args = message as List<Any?>
+            val pigeon_instanceArg = args[0] as java.io.OutputStream
+            val wrapped: List<Any?> =
+                try {
+                  api.close(pigeon_instanceArg)
+                  listOf(null)
+                } catch (exception: Throwable) {
+                  AndroidLibraryPigeonUtils.wrapError(exception)
+                }
+            reply.reply(wrapped)
+          }
+        } else {
+          channel.setMessageHandler(null)
+        }
+      }
+      run {
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger, "dev.flutter.pigeon.cross_file_android.OutputStream.flush", codec)
+        if (api != null) {
+          channel.setMessageHandler { message, reply ->
+            val args = message as List<Any?>
+            val pigeon_instanceArg = args[0] as java.io.OutputStream
+            val wrapped: List<Any?> =
+                try {
+                  api.flush(pigeon_instanceArg)
+                  listOf(null)
+                } catch (exception: Throwable) {
+                  AndroidLibraryPigeonUtils.wrapError(exception)
+                }
+            reply.reply(wrapped)
+          }
+        } else {
+          channel.setMessageHandler(null)
+        }
+      }
+    }
+  }
+
+  @Suppress("LocalVariableName", "FunctionName")
+  /** Creates a Dart instance of OutputStream and attaches it to [pigeon_instanceArg]. */
+  fun pigeon_newInstance(
+      pigeon_instanceArg: java.io.OutputStream,
+      callback: (Result<Unit>) -> Unit
+  ) {
+    if (pigeonRegistrar.ignoreCallsToDart) {
+      callback(
+          Result.failure(
+              FlutterError("ignore-calls-error", "Calls to Dart are being ignored.", "")))
+    } else if (pigeonRegistrar.instanceManager.containsInstance(pigeon_instanceArg)) {
+      callback(Result.success(Unit))
+    } else {
+      val pigeon_identifierArg =
+          pigeonRegistrar.instanceManager.addHostCreatedInstance(pigeon_instanceArg)
+      val binaryMessenger = pigeonRegistrar.binaryMessenger
+      val codec = pigeonRegistrar.codec
+      val channelName = "dev.flutter.pigeon.cross_file_android.OutputStream.pigeon_newInstance"
       val channel = BasicMessageChannel<Any?>(binaryMessenger, channelName, codec)
       channel.send(listOf(pigeon_identifierArg)) {
         if (it is List<*>) {

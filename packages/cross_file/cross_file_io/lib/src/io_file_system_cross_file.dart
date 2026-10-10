@@ -2,6 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 import 'dart:typed_data';
@@ -85,10 +86,54 @@ base class IOFileSystemXFile extends PlatformFileSystemXFile with IOFileSystemXF
     final File ioFile = await file.writeAsBytes(params.bytes);
     return IOFileSystemXFile(IOFileSystemXFileCreationParams.fromFile(ioFile));
   }
+
+  @override
+  StreamSink<Uint8List> openWrite(PlatformOpenWriteParams params) {
+    return _IOSinkWrapper(file.openWrite());
+  }
+
+  @override
+  Future<PlatformXFile> writeAsString(PlatformWriteAsStringParams params) async {
+    final File newFile = await file.writeAsString(params.contents, encoding: params.encoding);
+    return IOFileSystemXFile(IOFileSystemXFileCreationParams.fromFile(newFile));
+  }
+
+  @override
+  Future<bool> delete(PlatformFileDeleteParams params) async {
+    try {
+      await file.delete();
+      return true;
+    } on FileSystemException {
+      return false;
+    }
+  }
 }
 
 /// Provides platform-specific features for [IOFileSystemXFile].
 mixin IOFileSystemXFileExtension implements PlatformFileSystemXFileExtension {
   /// The underlying file.
   File get file;
+}
+
+// A wrapper is necessary because the `IOSink` returned from File.openWrite
+// can't be casted to a `StreamSink<Uint8List>`.
+class _IOSinkWrapper implements StreamSink<Uint8List> {
+  _IOSinkWrapper(this._ioSink);
+
+  final IOSink _ioSink;
+
+  @override
+  void add(Uint8List event) => _ioSink.add(event);
+
+  @override
+  void addError(Object error, [StackTrace? stackTrace]) => _ioSink.addError(error, stackTrace);
+
+  @override
+  Future<dynamic> addStream(Stream<Uint8List> stream) => _ioSink.addStream(stream);
+
+  @override
+  Future<dynamic> close() => _ioSink.close();
+
+  @override
+  Future<dynamic> get done => _ioSink.done;
 }

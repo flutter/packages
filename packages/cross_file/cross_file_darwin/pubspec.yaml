@@ -2,7 +2,7 @@ name: cross_file_darwin
 description: Implementation of cross_file_platform_interface for iOS and macOS.
 repository: https://github.com/flutter/packages/tree/main/packages/cross_file/cross_file_darwin
 issue_tracker: https://github.com/flutter/flutter/issues?q=is%3Aissue+is%3Aopen+label%3A%22p%3A+cross_file%22
-version: 1.0.0
+version: 1.1.0
 
 environment:
   sdk: ^3.11.0
@@ -33,7 +33,7 @@ dependencies:
 
 dev_dependencies:
   build_runner: ^2.15.1
-  ffigen: ^21.0.0
+  ffigen: ^22.0.0
   flutter_test:
     sdk: flutter
   mockito: ^5.6.4
@@ -42,3 +42,8 @@ dev_dependencies:
 topics:
   - file
   - cross-file
+# FOR TESTING AND INITIAL REVIEW ONLY. DO NOT MERGE.
+# See https://github.com/flutter/flutter/blob/master/docs/ecosystem/contributing/README.md#changing-federated-plugins
+dependency_overrides:
+  cross_file_io: {path: ../../../packages/cross_file/cross_file_io}
+  cross_file_platform_interface: {path: ../../../packages/cross_file/cross_file_platform_interface}
