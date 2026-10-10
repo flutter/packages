@@ -5818,6 +5818,83 @@ void main() {
       expect(getOpacity('Item 0'), equals(1.0));
     });
 
+    testWidgets('Disabling animations completes an active opening animation', (
+      WidgetTester tester,
+    ) async {
+      final controller = MenuController();
+      AnimationStatus animationStatus = AnimationStatus.dismissed;
+      var animated = true;
+
+      Widget buildMenu() {
+        return MaterialApp(
+          home: Material(
+            child: MenuAnchor(
+              controller: controller,
+              animated: animated,
+              onAnimationStatusChanged: (AnimationStatus status) {
+                animationStatus = status;
+              },
+              menuChildren: <Widget>[MenuItemButton(onPressed: () {}, child: const Text('Item 0'))],
+            ),
+          ),
+        );
+      }
+
+      await tester.pumpWidget(buildMenu());
+
+      controller.open();
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 30));
+
+      expect(animationStatus, AnimationStatus.forward);
+
+      animated = false;
+      await tester.pumpWidget(buildMenu());
+
+      expect(animationStatus, AnimationStatus.completed);
+    });
+
+    testWidgets('Disabling animations completes an active closing animation', (
+      WidgetTester tester,
+    ) async {
+      final controller = MenuController();
+      AnimationStatus animationStatus = AnimationStatus.dismissed;
+      var animated = true;
+
+      Widget buildMenu() {
+        return MaterialApp(
+          home: Material(
+            child: MenuAnchor(
+              controller: controller,
+              animated: animated,
+              onAnimationStatusChanged: (AnimationStatus status) {
+                animationStatus = status;
+              },
+              menuChildren: <Widget>[MenuItemButton(onPressed: () {}, child: const Text('Item 0'))],
+            ),
+          ),
+        );
+      }
+
+      await tester.pumpWidget(buildMenu());
+
+      controller.open();
+      await tester.pumpAndSettle();
+
+      expect(animationStatus, AnimationStatus.completed);
+
+      controller.close();
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 30));
+
+      expect(animationStatus, AnimationStatus.reverse);
+
+      animated = false;
+      await tester.pumpWidget(buildMenu());
+
+      expect(animationStatus, AnimationStatus.dismissed);
+    });
+
     testWidgets('MenuAnchor children can be changed', (WidgetTester tester) async {
       await tester.pumpWidget(
         MaterialApp(
