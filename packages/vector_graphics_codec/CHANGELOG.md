@@ -1,5 +1,6 @@
-## NEXT
+## 1.2.0
 
+* Adds a version 2 binary encoding for SVG filter boundaries and immutable filter descriptions. Version 1 assets remain supported.
 * Updates minimum supported SDK version to Flutter 3.41/Dart 3.11.
 
 ## 1.1.13

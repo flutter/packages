@@ -610,6 +610,32 @@ void main() {
     ]);
   });
 
+  for (final format in <int>[ImageFormatTypes.vector, ImageFormatTypes.filterRaster]) {
+    test('image format $format upgrades the header and pause before commands', () {
+      final buffer = VectorGraphicsBuffer();
+      final listener = TestListener();
+      final int id = codec.writeImage(buffer, format, Uint8List.fromList(<int>[1, 2, 3]));
+      codec.writeDrawImage(buffer, id, 0, 0, 16, 16, null);
+      final ByteData bytes = buffer.done();
+      expect(bytes.getUint8(4), 2);
+      final DecodeResponse first = codec.decode(bytes, listener);
+      expect(first.complete, isFalse);
+      expect(listener.commands, <OnImage>[
+        OnImage(id, format, const <int>[1, 2, 3]),
+      ]);
+      expect(codec.decode(bytes, listener, response: first).complete, isTrue);
+      bytes.setUint8(4, 1);
+      expect(() => codec.decode(bytes, null), throwsFormatException);
+    });
+  }
+  test('unused image resources also pause before completing', () {
+    final buffer = VectorGraphicsBuffer();
+    codec.writeImage(buffer, ImageFormatTypes.vector, Uint8List.fromList(<int>[1, 2, 3]));
+    final ByteData bytes = buffer.done();
+    final DecodeResponse first = codec.decode(bytes, null);
+    expect(first.complete, isFalse);
+    expect(codec.decode(bytes, null, response: first).complete, isTrue);
+  });
   test('Encodes image data with various formats', () {
     final buffer = VectorGraphicsBuffer();
 

@@ -203,10 +203,10 @@ void main() {
       Paint(blendMode: BlendMode.multiply, fill: Fill()),
       Paint(
         blendMode: BlendMode.multiply,
-        fill: Fill(color: Color(0x98ffffff), shader: gradient1),
+        fill: Fill(color: Color(0x99ffffff), shader: gradient1),
       ),
       Paint(
-        fill: Fill(color: Color(0x98ffffff), shader: gradient2),
+        fill: Fill(color: Color(0x99ffffff), shader: gradient2),
       ),
     ]);
 

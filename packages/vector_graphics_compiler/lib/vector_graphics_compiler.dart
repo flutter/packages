@@ -264,6 +264,18 @@ Uint8List _encodeInstructions(VectorInstructions instructions, bool useHalfPreci
 
   for (final DrawCommand command in instructions.commands) {
     switch (command.type) {
+      case DrawCommandType.pathGeometry:
+        codec.writePathGeometry(buffer, pathIds[command.objectId]!);
+      case DrawCommandType.beginFilter:
+        codec.writeBeginFilter(
+          buffer,
+          command.filter!,
+          command.filterTransform!.toMatrix4(),
+          command.filterWidth!,
+          command.filterHeight!,
+        );
+      case DrawCommandType.endFilter:
+        codec.writeEndFilter(buffer);
       case DrawCommandType.path:
         if (fillIds.containsKey(command.paintId)) {
           codec.writeDrawPath(
@@ -309,13 +321,17 @@ Uint8List _encodeInstructions(VectorInstructions instructions, bool useHalfPreci
         codec.writeUpdateTextPosition(buffer, command.objectId!);
 
       case DrawCommandType.text:
-        codec.writeDrawText(
-          buffer,
-          command.objectId!,
-          fillIds[command.paintId],
-          strokeIds[command.paintId],
-          command.patternId,
-        );
+        if (command.paintId == null) {
+          codec.writeTextGeometry(buffer, command.objectId!);
+        } else {
+          codec.writeDrawText(
+            buffer,
+            command.objectId!,
+            fillIds[command.paintId],
+            strokeIds[command.paintId],
+            command.patternId,
+          );
+        }
 
       case DrawCommandType.image:
         final DrawImageData drawImageData = instructions.drawImages[command.objectId!];
