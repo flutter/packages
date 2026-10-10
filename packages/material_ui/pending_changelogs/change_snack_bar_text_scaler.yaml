@@ -1,0 +1,3 @@
+changelog: |
+  - Accounts for `MediaQuery`'s `TextScaler` when calculating `SnackBar` action overflow and removes unnecessary blank right spacing in multi-line layout.
+version: patch

@@ -5,6 +5,7 @@
 import 'dart:io';
 
 import 'package:test/test.dart';
+
 import '../data/color_role.dart';
 import '../data/shape_struct.dart';
 import '../data/typescale.dart';
@@ -32,7 +33,7 @@ import '../templates/input_chip_template.dart';
 import '../templates/input_decorator_template.dart';
 import '../templates/list_tile_template.dart';
 import '../templates/menu_template.dart';
-// import '../templates/motion_template.dart';
+import '../templates/motion_template.dart';
 // import '../templates/navigation_bar_template.dart';
 // import '../templates/navigation_drawer_template.dart';
 // import '../templates/navigation_rail_template.dart';
@@ -48,10 +49,10 @@ import '../templates/snackbar_template.dart';
 // import '../templates/surface_tint_template.dart';
 // import '../templates/switch_template.dart';
 // import '../templates/tabs_template.dart';
+import '../templates/template.dart';
 // import '../templates/text_field_template.dart';
 // import '../templates/time_picker_template.dart';
-// import '../templates/typography_template.dart';
-import '../templates/template.dart';
+import '../templates/typography_template.dart';
 import 'test_fixtures/test_templates.dart';
 
 void main() {
@@ -721,8 +722,11 @@ void main() {
     });
 
     test('MotionTemplateM3 emits M3 Motion defaults from tokens', () {
-      // Intentionally empty, will be implemented during migration. See:
-      // https://github.com/flutter/flutter/issues/187899
+      final String contents = _generateContents(const MotionTemplateM3());
+      expect(contents, contains('short1 = Duration(milliseconds: 50)'));
+      expect(contents, contains('extralong4 = Duration(milliseconds: 1000)'));
+      expect(contents, contains('emphasizedAccelerate = Cubic(0.3, 0.0, 0.8, 0.15)'));
+      expect(contents, contains('legacy = Cubic(0.4, 0.0, 0.2, 1.0)'));
     });
 
     test('NavigationBarTemplateM3 emits M3 NavigationBar defaults from tokens', () {
@@ -822,8 +826,25 @@ void main() {
     });
 
     test('TypographyTemplateM3 emits M3 Typography defaults from tokens', () {
-      // Intentionally empty, will be implemented during migration. See:
-      // https://github.com/flutter/flutter/issues/187899
+      const template = TypographyTemplateM3();
+      final String contents = _generateContents(template);
+      expect(contents, contains('abstract final class _M3Typography'));
+      expect(contents, contains('displayLarge: TextStyle('));
+      expect(contents, contains("debugLabel: 'englishLike displayLarge 2021'"));
+      expect(contents, contains('static const TextTheme englishLike = TextTheme('));
+      expect(contents, contains('static const TextTheme dense = TextTheme('));
+      expect(contents, contains('static const TextTheme tall = TextTheme('));
+      expect(
+        contents,
+        contains(
+          "displayLarge: TextStyle(debugLabel: 'englishLike displayLarge 2021', inherit: false, "
+          'fontSize: 57.0, fontWeight: FontWeight.w400, letterSpacing: -0.25, height: 1.12, '
+          'textBaseline: TextBaseline.alphabetic, leadingDistribution: TextLeadingDistribution.even)',
+        ),
+      );
+      expect(contents, contains("debugLabel: 'dense bodySmall 2021'"));
+      expect(contents, contains('textBaseline: TextBaseline.ideographic'));
+      expect(contents, contains('fontWeight: FontWeight.w500'));
     });
 
     test('will run dart format over the generated file', () {

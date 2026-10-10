@@ -323,6 +323,12 @@ class _CupertinoPickerState extends State<CupertinoPicker> {
       duration: _kCupertinoPickerTapToScrollDuration,
       curve: _kCupertinoPickerTapToScrollCurve,
     );
+    // The picker can be disposed while the animation above is running, for
+    // example when a parent hides it as soon as a value is selected. Its
+    // controller is detached by then, and reading selectedItem would throw.
+    if (!mounted) {
+      return;
+    }
     _enableHapticFeedback = true;
     _lastHapticIndex = _effectiveController.selectedItem;
   }
