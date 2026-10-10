@@ -37,7 +37,8 @@ import '../templates/list_tile_template.dart';
 import '../templates/menu_template.dart';
 import '../templates/motion_template.dart';
 // import '../templates/navigation_bar_template.dart';
-// import '../templates/navigation_drawer_template.dart';
+import '../templates/navigation_drawer_template.dart';
+
 // import '../templates/navigation_rail_template.dart';
 // import '../templates/popup_menu_template.dart';
 // import '../templates/progress_indicator_template.dart';
@@ -99,7 +100,7 @@ Future<void> main(List<String> args) async {
   const MenuTemplateM3().generateFile(verbose: verbose);
   const MotionTemplateM3().generateFile(verbose: verbose);
   // const NavigationBarTemplateM3().generateFile(verbose: verbose);
-  // const NavigationDrawerTemplateM3().generateFile(verbose: verbose);
+  const NavigationDrawerTemplateM3().generateFile(verbose: verbose);
   // const NavigationRailTemplateM3().generateFile(verbose: verbose);
   // const PopupMenuTemplateM3().generateFile(verbose: verbose);
   // const ProgressIndicatorTemplateM3().generateFile(verbose: verbose);
