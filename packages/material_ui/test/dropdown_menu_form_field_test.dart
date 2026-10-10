@@ -97,6 +97,29 @@ void main() {
     expect(dropdownMenu.enabled, false);
   });
 
+  testWidgets('Disables the underlying DropdownMenu when its Form is disabled', (
+    WidgetTester tester,
+  ) async {
+    Widget buildForm({required bool formEnabled}) {
+      return MaterialApp(
+        home: Scaffold(
+          body: Form(
+            enabled: formEnabled,
+            child: DropdownMenuFormField<MenuItem>(dropdownMenuEntries: menuEntries),
+          ),
+        ),
+      );
+    }
+
+    await tester.pumpWidget(buildForm(formEnabled: false));
+    DropdownMenu<MenuItem> dropdownMenu = tester.widget(find.byType(DropdownMenu<MenuItem>));
+    expect(dropdownMenu.enabled, false);
+
+    await tester.pumpWidget(buildForm(formEnabled: true));
+    dropdownMenu = tester.widget(find.byType(DropdownMenu<MenuItem>));
+    expect(dropdownMenu.enabled, true);
+  });
+
   testWidgets('Passes width to underlying DropdownMenu', (WidgetTester tester) async {
     await tester.pumpWidget(
       MaterialApp(
