@@ -2485,6 +2485,177 @@ void main() {
     );
     expect(tester.takeException(), isNull);
   });
+
+  testWidgets('Checkbox.markInsets defaults to null', (WidgetTester tester) async {
+    await tester.pumpWidget(_padFrame(true));
+    expect(tester.widget<Checkbox>(find.byType(Checkbox)).markInsets, isNull);
+  });
+
+  testWidgets('Checkbox with no markInsets paints the check at full stroke width', (
+    WidgetTester tester,
+  ) async {
+    await tester.pumpWidget(_padFrame(true));
+    await tester.pumpAndSettle();
+    // default: scale == 1.0, so strokeWidth stays at _kStrokeWidth (2.0)
+    expect(_checkboxRenderer(tester), paints..path(strokeWidth: 2.0));
+  });
+
+  testWidgets('Checkbox.markInsets shrinks the check mark and its stroke', (
+    WidgetTester tester,
+  ) async {
+    await tester.pumpWidget(_padFrame(true, markInsets: const EdgeInsets.all(4.5)));
+    await tester.pumpAndSettle();
+    // inner = 18 - 9 = 9, scale = 9/18 = 0.5, strokeWidth = 2.0 * 0.5 = 1.0
+    expect(_checkboxRenderer(tester), paints..path(strokeWidth: 1.0));
+  });
+
+  testWidgets('Checkbox.markInsets shrinks the indeterminate dash', (WidgetTester tester) async {
+    await tester.pumpWidget(_padFrame(null, tristate: true, markInsets: const EdgeInsets.all(4.5)));
+    await tester.pumpAndSettle();
+    expect(_checkboxRenderer(tester), paints..line(strokeWidth: 1.0));
+  });
+
+  testWidgets('Checkbox.markInsets larger than the box collapses the mark without crashing', (
+    WidgetTester tester,
+  ) async {
+    await tester.pumpWidget(_padFrame(true, markInsets: const EdgeInsets.all(9.0)));
+    await tester.pumpAndSettle();
+    expect(tester.takeException(), isNull); // no exception thrown
+    expect(_checkboxRenderer(tester), isNot(paints..path())); // mark collapsed away
+  });
+
+  testWidgets('Checkbox.markInsets falls back to CheckboxThemeData.markInsets', (
+    WidgetTester tester,
+  ) async {
+    await tester.pumpWidget(
+      MaterialApp(
+        theme: ThemeData(checkboxTheme: const CheckboxThemeData(markInsets: EdgeInsets.all(4.5))),
+        home: Material(
+          child: Center(child: Checkbox(value: true, onChanged: (bool? v) {})),
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+    expect(_checkboxRenderer(tester), paints..path(strokeWidth: 1.0)); // theme markInsets applied
+  });
+
+  testWidgets('Checkbox.markInsets overrides CheckboxThemeData.markInsets', (
+    WidgetTester tester,
+  ) async {
+    await tester.pumpWidget(
+      MaterialApp(
+        theme: ThemeData(checkboxTheme: const CheckboxThemeData(markInsets: EdgeInsets.zero)),
+        home: Material(
+          child: Center(
+            child: Checkbox(
+              value: true,
+              onChanged: (bool? v) {},
+              markInsets: const EdgeInsets.all(4.5),
+            ),
+          ),
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+    expect(_checkboxRenderer(tester), paints..path(strokeWidth: 1.0)); // widget value wins
+  });
+
+  testWidgets('Checkbox.markInsets keeps the check mark proportional with asymmetric insets', (
+    WidgetTester tester,
+  ) async {
+    await tester.pumpWidget(_padFrame(true));
+    await tester.pumpAndSettle();
+    final Rect uninset = _paintedCheckBounds(tester);
+    final double aspect = uninset.width / uninset.height;
+
+    // Each of these leaves a different amount of room on each axis. The mark
+    // shrinks to the smaller of the two, so its shape never changes.
+    const asymmetric = <EdgeInsets>[
+      EdgeInsets.only(left: 9.0),
+      EdgeInsets.only(top: 9.0),
+      EdgeInsets.only(right: 4.5),
+      EdgeInsets.symmetric(horizontal: 6.0),
+    ];
+    for (final markInsets in asymmetric) {
+      await tester.pumpWidget(_padFrame(true, markInsets: markInsets));
+      await tester.pumpAndSettle();
+      final Rect inset = _paintedCheckBounds(tester);
+      expect(
+        inset.width / inset.height,
+        moreOrLessEquals(aspect, epsilon: 0.001),
+        reason: 'check mark was distorted by $markInsets',
+      );
+      expect(inset.width, lessThanOrEqualTo(uninset.width));
+      expect(inset.height, lessThanOrEqualTo(uninset.height));
+    }
+  });
+
+  testWidgets('Checkbox.markInsets shrinks the indeterminate dash by the smaller inset', (
+    WidgetTester tester,
+  ) async {
+    await tester.pumpWidget(_padFrame(null, tristate: true));
+    await tester.pumpAndSettle();
+    final double uninset = _paintedDashLength(tester);
+
+    // Only the horizontal axis is inset, but the dash still scales by half,
+    // matching the check mark rather than stretching to the inner width.
+    await tester.pumpWidget(
+      _padFrame(null, tristate: true, markInsets: const EdgeInsets.only(left: 9.0)),
+    );
+    await tester.pumpAndSettle();
+    expect(_paintedDashLength(tester), moreOrLessEquals(uninset / 2.0, epsilon: 0.001));
+  });
+}
+
+RenderBox _checkboxRenderer(WidgetTester tester) =>
+    tester.renderObject<RenderBox>(find.byType(Checkbox));
+
+// Replays the checkbox under test onto a recording canvas so that the geometry
+// of the mark itself can be inspected, which the `paints` matcher cannot do.
+List<RecordedInvocation> _recordCheckbox(WidgetTester tester) {
+  final canvas = TestRecordingCanvas();
+  _checkboxRenderer(tester).paint(TestRecordingPaintingContext(canvas), Offset.zero);
+  return canvas.invocations;
+}
+
+// The bounds of the check mark path painted by the checkbox under test.
+Rect _paintedCheckBounds(WidgetTester tester) {
+  for (final RecordedInvocation record in _recordCheckbox(tester)) {
+    if (record.invocation.memberName == #drawPath) {
+      final paint = record.invocation.positionalArguments[1] as Paint;
+      if (paint.style == PaintingStyle.stroke) {
+        return (record.invocation.positionalArguments[0] as Path).getBounds();
+      }
+    }
+  }
+  fail('No check mark was painted.');
+}
+
+// The length of the indeterminate dash painted by the checkbox under test.
+double _paintedDashLength(WidgetTester tester) {
+  for (final RecordedInvocation record in _recordCheckbox(tester)) {
+    if (record.invocation.memberName == #drawLine) {
+      final start = record.invocation.positionalArguments[0] as Offset;
+      final end = record.invocation.positionalArguments[1] as Offset;
+      return (end - start).distance;
+    }
+  }
+  fail('No indeterminate dash was painted.');
+}
+
+Widget _padFrame(bool? value, {EdgeInsets? markInsets, bool tristate = false}) {
+  return MaterialApp(
+    home: Material(
+      child: Center(
+        child: Checkbox(
+          value: value,
+          tristate: tristate,
+          markInsets: markInsets,
+          onChanged: (bool? v) {},
+        ),
+      ),
+    ),
+  );
 }
 
 class _SelectedGrabMouseCursor extends WidgetStateMouseCursor {
