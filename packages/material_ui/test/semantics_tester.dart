@@ -81,6 +81,8 @@ class TestSemantics {
     this.traversalChildIdentifier,
     this.locale,
     this.hintOverrides,
+    this.minValue,
+    this.maxValue,
   }) : assert(flags is int || flags is List<SemanticsFlag> || flags is SemanticsFlags),
        assert(actions is int || actions is List<SemanticsAction>),
        tags = tags?.toSet() ?? <SemanticsTag>{};
@@ -120,6 +122,8 @@ class TestSemantics {
     this.traversalChildIdentifier,
     this.locale,
     this.hintOverrides,
+    this.minValue,
+    this.maxValue,
   }) : id = 0,
        assert(flags is int || flags is List<SemanticsFlag> || flags is SemanticsFlags),
        assert(actions is int || actions is List<SemanticsAction>),
@@ -171,6 +175,8 @@ class TestSemantics {
     this.traversalChildIdentifier,
     this.locale,
     this.hintOverrides,
+    this.minValue,
+    this.maxValue,
   }) : assert(flags is int || flags is List<SemanticsFlag> || flags is SemanticsFlags),
        assert(actions is int || actions is List<SemanticsAction>),
        transform = _applyRootChildScale(transform),
@@ -337,6 +343,12 @@ class TestSemantics {
   ///
   /// Defaults to null if not set.
   final SemanticsHintOverrides? hintOverrides;
+
+  /// The minimum value of this node if it is a slider or progress indicator.
+  final String? minValue;
+
+  /// The maximum value of this node if it is a slider or progress indicator.
+  final String? maxValue;
 
   static Matrix4 _applyRootChildScale(Matrix4? transform) {
     final result = Matrix4.diagonal3Values(3.0, 3.0, 1.0);
@@ -550,6 +562,16 @@ class TestSemantics {
     if (locale != null && locale != node.getSemanticsData().locale) {
       return fail(
         'expected node id $id to have locale $locale but found locale ${node.getSemanticsData().locale}',
+      );
+    }
+    if (minValue != null && minValue != node.minValue) {
+      return fail(
+        'expected node id $id to have minValue $minValue but found minValue ${node.minValue}',
+      );
+    }
+    if (maxValue != null && maxValue != node.maxValue) {
+      return fail(
+        'expected node id $id to have maxValue $maxValue but found maxValue ${node.maxValue}',
       );
     }
 
@@ -1028,6 +1050,12 @@ class SemanticsTester {
     }
     if (node.hintOverrides != null) {
       buf.writeln('  hintOverrides: ${node.hintOverrides},');
+    }
+    if (node.minValue != null) {
+      buf.writeln("  minValue: '${node.minValue}',");
+    }
+    if (node.maxValue != null) {
+      buf.writeln("  maxValue: '${node.maxValue}',");
     }
     if (node.hasChildren) {
       buf.writeln('  children: <TestSemantics>[');
