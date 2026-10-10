@@ -1,3 +1,0 @@
-changelog: |
-  - Make onChanged optional and add enabled property to DropdownButton and DropdownButtonFormField.
-version: minor
