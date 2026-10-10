@@ -6,7 +6,32 @@ import 'package:flutter/rendering.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';
 
+class CustomContextMenu extends AdaptiveTextSelectionToolbar {
+  const CustomContextMenu.buttonItems({
+    super.key,
+    required super.anchors,
+    required super.buttonItems,
+  }) : super.buttonItems();
+}
+
 void main() {
+  CustomContextMenu defaultContextMenuBuilder(
+    BuildContext context,
+    EditableTextState editableTextState,
+  ) {
+    return CustomContextMenu.buttonItems(
+      anchors: editableTextState.contextMenuAnchors,
+      buttonItems: <ContextMenuButtonItem>[
+        ContextMenuButtonItem(
+          onPressed: () {
+            ContextMenuController.removeAny();
+          },
+          label: 'Context Button Item',
+        ),
+      ],
+    );
+  }
+
   test('TextSelectionThemeData copyWith, ==, hashCode basics', () {
     expect(const TextSelectionThemeData(), const TextSelectionThemeData().copyWith());
     expect(
@@ -21,11 +46,64 @@ void main() {
     expect(identical(TextSelectionThemeData.lerp(data, data, 0.5), data), true);
   });
 
+  group('TextSelectionThemeData lerp contextMenuBuilder', () {
+    Widget aBuilder(BuildContext context, EditableTextState editableTextState) {
+      return const Placeholder();
+    }
+
+    Widget bBuilder(BuildContext context, EditableTextState editableTextState) {
+      return const Icon(Icons.search);
+    }
+
+    const withoutBuilder = TextSelectionThemeData();
+    final withABuilder = TextSelectionThemeData(contextMenuBuilder: aBuilder);
+    final withBBuilder = TextSelectionThemeData(contextMenuBuilder: bBuilder);
+
+    test('returns null when both are null', () {
+      expect(TextSelectionThemeData.lerp(null, null, 0.5)?.contextMenuBuilder, null);
+      expect(
+        TextSelectionThemeData.lerp(withoutBuilder, withoutBuilder, 0.5)?.contextMenuBuilder,
+        null,
+      );
+    });
+
+    test('returns a below 0.5 and b at or above 0.5', () {
+      expect(
+        TextSelectionThemeData.lerp(withABuilder, withBBuilder, 0)!.contextMenuBuilder,
+        aBuilder,
+      );
+      expect(
+        TextSelectionThemeData.lerp(withABuilder, withBBuilder, 0.49)!.contextMenuBuilder,
+        aBuilder,
+      );
+      expect(
+        TextSelectionThemeData.lerp(withABuilder, withBBuilder, 0.5)!.contextMenuBuilder,
+        bBuilder,
+      );
+      expect(
+        TextSelectionThemeData.lerp(withABuilder, withBBuilder, 1)!.contextMenuBuilder,
+        bBuilder,
+      );
+    });
+
+    test('can produce a null result when the chosen side is null', () {
+      expect(
+        TextSelectionThemeData.lerp(withABuilder, withoutBuilder, 0.5)!.contextMenuBuilder,
+        null,
+      );
+      expect(
+        TextSelectionThemeData.lerp(withoutBuilder, withBBuilder, 0)!.contextMenuBuilder,
+        null,
+      );
+    });
+  });
+
   test('TextSelectionThemeData null fields by default', () {
     const theme = TextSelectionThemeData();
     expect(theme.cursorColor, null);
     expect(theme.selectionColor, null);
     expect(theme.selectionHandleColor, null);
+    expect(theme.contextMenuBuilder, null);
   });
 
   testWidgets('Default TextSelectionThemeData debugFillProperties', (WidgetTester tester) async {
@@ -42,14 +120,22 @@ void main() {
 
   testWidgets('TextSelectionThemeData implements debugFillProperties', (WidgetTester tester) async {
     final builder = DiagnosticPropertiesBuilder();
-    const TextSelectionThemeData(
-      cursorColor: Color(0xffeeffaa),
-      selectionColor: Color(0x88888888),
-      selectionHandleColor: Color(0xaabbccdd),
+    TextSelectionThemeData(
+      cursorColor: const Color(0xffeeffaa),
+      selectionColor: const Color(0x88888888),
+      selectionHandleColor: const Color(0xaabbccdd),
+      contextMenuBuilder: defaultContextMenuBuilder,
     ).debugFillProperties(builder);
 
-    final List<String> description = builder.properties
+    // The contextMenuBuilder property is checked separately below: its
+    // Function.toString() representation is compiler-dependent (VM vs
+    // dart2js/DDC), so it can't be compared as an exact string.
+    final List<DiagnosticsNode> properties = builder.properties
         .where((DiagnosticsNode node) => !node.isFiltered(DiagnosticLevel.info))
+        .toList();
+
+    final List<String> description = properties
+        .where((DiagnosticsNode node) => node.name != 'contextMenuBuilder')
         .map((DiagnosticsNode node) => node.toString())
         .toList();
 
@@ -58,6 +144,11 @@ void main() {
       'selectionColor: ${const Color(0x88888888)}',
       'selectionHandleColor: ${const Color(0xaabbccdd)}',
     ]);
+
+    final DiagnosticsNode contextMenuBuilderNode = properties.singleWhere(
+      (DiagnosticsNode node) => node.name == 'contextMenuBuilder',
+    );
+    expect(contextMenuBuilderNode.value, defaultContextMenuBuilder);
   });
 
   testWidgets('Material2 - Empty textSelectionTheme will use defaults', (
@@ -86,6 +177,12 @@ void main() {
     final RenderEditable renderEditable = editableTextState.renderEditable;
     expect(renderEditable.cursorColor, defaultCursorColor);
     expect(renderEditable.selectionColor, defaultSelectionColor);
+
+    final BuildContext textFieldContext = tester.element(find.byType(TextField));
+    final EditableTextContextMenuBuilder? themeContextMenuBuilder = TextSelectionTheme.of(
+      textFieldContext,
+    ).contextMenuBuilder;
+    expect(themeContextMenuBuilder, null);
 
     // Test the selection handle color.
     await tester.pumpWidget(
@@ -136,6 +233,12 @@ void main() {
     expect(renderEditable.cursorColor, defaultCursorColor);
     expect(renderEditable.selectionColor, defaultSelectionColor);
 
+    final BuildContext textFieldContext = tester.element(find.byType(TextField));
+    final EditableTextContextMenuBuilder? themeContextMenuBuilder = TextSelectionTheme.of(
+      textFieldContext,
+    ).contextMenuBuilder;
+    expect(themeContextMenuBuilder, null);
+
     // Test the selection handle color.
     await tester.pumpWidget(
       MaterialApp(
@@ -159,10 +262,11 @@ void main() {
   });
 
   testWidgets('ThemeData.textSelectionTheme will be used if provided', (WidgetTester tester) async {
-    const textSelectionTheme = TextSelectionThemeData(
-      cursorColor: Color(0xffaabbcc),
-      selectionColor: Color(0x88888888),
-      selectionHandleColor: Color(0x00ccbbaa),
+    final textSelectionTheme = TextSelectionThemeData(
+      cursorColor: const Color(0xffaabbcc),
+      selectionColor: const Color(0x88888888),
+      selectionHandleColor: const Color(0x00ccbbaa),
+      contextMenuBuilder: defaultContextMenuBuilder,
     );
     final ThemeData theme = ThemeData.fallback().copyWith(textSelectionTheme: textSelectionTheme);
 
@@ -184,6 +288,11 @@ void main() {
     final RenderEditable renderEditable = editableTextState.renderEditable;
     expect(renderEditable.cursorColor, textSelectionTheme.cursorColor);
     expect(renderEditable.selectionColor, textSelectionTheme.selectionColor);
+    final BuildContext textFieldContext = tester.element(find.byType(TextField));
+    final EditableTextContextMenuBuilder? themeContextMenuBuilder = TextSelectionTheme.of(
+      textFieldContext,
+    ).contextMenuBuilder;
+    expect(themeContextMenuBuilder, textSelectionTheme.contextMenuBuilder);
 
     // Test the selection handle color.
     await tester.pumpWidget(
@@ -218,10 +327,11 @@ void main() {
     final ThemeData theme = ThemeData.fallback().copyWith(
       textSelectionTheme: defaultTextSelectionTheme,
     );
-    const widgetTextSelectionTheme = TextSelectionThemeData(
-      cursorColor: Color(0xffddeeff),
-      selectionColor: Color(0x44444444),
-      selectionHandleColor: Color(0x00ffeedd),
+    final widgetTextSelectionTheme = TextSelectionThemeData(
+      cursorColor: const Color(0xffddeeff),
+      selectionColor: const Color(0x44444444),
+      selectionHandleColor: const Color(0x00ffeedd),
+      contextMenuBuilder: defaultContextMenuBuilder,
     );
 
     EditableText.debugDeterministicCursor = true;
@@ -232,10 +342,10 @@ void main() {
     await tester.pumpWidget(
       MaterialApp(
         theme: theme,
-        home: const Material(
+        home: Material(
           child: TextSelectionTheme(
             data: widgetTextSelectionTheme,
-            child: TextField(autofocus: true),
+            child: const TextField(autofocus: true),
           ),
         ),
       ),
@@ -245,6 +355,12 @@ void main() {
     final RenderEditable renderEditable = editableTextState.renderEditable;
     expect(renderEditable.cursorColor, widgetTextSelectionTheme.cursorColor);
     expect(renderEditable.selectionColor, widgetTextSelectionTheme.selectionColor);
+
+    final BuildContext textFieldContext = tester.element(find.byType(TextField));
+    final EditableTextContextMenuBuilder? themeContextMenuBuilder = TextSelectionTheme.of(
+      textFieldContext,
+    ).contextMenuBuilder;
+    expect(themeContextMenuBuilder, widgetTextSelectionTheme.contextMenuBuilder);
 
     // Test the selection handle color.
     await tester.pumpWidget(
@@ -289,10 +405,13 @@ void main() {
     await tester.pumpWidget(
       MaterialApp(
         theme: theme,
-        home: const Material(
+        home: Material(
           child: TextSelectionTheme(
             data: widgetTextSelectionTheme,
-            child: TextField(cursorColor: cursorColor),
+            child: TextField(
+              cursorColor: cursorColor,
+              contextMenuBuilder: defaultContextMenuBuilder,
+            ),
           ),
         ),
       ),
@@ -301,15 +420,20 @@ void main() {
     final EditableTextState editableTextState = tester.firstState(find.byType(EditableText));
     final RenderEditable renderEditable = editableTextState.renderEditable;
     expect(renderEditable.cursorColor, cursorColor.withAlpha(0));
+    expect(editableTextState.widget.contextMenuBuilder, defaultContextMenuBuilder);
 
     // Test SelectableText's cursor color.
     await tester.pumpWidget(
       MaterialApp(
         theme: theme,
-        home: const Material(
+        home: Material(
           child: TextSelectionTheme(
             data: widgetTextSelectionTheme,
-            child: SelectableText('foobar', cursorColor: cursorColor),
+            child: SelectableText(
+              'foobar',
+              cursorColor: cursorColor,
+              contextMenuBuilder: defaultContextMenuBuilder,
+            ),
           ),
         ),
       ),
@@ -318,6 +442,7 @@ void main() {
     final EditableTextState selectableTextState = tester.firstState(find.byType(EditableText));
     final RenderEditable renderSelectable = selectableTextState.renderEditable;
     expect(renderSelectable.cursorColor, cursorColor.withAlpha(0));
+    expect(selectableTextState.widget.contextMenuBuilder, defaultContextMenuBuilder);
   });
 
   testWidgets('TextSelectionThem overrides DefaultSelectionStyle', (WidgetTester tester) async {
@@ -336,9 +461,10 @@ void main() {
           child: Container(
             key: defaultSelectionStyle,
             child: TextSelectionTheme(
-              data: const TextSelectionThemeData(
+              data: TextSelectionThemeData(
                 selectionColor: themeSelectionColor,
                 cursorColor: themeCursorColor,
+                contextMenuBuilder: defaultContextMenuBuilder,
               ),
               child: Placeholder(key: themeStyle),
             ),
@@ -352,10 +478,14 @@ void main() {
     DefaultSelectionStyle style = DefaultSelectionStyle.of(defaultSelectionStyleContext);
     expect(style.selectionColor, defaultSelectionColor);
     expect(style.cursorColor, defaultCursorColor);
+    TextSelectionThemeData textSelectionTheme = TextSelectionTheme.of(defaultSelectionStyleContext);
+    expect(textSelectionTheme.contextMenuBuilder, null);
 
     final BuildContext themeStyleContext = tester.element(find.byKey(themeStyle));
     style = DefaultSelectionStyle.of(themeStyleContext);
     expect(style.selectionColor, themeSelectionColor);
     expect(style.cursorColor, themeCursorColor);
+    textSelectionTheme = TextSelectionTheme.of(themeStyleContext);
+    expect(textSelectionTheme.contextMenuBuilder, defaultContextMenuBuilder);
   });
 }
