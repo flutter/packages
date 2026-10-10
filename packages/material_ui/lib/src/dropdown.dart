@@ -1868,7 +1868,7 @@ class DropdownButtonFormField<T> extends FormField<T> {
     T? initialValue,
     Widget? hint,
     Widget? disabledHint,
-    required this.onChanged,
+    this.onChanged,
     VoidCallback? onTap,
     int elevation = 8,
     TextStyle? style,
@@ -1888,6 +1888,15 @@ class DropdownButtonFormField<T> extends FormField<T> {
     super.validator,
     super.errorBuilder,
     super.forceErrorText,
+
+    /// Whether the form field is enabled.
+    ///
+    /// When [enabled] is false, the field is disabled and does not allow user
+    /// interaction or value changes, regardless of the [onChanged] callback.
+    ///
+    /// If the `enabled` argument is not explicitly provided in the constructor,
+    /// this property falls back to true.
+    bool? enabled,
     AutovalidateMode? autovalidateMode,
     double? menuMaxHeight,
     bool? enableFeedback,
@@ -1922,6 +1931,7 @@ class DropdownButtonFormField<T> extends FormField<T> {
        super(
          initialValue: initialValue ?? value,
          autovalidateMode: autovalidateMode ?? AutovalidateMode.disabled,
+         enabled: enabled ?? true,
          builder: (FormFieldState<T> field) {
            final state = field as _DropdownButtonFormFieldState<T>;
            InputDecoration effectiveDecoration = (decoration ?? const InputDecoration())
@@ -1930,7 +1940,8 @@ class DropdownButtonFormField<T> extends FormField<T> {
            final bool showSelectedItem =
                items != null &&
                items.where((DropdownMenuItem<T> item) => item.value == state.value).isNotEmpty;
-           final bool isDropdownEnabled = onChanged != null && items != null && items.isNotEmpty;
+           final bool isDropdownEnabled =
+               (enabled ?? onChanged != null) && items != null && items.isNotEmpty;
            // If decoration hintText is provided, use it as the default value for both hint and disabledHint.
            final Widget? decorationHint = effectiveDecoration.hintText != null
                ? Text(effectiveDecoration.hintText!)
@@ -1969,7 +1980,7 @@ class DropdownButtonFormField<T> extends FormField<T> {
                  value: state.value,
                  hint: effectiveHint,
                  disabledHint: effectiveDisabledHint,
-                 onChanged: onChanged == null ? null : state.didChange,
+                 onChanged: isDropdownEnabled ? state.didChange : null,
                  onTap: onTap,
                  elevation: elevation,
                  style: style,

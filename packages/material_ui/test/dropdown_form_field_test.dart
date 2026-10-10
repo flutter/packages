@@ -188,7 +188,7 @@ void main() {
           child: DropdownButtonFormField<int?>(
             decoration: const InputDecoration(labelText: 'labelText'),
             initialValue: value,
-            onChanged: null, // this disables the menu and shows the disabledHint.
+            // onChanged is null by default, which disables the menu and shows the disabledHint.
             disabledHint: const Text('disabledHint'),
             items: const <DropdownMenuItem<int?>>[
               DropdownMenuItem<int?>(value: 1, child: Text('One')),
@@ -320,7 +320,7 @@ void main() {
             decoration: const InputDecoration(labelText: 'labelText'),
             initialValue: value,
             hint: const Text('hint'),
-            onChanged: null, // disabled
+            // onChanged is null by default, so disabled
             disabledHint: const Text('disabledHint'),
             items: const <DropdownMenuItem<int?>>[
               DropdownMenuItem<int?>(value: 1, child: Text('One')),
@@ -1183,7 +1183,6 @@ void main() {
               ) {
                 return DropdownMenuItem<String>(value: value, child: Text(value));
               }).toList(),
-              onChanged: null,
             ),
           ),
         ),
@@ -1315,7 +1314,6 @@ void main() {
                         items: menuItems.map((String value) {
                           return DropdownMenuItem<String>(value: value, child: Text(value));
                         }).toList(),
-                        onChanged: null,
                         autovalidateMode: AutovalidateMode.disabled,
                       ),
                       DropdownButtonFormField<String>(
@@ -1364,7 +1362,6 @@ void main() {
                     }).toList(),
                     decoration: const InputDecoration(errorText: decorationErrorText),
                     forceErrorText: forceErrorText,
-                    onChanged: null,
                   ),
                 ),
               ),
@@ -1528,5 +1525,88 @@ void main() {
       RendererBinding.instance.mouseTracker.debugDeviceActiveCursor(1),
       SystemMouseCursors.cell,
     );
+  });
+
+  testWidgets(
+    'DropdownButtonFormField enabled: true without onChanged updates FormFieldState.value',
+    (WidgetTester tester) async {
+      final fieldKey = GlobalKey<FormFieldState<int>>();
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Material(
+            child: DropdownButtonFormField<int>(
+              key: fieldKey,
+              value: 1,
+              items: const <DropdownMenuItem<int>>[
+                DropdownMenuItem<int>(value: 1, child: Text('one')),
+                DropdownMenuItem<int>(value: 2, child: Text('two')),
+              ],
+              enabled: true,
+            ),
+          ),
+        ),
+      );
+
+      // Open the menu,
+      await tester.tap(find.text('one'));
+      await tester.pumpAndSettle();
+
+      // Select the second item,
+      await tester.tap(find.text('two').last);
+      await tester.pumpAndSettle();
+
+      // Menu should be closed and value updated.
+      expect(fieldKey.currentState!.value, 2);
+      expect(find.text('two'), findsOneWidget);
+    },
+  );
+
+  testWidgets('DropdownButtonFormField enabled: false with onChanged does not open menu', (
+    WidgetTester tester,
+  ) async {
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Material(
+          child: DropdownButtonFormField<int>(
+            value: 1,
+            items: const <DropdownMenuItem<int>>[
+              DropdownMenuItem<int>(value: 1, child: Text('one')),
+              DropdownMenuItem<int>(value: 2, child: Text('two')),
+            ],
+            enabled: false,
+            onChanged: (int? v) {},
+          ),
+        ),
+      ),
+    );
+
+    // Attempt to open the menu.
+    await tester.tap(find.text('one'));
+    await tester.pumpAndSettle();
+
+    // Menu should not open, so 'two' should not be visible.
+    expect(find.text('two'), findsNothing);
+  });
+
+  testWidgets('DropdownButtonFormField with onChanged: null still autovalidates', (
+    WidgetTester tester,
+  ) async {
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Material(
+          child: DropdownButtonFormField<int>(
+            value: 1,
+            items: const <DropdownMenuItem<int>>[
+              DropdownMenuItem<int>(value: 1, child: Text('one')),
+              DropdownMenuItem<int>(value: 2, child: Text('two')),
+            ],
+            autovalidateMode: AutovalidateMode.always,
+            validator: (int? value) => 'error text',
+          ),
+        ),
+      ),
+    );
+
+    expect(find.text('error text'), findsOneWidget);
   });
 }
