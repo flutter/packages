@@ -531,7 +531,7 @@ If running this command on CI, you can set the pub credential content in the $_p
 }
 
 /// The path in which pub expects to find its credentials file.
-String _getCredentialsPath({required Platform platform, required p.Context path}) {
+String _getCredentialsPath({required NativePlatform platform, required p.Context path}) {
   // See https://github.com/dart-lang/pub/blob/master/doc/cache_layout.md#layout
   String? configDir;
   if (platform.isLinux) {

@@ -1114,4 +1114,15 @@ void main() {
         tester.widget<Container>(find.byType(Container).last).decoration! as BoxDecoration;
     expect(boxDecoration.color, themeCardColor);
   });
+
+  testWidgets('MergeableMaterial does not crash at zero area', (WidgetTester tester) async {
+    tester.view.physicalSize = Size.zero;
+    addTearDown(tester.view.reset);
+    await tester.pumpWidget(
+      const MaterialApp(
+        home: Scaffold(body: SingleChildScrollView(child: MergeableMaterial())),
+      ),
+    );
+    expect(tester.getSize(find.byType(MergeableMaterial)), Size.zero);
+  });
 }

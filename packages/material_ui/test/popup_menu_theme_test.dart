@@ -250,7 +250,7 @@ void main() {
       find.byType(SingleChildScrollView),
     );
     expect(popupMenu.padding, const EdgeInsets.symmetric(vertical: 8.0));
-  });
+  }, tags: 'reduced-web-test-set');
 
   testWidgets('Popup menu uses values from PopupMenuThemeData', (WidgetTester tester) async {
     final PopupMenuThemeData popupMenuTheme = _popupMenuThemeM3();
@@ -583,7 +583,7 @@ void main() {
         find.byType(SingleChildScrollView),
       );
       expect(popupMenu.padding, const EdgeInsets.symmetric(vertical: 8.0));
-    });
+    }, tags: 'reduced-web-test-set');
 
     testWidgets('Popup menu uses values from PopupMenuThemeData', (WidgetTester tester) async {
       final PopupMenuThemeData popupMenuTheme = _popupMenuThemeM2();

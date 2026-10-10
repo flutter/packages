@@ -2239,9 +2239,8 @@ class _NavigationBarStaticComponents {
   }
 
   static TextScaler _clampedTextScaler(BuildContext context) {
-    return MediaQuery.textScalerOf(
-      context,
-    ).clamp(minScaleFactor: 1.0, maxScaleFactor: _kMaxScaleFactor);
+    return MediaQuery.textScalerOf(context)
+        .clamp(minScaleFactor: 1.0, maxScaleFactor: _kMaxScaleFactor);
   }
 }
 

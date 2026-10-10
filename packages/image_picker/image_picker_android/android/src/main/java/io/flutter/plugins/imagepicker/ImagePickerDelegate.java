@@ -306,7 +306,7 @@ public class ImagePickerDelegate
 
   private void launchPickMediaFromGalleryIntent(GeneralOptions generalOptions) {
     Intent pickMediaIntent;
-    if (generalOptions.getUsePhotoPicker()) {
+    if (ImagePickerUtils.effectiveUsePhotoPicker(generalOptions.getUsePhotoPicker())) {
       if (generalOptions.getAllowMultiple()) {
         int limit = ImagePickerUtils.getLimitFromOption(generalOptions);
 
@@ -355,7 +355,7 @@ public class ImagePickerDelegate
 
   private void launchPickVideoFromGalleryIntent(Boolean usePhotoPicker) {
     Intent pickVideoIntent;
-    if (usePhotoPicker) {
+    if (ImagePickerUtils.effectiveUsePhotoPicker(usePhotoPicker)) {
       pickVideoIntent =
           new ActivityResultContracts.PickVisualMedia()
               .createIntent(
@@ -464,7 +464,7 @@ public class ImagePickerDelegate
 
   private void launchPickImageFromGalleryIntent(Boolean usePhotoPicker) {
     Intent pickImageIntent;
-    if (usePhotoPicker) {
+    if (ImagePickerUtils.effectiveUsePhotoPicker(usePhotoPicker)) {
       pickImageIntent =
           new ActivityResultContracts.PickVisualMedia()
               .createIntent(
@@ -481,7 +481,7 @@ public class ImagePickerDelegate
 
   private void launchMultiPickImageFromGalleryIntent(Boolean usePhotoPicker, int limit) {
     Intent pickMultiImageIntent;
-    if (usePhotoPicker) {
+    if (ImagePickerUtils.effectiveUsePhotoPicker(usePhotoPicker)) {
       pickMultiImageIntent =
           new ActivityResultContracts.PickMultipleVisualMedia(limit)
               .createIntent(
@@ -516,7 +516,7 @@ public class ImagePickerDelegate
 
   private void launchMultiPickVideoFromGalleryIntent(Boolean usePhotoPicker, int limit) {
     Intent pickMultiVideoIntent;
-    if (usePhotoPicker) {
+    if (ImagePickerUtils.effectiveUsePhotoPicker(usePhotoPicker)) {
       pickMultiVideoIntent =
           new ActivityResultContracts.PickMultipleVisualMedia(limit)
               .createIntent(

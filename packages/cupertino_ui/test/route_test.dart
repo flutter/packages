@@ -2340,6 +2340,44 @@ void main() {
     expect(find.text('Visible'), findsOneWidget);
   });
 
+  testWidgets('CupertinoPageRoute can opt out of route semantics', (WidgetTester tester) async {
+    final SemanticsHandle handle = tester.ensureSemantics();
+
+    await tester.pumpWidget(
+      CupertinoApp(
+        onGenerateRoute: (RouteSettings settings) {
+          return CupertinoPageRoute<void>(
+            includeRouteSemantics: false,
+            builder: (BuildContext context) => const Text('Page'),
+          );
+        },
+      ),
+    );
+
+    expect(find.semantics.byFlag(SemanticsFlag.scopesRoute), findsNothing);
+    handle.dispose();
+  });
+
+  testWidgets('CupertinoPage can opt out of route semantics', (WidgetTester tester) async {
+    final SemanticsHandle handle = tester.ensureSemantics();
+
+    await tester.pumpWidget(
+      buildNavigator(
+        view: tester.view,
+        pages: const <Page<void>>[
+          CupertinoPage<void>(includeRouteSemantics: false, child: Text('Page')),
+        ],
+        onPopPage: (Route<dynamic> route, dynamic result) {
+          assert(false); // The test shouldn't call this.
+          return true;
+        },
+      ),
+    );
+
+    expect(find.semantics.byFlag(SemanticsFlag.scopesRoute), findsNothing);
+    handle.dispose();
+  });
+
   testWidgets('CupertinoPage works', (WidgetTester tester) async {
     final LocalKey pageKey = UniqueKey();
     final detector = TransitionDetector();

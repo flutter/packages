@@ -232,7 +232,7 @@ class MiniController extends ValueNotifier<VideoPlayerValue> {
     );
 
     _playerId = (await _platform.createWithOptions(creationOptions)) ?? kUninitializedPlayerId;
-    _creatingCompleter!.complete(null);
+    _creatingCompleter!.complete();
     final initializingCompleter = Completer<void>();
 
     void eventListener(VideoEvent event) {
@@ -243,7 +243,7 @@ class MiniController extends ValueNotifier<VideoPlayerValue> {
             size: event.size,
             isInitialized: event.duration != null,
           );
-          initializingCompleter.complete(null);
+          initializingCompleter.complete();
           _platform.setVolume(_playerId, 1.0);
           _platform.setLooping(_playerId, true);
           _applyPlayPause();

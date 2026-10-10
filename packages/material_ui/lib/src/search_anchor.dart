@@ -51,16 +51,20 @@ const double _kDisableSearchBarOpacity = 0.38;
 ///
 /// The `controller` callback provided to [SearchAnchor.builder] can be used
 /// to open the search view and control the editable field on the view.
-typedef SearchAnchorChildBuilder =
-    Widget Function(BuildContext context, SearchController controller);
+typedef SearchAnchorChildBuilder = Widget Function(
+  BuildContext context,
+  SearchController controller,
+);
 
 /// Signature for a function that creates a [Widget] to build the suggestion list
 /// based on the input in the search bar.
 ///
 /// The `controller` callback provided to [SearchAnchor.suggestionsBuilder] can be used
 /// to close the search view and control the editable field on the view.
-typedef SuggestionsBuilder =
-    FutureOr<Iterable<Widget>> Function(BuildContext context, SearchController controller);
+typedef SuggestionsBuilder = FutureOr<Iterable<Widget>> Function(
+  BuildContext context,
+  SearchController controller,
+);
 
 /// Signature for a function that creates a [Widget] to layout the suggestion list.
 ///
@@ -974,6 +978,8 @@ class _ViewContentState extends State<_ViewContent> {
   Iterable<Widget> result = <Widget>[];
   String? searchValue;
   Timer? _timer;
+  // Identifies the latest call so that older async results cannot replace newer ones.
+  int _suggestionsCallId = 0;
 
   @override
   void initState() {
@@ -1010,14 +1016,9 @@ class _ViewContentState extends State<_ViewContent> {
       _timer?.cancel();
       _timer = Timer(Duration.zero, () async {
         searchValue = _controller.text;
-        final Iterable<Widget> suggestions = await widget.suggestionsBuilder(context, _controller);
+        await _buildSuggestions();
         _timer?.cancel();
         _timer = null;
-        if (mounted) {
-          setState(() {
-            result = suggestions;
-          });
-        }
       });
     }
   }
@@ -1058,13 +1059,19 @@ class _ViewContentState extends State<_ViewContent> {
   Future<void> updateSuggestions() async {
     if (searchValue != _controller.text) {
       searchValue = _controller.text;
-      final Iterable<Widget> suggestions = await widget.suggestionsBuilder(context, _controller);
-      if (mounted) {
-        setState(() {
-          result = suggestions;
-        });
-      }
+      await _buildSuggestions();
     }
+  }
+
+  Future<void> _buildSuggestions() async {
+    final int callId = ++_suggestionsCallId;
+    final Iterable<Widget> suggestions = await widget.suggestionsBuilder(context, _controller);
+    if (!mounted || callId != _suggestionsCallId) {
+      return;
+    }
+    setState(() {
+      result = suggestions;
+    });
   }
 
   @override

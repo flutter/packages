@@ -66,7 +66,7 @@ void main() {
           webOnlyWindowName: null,
           showTitle: false,
         )
-        ..setResponse(true);
+        ..setLaunchResponse(true);
       await followLink!();
       // Calling canLaunch just to pre-check launch is an anti-pattern, since
       // canLaunch doesn't always work, so ensure that it's not called.
@@ -101,7 +101,7 @@ void main() {
           webOnlyWindowName: null,
           showTitle: false,
         )
-        ..setResponse(true);
+        ..setLaunchResponse(true);
       await followLink!();
       // Calling canLaunch just to pre-check launch is an anti-pattern, since
       // canLaunch doesn't always work, so ensure that it's not called.

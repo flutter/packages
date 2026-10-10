@@ -38,7 +38,7 @@ class CameraValue {
     required this.isRecordingVideo,
     required this.isTakingPicture,
     required this.isStreamingImages,
-    required bool isRecordingPaused,
+    required this._isRecordingPaused,
     required this.flashMode,
     required this.exposureMode,
     required this.focusMode,
@@ -51,7 +51,7 @@ class CameraValue {
     this.isPreviewPaused = false,
     this.previewPauseOrientation,
     this.videoStabilizationMode = VideoStabilizationMode.off,
-  }) : _isRecordingPaused = isRecordingPaused;
+  });
 
   /// Creates a new camera controller state for an uninitialized controller.
   const CameraValue.uninitialized(CameraDescription description)
@@ -964,6 +964,26 @@ class CameraController extends ValueNotifier<CameraValue> {
         _cameraId,
         point == null ? null : Point<double>(point.dx, point.dy),
       );
+    } on PlatformException catch (e) {
+      throw CameraException(e.code, e.message);
+    }
+  }
+
+  /// Sets the JPEG compression quality for still image capture.
+  ///
+  /// This only applies to images captured in JPEG format.
+  /// The [quality] must be between 1 (lowest) and 100 (highest).
+  ///
+  /// This is a best-effort setting: platforms that do not support controlling
+  /// the JPEG quality ignore it rather than throwing. See
+  /// https://github.com/flutter/flutter/issues/191790 for the current state of
+  /// platform support.
+  Future<void> setJpegImageQuality(int quality) async {
+    if (quality < 1 || quality > 100) {
+      throw ArgumentError.value(quality, 'quality', 'Must be between 1 and 100.');
+    }
+    try {
+      await CameraPlatform.instance.setJpegImageQuality(_cameraId, quality);
     } on PlatformException catch (e) {
       throw CameraException(e.code, e.message);
     }

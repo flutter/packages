@@ -127,7 +127,7 @@ abstract class CameraApi {
   String takePicture();
 
   /// Starts recording a video on the camera with the given ID.
-  void startVideoRecording(bool enableStream);
+  void startVideoRecording(bool enableStream, {String? videoOutputPath});
 
   /// Ends video recording on the camera with the given ID and returns the path
   /// to the resulting file.

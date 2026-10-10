@@ -4598,6 +4598,9 @@ typedef struct {
   void (*call_flutter_callback_throw_error_from_void)(
       CoreTestsPigeonTestHostIntegrationCoreApiResponseHandle* response_handle,
       gpointer user_data);
+  void (*call_flutter_is_async_flutter_api_on_root)(
+      CoreTestsPigeonTestHostIntegrationCoreApiResponseHandle* response_handle,
+      gpointer user_data);
 } CoreTestsPigeonTestHostIntegrationCoreApiVTable;
 
 /**
@@ -6939,6 +6942,31 @@ void core_tests_pigeon_test_host_integration_core_api_respond_call_flutter_callb
  * HostIntegrationCoreApi.callFlutterCallbackThrowErrorFromVoid.
  */
 void core_tests_pigeon_test_host_integration_core_api_respond_error_call_flutter_callback_throw_error_from_void(
+    CoreTestsPigeonTestHostIntegrationCoreApiResponseHandle* response_handle,
+    const gchar* code, const gchar* message, FlValue* details);
+
+/**
+ * core_tests_pigeon_test_host_integration_core_api_respond_call_flutter_is_async_flutter_api_on_root:
+ * @response_handle: a #CoreTestsPigeonTestHostIntegrationCoreApiResponseHandle.
+ * @return_value: location to write the value returned by this method.
+ *
+ * Responds to HostIntegrationCoreApi.callFlutterIsAsyncFlutterApiOnRoot.
+ */
+void core_tests_pigeon_test_host_integration_core_api_respond_call_flutter_is_async_flutter_api_on_root(
+    CoreTestsPigeonTestHostIntegrationCoreApiResponseHandle* response_handle,
+    gboolean return_value);
+
+/**
+ * core_tests_pigeon_test_host_integration_core_api_respond_error_call_flutter_is_async_flutter_api_on_root:
+ * @response_handle: a #CoreTestsPigeonTestHostIntegrationCoreApiResponseHandle.
+ * @code: error code.
+ * @message: error message.
+ * @details: (allow-none): error details or %NULL.
+ *
+ * Responds with an error to
+ * HostIntegrationCoreApi.callFlutterIsAsyncFlutterApiOnRoot.
+ */
+void core_tests_pigeon_test_host_integration_core_api_respond_error_call_flutter_is_async_flutter_api_on_root(
     CoreTestsPigeonTestHostIntegrationCoreApiResponseHandle* response_handle,
     const gchar* code, const gchar* message, FlValue* details);
 
@@ -11171,6 +11199,83 @@ core_tests_pigeon_test_flutter_integration_core_api_echo_async_string_response_g
     CoreTestsPigeonTestFlutterIntegrationCoreApiEchoAsyncStringResponse*
         response);
 
+G_DECLARE_FINAL_TYPE(
+    CoreTestsPigeonTestFlutterIntegrationCoreApiIsAsyncFlutterApiOnRootResponse,
+    core_tests_pigeon_test_flutter_integration_core_api_is_async_flutter_api_on_root_response,
+    CORE_TESTS_PIGEON_TEST,
+    FLUTTER_INTEGRATION_CORE_API_IS_ASYNC_FLUTTER_API_ON_ROOT_RESPONSE, GObject)
+
+/**
+ * core_tests_pigeon_test_flutter_integration_core_api_is_async_flutter_api_on_root_response_is_error:
+ * @response: a
+ * #CoreTestsPigeonTestFlutterIntegrationCoreApiIsAsyncFlutterApiOnRootResponse.
+ *
+ * Checks if a response to FlutterIntegrationCoreApi.isAsyncFlutterApiOnRoot is
+ * an error.
+ *
+ * Returns: a %TRUE if this response is an error.
+ */
+gboolean
+core_tests_pigeon_test_flutter_integration_core_api_is_async_flutter_api_on_root_response_is_error(
+    CoreTestsPigeonTestFlutterIntegrationCoreApiIsAsyncFlutterApiOnRootResponse*
+        response);
+
+/**
+ * core_tests_pigeon_test_flutter_integration_core_api_is_async_flutter_api_on_root_response_get_error_code:
+ * @response: a
+ * #CoreTestsPigeonTestFlutterIntegrationCoreApiIsAsyncFlutterApiOnRootResponse.
+ *
+ * Get the error code for this response.
+ *
+ * Returns: an error code or %NULL if not an error.
+ */
+const gchar*
+core_tests_pigeon_test_flutter_integration_core_api_is_async_flutter_api_on_root_response_get_error_code(
+    CoreTestsPigeonTestFlutterIntegrationCoreApiIsAsyncFlutterApiOnRootResponse*
+        response);
+
+/**
+ * core_tests_pigeon_test_flutter_integration_core_api_is_async_flutter_api_on_root_response_get_error_message:
+ * @response: a
+ * #CoreTestsPigeonTestFlutterIntegrationCoreApiIsAsyncFlutterApiOnRootResponse.
+ *
+ * Get the error message for this response.
+ *
+ * Returns: an error message.
+ */
+const gchar*
+core_tests_pigeon_test_flutter_integration_core_api_is_async_flutter_api_on_root_response_get_error_message(
+    CoreTestsPigeonTestFlutterIntegrationCoreApiIsAsyncFlutterApiOnRootResponse*
+        response);
+
+/**
+ * core_tests_pigeon_test_flutter_integration_core_api_is_async_flutter_api_on_root_response_get_error_details:
+ * @response: a
+ * #CoreTestsPigeonTestFlutterIntegrationCoreApiIsAsyncFlutterApiOnRootResponse.
+ *
+ * Get the error details for this response.
+ *
+ * Returns: (allow-none): an error details or %NULL.
+ */
+FlValue*
+core_tests_pigeon_test_flutter_integration_core_api_is_async_flutter_api_on_root_response_get_error_details(
+    CoreTestsPigeonTestFlutterIntegrationCoreApiIsAsyncFlutterApiOnRootResponse*
+        response);
+
+/**
+ * core_tests_pigeon_test_flutter_integration_core_api_is_async_flutter_api_on_root_response_get_return_value:
+ * @response: a
+ * #CoreTestsPigeonTestFlutterIntegrationCoreApiIsAsyncFlutterApiOnRootResponse.
+ *
+ * Get the return value for this response.
+ *
+ * Returns: a return value.
+ */
+gboolean
+core_tests_pigeon_test_flutter_integration_core_api_is_async_flutter_api_on_root_response_get_return_value(
+    CoreTestsPigeonTestFlutterIntegrationCoreApiIsAsyncFlutterApiOnRootResponse*
+        response);
+
 /**
  * CoreTestsPigeonTestFlutterIntegrationCoreApi:
  *
@@ -13035,6 +13140,41 @@ void core_tests_pigeon_test_flutter_integration_core_api_echo_async_string(
  */
 CoreTestsPigeonTestFlutterIntegrationCoreApiEchoAsyncStringResponse*
 core_tests_pigeon_test_flutter_integration_core_api_echo_async_string_finish(
+    CoreTestsPigeonTestFlutterIntegrationCoreApi* api, GAsyncResult* result,
+    GError** error);
+
+/**
+ * core_tests_pigeon_test_flutter_integration_core_api_is_async_flutter_api_on_root:
+ * @api: a #CoreTestsPigeonTestFlutterIntegrationCoreApi.
+ * @cancellable: (allow-none): a #GCancellable or %NULL.
+ * @callback: (scope async): (allow-none): a #GAsyncReadyCallback to call when
+ * the call is complete or %NULL to ignore the response.
+ * @user_data: (closure): user data to pass to @callback.
+ *
+ * Returns true if the async FlutterApi method is run on the root isolate.
+ */
+void core_tests_pigeon_test_flutter_integration_core_api_is_async_flutter_api_on_root(
+    CoreTestsPigeonTestFlutterIntegrationCoreApi* api,
+    GCancellable* cancellable, GAsyncReadyCallback callback,
+    gpointer user_data);
+
+/**
+ * core_tests_pigeon_test_flutter_integration_core_api_is_async_flutter_api_on_root_finish:
+ * @api: a #CoreTestsPigeonTestFlutterIntegrationCoreApi.
+ * @result: a #GAsyncResult.
+ * @error: (allow-none): #GError location to store the error occurring, or %NULL
+ * to ignore.
+ *
+ * Completes a
+ * core_tests_pigeon_test_flutter_integration_core_api_is_async_flutter_api_on_root()
+ * call.
+ *
+ * Returns: a
+ * #CoreTestsPigeonTestFlutterIntegrationCoreApiIsAsyncFlutterApiOnRootResponse
+ * or %NULL on error.
+ */
+CoreTestsPigeonTestFlutterIntegrationCoreApiIsAsyncFlutterApiOnRootResponse*
+core_tests_pigeon_test_flutter_integration_core_api_is_async_flutter_api_on_root_finish(
     CoreTestsPigeonTestFlutterIntegrationCoreApi* api, GAsyncResult* result,
     GError** error);
 

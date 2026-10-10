@@ -1,3 +1,7 @@
+## NEXT
+
+* Updates minimum supported SDK version to Flutter 3.41/Dart 3.11.
+
 ## 2.6.0
 
 * Re-release: replaces Flutter-plugin-based implementation with direct

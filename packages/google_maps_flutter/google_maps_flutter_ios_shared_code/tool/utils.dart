@@ -49,9 +49,9 @@ List<String> unexpectedUnsharedSourceFiles(
 /// Adjusts a package-relative path to account for the package name being part of
 /// the directory structure for Swift packages.
 String sharedSourceRelativePathForPackagePath(String packageRelativePath) {
-  return packageRelativePath.replaceAll(
-    RegExp(r'/google_maps_flutter_ios[_\w\d]*/'),
-    '/google_maps_flutter_ios/',
+  return packageRelativePath.replaceAllMapped(
+    RegExp(r'/google_maps_flutter_ios(?:_sdk\d+)?((?:_objc)?)/'),
+    (match) => '/google_maps_flutter_ios${match.group(1)}/',
   );
 }
 
@@ -61,7 +61,10 @@ String packageRelativePathForSharedSourceRelativePath(
   String packageName,
   String sharedSourceRelativePath,
 ) {
-  return sharedSourceRelativePath.replaceAll('/google_maps_flutter_ios/', '/$packageName/');
+  return sharedSourceRelativePath.replaceAllMapped(
+    RegExp(r'/google_maps_flutter_ios((?:_objc)?)/'),
+    (match) => '/$packageName${match.group(1)}/',
+  );
 }
 
 /// Returns the contents of the file with any differences caused only by the
@@ -70,7 +73,8 @@ String normalizedFileContents(File file) {
   return file
       .readAsStringSync()
       // Ignore differences caused only by the package name.
-      .replaceAll(RegExp(r'google_maps_flutter_ios_[\w\d]+'), 'google_maps_flutter_ios')
+      .replaceAll(RegExp(r'google_maps_flutter_ios_sdk[\d]+'), 'google_maps_flutter_ios')
+      .replaceAll(RegExp(r'google_maps_flutter_ios_sdk[\d]+_objc'), 'google_maps_flutter_ios_objc')
       // Package name diffs could change line wrapping, so collapse whitespace.
       .replaceAll(RegExp(r'[\s\n]+'), ' ')
       .trim();
@@ -84,7 +88,7 @@ String normalizedFileContents(File file) {
 /// should be replaced in all files.
 void updatePackageNameInPathReferences(File file, String packageName) {
   final String newContents = file.readAsStringSync().replaceAllMapped(
-    RegExp(r'google_maps_flutter_ios[_\w\d]*([:/])'),
+    RegExp(r'google_maps_flutter_ios(?:_sdk\d+)?((?:_objc)?[:/])'),
     (match) => '$packageName${match.group(1)}',
   );
   file.writeAsStringSync(newContents);
@@ -100,13 +104,24 @@ void updatePackageNameInImports(File file, String packageName) {
       .readAsStringSync()
       // Package imports.
       .replaceAllMapped(
-        RegExp(r'^(@?(?:testable )?)import google_maps_flutter_ios[_\w\d]*(;?)$', multiLine: true),
+        RegExp(
+          r'^(@?(?:testable )?(?:  )?)import google_maps_flutter_ios(?:_sdk\d+)?((?:_objc)?;?)$',
+          multiLine: true,
+        ),
         (match) => '${match.group(1)}import $packageName${match.group(2)}',
+      )
+      // Conditional import.
+      .replaceAllMapped(
+        RegExp(
+          r'#if canImport\(google_maps_flutter_ios(?:_sdk\d+)?((?:_objc)?)\)$',
+          multiLine: true,
+        ),
+        (match) => '#if canImport($packageName${match.group(1)})',
       )
       // Bridging header.
       .replaceAllMapped(
-        RegExp(r'^#import <google_maps_flutter_ios[_\w\d]*/', multiLine: true),
-        (match) => '#import <$packageName/',
+        RegExp(r'^#import <google_maps_flutter_ios(?:_sdk\d+)?((?:_objc)?)/', multiLine: true),
+        (match) => '#import <$packageName${match.group(1)}/',
       );
   file.writeAsStringSync(newContents);
 }

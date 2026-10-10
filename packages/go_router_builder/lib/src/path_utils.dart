@@ -18,6 +18,21 @@ Set<String> pathParametersFromPattern(String pattern) => <String>{
   for (final RegExpMatch match in _parameterRegExp.allMatches(pattern)) match[1]!,
 };
 
+/// Replaces the parameter names in a [pattern] with a placeholder, so that
+/// patterns differing only in those names compare as equal.
+///
+/// A parameter's regex constraint is kept, since it changes which URLs the
+/// pattern matches.
+///
+/// For example:
+///
+/// ```dart
+/// normalizePathParameters('item/:id'); // 'item/:_'
+/// normalizePathParameters(r'item/:id(\d+)'); // r'item/:_(\d+)'
+/// ```
+String normalizePathParameters(String pattern) =>
+    pattern.replaceAllMapped(_parameterRegExp, (Match match) => ':_${match[2] ?? ''}');
+
 /// Reconstructs the full path from a [pattern] and path parameters.
 ///
 /// For example:

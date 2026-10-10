@@ -40,26 +40,36 @@ flutter {
     source = "../.."
 }
 
+// #docregion test_dependencies
 dependencies {
     testImplementation("junit:junit:4.13.2")
+    // #enddocregion test_dependencies
 
     // Multidex
     implementation("androidx.multidex:multidex:2.0.1")
 
     // Core library
+    // #docregion test_dependencies
     api("androidx.test:core:1.6.1")
+    // #enddocregion test_dependencies
 
     // AndroidJUnitRunner and JUnit Rules
+    // #docregion test_dependencies
     androidTestImplementation("androidx.test:runner:1.6.1")
+    // #enddocregion test_dependencies
     androidTestImplementation("androidx.test:rules:1.6.1")
 
     // Assertions
     androidTestImplementation("androidx.test.ext:junit:1.2.1")
     androidTestImplementation("androidx.test.ext:truth:1.6.0")
+    // #docregion test_dependencies
     androidTestImplementation("com.google.truth:truth:1.1.3")
+    // #enddocregion test_dependencies
 
     // Espresso dependencies
+    // #docregion test_dependencies
     androidTestImplementation("androidx.test.espresso:espresso-core:3.6.1")
+    // #enddocregion test_dependencies
     androidTestImplementation("androidx.test.espresso:espresso-contrib:3.6.1")
     androidTestImplementation("androidx.test.espresso:espresso-intents:3.6.1")
     androidTestImplementation("androidx.test.espresso:espresso-accessibility:3.6.1")
@@ -71,4 +81,6 @@ dependencies {
     // dependency to appear on your APK's compile classpath or the test APK
     // classpath.
     androidTestImplementation("androidx.test.espresso:espresso-idling-resource:3.6.1")
+// #docregion test_dependencies
 }
+// #enddocregion test_dependencies

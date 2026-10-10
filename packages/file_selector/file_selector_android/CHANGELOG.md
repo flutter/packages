@@ -1,3 +1,17 @@
+## 0.5.2+12
+
+* Updates Robolectric to 4.17 and adds the JVM arguments it requires for unit tests.
+* Updates minimum supported SDK version to Flutter 3.41/Dart 3.11.
+
+## 0.5.2+11
+
+* Fixes a crash when the content provider returns no stream for a selected
+  file; the pick now completes with an error instead.
+
+## 0.5.2+10
+
+* Updates pigeon dev_dependency to ^27.3.2 for analyzer 14 compatibility.
+
 ## 0.5.2+9
 
 * Fixes a crash when a selected file cannot be copied to a readable location (for

@@ -2,9 +2,10 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-// Version: 38.2.31
+// Version: 38.2.83
 
 // dart format off
+import 'motion.dart';
 import 'shape_struct.dart';
 
 class TokenIconButtonLarge {
@@ -48,10 +49,12 @@ class TokenIconButtonLarge {
   static const double outlinedOutlineWidth = 2.00;
 
   /// md.comp.icon-button.large.pressed.container.corner-size.motion.spring.damping
-  static const double pressedContainerCornerSizeMotionSpringDamping = 0.60;
+  static const double pressedContainerCornerSizeMotionSpringDamping =
+      TokenMotion.springFastSpatialDamping;
 
   /// md.comp.icon-button.large.pressed.container.corner-size.motion.spring.stiffness
-  static const double pressedContainerCornerSizeMotionSpringStiffness = 800.00;
+  static const double pressedContainerCornerSizeMotionSpringStiffness =
+      TokenMotion.springFastSpatialStiffness;
 
   /// md.comp.icon-button.large.pressed.container.shape
   static const ShapeStruct pressedContainerShape = ShapeStruct(

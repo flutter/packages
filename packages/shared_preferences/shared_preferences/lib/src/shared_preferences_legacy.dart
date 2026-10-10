@@ -139,14 +139,29 @@ class SharedPreferences {
   }
 
   /// Saves a boolean [value] to persistent storage in the background.
+  ///
+  /// Returns `false` if the platform implementation can definitively determine
+  /// that storing the preference failed. A return value of `true` indicates
+  /// either that the value was written successfully, or that the underlying
+  /// platform API does not report success or failure.
   Future<bool> setBool(String key, bool value) => _setValue('Bool', key, value);
 
   /// Saves an integer [value] to persistent storage in the background.
+  ///
+  /// Returns `false` if the platform implementation can definitively determine
+  /// that storing the preference failed. A return value of `true` indicates
+  /// either that the value was written successfully, or that the underlying
+  /// platform API does not report success or failure.
   Future<bool> setInt(String key, int value) => _setValue('Int', key, value);
 
   /// Saves a double [value] to persistent storage in the background.
   ///
   /// Android doesn't support storing doubles, so it will be stored as a float.
+  ///
+  /// Returns `false` if the platform implementation can definitively determine
+  /// that storing the preference failed. A return value of `true` indicates
+  /// either that the value was written successfully, or that the underlying
+  /// platform API does not report success or failure.
   Future<bool> setDouble(String key, double value) => _setValue('Double', key, value);
 
   /// Saves a string [value] to persistent storage in the background.
@@ -157,12 +172,27 @@ class SharedPreferences {
   /// - 'VGhpcyBpcyB0aGUgcHJlZml4IGZvciBhIGxpc3Qu'
   /// - 'VGhpcyBpcyB0aGUgcHJlZml4IGZvciBCaWdJbnRlZ2Vy'
   /// - 'VGhpcyBpcyB0aGUgcHJlZml4IGZvciBEb3VibGUu'
+  ///
+  /// Returns `false` if the platform implementation can definitively determine
+  /// that storing the preference failed. A return value of `true` indicates
+  /// either that the value was written successfully, or that the underlying
+  /// platform API does not report success or failure.
   Future<bool> setString(String key, String value) => _setValue('String', key, value);
 
   /// Saves a list of strings [value] to persistent storage in the background.
+  ///
+  /// Returns `false` if the platform implementation can definitively determine
+  /// that storing the preference failed. A return value of `true` indicates
+  /// either that the value was written successfully, or that the underlying
+  /// platform API does not report success or failure.
   Future<bool> setStringList(String key, List<String> value) => _setValue('StringList', key, value);
 
   /// Removes an entry from persistent storage.
+  ///
+  /// Returns `false` if the platform implementation can definitively determine
+  /// that removing the preference failed. A return value of `true` indicates
+  /// either that the value was removed successfully, or that the underlying
+  /// platform API does not report success or failure.
   Future<bool> remove(String key) {
     final prefixedKey = '$_prefix$key';
     _preferenceCache.remove(key);

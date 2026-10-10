@@ -39,21 +39,20 @@ export 'package:flutter/services.dart'
 // late FocusNode myFocusNode;
 
 /// Signature for the [TextField.buildCounter] callback.
-typedef InputCounterWidgetBuilder =
-    Widget? Function(
-      /// The build context for the TextField.
-      BuildContext context, {
+typedef InputCounterWidgetBuilder = Widget? Function(
+  /// The build context for the TextField.
+  BuildContext context, {
 
-      /// The length of the string currently in the input.
-      required int currentLength,
+  /// The length of the string currently in the input.
+  required int currentLength,
 
-      /// The maximum string length that can be entered into the TextField.
-      required int? maxLength,
+  /// The maximum string length that can be entered into the TextField.
+  required int? maxLength,
 
-      /// Whether or not the TextField is currently focused. Mainly provided for
-      /// the [liveRegion] parameter in the [Semantics] widget for accessibility.
-      required bool isFocused,
-    });
+  /// Whether or not the TextField is currently focused. Mainly provided for
+  /// the `liveRegion` parameter in the [Semantics] widget for accessibility.
+  required bool isFocused,
+});
 
 class _TextFieldSelectionGestureDetectorBuilder extends TextSelectionGestureDetectorBuilder {
   _TextFieldSelectionGestureDetectorBuilder({required _TextFieldState state})
@@ -366,9 +365,9 @@ class TextField extends StatefulWidget {
        assert(maxLength == null || maxLength == TextField.noMaxLength || maxLength > 0),
        // Assert the following instead of setting it directly to avoid surprising the user by silently changing the value they set.
        assert(
-         !identical(textInputAction, TextInputAction.newline) ||
+         textInputAction != TextInputAction.newline ||
              maxLines == 1 ||
-             !identical(keyboardType, TextInputType.text),
+             keyboardType != TextInputType.text,
          'Use keyboardType TextInputType.multiline when using TextInputAction.newline on a multiline TextField.',
        ),
        keyboardType =
@@ -449,6 +448,15 @@ class TextField extends StatefulWidget {
   /// By default, draws a horizontal line under the text field but can be
   /// configured to show an icon, label, hint text, and error text.
   ///
+  /// This decoration does not replace the ambient [InputDecorationTheme].
+  /// Instead, it is merged with it by [InputDecoration.applyDefaults]. Only the
+  /// properties that are left null here take their value from the
+  /// [InputDecorationThemeData] returned by [InputDecorationTheme.of], which in
+  /// turn defaults to [ThemeData.inputDecorationTheme]. So, for example, when
+  /// the theme specifies a border, passing an [InputDecoration] that leaves
+  /// [InputDecoration.border] null does not remove that border; pass
+  /// [InputBorder.none] to opt out of it explicitly.
+  ///
   /// Specify null to remove the decoration entirely (including the
   /// extra padding introduced by the decoration to save space for the labels).
   final InputDecoration? decoration;
@@ -489,6 +497,18 @@ class TextField extends StatefulWidget {
   final TextAlignVertical? textAlignVertical;
 
   /// {@macro flutter.widgets.editableText.textDirection}
+  ///
+  /// This does not affect the direction of the decoration's
+  /// [InputDecoration.hintText] or [InputDecoration.labelText].
+  ///
+  /// To override the direction for the entire field (including the hint, label,
+  /// and prefix/suffix icons), wrap the [TextField] in a [Directionality] widget.
+  ///
+  /// See also:
+  ///
+  ///  * [InputDecoration.hintTextDirection], which specifically controls the hint.
+  ///  * [InputDecoration.labelTextDirection], which specifically controls the label.
+  ///  * [Directionality], which provides the default direction for the subtree.
   final TextDirection? textDirection;
 
   /// {@macro flutter.widgets.editableText.autofocus}

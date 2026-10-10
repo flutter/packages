@@ -85,6 +85,23 @@ public class FileUtilTest {
   }
 
   @Test
+  public void FileUtil_GetPathFromUri_nullStream() throws IOException {
+    Uri uri = Uri.parse("content://dummy/dummy.png");
+
+    // `openInputStream` returns null when the provider cannot serve the item; this used to
+    // reach `copy()` and crash the plugin's executor thread with a NullPointerException.
+    ContentResolver mockContentResolver = mock(ContentResolver.class);
+    when(mockContentResolver.openInputStream(any(Uri.class))).thenReturn(null);
+
+    Context mockContext = mock(Context.class);
+    when(mockContext.getContentResolver()).thenReturn(mockContentResolver);
+
+    String path = fileUtils.getPathFromUri(mockContext, uri);
+
+    assertNull(path);
+  }
+
+  @Test
   public void FileUtil_GetPathFromUri_securityException() throws IOException {
     Uri uri = Uri.parse("content://dummy/dummy.png");
 

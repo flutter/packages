@@ -951,47 +951,96 @@ void main() {
     expect(tester.getSize(find.byType(CupertinoPicker)), Size.zero);
   });
 
-  testWidgets('CupertinoPicker in a SelectableRegion only pushes one selection handle leader layer per link', (
-    WidgetTester tester,
-  ) async {
-    // Regression test for https://github.com/flutter/flutter/issues/140543.
-    await tester.pumpWidget(
-      CupertinoApp(
-        home: Center(
-          child: SizedBox(
-            height: 300.0,
-            width: 300.0,
-            child: SelectableRegion(
-              selectionControls: cupertinoTextSelectionControls,
-              child: CupertinoPicker(
-                itemExtent: 50.0,
-                onSelectedItemChanged: (int index) {},
-                children: const <Widget>[Text('Element 1'), Text('Element 2')],
+  testWidgets(
+    'CupertinoPicker in a SelectableRegion only pushes one selection handle leader layer per link',
+    (WidgetTester tester) async {
+      // Regression test for https://github.com/flutter/flutter/issues/140543.
+      await tester.pumpWidget(
+        CupertinoApp(
+          home: Center(
+            child: SizedBox(
+              height: 300.0,
+              width: 300.0,
+              child: SelectableRegion(
+                selectionControls: cupertinoTextSelectionControls,
+                child: CupertinoPicker(
+                  itemExtent: 50.0,
+                  onSelectedItemChanged: (int index) {},
+                  children: const <Widget>[Text('Element 1'), Text('Element 2')],
+                ),
               ),
             ),
           ),
         ),
+      );
+
+      // The item in the center of the wheel is painted twice in the same frame:
+      // once dimmed outside of the center rect and once at full opacity inside of
+      // it. Selecting it used to push a selection handle leader layer for each of
+      // those paints, leaving the handle layer links with more than one leader.
+      final Rect textRect = tester.getRect(find.text('Element 1'));
+      final TestGesture gesture = await tester.startGesture(
+        textRect.centerLeft + const Offset(2.0, 0.0),
+        kind: PointerDeviceKind.mouse,
+      );
+      addTearDown(gesture.removePointer);
+      await tester.pump();
+      await gesture.moveTo(textRect.centerRight - const Offset(2.0, 0.0));
+      await tester.pump();
+      await gesture.up();
+      await tester.pumpAndSettle();
+
+      expect(tester.takeException(), isNull);
+      // One leader layer for the toolbar and one for each selection handle.
+      expect(tester.layers.whereType<LeaderLayer>(), hasLength(3));
+    },
+  );
+
+  testWidgets('Does not throw when disposed during the tap-to-select animation', (
+    WidgetTester tester,
+  ) async {
+    // Regression test for https://github.com/flutter/flutter/issues/192135
+    var showPicker = true;
+    late StateSetter setOuterState;
+
+    await tester.pumpWidget(
+      CupertinoApp(
+        home: StatefulBuilder(
+          builder: (BuildContext context, StateSetter setState) {
+            setOuterState = setState;
+            return Center(
+              child: showPicker
+                  ? SizedBox(
+                      height: 216,
+                      child: CupertinoPicker(
+                        itemExtent: 32,
+                        onSelectedItemChanged: (int index) {},
+                        children: List<Widget>.generate(
+                          20,
+                          (int index) => Center(child: Text('Item $index')),
+                        ),
+                      ),
+                    )
+                  : const SizedBox.shrink(),
+            );
+          },
+        ),
       ),
     );
 
-    // The item in the center of the wheel is painted twice in the same frame:
-    // once dimmed outside of the center rect and once at full opacity inside of
-    // it. Selecting it used to push a selection handle leader layer for each of
-    // those paints, leaving the handle layer links with more than one leader.
-    final Rect textRect = tester.getRect(find.text('Element 1'));
-    final TestGesture gesture = await tester.startGesture(
-      textRect.centerLeft + const Offset(2.0, 0.0),
-      kind: PointerDeviceKind.mouse,
-    );
-    addTearDown(gesture.removePointer);
+    // Tapping an item that is not centred starts the tap-to-select
+    // animation, which _handleChildTap awaits.
+    await tester.tap(find.text('Item 2'));
     await tester.pump();
-    await gesture.moveTo(textRect.centerRight - const Offset(2.0, 0.0));
+    await tester.pump(const Duration(milliseconds: 50));
+
+    // Remove the picker while that animation is still running.
+    setOuterState(() {
+      showPicker = false;
+    });
     await tester.pump();
-    await gesture.up();
-    await tester.pumpAndSettle();
+    await tester.pump(const Duration(milliseconds: 500));
 
     expect(tester.takeException(), isNull);
-    // One leader layer for the toolbar and one for each selection handle.
-    expect(tester.layers.whereType<LeaderLayer>(), hasLength(3));
   });
 }

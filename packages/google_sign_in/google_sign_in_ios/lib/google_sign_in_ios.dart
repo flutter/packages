@@ -58,26 +58,18 @@ class GoogleSignInIOS extends GoogleSignInPlatform {
     AttemptLightweightAuthenticationParameters params,
   ) async {
     final SignInResult result = await _api.restorePreviousSignIn();
-
-    if (result.error?.type == GoogleSignInErrorCode.noAuthInKeychain) {
-      return null;
+    switch (result) {
+      case SignInFailure(type: GoogleSignInErrorCode.noAuthInKeychain):
+        return null;
+      case SignInFailure(:final type, :final message, :final details):
+        throw GoogleSignInException(
+          code: _exceptionCodeForErrorPlatformErrorCode(type),
+          description: message,
+          details: details,
+        );
+      case SignInSuccess():
+        return _authenticationResultsFromSignInSuccess(result);
     }
-
-    final SignInFailure? failure = result.error;
-    if (failure != null) {
-      throw GoogleSignInException(
-        code: _exceptionCodeForErrorPlatformErrorCode(failure.type),
-        description: failure.message,
-        details: failure.details,
-      );
-    }
-
-    // The native code must never return a null success and a null error.
-    // Switching the native implementation to Swift and using sealed classes
-    // in the Pigeon definition (see Android's messages.dart) will allow
-    // enforcing this via the type system instead of force unwrapping.
-    final SignInSuccess success = result.success!;
-    return _authenticationResultsFromSignInSuccess(success);
   }
 
   @override
@@ -86,31 +78,23 @@ class GoogleSignInIOS extends GoogleSignInPlatform {
   @override
   Future<AuthenticationResults> authenticate(AuthenticateParameters params) async {
     final SignInResult result = await _signIn(params.scopeHint, _nonce);
-
-    // This should never happen; the corresponding native error code is
-    // documented as being specific to restorePreviousSignIn.
-    if (result.error?.type == GoogleSignInErrorCode.noAuthInKeychain) {
-      throw const GoogleSignInException(
-        code: GoogleSignInExceptionCode.unknownError,
-        description: 'No auth reported during interactive sign in.',
-      );
+    switch (result) {
+      // This should never happen; the corresponding native error code is
+      // documented as being specific to restorePreviousSignIn.
+      case SignInFailure(type: GoogleSignInErrorCode.noAuthInKeychain):
+        throw const GoogleSignInException(
+          code: GoogleSignInExceptionCode.unknownError,
+          description: 'No auth reported during interactive sign in.',
+        );
+      case SignInFailure(:final type, :final message, :final details):
+        throw GoogleSignInException(
+          code: _exceptionCodeForErrorPlatformErrorCode(type),
+          description: message,
+          details: details,
+        );
+      case SignInSuccess():
+        return _authenticationResultsFromSignInSuccess(result);
     }
-
-    final SignInFailure? failure = result.error;
-    if (failure != null) {
-      throw GoogleSignInException(
-        code: _exceptionCodeForErrorPlatformErrorCode(failure.type),
-        description: failure.message,
-        details: failure.details,
-      );
-    }
-
-    // The native code must never return a null success and a null error.
-    // Switching the native implementation to Swift and using sealed classes
-    // in the Pigeon definition (see Android's messages.dart) will allow
-    // enforcing this via the type system instead of force unwrapping.
-    final SignInSuccess success = result.success!;
-    return _authenticationResultsFromSignInSuccess(success);
   }
 
   @override
@@ -154,30 +138,28 @@ class GoogleSignInIOS extends GoogleSignInPlatform {
   Future<({String? accessToken, String? serverAuthCode})> _getAuthorizationTokens(
     AuthorizationRequestDetails request,
   ) async {
-    String? userId = request.userId;
-
+    final String userId;
     // The Google Sign In SDK requires authentication before authorization, so
     // if the authentication isn't associated with an existing sign-in user
     // run the authentication flow first.
-    if (userId == null) {
-      SignInResult result = await _api.restorePreviousSignIn();
-      final SignInSuccess? success = result.success;
-      if (success == null) {
-        // There's no existing sign-in to use, so return the results of the
-        // combined authn+authz flow, if prompting is allowed.
-        if (request.promptIfUnauthorized) {
-          result = await _signIn(request.scopes, _nonce);
-          return _processAuthorizationResult(result);
-        } else {
+    if (request.userId case final requestedUserId?) {
+      userId = requestedUserId;
+    } else {
+      switch (await _api.restorePreviousSignIn()) {
+        case SignInSuccess(:final UserData user):
+          // Discard the authentication information, and extract the user ID to
+          // pass back to the authorization step so that it can re-associate
+          // with the currently signed in user on the native side.
+          userId = user.userId;
+        case SignInFailure():
+          // There's no existing sign-in to use, so return the results of the
+          // combined authn+authz flow, if prompting is allowed.
+          if (request.promptIfUnauthorized) {
+            return _processAuthorizationResult(await _signIn(request.scopes, _nonce));
+          }
           // No existing authentication, and no prompting allowed, so return
           // no tokens.
           return (accessToken: null, serverAuthCode: null);
-        }
-      } else {
-        // Discard the authentication information, and extract the user ID to
-        // pass back to the authorization step so that it can re-associate
-        // with the currently signed in user on the native side.
-        userId = success.user.userId;
       }
     }
 
@@ -186,13 +168,14 @@ class GoogleSignInIOS extends GoogleSignInPlatform {
         ? await _api.getRefreshedAuthorizationTokens(userId)
         : await _addScopes(request.scopes, userId);
     if (!useExistingAuthorization &&
-        result.error?.type == GoogleSignInErrorCode.scopesAlreadyGranted) {
+        result is SignInFailure &&
+        result.type == GoogleSignInErrorCode.scopesAlreadyGranted) {
       // The Google Sign In SDK returns an error when requesting scopes that are
       // already authorized, so in that case request updated tokens instead to
       // construct a valid token response.
       result = await _api.getRefreshedAuthorizationTokens(userId);
     }
-    if (result.error?.type == GoogleSignInErrorCode.noAuthInKeychain) {
+    if (result is SignInFailure && result.type == GoogleSignInErrorCode.noAuthInKeychain) {
       return (accessToken: null, serverAuthCode: null);
     }
 
@@ -200,7 +183,6 @@ class GoogleSignInIOS extends GoogleSignInPlatform {
     // requested scopes before returning it, as the list of requested scopes
     // may have changed since the last authorization.
     if (useExistingAuthorization) {
-      final SignInSuccess? success = result.success;
       // Don't validate the OpenID Connect scopes (see
       // https://developers.google.com/identity/protocols/oauth2/scopes#openid-connect
       // for details), as they should always be available, and the granted
@@ -208,7 +190,7 @@ class GoogleSignInIOS extends GoogleSignInPlatform {
       // For example, requesting 'email' can instead result in the grant
       // 'https://www.googleapis.com/auth/userinfo.email'.
       const openIdConnectScopes = <String>{'email', 'openid', 'profile'};
-      if (success != null) {
+      if (result case final SignInSuccess success) {
         if (request.scopes.any(
           (String scope) =>
               !openIdConnectScopes.contains(scope) && !success.grantedScopes.contains(scope),
@@ -224,21 +206,21 @@ class GoogleSignInIOS extends GoogleSignInPlatform {
   Future<({String? accessToken, String? serverAuthCode})> _processAuthorizationResult(
     SignInResult result,
   ) async {
-    final SignInFailure? failure = result.error;
-    if (failure != null) {
-      throw GoogleSignInException(
-        code: _exceptionCodeForErrorPlatformErrorCode(failure.type),
-        description: failure.message,
-        details: failure.details,
-      );
+    switch (result) {
+      case SignInFailure(:final type, :final message, :final details):
+        throw GoogleSignInException(
+          code: _exceptionCodeForErrorPlatformErrorCode(type),
+          description: message,
+          details: details,
+        );
+      case SignInSuccess():
+        return _authorizationTokenDataFromSignInSuccess(result);
     }
-
-    return _authorizationTokenDataFromSignInSuccess(result.success);
   }
 
   Future<SignInResult> _signIn(List<String> scopeHint, String? nonce) async {
     final SignInResult result = await _api.signIn(scopeHint, nonce);
-    _updateAuthCodeCache(result.success);
+    _updateAuthCodeCache(result is SignInSuccess ? result : null);
     return result;
   }
 
@@ -247,8 +229,8 @@ class GoogleSignInIOS extends GoogleSignInPlatform {
     // Don't clear the cache for GoogleSignInErrorCode.scopesAlreadyGranted
     // since that indicates that nothing has changed. Otherwise, update the
     // cache (with a new token on success, or clearing on failure).
-    if (result.error?.type != GoogleSignInErrorCode.scopesAlreadyGranted) {
-      _updateAuthCodeCache(result.success);
+    if (result is! SignInFailure || result.type != GoogleSignInErrorCode.scopesAlreadyGranted) {
+      _updateAuthCodeCache(result is SignInSuccess ? result : null);
     }
     return result;
   }
@@ -273,17 +255,16 @@ class GoogleSignInIOS extends GoogleSignInPlatform {
   }
 
   ({String? accessToken, String? serverAuthCode}) _authorizationTokenDataFromSignInSuccess(
-    SignInSuccess? result,
+    SignInSuccess result,
   ) {
     // Check for a relevant cached auth code to add if needed.
-    final String? cachedAuthCode =
-        result != null && result.user.userId == _cachedServerAuthCodeUserId
+    final String? cachedAuthCode = result.user.userId == _cachedServerAuthCodeUserId
         ? _cachedServerAuthCode
         : null;
 
     return (
-      accessToken: result?.accessToken,
-      serverAuthCode: result?.serverAuthCode ?? cachedAuthCode,
+      accessToken: result.accessToken,
+      serverAuthCode: result.serverAuthCode ?? cachedAuthCode,
     );
   }
 

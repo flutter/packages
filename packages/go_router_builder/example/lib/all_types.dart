@@ -4,7 +4,7 @@
 
 // ignore_for_file: public_member_api_docs, unreachable_from_main
 
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:go_router/go_router.dart';
 
 import 'shared/data.dart';
@@ -20,7 +20,6 @@ part 'all_types.g.dart';
     TypedGoRoute<DoubleRoute>(path: 'double-route/:requiredDoubleField'),
     TypedGoRoute<IntRoute>(path: 'int-route/:requiredIntField'),
     TypedGoRoute<NumRoute>(path: 'num-route/:requiredNumField'),
-    TypedGoRoute<DoubleRoute>(path: 'double-route/:requiredDoubleField'),
     TypedGoRoute<EnumRoute>(path: 'enum-route/:requiredEnumField'),
     TypedGoRoute<EnhancedEnumRoute>(
       path: 'enhanced-enum-route/:requiredEnumField',

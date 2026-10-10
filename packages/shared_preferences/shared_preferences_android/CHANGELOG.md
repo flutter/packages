@@ -1,3 +1,12 @@
+## 2.4.29
+
+* Updates Robolectric to 4.17 and adds the JVM arguments it requires for unit tests.
+* Updates minimum supported SDK version to Flutter 3.41/Dart 3.11.
+
+## 2.4.28
+
+* Updates pigeon dev_dependency to ^27.3.2 for analyzer 14 compatibility.
+
 ## 2.4.27
 
 * Converts legacy backend to Kotlin.

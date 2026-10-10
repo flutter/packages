@@ -1,3 +1,12 @@
+## 6.3.34
+
+* Updates Robolectric to 4.17 and adds the JVM arguments it requires for unit tests.
+* Updates minimum supported SDK version to Flutter 3.41/Dart 3.11.
+
+## 6.3.33
+
+* Updates pigeon dev_dependency to ^27.3.2 for analyzer 14 compatibility.
+
 ## 6.3.32
 
 * Bumps the androidx group across 10 directories with 1 update.

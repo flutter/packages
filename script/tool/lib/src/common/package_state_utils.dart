@@ -206,6 +206,8 @@ Future<bool> _isDevChange(
       pathComponents.first == 'run_tests.sh' ||
       // CONTRIBUTING.md is dev-facing.
       pathComponents.last == 'CONTRIBUTING.md' ||
+      // AGENTS.md is dev/agent-facing.
+      pathComponents.last == 'AGENTS.md' ||
       // The top-level "pending_changelogs" directory is the repo convention for storing
       // pending changelog files.
       pathComponents.first == 'pending_changelogs' ||

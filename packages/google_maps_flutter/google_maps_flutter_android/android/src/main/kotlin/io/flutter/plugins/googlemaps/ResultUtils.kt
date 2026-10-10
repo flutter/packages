@@ -4,35 +4,51 @@
 
 package io.flutter.plugins.googlemaps
 
-fun <T> completeWithError(callback: (Result<@JvmSuppressWildcards T>) -> Unit, failure: Throwable) {
-  callback(Result.failure(failure))
+import kotlin.coroutines.Continuation
+import kotlin.coroutines.CoroutineContext
+import kotlin.coroutines.EmptyCoroutineContext
+import kotlin.coroutines.intrinsics.COROUTINE_SUSPENDED
+import kotlin.coroutines.resume
+
+fun <T> resumeWithValue(continuation: Continuation<T>, value: T) {
+  continuation.resume(value)
 }
 
-fun <T> completeWithValue(callback: (Result<@JvmSuppressWildcards T>) -> Unit, value: T) {
-  callback(Result.success(value))
+fun resumeWithUnitSuccess(continuation: Continuation<Unit>) {
+  continuation.resume(Unit)
 }
 
-fun completeWithUnitSuccess(callback: (Result<Unit>) -> Unit) {
-  callback(Result.success(Unit))
+fun resumeWithException(continuation: Continuation<*>, exception: Throwable) {
+  continuation.resumeWith(Result.failure(exception))
 }
+
+fun coroutineSuspended(): Any = COROUTINE_SUSPENDED
+
+private val noopContinuation =
+    object : Continuation<Any?> {
+      override val context: CoroutineContext = EmptyCoroutineContext
+
+      override fun resumeWith(result: Result<Any?>) {}
+    }
+
+@Suppress("UNCHECKED_CAST")
+fun <T> emptyContinuation(): Continuation<T> = noopContinuation as Continuation<T>
 
 @Suppress("UNCHECKED_CAST")
 class ResultCompat<T>(private val result: Result<T>) {
   private val value: T? = result.getOrNull()
   private val exception = result.exceptionOrNull()
-  val isSuccess = result.isSuccess
-  val isFailure = result.isFailure
 
   companion object {
     @JvmStatic
-    fun <T> success(value: T, callback: Any) {
-      val castedCallback: (Result<T>) -> Unit = callback as (Result<T>) -> Unit
-      castedCallback(Result.success(value))
-    }
+    fun <T> asContinuation(result: (ResultCompat<T>) -> Unit): Continuation<T> {
+      return object : Continuation<T> {
+        override val context: CoroutineContext = EmptyCoroutineContext
 
-    @JvmStatic
-    fun <T> asCompatCallback(result: (ResultCompat<T>) -> Unit): (Result<T>) -> Unit {
-      return { result(ResultCompat(it)) }
+        override fun resumeWith(result: Result<T>) {
+          result(ResultCompat(result))
+        }
+      }
     }
   }
 

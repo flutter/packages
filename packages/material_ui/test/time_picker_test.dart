@@ -2142,6 +2142,56 @@ void main() {
         expect(result, equals(const TimeOfDay(hour: 8, minute: 15)));
       });
 
+      testWidgets('Accepts 24-hour input for a 24-hour locale', (WidgetTester tester) async {
+        // Regression test for https://github.com/flutter/flutter/issues/74018
+        //
+        // en_GB uses a 24-hour format (HH:mm), so the hour input must be
+        // parsed as a 24-hour value.
+        TimeOfDay? result;
+        await startPicker(
+          tester,
+          (TimeOfDay? time) {
+            result = time;
+          },
+          entryMode: TimePickerEntryMode.input,
+          materialType: materialType,
+          locale: const Locale('en', 'GB'),
+          // Make the 24-hour format come from the locale alone. The issue does
+          // not occur when alwaysUse24HourFormat is true.
+          alwaysUse24HourFormat: false,
+        );
+
+        Future<void> openPicker() async {
+          await tester.tap(find.text('X'));
+          await tester.pumpAndSettle();
+        }
+
+        Future<void> submitHour(String hour) async {
+          await tester.enterText(find.byType(TextField).first, hour);
+          await tester.enterText(find.byType(TextField).last, '15');
+          await finishPicker(tester);
+        }
+
+        // Hours from 0 to 23 are accepted as is. 0 and 13 to 23 used to be
+        // rejected, and 12 used to be shifted to 0 because the initial time
+        // (07:00) is in the AM period.
+        await submitHour('00');
+        expect(result, const TimeOfDay(hour: 0, minute: 15));
+        await openPicker();
+        await submitHour('12');
+        expect(result, const TimeOfDay(hour: 12, minute: 15));
+        await openPicker();
+        await submitHour('23');
+        expect(result, const TimeOfDay(hour: 23, minute: 15));
+
+        // Hours outside 0 to 23 are rejected and keep the dialog open.
+        await openPicker();
+        await submitHour('-1');
+        expect(find.byType(TimePickerDialog), findsOneWidget);
+        await submitHour('24');
+        expect(find.byType(TimePickerDialog), findsOneWidget);
+      });
+
       // Fixes regression that was reverted in https://github.com/flutter/flutter/pull/64094#pullrequestreview-469836378.
       testWidgets('Ensure hour/minute fields are top-aligned with the separator', (
         WidgetTester tester,
@@ -2875,11 +2925,24 @@ Future<Offset?> startPicker(
   String? cancelText,
   String? confirmText,
   bool emptyInitialInput = false,
+  Locale? locale,
+  bool? alwaysUse24HourFormat,
 }) async {
   await tester.pumpWidget(
     MaterialApp(
       theme: theme ?? ThemeData(useMaterial3: materialType == MaterialType.material3),
       restorationScopeId: 'app',
+      locale: locale,
+      supportedLocales: locale == null ? const <Locale>[Locale('en', 'US')] : <Locale>[locale],
+      localizationsDelegates: locale == null ? null : GlobalMaterialLocalizations.delegates,
+      builder: alwaysUse24HourFormat == null
+          ? null
+          : (BuildContext context, Widget? child) {
+              return MediaQuery(
+                data: MediaQuery.of(context).copyWith(alwaysUse24HourFormat: alwaysUse24HourFormat),
+                child: child!,
+              );
+            },
       home: _TimePickerLauncher(
         onChanged: onChanged,
         entryMode: entryMode,

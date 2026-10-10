@@ -110,7 +110,7 @@ void main() {
 
     expect(pressed, isTrue);
     focusNode.dispose();
-  });
+  }, tags: 'reduced-web-test-set');
 
   testWidgets('materialTapTargetSize.padded expands hit test area', (WidgetTester tester) async {
     var pressed = 0;
@@ -651,5 +651,16 @@ void main() {
       RendererBinding.instance.mouseTracker.debugDeviceActiveCursor(1),
       SystemMouseCursors.basic,
     );
+  }, tags: 'reduced-web-test-set');
+
+  testWidgets('RawMaterialButton does not crash at zero area', (WidgetTester tester) async {
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Center(
+          child: SizedBox.shrink(child: RawMaterialButton(onPressed: () {})),
+        ),
+      ),
+    );
+    expect(tester.getSize(find.byType(RawMaterialButton)), Size.zero);
   });
 }

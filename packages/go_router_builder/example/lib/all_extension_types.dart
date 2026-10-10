@@ -4,7 +4,7 @@
 
 // ignore_for_file: public_member_api_docs, unreachable_from_main
 
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:go_router/go_router.dart';
 
 import 'shared/data.dart';
@@ -26,9 +26,6 @@ part 'all_extension_types.g.dart';
     ),
     TypedGoRoute<IntExtensionRoute>(path: 'int-route/:requiredIntField'),
     TypedGoRoute<NumExtensionRoute>(path: 'num-route/:requiredNumField'),
-    TypedGoRoute<DoubleExtensionRoute>(
-      path: 'double-route/:requiredDoubleField',
-    ),
     TypedGoRoute<EnumExtensionRoute>(path: 'enum-route/:requiredEnumField'),
     TypedGoRoute<EnhancedEnumExtensionRoute>(
       path: 'enhanced-enum-route/:requiredEnumField',
@@ -49,14 +46,23 @@ class AllTypesBaseRoute extends GoRouteData with $AllTypesBaseRoute {
 }
 
 extension type const BigIntExtension(BigInt value) {}
+
 extension type const BoolExtension(bool value) {}
+
 extension type const DateTimeExtension(DateTime value) {}
+
 extension type const DoubleExtension(double value) {}
+
 extension type const IntExtension(int value) {}
+
 extension type const NumExtension(num value) {}
+
 extension type const StringExtension(String value) {}
+
 extension type const UriExtension(Uri value) {}
+
 extension type const PersonDetailsExtension(PersonDetails value) {}
+
 extension type const SportDetailsExtension(SportDetails value) {}
 
 class BigIntExtensionRoute extends GoRouteData with $BigIntExtensionRoute {

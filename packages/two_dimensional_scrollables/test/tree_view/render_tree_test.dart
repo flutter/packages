@@ -344,7 +344,7 @@ void main() {
       expect(horizontalController.position.maxScrollExtent, 90.0);
 
       // Collapse a node. The horizontal extent should change to zero,
-      // and the position should corrrect.
+      // and the position should correct.
       treeController.toggleNode(treeController.getNodeFor('Third')!);
       await tester.pumpAndSettle();
       expect(horizontalController.position.pixels, 0.0);
@@ -818,6 +818,7 @@ void main() {
         var rows = 10;
         late StateSetter setState;
         final controller = ScrollController();
+        addTearDown(controller.dispose);
         await tester.pumpWidget(
           MaterialApp(
             home: Scaffold(
@@ -875,6 +876,7 @@ void main() {
       ) async {
         final treeController = TreeViewController();
         final scrollController = ScrollController();
+        addTearDown(scrollController.dispose);
 
         // Setup a TreeView with one expanded root node and one child node.
         final treeNodes = <TreeViewNode<String>>[

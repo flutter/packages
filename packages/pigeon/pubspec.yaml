@@ -2,7 +2,7 @@ name: pigeon
 description: Code generator tool to make communication between Flutter and the host platform type-safe and easier.
 repository: https://github.com/flutter/packages/tree/main/packages/pigeon
 issue_tracker: https://github.com/flutter/flutter/issues?q=is%3Aissue+is%3Aopen+label%3A%22p%3A+pigeon%22
-version: 28.0.0 # This must match the version in lib/src/generator_tools.dart
+version: 29.0.8 # This must match the version in lib/src/generator_tools.dart
 
 environment:
   sdk: ^3.11.0
@@ -20,6 +20,19 @@ dependencies:
   yaml: ^3.1.1
 
 dev_dependencies:
+  ffi: ^2.2.0
+  # When updating ffigen or objective_c, check that _swiftObjcSelectorFirstPiece
+  # in lib/src/dart/dart_generator.dart and _swiftFfiReservedFieldNames in
+  # lib/src/pigeon_lib_internal.dart still match the Dart names FFIgen generates.
+  ffigen: 22.0.0
+  jni: ^1.1.0
+  # When updating jnigen, check that _JniBindingNamer in
+  # lib/src/dart/dart_generator.dart, and the name lists it uses, still match
+  # JNIgen's renamer, then update the version linked in its doc comment.
+  jnigen: 1.0.1
+  objective_c: ^9.6.2
+  swift2objc: 0.3.1
+  swiftgen: 0.2.0
   test: ^1.11.1
 
 topics:

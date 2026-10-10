@@ -77,9 +77,8 @@ class TestWidgetInspectorService extends Object with WidgetInspectorService {
   }
 
   Iterable<Map<Object, Object?>> getServiceExtensionStateChangedEvents(String extensionName) {
-    return dispatchedEvents(
-      'Flutter.ServiceExtensionStateChanged',
-    ).where((Map<Object, Object?> event) => event['extension'] == extensionName);
+    return dispatchedEvents('Flutter.ServiceExtensionStateChanged')
+        .where((Map<Object, Object?> event) => event['extension'] == extensionName);
   }
 
   Future<Object?> testExtension(String name, Map<String, String> arguments) async {
@@ -94,9 +93,9 @@ class TestWidgetInspectorService extends Object with WidgetInspectorService {
     expect(extensions, contains(name));
     // Encode and decode to JSON to match behavior using a real service
     // extension where only JSON is allowed.
-    return (json.decode(json.encode(await extensions[name]!(arguments)))
-            as Map<String, dynamic>)['enabled']
-        .toString();
+    return (json.decode(
+      json.encode(await extensions[name]!(arguments)),
+    ) as Map<String, dynamic>)['enabled'].toString();
   }
 
   int rebuildCount = 0;

@@ -9,31 +9,38 @@ import 'dart:io' as io;
 import 'package:file/file.dart';
 import 'package:flutter_plugin_tools/src/common/process_runner.dart';
 import 'package:mockito/mockito.dart';
-import 'package:platform/platform.dart';
+import 'package:platform/testing.dart';
 
 import 'common/package_command_test.mocks.dart';
 
-class MockPlatform extends Mock implements Platform {
-  MockPlatform({this.isLinux = false, this.isMacOS = false, this.isWindows = false});
-
-  @override
-  bool isLinux;
-
-  @override
-  bool isMacOS;
-
-  @override
-  bool isWindows;
-
-  @override
-  Uri get script =>
-      isWindows ? Uri.file(r'C:\foo\bar', windows: true) : Uri.file('/foo/bar', windows: false);
-
-  @override
-  Map<String, String> environment = <String, String>{};
-
-  @override
-  String get pathSeparator => isWindows ? r'\' : '/';
+// TODO(stuartmorgan): Consider updating call sites to use TestNativePlatform directly; this is a
+// shim from the previous implementation, which mocked Platform directly, to fix tests when the
+// ability to mock Platform was removed.
+NativePlatform createMockPlatform({
+  bool isLinux = false,
+  bool isMacOS = false,
+  bool isWindows = false,
+}) {
+  assert(
+    !(isLinux && isMacOS) && !(isLinux && isWindows) && !(isMacOS && isWindows),
+    'Only one platform can be selected.',
+  );
+  final String platform;
+  if (isMacOS) {
+    platform = NativePlatform.macOS;
+  } else if (isWindows) {
+    platform = NativePlatform.windows;
+  } else {
+    platform = NativePlatform.linux;
+  }
+  return TestNativePlatform(
+    operatingSystem: platform,
+    script: isWindows
+        ? Uri.file(r'C:\foo\bar', windows: true)
+        : Uri.file('/foo/bar', windows: false),
+    environment: <String, String>{},
+    pathSeparator: isWindows ? r'\' : '/',
+  );
 }
 
 class MockProcess extends Mock implements io.Process {

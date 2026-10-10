@@ -696,7 +696,7 @@ TEST(CaptureController, StartRecordSuccess) {
 
   // Start record
   ComPtr<MockCaptureRecordSink> record_sink = new MockCaptureRecordSink();
-  std::string mock_path_to_video = "mock_path_to_video";
+  std::string mock_path_to_video = "mock_path_to_video.mp4";
   MockRecordStart(capture_controller.get(), engine.Get(), record_sink.Get(),
                   camera.get(), mock_path_to_video);
 
@@ -761,7 +761,7 @@ TEST(CaptureController, StartRecordWithSettingsSuccess) {
   // Start record
   ComPtr<MockCaptureRecordSink> record_sink = new MockCaptureRecordSink();
 
-  std::string mock_path_to_video = "mock_path_to_video";
+  std::string mock_path_to_video = "mock_path_to_video.mp4";
 
   EXPECT_CALL(*engine.Get(), StartRecord()).Times(1).WillOnce(Return(S_OK));
 
@@ -848,7 +848,7 @@ TEST(CaptureController, ReportsStartRecordError) {
                                   Eq("Failed to start video recording")))
       .Times(1);
 
-  capture_controller->StartRecord("mock_path");
+  capture_controller->StartRecord("mock_path.mp4");
 
   capture_controller = nullptr;
   texture_registrar = nullptr;
@@ -889,7 +889,7 @@ TEST(CaptureController, ReportsStartRecordAccessDenied) {
                                   Eq("Failed to start video recording")))
       .Times(1);
 
-  capture_controller->StartRecord("mock_path");
+  capture_controller->StartRecord("mock_path.mp4");
 
   capture_controller = nullptr;
   texture_registrar = nullptr;
@@ -919,7 +919,7 @@ TEST(CaptureController, ReportsStartRecordErrorEvent) {
 
   // Start record
   ComPtr<MockCaptureRecordSink> record_sink = new MockCaptureRecordSink();
-  std::string mock_path_to_video = "mock_path_to_video";
+  std::string mock_path_to_video = "mock_path_to_video.mp4";
 
   EXPECT_CALL(*engine.Get(), StartRecord()).Times(1).WillOnce(Return(S_OK));
 
@@ -984,7 +984,7 @@ TEST(CaptureController, ReportsStartRecordAccessDeniedEvent) {
 
   // Start record
   ComPtr<MockCaptureRecordSink> record_sink = new MockCaptureRecordSink();
-  std::string mock_path_to_video = "mock_path_to_video";
+  std::string mock_path_to_video = "mock_path_to_video.mp4";
 
   EXPECT_CALL(*engine.Get(), StartRecord()).Times(1).WillOnce(Return(S_OK));
 
@@ -1049,7 +1049,7 @@ TEST(CaptureController, StopRecordSuccess) {
 
   // Start record
   ComPtr<MockCaptureRecordSink> record_sink = new MockCaptureRecordSink();
-  std::string mock_path_to_video = "mock_path_to_video";
+  std::string mock_path_to_video = "mock_path_to_video.mp4";
   MockRecordStart(capture_controller.get(), engine.Get(), record_sink.Get(),
                   camera.get(), mock_path_to_video);
 
@@ -1095,7 +1095,7 @@ TEST(CaptureController, ReportsStopRecordError) {
   // Start record
   ComPtr<MockCaptureRecordSink> record_sink = new MockCaptureRecordSink();
   MockRecordStart(capture_controller.get(), engine.Get(), record_sink.Get(),
-                  camera.get(), "mock_path_to_video");
+                  camera.get(), "mock_path_to_video.mp4");
 
   // Cause stop record to fail
   EXPECT_CALL(*(engine.Get()), StopRecord(true, false))
@@ -1139,7 +1139,7 @@ TEST(CaptureController, ReportsStopRecordAccessDenied) {
   // Start record
   ComPtr<MockCaptureRecordSink> record_sink = new MockCaptureRecordSink();
   MockRecordStart(capture_controller.get(), engine.Get(), record_sink.Get(),
-                  camera.get(), "mock_path_to_video");
+                  camera.get(), "mock_path_to_video.mp4");
 
   // Cause stop record to fail
   EXPECT_CALL(*(engine.Get()), StopRecord(true, false))
@@ -1182,7 +1182,7 @@ TEST(CaptureController, ReportsStopRecordErrorEvent) {
 
   // Start record
   ComPtr<MockCaptureRecordSink> record_sink = new MockCaptureRecordSink();
-  std::string mock_path_to_video = "mock_path_to_video";
+  std::string mock_path_to_video = "mock_path_to_video.mp4";
   MockRecordStart(capture_controller.get(), engine.Get(), record_sink.Get(),
                   camera.get(), mock_path_to_video);
 
@@ -1223,7 +1223,7 @@ TEST(CaptureController, ReportsStopRecordAccessDeniedEvent) {
 
   // Start record
   ComPtr<MockCaptureRecordSink> record_sink = new MockCaptureRecordSink();
-  std::string mock_path_to_video = "mock_path_to_video";
+  std::string mock_path_to_video = "mock_path_to_video.mp4";
   MockRecordStart(capture_controller.get(), engine.Get(), record_sink.Get(),
                   camera.get(), mock_path_to_video);
 

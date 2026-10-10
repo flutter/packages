@@ -103,6 +103,8 @@ final Map<Version, Version> _dartSdkForFlutterSdk = <Version, Version>{
   Version(3, 41, 0): Version(3, 11, 0),
   Version(3, 41, 9): Version(3, 11, 5),
   Version(3, 44, 0): Version(3, 12, 0),
+  Version(3, 44, 9): Version(3, 12, 2),
+  Version(3, 47, 0): Version(3, 13, 0),
 };
 
 /// Returns the version of the Dart SDK that shipped with the given Flutter
@@ -160,7 +162,7 @@ Directory toolCacheDirectory(Directory repoRoot) {
 }
 
 /// The directory to which to write logs and other artifacts, if set in CI.
-Directory? ciLogsDirectory(Platform platform, FileSystem fileSystem) {
+Directory? ciLogsDirectory(NativePlatform platform, FileSystem fileSystem) {
   final String? logsDirectoryPath = platform.environment['FLUTTER_LOGS_DIR'];
   Directory? logsDirectory;
   if (logsDirectoryPath != null) {

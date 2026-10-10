@@ -25,6 +25,9 @@ import 'material_localizations.dart';
 import 'text_theme.dart';
 import 'theme.dart';
 
+part 'generated/dialog_defaults_m3.g.dart';
+part 'generated/dialog_fullscreen_defaults_m3.g.dart';
+
 // Examples can assume:
 // enum Department { treasury, state }
 // late BuildContext context;
@@ -1440,8 +1443,7 @@ class _FullWindowDialogWrapper extends StatelessWidget {
       insetPadding: EdgeInsets.zero,
       shape: const RoundedRectangleBorder(), // No rounded corners.
       alignment: Alignment.topLeft, // Align to top-left so it fills from corner.
-      constraints:
-          const BoxConstraints.expand(), // Remove default constraints so dialog can expand to fill available space.
+      constraints: const BoxConstraints.expand(), // Remove default constraints so dialog can expand to fill available space.
     );
 
     return DialogTheme(
@@ -1669,6 +1671,7 @@ class _DialogContentPage extends Page<void> {
 ///    [DisplayFeature]s can split the screen into sub-screens.
 ///  * <https://material.io/design/components/dialogs.html>
 ///  * <https://m3.material.io/components/dialogs>
+@awaitNotRequired
 Future<T?> showDialog<T>({
   required BuildContext context,
   required WidgetBuilder builder,
@@ -1754,6 +1757,7 @@ Future<T?> showDialog<T>({
 ///
 /// On Cupertino platforms, [barrierColor], [useSafeArea], and
 /// [traversalEdgeBehavior] are ignored.
+@awaitNotRequired
 Future<T?> showAdaptiveDialog<T>({
   required BuildContext context,
   required WidgetBuilder builder,
@@ -1980,69 +1984,3 @@ class _DialogDefaultsM2 extends DialogThemeData {
   @override
   EdgeInsetsGeometry? get actionsPadding => EdgeInsets.zero;
 }
-
-// BEGIN GENERATED TOKEN PROPERTIES - DialogFullscreen
-
-// Do not edit by hand. The code between the "BEGIN GENERATED" and
-// "END GENERATED" comments are generated from data in the Material
-// Design token database by the script:
-//   dev/tools/gen_defaults/bin/gen_defaults.dart.
-
-// dart format off
-class _DialogFullscreenDefaultsM3 extends DialogThemeData {
-  const _DialogFullscreenDefaultsM3(this.context): super(clipBehavior: Clip.none);
-
-  final BuildContext context;
-
-  @override
-  Color? get backgroundColor => Theme.of(context).colorScheme.surface;
-}
-// dart format on
-
-// END GENERATED TOKEN PROPERTIES - DialogFullscreen
-
-// BEGIN GENERATED TOKEN PROPERTIES - Dialog
-
-// Do not edit by hand. The code between the "BEGIN GENERATED" and
-// "END GENERATED" comments are generated from data in the Material
-// Design token database by the script:
-//   dev/tools/gen_defaults/bin/gen_defaults.dart.
-
-// dart format off
-class _DialogDefaultsM3 extends DialogThemeData {
-  _DialogDefaultsM3(this.context)
-    : super(
-        alignment: Alignment.center,
-        elevation: 6.0,
-        shape: const RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(28.0))),
-        clipBehavior: Clip.none,
-      );
-
-  final BuildContext context;
-  late final ColorScheme _colors = Theme.of(context).colorScheme;
-  late final TextTheme _textTheme = Theme.of(context).textTheme;
-
-  @override
-  Color? get iconColor => _colors.secondary;
-
-  @override
-  Color? get backgroundColor => _colors.surfaceContainerHigh;
-
-  @override
-  Color? get shadowColor => Colors.transparent;
-
-  @override
-  Color? get surfaceTintColor => Colors.transparent;
-
-  @override
-  TextStyle? get titleTextStyle => _textTheme.headlineSmall;
-
-  @override
-  TextStyle? get contentTextStyle => _textTheme.bodyMedium;
-
-  @override
-  EdgeInsetsGeometry? get actionsPadding => const EdgeInsets.only(left: 24.0, right: 24.0, bottom: 24.0);
-}
-// dart format on
-
-// END GENERATED TOKEN PROPERTIES - Dialog

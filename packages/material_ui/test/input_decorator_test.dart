@@ -1781,9 +1781,8 @@ void main() {
           ..rrect(
             style: PaintingStyle.fill,
             color: const Color(0xFF00FF00),
-            rrect: const BorderRadius.all(
-              Radius.circular(borderRadius),
-            ).toRRect(const Rect.fromLTWH(0, 0, inputDecoratorWidth, inputDecoratorHeight)),
+            rrect: const BorderRadius.all(Radius.circular(borderRadius))
+                .toRRect(const Rect.fromLTWH(0, 0, inputDecoratorWidth, inputDecoratorHeight)),
           )
           ..restore(),
       );
@@ -1876,9 +1875,8 @@ void main() {
           ..rrect(
             style: PaintingStyle.fill,
             color: const Color(0xFF00FF00),
-            rrect: const BorderRadius.all(
-              Radius.circular(12.0),
-            ).toRRect(const Rect.fromLTWH(0, 0, 800.0, 56.0)),
+            rrect: const BorderRadius.all(Radius.circular(12.0))
+                .toRRect(const Rect.fromLTWH(0, 0, 800.0, 56.0)),
           )
           // Border outline. The rrect is the -center- of the 1.0 stroked outline.
           ..rrect(
@@ -7681,17 +7679,15 @@ void main() {
     });
 
     test('InputDecorationThemeData.isCollapsed is applied', () {
-      final InputDecoration decoration = const InputDecoration(
-        hintText: 'Hello, Flutter!',
-      ).applyDefaults(const InputDecorationThemeData(isCollapsed: true));
+      final InputDecoration decoration = const InputDecoration(hintText: 'Hello, Flutter!')
+          .applyDefaults(const InputDecorationThemeData(isCollapsed: true));
 
       expect(decoration.isCollapsed, true);
     });
 
     test('InputDecorationThemeData.isCollapsed defaults to false', () {
-      final InputDecoration decoration = const InputDecoration(
-        hintText: 'Hello, Flutter!',
-      ).applyDefaults(const InputDecorationThemeData());
+      final InputDecoration decoration = const InputDecoration(hintText: 'Hello, Flutter!')
+          .applyDefaults(const InputDecorationThemeData());
 
       expect(decoration.isCollapsed, false);
     });
@@ -8569,9 +8565,8 @@ void main() {
   testWidgets('InputDecorationThemeData.toString()', (WidgetTester tester) async {
     // Regression test for https://github.com/flutter/flutter/issues/19305
     expect(
-      const InputDecorationThemeData(
-        contentPadding: EdgeInsetsDirectional.only(start: 5.0),
-      ).toString(),
+      const InputDecorationThemeData(contentPadding: EdgeInsetsDirectional.only(start: 5.0))
+          .toString(),
       contains('contentPadding: EdgeInsetsDirectional(5.0, 0.0, 0.0, 0.0)'),
     );
 
@@ -14450,9 +14445,8 @@ void main() {
           ..rrect(
             style: PaintingStyle.fill,
             color: const Color(0xFF00FF00),
-            rrect: const BorderRadius.all(
-              Radius.circular(12.0),
-            ).toRRect(const Rect.fromLTWH(0, 0, 800.0, 56.0)),
+            rrect: const BorderRadius.all(Radius.circular(12.0))
+                .toRRect(const Rect.fromLTWH(0, 0, 800.0, 56.0)),
           )
           // Border outline. The rrect is the -center- of the 1.0 stroked outline.
           ..rrect(
@@ -15102,9 +15096,8 @@ void main() {
           ..rrect(
             style: PaintingStyle.fill,
             color: const Color(0xFF00FF00),
-            rrect: const BorderRadius.all(
-              Radius.circular(borderRadius),
-            ).toRRect(const Rect.fromLTWH(0, 0, inputDecoratorWidth, inputDecoratorHeight)),
+            rrect: const BorderRadius.all(Radius.circular(borderRadius))
+                .toRRect(const Rect.fromLTWH(0, 0, inputDecoratorWidth, inputDecoratorHeight)),
           )
           ..restore(),
       );
@@ -15221,7 +15214,7 @@ void main() {
 
       // Ideographic (incorrect) value is 50.299999713897705
       expect(tester.getBottomLeft(find.text('hint')).dy, isBrowser ? 45.75 : 47.75);
-    });
+    }, tags: 'reduced-web-test-set');
 
     testWidgets('InputDecorator floating label Y coordinate', (WidgetTester tester) async {
       // Regression test for https://github.com/flutter/flutter/issues/54028
@@ -15769,5 +15762,40 @@ void main() {
       ),
     );
     expect(tester.getSize(find.byType(InputDecorator)), Size.zero);
+  });
+
+  testWidgets('InputDecorator respects individual text directions for label and hint', (
+    WidgetTester tester,
+  ) async {
+    const hintText = 'Hint Text';
+    const labelText = 'Label Text';
+
+    await tester.pumpWidget(
+      const MaterialApp(
+        home: Scaffold(
+          body: Directionality(
+            textDirection: TextDirection.ltr,
+            child: Center(
+              child: InputDecorator(
+                decoration: InputDecoration(
+                  hintText: hintText,
+                  labelText: labelText,
+                  labelTextDirection: TextDirection.rtl,
+                  hintTextDirection: TextDirection.rtl,
+                ),
+                isEmpty: true,
+                child: SizedBox.shrink(),
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+
+    final Text hint = tester.widget<Text>(find.text(hintText));
+    expect(hint.textDirection, TextDirection.rtl);
+
+    final Text label = tester.widget<Text>(find.text(labelText));
+    expect(label.textDirection, TextDirection.rtl);
   });
 }

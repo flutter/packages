@@ -17,8 +17,8 @@ class GradleProject {
   /// [processRunner].
   GradleProject(
     this.flutterProject, {
+    required this.platform,
     this.processRunner = const ProcessRunner(),
-    this.platform = const LocalPlatform(),
   });
 
   /// The directory of a Flutter project to run Gradle commands in.
@@ -28,7 +28,7 @@ class GradleProject {
   final ProcessRunner processRunner;
 
   /// The platform that commands are being run on.
-  final Platform platform;
+  final NativePlatform platform;
 
   /// The project's 'android' directory.
   Directory get androidDirectory => flutterProject.platformDirectory(FlutterPlatform.android);
