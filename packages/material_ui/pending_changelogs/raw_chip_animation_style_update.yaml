@@ -1,0 +1,3 @@
+changelog: |
+  - Updates RawChip animation durations when its animation style changes.
+version: patch
