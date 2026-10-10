@@ -76,6 +76,25 @@ import Testing
         finalizer = nil
       }
     }
+
+    @MainActor @Test func callbackRegistrarCycleIsReleasedOnTeardown() {
+      let plugin = WebViewFlutterPlugin(binaryMessenger: TestBinaryMessenger())
+      let registrarReference = WeakTestReference(plugin.proxyApiRegistrar)
+      autoreleasepool {
+        let handler = ScriptMessageHandlerImpl(
+          api: plugin.proxyApiRegistrar!.apiDelegate.pigeonApiWKScriptMessageHandler(
+            plugin.proxyApiRegistrar!),
+          registrar: plugin.proxyApiRegistrar!)
+        _ = plugin.proxyApiRegistrar!.instanceManager.addHostCreatedInstance(handler)
+        #expect(registrarReference.value != nil)
+
+        (plugin as FlutterApplicationLifeCycleDelegate).applicationWillTerminate!(
+          UIApplication.shared)
+      }
+
+      #expect(plugin.proxyApiRegistrar == nil)
+      #expect(registrarReference.value == nil)
+    }
   #endif
 }
 
@@ -84,5 +103,13 @@ class TestFinalizer {
 
   deinit {
     Self.onDeinit?()
+  }
+}
+
+final class WeakTestReference<Value: AnyObject> {
+  weak var value: Value?
+
+  init(_ value: Value?) {
+    self.value = value
   }
 }

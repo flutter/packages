@@ -7,7 +7,7 @@ import WebKit
 /// Implementation of `WKNavigationDelegate` that calls to Dart in callback methods.
 public class NavigationDelegateImpl: NSObject, WKNavigationDelegate {
   let api: PigeonApiProtocolWKNavigationDelegate
-  unowned let registrar: ProxyAPIRegistrar
+  let registrar: ProxyAPIRegistrar
 
   init(api: PigeonApiProtocolWKNavigationDelegate, registrar: ProxyAPIRegistrar) {
     self.api = api

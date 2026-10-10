@@ -6,7 +6,7 @@ import WebKit
 
 class WebViewImpl: WKWebView {
   let api: PigeonApiProtocolWKWebView
-  unowned let registrar: ProxyAPIRegistrar
+  let registrar: ProxyAPIRegistrar
 
   init(
     api: PigeonApiProtocolWKWebView, registrar: ProxyAPIRegistrar, frame: CGRect,
