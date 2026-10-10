@@ -1527,38 +1527,43 @@ void main() {
     );
   });
 
-  testWidgets('DropdownButtonFormField enabled: true without onChanged updates FormFieldState.value', (WidgetTester tester) async {
-    final fieldKey = GlobalKey<FormFieldState<int>>();
-    await tester.pumpWidget(
-      MaterialApp(
-        home: Material(
-          child: DropdownButtonFormField<int>(
-            key: fieldKey,
-            value: 1,
-            items: const <DropdownMenuItem<int>>[
-              DropdownMenuItem<int>(value: 1, child: Text('one')),
-              DropdownMenuItem<int>(value: 2, child: Text('two')),
-            ],
-            enabled: true,
+  testWidgets(
+    'DropdownButtonFormField enabled: true without onChanged updates FormFieldState.value',
+    (WidgetTester tester) async {
+      final fieldKey = GlobalKey<FormFieldState<int>>();
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Material(
+            child: DropdownButtonFormField<int>(
+              key: fieldKey,
+              value: 1,
+              items: const <DropdownMenuItem<int>>[
+                DropdownMenuItem<int>(value: 1, child: Text('one')),
+                DropdownMenuItem<int>(value: 2, child: Text('two')),
+              ],
+              enabled: true,
+            ),
           ),
         ),
-      ),
-    );
+      );
 
-    // Open the menu
-    await tester.tap(find.text('one'));
-    await tester.pumpAndSettle();
+      // Open the menu,
+      await tester.tap(find.text('one'));
+      await tester.pumpAndSettle();
 
-    // Select the second item
-    await tester.tap(find.text('two').last);
-    await tester.pumpAndSettle();
+      // Select the second item,
+      await tester.tap(find.text('two').last);
+      await tester.pumpAndSettle();
 
-    // Menu should be closed and value updated
-    expect(fieldKey.currentState!.value, 2);
-    expect(find.text('two'), findsOneWidget);
-  });
+      // Menu should be closed and value updated.
+      expect(fieldKey.currentState!.value, 2);
+      expect(find.text('two'), findsOneWidget);
+    },
+  );
 
-  testWidgets('DropdownButtonFormField enabled: false with onChanged does not open menu', (WidgetTester tester) async {
+  testWidgets('DropdownButtonFormField enabled: false with onChanged does not open menu', (
+    WidgetTester tester,
+  ) async {
     await tester.pumpWidget(
       MaterialApp(
         home: Material(
@@ -1575,15 +1580,17 @@ void main() {
       ),
     );
 
-    // Attempt to open the menu
+    // Attempt to open the menu.
     await tester.tap(find.text('one'));
     await tester.pumpAndSettle();
 
-    // Menu should not open, so 'two' should not be visible
+    // Menu should not open, so 'two' should not be visible.
     expect(find.text('two'), findsNothing);
   });
 
-  testWidgets('DropdownButtonFormField with onChanged: null still autovalidates', (WidgetTester tester) async {
+  testWidgets('DropdownButtonFormField with onChanged: null still autovalidates', (
+    WidgetTester tester,
+  ) async {
     await tester.pumpWidget(
       MaterialApp(
         home: Material(

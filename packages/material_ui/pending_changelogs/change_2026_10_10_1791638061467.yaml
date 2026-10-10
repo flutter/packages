@@ -1,0 +1,3 @@
+changelog: |
+  - Adds `enabled` parameter to `DropdownButtonFormField` to allow disabling the field without removing the `onChanged` callback.
+version: patch
