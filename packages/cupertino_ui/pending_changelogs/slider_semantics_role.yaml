@@ -1,0 +1,3 @@
+changelog: |
+  - Adds `SemanticsRole.slider` and min/max value bounds to `CupertinoSlider` semantics.
+version: patch
