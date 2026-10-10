@@ -1540,9 +1540,7 @@ void main() {
     expect(textFieldWidget.hintLocales, hintLocales);
   });
 
-  testWidgets('Passes through enableInlinePrediction to TextField', (
-    WidgetTester tester,
-  ) async {
+  testWidgets('Passes through enableInlinePrediction to TextField', (WidgetTester tester) async {
     const enableInlinePrediction = false;
 
     await tester.pumpWidget(
