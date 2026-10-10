@@ -23,9 +23,12 @@ final class FakeIAP2Callback: InAppPurchase2CallbackAPIProtocol {
 
 @available(iOS 15.0, macOS 12.0, *)
 final class InAppPurchase2PluginTests: XCTestCase {
+  // StoreKit 2's storekitd awaits AMSEngagement over XPC on every purchase, which has an
+  // internal ~6-7.5s timeout when amsengagementd is cold-starting on a fresh simulator.
+  private let purchaseTimeout: TimeInterval = 10
   private var session: SKTestSession!
   private var plugin: InAppPurchasePlugin!
-  private var callback: FakeIAP2Callback = FakeIAP2Callback()
+  private var callback: FakeIAP2Callback!
 
   override func setUp() async throws {
     try await super.setUp()
@@ -35,6 +38,7 @@ final class InAppPurchase2PluginTests: XCTestCase {
     session.clearTransactions()
     session.disableDialogs = true
 
+    callback = FakeIAP2Callback()
     plugin = InAppPurchasePluginStub(receiptManager: FIAPReceiptManagerStub()) { request in
       DefaultRequestHandler(requestHandler: FIAPRequestHandler(request: request))
     }
@@ -43,17 +47,13 @@ final class InAppPurchase2PluginTests: XCTestCase {
   }
 
   override func tearDown() async throws {
+    try? plugin.stopListeningToTransactions()
+    plugin = nil
+    callback = nil
     self.session.clearTransactions()
     session.disableDialogs = false
-  }
-
-  /// Skips tests that make purchases through `SKTestSession`, because these
-  /// purchases sometimes never complete on CI.
-  ///
-  /// These should be re-enabled once https://github.com/flutter/flutter/issues/193451
-  /// is fixed.
-  private func skipFlakyPurchaseTest() throws {
-    throw XCTSkip("Test is flaky. See https://github.com/flutter/flutter/issues/193451")
+    session = nil
+    try await super.tearDown()
   }
 
   func testCanMakePayments() throws {
@@ -71,10 +71,11 @@ final class InAppPurchase2PluginTests: XCTestCase {
         fetchedProductMsg = productMessages.first
         expectation.fulfill()
       case .failure(let error):
-        print("Failed to fetch products: \(error.localizedDescription)")
+        XCTFail("Failed to fetch products: \(error.localizedDescription)")
+        expectation.fulfill()
       }
     }
-    await fulfillment(of: [expectation], timeout: 5)
+    await fulfillment(of: [expectation], timeout: purchaseTimeout)
 
     let testProduct = try await Product.products(for: ["subscription_silver"]).first
 
@@ -85,7 +86,6 @@ final class InAppPurchase2PluginTests: XCTestCase {
   }
 
   func testGetTransactions() async throws {
-    try skipFlakyPurchaseTest()
     let purchaseExpectation = self.expectation(description: "Purchase should succeed")
     let transactionExpectation = self.expectation(
       description: "Getting transactions should succeed")
@@ -96,10 +96,11 @@ final class InAppPurchase2PluginTests: XCTestCase {
         purchaseExpectation.fulfill()
       case .failure(let error):
         XCTFail("Purchase should NOT fail. Failed with \(error)")
+        purchaseExpectation.fulfill()
       }
     }
 
-    await fulfillment(of: [purchaseExpectation], timeout: 5)
+    await fulfillment(of: [purchaseExpectation], timeout: purchaseTimeout)
 
     XCTAssert(callback.lastUpdate.count == 1)
     XCTAssert(
@@ -115,9 +116,10 @@ final class InAppPurchase2PluginTests: XCTestCase {
         transactionExpectation.fulfill()
       case .failure(let error):
         XCTFail("Getting transactions should NOT fail. Failed with \(error)")
+        transactionExpectation.fulfill()
       }
     }
-    await fulfillment(of: [transactionExpectation], timeout: 5)
+    await fulfillment(of: [transactionExpectation], timeout: purchaseTimeout)
   }
 
   func testGetDiscountedProducts() async throws {
@@ -129,10 +131,12 @@ final class InAppPurchase2PluginTests: XCTestCase {
       case .success(let productMessages):
         fetchedProductMsg = productMessages.first
         expectation.fulfill()
-      case .failure(let error): print("Failed to fetch products: \(error.localizedDescription)")
+      case .failure(let error):
+        XCTFail("Failed to fetch products: \(error.localizedDescription)")
+        expectation.fulfill()
       }
     }
-    await fulfillment(of: [expectation], timeout: 5)
+    await fulfillment(of: [expectation], timeout: purchaseTimeout)
 
     let testProduct = try await Product.products(for: ["subscription_silver"]).first
 
@@ -153,15 +157,15 @@ final class InAppPurchase2PluginTests: XCTestCase {
         expectation.fulfill()
       case .failure:
         XCTFail("Products should be successfully fetched")
+        expectation.fulfill()
       }
     }
-    await fulfillment(of: [expectation], timeout: 5)
+    await fulfillment(of: [expectation], timeout: purchaseTimeout)
 
     XCTAssert(fetchedProductMsg?.count == 0)
   }
 
   func testGetTransactionJsonRepresentation() async throws {
-    try skipFlakyPurchaseTest()
     let expectation = self.expectation(description: "Purchase request should succeed")
 
     plugin.purchase(id: "consumable", options: nil) { result in
@@ -170,10 +174,11 @@ final class InAppPurchase2PluginTests: XCTestCase {
         expectation.fulfill()
       case .failure(let error):
         XCTFail("Purchase should NOT fail. Failed with \(error)")
+        expectation.fulfill()
       }
     }
 
-    await fulfillment(of: [expectation], timeout: 5)
+    await fulfillment(of: [expectation], timeout: purchaseTimeout)
 
     let transaction = await plugin.fetchTransaction(
       by: UInt64(session.allTransactions()[0].originalTransactionIdentifier))
@@ -208,6 +213,7 @@ final class InAppPurchase2PluginTests: XCTestCase {
       switch result {
       case .success:
         XCTFail("This `products` call should not succeed")
+        expectation.fulfill()
       case .failure(let error):
         expectation.fulfill()
         XCTAssert(
@@ -216,11 +222,10 @@ final class InAppPurchase2PluginTests: XCTestCase {
         )
       }
     }
-    await fulfillment(of: [expectation], timeout: 5)
+    await fulfillment(of: [expectation], timeout: purchaseTimeout)
   }
 
   func testSuccessfulPurchase() async throws {
-    try skipFlakyPurchaseTest()
     let expectation = self.expectation(description: "Purchase request should succeed")
     plugin.purchase(id: "consumable", options: nil) { result in
       switch result {
@@ -229,9 +234,10 @@ final class InAppPurchase2PluginTests: XCTestCase {
         expectation.fulfill()
       case .failure(let error):
         XCTFail("Purchase should NOT fail. Failed with \(error)")
+        expectation.fulfill()
       }
     }
-    await fulfillment(of: [expectation], timeout: 5)
+    await fulfillment(of: [expectation], timeout: purchaseTimeout)
   }
 
   @available(iOS 17.0, macOS 14.0, *)
@@ -252,6 +258,7 @@ final class InAppPurchase2PluginTests: XCTestCase {
       switch result {
       case .success:
         XCTFail("Purchase should NOT succeed.")
+        expectation.fulfill()
       case .failure(let error):
         XCTAssertEqual(
           error.localizedDescription,
@@ -259,12 +266,11 @@ final class InAppPurchase2PluginTests: XCTestCase {
         expectation.fulfill()
       }
     }
-    await fulfillment(of: [expectation], timeout: 5)
+    await fulfillment(of: [expectation], timeout: purchaseTimeout)
   }
 
   @available(iOS 17.0, macOS 14.0, *)
   func testFailedProductUnavilablePurchase() async throws {
-    try skipFlakyPurchaseTest()
     try await session.setSimulatedError(
       .purchase(.productUnavailable), forAPI: .purchase)
     let expectation = self.expectation(description: "Purchase request should succeed")
@@ -272,12 +278,13 @@ final class InAppPurchase2PluginTests: XCTestCase {
       switch result {
       case .success:
         XCTFail("Purchase should NOT suceed.")
+        expectation.fulfill()
       case .failure(let error):
         XCTAssertEqual(error.localizedDescription, "Item Unavailable")
         expectation.fulfill()
       }
     }
-    await fulfillment(of: [expectation], timeout: 5)
+    await fulfillment(of: [expectation], timeout: purchaseTimeout)
   }
 
   func testInvalidProductPurchase() async throws {
@@ -286,6 +293,7 @@ final class InAppPurchase2PluginTests: XCTestCase {
       switch result {
       case .success:
         XCTFail("Purchase should NOT suceed.")
+        expectation.fulfill()
       case .failure(let error):
         let pigeonError = error as! PigeonError
 
@@ -293,11 +301,10 @@ final class InAppPurchase2PluginTests: XCTestCase {
         expectation.fulfill()
       }
     }
-    await fulfillment(of: [expectation], timeout: 5)
+    await fulfillment(of: [expectation], timeout: purchaseTimeout)
   }
 
   func testPurchaseUpgradeConsumableSuccess() async throws {
-    try skipFlakyPurchaseTest()
     let expectation = self.expectation(description: "Purchase request should succeed")
     plugin.purchase(id: "subscription_discounted", options: nil) { result in
       switch result {
@@ -305,13 +312,13 @@ final class InAppPurchase2PluginTests: XCTestCase {
         expectation.fulfill()
       case .failure(let error):
         XCTFail("Purchase should NOT fail. Failed with \(error)")
+        expectation.fulfill()
       }
     }
-    await fulfillment(of: [expectation], timeout: 5)
+    await fulfillment(of: [expectation], timeout: purchaseTimeout)
   }
 
   func testDiscountedSubscriptionSuccess() async throws {
-    try skipFlakyPurchaseTest()
     let expectation = self.expectation(description: "Purchase request should succeed")
     plugin.purchase(id: "subscription_discounted", options: nil) { result in
       switch result {
@@ -319,13 +326,13 @@ final class InAppPurchase2PluginTests: XCTestCase {
         expectation.fulfill()
       case .failure(let error):
         XCTFail("Purchase should NOT fail. Failed with \(error)")
+        expectation.fulfill()
       }
     }
-    await fulfillment(of: [expectation], timeout: 10)
+    await fulfillment(of: [expectation], timeout: purchaseTimeout)
   }
 
   func testDiscountedProductSuccess() async throws {
-    try skipFlakyPurchaseTest()
     let expectation = self.expectation(description: "Purchase request should succeed")
     plugin.purchase(id: "consumable_discounted", options: nil) { result in
       switch result {
@@ -333,13 +340,13 @@ final class InAppPurchase2PluginTests: XCTestCase {
         expectation.fulfill()
       case .failure(let error):
         XCTFail("Purchase should NOT fail. Failed with \(error)")
+        expectation.fulfill()
       }
     }
-    await fulfillment(of: [expectation], timeout: 10)
+    await fulfillment(of: [expectation], timeout: purchaseTimeout)
   }
 
   func testPurchaseWithAppAccountToken() async throws {
-    try skipFlakyPurchaseTest()
     let expectation = self.expectation(description: "Purchase with appAccountToken should succeed")
 
     let appAccountToken = UUID().uuidString
@@ -352,15 +359,15 @@ final class InAppPurchase2PluginTests: XCTestCase {
         expectation.fulfill()
       case .failure(let error):
         XCTFail("Purchase should NOT fail. Failed with \(error)")
+        expectation.fulfill()
       }
     }
 
-    await fulfillment(of: [expectation], timeout: 5)
+    await fulfillment(of: [expectation], timeout: purchaseTimeout)
   }
 
   @available(iOS 17.4, macOS 14.4, *)
   func testPurchaseWithPromotionalOffer() async throws {
-    try skipFlakyPurchaseTest()
     let expectation = self.expectation(description: "Purchase with promotionalOffer should succeed")
 
     let promotionalOffer = SK2SubscriptionOfferPurchaseMessage(
@@ -381,15 +388,15 @@ final class InAppPurchase2PluginTests: XCTestCase {
         expectation.fulfill()
       case .failure(let error):
         XCTFail("Purchase should NOT fail. Failed with \(error)")
+        expectation.fulfill()
       }
     }
 
-    await fulfillment(of: [expectation], timeout: 5)
+    await fulfillment(of: [expectation], timeout: purchaseTimeout)
   }
 
   @available(iOS 18.0, macOS 15.0, *)
   func testPurchaseWithWinBackOffer() async throws {
-    try skipFlakyPurchaseTest()
     let expectation = self.expectation(description: "Purchase with winBackOffer should succeed")
 
     let options = SK2ProductPurchaseOptionsMessage(
@@ -402,14 +409,14 @@ final class InAppPurchase2PluginTests: XCTestCase {
         expectation.fulfill()
       case .failure(let error):
         XCTFail("Purchase should NOT fail. Failed with \(error)")
+        expectation.fulfill()
       }
     }
 
-    await fulfillment(of: [expectation], timeout: 5)
+    await fulfillment(of: [expectation], timeout: purchaseTimeout)
   }
 
   func testPurchaseWithIntroductoryOfferEligibilityJWS() async throws {
-    try skipFlakyPurchaseTest()
     let expectation = self.expectation(
       description: "Purchase with an introductory offer eligibility JWS should complete")
 
@@ -426,11 +433,10 @@ final class InAppPurchase2PluginTests: XCTestCase {
       expectation.fulfill()
     }
 
-    await fulfillment(of: [expectation], timeout: 5)
+    await fulfillment(of: [expectation], timeout: purchaseTimeout)
   }
 
   func testRestoreProductSuccess() async throws {
-    try skipFlakyPurchaseTest()
     let purchaseExpectation = self.expectation(description: "Purchase request should succeed")
     let restoreExpectation = self.expectation(description: "Restore request should succeed")
 
@@ -440,9 +446,10 @@ final class InAppPurchase2PluginTests: XCTestCase {
         purchaseExpectation.fulfill()
       case .failure(let error):
         XCTFail("Purchase should NOT fail. Failed with \(error)")
+        purchaseExpectation.fulfill()
       }
     }
-    await fulfillment(of: [purchaseExpectation], timeout: 5)
+    await fulfillment(of: [purchaseExpectation], timeout: purchaseTimeout)
 
     XCTAssert(callback.lastUpdate.count == 1)
     XCTAssert(callback.lastUpdate.first?.status != .restored)
@@ -453,16 +460,16 @@ final class InAppPurchase2PluginTests: XCTestCase {
         restoreExpectation.fulfill()
       case .failure(let error):
         XCTFail("Restore purchases should NOT fail. Failed with \(error)")
+        restoreExpectation.fulfill()
       }
     }
-    await fulfillment(of: [restoreExpectation], timeout: 5)
+    await fulfillment(of: [restoreExpectation], timeout: purchaseTimeout)
 
     XCTAssert(callback.lastUpdate.count == 1)
     XCTAssert(callback.lastUpdate.first?.status == .restored)
   }
 
   func testRestoreMultipleProductsEmitsSingleBatchedUpdate() async throws {
-    try skipFlakyPurchaseTest()
     // Purchase two subscriptions from different subscription groups so that
     // both persist in `currentEntitlements` and restoring returns two
     // transactions.
@@ -473,9 +480,10 @@ final class InAppPurchase2PluginTests: XCTestCase {
         firstPurchaseExpectation.fulfill()
       case .failure(let error):
         XCTFail("Purchase should NOT fail. Failed with \(error)")
+        firstPurchaseExpectation.fulfill()
       }
     }
-    await fulfillment(of: [firstPurchaseExpectation], timeout: 5)
+    await fulfillment(of: [firstPurchaseExpectation], timeout: purchaseTimeout)
 
     let secondPurchaseExpectation = self.expectation(description: "Second purchase should succeed")
     plugin.purchase(id: "subscription_silver", options: nil) { result in
@@ -484,9 +492,10 @@ final class InAppPurchase2PluginTests: XCTestCase {
         secondPurchaseExpectation.fulfill()
       case .failure(let error):
         XCTFail("Purchase should NOT fail. Failed with \(error)")
+        secondPurchaseExpectation.fulfill()
       }
     }
-    await fulfillment(of: [secondPurchaseExpectation], timeout: 5)
+    await fulfillment(of: [secondPurchaseExpectation], timeout: purchaseTimeout)
 
     let restoreExpectation = self.expectation(description: "Restore request should succeed")
     plugin.restorePurchases { result in
@@ -495,9 +504,10 @@ final class InAppPurchase2PluginTests: XCTestCase {
         restoreExpectation.fulfill()
       case .failure(let error):
         XCTFail("Restore purchases should NOT fail. Failed with \(error)")
+        restoreExpectation.fulfill()
       }
     }
-    await fulfillment(of: [restoreExpectation], timeout: 5)
+    await fulfillment(of: [restoreExpectation], timeout: purchaseTimeout)
 
     // Both restored transactions must arrive in a single `onTransactionsUpdated`
     // callback.
@@ -509,7 +519,6 @@ final class InAppPurchase2PluginTests: XCTestCase {
   }
 
   func testFinishTransaction() async throws {
-    try skipFlakyPurchaseTest()
     let purchaseExpectation = self.expectation(description: "Purchase should succeed")
     let finishExpectation = self.expectation(description: "Finishing purchase should succeed")
 
@@ -519,10 +528,11 @@ final class InAppPurchase2PluginTests: XCTestCase {
         purchaseExpectation.fulfill()
       case .failure(let error):
         XCTFail("Purchase should NOT fail. Failed with \(error)")
+        purchaseExpectation.fulfill()
       }
     }
 
-    await fulfillment(of: [purchaseExpectation], timeout: 5)
+    await fulfillment(of: [purchaseExpectation], timeout: purchaseTimeout)
 
     // id should always be 0 as it is the first purchase
     plugin.finish(id: 0) { result in
@@ -531,10 +541,11 @@ final class InAppPurchase2PluginTests: XCTestCase {
         finishExpectation.fulfill()
       case .failure(let error):
         XCTFail("Finish purchases should NOT fail. Failed with \(error)")
+        finishExpectation.fulfill()
       }
     }
 
-    await fulfillment(of: [finishExpectation], timeout: 5)
+    await fulfillment(of: [finishExpectation], timeout: purchaseTimeout)
 
     for await result in Transaction.unfinished {
       if case .verified(let transaction) = result {
@@ -555,10 +566,11 @@ final class InAppPurchase2PluginTests: XCTestCase {
         purchaseExpectation.fulfill()
       case .failure(let error):
         XCTFail("Purchase should NOT fail. Failed with \(error)")
+        purchaseExpectation.fulfill()
       }
     }
 
-    await fulfillment(of: [purchaseExpectation], timeout: 5)
+    await fulfillment(of: [purchaseExpectation], timeout: purchaseTimeout)
 
     plugin.finish(id: 0) { result in
       switch result {
@@ -566,10 +578,11 @@ final class InAppPurchase2PluginTests: XCTestCase {
         finishExpectation.fulfill()
       case .failure(let error):
         XCTFail("Finish purchases should NOT fail. Failed with \(error)")
+        finishExpectation.fulfill()
       }
     }
 
-    await fulfillment(of: [finishExpectation], timeout: 5)
+    await fulfillment(of: [finishExpectation], timeout: purchaseTimeout)
 
     // A finished consumable is no longer in Transaction.all.
     plugin.finish(id: 0) { result in
@@ -578,15 +591,15 @@ final class InAppPurchase2PluginTests: XCTestCase {
         secondFinishExpectation.fulfill()
       case .failure(let error):
         XCTFail("Finish purchases should NOT fail. Failed with \(error)")
+        secondFinishExpectation.fulfill()
       }
     }
 
-    await fulfillment(of: [secondFinishExpectation], timeout: 5)
+    await fulfillment(of: [secondFinishExpectation], timeout: purchaseTimeout)
   }
 
   @available(iOS 18.0, macOS 15.0, *)
   func testIsWinBackOfferEligibleEligible() async throws {
-    try skipFlakyPurchaseTest()
     let purchaseExpectation = self.expectation(description: "Purchase should succeed")
 
     plugin.purchase(id: "subscription_silver", options: nil) { result in
@@ -595,9 +608,10 @@ final class InAppPurchase2PluginTests: XCTestCase {
         purchaseExpectation.fulfill()
       case .failure(let error):
         XCTFail("Purchase should NOT fail. Failed with \(error)")
+        purchaseExpectation.fulfill()
       }
     }
-    await fulfillment(of: [purchaseExpectation], timeout: 5)
+    await fulfillment(of: [purchaseExpectation], timeout: purchaseTimeout)
 
     try session.expireSubscription(productIdentifier: "subscription_silver")
 
@@ -613,10 +627,11 @@ final class InAppPurchase2PluginTests: XCTestCase {
         expectation.fulfill()
       case .failure(let error):
         XCTFail("Eligibility check failed: \(error.localizedDescription)")
+        expectation.fulfill()
       }
     }
 
-    await fulfillment(of: [expectation], timeout: 5)
+    await fulfillment(of: [expectation], timeout: purchaseTimeout)
 
   }
 
@@ -634,10 +649,11 @@ final class InAppPurchase2PluginTests: XCTestCase {
         expectation.fulfill()
       case .failure(let error):
         XCTFail("Eligibility check failed: \(error.localizedDescription)")
+        expectation.fulfill()
       }
     }
 
-    await fulfillment(of: [expectation], timeout: 5)
+    await fulfillment(of: [expectation], timeout: purchaseTimeout)
   }
 
   @available(iOS 18.0, macOS 15.0, *)
@@ -651,15 +667,17 @@ final class InAppPurchase2PluginTests: XCTestCase {
       switch result {
       case .success:
         XCTFail("Should not succeed")
+        expectation.fulfill()
       case .failure(let error as PigeonError):
         XCTAssertEqual(error.code, "storekit2_failed_to_fetch_product")
         expectation.fulfill()
       case .failure(let error):
         XCTFail("Unexpected error type: \(error)")
+        expectation.fulfill()
       }
     }
 
-    await fulfillment(of: [expectation], timeout: 5)
+    await fulfillment(of: [expectation], timeout: purchaseTimeout)
   }
 
   @available(iOS 18.0, macOS 15.0, *)
@@ -673,19 +691,20 @@ final class InAppPurchase2PluginTests: XCTestCase {
       switch result {
       case .success:
         XCTFail("Should not succeed")
+        expectation.fulfill()
       case .failure(let error as PigeonError):
         XCTAssertEqual(error.code, "storekit2_not_subscription")
         expectation.fulfill()
       case .failure(let error):
         XCTFail("Unexpected error type: \(error)")
+        expectation.fulfill()
       }
     }
 
-    await fulfillment(of: [expectation], timeout: 5)
+    await fulfillment(of: [expectation], timeout: purchaseTimeout)
   }
 
   func testDuplicatePurchaseFails() async throws {
-    try skipFlakyPurchaseTest()
     let firstPurchaseExpectation = self.expectation(description: "First purchase should succeed")
     let secondPurchaseExpectation = self.expectation(description: "Second purchase should fail")
 
@@ -695,22 +714,25 @@ final class InAppPurchase2PluginTests: XCTestCase {
         firstPurchaseExpectation.fulfill()
       case .failure(let error):
         XCTFail("First purchase should NOT fail. Failed with \(error)")
+        firstPurchaseExpectation.fulfill()
       }
     }
-    await fulfillment(of: [firstPurchaseExpectation], timeout: 5)
+    await fulfillment(of: [firstPurchaseExpectation], timeout: purchaseTimeout)
 
     plugin.purchase(id: "consumable", options: nil) { result in
       switch result {
       case .success:
         XCTFail("Second purchase should NOT succeed because a transaction is already pending.")
+        secondPurchaseExpectation.fulfill()
       case .failure(let error as PigeonError):
         XCTAssertEqual(error.code, "storekit_duplicate_product_object")
         secondPurchaseExpectation.fulfill()
       case .failure(let error):
         XCTFail("Unexpected error type: \(error)")
+        secondPurchaseExpectation.fulfill()
       }
     }
-    await fulfillment(of: [secondPurchaseExpectation], timeout: 5)
+    await fulfillment(of: [secondPurchaseExpectation], timeout: purchaseTimeout)
   }
   @available(iOS 16.0, macOS 15.0, *)
   func testRedeemCodeSheetFailsGracefullyWhenNoWindow() {

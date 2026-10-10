@@ -12,7 +12,9 @@ class MainFlutterWindow: NSWindow {
     self.contentViewController = flutterViewController
     self.setFrame(windowFrame, display: true)
 
-    RegisterGeneratedPlugins(registry: flutterViewController)
+    if NSClassFromString("XCTestCase") == nil {
+      RegisterGeneratedPlugins(registry: flutterViewController)
+    }
 
     super.awakeFromNib()
   }
