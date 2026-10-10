@@ -47,7 +47,7 @@ android {
     dependencies {
         implementation("androidx.annotation:annotation:1.10.0")
         testImplementation("junit:junit:4.13.2")
-        testImplementation("org.mockito:mockito-core:5.23.0")
+        testImplementation("org.mockito:mockito-core:5.24.0")
         testImplementation("androidx.test:core:1.7.0")
         testImplementation("org.robolectric:robolectric:4.17")
     }
