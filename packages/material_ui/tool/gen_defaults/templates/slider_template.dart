@@ -2,64 +2,66 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import '../data/slider.dart';
 import 'template.dart';
 
-class SliderTemplate extends TokenTemplate {
-  const SliderTemplate(
-    this.tokenGroup,
-    super.blockName,
-    super.fileName,
-    super.tokens, {
-    super.colorSchemePrefix = '_colors.',
-  });
-
-  final String tokenGroup;
+class SliderTemplateM3 extends TokenTemplateM3 {
+  const SliderTemplateM3();
 
   @override
-  String generate() =>
+  String get name => 'Slider';
+
+  @override
+  String get parentFilePath => 'slider.dart';
+
+  // TODO(Crdzbird): Using hard-coded values for the secondary active track
+  // opacity, the overlay state layer opacities, and the value indicator text
+  // style due to missing tokens.
+  @override
+  String generateContents(String className) =>
       '''
-class _${blockName}DefaultsM3 extends SliderThemeData {
-  _${blockName}DefaultsM3(this.context)
-    : super(trackHeight: ${getToken('$tokenGroup.active.track.height')});
+class $className extends SliderThemeData {
+  $className(this.context)
+    : super(trackHeight: ${number(TokenSlider.activeTrackHeight)});
 
   final BuildContext context;
   late final ColorScheme _colors = Theme.of(context).colorScheme;
 
   @override
-  Color? get activeTrackColor => ${componentColor('$tokenGroup.active.track')};
+  Color? get activeTrackColor => ${color(TokenSlider.activeTrackColor)};
 
   @override
-  Color? get inactiveTrackColor => ${componentColor('$tokenGroup.inactive.track')};
+  Color? get inactiveTrackColor => ${color(TokenSlider.inactiveTrackColor)};
 
   @override
-  Color? get secondaryActiveTrackColor => ${componentColor('$tokenGroup.active.track')}.withOpacity(0.54);
+  Color? get secondaryActiveTrackColor => ${colorWithOpacity(TokenSlider.activeTrackColor, 0.54)};
 
   @override
-  Color? get disabledActiveTrackColor => ${componentColor('$tokenGroup.disabled.active.track')};
+  Color? get disabledActiveTrackColor => ${colorWithOpacity(TokenSlider.disabledActiveTrackColor, TokenSlider.disabledActiveTrackOpacity)};
 
   @override
-  Color? get disabledInactiveTrackColor => ${componentColor('$tokenGroup.disabled.inactive.track')};
+  Color? get disabledInactiveTrackColor => ${colorWithOpacity(TokenSlider.disabledInactiveTrackColor, TokenSlider.disabledInactiveTrackOpacity)};
 
   @override
-  Color? get disabledSecondaryActiveTrackColor => ${componentColor('$tokenGroup.disabled.active.track')};
+  Color? get disabledSecondaryActiveTrackColor => ${colorWithOpacity(TokenSlider.disabledActiveTrackColor, TokenSlider.disabledActiveTrackOpacity)};
 
   @override
-  Color? get activeTickMarkColor => ${componentColor('$tokenGroup.active.stop-indicator.container')};
+  Color? get activeTickMarkColor => ${color(TokenSlider.activeStopIndicatorContainerColor)}.withOpacity(${number(TokenSlider.activeStopIndicatorContainerOpacity)});
 
   @override
-  Color? get inactiveTickMarkColor => ${componentColor('$tokenGroup.inactive.stop-indicator.container')};
+  Color? get inactiveTickMarkColor => ${color(TokenSlider.inactiveStopIndicatorContainerColor)}.withOpacity(${number(TokenSlider.inactiveStopIndicatorContainerOpacity)});
 
   @override
-  Color? get disabledActiveTickMarkColor => ${componentColor('$tokenGroup.disabled.active.stop-indicator.container')};
+  Color? get disabledActiveTickMarkColor => ${color(TokenSlider.disabledActiveStopIndicatorContainerColor)};
 
   @override
-  Color? get disabledInactiveTickMarkColor => ${componentColor('$tokenGroup.disabled.inactive.stop-indicator.container')};
+  Color? get disabledInactiveTickMarkColor => ${color(TokenSlider.disabledInactiveStopIndicatorContainerColor)};
 
   @override
-  Color? get thumbColor => ${componentColor('$tokenGroup.handle')};
+  Color? get thumbColor => ${color(TokenSlider.handleColor)};
 
   @override
-  Color? get disabledThumbColor => ${componentColor('$tokenGroup.disabled.handle')};
+  Color? get disabledThumbColor => ${colorWithOpacity(TokenSlider.disabledHandleColor, TokenSlider.disabledHandleOpacity)};
 
   @override
   Color? get overlayColor => WidgetStateColor.resolveWith((Set<WidgetState> states) {
@@ -77,12 +79,12 @@ class _${blockName}DefaultsM3 extends SliderThemeData {
   });
 
   @override
-  TextStyle? get valueIndicatorTextStyle => ${textStyle('$tokenGroup.value-indicator.label.label-text')}!.copyWith(
-    color: ${componentColor('$tokenGroup.value-indicator.label.label-text')},
+  TextStyle? get valueIndicatorTextStyle => Theme.of(context).textTheme.labelLarge!.copyWith(
+    color: ${color(TokenSlider.valueIndicatorLabelLabelTextColor)},
   );
 
   @override
-  Color? get valueIndicatorColor => ${componentColor('$tokenGroup.value-indicator.container')};
+  Color? get valueIndicatorColor => ${color(TokenSlider.valueIndicatorContainerColor)};
 
   @override
   SliderComponentShape? get valueIndicatorShape => const RoundedRectSliderValueIndicatorShape();
@@ -97,29 +99,29 @@ class _${blockName}DefaultsM3 extends SliderThemeData {
   SliderComponentShape? get overlayShape => const RoundSliderOverlayShape();
 
   @override
-  SliderTickMarkShape? get tickMarkShape => const RoundSliderTickMarkShape(tickMarkRadius: ${getToken("$tokenGroup.stop-indicator.size")} / 2);
+  SliderTickMarkShape? get tickMarkShape => const RoundSliderTickMarkShape(tickMarkRadius: ${number(TokenSlider.stopIndicatorSize)} / 2);
 
   @override
   WidgetStateProperty<Size?>? get thumbSize {
     return WidgetStateProperty.resolveWith((Set<WidgetState> states) {
       if (states.contains(WidgetState.disabled)) {
-        return const Size(${getToken("$tokenGroup.disabled.handle.width")}, ${getToken("$tokenGroup.handle.height")});
+        return const Size(${number(TokenSlider.disabledHandleWidth)}, ${number(TokenSlider.handleHeight)});
       }
       if (states.contains(WidgetState.hovered)) {
-        return const Size(${getToken("$tokenGroup.hover.handle.width")}, ${getToken("$tokenGroup.handle.height")});
+        return const Size(${number(TokenSlider.hoverHandleWidth)}, ${number(TokenSlider.handleHeight)});
       }
       if (states.contains(WidgetState.focused)) {
-        return const Size(${getToken("$tokenGroup.focus.handle.width")}, ${getToken("$tokenGroup.handle.height")});
+        return const Size(${number(TokenSlider.focusHandleWidth)}, ${number(TokenSlider.handleHeight)});
       }
       if (states.contains(WidgetState.pressed)) {
-        return const Size(${getToken("$tokenGroup.pressed.handle.width")}, ${getToken("$tokenGroup.handle.height")});
+        return const Size(${number(TokenSlider.pressedHandleWidth)}, ${number(TokenSlider.handleHeight)});
       }
-      return const Size(${getToken("$tokenGroup.handle.width")}, ${getToken("$tokenGroup.handle.height")});
+      return const Size(${number(TokenSlider.handleWidth)}, ${number(TokenSlider.handleHeight)});
     });
   }
 
   @override
-  double? get trackGap => ${getToken("$tokenGroup.active.handle.padding")};
+  double? get trackGap => ${number(TokenSlider.activeHandlePadding)};
 }
 ''';
 }
