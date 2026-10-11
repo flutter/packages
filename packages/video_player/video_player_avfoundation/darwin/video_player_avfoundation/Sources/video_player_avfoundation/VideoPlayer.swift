@@ -40,7 +40,11 @@ class VideoPlayer: NSObject, VideoPlayerInstanceApi {
   /// The current playback position of the video, in milliseconds.
   var position: Int64 = 0
   /// The event listener to report video events to.
-  var eventListener: FVPVideoEventListener?
+  var eventListener: FVPVideoEventListener? {
+    didSet {
+      registerInternalEventListeners()
+    }
+  }
   /// A block that will be called when dispose is called.
   var onDisposed: (() -> Void)?
 
@@ -160,6 +164,11 @@ class VideoPlayer: NSObject, VideoPlayerInstanceApi {
     }
     disposed = true
 
+    // Remove all observers.
+    if let playToEndObserver = playToEndObserver {
+      NotificationCenter.default.removeObserver(playToEndObserver)
+      self.playToEndObserver = nil
+    }
     keyValueObservations.removeAll()
 
     player.replaceCurrentItem(with: nil)
@@ -168,11 +177,12 @@ class VideoPlayer: NSObject, VideoPlayerInstanceApi {
     eventListener?.videoPlayerWasDisposed()
   }
 
-  func setEventListener(_ eventListener: FVPVideoEventListener?) {
-    self.eventListener = eventListener
+  private func registerInternalEventListeners() {
     // The first time an event listener is set, set up video event listeners to relay status changes
     // changes to the event listener.
-    if eventListener != nil && keyValueObservations.isEmpty, let item = player.currentItem {
+    if eventListener != nil && keyValueObservations.isEmpty && !disposed,
+      let item = player.currentItem
+    {
       // If the item is already ready to play, ensure that the intialized event is sent first.
       reportStatus(playerItem: item)
       // Set up all necessary observers to report video events.
@@ -226,7 +236,8 @@ class VideoPlayer: NSObject, VideoPlayerInstanceApi {
       playToEndObserver = NotificationCenter.default.addObserver(
         forName: .AVPlayerItemDidPlayToEndTime, object: item, queue: .main
       ) { [weak self] notification in
-        self?.itemDidPlayToEndTime(notification.object as! AVPlayerItem)
+        guard let item = notification.object as? AVPlayerItem else { return }
+        self?.itemDidPlayToEndTime(item)
       }
     }
   }

@@ -70,9 +70,9 @@ class TextureBasedVideoPlayer: VideoPlayer, FlutterTexture {
     // video streams (not just iOS 16).  (https://github.com/flutter/flutter/issues/109116). An
     // invisible AVPlayerLayer is used to overwrite the protection of pixel buffers in those streams
     // for issue #1, and restore the correct width and height for issue #2.
-    let layer = AVPlayerLayer(layer: player)
+    let layer = AVPlayerLayer(player: player)
     #if os(iOS)
-      let flutterLayer = viewProvider.viewController.view.layer
+      let flutterLayer = viewProvider.viewController?.view.layer
     #else
       let flutterLayer = viewProvider.view?.layer
     #endif
@@ -106,12 +106,9 @@ class TextureBasedVideoPlayer: VideoPlayer, FlutterTexture {
   }
 
   override func seek(to position: Int64, completion: @escaping (Result<Void, Error>) -> Void) {
-    let previousCMTime = player.currentTime
+    let previousCMTime = player.currentTime()
     super.seek(to: position) { [weak self] error in
-      guard let self = self else {
-        return
-      }
-      if CMTimeCompare(self.player.currentTime(), previousCMTime()) != 0 {
+      if let self = self, CMTimeCompare(self.player.currentTime(), previousCMTime) != 0 {
         // Ensure that a frame is drawn once available, even if currently paused. In theory a
         // race is possible here where the new frame has already drawn by the time this code
         // runs, and the display link stays on indefinitely, but that should be relatively
@@ -120,7 +117,6 @@ class TextureBasedVideoPlayer: VideoPlayer, FlutterTexture {
         // buffer is already available.
         self.expectFrame()
       }
-
       completion(error)
     }
   }
