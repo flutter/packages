@@ -175,16 +175,14 @@ class AVFoundationVideoPlayer extends VideoPlayerPlatform {
     int playerId,
     bool preventsDisplaySleepDuringVideoPlayback,
   ) {
-    return _playerWith(
-      id: playerId,
-    ).setPreventsDisplaySleepDuringVideoPlayback(preventsDisplaySleepDuringVideoPlayback);
+    return _playerWith(id: playerId)
+        .setPreventsDisplaySleepDuringVideoPlayback(preventsDisplaySleepDuringVideoPlayback);
   }
 
   @override
   Future<List<VideoAudioTrack>> getAudioTracks(int playerId) async {
-    final List<MediaSelectionAudioTrackData> nativeData = await _playerWith(
-      id: playerId,
-    ).getAudioTracks();
+    final List<MediaSelectionAudioTrackData> nativeData = await _playerWith(id: playerId)
+        .getAudioTracks();
     final tracks = <VideoAudioTrack>[];
 
     for (final track in nativeData) {

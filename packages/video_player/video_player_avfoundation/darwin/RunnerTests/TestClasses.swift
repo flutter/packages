@@ -57,7 +57,6 @@ final class TestAsset: NSObject, FVPAVAsset {
     handler?()
   }
 
-  @available(macOS 12.0, iOS 15.0, *)
   func loadTracks(
     withMediaType mediaType: AVMediaType,
     completionHandler: @escaping ([AVAssetTrack]?, Error?) -> Void
@@ -286,7 +285,7 @@ final class StubEventListener: NSObject, FVPVideoEventListener {
   }
   func videoPlayerDidSetPlaying(_ playing: Bool) {}
   func videoPlayerDidStartBuffering() {}
-  func videoPlayerDidUpdateBufferRegions(_ regions: [[NSNumber]]!) {}
+  func videoPlayerDidUpdateBufferRegions(_ regions: [[NSNumber]]) {}
   func videoPlayerWasDisposed() {}
 }
 

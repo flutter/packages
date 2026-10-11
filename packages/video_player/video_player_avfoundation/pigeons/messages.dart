@@ -133,7 +133,7 @@ abstract class VideoPlayerInstanceApi {
   void play();
   int getPosition();
   @async
-  @SwiftFunction('seekTo(_:)')
+  @SwiftFunction('seek(to:)')
   void seekTo(int position);
   void pause();
   void dispose();

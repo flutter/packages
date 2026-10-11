@@ -746,7 +746,7 @@ protocol VideoPlayerInstanceApi {
   func setPlaybackSpeed(_ speed: Double) throws
   func play() throws
   func getPosition() throws -> Int64
-  func seekTo(_ position: Int64, completion: @escaping (Result<Void, Error>) -> Void)
+  func seek(to position: Int64, completion: @escaping (Result<Void, Error>) -> Void)
   func pause() throws
   func dispose() throws
   func getAudioTracks() throws -> [MediaSelectionAudioTrackData]
@@ -863,7 +863,7 @@ class VideoPlayerInstanceApiSetup {
       seekToChannel.setMessageHandler { message, reply in
         let args = message as! [Any?]
         let positionArg = args[0] as! Int64
-        api.seekTo(positionArg) { result in
+        api.seek(to: positionArg) { result in
           switch result {
           case .success:
             reply(wrapResult(nil))
