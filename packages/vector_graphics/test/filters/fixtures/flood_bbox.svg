@@ -1,0 +1,1 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="128" height="128"><defs><filter id="f" primitiveUnits="objectBoundingBox"><feFlood flood-color="red" x=".25" y=".25" width=".5" height=".5"/></filter></defs><rect x="32" y="32" width="64" height="64" filter="url(#f)"/></svg>

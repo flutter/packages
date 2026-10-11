@@ -1,5 +1,6 @@
-## NEXT
+## 1.4.0
 
+* Compiles static SVG filter definitions, references, inline styles, regions, and named input graphs.
 * Updates minimum supported SDK version to Flutter 3.41/Dart 3.11.
 
 ## 1.3.0

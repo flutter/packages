@@ -4,7 +4,20 @@
 
 import 'dart:math' as math;
 
+import 'package:vector_graphics_codec/vector_graphics_codec.dart';
+
 import 'theme.dart';
+
+/// Absolute font-size keywords shared by text and filter length resolution.
+const Map<String, double> svgFontSizes = <String, double>{
+  'xx-small': 10,
+  'x-small': 12,
+  'small': 14,
+  'medium': 18,
+  'large': 22,
+  'x-large': 26,
+  'xx-large': 32,
+};
 
 /// Parses a [rawDouble] `String` to a `double`.
 ///
@@ -71,40 +84,20 @@ double? parseDoubleWithUnits(
   required SvgTheme theme,
   double? percentageRef,
 }) {
-  var unit = 1.0;
-
-  // Handle percentage values first.
-  // Check inline to avoid circular import with parsers.dart.
-  final bool isPercent = rawDouble?.trim().endsWith('%') ?? false;
-  if (isPercent) {
-    if (percentageRef == null || percentageRef.isInfinite) {
-      // If no reference dimension is available, the percentage cannot be
-      // resolved. Return null for tryParse, otherwise throw an exception.
-      if (tryParse) {
-        return null;
-      }
-      throw FormatException(
-        'Percentage value "$rawDouble" requires a reference dimension '
-        '(viewport width/height) but none was available.',
-      );
+  if (rawDouble == null) {
+    return null;
+  }
+  try {
+    return parseSvgLength(
+      rawDouble,
+      fontSize: theme.fontSize,
+      xHeight: theme.xHeight,
+      percentageRef: percentageRef,
+    );
+  } on FormatException {
+    if (tryParse) {
+      return null;
     }
-    final double? value = parseDouble(rawDouble, tryParse: tryParse);
-    return value != null ? (value / 100) * percentageRef : null;
+    rethrow;
   }
-
-  // 1 rem unit is equal to the root font size.
-  // 1 em unit is equal to the current font size.
-  // 1 ex unit is equal to the current x-height.
-  if (rawDouble?.contains('pt') ?? false) {
-    unit = kPointsToPixelFactor;
-  } else if (rawDouble?.contains('rem') ?? false) {
-    unit = theme.fontSize;
-  } else if (rawDouble?.contains('em') ?? false) {
-    unit = theme.fontSize;
-  } else if (rawDouble?.contains('ex') ?? false) {
-    unit = theme.xHeight;
-  }
-  final double? value = parseDouble(rawDouble, tryParse: tryParse);
-
-  return value != null ? value * unit : null;
 }

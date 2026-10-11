@@ -5,6 +5,7 @@
 import 'dart:typed_data';
 
 import 'package:meta/meta.dart';
+import 'package:vector_graphics_codec/vector_graphics_codec.dart';
 
 import '../geometry/basic_types.dart';
 import '../geometry/matrix.dart';
@@ -163,10 +164,21 @@ class ParentNode extends AttributedNode {
     String? maskId,
     String? patternId,
     required Resolver<List<Path>> clipResolver,
+    Resolver<VectorFilter?>? filterResolver,
+    String? filterId,
     required Resolver<AttributedNode?> maskResolver,
     required Resolver<AttributedNode?> patternResolver,
   }) {
     Node wrappedChild = child;
+    filterId ??= child.attributes.raw['filter'];
+    if (filterId != null && filterId != 'none' && filterResolver != null) {
+      wrappedChild = FilterNode(
+        SvgAttributes.empty,
+        filterId: filterId,
+        filterResolver: filterResolver,
+        children: <Node>[child],
+      );
+    }
     if (clipId != null) {
       wrappedChild = ClipNode(
         resolver: clipResolver,
@@ -197,8 +209,10 @@ class ParentNode extends AttributedNode {
 
   @override
   AttributedNode applyAttributes(SvgAttributes newAttributes, {bool replace = false}) {
-    return ParentNode(attributes.applyParent(newAttributes), precalculatedTransform: transform)
-      .._children.addAll(_children);
+    return ParentNode(
+      replace ? newAttributes.applyParent(attributes) : attributes.applyParent(newAttributes),
+      precalculatedTransform: transform,
+    ).._children.addAll(_children);
   }
 
   /// Create the paint required to draw a save layer, or `null` if none is
@@ -207,7 +221,10 @@ class ParentNode extends AttributedNode {
     final double? fillOpacity = attributes.fill?.opacity;
     final bool needsLayer =
         (attributes.blendMode != null) ||
-        (fillOpacity != null && fillOpacity != 1.0 && fillOpacity != 0.0);
+        (attributes.compositingOpacity == null &&
+            fillOpacity != null &&
+            fillOpacity != 1.0 &&
+            fillOpacity != 0.0);
 
     if (needsLayer) {
       return Paint(
@@ -283,8 +300,10 @@ class TextPositionNode extends ParentNode {
 
   @override
   AttributedNode applyAttributes(SvgAttributes newAttributes, {bool replace = false}) {
-    return TextPositionNode(attributes.applyParent(newAttributes), reset: reset)
-      .._children.addAll(_children);
+    return TextPositionNode(
+      replace ? newAttributes.applyParent(attributes) : attributes.applyParent(newAttributes),
+      reset: reset,
+    ).._children.addAll(_children);
   }
 }
 
@@ -593,4 +612,52 @@ class PatternNode extends TransformableNode {
       child: child.applyAttributes(newAttributes, replace: replace),
     );
   }
+}
+
+/// An isolated SVG filter source; retained as a boundary through compilation.
+class FilterNode extends ParentNode {
+  /// Creates a filter boundary.
+  FilterNode(
+    super.attributes, {
+    required this.filterId,
+    required this.filterResolver,
+    required super.children,
+    this.filterTransform = AffineMatrix.identity,
+    this.viewportWidth = 0,
+    this.viewportHeight = 0,
+    this.paintInputs = const <String, String>{},
+  });
+
+  /// The definition's URL reference.
+  final String filterId;
+
+  /// Resolves forward references.
+  final Resolver<VectorFilter?> filterResolver;
+
+  /// The source element's complete transform.
+  final AffineMatrix filterTransform;
+
+  /// The viewport dimensions used for percentages.
+  final double viewportWidth;
+
+  /// The viewport height in SVG units.
+  final double viewportHeight;
+
+  /// Resolved solid fill and stroke paints of the filtered element.
+  final Map<String, String> paintInputs;
+
+  @override
+  AttributedNode applyAttributes(SvgAttributes newAttributes, {bool replace = false}) => FilterNode(
+    attributes.applyParent(newAttributes),
+    filterId: filterId,
+    filterResolver: filterResolver,
+    children: children.toList(),
+    filterTransform: filterTransform,
+    viewportWidth: viewportWidth,
+    viewportHeight: viewportHeight,
+    paintInputs: paintInputs,
+  );
+
+  @override
+  S accept<S, V>(Visitor<S, V> visitor, V data) => visitor.visitFilterNode(this, data);
 }

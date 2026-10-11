@@ -2,6 +2,8 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'package:vector_graphics_codec/vector_graphics_codec.dart';
+
 import '../draw_command_builder.dart';
 import '../geometry/path.dart';
 import '../paint.dart';
@@ -13,6 +15,11 @@ import 'resolver.dart';
 abstract class Visitor<S, V> {
   /// Const constructor so subclasses can be const.
   const Visitor();
+
+  /// Visits a filter boundary. Optimizers must preserve this boundary.
+  S visitFilterNode(FilterNode node, V data) {
+    throw UnsupportedError('Filter boundaries cannot be flattened by $runtimeType');
+  }
 
   /// Visit a [ViewportNode].
   S visitViewportNode(ViewportNode viewportNode, V data);
@@ -137,6 +144,34 @@ class CommandBuilderVisitor extends Visitor<void, void> with ErrorOnUnResolvedNo
   }
 
   @override
+  void visitFilterNode(FilterNode node, void data) {
+    final VectorFilter? filter = node.filterResolver(node.filterId);
+    if (filter == null) {
+      visitParentNode(node, data);
+      return;
+    }
+    bool usesInput(VectorFilter element, String name) =>
+        element.attributes['in'] == name ||
+        element.attributes['in2'] == name ||
+        element.children.any((VectorFilter child) => usesInput(child, name));
+    final attributes = <String, String>{...filter.attributes};
+    for (final name in <String>['FillPaint', 'StrokePaint']) {
+      if (usesInput(filter, name)) {
+        final key = name == 'FillPaint' ? 'vector-fill-paint' : 'vector-stroke-paint';
+        attributes[key] = node.paintInputs[key] ?? 'unsupported';
+      }
+    }
+    _builder.beginFilter(
+      VectorFilter(filter.name, attributes, filter.children),
+      node.filterTransform,
+      node.viewportWidth,
+      node.viewportHeight,
+    );
+    visitParentNode(node, data);
+    _builder.endFilter();
+  }
+
+  @override
   void visitEmptyNode(Node node, void data) {}
 
   @override
@@ -172,7 +207,11 @@ class CommandBuilderVisitor extends Visitor<void, void> with ErrorOnUnResolvedNo
 
   @override
   void visitResolvedPath(ResolvedPathNode pathNode, void data) {
-    _builder.addPath(pathNode.path, pathNode.paint, null, currentPatternId);
+    if (pathNode.geometryOnly) {
+      _builder.addPathGeometry(pathNode.path);
+    } else {
+      _builder.addPath(pathNode.path, pathNode.paint, null, currentPatternId);
+    }
   }
 
   @override
@@ -185,7 +224,12 @@ class CommandBuilderVisitor extends Visitor<void, void> with ErrorOnUnResolvedNo
 
   @override
   void visitResolvedText(ResolvedTextNode textNode, void data) {
-    _builder.addText(textNode.textConfig, textNode.paint, null, currentPatternId);
+    _builder.addText(
+      textNode.textConfig,
+      textNode.geometryOnly ? null : textNode.paint,
+      null,
+      textNode.geometryOnly ? null : currentPatternId,
+    );
   }
 
   @override

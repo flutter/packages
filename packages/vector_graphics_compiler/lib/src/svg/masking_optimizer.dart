@@ -129,7 +129,7 @@ class MaskingOptimizer extends Visitor<_Result, Node> with ErrorOnUnResolvedNode
 
   /// Applies visitor to given node.
   Node apply(Node node) {
-    final Node newNode = node.accept(this, null).node;
+    final Node newNode = node.accept(this, Node.empty).node;
     return newNode;
   }
 

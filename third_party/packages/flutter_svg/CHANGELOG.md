@@ -1,5 +1,9 @@
-## NEXT
+## 2.4.0
 
+* Adds SVG filter infrastructure and static `feOffset` support, including filter regions and named inputs.
+* Adds static `feColorMatrix` support and SVG color interpolation.
+* Adds static `feFlood` support with computed colors and opacity.
+* Adds static `feMerge` support, including combinations with the base primitives.
 * Updates minimum supported SDK version to Flutter 3.41/Dart 3.11.
 
 ## 2.3.0

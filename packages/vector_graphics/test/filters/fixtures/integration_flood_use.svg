@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="128" height="128"><defs><rect id="source" x="24" y="24" width="80" height="80" fill="url(#grad)"/><linearGradient id="grad"><stop stop-color="#c06020"/><stop offset="1" stop-color="#2080c0"/></linearGradient>
+<linearGradient id="alpha"><stop stop-color="white" stop-opacity="0"/><stop offset="1" stop-color="white"/></linearGradient>
+<clipPath id="clip"><rect x="40" y="24" width="48" height="72"/></clipPath>
+<mask id="mask" maskUnits="userSpaceOnUse" x="0" y="0" width="128" height="128"><rect width="128" height="128" fill="url(#alpha)"/></mask>
+<pattern id="pattern" patternUnits="userSpaceOnUse" x="0" y="0" width="16" height="16"><rect width="8" height="16" fill="#c06020"/><rect x="8" width="8" height="16" fill="#2080c0"/></pattern>
+<filter id="inner" filterUnits="userSpaceOnUse" x="0" y="0" width="128" height="128"><feOffset dx="8" dy="4"/></filter><filter id="f" filterUnits="userSpaceOnUse" x="0" y="0" width="128" height="128"  color-interpolation-filters="sRGB"><feFlood flood-color="#8040c0"/></filter></defs><use href="#source" filter="url(#f)"/></svg>

@@ -3,8 +3,10 @@
 // found in the LICENSE file.
 
 import 'package:meta/meta.dart';
+import 'package:vector_graphics_codec/vector_graphics_codec.dart';
 
 import 'geometry/image.dart';
+import 'geometry/matrix.dart';
 import 'geometry/path.dart';
 import 'geometry/pattern.dart';
 import 'geometry/vertices.dart';
@@ -110,6 +112,15 @@ class VectorInstructions {
 ///
 /// See [DrawCommand.type] and [VectorInstructions.commands].
 enum DrawCommandType {
+  /// Includes original path geometry in filter bounds without painting it.
+  pathGeometry,
+
+  /// An isolated filter boundary.
+  beginFilter,
+
+  /// Completes the current filter.
+  endFilter,
+
   /// Specifies that this command draws a [Path].
   path,
 
@@ -171,6 +182,10 @@ class DrawCommand {
     this.debugString,
     this.patternId,
     this.patternDataId,
+    this.filter,
+    this.filterTransform,
+    this.filterWidth,
+    this.filterHeight,
   });
 
   /// A string, possibly from the original source SVG file, identifying a source
@@ -203,15 +218,32 @@ class DrawCommand {
   /// [VectorInstructions.patternData].
   final int? patternDataId;
 
+  /// Filter configuration for a begin-filter command.
+  final VectorFilter? filter;
+
+  /// The complete source transform.
+  final AffineMatrix? filterTransform;
+
+  /// The percentage-reference viewport width.
+  final double? filterWidth;
+
+  /// The percentage-reference viewport height.
+  final double? filterHeight;
+
   @override
-  int get hashCode => Object.hash(type, objectId, paintId, debugString);
+  int get hashCode =>
+      Object.hash(type, objectId, paintId, filter, filterTransform, filterWidth, filterHeight);
 
   @override
   bool operator ==(Object other) {
     return other is DrawCommand &&
         other.type == type &&
         other.objectId == objectId &&
-        other.paintId == paintId;
+        other.paintId == paintId &&
+        other.filter == filter &&
+        other.filterTransform == filterTransform &&
+        other.filterWidth == filterWidth &&
+        other.filterHeight == filterHeight;
   }
 
   @override
