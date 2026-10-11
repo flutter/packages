@@ -53,3 +53,7 @@ func standardizedTrackTransform(transform t: CGAffineTransform, size: CGSize)
   }
   return st
 }
+
+func frameDurationIsValid(_ duration: CMTime) -> Bool {
+  return duration.isNumeric && duration > CMTime.zero
+}

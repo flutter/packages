@@ -500,7 +500,7 @@ class VideoPlayer: NSObject, VideoPlayerInstanceApi {
     videoComposition.renderSize = CGSize(width: width, height: height)
 
     videoComposition.sourceTrackIDForFrameTiming = videoTrack.trackID
-    if videoTrack.minFrameDuration.isValid {
+    if frameDurationIsValid(videoTrack.minFrameDuration) {
       videoComposition.frameDuration = videoTrack.minFrameDuration
     } else {
       NSLog(

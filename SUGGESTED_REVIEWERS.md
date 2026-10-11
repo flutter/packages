@@ -42,7 +42,7 @@ reviewed by someone else.
   - @loic-sharma
 
 `flutter_plugin_android_lifecycle`:
-  - @reidbaker
+  - @camsim99
 
 `flutter_svg, flutter_svg_test`:
   - @domesticmouse
@@ -64,13 +64,13 @@ reviewed by someone else.
 
 `google_maps_flutter`:
   - **Cross-platform**: @tarrinneal, @bparrishMines
-  - **Android**: @reidbaker
+  - **Android**: @gmackall
   - **iOS**: @vashworth, @LongCatIsLooong
   - **Web**: @mdebbar
 
 `google_sign_in`:
   - **Cross-platform**: @elliette
-  - **Android**: @reidbaker
+  - **Android**: @mboetger
   - **iOS**: @LongCatIsLooong, @okorohelijah
   - **Web**: @mdebbar
 
