@@ -137,7 +137,9 @@ class OverdrawOptimizer extends Visitor<_Result, Node> with ErrorOnUnResolvedNod
     return node is ResolvedPathNode &&
         node.paint.stroke?.width == null &&
         node.paint.stroke?.color == null &&
-        node.paint.fill?.shader == null;
+        node.paint.fill?.shader == null &&
+        node.paint.filterBlurX == null &&
+        node.paint.filterBlurY == null;
   }
 
   @override
@@ -213,11 +215,9 @@ class OverdrawOptimizer extends Visitor<_Result, Node> with ErrorOnUnResolvedNod
                 lastPathNodeIndex = null;
               }
             }
-            // } else {
-            //   // Conservatively bail out here. There's some child that isn't
-            //   // optimizable, and there aren't sufficient checks to make sure
-            //   // we can make sense of what's actually going on anymore.
-            //   return _Result(parentNode);
+          } else {
+            lastPathNode = null;
+            lastPathNodeIndex = null;
           }
           index++;
         }
