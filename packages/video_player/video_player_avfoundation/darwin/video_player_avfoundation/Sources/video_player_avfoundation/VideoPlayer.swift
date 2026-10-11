@@ -3,7 +3,6 @@
 // found in the LICENSE file.
 
 import CoreMedia
-import GLKit
 
 #if os(iOS)
   import Flutter
@@ -21,7 +20,7 @@ import GLKit
 /// Note: Apple does not provide a constant for this key.
 /// AVURLAsset.variants is documented via Apple's current async-loading API docs:
 /// https://developer.apple.com/documentation/avfoundation/avpartialasyncproperty/variants
-private let kFVPAssetVariantsKey = "variants"
+private let assetVariantsKey = "variants"
 
 /// VideoPlayer manages video playback using AVPlayer.
 /// It provides methods for controlling playback, adjusting volume, and handling seeking.
@@ -32,13 +31,13 @@ private let kFVPAssetVariantsKey = "variants"
 // to a small bridge object to avoid the need to inherit from NSObject here.
 class VideoPlayer: NSObject, VideoPlayerInstanceApi {
   /// The AVPlayer instance used for video playback.
-  var player: AVPlayer
+  let player: AVPlayer
   /// Indicates whether the video player has been disposed.
-  var disposed = false
+  private(set) var disposed = false
   /// Indicates whether the video player is set to loop.
-  var isLooping = false
-  /// The current playback position of the video, in milliseconds.
-  var position: Int64 = 0
+  private(set) var isLooping = false
+  /// Indicates whether the video player is currently playing.
+  private(set) var isPlaying = false
   /// The event listener to report video events to.
   var eventListener: FVPVideoEventListener? {
     didSet {
@@ -48,19 +47,14 @@ class VideoPlayer: NSObject, VideoPlayerInstanceApi {
   /// A block that will be called when dispose is called.
   var onDisposed: (() -> Void)?
 
-  /// TODO handle this with visibility.
-  /// === Interface intended for use by subclasses, but not other callers. ===
-
   /// The pixel buffer source associated with this video player.
-  var pixelBufferSource: FVPPixelBufferSource
+  let pixelBufferSource: FVPPixelBufferSource
   /// The view provider, to obtain view information from.
-  var viewProvider: FVPViewProvider
+  let viewProvider: FVPViewProvider
   /// The preferred transform for the video. It can be used to handle the rotation of the video.
-  var preferredTransform: CGAffineTransform = CGAffineTransform.identity
+  private var preferredTransform: CGAffineTransform = CGAffineTransform.identity
   /// The target playback speed requested by the plugin client.
-  var targetPlaybackSpeed: Double?
-  /// Indicates whether the video player is currently playing.
-  var isPlaying = false
+  private var targetPlaybackSpeed: Double?
   /// Indicates whether an "initialized" message has been sent to the current Flutter event listener.
   ///
   /// The video player sends an "initialized" message to the event listener when its underlying
@@ -69,7 +63,7 @@ class VideoPlayer: NSObject, VideoPlayerInstanceApi {
   ///
   /// This flag is set to YES when the "initialized" message is first sent, and is never set to NO
   /// again.
-  var isInitialized = false
+  private var isInitialized = false
 
   private var keyValueObservations: [NSKeyValueObservation?] = []
   private var playToEndObserver: NSObjectProtocol? = nil
@@ -136,11 +130,11 @@ class VideoPlayer: NSObject, VideoPlayerInstanceApi {
               }
               if videoTrack.statusOfValue(forKey: "preferredTransform", error: nil) == .loaded {
                 // Rotate the video by using a videoComposition and the preferredTransform
-                self.preferredTransform = getStandardizedTrackTransform(
+                self.preferredTransform = standardizedTrackTransform(
                   transform:
                     videoTrack.preferredTransform, size: videoTrack.naturalSize)
                 // Do not use video composition when it is not needed.
-                if CGAffineTransformIsIdentity(self.preferredTransform) {
+                if self.preferredTransform.isIdentity {
                   return
                 }
                 // Note:
@@ -155,6 +149,50 @@ class VideoPlayer: NSObject, VideoPlayerInstanceApi {
         }
       }
     }
+  }
+
+  // MARK: VideoPlayerInstanceApi
+
+  func setLooping(_ looping: Bool) {
+    isLooping = looping
+  }
+
+  func setVolume(_ volume: Double) {
+    player.volume = Float(min(max(volume, 0.0), 1.0))
+  }
+
+  func setPlaybackSpeed(_ speed: Double) {
+    targetPlaybackSpeed = speed
+    updatePlayingState()
+  }
+
+  func play() {
+    isPlaying = true
+    updatePlayingState()
+  }
+
+  func getPosition() -> Int64 {
+    return convertCMTimeToMillis(player.currentTime())
+  }
+
+  func seek(to position: Int64, completion: @escaping (Result<Void, Error>) -> Void) {
+    let targetCMTime = CMTime(value: position, timescale: 1000)
+    let duration = player.currentItem?.asset.duration.value ?? 0
+    // Without adding tolerance when seeking to duration,
+    // seek(to:) will never complete, and this call will hang.
+    // see issue https://github.com/flutter/flutter/issues/124475.
+    let tolerance = position == duration ? CMTime(value: 1, timescale: 1000) : CMTime.zero
+    player.seek(to: targetCMTime, toleranceBefore: tolerance, toleranceAfter: tolerance) {
+      completed in
+      DispatchQueue.main.async {
+        completion(.success(()))
+      }
+    }
+  }
+
+  func pause() {
+    isPlaying = false
+    updatePlayingState()
   }
 
   func dispose() {
@@ -177,277 +215,56 @@ class VideoPlayer: NSObject, VideoPlayerInstanceApi {
     eventListener?.videoPlayerWasDisposed()
   }
 
-  private func registerInternalEventListeners() {
-    // The first time an event listener is set, set up video event listeners to relay status changes
-    // changes to the event listener.
-    if eventListener != nil && keyValueObservations.isEmpty && !disposed,
-      let item = player.currentItem
-    {
-      // If the item is already ready to play, ensure that the intialized event is sent first.
-      reportStatus(playerItem: item)
-      // Set up all necessary observers to report video events.
-      keyValueObservations.append(
-        item.observe(
-          \.loadedTimeRanges,
-          options: [.new]
-        ) { [weak self] object, change in
-          guard let self = self else { return }
-          let values = object.loadedTimeRanges.map { rangeValue in
-            let range = rangeValue.timeRangeValue
-            return [
-              NSNumber(value: self.convertCMTimeToMillis(range.start)),
-              NSNumber(value: self.convertCMTimeToMillis(range.duration)),
-            ]
-          }
-          self.eventListener?.videoPlayerDidUpdateBufferRegions(values)
-        }
-      )
-      keyValueObservations.append(
-        item.observe(
-          \.isPlaybackLikelyToKeepUp,
-          options: [.new]
-        ) { [weak self] object, change in
-          guard let self = self else { return }
-          self.updatePlayingState()
-          if object.isPlaybackLikelyToKeepUp {
-            self.eventListener?.videoPlayerDidEndBuffering()
-          } else {
-            self.eventListener?.videoPlayerDidStartBuffering()
-          }
-        }
-      )
-      keyValueObservations.append(
-        item.observe(
-          \.status,
-          options: [.new]
-        ) { [weak self] object, change in
-          self?.reportStatus(playerItem: object as AVPlayerItem)
-        }
-      )
-      keyValueObservations.append(
-        player.observe(
-          \.rate,
-          options: [.new]
-        ) { [weak self] object, change in
-          self?.eventListener?.videoPlayerDidSetPlaying(object.rate > 0)
-        }
-      )
+  func getAudioTracks() -> [MediaSelectionAudioTrackData] {
+    guard let currentItem = player.currentItem else {
+      return []
+    }
 
-      playToEndObserver = NotificationCenter.default.addObserver(
-        forName: .AVPlayerItemDidPlayToEndTime, object: item, queue: .main
-      ) { [weak self] notification in
-        guard let item = notification.object as? AVPlayerItem else { return }
-        self?.itemDidPlayToEndTime(item)
-      }
+    let asset = currentItem.asset
+
+    // Get tracks from media selection (for HLS streams)
+    let audioGroup = asset.mediaSelectionGroup(forMediaCharacteristic: .audible)
+
+    guard let audioGroup = audioGroup else {
+      return []
+    }
+
+    let mediaSelection = currentItem.currentMediaSelection
+    let currentSelection =
+      mediaSelection.selectedMediaOption(in: audioGroup)
+    return audioGroup.options.enumerated().map { i, option in
+
+      let displayName = option.displayName
+
+      let languageCode: String? = option.locale?.languageCode
+
+      let titleItems = AVMetadataItem.metadataItems(
+        from: option.commonMetadata, withKey: AVMetadataKey.commonKeyTitle, keySpace: .common)
+      let commonMetadataTitle: String? = titleItems.first?.stringValue
+
+      let isSelected = currentSelection?.isEqual(option) ?? false
+
+      return MediaSelectionAudioTrackData(
+        index: Int64(i),
+        displayName: displayName,
+        languageCode: languageCode,
+        isSelected: isSelected,
+        commonMetadataTitle: commonMetadataTitle)
     }
   }
 
-  func itemDidPlayToEndTime(_ item: AVPlayerItem) {
-    if isLooping {
-      item.seek(to: CMTime.zero) { _ in }
-    } else {
-      eventListener?.videoPlayerDidComplete()
-    }
-  }
+  func selectAudioTrack(atIndex trackIndex: Int64) {
+    guard let currentItem = player.currentItem else { return }
+    let asset = currentItem.asset
 
-  private func convertCMTimeToMillis(_ time: CMTime) -> Int64 {
-    // When CMTIME_IS_INDEFINITE return a value that matches TIME_UNSET from ExoPlayer2 on Android.
-    // Fixes https://github.com/flutter/flutter/issues/48670
-    if CMTIME_IS_INDEFINITE(time) { return -9_223_372_036_854_775_807 }
-    if time.timescale == 0 { return 0 }
-    return time.value * 1000 / Int64(time.timescale)
-  }
-
-  func radiansToDegrees(_ radians: CGFloat) -> Float {
-    // Input range [-pi, pi] or [-180, 180]
-    var degrees = GLKMathRadiansToDegrees(Float(radians))
-    if degrees < 0 {
-      // Convert -90 to 270 and -180 to 180
-      degrees += 360
-    }
-    // Output degrees in between [0, 360]
-    return degrees
-  }
-
-  func createVideoComposition(
-    transform: CGAffineTransform,
-    asset: FVPAVAsset,
-    videoTrack: AVAssetTrack
-  ) -> AVMutableVideoComposition {
-    let instruction = AVMutableVideoCompositionInstruction()
-    instruction.timeRange = CMTimeRangeMake(start: CMTime.zero, duration: asset.duration)
-    let layerInstruction = AVMutableVideoCompositionLayerInstruction(
-      assetTrack: videoTrack)
-    layerInstruction.setTransform(transform, at: CMTime.zero)
-
-    let videoComposition = AVMutableVideoComposition()
-    instruction.layerInstructions = [layerInstruction]
-    videoComposition.instructions = [instruction]
-
-    // If in portrait mode, switch the width and height of the video
-    var width = videoTrack.naturalSize.width
-    var height = videoTrack.naturalSize.height
-    let rotationDegrees =
-      Int(round(radiansToDegrees(atan2(transform.b, transform.a))))
-    if rotationDegrees == 90 || rotationDegrees == 270 {
-      width = videoTrack.naturalSize.height
-      height = videoTrack.naturalSize.width
-    }
-    videoComposition.renderSize = CGSize(width: width, height: height)
-
-    videoComposition.sourceTrackIDForFrameTiming = videoTrack.trackID
-    if CMTIME_IS_VALID(videoTrack.minFrameDuration) {
-      videoComposition.frameDuration = videoTrack.minFrameDuration
-    } else {
-      NSLog(
-        "Warning: videoTrack.minFrameDuration for input video is invalid, please report this to "
-          + "https://github.com/flutter/flutter/issues with input video attached.")
-      videoComposition.frameDuration = CMTimeMake(value: 1, timescale: 30)
-    }
-
-    return videoComposition
-  }
-
-  func reportStatus(playerItem item: AVPlayerItem) {
-    assert(
-      eventListener != nil,
-      "reportStatusForPlayerItem was called when the event listener was not set.")
-    switch item.status {
-    case .failed:
-      sendFailedToLoadVideoEvent()
-    case .readyToPlay:
-      if !isInitialized {
-        item.add(pixelBufferSource.videoOutput)
-        reportInitialized()
-        updatePlayingState()
-      }
-    case .unknown:
-      break
-    @unknown default:
-      break
-    }
-  }
-
-  /// Updates the playing state of the video player.
-  func updatePlayingState() {
-    if !isInitialized {
+    guard let audioGroup = asset.mediaSelectionGroup(forMediaCharacteristic: .audible) else {
       return
     }
-    if isPlaying {
-      // Calling play is the same as setting the rate to 1.0 (or to defaultRate depending on iOS
-      // version) so last set playback speed must be set here if any instead.
-      // https://github.com/flutter/flutter/issues/71264
-      // https://github.com/flutter/flutter/issues/73643
-      if targetPlaybackSpeed != nil {
-        updateRate()
-      } else {
-        player.play()
-      }
-    } else {
-      player.pause()
+
+    if trackIndex >= 0 && trackIndex < audioGroup.options.count {
+      let option = audioGroup.options[Int(trackIndex)]
+      currentItem.select(option, in: audioGroup)
     }
-  }
-
-  /// Synchronizes the player's playback rate with targetPlaybackSpeed, constrained by the playback
-  /// rate capabilities of the player's current item.
-  func updateRate() {
-    // See https://developer.apple.com/library/archive/qa/qa1772/_index.html for an explanation of
-    // these checks.
-    // If status is not AVPlayerItemStatusReadyToPlay then both canPlayFastForward
-    // and canPlaySlowForward are always false and it is unknown whether video can
-    // be played at these speeds, updatePlayingState will be called again when
-    // status changes to AVPlayerItemStatusReadyToPlay.
-    var speed = targetPlaybackSpeed ?? 1.0
-    let readyToPlay = player.currentItem?.status == .readyToPlay
-    if speed > 2.0 && !(player.currentItem?.canPlayFastForward ?? false) {
-      if !readyToPlay {
-        return
-      }
-      speed = 2.0
-    }
-    if speed < 1.0 && !(player.currentItem?.canPlaySlowForward ?? false) {
-      if !readyToPlay {
-        return
-      }
-      speed = 1.0
-    }
-    player.rate = Float(speed)
-  }
-
-  func sendFailedToLoadVideoEvent() {
-    // Prefer more detailed error information from tracks loading.
-    var nsError: NSError?
-    var error: Error?
-    if player.currentItem?.asset.statusOfValue(
-      forKey: "tracks",
-      error: &nsError) == .failed
-    {
-      error = nsError
-    } else {
-      error = player.currentItem?.error
-    }
-    let underlyingError = (error as? NSError)?.userInfo[NSUnderlyingErrorKey] as? NSError
-    let details: [String] = [
-      "Failed to load video",
-      error?.localizedDescription,
-      (error as? NSError)?.localizedFailureReason,
-      underlyingError?.localizedDescription,
-      underlyingError?.localizedFailureReason,
-    ].compactMap({ $0 })
-    eventListener?.videoPlayerDidError(withMessage: details.joined(separator: ": "))
-  }
-
-  func reportInitialized() {
-    let currentItem = player.currentItem
-    assert(
-      currentItem?.status == .readyToPlay,
-      "reportInitializedIfReadyToPlay was called when the item wasn't ready to play.")
-    assert(!isInitialized, "reportInitializedIfReadyToPlay should only be called once.")
-    isInitialized = true
-    eventListener?.videoPlayerDidInitialize(
-      withDuration: duration(), size: currentItem?.presentationSize ?? CGSize.zero)
-  }
-
-  func play() {
-    isPlaying = true
-    updatePlayingState()
-  }
-
-  func pause() {
-    isPlaying = false
-    updatePlayingState()
-  }
-
-  func getPosition() -> Int64 {
-    return convertCMTimeToMillis(player.currentTime())
-  }
-
-  func seek(to position: Int64, completion: @escaping (Result<Void, Error>) -> Void) {
-    let targetCMTime = CMTimeMake(value: position, timescale: 1000)
-    let duration = player.currentItem?.asset.duration.value ?? 0
-    // Without adding tolerance when seeking to duration,
-    // seek(to:) will never complete, and this call will hang.
-    // see issue https://github.com/flutter/flutter/issues/124475.
-    let tolerance = position == duration ? CMTimeMake(value: 1, timescale: 1000) : CMTime.zero
-    player.seek(to: targetCMTime, toleranceBefore: tolerance, toleranceAfter: tolerance) {
-      completed in
-      DispatchQueue.main.async {
-        completion(.success(()))
-      }
-    }
-  }
-
-  func setLooping(_ looping: Bool) {
-    isLooping = looping
-  }
-
-  func setVolume(_ volume: Double) {
-    player.volume = Float((volume < 0.0) ? 0.0 : ((volume > 1.0) ? 1.0 : volume))
-  }
-
-  func setPlaybackSpeed(_ speed: Double) {
-    targetPlaybackSpeed = speed
-    updatePlayingState()
   }
 
   func getVideoTracks(completion: @escaping (Result<NativeVideoTrackData, Error>) -> Void) {
@@ -466,10 +283,10 @@ class VideoPlayer: NSObject, VideoPlayerInstanceApi {
       return
     }
 
-    urlAsset.loadValuesAsynchronously(forKeys: [kFVPAssetVariantsKey]) {
+    urlAsset.loadValuesAsynchronously(forKeys: [assetVariantsKey]) {
       DispatchQueue.main.async {
         var error: NSError? = nil
-        let status = urlAsset.statusOfValue(forKey: kFVPAssetVariantsKey, error: &error)
+        let status = urlAsset.statusOfValue(forKey: assetVariantsKey, error: &error)
 
         if status == .loaded {
           let variants = urlAsset.variants
@@ -536,60 +353,243 @@ class VideoPlayer: NSObject, VideoPlayerInstanceApi {
     currentItem.preferredPeakBitRate = Double(bitrate)
   }
 
-  func getAudioTracks() -> [MediaSelectionAudioTrackData] {
-    guard let currentItem = player.currentItem else {
-      return []
-    }
-
-    let asset = currentItem.asset
-
-    // Get tracks from media selection (for HLS streams)
-    let audioGroup = asset.mediaSelectionGroup(forMediaCharacteristic: .audible)
-
-    guard let audioGroup = audioGroup else {
-      return []
-    }
-
-    let mediaSelection = currentItem.currentMediaSelection
-    let currentSelection =
-      mediaSelection.selectedMediaOption(in: audioGroup)
-    return audioGroup.options.enumerated().map { i, option in
-
-      let displayName = option.displayName
-
-      let languageCode: String? = option.locale?.languageCode
-
-      let titleItems = AVMetadataItem.metadataItems(
-        from: option.commonMetadata, withKey: AVMetadataKey.commonKeyTitle, keySpace: .common)
-      let commonMetadataTitle: String? = titleItems.first?.stringValue
-
-      let isSelected = currentSelection?.isEqual(option) ?? false
-
-      return MediaSelectionAudioTrackData(
-        index: Int64(i),
-        displayName: displayName,
-        languageCode: languageCode,
-        isSelected: isSelected,
-        commonMetadataTitle: commonMetadataTitle)
-    }
-  }
-
-  func selectAudioTrack(atIndex trackIndex: Int64) {
-    guard let currentItem = player.currentItem else { return }
-    let asset = currentItem.asset
-
-    guard let audioGroup = asset.mediaSelectionGroup(forMediaCharacteristic: .audible) else {
-      return
-    }
-
-    if trackIndex >= 0 && trackIndex < audioGroup.options.count {
-      let option = audioGroup.options[Int(trackIndex)]
-      currentItem.select(option, in: audioGroup)
-    }
-  }
-
   func setPreventsDisplaySleepDuringVideoPlayback(_ preventsDisplaySleepDuringVideoPlayback: Bool) {
     player.preventsDisplaySleepDuringVideoPlayback = preventsDisplaySleepDuringVideoPlayback
+  }
+
+  // MARK: Accessible for subclass
+
+  /// Updates the playing state of the video player.
+  func updatePlayingState() {
+    if !isInitialized {
+      return
+    }
+    if isPlaying {
+      // Calling play is the same as setting the rate to 1.0 (or to defaultRate depending on iOS
+      // version) so last set playback speed must be set here if any instead.
+      // https://github.com/flutter/flutter/issues/71264
+      // https://github.com/flutter/flutter/issues/73643
+      if targetPlaybackSpeed != nil {
+        updateRate()
+      } else {
+        player.play()
+      }
+    } else {
+      player.pause()
+    }
+  }
+
+  // MARK: Private
+
+  private func registerInternalEventListeners() {
+    // The first time an event listener is set, set up video event listeners to relay status changes
+    // changes to the event listener.
+    if eventListener != nil && keyValueObservations.isEmpty && !disposed,
+      let item = player.currentItem
+    {
+      // If the item is already ready to play, ensure that the intialized event is sent first.
+      reportStatus(playerItem: item)
+      // Set up all necessary observers to report video events.
+      keyValueObservations.append(
+        item.observe(
+          \.loadedTimeRanges,
+          options: [.new]
+        ) { [weak self] object, change in
+          guard let self = self else { return }
+          let values = object.loadedTimeRanges.map { rangeValue in
+            let range = rangeValue.timeRangeValue
+            return [
+              NSNumber(value: self.convertCMTimeToMillis(range.start)),
+              NSNumber(value: self.convertCMTimeToMillis(range.duration)),
+            ]
+          }
+          self.eventListener?.videoPlayerDidUpdateBufferRegions(values)
+        }
+      )
+      keyValueObservations.append(
+        item.observe(
+          \.isPlaybackLikelyToKeepUp,
+          options: [.new]
+        ) { [weak self] object, change in
+          guard let self = self else { return }
+          self.updatePlayingState()
+          if object.isPlaybackLikelyToKeepUp {
+            self.eventListener?.videoPlayerDidEndBuffering()
+          } else {
+            self.eventListener?.videoPlayerDidStartBuffering()
+          }
+        }
+      )
+      keyValueObservations.append(
+        item.observe(
+          \.status,
+          options: [.new]
+        ) { [weak self] object, change in
+          self?.reportStatus(playerItem: object as AVPlayerItem)
+        }
+      )
+      keyValueObservations.append(
+        player.observe(
+          \.rate,
+          options: [.new]
+        ) { [weak self] object, change in
+          self?.eventListener?.videoPlayerDidSetPlaying(object.rate > 0)
+        }
+      )
+
+      playToEndObserver = NotificationCenter.default.addObserver(
+        forName: .AVPlayerItemDidPlayToEndTime, object: item, queue: .main
+      ) { [weak self] notification in
+        guard let item = notification.object as? AVPlayerItem else { return }
+        self?.itemDidPlayToEndTime(item)
+      }
+    }
+  }
+
+  private func itemDidPlayToEndTime(_ item: AVPlayerItem) {
+    if isLooping {
+      item.seek(to: CMTime.zero) { _ in }
+    } else {
+      eventListener?.videoPlayerDidComplete()
+    }
+  }
+
+  private func convertCMTimeToMillis(_ time: CMTime) -> Int64 {
+    // For indefinite times return a value that matches TIME_UNSET from ExoPlayer2 on Android.
+    // Fixes https://github.com/flutter/flutter/issues/48670
+    if time.isIndefinite { return -9_223_372_036_854_775_807 }
+    if time.timescale == 0 { return 0 }
+    return time.value * 1000 / Int64(time.timescale)
+  }
+
+  private func radiansToDegrees(_ radians: CGFloat) -> Float {
+    // Input range [-pi, pi] or [-180, 180]
+    var degrees = Float(radians) * 180.0 / .pi
+    if degrees < 0 {
+      // Convert -90 to 270 and -180 to 180
+      degrees += 360
+    }
+    // Output degrees in between [0, 360]
+    return degrees
+  }
+
+  private func createVideoComposition(
+    transform: CGAffineTransform,
+    asset: FVPAVAsset,
+    videoTrack: AVAssetTrack
+  ) -> AVMutableVideoComposition {
+    let instruction = AVMutableVideoCompositionInstruction()
+    instruction.timeRange = CMTimeRange(start: CMTime.zero, duration: asset.duration)
+    let layerInstruction = AVMutableVideoCompositionLayerInstruction(
+      assetTrack: videoTrack)
+    layerInstruction.setTransform(transform, at: CMTime.zero)
+
+    let videoComposition = AVMutableVideoComposition()
+    instruction.layerInstructions = [layerInstruction]
+    videoComposition.instructions = [instruction]
+
+    // If in portrait mode, switch the width and height of the video
+    var width = videoTrack.naturalSize.width
+    var height = videoTrack.naturalSize.height
+    let rotationDegrees =
+      Int(round(radiansToDegrees(atan2(transform.b, transform.a))))
+    if rotationDegrees == 90 || rotationDegrees == 270 {
+      width = videoTrack.naturalSize.height
+      height = videoTrack.naturalSize.width
+    }
+    videoComposition.renderSize = CGSize(width: width, height: height)
+
+    videoComposition.sourceTrackIDForFrameTiming = videoTrack.trackID
+    if videoTrack.minFrameDuration.isValid {
+      videoComposition.frameDuration = videoTrack.minFrameDuration
+    } else {
+      NSLog(
+        "Warning: videoTrack.minFrameDuration for input video is invalid, please report this to "
+          + "https://github.com/flutter/flutter/issues with input video attached.")
+      videoComposition.frameDuration = CMTime(value: 1, timescale: 30)
+    }
+
+    return videoComposition
+  }
+
+  private func reportStatus(playerItem item: AVPlayerItem) {
+    assert(
+      eventListener != nil,
+      "reportStatusForPlayerItem was called when the event listener was not set.")
+    switch item.status {
+    case .failed:
+      sendFailedToLoadVideoEvent()
+    case .readyToPlay:
+      if !isInitialized {
+        item.add(pixelBufferSource.videoOutput)
+        reportInitialized()
+        updatePlayingState()
+      }
+    case .unknown:
+      break
+    @unknown default:
+      break
+    }
+  }
+
+  /// Synchronizes the player's playback rate with targetPlaybackSpeed, constrained by the playback
+  /// rate capabilities of the player's current item.
+  private func updateRate() {
+    // See https://developer.apple.com/library/archive/qa/qa1772/_index.html for an explanation of
+    // these checks.
+    // If status is not AVPlayerItemStatusReadyToPlay then both canPlayFastForward
+    // and canPlaySlowForward are always false and it is unknown whether video can
+    // be played at these speeds, updatePlayingState will be called again when
+    // status changes to AVPlayerItemStatusReadyToPlay.
+    var speed = targetPlaybackSpeed ?? 1.0
+    let readyToPlay = player.currentItem?.status == .readyToPlay
+    if speed > 2.0 && !(player.currentItem?.canPlayFastForward ?? false) {
+      if !readyToPlay {
+        return
+      }
+      speed = 2.0
+    }
+    if speed < 1.0 && !(player.currentItem?.canPlaySlowForward ?? false) {
+      if !readyToPlay {
+        return
+      }
+      speed = 1.0
+    }
+    player.rate = Float(speed)
+  }
+
+  private func sendFailedToLoadVideoEvent() {
+    // Prefer more detailed error information from tracks loading.
+    var nsError: NSError?
+    var error: Error?
+    if player.currentItem?.asset.statusOfValue(
+      forKey: "tracks",
+      error: &nsError) == .failed
+    {
+      error = nsError
+    } else {
+      error = player.currentItem?.error
+    }
+    let underlyingError = (error as? NSError)?.userInfo[NSUnderlyingErrorKey] as? NSError
+    let details: [String] = [
+      "Failed to load video",
+      error?.localizedDescription,
+      (error as? NSError)?.localizedFailureReason,
+      underlyingError?.localizedDescription,
+      underlyingError?.localizedFailureReason,
+    ].compactMap({ $0 })
+    eventListener?.videoPlayerDidError(withMessage: details.joined(separator: ": "))
+  }
+
+  private func reportInitialized() {
+    let currentItem = player.currentItem
+    assert(
+      currentItem?.status == .readyToPlay,
+      "reportInitializedIfReadyToPlay was called when the item wasn't ready to play.")
+    assert(!isInitialized, "reportInitializedIfReadyToPlay should only be called once.")
+    isInitialized = true
+    eventListener?.videoPlayerDidInitialize(
+      withDuration: duration(), size: currentItem?.presentationSize ?? CGSize.zero)
   }
 
   private func duration() -> Int64 {

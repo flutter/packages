@@ -49,7 +49,7 @@ class TextureBasedVideoPlayer: VideoPlayer, FlutterTexture {
   /// video streams (not just iOS 16).  (https://github.com/flutter/flutter/issues/109116). An
   /// invisible AVPlayerLayer is used to overwrite the protection of pixel buffers in those streams
   /// for issue #1, and restore the correct width and height for issue #2.
-  var playerLayer: AVPlayerLayer?
+  private(set) var playerLayer: AVPlayerLayer?
 
   /// Initializes a new instance of TextureBasedVideoPlayer with the given player item,
   /// frame updater, display link, AV factory, and view provider.
@@ -91,7 +91,7 @@ class TextureBasedVideoPlayer: VideoPlayer, FlutterTexture {
   }
 
   /// Ensures that the frame updater runs until a frame is rendered, regardless of play/pause state.
-  func expectFrame() {
+  private func expectFrame() {
     waitingForFrame = true
     displayLink?.running = true
   }

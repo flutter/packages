@@ -266,71 +266,69 @@ private let hlsAudioTestURI =
     #expect(durationApproximatelyEquals(eventListener.initializationDuration, 4000, tolerance: 200))
   }
 
-  #if os(iOS)
-    @Test func transformFixOrientationUp() {
-      let size = CGSize(width: 800, height: 600)
-      let naturalTransform = CGAffineTransform.identity
-      let t = getStandardizedTrackTransform(transform: naturalTransform, size: size)
-      #expect(t.tx == 0)
-      #expect(t.ty == 0)
-    }
+  @Test func transformFixOrientationUp() {
+    let size = CGSize(width: 800, height: 600)
+    let naturalTransform = CGAffineTransform.identity
+    let t = standardizedTrackTransform(transform: naturalTransform, size: size)
+    #expect(t.tx == 0)
+    #expect(t.ty == 0)
+  }
 
-    @Test func transformFixOrientationDown() {
-      let size = CGSize(width: 800, height: 600)
-      let naturalTransform = CGAffineTransform(a: -1, b: 0, c: 0, d: -1, tx: 0, ty: 0)
-      let t = getStandardizedTrackTransform(transform: naturalTransform, size: size)
-      #expect(t.tx == size.width)
-      #expect(t.ty == size.height)
-    }
+  @Test func transformFixOrientationDown() {
+    let size = CGSize(width: 800, height: 600)
+    let naturalTransform = CGAffineTransform(a: -1, b: 0, c: 0, d: -1, tx: 0, ty: 0)
+    let t = standardizedTrackTransform(transform: naturalTransform, size: size)
+    #expect(t.tx == size.width)
+    #expect(t.ty == size.height)
+  }
 
-    @Test func transformFixOrientationLeft() {
-      let size = CGSize(width: 800, height: 600)
-      let naturalTransform = CGAffineTransform(a: 0, b: -1, c: 1, d: 0, tx: 0, ty: 0)
-      let t = getStandardizedTrackTransform(transform: naturalTransform, size: size)
-      #expect(t.tx == 0)
-      #expect(t.ty == size.width)
-    }
+  @Test func transformFixOrientationLeft() {
+    let size = CGSize(width: 800, height: 600)
+    let naturalTransform = CGAffineTransform(a: 0, b: -1, c: 1, d: 0, tx: 0, ty: 0)
+    let t = standardizedTrackTransform(transform: naturalTransform, size: size)
+    #expect(t.tx == 0)
+    #expect(t.ty == size.width)
+  }
 
-    @Test func transformFixOrientationRight() {
-      let size = CGSize(width: 800, height: 600)
-      let naturalTransform = CGAffineTransform(a: 0, b: 1, c: -1, d: 0, tx: 0, ty: 0)
-      let t = getStandardizedTrackTransform(transform: naturalTransform, size: size)
-      #expect(t.tx == size.height)
-      #expect(t.ty == 0)
-    }
+  @Test func transformFixOrientationRight() {
+    let size = CGSize(width: 800, height: 600)
+    let naturalTransform = CGAffineTransform(a: 0, b: 1, c: -1, d: 0, tx: 0, ty: 0)
+    let t = standardizedTrackTransform(transform: naturalTransform, size: size)
+    #expect(t.tx == size.height)
+    #expect(t.ty == 0)
+  }
 
-    @Test func transformFixOrientationUpMirrored() {
-      let size = CGSize(width: 800, height: 600)
-      let naturalTransform = CGAffineTransform(a: -1, b: 0, c: 0, d: 1, tx: 0, ty: 0)
-      let t = getStandardizedTrackTransform(transform: naturalTransform, size: size)
-      #expect(t.tx == size.width)
-      #expect(t.ty == 0)
-    }
+  @Test func transformFixOrientationUpMirrored() {
+    let size = CGSize(width: 800, height: 600)
+    let naturalTransform = CGAffineTransform(a: -1, b: 0, c: 0, d: 1, tx: 0, ty: 0)
+    let t = standardizedTrackTransform(transform: naturalTransform, size: size)
+    #expect(t.tx == size.width)
+    #expect(t.ty == 0)
+  }
 
-    @Test func transformFixOrientationDownMirrored() {
-      let size = CGSize(width: 800, height: 600)
-      let naturalTransform = CGAffineTransform(a: 1, b: 0, c: 0, d: -1, tx: 0, ty: 0)
-      let t = getStandardizedTrackTransform(transform: naturalTransform, size: size)
-      #expect(t.tx == 0)
-      #expect(t.ty == size.height)
-    }
+  @Test func transformFixOrientationDownMirrored() {
+    let size = CGSize(width: 800, height: 600)
+    let naturalTransform = CGAffineTransform(a: 1, b: 0, c: 0, d: -1, tx: 0, ty: 0)
+    let t = standardizedTrackTransform(transform: naturalTransform, size: size)
+    #expect(t.tx == 0)
+    #expect(t.ty == size.height)
+  }
 
-    @Test func transformFixOrientationLeftMirrored() {
-      let size = CGSize(width: 800, height: 600)
-      let naturalTransform = CGAffineTransform(a: 0, b: -1, c: -1, d: 0, tx: 0, ty: 0)
-      let t = getStandardizedTrackTransform(transform: naturalTransform, size: size)
-      #expect(t.tx == size.height)
-      #expect(t.ty == size.width)
-    }
+  @Test func transformFixOrientationLeftMirrored() {
+    let size = CGSize(width: 800, height: 600)
+    let naturalTransform = CGAffineTransform(a: 0, b: -1, c: -1, d: 0, tx: 0, ty: 0)
+    let t = standardizedTrackTransform(transform: naturalTransform, size: size)
+    #expect(t.tx == size.height)
+    #expect(t.ty == size.width)
+  }
 
-    @Test func transformFixOrientationRightMirrored() {
-      let size = CGSize(width: 800, height: 600)
-      let naturalTransform = CGAffineTransform(a: 0, b: 1, c: 1, d: 0, tx: 0, ty: 0)
-      let t = getStandardizedTrackTransform(transform: naturalTransform, size: size)
-      #expect(t.tx == 0)
-      #expect(t.ty == 0)
-    }
-  #endif
+  @Test func transformFixOrientationRightMirrored() {
+    let size = CGSize(width: 800, height: 600)
+    let naturalTransform = CGAffineTransform(a: 0, b: 1, c: 1, d: 0, tx: 0, ty: 0)
+    let t = standardizedTrackTransform(transform: naturalTransform, size: size)
+    #expect(t.tx == 0)
+    #expect(t.ty == 0)
+  }
 
   @Test func seekToleranceWhenNotSeekingToEnd() async {
     let inspectableAVPlayer = InspectableAVPlayer()
@@ -748,7 +746,7 @@ private let hlsAudioTestURI =
   }
 
   @Test func loadTracksWithMediaTypeIsCalledOnNewerOS() {
-    let mockAsset = TestAsset(duration: CMTimeMake(value: 1, timescale: 1), tracks: [])
+    let mockAsset = TestAsset(duration: CMTime(value: 1, timescale: 1), tracks: [])
     let item = StubPlayerItem(asset: mockAsset)
 
     let stubAVFactory = StubFVPAVFactory(player: nil, playerItem: item, pixelBufferSource: nil)

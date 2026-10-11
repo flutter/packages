@@ -68,7 +68,7 @@ public final class VideoPlayerPlugin: NSObject, FlutterPlugin, AVFoundationVideo
   private let viewProvider: FVPViewProvider
   private let assetProvider: FVPAssetProvider
   private var nextPlayerIdentifier: Int64 = 1
-  var playersByIdentifier: [Int64: VideoPlayer] = [:]
+  private(set) var playersByIdentifier: [Int64: VideoPlayer] = [:]
 
   public static func register(with registrar: FlutterPluginRegistrar) {
     let instance = VideoPlayerPlugin(registrar: registrar)
