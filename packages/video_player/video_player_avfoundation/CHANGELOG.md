@@ -1,6 +1,7 @@
-## NEXT
+## 2.12.1
 
-* Updates minimum supported SDK version to Flutter 3.41/Dart 3.11.
+* Converts native player implementation to Swift.
+* Updates minimum supported SDK version to Flutter 3.47/Dart 3.13.
 
 ## 2.12.0
 
