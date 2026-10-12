@@ -1551,5 +1551,57 @@ TEST(CaptureController, ResumePreviewFailsIfPreviewNotStarted) {
   camera = nullptr;
 }
 
+TEST(CaptureController,
+     GetMaxPreviewHeightUsesResolutionPresetWhenVideoPresetNotSet) {
+  std::unique_ptr<MockCamera> camera =
+      std::make_unique<MockCamera>(MOCK_DEVICE_ID);
+  std::unique_ptr<CaptureControllerImpl> capture_controller =
+      std::make_unique<CaptureControllerImpl>(camera.get());
+  std::unique_ptr<MockTextureRegistrar> texture_registrar =
+      std::make_unique<MockTextureRegistrar>();
+  ComPtr<MockCaptureEngine> engine = new MockCaptureEngine();
+
+  PlatformMediaSettings settings(PlatformResolutionPreset::kMedium, true);
+  MockInitCaptureController(capture_controller.get(), texture_registrar.get(),
+                            engine.Get(), camera.get(), 1234, settings);
+
+  EXPECT_EQ(capture_controller->GetMaxPreviewHeight(), 480u);
+  EXPECT_EQ(capture_controller->GetMaxVideoHeight(), 480u);
+  EXPECT_EQ(capture_controller->GetMaxPhotoHeight(), 480u);
+
+  capture_controller = nullptr;
+  texture_registrar = nullptr;
+  engine = nullptr;
+  camera = nullptr;
+}
+
+TEST(CaptureController, GetMaxPreviewHeightUsesVideoResolutionPresetWhenSet) {
+  std::unique_ptr<MockCamera> camera =
+      std::make_unique<MockCamera>(MOCK_DEVICE_ID);
+  std::unique_ptr<CaptureControllerImpl> capture_controller =
+      std::make_unique<CaptureControllerImpl>(camera.get());
+  std::unique_ptr<MockTextureRegistrar> texture_registrar =
+      std::make_unique<MockTextureRegistrar>();
+  ComPtr<MockCaptureEngine> engine = new MockCaptureEngine();
+
+  PlatformResolutionPreset photo_preset = PlatformResolutionPreset::kUltraHigh;
+  PlatformResolutionPreset video_preset = PlatformResolutionPreset::kHigh;
+  PlatformMediaSettings settings(PlatformResolutionPreset::kLow, &photo_preset,
+                                 &video_preset, nullptr, nullptr, nullptr,
+                                 true);
+
+  MockInitCaptureController(capture_controller.get(), texture_registrar.get(),
+                            engine.Get(), camera.get(), 1234, settings);
+
+  EXPECT_EQ(capture_controller->GetMaxPreviewHeight(), 720u);
+  EXPECT_EQ(capture_controller->GetMaxVideoHeight(), 720u);
+  EXPECT_EQ(capture_controller->GetMaxPhotoHeight(), 2160u);
+
+  capture_controller = nullptr;
+  texture_registrar = nullptr;
+  engine = nullptr;
+  camera = nullptr;
+}
+
 }  // namespace test
 }  // namespace camera_windows

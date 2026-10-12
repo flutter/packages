@@ -1,3 +1,7 @@
+## 0.3.1
+ 
+* Adds support for separate photo and video resolution presets.
+
 ## 0.3.0
 
 * Adds support for custom video output path in video recording.

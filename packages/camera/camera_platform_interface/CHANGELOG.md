@@ -1,5 +1,6 @@
-## NEXT
+## 2.15.0
 
+* Adds `photoResolutionPreset` and `videoResolutionPreset` to `MediaSettings`.
 * Updates minimum supported SDK version to Flutter 3.41/Dart 3.11.
 
 ## 2.14.0

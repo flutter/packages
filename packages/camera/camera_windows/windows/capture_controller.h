@@ -161,8 +161,14 @@ class CaptureControllerImpl : public CaptureController,
   // This is called if capture engine creation fails or is disposed.
   void ResetCaptureController();
 
-  // Returns max preview height calculated from resolution present.
+  // Returns max preview height calculated from resolution preset.
   uint32_t GetMaxPreviewHeight() const;
+
+  // Returns max photo height calculated from resolution preset.
+  uint32_t GetMaxPhotoHeight() const;
+
+  // Returns max video height calculated from resolution preset.
+  uint32_t GetMaxVideoHeight() const;
 
   // Uses first audio source to capture audio.
   // Note: Enumerating audio sources via platform interface is not supported.
@@ -229,7 +235,8 @@ class CaptureControllerImpl : public CaptureController,
   ComPtr<CaptureEngineListener> capture_engine_callback_handler_;
   ComPtr<IMFDXGIDeviceManager> dxgi_device_manager_;
   ComPtr<ID3D11Device> dx11_device_;
-  ComPtr<IMFMediaType> base_capture_media_type_;
+  ComPtr<IMFMediaType> base_record_media_type_;
+  ComPtr<IMFMediaType> base_photo_media_type_;
   ComPtr<IMFMediaType> base_preview_media_type_;
   ComPtr<IMFMediaSource> video_source_;
   ComPtr<IMFMediaSource> audio_source_;

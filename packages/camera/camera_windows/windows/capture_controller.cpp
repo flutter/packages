@@ -283,7 +283,8 @@ void CaptureControllerImpl::ResetCaptureController() {
   audio_source_ = nullptr;
   video_source_ = nullptr;
   base_preview_media_type_ = nullptr;
-  base_capture_media_type_ = nullptr;
+  base_record_media_type_ = nullptr;
+  base_photo_media_type_ = nullptr;
 
   if (dxgi_device_manager_) {
     dxgi_device_manager_->ResetDevice(dx11_device_.Get(),
@@ -353,8 +354,8 @@ void CaptureControllerImpl::TakePicture(const std::string& file_path) {
 
   HRESULT hr = S_OK;
 
-  if (!base_capture_media_type_) {
-    // Enumerates mediatypes and finds media type for video capture.
+  if (!base_photo_media_type_) {
+    // Enumerates mediatypes and finds media type for photo capture.
     hr = FindBaseMediaTypes();
     if (FAILED(hr)) {
       return OnPicture(GetCameraResult(hr),
@@ -371,7 +372,7 @@ void CaptureControllerImpl::TakePicture(const std::string& file_path) {
   // Check MF_CAPTURE_ENGINE_PHOTO_TAKEN event handling
   // for response process.
   hr = photo_handler_->TakePhoto(file_path, capture_engine_.Get(),
-                                 base_capture_media_type_.Get());
+                                 base_photo_media_type_.Get());
   if (FAILED(hr)) {
     // Destroy photo handler on error cases to make sure state is resetted.
     photo_handler_ = nullptr;
@@ -379,8 +380,8 @@ void CaptureControllerImpl::TakePicture(const std::string& file_path) {
   }
 }
 
-uint32_t CaptureControllerImpl::GetMaxPreviewHeight() const {
-  switch (media_settings_.resolution_preset()) {
+uint32_t GetMaxHeightForPreset(PlatformResolutionPreset preset) {
+  switch (preset) {
     case PlatformResolutionPreset::kLow:
       return 240;
     case PlatformResolutionPreset::kMedium:
@@ -396,6 +397,30 @@ uint32_t CaptureControllerImpl::GetMaxPreviewHeight() const {
       // no limit.
       return 0xffffffff;
   }
+}
+
+uint32_t CaptureControllerImpl::GetMaxPreviewHeight() const {
+  const PlatformResolutionPreset* video_preset =
+      media_settings_.video_resolution_preset();
+  PlatformResolutionPreset preset =
+      video_preset ? *video_preset : media_settings_.resolution_preset();
+  return GetMaxHeightForPreset(preset);
+}
+
+uint32_t CaptureControllerImpl::GetMaxVideoHeight() const {
+  const PlatformResolutionPreset* video_preset =
+      media_settings_.video_resolution_preset();
+  PlatformResolutionPreset preset =
+      video_preset ? *video_preset : media_settings_.resolution_preset();
+  return GetMaxHeightForPreset(preset);
+}
+
+uint32_t CaptureControllerImpl::GetMaxPhotoHeight() const {
+  const PlatformResolutionPreset* photo_preset =
+      media_settings_.photo_resolution_preset();
+  PlatformResolutionPreset preset =
+      photo_preset ? *photo_preset : media_settings_.resolution_preset();
+  return GetMaxHeightForPreset(preset);
 }
 
 // Finds best media type for given source stream index and max height;
@@ -481,11 +506,19 @@ HRESULT CaptureControllerImpl::FindBaseMediaTypesForSource(
     return E_FAIL;
   }
 
-  // Find base media type for record and photo capture.
+  // Find base media type for video recording.
   if (!FindBestMediaType(
           (DWORD)MF_CAPTURE_ENGINE_PREFERRED_SOURCE_STREAM_FOR_VIDEO_RECORD,
-          source, base_capture_media_type_.GetAddressOf(), 0xffffffff, nullptr,
-          nullptr)) {
+          source, base_record_media_type_.GetAddressOf(), GetMaxVideoHeight(),
+          nullptr, nullptr)) {
+    return E_FAIL;
+  }
+
+  // Find base media type for photo capture.
+  if (!FindBestMediaType(
+          (DWORD)MF_CAPTURE_ENGINE_PREFERRED_SOURCE_STREAM_FOR_VIDEO_RECORD,
+          source, base_photo_media_type_.GetAddressOf(), GetMaxPhotoHeight(),
+          nullptr, nullptr)) {
     return E_FAIL;
   }
 
@@ -540,7 +573,7 @@ void CaptureControllerImpl::StartRecord(const std::string& file_path) {
 
   HRESULT hr = S_OK;
 
-  if (!base_capture_media_type_) {
+  if (!base_record_media_type_) {
     // Enumerates mediatypes and finds media type for video capture.
     hr = FindBaseMediaTypes();
     if (FAILED(hr)) {
@@ -561,7 +594,7 @@ void CaptureControllerImpl::StartRecord(const std::string& file_path) {
   // Check MF_CAPTURE_ENGINE_RECORD_STARTED event handling for response
   // process.
   hr = record_handler_->StartRecord(file_path, capture_engine_.Get(),
-                                    base_capture_media_type_.Get());
+                                    base_record_media_type_.Get());
   if (FAILED(hr)) {
     // Destroy record handler on error cases to make sure state is resetted.
     record_handler_ = nullptr;

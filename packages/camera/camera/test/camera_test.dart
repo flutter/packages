@@ -118,6 +118,28 @@ void main() {
       expect(cameraController.mediaSettings.fps, 15);
       expect(cameraController.mediaSettings.videoBitrate, 200000);
       expect(cameraController.mediaSettings.audioBitrate, 32000);
+      expect(cameraController.photoResolutionPreset, isNull);
+      expect(cameraController.videoResolutionPreset, isNull);
+    });
+
+    test('can be initialized with separate photo and video resolution presets', () async {
+      final cameraController = CameraController(
+        const CameraDescription(
+          name: 'cam',
+          lensDirection: CameraLensDirection.back,
+          sensorOrientation: 90,
+        ),
+        ResolutionPreset.medium,
+        photoResolutionPreset: ResolutionPreset.ultraHigh,
+        videoResolutionPreset: ResolutionPreset.high,
+      );
+      await cameraController.initialize();
+
+      expect(cameraController.resolutionPreset, ResolutionPreset.medium);
+      expect(cameraController.photoResolutionPreset, ResolutionPreset.ultraHigh);
+      expect(cameraController.videoResolutionPreset, ResolutionPreset.high);
+      expect(cameraController.mediaSettings.photoResolutionPreset, ResolutionPreset.ultraHigh);
+      expect(cameraController.mediaSettings.videoResolutionPreset, ResolutionPreset.high);
     });
 
     test('default constructor initializes media settings', () async {
@@ -132,6 +154,8 @@ void main() {
       await cameraController.initialize();
 
       expect(cameraController.resolutionPreset, ResolutionPreset.max);
+      expect(cameraController.photoResolutionPreset, isNull);
+      expect(cameraController.videoResolutionPreset, isNull);
       expect(cameraController.enableAudio, true);
       expect(cameraController.mediaSettings.fps, isNull);
       expect(cameraController.mediaSettings.videoBitrate, isNull);

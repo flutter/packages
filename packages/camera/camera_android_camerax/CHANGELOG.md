@@ -1,3 +1,7 @@
+## 0.7.6
+
+* Supports separate `photoResolutionPreset` and `videoResolutionPreset` from `MediaSettings`.
+
 ## 0.7.5+2
 
 * Updates Robolectric to 4.17 and adds the JVM arguments it requires for unit tests.
