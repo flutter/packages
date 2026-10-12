@@ -538,7 +538,7 @@ void main() {
             .element<StatelessElement>(
               find.descendant(of: findMenuItemButton(label), matching: find.text(label)),
             )
-            .renderObject;
+            .renderObject!;
         return (paragraph as RenderParagraph).text.style;
       }
 
@@ -4814,7 +4814,7 @@ void main() {
       );
 
       final TextField textField = tester.firstWidget(find.byType(TextField));
-      final InputDecoration effectiveDecoration = textField.decoration;
+      final InputDecoration effectiveDecoration = textField.decoration!;
 
       expect(effectiveDecoration.labelText, decoration.labelText);
       expect(effectiveDecoration.helperText, decoration.helperText);
@@ -5349,7 +5349,7 @@ void main() {
       TextInputAction.previous: true,
     };
 
-    final TextInputAction textInputAction = focusVariants.currentValue;
+    final TextInputAction textInputAction = focusVariants.currentValue!;
     expect(actionShouldLoseFocus.containsKey(textInputAction), isTrue);
 
     await ensureCorrectFocusHandlingForAction(

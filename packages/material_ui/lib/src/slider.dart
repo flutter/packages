@@ -1995,7 +1995,7 @@ class _RenderSlider extends RenderBox with RelayoutWhenSystemFontsChangeMixin {
 
     config.isEnabled = isInteractive;
     if (label != null) {
-      config.label = label;
+      config.label = label!;
     }
     config.isSlider = true;
     config.isFocusable = isInteractive;

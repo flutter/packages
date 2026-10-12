@@ -3650,7 +3650,7 @@ void main() {
     }
 
     Color textColor() {
-      return tester.renderObject<RenderParagraph>(find.text('Chip')).text.style!.color;
+      return tester.renderObject<RenderParagraph>(find.text('Chip')).text.style!.color!;
     }
 
     // Default, not disabled.

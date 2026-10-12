@@ -808,7 +808,7 @@ class SemanticsTester {
       }
 
       if (flagsCollection != null) {
-        final expectedFlags = flagsCollection;
+        final SemanticsFlags expectedFlags = flagsCollection;
         final SemanticsFlags actualFlags = node.getSemanticsData().flagsCollection;
         if (expectedFlags != actualFlags) {
           return false;

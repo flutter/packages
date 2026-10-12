@@ -144,7 +144,7 @@ class InkSplash extends InteractiveInkFeature {
   }) : _position = position,
        _borderRadius = borderRadius ?? BorderRadius.zero,
        _targetRadius =
-           radius ?? _getTargetRadius(referenceBox, containedInkWell, rectCallback, position),
+           radius ?? _getTargetRadius(referenceBox, containedInkWell, rectCallback, position!),
        _clipCallback = _getClipCallback(referenceBox, containedInkWell, rectCallback),
        _repositionToReferenceBox = !containedInkWell,
        super(controller: controller, color: color) {
@@ -219,7 +219,7 @@ class InkSplash extends InteractiveInkFeature {
       canvas: canvas,
       transform: transform,
       paint: paint,
-      center: center,
+      center: center!,
       textDirection: _textDirection,
       radius: _radius.value,
       customBorder: customBorder,

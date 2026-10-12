@@ -1720,7 +1720,7 @@ void main() {
     expect(tabController.index, 1);
 
     final PageView pageView = tester.widget(find.byType(PageView));
-    final PageController pageController = pageView.controller;
+    final PageController pageController = pageView.controller!;
     final ScrollPosition position = pageController.position;
 
     // The TabBarView's page width is 400, so page 0 is at scroll offset 0.0,
@@ -1770,7 +1770,7 @@ void main() {
     expect(tabController.index, 0);
 
     final PageView pageView = tester.widget<PageView>(find.byType(PageView));
-    final PageController pageController = pageView.controller;
+    final PageController pageController = pageView.controller!;
     final ScrollPosition position = pageController.position;
 
     expect(position.pixels, 0.0);
@@ -1834,7 +1834,7 @@ void main() {
     expect(tabController.index, 1);
 
     final PageView pageView = tester.widget(find.byType(PageView));
-    final PageController pageController = pageView.controller;
+    final PageController pageController = pageView.controller!;
 
     // The TabView was initialized with viewportFraction as 0.8
     // So it's expected the PageView inside would obtain the same viewportFraction
@@ -1878,7 +1878,7 @@ void main() {
     expect(tabController.index, 1);
 
     final PageView pageView = tester.widget(find.byType(PageView));
-    final PageController pageController = pageView.controller;
+    final PageController pageController = pageView.controller!;
 
     // The TabView was initialized with default viewportFraction
     // So it's expected the PageView inside would obtain the value 1
@@ -1922,7 +1922,7 @@ void main() {
 
     await tester.pumpWidget(buildFrame(0.8));
     PageView pageView = tester.widget(find.byType(PageView));
-    PageController pageController = pageView.controller;
+    PageController pageController = pageView.controller!;
     expect(pageController.viewportFraction, 0.8);
 
     // Rebuild with a different viewport fraction.
@@ -2112,7 +2112,7 @@ void main() {
     expect(tabController.index, 1);
 
     final PageView pageView = tester.widget(find.byType(PageView));
-    final PageController pageController = pageView.controller;
+    final PageController pageController = pageView.controller!;
     final ScrollPosition position = pageController.position;
 
     // The TabBarView's page width is 400, so page 0 is at scroll offset 0.0,
@@ -2159,7 +2159,7 @@ void main() {
     expect(tabController.index, 0);
 
     final PageView pageView = tester.widget(find.byType(PageView));
-    final PageController pageController = pageView.controller;
+    final PageController pageController = pageView.controller!;
     final ScrollPosition position = pageController.position;
 
     // The TabBarView's page width is 400, so page 0 is at scroll offset 0.0,
@@ -2207,7 +2207,7 @@ void main() {
     expect(tabController.index, 0);
 
     final PageView pageView = tester.widget(find.byType(PageView));
-    final PageController pageController = pageView.controller;
+    final PageController pageController = pageView.controller!;
     final ScrollPosition position = pageController.position;
 
     // The TabBarView's page width is 400, so page 0 is at scroll offset 0.0,
@@ -2259,7 +2259,7 @@ void main() {
       expect(tabController.index, 0);
 
       final PageView pageView = tester.widget(find.byType(PageView));
-      final PageController pageController = pageView.controller;
+      final PageController pageController = pageView.controller!;
       final ScrollPosition position = pageController.position;
 
       // The TabBarView's page width is 400, so page 0 is at scroll offset 0.0,
@@ -2314,7 +2314,7 @@ void main() {
     expect(tabController.index, 0);
 
     final PageView pageView = tester.widget(find.byType(PageView));
-    final PageController pageController = pageView.controller;
+    final PageController pageController = pageView.controller!;
     final ScrollPosition position = pageController.position;
 
     // The TabBarView's page width is 400, so page 0 is at scroll offset 0.0,
@@ -2512,7 +2512,7 @@ void main() {
     expect(tabController.index, 1);
 
     final PageView pageView = tester.widget(find.byType(PageView));
-    final PageController pageController = pageView.controller;
+    final PageController pageController = pageView.controller!;
     final ScrollPosition position = pageController.position;
 
     // The TabBarView's page width is 400, so page 0 is at scroll offset 0.0,
@@ -2736,7 +2736,7 @@ void main() {
     expect(tabController.index, 1);
 
     final PageView pageView = tester.widget(find.byType(PageView));
-    final PageController pageController = pageView.controller;
+    final PageController pageController = pageView.controller!;
     final ScrollPosition position = pageController.position;
 
     // The TabBarView's page width is 400, so page 0 is at scroll offset 0.0,
@@ -3945,7 +3945,7 @@ void main() {
     );
 
     final RenderBox tabBarBox = tester.firstRenderObject<RenderBox>(find.byType(TabBar));
-    const double tabBarHeight =
+    final double tabBarHeight =
         40.0 + indicatorWeight + padding.top + padding.bottom; // 40 = max tab height
     expect(tabBarBox.size.height, tabBarHeight);
 
@@ -4003,7 +4003,7 @@ void main() {
     );
 
     final RenderBox tabBarBox = tester.firstRenderObject<RenderBox>(find.byType(TabBar));
-    const double tabBarHeight =
+    final double tabBarHeight =
         50.0 + indicatorWeight + padding.top + padding.bottom; // 50 = max tab height
     expect(tabBarBox.size.height, tabBarHeight);
 
@@ -4099,8 +4099,8 @@ void main() {
     expect(tester.getRect(find.byKey(tabs[2].key!)), tabRect);
 
     // Tab 0 selected, indicatorPadding == labelPadding
-    const double indicatorLeft = indicatorPadding.left + indicatorWeight / 2.0;
-    const double indicatorRight =
+    final double indicatorLeft = indicatorPadding.left + indicatorWeight / 2.0;
+    final double indicatorRight =
         130.0 + labelPadding.horizontal - indicatorPadding.right - indicatorWeight / 2.0;
     final double indicatorY = tabBottom + indicatorWeight / 2.0;
     expect(
@@ -4175,8 +4175,8 @@ void main() {
     expect(tester.getRect(find.byKey(tabs[2].key!)), tabRect);
 
     // Tab 0 selected
-    const double indicatorLeft = indicatorPadding.left + labelPadding.left + indicatorWeight / 2.0;
-    const double indicatorRight =
+    final double indicatorLeft = indicatorPadding.left + labelPadding.left + indicatorWeight / 2.0;
+    final double indicatorRight =
         labelPadding.left + 130.0 - indicatorPadding.right - indicatorWeight / 2.0;
     final double indicatorY = tabBottom + indicatorWeight / 2.0;
     expect(
@@ -5043,7 +5043,7 @@ void main() {
 
     await tester.pumpWidget(buildFrame(15));
     PageView pageView = tester.widget(find.byType(PageView));
-    final PageController pageController1 = pageView.controller;
+    final PageController pageController1 = pageView.controller!;
     TabController tabController = DefaultTabController.of(tester.element(find.text('Page 14')));
     expect(tabController.index, 14);
     expect(pageController1.page, 14);
@@ -5051,7 +5051,7 @@ void main() {
     // Rebuild with a new default tab controller with more tabs.
     await tester.pumpWidget(buildFrame(10));
     pageView = tester.widget(find.byType(PageView));
-    final PageController pageController2 = pageView.controller;
+    final PageController pageController2 = pageView.controller!;
     tabController = DefaultTabController.of(tester.element(find.text('Page 9')));
     expect(tabController.index, 9);
     expect(pageController2.page, 9);
@@ -5498,11 +5498,11 @@ void main() {
     final TextStyle selectedTextStyle = tester
         .renderObject<RenderParagraph>(find.text(tab1))
         .text
-        .style;
+        .style!;
     final TextStyle unselectedTextStyle = tester
         .renderObject<RenderParagraph>(find.text(tab2))
         .text
-        .style;
+        .style!;
 
     expect(selectedTabIcon.color, selectedColor);
     expect(unselectedTabIcon.color, unselectedColor);
@@ -5545,11 +5545,11 @@ void main() {
 
     IconThemeData selectedTabIcon = IconTheme.of(tester.element(find.text(tab1)));
     IconThemeData unselectedTabIcon = IconTheme.of(tester.element(find.text(tab2)));
-    TextStyle selectedTextStyle = tester.renderObject<RenderParagraph>(find.text(tab1)).text.style;
+    TextStyle selectedTextStyle = tester.renderObject<RenderParagraph>(find.text(tab1)).text.style!;
     TextStyle unselectedTextStyle = tester
         .renderObject<RenderParagraph>(find.text(tab2))
         .text
-        .style;
+        .style!;
 
     expect(selectedTabIcon.color, selectedStateColor);
     expect(unselectedTabIcon.color, unselectedStateColor);
@@ -5899,7 +5899,7 @@ void main() {
       double expectedIndicatorLeft = canvas.indicatorRect.left;
 
       final PageView pageView = tester.widget(find.byType(PageView));
-      final PageController pageController = pageView.controller;
+      final PageController pageController = pageView.controller!;
       void pageControllerListener() {
         // Whenever TabBarView scrolls due to changing TabController's index,
         // check if indicator stays idle in its expectedIndicatorLeft
@@ -6090,7 +6090,7 @@ void main() {
       );
 
       final PageView pageView = tester.widget(find.byType(PageView));
-      final PageController pageController = pageView.controller;
+      final PageController pageController = pageView.controller!;
       final ScrollPosition position = pageController.position;
 
       expect(tabController.index, 0);
@@ -6611,7 +6611,7 @@ void main() {
 
       await tester.pumpWidget(buildFrame(controller1, showLast: true));
       final PageView pageView = tester.widget(find.byType(PageView));
-      final PageController pageController = pageView.controller;
+      final PageController pageController = pageView.controller!;
       await tester.tap(find.text('three'));
       await tester.pumpAndSettle();
       expect(controller1.index, 2);
@@ -6675,7 +6675,7 @@ void main() {
 
     await tester.pumpWidget(buildFrame(controller1, showLast: true));
     PageView pageView = tester.widget(find.byType(PageView));
-    PageController pageController = pageView.controller;
+    PageController pageController = pageView.controller!;
     await tester.tap(find.text('three'));
     await tester.pumpAndSettle();
     expect(controller1.index, 2);
@@ -7476,11 +7476,11 @@ void main() {
     final TextStyle selectedTextStyle = tester
         .renderObject<RenderParagraph>(find.text(tab1))
         .text
-        .style;
+        .style!;
     final TextStyle unselectedTextStyle = tester
         .renderObject<RenderParagraph>(find.text(tab2))
         .text
-        .style;
+        .style!;
 
     // Selected tab should use the labelStyle color.
     expect(selectedTabIcon.color, labelStyle.color);
@@ -7529,11 +7529,11 @@ void main() {
       TextStyle selectedTextStyle = tester
           .renderObject<RenderParagraph>(find.text(tab1))
           .text
-          .style;
+          .style!;
       TextStyle unselectedTextStyle = tester
           .renderObject<RenderParagraph>(find.text(tab2))
           .text
-          .style;
+          .style!;
 
       // Selected tab should use labelStyle color.
       expect(selectedTabIcon.color, labelStyle.color);
@@ -7851,7 +7851,7 @@ void main() {
       );
 
       final RenderBox tabBarBox = tester.firstRenderObject<RenderBox>(find.byType(TabBar));
-      const double tabBarHeight =
+      final double tabBarHeight =
           50.0 + indicatorWeight + padding.top + padding.bottom; // 50 = max tab height
       expect(tabBarBox.size.height, tabBarHeight);
 
@@ -7995,7 +7995,7 @@ void main() {
 
     await tester.pumpWidget(buildTabs());
 
-    ImageConfiguration config = decoration.painters.last.lastConfiguration;
+    ImageConfiguration config = decoration.painters.last.lastConfiguration!;
     expect(config.size?.width, closeTo(14.1, 0.1));
     expect(config.size?.height, equals(48.0));
     expect(config.textDirection, TextDirection.ltr);
@@ -8313,7 +8313,7 @@ void main() {
       final RichText iconRichText = tester.widget<RichText>(
         find.descendant(of: find.byIcon(icon), matching: find.byType(RichText)),
       );
-      return iconRichText.text.style;
+      return iconRichText.text.style!;
     }
 
     // The iconTheme color isn't applied to the selected icon.

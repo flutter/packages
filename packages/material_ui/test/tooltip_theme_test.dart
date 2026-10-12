@@ -40,7 +40,7 @@ void main() {
       enableFeedback: false,
       ignorePointer: false,
     );
-    final TooltipThemeData lerpedEarly = TooltipThemeData.lerp(a, b, 0.25);
+    final TooltipThemeData lerpedEarly = TooltipThemeData.lerp(a, b, 0.25)!;
     expect(lerpedEarly.waitDuration, a.waitDuration);
     expect(lerpedEarly.showDuration, a.showDuration);
     expect(lerpedEarly.exitDuration, a.exitDuration);
@@ -48,7 +48,7 @@ void main() {
     expect(lerpedEarly.enableFeedback, a.enableFeedback);
     expect(lerpedEarly.ignorePointer, a.ignorePointer);
 
-    final TooltipThemeData lerpedLate = TooltipThemeData.lerp(a, b, 0.75);
+    final TooltipThemeData lerpedLate = TooltipThemeData.lerp(a, b, 0.75)!;
     expect(lerpedLate.waitDuration, b.waitDuration);
     expect(lerpedLate.showDuration, b.showDuration);
     expect(lerpedLate.exitDuration, b.exitDuration);
@@ -691,7 +691,7 @@ void main() {
     key.currentState!.ensureTooltipVisible();
     await tester.pump(const Duration(seconds: 2)); // faded in, show timer started (and at 0.0)
 
-    final TextStyle textStyle = tester.widget<Text>(find.text(tooltipText)).style;
+    final TextStyle textStyle = tester.widget<Text>(find.text(tooltipText)).style!;
     expect(textStyle.color, Colors.orange);
     expect(textStyle.fontFamily, null);
     expect(textStyle.decoration, TextDecoration.underline);
@@ -715,7 +715,7 @@ void main() {
     key.currentState!.ensureTooltipVisible();
     await tester.pump(const Duration(seconds: 2)); // faded in, show timer started (and at 0.0)
 
-    final TextStyle textStyle = tester.widget<Text>(find.text(tooltipText)).style;
+    final TextStyle textStyle = tester.widget<Text>(find.text(tooltipText)).style!;
     expect(textStyle.color, Colors.orange);
     expect(textStyle.fontFamily, null);
     expect(textStyle.decoration, TextDecoration.underline);
@@ -742,7 +742,7 @@ void main() {
 
     // Default value should be TextAlign.start
     await pumpTooltipWithTextAlign();
-    TextAlign textAlign = tester.widget<Text>(find.text(tooltipText)).textAlign;
+    TextAlign textAlign = tester.widget<Text>(find.text(tooltipText)).textAlign!;
     expect(textAlign, TextAlign.start);
 
     await pumpTooltipWithTextAlign(textAlign: TextAlign.center);
@@ -1596,5 +1596,5 @@ void main() {
 }
 
 SemanticsNode findDebugSemantics(RenderObject object) {
-  return object.debugSemantics ?? findDebugSemantics(object.parent);
+  return object.debugSemantics ?? findDebugSemantics(object.parent!);
 }

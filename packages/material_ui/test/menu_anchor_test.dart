@@ -63,7 +63,7 @@ void main() {
 
   List<RenderObject> ancestorRenderTheaters(RenderObject child) {
     final results = <RenderObject>[];
-    var node = child;
+    RenderObject? node = child;
     while (node != null) {
       if (node.runtimeType.toString() == '_RenderTheater') {
         results.add(node);
@@ -190,7 +190,7 @@ void main() {
     final RichText iconRichText = tester.widget<RichText>(
       find.descendant(of: find.byIcon(icon), matching: find.byType(RichText)),
     );
-    return iconRichText.text.style;
+    return iconRichText.text.style!;
   }
 
   testWidgets('Menu responds to density changes', (WidgetTester tester) async {

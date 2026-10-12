@@ -1025,7 +1025,7 @@ class _IconButtonM3 extends ButtonStyleButton {
     required this.styleVariant,
     required this.toggleable,
     super.tooltip,
-    required super.child,
+    required Widget super.child,
   }) : super(onFocusChange: null, clipBehavior: Clip.none);
 
   final _IconButtonVariant iconButtonVariant;

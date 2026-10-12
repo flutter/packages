@@ -298,7 +298,7 @@ void main() {
               }),
             ),
           )
-          .child;
+          .child!;
     }
 
     final scaffoldKey = GlobalKey<ScaffoldState>();
@@ -1578,7 +1578,7 @@ void main() {
     await tester.pumpAndSettle();
 
     final BuildContext routeContext = tester.element(find.text('Second Body'));
-    final ModalRoute<dynamic> route = ModalRoute.of(routeContext);
+    final ModalRoute<dynamic> route = ModalRoute.of(routeContext)!;
 
     // The drawer should be closed.
     expect(find.text('Drawer Item'), findsNothing);
@@ -1628,7 +1628,7 @@ void main() {
     await tester.pumpAndSettle();
 
     final BuildContext routeContext = tester.element(find.text('Second Body'));
-    final ModalRoute<dynamic> route = ModalRoute.of(routeContext);
+    final ModalRoute<dynamic> route = ModalRoute.of(routeContext)!;
     expect(route.willHandlePopInternally, true);
 
     // Start closing the drawer programmatically to begin the closing animation.

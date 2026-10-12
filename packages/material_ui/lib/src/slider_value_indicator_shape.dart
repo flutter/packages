@@ -223,7 +223,7 @@ class RoundSliderOverlayShape extends SliderComponentShape {
     canvas.drawCircle(
       center,
       radiusTween.evaluate(activationAnimation),
-      Paint()..color = sliderTheme.overlayColor,
+      Paint()..color = sliderTheme.overlayColor!,
     );
   }
 }
@@ -253,7 +253,7 @@ class RectangularSliderValueIndicatorShape extends SliderComponentShape {
   }) {
     assert(labelPainter != null);
     assert(textScaleFactor != null && textScaleFactor >= 0);
-    return _pathPainter.getPreferredSize(labelPainter, textScaleFactor!);
+    return _pathPainter.getPreferredSize(labelPainter!, textScaleFactor!);
   }
 
   @override
@@ -281,7 +281,7 @@ class RectangularSliderValueIndicatorShape extends SliderComponentShape {
       labelPainter: labelPainter,
       textScaleFactor: textScaleFactor,
       sizeWithOverflow: sizeWithOverflow,
-      backgroundPaintColor: sliderTheme.valueIndicatorColor,
+      backgroundPaintColor: sliderTheme.valueIndicatorColor!,
       strokePaintColor: sliderTheme.valueIndicatorStrokeColor,
     );
   }
@@ -324,11 +324,11 @@ class RectangularRangeSliderValueIndicatorShape extends RangeSliderValueIndicato
     Size? sizeWithOverflow,
   }) {
     return _pathPainter.getHorizontalShift(
-      parentBox: parentBox,
-      center: center,
-      labelPainter: labelPainter,
+      parentBox: parentBox!,
+      center: center!,
+      labelPainter: labelPainter!,
       textScaleFactor: textScaleFactor!,
-      sizeWithOverflow: sizeWithOverflow,
+      sizeWithOverflow: sizeWithOverflow!,
       scale: activationAnimation!.value,
     );
   }
@@ -353,14 +353,14 @@ class RectangularRangeSliderValueIndicatorShape extends RangeSliderValueIndicato
     final Canvas canvas = context.canvas;
     final double scale = activationAnimation!.value;
     _pathPainter.paint(
-      parentBox: parentBox,
+      parentBox: parentBox!,
       canvas: canvas,
       center: center,
       scale: scale,
-      labelPainter: labelPainter,
+      labelPainter: labelPainter!,
       textScaleFactor: textScaleFactor!,
-      sizeWithOverflow: sizeWithOverflow,
-      backgroundPaintColor: sliderTheme!.valueIndicatorColor,
+      sizeWithOverflow: sizeWithOverflow!,
+      backgroundPaintColor: sliderTheme!.valueIndicatorColor!,
       strokePaintColor: isOnTop!
           ? sliderTheme.overlappingShapeStrokeColor
           : sliderTheme.valueIndicatorStrokeColor,
@@ -522,7 +522,7 @@ class PaddleSliderValueIndicatorShape extends SliderComponentShape {
   }) {
     assert(labelPainter != null);
     assert(textScaleFactor != null && textScaleFactor >= 0);
-    return _pathPainter.getPreferredSize(labelPainter, textScaleFactor!);
+    return _pathPainter.getPreferredSize(labelPainter!, textScaleFactor!);
   }
 
   @override
@@ -548,7 +548,7 @@ class PaddleSliderValueIndicatorShape extends SliderComponentShape {
     _pathPainter.paint(
       context.canvas,
       center,
-      Paint()..color = enableColor.evaluate(enableAnimation),
+      Paint()..color = enableColor.evaluate(enableAnimation)!,
       activationAnimation.value,
       labelPainter,
       textScaleFactor,
@@ -596,11 +596,11 @@ class PaddleRangeSliderValueIndicatorShape extends RangeSliderValueIndicatorShap
     Size? sizeWithOverflow,
   }) {
     return _pathPainter.getHorizontalShift(
-      center: center,
-      labelPainter: labelPainter,
+      center: center!,
+      labelPainter: labelPainter!,
       scale: activationAnimation!.value,
       textScaleFactor: textScaleFactor!,
-      sizeWithOverflow: sizeWithOverflow,
+      sizeWithOverflow: sizeWithOverflow!,
     );
   }
 
@@ -630,11 +630,11 @@ class PaddleRangeSliderValueIndicatorShape extends RangeSliderValueIndicatorShap
     _pathPainter.paint(
       context.canvas,
       center,
-      Paint()..color = enableColor.evaluate(enableAnimation),
+      Paint()..color = enableColor.evaluate(enableAnimation)!,
       activationAnimation.value,
       labelPainter,
       textScaleFactor!,
-      sizeWithOverflow,
+      sizeWithOverflow!,
       isOnTop ? sliderTheme.overlappingShapeStrokeColor : sliderTheme.valueIndicatorStrokeColor,
     );
   }
@@ -868,8 +868,8 @@ class _PaddleSliderValueIndicatorPathPainter {
     assert(
       !_debuggingLabelLocation ||
           () {
-            const Offset leftCenter = _topLobeCenter - Offset(leftWidthNeeded, 0.0) + neckStretch;
-            const Offset rightCenter = _topLobeCenter + Offset(rightWidthNeeded, 0.0) + neckStretch;
+            final Offset leftCenter = _topLobeCenter - Offset(leftWidthNeeded, 0.0) + neckStretch;
+            final Offset rightCenter = _topLobeCenter + Offset(rightWidthNeeded, 0.0) + neckStretch;
             final valueRect = Rect.fromLTRB(
               leftCenter.dx - _topLobeRadius,
               leftCenter.dy - _topLobeRadius,

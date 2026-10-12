@@ -549,19 +549,19 @@ void main() {
 
     List<TextStyle> extractStyles(TextTheme textTheme) {
       return <TextStyle>[
-        textTheme.displayLarge,
-        textTheme.displayMedium,
-        textTheme.displaySmall,
-        textTheme.headlineLarge,
-        textTheme.headlineMedium,
-        textTheme.headlineSmall,
-        textTheme.titleLarge,
-        textTheme.titleMedium,
-        textTheme.bodyLarge,
-        textTheme.bodyMedium,
-        textTheme.bodySmall,
-        textTheme.labelLarge,
-        textTheme.labelMedium,
+        textTheme.displayLarge!,
+        textTheme.displayMedium!,
+        textTheme.displaySmall!,
+        textTheme.headlineLarge!,
+        textTheme.headlineMedium!,
+        textTheme.headlineSmall!,
+        textTheme.titleLarge!,
+        textTheme.titleMedium!,
+        textTheme.bodyLarge!,
+        textTheme.bodyMedium!,
+        textTheme.bodySmall!,
+        textTheme.labelLarge!,
+        textTheme.labelMedium!,
         // textTheme.labelSmall!,
       ];
     }
@@ -614,19 +614,19 @@ void main() {
 
     List<TextStyle> extractStyles(TextTheme textTheme) {
       return <TextStyle>[
-        textTheme.displayLarge,
-        textTheme.displayMedium,
-        textTheme.displaySmall,
-        textTheme.headlineLarge,
-        textTheme.headlineMedium,
-        textTheme.headlineSmall,
-        textTheme.titleLarge,
-        textTheme.titleMedium,
-        textTheme.bodyLarge,
-        textTheme.bodyMedium,
-        textTheme.bodySmall,
-        textTheme.labelLarge,
-        textTheme.labelMedium,
+        textTheme.displayLarge!,
+        textTheme.displayMedium!,
+        textTheme.displaySmall!,
+        textTheme.headlineLarge!,
+        textTheme.headlineMedium!,
+        textTheme.headlineSmall!,
+        textTheme.titleLarge!,
+        textTheme.titleMedium!,
+        textTheme.bodyLarge!,
+        textTheme.bodyMedium!,
+        textTheme.bodySmall!,
+        textTheme.labelLarge!,
+        textTheme.labelMedium!,
       ];
     }
 
@@ -675,7 +675,7 @@ void main() {
 
     Future<CupertinoThemeData> testTheme(WidgetTester tester, ThemeData theme) async {
       await tester.pumpWidget(Theme(data: theme, child: singletonThemeSubtree));
-      return actualTheme;
+      return actualTheme!;
     }
 
     setUp(() {

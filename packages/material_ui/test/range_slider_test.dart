@@ -4424,7 +4424,7 @@ void main() {
     );
 
     // Initial state: root focus scope has focus
-    final FocusNode initialFocus = FocusManager.instance.primaryFocus;
+    final FocusNode initialFocus = FocusManager.instance.primaryFocus!;
     expect(initialFocus, isNotNull);
 
     final Offset topLeft = tester.getTopLeft(find.byType(RangeSlider));
@@ -4482,7 +4482,7 @@ void main() {
     );
 
     // Initial state
-    final FocusNode initialFocus = FocusManager.instance.primaryFocus;
+    final FocusNode initialFocus = FocusManager.instance.primaryFocus!;
     expect(initialFocus, isNotNull);
 
     final Offset topLeft = tester.getTopLeft(find.byType(RangeSlider));
@@ -4651,7 +4651,7 @@ class LoggingRangeSliderValueIndicatorShape extends RangeSliderValueIndicatorSha
     double? value,
     Thumb? thumb,
   }) {
-    logLabel.add(labelPainter.text);
+    logLabel.add(labelPainter.text!);
     logPainter?.add(labelPainter);
   }
 }

@@ -1380,7 +1380,7 @@ class _RawChipState extends State<RawChip> with TickerProviderStateMixin<RawChip
                 secondaryColor: brightness == Brightness.dark
                     ? Colors.tealAccent[200]!
                     : theme.primaryColor,
-                labelStyle: theme.textTheme.bodyLarge,
+                labelStyle: theme.textTheme.bodyLarge!,
               ));
     final TextDirection? textDirection = Directionality.maybeOf(context);
     final OutlinedBorder resolvedShape = _getShape(theme, chipTheme, chipDefaults);
@@ -1431,7 +1431,7 @@ class _RawChipState extends State<RawChip> with TickerProviderStateMixin<RawChip
       const EdgeInsets.symmetric(horizontal: 8.0),
       const EdgeInsets.symmetric(horizontal: 4.0),
       clampDouble(effectiveTextScale - 1.0, 0.0, 1.0),
-    );
+    )!;
 
     final EdgeInsetsGeometry labelPadding =
         widget.labelPadding ??
@@ -2174,7 +2174,7 @@ class _RenderChip extends RenderBox with SlottedContainerRenderObjectMixin<_Chip
         : paintColor;
 
     final paint = Paint()
-      ..color = paintColor
+      ..color = paintColor!
       ..style = PaintingStyle.stroke
       ..strokeWidth = _kCheckmarkStrokeWidth * avatar.size.height / 24.0;
     final double t = checkmarkAnimation.status == AnimationStatus.reverse
@@ -2193,12 +2193,12 @@ class _RenderChip extends RenderBox with SlottedContainerRenderObjectMixin<_Chip
     final end = Offset(size * 0.85, size * 0.25);
     if (t < 0.5) {
       final double strokeT = t * 2.0;
-      final Offset drawMid = Offset.lerp(start, mid, strokeT);
+      final Offset drawMid = Offset.lerp(start, mid, strokeT)!;
       path.moveTo(origin.dx + start.dx, origin.dy + start.dy);
       path.lineTo(origin.dx + drawMid.dx, origin.dy + drawMid.dy);
     } else {
       final double strokeT = (t - 0.5) * 2.0;
-      final Offset drawEnd = Offset.lerp(mid, end, strokeT);
+      final Offset drawEnd = Offset.lerp(mid, end, strokeT)!;
       path.moveTo(origin.dx + start.dx, origin.dy + start.dy);
       path.lineTo(origin.dx + mid.dx, origin.dy + mid.dy);
       path.lineTo(origin.dx + drawEnd.dx, origin.dy + drawEnd.dy);
@@ -2211,7 +2211,7 @@ class _RenderChip extends RenderBox with SlottedContainerRenderObjectMixin<_Chip
       if (theme.showAvatar) {
         final Rect avatarRect = _boxRect(avatar).shift(offset);
         final darkenPaint = Paint()
-          ..color = selectionScrimTween.evaluate(checkmarkAnimation)
+          ..color = selectionScrimTween.evaluate(checkmarkAnimation)!
           ..blendMode = BlendMode.srcATop;
         if (avatarBorder!.preferPaintInterior) {
           avatarBorder!.paintInterior(context.canvas, avatarRect, darkenPaint);

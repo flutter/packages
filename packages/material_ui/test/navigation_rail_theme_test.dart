@@ -240,7 +240,7 @@ void main() {
       const NavigationRailThemeData(),
       const NavigationRailThemeData(),
       0.5,
-    );
+    )!;
 
     expect(lerp.selectedIconTheme, isNull);
     expect(lerp.unselectedIconTheme, isNull);
@@ -350,14 +350,14 @@ TextStyle _selectedLabelStyle(WidgetTester tester) {
   return tester
       .widget<RichText>(find.descendant(of: find.text('Abc'), matching: find.byType(RichText)))
       .text
-      .style;
+      .style!;
 }
 
 TextStyle _unselectedLabelStyle(WidgetTester tester) {
   return tester
       .widget<RichText>(find.descendant(of: find.text('Def'), matching: find.byType(RichText)))
       .text
-      .style;
+      .style!;
 }
 
 Size _destinationSize(WidgetTester tester) {

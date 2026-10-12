@@ -358,7 +358,7 @@ Widget _withTheme({
   BottomAppBarThemeData? localBABTheme,
   bool useMaterial3 = true,
 }) {
-  var babWidget = const BottomAppBar(
+  Widget babWidget = const BottomAppBar(
     child: Row(
       children: <Widget>[
         Icon(Icons.add),
