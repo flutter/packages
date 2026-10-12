@@ -403,7 +403,8 @@ class _FadeForwardsPageTransition extends StatelessWidget {
   /// not be snapshotted.
   /// See also:
   ///
-  ///  * [_allowSnapshotting], which is the same but for both routes.
+  ///  * [_allowSnapshotting], which controls snapshotting for both the entering
+  ///  and exiting routes. When false, overrides `_allowEnterRouteSnapshotting`.
   final bool _allowEnterRouteSnapshotting;
 
   final Color? backgroundColor;
