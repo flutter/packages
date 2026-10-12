@@ -140,7 +140,9 @@ All code must adhere to the repository's style guides. The `format` command hand
 
 ## Version and CHANGELOG updates
 
-Any PR that changes non-test code in a package should update its version in pubspec.yaml and add a corresponding entry in CHANGELOG.md.
+Any PR that changes non-test code in a package must update its version in `pubspec.yaml` and add a corresponding entry in `CHANGELOG.md`. This includes refactors and dead-code removal with no behavior change: if the change ships in the published package, it needs a version. The full policy, including the short list of version-exempt cases, is in the [Version and CHANGELOG updates](https://github.com/flutter/flutter/blob/master/docs/ecosystem/contributing/README.md#version-and-changelog-updates) section of the ecosystem contributing guide.
+
+Use an unversioned `## NEXT` CHANGELOG section **only** for the exempt cases (changes limited to tests, unpublished example code, or local development tooling). If a `## NEXT` section already exists, append to it; when making a versioned change on top of an existing `## NEXT`, convert that section into the new version number.
 
 **This process can be automated**. The `update-release-info` command is the preferred way to handle this. It determines changed packages, bumps versions, and updates changelogs automatically.
 ```bash
