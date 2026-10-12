@@ -2590,6 +2590,210 @@ dev_dependencies:
     });
   });
 
+  group('native interop validation', () {
+    List<Error> validate(
+      GeneratorAdapter adapter,
+      String source, {
+      SwiftOptions swiftOptions = const SwiftOptions(useFfi: true),
+      KotlinOptions kotlinOptions = const KotlinOptions(useJni: true),
+    }) {
+      final ParseResults results = parseSource(source);
+      expect(results.errors, isEmpty);
+      final InternalPigeonOptions options = InternalPigeonOptions.fromPigeonOptions(
+        PigeonOptions(
+          dartOut: 'lib/messages.g.dart',
+          swiftOut: 'darwin/Messages.g.swift',
+          swiftOptions: swiftOptions,
+          kotlinOut: 'android/Messages.g.kt',
+          kotlinOptions: kotlinOptions,
+        ),
+      );
+      return adapter.validate(options, results.root);
+    }
+
+    const unsupportedFeaturesSource = '''
+@EventChannelApi()
+abstract class Events {
+  int numbers();
+}
+
+sealed class Shape {}
+
+class Circle extends Shape {
+  Circle(this.radius);
+  double radius;
+}
+
+@HostApi()
+abstract class Api {
+  Circle circle();
+}
+''';
+
+    test('Swift FFI rejects event channels and sealed classes', () {
+      final List<Error> errors = validate(const SwiftGeneratorAdapter(), unsupportedFeaturesSource);
+      expect(
+        errors.map((Error e) => e.message),
+        containsAll(<Matcher>[
+          contains('Swift FFI does not support event channels yet (in API "Events")'),
+          contains('Swift FFI does not support sealed classes yet (class "Shape")'),
+        ]),
+      );
+    });
+
+    test('Swift without FFI allows event channels and sealed classes', () {
+      final List<Error> errors = validate(
+        const SwiftGeneratorAdapter(),
+        unsupportedFeaturesSource,
+        swiftOptions: const SwiftOptions(),
+      );
+      expect(errors, isEmpty);
+    });
+
+    test('Swift FFI rejects ProxyApis', () {
+      final List<Error> errors = validate(const SwiftGeneratorAdapter(), '''
+@ProxyApi()
+abstract class Proxy {
+  Proxy();
+}
+''');
+      expect(errors, hasLength(1));
+      expect(
+        errors[0].message,
+        contains('Swift FFI does not support ProxyApis yet (in API "Proxy")'),
+      );
+    });
+
+    test('Swift FFI rejects fields named after NSObject members', () {
+      final List<Error> errors = validate(const SwiftGeneratorAdapter(), '''
+class Data {
+  Data(this.hash, this.isProxy, this.value);
+  int hash;
+  bool isProxy;
+  String value;
+}
+
+@HostApi()
+abstract class Api {
+  Data data();
+}
+''');
+      expect(errors.map((Error e) => e.message), <Matcher>[
+        contains('Field "hash" is not allowed in class "Data" with Swift FFI'),
+        contains('Field "isProxy" is not allowed in class "Data" with Swift FFI'),
+      ]);
+    });
+
+    test('Swift FFI rejects host API parameters named wrappedError', () {
+      final List<Error> errors = validate(const SwiftGeneratorAdapter(), '''
+@HostApi()
+abstract class Api {
+  void report(String error, int wrappedError);
+}
+''');
+      expect(errors, hasLength(1));
+      expect(errors[0].message, contains('Parameter "wrappedError" in method "report"'));
+    });
+
+    test('Swift FFI requires includeErrorClass', () {
+      final List<Error> errors = validate(const SwiftGeneratorAdapter(), '''
+@HostApi()
+abstract class Api {
+  void doIt();
+}
+''', swiftOptions: const SwiftOptions(useFfi: true, includeErrorClass: false));
+      expect(errors, hasLength(1));
+      expect(errors[0].message, contains('Swift FFI requires `includeErrorClass: true`'));
+    });
+
+    test('Kotlin JNI rejects event channels and sealed classes', () {
+      final List<Error> errors = validate(
+        const KotlinGeneratorAdapter(),
+        unsupportedFeaturesSource,
+      );
+      expect(
+        errors.map((Error e) => e.message),
+        containsAll(<Matcher>[
+          contains('Kotlin JNI does not support event channels yet (in API "Events")'),
+          contains('Kotlin JNI does not support sealed classes yet (class "Shape")'),
+        ]),
+      );
+    });
+
+    test('Kotlin without JNI allows event channels and sealed classes', () {
+      final List<Error> errors = validate(
+        const KotlinGeneratorAdapter(),
+        unsupportedFeaturesSource,
+        kotlinOptions: const KotlinOptions(),
+      );
+      expect(errors, isEmpty);
+    });
+
+    test('Kotlin JNI rejects ProxyApis', () {
+      final List<Error> errors = validate(const KotlinGeneratorAdapter(), '''
+@ProxyApi()
+abstract class Proxy {
+  Proxy();
+}
+''');
+      expect(errors, hasLength(1));
+      expect(
+        errors[0].message,
+        contains('Kotlin JNI does not support ProxyApis yet (in API "Proxy")'),
+      );
+    });
+
+    const reservedMethodNamesSource = '''
+@HostApi()
+abstract class Api {
+  int getInstance();
+}
+
+@FlutterApi()
+abstract class Callbacks {
+  void implement();
+  void register();
+  void dartApi();
+}
+''';
+
+    test('Dart rejects method names reserved by JNI interop code', () {
+      final List<Error> errors = validate(
+        const DartGeneratorAdapter(),
+        reservedMethodNamesSource,
+        swiftOptions: const SwiftOptions(),
+      );
+      expect(errors.map((Error e) => e.message), <Matcher>[
+        contains('Method name "getInstance" in API "Api"'),
+        contains('Method name "implement" in API "Callbacks"'),
+        contains('Method name "register" in API "Callbacks"'),
+        contains('Method name "dartApi" in API "Callbacks"'),
+      ]);
+    });
+
+    test('Dart rejects method names reserved by FFI interop code', () {
+      final List<Error> errors = validate(
+        const DartGeneratorAdapter(),
+        reservedMethodNamesSource,
+        kotlinOptions: const KotlinOptions(),
+      );
+      expect(errors.map((Error e) => e.message), <Matcher>[
+        contains('Method name "getInstance" in API "Api"'),
+        contains('Method name "implement" in API "Callbacks"'),
+      ]);
+    });
+
+    test('Dart allows those method names without native interop', () {
+      final List<Error> errors = validate(
+        const DartGeneratorAdapter(),
+        reservedMethodNamesSource,
+        swiftOptions: const SwiftOptions(),
+        kotlinOptions: const KotlinOptions(),
+      );
+      expect(errors, isEmpty);
+    });
+  });
+
   group('constants parsing', () {
     test('valid constants', () {
       const code = '''
