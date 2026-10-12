@@ -1902,14 +1902,6 @@ class DropdownButtonFormField<T> extends FormField<T> {
     super.validator,
     super.errorBuilder,
     super.forceErrorText,
-
-    /// Whether the form field is enabled.
-    ///
-    /// When [enabled] is false, the field is disabled and does not allow user
-    /// interaction or value changes, regardless of the [onChanged] callback.
-    ///
-    /// If the `enabled` argument is not explicitly provided in the constructor,
-    /// this property falls back to true.
     bool? enabled,
     AutovalidateMode? autovalidateMode,
     double? menuMaxHeight,

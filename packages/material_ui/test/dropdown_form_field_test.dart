@@ -1536,7 +1536,7 @@ void main() {
           home: Material(
             child: DropdownButtonFormField<int>(
               key: fieldKey,
-              value: 1,
+              initialValue: 1,
               items: const <DropdownMenuItem<int>>[
                 DropdownMenuItem<int>(value: 1, child: Text('one')),
                 DropdownMenuItem<int>(value: 2, child: Text('two')),
@@ -1568,7 +1568,7 @@ void main() {
       MaterialApp(
         home: Material(
           child: DropdownButtonFormField<int>(
-            value: 1,
+            initialValue: 1,
             items: const <DropdownMenuItem<int>>[
               DropdownMenuItem<int>(value: 1, child: Text('one')),
               DropdownMenuItem<int>(value: 2, child: Text('two')),
@@ -1595,7 +1595,7 @@ void main() {
       MaterialApp(
         home: Material(
           child: DropdownButtonFormField<int>(
-            value: 1,
+            initialValue: 1,
             items: const <DropdownMenuItem<int>>[
               DropdownMenuItem<int>(value: 1, child: Text('one')),
               DropdownMenuItem<int>(value: 2, child: Text('two')),
