@@ -15,10 +15,6 @@ class PopupMenuTemplateM3 extends TokenTemplateM3 {
   @override
   String get parentFilePath => 'popup_menu.dart';
 
-  // TODO(QuncCccccc): Replace this value if the former menu surface-tint token
-  // gets a typed TokenMenu replacement.
-  static const String _surfaceTintColor = 'Colors.transparent';
-
   @override
   String generateContents(String className) =>
       '''
@@ -49,7 +45,7 @@ class $className extends PopupMenuThemeData {
   Color? get shadowColor => ${color(TokenMenu.containerShadowColor)};
 
   @override
-  Color? get surfaceTintColor => $_surfaceTintColor;
+  Color? get surfaceTintColor => Colors.transparent;
 
   @override
   ShapeBorder? get shape => ${shape(TokenMenu.containerShape)};
