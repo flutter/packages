@@ -290,7 +290,7 @@ class TextFormField extends FormField<String> {
                onEditingComplete: onEditingComplete,
                onSubmitted: onFieldSubmitted,
                inputFormatters: inputFormatters,
-               enabled: enabled ?? decoration?.enabled ?? true,
+               enabled: field.isEnabled,
                ignorePointers: ignorePointers,
                cursorWidth: cursorWidth,
                cursorHeight: cursorHeight,

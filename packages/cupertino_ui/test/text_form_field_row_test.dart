@@ -667,4 +667,24 @@ void main() {
     controller.selection = const TextSelection.collapsed(offset: 0);
     await tester.pump();
   });
+
+  testWidgets('CupertinoTextFormFieldRow is disabled when its Form is disabled', (
+    WidgetTester tester,
+  ) async {
+    Widget buildForm({required bool formEnabled}) {
+      return CupertinoApp(
+        home: Center(
+          child: Form(enabled: formEnabled, child: CupertinoTextFormFieldRow(enabled: true)),
+        ),
+      );
+    }
+
+    await tester.pumpWidget(buildForm(formEnabled: false));
+    expect(tester.widget<CupertinoTextField>(find.byType(CupertinoTextField)).enabled, isFalse);
+
+    await tester.pumpWidget(buildForm(formEnabled: true));
+    expect(tester.widget<CupertinoTextField>(find.byType(CupertinoTextField)).enabled, isTrue);
+    await tester.enterText(find.byType(CupertinoTextFormFieldRow), 'Hello');
+    expect(find.text('Hello'), findsOneWidget);
+  });
 }
