@@ -44,6 +44,33 @@ final class FailingDataItemProvider: NSItemProvider {
   }
 }
 
+/// NSItemProvider that reports image conformance and loads the given data.
+final class StaticDataItemProvider: NSItemProvider {
+  let data: Data
+
+  init(data: Data) {
+    self.data = data
+    super.init()
+  }
+
+  @available(*, unavailable)
+  required init?(coder: NSCoder) {
+    fatalError("init(coder:) is not supported")
+  }
+
+  override func hasItemConformingToTypeIdentifier(_ typeIdentifier: String) -> Bool {
+    true
+  }
+
+  override func loadDataRepresentation(
+    forTypeIdentifier typeIdentifier: String,
+    completionHandler: @escaping @Sendable (Data?, (any Error)?) -> Void
+  ) -> Progress {
+    completionHandler(data, nil)
+    return Progress()
+  }
+}
+
 /// NSItemProvider that reports movie conformance and optionally loads a file URL.
 final class MovieItemProvider: NSItemProvider {
   let movieURL: URL?
