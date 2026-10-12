@@ -17,7 +17,6 @@ class SearchBarTemplateM3 extends TokenTemplateM3 {
 
   // TODO(QuncCccccc): Replace these values if component tokens become available.
   static const TokenColorRole _legacyShadowColor = TokenColorRole.shadow;
-  static const String _legacySurfaceTintColor = 'Colors.transparent';
   static const String _legacyFocusedStateLayerColor = 'Colors.transparent';
   static const double _legacyHorizontalPadding = 8.0;
   static const double _legacyMinWidth = 360.0;
@@ -47,7 +46,7 @@ class $className extends SearchBarThemeData {
 
   @override
   WidgetStateProperty<Color>? get surfaceTintColor =>
-    const MaterialStatePropertyAll<Color>($_legacySurfaceTintColor);
+    const MaterialStatePropertyAll<Color>(Colors.transparent);
 
   @override
   WidgetStateProperty<Color?>? get overlayColor =>
