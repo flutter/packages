@@ -1,5 +1,6 @@
 ## NEXT
 
+* Removes availability checks for iOS versions below the package minimum iOS 14.
 * Updates minimum supported SDK version to Flutter 3.41/Dart 3.11.
 
 ## 2.18.6
