@@ -1852,6 +1852,20 @@ class DropdownButtonFormField<T> extends FormField<T> {
   /// Creates a [DropdownButton] widget that is a [FormField], wrapped in an
   /// [InputDecorator].
   ///
+  /// The `enabled` argument controls whether the user can interact with the
+  /// field:
+  ///
+  ///  * If true, the field is interactive even if [onChanged] is null. The
+  ///    selected value is stored in the [FormFieldState].
+  ///  * If false, the field is not interactive and is not validated, even if
+  ///    [onChanged] is non-null.
+  ///  * If null, the field is interactive if and only if [onChanged] is
+  ///    non-null. In either case, it is still validated. This matches the
+  ///    behavior before `enabled` was added.
+  ///
+  /// The resolved [FormField.enabled] is true unless `enabled` is explicitly
+  /// false.
+  ///
   /// For a description of the `onSaved`, `validator`, or `autovalidateMode`
   /// parameters, see [FormField]. For the rest (other than [decoration]), see
   /// [DropdownButton].
