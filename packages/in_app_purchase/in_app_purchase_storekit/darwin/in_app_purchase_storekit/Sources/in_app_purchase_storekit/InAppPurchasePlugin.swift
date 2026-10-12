@@ -19,9 +19,7 @@ public class InAppPurchasePlugin: NSObject, FlutterPlugin, FIAInAppPurchaseAPI {
   private let receiptManager: FIAPReceiptManager
   private var productsCache: NSMutableDictionary = [:]
   private var paymentQueueDelegateCallbackChannel: FlutterMethodChannel?
-  // note - the type should be FIAPPaymentQueueDelegate, but this is only available >= iOS 13,
-  // FIAPPaymentQueueDelegate only gets set/used in registerPaymentQueueDelegateWithError or removePaymentQueueDelegateWithError, which both are ios13+ only
-  private var paymentQueueDelegate: Any?
+  private var paymentQueueDelegate: FIAPPaymentQueueDelegate?
   // Swift sets do not accept protocols, only concrete implementations
   // TODO(louisehsu): Change it back to a set when removing obj-c dependancies from this file via type erasure
   private var requestHandlers = NSHashTable<FLTRequestHandlerProtocol>()
@@ -349,7 +347,7 @@ public class InAppPurchasePlugin: NSObject, FlutterPlugin, FIAInAppPurchaseAPI {
       paymentQueueDelegate = FIAPPaymentQueueDelegate(
         methodChannel: DefaultMethodChannel(channel: unwrappedChannel))
 
-      getPaymentQueueHandler().delegate = paymentQueueDelegate as? SKPaymentQueueDelegate
+      getPaymentQueueHandler().delegate = paymentQueueDelegate
     #endif
   }
 
