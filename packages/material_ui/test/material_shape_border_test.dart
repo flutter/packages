@@ -4,7 +4,6 @@
 
 import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';
-
 void main() {
   group('$MaterialShapeBorder', () {
     final unitSquare = RoundedPolygon.rectangle(
@@ -588,15 +587,9 @@ void main() {
 
       circle.lerpTo(heart, 0.5);
 
-      expect(
-        MaterialShapeBorder.debugIsMorphCached(MaterialShapes.circle, MaterialShapes.heart),
-        isTrue,
-      );
+      expect(debugIsMaterialShapeMorphCached(MaterialShapes.circle, MaterialShapes.heart), isTrue);
       // Each direction is a morph of its own.
-      expect(
-        MaterialShapeBorder.debugIsMorphCached(MaterialShapes.heart, MaterialShapes.circle),
-        isFalse,
-      );
+      expect(debugIsMaterialShapeMorphCached(MaterialShapes.heart, MaterialShapes.circle), isFalse);
     });
 
     test('lerp stays correct once the morph cache evicts entries', () {
@@ -612,7 +605,7 @@ void main() {
       }
 
       expect(
-        MaterialShapeBorder.debugIsMorphCached(MaterialShapes.circle, MaterialShapes.square),
+        debugIsMaterialShapeMorphCached(MaterialShapes.circle, MaterialShapes.square),
         isFalse,
       );
       expect(circle.lerpTo(square, 0.5), expected);
@@ -636,10 +629,10 @@ void main() {
       // one, which is now the second pair.
       start.lerpTo(MaterialShapeBorder(shape: ends[cacheSize]), 0.5);
 
-      expect(MaterialShapeBorder.debugIsMorphCached(MaterialShapes.heart, ends[0]), isTrue);
-      expect(MaterialShapeBorder.debugIsMorphCached(MaterialShapes.heart, ends[1]), isFalse);
+      expect(debugIsMaterialShapeMorphCached(MaterialShapes.heart, ends[0]), isTrue);
+      expect(debugIsMaterialShapeMorphCached(MaterialShapes.heart, ends[1]), isFalse);
       for (final RoundedPolygon end in ends.skip(2)) {
-        expect(MaterialShapeBorder.debugIsMorphCached(MaterialShapes.heart, end), isTrue);
+        expect(debugIsMaterialShapeMorphCached(MaterialShapes.heart, end), isTrue);
       }
     });
 
@@ -654,7 +647,7 @@ void main() {
         circle.lerpTo(MaterialShapeBorder(shape: shape), 0.5);
       }
       expect(
-        MaterialShapeBorder.debugIsMorphCached(MaterialShapes.circle, MaterialShapes.square),
+        debugIsMaterialShapeMorphCached(MaterialShapes.circle, MaterialShapes.square),
         isFalse,
       );
 
@@ -662,7 +655,7 @@ void main() {
       // neither needs the cache nor repopulates it.
       final ShapeBorder? resumed = lerped.lerpTo(square, 0.5);
       expect(
-        MaterialShapeBorder.debugIsMorphCached(MaterialShapes.circle, MaterialShapes.square),
+        debugIsMaterialShapeMorphCached(MaterialShapes.circle, MaterialShapes.square),
         isFalse,
       );
 

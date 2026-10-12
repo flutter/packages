@@ -70,14 +70,6 @@ class MaterialShapeBorder extends OutlinedBorder {
     return _morphCache.putIfAbsent(_MorphCacheKey(start, end), () => Morph(start, end));
   }
 
-  /// Whether the [Morph] from [start] to [end] is currently cached.
-  ///
-  /// Only meant for tests that check the caching of morphs.
-  @visibleForTesting
-  static bool debugIsMorphCached(RoundedPolygon start, RoundedPolygon end) {
-    return _morphCache.containsKey(_MorphCacheKey(start, end));
-  }
-
   /// Whether [border] is a [MaterialShapeBorder] or the result of lerping
   /// between two of them.
   static bool _canLerpWith(OutlinedBorder border) {
@@ -417,6 +409,15 @@ void _paintSide(
       final Path path = _pathFromRect(cubics, squash, adjustedRect);
       canvas.drawPath(path, side.toPaint());
   }
+}
+
+/// Whether the [Morph] from [start] to [end] is currently cached by
+/// [MaterialShapeBorder].
+///
+/// Only meant for tests that check the caching of morphs.
+@visibleForTesting
+bool debugIsMaterialShapeMorphCached(RoundedPolygon start, RoundedPolygon end) {
+  return MaterialShapeBorder._morphCache.containsKey(_MorphCacheKey(start, end));
 }
 
 /// The pair of shapes a cached [Morph] was built from.
