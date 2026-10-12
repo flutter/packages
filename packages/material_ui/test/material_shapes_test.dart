@@ -4,6 +4,7 @@
 
 import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';
+import 'package:material_ui/src/shapes/rounded_polygon.dart';
 
 void main() {
   final namedShapes = <String, RoundedPolygon>{

@@ -18,16 +18,16 @@ import 'utils.dart';
 
 /// A closed polygonal shape, with optional rounding at its vertices.
 ///
-/// A polygon can be built from a number of vertices, from an ordered list of
-/// vertices, or from a list of [PolygonFeature]s.
+/// A polygon can be built from a number of vertices, or from an ordered list of
+/// vertices.
 @immutable
-class RoundedPolygon {
+final class RoundedPolygon {
   /// Creates a regular polygon with [numVertices] vertices, equally spaced
   /// around a circle of the given [radius] about [center].
   ///
   /// The default radius of 1 puts the vertices on the unit circle, giving a
-  /// shape 2 wide and 2 high, which will usually need rescaling with
-  /// [transformed] to suit the UI it is drawn in.
+  /// shape 2 wide and 2 high, which will usually need [normalized] to fit the
+  /// unit square a shape border expects.
   ///
   /// [rounding] rounds every vertex the same way. [perVertexRounding]
   /// overrides it, and must have [numVertices] elements when it is not null.
@@ -55,12 +55,12 @@ class RoundedPolygon {
   }
 
   RoundedPolygon._raw(List<PolygonFeature> features, Point center)
-    : features = List<PolygonFeature>.unmodifiable(features),
+    : _features = List<PolygonFeature>.unmodifiable(features),
       _center = center,
-      cubics = List<CubicBezier>.unmodifiable(_buildCubics(features, center)) {
-    CubicBezier prevCubic = cubics.last;
+      _cubics = List<CubicBezier>.unmodifiable(_buildCubics(features, center)) {
+    CubicBezier prevCubic = _cubics.last;
 
-    for (final CubicBezier cubic in cubics) {
+    for (final CubicBezier cubic in _cubics) {
       if ((cubic.anchor0X - prevCubic.anchor1X).abs() > distanceEpsilon ||
           (cubic.anchor0Y - prevCubic.anchor1Y).abs() > distanceEpsilon) {
         throw ArgumentError(
@@ -178,39 +178,10 @@ class RoundedPolygon {
         );
     }
 
-    return RoundedPolygon.fromFeatures(tempFeatures, center: center ?? calculateCenter(vertices));
-  }
-
-  /// Creates a polygon from [features], which describe each segment of its
-  /// outline.
-  ///
-  /// Specifying the features directly controls precisely how the polygon's
-  /// [CubicBezier]s are grouped into curves, and it is those groups that
-  /// [Morph] maps: it pairs each curve with one of the same type in the other
-  /// shape, convex with convex and concave with concave.
-  ///
-  /// [center] defaults to the average of every cubic's starting anchor point.
-  ///
-  /// Throws [ArgumentError] if [features] has fewer than 2 elements, or if the
-  /// features don't describe a closed shape.
-  factory RoundedPolygon.fromFeatures(List<PolygonFeature> features, {Offset? center}) {
-    if (features.length < 2) {
-      throw ArgumentError('Polygons must have at least 2 features.');
-    }
-
-    if (center != null) {
-      return RoundedPolygon._raw(features, center);
-    }
-
-    final vertices = <Point>[];
-
-    for (final feature in features) {
-      for (final CubicBezier cubic in feature.cubics) {
-        vertices.add(Point(cubic.anchor0X, cubic.anchor0Y));
-      }
-    }
-
-    return RoundedPolygon._raw(features, calculateCenter(vertices));
+    return RoundedPolygonInternals.fromFeatures(
+      tempFeatures,
+      center: center ?? calculateCenter(vertices),
+    );
   }
 
   /// Creates a circle of the given [radius] about [center], approximated by
@@ -243,8 +214,8 @@ class RoundedPolygon {
   /// optional rounding at its four corners.
   ///
   /// The default dimensions and center fit the shape into the 2x2 box around
-  /// the origin, which will usually need rescaling with [transformed] to suit
-  /// the UI it is drawn in.
+  /// the origin, which will usually need [normalized] to fit the unit square a
+  /// shape border expects.
   ///
   /// [rounding] rounds all four corners the same way. [perVertexRounding]
   /// overrides it, and must have 4 elements when it is not null. The default
@@ -449,20 +420,11 @@ class RoundedPolygon {
     );
   }
 
-  /// The [PolygonFeature]s this polygon is composed of.
-  ///
-  /// This list is unmodifiable.
-  final List<PolygonFeature> features;
+  final List<PolygonFeature> _features;
 
   final Point _center;
 
-  /// A flattened version of the [PolygonFeature]s, as a `List<CubicBezier>`.
-  ///
-  /// This list is unmodifiable.
-  final List<CubicBezier> cubics;
-
-  /// The center of this polygon, around which all vertices are placed.
-  Offset get center => _center;
+  final List<CubicBezier> _cubics;
 
   static List<CubicBezier> _buildCubics(List<PolygonFeature> features, Point center) {
     final cubics = <CubicBezier>[];
@@ -553,14 +515,6 @@ class RoundedPolygon {
     return cubics;
   }
 
-  /// Returns a new [RoundedPolygon] with every point of this one, including
-  /// its [center], mapped through [transformer].
-  RoundedPolygon transformed(ShapePointTransformer transformer) {
-    return RoundedPolygon._raw([
-      for (var i = 0; i < features.length; i++) features[i].transformed(transformer),
-    ], _center.transformed(transformer));
-  }
-
   /// Returns a new [RoundedPolygon], moving and resizing this one, so it's
   /// completely inside the (0, 0) -> (1, 1) square, centered if there is extra
   /// space in one direction.
@@ -579,6 +533,82 @@ class RoundedPolygon {
     return transformed((x, y) => ((x + offsetX) / side, (y + offsetY) / side));
   }
 
+  @override
+  String toString() {
+    return '${objectRuntimeType(this, 'RoundedPolygon')}'
+        '(center: $_center, features: ${_features.length}, cubics: ${_cubics.length})';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) {
+      return true;
+    }
+
+    return other is RoundedPolygon &&
+        other._center == _center &&
+        listEquals(other._features, _features);
+  }
+
+  @override
+  late final int hashCode = Object.hash(_center, Object.hashAll(_features));
+}
+
+/// Members of [RoundedPolygon] that are not part of the public API.
+extension RoundedPolygonInternals on RoundedPolygon {
+  /// Creates a polygon from [features], which describe each segment of its
+  /// outline.
+  ///
+  /// Specifying the features directly controls precisely how the polygon's
+  /// [CubicBezier]s are grouped into curves, and it is those groups that
+  /// [Morph] maps: it pairs each curve with one of the same type in the other
+  /// shape, convex with convex and concave with concave.
+  ///
+  /// [center] defaults to the average of every cubic's starting anchor point.
+  ///
+  /// Throws [ArgumentError] if [features] has fewer than 2 elements, or if the
+  /// features don't describe a closed shape.
+  static RoundedPolygon fromFeatures(List<PolygonFeature> features, {Offset? center}) {
+    if (features.length < 2) {
+      throw ArgumentError('Polygons must have at least 2 features.');
+    }
+
+    if (center != null) {
+      return RoundedPolygon._raw(features, center);
+    }
+
+    final vertices = <Point>[];
+
+    for (final feature in features) {
+      for (final CubicBezier cubic in feature.cubics) {
+        vertices.add(Point(cubic.anchor0X, cubic.anchor0Y));
+      }
+    }
+
+    return RoundedPolygon._raw(features, calculateCenter(vertices));
+  }
+
+  /// The [PolygonFeature]s this polygon is composed of.
+  ///
+  /// This list is unmodifiable.
+  List<PolygonFeature> get features => _features;
+
+  /// A flattened version of the [PolygonFeature]s, as a `List<CubicBezier>`.
+  ///
+  /// This list is unmodifiable.
+  List<CubicBezier> get cubics => _cubics;
+
+  /// The center of this polygon, around which all vertices are placed.
+  Offset get center => _center;
+
+  /// Returns a new [RoundedPolygon] with every point of this one, including
+  /// its [center], mapped through [transformer].
+  RoundedPolygon transformed(ShapePointTransformer transformer) {
+    return RoundedPolygon._raw([
+      for (var i = 0; i < _features.length; i++) _features[i].transformed(transformer),
+    ], _center.transformed(transformer));
+  }
+
   /// Like [calculateBounds], calculates the axis-aligned bounds of this shape,
   /// but determines the max dimension of the shape (by calculating the
   /// distance from its center to the start and midpoint of each curve) and
@@ -588,8 +618,8 @@ class RoundedPolygon {
   /// meant to hold this shape in any rotation.
   Rect calculateMaxBounds() {
     var maxDistSquared = 0.0;
-    for (var i = 0; i < cubics.length; i++) {
-      final CubicBezier cubic = cubics[i];
+    for (var i = 0; i < _cubics.length; i++) {
+      final CubicBezier cubic = _cubics[i];
       final double anchorDistance = (cubic.anchor0 - _center).distanceSquared;
       final Point middlePoint = cubic.pointAt(0.5);
       final double middleDistance = (middlePoint - _center).distanceSquared;
@@ -621,11 +651,11 @@ class RoundedPolygon {
 
   Rect _computeBounds({required bool approximate}) {
     Rect bounds = approximate
-        ? cubics.first.calculateApproximateBounds()
-        : cubics.first.calculateBounds();
+        ? _cubics.first.calculateApproximateBounds()
+        : _cubics.first.calculateBounds();
 
-    for (var i = 1; i < cubics.length; i++) {
-      final CubicBezier cubic = cubics[i];
+    for (var i = 1; i < _cubics.length; i++) {
+      final CubicBezier cubic = _cubics[i];
       bounds = bounds.expandToInclude(
         approximate ? cubic.calculateApproximateBounds() : cubic.calculateBounds(),
       );
@@ -652,33 +682,13 @@ class RoundedPolygon {
   /// If [closePath] is false, the returned [Path] is left open.
   Path toPath({double startAngle = 0, bool repeatPath = false, bool closePath = true}) {
     return pathFromCubics(
-      cubics,
+      _cubics,
       startAngle: startAngle,
       repeatPath: repeatPath,
       closePath: closePath,
       rotationPivot: _center,
     );
   }
-
-  @override
-  String toString() {
-    return '${objectRuntimeType(this, 'RoundedPolygon')}'
-        '(center: $center, features: ${features.length}, cubics: ${cubics.length})';
-  }
-
-  @override
-  bool operator ==(Object other) {
-    if (identical(this, other)) {
-      return true;
-    }
-
-    return other is RoundedPolygon &&
-        other._center == _center &&
-        listEquals(other.features, features);
-  }
-
-  @override
-  late final int hashCode = Object.hash(_center, Object.hashAll(features));
 }
 
 /// Calculates an estimated center position for the polygon, returning it. This

@@ -185,7 +185,7 @@ void main() {
     });
 
     test('handles empty feature last', () {
-      final triangle = RoundedPolygon.fromFeatures([
+      final RoundedPolygon triangle = RoundedPolygonInternals.fromFeatures([
         PolygonFeature.convexCorner([CubicBezier.straightLine(Offset.zero, const Offset(1, 1))]),
         PolygonFeature.convexCorner([
           CubicBezier.straightLine(const Offset(1, 1), const Offset(1, 0)),

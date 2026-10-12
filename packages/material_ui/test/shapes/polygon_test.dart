@@ -149,7 +149,7 @@ void main() {
     test('fromFeatures does not alias the list it is given', () {
       final List<PolygonFeature> expected = RoundedPolygon(4).features;
       final features = List<PolygonFeature>.of(expected);
-      final polygon = RoundedPolygon.fromFeatures(features);
+      final RoundedPolygon polygon = RoundedPolygonInternals.fromFeatures(features);
       final int cubicCount = polygon.cubics.length;
 
       features.clear();

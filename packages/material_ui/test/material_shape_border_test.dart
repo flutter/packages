@@ -4,6 +4,8 @@
 
 import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';
+import 'package:material_ui/src/shapes/rounded_polygon.dart';
+
 void main() {
   group('$MaterialShapeBorder', () {
     final unitSquare = RoundedPolygon.rectangle(
@@ -58,9 +60,9 @@ void main() {
 
     test('hashCode agrees with == for equal shapes', () {
       final List<PolygonFeature> features = MaterialShapes.circle.features;
-      final border = MaterialShapeBorder(shape: RoundedPolygon.fromFeatures(features));
+      final border = MaterialShapeBorder(shape: RoundedPolygonInternals.fromFeatures(features));
       final other = MaterialShapeBorder(
-        shape: RoundedPolygon.fromFeatures(List<PolygonFeature>.of(features)),
+        shape: RoundedPolygonInternals.fromFeatures(List<PolygonFeature>.of(features)),
       );
 
       expect(border, other);
@@ -478,7 +480,7 @@ void main() {
       // A widget that builds its border inline hands over a new polygon on
       // every build, so matching the endpoints by identity would snap here.
       final rebuilt = MaterialShapeBorder(
-        shape: RoundedPolygon.fromFeatures(
+        shape: RoundedPolygonInternals.fromFeatures(
           List<PolygonFeature>.of(MaterialShapes.circle.features),
           center: MaterialShapes.circle.center,
         ),

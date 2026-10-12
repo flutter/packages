@@ -92,9 +92,9 @@ void main() {
 
     group('fromFeatures', () {
       test('throws for too few features', () {
-        expect(() => RoundedPolygon.fromFeatures(const []), throwsArgumentError);
+        expect(() => RoundedPolygonInternals.fromFeatures(const []), throwsArgumentError);
         expect(
-          () => RoundedPolygon.fromFeatures([
+          () => RoundedPolygonInternals.fromFeatures([
             CornerFeature([CubicBezier.point(Point.zero)]),
           ]),
           throwsArgumentError,
@@ -105,7 +105,7 @@ void main() {
         final cubic1 = CubicBezier.straightLine(Point.zero, const Point(1, 0));
         final cubic2 = CubicBezier.straightLine(const Point(10, 10), const Point(20, 20));
         expect(
-          () => RoundedPolygon.fromFeatures([
+          () => RoundedPolygonInternals.fromFeatures([
             PolygonFeature.edge(cubic1),
             PolygonFeature.edge(cubic2),
           ]),
@@ -115,7 +115,7 @@ void main() {
 
       test('reconstructs square', () {
         final base = RoundedPolygon.rectangle();
-        final actual = RoundedPolygon.fromFeatures(base.features);
+        final RoundedPolygon actual = RoundedPolygonInternals.fromFeatures(base.features);
         expectPolygonsEqualish(base, actual);
       });
 
@@ -123,14 +123,14 @@ void main() {
         final base = RoundedPolygon.rectangle(
           rounding: const CornerRounding(radius: 0.5, smoothing: 0.2),
         );
-        final actual = RoundedPolygon.fromFeatures(base.features);
+        final RoundedPolygon actual = RoundedPolygonInternals.fromFeatures(base.features);
         expectPolygonsEqualish(base, actual);
       });
 
       test('reconstructs circles', () {
         for (var i = 3; i <= 20; i++) {
           final base = RoundedPolygon.circle(numVertices: i);
-          final actual = RoundedPolygon.fromFeatures(base.features);
+          final RoundedPolygon actual = RoundedPolygonInternals.fromFeatures(base.features);
           expectPolygonsEqualish(base, actual);
         }
       });
@@ -138,7 +138,7 @@ void main() {
       test('reconstructs stars', () {
         for (var i = 3; i <= 20; i++) {
           final base = RoundedPolygon.star(numVerticesPerRadius: i);
-          final actual = RoundedPolygon.fromFeatures(base.features);
+          final RoundedPolygon actual = RoundedPolygonInternals.fromFeatures(base.features);
           expectPolygonsEqualish(base, actual);
         }
       });
@@ -149,14 +149,14 @@ void main() {
             numVerticesPerRadius: i,
             rounding: const CornerRounding(radius: 0.5, smoothing: 0.2),
           );
-          final actual = RoundedPolygon.fromFeatures(base.features);
+          final RoundedPolygon actual = RoundedPolygonInternals.fromFeatures(base.features);
           expectPolygonsEqualish(base, actual);
         }
       });
 
       test('reconstructs pill', () {
         final base = RoundedPolygon.pill();
-        final actual = RoundedPolygon.fromFeatures(base.features);
+        final RoundedPolygon actual = RoundedPolygonInternals.fromFeatures(base.features);
         expectPolygonsEqualish(base, actual);
       });
 
@@ -164,7 +164,7 @@ void main() {
         final base = RoundedPolygon.pillStar(
           rounding: const CornerRounding(radius: 0.5, smoothing: 0.2),
         );
-        final actual = RoundedPolygon.fromFeatures(base.features);
+        final RoundedPolygon actual = RoundedPolygonInternals.fromFeatures(base.features);
         expectPolygonsEqualish(base, actual);
       });
     });
@@ -202,8 +202,10 @@ void main() {
 
     test('hashCode agrees with ==', () {
       final List<PolygonFeature> features = RoundedPolygon.circle().features;
-      final first = RoundedPolygon.fromFeatures(features);
-      final second = RoundedPolygon.fromFeatures(List<PolygonFeature>.of(features));
+      final RoundedPolygon first = RoundedPolygonInternals.fromFeatures(features);
+      final RoundedPolygon second = RoundedPolygonInternals.fromFeatures(
+        List<PolygonFeature>.of(features),
+      );
 
       expect(first, second);
       expect(first.hashCode, second.hashCode);
@@ -222,9 +224,12 @@ void main() {
 
     test('== distinguishes centers', () {
       final List<PolygonFeature> features = RoundedPolygon.circle().features;
-      final base = RoundedPolygon.fromFeatures(features);
-      final sameCenter = RoundedPolygon.fromFeatures(features, center: base.center);
-      final movedCenter = RoundedPolygon.fromFeatures(
+      final RoundedPolygon base = RoundedPolygonInternals.fromFeatures(features);
+      final RoundedPolygon sameCenter = RoundedPolygonInternals.fromFeatures(
+        features,
+        center: base.center,
+      );
+      final RoundedPolygon movedCenter = RoundedPolygonInternals.fromFeatures(
         features,
         center: base.center + const Offset(0.1, 0),
       );
