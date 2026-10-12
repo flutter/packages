@@ -2,7 +2,6 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import '../data/color_role.dart';
 import '../data/search_bar.dart';
 import 'template.dart';
 
@@ -15,12 +14,8 @@ class SearchBarTemplateM3 extends TokenTemplateM3 {
   @override
   String get parentFilePath => 'search_anchor.dart';
 
-  // TODO(QuncCccccc): Replace these values if component tokens become available.
-  static const TokenColorRole _legacyShadowColor = TokenColorRole.shadow;
+  // TODO(QuncCccccc): Replace this value if a focused state layer token becomes available.
   static const String _legacyFocusedStateLayerColor = 'Colors.transparent';
-  static const double _legacyHorizontalPadding = 8.0;
-  static const double _legacyMinWidth = 360.0;
-  static const double _legacyMaxWidth = 800.0;
 
   @override
   String generateContents(String className) =>
@@ -42,7 +37,7 @@ class $className extends SearchBarThemeData {
 
   @override
   WidgetStateProperty<Color>? get shadowColor =>
-    MaterialStatePropertyAll<Color>(${color(_legacyShadowColor)});
+    MaterialStatePropertyAll<Color>(_colors.shadow);
 
   @override
   WidgetStateProperty<Color>? get surfaceTintColor =>
@@ -71,7 +66,7 @@ class $className extends SearchBarThemeData {
 
   @override
   WidgetStateProperty<EdgeInsetsGeometry>? get padding =>
-    const MaterialStatePropertyAll<EdgeInsetsGeometry>(EdgeInsets.symmetric(horizontal: $_legacyHorizontalPadding));
+    const MaterialStatePropertyAll<EdgeInsetsGeometry>(EdgeInsets.symmetric(horizontal: 8.0));
 
   @override
   WidgetStateProperty<TextStyle?> get textStyle =>
@@ -87,7 +82,7 @@ class $className extends SearchBarThemeData {
 
   @override
   BoxConstraints get constraints =>
-    const BoxConstraints(minWidth: $_legacyMinWidth, maxWidth: $_legacyMaxWidth, minHeight: ${TokenSearchBar.containerHeight});
+    const BoxConstraints(minWidth: 360.0, maxWidth: 800.0, minHeight: ${TokenSearchBar.containerHeight});
 
   @override
   TextCapitalization get textCapitalization => TextCapitalization.none;
