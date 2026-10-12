@@ -5,6 +5,9 @@
 // This code is a Dart port of the Compose Material 3 shape catalog:
 // https://cs.android.com/androidx/platform/frameworks/support/+/androidx-main:compose/material3/material3/src/commonMain/kotlin/androidx/compose/material3/MaterialShapes.kt
 
+/// @docImport 'material_shape_border.dart';
+library;
+
 import 'dart:math' as math;
 
 import 'package:vector_math/vector_math_64.dart';
@@ -14,7 +17,8 @@ import 'shapes/rounded_polygon.dart';
 import 'shapes/shapes.dart';
 
 /// Holds predefined Material Design shapes as [RoundedPolygon]s that can be
-/// used at various components as they are, or as part of a [Morph].
+/// used at various components as they are, or with a [MaterialShapeBorder] to
+/// animate between them.
 ///
 /// Note that each [RoundedPolygon] in this class is normalized.
 ///
@@ -22,7 +26,8 @@ import 'shapes/shapes.dart';
 ///
 /// <callout-box>
 ///
-/// This example shows how to animate a [Morph] through every shape in [all].
+/// This example shows how to morph through every shape in [all] by animating
+/// a [MaterialShapeBorder].
 ///
 // TODO(framework): Replace the following block with a @dartpad directive
 // when it's supported. https://github.com/dart-lang/dartdoc/issues/4123

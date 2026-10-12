@@ -120,7 +120,7 @@ export 'src/magnifier.dart';
 export 'src/material.dart';
 export 'src/material_button.dart';
 export 'src/material_localizations.dart';
-export 'src/material_shape_border.dart';
+export 'src/material_shape_border.dart' show MaterialShapeBorder;
 export 'src/material_shapes.dart';
 export 'src/material_state.dart';
 export 'src/material_state_mixin.dart';
