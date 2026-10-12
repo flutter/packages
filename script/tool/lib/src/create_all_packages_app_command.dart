@@ -247,9 +247,9 @@ dependencies {}
       gradleFile,
       replacements: <String, List<String>>{
         if (gradleFileIsKotlin)
-          'compileSdk': <String>['compileSdk = 36']
+          'compileSdk': <String>['compileSdk = 37']
         else ...<String, List<String>>{
-          'compileSdkVersion': <String>['compileSdk 36'],
+          'compileSdkVersion': <String>['compileSdk 37'],
         },
       },
       regexReplacements: <RegExp, List<String>>{
