@@ -12,6 +12,14 @@ void main() {
   /// settle.
   const Duration morphDuration = Duration(seconds: 3);
 
+  /// The side of the square the example paints its shape in.
+  const side = 300.0;
+
+  /// Scales [points] from the unit square up to the painted square.
+  List<Offset> scaled(List<Offset> points) {
+    return <Offset>[for (final Offset point in points) point * side];
+  }
+
   /// Samples points on a grid over the unit square that are clearly [inside]
   /// (or outside) of [path].
   List<Offset> samplePoints(Path path, {required bool inside}) {
@@ -43,27 +51,26 @@ void main() {
 
     expect(find.text('Material Shapes Sample'), findsOne);
 
-    final Finder shape = find.byWidgetPredicate(
-      (Widget widget) => widget is CustomPaint && widget.willChange,
+    final Finder shape = find.descendant(
+      of: find.byType(example.MaterialShapesExample),
+      matching: find.byType(DecoratedBox),
     );
-    expect(tester.getSize(shape), const Size.square(300));
+    expect(tester.getSize(shape), const Size.square(side));
 
     final ThemeData theme = Theme.of(
       tester.element(find.byType(example.MaterialShapesExample)),
     );
 
-    // The circle is painted first, scaled up to fill the paint area, and is
-    // held still before the morphing starts.
+    // The circle is painted first, filling the paint area, and is held still
+    // before the morphing starts.
     expect(
       shape,
-      paints
-        ..scale(x: 300)
-        ..path(
-          color: theme.colorScheme.primary,
-          style: PaintingStyle.fill,
-          includes: const <Offset>[Offset(0.5, 0.5)],
-          excludes: const <Offset>[Offset(0.1, 0.1)],
-        ),
+      paints..path(
+        color: theme.colorScheme.primary,
+        style: PaintingStyle.fill,
+        includes: scaled(const <Offset>[Offset(0.5, 0.5)]),
+        excludes: scaled(const <Offset>[Offset(0.1, 0.1)]),
+      ),
     );
     expect(tester.hasRunningAnimations, isFalse);
 
@@ -78,14 +85,16 @@ void main() {
       await tester.pump(morphDuration);
 
       final RoundedPolygon target = MaterialShapes.all[(i + 1) % shapeCount];
-      final Path targetPath = target.toPath();
+      final Path targetPath = MaterialShapeBorder(
+        shape: target,
+      ).getOuterPath(const Rect.fromLTWH(0, 0, 1, 1));
       expect(
         shape,
         paints..path(
           color: theme.colorScheme.primary,
           style: PaintingStyle.fill,
-          includes: samplePoints(targetPath, inside: true),
-          excludes: samplePoints(targetPath, inside: false),
+          includes: scaled(samplePoints(targetPath, inside: true)),
+          excludes: scaled(samplePoints(targetPath, inside: false)),
         ),
         reason:
             'Morph $i should have settled on shape ${(i + 1) % shapeCount}.',

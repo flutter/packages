@@ -5,7 +5,6 @@
 // #region body
 import 'dart:async';
 
-import 'package:flutter/foundation.dart';
 import 'package:flutter/physics.dart';
 import 'package:material_ui/material_ui.dart';
 
@@ -40,17 +39,17 @@ class _MaterialShapesExampleState extends State<MaterialShapesExample>
   /// [MaterialShapes.all].
   static final List<RoundedPolygon> _shapes = MaterialShapes.all;
 
-  /// A [Morph] from each shape in [_shapes] to the next one, wrapping around
+  /// A tween from each shape in [_shapes] to the next one, wrapping around
   /// from the last shape back to the first.
   ///
-  /// These are built up front because a [Morph] computes the mapping between
-  /// its two shapes when it is constructed.
-  late final List<Morph> _morphs;
+  /// Lerping between two [MaterialShapeBorder]s morphs one shape into the
+  /// other.
+  late final List<ShapeBorderTween> _tweens;
 
-  /// The morph that is currently animating.
-  late final ValueNotifier<Morph> _morph;
+  /// The tween that is currently animating.
+  late ShapeBorderTween _tween;
 
-  /// Drives the progress of [_morph].
+  /// Drives the progress of [_tween].
   ///
   /// The controller is unbounded so that the springs below can overshoot past a
   /// progress of 1, which carries the morph slightly beyond its end shape.
@@ -87,11 +86,14 @@ class _MaterialShapesExampleState extends State<MaterialShapesExample>
   void initState() {
     super.initState();
 
-    _morphs = <Morph>[
+    _tweens = <ShapeBorderTween>[
       for (var i = 0; i < _shapes.length; i++)
-        Morph(_shapes[i], _shapes[(i + 1) % _shapes.length]),
+        ShapeBorderTween(
+          begin: MaterialShapeBorder(shape: _shapes[i]),
+          end: MaterialShapeBorder(shape: _shapes[(i + 1) % _shapes.length]),
+        ),
     ];
-    _morph = ValueNotifier<Morph>(_morphs.first);
+    _tween = _tweens.first;
     _controller = AnimationController.unbounded(vsync: this);
 
     // Hold the first shape for a moment so that it can be seen before it starts
@@ -103,11 +105,10 @@ class _MaterialShapesExampleState extends State<MaterialShapesExample>
   void dispose() {
     _startTimer?.cancel();
     _controller.dispose();
-    _morph.dispose();
     super.dispose();
   }
 
-  /// Animates the morphs in [_morphs] one after another, looping back to the
+  /// Animates the tweens in [_tweens] one after another, looping back to the
   /// first one after the last, until this widget is disposed.
   ///
   /// Waiting for each spring to settle, rather than advancing on a fixed
@@ -115,14 +116,14 @@ class _MaterialShapesExampleState extends State<MaterialShapesExample>
   /// shape.
   Future<void> _morphThroughShapes() async {
     while (mounted) {
-      _morph.value = _morphs[_morphIndex];
+      setState(() => _tween = _tweens[_morphIndex]);
       _controller.value = 0;
       await _controller.animateWith(
         _targetShape == MaterialShapes.heart
             ? _lessBouncySimulation
             : _bouncySimulation,
       );
-      _morphIndex = (_morphIndex + 1) % _morphs.length;
+      _morphIndex = (_morphIndex + 1) % _tweens.length;
     }
   }
 
@@ -135,57 +136,21 @@ class _MaterialShapesExampleState extends State<MaterialShapesExample>
           constraints: const BoxConstraints(maxWidth: 300, maxHeight: 300),
           child: AspectRatio(
             aspectRatio: 1,
-            child: RepaintBoundary(
-              child: CustomPaint(
-                painter: _MorphPainter(
-                  morph: _morph,
-                  progress: _controller,
-                  color: Theme.of(context).colorScheme.primary,
-                ),
-                willChange: true,
-                child: const SizedBox.expand(),
-              ),
+            child: AnimatedBuilder(
+              animation: _controller,
+              builder: (BuildContext context, Widget? child) {
+                return DecoratedBox(
+                  decoration: ShapeDecoration(
+                    color: Theme.of(context).colorScheme.primary,
+                    shape: _tween.evaluate(_controller)!,
+                  ),
+                );
+              },
             ),
           ),
         ),
       ),
     );
-  }
-}
-
-class _MorphPainter extends CustomPainter {
-  _MorphPainter({
-    required this.morph,
-    required this.progress,
-    required this.color,
-  }) : super(repaint: Listenable.merge(<Listenable>[morph, progress]));
-
-  final ValueListenable<Morph> morph;
-
-  final Animation<double> progress;
-
-  final Color color;
-
-  late final Paint _paint = Paint()
-    ..style = .fill
-    ..color = color;
-
-  @override
-  void paint(Canvas canvas, Size size) {
-    // Every shape in MaterialShapes is normalized, so its path fits in a one by
-    // one square that has to be scaled up to the size being painted.
-    canvas
-      ..save()
-      ..scale(size.width)
-      ..drawPath(morph.value.toPath(progress.value), _paint)
-      ..restore();
-  }
-
-  @override
-  bool shouldRepaint(_MorphPainter oldDelegate) {
-    return oldDelegate.morph != morph ||
-        oldDelegate.progress != progress ||
-        oldDelegate.color != color;
   }
 }
 // #endregion body
