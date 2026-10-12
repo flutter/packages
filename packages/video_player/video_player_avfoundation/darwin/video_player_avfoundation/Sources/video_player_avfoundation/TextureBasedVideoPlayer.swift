@@ -108,7 +108,7 @@ class TextureBasedVideoPlayer: VideoPlayer, FlutterTexture {
   override func seek(to position: Int64, completion: @escaping (Result<Void, Error>) -> Void) {
     let previousCMTime = player.currentTime()
     super.seek(to: position) { [weak self] error in
-      if let self = self, CMTimeCompare(self.player.currentTime(), previousCMTime) != 0 {
+      if let self = self, self.player.currentTime() != previousCMTime {
         // Ensure that a frame is drawn once available, even if currently paused. In theory a
         // race is possible here where the new frame has already drawn by the time this code
         // runs, and the display link stays on indefinitely, but that should be relatively

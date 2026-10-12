@@ -117,14 +117,13 @@ class VideoPlayer: NSObject, VideoPlayerInstanceApi {
 
     asset.loadValuesAsynchronously(forKeys: ["tracks"]) { [weak self] in
       if asset.statusOfValue(forKey: "tracks", error: nil) == .loaded {
-        guard let self = self else { return }
-        asset.loadTracks(withMediaType: .video) { (tracks, error) in
+        asset.loadTracks(withMediaType: .video) { [weak self] (tracks, error) in
           if let error = error {
-            NSLog("Error loading tracks: \(error)")
-
+            NSLog("Error loading tracks: %@", error.localizedDescription)
           } else if let tracks = tracks, !tracks.isEmpty {
             let videoTrack = tracks[0]
-            videoTrack.loadValuesAsynchronously(forKeys: ["preferredTransform"]) {
+            videoTrack.loadValuesAsynchronously(forKeys: ["preferredTransform"]) { [weak self] in
+              guard let self = self else { return }
               if self.disposed {
                 return
               }
@@ -285,8 +284,7 @@ class VideoPlayer: NSObject, VideoPlayerInstanceApi {
 
     urlAsset.loadValuesAsynchronously(forKeys: [assetVariantsKey]) {
       DispatchQueue.main.async {
-        var error: NSError? = nil
-        let status = urlAsset.statusOfValue(forKey: assetVariantsKey, error: &error)
+        let status = urlAsset.statusOfValue(forKey: assetVariantsKey, error: nil)
 
         if status == .loaded {
           let variants = urlAsset.variants
