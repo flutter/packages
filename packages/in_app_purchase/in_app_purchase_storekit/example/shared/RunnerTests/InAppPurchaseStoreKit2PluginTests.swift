@@ -10,6 +10,7 @@ import XCTest
 final class FakeIAP2Callback: InAppPurchase2CallbackAPIProtocol {
 
   public var lastUpdate: [in_app_purchase_storekit.SK2TransactionMessage] = []
+  public var onUpdateExpectation: XCTestExpectation?
 
   func onTransactionsUpdated(
     newTransactions newTransactionsArg: [in_app_purchase_storekit.SK2TransactionMessage],
@@ -18,6 +19,8 @@ final class FakeIAP2Callback: InAppPurchase2CallbackAPIProtocol {
     lastUpdate = newTransactionsArg
     // We should only write to a flutter channel from the main thread.
     XCTAssertTrue(Thread.isMainThread)
+    onUpdateExpectation?.fulfill()
+    onUpdateExpectation = nil
   }
 }
 
@@ -87,9 +90,12 @@ final class InAppPurchase2PluginTests: XCTestCase {
 
   func testGetTransactions() async throws {
     let purchaseExpectation = self.expectation(description: "Purchase should succeed")
+    let purchaseUpdateExpectation = self.expectation(
+      description: "Purchase transaction update should be received")
     let transactionExpectation = self.expectation(
       description: "Getting transactions should succeed")
 
+    callback.onUpdateExpectation = purchaseUpdateExpectation
     plugin.purchase(id: "consumable", options: nil) { result in
       switch result {
       case .success:
@@ -100,7 +106,8 @@ final class InAppPurchase2PluginTests: XCTestCase {
       }
     }
 
-    await fulfillment(of: [purchaseExpectation], timeout: purchaseTimeout)
+    await fulfillment(
+      of: [purchaseExpectation, purchaseUpdateExpectation], timeout: purchaseTimeout)
 
     XCTAssert(callback.lastUpdate.count == 1)
     XCTAssert(
@@ -438,8 +445,13 @@ final class InAppPurchase2PluginTests: XCTestCase {
 
   func testRestoreProductSuccess() async throws {
     let purchaseExpectation = self.expectation(description: "Purchase request should succeed")
+    let purchaseUpdateExpectation = self.expectation(
+      description: "Purchase transaction update should be received")
     let restoreExpectation = self.expectation(description: "Restore request should succeed")
+    let restoreUpdateExpectation = self.expectation(
+      description: "Restored transaction update should be received")
 
+    callback.onUpdateExpectation = purchaseUpdateExpectation
     plugin.purchase(id: "subscription_silver", options: nil) { result in
       switch result {
       case .success:
@@ -449,11 +461,13 @@ final class InAppPurchase2PluginTests: XCTestCase {
         purchaseExpectation.fulfill()
       }
     }
-    await fulfillment(of: [purchaseExpectation], timeout: purchaseTimeout)
+    await fulfillment(
+      of: [purchaseExpectation, purchaseUpdateExpectation], timeout: purchaseTimeout)
 
     XCTAssert(callback.lastUpdate.count == 1)
     XCTAssert(callback.lastUpdate.first?.status != .restored)
 
+    callback.onUpdateExpectation = restoreUpdateExpectation
     plugin.restorePurchases { result in
       switch result {
       case .success():
@@ -463,7 +477,8 @@ final class InAppPurchase2PluginTests: XCTestCase {
         restoreExpectation.fulfill()
       }
     }
-    await fulfillment(of: [restoreExpectation], timeout: purchaseTimeout)
+    await fulfillment(
+      of: [restoreExpectation, restoreUpdateExpectation], timeout: purchaseTimeout)
 
     XCTAssert(callback.lastUpdate.count == 1)
     XCTAssert(callback.lastUpdate.first?.status == .restored)
@@ -474,6 +489,9 @@ final class InAppPurchase2PluginTests: XCTestCase {
     // both persist in `currentEntitlements` and restoring returns two
     // transactions.
     let firstPurchaseExpectation = self.expectation(description: "First purchase should succeed")
+    let firstUpdateExpectation = self.expectation(
+      description: "First purchase transaction update should be received")
+    callback.onUpdateExpectation = firstUpdateExpectation
     plugin.purchase(id: "subscription_discounted", options: nil) { result in
       switch result {
       case .success:
@@ -483,9 +501,13 @@ final class InAppPurchase2PluginTests: XCTestCase {
         firstPurchaseExpectation.fulfill()
       }
     }
-    await fulfillment(of: [firstPurchaseExpectation], timeout: purchaseTimeout)
+    await fulfillment(
+      of: [firstPurchaseExpectation, firstUpdateExpectation], timeout: purchaseTimeout)
 
     let secondPurchaseExpectation = self.expectation(description: "Second purchase should succeed")
+    let secondUpdateExpectation = self.expectation(
+      description: "Second purchase transaction update should be received")
+    callback.onUpdateExpectation = secondUpdateExpectation
     plugin.purchase(id: "subscription_silver", options: nil) { result in
       switch result {
       case .success:
@@ -495,9 +517,13 @@ final class InAppPurchase2PluginTests: XCTestCase {
         secondPurchaseExpectation.fulfill()
       }
     }
-    await fulfillment(of: [secondPurchaseExpectation], timeout: purchaseTimeout)
+    await fulfillment(
+      of: [secondPurchaseExpectation, secondUpdateExpectation], timeout: purchaseTimeout)
 
     let restoreExpectation = self.expectation(description: "Restore request should succeed")
+    let restoreUpdateExpectation = self.expectation(
+      description: "Restored transactions update should be received")
+    callback.onUpdateExpectation = restoreUpdateExpectation
     plugin.restorePurchases { result in
       switch result {
       case .success():
@@ -507,7 +533,8 @@ final class InAppPurchase2PluginTests: XCTestCase {
         restoreExpectation.fulfill()
       }
     }
-    await fulfillment(of: [restoreExpectation], timeout: purchaseTimeout)
+    await fulfillment(
+      of: [restoreExpectation, restoreUpdateExpectation], timeout: purchaseTimeout)
 
     // Both restored transactions must arrive in a single `onTransactionsUpdated`
     // callback.
