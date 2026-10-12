@@ -2023,6 +2023,9 @@ class DropdownButtonFormField<T> extends FormField<T> {
   /// This callback is invoked after the parent [Form]'s [Form.onChanged] callback.
   /// The field's updated value is available in the [Form.onChanged] callback
   /// via [FormFieldState.value].
+  ///
+  /// If the constructor's `enabled` argument is true, the field is interactive even
+  /// when [onChanged] is null.
   final ValueChanged<T?>? onChanged;
 
   /// The decoration to show around the dropdown button form field.

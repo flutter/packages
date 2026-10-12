@@ -2,4 +2,4 @@ changelog: |
   - Adds an `enabled` parameter to `DropdownButtonFormField` and makes its
     `onChanged` parameter optional. When `enabled` is true, the field is
     interactive without an `onChanged` callback.
-version: patch
+version: minor
