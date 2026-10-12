@@ -1523,8 +1523,10 @@ public class CameraTest {
   @Test
   public void stopVideoRecording_returnsVideoPath_evenIfTakePictureOverwroteCaptureFile()
       throws Exception {
-    final String videoPath = new File(System.getProperty("java.io.tmpdir"), "test_video.mp4").getAbsolutePath();
-    final String jpegPath = new File(System.getProperty("java.io.tmpdir"), "test_photo.jpg").getAbsolutePath();
+    final String videoPath =
+        new File(System.getProperty("java.io.tmpdir"), "test_video.mp4").getAbsolutePath();
+    final String jpegPath =
+        new File(System.getProperty("java.io.tmpdir"), "test_photo.jpg").getAbsolutePath();
 
     final MediaRecorder mockMediaRecorder = mock(MediaRecorder.class);
     camera.mediaRecorder = mockMediaRecorder;
@@ -1536,13 +1538,14 @@ public class CameraTest {
     doNothing().when(cameraSpy).startPreview(any());
 
     // prepareRecording sets videoCaptureFile to the .mp4 path.
-    try (MockedConstruction<MediaRecorderBuilder> mockedBuilder = Mockito.mockConstruction(
-        MediaRecorderBuilder.class,
-        (mock, context) -> {
-          when(mock.setEnableAudio(anyBoolean())).thenReturn(mock);
-          when(mock.setMediaOrientation(anyInt())).thenReturn(mock);
-          when(mock.build()).thenReturn(mockMediaRecorder);
-        })) {
+    try (MockedConstruction<MediaRecorderBuilder> mockedBuilder =
+        Mockito.mockConstruction(
+            MediaRecorderBuilder.class,
+            (mock, context) -> {
+              when(mock.setEnableAudio(anyBoolean())).thenReturn(mock);
+              when(mock.setMediaOrientation(anyInt())).thenReturn(mock);
+              when(mock.build()).thenReturn(mockMediaRecorder);
+            })) {
       cameraSpy.prepareRecording(videoPath);
     }
 
@@ -1569,7 +1572,8 @@ public class CameraTest {
     doNothing().when(cameraSpy).startPreview(any());
 
     // videoCaptureFile left null
-    Messages.FlutterError error = assertThrows(Messages.FlutterError.class, cameraSpy::stopVideoRecording);
+    Messages.FlutterError error =
+        assertThrows(Messages.FlutterError.class, cameraSpy::stopVideoRecording);
     assertEquals("videoRecordingFailed", error.code);
   }
 

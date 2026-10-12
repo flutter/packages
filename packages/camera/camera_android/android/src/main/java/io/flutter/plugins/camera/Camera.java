@@ -136,14 +136,11 @@ class Camera
   @VisibleForTesting boolean pausedPreview;
 
   /** File used for still image capture (takePicture). */
-  @VisibleForTesting
-  File captureFile;
+  @VisibleForTesting File captureFile;
 
   /**
-   * File used for video recording. Kept separate from {@link #captureFile} so
-   * that calling
-   * takePicture() during an active recording does not overwrite the video path
-   * returned by
+   * File used for video recording. Kept separate from {@link #captureFile} so that calling
+   * takePicture() during an active recording does not overwrite the video path returned by
    * stopVideoRecording().
    */
   private File videoCaptureFile;
