@@ -71,6 +71,7 @@ public class TestPlugin: NSObject, FlutterPlugin, HostIntegrationCoreApi, HostCa
       binaryMessenger: binaryMessenger, apiDelegate: ProxyApiDelegate())
     proxyApiRegistrar!.setUp()
     NativeInteropHostIntegrationCoreApiSetup.register(api: NativeInteropTestsClass())
+    NativeInteropReservedNamesHostApiSetup.register(api: NativeInteropReservedNamesHostApiImpl())
   }
 
   public func detachFromEngine(for registrar: FlutterPluginRegistrar) {
@@ -2073,6 +2074,83 @@ class NativeInteropTestsClass: NSObject, NativeInteropHostIntegrationCoreApi {
   func testCallDeregisteredFlutterApi(name: String) throws -> Bool {
     NativeInteropFlutterIntegrationCoreApiRegistrar.registerInstance(api: nil, name: name)
     return NativeInteropFlutterIntegrationCoreApi.getInstance(name: name) == nil
+  }
+}
+
+class NativeInteropReservedNamesHostApiImpl: NativeInteropReservedNamesHostApi {
+  private var storedReference = ""
+
+  func release(value: String) throws -> String {
+    return value
+  }
+
+  func use(value: Int64) throws -> Int64 {
+    return value
+  }
+
+  func type() throws -> String {
+    return "type"
+  }
+
+  func isNull() throws -> Bool {
+    return true
+  }
+
+  func isNullable() throws -> Bool? {
+    return true
+  }
+
+  func isOpen() throws -> Bool {
+    return true
+  }
+
+  func getReference() throws -> String {
+    return storedReference
+  }
+
+  func setReference(value: String) throws {
+    storedReference = value
+  }
+
+  func getDefault() throws -> String {
+    return "default"
+  }
+
+  func getValueAsync() async throws -> String {
+    return "value"
+  }
+
+  func echoReservedNames(names: NativeInteropReservedNames) throws -> NativeInteropReservedNames {
+    return names
+  }
+
+  private func flutterApi() throws -> NativeInteropReservedNamesFlutterApi {
+    guard let flutterApi = NativeInteropReservedNamesFlutterApi.getInstance() else {
+      throw NativeInteropTestsError(
+        code: "not_registered", message: "NativeInteropReservedNamesFlutterApi not registered",
+        details: nil)
+    }
+    return flutterApi
+  }
+
+  func callFlutterRelease(value: String) throws -> String {
+    return try flutterApi().release(value: value)
+  }
+
+  func callFlutterType() throws -> String {
+    return try flutterApi().type()
+  }
+
+  func callFlutterImplementIn(value: String) throws -> String {
+    return try flutterApi().implementIn(value: value)
+  }
+
+  func callFlutterIsNull() throws -> Bool {
+    return try flutterApi().isNull()
+  }
+
+  func callFlutterGetReference() throws -> String {
+    return try flutterApi().getReference()
   }
 }
 
