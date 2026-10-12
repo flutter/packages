@@ -89,7 +89,7 @@ const Map<String, Type> _examples = <String, Type>{
       linear_progress_indicator_0.ProgressIndicatorExampleApp,
   'Circular progress indicators':
       circular_progress_indicator_0.ProgressIndicatorExampleApp,
-  'Material shapes': material_shapes_0.MaterialShapesExampleApp,
+  'Material 3 Expressive shapes': material_shapes_0.MaterialShapesExampleApp,
   'Menu': dropdown_menu_1.DropdownMenuApp,
   'Navigation bar': navigation_bar_1.NavigationBarApp,
   'Navigation rail': navigation_rail_0.NavigationRailExampleApp,

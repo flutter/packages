@@ -164,7 +164,7 @@ class ExampleApp extends StatelessWidget {
     ),
     _Example(
       filepath: 'material_shapes/material_shapes.0.dart',
-      title: 'Material shapes',
+      title: 'Material 3 Expressive shapes',
       builder: (BuildContext context) =>
           const material_shapes_0.MaterialShapesExampleApp(),
     ),
