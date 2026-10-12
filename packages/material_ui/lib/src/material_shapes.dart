@@ -5,7 +5,6 @@
 // This code is a Dart port of the Compose Material 3 shape catalog:
 // https://cs.android.com/androidx/platform/frameworks/support/+/androidx-main:compose/material3/material3/src/commonMain/kotlin/androidx/compose/material3/MaterialShapes.kt
 
-import 'dart:collection';
 import 'dart:math' as math;
 
 import 'package:vector_math/vector_math_64.dart';
@@ -366,7 +365,9 @@ abstract final class MaterialShapes {
   ).normalized();
 
   /// A list of all available shapes.
-  static final UnmodifiableListView<RoundedPolygon> all = UnmodifiableListView(<RoundedPolygon>[
+  ///
+  /// The list is unmodifiable.
+  static final List<RoundedPolygon> all = List<RoundedPolygon>.unmodifiable(<RoundedPolygon>[
     MaterialShapes.circle,
     MaterialShapes.square,
     MaterialShapes.slanted,
