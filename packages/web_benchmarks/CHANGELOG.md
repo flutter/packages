@@ -1,5 +1,3 @@
-## NEXT
-
 ## 4.1.3
 
 * Fix benchmarks stalling when only repainting views that are dirty.
