@@ -54,7 +54,11 @@ class ImageResizer {
               maxHeight);
       BitmapFactory.Options options = new BitmapFactory.Options();
       options.inSampleSize =
-          calculateSampleSize(options, (int) targetSize.getWidth(), (int) targetSize.getHeight());
+          calculateSampleSize(
+              (int) originalSize.getWidth(),
+              (int) originalSize.getHeight(),
+              (int) targetSize.getWidth(),
+              (int) targetSize.getHeight());
       Bitmap bmp = decodeFile(imagePath, options);
       if (bmp == null) {
         return imagePath;
@@ -160,10 +164,7 @@ class ImageResizer {
    *     href="https://developer.android.com/topic/performance/graphics/load-bitmap#load-bitmap">
    *     Loading Large Bitmaps Efficiently</a>
    */
-  private int calculateSampleSize(
-      BitmapFactory.Options options, int targetWidth, int targetHeight) {
-    final int height = options.outHeight;
-    final int width = options.outWidth;
+  private int calculateSampleSize(int width, int height, int targetWidth, int targetHeight) {
     int sampleSize = 1;
     if (height > targetHeight || width > targetWidth) {
       final int halfHeight = height / 2;

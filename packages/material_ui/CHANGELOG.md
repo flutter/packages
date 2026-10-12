@@ -1,3 +1,54 @@
+## 1.6.0
+
+- Documents that `TextField.decoration` is merged with the ambient
+  `InputDecorationTheme` rather than replacing it.
+- Fixes unresolved doc comment references.
+- Fixes `NavigationIndicator` not repainting when the selected destination changes without pointer interaction.
+- Removes the unconditional `dart:io` import from `AboutDialog`, so that `material_ui` is correctly detected as supporting the web platform and `showAboutDialog` no longer throws on the web when no application name is available.
+- Fix DropdownButtonFormField underline alignment at bottom.
+- Fixes floating-point rounding errors when calculating values for discrete `Slider` and `RangeSlider`.
+- Added `fontFeatures` and `fontVariations` parameters to `TextTheme.apply()`.
+
+## 1.5.0
+
+- Adds Material 3 Expressive support for IconButton.
+- Exposes `selected` state on `Autocomplete` option semantics.
+- Wraps `DrawerHeader` in `Semantics(header: true)`.
+- Adds `ignorePointer` to `TooltipThemeData` for WCAG 1.4.13 Hoverable support.
+- Fixes decorations on `MenuItemButton.leadingIcon`, such as `Badge`, being clipped to the icon's bounds in vertically expanding menus.
+- Introduces labelTextDirection property to InputDecoration.
+- Adds support for standard, medium, and high contrast Material 3 color scheme baselines.
+- Fixes LocalHistoryEntry leak when double tapping Drawer scrim
+
+## 1.4.0
+
+- Updates minimum supported SDK version to Flutter 3.47/Dart 3.13.
+- Adds sortIconBuilder parameter to DataTable, PaginatedDataTable, and DataTableThemeData for custom sorting indicators.
+- Fix `PopupMenuButton` not announcing button semantics (enabled state, expanded state) when built with a `child` instead of the default icon.
+- Fixes `DatePickerThemeData.todayBorder` color being overridden by `todayForegroundColor` in the year selector.
+- Adds an alternative keyboard input method for RangeSlider in NavigationMode.directional.
+
+## 1.3.0
+
+- Adds `@awaitNotRequired` annotations to asynchronous functions that do not need to be awaited.
+- Adds an option for `MaterialPageRoute` and `MaterialPage` to opt out of introducing a semantics route scope.
+- Fixes SliverGeometry maxPaintExtent assertion in CarouselView.weighted
+- Corrects the Material 3 default style documentation for FilledButton to match its implementation.
+- Adds support for customizing date input formatters via
+  `CalendarDelegate.keyboardInputFormatters`, allowing custom date input
+  behavior in the Material date picker.
+- Adds a semanticLabel to MenuAnchor for the expanded menu overlay.
+
+## 1.2.0
+
+- Adds the `StyleVariant` enum defining the Material 3 and Material 3 Expressive style variants.
+
+## 1.1.1
+
+- Constrains Slider and RangeSlider value indicator labels to the screen width, truncating with an ellipsis instead of clipping.
+- Prevents stale asynchronous suggestions from replacing newer `SearchAnchor` results.
+- Fix RangeSlider thumb overlay remaining visible after touch interaction
+
 ## 1.1.0
 
 - Add missing Widget of the Week videos to widget API docs.

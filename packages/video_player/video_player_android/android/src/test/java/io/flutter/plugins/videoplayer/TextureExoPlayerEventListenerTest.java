@@ -124,4 +124,61 @@ public class TextureExoPlayerEventListenerTest {
     eventListener.onPlaybackStateChanged(Player.STATE_READY);
     verify(mockCallbacks).onInitialized(800, 400, 10L, 270);
   }
+
+  @Test
+  public void onPlaybackStateChangedReadyScalesWidthByPixelAspectRatio_whenContentIsAnamorphic() {
+    TextureExoPlayerEventListener eventListener =
+        new TextureExoPlayerEventListener(mockExoPlayer, mockCallbacks, true);
+    // Anamorphic content: 1080x720 coded pixels with a 3:8 pixel aspect ratio displays as 405x720.
+    VideoSize size = new VideoSize(1080, 720, 0.375f);
+    when(mockExoPlayer.getVideoSize()).thenReturn(size);
+    when(mockExoPlayer.getDuration()).thenReturn(10L);
+
+    eventListener.onPlaybackStateChanged(Player.STATE_READY);
+    verify(mockCallbacks).onInitialized(405, 720, 10L, 0);
+  }
+
+  @Test
+  public void onPlaybackStateChangedReadyDoesNotScaleWidth_whenPixelAspectRatioIsSquare() {
+    TextureExoPlayerEventListener eventListener =
+        new TextureExoPlayerEventListener(mockExoPlayer, mockCallbacks, true);
+    VideoSize size = new VideoSize(800, 400, 1f);
+    when(mockExoPlayer.getVideoSize()).thenReturn(size);
+    when(mockExoPlayer.getDuration()).thenReturn(10L);
+
+    eventListener.onPlaybackStateChanged(Player.STATE_READY);
+    verify(mockCallbacks).onInitialized(800, 400, 10L, 0);
+  }
+
+  @Test
+  public void
+      onPlaybackStateChangedReadyScalesWidthByPixelAspectRatio_whenAnamorphicAndRotationCorrected() {
+    TextureExoPlayerEventListener eventListener =
+        new TextureExoPlayerEventListener(mockExoPlayer, mockCallbacks, false);
+    // ExoPlayer reports a pixel aspect ratio that already accounts for the applied rotation,
+    // so the width is scaled the same way regardless of the rotation correction.
+    VideoSize size = new VideoSize(1080, 720, 0.375f);
+    int rotationCorrection = 90;
+    Format videoFormat = new Format.Builder().setRotationDegrees(rotationCorrection).build();
+
+    when(mockExoPlayer.getVideoSize()).thenReturn(size);
+    when(mockExoPlayer.getDuration()).thenReturn(10L);
+    when(mockExoPlayer.getVideoFormat()).thenReturn(videoFormat);
+
+    eventListener.onPlaybackStateChanged(Player.STATE_READY);
+    verify(mockCallbacks).onInitialized(405, 720, 10L, rotationCorrection);
+  }
+
+  @Test
+  public void onPlaybackStateChangedReadyReportsAtLeastOnePixel_whenPixelAspectRatioIsDegenerate() {
+    TextureExoPlayerEventListener eventListener =
+        new TextureExoPlayerEventListener(mockExoPlayer, mockCallbacks, true);
+    // A malformed ratio would otherwise round the width down to zero.
+    VideoSize size = new VideoSize(800, 400, 0.0001f);
+    when(mockExoPlayer.getVideoSize()).thenReturn(size);
+    when(mockExoPlayer.getDuration()).thenReturn(10L);
+
+    eventListener.onPlaybackStateChanged(Player.STATE_READY);
+    verify(mockCallbacks).onInitialized(1, 400, 10L, 0);
+  }
 }

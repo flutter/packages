@@ -6,6 +6,7 @@
 ///
 /// @docImport 'dropdown.dart';
 /// @docImport 'ink_well.dart';
+/// @docImport 'tabs.dart';
 /// @docImport 'text_field.dart';
 /// @docImport 'text_form_field.dart';
 library;
@@ -29,6 +30,8 @@ import 'material_state.dart';
 import 'text_theme.dart';
 import 'theme.dart';
 import 'theme_data.dart';
+
+part 'generated/input_decorator_defaults_m3.g.dart';
 
 // Examples can assume:
 // late Widget _myIcon;
@@ -113,7 +116,7 @@ class _InputBorderTween extends Tween<InputBorder> {
 // Passes the _InputBorderGap parameters along to an InputBorder's paint method.
 class _InputBorderPainter extends CustomPainter {
   _InputBorderPainter({
-    required Listenable repaint,
+    required super.repaint,
     required this.borderAnimation,
     required this.border,
     required this.gapAnimation,
@@ -122,7 +125,7 @@ class _InputBorderPainter extends CustomPainter {
     required this.fillColor,
     required this.hoverAnimation,
     required this.hoverColorTween,
-  }) : super(repaint: repaint);
+  });
 
   final Animation<double> borderAnimation;
   final _InputBorderTween border;
@@ -2385,7 +2388,12 @@ class _InputDecoratorState extends State<InputDecorator> with TickerProviderStat
             style: labelShouldWithdraw ? _getFloatingLabelStyle(themeData, defaults) : labelStyle,
             child:
                 decoration.label ??
-                Text(decoration.labelText!, overflow: TextOverflow.ellipsis, textAlign: textAlign),
+                Text(
+                  decoration.labelText!,
+                  overflow: TextOverflow.ellipsis,
+                  textAlign: textAlign,
+                  textDirection: decoration.labelTextDirection,
+                ),
           ),
         ),
       );
@@ -2579,9 +2587,8 @@ class _InputDecoratorState extends State<InputDecorator> with TickerProviderStat
       contentPadding = decorationContentPadding ?? EdgeInsetsDirectional.zero;
     } else if (!border.isOutline) {
       // 4.0: the vertical gap between the inline elements and the floating label.
-      floatingLabelHeight = MediaQuery.textScalerOf(
-        context,
-      ).scale(4.0 + 0.75 * labelStyle.fontSize!);
+      floatingLabelHeight = MediaQuery.textScalerOf(context)
+          .scale(4.0 + 0.75 * labelStyle.fontSize!);
       if (decoration.filled ?? false) {
         contentPadding =
             decorationContentPadding ??
@@ -2812,6 +2819,7 @@ class InputDecoration {
     this.labelText,
     this.labelStyle,
     this.floatingLabelStyle,
+    this.labelTextDirection,
     this.helper,
     this.helperText,
     this.helperStyle,
@@ -2941,6 +2949,7 @@ class InputDecoration {
        labelText = null,
        labelStyle = null,
        floatingLabelStyle = null,
+       labelTextDirection = null,
        helper = null,
        helperText = null,
        helperStyle = null,
@@ -3118,6 +3127,17 @@ class InputDecoration {
   /// {@endtemplate}
   final TextStyle? floatingLabelStyle;
 
+  /// The direction to use for the [labelText].
+  ///
+  /// If null, defaults to a value derived from [Directionality] for the
+  /// input field and the current context.
+  ///
+  /// This is ignored if [label] is provided instead of [labelText].
+  /// If you need to set the direction for a custom [label] widget,
+  /// wrap that widget in a [Directionality] widget or use a [Text]
+  /// widget with its own [Text.textDirection] property.
+  final TextDirection? labelTextDirection;
+
   /// Optional widget that appears below the [InputDecorator.child].
   ///
   /// If non-null, the [helper] is displayed below the [InputDecorator.child], in
@@ -3210,6 +3230,11 @@ class InputDecoration {
   ///
   /// If null, defaults to a value derived from [Directionality] for the
   /// input field and the current context.
+  ///
+  /// This is ignored if [hint] is provided instead of [hintText].
+  /// If you need to set the direction for a custom [hint] widget,
+  /// wrap that widget in a [Directionality] widget or use a [Text]
+  /// widget with its own [Text.textDirection] property.
   final TextDirection? hintTextDirection;
 
   /// The maximum number of lines the [hintText] can occupy.
@@ -3982,6 +4007,7 @@ class InputDecoration {
     String? labelText,
     TextStyle? labelStyle,
     TextStyle? floatingLabelStyle,
+    TextDirection? labelTextDirection,
     Widget? helper,
     String? helperText,
     TextStyle? helperStyle,
@@ -4043,6 +4069,7 @@ class InputDecoration {
       labelText: labelText ?? this.labelText,
       labelStyle: labelStyle ?? this.labelStyle,
       floatingLabelStyle: floatingLabelStyle ?? this.floatingLabelStyle,
+      labelTextDirection: labelTextDirection ?? this.labelTextDirection,
       helper: helper ?? this.helper,
       helperText: helperText ?? this.helperText,
       helperStyle: helperStyle ?? this.helperStyle,
@@ -4168,6 +4195,7 @@ class InputDecoration {
         other.labelText == labelText &&
         other.labelStyle == labelStyle &&
         other.floatingLabelStyle == floatingLabelStyle &&
+        other.labelTextDirection == labelTextDirection &&
         other.helper == helper &&
         other.helperText == helperText &&
         other.helperStyle == helperStyle &&
@@ -4230,6 +4258,7 @@ class InputDecoration {
       label,
       labelText,
       floatingLabelStyle,
+      labelTextDirection,
       labelStyle,
       helper,
       helperText,
@@ -5668,7 +5697,6 @@ class InputDecorationThemeData with Diagnosticable {
         other.hintMaxLines == hintMaxLines &&
         other.alignLabelWithHint == alignLabelWithHint &&
         other.constraints == constraints &&
-        other.disabledBorder == disabledBorder &&
         other.visualDensity == visualDensity;
   }
 
@@ -5991,184 +6019,3 @@ class _InputDecoratorDefaultsM2 extends InputDecorationThemeData {
     };
   });
 }
-
-// BEGIN GENERATED TOKEN PROPERTIES - InputDecorator
-
-// Do not edit by hand. The code between the "BEGIN GENERATED" and
-// "END GENERATED" comments are generated from data in the Material
-// Design token database by the script:
-//   dev/tools/gen_defaults/bin/gen_defaults.dart.
-
-// dart format off
-class _InputDecoratorDefaultsM3 extends InputDecorationThemeData {
-   _InputDecoratorDefaultsM3(this.context)
-    : super();
-
-  final BuildContext context;
-
-  late final ColorScheme _colors = Theme.of(context).colorScheme;
-  late final TextTheme _textTheme = Theme.of(context).textTheme;
-
-  // For InputDecorator, focused state should take precedence over hovered state.
-  // For instance, the focused state increases border width (2dp) and applies bright
-  // colors (primary color or error color) while the hovered state has the same border
-  // than the non-focused state (1dp) and uses a color a little darker than non-focused
-  // state. On desktop, it is also very common that a text field is focused and hovered
-  // because users often rely on mouse selection.
-  // For other widgets, hovered state takes precedence over focused state, because it
-  // is mainly used to determine the overlay color,
-  // see https://github.com/flutter/flutter/pull/125905.
-
-  @override
-  TextStyle? get hintStyle => WidgetStateTextStyle.resolveWith((Set<WidgetState> states) {
-    if (states.contains(WidgetState.disabled)) {
-      return TextStyle(color: _colors.onSurface.withOpacity(0.38));
-    }
-    return TextStyle(color: _colors.onSurfaceVariant);
-  });
-
-  @override
-  Color? get fillColor => WidgetStateColor.resolveWith((Set<WidgetState> states) {
-    if (states.contains(WidgetState.disabled)) {
-      return _colors.onSurface.withOpacity(0.04);
-    }
-    return _colors.surfaceContainerHighest;
-  });
-
-  @override
-  BorderSide? get activeIndicatorBorder => WidgetStateBorderSide.resolveWith((Set<WidgetState> states) {
-    if (states.contains(WidgetState.disabled)) {
-      return BorderSide(color: _colors.onSurface.withOpacity(0.38));
-    }
-    if (states.contains(WidgetState.error)) {
-      if (states.contains(WidgetState.focused)) {
-        return BorderSide(color: _colors.error, width: 2.0);
-      }
-      if (states.contains(WidgetState.hovered)) {
-        return BorderSide(color: _colors.onErrorContainer);
-      }
-      return BorderSide(color: _colors.error);
-    }
-    if (states.contains(WidgetState.focused)) {
-      return BorderSide(color: _colors.primary, width: 2.0);
-    }
-    if (states.contains(WidgetState.hovered)) {
-      return BorderSide(color: _colors.onSurface);
-    }
-    return BorderSide(color: _colors.onSurfaceVariant);
-    });
-
-  @override
-  BorderSide? get outlineBorder => WidgetStateBorderSide.resolveWith((Set<WidgetState> states) {
-    if (states.contains(WidgetState.disabled)) {
-      return BorderSide(color: _colors.onSurface.withOpacity(0.12));
-    }
-    if (states.contains(WidgetState.error)) {
-      if (states.contains(WidgetState.focused)) {
-        return BorderSide(color: _colors.error, width: 2.0);
-      }
-      if (states.contains(WidgetState.hovered)) {
-        return BorderSide(color: _colors.onErrorContainer);
-      }
-      return BorderSide(color: _colors.error);
-    }
-    if (states.contains(WidgetState.focused)) {
-      return BorderSide(color: _colors.primary, width: 2.0);
-    }
-    if (states.contains(WidgetState.hovered)) {
-      return BorderSide(color: _colors.onSurface);
-    }
-    return BorderSide(color: _colors.outline);
-  });
-
-  @override
-  Color? get iconColor => _colors.onSurfaceVariant;
-
-  @override
-  Color? get prefixIconColor => WidgetStateColor.resolveWith((Set<WidgetState> states) {
-    if (states.contains(WidgetState.disabled)) {
-      return _colors.onSurface.withOpacity(0.38);
-    }
-    return _colors.onSurfaceVariant;
-  });
-
-  @override
-  Color? get suffixIconColor => WidgetStateColor.resolveWith((Set<WidgetState> states) {
-    if (states.contains(WidgetState.disabled)) {
-      return _colors.onSurface.withOpacity(0.38);
-    }
-    if (states.contains(WidgetState.error)) {
-      if (states.contains(WidgetState.hovered)) {
-        return _colors.onErrorContainer;
-      }
-      return _colors.error;
-    }
-    return _colors.onSurfaceVariant;
-  });
-
-  @override
-  TextStyle? get labelStyle => WidgetStateTextStyle.resolveWith((Set<WidgetState> states) {
-    final TextStyle textStyle = _textTheme.bodyLarge ?? const TextStyle();
-    if (states.contains(WidgetState.disabled)) {
-      return textStyle.copyWith(color: _colors.onSurface.withOpacity(0.38));
-    }
-    if (states.contains(WidgetState.error)) {
-      if (states.contains(WidgetState.focused)) {
-        return textStyle.copyWith(color: _colors.error);
-      }
-      if (states.contains(WidgetState.hovered)) {
-        return textStyle.copyWith(color: _colors.onErrorContainer);
-      }
-      return textStyle.copyWith(color: _colors.error);
-    }
-    if (states.contains(WidgetState.focused)) {
-      return textStyle.copyWith(color: _colors.primary);
-    }
-    if (states.contains(WidgetState.hovered)) {
-      return textStyle.copyWith(color: _colors.onSurfaceVariant);
-    }
-    return textStyle.copyWith(color: _colors.onSurfaceVariant);
-  });
-
-  @override
-  TextStyle? get floatingLabelStyle => WidgetStateTextStyle.resolveWith((Set<WidgetState> states) {
-    final TextStyle textStyle = _textTheme.bodyLarge ?? const TextStyle();
-    if (states.contains(WidgetState.disabled)) {
-      return textStyle.copyWith(color: _colors.onSurface.withOpacity(0.38));
-    }
-    if (states.contains(WidgetState.error)) {
-      if (states.contains(WidgetState.focused)) {
-        return textStyle.copyWith(color: _colors.error);
-      }
-      if (states.contains(WidgetState.hovered)) {
-        return textStyle.copyWith(color: _colors.onErrorContainer);
-      }
-      return textStyle.copyWith(color: _colors.error);
-    }
-    if (states.contains(WidgetState.focused)) {
-      return textStyle.copyWith(color: _colors.primary);
-    }
-    if (states.contains(WidgetState.hovered)) {
-      return textStyle.copyWith(color: _colors.onSurfaceVariant);
-    }
-    return textStyle.copyWith(color: _colors.onSurfaceVariant);
-  });
-
-  @override
-  TextStyle? get helperStyle => WidgetStateTextStyle.resolveWith((Set<WidgetState> states) {
-    final TextStyle textStyle = _textTheme.bodySmall ?? const TextStyle();
-    if (states.contains(WidgetState.disabled)) {
-      return textStyle.copyWith(color: _colors.onSurface.withOpacity(0.38));
-    }
-    return textStyle.copyWith(color: _colors.onSurfaceVariant);
-  });
-
-  @override
-  TextStyle? get errorStyle => WidgetStateTextStyle.resolveWith((Set<WidgetState> states) {
-    final TextStyle textStyle = _textTheme.bodySmall ?? const TextStyle();
-    return textStyle.copyWith(color: _colors.error);
-  });
-}
-// dart format on
-
-// END GENERATED TOKEN PROPERTIES - InputDecorator

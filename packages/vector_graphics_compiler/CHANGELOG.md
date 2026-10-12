@@ -1,3 +1,7 @@
+## NEXT
+
+* Updates minimum supported SDK version to Flutter 3.41/Dart 3.11.
+
 ## 1.3.0
 
 * An unrecognized `font-weight` value is now ignored with a warning (and still

@@ -23,8 +23,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import kotlin.Result;
-import kotlin.Unit;
 
 /**
  * Controls cluster managers and exposes interfaces for adding and removing cluster items for
@@ -238,8 +236,7 @@ class ClusterManagersController
       MarkerBuilder[] builders = cluster.getItems().toArray(new MarkerBuilder[0]);
       String clusterManagerId = builders[0].clusterManagerId();
       flutterApi.onClusterTap(
-          Convert.clusterToPigeon(clusterManagerId, cluster),
-          (Result<Unit> result) -> Unit.INSTANCE);
+          Convert.clusterToPigeon(clusterManagerId, cluster), ResultUtilsKt.emptyContinuation());
     }
 
     // Return false to allow the default behavior of the cluster click event to occur.

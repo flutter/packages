@@ -286,7 +286,9 @@ void main() {
           // MEDIA_ELEMENT_ERROR on web, see https://github.com/flutter/flutter/issues/169219
           kIsWeb ||
           // Hanging on Android, see https://github.com/flutter/flutter/issues/160797
-          defaultTargetPlatform == TargetPlatform.android,
+          defaultTargetPlatform == TargetPlatform.android ||
+          // Hanging on macOS, see https://github.com/flutter/flutter/issues/193300
+          defaultTargetPlatform == TargetPlatform.macOS,
     );
   });
 
