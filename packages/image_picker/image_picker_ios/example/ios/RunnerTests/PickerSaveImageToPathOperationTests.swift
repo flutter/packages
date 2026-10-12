@@ -147,6 +147,15 @@ struct PickerSaveImageToPathOperationTests {
     #expect(savedError?.details as? String == "PHPickerDomain")
   }
 
+  @Test func undecodableImageDataReturnsError() async throws {
+    let itemProvider = StaticDataItemProvider(data: Data("not an image".utf8))
+    let result = FakePickerItem(itemProvider: itemProvider, assetIdentifier: nil)
+    let (savedPath, savedError) = try await runSaveOperation(result: result, fullMetadata: true)
+    #expect(savedPath == nil)
+    #expect(savedError?.code == "invalid_image")
+    #expect(savedError?.message == "Could not decode image data.")
+  }
+
   @Test func initWithNilResultReturnsNil() {
     let operation = FLTPHPickerSaveImageToPathOperation(
       result: nil,
