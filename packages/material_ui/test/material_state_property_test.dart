@@ -69,7 +69,7 @@ void main() {
       textStyle2,
       0.0,
       TextStyle.lerp,
-    )!.resolve(enabled)!;
+    )!.resolve(enabled);
     expect(textStyle.fontSize, 14.0);
 
     // Using `0.5` interpolation value.

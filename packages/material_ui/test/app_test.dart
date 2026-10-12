@@ -857,7 +857,7 @@ void main() {
       lightTheme.scaffoldBackgroundColor,
       darkTheme.scaffoldBackgroundColor,
       0.5,
-    )!;
+    );
     expect(tester.widget<Material>(find.byType(Material)).color, halfBGColor);
   });
 

@@ -29,11 +29,11 @@ void main() {
     final TextStyle actualSelectedTextStyle = tester
         .renderObject<RenderParagraph>(find.text('Abc'))
         .text
-        .style!;
+        .style;
     final TextStyle actualUnselectedTextStyle = tester
         .renderObject<RenderParagraph>(find.text('Def'))
         .text
-        .style!;
+        .style;
     expect(actualSelectedTextStyle.fontSize, equals(selectedTextStyle.fontSize));
     expect(actualSelectedTextStyle.fontWeight, equals(selectedTextStyle.fontWeight));
     expect(actualUnselectedTextStyle.fontSize, equals(actualUnselectedTextStyle.fontSize));
@@ -6341,7 +6341,7 @@ TextStyle _iconStyle(WidgetTester tester, IconData icon) {
   return tester
       .widget<RichText>(find.descendant(of: find.byIcon(icon), matching: find.byType(RichText)))
       .text
-      .style!;
+      .style;
 }
 
 Finder _opacityAboveLabel(String text) {

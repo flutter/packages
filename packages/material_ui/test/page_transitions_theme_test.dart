@@ -245,7 +245,7 @@ void main() {
               secondaryAnimation,
               false,
               const SizedBox(),
-            )!;
+            );
           },
         ),
       );
@@ -287,7 +287,7 @@ void main() {
               secondaryAnimation,
               false,
               const SizedBox(),
-            )!;
+            );
           },
         ),
       );

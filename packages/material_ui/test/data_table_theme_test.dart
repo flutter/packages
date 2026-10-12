@@ -195,7 +195,7 @@ void main() {
     final TextStyle dataRowTextStyle = tester
         .renderObject<RenderParagraph>(find.text('Data'))
         .text
-        .style!;
+        .style;
     expect(dataRowTextStyle.fontSize, dataTextStyle.fontSize);
     expect(
       _tableRowBoxDecoration(tester: tester, index: 1).color,
@@ -207,7 +207,7 @@ void main() {
     final TextStyle headingRowTextStyle = tester
         .renderObject<RenderParagraph>(find.text('A'))
         .text
-        .style!;
+        .style;
     expect(headingRowTextStyle.fontSize, headingTextStyle.fontSize);
     expect(
       _tableRowBoxDecoration(tester: tester, index: 0).color,
@@ -371,7 +371,7 @@ void main() {
     final TextStyle dataRowTextStyle = tester
         .renderObject<RenderParagraph>(find.text('Data'))
         .text
-        .style!;
+        .style;
     expect(dataRowTextStyle.fontSize, dataTextStyle.fontSize);
     expect(
       _tableRowBoxDecoration(tester: tester, index: 1).color,
@@ -383,7 +383,7 @@ void main() {
     final TextStyle headingRowTextStyle = tester
         .renderObject<RenderParagraph>(find.text('A'))
         .text
-        .style!;
+        .style;
     expect(headingRowTextStyle.fontSize, headingTextStyle.fontSize);
     expect(
       _tableRowBoxDecoration(tester: tester, index: 0).color,
@@ -557,7 +557,7 @@ void main() {
     final TextStyle dataRowTextStyle = tester
         .renderObject<RenderParagraph>(find.text('Data'))
         .text
-        .style!;
+        .style;
     expect(dataRowTextStyle.fontSize, localThemeDataTextStyle.fontSize);
     expect(
       _tableRowBoxDecoration(tester: tester, index: 1).color,
@@ -572,7 +572,7 @@ void main() {
     final TextStyle headingRowTextStyle = tester
         .renderObject<RenderParagraph>(find.text('A'))
         .text
-        .style!;
+        .style;
     expect(headingRowTextStyle.fontSize, localThemeHeadingTextStyle.fontSize);
     expect(
       _tableRowBoxDecoration(tester: tester, index: 0).color,

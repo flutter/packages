@@ -479,7 +479,7 @@ class _RenderTextSelectionToolbarItemsLayout extends RenderBox
 
     // If the last child overflows, but only because of the width of the
     // overflow button, then just show it and hide the overflow button.
-    final RenderBox navButton = firstChild!;
+    final RenderBox navButton = firstChild;
     if (_lastIndexThatFits != -1 &&
         _lastIndexThatFits == childCount - 2 &&
         width - navButton.size.width <= sizedConstraints.maxWidth) {
@@ -508,7 +508,7 @@ class _RenderTextSelectionToolbarItemsLayout extends RenderBox
 
   /// Horizontal layout.
   Size _placeChildrenHorizontally() {
-    final RenderBox navButton = firstChild!;
+    final RenderBox navButton = firstChild;
     final isRtl = textDirection == TextDirection.rtl;
 
     final contentItems = <RenderBox>[];
@@ -578,7 +578,7 @@ class _RenderTextSelectionToolbarItemsLayout extends RenderBox
 
   /// Vertical layout (overflow menu).
   Size _placeChildrenVertically() {
-    final RenderBox navButton = firstChild!;
+    final RenderBox navButton = firstChild;
 
     var currentY = 0.0;
     var maxWidth = 0.0;
@@ -642,7 +642,7 @@ class _RenderTextSelectionToolbarItemsLayout extends RenderBox
       return;
     }
 
-    final RenderBox navButton = firstChild!;
+    final RenderBox navButton = firstChild;
     var i = -1;
 
     visitChildren((RenderObject renderObjectChild) {

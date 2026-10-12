@@ -166,7 +166,7 @@ void main() {
     final TextStyle selectedFontStyle = tester
         .renderObject<RenderParagraph>(find.text('AC'))
         .text
-        .style!;
+        .style;
     final TextStyle selectedIcon = _iconStyle(tester, Icons.ac_unit);
     final TextStyle unselectedIcon = _iconStyle(tester, Icons.access_alarm);
     expect(selectedFontStyle.fontSize, selectedFontStyle.fontSize);
@@ -291,7 +291,7 @@ void main() {
     final TextStyle selectedFontStyle = tester
         .renderObject<RenderParagraph>(find.text('AC'))
         .text
-        .style!;
+        .style;
     final TextStyle selectedIcon = _iconStyle(tester, Icons.ac_unit);
     final TextStyle unselectedIcon = _iconStyle(tester, Icons.access_alarm);
     expect(selectedFontStyle.fontSize, selectedFontStyle.fontSize);
@@ -441,7 +441,7 @@ TextStyle _iconStyle(WidgetTester tester, IconData icon) {
   final RichText iconRichText = tester.widget<RichText>(
     find.descendant(of: find.byIcon(icon), matching: find.byType(RichText)),
   );
-  return iconRichText.text.style!;
+  return iconRichText.text.style;
 }
 
 Material _material(WidgetTester tester) {

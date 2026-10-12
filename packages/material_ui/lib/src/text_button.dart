@@ -106,7 +106,7 @@ class TextButton extends ButtonStyleButton {
     super.clipBehavior,
     super.statesController,
     super.isSemanticButton,
-    required Widget super.child,
+    required super.child,
   }) : _addPadding = false;
 
   /// Create a text button from a pair of widgets that serve as the button's

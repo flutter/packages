@@ -1892,7 +1892,7 @@ class _PopupMenuDefaultsM3 extends PopupMenuThemeData {
   @override WidgetStateProperty<TextStyle?>? get labelTextStyle {
     return WidgetStateProperty.resolveWith((Set<WidgetState> states) {
     // TODO(quncheng): Update this hard-coded value to use the latest tokens.
-    final TextStyle style = _textTheme.labelLarge!;
+    final TextStyle style = _textTheme.labelLarge;
       if (states.contains(WidgetState.disabled)) {
         return style.apply(color: _colors.onSurface.withOpacity(0.38));
       }

@@ -1064,7 +1064,7 @@ void main() {
     final Finder persistentFooter = find
         .ancestor(of: find.byType(OverflowBar), matching: find.byType(Container))
         .first;
-    final Decoration decoration = tester.widget<Container>(persistentFooter).decoration!;
+    final Decoration decoration = tester.widget<Container>(persistentFooter).decoration;
 
     expect(decoration, isA<BoxDecoration>());
     expect((decoration as BoxDecoration).border!.top.color, Colors.red);
@@ -1849,7 +1849,7 @@ void main() {
       await tester.pump(const Duration(milliseconds: 50));
 
       ScaffoldGeometry geometry = listenerState.cache.value;
-      final Rect transitioningFabRect = geometry.floatingActionButtonArea!;
+      final Rect transitioningFabRect = geometry.floatingActionButtonArea;
 
       final double transitioningRotation = tester
           .widget<RotationTransition>(find.byType(RotationTransition))
@@ -3847,7 +3847,7 @@ class _GeometryListenerState extends State<_GeometryListener> {
 
     geometryListenable?.removeListener(onGeometryChanged);
     geometryListenable = newListenable..addListener(onGeometryChanged);
-    cache = _GeometryCachePainter(geometryListenable!);
+    cache = _GeometryCachePainter(geometryListenable);
   }
 
   void onGeometryChanged() {

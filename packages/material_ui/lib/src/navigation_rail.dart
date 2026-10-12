@@ -514,7 +514,7 @@ class _NavigationRailState extends State<NavigationRail> with TickerProviderStat
       mainAxisAlignment: widget.mainAxisAlignment ?? MainAxisAlignment.start,
       children: <Widget>[
         if (!widget.leadingAtTop && widget.leading != null) ...<Widget>[
-          widget.leading!,
+          widget.leading,
           _verticalSpacer,
         ],
         for (int i = 0; i < widget.destinations.length; i += 1)
@@ -572,7 +572,7 @@ class _NavigationRailState extends State<NavigationRail> with TickerProviderStat
                 children: <Widget>[
                   _verticalSpacer,
                   if (widget.leadingAtTop && widget.leading != null) ...<Widget>[
-                    widget.leading!,
+                    widget.leading,
                     _verticalSpacer,
                   ],
                   Flexible(

@@ -87,7 +87,7 @@ void main() {
   }
 
   ButtonStyle actionButtonStyle(WidgetTester tester, String text) {
-    return tester.widget<TextButton>(find.widgetWithText(TextButton, text)).style!;
+    return tester.widget<TextButton>(find.widgetWithText(TextButton, text)).style;
   }
 
   const wideWindowSize = Size(1920.0, 1080.0);
@@ -584,14 +584,14 @@ void main() {
     expect(selectedDate.style?.fontSize, datePickerTheme.headerHeadlineStyle?.fontSize);
 
     final Text day31 = tester.widget<Text>(find.text('31'));
-    final ShapeDecoration day31Decoration = findDayDecoration(tester, '31')!;
+    final ShapeDecoration day31Decoration = findDayDecoration(tester, '31');
     expect(day31.style?.color, datePickerTheme.dayForegroundColor?.resolve(<WidgetState>{}));
     expect(day31.style?.fontSize, datePickerTheme.dayStyle?.fontSize);
     expect(day31Decoration.color, datePickerTheme.dayBackgroundColor?.resolve(<WidgetState>{}));
     expect(day31Decoration.shape, datePickerTheme.dayShape?.resolve(<WidgetState>{}));
 
     final Text day24 = tester.widget<Text>(find.text('24')); // DatePickerDialog.currentDate
-    final ShapeDecoration day24Decoration = findDayDecoration(tester, '24')!;
+    final ShapeDecoration day24Decoration = findDayDecoration(tester, '24');
     final day24Shape = day24Decoration.shape as OutlinedBorder;
     expect(day24.style?.fontSize, datePickerTheme.dayStyle?.fontSize);
     expect(day24.style?.color, datePickerTheme.todayForegroundColor?.resolve(<WidgetState>{}));
@@ -634,14 +634,14 @@ void main() {
     await tester.pumpAndSettle();
 
     final Text year2022 = tester.widget<Text>(find.text('2022'));
-    final ShapeDecoration year2022Decoration = findTextDecoration(tester, '2022')!;
+    final ShapeDecoration year2022Decoration = findTextDecoration(tester, '2022');
     expect(year2022.style?.fontSize, datePickerTheme.yearStyle?.fontSize);
     expect(year2022.style?.color, datePickerTheme.yearForegroundColor?.resolve(<WidgetState>{}));
     expect(year2022Decoration.color, datePickerTheme.yearBackgroundColor?.resolve(<WidgetState>{}));
     expect(year2022Decoration.shape, datePickerTheme.yearShape?.resolve(<WidgetState>{}));
 
     final Text year2023 = tester.widget<Text>(find.text('2023')); // DatePickerDialog.currentDate
-    final ShapeDecoration year2023Decoration = findTextDecoration(tester, '2023')!;
+    final ShapeDecoration year2023Decoration = findTextDecoration(tester, '2023');
     expect(year2023.style?.fontSize, datePickerTheme.yearStyle?.fontSize);
     expect(year2023.style?.color, datePickerTheme.todayForegroundColor?.resolve(<WidgetState>{}));
     expect(
@@ -714,7 +714,7 @@ void main() {
 
     final InputDecoration inputDecoration = tester
         .widget<TextField>(find.byType(TextField))
-        .decoration!;
+        .decoration;
     expect(inputDecoration.fillColor, datePickerTheme.inputDecorationTheme?.fillColor);
 
     final ButtonStyle cancelButtonStyle = actionButtonStyle(tester, 'Cancel');
@@ -940,7 +940,7 @@ void main() {
         datePickerTheme: datePickerTheme,
       ),
     );
-    InputDecoration inputDecoration = tester.widget<TextField>(find.byType(TextField)).decoration!;
+    InputDecoration inputDecoration = tester.widget<TextField>(find.byType(TextField)).decoration;
     expect(inputDecoration.fillColor, datePickerTheme.inputDecorationTheme!.fillColor);
     expect(inputDecoration.border, datePickerTheme.inputDecorationTheme!.border);
 
@@ -1310,13 +1310,13 @@ void main() {
       ),
     );
 
-    final ShapeDecoration year2022Decoration = findTextDecoration(tester, '2022')!;
-    final OutlinedBorder year2022roundedRectangleBorder = year2022Decoration.shape as CircleBorder;
+    final ShapeDecoration year2022Decoration = findTextDecoration(tester, '2022');
+    final year2022roundedRectangleBorder = year2022Decoration.shape as CircleBorder;
     expect(year2022roundedRectangleBorder.side.width, 0.0);
     expect(year2022roundedRectangleBorder.side.color, yearShpae.side.color);
 
-    final ShapeDecoration year2025Decoration = findTextDecoration(tester, '2025')!;
-    final OutlinedBorder year2022RoundedRectangleBorder = year2025Decoration.shape as CircleBorder;
+    final ShapeDecoration year2025Decoration = findTextDecoration(tester, '2025');
+    final year2022RoundedRectangleBorder = year2025Decoration.shape as CircleBorder;
     expect(year2022RoundedRectangleBorder.side.width, datePickerTheme.todayBorder?.width);
     expect(
       year2022RoundedRectangleBorder.side.color,

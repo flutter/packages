@@ -1218,7 +1218,7 @@ class DataTable extends StatelessWidget {
 
       final padding = EdgeInsetsDirectional.only(start: paddingStart, end: paddingEnd);
       if (column.columnWidth != null) {
-        tableColumns[displayColumnIndex] = column.columnWidth!;
+        tableColumns[displayColumnIndex] = column.columnWidth;
       } else if (dataColumnIndex == _onlyTextColumn) {
         tableColumns[displayColumnIndex] = const IntrinsicColumnWidth(flex: 1.0);
       } else {
@@ -1334,7 +1334,7 @@ class TableRowInkWell extends InkResponse {
   @override
   RectCallback getRectCallback(RenderBox referenceBox) {
     return () {
-      RenderObject cell = referenceBox;
+      var cell = referenceBox;
       RenderObject? table = cell.parent;
       final transform = Matrix4.identity();
       while (table is RenderObject && table is! RenderTable) {

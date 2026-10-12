@@ -2631,7 +2631,7 @@ void main() {
 
   testWidgets('SelectableText change selection with semantics', (WidgetTester tester) async {
     final semantics = SemanticsTester(tester);
-    final SemanticsOwner semanticsOwner = tester.binding.pipelineOwner.semanticsOwner!;
+    final SemanticsOwner semanticsOwner = tester.binding.pipelineOwner.semanticsOwner;
     final Key key = UniqueKey();
 
     await tester.pumpWidget(overlay(child: SelectableText('Hello', key: key)));
@@ -2757,7 +2757,7 @@ void main() {
     const testValue = 'Hello';
 
     final semantics = SemanticsTester(tester);
-    final SemanticsOwner semanticsOwner = tester.binding.pipelineOwner.semanticsOwner!;
+    final SemanticsOwner semanticsOwner = tester.binding.pipelineOwner.semanticsOwner;
     final Key key = UniqueKey();
 
     await tester.pumpWidget(overlay(child: SelectableText(testValue, key: key)));

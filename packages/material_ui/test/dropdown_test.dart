@@ -585,7 +585,7 @@ void main() {
     expect(getIndex(), 2);
     // Changes only made to FormField state until form saved
     expect(value, equals(null));
-    final FormState form = formKey.currentState!;
+    final FormState form = formKey.currentState;
     form.save();
     expect(value, equals('three'));
   });
@@ -1738,7 +1738,7 @@ void main() {
     }
 
     Color textColor(String text) {
-      return tester.renderObject<RenderParagraph>(find.text(text)).text.style!.color!;
+      return tester.renderObject<RenderParagraph>(find.text(text)).text.style!.color;
     }
 
     // The selected value should be displayed when the button is enabled.
@@ -2759,7 +2759,7 @@ void main() {
               .descendant(of: find.byType(DropdownButton<String>), matching: find.byType(Focus))
               .first,
         )
-        .focusNode!;
+        .focusNode;
 
     // Replace internal FocusNode with external FocusNode.
     focusNode = FocusNode(debugLabel: 'DropdownButtonFormField');

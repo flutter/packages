@@ -459,7 +459,7 @@ void main() {
   });
 
   testWidgets('Radio mode has max of one panel open at a time', (WidgetTester tester) async {
-    final List<ExpansionPanel> demoItemsRadio = <ExpansionPanelRadio>[
+    final demoItemsRadio = <ExpansionPanelRadio>[
       ExpansionPanelRadio(
         headerBuilder: (BuildContext context, bool isExpanded) {
           return Text(isExpanded ? 'B' : 'A');
@@ -583,7 +583,7 @@ void main() {
   testWidgets('Radio mode calls expansionCallback once if other panels closed', (
     WidgetTester tester,
   ) async {
-    final List<ExpansionPanel> demoItemsRadio = <ExpansionPanelRadio>[
+    final demoItemsRadio = <ExpansionPanelRadio>[
       ExpansionPanelRadio(
         headerBuilder: (BuildContext context, bool isExpanded) {
           return Text(isExpanded ? 'B' : 'A');
@@ -647,7 +647,7 @@ void main() {
   testWidgets('Radio mode calls expansionCallback twice if other panel open prior', (
     WidgetTester tester,
   ) async {
-    final List<ExpansionPanel> demoItemsRadio = <ExpansionPanelRadio>[
+    final demoItemsRadio = <ExpansionPanelRadio>[
       ExpansionPanelRadio(
         headerBuilder: (BuildContext context, bool isExpanded) {
           return Text(isExpanded ? 'B' : 'A');
@@ -724,7 +724,7 @@ void main() {
       var topElementExpanded = false;
       var bottomElementExpanded = false;
 
-      final List<ExpansionPanel> demoItemsRadio = <ExpansionPanelRadio>[
+      final demoItemsRadio = <ExpansionPanelRadio>[
         // topElement
         ExpansionPanelRadio(
           headerBuilder: (BuildContext context, bool isExpanded) {
@@ -1292,7 +1292,7 @@ void main() {
     const firstPanelKey = Key('firstPanelKey');
     const secondPanelKey = Key('secondPanelKey');
 
-    final List<ExpansionPanel> demoItemsRadio = <ExpansionPanelRadio>[
+    final demoItemsRadio = <ExpansionPanelRadio>[
       ExpansionPanelRadio(
         headerBuilder: (BuildContext context, bool isExpanded) {
           return Text(isExpanded ? 'B' : 'A', key: firstPanelKey);
@@ -1449,7 +1449,7 @@ void main() {
     const firstPanelKey = Key('firstPanelKey');
     const secondPanelKey = Key('secondPanelKey');
 
-    final List<ExpansionPanel> demoItemsRadio = <ExpansionPanelRadio>[
+    final demoItemsRadio = <ExpansionPanelRadio>[
       ExpansionPanelRadio(
         headerBuilder: (BuildContext context, bool isExpanded) {
           return Text(isExpanded ? 'B' : 'A', key: firstPanelKey);

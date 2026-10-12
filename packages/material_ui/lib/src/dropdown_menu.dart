@@ -990,13 +990,13 @@ class _DropdownMenuState<T> extends State<DropdownMenu<T>> {
 
         final Color focusedForegroundColor = resolveFocusedColor(
           effectiveForegroundColor ?? defaultStyle.foregroundColor!,
-        )!;
+        );
         final Color focusedIconColor = resolveFocusedColor(
           effectiveIconColor ?? defaultStyle.iconColor!,
-        )!;
+        );
         final Color focusedOverlayColor = resolveFocusedColor(
           effectiveOverlayColor ?? defaultStyle.overlayColor!,
-        )!;
+        );
         // For the background color we can't rely on the default style which is transparent.
         // Defaults to onSurface.withOpacity(0.12).
         final Color focusedBackgroundColor =
@@ -1230,7 +1230,7 @@ class _DropdownMenuState<T> extends State<DropdownMenu<T>> {
           final double? effectiveMaximumWidth = effectiveMenuStyle!.maximumSize
               ?.resolve(states)
               ?.width;
-          return Size(math.min(widget.width!, effectiveMaximumWidth ?? widget.width!), 0.0);
+          return Size(math.min(widget.width, effectiveMaximumWidth ?? widget.width!), 0.0);
         }),
       );
     } else if (anchorWidth != null) {

@@ -16,7 +16,7 @@ void _verifySliverGeometry({
   required double paintExtent,
 }) {
   final target = key.currentContext!.findRenderObject()! as RenderSliver;
-  final SliverGeometry geometry = target.geometry!;
+  final SliverGeometry geometry = target.geometry;
   expect(geometry.visible, visible);
   expect(geometry.paintExtent, paintExtent);
 }

@@ -1254,7 +1254,7 @@ class _DayState extends State<_Day> {
     final OutlinedBorder dayShape = resolve<OutlinedBorder?>(
       (DatePickerThemeData? theme) => theme?.dayShape,
       states,
-    )!;
+    );
     final bool hasCustomBorderColor =
         datePickerTheme.todayBorder != null && datePickerTheme.todayBorder!.color.opacity != 0.0;
     final BorderSide todayBorderSide = hasCustomBorderColor
@@ -1519,7 +1519,7 @@ class _YearPickerState extends State<YearPicker> {
     final OutlinedBorder yearShape = resolve<OutlinedBorder?>(
       (DatePickerThemeData? theme) => theme?.yearShape,
       states,
-    )!;
+    );
 
     BorderSide? borderSide;
     if (isCurrentYear) {

@@ -770,7 +770,7 @@ class _NavigationDrawerDefaultsM3 extends NavigationDrawerThemeData {
   @override
   WidgetStateProperty<TextStyle?>? get labelTextStyle {
     return WidgetStateProperty.resolveWith((Set<WidgetState> states) {
-      final TextStyle style = _textTheme.labelLarge!;
+      final TextStyle style = _textTheme.labelLarge;
       return style.apply(
         color: states.contains(WidgetState.disabled)
           ? _colors.onSurfaceVariant.withOpacity(0.38)

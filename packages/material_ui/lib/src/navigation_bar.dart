@@ -1495,7 +1495,7 @@ class _NavigationBarDefaultsM3 extends NavigationBarThemeData {
   @override
   WidgetStateProperty<TextStyle?>? get labelTextStyle {
     return WidgetStateProperty.resolveWith((Set<WidgetState> states) {
-    final TextStyle style = _textTheme.labelMedium!;
+    final TextStyle style = _textTheme.labelMedium;
       return style.apply(
         color: states.contains(WidgetState.disabled)
           ? _colors.onSurfaceVariant.withOpacity(0.38)

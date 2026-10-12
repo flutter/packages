@@ -123,21 +123,21 @@ void main() {
     expect(theme.labelSmall!.color, bodyColor);
 
     final themeStyles = <TextStyle>[
-      theme.displayLarge!,
-      theme.displayMedium!,
-      theme.displaySmall!,
-      theme.headlineLarge!,
-      theme.headlineMedium!,
-      theme.headlineSmall!,
-      theme.titleLarge!,
-      theme.titleMedium!,
-      theme.titleSmall!,
-      theme.bodyLarge!,
-      theme.bodyMedium!,
-      theme.bodySmall!,
-      theme.labelLarge!,
-      theme.labelMedium!,
-      theme.labelSmall!,
+      theme.displayLarge,
+      theme.displayMedium,
+      theme.displaySmall,
+      theme.headlineLarge,
+      theme.headlineMedium,
+      theme.headlineSmall,
+      theme.titleLarge,
+      theme.titleMedium,
+      theme.titleSmall,
+      theme.bodyLarge,
+      theme.bodyMedium,
+      theme.bodySmall,
+      theme.labelLarge,
+      theme.labelMedium,
+      theme.labelSmall,
     ];
     expect(themeStyles.every((TextStyle style) => style.fontFamily == fontFamily), true);
     expect(
@@ -159,21 +159,21 @@ void main() {
     );
 
     final themeStyles = <TextStyle>[
-      theme.displayLarge!,
-      theme.displayMedium!,
-      theme.displaySmall!,
-      theme.headlineLarge!,
-      theme.headlineMedium!,
-      theme.headlineSmall!,
-      theme.titleLarge!,
-      theme.titleMedium!,
-      theme.titleSmall!,
-      theme.bodyLarge!,
-      theme.bodyMedium!,
-      theme.bodySmall!,
-      theme.labelLarge!,
-      theme.labelMedium!,
-      theme.labelSmall!,
+      theme.displayLarge,
+      theme.displayMedium,
+      theme.displaySmall,
+      theme.headlineLarge,
+      theme.headlineMedium,
+      theme.headlineSmall,
+      theme.titleLarge,
+      theme.titleMedium,
+      theme.titleSmall,
+      theme.bodyLarge,
+      theme.bodyMedium,
+      theme.bodySmall,
+      theme.labelLarge,
+      theme.labelMedium,
+      theme.labelSmall,
     ];
     for (final style in themeStyles) {
       expect(style.fontFeatures, fontFeatures);

@@ -3463,7 +3463,7 @@ void main() {
       count += 1;
     }
 
-    final MaterialStatesController controller = iconButton.statesController!;
+    final MaterialStatesController controller = iconButton.statesController;
     addTearDown(controller.dispose);
     controller.addListener(valueChanged);
 

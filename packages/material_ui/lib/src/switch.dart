@@ -1616,7 +1616,7 @@ class _SwitchPainter extends ToggleablePainter {
     thumbSize = Size(thumbSize!.width - inset, thumbSize.height - inset);
 
     final double colorValue = _colorAnimation!.value;
-    final Color trackColor = Color.lerp(inactiveTrackColor, activeTrackColor, colorValue)!;
+    final Color trackColor = Color.lerp(inactiveTrackColor, activeTrackColor, colorValue);
     final Color? trackOutlineColor =
         inactiveTrackOutlineColor == null || activeTrackOutlineColor == null
         ? null
@@ -1783,7 +1783,7 @@ class _SwitchPainter extends ToggleablePainter {
           thumbErrorListener,
         ).createBoxPainter(_handleDecorationChanged);
       }
-      final BoxPainter thumbPainter = _cachedThumbPainter!;
+      final BoxPainter thumbPainter = _cachedThumbPainter;
 
       if (isCupertino) {
         _paintCupertinoThumbShadowAndBorder(canvas, thumbPaintOffset, thumbSize);
@@ -1792,9 +1792,9 @@ class _SwitchPainter extends ToggleablePainter {
       thumbPainter.paint(canvas, thumbPaintOffset, configuration.copyWith(size: thumbSize));
 
       if (thumbIcon != null && thumbIcon.icon != null) {
-        final Color iconColor = Color.lerp(inactiveIconColor, activeIconColor, currentValue)!;
+        final Color iconColor = Color.lerp(inactiveIconColor, activeIconColor, currentValue);
         final double iconSize = thumbIcon.size ?? _SwitchConfigM3.iconSize;
-        final IconData iconData = thumbIcon.icon!;
+        final IconData iconData = thumbIcon.icon;
         final double? iconWeight = thumbIcon.weight ?? iconTheme?.weight;
         final double? iconFill = thumbIcon.fill ?? iconTheme?.fill;
         final double? iconGrade = thumbIcon.grade ?? iconTheme?.grade;

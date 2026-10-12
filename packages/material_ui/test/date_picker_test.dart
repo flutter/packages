@@ -1346,7 +1346,7 @@ void main() {
       // Select day 30.
       await tester.tap(find.text('30'));
       await tester.pumpAndSettle();
-      final ShapeDecoration day30Decoration = findDayDecoration(tester, '30')!;
+      final ShapeDecoration day30Decoration = findDayDecoration(tester, '30');
       expect(day30Decoration.color, theme.colorScheme.primary);
 
       final Offset center = tester.getCenter(find.text('30'));
@@ -1375,7 +1375,7 @@ void main() {
       // Select day 30.
       await tester.tap(find.text('30'));
       await tester.pumpAndSettle();
-      final ShapeDecoration day30Decoration = findDayDecoration(tester, '30')!;
+      final ShapeDecoration day30Decoration = findDayDecoration(tester, '30');
       expect(day30Decoration.color, theme.colorScheme.primary);
 
       // Navigate to the grid.
@@ -1404,7 +1404,7 @@ void main() {
       // Select day 30.
       await tester.tap(find.text('30'));
       await tester.pumpAndSettle();
-      final ShapeDecoration day30Decoration = findDayDecoration(tester, '30')!;
+      final ShapeDecoration day30Decoration = findDayDecoration(tester, '30');
       expect(day30Decoration.color, theme.colorScheme.primary);
 
       final Offset center = tester.getCenter(find.text('30'));
@@ -1488,7 +1488,7 @@ void main() {
       await prepareDatePicker(tester, (Future<DateTime?> date) async {
         final InputDecoration decoration = tester
             .widget<TextField>(find.byType(TextField))
-            .decoration!;
+            .decoration;
         expect(decoration.border, const OutlineInputBorder());
         expect(decoration.filled, false);
         expect(decoration.hintText, 'mm/dd/yyyy');
@@ -2517,7 +2517,7 @@ void main() {
         await prepareDatePicker(tester, (Future<DateTime?> date) async {
           final InputDecoration decoration = tester
               .widget<TextField>(find.byType(TextField))
-              .decoration!;
+              .decoration;
           expect(decoration.border, const UnderlineInputBorder());
           expect(decoration.filled, false);
           expect(decoration.hintText, 'mm/dd/yyyy');
@@ -2604,7 +2604,7 @@ void main() {
       // Select day 30.
       await tester.tap(find.text('30'));
       await tester.pumpAndSettle();
-      final ShapeDecoration day30Decoration = findDayDecoration(tester, '30')!;
+      final ShapeDecoration day30Decoration = findDayDecoration(tester, '30');
       expect(day30Decoration.color, theme.colorScheme.primary);
 
       final Offset center = tester.getCenter(find.text('30'));
@@ -2633,7 +2633,7 @@ void main() {
       // Select day 30.
       await tester.tap(find.text('30'));
       await tester.pumpAndSettle();
-      final ShapeDecoration day30Decoration = findDayDecoration(tester, '30')!;
+      final ShapeDecoration day30Decoration = findDayDecoration(tester, '30');
       expect(day30Decoration.color, theme.colorScheme.primary);
 
       // Navigate to the grid.
@@ -2662,7 +2662,7 @@ void main() {
       // Select day 30.
       await tester.tap(find.text('30'));
       await tester.pumpAndSettle();
-      final ShapeDecoration day30Decoration = findDayDecoration(tester, '30')!;
+      final ShapeDecoration day30Decoration = findDayDecoration(tester, '30');
       expect(day30Decoration.color, theme.colorScheme.primary);
 
       final Offset center = tester.getCenter(find.text('30'));
