@@ -207,20 +207,7 @@ enum ListTileTitleAlignment {
 ///
 /// <callout-box>
 ///
-// TODO(framework): Add unit tests to this code snippet.
-// https://github.com/flutter/flutter/issues/188530
-///
-/// ```dart
-/// const ColoredBox(
-///   color: Colors.green,
-///   child: Material(
-///     child: ListTile(
-///       title: Text('ListTile with red background'),
-///       tileColor: Colors.red,
-///     ),
-///   ),
-/// )
-/// ```
+/// {@example /example/lib/list_tile/list_tile.snippet.0.dart#body indent=strip}
 ///
 /// </callout-box>
 ///
@@ -305,52 +292,21 @@ enum ListTileTitleAlignment {
 ///
 /// <callout-box>
 ///
-// TODO(framework): Add unit tests to this code snippet.
-// https://github.com/flutter/flutter/issues/188530
-///
 /// To use a [ListTile] within a [Row], it needs to be wrapped in an
 /// [Expanded] widget. [ListTile] requires fixed width constraints,
 /// whereas a [Row] does not constrain its children.
 ///
-/// ```dart
-/// const Row(
-///   children: <Widget>[
-///     Expanded(
-///       child: ListTile(
-///         leading: FlutterLogo(),
-///         title: Text('These ListTiles are expanded '),
-///       ),
-///     ),
-///     Expanded(
-///       child: ListTile(
-///         trailing: FlutterLogo(),
-///         title: Text('to fill the available space.'),
-///       ),
-///     ),
-///   ],
-/// )
-/// ```
+/// {@example /example/lib/list_tile/list_tile.snippet.1.dart#body indent=strip}
 ///
 /// </callout-box>
 ///
 /// <callout-box>
 ///
-// TODO(framework): Add unit tests to this code snippet.
-// https://github.com/flutter/flutter/issues/188530
-///
 /// Tiles can be much more elaborate. Here is a tile which can be tapped, but
 /// which is disabled when the `_act` variable is not 2. When the tile is
 /// tapped, the whole row has an ink splash effect (see [InkWell]).
 ///
-/// ```dart
-/// ListTile(
-///   leading: const Icon(Icons.flight_land),
-///   title: const Text("Trix's airplane"),
-///   subtitle: _act != 2 ? const Text('The airplane is only in Act II.') : null,
-///   enabled: _act == 2,
-///   onTap: () { /* react to the tile being tapped */ }
-/// )
-/// ```
+/// {@example /example/lib/list_tile/list_tile.snippet.2.dart#body indent=strip}
 ///
 /// </callout-box>
 ///
@@ -368,31 +324,12 @@ enum ListTileTitleAlignment {
 ///
 /// <callout-box>
 ///
-// TODO(framework): Add unit tests to this code snippet.
-// https://github.com/flutter/flutter/issues/188530
-///
 /// Here is an example of a one-line, non-[dense] ListTile with a
 /// tappable leading widget that adheres to accessibility requirements and
 /// the Material spec. To adjust the use case below for a one-line, [dense]
 /// ListTile, adjust the vertical padding to 8.0.
 ///
-/// ```dart
-/// ListTile(
-///   leading: GestureDetector(
-///     behavior: HitTestBehavior.translucent,
-///     onTap: () {},
-///     child: Container(
-///       width: 48,
-///       height: 48,
-///       padding: const EdgeInsets.symmetric(vertical: 4.0),
-///       alignment: Alignment.center,
-///       child: const CircleAvatar(),
-///     ),
-///   ),
-///   title: const Text('title'),
-///   dense: false,
-/// )
-/// ```
+/// {@example /example/lib/list_tile/list_tile.snippet.3.dart#body indent=strip}
 ///
 /// </callout-box>
 ///
