@@ -10,7 +10,11 @@ import XCTest
 final class FakeIAP2Callback: InAppPurchase2CallbackAPIProtocol {
 
   public var lastUpdate: [in_app_purchase_storekit.SK2TransactionMessage] = []
-  public var onUpdateExpectation: XCTestExpectation?
+  public var onUpdateExpectation: XCTestExpectation? {
+    didSet {
+      onUpdateExpectation?.assertForOverFulfill = false
+    }
+  }
 
   func onTransactionsUpdated(
     newTransactions newTransactionsArg: [in_app_purchase_storekit.SK2TransactionMessage],
@@ -103,6 +107,7 @@ final class InAppPurchase2PluginTests: XCTestCase {
       case .failure(let error):
         XCTFail("Purchase should NOT fail. Failed with \(error)")
         purchaseExpectation.fulfill()
+        purchaseUpdateExpectation.fulfill()
       }
     }
 
@@ -459,6 +464,7 @@ final class InAppPurchase2PluginTests: XCTestCase {
       case .failure(let error):
         XCTFail("Purchase should NOT fail. Failed with \(error)")
         purchaseExpectation.fulfill()
+        purchaseUpdateExpectation.fulfill()
       }
     }
     await fulfillment(
@@ -475,6 +481,7 @@ final class InAppPurchase2PluginTests: XCTestCase {
       case .failure(let error):
         XCTFail("Restore purchases should NOT fail. Failed with \(error)")
         restoreExpectation.fulfill()
+        restoreUpdateExpectation.fulfill()
       }
     }
     await fulfillment(
@@ -499,6 +506,7 @@ final class InAppPurchase2PluginTests: XCTestCase {
       case .failure(let error):
         XCTFail("Purchase should NOT fail. Failed with \(error)")
         firstPurchaseExpectation.fulfill()
+        firstUpdateExpectation.fulfill()
       }
     }
     await fulfillment(
@@ -515,6 +523,7 @@ final class InAppPurchase2PluginTests: XCTestCase {
       case .failure(let error):
         XCTFail("Purchase should NOT fail. Failed with \(error)")
         secondPurchaseExpectation.fulfill()
+        secondUpdateExpectation.fulfill()
       }
     }
     await fulfillment(
@@ -531,6 +540,7 @@ final class InAppPurchase2PluginTests: XCTestCase {
       case .failure(let error):
         XCTFail("Restore purchases should NOT fail. Failed with \(error)")
         restoreExpectation.fulfill()
+        restoreUpdateExpectation.fulfill()
       }
     }
     await fulfillment(
