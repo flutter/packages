@@ -380,7 +380,13 @@ void CaptureControllerImpl::TakePicture(const std::string& file_path) {
   }
 }
 
-uint32_t GetMaxHeightForPreset(PlatformResolutionPreset preset) {
+static PlatformResolutionPreset GetEffectivePreset(
+    const PlatformResolutionPreset* override_preset,
+    const PlatformResolutionPreset& default_preset) {
+  return override_preset ? *override_preset : default_preset;
+}
+
+static uint32_t GetMaxHeightForPreset(PlatformResolutionPreset preset) {
   switch (preset) {
     case PlatformResolutionPreset::kLow:
       return 240;
@@ -400,27 +406,21 @@ uint32_t GetMaxHeightForPreset(PlatformResolutionPreset preset) {
 }
 
 uint32_t CaptureControllerImpl::GetMaxPreviewHeight() const {
-  const PlatformResolutionPreset* video_preset =
-      media_settings_.video_resolution_preset();
-  PlatformResolutionPreset preset =
-      video_preset ? *video_preset : media_settings_.resolution_preset();
-  return GetMaxHeightForPreset(preset);
+  return GetMaxHeightForPreset(
+      GetEffectivePreset(media_settings_.video_resolution_preset(),
+                         media_settings_.resolution_preset()));
 }
 
 uint32_t CaptureControllerImpl::GetMaxVideoHeight() const {
-  const PlatformResolutionPreset* video_preset =
-      media_settings_.video_resolution_preset();
-  PlatformResolutionPreset preset =
-      video_preset ? *video_preset : media_settings_.resolution_preset();
-  return GetMaxHeightForPreset(preset);
+  return GetMaxHeightForPreset(
+      GetEffectivePreset(media_settings_.video_resolution_preset(),
+                         media_settings_.resolution_preset()));
 }
 
 uint32_t CaptureControllerImpl::GetMaxPhotoHeight() const {
-  const PlatformResolutionPreset* photo_preset =
-      media_settings_.photo_resolution_preset();
-  PlatformResolutionPreset preset =
-      photo_preset ? *photo_preset : media_settings_.resolution_preset();
-  return GetMaxHeightForPreset(preset);
+  return GetMaxHeightForPreset(
+      GetEffectivePreset(media_settings_.photo_resolution_preset(),
+                         media_settings_.resolution_preset()));
 }
 
 // Finds best media type for given source stream index and max height;
@@ -515,11 +515,17 @@ HRESULT CaptureControllerImpl::FindBaseMediaTypesForSource(
   }
 
   // Find base media type for photo capture.
+  // Query photo stream first; if unavailable, fall back to record stream.
   if (!FindBestMediaType(
-          (DWORD)MF_CAPTURE_ENGINE_PREFERRED_SOURCE_STREAM_FOR_VIDEO_RECORD,
-          source, base_photo_media_type_.GetAddressOf(), GetMaxPhotoHeight(),
-          nullptr, nullptr)) {
-    return E_FAIL;
+          (DWORD)MF_CAPTURE_ENGINE_PREFERRED_SOURCE_STREAM_FOR_PHOTO, source,
+          base_photo_media_type_.GetAddressOf(), GetMaxPhotoHeight(), nullptr,
+          nullptr)) {
+    if (!FindBestMediaType(
+            (DWORD)MF_CAPTURE_ENGINE_PREFERRED_SOURCE_STREAM_FOR_VIDEO_RECORD,
+            source, base_photo_media_type_.GetAddressOf(), GetMaxPhotoHeight(),
+            nullptr, nullptr)) {
+      return E_FAIL;
+    }
   }
 
   return S_OK;
