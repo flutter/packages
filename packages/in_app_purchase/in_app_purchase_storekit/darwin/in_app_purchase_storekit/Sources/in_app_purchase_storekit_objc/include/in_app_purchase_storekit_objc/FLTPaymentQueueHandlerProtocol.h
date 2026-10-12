@@ -18,11 +18,9 @@ typedef void (^UpdatedDownloads)(NSArray<SKDownload *> *downloads);
 /// A protocol that conforms to SKPaymentTransactionObserver and handles SKPaymentQueue methods
 @protocol FLTPaymentQueueHandlerProtocol <NSObject, SKPaymentTransactionObserver>
 /// An object that provides information needed to complete transactions.
-@property(nonatomic, weak, nullable) id<SKPaymentQueueDelegate> delegate API_AVAILABLE(
-    ios(13.0), macos(10.15), watchos(6.2));
+@property(nonatomic, weak, nullable) id<SKPaymentQueueDelegate> delegate;
 /// An object containing the location and unique identifier of an Apple App Store storefront.
-@property(nonatomic, readonly, nullable)
-    SKStorefront *storefront API_AVAILABLE(ios(13.0), macos(10.15), watchos(6.2));
+@property(nonatomic, readonly, nullable) SKStorefront *storefront;
 
 /// Creates a new FIAPaymentQueueHandler.
 ///
