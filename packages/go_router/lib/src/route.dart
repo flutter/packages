@@ -1398,7 +1398,7 @@ class StatefulNavigationShellState extends State<StatefulNavigationShell> with R
     }
 
     final RouteMatchList scopedMatchList = matchList.remove(nextMatch);
-    String scopedLocation = matchList.uri.path;
+    String scopedLocation = scopedMatchList.uri.path;
     scopedMatchList.visitRouteMatches((RouteMatchBase match) {
       if (match is RouteMatch && match is! ImperativeRouteMatch) {
         scopedLocation = match.matchedLocation;
