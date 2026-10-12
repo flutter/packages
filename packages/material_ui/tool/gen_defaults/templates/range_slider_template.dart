@@ -2,7 +2,6 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import '../data/color_role.dart';
 import '../data/slider.dart';
 import '../data/typescale.dart';
 import 'template.dart';
@@ -15,13 +14,6 @@ class RangeSliderTemplateM3 extends TokenTemplateM3 {
 
   @override
   String get parentFilePath => 'range_slider.dart';
-
-  // TODO(QuncCccccc): Replace this value if an overlay opacity token becomes available.
-  static const double _legacyOverlayOpacity = 0.12;
-
-  // TODO(QuncCccccc): Replace this value if an overlapping shape stroke color
-  // token becomes available.
-  static const TokenColorRole _legacyOverlappingShapeStrokeColor = TokenColorRole.surface;
 
   @override
   String generateContents(String className) =>
@@ -61,13 +53,13 @@ class $className extends SliderThemeData {
   Color? get thumbColor => ${color(TokenSlider.handleColor)};
 
   @override
-  Color? get overlappingShapeStrokeColor => ${color(_legacyOverlappingShapeStrokeColor)};
+  Color? get overlappingShapeStrokeColor => _colors.surface;
 
   @override
   Color? get disabledThumbColor => ${colorWithOpacity(TokenSlider.disabledHandleColor, TokenSlider.disabledHandleOpacity)};
 
   @override
-  Color? get overlayColor => ${colorWithOpacity(TokenSlider.handleColor, _legacyOverlayOpacity)};
+  Color? get overlayColor => _colors.primary.withOpacity(0.12);
 
   @override
   TextStyle? get valueIndicatorTextStyle => ${textStyle(TokenTypescale.labelLarge, 'Theme.of(context).textTheme')}!.copyWith(
