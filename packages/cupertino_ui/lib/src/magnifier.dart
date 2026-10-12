@@ -356,10 +356,11 @@ class CupertinoMagnifier extends StatelessWidget {
     final double animationValue = inOutAnimation?.value ?? 1.0;
     final double defaultYOffset = (size.height / 2) - kMagnifierAboveFocalPoint;
 
-    final focalPointOffset = Offset(
-      additionalFocalPointOffset.dx,
-      (defaultYOffset * animationValue) + additionalFocalPointOffset.dy,
-    );
+    // Cancel the downward translation below so the lens keeps showing the focal
+    // point during the in/out animation, matching the native iOS loupe.
+    final Offset focalPointOffset =
+        Offset(0, defaultYOffset + kMagnifierAboveFocalPoint * (1 - animationValue)) +
+        additionalFocalPointOffset;
 
     return Transform.translate(
       offset: Offset.lerp(
