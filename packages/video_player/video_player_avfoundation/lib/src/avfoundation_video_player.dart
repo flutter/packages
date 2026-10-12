@@ -328,8 +328,7 @@ class AVFoundationVideoPlayer extends VideoPlayerPlatform {
 /// An instance of a video player, corresponding to a single player ID in
 /// [AVFoundationVideoPlayer].
 class _PlayerInstance {
-  _PlayerInstance(this._api, this.viewState, {required EventChannel eventChannel})
-    : _eventChannel = eventChannel;
+  _PlayerInstance(this._api, this.viewState, {required this._eventChannel});
 
   final VideoPlayerInstanceApi _api;
   final VideoPlayerViewState viewState;
