@@ -1,6 +1,25 @@
-## NEXT
+## 0.4.0
 
-* Updates minimum supported SDK version to Flutter 3.41/Dart 3.11.
+* Updates `cross_file` to a package-separated federated plugin.
+* Adds `XDirectory` to access resource containers.
+* Adds implementation for file systems. See `FileSystemXFile` and `FileSystemXDirectory`.
+* Adds implementation for scoped storage APIs that use ephemeral URLS. See `ScopedStorageXFile`
+  and `ScopedStorageXDirectory`.
+* **BREAKING CHANGES**:
+  * Replaces `XFile(String path)` with `XFile.fileSystem({required String path})` or
+    `FileSystemXFile(String path)`.
+  * Removes `XFile.fromData`. `XFile`s can no longer be instantiated with a `Uint8List`. The web
+    implementation can use `WebScopedStorageXFileCreationParams.fromBlob` to instantiate one with a
+    `Blob`/`File`. See README to see how to access platform-specific features.
+  * Removes `XFile.saveTo()`. `FileSystemXFile.writeAsBytes` has been added and the web
+    implementation can use `WebScopedStorageXFileExtension.download`. See README to see how to
+    access platform-specific features.
+  * Removes `XFile.mimeType`.
+  * Removes `XFile.path`. This has been replaced by `XFile.uri` or `FileSystemXFile.path`.
+  * Changes `XFile.name` to a method that returns `Future<String>` rather than a field that returns
+    `String`.
+  * Adds Flutter as a dependency.
+  * Updates minimum supported SDK version to Flutter 3.41/Dart 3.11.
 
 ## 0.3.5+5
 

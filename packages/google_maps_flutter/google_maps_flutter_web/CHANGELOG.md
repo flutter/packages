@@ -1,5 +1,10 @@
-## NEXT
+## 0.6.4+1
 
+* Fixes AdvancedMarker anchor handling.
+
+## 0.6.4
+
+* Adds support for tapping points of interest on the map.
 * Updates minimum supported SDK version to Flutter 3.41/Dart 3.11.
 
 ## 0.6.3+1
