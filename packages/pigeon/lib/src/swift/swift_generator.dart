@@ -51,6 +51,10 @@ class SwiftOptions {
   ///
   /// This should only ever be set to false if you have another generated
   /// Swift file in the same directory.
+  ///
+  /// This can't be false with [useFfi], because the FFI bindings are generated
+  /// from each Swift file alone. Use a different [errorClassName] in each file
+  /// instead.
   final bool includeErrorClass;
 
   /// Whether to use FFI when possible.
@@ -382,7 +386,7 @@ class SwiftGenerator extends StructuredGenerator<InternalSwiftOptions> {
     indent.format('''
 @objc class ${_classNamePrefix}PigeonInternalNull: NSObject {}
 
-class _PigeonFfiCodec {
+private class _PigeonFfiCodec {
   static func readValue(value: NSObject?, type: String? = nil, type2: String? = nil) -> Any? {
     if (${_classNamePrefix}PigeonInternal.isNullish(value)) {
       return nil
@@ -1037,7 +1041,8 @@ if (wrapped == nil) {
     bool useFfi = false,
     bool useFfiTypedData = false,
   }) {
-    indent.writeScoped('${objc}init(', ')', () {
+    final override = useFfi && fields.isEmpty ? 'override ' : '';
+    indent.writeScoped('$objc${override}init(', ')', () {
       for (var i = 0; i < fields.length; i++) {
         indent.write('');
         _writeClassField(indent, fields[i], useFfi: useFfi, useFfiTypedData: useFfiTypedData);
@@ -1318,8 +1323,8 @@ if (wrapped == nil) {
     indent.addScoped('{', '}', () {
       for (final Method method in api.methods) {
         addDocumentationComments(indent, method.documentationComments, _docCommentSpec);
-        final List<String> parameters = method.parameters.map((NamedType param) {
-          return '${param.name}: ${_nullSafeFfiTypeForDartType(param.type, forceNullable: true)}';
+        final List<String> parameters = indexMap(method.parameters, (int index, NamedType param) {
+          return '${_getArgumentName(index, param)} ${_getSafeArgumentName(index, param)}: ${_nullSafeFfiTypeForDartType(param.type, forceNullable: true)}';
         }).toList();
         parameters.add('error: $errorClassName');
 
@@ -1387,17 +1392,15 @@ if (wrapped == nil) {
         final returnTypeString = method.returnType.isVoid
             ? ''
             : ' -> ${_nullSafeSwiftTypeForDartType(method.returnType, ffiTypedData: true)}';
-        final String parameters = method.parameters
-            .map((NamedType param) {
-              return '${param.name}: ${_nullSafeSwiftTypeForDartType(param.type, ffiTypedData: true)}';
-            })
-            .join(', ');
+        final String parameters = indexMap(method.parameters, (int index, NamedType param) {
+          return '${_getArgumentName(index, param)} ${_getSafeArgumentName(index, param)}: ${_nullSafeSwiftTypeForDartType(param.type, ffiTypedData: true)}';
+        }).join(', ');
         final asyncString = method.isAsynchronous ? ' async' : '';
         indent.write('func ${method.name}($parameters)$asyncString throws$returnTypeString ');
         indent.addScoped('{', '}', () {
           indent.writeln('let error = $errorClassName()');
-          final List<String> params = method.parameters.map((NamedType param) {
-            return '${param.name}: ${_varToObjc(param.name, param.type, forceNullable: true)}';
+          final List<String> params = indexMap(method.parameters, (int index, NamedType param) {
+            return '${_getArgumentName(index, param)}: ${_varToObjc(_getSafeArgumentName(index, param), param.type, forceNullable: true)}';
           }).toList();
           params.add('error: error');
 
@@ -1500,30 +1503,53 @@ if (wrapped == nil) {
             isAsynchronous: method.isAsynchronous,
             swiftFunction: method.swiftFunction,
             components: components,
+            getParameterName: _getSafeArgumentName,
           ),
         );
         indent.addScoped(' {', '}', () {
+          final String arguments = indexMap(components.arguments, (
+            int index,
+            _SwiftFunctionArgument argument,
+          ) {
+            final label = argument.label == '_' ? '' : '${argument.label ?? argument.name}: ';
+            return '$label${_varToSwift(_getSafeArgumentName(index, argument.namedType), argument.type)}';
+          }).join(', ');
+          final bool returnsValue = !method.returnType.isVoid;
+          // The explicit type selects the right overload when `@SwiftFunction`
+          // maps methods that differ only in nullability to the same name.
+          final String swiftReturnType = returnsValue
+              ? _nullSafeSwiftTypeForDartType(method.returnType, ffiTypedData: true)
+              : 'Void';
+          final resultDeclaration = returnsValue ? 'let res: $swiftReturnType = ' : '';
           indent.writeScoped('do {', '}', () {
-            if ((method.returnType.isNullable && method.returnType.isEnum) ||
+            if (method.isAsynchronousCallback) {
+              final completion =
+                  '${arguments.isEmpty ? '' : ', '}completion: { continuation.resume(with: \$0) }';
+              indent.writeScoped(
+                '${resultDeclaration}try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<$swiftReturnType, Error>) in',
+                '}',
+                () {
+                  indent.writeln('api!.${components.name}($arguments$completion)');
+                },
+              );
+            } else {
+              indent.writeln(
+                '${resultDeclaration}try ${method.isAsynchronous ? 'await ' : ''}api!.${components.name}($arguments)',
+              );
+            }
+            if (!returnsValue) {
+              indent.writeln('return');
+            } else if ((method.returnType.isNullable && method.returnType.isEnum) ||
                 method.returnType.baseName == 'Uint8List' ||
                 method.returnType.baseName == 'Int32List' ||
                 method.returnType.baseName == 'Int64List' ||
                 method.returnType.baseName == 'Float32List' ||
                 method.returnType.baseName == 'Float64List') {
               indent.writeln(
-                'let res = try ${method.isAsynchronous ? 'await ' : ''}api!.${components.name}(${components.arguments.map((_SwiftFunctionArgument param) {
-                  return '${param.label == "_" || param.label == null ? "" : param.label}${param.label != null ? "" : param.name}${param.label != "_" ? ": " : ""}${_varToSwift(param.name, param.type)}';
-                }).join(', ')})${method.returnType.isEnum ? '?.rawValue' : ''}',
-              );
-              indent.writeln(
-                'return ${_classNamePrefix}PigeonInternal.isNullish(res) ? nil : ${method.returnType.isEnum ? 'NSNumber(value: res!)' : '${_classNamePrefix}PigeonTypedData(res${method.returnType.isNullable ? '!' : ''})'}',
+                'return ${_classNamePrefix}PigeonInternal.isNullish(res) ? nil : ${method.returnType.isEnum ? 'NSNumber(value: res!.rawValue)' : '${_classNamePrefix}PigeonTypedData(res${method.returnType.isNullable ? '!' : ''})'}',
               );
             } else {
-              indent.writeln(
-                'return try ${method.isAsynchronous ? 'await ' : ''}${_varToObjc('api!.${components.name}(${components.arguments.map((_SwiftFunctionArgument param) {
-                  return '${param.label == "_" || param.label == null ? "" : param.label}${param.label != null ? "" : param.name}${param.label != "_" ? ": " : ""}${_varToSwift(param.name, param.type)}';
-                }).join(', ')})', method.returnType, forceNullable: true)}',
-              );
+              indent.writeln('return ${_varToObjc('res', method.returnType, forceNullable: true)}');
             }
           }, addTrailingNewline: false);
           indent.addScoped(
@@ -1538,7 +1564,7 @@ if (wrapped == nil) {
           );
           indent.addScoped(' catch let error {', '}', () {
             indent.writeln(r'wrappedError.code = "\(error)"');
-            indent.writeln(r'wrappedError.message = "\(type(of: error))"');
+            indent.writeln(r'wrappedError.message = "\(Swift.type(of: error))"');
             indent.writeln(r'wrappedError.details = "Stacktrace: \(Thread.callStackSymbols)"');
           });
           indent.writeln('return${method.returnType.isVoid ? '' : ' nil'}');
