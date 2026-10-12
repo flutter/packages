@@ -1,3 +1,8 @@
+## 0.11.1
+
+* Adds support for zero-shutter-lag still image capture via
+  `isZeroShutterLagSupported` and `setZeroShutterLagEnabled` (iOS 17+).
+
 ## 0.11.0
 
 * Adds support for custom video output path in video recording.
