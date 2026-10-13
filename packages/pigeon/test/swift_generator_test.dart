@@ -1853,9 +1853,9 @@ void main() {
     expect(code, contains('static func toSwift(_ pigeonVar_bridge: ShapeBridge?) -> Shape? {'));
     expect(code, contains('case let pigeonVar_value as CircleBridge:'));
     expect(code, contains('return pigeonVar_value.toSwift()'));
-    expect(code, contains('ShapeBridge.toSwift(shape)!'));
-    expect(code, contains('ShapeBridge.toSwift(shape))'));
-    expect(code, contains('ShapeBridge.fromSwift(api!.echoShape('));
+    expect(code, contains('ShapeBridge.toSwift(shapeArg)!'));
+    expect(code, contains('ShapeBridge.toSwift(shapeArg))'));
+    expect(code, contains('ShapeBridge.fromSwift(res)'));
   });
 
   test('ffi codec has no branch for sealed classes', () {
@@ -1894,5 +1894,118 @@ void main() {
       code,
       isNot(contains(RegExp(r'@objc class EmptyShapeBridge: ShapeBridge \{\s*@objc init\('))),
     );
+  });
+
+  test('ffi codec is private to its file', () {
+    final root = Root(apis: <Api>[], classes: <Class>[], enums: <Enum>[]);
+    final sink = StringBuffer();
+    const swiftOptions = InternalSwiftOptions(swiftOut: '', useFfi: true);
+    const generator = SwiftGenerator();
+    generator.generate(swiftOptions, root, sink, dartPackageName: DEFAULT_PACKAGE_NAME);
+    final code = sink.toString();
+    expect(code, contains('private class _PigeonFfiCodec {'));
+  });
+
+  test('ffi bridge for a class without fields overrides the NSObject initializer', () {
+    final root = Root(
+      apis: <Api>[],
+      classes: <Class>[Class(name: 'Empty', fields: <NamedType>[])],
+      enums: <Enum>[],
+    );
+    final sink = StringBuffer();
+    const swiftOptions = InternalSwiftOptions(swiftOut: '', useFfi: true);
+    const generator = SwiftGenerator();
+    generator.generate(swiftOptions, root, sink, dartPackageName: DEFAULT_PACKAGE_NAME);
+    final code = sink.toString();
+    expect(code, contains('@objc class EmptyBridge: NSObject {\n  @objc override init(\n  ) {'));
+  });
+
+  test('ffi host api bridge', () {
+    const string = TypeDeclaration(baseName: 'String', isNullable: false);
+    final root = Root(
+      apis: <Api>[
+        AstHostApi(
+          name: 'Api',
+          methods: <Method>[
+            Method(
+              name: 'echo',
+              location: ApiLocation.host,
+              parameters: <Parameter>[Parameter(name: 'error', type: string)],
+              returnType: string,
+            ),
+            Method(
+              name: 'later',
+              location: ApiLocation.host,
+              isAsynchronous: true,
+              isAsynchronousCallback: true,
+              parameters: <Parameter>[Parameter(name: 'value', type: string)],
+              returnType: string,
+            ),
+          ],
+        ),
+      ],
+      classes: <Class>[],
+      enums: <Enum>[],
+    );
+    final sink = StringBuffer();
+    const swiftOptions = InternalSwiftOptions(swiftOut: '', useFfi: true);
+    const generator = SwiftGenerator();
+    generator.generate(swiftOptions, root, sink, dartPackageName: DEFAULT_PACKAGE_NAME);
+    final code = sink.toString();
+    expect(
+      code,
+      contains(
+        '@objc func echo(error errorArg: NSString, wrappedError: PigeonError) -> NSString? {',
+      ),
+    );
+    expect(code, contains('let res: String = try api!.echo(error: errorArg as String)'));
+    expect(
+      code,
+      contains(
+        'let res: String = try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<String, Error>) in',
+      ),
+    );
+    expect(
+      code,
+      contains(
+        r'api!.later(value: valueArg as String, completion: { continuation.resume(with: $0) })',
+      ),
+    );
+    expect(code, contains(r'wrappedError.message = "\(Swift.type(of: error))"'));
+  });
+
+  test('ffi flutter api parameters do not shadow the error parameter', () {
+    final root = Root(
+      apis: <Api>[
+        AstFlutterApi(
+          name: 'Api',
+          methods: <Method>[
+            Method(
+              name: 'report',
+              location: ApiLocation.flutter,
+              parameters: <Parameter>[
+                Parameter(
+                  name: 'error',
+                  type: const TypeDeclaration(baseName: 'String', isNullable: false),
+                ),
+              ],
+              returnType: const TypeDeclaration(baseName: 'String', isNullable: false),
+            ),
+          ],
+        ),
+      ],
+      classes: <Class>[],
+      enums: <Enum>[],
+    );
+    final sink = StringBuffer();
+    const swiftOptions = InternalSwiftOptions(swiftOut: '', useFfi: true);
+    const generator = SwiftGenerator();
+    generator.generate(swiftOptions, root, sink, dartPackageName: DEFAULT_PACKAGE_NAME);
+    final code = sink.toString();
+    expect(
+      code,
+      contains('@objc func report(error errorArg: NSString?, error: PigeonError) -> NSString?'),
+    );
+    expect(code, contains('func report(error errorArg: String) throws -> String {'));
   });
 }

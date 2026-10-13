@@ -1,8 +1,30 @@
+## 29.0.9
+
+* [dart] [swift] Allows `sealed` classes in native interop files.
+
 ## 29.0.8
 
-* [dart] [swift] Fixes sealed classes in native interop files, which generated code that
-  didn't compile. They now convert through their subclasses over both JNI and FFI.
-* [dart] [swift] Fixes FFI generation for data classes without fields.
+* [swift] Adds validation errors for code that Swift FFI doesn't support:
+  event channels, ProxyApis, data class fields that conflict with
+  `NSObject` members, host API parameters named `wrappedError`, and
+  `includeErrorClass: false`.
+* [swift] Fixes Swift FFI code that didn't compile for classes without fields,
+  `@asyncCallback` methods, `@SwiftFunction` overloads, methods named `type`,
+  parameters named `error`, and multiple FFI files in the same module.
+* [kotlin] Adds validation errors for code that Kotlin JNI doesn't support:
+  event channels and ProxyApis. Files that use Kotlin JNI
+  previously generated method channel code for event channels and ProxyApis;
+  move them to a separate pigeon file that doesn't use Kotlin JNI.
+* [dart] Adds a validation error for API method names that conflict with
+  generated native interop members.
+* [dart] Fixes native interop code that didn't compile for JNI member names that
+  JNIgen renames, parameter names that match generated local variables, lists or
+  maps of ProxyApis, a `fileSpecificClassNameComponent` that isn't
+  UpperCamelCase or is set only in `SwiftOptions`, and Dart test files.
+* [dart] Fixes a crash converting classes without fields with Swift FFI.
+* [dart] Fixes Swift FFI code that didn't compile for method names that end
+  with a preposition, like `signIn`, or first parameter and field names that
+  start with one, like `forKey`.
 
 ## 29.0.7
 
@@ -317,7 +339,7 @@
 ## 22.7.0
 
 * [swift, kotlin] Adds event channel support.
-* [swift, kotlin] Adds `sealed` class inheritance support.
+* [swift, kotlin] Adds ``` class inheritance support.
 * [swift] Updates codec class names to be upper camel case.
 
 ## 22.6.4
