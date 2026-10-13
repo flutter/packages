@@ -8,7 +8,6 @@ framework module image_picker_ios {
   header "FIPPickerSeams.h"
 
   explicit module Test {
-    header "FLTImagePickerPlugin_Test.h"
     header "FLTImagePickerImageUtil.h"
     header "FLTImagePickerMetaDataUtil.h"
     header "FLTImagePickerPhotoAssetUtil.h"

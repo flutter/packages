@@ -18,14 +18,20 @@ let package = Package(
   targets: [
     .target(
       name: "image_picker_ios",
-      dependencies: [],
-      exclude: ["include/image_picker_ios-umbrella.h", "include/ImagePickerPlugin.modulemap"],
+      dependencies: [
+        "image_picker_ios_objc"
+      ],
       resources: [
         .process("Resources")
-      ],
+      ]
+    ),
+    .target(
+      name: "image_picker_ios_objc",
+      dependencies: [],
+      exclude: ["include/image_picker_ios-umbrella.h", "include/ImagePickerPlugin.modulemap"],
       cSettings: [
         .headerSearchPath("include/image_picker_ios")
       ]
-    )
+    ),
   ]
 )
