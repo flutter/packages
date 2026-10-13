@@ -430,16 +430,19 @@ bool FindBestMediaType(DWORD source_stream_index, IMFCaptureSource* source,
                        uint32_t* target_frame_height,
                        float minimum_accepted_framerate = 15.f) {
   assert(source);
-  ComPtr<IMFMediaType> media_type;
+  assert(target_media_type);
 
+  ComPtr<IMFMediaType> best_media_type;
   uint32_t best_width = 0;
   uint32_t best_height = 0;
   float best_framerate = 0.f;
 
   // Loop native media types.
   for (int i = 0;; i++) {
+    ComPtr<IMFMediaType> media_type;
     if (FAILED(source->GetAvailableDeviceMediaType(
-            source_stream_index, i, media_type.GetAddressOf()))) {
+            source_stream_index, i, media_type.GetAddressOf())) ||
+        !media_type) {
       break;
     }
 
@@ -465,7 +468,7 @@ bool FindBestMediaType(DWORD source_stream_index, IMFCaptureSource* source,
       if (frame_height <= max_height &&
           (best_width < frame_width || best_height < frame_height ||
            best_framerate < frame_rate)) {
-        media_type.CopyTo(target_media_type);
+        best_media_type = media_type;
         best_width = frame_width;
         best_height = frame_height;
         best_framerate = frame_rate;
@@ -478,7 +481,11 @@ bool FindBestMediaType(DWORD source_stream_index, IMFCaptureSource* source,
     *target_frame_height = best_height;
   }
 
-  return *target_media_type != nullptr;
+  if (best_media_type) {
+    return SUCCEEDED(best_media_type.CopyTo(target_media_type));
+  }
+
+  return false;
 }
 
 HRESULT CaptureControllerImpl::FindBaseMediaTypes() {
@@ -497,6 +504,10 @@ HRESULT CaptureControllerImpl::FindBaseMediaTypes() {
 
 HRESULT CaptureControllerImpl::FindBaseMediaTypesForSource(
     IMFCaptureSource* source) {
+  base_preview_media_type_ = nullptr;
+  base_record_media_type_ = nullptr;
+  base_photo_media_type_ = nullptr;
+
   // Find base media type for previewing.
   if (!FindBestMediaType(
           (DWORD)MF_CAPTURE_ENGINE_PREFERRED_SOURCE_STREAM_FOR_VIDEO_PREVIEW,
