@@ -491,7 +491,11 @@ void main() {
           initialDate: DateTime(2016, DateTime.january, 15),
           onDateChanged: selectedDates.add,
           dayBuilder: (BuildContext context, CalendarDatePickerDayDetails details) {
-            return details.day.day == 1 ? const Text('Custom day 1') : details.child;
+            return switch (details.day.day) {
+              1 => const Text('Custom day 1'),
+              12 => Semantics(label: 'Custom semantics', child: details.child),
+              _ => details.child,
+            };
           },
         ),
       );
@@ -500,7 +504,7 @@ void main() {
       expect(
         tester.getSemantics(find.text('Custom day 1')),
         matchesSemantics(
-          label: '1, Friday, January 1, 2016',
+          label: '1, Friday, January 1, 2016\nCustom day 1',
           isButton: true,
           hasEnabledState: true,
           isEnabled: true,
@@ -510,13 +514,18 @@ void main() {
           isFocusable: true,
         ),
       );
-      expect(selectedDates, isEmpty);
+      expect(
+        tester.getSemantics(find.text('12')).label,
+        '12, Tuesday, January 12, 2016\nCustom semantics',
+      );
 
+      // Notify a date change only when the custom day is tapped.
+      expect(selectedDates, isEmpty);
       await tester.tap(find.text('Custom day 1'));
       await tester.pumpAndSettle();
-
       final januaryFirst2016 = DateTime(2016);
       expect(selectedDates, <DateTime>[januaryFirst2016]);
+
       semantics.dispose();
     });
 

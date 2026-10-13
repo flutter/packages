@@ -1397,7 +1397,9 @@ class _DayState extends State<_Day> {
     if (widget.dayBuilder != null) {
       dayWidget = Ink(
         decoration: decoration,
-        child: Center(child: Text(localizations.formatDecimal(widget.day.day))),
+        child: Center(
+          child: ExcludeSemantics(child: Text(localizations.formatDecimal(widget.day.day))),
+        ),
       );
       dayWidget = ListenableBuilder(
         listenable: _statesController,
@@ -1421,9 +1423,11 @@ class _DayState extends State<_Day> {
       dayWidget = Ink(
         decoration: decoration,
         child: Center(
-          child: Text(
-            localizations.formatDecimal(widget.day.day),
-            style: dayStyle?.apply(color: dayForegroundColor),
+          child: ExcludeSemantics(
+            child: Text(
+              localizations.formatDecimal(widget.day.day),
+              style: dayStyle?.apply(color: dayForegroundColor),
+            ),
           ),
         ),
       );
@@ -1448,7 +1452,6 @@ class _DayState extends State<_Day> {
       button: true,
       selected: widget.isSelectedDay,
       enabled: !widget.isDisabled,
-      excludeSemantics: true,
       child: dayWidget,
     );
 
