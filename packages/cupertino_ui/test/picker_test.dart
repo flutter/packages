@@ -949,4 +949,52 @@ void main() {
     );
     expect(tester.getSize(find.byType(CupertinoPicker)), Size.zero);
   });
+
+  testWidgets('Does not throw when disposed during the tap-to-select animation', (
+    WidgetTester tester,
+  ) async {
+    // Regression test for https://github.com/flutter/flutter/issues/192135
+    var showPicker = true;
+    late StateSetter setOuterState;
+
+    await tester.pumpWidget(
+      CupertinoApp(
+        home: StatefulBuilder(
+          builder: (BuildContext context, StateSetter setState) {
+            setOuterState = setState;
+            return Center(
+              child: showPicker
+                  ? SizedBox(
+                      height: 216,
+                      child: CupertinoPicker(
+                        itemExtent: 32,
+                        onSelectedItemChanged: (int index) {},
+                        children: List<Widget>.generate(
+                          20,
+                          (int index) => Center(child: Text('Item $index')),
+                        ),
+                      ),
+                    )
+                  : const SizedBox.shrink(),
+            );
+          },
+        ),
+      ),
+    );
+
+    // Tapping an item that is not centred starts the tap-to-select
+    // animation, which _handleChildTap awaits.
+    await tester.tap(find.text('Item 2'));
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 50));
+
+    // Remove the picker while that animation is still running.
+    setOuterState(() {
+      showPicker = false;
+    });
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 500));
+
+    expect(tester.takeException(), isNull);
+  });
 }
