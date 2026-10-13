@@ -29,18 +29,7 @@ import 'theme.dart';
 ///
 /// <callout-box>
 ///
-// TODO(framework): Add unit tests to this code snippet.
-// https://github.com/flutter/flutter/issues/188530
-///
-/// ```dart
-/// Scaffold(
-///   bottomNavigationBar: BottomAppBar(
-///     color: Colors.white,
-///     child: bottomAppBarContents,
-///   ),
-///   floatingActionButton: const FloatingActionButton(onPressed: null),
-/// )
-/// ```
+/// {@example /example/lib/bottom_app_bar/bottom_app_bar.snippet.0.dart#body indent=strip}
 ///
 /// </callout-box>
 ///
