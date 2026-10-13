@@ -32,7 +32,33 @@ void main() {
     expect(findRadioGroup, findsOne);
 
     final SemanticsNode radioGroup = findRadioGroup.evaluate().single;
-    expect(radioGroup.label, isNotEmpty);
+    expect(radioGroup.label, 'Singing character');
     expect(descendantSemanticsLabels(radioGroup), containsAll(<String>['Lafayette', 'Jefferson']));
+  });
+
+  testWidgets('radio group controls the selected radio', (WidgetTester tester) async {
+    await pumpsUseCase(tester, RadioListTileUseCase());
+    await tester.pumpAndSettle();
+
+    expect(
+      tester.getSemantics(find.text('Lafayette')),
+      containsSemantics(hasCheckedState: true, isChecked: true),
+    );
+    expect(
+      tester.getSemantics(find.text('Jefferson')),
+      containsSemantics(hasCheckedState: true, isChecked: false),
+    );
+
+    await tester.tap(find.text('Jefferson'));
+    await tester.pumpAndSettle();
+
+    expect(
+      tester.getSemantics(find.text('Lafayette')),
+      containsSemantics(hasCheckedState: true, isChecked: false),
+    );
+    expect(
+      tester.getSemantics(find.text('Jefferson')),
+      containsSemantics(hasCheckedState: true, isChecked: true),
+    );
   });
 }

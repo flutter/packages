@@ -55,8 +55,8 @@ void main() {
         .evaluate()
         .single;
     expect(
-      descendantSemanticsLabels(labelTypeGroup),
-      containsAll(<String>['None', 'Selected', 'All']),
+      descendantSemanticsLabels(labelTypeGroup).where((String label) => label.isNotEmpty),
+      <String>['None', 'Selected', 'All'],
     );
 
     final SemanticsNode groupAlignmentGroup = find.semantics
@@ -64,8 +64,8 @@ void main() {
         .evaluate()
         .single;
     expect(
-      descendantSemanticsLabels(groupAlignmentGroup),
-      containsAll(<String>['Top', 'Center', 'Bottom']),
+      descendantSemanticsLabels(groupAlignmentGroup).where((String label) => label.isNotEmpty),
+      <String>['Top', 'Center', 'Bottom'],
     );
   });
 
