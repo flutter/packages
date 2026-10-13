@@ -786,6 +786,116 @@ void main() {
     });
   });
 
+  group('SvgPicture alpha masks', () {
+    testWidgets('opaque mask with style="mask-type:alpha"', (WidgetTester tester) async {
+      final GlobalKey key = GlobalKey();
+
+      const svgStr = '''
+<svg width="100" height="100" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+  <mask id="m" style="mask-type:alpha">
+    <circle cx="50" cy="50" r="40" fill="#000000" />
+  </mask>
+  <g mask="url(#m)">
+    <rect width="100" height="100" fill="#FF8800" />
+  </g>
+</svg>
+''';
+
+      await tester.pumpWidget(
+        RepaintBoundary(
+          key: key,
+          child: SvgPicture.string(svgStr, width: 100.0, height: 100.0),
+        ),
+      );
+
+      await tester.pumpAndSettle();
+      await _checkWidgetAndGolden(key, 'alpha_mask.opaque_style.png');
+    });
+
+    testWidgets('semi-transparent mask with fill-opacity', (WidgetTester tester) async {
+      final GlobalKey key = GlobalKey();
+
+      const svgStr = '''
+<svg width="100" height="100" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+  <mask id="m" mask-type="alpha">
+    <circle cx="50" cy="50" r="40" fill="#000000" fill-opacity="0.5" />
+  </mask>
+  <g mask="url(#m)">
+    <rect width="100" height="100" fill="#FF8800" />
+  </g>
+</svg>
+''';
+
+      await tester.pumpWidget(
+        RepaintBoundary(
+          key: key,
+          child: SvgPicture.string(svgStr, width: 100.0, height: 100.0),
+        ),
+      );
+
+      await tester.pumpAndSettle();
+      await _checkWidgetAndGolden(key, 'alpha_mask.fill_opacity.png');
+    });
+
+    testWidgets('group opacity inside alpha mask', (WidgetTester tester) async {
+      final GlobalKey key = GlobalKey();
+
+      const svgStr = '''
+<svg width="100" height="100" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+  <mask id="m" mask-type="alpha">
+    <g opacity="0.5">
+      <circle cx="50" cy="50" r="40" fill="#000000" />
+    </g>
+  </mask>
+  <g mask="url(#m)">
+    <rect width="100" height="100" fill="#FF8800" />
+  </g>
+</svg>
+''';
+
+      await tester.pumpWidget(
+        RepaintBoundary(
+          key: key,
+          child: SvgPicture.string(svgStr, width: 100.0, height: 100.0),
+        ),
+      );
+
+      await tester.pumpAndSettle();
+      await _checkWidgetAndGolden(key, 'alpha_mask.group_opacity.png');
+    });
+
+    testWidgets('gradient alpha mask', (WidgetTester tester) async {
+      final GlobalKey key = GlobalKey();
+
+      const svgStr = '''
+<svg width="100" height="100" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="fade" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#000000" stop-opacity="1" />
+      <stop offset="100%" stop-color="#000000" stop-opacity="0" />
+    </linearGradient>
+  </defs>
+  <mask id="m" mask-type="alpha">
+    <circle cx="50" cy="50" r="40" fill="url(#fade)" />
+  </mask>
+  <g mask="url(#m)">
+    <rect width="100" height="100" fill="#FF8800" />
+  </g>
+</svg>
+''';
+
+      await tester.pumpWidget(
+        RepaintBoundary(
+          key: key,
+          child: SvgPicture.string(svgStr, width: 100.0, height: 100.0),
+        ),
+      );
+
+      await tester.pumpAndSettle();
+      await _checkWidgetAndGolden(key, 'alpha_mask.gradient.png');
+    });
+  });
+
   testWidgets('SvgPicture - two of the same', (WidgetTester tester) async {
     // Regression test to make sure the same SVG can render twice in the same
     // view. If layers are incorrectly reused, this will fail.
