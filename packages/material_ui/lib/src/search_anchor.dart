@@ -116,6 +116,26 @@ typedef ViewBuilder = Widget Function(Iterable<Widget> suggestions);
 /// When using [SearchAnchor.bar], [enableTapHandling] is already set to
 /// false because the factory constructor's [SearchBar] handles its own taps.
 ///
+/// ```dart
+/// SearchAnchor(
+///   enableTapHandling: false,
+///   builder: (BuildContext context, SearchController controller) {
+///     return SearchBar(
+///       controller: controller,
+///       onTap: () {
+///         controller.openView();
+///       },
+///       onChanged: (_) {
+///         controller.openView();
+///       },
+///     );
+///   },
+///   suggestionsBuilder: (BuildContext context, SearchController controller) {
+///     return const <Widget>[];
+///   },
+/// )
+/// ```
+///
 /// The search view route will be popped if the window size is changed and the
 /// search view route is not in full-screen mode. However, if the search view route
 /// is in full-screen mode, changing the window size, such as rotating a mobile
@@ -169,19 +189,6 @@ typedef ViewBuilder = Widget Function(Iterable<Widget> suggestions);
 /// {@macro material_ui.dartpad_guide}
 ///
 /// {@example /example/lib/search_anchor/search_anchor.4.dart#body}
-///
-/// </callout-box>
-///
-/// <callout-box>
-///
-/// This example shows how to use a [SearchAnchor] with a custom [SearchBar] as
-/// the anchor and sets [enableTapHandling] to false.
-///
-// TODO(framework): Replace the following block with a @dartpad directive
-// when it's supported. https://github.com/dart-lang/dartdoc/issues/4123
-/// {@macro material_ui.dartpad_guide}
-///
-/// {@example /example/lib/search_anchor/search_anchor.5.dart#body}
 ///
 /// </callout-box>
 ///
@@ -1884,9 +1891,10 @@ class _SearchBarState extends State<SearchBar> {
           child: IgnorePointer(
             ignoring: !widget.enabled,
             child: InkWell(
+              // Avoid creating a redundant focus stop and focusable/tappable
+              // semantics node on the InkWell, since the inner TextField
+              // already handles focus and semantics for the SearchBar.
               canRequestFocus: false,
-              // Avoid providing duplicate semantics actions that the TextField
-              // already provides.
               excludeFromSemantics: true,
               onTap: () {
                 widget.onTap?.call();

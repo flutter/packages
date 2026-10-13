@@ -3425,6 +3425,17 @@ void main() {
     );
 
     await expectLater(tester, meetsGuideline(labeledTapTargetGuideline));
+    // The outer InkWell should not create an intermediate unlabeled focusable
+    // semantics node wrapping the TextField and trailing IconButton.
+    expect(
+      semantics,
+      isNot(
+        includesNodeWith(
+          actions: <SemanticsAction>[SemanticsAction.focus],
+          flags: <SemanticsFlag>[SemanticsFlag.isFocusable],
+        ),
+      ),
+    );
     semantics.dispose();
   });
 
