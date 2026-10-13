@@ -366,7 +366,7 @@ class _FadeForwardsPageTransition extends StatelessWidget {
   const _FadeForwardsPageTransition({
     required this.animation,
     required this.secondaryAnimation,
-    required this._allowSnapshotting,
+    required this.allowSnapshotting,
     this.backgroundColor,
     this.child,
   });
@@ -388,7 +388,7 @@ class _FadeForwardsPageTransition extends StatelessWidget {
   ///    routes.
   ///  * [_FadeForwardsSnapshot], which implements the snapshotting for this
   ///    transition.
-  final bool _allowSnapshotting;
+  final bool allowSnapshotting;
 
   final Color? backgroundColor;
 
@@ -417,7 +417,7 @@ class _FadeForwardsPageTransition extends StatelessWidget {
             position: _forwardTranslationTween.animate(animation),
             child: _FadeForwardsSnapshot(
               animation: animation,
-              allowSnapshotting: _allowSnapshotting,
+              allowSnapshotting: this.allowSnapshotting,
               child: child,
             ),
           ),
@@ -432,7 +432,7 @@ class _FadeForwardsPageTransition extends StatelessWidget {
               position: _backwardTranslationTween.animate(animation),
               child: _FadeForwardsSnapshot(
                 animation: animation,
-                allowSnapshotting: _allowSnapshotting,
+                allowSnapshotting: this.allowSnapshotting,
                 child: child,
               ),
             ),
@@ -443,7 +443,7 @@ class _FadeForwardsPageTransition extends StatelessWidget {
         context,
         secondaryAnimation,
         backgroundColor,
-        _allowSnapshotting,
+        this.allowSnapshotting,
         child,
       ),
     );
@@ -590,7 +590,7 @@ class _FadeForwardsSnapshotState extends State<_FadeForwardsSnapshot> {
 class FadeForwardsPageTransitionsBuilder extends PageTransitionsBuilder {
   /// Constructs a page transition animation that matches the transition used on
   /// Android U.
-  const FadeForwardsPageTransitionsBuilder({this._allowSnapshotting = true, this.backgroundColor});
+  const FadeForwardsPageTransitionsBuilder({this.allowSnapshotting = true, this.backgroundColor});
 
   /// Whether FadeForwards page transitions will prefer to animate a snapshot of
   /// the entering and exiting routes.
@@ -604,7 +604,7 @@ class FadeForwardsPageTransitionsBuilder extends PageTransitionsBuilder {
   /// Generally this means that animations that occur on the entering/exiting route
   /// while the route animation plays may appear frozen - unless they are a hero
   /// animation or something that is drawn in a separate overlay.
-  final bool _allowSnapshotting;
+  final bool allowSnapshotting;
 
   /// The background color during transition between two routes.
   ///
@@ -639,7 +639,7 @@ class FadeForwardsPageTransitionsBuilder extends PageTransitionsBuilder {
         backgroundColor,
         !ZoomPageTransitionsBuilder._kProfileForceDisableSnapshotting &&
             allowSnapshotting &&
-            _allowSnapshotting,
+            this.allowSnapshotting,
         child,
       );
 
@@ -737,7 +737,7 @@ class FadeForwardsPageTransitionsBuilder extends PageTransitionsBuilder {
       secondaryAnimation: secondaryAnimation,
       allowSnapshotting:
           !ZoomPageTransitionsBuilder._kProfileForceDisableSnapshotting &&
-          _allowSnapshotting &&
+          this.allowSnapshotting &&
           (route?.allowSnapshotting ?? true),
       backgroundColor: backgroundColor,
       child: child,
