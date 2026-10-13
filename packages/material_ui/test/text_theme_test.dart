@@ -149,6 +149,56 @@ void main() {
     expect(themeStyles.every((TextStyle style) => style.decoration == decoration), true);
   });
 
+  test('TextTheme apply fontFeatures fontVariations', () {
+    const fontFeatures = <FontFeature>[FontFeature.enable('smcp')];
+    const fontVariations = <FontVariation>[FontVariation('wght', 400.0)];
+    final typography = Typography.material2018();
+    final TextTheme theme = typography.black.apply(
+      fontFeatures: fontFeatures,
+      fontVariations: fontVariations,
+    );
+
+    final themeStyles = <TextStyle>[
+      theme.displayLarge!,
+      theme.displayMedium!,
+      theme.displaySmall!,
+      theme.headlineLarge!,
+      theme.headlineMedium!,
+      theme.headlineSmall!,
+      theme.titleLarge!,
+      theme.titleMedium!,
+      theme.titleSmall!,
+      theme.bodyLarge!,
+      theme.bodyMedium!,
+      theme.bodySmall!,
+      theme.labelLarge!,
+      theme.labelMedium!,
+      theme.labelSmall!,
+    ];
+    for (final style in themeStyles) {
+      expect(style.fontFeatures, fontFeatures);
+      expect(style.fontVariations, fontVariations);
+    }
+  });
+
+  test('TextTheme apply null fontFeatures fontVariations preserves original', () {
+    const fontFeatures = <FontFeature>[FontFeature.enable('smcp')];
+    const fontVariations = <FontVariation>[FontVariation('wght', 400.0)];
+    final typography = Typography.material2018();
+    final TextTheme baseTheme = typography.black.copyWith(
+      displayLarge: typography.black.displayLarge!.copyWith(
+        fontFeatures: fontFeatures,
+        fontVariations: fontVariations,
+      ),
+    );
+    final TextTheme theme = baseTheme.apply();
+
+    expect(theme.displayLarge!.fontFeatures, fontFeatures);
+    expect(theme.displayLarge!.fontVariations, fontVariations);
+    expect(theme.displayMedium!.fontFeatures, isNull);
+    expect(theme.displayMedium!.fontVariations, isNull);
+  });
+
   test('TextTheme apply fontSizeFactor fontSizeDelta', () {
     final typography = Typography.material2018();
     final TextTheme baseTheme = Typography.englishLike2018.merge(typography.black);

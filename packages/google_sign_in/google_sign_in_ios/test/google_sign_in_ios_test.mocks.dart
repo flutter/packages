@@ -22,24 +22,21 @@ import 'package:mockito/src/dummies.dart' as _i3;
 // ignore_for_file: unnecessary_parenthesis
 // ignore_for_file: camel_case_types
 // ignore_for_file: subtype_of_sealed_class
-
-class _FakeSignInResult_0 extends _i1.SmartFake implements _i2.SignInResult {
-  _FakeSignInResult_0(Object parent, Invocation parentInvocation) : super(parent, parentInvocation);
-}
+// ignore_for_file: invalid_use_of_internal_member
 
 /// A class which mocks [GoogleSignInApi].
 ///
 /// See the documentation for Mockito's code generation for more information.
 class MockGoogleSignInApi extends _i1.Mock implements _i2.GoogleSignInApi {
-  MockGoogleSignInApi() {
-    _i1.throwOnMissingStub(this);
-  }
-
   @override
   String get pigeonVar_messageChannelSuffix =>
       (super.noSuchMethod(
             Invocation.getter(#pigeonVar_messageChannelSuffix),
             returnValue: _i3.dummyValue<String>(
+              this,
+              Invocation.getter(#pigeonVar_messageChannelSuffix),
+            ),
+            returnValueForMissingStub: _i3.dummyValue<String>(
               this,
               Invocation.getter(#pigeonVar_messageChannelSuffix),
             ),
@@ -60,7 +57,10 @@ class MockGoogleSignInApi extends _i1.Mock implements _i2.GoogleSignInApi {
       (super.noSuchMethod(
             Invocation.method(#restorePreviousSignIn, []),
             returnValue: _i4.Future<_i2.SignInResult>.value(
-              _FakeSignInResult_0(this, Invocation.method(#restorePreviousSignIn, [])),
+              _i3.dummyValue<_i2.SignInResult>(this, Invocation.method(#restorePreviousSignIn, [])),
+            ),
+            returnValueForMissingStub: _i4.Future<_i2.SignInResult>.value(
+              _i3.dummyValue<_i2.SignInResult>(this, Invocation.method(#restorePreviousSignIn, [])),
             ),
           )
           as _i4.Future<_i2.SignInResult>);
@@ -70,7 +70,16 @@ class MockGoogleSignInApi extends _i1.Mock implements _i2.GoogleSignInApi {
       (super.noSuchMethod(
             Invocation.method(#signIn, [scopeHint, nonce]),
             returnValue: _i4.Future<_i2.SignInResult>.value(
-              _FakeSignInResult_0(this, Invocation.method(#signIn, [scopeHint, nonce])),
+              _i3.dummyValue<_i2.SignInResult>(
+                this,
+                Invocation.method(#signIn, [scopeHint, nonce]),
+              ),
+            ),
+            returnValueForMissingStub: _i4.Future<_i2.SignInResult>.value(
+              _i3.dummyValue<_i2.SignInResult>(
+                this,
+                Invocation.method(#signIn, [scopeHint, nonce]),
+              ),
             ),
           )
           as _i4.Future<_i2.SignInResult>);
@@ -80,7 +89,13 @@ class MockGoogleSignInApi extends _i1.Mock implements _i2.GoogleSignInApi {
       (super.noSuchMethod(
             Invocation.method(#getRefreshedAuthorizationTokens, [userId]),
             returnValue: _i4.Future<_i2.SignInResult>.value(
-              _FakeSignInResult_0(
+              _i3.dummyValue<_i2.SignInResult>(
+                this,
+                Invocation.method(#getRefreshedAuthorizationTokens, [userId]),
+              ),
+            ),
+            returnValueForMissingStub: _i4.Future<_i2.SignInResult>.value(
+              _i3.dummyValue<_i2.SignInResult>(
                 this,
                 Invocation.method(#getRefreshedAuthorizationTokens, [userId]),
               ),
@@ -93,7 +108,16 @@ class MockGoogleSignInApi extends _i1.Mock implements _i2.GoogleSignInApi {
       (super.noSuchMethod(
             Invocation.method(#addScopes, [scopes, userId]),
             returnValue: _i4.Future<_i2.SignInResult>.value(
-              _FakeSignInResult_0(this, Invocation.method(#addScopes, [scopes, userId])),
+              _i3.dummyValue<_i2.SignInResult>(
+                this,
+                Invocation.method(#addScopes, [scopes, userId]),
+              ),
+            ),
+            returnValueForMissingStub: _i4.Future<_i2.SignInResult>.value(
+              _i3.dummyValue<_i2.SignInResult>(
+                this,
+                Invocation.method(#addScopes, [scopes, userId]),
+              ),
             ),
           )
           as _i4.Future<_i2.SignInResult>);

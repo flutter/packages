@@ -233,7 +233,7 @@
   return self.queue.transactions;
 }
 
-- (SKStorefront *)storefront API_AVAILABLE(ios(13.0)) {
+- (SKStorefront *)storefront {
   return self.queue.storefront;
 }
 

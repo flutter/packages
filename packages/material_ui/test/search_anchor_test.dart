@@ -3795,7 +3795,7 @@ void main() {
     expect(find.byType(EditableText), findsOneWidget);
     final EditableText editableText = tester.widget(find.byType(EditableText));
     expect(editableText.scrollPadding, scrollPadding);
-  });
+  }, tags: 'reduced-web-test-set');
 
   group('contextMenuBuilder', () {
     setUp(() async {
@@ -3854,7 +3854,7 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(find.byType(Placeholder), findsOneWidget);
-    });
+    }, tags: 'reduced-web-test-set');
 
     testWidgets(
       'iOS uses the system context menu by default if supported',

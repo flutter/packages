@@ -424,11 +424,10 @@ class _InkSparkleFactory extends InteractiveInkFeatureFactory {
 
   static void initializeShader() {
     if (!_initCalled) {
-      ui.FragmentProgram.fromAsset('packages/material_ui/shaders/ink_sparkle.frag').then((
-        ui.FragmentProgram program,
-      ) {
-        _program = program;
-      });
+      ui.FragmentProgram.fromAsset('packages/material_ui/shaders/ink_sparkle.frag')
+          .then((ui.FragmentProgram program) {
+            _program = program;
+          });
       _initCalled = true;
     }
   }

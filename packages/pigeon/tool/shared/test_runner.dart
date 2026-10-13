@@ -22,7 +22,10 @@ Future<void> runTests(
 }) async {
   final String baseDir = p.dirname(p.dirname(Platform.script.toFilePath()));
   if (runGeneration) {
-    await _runGenerate(baseDir, ciMode: ciMode);
+    final int exitCode = await _runGenerate(baseDir, ciMode: ciMode);
+    if (exitCode != 0) {
+      exit(exitCode);
+    }
   }
 
   if (runFormat) {
@@ -32,7 +35,10 @@ Future<void> runTests(
   await _runTests(testsToRun, ciMode: ciMode);
 
   if (includeOverflow) {
-    await _runGenerate(baseDir, ciMode: ciMode, includeOverflow: true);
+    final int exitCode = await _runGenerate(baseDir, ciMode: ciMode, includeOverflow: true);
+    if (exitCode != 0) {
+      exit(exitCode);
+    }
 
     // TODO(tarrinneal): Remove linux filter once overflow class is added to gobject generator.
     // https://github.com/flutter/flutter/issues/152916
@@ -54,7 +60,7 @@ Future<void> runTests(
 }
 
 // Pre-generate the necessary common output files.
-Future<void> _runGenerate(
+Future<int> _runGenerate(
   String baseDir, {
   required bool ciMode,
   bool includeOverflow = false,
@@ -71,6 +77,7 @@ Future<void> _runGenerate(
   } else {
     print('Generation failed; see above for errors.');
   }
+  return generateExitCode;
 }
 
 Future<void> _runFormat(String baseDir, {required bool ciMode}) async {

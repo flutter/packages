@@ -24,7 +24,7 @@ void main() {
     test('returns true', () async {
       mock
         ..setCanLaunchExpectations('foo')
-        ..setResponse(true);
+        ..setLaunchResponse(true);
 
       final bool result = await canLaunch('foo');
 
@@ -34,7 +34,7 @@ void main() {
     test('returns false', () async {
       mock
         ..setCanLaunchExpectations('foo')
-        ..setResponse(false);
+        ..setLaunchResponse(false);
 
       final bool result = await canLaunch('foo');
 
@@ -55,7 +55,7 @@ void main() {
           webOnlyWindowName: null,
           showTitle: false,
         )
-        ..setResponse(true);
+        ..setLaunchResponse(true);
       expect(await launch('http://flutter.dev/'), isTrue);
     });
 
@@ -72,7 +72,7 @@ void main() {
           webOnlyWindowName: null,
           showTitle: false,
         )
-        ..setResponse(true);
+        ..setLaunchResponse(true);
       expect(
         await launch('http://flutter.dev/', headers: <String, String>{'key': 'value'}),
         isTrue,
@@ -92,7 +92,7 @@ void main() {
           webOnlyWindowName: null,
           showTitle: false,
         )
-        ..setResponse(true);
+        ..setLaunchResponse(true);
       expect(await launch('http://flutter.dev/', forceSafariVC: true), isTrue);
     });
 
@@ -109,7 +109,7 @@ void main() {
           webOnlyWindowName: null,
           showTitle: false,
         )
-        ..setResponse(true);
+        ..setLaunchResponse(true);
       expect(
         await launch('http://flutter.dev/', forceSafariVC: false, universalLinksOnly: true),
         isTrue,
@@ -129,7 +129,7 @@ void main() {
           webOnlyWindowName: null,
           showTitle: false,
         )
-        ..setResponse(true);
+        ..setLaunchResponse(true);
       expect(await launch('http://flutter.dev/', forceWebView: true), isTrue);
     });
 
@@ -146,7 +146,7 @@ void main() {
           webOnlyWindowName: null,
           showTitle: false,
         )
-        ..setResponse(true);
+        ..setLaunchResponse(true);
       expect(
         await launch('http://flutter.dev/', forceWebView: true, enableJavaScript: true),
         isTrue,
@@ -166,7 +166,7 @@ void main() {
           webOnlyWindowName: null,
           showTitle: false,
         )
-        ..setResponse(true);
+        ..setLaunchResponse(true);
       expect(
         await launch('http://flutter.dev/', forceWebView: true, enableDomStorage: true),
         isTrue,
@@ -186,7 +186,7 @@ void main() {
           webOnlyWindowName: null,
           showTitle: false,
         )
-        ..setResponse(true);
+        ..setLaunchResponse(true);
       expect(await launch('http://flutter.dev/', forceSafariVC: false), isTrue);
     });
 
@@ -210,7 +210,7 @@ void main() {
           webOnlyWindowName: null,
           showTitle: false,
         )
-        ..setResponse(true);
+        ..setLaunchResponse(true);
       expect(await launch('mailto:gmail-noreply@google.com?subject=Hello'), isTrue);
     });
 
@@ -252,7 +252,7 @@ void main() {
           webOnlyWindowName: null,
           showTitle: false,
         )
-        ..setResponse(true);
+        ..setLaunchResponse(true);
 
       final TestWidgetsFlutterBinding binding = TestWidgetsFlutterBinding.ensureInitialized();
       debugDefaultTargetPlatformOverride = TargetPlatform.iOS;
@@ -285,7 +285,7 @@ void main() {
           webOnlyWindowName: null,
           showTitle: false,
         )
-        ..setResponse(true);
+        ..setLaunchResponse(true);
 
       final TestWidgetsFlutterBinding binding = TestWidgetsFlutterBinding.ensureInitialized();
       debugDefaultTargetPlatformOverride = TargetPlatform.android;
@@ -318,7 +318,7 @@ void main() {
           webOnlyWindowName: null,
           showTitle: false,
         )
-        ..setResponse(true);
+        ..setLaunchResponse(true);
       expect(
         await launch('rdp://full%20address=s:mypc:3389&audiomode=i:2&disable%20themes=i:1'),
         isTrue,

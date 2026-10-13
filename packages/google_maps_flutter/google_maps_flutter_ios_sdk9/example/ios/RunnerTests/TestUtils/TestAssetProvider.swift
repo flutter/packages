@@ -3,11 +3,11 @@
 // found in the LICENSE file.
 
 import UIKit
-import google_maps_flutter_ios_sdk9
-import google_maps_flutter_ios_sdk9_objc
 
-/// Fake implementation of FGMAssetProvider for unit tests.
-class TestAssetProvider: NSObject, FGMAssetProvider {
+@testable import google_maps_flutter_ios_sdk9
+
+/// Fake implementation of AssetProvider for unit tests.
+class TestAssetProvider: AssetProvider {
   private let image: UIImage?
   private let assetName: String?
   private let package: String?
@@ -25,14 +25,12 @@ class TestAssetProvider: NSObject, FGMAssetProvider {
     self.image = image
     self.assetName = assetName
     self.package = package
-    super.init()
   }
 
-  override init() {
+  init() {
     self.image = nil
     self.assetName = nil
     self.package = nil
-    super.init()
   }
 
   func lookupKey(forAsset asset: String) -> String? {

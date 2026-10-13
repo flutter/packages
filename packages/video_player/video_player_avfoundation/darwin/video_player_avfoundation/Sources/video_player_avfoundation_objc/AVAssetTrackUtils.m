@@ -42,3 +42,7 @@ CGAffineTransform FVPGetStandardizedTrackTransform(CGAffineTransform t, CGSize s
   }
   return t;
 }
+
+BOOL FVPFrameDurationIsValid(CMTime frameDuration) {
+  return CMTIME_IS_NUMERIC(frameDuration) && CMTimeCompare(frameDuration, kCMTimeZero) > 0;
+}

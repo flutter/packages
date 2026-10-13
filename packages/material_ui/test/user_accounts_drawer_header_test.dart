@@ -494,6 +494,7 @@ void main() {
     expect(
       tester.semantics.find(find.byType(UserAccountsDrawerHeader)),
       matchesSemantics(
+        isHeader: true,
         isFocusable: true,
         hasFocusAction: true,
         label: 'Signed in\nname\nemail',
@@ -559,6 +560,7 @@ void main() {
     expect(
       tester.semantics.find(find.byType(UserAccountsDrawerHeader)),
       matchesSemantics(
+        isHeader: true,
         label: 'Signed in',
         textDirection: TextDirection.ltr,
         children: <Matcher>[
