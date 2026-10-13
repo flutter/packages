@@ -2189,6 +2189,9 @@ abstract class PigeonApiCameraInfo(
       pigeon_instance: androidx.camera.core.CameraInfo
   ): androidx.camera.core.ExposureState
 
+  /** Returns whether or not the camera has a flash unit. */
+  abstract fun hasFlashUnit(pigeon_instance: androidx.camera.core.CameraInfo): Boolean
+
   /** A LiveData of the camera's state. */
   abstract fun getCameraState(
       pigeon_instance: androidx.camera.core.CameraInfo
@@ -2268,12 +2271,18 @@ abstract class PigeonApiCameraInfo(
       val sensorRotationDegreesArg = sensorRotationDegrees(pigeon_instanceArg)
       val lensFacingArg = lensFacing(pigeon_instanceArg)
       val exposureStateArg = exposureState(pigeon_instanceArg)
+      val hasFlashUnitArg = hasFlashUnit(pigeon_instanceArg)
       val binaryMessenger = pigeonRegistrar.binaryMessenger
       val codec = pigeonRegistrar.codec
       val channelName = "dev.flutter.pigeon.camera_android_camerax.CameraInfo.pigeon_newInstance"
       val channel = BasicMessageChannel<Any?>(binaryMessenger, channelName, codec)
       channel.send(
-          listOf(pigeon_identifierArg, sensorRotationDegreesArg, lensFacingArg, exposureStateArg)) {
+          listOf(
+              pigeon_identifierArg,
+              sensorRotationDegreesArg,
+              lensFacingArg,
+              exposureStateArg,
+              hasFlashUnitArg)) {
             if (it is List<*>) {
               if (it.size > 1) {
                 callback(

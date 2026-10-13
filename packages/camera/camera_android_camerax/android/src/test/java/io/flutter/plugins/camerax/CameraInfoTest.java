@@ -5,6 +5,8 @@
 package io.flutter.plugins.camerax;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -86,6 +88,18 @@ public class CameraInfoTest {
     when(instance.getExposureState()).thenReturn(value);
 
     assertEquals(value, api.exposureState(instance));
+  }
+
+  @Test
+  public void hasFlashUnit_makesCallToRetrieveHasFlashUnit() {
+    final PigeonApiCameraInfo api = new TestProxyApiRegistrar().getPigeonApiCameraInfo();
+
+    final CameraInfo instance = mock(CameraInfo.class);
+    when(instance.hasFlashUnit()).thenReturn(true);
+    assertTrue(api.hasFlashUnit(instance));
+
+    when(instance.hasFlashUnit()).thenReturn(false);
+    assertFalse(api.hasFlashUnit(instance));
   }
 
   @SuppressWarnings("unchecked")

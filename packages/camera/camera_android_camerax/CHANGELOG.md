@@ -1,3 +1,7 @@
+## 0.7.5+1
+
+* Fixes torch mode not being retained after switching cameras.
+
 ## 0.7.5
 
 * Adds support for custom video output path in video recording.

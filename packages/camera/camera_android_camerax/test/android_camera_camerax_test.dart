@@ -3658,6 +3658,295 @@ void main() {
     }
   });
 
+  group('torch mode', () {
+    const backCameraDescription = CameraDescription(
+      name: 'back',
+      lensDirection: CameraLensDirection.back,
+      sensorOrientation: 90,
+    );
+    const frontCameraDescription = CameraDescription(
+      name: 'front',
+      lensDirection: CameraLensDirection.front,
+      sensorOrientation: 270,
+    );
+
+    /// Creates a [MockCamera] whose [CameraInfo] reports [hasFlashUnit] and
+    /// whose [CameraControl] is [cameraControl].
+    ///
+    /// CameraX returns a new [Camera] each time use cases are bound, so each
+    /// camera switch in these tests is modeled by a separate [MockCamera]. As
+    /// in CameraX, enabling the torch on a camera without a flash unit fails.
+    MockCamera createMockCamera({
+      required bool hasFlashUnit,
+      required MockCameraControl cameraControl,
+    }) {
+      final mockCamera = MockCamera();
+      final mockCameraInfo = MockCameraInfo();
+      when(mockCamera.getCameraInfo()).thenAnswer((_) async => mockCameraInfo);
+      when(mockCamera.cameraControl).thenReturn(cameraControl);
+      when(mockCameraInfo.hasFlashUnit).thenReturn(hasFlashUnit);
+      when(mockCameraInfo.getCameraState()).thenAnswer((_) async => MockLiveCameraState());
+      if (!hasFlashUnit) {
+        when(cameraControl.enableTorch(any)).thenAnswer(
+          (_) async =>
+              throw PlatformException(code: 'IllegalStateException', message: 'No flash unit'),
+        );
+      }
+      return mockCamera;
+    }
+
+    /// Sets up [camera] such that each time use cases are bound, the next
+    /// camera in [boundCameras] is returned.
+    void setUpCameraBinding(AndroidCameraCameraX camera, List<MockCamera> boundCameras) {
+      final mockProcessCameraProvider = MockProcessCameraProvider();
+      setUpOverridesForTestingUseCaseConfiguration(mockProcessCameraProvider);
+      when(
+        mockProcessCameraProvider.bindToLifecycle(any, any),
+      ).thenAnswer((_) async => boundCameras.removeAt(0));
+      camera.processCameraProvider = mockProcessCameraProvider;
+    }
+
+    /// Creates and initializes the camera described by [description], which is
+    /// how `CameraController.setDescription` switches cameras when not recording.
+    Future<int> switchToCamera(AndroidCameraCameraX camera, CameraDescription description) async {
+      final int cameraId = await camera.createCamera(description, ResolutionPreset.low);
+      await camera.initializeCamera(cameraId);
+      return cameraId;
+    }
+
+    /// Returns a list that collects all camera errors reported by the plugin.
+    List<String> listenForCameraErrors() {
+      final errors = <String>[];
+      final StreamSubscription<String> subscription = AndroidCameraCameraX
+          .cameraErrorStreamController
+          .stream
+          .listen(errors.add);
+      addTearDown(subscription.cancel);
+      return errors;
+    }
+
+    test(
+      'is re-enabled after switching from a camera with a flash unit to one without and back',
+      () async {
+        final camera = AndroidCameraCameraX();
+        final backCameraControl = MockCameraControl();
+        final frontCameraControl = MockCameraControl();
+        final newBackCameraControl = MockCameraControl();
+        setUpCameraBinding(camera, <MockCamera>[
+          createMockCamera(hasFlashUnit: true, cameraControl: backCameraControl),
+          createMockCamera(hasFlashUnit: false, cameraControl: frontCameraControl),
+          createMockCamera(hasFlashUnit: true, cameraControl: newBackCameraControl),
+        ]);
+        final List<String> errors = listenForCameraErrors();
+
+        final int cameraId = await switchToCamera(camera, backCameraDescription);
+        await camera.setFlashMode(cameraId, FlashMode.torch);
+        verify(backCameraControl.enableTorch(true)).called(1);
+
+        await switchToCamera(camera, frontCameraDescription);
+        verifyNever(frontCameraControl.enableTorch(any));
+
+        final int newCameraId = await switchToCamera(camera, backCameraDescription);
+        verify(newBackCameraControl.enableTorch(true)).called(1);
+        expect(camera.torchEnabled, isTrue);
+
+        // The torch is already on, so requesting it again should be a no-op.
+        await camera.setFlashMode(newCameraId, FlashMode.torch);
+        verifyNever(newBackCameraControl.enableTorch(true));
+
+        await camera.setFlashMode(newCameraId, FlashMode.off);
+        verify(newBackCameraControl.enableTorch(false)).called(1);
+        expect(camera.torchEnabled, isFalse);
+
+        await Future<void>.delayed(Duration.zero);
+        expect(errors, isEmpty);
+      },
+    );
+
+    test('is not enabled on a new camera if it was not requested', () async {
+      final camera = AndroidCameraCameraX();
+      final backCameraControl = MockCameraControl();
+      final newBackCameraControl = MockCameraControl();
+      setUpCameraBinding(camera, <MockCamera>[
+        createMockCamera(hasFlashUnit: true, cameraControl: backCameraControl),
+        createMockCamera(hasFlashUnit: true, cameraControl: newBackCameraControl),
+      ]);
+
+      await switchToCamera(camera, backCameraDescription);
+      await switchToCamera(camera, backCameraDescription);
+
+      verifyNever(backCameraControl.enableTorch(any));
+      verifyNever(newBackCameraControl.enableTorch(any));
+      expect(camera.torchEnabled, isFalse);
+    });
+
+    test('is not enabled and no error is reported when switching to a camera without a '
+        'flash unit', () async {
+      final camera = AndroidCameraCameraX();
+      final backCameraControl = MockCameraControl();
+      final frontCameraControl = MockCameraControl();
+      setUpCameraBinding(camera, <MockCamera>[
+        createMockCamera(hasFlashUnit: true, cameraControl: backCameraControl),
+        createMockCamera(hasFlashUnit: false, cameraControl: frontCameraControl),
+      ]);
+      final List<String> errors = listenForCameraErrors();
+
+      final int cameraId = await switchToCamera(camera, backCameraDescription);
+      await camera.setFlashMode(cameraId, FlashMode.torch);
+      await switchToCamera(camera, frontCameraDescription);
+
+      verifyNever(frontCameraControl.enableTorch(any));
+      expect(camera.torchEnabled, isTrue);
+      await Future<void>.delayed(Duration.zero);
+      expect(errors, isEmpty);
+    });
+
+    test('is re-enabled on each camera with a flash unit when switching between multiple '
+        'cameras', () async {
+      final camera = AndroidCameraCameraX();
+      final firstBackCameraControl = MockCameraControl();
+      final frontCameraControl = MockCameraControl();
+      final secondBackCameraControl = MockCameraControl();
+      final newFirstBackCameraControl = MockCameraControl();
+      setUpCameraBinding(camera, <MockCamera>[
+        createMockCamera(hasFlashUnit: true, cameraControl: firstBackCameraControl),
+        createMockCamera(hasFlashUnit: false, cameraControl: frontCameraControl),
+        createMockCamera(hasFlashUnit: true, cameraControl: secondBackCameraControl),
+        createMockCamera(hasFlashUnit: true, cameraControl: newFirstBackCameraControl),
+      ]);
+      const secondBackCameraDescription = CameraDescription(
+        name: 'back2',
+        lensDirection: CameraLensDirection.back,
+        sensorOrientation: 90,
+      );
+      final List<String> errors = listenForCameraErrors();
+
+      final int cameraId = await switchToCamera(camera, backCameraDescription);
+      await camera.setFlashMode(cameraId, FlashMode.torch);
+      await switchToCamera(camera, frontCameraDescription);
+      await switchToCamera(camera, secondBackCameraDescription);
+      await switchToCamera(camera, backCameraDescription);
+
+      verify(firstBackCameraControl.enableTorch(true)).called(1);
+      verifyNever(frontCameraControl.enableTorch(any));
+      verify(secondBackCameraControl.enableTorch(true)).called(1);
+      verify(newFirstBackCameraControl.enableTorch(true)).called(1);
+      await Future<void>.delayed(Duration.zero);
+      expect(errors, isEmpty);
+    });
+
+    test('is re-enabled on the new camera when switching cameras while recording', () async {
+      final camera = AndroidCameraCameraX();
+      final backCameraControl = MockCameraControl();
+      final frontCameraControl = MockCameraControl();
+      final newBackCameraControl = MockCameraControl();
+      setUpCameraBinding(camera, <MockCamera>[
+        createMockCamera(hasFlashUnit: true, cameraControl: backCameraControl),
+        createMockCamera(hasFlashUnit: false, cameraControl: frontCameraControl),
+        createMockCamera(hasFlashUnit: true, cameraControl: newBackCameraControl),
+      ]);
+      final List<String> errors = listenForCameraErrors();
+
+      final int cameraId = await switchToCamera(camera, backCameraDescription);
+      await camera.setFlashMode(cameraId, FlashMode.torch);
+
+      // Set directly for test versus calling startVideoCapturing.
+      camera.recording = MockRecording();
+      camera.videoCapture = MockVideoCapture();
+
+      await camera.setDescriptionWhileRecording(frontCameraDescription);
+      verifyNever(frontCameraControl.enableTorch(any));
+
+      await camera.setDescriptionWhileRecording(backCameraDescription);
+      verify(newBackCameraControl.enableTorch(true)).called(1);
+      await Future<void>.delayed(Duration.zero);
+      expect(errors, isEmpty);
+    });
+
+    test('is re-enabled when resuming the preview binds a new camera', () async {
+      final camera = AndroidCameraCameraX();
+      final mockProcessCameraProvider = MockProcessCameraProvider();
+      final mockCameraControl = MockCameraControl();
+      final MockCamera mockCamera = createMockCamera(
+        hasFlashUnit: true,
+        cameraControl: mockCameraControl,
+      );
+
+      // Set directly for test versus calling createCamera and setFlashMode.
+      camera.processCameraProvider = mockProcessCameraProvider;
+      camera.cameraSelector = MockCameraSelector();
+      camera.preview = MockPreview();
+      camera.torchEnabled = true;
+
+      GenericsPigeonOverrides.observerNew =
+          <T>({required void Function(Observer<T>, T) onChanged}) {
+            return Observer<T>.detached(onChanged: onChanged);
+          };
+      when(
+        mockProcessCameraProvider.bindToLifecycle(camera.cameraSelector, <UseCase>[
+          camera.preview!,
+        ]),
+      ).thenAnswer((_) async => mockCamera);
+
+      await camera.resumePreview(78);
+
+      verify(mockCameraControl.enableTorch(true)).called(1);
+    });
+
+    test('is reset when the camera is disposed', () async {
+      final camera = AndroidCameraCameraX();
+      final backCameraControl = MockCameraControl();
+      final newBackCameraControl = MockCameraControl();
+      setUpCameraBinding(camera, <MockCamera>[
+        createMockCamera(hasFlashUnit: true, cameraControl: backCameraControl),
+        createMockCamera(hasFlashUnit: true, cameraControl: newBackCameraControl),
+      ]);
+
+      final int cameraId = await switchToCamera(camera, backCameraDescription);
+      await camera.setFlashMode(cameraId, FlashMode.torch);
+      await camera.dispose(cameraId);
+
+      expect(camera.torchEnabled, isFalse);
+
+      final int newCameraId = await switchToCamera(camera, backCameraDescription);
+      verifyNever(newBackCameraControl.enableTorch(any));
+
+      // Torch mode is no longer considered enabled, so it can be turned on again.
+      await camera.setFlashMode(newCameraId, FlashMode.torch);
+      verify(newBackCameraControl.enableTorch(true)).called(1);
+    });
+  });
+
+  test('dispose resets the flash mode used for taking pictures', () async {
+    final camera = AndroidCameraCameraX();
+    final mockProcessCameraProvider = MockProcessCameraProvider();
+    final mockCamera = MockCamera();
+    final mockCameraInfo = MockCameraInfo();
+    setUpOverridesForTestingUseCaseConfiguration(mockProcessCameraProvider);
+    when(mockProcessCameraProvider.bindToLifecycle(any, any)).thenAnswer((_) async => mockCamera);
+    when(mockProcessCameraProvider.isBound(any)).thenAnswer((_) async => true);
+    when(mockCamera.getCameraInfo()).thenAnswer((_) async => mockCameraInfo);
+    when(mockCameraInfo.getCameraState()).thenAnswer((_) async => MockLiveCameraState());
+    camera.processCameraProvider = mockProcessCameraProvider;
+    const cameraDescription = CameraDescription(
+      name: 'back',
+      lensDirection: CameraLensDirection.back,
+      sensorOrientation: 90,
+    );
+
+    final int cameraId = await camera.createCamera(cameraDescription, ResolutionPreset.low);
+    await camera.initializeCamera(cameraId);
+    await camera.setFlashMode(cameraId, FlashMode.always);
+    await camera.dispose(cameraId);
+
+    final int newCameraId = await camera.createCamera(cameraDescription, ResolutionPreset.low);
+    await camera.initializeCamera(newCameraId);
+    await camera.takePicture(newCameraId);
+
+    final imageCapture = camera.imageCapture! as MockImageCapture;
+    verifyNever(imageCapture.setFlashMode(any));
+  });
+
   test('getMinExposureOffset returns expected exposure offset', () async {
     final camera = AndroidCameraCameraX();
     final mockCameraInfo = MockCameraInfo();

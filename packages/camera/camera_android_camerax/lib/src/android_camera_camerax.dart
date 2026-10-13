@@ -525,6 +525,11 @@ class AndroidCameraCameraX extends CameraPlatform {
     recording = null;
     pendingRecording = null;
     videoOutputPath = null;
+
+    // `processCameraProvider.unbindAll()` turns the torch off natively, and a
+    // subsequently created camera should start with default flash settings.
+    torchEnabled = false;
+    _currentFlashMode = null;
   }
 
   /// The camera with ID [cameraId] has been initialized.
@@ -1457,6 +1462,21 @@ class AndroidCameraCameraX extends CameraPlatform {
     await liveCameraState?.removeObservers();
     liveCameraState = await cameraInfo!.getCameraState();
     await liveCameraState!.observe(_createCameraClosingObserver(cameraId));
+    await _restoreTorchModeIfEnabled();
+  }
+
+  /// Re-enables the torch on the current [camera] if torch mode was requested
+  /// via [setFlashMode].
+  ///
+  /// CameraX turns the torch off whenever a camera becomes inactive (e.g. when
+  /// all use cases are unbound to switch cameras), but the requested flash mode
+  /// should persist across camera switches. Cameras without a flash unit are
+  /// skipped so that switching to them does not report an error.
+  Future<void> _restoreTorchModeIfEnabled() async {
+    if (!torchEnabled || !cameraInfo!.hasFlashUnit) {
+      return;
+    }
+    await _enableTorchMode(true);
   }
 
   /// Creates [Observer] of the [CameraState] that will:
