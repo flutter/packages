@@ -1857,7 +1857,9 @@ class DropdownButtonFormField<T> extends FormField<T> {
   ///
   ///  * If true, the field is interactive even if [onChanged] is null. The
   ///    selected value is stored in the [FormFieldState].
-  ///  * If false, the field is not interactive and is not validated, even if
+  ///  * If false, the field is not interactive and its own [autovalidateMode]
+  ///    is ignored, even if [onChanged] is non-null. [FormState.validate] and
+  ///    the parent [Form]'s [Form.autovalidateMode] still validate it.
   ///    [onChanged] is non-null.
   ///  * If null, the field is interactive if and only if [onChanged] is
   ///    non-null. In either case, it is still validated. This matches the
