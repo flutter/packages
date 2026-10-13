@@ -480,10 +480,13 @@ class RoundedRectSliderTrackShape extends SliderTrackShape with BaseSliderTrackS
     final isLTR = textDirection == TextDirection.ltr;
     final isRTL = textDirection == TextDirection.rtl;
 
-    final bool drawInactiveTrack =
-        thumbCenter.dx < (trackRect.right - (sliderTheme.trackHeight! / 2));
-    if (drawInactiveTrack) {
-      // Draw the inactive track segment.
+    final bool drawRightTrack = thumbCenter.dx < (trackRect.right - (sliderTheme.trackHeight! / 2));
+    final bool drawLeftTrack = thumbCenter.dx > (trackRect.left + (sliderTheme.trackHeight! / 2));
+
+    void paintRightTrack() {
+      if (!drawRightTrack) {
+        return;
+      }
       context.canvas.drawRRect(
         RRect.fromLTRBR(
           thumbCenter.dx - (sliderTheme.trackHeight! / 2),
@@ -495,9 +498,11 @@ class RoundedRectSliderTrackShape extends SliderTrackShape with BaseSliderTrackS
         rightTrackPaint,
       );
     }
-    final bool drawActiveTrack = thumbCenter.dx > (trackRect.left + (sliderTheme.trackHeight! / 2));
-    if (drawActiveTrack) {
-      // Draw the active track segment.
+
+    void paintLeftTrack() {
+      if (!drawLeftTrack) {
+        return;
+      }
       context.canvas.drawRRect(
         RRect.fromLTRBR(
           trackRect.left,
@@ -508,6 +513,19 @@ class RoundedRectSliderTrackShape extends SliderTrackShape with BaseSliderTrackS
         ),
         leftTrackPaint,
       );
+    }
+
+    // Both segments extend past the thumb center by half of the track height, so
+    // the segment painted last has its rounded end drawn on top of the other one.
+    // Paint the inactive segment first so the active segment is on top in both
+    // text directions.
+    switch (textDirection) {
+      case TextDirection.ltr:
+        paintRightTrack();
+        paintLeftTrack();
+      case TextDirection.rtl:
+        paintLeftTrack();
+        paintRightTrack();
     }
 
     final bool showSecondaryTrack =
