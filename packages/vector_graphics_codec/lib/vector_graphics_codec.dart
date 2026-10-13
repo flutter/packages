@@ -964,7 +964,13 @@ class VectorGraphicsCodec {
     listener?.onPatternStart(patternId, x, y, width, height, transform!);
   }
 
-  /// Write a paint blur command to the buffer.
+  /// Encode a Gaussian blur filter command for a paint object into [buffer].
+  ///
+  /// The [paintId] must refer to a previously encoded paint object (from
+  /// [writeFill] or [writeStroke]).
+  ///
+  /// [sigmaX] and [sigmaY] specify the non-negative standard deviations of the
+  /// Gaussian blur kernel along the horizontal and vertical axes, respectively.
   void writePaintBlur(VectorGraphicsBuffer buffer, int paintId, double sigmaX, double sigmaY) {
     assert(paintId >= 0 && paintId < kMaxId);
     assert(sigmaX >= 0.0);
@@ -1051,7 +1057,9 @@ abstract class VectorGraphicsCodecListener {
   /// Prepare to draw a new mask, until the next [onRestoreLayer] command.
   void onMask();
 
-  /// A paint blur has been decoded.
+  /// A Gaussian blur filter for the paint object identified by [paintId] has
+  /// been decoded, with horizontal and vertical standard deviations [sigmaX]
+  /// and [sigmaY].
   void onPaintBlur(int paintId, double sigmaX, double sigmaY) {}
 
   /// A radial gradient shader has been parsed.
