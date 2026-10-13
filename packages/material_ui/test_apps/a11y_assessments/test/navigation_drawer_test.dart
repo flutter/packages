@@ -37,6 +37,7 @@ void main() {
     await tester.pumpAndSettle();
 
     final SemanticsNode header = tester.getSemantics(find.text('Header'));
+    expect(header, containsSemantics(isHeader: true));
     expect(header.getSemanticsData().headingLevel, 2);
   });
 }
