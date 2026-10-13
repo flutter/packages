@@ -77,10 +77,8 @@ struct ImagePickerPluginTests {
     #expect(controller.cameraDevice == .front)
   }
 
+  @available(iOS, obsoleted: 14, message: "PHPicker is used on iOS 14 and later.")
   @Test func pickMultiImageShouldUseUIImagePickerControllerOnPreiOS14() {
-    if #available(iOS 14, *) {
-      return
-    }
     let plugin = FLTImagePickerPlugin(viewProvider: StubViewProvider())
     let photo = FakePhotoLibraryPermissionChecker()
     photo.status = .authorized
@@ -94,10 +92,8 @@ struct ImagePickerPluginTests {
     #expect(controller.sourceType == .photoLibrary)
   }
 
+  @available(iOS, obsoleted: 14, message: "PHPicker is used on iOS 14 and later.")
   @Test func pickMediaShouldUseUIImagePickerControllerOnPreiOS14() {
-    if #available(iOS 14, *) {
-      return
-    }
     let plugin = FLTImagePickerPlugin(viewProvider: StubViewProvider())
     let photo = FakePhotoLibraryPermissionChecker()
     photo.status = .authorized
