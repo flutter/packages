@@ -20,7 +20,6 @@ class MaterialShapesExampleApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      theme: ThemeData(colorSchemeSeed: const Color(0xFF6750A4)),
       home: const MaterialShapesExample(),
     );
   }
