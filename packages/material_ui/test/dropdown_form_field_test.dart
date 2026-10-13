@@ -1056,7 +1056,7 @@ void main() {
     expect(find.text(currentValue), findsOneWidget);
 
     // Tap the DropdownButtonFormField widget
-    await tester.tap(find.byType(DropdownButton<String>));
+    await tester.tap(find.text(currentValue));
     await tester.pumpAndSettle();
 
     // Tap the first dropdown menu item.
@@ -1497,7 +1497,7 @@ void main() {
       RendererBinding.instance.mouseTracker.debugDeviceActiveCursor(1),
       kIsWeb ? SystemMouseCursors.click : SystemMouseCursors.basic,
     );
-  });
+  }, tags: 'reduced-web-test-set');
 
   testWidgets('DropdownButtonFormField has expected mouse cursor when explicitly configured', (
     WidgetTester tester,

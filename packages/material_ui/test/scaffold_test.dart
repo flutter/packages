@@ -1096,6 +1096,7 @@ void main() {
         TargetPlatform.android,
         TargetPlatform.fuchsia,
       }),
+      tags: 'reduced-web-test-set',
     );
 
     testWidgets(
@@ -2565,7 +2566,7 @@ void main() {
         '     Builder\n',
       );
       await tester.pumpAndSettle();
-    });
+    }, tags: 'reduced-web-test-set');
 
     testWidgets('Call to Scaffold.geometryOf() without context', (WidgetTester tester) async {
       ValueListenable<ScaffoldGeometry>? geometry;
@@ -2631,7 +2632,7 @@ void main() {
         '     Builder\n',
       );
       await tester.pumpAndSettle();
-    });
+    }, tags: 'reduced-web-test-set');
 
     testWidgets(
       'FloatingActionButton always keeps the same position regardless of extendBodyBehindAppBar',
@@ -2898,9 +2899,8 @@ void main() {
           home: Scaffold(
             body: Builder(
               builder: (BuildContext context) {
-                ScaffoldMessenger.of(
-                  context,
-                ).showSnackBar(const SnackBar(content: Text('SnackBar')));
+                ScaffoldMessenger.of(context)
+                    .showSnackBar(const SnackBar(content: Text('SnackBar')));
                 return const SizedBox.shrink();
               },
             ),
@@ -3759,9 +3759,8 @@ void main() {
           home: Builder(
             builder: (BuildContext context) {
               return MediaQuery(
-                data: MediaQuery.of(
-                  context,
-                ).copyWith(viewInsets: EdgeInsets.only(bottom: keyboardHeight)),
+                data: MediaQuery.of(context)
+                    .copyWith(viewInsets: EdgeInsets.only(bottom: keyboardHeight)),
                 child: Scaffold(
                   extendBody: true,
                   body: SizedBox.expand(key: bodyKey),

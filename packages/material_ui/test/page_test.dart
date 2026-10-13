@@ -14,6 +14,7 @@ import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';
+
 import 'finders.dart';
 
 void main() {
@@ -1102,9 +1103,8 @@ void main() {
       expect(homeTapCount, 1);
       expect(pageTapCount, 0);
 
-      final ValueNotifier<bool> notifier = Navigator.of(
-        homeScaffoldKey.currentContext!,
-      ).userGestureInProgressNotifier;
+      final ValueNotifier<bool> notifier = Navigator.of(homeScaffoldKey.currentContext!)
+          .userGestureInProgressNotifier;
       expect(notifier.value, false);
 
       unawaited(

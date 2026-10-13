@@ -335,6 +335,7 @@ void main() {
                 ..circle(color: focusColor)),
       );
     },
+    tags: 'reduced-web-test-set',
   );
 }
 

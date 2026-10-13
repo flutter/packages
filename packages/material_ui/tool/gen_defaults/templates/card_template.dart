@@ -58,7 +58,7 @@ class CardTemplateM3 extends TokenTemplateM3 {
     }
     return '''
 $cardShape.copyWith(
-  side: ${border(color(TokenOutlinedCard.outlineColor, '_colors'))},
+  side: ${border(color(TokenOutlinedCard.outlineColor))},
 )''';
   }
 
@@ -77,10 +77,10 @@ class $className extends CardThemeData {
   late final ColorScheme _colors = Theme.of(context).colorScheme;
 
   @override
-  Color? get color => ${color(_containerColor, '_colors')};
+  Color? get color => ${color(_containerColor)};
 
   @override
-  Color? get shadowColor => ${color(_containerShadowColor, '_colors')};
+  Color? get shadowColor => ${color(_containerShadowColor)};
 
   @override
   Color? get surfaceTintColor => Colors.transparent;
