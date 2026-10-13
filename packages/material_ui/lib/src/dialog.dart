@@ -282,24 +282,6 @@ class Dialog extends StatelessWidget {
     final BoxConstraints boxConstraints =
         constraints ?? dialogTheme.constraints ?? const BoxConstraints(minWidth: 280.0);
 
-    // Keeps its child out of the view insets, such as the software keyboard,
-    // which the child then no longer needs to account for.
-    Widget avoidViewInsets(Widget child) {
-      return AnimatedPadding(
-        padding: effectivePadding,
-        duration: insetAnimationDuration,
-        curve: insetAnimationCurve,
-        child: MediaQuery.removeViewInsets(
-          removeLeft: true,
-          removeTop: true,
-          removeRight: true,
-          removeBottom: true,
-          context: context,
-          child: child,
-        ),
-      );
-    }
-
     final Widget dialogChild;
 
     if (_fullscreen) {
@@ -309,11 +291,17 @@ class Dialog extends StatelessWidget {
       // kept above the keyboard.
       dialogChild = Material(
         color: backgroundColor ?? dialogTheme.backgroundColor ?? defaults.backgroundColor,
-        child: avoidViewInsets(child ?? const SizedBox.shrink()),
+        child: _avoidViewInsets(
+          context,
+          padding: effectivePadding,
+          child: child ?? const SizedBox.shrink(),
+        ),
       );
     } else {
-      dialogChild = avoidViewInsets(
-        Align(
+      dialogChild = _avoidViewInsets(
+        context,
+        padding: effectivePadding,
+        child: Align(
           alignment: alignment ?? dialogTheme.alignment ?? defaults.alignment!,
           child: ConstrainedBox(
             constraints: boxConstraints,
@@ -334,6 +322,29 @@ class Dialog extends StatelessWidget {
     }
 
     return Semantics(role: semanticsRole, child: dialogChild);
+  }
+
+  // Keeps [child] out of the view insets, such as the software keyboard, which
+  // the child then no longer needs to account for. [padding] is the view
+  // insets plus the dialog's inset padding.
+  Widget _avoidViewInsets(
+    BuildContext context, {
+    required EdgeInsets padding,
+    required Widget child,
+  }) {
+    return AnimatedPadding(
+      padding: padding,
+      duration: insetAnimationDuration,
+      curve: insetAnimationCurve,
+      child: MediaQuery.removeViewInsets(
+        removeLeft: true,
+        removeTop: true,
+        removeRight: true,
+        removeBottom: true,
+        context: context,
+        child: child,
+      ),
+    );
   }
 }
 
