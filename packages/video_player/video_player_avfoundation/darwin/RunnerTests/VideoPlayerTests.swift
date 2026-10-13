@@ -228,8 +228,8 @@ private let hlsAudioTestURI =
         #expect(!avPlayer.currentItem!.isPlaybackLikelyToKeepUp)
       }
     }
-    (player.eventListener as? FlutterStreamHandler)?.onListen(
-      withArguments: nil, eventSink: eventSink)
+    (player.eventListener as? VideoEventsStreamHandler)?.onListen(
+      withArguments: nil, sink: PigeonEventSink(eventSink))
 
     // Load for a while to let some buffer events happen.
     try await Task.sleep(nanoseconds: 10 * 1_000_000_000)
@@ -492,8 +492,8 @@ private let hlsAudioTestURI =
           continuation.resume()
         }
       }
-      (player.eventListener as? FlutterStreamHandler)?.onListen(
-        withArguments: nil, eventSink: eventSink)
+      (player.eventListener as? VideoEventsStreamHandler)?.onListen(
+        withArguments: nil, sink: PigeonEventSink(eventSink))
     }
   }
 
