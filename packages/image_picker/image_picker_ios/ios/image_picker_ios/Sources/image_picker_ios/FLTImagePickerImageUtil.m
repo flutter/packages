@@ -129,10 +129,7 @@ static UIImage *FLTImagePickerDrawScaledImage(UIImage *imageToScale, double widt
   if (@available(iOS 14.0, *)) {
     gifTypeIdentifier = UTTypeGIF.identifier;
   } else {
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-declarations"
     gifTypeIdentifier = (NSString *)kUTTypeGIF;
-#pragma clang diagnostic pop
   }
   options[(NSString *)kCGImageSourceTypeIdentifierHint] = gifTypeIdentifier;
 
