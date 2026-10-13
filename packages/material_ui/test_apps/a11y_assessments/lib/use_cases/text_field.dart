@@ -43,7 +43,9 @@ class _MainWidget extends StatelessWidget {
                 labelText: 'Email',
                 suffixText: '@gmail.com',
                 hintText: 'Enter your email',
-                hintMaxLines: 5,
+                // The field is single-line, so let the hint wrap at large
+                // text scales, one line per word.
+                hintMaxLines: 3,
               ),
             ),
           ),
@@ -57,7 +59,9 @@ class _MainWidget extends StatelessWidget {
                 labelText: 'Email',
                 suffixText: '@gmail.com',
                 hintText: 'Enter your email',
-                hintMaxLines: 5,
+                // The field is single-line, so let the hint wrap at large
+                // text scales, one line per word.
+                hintMaxLines: 3,
               ),
               enabled: false,
               controller: TextEditingController(text: 'xyz'),
