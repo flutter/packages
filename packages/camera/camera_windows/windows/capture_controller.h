@@ -151,6 +151,18 @@ class CaptureControllerImpl : public CaptureController,
     audio_source_ = audio_source;
   }
 
+  // Returns max preview height calculated from resolution preset.
+  // For testing purposes.
+  uint32_t GetMaxPreviewHeight() const;
+
+  // Returns max photo height calculated from resolution preset.
+  // For testing purposes.
+  uint32_t GetMaxPhotoHeight() const;
+
+  // Returns max video height calculated from resolution preset.
+  // For testing purposes.
+  uint32_t GetMaxVideoHeight() const;
+
  private:
   // Helper function to return initialized state as boolean;
   bool IsInitialized() const {
@@ -160,15 +172,6 @@ class CaptureControllerImpl : public CaptureController,
   // Resets capture controller state.
   // This is called if capture engine creation fails or is disposed.
   void ResetCaptureController();
-
-  // Returns max preview height calculated from resolution preset.
-  uint32_t GetMaxPreviewHeight() const;
-
-  // Returns max photo height calculated from resolution preset.
-  uint32_t GetMaxPhotoHeight() const;
-
-  // Returns max video height calculated from resolution preset.
-  uint32_t GetMaxVideoHeight() const;
 
   // Uses first audio source to capture audio.
   // Note: Enumerating audio sources via platform interface is not supported.
