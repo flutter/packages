@@ -32,7 +32,7 @@ final class FakeIAP2Callback: InAppPurchase2CallbackAPIProtocol {
 final class InAppPurchase2PluginTests: XCTestCase {
   // StoreKit 2's storekitd awaits AMSEngagement over XPC on every purchase, which has an
   // internal ~6-7.5s timeout when amsengagementd is cold-starting on a fresh simulator.
-  private let purchaseTimeout: TimeInterval = 10
+  private let purchaseTimeout: TimeInterval = 60
   private var session: SKTestSession!
   private var plugin: InAppPurchasePlugin!
   private var callback: FakeIAP2Callback!
