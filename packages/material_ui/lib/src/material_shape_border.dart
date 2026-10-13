@@ -20,6 +20,11 @@ import 'shapes/rounded_polygon.dart';
 /// widget it is applied to.
 ///
 /// Typically used with a [ShapeDecoration] to draw a material-shaped border.
+///
+/// Lerping between two [MaterialShapeBorder]s morphs one shape into the
+/// other. Lerping to or from another kind of [ShapeBorder], such as a
+/// [RoundedRectangleBorder], doesn't morph: the border switches from one to
+/// the other halfway through.
 class MaterialShapeBorder extends OutlinedBorder {
   /// Creates a [MaterialShapeBorder].
   const MaterialShapeBorder({required this.shape, super.side, this.squash = 0})
