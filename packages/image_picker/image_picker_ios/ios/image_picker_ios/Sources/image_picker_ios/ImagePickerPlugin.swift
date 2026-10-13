@@ -500,21 +500,25 @@ public final class ImagePickerPlugin: NSObject, FlutterPlugin, FLTImagePickerApi
     let maxHeight = currentCallContext?.maxSize?.height
     let desiredImageQuality = self.desiredImageQuality(currentCallContext?.imageQuality)
     let requestFullMetadata = currentCallContext?.requestFullMetadata ?? false
-    let pathList = NSMutableArray(capacity: results.count)
+    // Item-provider completions run concurrently on a private queue.
+    var pathList = [String?](repeating: nil, count: results.count)
     var saveError: FlutterError?
+    let lock = NSLock()
 
     let sendListOperation = BlockOperation {
-      if let saveError {
-        self.sendCallResult(with: saveError)
+      lock.lock()
+      let finishedError = saveError
+      let finishedPaths = pathList
+      lock.unlock()
+      if let finishedError {
+        self.sendCallResult(with: finishedError)
       } else {
-        self.sendCallResult(withSavedPathList: pathList)
+        self.sendCallResult(withSavedPathList: finishedPaths)
       }
       saveQueue = nil
     }
 
-    for result in results {
-      pathList.add(NSNull())
-      let index = pathList.count - 1
+    for (index, result) in results.enumerated() {
       guard
         let saveOperation = FLTPHPickerSaveImageToPathOperation(
           result: result,
@@ -523,6 +527,8 @@ public final class ImagePickerPlugin: NSObject, FlutterPlugin, FLTImagePickerApi
           desiredImageQuality: desiredImageQuality,
           fullMetadata: requestFullMetadata,
           savedPathBlock: { savedPath, error in
+            lock.lock()
+            defer { lock.unlock() }
             if let savedPath {
               pathList[index] = savedPath
             } else {
@@ -559,7 +565,7 @@ public final class ImagePickerPlugin: NSObject, FlutterPlugin, FLTImagePickerApi
             details: nil))
         return
       }
-      sendCallResult(withSavedPathList: [destination.path] as NSArray)
+      sendCallResult(withSavedPathList: [destination.path])
     } else {
       var image = info[.editedImage] as? UIImage
       if image == nil {
@@ -614,7 +620,7 @@ public final class ImagePickerPlugin: NSObject, FlutterPlugin, FLTImagePickerApi
     let savedPath = FLTImagePickerPhotoAssetUtil.saveImage(
       withOriginalImageData: originalImageData, image: image ?? UIImage(),
       maxWidth: maxWidth, maxHeight: maxHeight, imageQuality: imageQuality)
-    sendCallResult(withSavedPathList: [savedPath] as NSArray)
+    sendCallResult(withSavedPathList: [savedPath])
   }
 
   func saveImage(
@@ -622,16 +628,16 @@ public final class ImagePickerPlugin: NSObject, FlutterPlugin, FLTImagePickerApi
   ) {
     let savedPath = FLTImagePickerPhotoAssetUtil.saveImage(
       withPickerInfo: info, image: image, imageQuality: imageQuality)
-    sendCallResult(withSavedPathList: [savedPath] as NSArray)
+    sendCallResult(withSavedPathList: [savedPath])
   }
 
   /// Validates the provided paths list, then sends it via `callContext.result`.
-  func sendCallResult(withSavedPathList pathList: NSArray?) {
+  func sendCallResult(withSavedPathList pathList: [String?]?) {
     guard let callContext else {
       return
     }
 
-    if let pathList, pathList.contains(NSNull()) {
+    if let pathList, pathList.contains(where: { $0 == nil }) {
       callContext.result(
         nil,
         FlutterError(
@@ -639,7 +645,7 @@ public final class ImagePickerPlugin: NSObject, FlutterPlugin, FLTImagePickerApi
           message: "pathList's items should not be null",
           details: nil))
     } else {
-      let paths = pathList?.compactMap { $0 as? String } ?? []
+      let paths = pathList?.compactMap { $0 } ?? []
       callContext.result(paths, nil)
     }
     self.callContext = nil
