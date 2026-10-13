@@ -1,3 +1,7 @@
+## 0.4.13+2
+
+* Removes availability checks for iOS and macOS versions below the package minimum (iOS 13 and macOS 10.15).
+
 ## 0.4.13+1
 
 * Fixes `completePurchase` never completing with StoreKit 2 when the transaction
