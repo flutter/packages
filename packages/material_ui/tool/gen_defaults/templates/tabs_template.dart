@@ -37,7 +37,7 @@ class _TabsPrimaryDefaultsM3 extends TabBarThemeData {
   double? get dividerHeight => ${number(TokenDivider.thickness)};
 
   @override
-  Color? get indicatorColor => ${colorWithOpacity(TokenPrimaryNavigationTab.activeFocusStateLayerColor, TokenPrimaryNavigationTab.activeFocusStateLayerOpacity)};
+  Color? get indicatorColor => ${color(TokenPrimaryNavigationTab.activeFocusStateLayerColor)};
 
   @override
   Color? get labelColor => ${color(TokenPrimaryNavigationTab.withLabelTextActiveLabelTextColor)};
