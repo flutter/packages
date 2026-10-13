@@ -24,7 +24,7 @@ class $className extends SegmentedButtonThemeData {
   late final ColorScheme _colors = _theme.colorScheme;
   @override ButtonStyle? get style {
     return ButtonStyle(
-      textStyle: WidgetStatePropertyAll<TextStyle?>(${textStyle(TokenOutlinedSegmentedButton.labelTextType, 'Theme.of(context).textTheme')}),
+      textStyle: WidgetStatePropertyAll<TextStyle?>(${textStyle(TokenOutlinedSegmentedButton.labelTextType, '_theme.textTheme')}),
       backgroundColor: WidgetStateProperty.resolveWith((Set<WidgetState> states) {
         if (states.contains(WidgetState.disabled)) {
           return null;

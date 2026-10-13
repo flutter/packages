@@ -784,10 +784,7 @@ void main() {
         contents,
         contains('class _SegmentedButtonDefaultsM3 extends SegmentedButtonThemeData'),
       );
-      expect(
-        contents,
-        contains('WidgetStatePropertyAll<TextStyle?>(Theme.of(context).textTheme.labelLarge)'),
-      );
+      expect(contents, contains('WidgetStatePropertyAll<TextStyle?>(_theme.textTheme.labelLarge)'));
       expect(contents, contains('return _colors.secondaryContainer;'));
       expect(contents, contains('return _colors.onSurface.withOpacity(0.38);'));
       expect(contents, contains('return _colors.onSecondaryContainer;'));

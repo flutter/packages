@@ -15,7 +15,7 @@ class _SegmentedButtonDefaultsM3 extends SegmentedButtonThemeData {
   @override
   ButtonStyle? get style {
     return ButtonStyle(
-      textStyle: WidgetStatePropertyAll<TextStyle?>(Theme.of(context).textTheme.labelLarge),
+      textStyle: WidgetStatePropertyAll<TextStyle?>(_theme.textTheme.labelLarge),
       backgroundColor: WidgetStateProperty.resolveWith((Set<WidgetState> states) {
         if (states.contains(WidgetState.disabled)) {
           return null;
