@@ -125,15 +125,7 @@ static UIImage *FLTImagePickerDrawScaledImage(UIImage *imageToScale, double widt
                   maxHeight:(NSNumber *)maxHeight {
   NSMutableDictionary<NSString *, id> *options = [NSMutableDictionary dictionary];
   options[(NSString *)kCGImageSourceShouldCache] = @YES;
-  NSString *gifTypeIdentifier;
-  if (@available(iOS 14.0, *)) {
-    gifTypeIdentifier = UTTypeGIF.identifier;
-  } else {
-    // The value of kUTTypeGIF, which is deprecated as of iOS 15 and can no longer be referenced
-    // without a warning when the deployment target is 15 or later.
-    gifTypeIdentifier = @"com.compuserve.gif";
-  }
-  options[(NSString *)kCGImageSourceTypeIdentifierHint] = gifTypeIdentifier;
+  options[(NSString *)kCGImageSourceTypeIdentifierHint] = UTTypeGIF.identifier;
 
   CGImageSourceRef imageSource =
       CGImageSourceCreateWithData((__bridge CFDataRef)data, (__bridge CFDictionaryRef)options);

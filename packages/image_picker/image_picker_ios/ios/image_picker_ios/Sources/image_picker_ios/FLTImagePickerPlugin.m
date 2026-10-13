@@ -126,22 +126,11 @@ typedef NS_ENUM(NSInteger, ImagePickerClassType) { UIImagePickerClassType, PHPic
   imagePickerController.modalPresentationStyle = UIModalPresentationCurrentContext;
   imagePickerController.delegate = self;
   NSMutableArray<NSString *> *mediaTypes = [[NSMutableArray alloc] init];
-  // The kUTType* constants are deprecated as of iOS 15 and can no longer be referenced without a
-  // warning when the deployment target is 15 or later, so use UTType where available and the
-  // constants' string values otherwise.
   if (context.includeImages) {
-    if (@available(iOS 14.0, *)) {
-      [mediaTypes addObject:UTTypeImage.identifier];
-    } else {
-      [mediaTypes addObject:@"public.image"];
-    }
+    [mediaTypes addObject:UTTypeImage.identifier];
   }
   if (context.includeVideo) {
-    if (@available(iOS 14.0, *)) {
-      [mediaTypes addObject:UTTypeMovie.identifier];
-    } else {
-      [mediaTypes addObject:@"public.movie"];
-    }
+    [mediaTypes addObject:UTTypeMovie.identifier];
     imagePickerController.videoQuality = UIImagePickerControllerQualityTypeHigh;
   }
   imagePickerController.mediaTypes = mediaTypes;
