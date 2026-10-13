@@ -293,7 +293,7 @@ public final class VideoPlayerPlugin: NSObject, FlutterPlugin, AVFoundationVideo
     }
 
     // Set up the event channel.
-    let eventBridge = FVPEventBridge(
+    let eventBridge = EventBridge(
       messenger: binaryMessenger,
       channelName: "flutter.dev/videoPlayer/videoEvents\(channelSuffix)"
     )

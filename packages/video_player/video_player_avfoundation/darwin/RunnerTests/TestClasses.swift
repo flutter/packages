@@ -264,7 +264,7 @@ final class StubFVPDisplayLinkFactory: DisplayLinkFactory {
   }
 }
 
-final class StubEventListener: NSObject, FVPVideoEventListener {
+final class StubEventListener: NSObject, VideoEventListener {
   var onInitialized: (() -> Void)?
   private(set) var initializationDuration: Int64 = 0
   private(set) var initializationSize: CGSize = .zero
