@@ -1,7 +1,3 @@
-## NEXT
-
-* Removes availability checks for iOS versions below the package minimum iOS 16.
-
 ## 2.19.0
 
 * Adds support for tapping points of interest on the map.
