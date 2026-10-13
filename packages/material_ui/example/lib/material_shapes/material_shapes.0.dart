@@ -129,7 +129,7 @@ class _MaterialShapesExampleState extends State<MaterialShapesExample>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Material Shapes Sample')),
+      appBar: AppBar(title: const Text('Material 3 Expressive Shapes Sample')),
       body: Center(
         child: ConstrainedBox(
           constraints: const BoxConstraints(maxWidth: 300, maxHeight: 300),
