@@ -871,24 +871,6 @@ void main() {
       variant: TargetPlatformVariant.only(TargetPlatform.android),
       skip: kIsWeb, // [intended] rasterization is not used on the web.
     );
-
-    testWidgets(
-      'passes allowEnterRouteSnapshotting to FadeForwardsPageTransitionsBuilder',
-      (WidgetTester tester) async {
-        await tester.pumpWidget(
-          buildApp(const PredictiveBackPageTransitionsBuilder(allowEnterRouteSnapshotting: false)),
-        );
-
-        expect(await pushAndPop(tester), (
-          pushExiting: true,
-          pushEntering: false,
-          popExiting: true,
-          popEntering: false,
-        ));
-      },
-      variant: TargetPlatformVariant.only(TargetPlatform.android),
-      skip: kIsWeb, // [intended] rasterization is not used on the web.
-    );
   });
 }
 

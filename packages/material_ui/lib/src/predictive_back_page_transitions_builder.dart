@@ -48,11 +48,7 @@ import 'page_transitions_theme.dart';
 class PredictiveBackPageTransitionsBuilder extends PageTransitionsBuilder {
   /// Creates an instance of a [PageTransitionsBuilder] that matches Android U's
   /// predictive back transition.
-  const PredictiveBackPageTransitionsBuilder({
-    this.fallbackColor,
-    this._allowSnapshotting = true,
-    this._allowEnterRouteSnapshotting = true,
-  });
+  const PredictiveBackPageTransitionsBuilder({this.fallbackColor, this._allowSnapshotting = true});
 
   /// Whether page transitions will prefer to animate a snapshot of the entering
   /// and exiting routes.
@@ -67,16 +63,6 @@ class PredictiveBackPageTransitionsBuilder extends PageTransitionsBuilder {
   /// while the route animation plays may appear frozen - unless they are a hero
   /// animation or something that is drawn in a separate overlay.
   final bool _allowSnapshotting;
-
-  /// Whether to enable snapshotting on the entering route during the
-  /// transition animation.
-  ///
-  /// If not specified, defaults to true.
-  ///
-  /// If false, the route snapshotting will not be applied to the route being
-  /// animating into, e.g. when transitioning from route A to route B, B will
-  /// not be snapshotted.
-  final bool _allowEnterRouteSnapshotting;
 
   /// The color of the scrim (background) when the predictive back transition is
   /// not supported.
@@ -124,7 +110,6 @@ class PredictiveBackPageTransitionsBuilder extends PageTransitionsBuilder {
 
             return FadeForwardsPageTransitionsBuilder(
               allowSnapshotting: _allowSnapshotting,
-              allowEnterRouteSnapshotting: _allowEnterRouteSnapshotting,
               backgroundColor: fallbackColor,
             ).buildTransitions(route, context, animation, secondaryAnimation, child);
           },
