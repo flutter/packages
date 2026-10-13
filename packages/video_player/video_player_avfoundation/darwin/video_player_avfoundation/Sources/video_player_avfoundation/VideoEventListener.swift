@@ -8,24 +8,23 @@ import Foundation
 ///
 /// This is an abstraction around the event channel to avoid coupling VideoPlayer directly to
 /// implementation details specific to the plugin communication method.
-protocol VideoEventListener: AnyObject {
-  // Called when the video player has initialized.
+@MainActor protocol VideoEventListener: AnyObject {
+  /// Called when the video player has initialized.
   func videoPlayerDidInitialize(withDuration duration: Int64, size: CGSize)
-  // Called if there is an error in video load or playback.
+  /// Called if there is an error in video load or playback.
   func videoPlayerDidError(withMessage errorMessage: String)
-  // Called when the video player plays to the end and then stops (i.e., looping is not enabled).
+  /// Called when the video player plays to the end and then stops (i.e., looping is not enabled).
   func videoPlayerDidComplete()
-  // Called when the video player needs to buffer more in order to play witohut stopping.
+  /// Called when the video player needs to buffer more in order to play witohut stopping.
   func videoPlayerDidStartBuffering()
-  // Called when the video player has buffered enough to likely be able to play witohut stopping.
+  /// Called when the video player has buffered enough to likely be able to play witohut stopping.
   func videoPlayerDidEndBuffering()
-  // Called when the buffered regions change.
+  /// Called when the buffered regions change.
   ///
-  /// The array elements are two-element arrays, each containing the start and duration, in
-  /// milliseconds, of a buffered region.
-  func videoPlayerDidUpdateBufferRegions(_ regions: [[NSNumber]])
-  // Called when the player starts or stops playing.
+  /// Each element in the array represents a distinct buffered region.
+  func videoPlayerDidUpdateBufferRegions(_ regions: [PlatformDurationRange])
+  /// Called when the player starts or stops playing.
   func videoPlayerDidSetPlaying(_ playing: Bool)
-  // Called when the video player has been disposed on the Dart side.
+  /// Called when the video player has been disposed on the Dart side.
   func videoPlayerWasDisposed()
 }

@@ -12,103 +12,116 @@ import Foundation
   #error("Unsupported platform.")
 #endif
 
-class EventBridge: NSObject, FlutterStreamHandler, VideoEventListener {
-
-  /// The event channel to dispatch notifications to.
-  // TODO(stuartmorgan): Convert this to Pigeon event channels.
-  private let eventChannel: FlutterEventChannel
-
+@MainActor class EventBridge: VideoEventsStreamHandler, VideoEventListener {
   /// The event sink associated with eventChannel.
   ///
   /// Will be nil both before the channel listener is ready on the Dart side, and after it has been
   /// closed on the Dart side.
-  private var eventSink: FlutterEventSink?
+  private var eventSink: PigeonEventSink<PlatformVideoEvent>?
 
   /// A queue of events received before eventSink is ready, to dispatch once the channel is fully
   /// set up.
   private var queuedEvents: [Any]? = []
 
-  init(messenger: FlutterBinaryMessenger, channelName: String) {
-    self.eventChannel = FlutterEventChannel(
-      name: channelName,
-      binaryMessenger: messenger
-    )
+  init(messenger: FlutterBinaryMessenger, channelSuffix: String) {
     super.init()
-
-    // This retain loop is broken in videoPlayerWasDisposed.
-    self.eventChannel.setStreamHandler(self)
+    VideoEventsStreamHandler.register(
+      with: messenger,
+      instanceName: channelSuffix,
+      streamHandler: self,
+    )
   }
 
-  // MARK: FlutterStreamHandler
+  // MARK: VideoEventsStreamHandler
 
-  func onListen(withArguments arguments: Any?, eventSink: @escaping FlutterEventSink)
-    -> FlutterError?
-  {
-    self.eventSink = eventSink
+  override func onListen(withArguments arguments: Any?, sink: PigeonEventSink<PlatformVideoEvent>) {
+    // Work around lack of annotations in Pigeon-generated code. See
+    // https://github.com/flutter/flutter/issues/195012
+    MainActor.assumeIsolated {
+      eventSink = sink
 
-    // Send any events that came in before the sink was ready.
-    self.queuedEvents?.forEach(eventSink)
-    self.queuedEvents?.removeAll()
-
-    return nil
+      // Send any events that came in before the sink was ready.
+      if var queuedEvents = queuedEvents {
+        for event in queuedEvents {
+          switch event {
+          case let videoEvent as PlatformVideoEvent:
+            sink.success(videoEvent)
+          case let errorEvent as FlutterError:
+            sink.error(
+              code: errorEvent.code, message: errorEvent.message, details: errorEvent.details)
+          default:
+            assertionFailure("Invalid event type")
+          }
+        }
+        queuedEvents.removeAll()
+      }
+    }
   }
 
-  func onCancel(withArguments arguments: Any?) -> FlutterError? {
-    self.eventSink = nil
-    // No need to queue events coming in after this point; nil the queue so they will be discarded.
-    self.queuedEvents = nil
-    return nil
+  override func onCancel(withArguments arguments: Any?) {
+    // Work around lack of annotations in Pigeon-generated code. See
+    // https://github.com/flutter/flutter/issues/195012
+    MainActor.assumeIsolated {
+      eventSink = nil
+      // No need to queue events coming in after this point; nil the queue so they will be discarded.
+      queuedEvents = nil
+    }
   }
 
   // MARK: FVPVideoEventListener
 
   func videoPlayerDidInitialize(withDuration duration: Int64, size: CGSize) {
-    sendOrQueue([
-      "event": "initialized",
-      "duration": NSNumber(value: duration),
-      "width": NSNumber(value: size.width),
-      "height": NSNumber(value: size.height),
-    ])
+    sendOrQueueEvent(
+      InitializationEvent(durationMilliseconds: duration, width: size.width, height: size.height))
   }
 
   func videoPlayerDidError(withMessage errorMessage: String) {
-    sendOrQueue(FlutterError(code: "VideoError", message: errorMessage, details: nil))
+    sendOrQueueError(FlutterError(code: "VideoError", message: errorMessage, details: nil))
   }
 
   func videoPlayerDidComplete() {
-    sendOrQueue(["event": "completed"])
+    sendOrQueueEvent(PlaybackCompleteEvent())
   }
 
   func videoPlayerDidStartBuffering() {
-    sendOrQueue(["event": "bufferingStart"])
+    sendOrQueueEvent(BufferingStartEvent())
   }
 
   func videoPlayerDidEndBuffering() {
-    sendOrQueue(["event": "bufferingEnd"])
+    sendOrQueueEvent(BufferingEndEvent())
   }
 
-  func videoPlayerDidUpdateBufferRegions(_ regions: [[NSNumber]]) {
-    sendOrQueue(["event": "bufferingUpdate", "values": regions])
+  func videoPlayerDidUpdateBufferRegions(_ regions: [PlatformDurationRange]) {
+    sendOrQueueEvent(BufferingUpdateEvent(bufferedRanges: regions))
   }
 
   func videoPlayerDidSetPlaying(_ playing: Bool) {
-    sendOrQueue(["event": "isPlayingStateUpdate", "isPlaying": NSNumber(value: playing)])
+    sendOrQueueEvent(IsPlayingStateEvent(isPlaying: playing))
   }
 
   func videoPlayerWasDisposed() {
-    eventChannel.setStreamHandler(nil)
+    // Ignore any future events
+    eventSink = nil
+    queuedEvents = nil
   }
 
   // MARK: Private methods
 
   /// Sends the given event to the event sink if it is ready to receive events, or enqueues it to send
   /// later if not.
-  private func sendOrQueue(_ event: Any) {
+  private func sendOrQueueEvent(_ event: PlatformVideoEvent) {
     if let eventSink = self.eventSink {
-      eventSink(event)
+      eventSink.success(event)
     } else {
       self.queuedEvents?.append(event)
     }
   }
 
+  private func sendOrQueueError(_ error: FlutterError) {
+    if let eventSink = self.eventSink {
+      eventSink.error(code: error.code, message: error.message, details: error.details)
+    } else {
+      self.queuedEvents?.append(error)
+    }
+  }
 }
