@@ -1,0 +1,3 @@
+changelog: |
+  - Fixes the system back button being ignored after switching away from a `StatefulShellRoute` branch that still has an active sub-route.
+version: patch
