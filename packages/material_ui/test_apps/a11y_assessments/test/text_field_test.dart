@@ -2,6 +2,8 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'dart:ui' show SemanticsInputType;
+
 import 'package:a11y_assessments/use_cases/text_field.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';
@@ -70,5 +72,25 @@ void main() {
     final Finder findHeadingLevelOnes = find.bySemanticsLabel('TextField Demo');
     await tester.pumpAndSettle();
     expect(findHeadingLevelOnes, findsOne);
+  });
+
+  testWidgets('email text fields expose their input purpose', (WidgetTester tester) async {
+    await pumpsUseCase(tester, TextFieldUseCase());
+    await tester.pumpAndSettle();
+
+    for (final key in <Key>[const Key('enabled text field'), const Key('disabled text field')]) {
+      final Finder finder = find.byKey(key);
+      // On web, a single-line field with the email input type renders an
+      // <input autocomplete="email">. A multiline field renders a <textarea>
+      // with autocomplete="off".
+      expect(
+        tester.getSemantics(finder),
+        containsSemantics(inputType: SemanticsInputType.email, isMultiline: false),
+      );
+      final EditableText editableText = tester.widget<EditableText>(
+        find.descendant(of: finder, matching: find.byType(EditableText)),
+      );
+      expect(editableText.autofillHints, contains(AutofillHints.email));
+    }
   });
 }

@@ -37,11 +37,13 @@ class _MainWidget extends StatelessWidget {
             label: 'Input field with suffix @gmail.com',
             child: const TextField(
               key: Key('enabled text field'),
-              maxLines: null,
+              keyboardType: TextInputType.emailAddress,
+              autofillHints: <String>[AutofillHints.email],
               decoration: InputDecoration(
                 labelText: 'Email',
                 suffixText: '@gmail.com',
                 hintText: 'Enter your email',
+                hintMaxLines: 5,
               ),
             ),
           ),
@@ -49,11 +51,13 @@ class _MainWidget extends StatelessWidget {
             label: 'Input field with suffix @gmail.com',
             child: TextField(
               key: const Key('disabled text field'),
-              maxLines: null,
+              keyboardType: TextInputType.emailAddress,
+              autofillHints: const <String>[AutofillHints.email],
               decoration: const InputDecoration(
                 labelText: 'Email',
                 suffixText: '@gmail.com',
                 hintText: 'Enter your email',
+                hintMaxLines: 5,
               ),
               enabled: false,
               controller: TextEditingController(text: 'xyz'),
