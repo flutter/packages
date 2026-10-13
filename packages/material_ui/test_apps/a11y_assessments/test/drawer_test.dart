@@ -3,7 +3,6 @@
 // found in the LICENSE file.
 
 import 'package:a11y_assessments/use_cases/drawer.dart';
-import 'package:flutter/semantics.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';
 
@@ -27,17 +26,6 @@ void main() {
     final Finder findHeadingLevelOnes = find.bySemanticsLabel('drawer Demo');
     await tester.pumpAndSettle();
     expect(findHeadingLevelOnes, findsOne);
-  });
-
-  testWidgets('drawer header is a heading', (WidgetTester tester) async {
-    await pumpsUseCase(tester, DrawerUseCase());
-
-    final ScaffoldState state = tester.firstState(find.byType(Scaffold));
-    state.openEndDrawer();
-    await tester.pumpAndSettle();
-
-    final SemanticsNode header = tester.getSemantics(find.text('Drawer Header'));
-    expect(header.getSemanticsData().headingLevel, 2);
   });
 
   testWidgets('drawer exposes the selected item', (WidgetTester tester) async {

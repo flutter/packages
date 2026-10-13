@@ -42,15 +42,9 @@ class _DrawerExampleState extends State<DrawerExample> {
         child: ListView(
           padding: EdgeInsets.zero,
           children: <Widget>[
-            DrawerHeader(
-              decoration: const BoxDecoration(color: Colors.blue),
-              child: Semantics(
-                headingLevel: 2,
-                child: const Text(
-                  'Drawer Header',
-                  style: TextStyle(color: Colors.white, fontSize: 24),
-                ),
-              ),
+            const DrawerHeader(
+              decoration: BoxDecoration(color: Colors.blue),
+              child: Text('Drawer Header', style: TextStyle(color: Colors.white, fontSize: 24)),
             ),
             ListTile(
               leading: const Icon(Icons.message),
