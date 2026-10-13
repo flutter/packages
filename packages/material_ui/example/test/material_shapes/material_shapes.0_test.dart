@@ -49,7 +49,7 @@ void main() {
   ) async {
     await tester.pumpWidget(const example.MaterialShapesExampleApp());
 
-    expect(find.text('Material Shapes Sample'), findsOne);
+    expect(find.text('Material 3 Expressive Shapes Sample'), findsOne);
 
     final Finder shape = find.descendant(
       of: find.byType(example.MaterialShapesExample),
