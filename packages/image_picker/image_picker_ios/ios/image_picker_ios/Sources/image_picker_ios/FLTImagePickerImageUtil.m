@@ -129,7 +129,9 @@ static UIImage *FLTImagePickerDrawScaledImage(UIImage *imageToScale, double widt
   if (@available(iOS 14.0, *)) {
     gifTypeIdentifier = UTTypeGIF.identifier;
   } else {
-    gifTypeIdentifier = (NSString *)kUTTypeGIF;
+    // The value of kUTTypeGIF, which is deprecated as of iOS 15 and can no longer be referenced
+    // without a warning when the deployment target is 15 or later.
+    gifTypeIdentifier = @"com.compuserve.gif";
   }
   options[(NSString *)kCGImageSourceTypeIdentifierHint] = gifTypeIdentifier;
 

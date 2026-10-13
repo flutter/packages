@@ -1,3 +1,7 @@
+## 0.8.13+12
+
+* Stops referencing the deprecated `kUTTypeGIF`, `kUTTypeImage`, and `kUTTypeMovie` constants, which are compile errors when building with Xcode 27.
+
 ## 0.8.13+11
 
 * Adds an injectable protocol seam for PHImageManager image data requests.

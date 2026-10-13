@@ -103,7 +103,9 @@
   if (@available(iOS 14.0, *)) {
     imageType = (__bridge CFStringRef)UTTypeGIF.identifier;
   } else {
-    imageType = kUTTypeGIF;
+    // The value of kUTTypeGIF, which is deprecated as of iOS 15 and can no longer be referenced
+    // without a warning when the deployment target is 15 or later.
+    imageType = CFSTR("com.compuserve.gif");
   }
   CGImageDestinationRef destination = CGImageDestinationCreateWithURL(
       (__bridge CFURLRef)[NSURL fileURLWithPath:path], imageType, gifInfo.images.count, NULL);
