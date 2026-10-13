@@ -3,6 +3,7 @@
 // found in the LICENSE file.
 
 import 'package:flutter/widgets.dart';
+import 'package:meta/meta.dart';
 
 /// Marks whether the subtree below it belongs to the currently active branch
 /// of a `StatefulShellRoute`.
@@ -11,6 +12,7 @@ import 'package:flutter/widgets.dart';
 /// inactive ones. Widgets that must only take effect for the branch the user
 /// is currently looking at can use [isActiveBranchOf] to find out whether they
 /// are part of the active branch.
+@internal
 class ActiveBranchScope extends InheritedWidget {
   /// Constructs an [ActiveBranchScope].
   const ActiveBranchScope({required this.isActive, required super.child, super.key});

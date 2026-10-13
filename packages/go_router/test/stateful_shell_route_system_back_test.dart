@@ -161,14 +161,93 @@ void main() {
       // still has an active sub-route.
       expect(_branchCanPopValues(tester), <bool>[true, true]);
     });
+
+    testWidgets(
+      'Preloaded branch (preload: true) with deep initialLocation does not veto pop while inactive, and guards shell once activated',
+      (WidgetTester tester) async {
+        final router = GoRouter(
+          initialLocation: '/home',
+          routes: <RouteBase>[
+            StatefulShellRoute.indexedStack(
+              builder: (BuildContext context, GoRouterState state, StatefulNavigationShell shell) =>
+                  Scaffold(
+                    body: shell,
+                    bottomNavigationBar: Row(
+                      children: <Widget>[
+                        FilledButton(
+                          key: const Key('toHome'),
+                          onPressed: () => shell.goBranch(0),
+                          child: const Text('Home'),
+                        ),
+                        FilledButton(
+                          key: const Key('toSettings'),
+                          onPressed: () => shell.goBranch(1),
+                          child: const Text('Settings'),
+                        ),
+                      ],
+                    ),
+                  ),
+              branches: <StatefulShellBranch>[
+                StatefulShellBranch(
+                  routes: <RouteBase>[
+                    GoRoute(
+                      path: '/home',
+                      builder: (BuildContext context, GoRouterState state) =>
+                          const Scaffold(body: Text('Home Screen')),
+                    ),
+                  ],
+                ),
+                StatefulShellBranch(
+                  preload: true,
+                  initialLocation: '/settings/general',
+                  routes: <RouteBase>[
+                    GoRoute(
+                      path: '/settings',
+                      builder: (BuildContext context, GoRouterState state) =>
+                          const Scaffold(body: Text('Settings Screen')),
+                      routes: <RouteBase>[
+                        GoRoute(
+                          path: 'general',
+                          builder: (BuildContext context, GoRouterState state) =>
+                              const Scaffold(body: Text('General Screen')),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ],
+        );
+        addTearDown(router.dispose);
+
+        await tester.pumpWidget(MaterialApp.router(routerConfig: router));
+        await tester.pumpAndSettle();
+
+        expect(_branchCanPopValues(tester), <bool>[true, true]);
+        expect(await tester.binding.handlePopRoute(), isFalse);
+
+        await tester.tap(find.byKey(const Key('toSettings')));
+        await tester.pumpAndSettle();
+        expect(find.text('General Screen'), findsOneWidget);
+        expect(_branchCanPopValues(tester), <bool>[true, false]);
+
+        expect(await tester.binding.handlePopRoute(), isTrue);
+        await tester.pumpAndSettle();
+        expect(find.text('Settings Screen'), findsOneWidget);
+        expect(_branchCanPopValues(tester), <bool>[true, true]);
+      },
+    );
   });
 }
 
 /// The `canPop` value of the [PopScope] wrapping each branch Navigator, in
 /// branch order.
 List<bool> _branchCanPopValues(WidgetTester tester) => tester
-    .widgetList(find.byWidgetPredicate((Widget widget) => widget is PopScope, skipOffstage: false))
-    .map((Widget widget) => (widget as PopScope).canPop)
+    .widgetList<PopScope<Object?>>(
+      find.byWidgetPredicate((Widget widget) => widget is PopScope, skipOffstage: false),
+    )
+    .map((PopScope<Object?> widget) => widget.canPop)
     .toList();
 
 class _TestApp extends StatefulWidget {
