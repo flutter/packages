@@ -103,6 +103,11 @@ class Dialog extends StatelessWidget {
   /// Creates a fullscreen dialog.
   ///
   /// Typically used in conjunction with [showDialog].
+  ///
+  /// The dialog's [Material] covers the whole screen, including the area
+  /// behind the software keyboard, while [child] is kept above the keyboard,
+  /// so that a translucent keyboard shows the dialog's [backgroundColor]
+  /// rather than what is behind the dialog.
   const Dialog.fullscreen({
     super.key,
     this.backgroundColor,
@@ -277,36 +282,10 @@ class Dialog extends StatelessWidget {
     final BoxConstraints boxConstraints =
         constraints ?? dialogTheme.constraints ?? const BoxConstraints(minWidth: 280.0);
 
-    Widget dialogChild;
-
-    if (_fullscreen) {
-      dialogChild = Material(
-        color: backgroundColor ?? dialogTheme.backgroundColor ?? defaults.backgroundColor,
-        child: child,
-      );
-    } else {
-      dialogChild = Align(
-        alignment: alignment ?? dialogTheme.alignment ?? defaults.alignment!,
-        child: ConstrainedBox(
-          constraints: boxConstraints,
-          child: Material(
-            color: backgroundColor ?? dialogTheme.backgroundColor ?? defaults.backgroundColor,
-            elevation: elevation ?? dialogTheme.elevation ?? defaults.elevation!,
-            shadowColor: shadowColor ?? dialogTheme.shadowColor ?? defaults.shadowColor,
-            surfaceTintColor:
-                surfaceTintColor ?? dialogTheme.surfaceTintColor ?? defaults.surfaceTintColor,
-            shape: shape ?? dialogTheme.shape ?? defaults.shape!,
-            type: MaterialType.card,
-            clipBehavior: clipBehavior ?? dialogTheme.clipBehavior ?? defaults.clipBehavior!,
-            child: child,
-          ),
-        ),
-      );
-    }
-
-    return Semantics(
-      role: semanticsRole,
-      child: AnimatedPadding(
+    // Keeps its child out of the view insets, such as the software keyboard,
+    // which the child then no longer needs to account for.
+    Widget avoidViewInsets(Widget child) {
+      return AnimatedPadding(
         padding: effectivePadding,
         duration: insetAnimationDuration,
         curve: insetAnimationCurve,
@@ -316,10 +295,45 @@ class Dialog extends StatelessWidget {
           removeRight: true,
           removeBottom: true,
           context: context,
-          child: dialogChild,
+          child: child,
         ),
-      ),
-    );
+      );
+    }
+
+    final Widget dialogChild;
+
+    if (_fullscreen) {
+      // The Material keeps covering the whole screen, including the area
+      // behind the keyboard, so that a translucent keyboard shows the dialog's
+      // surface rather than the modal barrier behind it. Only the content is
+      // kept above the keyboard.
+      dialogChild = Material(
+        color: backgroundColor ?? dialogTheme.backgroundColor ?? defaults.backgroundColor,
+        child: avoidViewInsets(child ?? const SizedBox.shrink()),
+      );
+    } else {
+      dialogChild = avoidViewInsets(
+        Align(
+          alignment: alignment ?? dialogTheme.alignment ?? defaults.alignment!,
+          child: ConstrainedBox(
+            constraints: boxConstraints,
+            child: Material(
+              color: backgroundColor ?? dialogTheme.backgroundColor ?? defaults.backgroundColor,
+              elevation: elevation ?? dialogTheme.elevation ?? defaults.elevation!,
+              shadowColor: shadowColor ?? dialogTheme.shadowColor ?? defaults.shadowColor,
+              surfaceTintColor:
+                  surfaceTintColor ?? dialogTheme.surfaceTintColor ?? defaults.surfaceTintColor,
+              shape: shape ?? dialogTheme.shape ?? defaults.shape!,
+              type: MaterialType.card,
+              clipBehavior: clipBehavior ?? dialogTheme.clipBehavior ?? defaults.clipBehavior!,
+              child: child,
+            ),
+          ),
+        ),
+      );
+    }
+
+    return Semantics(role: semanticsRole, child: dialogChild);
   }
 }
 
