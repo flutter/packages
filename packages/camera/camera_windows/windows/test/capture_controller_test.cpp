@@ -1318,7 +1318,7 @@ TEST(CaptureController,
 
   ComPtr<MockCaptureSource> capture_source = new MockCaptureSource();
 
-  EXPECT_CALL(*engine, GetSource)
+  EXPECT_CALL(*engine.Get(), GetSource)
       .Times(1)
       .WillOnce(
           [src_source = capture_source](IMFCaptureSource** target_source) {
@@ -1331,7 +1331,7 @@ TEST(CaptureController,
   uint32_t mock_preview_height = 1;
 
   EXPECT_CALL(
-      *capture_source,
+      *capture_source.Get(),
       GetAvailableDeviceMediaType(
           Eq((DWORD)
                  MF_CAPTURE_ENGINE_PREFERRED_SOURCE_STREAM_FOR_VIDEO_PREVIEW),
@@ -1348,7 +1348,7 @@ TEST(CaptureController,
       });
 
   EXPECT_CALL(
-      *capture_source,
+      *capture_source.Get(),
       GetAvailableDeviceMediaType(
           Eq((DWORD)MF_CAPTURE_ENGINE_PREFERRED_SOURCE_STREAM_FOR_VIDEO_RECORD),
           _, _))
@@ -1365,7 +1365,7 @@ TEST(CaptureController,
 
   // Photo stream is not available, so it should fall back to record stream.
   EXPECT_CALL(
-      *capture_source,
+      *capture_source.Get(),
       GetAvailableDeviceMediaType(
           Eq((DWORD)MF_CAPTURE_ENGINE_PREFERRED_SOURCE_STREAM_FOR_PHOTO), _, _))
       .WillRepeatedly(Return(MF_E_INVALIDSTREAMNUMBER));
