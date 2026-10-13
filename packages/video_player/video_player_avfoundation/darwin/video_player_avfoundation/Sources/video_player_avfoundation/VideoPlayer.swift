@@ -127,7 +127,7 @@ class VideoPlayer: NSObject {
   /// Indicates whether the video player is currently playing.
   private(set) var isPlaying = false
   /// The event listener to report video events to.
-  private(set) var eventListener: FVPVideoEventListener?
+  private(set) var eventListener: VideoEventListener?
   /// A block that will be called when dispose is called.
   var onDisposed: (() -> Void)?
 
