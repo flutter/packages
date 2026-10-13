@@ -334,7 +334,7 @@ void main() {
         await tester.pump(const Duration(seconds: 1000));
         expect(tester.getTopLeft(find.widgetWithText(SizedBox, '0')), const Offset(0.0, 60.0));
 
-        mockHelper.refreshCompleter.complete(null);
+        mockHelper.refreshCompleter.complete();
         await tester.pump();
 
         expect(
@@ -623,7 +623,7 @@ void main() {
           const Rect.fromLTRB(0.0, 60.0, 800.0, 260.0),
         );
 
-        mockHelper.refreshCompleter.complete(null);
+        mockHelper.refreshCompleter.complete();
         await tester.pump();
         expect(
           mockHelper.invocations,
@@ -712,7 +712,7 @@ void main() {
           const Rect.fromLTRB(0.0, 60.0, 800.0, 260.0),
         );
 
-        mockHelper.refreshCompleter.complete(null);
+        mockHelper.refreshCompleter.complete();
         await tester.pump();
 
         expect(
@@ -775,7 +775,7 @@ void main() {
         await tester.pump();
         expect(mockHelper.invocations, contains(const RefreshTaskInvocation()));
 
-        mockHelper.refreshCompleter.complete(null);
+        mockHelper.refreshCompleter.complete();
         await tester.pump();
         expect(
           mockHelper.invocations,
@@ -888,7 +888,7 @@ void main() {
         expect(mockHelper.invocations, contains(const RefreshTaskInvocation()));
 
         // Complete the task while held down.
-        mockHelper.refreshCompleter.complete(null);
+        mockHelper.refreshCompleter.complete();
         await tester.pump();
 
         expect(
@@ -978,7 +978,7 @@ void main() {
         );
 
         // Complete the task while scrolled away.
-        mockHelper.refreshCompleter.complete(null);
+        mockHelper.refreshCompleter.complete();
         // The sliver is instantly gone since there is no overscroll physics
         // simulation.
         await tester.pump();
@@ -1384,7 +1384,7 @@ void main() {
           const Rect.fromLTRB(0.0, 60.0, 800.0, 260.0),
         );
 
-        mockHelper.refreshCompleter.complete(null);
+        mockHelper.refreshCompleter.complete();
         // The task completed between frames. The internal state goes to done
         // right away even though the sliver gets a new offset correction the
         // next frame.
@@ -1424,7 +1424,7 @@ void main() {
           RefreshIndicatorMode.armed,
         );
 
-        mockHelper.refreshCompleter.complete(null);
+        mockHelper.refreshCompleter.complete();
         expect(
           CupertinoSliverRefreshControl.state(tester.element(find.byType(LayoutBuilder))),
           RefreshIndicatorMode.done,
@@ -1521,7 +1521,7 @@ void main() {
           RefreshIndicatorMode.refresh,
         );
 
-        mockHelper.refreshCompleter.complete(null);
+        mockHelper.refreshCompleter.complete();
         // The sliver layout extent is removed on next frame.
         await tester.pump();
         expect(
@@ -1589,7 +1589,7 @@ void main() {
           const Rect.fromLTRB(0.0, 0.0, 800.0, 200.0),
         );
 
-        mockHelper.refreshCompleter.complete(null);
+        mockHelper.refreshCompleter.complete();
         await tester.pump();
         // Goes to inactive right away since the sliver is already collapsed.
         expect(

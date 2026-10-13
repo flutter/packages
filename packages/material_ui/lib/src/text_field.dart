@@ -50,7 +50,7 @@ typedef InputCounterWidgetBuilder = Widget? Function(
   required int? maxLength,
 
   /// Whether or not the TextField is currently focused. Mainly provided for
-  /// the [liveRegion] parameter in the [Semantics] widget for accessibility.
+  /// the `liveRegion` parameter in the [Semantics] widget for accessibility.
   required bool isFocused,
 });
 
@@ -447,6 +447,15 @@ class TextField extends StatefulWidget {
   ///
   /// By default, draws a horizontal line under the text field but can be
   /// configured to show an icon, label, hint text, and error text.
+  ///
+  /// This decoration does not replace the ambient [InputDecorationTheme].
+  /// Instead, it is merged with it by [InputDecoration.applyDefaults]. Only the
+  /// properties that are left null here take their value from the
+  /// [InputDecorationThemeData] returned by [InputDecorationTheme.of], which in
+  /// turn defaults to [ThemeData.inputDecorationTheme]. So, for example, when
+  /// the theme specifies a border, passing an [InputDecoration] that leaves
+  /// [InputDecoration.border] null does not remove that border; pass
+  /// [InputBorder.none] to opt out of it explicitly.
   ///
   /// Specify null to remove the decoration entirely (including the
   /// extra padding introduced by the decoration to save space for the labels).
