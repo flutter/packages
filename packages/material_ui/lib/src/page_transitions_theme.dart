@@ -417,7 +417,7 @@ class _FadeForwardsPageTransition extends StatelessWidget {
             position: _forwardTranslationTween.animate(animation),
             child: _FadeForwardsSnapshot(
               animation: animation,
-              allowSnapshotting: this.allowSnapshotting,
+              allowSnapshotting: allowSnapshotting,
               child: child,
             ),
           ),
@@ -432,7 +432,7 @@ class _FadeForwardsPageTransition extends StatelessWidget {
               position: _backwardTranslationTween.animate(animation),
               child: _FadeForwardsSnapshot(
                 animation: animation,
-                allowSnapshotting: this.allowSnapshotting,
+                allowSnapshotting: allowSnapshotting,
                 child: child,
               ),
             ),
@@ -443,7 +443,7 @@ class _FadeForwardsPageTransition extends StatelessWidget {
         context,
         secondaryAnimation,
         backgroundColor,
-        this.allowSnapshotting,
+        allowSnapshotting,
         child,
       ),
     );
@@ -737,7 +737,7 @@ class FadeForwardsPageTransitionsBuilder extends PageTransitionsBuilder {
       secondaryAnimation: secondaryAnimation,
       allowSnapshotting:
           !ZoomPageTransitionsBuilder._kProfileForceDisableSnapshotting &&
-          this.allowSnapshotting &&
+          allowSnapshotting &&
           (route?.allowSnapshotting ?? true),
       backgroundColor: backgroundColor,
       child: child,
