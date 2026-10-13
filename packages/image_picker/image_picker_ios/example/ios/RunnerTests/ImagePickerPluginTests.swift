@@ -236,7 +236,7 @@ struct ImagePickerPluginTests {
   ///
   /// That callback runs synchronously on this thread.
   private func captureSendResult(
-    _ plugin: ImagePickerPlugin, pathList: [Any]?
+    _ plugin: ImagePickerPlugin, pathList: [String?]?
   ) -> (result: [String]?, error: FlutterError?) {
     var received: [String]?
     var receivedError: FlutterError?
@@ -244,13 +244,13 @@ struct ImagePickerPluginTests {
       received = result
       receivedError = error
     }
-    plugin.sendCallResult(withSavedPathList: pathList as NSArray?)
+    plugin.sendCallResult(withSavedPathList: pathList)
     return (received, receivedError)
   }
 
   @Test func pluginMultiImagePathHasNullItem() {
     let plugin = ImagePickerPlugin(viewProvider: StubViewProvider())
-    let (_, error) = captureSendResult(plugin, pathList: [NSNull()])
+    let (_, error) = captureSendResult(plugin, pathList: [nil])
     #expect(error?.code == "create_error")
   }
 
@@ -507,7 +507,7 @@ struct ImagePickerPluginTests {
         }
         confirmed()
       }
-      plugin.sendCallResult(withSavedPathList: ["a", "b"] as NSArray)
+      plugin.sendCallResult(withSavedPathList: ["a", "b"])
     }
   }
 
@@ -528,7 +528,7 @@ struct ImagePickerPluginTests {
         }
         confirmed()
       }
-      plugin.sendCallResult(withSavedPathList: ["a", "b"] as NSArray)
+      plugin.sendCallResult(withSavedPathList: ["a", "b"])
     }
   }
 
