@@ -43,11 +43,15 @@ Future<void> main(List<String> args) async {
     'NativeInteropHostIntegrationCoreApiSetup',
     'NativeInteropFlutterIntegrationCoreApiBridge',
     'NativeInteropFlutterIntegrationCoreApiRegistrar',
+    'NativeInteropReservedNamesHostApiSetup',
+    'NativeInteropReservedNamesFlutterApiBridge',
+    'NativeInteropReservedNamesFlutterApiRegistrar',
     'NativeInteropUnusedClassBridge',
     'NativeInteropAllTypesBridge',
     'NativeInteropAllNullableTypesBridge',
     'NativeInteropAllNullableTypesWithoutRecursionBridge',
     'NativeInteropAllClassesWrapperBridge',
+    'NativeInteropReservedNamesBridge',
     'NativeInteropTestsError',
   };
   final enums = <String>{
