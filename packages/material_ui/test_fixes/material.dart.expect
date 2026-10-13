@@ -13,12 +13,12 @@ void main() {
   Object object;
 
   // Changes made in https://github.com/flutter/flutter/pull/26259
-  Scaffold scaffold = Scaffold(resizeToAvoidBottomPadding: true);
+  Scaffold scaffold = Scaffold(resizeToAvoidBottomInset: true);
   scaffold = Scaffold(error: '');
-  final bool resize = scaffold.resizeToAvoidBottomPadding;
+  final bool resize = scaffold.resizeToAvoidBottomInset;
 
   // Change made in https://github.com/flutter/flutter/pull/15303
-  showDialog(child: Text('Fix me.'));
+  showDialog(builder: (context) => Text('Fix me.'));
   showDialog(error: '');
 
   // Changes made in https://github.com/flutter/flutter/pull/44189
@@ -32,7 +32,7 @@ void main() {
   element.ancestorRenderObjectOfType(TypeMatcher<targetType>());
 
   // Changes made in https://github.com/flutter/flutter/pull/45941 and https://github.com/flutter/flutter/pull/83843
-  final WidgetsBinding binding = WidgetsBinding.instance!;
+  final WidgetsBinding binding = WidgetsBinding.instance;
   binding.deferFirstFrameReport();
   binding.allowFirstFrameReport();
 
@@ -69,15 +69,15 @@ void main() {
   final autoMode = formField.autovalidate;
 
   // Changes made in https://github.com/flutter/flutter/pull/61648
-  const TextFormField textFormField = TextFormField(autovalidate: true);
-  const TextFormField textFormField = TextFormField(autovalidate: false);
+  const TextFormField textFormField = TextFormField(autovalidateMode: AutovalidateMode.always);
+  const TextFormField textFormField = TextFormField(autovalidateMode: AutovalidateMode.disabled);
   const TextFormField textFormField = TextFormField(error: '');
 
   // Changes made in https://github.com/flutter/flutter/pull/61648
   const DropdownButtonFormField dropDownButtonFormField =
-      DropdownButtonFormField(autovalidate: true);
+      DropdownButtonFormField(autovalidateMode: AutovalidateMode.always);
   const DropdownButtonFormField dropdownButtonFormField =
-      DropdownButtonFormField(autovalidate: false);
+      DropdownButtonFormField(autovalidateMode: AutovalidateMode.disabled);
   const DropdownButtonFormField dropdownButtonFormField =
       DropdownButtonFormField(error: '');
 
@@ -92,12 +92,12 @@ void main() {
   Navigator.of(error: '');
 
   // Changes made in https://github.com/flutter/flutter/pull/68908
-  ScaffoldMessenger.of(context, nullOk: true);
-  ScaffoldMessenger.of(context, nullOk: false);
+  ScaffoldMessenger.maybeOf(context);
+  ScaffoldMessenger.of(context);
   ScaffoldMessenger.of(error: '');
   Scaffold.of(error: '');
-  Scaffold.of(context, nullOk: true);
-  Scaffold.of(context, nullOk: false);
+  Scaffold.maybeOf(context);
+  Scaffold.of(context);
 
   // Changes made in https://github.com/flutter/flutter/pull/68910
   Router.of(context, nullOk: true);
@@ -143,18 +143,18 @@ void main() {
   SliverAnimatedList.of(context, nullOk: false);
 
   // Changes made in https://github.com/flutter/flutter/pull/68905
-  MaterialBasedCupertinoThemeData.resolveFrom(context, nullOk: true);
-  MaterialBasedCupertinoThemeData.resolveFrom(context, nullOk: false);
+  MaterialBasedCupertinoThemeData.resolveFrom(context);
+  MaterialBasedCupertinoThemeData.resolveFrom(context);
   MaterialBasedCupertinoThemeData.resolveFrom(error: '');
 
   // Changes made in https://github.com/flutter/flutter/pull/72043
-  TextField(maxLengthEnforced: true);
-  TextField(maxLengthEnforced: false);
+  TextField(maxLengthEnforcement: MaxLengthEnforcement.enforce);
+  TextField(maxLengthEnforcement: MaxLengthEnforcement.none);
   TextField(error: '');
   final TextField textField;
-  textField.maxLengthEnforced;
-  TextFormField(maxLengthEnforced: true);
-  TextFormField(maxLengthEnforced: false);
+  textField.maxLengthEnforcement;
+  TextFormField(maxLengthEnforcement: MaxLengthEnforcement.enforce);
+  TextFormField(maxLengthEnforcement: MaxLengthEnforcement.none);
   TextFormField(error: '');
 
   // Changes made in https://github.com/flutter/flutter/pull/59127
@@ -167,7 +167,7 @@ void main() {
   bottomNavigationBarItem.title;
 
   // Changes made in https://github.com/flutter/flutter/pull/65246
-  RectangularSliderTrackShape(disabledThumbGapWidth: 2.0);
+  RectangularSliderTrackShape();
   RectangularSliderTrackShape(error: '');
 
   // Changes made in https://github.com/flutter/flutter/pull/79160
@@ -238,65 +238,58 @@ void main() {
   notification.disallowGlow();
 
   // Changes made in https://github.com/flutter/flutter/pull/96115
-  Icon icon = Icons.pie_chart_outlined;
+  Icon icon = Icons.pie_chart_outline;
 
   // Changes made in https://github.com/flutter/flutter/pull/96957
-  Scrollbar scrollbar = Scrollbar(isAlwaysShown: true);
-  bool nowShowing = scrollbar.isAlwaysShown;
+  Scrollbar scrollbar = Scrollbar(thumbVisibility: true);
+  bool nowShowing = scrollbar.thumbVisibility;
   ScrollbarThemeData scrollbarTheme = ScrollbarThemeData(
-    isAlwaysShown: nowShowing,
+    thumbVisibility: nowShowing,
   );
-  scrollbarTheme.copyWith(isAlwaysShown: nowShowing);
-  scrollbarTheme.isAlwaysShown;
+  scrollbarTheme.copyWith(thumbVisibility: nowShowing);
+  scrollbarTheme.thumbVisibility;
   RawScrollbar rawScrollbar = RawScrollbar(isAlwaysShown: true);
   nowShowing = rawScrollbar.isAlwaysShown;
 
   // Changes made in https://github.com/flutter/flutter/pull/96174
   Chip chip = Chip();
-  chip = Chip(useDeleteButtonTooltip: false);
-  chip = Chip(useDeleteButtonTooltip: true);
+  chip = Chip(deleteButtonTooltipMessage: '');
+  chip = Chip();
   chip = Chip(
-    useDeleteButtonTooltip: false,
     deleteButtonTooltipMessage: 'Delete Tooltip',
   );
-  chip.useDeleteButtonTooltip;
+  chip.deleteButtonTooltipMessage;
 
   // Changes made in https://github.com/flutter/flutter/pull/96174
   InputChip inputChip = InputChip();
-  inputChip = InputChip(useDeleteButtonTooltip: false);
-  inputChip = InputChip(useDeleteButtonTooltip: true);
+  inputChip = InputChip(deleteButtonTooltipMessage: '');
+  inputChip = InputChip();
   inputChip = InputChip(
-    useDeleteButtonTooltip: false,
     deleteButtonTooltipMessage: 'Delete Tooltip',
   );
-  inputChip.useDeleteButtonTooltip;
+  inputChip.deleteButtonTooltipMessage;
 
   // Changes made in https://github.com/flutter/flutter/pull/96174
   RawChip rawChip = Rawchip();
-  rawChip = RawChip(useDeleteButtonTooltip: false);
-  rawChip = RawChip(useDeleteButtonTooltip: true);
+  rawChip = RawChip(deleteButtonTooltipMessage: '');
+  rawChip = RawChip();
   rawChip = RawChip(
-    useDeleteButtonTooltip: false,
     deleteButtonTooltipMessage: 'Delete Tooltip',
   );
-  rawChip.useDeleteButtonTooltip;
+  rawChip.deleteButtonTooltipMessage;
 
   // Change made in https://github.com/flutter/flutter/pull/100381
   TextSelectionOverlay.fadeDuration;
 
   // Changes made in https://github.com/flutter/flutter/pull/105291
   ButtonStyle elevationButtonStyle = ElevatedButton.styleFrom(
-    primary: Colors.blue,
-    onPrimary: Colors.white,
-    onSurface: Colors.grey,
+    foregroundColor: Colors.white, backgroundColor: Colors.blue, disabledForegroundColor: Colors.grey.withValues(alpha: 0.38), disabledBackgroundColor: Colors.grey.withValues(alpha: 0.12),
   );
   ButtonStyle outlinedButtonStyle = OutlinedButton.styleFrom(
-    primary: Colors.blue,
-    onSurface: Colors.grey,
+    foregroundColor: Colors.blue, disabledForegroundColor: Colors.grey.withValues(alpha: 0.38),
   );
   ButtonStyle textButtonStyle = TextButton.styleFrom(
-    primary: Colors.blue,
-    onSurface: Colors.grey,
+    foregroundColor: Colors.blue, disabledForegroundColor: Colors.grey.withValues(alpha: 0.38),
   );
 
   // Changes made in https://github.com/flutter/flutter/pull/78588
@@ -304,11 +297,11 @@ void main() {
   scrollBehavior.buildViewportChrome(context, child, axisDirection);
   final MaterialScrollBehavior materialScrollBehavior =
       MaterialScrollBehavior();
-  materialScrollBehavior.buildViewportChrome(context, child, axisDirection);
+  materialScrollBehavior.buildOverscrollIndicator(context, child, axisDirection);
 
   // Changes made in https://github.com/flutter/flutter/pull/111706
-  Scrollbar scrollbar = Scrollbar(showTrackOnHover: true);
-  bool nowShowing = scrollbar.showTrackOnHover;
+  Scrollbar scrollbar = Scrollbar(trackVisibility: true);
+  bool nowShowing = scrollbar.trackVisibility;
   // The 3 expressions below have `bulkApply` set to true thus can't be tested yet.
   //ScrollbarThemeData scrollbarTheme = ScrollbarThemeData(showTrackOnHover: nowShowing);
   //scrollbarTheme.copyWith(showTrackOnHover: nowShowing);
@@ -325,9 +318,9 @@ void main() {
   final Clip clip = details.clipBehavior;
 
   // Changes made in https://github.com/flutter/flutter/pull/134417
-  const Curve curve = standardEasing;
-  const Curve curve = accelerateEasing;
-  const Curve curve = decelerateEasing;
+  const Curve curve = Easing.legacy;
+  const Curve curve = Easing.legacyAccelerate;
+  const Curve curve = Easing.legacyDecelerate;
 
   final PlatformMenuBar platformMenuBar = PlatformMenuBar(
     menus: <PlatformMenuItem>[],
@@ -336,20 +329,20 @@ void main() {
   final Widget bodyValue = platformMenuBar.body;
 
   // Changes made in https://github.com/flutter/flutter/pull/154972
-  final InputBorder outlineBorder = MaterialStateOutlineInputBorder.resolveWith(
+  final InputBorder outlineBorder = WidgetStateInputBorder.resolveWith(
     (states) => const OutlineInputBorder(),
   );
   final InputBorder underlineBorder =
-      MaterialStateUnderlineInputBorder.resolveWith(
+      WidgetStateInputBorder.resolveWith(
         (states) => const UnderlineInputBorder(),
       );
 
   // Changes made in https://github.com/flutter/flutter/pull/162223
-  const SliderThemeData(showValueIndicator: ShowValueIndicator.always);
+  const SliderThemeData(showValueIndicator: ShowValueIndicator.onDrag);
 
   // Changes made in https://github.com/flutter/flutter/pull/166382
-  Switch(activeColor: Colors.red, value: false, onChanged: null);
-  SwitchListTile(activeColor: Colors.red, value: false, onChanged: null);
+  Switch(activeThumbColor: Colors.red, value: false, onChanged: null);
+  SwitchListTile(activeThumbColor: Colors.red, value: false, onChanged: null);
 
   // Changes made in https://github.com/flutter/flutter/pull/179776
   PageTransitionsTheme(
