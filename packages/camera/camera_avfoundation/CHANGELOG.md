@@ -1,3 +1,7 @@
+## 0.11.0+1
+
+* Removes availability checks for iOS versions below the package minimum iOS 13.
+
 ## 0.11.0
 
 * Adds support for custom video output path in video recording.
