@@ -2,124 +2,101 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import '../data/outlined_segmented_button.dart';
 import 'template.dart';
 
-class SegmentedButtonTemplate extends TokenTemplate {
-  const SegmentedButtonTemplate(
-    this.tokenGroup,
-    super.blockName,
-    super.fileName,
-    super.tokens, {
-    super.colorSchemePrefix = '_colors.',
-  });
-
-  final String tokenGroup;
-
-  String _layerOpacity(String layerToken) {
-    if (tokenAvailable(layerToken)) {
-      final layerValue = getToken(layerToken) as String;
-      if (tokenAvailable(layerValue)) {
-        final String? opacityValue = opacity(layerValue);
-        if (opacityValue != null) {
-          return '.withOpacity($opacityValue)';
-        }
-      }
-    }
-    return '';
-  }
-
-  String _stateColor(String componentToken, String type, String state) {
-    final String baseColor = color('$componentToken.$type.$state.state-layer.color', '');
-    if (baseColor.isEmpty) {
-      return 'null';
-    }
-    final String opacity = _layerOpacity('$componentToken.$state.state-layer.opacity');
-    return '$baseColor$opacity';
-  }
+class SegmentedButtonTemplateM3 extends TokenTemplateM3 {
+  const SegmentedButtonTemplateM3();
 
   @override
-  String generate() =>
+  String get name => 'Segmented Button';
+
+  @override
+  String get parentFilePath => 'segmented_button.dart';
+
+  @override
+  String generateContents(String className) =>
       '''
-class _${blockName}DefaultsM3 extends SegmentedButtonThemeData {
-  _${blockName}DefaultsM3(this.context);
+class $className extends SegmentedButtonThemeData {
+  $className(this.context);
   final BuildContext context;
   late final ThemeData _theme = Theme.of(context);
   late final ColorScheme _colors = _theme.colorScheme;
   @override ButtonStyle? get style {
     return ButtonStyle(
-      textStyle: WidgetStatePropertyAll<TextStyle?>(${textStyle('$tokenGroup.label-text')}),
+      textStyle: WidgetStatePropertyAll<TextStyle?>(${textStyle(TokenOutlinedSegmentedButton.labelTextType, 'Theme.of(context).textTheme')}),
       backgroundColor: WidgetStateProperty.resolveWith((Set<WidgetState> states) {
         if (states.contains(WidgetState.disabled)) {
-          return ${componentColor('$tokenGroup.disabled')};
+          return null;
         }
         if (states.contains(WidgetState.selected)) {
-          return ${componentColor('$tokenGroup.selected.container')};
+          return ${color(TokenOutlinedSegmentedButton.selectedContainerColor)};
         }
-        return ${componentColor('$tokenGroup.unselected.container')};
+        return null;
       }),
       foregroundColor: WidgetStateProperty.resolveWith((Set<WidgetState> states) {
         if (states.contains(WidgetState.disabled)) {
-          return ${componentColor('$tokenGroup.disabled.label-text')};
+          return ${colorWithOpacity(TokenOutlinedSegmentedButton.disabledLabelTextColor, TokenOutlinedSegmentedButton.disabledLabelTextOpacity)};
         }
         if (states.contains(WidgetState.selected)) {
           if (states.contains(WidgetState.pressed)) {
-            return ${componentColor('$tokenGroup.selected.pressed.label-text')};
+            return ${color(TokenOutlinedSegmentedButton.selectedPressedLabelTextColor)};
           }
           if (states.contains(WidgetState.hovered)) {
-            return ${componentColor('$tokenGroup.selected.hover.label-text')};
+            return ${color(TokenOutlinedSegmentedButton.selectedHoverLabelTextColor)};
           }
           if (states.contains(WidgetState.focused)) {
-            return ${componentColor('$tokenGroup.selected.focus.label-text')};
+            return ${color(TokenOutlinedSegmentedButton.selectedFocusLabelTextColor)};
           }
-          return ${componentColor('$tokenGroup.selected.label-text')};
+          return ${color(TokenOutlinedSegmentedButton.selectedLabelTextColor)};
         } else {
           if (states.contains(WidgetState.pressed)) {
-            return ${componentColor('$tokenGroup.unselected.pressed.label-text')};
+            return ${color(TokenOutlinedSegmentedButton.unselectedPressedLabelTextColor)};
           }
           if (states.contains(WidgetState.hovered)) {
-            return ${componentColor('$tokenGroup.unselected.hover.label-text')};
+            return ${color(TokenOutlinedSegmentedButton.unselectedHoverLabelTextColor)};
           }
           if (states.contains(WidgetState.focused)) {
-            return ${componentColor('$tokenGroup.unselected.focus.label-text')};
+            return ${color(TokenOutlinedSegmentedButton.unselectedFocusLabelTextColor)};
           }
-          return ${componentColor('$tokenGroup.unselected.label-text')};
+          return ${color(TokenOutlinedSegmentedButton.unselectedLabelTextColor)};
         }
       }),
       overlayColor: WidgetStateProperty.resolveWith((Set<WidgetState> states) {
         if (states.contains(WidgetState.selected)) {
           if (states.contains(WidgetState.pressed)) {
-            return ${_stateColor(tokenGroup, 'selected', 'pressed')};
+            return ${colorWithOpacity(TokenOutlinedSegmentedButton.selectedPressedStateLayerColor, TokenOutlinedSegmentedButton.pressedStateLayerOpacity)};
           }
           if (states.contains(WidgetState.hovered)) {
-            return ${_stateColor(tokenGroup, 'selected', 'hover')};
+            return ${colorWithOpacity(TokenOutlinedSegmentedButton.selectedHoverStateLayerColor, TokenOutlinedSegmentedButton.hoverStateLayerOpacity)};
           }
           if (states.contains(WidgetState.focused)) {
-            return ${_stateColor(tokenGroup, 'selected', 'focus')};
+            return ${colorWithOpacity(TokenOutlinedSegmentedButton.selectedFocusStateLayerColor, TokenOutlinedSegmentedButton.focusStateLayerOpacity)};
           }
         } else {
           if (states.contains(WidgetState.pressed)) {
-            return ${_stateColor(tokenGroup, 'unselected', 'pressed')};
+            return ${colorWithOpacity(TokenOutlinedSegmentedButton.unselectedPressedStateLayerColor, TokenOutlinedSegmentedButton.pressedStateLayerOpacity)};
           }
           if (states.contains(WidgetState.hovered)) {
-            return ${_stateColor(tokenGroup, 'unselected', 'hover')};
+            return ${colorWithOpacity(TokenOutlinedSegmentedButton.unselectedHoverStateLayerColor, TokenOutlinedSegmentedButton.hoverStateLayerOpacity)};
           }
           if (states.contains(WidgetState.focused)) {
-            return ${_stateColor(tokenGroup, 'unselected', 'focus')};
+            return ${colorWithOpacity(TokenOutlinedSegmentedButton.unselectedFocusStateLayerColor, TokenOutlinedSegmentedButton.focusStateLayerOpacity)};
           }
         }
         return null;
       }),
       surfaceTintColor: const WidgetStatePropertyAll<Color>(Colors.transparent),
       elevation: const WidgetStatePropertyAll<double>(0),
-      iconSize: const WidgetStatePropertyAll<double?>(${getToken('$tokenGroup.with-icon.icon.size')}),
+      iconSize: const WidgetStatePropertyAll<double?>(${number(TokenOutlinedSegmentedButton.withIconIconSize)}),
       side: WidgetStateProperty.resolveWith((Set<WidgetState> states) {
         if (states.contains(WidgetState.disabled)) {
-          return ${border("$tokenGroup.disabled.outline")};
+          return ${border(colorWithOpacity(TokenOutlinedSegmentedButton.disabledOutlineColor, TokenOutlinedSegmentedButton.disabledOutlineOpacity), width: TokenOutlinedSegmentedButton.outlineWidth)};
         }
-        return ${border("$tokenGroup.outline")};
+        return ${border(color(TokenOutlinedSegmentedButton.outlineColor), width: TokenOutlinedSegmentedButton.outlineWidth)};
       }),
-      shape: const WidgetStatePropertyAll<OutlinedBorder>(${shape(tokenGroup, '')}),
-      minimumSize: const WidgetStatePropertyAll<Size?>(Size.fromHeight(${getToken('$tokenGroup.container.height')})),
+      shape: const WidgetStatePropertyAll<OutlinedBorder>(${shape(TokenOutlinedSegmentedButton.shape, '')}),
+      minimumSize: const WidgetStatePropertyAll<Size?>(Size.fromHeight(${number(TokenOutlinedSegmentedButton.containerHeight)})),
     );
   }
   @override
@@ -134,12 +111,12 @@ class _${blockName}DefaultsM3 extends SegmentedButtonThemeData {
     final Color? unselected = overlayColor ?? unselectedColor;
     return WidgetStateProperty<Color?>.fromMap(
       <WidgetStatesConstraint, Color?>{
-        WidgetState.selected & WidgetState.pressed: selected?.withOpacity(0.1),
-        WidgetState.selected & WidgetState.hovered: selected?.withOpacity(0.08),
-        WidgetState.selected & WidgetState.focused: selected?.withOpacity(0.1),
-        WidgetState.pressed: unselected?.withOpacity(0.1),
-        WidgetState.hovered: unselected?.withOpacity(0.08),
-        WidgetState.focused: unselected?.withOpacity(0.1),
+        WidgetState.selected & WidgetState.pressed: selected?.withOpacity(${number(TokenOutlinedSegmentedButton.pressedStateLayerOpacity)}),
+        WidgetState.selected & WidgetState.hovered: selected?.withOpacity(${number(TokenOutlinedSegmentedButton.hoverStateLayerOpacity)}),
+        WidgetState.selected & WidgetState.focused: selected?.withOpacity(${number(TokenOutlinedSegmentedButton.focusStateLayerOpacity)}),
+        WidgetState.pressed: unselected?.withOpacity(${number(TokenOutlinedSegmentedButton.pressedStateLayerOpacity)}),
+        WidgetState.hovered: unselected?.withOpacity(${number(TokenOutlinedSegmentedButton.hoverStateLayerOpacity)}),
+        WidgetState.focused: unselected?.withOpacity(${number(TokenOutlinedSegmentedButton.focusStateLayerOpacity)}),
         WidgetState.any: Colors.transparent,
       },
     );

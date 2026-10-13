@@ -43,7 +43,7 @@ import '../templates/motion_template.dart';
 // import '../templates/range_slider_template.dart';
 // import '../templates/search_bar_template.dart';
 // import '../templates/search_view_template.dart';
-// import '../templates/segmented_button_template.dart';
+import '../templates/segmented_button_template.dart';
 // import '../templates/slider_template.dart';
 import '../templates/snackbar_template.dart';
 // import '../templates/surface_tint_template.dart';
@@ -775,8 +775,38 @@ void main() {
     });
 
     test('SegmentedButtonTemplateM3 emits M3 SegmentedButton defaults from tokens', () {
-      // Intentionally empty, will be implemented during migration. See:
-      // https://github.com/flutter/flutter/issues/187899
+      const template = SegmentedButtonTemplateM3();
+      expect(template.parentFilePath, 'segmented_button.dart');
+      expect(template.outputFileName, 'segmented_button_defaults_m3.g.dart');
+
+      final String contents = _generateContents(template);
+      expect(
+        contents,
+        contains('class _SegmentedButtonDefaultsM3 extends SegmentedButtonThemeData'),
+      );
+      expect(
+        contents,
+        contains('WidgetStatePropertyAll<TextStyle?>(Theme.of(context).textTheme.labelLarge)'),
+      );
+      expect(contents, contains('return _colors.secondaryContainer;'));
+      expect(contents, contains('return _colors.onSurface.withOpacity(0.38);'));
+      expect(contents, contains('return _colors.onSecondaryContainer;'));
+      expect(contents, contains('return _colors.onSurface;'));
+      expect(contents, contains('return _colors.onSecondaryContainer.withOpacity(0.1);'));
+      expect(contents, contains('return _colors.onSecondaryContainer.withOpacity(0.08);'));
+      expect(contents, contains('return _colors.onSurface.withOpacity(0.1);'));
+      expect(contents, contains('return _colors.onSurface.withOpacity(0.08);'));
+      expect(contents, contains('const WidgetStatePropertyAll<double?>(18.0)'));
+      expect(contents, contains('return BorderSide(color: _colors.onSurface.withOpacity(0.12));'));
+      expect(contents, contains('return BorderSide(color: _colors.outline);'));
+      expect(contents, contains('const WidgetStatePropertyAll<OutlinedBorder>(StadiumBorder())'));
+      expect(contents, contains('const WidgetStatePropertyAll<Size?>(Size.fromHeight(40.0))'));
+      expect(contents, contains('Widget? get selectedIcon => const Icon(Icons.check)'));
+      expect(
+        contents,
+        contains('WidgetState.selected & WidgetState.pressed: selected?.withOpacity(0.1)'),
+      );
+      expect(contents, contains('WidgetState.hovered: unselected?.withOpacity(0.08)'));
     });
 
     test('SliderTemplateM3 emits M3 Slider defaults from tokens', () {
