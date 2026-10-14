@@ -1,5 +1,7 @@
-## NEXT
+## 7.3.0
 
+* Adds an optional `nonce` parameter to `authenticate`, which takes precedence
+  over the nonce passed to `initialize`.
 * Updates minimum supported SDK version to Flutter 3.41/Dart 3.11.
 * Updates README to reflect currently supported OS versions for the latest
   versions of the endorsed platform implementations.

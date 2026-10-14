@@ -130,7 +130,7 @@ class AttemptLightweightAuthenticationParameters {
 @immutable
 class AuthenticateParameters {
   /// Creates new authentication parameters.
-  const AuthenticateParameters({this.scopeHint = const <String>[]});
+  const AuthenticateParameters({this.scopeHint = const <String>[], this.nonce});
 
   /// A list of scopes that the application will attempt to use/request
   /// immediately.
@@ -140,6 +140,12 @@ class AuthenticateParameters {
   /// responsible for triggering an explicit authorization flow if authorization
   /// isn't granted.
   final List<String> scopeHint;
+
+  /// An optional nonce for added security in the ID token request.
+  ///
+  /// If provided, implementations should use this instead of
+  /// [InitParameters.nonce] for this request.
+  final String? nonce;
 }
 
 /// Common elements of authorization method parameters.
