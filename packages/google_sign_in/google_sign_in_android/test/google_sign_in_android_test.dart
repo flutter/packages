@@ -228,6 +228,17 @@ void main() {
       expect(hostParams.nonce, nonce);
     });
 
+    test('passes the authenticate nonce instead of the init nonce', () async {
+      const nonce = 'authenticateNonce';
+
+      await googleSignIn.init(const InitParameters(nonce: 'initNonce'));
+      await googleSignIn.authenticate(const AuthenticateParameters(nonce: nonce));
+
+      final VerificationResult verification = verify(mockApi.getCredential(captureAny));
+      final hostParams = verification.captured[0] as GetCredentialRequestParams;
+      expect(hostParams.nonce, nonce);
+    });
+
     test('passes success data to caller', () async {
       when(mockApi.getCredential(any)).thenAnswer(
         (_) async => GetCredentialSuccess(
