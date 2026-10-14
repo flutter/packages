@@ -34,8 +34,8 @@ abstract base class XFile extends XEntity {
     return FileSystemXFile(path);
   }
 
-  /// Instantiates a [ScopedStorageXFile] as a reference to a local data
-  /// resource within a device's scoped storage.
+  /// Instantiates a [ScopedStorageXFile] as a reference to a data resource
+  /// within a device's scoped storage.
   factory XFile.scopedStorage({required String uri}) {
     return ScopedStorageXFile(uri: uri);
   }
