@@ -40,6 +40,12 @@ class MediaSettings {
   /// [ResolutionPreset] specifically targeting still photo capture (`takePicture`).
   ///
   /// When null, platforms fall back to [resolutionPreset].
+  ///
+  /// Note: On platforms with a single underlying capture session (such as iOS
+  /// AVFoundation), photo capture dimensions correspond to the active capture
+  /// session format (governed by [videoResolutionPreset]) unless
+  /// [photoResolutionPreset] is set to [ResolutionPreset.max], which enables
+  /// maximum high-resolution photo dimensions.
   final ResolutionPreset? photoResolutionPreset;
 
   /// [ResolutionPreset] specifically targeting video recording and camera preview.

@@ -1,6 +1,6 @@
 ## 0.11.1
  
-* Adds support for separate photo and video resolution presets.
+* Adds support for separate photo and video resolution presets. Still photo capture dimensions follow the active capture session format (governed by the video preset), with `ResolutionPreset.max` enabling maximum high-resolution photo dimensions.
 
 ## 0.11.0
 

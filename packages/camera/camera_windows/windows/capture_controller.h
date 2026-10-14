@@ -240,6 +240,8 @@ class CaptureControllerImpl : public CaptureController,
   ComPtr<ID3D11Device> dx11_device_;
   ComPtr<IMFMediaType> base_record_media_type_;
   ComPtr<IMFMediaType> base_photo_media_type_;
+  DWORD photo_source_stream_index_ =
+      (DWORD)MF_CAPTURE_ENGINE_PREFERRED_SOURCE_STREAM_FOR_PHOTO;
   ComPtr<IMFMediaType> base_preview_media_type_;
   ComPtr<IMFMediaSource> video_source_;
   ComPtr<IMFMediaSource> audio_source_;

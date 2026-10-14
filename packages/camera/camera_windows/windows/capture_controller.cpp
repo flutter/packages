@@ -285,6 +285,8 @@ void CaptureControllerImpl::ResetCaptureController() {
   base_preview_media_type_ = nullptr;
   base_record_media_type_ = nullptr;
   base_photo_media_type_ = nullptr;
+  photo_source_stream_index_ =
+      (DWORD)MF_CAPTURE_ENGINE_PREFERRED_SOURCE_STREAM_FOR_PHOTO;
 
   if (dxgi_device_manager_) {
     dxgi_device_manager_->ResetDevice(dx11_device_.Get(),
@@ -372,7 +374,8 @@ void CaptureControllerImpl::TakePicture(const std::string& file_path) {
   // Check MF_CAPTURE_ENGINE_PHOTO_TAKEN event handling
   // for response process.
   hr = photo_handler_->TakePhoto(file_path, capture_engine_.Get(),
-                                 base_photo_media_type_.Get());
+                                 base_photo_media_type_.Get(),
+                                 photo_source_stream_index_);
   if (FAILED(hr)) {
     // Destroy photo handler on error cases to make sure state is resetted.
     photo_handler_ = nullptr;
@@ -527,14 +530,16 @@ HRESULT CaptureControllerImpl::FindBaseMediaTypesForSource(
 
   // Find base media type for photo capture.
   // Query photo stream first; if unavailable, fall back to record stream.
-  if (!FindBestMediaType(
-          (DWORD)MF_CAPTURE_ENGINE_PREFERRED_SOURCE_STREAM_FOR_PHOTO, source,
-          base_photo_media_type_.GetAddressOf(), GetMaxPhotoHeight(), nullptr,
-          nullptr)) {
-    if (!FindBestMediaType(
-            (DWORD)MF_CAPTURE_ENGINE_PREFERRED_SOURCE_STREAM_FOR_VIDEO_RECORD,
-            source, base_photo_media_type_.GetAddressOf(), GetMaxPhotoHeight(),
-            nullptr, nullptr)) {
+  photo_source_stream_index_ =
+      (DWORD)MF_CAPTURE_ENGINE_PREFERRED_SOURCE_STREAM_FOR_PHOTO;
+  if (!FindBestMediaType(photo_source_stream_index_, source,
+                         base_photo_media_type_.GetAddressOf(),
+                         GetMaxPhotoHeight(), nullptr, nullptr)) {
+    photo_source_stream_index_ =
+        (DWORD)MF_CAPTURE_ENGINE_PREFERRED_SOURCE_STREAM_FOR_VIDEO_RECORD;
+    if (!FindBestMediaType(photo_source_stream_index_, source,
+                           base_photo_media_type_.GetAddressOf(),
+                           GetMaxPhotoHeight(), nullptr, nullptr)) {
       return E_FAIL;
     }
   }

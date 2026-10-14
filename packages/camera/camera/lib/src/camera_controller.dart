@@ -236,7 +236,7 @@ class CameraValue {
 class CameraController extends ValueNotifier<CameraValue> {
   /// Creates a new camera controller in an uninitialized state.
   ///
-  /// - [resolutionPreset] affect the quality of video recording and image capture.
+  /// - [resolutionPreset] affects the quality of video recording and image capture.
   /// - [photoResolutionPreset] optionally overrides [resolutionPreset] specifically for photo capture.
   /// - [videoResolutionPreset] optionally overrides [resolutionPreset] specifically for video recording.
   /// - [enableAudio] controls audio presence in recorded video.

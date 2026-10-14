@@ -204,8 +204,9 @@ void MockStartPreview(CaptureControllerImpl* capture_controller,
                                mock_source_buffer_size);
 }
 
-void MockPhotoSink(MockCaptureEngine* engine,
-                   MockCapturePhotoSink* photo_sink) {
+void MockPhotoSink(MockCaptureEngine* engine, MockCapturePhotoSink* photo_sink,
+                   DWORD expected_source_stream_index = (DWORD)
+                       MF_CAPTURE_ENGINE_PREFERRED_SOURCE_STREAM_FOR_PHOTO) {
   EXPECT_CALL(*engine, GetSink(MF_CAPTURE_ENGINE_SINK_TYPE_PHOTO, _))
       .Times(1)
       .WillOnce([src_sink = photo_sink](MF_CAPTURE_ENGINE_SINK_TYPE sink_type,
@@ -215,7 +216,9 @@ void MockPhotoSink(MockCaptureEngine* engine,
         return S_OK;
       });
   EXPECT_CALL(*photo_sink, RemoveAllStreams).Times(1).WillOnce(Return(S_OK));
-  EXPECT_CALL(*photo_sink, AddStream).Times(1).WillOnce(Return(S_OK));
+  EXPECT_CALL(*photo_sink, AddStream(Eq(expected_source_stream_index), _, _, _))
+      .Times(1)
+      .WillOnce(Return(S_OK));
   EXPECT_CALL(*photo_sink, SetOutputFileName).Times(1).WillOnce(Return(S_OK));
 }
 
@@ -1372,8 +1375,10 @@ TEST(CaptureController,
 
   ComPtr<MockCapturePhotoSink> photo_sink = new MockCapturePhotoSink();
 
-  // Initialize photo sink
-  MockPhotoSink(engine.Get(), photo_sink.Get());
+  // Initialize photo sink expecting the fallback stream index
+  MockPhotoSink(
+      engine.Get(), photo_sink.Get(),
+      (DWORD)MF_CAPTURE_ENGINE_PREFERRED_SOURCE_STREAM_FOR_VIDEO_RECORD);
 
   // Request photo
   std::string mock_path_to_photo = "mock_path_to_photo";
