@@ -5,7 +5,6 @@
 // ignore_for_file: avoid_print
 
 import 'dart:io';
-import 'dart:mirrors';
 
 import 'package:analyzer/dart/analysis/analysis_context.dart' show AnalysisContext;
 import 'package:analyzer/dart/analysis/analysis_context_collection.dart'
@@ -15,6 +14,7 @@ import 'package:analyzer/dart/analysis/session.dart' show AnalysisSession;
 import 'package:analyzer/dart/ast/ast.dart' as dart_ast;
 import 'package:analyzer/diagnostic/diagnostic.dart' show Diagnostic;
 import 'package:args/args.dart';
+import 'package:cli_util/cli_util.dart' as cli_util;
 import 'package:meta/meta.dart' show visibleForTesting;
 import 'package:path/path.dart' as path;
 
@@ -491,7 +491,10 @@ class Pigeon {
   /// [AnalysisContextCollection].
   ParseResults parseFile(String inputPath, {String? sdkPath}) {
     final includedPaths = <String>[path.absolute(path.normalize(inputPath))];
-    final collection = AnalysisContextCollection(includedPaths: includedPaths, sdkPath: sdkPath);
+    final collection = AnalysisContextCollection(
+      includedPaths: includedPaths,
+      sdkPath: sdkPath ?? cli_util.sdkPath,
+    );
 
     final compilationErrors = <Error>[];
     final rootBuilder = RootBuilder(File(inputPath).readAsStringSync());
@@ -778,24 +781,6 @@ ${_argParser.usage}''';
     return opts;
   }
 
-  /// Crawls through the reflection system looking for a configurePigeon method and
-  /// executing it.
-  static void _executeConfigurePigeon(PigeonOptions options) {
-    for (final LibraryMirror library in currentMirrorSystem().libraries.values) {
-      for (final DeclarationMirror declaration in library.declarations.values) {
-        if (declaration is MethodMirror &&
-            MirrorSystem.getName(declaration.simpleName) == 'configurePigeon') {
-          if (declaration.parameters.length == 1 &&
-              declaration.parameters[0].type == reflectClass(PigeonOptions)) {
-            library.invoke(declaration.simpleName, <dynamic>[options]);
-          } else {
-            print("warning: invalid 'configurePigeon' method defined.");
-          }
-        }
-      }
-    }
-  }
-
   /// The 'main' entrypoint used by the command-line tool. [args] are the
   /// command-line arguments. The optional parameter [adapters] allows you to
   /// customize the generators that pigeon will use. The optional parameter
@@ -835,7 +820,6 @@ ${_argParser.usage}''';
           const ObjcGeneratorAdapter(),
           const AstGeneratorAdapter(),
         ];
-    _executeConfigurePigeon(options);
 
     if (options.input == null) {
       print(usage);
@@ -889,7 +873,7 @@ ${_argParser.usage}''';
     final bool useFfi = internalOptions.swiftOptions?.useFfi ?? false;
     final bool useJni = internalOptions.kotlinOptions?.useJni ?? false;
 
-    final String dartExecutable = Platform.resolvedExecutable;
+    final String dartExecutable = cli_util.dartExecutable ?? Platform.resolvedExecutable;
     for (final adapter in safeGeneratorAdapters) {
       for (final FileType fileType in adapter.fileTypeList) {
         final IOSink? sink = adapter.shouldGenerate(internalOptions, fileType);

@@ -5,7 +5,6 @@
 import 'dart:convert';
 import 'dart:io';
 import 'dart:math';
-import 'dart:mirrors';
 
 import 'package:path/path.dart' as path;
 import 'package:yaml/yaml.dart' as yaml;
@@ -16,7 +15,7 @@ import 'generator.dart';
 /// The current version of pigeon.
 ///
 /// This must match the version in pubspec.yaml.
-const String pigeonVersion = '29.0.8';
+const String pigeonVersion = '29.0.9';
 
 /// Default plugin package name.
 const String defaultPluginPackageName = 'dev.flutter.pigeon';
@@ -449,11 +448,6 @@ class Keys {
 
   /// The key in an error hash for the 'details' value.
   static const String errorDetails = 'details';
-}
-
-/// Returns true if `type` represents 'void'.
-bool isVoid(TypeMirror type) {
-  return MirrorSystem.getName(type.simpleName) == 'void';
 }
 
 /// Adds the [lines] to [indent].
