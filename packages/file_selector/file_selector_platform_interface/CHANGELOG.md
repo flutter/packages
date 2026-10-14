@@ -3,7 +3,7 @@
 * **BREAKING CHANGES**:
   * Updates `cross_file` dependency to `0.4.0`. 
   * Removes `MethodChannel` implementation.
-  * Replaces `FileSelectorPlatform`'s of implementation `PlatformInterface` with the `base` keyword.
+  * Replaces `FileSelectorPlatform`'s implementation of `PlatformInterface` with the `base` keyword.
   * Changes `FileSelectorPlatform.openFile` and `FileSelectorPlatform.openFiles` to take an
     `OpenDialogOptions`.
   * Removes `FileSelectorPlatform.getSavePath`. Replaced by `FileSelectorPlatform.getSaveLocation`.
