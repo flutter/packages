@@ -5,7 +5,7 @@
     `0.4.0`.
   * Replaces `FileSaveLocation.path` with `FileSaveLocation.file`.
   * Replaces `getDirectoryPath` with `getDirectory` and now returns a `XDirectory`.
-  * Replaces `getDirectoryPaths` with `getDirectories` and now returns `List<XDirectory`.
+  * Replaces `getDirectoryPaths` with `getDirectories` and now returns `List<XDirectory>`.
   * Removes `XTypeGroup.macUTIs`. Use `XTypeGroup.uniformTypeIdentifiers` instead.
 * Updates minimum supported SDK version to Flutter 3.41/Dart 3.11.
 

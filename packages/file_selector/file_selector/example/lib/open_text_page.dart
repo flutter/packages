@@ -85,6 +85,12 @@ class _TextDisplayState extends State<TextDisplay> {
   late final scrollController = ScrollController();
 
   @override
+  void dispose() {
+    scrollController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return AlertDialog(
       title: Text(widget.fileName),
@@ -96,11 +102,5 @@ class _TextDisplayState extends State<TextDisplay> {
         TextButton(child: const Text('Close'), onPressed: () => Navigator.pop(context)),
       ],
     );
-  }
-
-  @override
-  void dispose() {
-    scrollController.dispose();
-    super.dispose();
   }
 }
