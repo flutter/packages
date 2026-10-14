@@ -46,7 +46,8 @@ class UnknownMapIDError extends Error {
 
 /// Platform-specific configuration for a Google Map on iOS.
 @immutable
-class GoogleMapsFlutterIOSMapConfiguration extends platform_interface.PlatformMapConfiguration {
+base class GoogleMapsFlutterIOSMapConfiguration
+    extends platform_interface.PlatformMapConfiguration {
   /// Creates an iOS map configuration.
   const GoogleMapsFlutterIOSMapConfiguration({
     this.markerPositionAnimationsEnabled = true,

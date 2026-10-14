@@ -9,7 +9,7 @@ import 'package:flutter/foundation.dart';
 /// Platform implementations can add platform-specific configuration options
 /// by extending this class.
 @immutable
-class PlatformMapConfiguration {
+base class PlatformMapConfiguration {
   /// Creates a platform-specific map configuration.
   const PlatformMapConfiguration();
 }
