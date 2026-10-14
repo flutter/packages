@@ -714,6 +714,11 @@ class ShellRouteContext {
 /// ),
 /// ```
 ///
+/// See also:
+///
+/// * [StatefulShellRoute], which maintains separate navigation stacks for its
+///   branches and preserves their state when switching between them.
+///
 /// {@category Configuration}
 class ShellRoute extends ShellRouteBase {
   /// Constructs a [ShellRoute].
