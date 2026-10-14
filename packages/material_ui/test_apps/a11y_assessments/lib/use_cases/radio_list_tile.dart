@@ -44,21 +44,24 @@ class _MainWidgetState extends State<_MainWidget> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: Semantics(headingLevel: 1, child: Text('$pageTitle Demo'))),
-      body: ListView(
-        children: <Widget>[
-          RadioListTile<SingingCharacter>(
-            title: const Text('Lafayette'),
-            value: SingingCharacter.lafayette,
-            groupValue: _value,
-            onChanged: _onChanged,
+      body: Semantics(
+        label: 'Singing character',
+        child: RadioGroup<SingingCharacter>(
+          groupValue: _value,
+          onChanged: _onChanged,
+          child: ListView(
+            children: const <Widget>[
+              RadioListTile<SingingCharacter>(
+                title: Text('Lafayette'),
+                value: SingingCharacter.lafayette,
+              ),
+              RadioListTile<SingingCharacter>(
+                title: Text('Jefferson'),
+                value: SingingCharacter.jefferson,
+              ),
+            ],
           ),
-          RadioListTile<SingingCharacter>(
-            title: const Text('Jefferson'),
-            value: SingingCharacter.jefferson,
-            groupValue: _value,
-            onChanged: _onChanged,
-          ),
-        ],
+        ),
       ),
     );
   }

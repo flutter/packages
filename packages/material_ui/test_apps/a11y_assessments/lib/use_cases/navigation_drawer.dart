@@ -83,7 +83,11 @@ class _NavigationDrawerExampleState extends State<NavigationDrawerExample> {
         children: <Widget>[
           Padding(
             padding: const EdgeInsets.fromLTRB(28, 16, 16, 10),
-            child: Text('Header', style: Theme.of(context).textTheme.titleSmall),
+            child: Semantics(
+              container: true,
+              headingLevel: 2,
+              child: Text('Header', style: Theme.of(context).textTheme.titleSmall),
+            ),
           ),
           ...destinations.map((ExampleDestination destination) {
             return NavigationDrawerDestination(

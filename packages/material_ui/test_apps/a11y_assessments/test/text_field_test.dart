@@ -28,6 +28,7 @@ void main() {
       final Finder finder = find.byKey(const Key('disabled text field'));
       final TextField textField = tester.widget<TextField>(finder);
       expect(textField.enabled, isFalse);
+      expect(textField.autofillHints, contains(AutofillHints.email));
     }
   });
 

@@ -28,6 +28,7 @@ void main() {
       final Finder finder = find.byKey(const Key('disabled password'));
       final TextField passwordField = tester.widget<TextField>(finder);
       expect(passwordField.enabled, isFalse);
+      expect(passwordField.autofillHints, contains(AutofillHints.password));
     }
   });
 

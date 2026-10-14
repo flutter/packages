@@ -30,7 +30,7 @@ class DrawerExample extends StatefulWidget {
 }
 
 class _DrawerExampleState extends State<DrawerExample> {
-  String selectedPage = '';
+  String selectedPage = 'Messages';
 
   String pageTitle = getUseCaseName(DrawerUseCase());
 
@@ -49,6 +49,7 @@ class _DrawerExampleState extends State<DrawerExample> {
             ListTile(
               leading: const Icon(Icons.message),
               title: const Text('Messages'),
+              selected: selectedPage == 'Messages',
               onTap: () {
                 setState(() {
                   selectedPage = 'Messages';
@@ -58,6 +59,7 @@ class _DrawerExampleState extends State<DrawerExample> {
             ListTile(
               leading: const Icon(Icons.account_circle),
               title: const Text('Profile'),
+              selected: selectedPage == 'Profile',
               onTap: () {
                 setState(() {
                   selectedPage = 'Profile';
@@ -67,6 +69,7 @@ class _DrawerExampleState extends State<DrawerExample> {
             ListTile(
               leading: const Icon(Icons.settings),
               title: const Text('Settings'),
+              selected: selectedPage == 'Settings',
               onTap: () {
                 setState(() {
                   selectedPage = 'Settings';
