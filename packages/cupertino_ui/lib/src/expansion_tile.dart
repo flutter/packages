@@ -153,7 +153,9 @@ class _CupertinoExpansionTileState extends State<CupertinoExpansionTile> {
   // Shows the faded clone of the child whenever the tile expands or collapses,
   // whether that was triggered by tapping the header or by the controller.
   void _handleExpansionChanged() {
-    _fadeController.show();
+    if (widget.transitionMode == ExpansionTileTransitionMode.fade) {
+      _fadeController.show();
+    }
   }
 
   Widget? _buildIcon(BuildContext context, Animation<double> animation) {
