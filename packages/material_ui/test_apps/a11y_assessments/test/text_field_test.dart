@@ -92,4 +92,9 @@ void main() {
       expect(editableText.autofillHints, contains(AutofillHints.email));
     }
   });
+
+  testWidgets('text field use case content is not a semantic list', (WidgetTester tester) async {
+    await pumpsUseCase(tester, TextFieldUseCase());
+    expect(hasSemanticsList(tester, find.byType(ListView)), isFalse);
+  });
 }
