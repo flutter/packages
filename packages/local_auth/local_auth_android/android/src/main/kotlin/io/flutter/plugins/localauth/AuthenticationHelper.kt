@@ -37,6 +37,9 @@ internal class AuthenticationHelper(
   private val uiThreadExecutor: UiThreadExecutor = UiThreadExecutor()
   private var activityPaused = false
   private var stoppedByClient = false
+  // A cancellation that was not reported because sticky auth will prompt again. Reported if the
+  // client stops authentication first, since there is no prompt left to report it then.
+  private var heldError: Pair<Int, CharSequence>? = null
   private var focusListener: ViewTreeObserver.OnWindowFocusChangeListener? = null
   private var focusTimeout: Runnable? = null
   private var repromptOnFocus = false
@@ -76,9 +79,11 @@ internal class AuthenticationHelper(
   /** Cancels the biometric authentication. */
   fun stopAuthentication() {
     stoppedByClient = true
+    val error = heldError
     stop()
     biometricPrompt?.cancelAuthentication()
     biometricPrompt = null
+    error?.let { completeWithError(it.first, it.second) }
   }
 
   /** Stops the biometric listener. */
@@ -96,7 +101,10 @@ internal class AuthenticationHelper(
     if (isAuthSticky && !stoppedByClient && isCancellation(errorCode)) {
       // If we are doing sticky auth and the activity has been paused,
       // ignore this error. We will start listening again when resumed.
-      if (activityPaused) return
+      if (activityPaused) {
+        heldError = errorCode to errString
+        return
+      }
       // Android 12+ reports ERROR_USER_CANCELED both when the user dismisses the prompt and when
       // SystemUI dismisses it because the app left the foreground, and the error can arrive
       // before the activity is paused, or without it being paused at all (e.g. the app switcher
@@ -122,6 +130,7 @@ internal class AuthenticationHelper(
    */
   private fun waitForFocus(errorCode: Int, errString: CharSequence) {
     stopWaitingForFocus()
+    heldError = errorCode to errString
     val listener =
         ViewTreeObserver.OnWindowFocusChangeListener { hasFocus ->
           if (!hasFocus) return@OnWindowFocusChangeListener
@@ -151,6 +160,7 @@ internal class AuthenticationHelper(
   }
 
   private fun completeWithError(errorCode: Int, errString: CharSequence) {
+    heldError = null
     val code =
         when (errorCode) {
           BiometricPrompt.ERROR_USER_CANCELED -> AuthResultCode.USER_CANCELED
@@ -201,6 +211,7 @@ internal class AuthenticationHelper(
   }
 
   private fun showPromptAgain() {
+    heldError = null
     // TODO(stuartmorgan): This should be assigning to biometricPrompt instead; see
     // https://github.com/flutter/flutter/issues/191804
     val prompt = BiometricPrompt(activity, uiThreadExecutor, this)

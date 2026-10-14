@@ -384,6 +384,40 @@ class AuthenticationHelperTest {
   }
 
   @Test
+  fun stopAuthentication_withSticky_reportsCancellationWaitingForFocus() {
+    val result = ArrayList<AuthResult>()
+    val activity = buildMockActivityWithContext(mock<FragmentActivity>())
+    val observer = mockViewTreeObserver(activity)
+    val helper = buildStickyHelper(activity, result)
+
+    helper.onAuthenticationError(BiometricPrompt.ERROR_USER_CANCELED, "")
+    Assert.assertEquals(0, result.size)
+    helper.stopAuthentication()
+
+    Assert.assertEquals(1, result.size)
+    Assert.assertEquals(AuthResultCode.USER_CANCELED, result[0].code)
+    val listener = argumentCaptor<ViewTreeObserver.OnWindowFocusChangeListener>()
+    verify(observer).addOnWindowFocusChangeListener(listener.capture())
+    verify(observer).removeOnWindowFocusChangeListener(listener.firstValue)
+  }
+
+  @Test
+  fun stopAuthentication_withSticky_reportsCancellationIgnoredWhilePaused() {
+    val result = ArrayList<AuthResult>()
+    val activity = buildMockActivityWithContext(mock<FragmentActivity>())
+    mockViewTreeObserver(activity)
+    val helper = buildStickyHelper(activity, result)
+
+    helper.onActivityPaused(activity)
+    helper.onAuthenticationError(BiometricPrompt.ERROR_CANCELED, "")
+    Assert.assertEquals(0, result.size)
+    helper.stopAuthentication()
+
+    Assert.assertEquals(1, result.size)
+    Assert.assertEquals(AuthResultCode.SYSTEM_CANCELED, result[0].code)
+  }
+
+  @Test
   fun onAuthenticationError_withSticky_returnsNegativeButtonImmediately() {
     val result = ArrayList<AuthResult>()
     val activity = buildMockActivityWithContext(mock<FragmentActivity>())
