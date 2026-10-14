@@ -15,6 +15,13 @@ import 'scoped_storage/scoped_storage_cross_file.dart';
 /// A reference to a container of data resources.
 ///
 /// Note: Not all platforms support accessing directories.
+///
+/// See also:
+///
+/// * [FileSystemXDirectory], the `XDirectory` implementation for a local data
+///   resources on the file system.
+/// * [ScopedStorageXDirectory], the `XDirectory` implementation for a directory
+///   (or folder) within a device's scoped storage.
 @immutable
 abstract base class XDirectory extends XEntity {
   /// Constructs a [XDirectory] from a specific platform implementation.

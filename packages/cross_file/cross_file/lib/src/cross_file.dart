@@ -14,6 +14,13 @@ import 'file_system/file_system_cross_file.dart';
 import 'scoped_storage/scoped_storage_cross_file.dart';
 
 /// A reference to a data resource.
+///
+/// See also:
+///
+/// * [FileSystemXFile], the `XFile` implementation for a local data resource
+///   on the file system.
+/// * [ScopedStorageXFile], the `XFile` implementation for a data resource
+///   within a device's scoped storage.
 @immutable
 abstract base class XFile extends XEntity {
   /// Constructs a [XFile] from a specific platform implementation.
