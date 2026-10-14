@@ -1,0 +1,3 @@
+changelog: |
+  - Updates DropdownMenu default container and highlighted item colors to match Material 3 standard menu tokens.
+version: patch

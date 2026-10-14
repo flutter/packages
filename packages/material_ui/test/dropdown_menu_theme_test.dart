@@ -104,7 +104,7 @@ void main() {
     expect(find.byType(MenuAnchor), findsOneWidget);
 
     Material material = getMenuMaterial(tester);
-    expect(material.color, themeData.colorScheme.surfaceContainer);
+    expect(material.color, themeData.colorScheme.surfaceContainerLow);
     expect(material.shadowColor, themeData.colorScheme.shadow);
     expect(material.surfaceTintColor, Colors.transparent);
     expect(material.elevation, 3.0);
@@ -440,6 +440,100 @@ void main() {
       // make sure the displaying text has grey color
       final EditableText editableText = tester.widget(find.byType(EditableText));
       expect(editableText.style.color, Colors.grey);
+    },
+  );
+
+  testWidgets('Partial MenuStyle without backgroundColor falls back to surfaceContainerLow', (
+    WidgetTester tester,
+  ) async {
+    final themeData = ThemeData();
+    await tester.pumpWidget(
+      MaterialApp(
+        theme: themeData,
+        home: const Scaffold(
+          body: Center(
+            child: DropdownMenu<int>(
+              menuStyle: MenuStyle(elevation: MaterialStatePropertyAll<double>(10.0)),
+              dropdownMenuEntries: <DropdownMenuEntry<int>>[
+                DropdownMenuEntry<int>(value: 0, label: 'Item 0'),
+                DropdownMenuEntry<int>(value: 1, label: 'Item 1'),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+
+    await tester.tap(find.widgetWithIcon(IconButton, Icons.arrow_drop_down).first);
+    await tester.pump();
+
+    final Material material = getMenuMaterial(tester);
+    expect(material.color, themeData.colorScheme.surfaceContainerLow);
+    expect(material.elevation, 10.0);
+  });
+
+  testWidgets('MenuTheme backgroundColor overrides default surfaceContainerLow', (
+    WidgetTester tester,
+  ) async {
+    final themeData = ThemeData(
+      menuTheme: const MenuThemeData(
+        style: MenuStyle(backgroundColor: MaterialStatePropertyAll<Color>(Colors.purple)),
+      ),
+    );
+    await tester.pumpWidget(
+      MaterialApp(
+        theme: themeData,
+        home: const Scaffold(
+          body: Center(
+            child: DropdownMenu<int>(
+              dropdownMenuEntries: <DropdownMenuEntry<int>>[
+                DropdownMenuEntry<int>(value: 0, label: 'Item 0'),
+                DropdownMenuEntry<int>(value: 1, label: 'Item 1'),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+
+    await tester.tap(find.widgetWithIcon(IconButton, Icons.arrow_drop_down).first);
+    await tester.pump();
+
+    final Material material = getMenuMaterial(tester);
+    expect(material.color, Colors.purple);
+  });
+
+  testWidgets(
+    'Partial widget.menuStyle without backgroundColor falls back to DropdownMenuTheme backgroundColor',
+    (WidgetTester tester) async {
+      final themeData = ThemeData(
+        dropdownMenuTheme: const DropdownMenuThemeData(
+          menuStyle: MenuStyle(backgroundColor: MaterialStatePropertyAll<Color>(Colors.teal)),
+        ),
+      );
+      await tester.pumpWidget(
+        MaterialApp(
+          theme: themeData,
+          home: const Scaffold(
+            body: Center(
+              child: DropdownMenu<int>(
+                menuStyle: MenuStyle(elevation: MaterialStatePropertyAll<double>(10.0)),
+                dropdownMenuEntries: <DropdownMenuEntry<int>>[
+                  DropdownMenuEntry<int>(value: 0, label: 'Item 0'),
+                  DropdownMenuEntry<int>(value: 1, label: 'Item 1'),
+                ],
+              ),
+            ),
+          ),
+        ),
+      );
+
+      await tester.tap(find.widgetWithIcon(IconButton, Icons.arrow_drop_down).first);
+      await tester.pump();
+
+      final Material material = getMenuMaterial(tester);
+      expect(material.color, Colors.teal);
+      expect(material.elevation, 10.0);
     },
   );
 }
