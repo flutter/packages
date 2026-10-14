@@ -14,6 +14,9 @@ class FileSaveLocation {
   const FileSaveLocation(this.file, {this.activeFilter});
 
   /// The file to save to.
+  ///
+  /// See [FileSystemXFile] and [ScopedStorageXFile] for more details on file
+  /// implementations.
   final XFile file;
 
   /// The currently active filter group, if any.
