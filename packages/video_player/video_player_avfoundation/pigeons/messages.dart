@@ -137,7 +137,9 @@ abstract class VideoPlayerInstanceApi {
   void seekTo(int position);
   void pause();
   void dispose();
+  @async
   List<MediaSelectionAudioTrackData> getAudioTracks();
+  @async
   @SwiftFunction('selectAudioTrack(atIndex:)')
   void selectAudioTrack(int trackIndex);
 

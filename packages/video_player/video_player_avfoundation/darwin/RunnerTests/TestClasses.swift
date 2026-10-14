@@ -37,46 +37,42 @@ import video_player_avfoundation_objc
   }
 }
 
-final class TestAsset: NSObject, FVPAVAsset {
+final class TestAsset: WrappedAVAsset {
   let duration: CMTime
-  let tracks: [AVAssetTrack]?
+  let tracks: [AVAssetTrack]
+  var continuation: CheckedContinuation<Void, Never>?
 
-  var loadedTracksAsynchronously = false
+  var loadedValue = false
 
-  init(duration: CMTime = CMTime.zero, tracks: [AVAssetTrack]? = nil) {
+  init(
+    duration: CMTime = CMTime.zero,
+    tracks: [AVAssetTrack] = [],
+    continuation: CheckedContinuation<Void, Never>? = nil
+  ) {
     self.duration = duration
     self.tracks = tracks
-    super.init()
+    self.continuation = continuation
   }
 
-  func statusOfValue(forKey key: String, error outError: NSErrorPointer) -> AVKeyValueStatus {
-    return tracks == nil ? .loading : .loaded
-  }
-
-  func loadValuesAsynchronously(forKeys keys: [String], completionHandler handler: (() -> Void)?) {
-    handler?()
-  }
-
-  func loadTracks(
-    withMediaType mediaType: AVMediaType,
-    completionHandler: @escaping ([AVAssetTrack]?, Error?) -> Void
-  ) {
-    loadedTracksAsynchronously = true
-    completionHandler(tracks, nil)
-  }
-
-  func tracks(withMediaType mediaType: AVMediaType) -> [AVAssetTrack] {
-    return tracks ?? []
+  func load<T>(_ property: AVAsyncProperty<AVAsset, T>, isolation: isolated (any Actor)?)
+    async throws -> T
+  {
+    loadedValue = true
+    continuation?.resume()
+    continuation = nil
+    if let tracks = tracks as? T {
+      return tracks
+    }
+    fatalError("Unimplemented property in stub")
   }
 }
 
-final class StubPlayerItem: NSObject, FVPAVPlayerItem {
-  let asset: FVPAVAsset
+final class StubPlayerItem: WrappedAVPlayerItem {
+  let asset: WrappedAVAsset
   var videoComposition: AVVideoComposition?
 
-  init(asset: FVPAVAsset = TestAsset()) {
+  init(asset: WrappedAVAsset = TestAsset()) {
     self.asset = asset
-    super.init()
   }
 }
 
@@ -147,16 +143,15 @@ final class StubAssetProvider: NSObject, FVPAssetProvider {
   }
 }
 
-final class TestPixelBufferSource: NSObject, FVPPixelBufferSource {
+final class TestPixelBufferSource: PixelBufferSource {
   var pixelBuffer: CVPixelBuffer?
   let videoOutput: AVPlayerItemVideoOutput
 
-  override init() {
+  init() {
     videoOutput = AVPlayerItemVideoOutput(pixelBufferAttributes: [
       kCVPixelBufferPixelFormatTypeKey as String: kCVPixelFormatType_32BGRA,
       kCVPixelBufferIOSurfacePropertiesKey as String: [:] as [String: String],
     ])
-    super.init()
   }
 
   func itemTime(forHostTime hostTimeInSeconds: CFTimeInterval) -> CMTime {
@@ -179,7 +174,7 @@ final class TestPixelBufferSource: NSObject, FVPPixelBufferSource {
 }
 
 #if os(iOS)
-  final class TestAudioSession: NSObject, FVPAVAudioSession {
+  final class TestAudioSession: WrappedAVAudioSession {
     var category: AVAudioSession.Category = .ambient
     var categoryOptions: AVAudioSession.CategoryOptions = []
     private(set) var setCategoryCalled = false
@@ -195,19 +190,19 @@ final class TestPixelBufferSource: NSObject, FVPPixelBufferSource {
   }
 #endif
 
-final class StubFVPAVFactory: NSObject, FVPAVFactory {
+final class StubAVFactory: NSObject, WrappedAVObjectFactory {
   let player: AVPlayer
-  let playerItem: FVPAVPlayerItem
-  let pixelBufferSource: FVPPixelBufferSource?
+  let playerItem: WrappedAVPlayerItem
+  let pixelBufferSource: PixelBufferSource?
   private(set) var lastOutputSettings: [String: Any]?
   #if os(iOS)
-    var audioSession: FVPAVAudioSession
+    var audioSession: WrappedAVAudioSession
   #endif
 
   init(
     player: AVPlayer? = nil,
-    playerItem: FVPAVPlayerItem? = nil,
-    pixelBufferSource: FVPPixelBufferSource? = nil
+    playerItem: WrappedAVPlayerItem? = nil,
+    pixelBufferSource: PixelBufferSource? = nil
   ) {
     let dummyURL = URL(string: "https://flutter.dev")!
     self.player =
@@ -221,25 +216,25 @@ final class StubFVPAVFactory: NSObject, FVPAVFactory {
     super.init()
   }
 
-  func urlAsset(with url: URL, options: [String: Any]?) -> FVPAVAsset {
+  func urlAsset(with url: URL, options: [String: Any]?) -> WrappedAVAsset {
     return playerItem.asset
   }
 
-  func playerItem(with asset: FVPAVAsset) -> FVPAVPlayerItem {
+  func playerItem(with asset: WrappedAVAsset) -> WrappedAVPlayerItem {
     return playerItem
   }
 
-  func player(with playerItem: FVPAVPlayerItem) -> AVPlayer {
+  func player(with playerItem: WrappedAVPlayerItem) -> AVPlayer {
     return self.player
   }
 
-  func videoOutput(outputSettings: [String: Any]) -> FVPPixelBufferSource {
+  func videoOutput(outputSettings: [String: Any]) -> PixelBufferSource {
     lastOutputSettings = outputSettings
     return pixelBufferSource ?? TestPixelBufferSource()
   }
 
   #if os(iOS)
-    func sharedAudioSession() -> FVPAVAudioSession {
+    func sharedAudioSession() -> WrappedAVAudioSession {
       return audioSession
     }
   #endif

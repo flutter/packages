@@ -749,8 +749,9 @@ protocol VideoPlayerInstanceApi {
   func seek(to position: Int64, completion: @escaping (Result<Void, Error>) -> Void)
   func pause() throws
   func dispose() throws
-  func getAudioTracks() throws -> [MediaSelectionAudioTrackData]
-  func selectAudioTrack(atIndex trackIndex: Int64) throws
+  func getAudioTracks(completion: @escaping (Result<[MediaSelectionAudioTrackData], Error>) -> Void)
+  func selectAudioTrack(
+    atIndex trackIndex: Int64, completion: @escaping (Result<Void, Error>) -> Void)
   /// Gets the available video tracks for the video.
   func getVideoTracks(completion: @escaping (Result<NativeVideoTrackData, Error>) -> Void)
   /// Selects a video track by setting preferredPeakBitRate.
@@ -913,11 +914,13 @@ class VideoPlayerInstanceApiSetup {
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       getAudioTracksChannel.setMessageHandler { _, reply in
-        do {
-          let result = try api.getAudioTracks()
-          reply(wrapResult(result))
-        } catch {
-          reply(wrapError(error))
+        api.getAudioTracks { result in
+          switch result {
+          case .success(let res):
+            reply(wrapResult(res))
+          case .failure(let error):
+            reply(wrapError(error))
+          }
         }
       }
     } else {
@@ -931,11 +934,13 @@ class VideoPlayerInstanceApiSetup {
       selectAudioTrackChannel.setMessageHandler { message, reply in
         let args = message as! [Any?]
         let trackIndexArg = args[0] as! Int64
-        do {
-          try api.selectAudioTrack(atIndex: trackIndexArg)
-          reply(wrapResult(nil))
-        } catch {
-          reply(wrapError(error))
+        api.selectAudioTrack(atIndex: trackIndexArg) { result in
+          switch result {
+          case .success:
+            reply(wrapResult(nil))
+          case .failure(let error):
+            reply(wrapError(error))
+          }
         }
       }
     } else {

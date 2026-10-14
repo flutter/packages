@@ -64,7 +64,7 @@ public final class VideoPlayerPlugin: NSObject, FlutterPlugin, AVFoundationVideo
   private let binaryMessenger: FlutterBinaryMessenger
   private let textureRegistry: FlutterTextureRegistry
   private let displayLinkFactory: DisplayLinkFactory
-  private let avFactory: FVPAVFactory
+  private let avFactory: WrappedAVObjectFactory
   private let viewProvider: FVPViewProvider
   private let assetProvider: FVPAssetProvider
   private var nextPlayerIdentifier: Int64 = 1
@@ -101,7 +101,7 @@ public final class VideoPlayerPlugin: NSObject, FlutterPlugin, AVFoundationVideo
       let textures = registrar.textures
     #endif
     self.init(
-      avFactory: FVPDefaultAVFactory(),
+      avFactory: DefaultAVFactory(),
       displayLinkFactory: DefaultDisplayLinkFactory(),
       binaryMessenger: messenger,
       textureRegistry: textures,
@@ -111,7 +111,7 @@ public final class VideoPlayerPlugin: NSObject, FlutterPlugin, AVFoundationVideo
   }
 
   init(
-    avFactory: FVPAVFactory,
+    avFactory: WrappedAVObjectFactory,
     displayLinkFactory: DisplayLinkFactory,
     binaryMessenger: FlutterBinaryMessenger,
     textureRegistry: FlutterTextureRegistry,
@@ -270,7 +270,7 @@ public final class VideoPlayerPlugin: NSObject, FlutterPlugin, AVFoundationVideo
     return playerId
   }
 
-  private func playerItem(with options: CreationOptions) throws -> FVPAVPlayerItem {
+  private func playerItem(with options: CreationOptions) throws -> WrappedAVPlayerItem {
     let headers = options.httpHeaders
     let itemOptions = headers.isEmpty ? nil : ["AVURLAssetHTTPHeaderFieldsKey": headers]
     guard let url = URL(string: options.uri) else {
@@ -291,7 +291,7 @@ public final class VideoPlayerPlugin: NSObject, FlutterPlugin, AVFoundationVideo
   // that could affect other plugins which depend on this global state. Only change
   // category or options if there is change to prevent unnecessary lags and silence.
   private func upgradeAudioSessionCategory(
-    session: FVPAVAudioSession,
+    session: WrappedAVAudioSession,
     requestedCategory: AVAudioSession.Category,
     options: AVAudioSession.CategoryOptions,
     clearOptions: AVAudioSession.CategoryOptions

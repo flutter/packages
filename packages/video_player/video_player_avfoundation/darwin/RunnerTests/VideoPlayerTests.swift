@@ -71,7 +71,7 @@ private let hlsAudioTestURI =
     // Display link and frame updater wire-up is currently done in VideoPlayerPlugin, so create
     // the player via the plugin instead of directly to include that logic in the test.
     let videoPlayerPlugin = try createInitializedPlugin(
-      avFactory: StubFVPAVFactory(pixelBufferSource: mockVideoOutput),
+      avFactory: StubAVFactory(pixelBufferSource: mockVideoOutput),
       displayLinkFactory: stubDisplayLinkFactory)
 
     let identifiers = try videoPlayerPlugin.createTexturePlayer(
@@ -102,7 +102,7 @@ private let hlsAudioTestURI =
     let stubDisplayLinkFactory = StubFVPDisplayLinkFactory()
     let mockVideoOutput = TestPixelBufferSource()
     let videoPlayerPlugin = try createInitializedPlugin(
-      avFactory: StubFVPAVFactory(pixelBufferSource: mockVideoOutput),
+      avFactory: StubAVFactory(pixelBufferSource: mockVideoOutput),
       displayLinkFactory: stubDisplayLinkFactory)
 
     let identifiers = try videoPlayerPlugin.createTexturePlayer(
@@ -128,7 +128,7 @@ private let hlsAudioTestURI =
     let stubDisplayLinkFactory = StubFVPDisplayLinkFactory()
     let mockVideoOutput = TestPixelBufferSource()
     let videoPlayerPlugin = try createInitializedPlugin(
-      avFactory: StubFVPAVFactory(pixelBufferSource: mockVideoOutput),
+      avFactory: StubAVFactory(pixelBufferSource: mockVideoOutput),
       displayLinkFactory: stubDisplayLinkFactory)
 
     let identifiers = try videoPlayerPlugin.createTexturePlayer(
@@ -176,7 +176,7 @@ private let hlsAudioTestURI =
     let stubDisplayLinkFactory = StubFVPDisplayLinkFactory()
     let mockVideoOutput = TestPixelBufferSource()
     let videoPlayerPlugin = try createInitializedPlugin(
-      avFactory: StubFVPAVFactory(pixelBufferSource: mockVideoOutput),
+      avFactory: StubAVFactory(pixelBufferSource: mockVideoOutput),
       displayLinkFactory: stubDisplayLinkFactory)
 
     let identifiers = try videoPlayerPlugin.createTexturePlayer(
@@ -204,7 +204,7 @@ private let hlsAudioTestURI =
   @Test func bufferingStateFromPlayer() async throws {
     // TODO(stuartmorgan): Rewrite this test to use stubs, instead of running for 10
     // seconds with a real player and hoping to get buffer status updates.
-    let realObjectFactory = FVPDefaultAVFactory()
+    let realObjectFactory = DefaultAVFactory()
     let videoPlayerPlugin = try createInitializedPlugin(avFactory: realObjectFactory)
 
     let identifiers = try videoPlayerPlugin.createTexturePlayer(
@@ -332,7 +332,7 @@ private let hlsAudioTestURI =
 
   @Test func seekToleranceWhenNotSeekingToEnd() async {
     let inspectableAVPlayer = InspectableAVPlayer()
-    let stubAVFactory = StubFVPAVFactory(player: inspectableAVPlayer)
+    let stubAVFactory = StubAVFactory(player: inspectableAVPlayer)
     let player = VideoPlayer(
       playerItem: StubPlayerItem(),
       avFactory: stubAVFactory,
@@ -348,7 +348,7 @@ private let hlsAudioTestURI =
 
   @Test func seekToleranceWhenSeekingToEnd() async {
     let inspectableAVPlayer = InspectableAVPlayer()
-    let stubAVFactory = StubFVPAVFactory(player: inspectableAVPlayer)
+    let stubAVFactory = StubAVFactory(player: inspectableAVPlayer)
     let player = VideoPlayer(
       playerItem: StubPlayerItem(),
       avFactory: stubAVFactory,
@@ -363,7 +363,7 @@ private let hlsAudioTestURI =
   }
 
   @Test func setPreventsDisplaySleepDuringVideoPlayback() {
-    let stubAVFactory = StubFVPAVFactory(player: AVPlayer())
+    let stubAVFactory = StubAVFactory(player: AVPlayer())
     let player = VideoPlayer(
       playerItem: StubPlayerItem(),
       avFactory: stubAVFactory,
@@ -381,7 +381,7 @@ private let hlsAudioTestURI =
 
   #if os(iOS)
     @Test func externalPlaybackIsEnabledForAirPlay() {
-      let stubAVFactory = StubFVPAVFactory(player: AVPlayer())
+      let stubAVFactory = StubAVFactory(player: AVPlayer())
       let player = VideoPlayer(
         playerItem: StubPlayerItem(),
         avFactory: stubAVFactory,
@@ -401,7 +401,7 @@ private let hlsAudioTestURI =
   ///
   /// Returns the stub event listener to allow tests to inspect the call state.
   func sanityTestURI(_ testURI: String) async throws -> StubEventListener {
-    let realObjectFactory = FVPDefaultAVFactory()
+    let realObjectFactory = DefaultAVFactory()
     let testURL = try #require(URL(string: testURI))
     let player = VideoPlayer(
       playerItem: playerItem(with: testURL, factory: realObjectFactory),
@@ -438,7 +438,7 @@ private let hlsAudioTestURI =
   //
   // Failing to de-register results in a crash in [AVPlayer willChangeValueForKey:].
   @Test func doesNotCrashOnRateObservationAfterDisposal() async throws {
-    let realObjectFactory = FVPDefaultAVFactory()
+    let realObjectFactory = DefaultAVFactory()
 
     var avPlayer: AVPlayer? = nil
     weak var weakPlayer: VideoPlayer? = nil
@@ -485,7 +485,7 @@ private let hlsAudioTestURI =
 
     // Autoreleasepool is needed to simulate conditions of VideoPlayer deallocation.
     try autoreleasepool {
-      let videoPlayerPlugin = try createInitializedPlugin(avFactory: StubFVPAVFactory())
+      let videoPlayerPlugin = try createInitializedPlugin(avFactory: StubAVFactory())
 
       let identifiers = try videoPlayerPlugin.createTexturePlayer(
         options: CreationOptions(uri: mp4TestURI, httpHeaders: [:]))
@@ -513,7 +513,7 @@ private let hlsAudioTestURI =
 
   @Test func failedToLoadVideoEventShouldBeAlwaysSent() async throws {
     // Use real objects to test a real failure flow.
-    let realObjectFactory = FVPDefaultAVFactory()
+    let realObjectFactory = DefaultAVFactory()
     let videoPlayerPlugin = try createInitializedPlugin(avFactory: realObjectFactory)
 
     // Provide a URI that is a valid URI, but not a video, to trigger a failure inside AVPlayer.
@@ -535,7 +535,7 @@ private let hlsAudioTestURI =
   }
 
   @Test func updatePlayingStateShouldNotResetRate() async throws {
-    let realObjectFactory = FVPDefaultAVFactory()
+    let realObjectFactory = DefaultAVFactory()
     let testURL = try #require(URL(string: mp4TestURI))
     let player = VideoPlayer(
       playerItem: playerItem(with: testURL, factory: realObjectFactory),
@@ -557,7 +557,7 @@ private let hlsAudioTestURI =
     let stubDisplayLinkFactory = StubFVPDisplayLinkFactory()
     let mockVideoOutput = TestPixelBufferSource()
     let videoPlayerPlugin = try createInitializedPlugin(
-      avFactory: StubFVPAVFactory(pixelBufferSource: mockVideoOutput),
+      avFactory: StubAVFactory(pixelBufferSource: mockVideoOutput),
       displayLinkFactory: stubDisplayLinkFactory,
       textureRegistry: textureRegistry)
 
@@ -585,7 +585,7 @@ private let hlsAudioTestURI =
   }
 
   @Test func videoOutputIsAddedWhenAVPlayerIsInitialized() async throws {
-    let realObjectFactory = FVPDefaultAVFactory()
+    let realObjectFactory = DefaultAVFactory()
     let videoPlayerPlugin = try createInitializedPlugin(avFactory: realObjectFactory)
 
     let identifiers = try videoPlayerPlugin.createTexturePlayer(
@@ -605,7 +605,7 @@ private let hlsAudioTestURI =
 
   #if os(iOS)
     @Test func videoPlayerShouldNotOverwritePlayAndRecordNorDefaultToSpeaker() throws {
-      let stubFactory = StubFVPAVFactory()
+      let stubFactory = StubAVFactory()
       let audioSession = TestAudioSession()
       stubFactory.audioSession = audioSession
       audioSession.category = .playAndRecord
@@ -619,7 +619,7 @@ private let hlsAudioTestURI =
     }
 
     @Test func setMixWithOthersShouldNoOpWhenNoChangesAreRequired() throws {
-      let stubFactory = StubFVPAVFactory()
+      let stubFactory = StubAVFactory()
       let audioSession = TestAudioSession()
       stubFactory.audioSession = audioSession
       audioSession.category = .playAndRecord
@@ -636,7 +636,7 @@ private let hlsAudioTestURI =
   // Tests getAudioTracks with a regular MP4 video file using real AVFoundation.
   // Regular MP4 files do not have media selection groups, so getAudioTracks returns an empty array.
   @Test func getAudioTracksWithRealMP4Video() async throws {
-    let realObjectFactory = FVPDefaultAVFactory()
+    let realObjectFactory = DefaultAVFactory()
     let testURL = try #require(URL(string: mp4TestURI))
     let player = VideoPlayer(
       playerItem: playerItem(with: testURL, factory: realObjectFactory),
@@ -649,11 +649,19 @@ private let hlsAudioTestURI =
     }
 
     // Now test getAudioTracks
-    let result = player.getAudioTracks()
-
-    // Regular MP4 files do not have media selection groups for audio.
-    // getAudioTracks only returns selectable audio tracks from HLS streams.
-    #expect(result.count == 0)
+    await withCheckedContinuation { continuation in
+      player.getAudioTracks { result in
+        switch result {
+        case .success(let tracks):
+          // Regular MP4 files do not have media selection groups for audio.
+          // getAudioTracks only returns selectable audio tracks from HLS streams.
+          #expect(tracks.isEmpty)
+        case .failure(let error):
+          Issue.record("Failed to get tracks: \(error)")
+        }
+        continuation.resume()
+      }
+    }
 
     player.dispose()
   }
@@ -661,7 +669,7 @@ private let hlsAudioTestURI =
   // Tests getAudioTracks with an HLS stream using real AVFoundation.
   // HLS streams use media selection groups for audio track selection.
   @Test func getAudioTracksWithRealHLSStream() async throws {
-    let realObjectFactory = FVPDefaultAVFactory()
+    let realObjectFactory = DefaultAVFactory()
     let hlsURL = try #require(URL(string: hlsTestURI))
 
     let player = VideoPlayer(
@@ -675,14 +683,22 @@ private let hlsAudioTestURI =
     }
 
     // Now test getAudioTracks
-    let result = player.getAudioTracks()
-
-    // For HLS streams with multiple audio options, we get media selection tracks.
-    // The bee.m3u8 stream may or may not have multiple audio tracks.
-    // We verify the method returns valid data without crashing.
-    for track in result {
-      #expect(track.displayName != nil)
-      #expect(track.index >= 0)
+    await withCheckedContinuation { continuation in
+      player.getAudioTracks { result in
+        switch result {
+        case .success(let tracks):
+          // For HLS streams with multiple audio options, we get media selection tracks.
+          // The bee.m3u8 stream may or may not have multiple audio tracks.
+          // We verify the method returns valid data without crashing.
+          for track in tracks {
+            #expect(track.displayName != nil)
+            #expect(track.index >= 0)
+          }
+        case .failure(let error):
+          Issue.record("Failed to get tracks: \(error)")
+        }
+        continuation.resume()
+      }
     }
 
     player.dispose()
@@ -693,7 +709,7 @@ private let hlsAudioTestURI =
   @Test func getAudioTracksWithRealAudioFile() async throws {
     // TODO(stuartmorgan): Add more use of protocols in VideoPlayer so that this test
     // can use a fake item/asset instead of loading an actual remote asset.
-    let realObjectFactory = FVPDefaultAVFactory()
+    let realObjectFactory = DefaultAVFactory()
     let audioURL = try #require(URL(string: mp3AudioTestURI))
 
     let player = VideoPlayer(
@@ -707,11 +723,19 @@ private let hlsAudioTestURI =
     }
 
     // Now test getAudioTracks
-    let result = player.getAudioTracks()
-
-    // Regular audio files do not have media selection groups.
-    // getAudioTracks only returns selectable audio tracks from HLS streams.
-    #expect(result.count == 0)
+    await withCheckedContinuation { continuation in
+      player.getAudioTracks { result in
+        switch result {
+        case .success(let tracks):
+          // Regular audio files do not have media selection groups.
+          // getAudioTracks only returns selectable audio tracks from HLS streams.
+          #expect(tracks.isEmpty)
+        case .failure(let error):
+          Issue.record("Failed to get tracks: \(error)")
+        }
+        continuation.resume()
+      }
+    }
 
     player.dispose()
   }
@@ -721,7 +745,7 @@ private let hlsAudioTestURI =
   @Test func getAudioTracksViaPluginWithRealVideo() async throws {
     // TODO(stuartmorgan): Add more use of protocols in VideoPlayer so that this test
     // can use a fake item/asset instead of loading an actual remote asset.
-    let realObjectFactory = FVPDefaultAVFactory()
+    let realObjectFactory = DefaultAVFactory()
     let testURL = try #require(URL(string: mp4TestURI))
     let player = VideoPlayer(
       playerItem: playerItem(with: testURL, factory: realObjectFactory),
@@ -736,29 +760,40 @@ private let hlsAudioTestURI =
     }
 
     // Now test getAudioTracks
-    let result = player.getAudioTracks()
-
-    // Regular MP4 files do not have media selection groups.
-    // getAudioTracks only returns selectable audio tracks from HLS streams.
-    #expect(result.count == 0)
+    await withCheckedContinuation { continuation in
+      player.getAudioTracks { result in
+        switch result {
+        case .success(let tracks):
+          // Regular MP4 files do not have media selection groups.
+          // getAudioTracks only returns selectable audio tracks from HLS streams.
+          #expect(tracks.isEmpty)
+        case .failure(let error):
+          Issue.record("Failed to get tracks: \(error)")
+        }
+        continuation.resume()
+      }
+    }
 
     player.dispose()
   }
 
-  @Test func loadTracksWithMediaTypeIsCalledOnNewerOS() {
-    let mockAsset = TestAsset(duration: CMTime(value: 1, timescale: 1), tracks: [])
+  @Test func loadIsCalledToLoadVideoTracks() async {
+    let mockAsset = TestAsset(duration: CMTime(value: 1, timescale: 1))
     let item = StubPlayerItem(asset: mockAsset)
 
-    let stubAVFactory = StubFVPAVFactory(player: nil, playerItem: item, pixelBufferSource: nil)
+    let stubAVFactory = StubAVFactory(player: nil, playerItem: item, pixelBufferSource: nil)
     let stubViewProvider = StubViewProvider()
-    let _ = VideoPlayer(
-      playerItem: item, avFactory: stubAVFactory, viewProvider: stubViewProvider)
-    #expect(mockAsset.loadedTracksAsynchronously)
+    await withCheckedContinuation { continuation in
+      mockAsset.continuation = continuation
+      let _ = VideoPlayer(
+        playerItem: item, avFactory: stubAVFactory, viewProvider: stubViewProvider)
+    }
+    #expect(mockAsset.loadedValue)
   }
 
   @Test func videoOutputIsConfiguredWithBT709ColorProperties() throws {
     let item = StubPlayerItem()
-    let stubAVFactory = StubFVPAVFactory(player: nil, playerItem: item, pixelBufferSource: nil)
+    let stubAVFactory = StubAVFactory(player: nil, playerItem: item, pixelBufferSource: nil)
     let stubViewProvider = StubViewProvider()
     let _ = VideoPlayer(
       playerItem: item, avFactory: stubAVFactory, viewProvider: stubViewProvider)
@@ -786,7 +821,7 @@ private let hlsAudioTestURI =
   @Test func getVideoTracksWithRealMP4Video() async throws {
     // TODO(stuartmorgan): Add more use of protocols in VideoPlayer so that this test
     // can use a fake item/asset instead of loading an actual remote asset.
-    let realObjectFactory = FVPDefaultAVFactory()
+    let realObjectFactory = DefaultAVFactory()
     let testURL = try #require(URL(string: mp4TestURI))
 
     let player = VideoPlayer(
@@ -819,7 +854,7 @@ private let hlsAudioTestURI =
   @Test func getVideoTracksWithRealHLSStream() async throws {
     // TODO(stuartmorgan): Add more use of protocols in VideoPlayer so that this test
     // can use a fake item/asset instead of loading an actual remote asset.
-    let realObjectFactory = FVPDefaultAVFactory()
+    let realObjectFactory = DefaultAVFactory()
     let hlsURL = try #require(URL(string: hlsTestURI))
 
     let player = VideoPlayer(
@@ -863,7 +898,7 @@ private let hlsAudioTestURI =
   @Test func selectVideoTrackSetsBitrate() async throws {
     // TODO(stuartmorgan): Add more use of protocols in VideoPlayer so that this test
     // can use a fake item/asset instead of loading an actual remote asset.
-    let realObjectFactory = FVPDefaultAVFactory()
+    let realObjectFactory = DefaultAVFactory()
     let testURL = try #require(URL(string: mp4TestURI))
 
     let player = VideoPlayer(
@@ -887,7 +922,7 @@ private let hlsAudioTestURI =
   @Test func selectVideoTrackAutoQuality() async throws {
     // TODO(stuartmorgan): Add more use of protocols in VideoPlayer so that this test
     // can use a fake item/asset instead of loading an actual remote asset.
-    let realObjectFactory = FVPDefaultAVFactory()
+    let realObjectFactory = DefaultAVFactory()
     let testURL = try #require(URL(string: mp4TestURI))
 
     let player = VideoPlayer(
@@ -915,7 +950,7 @@ private let hlsAudioTestURI =
   @Test func getVideoTracksViaPluginWithRealVideo() async throws {
     // TODO(stuartmorgan): Add more use of protocols in VideoPlayer so that this test
     // can use a fake item/asset instead of loading an actual remote asset.
-    let realObjectFactory = FVPDefaultAVFactory()
+    let realObjectFactory = DefaultAVFactory()
     let videoPlayerPlugin = try createInitializedPlugin(avFactory: realObjectFactory)
 
     let identifiers = try videoPlayerPlugin.createTexturePlayer(
@@ -944,7 +979,7 @@ private let hlsAudioTestURI =
   @Test func selectVideoTrackViaPluginWithHLSStream() async throws {
     // TODO(stuartmorgan): Add more use of protocols in VideoPlayer so that this test
     // can use a fake item/asset instead of loading an actual remote asset.
-    let realObjectFactory = FVPDefaultAVFactory()
+    let realObjectFactory = DefaultAVFactory()
     let videoPlayerPlugin = try createInitializedPlugin(avFactory: realObjectFactory)
 
     // Use HLS stream which supports adaptive bitrate
@@ -999,7 +1034,7 @@ private let hlsAudioTestURI =
   /// Creates a plugin with the given dependencies, and default stubs for any that aren't provided,
   /// then initializes it.
   private func createInitializedPlugin(
-    avFactory: FVPAVFactory = StubFVPAVFactory(),
+    avFactory: WrappedAVObjectFactory = StubAVFactory(),
     displayLinkFactory: DisplayLinkFactory = StubFVPDisplayLinkFactory(),
     binaryMessenger: FlutterBinaryMessenger = StubBinaryMessenger(),
     textureRegistry: FlutterTextureRegistry = TestTextureRegistry(),
@@ -1017,7 +1052,7 @@ private let hlsAudioTestURI =
     return plugin
   }
 
-  private func playerItem(with url: URL, factory: FVPAVFactory) -> FVPAVPlayerItem {
+  private func playerItem(with url: URL, factory: WrappedAVObjectFactory) -> WrappedAVPlayerItem {
     let asset = factory.urlAsset(with: url, options: nil)
     return factory.playerItem(with: asset)
   }

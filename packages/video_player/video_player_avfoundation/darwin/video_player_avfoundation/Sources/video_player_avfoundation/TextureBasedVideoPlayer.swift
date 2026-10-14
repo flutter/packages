@@ -54,10 +54,10 @@ class TextureBasedVideoPlayer: VideoPlayer, FlutterTexture {
   /// Initializes a new instance of TextureBasedVideoPlayer with the given player item,
   /// frame updater, display link, AV factory, and view provider.
   init(
-    playerItem: FVPAVPlayerItem,
+    playerItem: WrappedAVPlayerItem,
     frameUpdater: FVPFrameUpdater,
     displayLink: FVPDisplayLink,
-    avFactory: FVPAVFactory,
+    avFactory: WrappedAVObjectFactory,
     viewProvider: FVPViewProvider
   ) {
     self.frameUpdater = frameUpdater

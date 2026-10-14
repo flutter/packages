@@ -2,6 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import AVFoundation
 import CoreMedia
 
 #if os(iOS)
@@ -48,7 +49,7 @@ class VideoPlayer: NSObject, VideoPlayerInstanceApi {
   var onDisposed: (() -> Void)?
 
   /// The pixel buffer source associated with this video player.
-  let pixelBufferSource: FVPPixelBufferSource
+  let pixelBufferSource: PixelBufferSource
   /// The view provider, to obtain view information from.
   let viewProvider: FVPViewProvider
   /// The preferred transform for the video. It can be used to handle the rotation of the video.
@@ -71,8 +72,8 @@ class VideoPlayer: NSObject, VideoPlayerInstanceApi {
   /// Initializes a new instance of FVPVideoPlayer with the given AVPlayerItem, AV factory, and view
   /// provider.
   init(
-    playerItem: FVPAVPlayerItem,
-    avFactory: FVPAVFactory,
+    playerItem: WrappedAVPlayerItem,
+    avFactory: WrappedAVObjectFactory,
     viewProvider: FVPViewProvider
   ) {
     self.viewProvider = viewProvider
@@ -115,37 +116,33 @@ class VideoPlayer: NSObject, VideoPlayerInstanceApi {
 
     super.init()
 
-    asset.loadValuesAsynchronously(forKeys: ["tracks"]) { [weak self] in
-      if asset.statusOfValue(forKey: "tracks", error: nil) == .loaded {
-        asset.loadTracks(withMediaType: .video) { [weak self] (tracks, error) in
-          if let error = error {
-            NSLog("Error loading tracks: %@", error.localizedDescription)
-          } else if let tracks = tracks, !tracks.isEmpty {
-            let videoTrack = tracks[0]
-            videoTrack.loadValuesAsynchronously(forKeys: ["preferredTransform"]) { [weak self] in
-              guard let self = self else { return }
-              if self.disposed {
-                return
-              }
-              if videoTrack.statusOfValue(forKey: "preferredTransform", error: nil) == .loaded {
-                // Rotate the video by using a videoComposition and the preferredTransform
-                self.preferredTransform = standardizedTrackTransform(
-                  transform:
-                    videoTrack.preferredTransform, size: videoTrack.naturalSize)
-                // Do not use video composition when it is not needed.
-                if self.preferredTransform.isIdentity {
-                  return
-                }
-                // Note:
-                // https://developer.apple.com/documentation/avfoundation/avplayeritem/1388818-videocomposition
-                // Video composition can only be used with file-based media and is not supported for
-                // use with media served using HTTP Live Streaming.
-                playerItem.videoComposition = self.createVideoComposition(
-                  transform: self.preferredTransform, asset: asset, videoTrack: videoTrack)
-              }
-            }
+    Task { @MainActor [weak self] in
+      do {
+        let tracks = try await asset.load(.tracks, isolation: #isolation)
+        let videoTracks = tracks.filter { $0.mediaType == .video }
+        if !videoTracks.isEmpty {
+          let videoTrack = videoTracks[0]
+          let transform = try await videoTrack.load(.preferredTransform)
+          guard let self = self else { return }
+          if self.disposed {
+            return
           }
+          // Rotate the video by using a videoComposition and the preferredTransform
+          self.preferredTransform = standardizedTrackTransform(
+            transform: transform, size: videoTrack.naturalSize)
+          // Do not use video composition when it is not needed.
+          if self.preferredTransform.isIdentity {
+            return
+          }
+          // Note:
+          // https://developer.apple.com/documentation/avfoundation/avplayeritem/1388818-videocomposition
+          // Video composition can only be used with file-based media and is not supported for
+          // use with media served using HTTP Live Streaming.
+          playerItem.videoComposition = self.createVideoComposition(
+            transform: self.preferredTransform, asset: asset, videoTrack: videoTrack)
         }
+      } catch {
+        NSLog("Error loading tracks: %@", error.localizedDescription)
       }
     }
   }
@@ -214,61 +211,57 @@ class VideoPlayer: NSObject, VideoPlayerInstanceApi {
     eventListener?.videoPlayerWasDisposed()
   }
 
-  func getAudioTracks() -> [MediaSelectionAudioTrackData] {
+  func getAudioTracks(completion: @escaping (Result<[MediaSelectionAudioTrackData], Error>) -> Void)
+  {
     guard let currentItem = player.currentItem else {
-      return []
+      completion(.success([]))
+      return
     }
 
     let asset = currentItem.asset
 
     // Get tracks from media selection (for HLS streams)
-    let audioGroup = asset.mediaSelectionGroup(forMediaCharacteristic: .audible)
+    asset.loadMediaSelectionGroup(for: .audible) { audioGroup, _ in
+      guard let audioGroup = audioGroup else {
+        completion(.success([]))
+        return
+      }
 
-    guard let audioGroup = audioGroup else {
-      return []
-    }
-
-    let mediaSelection = currentItem.currentMediaSelection
-    let currentSelection =
-      mediaSelection.selectedMediaOption(in: audioGroup)
-    return audioGroup.options.enumerated().map { i, option in
-
-      let displayName = option.displayName
-
-      let languageCode: String? = option.locale?.languageCode
-
-      let titleItems = AVMetadataItem.metadataItems(
-        from: option.commonMetadata, withKey: AVMetadataKey.commonKeyTitle, keySpace: .common)
-      let commonMetadataTitle: String? = titleItems.first?.stringValue
-
-      let isSelected = currentSelection?.isEqual(option) ?? false
-
-      return MediaSelectionAudioTrackData(
-        index: Int64(i),
-        displayName: displayName,
-        languageCode: languageCode,
-        isSelected: isSelected,
-        commonMetadataTitle: commonMetadataTitle)
+      let mediaSelection = currentItem.currentMediaSelection
+      let currentSelection = mediaSelection.selectedMediaOption(in: audioGroup)
+      completion(
+        .success(
+          audioGroup.options.enumerated().map { i, option in
+            let titleItems = AVMetadataItem.metadataItems(
+              from: option.commonMetadata, withKey: AVMetadataKey.commonKeyTitle, keySpace: .common)
+            return MediaSelectionAudioTrackData(
+              index: Int64(i),
+              displayName: option.displayName,
+              languageCode: option.locale?.languageCode,
+              isSelected: currentSelection == option,
+              commonMetadataTitle: titleItems.first?.stringValue)
+          }))
     }
   }
 
-  func selectAudioTrack(atIndex trackIndex: Int64) {
+  func selectAudioTrack(
+    atIndex trackIndex: Int64, completion: @escaping (Result<Void, Error>) -> Void
+  ) {
     guard let currentItem = player.currentItem else { return }
     let asset = currentItem.asset
 
-    guard let audioGroup = asset.mediaSelectionGroup(forMediaCharacteristic: .audible) else {
-      return
-    }
-
-    if trackIndex >= 0 && trackIndex < audioGroup.options.count {
-      let option = audioGroup.options[Int(trackIndex)]
-      currentItem.select(option, in: audioGroup)
+    asset.loadMediaSelectionGroup(for: .audible) { audioGroup, _ in
+      if let audioGroup = audioGroup {
+        if trackIndex >= 0 && trackIndex < audioGroup.options.count {
+          let option = audioGroup.options[Int(trackIndex)]
+          currentItem.select(option, in: audioGroup)
+        }
+      }
+      completion(.success(()))
     }
   }
 
   func getVideoTracks(completion: @escaping (Result<NativeVideoTrackData, Error>) -> Void) {
-    var mediaSelectionTracks: [MediaSelectionVideoTrackData] = []
-
     guard let currentItem = player.currentItem else {
       completion(
         .failure(PigeonError(code: "State Error", message: "No current player item", details: nil)))
@@ -282,54 +275,51 @@ class VideoPlayer: NSObject, VideoPlayerInstanceApi {
       return
     }
 
-    urlAsset.loadValuesAsynchronously(forKeys: [assetVariantsKey]) {
-      DispatchQueue.main.async {
-        let status = urlAsset.statusOfValue(forKey: assetVariantsKey, error: nil)
+    Task { @MainActor in
+      do {
+        let variants = try await urlAsset.load(.variants)
+        var mediaSelectionTracks: [MediaSelectionVideoTrackData] = []
+        let currentBitrate = max(currentItem.preferredPeakBitRate, 0)
 
-        if status == .loaded {
-          let variants = urlAsset.variants
-          let currentBitrate = max(currentItem.preferredPeakBitRate, 0)
+        var variantIndex = 0
+        for variant in variants {
+          let peakBitRate = variant.peakBitRate ?? 0.0
+          var videoSize = CGSize.zero
+          var frameRate = 0.0
+          var codec: String? = nil
 
-          var variantIndex = 0
-          for variant in variants {
-            let peakBitRate = variant.peakBitRate ?? 0.0
-            var videoSize = CGSize.zero
-            var frameRate = 0.0
-            var codec: String? = nil
-
-            // Get video attributes if available
-            if let videoAttrs = variant.videoAttributes {
-              videoSize = videoAttrs.presentationSize
-              frameRate = videoAttrs.nominalFrameRate ?? 0.0
-              // Get codec from media sub types
-              let codecTypes = videoAttrs.codecTypes
-              if !codecTypes.isEmpty {
-                codec = codecStringFromFourCharCode(codecTypes[0])
-              }
+          // Get video attributes if available
+          if let videoAttrs = variant.videoAttributes {
+            videoSize = videoAttrs.presentationSize
+            frameRate = videoAttrs.nominalFrameRate ?? 0.0
+            // Get codec from media sub types
+            let codecTypes = videoAttrs.codecTypes
+            if !codecTypes.isEmpty {
+              codec = codecStringFromFourCharCode(codecTypes[0])
             }
-
-            // Determine if this variant is currently selected by comparing
-            // bitrates. Since AVPlayer doesn't expose the exact selected variant,
-            // we use a 10% tolerance to account for minor bitrate variations in
-            // adaptive streaming.
-            let isSelected =
-              currentBitrate > 0 && abs(peakBitRate - currentBitrate) < peakBitRate * 0.1
-
-            // Generate a human-readable resolution label (e.g., "1080p")
-            let resolutionLabel: String? =
-              videoSize.height > 0 ? String(format: "%.0fp", videoSize.height) : nil
-
-            let trackData = createVideoTrackData(
-              index: variantIndex,
-              label: resolutionLabel,
-              peakBitRate: peakBitRate,
-              videoSize: videoSize,
-              frameRate: frameRate,
-              codec: codec,
-              isSelected: isSelected)
-            mediaSelectionTracks.append(trackData)
-            variantIndex += 1
           }
+
+          // Determine if this variant is currently selected by comparing
+          // bitrates. Since AVPlayer doesn't expose the exact selected variant,
+          // we use a 10% tolerance to account for minor bitrate variations in
+          // adaptive streaming.
+          let isSelected =
+            currentBitrate > 0 && abs(peakBitRate - currentBitrate) < peakBitRate * 0.1
+
+          // Generate a human-readable resolution label (e.g., "1080p")
+          let resolutionLabel: String? =
+            videoSize.height > 0 ? String(format: "%.0fp", videoSize.height) : nil
+
+          let trackData = createVideoTrackData(
+            index: variantIndex,
+            label: resolutionLabel,
+            peakBitRate: peakBitRate,
+            videoSize: videoSize,
+            frameRate: frameRate,
+            codec: codec,
+            isSelected: isSelected)
+          mediaSelectionTracks.append(trackData)
+          variantIndex += 1
         }
 
         completion(
@@ -337,6 +327,12 @@ class VideoPlayer: NSObject, VideoPlayerInstanceApi {
             NativeVideoTrackData(
               assetTracks: nil,
               mediaSelectionTracks: mediaSelectionTracks)))
+      } catch {
+        completion(
+          .success(
+            NativeVideoTrackData(
+              assetTracks: nil,
+              mediaSelectionTracks: [])))
       }
     }
   }
@@ -473,7 +469,7 @@ class VideoPlayer: NSObject, VideoPlayerInstanceApi {
 
   private func createVideoComposition(
     transform: CGAffineTransform,
-    asset: FVPAVAsset,
+    asset: WrappedAVAsset,
     videoTrack: AVAssetTrack
   ) -> AVMutableVideoComposition {
     let instruction = AVMutableVideoCompositionInstruction()
@@ -568,15 +564,19 @@ class VideoPlayer: NSObject, VideoPlayerInstanceApi {
     } else {
       error = player.currentItem?.error
     }
+    let details = NSMutableOrderedSet(object: "Failed to load video")
+    let addToDetails: (String?) -> Void = { detail in
+      if let detail = detail {
+        details.add(detail)
+      }
+    }
     let underlyingError = (error as? NSError)?.userInfo[NSUnderlyingErrorKey] as? NSError
-    let details: [String] = [
-      "Failed to load video",
-      error?.localizedDescription,
-      (error as? NSError)?.localizedFailureReason,
-      underlyingError?.localizedDescription,
-      underlyingError?.localizedFailureReason,
-    ].compactMap({ $0 })
-    eventListener?.videoPlayerDidError(withMessage: details.joined(separator: ": "))
+    addToDetails(error?.localizedDescription)
+    addToDetails((error as? NSError)?.localizedFailureReason)
+    addToDetails(underlyingError?.localizedDescription)
+    addToDetails(underlyingError?.localizedFailureReason)
+    eventListener?.videoPlayerDidError(
+      withMessage: (details.array as! [String]).joined(separator: ": "))
   }
 
   private func reportInitialized() {
