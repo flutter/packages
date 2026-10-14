@@ -1,3 +1,3 @@
 changelog: |
-  - Fixes `IconButton` ignoring the Material 3 Expressive opt-in under an `IconButtonTheme` that doesn't set `variant`, including the ones that `ListTile`, `InputDecorator`, and `AppBar` add. A null `IconButtonThemeData.variant` is now inherited from the enclosing icon button themes, and the new `IconButtonTheme.variantOf` returns the variant that applies at a given location.
+  - Adds `IconButtonTheme.variantOf`, which returns the closest non-null `IconButtonThemeData.variant`.
 version: minor
