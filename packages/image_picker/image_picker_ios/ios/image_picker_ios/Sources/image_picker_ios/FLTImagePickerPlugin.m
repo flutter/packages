@@ -11,6 +11,7 @@
 #import <PhotosUI/PHPhotoLibrary+PhotosUISupport.h>
 #import <PhotosUI/PhotosUI.h>
 #import <UIKit/UIKit.h>
+#import <UniformTypeIdentifiers/UniformTypeIdentifiers.h>
 
 #import "./include/image_picker_ios/messages.g.h"
 #import "FLTImagePickerImageUtil.h"
@@ -126,10 +127,10 @@ typedef NS_ENUM(NSInteger, ImagePickerClassType) { UIImagePickerClassType, PHPic
   imagePickerController.delegate = self;
   NSMutableArray<NSString *> *mediaTypes = [[NSMutableArray alloc] init];
   if (context.includeImages) {
-    [mediaTypes addObject:(NSString *)kUTTypeImage];
+    [mediaTypes addObject:UTTypeImage.identifier];
   }
   if (context.includeVideo) {
-    [mediaTypes addObject:(NSString *)kUTTypeMovie];
+    [mediaTypes addObject:UTTypeMovie.identifier];
     imagePickerController.videoQuality = UIImagePickerControllerQualityTypeHigh;
   }
   imagePickerController.mediaTypes = mediaTypes;
