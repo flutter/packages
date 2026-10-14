@@ -18,12 +18,10 @@
 #endif
 
 NS_ASSUME_NONNULL_BEGIN
-API_AVAILABLE(ios(11.2), macos(10.13.2))
 @interface SKProductSubscriptionPeriodStub : SKProductSubscriptionPeriod
 - (instancetype)initWithMap:(NSDictionary *)map;
 @end
 
-API_AVAILABLE(ios(11.2), macos(10.13.2))
 @interface SKProductDiscountStub : SKProductDiscount
 - (instancetype)initWithMap:(NSDictionary *)map;
 @end
@@ -74,7 +72,6 @@ API_AVAILABLE(ios(11.2), macos(10.13.2))
 - (instancetype)initWithFailureError:(NSError *)error;
 @end
 
-API_AVAILABLE(ios(13.0), macos(10.15))
 @interface SKStorefrontStub : SKStorefront
 - (instancetype)initWithMap:(NSDictionary *)map;
 @end
@@ -85,9 +82,8 @@ API_AVAILABLE(ios(13.0), macos(10.15))
 // FLTPaymentQueueProtocol properties
 @property(nonatomic, assign) SKPaymentTransactionState paymentState;
 @property(nonatomic, strong, nullable) id<SKPaymentTransactionObserver> observer;
-@property(nonatomic, strong, readwrite) SKStorefront *storefront API_AVAILABLE(ios(13.0));
-@property(nonatomic, strong, readwrite) NSArray<SKPaymentTransaction *> *transactions API_AVAILABLE(
-    ios(3.0), macos(10.7), watchos(6.2));
+@property(nonatomic, strong, readwrite) SKStorefront *storefront;
+@property(nonatomic, strong, readwrite) NSArray<SKPaymentTransaction *> *transactions;
 
 // Test Properties
 @property(nonatomic, assign)
