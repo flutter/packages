@@ -2500,7 +2500,6 @@ void main() {
     },
   );
 
-  // Regression test for https://github.com/flutter/flutter/issues/129058.
   testWidgets('InkWell tertiary tap test', (WidgetTester tester) async {
     final log = <String>[];
 
