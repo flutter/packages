@@ -2,7 +2,7 @@
 
 * **BREAKING CHANGES**:
   * Updates `file_selector_platform_interface` to `3.0.0` which updates `cross_file` dependency to
-    `0.4.0`.
+    `0.4.0`. See its [CHANGELOG](https://pub.dev/packages/cross_file/changelog#040).
   * Replaces `FileSaveLocation.path` with `FileSaveLocation.file`.
   * Replaces `getDirectoryPath` with `getDirectory` and now returns a `XDirectory`.
   * Replaces `getDirectoryPaths` with `getDirectories` and now returns `List<XDirectory>`.
