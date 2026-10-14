@@ -13,6 +13,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 
 import 'button_style.dart';
+import 'color_scheme.dart';
 import 'dropdown_menu_theme.dart';
 import 'icon_button.dart';
 import 'icons.dart';
@@ -23,6 +24,7 @@ import 'material_state.dart';
 import 'menu_anchor.dart';
 import 'menu_button_theme.dart';
 import 'menu_style.dart';
+import 'menu_theme.dart';
 import 'text_field.dart';
 import 'theme.dart';
 import 'theme_data.dart';
@@ -979,29 +981,23 @@ class _DropdownMenuState<T> extends State<DropdownMenu<T>> {
           WidgetState.focused,
         });
 
-        // Query the Material 3 default style.
-        // TODO(bleroux): replace once a standard way for accessing defaults will be defined.
-        // See: https://github.com/flutter/flutter/issues/130135.
-        final ButtonStyle defaultStyle = const MenuItemButton().defaultStyleOf(context);
+        final ColorScheme colorScheme = Theme.of(context).colorScheme;
 
         Color? resolveFocusedColor(WidgetStateProperty<Color?>? colorStateProperty) {
           return colorStateProperty?.resolve(<WidgetState>{WidgetState.focused});
         }
 
-        final Color focusedForegroundColor = resolveFocusedColor(
-          effectiveForegroundColor ?? defaultStyle.foregroundColor!,
-        )!;
-        final Color focusedIconColor = resolveFocusedColor(
-          effectiveIconColor ?? defaultStyle.iconColor!,
-        )!;
-        final Color focusedOverlayColor = resolveFocusedColor(
-          effectiveOverlayColor ?? defaultStyle.overlayColor!,
-        )!;
-        // For the background color we can't rely on the default style which is transparent.
-        // Defaults to onSurface.withOpacity(0.12).
+        // Per M3 standard menu specs, highlighted/selected menu items default
+        // to tertiaryContainer background and onTertiaryContainer foreground.
+        final Color focusedForegroundColor =
+            resolveFocusedColor(effectiveForegroundColor) ?? colorScheme.onTertiaryContainer;
+        final Color focusedIconColor =
+            resolveFocusedColor(effectiveIconColor) ?? colorScheme.onTertiaryContainer;
+        final Color focusedOverlayColor =
+            resolveFocusedColor(effectiveOverlayColor) ??
+            colorScheme.onTertiaryContainer.withOpacity(0.1);
         final Color focusedBackgroundColor =
-            resolveFocusedColor(effectiveBackgroundColor) ??
-            Theme.of(context).colorScheme.onSurface.withOpacity(0.12);
+            resolveFocusedColor(effectiveBackgroundColor) ?? colorScheme.tertiaryContainer;
 
         effectiveStyle = effectiveStyle.copyWith(
           backgroundColor: MaterialStatePropertyAll<Color>(focusedBackgroundColor),
@@ -1222,6 +1218,14 @@ class _DropdownMenuState<T> extends State<DropdownMenu<T>> {
         : baseTextStyle?.copyWith(color: disabledColor) ?? TextStyle(color: disabledColor);
 
     MenuStyle? effectiveMenuStyle = widget.menuStyle ?? theme.menuStyle ?? defaults.menuStyle!;
+    if (widget.menuStyle?.backgroundColor == null) {
+      effectiveMenuStyle = effectiveMenuStyle.copyWith(
+        backgroundColor:
+            theme.menuStyle?.backgroundColor ??
+            MenuTheme.of(context).style?.backgroundColor ??
+            defaults.menuStyle!.backgroundColor,
+      );
+    }
 
     final double? anchorWidth = getWidth(_anchorKey);
     if (widget.width != null) {
@@ -1752,9 +1756,10 @@ class _DropdownMenuDefaultsM3 extends DropdownMenuThemeData {
 
   @override
   MenuStyle get menuStyle {
-    return const MenuStyle(
-      minimumSize: MaterialStatePropertyAll<Size>(Size(_kMinimumWidth, 0.0)),
-      maximumSize: MaterialStatePropertyAll<Size>(Size.infinite),
+    return MenuStyle(
+      backgroundColor: MaterialStatePropertyAll<Color>(_theme.colorScheme.surfaceContainerLow),
+      minimumSize: const MaterialStatePropertyAll<Size>(Size(_kMinimumWidth, 0.0)),
+      maximumSize: const MaterialStatePropertyAll<Size>(Size.infinite),
       visualDensity: VisualDensity.standard,
     );
   }
