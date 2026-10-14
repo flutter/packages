@@ -1852,6 +1852,22 @@ class DropdownButtonFormField<T> extends FormField<T> {
   /// Creates a [DropdownButton] widget that is a [FormField], wrapped in an
   /// [InputDecorator].
   ///
+  /// The `enabled` argument controls whether the user can interact with the
+  /// field:
+  ///
+  ///  * If true, the field is interactive even if [onChanged] is null. The
+  ///    selected value is stored in the [FormFieldState].
+  ///  * If false, the field is not interactive and its own [autovalidateMode]
+  ///    is ignored, even if [onChanged] is non-null. [FormState.validate] and
+  ///    the parent [Form]'s [Form.autovalidateMode] still validate it.
+  ///
+  ///  * If null, the field is interactive if and only if [onChanged] is
+  ///    non-null. In either case, it is still validated. This matches the
+  ///    behavior before `enabled` was added.
+  ///
+  /// The resolved [FormField.enabled] is true unless `enabled` is explicitly
+  /// false.
+  ///
   /// For a description of the `onSaved`, `validator`, or `autovalidateMode`
   /// parameters, see [FormField]. For the rest (other than [decoration]), see
   /// [DropdownButton].
@@ -1868,7 +1884,7 @@ class DropdownButtonFormField<T> extends FormField<T> {
     T? initialValue,
     Widget? hint,
     Widget? disabledHint,
-    required this.onChanged,
+    this.onChanged,
     VoidCallback? onTap,
     int elevation = 8,
     TextStyle? style,
@@ -1888,6 +1904,7 @@ class DropdownButtonFormField<T> extends FormField<T> {
     super.validator,
     super.errorBuilder,
     super.forceErrorText,
+    bool? enabled,
     AutovalidateMode? autovalidateMode,
     double? menuMaxHeight,
     bool? enableFeedback,
@@ -1922,6 +1939,7 @@ class DropdownButtonFormField<T> extends FormField<T> {
        super(
          initialValue: initialValue ?? value,
          autovalidateMode: autovalidateMode ?? AutovalidateMode.disabled,
+         enabled: enabled ?? true,
          builder: (FormFieldState<T> field) {
            final state = field as _DropdownButtonFormFieldState<T>;
            InputDecoration effectiveDecoration = (decoration ?? const InputDecoration())
@@ -1930,7 +1948,8 @@ class DropdownButtonFormField<T> extends FormField<T> {
            final bool showSelectedItem =
                items != null &&
                items.where((DropdownMenuItem<T> item) => item.value == state.value).isNotEmpty;
-           final bool isDropdownEnabled = onChanged != null && items != null && items.isNotEmpty;
+           final bool isDropdownEnabled =
+               (enabled ?? onChanged != null) && items != null && items.isNotEmpty;
            // If decoration hintText is provided, use it as the default value for both hint and disabledHint.
            final Widget? decorationHint = effectiveDecoration.hintText != null
                ? Text(effectiveDecoration.hintText!)
@@ -1969,7 +1988,7 @@ class DropdownButtonFormField<T> extends FormField<T> {
                  value: state.value,
                  hint: effectiveHint,
                  disabledHint: effectiveDisabledHint,
-                 onChanged: onChanged == null ? null : state.didChange,
+                 onChanged: isDropdownEnabled ? state.didChange : null,
                  onTap: onTap,
                  elevation: elevation,
                  style: style,
@@ -2006,6 +2025,9 @@ class DropdownButtonFormField<T> extends FormField<T> {
   /// This callback is invoked after the parent [Form]'s [Form.onChanged] callback.
   /// The field's updated value is available in the [Form.onChanged] callback
   /// via [FormFieldState.value].
+  ///
+  /// If the constructor's `enabled` argument is true, the field is interactive even
+  /// when [onChanged] is null.
   final ValueChanged<T?>? onChanged;
 
   /// The decoration to show around the dropdown button form field.

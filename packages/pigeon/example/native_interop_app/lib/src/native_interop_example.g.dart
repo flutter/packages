@@ -482,9 +482,9 @@ class NativeInteropExampleApiForNativeInterop {
       if (_jniApi != null) {
         return _jniApi.doSomething();
       } else if (_ffiApi != null) {
-        final error = ffi_bridge.PigeonError();
-        _ffiApi.doSomethingWithWrappedError(error);
-        _throwIfFfiError(error);
+        final pigeonVar_error = ffi_bridge.PigeonError();
+        _ffiApi.doSomethingWithWrappedError(pigeonVar_error);
+        _throwIfFfiError(pigeonVar_error);
         return;
       } else {
         throw Exception('No JNI or FFI api available');

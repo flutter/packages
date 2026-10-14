@@ -4739,14 +4739,18 @@ void main() {
     testWidgets(
       'Obsolete branches in StatefulShellRoute are cleaned up after route '
       'configuration change',
-      // TODO(tolo): Temporarily skipped due to a bug that causes test to faiL
-      skip: true,
+      // Reusing explicit keys identifies equivalent branches across configurations.
       (WidgetTester tester) async {
         final rootNavigatorKey = GlobalKey<NavigatorState>(debugLabel: 'root');
         final statefulShellKey = GlobalKey<StatefulNavigationShellState>(debugLabel: 'shell');
+        final branchNavigatorKeys = <String, GlobalKey<NavigatorState>>{
+          'a': GlobalKey<NavigatorState>(debugLabel: 'branch-a'),
+          'b': GlobalKey<NavigatorState>(debugLabel: 'branch-b'),
+          'c': GlobalKey<NavigatorState>(debugLabel: 'branch-c'),
+        };
         StatefulNavigationShell? routeState;
         StatefulShellBranch makeBranch(String name) => StatefulShellBranch(
-          navigatorKey: GlobalKey<NavigatorState>(debugLabel: 'branch-$name'),
+          navigatorKey: branchNavigatorKeys[name],
           preload: true,
           initialLocation: '/$name',
           routes: <GoRoute>[
@@ -4795,6 +4799,9 @@ void main() {
         expect(hasLoadedBranch('a'), isTrue);
         expect(hasLoadedBranch('b'), isTrue);
         expect(hasLoadedBranch('c'), isTrue);
+        final NavigatorState branchAState = branchNavigatorKeys['a']!.currentState!;
+        final NavigatorState branchBState = branchNavigatorKeys['b']!.currentState!;
+        final NavigatorState branchCState = branchNavigatorKeys['c']!.currentState!;
 
         // Unload branch 'c' by changing the route configuration
         config.value = RoutingConfig(routes: createRoutes(false));
@@ -4803,6 +4810,10 @@ void main() {
         expect(hasLoadedBranch('a'), isTrue);
         expect(hasLoadedBranch('b'), isTrue);
         expect(hasLoadedBranch('c'), isFalse);
+        expect(branchNavigatorKeys['a']!.currentState, same(branchAState));
+        expect(branchNavigatorKeys['b']!.currentState, same(branchBState));
+        expect(branchNavigatorKeys['c']!.currentState, isNull);
+        expect(branchCState.mounted, isFalse);
       },
     );
   });
