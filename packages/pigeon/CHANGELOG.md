@@ -1,3 +1,10 @@
+## 29.0.9
+
+* Adds `pigeon` to `executables` in `pubspec.yaml`, removes unused
+  `dart:mirrors` imports, and resolves the Dart SDK and executable via
+  `package:cli_util` so `pigeon` can run as a standalone AOT-compiled executable
+  (such as via `dart install` or `dart run pigeon@`).
+
 ## 29.0.8
 
 * [swift] Adds validation errors for code that Swift FFI doesn't support:

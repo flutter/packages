@@ -5,6 +5,7 @@
 import 'dart:async';
 import 'dart:io';
 
+import 'package:cli_util/cli_util.dart' as cli_util;
 import 'package:path/path.dart' as path;
 import 'package:pigeon/src/ast.dart';
 import 'package:pigeon/src/dart/dart_generator.dart';
@@ -2983,5 +2984,21 @@ const String myConst = 'hello ${1 + 2}';
       final String configPath = getFfigenConfigPath(targetDir, options.input);
       expect(configPath, equals('example/tool/pigeon/messages_ffigen_config.dart'));
     });
+  });
+
+  test('parseFile locates Dart SDK via cli_util when running as AOT binary', () {
+    final String? currentSdk = cli_util.sdkPath;
+    expect(currentSdk, isNotNull);
+    final ParseResults parseResult = runZoned(
+      () => parseSource('class Message { String? text; }'),
+      zoneValues: <Object, Object>{
+        cli_util.environmentOverridesKey: <String, String>{
+          '_DART_RESOLVED_EXECUTABLE': '/nonexistent/bin/pigeon',
+          'DART_SDK': currentSdk!,
+        },
+      },
+    );
+    expect(parseResult.errors, isEmpty);
+    expect(parseResult.root.classes.single.name, 'Message');
   });
 }
