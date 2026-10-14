@@ -1,3 +1,18 @@
+## 0.4.13+2
+
+* Removes availability checks for iOS and macOS versions below the package minimum (iOS 13 and macOS 10.15).
+
+## 0.4.13+1
+
+* Fixes `completePurchase` never completing with StoreKit 2 when the transaction
+  is not found, such as an already finished consumable.
+* Updates minimum supported SDK version to Flutter 3.41/Dart 3.11.
+* Fixes lint issues.
+
+## 0.4.13
+
+* Exposes expirationDate on SK2PurchaseDetails.
+
 ## 0.4.12
 
 * Adds support for setting introductory offer eligibility from a server-signed

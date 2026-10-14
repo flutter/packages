@@ -901,7 +901,7 @@ void main() {
       RendererBinding.instance.mouseTracker.debugDeviceActiveCursor(1),
       SystemMouseCursors.basic,
     );
-  });
+  }, tags: 'reduced-web-test-set');
 
   testWidgets('RadioListTile respects fillColor in enabled/disabled states', (
     WidgetTester tester,

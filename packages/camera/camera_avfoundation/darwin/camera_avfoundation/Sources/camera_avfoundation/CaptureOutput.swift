@@ -56,6 +56,10 @@ protocol CapturePhotoOutput: CaptureOutput {
   /// Corresponds to the `isHighResolutionCaptureEnabled` property of `AVCapturePhotoOutput`
   var isHighResolutionCaptureEnabled: Bool { get set }
 
+  /// Corresponds to the `maxPhotoDimensions` property of `AVCapturePhotoOutput`
+  @available(iOS 16.0, *)
+  var maxPhotoDimensions: CMVideoDimensions { get set }
+
   /// Corresponds to the `supportedFlashModes` property of `AVCapturePhotoOutput`
   var supportedFlashModes: [AVCaptureDevice.FlashMode] { get }
 

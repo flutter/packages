@@ -289,6 +289,11 @@ class GoogleMapController {
     _onClickSubscription = map.onClick.listen((gmaps.MapMouseEventOrIconMouseEvent event) {
       assert(event.latLng != null);
       if (!_streamController.isClosed) {
+        final String? placeId = event.placeId;
+        if (placeId != null) {
+          _streamController.add(PointOfInterestTapEvent(_mapId, PointOfInterestId(placeId)));
+          return;
+        }
         _streamController.add(MapTapEvent(_mapId, gmLatLngToLatLng(event.latLng!)));
       }
     });

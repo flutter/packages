@@ -26,25 +26,100 @@ const int _acceptablePixelDelta = 1;
 void main() {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
 
-  group('Methods that require a proper Projection', () {
-    const center = LatLng(43.3078, -5.6958);
-    const size = Size(320, 240);
-    const initialCamera = CameraPosition(target: center, zoom: 14);
+  group(
+    'Methods that require a proper Projection',
+    () {
+      const center = LatLng(43.3078, -5.6958);
+      const size = Size(320, 240);
+      const initialCamera = CameraPosition(target: center, zoom: 14);
 
-    late Completer<GoogleMapController> controllerCompleter;
-    late void Function(GoogleMapController) onMapCreated;
+      late Completer<GoogleMapController> controllerCompleter;
+      late void Function(GoogleMapController) onMapCreated;
 
-    setUp(() {
-      controllerCompleter = Completer<GoogleMapController>();
-      onMapCreated = (GoogleMapController mapController) {
-        controllerCompleter.complete(mapController);
-      };
-    });
+      setUp(() {
+        controllerCompleter = Completer<GoogleMapController>();
+        onMapCreated = (GoogleMapController mapController) {
+          controllerCompleter.complete(mapController);
+        };
+      });
 
-    group('moveCamera', () {
-      testWidgets(
-        'center can be moved with newLatLngZoom',
-        (WidgetTester tester) async {
+      group('moveCamera', () {
+        testWidgets(
+          'center can be moved with newLatLngZoom',
+          (WidgetTester tester) async {
+            await pumpCenteredMap(
+              tester,
+              initialCamera: initialCamera,
+              size: size,
+              onMapCreated: onMapCreated,
+            );
+
+            final GoogleMapController controller = await controllerCompleter.future;
+
+            await controller.moveCamera(CameraUpdate.newLatLngZoom(const LatLng(19, 26), 12));
+
+            final LatLng coords = await controller.getLatLng(
+              ScreenCoordinate(x: size.width ~/ 2, y: size.height ~/ 2),
+            );
+
+            expect(await controller.getZoomLevel(), 12);
+            expect(coords.latitude, closeTo(19, _acceptableLatLngDelta));
+            expect(coords.longitude, closeTo(26, _acceptableLatLngDelta));
+          },
+          // TODO(bparrishMines): This is failing due to an error being thrown after
+          // completion. See https://github.com/flutter/flutter/issues/145149
+          skip: true,
+        );
+
+        testWidgets('addPadding', (WidgetTester tester) async {
+          const initialMapCenter = LatLng(0, 0);
+          const double initialZoomLevel = 5;
+          const initialCameraPosition = CameraPosition(
+            target: initialMapCenter,
+            zoom: initialZoomLevel,
+          );
+          final zeroLatLngBounds = LatLngBounds(
+            southwest: const LatLng(0, 0),
+            northeast: const LatLng(0, 0),
+          );
+          await tester.pumpWidget(
+            Directionality(
+              textDirection: TextDirection.ltr,
+              child: GoogleMap(
+                initialCameraPosition: initialCameraPosition,
+                onMapCreated: onMapCreated,
+              ),
+            ),
+          );
+          await tester.pumpAndSettle();
+
+          final GoogleMapController controller = await controllerCompleter.future;
+
+          final LatLngBounds firstVisibleRegion = await controller.getVisibleRegion();
+
+          expect(firstVisibleRegion, isNotNull);
+          expect(firstVisibleRegion.southwest, isNotNull);
+          expect(firstVisibleRegion.northeast, isNotNull);
+          expect(firstVisibleRegion, isNot(zeroLatLngBounds));
+          expect(firstVisibleRegion.contains(initialMapCenter), isTrue);
+
+          const padding = 0.1;
+          await controller.moveCamera(CameraUpdate.newLatLngBounds(firstVisibleRegion, padding));
+          await tester.pumpAndSettle(const Duration(seconds: 3));
+
+          final LatLngBounds secondVisibleRegion = await controller.getVisibleRegion();
+
+          expect(secondVisibleRegion, isNotNull);
+          expect(secondVisibleRegion, isNot(zeroLatLngBounds));
+          expect(secondVisibleRegion, isNot(firstVisibleRegion));
+          expect(secondVisibleRegion.contains(initialMapCenter), isTrue);
+          expect(secondVisibleRegion.contains(firstVisibleRegion.northeast), isTrue);
+          expect(secondVisibleRegion.contains(firstVisibleRegion.southwest), isTrue);
+        });
+      });
+
+      group('getScreenCoordinate', () {
+        testWidgets('target of map is in center of widget', (WidgetTester tester) async {
           await pumpCenteredMap(
             tester,
             initialCamera: initialCamera,
@@ -54,184 +129,116 @@ void main() {
 
           final GoogleMapController controller = await controllerCompleter.future;
 
-          await controller.moveCamera(CameraUpdate.newLatLngZoom(const LatLng(19, 26), 12));
+          final ScreenCoordinate screenPosition = await controller.getScreenCoordinate(center);
+
+          expect(screenPosition.x, closeTo(size.width / 2, _acceptablePixelDelta));
+          expect(screenPosition.y, closeTo(size.height / 2, _acceptablePixelDelta));
+        });
+
+        testWidgets('NorthWest of visible region corresponds to x:0, y:0', (
+          WidgetTester tester,
+        ) async {
+          await pumpCenteredMap(
+            tester,
+            initialCamera: initialCamera,
+            size: size,
+            onMapCreated: onMapCreated,
+          );
+          final GoogleMapController controller = await controllerCompleter.future;
+
+          final LatLngBounds bounds = await controller.getVisibleRegion();
+          final northWest = LatLng(bounds.northeast.latitude, bounds.southwest.longitude);
+
+          final ScreenCoordinate screenPosition = await controller.getScreenCoordinate(northWest);
+
+          expect(screenPosition.x, closeTo(0, _acceptablePixelDelta));
+          expect(screenPosition.y, closeTo(0, _acceptablePixelDelta));
+        });
+
+        testWidgets('SouthEast of visible region corresponds to x:size.width, y:size.height', (
+          WidgetTester tester,
+        ) async {
+          await pumpCenteredMap(
+            tester,
+            initialCamera: initialCamera,
+            size: size,
+            onMapCreated: onMapCreated,
+          );
+          final GoogleMapController controller = await controllerCompleter.future;
+
+          final LatLngBounds bounds = await controller.getVisibleRegion();
+          final southEast = LatLng(bounds.southwest.latitude, bounds.northeast.longitude);
+
+          final ScreenCoordinate screenPosition = await controller.getScreenCoordinate(southEast);
+
+          expect(screenPosition.x, closeTo(size.width, _acceptablePixelDelta));
+          expect(screenPosition.y, closeTo(size.height, _acceptablePixelDelta));
+        });
+      });
+
+      group('getLatLng', () {
+        testWidgets('Center of widget is the target of map', (WidgetTester tester) async {
+          await pumpCenteredMap(
+            tester,
+            initialCamera: initialCamera,
+            size: size,
+            onMapCreated: onMapCreated,
+          );
+
+          final GoogleMapController controller = await controllerCompleter.future;
 
           final LatLng coords = await controller.getLatLng(
             ScreenCoordinate(x: size.width ~/ 2, y: size.height ~/ 2),
           );
 
-          expect(await controller.getZoomLevel(), 12);
-          expect(coords.latitude, closeTo(19, _acceptableLatLngDelta));
-          expect(coords.longitude, closeTo(26, _acceptableLatLngDelta));
-        },
-        // TODO(bparrishMines): This is failing due to an error being thrown after
-        // completion. See https://github.com/flutter/flutter/issues/145149
-        skip: true,
-      );
+          expect(coords.latitude, closeTo(center.latitude, _acceptableLatLngDelta));
+          expect(coords.longitude, closeTo(center.longitude, _acceptableLatLngDelta));
+        });
 
-      testWidgets('addPadding', (WidgetTester tester) async {
-        const initialMapCenter = LatLng(0, 0);
-        const double initialZoomLevel = 5;
-        const initialCameraPosition = CameraPosition(
-          target: initialMapCenter,
-          zoom: initialZoomLevel,
-        );
-        final zeroLatLngBounds = LatLngBounds(
-          southwest: const LatLng(0, 0),
-          northeast: const LatLng(0, 0),
-        );
-        await tester.pumpWidget(
-          Directionality(
-            textDirection: TextDirection.ltr,
-            child: GoogleMap(
-              initialCameraPosition: initialCameraPosition,
-              onMapCreated: onMapCreated,
-            ),
-          ),
-        );
-        await tester.pumpAndSettle();
+        testWidgets('Top-left of widget is NorthWest bound of map', (WidgetTester tester) async {
+          await pumpCenteredMap(
+            tester,
+            initialCamera: initialCamera,
+            size: size,
+            onMapCreated: onMapCreated,
+          );
+          final GoogleMapController controller = await controllerCompleter.future;
 
-        final GoogleMapController controller = await controllerCompleter.future;
+          final LatLngBounds bounds = await controller.getVisibleRegion();
+          final northWest = LatLng(bounds.northeast.latitude, bounds.southwest.longitude);
 
-        final LatLngBounds firstVisibleRegion = await controller.getVisibleRegion();
+          final LatLng coords = await controller.getLatLng(const ScreenCoordinate(x: 0, y: 0));
 
-        expect(firstVisibleRegion, isNotNull);
-        expect(firstVisibleRegion.southwest, isNotNull);
-        expect(firstVisibleRegion.northeast, isNotNull);
-        expect(firstVisibleRegion, isNot(zeroLatLngBounds));
-        expect(firstVisibleRegion.contains(initialMapCenter), isTrue);
+          expect(coords.latitude, closeTo(northWest.latitude, _acceptableLatLngDelta));
+          expect(coords.longitude, closeTo(northWest.longitude, _acceptableLatLngDelta));
+        });
 
-        const padding = 0.1;
-        await controller.moveCamera(CameraUpdate.newLatLngBounds(firstVisibleRegion, padding));
-        await tester.pumpAndSettle(const Duration(seconds: 3));
+        testWidgets('Bottom-right of widget is SouthWest bound of map', (
+          WidgetTester tester,
+        ) async {
+          await pumpCenteredMap(
+            tester,
+            initialCamera: initialCamera,
+            size: size,
+            onMapCreated: onMapCreated,
+          );
+          final GoogleMapController controller = await controllerCompleter.future;
 
-        final LatLngBounds secondVisibleRegion = await controller.getVisibleRegion();
+          final LatLngBounds bounds = await controller.getVisibleRegion();
+          final southEast = LatLng(bounds.southwest.latitude, bounds.northeast.longitude);
 
-        expect(secondVisibleRegion, isNotNull);
-        expect(secondVisibleRegion, isNot(zeroLatLngBounds));
-        expect(secondVisibleRegion, isNot(firstVisibleRegion));
-        expect(secondVisibleRegion.contains(initialMapCenter), isTrue);
-        expect(secondVisibleRegion.contains(firstVisibleRegion.northeast), isTrue);
-        expect(secondVisibleRegion.contains(firstVisibleRegion.southwest), isTrue);
+          final LatLng coords = await controller.getLatLng(
+            ScreenCoordinate(x: size.width.toInt(), y: size.height.toInt()),
+          );
+
+          expect(coords.latitude, closeTo(southEast.latitude, _acceptableLatLngDelta));
+          expect(coords.longitude, closeTo(southEast.longitude, _acceptableLatLngDelta));
+        });
       });
-    });
-
-    group('getScreenCoordinate', () {
-      testWidgets('target of map is in center of widget', (WidgetTester tester) async {
-        await pumpCenteredMap(
-          tester,
-          initialCamera: initialCamera,
-          size: size,
-          onMapCreated: onMapCreated,
-        );
-
-        final GoogleMapController controller = await controllerCompleter.future;
-
-        final ScreenCoordinate screenPosition = await controller.getScreenCoordinate(center);
-
-        expect(screenPosition.x, closeTo(size.width / 2, _acceptablePixelDelta));
-        expect(screenPosition.y, closeTo(size.height / 2, _acceptablePixelDelta));
-      });
-
-      testWidgets('NorthWest of visible region corresponds to x:0, y:0', (
-        WidgetTester tester,
-      ) async {
-        await pumpCenteredMap(
-          tester,
-          initialCamera: initialCamera,
-          size: size,
-          onMapCreated: onMapCreated,
-        );
-        final GoogleMapController controller = await controllerCompleter.future;
-
-        final LatLngBounds bounds = await controller.getVisibleRegion();
-        final northWest = LatLng(bounds.northeast.latitude, bounds.southwest.longitude);
-
-        final ScreenCoordinate screenPosition = await controller.getScreenCoordinate(northWest);
-
-        expect(screenPosition.x, closeTo(0, _acceptablePixelDelta));
-        expect(screenPosition.y, closeTo(0, _acceptablePixelDelta));
-      });
-
-      testWidgets('SouthEast of visible region corresponds to x:size.width, y:size.height', (
-        WidgetTester tester,
-      ) async {
-        await pumpCenteredMap(
-          tester,
-          initialCamera: initialCamera,
-          size: size,
-          onMapCreated: onMapCreated,
-        );
-        final GoogleMapController controller = await controllerCompleter.future;
-
-        final LatLngBounds bounds = await controller.getVisibleRegion();
-        final southEast = LatLng(bounds.southwest.latitude, bounds.northeast.longitude);
-
-        final ScreenCoordinate screenPosition = await controller.getScreenCoordinate(southEast);
-
-        expect(screenPosition.x, closeTo(size.width, _acceptablePixelDelta));
-        expect(screenPosition.y, closeTo(size.height, _acceptablePixelDelta));
-      });
-    });
-
-    group('getLatLng', () {
-      testWidgets('Center of widget is the target of map', (WidgetTester tester) async {
-        await pumpCenteredMap(
-          tester,
-          initialCamera: initialCamera,
-          size: size,
-          onMapCreated: onMapCreated,
-        );
-
-        final GoogleMapController controller = await controllerCompleter.future;
-
-        final LatLng coords = await controller.getLatLng(
-          ScreenCoordinate(x: size.width ~/ 2, y: size.height ~/ 2),
-        );
-
-        expect(coords.latitude, closeTo(center.latitude, _acceptableLatLngDelta));
-        expect(coords.longitude, closeTo(center.longitude, _acceptableLatLngDelta));
-      });
-
-      testWidgets('Top-left of widget is NorthWest bound of map', (WidgetTester tester) async {
-        await pumpCenteredMap(
-          tester,
-          initialCamera: initialCamera,
-          size: size,
-          onMapCreated: onMapCreated,
-        );
-        final GoogleMapController controller = await controllerCompleter.future;
-
-        final LatLngBounds bounds = await controller.getVisibleRegion();
-        final northWest = LatLng(bounds.northeast.latitude, bounds.southwest.longitude);
-
-        final LatLng coords = await controller.getLatLng(const ScreenCoordinate(x: 0, y: 0));
-
-        expect(coords.latitude, closeTo(northWest.latitude, _acceptableLatLngDelta));
-        expect(coords.longitude, closeTo(northWest.longitude, _acceptableLatLngDelta));
-      });
-
-      testWidgets('Bottom-right of widget is SouthWest bound of map', (WidgetTester tester) async {
-        await pumpCenteredMap(
-          tester,
-          initialCamera: initialCamera,
-          size: size,
-          onMapCreated: onMapCreated,
-        );
-        final GoogleMapController controller = await controllerCompleter.future;
-
-        final LatLngBounds bounds = await controller.getVisibleRegion();
-        final southEast = LatLng(bounds.southwest.latitude, bounds.northeast.longitude);
-
-        final LatLng coords = await controller.getLatLng(
-          ScreenCoordinate(x: size.width.toInt(), y: size.height.toInt()),
-        );
-
-        expect(coords.latitude, closeTo(southEast.latitude, _acceptableLatLngDelta));
-        expect(coords.longitude, closeTo(southEast.longitude, _acceptableLatLngDelta));
-      });
-    });
-  });
+    },
+    // Flaky; see https://github.com/flutter/flutter/issues/193452
+    skip: true,
+  );
 }
 
 // Pumps a CenteredMap Widget into a given tester, with some parameters

@@ -1,6 +1,78 @@
+## 29.0.8
+
+* [swift] Adds validation errors for code that Swift FFI doesn't support:
+  event channels, ProxyApis, sealed classes, data class fields that conflict with
+  `NSObject` members, host API parameters named `wrappedError`, and
+  `includeErrorClass: false`.
+* [swift] Fixes Swift FFI code that didn't compile for classes without fields,
+  `@asyncCallback` methods, `@SwiftFunction` overloads, methods named `type`,
+  parameters named `error`, and multiple FFI files in the same module.
+* [kotlin] Adds validation errors for code that Kotlin JNI doesn't support:
+  event channels, ProxyApis, and sealed classes. Files that use Kotlin JNI
+  previously generated method channel code for event channels and ProxyApis;
+  move them to a separate pigeon file that doesn't use Kotlin JNI.
+* [dart] Adds a validation error for API method names that conflict with
+  generated native interop members.
+* [dart] Fixes native interop code that didn't compile for JNI member names that
+  JNIgen renames, parameter names that match generated local variables, lists or
+  maps of ProxyApis, a `fileSpecificClassNameComponent` that isn't
+  UpperCamelCase or is set only in `SwiftOptions`, and Dart test files.
+* [dart] Fixes a crash converting classes without fields with Swift FFI.
+* [dart] Fixes Swift FFI code that didn't compile for method names that end
+  with a preposition, like `signIn`, or first parameter and field names that
+  start with one, like `forKey`.
+
+## 29.0.7
+
+* [kotlin] Fixes native interop calls failing with `ClassNotFoundException` in minified
+  Android release builds, by adding `@Keep` to every generated class that JNI reaches by name.
+* Updates native interop guides and migration skill with the keep rules that Android
+  release builds need for the Kotlin classes that `package:jni` looks up by name.
+
+## 29.0.6
+
+* Updates native interop guides and migration skill with SwiftPM `<plugin_name>_objc_gen` target guidance.
+* Updates FFI and JNI dependencies and pins code generation `dev_dependencies` (`ffigen`, `jnigen`, `swift2objc`, and `swiftgen`).
+
+## 29.0.5
+
+* [dart] Fixes JNI typed data arrays being backed by native memory that is freed when
+  the isolate that read them exits.
+* [dart] Fixes a potential use-after-free when reading FFI typed data arrays.
+* Updates native interop guides and migration skill for `jnigen` 1.0.0 and
+  current tooling requirements.
+
+## 29.0.4
+
+* [swift] Fixes FFI number wrapping for Objective-C `CFBoolean` and floating-point `NSNumber` values.
+* [swift] Fixes FFI dictionary serialization checking `isNullish` on the key instead of the value.
+
+## 29.0.3
+
+* [swift] Uses `isNullish` to check for null and `NSNull` in non-null Flutter API returns.
+* Updates minimum supported SDK version to Flutter 3.41/Dart 3.11.
+
+## 29.0.2
+
+* [swift] Fixes a crash when a Flutter API returns null for a non-null return
+  value and the null arrives as `NSNull`.
+
+## 29.0.1
+
+* [swift] Annotates async `FlutterApi` methods with `@MainActor`.
+
+## 29.0.0
+
+* [swift] [kotlin] Adds experimental support for FFI and JNI.
+* Exposes missing PigeonOptions and language-specific configurations as command-line arguments.
+
+## 28.1.0
+
+* [swift] Adds support for multiple output locations in `swiftOut` and `--swift_out`.
+
 ## 28.0.0
 
-* **Breaking Change** Updates Kotlin and Swift generators to generate `suspend` functions and `async throws` signatures for `@FlutterApi` methods by default, and for `@HostApi` methods annotated with `@async`.
+* **Breaking Change** Updates Kotlin and Swift generators to generate `suspend` functions and `async` signatures for `@FlutterApi` methods by default, and for `@HostApi` methods annotated with `@async`.
   * Use `@asyncCallback` if callback-style signatures are required.
 
 ## 27.3.2
