@@ -24,8 +24,8 @@ flutter:
 dependencies:
   flutter:
     sdk: flutter
-  google_sign_in_android: ^7.1.0
-  google_sign_in_ios: ^6.2.0
+  google_sign_in_android: ^7.3.0
+  google_sign_in_ios: ^6.4.0
   google_sign_in_platform_interface: ^3.2.0
   google_sign_in_web: ^1.1.0
 
