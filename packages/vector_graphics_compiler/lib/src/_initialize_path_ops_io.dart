@@ -12,12 +12,8 @@ import 'svg/path_ops.dart';
 
 /// Look up the location of the pathops from flutter's artifact cache.
 bool initializePathOpsFromFlutterCache() {
-  final Directory cacheRoot;
-  if (Platform.resolvedExecutable.contains('flutter_tester')) {
-    cacheRoot = File(Platform.resolvedExecutable).parent.parent.parent.parent;
-  } else if (Platform.resolvedExecutable.contains('dart')) {
-    cacheRoot = File(Platform.resolvedExecutable).parent.parent.parent;
-  } else {
+  final Directory? cacheRoot = resolveFlutterCacheRoot();
+  if (cacheRoot == null) {
     print('Unknown executable: ${Platform.resolvedExecutable}');
     return false;
   }
