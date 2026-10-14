@@ -2,6 +2,14 @@
  
 * Adds support for separate photo and video resolution presets. Still photo capture dimensions follow the active capture session format (governed by the video preset), with `ResolutionPreset.max` enabling maximum high-resolution photo dimensions.
 
+## 0.11.0+2
+
+* Replaces the deprecated `videoOrientation` with `videoRotationAngle` on iOS 17 and later.
+
+## 0.11.0+1
+
+* Removes availability checks for iOS versions below the package minimum iOS 13.
+
 ## 0.11.0
 
 * Adds support for custom video output path in video recording.
