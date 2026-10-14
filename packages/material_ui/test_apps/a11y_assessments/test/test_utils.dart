@@ -28,3 +28,28 @@ List<String> descendantSemanticsLabels(SemanticsNode node) {
   });
   return labels;
 }
+
+/// Returns whether any semantics node in the subtree rooted at [finder]
+/// specifies a list/collection.
+///
+/// On Android TalkBack, list announcements like "in list, N items" and "1 of N"
+/// are triggered when a node has `scrollChildCount > 0` (CollectionInfo) or
+/// when children have `indexInParent != null` (CollectionItemInfo).
+bool hasSemanticsList(WidgetTester tester, Finder finder) {
+  bool checkNode(SemanticsNode node) {
+    if ((node.scrollChildCount ?? 0) > 0 || node.indexInParent != null) {
+      return true;
+    }
+    var childHasList = false;
+    node.visitChildren((SemanticsNode child) {
+      if (checkNode(child)) {
+        childHasList = true;
+        return false;
+      }
+      return true;
+    });
+    return childHasList;
+  }
+
+  return checkNode(tester.getSemantics(finder));
+}

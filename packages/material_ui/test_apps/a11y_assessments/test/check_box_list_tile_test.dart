@@ -4,6 +4,7 @@
 
 import 'package:a11y_assessments/use_cases/check_box_list_tile.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:material_ui/material_ui.dart';
 
 import 'test_utils.dart';
 
@@ -19,5 +20,12 @@ void main() {
     final Finder findHeadingLevelOnes = find.bySemanticsLabel(RegExp('CheckBoxListTile Demo'));
     await tester.pumpAndSettle();
     expect(findHeadingLevelOnes, findsOne);
+  });
+
+  testWidgets('check box list tile use case content is a semantic list', (
+    WidgetTester tester,
+  ) async {
+    await pumpsUseCase(tester, CheckBoxListTile());
+    expect(hasSemanticsList(tester, find.byType(ListView)), isTrue);
   });
 }

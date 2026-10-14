@@ -56,4 +56,11 @@ void main() {
     await tester.pumpAndSettle();
     expect(findHeadingLevelOnes, findsOne);
   });
+
+  testWidgets('text field password use case content is not a semantic list', (
+    WidgetTester tester,
+  ) async {
+    await pumpsUseCase(tester, TextFieldPasswordUseCase());
+    expect(hasSemanticsList(tester, find.byType(ListView)), isFalse);
+  });
 }
