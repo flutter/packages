@@ -1,7 +1,6 @@
-## 2.19.0
+## 2.18.8
 
-* Adds an iOS-specific map configuration option to disable implicit marker
-  position and rotation update animations.
+* Updates for the platform-specific map configuration API.
 
 ## 2.18.7
 

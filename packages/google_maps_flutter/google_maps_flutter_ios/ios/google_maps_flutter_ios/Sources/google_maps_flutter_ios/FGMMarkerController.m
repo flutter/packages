@@ -2,20 +2,12 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-@import QuartzCore;
-
 #import "FGMMarkerController.h"
 #import "FGMMarkerController_Test.h"
 
 #import "FGMConversionUtils.h"
 #import "FGMImageUtils.h"
 #import "FGMMarkerUserData.h"
-
-static FGMPlatformMarkerUpdateAnimationConfiguration *FGMDefaultMarkerUpdateAnimationConfiguration(
-    void) {
-  return [FGMPlatformMarkerUpdateAnimationConfiguration makeWithPositionAnimationsEnabled:YES
-                                                                rotationAnimationsEnabled:YES];
-}
 
 @interface FGMMarkerController ()
 
@@ -62,10 +54,8 @@ static FGMPlatformMarkerUpdateAnimationConfiguration *FGMDefaultMarkerUpdateAnim
 }
 
 - (void)updateFromPlatformMarker:(FGMPlatformMarker *)platformMarker
-                         assetProvider:(NSObject<FGMAssetProvider> *)assetProvider
-                           screenScale:(CGFloat)screenScale
-    markerUpdateAnimationConfiguration:
-        (FGMPlatformMarkerUpdateAnimationConfiguration *)markerUpdateAnimationConfiguration {
+                   assetProvider:(NSObject<FGMAssetProvider> *)assetProvider
+                     screenScale:(CGFloat)screenScale {
   self.clusterManagerIdentifier = platformMarker.clusterManagerId;
   self.consumeTapEvents = platformMarker.consumeTapEvents;
 
@@ -77,50 +67,26 @@ static FGMPlatformMarkerUpdateAnimationConfiguration *FGMDefaultMarkerUpdateAnim
   // as the cluster manager controls when marker is on the map and when not.
   BOOL useOpacityForVisibility = self.clusterManagerIdentifier != nil;
   [FGMMarkerController updateMarker:self.marker
-                      fromPlatformMarker:platformMarker
-                             withMapView:self.mapView
-                           assetProvider:assetProvider
-                             screenScale:screenScale
-      markerUpdateAnimationConfiguration:markerUpdateAnimationConfiguration
-               usingOpacityForVisibility:useOpacityForVisibility];
+                 fromPlatformMarker:platformMarker
+                        withMapView:self.mapView
+                      assetProvider:assetProvider
+                        screenScale:screenScale
+          usingOpacityForVisibility:useOpacityForVisibility];
 }
 
 + (void)updateMarker:(GMSMarker *)marker
-                    fromPlatformMarker:(FGMPlatformMarker *)platformMarker
-                           withMapView:(GMSMapView *)mapView
-                         assetProvider:(NSObject<FGMAssetProvider> *)assetProvider
-                           screenScale:(CGFloat)screenScale
-    markerUpdateAnimationConfiguration:
-        (FGMPlatformMarkerUpdateAnimationConfiguration *)markerUpdateAnimationConfiguration
-             usingOpacityForVisibility:(BOOL)useOpacityForVisibility {
+           fromPlatformMarker:(FGMPlatformMarker *)platformMarker
+                  withMapView:(GMSMapView *)mapView
+                assetProvider:(NSObject<FGMAssetProvider> *)assetProvider
+                  screenScale:(CGFloat)screenScale
+    usingOpacityForVisibility:(BOOL)useOpacityForVisibility {
   marker.groundAnchor = FGMGetCGPointForPigeonPoint(platformMarker.anchor);
   marker.draggable = platformMarker.draggable;
   UIImage *image = FGMIconFromBitmap(platformMarker.icon, assetProvider, screenScale);
   marker.icon = image;
   marker.flat = platformMarker.flat;
-  CLLocationCoordinate2D position = FGMGetCoordinateForPigeonLatLng(platformMarker.position);
-  CLLocationDegrees rotation = platformMarker.rotation;
-  // The iOS Maps SDK implicitly animates marker position and rotation changes.
-  // For each property whose animation is disabled, apply the update inside a
-  // CATransaction with actions disabled so it takes effect immediately.
-  if (markerUpdateAnimationConfiguration &&
-      !markerUpdateAnimationConfiguration.positionAnimationsEnabled) {
-    [CATransaction begin];
-    [CATransaction setDisableActions:YES];
-    marker.position = position;
-    [CATransaction commit];
-  } else {
-    marker.position = position;
-  }
-  if (markerUpdateAnimationConfiguration &&
-      !markerUpdateAnimationConfiguration.rotationAnimationsEnabled) {
-    [CATransaction begin];
-    [CATransaction setDisableActions:YES];
-    marker.rotation = rotation;
-    [CATransaction commit];
-  } else {
-    marker.rotation = rotation;
-  }
+  marker.position = FGMGetCoordinateForPigeonLatLng(platformMarker.position);
+  marker.rotation = platformMarker.rotation;
   marker.zIndex = (int)platformMarker.zIndex;
   FGMPlatformInfoWindow *infoWindow = platformMarker.infoWindow;
   marker.infoWindowAnchor = FGMGetCGPointForPigeonPoint(infoWindow.anchor);
@@ -156,8 +122,6 @@ static FGMPlatformMarkerUpdateAnimationConfiguration *FGMDefaultMarkerUpdateAnim
 @property(strong, nonatomic) NSObject<FGMAssetProvider> *assetProvider;
 @property(weak, nonatomic) GMSMapView *mapView;
 @property(nonatomic) FGMPlatformMarkerType markerType;
-@property(strong, nonatomic)
-    FGMPlatformMarkerUpdateAnimationConfiguration *markerUpdateAnimationConfiguration;
 
 @end
 
@@ -176,7 +140,6 @@ static FGMPlatformMarkerUpdateAnimationConfiguration *FGMDefaultMarkerUpdateAnim
     _markerIdentifierToController = [[NSMutableDictionary alloc] init];
     _assetProvider = assetProvider;
     _markerType = markerType;
-    _markerUpdateAnimationConfiguration = FGMDefaultMarkerUpdateAnimationConfiguration();
   }
   return self;
 }
@@ -198,9 +161,8 @@ static FGMPlatformMarkerUpdateAnimationConfiguration *FGMDefaultMarkerUpdateAnim
                                                                markerIdentifier:markerIdentifier
                                                                         mapView:self.mapView];
   [controller updateFromPlatformMarker:markerToAdd
-                           assetProvider:self.assetProvider
-                             screenScale:[self getScreenScale]
-      markerUpdateAnimationConfiguration:self.markerUpdateAnimationConfiguration];
+                         assetProvider:self.assetProvider
+                           screenScale:[self getScreenScale]];
   if (clusterManagerIdentifier) {
     GMUClusterManager *clusterManager =
         [_clusterManagersController clusterManagerWithIdentifier:clusterManagerIdentifier];
@@ -228,9 +190,8 @@ static FGMPlatformMarkerUpdateAnimationConfiguration *FGMDefaultMarkerUpdateAnim
   NSString *clusterManagerIdentifier = markerToChange.clusterManagerId;
   NSString *previousClusterManagerIdentifier = [controller clusterManagerIdentifier];
   [controller updateFromPlatformMarker:markerToChange
-                           assetProvider:self.assetProvider
-                             screenScale:[self getScreenScale]
-      markerUpdateAnimationConfiguration:self.markerUpdateAnimationConfiguration];
+                         assetProvider:self.assetProvider
+                           screenScale:[self getScreenScale]];
 
   if ([controller.marker conformsToProtocol:@protocol(GMUClusterItem)]) {
     if (previousClusterManagerIdentifier &&
@@ -272,11 +233,6 @@ static FGMPlatformMarkerUpdateAnimationConfiguration *FGMDefaultMarkerUpdateAnim
     [controller removeMarker];
   }
   [self.markerIdentifierToController removeObjectForKey:identifier];
-}
-
-- (void)setMarkerUpdateAnimationConfiguration:
-    (FGMPlatformMarkerUpdateAnimationConfiguration *)configuration {
-  _markerUpdateAnimationConfiguration = configuration;
 }
 
 - (BOOL)didTapMarkerWithIdentifier:(NSString *)identifier {

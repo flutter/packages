@@ -699,13 +699,6 @@
   [self.controller interpretMapConfiguration:configuration];
 }
 
-- (void)setMarkerUpdateAnimationConfiguration:
-            (nonnull FGMPlatformMarkerUpdateAnimationConfiguration *)configuration
-                                        error:(FlutterError *_Nullable __autoreleasing *_Nonnull)
-                                                  error {
-  [self.controller.markersController setMarkerUpdateAnimationConfiguration:configuration];
-}
-
 - (void)updateMarkersByAdding:(nonnull NSArray<FGMPlatformMarker *> *)toAdd
                      changing:(nonnull NSArray<FGMPlatformMarker *> *)toChange
                      removing:(nonnull NSArray<NSString *> *)idsToRemove

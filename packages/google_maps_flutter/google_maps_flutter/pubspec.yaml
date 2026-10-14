@@ -22,7 +22,7 @@ dependencies:
   flutter:
     sdk: flutter
   google_maps_flutter_android: ^2.21.2
-  google_maps_flutter_ios: ^2.19.0
+  google_maps_flutter_ios: ^2.18.8
   google_maps_flutter_platform_interface: ^2.19.0
   google_maps_flutter_web: ^0.6.4
 
