@@ -56,7 +56,8 @@ void main() {
     controller.expand();
     await tester.pump();
     expect(controller.isExpanded, isTrue);
-    expect(find.text('Content'), findsOneWidget);
+    // The child animating its height and a clone fading in.
+    expect(find.text('Content'), findsNWidgets(2));
 
     controller.collapse();
     await tester.pump();
@@ -84,7 +85,8 @@ void main() {
     await tester.pump();
 
     expect(controller.isExpanded, isTrue);
-    expect(find.text('Content'), findsOneWidget);
+    // The child animating its height and a clone fading in.
+    expect(find.text('Content'), findsNWidgets(2));
 
     await tester.tap(find.text('Title'));
     await tester.pump();
@@ -92,6 +94,46 @@ void main() {
     expect(find.text('Content'), findsNothing);
 
     controller.dispose();
+  });
+
+  testWidgets('Fades the child when toggled by ExpansibleController', (WidgetTester tester) async {
+    final controller = ExpansibleController();
+    addTearDown(controller.dispose);
+    await tester.pumpWidget(
+      CupertinoApp(
+        home: CupertinoPageScaffold(
+          child: CupertinoExpansionTile(
+            controller: controller,
+            title: const Text('Title'),
+            child: const Text('Content'),
+          ),
+        ),
+      ),
+    );
+
+    // The clone of the child that fades in and out over the animating child.
+    final Finder fadingChild = find.byWidgetPredicate(
+      (Widget widget) => widget is FadeTransition && widget.child is Text,
+    );
+    double fadeOpacity() => tester.widget<FadeTransition>(fadingChild).opacity.value;
+
+    controller.expand();
+    await tester.pump();
+    await tester.pump(expansionDuration ~/ 2);
+    expect(fadeOpacity(), greaterThan(0.0));
+    expect(fadeOpacity(), lessThan(1.0));
+
+    await tester.pumpAndSettle();
+    expect(find.text('Content'), findsOneWidget);
+
+    controller.collapse();
+    await tester.pump();
+    await tester.pump(expansionDuration ~/ 2);
+    expect(fadeOpacity(), greaterThan(0.0));
+    expect(fadeOpacity(), lessThan(1.0));
+
+    await tester.pumpAndSettle();
+    expect(find.text('Content'), findsNothing);
   });
 
   testWidgets('Nested expansion tile', (WidgetTester tester) async {
