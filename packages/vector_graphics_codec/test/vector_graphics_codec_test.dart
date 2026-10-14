@@ -161,6 +161,18 @@ void main() {
     ]);
   });
 
+  test('writePaintBlur asserts that paintId was previously encoded', () {
+    final buffer = VectorGraphicsBuffer();
+    expect(() => codec.writePaintBlur(buffer, 0, 2.5, 3.5), throwsA(isA<AssertionError>()));
+
+    final int paintId = codec.writeFill(buffer, 23, 0);
+    expect(
+      () => codec.writePaintBlur(buffer, paintId + 1, 2.5, 3.5),
+      throwsA(isA<AssertionError>()),
+    );
+    expect(() => codec.writePaintBlur(buffer, -1, 2.5, 3.5), throwsA(isA<AssertionError>()));
+  });
+
   test('Basic message encode and decode with shaded path', () {
     final buffer = VectorGraphicsBuffer();
     final listener = TestListener();

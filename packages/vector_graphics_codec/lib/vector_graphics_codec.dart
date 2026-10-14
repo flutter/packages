@@ -972,7 +972,10 @@ class VectorGraphicsCodec {
   /// [sigmaX] and [sigmaY] specify the non-negative standard deviations of the
   /// Gaussian blur kernel along the horizontal and vertical axes, respectively.
   void writePaintBlur(VectorGraphicsBuffer buffer, int paintId, double sigmaX, double sigmaY) {
-    assert(paintId >= 0 && paintId < kMaxId);
+    assert(
+      paintId >= 0 && paintId < buffer._nextPaintId,
+      'paintId ($paintId) must refer to a previously encoded paint object.',
+    );
     assert(sigmaX >= 0.0);
     assert(sigmaY >= 0.0);
     buffer._checkPhase(_CurrentSection.paints);
