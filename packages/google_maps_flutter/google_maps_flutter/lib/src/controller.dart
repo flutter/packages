@@ -133,13 +133,14 @@ class GoogleMapController {
     return GoogleMapsFlutterPlatform.instance.updateMapConfiguration(update, mapId: mapId);
   }
 
-  /// Sets platform-specific configuration for this map.
+  /// Sets platform-specific options for this map.
   ///
-  /// Platform-specific configuration classes are provided by the platform
-  /// implementation packages.
-  Future<void> setPlatformConfiguration(PlatformMapConfiguration configuration) {
+  /// Platform-specific options classes are provided by the platform
+  /// implementation packages. Each call replaces the platform-specific options,
+  /// including defaults for any values omitted from the options object.
+  Future<void> setPlatformOptions(PlatformMapOptions options) {
     _checkWidgetMountedOrThrow();
-    return GoogleMapsFlutterPlatform.instance.setPlatformConfiguration(configuration, mapId: mapId);
+    return GoogleMapsFlutterPlatform.instance.setPlatformOptions(options, mapId: mapId);
   }
 
   /// Updates marker configuration.

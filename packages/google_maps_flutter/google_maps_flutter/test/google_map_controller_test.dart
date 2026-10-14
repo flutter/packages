@@ -53,7 +53,7 @@ void main() {
     await expectLater(() => controller?.getZoomLevel(), throwsA(isA<StateError>()));
   });
 
-  testWidgets('setPlatformConfiguration delegates with the map ID', (WidgetTester tester) async {
+  testWidgets('setPlatformOptions delegates with the map ID', (WidgetTester tester) async {
     GoogleMapController? controller;
 
     await tester.pumpWidget(
@@ -66,10 +66,10 @@ void main() {
       ),
     );
 
-    const configuration = PlatformMapConfiguration();
-    await controller!.setPlatformConfiguration(configuration);
+    const configuration = PlatformMapOptions();
+    await controller!.setPlatformOptions(configuration);
 
-    expect(platform.platformConfiguration, same(configuration));
-    expect(platform.platformConfigurationMapId, platform.createdIds.single);
+    expect(platform.platformOptions, same(configuration));
+    expect(platform.platformOptionsMapId, platform.createdIds.single);
   });
 }

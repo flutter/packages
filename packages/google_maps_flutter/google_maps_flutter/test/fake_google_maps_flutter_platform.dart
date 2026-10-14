@@ -32,11 +32,11 @@ class FakeGoogleMapsFlutterPlatform extends GoogleMapsFlutterPlatform {
   /// Whether `dispose` has been called.
   bool disposed = false;
 
-  /// The most recent platform-specific configuration passed to the platform.
-  PlatformMapConfiguration? platformConfiguration;
+  /// The most recent platform-specific options passed to the platform.
+  PlatformMapOptions? platformOptions;
 
-  /// The map ID associated with [platformConfiguration].
-  int? platformConfigurationMapId;
+  /// The map ID associated with [platformOptions].
+  int? platformOptionsMapId;
 
   /// Stream controller to inject events for testing.
   final StreamController<MapEvent<dynamic>> mapEventStreamController =
@@ -55,12 +55,9 @@ class FakeGoogleMapsFlutterPlatform extends GoogleMapsFlutterPlatform {
   }
 
   @override
-  Future<void> setPlatformConfiguration(
-    PlatformMapConfiguration configuration, {
-    required int mapId,
-  }) async {
-    platformConfiguration = configuration;
-    platformConfigurationMapId = mapId;
+  Future<void> setPlatformOptions(PlatformMapOptions options, {required int mapId}) async {
+    platformOptions = options;
+    platformOptionsMapId = mapId;
     await _fakeDelay();
   }
 

@@ -1,7 +1,3 @@
-## 2.18.8
-
-* Updates for the platform-specific map configuration API.
-
 ## 2.18.7
 
 * Updates README to note that `GoogleMap.onPointOfInterestTap` is not supported.

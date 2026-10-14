@@ -111,10 +111,10 @@ void main() {
       expect(await platform.isAdvancedMarkersAvailable(mapId: 0), isFalse);
     });
 
-    test('default implementation of setPlatformConfiguration is a no-op', () async {
+    test('default implementation of setPlatformOptions is a no-op', () async {
       final GoogleMapsFlutterPlatform platform = BuildViewGoogleMapsFlutterPlatform();
       await expectLater(
-        platform.setPlatformConfiguration(const PlatformMapConfiguration(), mapId: 0),
+        platform.setPlatformOptions(const PlatformMapOptions(), mapId: 0),
         completes,
       );
     });

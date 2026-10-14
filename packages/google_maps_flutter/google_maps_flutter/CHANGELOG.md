@@ -1,6 +1,6 @@
 ## 2.20.0
 
-* Adds `GoogleMapController.setPlatformConfiguration` for configuring
+* Adds `GoogleMapController.setPlatformOptions` for configuring
   platform-specific map options.
 
 ## 2.19.0
