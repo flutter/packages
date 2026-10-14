@@ -1,0 +1,3 @@
+changelog: |
+  - Fixes a spurious `onExit` call on a pushed route when `refreshListenable` fires (e.g. on tab refocus), by carrying over the live push completer when the current configuration is re-decoded.
+version: patch
