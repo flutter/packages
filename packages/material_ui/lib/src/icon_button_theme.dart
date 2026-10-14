@@ -9,7 +9,6 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
 
 import 'button_style.dart';
-import 'style_variant_resolution.dart';
 import 'theme.dart';
 import 'theme_data.dart';
 
@@ -161,11 +160,25 @@ class IconButtonTheme extends InheritedTheme {
   /// final StyleVariant variant = IconButtonTheme.variantOf(context) ?? StyleVariant.material3;
   /// ```
   static StyleVariant? variantOf(BuildContext context) {
-    return findClosestStyleVariant<IconButtonTheme>(
-          context,
-          (IconButtonTheme theme) => theme.data.variant,
-        ) ??
-        Theme.of(context).iconButtonTheme.variant;
+    InheritedElement? element = context.getElementForInheritedWidgetOfExactType<IconButtonTheme>();
+    while (element != null) {
+      // Depend on every theme that is visited, so that a change to any of them
+      // rebuilds the dependent.
+      context.dependOnInheritedElement(element);
+      final StyleVariant? variant = (element.widget as IconButtonTheme).data.variant;
+      if (variant != null) {
+        return variant;
+      }
+      // Calling getElementForInheritedWidgetOfExactType on the element itself
+      // would return the same element, so continue the search from its parent.
+      Element? parent;
+      element.visitAncestorElements((Element ancestor) {
+        parent = ancestor;
+        return false;
+      });
+      element = parent?.getElementForInheritedWidgetOfExactType<IconButtonTheme>();
+    }
+    return Theme.of(context).iconButtonTheme.variant;
   }
 
   @override
