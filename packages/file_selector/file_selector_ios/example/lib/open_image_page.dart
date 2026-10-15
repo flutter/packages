@@ -27,7 +27,7 @@ class OpenImagePage extends StatelessWidget {
       return;
     }
     final String? fileName = await file.name();
-    final String filePath = (file as FileSystemXFile).path;
+    final String filePath = Uri.parse(file.uri).toFilePath();
 
     if (context.mounted) {
       await showDialog<void>(
