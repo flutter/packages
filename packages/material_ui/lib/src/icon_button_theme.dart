@@ -144,23 +144,21 @@ class IconButtonTheme extends InheritedTheme {
     return buttonTheme?.data ?? Theme.of(context).iconButtonTheme;
   }
 
-  /// Returns the [StyleVariant] that [IconButton]s use at the given [context],
-  /// or null if no theme specifies one.
+  /// Returns the [StyleVariant] that [IconButton]s use at the given [context].
   ///
   /// The closest enclosing [IconButtonTheme] whose
   /// [IconButtonThemeData.variant] is non-null determines the variant, so an
   /// [IconButtonTheme] that doesn't specify a variant inherits it from its
   /// ancestors. If none of the enclosing [IconButtonTheme]s specify a variant,
-  /// the variant of [ThemeData.iconButtonTheme] is returned.
-  ///
-  /// [IconButton] uses [StyleVariant.material3] if this returns null.
+  /// the variant of [ThemeData.iconButtonTheme] is used. If that is also null,
+  /// [StyleVariant.material3] is returned.
   ///
   /// Typical usage is as follows:
   ///
   /// ```dart
-  /// final StyleVariant variant = IconButtonTheme.variantOf(context) ?? StyleVariant.material3;
+  /// final StyleVariant variant = IconButtonTheme.variantOf(context);
   /// ```
-  static StyleVariant? variantOf(BuildContext context) {
+  static StyleVariant variantOf(BuildContext context) {
     InheritedElement? element = context.getElementForInheritedWidgetOfExactType<IconButtonTheme>();
     while (element != null) {
       // Depend on every theme that is visited, so that a change to any of them
@@ -179,7 +177,7 @@ class IconButtonTheme extends InheritedTheme {
       });
       element = parent?.getElementForInheritedWidgetOfExactType<IconButtonTheme>();
     }
-    return Theme.of(context).iconButtonTheme.variant;
+    return Theme.of(context).iconButtonTheme.variant ?? StyleVariant.material3;
   }
 
   @override
