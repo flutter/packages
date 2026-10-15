@@ -15,8 +15,8 @@ class SwitchTemplateM3 extends TokenTemplateM3 {
   @override
   String get parentFilePath => 'switch.dart';
 
-  // The selected icon tokens differ from the existing Switch default.
-  // Preserve the existing color during this template migration.
+  // TODO(QuncCccccc): Remove this legacy color when the selected icon color
+  // change can be made separately from this template migration.
   static const TokenColorRole _legacySelectedIconColor = TokenColorRole.onPrimaryContainer;
 
   @override
