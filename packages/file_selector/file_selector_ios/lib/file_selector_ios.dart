@@ -22,7 +22,7 @@ base class FileSelectorIOS extends FileSelectorPlatform {
   // TODO(bparrishMines): Add an iOS `OpenDialogOptions` implementation option
   // to configure the flag passed to the native
   // UIDocumentPickerViewController:(documenttypes:in:). The plugin currently
-  // passes `UIDocumentPickerMode.import` which "essentially` creates a copy of
+  // passes `UIDocumentPickerMode.import` which "essentially" creates a copy of
   // the file. So this returns a `FileSystemXFile` instead of a
   // `ScopedStorageXFile`. See https://github.com/flutter/flutter/issues/193925
   @override
@@ -36,7 +36,7 @@ base class FileSelectorIOS extends FileSelectorPlatform {
   // TODO(bparrishMines): Add an iOS `OpenDialogOptions` implementation option
   // to configure the flag passed to the native
   // UIDocumentPickerViewController:(documenttypes:in:). The plugin currently
-  // passes `UIDocumentPickerMode.import` which "essentially` creates a copy of
+  // passes `UIDocumentPickerMode.import` which "essentially" creates a copy of
   // the file. So this returns a `FileSystemXFile` instead of a
   // `ScopedStorageXFile`. See https://github.com/flutter/flutter/issues/193925
   @override

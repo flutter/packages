@@ -11,7 +11,7 @@ class OpenAnyPage extends StatelessWidget {
   /// Default Constructor
   const OpenAnyPage({super.key});
 
-  Future<void> _openTextFile(BuildContext context) async {
+  Future<void> _openAnyFile(BuildContext context) async {
     final XFile? file = await FileSelectorPlatform.instance!.openFile();
     if (file == null) {
       // Operation was canceled by the user.
@@ -41,7 +41,7 @@ class OpenAnyPage extends StatelessWidget {
                 foregroundColor: Colors.white,
               ),
               child: const Text('Press to open a file of any type'),
-              onPressed: () => _openTextFile(context),
+              onPressed: () => _openAnyFile(context),
             ),
           ],
         ),
