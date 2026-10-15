@@ -3,6 +3,10 @@
 // found in the LICENSE file.
 
 import 'dart:ffi' show Abi;
+import 'dart:io';
+
+import 'package:cli_util/cli_util.dart' as cli_util;
+import 'package:path/path.dart' as p;
 
 /// Returns the engine-artifact subpath (`<platform-dir>/<file>`) for [abi],
 /// or `null` if the host is unsupported.
@@ -19,4 +23,32 @@ String? engineArtifactSubpath({
     Abi.linuxArm64 => 'linux-arm64/$linuxFile',
     _ => null,
   };
+}
+
+/// Resolves the Flutter artifact cache root directory (`<flutter>/bin/cache`),
+/// or `null` if it cannot be located.
+///
+/// Checks [resolvedExecutable] (defaulting to [Platform.resolvedExecutable])
+/// when running under `flutter_tester`, and otherwise uses `package:cli_util`'s
+/// [cli_util.sdkPath] so standalone AOT-compiled executables (`dart install` /
+/// `dart compile exe`) can locate the Flutter artifact cache.
+Directory? resolveFlutterCacheRoot({String? resolvedExecutable, String? dartSdkPath}) {
+  final String executable = resolvedExecutable ?? Platform.resolvedExecutable;
+  if (executable.contains('flutter_tester')) {
+    return File(executable).parent.parent.parent.parent;
+  }
+
+  final String? sdk = dartSdkPath ?? cli_util.sdkPath;
+  if (sdk != null) {
+    final Directory candidate = Directory(sdk).parent;
+    if (_hasEngineArtifacts(candidate) || p.basename(candidate.path) == 'cache') {
+      return candidate;
+    }
+  }
+
+  return null;
+}
+
+bool _hasEngineArtifacts(Directory cacheRoot) {
+  return Directory(p.join(cacheRoot.path, 'artifacts', 'engine')).existsSync();
 }

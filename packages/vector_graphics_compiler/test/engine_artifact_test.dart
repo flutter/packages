@@ -2,9 +2,13 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'dart:async';
 import 'dart:ffi';
+import 'dart:io';
 
+import 'package:cli_util/cli_util.dart' as cli_util;
 import 'package:flutter_test/flutter_test.dart';
+import 'package:path/path.dart' as p;
 import 'package:vector_graphics_compiler/src/engine_artifact.dart';
 
 void main() {
@@ -89,6 +93,85 @@ void main() {
       test('windowsIA32', () {
         expect(pathOps(Abi.windowsIA32), isNull);
       });
+    });
+  });
+
+  group('resolveFlutterCacheRoot', () {
+    late Directory tempDir;
+    late Directory flutterRoot;
+    late Directory cacheDir;
+    late Directory dartSdkDir;
+
+    setUp(() {
+      tempDir = Directory.systemTemp.createTempSync('vgc_engine_artifact_test_');
+      flutterRoot = Directory(p.join(tempDir.path, 'flutter'));
+      cacheDir = Directory(p.join(flutterRoot.path, 'bin', 'cache'));
+      dartSdkDir = Directory(p.join(cacheDir.path, 'dart-sdk'));
+      Directory(p.join(cacheDir.path, 'artifacts', 'engine')).createSync(recursive: true);
+      File(p.join(dartSdkDir.path, 'lib', 'libraries.json')).createSync(recursive: true);
+      File(p.join(dartSdkDir.path, 'version')).createSync(recursive: true);
+    });
+
+    tearDown(() {
+      if (tempDir.existsSync()) {
+        tempDir.deleteSync(recursive: true);
+      }
+    });
+
+    test('resolves from flutter_tester executable', () {
+      final String testerExe = p.join(
+        cacheDir.path,
+        'artifacts',
+        'engine',
+        'linux-x64',
+        'flutter_tester',
+      );
+      final Directory? resolved = resolveFlutterCacheRoot(resolvedExecutable: testerExe);
+      expect(resolved?.path, cacheDir.path);
+    });
+
+    test('resolves from Flutter dart-sdk via cli_util when compiled to AOT binary', () {
+      final String aotExe = p.join(
+        tempDir.path,
+        '.dart_install',
+        'bin',
+        'vector_graphics_compiler',
+      );
+      final Directory? resolved = runZoned(
+        () => resolveFlutterCacheRoot(resolvedExecutable: aotExe),
+        zoneValues: <Object, Object>{
+          cli_util.environmentOverridesKey: <String, String>{
+            '_DART_RESOLVED_EXECUTABLE': aotExe,
+            'FLUTTER_ROOT': flutterRoot.path,
+          },
+        },
+      );
+      expect(resolved?.path, cacheDir.path);
+    });
+
+    test('resolves via DART_SDK when compiled to AOT binary', () {
+      final String aotExe = p.join(tempDir.path, 'bin', 'vector_graphics_compiler');
+      final Directory? resolved = runZoned(
+        () => resolveFlutterCacheRoot(resolvedExecutable: aotExe),
+        zoneValues: <Object, Object>{
+          cli_util.environmentOverridesKey: <String, String>{
+            '_DART_RESOLVED_EXECUTABLE': aotExe,
+            'DART_SDK': dartSdkDir.path,
+          },
+        },
+      );
+      expect(resolved?.path, cacheDir.path);
+    });
+
+    test('returns null for AOT binary when no Flutter SDK is available', () {
+      final String aotExe = p.join(tempDir.path, 'bin', 'vector_graphics_compiler');
+      final Directory? resolved = runZoned(
+        () => resolveFlutterCacheRoot(resolvedExecutable: aotExe),
+        zoneValues: <Object, Object>{
+          cli_util.environmentOverridesKey: <String, String>{'_DART_RESOLVED_EXECUTABLE': aotExe},
+        },
+      );
+      expect(resolved, isNull);
     });
   });
 }
