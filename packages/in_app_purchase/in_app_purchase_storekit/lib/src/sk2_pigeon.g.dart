@@ -131,7 +131,7 @@ enum SK2SubscriptionPeriodUnitMessage { day, week, month, year }
 /// The way a subscription bills: up front for the whole period, or monthly
 /// under a 12-month commitment.
 /// https://developer.apple.com/documentation/storekit/product/subscriptioninfo/billingplantype
-enum SK2BillingPlanTypeMessage { upFront, monthly }
+enum SK2BillingPlanTypeMessage { upFront, monthly, unknown }
 
 enum SK2ProductPurchaseResultMessage { success, unverified, userCancelled, pending }
 

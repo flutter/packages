@@ -95,9 +95,11 @@ class Sk2PurchaseParam extends PurchaseParam {
   /// A monthly billing plan must be configured for the subscription in App
   /// Store Connect, and is not offered in every storefront. Check
   /// [SK2SubscriptionInfo.pricingTerms] for an [SK2BillingPlanType.monthly]
-  /// entry before offering it; when the plan is unavailable StoreKit falls
-  /// back to the up-front plan.
+  /// entry before offering it.
   ///
-  /// Requires iOS 26.4+ or macOS 26.4+; it is ignored on earlier versions.
+  /// Requesting [SK2BillingPlanType.monthly] requires iOS 26.4+ or macOS 26.4+.
+  /// On earlier versions the purchase fails with a
+  /// `storekit2_billing_plan_unsupported` error instead of falling back to the
+  /// up-front plan.
   final SK2BillingPlanType? billingPlanType;
 }

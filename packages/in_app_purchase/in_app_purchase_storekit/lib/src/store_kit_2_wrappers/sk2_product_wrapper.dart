@@ -168,6 +168,9 @@ enum SK2BillingPlanType {
 
   /// Billed monthly for the duration of a 12-month commitment.
   monthly,
+
+  /// A billing plan this version of the plugin does not recognize.
+  unknown,
 }
 
 /// A wrapper around StoreKit2's CommitmentInfo
@@ -234,6 +237,7 @@ extension on SK2BillingPlanTypeMessage {
     return switch (this) {
       SK2BillingPlanTypeMessage.upFront => SK2BillingPlanType.upFront,
       SK2BillingPlanTypeMessage.monthly => SK2BillingPlanType.monthly,
+      SK2BillingPlanTypeMessage.unknown => SK2BillingPlanType.unknown,
     };
   }
 }
@@ -243,6 +247,7 @@ extension on SK2BillingPlanType {
     return switch (this) {
       SK2BillingPlanType.upFront => SK2BillingPlanTypeMessage.upFront,
       SK2BillingPlanType.monthly => SK2BillingPlanTypeMessage.monthly,
+      SK2BillingPlanType.unknown => SK2BillingPlanTypeMessage.unknown,
     };
   }
 }

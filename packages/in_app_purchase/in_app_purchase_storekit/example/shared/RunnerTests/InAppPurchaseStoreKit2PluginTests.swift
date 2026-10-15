@@ -437,9 +437,8 @@ final class InAppPurchase2PluginTests: XCTestCase {
     let expectation = self.expectation(
       description: "Purchase with a billing plan type should complete")
 
-    // `subscription_silver` has no monthly billing plan configured, so StoreKit
-    // falls back to the up-front plan. The purchase is driven end to end to
-    // exercise the option-building path.
+    // `subscription_silver` has no monthly billing plan configured. The purchase
+    // is driven end to end to exercise the option-building path.
     let options = SK2ProductPurchaseOptionsMessage(
       appAccountToken: nil, promotionalOffer: nil, winBackOfferId: nil,
       introductoryOfferEligibilityCompactJWS: nil, billingPlanType: .monthly)

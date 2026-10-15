@@ -62,7 +62,7 @@ class SK2SubscriptionPeriodMessage {
 /// The way a subscription bills: up front for the whole period, or monthly
 /// under a 12-month commitment.
 /// https://developer.apple.com/documentation/storekit/product/subscriptioninfo/billingplantype
-enum SK2BillingPlanTypeMessage { upFront, monthly }
+enum SK2BillingPlanTypeMessage { upFront, monthly, unknown }
 
 /// Details of the 12-month commitment attached to a monthly billing plan.
 /// https://developer.apple.com/documentation/storekit/product/subscriptioninfo/commitmentinfo

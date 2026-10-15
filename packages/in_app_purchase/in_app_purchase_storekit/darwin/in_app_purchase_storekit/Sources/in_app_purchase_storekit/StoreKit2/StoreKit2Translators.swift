@@ -72,7 +72,11 @@ extension Product.SubscriptionInfo {
 @available(iOS 26.4, macOS 26.4, tvOS 26.4, visionOS 26.4, *)
 extension Product.SubscriptionInfo.BillingPlanType {
   var convertToPigeon: SK2BillingPlanTypeMessage {
-    return self == .monthly ? .monthly : .upFront
+    switch self {
+    case .upFront: return .upFront
+    case .monthly: return .monthly
+    default: return .unknown
+    }
   }
 }
 
@@ -106,10 +110,11 @@ extension Product.SubscriptionInfo.PricingTerms {
 
 @available(iOS 26.4, macOS 26.4, tvOS 26.4, visionOS 26.4, *)
 extension SK2BillingPlanTypeMessage {
-  var convertFromPigeon: Product.SubscriptionInfo.BillingPlanType {
+  var convertFromPigeon: Product.SubscriptionInfo.BillingPlanType? {
     switch self {
     case .monthly: return .monthly
     case .upFront: return .upFront
+    case .unknown: return nil
     }
   }
 }

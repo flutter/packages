@@ -228,6 +228,7 @@ enum SK2SubscriptionPeriodUnitMessage: Int, CaseIterable {
 enum SK2BillingPlanTypeMessage: Int, CaseIterable {
   case upFront = 0
   case monthly = 1
+  case unknown = 2
 }
 
 enum SK2ProductPurchaseResultMessage: Int, CaseIterable {
