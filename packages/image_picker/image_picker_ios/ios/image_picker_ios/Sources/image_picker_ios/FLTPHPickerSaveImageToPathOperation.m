@@ -127,6 +127,13 @@ API_AVAILABLE(ios(14))
 /// Processes the image.
 - (void)processImage:(NSData *)pickerImageData API_AVAILABLE(ios(14)) {
   UIImage *localImage = [[UIImage alloc] initWithData:pickerImageData];
+  if (localImage == nil) {
+    FlutterError *flutterError = [FlutterError errorWithCode:@"invalid_image"
+                                                     message:@"Could not decode image data."
+                                                     details:nil];
+    [self completeOperationWithPath:nil error:flutterError];
+    return;
+  }
 
   if (self.maxWidth != nil || self.maxHeight != nil) {
     localImage = [FLTImagePickerImageUtil scaledImage:localImage

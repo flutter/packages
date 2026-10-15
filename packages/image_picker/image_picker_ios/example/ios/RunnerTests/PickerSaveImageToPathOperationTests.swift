@@ -5,14 +5,13 @@
 import ImageIO
 import Testing
 import UIKit
-import UniformTypeIdentifiers
 
 @testable import image_picker_ios
 
 @Suite
 struct PickerSaveImageToPathOperationTests {
   private var testBundle: Bundle {
-    Bundle(for: ImagePickerTestImages.self)
+    ImagePickerTestImages.bundle
   }
 
   private func pickerItem(forResource name: String, ext: String) throws -> FakePickerItem {
@@ -148,15 +147,21 @@ struct PickerSaveImageToPathOperationTests {
     #expect(savedError?.details as? String == "PHPickerDomain")
   }
 
-  @Test func saveImageFailsWhenImageCannotBeDecoded() async throws {
-    let dataJPG = ImagePickerTestImages.jpgTestData
-    let truncatedJPG = Data(dataJPG.prefix(dataJPG.count / 2))
-    #expect(UIImage(data: truncatedJPG) == nil)
-    let itemProvider = NSItemProvider(
-      item: truncatedJPG as NSData, typeIdentifier: UTType.jpeg.identifier)
+  @Test func undecodableImageDataReturnsError() async throws {
+    let itemProvider = StaticDataItemProvider(data: Data("not an image".utf8))
     let result = FakePickerItem(itemProvider: itemProvider, assetIdentifier: nil)
-
     let (savedPath, savedError) = try await runSaveOperation(result: result, fullMetadata: true)
+    #expect(savedPath == nil)
+    #expect(savedError?.code == "invalid_image")
+    #expect(savedError?.message == "Could not decode image data.")
+  }
+
+  @Test func saveImageFailsWhenScaledImageIsEmpty() async throws {
+    // A maxWidth of 0 is accepted by the Dart API but scales the image to nothing, so no image
+    // data can be encoded.
+    let result = try pickerItem(forResource: "jpgImage", ext: "jpg")
+    let (savedPath, savedError) = try await runSaveOperation(
+      result: result, maxWidth: 0, fullMetadata: true)
     let savedData = savedPath.flatMap { FileManager.default.contents(atPath: $0) }
     #expect(savedPath == nil, "Returned a path to a \(savedData?.count ?? 0)-byte file.")
     #expect(savedError?.code == "invalid_image")

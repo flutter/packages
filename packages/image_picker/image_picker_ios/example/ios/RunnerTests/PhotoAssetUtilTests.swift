@@ -11,7 +11,9 @@ import UIKit
 
 /// Saves into a directory that does not exist, so writing the file fails.
 private final class UnwritablePhotoAssetUtil: FLTImagePickerPhotoAssetUtil {
-  override class func temporaryFilePath(_ suffix: String) -> String {
+  // Replaces the private +temporaryFilePath: helper, which the save methods call on `self`.
+  @objc(temporaryFilePath:)
+  class func unwritableTemporaryFilePath(_ suffix: String) -> String {
     "/this/path/does/not/exist/image" + suffix
   }
 }
@@ -197,11 +199,10 @@ struct PhotoAssetUtilTests {
     if let savedPath { try? FileManager.default.removeItem(atPath: savedPath) }
   }
 
-  @Test func saveGIFReturnsNilWhenDestinationCannotBeCreated() throws {
-    let frame = try #require(UIImage(data: ImagePickerTestImages.gifTestData))
-    let gifInfo = GIFInfo(images: [frame], interval: 0.1)
-    #expect(
-      FLTImagePickerPhotoAssetUtil.saveImage(
-        withMetaData: nil, gifInfo: gifInfo, path: "/this/path/does/not/exist.gif") == nil)
+  @Test func saveGIFReturnsNilWhenDestinationCannotBeCreated() {
+    let savedPath = UnwritablePhotoAssetUtil.saveImage(
+      withOriginalImageData: ImagePickerTestImages.gifTestData, image: nil, maxWidth: nil,
+      maxHeight: nil, imageQuality: nil)
+    #expect(savedPath == nil)
   }
 }

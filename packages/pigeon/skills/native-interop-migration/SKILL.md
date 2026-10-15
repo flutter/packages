@@ -31,9 +31,6 @@ flutter pub add jni
 flutter pub add dev:jnigen dev:logging dev:path
 ```
 
-> [!NOTE]
-> Ensure the resolved `objective_c` version in `pubspec.yaml` matches the version expected by your `ffigen` version (e.g., `ffigen: ^22.0.0` generates bindings that require `objective_c: ^9.6.0`).
-
 ---
 
 ## 2. Configure `@ConfigurePigeon` Options
@@ -96,7 +93,7 @@ s.source_files = 'my_plugin/Sources/**/*.{swift,m,h}'
 ```
 
 ### 3.2 Swift Package Manager (`Package.swift`)
-Because SPM targets cannot mix Swift and Objective-C files in a single target, split the targets into an Objective-C bridging target (`<plugin_name>_objc_gen`) and the main Swift target:
+**Only if a `.m` file is generated** in `<swift_output_dir>_objc_gen`, split the targets in `Package.swift` into an Objective-C bridging target (`<plugin_name>_objc_gen`) and the main Swift target (since SPM targets cannot mix Swift and Objective-C files in a single target):
 
 ```swift
 targets: [
@@ -114,6 +111,11 @@ targets: [
   ),
 ]
 ```
+
+> [!IMPORTANT]
+> **Do NOT add `<plugin_name>_objc_gen` to `Package.swift` if no `.m` file is generated!**
+> If your Pigeon schema only has synchronous `@HostApi()` methods, `ffigen` only generates a `.h` header (and a temporary `.o` file that should be deleted/ignored) in `<swift_output_dir>_objc_gen`, without a `.m` file. Because SwiftPM requires every `.target` to have at least one compilable source file (`.m`, `.c`, or `.swift`), declaring `<plugin_name>_objc_gen` without a `.m` file will cause `flutter build ios`/`macos` to fail with:
+> `Error (Xcode): Build input file cannot be found: '.../<plugin_name>_objc_gen.o'`
 
 ### 3.3 Application & Example App Targets
 When implementing Native Interop host APIs directly in an application target (such as a plugin's `example/` app or a standalone app) rather than a plugin package:
@@ -229,6 +231,27 @@ class MyPluginAndroid extends MyPluginPlatform {
 }
 ```
 
+### 4.5 Android Release Builds (R8 Keep Rules)
+<!-- TODO(tarrinneal): Remove this section once package:jni ships these keep rules: https://github.com/dart-lang/native/issues/3732 -->
+Flutter enables R8 for Android release builds by default, and R8 removes or renames classes that JNI looks up by name. Pigeon adds `@Keep` to the generated Kotlin classes that JNI reaches, but `package:jni` and the generated Dart code also look up Kotlin standard library classes by name to call and implement `suspend` functions. Until `package:jni` includes rules for these classes, add them to the plugin:
+
+1. Create `android/consumer-rules.pro` in the plugin:
+   ```text
+   # Kotlin classes that package:jni and the generated Dart code look up by name.
+   -keep class kotlin.Unit { *; }
+   -keep class kotlin.Result { *; }
+   -keep class kotlin.Result$Failure { *; }
+   -keep class kotlin.coroutines.Continuation { *; }
+   -keep class kotlin.coroutines.intrinsics.CoroutineSingletons { *; }
+   -keep class kotlin.coroutines.intrinsics.IntrinsicsKt { *; }
+   ```
+2. Reference it from `android.defaultConfig` in the plugin's `android/build.gradle` or `android/build.gradle.kts`, so that every app using the plugin applies the rules:
+   ```gradle
+   consumerProguardFiles("consumer-rules.pro")
+   ```
+
+Do not add a `-keep` rule for the plugin's own package to work around missing generated classes; regenerate with the latest Pigeon instead.
+
 ---
 
 ## 5. Code Generation, Formatting, and Validation
@@ -311,3 +334,16 @@ F DartJNI : JNI is not initialized. Are you trying to invoke a Java API from Dar
 ```
 - **Cause**: Your plugin's `registerWith()` method (invoked by Flutter's `_PluginRegistrant.register()` before `main()`) constructed your Dart plugin class, and its constructor eagerly called `<MyApi>.createWithNativeInteropApi()` before `JniPlugin` initialized `DartJNI`.
 - **Solution**: Initialize `<MyApi>.createWithNativeInteropApi()` lazily using `late final` (see [Section 4.4](#44-dart-plugin-client-createwithnativeinteropapi--dartpluginclass)).
+
+### 6.9 Xcode Build Error: `Build input file cannot be found: '.../<plugin_name>_objc_gen.o'`
+If an iOS or macOS SwiftPM build fails because `<plugin_name>_objc_gen.o` cannot be found:
+- **Cause**: `Package.swift` defines a `<plugin_name>_objc_gen` target, but `ffigen` did not generate a `.m` implementation file in `Sources/<plugin_name>_objc_gen/` (because the Pigeon schema has no async callbacks, closures, or `@FlutterApi` methods requiring Objective-C trampolines). Without a `.m` source file, SwiftPM does not produce an object file for the target. (Note: any `.o` file produced inside `Sources/<plugin_name>_objc_gen/` during `ffigen` execution is a temporary `swiftc` artifact and must be deleted/ignored, never committed.)
+- **Solution**: Remove the `<plugin_name>_objc_gen` target and its dependency entry from `Package.swift`.
+
+### 6.10 `ClassNotFoundException` or `NoSuchMethodError` in Android Release Builds (JNI)
+If native interop calls work in debug builds but fail in release builds with `java.lang.ClassNotFoundException` or `java.lang.NoSuchMethodError`:
+- **Cause**: R8 removed or renamed a class or member that JNI looks up by name.
+- **Solution**:
+  - If the error names a class generated by Pigeon, regenerate with Pigeon 29.0.7 or later, which adds `@Keep` to every generated class that JNI reaches.
+  - If the error names a class in the `kotlin` package (for example, `kotlin/coroutines/Continuation` in the signature of a `suspend` method), add the keep rules from [Section 4.5](#45-android-release-builds-r8-keep-rules). <!-- TODO(tarrinneal): Remove this bullet once package:jni ships these keep rules: https://github.com/dart-lang/native/issues/3732 -->
+  - To see what R8 removed or renamed, check `build/app/outputs/mapping/release/mapping.txt` in the example app directory.
