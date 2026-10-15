@@ -6,12 +6,12 @@ import 'package:file_selector_platform_interface/file_selector_platform_interfac
 import 'package:flutter/material.dart';
 
 /// Screen that allows the user to select a directory path using
-/// `getDirectoryPath`, then displays all entities in that directory in a dialog.
-class GetDirectoryPathPage extends StatelessWidget {
-  /// Default Constructor
-  const GetDirectoryPathPage({super.key});
+/// `getDirectory`, then displays all entities in that directory in a dialog.
+class GetDirectoryPage extends StatelessWidget {
+  /// Default Constructor.
+  const GetDirectoryPage({super.key});
 
-  Future<void> _getDirectoryPath(BuildContext context) async {
+  Future<void> _getDirectory(BuildContext context) async {
     final XDirectory? directory = await FileSelectorPlatform.instance!.getDirectory();
     if (directory == null) {
       // Operation was canceled by the user.
@@ -28,7 +28,7 @@ class GetDirectoryPathPage extends StatelessWidget {
       } else if (entity is XDirectory) {
         // Getting a name for a directory is not supported, so this is a
         // workaround to show just the directory name.
-        entityNames.add(entity.uri.split('%2F').last);
+        entityNames.add(Uri.parse(entity.uri).pathSegments.last);
       } else {
         entityNames.add(entity.uri);
       }
@@ -56,7 +56,7 @@ class GetDirectoryPathPage extends StatelessWidget {
                 backgroundColor: Colors.white,
               ),
               child: const Text('Press to open a directory and get text files'),
-              onPressed: () => _getDirectoryPath(context),
+              onPressed: () => _getDirectory(context),
             ),
           ],
         ),

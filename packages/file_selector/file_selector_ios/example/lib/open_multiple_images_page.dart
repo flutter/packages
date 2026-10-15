@@ -74,14 +74,10 @@ class MultipleImagesDisplay extends StatelessWidget {
   Widget build(BuildContext context) {
     return AlertDialog(
       title: const Text('Gallery'),
-      // On web the filePath is a blob url
-      // while on other platforms it is a system path.
       content: Center(
         child: Row(
           children: <Widget>[
-            ...files.map(
-              (XFile file) => Flexible(child: Image.file(File((file as FileSystemXFile).path))),
-            ),
+            ...files.map((XFile file) => Flexible(child: Image.file(File(file.uri)))),
           ],
         ),
       ),

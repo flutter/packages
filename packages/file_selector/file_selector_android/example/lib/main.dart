@@ -37,7 +37,7 @@ class MyApp extends StatelessWidget {
       ),
       home: const HomePage(),
       routes: <String, WidgetBuilder>{
-        '/get/directory': (BuildContext context) => const GetDirectoryPathPage(),
+        '/get/directory': (BuildContext context) => const GetDirectoryPage(),
         '/open/image': (BuildContext context) => const OpenImagePage(),
         '/open/images': (BuildContext context) => const OpenMultipleImagesPage(),
         '/open/text': (BuildContext context) => const OpenTextPage(),
