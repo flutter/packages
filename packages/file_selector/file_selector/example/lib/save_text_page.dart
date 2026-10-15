@@ -7,6 +7,8 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart' as path_provider;
 
+import 'save_file_helper.dart';
+
 /// Page for showing an example of saving with file_selector
 class SaveTextPage extends StatelessWidget {
   /// Default Constructor
@@ -35,8 +37,10 @@ class SaveTextPage extends StatelessWidget {
       return;
     }
 
-    if (result.file case final FileSystemXFile file) {
-      final String text = _contentController.text;
+    final String text = _contentController.text;
+    if (kIsWeb) {
+      await saveFileWeb(fileName, text);
+    } else if (result.file case final FileSystemXFile file) {
       final fileData = Uint8List.fromList(text.codeUnits);
       await file.writeAsBytes(fileData);
     }
