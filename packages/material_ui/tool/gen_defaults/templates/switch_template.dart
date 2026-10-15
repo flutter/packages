@@ -2,21 +2,28 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import '../data/color_role.dart';
+import '../data/switch.dart';
 import 'template.dart';
 
-class SwitchTemplate extends TokenTemplate {
-  const SwitchTemplate(
-    super.blockName,
-    super.fileName,
-    super.tokens, {
-    super.colorSchemePrefix = '_colors.',
-  });
+class SwitchTemplateM3 extends TokenTemplateM3 {
+  const SwitchTemplateM3();
 
   @override
-  String generate() =>
+  String get name => 'Switch';
+
+  @override
+  String get parentFilePath => 'switch.dart';
+
+  // The selected icon tokens differ from the existing Switch default.
+  // Preserve the existing color during this template migration.
+  static const TokenColorRole _legacySelectedIconColor = TokenColorRole.onPrimaryContainer;
+
+  @override
+  String generateContents(String className) =>
       '''
-class _${blockName}DefaultsM3 extends SwitchThemeData {
-  _${blockName}DefaultsM3(this.context);
+class $className extends SwitchThemeData {
+  $className(this.context);
 
   final BuildContext context;
   late final ColorScheme _colors = Theme.of(context).colorScheme;
@@ -26,32 +33,32 @@ class _${blockName}DefaultsM3 extends SwitchThemeData {
     return WidgetStateProperty.resolveWith((Set<WidgetState> states) {
       if (states.contains(WidgetState.disabled)) {
         if (states.contains(WidgetState.selected)) {
-          return ${componentColor('md.comp.switch.disabled.selected.handle')};
+          return ${color(TokenSwitch.disabledSelectedHandleColor)}.withOpacity(${TokenSwitch.disabledSelectedHandleOpacity});
         }
-        return ${componentColor('md.comp.switch.disabled.unselected.handle')};
+        return ${colorWithOpacity(TokenSwitch.disabledUnselectedHandleColor, TokenSwitch.disabledUnselectedHandleOpacity)};
       }
       if (states.contains(WidgetState.selected)) {
         if (states.contains(WidgetState.pressed)) {
-          return ${componentColor('md.comp.switch.selected.pressed.handle')};
+          return ${color(TokenSwitch.selectedPressedHandleColor)};
         }
         if (states.contains(WidgetState.hovered)) {
-          return ${componentColor('md.comp.switch.selected.hover.handle')};
+          return ${color(TokenSwitch.selectedHoverHandleColor)};
         }
         if (states.contains(WidgetState.focused)) {
-          return ${componentColor('md.comp.switch.selected.focus.handle')};
+          return ${color(TokenSwitch.selectedFocusHandleColor)};
         }
-        return ${componentColor('md.comp.switch.selected.handle')};
+        return ${color(TokenSwitch.selectedHandleColor)};
       }
       if (states.contains(WidgetState.pressed)) {
-        return ${componentColor('md.comp.switch.unselected.pressed.handle')};
+        return ${color(TokenSwitch.unselectedPressedHandleColor)};
       }
       if (states.contains(WidgetState.hovered)) {
-        return ${componentColor('md.comp.switch.unselected.hover.handle')};
+        return ${color(TokenSwitch.unselectedHoverHandleColor)};
       }
       if (states.contains(WidgetState.focused)) {
-        return ${componentColor('md.comp.switch.unselected.focus.handle')};
+        return ${color(TokenSwitch.unselectedFocusHandleColor)};
       }
-      return ${componentColor('md.comp.switch.unselected.handle')};
+      return ${color(TokenSwitch.unselectedHandleColor)};
     });
   }
 
@@ -60,32 +67,32 @@ class _${blockName}DefaultsM3 extends SwitchThemeData {
     return WidgetStateProperty.resolveWith((Set<WidgetState> states) {
       if (states.contains(WidgetState.disabled)) {
         if (states.contains(WidgetState.selected)) {
-          return ${componentColor('md.comp.switch.disabled.selected.track')}.withOpacity(${opacity('md.comp.switch.disabled.track.opacity')});
+          return ${colorWithOpacity(TokenSwitch.disabledSelectedTrackColor, TokenSwitch.disabledTrackOpacity)};
         }
-        return ${componentColor('md.comp.switch.disabled.unselected.track')}.withOpacity(${opacity('md.comp.switch.disabled.track.opacity')});
+        return ${colorWithOpacity(TokenSwitch.disabledUnselectedTrackColor, TokenSwitch.disabledTrackOpacity)};
       }
       if (states.contains(WidgetState.selected)) {
         if (states.contains(WidgetState.pressed)) {
-          return ${componentColor('md.comp.switch.selected.pressed.track')};
+          return ${color(TokenSwitch.selectedPressedTrackColor)};
         }
         if (states.contains(WidgetState.hovered)) {
-          return ${componentColor('md.comp.switch.selected.hover.track')};
+          return ${color(TokenSwitch.selectedHoverTrackColor)};
         }
         if (states.contains(WidgetState.focused)) {
-          return ${componentColor('md.comp.switch.selected.focus.track')};
+          return ${color(TokenSwitch.selectedFocusTrackColor)};
         }
-        return ${componentColor('md.comp.switch.selected.track')};
+        return ${color(TokenSwitch.selectedTrackColor)};
       }
       if (states.contains(WidgetState.pressed)) {
-        return ${componentColor('md.comp.switch.unselected.pressed.track')};
+        return ${color(TokenSwitch.unselectedPressedTrackColor)};
       }
       if (states.contains(WidgetState.hovered)) {
-        return ${componentColor('md.comp.switch.unselected.hover.track')};
+        return ${color(TokenSwitch.unselectedHoverTrackColor)};
       }
       if (states.contains(WidgetState.focused)) {
-        return ${componentColor('md.comp.switch.unselected.focus.track')};
+        return ${color(TokenSwitch.unselectedFocusTrackColor)};
       }
-      return ${componentColor('md.comp.switch.unselected.track')};
+      return ${color(TokenSwitch.unselectedTrackColor)};
     });
   }
 
@@ -96,9 +103,9 @@ class _${blockName}DefaultsM3 extends SwitchThemeData {
         return Colors.transparent;
       }
       if (states.contains(WidgetState.disabled)) {
-        return ${componentColor('md.comp.switch.disabled.unselected.track.outline')}.withOpacity(${opacity('md.comp.switch.disabled.track.opacity')});
+        return ${colorWithOpacity(TokenSwitch.disabledUnselectedTrackOutlineColor, TokenSwitch.disabledTrackOpacity)};
       }
-      return ${componentColor('md.comp.switch.unselected.track.outline')};
+      return ${color(TokenSwitch.unselectedTrackOutlineColor)};
     });
   }
 
@@ -107,24 +114,24 @@ class _${blockName}DefaultsM3 extends SwitchThemeData {
     return WidgetStateProperty.resolveWith((Set<WidgetState> states) {
       if (states.contains(WidgetState.selected)) {
         if (states.contains(WidgetState.pressed)) {
-          return ${componentColor('md.comp.switch.selected.pressed.state-layer')};
+          return ${colorWithOpacity(TokenSwitch.selectedPressedStateLayerColor, TokenSwitch.selectedPressedStateLayerOpacity)};
         }
         if (states.contains(WidgetState.hovered)) {
-          return ${componentColor('md.comp.switch.selected.hover.state-layer')};
+          return ${colorWithOpacity(TokenSwitch.selectedHoverStateLayerColor, TokenSwitch.selectedHoverStateLayerOpacity)};
         }
         if (states.contains(WidgetState.focused)) {
-          return ${componentColor('md.comp.switch.selected.focus.state-layer')};
+          return ${colorWithOpacity(TokenSwitch.selectedFocusStateLayerColor, TokenSwitch.selectedFocusStateLayerOpacity)};
         }
         return null;
       }
       if (states.contains(WidgetState.pressed)) {
-        return ${componentColor('md.comp.switch.unselected.pressed.state-layer')};
+        return ${colorWithOpacity(TokenSwitch.unselectedPressedStateLayerColor, TokenSwitch.unselectedPressedStateLayerOpacity)};
       }
       if (states.contains(WidgetState.hovered)) {
-        return ${componentColor('md.comp.switch.unselected.hover.state-layer')};
+        return ${colorWithOpacity(TokenSwitch.unselectedHoverStateLayerColor, TokenSwitch.unselectedHoverStateLayerOpacity)};
       }
       if (states.contains(WidgetState.focused)) {
-        return ${componentColor('md.comp.switch.unselected.focus.state-layer')};
+        return ${colorWithOpacity(TokenSwitch.unselectedFocusStateLayerColor, TokenSwitch.unselectedFocusStateLayerOpacity)};
       }
       return null;
     });
@@ -137,10 +144,10 @@ class _${blockName}DefaultsM3 extends SwitchThemeData {
   }
 
   @override
-  MaterialStatePropertyAll<double> get trackOutlineWidth => const MaterialStatePropertyAll<double>(${getToken('md.comp.switch.track.outline.width')});
+  MaterialStatePropertyAll<double> get trackOutlineWidth => const MaterialStatePropertyAll<double>(${TokenSwitch.trackOutlineWidth});
 
   @override
-  double get splashRadius => ${getToken('md.comp.switch.state-layer.size')} / 2;
+  double get splashRadius => ${TokenSwitch.stateLayerSize} / 2;
 
   @override
   EdgeInsetsGeometry? get padding => const EdgeInsets.symmetric(horizontal: 4);
@@ -153,50 +160,50 @@ class _SwitchConfigM3 with _SwitchConfig {
   BuildContext context;
   final ColorScheme _colors;
 
-  static const double iconSize = ${getToken('md.comp.switch.unselected.icon.size')};
+  static const double iconSize = ${TokenSwitch.unselectedIconSize};
 
   @override
-  double get activeThumbRadius => ${getToken('md.comp.switch.selected.handle.width')} / 2;
+  double get activeThumbRadius => ${TokenSwitch.selectedHandleWidth} / 2;
 
   @override
   WidgetStateProperty<Color> get iconColor {
     return WidgetStateProperty.resolveWith((Set<WidgetState> states) {
       if (states.contains(WidgetState.disabled)) {
         if (states.contains(WidgetState.selected)) {
-          return ${componentColor('md.comp.switch.disabled.selected.icon')};
+          return ${colorWithOpacity(TokenSwitch.disabledSelectedIconColor, TokenSwitch.disabledSelectedIconOpacity)};
         }
-        return ${componentColor('md.comp.switch.disabled.unselected.icon')};
+        return ${colorWithOpacity(TokenSwitch.disabledUnselectedIconColor, TokenSwitch.disabledUnselectedIconOpacity)};
       }
       if (states.contains(WidgetState.selected)) {
         if (states.contains(WidgetState.pressed)) {
-          return ${componentColor('md.comp.switch.selected.pressed.icon')};
+          return ${color(_legacySelectedIconColor)};
         }
         if (states.contains(WidgetState.hovered)) {
-          return ${componentColor('md.comp.switch.selected.hover.icon')};
+          return ${color(_legacySelectedIconColor)};
         }
         if (states.contains(WidgetState.focused)) {
-          return ${componentColor('md.comp.switch.selected.focus.icon')};
+          return ${color(_legacySelectedIconColor)};
         }
-        return ${componentColor('md.comp.switch.selected.icon')};
+        return ${color(_legacySelectedIconColor)};
       }
       if (states.contains(WidgetState.pressed)) {
-        return ${componentColor('md.comp.switch.unselected.pressed.icon')};
+        return ${color(TokenSwitch.unselectedPressedIconColor)};
       }
       if (states.contains(WidgetState.hovered)) {
-        return ${componentColor('md.comp.switch.unselected.hover.icon')};
+        return ${color(TokenSwitch.unselectedHoverIconColor)};
       }
       if (states.contains(WidgetState.focused)) {
-        return ${componentColor('md.comp.switch.unselected.focus.icon')};
+        return ${color(TokenSwitch.unselectedFocusIconColor)};
       }
-      return ${componentColor('md.comp.switch.unselected.icon')};
+      return ${color(TokenSwitch.unselectedIconColor)};
     });
   }
 
   @override
-  double get inactiveThumbRadius => ${getToken('md.comp.switch.unselected.handle.width')} / 2;
+  double get inactiveThumbRadius => ${TokenSwitch.unselectedHandleWidth} / 2;
 
   @override
-  double get pressedThumbRadius => ${getToken('md.comp.switch.pressed.handle.width')} / 2;
+  double get pressedThumbRadius => ${TokenSwitch.pressedHandleWidth} / 2;
 
   @override
   double get switchHeight => switchMinSize.height + 8.0;
@@ -208,16 +215,16 @@ class _SwitchConfigM3 with _SwitchConfig {
   double get switchWidth => 52.0;
 
   @override
-  double get thumbRadiusWithIcon => ${getToken('md.comp.switch.with-icon.handle.width')} / 2;
+  double get thumbRadiusWithIcon => ${TokenSwitch.withIconHandleWidth} / 2;
 
   @override
   List<BoxShadow>? get thumbShadow => kElevationToShadow[0];
 
   @override
-  double get trackHeight => ${getToken('md.comp.switch.track.height')};
+  double get trackHeight => ${TokenSwitch.trackHeight};
 
   @override
-  double get trackWidth => ${getToken('md.comp.switch.track.width')};
+  double get trackWidth => ${TokenSwitch.trackWidth};
 
   // The thumb size at the middle of the track. Hand coded default based on the animation specs.
   @override

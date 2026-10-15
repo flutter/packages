@@ -49,7 +49,7 @@ import '../templates/motion_template.dart';
 // import '../templates/slider_template.dart';
 import '../templates/snackbar_template.dart';
 // import '../templates/surface_tint_template.dart';
-// import '../templates/switch_template.dart';
+import '../templates/switch_template.dart';
 // import '../templates/tabs_template.dart';
 // import '../templates/text_field_template.dart';
 // import '../templates/time_picker_template.dart';
@@ -111,7 +111,7 @@ Future<void> main(List<String> args) async {
   // const SliderTemplateM3().generateFile(verbose: verbose);
   const SnackbarTemplateM3().generateFile(verbose: verbose);
   // const SurfaceTintTemplateM3().generateFile(verbose: verbose);
-  // const SwitchTemplateM3().generateFile(verbose: verbose);
+  const SwitchTemplateM3().generateFile(verbose: verbose);
   // const TabsTemplateM3().generateFile(verbose: verbose);
   // const TextFieldTemplateM3().generateFile(verbose: verbose);
   // const TimePickerTemplateM3().generateFile(verbose: verbose);
