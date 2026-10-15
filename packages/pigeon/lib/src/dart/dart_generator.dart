@@ -1618,74 +1618,82 @@ class DartGenerator extends StructuredGenerator<InternalDartOptions> {
         indent.writeln('return api;');
       });
 
-      if (generatorOptions.useJniHybrid) {
-        for (final Method method in api.methods) {
-          _writeJniHybridFlutterMethod(indent, api, method);
-        }
-      } else if (generatorOptions.useJni) {
+      if (generatorOptions.useJni) {
         final jniNamer = _JniBindingNamer(isInterface: true);
-        for (final Method method
-            in root.apis
-                .whereType<AstFlutterApi>()
-                .expand((a) => a.methods)
-                .where((m) => api.methods.contains(m))) {
-          indent.newln();
-          indent.writeln('@override');
-          final _JniType jniReturnType = _JniType.fromTypeDeclaration(method.returnType);
-          final String returnType = method.isAsynchronous
-              ? 'Future<${method.returnType.isVoid ? 'JObject' : jniReturnType.getJniCallReturnType(true)}>'
-              : jniReturnType.getJniCallReturnType(false);
-          final String params = _getMethodParameterSignature(
-            method.parameters,
-            useJni: true,
-            isAsynchronous: method.isAsynchronous,
-          );
-          final String jniMethodName = jniNamer.nextApiMethod(method).name;
-          indent.writeScoped('$returnType $jniMethodName($params) {', '}', () {
-            indent.writeScoped('if (dartApi != null) {', '} ', () {
-              final methodCall =
-                  'dartApi!.${method.name}(${indexMap(method.parameters, (int index, Parameter p) {
-                    final _JniType jniType = _JniType.fromTypeDeclaration(p.type);
-                    return jniType.getToDartCall(p.type, varName: _getSafeArgumentName(index, p));
-                  }).join(', ')})';
+        if (generatorOptions.useJniHybrid) {
+          for (final Method method in api.methods) {
+            _writeJniHybridFlutterMethod(
+              indent,
+              api,
+              method,
+              jniNamer.nextApiMethod(method, hybrid: true).name,
+            );
+          }
+        } else {
+          for (final Method method
+              in root.apis
+                  .whereType<AstFlutterApi>()
+                  .expand((a) => a.methods)
+                  .where((m) => api.methods.contains(m))) {
+            indent.newln();
+            indent.writeln('@override');
+            final _JniType jniReturnType = _JniType.fromTypeDeclaration(method.returnType);
+            final String returnType = method.isAsynchronous
+                ? 'Future<${method.returnType.isVoid ? 'JObject' : jniReturnType.getJniCallReturnType(true)}>'
+                : jniReturnType.getJniCallReturnType(false);
+            final String params = _getMethodParameterSignature(
+              method.parameters,
+              useJni: true,
+              isAsynchronous: method.isAsynchronous,
+            );
+            final String jniMethodName = jniNamer.nextApiMethod(method).name;
+            indent.writeScoped('$returnType $jniMethodName($params) {', '}', () {
+              indent.writeScoped('if (dartApi != null) {', '} ', () {
+                final methodCall =
+                    'dartApi!.${method.name}(${indexMap(method.parameters, (int index, Parameter p) {
+                      final _JniType jniType = _JniType.fromTypeDeclaration(p.type);
+                      return jniType.getToDartCall(p.type, varName: _getSafeArgumentName(index, p));
+                    }).join(', ')})';
 
-              if (method.isAsynchronous) {
-                indent.writeScoped('return $methodCall.then((response) {', '});', () {
-                  if (method.returnType.isVoid) {
-                    indent.writeln('return _PigeonJniCodec._kotlinUnit;');
-                  } else {
-                    String toJniCall;
-                    if (!method.returnType.isNullable && isPrimitiveType(method.returnType)) {
-                      toJniCall = '_PigeonJniCodec.writeValue<${jniReturnType.jniName}>(response)';
+                if (method.isAsynchronous) {
+                  indent.writeScoped('return $methodCall.then((response) {', '});', () {
+                    if (method.returnType.isVoid) {
+                      indent.writeln('return _PigeonJniCodec._kotlinUnit;');
                     } else {
-                      toJniCall = jniReturnType.getToJniCall(
-                        method.returnType,
-                        'response',
-                        jniReturnType,
-                      );
+                      String toJniCall;
+                      if (!method.returnType.isNullable && isPrimitiveType(method.returnType)) {
+                        toJniCall =
+                            '_PigeonJniCodec.writeValue<${jniReturnType.jniName}>(response)';
+                      } else {
+                        toJniCall = jniReturnType.getToJniCall(
+                          method.returnType,
+                          'response',
+                          jniReturnType,
+                        );
+                      }
+                      indent.writeln('return $toJniCall;');
                     }
-                    indent.writeln('return $toJniCall;');
-                  }
-                });
-              } else if (method.returnType.isVoid) {
-                indent.writeln('$methodCall;');
-                indent.writeln('return;');
-              } else {
-                indent.writeln(
-                  'final ${addGenericTypes(method.returnType)} response = $methodCall;',
-                );
-                final String toJniCall = jniReturnType.getToJniCall(
-                  method.returnType,
-                  'response',
-                  jniReturnType,
-                );
-                indent.writeln('return $toJniCall;');
-              }
+                  });
+                } else if (method.returnType.isVoid) {
+                  indent.writeln('$methodCall;');
+                  indent.writeln('return;');
+                } else {
+                  indent.writeln(
+                    'final ${addGenericTypes(method.returnType)} response = $methodCall;',
+                  );
+                  final String toJniCall = jniReturnType.getToJniCall(
+                    method.returnType,
+                    'response',
+                    jniReturnType,
+                  );
+                  indent.writeln('return $toJniCall;');
+                }
+              });
+              indent.writeScoped('else {', '}', () {
+                indent.writeln("throw ArgumentError('${api.name} was not registered.');");
+              });
             });
-            indent.writeScoped('else {', '}', () {
-              indent.writeln("throw ArgumentError('${api.name} was not registered.');");
-            });
-          });
+          }
         }
       }
     });
@@ -1913,7 +1921,10 @@ class DartGenerator extends StructuredGenerator<InternalDartOptions> {
         declaredFirst: const <String>['register', 'getInstance'],
       );
       for (final Method method in api.methods) {
-        final _JniMember jniMember = jniNamer.nextApiMethod(method);
+        final _JniMember jniMember = jniNamer.nextApiMethod(
+          method,
+          hybrid: generatorOptions.useJniHybrid,
+        );
         indent.writeScoped(
           '${method.isAsynchronous ? 'Future<' : ''}${addGenericTypes(method.returnType)}${method.isAsynchronous ? '>' : ''} ${method.name}(${_getMethodParameterSignature(method.parameters)}) ${method.isAsynchronous ? 'async ' : ''}{',
           '}',
@@ -1923,7 +1934,7 @@ class DartGenerator extends StructuredGenerator<InternalDartOptions> {
               if (generatorOptions.useJni) {
                 indent.writeScoped('if (_jniApi != null) {', '}', () {
                   if (generatorOptions.useJniHybrid) {
-                    _writeJniHybridHostCall(indent, method);
+                    _writeJniHybridHostCall(indent, method, jniMember);
                     return;
                   }
                   final _JniType returnType = _JniType.fromTypeDeclaration(method.returnType);
@@ -2042,8 +2053,8 @@ return ${generatorOptions.useJni ? 'await ' : ''}$completerVar.future;
   }
 
   /// Writes the body of the JNI branch of a host API [method] for the hybrid
-  /// transport: one call to the method's `pigeon_` entry point.
-  void _writeJniHybridHostCall(Indent indent, Method method) {
+  /// transport.
+  void _writeJniHybridHostCall(Indent indent, Method method, _JniMember jniMember) {
     const String argsVar = nativeInteropArgsParameterName;
     const resultVar = '${varNamePrefix}res';
     final temporaries = <(String, bool)>[];
@@ -2080,8 +2091,7 @@ return ${generatorOptions.useJni ? 'await ' : ''}$completerVar.future;
       callArguments.add(argsVar);
     }
     final await = method.isAsynchronous ? 'await ' : '';
-    final call =
-        '${await}_jniApi.${nativeInteropEntryPointName(method.name)}(${callArguments.join(', ')})';
+    final call = '$await${jniMember.access('_jniApi', callArguments.join(', '))}';
 
     void writeCallAndReturn() {
       final TypeDeclaration returnType = method.returnType;
@@ -2124,7 +2134,12 @@ return ${generatorOptions.useJni ? 'await ' : ''}$completerVar.future;
 
   /// Writes the Dart implementation of the hybrid transport bridge method
   /// for the Flutter API [method], which Kotlin calls through JNI.
-  void _writeJniHybridFlutterMethod(Indent indent, AstFlutterApi api, Method method) {
+  void _writeJniHybridFlutterMethod(
+    Indent indent,
+    AstFlutterApi api,
+    Method method,
+    String jniMethodName,
+  ) {
     const decodedArgsVar = '${varNamePrefix}decodedArgs';
     final TypeDeclaration returnType = method.returnType;
     final String entryReturnType;
@@ -2154,75 +2169,71 @@ return ${generatorOptions.useJni ? 'await ' : ''}$completerVar.future;
     ];
     indent.newln();
     indent.writeln('@override');
-    indent.writeScoped(
-      '$entryReturnType ${nativeInteropEntryPointName(method.name)}(${parameters.join(', ')}) {',
-      '}',
-      () {
-        indent.writeScoped('if (dartApi == null) {', '}', () {
-          indent.writeln("throw ArgumentError('${api.name} was not registered.');");
-        });
-        if (nativeInteropEncodedParameters(method.parameters).isNotEmpty) {
-          indent.writeln(
-            'final List<Object?> $decodedArgsVar = _PigeonJniBuffers.decode($nativeInteropArgsParameterName)! as List<Object?>;',
+    indent.writeScoped('$entryReturnType $jniMethodName(${parameters.join(', ')}) {', '}', () {
+      indent.writeScoped('if (dartApi == null) {', '}', () {
+        indent.writeln("throw ArgumentError('${api.name} was not registered.');");
+      });
+      if (nativeInteropEncodedParameters(method.parameters).isNotEmpty) {
+        indent.writeln(
+          'final List<Object?> $decodedArgsVar = _PigeonJniBuffers.decode($nativeInteropArgsParameterName)! as List<Object?>;',
+        );
+      }
+      var encodedIndex = 0;
+      final arguments = <String>[];
+      for (final (int index, Parameter parameter) in method.parameters.indexed) {
+        final String argName = _getSafeArgumentName(index, parameter);
+        if (!isNativeInteropDirectType(parameter.type)) {
+          arguments.add(_castValue('$decodedArgsVar[${encodedIndex++}]', parameter.type));
+        } else if (parameter.type.isEnum) {
+          arguments.add(_enumFromIndex(argName, parameter.type));
+        } else {
+          arguments.add(
+            _JniType.fromTypeDeclaration(
+              parameter.type,
+            ).getToDartCall(parameter.type, varName: argName),
           );
         }
-        var encodedIndex = 0;
-        final arguments = <String>[];
-        for (final (int index, Parameter parameter) in method.parameters.indexed) {
-          final String argName = _getSafeArgumentName(index, parameter);
-          if (!isNativeInteropDirectType(parameter.type)) {
-            arguments.add(_castValue('$decodedArgsVar[${encodedIndex++}]', parameter.type));
-          } else if (parameter.type.isEnum) {
-            arguments.add(_enumFromIndex(argName, parameter.type));
+      }
+      final methodCall = 'dartApi!.${method.name}(${arguments.join(', ')})';
+
+      String toEntryReturn(String value) {
+        if (nativeInteropReturnsBuffer(returnType)) {
+          return '_PigeonJniBuffers.encodeOrNull($value)';
+        }
+        if (returnType.isEnum) {
+          final index = returnType.isNullable
+              ? '$value?.index ?? $nativeInteropNullEnumIndex'
+              : '$value.index';
+          return method.isAsynchronous ? 'JLong($index)' : index;
+        }
+        final _JniType jniReturnType = _JniType.fromTypeDeclaration(returnType);
+        if (isPrimitiveType(returnType) && !returnType.isNullable) {
+          return method.isAsynchronous
+              ? '_PigeonJniCodec.writeValue<${jniReturnType.jniName}>($value)'
+              : value;
+        }
+        return jniReturnType.getToJniCall(returnType, value, jniReturnType);
+      }
+
+      if (method.isAsynchronous) {
+        indent.writeScoped('return $methodCall.then((response) {', '});', () {
+          if (returnType.isVoid) {
+            indent.writeln('return _PigeonJniCodec._kotlinUnit;');
           } else {
-            arguments.add(
-              _JniType.fromTypeDeclaration(
-                parameter.type,
-              ).getToDartCall(parameter.type, varName: argName),
-            );
+            indent.writeln('return ${toEntryReturn('response')};');
           }
-        }
-        final methodCall = 'dartApi!.${method.name}(${arguments.join(', ')})';
-
-        String toEntryReturn(String value) {
-          if (nativeInteropReturnsBuffer(returnType)) {
-            return '_PigeonJniBuffers.encodeOrNull($value)';
-          }
-          if (returnType.isEnum) {
-            final index = returnType.isNullable
-                ? '$value?.index ?? $nativeInteropNullEnumIndex'
-                : '$value.index';
-            return method.isAsynchronous ? 'JLong($index)' : index;
-          }
-          final _JniType jniReturnType = _JniType.fromTypeDeclaration(returnType);
-          if (isPrimitiveType(returnType) && !returnType.isNullable) {
-            return method.isAsynchronous
-                ? '_PigeonJniCodec.writeValue<${jniReturnType.jniName}>($value)'
-                : value;
-          }
-          return jniReturnType.getToJniCall(returnType, value, jniReturnType);
-        }
-
-        if (method.isAsynchronous) {
-          indent.writeScoped('return $methodCall.then((response) {', '});', () {
-            if (returnType.isVoid) {
-              indent.writeln('return _PigeonJniCodec._kotlinUnit;');
-            } else {
-              indent.writeln('return ${toEntryReturn('response')};');
-            }
-          });
-        } else if (returnType.isVoid) {
-          indent.writeln('$methodCall;');
-        } else {
-          indent.writeln('final ${addGenericTypes(returnType)} response = $methodCall;');
-          indent.writeln('return ${toEntryReturn('response')};');
-        }
-      },
-    );
+        });
+      } else if (returnType.isVoid) {
+        indent.writeln('$methodCall;');
+      } else {
+        indent.writeln('final ${addGenericTypes(returnType)} response = $methodCall;');
+        indent.writeln('return ${toEntryReturn('response')};');
+      }
+    });
   }
 
   /// Writes the body of the FFI branch of a host API [method] for the hybrid
-  /// transport: one call to the method's `pigeon_` entry point.
+  /// transport.
   void _writeFfiHybridHostCall(Indent indent, Method method, InternalDartOptions generatorOptions) {
     const errorVar = '${varNamePrefix}error';
     const resultVar = '${varNamePrefix}res';
@@ -2242,6 +2253,7 @@ return ${generatorOptions.useJni ? 'await ' : ''}$completerVar.future;
       if (encodedParameters.isNotEmpty) (argsVar, argsVar),
       ('wrappedError', errorVar),
     ];
+    final String methodCallName = _swiftObjcSelectorFirstPiece(method.name, arguments.first.$1);
     final String returnObjCType = _ffiHybridReturnType(method.returnType);
     String callWith([String? completionHandler]) {
       final values = <String>[
@@ -2249,7 +2261,7 @@ return ${generatorOptions.useJni ? 'await ' : ''}$completerVar.future;
           if (index == 0) value else '$label: $value',
         if (completionHandler != null) 'completionHandler: $completionHandler',
       ];
-      return '_ffiApi.${nativeInteropEntryPointName(method.name)}(${values.join(', ')})';
+      return '_ffiApi.$methodCallName(${values.join(', ')})';
     }
 
     String toDart(String value) => nativeInteropReturnsBuffer(method.returnType)
@@ -2291,14 +2303,16 @@ ${callWith('$_ffiBridgePrefix.$blockName.listener(($resultParameter) {\n  if ($e
     InternalDartOptions generatorOptions,
   ) {
     const decodedArgsVar = '${varNamePrefix}decodedArgs';
-    final String selector = nativeInteropHybridSelector(
-      method.name,
-      method.parameters,
-      errorLabel: 'error',
-      isAsynchronous: method.isAsynchronous,
-    );
-    final String builderMember = selector.replaceAll(':', '_');
     final List<Parameter> encodedParameters = nativeInteropEncodedParameters(method.parameters);
+    final labels = <String>[
+      for (final Parameter parameter in method.parameters)
+        if (isNativeInteropDirectType(parameter.type)) parameter.name,
+      if (encodedParameters.isNotEmpty) nativeInteropArgsParameterName,
+      'error',
+      if (method.isAsynchronous) 'completionHandler',
+    ];
+    final builderMember =
+        '${_swiftObjcSelectorFirstPiece(method.name, labels.first)}_${labels.skip(1).map((String label) => '${label}_').join()}';
     final String returnObjCType = _ffiHybridReturnType(method.returnType);
     final parameters = <String>[
       for (final (int index, Parameter parameter) in method.parameters.indexed)
@@ -4299,17 +4313,36 @@ class _JniBindingNamer {
   }
 
   /// Names a method of a Pigeon API.
-  _JniMember nextApiMethod(Method method) {
-    final TypeDeclaration? propertyType = method.returnType.isVoid
-        ? method.parameters.firstOrNull?.type
-        : method.returnType;
+  _JniMember nextApiMethod(Method method, {bool hybrid = false}) {
+    final int parameterCount = hybrid
+        ? method.parameters.where((Parameter p) => isNativeInteropDirectType(p.type)).length +
+              (nativeInteropEncodedParameters(method.parameters).isNotEmpty ? 1 : 0)
+        : method.parameters.length;
+    final String propertyType;
+    if (hybrid) {
+      if (method.returnType.isVoid) {
+        if (nativeInteropEncodedParameters(method.parameters).isNotEmpty) {
+          propertyType = 'Uint8List';
+        } else {
+          final TypeDeclaration? firstType = method.parameters.firstOrNull?.type;
+          propertyType = firstType == null ? '' : _hybridJvmTypeKey(firstType);
+        }
+      } else {
+        propertyType = _hybridJvmTypeKey(method.returnType);
+      }
+    } else {
+      final TypeDeclaration? type = method.returnType.isVoid
+          ? method.parameters.firstOrNull?.type
+          : method.returnType;
+      propertyType = type == null ? '' : _jvmTypeKey(type);
+    }
     return next(
       method.name,
-      parameterCount: method.parameters.length,
+      parameterCount: parameterCount,
       returnsVoid: method.returnType.isVoid,
       returnsPrimitiveBool: _isJvmPrimitiveBool(method.returnType),
       isSuspend: method.isAsynchronous,
-      propertyType: propertyType == null ? '' : _jvmTypeKey(propertyType),
+      propertyType: propertyType,
     );
   }
 
@@ -4346,6 +4379,16 @@ class _JniBindingNamer {
     const primitives = <String>{'bool', 'int', 'double'};
     final boxed = type.isNullable && primitives.contains(type.baseName) ? '?' : '';
     return '${type.getFullName(withNullable: false)}$boxed';
+  }
+
+  static String _hybridJvmTypeKey(TypeDeclaration type) {
+    if (nativeInteropReturnsBuffer(type)) {
+      return 'Uint8List';
+    }
+    if (type.isEnum) {
+      return type.isNullable ? 'int?' : 'int';
+    }
+    return _jvmTypeKey(type);
   }
 }
 

@@ -2102,19 +2102,28 @@ void main() {
       expect(code, contains('writeValue(value.value)'));
     });
 
-    test('host api setup exposes entry points with explicit selectors', () {
+    test('host api setup exposes entry points', () {
       final String code = generate(hybrid: true);
-      expect(code, contains('@objc(pigeon_echoData:pigeonVar_args:wrappedError:)'));
       expect(
         code,
         contains(
-          'func pigeon_echoData(_ countArg: Int64, pigeonVar_args: NSData, wrappedError: PigeonError) -> NSData? {',
+          '@objc func echoData(count countArg: Int64, pigeonVar_args: NSData, wrappedError: PigeonError) -> NSData? {',
         ),
       );
-      expect(code, contains('return FooPigeonInteropCodec.encodeOrNil(pigeonVar_result)'));
-      expect(code, contains('@objc(pigeon_echoBytes:wrappedError:)'));
+      expect(code, contains('return FooPigeonInteropCodec.encodeOrNil(res)'));
+      expect(
+        code,
+        contains(
+          '@objc func echoBytes(bytes bytesArg: NSData, wrappedError: PigeonError) -> NSData? {',
+        ),
+      );
       expect(code, contains('FooPigeonInteropCodec.typedData(bytesArg, as: UInt8.self)'));
-      expect(code, contains('@objc(pigeon_echoAsyncData:wrappedError:completionHandler:)'));
+      expect(
+        code,
+        contains(
+          '@objc func echoAsyncData(pigeonVar_args: NSData, wrappedError: PigeonError) async -> NSData? {',
+        ),
+      );
     });
 
     test('flutter api protocol takes and returns buffers', () {
@@ -2122,13 +2131,13 @@ void main() {
       expect(
         code,
         contains(
-          '@objc(pigeon_echoData:pigeonVar_args:error:) func pigeon_echoData(_ countArg: Int64, pigeonVar_args: NSData, error: PigeonError) -> NSData?',
+          '@objc func echoData(count countArg: Int64, pigeonVar_args: NSData, error: PigeonError) -> NSData?',
         ),
       );
       expect(
         code,
         contains(
-          r'api.pigeon_echoData(countArg, pigeonVar_args: FooPigeonInteropCodec.encode { $0.writeByte(12); $0.writeSize(1); $0.writeValue(dataArg) }, error: error)',
+          r'api.echoData(count: countArg, pigeonVar_args: FooPigeonInteropCodec.encode { $0.writeByte(12); $0.writeSize(1); $0.writeValue(dataArg) }, error: error)',
         ),
       );
     });
@@ -2148,6 +2157,20 @@ void main() {
           NamedType(
             name: 'longs',
             type: const TypeDeclaration(baseName: 'Int64List', isNullable: true),
+          ),
+          NamedType(
+            name: 'nestedInts',
+            type: const TypeDeclaration(
+              baseName: 'List',
+              isNullable: false,
+              typeArguments: <TypeDeclaration>[
+                TypeDeclaration(
+                  baseName: 'List',
+                  isNullable: false,
+                  typeArguments: <TypeDeclaration>[intType],
+                ),
+              ],
+            ),
           ),
         ],
       );
@@ -2183,19 +2206,17 @@ void main() {
       );
       final sink = StringBuffer();
       const SwiftGenerator().generate(
-        const InternalSwiftOptions(
-          swiftOut: '',
-          useFfi: true,
-          nativeInteropTransport: NativeInteropTransport.hybrid,
-        ),
+        const InternalSwiftOptions(swiftOut: '', useFfi: true),
         root,
         sink,
         dartPackageName: DEFAULT_PACKAGE_NAME,
       );
       final code = sink.toString();
       // Swift represents both `List<int>` and `Int64List` as `[Int64]`.
+      expect(code, contains('mutating func writeNumbers(_ value: Numbers)'));
       expect(code, contains('writeList(value.ints)'));
       expect(code, contains('writeTypedData(10, value.longs, alignment: 8)'));
+      expect(code, contains(r'writeList(value.nestedInts) { $0.writeList($1) }'));
       expect(code, contains('ints: read([Int64].self)'));
       expect(code, contains('longs: read([Int64]?.self)'));
     });

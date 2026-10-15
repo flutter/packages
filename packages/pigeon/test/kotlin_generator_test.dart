@@ -2128,6 +2128,13 @@ void main() {
         parameters: <Parameter>[Parameter(name: 'color', type: enumType)],
         returnType: enumType,
       ),
+      Method(
+        name: 'echoAsyncData',
+        location: location,
+        isAsynchronous: true,
+        parameters: <Parameter>[Parameter(name: 'data', type: dataType)],
+        returnType: dataType,
+      ),
     ];
 
     String generate({required bool hybrid}) {
@@ -2167,10 +2174,7 @@ void main() {
     test('host api registrar exposes entry points', () {
       final String code = generate(hybrid: true);
       expect(code, contains('class HostApiRegistrar {'));
-      expect(
-        code,
-        contains('fun pigeon_echoData(count: Long, pigeonVar_args: ByteArray): ByteArray? {'),
-      );
+      expect(code, contains('fun echoData(count: Long, pigeonVar_args: ByteArray): ByteArray? {'));
       expect(code, contains('val dataArg = pigeonVar_decodedArgs[0] as Data?'));
       expect(
         code,
@@ -2178,11 +2182,12 @@ void main() {
           'return FooPigeonInteropCodec.encodeOrNull(pigeonVar_api.echoData(count, dataArg))',
         ),
       );
-      expect(code, contains('fun pigeon_echoColor(color: Long): Long {'));
+      expect(code, contains('fun echoColor(color: Long): Long {'));
       expect(
         code,
         contains('pigeonVar_api.echoColor(if (color == -1L) null else Color.ofRaw(color.toInt()))'),
       );
+      expect(code, contains('suspend fun echoAsyncData(pigeonVar_args: ByteArray): ByteArray? {'));
     });
 
     test('host api entry points encode error details', () {
@@ -2199,10 +2204,7 @@ void main() {
     test('flutter api is implemented through a buffer bridge', () {
       final String code = generate(hybrid: true);
       expect(code, contains('@Keep\ninterface FlutterApiBridge {'));
-      expect(
-        code,
-        contains('fun pigeon_echoData(count: Long, pigeonVar_args: ByteArray): ByteArray?'),
-      );
+      expect(code, contains('fun echoData(count: Long, pigeonVar_args: ByteArray): ByteArray?'));
       expect(
         code,
         contains(
@@ -2222,7 +2224,7 @@ void main() {
       final String code = generate(hybrid: false);
       expect(code, contains('class HostApiRegistrar : HostApi {'));
       expect(code, isNot(contains('PigeonInteropCodec')));
-      expect(code, isNot(contains('pigeon_echoData')));
+      expect(code, isNot(contains('pigeonVar_args')));
     });
 
     test('enum ofRaw indexes a cached array', () {

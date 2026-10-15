@@ -916,7 +916,7 @@ class ${api.name}Registrar() {
       for (final Method method in api.methods) {
         final suspend = method.isAsynchronous ? 'suspend ' : '';
         indent.writeln(
-          '${suspend}fun ${nativeInteropEntryPointName(method.name)}(${_hybridEntryPointParameters(method.parameters)})${_hybridEntryPointReturnType(method.returnType)}',
+          '${suspend}fun ${method.name}(${_hybridEntryPointParameters(method.parameters)})${_hybridEntryPointReturnType(method.returnType)}',
         );
       }
     });
@@ -955,8 +955,7 @@ class ${api.name}Registrar() {
                   .join(', ');
               arguments.add('$codec.encode(listOf<Any?>($encodedNames))');
             }
-            final call =
-                'bridge.${nativeInteropEntryPointName(method.name)}(${arguments.join(', ')})';
+            final call = 'bridge.${method.name}(${arguments.join(', ')})';
             if (method.returnType.isVoid) {
               indent.writeln(call);
               return;
@@ -1157,7 +1156,7 @@ class ${api.name}Registrar() {
     final List<Parameter> encodedParameters = nativeInteropEncodedParameters(method.parameters);
     final suspend = method.isAsynchronous ? 'suspend ' : '';
     indent.writeScoped(
-      '${suspend}fun ${nativeInteropEntryPointName(method.name)}(${_hybridEntryPointParameters(method.parameters)})${_hybridEntryPointReturnType(method.returnType)} {',
+      '${suspend}fun ${method.name}(${_hybridEntryPointParameters(method.parameters)})${_hybridEntryPointReturnType(method.returnType)} {',
       '}',
       () {
         indent.writeln(

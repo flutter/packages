@@ -243,6 +243,29 @@ class _PigeonJniCodec {
 }
 
 // ignore: unused_element
+class _PigeonJniBuffers {
+  static JByteArray encode(Object? value) {
+    final ByteData data = const _PigeonCodec().encodeMessage(value)!;
+    final JByteArray array = JByteArray(data.lengthInBytes);
+    array.setRange(
+      0,
+      data.lengthInBytes,
+      data.buffer.asInt8List(data.offsetInBytes, data.lengthInBytes),
+    );
+    return array;
+  }
+
+  static JByteArray? encodeOrNull(Object? value) {
+    return value == null ? null : encode(value);
+  }
+
+  static Object? decode(JByteArray? array) {
+    final Uint8List? bytes = _jByteArrayToDart(array, release: true);
+    return bytes == null ? null : const _PigeonCodec().decodeMessage(ByteData.sublistView(bytes));
+  }
+}
+
+// ignore: unused_element
 class _PigeonFfiCodec {
   static Object? readTypedData(ffi_bridge.NativeInteropExamplePigeonTypedData? value) {
     return value == null ? null : _getValueFromPigeonTypedData(value);
@@ -399,6 +422,39 @@ Object? _getValueFromPigeonTypedData(ffi_bridge.NativeInteropExamplePigeonTypedD
   }
 }
 
+// ignore: unused_element
+class _PigeonFfiBuffers {
+  static Uint8List? toUint8List(NSData? data) {
+    if (data == null) {
+      return null;
+    }
+    final ObjCObjectRef dataRef = data.object$.ref;
+    try {
+      final int length = data.length;
+      if (length == 0) {
+        return Uint8List(0);
+      }
+      return Uint8List.fromList(data.bytes.cast<Uint8>().asTypedList(length));
+    } finally {
+      dataRef.release();
+    }
+  }
+
+  static NSData encode(Object? value) {
+    final ByteData data = const _PigeonCodec().encodeMessage(value)!;
+    return _typedDataToNSData(data.buffer.asUint8List(data.offsetInBytes, data.lengthInBytes));
+  }
+
+  static NSData? encodeOrNull(Object? value) {
+    return value == null ? null : encode(value);
+  }
+
+  static Object? decode(NSData? data) {
+    final Uint8List? bytes = toUint8List(data);
+    return bytes == null ? null : const _PigeonCodec().decodeMessage(ByteData.sublistView(bytes));
+  }
+}
+
 Object? _convertNumberWrapperToDart(ffi_bridge.NativeInteropExampleNumberWrapper value) {
   switch (value.type) {
     case 1:
@@ -476,9 +532,7 @@ PlatformException _wrapJniException(JThrowable e) {
     return PlatformException(
       code: pigeonError.code.toDartString(),
       message: pigeonError.message?.toDartString(),
-      details: pigeonError.details?.isA<JString>(JString.type) ?? false
-          ? pigeonError.details!.as(JString.type).toDartString()
-          : pigeonError.details,
+      details: _PigeonJniBuffers.decode(pigeonError.details as JByteArray?),
       stacktrace: e.javaStackTrace,
     );
   }
@@ -553,7 +607,8 @@ class NativeInteropExampleApiForNativeInterop {
   void doSomething() {
     try {
       if (_jniApi != null) {
-        return _jniApi.doSomething();
+        _jniApi.doSomething();
+        return;
       } else if (_ffiApi != null) {
         final pigeonVar_error = ffi_bridge.PigeonError();
         _ffiApi.doSomethingWithWrappedError(pigeonVar_error);

@@ -30,7 +30,7 @@ const Duration _maxWarmUp = Duration(milliseconds: 500);
 /// samples.
 const Duration _maxSampling = Duration(seconds: 5);
 
-const int _minWarmUpIterations = 20;
+const int _maxWarmUpIterations = 20;
 const int _minSamples = 5;
 const int _maxSamples = 201;
 
@@ -55,7 +55,7 @@ _Result _summarize(List<double> samples) {
 /// Measures [call], which completes synchronously.
 _Result _measureSync(void Function() call) {
   final warmUp = Stopwatch()..start();
-  for (var i = 0; i < _minWarmUpIterations && warmUp.elapsed < _maxWarmUp; i++) {
+  for (var i = 0; i < _maxWarmUpIterations && warmUp.elapsed < _maxWarmUp; i++) {
     call();
   }
   final probe = Stopwatch()..start();
@@ -81,7 +81,7 @@ _Result _measureSync(void Function() call) {
 /// Measures [call], which completes asynchronously.
 Future<_Result> _measureAsync(Future<void> Function() call) async {
   final warmUp = Stopwatch()..start();
-  for (var i = 0; i < _minWarmUpIterations && warmUp.elapsed < _maxWarmUp; i++) {
+  for (var i = 0; i < _maxWarmUpIterations && warmUp.elapsed < _maxWarmUp; i++) {
     await call();
   }
   final probe = Stopwatch()..start();

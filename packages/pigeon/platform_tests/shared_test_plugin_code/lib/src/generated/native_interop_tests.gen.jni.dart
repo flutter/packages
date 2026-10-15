@@ -336,10 +336,12 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
     ).object<NativeInteropHostIntegrationCoreApiRegistrar?>();
   }
 
-  static final _id_pigeon_noop = NativeInteropHostIntegrationCoreApiRegistrar._class
-      .instanceMethodId(r'pigeon_noop', r'()V');
+  static final _id_noop = NativeInteropHostIntegrationCoreApiRegistrar._class.instanceMethodId(
+    r'noop',
+    r'()V',
+  );
 
-  static final _pigeon_noop =
+  static final _noop =
       jni$_.ProtectedJniExtensions.lookup<
             jni$_.NativeFunction<
               jni$_.JThrowablePtr Function(jni$_.Pointer<jni$_.Void>, jni$_.JMethodIDPtr)
@@ -349,16 +351,16 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
             jni$_.JThrowablePtr Function(jni$_.Pointer<jni$_.Void>, jni$_.JMethodIDPtr)
           >();
 
-  /// from: `public fun pigeon_noop(): kotlin.Unit`
-  void pigeon_noop() {
+  /// from: `public fun noop(): kotlin.Unit`
+  void noop() {
     final _$$selfRef = reference;
-    _pigeon_noop(_$$selfRef.pointer, _id_pigeon_noop.pointer).check();
+    _noop(_$$selfRef.pointer, _id_noop.pointer).check();
   }
 
-  static final _id_pigeon_echoAllTypes = NativeInteropHostIntegrationCoreApiRegistrar._class
-      .instanceMethodId(r'pigeon_echoAllTypes', r'([B)[B');
+  static final _id_echoAllTypes = NativeInteropHostIntegrationCoreApiRegistrar._class
+      .instanceMethodId(r'echoAllTypes', r'([B)[B');
 
-  static final _pigeon_echoAllTypes =
+  static final _echoAllTypes =
       jni$_.ProtectedJniExtensions.lookup<
             jni$_.NativeFunction<
               jni$_.JniResult Function(
@@ -376,249 +378,22 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
             )
           >();
 
-  /// from: `public fun pigeon_echoAllTypes(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
+  /// from: `public fun echoAllTypes(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
   /// The returned object must be released after use, by calling the [release] method.
-  jni$_.JByteArray? pigeon_echoAllTypes(jni$_.JByteArray bs) {
+  jni$_.JByteArray? echoAllTypes(jni$_.JByteArray bs) {
     final _$$selfRef = reference;
     final _$bs = bs.reference;
-    return _pigeon_echoAllTypes(
+    return _echoAllTypes(
       _$$selfRef.pointer,
-      _id_pigeon_echoAllTypes.pointer,
+      _id_echoAllTypes.pointer,
       _$bs.pointer,
     ).object<jni$_.JByteArray?>();
   }
 
-  static final _id_pigeon_echoSealedClass = NativeInteropHostIntegrationCoreApiRegistrar._class
-      .instanceMethodId(r'pigeon_echoSealedClass', r'([B)[B');
+  static final _id_throwError = NativeInteropHostIntegrationCoreApiRegistrar._class
+      .instanceMethodId(r'throwError', r'()[B');
 
-  static final _pigeon_echoSealedClass =
-      jni$_.ProtectedJniExtensions.lookup<
-            jni$_.NativeFunction<
-              jni$_.JniResult Function(
-                jni$_.Pointer<jni$_.Void>,
-                jni$_.JMethodIDPtr,
-                jni$_.VarArgs<(jni$_.Pointer<jni$_.Void>,)>,
-              )
-            >
-          >('globalEnv_CallObjectMethod')
-          .asFunction<
-            jni$_.JniResult Function(
-              jni$_.Pointer<jni$_.Void>,
-              jni$_.JMethodIDPtr,
-              jni$_.Pointer<jni$_.Void>,
-            )
-          >();
-
-  /// from: `public fun pigeon_echoSealedClass(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
-  /// The returned object must be released after use, by calling the [release] method.
-  jni$_.JByteArray? pigeon_echoSealedClass(jni$_.JByteArray bs) {
-    final _$$selfRef = reference;
-    final _$bs = bs.reference;
-    return _pigeon_echoSealedClass(
-      _$$selfRef.pointer,
-      _id_pigeon_echoSealedClass.pointer,
-      _$bs.pointer,
-    ).object<jni$_.JByteArray?>();
-  }
-
-  static final _id_pigeon_echoNullableSealedClass = NativeInteropHostIntegrationCoreApiRegistrar
-      ._class
-      .instanceMethodId(r'pigeon_echoNullableSealedClass', r'([B)[B');
-
-  static final _pigeon_echoNullableSealedClass =
-      jni$_.ProtectedJniExtensions.lookup<
-            jni$_.NativeFunction<
-              jni$_.JniResult Function(
-                jni$_.Pointer<jni$_.Void>,
-                jni$_.JMethodIDPtr,
-                jni$_.VarArgs<(jni$_.Pointer<jni$_.Void>,)>,
-              )
-            >
-          >('globalEnv_CallObjectMethod')
-          .asFunction<
-            jni$_.JniResult Function(
-              jni$_.Pointer<jni$_.Void>,
-              jni$_.JMethodIDPtr,
-              jni$_.Pointer<jni$_.Void>,
-            )
-          >();
-
-  /// from: `public fun pigeon_echoNullableSealedClass(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
-  /// The returned object must be released after use, by calling the [release] method.
-  jni$_.JByteArray? pigeon_echoNullableSealedClass(jni$_.JByteArray bs) {
-    final _$$selfRef = reference;
-    final _$bs = bs.reference;
-    return _pigeon_echoNullableSealedClass(
-      _$$selfRef.pointer,
-      _id_pigeon_echoNullableSealedClass.pointer,
-      _$bs.pointer,
-    ).object<jni$_.JByteArray?>();
-  }
-
-  static final _id_pigeon_echoSealedClassList = NativeInteropHostIntegrationCoreApiRegistrar._class
-      .instanceMethodId(r'pigeon_echoSealedClassList', r'([B)[B');
-
-  static final _pigeon_echoSealedClassList =
-      jni$_.ProtectedJniExtensions.lookup<
-            jni$_.NativeFunction<
-              jni$_.JniResult Function(
-                jni$_.Pointer<jni$_.Void>,
-                jni$_.JMethodIDPtr,
-                jni$_.VarArgs<(jni$_.Pointer<jni$_.Void>,)>,
-              )
-            >
-          >('globalEnv_CallObjectMethod')
-          .asFunction<
-            jni$_.JniResult Function(
-              jni$_.Pointer<jni$_.Void>,
-              jni$_.JMethodIDPtr,
-              jni$_.Pointer<jni$_.Void>,
-            )
-          >();
-
-  /// from: `public fun pigeon_echoSealedClassList(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
-  /// The returned object must be released after use, by calling the [release] method.
-  jni$_.JByteArray? pigeon_echoSealedClassList(jni$_.JByteArray bs) {
-    final _$$selfRef = reference;
-    final _$bs = bs.reference;
-    return _pigeon_echoSealedClassList(
-      _$$selfRef.pointer,
-      _id_pigeon_echoSealedClassList.pointer,
-      _$bs.pointer,
-    ).object<jni$_.JByteArray?>();
-  }
-
-  static final _id_pigeon_echoSealedClassWrapper = NativeInteropHostIntegrationCoreApiRegistrar
-      ._class
-      .instanceMethodId(r'pigeon_echoSealedClassWrapper', r'([B)[B');
-
-  static final _pigeon_echoSealedClassWrapper =
-      jni$_.ProtectedJniExtensions.lookup<
-            jni$_.NativeFunction<
-              jni$_.JniResult Function(
-                jni$_.Pointer<jni$_.Void>,
-                jni$_.JMethodIDPtr,
-                jni$_.VarArgs<(jni$_.Pointer<jni$_.Void>,)>,
-              )
-            >
-          >('globalEnv_CallObjectMethod')
-          .asFunction<
-            jni$_.JniResult Function(
-              jni$_.Pointer<jni$_.Void>,
-              jni$_.JMethodIDPtr,
-              jni$_.Pointer<jni$_.Void>,
-            )
-          >();
-
-  /// from: `public fun pigeon_echoSealedClassWrapper(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
-  /// The returned object must be released after use, by calling the [release] method.
-  jni$_.JByteArray? pigeon_echoSealedClassWrapper(jni$_.JByteArray bs) {
-    final _$$selfRef = reference;
-    final _$bs = bs.reference;
-    return _pigeon_echoSealedClassWrapper(
-      _$$selfRef.pointer,
-      _id_pigeon_echoSealedClassWrapper.pointer,
-      _$bs.pointer,
-    ).object<jni$_.JByteArray?>();
-  }
-
-  static final _id_pigeon_echoAsyncSealedClass = NativeInteropHostIntegrationCoreApiRegistrar._class
-      .instanceMethodId(
-        r'pigeon_echoAsyncSealedClass',
-        r'([BLkotlin/coroutines/Continuation;)Ljava/lang/Object;',
-      );
-
-  static final _pigeon_echoAsyncSealedClass =
-      jni$_.ProtectedJniExtensions.lookup<
-            jni$_.NativeFunction<
-              jni$_.JniResult Function(
-                jni$_.Pointer<jni$_.Void>,
-                jni$_.JMethodIDPtr,
-                jni$_.VarArgs<(jni$_.Pointer<jni$_.Void>, jni$_.Pointer<jni$_.Void>)>,
-              )
-            >
-          >('globalEnv_CallObjectMethod')
-          .asFunction<
-            jni$_.JniResult Function(
-              jni$_.Pointer<jni$_.Void>,
-              jni$_.JMethodIDPtr,
-              jni$_.Pointer<jni$_.Void>,
-              jni$_.Pointer<jni$_.Void>,
-            )
-          >();
-
-  /// from: `public suspend fun pigeon_echoAsyncSealedClass(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
-  /// The returned object must be released after use, by calling the [release] method.
-  core$_.Future<jni$_.JByteArray?> pigeon_echoAsyncSealedClass(jni$_.JByteArray bs) async {
-    final $p = jni$_.ReceivePort();
-    final _$continuation = jni$_.ProtectedJniExtensions.newPortContinuation($p);
-    final _$$selfRef = reference;
-    final _$bs = bs.reference;
-    final $r = _pigeon_echoAsyncSealedClass(
-      _$$selfRef.pointer,
-      _id_pigeon_echoAsyncSealedClass.pointer,
-      _$bs.pointer,
-      _$continuation.pointer,
-    ).object<jni$_.JObject?>();
-    _$continuation.release();
-    jni$_.JObject? $o;
-    if ($r != null && $r.isInstanceOf(jni$_.coroutineSingletonsClass)) {
-      $r.release();
-      final $a = await $p.first;
-      $o = $a == 0
-          ? null
-          : jni$_.JObject.fromReference(jni$_.JGlobalReference(jni$_.JObjectPtr.fromAddress($a)));
-      if ($o != null && $o.isInstanceOf(jni$_.result$Class)) {
-        $o = jni$_.resultValueField.get($o, const jni$_.$JObject$Type$());
-      } else if ($o != null && $o.isInstanceOf(jni$_.result$FailureClass)) {
-        final $e = jni$_.failureExceptionField.get($o, const jni$_.$JObject$Type$());
-        $o.release();
-        jni$_.Jni.throwException($e.reference.toPointer());
-      }
-    } else {
-      $o = $r;
-    }
-    return $o?.as<jni$_.JByteArray>(jni$_.JByteArray.type, releaseOriginal: true);
-  }
-
-  static final _id_pigeon_callFlutterEchoSealedClass = NativeInteropHostIntegrationCoreApiRegistrar
-      ._class
-      .instanceMethodId(r'pigeon_callFlutterEchoSealedClass', r'([B)[B');
-
-  static final _pigeon_callFlutterEchoSealedClass =
-      jni$_.ProtectedJniExtensions.lookup<
-            jni$_.NativeFunction<
-              jni$_.JniResult Function(
-                jni$_.Pointer<jni$_.Void>,
-                jni$_.JMethodIDPtr,
-                jni$_.VarArgs<(jni$_.Pointer<jni$_.Void>,)>,
-              )
-            >
-          >('globalEnv_CallObjectMethod')
-          .asFunction<
-            jni$_.JniResult Function(
-              jni$_.Pointer<jni$_.Void>,
-              jni$_.JMethodIDPtr,
-              jni$_.Pointer<jni$_.Void>,
-            )
-          >();
-
-  /// from: `public fun pigeon_callFlutterEchoSealedClass(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
-  /// The returned object must be released after use, by calling the [release] method.
-  jni$_.JByteArray? pigeon_callFlutterEchoSealedClass(jni$_.JByteArray bs) {
-    final _$$selfRef = reference;
-    final _$bs = bs.reference;
-    return _pigeon_callFlutterEchoSealedClass(
-      _$$selfRef.pointer,
-      _id_pigeon_callFlutterEchoSealedClass.pointer,
-      _$bs.pointer,
-    ).object<jni$_.JByteArray?>();
-  }
-
-  static final _id_pigeon_throwError = NativeInteropHostIntegrationCoreApiRegistrar._class
-      .instanceMethodId(r'pigeon_throwError', r'()[B');
-
-  static final _pigeon_throwError =
+  static final _throwError =
       jni$_.ProtectedJniExtensions.lookup<
             jni$_.NativeFunction<
               jni$_.JniResult Function(jni$_.Pointer<jni$_.Void>, jni$_.JMethodIDPtr)
@@ -626,20 +401,17 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
           >('globalEnv_CallObjectMethod')
           .asFunction<jni$_.JniResult Function(jni$_.Pointer<jni$_.Void>, jni$_.JMethodIDPtr)>();
 
-  /// from: `public fun pigeon_throwError(): kotlin.ByteArray?`
+  /// from: `public fun throwError(): kotlin.ByteArray?`
   /// The returned object must be released after use, by calling the [release] method.
-  jni$_.JByteArray? pigeon_throwError() {
+  jni$_.JByteArray? throwError() {
     final _$$selfRef = reference;
-    return _pigeon_throwError(
-      _$$selfRef.pointer,
-      _id_pigeon_throwError.pointer,
-    ).object<jni$_.JByteArray?>();
+    return _throwError(_$$selfRef.pointer, _id_throwError.pointer).object<jni$_.JByteArray?>();
   }
 
-  static final _id_pigeon_throwErrorFromVoid = NativeInteropHostIntegrationCoreApiRegistrar._class
-      .instanceMethodId(r'pigeon_throwErrorFromVoid', r'()V');
+  static final _id_throwErrorFromVoid = NativeInteropHostIntegrationCoreApiRegistrar._class
+      .instanceMethodId(r'throwErrorFromVoid', r'()V');
 
-  static final _pigeon_throwErrorFromVoid =
+  static final _throwErrorFromVoid =
       jni$_.ProtectedJniExtensions.lookup<
             jni$_.NativeFunction<
               jni$_.JThrowablePtr Function(jni$_.Pointer<jni$_.Void>, jni$_.JMethodIDPtr)
@@ -649,16 +421,16 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
             jni$_.JThrowablePtr Function(jni$_.Pointer<jni$_.Void>, jni$_.JMethodIDPtr)
           >();
 
-  /// from: `public fun pigeon_throwErrorFromVoid(): kotlin.Unit`
-  void pigeon_throwErrorFromVoid() {
+  /// from: `public fun throwErrorFromVoid(): kotlin.Unit`
+  void throwErrorFromVoid() {
     final _$$selfRef = reference;
-    _pigeon_throwErrorFromVoid(_$$selfRef.pointer, _id_pigeon_throwErrorFromVoid.pointer).check();
+    _throwErrorFromVoid(_$$selfRef.pointer, _id_throwErrorFromVoid.pointer).check();
   }
 
-  static final _id_pigeon_throwFlutterError = NativeInteropHostIntegrationCoreApiRegistrar._class
-      .instanceMethodId(r'pigeon_throwFlutterError', r'()[B');
+  static final _id_throwFlutterError = NativeInteropHostIntegrationCoreApiRegistrar._class
+      .instanceMethodId(r'throwFlutterError', r'()[B');
 
-  static final _pigeon_throwFlutterError =
+  static final _throwFlutterError =
       jni$_.ProtectedJniExtensions.lookup<
             jni$_.NativeFunction<
               jni$_.JniResult Function(jni$_.Pointer<jni$_.Void>, jni$_.JMethodIDPtr)
@@ -666,20 +438,22 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
           >('globalEnv_CallObjectMethod')
           .asFunction<jni$_.JniResult Function(jni$_.Pointer<jni$_.Void>, jni$_.JMethodIDPtr)>();
 
-  /// from: `public fun pigeon_throwFlutterError(): kotlin.ByteArray?`
+  /// from: `public fun throwFlutterError(): kotlin.ByteArray?`
   /// The returned object must be released after use, by calling the [release] method.
-  jni$_.JByteArray? pigeon_throwFlutterError() {
+  jni$_.JByteArray? throwFlutterError() {
     final _$$selfRef = reference;
-    return _pigeon_throwFlutterError(
+    return _throwFlutterError(
       _$$selfRef.pointer,
-      _id_pigeon_throwFlutterError.pointer,
+      _id_throwFlutterError.pointer,
     ).object<jni$_.JByteArray?>();
   }
 
-  static final _id_pigeon_echoInt = NativeInteropHostIntegrationCoreApiRegistrar._class
-      .instanceMethodId(r'pigeon_echoInt', r'(J)J');
+  static final _id_echoInt = NativeInteropHostIntegrationCoreApiRegistrar._class.instanceMethodId(
+    r'echoInt',
+    r'(J)J',
+  );
 
-  static final _pigeon_echoInt =
+  static final _echoInt =
       jni$_.ProtectedJniExtensions.lookup<
             jni$_.NativeFunction<
               jni$_.JniResult Function(
@@ -693,16 +467,16 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
             jni$_.JniResult Function(jni$_.Pointer<jni$_.Void>, jni$_.JMethodIDPtr, core$_.int)
           >();
 
-  /// from: `public fun pigeon_echoInt(anInt: kotlin.Long): kotlin.Long`
-  core$_.int pigeon_echoInt(core$_.int j) {
+  /// from: `public fun echoInt(anInt: kotlin.Long): kotlin.Long`
+  core$_.int echoInt(core$_.int j) {
     final _$$selfRef = reference;
-    return _pigeon_echoInt(_$$selfRef.pointer, _id_pigeon_echoInt.pointer, j).long;
+    return _echoInt(_$$selfRef.pointer, _id_echoInt.pointer, j).long;
   }
 
-  static final _id_pigeon_echoDouble = NativeInteropHostIntegrationCoreApiRegistrar._class
-      .instanceMethodId(r'pigeon_echoDouble', r'(D)D');
+  static final _id_echoDouble = NativeInteropHostIntegrationCoreApiRegistrar._class
+      .instanceMethodId(r'echoDouble', r'(D)D');
 
-  static final _pigeon_echoDouble =
+  static final _echoDouble =
       jni$_.ProtectedJniExtensions.lookup<
             jni$_.NativeFunction<
               jni$_.JniResult Function(
@@ -716,16 +490,18 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
             jni$_.JniResult Function(jni$_.Pointer<jni$_.Void>, jni$_.JMethodIDPtr, core$_.double)
           >();
 
-  /// from: `public fun pigeon_echoDouble(aDouble: kotlin.Double): kotlin.Double`
-  core$_.double pigeon_echoDouble(core$_.double d) {
+  /// from: `public fun echoDouble(aDouble: kotlin.Double): kotlin.Double`
+  core$_.double echoDouble(core$_.double d) {
     final _$$selfRef = reference;
-    return _pigeon_echoDouble(_$$selfRef.pointer, _id_pigeon_echoDouble.pointer, d).doubleFloat;
+    return _echoDouble(_$$selfRef.pointer, _id_echoDouble.pointer, d).doubleFloat;
   }
 
-  static final _id_pigeon_echoBool = NativeInteropHostIntegrationCoreApiRegistrar._class
-      .instanceMethodId(r'pigeon_echoBool', r'(Z)Z');
+  static final _id_echoBool = NativeInteropHostIntegrationCoreApiRegistrar._class.instanceMethodId(
+    r'echoBool',
+    r'(Z)Z',
+  );
 
-  static final _pigeon_echoBool =
+  static final _echoBool =
       jni$_.ProtectedJniExtensions.lookup<
             jni$_.NativeFunction<
               jni$_.JniResult Function(
@@ -739,16 +515,16 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
             jni$_.JniResult Function(jni$_.Pointer<jni$_.Void>, jni$_.JMethodIDPtr, core$_.int)
           >();
 
-  /// from: `public fun pigeon_echoBool(aBool: kotlin.Boolean): kotlin.Boolean`
-  core$_.bool pigeon_echoBool(core$_.bool z) {
+  /// from: `public fun echoBool(aBool: kotlin.Boolean): kotlin.Boolean`
+  core$_.bool echoBool(core$_.bool z) {
     final _$$selfRef = reference;
-    return _pigeon_echoBool(_$$selfRef.pointer, _id_pigeon_echoBool.pointer, z ? 1 : 0).boolean;
+    return _echoBool(_$$selfRef.pointer, _id_echoBool.pointer, z ? 1 : 0).boolean;
   }
 
-  static final _id_pigeon_echoString = NativeInteropHostIntegrationCoreApiRegistrar._class
-      .instanceMethodId(r'pigeon_echoString', r'(Ljava/lang/String;)Ljava/lang/String;');
+  static final _id_echoString = NativeInteropHostIntegrationCoreApiRegistrar._class
+      .instanceMethodId(r'echoString', r'(Ljava/lang/String;)Ljava/lang/String;');
 
-  static final _pigeon_echoString =
+  static final _echoString =
       jni$_.ProtectedJniExtensions.lookup<
             jni$_.NativeFunction<
               jni$_.JniResult Function(
@@ -766,22 +542,22 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
             )
           >();
 
-  /// from: `public fun pigeon_echoString(aString: kotlin.String): kotlin.String`
+  /// from: `public fun echoString(aString: kotlin.String): kotlin.String`
   /// The returned object must be released after use, by calling the [release] method.
-  jni$_.JString pigeon_echoString(jni$_.JString string) {
+  jni$_.JString echoString(jni$_.JString string) {
     final _$$selfRef = reference;
     final _$string = string.reference;
-    return _pigeon_echoString(
+    return _echoString(
       _$$selfRef.pointer,
-      _id_pigeon_echoString.pointer,
+      _id_echoString.pointer,
       _$string.pointer,
     ).object<jni$_.JString>();
   }
 
-  static final _id_pigeon_echoUint8List = NativeInteropHostIntegrationCoreApiRegistrar._class
-      .instanceMethodId(r'pigeon_echoUint8List', r'([B)[B');
+  static final _id_echoUint8List = NativeInteropHostIntegrationCoreApiRegistrar._class
+      .instanceMethodId(r'echoUint8List', r'([B)[B');
 
-  static final _pigeon_echoUint8List =
+  static final _echoUint8List =
       jni$_.ProtectedJniExtensions.lookup<
             jni$_.NativeFunction<
               jni$_.JniResult Function(
@@ -799,22 +575,22 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
             )
           >();
 
-  /// from: `public fun pigeon_echoUint8List(aUint8List: kotlin.ByteArray): kotlin.ByteArray`
+  /// from: `public fun echoUint8List(aUint8List: kotlin.ByteArray): kotlin.ByteArray`
   /// The returned object must be released after use, by calling the [release] method.
-  jni$_.JByteArray pigeon_echoUint8List(jni$_.JByteArray bs) {
+  jni$_.JByteArray echoUint8List(jni$_.JByteArray bs) {
     final _$$selfRef = reference;
     final _$bs = bs.reference;
-    return _pigeon_echoUint8List(
+    return _echoUint8List(
       _$$selfRef.pointer,
-      _id_pigeon_echoUint8List.pointer,
+      _id_echoUint8List.pointer,
       _$bs.pointer,
     ).object<jni$_.JByteArray>();
   }
 
-  static final _id_pigeon_echoInt32List = NativeInteropHostIntegrationCoreApiRegistrar._class
-      .instanceMethodId(r'pigeon_echoInt32List', r'([I)[I');
+  static final _id_echoInt32List = NativeInteropHostIntegrationCoreApiRegistrar._class
+      .instanceMethodId(r'echoInt32List', r'([I)[I');
 
-  static final _pigeon_echoInt32List =
+  static final _echoInt32List =
       jni$_.ProtectedJniExtensions.lookup<
             jni$_.NativeFunction<
               jni$_.JniResult Function(
@@ -832,22 +608,22 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
             )
           >();
 
-  /// from: `public fun pigeon_echoInt32List(aInt32List: kotlin.IntArray): kotlin.IntArray`
+  /// from: `public fun echoInt32List(aInt32List: kotlin.IntArray): kotlin.IntArray`
   /// The returned object must be released after use, by calling the [release] method.
-  jni$_.JIntArray pigeon_echoInt32List(jni$_.JIntArray is$) {
+  jni$_.JIntArray echoInt32List(jni$_.JIntArray is$) {
     final _$$selfRef = reference;
     final _$is$ = is$.reference;
-    return _pigeon_echoInt32List(
+    return _echoInt32List(
       _$$selfRef.pointer,
-      _id_pigeon_echoInt32List.pointer,
+      _id_echoInt32List.pointer,
       _$is$.pointer,
     ).object<jni$_.JIntArray>();
   }
 
-  static final _id_pigeon_echoInt64List = NativeInteropHostIntegrationCoreApiRegistrar._class
-      .instanceMethodId(r'pigeon_echoInt64List', r'([J)[J');
+  static final _id_echoInt64List = NativeInteropHostIntegrationCoreApiRegistrar._class
+      .instanceMethodId(r'echoInt64List', r'([J)[J');
 
-  static final _pigeon_echoInt64List =
+  static final _echoInt64List =
       jni$_.ProtectedJniExtensions.lookup<
             jni$_.NativeFunction<
               jni$_.JniResult Function(
@@ -865,22 +641,22 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
             )
           >();
 
-  /// from: `public fun pigeon_echoInt64List(aInt64List: kotlin.LongArray): kotlin.LongArray`
+  /// from: `public fun echoInt64List(aInt64List: kotlin.LongArray): kotlin.LongArray`
   /// The returned object must be released after use, by calling the [release] method.
-  jni$_.JLongArray pigeon_echoInt64List(jni$_.JLongArray js) {
+  jni$_.JLongArray echoInt64List(jni$_.JLongArray js) {
     final _$$selfRef = reference;
     final _$js = js.reference;
-    return _pigeon_echoInt64List(
+    return _echoInt64List(
       _$$selfRef.pointer,
-      _id_pigeon_echoInt64List.pointer,
+      _id_echoInt64List.pointer,
       _$js.pointer,
     ).object<jni$_.JLongArray>();
   }
 
-  static final _id_pigeon_echoFloat64List = NativeInteropHostIntegrationCoreApiRegistrar._class
-      .instanceMethodId(r'pigeon_echoFloat64List', r'([D)[D');
+  static final _id_echoFloat64List = NativeInteropHostIntegrationCoreApiRegistrar._class
+      .instanceMethodId(r'echoFloat64List', r'([D)[D');
 
-  static final _pigeon_echoFloat64List =
+  static final _echoFloat64List =
       jni$_.ProtectedJniExtensions.lookup<
             jni$_.NativeFunction<
               jni$_.JniResult Function(
@@ -898,22 +674,22 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
             )
           >();
 
-  /// from: `public fun pigeon_echoFloat64List(aFloat64List: kotlin.DoubleArray): kotlin.DoubleArray`
+  /// from: `public fun echoFloat64List(aFloat64List: kotlin.DoubleArray): kotlin.DoubleArray`
   /// The returned object must be released after use, by calling the [release] method.
-  jni$_.JDoubleArray pigeon_echoFloat64List(jni$_.JDoubleArray ds) {
+  jni$_.JDoubleArray echoFloat64List(jni$_.JDoubleArray ds) {
     final _$$selfRef = reference;
     final _$ds = ds.reference;
-    return _pigeon_echoFloat64List(
+    return _echoFloat64List(
       _$$selfRef.pointer,
-      _id_pigeon_echoFloat64List.pointer,
+      _id_echoFloat64List.pointer,
       _$ds.pointer,
     ).object<jni$_.JDoubleArray>();
   }
 
-  static final _id_pigeon_echoObject = NativeInteropHostIntegrationCoreApiRegistrar._class
-      .instanceMethodId(r'pigeon_echoObject', r'([B)[B');
+  static final _id_echoObject = NativeInteropHostIntegrationCoreApiRegistrar._class
+      .instanceMethodId(r'echoObject', r'([B)[B');
 
-  static final _pigeon_echoObject =
+  static final _echoObject =
       jni$_.ProtectedJniExtensions.lookup<
             jni$_.NativeFunction<
               jni$_.JniResult Function(
@@ -931,22 +707,24 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
             )
           >();
 
-  /// from: `public fun pigeon_echoObject(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
+  /// from: `public fun echoObject(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
   /// The returned object must be released after use, by calling the [release] method.
-  jni$_.JByteArray? pigeon_echoObject(jni$_.JByteArray bs) {
+  jni$_.JByteArray? echoObject(jni$_.JByteArray bs) {
     final _$$selfRef = reference;
     final _$bs = bs.reference;
-    return _pigeon_echoObject(
+    return _echoObject(
       _$$selfRef.pointer,
-      _id_pigeon_echoObject.pointer,
+      _id_echoObject.pointer,
       _$bs.pointer,
     ).object<jni$_.JByteArray?>();
   }
 
-  static final _id_pigeon_echoList = NativeInteropHostIntegrationCoreApiRegistrar._class
-      .instanceMethodId(r'pigeon_echoList', r'([B)[B');
+  static final _id_echoList = NativeInteropHostIntegrationCoreApiRegistrar._class.instanceMethodId(
+    r'echoList',
+    r'([B)[B',
+  );
 
-  static final _pigeon_echoList =
+  static final _echoList =
       jni$_.ProtectedJniExtensions.lookup<
             jni$_.NativeFunction<
               jni$_.JniResult Function(
@@ -964,22 +742,22 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
             )
           >();
 
-  /// from: `public fun pigeon_echoList(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
+  /// from: `public fun echoList(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
   /// The returned object must be released after use, by calling the [release] method.
-  jni$_.JByteArray? pigeon_echoList(jni$_.JByteArray bs) {
+  jni$_.JByteArray? echoList(jni$_.JByteArray bs) {
     final _$$selfRef = reference;
     final _$bs = bs.reference;
-    return _pigeon_echoList(
+    return _echoList(
       _$$selfRef.pointer,
-      _id_pigeon_echoList.pointer,
+      _id_echoList.pointer,
       _$bs.pointer,
     ).object<jni$_.JByteArray?>();
   }
 
-  static final _id_pigeon_echoStringList = NativeInteropHostIntegrationCoreApiRegistrar._class
-      .instanceMethodId(r'pigeon_echoStringList', r'([B)[B');
+  static final _id_echoStringList = NativeInteropHostIntegrationCoreApiRegistrar._class
+      .instanceMethodId(r'echoStringList', r'([B)[B');
 
-  static final _pigeon_echoStringList =
+  static final _echoStringList =
       jni$_.ProtectedJniExtensions.lookup<
             jni$_.NativeFunction<
               jni$_.JniResult Function(
@@ -997,22 +775,22 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
             )
           >();
 
-  /// from: `public fun pigeon_echoStringList(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
+  /// from: `public fun echoStringList(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
   /// The returned object must be released after use, by calling the [release] method.
-  jni$_.JByteArray? pigeon_echoStringList(jni$_.JByteArray bs) {
+  jni$_.JByteArray? echoStringList(jni$_.JByteArray bs) {
     final _$$selfRef = reference;
     final _$bs = bs.reference;
-    return _pigeon_echoStringList(
+    return _echoStringList(
       _$$selfRef.pointer,
-      _id_pigeon_echoStringList.pointer,
+      _id_echoStringList.pointer,
       _$bs.pointer,
     ).object<jni$_.JByteArray?>();
   }
 
-  static final _id_pigeon_echoIntList = NativeInteropHostIntegrationCoreApiRegistrar._class
-      .instanceMethodId(r'pigeon_echoIntList', r'([B)[B');
+  static final _id_echoIntList = NativeInteropHostIntegrationCoreApiRegistrar._class
+      .instanceMethodId(r'echoIntList', r'([B)[B');
 
-  static final _pigeon_echoIntList =
+  static final _echoIntList =
       jni$_.ProtectedJniExtensions.lookup<
             jni$_.NativeFunction<
               jni$_.JniResult Function(
@@ -1030,22 +808,22 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
             )
           >();
 
-  /// from: `public fun pigeon_echoIntList(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
+  /// from: `public fun echoIntList(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
   /// The returned object must be released after use, by calling the [release] method.
-  jni$_.JByteArray? pigeon_echoIntList(jni$_.JByteArray bs) {
+  jni$_.JByteArray? echoIntList(jni$_.JByteArray bs) {
     final _$$selfRef = reference;
     final _$bs = bs.reference;
-    return _pigeon_echoIntList(
+    return _echoIntList(
       _$$selfRef.pointer,
-      _id_pigeon_echoIntList.pointer,
+      _id_echoIntList.pointer,
       _$bs.pointer,
     ).object<jni$_.JByteArray?>();
   }
 
-  static final _id_pigeon_echoDoubleList = NativeInteropHostIntegrationCoreApiRegistrar._class
-      .instanceMethodId(r'pigeon_echoDoubleList', r'([B)[B');
+  static final _id_echoDoubleList = NativeInteropHostIntegrationCoreApiRegistrar._class
+      .instanceMethodId(r'echoDoubleList', r'([B)[B');
 
-  static final _pigeon_echoDoubleList =
+  static final _echoDoubleList =
       jni$_.ProtectedJniExtensions.lookup<
             jni$_.NativeFunction<
               jni$_.JniResult Function(
@@ -1063,22 +841,22 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
             )
           >();
 
-  /// from: `public fun pigeon_echoDoubleList(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
+  /// from: `public fun echoDoubleList(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
   /// The returned object must be released after use, by calling the [release] method.
-  jni$_.JByteArray? pigeon_echoDoubleList(jni$_.JByteArray bs) {
+  jni$_.JByteArray? echoDoubleList(jni$_.JByteArray bs) {
     final _$$selfRef = reference;
     final _$bs = bs.reference;
-    return _pigeon_echoDoubleList(
+    return _echoDoubleList(
       _$$selfRef.pointer,
-      _id_pigeon_echoDoubleList.pointer,
+      _id_echoDoubleList.pointer,
       _$bs.pointer,
     ).object<jni$_.JByteArray?>();
   }
 
-  static final _id_pigeon_echoBoolList = NativeInteropHostIntegrationCoreApiRegistrar._class
-      .instanceMethodId(r'pigeon_echoBoolList', r'([B)[B');
+  static final _id_echoBoolList = NativeInteropHostIntegrationCoreApiRegistrar._class
+      .instanceMethodId(r'echoBoolList', r'([B)[B');
 
-  static final _pigeon_echoBoolList =
+  static final _echoBoolList =
       jni$_.ProtectedJniExtensions.lookup<
             jni$_.NativeFunction<
               jni$_.JniResult Function(
@@ -1096,22 +874,22 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
             )
           >();
 
-  /// from: `public fun pigeon_echoBoolList(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
+  /// from: `public fun echoBoolList(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
   /// The returned object must be released after use, by calling the [release] method.
-  jni$_.JByteArray? pigeon_echoBoolList(jni$_.JByteArray bs) {
+  jni$_.JByteArray? echoBoolList(jni$_.JByteArray bs) {
     final _$$selfRef = reference;
     final _$bs = bs.reference;
-    return _pigeon_echoBoolList(
+    return _echoBoolList(
       _$$selfRef.pointer,
-      _id_pigeon_echoBoolList.pointer,
+      _id_echoBoolList.pointer,
       _$bs.pointer,
     ).object<jni$_.JByteArray?>();
   }
 
-  static final _id_pigeon_echoEnumList = NativeInteropHostIntegrationCoreApiRegistrar._class
-      .instanceMethodId(r'pigeon_echoEnumList', r'([B)[B');
+  static final _id_echoEnumList = NativeInteropHostIntegrationCoreApiRegistrar._class
+      .instanceMethodId(r'echoEnumList', r'([B)[B');
 
-  static final _pigeon_echoEnumList =
+  static final _echoEnumList =
       jni$_.ProtectedJniExtensions.lookup<
             jni$_.NativeFunction<
               jni$_.JniResult Function(
@@ -1129,22 +907,22 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
             )
           >();
 
-  /// from: `public fun pigeon_echoEnumList(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
+  /// from: `public fun echoEnumList(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
   /// The returned object must be released after use, by calling the [release] method.
-  jni$_.JByteArray? pigeon_echoEnumList(jni$_.JByteArray bs) {
+  jni$_.JByteArray? echoEnumList(jni$_.JByteArray bs) {
     final _$$selfRef = reference;
     final _$bs = bs.reference;
-    return _pigeon_echoEnumList(
+    return _echoEnumList(
       _$$selfRef.pointer,
-      _id_pigeon_echoEnumList.pointer,
+      _id_echoEnumList.pointer,
       _$bs.pointer,
     ).object<jni$_.JByteArray?>();
   }
 
-  static final _id_pigeon_echoClassList = NativeInteropHostIntegrationCoreApiRegistrar._class
-      .instanceMethodId(r'pigeon_echoClassList', r'([B)[B');
+  static final _id_echoClassList = NativeInteropHostIntegrationCoreApiRegistrar._class
+      .instanceMethodId(r'echoClassList', r'([B)[B');
 
-  static final _pigeon_echoClassList =
+  static final _echoClassList =
       jni$_.ProtectedJniExtensions.lookup<
             jni$_.NativeFunction<
               jni$_.JniResult Function(
@@ -1162,22 +940,22 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
             )
           >();
 
-  /// from: `public fun pigeon_echoClassList(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
+  /// from: `public fun echoClassList(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
   /// The returned object must be released after use, by calling the [release] method.
-  jni$_.JByteArray? pigeon_echoClassList(jni$_.JByteArray bs) {
+  jni$_.JByteArray? echoClassList(jni$_.JByteArray bs) {
     final _$$selfRef = reference;
     final _$bs = bs.reference;
-    return _pigeon_echoClassList(
+    return _echoClassList(
       _$$selfRef.pointer,
-      _id_pigeon_echoClassList.pointer,
+      _id_echoClassList.pointer,
       _$bs.pointer,
     ).object<jni$_.JByteArray?>();
   }
 
-  static final _id_pigeon_echoNonNullEnumList = NativeInteropHostIntegrationCoreApiRegistrar._class
-      .instanceMethodId(r'pigeon_echoNonNullEnumList', r'([B)[B');
+  static final _id_echoNonNullEnumList = NativeInteropHostIntegrationCoreApiRegistrar._class
+      .instanceMethodId(r'echoNonNullEnumList', r'([B)[B');
 
-  static final _pigeon_echoNonNullEnumList =
+  static final _echoNonNullEnumList =
       jni$_.ProtectedJniExtensions.lookup<
             jni$_.NativeFunction<
               jni$_.JniResult Function(
@@ -1195,22 +973,22 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
             )
           >();
 
-  /// from: `public fun pigeon_echoNonNullEnumList(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
+  /// from: `public fun echoNonNullEnumList(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
   /// The returned object must be released after use, by calling the [release] method.
-  jni$_.JByteArray? pigeon_echoNonNullEnumList(jni$_.JByteArray bs) {
+  jni$_.JByteArray? echoNonNullEnumList(jni$_.JByteArray bs) {
     final _$$selfRef = reference;
     final _$bs = bs.reference;
-    return _pigeon_echoNonNullEnumList(
+    return _echoNonNullEnumList(
       _$$selfRef.pointer,
-      _id_pigeon_echoNonNullEnumList.pointer,
+      _id_echoNonNullEnumList.pointer,
       _$bs.pointer,
     ).object<jni$_.JByteArray?>();
   }
 
-  static final _id_pigeon_echoNonNullClassList = NativeInteropHostIntegrationCoreApiRegistrar._class
-      .instanceMethodId(r'pigeon_echoNonNullClassList', r'([B)[B');
+  static final _id_echoNonNullClassList = NativeInteropHostIntegrationCoreApiRegistrar._class
+      .instanceMethodId(r'echoNonNullClassList', r'([B)[B');
 
-  static final _pigeon_echoNonNullClassList =
+  static final _echoNonNullClassList =
       jni$_.ProtectedJniExtensions.lookup<
             jni$_.NativeFunction<
               jni$_.JniResult Function(
@@ -1228,22 +1006,24 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
             )
           >();
 
-  /// from: `public fun pigeon_echoNonNullClassList(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
+  /// from: `public fun echoNonNullClassList(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
   /// The returned object must be released after use, by calling the [release] method.
-  jni$_.JByteArray? pigeon_echoNonNullClassList(jni$_.JByteArray bs) {
+  jni$_.JByteArray? echoNonNullClassList(jni$_.JByteArray bs) {
     final _$$selfRef = reference;
     final _$bs = bs.reference;
-    return _pigeon_echoNonNullClassList(
+    return _echoNonNullClassList(
       _$$selfRef.pointer,
-      _id_pigeon_echoNonNullClassList.pointer,
+      _id_echoNonNullClassList.pointer,
       _$bs.pointer,
     ).object<jni$_.JByteArray?>();
   }
 
-  static final _id_pigeon_echoMap = NativeInteropHostIntegrationCoreApiRegistrar._class
-      .instanceMethodId(r'pigeon_echoMap', r'([B)[B');
+  static final _id_echoMap = NativeInteropHostIntegrationCoreApiRegistrar._class.instanceMethodId(
+    r'echoMap',
+    r'([B)[B',
+  );
 
-  static final _pigeon_echoMap =
+  static final _echoMap =
       jni$_.ProtectedJniExtensions.lookup<
             jni$_.NativeFunction<
               jni$_.JniResult Function(
@@ -1261,22 +1041,22 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
             )
           >();
 
-  /// from: `public fun pigeon_echoMap(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
+  /// from: `public fun echoMap(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
   /// The returned object must be released after use, by calling the [release] method.
-  jni$_.JByteArray? pigeon_echoMap(jni$_.JByteArray bs) {
+  jni$_.JByteArray? echoMap(jni$_.JByteArray bs) {
     final _$$selfRef = reference;
     final _$bs = bs.reference;
-    return _pigeon_echoMap(
+    return _echoMap(
       _$$selfRef.pointer,
-      _id_pigeon_echoMap.pointer,
+      _id_echoMap.pointer,
       _$bs.pointer,
     ).object<jni$_.JByteArray?>();
   }
 
-  static final _id_pigeon_echoStringMap = NativeInteropHostIntegrationCoreApiRegistrar._class
-      .instanceMethodId(r'pigeon_echoStringMap', r'([B)[B');
+  static final _id_echoStringMap = NativeInteropHostIntegrationCoreApiRegistrar._class
+      .instanceMethodId(r'echoStringMap', r'([B)[B');
 
-  static final _pigeon_echoStringMap =
+  static final _echoStringMap =
       jni$_.ProtectedJniExtensions.lookup<
             jni$_.NativeFunction<
               jni$_.JniResult Function(
@@ -1294,22 +1074,22 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
             )
           >();
 
-  /// from: `public fun pigeon_echoStringMap(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
+  /// from: `public fun echoStringMap(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
   /// The returned object must be released after use, by calling the [release] method.
-  jni$_.JByteArray? pigeon_echoStringMap(jni$_.JByteArray bs) {
+  jni$_.JByteArray? echoStringMap(jni$_.JByteArray bs) {
     final _$$selfRef = reference;
     final _$bs = bs.reference;
-    return _pigeon_echoStringMap(
+    return _echoStringMap(
       _$$selfRef.pointer,
-      _id_pigeon_echoStringMap.pointer,
+      _id_echoStringMap.pointer,
       _$bs.pointer,
     ).object<jni$_.JByteArray?>();
   }
 
-  static final _id_pigeon_echoIntMap = NativeInteropHostIntegrationCoreApiRegistrar._class
-      .instanceMethodId(r'pigeon_echoIntMap', r'([B)[B');
+  static final _id_echoIntMap = NativeInteropHostIntegrationCoreApiRegistrar._class
+      .instanceMethodId(r'echoIntMap', r'([B)[B');
 
-  static final _pigeon_echoIntMap =
+  static final _echoIntMap =
       jni$_.ProtectedJniExtensions.lookup<
             jni$_.NativeFunction<
               jni$_.JniResult Function(
@@ -1327,22 +1107,22 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
             )
           >();
 
-  /// from: `public fun pigeon_echoIntMap(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
+  /// from: `public fun echoIntMap(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
   /// The returned object must be released after use, by calling the [release] method.
-  jni$_.JByteArray? pigeon_echoIntMap(jni$_.JByteArray bs) {
+  jni$_.JByteArray? echoIntMap(jni$_.JByteArray bs) {
     final _$$selfRef = reference;
     final _$bs = bs.reference;
-    return _pigeon_echoIntMap(
+    return _echoIntMap(
       _$$selfRef.pointer,
-      _id_pigeon_echoIntMap.pointer,
+      _id_echoIntMap.pointer,
       _$bs.pointer,
     ).object<jni$_.JByteArray?>();
   }
 
-  static final _id_pigeon_echoEnumMap = NativeInteropHostIntegrationCoreApiRegistrar._class
-      .instanceMethodId(r'pigeon_echoEnumMap', r'([B)[B');
+  static final _id_echoEnumMap = NativeInteropHostIntegrationCoreApiRegistrar._class
+      .instanceMethodId(r'echoEnumMap', r'([B)[B');
 
-  static final _pigeon_echoEnumMap =
+  static final _echoEnumMap =
       jni$_.ProtectedJniExtensions.lookup<
             jni$_.NativeFunction<
               jni$_.JniResult Function(
@@ -1360,22 +1140,22 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
             )
           >();
 
-  /// from: `public fun pigeon_echoEnumMap(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
+  /// from: `public fun echoEnumMap(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
   /// The returned object must be released after use, by calling the [release] method.
-  jni$_.JByteArray? pigeon_echoEnumMap(jni$_.JByteArray bs) {
+  jni$_.JByteArray? echoEnumMap(jni$_.JByteArray bs) {
     final _$$selfRef = reference;
     final _$bs = bs.reference;
-    return _pigeon_echoEnumMap(
+    return _echoEnumMap(
       _$$selfRef.pointer,
-      _id_pigeon_echoEnumMap.pointer,
+      _id_echoEnumMap.pointer,
       _$bs.pointer,
     ).object<jni$_.JByteArray?>();
   }
 
-  static final _id_pigeon_echoClassMap = NativeInteropHostIntegrationCoreApiRegistrar._class
-      .instanceMethodId(r'pigeon_echoClassMap', r'([B)[B');
+  static final _id_echoClassMap = NativeInteropHostIntegrationCoreApiRegistrar._class
+      .instanceMethodId(r'echoClassMap', r'([B)[B');
 
-  static final _pigeon_echoClassMap =
+  static final _echoClassMap =
       jni$_.ProtectedJniExtensions.lookup<
             jni$_.NativeFunction<
               jni$_.JniResult Function(
@@ -1393,22 +1173,22 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
             )
           >();
 
-  /// from: `public fun pigeon_echoClassMap(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
+  /// from: `public fun echoClassMap(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
   /// The returned object must be released after use, by calling the [release] method.
-  jni$_.JByteArray? pigeon_echoClassMap(jni$_.JByteArray bs) {
+  jni$_.JByteArray? echoClassMap(jni$_.JByteArray bs) {
     final _$$selfRef = reference;
     final _$bs = bs.reference;
-    return _pigeon_echoClassMap(
+    return _echoClassMap(
       _$$selfRef.pointer,
-      _id_pigeon_echoClassMap.pointer,
+      _id_echoClassMap.pointer,
       _$bs.pointer,
     ).object<jni$_.JByteArray?>();
   }
 
-  static final _id_pigeon_echoNonNullStringMap = NativeInteropHostIntegrationCoreApiRegistrar._class
-      .instanceMethodId(r'pigeon_echoNonNullStringMap', r'([B)[B');
+  static final _id_echoNonNullStringMap = NativeInteropHostIntegrationCoreApiRegistrar._class
+      .instanceMethodId(r'echoNonNullStringMap', r'([B)[B');
 
-  static final _pigeon_echoNonNullStringMap =
+  static final _echoNonNullStringMap =
       jni$_.ProtectedJniExtensions.lookup<
             jni$_.NativeFunction<
               jni$_.JniResult Function(
@@ -1426,22 +1206,22 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
             )
           >();
 
-  /// from: `public fun pigeon_echoNonNullStringMap(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
+  /// from: `public fun echoNonNullStringMap(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
   /// The returned object must be released after use, by calling the [release] method.
-  jni$_.JByteArray? pigeon_echoNonNullStringMap(jni$_.JByteArray bs) {
+  jni$_.JByteArray? echoNonNullStringMap(jni$_.JByteArray bs) {
     final _$$selfRef = reference;
     final _$bs = bs.reference;
-    return _pigeon_echoNonNullStringMap(
+    return _echoNonNullStringMap(
       _$$selfRef.pointer,
-      _id_pigeon_echoNonNullStringMap.pointer,
+      _id_echoNonNullStringMap.pointer,
       _$bs.pointer,
     ).object<jni$_.JByteArray?>();
   }
 
-  static final _id_pigeon_echoNonNullIntMap = NativeInteropHostIntegrationCoreApiRegistrar._class
-      .instanceMethodId(r'pigeon_echoNonNullIntMap', r'([B)[B');
+  static final _id_echoNonNullIntMap = NativeInteropHostIntegrationCoreApiRegistrar._class
+      .instanceMethodId(r'echoNonNullIntMap', r'([B)[B');
 
-  static final _pigeon_echoNonNullIntMap =
+  static final _echoNonNullIntMap =
       jni$_.ProtectedJniExtensions.lookup<
             jni$_.NativeFunction<
               jni$_.JniResult Function(
@@ -1459,22 +1239,22 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
             )
           >();
 
-  /// from: `public fun pigeon_echoNonNullIntMap(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
+  /// from: `public fun echoNonNullIntMap(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
   /// The returned object must be released after use, by calling the [release] method.
-  jni$_.JByteArray? pigeon_echoNonNullIntMap(jni$_.JByteArray bs) {
+  jni$_.JByteArray? echoNonNullIntMap(jni$_.JByteArray bs) {
     final _$$selfRef = reference;
     final _$bs = bs.reference;
-    return _pigeon_echoNonNullIntMap(
+    return _echoNonNullIntMap(
       _$$selfRef.pointer,
-      _id_pigeon_echoNonNullIntMap.pointer,
+      _id_echoNonNullIntMap.pointer,
       _$bs.pointer,
     ).object<jni$_.JByteArray?>();
   }
 
-  static final _id_pigeon_echoNonNullEnumMap = NativeInteropHostIntegrationCoreApiRegistrar._class
-      .instanceMethodId(r'pigeon_echoNonNullEnumMap', r'([B)[B');
+  static final _id_echoNonNullEnumMap = NativeInteropHostIntegrationCoreApiRegistrar._class
+      .instanceMethodId(r'echoNonNullEnumMap', r'([B)[B');
 
-  static final _pigeon_echoNonNullEnumMap =
+  static final _echoNonNullEnumMap =
       jni$_.ProtectedJniExtensions.lookup<
             jni$_.NativeFunction<
               jni$_.JniResult Function(
@@ -1492,22 +1272,22 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
             )
           >();
 
-  /// from: `public fun pigeon_echoNonNullEnumMap(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
+  /// from: `public fun echoNonNullEnumMap(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
   /// The returned object must be released after use, by calling the [release] method.
-  jni$_.JByteArray? pigeon_echoNonNullEnumMap(jni$_.JByteArray bs) {
+  jni$_.JByteArray? echoNonNullEnumMap(jni$_.JByteArray bs) {
     final _$$selfRef = reference;
     final _$bs = bs.reference;
-    return _pigeon_echoNonNullEnumMap(
+    return _echoNonNullEnumMap(
       _$$selfRef.pointer,
-      _id_pigeon_echoNonNullEnumMap.pointer,
+      _id_echoNonNullEnumMap.pointer,
       _$bs.pointer,
     ).object<jni$_.JByteArray?>();
   }
 
-  static final _id_pigeon_echoNonNullClassMap = NativeInteropHostIntegrationCoreApiRegistrar._class
-      .instanceMethodId(r'pigeon_echoNonNullClassMap', r'([B)[B');
+  static final _id_echoNonNullClassMap = NativeInteropHostIntegrationCoreApiRegistrar._class
+      .instanceMethodId(r'echoNonNullClassMap', r'([B)[B');
 
-  static final _pigeon_echoNonNullClassMap =
+  static final _echoNonNullClassMap =
       jni$_.ProtectedJniExtensions.lookup<
             jni$_.NativeFunction<
               jni$_.JniResult Function(
@@ -1525,22 +1305,22 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
             )
           >();
 
-  /// from: `public fun pigeon_echoNonNullClassMap(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
+  /// from: `public fun echoNonNullClassMap(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
   /// The returned object must be released after use, by calling the [release] method.
-  jni$_.JByteArray? pigeon_echoNonNullClassMap(jni$_.JByteArray bs) {
+  jni$_.JByteArray? echoNonNullClassMap(jni$_.JByteArray bs) {
     final _$$selfRef = reference;
     final _$bs = bs.reference;
-    return _pigeon_echoNonNullClassMap(
+    return _echoNonNullClassMap(
       _$$selfRef.pointer,
-      _id_pigeon_echoNonNullClassMap.pointer,
+      _id_echoNonNullClassMap.pointer,
       _$bs.pointer,
     ).object<jni$_.JByteArray?>();
   }
 
-  static final _id_pigeon_echoClassWrapper = NativeInteropHostIntegrationCoreApiRegistrar._class
-      .instanceMethodId(r'pigeon_echoClassWrapper', r'([B)[B');
+  static final _id_echoClassWrapper = NativeInteropHostIntegrationCoreApiRegistrar._class
+      .instanceMethodId(r'echoClassWrapper', r'([B)[B');
 
-  static final _pigeon_echoClassWrapper =
+  static final _echoClassWrapper =
       jni$_.ProtectedJniExtensions.lookup<
             jni$_.NativeFunction<
               jni$_.JniResult Function(
@@ -1558,22 +1338,156 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
             )
           >();
 
-  /// from: `public fun pigeon_echoClassWrapper(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
+  /// from: `public fun echoClassWrapper(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
   /// The returned object must be released after use, by calling the [release] method.
-  jni$_.JByteArray? pigeon_echoClassWrapper(jni$_.JByteArray bs) {
+  jni$_.JByteArray? echoClassWrapper(jni$_.JByteArray bs) {
     final _$$selfRef = reference;
     final _$bs = bs.reference;
-    return _pigeon_echoClassWrapper(
+    return _echoClassWrapper(
       _$$selfRef.pointer,
-      _id_pigeon_echoClassWrapper.pointer,
+      _id_echoClassWrapper.pointer,
       _$bs.pointer,
     ).object<jni$_.JByteArray?>();
   }
 
-  static final _id_pigeon_echoEnum = NativeInteropHostIntegrationCoreApiRegistrar._class
-      .instanceMethodId(r'pigeon_echoEnum', r'(J)J');
+  static final _id_echoSealedClass = NativeInteropHostIntegrationCoreApiRegistrar._class
+      .instanceMethodId(r'echoSealedClass', r'([B)[B');
 
-  static final _pigeon_echoEnum =
+  static final _echoSealedClass =
+      jni$_.ProtectedJniExtensions.lookup<
+            jni$_.NativeFunction<
+              jni$_.JniResult Function(
+                jni$_.Pointer<jni$_.Void>,
+                jni$_.JMethodIDPtr,
+                jni$_.VarArgs<(jni$_.Pointer<jni$_.Void>,)>,
+              )
+            >
+          >('globalEnv_CallObjectMethod')
+          .asFunction<
+            jni$_.JniResult Function(
+              jni$_.Pointer<jni$_.Void>,
+              jni$_.JMethodIDPtr,
+              jni$_.Pointer<jni$_.Void>,
+            )
+          >();
+
+  /// from: `public fun echoSealedClass(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
+  /// The returned object must be released after use, by calling the [release] method.
+  jni$_.JByteArray? echoSealedClass(jni$_.JByteArray bs) {
+    final _$$selfRef = reference;
+    final _$bs = bs.reference;
+    return _echoSealedClass(
+      _$$selfRef.pointer,
+      _id_echoSealedClass.pointer,
+      _$bs.pointer,
+    ).object<jni$_.JByteArray?>();
+  }
+
+  static final _id_echoNullableSealedClass = NativeInteropHostIntegrationCoreApiRegistrar._class
+      .instanceMethodId(r'echoNullableSealedClass', r'([B)[B');
+
+  static final _echoNullableSealedClass =
+      jni$_.ProtectedJniExtensions.lookup<
+            jni$_.NativeFunction<
+              jni$_.JniResult Function(
+                jni$_.Pointer<jni$_.Void>,
+                jni$_.JMethodIDPtr,
+                jni$_.VarArgs<(jni$_.Pointer<jni$_.Void>,)>,
+              )
+            >
+          >('globalEnv_CallObjectMethod')
+          .asFunction<
+            jni$_.JniResult Function(
+              jni$_.Pointer<jni$_.Void>,
+              jni$_.JMethodIDPtr,
+              jni$_.Pointer<jni$_.Void>,
+            )
+          >();
+
+  /// from: `public fun echoNullableSealedClass(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
+  /// The returned object must be released after use, by calling the [release] method.
+  jni$_.JByteArray? echoNullableSealedClass(jni$_.JByteArray bs) {
+    final _$$selfRef = reference;
+    final _$bs = bs.reference;
+    return _echoNullableSealedClass(
+      _$$selfRef.pointer,
+      _id_echoNullableSealedClass.pointer,
+      _$bs.pointer,
+    ).object<jni$_.JByteArray?>();
+  }
+
+  static final _id_echoSealedClassList = NativeInteropHostIntegrationCoreApiRegistrar._class
+      .instanceMethodId(r'echoSealedClassList', r'([B)[B');
+
+  static final _echoSealedClassList =
+      jni$_.ProtectedJniExtensions.lookup<
+            jni$_.NativeFunction<
+              jni$_.JniResult Function(
+                jni$_.Pointer<jni$_.Void>,
+                jni$_.JMethodIDPtr,
+                jni$_.VarArgs<(jni$_.Pointer<jni$_.Void>,)>,
+              )
+            >
+          >('globalEnv_CallObjectMethod')
+          .asFunction<
+            jni$_.JniResult Function(
+              jni$_.Pointer<jni$_.Void>,
+              jni$_.JMethodIDPtr,
+              jni$_.Pointer<jni$_.Void>,
+            )
+          >();
+
+  /// from: `public fun echoSealedClassList(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
+  /// The returned object must be released after use, by calling the [release] method.
+  jni$_.JByteArray? echoSealedClassList(jni$_.JByteArray bs) {
+    final _$$selfRef = reference;
+    final _$bs = bs.reference;
+    return _echoSealedClassList(
+      _$$selfRef.pointer,
+      _id_echoSealedClassList.pointer,
+      _$bs.pointer,
+    ).object<jni$_.JByteArray?>();
+  }
+
+  static final _id_echoSealedClassWrapper = NativeInteropHostIntegrationCoreApiRegistrar._class
+      .instanceMethodId(r'echoSealedClassWrapper', r'([B)[B');
+
+  static final _echoSealedClassWrapper =
+      jni$_.ProtectedJniExtensions.lookup<
+            jni$_.NativeFunction<
+              jni$_.JniResult Function(
+                jni$_.Pointer<jni$_.Void>,
+                jni$_.JMethodIDPtr,
+                jni$_.VarArgs<(jni$_.Pointer<jni$_.Void>,)>,
+              )
+            >
+          >('globalEnv_CallObjectMethod')
+          .asFunction<
+            jni$_.JniResult Function(
+              jni$_.Pointer<jni$_.Void>,
+              jni$_.JMethodIDPtr,
+              jni$_.Pointer<jni$_.Void>,
+            )
+          >();
+
+  /// from: `public fun echoSealedClassWrapper(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
+  /// The returned object must be released after use, by calling the [release] method.
+  jni$_.JByteArray? echoSealedClassWrapper(jni$_.JByteArray bs) {
+    final _$$selfRef = reference;
+    final _$bs = bs.reference;
+    return _echoSealedClassWrapper(
+      _$$selfRef.pointer,
+      _id_echoSealedClassWrapper.pointer,
+      _$bs.pointer,
+    ).object<jni$_.JByteArray?>();
+  }
+
+  static final _id_echoEnum = NativeInteropHostIntegrationCoreApiRegistrar._class.instanceMethodId(
+    r'echoEnum',
+    r'(J)J',
+  );
+
+  static final _echoEnum =
       jni$_.ProtectedJniExtensions.lookup<
             jni$_.NativeFunction<
               jni$_.JniResult Function(
@@ -1587,16 +1501,16 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
             jni$_.JniResult Function(jni$_.Pointer<jni$_.Void>, jni$_.JMethodIDPtr, core$_.int)
           >();
 
-  /// from: `public fun pigeon_echoEnum(anEnum: kotlin.Long): kotlin.Long`
-  core$_.int pigeon_echoEnum(core$_.int j) {
+  /// from: `public fun echoEnum(anEnum: kotlin.Long): kotlin.Long`
+  core$_.int echoEnum(core$_.int j) {
     final _$$selfRef = reference;
-    return _pigeon_echoEnum(_$$selfRef.pointer, _id_pigeon_echoEnum.pointer, j).long;
+    return _echoEnum(_$$selfRef.pointer, _id_echoEnum.pointer, j).long;
   }
 
-  static final _id_pigeon_echoAnotherEnum = NativeInteropHostIntegrationCoreApiRegistrar._class
-      .instanceMethodId(r'pigeon_echoAnotherEnum', r'(J)J');
+  static final _id_echoAnotherEnum = NativeInteropHostIntegrationCoreApiRegistrar._class
+      .instanceMethodId(r'echoAnotherEnum', r'(J)J');
 
-  static final _pigeon_echoAnotherEnum =
+  static final _echoAnotherEnum =
       jni$_.ProtectedJniExtensions.lookup<
             jni$_.NativeFunction<
               jni$_.JniResult Function(
@@ -1610,20 +1524,16 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
             jni$_.JniResult Function(jni$_.Pointer<jni$_.Void>, jni$_.JMethodIDPtr, core$_.int)
           >();
 
-  /// from: `public fun pigeon_echoAnotherEnum(anotherEnum: kotlin.Long): kotlin.Long`
-  core$_.int pigeon_echoAnotherEnum(core$_.int j) {
+  /// from: `public fun echoAnotherEnum(anotherEnum: kotlin.Long): kotlin.Long`
+  core$_.int echoAnotherEnum(core$_.int j) {
     final _$$selfRef = reference;
-    return _pigeon_echoAnotherEnum(_$$selfRef.pointer, _id_pigeon_echoAnotherEnum.pointer, j).long;
+    return _echoAnotherEnum(_$$selfRef.pointer, _id_echoAnotherEnum.pointer, j).long;
   }
 
-  static final _id_pigeon_echoNamedDefaultString = NativeInteropHostIntegrationCoreApiRegistrar
-      ._class
-      .instanceMethodId(
-        r'pigeon_echoNamedDefaultString',
-        r'(Ljava/lang/String;)Ljava/lang/String;',
-      );
+  static final _id_echoNamedDefaultString = NativeInteropHostIntegrationCoreApiRegistrar._class
+      .instanceMethodId(r'echoNamedDefaultString', r'(Ljava/lang/String;)Ljava/lang/String;');
 
-  static final _pigeon_echoNamedDefaultString =
+  static final _echoNamedDefaultString =
       jni$_.ProtectedJniExtensions.lookup<
             jni$_.NativeFunction<
               jni$_.JniResult Function(
@@ -1641,23 +1551,22 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
             )
           >();
 
-  /// from: `public fun pigeon_echoNamedDefaultString(aString: kotlin.String): kotlin.String`
+  /// from: `public fun echoNamedDefaultString(aString: kotlin.String): kotlin.String`
   /// The returned object must be released after use, by calling the [release] method.
-  jni$_.JString pigeon_echoNamedDefaultString(jni$_.JString string) {
+  jni$_.JString echoNamedDefaultString(jni$_.JString string) {
     final _$$selfRef = reference;
     final _$string = string.reference;
-    return _pigeon_echoNamedDefaultString(
+    return _echoNamedDefaultString(
       _$$selfRef.pointer,
-      _id_pigeon_echoNamedDefaultString.pointer,
+      _id_echoNamedDefaultString.pointer,
       _$string.pointer,
     ).object<jni$_.JString>();
   }
 
-  static final _id_pigeon_echoOptionalDefaultDouble = NativeInteropHostIntegrationCoreApiRegistrar
-      ._class
-      .instanceMethodId(r'pigeon_echoOptionalDefaultDouble', r'(D)D');
+  static final _id_echoOptionalDefaultDouble = NativeInteropHostIntegrationCoreApiRegistrar._class
+      .instanceMethodId(r'echoOptionalDefaultDouble', r'(D)D');
 
-  static final _pigeon_echoOptionalDefaultDouble =
+  static final _echoOptionalDefaultDouble =
       jni$_.ProtectedJniExtensions.lookup<
             jni$_.NativeFunction<
               jni$_.JniResult Function(
@@ -1671,20 +1580,20 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
             jni$_.JniResult Function(jni$_.Pointer<jni$_.Void>, jni$_.JMethodIDPtr, core$_.double)
           >();
 
-  /// from: `public fun pigeon_echoOptionalDefaultDouble(aDouble: kotlin.Double): kotlin.Double`
-  core$_.double pigeon_echoOptionalDefaultDouble(core$_.double d) {
+  /// from: `public fun echoOptionalDefaultDouble(aDouble: kotlin.Double): kotlin.Double`
+  core$_.double echoOptionalDefaultDouble(core$_.double d) {
     final _$$selfRef = reference;
-    return _pigeon_echoOptionalDefaultDouble(
+    return _echoOptionalDefaultDouble(
       _$$selfRef.pointer,
-      _id_pigeon_echoOptionalDefaultDouble.pointer,
+      _id_echoOptionalDefaultDouble.pointer,
       d,
     ).doubleFloat;
   }
 
-  static final _id_pigeon_echoRequiredInt = NativeInteropHostIntegrationCoreApiRegistrar._class
-      .instanceMethodId(r'pigeon_echoRequiredInt', r'(J)J');
+  static final _id_echoRequiredInt = NativeInteropHostIntegrationCoreApiRegistrar._class
+      .instanceMethodId(r'echoRequiredInt', r'(J)J');
 
-  static final _pigeon_echoRequiredInt =
+  static final _echoRequiredInt =
       jni$_.ProtectedJniExtensions.lookup<
             jni$_.NativeFunction<
               jni$_.JniResult Function(
@@ -1698,16 +1607,16 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
             jni$_.JniResult Function(jni$_.Pointer<jni$_.Void>, jni$_.JMethodIDPtr, core$_.int)
           >();
 
-  /// from: `public fun pigeon_echoRequiredInt(anInt: kotlin.Long): kotlin.Long`
-  core$_.int pigeon_echoRequiredInt(core$_.int j) {
+  /// from: `public fun echoRequiredInt(anInt: kotlin.Long): kotlin.Long`
+  core$_.int echoRequiredInt(core$_.int j) {
     final _$$selfRef = reference;
-    return _pigeon_echoRequiredInt(_$$selfRef.pointer, _id_pigeon_echoRequiredInt.pointer, j).long;
+    return _echoRequiredInt(_$$selfRef.pointer, _id_echoRequiredInt.pointer, j).long;
   }
 
-  static final _id_pigeon_echoAllNullableTypes = NativeInteropHostIntegrationCoreApiRegistrar._class
-      .instanceMethodId(r'pigeon_echoAllNullableTypes', r'([B)[B');
+  static final _id_echoAllNullableTypes = NativeInteropHostIntegrationCoreApiRegistrar._class
+      .instanceMethodId(r'echoAllNullableTypes', r'([B)[B');
 
-  static final _pigeon_echoAllNullableTypes =
+  static final _echoAllNullableTypes =
       jni$_.ProtectedJniExtensions.lookup<
             jni$_.NativeFunction<
               jni$_.JniResult Function(
@@ -1725,25 +1634,25 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
             )
           >();
 
-  /// from: `public fun pigeon_echoAllNullableTypes(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
+  /// from: `public fun echoAllNullableTypes(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
   /// The returned object must be released after use, by calling the [release] method.
-  jni$_.JByteArray? pigeon_echoAllNullableTypes(jni$_.JByteArray bs) {
+  jni$_.JByteArray? echoAllNullableTypes(jni$_.JByteArray bs) {
     final _$$selfRef = reference;
     final _$bs = bs.reference;
-    return _pigeon_echoAllNullableTypes(
+    return _echoAllNullableTypes(
       _$$selfRef.pointer,
-      _id_pigeon_echoAllNullableTypes.pointer,
+      _id_echoAllNullableTypes.pointer,
       _$bs.pointer,
     ).object<jni$_.JByteArray?>();
   }
 
-  static final _id_pigeon_echoAllNullableTypesWithoutRecursion =
+  static final _id_echoAllNullableTypesWithoutRecursion =
       NativeInteropHostIntegrationCoreApiRegistrar._class.instanceMethodId(
-        r'pigeon_echoAllNullableTypesWithoutRecursion',
+        r'echoAllNullableTypesWithoutRecursion',
         r'([B)[B',
       );
 
-  static final _pigeon_echoAllNullableTypesWithoutRecursion =
+  static final _echoAllNullableTypesWithoutRecursion =
       jni$_.ProtectedJniExtensions.lookup<
             jni$_.NativeFunction<
               jni$_.JniResult Function(
@@ -1761,23 +1670,22 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
             )
           >();
 
-  /// from: `public fun pigeon_echoAllNullableTypesWithoutRecursion(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
+  /// from: `public fun echoAllNullableTypesWithoutRecursion(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
   /// The returned object must be released after use, by calling the [release] method.
-  jni$_.JByteArray? pigeon_echoAllNullableTypesWithoutRecursion(jni$_.JByteArray bs) {
+  jni$_.JByteArray? echoAllNullableTypesWithoutRecursion(jni$_.JByteArray bs) {
     final _$$selfRef = reference;
     final _$bs = bs.reference;
-    return _pigeon_echoAllNullableTypesWithoutRecursion(
+    return _echoAllNullableTypesWithoutRecursion(
       _$$selfRef.pointer,
-      _id_pigeon_echoAllNullableTypesWithoutRecursion.pointer,
+      _id_echoAllNullableTypesWithoutRecursion.pointer,
       _$bs.pointer,
     ).object<jni$_.JByteArray?>();
   }
 
-  static final _id_pigeon_extractNestedNullableString = NativeInteropHostIntegrationCoreApiRegistrar
-      ._class
-      .instanceMethodId(r'pigeon_extractNestedNullableString', r'([B)Ljava/lang/String;');
+  static final _id_extractNestedNullableString = NativeInteropHostIntegrationCoreApiRegistrar._class
+      .instanceMethodId(r'extractNestedNullableString', r'([B)Ljava/lang/String;');
 
-  static final _pigeon_extractNestedNullableString =
+  static final _extractNestedNullableString =
       jni$_.ProtectedJniExtensions.lookup<
             jni$_.NativeFunction<
               jni$_.JniResult Function(
@@ -1795,23 +1703,22 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
             )
           >();
 
-  /// from: `public fun pigeon_extractNestedNullableString(pigeonVar_args: kotlin.ByteArray): kotlin.String?`
+  /// from: `public fun extractNestedNullableString(pigeonVar_args: kotlin.ByteArray): kotlin.String?`
   /// The returned object must be released after use, by calling the [release] method.
-  jni$_.JString? pigeon_extractNestedNullableString(jni$_.JByteArray bs) {
+  jni$_.JString? extractNestedNullableString(jni$_.JByteArray bs) {
     final _$$selfRef = reference;
     final _$bs = bs.reference;
-    return _pigeon_extractNestedNullableString(
+    return _extractNestedNullableString(
       _$$selfRef.pointer,
-      _id_pigeon_extractNestedNullableString.pointer,
+      _id_extractNestedNullableString.pointer,
       _$bs.pointer,
     ).object<jni$_.JString?>();
   }
 
-  static final _id_pigeon_createNestedNullableString = NativeInteropHostIntegrationCoreApiRegistrar
-      ._class
-      .instanceMethodId(r'pigeon_createNestedNullableString', r'(Ljava/lang/String;)[B');
+  static final _id_createNestedNullableString = NativeInteropHostIntegrationCoreApiRegistrar._class
+      .instanceMethodId(r'createNestedNullableString', r'(Ljava/lang/String;)[B');
 
-  static final _pigeon_createNestedNullableString =
+  static final _createNestedNullableString =
       jni$_.ProtectedJniExtensions.lookup<
             jni$_.NativeFunction<
               jni$_.JniResult Function(
@@ -1829,26 +1736,25 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
             )
           >();
 
-  /// from: `public fun pigeon_createNestedNullableString(nullableString: kotlin.String?): kotlin.ByteArray?`
+  /// from: `public fun createNestedNullableString(nullableString: kotlin.String?): kotlin.ByteArray?`
   /// The returned object must be released after use, by calling the [release] method.
-  jni$_.JByteArray? pigeon_createNestedNullableString(jni$_.JString? string) {
+  jni$_.JByteArray? createNestedNullableString(jni$_.JString? string) {
     final _$$selfRef = reference;
     final _$string = string?.reference ?? jni$_.jNullReference;
-    return _pigeon_createNestedNullableString(
+    return _createNestedNullableString(
       _$$selfRef.pointer,
-      _id_pigeon_createNestedNullableString.pointer,
+      _id_createNestedNullableString.pointer,
       _$string.pointer,
     ).object<jni$_.JByteArray?>();
   }
 
-  static final _id_pigeon_sendMultipleNullableTypes = NativeInteropHostIntegrationCoreApiRegistrar
-      ._class
+  static final _id_sendMultipleNullableTypes = NativeInteropHostIntegrationCoreApiRegistrar._class
       .instanceMethodId(
-        r'pigeon_sendMultipleNullableTypes',
+        r'sendMultipleNullableTypes',
         r'(Ljava/lang/Boolean;Ljava/lang/Long;Ljava/lang/String;)[B',
       );
 
-  static final _pigeon_sendMultipleNullableTypes =
+  static final _sendMultipleNullableTypes =
       jni$_.ProtectedJniExtensions.lookup<
             jni$_.NativeFunction<
               jni$_.JniResult Function(
@@ -1870,9 +1776,9 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
             )
           >();
 
-  /// from: `public fun pigeon_sendMultipleNullableTypes(aNullableBool: kotlin.Boolean?, aNullableInt: kotlin.Long?, aNullableString: kotlin.String?): kotlin.ByteArray?`
+  /// from: `public fun sendMultipleNullableTypes(aNullableBool: kotlin.Boolean?, aNullableInt: kotlin.Long?, aNullableString: kotlin.String?): kotlin.ByteArray?`
   /// The returned object must be released after use, by calling the [release] method.
-  jni$_.JByteArray? pigeon_sendMultipleNullableTypes(
+  jni$_.JByteArray? sendMultipleNullableTypes(
     jni$_.JBoolean? boolean,
     jni$_.JLong? long,
     jni$_.JString? string,
@@ -1881,22 +1787,22 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
     final _$boolean = boolean?.reference ?? jni$_.jNullReference;
     final _$long = long?.reference ?? jni$_.jNullReference;
     final _$string = string?.reference ?? jni$_.jNullReference;
-    return _pigeon_sendMultipleNullableTypes(
+    return _sendMultipleNullableTypes(
       _$$selfRef.pointer,
-      _id_pigeon_sendMultipleNullableTypes.pointer,
+      _id_sendMultipleNullableTypes.pointer,
       _$boolean.pointer,
       _$long.pointer,
       _$string.pointer,
     ).object<jni$_.JByteArray?>();
   }
 
-  static final _id_pigeon_sendMultipleNullableTypesWithoutRecursion =
+  static final _id_sendMultipleNullableTypesWithoutRecursion =
       NativeInteropHostIntegrationCoreApiRegistrar._class.instanceMethodId(
-        r'pigeon_sendMultipleNullableTypesWithoutRecursion',
+        r'sendMultipleNullableTypesWithoutRecursion',
         r'(Ljava/lang/Boolean;Ljava/lang/Long;Ljava/lang/String;)[B',
       );
 
-  static final _pigeon_sendMultipleNullableTypesWithoutRecursion =
+  static final _sendMultipleNullableTypesWithoutRecursion =
       jni$_.ProtectedJniExtensions.lookup<
             jni$_.NativeFunction<
               jni$_.JniResult Function(
@@ -1918,9 +1824,9 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
             )
           >();
 
-  /// from: `public fun pigeon_sendMultipleNullableTypesWithoutRecursion(aNullableBool: kotlin.Boolean?, aNullableInt: kotlin.Long?, aNullableString: kotlin.String?): kotlin.ByteArray?`
+  /// from: `public fun sendMultipleNullableTypesWithoutRecursion(aNullableBool: kotlin.Boolean?, aNullableInt: kotlin.Long?, aNullableString: kotlin.String?): kotlin.ByteArray?`
   /// The returned object must be released after use, by calling the [release] method.
-  jni$_.JByteArray? pigeon_sendMultipleNullableTypesWithoutRecursion(
+  jni$_.JByteArray? sendMultipleNullableTypesWithoutRecursion(
     jni$_.JBoolean? boolean,
     jni$_.JLong? long,
     jni$_.JString? string,
@@ -1929,19 +1835,19 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
     final _$boolean = boolean?.reference ?? jni$_.jNullReference;
     final _$long = long?.reference ?? jni$_.jNullReference;
     final _$string = string?.reference ?? jni$_.jNullReference;
-    return _pigeon_sendMultipleNullableTypesWithoutRecursion(
+    return _sendMultipleNullableTypesWithoutRecursion(
       _$$selfRef.pointer,
-      _id_pigeon_sendMultipleNullableTypesWithoutRecursion.pointer,
+      _id_sendMultipleNullableTypesWithoutRecursion.pointer,
       _$boolean.pointer,
       _$long.pointer,
       _$string.pointer,
     ).object<jni$_.JByteArray?>();
   }
 
-  static final _id_pigeon_echoNullableInt = NativeInteropHostIntegrationCoreApiRegistrar._class
-      .instanceMethodId(r'pigeon_echoNullableInt', r'(Ljava/lang/Long;)Ljava/lang/Long;');
+  static final _id_echoNullableInt = NativeInteropHostIntegrationCoreApiRegistrar._class
+      .instanceMethodId(r'echoNullableInt', r'(Ljava/lang/Long;)Ljava/lang/Long;');
 
-  static final _pigeon_echoNullableInt =
+  static final _echoNullableInt =
       jni$_.ProtectedJniExtensions.lookup<
             jni$_.NativeFunction<
               jni$_.JniResult Function(
@@ -1959,22 +1865,22 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
             )
           >();
 
-  /// from: `public fun pigeon_echoNullableInt(aNullableInt: kotlin.Long?): kotlin.Long?`
+  /// from: `public fun echoNullableInt(aNullableInt: kotlin.Long?): kotlin.Long?`
   /// The returned object must be released after use, by calling the [release] method.
-  jni$_.JLong? pigeon_echoNullableInt(jni$_.JLong? long) {
+  jni$_.JLong? echoNullableInt(jni$_.JLong? long) {
     final _$$selfRef = reference;
     final _$long = long?.reference ?? jni$_.jNullReference;
-    return _pigeon_echoNullableInt(
+    return _echoNullableInt(
       _$$selfRef.pointer,
-      _id_pigeon_echoNullableInt.pointer,
+      _id_echoNullableInt.pointer,
       _$long.pointer,
     ).object<jni$_.JLong?>();
   }
 
-  static final _id_pigeon_echoNullableDouble = NativeInteropHostIntegrationCoreApiRegistrar._class
-      .instanceMethodId(r'pigeon_echoNullableDouble', r'(Ljava/lang/Double;)Ljava/lang/Double;');
+  static final _id_echoNullableDouble = NativeInteropHostIntegrationCoreApiRegistrar._class
+      .instanceMethodId(r'echoNullableDouble', r'(Ljava/lang/Double;)Ljava/lang/Double;');
 
-  static final _pigeon_echoNullableDouble =
+  static final _echoNullableDouble =
       jni$_.ProtectedJniExtensions.lookup<
             jni$_.NativeFunction<
               jni$_.JniResult Function(
@@ -1992,22 +1898,22 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
             )
           >();
 
-  /// from: `public fun pigeon_echoNullableDouble(aNullableDouble: kotlin.Double?): kotlin.Double?`
+  /// from: `public fun echoNullableDouble(aNullableDouble: kotlin.Double?): kotlin.Double?`
   /// The returned object must be released after use, by calling the [release] method.
-  jni$_.JDouble? pigeon_echoNullableDouble(jni$_.JDouble? double) {
+  jni$_.JDouble? echoNullableDouble(jni$_.JDouble? double) {
     final _$$selfRef = reference;
     final _$double = double?.reference ?? jni$_.jNullReference;
-    return _pigeon_echoNullableDouble(
+    return _echoNullableDouble(
       _$$selfRef.pointer,
-      _id_pigeon_echoNullableDouble.pointer,
+      _id_echoNullableDouble.pointer,
       _$double.pointer,
     ).object<jni$_.JDouble?>();
   }
 
-  static final _id_pigeon_echoNullableBool = NativeInteropHostIntegrationCoreApiRegistrar._class
-      .instanceMethodId(r'pigeon_echoNullableBool', r'(Ljava/lang/Boolean;)Ljava/lang/Boolean;');
+  static final _id_echoNullableBool = NativeInteropHostIntegrationCoreApiRegistrar._class
+      .instanceMethodId(r'echoNullableBool', r'(Ljava/lang/Boolean;)Ljava/lang/Boolean;');
 
-  static final _pigeon_echoNullableBool =
+  static final _echoNullableBool =
       jni$_.ProtectedJniExtensions.lookup<
             jni$_.NativeFunction<
               jni$_.JniResult Function(
@@ -2025,22 +1931,22 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
             )
           >();
 
-  /// from: `public fun pigeon_echoNullableBool(aNullableBool: kotlin.Boolean?): kotlin.Boolean?`
+  /// from: `public fun echoNullableBool(aNullableBool: kotlin.Boolean?): kotlin.Boolean?`
   /// The returned object must be released after use, by calling the [release] method.
-  jni$_.JBoolean? pigeon_echoNullableBool(jni$_.JBoolean? boolean) {
+  jni$_.JBoolean? echoNullableBool(jni$_.JBoolean? boolean) {
     final _$$selfRef = reference;
     final _$boolean = boolean?.reference ?? jni$_.jNullReference;
-    return _pigeon_echoNullableBool(
+    return _echoNullableBool(
       _$$selfRef.pointer,
-      _id_pigeon_echoNullableBool.pointer,
+      _id_echoNullableBool.pointer,
       _$boolean.pointer,
     ).object<jni$_.JBoolean?>();
   }
 
-  static final _id_pigeon_echoNullableString = NativeInteropHostIntegrationCoreApiRegistrar._class
-      .instanceMethodId(r'pigeon_echoNullableString', r'(Ljava/lang/String;)Ljava/lang/String;');
+  static final _id_echoNullableString = NativeInteropHostIntegrationCoreApiRegistrar._class
+      .instanceMethodId(r'echoNullableString', r'(Ljava/lang/String;)Ljava/lang/String;');
 
-  static final _pigeon_echoNullableString =
+  static final _echoNullableString =
       jni$_.ProtectedJniExtensions.lookup<
             jni$_.NativeFunction<
               jni$_.JniResult Function(
@@ -2058,23 +1964,22 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
             )
           >();
 
-  /// from: `public fun pigeon_echoNullableString(aNullableString: kotlin.String?): kotlin.String?`
+  /// from: `public fun echoNullableString(aNullableString: kotlin.String?): kotlin.String?`
   /// The returned object must be released after use, by calling the [release] method.
-  jni$_.JString? pigeon_echoNullableString(jni$_.JString? string) {
+  jni$_.JString? echoNullableString(jni$_.JString? string) {
     final _$$selfRef = reference;
     final _$string = string?.reference ?? jni$_.jNullReference;
-    return _pigeon_echoNullableString(
+    return _echoNullableString(
       _$$selfRef.pointer,
-      _id_pigeon_echoNullableString.pointer,
+      _id_echoNullableString.pointer,
       _$string.pointer,
     ).object<jni$_.JString?>();
   }
 
-  static final _id_pigeon_echoNullableUint8List = NativeInteropHostIntegrationCoreApiRegistrar
-      ._class
-      .instanceMethodId(r'pigeon_echoNullableUint8List', r'([B)[B');
+  static final _id_echoNullableUint8List = NativeInteropHostIntegrationCoreApiRegistrar._class
+      .instanceMethodId(r'echoNullableUint8List', r'([B)[B');
 
-  static final _pigeon_echoNullableUint8List =
+  static final _echoNullableUint8List =
       jni$_.ProtectedJniExtensions.lookup<
             jni$_.NativeFunction<
               jni$_.JniResult Function(
@@ -2092,23 +1997,22 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
             )
           >();
 
-  /// from: `public fun pigeon_echoNullableUint8List(aNullableUint8List: kotlin.ByteArray?): kotlin.ByteArray?`
+  /// from: `public fun echoNullableUint8List(aNullableUint8List: kotlin.ByteArray?): kotlin.ByteArray?`
   /// The returned object must be released after use, by calling the [release] method.
-  jni$_.JByteArray? pigeon_echoNullableUint8List(jni$_.JByteArray? bs) {
+  jni$_.JByteArray? echoNullableUint8List(jni$_.JByteArray? bs) {
     final _$$selfRef = reference;
     final _$bs = bs?.reference ?? jni$_.jNullReference;
-    return _pigeon_echoNullableUint8List(
+    return _echoNullableUint8List(
       _$$selfRef.pointer,
-      _id_pigeon_echoNullableUint8List.pointer,
+      _id_echoNullableUint8List.pointer,
       _$bs.pointer,
     ).object<jni$_.JByteArray?>();
   }
 
-  static final _id_pigeon_echoNullableInt32List = NativeInteropHostIntegrationCoreApiRegistrar
-      ._class
-      .instanceMethodId(r'pigeon_echoNullableInt32List', r'([I)[I');
+  static final _id_echoNullableInt32List = NativeInteropHostIntegrationCoreApiRegistrar._class
+      .instanceMethodId(r'echoNullableInt32List', r'([I)[I');
 
-  static final _pigeon_echoNullableInt32List =
+  static final _echoNullableInt32List =
       jni$_.ProtectedJniExtensions.lookup<
             jni$_.NativeFunction<
               jni$_.JniResult Function(
@@ -2126,23 +2030,22 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
             )
           >();
 
-  /// from: `public fun pigeon_echoNullableInt32List(aNullableInt32List: kotlin.IntArray?): kotlin.IntArray?`
+  /// from: `public fun echoNullableInt32List(aNullableInt32List: kotlin.IntArray?): kotlin.IntArray?`
   /// The returned object must be released after use, by calling the [release] method.
-  jni$_.JIntArray? pigeon_echoNullableInt32List(jni$_.JIntArray? is$) {
+  jni$_.JIntArray? echoNullableInt32List(jni$_.JIntArray? is$) {
     final _$$selfRef = reference;
     final _$is$ = is$?.reference ?? jni$_.jNullReference;
-    return _pigeon_echoNullableInt32List(
+    return _echoNullableInt32List(
       _$$selfRef.pointer,
-      _id_pigeon_echoNullableInt32List.pointer,
+      _id_echoNullableInt32List.pointer,
       _$is$.pointer,
     ).object<jni$_.JIntArray?>();
   }
 
-  static final _id_pigeon_echoNullableInt64List = NativeInteropHostIntegrationCoreApiRegistrar
-      ._class
-      .instanceMethodId(r'pigeon_echoNullableInt64List', r'([J)[J');
+  static final _id_echoNullableInt64List = NativeInteropHostIntegrationCoreApiRegistrar._class
+      .instanceMethodId(r'echoNullableInt64List', r'([J)[J');
 
-  static final _pigeon_echoNullableInt64List =
+  static final _echoNullableInt64List =
       jni$_.ProtectedJniExtensions.lookup<
             jni$_.NativeFunction<
               jni$_.JniResult Function(
@@ -2160,23 +2063,22 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
             )
           >();
 
-  /// from: `public fun pigeon_echoNullableInt64List(aNullableInt64List: kotlin.LongArray?): kotlin.LongArray?`
+  /// from: `public fun echoNullableInt64List(aNullableInt64List: kotlin.LongArray?): kotlin.LongArray?`
   /// The returned object must be released after use, by calling the [release] method.
-  jni$_.JLongArray? pigeon_echoNullableInt64List(jni$_.JLongArray? js) {
+  jni$_.JLongArray? echoNullableInt64List(jni$_.JLongArray? js) {
     final _$$selfRef = reference;
     final _$js = js?.reference ?? jni$_.jNullReference;
-    return _pigeon_echoNullableInt64List(
+    return _echoNullableInt64List(
       _$$selfRef.pointer,
-      _id_pigeon_echoNullableInt64List.pointer,
+      _id_echoNullableInt64List.pointer,
       _$js.pointer,
     ).object<jni$_.JLongArray?>();
   }
 
-  static final _id_pigeon_echoNullableFloat64List = NativeInteropHostIntegrationCoreApiRegistrar
-      ._class
-      .instanceMethodId(r'pigeon_echoNullableFloat64List', r'([D)[D');
+  static final _id_echoNullableFloat64List = NativeInteropHostIntegrationCoreApiRegistrar._class
+      .instanceMethodId(r'echoNullableFloat64List', r'([D)[D');
 
-  static final _pigeon_echoNullableFloat64List =
+  static final _echoNullableFloat64List =
       jni$_.ProtectedJniExtensions.lookup<
             jni$_.NativeFunction<
               jni$_.JniResult Function(
@@ -2194,22 +2096,22 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
             )
           >();
 
-  /// from: `public fun pigeon_echoNullableFloat64List(aNullableFloat64List: kotlin.DoubleArray?): kotlin.DoubleArray?`
+  /// from: `public fun echoNullableFloat64List(aNullableFloat64List: kotlin.DoubleArray?): kotlin.DoubleArray?`
   /// The returned object must be released after use, by calling the [release] method.
-  jni$_.JDoubleArray? pigeon_echoNullableFloat64List(jni$_.JDoubleArray? ds) {
+  jni$_.JDoubleArray? echoNullableFloat64List(jni$_.JDoubleArray? ds) {
     final _$$selfRef = reference;
     final _$ds = ds?.reference ?? jni$_.jNullReference;
-    return _pigeon_echoNullableFloat64List(
+    return _echoNullableFloat64List(
       _$$selfRef.pointer,
-      _id_pigeon_echoNullableFloat64List.pointer,
+      _id_echoNullableFloat64List.pointer,
       _$ds.pointer,
     ).object<jni$_.JDoubleArray?>();
   }
 
-  static final _id_pigeon_echoNullableObject = NativeInteropHostIntegrationCoreApiRegistrar._class
-      .instanceMethodId(r'pigeon_echoNullableObject', r'([B)[B');
+  static final _id_echoNullableObject = NativeInteropHostIntegrationCoreApiRegistrar._class
+      .instanceMethodId(r'echoNullableObject', r'([B)[B');
 
-  static final _pigeon_echoNullableObject =
+  static final _echoNullableObject =
       jni$_.ProtectedJniExtensions.lookup<
             jni$_.NativeFunction<
               jni$_.JniResult Function(
@@ -2227,22 +2129,22 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
             )
           >();
 
-  /// from: `public fun pigeon_echoNullableObject(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
+  /// from: `public fun echoNullableObject(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
   /// The returned object must be released after use, by calling the [release] method.
-  jni$_.JByteArray? pigeon_echoNullableObject(jni$_.JByteArray bs) {
+  jni$_.JByteArray? echoNullableObject(jni$_.JByteArray bs) {
     final _$$selfRef = reference;
     final _$bs = bs.reference;
-    return _pigeon_echoNullableObject(
+    return _echoNullableObject(
       _$$selfRef.pointer,
-      _id_pigeon_echoNullableObject.pointer,
+      _id_echoNullableObject.pointer,
       _$bs.pointer,
     ).object<jni$_.JByteArray?>();
   }
 
-  static final _id_pigeon_echoNullableList = NativeInteropHostIntegrationCoreApiRegistrar._class
-      .instanceMethodId(r'pigeon_echoNullableList', r'([B)[B');
+  static final _id_echoNullableList = NativeInteropHostIntegrationCoreApiRegistrar._class
+      .instanceMethodId(r'echoNullableList', r'([B)[B');
 
-  static final _pigeon_echoNullableList =
+  static final _echoNullableList =
       jni$_.ProtectedJniExtensions.lookup<
             jni$_.NativeFunction<
               jni$_.JniResult Function(
@@ -2260,22 +2162,22 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
             )
           >();
 
-  /// from: `public fun pigeon_echoNullableList(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
+  /// from: `public fun echoNullableList(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
   /// The returned object must be released after use, by calling the [release] method.
-  jni$_.JByteArray? pigeon_echoNullableList(jni$_.JByteArray bs) {
+  jni$_.JByteArray? echoNullableList(jni$_.JByteArray bs) {
     final _$$selfRef = reference;
     final _$bs = bs.reference;
-    return _pigeon_echoNullableList(
+    return _echoNullableList(
       _$$selfRef.pointer,
-      _id_pigeon_echoNullableList.pointer,
+      _id_echoNullableList.pointer,
       _$bs.pointer,
     ).object<jni$_.JByteArray?>();
   }
 
-  static final _id_pigeon_echoNullableEnumList = NativeInteropHostIntegrationCoreApiRegistrar._class
-      .instanceMethodId(r'pigeon_echoNullableEnumList', r'([B)[B');
+  static final _id_echoNullableEnumList = NativeInteropHostIntegrationCoreApiRegistrar._class
+      .instanceMethodId(r'echoNullableEnumList', r'([B)[B');
 
-  static final _pigeon_echoNullableEnumList =
+  static final _echoNullableEnumList =
       jni$_.ProtectedJniExtensions.lookup<
             jni$_.NativeFunction<
               jni$_.JniResult Function(
@@ -2293,23 +2195,89 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
             )
           >();
 
-  /// from: `public fun pigeon_echoNullableEnumList(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
+  /// from: `public fun echoNullableEnumList(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
   /// The returned object must be released after use, by calling the [release] method.
-  jni$_.JByteArray? pigeon_echoNullableEnumList(jni$_.JByteArray bs) {
+  jni$_.JByteArray? echoNullableEnumList(jni$_.JByteArray bs) {
     final _$$selfRef = reference;
     final _$bs = bs.reference;
-    return _pigeon_echoNullableEnumList(
+    return _echoNullableEnumList(
       _$$selfRef.pointer,
-      _id_pigeon_echoNullableEnumList.pointer,
+      _id_echoNullableEnumList.pointer,
       _$bs.pointer,
     ).object<jni$_.JByteArray?>();
   }
 
-  static final _id_pigeon_echoNullableClassList = NativeInteropHostIntegrationCoreApiRegistrar
+  static final _id_echoNullableClassList = NativeInteropHostIntegrationCoreApiRegistrar._class
+      .instanceMethodId(r'echoNullableClassList', r'([B)[B');
+
+  static final _echoNullableClassList =
+      jni$_.ProtectedJniExtensions.lookup<
+            jni$_.NativeFunction<
+              jni$_.JniResult Function(
+                jni$_.Pointer<jni$_.Void>,
+                jni$_.JMethodIDPtr,
+                jni$_.VarArgs<(jni$_.Pointer<jni$_.Void>,)>,
+              )
+            >
+          >('globalEnv_CallObjectMethod')
+          .asFunction<
+            jni$_.JniResult Function(
+              jni$_.Pointer<jni$_.Void>,
+              jni$_.JMethodIDPtr,
+              jni$_.Pointer<jni$_.Void>,
+            )
+          >();
+
+  /// from: `public fun echoNullableClassList(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
+  /// The returned object must be released after use, by calling the [release] method.
+  jni$_.JByteArray? echoNullableClassList(jni$_.JByteArray bs) {
+    final _$$selfRef = reference;
+    final _$bs = bs.reference;
+    return _echoNullableClassList(
+      _$$selfRef.pointer,
+      _id_echoNullableClassList.pointer,
+      _$bs.pointer,
+    ).object<jni$_.JByteArray?>();
+  }
+
+  static final _id_echoNullableNonNullEnumList = NativeInteropHostIntegrationCoreApiRegistrar._class
+      .instanceMethodId(r'echoNullableNonNullEnumList', r'([B)[B');
+
+  static final _echoNullableNonNullEnumList =
+      jni$_.ProtectedJniExtensions.lookup<
+            jni$_.NativeFunction<
+              jni$_.JniResult Function(
+                jni$_.Pointer<jni$_.Void>,
+                jni$_.JMethodIDPtr,
+                jni$_.VarArgs<(jni$_.Pointer<jni$_.Void>,)>,
+              )
+            >
+          >('globalEnv_CallObjectMethod')
+          .asFunction<
+            jni$_.JniResult Function(
+              jni$_.Pointer<jni$_.Void>,
+              jni$_.JMethodIDPtr,
+              jni$_.Pointer<jni$_.Void>,
+            )
+          >();
+
+  /// from: `public fun echoNullableNonNullEnumList(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
+  /// The returned object must be released after use, by calling the [release] method.
+  jni$_.JByteArray? echoNullableNonNullEnumList(jni$_.JByteArray bs) {
+    final _$$selfRef = reference;
+    final _$bs = bs.reference;
+    return _echoNullableNonNullEnumList(
+      _$$selfRef.pointer,
+      _id_echoNullableNonNullEnumList.pointer,
+      _$bs.pointer,
+    ).object<jni$_.JByteArray?>();
+  }
+
+  static final _id_echoNullableNonNullClassList = NativeInteropHostIntegrationCoreApiRegistrar
       ._class
-      .instanceMethodId(r'pigeon_echoNullableClassList', r'([B)[B');
+      .instanceMethodId(r'echoNullableNonNullClassList', r'([B)[B');
 
-  static final _pigeon_echoNullableClassList =
+  static final _echoNullableNonNullClassList =
       jni$_.ProtectedJniExtensions.lookup<
             jni$_.NativeFunction<
               jni$_.JniResult Function(
@@ -2327,23 +2295,188 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
             )
           >();
 
-  /// from: `public fun pigeon_echoNullableClassList(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
+  /// from: `public fun echoNullableNonNullClassList(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
   /// The returned object must be released after use, by calling the [release] method.
-  jni$_.JByteArray? pigeon_echoNullableClassList(jni$_.JByteArray bs) {
+  jni$_.JByteArray? echoNullableNonNullClassList(jni$_.JByteArray bs) {
     final _$$selfRef = reference;
     final _$bs = bs.reference;
-    return _pigeon_echoNullableClassList(
+    return _echoNullableNonNullClassList(
       _$$selfRef.pointer,
-      _id_pigeon_echoNullableClassList.pointer,
+      _id_echoNullableNonNullClassList.pointer,
       _$bs.pointer,
     ).object<jni$_.JByteArray?>();
   }
 
-  static final _id_pigeon_echoNullableNonNullEnumList = NativeInteropHostIntegrationCoreApiRegistrar
+  static final _id_echoNullableMap = NativeInteropHostIntegrationCoreApiRegistrar._class
+      .instanceMethodId(r'echoNullableMap', r'([B)[B');
+
+  static final _echoNullableMap =
+      jni$_.ProtectedJniExtensions.lookup<
+            jni$_.NativeFunction<
+              jni$_.JniResult Function(
+                jni$_.Pointer<jni$_.Void>,
+                jni$_.JMethodIDPtr,
+                jni$_.VarArgs<(jni$_.Pointer<jni$_.Void>,)>,
+              )
+            >
+          >('globalEnv_CallObjectMethod')
+          .asFunction<
+            jni$_.JniResult Function(
+              jni$_.Pointer<jni$_.Void>,
+              jni$_.JMethodIDPtr,
+              jni$_.Pointer<jni$_.Void>,
+            )
+          >();
+
+  /// from: `public fun echoNullableMap(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
+  /// The returned object must be released after use, by calling the [release] method.
+  jni$_.JByteArray? echoNullableMap(jni$_.JByteArray bs) {
+    final _$$selfRef = reference;
+    final _$bs = bs.reference;
+    return _echoNullableMap(
+      _$$selfRef.pointer,
+      _id_echoNullableMap.pointer,
+      _$bs.pointer,
+    ).object<jni$_.JByteArray?>();
+  }
+
+  static final _id_echoNullableStringMap = NativeInteropHostIntegrationCoreApiRegistrar._class
+      .instanceMethodId(r'echoNullableStringMap', r'([B)[B');
+
+  static final _echoNullableStringMap =
+      jni$_.ProtectedJniExtensions.lookup<
+            jni$_.NativeFunction<
+              jni$_.JniResult Function(
+                jni$_.Pointer<jni$_.Void>,
+                jni$_.JMethodIDPtr,
+                jni$_.VarArgs<(jni$_.Pointer<jni$_.Void>,)>,
+              )
+            >
+          >('globalEnv_CallObjectMethod')
+          .asFunction<
+            jni$_.JniResult Function(
+              jni$_.Pointer<jni$_.Void>,
+              jni$_.JMethodIDPtr,
+              jni$_.Pointer<jni$_.Void>,
+            )
+          >();
+
+  /// from: `public fun echoNullableStringMap(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
+  /// The returned object must be released after use, by calling the [release] method.
+  jni$_.JByteArray? echoNullableStringMap(jni$_.JByteArray bs) {
+    final _$$selfRef = reference;
+    final _$bs = bs.reference;
+    return _echoNullableStringMap(
+      _$$selfRef.pointer,
+      _id_echoNullableStringMap.pointer,
+      _$bs.pointer,
+    ).object<jni$_.JByteArray?>();
+  }
+
+  static final _id_echoNullableIntMap = NativeInteropHostIntegrationCoreApiRegistrar._class
+      .instanceMethodId(r'echoNullableIntMap', r'([B)[B');
+
+  static final _echoNullableIntMap =
+      jni$_.ProtectedJniExtensions.lookup<
+            jni$_.NativeFunction<
+              jni$_.JniResult Function(
+                jni$_.Pointer<jni$_.Void>,
+                jni$_.JMethodIDPtr,
+                jni$_.VarArgs<(jni$_.Pointer<jni$_.Void>,)>,
+              )
+            >
+          >('globalEnv_CallObjectMethod')
+          .asFunction<
+            jni$_.JniResult Function(
+              jni$_.Pointer<jni$_.Void>,
+              jni$_.JMethodIDPtr,
+              jni$_.Pointer<jni$_.Void>,
+            )
+          >();
+
+  /// from: `public fun echoNullableIntMap(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
+  /// The returned object must be released after use, by calling the [release] method.
+  jni$_.JByteArray? echoNullableIntMap(jni$_.JByteArray bs) {
+    final _$$selfRef = reference;
+    final _$bs = bs.reference;
+    return _echoNullableIntMap(
+      _$$selfRef.pointer,
+      _id_echoNullableIntMap.pointer,
+      _$bs.pointer,
+    ).object<jni$_.JByteArray?>();
+  }
+
+  static final _id_echoNullableEnumMap = NativeInteropHostIntegrationCoreApiRegistrar._class
+      .instanceMethodId(r'echoNullableEnumMap', r'([B)[B');
+
+  static final _echoNullableEnumMap =
+      jni$_.ProtectedJniExtensions.lookup<
+            jni$_.NativeFunction<
+              jni$_.JniResult Function(
+                jni$_.Pointer<jni$_.Void>,
+                jni$_.JMethodIDPtr,
+                jni$_.VarArgs<(jni$_.Pointer<jni$_.Void>,)>,
+              )
+            >
+          >('globalEnv_CallObjectMethod')
+          .asFunction<
+            jni$_.JniResult Function(
+              jni$_.Pointer<jni$_.Void>,
+              jni$_.JMethodIDPtr,
+              jni$_.Pointer<jni$_.Void>,
+            )
+          >();
+
+  /// from: `public fun echoNullableEnumMap(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
+  /// The returned object must be released after use, by calling the [release] method.
+  jni$_.JByteArray? echoNullableEnumMap(jni$_.JByteArray bs) {
+    final _$$selfRef = reference;
+    final _$bs = bs.reference;
+    return _echoNullableEnumMap(
+      _$$selfRef.pointer,
+      _id_echoNullableEnumMap.pointer,
+      _$bs.pointer,
+    ).object<jni$_.JByteArray?>();
+  }
+
+  static final _id_echoNullableClassMap = NativeInteropHostIntegrationCoreApiRegistrar._class
+      .instanceMethodId(r'echoNullableClassMap', r'([B)[B');
+
+  static final _echoNullableClassMap =
+      jni$_.ProtectedJniExtensions.lookup<
+            jni$_.NativeFunction<
+              jni$_.JniResult Function(
+                jni$_.Pointer<jni$_.Void>,
+                jni$_.JMethodIDPtr,
+                jni$_.VarArgs<(jni$_.Pointer<jni$_.Void>,)>,
+              )
+            >
+          >('globalEnv_CallObjectMethod')
+          .asFunction<
+            jni$_.JniResult Function(
+              jni$_.Pointer<jni$_.Void>,
+              jni$_.JMethodIDPtr,
+              jni$_.Pointer<jni$_.Void>,
+            )
+          >();
+
+  /// from: `public fun echoNullableClassMap(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
+  /// The returned object must be released after use, by calling the [release] method.
+  jni$_.JByteArray? echoNullableClassMap(jni$_.JByteArray bs) {
+    final _$$selfRef = reference;
+    final _$bs = bs.reference;
+    return _echoNullableClassMap(
+      _$$selfRef.pointer,
+      _id_echoNullableClassMap.pointer,
+      _$bs.pointer,
+    ).object<jni$_.JByteArray?>();
+  }
+
+  static final _id_echoNullableNonNullStringMap = NativeInteropHostIntegrationCoreApiRegistrar
       ._class
-      .instanceMethodId(r'pigeon_echoNullableNonNullEnumList', r'([B)[B');
+      .instanceMethodId(r'echoNullableNonNullStringMap', r'([B)[B');
 
-  static final _pigeon_echoNullableNonNullEnumList =
+  static final _echoNullableNonNullStringMap =
       jni$_.ProtectedJniExtensions.lookup<
             jni$_.NativeFunction<
               jni$_.JniResult Function(
@@ -2361,25 +2494,22 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
             )
           >();
 
-  /// from: `public fun pigeon_echoNullableNonNullEnumList(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
+  /// from: `public fun echoNullableNonNullStringMap(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
   /// The returned object must be released after use, by calling the [release] method.
-  jni$_.JByteArray? pigeon_echoNullableNonNullEnumList(jni$_.JByteArray bs) {
+  jni$_.JByteArray? echoNullableNonNullStringMap(jni$_.JByteArray bs) {
     final _$$selfRef = reference;
     final _$bs = bs.reference;
-    return _pigeon_echoNullableNonNullEnumList(
+    return _echoNullableNonNullStringMap(
       _$$selfRef.pointer,
-      _id_pigeon_echoNullableNonNullEnumList.pointer,
+      _id_echoNullableNonNullStringMap.pointer,
       _$bs.pointer,
     ).object<jni$_.JByteArray?>();
   }
 
-  static final _id_pigeon_echoNullableNonNullClassList =
-      NativeInteropHostIntegrationCoreApiRegistrar._class.instanceMethodId(
-        r'pigeon_echoNullableNonNullClassList',
-        r'([B)[B',
-      );
+  static final _id_echoNullableNonNullIntMap = NativeInteropHostIntegrationCoreApiRegistrar._class
+      .instanceMethodId(r'echoNullableNonNullIntMap', r'([B)[B');
 
-  static final _pigeon_echoNullableNonNullClassList =
+  static final _echoNullableNonNullIntMap =
       jni$_.ProtectedJniExtensions.lookup<
             jni$_.NativeFunction<
               jni$_.JniResult Function(
@@ -2397,22 +2527,22 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
             )
           >();
 
-  /// from: `public fun pigeon_echoNullableNonNullClassList(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
+  /// from: `public fun echoNullableNonNullIntMap(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
   /// The returned object must be released after use, by calling the [release] method.
-  jni$_.JByteArray? pigeon_echoNullableNonNullClassList(jni$_.JByteArray bs) {
+  jni$_.JByteArray? echoNullableNonNullIntMap(jni$_.JByteArray bs) {
     final _$$selfRef = reference;
     final _$bs = bs.reference;
-    return _pigeon_echoNullableNonNullClassList(
+    return _echoNullableNonNullIntMap(
       _$$selfRef.pointer,
-      _id_pigeon_echoNullableNonNullClassList.pointer,
+      _id_echoNullableNonNullIntMap.pointer,
       _$bs.pointer,
     ).object<jni$_.JByteArray?>();
   }
 
-  static final _id_pigeon_echoNullableMap = NativeInteropHostIntegrationCoreApiRegistrar._class
-      .instanceMethodId(r'pigeon_echoNullableMap', r'([B)[B');
+  static final _id_echoNullableNonNullEnumMap = NativeInteropHostIntegrationCoreApiRegistrar._class
+      .instanceMethodId(r'echoNullableNonNullEnumMap', r'([B)[B');
 
-  static final _pigeon_echoNullableMap =
+  static final _echoNullableNonNullEnumMap =
       jni$_.ProtectedJniExtensions.lookup<
             jni$_.NativeFunction<
               jni$_.JniResult Function(
@@ -2430,23 +2560,22 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
             )
           >();
 
-  /// from: `public fun pigeon_echoNullableMap(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
+  /// from: `public fun echoNullableNonNullEnumMap(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
   /// The returned object must be released after use, by calling the [release] method.
-  jni$_.JByteArray? pigeon_echoNullableMap(jni$_.JByteArray bs) {
+  jni$_.JByteArray? echoNullableNonNullEnumMap(jni$_.JByteArray bs) {
     final _$$selfRef = reference;
     final _$bs = bs.reference;
-    return _pigeon_echoNullableMap(
+    return _echoNullableNonNullEnumMap(
       _$$selfRef.pointer,
-      _id_pigeon_echoNullableMap.pointer,
+      _id_echoNullableNonNullEnumMap.pointer,
       _$bs.pointer,
     ).object<jni$_.JByteArray?>();
   }
 
-  static final _id_pigeon_echoNullableStringMap = NativeInteropHostIntegrationCoreApiRegistrar
-      ._class
-      .instanceMethodId(r'pigeon_echoNullableStringMap', r'([B)[B');
+  static final _id_echoNullableNonNullClassMap = NativeInteropHostIntegrationCoreApiRegistrar._class
+      .instanceMethodId(r'echoNullableNonNullClassMap', r'([B)[B');
 
-  static final _pigeon_echoNullableStringMap =
+  static final _echoNullableNonNullClassMap =
       jni$_.ProtectedJniExtensions.lookup<
             jni$_.NativeFunction<
               jni$_.JniResult Function(
@@ -2464,259 +2593,22 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
             )
           >();
 
-  /// from: `public fun pigeon_echoNullableStringMap(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
+  /// from: `public fun echoNullableNonNullClassMap(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
   /// The returned object must be released after use, by calling the [release] method.
-  jni$_.JByteArray? pigeon_echoNullableStringMap(jni$_.JByteArray bs) {
+  jni$_.JByteArray? echoNullableNonNullClassMap(jni$_.JByteArray bs) {
     final _$$selfRef = reference;
     final _$bs = bs.reference;
-    return _pigeon_echoNullableStringMap(
+    return _echoNullableNonNullClassMap(
       _$$selfRef.pointer,
-      _id_pigeon_echoNullableStringMap.pointer,
+      _id_echoNullableNonNullClassMap.pointer,
       _$bs.pointer,
     ).object<jni$_.JByteArray?>();
   }
 
-  static final _id_pigeon_echoNullableIntMap = NativeInteropHostIntegrationCoreApiRegistrar._class
-      .instanceMethodId(r'pigeon_echoNullableIntMap', r'([B)[B');
+  static final _id_echoNullableEnum = NativeInteropHostIntegrationCoreApiRegistrar._class
+      .instanceMethodId(r'echoNullableEnum', r'(J)J');
 
-  static final _pigeon_echoNullableIntMap =
-      jni$_.ProtectedJniExtensions.lookup<
-            jni$_.NativeFunction<
-              jni$_.JniResult Function(
-                jni$_.Pointer<jni$_.Void>,
-                jni$_.JMethodIDPtr,
-                jni$_.VarArgs<(jni$_.Pointer<jni$_.Void>,)>,
-              )
-            >
-          >('globalEnv_CallObjectMethod')
-          .asFunction<
-            jni$_.JniResult Function(
-              jni$_.Pointer<jni$_.Void>,
-              jni$_.JMethodIDPtr,
-              jni$_.Pointer<jni$_.Void>,
-            )
-          >();
-
-  /// from: `public fun pigeon_echoNullableIntMap(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
-  /// The returned object must be released after use, by calling the [release] method.
-  jni$_.JByteArray? pigeon_echoNullableIntMap(jni$_.JByteArray bs) {
-    final _$$selfRef = reference;
-    final _$bs = bs.reference;
-    return _pigeon_echoNullableIntMap(
-      _$$selfRef.pointer,
-      _id_pigeon_echoNullableIntMap.pointer,
-      _$bs.pointer,
-    ).object<jni$_.JByteArray?>();
-  }
-
-  static final _id_pigeon_echoNullableEnumMap = NativeInteropHostIntegrationCoreApiRegistrar._class
-      .instanceMethodId(r'pigeon_echoNullableEnumMap', r'([B)[B');
-
-  static final _pigeon_echoNullableEnumMap =
-      jni$_.ProtectedJniExtensions.lookup<
-            jni$_.NativeFunction<
-              jni$_.JniResult Function(
-                jni$_.Pointer<jni$_.Void>,
-                jni$_.JMethodIDPtr,
-                jni$_.VarArgs<(jni$_.Pointer<jni$_.Void>,)>,
-              )
-            >
-          >('globalEnv_CallObjectMethod')
-          .asFunction<
-            jni$_.JniResult Function(
-              jni$_.Pointer<jni$_.Void>,
-              jni$_.JMethodIDPtr,
-              jni$_.Pointer<jni$_.Void>,
-            )
-          >();
-
-  /// from: `public fun pigeon_echoNullableEnumMap(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
-  /// The returned object must be released after use, by calling the [release] method.
-  jni$_.JByteArray? pigeon_echoNullableEnumMap(jni$_.JByteArray bs) {
-    final _$$selfRef = reference;
-    final _$bs = bs.reference;
-    return _pigeon_echoNullableEnumMap(
-      _$$selfRef.pointer,
-      _id_pigeon_echoNullableEnumMap.pointer,
-      _$bs.pointer,
-    ).object<jni$_.JByteArray?>();
-  }
-
-  static final _id_pigeon_echoNullableClassMap = NativeInteropHostIntegrationCoreApiRegistrar._class
-      .instanceMethodId(r'pigeon_echoNullableClassMap', r'([B)[B');
-
-  static final _pigeon_echoNullableClassMap =
-      jni$_.ProtectedJniExtensions.lookup<
-            jni$_.NativeFunction<
-              jni$_.JniResult Function(
-                jni$_.Pointer<jni$_.Void>,
-                jni$_.JMethodIDPtr,
-                jni$_.VarArgs<(jni$_.Pointer<jni$_.Void>,)>,
-              )
-            >
-          >('globalEnv_CallObjectMethod')
-          .asFunction<
-            jni$_.JniResult Function(
-              jni$_.Pointer<jni$_.Void>,
-              jni$_.JMethodIDPtr,
-              jni$_.Pointer<jni$_.Void>,
-            )
-          >();
-
-  /// from: `public fun pigeon_echoNullableClassMap(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
-  /// The returned object must be released after use, by calling the [release] method.
-  jni$_.JByteArray? pigeon_echoNullableClassMap(jni$_.JByteArray bs) {
-    final _$$selfRef = reference;
-    final _$bs = bs.reference;
-    return _pigeon_echoNullableClassMap(
-      _$$selfRef.pointer,
-      _id_pigeon_echoNullableClassMap.pointer,
-      _$bs.pointer,
-    ).object<jni$_.JByteArray?>();
-  }
-
-  static final _id_pigeon_echoNullableNonNullStringMap =
-      NativeInteropHostIntegrationCoreApiRegistrar._class.instanceMethodId(
-        r'pigeon_echoNullableNonNullStringMap',
-        r'([B)[B',
-      );
-
-  static final _pigeon_echoNullableNonNullStringMap =
-      jni$_.ProtectedJniExtensions.lookup<
-            jni$_.NativeFunction<
-              jni$_.JniResult Function(
-                jni$_.Pointer<jni$_.Void>,
-                jni$_.JMethodIDPtr,
-                jni$_.VarArgs<(jni$_.Pointer<jni$_.Void>,)>,
-              )
-            >
-          >('globalEnv_CallObjectMethod')
-          .asFunction<
-            jni$_.JniResult Function(
-              jni$_.Pointer<jni$_.Void>,
-              jni$_.JMethodIDPtr,
-              jni$_.Pointer<jni$_.Void>,
-            )
-          >();
-
-  /// from: `public fun pigeon_echoNullableNonNullStringMap(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
-  /// The returned object must be released after use, by calling the [release] method.
-  jni$_.JByteArray? pigeon_echoNullableNonNullStringMap(jni$_.JByteArray bs) {
-    final _$$selfRef = reference;
-    final _$bs = bs.reference;
-    return _pigeon_echoNullableNonNullStringMap(
-      _$$selfRef.pointer,
-      _id_pigeon_echoNullableNonNullStringMap.pointer,
-      _$bs.pointer,
-    ).object<jni$_.JByteArray?>();
-  }
-
-  static final _id_pigeon_echoNullableNonNullIntMap = NativeInteropHostIntegrationCoreApiRegistrar
-      ._class
-      .instanceMethodId(r'pigeon_echoNullableNonNullIntMap', r'([B)[B');
-
-  static final _pigeon_echoNullableNonNullIntMap =
-      jni$_.ProtectedJniExtensions.lookup<
-            jni$_.NativeFunction<
-              jni$_.JniResult Function(
-                jni$_.Pointer<jni$_.Void>,
-                jni$_.JMethodIDPtr,
-                jni$_.VarArgs<(jni$_.Pointer<jni$_.Void>,)>,
-              )
-            >
-          >('globalEnv_CallObjectMethod')
-          .asFunction<
-            jni$_.JniResult Function(
-              jni$_.Pointer<jni$_.Void>,
-              jni$_.JMethodIDPtr,
-              jni$_.Pointer<jni$_.Void>,
-            )
-          >();
-
-  /// from: `public fun pigeon_echoNullableNonNullIntMap(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
-  /// The returned object must be released after use, by calling the [release] method.
-  jni$_.JByteArray? pigeon_echoNullableNonNullIntMap(jni$_.JByteArray bs) {
-    final _$$selfRef = reference;
-    final _$bs = bs.reference;
-    return _pigeon_echoNullableNonNullIntMap(
-      _$$selfRef.pointer,
-      _id_pigeon_echoNullableNonNullIntMap.pointer,
-      _$bs.pointer,
-    ).object<jni$_.JByteArray?>();
-  }
-
-  static final _id_pigeon_echoNullableNonNullEnumMap = NativeInteropHostIntegrationCoreApiRegistrar
-      ._class
-      .instanceMethodId(r'pigeon_echoNullableNonNullEnumMap', r'([B)[B');
-
-  static final _pigeon_echoNullableNonNullEnumMap =
-      jni$_.ProtectedJniExtensions.lookup<
-            jni$_.NativeFunction<
-              jni$_.JniResult Function(
-                jni$_.Pointer<jni$_.Void>,
-                jni$_.JMethodIDPtr,
-                jni$_.VarArgs<(jni$_.Pointer<jni$_.Void>,)>,
-              )
-            >
-          >('globalEnv_CallObjectMethod')
-          .asFunction<
-            jni$_.JniResult Function(
-              jni$_.Pointer<jni$_.Void>,
-              jni$_.JMethodIDPtr,
-              jni$_.Pointer<jni$_.Void>,
-            )
-          >();
-
-  /// from: `public fun pigeon_echoNullableNonNullEnumMap(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
-  /// The returned object must be released after use, by calling the [release] method.
-  jni$_.JByteArray? pigeon_echoNullableNonNullEnumMap(jni$_.JByteArray bs) {
-    final _$$selfRef = reference;
-    final _$bs = bs.reference;
-    return _pigeon_echoNullableNonNullEnumMap(
-      _$$selfRef.pointer,
-      _id_pigeon_echoNullableNonNullEnumMap.pointer,
-      _$bs.pointer,
-    ).object<jni$_.JByteArray?>();
-  }
-
-  static final _id_pigeon_echoNullableNonNullClassMap = NativeInteropHostIntegrationCoreApiRegistrar
-      ._class
-      .instanceMethodId(r'pigeon_echoNullableNonNullClassMap', r'([B)[B');
-
-  static final _pigeon_echoNullableNonNullClassMap =
-      jni$_.ProtectedJniExtensions.lookup<
-            jni$_.NativeFunction<
-              jni$_.JniResult Function(
-                jni$_.Pointer<jni$_.Void>,
-                jni$_.JMethodIDPtr,
-                jni$_.VarArgs<(jni$_.Pointer<jni$_.Void>,)>,
-              )
-            >
-          >('globalEnv_CallObjectMethod')
-          .asFunction<
-            jni$_.JniResult Function(
-              jni$_.Pointer<jni$_.Void>,
-              jni$_.JMethodIDPtr,
-              jni$_.Pointer<jni$_.Void>,
-            )
-          >();
-
-  /// from: `public fun pigeon_echoNullableNonNullClassMap(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
-  /// The returned object must be released after use, by calling the [release] method.
-  jni$_.JByteArray? pigeon_echoNullableNonNullClassMap(jni$_.JByteArray bs) {
-    final _$$selfRef = reference;
-    final _$bs = bs.reference;
-    return _pigeon_echoNullableNonNullClassMap(
-      _$$selfRef.pointer,
-      _id_pigeon_echoNullableNonNullClassMap.pointer,
-      _$bs.pointer,
-    ).object<jni$_.JByteArray?>();
-  }
-
-  static final _id_pigeon_echoNullableEnum = NativeInteropHostIntegrationCoreApiRegistrar._class
-      .instanceMethodId(r'pigeon_echoNullableEnum', r'(J)J');
-
-  static final _pigeon_echoNullableEnum =
+  static final _echoNullableEnum =
       jni$_.ProtectedJniExtensions.lookup<
             jni$_.NativeFunction<
               jni$_.JniResult Function(
@@ -2730,21 +2622,16 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
             jni$_.JniResult Function(jni$_.Pointer<jni$_.Void>, jni$_.JMethodIDPtr, core$_.int)
           >();
 
-  /// from: `public fun pigeon_echoNullableEnum(anEnum: kotlin.Long): kotlin.Long`
-  core$_.int pigeon_echoNullableEnum(core$_.int j) {
+  /// from: `public fun echoNullableEnum(anEnum: kotlin.Long): kotlin.Long`
+  core$_.int echoNullableEnum(core$_.int j) {
     final _$$selfRef = reference;
-    return _pigeon_echoNullableEnum(
-      _$$selfRef.pointer,
-      _id_pigeon_echoNullableEnum.pointer,
-      j,
-    ).long;
+    return _echoNullableEnum(_$$selfRef.pointer, _id_echoNullableEnum.pointer, j).long;
   }
 
-  static final _id_pigeon_echoAnotherNullableEnum = NativeInteropHostIntegrationCoreApiRegistrar
-      ._class
-      .instanceMethodId(r'pigeon_echoAnotherNullableEnum', r'(J)J');
+  static final _id_echoAnotherNullableEnum = NativeInteropHostIntegrationCoreApiRegistrar._class
+      .instanceMethodId(r'echoAnotherNullableEnum', r'(J)J');
 
-  static final _pigeon_echoAnotherNullableEnum =
+  static final _echoAnotherNullableEnum =
       jni$_.ProtectedJniExtensions.lookup<
             jni$_.NativeFunction<
               jni$_.JniResult Function(
@@ -2758,21 +2645,20 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
             jni$_.JniResult Function(jni$_.Pointer<jni$_.Void>, jni$_.JMethodIDPtr, core$_.int)
           >();
 
-  /// from: `public fun pigeon_echoAnotherNullableEnum(anotherEnum: kotlin.Long): kotlin.Long`
-  core$_.int pigeon_echoAnotherNullableEnum(core$_.int j) {
+  /// from: `public fun echoAnotherNullableEnum(anotherEnum: kotlin.Long): kotlin.Long`
+  core$_.int echoAnotherNullableEnum(core$_.int j) {
     final _$$selfRef = reference;
-    return _pigeon_echoAnotherNullableEnum(
+    return _echoAnotherNullableEnum(
       _$$selfRef.pointer,
-      _id_pigeon_echoAnotherNullableEnum.pointer,
+      _id_echoAnotherNullableEnum.pointer,
       j,
     ).long;
   }
 
-  static final _id_pigeon_echoOptionalNullableInt = NativeInteropHostIntegrationCoreApiRegistrar
-      ._class
-      .instanceMethodId(r'pigeon_echoOptionalNullableInt', r'(Ljava/lang/Long;)Ljava/lang/Long;');
+  static final _id_echoOptionalNullableInt = NativeInteropHostIntegrationCoreApiRegistrar._class
+      .instanceMethodId(r'echoOptionalNullableInt', r'(Ljava/lang/Long;)Ljava/lang/Long;');
 
-  static final _pigeon_echoOptionalNullableInt =
+  static final _echoOptionalNullableInt =
       jni$_.ProtectedJniExtensions.lookup<
             jni$_.NativeFunction<
               jni$_.JniResult Function(
@@ -2790,26 +2676,22 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
             )
           >();
 
-  /// from: `public fun pigeon_echoOptionalNullableInt(aNullableInt: kotlin.Long?): kotlin.Long?`
+  /// from: `public fun echoOptionalNullableInt(aNullableInt: kotlin.Long?): kotlin.Long?`
   /// The returned object must be released after use, by calling the [release] method.
-  jni$_.JLong? pigeon_echoOptionalNullableInt(jni$_.JLong? long) {
+  jni$_.JLong? echoOptionalNullableInt(jni$_.JLong? long) {
     final _$$selfRef = reference;
     final _$long = long?.reference ?? jni$_.jNullReference;
-    return _pigeon_echoOptionalNullableInt(
+    return _echoOptionalNullableInt(
       _$$selfRef.pointer,
-      _id_pigeon_echoOptionalNullableInt.pointer,
+      _id_echoOptionalNullableInt.pointer,
       _$long.pointer,
     ).object<jni$_.JLong?>();
   }
 
-  static final _id_pigeon_echoNamedNullableString = NativeInteropHostIntegrationCoreApiRegistrar
-      ._class
-      .instanceMethodId(
-        r'pigeon_echoNamedNullableString',
-        r'(Ljava/lang/String;)Ljava/lang/String;',
-      );
+  static final _id_echoNamedNullableString = NativeInteropHostIntegrationCoreApiRegistrar._class
+      .instanceMethodId(r'echoNamedNullableString', r'(Ljava/lang/String;)Ljava/lang/String;');
 
-  static final _pigeon_echoNamedNullableString =
+  static final _echoNamedNullableString =
       jni$_.ProtectedJniExtensions.lookup<
             jni$_.NativeFunction<
               jni$_.JniResult Function(
@@ -2827,25 +2709,24 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
             )
           >();
 
-  /// from: `public fun pigeon_echoNamedNullableString(aNullableString: kotlin.String?): kotlin.String?`
+  /// from: `public fun echoNamedNullableString(aNullableString: kotlin.String?): kotlin.String?`
   /// The returned object must be released after use, by calling the [release] method.
-  jni$_.JString? pigeon_echoNamedNullableString(jni$_.JString? string) {
+  jni$_.JString? echoNamedNullableString(jni$_.JString? string) {
     final _$$selfRef = reference;
     final _$string = string?.reference ?? jni$_.jNullReference;
-    return _pigeon_echoNamedNullableString(
+    return _echoNamedNullableString(
       _$$selfRef.pointer,
-      _id_pigeon_echoNamedNullableString.pointer,
+      _id_echoNamedNullableString.pointer,
       _$string.pointer,
     ).object<jni$_.JString?>();
   }
 
-  static final _id_pigeon_noopAsync = NativeInteropHostIntegrationCoreApiRegistrar._class
-      .instanceMethodId(
-        r'pigeon_noopAsync',
-        r'(Lkotlin/coroutines/Continuation;)Ljava/lang/Object;',
-      );
+  static final _id_noopAsync = NativeInteropHostIntegrationCoreApiRegistrar._class.instanceMethodId(
+    r'noopAsync',
+    r'(Lkotlin/coroutines/Continuation;)Ljava/lang/Object;',
+  );
 
-  static final _pigeon_noopAsync =
+  static final _noopAsync =
       jni$_.ProtectedJniExtensions.lookup<
             jni$_.NativeFunction<
               jni$_.JniResult Function(
@@ -2863,15 +2744,15 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
             )
           >();
 
-  /// from: `public suspend fun pigeon_noopAsync(): kotlin.Unit`
+  /// from: `public suspend fun noopAsync(): kotlin.Unit`
   /// The returned object must be released after use, by calling the [release] method.
-  core$_.Future<void> pigeon_noopAsync() async {
+  core$_.Future<void> noopAsync() async {
     final $p = jni$_.ReceivePort();
     final _$continuation = jni$_.ProtectedJniExtensions.newPortContinuation($p);
     final _$$selfRef = reference;
-    final $r = _pigeon_noopAsync(
+    final $r = _noopAsync(
       _$$selfRef.pointer,
-      _id_pigeon_noopAsync.pointer,
+      _id_noopAsync.pointer,
       _$continuation.pointer,
     ).object<jni$_.JObject>();
     _$continuation.release();
@@ -2893,13 +2774,10 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
     return;
   }
 
-  static final _id_pigeon_echoAsyncInt = NativeInteropHostIntegrationCoreApiRegistrar._class
-      .instanceMethodId(
-        r'pigeon_echoAsyncInt',
-        r'(JLkotlin/coroutines/Continuation;)Ljava/lang/Object;',
-      );
+  static final _id_echoAsyncInt = NativeInteropHostIntegrationCoreApiRegistrar._class
+      .instanceMethodId(r'echoAsyncInt', r'(JLkotlin/coroutines/Continuation;)Ljava/lang/Object;');
 
-  static final _pigeon_echoAsyncInt =
+  static final _echoAsyncInt =
       jni$_.ProtectedJniExtensions.lookup<
             jni$_.NativeFunction<
               jni$_.JniResult Function(
@@ -2918,15 +2796,15 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
             )
           >();
 
-  /// from: `public suspend fun pigeon_echoAsyncInt(anInt: kotlin.Long): kotlin.Long`
+  /// from: `public suspend fun echoAsyncInt(anInt: kotlin.Long): kotlin.Long`
   /// The returned object must be released after use, by calling the [release] method.
-  core$_.Future<jni$_.JLong> pigeon_echoAsyncInt(core$_.int j) async {
+  core$_.Future<jni$_.JLong> echoAsyncInt(core$_.int j) async {
     final $p = jni$_.ReceivePort();
     final _$continuation = jni$_.ProtectedJniExtensions.newPortContinuation($p);
     final _$$selfRef = reference;
-    final $r = _pigeon_echoAsyncInt(
+    final $r = _echoAsyncInt(
       _$$selfRef.pointer,
-      _id_pigeon_echoAsyncInt.pointer,
+      _id_echoAsyncInt.pointer,
       j,
       _$continuation.pointer,
     ).object<jni$_.JObject>();
@@ -2949,13 +2827,13 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
     return $o.as<jni$_.JLong>(jni$_.JLong.type, releaseOriginal: true);
   }
 
-  static final _id_pigeon_echoAsyncDouble = NativeInteropHostIntegrationCoreApiRegistrar._class
+  static final _id_echoAsyncDouble = NativeInteropHostIntegrationCoreApiRegistrar._class
       .instanceMethodId(
-        r'pigeon_echoAsyncDouble',
+        r'echoAsyncDouble',
         r'(DLkotlin/coroutines/Continuation;)Ljava/lang/Object;',
       );
 
-  static final _pigeon_echoAsyncDouble =
+  static final _echoAsyncDouble =
       jni$_.ProtectedJniExtensions.lookup<
             jni$_.NativeFunction<
               jni$_.JniResult Function(
@@ -2974,15 +2852,15 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
             )
           >();
 
-  /// from: `public suspend fun pigeon_echoAsyncDouble(aDouble: kotlin.Double): kotlin.Double`
+  /// from: `public suspend fun echoAsyncDouble(aDouble: kotlin.Double): kotlin.Double`
   /// The returned object must be released after use, by calling the [release] method.
-  core$_.Future<jni$_.JDouble> pigeon_echoAsyncDouble(core$_.double d) async {
+  core$_.Future<jni$_.JDouble> echoAsyncDouble(core$_.double d) async {
     final $p = jni$_.ReceivePort();
     final _$continuation = jni$_.ProtectedJniExtensions.newPortContinuation($p);
     final _$$selfRef = reference;
-    final $r = _pigeon_echoAsyncDouble(
+    final $r = _echoAsyncDouble(
       _$$selfRef.pointer,
-      _id_pigeon_echoAsyncDouble.pointer,
+      _id_echoAsyncDouble.pointer,
       d,
       _$continuation.pointer,
     ).object<jni$_.JObject>();
@@ -3005,13 +2883,10 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
     return $o.as<jni$_.JDouble>(jni$_.JDouble.type, releaseOriginal: true);
   }
 
-  static final _id_pigeon_echoAsyncBool = NativeInteropHostIntegrationCoreApiRegistrar._class
-      .instanceMethodId(
-        r'pigeon_echoAsyncBool',
-        r'(ZLkotlin/coroutines/Continuation;)Ljava/lang/Object;',
-      );
+  static final _id_echoAsyncBool = NativeInteropHostIntegrationCoreApiRegistrar._class
+      .instanceMethodId(r'echoAsyncBool', r'(ZLkotlin/coroutines/Continuation;)Ljava/lang/Object;');
 
-  static final _pigeon_echoAsyncBool =
+  static final _echoAsyncBool =
       jni$_.ProtectedJniExtensions.lookup<
             jni$_.NativeFunction<
               jni$_.JniResult Function(
@@ -3030,15 +2905,15 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
             )
           >();
 
-  /// from: `public suspend fun pigeon_echoAsyncBool(aBool: kotlin.Boolean): kotlin.Boolean`
+  /// from: `public suspend fun echoAsyncBool(aBool: kotlin.Boolean): kotlin.Boolean`
   /// The returned object must be released after use, by calling the [release] method.
-  core$_.Future<jni$_.JBoolean> pigeon_echoAsyncBool(core$_.bool z) async {
+  core$_.Future<jni$_.JBoolean> echoAsyncBool(core$_.bool z) async {
     final $p = jni$_.ReceivePort();
     final _$continuation = jni$_.ProtectedJniExtensions.newPortContinuation($p);
     final _$$selfRef = reference;
-    final $r = _pigeon_echoAsyncBool(
+    final $r = _echoAsyncBool(
       _$$selfRef.pointer,
-      _id_pigeon_echoAsyncBool.pointer,
+      _id_echoAsyncBool.pointer,
       z ? 1 : 0,
       _$continuation.pointer,
     ).object<jni$_.JObject>();
@@ -3061,13 +2936,13 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
     return $o.as<jni$_.JBoolean>(jni$_.JBoolean.type, releaseOriginal: true);
   }
 
-  static final _id_pigeon_echoAsyncString = NativeInteropHostIntegrationCoreApiRegistrar._class
+  static final _id_echoAsyncString = NativeInteropHostIntegrationCoreApiRegistrar._class
       .instanceMethodId(
-        r'pigeon_echoAsyncString',
+        r'echoAsyncString',
         r'(Ljava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;',
       );
 
-  static final _pigeon_echoAsyncString =
+  static final _echoAsyncString =
       jni$_.ProtectedJniExtensions.lookup<
             jni$_.NativeFunction<
               jni$_.JniResult Function(
@@ -3086,16 +2961,16 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
             )
           >();
 
-  /// from: `public suspend fun pigeon_echoAsyncString(aString: kotlin.String): kotlin.String`
+  /// from: `public suspend fun echoAsyncString(aString: kotlin.String): kotlin.String`
   /// The returned object must be released after use, by calling the [release] method.
-  core$_.Future<jni$_.JString> pigeon_echoAsyncString(jni$_.JString string) async {
+  core$_.Future<jni$_.JString> echoAsyncString(jni$_.JString string) async {
     final $p = jni$_.ReceivePort();
     final _$continuation = jni$_.ProtectedJniExtensions.newPortContinuation($p);
     final _$$selfRef = reference;
     final _$string = string.reference;
-    final $r = _pigeon_echoAsyncString(
+    final $r = _echoAsyncString(
       _$$selfRef.pointer,
-      _id_pigeon_echoAsyncString.pointer,
+      _id_echoAsyncString.pointer,
       _$string.pointer,
       _$continuation.pointer,
     ).object<jni$_.JObject>();
@@ -3118,13 +2993,13 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
     return $o.as<jni$_.JString>(jni$_.JString.type, releaseOriginal: true);
   }
 
-  static final _id_pigeon_echoAsyncUint8List = NativeInteropHostIntegrationCoreApiRegistrar._class
+  static final _id_echoAsyncUint8List = NativeInteropHostIntegrationCoreApiRegistrar._class
       .instanceMethodId(
-        r'pigeon_echoAsyncUint8List',
+        r'echoAsyncUint8List',
         r'([BLkotlin/coroutines/Continuation;)Ljava/lang/Object;',
       );
 
-  static final _pigeon_echoAsyncUint8List =
+  static final _echoAsyncUint8List =
       jni$_.ProtectedJniExtensions.lookup<
             jni$_.NativeFunction<
               jni$_.JniResult Function(
@@ -3143,16 +3018,16 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
             )
           >();
 
-  /// from: `public suspend fun pigeon_echoAsyncUint8List(aUint8List: kotlin.ByteArray): kotlin.ByteArray`
+  /// from: `public suspend fun echoAsyncUint8List(aUint8List: kotlin.ByteArray): kotlin.ByteArray`
   /// The returned object must be released after use, by calling the [release] method.
-  core$_.Future<jni$_.JByteArray> pigeon_echoAsyncUint8List(jni$_.JByteArray bs) async {
+  core$_.Future<jni$_.JByteArray> echoAsyncUint8List(jni$_.JByteArray bs) async {
     final $p = jni$_.ReceivePort();
     final _$continuation = jni$_.ProtectedJniExtensions.newPortContinuation($p);
     final _$$selfRef = reference;
     final _$bs = bs.reference;
-    final $r = _pigeon_echoAsyncUint8List(
+    final $r = _echoAsyncUint8List(
       _$$selfRef.pointer,
-      _id_pigeon_echoAsyncUint8List.pointer,
+      _id_echoAsyncUint8List.pointer,
       _$bs.pointer,
       _$continuation.pointer,
     ).object<jni$_.JObject>();
@@ -3175,13 +3050,13 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
     return $o.as<jni$_.JByteArray>(jni$_.JByteArray.type, releaseOriginal: true);
   }
 
-  static final _id_pigeon_echoAsyncInt32List = NativeInteropHostIntegrationCoreApiRegistrar._class
+  static final _id_echoAsyncInt32List = NativeInteropHostIntegrationCoreApiRegistrar._class
       .instanceMethodId(
-        r'pigeon_echoAsyncInt32List',
+        r'echoAsyncInt32List',
         r'([ILkotlin/coroutines/Continuation;)Ljava/lang/Object;',
       );
 
-  static final _pigeon_echoAsyncInt32List =
+  static final _echoAsyncInt32List =
       jni$_.ProtectedJniExtensions.lookup<
             jni$_.NativeFunction<
               jni$_.JniResult Function(
@@ -3200,16 +3075,16 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
             )
           >();
 
-  /// from: `public suspend fun pigeon_echoAsyncInt32List(aInt32List: kotlin.IntArray): kotlin.IntArray`
+  /// from: `public suspend fun echoAsyncInt32List(aInt32List: kotlin.IntArray): kotlin.IntArray`
   /// The returned object must be released after use, by calling the [release] method.
-  core$_.Future<jni$_.JIntArray> pigeon_echoAsyncInt32List(jni$_.JIntArray is$) async {
+  core$_.Future<jni$_.JIntArray> echoAsyncInt32List(jni$_.JIntArray is$) async {
     final $p = jni$_.ReceivePort();
     final _$continuation = jni$_.ProtectedJniExtensions.newPortContinuation($p);
     final _$$selfRef = reference;
     final _$is$ = is$.reference;
-    final $r = _pigeon_echoAsyncInt32List(
+    final $r = _echoAsyncInt32List(
       _$$selfRef.pointer,
-      _id_pigeon_echoAsyncInt32List.pointer,
+      _id_echoAsyncInt32List.pointer,
       _$is$.pointer,
       _$continuation.pointer,
     ).object<jni$_.JObject>();
@@ -3232,13 +3107,13 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
     return $o.as<jni$_.JIntArray>(jni$_.JIntArray.type, releaseOriginal: true);
   }
 
-  static final _id_pigeon_echoAsyncInt64List = NativeInteropHostIntegrationCoreApiRegistrar._class
+  static final _id_echoAsyncInt64List = NativeInteropHostIntegrationCoreApiRegistrar._class
       .instanceMethodId(
-        r'pigeon_echoAsyncInt64List',
+        r'echoAsyncInt64List',
         r'([JLkotlin/coroutines/Continuation;)Ljava/lang/Object;',
       );
 
-  static final _pigeon_echoAsyncInt64List =
+  static final _echoAsyncInt64List =
       jni$_.ProtectedJniExtensions.lookup<
             jni$_.NativeFunction<
               jni$_.JniResult Function(
@@ -3257,16 +3132,16 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
             )
           >();
 
-  /// from: `public suspend fun pigeon_echoAsyncInt64List(aInt64List: kotlin.LongArray): kotlin.LongArray`
+  /// from: `public suspend fun echoAsyncInt64List(aInt64List: kotlin.LongArray): kotlin.LongArray`
   /// The returned object must be released after use, by calling the [release] method.
-  core$_.Future<jni$_.JLongArray> pigeon_echoAsyncInt64List(jni$_.JLongArray js) async {
+  core$_.Future<jni$_.JLongArray> echoAsyncInt64List(jni$_.JLongArray js) async {
     final $p = jni$_.ReceivePort();
     final _$continuation = jni$_.ProtectedJniExtensions.newPortContinuation($p);
     final _$$selfRef = reference;
     final _$js = js.reference;
-    final $r = _pigeon_echoAsyncInt64List(
+    final $r = _echoAsyncInt64List(
       _$$selfRef.pointer,
-      _id_pigeon_echoAsyncInt64List.pointer,
+      _id_echoAsyncInt64List.pointer,
       _$js.pointer,
       _$continuation.pointer,
     ).object<jni$_.JObject>();
@@ -3289,13 +3164,13 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
     return $o.as<jni$_.JLongArray>(jni$_.JLongArray.type, releaseOriginal: true);
   }
 
-  static final _id_pigeon_echoAsyncFloat64List = NativeInteropHostIntegrationCoreApiRegistrar._class
+  static final _id_echoAsyncFloat64List = NativeInteropHostIntegrationCoreApiRegistrar._class
       .instanceMethodId(
-        r'pigeon_echoAsyncFloat64List',
+        r'echoAsyncFloat64List',
         r'([DLkotlin/coroutines/Continuation;)Ljava/lang/Object;',
       );
 
-  static final _pigeon_echoAsyncFloat64List =
+  static final _echoAsyncFloat64List =
       jni$_.ProtectedJniExtensions.lookup<
             jni$_.NativeFunction<
               jni$_.JniResult Function(
@@ -3314,16 +3189,16 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
             )
           >();
 
-  /// from: `public suspend fun pigeon_echoAsyncFloat64List(aFloat64List: kotlin.DoubleArray): kotlin.DoubleArray`
+  /// from: `public suspend fun echoAsyncFloat64List(aFloat64List: kotlin.DoubleArray): kotlin.DoubleArray`
   /// The returned object must be released after use, by calling the [release] method.
-  core$_.Future<jni$_.JDoubleArray> pigeon_echoAsyncFloat64List(jni$_.JDoubleArray ds) async {
+  core$_.Future<jni$_.JDoubleArray> echoAsyncFloat64List(jni$_.JDoubleArray ds) async {
     final $p = jni$_.ReceivePort();
     final _$continuation = jni$_.ProtectedJniExtensions.newPortContinuation($p);
     final _$$selfRef = reference;
     final _$ds = ds.reference;
-    final $r = _pigeon_echoAsyncFloat64List(
+    final $r = _echoAsyncFloat64List(
       _$$selfRef.pointer,
-      _id_pigeon_echoAsyncFloat64List.pointer,
+      _id_echoAsyncFloat64List.pointer,
       _$ds.pointer,
       _$continuation.pointer,
     ).object<jni$_.JObject>();
@@ -3346,13 +3221,13 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
     return $o.as<jni$_.JDoubleArray>(jni$_.JDoubleArray.type, releaseOriginal: true);
   }
 
-  static final _id_pigeon_echoAsyncObject = NativeInteropHostIntegrationCoreApiRegistrar._class
+  static final _id_echoAsyncObject = NativeInteropHostIntegrationCoreApiRegistrar._class
       .instanceMethodId(
-        r'pigeon_echoAsyncObject',
+        r'echoAsyncObject',
         r'([BLkotlin/coroutines/Continuation;)Ljava/lang/Object;',
       );
 
-  static final _pigeon_echoAsyncObject =
+  static final _echoAsyncObject =
       jni$_.ProtectedJniExtensions.lookup<
             jni$_.NativeFunction<
               jni$_.JniResult Function(
@@ -3371,16 +3246,16 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
             )
           >();
 
-  /// from: `public suspend fun pigeon_echoAsyncObject(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
+  /// from: `public suspend fun echoAsyncObject(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
   /// The returned object must be released after use, by calling the [release] method.
-  core$_.Future<jni$_.JByteArray?> pigeon_echoAsyncObject(jni$_.JByteArray bs) async {
+  core$_.Future<jni$_.JByteArray?> echoAsyncObject(jni$_.JByteArray bs) async {
     final $p = jni$_.ReceivePort();
     final _$continuation = jni$_.ProtectedJniExtensions.newPortContinuation($p);
     final _$$selfRef = reference;
     final _$bs = bs.reference;
-    final $r = _pigeon_echoAsyncObject(
+    final $r = _echoAsyncObject(
       _$$selfRef.pointer,
-      _id_pigeon_echoAsyncObject.pointer,
+      _id_echoAsyncObject.pointer,
       _$bs.pointer,
       _$continuation.pointer,
     ).object<jni$_.JObject?>();
@@ -3405,13 +3280,13 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
     return $o?.as<jni$_.JByteArray>(jni$_.JByteArray.type, releaseOriginal: true);
   }
 
-  static final _id_pigeon_echoAsyncList = NativeInteropHostIntegrationCoreApiRegistrar._class
+  static final _id_echoAsyncList = NativeInteropHostIntegrationCoreApiRegistrar._class
       .instanceMethodId(
-        r'pigeon_echoAsyncList',
+        r'echoAsyncList',
         r'([BLkotlin/coroutines/Continuation;)Ljava/lang/Object;',
       );
 
-  static final _pigeon_echoAsyncList =
+  static final _echoAsyncList =
       jni$_.ProtectedJniExtensions.lookup<
             jni$_.NativeFunction<
               jni$_.JniResult Function(
@@ -3430,16 +3305,16 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
             )
           >();
 
-  /// from: `public suspend fun pigeon_echoAsyncList(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
+  /// from: `public suspend fun echoAsyncList(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
   /// The returned object must be released after use, by calling the [release] method.
-  core$_.Future<jni$_.JByteArray?> pigeon_echoAsyncList(jni$_.JByteArray bs) async {
+  core$_.Future<jni$_.JByteArray?> echoAsyncList(jni$_.JByteArray bs) async {
     final $p = jni$_.ReceivePort();
     final _$continuation = jni$_.ProtectedJniExtensions.newPortContinuation($p);
     final _$$selfRef = reference;
     final _$bs = bs.reference;
-    final $r = _pigeon_echoAsyncList(
+    final $r = _echoAsyncList(
       _$$selfRef.pointer,
-      _id_pigeon_echoAsyncList.pointer,
+      _id_echoAsyncList.pointer,
       _$bs.pointer,
       _$continuation.pointer,
     ).object<jni$_.JObject?>();
@@ -3464,13 +3339,13 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
     return $o?.as<jni$_.JByteArray>(jni$_.JByteArray.type, releaseOriginal: true);
   }
 
-  static final _id_pigeon_echoAsyncEnumList = NativeInteropHostIntegrationCoreApiRegistrar._class
+  static final _id_echoAsyncEnumList = NativeInteropHostIntegrationCoreApiRegistrar._class
       .instanceMethodId(
-        r'pigeon_echoAsyncEnumList',
+        r'echoAsyncEnumList',
         r'([BLkotlin/coroutines/Continuation;)Ljava/lang/Object;',
       );
 
-  static final _pigeon_echoAsyncEnumList =
+  static final _echoAsyncEnumList =
       jni$_.ProtectedJniExtensions.lookup<
             jni$_.NativeFunction<
               jni$_.JniResult Function(
@@ -3489,16 +3364,16 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
             )
           >();
 
-  /// from: `public suspend fun pigeon_echoAsyncEnumList(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
+  /// from: `public suspend fun echoAsyncEnumList(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
   /// The returned object must be released after use, by calling the [release] method.
-  core$_.Future<jni$_.JByteArray?> pigeon_echoAsyncEnumList(jni$_.JByteArray bs) async {
+  core$_.Future<jni$_.JByteArray?> echoAsyncEnumList(jni$_.JByteArray bs) async {
     final $p = jni$_.ReceivePort();
     final _$continuation = jni$_.ProtectedJniExtensions.newPortContinuation($p);
     final _$$selfRef = reference;
     final _$bs = bs.reference;
-    final $r = _pigeon_echoAsyncEnumList(
+    final $r = _echoAsyncEnumList(
       _$$selfRef.pointer,
-      _id_pigeon_echoAsyncEnumList.pointer,
+      _id_echoAsyncEnumList.pointer,
       _$bs.pointer,
       _$continuation.pointer,
     ).object<jni$_.JObject?>();
@@ -3523,13 +3398,13 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
     return $o?.as<jni$_.JByteArray>(jni$_.JByteArray.type, releaseOriginal: true);
   }
 
-  static final _id_pigeon_echoAsyncClassList = NativeInteropHostIntegrationCoreApiRegistrar._class
+  static final _id_echoAsyncClassList = NativeInteropHostIntegrationCoreApiRegistrar._class
       .instanceMethodId(
-        r'pigeon_echoAsyncClassList',
+        r'echoAsyncClassList',
         r'([BLkotlin/coroutines/Continuation;)Ljava/lang/Object;',
       );
 
-  static final _pigeon_echoAsyncClassList =
+  static final _echoAsyncClassList =
       jni$_.ProtectedJniExtensions.lookup<
             jni$_.NativeFunction<
               jni$_.JniResult Function(
@@ -3548,16 +3423,16 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
             )
           >();
 
-  /// from: `public suspend fun pigeon_echoAsyncClassList(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
+  /// from: `public suspend fun echoAsyncClassList(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
   /// The returned object must be released after use, by calling the [release] method.
-  core$_.Future<jni$_.JByteArray?> pigeon_echoAsyncClassList(jni$_.JByteArray bs) async {
+  core$_.Future<jni$_.JByteArray?> echoAsyncClassList(jni$_.JByteArray bs) async {
     final $p = jni$_.ReceivePort();
     final _$continuation = jni$_.ProtectedJniExtensions.newPortContinuation($p);
     final _$$selfRef = reference;
     final _$bs = bs.reference;
-    final $r = _pigeon_echoAsyncClassList(
+    final $r = _echoAsyncClassList(
       _$$selfRef.pointer,
-      _id_pigeon_echoAsyncClassList.pointer,
+      _id_echoAsyncClassList.pointer,
       _$bs.pointer,
       _$continuation.pointer,
     ).object<jni$_.JObject?>();
@@ -3582,13 +3457,10 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
     return $o?.as<jni$_.JByteArray>(jni$_.JByteArray.type, releaseOriginal: true);
   }
 
-  static final _id_pigeon_echoAsyncMap = NativeInteropHostIntegrationCoreApiRegistrar._class
-      .instanceMethodId(
-        r'pigeon_echoAsyncMap',
-        r'([BLkotlin/coroutines/Continuation;)Ljava/lang/Object;',
-      );
+  static final _id_echoAsyncMap = NativeInteropHostIntegrationCoreApiRegistrar._class
+      .instanceMethodId(r'echoAsyncMap', r'([BLkotlin/coroutines/Continuation;)Ljava/lang/Object;');
 
-  static final _pigeon_echoAsyncMap =
+  static final _echoAsyncMap =
       jni$_.ProtectedJniExtensions.lookup<
             jni$_.NativeFunction<
               jni$_.JniResult Function(
@@ -3607,16 +3479,16 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
             )
           >();
 
-  /// from: `public suspend fun pigeon_echoAsyncMap(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
+  /// from: `public suspend fun echoAsyncMap(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
   /// The returned object must be released after use, by calling the [release] method.
-  core$_.Future<jni$_.JByteArray?> pigeon_echoAsyncMap(jni$_.JByteArray bs) async {
+  core$_.Future<jni$_.JByteArray?> echoAsyncMap(jni$_.JByteArray bs) async {
     final $p = jni$_.ReceivePort();
     final _$continuation = jni$_.ProtectedJniExtensions.newPortContinuation($p);
     final _$$selfRef = reference;
     final _$bs = bs.reference;
-    final $r = _pigeon_echoAsyncMap(
+    final $r = _echoAsyncMap(
       _$$selfRef.pointer,
-      _id_pigeon_echoAsyncMap.pointer,
+      _id_echoAsyncMap.pointer,
       _$bs.pointer,
       _$continuation.pointer,
     ).object<jni$_.JObject?>();
@@ -3641,13 +3513,13 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
     return $o?.as<jni$_.JByteArray>(jni$_.JByteArray.type, releaseOriginal: true);
   }
 
-  static final _id_pigeon_echoAsyncStringMap = NativeInteropHostIntegrationCoreApiRegistrar._class
+  static final _id_echoAsyncStringMap = NativeInteropHostIntegrationCoreApiRegistrar._class
       .instanceMethodId(
-        r'pigeon_echoAsyncStringMap',
+        r'echoAsyncStringMap',
         r'([BLkotlin/coroutines/Continuation;)Ljava/lang/Object;',
       );
 
-  static final _pigeon_echoAsyncStringMap =
+  static final _echoAsyncStringMap =
       jni$_.ProtectedJniExtensions.lookup<
             jni$_.NativeFunction<
               jni$_.JniResult Function(
@@ -3666,16 +3538,16 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
             )
           >();
 
-  /// from: `public suspend fun pigeon_echoAsyncStringMap(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
+  /// from: `public suspend fun echoAsyncStringMap(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
   /// The returned object must be released after use, by calling the [release] method.
-  core$_.Future<jni$_.JByteArray?> pigeon_echoAsyncStringMap(jni$_.JByteArray bs) async {
+  core$_.Future<jni$_.JByteArray?> echoAsyncStringMap(jni$_.JByteArray bs) async {
     final $p = jni$_.ReceivePort();
     final _$continuation = jni$_.ProtectedJniExtensions.newPortContinuation($p);
     final _$$selfRef = reference;
     final _$bs = bs.reference;
-    final $r = _pigeon_echoAsyncStringMap(
+    final $r = _echoAsyncStringMap(
       _$$selfRef.pointer,
-      _id_pigeon_echoAsyncStringMap.pointer,
+      _id_echoAsyncStringMap.pointer,
       _$bs.pointer,
       _$continuation.pointer,
     ).object<jni$_.JObject?>();
@@ -3700,13 +3572,13 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
     return $o?.as<jni$_.JByteArray>(jni$_.JByteArray.type, releaseOriginal: true);
   }
 
-  static final _id_pigeon_echoAsyncIntMap = NativeInteropHostIntegrationCoreApiRegistrar._class
+  static final _id_echoAsyncIntMap = NativeInteropHostIntegrationCoreApiRegistrar._class
       .instanceMethodId(
-        r'pigeon_echoAsyncIntMap',
+        r'echoAsyncIntMap',
         r'([BLkotlin/coroutines/Continuation;)Ljava/lang/Object;',
       );
 
-  static final _pigeon_echoAsyncIntMap =
+  static final _echoAsyncIntMap =
       jni$_.ProtectedJniExtensions.lookup<
             jni$_.NativeFunction<
               jni$_.JniResult Function(
@@ -3725,16 +3597,16 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
             )
           >();
 
-  /// from: `public suspend fun pigeon_echoAsyncIntMap(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
+  /// from: `public suspend fun echoAsyncIntMap(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
   /// The returned object must be released after use, by calling the [release] method.
-  core$_.Future<jni$_.JByteArray?> pigeon_echoAsyncIntMap(jni$_.JByteArray bs) async {
+  core$_.Future<jni$_.JByteArray?> echoAsyncIntMap(jni$_.JByteArray bs) async {
     final $p = jni$_.ReceivePort();
     final _$continuation = jni$_.ProtectedJniExtensions.newPortContinuation($p);
     final _$$selfRef = reference;
     final _$bs = bs.reference;
-    final $r = _pigeon_echoAsyncIntMap(
+    final $r = _echoAsyncIntMap(
       _$$selfRef.pointer,
-      _id_pigeon_echoAsyncIntMap.pointer,
+      _id_echoAsyncIntMap.pointer,
       _$bs.pointer,
       _$continuation.pointer,
     ).object<jni$_.JObject?>();
@@ -3759,13 +3631,13 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
     return $o?.as<jni$_.JByteArray>(jni$_.JByteArray.type, releaseOriginal: true);
   }
 
-  static final _id_pigeon_echoAsyncEnumMap = NativeInteropHostIntegrationCoreApiRegistrar._class
+  static final _id_echoAsyncEnumMap = NativeInteropHostIntegrationCoreApiRegistrar._class
       .instanceMethodId(
-        r'pigeon_echoAsyncEnumMap',
+        r'echoAsyncEnumMap',
         r'([BLkotlin/coroutines/Continuation;)Ljava/lang/Object;',
       );
 
-  static final _pigeon_echoAsyncEnumMap =
+  static final _echoAsyncEnumMap =
       jni$_.ProtectedJniExtensions.lookup<
             jni$_.NativeFunction<
               jni$_.JniResult Function(
@@ -3784,16 +3656,16 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
             )
           >();
 
-  /// from: `public suspend fun pigeon_echoAsyncEnumMap(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
+  /// from: `public suspend fun echoAsyncEnumMap(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
   /// The returned object must be released after use, by calling the [release] method.
-  core$_.Future<jni$_.JByteArray?> pigeon_echoAsyncEnumMap(jni$_.JByteArray bs) async {
+  core$_.Future<jni$_.JByteArray?> echoAsyncEnumMap(jni$_.JByteArray bs) async {
     final $p = jni$_.ReceivePort();
     final _$continuation = jni$_.ProtectedJniExtensions.newPortContinuation($p);
     final _$$selfRef = reference;
     final _$bs = bs.reference;
-    final $r = _pigeon_echoAsyncEnumMap(
+    final $r = _echoAsyncEnumMap(
       _$$selfRef.pointer,
-      _id_pigeon_echoAsyncEnumMap.pointer,
+      _id_echoAsyncEnumMap.pointer,
       _$bs.pointer,
       _$continuation.pointer,
     ).object<jni$_.JObject?>();
@@ -3818,13 +3690,13 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
     return $o?.as<jni$_.JByteArray>(jni$_.JByteArray.type, releaseOriginal: true);
   }
 
-  static final _id_pigeon_echoAsyncClassMap = NativeInteropHostIntegrationCoreApiRegistrar._class
+  static final _id_echoAsyncClassMap = NativeInteropHostIntegrationCoreApiRegistrar._class
       .instanceMethodId(
-        r'pigeon_echoAsyncClassMap',
+        r'echoAsyncClassMap',
         r'([BLkotlin/coroutines/Continuation;)Ljava/lang/Object;',
       );
 
-  static final _pigeon_echoAsyncClassMap =
+  static final _echoAsyncClassMap =
       jni$_.ProtectedJniExtensions.lookup<
             jni$_.NativeFunction<
               jni$_.JniResult Function(
@@ -3843,16 +3715,16 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
             )
           >();
 
-  /// from: `public suspend fun pigeon_echoAsyncClassMap(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
+  /// from: `public suspend fun echoAsyncClassMap(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
   /// The returned object must be released after use, by calling the [release] method.
-  core$_.Future<jni$_.JByteArray?> pigeon_echoAsyncClassMap(jni$_.JByteArray bs) async {
+  core$_.Future<jni$_.JByteArray?> echoAsyncClassMap(jni$_.JByteArray bs) async {
     final $p = jni$_.ReceivePort();
     final _$continuation = jni$_.ProtectedJniExtensions.newPortContinuation($p);
     final _$$selfRef = reference;
     final _$bs = bs.reference;
-    final $r = _pigeon_echoAsyncClassMap(
+    final $r = _echoAsyncClassMap(
       _$$selfRef.pointer,
-      _id_pigeon_echoAsyncClassMap.pointer,
+      _id_echoAsyncClassMap.pointer,
       _$bs.pointer,
       _$continuation.pointer,
     ).object<jni$_.JObject?>();
@@ -3877,13 +3749,10 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
     return $o?.as<jni$_.JByteArray>(jni$_.JByteArray.type, releaseOriginal: true);
   }
 
-  static final _id_pigeon_echoAsyncEnum = NativeInteropHostIntegrationCoreApiRegistrar._class
-      .instanceMethodId(
-        r'pigeon_echoAsyncEnum',
-        r'(JLkotlin/coroutines/Continuation;)Ljava/lang/Object;',
-      );
+  static final _id_echoAsyncEnum = NativeInteropHostIntegrationCoreApiRegistrar._class
+      .instanceMethodId(r'echoAsyncEnum', r'(JLkotlin/coroutines/Continuation;)Ljava/lang/Object;');
 
-  static final _pigeon_echoAsyncEnum =
+  static final _echoAsyncEnum =
       jni$_.ProtectedJniExtensions.lookup<
             jni$_.NativeFunction<
               jni$_.JniResult Function(
@@ -3902,15 +3771,15 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
             )
           >();
 
-  /// from: `public suspend fun pigeon_echoAsyncEnum(anEnum: kotlin.Long): kotlin.Long`
+  /// from: `public suspend fun echoAsyncEnum(anEnum: kotlin.Long): kotlin.Long`
   /// The returned object must be released after use, by calling the [release] method.
-  core$_.Future<jni$_.JLong> pigeon_echoAsyncEnum(core$_.int j) async {
+  core$_.Future<jni$_.JLong> echoAsyncEnum(core$_.int j) async {
     final $p = jni$_.ReceivePort();
     final _$continuation = jni$_.ProtectedJniExtensions.newPortContinuation($p);
     final _$$selfRef = reference;
-    final $r = _pigeon_echoAsyncEnum(
+    final $r = _echoAsyncEnum(
       _$$selfRef.pointer,
-      _id_pigeon_echoAsyncEnum.pointer,
+      _id_echoAsyncEnum.pointer,
       j,
       _$continuation.pointer,
     ).object<jni$_.JObject>();
@@ -3933,13 +3802,13 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
     return $o.as<jni$_.JLong>(jni$_.JLong.type, releaseOriginal: true);
   }
 
-  static final _id_pigeon_echoAnotherAsyncEnum = NativeInteropHostIntegrationCoreApiRegistrar._class
+  static final _id_echoAnotherAsyncEnum = NativeInteropHostIntegrationCoreApiRegistrar._class
       .instanceMethodId(
-        r'pigeon_echoAnotherAsyncEnum',
+        r'echoAnotherAsyncEnum',
         r'(JLkotlin/coroutines/Continuation;)Ljava/lang/Object;',
       );
 
-  static final _pigeon_echoAnotherAsyncEnum =
+  static final _echoAnotherAsyncEnum =
       jni$_.ProtectedJniExtensions.lookup<
             jni$_.NativeFunction<
               jni$_.JniResult Function(
@@ -3958,15 +3827,15 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
             )
           >();
 
-  /// from: `public suspend fun pigeon_echoAnotherAsyncEnum(anotherEnum: kotlin.Long): kotlin.Long`
+  /// from: `public suspend fun echoAnotherAsyncEnum(anotherEnum: kotlin.Long): kotlin.Long`
   /// The returned object must be released after use, by calling the [release] method.
-  core$_.Future<jni$_.JLong> pigeon_echoAnotherAsyncEnum(core$_.int j) async {
+  core$_.Future<jni$_.JLong> echoAnotherAsyncEnum(core$_.int j) async {
     final $p = jni$_.ReceivePort();
     final _$continuation = jni$_.ProtectedJniExtensions.newPortContinuation($p);
     final _$$selfRef = reference;
-    final $r = _pigeon_echoAnotherAsyncEnum(
+    final $r = _echoAnotherAsyncEnum(
       _$$selfRef.pointer,
-      _id_pigeon_echoAnotherAsyncEnum.pointer,
+      _id_echoAnotherAsyncEnum.pointer,
       j,
       _$continuation.pointer,
     ).object<jni$_.JObject>();
@@ -3989,13 +3858,13 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
     return $o.as<jni$_.JLong>(jni$_.JLong.type, releaseOriginal: true);
   }
 
-  static final _id_pigeon_throwAsyncError = NativeInteropHostIntegrationCoreApiRegistrar._class
+  static final _id_throwAsyncError = NativeInteropHostIntegrationCoreApiRegistrar._class
       .instanceMethodId(
-        r'pigeon_throwAsyncError',
+        r'throwAsyncError',
         r'(Lkotlin/coroutines/Continuation;)Ljava/lang/Object;',
       );
 
-  static final _pigeon_throwAsyncError =
+  static final _throwAsyncError =
       jni$_.ProtectedJniExtensions.lookup<
             jni$_.NativeFunction<
               jni$_.JniResult Function(
@@ -4013,15 +3882,15 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
             )
           >();
 
-  /// from: `public suspend fun pigeon_throwAsyncError(): kotlin.ByteArray?`
+  /// from: `public suspend fun throwAsyncError(): kotlin.ByteArray?`
   /// The returned object must be released after use, by calling the [release] method.
-  core$_.Future<jni$_.JByteArray?> pigeon_throwAsyncError() async {
+  core$_.Future<jni$_.JByteArray?> throwAsyncError() async {
     final $p = jni$_.ReceivePort();
     final _$continuation = jni$_.ProtectedJniExtensions.newPortContinuation($p);
     final _$$selfRef = reference;
-    final $r = _pigeon_throwAsyncError(
+    final $r = _throwAsyncError(
       _$$selfRef.pointer,
-      _id_pigeon_throwAsyncError.pointer,
+      _id_throwAsyncError.pointer,
       _$continuation.pointer,
     ).object<jni$_.JObject?>();
     _$continuation.release();
@@ -4045,14 +3914,13 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
     return $o?.as<jni$_.JByteArray>(jni$_.JByteArray.type, releaseOriginal: true);
   }
 
-  static final _id_pigeon_throwAsyncErrorFromVoid = NativeInteropHostIntegrationCoreApiRegistrar
-      ._class
+  static final _id_throwAsyncErrorFromVoid = NativeInteropHostIntegrationCoreApiRegistrar._class
       .instanceMethodId(
-        r'pigeon_throwAsyncErrorFromVoid',
+        r'throwAsyncErrorFromVoid',
         r'(Lkotlin/coroutines/Continuation;)Ljava/lang/Object;',
       );
 
-  static final _pigeon_throwAsyncErrorFromVoid =
+  static final _throwAsyncErrorFromVoid =
       jni$_.ProtectedJniExtensions.lookup<
             jni$_.NativeFunction<
               jni$_.JniResult Function(
@@ -4070,15 +3938,15 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
             )
           >();
 
-  /// from: `public suspend fun pigeon_throwAsyncErrorFromVoid(): kotlin.Unit`
+  /// from: `public suspend fun throwAsyncErrorFromVoid(): kotlin.Unit`
   /// The returned object must be released after use, by calling the [release] method.
-  core$_.Future<void> pigeon_throwAsyncErrorFromVoid() async {
+  core$_.Future<void> throwAsyncErrorFromVoid() async {
     final $p = jni$_.ReceivePort();
     final _$continuation = jni$_.ProtectedJniExtensions.newPortContinuation($p);
     final _$$selfRef = reference;
-    final $r = _pigeon_throwAsyncErrorFromVoid(
+    final $r = _throwAsyncErrorFromVoid(
       _$$selfRef.pointer,
-      _id_pigeon_throwAsyncErrorFromVoid.pointer,
+      _id_throwAsyncErrorFromVoid.pointer,
       _$continuation.pointer,
     ).object<jni$_.JObject>();
     _$continuation.release();
@@ -4100,14 +3968,13 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
     return;
   }
 
-  static final _id_pigeon_throwAsyncFlutterError = NativeInteropHostIntegrationCoreApiRegistrar
-      ._class
+  static final _id_throwAsyncFlutterError = NativeInteropHostIntegrationCoreApiRegistrar._class
       .instanceMethodId(
-        r'pigeon_throwAsyncFlutterError',
+        r'throwAsyncFlutterError',
         r'(Lkotlin/coroutines/Continuation;)Ljava/lang/Object;',
       );
 
-  static final _pigeon_throwAsyncFlutterError =
+  static final _throwAsyncFlutterError =
       jni$_.ProtectedJniExtensions.lookup<
             jni$_.NativeFunction<
               jni$_.JniResult Function(
@@ -4125,15 +3992,15 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
             )
           >();
 
-  /// from: `public suspend fun pigeon_throwAsyncFlutterError(): kotlin.ByteArray?`
+  /// from: `public suspend fun throwAsyncFlutterError(): kotlin.ByteArray?`
   /// The returned object must be released after use, by calling the [release] method.
-  core$_.Future<jni$_.JByteArray?> pigeon_throwAsyncFlutterError() async {
+  core$_.Future<jni$_.JByteArray?> throwAsyncFlutterError() async {
     final $p = jni$_.ReceivePort();
     final _$continuation = jni$_.ProtectedJniExtensions.newPortContinuation($p);
     final _$$selfRef = reference;
-    final $r = _pigeon_throwAsyncFlutterError(
+    final $r = _throwAsyncFlutterError(
       _$$selfRef.pointer,
-      _id_pigeon_throwAsyncFlutterError.pointer,
+      _id_throwAsyncFlutterError.pointer,
       _$continuation.pointer,
     ).object<jni$_.JObject?>();
     _$continuation.release();
@@ -4157,195 +4024,254 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
     return $o?.as<jni$_.JByteArray>(jni$_.JByteArray.type, releaseOriginal: true);
   }
 
-  static final _id_pigeon_echoAsyncNativeInteropAllTypes =
-      NativeInteropHostIntegrationCoreApiRegistrar._class.instanceMethodId(
-        r'pigeon_echoAsyncNativeInteropAllTypes',
-        r'([BLkotlin/coroutines/Continuation;)Ljava/lang/Object;',
-      );
-
-  static final _pigeon_echoAsyncNativeInteropAllTypes =
-      jni$_.ProtectedJniExtensions.lookup<
-            jni$_.NativeFunction<
-              jni$_.JniResult Function(
-                jni$_.Pointer<jni$_.Void>,
-                jni$_.JMethodIDPtr,
-                jni$_.VarArgs<(jni$_.Pointer<jni$_.Void>, jni$_.Pointer<jni$_.Void>)>,
-              )
-            >
-          >('globalEnv_CallObjectMethod')
-          .asFunction<
-            jni$_.JniResult Function(
-              jni$_.Pointer<jni$_.Void>,
-              jni$_.JMethodIDPtr,
-              jni$_.Pointer<jni$_.Void>,
-              jni$_.Pointer<jni$_.Void>,
-            )
-          >();
-
-  /// from: `public suspend fun pigeon_echoAsyncNativeInteropAllTypes(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
-  /// The returned object must be released after use, by calling the [release] method.
-  core$_.Future<jni$_.JByteArray?> pigeon_echoAsyncNativeInteropAllTypes(
-    jni$_.JByteArray bs,
-  ) async {
-    final $p = jni$_.ReceivePort();
-    final _$continuation = jni$_.ProtectedJniExtensions.newPortContinuation($p);
-    final _$$selfRef = reference;
-    final _$bs = bs.reference;
-    final $r = _pigeon_echoAsyncNativeInteropAllTypes(
-      _$$selfRef.pointer,
-      _id_pigeon_echoAsyncNativeInteropAllTypes.pointer,
-      _$bs.pointer,
-      _$continuation.pointer,
-    ).object<jni$_.JObject?>();
-    _$continuation.release();
-    jni$_.JObject? $o;
-    if ($r != null && $r.isInstanceOf(jni$_.coroutineSingletonsClass)) {
-      $r.release();
-      final $a = await $p.first;
-      $o = $a == 0
-          ? null
-          : jni$_.JObject.fromReference(jni$_.JGlobalReference(jni$_.JObjectPtr.fromAddress($a)));
-      if ($o != null && $o.isInstanceOf(jni$_.result$Class)) {
-        $o = jni$_.resultValueField.get($o, const jni$_.$JObject$Type$());
-      } else if ($o != null && $o.isInstanceOf(jni$_.result$FailureClass)) {
-        final $e = jni$_.failureExceptionField.get($o, const jni$_.$JObject$Type$());
-        $o.release();
-        jni$_.Jni.throwException($e.reference.toPointer());
-      }
-    } else {
-      $o = $r;
-    }
-    return $o?.as<jni$_.JByteArray>(jni$_.JByteArray.type, releaseOriginal: true);
-  }
-
-  static final _id_pigeon_echoAsyncNullableNativeInteropAllNullableTypes =
-      NativeInteropHostIntegrationCoreApiRegistrar._class.instanceMethodId(
-        r'pigeon_echoAsyncNullableNativeInteropAllNullableTypes',
-        r'([BLkotlin/coroutines/Continuation;)Ljava/lang/Object;',
-      );
-
-  static final _pigeon_echoAsyncNullableNativeInteropAllNullableTypes =
-      jni$_.ProtectedJniExtensions.lookup<
-            jni$_.NativeFunction<
-              jni$_.JniResult Function(
-                jni$_.Pointer<jni$_.Void>,
-                jni$_.JMethodIDPtr,
-                jni$_.VarArgs<(jni$_.Pointer<jni$_.Void>, jni$_.Pointer<jni$_.Void>)>,
-              )
-            >
-          >('globalEnv_CallObjectMethod')
-          .asFunction<
-            jni$_.JniResult Function(
-              jni$_.Pointer<jni$_.Void>,
-              jni$_.JMethodIDPtr,
-              jni$_.Pointer<jni$_.Void>,
-              jni$_.Pointer<jni$_.Void>,
-            )
-          >();
-
-  /// from: `public suspend fun pigeon_echoAsyncNullableNativeInteropAllNullableTypes(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
-  /// The returned object must be released after use, by calling the [release] method.
-  core$_.Future<jni$_.JByteArray?> pigeon_echoAsyncNullableNativeInteropAllNullableTypes(
-    jni$_.JByteArray bs,
-  ) async {
-    final $p = jni$_.ReceivePort();
-    final _$continuation = jni$_.ProtectedJniExtensions.newPortContinuation($p);
-    final _$$selfRef = reference;
-    final _$bs = bs.reference;
-    final $r = _pigeon_echoAsyncNullableNativeInteropAllNullableTypes(
-      _$$selfRef.pointer,
-      _id_pigeon_echoAsyncNullableNativeInteropAllNullableTypes.pointer,
-      _$bs.pointer,
-      _$continuation.pointer,
-    ).object<jni$_.JObject?>();
-    _$continuation.release();
-    jni$_.JObject? $o;
-    if ($r != null && $r.isInstanceOf(jni$_.coroutineSingletonsClass)) {
-      $r.release();
-      final $a = await $p.first;
-      $o = $a == 0
-          ? null
-          : jni$_.JObject.fromReference(jni$_.JGlobalReference(jni$_.JObjectPtr.fromAddress($a)));
-      if ($o != null && $o.isInstanceOf(jni$_.result$Class)) {
-        $o = jni$_.resultValueField.get($o, const jni$_.$JObject$Type$());
-      } else if ($o != null && $o.isInstanceOf(jni$_.result$FailureClass)) {
-        final $e = jni$_.failureExceptionField.get($o, const jni$_.$JObject$Type$());
-        $o.release();
-        jni$_.Jni.throwException($e.reference.toPointer());
-      }
-    } else {
-      $o = $r;
-    }
-    return $o?.as<jni$_.JByteArray>(jni$_.JByteArray.type, releaseOriginal: true);
-  }
-
-  static final _id_pigeon_echoAsyncNullableNativeInteropAllNullableTypesWithoutRecursion =
-      NativeInteropHostIntegrationCoreApiRegistrar._class.instanceMethodId(
-        r'pigeon_echoAsyncNullableNativeInteropAllNullableTypesWithoutRecursion',
-        r'([BLkotlin/coroutines/Continuation;)Ljava/lang/Object;',
-      );
-
-  static final _pigeon_echoAsyncNullableNativeInteropAllNullableTypesWithoutRecursion =
-      jni$_.ProtectedJniExtensions.lookup<
-            jni$_.NativeFunction<
-              jni$_.JniResult Function(
-                jni$_.Pointer<jni$_.Void>,
-                jni$_.JMethodIDPtr,
-                jni$_.VarArgs<(jni$_.Pointer<jni$_.Void>, jni$_.Pointer<jni$_.Void>)>,
-              )
-            >
-          >('globalEnv_CallObjectMethod')
-          .asFunction<
-            jni$_.JniResult Function(
-              jni$_.Pointer<jni$_.Void>,
-              jni$_.JMethodIDPtr,
-              jni$_.Pointer<jni$_.Void>,
-              jni$_.Pointer<jni$_.Void>,
-            )
-          >();
-
-  /// from: `public suspend fun pigeon_echoAsyncNullableNativeInteropAllNullableTypesWithoutRecursion(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
-  /// The returned object must be released after use, by calling the [release] method.
-  core$_.Future<jni$_.JByteArray?>
-  pigeon_echoAsyncNullableNativeInteropAllNullableTypesWithoutRecursion(jni$_.JByteArray bs) async {
-    final $p = jni$_.ReceivePort();
-    final _$continuation = jni$_.ProtectedJniExtensions.newPortContinuation($p);
-    final _$$selfRef = reference;
-    final _$bs = bs.reference;
-    final $r = _pigeon_echoAsyncNullableNativeInteropAllNullableTypesWithoutRecursion(
-      _$$selfRef.pointer,
-      _id_pigeon_echoAsyncNullableNativeInteropAllNullableTypesWithoutRecursion.pointer,
-      _$bs.pointer,
-      _$continuation.pointer,
-    ).object<jni$_.JObject?>();
-    _$continuation.release();
-    jni$_.JObject? $o;
-    if ($r != null && $r.isInstanceOf(jni$_.coroutineSingletonsClass)) {
-      $r.release();
-      final $a = await $p.first;
-      $o = $a == 0
-          ? null
-          : jni$_.JObject.fromReference(jni$_.JGlobalReference(jni$_.JObjectPtr.fromAddress($a)));
-      if ($o != null && $o.isInstanceOf(jni$_.result$Class)) {
-        $o = jni$_.resultValueField.get($o, const jni$_.$JObject$Type$());
-      } else if ($o != null && $o.isInstanceOf(jni$_.result$FailureClass)) {
-        final $e = jni$_.failureExceptionField.get($o, const jni$_.$JObject$Type$());
-        $o.release();
-        jni$_.Jni.throwException($e.reference.toPointer());
-      }
-    } else {
-      $o = $r;
-    }
-    return $o?.as<jni$_.JByteArray>(jni$_.JByteArray.type, releaseOriginal: true);
-  }
-
-  static final _id_pigeon_echoAsyncNullableInt = NativeInteropHostIntegrationCoreApiRegistrar._class
+  static final _id_echoAsyncNativeInteropAllTypes = NativeInteropHostIntegrationCoreApiRegistrar
+      ._class
       .instanceMethodId(
-        r'pigeon_echoAsyncNullableInt',
+        r'echoAsyncNativeInteropAllTypes',
+        r'([BLkotlin/coroutines/Continuation;)Ljava/lang/Object;',
+      );
+
+  static final _echoAsyncNativeInteropAllTypes =
+      jni$_.ProtectedJniExtensions.lookup<
+            jni$_.NativeFunction<
+              jni$_.JniResult Function(
+                jni$_.Pointer<jni$_.Void>,
+                jni$_.JMethodIDPtr,
+                jni$_.VarArgs<(jni$_.Pointer<jni$_.Void>, jni$_.Pointer<jni$_.Void>)>,
+              )
+            >
+          >('globalEnv_CallObjectMethod')
+          .asFunction<
+            jni$_.JniResult Function(
+              jni$_.Pointer<jni$_.Void>,
+              jni$_.JMethodIDPtr,
+              jni$_.Pointer<jni$_.Void>,
+              jni$_.Pointer<jni$_.Void>,
+            )
+          >();
+
+  /// from: `public suspend fun echoAsyncNativeInteropAllTypes(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
+  /// The returned object must be released after use, by calling the [release] method.
+  core$_.Future<jni$_.JByteArray?> echoAsyncNativeInteropAllTypes(jni$_.JByteArray bs) async {
+    final $p = jni$_.ReceivePort();
+    final _$continuation = jni$_.ProtectedJniExtensions.newPortContinuation($p);
+    final _$$selfRef = reference;
+    final _$bs = bs.reference;
+    final $r = _echoAsyncNativeInteropAllTypes(
+      _$$selfRef.pointer,
+      _id_echoAsyncNativeInteropAllTypes.pointer,
+      _$bs.pointer,
+      _$continuation.pointer,
+    ).object<jni$_.JObject?>();
+    _$continuation.release();
+    jni$_.JObject? $o;
+    if ($r != null && $r.isInstanceOf(jni$_.coroutineSingletonsClass)) {
+      $r.release();
+      final $a = await $p.first;
+      $o = $a == 0
+          ? null
+          : jni$_.JObject.fromReference(jni$_.JGlobalReference(jni$_.JObjectPtr.fromAddress($a)));
+      if ($o != null && $o.isInstanceOf(jni$_.result$Class)) {
+        $o = jni$_.resultValueField.get($o, const jni$_.$JObject$Type$());
+      } else if ($o != null && $o.isInstanceOf(jni$_.result$FailureClass)) {
+        final $e = jni$_.failureExceptionField.get($o, const jni$_.$JObject$Type$());
+        $o.release();
+        jni$_.Jni.throwException($e.reference.toPointer());
+      }
+    } else {
+      $o = $r;
+    }
+    return $o?.as<jni$_.JByteArray>(jni$_.JByteArray.type, releaseOriginal: true);
+  }
+
+  static final _id_echoAsyncSealedClass = NativeInteropHostIntegrationCoreApiRegistrar._class
+      .instanceMethodId(
+        r'echoAsyncSealedClass',
+        r'([BLkotlin/coroutines/Continuation;)Ljava/lang/Object;',
+      );
+
+  static final _echoAsyncSealedClass =
+      jni$_.ProtectedJniExtensions.lookup<
+            jni$_.NativeFunction<
+              jni$_.JniResult Function(
+                jni$_.Pointer<jni$_.Void>,
+                jni$_.JMethodIDPtr,
+                jni$_.VarArgs<(jni$_.Pointer<jni$_.Void>, jni$_.Pointer<jni$_.Void>)>,
+              )
+            >
+          >('globalEnv_CallObjectMethod')
+          .asFunction<
+            jni$_.JniResult Function(
+              jni$_.Pointer<jni$_.Void>,
+              jni$_.JMethodIDPtr,
+              jni$_.Pointer<jni$_.Void>,
+              jni$_.Pointer<jni$_.Void>,
+            )
+          >();
+
+  /// from: `public suspend fun echoAsyncSealedClass(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
+  /// The returned object must be released after use, by calling the [release] method.
+  core$_.Future<jni$_.JByteArray?> echoAsyncSealedClass(jni$_.JByteArray bs) async {
+    final $p = jni$_.ReceivePort();
+    final _$continuation = jni$_.ProtectedJniExtensions.newPortContinuation($p);
+    final _$$selfRef = reference;
+    final _$bs = bs.reference;
+    final $r = _echoAsyncSealedClass(
+      _$$selfRef.pointer,
+      _id_echoAsyncSealedClass.pointer,
+      _$bs.pointer,
+      _$continuation.pointer,
+    ).object<jni$_.JObject?>();
+    _$continuation.release();
+    jni$_.JObject? $o;
+    if ($r != null && $r.isInstanceOf(jni$_.coroutineSingletonsClass)) {
+      $r.release();
+      final $a = await $p.first;
+      $o = $a == 0
+          ? null
+          : jni$_.JObject.fromReference(jni$_.JGlobalReference(jni$_.JObjectPtr.fromAddress($a)));
+      if ($o != null && $o.isInstanceOf(jni$_.result$Class)) {
+        $o = jni$_.resultValueField.get($o, const jni$_.$JObject$Type$());
+      } else if ($o != null && $o.isInstanceOf(jni$_.result$FailureClass)) {
+        final $e = jni$_.failureExceptionField.get($o, const jni$_.$JObject$Type$());
+        $o.release();
+        jni$_.Jni.throwException($e.reference.toPointer());
+      }
+    } else {
+      $o = $r;
+    }
+    return $o?.as<jni$_.JByteArray>(jni$_.JByteArray.type, releaseOriginal: true);
+  }
+
+  static final _id_echoAsyncNullableNativeInteropAllNullableTypes =
+      NativeInteropHostIntegrationCoreApiRegistrar._class.instanceMethodId(
+        r'echoAsyncNullableNativeInteropAllNullableTypes',
+        r'([BLkotlin/coroutines/Continuation;)Ljava/lang/Object;',
+      );
+
+  static final _echoAsyncNullableNativeInteropAllNullableTypes =
+      jni$_.ProtectedJniExtensions.lookup<
+            jni$_.NativeFunction<
+              jni$_.JniResult Function(
+                jni$_.Pointer<jni$_.Void>,
+                jni$_.JMethodIDPtr,
+                jni$_.VarArgs<(jni$_.Pointer<jni$_.Void>, jni$_.Pointer<jni$_.Void>)>,
+              )
+            >
+          >('globalEnv_CallObjectMethod')
+          .asFunction<
+            jni$_.JniResult Function(
+              jni$_.Pointer<jni$_.Void>,
+              jni$_.JMethodIDPtr,
+              jni$_.Pointer<jni$_.Void>,
+              jni$_.Pointer<jni$_.Void>,
+            )
+          >();
+
+  /// from: `public suspend fun echoAsyncNullableNativeInteropAllNullableTypes(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
+  /// The returned object must be released after use, by calling the [release] method.
+  core$_.Future<jni$_.JByteArray?> echoAsyncNullableNativeInteropAllNullableTypes(
+    jni$_.JByteArray bs,
+  ) async {
+    final $p = jni$_.ReceivePort();
+    final _$continuation = jni$_.ProtectedJniExtensions.newPortContinuation($p);
+    final _$$selfRef = reference;
+    final _$bs = bs.reference;
+    final $r = _echoAsyncNullableNativeInteropAllNullableTypes(
+      _$$selfRef.pointer,
+      _id_echoAsyncNullableNativeInteropAllNullableTypes.pointer,
+      _$bs.pointer,
+      _$continuation.pointer,
+    ).object<jni$_.JObject?>();
+    _$continuation.release();
+    jni$_.JObject? $o;
+    if ($r != null && $r.isInstanceOf(jni$_.coroutineSingletonsClass)) {
+      $r.release();
+      final $a = await $p.first;
+      $o = $a == 0
+          ? null
+          : jni$_.JObject.fromReference(jni$_.JGlobalReference(jni$_.JObjectPtr.fromAddress($a)));
+      if ($o != null && $o.isInstanceOf(jni$_.result$Class)) {
+        $o = jni$_.resultValueField.get($o, const jni$_.$JObject$Type$());
+      } else if ($o != null && $o.isInstanceOf(jni$_.result$FailureClass)) {
+        final $e = jni$_.failureExceptionField.get($o, const jni$_.$JObject$Type$());
+        $o.release();
+        jni$_.Jni.throwException($e.reference.toPointer());
+      }
+    } else {
+      $o = $r;
+    }
+    return $o?.as<jni$_.JByteArray>(jni$_.JByteArray.type, releaseOriginal: true);
+  }
+
+  static final _id_echoAsyncNullableNativeInteropAllNullableTypesWithoutRecursion =
+      NativeInteropHostIntegrationCoreApiRegistrar._class.instanceMethodId(
+        r'echoAsyncNullableNativeInteropAllNullableTypesWithoutRecursion',
+        r'([BLkotlin/coroutines/Continuation;)Ljava/lang/Object;',
+      );
+
+  static final _echoAsyncNullableNativeInteropAllNullableTypesWithoutRecursion =
+      jni$_.ProtectedJniExtensions.lookup<
+            jni$_.NativeFunction<
+              jni$_.JniResult Function(
+                jni$_.Pointer<jni$_.Void>,
+                jni$_.JMethodIDPtr,
+                jni$_.VarArgs<(jni$_.Pointer<jni$_.Void>, jni$_.Pointer<jni$_.Void>)>,
+              )
+            >
+          >('globalEnv_CallObjectMethod')
+          .asFunction<
+            jni$_.JniResult Function(
+              jni$_.Pointer<jni$_.Void>,
+              jni$_.JMethodIDPtr,
+              jni$_.Pointer<jni$_.Void>,
+              jni$_.Pointer<jni$_.Void>,
+            )
+          >();
+
+  /// from: `public suspend fun echoAsyncNullableNativeInteropAllNullableTypesWithoutRecursion(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
+  /// The returned object must be released after use, by calling the [release] method.
+  core$_.Future<jni$_.JByteArray?> echoAsyncNullableNativeInteropAllNullableTypesWithoutRecursion(
+    jni$_.JByteArray bs,
+  ) async {
+    final $p = jni$_.ReceivePort();
+    final _$continuation = jni$_.ProtectedJniExtensions.newPortContinuation($p);
+    final _$$selfRef = reference;
+    final _$bs = bs.reference;
+    final $r = _echoAsyncNullableNativeInteropAllNullableTypesWithoutRecursion(
+      _$$selfRef.pointer,
+      _id_echoAsyncNullableNativeInteropAllNullableTypesWithoutRecursion.pointer,
+      _$bs.pointer,
+      _$continuation.pointer,
+    ).object<jni$_.JObject?>();
+    _$continuation.release();
+    jni$_.JObject? $o;
+    if ($r != null && $r.isInstanceOf(jni$_.coroutineSingletonsClass)) {
+      $r.release();
+      final $a = await $p.first;
+      $o = $a == 0
+          ? null
+          : jni$_.JObject.fromReference(jni$_.JGlobalReference(jni$_.JObjectPtr.fromAddress($a)));
+      if ($o != null && $o.isInstanceOf(jni$_.result$Class)) {
+        $o = jni$_.resultValueField.get($o, const jni$_.$JObject$Type$());
+      } else if ($o != null && $o.isInstanceOf(jni$_.result$FailureClass)) {
+        final $e = jni$_.failureExceptionField.get($o, const jni$_.$JObject$Type$());
+        $o.release();
+        jni$_.Jni.throwException($e.reference.toPointer());
+      }
+    } else {
+      $o = $r;
+    }
+    return $o?.as<jni$_.JByteArray>(jni$_.JByteArray.type, releaseOriginal: true);
+  }
+
+  static final _id_echoAsyncNullableInt = NativeInteropHostIntegrationCoreApiRegistrar._class
+      .instanceMethodId(
+        r'echoAsyncNullableInt',
         r'(Ljava/lang/Long;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;',
       );
 
-  static final _pigeon_echoAsyncNullableInt =
+  static final _echoAsyncNullableInt =
       jni$_.ProtectedJniExtensions.lookup<
             jni$_.NativeFunction<
               jni$_.JniResult Function(
@@ -4364,16 +4290,16 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
             )
           >();
 
-  /// from: `public suspend fun pigeon_echoAsyncNullableInt(anInt: kotlin.Long?): kotlin.Long?`
+  /// from: `public suspend fun echoAsyncNullableInt(anInt: kotlin.Long?): kotlin.Long?`
   /// The returned object must be released after use, by calling the [release] method.
-  core$_.Future<jni$_.JLong?> pigeon_echoAsyncNullableInt(jni$_.JLong? long) async {
+  core$_.Future<jni$_.JLong?> echoAsyncNullableInt(jni$_.JLong? long) async {
     final $p = jni$_.ReceivePort();
     final _$continuation = jni$_.ProtectedJniExtensions.newPortContinuation($p);
     final _$$selfRef = reference;
     final _$long = long?.reference ?? jni$_.jNullReference;
-    final $r = _pigeon_echoAsyncNullableInt(
+    final $r = _echoAsyncNullableInt(
       _$$selfRef.pointer,
-      _id_pigeon_echoAsyncNullableInt.pointer,
+      _id_echoAsyncNullableInt.pointer,
       _$long.pointer,
       _$continuation.pointer,
     ).object<jni$_.JObject?>();
@@ -4398,14 +4324,13 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
     return $o?.as<jni$_.JLong>(jni$_.JLong.type, releaseOriginal: true);
   }
 
-  static final _id_pigeon_echoAsyncNullableDouble = NativeInteropHostIntegrationCoreApiRegistrar
-      ._class
+  static final _id_echoAsyncNullableDouble = NativeInteropHostIntegrationCoreApiRegistrar._class
       .instanceMethodId(
-        r'pigeon_echoAsyncNullableDouble',
+        r'echoAsyncNullableDouble',
         r'(Ljava/lang/Double;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;',
       );
 
-  static final _pigeon_echoAsyncNullableDouble =
+  static final _echoAsyncNullableDouble =
       jni$_.ProtectedJniExtensions.lookup<
             jni$_.NativeFunction<
               jni$_.JniResult Function(
@@ -4424,16 +4349,16 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
             )
           >();
 
-  /// from: `public suspend fun pigeon_echoAsyncNullableDouble(aDouble: kotlin.Double?): kotlin.Double?`
+  /// from: `public suspend fun echoAsyncNullableDouble(aDouble: kotlin.Double?): kotlin.Double?`
   /// The returned object must be released after use, by calling the [release] method.
-  core$_.Future<jni$_.JDouble?> pigeon_echoAsyncNullableDouble(jni$_.JDouble? double) async {
+  core$_.Future<jni$_.JDouble?> echoAsyncNullableDouble(jni$_.JDouble? double) async {
     final $p = jni$_.ReceivePort();
     final _$continuation = jni$_.ProtectedJniExtensions.newPortContinuation($p);
     final _$$selfRef = reference;
     final _$double = double?.reference ?? jni$_.jNullReference;
-    final $r = _pigeon_echoAsyncNullableDouble(
+    final $r = _echoAsyncNullableDouble(
       _$$selfRef.pointer,
-      _id_pigeon_echoAsyncNullableDouble.pointer,
+      _id_echoAsyncNullableDouble.pointer,
       _$double.pointer,
       _$continuation.pointer,
     ).object<jni$_.JObject?>();
@@ -4458,14 +4383,13 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
     return $o?.as<jni$_.JDouble>(jni$_.JDouble.type, releaseOriginal: true);
   }
 
-  static final _id_pigeon_echoAsyncNullableBool = NativeInteropHostIntegrationCoreApiRegistrar
-      ._class
+  static final _id_echoAsyncNullableBool = NativeInteropHostIntegrationCoreApiRegistrar._class
       .instanceMethodId(
-        r'pigeon_echoAsyncNullableBool',
+        r'echoAsyncNullableBool',
         r'(Ljava/lang/Boolean;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;',
       );
 
-  static final _pigeon_echoAsyncNullableBool =
+  static final _echoAsyncNullableBool =
       jni$_.ProtectedJniExtensions.lookup<
             jni$_.NativeFunction<
               jni$_.JniResult Function(
@@ -4484,16 +4408,16 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
             )
           >();
 
-  /// from: `public suspend fun pigeon_echoAsyncNullableBool(aBool: kotlin.Boolean?): kotlin.Boolean?`
+  /// from: `public suspend fun echoAsyncNullableBool(aBool: kotlin.Boolean?): kotlin.Boolean?`
   /// The returned object must be released after use, by calling the [release] method.
-  core$_.Future<jni$_.JBoolean?> pigeon_echoAsyncNullableBool(jni$_.JBoolean? boolean) async {
+  core$_.Future<jni$_.JBoolean?> echoAsyncNullableBool(jni$_.JBoolean? boolean) async {
     final $p = jni$_.ReceivePort();
     final _$continuation = jni$_.ProtectedJniExtensions.newPortContinuation($p);
     final _$$selfRef = reference;
     final _$boolean = boolean?.reference ?? jni$_.jNullReference;
-    final $r = _pigeon_echoAsyncNullableBool(
+    final $r = _echoAsyncNullableBool(
       _$$selfRef.pointer,
-      _id_pigeon_echoAsyncNullableBool.pointer,
+      _id_echoAsyncNullableBool.pointer,
       _$boolean.pointer,
       _$continuation.pointer,
     ).object<jni$_.JObject?>();
@@ -4518,14 +4442,13 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
     return $o?.as<jni$_.JBoolean>(jni$_.JBoolean.type, releaseOriginal: true);
   }
 
-  static final _id_pigeon_echoAsyncNullableString = NativeInteropHostIntegrationCoreApiRegistrar
-      ._class
+  static final _id_echoAsyncNullableString = NativeInteropHostIntegrationCoreApiRegistrar._class
       .instanceMethodId(
-        r'pigeon_echoAsyncNullableString',
+        r'echoAsyncNullableString',
         r'(Ljava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;',
       );
 
-  static final _pigeon_echoAsyncNullableString =
+  static final _echoAsyncNullableString =
       jni$_.ProtectedJniExtensions.lookup<
             jni$_.NativeFunction<
               jni$_.JniResult Function(
@@ -4544,16 +4467,16 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
             )
           >();
 
-  /// from: `public suspend fun pigeon_echoAsyncNullableString(aString: kotlin.String?): kotlin.String?`
+  /// from: `public suspend fun echoAsyncNullableString(aString: kotlin.String?): kotlin.String?`
   /// The returned object must be released after use, by calling the [release] method.
-  core$_.Future<jni$_.JString?> pigeon_echoAsyncNullableString(jni$_.JString? string) async {
+  core$_.Future<jni$_.JString?> echoAsyncNullableString(jni$_.JString? string) async {
     final $p = jni$_.ReceivePort();
     final _$continuation = jni$_.ProtectedJniExtensions.newPortContinuation($p);
     final _$$selfRef = reference;
     final _$string = string?.reference ?? jni$_.jNullReference;
-    final $r = _pigeon_echoAsyncNullableString(
+    final $r = _echoAsyncNullableString(
       _$$selfRef.pointer,
-      _id_pigeon_echoAsyncNullableString.pointer,
+      _id_echoAsyncNullableString.pointer,
       _$string.pointer,
       _$continuation.pointer,
     ).object<jni$_.JObject?>();
@@ -4578,14 +4501,13 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
     return $o?.as<jni$_.JString>(jni$_.JString.type, releaseOriginal: true);
   }
 
-  static final _id_pigeon_echoAsyncNullableUint8List = NativeInteropHostIntegrationCoreApiRegistrar
-      ._class
+  static final _id_echoAsyncNullableUint8List = NativeInteropHostIntegrationCoreApiRegistrar._class
       .instanceMethodId(
-        r'pigeon_echoAsyncNullableUint8List',
+        r'echoAsyncNullableUint8List',
         r'([BLkotlin/coroutines/Continuation;)Ljava/lang/Object;',
       );
 
-  static final _pigeon_echoAsyncNullableUint8List =
+  static final _echoAsyncNullableUint8List =
       jni$_.ProtectedJniExtensions.lookup<
             jni$_.NativeFunction<
               jni$_.JniResult Function(
@@ -4604,16 +4526,16 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
             )
           >();
 
-  /// from: `public suspend fun pigeon_echoAsyncNullableUint8List(aUint8List: kotlin.ByteArray?): kotlin.ByteArray?`
+  /// from: `public suspend fun echoAsyncNullableUint8List(aUint8List: kotlin.ByteArray?): kotlin.ByteArray?`
   /// The returned object must be released after use, by calling the [release] method.
-  core$_.Future<jni$_.JByteArray?> pigeon_echoAsyncNullableUint8List(jni$_.JByteArray? bs) async {
+  core$_.Future<jni$_.JByteArray?> echoAsyncNullableUint8List(jni$_.JByteArray? bs) async {
     final $p = jni$_.ReceivePort();
     final _$continuation = jni$_.ProtectedJniExtensions.newPortContinuation($p);
     final _$$selfRef = reference;
     final _$bs = bs?.reference ?? jni$_.jNullReference;
-    final $r = _pigeon_echoAsyncNullableUint8List(
+    final $r = _echoAsyncNullableUint8List(
       _$$selfRef.pointer,
-      _id_pigeon_echoAsyncNullableUint8List.pointer,
+      _id_echoAsyncNullableUint8List.pointer,
       _$bs.pointer,
       _$continuation.pointer,
     ).object<jni$_.JObject?>();
@@ -4638,14 +4560,13 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
     return $o?.as<jni$_.JByteArray>(jni$_.JByteArray.type, releaseOriginal: true);
   }
 
-  static final _id_pigeon_echoAsyncNullableInt32List = NativeInteropHostIntegrationCoreApiRegistrar
-      ._class
+  static final _id_echoAsyncNullableInt32List = NativeInteropHostIntegrationCoreApiRegistrar._class
       .instanceMethodId(
-        r'pigeon_echoAsyncNullableInt32List',
+        r'echoAsyncNullableInt32List',
         r'([ILkotlin/coroutines/Continuation;)Ljava/lang/Object;',
       );
 
-  static final _pigeon_echoAsyncNullableInt32List =
+  static final _echoAsyncNullableInt32List =
       jni$_.ProtectedJniExtensions.lookup<
             jni$_.NativeFunction<
               jni$_.JniResult Function(
@@ -4664,16 +4585,16 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
             )
           >();
 
-  /// from: `public suspend fun pigeon_echoAsyncNullableInt32List(aInt32List: kotlin.IntArray?): kotlin.IntArray?`
+  /// from: `public suspend fun echoAsyncNullableInt32List(aInt32List: kotlin.IntArray?): kotlin.IntArray?`
   /// The returned object must be released after use, by calling the [release] method.
-  core$_.Future<jni$_.JIntArray?> pigeon_echoAsyncNullableInt32List(jni$_.JIntArray? is$) async {
+  core$_.Future<jni$_.JIntArray?> echoAsyncNullableInt32List(jni$_.JIntArray? is$) async {
     final $p = jni$_.ReceivePort();
     final _$continuation = jni$_.ProtectedJniExtensions.newPortContinuation($p);
     final _$$selfRef = reference;
     final _$is$ = is$?.reference ?? jni$_.jNullReference;
-    final $r = _pigeon_echoAsyncNullableInt32List(
+    final $r = _echoAsyncNullableInt32List(
       _$$selfRef.pointer,
-      _id_pigeon_echoAsyncNullableInt32List.pointer,
+      _id_echoAsyncNullableInt32List.pointer,
       _$is$.pointer,
       _$continuation.pointer,
     ).object<jni$_.JObject?>();
@@ -4698,14 +4619,13 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
     return $o?.as<jni$_.JIntArray>(jni$_.JIntArray.type, releaseOriginal: true);
   }
 
-  static final _id_pigeon_echoAsyncNullableInt64List = NativeInteropHostIntegrationCoreApiRegistrar
-      ._class
+  static final _id_echoAsyncNullableInt64List = NativeInteropHostIntegrationCoreApiRegistrar._class
       .instanceMethodId(
-        r'pigeon_echoAsyncNullableInt64List',
+        r'echoAsyncNullableInt64List',
         r'([JLkotlin/coroutines/Continuation;)Ljava/lang/Object;',
       );
 
-  static final _pigeon_echoAsyncNullableInt64List =
+  static final _echoAsyncNullableInt64List =
       jni$_.ProtectedJniExtensions.lookup<
             jni$_.NativeFunction<
               jni$_.JniResult Function(
@@ -4724,16 +4644,16 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
             )
           >();
 
-  /// from: `public suspend fun pigeon_echoAsyncNullableInt64List(aInt64List: kotlin.LongArray?): kotlin.LongArray?`
+  /// from: `public suspend fun echoAsyncNullableInt64List(aInt64List: kotlin.LongArray?): kotlin.LongArray?`
   /// The returned object must be released after use, by calling the [release] method.
-  core$_.Future<jni$_.JLongArray?> pigeon_echoAsyncNullableInt64List(jni$_.JLongArray? js) async {
+  core$_.Future<jni$_.JLongArray?> echoAsyncNullableInt64List(jni$_.JLongArray? js) async {
     final $p = jni$_.ReceivePort();
     final _$continuation = jni$_.ProtectedJniExtensions.newPortContinuation($p);
     final _$$selfRef = reference;
     final _$js = js?.reference ?? jni$_.jNullReference;
-    final $r = _pigeon_echoAsyncNullableInt64List(
+    final $r = _echoAsyncNullableInt64List(
       _$$selfRef.pointer,
-      _id_pigeon_echoAsyncNullableInt64List.pointer,
+      _id_echoAsyncNullableInt64List.pointer,
       _$js.pointer,
       _$continuation.pointer,
     ).object<jni$_.JObject?>();
@@ -4758,13 +4678,14 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
     return $o?.as<jni$_.JLongArray>(jni$_.JLongArray.type, releaseOriginal: true);
   }
 
-  static final _id_pigeon_echoAsyncNullableFloat64List =
-      NativeInteropHostIntegrationCoreApiRegistrar._class.instanceMethodId(
-        r'pigeon_echoAsyncNullableFloat64List',
+  static final _id_echoAsyncNullableFloat64List = NativeInteropHostIntegrationCoreApiRegistrar
+      ._class
+      .instanceMethodId(
+        r'echoAsyncNullableFloat64List',
         r'([DLkotlin/coroutines/Continuation;)Ljava/lang/Object;',
       );
 
-  static final _pigeon_echoAsyncNullableFloat64List =
+  static final _echoAsyncNullableFloat64List =
       jni$_.ProtectedJniExtensions.lookup<
             jni$_.NativeFunction<
               jni$_.JniResult Function(
@@ -4783,18 +4704,16 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
             )
           >();
 
-  /// from: `public suspend fun pigeon_echoAsyncNullableFloat64List(aFloat64List: kotlin.DoubleArray?): kotlin.DoubleArray?`
+  /// from: `public suspend fun echoAsyncNullableFloat64List(aFloat64List: kotlin.DoubleArray?): kotlin.DoubleArray?`
   /// The returned object must be released after use, by calling the [release] method.
-  core$_.Future<jni$_.JDoubleArray?> pigeon_echoAsyncNullableFloat64List(
-    jni$_.JDoubleArray? ds,
-  ) async {
+  core$_.Future<jni$_.JDoubleArray?> echoAsyncNullableFloat64List(jni$_.JDoubleArray? ds) async {
     final $p = jni$_.ReceivePort();
     final _$continuation = jni$_.ProtectedJniExtensions.newPortContinuation($p);
     final _$$selfRef = reference;
     final _$ds = ds?.reference ?? jni$_.jNullReference;
-    final $r = _pigeon_echoAsyncNullableFloat64List(
+    final $r = _echoAsyncNullableFloat64List(
       _$$selfRef.pointer,
-      _id_pigeon_echoAsyncNullableFloat64List.pointer,
+      _id_echoAsyncNullableFloat64List.pointer,
       _$ds.pointer,
       _$continuation.pointer,
     ).object<jni$_.JObject?>();
@@ -4819,14 +4738,13 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
     return $o?.as<jni$_.JDoubleArray>(jni$_.JDoubleArray.type, releaseOriginal: true);
   }
 
-  static final _id_pigeon_echoAsyncNullableObject = NativeInteropHostIntegrationCoreApiRegistrar
-      ._class
+  static final _id_echoAsyncNullableObject = NativeInteropHostIntegrationCoreApiRegistrar._class
       .instanceMethodId(
-        r'pigeon_echoAsyncNullableObject',
+        r'echoAsyncNullableObject',
         r'([BLkotlin/coroutines/Continuation;)Ljava/lang/Object;',
       );
 
-  static final _pigeon_echoAsyncNullableObject =
+  static final _echoAsyncNullableObject =
       jni$_.ProtectedJniExtensions.lookup<
             jni$_.NativeFunction<
               jni$_.JniResult Function(
@@ -4845,16 +4763,16 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
             )
           >();
 
-  /// from: `public suspend fun pigeon_echoAsyncNullableObject(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
+  /// from: `public suspend fun echoAsyncNullableObject(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
   /// The returned object must be released after use, by calling the [release] method.
-  core$_.Future<jni$_.JByteArray?> pigeon_echoAsyncNullableObject(jni$_.JByteArray bs) async {
+  core$_.Future<jni$_.JByteArray?> echoAsyncNullableObject(jni$_.JByteArray bs) async {
     final $p = jni$_.ReceivePort();
     final _$continuation = jni$_.ProtectedJniExtensions.newPortContinuation($p);
     final _$$selfRef = reference;
     final _$bs = bs.reference;
-    final $r = _pigeon_echoAsyncNullableObject(
+    final $r = _echoAsyncNullableObject(
       _$$selfRef.pointer,
-      _id_pigeon_echoAsyncNullableObject.pointer,
+      _id_echoAsyncNullableObject.pointer,
       _$bs.pointer,
       _$continuation.pointer,
     ).object<jni$_.JObject?>();
@@ -4879,14 +4797,13 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
     return $o?.as<jni$_.JByteArray>(jni$_.JByteArray.type, releaseOriginal: true);
   }
 
-  static final _id_pigeon_echoAsyncNullableList = NativeInteropHostIntegrationCoreApiRegistrar
-      ._class
+  static final _id_echoAsyncNullableList = NativeInteropHostIntegrationCoreApiRegistrar._class
       .instanceMethodId(
-        r'pigeon_echoAsyncNullableList',
+        r'echoAsyncNullableList',
         r'([BLkotlin/coroutines/Continuation;)Ljava/lang/Object;',
       );
 
-  static final _pigeon_echoAsyncNullableList =
+  static final _echoAsyncNullableList =
       jni$_.ProtectedJniExtensions.lookup<
             jni$_.NativeFunction<
               jni$_.JniResult Function(
@@ -4905,16 +4822,16 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
             )
           >();
 
-  /// from: `public suspend fun pigeon_echoAsyncNullableList(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
+  /// from: `public suspend fun echoAsyncNullableList(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
   /// The returned object must be released after use, by calling the [release] method.
-  core$_.Future<jni$_.JByteArray?> pigeon_echoAsyncNullableList(jni$_.JByteArray bs) async {
+  core$_.Future<jni$_.JByteArray?> echoAsyncNullableList(jni$_.JByteArray bs) async {
     final $p = jni$_.ReceivePort();
     final _$continuation = jni$_.ProtectedJniExtensions.newPortContinuation($p);
     final _$$selfRef = reference;
     final _$bs = bs.reference;
-    final $r = _pigeon_echoAsyncNullableList(
+    final $r = _echoAsyncNullableList(
       _$$selfRef.pointer,
-      _id_pigeon_echoAsyncNullableList.pointer,
+      _id_echoAsyncNullableList.pointer,
       _$bs.pointer,
       _$continuation.pointer,
     ).object<jni$_.JObject?>();
@@ -4939,14 +4856,13 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
     return $o?.as<jni$_.JByteArray>(jni$_.JByteArray.type, releaseOriginal: true);
   }
 
-  static final _id_pigeon_echoAsyncNullableEnumList = NativeInteropHostIntegrationCoreApiRegistrar
-      ._class
+  static final _id_echoAsyncNullableEnumList = NativeInteropHostIntegrationCoreApiRegistrar._class
       .instanceMethodId(
-        r'pigeon_echoAsyncNullableEnumList',
+        r'echoAsyncNullableEnumList',
         r'([BLkotlin/coroutines/Continuation;)Ljava/lang/Object;',
       );
 
-  static final _pigeon_echoAsyncNullableEnumList =
+  static final _echoAsyncNullableEnumList =
       jni$_.ProtectedJniExtensions.lookup<
             jni$_.NativeFunction<
               jni$_.JniResult Function(
@@ -4965,16 +4881,16 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
             )
           >();
 
-  /// from: `public suspend fun pigeon_echoAsyncNullableEnumList(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
+  /// from: `public suspend fun echoAsyncNullableEnumList(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
   /// The returned object must be released after use, by calling the [release] method.
-  core$_.Future<jni$_.JByteArray?> pigeon_echoAsyncNullableEnumList(jni$_.JByteArray bs) async {
+  core$_.Future<jni$_.JByteArray?> echoAsyncNullableEnumList(jni$_.JByteArray bs) async {
     final $p = jni$_.ReceivePort();
     final _$continuation = jni$_.ProtectedJniExtensions.newPortContinuation($p);
     final _$$selfRef = reference;
     final _$bs = bs.reference;
-    final $r = _pigeon_echoAsyncNullableEnumList(
+    final $r = _echoAsyncNullableEnumList(
       _$$selfRef.pointer,
-      _id_pigeon_echoAsyncNullableEnumList.pointer,
+      _id_echoAsyncNullableEnumList.pointer,
       _$bs.pointer,
       _$continuation.pointer,
     ).object<jni$_.JObject?>();
@@ -4999,14 +4915,13 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
     return $o?.as<jni$_.JByteArray>(jni$_.JByteArray.type, releaseOriginal: true);
   }
 
-  static final _id_pigeon_echoAsyncNullableClassList = NativeInteropHostIntegrationCoreApiRegistrar
-      ._class
+  static final _id_echoAsyncNullableClassList = NativeInteropHostIntegrationCoreApiRegistrar._class
       .instanceMethodId(
-        r'pigeon_echoAsyncNullableClassList',
+        r'echoAsyncNullableClassList',
         r'([BLkotlin/coroutines/Continuation;)Ljava/lang/Object;',
       );
 
-  static final _pigeon_echoAsyncNullableClassList =
+  static final _echoAsyncNullableClassList =
       jni$_.ProtectedJniExtensions.lookup<
             jni$_.NativeFunction<
               jni$_.JniResult Function(
@@ -5025,16 +4940,16 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
             )
           >();
 
-  /// from: `public suspend fun pigeon_echoAsyncNullableClassList(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
+  /// from: `public suspend fun echoAsyncNullableClassList(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
   /// The returned object must be released after use, by calling the [release] method.
-  core$_.Future<jni$_.JByteArray?> pigeon_echoAsyncNullableClassList(jni$_.JByteArray bs) async {
+  core$_.Future<jni$_.JByteArray?> echoAsyncNullableClassList(jni$_.JByteArray bs) async {
     final $p = jni$_.ReceivePort();
     final _$continuation = jni$_.ProtectedJniExtensions.newPortContinuation($p);
     final _$$selfRef = reference;
     final _$bs = bs.reference;
-    final $r = _pigeon_echoAsyncNullableClassList(
+    final $r = _echoAsyncNullableClassList(
       _$$selfRef.pointer,
-      _id_pigeon_echoAsyncNullableClassList.pointer,
+      _id_echoAsyncNullableClassList.pointer,
       _$bs.pointer,
       _$continuation.pointer,
     ).object<jni$_.JObject?>();
@@ -5059,13 +4974,13 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
     return $o?.as<jni$_.JByteArray>(jni$_.JByteArray.type, releaseOriginal: true);
   }
 
-  static final _id_pigeon_echoAsyncNullableMap = NativeInteropHostIntegrationCoreApiRegistrar._class
+  static final _id_echoAsyncNullableMap = NativeInteropHostIntegrationCoreApiRegistrar._class
       .instanceMethodId(
-        r'pigeon_echoAsyncNullableMap',
+        r'echoAsyncNullableMap',
         r'([BLkotlin/coroutines/Continuation;)Ljava/lang/Object;',
       );
 
-  static final _pigeon_echoAsyncNullableMap =
+  static final _echoAsyncNullableMap =
       jni$_.ProtectedJniExtensions.lookup<
             jni$_.NativeFunction<
               jni$_.JniResult Function(
@@ -5084,16 +4999,16 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
             )
           >();
 
-  /// from: `public suspend fun pigeon_echoAsyncNullableMap(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
+  /// from: `public suspend fun echoAsyncNullableMap(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
   /// The returned object must be released after use, by calling the [release] method.
-  core$_.Future<jni$_.JByteArray?> pigeon_echoAsyncNullableMap(jni$_.JByteArray bs) async {
+  core$_.Future<jni$_.JByteArray?> echoAsyncNullableMap(jni$_.JByteArray bs) async {
     final $p = jni$_.ReceivePort();
     final _$continuation = jni$_.ProtectedJniExtensions.newPortContinuation($p);
     final _$$selfRef = reference;
     final _$bs = bs.reference;
-    final $r = _pigeon_echoAsyncNullableMap(
+    final $r = _echoAsyncNullableMap(
       _$$selfRef.pointer,
-      _id_pigeon_echoAsyncNullableMap.pointer,
+      _id_echoAsyncNullableMap.pointer,
       _$bs.pointer,
       _$continuation.pointer,
     ).object<jni$_.JObject?>();
@@ -5118,14 +5033,13 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
     return $o?.as<jni$_.JByteArray>(jni$_.JByteArray.type, releaseOriginal: true);
   }
 
-  static final _id_pigeon_echoAsyncNullableStringMap = NativeInteropHostIntegrationCoreApiRegistrar
-      ._class
+  static final _id_echoAsyncNullableStringMap = NativeInteropHostIntegrationCoreApiRegistrar._class
       .instanceMethodId(
-        r'pigeon_echoAsyncNullableStringMap',
+        r'echoAsyncNullableStringMap',
         r'([BLkotlin/coroutines/Continuation;)Ljava/lang/Object;',
       );
 
-  static final _pigeon_echoAsyncNullableStringMap =
+  static final _echoAsyncNullableStringMap =
       jni$_.ProtectedJniExtensions.lookup<
             jni$_.NativeFunction<
               jni$_.JniResult Function(
@@ -5144,16 +5058,16 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
             )
           >();
 
-  /// from: `public suspend fun pigeon_echoAsyncNullableStringMap(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
+  /// from: `public suspend fun echoAsyncNullableStringMap(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
   /// The returned object must be released after use, by calling the [release] method.
-  core$_.Future<jni$_.JByteArray?> pigeon_echoAsyncNullableStringMap(jni$_.JByteArray bs) async {
+  core$_.Future<jni$_.JByteArray?> echoAsyncNullableStringMap(jni$_.JByteArray bs) async {
     final $p = jni$_.ReceivePort();
     final _$continuation = jni$_.ProtectedJniExtensions.newPortContinuation($p);
     final _$$selfRef = reference;
     final _$bs = bs.reference;
-    final $r = _pigeon_echoAsyncNullableStringMap(
+    final $r = _echoAsyncNullableStringMap(
       _$$selfRef.pointer,
-      _id_pigeon_echoAsyncNullableStringMap.pointer,
+      _id_echoAsyncNullableStringMap.pointer,
       _$bs.pointer,
       _$continuation.pointer,
     ).object<jni$_.JObject?>();
@@ -5178,14 +5092,13 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
     return $o?.as<jni$_.JByteArray>(jni$_.JByteArray.type, releaseOriginal: true);
   }
 
-  static final _id_pigeon_echoAsyncNullableIntMap = NativeInteropHostIntegrationCoreApiRegistrar
-      ._class
+  static final _id_echoAsyncNullableIntMap = NativeInteropHostIntegrationCoreApiRegistrar._class
       .instanceMethodId(
-        r'pigeon_echoAsyncNullableIntMap',
+        r'echoAsyncNullableIntMap',
         r'([BLkotlin/coroutines/Continuation;)Ljava/lang/Object;',
       );
 
-  static final _pigeon_echoAsyncNullableIntMap =
+  static final _echoAsyncNullableIntMap =
       jni$_.ProtectedJniExtensions.lookup<
             jni$_.NativeFunction<
               jni$_.JniResult Function(
@@ -5204,16 +5117,16 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
             )
           >();
 
-  /// from: `public suspend fun pigeon_echoAsyncNullableIntMap(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
+  /// from: `public suspend fun echoAsyncNullableIntMap(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
   /// The returned object must be released after use, by calling the [release] method.
-  core$_.Future<jni$_.JByteArray?> pigeon_echoAsyncNullableIntMap(jni$_.JByteArray bs) async {
+  core$_.Future<jni$_.JByteArray?> echoAsyncNullableIntMap(jni$_.JByteArray bs) async {
     final $p = jni$_.ReceivePort();
     final _$continuation = jni$_.ProtectedJniExtensions.newPortContinuation($p);
     final _$$selfRef = reference;
     final _$bs = bs.reference;
-    final $r = _pigeon_echoAsyncNullableIntMap(
+    final $r = _echoAsyncNullableIntMap(
       _$$selfRef.pointer,
-      _id_pigeon_echoAsyncNullableIntMap.pointer,
+      _id_echoAsyncNullableIntMap.pointer,
       _$bs.pointer,
       _$continuation.pointer,
     ).object<jni$_.JObject?>();
@@ -5238,14 +5151,13 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
     return $o?.as<jni$_.JByteArray>(jni$_.JByteArray.type, releaseOriginal: true);
   }
 
-  static final _id_pigeon_echoAsyncNullableEnumMap = NativeInteropHostIntegrationCoreApiRegistrar
-      ._class
+  static final _id_echoAsyncNullableEnumMap = NativeInteropHostIntegrationCoreApiRegistrar._class
       .instanceMethodId(
-        r'pigeon_echoAsyncNullableEnumMap',
+        r'echoAsyncNullableEnumMap',
         r'([BLkotlin/coroutines/Continuation;)Ljava/lang/Object;',
       );
 
-  static final _pigeon_echoAsyncNullableEnumMap =
+  static final _echoAsyncNullableEnumMap =
       jni$_.ProtectedJniExtensions.lookup<
             jni$_.NativeFunction<
               jni$_.JniResult Function(
@@ -5264,16 +5176,16 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
             )
           >();
 
-  /// from: `public suspend fun pigeon_echoAsyncNullableEnumMap(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
+  /// from: `public suspend fun echoAsyncNullableEnumMap(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
   /// The returned object must be released after use, by calling the [release] method.
-  core$_.Future<jni$_.JByteArray?> pigeon_echoAsyncNullableEnumMap(jni$_.JByteArray bs) async {
+  core$_.Future<jni$_.JByteArray?> echoAsyncNullableEnumMap(jni$_.JByteArray bs) async {
     final $p = jni$_.ReceivePort();
     final _$continuation = jni$_.ProtectedJniExtensions.newPortContinuation($p);
     final _$$selfRef = reference;
     final _$bs = bs.reference;
-    final $r = _pigeon_echoAsyncNullableEnumMap(
+    final $r = _echoAsyncNullableEnumMap(
       _$$selfRef.pointer,
-      _id_pigeon_echoAsyncNullableEnumMap.pointer,
+      _id_echoAsyncNullableEnumMap.pointer,
       _$bs.pointer,
       _$continuation.pointer,
     ).object<jni$_.JObject?>();
@@ -5298,14 +5210,13 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
     return $o?.as<jni$_.JByteArray>(jni$_.JByteArray.type, releaseOriginal: true);
   }
 
-  static final _id_pigeon_echoAsyncNullableClassMap = NativeInteropHostIntegrationCoreApiRegistrar
-      ._class
+  static final _id_echoAsyncNullableClassMap = NativeInteropHostIntegrationCoreApiRegistrar._class
       .instanceMethodId(
-        r'pigeon_echoAsyncNullableClassMap',
+        r'echoAsyncNullableClassMap',
         r'([BLkotlin/coroutines/Continuation;)Ljava/lang/Object;',
       );
 
-  static final _pigeon_echoAsyncNullableClassMap =
+  static final _echoAsyncNullableClassMap =
       jni$_.ProtectedJniExtensions.lookup<
             jni$_.NativeFunction<
               jni$_.JniResult Function(
@@ -5324,16 +5235,16 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
             )
           >();
 
-  /// from: `public suspend fun pigeon_echoAsyncNullableClassMap(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
+  /// from: `public suspend fun echoAsyncNullableClassMap(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
   /// The returned object must be released after use, by calling the [release] method.
-  core$_.Future<jni$_.JByteArray?> pigeon_echoAsyncNullableClassMap(jni$_.JByteArray bs) async {
+  core$_.Future<jni$_.JByteArray?> echoAsyncNullableClassMap(jni$_.JByteArray bs) async {
     final $p = jni$_.ReceivePort();
     final _$continuation = jni$_.ProtectedJniExtensions.newPortContinuation($p);
     final _$$selfRef = reference;
     final _$bs = bs.reference;
-    final $r = _pigeon_echoAsyncNullableClassMap(
+    final $r = _echoAsyncNullableClassMap(
       _$$selfRef.pointer,
-      _id_pigeon_echoAsyncNullableClassMap.pointer,
+      _id_echoAsyncNullableClassMap.pointer,
       _$bs.pointer,
       _$continuation.pointer,
     ).object<jni$_.JObject?>();
@@ -5358,14 +5269,13 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
     return $o?.as<jni$_.JByteArray>(jni$_.JByteArray.type, releaseOriginal: true);
   }
 
-  static final _id_pigeon_echoAsyncNullableEnum = NativeInteropHostIntegrationCoreApiRegistrar
-      ._class
+  static final _id_echoAsyncNullableEnum = NativeInteropHostIntegrationCoreApiRegistrar._class
       .instanceMethodId(
-        r'pigeon_echoAsyncNullableEnum',
+        r'echoAsyncNullableEnum',
         r'(JLkotlin/coroutines/Continuation;)Ljava/lang/Object;',
       );
 
-  static final _pigeon_echoAsyncNullableEnum =
+  static final _echoAsyncNullableEnum =
       jni$_.ProtectedJniExtensions.lookup<
             jni$_.NativeFunction<
               jni$_.JniResult Function(
@@ -5384,15 +5294,15 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
             )
           >();
 
-  /// from: `public suspend fun pigeon_echoAsyncNullableEnum(anEnum: kotlin.Long): kotlin.Long`
+  /// from: `public suspend fun echoAsyncNullableEnum(anEnum: kotlin.Long): kotlin.Long`
   /// The returned object must be released after use, by calling the [release] method.
-  core$_.Future<jni$_.JLong> pigeon_echoAsyncNullableEnum(core$_.int j) async {
+  core$_.Future<jni$_.JLong> echoAsyncNullableEnum(core$_.int j) async {
     final $p = jni$_.ReceivePort();
     final _$continuation = jni$_.ProtectedJniExtensions.newPortContinuation($p);
     final _$$selfRef = reference;
-    final $r = _pigeon_echoAsyncNullableEnum(
+    final $r = _echoAsyncNullableEnum(
       _$$selfRef.pointer,
-      _id_pigeon_echoAsyncNullableEnum.pointer,
+      _id_echoAsyncNullableEnum.pointer,
       j,
       _$continuation.pointer,
     ).object<jni$_.JObject>();
@@ -5415,13 +5325,14 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
     return $o.as<jni$_.JLong>(jni$_.JLong.type, releaseOriginal: true);
   }
 
-  static final _id_pigeon_echoAnotherAsyncNullableEnum =
-      NativeInteropHostIntegrationCoreApiRegistrar._class.instanceMethodId(
-        r'pigeon_echoAnotherAsyncNullableEnum',
+  static final _id_echoAnotherAsyncNullableEnum = NativeInteropHostIntegrationCoreApiRegistrar
+      ._class
+      .instanceMethodId(
+        r'echoAnotherAsyncNullableEnum',
         r'(JLkotlin/coroutines/Continuation;)Ljava/lang/Object;',
       );
 
-  static final _pigeon_echoAnotherAsyncNullableEnum =
+  static final _echoAnotherAsyncNullableEnum =
       jni$_.ProtectedJniExtensions.lookup<
             jni$_.NativeFunction<
               jni$_.JniResult Function(
@@ -5440,15 +5351,15 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
             )
           >();
 
-  /// from: `public suspend fun pigeon_echoAnotherAsyncNullableEnum(anotherEnum: kotlin.Long): kotlin.Long`
+  /// from: `public suspend fun echoAnotherAsyncNullableEnum(anotherEnum: kotlin.Long): kotlin.Long`
   /// The returned object must be released after use, by calling the [release] method.
-  core$_.Future<jni$_.JLong> pigeon_echoAnotherAsyncNullableEnum(core$_.int j) async {
+  core$_.Future<jni$_.JLong> echoAnotherAsyncNullableEnum(core$_.int j) async {
     final $p = jni$_.ReceivePort();
     final _$continuation = jni$_.ProtectedJniExtensions.newPortContinuation($p);
     final _$$selfRef = reference;
-    final $r = _pigeon_echoAnotherAsyncNullableEnum(
+    final $r = _echoAnotherAsyncNullableEnum(
       _$$selfRef.pointer,
-      _id_pigeon_echoAnotherAsyncNullableEnum.pointer,
+      _id_echoAnotherAsyncNullableEnum.pointer,
       j,
       _$continuation.pointer,
     ).object<jni$_.JObject>();
@@ -5471,10 +5382,10 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
     return $o.as<jni$_.JLong>(jni$_.JLong.type, releaseOriginal: true);
   }
 
-  static final _id_pigeon_callFlutterNoop = NativeInteropHostIntegrationCoreApiRegistrar._class
-      .instanceMethodId(r'pigeon_callFlutterNoop', r'()V');
+  static final _id_callFlutterNoop = NativeInteropHostIntegrationCoreApiRegistrar._class
+      .instanceMethodId(r'callFlutterNoop', r'()V');
 
-  static final _pigeon_callFlutterNoop =
+  static final _callFlutterNoop =
       jni$_.ProtectedJniExtensions.lookup<
             jni$_.NativeFunction<
               jni$_.JThrowablePtr Function(jni$_.Pointer<jni$_.Void>, jni$_.JMethodIDPtr)
@@ -5484,17 +5395,16 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
             jni$_.JThrowablePtr Function(jni$_.Pointer<jni$_.Void>, jni$_.JMethodIDPtr)
           >();
 
-  /// from: `public fun pigeon_callFlutterNoop(): kotlin.Unit`
-  void pigeon_callFlutterNoop() {
+  /// from: `public fun callFlutterNoop(): kotlin.Unit`
+  void callFlutterNoop() {
     final _$$selfRef = reference;
-    _pigeon_callFlutterNoop(_$$selfRef.pointer, _id_pigeon_callFlutterNoop.pointer).check();
+    _callFlutterNoop(_$$selfRef.pointer, _id_callFlutterNoop.pointer).check();
   }
 
-  static final _id_pigeon_callFlutterThrowError = NativeInteropHostIntegrationCoreApiRegistrar
-      ._class
-      .instanceMethodId(r'pigeon_callFlutterThrowError', r'()[B');
+  static final _id_callFlutterThrowError = NativeInteropHostIntegrationCoreApiRegistrar._class
+      .instanceMethodId(r'callFlutterThrowError', r'()[B');
 
-  static final _pigeon_callFlutterThrowError =
+  static final _callFlutterThrowError =
       jni$_.ProtectedJniExtensions.lookup<
             jni$_.NativeFunction<
               jni$_.JniResult Function(jni$_.Pointer<jni$_.Void>, jni$_.JMethodIDPtr)
@@ -5502,23 +5412,21 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
           >('globalEnv_CallObjectMethod')
           .asFunction<jni$_.JniResult Function(jni$_.Pointer<jni$_.Void>, jni$_.JMethodIDPtr)>();
 
-  /// from: `public fun pigeon_callFlutterThrowError(): kotlin.ByteArray?`
+  /// from: `public fun callFlutterThrowError(): kotlin.ByteArray?`
   /// The returned object must be released after use, by calling the [release] method.
-  jni$_.JByteArray? pigeon_callFlutterThrowError() {
+  jni$_.JByteArray? callFlutterThrowError() {
     final _$$selfRef = reference;
-    return _pigeon_callFlutterThrowError(
+    return _callFlutterThrowError(
       _$$selfRef.pointer,
-      _id_pigeon_callFlutterThrowError.pointer,
+      _id_callFlutterThrowError.pointer,
     ).object<jni$_.JByteArray?>();
   }
 
-  static final _id_pigeon_callFlutterThrowErrorFromVoid =
-      NativeInteropHostIntegrationCoreApiRegistrar._class.instanceMethodId(
-        r'pigeon_callFlutterThrowErrorFromVoid',
-        r'()V',
-      );
+  static final _id_callFlutterThrowErrorFromVoid = NativeInteropHostIntegrationCoreApiRegistrar
+      ._class
+      .instanceMethodId(r'callFlutterThrowErrorFromVoid', r'()V');
 
-  static final _pigeon_callFlutterThrowErrorFromVoid =
+  static final _callFlutterThrowErrorFromVoid =
       jni$_.ProtectedJniExtensions.lookup<
             jni$_.NativeFunction<
               jni$_.JThrowablePtr Function(jni$_.Pointer<jni$_.Void>, jni$_.JMethodIDPtr)
@@ -5528,22 +5436,22 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
             jni$_.JThrowablePtr Function(jni$_.Pointer<jni$_.Void>, jni$_.JMethodIDPtr)
           >();
 
-  /// from: `public fun pigeon_callFlutterThrowErrorFromVoid(): kotlin.Unit`
-  void pigeon_callFlutterThrowErrorFromVoid() {
+  /// from: `public fun callFlutterThrowErrorFromVoid(): kotlin.Unit`
+  void callFlutterThrowErrorFromVoid() {
     final _$$selfRef = reference;
-    _pigeon_callFlutterThrowErrorFromVoid(
+    _callFlutterThrowErrorFromVoid(
       _$$selfRef.pointer,
-      _id_pigeon_callFlutterThrowErrorFromVoid.pointer,
+      _id_callFlutterThrowErrorFromVoid.pointer,
     ).check();
   }
 
-  static final _id_pigeon_callFlutterEchoNativeInteropAllTypes =
+  static final _id_callFlutterEchoNativeInteropAllTypes =
       NativeInteropHostIntegrationCoreApiRegistrar._class.instanceMethodId(
-        r'pigeon_callFlutterEchoNativeInteropAllTypes',
+        r'callFlutterEchoNativeInteropAllTypes',
         r'([B)[B',
       );
 
-  static final _pigeon_callFlutterEchoNativeInteropAllTypes =
+  static final _callFlutterEchoNativeInteropAllTypes =
       jni$_.ProtectedJniExtensions.lookup<
             jni$_.NativeFunction<
               jni$_.JniResult Function(
@@ -5561,25 +5469,25 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
             )
           >();
 
-  /// from: `public fun pigeon_callFlutterEchoNativeInteropAllTypes(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
+  /// from: `public fun callFlutterEchoNativeInteropAllTypes(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
   /// The returned object must be released after use, by calling the [release] method.
-  jni$_.JByteArray? pigeon_callFlutterEchoNativeInteropAllTypes(jni$_.JByteArray bs) {
+  jni$_.JByteArray? callFlutterEchoNativeInteropAllTypes(jni$_.JByteArray bs) {
     final _$$selfRef = reference;
     final _$bs = bs.reference;
-    return _pigeon_callFlutterEchoNativeInteropAllTypes(
+    return _callFlutterEchoNativeInteropAllTypes(
       _$$selfRef.pointer,
-      _id_pigeon_callFlutterEchoNativeInteropAllTypes.pointer,
+      _id_callFlutterEchoNativeInteropAllTypes.pointer,
       _$bs.pointer,
     ).object<jni$_.JByteArray?>();
   }
 
-  static final _id_pigeon_callFlutterEchoNativeInteropAllNullableTypes =
+  static final _id_callFlutterEchoNativeInteropAllNullableTypes =
       NativeInteropHostIntegrationCoreApiRegistrar._class.instanceMethodId(
-        r'pigeon_callFlutterEchoNativeInteropAllNullableTypes',
+        r'callFlutterEchoNativeInteropAllNullableTypes',
         r'([B)[B',
       );
 
-  static final _pigeon_callFlutterEchoNativeInteropAllNullableTypes =
+  static final _callFlutterEchoNativeInteropAllNullableTypes =
       jni$_.ProtectedJniExtensions.lookup<
             jni$_.NativeFunction<
               jni$_.JniResult Function(
@@ -5597,25 +5505,58 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
             )
           >();
 
-  /// from: `public fun pigeon_callFlutterEchoNativeInteropAllNullableTypes(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
+  /// from: `public fun callFlutterEchoNativeInteropAllNullableTypes(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
   /// The returned object must be released after use, by calling the [release] method.
-  jni$_.JByteArray? pigeon_callFlutterEchoNativeInteropAllNullableTypes(jni$_.JByteArray bs) {
+  jni$_.JByteArray? callFlutterEchoNativeInteropAllNullableTypes(jni$_.JByteArray bs) {
     final _$$selfRef = reference;
     final _$bs = bs.reference;
-    return _pigeon_callFlutterEchoNativeInteropAllNullableTypes(
+    return _callFlutterEchoNativeInteropAllNullableTypes(
       _$$selfRef.pointer,
-      _id_pigeon_callFlutterEchoNativeInteropAllNullableTypes.pointer,
+      _id_callFlutterEchoNativeInteropAllNullableTypes.pointer,
       _$bs.pointer,
     ).object<jni$_.JByteArray?>();
   }
 
-  static final _id_pigeon_callFlutterSendMultipleNullableTypes =
+  static final _id_callFlutterEchoSealedClass = NativeInteropHostIntegrationCoreApiRegistrar._class
+      .instanceMethodId(r'callFlutterEchoSealedClass', r'([B)[B');
+
+  static final _callFlutterEchoSealedClass =
+      jni$_.ProtectedJniExtensions.lookup<
+            jni$_.NativeFunction<
+              jni$_.JniResult Function(
+                jni$_.Pointer<jni$_.Void>,
+                jni$_.JMethodIDPtr,
+                jni$_.VarArgs<(jni$_.Pointer<jni$_.Void>,)>,
+              )
+            >
+          >('globalEnv_CallObjectMethod')
+          .asFunction<
+            jni$_.JniResult Function(
+              jni$_.Pointer<jni$_.Void>,
+              jni$_.JMethodIDPtr,
+              jni$_.Pointer<jni$_.Void>,
+            )
+          >();
+
+  /// from: `public fun callFlutterEchoSealedClass(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
+  /// The returned object must be released after use, by calling the [release] method.
+  jni$_.JByteArray? callFlutterEchoSealedClass(jni$_.JByteArray bs) {
+    final _$$selfRef = reference;
+    final _$bs = bs.reference;
+    return _callFlutterEchoSealedClass(
+      _$$selfRef.pointer,
+      _id_callFlutterEchoSealedClass.pointer,
+      _$bs.pointer,
+    ).object<jni$_.JByteArray?>();
+  }
+
+  static final _id_callFlutterSendMultipleNullableTypes =
       NativeInteropHostIntegrationCoreApiRegistrar._class.instanceMethodId(
-        r'pigeon_callFlutterSendMultipleNullableTypes',
+        r'callFlutterSendMultipleNullableTypes',
         r'(Ljava/lang/Boolean;Ljava/lang/Long;Ljava/lang/String;)[B',
       );
 
-  static final _pigeon_callFlutterSendMultipleNullableTypes =
+  static final _callFlutterSendMultipleNullableTypes =
       jni$_.ProtectedJniExtensions.lookup<
             jni$_.NativeFunction<
               jni$_.JniResult Function(
@@ -5637,9 +5578,9 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
             )
           >();
 
-  /// from: `public fun pigeon_callFlutterSendMultipleNullableTypes(aNullableBool: kotlin.Boolean?, aNullableInt: kotlin.Long?, aNullableString: kotlin.String?): kotlin.ByteArray?`
+  /// from: `public fun callFlutterSendMultipleNullableTypes(aNullableBool: kotlin.Boolean?, aNullableInt: kotlin.Long?, aNullableString: kotlin.String?): kotlin.ByteArray?`
   /// The returned object must be released after use, by calling the [release] method.
-  jni$_.JByteArray? pigeon_callFlutterSendMultipleNullableTypes(
+  jni$_.JByteArray? callFlutterSendMultipleNullableTypes(
     jni$_.JBoolean? boolean,
     jni$_.JLong? long,
     jni$_.JString? string,
@@ -5648,22 +5589,22 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
     final _$boolean = boolean?.reference ?? jni$_.jNullReference;
     final _$long = long?.reference ?? jni$_.jNullReference;
     final _$string = string?.reference ?? jni$_.jNullReference;
-    return _pigeon_callFlutterSendMultipleNullableTypes(
+    return _callFlutterSendMultipleNullableTypes(
       _$$selfRef.pointer,
-      _id_pigeon_callFlutterSendMultipleNullableTypes.pointer,
+      _id_callFlutterSendMultipleNullableTypes.pointer,
       _$boolean.pointer,
       _$long.pointer,
       _$string.pointer,
     ).object<jni$_.JByteArray?>();
   }
 
-  static final _id_pigeon_callFlutterEchoNativeInteropAllNullableTypesWithoutRecursion =
+  static final _id_callFlutterEchoNativeInteropAllNullableTypesWithoutRecursion =
       NativeInteropHostIntegrationCoreApiRegistrar._class.instanceMethodId(
-        r'pigeon_callFlutterEchoNativeInteropAllNullableTypesWithoutRecursion',
+        r'callFlutterEchoNativeInteropAllNullableTypesWithoutRecursion',
         r'([B)[B',
       );
 
-  static final _pigeon_callFlutterEchoNativeInteropAllNullableTypesWithoutRecursion =
+  static final _callFlutterEchoNativeInteropAllNullableTypesWithoutRecursion =
       jni$_.ProtectedJniExtensions.lookup<
             jni$_.NativeFunction<
               jni$_.JniResult Function(
@@ -5681,27 +5622,27 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
             )
           >();
 
-  /// from: `public fun pigeon_callFlutterEchoNativeInteropAllNullableTypesWithoutRecursion(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
+  /// from: `public fun callFlutterEchoNativeInteropAllNullableTypesWithoutRecursion(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
   /// The returned object must be released after use, by calling the [release] method.
-  jni$_.JByteArray? pigeon_callFlutterEchoNativeInteropAllNullableTypesWithoutRecursion(
+  jni$_.JByteArray? callFlutterEchoNativeInteropAllNullableTypesWithoutRecursion(
     jni$_.JByteArray bs,
   ) {
     final _$$selfRef = reference;
     final _$bs = bs.reference;
-    return _pigeon_callFlutterEchoNativeInteropAllNullableTypesWithoutRecursion(
+    return _callFlutterEchoNativeInteropAllNullableTypesWithoutRecursion(
       _$$selfRef.pointer,
-      _id_pigeon_callFlutterEchoNativeInteropAllNullableTypesWithoutRecursion.pointer,
+      _id_callFlutterEchoNativeInteropAllNullableTypesWithoutRecursion.pointer,
       _$bs.pointer,
     ).object<jni$_.JByteArray?>();
   }
 
-  static final _id_pigeon_callFlutterSendMultipleNullableTypesWithoutRecursion =
+  static final _id_callFlutterSendMultipleNullableTypesWithoutRecursion =
       NativeInteropHostIntegrationCoreApiRegistrar._class.instanceMethodId(
-        r'pigeon_callFlutterSendMultipleNullableTypesWithoutRecursion',
+        r'callFlutterSendMultipleNullableTypesWithoutRecursion',
         r'(Ljava/lang/Boolean;Ljava/lang/Long;Ljava/lang/String;)[B',
       );
 
-  static final _pigeon_callFlutterSendMultipleNullableTypesWithoutRecursion =
+  static final _callFlutterSendMultipleNullableTypesWithoutRecursion =
       jni$_.ProtectedJniExtensions.lookup<
             jni$_.NativeFunction<
               jni$_.JniResult Function(
@@ -5723,9 +5664,9 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
             )
           >();
 
-  /// from: `public fun pigeon_callFlutterSendMultipleNullableTypesWithoutRecursion(aNullableBool: kotlin.Boolean?, aNullableInt: kotlin.Long?, aNullableString: kotlin.String?): kotlin.ByteArray?`
+  /// from: `public fun callFlutterSendMultipleNullableTypesWithoutRecursion(aNullableBool: kotlin.Boolean?, aNullableInt: kotlin.Long?, aNullableString: kotlin.String?): kotlin.ByteArray?`
   /// The returned object must be released after use, by calling the [release] method.
-  jni$_.JByteArray? pigeon_callFlutterSendMultipleNullableTypesWithoutRecursion(
+  jni$_.JByteArray? callFlutterSendMultipleNullableTypesWithoutRecursion(
     jni$_.JBoolean? boolean,
     jni$_.JLong? long,
     jni$_.JString? string,
@@ -5734,19 +5675,19 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
     final _$boolean = boolean?.reference ?? jni$_.jNullReference;
     final _$long = long?.reference ?? jni$_.jNullReference;
     final _$string = string?.reference ?? jni$_.jNullReference;
-    return _pigeon_callFlutterSendMultipleNullableTypesWithoutRecursion(
+    return _callFlutterSendMultipleNullableTypesWithoutRecursion(
       _$$selfRef.pointer,
-      _id_pigeon_callFlutterSendMultipleNullableTypesWithoutRecursion.pointer,
+      _id_callFlutterSendMultipleNullableTypesWithoutRecursion.pointer,
       _$boolean.pointer,
       _$long.pointer,
       _$string.pointer,
     ).object<jni$_.JByteArray?>();
   }
 
-  static final _id_pigeon_callFlutterEchoBool = NativeInteropHostIntegrationCoreApiRegistrar._class
-      .instanceMethodId(r'pigeon_callFlutterEchoBool', r'(Z)Z');
+  static final _id_callFlutterEchoBool = NativeInteropHostIntegrationCoreApiRegistrar._class
+      .instanceMethodId(r'callFlutterEchoBool', r'(Z)Z');
 
-  static final _pigeon_callFlutterEchoBool =
+  static final _callFlutterEchoBool =
       jni$_.ProtectedJniExtensions.lookup<
             jni$_.NativeFunction<
               jni$_.JniResult Function(
@@ -5760,20 +5701,20 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
             jni$_.JniResult Function(jni$_.Pointer<jni$_.Void>, jni$_.JMethodIDPtr, core$_.int)
           >();
 
-  /// from: `public fun pigeon_callFlutterEchoBool(aBool: kotlin.Boolean): kotlin.Boolean`
-  core$_.bool pigeon_callFlutterEchoBool(core$_.bool z) {
+  /// from: `public fun callFlutterEchoBool(aBool: kotlin.Boolean): kotlin.Boolean`
+  core$_.bool callFlutterEchoBool(core$_.bool z) {
     final _$$selfRef = reference;
-    return _pigeon_callFlutterEchoBool(
+    return _callFlutterEchoBool(
       _$$selfRef.pointer,
-      _id_pigeon_callFlutterEchoBool.pointer,
+      _id_callFlutterEchoBool.pointer,
       z ? 1 : 0,
     ).boolean;
   }
 
-  static final _id_pigeon_callFlutterEchoInt = NativeInteropHostIntegrationCoreApiRegistrar._class
-      .instanceMethodId(r'pigeon_callFlutterEchoInt', r'(J)J');
+  static final _id_callFlutterEchoInt = NativeInteropHostIntegrationCoreApiRegistrar._class
+      .instanceMethodId(r'callFlutterEchoInt', r'(J)J');
 
-  static final _pigeon_callFlutterEchoInt =
+  static final _callFlutterEchoInt =
       jni$_.ProtectedJniExtensions.lookup<
             jni$_.NativeFunction<
               jni$_.JniResult Function(
@@ -5787,21 +5728,16 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
             jni$_.JniResult Function(jni$_.Pointer<jni$_.Void>, jni$_.JMethodIDPtr, core$_.int)
           >();
 
-  /// from: `public fun pigeon_callFlutterEchoInt(anInt: kotlin.Long): kotlin.Long`
-  core$_.int pigeon_callFlutterEchoInt(core$_.int j) {
+  /// from: `public fun callFlutterEchoInt(anInt: kotlin.Long): kotlin.Long`
+  core$_.int callFlutterEchoInt(core$_.int j) {
     final _$$selfRef = reference;
-    return _pigeon_callFlutterEchoInt(
-      _$$selfRef.pointer,
-      _id_pigeon_callFlutterEchoInt.pointer,
-      j,
-    ).long;
+    return _callFlutterEchoInt(_$$selfRef.pointer, _id_callFlutterEchoInt.pointer, j).long;
   }
 
-  static final _id_pigeon_callFlutterEchoDouble = NativeInteropHostIntegrationCoreApiRegistrar
-      ._class
-      .instanceMethodId(r'pigeon_callFlutterEchoDouble', r'(D)D');
+  static final _id_callFlutterEchoDouble = NativeInteropHostIntegrationCoreApiRegistrar._class
+      .instanceMethodId(r'callFlutterEchoDouble', r'(D)D');
 
-  static final _pigeon_callFlutterEchoDouble =
+  static final _callFlutterEchoDouble =
       jni$_.ProtectedJniExtensions.lookup<
             jni$_.NativeFunction<
               jni$_.JniResult Function(
@@ -5815,21 +5751,20 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
             jni$_.JniResult Function(jni$_.Pointer<jni$_.Void>, jni$_.JMethodIDPtr, core$_.double)
           >();
 
-  /// from: `public fun pigeon_callFlutterEchoDouble(aDouble: kotlin.Double): kotlin.Double`
-  core$_.double pigeon_callFlutterEchoDouble(core$_.double d) {
+  /// from: `public fun callFlutterEchoDouble(aDouble: kotlin.Double): kotlin.Double`
+  core$_.double callFlutterEchoDouble(core$_.double d) {
     final _$$selfRef = reference;
-    return _pigeon_callFlutterEchoDouble(
+    return _callFlutterEchoDouble(
       _$$selfRef.pointer,
-      _id_pigeon_callFlutterEchoDouble.pointer,
+      _id_callFlutterEchoDouble.pointer,
       d,
     ).doubleFloat;
   }
 
-  static final _id_pigeon_callFlutterEchoString = NativeInteropHostIntegrationCoreApiRegistrar
-      ._class
-      .instanceMethodId(r'pigeon_callFlutterEchoString', r'(Ljava/lang/String;)Ljava/lang/String;');
+  static final _id_callFlutterEchoString = NativeInteropHostIntegrationCoreApiRegistrar._class
+      .instanceMethodId(r'callFlutterEchoString', r'(Ljava/lang/String;)Ljava/lang/String;');
 
-  static final _pigeon_callFlutterEchoString =
+  static final _callFlutterEchoString =
       jni$_.ProtectedJniExtensions.lookup<
             jni$_.NativeFunction<
               jni$_.JniResult Function(
@@ -5847,23 +5782,22 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
             )
           >();
 
-  /// from: `public fun pigeon_callFlutterEchoString(aString: kotlin.String): kotlin.String`
+  /// from: `public fun callFlutterEchoString(aString: kotlin.String): kotlin.String`
   /// The returned object must be released after use, by calling the [release] method.
-  jni$_.JString pigeon_callFlutterEchoString(jni$_.JString string) {
+  jni$_.JString callFlutterEchoString(jni$_.JString string) {
     final _$$selfRef = reference;
     final _$string = string.reference;
-    return _pigeon_callFlutterEchoString(
+    return _callFlutterEchoString(
       _$$selfRef.pointer,
-      _id_pigeon_callFlutterEchoString.pointer,
+      _id_callFlutterEchoString.pointer,
       _$string.pointer,
     ).object<jni$_.JString>();
   }
 
-  static final _id_pigeon_callFlutterEchoUint8List = NativeInteropHostIntegrationCoreApiRegistrar
-      ._class
-      .instanceMethodId(r'pigeon_callFlutterEchoUint8List', r'([B)[B');
+  static final _id_callFlutterEchoUint8List = NativeInteropHostIntegrationCoreApiRegistrar._class
+      .instanceMethodId(r'callFlutterEchoUint8List', r'([B)[B');
 
-  static final _pigeon_callFlutterEchoUint8List =
+  static final _callFlutterEchoUint8List =
       jni$_.ProtectedJniExtensions.lookup<
             jni$_.NativeFunction<
               jni$_.JniResult Function(
@@ -5881,23 +5815,22 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
             )
           >();
 
-  /// from: `public fun pigeon_callFlutterEchoUint8List(list: kotlin.ByteArray): kotlin.ByteArray`
+  /// from: `public fun callFlutterEchoUint8List(list: kotlin.ByteArray): kotlin.ByteArray`
   /// The returned object must be released after use, by calling the [release] method.
-  jni$_.JByteArray pigeon_callFlutterEchoUint8List(jni$_.JByteArray bs) {
+  jni$_.JByteArray callFlutterEchoUint8List(jni$_.JByteArray bs) {
     final _$$selfRef = reference;
     final _$bs = bs.reference;
-    return _pigeon_callFlutterEchoUint8List(
+    return _callFlutterEchoUint8List(
       _$$selfRef.pointer,
-      _id_pigeon_callFlutterEchoUint8List.pointer,
+      _id_callFlutterEchoUint8List.pointer,
       _$bs.pointer,
     ).object<jni$_.JByteArray>();
   }
 
-  static final _id_pigeon_callFlutterEchoInt32List = NativeInteropHostIntegrationCoreApiRegistrar
-      ._class
-      .instanceMethodId(r'pigeon_callFlutterEchoInt32List', r'([I)[I');
+  static final _id_callFlutterEchoInt32List = NativeInteropHostIntegrationCoreApiRegistrar._class
+      .instanceMethodId(r'callFlutterEchoInt32List', r'([I)[I');
 
-  static final _pigeon_callFlutterEchoInt32List =
+  static final _callFlutterEchoInt32List =
       jni$_.ProtectedJniExtensions.lookup<
             jni$_.NativeFunction<
               jni$_.JniResult Function(
@@ -5915,23 +5848,22 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
             )
           >();
 
-  /// from: `public fun pigeon_callFlutterEchoInt32List(list: kotlin.IntArray): kotlin.IntArray`
+  /// from: `public fun callFlutterEchoInt32List(list: kotlin.IntArray): kotlin.IntArray`
   /// The returned object must be released after use, by calling the [release] method.
-  jni$_.JIntArray pigeon_callFlutterEchoInt32List(jni$_.JIntArray is$) {
+  jni$_.JIntArray callFlutterEchoInt32List(jni$_.JIntArray is$) {
     final _$$selfRef = reference;
     final _$is$ = is$.reference;
-    return _pigeon_callFlutterEchoInt32List(
+    return _callFlutterEchoInt32List(
       _$$selfRef.pointer,
-      _id_pigeon_callFlutterEchoInt32List.pointer,
+      _id_callFlutterEchoInt32List.pointer,
       _$is$.pointer,
     ).object<jni$_.JIntArray>();
   }
 
-  static final _id_pigeon_callFlutterEchoInt64List = NativeInteropHostIntegrationCoreApiRegistrar
-      ._class
-      .instanceMethodId(r'pigeon_callFlutterEchoInt64List', r'([J)[J');
+  static final _id_callFlutterEchoInt64List = NativeInteropHostIntegrationCoreApiRegistrar._class
+      .instanceMethodId(r'callFlutterEchoInt64List', r'([J)[J');
 
-  static final _pigeon_callFlutterEchoInt64List =
+  static final _callFlutterEchoInt64List =
       jni$_.ProtectedJniExtensions.lookup<
             jni$_.NativeFunction<
               jni$_.JniResult Function(
@@ -5949,23 +5881,22 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
             )
           >();
 
-  /// from: `public fun pigeon_callFlutterEchoInt64List(list: kotlin.LongArray): kotlin.LongArray`
+  /// from: `public fun callFlutterEchoInt64List(list: kotlin.LongArray): kotlin.LongArray`
   /// The returned object must be released after use, by calling the [release] method.
-  jni$_.JLongArray pigeon_callFlutterEchoInt64List(jni$_.JLongArray js) {
+  jni$_.JLongArray callFlutterEchoInt64List(jni$_.JLongArray js) {
     final _$$selfRef = reference;
     final _$js = js.reference;
-    return _pigeon_callFlutterEchoInt64List(
+    return _callFlutterEchoInt64List(
       _$$selfRef.pointer,
-      _id_pigeon_callFlutterEchoInt64List.pointer,
+      _id_callFlutterEchoInt64List.pointer,
       _$js.pointer,
     ).object<jni$_.JLongArray>();
   }
 
-  static final _id_pigeon_callFlutterEchoFloat64List = NativeInteropHostIntegrationCoreApiRegistrar
-      ._class
-      .instanceMethodId(r'pigeon_callFlutterEchoFloat64List', r'([D)[D');
+  static final _id_callFlutterEchoFloat64List = NativeInteropHostIntegrationCoreApiRegistrar._class
+      .instanceMethodId(r'callFlutterEchoFloat64List', r'([D)[D');
 
-  static final _pigeon_callFlutterEchoFloat64List =
+  static final _callFlutterEchoFloat64List =
       jni$_.ProtectedJniExtensions.lookup<
             jni$_.NativeFunction<
               jni$_.JniResult Function(
@@ -5983,22 +5914,22 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
             )
           >();
 
-  /// from: `public fun pigeon_callFlutterEchoFloat64List(list: kotlin.DoubleArray): kotlin.DoubleArray`
+  /// from: `public fun callFlutterEchoFloat64List(list: kotlin.DoubleArray): kotlin.DoubleArray`
   /// The returned object must be released after use, by calling the [release] method.
-  jni$_.JDoubleArray pigeon_callFlutterEchoFloat64List(jni$_.JDoubleArray ds) {
+  jni$_.JDoubleArray callFlutterEchoFloat64List(jni$_.JDoubleArray ds) {
     final _$$selfRef = reference;
     final _$ds = ds.reference;
-    return _pigeon_callFlutterEchoFloat64List(
+    return _callFlutterEchoFloat64List(
       _$$selfRef.pointer,
-      _id_pigeon_callFlutterEchoFloat64List.pointer,
+      _id_callFlutterEchoFloat64List.pointer,
       _$ds.pointer,
     ).object<jni$_.JDoubleArray>();
   }
 
-  static final _id_pigeon_callFlutterEchoList = NativeInteropHostIntegrationCoreApiRegistrar._class
-      .instanceMethodId(r'pigeon_callFlutterEchoList', r'([B)[B');
+  static final _id_callFlutterEchoList = NativeInteropHostIntegrationCoreApiRegistrar._class
+      .instanceMethodId(r'callFlutterEchoList', r'([B)[B');
 
-  static final _pigeon_callFlutterEchoList =
+  static final _callFlutterEchoList =
       jni$_.ProtectedJniExtensions.lookup<
             jni$_.NativeFunction<
               jni$_.JniResult Function(
@@ -6016,23 +5947,89 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
             )
           >();
 
-  /// from: `public fun pigeon_callFlutterEchoList(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
+  /// from: `public fun callFlutterEchoList(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
   /// The returned object must be released after use, by calling the [release] method.
-  jni$_.JByteArray? pigeon_callFlutterEchoList(jni$_.JByteArray bs) {
+  jni$_.JByteArray? callFlutterEchoList(jni$_.JByteArray bs) {
     final _$$selfRef = reference;
     final _$bs = bs.reference;
-    return _pigeon_callFlutterEchoList(
+    return _callFlutterEchoList(
       _$$selfRef.pointer,
-      _id_pigeon_callFlutterEchoList.pointer,
+      _id_callFlutterEchoList.pointer,
       _$bs.pointer,
     ).object<jni$_.JByteArray?>();
   }
 
-  static final _id_pigeon_callFlutterEchoEnumList = NativeInteropHostIntegrationCoreApiRegistrar
+  static final _id_callFlutterEchoEnumList = NativeInteropHostIntegrationCoreApiRegistrar._class
+      .instanceMethodId(r'callFlutterEchoEnumList', r'([B)[B');
+
+  static final _callFlutterEchoEnumList =
+      jni$_.ProtectedJniExtensions.lookup<
+            jni$_.NativeFunction<
+              jni$_.JniResult Function(
+                jni$_.Pointer<jni$_.Void>,
+                jni$_.JMethodIDPtr,
+                jni$_.VarArgs<(jni$_.Pointer<jni$_.Void>,)>,
+              )
+            >
+          >('globalEnv_CallObjectMethod')
+          .asFunction<
+            jni$_.JniResult Function(
+              jni$_.Pointer<jni$_.Void>,
+              jni$_.JMethodIDPtr,
+              jni$_.Pointer<jni$_.Void>,
+            )
+          >();
+
+  /// from: `public fun callFlutterEchoEnumList(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
+  /// The returned object must be released after use, by calling the [release] method.
+  jni$_.JByteArray? callFlutterEchoEnumList(jni$_.JByteArray bs) {
+    final _$$selfRef = reference;
+    final _$bs = bs.reference;
+    return _callFlutterEchoEnumList(
+      _$$selfRef.pointer,
+      _id_callFlutterEchoEnumList.pointer,
+      _$bs.pointer,
+    ).object<jni$_.JByteArray?>();
+  }
+
+  static final _id_callFlutterEchoClassList = NativeInteropHostIntegrationCoreApiRegistrar._class
+      .instanceMethodId(r'callFlutterEchoClassList', r'([B)[B');
+
+  static final _callFlutterEchoClassList =
+      jni$_.ProtectedJniExtensions.lookup<
+            jni$_.NativeFunction<
+              jni$_.JniResult Function(
+                jni$_.Pointer<jni$_.Void>,
+                jni$_.JMethodIDPtr,
+                jni$_.VarArgs<(jni$_.Pointer<jni$_.Void>,)>,
+              )
+            >
+          >('globalEnv_CallObjectMethod')
+          .asFunction<
+            jni$_.JniResult Function(
+              jni$_.Pointer<jni$_.Void>,
+              jni$_.JMethodIDPtr,
+              jni$_.Pointer<jni$_.Void>,
+            )
+          >();
+
+  /// from: `public fun callFlutterEchoClassList(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
+  /// The returned object must be released after use, by calling the [release] method.
+  jni$_.JByteArray? callFlutterEchoClassList(jni$_.JByteArray bs) {
+    final _$$selfRef = reference;
+    final _$bs = bs.reference;
+    return _callFlutterEchoClassList(
+      _$$selfRef.pointer,
+      _id_callFlutterEchoClassList.pointer,
+      _$bs.pointer,
+    ).object<jni$_.JByteArray?>();
+  }
+
+  static final _id_callFlutterEchoNonNullEnumList = NativeInteropHostIntegrationCoreApiRegistrar
       ._class
-      .instanceMethodId(r'pigeon_callFlutterEchoEnumList', r'([B)[B');
+      .instanceMethodId(r'callFlutterEchoNonNullEnumList', r'([B)[B');
 
-  static final _pigeon_callFlutterEchoEnumList =
+  static final _callFlutterEchoNonNullEnumList =
       jni$_.ProtectedJniExtensions.lookup<
             jni$_.NativeFunction<
               jni$_.JniResult Function(
@@ -6050,23 +6047,23 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
             )
           >();
 
-  /// from: `public fun pigeon_callFlutterEchoEnumList(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
+  /// from: `public fun callFlutterEchoNonNullEnumList(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
   /// The returned object must be released after use, by calling the [release] method.
-  jni$_.JByteArray? pigeon_callFlutterEchoEnumList(jni$_.JByteArray bs) {
+  jni$_.JByteArray? callFlutterEchoNonNullEnumList(jni$_.JByteArray bs) {
     final _$$selfRef = reference;
     final _$bs = bs.reference;
-    return _pigeon_callFlutterEchoEnumList(
+    return _callFlutterEchoNonNullEnumList(
       _$$selfRef.pointer,
-      _id_pigeon_callFlutterEchoEnumList.pointer,
+      _id_callFlutterEchoNonNullEnumList.pointer,
       _$bs.pointer,
     ).object<jni$_.JByteArray?>();
   }
 
-  static final _id_pigeon_callFlutterEchoClassList = NativeInteropHostIntegrationCoreApiRegistrar
+  static final _id_callFlutterEchoNonNullClassList = NativeInteropHostIntegrationCoreApiRegistrar
       ._class
-      .instanceMethodId(r'pigeon_callFlutterEchoClassList', r'([B)[B');
+      .instanceMethodId(r'callFlutterEchoNonNullClassList', r'([B)[B');
 
-  static final _pigeon_callFlutterEchoClassList =
+  static final _callFlutterEchoNonNullClassList =
       jni$_.ProtectedJniExtensions.lookup<
             jni$_.NativeFunction<
               jni$_.JniResult Function(
@@ -6084,25 +6081,22 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
             )
           >();
 
-  /// from: `public fun pigeon_callFlutterEchoClassList(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
+  /// from: `public fun callFlutterEchoNonNullClassList(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
   /// The returned object must be released after use, by calling the [release] method.
-  jni$_.JByteArray? pigeon_callFlutterEchoClassList(jni$_.JByteArray bs) {
+  jni$_.JByteArray? callFlutterEchoNonNullClassList(jni$_.JByteArray bs) {
     final _$$selfRef = reference;
     final _$bs = bs.reference;
-    return _pigeon_callFlutterEchoClassList(
+    return _callFlutterEchoNonNullClassList(
       _$$selfRef.pointer,
-      _id_pigeon_callFlutterEchoClassList.pointer,
+      _id_callFlutterEchoNonNullClassList.pointer,
       _$bs.pointer,
     ).object<jni$_.JByteArray?>();
   }
 
-  static final _id_pigeon_callFlutterEchoNonNullEnumList =
-      NativeInteropHostIntegrationCoreApiRegistrar._class.instanceMethodId(
-        r'pigeon_callFlutterEchoNonNullEnumList',
-        r'([B)[B',
-      );
+  static final _id_callFlutterEchoMap = NativeInteropHostIntegrationCoreApiRegistrar._class
+      .instanceMethodId(r'callFlutterEchoMap', r'([B)[B');
 
-  static final _pigeon_callFlutterEchoNonNullEnumList =
+  static final _callFlutterEchoMap =
       jni$_.ProtectedJniExtensions.lookup<
             jni$_.NativeFunction<
               jni$_.JniResult Function(
@@ -6120,25 +6114,22 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
             )
           >();
 
-  /// from: `public fun pigeon_callFlutterEchoNonNullEnumList(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
+  /// from: `public fun callFlutterEchoMap(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
   /// The returned object must be released after use, by calling the [release] method.
-  jni$_.JByteArray? pigeon_callFlutterEchoNonNullEnumList(jni$_.JByteArray bs) {
+  jni$_.JByteArray? callFlutterEchoMap(jni$_.JByteArray bs) {
     final _$$selfRef = reference;
     final _$bs = bs.reference;
-    return _pigeon_callFlutterEchoNonNullEnumList(
+    return _callFlutterEchoMap(
       _$$selfRef.pointer,
-      _id_pigeon_callFlutterEchoNonNullEnumList.pointer,
+      _id_callFlutterEchoMap.pointer,
       _$bs.pointer,
     ).object<jni$_.JByteArray?>();
   }
 
-  static final _id_pigeon_callFlutterEchoNonNullClassList =
-      NativeInteropHostIntegrationCoreApiRegistrar._class.instanceMethodId(
-        r'pigeon_callFlutterEchoNonNullClassList',
-        r'([B)[B',
-      );
+  static final _id_callFlutterEchoStringMap = NativeInteropHostIntegrationCoreApiRegistrar._class
+      .instanceMethodId(r'callFlutterEchoStringMap', r'([B)[B');
 
-  static final _pigeon_callFlutterEchoNonNullClassList =
+  static final _callFlutterEchoStringMap =
       jni$_.ProtectedJniExtensions.lookup<
             jni$_.NativeFunction<
               jni$_.JniResult Function(
@@ -6156,22 +6147,22 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
             )
           >();
 
-  /// from: `public fun pigeon_callFlutterEchoNonNullClassList(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
+  /// from: `public fun callFlutterEchoStringMap(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
   /// The returned object must be released after use, by calling the [release] method.
-  jni$_.JByteArray? pigeon_callFlutterEchoNonNullClassList(jni$_.JByteArray bs) {
+  jni$_.JByteArray? callFlutterEchoStringMap(jni$_.JByteArray bs) {
     final _$$selfRef = reference;
     final _$bs = bs.reference;
-    return _pigeon_callFlutterEchoNonNullClassList(
+    return _callFlutterEchoStringMap(
       _$$selfRef.pointer,
-      _id_pigeon_callFlutterEchoNonNullClassList.pointer,
+      _id_callFlutterEchoStringMap.pointer,
       _$bs.pointer,
     ).object<jni$_.JByteArray?>();
   }
 
-  static final _id_pigeon_callFlutterEchoMap = NativeInteropHostIntegrationCoreApiRegistrar._class
-      .instanceMethodId(r'pigeon_callFlutterEchoMap', r'([B)[B');
+  static final _id_callFlutterEchoIntMap = NativeInteropHostIntegrationCoreApiRegistrar._class
+      .instanceMethodId(r'callFlutterEchoIntMap', r'([B)[B');
 
-  static final _pigeon_callFlutterEchoMap =
+  static final _callFlutterEchoIntMap =
       jni$_.ProtectedJniExtensions.lookup<
             jni$_.NativeFunction<
               jni$_.JniResult Function(
@@ -6189,23 +6180,89 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
             )
           >();
 
-  /// from: `public fun pigeon_callFlutterEchoMap(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
+  /// from: `public fun callFlutterEchoIntMap(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
   /// The returned object must be released after use, by calling the [release] method.
-  jni$_.JByteArray? pigeon_callFlutterEchoMap(jni$_.JByteArray bs) {
+  jni$_.JByteArray? callFlutterEchoIntMap(jni$_.JByteArray bs) {
     final _$$selfRef = reference;
     final _$bs = bs.reference;
-    return _pigeon_callFlutterEchoMap(
+    return _callFlutterEchoIntMap(
       _$$selfRef.pointer,
-      _id_pigeon_callFlutterEchoMap.pointer,
+      _id_callFlutterEchoIntMap.pointer,
       _$bs.pointer,
     ).object<jni$_.JByteArray?>();
   }
 
-  static final _id_pigeon_callFlutterEchoStringMap = NativeInteropHostIntegrationCoreApiRegistrar
+  static final _id_callFlutterEchoEnumMap = NativeInteropHostIntegrationCoreApiRegistrar._class
+      .instanceMethodId(r'callFlutterEchoEnumMap', r'([B)[B');
+
+  static final _callFlutterEchoEnumMap =
+      jni$_.ProtectedJniExtensions.lookup<
+            jni$_.NativeFunction<
+              jni$_.JniResult Function(
+                jni$_.Pointer<jni$_.Void>,
+                jni$_.JMethodIDPtr,
+                jni$_.VarArgs<(jni$_.Pointer<jni$_.Void>,)>,
+              )
+            >
+          >('globalEnv_CallObjectMethod')
+          .asFunction<
+            jni$_.JniResult Function(
+              jni$_.Pointer<jni$_.Void>,
+              jni$_.JMethodIDPtr,
+              jni$_.Pointer<jni$_.Void>,
+            )
+          >();
+
+  /// from: `public fun callFlutterEchoEnumMap(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
+  /// The returned object must be released after use, by calling the [release] method.
+  jni$_.JByteArray? callFlutterEchoEnumMap(jni$_.JByteArray bs) {
+    final _$$selfRef = reference;
+    final _$bs = bs.reference;
+    return _callFlutterEchoEnumMap(
+      _$$selfRef.pointer,
+      _id_callFlutterEchoEnumMap.pointer,
+      _$bs.pointer,
+    ).object<jni$_.JByteArray?>();
+  }
+
+  static final _id_callFlutterEchoClassMap = NativeInteropHostIntegrationCoreApiRegistrar._class
+      .instanceMethodId(r'callFlutterEchoClassMap', r'([B)[B');
+
+  static final _callFlutterEchoClassMap =
+      jni$_.ProtectedJniExtensions.lookup<
+            jni$_.NativeFunction<
+              jni$_.JniResult Function(
+                jni$_.Pointer<jni$_.Void>,
+                jni$_.JMethodIDPtr,
+                jni$_.VarArgs<(jni$_.Pointer<jni$_.Void>,)>,
+              )
+            >
+          >('globalEnv_CallObjectMethod')
+          .asFunction<
+            jni$_.JniResult Function(
+              jni$_.Pointer<jni$_.Void>,
+              jni$_.JMethodIDPtr,
+              jni$_.Pointer<jni$_.Void>,
+            )
+          >();
+
+  /// from: `public fun callFlutterEchoClassMap(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
+  /// The returned object must be released after use, by calling the [release] method.
+  jni$_.JByteArray? callFlutterEchoClassMap(jni$_.JByteArray bs) {
+    final _$$selfRef = reference;
+    final _$bs = bs.reference;
+    return _callFlutterEchoClassMap(
+      _$$selfRef.pointer,
+      _id_callFlutterEchoClassMap.pointer,
+      _$bs.pointer,
+    ).object<jni$_.JByteArray?>();
+  }
+
+  static final _id_callFlutterEchoNonNullStringMap = NativeInteropHostIntegrationCoreApiRegistrar
       ._class
-      .instanceMethodId(r'pigeon_callFlutterEchoStringMap', r'([B)[B');
+      .instanceMethodId(r'callFlutterEchoNonNullStringMap', r'([B)[B');
 
-  static final _pigeon_callFlutterEchoStringMap =
+  static final _callFlutterEchoNonNullStringMap =
       jni$_.ProtectedJniExtensions.lookup<
             jni$_.NativeFunction<
               jni$_.JniResult Function(
@@ -6223,23 +6280,23 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
             )
           >();
 
-  /// from: `public fun pigeon_callFlutterEchoStringMap(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
+  /// from: `public fun callFlutterEchoNonNullStringMap(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
   /// The returned object must be released after use, by calling the [release] method.
-  jni$_.JByteArray? pigeon_callFlutterEchoStringMap(jni$_.JByteArray bs) {
+  jni$_.JByteArray? callFlutterEchoNonNullStringMap(jni$_.JByteArray bs) {
     final _$$selfRef = reference;
     final _$bs = bs.reference;
-    return _pigeon_callFlutterEchoStringMap(
+    return _callFlutterEchoNonNullStringMap(
       _$$selfRef.pointer,
-      _id_pigeon_callFlutterEchoStringMap.pointer,
+      _id_callFlutterEchoNonNullStringMap.pointer,
       _$bs.pointer,
     ).object<jni$_.JByteArray?>();
   }
 
-  static final _id_pigeon_callFlutterEchoIntMap = NativeInteropHostIntegrationCoreApiRegistrar
+  static final _id_callFlutterEchoNonNullIntMap = NativeInteropHostIntegrationCoreApiRegistrar
       ._class
-      .instanceMethodId(r'pigeon_callFlutterEchoIntMap', r'([B)[B');
+      .instanceMethodId(r'callFlutterEchoNonNullIntMap', r'([B)[B');
 
-  static final _pigeon_callFlutterEchoIntMap =
+  static final _callFlutterEchoNonNullIntMap =
       jni$_.ProtectedJniExtensions.lookup<
             jni$_.NativeFunction<
               jni$_.JniResult Function(
@@ -6257,23 +6314,23 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
             )
           >();
 
-  /// from: `public fun pigeon_callFlutterEchoIntMap(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
+  /// from: `public fun callFlutterEchoNonNullIntMap(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
   /// The returned object must be released after use, by calling the [release] method.
-  jni$_.JByteArray? pigeon_callFlutterEchoIntMap(jni$_.JByteArray bs) {
+  jni$_.JByteArray? callFlutterEchoNonNullIntMap(jni$_.JByteArray bs) {
     final _$$selfRef = reference;
     final _$bs = bs.reference;
-    return _pigeon_callFlutterEchoIntMap(
+    return _callFlutterEchoNonNullIntMap(
       _$$selfRef.pointer,
-      _id_pigeon_callFlutterEchoIntMap.pointer,
+      _id_callFlutterEchoNonNullIntMap.pointer,
       _$bs.pointer,
     ).object<jni$_.JByteArray?>();
   }
 
-  static final _id_pigeon_callFlutterEchoEnumMap = NativeInteropHostIntegrationCoreApiRegistrar
+  static final _id_callFlutterEchoNonNullEnumMap = NativeInteropHostIntegrationCoreApiRegistrar
       ._class
-      .instanceMethodId(r'pigeon_callFlutterEchoEnumMap', r'([B)[B');
+      .instanceMethodId(r'callFlutterEchoNonNullEnumMap', r'([B)[B');
 
-  static final _pigeon_callFlutterEchoEnumMap =
+  static final _callFlutterEchoNonNullEnumMap =
       jni$_.ProtectedJniExtensions.lookup<
             jni$_.NativeFunction<
               jni$_.JniResult Function(
@@ -6291,23 +6348,23 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
             )
           >();
 
-  /// from: `public fun pigeon_callFlutterEchoEnumMap(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
+  /// from: `public fun callFlutterEchoNonNullEnumMap(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
   /// The returned object must be released after use, by calling the [release] method.
-  jni$_.JByteArray? pigeon_callFlutterEchoEnumMap(jni$_.JByteArray bs) {
+  jni$_.JByteArray? callFlutterEchoNonNullEnumMap(jni$_.JByteArray bs) {
     final _$$selfRef = reference;
     final _$bs = bs.reference;
-    return _pigeon_callFlutterEchoEnumMap(
+    return _callFlutterEchoNonNullEnumMap(
       _$$selfRef.pointer,
-      _id_pigeon_callFlutterEchoEnumMap.pointer,
+      _id_callFlutterEchoNonNullEnumMap.pointer,
       _$bs.pointer,
     ).object<jni$_.JByteArray?>();
   }
 
-  static final _id_pigeon_callFlutterEchoClassMap = NativeInteropHostIntegrationCoreApiRegistrar
+  static final _id_callFlutterEchoNonNullClassMap = NativeInteropHostIntegrationCoreApiRegistrar
       ._class
-      .instanceMethodId(r'pigeon_callFlutterEchoClassMap', r'([B)[B');
+      .instanceMethodId(r'callFlutterEchoNonNullClassMap', r'([B)[B');
 
-  static final _pigeon_callFlutterEchoClassMap =
+  static final _callFlutterEchoNonNullClassMap =
       jni$_.ProtectedJniExtensions.lookup<
             jni$_.NativeFunction<
               jni$_.JniResult Function(
@@ -6325,166 +6382,22 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
             )
           >();
 
-  /// from: `public fun pigeon_callFlutterEchoClassMap(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
+  /// from: `public fun callFlutterEchoNonNullClassMap(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
   /// The returned object must be released after use, by calling the [release] method.
-  jni$_.JByteArray? pigeon_callFlutterEchoClassMap(jni$_.JByteArray bs) {
+  jni$_.JByteArray? callFlutterEchoNonNullClassMap(jni$_.JByteArray bs) {
     final _$$selfRef = reference;
     final _$bs = bs.reference;
-    return _pigeon_callFlutterEchoClassMap(
+    return _callFlutterEchoNonNullClassMap(
       _$$selfRef.pointer,
-      _id_pigeon_callFlutterEchoClassMap.pointer,
+      _id_callFlutterEchoNonNullClassMap.pointer,
       _$bs.pointer,
     ).object<jni$_.JByteArray?>();
   }
 
-  static final _id_pigeon_callFlutterEchoNonNullStringMap =
-      NativeInteropHostIntegrationCoreApiRegistrar._class.instanceMethodId(
-        r'pigeon_callFlutterEchoNonNullStringMap',
-        r'([B)[B',
-      );
+  static final _id_callFlutterEchoEnum = NativeInteropHostIntegrationCoreApiRegistrar._class
+      .instanceMethodId(r'callFlutterEchoEnum', r'(J)J');
 
-  static final _pigeon_callFlutterEchoNonNullStringMap =
-      jni$_.ProtectedJniExtensions.lookup<
-            jni$_.NativeFunction<
-              jni$_.JniResult Function(
-                jni$_.Pointer<jni$_.Void>,
-                jni$_.JMethodIDPtr,
-                jni$_.VarArgs<(jni$_.Pointer<jni$_.Void>,)>,
-              )
-            >
-          >('globalEnv_CallObjectMethod')
-          .asFunction<
-            jni$_.JniResult Function(
-              jni$_.Pointer<jni$_.Void>,
-              jni$_.JMethodIDPtr,
-              jni$_.Pointer<jni$_.Void>,
-            )
-          >();
-
-  /// from: `public fun pigeon_callFlutterEchoNonNullStringMap(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
-  /// The returned object must be released after use, by calling the [release] method.
-  jni$_.JByteArray? pigeon_callFlutterEchoNonNullStringMap(jni$_.JByteArray bs) {
-    final _$$selfRef = reference;
-    final _$bs = bs.reference;
-    return _pigeon_callFlutterEchoNonNullStringMap(
-      _$$selfRef.pointer,
-      _id_pigeon_callFlutterEchoNonNullStringMap.pointer,
-      _$bs.pointer,
-    ).object<jni$_.JByteArray?>();
-  }
-
-  static final _id_pigeon_callFlutterEchoNonNullIntMap =
-      NativeInteropHostIntegrationCoreApiRegistrar._class.instanceMethodId(
-        r'pigeon_callFlutterEchoNonNullIntMap',
-        r'([B)[B',
-      );
-
-  static final _pigeon_callFlutterEchoNonNullIntMap =
-      jni$_.ProtectedJniExtensions.lookup<
-            jni$_.NativeFunction<
-              jni$_.JniResult Function(
-                jni$_.Pointer<jni$_.Void>,
-                jni$_.JMethodIDPtr,
-                jni$_.VarArgs<(jni$_.Pointer<jni$_.Void>,)>,
-              )
-            >
-          >('globalEnv_CallObjectMethod')
-          .asFunction<
-            jni$_.JniResult Function(
-              jni$_.Pointer<jni$_.Void>,
-              jni$_.JMethodIDPtr,
-              jni$_.Pointer<jni$_.Void>,
-            )
-          >();
-
-  /// from: `public fun pigeon_callFlutterEchoNonNullIntMap(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
-  /// The returned object must be released after use, by calling the [release] method.
-  jni$_.JByteArray? pigeon_callFlutterEchoNonNullIntMap(jni$_.JByteArray bs) {
-    final _$$selfRef = reference;
-    final _$bs = bs.reference;
-    return _pigeon_callFlutterEchoNonNullIntMap(
-      _$$selfRef.pointer,
-      _id_pigeon_callFlutterEchoNonNullIntMap.pointer,
-      _$bs.pointer,
-    ).object<jni$_.JByteArray?>();
-  }
-
-  static final _id_pigeon_callFlutterEchoNonNullEnumMap =
-      NativeInteropHostIntegrationCoreApiRegistrar._class.instanceMethodId(
-        r'pigeon_callFlutterEchoNonNullEnumMap',
-        r'([B)[B',
-      );
-
-  static final _pigeon_callFlutterEchoNonNullEnumMap =
-      jni$_.ProtectedJniExtensions.lookup<
-            jni$_.NativeFunction<
-              jni$_.JniResult Function(
-                jni$_.Pointer<jni$_.Void>,
-                jni$_.JMethodIDPtr,
-                jni$_.VarArgs<(jni$_.Pointer<jni$_.Void>,)>,
-              )
-            >
-          >('globalEnv_CallObjectMethod')
-          .asFunction<
-            jni$_.JniResult Function(
-              jni$_.Pointer<jni$_.Void>,
-              jni$_.JMethodIDPtr,
-              jni$_.Pointer<jni$_.Void>,
-            )
-          >();
-
-  /// from: `public fun pigeon_callFlutterEchoNonNullEnumMap(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
-  /// The returned object must be released after use, by calling the [release] method.
-  jni$_.JByteArray? pigeon_callFlutterEchoNonNullEnumMap(jni$_.JByteArray bs) {
-    final _$$selfRef = reference;
-    final _$bs = bs.reference;
-    return _pigeon_callFlutterEchoNonNullEnumMap(
-      _$$selfRef.pointer,
-      _id_pigeon_callFlutterEchoNonNullEnumMap.pointer,
-      _$bs.pointer,
-    ).object<jni$_.JByteArray?>();
-  }
-
-  static final _id_pigeon_callFlutterEchoNonNullClassMap =
-      NativeInteropHostIntegrationCoreApiRegistrar._class.instanceMethodId(
-        r'pigeon_callFlutterEchoNonNullClassMap',
-        r'([B)[B',
-      );
-
-  static final _pigeon_callFlutterEchoNonNullClassMap =
-      jni$_.ProtectedJniExtensions.lookup<
-            jni$_.NativeFunction<
-              jni$_.JniResult Function(
-                jni$_.Pointer<jni$_.Void>,
-                jni$_.JMethodIDPtr,
-                jni$_.VarArgs<(jni$_.Pointer<jni$_.Void>,)>,
-              )
-            >
-          >('globalEnv_CallObjectMethod')
-          .asFunction<
-            jni$_.JniResult Function(
-              jni$_.Pointer<jni$_.Void>,
-              jni$_.JMethodIDPtr,
-              jni$_.Pointer<jni$_.Void>,
-            )
-          >();
-
-  /// from: `public fun pigeon_callFlutterEchoNonNullClassMap(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
-  /// The returned object must be released after use, by calling the [release] method.
-  jni$_.JByteArray? pigeon_callFlutterEchoNonNullClassMap(jni$_.JByteArray bs) {
-    final _$$selfRef = reference;
-    final _$bs = bs.reference;
-    return _pigeon_callFlutterEchoNonNullClassMap(
-      _$$selfRef.pointer,
-      _id_pigeon_callFlutterEchoNonNullClassMap.pointer,
-      _$bs.pointer,
-    ).object<jni$_.JByteArray?>();
-  }
-
-  static final _id_pigeon_callFlutterEchoEnum = NativeInteropHostIntegrationCoreApiRegistrar._class
-      .instanceMethodId(r'pigeon_callFlutterEchoEnum', r'(J)J');
-
-  static final _pigeon_callFlutterEchoEnum =
+  static final _callFlutterEchoEnum =
       jni$_.ProtectedJniExtensions.lookup<
             jni$_.NativeFunction<
               jni$_.JniResult Function(
@@ -6498,23 +6411,19 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
             jni$_.JniResult Function(jni$_.Pointer<jni$_.Void>, jni$_.JMethodIDPtr, core$_.int)
           >();
 
-  /// from: `public fun pigeon_callFlutterEchoEnum(anEnum: kotlin.Long): kotlin.Long`
-  core$_.int pigeon_callFlutterEchoEnum(core$_.int j) {
+  /// from: `public fun callFlutterEchoEnum(anEnum: kotlin.Long): kotlin.Long`
+  core$_.int callFlutterEchoEnum(core$_.int j) {
     final _$$selfRef = reference;
-    return _pigeon_callFlutterEchoEnum(
-      _$$selfRef.pointer,
-      _id_pigeon_callFlutterEchoEnum.pointer,
-      j,
-    ).long;
+    return _callFlutterEchoEnum(_$$selfRef.pointer, _id_callFlutterEchoEnum.pointer, j).long;
   }
 
-  static final _id_pigeon_callFlutterEchoNativeInteropAnotherEnum =
+  static final _id_callFlutterEchoNativeInteropAnotherEnum =
       NativeInteropHostIntegrationCoreApiRegistrar._class.instanceMethodId(
-        r'pigeon_callFlutterEchoNativeInteropAnotherEnum',
+        r'callFlutterEchoNativeInteropAnotherEnum',
         r'(J)J',
       );
 
-  static final _pigeon_callFlutterEchoNativeInteropAnotherEnum =
+  static final _callFlutterEchoNativeInteropAnotherEnum =
       jni$_.ProtectedJniExtensions.lookup<
             jni$_.NativeFunction<
               jni$_.JniResult Function(
@@ -6528,24 +6437,23 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
             jni$_.JniResult Function(jni$_.Pointer<jni$_.Void>, jni$_.JMethodIDPtr, core$_.int)
           >();
 
-  /// from: `public fun pigeon_callFlutterEchoNativeInteropAnotherEnum(anotherEnum: kotlin.Long): kotlin.Long`
-  core$_.int pigeon_callFlutterEchoNativeInteropAnotherEnum(core$_.int j) {
+  /// from: `public fun callFlutterEchoNativeInteropAnotherEnum(anotherEnum: kotlin.Long): kotlin.Long`
+  core$_.int callFlutterEchoNativeInteropAnotherEnum(core$_.int j) {
     final _$$selfRef = reference;
-    return _pigeon_callFlutterEchoNativeInteropAnotherEnum(
+    return _callFlutterEchoNativeInteropAnotherEnum(
       _$$selfRef.pointer,
-      _id_pigeon_callFlutterEchoNativeInteropAnotherEnum.pointer,
+      _id_callFlutterEchoNativeInteropAnotherEnum.pointer,
       j,
     ).long;
   }
 
-  static final _id_pigeon_callFlutterEchoNullableBool = NativeInteropHostIntegrationCoreApiRegistrar
-      ._class
+  static final _id_callFlutterEchoNullableBool = NativeInteropHostIntegrationCoreApiRegistrar._class
       .instanceMethodId(
-        r'pigeon_callFlutterEchoNullableBool',
+        r'callFlutterEchoNullableBool',
         r'(Ljava/lang/Boolean;)Ljava/lang/Boolean;',
       );
 
-  static final _pigeon_callFlutterEchoNullableBool =
+  static final _callFlutterEchoNullableBool =
       jni$_.ProtectedJniExtensions.lookup<
             jni$_.NativeFunction<
               jni$_.JniResult Function(
@@ -6563,26 +6471,22 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
             )
           >();
 
-  /// from: `public fun pigeon_callFlutterEchoNullableBool(aBool: kotlin.Boolean?): kotlin.Boolean?`
+  /// from: `public fun callFlutterEchoNullableBool(aBool: kotlin.Boolean?): kotlin.Boolean?`
   /// The returned object must be released after use, by calling the [release] method.
-  jni$_.JBoolean? pigeon_callFlutterEchoNullableBool(jni$_.JBoolean? boolean) {
+  jni$_.JBoolean? callFlutterEchoNullableBool(jni$_.JBoolean? boolean) {
     final _$$selfRef = reference;
     final _$boolean = boolean?.reference ?? jni$_.jNullReference;
-    return _pigeon_callFlutterEchoNullableBool(
+    return _callFlutterEchoNullableBool(
       _$$selfRef.pointer,
-      _id_pigeon_callFlutterEchoNullableBool.pointer,
+      _id_callFlutterEchoNullableBool.pointer,
       _$boolean.pointer,
     ).object<jni$_.JBoolean?>();
   }
 
-  static final _id_pigeon_callFlutterEchoNullableInt = NativeInteropHostIntegrationCoreApiRegistrar
-      ._class
-      .instanceMethodId(
-        r'pigeon_callFlutterEchoNullableInt',
-        r'(Ljava/lang/Long;)Ljava/lang/Long;',
-      );
+  static final _id_callFlutterEchoNullableInt = NativeInteropHostIntegrationCoreApiRegistrar._class
+      .instanceMethodId(r'callFlutterEchoNullableInt', r'(Ljava/lang/Long;)Ljava/lang/Long;');
 
-  static final _pigeon_callFlutterEchoNullableInt =
+  static final _callFlutterEchoNullableInt =
       jni$_.ProtectedJniExtensions.lookup<
             jni$_.NativeFunction<
               jni$_.JniResult Function(
@@ -6600,25 +6504,26 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
             )
           >();
 
-  /// from: `public fun pigeon_callFlutterEchoNullableInt(anInt: kotlin.Long?): kotlin.Long?`
+  /// from: `public fun callFlutterEchoNullableInt(anInt: kotlin.Long?): kotlin.Long?`
   /// The returned object must be released after use, by calling the [release] method.
-  jni$_.JLong? pigeon_callFlutterEchoNullableInt(jni$_.JLong? long) {
+  jni$_.JLong? callFlutterEchoNullableInt(jni$_.JLong? long) {
     final _$$selfRef = reference;
     final _$long = long?.reference ?? jni$_.jNullReference;
-    return _pigeon_callFlutterEchoNullableInt(
+    return _callFlutterEchoNullableInt(
       _$$selfRef.pointer,
-      _id_pigeon_callFlutterEchoNullableInt.pointer,
+      _id_callFlutterEchoNullableInt.pointer,
       _$long.pointer,
     ).object<jni$_.JLong?>();
   }
 
-  static final _id_pigeon_callFlutterEchoNullableDouble =
-      NativeInteropHostIntegrationCoreApiRegistrar._class.instanceMethodId(
-        r'pigeon_callFlutterEchoNullableDouble',
+  static final _id_callFlutterEchoNullableDouble = NativeInteropHostIntegrationCoreApiRegistrar
+      ._class
+      .instanceMethodId(
+        r'callFlutterEchoNullableDouble',
         r'(Ljava/lang/Double;)Ljava/lang/Double;',
       );
 
-  static final _pigeon_callFlutterEchoNullableDouble =
+  static final _callFlutterEchoNullableDouble =
       jni$_.ProtectedJniExtensions.lookup<
             jni$_.NativeFunction<
               jni$_.JniResult Function(
@@ -6636,25 +6541,26 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
             )
           >();
 
-  /// from: `public fun pigeon_callFlutterEchoNullableDouble(aDouble: kotlin.Double?): kotlin.Double?`
+  /// from: `public fun callFlutterEchoNullableDouble(aDouble: kotlin.Double?): kotlin.Double?`
   /// The returned object must be released after use, by calling the [release] method.
-  jni$_.JDouble? pigeon_callFlutterEchoNullableDouble(jni$_.JDouble? double) {
+  jni$_.JDouble? callFlutterEchoNullableDouble(jni$_.JDouble? double) {
     final _$$selfRef = reference;
     final _$double = double?.reference ?? jni$_.jNullReference;
-    return _pigeon_callFlutterEchoNullableDouble(
+    return _callFlutterEchoNullableDouble(
       _$$selfRef.pointer,
-      _id_pigeon_callFlutterEchoNullableDouble.pointer,
+      _id_callFlutterEchoNullableDouble.pointer,
       _$double.pointer,
     ).object<jni$_.JDouble?>();
   }
 
-  static final _id_pigeon_callFlutterEchoNullableString =
-      NativeInteropHostIntegrationCoreApiRegistrar._class.instanceMethodId(
-        r'pigeon_callFlutterEchoNullableString',
+  static final _id_callFlutterEchoNullableString = NativeInteropHostIntegrationCoreApiRegistrar
+      ._class
+      .instanceMethodId(
+        r'callFlutterEchoNullableString',
         r'(Ljava/lang/String;)Ljava/lang/String;',
       );
 
-  static final _pigeon_callFlutterEchoNullableString =
+  static final _callFlutterEchoNullableString =
       jni$_.ProtectedJniExtensions.lookup<
             jni$_.NativeFunction<
               jni$_.JniResult Function(
@@ -6672,25 +6578,23 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
             )
           >();
 
-  /// from: `public fun pigeon_callFlutterEchoNullableString(aString: kotlin.String?): kotlin.String?`
+  /// from: `public fun callFlutterEchoNullableString(aString: kotlin.String?): kotlin.String?`
   /// The returned object must be released after use, by calling the [release] method.
-  jni$_.JString? pigeon_callFlutterEchoNullableString(jni$_.JString? string) {
+  jni$_.JString? callFlutterEchoNullableString(jni$_.JString? string) {
     final _$$selfRef = reference;
     final _$string = string?.reference ?? jni$_.jNullReference;
-    return _pigeon_callFlutterEchoNullableString(
+    return _callFlutterEchoNullableString(
       _$$selfRef.pointer,
-      _id_pigeon_callFlutterEchoNullableString.pointer,
+      _id_callFlutterEchoNullableString.pointer,
       _$string.pointer,
     ).object<jni$_.JString?>();
   }
 
-  static final _id_pigeon_callFlutterEchoNullableUint8List =
-      NativeInteropHostIntegrationCoreApiRegistrar._class.instanceMethodId(
-        r'pigeon_callFlutterEchoNullableUint8List',
-        r'([B)[B',
-      );
+  static final _id_callFlutterEchoNullableUint8List = NativeInteropHostIntegrationCoreApiRegistrar
+      ._class
+      .instanceMethodId(r'callFlutterEchoNullableUint8List', r'([B)[B');
 
-  static final _pigeon_callFlutterEchoNullableUint8List =
+  static final _callFlutterEchoNullableUint8List =
       jni$_.ProtectedJniExtensions.lookup<
             jni$_.NativeFunction<
               jni$_.JniResult Function(
@@ -6708,25 +6612,23 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
             )
           >();
 
-  /// from: `public fun pigeon_callFlutterEchoNullableUint8List(list: kotlin.ByteArray?): kotlin.ByteArray?`
+  /// from: `public fun callFlutterEchoNullableUint8List(list: kotlin.ByteArray?): kotlin.ByteArray?`
   /// The returned object must be released after use, by calling the [release] method.
-  jni$_.JByteArray? pigeon_callFlutterEchoNullableUint8List(jni$_.JByteArray? bs) {
+  jni$_.JByteArray? callFlutterEchoNullableUint8List(jni$_.JByteArray? bs) {
     final _$$selfRef = reference;
     final _$bs = bs?.reference ?? jni$_.jNullReference;
-    return _pigeon_callFlutterEchoNullableUint8List(
+    return _callFlutterEchoNullableUint8List(
       _$$selfRef.pointer,
-      _id_pigeon_callFlutterEchoNullableUint8List.pointer,
+      _id_callFlutterEchoNullableUint8List.pointer,
       _$bs.pointer,
     ).object<jni$_.JByteArray?>();
   }
 
-  static final _id_pigeon_callFlutterEchoNullableInt32List =
-      NativeInteropHostIntegrationCoreApiRegistrar._class.instanceMethodId(
-        r'pigeon_callFlutterEchoNullableInt32List',
-        r'([I)[I',
-      );
+  static final _id_callFlutterEchoNullableInt32List = NativeInteropHostIntegrationCoreApiRegistrar
+      ._class
+      .instanceMethodId(r'callFlutterEchoNullableInt32List', r'([I)[I');
 
-  static final _pigeon_callFlutterEchoNullableInt32List =
+  static final _callFlutterEchoNullableInt32List =
       jni$_.ProtectedJniExtensions.lookup<
             jni$_.NativeFunction<
               jni$_.JniResult Function(
@@ -6744,25 +6646,23 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
             )
           >();
 
-  /// from: `public fun pigeon_callFlutterEchoNullableInt32List(list: kotlin.IntArray?): kotlin.IntArray?`
+  /// from: `public fun callFlutterEchoNullableInt32List(list: kotlin.IntArray?): kotlin.IntArray?`
   /// The returned object must be released after use, by calling the [release] method.
-  jni$_.JIntArray? pigeon_callFlutterEchoNullableInt32List(jni$_.JIntArray? is$) {
+  jni$_.JIntArray? callFlutterEchoNullableInt32List(jni$_.JIntArray? is$) {
     final _$$selfRef = reference;
     final _$is$ = is$?.reference ?? jni$_.jNullReference;
-    return _pigeon_callFlutterEchoNullableInt32List(
+    return _callFlutterEchoNullableInt32List(
       _$$selfRef.pointer,
-      _id_pigeon_callFlutterEchoNullableInt32List.pointer,
+      _id_callFlutterEchoNullableInt32List.pointer,
       _$is$.pointer,
     ).object<jni$_.JIntArray?>();
   }
 
-  static final _id_pigeon_callFlutterEchoNullableInt64List =
-      NativeInteropHostIntegrationCoreApiRegistrar._class.instanceMethodId(
-        r'pigeon_callFlutterEchoNullableInt64List',
-        r'([J)[J',
-      );
+  static final _id_callFlutterEchoNullableInt64List = NativeInteropHostIntegrationCoreApiRegistrar
+      ._class
+      .instanceMethodId(r'callFlutterEchoNullableInt64List', r'([J)[J');
 
-  static final _pigeon_callFlutterEchoNullableInt64List =
+  static final _callFlutterEchoNullableInt64List =
       jni$_.ProtectedJniExtensions.lookup<
             jni$_.NativeFunction<
               jni$_.JniResult Function(
@@ -6780,25 +6680,23 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
             )
           >();
 
-  /// from: `public fun pigeon_callFlutterEchoNullableInt64List(list: kotlin.LongArray?): kotlin.LongArray?`
+  /// from: `public fun callFlutterEchoNullableInt64List(list: kotlin.LongArray?): kotlin.LongArray?`
   /// The returned object must be released after use, by calling the [release] method.
-  jni$_.JLongArray? pigeon_callFlutterEchoNullableInt64List(jni$_.JLongArray? js) {
+  jni$_.JLongArray? callFlutterEchoNullableInt64List(jni$_.JLongArray? js) {
     final _$$selfRef = reference;
     final _$js = js?.reference ?? jni$_.jNullReference;
-    return _pigeon_callFlutterEchoNullableInt64List(
+    return _callFlutterEchoNullableInt64List(
       _$$selfRef.pointer,
-      _id_pigeon_callFlutterEchoNullableInt64List.pointer,
+      _id_callFlutterEchoNullableInt64List.pointer,
       _$js.pointer,
     ).object<jni$_.JLongArray?>();
   }
 
-  static final _id_pigeon_callFlutterEchoNullableFloat64List =
-      NativeInteropHostIntegrationCoreApiRegistrar._class.instanceMethodId(
-        r'pigeon_callFlutterEchoNullableFloat64List',
-        r'([D)[D',
-      );
+  static final _id_callFlutterEchoNullableFloat64List = NativeInteropHostIntegrationCoreApiRegistrar
+      ._class
+      .instanceMethodId(r'callFlutterEchoNullableFloat64List', r'([D)[D');
 
-  static final _pigeon_callFlutterEchoNullableFloat64List =
+  static final _callFlutterEchoNullableFloat64List =
       jni$_.ProtectedJniExtensions.lookup<
             jni$_.NativeFunction<
               jni$_.JniResult Function(
@@ -6816,23 +6714,56 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
             )
           >();
 
-  /// from: `public fun pigeon_callFlutterEchoNullableFloat64List(list: kotlin.DoubleArray?): kotlin.DoubleArray?`
+  /// from: `public fun callFlutterEchoNullableFloat64List(list: kotlin.DoubleArray?): kotlin.DoubleArray?`
   /// The returned object must be released after use, by calling the [release] method.
-  jni$_.JDoubleArray? pigeon_callFlutterEchoNullableFloat64List(jni$_.JDoubleArray? ds) {
+  jni$_.JDoubleArray? callFlutterEchoNullableFloat64List(jni$_.JDoubleArray? ds) {
     final _$$selfRef = reference;
     final _$ds = ds?.reference ?? jni$_.jNullReference;
-    return _pigeon_callFlutterEchoNullableFloat64List(
+    return _callFlutterEchoNullableFloat64List(
       _$$selfRef.pointer,
-      _id_pigeon_callFlutterEchoNullableFloat64List.pointer,
+      _id_callFlutterEchoNullableFloat64List.pointer,
       _$ds.pointer,
     ).object<jni$_.JDoubleArray?>();
   }
 
-  static final _id_pigeon_callFlutterEchoNullableList = NativeInteropHostIntegrationCoreApiRegistrar
+  static final _id_callFlutterEchoNullableList = NativeInteropHostIntegrationCoreApiRegistrar._class
+      .instanceMethodId(r'callFlutterEchoNullableList', r'([B)[B');
+
+  static final _callFlutterEchoNullableList =
+      jni$_.ProtectedJniExtensions.lookup<
+            jni$_.NativeFunction<
+              jni$_.JniResult Function(
+                jni$_.Pointer<jni$_.Void>,
+                jni$_.JMethodIDPtr,
+                jni$_.VarArgs<(jni$_.Pointer<jni$_.Void>,)>,
+              )
+            >
+          >('globalEnv_CallObjectMethod')
+          .asFunction<
+            jni$_.JniResult Function(
+              jni$_.Pointer<jni$_.Void>,
+              jni$_.JMethodIDPtr,
+              jni$_.Pointer<jni$_.Void>,
+            )
+          >();
+
+  /// from: `public fun callFlutterEchoNullableList(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
+  /// The returned object must be released after use, by calling the [release] method.
+  jni$_.JByteArray? callFlutterEchoNullableList(jni$_.JByteArray bs) {
+    final _$$selfRef = reference;
+    final _$bs = bs.reference;
+    return _callFlutterEchoNullableList(
+      _$$selfRef.pointer,
+      _id_callFlutterEchoNullableList.pointer,
+      _$bs.pointer,
+    ).object<jni$_.JByteArray?>();
+  }
+
+  static final _id_callFlutterEchoNullableEnumList = NativeInteropHostIntegrationCoreApiRegistrar
       ._class
-      .instanceMethodId(r'pigeon_callFlutterEchoNullableList', r'([B)[B');
+      .instanceMethodId(r'callFlutterEchoNullableEnumList', r'([B)[B');
 
-  static final _pigeon_callFlutterEchoNullableList =
+  static final _callFlutterEchoNullableEnumList =
       jni$_.ProtectedJniExtensions.lookup<
             jni$_.NativeFunction<
               jni$_.JniResult Function(
@@ -6850,167 +6781,23 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
             )
           >();
 
-  /// from: `public fun pigeon_callFlutterEchoNullableList(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
+  /// from: `public fun callFlutterEchoNullableEnumList(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
   /// The returned object must be released after use, by calling the [release] method.
-  jni$_.JByteArray? pigeon_callFlutterEchoNullableList(jni$_.JByteArray bs) {
+  jni$_.JByteArray? callFlutterEchoNullableEnumList(jni$_.JByteArray bs) {
     final _$$selfRef = reference;
     final _$bs = bs.reference;
-    return _pigeon_callFlutterEchoNullableList(
+    return _callFlutterEchoNullableEnumList(
       _$$selfRef.pointer,
-      _id_pigeon_callFlutterEchoNullableList.pointer,
+      _id_callFlutterEchoNullableEnumList.pointer,
       _$bs.pointer,
     ).object<jni$_.JByteArray?>();
   }
 
-  static final _id_pigeon_callFlutterEchoNullableEnumList =
-      NativeInteropHostIntegrationCoreApiRegistrar._class.instanceMethodId(
-        r'pigeon_callFlutterEchoNullableEnumList',
-        r'([B)[B',
-      );
-
-  static final _pigeon_callFlutterEchoNullableEnumList =
-      jni$_.ProtectedJniExtensions.lookup<
-            jni$_.NativeFunction<
-              jni$_.JniResult Function(
-                jni$_.Pointer<jni$_.Void>,
-                jni$_.JMethodIDPtr,
-                jni$_.VarArgs<(jni$_.Pointer<jni$_.Void>,)>,
-              )
-            >
-          >('globalEnv_CallObjectMethod')
-          .asFunction<
-            jni$_.JniResult Function(
-              jni$_.Pointer<jni$_.Void>,
-              jni$_.JMethodIDPtr,
-              jni$_.Pointer<jni$_.Void>,
-            )
-          >();
-
-  /// from: `public fun pigeon_callFlutterEchoNullableEnumList(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
-  /// The returned object must be released after use, by calling the [release] method.
-  jni$_.JByteArray? pigeon_callFlutterEchoNullableEnumList(jni$_.JByteArray bs) {
-    final _$$selfRef = reference;
-    final _$bs = bs.reference;
-    return _pigeon_callFlutterEchoNullableEnumList(
-      _$$selfRef.pointer,
-      _id_pigeon_callFlutterEchoNullableEnumList.pointer,
-      _$bs.pointer,
-    ).object<jni$_.JByteArray?>();
-  }
-
-  static final _id_pigeon_callFlutterEchoNullableClassList =
-      NativeInteropHostIntegrationCoreApiRegistrar._class.instanceMethodId(
-        r'pigeon_callFlutterEchoNullableClassList',
-        r'([B)[B',
-      );
-
-  static final _pigeon_callFlutterEchoNullableClassList =
-      jni$_.ProtectedJniExtensions.lookup<
-            jni$_.NativeFunction<
-              jni$_.JniResult Function(
-                jni$_.Pointer<jni$_.Void>,
-                jni$_.JMethodIDPtr,
-                jni$_.VarArgs<(jni$_.Pointer<jni$_.Void>,)>,
-              )
-            >
-          >('globalEnv_CallObjectMethod')
-          .asFunction<
-            jni$_.JniResult Function(
-              jni$_.Pointer<jni$_.Void>,
-              jni$_.JMethodIDPtr,
-              jni$_.Pointer<jni$_.Void>,
-            )
-          >();
-
-  /// from: `public fun pigeon_callFlutterEchoNullableClassList(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
-  /// The returned object must be released after use, by calling the [release] method.
-  jni$_.JByteArray? pigeon_callFlutterEchoNullableClassList(jni$_.JByteArray bs) {
-    final _$$selfRef = reference;
-    final _$bs = bs.reference;
-    return _pigeon_callFlutterEchoNullableClassList(
-      _$$selfRef.pointer,
-      _id_pigeon_callFlutterEchoNullableClassList.pointer,
-      _$bs.pointer,
-    ).object<jni$_.JByteArray?>();
-  }
-
-  static final _id_pigeon_callFlutterEchoNullableNonNullEnumList =
-      NativeInteropHostIntegrationCoreApiRegistrar._class.instanceMethodId(
-        r'pigeon_callFlutterEchoNullableNonNullEnumList',
-        r'([B)[B',
-      );
-
-  static final _pigeon_callFlutterEchoNullableNonNullEnumList =
-      jni$_.ProtectedJniExtensions.lookup<
-            jni$_.NativeFunction<
-              jni$_.JniResult Function(
-                jni$_.Pointer<jni$_.Void>,
-                jni$_.JMethodIDPtr,
-                jni$_.VarArgs<(jni$_.Pointer<jni$_.Void>,)>,
-              )
-            >
-          >('globalEnv_CallObjectMethod')
-          .asFunction<
-            jni$_.JniResult Function(
-              jni$_.Pointer<jni$_.Void>,
-              jni$_.JMethodIDPtr,
-              jni$_.Pointer<jni$_.Void>,
-            )
-          >();
-
-  /// from: `public fun pigeon_callFlutterEchoNullableNonNullEnumList(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
-  /// The returned object must be released after use, by calling the [release] method.
-  jni$_.JByteArray? pigeon_callFlutterEchoNullableNonNullEnumList(jni$_.JByteArray bs) {
-    final _$$selfRef = reference;
-    final _$bs = bs.reference;
-    return _pigeon_callFlutterEchoNullableNonNullEnumList(
-      _$$selfRef.pointer,
-      _id_pigeon_callFlutterEchoNullableNonNullEnumList.pointer,
-      _$bs.pointer,
-    ).object<jni$_.JByteArray?>();
-  }
-
-  static final _id_pigeon_callFlutterEchoNullableNonNullClassList =
-      NativeInteropHostIntegrationCoreApiRegistrar._class.instanceMethodId(
-        r'pigeon_callFlutterEchoNullableNonNullClassList',
-        r'([B)[B',
-      );
-
-  static final _pigeon_callFlutterEchoNullableNonNullClassList =
-      jni$_.ProtectedJniExtensions.lookup<
-            jni$_.NativeFunction<
-              jni$_.JniResult Function(
-                jni$_.Pointer<jni$_.Void>,
-                jni$_.JMethodIDPtr,
-                jni$_.VarArgs<(jni$_.Pointer<jni$_.Void>,)>,
-              )
-            >
-          >('globalEnv_CallObjectMethod')
-          .asFunction<
-            jni$_.JniResult Function(
-              jni$_.Pointer<jni$_.Void>,
-              jni$_.JMethodIDPtr,
-              jni$_.Pointer<jni$_.Void>,
-            )
-          >();
-
-  /// from: `public fun pigeon_callFlutterEchoNullableNonNullClassList(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
-  /// The returned object must be released after use, by calling the [release] method.
-  jni$_.JByteArray? pigeon_callFlutterEchoNullableNonNullClassList(jni$_.JByteArray bs) {
-    final _$$selfRef = reference;
-    final _$bs = bs.reference;
-    return _pigeon_callFlutterEchoNullableNonNullClassList(
-      _$$selfRef.pointer,
-      _id_pigeon_callFlutterEchoNullableNonNullClassList.pointer,
-      _$bs.pointer,
-    ).object<jni$_.JByteArray?>();
-  }
-
-  static final _id_pigeon_callFlutterEchoNullableMap = NativeInteropHostIntegrationCoreApiRegistrar
+  static final _id_callFlutterEchoNullableClassList = NativeInteropHostIntegrationCoreApiRegistrar
       ._class
-      .instanceMethodId(r'pigeon_callFlutterEchoNullableMap', r'([B)[B');
+      .instanceMethodId(r'callFlutterEchoNullableClassList', r'([B)[B');
 
-  static final _pigeon_callFlutterEchoNullableMap =
+  static final _callFlutterEchoNullableClassList =
       jni$_.ProtectedJniExtensions.lookup<
             jni$_.NativeFunction<
               jni$_.JniResult Function(
@@ -7028,25 +6815,25 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
             )
           >();
 
-  /// from: `public fun pigeon_callFlutterEchoNullableMap(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
+  /// from: `public fun callFlutterEchoNullableClassList(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
   /// The returned object must be released after use, by calling the [release] method.
-  jni$_.JByteArray? pigeon_callFlutterEchoNullableMap(jni$_.JByteArray bs) {
+  jni$_.JByteArray? callFlutterEchoNullableClassList(jni$_.JByteArray bs) {
     final _$$selfRef = reference;
     final _$bs = bs.reference;
-    return _pigeon_callFlutterEchoNullableMap(
+    return _callFlutterEchoNullableClassList(
       _$$selfRef.pointer,
-      _id_pigeon_callFlutterEchoNullableMap.pointer,
+      _id_callFlutterEchoNullableClassList.pointer,
       _$bs.pointer,
     ).object<jni$_.JByteArray?>();
   }
 
-  static final _id_pigeon_callFlutterEchoNullableStringMap =
+  static final _id_callFlutterEchoNullableNonNullEnumList =
       NativeInteropHostIntegrationCoreApiRegistrar._class.instanceMethodId(
-        r'pigeon_callFlutterEchoNullableStringMap',
+        r'callFlutterEchoNullableNonNullEnumList',
         r'([B)[B',
       );
 
-  static final _pigeon_callFlutterEchoNullableStringMap =
+  static final _callFlutterEchoNullableNonNullEnumList =
       jni$_.ProtectedJniExtensions.lookup<
             jni$_.NativeFunction<
               jni$_.JniResult Function(
@@ -7064,25 +6851,25 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
             )
           >();
 
-  /// from: `public fun pigeon_callFlutterEchoNullableStringMap(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
+  /// from: `public fun callFlutterEchoNullableNonNullEnumList(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
   /// The returned object must be released after use, by calling the [release] method.
-  jni$_.JByteArray? pigeon_callFlutterEchoNullableStringMap(jni$_.JByteArray bs) {
+  jni$_.JByteArray? callFlutterEchoNullableNonNullEnumList(jni$_.JByteArray bs) {
     final _$$selfRef = reference;
     final _$bs = bs.reference;
-    return _pigeon_callFlutterEchoNullableStringMap(
+    return _callFlutterEchoNullableNonNullEnumList(
       _$$selfRef.pointer,
-      _id_pigeon_callFlutterEchoNullableStringMap.pointer,
+      _id_callFlutterEchoNullableNonNullEnumList.pointer,
       _$bs.pointer,
     ).object<jni$_.JByteArray?>();
   }
 
-  static final _id_pigeon_callFlutterEchoNullableIntMap =
+  static final _id_callFlutterEchoNullableNonNullClassList =
       NativeInteropHostIntegrationCoreApiRegistrar._class.instanceMethodId(
-        r'pigeon_callFlutterEchoNullableIntMap',
+        r'callFlutterEchoNullableNonNullClassList',
         r'([B)[B',
       );
 
-  static final _pigeon_callFlutterEchoNullableIntMap =
+  static final _callFlutterEchoNullableNonNullClassList =
       jni$_.ProtectedJniExtensions.lookup<
             jni$_.NativeFunction<
               jni$_.JniResult Function(
@@ -7100,25 +6887,22 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
             )
           >();
 
-  /// from: `public fun pigeon_callFlutterEchoNullableIntMap(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
+  /// from: `public fun callFlutterEchoNullableNonNullClassList(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
   /// The returned object must be released after use, by calling the [release] method.
-  jni$_.JByteArray? pigeon_callFlutterEchoNullableIntMap(jni$_.JByteArray bs) {
+  jni$_.JByteArray? callFlutterEchoNullableNonNullClassList(jni$_.JByteArray bs) {
     final _$$selfRef = reference;
     final _$bs = bs.reference;
-    return _pigeon_callFlutterEchoNullableIntMap(
+    return _callFlutterEchoNullableNonNullClassList(
       _$$selfRef.pointer,
-      _id_pigeon_callFlutterEchoNullableIntMap.pointer,
+      _id_callFlutterEchoNullableNonNullClassList.pointer,
       _$bs.pointer,
     ).object<jni$_.JByteArray?>();
   }
 
-  static final _id_pigeon_callFlutterEchoNullableEnumMap =
-      NativeInteropHostIntegrationCoreApiRegistrar._class.instanceMethodId(
-        r'pigeon_callFlutterEchoNullableEnumMap',
-        r'([B)[B',
-      );
+  static final _id_callFlutterEchoNullableMap = NativeInteropHostIntegrationCoreApiRegistrar._class
+      .instanceMethodId(r'callFlutterEchoNullableMap', r'([B)[B');
 
-  static final _pigeon_callFlutterEchoNullableEnumMap =
+  static final _callFlutterEchoNullableMap =
       jni$_.ProtectedJniExtensions.lookup<
             jni$_.NativeFunction<
               jni$_.JniResult Function(
@@ -7136,203 +6920,302 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
             )
           >();
 
-  /// from: `public fun pigeon_callFlutterEchoNullableEnumMap(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
+  /// from: `public fun callFlutterEchoNullableMap(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
   /// The returned object must be released after use, by calling the [release] method.
-  jni$_.JByteArray? pigeon_callFlutterEchoNullableEnumMap(jni$_.JByteArray bs) {
+  jni$_.JByteArray? callFlutterEchoNullableMap(jni$_.JByteArray bs) {
     final _$$selfRef = reference;
     final _$bs = bs.reference;
-    return _pigeon_callFlutterEchoNullableEnumMap(
+    return _callFlutterEchoNullableMap(
       _$$selfRef.pointer,
-      _id_pigeon_callFlutterEchoNullableEnumMap.pointer,
+      _id_callFlutterEchoNullableMap.pointer,
       _$bs.pointer,
     ).object<jni$_.JByteArray?>();
   }
 
-  static final _id_pigeon_callFlutterEchoNullableClassMap =
-      NativeInteropHostIntegrationCoreApiRegistrar._class.instanceMethodId(
-        r'pigeon_callFlutterEchoNullableClassMap',
-        r'([B)[B',
-      );
-
-  static final _pigeon_callFlutterEchoNullableClassMap =
-      jni$_.ProtectedJniExtensions.lookup<
-            jni$_.NativeFunction<
-              jni$_.JniResult Function(
-                jni$_.Pointer<jni$_.Void>,
-                jni$_.JMethodIDPtr,
-                jni$_.VarArgs<(jni$_.Pointer<jni$_.Void>,)>,
-              )
-            >
-          >('globalEnv_CallObjectMethod')
-          .asFunction<
-            jni$_.JniResult Function(
-              jni$_.Pointer<jni$_.Void>,
-              jni$_.JMethodIDPtr,
-              jni$_.Pointer<jni$_.Void>,
-            )
-          >();
-
-  /// from: `public fun pigeon_callFlutterEchoNullableClassMap(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
-  /// The returned object must be released after use, by calling the [release] method.
-  jni$_.JByteArray? pigeon_callFlutterEchoNullableClassMap(jni$_.JByteArray bs) {
-    final _$$selfRef = reference;
-    final _$bs = bs.reference;
-    return _pigeon_callFlutterEchoNullableClassMap(
-      _$$selfRef.pointer,
-      _id_pigeon_callFlutterEchoNullableClassMap.pointer,
-      _$bs.pointer,
-    ).object<jni$_.JByteArray?>();
-  }
-
-  static final _id_pigeon_callFlutterEchoNullableNonNullStringMap =
-      NativeInteropHostIntegrationCoreApiRegistrar._class.instanceMethodId(
-        r'pigeon_callFlutterEchoNullableNonNullStringMap',
-        r'([B)[B',
-      );
-
-  static final _pigeon_callFlutterEchoNullableNonNullStringMap =
-      jni$_.ProtectedJniExtensions.lookup<
-            jni$_.NativeFunction<
-              jni$_.JniResult Function(
-                jni$_.Pointer<jni$_.Void>,
-                jni$_.JMethodIDPtr,
-                jni$_.VarArgs<(jni$_.Pointer<jni$_.Void>,)>,
-              )
-            >
-          >('globalEnv_CallObjectMethod')
-          .asFunction<
-            jni$_.JniResult Function(
-              jni$_.Pointer<jni$_.Void>,
-              jni$_.JMethodIDPtr,
-              jni$_.Pointer<jni$_.Void>,
-            )
-          >();
-
-  /// from: `public fun pigeon_callFlutterEchoNullableNonNullStringMap(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
-  /// The returned object must be released after use, by calling the [release] method.
-  jni$_.JByteArray? pigeon_callFlutterEchoNullableNonNullStringMap(jni$_.JByteArray bs) {
-    final _$$selfRef = reference;
-    final _$bs = bs.reference;
-    return _pigeon_callFlutterEchoNullableNonNullStringMap(
-      _$$selfRef.pointer,
-      _id_pigeon_callFlutterEchoNullableNonNullStringMap.pointer,
-      _$bs.pointer,
-    ).object<jni$_.JByteArray?>();
-  }
-
-  static final _id_pigeon_callFlutterEchoNullableNonNullIntMap =
-      NativeInteropHostIntegrationCoreApiRegistrar._class.instanceMethodId(
-        r'pigeon_callFlutterEchoNullableNonNullIntMap',
-        r'([B)[B',
-      );
-
-  static final _pigeon_callFlutterEchoNullableNonNullIntMap =
-      jni$_.ProtectedJniExtensions.lookup<
-            jni$_.NativeFunction<
-              jni$_.JniResult Function(
-                jni$_.Pointer<jni$_.Void>,
-                jni$_.JMethodIDPtr,
-                jni$_.VarArgs<(jni$_.Pointer<jni$_.Void>,)>,
-              )
-            >
-          >('globalEnv_CallObjectMethod')
-          .asFunction<
-            jni$_.JniResult Function(
-              jni$_.Pointer<jni$_.Void>,
-              jni$_.JMethodIDPtr,
-              jni$_.Pointer<jni$_.Void>,
-            )
-          >();
-
-  /// from: `public fun pigeon_callFlutterEchoNullableNonNullIntMap(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
-  /// The returned object must be released after use, by calling the [release] method.
-  jni$_.JByteArray? pigeon_callFlutterEchoNullableNonNullIntMap(jni$_.JByteArray bs) {
-    final _$$selfRef = reference;
-    final _$bs = bs.reference;
-    return _pigeon_callFlutterEchoNullableNonNullIntMap(
-      _$$selfRef.pointer,
-      _id_pigeon_callFlutterEchoNullableNonNullIntMap.pointer,
-      _$bs.pointer,
-    ).object<jni$_.JByteArray?>();
-  }
-
-  static final _id_pigeon_callFlutterEchoNullableNonNullEnumMap =
-      NativeInteropHostIntegrationCoreApiRegistrar._class.instanceMethodId(
-        r'pigeon_callFlutterEchoNullableNonNullEnumMap',
-        r'([B)[B',
-      );
-
-  static final _pigeon_callFlutterEchoNullableNonNullEnumMap =
-      jni$_.ProtectedJniExtensions.lookup<
-            jni$_.NativeFunction<
-              jni$_.JniResult Function(
-                jni$_.Pointer<jni$_.Void>,
-                jni$_.JMethodIDPtr,
-                jni$_.VarArgs<(jni$_.Pointer<jni$_.Void>,)>,
-              )
-            >
-          >('globalEnv_CallObjectMethod')
-          .asFunction<
-            jni$_.JniResult Function(
-              jni$_.Pointer<jni$_.Void>,
-              jni$_.JMethodIDPtr,
-              jni$_.Pointer<jni$_.Void>,
-            )
-          >();
-
-  /// from: `public fun pigeon_callFlutterEchoNullableNonNullEnumMap(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
-  /// The returned object must be released after use, by calling the [release] method.
-  jni$_.JByteArray? pigeon_callFlutterEchoNullableNonNullEnumMap(jni$_.JByteArray bs) {
-    final _$$selfRef = reference;
-    final _$bs = bs.reference;
-    return _pigeon_callFlutterEchoNullableNonNullEnumMap(
-      _$$selfRef.pointer,
-      _id_pigeon_callFlutterEchoNullableNonNullEnumMap.pointer,
-      _$bs.pointer,
-    ).object<jni$_.JByteArray?>();
-  }
-
-  static final _id_pigeon_callFlutterEchoNullableNonNullClassMap =
-      NativeInteropHostIntegrationCoreApiRegistrar._class.instanceMethodId(
-        r'pigeon_callFlutterEchoNullableNonNullClassMap',
-        r'([B)[B',
-      );
-
-  static final _pigeon_callFlutterEchoNullableNonNullClassMap =
-      jni$_.ProtectedJniExtensions.lookup<
-            jni$_.NativeFunction<
-              jni$_.JniResult Function(
-                jni$_.Pointer<jni$_.Void>,
-                jni$_.JMethodIDPtr,
-                jni$_.VarArgs<(jni$_.Pointer<jni$_.Void>,)>,
-              )
-            >
-          >('globalEnv_CallObjectMethod')
-          .asFunction<
-            jni$_.JniResult Function(
-              jni$_.Pointer<jni$_.Void>,
-              jni$_.JMethodIDPtr,
-              jni$_.Pointer<jni$_.Void>,
-            )
-          >();
-
-  /// from: `public fun pigeon_callFlutterEchoNullableNonNullClassMap(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
-  /// The returned object must be released after use, by calling the [release] method.
-  jni$_.JByteArray? pigeon_callFlutterEchoNullableNonNullClassMap(jni$_.JByteArray bs) {
-    final _$$selfRef = reference;
-    final _$bs = bs.reference;
-    return _pigeon_callFlutterEchoNullableNonNullClassMap(
-      _$$selfRef.pointer,
-      _id_pigeon_callFlutterEchoNullableNonNullClassMap.pointer,
-      _$bs.pointer,
-    ).object<jni$_.JByteArray?>();
-  }
-
-  static final _id_pigeon_callFlutterEchoNullableEnum = NativeInteropHostIntegrationCoreApiRegistrar
+  static final _id_callFlutterEchoNullableStringMap = NativeInteropHostIntegrationCoreApiRegistrar
       ._class
-      .instanceMethodId(r'pigeon_callFlutterEchoNullableEnum', r'(J)J');
+      .instanceMethodId(r'callFlutterEchoNullableStringMap', r'([B)[B');
 
-  static final _pigeon_callFlutterEchoNullableEnum =
+  static final _callFlutterEchoNullableStringMap =
+      jni$_.ProtectedJniExtensions.lookup<
+            jni$_.NativeFunction<
+              jni$_.JniResult Function(
+                jni$_.Pointer<jni$_.Void>,
+                jni$_.JMethodIDPtr,
+                jni$_.VarArgs<(jni$_.Pointer<jni$_.Void>,)>,
+              )
+            >
+          >('globalEnv_CallObjectMethod')
+          .asFunction<
+            jni$_.JniResult Function(
+              jni$_.Pointer<jni$_.Void>,
+              jni$_.JMethodIDPtr,
+              jni$_.Pointer<jni$_.Void>,
+            )
+          >();
+
+  /// from: `public fun callFlutterEchoNullableStringMap(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
+  /// The returned object must be released after use, by calling the [release] method.
+  jni$_.JByteArray? callFlutterEchoNullableStringMap(jni$_.JByteArray bs) {
+    final _$$selfRef = reference;
+    final _$bs = bs.reference;
+    return _callFlutterEchoNullableStringMap(
+      _$$selfRef.pointer,
+      _id_callFlutterEchoNullableStringMap.pointer,
+      _$bs.pointer,
+    ).object<jni$_.JByteArray?>();
+  }
+
+  static final _id_callFlutterEchoNullableIntMap = NativeInteropHostIntegrationCoreApiRegistrar
+      ._class
+      .instanceMethodId(r'callFlutterEchoNullableIntMap', r'([B)[B');
+
+  static final _callFlutterEchoNullableIntMap =
+      jni$_.ProtectedJniExtensions.lookup<
+            jni$_.NativeFunction<
+              jni$_.JniResult Function(
+                jni$_.Pointer<jni$_.Void>,
+                jni$_.JMethodIDPtr,
+                jni$_.VarArgs<(jni$_.Pointer<jni$_.Void>,)>,
+              )
+            >
+          >('globalEnv_CallObjectMethod')
+          .asFunction<
+            jni$_.JniResult Function(
+              jni$_.Pointer<jni$_.Void>,
+              jni$_.JMethodIDPtr,
+              jni$_.Pointer<jni$_.Void>,
+            )
+          >();
+
+  /// from: `public fun callFlutterEchoNullableIntMap(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
+  /// The returned object must be released after use, by calling the [release] method.
+  jni$_.JByteArray? callFlutterEchoNullableIntMap(jni$_.JByteArray bs) {
+    final _$$selfRef = reference;
+    final _$bs = bs.reference;
+    return _callFlutterEchoNullableIntMap(
+      _$$selfRef.pointer,
+      _id_callFlutterEchoNullableIntMap.pointer,
+      _$bs.pointer,
+    ).object<jni$_.JByteArray?>();
+  }
+
+  static final _id_callFlutterEchoNullableEnumMap = NativeInteropHostIntegrationCoreApiRegistrar
+      ._class
+      .instanceMethodId(r'callFlutterEchoNullableEnumMap', r'([B)[B');
+
+  static final _callFlutterEchoNullableEnumMap =
+      jni$_.ProtectedJniExtensions.lookup<
+            jni$_.NativeFunction<
+              jni$_.JniResult Function(
+                jni$_.Pointer<jni$_.Void>,
+                jni$_.JMethodIDPtr,
+                jni$_.VarArgs<(jni$_.Pointer<jni$_.Void>,)>,
+              )
+            >
+          >('globalEnv_CallObjectMethod')
+          .asFunction<
+            jni$_.JniResult Function(
+              jni$_.Pointer<jni$_.Void>,
+              jni$_.JMethodIDPtr,
+              jni$_.Pointer<jni$_.Void>,
+            )
+          >();
+
+  /// from: `public fun callFlutterEchoNullableEnumMap(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
+  /// The returned object must be released after use, by calling the [release] method.
+  jni$_.JByteArray? callFlutterEchoNullableEnumMap(jni$_.JByteArray bs) {
+    final _$$selfRef = reference;
+    final _$bs = bs.reference;
+    return _callFlutterEchoNullableEnumMap(
+      _$$selfRef.pointer,
+      _id_callFlutterEchoNullableEnumMap.pointer,
+      _$bs.pointer,
+    ).object<jni$_.JByteArray?>();
+  }
+
+  static final _id_callFlutterEchoNullableClassMap = NativeInteropHostIntegrationCoreApiRegistrar
+      ._class
+      .instanceMethodId(r'callFlutterEchoNullableClassMap', r'([B)[B');
+
+  static final _callFlutterEchoNullableClassMap =
+      jni$_.ProtectedJniExtensions.lookup<
+            jni$_.NativeFunction<
+              jni$_.JniResult Function(
+                jni$_.Pointer<jni$_.Void>,
+                jni$_.JMethodIDPtr,
+                jni$_.VarArgs<(jni$_.Pointer<jni$_.Void>,)>,
+              )
+            >
+          >('globalEnv_CallObjectMethod')
+          .asFunction<
+            jni$_.JniResult Function(
+              jni$_.Pointer<jni$_.Void>,
+              jni$_.JMethodIDPtr,
+              jni$_.Pointer<jni$_.Void>,
+            )
+          >();
+
+  /// from: `public fun callFlutterEchoNullableClassMap(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
+  /// The returned object must be released after use, by calling the [release] method.
+  jni$_.JByteArray? callFlutterEchoNullableClassMap(jni$_.JByteArray bs) {
+    final _$$selfRef = reference;
+    final _$bs = bs.reference;
+    return _callFlutterEchoNullableClassMap(
+      _$$selfRef.pointer,
+      _id_callFlutterEchoNullableClassMap.pointer,
+      _$bs.pointer,
+    ).object<jni$_.JByteArray?>();
+  }
+
+  static final _id_callFlutterEchoNullableNonNullStringMap =
+      NativeInteropHostIntegrationCoreApiRegistrar._class.instanceMethodId(
+        r'callFlutterEchoNullableNonNullStringMap',
+        r'([B)[B',
+      );
+
+  static final _callFlutterEchoNullableNonNullStringMap =
+      jni$_.ProtectedJniExtensions.lookup<
+            jni$_.NativeFunction<
+              jni$_.JniResult Function(
+                jni$_.Pointer<jni$_.Void>,
+                jni$_.JMethodIDPtr,
+                jni$_.VarArgs<(jni$_.Pointer<jni$_.Void>,)>,
+              )
+            >
+          >('globalEnv_CallObjectMethod')
+          .asFunction<
+            jni$_.JniResult Function(
+              jni$_.Pointer<jni$_.Void>,
+              jni$_.JMethodIDPtr,
+              jni$_.Pointer<jni$_.Void>,
+            )
+          >();
+
+  /// from: `public fun callFlutterEchoNullableNonNullStringMap(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
+  /// The returned object must be released after use, by calling the [release] method.
+  jni$_.JByteArray? callFlutterEchoNullableNonNullStringMap(jni$_.JByteArray bs) {
+    final _$$selfRef = reference;
+    final _$bs = bs.reference;
+    return _callFlutterEchoNullableNonNullStringMap(
+      _$$selfRef.pointer,
+      _id_callFlutterEchoNullableNonNullStringMap.pointer,
+      _$bs.pointer,
+    ).object<jni$_.JByteArray?>();
+  }
+
+  static final _id_callFlutterEchoNullableNonNullIntMap =
+      NativeInteropHostIntegrationCoreApiRegistrar._class.instanceMethodId(
+        r'callFlutterEchoNullableNonNullIntMap',
+        r'([B)[B',
+      );
+
+  static final _callFlutterEchoNullableNonNullIntMap =
+      jni$_.ProtectedJniExtensions.lookup<
+            jni$_.NativeFunction<
+              jni$_.JniResult Function(
+                jni$_.Pointer<jni$_.Void>,
+                jni$_.JMethodIDPtr,
+                jni$_.VarArgs<(jni$_.Pointer<jni$_.Void>,)>,
+              )
+            >
+          >('globalEnv_CallObjectMethod')
+          .asFunction<
+            jni$_.JniResult Function(
+              jni$_.Pointer<jni$_.Void>,
+              jni$_.JMethodIDPtr,
+              jni$_.Pointer<jni$_.Void>,
+            )
+          >();
+
+  /// from: `public fun callFlutterEchoNullableNonNullIntMap(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
+  /// The returned object must be released after use, by calling the [release] method.
+  jni$_.JByteArray? callFlutterEchoNullableNonNullIntMap(jni$_.JByteArray bs) {
+    final _$$selfRef = reference;
+    final _$bs = bs.reference;
+    return _callFlutterEchoNullableNonNullIntMap(
+      _$$selfRef.pointer,
+      _id_callFlutterEchoNullableNonNullIntMap.pointer,
+      _$bs.pointer,
+    ).object<jni$_.JByteArray?>();
+  }
+
+  static final _id_callFlutterEchoNullableNonNullEnumMap =
+      NativeInteropHostIntegrationCoreApiRegistrar._class.instanceMethodId(
+        r'callFlutterEchoNullableNonNullEnumMap',
+        r'([B)[B',
+      );
+
+  static final _callFlutterEchoNullableNonNullEnumMap =
+      jni$_.ProtectedJniExtensions.lookup<
+            jni$_.NativeFunction<
+              jni$_.JniResult Function(
+                jni$_.Pointer<jni$_.Void>,
+                jni$_.JMethodIDPtr,
+                jni$_.VarArgs<(jni$_.Pointer<jni$_.Void>,)>,
+              )
+            >
+          >('globalEnv_CallObjectMethod')
+          .asFunction<
+            jni$_.JniResult Function(
+              jni$_.Pointer<jni$_.Void>,
+              jni$_.JMethodIDPtr,
+              jni$_.Pointer<jni$_.Void>,
+            )
+          >();
+
+  /// from: `public fun callFlutterEchoNullableNonNullEnumMap(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
+  /// The returned object must be released after use, by calling the [release] method.
+  jni$_.JByteArray? callFlutterEchoNullableNonNullEnumMap(jni$_.JByteArray bs) {
+    final _$$selfRef = reference;
+    final _$bs = bs.reference;
+    return _callFlutterEchoNullableNonNullEnumMap(
+      _$$selfRef.pointer,
+      _id_callFlutterEchoNullableNonNullEnumMap.pointer,
+      _$bs.pointer,
+    ).object<jni$_.JByteArray?>();
+  }
+
+  static final _id_callFlutterEchoNullableNonNullClassMap =
+      NativeInteropHostIntegrationCoreApiRegistrar._class.instanceMethodId(
+        r'callFlutterEchoNullableNonNullClassMap',
+        r'([B)[B',
+      );
+
+  static final _callFlutterEchoNullableNonNullClassMap =
+      jni$_.ProtectedJniExtensions.lookup<
+            jni$_.NativeFunction<
+              jni$_.JniResult Function(
+                jni$_.Pointer<jni$_.Void>,
+                jni$_.JMethodIDPtr,
+                jni$_.VarArgs<(jni$_.Pointer<jni$_.Void>,)>,
+              )
+            >
+          >('globalEnv_CallObjectMethod')
+          .asFunction<
+            jni$_.JniResult Function(
+              jni$_.Pointer<jni$_.Void>,
+              jni$_.JMethodIDPtr,
+              jni$_.Pointer<jni$_.Void>,
+            )
+          >();
+
+  /// from: `public fun callFlutterEchoNullableNonNullClassMap(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
+  /// The returned object must be released after use, by calling the [release] method.
+  jni$_.JByteArray? callFlutterEchoNullableNonNullClassMap(jni$_.JByteArray bs) {
+    final _$$selfRef = reference;
+    final _$bs = bs.reference;
+    return _callFlutterEchoNullableNonNullClassMap(
+      _$$selfRef.pointer,
+      _id_callFlutterEchoNullableNonNullClassMap.pointer,
+      _$bs.pointer,
+    ).object<jni$_.JByteArray?>();
+  }
+
+  static final _id_callFlutterEchoNullableEnum = NativeInteropHostIntegrationCoreApiRegistrar._class
+      .instanceMethodId(r'callFlutterEchoNullableEnum', r'(J)J');
+
+  static final _callFlutterEchoNullableEnum =
       jni$_.ProtectedJniExtensions.lookup<
             jni$_.NativeFunction<
               jni$_.JniResult Function(
@@ -7346,23 +7229,21 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
             jni$_.JniResult Function(jni$_.Pointer<jni$_.Void>, jni$_.JMethodIDPtr, core$_.int)
           >();
 
-  /// from: `public fun pigeon_callFlutterEchoNullableEnum(anEnum: kotlin.Long): kotlin.Long`
-  core$_.int pigeon_callFlutterEchoNullableEnum(core$_.int j) {
+  /// from: `public fun callFlutterEchoNullableEnum(anEnum: kotlin.Long): kotlin.Long`
+  core$_.int callFlutterEchoNullableEnum(core$_.int j) {
     final _$$selfRef = reference;
-    return _pigeon_callFlutterEchoNullableEnum(
+    return _callFlutterEchoNullableEnum(
       _$$selfRef.pointer,
-      _id_pigeon_callFlutterEchoNullableEnum.pointer,
+      _id_callFlutterEchoNullableEnum.pointer,
       j,
     ).long;
   }
 
-  static final _id_pigeon_callFlutterEchoAnotherNullableEnum =
-      NativeInteropHostIntegrationCoreApiRegistrar._class.instanceMethodId(
-        r'pigeon_callFlutterEchoAnotherNullableEnum',
-        r'(J)J',
-      );
+  static final _id_callFlutterEchoAnotherNullableEnum = NativeInteropHostIntegrationCoreApiRegistrar
+      ._class
+      .instanceMethodId(r'callFlutterEchoAnotherNullableEnum', r'(J)J');
 
-  static final _pigeon_callFlutterEchoAnotherNullableEnum =
+  static final _callFlutterEchoAnotherNullableEnum =
       jni$_.ProtectedJniExtensions.lookup<
             jni$_.NativeFunction<
               jni$_.JniResult Function(
@@ -7376,23 +7257,23 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
             jni$_.JniResult Function(jni$_.Pointer<jni$_.Void>, jni$_.JMethodIDPtr, core$_.int)
           >();
 
-  /// from: `public fun pigeon_callFlutterEchoAnotherNullableEnum(anotherEnum: kotlin.Long): kotlin.Long`
-  core$_.int pigeon_callFlutterEchoAnotherNullableEnum(core$_.int j) {
+  /// from: `public fun callFlutterEchoAnotherNullableEnum(anotherEnum: kotlin.Long): kotlin.Long`
+  core$_.int callFlutterEchoAnotherNullableEnum(core$_.int j) {
     final _$$selfRef = reference;
-    return _pigeon_callFlutterEchoAnotherNullableEnum(
+    return _callFlutterEchoAnotherNullableEnum(
       _$$selfRef.pointer,
-      _id_pigeon_callFlutterEchoAnotherNullableEnum.pointer,
+      _id_callFlutterEchoAnotherNullableEnum.pointer,
       j,
     ).long;
   }
 
-  static final _id_pigeon_callFlutterNoopAsync = NativeInteropHostIntegrationCoreApiRegistrar._class
+  static final _id_callFlutterNoopAsync = NativeInteropHostIntegrationCoreApiRegistrar._class
       .instanceMethodId(
-        r'pigeon_callFlutterNoopAsync',
+        r'callFlutterNoopAsync',
         r'(Lkotlin/coroutines/Continuation;)Ljava/lang/Object;',
       );
 
-  static final _pigeon_callFlutterNoopAsync =
+  static final _callFlutterNoopAsync =
       jni$_.ProtectedJniExtensions.lookup<
             jni$_.NativeFunction<
               jni$_.JniResult Function(
@@ -7410,15 +7291,15 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
             )
           >();
 
-  /// from: `public suspend fun pigeon_callFlutterNoopAsync(): kotlin.Unit`
+  /// from: `public suspend fun callFlutterNoopAsync(): kotlin.Unit`
   /// The returned object must be released after use, by calling the [release] method.
-  core$_.Future<void> pigeon_callFlutterNoopAsync() async {
+  core$_.Future<void> callFlutterNoopAsync() async {
     final $p = jni$_.ReceivePort();
     final _$continuation = jni$_.ProtectedJniExtensions.newPortContinuation($p);
     final _$$selfRef = reference;
-    final $r = _pigeon_callFlutterNoopAsync(
+    final $r = _callFlutterNoopAsync(
       _$$selfRef.pointer,
-      _id_pigeon_callFlutterNoopAsync.pointer,
+      _id_callFlutterNoopAsync.pointer,
       _$continuation.pointer,
     ).object<jni$_.JObject>();
     _$continuation.release();
@@ -7440,13 +7321,13 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
     return;
   }
 
-  static final _id_pigeon_callFlutterEchoAsyncNativeInteropAllTypes =
+  static final _id_callFlutterEchoAsyncNativeInteropAllTypes =
       NativeInteropHostIntegrationCoreApiRegistrar._class.instanceMethodId(
-        r'pigeon_callFlutterEchoAsyncNativeInteropAllTypes',
+        r'callFlutterEchoAsyncNativeInteropAllTypes',
         r'([BLkotlin/coroutines/Continuation;)Ljava/lang/Object;',
       );
 
-  static final _pigeon_callFlutterEchoAsyncNativeInteropAllTypes =
+  static final _callFlutterEchoAsyncNativeInteropAllTypes =
       jni$_.ProtectedJniExtensions.lookup<
             jni$_.NativeFunction<
               jni$_.JniResult Function(
@@ -7465,18 +7346,18 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
             )
           >();
 
-  /// from: `public suspend fun pigeon_callFlutterEchoAsyncNativeInteropAllTypes(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
+  /// from: `public suspend fun callFlutterEchoAsyncNativeInteropAllTypes(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
   /// The returned object must be released after use, by calling the [release] method.
-  core$_.Future<jni$_.JByteArray?> pigeon_callFlutterEchoAsyncNativeInteropAllTypes(
+  core$_.Future<jni$_.JByteArray?> callFlutterEchoAsyncNativeInteropAllTypes(
     jni$_.JByteArray bs,
   ) async {
     final $p = jni$_.ReceivePort();
     final _$continuation = jni$_.ProtectedJniExtensions.newPortContinuation($p);
     final _$$selfRef = reference;
     final _$bs = bs.reference;
-    final $r = _pigeon_callFlutterEchoAsyncNativeInteropAllTypes(
+    final $r = _callFlutterEchoAsyncNativeInteropAllTypes(
       _$$selfRef.pointer,
-      _id_pigeon_callFlutterEchoAsyncNativeInteropAllTypes.pointer,
+      _id_callFlutterEchoAsyncNativeInteropAllTypes.pointer,
       _$bs.pointer,
       _$continuation.pointer,
     ).object<jni$_.JObject?>();
@@ -7501,13 +7382,13 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
     return $o?.as<jni$_.JByteArray>(jni$_.JByteArray.type, releaseOriginal: true);
   }
 
-  static final _id_pigeon_callFlutterEchoAsyncNullableNativeInteropAllNullableTypes =
+  static final _id_callFlutterEchoAsyncNullableNativeInteropAllNullableTypes =
       NativeInteropHostIntegrationCoreApiRegistrar._class.instanceMethodId(
-        r'pigeon_callFlutterEchoAsyncNullableNativeInteropAllNullableTypes',
+        r'callFlutterEchoAsyncNullableNativeInteropAllNullableTypes',
         r'([BLkotlin/coroutines/Continuation;)Ljava/lang/Object;',
       );
 
-  static final _pigeon_callFlutterEchoAsyncNullableNativeInteropAllNullableTypes =
+  static final _callFlutterEchoAsyncNullableNativeInteropAllNullableTypes =
       jni$_.ProtectedJniExtensions.lookup<
             jni$_.NativeFunction<
               jni$_.JniResult Function(
@@ -7526,18 +7407,18 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
             )
           >();
 
-  /// from: `public suspend fun pigeon_callFlutterEchoAsyncNullableNativeInteropAllNullableTypes(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
+  /// from: `public suspend fun callFlutterEchoAsyncNullableNativeInteropAllNullableTypes(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
   /// The returned object must be released after use, by calling the [release] method.
-  core$_.Future<jni$_.JByteArray?> pigeon_callFlutterEchoAsyncNullableNativeInteropAllNullableTypes(
+  core$_.Future<jni$_.JByteArray?> callFlutterEchoAsyncNullableNativeInteropAllNullableTypes(
     jni$_.JByteArray bs,
   ) async {
     final $p = jni$_.ReceivePort();
     final _$continuation = jni$_.ProtectedJniExtensions.newPortContinuation($p);
     final _$$selfRef = reference;
     final _$bs = bs.reference;
-    final $r = _pigeon_callFlutterEchoAsyncNullableNativeInteropAllNullableTypes(
+    final $r = _callFlutterEchoAsyncNullableNativeInteropAllNullableTypes(
       _$$selfRef.pointer,
-      _id_pigeon_callFlutterEchoAsyncNullableNativeInteropAllNullableTypes.pointer,
+      _id_callFlutterEchoAsyncNullableNativeInteropAllNullableTypes.pointer,
       _$bs.pointer,
       _$continuation.pointer,
     ).object<jni$_.JObject?>();
@@ -7562,13 +7443,13 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
     return $o?.as<jni$_.JByteArray>(jni$_.JByteArray.type, releaseOriginal: true);
   }
 
-  static final _id_pigeon_callFlutterEchoAsyncNullableNativeInteropAllNullableTypesWithoutRecursion =
+  static final _id_callFlutterEchoAsyncNullableNativeInteropAllNullableTypesWithoutRecursion =
       NativeInteropHostIntegrationCoreApiRegistrar._class.instanceMethodId(
-        r'pigeon_callFlutterEchoAsyncNullableNativeInteropAllNullableTypesWithoutRecursion',
+        r'callFlutterEchoAsyncNullableNativeInteropAllNullableTypesWithoutRecursion',
         r'([BLkotlin/coroutines/Continuation;)Ljava/lang/Object;',
       );
 
-  static final _pigeon_callFlutterEchoAsyncNullableNativeInteropAllNullableTypesWithoutRecursion =
+  static final _callFlutterEchoAsyncNullableNativeInteropAllNullableTypesWithoutRecursion =
       jni$_.ProtectedJniExtensions.lookup<
             jni$_.NativeFunction<
               jni$_.JniResult Function(
@@ -7587,19 +7468,19 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
             )
           >();
 
-  /// from: `public suspend fun pigeon_callFlutterEchoAsyncNullableNativeInteropAllNullableTypesWithoutRecursion(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
+  /// from: `public suspend fun callFlutterEchoAsyncNullableNativeInteropAllNullableTypesWithoutRecursion(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
   /// The returned object must be released after use, by calling the [release] method.
   core$_.Future<jni$_.JByteArray?>
-  pigeon_callFlutterEchoAsyncNullableNativeInteropAllNullableTypesWithoutRecursion(
+  callFlutterEchoAsyncNullableNativeInteropAllNullableTypesWithoutRecursion(
     jni$_.JByteArray bs,
   ) async {
     final $p = jni$_.ReceivePort();
     final _$continuation = jni$_.ProtectedJniExtensions.newPortContinuation($p);
     final _$$selfRef = reference;
     final _$bs = bs.reference;
-    final $r = _pigeon_callFlutterEchoAsyncNullableNativeInteropAllNullableTypesWithoutRecursion(
+    final $r = _callFlutterEchoAsyncNullableNativeInteropAllNullableTypesWithoutRecursion(
       _$$selfRef.pointer,
-      _id_pigeon_callFlutterEchoAsyncNullableNativeInteropAllNullableTypesWithoutRecursion.pointer,
+      _id_callFlutterEchoAsyncNullableNativeInteropAllNullableTypesWithoutRecursion.pointer,
       _$bs.pointer,
       _$continuation.pointer,
     ).object<jni$_.JObject?>();
@@ -7624,14 +7505,13 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
     return $o?.as<jni$_.JByteArray>(jni$_.JByteArray.type, releaseOriginal: true);
   }
 
-  static final _id_pigeon_callFlutterEchoAsyncBool = NativeInteropHostIntegrationCoreApiRegistrar
-      ._class
+  static final _id_callFlutterEchoAsyncBool = NativeInteropHostIntegrationCoreApiRegistrar._class
       .instanceMethodId(
-        r'pigeon_callFlutterEchoAsyncBool',
+        r'callFlutterEchoAsyncBool',
         r'(ZLkotlin/coroutines/Continuation;)Ljava/lang/Object;',
       );
 
-  static final _pigeon_callFlutterEchoAsyncBool =
+  static final _callFlutterEchoAsyncBool =
       jni$_.ProtectedJniExtensions.lookup<
             jni$_.NativeFunction<
               jni$_.JniResult Function(
@@ -7650,15 +7530,15 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
             )
           >();
 
-  /// from: `public suspend fun pigeon_callFlutterEchoAsyncBool(aBool: kotlin.Boolean): kotlin.Boolean`
+  /// from: `public suspend fun callFlutterEchoAsyncBool(aBool: kotlin.Boolean): kotlin.Boolean`
   /// The returned object must be released after use, by calling the [release] method.
-  core$_.Future<jni$_.JBoolean> pigeon_callFlutterEchoAsyncBool(core$_.bool z) async {
+  core$_.Future<jni$_.JBoolean> callFlutterEchoAsyncBool(core$_.bool z) async {
     final $p = jni$_.ReceivePort();
     final _$continuation = jni$_.ProtectedJniExtensions.newPortContinuation($p);
     final _$$selfRef = reference;
-    final $r = _pigeon_callFlutterEchoAsyncBool(
+    final $r = _callFlutterEchoAsyncBool(
       _$$selfRef.pointer,
-      _id_pigeon_callFlutterEchoAsyncBool.pointer,
+      _id_callFlutterEchoAsyncBool.pointer,
       z ? 1 : 0,
       _$continuation.pointer,
     ).object<jni$_.JObject>();
@@ -7681,14 +7561,13 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
     return $o.as<jni$_.JBoolean>(jni$_.JBoolean.type, releaseOriginal: true);
   }
 
-  static final _id_pigeon_callFlutterEchoAsyncInt = NativeInteropHostIntegrationCoreApiRegistrar
-      ._class
+  static final _id_callFlutterEchoAsyncInt = NativeInteropHostIntegrationCoreApiRegistrar._class
       .instanceMethodId(
-        r'pigeon_callFlutterEchoAsyncInt',
+        r'callFlutterEchoAsyncInt',
         r'(JLkotlin/coroutines/Continuation;)Ljava/lang/Object;',
       );
 
-  static final _pigeon_callFlutterEchoAsyncInt =
+  static final _callFlutterEchoAsyncInt =
       jni$_.ProtectedJniExtensions.lookup<
             jni$_.NativeFunction<
               jni$_.JniResult Function(
@@ -7707,15 +7586,15 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
             )
           >();
 
-  /// from: `public suspend fun pigeon_callFlutterEchoAsyncInt(anInt: kotlin.Long): kotlin.Long`
+  /// from: `public suspend fun callFlutterEchoAsyncInt(anInt: kotlin.Long): kotlin.Long`
   /// The returned object must be released after use, by calling the [release] method.
-  core$_.Future<jni$_.JLong> pigeon_callFlutterEchoAsyncInt(core$_.int j) async {
+  core$_.Future<jni$_.JLong> callFlutterEchoAsyncInt(core$_.int j) async {
     final $p = jni$_.ReceivePort();
     final _$continuation = jni$_.ProtectedJniExtensions.newPortContinuation($p);
     final _$$selfRef = reference;
-    final $r = _pigeon_callFlutterEchoAsyncInt(
+    final $r = _callFlutterEchoAsyncInt(
       _$$selfRef.pointer,
-      _id_pigeon_callFlutterEchoAsyncInt.pointer,
+      _id_callFlutterEchoAsyncInt.pointer,
       j,
       _$continuation.pointer,
     ).object<jni$_.JObject>();
@@ -7738,14 +7617,13 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
     return $o.as<jni$_.JLong>(jni$_.JLong.type, releaseOriginal: true);
   }
 
-  static final _id_pigeon_callFlutterEchoAsyncDouble = NativeInteropHostIntegrationCoreApiRegistrar
-      ._class
+  static final _id_callFlutterEchoAsyncDouble = NativeInteropHostIntegrationCoreApiRegistrar._class
       .instanceMethodId(
-        r'pigeon_callFlutterEchoAsyncDouble',
+        r'callFlutterEchoAsyncDouble',
         r'(DLkotlin/coroutines/Continuation;)Ljava/lang/Object;',
       );
 
-  static final _pigeon_callFlutterEchoAsyncDouble =
+  static final _callFlutterEchoAsyncDouble =
       jni$_.ProtectedJniExtensions.lookup<
             jni$_.NativeFunction<
               jni$_.JniResult Function(
@@ -7764,15 +7642,15 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
             )
           >();
 
-  /// from: `public suspend fun pigeon_callFlutterEchoAsyncDouble(aDouble: kotlin.Double): kotlin.Double`
+  /// from: `public suspend fun callFlutterEchoAsyncDouble(aDouble: kotlin.Double): kotlin.Double`
   /// The returned object must be released after use, by calling the [release] method.
-  core$_.Future<jni$_.JDouble> pigeon_callFlutterEchoAsyncDouble(core$_.double d) async {
+  core$_.Future<jni$_.JDouble> callFlutterEchoAsyncDouble(core$_.double d) async {
     final $p = jni$_.ReceivePort();
     final _$continuation = jni$_.ProtectedJniExtensions.newPortContinuation($p);
     final _$$selfRef = reference;
-    final $r = _pigeon_callFlutterEchoAsyncDouble(
+    final $r = _callFlutterEchoAsyncDouble(
       _$$selfRef.pointer,
-      _id_pigeon_callFlutterEchoAsyncDouble.pointer,
+      _id_callFlutterEchoAsyncDouble.pointer,
       d,
       _$continuation.pointer,
     ).object<jni$_.JObject>();
@@ -7795,14 +7673,13 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
     return $o.as<jni$_.JDouble>(jni$_.JDouble.type, releaseOriginal: true);
   }
 
-  static final _id_pigeon_callFlutterEchoAsyncString = NativeInteropHostIntegrationCoreApiRegistrar
-      ._class
+  static final _id_callFlutterEchoAsyncString = NativeInteropHostIntegrationCoreApiRegistrar._class
       .instanceMethodId(
-        r'pigeon_callFlutterEchoAsyncString',
+        r'callFlutterEchoAsyncString',
         r'(Ljava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;',
       );
 
-  static final _pigeon_callFlutterEchoAsyncString =
+  static final _callFlutterEchoAsyncString =
       jni$_.ProtectedJniExtensions.lookup<
             jni$_.NativeFunction<
               jni$_.JniResult Function(
@@ -7821,16 +7698,16 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
             )
           >();
 
-  /// from: `public suspend fun pigeon_callFlutterEchoAsyncString(aString: kotlin.String): kotlin.String`
+  /// from: `public suspend fun callFlutterEchoAsyncString(aString: kotlin.String): kotlin.String`
   /// The returned object must be released after use, by calling the [release] method.
-  core$_.Future<jni$_.JString> pigeon_callFlutterEchoAsyncString(jni$_.JString string) async {
+  core$_.Future<jni$_.JString> callFlutterEchoAsyncString(jni$_.JString string) async {
     final $p = jni$_.ReceivePort();
     final _$continuation = jni$_.ProtectedJniExtensions.newPortContinuation($p);
     final _$$selfRef = reference;
     final _$string = string.reference;
-    final $r = _pigeon_callFlutterEchoAsyncString(
+    final $r = _callFlutterEchoAsyncString(
       _$$selfRef.pointer,
-      _id_pigeon_callFlutterEchoAsyncString.pointer,
+      _id_callFlutterEchoAsyncString.pointer,
       _$string.pointer,
       _$continuation.pointer,
     ).object<jni$_.JObject>();
@@ -7853,13 +7730,14 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
     return $o.as<jni$_.JString>(jni$_.JString.type, releaseOriginal: true);
   }
 
-  static final _id_pigeon_callFlutterEchoAsyncUint8List =
-      NativeInteropHostIntegrationCoreApiRegistrar._class.instanceMethodId(
-        r'pigeon_callFlutterEchoAsyncUint8List',
+  static final _id_callFlutterEchoAsyncUint8List = NativeInteropHostIntegrationCoreApiRegistrar
+      ._class
+      .instanceMethodId(
+        r'callFlutterEchoAsyncUint8List',
         r'([BLkotlin/coroutines/Continuation;)Ljava/lang/Object;',
       );
 
-  static final _pigeon_callFlutterEchoAsyncUint8List =
+  static final _callFlutterEchoAsyncUint8List =
       jni$_.ProtectedJniExtensions.lookup<
             jni$_.NativeFunction<
               jni$_.JniResult Function(
@@ -7878,16 +7756,16 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
             )
           >();
 
-  /// from: `public suspend fun pigeon_callFlutterEchoAsyncUint8List(list: kotlin.ByteArray): kotlin.ByteArray`
+  /// from: `public suspend fun callFlutterEchoAsyncUint8List(list: kotlin.ByteArray): kotlin.ByteArray`
   /// The returned object must be released after use, by calling the [release] method.
-  core$_.Future<jni$_.JByteArray> pigeon_callFlutterEchoAsyncUint8List(jni$_.JByteArray bs) async {
+  core$_.Future<jni$_.JByteArray> callFlutterEchoAsyncUint8List(jni$_.JByteArray bs) async {
     final $p = jni$_.ReceivePort();
     final _$continuation = jni$_.ProtectedJniExtensions.newPortContinuation($p);
     final _$$selfRef = reference;
     final _$bs = bs.reference;
-    final $r = _pigeon_callFlutterEchoAsyncUint8List(
+    final $r = _callFlutterEchoAsyncUint8List(
       _$$selfRef.pointer,
-      _id_pigeon_callFlutterEchoAsyncUint8List.pointer,
+      _id_callFlutterEchoAsyncUint8List.pointer,
       _$bs.pointer,
       _$continuation.pointer,
     ).object<jni$_.JObject>();
@@ -7910,13 +7788,14 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
     return $o.as<jni$_.JByteArray>(jni$_.JByteArray.type, releaseOriginal: true);
   }
 
-  static final _id_pigeon_callFlutterEchoAsyncInt32List =
-      NativeInteropHostIntegrationCoreApiRegistrar._class.instanceMethodId(
-        r'pigeon_callFlutterEchoAsyncInt32List',
+  static final _id_callFlutterEchoAsyncInt32List = NativeInteropHostIntegrationCoreApiRegistrar
+      ._class
+      .instanceMethodId(
+        r'callFlutterEchoAsyncInt32List',
         r'([ILkotlin/coroutines/Continuation;)Ljava/lang/Object;',
       );
 
-  static final _pigeon_callFlutterEchoAsyncInt32List =
+  static final _callFlutterEchoAsyncInt32List =
       jni$_.ProtectedJniExtensions.lookup<
             jni$_.NativeFunction<
               jni$_.JniResult Function(
@@ -7935,16 +7814,16 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
             )
           >();
 
-  /// from: `public suspend fun pigeon_callFlutterEchoAsyncInt32List(list: kotlin.IntArray): kotlin.IntArray`
+  /// from: `public suspend fun callFlutterEchoAsyncInt32List(list: kotlin.IntArray): kotlin.IntArray`
   /// The returned object must be released after use, by calling the [release] method.
-  core$_.Future<jni$_.JIntArray> pigeon_callFlutterEchoAsyncInt32List(jni$_.JIntArray is$) async {
+  core$_.Future<jni$_.JIntArray> callFlutterEchoAsyncInt32List(jni$_.JIntArray is$) async {
     final $p = jni$_.ReceivePort();
     final _$continuation = jni$_.ProtectedJniExtensions.newPortContinuation($p);
     final _$$selfRef = reference;
     final _$is$ = is$.reference;
-    final $r = _pigeon_callFlutterEchoAsyncInt32List(
+    final $r = _callFlutterEchoAsyncInt32List(
       _$$selfRef.pointer,
-      _id_pigeon_callFlutterEchoAsyncInt32List.pointer,
+      _id_callFlutterEchoAsyncInt32List.pointer,
       _$is$.pointer,
       _$continuation.pointer,
     ).object<jni$_.JObject>();
@@ -7967,13 +7846,14 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
     return $o.as<jni$_.JIntArray>(jni$_.JIntArray.type, releaseOriginal: true);
   }
 
-  static final _id_pigeon_callFlutterEchoAsyncInt64List =
-      NativeInteropHostIntegrationCoreApiRegistrar._class.instanceMethodId(
-        r'pigeon_callFlutterEchoAsyncInt64List',
+  static final _id_callFlutterEchoAsyncInt64List = NativeInteropHostIntegrationCoreApiRegistrar
+      ._class
+      .instanceMethodId(
+        r'callFlutterEchoAsyncInt64List',
         r'([JLkotlin/coroutines/Continuation;)Ljava/lang/Object;',
       );
 
-  static final _pigeon_callFlutterEchoAsyncInt64List =
+  static final _callFlutterEchoAsyncInt64List =
       jni$_.ProtectedJniExtensions.lookup<
             jni$_.NativeFunction<
               jni$_.JniResult Function(
@@ -7992,16 +7872,16 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
             )
           >();
 
-  /// from: `public suspend fun pigeon_callFlutterEchoAsyncInt64List(list: kotlin.LongArray): kotlin.LongArray`
+  /// from: `public suspend fun callFlutterEchoAsyncInt64List(list: kotlin.LongArray): kotlin.LongArray`
   /// The returned object must be released after use, by calling the [release] method.
-  core$_.Future<jni$_.JLongArray> pigeon_callFlutterEchoAsyncInt64List(jni$_.JLongArray js) async {
+  core$_.Future<jni$_.JLongArray> callFlutterEchoAsyncInt64List(jni$_.JLongArray js) async {
     final $p = jni$_.ReceivePort();
     final _$continuation = jni$_.ProtectedJniExtensions.newPortContinuation($p);
     final _$$selfRef = reference;
     final _$js = js.reference;
-    final $r = _pigeon_callFlutterEchoAsyncInt64List(
+    final $r = _callFlutterEchoAsyncInt64List(
       _$$selfRef.pointer,
-      _id_pigeon_callFlutterEchoAsyncInt64List.pointer,
+      _id_callFlutterEchoAsyncInt64List.pointer,
       _$js.pointer,
       _$continuation.pointer,
     ).object<jni$_.JObject>();
@@ -8024,13 +7904,14 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
     return $o.as<jni$_.JLongArray>(jni$_.JLongArray.type, releaseOriginal: true);
   }
 
-  static final _id_pigeon_callFlutterEchoAsyncFloat64List =
-      NativeInteropHostIntegrationCoreApiRegistrar._class.instanceMethodId(
-        r'pigeon_callFlutterEchoAsyncFloat64List',
+  static final _id_callFlutterEchoAsyncFloat64List = NativeInteropHostIntegrationCoreApiRegistrar
+      ._class
+      .instanceMethodId(
+        r'callFlutterEchoAsyncFloat64List',
         r'([DLkotlin/coroutines/Continuation;)Ljava/lang/Object;',
       );
 
-  static final _pigeon_callFlutterEchoAsyncFloat64List =
+  static final _callFlutterEchoAsyncFloat64List =
       jni$_.ProtectedJniExtensions.lookup<
             jni$_.NativeFunction<
               jni$_.JniResult Function(
@@ -8049,18 +7930,16 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
             )
           >();
 
-  /// from: `public suspend fun pigeon_callFlutterEchoAsyncFloat64List(list: kotlin.DoubleArray): kotlin.DoubleArray`
+  /// from: `public suspend fun callFlutterEchoAsyncFloat64List(list: kotlin.DoubleArray): kotlin.DoubleArray`
   /// The returned object must be released after use, by calling the [release] method.
-  core$_.Future<jni$_.JDoubleArray> pigeon_callFlutterEchoAsyncFloat64List(
-    jni$_.JDoubleArray ds,
-  ) async {
+  core$_.Future<jni$_.JDoubleArray> callFlutterEchoAsyncFloat64List(jni$_.JDoubleArray ds) async {
     final $p = jni$_.ReceivePort();
     final _$continuation = jni$_.ProtectedJniExtensions.newPortContinuation($p);
     final _$$selfRef = reference;
     final _$ds = ds.reference;
-    final $r = _pigeon_callFlutterEchoAsyncFloat64List(
+    final $r = _callFlutterEchoAsyncFloat64List(
       _$$selfRef.pointer,
-      _id_pigeon_callFlutterEchoAsyncFloat64List.pointer,
+      _id_callFlutterEchoAsyncFloat64List.pointer,
       _$ds.pointer,
       _$continuation.pointer,
     ).object<jni$_.JObject>();
@@ -8083,14 +7962,132 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
     return $o.as<jni$_.JDoubleArray>(jni$_.JDoubleArray.type, releaseOriginal: true);
   }
 
-  static final _id_pigeon_callFlutterEchoAsyncObject = NativeInteropHostIntegrationCoreApiRegistrar
+  static final _id_callFlutterEchoAsyncObject = NativeInteropHostIntegrationCoreApiRegistrar._class
+      .instanceMethodId(
+        r'callFlutterEchoAsyncObject',
+        r'([BLkotlin/coroutines/Continuation;)Ljava/lang/Object;',
+      );
+
+  static final _callFlutterEchoAsyncObject =
+      jni$_.ProtectedJniExtensions.lookup<
+            jni$_.NativeFunction<
+              jni$_.JniResult Function(
+                jni$_.Pointer<jni$_.Void>,
+                jni$_.JMethodIDPtr,
+                jni$_.VarArgs<(jni$_.Pointer<jni$_.Void>, jni$_.Pointer<jni$_.Void>)>,
+              )
+            >
+          >('globalEnv_CallObjectMethod')
+          .asFunction<
+            jni$_.JniResult Function(
+              jni$_.Pointer<jni$_.Void>,
+              jni$_.JMethodIDPtr,
+              jni$_.Pointer<jni$_.Void>,
+              jni$_.Pointer<jni$_.Void>,
+            )
+          >();
+
+  /// from: `public suspend fun callFlutterEchoAsyncObject(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
+  /// The returned object must be released after use, by calling the [release] method.
+  core$_.Future<jni$_.JByteArray?> callFlutterEchoAsyncObject(jni$_.JByteArray bs) async {
+    final $p = jni$_.ReceivePort();
+    final _$continuation = jni$_.ProtectedJniExtensions.newPortContinuation($p);
+    final _$$selfRef = reference;
+    final _$bs = bs.reference;
+    final $r = _callFlutterEchoAsyncObject(
+      _$$selfRef.pointer,
+      _id_callFlutterEchoAsyncObject.pointer,
+      _$bs.pointer,
+      _$continuation.pointer,
+    ).object<jni$_.JObject?>();
+    _$continuation.release();
+    jni$_.JObject? $o;
+    if ($r != null && $r.isInstanceOf(jni$_.coroutineSingletonsClass)) {
+      $r.release();
+      final $a = await $p.first;
+      $o = $a == 0
+          ? null
+          : jni$_.JObject.fromReference(jni$_.JGlobalReference(jni$_.JObjectPtr.fromAddress($a)));
+      if ($o != null && $o.isInstanceOf(jni$_.result$Class)) {
+        $o = jni$_.resultValueField.get($o, const jni$_.$JObject$Type$());
+      } else if ($o != null && $o.isInstanceOf(jni$_.result$FailureClass)) {
+        final $e = jni$_.failureExceptionField.get($o, const jni$_.$JObject$Type$());
+        $o.release();
+        jni$_.Jni.throwException($e.reference.toPointer());
+      }
+    } else {
+      $o = $r;
+    }
+    return $o?.as<jni$_.JByteArray>(jni$_.JByteArray.type, releaseOriginal: true);
+  }
+
+  static final _id_callFlutterEchoAsyncList = NativeInteropHostIntegrationCoreApiRegistrar._class
+      .instanceMethodId(
+        r'callFlutterEchoAsyncList',
+        r'([BLkotlin/coroutines/Continuation;)Ljava/lang/Object;',
+      );
+
+  static final _callFlutterEchoAsyncList =
+      jni$_.ProtectedJniExtensions.lookup<
+            jni$_.NativeFunction<
+              jni$_.JniResult Function(
+                jni$_.Pointer<jni$_.Void>,
+                jni$_.JMethodIDPtr,
+                jni$_.VarArgs<(jni$_.Pointer<jni$_.Void>, jni$_.Pointer<jni$_.Void>)>,
+              )
+            >
+          >('globalEnv_CallObjectMethod')
+          .asFunction<
+            jni$_.JniResult Function(
+              jni$_.Pointer<jni$_.Void>,
+              jni$_.JMethodIDPtr,
+              jni$_.Pointer<jni$_.Void>,
+              jni$_.Pointer<jni$_.Void>,
+            )
+          >();
+
+  /// from: `public suspend fun callFlutterEchoAsyncList(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
+  /// The returned object must be released after use, by calling the [release] method.
+  core$_.Future<jni$_.JByteArray?> callFlutterEchoAsyncList(jni$_.JByteArray bs) async {
+    final $p = jni$_.ReceivePort();
+    final _$continuation = jni$_.ProtectedJniExtensions.newPortContinuation($p);
+    final _$$selfRef = reference;
+    final _$bs = bs.reference;
+    final $r = _callFlutterEchoAsyncList(
+      _$$selfRef.pointer,
+      _id_callFlutterEchoAsyncList.pointer,
+      _$bs.pointer,
+      _$continuation.pointer,
+    ).object<jni$_.JObject?>();
+    _$continuation.release();
+    jni$_.JObject? $o;
+    if ($r != null && $r.isInstanceOf(jni$_.coroutineSingletonsClass)) {
+      $r.release();
+      final $a = await $p.first;
+      $o = $a == 0
+          ? null
+          : jni$_.JObject.fromReference(jni$_.JGlobalReference(jni$_.JObjectPtr.fromAddress($a)));
+      if ($o != null && $o.isInstanceOf(jni$_.result$Class)) {
+        $o = jni$_.resultValueField.get($o, const jni$_.$JObject$Type$());
+      } else if ($o != null && $o.isInstanceOf(jni$_.result$FailureClass)) {
+        final $e = jni$_.failureExceptionField.get($o, const jni$_.$JObject$Type$());
+        $o.release();
+        jni$_.Jni.throwException($e.reference.toPointer());
+      }
+    } else {
+      $o = $r;
+    }
+    return $o?.as<jni$_.JByteArray>(jni$_.JByteArray.type, releaseOriginal: true);
+  }
+
+  static final _id_callFlutterEchoAsyncEnumList = NativeInteropHostIntegrationCoreApiRegistrar
       ._class
       .instanceMethodId(
-        r'pigeon_callFlutterEchoAsyncObject',
+        r'callFlutterEchoAsyncEnumList',
         r'([BLkotlin/coroutines/Continuation;)Ljava/lang/Object;',
       );
 
-  static final _pigeon_callFlutterEchoAsyncObject =
+  static final _callFlutterEchoAsyncEnumList =
       jni$_.ProtectedJniExtensions.lookup<
             jni$_.NativeFunction<
               jni$_.JniResult Function(
@@ -8109,16 +8106,16 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
             )
           >();
 
-  /// from: `public suspend fun pigeon_callFlutterEchoAsyncObject(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
+  /// from: `public suspend fun callFlutterEchoAsyncEnumList(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
   /// The returned object must be released after use, by calling the [release] method.
-  core$_.Future<jni$_.JByteArray?> pigeon_callFlutterEchoAsyncObject(jni$_.JByteArray bs) async {
+  core$_.Future<jni$_.JByteArray?> callFlutterEchoAsyncEnumList(jni$_.JByteArray bs) async {
     final $p = jni$_.ReceivePort();
     final _$continuation = jni$_.ProtectedJniExtensions.newPortContinuation($p);
     final _$$selfRef = reference;
     final _$bs = bs.reference;
-    final $r = _pigeon_callFlutterEchoAsyncObject(
+    final $r = _callFlutterEchoAsyncEnumList(
       _$$selfRef.pointer,
-      _id_pigeon_callFlutterEchoAsyncObject.pointer,
+      _id_callFlutterEchoAsyncEnumList.pointer,
       _$bs.pointer,
       _$continuation.pointer,
     ).object<jni$_.JObject?>();
@@ -8143,14 +8140,14 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
     return $o?.as<jni$_.JByteArray>(jni$_.JByteArray.type, releaseOriginal: true);
   }
 
-  static final _id_pigeon_callFlutterEchoAsyncList = NativeInteropHostIntegrationCoreApiRegistrar
+  static final _id_callFlutterEchoAsyncClassList = NativeInteropHostIntegrationCoreApiRegistrar
       ._class
       .instanceMethodId(
-        r'pigeon_callFlutterEchoAsyncList',
+        r'callFlutterEchoAsyncClassList',
         r'([BLkotlin/coroutines/Continuation;)Ljava/lang/Object;',
       );
 
-  static final _pigeon_callFlutterEchoAsyncList =
+  static final _callFlutterEchoAsyncClassList =
       jni$_.ProtectedJniExtensions.lookup<
             jni$_.NativeFunction<
               jni$_.JniResult Function(
@@ -8169,16 +8166,16 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
             )
           >();
 
-  /// from: `public suspend fun pigeon_callFlutterEchoAsyncList(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
+  /// from: `public suspend fun callFlutterEchoAsyncClassList(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
   /// The returned object must be released after use, by calling the [release] method.
-  core$_.Future<jni$_.JByteArray?> pigeon_callFlutterEchoAsyncList(jni$_.JByteArray bs) async {
+  core$_.Future<jni$_.JByteArray?> callFlutterEchoAsyncClassList(jni$_.JByteArray bs) async {
     final $p = jni$_.ReceivePort();
     final _$continuation = jni$_.ProtectedJniExtensions.newPortContinuation($p);
     final _$$selfRef = reference;
     final _$bs = bs.reference;
-    final $r = _pigeon_callFlutterEchoAsyncList(
+    final $r = _callFlutterEchoAsyncClassList(
       _$$selfRef.pointer,
-      _id_pigeon_callFlutterEchoAsyncList.pointer,
+      _id_callFlutterEchoAsyncClassList.pointer,
       _$bs.pointer,
       _$continuation.pointer,
     ).object<jni$_.JObject?>();
@@ -8203,13 +8200,13 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
     return $o?.as<jni$_.JByteArray>(jni$_.JByteArray.type, releaseOriginal: true);
   }
 
-  static final _id_pigeon_callFlutterEchoAsyncEnumList =
+  static final _id_callFlutterEchoAsyncNonNullEnumList =
       NativeInteropHostIntegrationCoreApiRegistrar._class.instanceMethodId(
-        r'pigeon_callFlutterEchoAsyncEnumList',
+        r'callFlutterEchoAsyncNonNullEnumList',
         r'([BLkotlin/coroutines/Continuation;)Ljava/lang/Object;',
       );
 
-  static final _pigeon_callFlutterEchoAsyncEnumList =
+  static final _callFlutterEchoAsyncNonNullEnumList =
       jni$_.ProtectedJniExtensions.lookup<
             jni$_.NativeFunction<
               jni$_.JniResult Function(
@@ -8228,16 +8225,16 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
             )
           >();
 
-  /// from: `public suspend fun pigeon_callFlutterEchoAsyncEnumList(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
+  /// from: `public suspend fun callFlutterEchoAsyncNonNullEnumList(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
   /// The returned object must be released after use, by calling the [release] method.
-  core$_.Future<jni$_.JByteArray?> pigeon_callFlutterEchoAsyncEnumList(jni$_.JByteArray bs) async {
+  core$_.Future<jni$_.JByteArray?> callFlutterEchoAsyncNonNullEnumList(jni$_.JByteArray bs) async {
     final $p = jni$_.ReceivePort();
     final _$continuation = jni$_.ProtectedJniExtensions.newPortContinuation($p);
     final _$$selfRef = reference;
     final _$bs = bs.reference;
-    final $r = _pigeon_callFlutterEchoAsyncEnumList(
+    final $r = _callFlutterEchoAsyncNonNullEnumList(
       _$$selfRef.pointer,
-      _id_pigeon_callFlutterEchoAsyncEnumList.pointer,
+      _id_callFlutterEchoAsyncNonNullEnumList.pointer,
       _$bs.pointer,
       _$continuation.pointer,
     ).object<jni$_.JObject?>();
@@ -8262,13 +8259,13 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
     return $o?.as<jni$_.JByteArray>(jni$_.JByteArray.type, releaseOriginal: true);
   }
 
-  static final _id_pigeon_callFlutterEchoAsyncClassList =
+  static final _id_callFlutterEchoAsyncNonNullClassList =
       NativeInteropHostIntegrationCoreApiRegistrar._class.instanceMethodId(
-        r'pigeon_callFlutterEchoAsyncClassList',
+        r'callFlutterEchoAsyncNonNullClassList',
         r'([BLkotlin/coroutines/Continuation;)Ljava/lang/Object;',
       );
 
-  static final _pigeon_callFlutterEchoAsyncClassList =
+  static final _callFlutterEchoAsyncNonNullClassList =
       jni$_.ProtectedJniExtensions.lookup<
             jni$_.NativeFunction<
               jni$_.JniResult Function(
@@ -8287,16 +8284,16 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
             )
           >();
 
-  /// from: `public suspend fun pigeon_callFlutterEchoAsyncClassList(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
+  /// from: `public suspend fun callFlutterEchoAsyncNonNullClassList(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
   /// The returned object must be released after use, by calling the [release] method.
-  core$_.Future<jni$_.JByteArray?> pigeon_callFlutterEchoAsyncClassList(jni$_.JByteArray bs) async {
+  core$_.Future<jni$_.JByteArray?> callFlutterEchoAsyncNonNullClassList(jni$_.JByteArray bs) async {
     final $p = jni$_.ReceivePort();
     final _$continuation = jni$_.ProtectedJniExtensions.newPortContinuation($p);
     final _$$selfRef = reference;
     final _$bs = bs.reference;
-    final $r = _pigeon_callFlutterEchoAsyncClassList(
+    final $r = _callFlutterEchoAsyncNonNullClassList(
       _$$selfRef.pointer,
-      _id_pigeon_callFlutterEchoAsyncClassList.pointer,
+      _id_callFlutterEchoAsyncNonNullClassList.pointer,
       _$bs.pointer,
       _$continuation.pointer,
     ).object<jni$_.JObject?>();
@@ -8321,13 +8318,13 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
     return $o?.as<jni$_.JByteArray>(jni$_.JByteArray.type, releaseOriginal: true);
   }
 
-  static final _id_pigeon_callFlutterEchoAsyncNonNullEnumList =
-      NativeInteropHostIntegrationCoreApiRegistrar._class.instanceMethodId(
-        r'pigeon_callFlutterEchoAsyncNonNullEnumList',
+  static final _id_callFlutterEchoAsyncMap = NativeInteropHostIntegrationCoreApiRegistrar._class
+      .instanceMethodId(
+        r'callFlutterEchoAsyncMap',
         r'([BLkotlin/coroutines/Continuation;)Ljava/lang/Object;',
       );
 
-  static final _pigeon_callFlutterEchoAsyncNonNullEnumList =
+  static final _callFlutterEchoAsyncMap =
       jni$_.ProtectedJniExtensions.lookup<
             jni$_.NativeFunction<
               jni$_.JniResult Function(
@@ -8346,18 +8343,16 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
             )
           >();
 
-  /// from: `public suspend fun pigeon_callFlutterEchoAsyncNonNullEnumList(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
+  /// from: `public suspend fun callFlutterEchoAsyncMap(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
   /// The returned object must be released after use, by calling the [release] method.
-  core$_.Future<jni$_.JByteArray?> pigeon_callFlutterEchoAsyncNonNullEnumList(
-    jni$_.JByteArray bs,
-  ) async {
+  core$_.Future<jni$_.JByteArray?> callFlutterEchoAsyncMap(jni$_.JByteArray bs) async {
     final $p = jni$_.ReceivePort();
     final _$continuation = jni$_.ProtectedJniExtensions.newPortContinuation($p);
     final _$$selfRef = reference;
     final _$bs = bs.reference;
-    final $r = _pigeon_callFlutterEchoAsyncNonNullEnumList(
+    final $r = _callFlutterEchoAsyncMap(
       _$$selfRef.pointer,
-      _id_pigeon_callFlutterEchoAsyncNonNullEnumList.pointer,
+      _id_callFlutterEchoAsyncMap.pointer,
       _$bs.pointer,
       _$continuation.pointer,
     ).object<jni$_.JObject?>();
@@ -8382,75 +8377,14 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
     return $o?.as<jni$_.JByteArray>(jni$_.JByteArray.type, releaseOriginal: true);
   }
 
-  static final _id_pigeon_callFlutterEchoAsyncNonNullClassList =
-      NativeInteropHostIntegrationCoreApiRegistrar._class.instanceMethodId(
-        r'pigeon_callFlutterEchoAsyncNonNullClassList',
-        r'([BLkotlin/coroutines/Continuation;)Ljava/lang/Object;',
-      );
-
-  static final _pigeon_callFlutterEchoAsyncNonNullClassList =
-      jni$_.ProtectedJniExtensions.lookup<
-            jni$_.NativeFunction<
-              jni$_.JniResult Function(
-                jni$_.Pointer<jni$_.Void>,
-                jni$_.JMethodIDPtr,
-                jni$_.VarArgs<(jni$_.Pointer<jni$_.Void>, jni$_.Pointer<jni$_.Void>)>,
-              )
-            >
-          >('globalEnv_CallObjectMethod')
-          .asFunction<
-            jni$_.JniResult Function(
-              jni$_.Pointer<jni$_.Void>,
-              jni$_.JMethodIDPtr,
-              jni$_.Pointer<jni$_.Void>,
-              jni$_.Pointer<jni$_.Void>,
-            )
-          >();
-
-  /// from: `public suspend fun pigeon_callFlutterEchoAsyncNonNullClassList(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
-  /// The returned object must be released after use, by calling the [release] method.
-  core$_.Future<jni$_.JByteArray?> pigeon_callFlutterEchoAsyncNonNullClassList(
-    jni$_.JByteArray bs,
-  ) async {
-    final $p = jni$_.ReceivePort();
-    final _$continuation = jni$_.ProtectedJniExtensions.newPortContinuation($p);
-    final _$$selfRef = reference;
-    final _$bs = bs.reference;
-    final $r = _pigeon_callFlutterEchoAsyncNonNullClassList(
-      _$$selfRef.pointer,
-      _id_pigeon_callFlutterEchoAsyncNonNullClassList.pointer,
-      _$bs.pointer,
-      _$continuation.pointer,
-    ).object<jni$_.JObject?>();
-    _$continuation.release();
-    jni$_.JObject? $o;
-    if ($r != null && $r.isInstanceOf(jni$_.coroutineSingletonsClass)) {
-      $r.release();
-      final $a = await $p.first;
-      $o = $a == 0
-          ? null
-          : jni$_.JObject.fromReference(jni$_.JGlobalReference(jni$_.JObjectPtr.fromAddress($a)));
-      if ($o != null && $o.isInstanceOf(jni$_.result$Class)) {
-        $o = jni$_.resultValueField.get($o, const jni$_.$JObject$Type$());
-      } else if ($o != null && $o.isInstanceOf(jni$_.result$FailureClass)) {
-        final $e = jni$_.failureExceptionField.get($o, const jni$_.$JObject$Type$());
-        $o.release();
-        jni$_.Jni.throwException($e.reference.toPointer());
-      }
-    } else {
-      $o = $r;
-    }
-    return $o?.as<jni$_.JByteArray>(jni$_.JByteArray.type, releaseOriginal: true);
-  }
-
-  static final _id_pigeon_callFlutterEchoAsyncMap = NativeInteropHostIntegrationCoreApiRegistrar
+  static final _id_callFlutterEchoAsyncStringMap = NativeInteropHostIntegrationCoreApiRegistrar
       ._class
       .instanceMethodId(
-        r'pigeon_callFlutterEchoAsyncMap',
+        r'callFlutterEchoAsyncStringMap',
         r'([BLkotlin/coroutines/Continuation;)Ljava/lang/Object;',
       );
 
-  static final _pigeon_callFlutterEchoAsyncMap =
+  static final _callFlutterEchoAsyncStringMap =
       jni$_.ProtectedJniExtensions.lookup<
             jni$_.NativeFunction<
               jni$_.JniResult Function(
@@ -8469,16 +8403,16 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
             )
           >();
 
-  /// from: `public suspend fun pigeon_callFlutterEchoAsyncMap(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
+  /// from: `public suspend fun callFlutterEchoAsyncStringMap(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
   /// The returned object must be released after use, by calling the [release] method.
-  core$_.Future<jni$_.JByteArray?> pigeon_callFlutterEchoAsyncMap(jni$_.JByteArray bs) async {
+  core$_.Future<jni$_.JByteArray?> callFlutterEchoAsyncStringMap(jni$_.JByteArray bs) async {
     final $p = jni$_.ReceivePort();
     final _$continuation = jni$_.ProtectedJniExtensions.newPortContinuation($p);
     final _$$selfRef = reference;
     final _$bs = bs.reference;
-    final $r = _pigeon_callFlutterEchoAsyncMap(
+    final $r = _callFlutterEchoAsyncStringMap(
       _$$selfRef.pointer,
-      _id_pigeon_callFlutterEchoAsyncMap.pointer,
+      _id_callFlutterEchoAsyncStringMap.pointer,
       _$bs.pointer,
       _$continuation.pointer,
     ).object<jni$_.JObject?>();
@@ -8503,13 +8437,13 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
     return $o?.as<jni$_.JByteArray>(jni$_.JByteArray.type, releaseOriginal: true);
   }
 
-  static final _id_pigeon_callFlutterEchoAsyncStringMap =
-      NativeInteropHostIntegrationCoreApiRegistrar._class.instanceMethodId(
-        r'pigeon_callFlutterEchoAsyncStringMap',
+  static final _id_callFlutterEchoAsyncIntMap = NativeInteropHostIntegrationCoreApiRegistrar._class
+      .instanceMethodId(
+        r'callFlutterEchoAsyncIntMap',
         r'([BLkotlin/coroutines/Continuation;)Ljava/lang/Object;',
       );
 
-  static final _pigeon_callFlutterEchoAsyncStringMap =
+  static final _callFlutterEchoAsyncIntMap =
       jni$_.ProtectedJniExtensions.lookup<
             jni$_.NativeFunction<
               jni$_.JniResult Function(
@@ -8528,16 +8462,16 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
             )
           >();
 
-  /// from: `public suspend fun pigeon_callFlutterEchoAsyncStringMap(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
+  /// from: `public suspend fun callFlutterEchoAsyncIntMap(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
   /// The returned object must be released after use, by calling the [release] method.
-  core$_.Future<jni$_.JByteArray?> pigeon_callFlutterEchoAsyncStringMap(jni$_.JByteArray bs) async {
+  core$_.Future<jni$_.JByteArray?> callFlutterEchoAsyncIntMap(jni$_.JByteArray bs) async {
     final $p = jni$_.ReceivePort();
     final _$continuation = jni$_.ProtectedJniExtensions.newPortContinuation($p);
     final _$$selfRef = reference;
     final _$bs = bs.reference;
-    final $r = _pigeon_callFlutterEchoAsyncStringMap(
+    final $r = _callFlutterEchoAsyncIntMap(
       _$$selfRef.pointer,
-      _id_pigeon_callFlutterEchoAsyncStringMap.pointer,
+      _id_callFlutterEchoAsyncIntMap.pointer,
       _$bs.pointer,
       _$continuation.pointer,
     ).object<jni$_.JObject?>();
@@ -8562,14 +8496,73 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
     return $o?.as<jni$_.JByteArray>(jni$_.JByteArray.type, releaseOriginal: true);
   }
 
-  static final _id_pigeon_callFlutterEchoAsyncIntMap = NativeInteropHostIntegrationCoreApiRegistrar
+  static final _id_callFlutterEchoAsyncEnumMap = NativeInteropHostIntegrationCoreApiRegistrar._class
+      .instanceMethodId(
+        r'callFlutterEchoAsyncEnumMap',
+        r'([BLkotlin/coroutines/Continuation;)Ljava/lang/Object;',
+      );
+
+  static final _callFlutterEchoAsyncEnumMap =
+      jni$_.ProtectedJniExtensions.lookup<
+            jni$_.NativeFunction<
+              jni$_.JniResult Function(
+                jni$_.Pointer<jni$_.Void>,
+                jni$_.JMethodIDPtr,
+                jni$_.VarArgs<(jni$_.Pointer<jni$_.Void>, jni$_.Pointer<jni$_.Void>)>,
+              )
+            >
+          >('globalEnv_CallObjectMethod')
+          .asFunction<
+            jni$_.JniResult Function(
+              jni$_.Pointer<jni$_.Void>,
+              jni$_.JMethodIDPtr,
+              jni$_.Pointer<jni$_.Void>,
+              jni$_.Pointer<jni$_.Void>,
+            )
+          >();
+
+  /// from: `public suspend fun callFlutterEchoAsyncEnumMap(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
+  /// The returned object must be released after use, by calling the [release] method.
+  core$_.Future<jni$_.JByteArray?> callFlutterEchoAsyncEnumMap(jni$_.JByteArray bs) async {
+    final $p = jni$_.ReceivePort();
+    final _$continuation = jni$_.ProtectedJniExtensions.newPortContinuation($p);
+    final _$$selfRef = reference;
+    final _$bs = bs.reference;
+    final $r = _callFlutterEchoAsyncEnumMap(
+      _$$selfRef.pointer,
+      _id_callFlutterEchoAsyncEnumMap.pointer,
+      _$bs.pointer,
+      _$continuation.pointer,
+    ).object<jni$_.JObject?>();
+    _$continuation.release();
+    jni$_.JObject? $o;
+    if ($r != null && $r.isInstanceOf(jni$_.coroutineSingletonsClass)) {
+      $r.release();
+      final $a = await $p.first;
+      $o = $a == 0
+          ? null
+          : jni$_.JObject.fromReference(jni$_.JGlobalReference(jni$_.JObjectPtr.fromAddress($a)));
+      if ($o != null && $o.isInstanceOf(jni$_.result$Class)) {
+        $o = jni$_.resultValueField.get($o, const jni$_.$JObject$Type$());
+      } else if ($o != null && $o.isInstanceOf(jni$_.result$FailureClass)) {
+        final $e = jni$_.failureExceptionField.get($o, const jni$_.$JObject$Type$());
+        $o.release();
+        jni$_.Jni.throwException($e.reference.toPointer());
+      }
+    } else {
+      $o = $r;
+    }
+    return $o?.as<jni$_.JByteArray>(jni$_.JByteArray.type, releaseOriginal: true);
+  }
+
+  static final _id_callFlutterEchoAsyncClassMap = NativeInteropHostIntegrationCoreApiRegistrar
       ._class
       .instanceMethodId(
-        r'pigeon_callFlutterEchoAsyncIntMap',
+        r'callFlutterEchoAsyncClassMap',
         r'([BLkotlin/coroutines/Continuation;)Ljava/lang/Object;',
       );
 
-  static final _pigeon_callFlutterEchoAsyncIntMap =
+  static final _callFlutterEchoAsyncClassMap =
       jni$_.ProtectedJniExtensions.lookup<
             jni$_.NativeFunction<
               jni$_.JniResult Function(
@@ -8588,16 +8581,16 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
             )
           >();
 
-  /// from: `public suspend fun pigeon_callFlutterEchoAsyncIntMap(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
+  /// from: `public suspend fun callFlutterEchoAsyncClassMap(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
   /// The returned object must be released after use, by calling the [release] method.
-  core$_.Future<jni$_.JByteArray?> pigeon_callFlutterEchoAsyncIntMap(jni$_.JByteArray bs) async {
+  core$_.Future<jni$_.JByteArray?> callFlutterEchoAsyncClassMap(jni$_.JByteArray bs) async {
     final $p = jni$_.ReceivePort();
     final _$continuation = jni$_.ProtectedJniExtensions.newPortContinuation($p);
     final _$$selfRef = reference;
     final _$bs = bs.reference;
-    final $r = _pigeon_callFlutterEchoAsyncIntMap(
+    final $r = _callFlutterEchoAsyncClassMap(
       _$$selfRef.pointer,
-      _id_pigeon_callFlutterEchoAsyncIntMap.pointer,
+      _id_callFlutterEchoAsyncClassMap.pointer,
       _$bs.pointer,
       _$continuation.pointer,
     ).object<jni$_.JObject?>();
@@ -8622,133 +8615,13 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
     return $o?.as<jni$_.JByteArray>(jni$_.JByteArray.type, releaseOriginal: true);
   }
 
-  static final _id_pigeon_callFlutterEchoAsyncEnumMap = NativeInteropHostIntegrationCoreApiRegistrar
-      ._class
+  static final _id_callFlutterEchoAsyncEnum = NativeInteropHostIntegrationCoreApiRegistrar._class
       .instanceMethodId(
-        r'pigeon_callFlutterEchoAsyncEnumMap',
-        r'([BLkotlin/coroutines/Continuation;)Ljava/lang/Object;',
-      );
-
-  static final _pigeon_callFlutterEchoAsyncEnumMap =
-      jni$_.ProtectedJniExtensions.lookup<
-            jni$_.NativeFunction<
-              jni$_.JniResult Function(
-                jni$_.Pointer<jni$_.Void>,
-                jni$_.JMethodIDPtr,
-                jni$_.VarArgs<(jni$_.Pointer<jni$_.Void>, jni$_.Pointer<jni$_.Void>)>,
-              )
-            >
-          >('globalEnv_CallObjectMethod')
-          .asFunction<
-            jni$_.JniResult Function(
-              jni$_.Pointer<jni$_.Void>,
-              jni$_.JMethodIDPtr,
-              jni$_.Pointer<jni$_.Void>,
-              jni$_.Pointer<jni$_.Void>,
-            )
-          >();
-
-  /// from: `public suspend fun pigeon_callFlutterEchoAsyncEnumMap(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
-  /// The returned object must be released after use, by calling the [release] method.
-  core$_.Future<jni$_.JByteArray?> pigeon_callFlutterEchoAsyncEnumMap(jni$_.JByteArray bs) async {
-    final $p = jni$_.ReceivePort();
-    final _$continuation = jni$_.ProtectedJniExtensions.newPortContinuation($p);
-    final _$$selfRef = reference;
-    final _$bs = bs.reference;
-    final $r = _pigeon_callFlutterEchoAsyncEnumMap(
-      _$$selfRef.pointer,
-      _id_pigeon_callFlutterEchoAsyncEnumMap.pointer,
-      _$bs.pointer,
-      _$continuation.pointer,
-    ).object<jni$_.JObject?>();
-    _$continuation.release();
-    jni$_.JObject? $o;
-    if ($r != null && $r.isInstanceOf(jni$_.coroutineSingletonsClass)) {
-      $r.release();
-      final $a = await $p.first;
-      $o = $a == 0
-          ? null
-          : jni$_.JObject.fromReference(jni$_.JGlobalReference(jni$_.JObjectPtr.fromAddress($a)));
-      if ($o != null && $o.isInstanceOf(jni$_.result$Class)) {
-        $o = jni$_.resultValueField.get($o, const jni$_.$JObject$Type$());
-      } else if ($o != null && $o.isInstanceOf(jni$_.result$FailureClass)) {
-        final $e = jni$_.failureExceptionField.get($o, const jni$_.$JObject$Type$());
-        $o.release();
-        jni$_.Jni.throwException($e.reference.toPointer());
-      }
-    } else {
-      $o = $r;
-    }
-    return $o?.as<jni$_.JByteArray>(jni$_.JByteArray.type, releaseOriginal: true);
-  }
-
-  static final _id_pigeon_callFlutterEchoAsyncClassMap =
-      NativeInteropHostIntegrationCoreApiRegistrar._class.instanceMethodId(
-        r'pigeon_callFlutterEchoAsyncClassMap',
-        r'([BLkotlin/coroutines/Continuation;)Ljava/lang/Object;',
-      );
-
-  static final _pigeon_callFlutterEchoAsyncClassMap =
-      jni$_.ProtectedJniExtensions.lookup<
-            jni$_.NativeFunction<
-              jni$_.JniResult Function(
-                jni$_.Pointer<jni$_.Void>,
-                jni$_.JMethodIDPtr,
-                jni$_.VarArgs<(jni$_.Pointer<jni$_.Void>, jni$_.Pointer<jni$_.Void>)>,
-              )
-            >
-          >('globalEnv_CallObjectMethod')
-          .asFunction<
-            jni$_.JniResult Function(
-              jni$_.Pointer<jni$_.Void>,
-              jni$_.JMethodIDPtr,
-              jni$_.Pointer<jni$_.Void>,
-              jni$_.Pointer<jni$_.Void>,
-            )
-          >();
-
-  /// from: `public suspend fun pigeon_callFlutterEchoAsyncClassMap(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
-  /// The returned object must be released after use, by calling the [release] method.
-  core$_.Future<jni$_.JByteArray?> pigeon_callFlutterEchoAsyncClassMap(jni$_.JByteArray bs) async {
-    final $p = jni$_.ReceivePort();
-    final _$continuation = jni$_.ProtectedJniExtensions.newPortContinuation($p);
-    final _$$selfRef = reference;
-    final _$bs = bs.reference;
-    final $r = _pigeon_callFlutterEchoAsyncClassMap(
-      _$$selfRef.pointer,
-      _id_pigeon_callFlutterEchoAsyncClassMap.pointer,
-      _$bs.pointer,
-      _$continuation.pointer,
-    ).object<jni$_.JObject?>();
-    _$continuation.release();
-    jni$_.JObject? $o;
-    if ($r != null && $r.isInstanceOf(jni$_.coroutineSingletonsClass)) {
-      $r.release();
-      final $a = await $p.first;
-      $o = $a == 0
-          ? null
-          : jni$_.JObject.fromReference(jni$_.JGlobalReference(jni$_.JObjectPtr.fromAddress($a)));
-      if ($o != null && $o.isInstanceOf(jni$_.result$Class)) {
-        $o = jni$_.resultValueField.get($o, const jni$_.$JObject$Type$());
-      } else if ($o != null && $o.isInstanceOf(jni$_.result$FailureClass)) {
-        final $e = jni$_.failureExceptionField.get($o, const jni$_.$JObject$Type$());
-        $o.release();
-        jni$_.Jni.throwException($e.reference.toPointer());
-      }
-    } else {
-      $o = $r;
-    }
-    return $o?.as<jni$_.JByteArray>(jni$_.JByteArray.type, releaseOriginal: true);
-  }
-
-  static final _id_pigeon_callFlutterEchoAsyncEnum = NativeInteropHostIntegrationCoreApiRegistrar
-      ._class
-      .instanceMethodId(
-        r'pigeon_callFlutterEchoAsyncEnum',
+        r'callFlutterEchoAsyncEnum',
         r'(JLkotlin/coroutines/Continuation;)Ljava/lang/Object;',
       );
 
-  static final _pigeon_callFlutterEchoAsyncEnum =
+  static final _callFlutterEchoAsyncEnum =
       jni$_.ProtectedJniExtensions.lookup<
             jni$_.NativeFunction<
               jni$_.JniResult Function(
@@ -8767,15 +8640,15 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
             )
           >();
 
-  /// from: `public suspend fun pigeon_callFlutterEchoAsyncEnum(anEnum: kotlin.Long): kotlin.Long`
+  /// from: `public suspend fun callFlutterEchoAsyncEnum(anEnum: kotlin.Long): kotlin.Long`
   /// The returned object must be released after use, by calling the [release] method.
-  core$_.Future<jni$_.JLong> pigeon_callFlutterEchoAsyncEnum(core$_.int j) async {
+  core$_.Future<jni$_.JLong> callFlutterEchoAsyncEnum(core$_.int j) async {
     final $p = jni$_.ReceivePort();
     final _$continuation = jni$_.ProtectedJniExtensions.newPortContinuation($p);
     final _$$selfRef = reference;
-    final $r = _pigeon_callFlutterEchoAsyncEnum(
+    final $r = _callFlutterEchoAsyncEnum(
       _$$selfRef.pointer,
-      _id_pigeon_callFlutterEchoAsyncEnum.pointer,
+      _id_callFlutterEchoAsyncEnum.pointer,
       j,
       _$continuation.pointer,
     ).object<jni$_.JObject>();
@@ -8798,13 +8671,14 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
     return $o.as<jni$_.JLong>(jni$_.JLong.type, releaseOriginal: true);
   }
 
-  static final _id_pigeon_callFlutterEchoAnotherAsyncEnum =
-      NativeInteropHostIntegrationCoreApiRegistrar._class.instanceMethodId(
-        r'pigeon_callFlutterEchoAnotherAsyncEnum',
+  static final _id_callFlutterEchoAnotherAsyncEnum = NativeInteropHostIntegrationCoreApiRegistrar
+      ._class
+      .instanceMethodId(
+        r'callFlutterEchoAnotherAsyncEnum',
         r'(JLkotlin/coroutines/Continuation;)Ljava/lang/Object;',
       );
 
-  static final _pigeon_callFlutterEchoAnotherAsyncEnum =
+  static final _callFlutterEchoAnotherAsyncEnum =
       jni$_.ProtectedJniExtensions.lookup<
             jni$_.NativeFunction<
               jni$_.JniResult Function(
@@ -8823,15 +8697,15 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
             )
           >();
 
-  /// from: `public suspend fun pigeon_callFlutterEchoAnotherAsyncEnum(anotherEnum: kotlin.Long): kotlin.Long`
+  /// from: `public suspend fun callFlutterEchoAnotherAsyncEnum(anotherEnum: kotlin.Long): kotlin.Long`
   /// The returned object must be released after use, by calling the [release] method.
-  core$_.Future<jni$_.JLong> pigeon_callFlutterEchoAnotherAsyncEnum(core$_.int j) async {
+  core$_.Future<jni$_.JLong> callFlutterEchoAnotherAsyncEnum(core$_.int j) async {
     final $p = jni$_.ReceivePort();
     final _$continuation = jni$_.ProtectedJniExtensions.newPortContinuation($p);
     final _$$selfRef = reference;
-    final $r = _pigeon_callFlutterEchoAnotherAsyncEnum(
+    final $r = _callFlutterEchoAnotherAsyncEnum(
       _$$selfRef.pointer,
-      _id_pigeon_callFlutterEchoAnotherAsyncEnum.pointer,
+      _id_callFlutterEchoAnotherAsyncEnum.pointer,
       j,
       _$continuation.pointer,
     ).object<jni$_.JObject>();
@@ -8854,13 +8728,14 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
     return $o.as<jni$_.JLong>(jni$_.JLong.type, releaseOriginal: true);
   }
 
-  static final _id_pigeon_callFlutterEchoAsyncNullableBool =
-      NativeInteropHostIntegrationCoreApiRegistrar._class.instanceMethodId(
-        r'pigeon_callFlutterEchoAsyncNullableBool',
+  static final _id_callFlutterEchoAsyncNullableBool = NativeInteropHostIntegrationCoreApiRegistrar
+      ._class
+      .instanceMethodId(
+        r'callFlutterEchoAsyncNullableBool',
         r'(Ljava/lang/Boolean;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;',
       );
 
-  static final _pigeon_callFlutterEchoAsyncNullableBool =
+  static final _callFlutterEchoAsyncNullableBool =
       jni$_.ProtectedJniExtensions.lookup<
             jni$_.NativeFunction<
               jni$_.JniResult Function(
@@ -8879,18 +8754,16 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
             )
           >();
 
-  /// from: `public suspend fun pigeon_callFlutterEchoAsyncNullableBool(aBool: kotlin.Boolean?): kotlin.Boolean?`
+  /// from: `public suspend fun callFlutterEchoAsyncNullableBool(aBool: kotlin.Boolean?): kotlin.Boolean?`
   /// The returned object must be released after use, by calling the [release] method.
-  core$_.Future<jni$_.JBoolean?> pigeon_callFlutterEchoAsyncNullableBool(
-    jni$_.JBoolean? boolean,
-  ) async {
+  core$_.Future<jni$_.JBoolean?> callFlutterEchoAsyncNullableBool(jni$_.JBoolean? boolean) async {
     final $p = jni$_.ReceivePort();
     final _$continuation = jni$_.ProtectedJniExtensions.newPortContinuation($p);
     final _$$selfRef = reference;
     final _$boolean = boolean?.reference ?? jni$_.jNullReference;
-    final $r = _pigeon_callFlutterEchoAsyncNullableBool(
+    final $r = _callFlutterEchoAsyncNullableBool(
       _$$selfRef.pointer,
-      _id_pigeon_callFlutterEchoAsyncNullableBool.pointer,
+      _id_callFlutterEchoAsyncNullableBool.pointer,
       _$boolean.pointer,
       _$continuation.pointer,
     ).object<jni$_.JObject?>();
@@ -8915,13 +8788,14 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
     return $o?.as<jni$_.JBoolean>(jni$_.JBoolean.type, releaseOriginal: true);
   }
 
-  static final _id_pigeon_callFlutterEchoAsyncNullableInt =
-      NativeInteropHostIntegrationCoreApiRegistrar._class.instanceMethodId(
-        r'pigeon_callFlutterEchoAsyncNullableInt',
+  static final _id_callFlutterEchoAsyncNullableInt = NativeInteropHostIntegrationCoreApiRegistrar
+      ._class
+      .instanceMethodId(
+        r'callFlutterEchoAsyncNullableInt',
         r'(Ljava/lang/Long;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;',
       );
 
-  static final _pigeon_callFlutterEchoAsyncNullableInt =
+  static final _callFlutterEchoAsyncNullableInt =
       jni$_.ProtectedJniExtensions.lookup<
             jni$_.NativeFunction<
               jni$_.JniResult Function(
@@ -8940,16 +8814,16 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
             )
           >();
 
-  /// from: `public suspend fun pigeon_callFlutterEchoAsyncNullableInt(anInt: kotlin.Long?): kotlin.Long?`
+  /// from: `public suspend fun callFlutterEchoAsyncNullableInt(anInt: kotlin.Long?): kotlin.Long?`
   /// The returned object must be released after use, by calling the [release] method.
-  core$_.Future<jni$_.JLong?> pigeon_callFlutterEchoAsyncNullableInt(jni$_.JLong? long) async {
+  core$_.Future<jni$_.JLong?> callFlutterEchoAsyncNullableInt(jni$_.JLong? long) async {
     final $p = jni$_.ReceivePort();
     final _$continuation = jni$_.ProtectedJniExtensions.newPortContinuation($p);
     final _$$selfRef = reference;
     final _$long = long?.reference ?? jni$_.jNullReference;
-    final $r = _pigeon_callFlutterEchoAsyncNullableInt(
+    final $r = _callFlutterEchoAsyncNullableInt(
       _$$selfRef.pointer,
-      _id_pigeon_callFlutterEchoAsyncNullableInt.pointer,
+      _id_callFlutterEchoAsyncNullableInt.pointer,
       _$long.pointer,
       _$continuation.pointer,
     ).object<jni$_.JObject?>();
@@ -8974,13 +8848,14 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
     return $o?.as<jni$_.JLong>(jni$_.JLong.type, releaseOriginal: true);
   }
 
-  static final _id_pigeon_callFlutterEchoAsyncNullableDouble =
-      NativeInteropHostIntegrationCoreApiRegistrar._class.instanceMethodId(
-        r'pigeon_callFlutterEchoAsyncNullableDouble',
+  static final _id_callFlutterEchoAsyncNullableDouble = NativeInteropHostIntegrationCoreApiRegistrar
+      ._class
+      .instanceMethodId(
+        r'callFlutterEchoAsyncNullableDouble',
         r'(Ljava/lang/Double;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;',
       );
 
-  static final _pigeon_callFlutterEchoAsyncNullableDouble =
+  static final _callFlutterEchoAsyncNullableDouble =
       jni$_.ProtectedJniExtensions.lookup<
             jni$_.NativeFunction<
               jni$_.JniResult Function(
@@ -8999,18 +8874,16 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
             )
           >();
 
-  /// from: `public suspend fun pigeon_callFlutterEchoAsyncNullableDouble(aDouble: kotlin.Double?): kotlin.Double?`
+  /// from: `public suspend fun callFlutterEchoAsyncNullableDouble(aDouble: kotlin.Double?): kotlin.Double?`
   /// The returned object must be released after use, by calling the [release] method.
-  core$_.Future<jni$_.JDouble?> pigeon_callFlutterEchoAsyncNullableDouble(
-    jni$_.JDouble? double,
-  ) async {
+  core$_.Future<jni$_.JDouble?> callFlutterEchoAsyncNullableDouble(jni$_.JDouble? double) async {
     final $p = jni$_.ReceivePort();
     final _$continuation = jni$_.ProtectedJniExtensions.newPortContinuation($p);
     final _$$selfRef = reference;
     final _$double = double?.reference ?? jni$_.jNullReference;
-    final $r = _pigeon_callFlutterEchoAsyncNullableDouble(
+    final $r = _callFlutterEchoAsyncNullableDouble(
       _$$selfRef.pointer,
-      _id_pigeon_callFlutterEchoAsyncNullableDouble.pointer,
+      _id_callFlutterEchoAsyncNullableDouble.pointer,
       _$double.pointer,
       _$continuation.pointer,
     ).object<jni$_.JObject?>();
@@ -9035,13 +8908,14 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
     return $o?.as<jni$_.JDouble>(jni$_.JDouble.type, releaseOriginal: true);
   }
 
-  static final _id_pigeon_callFlutterEchoAsyncNullableString =
-      NativeInteropHostIntegrationCoreApiRegistrar._class.instanceMethodId(
-        r'pigeon_callFlutterEchoAsyncNullableString',
+  static final _id_callFlutterEchoAsyncNullableString = NativeInteropHostIntegrationCoreApiRegistrar
+      ._class
+      .instanceMethodId(
+        r'callFlutterEchoAsyncNullableString',
         r'(Ljava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;',
       );
 
-  static final _pigeon_callFlutterEchoAsyncNullableString =
+  static final _callFlutterEchoAsyncNullableString =
       jni$_.ProtectedJniExtensions.lookup<
             jni$_.NativeFunction<
               jni$_.JniResult Function(
@@ -9060,18 +8934,16 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
             )
           >();
 
-  /// from: `public suspend fun pigeon_callFlutterEchoAsyncNullableString(aString: kotlin.String?): kotlin.String?`
+  /// from: `public suspend fun callFlutterEchoAsyncNullableString(aString: kotlin.String?): kotlin.String?`
   /// The returned object must be released after use, by calling the [release] method.
-  core$_.Future<jni$_.JString?> pigeon_callFlutterEchoAsyncNullableString(
-    jni$_.JString? string,
-  ) async {
+  core$_.Future<jni$_.JString?> callFlutterEchoAsyncNullableString(jni$_.JString? string) async {
     final $p = jni$_.ReceivePort();
     final _$continuation = jni$_.ProtectedJniExtensions.newPortContinuation($p);
     final _$$selfRef = reference;
     final _$string = string?.reference ?? jni$_.jNullReference;
-    final $r = _pigeon_callFlutterEchoAsyncNullableString(
+    final $r = _callFlutterEchoAsyncNullableString(
       _$$selfRef.pointer,
-      _id_pigeon_callFlutterEchoAsyncNullableString.pointer,
+      _id_callFlutterEchoAsyncNullableString.pointer,
       _$string.pointer,
       _$continuation.pointer,
     ).object<jni$_.JObject?>();
@@ -9096,13 +8968,13 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
     return $o?.as<jni$_.JString>(jni$_.JString.type, releaseOriginal: true);
   }
 
-  static final _id_pigeon_callFlutterEchoAsyncNullableUint8List =
+  static final _id_callFlutterEchoAsyncNullableUint8List =
       NativeInteropHostIntegrationCoreApiRegistrar._class.instanceMethodId(
-        r'pigeon_callFlutterEchoAsyncNullableUint8List',
+        r'callFlutterEchoAsyncNullableUint8List',
         r'([BLkotlin/coroutines/Continuation;)Ljava/lang/Object;',
       );
 
-  static final _pigeon_callFlutterEchoAsyncNullableUint8List =
+  static final _callFlutterEchoAsyncNullableUint8List =
       jni$_.ProtectedJniExtensions.lookup<
             jni$_.NativeFunction<
               jni$_.JniResult Function(
@@ -9121,18 +8993,18 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
             )
           >();
 
-  /// from: `public suspend fun pigeon_callFlutterEchoAsyncNullableUint8List(list: kotlin.ByteArray?): kotlin.ByteArray?`
+  /// from: `public suspend fun callFlutterEchoAsyncNullableUint8List(list: kotlin.ByteArray?): kotlin.ByteArray?`
   /// The returned object must be released after use, by calling the [release] method.
-  core$_.Future<jni$_.JByteArray?> pigeon_callFlutterEchoAsyncNullableUint8List(
+  core$_.Future<jni$_.JByteArray?> callFlutterEchoAsyncNullableUint8List(
     jni$_.JByteArray? bs,
   ) async {
     final $p = jni$_.ReceivePort();
     final _$continuation = jni$_.ProtectedJniExtensions.newPortContinuation($p);
     final _$$selfRef = reference;
     final _$bs = bs?.reference ?? jni$_.jNullReference;
-    final $r = _pigeon_callFlutterEchoAsyncNullableUint8List(
+    final $r = _callFlutterEchoAsyncNullableUint8List(
       _$$selfRef.pointer,
-      _id_pigeon_callFlutterEchoAsyncNullableUint8List.pointer,
+      _id_callFlutterEchoAsyncNullableUint8List.pointer,
       _$bs.pointer,
       _$continuation.pointer,
     ).object<jni$_.JObject?>();
@@ -9157,13 +9029,13 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
     return $o?.as<jni$_.JByteArray>(jni$_.JByteArray.type, releaseOriginal: true);
   }
 
-  static final _id_pigeon_callFlutterEchoAsyncNullableInt32List =
+  static final _id_callFlutterEchoAsyncNullableInt32List =
       NativeInteropHostIntegrationCoreApiRegistrar._class.instanceMethodId(
-        r'pigeon_callFlutterEchoAsyncNullableInt32List',
+        r'callFlutterEchoAsyncNullableInt32List',
         r'([ILkotlin/coroutines/Continuation;)Ljava/lang/Object;',
       );
 
-  static final _pigeon_callFlutterEchoAsyncNullableInt32List =
+  static final _callFlutterEchoAsyncNullableInt32List =
       jni$_.ProtectedJniExtensions.lookup<
             jni$_.NativeFunction<
               jni$_.JniResult Function(
@@ -9182,18 +9054,18 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
             )
           >();
 
-  /// from: `public suspend fun pigeon_callFlutterEchoAsyncNullableInt32List(list: kotlin.IntArray?): kotlin.IntArray?`
+  /// from: `public suspend fun callFlutterEchoAsyncNullableInt32List(list: kotlin.IntArray?): kotlin.IntArray?`
   /// The returned object must be released after use, by calling the [release] method.
-  core$_.Future<jni$_.JIntArray?> pigeon_callFlutterEchoAsyncNullableInt32List(
+  core$_.Future<jni$_.JIntArray?> callFlutterEchoAsyncNullableInt32List(
     jni$_.JIntArray? is$,
   ) async {
     final $p = jni$_.ReceivePort();
     final _$continuation = jni$_.ProtectedJniExtensions.newPortContinuation($p);
     final _$$selfRef = reference;
     final _$is$ = is$?.reference ?? jni$_.jNullReference;
-    final $r = _pigeon_callFlutterEchoAsyncNullableInt32List(
+    final $r = _callFlutterEchoAsyncNullableInt32List(
       _$$selfRef.pointer,
-      _id_pigeon_callFlutterEchoAsyncNullableInt32List.pointer,
+      _id_callFlutterEchoAsyncNullableInt32List.pointer,
       _$is$.pointer,
       _$continuation.pointer,
     ).object<jni$_.JObject?>();
@@ -9218,13 +9090,13 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
     return $o?.as<jni$_.JIntArray>(jni$_.JIntArray.type, releaseOriginal: true);
   }
 
-  static final _id_pigeon_callFlutterEchoAsyncNullableInt64List =
+  static final _id_callFlutterEchoAsyncNullableInt64List =
       NativeInteropHostIntegrationCoreApiRegistrar._class.instanceMethodId(
-        r'pigeon_callFlutterEchoAsyncNullableInt64List',
+        r'callFlutterEchoAsyncNullableInt64List',
         r'([JLkotlin/coroutines/Continuation;)Ljava/lang/Object;',
       );
 
-  static final _pigeon_callFlutterEchoAsyncNullableInt64List =
+  static final _callFlutterEchoAsyncNullableInt64List =
       jni$_.ProtectedJniExtensions.lookup<
             jni$_.NativeFunction<
               jni$_.JniResult Function(
@@ -9243,18 +9115,18 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
             )
           >();
 
-  /// from: `public suspend fun pigeon_callFlutterEchoAsyncNullableInt64List(list: kotlin.LongArray?): kotlin.LongArray?`
+  /// from: `public suspend fun callFlutterEchoAsyncNullableInt64List(list: kotlin.LongArray?): kotlin.LongArray?`
   /// The returned object must be released after use, by calling the [release] method.
-  core$_.Future<jni$_.JLongArray?> pigeon_callFlutterEchoAsyncNullableInt64List(
+  core$_.Future<jni$_.JLongArray?> callFlutterEchoAsyncNullableInt64List(
     jni$_.JLongArray? js,
   ) async {
     final $p = jni$_.ReceivePort();
     final _$continuation = jni$_.ProtectedJniExtensions.newPortContinuation($p);
     final _$$selfRef = reference;
     final _$js = js?.reference ?? jni$_.jNullReference;
-    final $r = _pigeon_callFlutterEchoAsyncNullableInt64List(
+    final $r = _callFlutterEchoAsyncNullableInt64List(
       _$$selfRef.pointer,
-      _id_pigeon_callFlutterEchoAsyncNullableInt64List.pointer,
+      _id_callFlutterEchoAsyncNullableInt64List.pointer,
       _$js.pointer,
       _$continuation.pointer,
     ).object<jni$_.JObject?>();
@@ -9279,13 +9151,13 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
     return $o?.as<jni$_.JLongArray>(jni$_.JLongArray.type, releaseOriginal: true);
   }
 
-  static final _id_pigeon_callFlutterEchoAsyncNullableFloat64List =
+  static final _id_callFlutterEchoAsyncNullableFloat64List =
       NativeInteropHostIntegrationCoreApiRegistrar._class.instanceMethodId(
-        r'pigeon_callFlutterEchoAsyncNullableFloat64List',
+        r'callFlutterEchoAsyncNullableFloat64List',
         r'([DLkotlin/coroutines/Continuation;)Ljava/lang/Object;',
       );
 
-  static final _pigeon_callFlutterEchoAsyncNullableFloat64List =
+  static final _callFlutterEchoAsyncNullableFloat64List =
       jni$_.ProtectedJniExtensions.lookup<
             jni$_.NativeFunction<
               jni$_.JniResult Function(
@@ -9304,18 +9176,18 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
             )
           >();
 
-  /// from: `public suspend fun pigeon_callFlutterEchoAsyncNullableFloat64List(list: kotlin.DoubleArray?): kotlin.DoubleArray?`
+  /// from: `public suspend fun callFlutterEchoAsyncNullableFloat64List(list: kotlin.DoubleArray?): kotlin.DoubleArray?`
   /// The returned object must be released after use, by calling the [release] method.
-  core$_.Future<jni$_.JDoubleArray?> pigeon_callFlutterEchoAsyncNullableFloat64List(
+  core$_.Future<jni$_.JDoubleArray?> callFlutterEchoAsyncNullableFloat64List(
     jni$_.JDoubleArray? ds,
   ) async {
     final $p = jni$_.ReceivePort();
     final _$continuation = jni$_.ProtectedJniExtensions.newPortContinuation($p);
     final _$$selfRef = reference;
     final _$ds = ds?.reference ?? jni$_.jNullReference;
-    final $r = _pigeon_callFlutterEchoAsyncNullableFloat64List(
+    final $r = _callFlutterEchoAsyncNullableFloat64List(
       _$$selfRef.pointer,
-      _id_pigeon_callFlutterEchoAsyncNullableFloat64List.pointer,
+      _id_callFlutterEchoAsyncNullableFloat64List.pointer,
       _$ds.pointer,
       _$continuation.pointer,
     ).object<jni$_.JObject?>();
@@ -9340,13 +9212,14 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
     return $o?.as<jni$_.JDoubleArray>(jni$_.JDoubleArray.type, releaseOriginal: true);
   }
 
-  static final _id_pigeon_callFlutterThrowFlutterErrorAsync =
-      NativeInteropHostIntegrationCoreApiRegistrar._class.instanceMethodId(
-        r'pigeon_callFlutterThrowFlutterErrorAsync',
+  static final _id_callFlutterThrowFlutterErrorAsync = NativeInteropHostIntegrationCoreApiRegistrar
+      ._class
+      .instanceMethodId(
+        r'callFlutterThrowFlutterErrorAsync',
         r'(Lkotlin/coroutines/Continuation;)Ljava/lang/Object;',
       );
 
-  static final _pigeon_callFlutterThrowFlutterErrorAsync =
+  static final _callFlutterThrowFlutterErrorAsync =
       jni$_.ProtectedJniExtensions.lookup<
             jni$_.NativeFunction<
               jni$_.JniResult Function(
@@ -9364,15 +9237,15 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
             )
           >();
 
-  /// from: `public suspend fun pigeon_callFlutterThrowFlutterErrorAsync(): kotlin.ByteArray?`
+  /// from: `public suspend fun callFlutterThrowFlutterErrorAsync(): kotlin.ByteArray?`
   /// The returned object must be released after use, by calling the [release] method.
-  core$_.Future<jni$_.JByteArray?> pigeon_callFlutterThrowFlutterErrorAsync() async {
+  core$_.Future<jni$_.JByteArray?> callFlutterThrowFlutterErrorAsync() async {
     final $p = jni$_.ReceivePort();
     final _$continuation = jni$_.ProtectedJniExtensions.newPortContinuation($p);
     final _$$selfRef = reference;
-    final $r = _pigeon_callFlutterThrowFlutterErrorAsync(
+    final $r = _callFlutterThrowFlutterErrorAsync(
       _$$selfRef.pointer,
-      _id_pigeon_callFlutterThrowFlutterErrorAsync.pointer,
+      _id_callFlutterThrowFlutterErrorAsync.pointer,
       _$continuation.pointer,
     ).object<jni$_.JObject?>();
     _$continuation.release();
@@ -9396,13 +9269,14 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
     return $o?.as<jni$_.JByteArray>(jni$_.JByteArray.type, releaseOriginal: true);
   }
 
-  static final _id_pigeon_callFlutterEchoAsyncNullableObject =
-      NativeInteropHostIntegrationCoreApiRegistrar._class.instanceMethodId(
-        r'pigeon_callFlutterEchoAsyncNullableObject',
+  static final _id_callFlutterEchoAsyncNullableObject = NativeInteropHostIntegrationCoreApiRegistrar
+      ._class
+      .instanceMethodId(
+        r'callFlutterEchoAsyncNullableObject',
         r'([BLkotlin/coroutines/Continuation;)Ljava/lang/Object;',
       );
 
-  static final _pigeon_callFlutterEchoAsyncNullableObject =
+  static final _callFlutterEchoAsyncNullableObject =
       jni$_.ProtectedJniExtensions.lookup<
             jni$_.NativeFunction<
               jni$_.JniResult Function(
@@ -9421,18 +9295,16 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
             )
           >();
 
-  /// from: `public suspend fun pigeon_callFlutterEchoAsyncNullableObject(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
+  /// from: `public suspend fun callFlutterEchoAsyncNullableObject(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
   /// The returned object must be released after use, by calling the [release] method.
-  core$_.Future<jni$_.JByteArray?> pigeon_callFlutterEchoAsyncNullableObject(
-    jni$_.JByteArray bs,
-  ) async {
+  core$_.Future<jni$_.JByteArray?> callFlutterEchoAsyncNullableObject(jni$_.JByteArray bs) async {
     final $p = jni$_.ReceivePort();
     final _$continuation = jni$_.ProtectedJniExtensions.newPortContinuation($p);
     final _$$selfRef = reference;
     final _$bs = bs.reference;
-    final $r = _pigeon_callFlutterEchoAsyncNullableObject(
+    final $r = _callFlutterEchoAsyncNullableObject(
       _$$selfRef.pointer,
-      _id_pigeon_callFlutterEchoAsyncNullableObject.pointer,
+      _id_callFlutterEchoAsyncNullableObject.pointer,
       _$bs.pointer,
       _$continuation.pointer,
     ).object<jni$_.JObject?>();
@@ -9457,13 +9329,14 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
     return $o?.as<jni$_.JByteArray>(jni$_.JByteArray.type, releaseOriginal: true);
   }
 
-  static final _id_pigeon_callFlutterEchoAsyncNullableList =
-      NativeInteropHostIntegrationCoreApiRegistrar._class.instanceMethodId(
-        r'pigeon_callFlutterEchoAsyncNullableList',
+  static final _id_callFlutterEchoAsyncNullableList = NativeInteropHostIntegrationCoreApiRegistrar
+      ._class
+      .instanceMethodId(
+        r'callFlutterEchoAsyncNullableList',
         r'([BLkotlin/coroutines/Continuation;)Ljava/lang/Object;',
       );
 
-  static final _pigeon_callFlutterEchoAsyncNullableList =
+  static final _callFlutterEchoAsyncNullableList =
       jni$_.ProtectedJniExtensions.lookup<
             jni$_.NativeFunction<
               jni$_.JniResult Function(
@@ -9482,18 +9355,16 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
             )
           >();
 
-  /// from: `public suspend fun pigeon_callFlutterEchoAsyncNullableList(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
+  /// from: `public suspend fun callFlutterEchoAsyncNullableList(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
   /// The returned object must be released after use, by calling the [release] method.
-  core$_.Future<jni$_.JByteArray?> pigeon_callFlutterEchoAsyncNullableList(
-    jni$_.JByteArray bs,
-  ) async {
+  core$_.Future<jni$_.JByteArray?> callFlutterEchoAsyncNullableList(jni$_.JByteArray bs) async {
     final $p = jni$_.ReceivePort();
     final _$continuation = jni$_.ProtectedJniExtensions.newPortContinuation($p);
     final _$$selfRef = reference;
     final _$bs = bs.reference;
-    final $r = _pigeon_callFlutterEchoAsyncNullableList(
+    final $r = _callFlutterEchoAsyncNullableList(
       _$$selfRef.pointer,
-      _id_pigeon_callFlutterEchoAsyncNullableList.pointer,
+      _id_callFlutterEchoAsyncNullableList.pointer,
       _$bs.pointer,
       _$continuation.pointer,
     ).object<jni$_.JObject?>();
@@ -9518,13 +9389,13 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
     return $o?.as<jni$_.JByteArray>(jni$_.JByteArray.type, releaseOriginal: true);
   }
 
-  static final _id_pigeon_callFlutterEchoAsyncNullableEnumList =
+  static final _id_callFlutterEchoAsyncNullableEnumList =
       NativeInteropHostIntegrationCoreApiRegistrar._class.instanceMethodId(
-        r'pigeon_callFlutterEchoAsyncNullableEnumList',
+        r'callFlutterEchoAsyncNullableEnumList',
         r'([BLkotlin/coroutines/Continuation;)Ljava/lang/Object;',
       );
 
-  static final _pigeon_callFlutterEchoAsyncNullableEnumList =
+  static final _callFlutterEchoAsyncNullableEnumList =
       jni$_.ProtectedJniExtensions.lookup<
             jni$_.NativeFunction<
               jni$_.JniResult Function(
@@ -9543,18 +9414,16 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
             )
           >();
 
-  /// from: `public suspend fun pigeon_callFlutterEchoAsyncNullableEnumList(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
+  /// from: `public suspend fun callFlutterEchoAsyncNullableEnumList(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
   /// The returned object must be released after use, by calling the [release] method.
-  core$_.Future<jni$_.JByteArray?> pigeon_callFlutterEchoAsyncNullableEnumList(
-    jni$_.JByteArray bs,
-  ) async {
+  core$_.Future<jni$_.JByteArray?> callFlutterEchoAsyncNullableEnumList(jni$_.JByteArray bs) async {
     final $p = jni$_.ReceivePort();
     final _$continuation = jni$_.ProtectedJniExtensions.newPortContinuation($p);
     final _$$selfRef = reference;
     final _$bs = bs.reference;
-    final $r = _pigeon_callFlutterEchoAsyncNullableEnumList(
+    final $r = _callFlutterEchoAsyncNullableEnumList(
       _$$selfRef.pointer,
-      _id_pigeon_callFlutterEchoAsyncNullableEnumList.pointer,
+      _id_callFlutterEchoAsyncNullableEnumList.pointer,
       _$bs.pointer,
       _$continuation.pointer,
     ).object<jni$_.JObject?>();
@@ -9579,13 +9448,13 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
     return $o?.as<jni$_.JByteArray>(jni$_.JByteArray.type, releaseOriginal: true);
   }
 
-  static final _id_pigeon_callFlutterEchoAsyncNullableClassList =
+  static final _id_callFlutterEchoAsyncNullableClassList =
       NativeInteropHostIntegrationCoreApiRegistrar._class.instanceMethodId(
-        r'pigeon_callFlutterEchoAsyncNullableClassList',
+        r'callFlutterEchoAsyncNullableClassList',
         r'([BLkotlin/coroutines/Continuation;)Ljava/lang/Object;',
       );
 
-  static final _pigeon_callFlutterEchoAsyncNullableClassList =
+  static final _callFlutterEchoAsyncNullableClassList =
       jni$_.ProtectedJniExtensions.lookup<
             jni$_.NativeFunction<
               jni$_.JniResult Function(
@@ -9604,18 +9473,18 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
             )
           >();
 
-  /// from: `public suspend fun pigeon_callFlutterEchoAsyncNullableClassList(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
+  /// from: `public suspend fun callFlutterEchoAsyncNullableClassList(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
   /// The returned object must be released after use, by calling the [release] method.
-  core$_.Future<jni$_.JByteArray?> pigeon_callFlutterEchoAsyncNullableClassList(
+  core$_.Future<jni$_.JByteArray?> callFlutterEchoAsyncNullableClassList(
     jni$_.JByteArray bs,
   ) async {
     final $p = jni$_.ReceivePort();
     final _$continuation = jni$_.ProtectedJniExtensions.newPortContinuation($p);
     final _$$selfRef = reference;
     final _$bs = bs.reference;
-    final $r = _pigeon_callFlutterEchoAsyncNullableClassList(
+    final $r = _callFlutterEchoAsyncNullableClassList(
       _$$selfRef.pointer,
-      _id_pigeon_callFlutterEchoAsyncNullableClassList.pointer,
+      _id_callFlutterEchoAsyncNullableClassList.pointer,
       _$bs.pointer,
       _$continuation.pointer,
     ).object<jni$_.JObject?>();
@@ -9640,13 +9509,13 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
     return $o?.as<jni$_.JByteArray>(jni$_.JByteArray.type, releaseOriginal: true);
   }
 
-  static final _id_pigeon_callFlutterEchoAsyncNullableNonNullEnumList =
+  static final _id_callFlutterEchoAsyncNullableNonNullEnumList =
       NativeInteropHostIntegrationCoreApiRegistrar._class.instanceMethodId(
-        r'pigeon_callFlutterEchoAsyncNullableNonNullEnumList',
+        r'callFlutterEchoAsyncNullableNonNullEnumList',
         r'([BLkotlin/coroutines/Continuation;)Ljava/lang/Object;',
       );
 
-  static final _pigeon_callFlutterEchoAsyncNullableNonNullEnumList =
+  static final _callFlutterEchoAsyncNullableNonNullEnumList =
       jni$_.ProtectedJniExtensions.lookup<
             jni$_.NativeFunction<
               jni$_.JniResult Function(
@@ -9665,18 +9534,18 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
             )
           >();
 
-  /// from: `public suspend fun pigeon_callFlutterEchoAsyncNullableNonNullEnumList(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
+  /// from: `public suspend fun callFlutterEchoAsyncNullableNonNullEnumList(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
   /// The returned object must be released after use, by calling the [release] method.
-  core$_.Future<jni$_.JByteArray?> pigeon_callFlutterEchoAsyncNullableNonNullEnumList(
+  core$_.Future<jni$_.JByteArray?> callFlutterEchoAsyncNullableNonNullEnumList(
     jni$_.JByteArray bs,
   ) async {
     final $p = jni$_.ReceivePort();
     final _$continuation = jni$_.ProtectedJniExtensions.newPortContinuation($p);
     final _$$selfRef = reference;
     final _$bs = bs.reference;
-    final $r = _pigeon_callFlutterEchoAsyncNullableNonNullEnumList(
+    final $r = _callFlutterEchoAsyncNullableNonNullEnumList(
       _$$selfRef.pointer,
-      _id_pigeon_callFlutterEchoAsyncNullableNonNullEnumList.pointer,
+      _id_callFlutterEchoAsyncNullableNonNullEnumList.pointer,
       _$bs.pointer,
       _$continuation.pointer,
     ).object<jni$_.JObject?>();
@@ -9701,13 +9570,13 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
     return $o?.as<jni$_.JByteArray>(jni$_.JByteArray.type, releaseOriginal: true);
   }
 
-  static final _id_pigeon_callFlutterEchoAsyncNullableNonNullClassList =
+  static final _id_callFlutterEchoAsyncNullableNonNullClassList =
       NativeInteropHostIntegrationCoreApiRegistrar._class.instanceMethodId(
-        r'pigeon_callFlutterEchoAsyncNullableNonNullClassList',
+        r'callFlutterEchoAsyncNullableNonNullClassList',
         r'([BLkotlin/coroutines/Continuation;)Ljava/lang/Object;',
       );
 
-  static final _pigeon_callFlutterEchoAsyncNullableNonNullClassList =
+  static final _callFlutterEchoAsyncNullableNonNullClassList =
       jni$_.ProtectedJniExtensions.lookup<
             jni$_.NativeFunction<
               jni$_.JniResult Function(
@@ -9726,18 +9595,18 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
             )
           >();
 
-  /// from: `public suspend fun pigeon_callFlutterEchoAsyncNullableNonNullClassList(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
+  /// from: `public suspend fun callFlutterEchoAsyncNullableNonNullClassList(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
   /// The returned object must be released after use, by calling the [release] method.
-  core$_.Future<jni$_.JByteArray?> pigeon_callFlutterEchoAsyncNullableNonNullClassList(
+  core$_.Future<jni$_.JByteArray?> callFlutterEchoAsyncNullableNonNullClassList(
     jni$_.JByteArray bs,
   ) async {
     final $p = jni$_.ReceivePort();
     final _$continuation = jni$_.ProtectedJniExtensions.newPortContinuation($p);
     final _$$selfRef = reference;
     final _$bs = bs.reference;
-    final $r = _pigeon_callFlutterEchoAsyncNullableNonNullClassList(
+    final $r = _callFlutterEchoAsyncNullableNonNullClassList(
       _$$selfRef.pointer,
-      _id_pigeon_callFlutterEchoAsyncNullableNonNullClassList.pointer,
+      _id_callFlutterEchoAsyncNullableNonNullClassList.pointer,
       _$bs.pointer,
       _$continuation.pointer,
     ).object<jni$_.JObject?>();
@@ -9762,13 +9631,14 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
     return $o?.as<jni$_.JByteArray>(jni$_.JByteArray.type, releaseOriginal: true);
   }
 
-  static final _id_pigeon_callFlutterEchoAsyncNullableMap =
-      NativeInteropHostIntegrationCoreApiRegistrar._class.instanceMethodId(
-        r'pigeon_callFlutterEchoAsyncNullableMap',
+  static final _id_callFlutterEchoAsyncNullableMap = NativeInteropHostIntegrationCoreApiRegistrar
+      ._class
+      .instanceMethodId(
+        r'callFlutterEchoAsyncNullableMap',
         r'([BLkotlin/coroutines/Continuation;)Ljava/lang/Object;',
       );
 
-  static final _pigeon_callFlutterEchoAsyncNullableMap =
+  static final _callFlutterEchoAsyncNullableMap =
       jni$_.ProtectedJniExtensions.lookup<
             jni$_.NativeFunction<
               jni$_.JniResult Function(
@@ -9787,18 +9657,16 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
             )
           >();
 
-  /// from: `public suspend fun pigeon_callFlutterEchoAsyncNullableMap(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
+  /// from: `public suspend fun callFlutterEchoAsyncNullableMap(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
   /// The returned object must be released after use, by calling the [release] method.
-  core$_.Future<jni$_.JByteArray?> pigeon_callFlutterEchoAsyncNullableMap(
-    jni$_.JByteArray bs,
-  ) async {
+  core$_.Future<jni$_.JByteArray?> callFlutterEchoAsyncNullableMap(jni$_.JByteArray bs) async {
     final $p = jni$_.ReceivePort();
     final _$continuation = jni$_.ProtectedJniExtensions.newPortContinuation($p);
     final _$$selfRef = reference;
     final _$bs = bs.reference;
-    final $r = _pigeon_callFlutterEchoAsyncNullableMap(
+    final $r = _callFlutterEchoAsyncNullableMap(
       _$$selfRef.pointer,
-      _id_pigeon_callFlutterEchoAsyncNullableMap.pointer,
+      _id_callFlutterEchoAsyncNullableMap.pointer,
       _$bs.pointer,
       _$continuation.pointer,
     ).object<jni$_.JObject?>();
@@ -9823,13 +9691,13 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
     return $o?.as<jni$_.JByteArray>(jni$_.JByteArray.type, releaseOriginal: true);
   }
 
-  static final _id_pigeon_callFlutterEchoAsyncNullableStringMap =
+  static final _id_callFlutterEchoAsyncNullableStringMap =
       NativeInteropHostIntegrationCoreApiRegistrar._class.instanceMethodId(
-        r'pigeon_callFlutterEchoAsyncNullableStringMap',
+        r'callFlutterEchoAsyncNullableStringMap',
         r'([BLkotlin/coroutines/Continuation;)Ljava/lang/Object;',
       );
 
-  static final _pigeon_callFlutterEchoAsyncNullableStringMap =
+  static final _callFlutterEchoAsyncNullableStringMap =
       jni$_.ProtectedJniExtensions.lookup<
             jni$_.NativeFunction<
               jni$_.JniResult Function(
@@ -9848,18 +9716,18 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
             )
           >();
 
-  /// from: `public suspend fun pigeon_callFlutterEchoAsyncNullableStringMap(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
+  /// from: `public suspend fun callFlutterEchoAsyncNullableStringMap(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
   /// The returned object must be released after use, by calling the [release] method.
-  core$_.Future<jni$_.JByteArray?> pigeon_callFlutterEchoAsyncNullableStringMap(
+  core$_.Future<jni$_.JByteArray?> callFlutterEchoAsyncNullableStringMap(
     jni$_.JByteArray bs,
   ) async {
     final $p = jni$_.ReceivePort();
     final _$continuation = jni$_.ProtectedJniExtensions.newPortContinuation($p);
     final _$$selfRef = reference;
     final _$bs = bs.reference;
-    final $r = _pigeon_callFlutterEchoAsyncNullableStringMap(
+    final $r = _callFlutterEchoAsyncNullableStringMap(
       _$$selfRef.pointer,
-      _id_pigeon_callFlutterEchoAsyncNullableStringMap.pointer,
+      _id_callFlutterEchoAsyncNullableStringMap.pointer,
       _$bs.pointer,
       _$continuation.pointer,
     ).object<jni$_.JObject?>();
@@ -9884,13 +9752,14 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
     return $o?.as<jni$_.JByteArray>(jni$_.JByteArray.type, releaseOriginal: true);
   }
 
-  static final _id_pigeon_callFlutterEchoAsyncNullableIntMap =
-      NativeInteropHostIntegrationCoreApiRegistrar._class.instanceMethodId(
-        r'pigeon_callFlutterEchoAsyncNullableIntMap',
+  static final _id_callFlutterEchoAsyncNullableIntMap = NativeInteropHostIntegrationCoreApiRegistrar
+      ._class
+      .instanceMethodId(
+        r'callFlutterEchoAsyncNullableIntMap',
         r'([BLkotlin/coroutines/Continuation;)Ljava/lang/Object;',
       );
 
-  static final _pigeon_callFlutterEchoAsyncNullableIntMap =
+  static final _callFlutterEchoAsyncNullableIntMap =
       jni$_.ProtectedJniExtensions.lookup<
             jni$_.NativeFunction<
               jni$_.JniResult Function(
@@ -9909,18 +9778,16 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
             )
           >();
 
-  /// from: `public suspend fun pigeon_callFlutterEchoAsyncNullableIntMap(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
+  /// from: `public suspend fun callFlutterEchoAsyncNullableIntMap(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
   /// The returned object must be released after use, by calling the [release] method.
-  core$_.Future<jni$_.JByteArray?> pigeon_callFlutterEchoAsyncNullableIntMap(
-    jni$_.JByteArray bs,
-  ) async {
+  core$_.Future<jni$_.JByteArray?> callFlutterEchoAsyncNullableIntMap(jni$_.JByteArray bs) async {
     final $p = jni$_.ReceivePort();
     final _$continuation = jni$_.ProtectedJniExtensions.newPortContinuation($p);
     final _$$selfRef = reference;
     final _$bs = bs.reference;
-    final $r = _pigeon_callFlutterEchoAsyncNullableIntMap(
+    final $r = _callFlutterEchoAsyncNullableIntMap(
       _$$selfRef.pointer,
-      _id_pigeon_callFlutterEchoAsyncNullableIntMap.pointer,
+      _id_callFlutterEchoAsyncNullableIntMap.pointer,
       _$bs.pointer,
       _$continuation.pointer,
     ).object<jni$_.JObject?>();
@@ -9945,13 +9812,13 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
     return $o?.as<jni$_.JByteArray>(jni$_.JByteArray.type, releaseOriginal: true);
   }
 
-  static final _id_pigeon_callFlutterEchoAsyncNullableEnumMap =
+  static final _id_callFlutterEchoAsyncNullableEnumMap =
       NativeInteropHostIntegrationCoreApiRegistrar._class.instanceMethodId(
-        r'pigeon_callFlutterEchoAsyncNullableEnumMap',
+        r'callFlutterEchoAsyncNullableEnumMap',
         r'([BLkotlin/coroutines/Continuation;)Ljava/lang/Object;',
       );
 
-  static final _pigeon_callFlutterEchoAsyncNullableEnumMap =
+  static final _callFlutterEchoAsyncNullableEnumMap =
       jni$_.ProtectedJniExtensions.lookup<
             jni$_.NativeFunction<
               jni$_.JniResult Function(
@@ -9970,18 +9837,16 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
             )
           >();
 
-  /// from: `public suspend fun pigeon_callFlutterEchoAsyncNullableEnumMap(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
+  /// from: `public suspend fun callFlutterEchoAsyncNullableEnumMap(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
   /// The returned object must be released after use, by calling the [release] method.
-  core$_.Future<jni$_.JByteArray?> pigeon_callFlutterEchoAsyncNullableEnumMap(
-    jni$_.JByteArray bs,
-  ) async {
+  core$_.Future<jni$_.JByteArray?> callFlutterEchoAsyncNullableEnumMap(jni$_.JByteArray bs) async {
     final $p = jni$_.ReceivePort();
     final _$continuation = jni$_.ProtectedJniExtensions.newPortContinuation($p);
     final _$$selfRef = reference;
     final _$bs = bs.reference;
-    final $r = _pigeon_callFlutterEchoAsyncNullableEnumMap(
+    final $r = _callFlutterEchoAsyncNullableEnumMap(
       _$$selfRef.pointer,
-      _id_pigeon_callFlutterEchoAsyncNullableEnumMap.pointer,
+      _id_callFlutterEchoAsyncNullableEnumMap.pointer,
       _$bs.pointer,
       _$continuation.pointer,
     ).object<jni$_.JObject?>();
@@ -10006,13 +9871,13 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
     return $o?.as<jni$_.JByteArray>(jni$_.JByteArray.type, releaseOriginal: true);
   }
 
-  static final _id_pigeon_callFlutterEchoAsyncNullableClassMap =
+  static final _id_callFlutterEchoAsyncNullableClassMap =
       NativeInteropHostIntegrationCoreApiRegistrar._class.instanceMethodId(
-        r'pigeon_callFlutterEchoAsyncNullableClassMap',
+        r'callFlutterEchoAsyncNullableClassMap',
         r'([BLkotlin/coroutines/Continuation;)Ljava/lang/Object;',
       );
 
-  static final _pigeon_callFlutterEchoAsyncNullableClassMap =
+  static final _callFlutterEchoAsyncNullableClassMap =
       jni$_.ProtectedJniExtensions.lookup<
             jni$_.NativeFunction<
               jni$_.JniResult Function(
@@ -10031,18 +9896,16 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
             )
           >();
 
-  /// from: `public suspend fun pigeon_callFlutterEchoAsyncNullableClassMap(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
+  /// from: `public suspend fun callFlutterEchoAsyncNullableClassMap(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
   /// The returned object must be released after use, by calling the [release] method.
-  core$_.Future<jni$_.JByteArray?> pigeon_callFlutterEchoAsyncNullableClassMap(
-    jni$_.JByteArray bs,
-  ) async {
+  core$_.Future<jni$_.JByteArray?> callFlutterEchoAsyncNullableClassMap(jni$_.JByteArray bs) async {
     final $p = jni$_.ReceivePort();
     final _$continuation = jni$_.ProtectedJniExtensions.newPortContinuation($p);
     final _$$selfRef = reference;
     final _$bs = bs.reference;
-    final $r = _pigeon_callFlutterEchoAsyncNullableClassMap(
+    final $r = _callFlutterEchoAsyncNullableClassMap(
       _$$selfRef.pointer,
-      _id_pigeon_callFlutterEchoAsyncNullableClassMap.pointer,
+      _id_callFlutterEchoAsyncNullableClassMap.pointer,
       _$bs.pointer,
       _$continuation.pointer,
     ).object<jni$_.JObject?>();
@@ -10067,13 +9930,14 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
     return $o?.as<jni$_.JByteArray>(jni$_.JByteArray.type, releaseOriginal: true);
   }
 
-  static final _id_pigeon_callFlutterEchoAsyncNullableEnum =
-      NativeInteropHostIntegrationCoreApiRegistrar._class.instanceMethodId(
-        r'pigeon_callFlutterEchoAsyncNullableEnum',
+  static final _id_callFlutterEchoAsyncNullableEnum = NativeInteropHostIntegrationCoreApiRegistrar
+      ._class
+      .instanceMethodId(
+        r'callFlutterEchoAsyncNullableEnum',
         r'(JLkotlin/coroutines/Continuation;)Ljava/lang/Object;',
       );
 
-  static final _pigeon_callFlutterEchoAsyncNullableEnum =
+  static final _callFlutterEchoAsyncNullableEnum =
       jni$_.ProtectedJniExtensions.lookup<
             jni$_.NativeFunction<
               jni$_.JniResult Function(
@@ -10092,15 +9956,15 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
             )
           >();
 
-  /// from: `public suspend fun pigeon_callFlutterEchoAsyncNullableEnum(anEnum: kotlin.Long): kotlin.Long`
+  /// from: `public suspend fun callFlutterEchoAsyncNullableEnum(anEnum: kotlin.Long): kotlin.Long`
   /// The returned object must be released after use, by calling the [release] method.
-  core$_.Future<jni$_.JLong> pigeon_callFlutterEchoAsyncNullableEnum(core$_.int j) async {
+  core$_.Future<jni$_.JLong> callFlutterEchoAsyncNullableEnum(core$_.int j) async {
     final $p = jni$_.ReceivePort();
     final _$continuation = jni$_.ProtectedJniExtensions.newPortContinuation($p);
     final _$$selfRef = reference;
-    final $r = _pigeon_callFlutterEchoAsyncNullableEnum(
+    final $r = _callFlutterEchoAsyncNullableEnum(
       _$$selfRef.pointer,
-      _id_pigeon_callFlutterEchoAsyncNullableEnum.pointer,
+      _id_callFlutterEchoAsyncNullableEnum.pointer,
       j,
       _$continuation.pointer,
     ).object<jni$_.JObject>();
@@ -10123,13 +9987,13 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
     return $o.as<jni$_.JLong>(jni$_.JLong.type, releaseOriginal: true);
   }
 
-  static final _id_pigeon_callFlutterEchoAnotherAsyncNullableEnum =
+  static final _id_callFlutterEchoAnotherAsyncNullableEnum =
       NativeInteropHostIntegrationCoreApiRegistrar._class.instanceMethodId(
-        r'pigeon_callFlutterEchoAnotherAsyncNullableEnum',
+        r'callFlutterEchoAnotherAsyncNullableEnum',
         r'(JLkotlin/coroutines/Continuation;)Ljava/lang/Object;',
       );
 
-  static final _pigeon_callFlutterEchoAnotherAsyncNullableEnum =
+  static final _callFlutterEchoAnotherAsyncNullableEnum =
       jni$_.ProtectedJniExtensions.lookup<
             jni$_.NativeFunction<
               jni$_.JniResult Function(
@@ -10148,15 +10012,15 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
             )
           >();
 
-  /// from: `public suspend fun pigeon_callFlutterEchoAnotherAsyncNullableEnum(anotherEnum: kotlin.Long): kotlin.Long`
+  /// from: `public suspend fun callFlutterEchoAnotherAsyncNullableEnum(anotherEnum: kotlin.Long): kotlin.Long`
   /// The returned object must be released after use, by calling the [release] method.
-  core$_.Future<jni$_.JLong> pigeon_callFlutterEchoAnotherAsyncNullableEnum(core$_.int j) async {
+  core$_.Future<jni$_.JLong> callFlutterEchoAnotherAsyncNullableEnum(core$_.int j) async {
     final $p = jni$_.ReceivePort();
     final _$continuation = jni$_.ProtectedJniExtensions.newPortContinuation($p);
     final _$$selfRef = reference;
-    final $r = _pigeon_callFlutterEchoAnotherAsyncNullableEnum(
+    final $r = _callFlutterEchoAnotherAsyncNullableEnum(
       _$$selfRef.pointer,
-      _id_pigeon_callFlutterEchoAnotherAsyncNullableEnum.pointer,
+      _id_callFlutterEchoAnotherAsyncNullableEnum.pointer,
       j,
       _$continuation.pointer,
     ).object<jni$_.JObject>();
@@ -10179,10 +10043,10 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
     return $o.as<jni$_.JLong>(jni$_.JLong.type, releaseOriginal: true);
   }
 
-  static final _id_pigeon_isMainThread = NativeInteropHostIntegrationCoreApiRegistrar._class
-      .instanceMethodId(r'pigeon_isMainThread', r'()Z');
+  static final _id_get$isMainThread = NativeInteropHostIntegrationCoreApiRegistrar._class
+      .instanceMethodId(r'isMainThread', r'()Z');
 
-  static final _pigeon_isMainThread =
+  static final _get$isMainThread =
       jni$_.ProtectedJniExtensions.lookup<
             jni$_.NativeFunction<
               jni$_.JniResult Function(jni$_.Pointer<jni$_.Void>, jni$_.JMethodIDPtr)
@@ -10190,20 +10054,19 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
           >('globalEnv_CallBooleanMethod')
           .asFunction<jni$_.JniResult Function(jni$_.Pointer<jni$_.Void>, jni$_.JMethodIDPtr)>();
 
-  /// from: `public fun pigeon_isMainThread(): kotlin.Boolean`
-  core$_.bool pigeon_isMainThread() {
+  /// from: `public fun isMainThread(): kotlin.Boolean`
+  core$_.bool get isMainThread {
     final _$$selfRef = reference;
-    return _pigeon_isMainThread(_$$selfRef.pointer, _id_pigeon_isMainThread.pointer).boolean;
+    return _get$isMainThread(_$$selfRef.pointer, _id_get$isMainThread.pointer).boolean;
   }
 
-  static final _id_pigeon_asyncIsBackgroundThread = NativeInteropHostIntegrationCoreApiRegistrar
-      ._class
+  static final _id_asyncIsBackgroundThread = NativeInteropHostIntegrationCoreApiRegistrar._class
       .instanceMethodId(
-        r'pigeon_asyncIsBackgroundThread',
+        r'asyncIsBackgroundThread',
         r'(Lkotlin/coroutines/Continuation;)Ljava/lang/Object;',
       );
 
-  static final _pigeon_asyncIsBackgroundThread =
+  static final _asyncIsBackgroundThread =
       jni$_.ProtectedJniExtensions.lookup<
             jni$_.NativeFunction<
               jni$_.JniResult Function(
@@ -10221,15 +10084,15 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
             )
           >();
 
-  /// from: `public suspend fun pigeon_asyncIsBackgroundThread(): kotlin.Boolean`
+  /// from: `public suspend fun asyncIsBackgroundThread(): kotlin.Boolean`
   /// The returned object must be released after use, by calling the [release] method.
-  core$_.Future<jni$_.JBoolean> pigeon_asyncIsBackgroundThread() async {
+  core$_.Future<jni$_.JBoolean> asyncIsBackgroundThread() async {
     final $p = jni$_.ReceivePort();
     final _$continuation = jni$_.ProtectedJniExtensions.newPortContinuation($p);
     final _$$selfRef = reference;
-    final $r = _pigeon_asyncIsBackgroundThread(
+    final $r = _asyncIsBackgroundThread(
       _$$selfRef.pointer,
-      _id_pigeon_asyncIsBackgroundThread.pointer,
+      _id_asyncIsBackgroundThread.pointer,
       _$continuation.pointer,
     ).object<jni$_.JObject>();
     _$continuation.release();
@@ -10251,10 +10114,10 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
     return $o.as<jni$_.JBoolean>(jni$_.JBoolean.type, releaseOriginal: true);
   }
 
-  static final _id_pigeon_isGetter = NativeInteropHostIntegrationCoreApiRegistrar._class
-      .instanceMethodId(r'pigeon_isGetter', r'()Z');
+  static final _id_get$isGetter = NativeInteropHostIntegrationCoreApiRegistrar._class
+      .instanceMethodId(r'isGetter', r'()Z');
 
-  static final _pigeon_isGetter =
+  static final _get$isGetter =
       jni$_.ProtectedJniExtensions.lookup<
             jni$_.NativeFunction<
               jni$_.JniResult Function(jni$_.Pointer<jni$_.Void>, jni$_.JMethodIDPtr)
@@ -10262,16 +10125,16 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
           >('globalEnv_CallBooleanMethod')
           .asFunction<jni$_.JniResult Function(jni$_.Pointer<jni$_.Void>, jni$_.JMethodIDPtr)>();
 
-  /// from: `public fun pigeon_isGetter(): kotlin.Boolean`
-  core$_.bool pigeon_isGetter() {
+  /// from: `public fun isGetter(): kotlin.Boolean`
+  core$_.bool get isGetter {
     final _$$selfRef = reference;
-    return _pigeon_isGetter(_$$selfRef.pointer, _id_pigeon_isGetter.pointer).boolean;
+    return _get$isGetter(_$$selfRef.pointer, _id_get$isGetter.pointer).boolean;
   }
 
-  static final _id_pigeon_getGetter = NativeInteropHostIntegrationCoreApiRegistrar._class
-      .instanceMethodId(r'pigeon_getGetter', r'()J');
+  static final _id_get$getter = NativeInteropHostIntegrationCoreApiRegistrar._class
+      .instanceMethodId(r'getGetter', r'()J');
 
-  static final _pigeon_getGetter =
+  static final _get$getter =
       jni$_.ProtectedJniExtensions.lookup<
             jni$_.NativeFunction<
               jni$_.JniResult Function(jni$_.Pointer<jni$_.Void>, jni$_.JMethodIDPtr)
@@ -10279,16 +10142,16 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
           >('globalEnv_CallLongMethod')
           .asFunction<jni$_.JniResult Function(jni$_.Pointer<jni$_.Void>, jni$_.JMethodIDPtr)>();
 
-  /// from: `public fun pigeon_getGetter(): kotlin.Long`
-  core$_.int pigeon_getGetter() {
+  /// from: `public fun getGetter(): kotlin.Long`
+  core$_.int get getter {
     final _$$selfRef = reference;
-    return _pigeon_getGetter(_$$selfRef.pointer, _id_pigeon_getGetter.pointer).long;
+    return _get$getter(_$$selfRef.pointer, _id_get$getter.pointer).long;
   }
 
-  static final _id_pigeon_setSetter = NativeInteropHostIntegrationCoreApiRegistrar._class
-      .instanceMethodId(r'pigeon_setSetter', r'(J)V');
+  static final _id_set$setter = NativeInteropHostIntegrationCoreApiRegistrar._class
+      .instanceMethodId(r'setSetter', r'(J)V');
 
-  static final _pigeon_setSetter =
+  static final _set$setter =
       jni$_.ProtectedJniExtensions.lookup<
             jni$_.NativeFunction<
               jni$_.JThrowablePtr Function(
@@ -10302,19 +10165,20 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
             jni$_.JThrowablePtr Function(jni$_.Pointer<jni$_.Void>, jni$_.JMethodIDPtr, core$_.int)
           >();
 
-  /// from: `public fun pigeon_setSetter(value: kotlin.Long): kotlin.Unit`
-  void pigeon_setSetter(core$_.int j) {
+  /// from: `public fun setSetter(value: kotlin.Long): kotlin.Unit`
+  set setter(core$_.int j) {
     final _$$selfRef = reference;
-    _pigeon_setSetter(_$$selfRef.pointer, _id_pigeon_setSetter.pointer, j).check();
+    _set$setter(_$$selfRef.pointer, _id_set$setter.pointer, j).check();
   }
 
-  static final _id_pigeon_callFlutterNoopOnBackgroundThread =
-      NativeInteropHostIntegrationCoreApiRegistrar._class.instanceMethodId(
-        r'pigeon_callFlutterNoopOnBackgroundThread',
+  static final _id_callFlutterNoopOnBackgroundThread = NativeInteropHostIntegrationCoreApiRegistrar
+      ._class
+      .instanceMethodId(
+        r'callFlutterNoopOnBackgroundThread',
         r'(Lkotlin/coroutines/Continuation;)Ljava/lang/Object;',
       );
 
-  static final _pigeon_callFlutterNoopOnBackgroundThread =
+  static final _callFlutterNoopOnBackgroundThread =
       jni$_.ProtectedJniExtensions.lookup<
             jni$_.NativeFunction<
               jni$_.JniResult Function(
@@ -10332,15 +10196,15 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
             )
           >();
 
-  /// from: `public suspend fun pigeon_callFlutterNoopOnBackgroundThread(): kotlin.Boolean`
+  /// from: `public suspend fun callFlutterNoopOnBackgroundThread(): kotlin.Boolean`
   /// The returned object must be released after use, by calling the [release] method.
-  core$_.Future<jni$_.JBoolean> pigeon_callFlutterNoopOnBackgroundThread() async {
+  core$_.Future<jni$_.JBoolean> callFlutterNoopOnBackgroundThread() async {
     final $p = jni$_.ReceivePort();
     final _$continuation = jni$_.ProtectedJniExtensions.newPortContinuation($p);
     final _$$selfRef = reference;
-    final $r = _pigeon_callFlutterNoopOnBackgroundThread(
+    final $r = _callFlutterNoopOnBackgroundThread(
       _$$selfRef.pointer,
-      _id_pigeon_callFlutterNoopOnBackgroundThread.pointer,
+      _id_callFlutterNoopOnBackgroundThread.pointer,
       _$continuation.pointer,
     ).object<jni$_.JObject>();
     _$continuation.release();
@@ -10362,11 +10226,10 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
     return $o.as<jni$_.JBoolean>(jni$_.JBoolean.type, releaseOriginal: true);
   }
 
-  static final _id_pigeon_testDeregisterHostApi = NativeInteropHostIntegrationCoreApiRegistrar
-      ._class
-      .instanceMethodId(r'pigeon_testDeregisterHostApi', r'()Z');
+  static final _id_testDeregisterHostApi = NativeInteropHostIntegrationCoreApiRegistrar._class
+      .instanceMethodId(r'testDeregisterHostApi', r'()Z');
 
-  static final _pigeon_testDeregisterHostApi =
+  static final _testDeregisterHostApi =
       jni$_.ProtectedJniExtensions.lookup<
             jni$_.NativeFunction<
               jni$_.JniResult Function(jni$_.Pointer<jni$_.Void>, jni$_.JMethodIDPtr)
@@ -10374,20 +10237,16 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
           >('globalEnv_CallBooleanMethod')
           .asFunction<jni$_.JniResult Function(jni$_.Pointer<jni$_.Void>, jni$_.JMethodIDPtr)>();
 
-  /// from: `public fun pigeon_testDeregisterHostApi(): kotlin.Boolean`
-  core$_.bool pigeon_testDeregisterHostApi() {
+  /// from: `public fun testDeregisterHostApi(): kotlin.Boolean`
+  core$_.bool testDeregisterHostApi() {
     final _$$selfRef = reference;
-    return _pigeon_testDeregisterHostApi(
-      _$$selfRef.pointer,
-      _id_pigeon_testDeregisterHostApi.pointer,
-    ).boolean;
+    return _testDeregisterHostApi(_$$selfRef.pointer, _id_testDeregisterHostApi.pointer).boolean;
   }
 
-  static final _id_pigeon_testDeregisterFlutterApi = NativeInteropHostIntegrationCoreApiRegistrar
-      ._class
-      .instanceMethodId(r'pigeon_testDeregisterFlutterApi', r'()Z');
+  static final _id_testDeregisterFlutterApi = NativeInteropHostIntegrationCoreApiRegistrar._class
+      .instanceMethodId(r'testDeregisterFlutterApi', r'()Z');
 
-  static final _pigeon_testDeregisterFlutterApi =
+  static final _testDeregisterFlutterApi =
       jni$_.ProtectedJniExtensions.lookup<
             jni$_.NativeFunction<
               jni$_.JniResult Function(jni$_.Pointer<jni$_.Void>, jni$_.JMethodIDPtr)
@@ -10395,22 +10254,22 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
           >('globalEnv_CallBooleanMethod')
           .asFunction<jni$_.JniResult Function(jni$_.Pointer<jni$_.Void>, jni$_.JMethodIDPtr)>();
 
-  /// from: `public fun pigeon_testDeregisterFlutterApi(): kotlin.Boolean`
-  core$_.bool pigeon_testDeregisterFlutterApi() {
+  /// from: `public fun testDeregisterFlutterApi(): kotlin.Boolean`
+  core$_.bool testDeregisterFlutterApi() {
     final _$$selfRef = reference;
-    return _pigeon_testDeregisterFlutterApi(
+    return _testDeregisterFlutterApi(
       _$$selfRef.pointer,
-      _id_pigeon_testDeregisterFlutterApi.pointer,
+      _id_testDeregisterFlutterApi.pointer,
     ).boolean;
   }
 
-  static final _id_pigeon_registerAndImmediatelyDeregisterHostApi =
+  static final _id_registerAndImmediatelyDeregisterHostApi =
       NativeInteropHostIntegrationCoreApiRegistrar._class.instanceMethodId(
-        r'pigeon_registerAndImmediatelyDeregisterHostApi',
+        r'registerAndImmediatelyDeregisterHostApi',
         r'(Ljava/lang/String;)V',
       );
 
-  static final _pigeon_registerAndImmediatelyDeregisterHostApi =
+  static final _registerAndImmediatelyDeregisterHostApi =
       jni$_.ProtectedJniExtensions.lookup<
             jni$_.NativeFunction<
               jni$_.JThrowablePtr Function(
@@ -10428,24 +10287,22 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
             )
           >();
 
-  /// from: `public fun pigeon_registerAndImmediatelyDeregisterHostApi(name: kotlin.String): kotlin.Unit`
-  void pigeon_registerAndImmediatelyDeregisterHostApi(jni$_.JString string) {
+  /// from: `public fun registerAndImmediatelyDeregisterHostApi(name: kotlin.String): kotlin.Unit`
+  void registerAndImmediatelyDeregisterHostApi(jni$_.JString string) {
     final _$$selfRef = reference;
     final _$string = string.reference;
-    _pigeon_registerAndImmediatelyDeregisterHostApi(
+    _registerAndImmediatelyDeregisterHostApi(
       _$$selfRef.pointer,
-      _id_pigeon_registerAndImmediatelyDeregisterHostApi.pointer,
+      _id_registerAndImmediatelyDeregisterHostApi.pointer,
       _$string.pointer,
     ).check();
   }
 
-  static final _id_pigeon_testCallDeregisteredFlutterApi =
-      NativeInteropHostIntegrationCoreApiRegistrar._class.instanceMethodId(
-        r'pigeon_testCallDeregisteredFlutterApi',
-        r'(Ljava/lang/String;)Z',
-      );
+  static final _id_testCallDeregisteredFlutterApi = NativeInteropHostIntegrationCoreApiRegistrar
+      ._class
+      .instanceMethodId(r'testCallDeregisteredFlutterApi', r'(Ljava/lang/String;)Z');
 
-  static final _pigeon_testCallDeregisteredFlutterApi =
+  static final _testCallDeregisteredFlutterApi =
       jni$_.ProtectedJniExtensions.lookup<
             jni$_.NativeFunction<
               jni$_.JniResult Function(
@@ -10463,13 +10320,13 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
             )
           >();
 
-  /// from: `public fun pigeon_testCallDeregisteredFlutterApi(name: kotlin.String): kotlin.Boolean`
-  core$_.bool pigeon_testCallDeregisteredFlutterApi(jni$_.JString string) {
+  /// from: `public fun testCallDeregisteredFlutterApi(name: kotlin.String): kotlin.Boolean`
+  core$_.bool testCallDeregisteredFlutterApi(jni$_.JString string) {
     final _$$selfRef = reference;
     final _$string = string.reference;
-    return _pigeon_testCallDeregisteredFlutterApi(
+    return _testCallDeregisteredFlutterApi(
       _$$selfRef.pointer,
-      _id_pigeon_testCallDeregisteredFlutterApi.pointer,
+      _id_testCallDeregisteredFlutterApi.pointer,
       _$string.pointer,
     ).boolean;
   }
@@ -10518,39 +10375,42 @@ extension type NativeInteropFlutterIntegrationCoreApiBridge._(jni$_.JObject _$th
     try {
       final $d = $i.methodDescriptor.toDartString(releaseOriginal: true);
       final $a = $i.args;
-      if ($d == r'pigeon_noop()V') {
-        _$impls[$p]!.pigeon_noop();
+      if ($d == r'noop()V') {
+        _$impls[$p]!.noop();
         return jni$_.nullptr;
       }
-      if ($d == r'pigeon_throwFlutterError()[B') {
-        final $r = _$impls[$p]!.pigeon_throwFlutterError();
+      if ($d == r'throwFlutterError()[B') {
+        final $r = _$impls[$p]!.throwFlutterError();
         return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
             jni$_.nullptr;
       }
-      if ($d == r'pigeon_throwError()[B') {
-        final $r = _$impls[$p]!.pigeon_throwError();
+      if ($d == r'throwError()[B') {
+        final $r = _$impls[$p]!.throwError();
         return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
             jni$_.nullptr;
       }
-      if ($d == r'pigeon_throwErrorFromVoid()V') {
-        _$impls[$p]!.pigeon_throwErrorFromVoid();
+      if ($d == r'throwErrorFromVoid()V') {
+        _$impls[$p]!.throwErrorFromVoid();
         return jni$_.nullptr;
       }
-      if ($d == r'pigeon_echoNativeInteropAllTypes([B)[B') {
-        final $r = _$impls[$p]!.pigeon_echoNativeInteropAllTypes(($a![0] as jni$_.JByteArray));
+      if ($d == r'echoNativeInteropAllTypes([B)[B') {
+        final $r = _$impls[$p]!.echoNativeInteropAllTypes(($a![0] as jni$_.JByteArray));
         return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
             jni$_.nullptr;
       }
-      if ($d == r'pigeon_echoNativeInteropAllNullableTypes([B)[B') {
-        final $r = _$impls[$p]!.pigeon_echoNativeInteropAllNullableTypes(
-          ($a![0] as jni$_.JByteArray),
-        );
+      if ($d == r'echoNativeInteropAllNullableTypes([B)[B') {
+        final $r = _$impls[$p]!.echoNativeInteropAllNullableTypes(($a![0] as jni$_.JByteArray));
+        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
+            jni$_.nullptr;
+      }
+      if ($d == r'echoNativeInteropSealedClass([B)[B') {
+        final $r = _$impls[$p]!.echoNativeInteropSealedClass(($a![0] as jni$_.JByteArray));
         return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
             jni$_.nullptr;
       }
       if ($d ==
-          r'pigeon_sendMultipleNullableTypes(Ljava/lang/Boolean;Ljava/lang/Long;Ljava/lang/String;)[B') {
-        final $r = _$impls[$p]!.pigeon_sendMultipleNullableTypes(
+          r'sendMultipleNullableTypes(Ljava/lang/Boolean;Ljava/lang/Long;Ljava/lang/String;)[B') {
+        final $r = _$impls[$p]!.sendMultipleNullableTypes(
           ($a![0] as jni$_.JBoolean?),
           ($a![1] as jni$_.JLong?),
           ($a![2] as jni$_.JString?),
@@ -10558,16 +10418,16 @@ extension type NativeInteropFlutterIntegrationCoreApiBridge._(jni$_.JObject _$th
         return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
             jni$_.nullptr;
       }
-      if ($d == r'pigeon_echoNativeInteropAllNullableTypesWithoutRecursion([B)[B') {
-        final $r = _$impls[$p]!.pigeon_echoNativeInteropAllNullableTypesWithoutRecursion(
+      if ($d == r'echoNativeInteropAllNullableTypesWithoutRecursion([B)[B') {
+        final $r = _$impls[$p]!.echoNativeInteropAllNullableTypesWithoutRecursion(
           ($a![0] as jni$_.JByteArray),
         );
         return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
             jni$_.nullptr;
       }
       if ($d ==
-          r'pigeon_sendMultipleNullableTypesWithoutRecursion(Ljava/lang/Boolean;Ljava/lang/Long;Ljava/lang/String;)[B') {
-        final $r = _$impls[$p]!.pigeon_sendMultipleNullableTypesWithoutRecursion(
+          r'sendMultipleNullableTypesWithoutRecursion(Ljava/lang/Boolean;Ljava/lang/Long;Ljava/lang/String;)[B') {
+        final $r = _$impls[$p]!.sendMultipleNullableTypesWithoutRecursion(
           ($a![0] as jni$_.JBoolean?),
           ($a![1] as jni$_.JLong?),
           ($a![2] as jni$_.JString?),
@@ -10575,330 +10435,314 @@ extension type NativeInteropFlutterIntegrationCoreApiBridge._(jni$_.JObject _$th
         return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
             jni$_.nullptr;
       }
-      if ($d == r'pigeon_echoBool(Z)Z') {
-        final $r = _$impls[$p]!.pigeon_echoBool(
+      if ($d == r'echoBool(Z)Z') {
+        final $r = _$impls[$p]!.echoBool(
           ($a![0] as jni$_.JBoolean).toDartBool(releaseOriginal: true),
         );
         return $r.toJBoolean().reference.toPointer();
       }
-      if ($d == r'pigeon_echoInt(J)J') {
-        final $r = _$impls[$p]!.pigeon_echoInt(
-          ($a![0] as jni$_.JLong).toDartInt(releaseOriginal: true),
-        );
+      if ($d == r'echoInt(J)J') {
+        final $r = _$impls[$p]!.echoInt(($a![0] as jni$_.JLong).toDartInt(releaseOriginal: true));
         return $r.toJLong().reference.toPointer();
       }
-      if ($d == r'pigeon_echoDouble(D)D') {
-        final $r = _$impls[$p]!.pigeon_echoDouble(
+      if ($d == r'echoDouble(D)D') {
+        final $r = _$impls[$p]!.echoDouble(
           ($a![0] as jni$_.JDouble).toDartDouble(releaseOriginal: true),
         );
         return $r.toJDouble().reference.toPointer();
       }
-      if ($d == r'pigeon_echoString(Ljava/lang/String;)Ljava/lang/String;') {
-        final $r = _$impls[$p]!.pigeon_echoString(($a![0] as jni$_.JString));
+      if ($d == r'echoString(Ljava/lang/String;)Ljava/lang/String;') {
+        final $r = _$impls[$p]!.echoString(($a![0] as jni$_.JString));
         return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
             jni$_.nullptr;
       }
-      if ($d == r'pigeon_echoUint8List([B)[B') {
-        final $r = _$impls[$p]!.pigeon_echoUint8List(($a![0] as jni$_.JByteArray));
+      if ($d == r'echoUint8List([B)[B') {
+        final $r = _$impls[$p]!.echoUint8List(($a![0] as jni$_.JByteArray));
         return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
             jni$_.nullptr;
       }
-      if ($d == r'pigeon_echoInt32List([I)[I') {
-        final $r = _$impls[$p]!.pigeon_echoInt32List(($a![0] as jni$_.JIntArray));
+      if ($d == r'echoInt32List([I)[I') {
+        final $r = _$impls[$p]!.echoInt32List(($a![0] as jni$_.JIntArray));
         return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
             jni$_.nullptr;
       }
-      if ($d == r'pigeon_echoInt64List([J)[J') {
-        final $r = _$impls[$p]!.pigeon_echoInt64List(($a![0] as jni$_.JLongArray));
+      if ($d == r'echoInt64List([J)[J') {
+        final $r = _$impls[$p]!.echoInt64List(($a![0] as jni$_.JLongArray));
         return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
             jni$_.nullptr;
       }
-      if ($d == r'pigeon_echoFloat64List([D)[D') {
-        final $r = _$impls[$p]!.pigeon_echoFloat64List(($a![0] as jni$_.JDoubleArray));
+      if ($d == r'echoFloat64List([D)[D') {
+        final $r = _$impls[$p]!.echoFloat64List(($a![0] as jni$_.JDoubleArray));
         return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
             jni$_.nullptr;
       }
-      if ($d == r'pigeon_echoList([B)[B') {
-        final $r = _$impls[$p]!.pigeon_echoList(($a![0] as jni$_.JByteArray));
+      if ($d == r'echoList([B)[B') {
+        final $r = _$impls[$p]!.echoList(($a![0] as jni$_.JByteArray));
         return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
             jni$_.nullptr;
       }
-      if ($d == r'pigeon_echoEnumList([B)[B') {
-        final $r = _$impls[$p]!.pigeon_echoEnumList(($a![0] as jni$_.JByteArray));
+      if ($d == r'echoEnumList([B)[B') {
+        final $r = _$impls[$p]!.echoEnumList(($a![0] as jni$_.JByteArray));
         return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
             jni$_.nullptr;
       }
-      if ($d == r'pigeon_echoNativeInteropSealedClass([B)[B') {
-        final $r = _$impls[$p]!.pigeon_echoNativeInteropSealedClass(($a![0] as jni$_.JByteArray));
+      if ($d == r'echoClassList([B)[B') {
+        final $r = _$impls[$p]!.echoClassList(($a![0] as jni$_.JByteArray));
         return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
             jni$_.nullptr;
       }
-      if ($d == r'pigeon_echoClassList([B)[B') {
-        final $r = _$impls[$p]!.pigeon_echoClassList(($a![0] as jni$_.JByteArray));
+      if ($d == r'echoNonNullEnumList([B)[B') {
+        final $r = _$impls[$p]!.echoNonNullEnumList(($a![0] as jni$_.JByteArray));
         return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
             jni$_.nullptr;
       }
-      if ($d == r'pigeon_echoNonNullEnumList([B)[B') {
-        final $r = _$impls[$p]!.pigeon_echoNonNullEnumList(($a![0] as jni$_.JByteArray));
+      if ($d == r'echoNonNullClassList([B)[B') {
+        final $r = _$impls[$p]!.echoNonNullClassList(($a![0] as jni$_.JByteArray));
         return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
             jni$_.nullptr;
       }
-      if ($d == r'pigeon_echoNonNullClassList([B)[B') {
-        final $r = _$impls[$p]!.pigeon_echoNonNullClassList(($a![0] as jni$_.JByteArray));
+      if ($d == r'echoMap([B)[B') {
+        final $r = _$impls[$p]!.echoMap(($a![0] as jni$_.JByteArray));
         return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
             jni$_.nullptr;
       }
-      if ($d == r'pigeon_echoMap([B)[B') {
-        final $r = _$impls[$p]!.pigeon_echoMap(($a![0] as jni$_.JByteArray));
+      if ($d == r'echoStringMap([B)[B') {
+        final $r = _$impls[$p]!.echoStringMap(($a![0] as jni$_.JByteArray));
         return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
             jni$_.nullptr;
       }
-      if ($d == r'pigeon_echoStringMap([B)[B') {
-        final $r = _$impls[$p]!.pigeon_echoStringMap(($a![0] as jni$_.JByteArray));
+      if ($d == r'echoIntMap([B)[B') {
+        final $r = _$impls[$p]!.echoIntMap(($a![0] as jni$_.JByteArray));
         return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
             jni$_.nullptr;
       }
-      if ($d == r'pigeon_echoIntMap([B)[B') {
-        final $r = _$impls[$p]!.pigeon_echoIntMap(($a![0] as jni$_.JByteArray));
+      if ($d == r'echoEnumMap([B)[B') {
+        final $r = _$impls[$p]!.echoEnumMap(($a![0] as jni$_.JByteArray));
         return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
             jni$_.nullptr;
       }
-      if ($d == r'pigeon_echoEnumMap([B)[B') {
-        final $r = _$impls[$p]!.pigeon_echoEnumMap(($a![0] as jni$_.JByteArray));
+      if ($d == r'echoClassMap([B)[B') {
+        final $r = _$impls[$p]!.echoClassMap(($a![0] as jni$_.JByteArray));
         return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
             jni$_.nullptr;
       }
-      if ($d == r'pigeon_echoClassMap([B)[B') {
-        final $r = _$impls[$p]!.pigeon_echoClassMap(($a![0] as jni$_.JByteArray));
+      if ($d == r'echoNonNullStringMap([B)[B') {
+        final $r = _$impls[$p]!.echoNonNullStringMap(($a![0] as jni$_.JByteArray));
         return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
             jni$_.nullptr;
       }
-      if ($d == r'pigeon_echoNonNullStringMap([B)[B') {
-        final $r = _$impls[$p]!.pigeon_echoNonNullStringMap(($a![0] as jni$_.JByteArray));
+      if ($d == r'echoNonNullIntMap([B)[B') {
+        final $r = _$impls[$p]!.echoNonNullIntMap(($a![0] as jni$_.JByteArray));
         return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
             jni$_.nullptr;
       }
-      if ($d == r'pigeon_echoNonNullIntMap([B)[B') {
-        final $r = _$impls[$p]!.pigeon_echoNonNullIntMap(($a![0] as jni$_.JByteArray));
+      if ($d == r'echoNonNullEnumMap([B)[B') {
+        final $r = _$impls[$p]!.echoNonNullEnumMap(($a![0] as jni$_.JByteArray));
         return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
             jni$_.nullptr;
       }
-      if ($d == r'pigeon_echoNonNullEnumMap([B)[B') {
-        final $r = _$impls[$p]!.pigeon_echoNonNullEnumMap(($a![0] as jni$_.JByteArray));
+      if ($d == r'echoNonNullClassMap([B)[B') {
+        final $r = _$impls[$p]!.echoNonNullClassMap(($a![0] as jni$_.JByteArray));
         return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
             jni$_.nullptr;
       }
-      if ($d == r'pigeon_echoNonNullClassMap([B)[B') {
-        final $r = _$impls[$p]!.pigeon_echoNonNullClassMap(($a![0] as jni$_.JByteArray));
-        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
-            jni$_.nullptr;
+      if ($d == r'echoEnum(J)J') {
+        final $r = _$impls[$p]!.echoEnum(($a![0] as jni$_.JLong).toDartInt(releaseOriginal: true));
+        return $r.toJLong().reference.toPointer();
       }
-      if ($d == r'pigeon_echoEnum(J)J') {
-        final $r = _$impls[$p]!.pigeon_echoEnum(
+      if ($d == r'echoNativeInteropAnotherEnum(J)J') {
+        final $r = _$impls[$p]!.echoNativeInteropAnotherEnum(
           ($a![0] as jni$_.JLong).toDartInt(releaseOriginal: true),
         );
         return $r.toJLong().reference.toPointer();
       }
-      if ($d == r'pigeon_echoNativeInteropAnotherEnum(J)J') {
-        final $r = _$impls[$p]!.pigeon_echoNativeInteropAnotherEnum(
+      if ($d == r'echoNullableBool(Ljava/lang/Boolean;)Ljava/lang/Boolean;') {
+        final $r = _$impls[$p]!.echoNullableBool(($a![0] as jni$_.JBoolean?));
+        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
+            jni$_.nullptr;
+      }
+      if ($d == r'echoNullableInt(Ljava/lang/Long;)Ljava/lang/Long;') {
+        final $r = _$impls[$p]!.echoNullableInt(($a![0] as jni$_.JLong?));
+        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
+            jni$_.nullptr;
+      }
+      if ($d == r'echoNullableDouble(Ljava/lang/Double;)Ljava/lang/Double;') {
+        final $r = _$impls[$p]!.echoNullableDouble(($a![0] as jni$_.JDouble?));
+        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
+            jni$_.nullptr;
+      }
+      if ($d == r'echoNullableString(Ljava/lang/String;)Ljava/lang/String;') {
+        final $r = _$impls[$p]!.echoNullableString(($a![0] as jni$_.JString?));
+        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
+            jni$_.nullptr;
+      }
+      if ($d == r'echoNullableUint8List([B)[B') {
+        final $r = _$impls[$p]!.echoNullableUint8List(($a![0] as jni$_.JByteArray?));
+        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
+            jni$_.nullptr;
+      }
+      if ($d == r'echoNullableInt32List([I)[I') {
+        final $r = _$impls[$p]!.echoNullableInt32List(($a![0] as jni$_.JIntArray?));
+        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
+            jni$_.nullptr;
+      }
+      if ($d == r'echoNullableInt64List([J)[J') {
+        final $r = _$impls[$p]!.echoNullableInt64List(($a![0] as jni$_.JLongArray?));
+        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
+            jni$_.nullptr;
+      }
+      if ($d == r'echoNullableFloat64List([D)[D') {
+        final $r = _$impls[$p]!.echoNullableFloat64List(($a![0] as jni$_.JDoubleArray?));
+        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
+            jni$_.nullptr;
+      }
+      if ($d == r'echoNullableList([B)[B') {
+        final $r = _$impls[$p]!.echoNullableList(($a![0] as jni$_.JByteArray));
+        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
+            jni$_.nullptr;
+      }
+      if ($d == r'echoNullableEnumList([B)[B') {
+        final $r = _$impls[$p]!.echoNullableEnumList(($a![0] as jni$_.JByteArray));
+        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
+            jni$_.nullptr;
+      }
+      if ($d == r'echoNullableClassList([B)[B') {
+        final $r = _$impls[$p]!.echoNullableClassList(($a![0] as jni$_.JByteArray));
+        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
+            jni$_.nullptr;
+      }
+      if ($d == r'echoNullableNonNullEnumList([B)[B') {
+        final $r = _$impls[$p]!.echoNullableNonNullEnumList(($a![0] as jni$_.JByteArray));
+        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
+            jni$_.nullptr;
+      }
+      if ($d == r'echoNullableNonNullClassList([B)[B') {
+        final $r = _$impls[$p]!.echoNullableNonNullClassList(($a![0] as jni$_.JByteArray));
+        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
+            jni$_.nullptr;
+      }
+      if ($d == r'echoNullableMap([B)[B') {
+        final $r = _$impls[$p]!.echoNullableMap(($a![0] as jni$_.JByteArray));
+        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
+            jni$_.nullptr;
+      }
+      if ($d == r'echoNullableStringMap([B)[B') {
+        final $r = _$impls[$p]!.echoNullableStringMap(($a![0] as jni$_.JByteArray));
+        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
+            jni$_.nullptr;
+      }
+      if ($d == r'echoNullableIntMap([B)[B') {
+        final $r = _$impls[$p]!.echoNullableIntMap(($a![0] as jni$_.JByteArray));
+        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
+            jni$_.nullptr;
+      }
+      if ($d == r'echoNullableEnumMap([B)[B') {
+        final $r = _$impls[$p]!.echoNullableEnumMap(($a![0] as jni$_.JByteArray));
+        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
+            jni$_.nullptr;
+      }
+      if ($d == r'echoNullableClassMap([B)[B') {
+        final $r = _$impls[$p]!.echoNullableClassMap(($a![0] as jni$_.JByteArray));
+        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
+            jni$_.nullptr;
+      }
+      if ($d == r'echoNullableNonNullStringMap([B)[B') {
+        final $r = _$impls[$p]!.echoNullableNonNullStringMap(($a![0] as jni$_.JByteArray));
+        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
+            jni$_.nullptr;
+      }
+      if ($d == r'echoNullableNonNullIntMap([B)[B') {
+        final $r = _$impls[$p]!.echoNullableNonNullIntMap(($a![0] as jni$_.JByteArray));
+        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
+            jni$_.nullptr;
+      }
+      if ($d == r'echoNullableNonNullEnumMap([B)[B') {
+        final $r = _$impls[$p]!.echoNullableNonNullEnumMap(($a![0] as jni$_.JByteArray));
+        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
+            jni$_.nullptr;
+      }
+      if ($d == r'echoNullableNonNullClassMap([B)[B') {
+        final $r = _$impls[$p]!.echoNullableNonNullClassMap(($a![0] as jni$_.JByteArray));
+        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
+            jni$_.nullptr;
+      }
+      if ($d == r'echoNullableEnum(J)J') {
+        final $r = _$impls[$p]!.echoNullableEnum(
           ($a![0] as jni$_.JLong).toDartInt(releaseOriginal: true),
         );
         return $r.toJLong().reference.toPointer();
       }
-      if ($d == r'pigeon_echoNullableBool(Ljava/lang/Boolean;)Ljava/lang/Boolean;') {
-        final $r = _$impls[$p]!.pigeon_echoNullableBool(($a![0] as jni$_.JBoolean?));
-        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
-            jni$_.nullptr;
-      }
-      if ($d == r'pigeon_echoNullableInt(Ljava/lang/Long;)Ljava/lang/Long;') {
-        final $r = _$impls[$p]!.pigeon_echoNullableInt(($a![0] as jni$_.JLong?));
-        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
-            jni$_.nullptr;
-      }
-      if ($d == r'pigeon_echoNullableDouble(Ljava/lang/Double;)Ljava/lang/Double;') {
-        final $r = _$impls[$p]!.pigeon_echoNullableDouble(($a![0] as jni$_.JDouble?));
-        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
-            jni$_.nullptr;
-      }
-      if ($d == r'pigeon_echoNullableString(Ljava/lang/String;)Ljava/lang/String;') {
-        final $r = _$impls[$p]!.pigeon_echoNullableString(($a![0] as jni$_.JString?));
-        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
-            jni$_.nullptr;
-      }
-      if ($d == r'pigeon_echoNullableUint8List([B)[B') {
-        final $r = _$impls[$p]!.pigeon_echoNullableUint8List(($a![0] as jni$_.JByteArray?));
-        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
-            jni$_.nullptr;
-      }
-      if ($d == r'pigeon_echoNullableInt32List([I)[I') {
-        final $r = _$impls[$p]!.pigeon_echoNullableInt32List(($a![0] as jni$_.JIntArray?));
-        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
-            jni$_.nullptr;
-      }
-      if ($d == r'pigeon_echoNullableInt64List([J)[J') {
-        final $r = _$impls[$p]!.pigeon_echoNullableInt64List(($a![0] as jni$_.JLongArray?));
-        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
-            jni$_.nullptr;
-      }
-      if ($d == r'pigeon_echoNullableFloat64List([D)[D') {
-        final $r = _$impls[$p]!.pigeon_echoNullableFloat64List(($a![0] as jni$_.JDoubleArray?));
-        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
-            jni$_.nullptr;
-      }
-      if ($d == r'pigeon_echoNullableList([B)[B') {
-        final $r = _$impls[$p]!.pigeon_echoNullableList(($a![0] as jni$_.JByteArray));
-        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
-            jni$_.nullptr;
-      }
-      if ($d == r'pigeon_echoNullableEnumList([B)[B') {
-        final $r = _$impls[$p]!.pigeon_echoNullableEnumList(($a![0] as jni$_.JByteArray));
-        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
-            jni$_.nullptr;
-      }
-      if ($d == r'pigeon_echoNullableClassList([B)[B') {
-        final $r = _$impls[$p]!.pigeon_echoNullableClassList(($a![0] as jni$_.JByteArray));
-        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
-            jni$_.nullptr;
-      }
-      if ($d == r'pigeon_echoNullableNonNullEnumList([B)[B') {
-        final $r = _$impls[$p]!.pigeon_echoNullableNonNullEnumList(($a![0] as jni$_.JByteArray));
-        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
-            jni$_.nullptr;
-      }
-      if ($d == r'pigeon_echoNullableNonNullClassList([B)[B') {
-        final $r = _$impls[$p]!.pigeon_echoNullableNonNullClassList(($a![0] as jni$_.JByteArray));
-        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
-            jni$_.nullptr;
-      }
-      if ($d == r'pigeon_echoNullableMap([B)[B') {
-        final $r = _$impls[$p]!.pigeon_echoNullableMap(($a![0] as jni$_.JByteArray));
-        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
-            jni$_.nullptr;
-      }
-      if ($d == r'pigeon_echoNullableStringMap([B)[B') {
-        final $r = _$impls[$p]!.pigeon_echoNullableStringMap(($a![0] as jni$_.JByteArray));
-        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
-            jni$_.nullptr;
-      }
-      if ($d == r'pigeon_echoNullableIntMap([B)[B') {
-        final $r = _$impls[$p]!.pigeon_echoNullableIntMap(($a![0] as jni$_.JByteArray));
-        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
-            jni$_.nullptr;
-      }
-      if ($d == r'pigeon_echoNullableEnumMap([B)[B') {
-        final $r = _$impls[$p]!.pigeon_echoNullableEnumMap(($a![0] as jni$_.JByteArray));
-        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
-            jni$_.nullptr;
-      }
-      if ($d == r'pigeon_echoNullableClassMap([B)[B') {
-        final $r = _$impls[$p]!.pigeon_echoNullableClassMap(($a![0] as jni$_.JByteArray));
-        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
-            jni$_.nullptr;
-      }
-      if ($d == r'pigeon_echoNullableNonNullStringMap([B)[B') {
-        final $r = _$impls[$p]!.pigeon_echoNullableNonNullStringMap(($a![0] as jni$_.JByteArray));
-        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
-            jni$_.nullptr;
-      }
-      if ($d == r'pigeon_echoNullableNonNullIntMap([B)[B') {
-        final $r = _$impls[$p]!.pigeon_echoNullableNonNullIntMap(($a![0] as jni$_.JByteArray));
-        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
-            jni$_.nullptr;
-      }
-      if ($d == r'pigeon_echoNullableNonNullEnumMap([B)[B') {
-        final $r = _$impls[$p]!.pigeon_echoNullableNonNullEnumMap(($a![0] as jni$_.JByteArray));
-        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
-            jni$_.nullptr;
-      }
-      if ($d == r'pigeon_echoNullableNonNullClassMap([B)[B') {
-        final $r = _$impls[$p]!.pigeon_echoNullableNonNullClassMap(($a![0] as jni$_.JByteArray));
-        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
-            jni$_.nullptr;
-      }
-      if ($d == r'pigeon_echoNullableEnum(J)J') {
-        final $r = _$impls[$p]!.pigeon_echoNullableEnum(
+      if ($d == r'echoAnotherNullableEnum(J)J') {
+        final $r = _$impls[$p]!.echoAnotherNullableEnum(
           ($a![0] as jni$_.JLong).toDartInt(releaseOriginal: true),
         );
         return $r.toJLong().reference.toPointer();
       }
-      if ($d == r'pigeon_echoAnotherNullableEnum(J)J') {
-        final $r = _$impls[$p]!.pigeon_echoAnotherNullableEnum(
-          ($a![0] as jni$_.JLong).toDartInt(releaseOriginal: true),
-        );
-        return $r.toJLong().reference.toPointer();
-      }
-      if ($d == r'pigeon_noopAsync(Lkotlin/coroutines/Continuation;)Ljava/lang/Object;') {
+      if ($d == r'noopAsync(Lkotlin/coroutines/Continuation;)Ljava/lang/Object;') {
         final _$$contRef = ($a![0] as Continuation).reference;
         final $r = jni$_.KotlinContinuation.fromReference(
           _$$contRef,
-        ).resumeWithVoidFuture(_$impls[$p]!.pigeon_noopAsync());
+        ).resumeWithVoidFuture(_$impls[$p]!.noopAsync());
         return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
             jni$_.nullptr;
       }
-      if ($d ==
-          r'pigeon_throwFlutterErrorAsync(Lkotlin/coroutines/Continuation;)Ljava/lang/Object;') {
+      if ($d == r'throwFlutterErrorAsync(Lkotlin/coroutines/Continuation;)Ljava/lang/Object;') {
         final _$$contRef = ($a![0] as Continuation).reference;
         final $r = jni$_.KotlinContinuation.fromReference(
           _$$contRef,
-        ).resumeWithFuture(_$impls[$p]!.pigeon_throwFlutterErrorAsync());
+        ).resumeWithFuture(_$impls[$p]!.throwFlutterErrorAsync());
         return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
             jni$_.nullptr;
       }
       if ($d ==
-          r'pigeon_echoAsyncNativeInteropAllTypes([BLkotlin/coroutines/Continuation;)Ljava/lang/Object;') {
+          r'echoAsyncNativeInteropAllTypes([BLkotlin/coroutines/Continuation;)Ljava/lang/Object;') {
         final _$$contRef = ($a![1] as Continuation).reference;
         final $r = jni$_.KotlinContinuation.fromReference(_$$contRef).resumeWithFuture(
-          _$impls[$p]!.pigeon_echoAsyncNativeInteropAllTypes(($a![0] as jni$_.JByteArray)),
+          _$impls[$p]!.echoAsyncNativeInteropAllTypes(($a![0] as jni$_.JByteArray)),
         );
         return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
             jni$_.nullptr;
       }
       if ($d ==
-          r'pigeon_echoAsyncNullableNativeInteropAllNullableTypes([BLkotlin/coroutines/Continuation;)Ljava/lang/Object;') {
+          r'echoAsyncNullableNativeInteropAllNullableTypes([BLkotlin/coroutines/Continuation;)Ljava/lang/Object;') {
         final _$$contRef = ($a![1] as Continuation).reference;
         final $r = jni$_.KotlinContinuation.fromReference(_$$contRef).resumeWithFuture(
-          _$impls[$p]!.pigeon_echoAsyncNullableNativeInteropAllNullableTypes(
+          _$impls[$p]!.echoAsyncNullableNativeInteropAllNullableTypes(($a![0] as jni$_.JByteArray)),
+        );
+        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
+            jni$_.nullptr;
+      }
+      if ($d ==
+          r'echoAsyncNullableNativeInteropAllNullableTypesWithoutRecursion([BLkotlin/coroutines/Continuation;)Ljava/lang/Object;') {
+        final _$$contRef = ($a![1] as Continuation).reference;
+        final $r = jni$_.KotlinContinuation.fromReference(_$$contRef).resumeWithFuture(
+          _$impls[$p]!.echoAsyncNullableNativeInteropAllNullableTypesWithoutRecursion(
             ($a![0] as jni$_.JByteArray),
           ),
         );
         return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
             jni$_.nullptr;
       }
-      if ($d ==
-          r'pigeon_echoAsyncNullableNativeInteropAllNullableTypesWithoutRecursion([BLkotlin/coroutines/Continuation;)Ljava/lang/Object;') {
+      if ($d == r'echoAsyncBool(ZLkotlin/coroutines/Continuation;)Ljava/lang/Object;') {
         final _$$contRef = ($a![1] as Continuation).reference;
         final $r = jni$_.KotlinContinuation.fromReference(_$$contRef).resumeWithFuture(
-          _$impls[$p]!.pigeon_echoAsyncNullableNativeInteropAllNullableTypesWithoutRecursion(
-            ($a![0] as jni$_.JByteArray),
-          ),
+          _$impls[$p]!.echoAsyncBool(($a![0] as jni$_.JBoolean).toDartBool(releaseOriginal: true)),
         );
         return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
             jni$_.nullptr;
       }
-      if ($d == r'pigeon_echoAsyncBool(ZLkotlin/coroutines/Continuation;)Ljava/lang/Object;') {
+      if ($d == r'echoAsyncInt(JLkotlin/coroutines/Continuation;)Ljava/lang/Object;') {
         final _$$contRef = ($a![1] as Continuation).reference;
         final $r = jni$_.KotlinContinuation.fromReference(_$$contRef).resumeWithFuture(
-          _$impls[$p]!.pigeon_echoAsyncBool(
-            ($a![0] as jni$_.JBoolean).toDartBool(releaseOriginal: true),
-          ),
+          _$impls[$p]!.echoAsyncInt(($a![0] as jni$_.JLong).toDartInt(releaseOriginal: true)),
         );
         return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
             jni$_.nullptr;
       }
-      if ($d == r'pigeon_echoAsyncInt(JLkotlin/coroutines/Continuation;)Ljava/lang/Object;') {
+      if ($d == r'echoAsyncDouble(DLkotlin/coroutines/Continuation;)Ljava/lang/Object;') {
         final _$$contRef = ($a![1] as Continuation).reference;
         final $r = jni$_.KotlinContinuation.fromReference(_$$contRef).resumeWithFuture(
-          _$impls[$p]!.pigeon_echoAsyncInt(
-            ($a![0] as jni$_.JLong).toDartInt(releaseOriginal: true),
-          ),
-        );
-        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
-            jni$_.nullptr;
-      }
-      if ($d == r'pigeon_echoAsyncDouble(DLkotlin/coroutines/Continuation;)Ljava/lang/Object;') {
-        final _$$contRef = ($a![1] as Continuation).reference;
-        final $r = jni$_.KotlinContinuation.fromReference(_$$contRef).resumeWithFuture(
-          _$impls[$p]!.pigeon_echoAsyncDouble(
+          _$impls[$p]!.echoAsyncDouble(
             ($a![0] as jni$_.JDouble).toDartDouble(releaseOriginal: true),
           ),
         );
@@ -10906,146 +10750,147 @@ extension type NativeInteropFlutterIntegrationCoreApiBridge._(jni$_.JObject _$th
             jni$_.nullptr;
       }
       if ($d ==
-          r'pigeon_echoAsyncString(Ljava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;') {
+          r'echoAsyncString(Ljava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;') {
         final _$$contRef = ($a![1] as Continuation).reference;
         final $r = jni$_.KotlinContinuation.fromReference(
           _$$contRef,
-        ).resumeWithFuture(_$impls[$p]!.pigeon_echoAsyncString(($a![0] as jni$_.JString)));
+        ).resumeWithFuture(_$impls[$p]!.echoAsyncString(($a![0] as jni$_.JString)));
+        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
+            jni$_.nullptr;
+      }
+      if ($d == r'echoAsyncUint8List([BLkotlin/coroutines/Continuation;)Ljava/lang/Object;') {
+        final _$$contRef = ($a![1] as Continuation).reference;
+        final $r = jni$_.KotlinContinuation.fromReference(
+          _$$contRef,
+        ).resumeWithFuture(_$impls[$p]!.echoAsyncUint8List(($a![0] as jni$_.JByteArray)));
+        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
+            jni$_.nullptr;
+      }
+      if ($d == r'echoAsyncInt32List([ILkotlin/coroutines/Continuation;)Ljava/lang/Object;') {
+        final _$$contRef = ($a![1] as Continuation).reference;
+        final $r = jni$_.KotlinContinuation.fromReference(
+          _$$contRef,
+        ).resumeWithFuture(_$impls[$p]!.echoAsyncInt32List(($a![0] as jni$_.JIntArray)));
+        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
+            jni$_.nullptr;
+      }
+      if ($d == r'echoAsyncInt64List([JLkotlin/coroutines/Continuation;)Ljava/lang/Object;') {
+        final _$$contRef = ($a![1] as Continuation).reference;
+        final $r = jni$_.KotlinContinuation.fromReference(
+          _$$contRef,
+        ).resumeWithFuture(_$impls[$p]!.echoAsyncInt64List(($a![0] as jni$_.JLongArray)));
+        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
+            jni$_.nullptr;
+      }
+      if ($d == r'echoAsyncFloat64List([DLkotlin/coroutines/Continuation;)Ljava/lang/Object;') {
+        final _$$contRef = ($a![1] as Continuation).reference;
+        final $r = jni$_.KotlinContinuation.fromReference(
+          _$$contRef,
+        ).resumeWithFuture(_$impls[$p]!.echoAsyncFloat64List(($a![0] as jni$_.JDoubleArray)));
+        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
+            jni$_.nullptr;
+      }
+      if ($d == r'echoAsyncObject([BLkotlin/coroutines/Continuation;)Ljava/lang/Object;') {
+        final _$$contRef = ($a![1] as Continuation).reference;
+        final $r = jni$_.KotlinContinuation.fromReference(
+          _$$contRef,
+        ).resumeWithFuture(_$impls[$p]!.echoAsyncObject(($a![0] as jni$_.JByteArray)));
+        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
+            jni$_.nullptr;
+      }
+      if ($d == r'echoAsyncList([BLkotlin/coroutines/Continuation;)Ljava/lang/Object;') {
+        final _$$contRef = ($a![1] as Continuation).reference;
+        final $r = jni$_.KotlinContinuation.fromReference(
+          _$$contRef,
+        ).resumeWithFuture(_$impls[$p]!.echoAsyncList(($a![0] as jni$_.JByteArray)));
+        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
+            jni$_.nullptr;
+      }
+      if ($d == r'echoAsyncEnumList([BLkotlin/coroutines/Continuation;)Ljava/lang/Object;') {
+        final _$$contRef = ($a![1] as Continuation).reference;
+        final $r = jni$_.KotlinContinuation.fromReference(
+          _$$contRef,
+        ).resumeWithFuture(_$impls[$p]!.echoAsyncEnumList(($a![0] as jni$_.JByteArray)));
+        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
+            jni$_.nullptr;
+      }
+      if ($d == r'echoAsyncClassList([BLkotlin/coroutines/Continuation;)Ljava/lang/Object;') {
+        final _$$contRef = ($a![1] as Continuation).reference;
+        final $r = jni$_.KotlinContinuation.fromReference(
+          _$$contRef,
+        ).resumeWithFuture(_$impls[$p]!.echoAsyncClassList(($a![0] as jni$_.JByteArray)));
+        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
+            jni$_.nullptr;
+      }
+      if ($d == r'echoAsyncNonNullEnumList([BLkotlin/coroutines/Continuation;)Ljava/lang/Object;') {
+        final _$$contRef = ($a![1] as Continuation).reference;
+        final $r = jni$_.KotlinContinuation.fromReference(
+          _$$contRef,
+        ).resumeWithFuture(_$impls[$p]!.echoAsyncNonNullEnumList(($a![0] as jni$_.JByteArray)));
         return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
             jni$_.nullptr;
       }
       if ($d ==
-          r'pigeon_echoAsyncUint8List([BLkotlin/coroutines/Continuation;)Ljava/lang/Object;') {
+          r'echoAsyncNonNullClassList([BLkotlin/coroutines/Continuation;)Ljava/lang/Object;') {
         final _$$contRef = ($a![1] as Continuation).reference;
         final $r = jni$_.KotlinContinuation.fromReference(
           _$$contRef,
-        ).resumeWithFuture(_$impls[$p]!.pigeon_echoAsyncUint8List(($a![0] as jni$_.JByteArray)));
+        ).resumeWithFuture(_$impls[$p]!.echoAsyncNonNullClassList(($a![0] as jni$_.JByteArray)));
         return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
             jni$_.nullptr;
       }
-      if ($d ==
-          r'pigeon_echoAsyncInt32List([ILkotlin/coroutines/Continuation;)Ljava/lang/Object;') {
+      if ($d == r'echoAsyncMap([BLkotlin/coroutines/Continuation;)Ljava/lang/Object;') {
         final _$$contRef = ($a![1] as Continuation).reference;
         final $r = jni$_.KotlinContinuation.fromReference(
           _$$contRef,
-        ).resumeWithFuture(_$impls[$p]!.pigeon_echoAsyncInt32List(($a![0] as jni$_.JIntArray)));
+        ).resumeWithFuture(_$impls[$p]!.echoAsyncMap(($a![0] as jni$_.JByteArray)));
         return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
             jni$_.nullptr;
       }
-      if ($d ==
-          r'pigeon_echoAsyncInt64List([JLkotlin/coroutines/Continuation;)Ljava/lang/Object;') {
+      if ($d == r'echoAsyncStringMap([BLkotlin/coroutines/Continuation;)Ljava/lang/Object;') {
         final _$$contRef = ($a![1] as Continuation).reference;
         final $r = jni$_.KotlinContinuation.fromReference(
           _$$contRef,
-        ).resumeWithFuture(_$impls[$p]!.pigeon_echoAsyncInt64List(($a![0] as jni$_.JLongArray)));
+        ).resumeWithFuture(_$impls[$p]!.echoAsyncStringMap(($a![0] as jni$_.JByteArray)));
         return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
             jni$_.nullptr;
       }
-      if ($d ==
-          r'pigeon_echoAsyncFloat64List([DLkotlin/coroutines/Continuation;)Ljava/lang/Object;') {
+      if ($d == r'echoAsyncIntMap([BLkotlin/coroutines/Continuation;)Ljava/lang/Object;') {
+        final _$$contRef = ($a![1] as Continuation).reference;
+        final $r = jni$_.KotlinContinuation.fromReference(
+          _$$contRef,
+        ).resumeWithFuture(_$impls[$p]!.echoAsyncIntMap(($a![0] as jni$_.JByteArray)));
+        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
+            jni$_.nullptr;
+      }
+      if ($d == r'echoAsyncEnumMap([BLkotlin/coroutines/Continuation;)Ljava/lang/Object;') {
+        final _$$contRef = ($a![1] as Continuation).reference;
+        final $r = jni$_.KotlinContinuation.fromReference(
+          _$$contRef,
+        ).resumeWithFuture(_$impls[$p]!.echoAsyncEnumMap(($a![0] as jni$_.JByteArray)));
+        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
+            jni$_.nullptr;
+      }
+      if ($d == r'echoAsyncClassMap([BLkotlin/coroutines/Continuation;)Ljava/lang/Object;') {
+        final _$$contRef = ($a![1] as Continuation).reference;
+        final $r = jni$_.KotlinContinuation.fromReference(
+          _$$contRef,
+        ).resumeWithFuture(_$impls[$p]!.echoAsyncClassMap(($a![0] as jni$_.JByteArray)));
+        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
+            jni$_.nullptr;
+      }
+      if ($d == r'echoAsyncEnum(JLkotlin/coroutines/Continuation;)Ljava/lang/Object;') {
         final _$$contRef = ($a![1] as Continuation).reference;
         final $r = jni$_.KotlinContinuation.fromReference(_$$contRef).resumeWithFuture(
-          _$impls[$p]!.pigeon_echoAsyncFloat64List(($a![0] as jni$_.JDoubleArray)),
+          _$impls[$p]!.echoAsyncEnum(($a![0] as jni$_.JLong).toDartInt(releaseOriginal: true)),
         );
         return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
             jni$_.nullptr;
       }
-      if ($d == r'pigeon_echoAsyncObject([BLkotlin/coroutines/Continuation;)Ljava/lang/Object;') {
-        final _$$contRef = ($a![1] as Continuation).reference;
-        final $r = jni$_.KotlinContinuation.fromReference(
-          _$$contRef,
-        ).resumeWithFuture(_$impls[$p]!.pigeon_echoAsyncObject(($a![0] as jni$_.JByteArray)));
-        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
-            jni$_.nullptr;
-      }
-      if ($d == r'pigeon_echoAsyncList([BLkotlin/coroutines/Continuation;)Ljava/lang/Object;') {
-        final _$$contRef = ($a![1] as Continuation).reference;
-        final $r = jni$_.KotlinContinuation.fromReference(
-          _$$contRef,
-        ).resumeWithFuture(_$impls[$p]!.pigeon_echoAsyncList(($a![0] as jni$_.JByteArray)));
-        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
-            jni$_.nullptr;
-      }
-      if ($d == r'pigeon_echoAsyncEnumList([BLkotlin/coroutines/Continuation;)Ljava/lang/Object;') {
-        final _$$contRef = ($a![1] as Continuation).reference;
-        final $r = jni$_.KotlinContinuation.fromReference(
-          _$$contRef,
-        ).resumeWithFuture(_$impls[$p]!.pigeon_echoAsyncEnumList(($a![0] as jni$_.JByteArray)));
-        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
-            jni$_.nullptr;
-      }
-      if ($d ==
-          r'pigeon_echoAsyncClassList([BLkotlin/coroutines/Continuation;)Ljava/lang/Object;') {
-        final _$$contRef = ($a![1] as Continuation).reference;
-        final $r = jni$_.KotlinContinuation.fromReference(
-          _$$contRef,
-        ).resumeWithFuture(_$impls[$p]!.pigeon_echoAsyncClassList(($a![0] as jni$_.JByteArray)));
-        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
-            jni$_.nullptr;
-      }
-      if ($d ==
-          r'pigeon_echoAsyncNonNullEnumList([BLkotlin/coroutines/Continuation;)Ljava/lang/Object;') {
+      if ($d == r'echoAnotherAsyncEnum(JLkotlin/coroutines/Continuation;)Ljava/lang/Object;') {
         final _$$contRef = ($a![1] as Continuation).reference;
         final $r = jni$_.KotlinContinuation.fromReference(_$$contRef).resumeWithFuture(
-          _$impls[$p]!.pigeon_echoAsyncNonNullEnumList(($a![0] as jni$_.JByteArray)),
-        );
-        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
-            jni$_.nullptr;
-      }
-      if ($d ==
-          r'pigeon_echoAsyncNonNullClassList([BLkotlin/coroutines/Continuation;)Ljava/lang/Object;') {
-        final _$$contRef = ($a![1] as Continuation).reference;
-        final $r = jni$_.KotlinContinuation.fromReference(_$$contRef).resumeWithFuture(
-          _$impls[$p]!.pigeon_echoAsyncNonNullClassList(($a![0] as jni$_.JByteArray)),
-        );
-        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
-            jni$_.nullptr;
-      }
-      if ($d == r'pigeon_echoAsyncMap([BLkotlin/coroutines/Continuation;)Ljava/lang/Object;') {
-        final _$$contRef = ($a![1] as Continuation).reference;
-        final $r = jni$_.KotlinContinuation.fromReference(
-          _$$contRef,
-        ).resumeWithFuture(_$impls[$p]!.pigeon_echoAsyncMap(($a![0] as jni$_.JByteArray)));
-        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
-            jni$_.nullptr;
-      }
-      if ($d ==
-          r'pigeon_echoAsyncStringMap([BLkotlin/coroutines/Continuation;)Ljava/lang/Object;') {
-        final _$$contRef = ($a![1] as Continuation).reference;
-        final $r = jni$_.KotlinContinuation.fromReference(
-          _$$contRef,
-        ).resumeWithFuture(_$impls[$p]!.pigeon_echoAsyncStringMap(($a![0] as jni$_.JByteArray)));
-        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
-            jni$_.nullptr;
-      }
-      if ($d == r'pigeon_echoAsyncIntMap([BLkotlin/coroutines/Continuation;)Ljava/lang/Object;') {
-        final _$$contRef = ($a![1] as Continuation).reference;
-        final $r = jni$_.KotlinContinuation.fromReference(
-          _$$contRef,
-        ).resumeWithFuture(_$impls[$p]!.pigeon_echoAsyncIntMap(($a![0] as jni$_.JByteArray)));
-        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
-            jni$_.nullptr;
-      }
-      if ($d == r'pigeon_echoAsyncEnumMap([BLkotlin/coroutines/Continuation;)Ljava/lang/Object;') {
-        final _$$contRef = ($a![1] as Continuation).reference;
-        final $r = jni$_.KotlinContinuation.fromReference(
-          _$$contRef,
-        ).resumeWithFuture(_$impls[$p]!.pigeon_echoAsyncEnumMap(($a![0] as jni$_.JByteArray)));
-        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
-            jni$_.nullptr;
-      }
-      if ($d == r'pigeon_echoAsyncClassMap([BLkotlin/coroutines/Continuation;)Ljava/lang/Object;') {
-        final _$$contRef = ($a![1] as Continuation).reference;
-        final $r = jni$_.KotlinContinuation.fromReference(
-          _$$contRef,
-        ).resumeWithFuture(_$impls[$p]!.pigeon_echoAsyncClassMap(($a![0] as jni$_.JByteArray)));
-        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
-            jni$_.nullptr;
-      }
-      if ($d == r'pigeon_echoAsyncEnum(JLkotlin/coroutines/Continuation;)Ljava/lang/Object;') {
-        final _$$contRef = ($a![1] as Continuation).reference;
-        final $r = jni$_.KotlinContinuation.fromReference(_$$contRef).resumeWithFuture(
-          _$impls[$p]!.pigeon_echoAsyncEnum(
+          _$impls[$p]!.echoAnotherAsyncEnum(
             ($a![0] as jni$_.JLong).toDartInt(releaseOriginal: true),
           ),
         );
@@ -11053,10 +10898,175 @@ extension type NativeInteropFlutterIntegrationCoreApiBridge._(jni$_.JObject _$th
             jni$_.nullptr;
       }
       if ($d ==
-          r'pigeon_echoAnotherAsyncEnum(JLkotlin/coroutines/Continuation;)Ljava/lang/Object;') {
+          r'echoAsyncNullableBool(Ljava/lang/Boolean;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;') {
+        final _$$contRef = ($a![1] as Continuation).reference;
+        final $r = jni$_.KotlinContinuation.fromReference(
+          _$$contRef,
+        ).resumeWithFuture(_$impls[$p]!.echoAsyncNullableBool(($a![0] as jni$_.JBoolean?)));
+        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
+            jni$_.nullptr;
+      }
+      if ($d ==
+          r'echoAsyncNullableInt(Ljava/lang/Long;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;') {
+        final _$$contRef = ($a![1] as Continuation).reference;
+        final $r = jni$_.KotlinContinuation.fromReference(
+          _$$contRef,
+        ).resumeWithFuture(_$impls[$p]!.echoAsyncNullableInt(($a![0] as jni$_.JLong?)));
+        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
+            jni$_.nullptr;
+      }
+      if ($d ==
+          r'echoAsyncNullableDouble(Ljava/lang/Double;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;') {
+        final _$$contRef = ($a![1] as Continuation).reference;
+        final $r = jni$_.KotlinContinuation.fromReference(
+          _$$contRef,
+        ).resumeWithFuture(_$impls[$p]!.echoAsyncNullableDouble(($a![0] as jni$_.JDouble?)));
+        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
+            jni$_.nullptr;
+      }
+      if ($d ==
+          r'echoAsyncNullableString(Ljava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;') {
+        final _$$contRef = ($a![1] as Continuation).reference;
+        final $r = jni$_.KotlinContinuation.fromReference(
+          _$$contRef,
+        ).resumeWithFuture(_$impls[$p]!.echoAsyncNullableString(($a![0] as jni$_.JString?)));
+        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
+            jni$_.nullptr;
+      }
+      if ($d ==
+          r'echoAsyncNullableUint8List([BLkotlin/coroutines/Continuation;)Ljava/lang/Object;') {
+        final _$$contRef = ($a![1] as Continuation).reference;
+        final $r = jni$_.KotlinContinuation.fromReference(
+          _$$contRef,
+        ).resumeWithFuture(_$impls[$p]!.echoAsyncNullableUint8List(($a![0] as jni$_.JByteArray?)));
+        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
+            jni$_.nullptr;
+      }
+      if ($d ==
+          r'echoAsyncNullableInt32List([ILkotlin/coroutines/Continuation;)Ljava/lang/Object;') {
+        final _$$contRef = ($a![1] as Continuation).reference;
+        final $r = jni$_.KotlinContinuation.fromReference(
+          _$$contRef,
+        ).resumeWithFuture(_$impls[$p]!.echoAsyncNullableInt32List(($a![0] as jni$_.JIntArray?)));
+        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
+            jni$_.nullptr;
+      }
+      if ($d ==
+          r'echoAsyncNullableInt64List([JLkotlin/coroutines/Continuation;)Ljava/lang/Object;') {
+        final _$$contRef = ($a![1] as Continuation).reference;
+        final $r = jni$_.KotlinContinuation.fromReference(
+          _$$contRef,
+        ).resumeWithFuture(_$impls[$p]!.echoAsyncNullableInt64List(($a![0] as jni$_.JLongArray?)));
+        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
+            jni$_.nullptr;
+      }
+      if ($d ==
+          r'echoAsyncNullableFloat64List([DLkotlin/coroutines/Continuation;)Ljava/lang/Object;') {
         final _$$contRef = ($a![1] as Continuation).reference;
         final $r = jni$_.KotlinContinuation.fromReference(_$$contRef).resumeWithFuture(
-          _$impls[$p]!.pigeon_echoAnotherAsyncEnum(
+          _$impls[$p]!.echoAsyncNullableFloat64List(($a![0] as jni$_.JDoubleArray?)),
+        );
+        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
+            jni$_.nullptr;
+      }
+      if ($d == r'echoAsyncNullableObject([BLkotlin/coroutines/Continuation;)Ljava/lang/Object;') {
+        final _$$contRef = ($a![1] as Continuation).reference;
+        final $r = jni$_.KotlinContinuation.fromReference(
+          _$$contRef,
+        ).resumeWithFuture(_$impls[$p]!.echoAsyncNullableObject(($a![0] as jni$_.JByteArray)));
+        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
+            jni$_.nullptr;
+      }
+      if ($d == r'echoAsyncNullableList([BLkotlin/coroutines/Continuation;)Ljava/lang/Object;') {
+        final _$$contRef = ($a![1] as Continuation).reference;
+        final $r = jni$_.KotlinContinuation.fromReference(
+          _$$contRef,
+        ).resumeWithFuture(_$impls[$p]!.echoAsyncNullableList(($a![0] as jni$_.JByteArray)));
+        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
+            jni$_.nullptr;
+      }
+      if ($d ==
+          r'echoAsyncNullableEnumList([BLkotlin/coroutines/Continuation;)Ljava/lang/Object;') {
+        final _$$contRef = ($a![1] as Continuation).reference;
+        final $r = jni$_.KotlinContinuation.fromReference(
+          _$$contRef,
+        ).resumeWithFuture(_$impls[$p]!.echoAsyncNullableEnumList(($a![0] as jni$_.JByteArray)));
+        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
+            jni$_.nullptr;
+      }
+      if ($d ==
+          r'echoAsyncNullableClassList([BLkotlin/coroutines/Continuation;)Ljava/lang/Object;') {
+        final _$$contRef = ($a![1] as Continuation).reference;
+        final $r = jni$_.KotlinContinuation.fromReference(
+          _$$contRef,
+        ).resumeWithFuture(_$impls[$p]!.echoAsyncNullableClassList(($a![0] as jni$_.JByteArray)));
+        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
+            jni$_.nullptr;
+      }
+      if ($d ==
+          r'echoAsyncNullableNonNullEnumList([BLkotlin/coroutines/Continuation;)Ljava/lang/Object;') {
+        final _$$contRef = ($a![1] as Continuation).reference;
+        final $r = jni$_.KotlinContinuation.fromReference(_$$contRef).resumeWithFuture(
+          _$impls[$p]!.echoAsyncNullableNonNullEnumList(($a![0] as jni$_.JByteArray)),
+        );
+        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
+            jni$_.nullptr;
+      }
+      if ($d ==
+          r'echoAsyncNullableNonNullClassList([BLkotlin/coroutines/Continuation;)Ljava/lang/Object;') {
+        final _$$contRef = ($a![1] as Continuation).reference;
+        final $r = jni$_.KotlinContinuation.fromReference(_$$contRef).resumeWithFuture(
+          _$impls[$p]!.echoAsyncNullableNonNullClassList(($a![0] as jni$_.JByteArray)),
+        );
+        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
+            jni$_.nullptr;
+      }
+      if ($d == r'echoAsyncNullableMap([BLkotlin/coroutines/Continuation;)Ljava/lang/Object;') {
+        final _$$contRef = ($a![1] as Continuation).reference;
+        final $r = jni$_.KotlinContinuation.fromReference(
+          _$$contRef,
+        ).resumeWithFuture(_$impls[$p]!.echoAsyncNullableMap(($a![0] as jni$_.JByteArray)));
+        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
+            jni$_.nullptr;
+      }
+      if ($d ==
+          r'echoAsyncNullableStringMap([BLkotlin/coroutines/Continuation;)Ljava/lang/Object;') {
+        final _$$contRef = ($a![1] as Continuation).reference;
+        final $r = jni$_.KotlinContinuation.fromReference(
+          _$$contRef,
+        ).resumeWithFuture(_$impls[$p]!.echoAsyncNullableStringMap(($a![0] as jni$_.JByteArray)));
+        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
+            jni$_.nullptr;
+      }
+      if ($d == r'echoAsyncNullableIntMap([BLkotlin/coroutines/Continuation;)Ljava/lang/Object;') {
+        final _$$contRef = ($a![1] as Continuation).reference;
+        final $r = jni$_.KotlinContinuation.fromReference(
+          _$$contRef,
+        ).resumeWithFuture(_$impls[$p]!.echoAsyncNullableIntMap(($a![0] as jni$_.JByteArray)));
+        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
+            jni$_.nullptr;
+      }
+      if ($d == r'echoAsyncNullableEnumMap([BLkotlin/coroutines/Continuation;)Ljava/lang/Object;') {
+        final _$$contRef = ($a![1] as Continuation).reference;
+        final $r = jni$_.KotlinContinuation.fromReference(
+          _$$contRef,
+        ).resumeWithFuture(_$impls[$p]!.echoAsyncNullableEnumMap(($a![0] as jni$_.JByteArray)));
+        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
+            jni$_.nullptr;
+      }
+      if ($d ==
+          r'echoAsyncNullableClassMap([BLkotlin/coroutines/Continuation;)Ljava/lang/Object;') {
+        final _$$contRef = ($a![1] as Continuation).reference;
+        final $r = jni$_.KotlinContinuation.fromReference(
+          _$$contRef,
+        ).resumeWithFuture(_$impls[$p]!.echoAsyncNullableClassMap(($a![0] as jni$_.JByteArray)));
+        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
+            jni$_.nullptr;
+      }
+      if ($d == r'echoAsyncNullableEnum(JLkotlin/coroutines/Continuation;)Ljava/lang/Object;') {
+        final _$$contRef = ($a![1] as Continuation).reference;
+        final $r = jni$_.KotlinContinuation.fromReference(_$$contRef).resumeWithFuture(
+          _$impls[$p]!.echoAsyncNullableEnum(
             ($a![0] as jni$_.JLong).toDartInt(releaseOriginal: true),
           ),
         );
@@ -11064,192 +11074,10 @@ extension type NativeInteropFlutterIntegrationCoreApiBridge._(jni$_.JObject _$th
             jni$_.nullptr;
       }
       if ($d ==
-          r'pigeon_echoAsyncNullableBool(Ljava/lang/Boolean;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;') {
-        final _$$contRef = ($a![1] as Continuation).reference;
-        final $r = jni$_.KotlinContinuation.fromReference(
-          _$$contRef,
-        ).resumeWithFuture(_$impls[$p]!.pigeon_echoAsyncNullableBool(($a![0] as jni$_.JBoolean?)));
-        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
-            jni$_.nullptr;
-      }
-      if ($d ==
-          r'pigeon_echoAsyncNullableInt(Ljava/lang/Long;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;') {
-        final _$$contRef = ($a![1] as Continuation).reference;
-        final $r = jni$_.KotlinContinuation.fromReference(
-          _$$contRef,
-        ).resumeWithFuture(_$impls[$p]!.pigeon_echoAsyncNullableInt(($a![0] as jni$_.JLong?)));
-        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
-            jni$_.nullptr;
-      }
-      if ($d ==
-          r'pigeon_echoAsyncNullableDouble(Ljava/lang/Double;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;') {
-        final _$$contRef = ($a![1] as Continuation).reference;
-        final $r = jni$_.KotlinContinuation.fromReference(
-          _$$contRef,
-        ).resumeWithFuture(_$impls[$p]!.pigeon_echoAsyncNullableDouble(($a![0] as jni$_.JDouble?)));
-        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
-            jni$_.nullptr;
-      }
-      if ($d ==
-          r'pigeon_echoAsyncNullableString(Ljava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;') {
-        final _$$contRef = ($a![1] as Continuation).reference;
-        final $r = jni$_.KotlinContinuation.fromReference(
-          _$$contRef,
-        ).resumeWithFuture(_$impls[$p]!.pigeon_echoAsyncNullableString(($a![0] as jni$_.JString?)));
-        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
-            jni$_.nullptr;
-      }
-      if ($d ==
-          r'pigeon_echoAsyncNullableUint8List([BLkotlin/coroutines/Continuation;)Ljava/lang/Object;') {
+          r'echoAnotherAsyncNullableEnum(JLkotlin/coroutines/Continuation;)Ljava/lang/Object;') {
         final _$$contRef = ($a![1] as Continuation).reference;
         final $r = jni$_.KotlinContinuation.fromReference(_$$contRef).resumeWithFuture(
-          _$impls[$p]!.pigeon_echoAsyncNullableUint8List(($a![0] as jni$_.JByteArray?)),
-        );
-        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
-            jni$_.nullptr;
-      }
-      if ($d ==
-          r'pigeon_echoAsyncNullableInt32List([ILkotlin/coroutines/Continuation;)Ljava/lang/Object;') {
-        final _$$contRef = ($a![1] as Continuation).reference;
-        final $r = jni$_.KotlinContinuation.fromReference(_$$contRef).resumeWithFuture(
-          _$impls[$p]!.pigeon_echoAsyncNullableInt32List(($a![0] as jni$_.JIntArray?)),
-        );
-        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
-            jni$_.nullptr;
-      }
-      if ($d ==
-          r'pigeon_echoAsyncNullableInt64List([JLkotlin/coroutines/Continuation;)Ljava/lang/Object;') {
-        final _$$contRef = ($a![1] as Continuation).reference;
-        final $r = jni$_.KotlinContinuation.fromReference(_$$contRef).resumeWithFuture(
-          _$impls[$p]!.pigeon_echoAsyncNullableInt64List(($a![0] as jni$_.JLongArray?)),
-        );
-        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
-            jni$_.nullptr;
-      }
-      if ($d ==
-          r'pigeon_echoAsyncNullableFloat64List([DLkotlin/coroutines/Continuation;)Ljava/lang/Object;') {
-        final _$$contRef = ($a![1] as Continuation).reference;
-        final $r = jni$_.KotlinContinuation.fromReference(_$$contRef).resumeWithFuture(
-          _$impls[$p]!.pigeon_echoAsyncNullableFloat64List(($a![0] as jni$_.JDoubleArray?)),
-        );
-        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
-            jni$_.nullptr;
-      }
-      if ($d ==
-          r'pigeon_echoAsyncNullableObject([BLkotlin/coroutines/Continuation;)Ljava/lang/Object;') {
-        final _$$contRef = ($a![1] as Continuation).reference;
-        final $r = jni$_.KotlinContinuation.fromReference(_$$contRef).resumeWithFuture(
-          _$impls[$p]!.pigeon_echoAsyncNullableObject(($a![0] as jni$_.JByteArray)),
-        );
-        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
-            jni$_.nullptr;
-      }
-      if ($d ==
-          r'pigeon_echoAsyncNullableList([BLkotlin/coroutines/Continuation;)Ljava/lang/Object;') {
-        final _$$contRef = ($a![1] as Continuation).reference;
-        final $r = jni$_.KotlinContinuation.fromReference(
-          _$$contRef,
-        ).resumeWithFuture(_$impls[$p]!.pigeon_echoAsyncNullableList(($a![0] as jni$_.JByteArray)));
-        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
-            jni$_.nullptr;
-      }
-      if ($d ==
-          r'pigeon_echoAsyncNullableEnumList([BLkotlin/coroutines/Continuation;)Ljava/lang/Object;') {
-        final _$$contRef = ($a![1] as Continuation).reference;
-        final $r = jni$_.KotlinContinuation.fromReference(_$$contRef).resumeWithFuture(
-          _$impls[$p]!.pigeon_echoAsyncNullableEnumList(($a![0] as jni$_.JByteArray)),
-        );
-        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
-            jni$_.nullptr;
-      }
-      if ($d ==
-          r'pigeon_echoAsyncNullableClassList([BLkotlin/coroutines/Continuation;)Ljava/lang/Object;') {
-        final _$$contRef = ($a![1] as Continuation).reference;
-        final $r = jni$_.KotlinContinuation.fromReference(_$$contRef).resumeWithFuture(
-          _$impls[$p]!.pigeon_echoAsyncNullableClassList(($a![0] as jni$_.JByteArray)),
-        );
-        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
-            jni$_.nullptr;
-      }
-      if ($d ==
-          r'pigeon_echoAsyncNullableNonNullEnumList([BLkotlin/coroutines/Continuation;)Ljava/lang/Object;') {
-        final _$$contRef = ($a![1] as Continuation).reference;
-        final $r = jni$_.KotlinContinuation.fromReference(_$$contRef).resumeWithFuture(
-          _$impls[$p]!.pigeon_echoAsyncNullableNonNullEnumList(($a![0] as jni$_.JByteArray)),
-        );
-        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
-            jni$_.nullptr;
-      }
-      if ($d ==
-          r'pigeon_echoAsyncNullableNonNullClassList([BLkotlin/coroutines/Continuation;)Ljava/lang/Object;') {
-        final _$$contRef = ($a![1] as Continuation).reference;
-        final $r = jni$_.KotlinContinuation.fromReference(_$$contRef).resumeWithFuture(
-          _$impls[$p]!.pigeon_echoAsyncNullableNonNullClassList(($a![0] as jni$_.JByteArray)),
-        );
-        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
-            jni$_.nullptr;
-      }
-      if ($d ==
-          r'pigeon_echoAsyncNullableMap([BLkotlin/coroutines/Continuation;)Ljava/lang/Object;') {
-        final _$$contRef = ($a![1] as Continuation).reference;
-        final $r = jni$_.KotlinContinuation.fromReference(
-          _$$contRef,
-        ).resumeWithFuture(_$impls[$p]!.pigeon_echoAsyncNullableMap(($a![0] as jni$_.JByteArray)));
-        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
-            jni$_.nullptr;
-      }
-      if ($d ==
-          r'pigeon_echoAsyncNullableStringMap([BLkotlin/coroutines/Continuation;)Ljava/lang/Object;') {
-        final _$$contRef = ($a![1] as Continuation).reference;
-        final $r = jni$_.KotlinContinuation.fromReference(_$$contRef).resumeWithFuture(
-          _$impls[$p]!.pigeon_echoAsyncNullableStringMap(($a![0] as jni$_.JByteArray)),
-        );
-        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
-            jni$_.nullptr;
-      }
-      if ($d ==
-          r'pigeon_echoAsyncNullableIntMap([BLkotlin/coroutines/Continuation;)Ljava/lang/Object;') {
-        final _$$contRef = ($a![1] as Continuation).reference;
-        final $r = jni$_.KotlinContinuation.fromReference(_$$contRef).resumeWithFuture(
-          _$impls[$p]!.pigeon_echoAsyncNullableIntMap(($a![0] as jni$_.JByteArray)),
-        );
-        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
-            jni$_.nullptr;
-      }
-      if ($d ==
-          r'pigeon_echoAsyncNullableEnumMap([BLkotlin/coroutines/Continuation;)Ljava/lang/Object;') {
-        final _$$contRef = ($a![1] as Continuation).reference;
-        final $r = jni$_.KotlinContinuation.fromReference(_$$contRef).resumeWithFuture(
-          _$impls[$p]!.pigeon_echoAsyncNullableEnumMap(($a![0] as jni$_.JByteArray)),
-        );
-        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
-            jni$_.nullptr;
-      }
-      if ($d ==
-          r'pigeon_echoAsyncNullableClassMap([BLkotlin/coroutines/Continuation;)Ljava/lang/Object;') {
-        final _$$contRef = ($a![1] as Continuation).reference;
-        final $r = jni$_.KotlinContinuation.fromReference(_$$contRef).resumeWithFuture(
-          _$impls[$p]!.pigeon_echoAsyncNullableClassMap(($a![0] as jni$_.JByteArray)),
-        );
-        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
-            jni$_.nullptr;
-      }
-      if ($d ==
-          r'pigeon_echoAsyncNullableEnum(JLkotlin/coroutines/Continuation;)Ljava/lang/Object;') {
-        final _$$contRef = ($a![1] as Continuation).reference;
-        final $r = jni$_.KotlinContinuation.fromReference(_$$contRef).resumeWithFuture(
-          _$impls[$p]!.pigeon_echoAsyncNullableEnum(
-            ($a![0] as jni$_.JLong).toDartInt(releaseOriginal: true),
-          ),
-        );
-        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
-            jni$_.nullptr;
-      }
-      if ($d ==
-          r'pigeon_echoAnotherAsyncNullableEnum(JLkotlin/coroutines/Continuation;)Ljava/lang/Object;') {
-        final _$$contRef = ($a![1] as Continuation).reference;
-        final $r = jni$_.KotlinContinuation.fromReference(_$$contRef).resumeWithFuture(
-          _$impls[$p]!.pigeon_echoAnotherAsyncNullableEnum(
+          _$impls[$p]!.echoAnotherAsyncNullableEnum(
             ($a![0] as jni$_.JLong).toDartInt(releaseOriginal: true),
           ),
         );
@@ -11283,8 +11111,8 @@ extension type NativeInteropFlutterIntegrationCoreApiBridge._(jni$_.JObject _$th
       $p,
       _$invokePointer,
       [
-        if ($impl.pigeon_noop$async) r'pigeon_noop()V',
-        if ($impl.pigeon_throwErrorFromVoid$async) r'pigeon_throwErrorFromVoid()V',
+        if ($impl.noop$async) r'noop()V',
+        if ($impl.throwErrorFromVoid$async) r'throwErrorFromVoid()V',
       ],
     );
     final $a = $p.sendPort.nativePort;
@@ -11302,10 +11130,12 @@ extension type NativeInteropFlutterIntegrationCoreApiBridge._(jni$_.JObject _$th
 
 extension NativeInteropFlutterIntegrationCoreApiBridge$$Methods
     on NativeInteropFlutterIntegrationCoreApiBridge {
-  static final _id_pigeon_noop = NativeInteropFlutterIntegrationCoreApiBridge._class
-      .instanceMethodId(r'pigeon_noop', r'()V');
+  static final _id_noop = NativeInteropFlutterIntegrationCoreApiBridge._class.instanceMethodId(
+    r'noop',
+    r'()V',
+  );
 
-  static final _pigeon_noop =
+  static final _noop =
       jni$_.ProtectedJniExtensions.lookup<
             jni$_.NativeFunction<
               jni$_.JThrowablePtr Function(jni$_.Pointer<jni$_.Void>, jni$_.JMethodIDPtr)
@@ -11315,16 +11145,16 @@ extension NativeInteropFlutterIntegrationCoreApiBridge$$Methods
             jni$_.JThrowablePtr Function(jni$_.Pointer<jni$_.Void>, jni$_.JMethodIDPtr)
           >();
 
-  /// from: `public fun pigeon_noop(): kotlin.Unit`
-  void pigeon_noop() {
+  /// from: `public fun noop(): kotlin.Unit`
+  void noop() {
     final _$$selfRef = reference;
-    _pigeon_noop(_$$selfRef.pointer, _id_pigeon_noop.pointer).check();
+    _noop(_$$selfRef.pointer, _id_noop.pointer).check();
   }
 
-  static final _id_pigeon_throwFlutterError = NativeInteropFlutterIntegrationCoreApiBridge._class
-      .instanceMethodId(r'pigeon_throwFlutterError', r'()[B');
+  static final _id_throwFlutterError = NativeInteropFlutterIntegrationCoreApiBridge._class
+      .instanceMethodId(r'throwFlutterError', r'()[B');
 
-  static final _pigeon_throwFlutterError =
+  static final _throwFlutterError =
       jni$_.ProtectedJniExtensions.lookup<
             jni$_.NativeFunction<
               jni$_.JniResult Function(jni$_.Pointer<jni$_.Void>, jni$_.JMethodIDPtr)
@@ -11332,20 +11162,20 @@ extension NativeInteropFlutterIntegrationCoreApiBridge$$Methods
           >('globalEnv_CallObjectMethod')
           .asFunction<jni$_.JniResult Function(jni$_.Pointer<jni$_.Void>, jni$_.JMethodIDPtr)>();
 
-  /// from: `public fun pigeon_throwFlutterError(): kotlin.ByteArray?`
+  /// from: `public fun throwFlutterError(): kotlin.ByteArray?`
   /// The returned object must be released after use, by calling the [release] method.
-  jni$_.JByteArray? pigeon_throwFlutterError() {
+  jni$_.JByteArray? throwFlutterError() {
     final _$$selfRef = reference;
-    return _pigeon_throwFlutterError(
+    return _throwFlutterError(
       _$$selfRef.pointer,
-      _id_pigeon_throwFlutterError.pointer,
+      _id_throwFlutterError.pointer,
     ).object<jni$_.JByteArray?>();
   }
 
-  static final _id_pigeon_throwError = NativeInteropFlutterIntegrationCoreApiBridge._class
-      .instanceMethodId(r'pigeon_throwError', r'()[B');
+  static final _id_throwError = NativeInteropFlutterIntegrationCoreApiBridge._class
+      .instanceMethodId(r'throwError', r'()[B');
 
-  static final _pigeon_throwError =
+  static final _throwError =
       jni$_.ProtectedJniExtensions.lookup<
             jni$_.NativeFunction<
               jni$_.JniResult Function(jni$_.Pointer<jni$_.Void>, jni$_.JMethodIDPtr)
@@ -11353,20 +11183,17 @@ extension NativeInteropFlutterIntegrationCoreApiBridge$$Methods
           >('globalEnv_CallObjectMethod')
           .asFunction<jni$_.JniResult Function(jni$_.Pointer<jni$_.Void>, jni$_.JMethodIDPtr)>();
 
-  /// from: `public fun pigeon_throwError(): kotlin.ByteArray?`
+  /// from: `public fun throwError(): kotlin.ByteArray?`
   /// The returned object must be released after use, by calling the [release] method.
-  jni$_.JByteArray? pigeon_throwError() {
+  jni$_.JByteArray? throwError() {
     final _$$selfRef = reference;
-    return _pigeon_throwError(
-      _$$selfRef.pointer,
-      _id_pigeon_throwError.pointer,
-    ).object<jni$_.JByteArray?>();
+    return _throwError(_$$selfRef.pointer, _id_throwError.pointer).object<jni$_.JByteArray?>();
   }
 
-  static final _id_pigeon_throwErrorFromVoid = NativeInteropFlutterIntegrationCoreApiBridge._class
-      .instanceMethodId(r'pigeon_throwErrorFromVoid', r'()V');
+  static final _id_throwErrorFromVoid = NativeInteropFlutterIntegrationCoreApiBridge._class
+      .instanceMethodId(r'throwErrorFromVoid', r'()V');
 
-  static final _pigeon_throwErrorFromVoid =
+  static final _throwErrorFromVoid =
       jni$_.ProtectedJniExtensions.lookup<
             jni$_.NativeFunction<
               jni$_.JThrowablePtr Function(jni$_.Pointer<jni$_.Void>, jni$_.JMethodIDPtr)
@@ -11376,17 +11203,16 @@ extension NativeInteropFlutterIntegrationCoreApiBridge$$Methods
             jni$_.JThrowablePtr Function(jni$_.Pointer<jni$_.Void>, jni$_.JMethodIDPtr)
           >();
 
-  /// from: `public fun pigeon_throwErrorFromVoid(): kotlin.Unit`
-  void pigeon_throwErrorFromVoid() {
+  /// from: `public fun throwErrorFromVoid(): kotlin.Unit`
+  void throwErrorFromVoid() {
     final _$$selfRef = reference;
-    _pigeon_throwErrorFromVoid(_$$selfRef.pointer, _id_pigeon_throwErrorFromVoid.pointer).check();
+    _throwErrorFromVoid(_$$selfRef.pointer, _id_throwErrorFromVoid.pointer).check();
   }
 
-  static final _id_pigeon_echoNativeInteropAllTypes = NativeInteropFlutterIntegrationCoreApiBridge
-      ._class
-      .instanceMethodId(r'pigeon_echoNativeInteropAllTypes', r'([B)[B');
+  static final _id_echoNativeInteropAllTypes = NativeInteropFlutterIntegrationCoreApiBridge._class
+      .instanceMethodId(r'echoNativeInteropAllTypes', r'([B)[B');
 
-  static final _pigeon_echoNativeInteropAllTypes =
+  static final _echoNativeInteropAllTypes =
       jni$_.ProtectedJniExtensions.lookup<
             jni$_.NativeFunction<
               jni$_.JniResult Function(
@@ -11404,25 +11230,23 @@ extension NativeInteropFlutterIntegrationCoreApiBridge$$Methods
             )
           >();
 
-  /// from: `public fun pigeon_echoNativeInteropAllTypes(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
+  /// from: `public fun echoNativeInteropAllTypes(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
   /// The returned object must be released after use, by calling the [release] method.
-  jni$_.JByteArray? pigeon_echoNativeInteropAllTypes(jni$_.JByteArray bs) {
+  jni$_.JByteArray? echoNativeInteropAllTypes(jni$_.JByteArray bs) {
     final _$$selfRef = reference;
     final _$bs = bs.reference;
-    return _pigeon_echoNativeInteropAllTypes(
+    return _echoNativeInteropAllTypes(
       _$$selfRef.pointer,
-      _id_pigeon_echoNativeInteropAllTypes.pointer,
+      _id_echoNativeInteropAllTypes.pointer,
       _$bs.pointer,
     ).object<jni$_.JByteArray?>();
   }
 
-  static final _id_pigeon_echoNativeInteropAllNullableTypes =
-      NativeInteropFlutterIntegrationCoreApiBridge._class.instanceMethodId(
-        r'pigeon_echoNativeInteropAllNullableTypes',
-        r'([B)[B',
-      );
+  static final _id_echoNativeInteropAllNullableTypes = NativeInteropFlutterIntegrationCoreApiBridge
+      ._class
+      .instanceMethodId(r'echoNativeInteropAllNullableTypes', r'([B)[B');
 
-  static final _pigeon_echoNativeInteropAllNullableTypes =
+  static final _echoNativeInteropAllNullableTypes =
       jni$_.ProtectedJniExtensions.lookup<
             jni$_.NativeFunction<
               jni$_.JniResult Function(
@@ -11440,26 +11264,59 @@ extension NativeInteropFlutterIntegrationCoreApiBridge$$Methods
             )
           >();
 
-  /// from: `public fun pigeon_echoNativeInteropAllNullableTypes(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
+  /// from: `public fun echoNativeInteropAllNullableTypes(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
   /// The returned object must be released after use, by calling the [release] method.
-  jni$_.JByteArray? pigeon_echoNativeInteropAllNullableTypes(jni$_.JByteArray bs) {
+  jni$_.JByteArray? echoNativeInteropAllNullableTypes(jni$_.JByteArray bs) {
     final _$$selfRef = reference;
     final _$bs = bs.reference;
-    return _pigeon_echoNativeInteropAllNullableTypes(
+    return _echoNativeInteropAllNullableTypes(
       _$$selfRef.pointer,
-      _id_pigeon_echoNativeInteropAllNullableTypes.pointer,
+      _id_echoNativeInteropAllNullableTypes.pointer,
       _$bs.pointer,
     ).object<jni$_.JByteArray?>();
   }
 
-  static final _id_pigeon_sendMultipleNullableTypes = NativeInteropFlutterIntegrationCoreApiBridge
+  static final _id_echoNativeInteropSealedClass = NativeInteropFlutterIntegrationCoreApiBridge
       ._class
+      .instanceMethodId(r'echoNativeInteropSealedClass', r'([B)[B');
+
+  static final _echoNativeInteropSealedClass =
+      jni$_.ProtectedJniExtensions.lookup<
+            jni$_.NativeFunction<
+              jni$_.JniResult Function(
+                jni$_.Pointer<jni$_.Void>,
+                jni$_.JMethodIDPtr,
+                jni$_.VarArgs<(jni$_.Pointer<jni$_.Void>,)>,
+              )
+            >
+          >('globalEnv_CallObjectMethod')
+          .asFunction<
+            jni$_.JniResult Function(
+              jni$_.Pointer<jni$_.Void>,
+              jni$_.JMethodIDPtr,
+              jni$_.Pointer<jni$_.Void>,
+            )
+          >();
+
+  /// from: `public fun echoNativeInteropSealedClass(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
+  /// The returned object must be released after use, by calling the [release] method.
+  jni$_.JByteArray? echoNativeInteropSealedClass(jni$_.JByteArray bs) {
+    final _$$selfRef = reference;
+    final _$bs = bs.reference;
+    return _echoNativeInteropSealedClass(
+      _$$selfRef.pointer,
+      _id_echoNativeInteropSealedClass.pointer,
+      _$bs.pointer,
+    ).object<jni$_.JByteArray?>();
+  }
+
+  static final _id_sendMultipleNullableTypes = NativeInteropFlutterIntegrationCoreApiBridge._class
       .instanceMethodId(
-        r'pigeon_sendMultipleNullableTypes',
+        r'sendMultipleNullableTypes',
         r'(Ljava/lang/Boolean;Ljava/lang/Long;Ljava/lang/String;)[B',
       );
 
-  static final _pigeon_sendMultipleNullableTypes =
+  static final _sendMultipleNullableTypes =
       jni$_.ProtectedJniExtensions.lookup<
             jni$_.NativeFunction<
               jni$_.JniResult Function(
@@ -11481,9 +11338,9 @@ extension NativeInteropFlutterIntegrationCoreApiBridge$$Methods
             )
           >();
 
-  /// from: `public fun pigeon_sendMultipleNullableTypes(aNullableBool: kotlin.Boolean?, aNullableInt: kotlin.Long?, aNullableString: kotlin.String?): kotlin.ByteArray?`
+  /// from: `public fun sendMultipleNullableTypes(aNullableBool: kotlin.Boolean?, aNullableInt: kotlin.Long?, aNullableString: kotlin.String?): kotlin.ByteArray?`
   /// The returned object must be released after use, by calling the [release] method.
-  jni$_.JByteArray? pigeon_sendMultipleNullableTypes(
+  jni$_.JByteArray? sendMultipleNullableTypes(
     jni$_.JBoolean? boolean,
     jni$_.JLong? long,
     jni$_.JString? string,
@@ -11492,22 +11349,22 @@ extension NativeInteropFlutterIntegrationCoreApiBridge$$Methods
     final _$boolean = boolean?.reference ?? jni$_.jNullReference;
     final _$long = long?.reference ?? jni$_.jNullReference;
     final _$string = string?.reference ?? jni$_.jNullReference;
-    return _pigeon_sendMultipleNullableTypes(
+    return _sendMultipleNullableTypes(
       _$$selfRef.pointer,
-      _id_pigeon_sendMultipleNullableTypes.pointer,
+      _id_sendMultipleNullableTypes.pointer,
       _$boolean.pointer,
       _$long.pointer,
       _$string.pointer,
     ).object<jni$_.JByteArray?>();
   }
 
-  static final _id_pigeon_echoNativeInteropAllNullableTypesWithoutRecursion =
+  static final _id_echoNativeInteropAllNullableTypesWithoutRecursion =
       NativeInteropFlutterIntegrationCoreApiBridge._class.instanceMethodId(
-        r'pigeon_echoNativeInteropAllNullableTypesWithoutRecursion',
+        r'echoNativeInteropAllNullableTypesWithoutRecursion',
         r'([B)[B',
       );
 
-  static final _pigeon_echoNativeInteropAllNullableTypesWithoutRecursion =
+  static final _echoNativeInteropAllNullableTypesWithoutRecursion =
       jni$_.ProtectedJniExtensions.lookup<
             jni$_.NativeFunction<
               jni$_.JniResult Function(
@@ -11525,25 +11382,25 @@ extension NativeInteropFlutterIntegrationCoreApiBridge$$Methods
             )
           >();
 
-  /// from: `public fun pigeon_echoNativeInteropAllNullableTypesWithoutRecursion(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
+  /// from: `public fun echoNativeInteropAllNullableTypesWithoutRecursion(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
   /// The returned object must be released after use, by calling the [release] method.
-  jni$_.JByteArray? pigeon_echoNativeInteropAllNullableTypesWithoutRecursion(jni$_.JByteArray bs) {
+  jni$_.JByteArray? echoNativeInteropAllNullableTypesWithoutRecursion(jni$_.JByteArray bs) {
     final _$$selfRef = reference;
     final _$bs = bs.reference;
-    return _pigeon_echoNativeInteropAllNullableTypesWithoutRecursion(
+    return _echoNativeInteropAllNullableTypesWithoutRecursion(
       _$$selfRef.pointer,
-      _id_pigeon_echoNativeInteropAllNullableTypesWithoutRecursion.pointer,
+      _id_echoNativeInteropAllNullableTypesWithoutRecursion.pointer,
       _$bs.pointer,
     ).object<jni$_.JByteArray?>();
   }
 
-  static final _id_pigeon_sendMultipleNullableTypesWithoutRecursion =
+  static final _id_sendMultipleNullableTypesWithoutRecursion =
       NativeInteropFlutterIntegrationCoreApiBridge._class.instanceMethodId(
-        r'pigeon_sendMultipleNullableTypesWithoutRecursion',
+        r'sendMultipleNullableTypesWithoutRecursion',
         r'(Ljava/lang/Boolean;Ljava/lang/Long;Ljava/lang/String;)[B',
       );
 
-  static final _pigeon_sendMultipleNullableTypesWithoutRecursion =
+  static final _sendMultipleNullableTypesWithoutRecursion =
       jni$_.ProtectedJniExtensions.lookup<
             jni$_.NativeFunction<
               jni$_.JniResult Function(
@@ -11565,9 +11422,9 @@ extension NativeInteropFlutterIntegrationCoreApiBridge$$Methods
             )
           >();
 
-  /// from: `public fun pigeon_sendMultipleNullableTypesWithoutRecursion(aNullableBool: kotlin.Boolean?, aNullableInt: kotlin.Long?, aNullableString: kotlin.String?): kotlin.ByteArray?`
+  /// from: `public fun sendMultipleNullableTypesWithoutRecursion(aNullableBool: kotlin.Boolean?, aNullableInt: kotlin.Long?, aNullableString: kotlin.String?): kotlin.ByteArray?`
   /// The returned object must be released after use, by calling the [release] method.
-  jni$_.JByteArray? pigeon_sendMultipleNullableTypesWithoutRecursion(
+  jni$_.JByteArray? sendMultipleNullableTypesWithoutRecursion(
     jni$_.JBoolean? boolean,
     jni$_.JLong? long,
     jni$_.JString? string,
@@ -11576,19 +11433,21 @@ extension NativeInteropFlutterIntegrationCoreApiBridge$$Methods
     final _$boolean = boolean?.reference ?? jni$_.jNullReference;
     final _$long = long?.reference ?? jni$_.jNullReference;
     final _$string = string?.reference ?? jni$_.jNullReference;
-    return _pigeon_sendMultipleNullableTypesWithoutRecursion(
+    return _sendMultipleNullableTypesWithoutRecursion(
       _$$selfRef.pointer,
-      _id_pigeon_sendMultipleNullableTypesWithoutRecursion.pointer,
+      _id_sendMultipleNullableTypesWithoutRecursion.pointer,
       _$boolean.pointer,
       _$long.pointer,
       _$string.pointer,
     ).object<jni$_.JByteArray?>();
   }
 
-  static final _id_pigeon_echoBool = NativeInteropFlutterIntegrationCoreApiBridge._class
-      .instanceMethodId(r'pigeon_echoBool', r'(Z)Z');
+  static final _id_echoBool = NativeInteropFlutterIntegrationCoreApiBridge._class.instanceMethodId(
+    r'echoBool',
+    r'(Z)Z',
+  );
 
-  static final _pigeon_echoBool =
+  static final _echoBool =
       jni$_.ProtectedJniExtensions.lookup<
             jni$_.NativeFunction<
               jni$_.JniResult Function(
@@ -11602,16 +11461,18 @@ extension NativeInteropFlutterIntegrationCoreApiBridge$$Methods
             jni$_.JniResult Function(jni$_.Pointer<jni$_.Void>, jni$_.JMethodIDPtr, core$_.int)
           >();
 
-  /// from: `public fun pigeon_echoBool(aBool: kotlin.Boolean): kotlin.Boolean`
-  core$_.bool pigeon_echoBool(core$_.bool z) {
+  /// from: `public fun echoBool(aBool: kotlin.Boolean): kotlin.Boolean`
+  core$_.bool echoBool(core$_.bool z) {
     final _$$selfRef = reference;
-    return _pigeon_echoBool(_$$selfRef.pointer, _id_pigeon_echoBool.pointer, z ? 1 : 0).boolean;
+    return _echoBool(_$$selfRef.pointer, _id_echoBool.pointer, z ? 1 : 0).boolean;
   }
 
-  static final _id_pigeon_echoInt = NativeInteropFlutterIntegrationCoreApiBridge._class
-      .instanceMethodId(r'pigeon_echoInt', r'(J)J');
+  static final _id_echoInt = NativeInteropFlutterIntegrationCoreApiBridge._class.instanceMethodId(
+    r'echoInt',
+    r'(J)J',
+  );
 
-  static final _pigeon_echoInt =
+  static final _echoInt =
       jni$_.ProtectedJniExtensions.lookup<
             jni$_.NativeFunction<
               jni$_.JniResult Function(
@@ -11625,16 +11486,16 @@ extension NativeInteropFlutterIntegrationCoreApiBridge$$Methods
             jni$_.JniResult Function(jni$_.Pointer<jni$_.Void>, jni$_.JMethodIDPtr, core$_.int)
           >();
 
-  /// from: `public fun pigeon_echoInt(anInt: kotlin.Long): kotlin.Long`
-  core$_.int pigeon_echoInt(core$_.int j) {
+  /// from: `public fun echoInt(anInt: kotlin.Long): kotlin.Long`
+  core$_.int echoInt(core$_.int j) {
     final _$$selfRef = reference;
-    return _pigeon_echoInt(_$$selfRef.pointer, _id_pigeon_echoInt.pointer, j).long;
+    return _echoInt(_$$selfRef.pointer, _id_echoInt.pointer, j).long;
   }
 
-  static final _id_pigeon_echoDouble = NativeInteropFlutterIntegrationCoreApiBridge._class
-      .instanceMethodId(r'pigeon_echoDouble', r'(D)D');
+  static final _id_echoDouble = NativeInteropFlutterIntegrationCoreApiBridge._class
+      .instanceMethodId(r'echoDouble', r'(D)D');
 
-  static final _pigeon_echoDouble =
+  static final _echoDouble =
       jni$_.ProtectedJniExtensions.lookup<
             jni$_.NativeFunction<
               jni$_.JniResult Function(
@@ -11648,16 +11509,16 @@ extension NativeInteropFlutterIntegrationCoreApiBridge$$Methods
             jni$_.JniResult Function(jni$_.Pointer<jni$_.Void>, jni$_.JMethodIDPtr, core$_.double)
           >();
 
-  /// from: `public fun pigeon_echoDouble(aDouble: kotlin.Double): kotlin.Double`
-  core$_.double pigeon_echoDouble(core$_.double d) {
+  /// from: `public fun echoDouble(aDouble: kotlin.Double): kotlin.Double`
+  core$_.double echoDouble(core$_.double d) {
     final _$$selfRef = reference;
-    return _pigeon_echoDouble(_$$selfRef.pointer, _id_pigeon_echoDouble.pointer, d).doubleFloat;
+    return _echoDouble(_$$selfRef.pointer, _id_echoDouble.pointer, d).doubleFloat;
   }
 
-  static final _id_pigeon_echoString = NativeInteropFlutterIntegrationCoreApiBridge._class
-      .instanceMethodId(r'pigeon_echoString', r'(Ljava/lang/String;)Ljava/lang/String;');
+  static final _id_echoString = NativeInteropFlutterIntegrationCoreApiBridge._class
+      .instanceMethodId(r'echoString', r'(Ljava/lang/String;)Ljava/lang/String;');
 
-  static final _pigeon_echoString =
+  static final _echoString =
       jni$_.ProtectedJniExtensions.lookup<
             jni$_.NativeFunction<
               jni$_.JniResult Function(
@@ -11675,22 +11536,22 @@ extension NativeInteropFlutterIntegrationCoreApiBridge$$Methods
             )
           >();
 
-  /// from: `public fun pigeon_echoString(aString: kotlin.String): kotlin.String`
+  /// from: `public fun echoString(aString: kotlin.String): kotlin.String`
   /// The returned object must be released after use, by calling the [release] method.
-  jni$_.JString pigeon_echoString(jni$_.JString string) {
+  jni$_.JString echoString(jni$_.JString string) {
     final _$$selfRef = reference;
     final _$string = string.reference;
-    return _pigeon_echoString(
+    return _echoString(
       _$$selfRef.pointer,
-      _id_pigeon_echoString.pointer,
+      _id_echoString.pointer,
       _$string.pointer,
     ).object<jni$_.JString>();
   }
 
-  static final _id_pigeon_echoUint8List = NativeInteropFlutterIntegrationCoreApiBridge._class
-      .instanceMethodId(r'pigeon_echoUint8List', r'([B)[B');
+  static final _id_echoUint8List = NativeInteropFlutterIntegrationCoreApiBridge._class
+      .instanceMethodId(r'echoUint8List', r'([B)[B');
 
-  static final _pigeon_echoUint8List =
+  static final _echoUint8List =
       jni$_.ProtectedJniExtensions.lookup<
             jni$_.NativeFunction<
               jni$_.JniResult Function(
@@ -11708,22 +11569,22 @@ extension NativeInteropFlutterIntegrationCoreApiBridge$$Methods
             )
           >();
 
-  /// from: `public fun pigeon_echoUint8List(list: kotlin.ByteArray): kotlin.ByteArray`
+  /// from: `public fun echoUint8List(list: kotlin.ByteArray): kotlin.ByteArray`
   /// The returned object must be released after use, by calling the [release] method.
-  jni$_.JByteArray pigeon_echoUint8List(jni$_.JByteArray bs) {
+  jni$_.JByteArray echoUint8List(jni$_.JByteArray bs) {
     final _$$selfRef = reference;
     final _$bs = bs.reference;
-    return _pigeon_echoUint8List(
+    return _echoUint8List(
       _$$selfRef.pointer,
-      _id_pigeon_echoUint8List.pointer,
+      _id_echoUint8List.pointer,
       _$bs.pointer,
     ).object<jni$_.JByteArray>();
   }
 
-  static final _id_pigeon_echoInt32List = NativeInteropFlutterIntegrationCoreApiBridge._class
-      .instanceMethodId(r'pigeon_echoInt32List', r'([I)[I');
+  static final _id_echoInt32List = NativeInteropFlutterIntegrationCoreApiBridge._class
+      .instanceMethodId(r'echoInt32List', r'([I)[I');
 
-  static final _pigeon_echoInt32List =
+  static final _echoInt32List =
       jni$_.ProtectedJniExtensions.lookup<
             jni$_.NativeFunction<
               jni$_.JniResult Function(
@@ -11741,22 +11602,22 @@ extension NativeInteropFlutterIntegrationCoreApiBridge$$Methods
             )
           >();
 
-  /// from: `public fun pigeon_echoInt32List(list: kotlin.IntArray): kotlin.IntArray`
+  /// from: `public fun echoInt32List(list: kotlin.IntArray): kotlin.IntArray`
   /// The returned object must be released after use, by calling the [release] method.
-  jni$_.JIntArray pigeon_echoInt32List(jni$_.JIntArray is$) {
+  jni$_.JIntArray echoInt32List(jni$_.JIntArray is$) {
     final _$$selfRef = reference;
     final _$is$ = is$.reference;
-    return _pigeon_echoInt32List(
+    return _echoInt32List(
       _$$selfRef.pointer,
-      _id_pigeon_echoInt32List.pointer,
+      _id_echoInt32List.pointer,
       _$is$.pointer,
     ).object<jni$_.JIntArray>();
   }
 
-  static final _id_pigeon_echoInt64List = NativeInteropFlutterIntegrationCoreApiBridge._class
-      .instanceMethodId(r'pigeon_echoInt64List', r'([J)[J');
+  static final _id_echoInt64List = NativeInteropFlutterIntegrationCoreApiBridge._class
+      .instanceMethodId(r'echoInt64List', r'([J)[J');
 
-  static final _pigeon_echoInt64List =
+  static final _echoInt64List =
       jni$_.ProtectedJniExtensions.lookup<
             jni$_.NativeFunction<
               jni$_.JniResult Function(
@@ -11774,22 +11635,22 @@ extension NativeInteropFlutterIntegrationCoreApiBridge$$Methods
             )
           >();
 
-  /// from: `public fun pigeon_echoInt64List(list: kotlin.LongArray): kotlin.LongArray`
+  /// from: `public fun echoInt64List(list: kotlin.LongArray): kotlin.LongArray`
   /// The returned object must be released after use, by calling the [release] method.
-  jni$_.JLongArray pigeon_echoInt64List(jni$_.JLongArray js) {
+  jni$_.JLongArray echoInt64List(jni$_.JLongArray js) {
     final _$$selfRef = reference;
     final _$js = js.reference;
-    return _pigeon_echoInt64List(
+    return _echoInt64List(
       _$$selfRef.pointer,
-      _id_pigeon_echoInt64List.pointer,
+      _id_echoInt64List.pointer,
       _$js.pointer,
     ).object<jni$_.JLongArray>();
   }
 
-  static final _id_pigeon_echoFloat64List = NativeInteropFlutterIntegrationCoreApiBridge._class
-      .instanceMethodId(r'pigeon_echoFloat64List', r'([D)[D');
+  static final _id_echoFloat64List = NativeInteropFlutterIntegrationCoreApiBridge._class
+      .instanceMethodId(r'echoFloat64List', r'([D)[D');
 
-  static final _pigeon_echoFloat64List =
+  static final _echoFloat64List =
       jni$_.ProtectedJniExtensions.lookup<
             jni$_.NativeFunction<
               jni$_.JniResult Function(
@@ -11807,22 +11668,24 @@ extension NativeInteropFlutterIntegrationCoreApiBridge$$Methods
             )
           >();
 
-  /// from: `public fun pigeon_echoFloat64List(list: kotlin.DoubleArray): kotlin.DoubleArray`
+  /// from: `public fun echoFloat64List(list: kotlin.DoubleArray): kotlin.DoubleArray`
   /// The returned object must be released after use, by calling the [release] method.
-  jni$_.JDoubleArray pigeon_echoFloat64List(jni$_.JDoubleArray ds) {
+  jni$_.JDoubleArray echoFloat64List(jni$_.JDoubleArray ds) {
     final _$$selfRef = reference;
     final _$ds = ds.reference;
-    return _pigeon_echoFloat64List(
+    return _echoFloat64List(
       _$$selfRef.pointer,
-      _id_pigeon_echoFloat64List.pointer,
+      _id_echoFloat64List.pointer,
       _$ds.pointer,
     ).object<jni$_.JDoubleArray>();
   }
 
-  static final _id_pigeon_echoList = NativeInteropFlutterIntegrationCoreApiBridge._class
-      .instanceMethodId(r'pigeon_echoList', r'([B)[B');
+  static final _id_echoList = NativeInteropFlutterIntegrationCoreApiBridge._class.instanceMethodId(
+    r'echoList',
+    r'([B)[B',
+  );
 
-  static final _pigeon_echoList =
+  static final _echoList =
       jni$_.ProtectedJniExtensions.lookup<
             jni$_.NativeFunction<
               jni$_.JniResult Function(
@@ -11840,22 +11703,22 @@ extension NativeInteropFlutterIntegrationCoreApiBridge$$Methods
             )
           >();
 
-  /// from: `public fun pigeon_echoList(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
+  /// from: `public fun echoList(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
   /// The returned object must be released after use, by calling the [release] method.
-  jni$_.JByteArray? pigeon_echoList(jni$_.JByteArray bs) {
+  jni$_.JByteArray? echoList(jni$_.JByteArray bs) {
     final _$$selfRef = reference;
     final _$bs = bs.reference;
-    return _pigeon_echoList(
+    return _echoList(
       _$$selfRef.pointer,
-      _id_pigeon_echoList.pointer,
+      _id_echoList.pointer,
       _$bs.pointer,
     ).object<jni$_.JByteArray?>();
   }
 
-  static final _id_pigeon_echoEnumList = NativeInteropFlutterIntegrationCoreApiBridge._class
-      .instanceMethodId(r'pigeon_echoEnumList', r'([B)[B');
+  static final _id_echoEnumList = NativeInteropFlutterIntegrationCoreApiBridge._class
+      .instanceMethodId(r'echoEnumList', r'([B)[B');
 
-  static final _pigeon_echoEnumList =
+  static final _echoEnumList =
       jni$_.ProtectedJniExtensions.lookup<
             jni$_.NativeFunction<
               jni$_.JniResult Function(
@@ -11873,25 +11736,22 @@ extension NativeInteropFlutterIntegrationCoreApiBridge$$Methods
             )
           >();
 
-  /// from: `public fun pigeon_echoEnumList(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
+  /// from: `public fun echoEnumList(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
   /// The returned object must be released after use, by calling the [release] method.
-  jni$_.JByteArray? pigeon_echoEnumList(jni$_.JByteArray bs) {
+  jni$_.JByteArray? echoEnumList(jni$_.JByteArray bs) {
     final _$$selfRef = reference;
     final _$bs = bs.reference;
-    return _pigeon_echoEnumList(
+    return _echoEnumList(
       _$$selfRef.pointer,
-      _id_pigeon_echoEnumList.pointer,
+      _id_echoEnumList.pointer,
       _$bs.pointer,
     ).object<jni$_.JByteArray?>();
   }
 
-  static final _id_pigeon_echoNativeInteropSealedClass =
-      NativeInteropFlutterIntegrationCoreApiBridge._class.instanceMethodId(
-        r'pigeon_echoNativeInteropSealedClass',
-        r'([B)[B',
-      );
+  static final _id_echoClassList = NativeInteropFlutterIntegrationCoreApiBridge._class
+      .instanceMethodId(r'echoClassList', r'([B)[B');
 
-  static final _pigeon_echoNativeInteropSealedClass =
+  static final _echoClassList =
       jni$_.ProtectedJniExtensions.lookup<
             jni$_.NativeFunction<
               jni$_.JniResult Function(
@@ -11909,22 +11769,22 @@ extension NativeInteropFlutterIntegrationCoreApiBridge$$Methods
             )
           >();
 
-  /// from: `public fun pigeon_echoNativeInteropSealedClass(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
+  /// from: `public fun echoClassList(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
   /// The returned object must be released after use, by calling the [release] method.
-  jni$_.JByteArray? pigeon_echoNativeInteropSealedClass(jni$_.JByteArray bs) {
+  jni$_.JByteArray? echoClassList(jni$_.JByteArray bs) {
     final _$$selfRef = reference;
     final _$bs = bs.reference;
-    return _pigeon_echoNativeInteropSealedClass(
+    return _echoClassList(
       _$$selfRef.pointer,
-      _id_pigeon_echoNativeInteropSealedClass.pointer,
+      _id_echoClassList.pointer,
       _$bs.pointer,
     ).object<jni$_.JByteArray?>();
   }
 
-  static final _id_pigeon_echoClassList = NativeInteropFlutterIntegrationCoreApiBridge._class
-      .instanceMethodId(r'pigeon_echoClassList', r'([B)[B');
+  static final _id_echoNonNullEnumList = NativeInteropFlutterIntegrationCoreApiBridge._class
+      .instanceMethodId(r'echoNonNullEnumList', r'([B)[B');
 
-  static final _pigeon_echoClassList =
+  static final _echoNonNullEnumList =
       jni$_.ProtectedJniExtensions.lookup<
             jni$_.NativeFunction<
               jni$_.JniResult Function(
@@ -11942,22 +11802,22 @@ extension NativeInteropFlutterIntegrationCoreApiBridge$$Methods
             )
           >();
 
-  /// from: `public fun pigeon_echoClassList(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
+  /// from: `public fun echoNonNullEnumList(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
   /// The returned object must be released after use, by calling the [release] method.
-  jni$_.JByteArray? pigeon_echoClassList(jni$_.JByteArray bs) {
+  jni$_.JByteArray? echoNonNullEnumList(jni$_.JByteArray bs) {
     final _$$selfRef = reference;
     final _$bs = bs.reference;
-    return _pigeon_echoClassList(
+    return _echoNonNullEnumList(
       _$$selfRef.pointer,
-      _id_pigeon_echoClassList.pointer,
+      _id_echoNonNullEnumList.pointer,
       _$bs.pointer,
     ).object<jni$_.JByteArray?>();
   }
 
-  static final _id_pigeon_echoNonNullEnumList = NativeInteropFlutterIntegrationCoreApiBridge._class
-      .instanceMethodId(r'pigeon_echoNonNullEnumList', r'([B)[B');
+  static final _id_echoNonNullClassList = NativeInteropFlutterIntegrationCoreApiBridge._class
+      .instanceMethodId(r'echoNonNullClassList', r'([B)[B');
 
-  static final _pigeon_echoNonNullEnumList =
+  static final _echoNonNullClassList =
       jni$_.ProtectedJniExtensions.lookup<
             jni$_.NativeFunction<
               jni$_.JniResult Function(
@@ -11975,22 +11835,24 @@ extension NativeInteropFlutterIntegrationCoreApiBridge$$Methods
             )
           >();
 
-  /// from: `public fun pigeon_echoNonNullEnumList(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
+  /// from: `public fun echoNonNullClassList(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
   /// The returned object must be released after use, by calling the [release] method.
-  jni$_.JByteArray? pigeon_echoNonNullEnumList(jni$_.JByteArray bs) {
+  jni$_.JByteArray? echoNonNullClassList(jni$_.JByteArray bs) {
     final _$$selfRef = reference;
     final _$bs = bs.reference;
-    return _pigeon_echoNonNullEnumList(
+    return _echoNonNullClassList(
       _$$selfRef.pointer,
-      _id_pigeon_echoNonNullEnumList.pointer,
+      _id_echoNonNullClassList.pointer,
       _$bs.pointer,
     ).object<jni$_.JByteArray?>();
   }
 
-  static final _id_pigeon_echoNonNullClassList = NativeInteropFlutterIntegrationCoreApiBridge._class
-      .instanceMethodId(r'pigeon_echoNonNullClassList', r'([B)[B');
+  static final _id_echoMap = NativeInteropFlutterIntegrationCoreApiBridge._class.instanceMethodId(
+    r'echoMap',
+    r'([B)[B',
+  );
 
-  static final _pigeon_echoNonNullClassList =
+  static final _echoMap =
       jni$_.ProtectedJniExtensions.lookup<
             jni$_.NativeFunction<
               jni$_.JniResult Function(
@@ -12008,22 +11870,22 @@ extension NativeInteropFlutterIntegrationCoreApiBridge$$Methods
             )
           >();
 
-  /// from: `public fun pigeon_echoNonNullClassList(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
+  /// from: `public fun echoMap(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
   /// The returned object must be released after use, by calling the [release] method.
-  jni$_.JByteArray? pigeon_echoNonNullClassList(jni$_.JByteArray bs) {
+  jni$_.JByteArray? echoMap(jni$_.JByteArray bs) {
     final _$$selfRef = reference;
     final _$bs = bs.reference;
-    return _pigeon_echoNonNullClassList(
+    return _echoMap(
       _$$selfRef.pointer,
-      _id_pigeon_echoNonNullClassList.pointer,
+      _id_echoMap.pointer,
       _$bs.pointer,
     ).object<jni$_.JByteArray?>();
   }
 
-  static final _id_pigeon_echoMap = NativeInteropFlutterIntegrationCoreApiBridge._class
-      .instanceMethodId(r'pigeon_echoMap', r'([B)[B');
+  static final _id_echoStringMap = NativeInteropFlutterIntegrationCoreApiBridge._class
+      .instanceMethodId(r'echoStringMap', r'([B)[B');
 
-  static final _pigeon_echoMap =
+  static final _echoStringMap =
       jni$_.ProtectedJniExtensions.lookup<
             jni$_.NativeFunction<
               jni$_.JniResult Function(
@@ -12041,22 +11903,22 @@ extension NativeInteropFlutterIntegrationCoreApiBridge$$Methods
             )
           >();
 
-  /// from: `public fun pigeon_echoMap(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
+  /// from: `public fun echoStringMap(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
   /// The returned object must be released after use, by calling the [release] method.
-  jni$_.JByteArray? pigeon_echoMap(jni$_.JByteArray bs) {
+  jni$_.JByteArray? echoStringMap(jni$_.JByteArray bs) {
     final _$$selfRef = reference;
     final _$bs = bs.reference;
-    return _pigeon_echoMap(
+    return _echoStringMap(
       _$$selfRef.pointer,
-      _id_pigeon_echoMap.pointer,
+      _id_echoStringMap.pointer,
       _$bs.pointer,
     ).object<jni$_.JByteArray?>();
   }
 
-  static final _id_pigeon_echoStringMap = NativeInteropFlutterIntegrationCoreApiBridge._class
-      .instanceMethodId(r'pigeon_echoStringMap', r'([B)[B');
+  static final _id_echoIntMap = NativeInteropFlutterIntegrationCoreApiBridge._class
+      .instanceMethodId(r'echoIntMap', r'([B)[B');
 
-  static final _pigeon_echoStringMap =
+  static final _echoIntMap =
       jni$_.ProtectedJniExtensions.lookup<
             jni$_.NativeFunction<
               jni$_.JniResult Function(
@@ -12074,22 +11936,22 @@ extension NativeInteropFlutterIntegrationCoreApiBridge$$Methods
             )
           >();
 
-  /// from: `public fun pigeon_echoStringMap(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
+  /// from: `public fun echoIntMap(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
   /// The returned object must be released after use, by calling the [release] method.
-  jni$_.JByteArray? pigeon_echoStringMap(jni$_.JByteArray bs) {
+  jni$_.JByteArray? echoIntMap(jni$_.JByteArray bs) {
     final _$$selfRef = reference;
     final _$bs = bs.reference;
-    return _pigeon_echoStringMap(
+    return _echoIntMap(
       _$$selfRef.pointer,
-      _id_pigeon_echoStringMap.pointer,
+      _id_echoIntMap.pointer,
       _$bs.pointer,
     ).object<jni$_.JByteArray?>();
   }
 
-  static final _id_pigeon_echoIntMap = NativeInteropFlutterIntegrationCoreApiBridge._class
-      .instanceMethodId(r'pigeon_echoIntMap', r'([B)[B');
+  static final _id_echoEnumMap = NativeInteropFlutterIntegrationCoreApiBridge._class
+      .instanceMethodId(r'echoEnumMap', r'([B)[B');
 
-  static final _pigeon_echoIntMap =
+  static final _echoEnumMap =
       jni$_.ProtectedJniExtensions.lookup<
             jni$_.NativeFunction<
               jni$_.JniResult Function(
@@ -12107,22 +11969,22 @@ extension NativeInteropFlutterIntegrationCoreApiBridge$$Methods
             )
           >();
 
-  /// from: `public fun pigeon_echoIntMap(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
+  /// from: `public fun echoEnumMap(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
   /// The returned object must be released after use, by calling the [release] method.
-  jni$_.JByteArray? pigeon_echoIntMap(jni$_.JByteArray bs) {
+  jni$_.JByteArray? echoEnumMap(jni$_.JByteArray bs) {
     final _$$selfRef = reference;
     final _$bs = bs.reference;
-    return _pigeon_echoIntMap(
+    return _echoEnumMap(
       _$$selfRef.pointer,
-      _id_pigeon_echoIntMap.pointer,
+      _id_echoEnumMap.pointer,
       _$bs.pointer,
     ).object<jni$_.JByteArray?>();
   }
 
-  static final _id_pigeon_echoEnumMap = NativeInteropFlutterIntegrationCoreApiBridge._class
-      .instanceMethodId(r'pigeon_echoEnumMap', r'([B)[B');
+  static final _id_echoClassMap = NativeInteropFlutterIntegrationCoreApiBridge._class
+      .instanceMethodId(r'echoClassMap', r'([B)[B');
 
-  static final _pigeon_echoEnumMap =
+  static final _echoClassMap =
       jni$_.ProtectedJniExtensions.lookup<
             jni$_.NativeFunction<
               jni$_.JniResult Function(
@@ -12140,22 +12002,22 @@ extension NativeInteropFlutterIntegrationCoreApiBridge$$Methods
             )
           >();
 
-  /// from: `public fun pigeon_echoEnumMap(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
+  /// from: `public fun echoClassMap(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
   /// The returned object must be released after use, by calling the [release] method.
-  jni$_.JByteArray? pigeon_echoEnumMap(jni$_.JByteArray bs) {
+  jni$_.JByteArray? echoClassMap(jni$_.JByteArray bs) {
     final _$$selfRef = reference;
     final _$bs = bs.reference;
-    return _pigeon_echoEnumMap(
+    return _echoClassMap(
       _$$selfRef.pointer,
-      _id_pigeon_echoEnumMap.pointer,
+      _id_echoClassMap.pointer,
       _$bs.pointer,
     ).object<jni$_.JByteArray?>();
   }
 
-  static final _id_pigeon_echoClassMap = NativeInteropFlutterIntegrationCoreApiBridge._class
-      .instanceMethodId(r'pigeon_echoClassMap', r'([B)[B');
+  static final _id_echoNonNullStringMap = NativeInteropFlutterIntegrationCoreApiBridge._class
+      .instanceMethodId(r'echoNonNullStringMap', r'([B)[B');
 
-  static final _pigeon_echoClassMap =
+  static final _echoNonNullStringMap =
       jni$_.ProtectedJniExtensions.lookup<
             jni$_.NativeFunction<
               jni$_.JniResult Function(
@@ -12173,22 +12035,22 @@ extension NativeInteropFlutterIntegrationCoreApiBridge$$Methods
             )
           >();
 
-  /// from: `public fun pigeon_echoClassMap(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
+  /// from: `public fun echoNonNullStringMap(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
   /// The returned object must be released after use, by calling the [release] method.
-  jni$_.JByteArray? pigeon_echoClassMap(jni$_.JByteArray bs) {
+  jni$_.JByteArray? echoNonNullStringMap(jni$_.JByteArray bs) {
     final _$$selfRef = reference;
     final _$bs = bs.reference;
-    return _pigeon_echoClassMap(
+    return _echoNonNullStringMap(
       _$$selfRef.pointer,
-      _id_pigeon_echoClassMap.pointer,
+      _id_echoNonNullStringMap.pointer,
       _$bs.pointer,
     ).object<jni$_.JByteArray?>();
   }
 
-  static final _id_pigeon_echoNonNullStringMap = NativeInteropFlutterIntegrationCoreApiBridge._class
-      .instanceMethodId(r'pigeon_echoNonNullStringMap', r'([B)[B');
+  static final _id_echoNonNullIntMap = NativeInteropFlutterIntegrationCoreApiBridge._class
+      .instanceMethodId(r'echoNonNullIntMap', r'([B)[B');
 
-  static final _pigeon_echoNonNullStringMap =
+  static final _echoNonNullIntMap =
       jni$_.ProtectedJniExtensions.lookup<
             jni$_.NativeFunction<
               jni$_.JniResult Function(
@@ -12206,22 +12068,22 @@ extension NativeInteropFlutterIntegrationCoreApiBridge$$Methods
             )
           >();
 
-  /// from: `public fun pigeon_echoNonNullStringMap(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
+  /// from: `public fun echoNonNullIntMap(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
   /// The returned object must be released after use, by calling the [release] method.
-  jni$_.JByteArray? pigeon_echoNonNullStringMap(jni$_.JByteArray bs) {
+  jni$_.JByteArray? echoNonNullIntMap(jni$_.JByteArray bs) {
     final _$$selfRef = reference;
     final _$bs = bs.reference;
-    return _pigeon_echoNonNullStringMap(
+    return _echoNonNullIntMap(
       _$$selfRef.pointer,
-      _id_pigeon_echoNonNullStringMap.pointer,
+      _id_echoNonNullIntMap.pointer,
       _$bs.pointer,
     ).object<jni$_.JByteArray?>();
   }
 
-  static final _id_pigeon_echoNonNullIntMap = NativeInteropFlutterIntegrationCoreApiBridge._class
-      .instanceMethodId(r'pigeon_echoNonNullIntMap', r'([B)[B');
+  static final _id_echoNonNullEnumMap = NativeInteropFlutterIntegrationCoreApiBridge._class
+      .instanceMethodId(r'echoNonNullEnumMap', r'([B)[B');
 
-  static final _pigeon_echoNonNullIntMap =
+  static final _echoNonNullEnumMap =
       jni$_.ProtectedJniExtensions.lookup<
             jni$_.NativeFunction<
               jni$_.JniResult Function(
@@ -12239,22 +12101,22 @@ extension NativeInteropFlutterIntegrationCoreApiBridge$$Methods
             )
           >();
 
-  /// from: `public fun pigeon_echoNonNullIntMap(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
+  /// from: `public fun echoNonNullEnumMap(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
   /// The returned object must be released after use, by calling the [release] method.
-  jni$_.JByteArray? pigeon_echoNonNullIntMap(jni$_.JByteArray bs) {
+  jni$_.JByteArray? echoNonNullEnumMap(jni$_.JByteArray bs) {
     final _$$selfRef = reference;
     final _$bs = bs.reference;
-    return _pigeon_echoNonNullIntMap(
+    return _echoNonNullEnumMap(
       _$$selfRef.pointer,
-      _id_pigeon_echoNonNullIntMap.pointer,
+      _id_echoNonNullEnumMap.pointer,
       _$bs.pointer,
     ).object<jni$_.JByteArray?>();
   }
 
-  static final _id_pigeon_echoNonNullEnumMap = NativeInteropFlutterIntegrationCoreApiBridge._class
-      .instanceMethodId(r'pigeon_echoNonNullEnumMap', r'([B)[B');
+  static final _id_echoNonNullClassMap = NativeInteropFlutterIntegrationCoreApiBridge._class
+      .instanceMethodId(r'echoNonNullClassMap', r'([B)[B');
 
-  static final _pigeon_echoNonNullEnumMap =
+  static final _echoNonNullClassMap =
       jni$_.ProtectedJniExtensions.lookup<
             jni$_.NativeFunction<
               jni$_.JniResult Function(
@@ -12272,55 +12134,24 @@ extension NativeInteropFlutterIntegrationCoreApiBridge$$Methods
             )
           >();
 
-  /// from: `public fun pigeon_echoNonNullEnumMap(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
+  /// from: `public fun echoNonNullClassMap(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
   /// The returned object must be released after use, by calling the [release] method.
-  jni$_.JByteArray? pigeon_echoNonNullEnumMap(jni$_.JByteArray bs) {
+  jni$_.JByteArray? echoNonNullClassMap(jni$_.JByteArray bs) {
     final _$$selfRef = reference;
     final _$bs = bs.reference;
-    return _pigeon_echoNonNullEnumMap(
+    return _echoNonNullClassMap(
       _$$selfRef.pointer,
-      _id_pigeon_echoNonNullEnumMap.pointer,
+      _id_echoNonNullClassMap.pointer,
       _$bs.pointer,
     ).object<jni$_.JByteArray?>();
   }
 
-  static final _id_pigeon_echoNonNullClassMap = NativeInteropFlutterIntegrationCoreApiBridge._class
-      .instanceMethodId(r'pigeon_echoNonNullClassMap', r'([B)[B');
+  static final _id_echoEnum = NativeInteropFlutterIntegrationCoreApiBridge._class.instanceMethodId(
+    r'echoEnum',
+    r'(J)J',
+  );
 
-  static final _pigeon_echoNonNullClassMap =
-      jni$_.ProtectedJniExtensions.lookup<
-            jni$_.NativeFunction<
-              jni$_.JniResult Function(
-                jni$_.Pointer<jni$_.Void>,
-                jni$_.JMethodIDPtr,
-                jni$_.VarArgs<(jni$_.Pointer<jni$_.Void>,)>,
-              )
-            >
-          >('globalEnv_CallObjectMethod')
-          .asFunction<
-            jni$_.JniResult Function(
-              jni$_.Pointer<jni$_.Void>,
-              jni$_.JMethodIDPtr,
-              jni$_.Pointer<jni$_.Void>,
-            )
-          >();
-
-  /// from: `public fun pigeon_echoNonNullClassMap(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
-  /// The returned object must be released after use, by calling the [release] method.
-  jni$_.JByteArray? pigeon_echoNonNullClassMap(jni$_.JByteArray bs) {
-    final _$$selfRef = reference;
-    final _$bs = bs.reference;
-    return _pigeon_echoNonNullClassMap(
-      _$$selfRef.pointer,
-      _id_pigeon_echoNonNullClassMap.pointer,
-      _$bs.pointer,
-    ).object<jni$_.JByteArray?>();
-  }
-
-  static final _id_pigeon_echoEnum = NativeInteropFlutterIntegrationCoreApiBridge._class
-      .instanceMethodId(r'pigeon_echoEnum', r'(J)J');
-
-  static final _pigeon_echoEnum =
+  static final _echoEnum =
       jni$_.ProtectedJniExtensions.lookup<
             jni$_.NativeFunction<
               jni$_.JniResult Function(
@@ -12334,19 +12165,17 @@ extension NativeInteropFlutterIntegrationCoreApiBridge$$Methods
             jni$_.JniResult Function(jni$_.Pointer<jni$_.Void>, jni$_.JMethodIDPtr, core$_.int)
           >();
 
-  /// from: `public fun pigeon_echoEnum(anEnum: kotlin.Long): kotlin.Long`
-  core$_.int pigeon_echoEnum(core$_.int j) {
+  /// from: `public fun echoEnum(anEnum: kotlin.Long): kotlin.Long`
+  core$_.int echoEnum(core$_.int j) {
     final _$$selfRef = reference;
-    return _pigeon_echoEnum(_$$selfRef.pointer, _id_pigeon_echoEnum.pointer, j).long;
+    return _echoEnum(_$$selfRef.pointer, _id_echoEnum.pointer, j).long;
   }
 
-  static final _id_pigeon_echoNativeInteropAnotherEnum =
-      NativeInteropFlutterIntegrationCoreApiBridge._class.instanceMethodId(
-        r'pigeon_echoNativeInteropAnotherEnum',
-        r'(J)J',
-      );
+  static final _id_echoNativeInteropAnotherEnum = NativeInteropFlutterIntegrationCoreApiBridge
+      ._class
+      .instanceMethodId(r'echoNativeInteropAnotherEnum', r'(J)J');
 
-  static final _pigeon_echoNativeInteropAnotherEnum =
+  static final _echoNativeInteropAnotherEnum =
       jni$_.ProtectedJniExtensions.lookup<
             jni$_.NativeFunction<
               jni$_.JniResult Function(
@@ -12360,20 +12189,20 @@ extension NativeInteropFlutterIntegrationCoreApiBridge$$Methods
             jni$_.JniResult Function(jni$_.Pointer<jni$_.Void>, jni$_.JMethodIDPtr, core$_.int)
           >();
 
-  /// from: `public fun pigeon_echoNativeInteropAnotherEnum(anotherEnum: kotlin.Long): kotlin.Long`
-  core$_.int pigeon_echoNativeInteropAnotherEnum(core$_.int j) {
+  /// from: `public fun echoNativeInteropAnotherEnum(anotherEnum: kotlin.Long): kotlin.Long`
+  core$_.int echoNativeInteropAnotherEnum(core$_.int j) {
     final _$$selfRef = reference;
-    return _pigeon_echoNativeInteropAnotherEnum(
+    return _echoNativeInteropAnotherEnum(
       _$$selfRef.pointer,
-      _id_pigeon_echoNativeInteropAnotherEnum.pointer,
+      _id_echoNativeInteropAnotherEnum.pointer,
       j,
     ).long;
   }
 
-  static final _id_pigeon_echoNullableBool = NativeInteropFlutterIntegrationCoreApiBridge._class
-      .instanceMethodId(r'pigeon_echoNullableBool', r'(Ljava/lang/Boolean;)Ljava/lang/Boolean;');
+  static final _id_echoNullableBool = NativeInteropFlutterIntegrationCoreApiBridge._class
+      .instanceMethodId(r'echoNullableBool', r'(Ljava/lang/Boolean;)Ljava/lang/Boolean;');
 
-  static final _pigeon_echoNullableBool =
+  static final _echoNullableBool =
       jni$_.ProtectedJniExtensions.lookup<
             jni$_.NativeFunction<
               jni$_.JniResult Function(
@@ -12391,22 +12220,22 @@ extension NativeInteropFlutterIntegrationCoreApiBridge$$Methods
             )
           >();
 
-  /// from: `public fun pigeon_echoNullableBool(aBool: kotlin.Boolean?): kotlin.Boolean?`
+  /// from: `public fun echoNullableBool(aBool: kotlin.Boolean?): kotlin.Boolean?`
   /// The returned object must be released after use, by calling the [release] method.
-  jni$_.JBoolean? pigeon_echoNullableBool(jni$_.JBoolean? boolean) {
+  jni$_.JBoolean? echoNullableBool(jni$_.JBoolean? boolean) {
     final _$$selfRef = reference;
     final _$boolean = boolean?.reference ?? jni$_.jNullReference;
-    return _pigeon_echoNullableBool(
+    return _echoNullableBool(
       _$$selfRef.pointer,
-      _id_pigeon_echoNullableBool.pointer,
+      _id_echoNullableBool.pointer,
       _$boolean.pointer,
     ).object<jni$_.JBoolean?>();
   }
 
-  static final _id_pigeon_echoNullableInt = NativeInteropFlutterIntegrationCoreApiBridge._class
-      .instanceMethodId(r'pigeon_echoNullableInt', r'(Ljava/lang/Long;)Ljava/lang/Long;');
+  static final _id_echoNullableInt = NativeInteropFlutterIntegrationCoreApiBridge._class
+      .instanceMethodId(r'echoNullableInt', r'(Ljava/lang/Long;)Ljava/lang/Long;');
 
-  static final _pigeon_echoNullableInt =
+  static final _echoNullableInt =
       jni$_.ProtectedJniExtensions.lookup<
             jni$_.NativeFunction<
               jni$_.JniResult Function(
@@ -12424,22 +12253,22 @@ extension NativeInteropFlutterIntegrationCoreApiBridge$$Methods
             )
           >();
 
-  /// from: `public fun pigeon_echoNullableInt(anInt: kotlin.Long?): kotlin.Long?`
+  /// from: `public fun echoNullableInt(anInt: kotlin.Long?): kotlin.Long?`
   /// The returned object must be released after use, by calling the [release] method.
-  jni$_.JLong? pigeon_echoNullableInt(jni$_.JLong? long) {
+  jni$_.JLong? echoNullableInt(jni$_.JLong? long) {
     final _$$selfRef = reference;
     final _$long = long?.reference ?? jni$_.jNullReference;
-    return _pigeon_echoNullableInt(
+    return _echoNullableInt(
       _$$selfRef.pointer,
-      _id_pigeon_echoNullableInt.pointer,
+      _id_echoNullableInt.pointer,
       _$long.pointer,
     ).object<jni$_.JLong?>();
   }
 
-  static final _id_pigeon_echoNullableDouble = NativeInteropFlutterIntegrationCoreApiBridge._class
-      .instanceMethodId(r'pigeon_echoNullableDouble', r'(Ljava/lang/Double;)Ljava/lang/Double;');
+  static final _id_echoNullableDouble = NativeInteropFlutterIntegrationCoreApiBridge._class
+      .instanceMethodId(r'echoNullableDouble', r'(Ljava/lang/Double;)Ljava/lang/Double;');
 
-  static final _pigeon_echoNullableDouble =
+  static final _echoNullableDouble =
       jni$_.ProtectedJniExtensions.lookup<
             jni$_.NativeFunction<
               jni$_.JniResult Function(
@@ -12457,22 +12286,22 @@ extension NativeInteropFlutterIntegrationCoreApiBridge$$Methods
             )
           >();
 
-  /// from: `public fun pigeon_echoNullableDouble(aDouble: kotlin.Double?): kotlin.Double?`
+  /// from: `public fun echoNullableDouble(aDouble: kotlin.Double?): kotlin.Double?`
   /// The returned object must be released after use, by calling the [release] method.
-  jni$_.JDouble? pigeon_echoNullableDouble(jni$_.JDouble? double) {
+  jni$_.JDouble? echoNullableDouble(jni$_.JDouble? double) {
     final _$$selfRef = reference;
     final _$double = double?.reference ?? jni$_.jNullReference;
-    return _pigeon_echoNullableDouble(
+    return _echoNullableDouble(
       _$$selfRef.pointer,
-      _id_pigeon_echoNullableDouble.pointer,
+      _id_echoNullableDouble.pointer,
       _$double.pointer,
     ).object<jni$_.JDouble?>();
   }
 
-  static final _id_pigeon_echoNullableString = NativeInteropFlutterIntegrationCoreApiBridge._class
-      .instanceMethodId(r'pigeon_echoNullableString', r'(Ljava/lang/String;)Ljava/lang/String;');
+  static final _id_echoNullableString = NativeInteropFlutterIntegrationCoreApiBridge._class
+      .instanceMethodId(r'echoNullableString', r'(Ljava/lang/String;)Ljava/lang/String;');
 
-  static final _pigeon_echoNullableString =
+  static final _echoNullableString =
       jni$_.ProtectedJniExtensions.lookup<
             jni$_.NativeFunction<
               jni$_.JniResult Function(
@@ -12490,23 +12319,22 @@ extension NativeInteropFlutterIntegrationCoreApiBridge$$Methods
             )
           >();
 
-  /// from: `public fun pigeon_echoNullableString(aString: kotlin.String?): kotlin.String?`
+  /// from: `public fun echoNullableString(aString: kotlin.String?): kotlin.String?`
   /// The returned object must be released after use, by calling the [release] method.
-  jni$_.JString? pigeon_echoNullableString(jni$_.JString? string) {
+  jni$_.JString? echoNullableString(jni$_.JString? string) {
     final _$$selfRef = reference;
     final _$string = string?.reference ?? jni$_.jNullReference;
-    return _pigeon_echoNullableString(
+    return _echoNullableString(
       _$$selfRef.pointer,
-      _id_pigeon_echoNullableString.pointer,
+      _id_echoNullableString.pointer,
       _$string.pointer,
     ).object<jni$_.JString?>();
   }
 
-  static final _id_pigeon_echoNullableUint8List = NativeInteropFlutterIntegrationCoreApiBridge
-      ._class
-      .instanceMethodId(r'pigeon_echoNullableUint8List', r'([B)[B');
+  static final _id_echoNullableUint8List = NativeInteropFlutterIntegrationCoreApiBridge._class
+      .instanceMethodId(r'echoNullableUint8List', r'([B)[B');
 
-  static final _pigeon_echoNullableUint8List =
+  static final _echoNullableUint8List =
       jni$_.ProtectedJniExtensions.lookup<
             jni$_.NativeFunction<
               jni$_.JniResult Function(
@@ -12524,23 +12352,22 @@ extension NativeInteropFlutterIntegrationCoreApiBridge$$Methods
             )
           >();
 
-  /// from: `public fun pigeon_echoNullableUint8List(list: kotlin.ByteArray?): kotlin.ByteArray?`
+  /// from: `public fun echoNullableUint8List(list: kotlin.ByteArray?): kotlin.ByteArray?`
   /// The returned object must be released after use, by calling the [release] method.
-  jni$_.JByteArray? pigeon_echoNullableUint8List(jni$_.JByteArray? bs) {
+  jni$_.JByteArray? echoNullableUint8List(jni$_.JByteArray? bs) {
     final _$$selfRef = reference;
     final _$bs = bs?.reference ?? jni$_.jNullReference;
-    return _pigeon_echoNullableUint8List(
+    return _echoNullableUint8List(
       _$$selfRef.pointer,
-      _id_pigeon_echoNullableUint8List.pointer,
+      _id_echoNullableUint8List.pointer,
       _$bs.pointer,
     ).object<jni$_.JByteArray?>();
   }
 
-  static final _id_pigeon_echoNullableInt32List = NativeInteropFlutterIntegrationCoreApiBridge
-      ._class
-      .instanceMethodId(r'pigeon_echoNullableInt32List', r'([I)[I');
+  static final _id_echoNullableInt32List = NativeInteropFlutterIntegrationCoreApiBridge._class
+      .instanceMethodId(r'echoNullableInt32List', r'([I)[I');
 
-  static final _pigeon_echoNullableInt32List =
+  static final _echoNullableInt32List =
       jni$_.ProtectedJniExtensions.lookup<
             jni$_.NativeFunction<
               jni$_.JniResult Function(
@@ -12558,23 +12385,22 @@ extension NativeInteropFlutterIntegrationCoreApiBridge$$Methods
             )
           >();
 
-  /// from: `public fun pigeon_echoNullableInt32List(list: kotlin.IntArray?): kotlin.IntArray?`
+  /// from: `public fun echoNullableInt32List(list: kotlin.IntArray?): kotlin.IntArray?`
   /// The returned object must be released after use, by calling the [release] method.
-  jni$_.JIntArray? pigeon_echoNullableInt32List(jni$_.JIntArray? is$) {
+  jni$_.JIntArray? echoNullableInt32List(jni$_.JIntArray? is$) {
     final _$$selfRef = reference;
     final _$is$ = is$?.reference ?? jni$_.jNullReference;
-    return _pigeon_echoNullableInt32List(
+    return _echoNullableInt32List(
       _$$selfRef.pointer,
-      _id_pigeon_echoNullableInt32List.pointer,
+      _id_echoNullableInt32List.pointer,
       _$is$.pointer,
     ).object<jni$_.JIntArray?>();
   }
 
-  static final _id_pigeon_echoNullableInt64List = NativeInteropFlutterIntegrationCoreApiBridge
-      ._class
-      .instanceMethodId(r'pigeon_echoNullableInt64List', r'([J)[J');
+  static final _id_echoNullableInt64List = NativeInteropFlutterIntegrationCoreApiBridge._class
+      .instanceMethodId(r'echoNullableInt64List', r'([J)[J');
 
-  static final _pigeon_echoNullableInt64List =
+  static final _echoNullableInt64List =
       jni$_.ProtectedJniExtensions.lookup<
             jni$_.NativeFunction<
               jni$_.JniResult Function(
@@ -12592,23 +12418,22 @@ extension NativeInteropFlutterIntegrationCoreApiBridge$$Methods
             )
           >();
 
-  /// from: `public fun pigeon_echoNullableInt64List(list: kotlin.LongArray?): kotlin.LongArray?`
+  /// from: `public fun echoNullableInt64List(list: kotlin.LongArray?): kotlin.LongArray?`
   /// The returned object must be released after use, by calling the [release] method.
-  jni$_.JLongArray? pigeon_echoNullableInt64List(jni$_.JLongArray? js) {
+  jni$_.JLongArray? echoNullableInt64List(jni$_.JLongArray? js) {
     final _$$selfRef = reference;
     final _$js = js?.reference ?? jni$_.jNullReference;
-    return _pigeon_echoNullableInt64List(
+    return _echoNullableInt64List(
       _$$selfRef.pointer,
-      _id_pigeon_echoNullableInt64List.pointer,
+      _id_echoNullableInt64List.pointer,
       _$js.pointer,
     ).object<jni$_.JLongArray?>();
   }
 
-  static final _id_pigeon_echoNullableFloat64List = NativeInteropFlutterIntegrationCoreApiBridge
-      ._class
-      .instanceMethodId(r'pigeon_echoNullableFloat64List', r'([D)[D');
+  static final _id_echoNullableFloat64List = NativeInteropFlutterIntegrationCoreApiBridge._class
+      .instanceMethodId(r'echoNullableFloat64List', r'([D)[D');
 
-  static final _pigeon_echoNullableFloat64List =
+  static final _echoNullableFloat64List =
       jni$_.ProtectedJniExtensions.lookup<
             jni$_.NativeFunction<
               jni$_.JniResult Function(
@@ -12626,22 +12451,22 @@ extension NativeInteropFlutterIntegrationCoreApiBridge$$Methods
             )
           >();
 
-  /// from: `public fun pigeon_echoNullableFloat64List(list: kotlin.DoubleArray?): kotlin.DoubleArray?`
+  /// from: `public fun echoNullableFloat64List(list: kotlin.DoubleArray?): kotlin.DoubleArray?`
   /// The returned object must be released after use, by calling the [release] method.
-  jni$_.JDoubleArray? pigeon_echoNullableFloat64List(jni$_.JDoubleArray? ds) {
+  jni$_.JDoubleArray? echoNullableFloat64List(jni$_.JDoubleArray? ds) {
     final _$$selfRef = reference;
     final _$ds = ds?.reference ?? jni$_.jNullReference;
-    return _pigeon_echoNullableFloat64List(
+    return _echoNullableFloat64List(
       _$$selfRef.pointer,
-      _id_pigeon_echoNullableFloat64List.pointer,
+      _id_echoNullableFloat64List.pointer,
       _$ds.pointer,
     ).object<jni$_.JDoubleArray?>();
   }
 
-  static final _id_pigeon_echoNullableList = NativeInteropFlutterIntegrationCoreApiBridge._class
-      .instanceMethodId(r'pigeon_echoNullableList', r'([B)[B');
+  static final _id_echoNullableList = NativeInteropFlutterIntegrationCoreApiBridge._class
+      .instanceMethodId(r'echoNullableList', r'([B)[B');
 
-  static final _pigeon_echoNullableList =
+  static final _echoNullableList =
       jni$_.ProtectedJniExtensions.lookup<
             jni$_.NativeFunction<
               jni$_.JniResult Function(
@@ -12659,22 +12484,22 @@ extension NativeInteropFlutterIntegrationCoreApiBridge$$Methods
             )
           >();
 
-  /// from: `public fun pigeon_echoNullableList(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
+  /// from: `public fun echoNullableList(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
   /// The returned object must be released after use, by calling the [release] method.
-  jni$_.JByteArray? pigeon_echoNullableList(jni$_.JByteArray bs) {
+  jni$_.JByteArray? echoNullableList(jni$_.JByteArray bs) {
     final _$$selfRef = reference;
     final _$bs = bs.reference;
-    return _pigeon_echoNullableList(
+    return _echoNullableList(
       _$$selfRef.pointer,
-      _id_pigeon_echoNullableList.pointer,
+      _id_echoNullableList.pointer,
       _$bs.pointer,
     ).object<jni$_.JByteArray?>();
   }
 
-  static final _id_pigeon_echoNullableEnumList = NativeInteropFlutterIntegrationCoreApiBridge._class
-      .instanceMethodId(r'pigeon_echoNullableEnumList', r'([B)[B');
+  static final _id_echoNullableEnumList = NativeInteropFlutterIntegrationCoreApiBridge._class
+      .instanceMethodId(r'echoNullableEnumList', r'([B)[B');
 
-  static final _pigeon_echoNullableEnumList =
+  static final _echoNullableEnumList =
       jni$_.ProtectedJniExtensions.lookup<
             jni$_.NativeFunction<
               jni$_.JniResult Function(
@@ -12692,23 +12517,89 @@ extension NativeInteropFlutterIntegrationCoreApiBridge$$Methods
             )
           >();
 
-  /// from: `public fun pigeon_echoNullableEnumList(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
+  /// from: `public fun echoNullableEnumList(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
   /// The returned object must be released after use, by calling the [release] method.
-  jni$_.JByteArray? pigeon_echoNullableEnumList(jni$_.JByteArray bs) {
+  jni$_.JByteArray? echoNullableEnumList(jni$_.JByteArray bs) {
     final _$$selfRef = reference;
     final _$bs = bs.reference;
-    return _pigeon_echoNullableEnumList(
+    return _echoNullableEnumList(
       _$$selfRef.pointer,
-      _id_pigeon_echoNullableEnumList.pointer,
+      _id_echoNullableEnumList.pointer,
       _$bs.pointer,
     ).object<jni$_.JByteArray?>();
   }
 
-  static final _id_pigeon_echoNullableClassList = NativeInteropFlutterIntegrationCoreApiBridge
+  static final _id_echoNullableClassList = NativeInteropFlutterIntegrationCoreApiBridge._class
+      .instanceMethodId(r'echoNullableClassList', r'([B)[B');
+
+  static final _echoNullableClassList =
+      jni$_.ProtectedJniExtensions.lookup<
+            jni$_.NativeFunction<
+              jni$_.JniResult Function(
+                jni$_.Pointer<jni$_.Void>,
+                jni$_.JMethodIDPtr,
+                jni$_.VarArgs<(jni$_.Pointer<jni$_.Void>,)>,
+              )
+            >
+          >('globalEnv_CallObjectMethod')
+          .asFunction<
+            jni$_.JniResult Function(
+              jni$_.Pointer<jni$_.Void>,
+              jni$_.JMethodIDPtr,
+              jni$_.Pointer<jni$_.Void>,
+            )
+          >();
+
+  /// from: `public fun echoNullableClassList(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
+  /// The returned object must be released after use, by calling the [release] method.
+  jni$_.JByteArray? echoNullableClassList(jni$_.JByteArray bs) {
+    final _$$selfRef = reference;
+    final _$bs = bs.reference;
+    return _echoNullableClassList(
+      _$$selfRef.pointer,
+      _id_echoNullableClassList.pointer,
+      _$bs.pointer,
+    ).object<jni$_.JByteArray?>();
+  }
+
+  static final _id_echoNullableNonNullEnumList = NativeInteropFlutterIntegrationCoreApiBridge._class
+      .instanceMethodId(r'echoNullableNonNullEnumList', r'([B)[B');
+
+  static final _echoNullableNonNullEnumList =
+      jni$_.ProtectedJniExtensions.lookup<
+            jni$_.NativeFunction<
+              jni$_.JniResult Function(
+                jni$_.Pointer<jni$_.Void>,
+                jni$_.JMethodIDPtr,
+                jni$_.VarArgs<(jni$_.Pointer<jni$_.Void>,)>,
+              )
+            >
+          >('globalEnv_CallObjectMethod')
+          .asFunction<
+            jni$_.JniResult Function(
+              jni$_.Pointer<jni$_.Void>,
+              jni$_.JMethodIDPtr,
+              jni$_.Pointer<jni$_.Void>,
+            )
+          >();
+
+  /// from: `public fun echoNullableNonNullEnumList(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
+  /// The returned object must be released after use, by calling the [release] method.
+  jni$_.JByteArray? echoNullableNonNullEnumList(jni$_.JByteArray bs) {
+    final _$$selfRef = reference;
+    final _$bs = bs.reference;
+    return _echoNullableNonNullEnumList(
+      _$$selfRef.pointer,
+      _id_echoNullableNonNullEnumList.pointer,
+      _$bs.pointer,
+    ).object<jni$_.JByteArray?>();
+  }
+
+  static final _id_echoNullableNonNullClassList = NativeInteropFlutterIntegrationCoreApiBridge
       ._class
-      .instanceMethodId(r'pigeon_echoNullableClassList', r'([B)[B');
+      .instanceMethodId(r'echoNullableNonNullClassList', r'([B)[B');
 
-  static final _pigeon_echoNullableClassList =
+  static final _echoNullableNonNullClassList =
       jni$_.ProtectedJniExtensions.lookup<
             jni$_.NativeFunction<
               jni$_.JniResult Function(
@@ -12726,23 +12617,188 @@ extension NativeInteropFlutterIntegrationCoreApiBridge$$Methods
             )
           >();
 
-  /// from: `public fun pigeon_echoNullableClassList(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
+  /// from: `public fun echoNullableNonNullClassList(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
   /// The returned object must be released after use, by calling the [release] method.
-  jni$_.JByteArray? pigeon_echoNullableClassList(jni$_.JByteArray bs) {
+  jni$_.JByteArray? echoNullableNonNullClassList(jni$_.JByteArray bs) {
     final _$$selfRef = reference;
     final _$bs = bs.reference;
-    return _pigeon_echoNullableClassList(
+    return _echoNullableNonNullClassList(
       _$$selfRef.pointer,
-      _id_pigeon_echoNullableClassList.pointer,
+      _id_echoNullableNonNullClassList.pointer,
       _$bs.pointer,
     ).object<jni$_.JByteArray?>();
   }
 
-  static final _id_pigeon_echoNullableNonNullEnumList = NativeInteropFlutterIntegrationCoreApiBridge
+  static final _id_echoNullableMap = NativeInteropFlutterIntegrationCoreApiBridge._class
+      .instanceMethodId(r'echoNullableMap', r'([B)[B');
+
+  static final _echoNullableMap =
+      jni$_.ProtectedJniExtensions.lookup<
+            jni$_.NativeFunction<
+              jni$_.JniResult Function(
+                jni$_.Pointer<jni$_.Void>,
+                jni$_.JMethodIDPtr,
+                jni$_.VarArgs<(jni$_.Pointer<jni$_.Void>,)>,
+              )
+            >
+          >('globalEnv_CallObjectMethod')
+          .asFunction<
+            jni$_.JniResult Function(
+              jni$_.Pointer<jni$_.Void>,
+              jni$_.JMethodIDPtr,
+              jni$_.Pointer<jni$_.Void>,
+            )
+          >();
+
+  /// from: `public fun echoNullableMap(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
+  /// The returned object must be released after use, by calling the [release] method.
+  jni$_.JByteArray? echoNullableMap(jni$_.JByteArray bs) {
+    final _$$selfRef = reference;
+    final _$bs = bs.reference;
+    return _echoNullableMap(
+      _$$selfRef.pointer,
+      _id_echoNullableMap.pointer,
+      _$bs.pointer,
+    ).object<jni$_.JByteArray?>();
+  }
+
+  static final _id_echoNullableStringMap = NativeInteropFlutterIntegrationCoreApiBridge._class
+      .instanceMethodId(r'echoNullableStringMap', r'([B)[B');
+
+  static final _echoNullableStringMap =
+      jni$_.ProtectedJniExtensions.lookup<
+            jni$_.NativeFunction<
+              jni$_.JniResult Function(
+                jni$_.Pointer<jni$_.Void>,
+                jni$_.JMethodIDPtr,
+                jni$_.VarArgs<(jni$_.Pointer<jni$_.Void>,)>,
+              )
+            >
+          >('globalEnv_CallObjectMethod')
+          .asFunction<
+            jni$_.JniResult Function(
+              jni$_.Pointer<jni$_.Void>,
+              jni$_.JMethodIDPtr,
+              jni$_.Pointer<jni$_.Void>,
+            )
+          >();
+
+  /// from: `public fun echoNullableStringMap(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
+  /// The returned object must be released after use, by calling the [release] method.
+  jni$_.JByteArray? echoNullableStringMap(jni$_.JByteArray bs) {
+    final _$$selfRef = reference;
+    final _$bs = bs.reference;
+    return _echoNullableStringMap(
+      _$$selfRef.pointer,
+      _id_echoNullableStringMap.pointer,
+      _$bs.pointer,
+    ).object<jni$_.JByteArray?>();
+  }
+
+  static final _id_echoNullableIntMap = NativeInteropFlutterIntegrationCoreApiBridge._class
+      .instanceMethodId(r'echoNullableIntMap', r'([B)[B');
+
+  static final _echoNullableIntMap =
+      jni$_.ProtectedJniExtensions.lookup<
+            jni$_.NativeFunction<
+              jni$_.JniResult Function(
+                jni$_.Pointer<jni$_.Void>,
+                jni$_.JMethodIDPtr,
+                jni$_.VarArgs<(jni$_.Pointer<jni$_.Void>,)>,
+              )
+            >
+          >('globalEnv_CallObjectMethod')
+          .asFunction<
+            jni$_.JniResult Function(
+              jni$_.Pointer<jni$_.Void>,
+              jni$_.JMethodIDPtr,
+              jni$_.Pointer<jni$_.Void>,
+            )
+          >();
+
+  /// from: `public fun echoNullableIntMap(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
+  /// The returned object must be released after use, by calling the [release] method.
+  jni$_.JByteArray? echoNullableIntMap(jni$_.JByteArray bs) {
+    final _$$selfRef = reference;
+    final _$bs = bs.reference;
+    return _echoNullableIntMap(
+      _$$selfRef.pointer,
+      _id_echoNullableIntMap.pointer,
+      _$bs.pointer,
+    ).object<jni$_.JByteArray?>();
+  }
+
+  static final _id_echoNullableEnumMap = NativeInteropFlutterIntegrationCoreApiBridge._class
+      .instanceMethodId(r'echoNullableEnumMap', r'([B)[B');
+
+  static final _echoNullableEnumMap =
+      jni$_.ProtectedJniExtensions.lookup<
+            jni$_.NativeFunction<
+              jni$_.JniResult Function(
+                jni$_.Pointer<jni$_.Void>,
+                jni$_.JMethodIDPtr,
+                jni$_.VarArgs<(jni$_.Pointer<jni$_.Void>,)>,
+              )
+            >
+          >('globalEnv_CallObjectMethod')
+          .asFunction<
+            jni$_.JniResult Function(
+              jni$_.Pointer<jni$_.Void>,
+              jni$_.JMethodIDPtr,
+              jni$_.Pointer<jni$_.Void>,
+            )
+          >();
+
+  /// from: `public fun echoNullableEnumMap(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
+  /// The returned object must be released after use, by calling the [release] method.
+  jni$_.JByteArray? echoNullableEnumMap(jni$_.JByteArray bs) {
+    final _$$selfRef = reference;
+    final _$bs = bs.reference;
+    return _echoNullableEnumMap(
+      _$$selfRef.pointer,
+      _id_echoNullableEnumMap.pointer,
+      _$bs.pointer,
+    ).object<jni$_.JByteArray?>();
+  }
+
+  static final _id_echoNullableClassMap = NativeInteropFlutterIntegrationCoreApiBridge._class
+      .instanceMethodId(r'echoNullableClassMap', r'([B)[B');
+
+  static final _echoNullableClassMap =
+      jni$_.ProtectedJniExtensions.lookup<
+            jni$_.NativeFunction<
+              jni$_.JniResult Function(
+                jni$_.Pointer<jni$_.Void>,
+                jni$_.JMethodIDPtr,
+                jni$_.VarArgs<(jni$_.Pointer<jni$_.Void>,)>,
+              )
+            >
+          >('globalEnv_CallObjectMethod')
+          .asFunction<
+            jni$_.JniResult Function(
+              jni$_.Pointer<jni$_.Void>,
+              jni$_.JMethodIDPtr,
+              jni$_.Pointer<jni$_.Void>,
+            )
+          >();
+
+  /// from: `public fun echoNullableClassMap(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
+  /// The returned object must be released after use, by calling the [release] method.
+  jni$_.JByteArray? echoNullableClassMap(jni$_.JByteArray bs) {
+    final _$$selfRef = reference;
+    final _$bs = bs.reference;
+    return _echoNullableClassMap(
+      _$$selfRef.pointer,
+      _id_echoNullableClassMap.pointer,
+      _$bs.pointer,
+    ).object<jni$_.JByteArray?>();
+  }
+
+  static final _id_echoNullableNonNullStringMap = NativeInteropFlutterIntegrationCoreApiBridge
       ._class
-      .instanceMethodId(r'pigeon_echoNullableNonNullEnumList', r'([B)[B');
+      .instanceMethodId(r'echoNullableNonNullStringMap', r'([B)[B');
 
-  static final _pigeon_echoNullableNonNullEnumList =
+  static final _echoNullableNonNullStringMap =
       jni$_.ProtectedJniExtensions.lookup<
             jni$_.NativeFunction<
               jni$_.JniResult Function(
@@ -12760,25 +12816,22 @@ extension NativeInteropFlutterIntegrationCoreApiBridge$$Methods
             )
           >();
 
-  /// from: `public fun pigeon_echoNullableNonNullEnumList(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
+  /// from: `public fun echoNullableNonNullStringMap(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
   /// The returned object must be released after use, by calling the [release] method.
-  jni$_.JByteArray? pigeon_echoNullableNonNullEnumList(jni$_.JByteArray bs) {
+  jni$_.JByteArray? echoNullableNonNullStringMap(jni$_.JByteArray bs) {
     final _$$selfRef = reference;
     final _$bs = bs.reference;
-    return _pigeon_echoNullableNonNullEnumList(
+    return _echoNullableNonNullStringMap(
       _$$selfRef.pointer,
-      _id_pigeon_echoNullableNonNullEnumList.pointer,
+      _id_echoNullableNonNullStringMap.pointer,
       _$bs.pointer,
     ).object<jni$_.JByteArray?>();
   }
 
-  static final _id_pigeon_echoNullableNonNullClassList =
-      NativeInteropFlutterIntegrationCoreApiBridge._class.instanceMethodId(
-        r'pigeon_echoNullableNonNullClassList',
-        r'([B)[B',
-      );
+  static final _id_echoNullableNonNullIntMap = NativeInteropFlutterIntegrationCoreApiBridge._class
+      .instanceMethodId(r'echoNullableNonNullIntMap', r'([B)[B');
 
-  static final _pigeon_echoNullableNonNullClassList =
+  static final _echoNullableNonNullIntMap =
       jni$_.ProtectedJniExtensions.lookup<
             jni$_.NativeFunction<
               jni$_.JniResult Function(
@@ -12796,22 +12849,22 @@ extension NativeInteropFlutterIntegrationCoreApiBridge$$Methods
             )
           >();
 
-  /// from: `public fun pigeon_echoNullableNonNullClassList(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
+  /// from: `public fun echoNullableNonNullIntMap(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
   /// The returned object must be released after use, by calling the [release] method.
-  jni$_.JByteArray? pigeon_echoNullableNonNullClassList(jni$_.JByteArray bs) {
+  jni$_.JByteArray? echoNullableNonNullIntMap(jni$_.JByteArray bs) {
     final _$$selfRef = reference;
     final _$bs = bs.reference;
-    return _pigeon_echoNullableNonNullClassList(
+    return _echoNullableNonNullIntMap(
       _$$selfRef.pointer,
-      _id_pigeon_echoNullableNonNullClassList.pointer,
+      _id_echoNullableNonNullIntMap.pointer,
       _$bs.pointer,
     ).object<jni$_.JByteArray?>();
   }
 
-  static final _id_pigeon_echoNullableMap = NativeInteropFlutterIntegrationCoreApiBridge._class
-      .instanceMethodId(r'pigeon_echoNullableMap', r'([B)[B');
+  static final _id_echoNullableNonNullEnumMap = NativeInteropFlutterIntegrationCoreApiBridge._class
+      .instanceMethodId(r'echoNullableNonNullEnumMap', r'([B)[B');
 
-  static final _pigeon_echoNullableMap =
+  static final _echoNullableNonNullEnumMap =
       jni$_.ProtectedJniExtensions.lookup<
             jni$_.NativeFunction<
               jni$_.JniResult Function(
@@ -12829,23 +12882,22 @@ extension NativeInteropFlutterIntegrationCoreApiBridge$$Methods
             )
           >();
 
-  /// from: `public fun pigeon_echoNullableMap(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
+  /// from: `public fun echoNullableNonNullEnumMap(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
   /// The returned object must be released after use, by calling the [release] method.
-  jni$_.JByteArray? pigeon_echoNullableMap(jni$_.JByteArray bs) {
+  jni$_.JByteArray? echoNullableNonNullEnumMap(jni$_.JByteArray bs) {
     final _$$selfRef = reference;
     final _$bs = bs.reference;
-    return _pigeon_echoNullableMap(
+    return _echoNullableNonNullEnumMap(
       _$$selfRef.pointer,
-      _id_pigeon_echoNullableMap.pointer,
+      _id_echoNullableNonNullEnumMap.pointer,
       _$bs.pointer,
     ).object<jni$_.JByteArray?>();
   }
 
-  static final _id_pigeon_echoNullableStringMap = NativeInteropFlutterIntegrationCoreApiBridge
-      ._class
-      .instanceMethodId(r'pigeon_echoNullableStringMap', r'([B)[B');
+  static final _id_echoNullableNonNullClassMap = NativeInteropFlutterIntegrationCoreApiBridge._class
+      .instanceMethodId(r'echoNullableNonNullClassMap', r'([B)[B');
 
-  static final _pigeon_echoNullableStringMap =
+  static final _echoNullableNonNullClassMap =
       jni$_.ProtectedJniExtensions.lookup<
             jni$_.NativeFunction<
               jni$_.JniResult Function(
@@ -12863,259 +12915,22 @@ extension NativeInteropFlutterIntegrationCoreApiBridge$$Methods
             )
           >();
 
-  /// from: `public fun pigeon_echoNullableStringMap(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
+  /// from: `public fun echoNullableNonNullClassMap(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
   /// The returned object must be released after use, by calling the [release] method.
-  jni$_.JByteArray? pigeon_echoNullableStringMap(jni$_.JByteArray bs) {
+  jni$_.JByteArray? echoNullableNonNullClassMap(jni$_.JByteArray bs) {
     final _$$selfRef = reference;
     final _$bs = bs.reference;
-    return _pigeon_echoNullableStringMap(
+    return _echoNullableNonNullClassMap(
       _$$selfRef.pointer,
-      _id_pigeon_echoNullableStringMap.pointer,
+      _id_echoNullableNonNullClassMap.pointer,
       _$bs.pointer,
     ).object<jni$_.JByteArray?>();
   }
 
-  static final _id_pigeon_echoNullableIntMap = NativeInteropFlutterIntegrationCoreApiBridge._class
-      .instanceMethodId(r'pigeon_echoNullableIntMap', r'([B)[B');
+  static final _id_echoNullableEnum = NativeInteropFlutterIntegrationCoreApiBridge._class
+      .instanceMethodId(r'echoNullableEnum', r'(J)J');
 
-  static final _pigeon_echoNullableIntMap =
-      jni$_.ProtectedJniExtensions.lookup<
-            jni$_.NativeFunction<
-              jni$_.JniResult Function(
-                jni$_.Pointer<jni$_.Void>,
-                jni$_.JMethodIDPtr,
-                jni$_.VarArgs<(jni$_.Pointer<jni$_.Void>,)>,
-              )
-            >
-          >('globalEnv_CallObjectMethod')
-          .asFunction<
-            jni$_.JniResult Function(
-              jni$_.Pointer<jni$_.Void>,
-              jni$_.JMethodIDPtr,
-              jni$_.Pointer<jni$_.Void>,
-            )
-          >();
-
-  /// from: `public fun pigeon_echoNullableIntMap(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
-  /// The returned object must be released after use, by calling the [release] method.
-  jni$_.JByteArray? pigeon_echoNullableIntMap(jni$_.JByteArray bs) {
-    final _$$selfRef = reference;
-    final _$bs = bs.reference;
-    return _pigeon_echoNullableIntMap(
-      _$$selfRef.pointer,
-      _id_pigeon_echoNullableIntMap.pointer,
-      _$bs.pointer,
-    ).object<jni$_.JByteArray?>();
-  }
-
-  static final _id_pigeon_echoNullableEnumMap = NativeInteropFlutterIntegrationCoreApiBridge._class
-      .instanceMethodId(r'pigeon_echoNullableEnumMap', r'([B)[B');
-
-  static final _pigeon_echoNullableEnumMap =
-      jni$_.ProtectedJniExtensions.lookup<
-            jni$_.NativeFunction<
-              jni$_.JniResult Function(
-                jni$_.Pointer<jni$_.Void>,
-                jni$_.JMethodIDPtr,
-                jni$_.VarArgs<(jni$_.Pointer<jni$_.Void>,)>,
-              )
-            >
-          >('globalEnv_CallObjectMethod')
-          .asFunction<
-            jni$_.JniResult Function(
-              jni$_.Pointer<jni$_.Void>,
-              jni$_.JMethodIDPtr,
-              jni$_.Pointer<jni$_.Void>,
-            )
-          >();
-
-  /// from: `public fun pigeon_echoNullableEnumMap(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
-  /// The returned object must be released after use, by calling the [release] method.
-  jni$_.JByteArray? pigeon_echoNullableEnumMap(jni$_.JByteArray bs) {
-    final _$$selfRef = reference;
-    final _$bs = bs.reference;
-    return _pigeon_echoNullableEnumMap(
-      _$$selfRef.pointer,
-      _id_pigeon_echoNullableEnumMap.pointer,
-      _$bs.pointer,
-    ).object<jni$_.JByteArray?>();
-  }
-
-  static final _id_pigeon_echoNullableClassMap = NativeInteropFlutterIntegrationCoreApiBridge._class
-      .instanceMethodId(r'pigeon_echoNullableClassMap', r'([B)[B');
-
-  static final _pigeon_echoNullableClassMap =
-      jni$_.ProtectedJniExtensions.lookup<
-            jni$_.NativeFunction<
-              jni$_.JniResult Function(
-                jni$_.Pointer<jni$_.Void>,
-                jni$_.JMethodIDPtr,
-                jni$_.VarArgs<(jni$_.Pointer<jni$_.Void>,)>,
-              )
-            >
-          >('globalEnv_CallObjectMethod')
-          .asFunction<
-            jni$_.JniResult Function(
-              jni$_.Pointer<jni$_.Void>,
-              jni$_.JMethodIDPtr,
-              jni$_.Pointer<jni$_.Void>,
-            )
-          >();
-
-  /// from: `public fun pigeon_echoNullableClassMap(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
-  /// The returned object must be released after use, by calling the [release] method.
-  jni$_.JByteArray? pigeon_echoNullableClassMap(jni$_.JByteArray bs) {
-    final _$$selfRef = reference;
-    final _$bs = bs.reference;
-    return _pigeon_echoNullableClassMap(
-      _$$selfRef.pointer,
-      _id_pigeon_echoNullableClassMap.pointer,
-      _$bs.pointer,
-    ).object<jni$_.JByteArray?>();
-  }
-
-  static final _id_pigeon_echoNullableNonNullStringMap =
-      NativeInteropFlutterIntegrationCoreApiBridge._class.instanceMethodId(
-        r'pigeon_echoNullableNonNullStringMap',
-        r'([B)[B',
-      );
-
-  static final _pigeon_echoNullableNonNullStringMap =
-      jni$_.ProtectedJniExtensions.lookup<
-            jni$_.NativeFunction<
-              jni$_.JniResult Function(
-                jni$_.Pointer<jni$_.Void>,
-                jni$_.JMethodIDPtr,
-                jni$_.VarArgs<(jni$_.Pointer<jni$_.Void>,)>,
-              )
-            >
-          >('globalEnv_CallObjectMethod')
-          .asFunction<
-            jni$_.JniResult Function(
-              jni$_.Pointer<jni$_.Void>,
-              jni$_.JMethodIDPtr,
-              jni$_.Pointer<jni$_.Void>,
-            )
-          >();
-
-  /// from: `public fun pigeon_echoNullableNonNullStringMap(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
-  /// The returned object must be released after use, by calling the [release] method.
-  jni$_.JByteArray? pigeon_echoNullableNonNullStringMap(jni$_.JByteArray bs) {
-    final _$$selfRef = reference;
-    final _$bs = bs.reference;
-    return _pigeon_echoNullableNonNullStringMap(
-      _$$selfRef.pointer,
-      _id_pigeon_echoNullableNonNullStringMap.pointer,
-      _$bs.pointer,
-    ).object<jni$_.JByteArray?>();
-  }
-
-  static final _id_pigeon_echoNullableNonNullIntMap = NativeInteropFlutterIntegrationCoreApiBridge
-      ._class
-      .instanceMethodId(r'pigeon_echoNullableNonNullIntMap', r'([B)[B');
-
-  static final _pigeon_echoNullableNonNullIntMap =
-      jni$_.ProtectedJniExtensions.lookup<
-            jni$_.NativeFunction<
-              jni$_.JniResult Function(
-                jni$_.Pointer<jni$_.Void>,
-                jni$_.JMethodIDPtr,
-                jni$_.VarArgs<(jni$_.Pointer<jni$_.Void>,)>,
-              )
-            >
-          >('globalEnv_CallObjectMethod')
-          .asFunction<
-            jni$_.JniResult Function(
-              jni$_.Pointer<jni$_.Void>,
-              jni$_.JMethodIDPtr,
-              jni$_.Pointer<jni$_.Void>,
-            )
-          >();
-
-  /// from: `public fun pigeon_echoNullableNonNullIntMap(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
-  /// The returned object must be released after use, by calling the [release] method.
-  jni$_.JByteArray? pigeon_echoNullableNonNullIntMap(jni$_.JByteArray bs) {
-    final _$$selfRef = reference;
-    final _$bs = bs.reference;
-    return _pigeon_echoNullableNonNullIntMap(
-      _$$selfRef.pointer,
-      _id_pigeon_echoNullableNonNullIntMap.pointer,
-      _$bs.pointer,
-    ).object<jni$_.JByteArray?>();
-  }
-
-  static final _id_pigeon_echoNullableNonNullEnumMap = NativeInteropFlutterIntegrationCoreApiBridge
-      ._class
-      .instanceMethodId(r'pigeon_echoNullableNonNullEnumMap', r'([B)[B');
-
-  static final _pigeon_echoNullableNonNullEnumMap =
-      jni$_.ProtectedJniExtensions.lookup<
-            jni$_.NativeFunction<
-              jni$_.JniResult Function(
-                jni$_.Pointer<jni$_.Void>,
-                jni$_.JMethodIDPtr,
-                jni$_.VarArgs<(jni$_.Pointer<jni$_.Void>,)>,
-              )
-            >
-          >('globalEnv_CallObjectMethod')
-          .asFunction<
-            jni$_.JniResult Function(
-              jni$_.Pointer<jni$_.Void>,
-              jni$_.JMethodIDPtr,
-              jni$_.Pointer<jni$_.Void>,
-            )
-          >();
-
-  /// from: `public fun pigeon_echoNullableNonNullEnumMap(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
-  /// The returned object must be released after use, by calling the [release] method.
-  jni$_.JByteArray? pigeon_echoNullableNonNullEnumMap(jni$_.JByteArray bs) {
-    final _$$selfRef = reference;
-    final _$bs = bs.reference;
-    return _pigeon_echoNullableNonNullEnumMap(
-      _$$selfRef.pointer,
-      _id_pigeon_echoNullableNonNullEnumMap.pointer,
-      _$bs.pointer,
-    ).object<jni$_.JByteArray?>();
-  }
-
-  static final _id_pigeon_echoNullableNonNullClassMap = NativeInteropFlutterIntegrationCoreApiBridge
-      ._class
-      .instanceMethodId(r'pigeon_echoNullableNonNullClassMap', r'([B)[B');
-
-  static final _pigeon_echoNullableNonNullClassMap =
-      jni$_.ProtectedJniExtensions.lookup<
-            jni$_.NativeFunction<
-              jni$_.JniResult Function(
-                jni$_.Pointer<jni$_.Void>,
-                jni$_.JMethodIDPtr,
-                jni$_.VarArgs<(jni$_.Pointer<jni$_.Void>,)>,
-              )
-            >
-          >('globalEnv_CallObjectMethod')
-          .asFunction<
-            jni$_.JniResult Function(
-              jni$_.Pointer<jni$_.Void>,
-              jni$_.JMethodIDPtr,
-              jni$_.Pointer<jni$_.Void>,
-            )
-          >();
-
-  /// from: `public fun pigeon_echoNullableNonNullClassMap(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
-  /// The returned object must be released after use, by calling the [release] method.
-  jni$_.JByteArray? pigeon_echoNullableNonNullClassMap(jni$_.JByteArray bs) {
-    final _$$selfRef = reference;
-    final _$bs = bs.reference;
-    return _pigeon_echoNullableNonNullClassMap(
-      _$$selfRef.pointer,
-      _id_pigeon_echoNullableNonNullClassMap.pointer,
-      _$bs.pointer,
-    ).object<jni$_.JByteArray?>();
-  }
-
-  static final _id_pigeon_echoNullableEnum = NativeInteropFlutterIntegrationCoreApiBridge._class
-      .instanceMethodId(r'pigeon_echoNullableEnum', r'(J)J');
-
-  static final _pigeon_echoNullableEnum =
+  static final _echoNullableEnum =
       jni$_.ProtectedJniExtensions.lookup<
             jni$_.NativeFunction<
               jni$_.JniResult Function(
@@ -13129,21 +12944,16 @@ extension NativeInteropFlutterIntegrationCoreApiBridge$$Methods
             jni$_.JniResult Function(jni$_.Pointer<jni$_.Void>, jni$_.JMethodIDPtr, core$_.int)
           >();
 
-  /// from: `public fun pigeon_echoNullableEnum(anEnum: kotlin.Long): kotlin.Long`
-  core$_.int pigeon_echoNullableEnum(core$_.int j) {
+  /// from: `public fun echoNullableEnum(anEnum: kotlin.Long): kotlin.Long`
+  core$_.int echoNullableEnum(core$_.int j) {
     final _$$selfRef = reference;
-    return _pigeon_echoNullableEnum(
-      _$$selfRef.pointer,
-      _id_pigeon_echoNullableEnum.pointer,
-      j,
-    ).long;
+    return _echoNullableEnum(_$$selfRef.pointer, _id_echoNullableEnum.pointer, j).long;
   }
 
-  static final _id_pigeon_echoAnotherNullableEnum = NativeInteropFlutterIntegrationCoreApiBridge
-      ._class
-      .instanceMethodId(r'pigeon_echoAnotherNullableEnum', r'(J)J');
+  static final _id_echoAnotherNullableEnum = NativeInteropFlutterIntegrationCoreApiBridge._class
+      .instanceMethodId(r'echoAnotherNullableEnum', r'(J)J');
 
-  static final _pigeon_echoAnotherNullableEnum =
+  static final _echoAnotherNullableEnum =
       jni$_.ProtectedJniExtensions.lookup<
             jni$_.NativeFunction<
               jni$_.JniResult Function(
@@ -13157,23 +12967,22 @@ extension NativeInteropFlutterIntegrationCoreApiBridge$$Methods
             jni$_.JniResult Function(jni$_.Pointer<jni$_.Void>, jni$_.JMethodIDPtr, core$_.int)
           >();
 
-  /// from: `public fun pigeon_echoAnotherNullableEnum(anotherEnum: kotlin.Long): kotlin.Long`
-  core$_.int pigeon_echoAnotherNullableEnum(core$_.int j) {
+  /// from: `public fun echoAnotherNullableEnum(anotherEnum: kotlin.Long): kotlin.Long`
+  core$_.int echoAnotherNullableEnum(core$_.int j) {
     final _$$selfRef = reference;
-    return _pigeon_echoAnotherNullableEnum(
+    return _echoAnotherNullableEnum(
       _$$selfRef.pointer,
-      _id_pigeon_echoAnotherNullableEnum.pointer,
+      _id_echoAnotherNullableEnum.pointer,
       j,
     ).long;
   }
 
-  static final _id_pigeon_noopAsync = NativeInteropFlutterIntegrationCoreApiBridge._class
-      .instanceMethodId(
-        r'pigeon_noopAsync',
-        r'(Lkotlin/coroutines/Continuation;)Ljava/lang/Object;',
-      );
+  static final _id_noopAsync = NativeInteropFlutterIntegrationCoreApiBridge._class.instanceMethodId(
+    r'noopAsync',
+    r'(Lkotlin/coroutines/Continuation;)Ljava/lang/Object;',
+  );
 
-  static final _pigeon_noopAsync =
+  static final _noopAsync =
       jni$_.ProtectedJniExtensions.lookup<
             jni$_.NativeFunction<
               jni$_.JniResult Function(
@@ -13191,15 +13000,15 @@ extension NativeInteropFlutterIntegrationCoreApiBridge$$Methods
             )
           >();
 
-  /// from: `public suspend fun pigeon_noopAsync(): kotlin.Unit`
+  /// from: `public suspend fun noopAsync(): kotlin.Unit`
   /// The returned object must be released after use, by calling the [release] method.
-  core$_.Future<void> pigeon_noopAsync() async {
+  core$_.Future<void> noopAsync() async {
     final $p = jni$_.ReceivePort();
     final _$continuation = jni$_.ProtectedJniExtensions.newPortContinuation($p);
     final _$$selfRef = reference;
-    final $r = _pigeon_noopAsync(
+    final $r = _noopAsync(
       _$$selfRef.pointer,
-      _id_pigeon_noopAsync.pointer,
+      _id_noopAsync.pointer,
       _$continuation.pointer,
     ).object<jni$_.JObject>();
     _$continuation.release();
@@ -13221,14 +13030,13 @@ extension NativeInteropFlutterIntegrationCoreApiBridge$$Methods
     return;
   }
 
-  static final _id_pigeon_throwFlutterErrorAsync = NativeInteropFlutterIntegrationCoreApiBridge
-      ._class
+  static final _id_throwFlutterErrorAsync = NativeInteropFlutterIntegrationCoreApiBridge._class
       .instanceMethodId(
-        r'pigeon_throwFlutterErrorAsync',
+        r'throwFlutterErrorAsync',
         r'(Lkotlin/coroutines/Continuation;)Ljava/lang/Object;',
       );
 
-  static final _pigeon_throwFlutterErrorAsync =
+  static final _throwFlutterErrorAsync =
       jni$_.ProtectedJniExtensions.lookup<
             jni$_.NativeFunction<
               jni$_.JniResult Function(
@@ -13246,15 +13054,15 @@ extension NativeInteropFlutterIntegrationCoreApiBridge$$Methods
             )
           >();
 
-  /// from: `public suspend fun pigeon_throwFlutterErrorAsync(): kotlin.ByteArray?`
+  /// from: `public suspend fun throwFlutterErrorAsync(): kotlin.ByteArray?`
   /// The returned object must be released after use, by calling the [release] method.
-  core$_.Future<jni$_.JByteArray?> pigeon_throwFlutterErrorAsync() async {
+  core$_.Future<jni$_.JByteArray?> throwFlutterErrorAsync() async {
     final $p = jni$_.ReceivePort();
     final _$continuation = jni$_.ProtectedJniExtensions.newPortContinuation($p);
     final _$$selfRef = reference;
-    final $r = _pigeon_throwFlutterErrorAsync(
+    final $r = _throwFlutterErrorAsync(
       _$$selfRef.pointer,
-      _id_pigeon_throwFlutterErrorAsync.pointer,
+      _id_throwFlutterErrorAsync.pointer,
       _$continuation.pointer,
     ).object<jni$_.JObject?>();
     _$continuation.release();
@@ -13278,195 +13086,192 @@ extension NativeInteropFlutterIntegrationCoreApiBridge$$Methods
     return $o?.as<jni$_.JByteArray>(jni$_.JByteArray.type, releaseOriginal: true);
   }
 
-  static final _id_pigeon_echoAsyncNativeInteropAllTypes =
-      NativeInteropFlutterIntegrationCoreApiBridge._class.instanceMethodId(
-        r'pigeon_echoAsyncNativeInteropAllTypes',
-        r'([BLkotlin/coroutines/Continuation;)Ljava/lang/Object;',
-      );
-
-  static final _pigeon_echoAsyncNativeInteropAllTypes =
-      jni$_.ProtectedJniExtensions.lookup<
-            jni$_.NativeFunction<
-              jni$_.JniResult Function(
-                jni$_.Pointer<jni$_.Void>,
-                jni$_.JMethodIDPtr,
-                jni$_.VarArgs<(jni$_.Pointer<jni$_.Void>, jni$_.Pointer<jni$_.Void>)>,
-              )
-            >
-          >('globalEnv_CallObjectMethod')
-          .asFunction<
-            jni$_.JniResult Function(
-              jni$_.Pointer<jni$_.Void>,
-              jni$_.JMethodIDPtr,
-              jni$_.Pointer<jni$_.Void>,
-              jni$_.Pointer<jni$_.Void>,
-            )
-          >();
-
-  /// from: `public suspend fun pigeon_echoAsyncNativeInteropAllTypes(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
-  /// The returned object must be released after use, by calling the [release] method.
-  core$_.Future<jni$_.JByteArray?> pigeon_echoAsyncNativeInteropAllTypes(
-    jni$_.JByteArray bs,
-  ) async {
-    final $p = jni$_.ReceivePort();
-    final _$continuation = jni$_.ProtectedJniExtensions.newPortContinuation($p);
-    final _$$selfRef = reference;
-    final _$bs = bs.reference;
-    final $r = _pigeon_echoAsyncNativeInteropAllTypes(
-      _$$selfRef.pointer,
-      _id_pigeon_echoAsyncNativeInteropAllTypes.pointer,
-      _$bs.pointer,
-      _$continuation.pointer,
-    ).object<jni$_.JObject?>();
-    _$continuation.release();
-    jni$_.JObject? $o;
-    if ($r != null && $r.isInstanceOf(jni$_.coroutineSingletonsClass)) {
-      $r.release();
-      final $a = await $p.first;
-      $o = $a == 0
-          ? null
-          : jni$_.JObject.fromReference(jni$_.JGlobalReference(jni$_.JObjectPtr.fromAddress($a)));
-      if ($o != null && $o.isInstanceOf(jni$_.result$Class)) {
-        $o = jni$_.resultValueField.get($o, const jni$_.$JObject$Type$());
-      } else if ($o != null && $o.isInstanceOf(jni$_.result$FailureClass)) {
-        final $e = jni$_.failureExceptionField.get($o, const jni$_.$JObject$Type$());
-        $o.release();
-        jni$_.Jni.throwException($e.reference.toPointer());
-      }
-    } else {
-      $o = $r;
-    }
-    return $o?.as<jni$_.JByteArray>(jni$_.JByteArray.type, releaseOriginal: true);
-  }
-
-  static final _id_pigeon_echoAsyncNullableNativeInteropAllNullableTypes =
-      NativeInteropFlutterIntegrationCoreApiBridge._class.instanceMethodId(
-        r'pigeon_echoAsyncNullableNativeInteropAllNullableTypes',
-        r'([BLkotlin/coroutines/Continuation;)Ljava/lang/Object;',
-      );
-
-  static final _pigeon_echoAsyncNullableNativeInteropAllNullableTypes =
-      jni$_.ProtectedJniExtensions.lookup<
-            jni$_.NativeFunction<
-              jni$_.JniResult Function(
-                jni$_.Pointer<jni$_.Void>,
-                jni$_.JMethodIDPtr,
-                jni$_.VarArgs<(jni$_.Pointer<jni$_.Void>, jni$_.Pointer<jni$_.Void>)>,
-              )
-            >
-          >('globalEnv_CallObjectMethod')
-          .asFunction<
-            jni$_.JniResult Function(
-              jni$_.Pointer<jni$_.Void>,
-              jni$_.JMethodIDPtr,
-              jni$_.Pointer<jni$_.Void>,
-              jni$_.Pointer<jni$_.Void>,
-            )
-          >();
-
-  /// from: `public suspend fun pigeon_echoAsyncNullableNativeInteropAllNullableTypes(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
-  /// The returned object must be released after use, by calling the [release] method.
-  core$_.Future<jni$_.JByteArray?> pigeon_echoAsyncNullableNativeInteropAllNullableTypes(
-    jni$_.JByteArray bs,
-  ) async {
-    final $p = jni$_.ReceivePort();
-    final _$continuation = jni$_.ProtectedJniExtensions.newPortContinuation($p);
-    final _$$selfRef = reference;
-    final _$bs = bs.reference;
-    final $r = _pigeon_echoAsyncNullableNativeInteropAllNullableTypes(
-      _$$selfRef.pointer,
-      _id_pigeon_echoAsyncNullableNativeInteropAllNullableTypes.pointer,
-      _$bs.pointer,
-      _$continuation.pointer,
-    ).object<jni$_.JObject?>();
-    _$continuation.release();
-    jni$_.JObject? $o;
-    if ($r != null && $r.isInstanceOf(jni$_.coroutineSingletonsClass)) {
-      $r.release();
-      final $a = await $p.first;
-      $o = $a == 0
-          ? null
-          : jni$_.JObject.fromReference(jni$_.JGlobalReference(jni$_.JObjectPtr.fromAddress($a)));
-      if ($o != null && $o.isInstanceOf(jni$_.result$Class)) {
-        $o = jni$_.resultValueField.get($o, const jni$_.$JObject$Type$());
-      } else if ($o != null && $o.isInstanceOf(jni$_.result$FailureClass)) {
-        final $e = jni$_.failureExceptionField.get($o, const jni$_.$JObject$Type$());
-        $o.release();
-        jni$_.Jni.throwException($e.reference.toPointer());
-      }
-    } else {
-      $o = $r;
-    }
-    return $o?.as<jni$_.JByteArray>(jni$_.JByteArray.type, releaseOriginal: true);
-  }
-
-  static final _id_pigeon_echoAsyncNullableNativeInteropAllNullableTypesWithoutRecursion =
-      NativeInteropFlutterIntegrationCoreApiBridge._class.instanceMethodId(
-        r'pigeon_echoAsyncNullableNativeInteropAllNullableTypesWithoutRecursion',
-        r'([BLkotlin/coroutines/Continuation;)Ljava/lang/Object;',
-      );
-
-  static final _pigeon_echoAsyncNullableNativeInteropAllNullableTypesWithoutRecursion =
-      jni$_.ProtectedJniExtensions.lookup<
-            jni$_.NativeFunction<
-              jni$_.JniResult Function(
-                jni$_.Pointer<jni$_.Void>,
-                jni$_.JMethodIDPtr,
-                jni$_.VarArgs<(jni$_.Pointer<jni$_.Void>, jni$_.Pointer<jni$_.Void>)>,
-              )
-            >
-          >('globalEnv_CallObjectMethod')
-          .asFunction<
-            jni$_.JniResult Function(
-              jni$_.Pointer<jni$_.Void>,
-              jni$_.JMethodIDPtr,
-              jni$_.Pointer<jni$_.Void>,
-              jni$_.Pointer<jni$_.Void>,
-            )
-          >();
-
-  /// from: `public suspend fun pigeon_echoAsyncNullableNativeInteropAllNullableTypesWithoutRecursion(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
-  /// The returned object must be released after use, by calling the [release] method.
-  core$_.Future<jni$_.JByteArray?>
-  pigeon_echoAsyncNullableNativeInteropAllNullableTypesWithoutRecursion(jni$_.JByteArray bs) async {
-    final $p = jni$_.ReceivePort();
-    final _$continuation = jni$_.ProtectedJniExtensions.newPortContinuation($p);
-    final _$$selfRef = reference;
-    final _$bs = bs.reference;
-    final $r = _pigeon_echoAsyncNullableNativeInteropAllNullableTypesWithoutRecursion(
-      _$$selfRef.pointer,
-      _id_pigeon_echoAsyncNullableNativeInteropAllNullableTypesWithoutRecursion.pointer,
-      _$bs.pointer,
-      _$continuation.pointer,
-    ).object<jni$_.JObject?>();
-    _$continuation.release();
-    jni$_.JObject? $o;
-    if ($r != null && $r.isInstanceOf(jni$_.coroutineSingletonsClass)) {
-      $r.release();
-      final $a = await $p.first;
-      $o = $a == 0
-          ? null
-          : jni$_.JObject.fromReference(jni$_.JGlobalReference(jni$_.JObjectPtr.fromAddress($a)));
-      if ($o != null && $o.isInstanceOf(jni$_.result$Class)) {
-        $o = jni$_.resultValueField.get($o, const jni$_.$JObject$Type$());
-      } else if ($o != null && $o.isInstanceOf(jni$_.result$FailureClass)) {
-        final $e = jni$_.failureExceptionField.get($o, const jni$_.$JObject$Type$());
-        $o.release();
-        jni$_.Jni.throwException($e.reference.toPointer());
-      }
-    } else {
-      $o = $r;
-    }
-    return $o?.as<jni$_.JByteArray>(jni$_.JByteArray.type, releaseOriginal: true);
-  }
-
-  static final _id_pigeon_echoAsyncBool = NativeInteropFlutterIntegrationCoreApiBridge._class
+  static final _id_echoAsyncNativeInteropAllTypes = NativeInteropFlutterIntegrationCoreApiBridge
+      ._class
       .instanceMethodId(
-        r'pigeon_echoAsyncBool',
-        r'(ZLkotlin/coroutines/Continuation;)Ljava/lang/Object;',
+        r'echoAsyncNativeInteropAllTypes',
+        r'([BLkotlin/coroutines/Continuation;)Ljava/lang/Object;',
       );
 
-  static final _pigeon_echoAsyncBool =
+  static final _echoAsyncNativeInteropAllTypes =
+      jni$_.ProtectedJniExtensions.lookup<
+            jni$_.NativeFunction<
+              jni$_.JniResult Function(
+                jni$_.Pointer<jni$_.Void>,
+                jni$_.JMethodIDPtr,
+                jni$_.VarArgs<(jni$_.Pointer<jni$_.Void>, jni$_.Pointer<jni$_.Void>)>,
+              )
+            >
+          >('globalEnv_CallObjectMethod')
+          .asFunction<
+            jni$_.JniResult Function(
+              jni$_.Pointer<jni$_.Void>,
+              jni$_.JMethodIDPtr,
+              jni$_.Pointer<jni$_.Void>,
+              jni$_.Pointer<jni$_.Void>,
+            )
+          >();
+
+  /// from: `public suspend fun echoAsyncNativeInteropAllTypes(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
+  /// The returned object must be released after use, by calling the [release] method.
+  core$_.Future<jni$_.JByteArray?> echoAsyncNativeInteropAllTypes(jni$_.JByteArray bs) async {
+    final $p = jni$_.ReceivePort();
+    final _$continuation = jni$_.ProtectedJniExtensions.newPortContinuation($p);
+    final _$$selfRef = reference;
+    final _$bs = bs.reference;
+    final $r = _echoAsyncNativeInteropAllTypes(
+      _$$selfRef.pointer,
+      _id_echoAsyncNativeInteropAllTypes.pointer,
+      _$bs.pointer,
+      _$continuation.pointer,
+    ).object<jni$_.JObject?>();
+    _$continuation.release();
+    jni$_.JObject? $o;
+    if ($r != null && $r.isInstanceOf(jni$_.coroutineSingletonsClass)) {
+      $r.release();
+      final $a = await $p.first;
+      $o = $a == 0
+          ? null
+          : jni$_.JObject.fromReference(jni$_.JGlobalReference(jni$_.JObjectPtr.fromAddress($a)));
+      if ($o != null && $o.isInstanceOf(jni$_.result$Class)) {
+        $o = jni$_.resultValueField.get($o, const jni$_.$JObject$Type$());
+      } else if ($o != null && $o.isInstanceOf(jni$_.result$FailureClass)) {
+        final $e = jni$_.failureExceptionField.get($o, const jni$_.$JObject$Type$());
+        $o.release();
+        jni$_.Jni.throwException($e.reference.toPointer());
+      }
+    } else {
+      $o = $r;
+    }
+    return $o?.as<jni$_.JByteArray>(jni$_.JByteArray.type, releaseOriginal: true);
+  }
+
+  static final _id_echoAsyncNullableNativeInteropAllNullableTypes =
+      NativeInteropFlutterIntegrationCoreApiBridge._class.instanceMethodId(
+        r'echoAsyncNullableNativeInteropAllNullableTypes',
+        r'([BLkotlin/coroutines/Continuation;)Ljava/lang/Object;',
+      );
+
+  static final _echoAsyncNullableNativeInteropAllNullableTypes =
+      jni$_.ProtectedJniExtensions.lookup<
+            jni$_.NativeFunction<
+              jni$_.JniResult Function(
+                jni$_.Pointer<jni$_.Void>,
+                jni$_.JMethodIDPtr,
+                jni$_.VarArgs<(jni$_.Pointer<jni$_.Void>, jni$_.Pointer<jni$_.Void>)>,
+              )
+            >
+          >('globalEnv_CallObjectMethod')
+          .asFunction<
+            jni$_.JniResult Function(
+              jni$_.Pointer<jni$_.Void>,
+              jni$_.JMethodIDPtr,
+              jni$_.Pointer<jni$_.Void>,
+              jni$_.Pointer<jni$_.Void>,
+            )
+          >();
+
+  /// from: `public suspend fun echoAsyncNullableNativeInteropAllNullableTypes(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
+  /// The returned object must be released after use, by calling the [release] method.
+  core$_.Future<jni$_.JByteArray?> echoAsyncNullableNativeInteropAllNullableTypes(
+    jni$_.JByteArray bs,
+  ) async {
+    final $p = jni$_.ReceivePort();
+    final _$continuation = jni$_.ProtectedJniExtensions.newPortContinuation($p);
+    final _$$selfRef = reference;
+    final _$bs = bs.reference;
+    final $r = _echoAsyncNullableNativeInteropAllNullableTypes(
+      _$$selfRef.pointer,
+      _id_echoAsyncNullableNativeInteropAllNullableTypes.pointer,
+      _$bs.pointer,
+      _$continuation.pointer,
+    ).object<jni$_.JObject?>();
+    _$continuation.release();
+    jni$_.JObject? $o;
+    if ($r != null && $r.isInstanceOf(jni$_.coroutineSingletonsClass)) {
+      $r.release();
+      final $a = await $p.first;
+      $o = $a == 0
+          ? null
+          : jni$_.JObject.fromReference(jni$_.JGlobalReference(jni$_.JObjectPtr.fromAddress($a)));
+      if ($o != null && $o.isInstanceOf(jni$_.result$Class)) {
+        $o = jni$_.resultValueField.get($o, const jni$_.$JObject$Type$());
+      } else if ($o != null && $o.isInstanceOf(jni$_.result$FailureClass)) {
+        final $e = jni$_.failureExceptionField.get($o, const jni$_.$JObject$Type$());
+        $o.release();
+        jni$_.Jni.throwException($e.reference.toPointer());
+      }
+    } else {
+      $o = $r;
+    }
+    return $o?.as<jni$_.JByteArray>(jni$_.JByteArray.type, releaseOriginal: true);
+  }
+
+  static final _id_echoAsyncNullableNativeInteropAllNullableTypesWithoutRecursion =
+      NativeInteropFlutterIntegrationCoreApiBridge._class.instanceMethodId(
+        r'echoAsyncNullableNativeInteropAllNullableTypesWithoutRecursion',
+        r'([BLkotlin/coroutines/Continuation;)Ljava/lang/Object;',
+      );
+
+  static final _echoAsyncNullableNativeInteropAllNullableTypesWithoutRecursion =
+      jni$_.ProtectedJniExtensions.lookup<
+            jni$_.NativeFunction<
+              jni$_.JniResult Function(
+                jni$_.Pointer<jni$_.Void>,
+                jni$_.JMethodIDPtr,
+                jni$_.VarArgs<(jni$_.Pointer<jni$_.Void>, jni$_.Pointer<jni$_.Void>)>,
+              )
+            >
+          >('globalEnv_CallObjectMethod')
+          .asFunction<
+            jni$_.JniResult Function(
+              jni$_.Pointer<jni$_.Void>,
+              jni$_.JMethodIDPtr,
+              jni$_.Pointer<jni$_.Void>,
+              jni$_.Pointer<jni$_.Void>,
+            )
+          >();
+
+  /// from: `public suspend fun echoAsyncNullableNativeInteropAllNullableTypesWithoutRecursion(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
+  /// The returned object must be released after use, by calling the [release] method.
+  core$_.Future<jni$_.JByteArray?> echoAsyncNullableNativeInteropAllNullableTypesWithoutRecursion(
+    jni$_.JByteArray bs,
+  ) async {
+    final $p = jni$_.ReceivePort();
+    final _$continuation = jni$_.ProtectedJniExtensions.newPortContinuation($p);
+    final _$$selfRef = reference;
+    final _$bs = bs.reference;
+    final $r = _echoAsyncNullableNativeInteropAllNullableTypesWithoutRecursion(
+      _$$selfRef.pointer,
+      _id_echoAsyncNullableNativeInteropAllNullableTypesWithoutRecursion.pointer,
+      _$bs.pointer,
+      _$continuation.pointer,
+    ).object<jni$_.JObject?>();
+    _$continuation.release();
+    jni$_.JObject? $o;
+    if ($r != null && $r.isInstanceOf(jni$_.coroutineSingletonsClass)) {
+      $r.release();
+      final $a = await $p.first;
+      $o = $a == 0
+          ? null
+          : jni$_.JObject.fromReference(jni$_.JGlobalReference(jni$_.JObjectPtr.fromAddress($a)));
+      if ($o != null && $o.isInstanceOf(jni$_.result$Class)) {
+        $o = jni$_.resultValueField.get($o, const jni$_.$JObject$Type$());
+      } else if ($o != null && $o.isInstanceOf(jni$_.result$FailureClass)) {
+        final $e = jni$_.failureExceptionField.get($o, const jni$_.$JObject$Type$());
+        $o.release();
+        jni$_.Jni.throwException($e.reference.toPointer());
+      }
+    } else {
+      $o = $r;
+    }
+    return $o?.as<jni$_.JByteArray>(jni$_.JByteArray.type, releaseOriginal: true);
+  }
+
+  static final _id_echoAsyncBool = NativeInteropFlutterIntegrationCoreApiBridge._class
+      .instanceMethodId(r'echoAsyncBool', r'(ZLkotlin/coroutines/Continuation;)Ljava/lang/Object;');
+
+  static final _echoAsyncBool =
       jni$_.ProtectedJniExtensions.lookup<
             jni$_.NativeFunction<
               jni$_.JniResult Function(
@@ -13485,15 +13290,15 @@ extension NativeInteropFlutterIntegrationCoreApiBridge$$Methods
             )
           >();
 
-  /// from: `public suspend fun pigeon_echoAsyncBool(aBool: kotlin.Boolean): kotlin.Boolean`
+  /// from: `public suspend fun echoAsyncBool(aBool: kotlin.Boolean): kotlin.Boolean`
   /// The returned object must be released after use, by calling the [release] method.
-  core$_.Future<jni$_.JBoolean> pigeon_echoAsyncBool(core$_.bool z) async {
+  core$_.Future<jni$_.JBoolean> echoAsyncBool(core$_.bool z) async {
     final $p = jni$_.ReceivePort();
     final _$continuation = jni$_.ProtectedJniExtensions.newPortContinuation($p);
     final _$$selfRef = reference;
-    final $r = _pigeon_echoAsyncBool(
+    final $r = _echoAsyncBool(
       _$$selfRef.pointer,
-      _id_pigeon_echoAsyncBool.pointer,
+      _id_echoAsyncBool.pointer,
       z ? 1 : 0,
       _$continuation.pointer,
     ).object<jni$_.JObject>();
@@ -13516,13 +13321,10 @@ extension NativeInteropFlutterIntegrationCoreApiBridge$$Methods
     return $o.as<jni$_.JBoolean>(jni$_.JBoolean.type, releaseOriginal: true);
   }
 
-  static final _id_pigeon_echoAsyncInt = NativeInteropFlutterIntegrationCoreApiBridge._class
-      .instanceMethodId(
-        r'pigeon_echoAsyncInt',
-        r'(JLkotlin/coroutines/Continuation;)Ljava/lang/Object;',
-      );
+  static final _id_echoAsyncInt = NativeInteropFlutterIntegrationCoreApiBridge._class
+      .instanceMethodId(r'echoAsyncInt', r'(JLkotlin/coroutines/Continuation;)Ljava/lang/Object;');
 
-  static final _pigeon_echoAsyncInt =
+  static final _echoAsyncInt =
       jni$_.ProtectedJniExtensions.lookup<
             jni$_.NativeFunction<
               jni$_.JniResult Function(
@@ -13541,15 +13343,15 @@ extension NativeInteropFlutterIntegrationCoreApiBridge$$Methods
             )
           >();
 
-  /// from: `public suspend fun pigeon_echoAsyncInt(anInt: kotlin.Long): kotlin.Long`
+  /// from: `public suspend fun echoAsyncInt(anInt: kotlin.Long): kotlin.Long`
   /// The returned object must be released after use, by calling the [release] method.
-  core$_.Future<jni$_.JLong> pigeon_echoAsyncInt(core$_.int j) async {
+  core$_.Future<jni$_.JLong> echoAsyncInt(core$_.int j) async {
     final $p = jni$_.ReceivePort();
     final _$continuation = jni$_.ProtectedJniExtensions.newPortContinuation($p);
     final _$$selfRef = reference;
-    final $r = _pigeon_echoAsyncInt(
+    final $r = _echoAsyncInt(
       _$$selfRef.pointer,
-      _id_pigeon_echoAsyncInt.pointer,
+      _id_echoAsyncInt.pointer,
       j,
       _$continuation.pointer,
     ).object<jni$_.JObject>();
@@ -13572,13 +13374,13 @@ extension NativeInteropFlutterIntegrationCoreApiBridge$$Methods
     return $o.as<jni$_.JLong>(jni$_.JLong.type, releaseOriginal: true);
   }
 
-  static final _id_pigeon_echoAsyncDouble = NativeInteropFlutterIntegrationCoreApiBridge._class
+  static final _id_echoAsyncDouble = NativeInteropFlutterIntegrationCoreApiBridge._class
       .instanceMethodId(
-        r'pigeon_echoAsyncDouble',
+        r'echoAsyncDouble',
         r'(DLkotlin/coroutines/Continuation;)Ljava/lang/Object;',
       );
 
-  static final _pigeon_echoAsyncDouble =
+  static final _echoAsyncDouble =
       jni$_.ProtectedJniExtensions.lookup<
             jni$_.NativeFunction<
               jni$_.JniResult Function(
@@ -13597,15 +13399,15 @@ extension NativeInteropFlutterIntegrationCoreApiBridge$$Methods
             )
           >();
 
-  /// from: `public suspend fun pigeon_echoAsyncDouble(aDouble: kotlin.Double): kotlin.Double`
+  /// from: `public suspend fun echoAsyncDouble(aDouble: kotlin.Double): kotlin.Double`
   /// The returned object must be released after use, by calling the [release] method.
-  core$_.Future<jni$_.JDouble> pigeon_echoAsyncDouble(core$_.double d) async {
+  core$_.Future<jni$_.JDouble> echoAsyncDouble(core$_.double d) async {
     final $p = jni$_.ReceivePort();
     final _$continuation = jni$_.ProtectedJniExtensions.newPortContinuation($p);
     final _$$selfRef = reference;
-    final $r = _pigeon_echoAsyncDouble(
+    final $r = _echoAsyncDouble(
       _$$selfRef.pointer,
-      _id_pigeon_echoAsyncDouble.pointer,
+      _id_echoAsyncDouble.pointer,
       d,
       _$continuation.pointer,
     ).object<jni$_.JObject>();
@@ -13628,13 +13430,13 @@ extension NativeInteropFlutterIntegrationCoreApiBridge$$Methods
     return $o.as<jni$_.JDouble>(jni$_.JDouble.type, releaseOriginal: true);
   }
 
-  static final _id_pigeon_echoAsyncString = NativeInteropFlutterIntegrationCoreApiBridge._class
+  static final _id_echoAsyncString = NativeInteropFlutterIntegrationCoreApiBridge._class
       .instanceMethodId(
-        r'pigeon_echoAsyncString',
+        r'echoAsyncString',
         r'(Ljava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;',
       );
 
-  static final _pigeon_echoAsyncString =
+  static final _echoAsyncString =
       jni$_.ProtectedJniExtensions.lookup<
             jni$_.NativeFunction<
               jni$_.JniResult Function(
@@ -13653,16 +13455,16 @@ extension NativeInteropFlutterIntegrationCoreApiBridge$$Methods
             )
           >();
 
-  /// from: `public suspend fun pigeon_echoAsyncString(aString: kotlin.String): kotlin.String`
+  /// from: `public suspend fun echoAsyncString(aString: kotlin.String): kotlin.String`
   /// The returned object must be released after use, by calling the [release] method.
-  core$_.Future<jni$_.JString> pigeon_echoAsyncString(jni$_.JString string) async {
+  core$_.Future<jni$_.JString> echoAsyncString(jni$_.JString string) async {
     final $p = jni$_.ReceivePort();
     final _$continuation = jni$_.ProtectedJniExtensions.newPortContinuation($p);
     final _$$selfRef = reference;
     final _$string = string.reference;
-    final $r = _pigeon_echoAsyncString(
+    final $r = _echoAsyncString(
       _$$selfRef.pointer,
-      _id_pigeon_echoAsyncString.pointer,
+      _id_echoAsyncString.pointer,
       _$string.pointer,
       _$continuation.pointer,
     ).object<jni$_.JObject>();
@@ -13685,13 +13487,13 @@ extension NativeInteropFlutterIntegrationCoreApiBridge$$Methods
     return $o.as<jni$_.JString>(jni$_.JString.type, releaseOriginal: true);
   }
 
-  static final _id_pigeon_echoAsyncUint8List = NativeInteropFlutterIntegrationCoreApiBridge._class
+  static final _id_echoAsyncUint8List = NativeInteropFlutterIntegrationCoreApiBridge._class
       .instanceMethodId(
-        r'pigeon_echoAsyncUint8List',
+        r'echoAsyncUint8List',
         r'([BLkotlin/coroutines/Continuation;)Ljava/lang/Object;',
       );
 
-  static final _pigeon_echoAsyncUint8List =
+  static final _echoAsyncUint8List =
       jni$_.ProtectedJniExtensions.lookup<
             jni$_.NativeFunction<
               jni$_.JniResult Function(
@@ -13710,16 +13512,16 @@ extension NativeInteropFlutterIntegrationCoreApiBridge$$Methods
             )
           >();
 
-  /// from: `public suspend fun pigeon_echoAsyncUint8List(list: kotlin.ByteArray): kotlin.ByteArray`
+  /// from: `public suspend fun echoAsyncUint8List(list: kotlin.ByteArray): kotlin.ByteArray`
   /// The returned object must be released after use, by calling the [release] method.
-  core$_.Future<jni$_.JByteArray> pigeon_echoAsyncUint8List(jni$_.JByteArray bs) async {
+  core$_.Future<jni$_.JByteArray> echoAsyncUint8List(jni$_.JByteArray bs) async {
     final $p = jni$_.ReceivePort();
     final _$continuation = jni$_.ProtectedJniExtensions.newPortContinuation($p);
     final _$$selfRef = reference;
     final _$bs = bs.reference;
-    final $r = _pigeon_echoAsyncUint8List(
+    final $r = _echoAsyncUint8List(
       _$$selfRef.pointer,
-      _id_pigeon_echoAsyncUint8List.pointer,
+      _id_echoAsyncUint8List.pointer,
       _$bs.pointer,
       _$continuation.pointer,
     ).object<jni$_.JObject>();
@@ -13742,13 +13544,13 @@ extension NativeInteropFlutterIntegrationCoreApiBridge$$Methods
     return $o.as<jni$_.JByteArray>(jni$_.JByteArray.type, releaseOriginal: true);
   }
 
-  static final _id_pigeon_echoAsyncInt32List = NativeInteropFlutterIntegrationCoreApiBridge._class
+  static final _id_echoAsyncInt32List = NativeInteropFlutterIntegrationCoreApiBridge._class
       .instanceMethodId(
-        r'pigeon_echoAsyncInt32List',
+        r'echoAsyncInt32List',
         r'([ILkotlin/coroutines/Continuation;)Ljava/lang/Object;',
       );
 
-  static final _pigeon_echoAsyncInt32List =
+  static final _echoAsyncInt32List =
       jni$_.ProtectedJniExtensions.lookup<
             jni$_.NativeFunction<
               jni$_.JniResult Function(
@@ -13767,16 +13569,16 @@ extension NativeInteropFlutterIntegrationCoreApiBridge$$Methods
             )
           >();
 
-  /// from: `public suspend fun pigeon_echoAsyncInt32List(list: kotlin.IntArray): kotlin.IntArray`
+  /// from: `public suspend fun echoAsyncInt32List(list: kotlin.IntArray): kotlin.IntArray`
   /// The returned object must be released after use, by calling the [release] method.
-  core$_.Future<jni$_.JIntArray> pigeon_echoAsyncInt32List(jni$_.JIntArray is$) async {
+  core$_.Future<jni$_.JIntArray> echoAsyncInt32List(jni$_.JIntArray is$) async {
     final $p = jni$_.ReceivePort();
     final _$continuation = jni$_.ProtectedJniExtensions.newPortContinuation($p);
     final _$$selfRef = reference;
     final _$is$ = is$.reference;
-    final $r = _pigeon_echoAsyncInt32List(
+    final $r = _echoAsyncInt32List(
       _$$selfRef.pointer,
-      _id_pigeon_echoAsyncInt32List.pointer,
+      _id_echoAsyncInt32List.pointer,
       _$is$.pointer,
       _$continuation.pointer,
     ).object<jni$_.JObject>();
@@ -13799,13 +13601,13 @@ extension NativeInteropFlutterIntegrationCoreApiBridge$$Methods
     return $o.as<jni$_.JIntArray>(jni$_.JIntArray.type, releaseOriginal: true);
   }
 
-  static final _id_pigeon_echoAsyncInt64List = NativeInteropFlutterIntegrationCoreApiBridge._class
+  static final _id_echoAsyncInt64List = NativeInteropFlutterIntegrationCoreApiBridge._class
       .instanceMethodId(
-        r'pigeon_echoAsyncInt64List',
+        r'echoAsyncInt64List',
         r'([JLkotlin/coroutines/Continuation;)Ljava/lang/Object;',
       );
 
-  static final _pigeon_echoAsyncInt64List =
+  static final _echoAsyncInt64List =
       jni$_.ProtectedJniExtensions.lookup<
             jni$_.NativeFunction<
               jni$_.JniResult Function(
@@ -13824,16 +13626,16 @@ extension NativeInteropFlutterIntegrationCoreApiBridge$$Methods
             )
           >();
 
-  /// from: `public suspend fun pigeon_echoAsyncInt64List(list: kotlin.LongArray): kotlin.LongArray`
+  /// from: `public suspend fun echoAsyncInt64List(list: kotlin.LongArray): kotlin.LongArray`
   /// The returned object must be released after use, by calling the [release] method.
-  core$_.Future<jni$_.JLongArray> pigeon_echoAsyncInt64List(jni$_.JLongArray js) async {
+  core$_.Future<jni$_.JLongArray> echoAsyncInt64List(jni$_.JLongArray js) async {
     final $p = jni$_.ReceivePort();
     final _$continuation = jni$_.ProtectedJniExtensions.newPortContinuation($p);
     final _$$selfRef = reference;
     final _$js = js.reference;
-    final $r = _pigeon_echoAsyncInt64List(
+    final $r = _echoAsyncInt64List(
       _$$selfRef.pointer,
-      _id_pigeon_echoAsyncInt64List.pointer,
+      _id_echoAsyncInt64List.pointer,
       _$js.pointer,
       _$continuation.pointer,
     ).object<jni$_.JObject>();
@@ -13856,13 +13658,13 @@ extension NativeInteropFlutterIntegrationCoreApiBridge$$Methods
     return $o.as<jni$_.JLongArray>(jni$_.JLongArray.type, releaseOriginal: true);
   }
 
-  static final _id_pigeon_echoAsyncFloat64List = NativeInteropFlutterIntegrationCoreApiBridge._class
+  static final _id_echoAsyncFloat64List = NativeInteropFlutterIntegrationCoreApiBridge._class
       .instanceMethodId(
-        r'pigeon_echoAsyncFloat64List',
+        r'echoAsyncFloat64List',
         r'([DLkotlin/coroutines/Continuation;)Ljava/lang/Object;',
       );
 
-  static final _pigeon_echoAsyncFloat64List =
+  static final _echoAsyncFloat64List =
       jni$_.ProtectedJniExtensions.lookup<
             jni$_.NativeFunction<
               jni$_.JniResult Function(
@@ -13881,16 +13683,16 @@ extension NativeInteropFlutterIntegrationCoreApiBridge$$Methods
             )
           >();
 
-  /// from: `public suspend fun pigeon_echoAsyncFloat64List(list: kotlin.DoubleArray): kotlin.DoubleArray`
+  /// from: `public suspend fun echoAsyncFloat64List(list: kotlin.DoubleArray): kotlin.DoubleArray`
   /// The returned object must be released after use, by calling the [release] method.
-  core$_.Future<jni$_.JDoubleArray> pigeon_echoAsyncFloat64List(jni$_.JDoubleArray ds) async {
+  core$_.Future<jni$_.JDoubleArray> echoAsyncFloat64List(jni$_.JDoubleArray ds) async {
     final $p = jni$_.ReceivePort();
     final _$continuation = jni$_.ProtectedJniExtensions.newPortContinuation($p);
     final _$$selfRef = reference;
     final _$ds = ds.reference;
-    final $r = _pigeon_echoAsyncFloat64List(
+    final $r = _echoAsyncFloat64List(
       _$$selfRef.pointer,
-      _id_pigeon_echoAsyncFloat64List.pointer,
+      _id_echoAsyncFloat64List.pointer,
       _$ds.pointer,
       _$continuation.pointer,
     ).object<jni$_.JObject>();
@@ -13913,13 +13715,13 @@ extension NativeInteropFlutterIntegrationCoreApiBridge$$Methods
     return $o.as<jni$_.JDoubleArray>(jni$_.JDoubleArray.type, releaseOriginal: true);
   }
 
-  static final _id_pigeon_echoAsyncObject = NativeInteropFlutterIntegrationCoreApiBridge._class
+  static final _id_echoAsyncObject = NativeInteropFlutterIntegrationCoreApiBridge._class
       .instanceMethodId(
-        r'pigeon_echoAsyncObject',
+        r'echoAsyncObject',
         r'([BLkotlin/coroutines/Continuation;)Ljava/lang/Object;',
       );
 
-  static final _pigeon_echoAsyncObject =
+  static final _echoAsyncObject =
       jni$_.ProtectedJniExtensions.lookup<
             jni$_.NativeFunction<
               jni$_.JniResult Function(
@@ -13938,16 +13740,16 @@ extension NativeInteropFlutterIntegrationCoreApiBridge$$Methods
             )
           >();
 
-  /// from: `public suspend fun pigeon_echoAsyncObject(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
+  /// from: `public suspend fun echoAsyncObject(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
   /// The returned object must be released after use, by calling the [release] method.
-  core$_.Future<jni$_.JByteArray?> pigeon_echoAsyncObject(jni$_.JByteArray bs) async {
+  core$_.Future<jni$_.JByteArray?> echoAsyncObject(jni$_.JByteArray bs) async {
     final $p = jni$_.ReceivePort();
     final _$continuation = jni$_.ProtectedJniExtensions.newPortContinuation($p);
     final _$$selfRef = reference;
     final _$bs = bs.reference;
-    final $r = _pigeon_echoAsyncObject(
+    final $r = _echoAsyncObject(
       _$$selfRef.pointer,
-      _id_pigeon_echoAsyncObject.pointer,
+      _id_echoAsyncObject.pointer,
       _$bs.pointer,
       _$continuation.pointer,
     ).object<jni$_.JObject?>();
@@ -13972,13 +13774,13 @@ extension NativeInteropFlutterIntegrationCoreApiBridge$$Methods
     return $o?.as<jni$_.JByteArray>(jni$_.JByteArray.type, releaseOriginal: true);
   }
 
-  static final _id_pigeon_echoAsyncList = NativeInteropFlutterIntegrationCoreApiBridge._class
+  static final _id_echoAsyncList = NativeInteropFlutterIntegrationCoreApiBridge._class
       .instanceMethodId(
-        r'pigeon_echoAsyncList',
+        r'echoAsyncList',
         r'([BLkotlin/coroutines/Continuation;)Ljava/lang/Object;',
       );
 
-  static final _pigeon_echoAsyncList =
+  static final _echoAsyncList =
       jni$_.ProtectedJniExtensions.lookup<
             jni$_.NativeFunction<
               jni$_.JniResult Function(
@@ -13997,16 +13799,16 @@ extension NativeInteropFlutterIntegrationCoreApiBridge$$Methods
             )
           >();
 
-  /// from: `public suspend fun pigeon_echoAsyncList(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
+  /// from: `public suspend fun echoAsyncList(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
   /// The returned object must be released after use, by calling the [release] method.
-  core$_.Future<jni$_.JByteArray?> pigeon_echoAsyncList(jni$_.JByteArray bs) async {
+  core$_.Future<jni$_.JByteArray?> echoAsyncList(jni$_.JByteArray bs) async {
     final $p = jni$_.ReceivePort();
     final _$continuation = jni$_.ProtectedJniExtensions.newPortContinuation($p);
     final _$$selfRef = reference;
     final _$bs = bs.reference;
-    final $r = _pigeon_echoAsyncList(
+    final $r = _echoAsyncList(
       _$$selfRef.pointer,
-      _id_pigeon_echoAsyncList.pointer,
+      _id_echoAsyncList.pointer,
       _$bs.pointer,
       _$continuation.pointer,
     ).object<jni$_.JObject?>();
@@ -14031,13 +13833,13 @@ extension NativeInteropFlutterIntegrationCoreApiBridge$$Methods
     return $o?.as<jni$_.JByteArray>(jni$_.JByteArray.type, releaseOriginal: true);
   }
 
-  static final _id_pigeon_echoAsyncEnumList = NativeInteropFlutterIntegrationCoreApiBridge._class
+  static final _id_echoAsyncEnumList = NativeInteropFlutterIntegrationCoreApiBridge._class
       .instanceMethodId(
-        r'pigeon_echoAsyncEnumList',
+        r'echoAsyncEnumList',
         r'([BLkotlin/coroutines/Continuation;)Ljava/lang/Object;',
       );
 
-  static final _pigeon_echoAsyncEnumList =
+  static final _echoAsyncEnumList =
       jni$_.ProtectedJniExtensions.lookup<
             jni$_.NativeFunction<
               jni$_.JniResult Function(
@@ -14056,16 +13858,16 @@ extension NativeInteropFlutterIntegrationCoreApiBridge$$Methods
             )
           >();
 
-  /// from: `public suspend fun pigeon_echoAsyncEnumList(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
+  /// from: `public suspend fun echoAsyncEnumList(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
   /// The returned object must be released after use, by calling the [release] method.
-  core$_.Future<jni$_.JByteArray?> pigeon_echoAsyncEnumList(jni$_.JByteArray bs) async {
+  core$_.Future<jni$_.JByteArray?> echoAsyncEnumList(jni$_.JByteArray bs) async {
     final $p = jni$_.ReceivePort();
     final _$continuation = jni$_.ProtectedJniExtensions.newPortContinuation($p);
     final _$$selfRef = reference;
     final _$bs = bs.reference;
-    final $r = _pigeon_echoAsyncEnumList(
+    final $r = _echoAsyncEnumList(
       _$$selfRef.pointer,
-      _id_pigeon_echoAsyncEnumList.pointer,
+      _id_echoAsyncEnumList.pointer,
       _$bs.pointer,
       _$continuation.pointer,
     ).object<jni$_.JObject?>();
@@ -14090,13 +13892,13 @@ extension NativeInteropFlutterIntegrationCoreApiBridge$$Methods
     return $o?.as<jni$_.JByteArray>(jni$_.JByteArray.type, releaseOriginal: true);
   }
 
-  static final _id_pigeon_echoAsyncClassList = NativeInteropFlutterIntegrationCoreApiBridge._class
+  static final _id_echoAsyncClassList = NativeInteropFlutterIntegrationCoreApiBridge._class
       .instanceMethodId(
-        r'pigeon_echoAsyncClassList',
+        r'echoAsyncClassList',
         r'([BLkotlin/coroutines/Continuation;)Ljava/lang/Object;',
       );
 
-  static final _pigeon_echoAsyncClassList =
+  static final _echoAsyncClassList =
       jni$_.ProtectedJniExtensions.lookup<
             jni$_.NativeFunction<
               jni$_.JniResult Function(
@@ -14115,16 +13917,16 @@ extension NativeInteropFlutterIntegrationCoreApiBridge$$Methods
             )
           >();
 
-  /// from: `public suspend fun pigeon_echoAsyncClassList(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
+  /// from: `public suspend fun echoAsyncClassList(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
   /// The returned object must be released after use, by calling the [release] method.
-  core$_.Future<jni$_.JByteArray?> pigeon_echoAsyncClassList(jni$_.JByteArray bs) async {
+  core$_.Future<jni$_.JByteArray?> echoAsyncClassList(jni$_.JByteArray bs) async {
     final $p = jni$_.ReceivePort();
     final _$continuation = jni$_.ProtectedJniExtensions.newPortContinuation($p);
     final _$$selfRef = reference;
     final _$bs = bs.reference;
-    final $r = _pigeon_echoAsyncClassList(
+    final $r = _echoAsyncClassList(
       _$$selfRef.pointer,
-      _id_pigeon_echoAsyncClassList.pointer,
+      _id_echoAsyncClassList.pointer,
       _$bs.pointer,
       _$continuation.pointer,
     ).object<jni$_.JObject?>();
@@ -14149,14 +13951,13 @@ extension NativeInteropFlutterIntegrationCoreApiBridge$$Methods
     return $o?.as<jni$_.JByteArray>(jni$_.JByteArray.type, releaseOriginal: true);
   }
 
-  static final _id_pigeon_echoAsyncNonNullEnumList = NativeInteropFlutterIntegrationCoreApiBridge
-      ._class
+  static final _id_echoAsyncNonNullEnumList = NativeInteropFlutterIntegrationCoreApiBridge._class
       .instanceMethodId(
-        r'pigeon_echoAsyncNonNullEnumList',
+        r'echoAsyncNonNullEnumList',
         r'([BLkotlin/coroutines/Continuation;)Ljava/lang/Object;',
       );
 
-  static final _pigeon_echoAsyncNonNullEnumList =
+  static final _echoAsyncNonNullEnumList =
       jni$_.ProtectedJniExtensions.lookup<
             jni$_.NativeFunction<
               jni$_.JniResult Function(
@@ -14175,16 +13976,16 @@ extension NativeInteropFlutterIntegrationCoreApiBridge$$Methods
             )
           >();
 
-  /// from: `public suspend fun pigeon_echoAsyncNonNullEnumList(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
+  /// from: `public suspend fun echoAsyncNonNullEnumList(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
   /// The returned object must be released after use, by calling the [release] method.
-  core$_.Future<jni$_.JByteArray?> pigeon_echoAsyncNonNullEnumList(jni$_.JByteArray bs) async {
+  core$_.Future<jni$_.JByteArray?> echoAsyncNonNullEnumList(jni$_.JByteArray bs) async {
     final $p = jni$_.ReceivePort();
     final _$continuation = jni$_.ProtectedJniExtensions.newPortContinuation($p);
     final _$$selfRef = reference;
     final _$bs = bs.reference;
-    final $r = _pigeon_echoAsyncNonNullEnumList(
+    final $r = _echoAsyncNonNullEnumList(
       _$$selfRef.pointer,
-      _id_pigeon_echoAsyncNonNullEnumList.pointer,
+      _id_echoAsyncNonNullEnumList.pointer,
       _$bs.pointer,
       _$continuation.pointer,
     ).object<jni$_.JObject?>();
@@ -14209,14 +14010,13 @@ extension NativeInteropFlutterIntegrationCoreApiBridge$$Methods
     return $o?.as<jni$_.JByteArray>(jni$_.JByteArray.type, releaseOriginal: true);
   }
 
-  static final _id_pigeon_echoAsyncNonNullClassList = NativeInteropFlutterIntegrationCoreApiBridge
-      ._class
+  static final _id_echoAsyncNonNullClassList = NativeInteropFlutterIntegrationCoreApiBridge._class
       .instanceMethodId(
-        r'pigeon_echoAsyncNonNullClassList',
+        r'echoAsyncNonNullClassList',
         r'([BLkotlin/coroutines/Continuation;)Ljava/lang/Object;',
       );
 
-  static final _pigeon_echoAsyncNonNullClassList =
+  static final _echoAsyncNonNullClassList =
       jni$_.ProtectedJniExtensions.lookup<
             jni$_.NativeFunction<
               jni$_.JniResult Function(
@@ -14235,16 +14035,16 @@ extension NativeInteropFlutterIntegrationCoreApiBridge$$Methods
             )
           >();
 
-  /// from: `public suspend fun pigeon_echoAsyncNonNullClassList(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
+  /// from: `public suspend fun echoAsyncNonNullClassList(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
   /// The returned object must be released after use, by calling the [release] method.
-  core$_.Future<jni$_.JByteArray?> pigeon_echoAsyncNonNullClassList(jni$_.JByteArray bs) async {
+  core$_.Future<jni$_.JByteArray?> echoAsyncNonNullClassList(jni$_.JByteArray bs) async {
     final $p = jni$_.ReceivePort();
     final _$continuation = jni$_.ProtectedJniExtensions.newPortContinuation($p);
     final _$$selfRef = reference;
     final _$bs = bs.reference;
-    final $r = _pigeon_echoAsyncNonNullClassList(
+    final $r = _echoAsyncNonNullClassList(
       _$$selfRef.pointer,
-      _id_pigeon_echoAsyncNonNullClassList.pointer,
+      _id_echoAsyncNonNullClassList.pointer,
       _$bs.pointer,
       _$continuation.pointer,
     ).object<jni$_.JObject?>();
@@ -14269,13 +14069,10 @@ extension NativeInteropFlutterIntegrationCoreApiBridge$$Methods
     return $o?.as<jni$_.JByteArray>(jni$_.JByteArray.type, releaseOriginal: true);
   }
 
-  static final _id_pigeon_echoAsyncMap = NativeInteropFlutterIntegrationCoreApiBridge._class
-      .instanceMethodId(
-        r'pigeon_echoAsyncMap',
-        r'([BLkotlin/coroutines/Continuation;)Ljava/lang/Object;',
-      );
+  static final _id_echoAsyncMap = NativeInteropFlutterIntegrationCoreApiBridge._class
+      .instanceMethodId(r'echoAsyncMap', r'([BLkotlin/coroutines/Continuation;)Ljava/lang/Object;');
 
-  static final _pigeon_echoAsyncMap =
+  static final _echoAsyncMap =
       jni$_.ProtectedJniExtensions.lookup<
             jni$_.NativeFunction<
               jni$_.JniResult Function(
@@ -14294,16 +14091,16 @@ extension NativeInteropFlutterIntegrationCoreApiBridge$$Methods
             )
           >();
 
-  /// from: `public suspend fun pigeon_echoAsyncMap(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
+  /// from: `public suspend fun echoAsyncMap(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
   /// The returned object must be released after use, by calling the [release] method.
-  core$_.Future<jni$_.JByteArray?> pigeon_echoAsyncMap(jni$_.JByteArray bs) async {
+  core$_.Future<jni$_.JByteArray?> echoAsyncMap(jni$_.JByteArray bs) async {
     final $p = jni$_.ReceivePort();
     final _$continuation = jni$_.ProtectedJniExtensions.newPortContinuation($p);
     final _$$selfRef = reference;
     final _$bs = bs.reference;
-    final $r = _pigeon_echoAsyncMap(
+    final $r = _echoAsyncMap(
       _$$selfRef.pointer,
-      _id_pigeon_echoAsyncMap.pointer,
+      _id_echoAsyncMap.pointer,
       _$bs.pointer,
       _$continuation.pointer,
     ).object<jni$_.JObject?>();
@@ -14328,13 +14125,13 @@ extension NativeInteropFlutterIntegrationCoreApiBridge$$Methods
     return $o?.as<jni$_.JByteArray>(jni$_.JByteArray.type, releaseOriginal: true);
   }
 
-  static final _id_pigeon_echoAsyncStringMap = NativeInteropFlutterIntegrationCoreApiBridge._class
+  static final _id_echoAsyncStringMap = NativeInteropFlutterIntegrationCoreApiBridge._class
       .instanceMethodId(
-        r'pigeon_echoAsyncStringMap',
+        r'echoAsyncStringMap',
         r'([BLkotlin/coroutines/Continuation;)Ljava/lang/Object;',
       );
 
-  static final _pigeon_echoAsyncStringMap =
+  static final _echoAsyncStringMap =
       jni$_.ProtectedJniExtensions.lookup<
             jni$_.NativeFunction<
               jni$_.JniResult Function(
@@ -14353,16 +14150,16 @@ extension NativeInteropFlutterIntegrationCoreApiBridge$$Methods
             )
           >();
 
-  /// from: `public suspend fun pigeon_echoAsyncStringMap(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
+  /// from: `public suspend fun echoAsyncStringMap(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
   /// The returned object must be released after use, by calling the [release] method.
-  core$_.Future<jni$_.JByteArray?> pigeon_echoAsyncStringMap(jni$_.JByteArray bs) async {
+  core$_.Future<jni$_.JByteArray?> echoAsyncStringMap(jni$_.JByteArray bs) async {
     final $p = jni$_.ReceivePort();
     final _$continuation = jni$_.ProtectedJniExtensions.newPortContinuation($p);
     final _$$selfRef = reference;
     final _$bs = bs.reference;
-    final $r = _pigeon_echoAsyncStringMap(
+    final $r = _echoAsyncStringMap(
       _$$selfRef.pointer,
-      _id_pigeon_echoAsyncStringMap.pointer,
+      _id_echoAsyncStringMap.pointer,
       _$bs.pointer,
       _$continuation.pointer,
     ).object<jni$_.JObject?>();
@@ -14387,13 +14184,13 @@ extension NativeInteropFlutterIntegrationCoreApiBridge$$Methods
     return $o?.as<jni$_.JByteArray>(jni$_.JByteArray.type, releaseOriginal: true);
   }
 
-  static final _id_pigeon_echoAsyncIntMap = NativeInteropFlutterIntegrationCoreApiBridge._class
+  static final _id_echoAsyncIntMap = NativeInteropFlutterIntegrationCoreApiBridge._class
       .instanceMethodId(
-        r'pigeon_echoAsyncIntMap',
+        r'echoAsyncIntMap',
         r'([BLkotlin/coroutines/Continuation;)Ljava/lang/Object;',
       );
 
-  static final _pigeon_echoAsyncIntMap =
+  static final _echoAsyncIntMap =
       jni$_.ProtectedJniExtensions.lookup<
             jni$_.NativeFunction<
               jni$_.JniResult Function(
@@ -14412,16 +14209,16 @@ extension NativeInteropFlutterIntegrationCoreApiBridge$$Methods
             )
           >();
 
-  /// from: `public suspend fun pigeon_echoAsyncIntMap(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
+  /// from: `public suspend fun echoAsyncIntMap(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
   /// The returned object must be released after use, by calling the [release] method.
-  core$_.Future<jni$_.JByteArray?> pigeon_echoAsyncIntMap(jni$_.JByteArray bs) async {
+  core$_.Future<jni$_.JByteArray?> echoAsyncIntMap(jni$_.JByteArray bs) async {
     final $p = jni$_.ReceivePort();
     final _$continuation = jni$_.ProtectedJniExtensions.newPortContinuation($p);
     final _$$selfRef = reference;
     final _$bs = bs.reference;
-    final $r = _pigeon_echoAsyncIntMap(
+    final $r = _echoAsyncIntMap(
       _$$selfRef.pointer,
-      _id_pigeon_echoAsyncIntMap.pointer,
+      _id_echoAsyncIntMap.pointer,
       _$bs.pointer,
       _$continuation.pointer,
     ).object<jni$_.JObject?>();
@@ -14446,13 +14243,13 @@ extension NativeInteropFlutterIntegrationCoreApiBridge$$Methods
     return $o?.as<jni$_.JByteArray>(jni$_.JByteArray.type, releaseOriginal: true);
   }
 
-  static final _id_pigeon_echoAsyncEnumMap = NativeInteropFlutterIntegrationCoreApiBridge._class
+  static final _id_echoAsyncEnumMap = NativeInteropFlutterIntegrationCoreApiBridge._class
       .instanceMethodId(
-        r'pigeon_echoAsyncEnumMap',
+        r'echoAsyncEnumMap',
         r'([BLkotlin/coroutines/Continuation;)Ljava/lang/Object;',
       );
 
-  static final _pigeon_echoAsyncEnumMap =
+  static final _echoAsyncEnumMap =
       jni$_.ProtectedJniExtensions.lookup<
             jni$_.NativeFunction<
               jni$_.JniResult Function(
@@ -14471,16 +14268,16 @@ extension NativeInteropFlutterIntegrationCoreApiBridge$$Methods
             )
           >();
 
-  /// from: `public suspend fun pigeon_echoAsyncEnumMap(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
+  /// from: `public suspend fun echoAsyncEnumMap(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
   /// The returned object must be released after use, by calling the [release] method.
-  core$_.Future<jni$_.JByteArray?> pigeon_echoAsyncEnumMap(jni$_.JByteArray bs) async {
+  core$_.Future<jni$_.JByteArray?> echoAsyncEnumMap(jni$_.JByteArray bs) async {
     final $p = jni$_.ReceivePort();
     final _$continuation = jni$_.ProtectedJniExtensions.newPortContinuation($p);
     final _$$selfRef = reference;
     final _$bs = bs.reference;
-    final $r = _pigeon_echoAsyncEnumMap(
+    final $r = _echoAsyncEnumMap(
       _$$selfRef.pointer,
-      _id_pigeon_echoAsyncEnumMap.pointer,
+      _id_echoAsyncEnumMap.pointer,
       _$bs.pointer,
       _$continuation.pointer,
     ).object<jni$_.JObject?>();
@@ -14505,13 +14302,13 @@ extension NativeInteropFlutterIntegrationCoreApiBridge$$Methods
     return $o?.as<jni$_.JByteArray>(jni$_.JByteArray.type, releaseOriginal: true);
   }
 
-  static final _id_pigeon_echoAsyncClassMap = NativeInteropFlutterIntegrationCoreApiBridge._class
+  static final _id_echoAsyncClassMap = NativeInteropFlutterIntegrationCoreApiBridge._class
       .instanceMethodId(
-        r'pigeon_echoAsyncClassMap',
+        r'echoAsyncClassMap',
         r'([BLkotlin/coroutines/Continuation;)Ljava/lang/Object;',
       );
 
-  static final _pigeon_echoAsyncClassMap =
+  static final _echoAsyncClassMap =
       jni$_.ProtectedJniExtensions.lookup<
             jni$_.NativeFunction<
               jni$_.JniResult Function(
@@ -14530,16 +14327,16 @@ extension NativeInteropFlutterIntegrationCoreApiBridge$$Methods
             )
           >();
 
-  /// from: `public suspend fun pigeon_echoAsyncClassMap(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
+  /// from: `public suspend fun echoAsyncClassMap(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
   /// The returned object must be released after use, by calling the [release] method.
-  core$_.Future<jni$_.JByteArray?> pigeon_echoAsyncClassMap(jni$_.JByteArray bs) async {
+  core$_.Future<jni$_.JByteArray?> echoAsyncClassMap(jni$_.JByteArray bs) async {
     final $p = jni$_.ReceivePort();
     final _$continuation = jni$_.ProtectedJniExtensions.newPortContinuation($p);
     final _$$selfRef = reference;
     final _$bs = bs.reference;
-    final $r = _pigeon_echoAsyncClassMap(
+    final $r = _echoAsyncClassMap(
       _$$selfRef.pointer,
-      _id_pigeon_echoAsyncClassMap.pointer,
+      _id_echoAsyncClassMap.pointer,
       _$bs.pointer,
       _$continuation.pointer,
     ).object<jni$_.JObject?>();
@@ -14564,13 +14361,10 @@ extension NativeInteropFlutterIntegrationCoreApiBridge$$Methods
     return $o?.as<jni$_.JByteArray>(jni$_.JByteArray.type, releaseOriginal: true);
   }
 
-  static final _id_pigeon_echoAsyncEnum = NativeInteropFlutterIntegrationCoreApiBridge._class
-      .instanceMethodId(
-        r'pigeon_echoAsyncEnum',
-        r'(JLkotlin/coroutines/Continuation;)Ljava/lang/Object;',
-      );
+  static final _id_echoAsyncEnum = NativeInteropFlutterIntegrationCoreApiBridge._class
+      .instanceMethodId(r'echoAsyncEnum', r'(JLkotlin/coroutines/Continuation;)Ljava/lang/Object;');
 
-  static final _pigeon_echoAsyncEnum =
+  static final _echoAsyncEnum =
       jni$_.ProtectedJniExtensions.lookup<
             jni$_.NativeFunction<
               jni$_.JniResult Function(
@@ -14589,15 +14383,15 @@ extension NativeInteropFlutterIntegrationCoreApiBridge$$Methods
             )
           >();
 
-  /// from: `public suspend fun pigeon_echoAsyncEnum(anEnum: kotlin.Long): kotlin.Long`
+  /// from: `public suspend fun echoAsyncEnum(anEnum: kotlin.Long): kotlin.Long`
   /// The returned object must be released after use, by calling the [release] method.
-  core$_.Future<jni$_.JLong> pigeon_echoAsyncEnum(core$_.int j) async {
+  core$_.Future<jni$_.JLong> echoAsyncEnum(core$_.int j) async {
     final $p = jni$_.ReceivePort();
     final _$continuation = jni$_.ProtectedJniExtensions.newPortContinuation($p);
     final _$$selfRef = reference;
-    final $r = _pigeon_echoAsyncEnum(
+    final $r = _echoAsyncEnum(
       _$$selfRef.pointer,
-      _id_pigeon_echoAsyncEnum.pointer,
+      _id_echoAsyncEnum.pointer,
       j,
       _$continuation.pointer,
     ).object<jni$_.JObject>();
@@ -14620,13 +14414,13 @@ extension NativeInteropFlutterIntegrationCoreApiBridge$$Methods
     return $o.as<jni$_.JLong>(jni$_.JLong.type, releaseOriginal: true);
   }
 
-  static final _id_pigeon_echoAnotherAsyncEnum = NativeInteropFlutterIntegrationCoreApiBridge._class
+  static final _id_echoAnotherAsyncEnum = NativeInteropFlutterIntegrationCoreApiBridge._class
       .instanceMethodId(
-        r'pigeon_echoAnotherAsyncEnum',
+        r'echoAnotherAsyncEnum',
         r'(JLkotlin/coroutines/Continuation;)Ljava/lang/Object;',
       );
 
-  static final _pigeon_echoAnotherAsyncEnum =
+  static final _echoAnotherAsyncEnum =
       jni$_.ProtectedJniExtensions.lookup<
             jni$_.NativeFunction<
               jni$_.JniResult Function(
@@ -14645,15 +14439,15 @@ extension NativeInteropFlutterIntegrationCoreApiBridge$$Methods
             )
           >();
 
-  /// from: `public suspend fun pigeon_echoAnotherAsyncEnum(anotherEnum: kotlin.Long): kotlin.Long`
+  /// from: `public suspend fun echoAnotherAsyncEnum(anotherEnum: kotlin.Long): kotlin.Long`
   /// The returned object must be released after use, by calling the [release] method.
-  core$_.Future<jni$_.JLong> pigeon_echoAnotherAsyncEnum(core$_.int j) async {
+  core$_.Future<jni$_.JLong> echoAnotherAsyncEnum(core$_.int j) async {
     final $p = jni$_.ReceivePort();
     final _$continuation = jni$_.ProtectedJniExtensions.newPortContinuation($p);
     final _$$selfRef = reference;
-    final $r = _pigeon_echoAnotherAsyncEnum(
+    final $r = _echoAnotherAsyncEnum(
       _$$selfRef.pointer,
-      _id_pigeon_echoAnotherAsyncEnum.pointer,
+      _id_echoAnotherAsyncEnum.pointer,
       j,
       _$continuation.pointer,
     ).object<jni$_.JObject>();
@@ -14676,14 +14470,13 @@ extension NativeInteropFlutterIntegrationCoreApiBridge$$Methods
     return $o.as<jni$_.JLong>(jni$_.JLong.type, releaseOriginal: true);
   }
 
-  static final _id_pigeon_echoAsyncNullableBool = NativeInteropFlutterIntegrationCoreApiBridge
-      ._class
+  static final _id_echoAsyncNullableBool = NativeInteropFlutterIntegrationCoreApiBridge._class
       .instanceMethodId(
-        r'pigeon_echoAsyncNullableBool',
+        r'echoAsyncNullableBool',
         r'(Ljava/lang/Boolean;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;',
       );
 
-  static final _pigeon_echoAsyncNullableBool =
+  static final _echoAsyncNullableBool =
       jni$_.ProtectedJniExtensions.lookup<
             jni$_.NativeFunction<
               jni$_.JniResult Function(
@@ -14702,16 +14495,16 @@ extension NativeInteropFlutterIntegrationCoreApiBridge$$Methods
             )
           >();
 
-  /// from: `public suspend fun pigeon_echoAsyncNullableBool(aBool: kotlin.Boolean?): kotlin.Boolean?`
+  /// from: `public suspend fun echoAsyncNullableBool(aBool: kotlin.Boolean?): kotlin.Boolean?`
   /// The returned object must be released after use, by calling the [release] method.
-  core$_.Future<jni$_.JBoolean?> pigeon_echoAsyncNullableBool(jni$_.JBoolean? boolean) async {
+  core$_.Future<jni$_.JBoolean?> echoAsyncNullableBool(jni$_.JBoolean? boolean) async {
     final $p = jni$_.ReceivePort();
     final _$continuation = jni$_.ProtectedJniExtensions.newPortContinuation($p);
     final _$$selfRef = reference;
     final _$boolean = boolean?.reference ?? jni$_.jNullReference;
-    final $r = _pigeon_echoAsyncNullableBool(
+    final $r = _echoAsyncNullableBool(
       _$$selfRef.pointer,
-      _id_pigeon_echoAsyncNullableBool.pointer,
+      _id_echoAsyncNullableBool.pointer,
       _$boolean.pointer,
       _$continuation.pointer,
     ).object<jni$_.JObject?>();
@@ -14736,13 +14529,13 @@ extension NativeInteropFlutterIntegrationCoreApiBridge$$Methods
     return $o?.as<jni$_.JBoolean>(jni$_.JBoolean.type, releaseOriginal: true);
   }
 
-  static final _id_pigeon_echoAsyncNullableInt = NativeInteropFlutterIntegrationCoreApiBridge._class
+  static final _id_echoAsyncNullableInt = NativeInteropFlutterIntegrationCoreApiBridge._class
       .instanceMethodId(
-        r'pigeon_echoAsyncNullableInt',
+        r'echoAsyncNullableInt',
         r'(Ljava/lang/Long;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;',
       );
 
-  static final _pigeon_echoAsyncNullableInt =
+  static final _echoAsyncNullableInt =
       jni$_.ProtectedJniExtensions.lookup<
             jni$_.NativeFunction<
               jni$_.JniResult Function(
@@ -14761,16 +14554,16 @@ extension NativeInteropFlutterIntegrationCoreApiBridge$$Methods
             )
           >();
 
-  /// from: `public suspend fun pigeon_echoAsyncNullableInt(anInt: kotlin.Long?): kotlin.Long?`
+  /// from: `public suspend fun echoAsyncNullableInt(anInt: kotlin.Long?): kotlin.Long?`
   /// The returned object must be released after use, by calling the [release] method.
-  core$_.Future<jni$_.JLong?> pigeon_echoAsyncNullableInt(jni$_.JLong? long) async {
+  core$_.Future<jni$_.JLong?> echoAsyncNullableInt(jni$_.JLong? long) async {
     final $p = jni$_.ReceivePort();
     final _$continuation = jni$_.ProtectedJniExtensions.newPortContinuation($p);
     final _$$selfRef = reference;
     final _$long = long?.reference ?? jni$_.jNullReference;
-    final $r = _pigeon_echoAsyncNullableInt(
+    final $r = _echoAsyncNullableInt(
       _$$selfRef.pointer,
-      _id_pigeon_echoAsyncNullableInt.pointer,
+      _id_echoAsyncNullableInt.pointer,
       _$long.pointer,
       _$continuation.pointer,
     ).object<jni$_.JObject?>();
@@ -14795,14 +14588,13 @@ extension NativeInteropFlutterIntegrationCoreApiBridge$$Methods
     return $o?.as<jni$_.JLong>(jni$_.JLong.type, releaseOriginal: true);
   }
 
-  static final _id_pigeon_echoAsyncNullableDouble = NativeInteropFlutterIntegrationCoreApiBridge
-      ._class
+  static final _id_echoAsyncNullableDouble = NativeInteropFlutterIntegrationCoreApiBridge._class
       .instanceMethodId(
-        r'pigeon_echoAsyncNullableDouble',
+        r'echoAsyncNullableDouble',
         r'(Ljava/lang/Double;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;',
       );
 
-  static final _pigeon_echoAsyncNullableDouble =
+  static final _echoAsyncNullableDouble =
       jni$_.ProtectedJniExtensions.lookup<
             jni$_.NativeFunction<
               jni$_.JniResult Function(
@@ -14821,16 +14613,16 @@ extension NativeInteropFlutterIntegrationCoreApiBridge$$Methods
             )
           >();
 
-  /// from: `public suspend fun pigeon_echoAsyncNullableDouble(aDouble: kotlin.Double?): kotlin.Double?`
+  /// from: `public suspend fun echoAsyncNullableDouble(aDouble: kotlin.Double?): kotlin.Double?`
   /// The returned object must be released after use, by calling the [release] method.
-  core$_.Future<jni$_.JDouble?> pigeon_echoAsyncNullableDouble(jni$_.JDouble? double) async {
+  core$_.Future<jni$_.JDouble?> echoAsyncNullableDouble(jni$_.JDouble? double) async {
     final $p = jni$_.ReceivePort();
     final _$continuation = jni$_.ProtectedJniExtensions.newPortContinuation($p);
     final _$$selfRef = reference;
     final _$double = double?.reference ?? jni$_.jNullReference;
-    final $r = _pigeon_echoAsyncNullableDouble(
+    final $r = _echoAsyncNullableDouble(
       _$$selfRef.pointer,
-      _id_pigeon_echoAsyncNullableDouble.pointer,
+      _id_echoAsyncNullableDouble.pointer,
       _$double.pointer,
       _$continuation.pointer,
     ).object<jni$_.JObject?>();
@@ -14855,14 +14647,13 @@ extension NativeInteropFlutterIntegrationCoreApiBridge$$Methods
     return $o?.as<jni$_.JDouble>(jni$_.JDouble.type, releaseOriginal: true);
   }
 
-  static final _id_pigeon_echoAsyncNullableString = NativeInteropFlutterIntegrationCoreApiBridge
-      ._class
+  static final _id_echoAsyncNullableString = NativeInteropFlutterIntegrationCoreApiBridge._class
       .instanceMethodId(
-        r'pigeon_echoAsyncNullableString',
+        r'echoAsyncNullableString',
         r'(Ljava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;',
       );
 
-  static final _pigeon_echoAsyncNullableString =
+  static final _echoAsyncNullableString =
       jni$_.ProtectedJniExtensions.lookup<
             jni$_.NativeFunction<
               jni$_.JniResult Function(
@@ -14881,16 +14672,16 @@ extension NativeInteropFlutterIntegrationCoreApiBridge$$Methods
             )
           >();
 
-  /// from: `public suspend fun pigeon_echoAsyncNullableString(aString: kotlin.String?): kotlin.String?`
+  /// from: `public suspend fun echoAsyncNullableString(aString: kotlin.String?): kotlin.String?`
   /// The returned object must be released after use, by calling the [release] method.
-  core$_.Future<jni$_.JString?> pigeon_echoAsyncNullableString(jni$_.JString? string) async {
+  core$_.Future<jni$_.JString?> echoAsyncNullableString(jni$_.JString? string) async {
     final $p = jni$_.ReceivePort();
     final _$continuation = jni$_.ProtectedJniExtensions.newPortContinuation($p);
     final _$$selfRef = reference;
     final _$string = string?.reference ?? jni$_.jNullReference;
-    final $r = _pigeon_echoAsyncNullableString(
+    final $r = _echoAsyncNullableString(
       _$$selfRef.pointer,
-      _id_pigeon_echoAsyncNullableString.pointer,
+      _id_echoAsyncNullableString.pointer,
       _$string.pointer,
       _$continuation.pointer,
     ).object<jni$_.JObject?>();
@@ -14915,14 +14706,13 @@ extension NativeInteropFlutterIntegrationCoreApiBridge$$Methods
     return $o?.as<jni$_.JString>(jni$_.JString.type, releaseOriginal: true);
   }
 
-  static final _id_pigeon_echoAsyncNullableUint8List = NativeInteropFlutterIntegrationCoreApiBridge
-      ._class
+  static final _id_echoAsyncNullableUint8List = NativeInteropFlutterIntegrationCoreApiBridge._class
       .instanceMethodId(
-        r'pigeon_echoAsyncNullableUint8List',
+        r'echoAsyncNullableUint8List',
         r'([BLkotlin/coroutines/Continuation;)Ljava/lang/Object;',
       );
 
-  static final _pigeon_echoAsyncNullableUint8List =
+  static final _echoAsyncNullableUint8List =
       jni$_.ProtectedJniExtensions.lookup<
             jni$_.NativeFunction<
               jni$_.JniResult Function(
@@ -14941,16 +14731,16 @@ extension NativeInteropFlutterIntegrationCoreApiBridge$$Methods
             )
           >();
 
-  /// from: `public suspend fun pigeon_echoAsyncNullableUint8List(list: kotlin.ByteArray?): kotlin.ByteArray?`
+  /// from: `public suspend fun echoAsyncNullableUint8List(list: kotlin.ByteArray?): kotlin.ByteArray?`
   /// The returned object must be released after use, by calling the [release] method.
-  core$_.Future<jni$_.JByteArray?> pigeon_echoAsyncNullableUint8List(jni$_.JByteArray? bs) async {
+  core$_.Future<jni$_.JByteArray?> echoAsyncNullableUint8List(jni$_.JByteArray? bs) async {
     final $p = jni$_.ReceivePort();
     final _$continuation = jni$_.ProtectedJniExtensions.newPortContinuation($p);
     final _$$selfRef = reference;
     final _$bs = bs?.reference ?? jni$_.jNullReference;
-    final $r = _pigeon_echoAsyncNullableUint8List(
+    final $r = _echoAsyncNullableUint8List(
       _$$selfRef.pointer,
-      _id_pigeon_echoAsyncNullableUint8List.pointer,
+      _id_echoAsyncNullableUint8List.pointer,
       _$bs.pointer,
       _$continuation.pointer,
     ).object<jni$_.JObject?>();
@@ -14975,14 +14765,13 @@ extension NativeInteropFlutterIntegrationCoreApiBridge$$Methods
     return $o?.as<jni$_.JByteArray>(jni$_.JByteArray.type, releaseOriginal: true);
   }
 
-  static final _id_pigeon_echoAsyncNullableInt32List = NativeInteropFlutterIntegrationCoreApiBridge
-      ._class
+  static final _id_echoAsyncNullableInt32List = NativeInteropFlutterIntegrationCoreApiBridge._class
       .instanceMethodId(
-        r'pigeon_echoAsyncNullableInt32List',
+        r'echoAsyncNullableInt32List',
         r'([ILkotlin/coroutines/Continuation;)Ljava/lang/Object;',
       );
 
-  static final _pigeon_echoAsyncNullableInt32List =
+  static final _echoAsyncNullableInt32List =
       jni$_.ProtectedJniExtensions.lookup<
             jni$_.NativeFunction<
               jni$_.JniResult Function(
@@ -15001,16 +14790,16 @@ extension NativeInteropFlutterIntegrationCoreApiBridge$$Methods
             )
           >();
 
-  /// from: `public suspend fun pigeon_echoAsyncNullableInt32List(list: kotlin.IntArray?): kotlin.IntArray?`
+  /// from: `public suspend fun echoAsyncNullableInt32List(list: kotlin.IntArray?): kotlin.IntArray?`
   /// The returned object must be released after use, by calling the [release] method.
-  core$_.Future<jni$_.JIntArray?> pigeon_echoAsyncNullableInt32List(jni$_.JIntArray? is$) async {
+  core$_.Future<jni$_.JIntArray?> echoAsyncNullableInt32List(jni$_.JIntArray? is$) async {
     final $p = jni$_.ReceivePort();
     final _$continuation = jni$_.ProtectedJniExtensions.newPortContinuation($p);
     final _$$selfRef = reference;
     final _$is$ = is$?.reference ?? jni$_.jNullReference;
-    final $r = _pigeon_echoAsyncNullableInt32List(
+    final $r = _echoAsyncNullableInt32List(
       _$$selfRef.pointer,
-      _id_pigeon_echoAsyncNullableInt32List.pointer,
+      _id_echoAsyncNullableInt32List.pointer,
       _$is$.pointer,
       _$continuation.pointer,
     ).object<jni$_.JObject?>();
@@ -15035,14 +14824,13 @@ extension NativeInteropFlutterIntegrationCoreApiBridge$$Methods
     return $o?.as<jni$_.JIntArray>(jni$_.JIntArray.type, releaseOriginal: true);
   }
 
-  static final _id_pigeon_echoAsyncNullableInt64List = NativeInteropFlutterIntegrationCoreApiBridge
-      ._class
+  static final _id_echoAsyncNullableInt64List = NativeInteropFlutterIntegrationCoreApiBridge._class
       .instanceMethodId(
-        r'pigeon_echoAsyncNullableInt64List',
+        r'echoAsyncNullableInt64List',
         r'([JLkotlin/coroutines/Continuation;)Ljava/lang/Object;',
       );
 
-  static final _pigeon_echoAsyncNullableInt64List =
+  static final _echoAsyncNullableInt64List =
       jni$_.ProtectedJniExtensions.lookup<
             jni$_.NativeFunction<
               jni$_.JniResult Function(
@@ -15061,16 +14849,16 @@ extension NativeInteropFlutterIntegrationCoreApiBridge$$Methods
             )
           >();
 
-  /// from: `public suspend fun pigeon_echoAsyncNullableInt64List(list: kotlin.LongArray?): kotlin.LongArray?`
+  /// from: `public suspend fun echoAsyncNullableInt64List(list: kotlin.LongArray?): kotlin.LongArray?`
   /// The returned object must be released after use, by calling the [release] method.
-  core$_.Future<jni$_.JLongArray?> pigeon_echoAsyncNullableInt64List(jni$_.JLongArray? js) async {
+  core$_.Future<jni$_.JLongArray?> echoAsyncNullableInt64List(jni$_.JLongArray? js) async {
     final $p = jni$_.ReceivePort();
     final _$continuation = jni$_.ProtectedJniExtensions.newPortContinuation($p);
     final _$$selfRef = reference;
     final _$js = js?.reference ?? jni$_.jNullReference;
-    final $r = _pigeon_echoAsyncNullableInt64List(
+    final $r = _echoAsyncNullableInt64List(
       _$$selfRef.pointer,
-      _id_pigeon_echoAsyncNullableInt64List.pointer,
+      _id_echoAsyncNullableInt64List.pointer,
       _$js.pointer,
       _$continuation.pointer,
     ).object<jni$_.JObject?>();
@@ -15095,13 +14883,14 @@ extension NativeInteropFlutterIntegrationCoreApiBridge$$Methods
     return $o?.as<jni$_.JLongArray>(jni$_.JLongArray.type, releaseOriginal: true);
   }
 
-  static final _id_pigeon_echoAsyncNullableFloat64List =
-      NativeInteropFlutterIntegrationCoreApiBridge._class.instanceMethodId(
-        r'pigeon_echoAsyncNullableFloat64List',
+  static final _id_echoAsyncNullableFloat64List = NativeInteropFlutterIntegrationCoreApiBridge
+      ._class
+      .instanceMethodId(
+        r'echoAsyncNullableFloat64List',
         r'([DLkotlin/coroutines/Continuation;)Ljava/lang/Object;',
       );
 
-  static final _pigeon_echoAsyncNullableFloat64List =
+  static final _echoAsyncNullableFloat64List =
       jni$_.ProtectedJniExtensions.lookup<
             jni$_.NativeFunction<
               jni$_.JniResult Function(
@@ -15120,18 +14909,16 @@ extension NativeInteropFlutterIntegrationCoreApiBridge$$Methods
             )
           >();
 
-  /// from: `public suspend fun pigeon_echoAsyncNullableFloat64List(list: kotlin.DoubleArray?): kotlin.DoubleArray?`
+  /// from: `public suspend fun echoAsyncNullableFloat64List(list: kotlin.DoubleArray?): kotlin.DoubleArray?`
   /// The returned object must be released after use, by calling the [release] method.
-  core$_.Future<jni$_.JDoubleArray?> pigeon_echoAsyncNullableFloat64List(
-    jni$_.JDoubleArray? ds,
-  ) async {
+  core$_.Future<jni$_.JDoubleArray?> echoAsyncNullableFloat64List(jni$_.JDoubleArray? ds) async {
     final $p = jni$_.ReceivePort();
     final _$continuation = jni$_.ProtectedJniExtensions.newPortContinuation($p);
     final _$$selfRef = reference;
     final _$ds = ds?.reference ?? jni$_.jNullReference;
-    final $r = _pigeon_echoAsyncNullableFloat64List(
+    final $r = _echoAsyncNullableFloat64List(
       _$$selfRef.pointer,
-      _id_pigeon_echoAsyncNullableFloat64List.pointer,
+      _id_echoAsyncNullableFloat64List.pointer,
       _$ds.pointer,
       _$continuation.pointer,
     ).object<jni$_.JObject?>();
@@ -15156,14 +14943,250 @@ extension NativeInteropFlutterIntegrationCoreApiBridge$$Methods
     return $o?.as<jni$_.JDoubleArray>(jni$_.JDoubleArray.type, releaseOriginal: true);
   }
 
-  static final _id_pigeon_echoAsyncNullableObject = NativeInteropFlutterIntegrationCoreApiBridge
+  static final _id_echoAsyncNullableObject = NativeInteropFlutterIntegrationCoreApiBridge._class
+      .instanceMethodId(
+        r'echoAsyncNullableObject',
+        r'([BLkotlin/coroutines/Continuation;)Ljava/lang/Object;',
+      );
+
+  static final _echoAsyncNullableObject =
+      jni$_.ProtectedJniExtensions.lookup<
+            jni$_.NativeFunction<
+              jni$_.JniResult Function(
+                jni$_.Pointer<jni$_.Void>,
+                jni$_.JMethodIDPtr,
+                jni$_.VarArgs<(jni$_.Pointer<jni$_.Void>, jni$_.Pointer<jni$_.Void>)>,
+              )
+            >
+          >('globalEnv_CallObjectMethod')
+          .asFunction<
+            jni$_.JniResult Function(
+              jni$_.Pointer<jni$_.Void>,
+              jni$_.JMethodIDPtr,
+              jni$_.Pointer<jni$_.Void>,
+              jni$_.Pointer<jni$_.Void>,
+            )
+          >();
+
+  /// from: `public suspend fun echoAsyncNullableObject(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
+  /// The returned object must be released after use, by calling the [release] method.
+  core$_.Future<jni$_.JByteArray?> echoAsyncNullableObject(jni$_.JByteArray bs) async {
+    final $p = jni$_.ReceivePort();
+    final _$continuation = jni$_.ProtectedJniExtensions.newPortContinuation($p);
+    final _$$selfRef = reference;
+    final _$bs = bs.reference;
+    final $r = _echoAsyncNullableObject(
+      _$$selfRef.pointer,
+      _id_echoAsyncNullableObject.pointer,
+      _$bs.pointer,
+      _$continuation.pointer,
+    ).object<jni$_.JObject?>();
+    _$continuation.release();
+    jni$_.JObject? $o;
+    if ($r != null && $r.isInstanceOf(jni$_.coroutineSingletonsClass)) {
+      $r.release();
+      final $a = await $p.first;
+      $o = $a == 0
+          ? null
+          : jni$_.JObject.fromReference(jni$_.JGlobalReference(jni$_.JObjectPtr.fromAddress($a)));
+      if ($o != null && $o.isInstanceOf(jni$_.result$Class)) {
+        $o = jni$_.resultValueField.get($o, const jni$_.$JObject$Type$());
+      } else if ($o != null && $o.isInstanceOf(jni$_.result$FailureClass)) {
+        final $e = jni$_.failureExceptionField.get($o, const jni$_.$JObject$Type$());
+        $o.release();
+        jni$_.Jni.throwException($e.reference.toPointer());
+      }
+    } else {
+      $o = $r;
+    }
+    return $o?.as<jni$_.JByteArray>(jni$_.JByteArray.type, releaseOriginal: true);
+  }
+
+  static final _id_echoAsyncNullableList = NativeInteropFlutterIntegrationCoreApiBridge._class
+      .instanceMethodId(
+        r'echoAsyncNullableList',
+        r'([BLkotlin/coroutines/Continuation;)Ljava/lang/Object;',
+      );
+
+  static final _echoAsyncNullableList =
+      jni$_.ProtectedJniExtensions.lookup<
+            jni$_.NativeFunction<
+              jni$_.JniResult Function(
+                jni$_.Pointer<jni$_.Void>,
+                jni$_.JMethodIDPtr,
+                jni$_.VarArgs<(jni$_.Pointer<jni$_.Void>, jni$_.Pointer<jni$_.Void>)>,
+              )
+            >
+          >('globalEnv_CallObjectMethod')
+          .asFunction<
+            jni$_.JniResult Function(
+              jni$_.Pointer<jni$_.Void>,
+              jni$_.JMethodIDPtr,
+              jni$_.Pointer<jni$_.Void>,
+              jni$_.Pointer<jni$_.Void>,
+            )
+          >();
+
+  /// from: `public suspend fun echoAsyncNullableList(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
+  /// The returned object must be released after use, by calling the [release] method.
+  core$_.Future<jni$_.JByteArray?> echoAsyncNullableList(jni$_.JByteArray bs) async {
+    final $p = jni$_.ReceivePort();
+    final _$continuation = jni$_.ProtectedJniExtensions.newPortContinuation($p);
+    final _$$selfRef = reference;
+    final _$bs = bs.reference;
+    final $r = _echoAsyncNullableList(
+      _$$selfRef.pointer,
+      _id_echoAsyncNullableList.pointer,
+      _$bs.pointer,
+      _$continuation.pointer,
+    ).object<jni$_.JObject?>();
+    _$continuation.release();
+    jni$_.JObject? $o;
+    if ($r != null && $r.isInstanceOf(jni$_.coroutineSingletonsClass)) {
+      $r.release();
+      final $a = await $p.first;
+      $o = $a == 0
+          ? null
+          : jni$_.JObject.fromReference(jni$_.JGlobalReference(jni$_.JObjectPtr.fromAddress($a)));
+      if ($o != null && $o.isInstanceOf(jni$_.result$Class)) {
+        $o = jni$_.resultValueField.get($o, const jni$_.$JObject$Type$());
+      } else if ($o != null && $o.isInstanceOf(jni$_.result$FailureClass)) {
+        final $e = jni$_.failureExceptionField.get($o, const jni$_.$JObject$Type$());
+        $o.release();
+        jni$_.Jni.throwException($e.reference.toPointer());
+      }
+    } else {
+      $o = $r;
+    }
+    return $o?.as<jni$_.JByteArray>(jni$_.JByteArray.type, releaseOriginal: true);
+  }
+
+  static final _id_echoAsyncNullableEnumList = NativeInteropFlutterIntegrationCoreApiBridge._class
+      .instanceMethodId(
+        r'echoAsyncNullableEnumList',
+        r'([BLkotlin/coroutines/Continuation;)Ljava/lang/Object;',
+      );
+
+  static final _echoAsyncNullableEnumList =
+      jni$_.ProtectedJniExtensions.lookup<
+            jni$_.NativeFunction<
+              jni$_.JniResult Function(
+                jni$_.Pointer<jni$_.Void>,
+                jni$_.JMethodIDPtr,
+                jni$_.VarArgs<(jni$_.Pointer<jni$_.Void>, jni$_.Pointer<jni$_.Void>)>,
+              )
+            >
+          >('globalEnv_CallObjectMethod')
+          .asFunction<
+            jni$_.JniResult Function(
+              jni$_.Pointer<jni$_.Void>,
+              jni$_.JMethodIDPtr,
+              jni$_.Pointer<jni$_.Void>,
+              jni$_.Pointer<jni$_.Void>,
+            )
+          >();
+
+  /// from: `public suspend fun echoAsyncNullableEnumList(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
+  /// The returned object must be released after use, by calling the [release] method.
+  core$_.Future<jni$_.JByteArray?> echoAsyncNullableEnumList(jni$_.JByteArray bs) async {
+    final $p = jni$_.ReceivePort();
+    final _$continuation = jni$_.ProtectedJniExtensions.newPortContinuation($p);
+    final _$$selfRef = reference;
+    final _$bs = bs.reference;
+    final $r = _echoAsyncNullableEnumList(
+      _$$selfRef.pointer,
+      _id_echoAsyncNullableEnumList.pointer,
+      _$bs.pointer,
+      _$continuation.pointer,
+    ).object<jni$_.JObject?>();
+    _$continuation.release();
+    jni$_.JObject? $o;
+    if ($r != null && $r.isInstanceOf(jni$_.coroutineSingletonsClass)) {
+      $r.release();
+      final $a = await $p.first;
+      $o = $a == 0
+          ? null
+          : jni$_.JObject.fromReference(jni$_.JGlobalReference(jni$_.JObjectPtr.fromAddress($a)));
+      if ($o != null && $o.isInstanceOf(jni$_.result$Class)) {
+        $o = jni$_.resultValueField.get($o, const jni$_.$JObject$Type$());
+      } else if ($o != null && $o.isInstanceOf(jni$_.result$FailureClass)) {
+        final $e = jni$_.failureExceptionField.get($o, const jni$_.$JObject$Type$());
+        $o.release();
+        jni$_.Jni.throwException($e.reference.toPointer());
+      }
+    } else {
+      $o = $r;
+    }
+    return $o?.as<jni$_.JByteArray>(jni$_.JByteArray.type, releaseOriginal: true);
+  }
+
+  static final _id_echoAsyncNullableClassList = NativeInteropFlutterIntegrationCoreApiBridge._class
+      .instanceMethodId(
+        r'echoAsyncNullableClassList',
+        r'([BLkotlin/coroutines/Continuation;)Ljava/lang/Object;',
+      );
+
+  static final _echoAsyncNullableClassList =
+      jni$_.ProtectedJniExtensions.lookup<
+            jni$_.NativeFunction<
+              jni$_.JniResult Function(
+                jni$_.Pointer<jni$_.Void>,
+                jni$_.JMethodIDPtr,
+                jni$_.VarArgs<(jni$_.Pointer<jni$_.Void>, jni$_.Pointer<jni$_.Void>)>,
+              )
+            >
+          >('globalEnv_CallObjectMethod')
+          .asFunction<
+            jni$_.JniResult Function(
+              jni$_.Pointer<jni$_.Void>,
+              jni$_.JMethodIDPtr,
+              jni$_.Pointer<jni$_.Void>,
+              jni$_.Pointer<jni$_.Void>,
+            )
+          >();
+
+  /// from: `public suspend fun echoAsyncNullableClassList(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
+  /// The returned object must be released after use, by calling the [release] method.
+  core$_.Future<jni$_.JByteArray?> echoAsyncNullableClassList(jni$_.JByteArray bs) async {
+    final $p = jni$_.ReceivePort();
+    final _$continuation = jni$_.ProtectedJniExtensions.newPortContinuation($p);
+    final _$$selfRef = reference;
+    final _$bs = bs.reference;
+    final $r = _echoAsyncNullableClassList(
+      _$$selfRef.pointer,
+      _id_echoAsyncNullableClassList.pointer,
+      _$bs.pointer,
+      _$continuation.pointer,
+    ).object<jni$_.JObject?>();
+    _$continuation.release();
+    jni$_.JObject? $o;
+    if ($r != null && $r.isInstanceOf(jni$_.coroutineSingletonsClass)) {
+      $r.release();
+      final $a = await $p.first;
+      $o = $a == 0
+          ? null
+          : jni$_.JObject.fromReference(jni$_.JGlobalReference(jni$_.JObjectPtr.fromAddress($a)));
+      if ($o != null && $o.isInstanceOf(jni$_.result$Class)) {
+        $o = jni$_.resultValueField.get($o, const jni$_.$JObject$Type$());
+      } else if ($o != null && $o.isInstanceOf(jni$_.result$FailureClass)) {
+        final $e = jni$_.failureExceptionField.get($o, const jni$_.$JObject$Type$());
+        $o.release();
+        jni$_.Jni.throwException($e.reference.toPointer());
+      }
+    } else {
+      $o = $r;
+    }
+    return $o?.as<jni$_.JByteArray>(jni$_.JByteArray.type, releaseOriginal: true);
+  }
+
+  static final _id_echoAsyncNullableNonNullEnumList = NativeInteropFlutterIntegrationCoreApiBridge
       ._class
       .instanceMethodId(
-        r'pigeon_echoAsyncNullableObject',
+        r'echoAsyncNullableNonNullEnumList',
         r'([BLkotlin/coroutines/Continuation;)Ljava/lang/Object;',
       );
 
-  static final _pigeon_echoAsyncNullableObject =
+  static final _echoAsyncNullableNonNullEnumList =
       jni$_.ProtectedJniExtensions.lookup<
             jni$_.NativeFunction<
               jni$_.JniResult Function(
@@ -15182,16 +15205,16 @@ extension NativeInteropFlutterIntegrationCoreApiBridge$$Methods
             )
           >();
 
-  /// from: `public suspend fun pigeon_echoAsyncNullableObject(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
+  /// from: `public suspend fun echoAsyncNullableNonNullEnumList(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
   /// The returned object must be released after use, by calling the [release] method.
-  core$_.Future<jni$_.JByteArray?> pigeon_echoAsyncNullableObject(jni$_.JByteArray bs) async {
+  core$_.Future<jni$_.JByteArray?> echoAsyncNullableNonNullEnumList(jni$_.JByteArray bs) async {
     final $p = jni$_.ReceivePort();
     final _$continuation = jni$_.ProtectedJniExtensions.newPortContinuation($p);
     final _$$selfRef = reference;
     final _$bs = bs.reference;
-    final $r = _pigeon_echoAsyncNullableObject(
+    final $r = _echoAsyncNullableNonNullEnumList(
       _$$selfRef.pointer,
-      _id_pigeon_echoAsyncNullableObject.pointer,
+      _id_echoAsyncNullableNonNullEnumList.pointer,
       _$bs.pointer,
       _$continuation.pointer,
     ).object<jni$_.JObject?>();
@@ -15216,14 +15239,14 @@ extension NativeInteropFlutterIntegrationCoreApiBridge$$Methods
     return $o?.as<jni$_.JByteArray>(jni$_.JByteArray.type, releaseOriginal: true);
   }
 
-  static final _id_pigeon_echoAsyncNullableList = NativeInteropFlutterIntegrationCoreApiBridge
+  static final _id_echoAsyncNullableNonNullClassList = NativeInteropFlutterIntegrationCoreApiBridge
       ._class
       .instanceMethodId(
-        r'pigeon_echoAsyncNullableList',
+        r'echoAsyncNullableNonNullClassList',
         r'([BLkotlin/coroutines/Continuation;)Ljava/lang/Object;',
       );
 
-  static final _pigeon_echoAsyncNullableList =
+  static final _echoAsyncNullableNonNullClassList =
       jni$_.ProtectedJniExtensions.lookup<
             jni$_.NativeFunction<
               jni$_.JniResult Function(
@@ -15242,16 +15265,16 @@ extension NativeInteropFlutterIntegrationCoreApiBridge$$Methods
             )
           >();
 
-  /// from: `public suspend fun pigeon_echoAsyncNullableList(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
+  /// from: `public suspend fun echoAsyncNullableNonNullClassList(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
   /// The returned object must be released after use, by calling the [release] method.
-  core$_.Future<jni$_.JByteArray?> pigeon_echoAsyncNullableList(jni$_.JByteArray bs) async {
+  core$_.Future<jni$_.JByteArray?> echoAsyncNullableNonNullClassList(jni$_.JByteArray bs) async {
     final $p = jni$_.ReceivePort();
     final _$continuation = jni$_.ProtectedJniExtensions.newPortContinuation($p);
     final _$$selfRef = reference;
     final _$bs = bs.reference;
-    final $r = _pigeon_echoAsyncNullableList(
+    final $r = _echoAsyncNullableNonNullClassList(
       _$$selfRef.pointer,
-      _id_pigeon_echoAsyncNullableList.pointer,
+      _id_echoAsyncNullableNonNullClassList.pointer,
       _$bs.pointer,
       _$continuation.pointer,
     ).object<jni$_.JObject?>();
@@ -15276,14 +15299,13 @@ extension NativeInteropFlutterIntegrationCoreApiBridge$$Methods
     return $o?.as<jni$_.JByteArray>(jni$_.JByteArray.type, releaseOriginal: true);
   }
 
-  static final _id_pigeon_echoAsyncNullableEnumList = NativeInteropFlutterIntegrationCoreApiBridge
-      ._class
+  static final _id_echoAsyncNullableMap = NativeInteropFlutterIntegrationCoreApiBridge._class
       .instanceMethodId(
-        r'pigeon_echoAsyncNullableEnumList',
+        r'echoAsyncNullableMap',
         r'([BLkotlin/coroutines/Continuation;)Ljava/lang/Object;',
       );
 
-  static final _pigeon_echoAsyncNullableEnumList =
+  static final _echoAsyncNullableMap =
       jni$_.ProtectedJniExtensions.lookup<
             jni$_.NativeFunction<
               jni$_.JniResult Function(
@@ -15302,16 +15324,16 @@ extension NativeInteropFlutterIntegrationCoreApiBridge$$Methods
             )
           >();
 
-  /// from: `public suspend fun pigeon_echoAsyncNullableEnumList(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
+  /// from: `public suspend fun echoAsyncNullableMap(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
   /// The returned object must be released after use, by calling the [release] method.
-  core$_.Future<jni$_.JByteArray?> pigeon_echoAsyncNullableEnumList(jni$_.JByteArray bs) async {
+  core$_.Future<jni$_.JByteArray?> echoAsyncNullableMap(jni$_.JByteArray bs) async {
     final $p = jni$_.ReceivePort();
     final _$continuation = jni$_.ProtectedJniExtensions.newPortContinuation($p);
     final _$$selfRef = reference;
     final _$bs = bs.reference;
-    final $r = _pigeon_echoAsyncNullableEnumList(
+    final $r = _echoAsyncNullableMap(
       _$$selfRef.pointer,
-      _id_pigeon_echoAsyncNullableEnumList.pointer,
+      _id_echoAsyncNullableMap.pointer,
       _$bs.pointer,
       _$continuation.pointer,
     ).object<jni$_.JObject?>();
@@ -15336,14 +15358,13 @@ extension NativeInteropFlutterIntegrationCoreApiBridge$$Methods
     return $o?.as<jni$_.JByteArray>(jni$_.JByteArray.type, releaseOriginal: true);
   }
 
-  static final _id_pigeon_echoAsyncNullableClassList = NativeInteropFlutterIntegrationCoreApiBridge
-      ._class
+  static final _id_echoAsyncNullableStringMap = NativeInteropFlutterIntegrationCoreApiBridge._class
       .instanceMethodId(
-        r'pigeon_echoAsyncNullableClassList',
+        r'echoAsyncNullableStringMap',
         r'([BLkotlin/coroutines/Continuation;)Ljava/lang/Object;',
       );
 
-  static final _pigeon_echoAsyncNullableClassList =
+  static final _echoAsyncNullableStringMap =
       jni$_.ProtectedJniExtensions.lookup<
             jni$_.NativeFunction<
               jni$_.JniResult Function(
@@ -15362,16 +15383,16 @@ extension NativeInteropFlutterIntegrationCoreApiBridge$$Methods
             )
           >();
 
-  /// from: `public suspend fun pigeon_echoAsyncNullableClassList(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
+  /// from: `public suspend fun echoAsyncNullableStringMap(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
   /// The returned object must be released after use, by calling the [release] method.
-  core$_.Future<jni$_.JByteArray?> pigeon_echoAsyncNullableClassList(jni$_.JByteArray bs) async {
+  core$_.Future<jni$_.JByteArray?> echoAsyncNullableStringMap(jni$_.JByteArray bs) async {
     final $p = jni$_.ReceivePort();
     final _$continuation = jni$_.ProtectedJniExtensions.newPortContinuation($p);
     final _$$selfRef = reference;
     final _$bs = bs.reference;
-    final $r = _pigeon_echoAsyncNullableClassList(
+    final $r = _echoAsyncNullableStringMap(
       _$$selfRef.pointer,
-      _id_pigeon_echoAsyncNullableClassList.pointer,
+      _id_echoAsyncNullableStringMap.pointer,
       _$bs.pointer,
       _$continuation.pointer,
     ).object<jni$_.JObject?>();
@@ -15396,135 +15417,13 @@ extension NativeInteropFlutterIntegrationCoreApiBridge$$Methods
     return $o?.as<jni$_.JByteArray>(jni$_.JByteArray.type, releaseOriginal: true);
   }
 
-  static final _id_pigeon_echoAsyncNullableNonNullEnumList =
-      NativeInteropFlutterIntegrationCoreApiBridge._class.instanceMethodId(
-        r'pigeon_echoAsyncNullableNonNullEnumList',
-        r'([BLkotlin/coroutines/Continuation;)Ljava/lang/Object;',
-      );
-
-  static final _pigeon_echoAsyncNullableNonNullEnumList =
-      jni$_.ProtectedJniExtensions.lookup<
-            jni$_.NativeFunction<
-              jni$_.JniResult Function(
-                jni$_.Pointer<jni$_.Void>,
-                jni$_.JMethodIDPtr,
-                jni$_.VarArgs<(jni$_.Pointer<jni$_.Void>, jni$_.Pointer<jni$_.Void>)>,
-              )
-            >
-          >('globalEnv_CallObjectMethod')
-          .asFunction<
-            jni$_.JniResult Function(
-              jni$_.Pointer<jni$_.Void>,
-              jni$_.JMethodIDPtr,
-              jni$_.Pointer<jni$_.Void>,
-              jni$_.Pointer<jni$_.Void>,
-            )
-          >();
-
-  /// from: `public suspend fun pigeon_echoAsyncNullableNonNullEnumList(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
-  /// The returned object must be released after use, by calling the [release] method.
-  core$_.Future<jni$_.JByteArray?> pigeon_echoAsyncNullableNonNullEnumList(
-    jni$_.JByteArray bs,
-  ) async {
-    final $p = jni$_.ReceivePort();
-    final _$continuation = jni$_.ProtectedJniExtensions.newPortContinuation($p);
-    final _$$selfRef = reference;
-    final _$bs = bs.reference;
-    final $r = _pigeon_echoAsyncNullableNonNullEnumList(
-      _$$selfRef.pointer,
-      _id_pigeon_echoAsyncNullableNonNullEnumList.pointer,
-      _$bs.pointer,
-      _$continuation.pointer,
-    ).object<jni$_.JObject?>();
-    _$continuation.release();
-    jni$_.JObject? $o;
-    if ($r != null && $r.isInstanceOf(jni$_.coroutineSingletonsClass)) {
-      $r.release();
-      final $a = await $p.first;
-      $o = $a == 0
-          ? null
-          : jni$_.JObject.fromReference(jni$_.JGlobalReference(jni$_.JObjectPtr.fromAddress($a)));
-      if ($o != null && $o.isInstanceOf(jni$_.result$Class)) {
-        $o = jni$_.resultValueField.get($o, const jni$_.$JObject$Type$());
-      } else if ($o != null && $o.isInstanceOf(jni$_.result$FailureClass)) {
-        final $e = jni$_.failureExceptionField.get($o, const jni$_.$JObject$Type$());
-        $o.release();
-        jni$_.Jni.throwException($e.reference.toPointer());
-      }
-    } else {
-      $o = $r;
-    }
-    return $o?.as<jni$_.JByteArray>(jni$_.JByteArray.type, releaseOriginal: true);
-  }
-
-  static final _id_pigeon_echoAsyncNullableNonNullClassList =
-      NativeInteropFlutterIntegrationCoreApiBridge._class.instanceMethodId(
-        r'pigeon_echoAsyncNullableNonNullClassList',
-        r'([BLkotlin/coroutines/Continuation;)Ljava/lang/Object;',
-      );
-
-  static final _pigeon_echoAsyncNullableNonNullClassList =
-      jni$_.ProtectedJniExtensions.lookup<
-            jni$_.NativeFunction<
-              jni$_.JniResult Function(
-                jni$_.Pointer<jni$_.Void>,
-                jni$_.JMethodIDPtr,
-                jni$_.VarArgs<(jni$_.Pointer<jni$_.Void>, jni$_.Pointer<jni$_.Void>)>,
-              )
-            >
-          >('globalEnv_CallObjectMethod')
-          .asFunction<
-            jni$_.JniResult Function(
-              jni$_.Pointer<jni$_.Void>,
-              jni$_.JMethodIDPtr,
-              jni$_.Pointer<jni$_.Void>,
-              jni$_.Pointer<jni$_.Void>,
-            )
-          >();
-
-  /// from: `public suspend fun pigeon_echoAsyncNullableNonNullClassList(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
-  /// The returned object must be released after use, by calling the [release] method.
-  core$_.Future<jni$_.JByteArray?> pigeon_echoAsyncNullableNonNullClassList(
-    jni$_.JByteArray bs,
-  ) async {
-    final $p = jni$_.ReceivePort();
-    final _$continuation = jni$_.ProtectedJniExtensions.newPortContinuation($p);
-    final _$$selfRef = reference;
-    final _$bs = bs.reference;
-    final $r = _pigeon_echoAsyncNullableNonNullClassList(
-      _$$selfRef.pointer,
-      _id_pigeon_echoAsyncNullableNonNullClassList.pointer,
-      _$bs.pointer,
-      _$continuation.pointer,
-    ).object<jni$_.JObject?>();
-    _$continuation.release();
-    jni$_.JObject? $o;
-    if ($r != null && $r.isInstanceOf(jni$_.coroutineSingletonsClass)) {
-      $r.release();
-      final $a = await $p.first;
-      $o = $a == 0
-          ? null
-          : jni$_.JObject.fromReference(jni$_.JGlobalReference(jni$_.JObjectPtr.fromAddress($a)));
-      if ($o != null && $o.isInstanceOf(jni$_.result$Class)) {
-        $o = jni$_.resultValueField.get($o, const jni$_.$JObject$Type$());
-      } else if ($o != null && $o.isInstanceOf(jni$_.result$FailureClass)) {
-        final $e = jni$_.failureExceptionField.get($o, const jni$_.$JObject$Type$());
-        $o.release();
-        jni$_.Jni.throwException($e.reference.toPointer());
-      }
-    } else {
-      $o = $r;
-    }
-    return $o?.as<jni$_.JByteArray>(jni$_.JByteArray.type, releaseOriginal: true);
-  }
-
-  static final _id_pigeon_echoAsyncNullableMap = NativeInteropFlutterIntegrationCoreApiBridge._class
+  static final _id_echoAsyncNullableIntMap = NativeInteropFlutterIntegrationCoreApiBridge._class
       .instanceMethodId(
-        r'pigeon_echoAsyncNullableMap',
+        r'echoAsyncNullableIntMap',
         r'([BLkotlin/coroutines/Continuation;)Ljava/lang/Object;',
       );
 
-  static final _pigeon_echoAsyncNullableMap =
+  static final _echoAsyncNullableIntMap =
       jni$_.ProtectedJniExtensions.lookup<
             jni$_.NativeFunction<
               jni$_.JniResult Function(
@@ -15543,16 +15442,16 @@ extension NativeInteropFlutterIntegrationCoreApiBridge$$Methods
             )
           >();
 
-  /// from: `public suspend fun pigeon_echoAsyncNullableMap(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
+  /// from: `public suspend fun echoAsyncNullableIntMap(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
   /// The returned object must be released after use, by calling the [release] method.
-  core$_.Future<jni$_.JByteArray?> pigeon_echoAsyncNullableMap(jni$_.JByteArray bs) async {
+  core$_.Future<jni$_.JByteArray?> echoAsyncNullableIntMap(jni$_.JByteArray bs) async {
     final $p = jni$_.ReceivePort();
     final _$continuation = jni$_.ProtectedJniExtensions.newPortContinuation($p);
     final _$$selfRef = reference;
     final _$bs = bs.reference;
-    final $r = _pigeon_echoAsyncNullableMap(
+    final $r = _echoAsyncNullableIntMap(
       _$$selfRef.pointer,
-      _id_pigeon_echoAsyncNullableMap.pointer,
+      _id_echoAsyncNullableIntMap.pointer,
       _$bs.pointer,
       _$continuation.pointer,
     ).object<jni$_.JObject?>();
@@ -15577,14 +15476,13 @@ extension NativeInteropFlutterIntegrationCoreApiBridge$$Methods
     return $o?.as<jni$_.JByteArray>(jni$_.JByteArray.type, releaseOriginal: true);
   }
 
-  static final _id_pigeon_echoAsyncNullableStringMap = NativeInteropFlutterIntegrationCoreApiBridge
-      ._class
+  static final _id_echoAsyncNullableEnumMap = NativeInteropFlutterIntegrationCoreApiBridge._class
       .instanceMethodId(
-        r'pigeon_echoAsyncNullableStringMap',
+        r'echoAsyncNullableEnumMap',
         r'([BLkotlin/coroutines/Continuation;)Ljava/lang/Object;',
       );
 
-  static final _pigeon_echoAsyncNullableStringMap =
+  static final _echoAsyncNullableEnumMap =
       jni$_.ProtectedJniExtensions.lookup<
             jni$_.NativeFunction<
               jni$_.JniResult Function(
@@ -15603,16 +15501,16 @@ extension NativeInteropFlutterIntegrationCoreApiBridge$$Methods
             )
           >();
 
-  /// from: `public suspend fun pigeon_echoAsyncNullableStringMap(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
+  /// from: `public suspend fun echoAsyncNullableEnumMap(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
   /// The returned object must be released after use, by calling the [release] method.
-  core$_.Future<jni$_.JByteArray?> pigeon_echoAsyncNullableStringMap(jni$_.JByteArray bs) async {
+  core$_.Future<jni$_.JByteArray?> echoAsyncNullableEnumMap(jni$_.JByteArray bs) async {
     final $p = jni$_.ReceivePort();
     final _$continuation = jni$_.ProtectedJniExtensions.newPortContinuation($p);
     final _$$selfRef = reference;
     final _$bs = bs.reference;
-    final $r = _pigeon_echoAsyncNullableStringMap(
+    final $r = _echoAsyncNullableEnumMap(
       _$$selfRef.pointer,
-      _id_pigeon_echoAsyncNullableStringMap.pointer,
+      _id_echoAsyncNullableEnumMap.pointer,
       _$bs.pointer,
       _$continuation.pointer,
     ).object<jni$_.JObject?>();
@@ -15637,14 +15535,13 @@ extension NativeInteropFlutterIntegrationCoreApiBridge$$Methods
     return $o?.as<jni$_.JByteArray>(jni$_.JByteArray.type, releaseOriginal: true);
   }
 
-  static final _id_pigeon_echoAsyncNullableIntMap = NativeInteropFlutterIntegrationCoreApiBridge
-      ._class
+  static final _id_echoAsyncNullableClassMap = NativeInteropFlutterIntegrationCoreApiBridge._class
       .instanceMethodId(
-        r'pigeon_echoAsyncNullableIntMap',
+        r'echoAsyncNullableClassMap',
         r'([BLkotlin/coroutines/Continuation;)Ljava/lang/Object;',
       );
 
-  static final _pigeon_echoAsyncNullableIntMap =
+  static final _echoAsyncNullableClassMap =
       jni$_.ProtectedJniExtensions.lookup<
             jni$_.NativeFunction<
               jni$_.JniResult Function(
@@ -15663,16 +15560,16 @@ extension NativeInteropFlutterIntegrationCoreApiBridge$$Methods
             )
           >();
 
-  /// from: `public suspend fun pigeon_echoAsyncNullableIntMap(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
+  /// from: `public suspend fun echoAsyncNullableClassMap(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
   /// The returned object must be released after use, by calling the [release] method.
-  core$_.Future<jni$_.JByteArray?> pigeon_echoAsyncNullableIntMap(jni$_.JByteArray bs) async {
+  core$_.Future<jni$_.JByteArray?> echoAsyncNullableClassMap(jni$_.JByteArray bs) async {
     final $p = jni$_.ReceivePort();
     final _$continuation = jni$_.ProtectedJniExtensions.newPortContinuation($p);
     final _$$selfRef = reference;
     final _$bs = bs.reference;
-    final $r = _pigeon_echoAsyncNullableIntMap(
+    final $r = _echoAsyncNullableClassMap(
       _$$selfRef.pointer,
-      _id_pigeon_echoAsyncNullableIntMap.pointer,
+      _id_echoAsyncNullableClassMap.pointer,
       _$bs.pointer,
       _$continuation.pointer,
     ).object<jni$_.JObject?>();
@@ -15697,134 +15594,13 @@ extension NativeInteropFlutterIntegrationCoreApiBridge$$Methods
     return $o?.as<jni$_.JByteArray>(jni$_.JByteArray.type, releaseOriginal: true);
   }
 
-  static final _id_pigeon_echoAsyncNullableEnumMap = NativeInteropFlutterIntegrationCoreApiBridge
-      ._class
+  static final _id_echoAsyncNullableEnum = NativeInteropFlutterIntegrationCoreApiBridge._class
       .instanceMethodId(
-        r'pigeon_echoAsyncNullableEnumMap',
-        r'([BLkotlin/coroutines/Continuation;)Ljava/lang/Object;',
-      );
-
-  static final _pigeon_echoAsyncNullableEnumMap =
-      jni$_.ProtectedJniExtensions.lookup<
-            jni$_.NativeFunction<
-              jni$_.JniResult Function(
-                jni$_.Pointer<jni$_.Void>,
-                jni$_.JMethodIDPtr,
-                jni$_.VarArgs<(jni$_.Pointer<jni$_.Void>, jni$_.Pointer<jni$_.Void>)>,
-              )
-            >
-          >('globalEnv_CallObjectMethod')
-          .asFunction<
-            jni$_.JniResult Function(
-              jni$_.Pointer<jni$_.Void>,
-              jni$_.JMethodIDPtr,
-              jni$_.Pointer<jni$_.Void>,
-              jni$_.Pointer<jni$_.Void>,
-            )
-          >();
-
-  /// from: `public suspend fun pigeon_echoAsyncNullableEnumMap(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
-  /// The returned object must be released after use, by calling the [release] method.
-  core$_.Future<jni$_.JByteArray?> pigeon_echoAsyncNullableEnumMap(jni$_.JByteArray bs) async {
-    final $p = jni$_.ReceivePort();
-    final _$continuation = jni$_.ProtectedJniExtensions.newPortContinuation($p);
-    final _$$selfRef = reference;
-    final _$bs = bs.reference;
-    final $r = _pigeon_echoAsyncNullableEnumMap(
-      _$$selfRef.pointer,
-      _id_pigeon_echoAsyncNullableEnumMap.pointer,
-      _$bs.pointer,
-      _$continuation.pointer,
-    ).object<jni$_.JObject?>();
-    _$continuation.release();
-    jni$_.JObject? $o;
-    if ($r != null && $r.isInstanceOf(jni$_.coroutineSingletonsClass)) {
-      $r.release();
-      final $a = await $p.first;
-      $o = $a == 0
-          ? null
-          : jni$_.JObject.fromReference(jni$_.JGlobalReference(jni$_.JObjectPtr.fromAddress($a)));
-      if ($o != null && $o.isInstanceOf(jni$_.result$Class)) {
-        $o = jni$_.resultValueField.get($o, const jni$_.$JObject$Type$());
-      } else if ($o != null && $o.isInstanceOf(jni$_.result$FailureClass)) {
-        final $e = jni$_.failureExceptionField.get($o, const jni$_.$JObject$Type$());
-        $o.release();
-        jni$_.Jni.throwException($e.reference.toPointer());
-      }
-    } else {
-      $o = $r;
-    }
-    return $o?.as<jni$_.JByteArray>(jni$_.JByteArray.type, releaseOriginal: true);
-  }
-
-  static final _id_pigeon_echoAsyncNullableClassMap = NativeInteropFlutterIntegrationCoreApiBridge
-      ._class
-      .instanceMethodId(
-        r'pigeon_echoAsyncNullableClassMap',
-        r'([BLkotlin/coroutines/Continuation;)Ljava/lang/Object;',
-      );
-
-  static final _pigeon_echoAsyncNullableClassMap =
-      jni$_.ProtectedJniExtensions.lookup<
-            jni$_.NativeFunction<
-              jni$_.JniResult Function(
-                jni$_.Pointer<jni$_.Void>,
-                jni$_.JMethodIDPtr,
-                jni$_.VarArgs<(jni$_.Pointer<jni$_.Void>, jni$_.Pointer<jni$_.Void>)>,
-              )
-            >
-          >('globalEnv_CallObjectMethod')
-          .asFunction<
-            jni$_.JniResult Function(
-              jni$_.Pointer<jni$_.Void>,
-              jni$_.JMethodIDPtr,
-              jni$_.Pointer<jni$_.Void>,
-              jni$_.Pointer<jni$_.Void>,
-            )
-          >();
-
-  /// from: `public suspend fun pigeon_echoAsyncNullableClassMap(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
-  /// The returned object must be released after use, by calling the [release] method.
-  core$_.Future<jni$_.JByteArray?> pigeon_echoAsyncNullableClassMap(jni$_.JByteArray bs) async {
-    final $p = jni$_.ReceivePort();
-    final _$continuation = jni$_.ProtectedJniExtensions.newPortContinuation($p);
-    final _$$selfRef = reference;
-    final _$bs = bs.reference;
-    final $r = _pigeon_echoAsyncNullableClassMap(
-      _$$selfRef.pointer,
-      _id_pigeon_echoAsyncNullableClassMap.pointer,
-      _$bs.pointer,
-      _$continuation.pointer,
-    ).object<jni$_.JObject?>();
-    _$continuation.release();
-    jni$_.JObject? $o;
-    if ($r != null && $r.isInstanceOf(jni$_.coroutineSingletonsClass)) {
-      $r.release();
-      final $a = await $p.first;
-      $o = $a == 0
-          ? null
-          : jni$_.JObject.fromReference(jni$_.JGlobalReference(jni$_.JObjectPtr.fromAddress($a)));
-      if ($o != null && $o.isInstanceOf(jni$_.result$Class)) {
-        $o = jni$_.resultValueField.get($o, const jni$_.$JObject$Type$());
-      } else if ($o != null && $o.isInstanceOf(jni$_.result$FailureClass)) {
-        final $e = jni$_.failureExceptionField.get($o, const jni$_.$JObject$Type$());
-        $o.release();
-        jni$_.Jni.throwException($e.reference.toPointer());
-      }
-    } else {
-      $o = $r;
-    }
-    return $o?.as<jni$_.JByteArray>(jni$_.JByteArray.type, releaseOriginal: true);
-  }
-
-  static final _id_pigeon_echoAsyncNullableEnum = NativeInteropFlutterIntegrationCoreApiBridge
-      ._class
-      .instanceMethodId(
-        r'pigeon_echoAsyncNullableEnum',
+        r'echoAsyncNullableEnum',
         r'(JLkotlin/coroutines/Continuation;)Ljava/lang/Object;',
       );
 
-  static final _pigeon_echoAsyncNullableEnum =
+  static final _echoAsyncNullableEnum =
       jni$_.ProtectedJniExtensions.lookup<
             jni$_.NativeFunction<
               jni$_.JniResult Function(
@@ -15843,15 +15619,15 @@ extension NativeInteropFlutterIntegrationCoreApiBridge$$Methods
             )
           >();
 
-  /// from: `public suspend fun pigeon_echoAsyncNullableEnum(anEnum: kotlin.Long): kotlin.Long`
+  /// from: `public suspend fun echoAsyncNullableEnum(anEnum: kotlin.Long): kotlin.Long`
   /// The returned object must be released after use, by calling the [release] method.
-  core$_.Future<jni$_.JLong> pigeon_echoAsyncNullableEnum(core$_.int j) async {
+  core$_.Future<jni$_.JLong> echoAsyncNullableEnum(core$_.int j) async {
     final $p = jni$_.ReceivePort();
     final _$continuation = jni$_.ProtectedJniExtensions.newPortContinuation($p);
     final _$$selfRef = reference;
-    final $r = _pigeon_echoAsyncNullableEnum(
+    final $r = _echoAsyncNullableEnum(
       _$$selfRef.pointer,
-      _id_pigeon_echoAsyncNullableEnum.pointer,
+      _id_echoAsyncNullableEnum.pointer,
       j,
       _$continuation.pointer,
     ).object<jni$_.JObject>();
@@ -15874,13 +15650,14 @@ extension NativeInteropFlutterIntegrationCoreApiBridge$$Methods
     return $o.as<jni$_.JLong>(jni$_.JLong.type, releaseOriginal: true);
   }
 
-  static final _id_pigeon_echoAnotherAsyncNullableEnum =
-      NativeInteropFlutterIntegrationCoreApiBridge._class.instanceMethodId(
-        r'pigeon_echoAnotherAsyncNullableEnum',
+  static final _id_echoAnotherAsyncNullableEnum = NativeInteropFlutterIntegrationCoreApiBridge
+      ._class
+      .instanceMethodId(
+        r'echoAnotherAsyncNullableEnum',
         r'(JLkotlin/coroutines/Continuation;)Ljava/lang/Object;',
       );
 
-  static final _pigeon_echoAnotherAsyncNullableEnum =
+  static final _echoAnotherAsyncNullableEnum =
       jni$_.ProtectedJniExtensions.lookup<
             jni$_.NativeFunction<
               jni$_.JniResult Function(
@@ -15899,15 +15676,15 @@ extension NativeInteropFlutterIntegrationCoreApiBridge$$Methods
             )
           >();
 
-  /// from: `public suspend fun pigeon_echoAnotherAsyncNullableEnum(anotherEnum: kotlin.Long): kotlin.Long`
+  /// from: `public suspend fun echoAnotherAsyncNullableEnum(anotherEnum: kotlin.Long): kotlin.Long`
   /// The returned object must be released after use, by calling the [release] method.
-  core$_.Future<jni$_.JLong> pigeon_echoAnotherAsyncNullableEnum(core$_.int j) async {
+  core$_.Future<jni$_.JLong> echoAnotherAsyncNullableEnum(core$_.int j) async {
     final $p = jni$_.ReceivePort();
     final _$continuation = jni$_.ProtectedJniExtensions.newPortContinuation($p);
     final _$$selfRef = reference;
-    final $r = _pigeon_echoAnotherAsyncNullableEnum(
+    final $r = _echoAnotherAsyncNullableEnum(
       _$$selfRef.pointer,
-      _id_pigeon_echoAnotherAsyncNullableEnum.pointer,
+      _id_echoAnotherAsyncNullableEnum.pointer,
       j,
       _$continuation.pointer,
     ).object<jni$_.JObject>();
@@ -15933,1110 +15710,1064 @@ extension NativeInteropFlutterIntegrationCoreApiBridge$$Methods
 
 abstract base mixin class $NativeInteropFlutterIntegrationCoreApiBridge {
   factory $NativeInteropFlutterIntegrationCoreApiBridge({
-    required void Function() pigeon_noop,
-    core$_.bool pigeon_noop$async,
-    required jni$_.JByteArray? Function() pigeon_throwFlutterError,
-    required jni$_.JByteArray? Function() pigeon_throwError,
-    required void Function() pigeon_throwErrorFromVoid,
-    core$_.bool pigeon_throwErrorFromVoid$async,
-    required jni$_.JByteArray? Function(jni$_.JByteArray bs) pigeon_echoNativeInteropAllTypes,
-    required jni$_.JByteArray? Function(jni$_.JByteArray bs)
-    pigeon_echoNativeInteropAllNullableTypes,
+    required void Function() noop,
+    core$_.bool noop$async,
+    required jni$_.JByteArray? Function() throwFlutterError,
+    required jni$_.JByteArray? Function() throwError,
+    required void Function() throwErrorFromVoid,
+    core$_.bool throwErrorFromVoid$async,
+    required jni$_.JByteArray? Function(jni$_.JByteArray bs) echoNativeInteropAllTypes,
+    required jni$_.JByteArray? Function(jni$_.JByteArray bs) echoNativeInteropAllNullableTypes,
+    required jni$_.JByteArray? Function(jni$_.JByteArray bs) echoNativeInteropSealedClass,
     required jni$_.JByteArray? Function(
       jni$_.JBoolean? boolean,
       jni$_.JLong? long,
       jni$_.JString? string,
     )
-    pigeon_sendMultipleNullableTypes,
+    sendMultipleNullableTypes,
     required jni$_.JByteArray? Function(jni$_.JByteArray bs)
-    pigeon_echoNativeInteropAllNullableTypesWithoutRecursion,
+    echoNativeInteropAllNullableTypesWithoutRecursion,
     required jni$_.JByteArray? Function(
       jni$_.JBoolean? boolean,
       jni$_.JLong? long,
       jni$_.JString? string,
     )
-    pigeon_sendMultipleNullableTypesWithoutRecursion,
-    required core$_.bool Function(core$_.bool z) pigeon_echoBool,
-    required core$_.int Function(core$_.int j) pigeon_echoInt,
-    required core$_.double Function(core$_.double d) pigeon_echoDouble,
-    required jni$_.JString Function(jni$_.JString string) pigeon_echoString,
-    required jni$_.JByteArray Function(jni$_.JByteArray bs) pigeon_echoUint8List,
-    required jni$_.JIntArray Function(jni$_.JIntArray is$) pigeon_echoInt32List,
-    required jni$_.JLongArray Function(jni$_.JLongArray js) pigeon_echoInt64List,
-    required jni$_.JDoubleArray Function(jni$_.JDoubleArray ds) pigeon_echoFloat64List,
-    required jni$_.JByteArray? Function(jni$_.JByteArray bs) pigeon_echoList,
-    required jni$_.JByteArray? Function(jni$_.JByteArray bs) pigeon_echoEnumList,
-    required jni$_.JByteArray? Function(jni$_.JByteArray bs) pigeon_echoNativeInteropSealedClass,
-    required jni$_.JByteArray? Function(jni$_.JByteArray bs) pigeon_echoClassList,
-    required jni$_.JByteArray? Function(jni$_.JByteArray bs) pigeon_echoNonNullEnumList,
-    required jni$_.JByteArray? Function(jni$_.JByteArray bs) pigeon_echoNonNullClassList,
-    required jni$_.JByteArray? Function(jni$_.JByteArray bs) pigeon_echoMap,
-    required jni$_.JByteArray? Function(jni$_.JByteArray bs) pigeon_echoStringMap,
-    required jni$_.JByteArray? Function(jni$_.JByteArray bs) pigeon_echoIntMap,
-    required jni$_.JByteArray? Function(jni$_.JByteArray bs) pigeon_echoEnumMap,
-    required jni$_.JByteArray? Function(jni$_.JByteArray bs) pigeon_echoClassMap,
-    required jni$_.JByteArray? Function(jni$_.JByteArray bs) pigeon_echoNonNullStringMap,
-    required jni$_.JByteArray? Function(jni$_.JByteArray bs) pigeon_echoNonNullIntMap,
-    required jni$_.JByteArray? Function(jni$_.JByteArray bs) pigeon_echoNonNullEnumMap,
-    required jni$_.JByteArray? Function(jni$_.JByteArray bs) pigeon_echoNonNullClassMap,
-    required core$_.int Function(core$_.int j) pigeon_echoEnum,
-    required core$_.int Function(core$_.int j) pigeon_echoNativeInteropAnotherEnum,
-    required jni$_.JBoolean? Function(jni$_.JBoolean? boolean) pigeon_echoNullableBool,
-    required jni$_.JLong? Function(jni$_.JLong? long) pigeon_echoNullableInt,
-    required jni$_.JDouble? Function(jni$_.JDouble? double) pigeon_echoNullableDouble,
-    required jni$_.JString? Function(jni$_.JString? string) pigeon_echoNullableString,
-    required jni$_.JByteArray? Function(jni$_.JByteArray? bs) pigeon_echoNullableUint8List,
-    required jni$_.JIntArray? Function(jni$_.JIntArray? is$) pigeon_echoNullableInt32List,
-    required jni$_.JLongArray? Function(jni$_.JLongArray? js) pigeon_echoNullableInt64List,
-    required jni$_.JDoubleArray? Function(jni$_.JDoubleArray? ds) pigeon_echoNullableFloat64List,
-    required jni$_.JByteArray? Function(jni$_.JByteArray bs) pigeon_echoNullableList,
-    required jni$_.JByteArray? Function(jni$_.JByteArray bs) pigeon_echoNullableEnumList,
-    required jni$_.JByteArray? Function(jni$_.JByteArray bs) pigeon_echoNullableClassList,
-    required jni$_.JByteArray? Function(jni$_.JByteArray bs) pigeon_echoNullableNonNullEnumList,
-    required jni$_.JByteArray? Function(jni$_.JByteArray bs) pigeon_echoNullableNonNullClassList,
-    required jni$_.JByteArray? Function(jni$_.JByteArray bs) pigeon_echoNullableMap,
-    required jni$_.JByteArray? Function(jni$_.JByteArray bs) pigeon_echoNullableStringMap,
-    required jni$_.JByteArray? Function(jni$_.JByteArray bs) pigeon_echoNullableIntMap,
-    required jni$_.JByteArray? Function(jni$_.JByteArray bs) pigeon_echoNullableEnumMap,
-    required jni$_.JByteArray? Function(jni$_.JByteArray bs) pigeon_echoNullableClassMap,
-    required jni$_.JByteArray? Function(jni$_.JByteArray bs) pigeon_echoNullableNonNullStringMap,
-    required jni$_.JByteArray? Function(jni$_.JByteArray bs) pigeon_echoNullableNonNullIntMap,
-    required jni$_.JByteArray? Function(jni$_.JByteArray bs) pigeon_echoNullableNonNullEnumMap,
-    required jni$_.JByteArray? Function(jni$_.JByteArray bs) pigeon_echoNullableNonNullClassMap,
-    required core$_.int Function(core$_.int j) pigeon_echoNullableEnum,
-    required core$_.int Function(core$_.int j) pigeon_echoAnotherNullableEnum,
-    required core$_.Future<void> Function() pigeon_noopAsync,
-    required core$_.Future<jni$_.JByteArray?> Function() pigeon_throwFlutterErrorAsync,
+    sendMultipleNullableTypesWithoutRecursion,
+    required core$_.bool Function(core$_.bool z) echoBool,
+    required core$_.int Function(core$_.int j) echoInt,
+    required core$_.double Function(core$_.double d) echoDouble,
+    required jni$_.JString Function(jni$_.JString string) echoString,
+    required jni$_.JByteArray Function(jni$_.JByteArray bs) echoUint8List,
+    required jni$_.JIntArray Function(jni$_.JIntArray is$) echoInt32List,
+    required jni$_.JLongArray Function(jni$_.JLongArray js) echoInt64List,
+    required jni$_.JDoubleArray Function(jni$_.JDoubleArray ds) echoFloat64List,
+    required jni$_.JByteArray? Function(jni$_.JByteArray bs) echoList,
+    required jni$_.JByteArray? Function(jni$_.JByteArray bs) echoEnumList,
+    required jni$_.JByteArray? Function(jni$_.JByteArray bs) echoClassList,
+    required jni$_.JByteArray? Function(jni$_.JByteArray bs) echoNonNullEnumList,
+    required jni$_.JByteArray? Function(jni$_.JByteArray bs) echoNonNullClassList,
+    required jni$_.JByteArray? Function(jni$_.JByteArray bs) echoMap,
+    required jni$_.JByteArray? Function(jni$_.JByteArray bs) echoStringMap,
+    required jni$_.JByteArray? Function(jni$_.JByteArray bs) echoIntMap,
+    required jni$_.JByteArray? Function(jni$_.JByteArray bs) echoEnumMap,
+    required jni$_.JByteArray? Function(jni$_.JByteArray bs) echoClassMap,
+    required jni$_.JByteArray? Function(jni$_.JByteArray bs) echoNonNullStringMap,
+    required jni$_.JByteArray? Function(jni$_.JByteArray bs) echoNonNullIntMap,
+    required jni$_.JByteArray? Function(jni$_.JByteArray bs) echoNonNullEnumMap,
+    required jni$_.JByteArray? Function(jni$_.JByteArray bs) echoNonNullClassMap,
+    required core$_.int Function(core$_.int j) echoEnum,
+    required core$_.int Function(core$_.int j) echoNativeInteropAnotherEnum,
+    required jni$_.JBoolean? Function(jni$_.JBoolean? boolean) echoNullableBool,
+    required jni$_.JLong? Function(jni$_.JLong? long) echoNullableInt,
+    required jni$_.JDouble? Function(jni$_.JDouble? double) echoNullableDouble,
+    required jni$_.JString? Function(jni$_.JString? string) echoNullableString,
+    required jni$_.JByteArray? Function(jni$_.JByteArray? bs) echoNullableUint8List,
+    required jni$_.JIntArray? Function(jni$_.JIntArray? is$) echoNullableInt32List,
+    required jni$_.JLongArray? Function(jni$_.JLongArray? js) echoNullableInt64List,
+    required jni$_.JDoubleArray? Function(jni$_.JDoubleArray? ds) echoNullableFloat64List,
+    required jni$_.JByteArray? Function(jni$_.JByteArray bs) echoNullableList,
+    required jni$_.JByteArray? Function(jni$_.JByteArray bs) echoNullableEnumList,
+    required jni$_.JByteArray? Function(jni$_.JByteArray bs) echoNullableClassList,
+    required jni$_.JByteArray? Function(jni$_.JByteArray bs) echoNullableNonNullEnumList,
+    required jni$_.JByteArray? Function(jni$_.JByteArray bs) echoNullableNonNullClassList,
+    required jni$_.JByteArray? Function(jni$_.JByteArray bs) echoNullableMap,
+    required jni$_.JByteArray? Function(jni$_.JByteArray bs) echoNullableStringMap,
+    required jni$_.JByteArray? Function(jni$_.JByteArray bs) echoNullableIntMap,
+    required jni$_.JByteArray? Function(jni$_.JByteArray bs) echoNullableEnumMap,
+    required jni$_.JByteArray? Function(jni$_.JByteArray bs) echoNullableClassMap,
+    required jni$_.JByteArray? Function(jni$_.JByteArray bs) echoNullableNonNullStringMap,
+    required jni$_.JByteArray? Function(jni$_.JByteArray bs) echoNullableNonNullIntMap,
+    required jni$_.JByteArray? Function(jni$_.JByteArray bs) echoNullableNonNullEnumMap,
+    required jni$_.JByteArray? Function(jni$_.JByteArray bs) echoNullableNonNullClassMap,
+    required core$_.int Function(core$_.int j) echoNullableEnum,
+    required core$_.int Function(core$_.int j) echoAnotherNullableEnum,
+    required core$_.Future<void> Function() noopAsync,
+    required core$_.Future<jni$_.JByteArray?> Function() throwFlutterErrorAsync,
     required core$_.Future<jni$_.JByteArray?> Function(jni$_.JByteArray bs)
-    pigeon_echoAsyncNativeInteropAllTypes,
+    echoAsyncNativeInteropAllTypes,
     required core$_.Future<jni$_.JByteArray?> Function(jni$_.JByteArray bs)
-    pigeon_echoAsyncNullableNativeInteropAllNullableTypes,
+    echoAsyncNullableNativeInteropAllNullableTypes,
     required core$_.Future<jni$_.JByteArray?> Function(jni$_.JByteArray bs)
-    pigeon_echoAsyncNullableNativeInteropAllNullableTypesWithoutRecursion,
-    required core$_.Future<jni$_.JBoolean> Function(core$_.bool z) pigeon_echoAsyncBool,
-    required core$_.Future<jni$_.JLong> Function(core$_.int j) pigeon_echoAsyncInt,
-    required core$_.Future<jni$_.JDouble> Function(core$_.double d) pigeon_echoAsyncDouble,
-    required core$_.Future<jni$_.JString> Function(jni$_.JString string) pigeon_echoAsyncString,
-    required core$_.Future<jni$_.JByteArray> Function(jni$_.JByteArray bs)
-    pigeon_echoAsyncUint8List,
-    required core$_.Future<jni$_.JIntArray> Function(jni$_.JIntArray is$) pigeon_echoAsyncInt32List,
-    required core$_.Future<jni$_.JLongArray> Function(jni$_.JLongArray js)
-    pigeon_echoAsyncInt64List,
-    required core$_.Future<jni$_.JDoubleArray> Function(jni$_.JDoubleArray ds)
-    pigeon_echoAsyncFloat64List,
-    required core$_.Future<jni$_.JByteArray?> Function(jni$_.JByteArray bs) pigeon_echoAsyncObject,
-    required core$_.Future<jni$_.JByteArray?> Function(jni$_.JByteArray bs) pigeon_echoAsyncList,
+    echoAsyncNullableNativeInteropAllNullableTypesWithoutRecursion,
+    required core$_.Future<jni$_.JBoolean> Function(core$_.bool z) echoAsyncBool,
+    required core$_.Future<jni$_.JLong> Function(core$_.int j) echoAsyncInt,
+    required core$_.Future<jni$_.JDouble> Function(core$_.double d) echoAsyncDouble,
+    required core$_.Future<jni$_.JString> Function(jni$_.JString string) echoAsyncString,
+    required core$_.Future<jni$_.JByteArray> Function(jni$_.JByteArray bs) echoAsyncUint8List,
+    required core$_.Future<jni$_.JIntArray> Function(jni$_.JIntArray is$) echoAsyncInt32List,
+    required core$_.Future<jni$_.JLongArray> Function(jni$_.JLongArray js) echoAsyncInt64List,
+    required core$_.Future<jni$_.JDoubleArray> Function(jni$_.JDoubleArray ds) echoAsyncFloat64List,
+    required core$_.Future<jni$_.JByteArray?> Function(jni$_.JByteArray bs) echoAsyncObject,
+    required core$_.Future<jni$_.JByteArray?> Function(jni$_.JByteArray bs) echoAsyncList,
+    required core$_.Future<jni$_.JByteArray?> Function(jni$_.JByteArray bs) echoAsyncEnumList,
+    required core$_.Future<jni$_.JByteArray?> Function(jni$_.JByteArray bs) echoAsyncClassList,
     required core$_.Future<jni$_.JByteArray?> Function(jni$_.JByteArray bs)
-    pigeon_echoAsyncEnumList,
+    echoAsyncNonNullEnumList,
     required core$_.Future<jni$_.JByteArray?> Function(jni$_.JByteArray bs)
-    pigeon_echoAsyncClassList,
-    required core$_.Future<jni$_.JByteArray?> Function(jni$_.JByteArray bs)
-    pigeon_echoAsyncNonNullEnumList,
-    required core$_.Future<jni$_.JByteArray?> Function(jni$_.JByteArray bs)
-    pigeon_echoAsyncNonNullClassList,
-    required core$_.Future<jni$_.JByteArray?> Function(jni$_.JByteArray bs) pigeon_echoAsyncMap,
-    required core$_.Future<jni$_.JByteArray?> Function(jni$_.JByteArray bs)
-    pigeon_echoAsyncStringMap,
-    required core$_.Future<jni$_.JByteArray?> Function(jni$_.JByteArray bs) pigeon_echoAsyncIntMap,
-    required core$_.Future<jni$_.JByteArray?> Function(jni$_.JByteArray bs) pigeon_echoAsyncEnumMap,
-    required core$_.Future<jni$_.JByteArray?> Function(jni$_.JByteArray bs)
-    pigeon_echoAsyncClassMap,
-    required core$_.Future<jni$_.JLong> Function(core$_.int j) pigeon_echoAsyncEnum,
-    required core$_.Future<jni$_.JLong> Function(core$_.int j) pigeon_echoAnotherAsyncEnum,
-    required core$_.Future<jni$_.JBoolean?> Function(jni$_.JBoolean? boolean)
-    pigeon_echoAsyncNullableBool,
-    required core$_.Future<jni$_.JLong?> Function(jni$_.JLong? long) pigeon_echoAsyncNullableInt,
-    required core$_.Future<jni$_.JDouble?> Function(jni$_.JDouble? double)
-    pigeon_echoAsyncNullableDouble,
-    required core$_.Future<jni$_.JString?> Function(jni$_.JString? string)
-    pigeon_echoAsyncNullableString,
+    echoAsyncNonNullClassList,
+    required core$_.Future<jni$_.JByteArray?> Function(jni$_.JByteArray bs) echoAsyncMap,
+    required core$_.Future<jni$_.JByteArray?> Function(jni$_.JByteArray bs) echoAsyncStringMap,
+    required core$_.Future<jni$_.JByteArray?> Function(jni$_.JByteArray bs) echoAsyncIntMap,
+    required core$_.Future<jni$_.JByteArray?> Function(jni$_.JByteArray bs) echoAsyncEnumMap,
+    required core$_.Future<jni$_.JByteArray?> Function(jni$_.JByteArray bs) echoAsyncClassMap,
+    required core$_.Future<jni$_.JLong> Function(core$_.int j) echoAsyncEnum,
+    required core$_.Future<jni$_.JLong> Function(core$_.int j) echoAnotherAsyncEnum,
+    required core$_.Future<jni$_.JBoolean?> Function(jni$_.JBoolean? boolean) echoAsyncNullableBool,
+    required core$_.Future<jni$_.JLong?> Function(jni$_.JLong? long) echoAsyncNullableInt,
+    required core$_.Future<jni$_.JDouble?> Function(jni$_.JDouble? double) echoAsyncNullableDouble,
+    required core$_.Future<jni$_.JString?> Function(jni$_.JString? string) echoAsyncNullableString,
     required core$_.Future<jni$_.JByteArray?> Function(jni$_.JByteArray? bs)
-    pigeon_echoAsyncNullableUint8List,
+    echoAsyncNullableUint8List,
     required core$_.Future<jni$_.JIntArray?> Function(jni$_.JIntArray? is$)
-    pigeon_echoAsyncNullableInt32List,
+    echoAsyncNullableInt32List,
     required core$_.Future<jni$_.JLongArray?> Function(jni$_.JLongArray? js)
-    pigeon_echoAsyncNullableInt64List,
+    echoAsyncNullableInt64List,
     required core$_.Future<jni$_.JDoubleArray?> Function(jni$_.JDoubleArray? ds)
-    pigeon_echoAsyncNullableFloat64List,
+    echoAsyncNullableFloat64List,
+    required core$_.Future<jni$_.JByteArray?> Function(jni$_.JByteArray bs) echoAsyncNullableObject,
+    required core$_.Future<jni$_.JByteArray?> Function(jni$_.JByteArray bs) echoAsyncNullableList,
     required core$_.Future<jni$_.JByteArray?> Function(jni$_.JByteArray bs)
-    pigeon_echoAsyncNullableObject,
+    echoAsyncNullableEnumList,
     required core$_.Future<jni$_.JByteArray?> Function(jni$_.JByteArray bs)
-    pigeon_echoAsyncNullableList,
+    echoAsyncNullableClassList,
     required core$_.Future<jni$_.JByteArray?> Function(jni$_.JByteArray bs)
-    pigeon_echoAsyncNullableEnumList,
+    echoAsyncNullableNonNullEnumList,
     required core$_.Future<jni$_.JByteArray?> Function(jni$_.JByteArray bs)
-    pigeon_echoAsyncNullableClassList,
+    echoAsyncNullableNonNullClassList,
+    required core$_.Future<jni$_.JByteArray?> Function(jni$_.JByteArray bs) echoAsyncNullableMap,
     required core$_.Future<jni$_.JByteArray?> Function(jni$_.JByteArray bs)
-    pigeon_echoAsyncNullableNonNullEnumList,
+    echoAsyncNullableStringMap,
+    required core$_.Future<jni$_.JByteArray?> Function(jni$_.JByteArray bs) echoAsyncNullableIntMap,
     required core$_.Future<jni$_.JByteArray?> Function(jni$_.JByteArray bs)
-    pigeon_echoAsyncNullableNonNullClassList,
+    echoAsyncNullableEnumMap,
     required core$_.Future<jni$_.JByteArray?> Function(jni$_.JByteArray bs)
-    pigeon_echoAsyncNullableMap,
-    required core$_.Future<jni$_.JByteArray?> Function(jni$_.JByteArray bs)
-    pigeon_echoAsyncNullableStringMap,
-    required core$_.Future<jni$_.JByteArray?> Function(jni$_.JByteArray bs)
-    pigeon_echoAsyncNullableIntMap,
-    required core$_.Future<jni$_.JByteArray?> Function(jni$_.JByteArray bs)
-    pigeon_echoAsyncNullableEnumMap,
-    required core$_.Future<jni$_.JByteArray?> Function(jni$_.JByteArray bs)
-    pigeon_echoAsyncNullableClassMap,
-    required core$_.Future<jni$_.JLong> Function(core$_.int j) pigeon_echoAsyncNullableEnum,
-    required core$_.Future<jni$_.JLong> Function(core$_.int j) pigeon_echoAnotherAsyncNullableEnum,
+    echoAsyncNullableClassMap,
+    required core$_.Future<jni$_.JLong> Function(core$_.int j) echoAsyncNullableEnum,
+    required core$_.Future<jni$_.JLong> Function(core$_.int j) echoAnotherAsyncNullableEnum,
   }) = _$NativeInteropFlutterIntegrationCoreApiBridge;
 
-  void pigeon_noop();
-  core$_.bool get pigeon_noop$async => false;
-  jni$_.JByteArray? pigeon_throwFlutterError();
-  jni$_.JByteArray? pigeon_throwError();
-  void pigeon_throwErrorFromVoid();
-  core$_.bool get pigeon_throwErrorFromVoid$async => false;
-  jni$_.JByteArray? pigeon_echoNativeInteropAllTypes(jni$_.JByteArray bs);
-  jni$_.JByteArray? pigeon_echoNativeInteropAllNullableTypes(jni$_.JByteArray bs);
-  jni$_.JByteArray? pigeon_sendMultipleNullableTypes(
+  void noop();
+  core$_.bool get noop$async => false;
+  jni$_.JByteArray? throwFlutterError();
+  jni$_.JByteArray? throwError();
+  void throwErrorFromVoid();
+  core$_.bool get throwErrorFromVoid$async => false;
+  jni$_.JByteArray? echoNativeInteropAllTypes(jni$_.JByteArray bs);
+  jni$_.JByteArray? echoNativeInteropAllNullableTypes(jni$_.JByteArray bs);
+  jni$_.JByteArray? echoNativeInteropSealedClass(jni$_.JByteArray bs);
+  jni$_.JByteArray? sendMultipleNullableTypes(
     jni$_.JBoolean? boolean,
     jni$_.JLong? long,
     jni$_.JString? string,
   );
-  jni$_.JByteArray? pigeon_echoNativeInteropAllNullableTypesWithoutRecursion(jni$_.JByteArray bs);
-  jni$_.JByteArray? pigeon_sendMultipleNullableTypesWithoutRecursion(
+  jni$_.JByteArray? echoNativeInteropAllNullableTypesWithoutRecursion(jni$_.JByteArray bs);
+  jni$_.JByteArray? sendMultipleNullableTypesWithoutRecursion(
     jni$_.JBoolean? boolean,
     jni$_.JLong? long,
     jni$_.JString? string,
   );
-  core$_.bool pigeon_echoBool(core$_.bool z);
-  core$_.int pigeon_echoInt(core$_.int j);
-  core$_.double pigeon_echoDouble(core$_.double d);
-  jni$_.JString pigeon_echoString(jni$_.JString string);
-  jni$_.JByteArray pigeon_echoUint8List(jni$_.JByteArray bs);
-  jni$_.JIntArray pigeon_echoInt32List(jni$_.JIntArray is$);
-  jni$_.JLongArray pigeon_echoInt64List(jni$_.JLongArray js);
-  jni$_.JDoubleArray pigeon_echoFloat64List(jni$_.JDoubleArray ds);
-  jni$_.JByteArray? pigeon_echoList(jni$_.JByteArray bs);
-  jni$_.JByteArray? pigeon_echoEnumList(jni$_.JByteArray bs);
-  jni$_.JByteArray? pigeon_echoNativeInteropSealedClass(jni$_.JByteArray bs);
-  jni$_.JByteArray? pigeon_echoClassList(jni$_.JByteArray bs);
-  jni$_.JByteArray? pigeon_echoNonNullEnumList(jni$_.JByteArray bs);
-  jni$_.JByteArray? pigeon_echoNonNullClassList(jni$_.JByteArray bs);
-  jni$_.JByteArray? pigeon_echoMap(jni$_.JByteArray bs);
-  jni$_.JByteArray? pigeon_echoStringMap(jni$_.JByteArray bs);
-  jni$_.JByteArray? pigeon_echoIntMap(jni$_.JByteArray bs);
-  jni$_.JByteArray? pigeon_echoEnumMap(jni$_.JByteArray bs);
-  jni$_.JByteArray? pigeon_echoClassMap(jni$_.JByteArray bs);
-  jni$_.JByteArray? pigeon_echoNonNullStringMap(jni$_.JByteArray bs);
-  jni$_.JByteArray? pigeon_echoNonNullIntMap(jni$_.JByteArray bs);
-  jni$_.JByteArray? pigeon_echoNonNullEnumMap(jni$_.JByteArray bs);
-  jni$_.JByteArray? pigeon_echoNonNullClassMap(jni$_.JByteArray bs);
-  core$_.int pigeon_echoEnum(core$_.int j);
-  core$_.int pigeon_echoNativeInteropAnotherEnum(core$_.int j);
-  jni$_.JBoolean? pigeon_echoNullableBool(jni$_.JBoolean? boolean);
-  jni$_.JLong? pigeon_echoNullableInt(jni$_.JLong? long);
-  jni$_.JDouble? pigeon_echoNullableDouble(jni$_.JDouble? double);
-  jni$_.JString? pigeon_echoNullableString(jni$_.JString? string);
-  jni$_.JByteArray? pigeon_echoNullableUint8List(jni$_.JByteArray? bs);
-  jni$_.JIntArray? pigeon_echoNullableInt32List(jni$_.JIntArray? is$);
-  jni$_.JLongArray? pigeon_echoNullableInt64List(jni$_.JLongArray? js);
-  jni$_.JDoubleArray? pigeon_echoNullableFloat64List(jni$_.JDoubleArray? ds);
-  jni$_.JByteArray? pigeon_echoNullableList(jni$_.JByteArray bs);
-  jni$_.JByteArray? pigeon_echoNullableEnumList(jni$_.JByteArray bs);
-  jni$_.JByteArray? pigeon_echoNullableClassList(jni$_.JByteArray bs);
-  jni$_.JByteArray? pigeon_echoNullableNonNullEnumList(jni$_.JByteArray bs);
-  jni$_.JByteArray? pigeon_echoNullableNonNullClassList(jni$_.JByteArray bs);
-  jni$_.JByteArray? pigeon_echoNullableMap(jni$_.JByteArray bs);
-  jni$_.JByteArray? pigeon_echoNullableStringMap(jni$_.JByteArray bs);
-  jni$_.JByteArray? pigeon_echoNullableIntMap(jni$_.JByteArray bs);
-  jni$_.JByteArray? pigeon_echoNullableEnumMap(jni$_.JByteArray bs);
-  jni$_.JByteArray? pigeon_echoNullableClassMap(jni$_.JByteArray bs);
-  jni$_.JByteArray? pigeon_echoNullableNonNullStringMap(jni$_.JByteArray bs);
-  jni$_.JByteArray? pigeon_echoNullableNonNullIntMap(jni$_.JByteArray bs);
-  jni$_.JByteArray? pigeon_echoNullableNonNullEnumMap(jni$_.JByteArray bs);
-  jni$_.JByteArray? pigeon_echoNullableNonNullClassMap(jni$_.JByteArray bs);
-  core$_.int pigeon_echoNullableEnum(core$_.int j);
-  core$_.int pigeon_echoAnotherNullableEnum(core$_.int j);
-  core$_.Future<void> pigeon_noopAsync();
-  core$_.Future<jni$_.JByteArray?> pigeon_throwFlutterErrorAsync();
-  core$_.Future<jni$_.JByteArray?> pigeon_echoAsyncNativeInteropAllTypes(jni$_.JByteArray bs);
-  core$_.Future<jni$_.JByteArray?> pigeon_echoAsyncNullableNativeInteropAllNullableTypes(
+  core$_.bool echoBool(core$_.bool z);
+  core$_.int echoInt(core$_.int j);
+  core$_.double echoDouble(core$_.double d);
+  jni$_.JString echoString(jni$_.JString string);
+  jni$_.JByteArray echoUint8List(jni$_.JByteArray bs);
+  jni$_.JIntArray echoInt32List(jni$_.JIntArray is$);
+  jni$_.JLongArray echoInt64List(jni$_.JLongArray js);
+  jni$_.JDoubleArray echoFloat64List(jni$_.JDoubleArray ds);
+  jni$_.JByteArray? echoList(jni$_.JByteArray bs);
+  jni$_.JByteArray? echoEnumList(jni$_.JByteArray bs);
+  jni$_.JByteArray? echoClassList(jni$_.JByteArray bs);
+  jni$_.JByteArray? echoNonNullEnumList(jni$_.JByteArray bs);
+  jni$_.JByteArray? echoNonNullClassList(jni$_.JByteArray bs);
+  jni$_.JByteArray? echoMap(jni$_.JByteArray bs);
+  jni$_.JByteArray? echoStringMap(jni$_.JByteArray bs);
+  jni$_.JByteArray? echoIntMap(jni$_.JByteArray bs);
+  jni$_.JByteArray? echoEnumMap(jni$_.JByteArray bs);
+  jni$_.JByteArray? echoClassMap(jni$_.JByteArray bs);
+  jni$_.JByteArray? echoNonNullStringMap(jni$_.JByteArray bs);
+  jni$_.JByteArray? echoNonNullIntMap(jni$_.JByteArray bs);
+  jni$_.JByteArray? echoNonNullEnumMap(jni$_.JByteArray bs);
+  jni$_.JByteArray? echoNonNullClassMap(jni$_.JByteArray bs);
+  core$_.int echoEnum(core$_.int j);
+  core$_.int echoNativeInteropAnotherEnum(core$_.int j);
+  jni$_.JBoolean? echoNullableBool(jni$_.JBoolean? boolean);
+  jni$_.JLong? echoNullableInt(jni$_.JLong? long);
+  jni$_.JDouble? echoNullableDouble(jni$_.JDouble? double);
+  jni$_.JString? echoNullableString(jni$_.JString? string);
+  jni$_.JByteArray? echoNullableUint8List(jni$_.JByteArray? bs);
+  jni$_.JIntArray? echoNullableInt32List(jni$_.JIntArray? is$);
+  jni$_.JLongArray? echoNullableInt64List(jni$_.JLongArray? js);
+  jni$_.JDoubleArray? echoNullableFloat64List(jni$_.JDoubleArray? ds);
+  jni$_.JByteArray? echoNullableList(jni$_.JByteArray bs);
+  jni$_.JByteArray? echoNullableEnumList(jni$_.JByteArray bs);
+  jni$_.JByteArray? echoNullableClassList(jni$_.JByteArray bs);
+  jni$_.JByteArray? echoNullableNonNullEnumList(jni$_.JByteArray bs);
+  jni$_.JByteArray? echoNullableNonNullClassList(jni$_.JByteArray bs);
+  jni$_.JByteArray? echoNullableMap(jni$_.JByteArray bs);
+  jni$_.JByteArray? echoNullableStringMap(jni$_.JByteArray bs);
+  jni$_.JByteArray? echoNullableIntMap(jni$_.JByteArray bs);
+  jni$_.JByteArray? echoNullableEnumMap(jni$_.JByteArray bs);
+  jni$_.JByteArray? echoNullableClassMap(jni$_.JByteArray bs);
+  jni$_.JByteArray? echoNullableNonNullStringMap(jni$_.JByteArray bs);
+  jni$_.JByteArray? echoNullableNonNullIntMap(jni$_.JByteArray bs);
+  jni$_.JByteArray? echoNullableNonNullEnumMap(jni$_.JByteArray bs);
+  jni$_.JByteArray? echoNullableNonNullClassMap(jni$_.JByteArray bs);
+  core$_.int echoNullableEnum(core$_.int j);
+  core$_.int echoAnotherNullableEnum(core$_.int j);
+  core$_.Future<void> noopAsync();
+  core$_.Future<jni$_.JByteArray?> throwFlutterErrorAsync();
+  core$_.Future<jni$_.JByteArray?> echoAsyncNativeInteropAllTypes(jni$_.JByteArray bs);
+  core$_.Future<jni$_.JByteArray?> echoAsyncNullableNativeInteropAllNullableTypes(
     jni$_.JByteArray bs,
   );
-  core$_.Future<jni$_.JByteArray?>
-  pigeon_echoAsyncNullableNativeInteropAllNullableTypesWithoutRecursion(jni$_.JByteArray bs);
-  core$_.Future<jni$_.JBoolean> pigeon_echoAsyncBool(core$_.bool z);
-  core$_.Future<jni$_.JLong> pigeon_echoAsyncInt(core$_.int j);
-  core$_.Future<jni$_.JDouble> pigeon_echoAsyncDouble(core$_.double d);
-  core$_.Future<jni$_.JString> pigeon_echoAsyncString(jni$_.JString string);
-  core$_.Future<jni$_.JByteArray> pigeon_echoAsyncUint8List(jni$_.JByteArray bs);
-  core$_.Future<jni$_.JIntArray> pigeon_echoAsyncInt32List(jni$_.JIntArray is$);
-  core$_.Future<jni$_.JLongArray> pigeon_echoAsyncInt64List(jni$_.JLongArray js);
-  core$_.Future<jni$_.JDoubleArray> pigeon_echoAsyncFloat64List(jni$_.JDoubleArray ds);
-  core$_.Future<jni$_.JByteArray?> pigeon_echoAsyncObject(jni$_.JByteArray bs);
-  core$_.Future<jni$_.JByteArray?> pigeon_echoAsyncList(jni$_.JByteArray bs);
-  core$_.Future<jni$_.JByteArray?> pigeon_echoAsyncEnumList(jni$_.JByteArray bs);
-  core$_.Future<jni$_.JByteArray?> pigeon_echoAsyncClassList(jni$_.JByteArray bs);
-  core$_.Future<jni$_.JByteArray?> pigeon_echoAsyncNonNullEnumList(jni$_.JByteArray bs);
-  core$_.Future<jni$_.JByteArray?> pigeon_echoAsyncNonNullClassList(jni$_.JByteArray bs);
-  core$_.Future<jni$_.JByteArray?> pigeon_echoAsyncMap(jni$_.JByteArray bs);
-  core$_.Future<jni$_.JByteArray?> pigeon_echoAsyncStringMap(jni$_.JByteArray bs);
-  core$_.Future<jni$_.JByteArray?> pigeon_echoAsyncIntMap(jni$_.JByteArray bs);
-  core$_.Future<jni$_.JByteArray?> pigeon_echoAsyncEnumMap(jni$_.JByteArray bs);
-  core$_.Future<jni$_.JByteArray?> pigeon_echoAsyncClassMap(jni$_.JByteArray bs);
-  core$_.Future<jni$_.JLong> pigeon_echoAsyncEnum(core$_.int j);
-  core$_.Future<jni$_.JLong> pigeon_echoAnotherAsyncEnum(core$_.int j);
-  core$_.Future<jni$_.JBoolean?> pigeon_echoAsyncNullableBool(jni$_.JBoolean? boolean);
-  core$_.Future<jni$_.JLong?> pigeon_echoAsyncNullableInt(jni$_.JLong? long);
-  core$_.Future<jni$_.JDouble?> pigeon_echoAsyncNullableDouble(jni$_.JDouble? double);
-  core$_.Future<jni$_.JString?> pigeon_echoAsyncNullableString(jni$_.JString? string);
-  core$_.Future<jni$_.JByteArray?> pigeon_echoAsyncNullableUint8List(jni$_.JByteArray? bs);
-  core$_.Future<jni$_.JIntArray?> pigeon_echoAsyncNullableInt32List(jni$_.JIntArray? is$);
-  core$_.Future<jni$_.JLongArray?> pigeon_echoAsyncNullableInt64List(jni$_.JLongArray? js);
-  core$_.Future<jni$_.JDoubleArray?> pigeon_echoAsyncNullableFloat64List(jni$_.JDoubleArray? ds);
-  core$_.Future<jni$_.JByteArray?> pigeon_echoAsyncNullableObject(jni$_.JByteArray bs);
-  core$_.Future<jni$_.JByteArray?> pigeon_echoAsyncNullableList(jni$_.JByteArray bs);
-  core$_.Future<jni$_.JByteArray?> pigeon_echoAsyncNullableEnumList(jni$_.JByteArray bs);
-  core$_.Future<jni$_.JByteArray?> pigeon_echoAsyncNullableClassList(jni$_.JByteArray bs);
-  core$_.Future<jni$_.JByteArray?> pigeon_echoAsyncNullableNonNullEnumList(jni$_.JByteArray bs);
-  core$_.Future<jni$_.JByteArray?> pigeon_echoAsyncNullableNonNullClassList(jni$_.JByteArray bs);
-  core$_.Future<jni$_.JByteArray?> pigeon_echoAsyncNullableMap(jni$_.JByteArray bs);
-  core$_.Future<jni$_.JByteArray?> pigeon_echoAsyncNullableStringMap(jni$_.JByteArray bs);
-  core$_.Future<jni$_.JByteArray?> pigeon_echoAsyncNullableIntMap(jni$_.JByteArray bs);
-  core$_.Future<jni$_.JByteArray?> pigeon_echoAsyncNullableEnumMap(jni$_.JByteArray bs);
-  core$_.Future<jni$_.JByteArray?> pigeon_echoAsyncNullableClassMap(jni$_.JByteArray bs);
-  core$_.Future<jni$_.JLong> pigeon_echoAsyncNullableEnum(core$_.int j);
-  core$_.Future<jni$_.JLong> pigeon_echoAnotherAsyncNullableEnum(core$_.int j);
+  core$_.Future<jni$_.JByteArray?> echoAsyncNullableNativeInteropAllNullableTypesWithoutRecursion(
+    jni$_.JByteArray bs,
+  );
+  core$_.Future<jni$_.JBoolean> echoAsyncBool(core$_.bool z);
+  core$_.Future<jni$_.JLong> echoAsyncInt(core$_.int j);
+  core$_.Future<jni$_.JDouble> echoAsyncDouble(core$_.double d);
+  core$_.Future<jni$_.JString> echoAsyncString(jni$_.JString string);
+  core$_.Future<jni$_.JByteArray> echoAsyncUint8List(jni$_.JByteArray bs);
+  core$_.Future<jni$_.JIntArray> echoAsyncInt32List(jni$_.JIntArray is$);
+  core$_.Future<jni$_.JLongArray> echoAsyncInt64List(jni$_.JLongArray js);
+  core$_.Future<jni$_.JDoubleArray> echoAsyncFloat64List(jni$_.JDoubleArray ds);
+  core$_.Future<jni$_.JByteArray?> echoAsyncObject(jni$_.JByteArray bs);
+  core$_.Future<jni$_.JByteArray?> echoAsyncList(jni$_.JByteArray bs);
+  core$_.Future<jni$_.JByteArray?> echoAsyncEnumList(jni$_.JByteArray bs);
+  core$_.Future<jni$_.JByteArray?> echoAsyncClassList(jni$_.JByteArray bs);
+  core$_.Future<jni$_.JByteArray?> echoAsyncNonNullEnumList(jni$_.JByteArray bs);
+  core$_.Future<jni$_.JByteArray?> echoAsyncNonNullClassList(jni$_.JByteArray bs);
+  core$_.Future<jni$_.JByteArray?> echoAsyncMap(jni$_.JByteArray bs);
+  core$_.Future<jni$_.JByteArray?> echoAsyncStringMap(jni$_.JByteArray bs);
+  core$_.Future<jni$_.JByteArray?> echoAsyncIntMap(jni$_.JByteArray bs);
+  core$_.Future<jni$_.JByteArray?> echoAsyncEnumMap(jni$_.JByteArray bs);
+  core$_.Future<jni$_.JByteArray?> echoAsyncClassMap(jni$_.JByteArray bs);
+  core$_.Future<jni$_.JLong> echoAsyncEnum(core$_.int j);
+  core$_.Future<jni$_.JLong> echoAnotherAsyncEnum(core$_.int j);
+  core$_.Future<jni$_.JBoolean?> echoAsyncNullableBool(jni$_.JBoolean? boolean);
+  core$_.Future<jni$_.JLong?> echoAsyncNullableInt(jni$_.JLong? long);
+  core$_.Future<jni$_.JDouble?> echoAsyncNullableDouble(jni$_.JDouble? double);
+  core$_.Future<jni$_.JString?> echoAsyncNullableString(jni$_.JString? string);
+  core$_.Future<jni$_.JByteArray?> echoAsyncNullableUint8List(jni$_.JByteArray? bs);
+  core$_.Future<jni$_.JIntArray?> echoAsyncNullableInt32List(jni$_.JIntArray? is$);
+  core$_.Future<jni$_.JLongArray?> echoAsyncNullableInt64List(jni$_.JLongArray? js);
+  core$_.Future<jni$_.JDoubleArray?> echoAsyncNullableFloat64List(jni$_.JDoubleArray? ds);
+  core$_.Future<jni$_.JByteArray?> echoAsyncNullableObject(jni$_.JByteArray bs);
+  core$_.Future<jni$_.JByteArray?> echoAsyncNullableList(jni$_.JByteArray bs);
+  core$_.Future<jni$_.JByteArray?> echoAsyncNullableEnumList(jni$_.JByteArray bs);
+  core$_.Future<jni$_.JByteArray?> echoAsyncNullableClassList(jni$_.JByteArray bs);
+  core$_.Future<jni$_.JByteArray?> echoAsyncNullableNonNullEnumList(jni$_.JByteArray bs);
+  core$_.Future<jni$_.JByteArray?> echoAsyncNullableNonNullClassList(jni$_.JByteArray bs);
+  core$_.Future<jni$_.JByteArray?> echoAsyncNullableMap(jni$_.JByteArray bs);
+  core$_.Future<jni$_.JByteArray?> echoAsyncNullableStringMap(jni$_.JByteArray bs);
+  core$_.Future<jni$_.JByteArray?> echoAsyncNullableIntMap(jni$_.JByteArray bs);
+  core$_.Future<jni$_.JByteArray?> echoAsyncNullableEnumMap(jni$_.JByteArray bs);
+  core$_.Future<jni$_.JByteArray?> echoAsyncNullableClassMap(jni$_.JByteArray bs);
+  core$_.Future<jni$_.JLong> echoAsyncNullableEnum(core$_.int j);
+  core$_.Future<jni$_.JLong> echoAnotherAsyncNullableEnum(core$_.int j);
 }
 
 final class _$NativeInteropFlutterIntegrationCoreApiBridge
     with $NativeInteropFlutterIntegrationCoreApiBridge {
   _$NativeInteropFlutterIntegrationCoreApiBridge({
-    required void Function() pigeon_noop,
-    this.pigeon_noop$async = false,
-    required jni$_.JByteArray? Function() pigeon_throwFlutterError,
-    required jni$_.JByteArray? Function() pigeon_throwError,
-    required void Function() pigeon_throwErrorFromVoid,
-    this.pigeon_throwErrorFromVoid$async = false,
-    required jni$_.JByteArray? Function(jni$_.JByteArray bs) pigeon_echoNativeInteropAllTypes,
-    required jni$_.JByteArray? Function(jni$_.JByteArray bs)
-    pigeon_echoNativeInteropAllNullableTypes,
+    required void Function() noop,
+    this.noop$async = false,
+    required jni$_.JByteArray? Function() throwFlutterError,
+    required jni$_.JByteArray? Function() throwError,
+    required void Function() throwErrorFromVoid,
+    this.throwErrorFromVoid$async = false,
+    required jni$_.JByteArray? Function(jni$_.JByteArray bs) echoNativeInteropAllTypes,
+    required jni$_.JByteArray? Function(jni$_.JByteArray bs) echoNativeInteropAllNullableTypes,
+    required jni$_.JByteArray? Function(jni$_.JByteArray bs) echoNativeInteropSealedClass,
     required jni$_.JByteArray? Function(
       jni$_.JBoolean? boolean,
       jni$_.JLong? long,
       jni$_.JString? string,
     )
-    pigeon_sendMultipleNullableTypes,
+    sendMultipleNullableTypes,
     required jni$_.JByteArray? Function(jni$_.JByteArray bs)
-    pigeon_echoNativeInteropAllNullableTypesWithoutRecursion,
+    echoNativeInteropAllNullableTypesWithoutRecursion,
     required jni$_.JByteArray? Function(
       jni$_.JBoolean? boolean,
       jni$_.JLong? long,
       jni$_.JString? string,
     )
-    pigeon_sendMultipleNullableTypesWithoutRecursion,
-    required core$_.bool Function(core$_.bool z) pigeon_echoBool,
-    required core$_.int Function(core$_.int j) pigeon_echoInt,
-    required core$_.double Function(core$_.double d) pigeon_echoDouble,
-    required jni$_.JString Function(jni$_.JString string) pigeon_echoString,
-    required jni$_.JByteArray Function(jni$_.JByteArray bs) pigeon_echoUint8List,
-    required jni$_.JIntArray Function(jni$_.JIntArray is$) pigeon_echoInt32List,
-    required jni$_.JLongArray Function(jni$_.JLongArray js) pigeon_echoInt64List,
-    required jni$_.JDoubleArray Function(jni$_.JDoubleArray ds) pigeon_echoFloat64List,
-    required jni$_.JByteArray? Function(jni$_.JByteArray bs) pigeon_echoList,
-    required jni$_.JByteArray? Function(jni$_.JByteArray bs) pigeon_echoEnumList,
-    required jni$_.JByteArray? Function(jni$_.JByteArray bs) pigeon_echoNativeInteropSealedClass,
-    required jni$_.JByteArray? Function(jni$_.JByteArray bs) pigeon_echoClassList,
-    required jni$_.JByteArray? Function(jni$_.JByteArray bs) pigeon_echoNonNullEnumList,
-    required jni$_.JByteArray? Function(jni$_.JByteArray bs) pigeon_echoNonNullClassList,
-    required jni$_.JByteArray? Function(jni$_.JByteArray bs) pigeon_echoMap,
-    required jni$_.JByteArray? Function(jni$_.JByteArray bs) pigeon_echoStringMap,
-    required jni$_.JByteArray? Function(jni$_.JByteArray bs) pigeon_echoIntMap,
-    required jni$_.JByteArray? Function(jni$_.JByteArray bs) pigeon_echoEnumMap,
-    required jni$_.JByteArray? Function(jni$_.JByteArray bs) pigeon_echoClassMap,
-    required jni$_.JByteArray? Function(jni$_.JByteArray bs) pigeon_echoNonNullStringMap,
-    required jni$_.JByteArray? Function(jni$_.JByteArray bs) pigeon_echoNonNullIntMap,
-    required jni$_.JByteArray? Function(jni$_.JByteArray bs) pigeon_echoNonNullEnumMap,
-    required jni$_.JByteArray? Function(jni$_.JByteArray bs) pigeon_echoNonNullClassMap,
-    required core$_.int Function(core$_.int j) pigeon_echoEnum,
-    required core$_.int Function(core$_.int j) pigeon_echoNativeInteropAnotherEnum,
-    required jni$_.JBoolean? Function(jni$_.JBoolean? boolean) pigeon_echoNullableBool,
-    required jni$_.JLong? Function(jni$_.JLong? long) pigeon_echoNullableInt,
-    required jni$_.JDouble? Function(jni$_.JDouble? double) pigeon_echoNullableDouble,
-    required jni$_.JString? Function(jni$_.JString? string) pigeon_echoNullableString,
-    required jni$_.JByteArray? Function(jni$_.JByteArray? bs) pigeon_echoNullableUint8List,
-    required jni$_.JIntArray? Function(jni$_.JIntArray? is$) pigeon_echoNullableInt32List,
-    required jni$_.JLongArray? Function(jni$_.JLongArray? js) pigeon_echoNullableInt64List,
-    required jni$_.JDoubleArray? Function(jni$_.JDoubleArray? ds) pigeon_echoNullableFloat64List,
-    required jni$_.JByteArray? Function(jni$_.JByteArray bs) pigeon_echoNullableList,
-    required jni$_.JByteArray? Function(jni$_.JByteArray bs) pigeon_echoNullableEnumList,
-    required jni$_.JByteArray? Function(jni$_.JByteArray bs) pigeon_echoNullableClassList,
-    required jni$_.JByteArray? Function(jni$_.JByteArray bs) pigeon_echoNullableNonNullEnumList,
-    required jni$_.JByteArray? Function(jni$_.JByteArray bs) pigeon_echoNullableNonNullClassList,
-    required jni$_.JByteArray? Function(jni$_.JByteArray bs) pigeon_echoNullableMap,
-    required jni$_.JByteArray? Function(jni$_.JByteArray bs) pigeon_echoNullableStringMap,
-    required jni$_.JByteArray? Function(jni$_.JByteArray bs) pigeon_echoNullableIntMap,
-    required jni$_.JByteArray? Function(jni$_.JByteArray bs) pigeon_echoNullableEnumMap,
-    required jni$_.JByteArray? Function(jni$_.JByteArray bs) pigeon_echoNullableClassMap,
-    required jni$_.JByteArray? Function(jni$_.JByteArray bs) pigeon_echoNullableNonNullStringMap,
-    required jni$_.JByteArray? Function(jni$_.JByteArray bs) pigeon_echoNullableNonNullIntMap,
-    required jni$_.JByteArray? Function(jni$_.JByteArray bs) pigeon_echoNullableNonNullEnumMap,
-    required jni$_.JByteArray? Function(jni$_.JByteArray bs) pigeon_echoNullableNonNullClassMap,
-    required core$_.int Function(core$_.int j) pigeon_echoNullableEnum,
-    required core$_.int Function(core$_.int j) pigeon_echoAnotherNullableEnum,
-    required core$_.Future<void> Function() pigeon_noopAsync,
-    required core$_.Future<jni$_.JByteArray?> Function() pigeon_throwFlutterErrorAsync,
+    sendMultipleNullableTypesWithoutRecursion,
+    required core$_.bool Function(core$_.bool z) echoBool,
+    required core$_.int Function(core$_.int j) echoInt,
+    required core$_.double Function(core$_.double d) echoDouble,
+    required jni$_.JString Function(jni$_.JString string) echoString,
+    required jni$_.JByteArray Function(jni$_.JByteArray bs) echoUint8List,
+    required jni$_.JIntArray Function(jni$_.JIntArray is$) echoInt32List,
+    required jni$_.JLongArray Function(jni$_.JLongArray js) echoInt64List,
+    required jni$_.JDoubleArray Function(jni$_.JDoubleArray ds) echoFloat64List,
+    required jni$_.JByteArray? Function(jni$_.JByteArray bs) echoList,
+    required jni$_.JByteArray? Function(jni$_.JByteArray bs) echoEnumList,
+    required jni$_.JByteArray? Function(jni$_.JByteArray bs) echoClassList,
+    required jni$_.JByteArray? Function(jni$_.JByteArray bs) echoNonNullEnumList,
+    required jni$_.JByteArray? Function(jni$_.JByteArray bs) echoNonNullClassList,
+    required jni$_.JByteArray? Function(jni$_.JByteArray bs) echoMap,
+    required jni$_.JByteArray? Function(jni$_.JByteArray bs) echoStringMap,
+    required jni$_.JByteArray? Function(jni$_.JByteArray bs) echoIntMap,
+    required jni$_.JByteArray? Function(jni$_.JByteArray bs) echoEnumMap,
+    required jni$_.JByteArray? Function(jni$_.JByteArray bs) echoClassMap,
+    required jni$_.JByteArray? Function(jni$_.JByteArray bs) echoNonNullStringMap,
+    required jni$_.JByteArray? Function(jni$_.JByteArray bs) echoNonNullIntMap,
+    required jni$_.JByteArray? Function(jni$_.JByteArray bs) echoNonNullEnumMap,
+    required jni$_.JByteArray? Function(jni$_.JByteArray bs) echoNonNullClassMap,
+    required core$_.int Function(core$_.int j) echoEnum,
+    required core$_.int Function(core$_.int j) echoNativeInteropAnotherEnum,
+    required jni$_.JBoolean? Function(jni$_.JBoolean? boolean) echoNullableBool,
+    required jni$_.JLong? Function(jni$_.JLong? long) echoNullableInt,
+    required jni$_.JDouble? Function(jni$_.JDouble? double) echoNullableDouble,
+    required jni$_.JString? Function(jni$_.JString? string) echoNullableString,
+    required jni$_.JByteArray? Function(jni$_.JByteArray? bs) echoNullableUint8List,
+    required jni$_.JIntArray? Function(jni$_.JIntArray? is$) echoNullableInt32List,
+    required jni$_.JLongArray? Function(jni$_.JLongArray? js) echoNullableInt64List,
+    required jni$_.JDoubleArray? Function(jni$_.JDoubleArray? ds) echoNullableFloat64List,
+    required jni$_.JByteArray? Function(jni$_.JByteArray bs) echoNullableList,
+    required jni$_.JByteArray? Function(jni$_.JByteArray bs) echoNullableEnumList,
+    required jni$_.JByteArray? Function(jni$_.JByteArray bs) echoNullableClassList,
+    required jni$_.JByteArray? Function(jni$_.JByteArray bs) echoNullableNonNullEnumList,
+    required jni$_.JByteArray? Function(jni$_.JByteArray bs) echoNullableNonNullClassList,
+    required jni$_.JByteArray? Function(jni$_.JByteArray bs) echoNullableMap,
+    required jni$_.JByteArray? Function(jni$_.JByteArray bs) echoNullableStringMap,
+    required jni$_.JByteArray? Function(jni$_.JByteArray bs) echoNullableIntMap,
+    required jni$_.JByteArray? Function(jni$_.JByteArray bs) echoNullableEnumMap,
+    required jni$_.JByteArray? Function(jni$_.JByteArray bs) echoNullableClassMap,
+    required jni$_.JByteArray? Function(jni$_.JByteArray bs) echoNullableNonNullStringMap,
+    required jni$_.JByteArray? Function(jni$_.JByteArray bs) echoNullableNonNullIntMap,
+    required jni$_.JByteArray? Function(jni$_.JByteArray bs) echoNullableNonNullEnumMap,
+    required jni$_.JByteArray? Function(jni$_.JByteArray bs) echoNullableNonNullClassMap,
+    required core$_.int Function(core$_.int j) echoNullableEnum,
+    required core$_.int Function(core$_.int j) echoAnotherNullableEnum,
+    required core$_.Future<void> Function() noopAsync,
+    required core$_.Future<jni$_.JByteArray?> Function() throwFlutterErrorAsync,
     required core$_.Future<jni$_.JByteArray?> Function(jni$_.JByteArray bs)
-    pigeon_echoAsyncNativeInteropAllTypes,
+    echoAsyncNativeInteropAllTypes,
     required core$_.Future<jni$_.JByteArray?> Function(jni$_.JByteArray bs)
-    pigeon_echoAsyncNullableNativeInteropAllNullableTypes,
+    echoAsyncNullableNativeInteropAllNullableTypes,
     required core$_.Future<jni$_.JByteArray?> Function(jni$_.JByteArray bs)
-    pigeon_echoAsyncNullableNativeInteropAllNullableTypesWithoutRecursion,
-    required core$_.Future<jni$_.JBoolean> Function(core$_.bool z) pigeon_echoAsyncBool,
-    required core$_.Future<jni$_.JLong> Function(core$_.int j) pigeon_echoAsyncInt,
-    required core$_.Future<jni$_.JDouble> Function(core$_.double d) pigeon_echoAsyncDouble,
-    required core$_.Future<jni$_.JString> Function(jni$_.JString string) pigeon_echoAsyncString,
-    required core$_.Future<jni$_.JByteArray> Function(jni$_.JByteArray bs)
-    pigeon_echoAsyncUint8List,
-    required core$_.Future<jni$_.JIntArray> Function(jni$_.JIntArray is$) pigeon_echoAsyncInt32List,
-    required core$_.Future<jni$_.JLongArray> Function(jni$_.JLongArray js)
-    pigeon_echoAsyncInt64List,
-    required core$_.Future<jni$_.JDoubleArray> Function(jni$_.JDoubleArray ds)
-    pigeon_echoAsyncFloat64List,
-    required core$_.Future<jni$_.JByteArray?> Function(jni$_.JByteArray bs) pigeon_echoAsyncObject,
-    required core$_.Future<jni$_.JByteArray?> Function(jni$_.JByteArray bs) pigeon_echoAsyncList,
+    echoAsyncNullableNativeInteropAllNullableTypesWithoutRecursion,
+    required core$_.Future<jni$_.JBoolean> Function(core$_.bool z) echoAsyncBool,
+    required core$_.Future<jni$_.JLong> Function(core$_.int j) echoAsyncInt,
+    required core$_.Future<jni$_.JDouble> Function(core$_.double d) echoAsyncDouble,
+    required core$_.Future<jni$_.JString> Function(jni$_.JString string) echoAsyncString,
+    required core$_.Future<jni$_.JByteArray> Function(jni$_.JByteArray bs) echoAsyncUint8List,
+    required core$_.Future<jni$_.JIntArray> Function(jni$_.JIntArray is$) echoAsyncInt32List,
+    required core$_.Future<jni$_.JLongArray> Function(jni$_.JLongArray js) echoAsyncInt64List,
+    required core$_.Future<jni$_.JDoubleArray> Function(jni$_.JDoubleArray ds) echoAsyncFloat64List,
+    required core$_.Future<jni$_.JByteArray?> Function(jni$_.JByteArray bs) echoAsyncObject,
+    required core$_.Future<jni$_.JByteArray?> Function(jni$_.JByteArray bs) echoAsyncList,
+    required core$_.Future<jni$_.JByteArray?> Function(jni$_.JByteArray bs) echoAsyncEnumList,
+    required core$_.Future<jni$_.JByteArray?> Function(jni$_.JByteArray bs) echoAsyncClassList,
     required core$_.Future<jni$_.JByteArray?> Function(jni$_.JByteArray bs)
-    pigeon_echoAsyncEnumList,
+    echoAsyncNonNullEnumList,
     required core$_.Future<jni$_.JByteArray?> Function(jni$_.JByteArray bs)
-    pigeon_echoAsyncClassList,
-    required core$_.Future<jni$_.JByteArray?> Function(jni$_.JByteArray bs)
-    pigeon_echoAsyncNonNullEnumList,
-    required core$_.Future<jni$_.JByteArray?> Function(jni$_.JByteArray bs)
-    pigeon_echoAsyncNonNullClassList,
-    required core$_.Future<jni$_.JByteArray?> Function(jni$_.JByteArray bs) pigeon_echoAsyncMap,
-    required core$_.Future<jni$_.JByteArray?> Function(jni$_.JByteArray bs)
-    pigeon_echoAsyncStringMap,
-    required core$_.Future<jni$_.JByteArray?> Function(jni$_.JByteArray bs) pigeon_echoAsyncIntMap,
-    required core$_.Future<jni$_.JByteArray?> Function(jni$_.JByteArray bs) pigeon_echoAsyncEnumMap,
-    required core$_.Future<jni$_.JByteArray?> Function(jni$_.JByteArray bs)
-    pigeon_echoAsyncClassMap,
-    required core$_.Future<jni$_.JLong> Function(core$_.int j) pigeon_echoAsyncEnum,
-    required core$_.Future<jni$_.JLong> Function(core$_.int j) pigeon_echoAnotherAsyncEnum,
-    required core$_.Future<jni$_.JBoolean?> Function(jni$_.JBoolean? boolean)
-    pigeon_echoAsyncNullableBool,
-    required core$_.Future<jni$_.JLong?> Function(jni$_.JLong? long) pigeon_echoAsyncNullableInt,
-    required core$_.Future<jni$_.JDouble?> Function(jni$_.JDouble? double)
-    pigeon_echoAsyncNullableDouble,
-    required core$_.Future<jni$_.JString?> Function(jni$_.JString? string)
-    pigeon_echoAsyncNullableString,
+    echoAsyncNonNullClassList,
+    required core$_.Future<jni$_.JByteArray?> Function(jni$_.JByteArray bs) echoAsyncMap,
+    required core$_.Future<jni$_.JByteArray?> Function(jni$_.JByteArray bs) echoAsyncStringMap,
+    required core$_.Future<jni$_.JByteArray?> Function(jni$_.JByteArray bs) echoAsyncIntMap,
+    required core$_.Future<jni$_.JByteArray?> Function(jni$_.JByteArray bs) echoAsyncEnumMap,
+    required core$_.Future<jni$_.JByteArray?> Function(jni$_.JByteArray bs) echoAsyncClassMap,
+    required core$_.Future<jni$_.JLong> Function(core$_.int j) echoAsyncEnum,
+    required core$_.Future<jni$_.JLong> Function(core$_.int j) echoAnotherAsyncEnum,
+    required core$_.Future<jni$_.JBoolean?> Function(jni$_.JBoolean? boolean) echoAsyncNullableBool,
+    required core$_.Future<jni$_.JLong?> Function(jni$_.JLong? long) echoAsyncNullableInt,
+    required core$_.Future<jni$_.JDouble?> Function(jni$_.JDouble? double) echoAsyncNullableDouble,
+    required core$_.Future<jni$_.JString?> Function(jni$_.JString? string) echoAsyncNullableString,
     required core$_.Future<jni$_.JByteArray?> Function(jni$_.JByteArray? bs)
-    pigeon_echoAsyncNullableUint8List,
+    echoAsyncNullableUint8List,
     required core$_.Future<jni$_.JIntArray?> Function(jni$_.JIntArray? is$)
-    pigeon_echoAsyncNullableInt32List,
+    echoAsyncNullableInt32List,
     required core$_.Future<jni$_.JLongArray?> Function(jni$_.JLongArray? js)
-    pigeon_echoAsyncNullableInt64List,
+    echoAsyncNullableInt64List,
     required core$_.Future<jni$_.JDoubleArray?> Function(jni$_.JDoubleArray? ds)
-    pigeon_echoAsyncNullableFloat64List,
+    echoAsyncNullableFloat64List,
+    required core$_.Future<jni$_.JByteArray?> Function(jni$_.JByteArray bs) echoAsyncNullableObject,
+    required core$_.Future<jni$_.JByteArray?> Function(jni$_.JByteArray bs) echoAsyncNullableList,
     required core$_.Future<jni$_.JByteArray?> Function(jni$_.JByteArray bs)
-    pigeon_echoAsyncNullableObject,
+    echoAsyncNullableEnumList,
     required core$_.Future<jni$_.JByteArray?> Function(jni$_.JByteArray bs)
-    pigeon_echoAsyncNullableList,
+    echoAsyncNullableClassList,
     required core$_.Future<jni$_.JByteArray?> Function(jni$_.JByteArray bs)
-    pigeon_echoAsyncNullableEnumList,
+    echoAsyncNullableNonNullEnumList,
     required core$_.Future<jni$_.JByteArray?> Function(jni$_.JByteArray bs)
-    pigeon_echoAsyncNullableClassList,
+    echoAsyncNullableNonNullClassList,
+    required core$_.Future<jni$_.JByteArray?> Function(jni$_.JByteArray bs) echoAsyncNullableMap,
     required core$_.Future<jni$_.JByteArray?> Function(jni$_.JByteArray bs)
-    pigeon_echoAsyncNullableNonNullEnumList,
+    echoAsyncNullableStringMap,
+    required core$_.Future<jni$_.JByteArray?> Function(jni$_.JByteArray bs) echoAsyncNullableIntMap,
     required core$_.Future<jni$_.JByteArray?> Function(jni$_.JByteArray bs)
-    pigeon_echoAsyncNullableNonNullClassList,
+    echoAsyncNullableEnumMap,
     required core$_.Future<jni$_.JByteArray?> Function(jni$_.JByteArray bs)
-    pigeon_echoAsyncNullableMap,
-    required core$_.Future<jni$_.JByteArray?> Function(jni$_.JByteArray bs)
-    pigeon_echoAsyncNullableStringMap,
-    required core$_.Future<jni$_.JByteArray?> Function(jni$_.JByteArray bs)
-    pigeon_echoAsyncNullableIntMap,
-    required core$_.Future<jni$_.JByteArray?> Function(jni$_.JByteArray bs)
-    pigeon_echoAsyncNullableEnumMap,
-    required core$_.Future<jni$_.JByteArray?> Function(jni$_.JByteArray bs)
-    pigeon_echoAsyncNullableClassMap,
-    required core$_.Future<jni$_.JLong> Function(core$_.int j) pigeon_echoAsyncNullableEnum,
-    required core$_.Future<jni$_.JLong> Function(core$_.int j) pigeon_echoAnotherAsyncNullableEnum,
-  }) : _pigeon_noop = pigeon_noop,
-       _pigeon_throwFlutterError = pigeon_throwFlutterError,
-       _pigeon_throwError = pigeon_throwError,
-       _pigeon_throwErrorFromVoid = pigeon_throwErrorFromVoid,
-       _pigeon_echoNativeInteropAllTypes = pigeon_echoNativeInteropAllTypes,
-       _pigeon_echoNativeInteropAllNullableTypes = pigeon_echoNativeInteropAllNullableTypes,
-       _pigeon_sendMultipleNullableTypes = pigeon_sendMultipleNullableTypes,
-       _pigeon_echoNativeInteropAllNullableTypesWithoutRecursion =
-           pigeon_echoNativeInteropAllNullableTypesWithoutRecursion,
-       _pigeon_sendMultipleNullableTypesWithoutRecursion =
-           pigeon_sendMultipleNullableTypesWithoutRecursion,
-       _pigeon_echoBool = pigeon_echoBool,
-       _pigeon_echoInt = pigeon_echoInt,
-       _pigeon_echoDouble = pigeon_echoDouble,
-       _pigeon_echoString = pigeon_echoString,
-       _pigeon_echoUint8List = pigeon_echoUint8List,
-       _pigeon_echoInt32List = pigeon_echoInt32List,
-       _pigeon_echoInt64List = pigeon_echoInt64List,
-       _pigeon_echoFloat64List = pigeon_echoFloat64List,
-       _pigeon_echoList = pigeon_echoList,
-       _pigeon_echoEnumList = pigeon_echoEnumList,
-       _pigeon_echoNativeInteropSealedClass = pigeon_echoNativeInteropSealedClass,
-       _pigeon_echoClassList = pigeon_echoClassList,
-       _pigeon_echoNonNullEnumList = pigeon_echoNonNullEnumList,
-       _pigeon_echoNonNullClassList = pigeon_echoNonNullClassList,
-       _pigeon_echoMap = pigeon_echoMap,
-       _pigeon_echoStringMap = pigeon_echoStringMap,
-       _pigeon_echoIntMap = pigeon_echoIntMap,
-       _pigeon_echoEnumMap = pigeon_echoEnumMap,
-       _pigeon_echoClassMap = pigeon_echoClassMap,
-       _pigeon_echoNonNullStringMap = pigeon_echoNonNullStringMap,
-       _pigeon_echoNonNullIntMap = pigeon_echoNonNullIntMap,
-       _pigeon_echoNonNullEnumMap = pigeon_echoNonNullEnumMap,
-       _pigeon_echoNonNullClassMap = pigeon_echoNonNullClassMap,
-       _pigeon_echoEnum = pigeon_echoEnum,
-       _pigeon_echoNativeInteropAnotherEnum = pigeon_echoNativeInteropAnotherEnum,
-       _pigeon_echoNullableBool = pigeon_echoNullableBool,
-       _pigeon_echoNullableInt = pigeon_echoNullableInt,
-       _pigeon_echoNullableDouble = pigeon_echoNullableDouble,
-       _pigeon_echoNullableString = pigeon_echoNullableString,
-       _pigeon_echoNullableUint8List = pigeon_echoNullableUint8List,
-       _pigeon_echoNullableInt32List = pigeon_echoNullableInt32List,
-       _pigeon_echoNullableInt64List = pigeon_echoNullableInt64List,
-       _pigeon_echoNullableFloat64List = pigeon_echoNullableFloat64List,
-       _pigeon_echoNullableList = pigeon_echoNullableList,
-       _pigeon_echoNullableEnumList = pigeon_echoNullableEnumList,
-       _pigeon_echoNullableClassList = pigeon_echoNullableClassList,
-       _pigeon_echoNullableNonNullEnumList = pigeon_echoNullableNonNullEnumList,
-       _pigeon_echoNullableNonNullClassList = pigeon_echoNullableNonNullClassList,
-       _pigeon_echoNullableMap = pigeon_echoNullableMap,
-       _pigeon_echoNullableStringMap = pigeon_echoNullableStringMap,
-       _pigeon_echoNullableIntMap = pigeon_echoNullableIntMap,
-       _pigeon_echoNullableEnumMap = pigeon_echoNullableEnumMap,
-       _pigeon_echoNullableClassMap = pigeon_echoNullableClassMap,
-       _pigeon_echoNullableNonNullStringMap = pigeon_echoNullableNonNullStringMap,
-       _pigeon_echoNullableNonNullIntMap = pigeon_echoNullableNonNullIntMap,
-       _pigeon_echoNullableNonNullEnumMap = pigeon_echoNullableNonNullEnumMap,
-       _pigeon_echoNullableNonNullClassMap = pigeon_echoNullableNonNullClassMap,
-       _pigeon_echoNullableEnum = pigeon_echoNullableEnum,
-       _pigeon_echoAnotherNullableEnum = pigeon_echoAnotherNullableEnum,
-       _pigeon_noopAsync = pigeon_noopAsync,
-       _pigeon_throwFlutterErrorAsync = pigeon_throwFlutterErrorAsync,
-       _pigeon_echoAsyncNativeInteropAllTypes = pigeon_echoAsyncNativeInteropAllTypes,
-       _pigeon_echoAsyncNullableNativeInteropAllNullableTypes =
-           pigeon_echoAsyncNullableNativeInteropAllNullableTypes,
-       _pigeon_echoAsyncNullableNativeInteropAllNullableTypesWithoutRecursion =
-           pigeon_echoAsyncNullableNativeInteropAllNullableTypesWithoutRecursion,
-       _pigeon_echoAsyncBool = pigeon_echoAsyncBool,
-       _pigeon_echoAsyncInt = pigeon_echoAsyncInt,
-       _pigeon_echoAsyncDouble = pigeon_echoAsyncDouble,
-       _pigeon_echoAsyncString = pigeon_echoAsyncString,
-       _pigeon_echoAsyncUint8List = pigeon_echoAsyncUint8List,
-       _pigeon_echoAsyncInt32List = pigeon_echoAsyncInt32List,
-       _pigeon_echoAsyncInt64List = pigeon_echoAsyncInt64List,
-       _pigeon_echoAsyncFloat64List = pigeon_echoAsyncFloat64List,
-       _pigeon_echoAsyncObject = pigeon_echoAsyncObject,
-       _pigeon_echoAsyncList = pigeon_echoAsyncList,
-       _pigeon_echoAsyncEnumList = pigeon_echoAsyncEnumList,
-       _pigeon_echoAsyncClassList = pigeon_echoAsyncClassList,
-       _pigeon_echoAsyncNonNullEnumList = pigeon_echoAsyncNonNullEnumList,
-       _pigeon_echoAsyncNonNullClassList = pigeon_echoAsyncNonNullClassList,
-       _pigeon_echoAsyncMap = pigeon_echoAsyncMap,
-       _pigeon_echoAsyncStringMap = pigeon_echoAsyncStringMap,
-       _pigeon_echoAsyncIntMap = pigeon_echoAsyncIntMap,
-       _pigeon_echoAsyncEnumMap = pigeon_echoAsyncEnumMap,
-       _pigeon_echoAsyncClassMap = pigeon_echoAsyncClassMap,
-       _pigeon_echoAsyncEnum = pigeon_echoAsyncEnum,
-       _pigeon_echoAnotherAsyncEnum = pigeon_echoAnotherAsyncEnum,
-       _pigeon_echoAsyncNullableBool = pigeon_echoAsyncNullableBool,
-       _pigeon_echoAsyncNullableInt = pigeon_echoAsyncNullableInt,
-       _pigeon_echoAsyncNullableDouble = pigeon_echoAsyncNullableDouble,
-       _pigeon_echoAsyncNullableString = pigeon_echoAsyncNullableString,
-       _pigeon_echoAsyncNullableUint8List = pigeon_echoAsyncNullableUint8List,
-       _pigeon_echoAsyncNullableInt32List = pigeon_echoAsyncNullableInt32List,
-       _pigeon_echoAsyncNullableInt64List = pigeon_echoAsyncNullableInt64List,
-       _pigeon_echoAsyncNullableFloat64List = pigeon_echoAsyncNullableFloat64List,
-       _pigeon_echoAsyncNullableObject = pigeon_echoAsyncNullableObject,
-       _pigeon_echoAsyncNullableList = pigeon_echoAsyncNullableList,
-       _pigeon_echoAsyncNullableEnumList = pigeon_echoAsyncNullableEnumList,
-       _pigeon_echoAsyncNullableClassList = pigeon_echoAsyncNullableClassList,
-       _pigeon_echoAsyncNullableNonNullEnumList = pigeon_echoAsyncNullableNonNullEnumList,
-       _pigeon_echoAsyncNullableNonNullClassList = pigeon_echoAsyncNullableNonNullClassList,
-       _pigeon_echoAsyncNullableMap = pigeon_echoAsyncNullableMap,
-       _pigeon_echoAsyncNullableStringMap = pigeon_echoAsyncNullableStringMap,
-       _pigeon_echoAsyncNullableIntMap = pigeon_echoAsyncNullableIntMap,
-       _pigeon_echoAsyncNullableEnumMap = pigeon_echoAsyncNullableEnumMap,
-       _pigeon_echoAsyncNullableClassMap = pigeon_echoAsyncNullableClassMap,
-       _pigeon_echoAsyncNullableEnum = pigeon_echoAsyncNullableEnum,
-       _pigeon_echoAnotherAsyncNullableEnum = pigeon_echoAnotherAsyncNullableEnum;
+    echoAsyncNullableClassMap,
+    required core$_.Future<jni$_.JLong> Function(core$_.int j) echoAsyncNullableEnum,
+    required core$_.Future<jni$_.JLong> Function(core$_.int j) echoAnotherAsyncNullableEnum,
+  }) : _noop = noop,
+       _throwFlutterError = throwFlutterError,
+       _throwError = throwError,
+       _throwErrorFromVoid = throwErrorFromVoid,
+       _echoNativeInteropAllTypes = echoNativeInteropAllTypes,
+       _echoNativeInteropAllNullableTypes = echoNativeInteropAllNullableTypes,
+       _echoNativeInteropSealedClass = echoNativeInteropSealedClass,
+       _sendMultipleNullableTypes = sendMultipleNullableTypes,
+       _echoNativeInteropAllNullableTypesWithoutRecursion =
+           echoNativeInteropAllNullableTypesWithoutRecursion,
+       _sendMultipleNullableTypesWithoutRecursion = sendMultipleNullableTypesWithoutRecursion,
+       _echoBool = echoBool,
+       _echoInt = echoInt,
+       _echoDouble = echoDouble,
+       _echoString = echoString,
+       _echoUint8List = echoUint8List,
+       _echoInt32List = echoInt32List,
+       _echoInt64List = echoInt64List,
+       _echoFloat64List = echoFloat64List,
+       _echoList = echoList,
+       _echoEnumList = echoEnumList,
+       _echoClassList = echoClassList,
+       _echoNonNullEnumList = echoNonNullEnumList,
+       _echoNonNullClassList = echoNonNullClassList,
+       _echoMap = echoMap,
+       _echoStringMap = echoStringMap,
+       _echoIntMap = echoIntMap,
+       _echoEnumMap = echoEnumMap,
+       _echoClassMap = echoClassMap,
+       _echoNonNullStringMap = echoNonNullStringMap,
+       _echoNonNullIntMap = echoNonNullIntMap,
+       _echoNonNullEnumMap = echoNonNullEnumMap,
+       _echoNonNullClassMap = echoNonNullClassMap,
+       _echoEnum = echoEnum,
+       _echoNativeInteropAnotherEnum = echoNativeInteropAnotherEnum,
+       _echoNullableBool = echoNullableBool,
+       _echoNullableInt = echoNullableInt,
+       _echoNullableDouble = echoNullableDouble,
+       _echoNullableString = echoNullableString,
+       _echoNullableUint8List = echoNullableUint8List,
+       _echoNullableInt32List = echoNullableInt32List,
+       _echoNullableInt64List = echoNullableInt64List,
+       _echoNullableFloat64List = echoNullableFloat64List,
+       _echoNullableList = echoNullableList,
+       _echoNullableEnumList = echoNullableEnumList,
+       _echoNullableClassList = echoNullableClassList,
+       _echoNullableNonNullEnumList = echoNullableNonNullEnumList,
+       _echoNullableNonNullClassList = echoNullableNonNullClassList,
+       _echoNullableMap = echoNullableMap,
+       _echoNullableStringMap = echoNullableStringMap,
+       _echoNullableIntMap = echoNullableIntMap,
+       _echoNullableEnumMap = echoNullableEnumMap,
+       _echoNullableClassMap = echoNullableClassMap,
+       _echoNullableNonNullStringMap = echoNullableNonNullStringMap,
+       _echoNullableNonNullIntMap = echoNullableNonNullIntMap,
+       _echoNullableNonNullEnumMap = echoNullableNonNullEnumMap,
+       _echoNullableNonNullClassMap = echoNullableNonNullClassMap,
+       _echoNullableEnum = echoNullableEnum,
+       _echoAnotherNullableEnum = echoAnotherNullableEnum,
+       _noopAsync = noopAsync,
+       _throwFlutterErrorAsync = throwFlutterErrorAsync,
+       _echoAsyncNativeInteropAllTypes = echoAsyncNativeInteropAllTypes,
+       _echoAsyncNullableNativeInteropAllNullableTypes =
+           echoAsyncNullableNativeInteropAllNullableTypes,
+       _echoAsyncNullableNativeInteropAllNullableTypesWithoutRecursion =
+           echoAsyncNullableNativeInteropAllNullableTypesWithoutRecursion,
+       _echoAsyncBool = echoAsyncBool,
+       _echoAsyncInt = echoAsyncInt,
+       _echoAsyncDouble = echoAsyncDouble,
+       _echoAsyncString = echoAsyncString,
+       _echoAsyncUint8List = echoAsyncUint8List,
+       _echoAsyncInt32List = echoAsyncInt32List,
+       _echoAsyncInt64List = echoAsyncInt64List,
+       _echoAsyncFloat64List = echoAsyncFloat64List,
+       _echoAsyncObject = echoAsyncObject,
+       _echoAsyncList = echoAsyncList,
+       _echoAsyncEnumList = echoAsyncEnumList,
+       _echoAsyncClassList = echoAsyncClassList,
+       _echoAsyncNonNullEnumList = echoAsyncNonNullEnumList,
+       _echoAsyncNonNullClassList = echoAsyncNonNullClassList,
+       _echoAsyncMap = echoAsyncMap,
+       _echoAsyncStringMap = echoAsyncStringMap,
+       _echoAsyncIntMap = echoAsyncIntMap,
+       _echoAsyncEnumMap = echoAsyncEnumMap,
+       _echoAsyncClassMap = echoAsyncClassMap,
+       _echoAsyncEnum = echoAsyncEnum,
+       _echoAnotherAsyncEnum = echoAnotherAsyncEnum,
+       _echoAsyncNullableBool = echoAsyncNullableBool,
+       _echoAsyncNullableInt = echoAsyncNullableInt,
+       _echoAsyncNullableDouble = echoAsyncNullableDouble,
+       _echoAsyncNullableString = echoAsyncNullableString,
+       _echoAsyncNullableUint8List = echoAsyncNullableUint8List,
+       _echoAsyncNullableInt32List = echoAsyncNullableInt32List,
+       _echoAsyncNullableInt64List = echoAsyncNullableInt64List,
+       _echoAsyncNullableFloat64List = echoAsyncNullableFloat64List,
+       _echoAsyncNullableObject = echoAsyncNullableObject,
+       _echoAsyncNullableList = echoAsyncNullableList,
+       _echoAsyncNullableEnumList = echoAsyncNullableEnumList,
+       _echoAsyncNullableClassList = echoAsyncNullableClassList,
+       _echoAsyncNullableNonNullEnumList = echoAsyncNullableNonNullEnumList,
+       _echoAsyncNullableNonNullClassList = echoAsyncNullableNonNullClassList,
+       _echoAsyncNullableMap = echoAsyncNullableMap,
+       _echoAsyncNullableStringMap = echoAsyncNullableStringMap,
+       _echoAsyncNullableIntMap = echoAsyncNullableIntMap,
+       _echoAsyncNullableEnumMap = echoAsyncNullableEnumMap,
+       _echoAsyncNullableClassMap = echoAsyncNullableClassMap,
+       _echoAsyncNullableEnum = echoAsyncNullableEnum,
+       _echoAnotherAsyncNullableEnum = echoAnotherAsyncNullableEnum;
 
-  final void Function() _pigeon_noop;
-  final core$_.bool pigeon_noop$async;
-  final jni$_.JByteArray? Function() _pigeon_throwFlutterError;
-  final jni$_.JByteArray? Function() _pigeon_throwError;
-  final void Function() _pigeon_throwErrorFromVoid;
-  final core$_.bool pigeon_throwErrorFromVoid$async;
-  final jni$_.JByteArray? Function(jni$_.JByteArray bs) _pigeon_echoNativeInteropAllTypes;
-  final jni$_.JByteArray? Function(jni$_.JByteArray bs) _pigeon_echoNativeInteropAllNullableTypes;
+  final void Function() _noop;
+  final core$_.bool noop$async;
+  final jni$_.JByteArray? Function() _throwFlutterError;
+  final jni$_.JByteArray? Function() _throwError;
+  final void Function() _throwErrorFromVoid;
+  final core$_.bool throwErrorFromVoid$async;
+  final jni$_.JByteArray? Function(jni$_.JByteArray bs) _echoNativeInteropAllTypes;
+  final jni$_.JByteArray? Function(jni$_.JByteArray bs) _echoNativeInteropAllNullableTypes;
+  final jni$_.JByteArray? Function(jni$_.JByteArray bs) _echoNativeInteropSealedClass;
   final jni$_.JByteArray? Function(
     jni$_.JBoolean? boolean,
     jni$_.JLong? long,
     jni$_.JString? string,
   )
-  _pigeon_sendMultipleNullableTypes;
+  _sendMultipleNullableTypes;
   final jni$_.JByteArray? Function(jni$_.JByteArray bs)
-  _pigeon_echoNativeInteropAllNullableTypesWithoutRecursion;
+  _echoNativeInteropAllNullableTypesWithoutRecursion;
   final jni$_.JByteArray? Function(
     jni$_.JBoolean? boolean,
     jni$_.JLong? long,
     jni$_.JString? string,
   )
-  _pigeon_sendMultipleNullableTypesWithoutRecursion;
-  final core$_.bool Function(core$_.bool z) _pigeon_echoBool;
-  final core$_.int Function(core$_.int j) _pigeon_echoInt;
-  final core$_.double Function(core$_.double d) _pigeon_echoDouble;
-  final jni$_.JString Function(jni$_.JString string) _pigeon_echoString;
-  final jni$_.JByteArray Function(jni$_.JByteArray bs) _pigeon_echoUint8List;
-  final jni$_.JIntArray Function(jni$_.JIntArray is$) _pigeon_echoInt32List;
-  final jni$_.JLongArray Function(jni$_.JLongArray js) _pigeon_echoInt64List;
-  final jni$_.JDoubleArray Function(jni$_.JDoubleArray ds) _pigeon_echoFloat64List;
-  final jni$_.JByteArray? Function(jni$_.JByteArray bs) _pigeon_echoList;
-  final jni$_.JByteArray? Function(jni$_.JByteArray bs) _pigeon_echoEnumList;
-  final jni$_.JByteArray? Function(jni$_.JByteArray bs) _pigeon_echoNativeInteropSealedClass;
-  final jni$_.JByteArray? Function(jni$_.JByteArray bs) _pigeon_echoClassList;
-  final jni$_.JByteArray? Function(jni$_.JByteArray bs) _pigeon_echoNonNullEnumList;
-  final jni$_.JByteArray? Function(jni$_.JByteArray bs) _pigeon_echoNonNullClassList;
-  final jni$_.JByteArray? Function(jni$_.JByteArray bs) _pigeon_echoMap;
-  final jni$_.JByteArray? Function(jni$_.JByteArray bs) _pigeon_echoStringMap;
-  final jni$_.JByteArray? Function(jni$_.JByteArray bs) _pigeon_echoIntMap;
-  final jni$_.JByteArray? Function(jni$_.JByteArray bs) _pigeon_echoEnumMap;
-  final jni$_.JByteArray? Function(jni$_.JByteArray bs) _pigeon_echoClassMap;
-  final jni$_.JByteArray? Function(jni$_.JByteArray bs) _pigeon_echoNonNullStringMap;
-  final jni$_.JByteArray? Function(jni$_.JByteArray bs) _pigeon_echoNonNullIntMap;
-  final jni$_.JByteArray? Function(jni$_.JByteArray bs) _pigeon_echoNonNullEnumMap;
-  final jni$_.JByteArray? Function(jni$_.JByteArray bs) _pigeon_echoNonNullClassMap;
-  final core$_.int Function(core$_.int j) _pigeon_echoEnum;
-  final core$_.int Function(core$_.int j) _pigeon_echoNativeInteropAnotherEnum;
-  final jni$_.JBoolean? Function(jni$_.JBoolean? boolean) _pigeon_echoNullableBool;
-  final jni$_.JLong? Function(jni$_.JLong? long) _pigeon_echoNullableInt;
-  final jni$_.JDouble? Function(jni$_.JDouble? double) _pigeon_echoNullableDouble;
-  final jni$_.JString? Function(jni$_.JString? string) _pigeon_echoNullableString;
-  final jni$_.JByteArray? Function(jni$_.JByteArray? bs) _pigeon_echoNullableUint8List;
-  final jni$_.JIntArray? Function(jni$_.JIntArray? is$) _pigeon_echoNullableInt32List;
-  final jni$_.JLongArray? Function(jni$_.JLongArray? js) _pigeon_echoNullableInt64List;
-  final jni$_.JDoubleArray? Function(jni$_.JDoubleArray? ds) _pigeon_echoNullableFloat64List;
-  final jni$_.JByteArray? Function(jni$_.JByteArray bs) _pigeon_echoNullableList;
-  final jni$_.JByteArray? Function(jni$_.JByteArray bs) _pigeon_echoNullableEnumList;
-  final jni$_.JByteArray? Function(jni$_.JByteArray bs) _pigeon_echoNullableClassList;
-  final jni$_.JByteArray? Function(jni$_.JByteArray bs) _pigeon_echoNullableNonNullEnumList;
-  final jni$_.JByteArray? Function(jni$_.JByteArray bs) _pigeon_echoNullableNonNullClassList;
-  final jni$_.JByteArray? Function(jni$_.JByteArray bs) _pigeon_echoNullableMap;
-  final jni$_.JByteArray? Function(jni$_.JByteArray bs) _pigeon_echoNullableStringMap;
-  final jni$_.JByteArray? Function(jni$_.JByteArray bs) _pigeon_echoNullableIntMap;
-  final jni$_.JByteArray? Function(jni$_.JByteArray bs) _pigeon_echoNullableEnumMap;
-  final jni$_.JByteArray? Function(jni$_.JByteArray bs) _pigeon_echoNullableClassMap;
-  final jni$_.JByteArray? Function(jni$_.JByteArray bs) _pigeon_echoNullableNonNullStringMap;
-  final jni$_.JByteArray? Function(jni$_.JByteArray bs) _pigeon_echoNullableNonNullIntMap;
-  final jni$_.JByteArray? Function(jni$_.JByteArray bs) _pigeon_echoNullableNonNullEnumMap;
-  final jni$_.JByteArray? Function(jni$_.JByteArray bs) _pigeon_echoNullableNonNullClassMap;
-  final core$_.int Function(core$_.int j) _pigeon_echoNullableEnum;
-  final core$_.int Function(core$_.int j) _pigeon_echoAnotherNullableEnum;
-  final core$_.Future<void> Function() _pigeon_noopAsync;
-  final core$_.Future<jni$_.JByteArray?> Function() _pigeon_throwFlutterErrorAsync;
+  _sendMultipleNullableTypesWithoutRecursion;
+  final core$_.bool Function(core$_.bool z) _echoBool;
+  final core$_.int Function(core$_.int j) _echoInt;
+  final core$_.double Function(core$_.double d) _echoDouble;
+  final jni$_.JString Function(jni$_.JString string) _echoString;
+  final jni$_.JByteArray Function(jni$_.JByteArray bs) _echoUint8List;
+  final jni$_.JIntArray Function(jni$_.JIntArray is$) _echoInt32List;
+  final jni$_.JLongArray Function(jni$_.JLongArray js) _echoInt64List;
+  final jni$_.JDoubleArray Function(jni$_.JDoubleArray ds) _echoFloat64List;
+  final jni$_.JByteArray? Function(jni$_.JByteArray bs) _echoList;
+  final jni$_.JByteArray? Function(jni$_.JByteArray bs) _echoEnumList;
+  final jni$_.JByteArray? Function(jni$_.JByteArray bs) _echoClassList;
+  final jni$_.JByteArray? Function(jni$_.JByteArray bs) _echoNonNullEnumList;
+  final jni$_.JByteArray? Function(jni$_.JByteArray bs) _echoNonNullClassList;
+  final jni$_.JByteArray? Function(jni$_.JByteArray bs) _echoMap;
+  final jni$_.JByteArray? Function(jni$_.JByteArray bs) _echoStringMap;
+  final jni$_.JByteArray? Function(jni$_.JByteArray bs) _echoIntMap;
+  final jni$_.JByteArray? Function(jni$_.JByteArray bs) _echoEnumMap;
+  final jni$_.JByteArray? Function(jni$_.JByteArray bs) _echoClassMap;
+  final jni$_.JByteArray? Function(jni$_.JByteArray bs) _echoNonNullStringMap;
+  final jni$_.JByteArray? Function(jni$_.JByteArray bs) _echoNonNullIntMap;
+  final jni$_.JByteArray? Function(jni$_.JByteArray bs) _echoNonNullEnumMap;
+  final jni$_.JByteArray? Function(jni$_.JByteArray bs) _echoNonNullClassMap;
+  final core$_.int Function(core$_.int j) _echoEnum;
+  final core$_.int Function(core$_.int j) _echoNativeInteropAnotherEnum;
+  final jni$_.JBoolean? Function(jni$_.JBoolean? boolean) _echoNullableBool;
+  final jni$_.JLong? Function(jni$_.JLong? long) _echoNullableInt;
+  final jni$_.JDouble? Function(jni$_.JDouble? double) _echoNullableDouble;
+  final jni$_.JString? Function(jni$_.JString? string) _echoNullableString;
+  final jni$_.JByteArray? Function(jni$_.JByteArray? bs) _echoNullableUint8List;
+  final jni$_.JIntArray? Function(jni$_.JIntArray? is$) _echoNullableInt32List;
+  final jni$_.JLongArray? Function(jni$_.JLongArray? js) _echoNullableInt64List;
+  final jni$_.JDoubleArray? Function(jni$_.JDoubleArray? ds) _echoNullableFloat64List;
+  final jni$_.JByteArray? Function(jni$_.JByteArray bs) _echoNullableList;
+  final jni$_.JByteArray? Function(jni$_.JByteArray bs) _echoNullableEnumList;
+  final jni$_.JByteArray? Function(jni$_.JByteArray bs) _echoNullableClassList;
+  final jni$_.JByteArray? Function(jni$_.JByteArray bs) _echoNullableNonNullEnumList;
+  final jni$_.JByteArray? Function(jni$_.JByteArray bs) _echoNullableNonNullClassList;
+  final jni$_.JByteArray? Function(jni$_.JByteArray bs) _echoNullableMap;
+  final jni$_.JByteArray? Function(jni$_.JByteArray bs) _echoNullableStringMap;
+  final jni$_.JByteArray? Function(jni$_.JByteArray bs) _echoNullableIntMap;
+  final jni$_.JByteArray? Function(jni$_.JByteArray bs) _echoNullableEnumMap;
+  final jni$_.JByteArray? Function(jni$_.JByteArray bs) _echoNullableClassMap;
+  final jni$_.JByteArray? Function(jni$_.JByteArray bs) _echoNullableNonNullStringMap;
+  final jni$_.JByteArray? Function(jni$_.JByteArray bs) _echoNullableNonNullIntMap;
+  final jni$_.JByteArray? Function(jni$_.JByteArray bs) _echoNullableNonNullEnumMap;
+  final jni$_.JByteArray? Function(jni$_.JByteArray bs) _echoNullableNonNullClassMap;
+  final core$_.int Function(core$_.int j) _echoNullableEnum;
+  final core$_.int Function(core$_.int j) _echoAnotherNullableEnum;
+  final core$_.Future<void> Function() _noopAsync;
+  final core$_.Future<jni$_.JByteArray?> Function() _throwFlutterErrorAsync;
   final core$_.Future<jni$_.JByteArray?> Function(jni$_.JByteArray bs)
-  _pigeon_echoAsyncNativeInteropAllTypes;
+  _echoAsyncNativeInteropAllTypes;
   final core$_.Future<jni$_.JByteArray?> Function(jni$_.JByteArray bs)
-  _pigeon_echoAsyncNullableNativeInteropAllNullableTypes;
+  _echoAsyncNullableNativeInteropAllNullableTypes;
   final core$_.Future<jni$_.JByteArray?> Function(jni$_.JByteArray bs)
-  _pigeon_echoAsyncNullableNativeInteropAllNullableTypesWithoutRecursion;
-  final core$_.Future<jni$_.JBoolean> Function(core$_.bool z) _pigeon_echoAsyncBool;
-  final core$_.Future<jni$_.JLong> Function(core$_.int j) _pigeon_echoAsyncInt;
-  final core$_.Future<jni$_.JDouble> Function(core$_.double d) _pigeon_echoAsyncDouble;
-  final core$_.Future<jni$_.JString> Function(jni$_.JString string) _pigeon_echoAsyncString;
-  final core$_.Future<jni$_.JByteArray> Function(jni$_.JByteArray bs) _pigeon_echoAsyncUint8List;
-  final core$_.Future<jni$_.JIntArray> Function(jni$_.JIntArray is$) _pigeon_echoAsyncInt32List;
-  final core$_.Future<jni$_.JLongArray> Function(jni$_.JLongArray js) _pigeon_echoAsyncInt64List;
-  final core$_.Future<jni$_.JDoubleArray> Function(jni$_.JDoubleArray ds)
-  _pigeon_echoAsyncFloat64List;
-  final core$_.Future<jni$_.JByteArray?> Function(jni$_.JByteArray bs) _pigeon_echoAsyncObject;
-  final core$_.Future<jni$_.JByteArray?> Function(jni$_.JByteArray bs) _pigeon_echoAsyncList;
-  final core$_.Future<jni$_.JByteArray?> Function(jni$_.JByteArray bs) _pigeon_echoAsyncEnumList;
-  final core$_.Future<jni$_.JByteArray?> Function(jni$_.JByteArray bs) _pigeon_echoAsyncClassList;
-  final core$_.Future<jni$_.JByteArray?> Function(jni$_.JByteArray bs)
-  _pigeon_echoAsyncNonNullEnumList;
-  final core$_.Future<jni$_.JByteArray?> Function(jni$_.JByteArray bs)
-  _pigeon_echoAsyncNonNullClassList;
-  final core$_.Future<jni$_.JByteArray?> Function(jni$_.JByteArray bs) _pigeon_echoAsyncMap;
-  final core$_.Future<jni$_.JByteArray?> Function(jni$_.JByteArray bs) _pigeon_echoAsyncStringMap;
-  final core$_.Future<jni$_.JByteArray?> Function(jni$_.JByteArray bs) _pigeon_echoAsyncIntMap;
-  final core$_.Future<jni$_.JByteArray?> Function(jni$_.JByteArray bs) _pigeon_echoAsyncEnumMap;
-  final core$_.Future<jni$_.JByteArray?> Function(jni$_.JByteArray bs) _pigeon_echoAsyncClassMap;
-  final core$_.Future<jni$_.JLong> Function(core$_.int j) _pigeon_echoAsyncEnum;
-  final core$_.Future<jni$_.JLong> Function(core$_.int j) _pigeon_echoAnotherAsyncEnum;
-  final core$_.Future<jni$_.JBoolean?> Function(jni$_.JBoolean? boolean)
-  _pigeon_echoAsyncNullableBool;
-  final core$_.Future<jni$_.JLong?> Function(jni$_.JLong? long) _pigeon_echoAsyncNullableInt;
-  final core$_.Future<jni$_.JDouble?> Function(jni$_.JDouble? double)
-  _pigeon_echoAsyncNullableDouble;
-  final core$_.Future<jni$_.JString?> Function(jni$_.JString? string)
-  _pigeon_echoAsyncNullableString;
-  final core$_.Future<jni$_.JByteArray?> Function(jni$_.JByteArray? bs)
-  _pigeon_echoAsyncNullableUint8List;
-  final core$_.Future<jni$_.JIntArray?> Function(jni$_.JIntArray? is$)
-  _pigeon_echoAsyncNullableInt32List;
-  final core$_.Future<jni$_.JLongArray?> Function(jni$_.JLongArray? js)
-  _pigeon_echoAsyncNullableInt64List;
+  _echoAsyncNullableNativeInteropAllNullableTypesWithoutRecursion;
+  final core$_.Future<jni$_.JBoolean> Function(core$_.bool z) _echoAsyncBool;
+  final core$_.Future<jni$_.JLong> Function(core$_.int j) _echoAsyncInt;
+  final core$_.Future<jni$_.JDouble> Function(core$_.double d) _echoAsyncDouble;
+  final core$_.Future<jni$_.JString> Function(jni$_.JString string) _echoAsyncString;
+  final core$_.Future<jni$_.JByteArray> Function(jni$_.JByteArray bs) _echoAsyncUint8List;
+  final core$_.Future<jni$_.JIntArray> Function(jni$_.JIntArray is$) _echoAsyncInt32List;
+  final core$_.Future<jni$_.JLongArray> Function(jni$_.JLongArray js) _echoAsyncInt64List;
+  final core$_.Future<jni$_.JDoubleArray> Function(jni$_.JDoubleArray ds) _echoAsyncFloat64List;
+  final core$_.Future<jni$_.JByteArray?> Function(jni$_.JByteArray bs) _echoAsyncObject;
+  final core$_.Future<jni$_.JByteArray?> Function(jni$_.JByteArray bs) _echoAsyncList;
+  final core$_.Future<jni$_.JByteArray?> Function(jni$_.JByteArray bs) _echoAsyncEnumList;
+  final core$_.Future<jni$_.JByteArray?> Function(jni$_.JByteArray bs) _echoAsyncClassList;
+  final core$_.Future<jni$_.JByteArray?> Function(jni$_.JByteArray bs) _echoAsyncNonNullEnumList;
+  final core$_.Future<jni$_.JByteArray?> Function(jni$_.JByteArray bs) _echoAsyncNonNullClassList;
+  final core$_.Future<jni$_.JByteArray?> Function(jni$_.JByteArray bs) _echoAsyncMap;
+  final core$_.Future<jni$_.JByteArray?> Function(jni$_.JByteArray bs) _echoAsyncStringMap;
+  final core$_.Future<jni$_.JByteArray?> Function(jni$_.JByteArray bs) _echoAsyncIntMap;
+  final core$_.Future<jni$_.JByteArray?> Function(jni$_.JByteArray bs) _echoAsyncEnumMap;
+  final core$_.Future<jni$_.JByteArray?> Function(jni$_.JByteArray bs) _echoAsyncClassMap;
+  final core$_.Future<jni$_.JLong> Function(core$_.int j) _echoAsyncEnum;
+  final core$_.Future<jni$_.JLong> Function(core$_.int j) _echoAnotherAsyncEnum;
+  final core$_.Future<jni$_.JBoolean?> Function(jni$_.JBoolean? boolean) _echoAsyncNullableBool;
+  final core$_.Future<jni$_.JLong?> Function(jni$_.JLong? long) _echoAsyncNullableInt;
+  final core$_.Future<jni$_.JDouble?> Function(jni$_.JDouble? double) _echoAsyncNullableDouble;
+  final core$_.Future<jni$_.JString?> Function(jni$_.JString? string) _echoAsyncNullableString;
+  final core$_.Future<jni$_.JByteArray?> Function(jni$_.JByteArray? bs) _echoAsyncNullableUint8List;
+  final core$_.Future<jni$_.JIntArray?> Function(jni$_.JIntArray? is$) _echoAsyncNullableInt32List;
+  final core$_.Future<jni$_.JLongArray?> Function(jni$_.JLongArray? js) _echoAsyncNullableInt64List;
   final core$_.Future<jni$_.JDoubleArray?> Function(jni$_.JDoubleArray? ds)
-  _pigeon_echoAsyncNullableFloat64List;
+  _echoAsyncNullableFloat64List;
+  final core$_.Future<jni$_.JByteArray?> Function(jni$_.JByteArray bs) _echoAsyncNullableObject;
+  final core$_.Future<jni$_.JByteArray?> Function(jni$_.JByteArray bs) _echoAsyncNullableList;
+  final core$_.Future<jni$_.JByteArray?> Function(jni$_.JByteArray bs) _echoAsyncNullableEnumList;
+  final core$_.Future<jni$_.JByteArray?> Function(jni$_.JByteArray bs) _echoAsyncNullableClassList;
   final core$_.Future<jni$_.JByteArray?> Function(jni$_.JByteArray bs)
-  _pigeon_echoAsyncNullableObject;
+  _echoAsyncNullableNonNullEnumList;
   final core$_.Future<jni$_.JByteArray?> Function(jni$_.JByteArray bs)
-  _pigeon_echoAsyncNullableList;
-  final core$_.Future<jni$_.JByteArray?> Function(jni$_.JByteArray bs)
-  _pigeon_echoAsyncNullableEnumList;
-  final core$_.Future<jni$_.JByteArray?> Function(jni$_.JByteArray bs)
-  _pigeon_echoAsyncNullableClassList;
-  final core$_.Future<jni$_.JByteArray?> Function(jni$_.JByteArray bs)
-  _pigeon_echoAsyncNullableNonNullEnumList;
-  final core$_.Future<jni$_.JByteArray?> Function(jni$_.JByteArray bs)
-  _pigeon_echoAsyncNullableNonNullClassList;
-  final core$_.Future<jni$_.JByteArray?> Function(jni$_.JByteArray bs) _pigeon_echoAsyncNullableMap;
-  final core$_.Future<jni$_.JByteArray?> Function(jni$_.JByteArray bs)
-  _pigeon_echoAsyncNullableStringMap;
-  final core$_.Future<jni$_.JByteArray?> Function(jni$_.JByteArray bs)
-  _pigeon_echoAsyncNullableIntMap;
-  final core$_.Future<jni$_.JByteArray?> Function(jni$_.JByteArray bs)
-  _pigeon_echoAsyncNullableEnumMap;
-  final core$_.Future<jni$_.JByteArray?> Function(jni$_.JByteArray bs)
-  _pigeon_echoAsyncNullableClassMap;
-  final core$_.Future<jni$_.JLong> Function(core$_.int j) _pigeon_echoAsyncNullableEnum;
-  final core$_.Future<jni$_.JLong> Function(core$_.int j) _pigeon_echoAnotherAsyncNullableEnum;
+  _echoAsyncNullableNonNullClassList;
+  final core$_.Future<jni$_.JByteArray?> Function(jni$_.JByteArray bs) _echoAsyncNullableMap;
+  final core$_.Future<jni$_.JByteArray?> Function(jni$_.JByteArray bs) _echoAsyncNullableStringMap;
+  final core$_.Future<jni$_.JByteArray?> Function(jni$_.JByteArray bs) _echoAsyncNullableIntMap;
+  final core$_.Future<jni$_.JByteArray?> Function(jni$_.JByteArray bs) _echoAsyncNullableEnumMap;
+  final core$_.Future<jni$_.JByteArray?> Function(jni$_.JByteArray bs) _echoAsyncNullableClassMap;
+  final core$_.Future<jni$_.JLong> Function(core$_.int j) _echoAsyncNullableEnum;
+  final core$_.Future<jni$_.JLong> Function(core$_.int j) _echoAnotherAsyncNullableEnum;
 
-  void pigeon_noop() {
-    return _pigeon_noop();
+  void noop() {
+    return _noop();
   }
 
-  jni$_.JByteArray? pigeon_throwFlutterError() {
-    return _pigeon_throwFlutterError();
+  jni$_.JByteArray? throwFlutterError() {
+    return _throwFlutterError();
   }
 
-  jni$_.JByteArray? pigeon_throwError() {
-    return _pigeon_throwError();
+  jni$_.JByteArray? throwError() {
+    return _throwError();
   }
 
-  void pigeon_throwErrorFromVoid() {
-    return _pigeon_throwErrorFromVoid();
+  void throwErrorFromVoid() {
+    return _throwErrorFromVoid();
   }
 
-  jni$_.JByteArray? pigeon_echoNativeInteropAllTypes(jni$_.JByteArray bs) {
-    return _pigeon_echoNativeInteropAllTypes(bs);
+  jni$_.JByteArray? echoNativeInteropAllTypes(jni$_.JByteArray bs) {
+    return _echoNativeInteropAllTypes(bs);
   }
 
-  jni$_.JByteArray? pigeon_echoNativeInteropAllNullableTypes(jni$_.JByteArray bs) {
-    return _pigeon_echoNativeInteropAllNullableTypes(bs);
+  jni$_.JByteArray? echoNativeInteropAllNullableTypes(jni$_.JByteArray bs) {
+    return _echoNativeInteropAllNullableTypes(bs);
   }
 
-  jni$_.JByteArray? pigeon_sendMultipleNullableTypes(
+  jni$_.JByteArray? echoNativeInteropSealedClass(jni$_.JByteArray bs) {
+    return _echoNativeInteropSealedClass(bs);
+  }
+
+  jni$_.JByteArray? sendMultipleNullableTypes(
     jni$_.JBoolean? boolean,
     jni$_.JLong? long,
     jni$_.JString? string,
   ) {
-    return _pigeon_sendMultipleNullableTypes(boolean, long, string);
+    return _sendMultipleNullableTypes(boolean, long, string);
   }
 
-  jni$_.JByteArray? pigeon_echoNativeInteropAllNullableTypesWithoutRecursion(jni$_.JByteArray bs) {
-    return _pigeon_echoNativeInteropAllNullableTypesWithoutRecursion(bs);
+  jni$_.JByteArray? echoNativeInteropAllNullableTypesWithoutRecursion(jni$_.JByteArray bs) {
+    return _echoNativeInteropAllNullableTypesWithoutRecursion(bs);
   }
 
-  jni$_.JByteArray? pigeon_sendMultipleNullableTypesWithoutRecursion(
+  jni$_.JByteArray? sendMultipleNullableTypesWithoutRecursion(
     jni$_.JBoolean? boolean,
     jni$_.JLong? long,
     jni$_.JString? string,
   ) {
-    return _pigeon_sendMultipleNullableTypesWithoutRecursion(boolean, long, string);
+    return _sendMultipleNullableTypesWithoutRecursion(boolean, long, string);
   }
 
-  core$_.bool pigeon_echoBool(core$_.bool z) {
-    return _pigeon_echoBool(z);
+  core$_.bool echoBool(core$_.bool z) {
+    return _echoBool(z);
   }
 
-  core$_.int pigeon_echoInt(core$_.int j) {
-    return _pigeon_echoInt(j);
+  core$_.int echoInt(core$_.int j) {
+    return _echoInt(j);
   }
 
-  core$_.double pigeon_echoDouble(core$_.double d) {
-    return _pigeon_echoDouble(d);
+  core$_.double echoDouble(core$_.double d) {
+    return _echoDouble(d);
   }
 
-  jni$_.JString pigeon_echoString(jni$_.JString string) {
-    return _pigeon_echoString(string);
+  jni$_.JString echoString(jni$_.JString string) {
+    return _echoString(string);
   }
 
-  jni$_.JByteArray pigeon_echoUint8List(jni$_.JByteArray bs) {
-    return _pigeon_echoUint8List(bs);
+  jni$_.JByteArray echoUint8List(jni$_.JByteArray bs) {
+    return _echoUint8List(bs);
   }
 
-  jni$_.JIntArray pigeon_echoInt32List(jni$_.JIntArray is$) {
-    return _pigeon_echoInt32List(is$);
+  jni$_.JIntArray echoInt32List(jni$_.JIntArray is$) {
+    return _echoInt32List(is$);
   }
 
-  jni$_.JLongArray pigeon_echoInt64List(jni$_.JLongArray js) {
-    return _pigeon_echoInt64List(js);
+  jni$_.JLongArray echoInt64List(jni$_.JLongArray js) {
+    return _echoInt64List(js);
   }
 
-  jni$_.JDoubleArray pigeon_echoFloat64List(jni$_.JDoubleArray ds) {
-    return _pigeon_echoFloat64List(ds);
+  jni$_.JDoubleArray echoFloat64List(jni$_.JDoubleArray ds) {
+    return _echoFloat64List(ds);
   }
 
-  jni$_.JByteArray? pigeon_echoList(jni$_.JByteArray bs) {
-    return _pigeon_echoList(bs);
+  jni$_.JByteArray? echoList(jni$_.JByteArray bs) {
+    return _echoList(bs);
   }
 
-  jni$_.JByteArray? pigeon_echoEnumList(jni$_.JByteArray bs) {
-    return _pigeon_echoEnumList(bs);
+  jni$_.JByteArray? echoEnumList(jni$_.JByteArray bs) {
+    return _echoEnumList(bs);
   }
 
-  jni$_.JByteArray? pigeon_echoNativeInteropSealedClass(jni$_.JByteArray bs) {
-    return _pigeon_echoNativeInteropSealedClass(bs);
+  jni$_.JByteArray? echoClassList(jni$_.JByteArray bs) {
+    return _echoClassList(bs);
   }
 
-  jni$_.JByteArray? pigeon_echoClassList(jni$_.JByteArray bs) {
-    return _pigeon_echoClassList(bs);
+  jni$_.JByteArray? echoNonNullEnumList(jni$_.JByteArray bs) {
+    return _echoNonNullEnumList(bs);
   }
 
-  jni$_.JByteArray? pigeon_echoNonNullEnumList(jni$_.JByteArray bs) {
-    return _pigeon_echoNonNullEnumList(bs);
+  jni$_.JByteArray? echoNonNullClassList(jni$_.JByteArray bs) {
+    return _echoNonNullClassList(bs);
   }
 
-  jni$_.JByteArray? pigeon_echoNonNullClassList(jni$_.JByteArray bs) {
-    return _pigeon_echoNonNullClassList(bs);
+  jni$_.JByteArray? echoMap(jni$_.JByteArray bs) {
+    return _echoMap(bs);
   }
 
-  jni$_.JByteArray? pigeon_echoMap(jni$_.JByteArray bs) {
-    return _pigeon_echoMap(bs);
+  jni$_.JByteArray? echoStringMap(jni$_.JByteArray bs) {
+    return _echoStringMap(bs);
   }
 
-  jni$_.JByteArray? pigeon_echoStringMap(jni$_.JByteArray bs) {
-    return _pigeon_echoStringMap(bs);
+  jni$_.JByteArray? echoIntMap(jni$_.JByteArray bs) {
+    return _echoIntMap(bs);
   }
 
-  jni$_.JByteArray? pigeon_echoIntMap(jni$_.JByteArray bs) {
-    return _pigeon_echoIntMap(bs);
+  jni$_.JByteArray? echoEnumMap(jni$_.JByteArray bs) {
+    return _echoEnumMap(bs);
   }
 
-  jni$_.JByteArray? pigeon_echoEnumMap(jni$_.JByteArray bs) {
-    return _pigeon_echoEnumMap(bs);
+  jni$_.JByteArray? echoClassMap(jni$_.JByteArray bs) {
+    return _echoClassMap(bs);
   }
 
-  jni$_.JByteArray? pigeon_echoClassMap(jni$_.JByteArray bs) {
-    return _pigeon_echoClassMap(bs);
+  jni$_.JByteArray? echoNonNullStringMap(jni$_.JByteArray bs) {
+    return _echoNonNullStringMap(bs);
   }
 
-  jni$_.JByteArray? pigeon_echoNonNullStringMap(jni$_.JByteArray bs) {
-    return _pigeon_echoNonNullStringMap(bs);
+  jni$_.JByteArray? echoNonNullIntMap(jni$_.JByteArray bs) {
+    return _echoNonNullIntMap(bs);
   }
 
-  jni$_.JByteArray? pigeon_echoNonNullIntMap(jni$_.JByteArray bs) {
-    return _pigeon_echoNonNullIntMap(bs);
+  jni$_.JByteArray? echoNonNullEnumMap(jni$_.JByteArray bs) {
+    return _echoNonNullEnumMap(bs);
   }
 
-  jni$_.JByteArray? pigeon_echoNonNullEnumMap(jni$_.JByteArray bs) {
-    return _pigeon_echoNonNullEnumMap(bs);
+  jni$_.JByteArray? echoNonNullClassMap(jni$_.JByteArray bs) {
+    return _echoNonNullClassMap(bs);
   }
 
-  jni$_.JByteArray? pigeon_echoNonNullClassMap(jni$_.JByteArray bs) {
-    return _pigeon_echoNonNullClassMap(bs);
+  core$_.int echoEnum(core$_.int j) {
+    return _echoEnum(j);
   }
 
-  core$_.int pigeon_echoEnum(core$_.int j) {
-    return _pigeon_echoEnum(j);
+  core$_.int echoNativeInteropAnotherEnum(core$_.int j) {
+    return _echoNativeInteropAnotherEnum(j);
   }
 
-  core$_.int pigeon_echoNativeInteropAnotherEnum(core$_.int j) {
-    return _pigeon_echoNativeInteropAnotherEnum(j);
+  jni$_.JBoolean? echoNullableBool(jni$_.JBoolean? boolean) {
+    return _echoNullableBool(boolean);
   }
 
-  jni$_.JBoolean? pigeon_echoNullableBool(jni$_.JBoolean? boolean) {
-    return _pigeon_echoNullableBool(boolean);
+  jni$_.JLong? echoNullableInt(jni$_.JLong? long) {
+    return _echoNullableInt(long);
   }
 
-  jni$_.JLong? pigeon_echoNullableInt(jni$_.JLong? long) {
-    return _pigeon_echoNullableInt(long);
+  jni$_.JDouble? echoNullableDouble(jni$_.JDouble? double) {
+    return _echoNullableDouble(double);
   }
 
-  jni$_.JDouble? pigeon_echoNullableDouble(jni$_.JDouble? double) {
-    return _pigeon_echoNullableDouble(double);
+  jni$_.JString? echoNullableString(jni$_.JString? string) {
+    return _echoNullableString(string);
   }
 
-  jni$_.JString? pigeon_echoNullableString(jni$_.JString? string) {
-    return _pigeon_echoNullableString(string);
+  jni$_.JByteArray? echoNullableUint8List(jni$_.JByteArray? bs) {
+    return _echoNullableUint8List(bs);
   }
 
-  jni$_.JByteArray? pigeon_echoNullableUint8List(jni$_.JByteArray? bs) {
-    return _pigeon_echoNullableUint8List(bs);
+  jni$_.JIntArray? echoNullableInt32List(jni$_.JIntArray? is$) {
+    return _echoNullableInt32List(is$);
   }
 
-  jni$_.JIntArray? pigeon_echoNullableInt32List(jni$_.JIntArray? is$) {
-    return _pigeon_echoNullableInt32List(is$);
+  jni$_.JLongArray? echoNullableInt64List(jni$_.JLongArray? js) {
+    return _echoNullableInt64List(js);
   }
 
-  jni$_.JLongArray? pigeon_echoNullableInt64List(jni$_.JLongArray? js) {
-    return _pigeon_echoNullableInt64List(js);
+  jni$_.JDoubleArray? echoNullableFloat64List(jni$_.JDoubleArray? ds) {
+    return _echoNullableFloat64List(ds);
   }
 
-  jni$_.JDoubleArray? pigeon_echoNullableFloat64List(jni$_.JDoubleArray? ds) {
-    return _pigeon_echoNullableFloat64List(ds);
+  jni$_.JByteArray? echoNullableList(jni$_.JByteArray bs) {
+    return _echoNullableList(bs);
   }
 
-  jni$_.JByteArray? pigeon_echoNullableList(jni$_.JByteArray bs) {
-    return _pigeon_echoNullableList(bs);
+  jni$_.JByteArray? echoNullableEnumList(jni$_.JByteArray bs) {
+    return _echoNullableEnumList(bs);
   }
 
-  jni$_.JByteArray? pigeon_echoNullableEnumList(jni$_.JByteArray bs) {
-    return _pigeon_echoNullableEnumList(bs);
+  jni$_.JByteArray? echoNullableClassList(jni$_.JByteArray bs) {
+    return _echoNullableClassList(bs);
   }
 
-  jni$_.JByteArray? pigeon_echoNullableClassList(jni$_.JByteArray bs) {
-    return _pigeon_echoNullableClassList(bs);
+  jni$_.JByteArray? echoNullableNonNullEnumList(jni$_.JByteArray bs) {
+    return _echoNullableNonNullEnumList(bs);
   }
 
-  jni$_.JByteArray? pigeon_echoNullableNonNullEnumList(jni$_.JByteArray bs) {
-    return _pigeon_echoNullableNonNullEnumList(bs);
+  jni$_.JByteArray? echoNullableNonNullClassList(jni$_.JByteArray bs) {
+    return _echoNullableNonNullClassList(bs);
   }
 
-  jni$_.JByteArray? pigeon_echoNullableNonNullClassList(jni$_.JByteArray bs) {
-    return _pigeon_echoNullableNonNullClassList(bs);
+  jni$_.JByteArray? echoNullableMap(jni$_.JByteArray bs) {
+    return _echoNullableMap(bs);
   }
 
-  jni$_.JByteArray? pigeon_echoNullableMap(jni$_.JByteArray bs) {
-    return _pigeon_echoNullableMap(bs);
+  jni$_.JByteArray? echoNullableStringMap(jni$_.JByteArray bs) {
+    return _echoNullableStringMap(bs);
   }
 
-  jni$_.JByteArray? pigeon_echoNullableStringMap(jni$_.JByteArray bs) {
-    return _pigeon_echoNullableStringMap(bs);
+  jni$_.JByteArray? echoNullableIntMap(jni$_.JByteArray bs) {
+    return _echoNullableIntMap(bs);
   }
 
-  jni$_.JByteArray? pigeon_echoNullableIntMap(jni$_.JByteArray bs) {
-    return _pigeon_echoNullableIntMap(bs);
+  jni$_.JByteArray? echoNullableEnumMap(jni$_.JByteArray bs) {
+    return _echoNullableEnumMap(bs);
   }
 
-  jni$_.JByteArray? pigeon_echoNullableEnumMap(jni$_.JByteArray bs) {
-    return _pigeon_echoNullableEnumMap(bs);
+  jni$_.JByteArray? echoNullableClassMap(jni$_.JByteArray bs) {
+    return _echoNullableClassMap(bs);
   }
 
-  jni$_.JByteArray? pigeon_echoNullableClassMap(jni$_.JByteArray bs) {
-    return _pigeon_echoNullableClassMap(bs);
+  jni$_.JByteArray? echoNullableNonNullStringMap(jni$_.JByteArray bs) {
+    return _echoNullableNonNullStringMap(bs);
   }
 
-  jni$_.JByteArray? pigeon_echoNullableNonNullStringMap(jni$_.JByteArray bs) {
-    return _pigeon_echoNullableNonNullStringMap(bs);
+  jni$_.JByteArray? echoNullableNonNullIntMap(jni$_.JByteArray bs) {
+    return _echoNullableNonNullIntMap(bs);
   }
 
-  jni$_.JByteArray? pigeon_echoNullableNonNullIntMap(jni$_.JByteArray bs) {
-    return _pigeon_echoNullableNonNullIntMap(bs);
+  jni$_.JByteArray? echoNullableNonNullEnumMap(jni$_.JByteArray bs) {
+    return _echoNullableNonNullEnumMap(bs);
   }
 
-  jni$_.JByteArray? pigeon_echoNullableNonNullEnumMap(jni$_.JByteArray bs) {
-    return _pigeon_echoNullableNonNullEnumMap(bs);
+  jni$_.JByteArray? echoNullableNonNullClassMap(jni$_.JByteArray bs) {
+    return _echoNullableNonNullClassMap(bs);
   }
 
-  jni$_.JByteArray? pigeon_echoNullableNonNullClassMap(jni$_.JByteArray bs) {
-    return _pigeon_echoNullableNonNullClassMap(bs);
+  core$_.int echoNullableEnum(core$_.int j) {
+    return _echoNullableEnum(j);
   }
 
-  core$_.int pigeon_echoNullableEnum(core$_.int j) {
-    return _pigeon_echoNullableEnum(j);
+  core$_.int echoAnotherNullableEnum(core$_.int j) {
+    return _echoAnotherNullableEnum(j);
   }
 
-  core$_.int pigeon_echoAnotherNullableEnum(core$_.int j) {
-    return _pigeon_echoAnotherNullableEnum(j);
+  core$_.Future<void> noopAsync() {
+    return _noopAsync();
   }
 
-  core$_.Future<void> pigeon_noopAsync() {
-    return _pigeon_noopAsync();
+  core$_.Future<jni$_.JByteArray?> throwFlutterErrorAsync() {
+    return _throwFlutterErrorAsync();
   }
 
-  core$_.Future<jni$_.JByteArray?> pigeon_throwFlutterErrorAsync() {
-    return _pigeon_throwFlutterErrorAsync();
+  core$_.Future<jni$_.JByteArray?> echoAsyncNativeInteropAllTypes(jni$_.JByteArray bs) {
+    return _echoAsyncNativeInteropAllTypes(bs);
   }
 
-  core$_.Future<jni$_.JByteArray?> pigeon_echoAsyncNativeInteropAllTypes(jni$_.JByteArray bs) {
-    return _pigeon_echoAsyncNativeInteropAllTypes(bs);
-  }
-
-  core$_.Future<jni$_.JByteArray?> pigeon_echoAsyncNullableNativeInteropAllNullableTypes(
+  core$_.Future<jni$_.JByteArray?> echoAsyncNullableNativeInteropAllNullableTypes(
     jni$_.JByteArray bs,
   ) {
-    return _pigeon_echoAsyncNullableNativeInteropAllNullableTypes(bs);
+    return _echoAsyncNullableNativeInteropAllNullableTypes(bs);
   }
 
-  core$_.Future<jni$_.JByteArray?>
-  pigeon_echoAsyncNullableNativeInteropAllNullableTypesWithoutRecursion(jni$_.JByteArray bs) {
-    return _pigeon_echoAsyncNullableNativeInteropAllNullableTypesWithoutRecursion(bs);
+  core$_.Future<jni$_.JByteArray?> echoAsyncNullableNativeInteropAllNullableTypesWithoutRecursion(
+    jni$_.JByteArray bs,
+  ) {
+    return _echoAsyncNullableNativeInteropAllNullableTypesWithoutRecursion(bs);
   }
 
-  core$_.Future<jni$_.JBoolean> pigeon_echoAsyncBool(core$_.bool z) {
-    return _pigeon_echoAsyncBool(z);
+  core$_.Future<jni$_.JBoolean> echoAsyncBool(core$_.bool z) {
+    return _echoAsyncBool(z);
   }
 
-  core$_.Future<jni$_.JLong> pigeon_echoAsyncInt(core$_.int j) {
-    return _pigeon_echoAsyncInt(j);
+  core$_.Future<jni$_.JLong> echoAsyncInt(core$_.int j) {
+    return _echoAsyncInt(j);
   }
 
-  core$_.Future<jni$_.JDouble> pigeon_echoAsyncDouble(core$_.double d) {
-    return _pigeon_echoAsyncDouble(d);
+  core$_.Future<jni$_.JDouble> echoAsyncDouble(core$_.double d) {
+    return _echoAsyncDouble(d);
   }
 
-  core$_.Future<jni$_.JString> pigeon_echoAsyncString(jni$_.JString string) {
-    return _pigeon_echoAsyncString(string);
+  core$_.Future<jni$_.JString> echoAsyncString(jni$_.JString string) {
+    return _echoAsyncString(string);
   }
 
-  core$_.Future<jni$_.JByteArray> pigeon_echoAsyncUint8List(jni$_.JByteArray bs) {
-    return _pigeon_echoAsyncUint8List(bs);
+  core$_.Future<jni$_.JByteArray> echoAsyncUint8List(jni$_.JByteArray bs) {
+    return _echoAsyncUint8List(bs);
   }
 
-  core$_.Future<jni$_.JIntArray> pigeon_echoAsyncInt32List(jni$_.JIntArray is$) {
-    return _pigeon_echoAsyncInt32List(is$);
+  core$_.Future<jni$_.JIntArray> echoAsyncInt32List(jni$_.JIntArray is$) {
+    return _echoAsyncInt32List(is$);
   }
 
-  core$_.Future<jni$_.JLongArray> pigeon_echoAsyncInt64List(jni$_.JLongArray js) {
-    return _pigeon_echoAsyncInt64List(js);
+  core$_.Future<jni$_.JLongArray> echoAsyncInt64List(jni$_.JLongArray js) {
+    return _echoAsyncInt64List(js);
   }
 
-  core$_.Future<jni$_.JDoubleArray> pigeon_echoAsyncFloat64List(jni$_.JDoubleArray ds) {
-    return _pigeon_echoAsyncFloat64List(ds);
+  core$_.Future<jni$_.JDoubleArray> echoAsyncFloat64List(jni$_.JDoubleArray ds) {
+    return _echoAsyncFloat64List(ds);
   }
 
-  core$_.Future<jni$_.JByteArray?> pigeon_echoAsyncObject(jni$_.JByteArray bs) {
-    return _pigeon_echoAsyncObject(bs);
+  core$_.Future<jni$_.JByteArray?> echoAsyncObject(jni$_.JByteArray bs) {
+    return _echoAsyncObject(bs);
   }
 
-  core$_.Future<jni$_.JByteArray?> pigeon_echoAsyncList(jni$_.JByteArray bs) {
-    return _pigeon_echoAsyncList(bs);
+  core$_.Future<jni$_.JByteArray?> echoAsyncList(jni$_.JByteArray bs) {
+    return _echoAsyncList(bs);
   }
 
-  core$_.Future<jni$_.JByteArray?> pigeon_echoAsyncEnumList(jni$_.JByteArray bs) {
-    return _pigeon_echoAsyncEnumList(bs);
+  core$_.Future<jni$_.JByteArray?> echoAsyncEnumList(jni$_.JByteArray bs) {
+    return _echoAsyncEnumList(bs);
   }
 
-  core$_.Future<jni$_.JByteArray?> pigeon_echoAsyncClassList(jni$_.JByteArray bs) {
-    return _pigeon_echoAsyncClassList(bs);
+  core$_.Future<jni$_.JByteArray?> echoAsyncClassList(jni$_.JByteArray bs) {
+    return _echoAsyncClassList(bs);
   }
 
-  core$_.Future<jni$_.JByteArray?> pigeon_echoAsyncNonNullEnumList(jni$_.JByteArray bs) {
-    return _pigeon_echoAsyncNonNullEnumList(bs);
+  core$_.Future<jni$_.JByteArray?> echoAsyncNonNullEnumList(jni$_.JByteArray bs) {
+    return _echoAsyncNonNullEnumList(bs);
   }
 
-  core$_.Future<jni$_.JByteArray?> pigeon_echoAsyncNonNullClassList(jni$_.JByteArray bs) {
-    return _pigeon_echoAsyncNonNullClassList(bs);
+  core$_.Future<jni$_.JByteArray?> echoAsyncNonNullClassList(jni$_.JByteArray bs) {
+    return _echoAsyncNonNullClassList(bs);
   }
 
-  core$_.Future<jni$_.JByteArray?> pigeon_echoAsyncMap(jni$_.JByteArray bs) {
-    return _pigeon_echoAsyncMap(bs);
+  core$_.Future<jni$_.JByteArray?> echoAsyncMap(jni$_.JByteArray bs) {
+    return _echoAsyncMap(bs);
   }
 
-  core$_.Future<jni$_.JByteArray?> pigeon_echoAsyncStringMap(jni$_.JByteArray bs) {
-    return _pigeon_echoAsyncStringMap(bs);
+  core$_.Future<jni$_.JByteArray?> echoAsyncStringMap(jni$_.JByteArray bs) {
+    return _echoAsyncStringMap(bs);
   }
 
-  core$_.Future<jni$_.JByteArray?> pigeon_echoAsyncIntMap(jni$_.JByteArray bs) {
-    return _pigeon_echoAsyncIntMap(bs);
+  core$_.Future<jni$_.JByteArray?> echoAsyncIntMap(jni$_.JByteArray bs) {
+    return _echoAsyncIntMap(bs);
   }
 
-  core$_.Future<jni$_.JByteArray?> pigeon_echoAsyncEnumMap(jni$_.JByteArray bs) {
-    return _pigeon_echoAsyncEnumMap(bs);
+  core$_.Future<jni$_.JByteArray?> echoAsyncEnumMap(jni$_.JByteArray bs) {
+    return _echoAsyncEnumMap(bs);
   }
 
-  core$_.Future<jni$_.JByteArray?> pigeon_echoAsyncClassMap(jni$_.JByteArray bs) {
-    return _pigeon_echoAsyncClassMap(bs);
+  core$_.Future<jni$_.JByteArray?> echoAsyncClassMap(jni$_.JByteArray bs) {
+    return _echoAsyncClassMap(bs);
   }
 
-  core$_.Future<jni$_.JLong> pigeon_echoAsyncEnum(core$_.int j) {
-    return _pigeon_echoAsyncEnum(j);
+  core$_.Future<jni$_.JLong> echoAsyncEnum(core$_.int j) {
+    return _echoAsyncEnum(j);
   }
 
-  core$_.Future<jni$_.JLong> pigeon_echoAnotherAsyncEnum(core$_.int j) {
-    return _pigeon_echoAnotherAsyncEnum(j);
+  core$_.Future<jni$_.JLong> echoAnotherAsyncEnum(core$_.int j) {
+    return _echoAnotherAsyncEnum(j);
   }
 
-  core$_.Future<jni$_.JBoolean?> pigeon_echoAsyncNullableBool(jni$_.JBoolean? boolean) {
-    return _pigeon_echoAsyncNullableBool(boolean);
+  core$_.Future<jni$_.JBoolean?> echoAsyncNullableBool(jni$_.JBoolean? boolean) {
+    return _echoAsyncNullableBool(boolean);
   }
 
-  core$_.Future<jni$_.JLong?> pigeon_echoAsyncNullableInt(jni$_.JLong? long) {
-    return _pigeon_echoAsyncNullableInt(long);
+  core$_.Future<jni$_.JLong?> echoAsyncNullableInt(jni$_.JLong? long) {
+    return _echoAsyncNullableInt(long);
   }
 
-  core$_.Future<jni$_.JDouble?> pigeon_echoAsyncNullableDouble(jni$_.JDouble? double) {
-    return _pigeon_echoAsyncNullableDouble(double);
+  core$_.Future<jni$_.JDouble?> echoAsyncNullableDouble(jni$_.JDouble? double) {
+    return _echoAsyncNullableDouble(double);
   }
 
-  core$_.Future<jni$_.JString?> pigeon_echoAsyncNullableString(jni$_.JString? string) {
-    return _pigeon_echoAsyncNullableString(string);
+  core$_.Future<jni$_.JString?> echoAsyncNullableString(jni$_.JString? string) {
+    return _echoAsyncNullableString(string);
   }
 
-  core$_.Future<jni$_.JByteArray?> pigeon_echoAsyncNullableUint8List(jni$_.JByteArray? bs) {
-    return _pigeon_echoAsyncNullableUint8List(bs);
+  core$_.Future<jni$_.JByteArray?> echoAsyncNullableUint8List(jni$_.JByteArray? bs) {
+    return _echoAsyncNullableUint8List(bs);
   }
 
-  core$_.Future<jni$_.JIntArray?> pigeon_echoAsyncNullableInt32List(jni$_.JIntArray? is$) {
-    return _pigeon_echoAsyncNullableInt32List(is$);
+  core$_.Future<jni$_.JIntArray?> echoAsyncNullableInt32List(jni$_.JIntArray? is$) {
+    return _echoAsyncNullableInt32List(is$);
   }
 
-  core$_.Future<jni$_.JLongArray?> pigeon_echoAsyncNullableInt64List(jni$_.JLongArray? js) {
-    return _pigeon_echoAsyncNullableInt64List(js);
+  core$_.Future<jni$_.JLongArray?> echoAsyncNullableInt64List(jni$_.JLongArray? js) {
+    return _echoAsyncNullableInt64List(js);
   }
 
-  core$_.Future<jni$_.JDoubleArray?> pigeon_echoAsyncNullableFloat64List(jni$_.JDoubleArray? ds) {
-    return _pigeon_echoAsyncNullableFloat64List(ds);
+  core$_.Future<jni$_.JDoubleArray?> echoAsyncNullableFloat64List(jni$_.JDoubleArray? ds) {
+    return _echoAsyncNullableFloat64List(ds);
   }
 
-  core$_.Future<jni$_.JByteArray?> pigeon_echoAsyncNullableObject(jni$_.JByteArray bs) {
-    return _pigeon_echoAsyncNullableObject(bs);
+  core$_.Future<jni$_.JByteArray?> echoAsyncNullableObject(jni$_.JByteArray bs) {
+    return _echoAsyncNullableObject(bs);
   }
 
-  core$_.Future<jni$_.JByteArray?> pigeon_echoAsyncNullableList(jni$_.JByteArray bs) {
-    return _pigeon_echoAsyncNullableList(bs);
+  core$_.Future<jni$_.JByteArray?> echoAsyncNullableList(jni$_.JByteArray bs) {
+    return _echoAsyncNullableList(bs);
   }
 
-  core$_.Future<jni$_.JByteArray?> pigeon_echoAsyncNullableEnumList(jni$_.JByteArray bs) {
-    return _pigeon_echoAsyncNullableEnumList(bs);
+  core$_.Future<jni$_.JByteArray?> echoAsyncNullableEnumList(jni$_.JByteArray bs) {
+    return _echoAsyncNullableEnumList(bs);
   }
 
-  core$_.Future<jni$_.JByteArray?> pigeon_echoAsyncNullableClassList(jni$_.JByteArray bs) {
-    return _pigeon_echoAsyncNullableClassList(bs);
+  core$_.Future<jni$_.JByteArray?> echoAsyncNullableClassList(jni$_.JByteArray bs) {
+    return _echoAsyncNullableClassList(bs);
   }
 
-  core$_.Future<jni$_.JByteArray?> pigeon_echoAsyncNullableNonNullEnumList(jni$_.JByteArray bs) {
-    return _pigeon_echoAsyncNullableNonNullEnumList(bs);
+  core$_.Future<jni$_.JByteArray?> echoAsyncNullableNonNullEnumList(jni$_.JByteArray bs) {
+    return _echoAsyncNullableNonNullEnumList(bs);
   }
 
-  core$_.Future<jni$_.JByteArray?> pigeon_echoAsyncNullableNonNullClassList(jni$_.JByteArray bs) {
-    return _pigeon_echoAsyncNullableNonNullClassList(bs);
+  core$_.Future<jni$_.JByteArray?> echoAsyncNullableNonNullClassList(jni$_.JByteArray bs) {
+    return _echoAsyncNullableNonNullClassList(bs);
   }
 
-  core$_.Future<jni$_.JByteArray?> pigeon_echoAsyncNullableMap(jni$_.JByteArray bs) {
-    return _pigeon_echoAsyncNullableMap(bs);
+  core$_.Future<jni$_.JByteArray?> echoAsyncNullableMap(jni$_.JByteArray bs) {
+    return _echoAsyncNullableMap(bs);
   }
 
-  core$_.Future<jni$_.JByteArray?> pigeon_echoAsyncNullableStringMap(jni$_.JByteArray bs) {
-    return _pigeon_echoAsyncNullableStringMap(bs);
+  core$_.Future<jni$_.JByteArray?> echoAsyncNullableStringMap(jni$_.JByteArray bs) {
+    return _echoAsyncNullableStringMap(bs);
   }
 
-  core$_.Future<jni$_.JByteArray?> pigeon_echoAsyncNullableIntMap(jni$_.JByteArray bs) {
-    return _pigeon_echoAsyncNullableIntMap(bs);
+  core$_.Future<jni$_.JByteArray?> echoAsyncNullableIntMap(jni$_.JByteArray bs) {
+    return _echoAsyncNullableIntMap(bs);
   }
 
-  core$_.Future<jni$_.JByteArray?> pigeon_echoAsyncNullableEnumMap(jni$_.JByteArray bs) {
-    return _pigeon_echoAsyncNullableEnumMap(bs);
+  core$_.Future<jni$_.JByteArray?> echoAsyncNullableEnumMap(jni$_.JByteArray bs) {
+    return _echoAsyncNullableEnumMap(bs);
   }
 
-  core$_.Future<jni$_.JByteArray?> pigeon_echoAsyncNullableClassMap(jni$_.JByteArray bs) {
-    return _pigeon_echoAsyncNullableClassMap(bs);
+  core$_.Future<jni$_.JByteArray?> echoAsyncNullableClassMap(jni$_.JByteArray bs) {
+    return _echoAsyncNullableClassMap(bs);
   }
 
-  core$_.Future<jni$_.JLong> pigeon_echoAsyncNullableEnum(core$_.int j) {
-    return _pigeon_echoAsyncNullableEnum(j);
+  core$_.Future<jni$_.JLong> echoAsyncNullableEnum(core$_.int j) {
+    return _echoAsyncNullableEnum(j);
   }
 
-  core$_.Future<jni$_.JLong> pigeon_echoAnotherAsyncNullableEnum(core$_.int j) {
-    return _pigeon_echoAnotherAsyncNullableEnum(j);
+  core$_.Future<jni$_.JLong> echoAnotherAsyncNullableEnum(core$_.int j) {
+    return _echoAnotherAsyncNullableEnum(j);
   }
 }
 
@@ -17283,10 +17014,12 @@ extension NativeInteropReservedNamesHostApiRegistrar$$Methods
     ).object<NativeInteropReservedNamesHostApiRegistrar?>();
   }
 
-  static final _id_pigeon_release = NativeInteropReservedNamesHostApiRegistrar._class
-      .instanceMethodId(r'pigeon_release', r'(Ljava/lang/String;)Ljava/lang/String;');
+  static final _id_release$1 = NativeInteropReservedNamesHostApiRegistrar._class.instanceMethodId(
+    r'release',
+    r'(Ljava/lang/String;)Ljava/lang/String;',
+  );
 
-  static final _pigeon_release =
+  static final _release$1 =
       jni$_.ProtectedJniExtensions.lookup<
             jni$_.NativeFunction<
               jni$_.JniResult Function(
@@ -17304,24 +17037,24 @@ extension NativeInteropReservedNamesHostApiRegistrar$$Methods
             )
           >();
 
-  /// from: `public fun pigeon_release(value: kotlin.String): kotlin.String`
+  /// from: `public fun release(value: kotlin.String): kotlin.String`
   /// The returned object must be released after use, by calling the [release] method.
-  jni$_.JString pigeon_release(jni$_.JString string) {
+  jni$_.JString release$1(jni$_.JString string) {
     final _$$selfRef = reference;
     final _$string = string.reference;
-    return _pigeon_release(
+    return _release$1(
       _$$selfRef.pointer,
-      _id_pigeon_release.pointer,
+      _id_release$1.pointer,
       _$string.pointer,
     ).object<jni$_.JString>();
   }
 
-  static final _id_pigeon_use = NativeInteropReservedNamesHostApiRegistrar._class.instanceMethodId(
-    r'pigeon_use',
+  static final _id_use$1 = NativeInteropReservedNamesHostApiRegistrar._class.instanceMethodId(
+    r'use',
     r'(J)J',
   );
 
-  static final _pigeon_use =
+  static final _use$1 =
       jni$_.ProtectedJniExtensions.lookup<
             jni$_.NativeFunction<
               jni$_.JniResult Function(
@@ -17335,18 +17068,18 @@ extension NativeInteropReservedNamesHostApiRegistrar$$Methods
             jni$_.JniResult Function(jni$_.Pointer<jni$_.Void>, jni$_.JMethodIDPtr, core$_.int)
           >();
 
-  /// from: `public fun pigeon_use(value: kotlin.Long): kotlin.Long`
-  core$_.int pigeon_use(core$_.int j) {
+  /// from: `public fun use(value: kotlin.Long): kotlin.Long`
+  core$_.int use$1(core$_.int j) {
     final _$$selfRef = reference;
-    return _pigeon_use(_$$selfRef.pointer, _id_pigeon_use.pointer, j).long;
+    return _use$1(_$$selfRef.pointer, _id_use$1.pointer, j).long;
   }
 
-  static final _id_pigeon_type = NativeInteropReservedNamesHostApiRegistrar._class.instanceMethodId(
-    r'pigeon_type',
+  static final _id_type$1 = NativeInteropReservedNamesHostApiRegistrar._class.instanceMethodId(
+    r'type',
     r'()Ljava/lang/String;',
   );
 
-  static final _pigeon_type =
+  static final _type$1 =
       jni$_.ProtectedJniExtensions.lookup<
             jni$_.NativeFunction<
               jni$_.JniResult Function(jni$_.Pointer<jni$_.Void>, jni$_.JMethodIDPtr)
@@ -17354,17 +17087,17 @@ extension NativeInteropReservedNamesHostApiRegistrar$$Methods
           >('globalEnv_CallObjectMethod')
           .asFunction<jni$_.JniResult Function(jni$_.Pointer<jni$_.Void>, jni$_.JMethodIDPtr)>();
 
-  /// from: `public fun pigeon_type(): kotlin.String`
+  /// from: `public fun type(): kotlin.String`
   /// The returned object must be released after use, by calling the [release] method.
-  jni$_.JString pigeon_type() {
+  jni$_.JString type$1() {
     final _$$selfRef = reference;
-    return _pigeon_type(_$$selfRef.pointer, _id_pigeon_type.pointer).object<jni$_.JString>();
+    return _type$1(_$$selfRef.pointer, _id_type$1.pointer).object<jni$_.JString>();
   }
 
-  static final _id_pigeon_isNull = NativeInteropReservedNamesHostApiRegistrar._class
-      .instanceMethodId(r'pigeon_isNull', r'()Z');
+  static final _id_get$isNull$1 = NativeInteropReservedNamesHostApiRegistrar._class
+      .instanceMethodId(r'isNull', r'()Z');
 
-  static final _pigeon_isNull =
+  static final _get$isNull$1 =
       jni$_.ProtectedJniExtensions.lookup<
             jni$_.NativeFunction<
               jni$_.JniResult Function(jni$_.Pointer<jni$_.Void>, jni$_.JMethodIDPtr)
@@ -17372,16 +17105,18 @@ extension NativeInteropReservedNamesHostApiRegistrar$$Methods
           >('globalEnv_CallBooleanMethod')
           .asFunction<jni$_.JniResult Function(jni$_.Pointer<jni$_.Void>, jni$_.JMethodIDPtr)>();
 
-  /// from: `public fun pigeon_isNull(): kotlin.Boolean`
-  core$_.bool pigeon_isNull() {
+  /// from: `public fun isNull(): kotlin.Boolean`
+  core$_.bool get isNull$1 {
     final _$$selfRef = reference;
-    return _pigeon_isNull(_$$selfRef.pointer, _id_pigeon_isNull.pointer).boolean;
+    return _get$isNull$1(_$$selfRef.pointer, _id_get$isNull$1.pointer).boolean;
   }
 
-  static final _id_pigeon_isNullable = NativeInteropReservedNamesHostApiRegistrar._class
-      .instanceMethodId(r'pigeon_isNullable', r'()Ljava/lang/Boolean;');
+  static final _id_isNullable = NativeInteropReservedNamesHostApiRegistrar._class.instanceMethodId(
+    r'isNullable',
+    r'()Ljava/lang/Boolean;',
+  );
 
-  static final _pigeon_isNullable =
+  static final _isNullable =
       jni$_.ProtectedJniExtensions.lookup<
             jni$_.NativeFunction<
               jni$_.JniResult Function(jni$_.Pointer<jni$_.Void>, jni$_.JMethodIDPtr)
@@ -17389,20 +17124,19 @@ extension NativeInteropReservedNamesHostApiRegistrar$$Methods
           >('globalEnv_CallObjectMethod')
           .asFunction<jni$_.JniResult Function(jni$_.Pointer<jni$_.Void>, jni$_.JMethodIDPtr)>();
 
-  /// from: `public fun pigeon_isNullable(): kotlin.Boolean?`
+  /// from: `public fun isNullable(): kotlin.Boolean?`
   /// The returned object must be released after use, by calling the [release] method.
-  jni$_.JBoolean? pigeon_isNullable() {
+  jni$_.JBoolean? isNullable() {
     final _$$selfRef = reference;
-    return _pigeon_isNullable(
-      _$$selfRef.pointer,
-      _id_pigeon_isNullable.pointer,
-    ).object<jni$_.JBoolean?>();
+    return _isNullable(_$$selfRef.pointer, _id_isNullable.pointer).object<jni$_.JBoolean?>();
   }
 
-  static final _id_pigeon_isOpen = NativeInteropReservedNamesHostApiRegistrar._class
-      .instanceMethodId(r'pigeon_isOpen', r'()Z');
+  static final _id_get$isOpen = NativeInteropReservedNamesHostApiRegistrar._class.instanceMethodId(
+    r'isOpen',
+    r'()Z',
+  );
 
-  static final _pigeon_isOpen =
+  static final _get$isOpen =
       jni$_.ProtectedJniExtensions.lookup<
             jni$_.NativeFunction<
               jni$_.JniResult Function(jni$_.Pointer<jni$_.Void>, jni$_.JMethodIDPtr)
@@ -17410,16 +17144,16 @@ extension NativeInteropReservedNamesHostApiRegistrar$$Methods
           >('globalEnv_CallBooleanMethod')
           .asFunction<jni$_.JniResult Function(jni$_.Pointer<jni$_.Void>, jni$_.JMethodIDPtr)>();
 
-  /// from: `public fun pigeon_isOpen(): kotlin.Boolean`
-  core$_.bool pigeon_isOpen() {
+  /// from: `public fun isOpen(): kotlin.Boolean`
+  core$_.bool get isOpen {
     final _$$selfRef = reference;
-    return _pigeon_isOpen(_$$selfRef.pointer, _id_pigeon_isOpen.pointer).boolean;
+    return _get$isOpen(_$$selfRef.pointer, _id_get$isOpen.pointer).boolean;
   }
 
-  static final _id_pigeon_getReference = NativeInteropReservedNamesHostApiRegistrar._class
-      .instanceMethodId(r'pigeon_getReference', r'()Ljava/lang/String;');
+  static final _id_get$reference$1 = NativeInteropReservedNamesHostApiRegistrar._class
+      .instanceMethodId(r'getReference', r'()Ljava/lang/String;');
 
-  static final _pigeon_getReference =
+  static final _get$reference$1 =
       jni$_.ProtectedJniExtensions.lookup<
             jni$_.NativeFunction<
               jni$_.JniResult Function(jni$_.Pointer<jni$_.Void>, jni$_.JMethodIDPtr)
@@ -17427,20 +17161,20 @@ extension NativeInteropReservedNamesHostApiRegistrar$$Methods
           >('globalEnv_CallObjectMethod')
           .asFunction<jni$_.JniResult Function(jni$_.Pointer<jni$_.Void>, jni$_.JMethodIDPtr)>();
 
-  /// from: `public fun pigeon_getReference(): kotlin.String`
+  /// from: `public fun getReference(): kotlin.String`
   /// The returned object must be released after use, by calling the [release] method.
-  jni$_.JString pigeon_getReference() {
+  jni$_.JString get reference$1 {
     final _$$selfRef = reference;
-    return _pigeon_getReference(
+    return _get$reference$1(
       _$$selfRef.pointer,
-      _id_pigeon_getReference.pointer,
+      _id_get$reference$1.pointer,
     ).object<jni$_.JString>();
   }
 
-  static final _id_pigeon_setReference = NativeInteropReservedNamesHostApiRegistrar._class
-      .instanceMethodId(r'pigeon_setReference', r'(Ljava/lang/String;)V');
+  static final _id_set$reference$1 = NativeInteropReservedNamesHostApiRegistrar._class
+      .instanceMethodId(r'setReference', r'(Ljava/lang/String;)V');
 
-  static final _pigeon_setReference =
+  static final _set$reference$1 =
       jni$_.ProtectedJniExtensions.lookup<
             jni$_.NativeFunction<
               jni$_.JThrowablePtr Function(
@@ -17458,21 +17192,17 @@ extension NativeInteropReservedNamesHostApiRegistrar$$Methods
             )
           >();
 
-  /// from: `public fun pigeon_setReference(value: kotlin.String): kotlin.Unit`
-  void pigeon_setReference(jni$_.JString string) {
+  /// from: `public fun setReference(value: kotlin.String): kotlin.Unit`
+  set reference$1(jni$_.JString string) {
     final _$$selfRef = reference;
     final _$string = string.reference;
-    _pigeon_setReference(
-      _$$selfRef.pointer,
-      _id_pigeon_setReference.pointer,
-      _$string.pointer,
-    ).check();
+    _set$reference$1(_$$selfRef.pointer, _id_set$reference$1.pointer, _$string.pointer).check();
   }
 
-  static final _id_pigeon_getDefault = NativeInteropReservedNamesHostApiRegistrar._class
-      .instanceMethodId(r'pigeon_getDefault', r'()Ljava/lang/String;');
+  static final _id_get$default$ = NativeInteropReservedNamesHostApiRegistrar._class
+      .instanceMethodId(r'getDefault', r'()Ljava/lang/String;');
 
-  static final _pigeon_getDefault =
+  static final _get$default$ =
       jni$_.ProtectedJniExtensions.lookup<
             jni$_.NativeFunction<
               jni$_.JniResult Function(jni$_.Pointer<jni$_.Void>, jni$_.JMethodIDPtr)
@@ -17480,23 +17210,17 @@ extension NativeInteropReservedNamesHostApiRegistrar$$Methods
           >('globalEnv_CallObjectMethod')
           .asFunction<jni$_.JniResult Function(jni$_.Pointer<jni$_.Void>, jni$_.JMethodIDPtr)>();
 
-  /// from: `public fun pigeon_getDefault(): kotlin.String`
+  /// from: `public fun getDefault(): kotlin.String`
   /// The returned object must be released after use, by calling the [release] method.
-  jni$_.JString pigeon_getDefault() {
+  jni$_.JString get default$ {
     final _$$selfRef = reference;
-    return _pigeon_getDefault(
-      _$$selfRef.pointer,
-      _id_pigeon_getDefault.pointer,
-    ).object<jni$_.JString>();
+    return _get$default$(_$$selfRef.pointer, _id_get$default$.pointer).object<jni$_.JString>();
   }
 
-  static final _id_pigeon_getValueAsync = NativeInteropReservedNamesHostApiRegistrar._class
-      .instanceMethodId(
-        r'pigeon_getValueAsync',
-        r'(Lkotlin/coroutines/Continuation;)Ljava/lang/Object;',
-      );
+  static final _id_getValueAsync = NativeInteropReservedNamesHostApiRegistrar._class
+      .instanceMethodId(r'getValueAsync', r'(Lkotlin/coroutines/Continuation;)Ljava/lang/Object;');
 
-  static final _pigeon_getValueAsync =
+  static final _getValueAsync =
       jni$_.ProtectedJniExtensions.lookup<
             jni$_.NativeFunction<
               jni$_.JniResult Function(
@@ -17514,15 +17238,15 @@ extension NativeInteropReservedNamesHostApiRegistrar$$Methods
             )
           >();
 
-  /// from: `public suspend fun pigeon_getValueAsync(): kotlin.String`
+  /// from: `public suspend fun getValueAsync(): kotlin.String`
   /// The returned object must be released after use, by calling the [release] method.
-  core$_.Future<jni$_.JString> pigeon_getValueAsync() async {
+  core$_.Future<jni$_.JString> getValueAsync() async {
     final $p = jni$_.ReceivePort();
     final _$continuation = jni$_.ProtectedJniExtensions.newPortContinuation($p);
     final _$$selfRef = reference;
-    final $r = _pigeon_getValueAsync(
+    final $r = _getValueAsync(
       _$$selfRef.pointer,
-      _id_pigeon_getValueAsync.pointer,
+      _id_getValueAsync.pointer,
       _$continuation.pointer,
     ).object<jni$_.JObject>();
     _$continuation.release();
@@ -17544,10 +17268,10 @@ extension NativeInteropReservedNamesHostApiRegistrar$$Methods
     return $o.as<jni$_.JString>(jni$_.JString.type, releaseOriginal: true);
   }
 
-  static final _id_pigeon_echoReservedNames = NativeInteropReservedNamesHostApiRegistrar._class
-      .instanceMethodId(r'pigeon_echoReservedNames', r'([B)[B');
+  static final _id_echoReservedNames = NativeInteropReservedNamesHostApiRegistrar._class
+      .instanceMethodId(r'echoReservedNames', r'([B)[B');
 
-  static final _pigeon_echoReservedNames =
+  static final _echoReservedNames =
       jni$_.ProtectedJniExtensions.lookup<
             jni$_.NativeFunction<
               jni$_.JniResult Function(
@@ -17565,22 +17289,22 @@ extension NativeInteropReservedNamesHostApiRegistrar$$Methods
             )
           >();
 
-  /// from: `public fun pigeon_echoReservedNames(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
+  /// from: `public fun echoReservedNames(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
   /// The returned object must be released after use, by calling the [release] method.
-  jni$_.JByteArray? pigeon_echoReservedNames(jni$_.JByteArray bs) {
+  jni$_.JByteArray? echoReservedNames(jni$_.JByteArray bs) {
     final _$$selfRef = reference;
     final _$bs = bs.reference;
-    return _pigeon_echoReservedNames(
+    return _echoReservedNames(
       _$$selfRef.pointer,
-      _id_pigeon_echoReservedNames.pointer,
+      _id_echoReservedNames.pointer,
       _$bs.pointer,
     ).object<jni$_.JByteArray?>();
   }
 
-  static final _id_pigeon_callFlutterRelease = NativeInteropReservedNamesHostApiRegistrar._class
-      .instanceMethodId(r'pigeon_callFlutterRelease', r'(Ljava/lang/String;)Ljava/lang/String;');
+  static final _id_callFlutterRelease = NativeInteropReservedNamesHostApiRegistrar._class
+      .instanceMethodId(r'callFlutterRelease', r'(Ljava/lang/String;)Ljava/lang/String;');
 
-  static final _pigeon_callFlutterRelease =
+  static final _callFlutterRelease =
       jni$_.ProtectedJniExtensions.lookup<
             jni$_.NativeFunction<
               jni$_.JniResult Function(
@@ -17598,22 +17322,22 @@ extension NativeInteropReservedNamesHostApiRegistrar$$Methods
             )
           >();
 
-  /// from: `public fun pigeon_callFlutterRelease(value: kotlin.String): kotlin.String`
+  /// from: `public fun callFlutterRelease(value: kotlin.String): kotlin.String`
   /// The returned object must be released after use, by calling the [release] method.
-  jni$_.JString pigeon_callFlutterRelease(jni$_.JString string) {
+  jni$_.JString callFlutterRelease(jni$_.JString string) {
     final _$$selfRef = reference;
     final _$string = string.reference;
-    return _pigeon_callFlutterRelease(
+    return _callFlutterRelease(
       _$$selfRef.pointer,
-      _id_pigeon_callFlutterRelease.pointer,
+      _id_callFlutterRelease.pointer,
       _$string.pointer,
     ).object<jni$_.JString>();
   }
 
-  static final _id_pigeon_callFlutterType = NativeInteropReservedNamesHostApiRegistrar._class
-      .instanceMethodId(r'pigeon_callFlutterType', r'()Ljava/lang/String;');
+  static final _id_callFlutterType = NativeInteropReservedNamesHostApiRegistrar._class
+      .instanceMethodId(r'callFlutterType', r'()Ljava/lang/String;');
 
-  static final _pigeon_callFlutterType =
+  static final _callFlutterType =
       jni$_.ProtectedJniExtensions.lookup<
             jni$_.NativeFunction<
               jni$_.JniResult Function(jni$_.Pointer<jni$_.Void>, jni$_.JMethodIDPtr)
@@ -17621,23 +17345,20 @@ extension NativeInteropReservedNamesHostApiRegistrar$$Methods
           >('globalEnv_CallObjectMethod')
           .asFunction<jni$_.JniResult Function(jni$_.Pointer<jni$_.Void>, jni$_.JMethodIDPtr)>();
 
-  /// from: `public fun pigeon_callFlutterType(): kotlin.String`
+  /// from: `public fun callFlutterType(): kotlin.String`
   /// The returned object must be released after use, by calling the [release] method.
-  jni$_.JString pigeon_callFlutterType() {
+  jni$_.JString callFlutterType() {
     final _$$selfRef = reference;
-    return _pigeon_callFlutterType(
+    return _callFlutterType(
       _$$selfRef.pointer,
-      _id_pigeon_callFlutterType.pointer,
+      _id_callFlutterType.pointer,
     ).object<jni$_.JString>();
   }
 
-  static final _id_pigeon_callFlutterImplementIn = NativeInteropReservedNamesHostApiRegistrar._class
-      .instanceMethodId(
-        r'pigeon_callFlutterImplementIn',
-        r'(Ljava/lang/String;)Ljava/lang/String;',
-      );
+  static final _id_callFlutterImplementIn = NativeInteropReservedNamesHostApiRegistrar._class
+      .instanceMethodId(r'callFlutterImplementIn', r'(Ljava/lang/String;)Ljava/lang/String;');
 
-  static final _pigeon_callFlutterImplementIn =
+  static final _callFlutterImplementIn =
       jni$_.ProtectedJniExtensions.lookup<
             jni$_.NativeFunction<
               jni$_.JniResult Function(
@@ -17655,22 +17376,22 @@ extension NativeInteropReservedNamesHostApiRegistrar$$Methods
             )
           >();
 
-  /// from: `public fun pigeon_callFlutterImplementIn(value: kotlin.String): kotlin.String`
+  /// from: `public fun callFlutterImplementIn(value: kotlin.String): kotlin.String`
   /// The returned object must be released after use, by calling the [release] method.
-  jni$_.JString pigeon_callFlutterImplementIn(jni$_.JString string) {
+  jni$_.JString callFlutterImplementIn(jni$_.JString string) {
     final _$$selfRef = reference;
     final _$string = string.reference;
-    return _pigeon_callFlutterImplementIn(
+    return _callFlutterImplementIn(
       _$$selfRef.pointer,
-      _id_pigeon_callFlutterImplementIn.pointer,
+      _id_callFlutterImplementIn.pointer,
       _$string.pointer,
     ).object<jni$_.JString>();
   }
 
-  static final _id_pigeon_callFlutterIsNull = NativeInteropReservedNamesHostApiRegistrar._class
-      .instanceMethodId(r'pigeon_callFlutterIsNull', r'()Z');
+  static final _id_callFlutterIsNull = NativeInteropReservedNamesHostApiRegistrar._class
+      .instanceMethodId(r'callFlutterIsNull', r'()Z');
 
-  static final _pigeon_callFlutterIsNull =
+  static final _callFlutterIsNull =
       jni$_.ProtectedJniExtensions.lookup<
             jni$_.NativeFunction<
               jni$_.JniResult Function(jni$_.Pointer<jni$_.Void>, jni$_.JMethodIDPtr)
@@ -17678,20 +17399,16 @@ extension NativeInteropReservedNamesHostApiRegistrar$$Methods
           >('globalEnv_CallBooleanMethod')
           .asFunction<jni$_.JniResult Function(jni$_.Pointer<jni$_.Void>, jni$_.JMethodIDPtr)>();
 
-  /// from: `public fun pigeon_callFlutterIsNull(): kotlin.Boolean`
-  core$_.bool pigeon_callFlutterIsNull() {
+  /// from: `public fun callFlutterIsNull(): kotlin.Boolean`
+  core$_.bool callFlutterIsNull() {
     final _$$selfRef = reference;
-    return _pigeon_callFlutterIsNull(
-      _$$selfRef.pointer,
-      _id_pigeon_callFlutterIsNull.pointer,
-    ).boolean;
+    return _callFlutterIsNull(_$$selfRef.pointer, _id_callFlutterIsNull.pointer).boolean;
   }
 
-  static final _id_pigeon_callFlutterGetReference = NativeInteropReservedNamesHostApiRegistrar
-      ._class
-      .instanceMethodId(r'pigeon_callFlutterGetReference', r'()Ljava/lang/String;');
+  static final _id_callFlutterGetReference = NativeInteropReservedNamesHostApiRegistrar._class
+      .instanceMethodId(r'callFlutterGetReference', r'()Ljava/lang/String;');
 
-  static final _pigeon_callFlutterGetReference =
+  static final _callFlutterGetReference =
       jni$_.ProtectedJniExtensions.lookup<
             jni$_.NativeFunction<
               jni$_.JniResult Function(jni$_.Pointer<jni$_.Void>, jni$_.JMethodIDPtr)
@@ -17699,13 +17416,13 @@ extension NativeInteropReservedNamesHostApiRegistrar$$Methods
           >('globalEnv_CallObjectMethod')
           .asFunction<jni$_.JniResult Function(jni$_.Pointer<jni$_.Void>, jni$_.JMethodIDPtr)>();
 
-  /// from: `public fun pigeon_callFlutterGetReference(): kotlin.String`
+  /// from: `public fun callFlutterGetReference(): kotlin.String`
   /// The returned object must be released after use, by calling the [release] method.
-  jni$_.JString pigeon_callFlutterGetReference() {
+  jni$_.JString callFlutterGetReference() {
     final _$$selfRef = reference;
-    return _pigeon_callFlutterGetReference(
+    return _callFlutterGetReference(
       _$$selfRef.pointer,
-      _id_pigeon_callFlutterGetReference.pointer,
+      _id_callFlutterGetReference.pointer,
     ).object<jni$_.JString>();
   }
 }
@@ -17753,27 +17470,27 @@ extension type NativeInteropReservedNamesFlutterApiBridge._(jni$_.JObject _$this
     try {
       final $d = $i.methodDescriptor.toDartString(releaseOriginal: true);
       final $a = $i.args;
-      if ($d == r'pigeon_release(Ljava/lang/String;)Ljava/lang/String;') {
-        final $r = _$impls[$p]!.pigeon_release(($a![0] as jni$_.JString));
+      if ($d == r'release(Ljava/lang/String;)Ljava/lang/String;') {
+        final $r = _$impls[$p]!.release$1(($a![0] as jni$_.JString));
         return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
             jni$_.nullptr;
       }
-      if ($d == r'pigeon_type()Ljava/lang/String;') {
-        final $r = _$impls[$p]!.pigeon_type();
+      if ($d == r'type()Ljava/lang/String;') {
+        final $r = _$impls[$p]!.type$1();
         return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
             jni$_.nullptr;
       }
-      if ($d == r'pigeon_implementIn(Ljava/lang/String;)Ljava/lang/String;') {
-        final $r = _$impls[$p]!.pigeon_implementIn(($a![0] as jni$_.JString));
+      if ($d == r'implementIn(Ljava/lang/String;)Ljava/lang/String;') {
+        final $r = _$impls[$p]!.implementIn$1(($a![0] as jni$_.JString));
         return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
             jni$_.nullptr;
       }
-      if ($d == r'pigeon_isNull()Z') {
-        final $r = _$impls[$p]!.pigeon_isNull();
+      if ($d == r'isNull()Z') {
+        final $r = _$impls[$p]!.isNull$1();
         return $r.toJBoolean().reference.toPointer();
       }
-      if ($d == r'pigeon_getReference()Ljava/lang/String;') {
-        final $r = _$impls[$p]!.pigeon_getReference();
+      if ($d == r'getReference()Ljava/lang/String;') {
+        final $r = _$impls[$p]!.getReference();
         return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
             jni$_.nullptr;
       }
@@ -17820,10 +17537,12 @@ extension type NativeInteropReservedNamesFlutterApiBridge._(jni$_.JObject _$this
 
 extension NativeInteropReservedNamesFlutterApiBridge$$Methods
     on NativeInteropReservedNamesFlutterApiBridge {
-  static final _id_pigeon_release = NativeInteropReservedNamesFlutterApiBridge._class
-      .instanceMethodId(r'pigeon_release', r'(Ljava/lang/String;)Ljava/lang/String;');
+  static final _id_release$1 = NativeInteropReservedNamesFlutterApiBridge._class.instanceMethodId(
+    r'release',
+    r'(Ljava/lang/String;)Ljava/lang/String;',
+  );
 
-  static final _pigeon_release =
+  static final _release$1 =
       jni$_.ProtectedJniExtensions.lookup<
             jni$_.NativeFunction<
               jni$_.JniResult Function(
@@ -17841,24 +17560,24 @@ extension NativeInteropReservedNamesFlutterApiBridge$$Methods
             )
           >();
 
-  /// from: `public fun pigeon_release(value: kotlin.String): kotlin.String`
+  /// from: `public fun release(value: kotlin.String): kotlin.String`
   /// The returned object must be released after use, by calling the [release] method.
-  jni$_.JString pigeon_release(jni$_.JString string) {
+  jni$_.JString release$1(jni$_.JString string) {
     final _$$selfRef = reference;
     final _$string = string.reference;
-    return _pigeon_release(
+    return _release$1(
       _$$selfRef.pointer,
-      _id_pigeon_release.pointer,
+      _id_release$1.pointer,
       _$string.pointer,
     ).object<jni$_.JString>();
   }
 
-  static final _id_pigeon_type = NativeInteropReservedNamesFlutterApiBridge._class.instanceMethodId(
-    r'pigeon_type',
+  static final _id_type$1 = NativeInteropReservedNamesFlutterApiBridge._class.instanceMethodId(
+    r'type',
     r'()Ljava/lang/String;',
   );
 
-  static final _pigeon_type =
+  static final _type$1 =
       jni$_.ProtectedJniExtensions.lookup<
             jni$_.NativeFunction<
               jni$_.JniResult Function(jni$_.Pointer<jni$_.Void>, jni$_.JMethodIDPtr)
@@ -17866,17 +17585,17 @@ extension NativeInteropReservedNamesFlutterApiBridge$$Methods
           >('globalEnv_CallObjectMethod')
           .asFunction<jni$_.JniResult Function(jni$_.Pointer<jni$_.Void>, jni$_.JMethodIDPtr)>();
 
-  /// from: `public fun pigeon_type(): kotlin.String`
+  /// from: `public fun type(): kotlin.String`
   /// The returned object must be released after use, by calling the [release] method.
-  jni$_.JString pigeon_type() {
+  jni$_.JString type$1() {
     final _$$selfRef = reference;
-    return _pigeon_type(_$$selfRef.pointer, _id_pigeon_type.pointer).object<jni$_.JString>();
+    return _type$1(_$$selfRef.pointer, _id_type$1.pointer).object<jni$_.JString>();
   }
 
-  static final _id_pigeon_implementIn = NativeInteropReservedNamesFlutterApiBridge._class
-      .instanceMethodId(r'pigeon_implementIn', r'(Ljava/lang/String;)Ljava/lang/String;');
+  static final _id_implementIn$1 = NativeInteropReservedNamesFlutterApiBridge._class
+      .instanceMethodId(r'implementIn', r'(Ljava/lang/String;)Ljava/lang/String;');
 
-  static final _pigeon_implementIn =
+  static final _implementIn$1 =
       jni$_.ProtectedJniExtensions.lookup<
             jni$_.NativeFunction<
               jni$_.JniResult Function(
@@ -17894,22 +17613,24 @@ extension NativeInteropReservedNamesFlutterApiBridge$$Methods
             )
           >();
 
-  /// from: `public fun pigeon_implementIn(value: kotlin.String): kotlin.String`
+  /// from: `public fun implementIn(value: kotlin.String): kotlin.String`
   /// The returned object must be released after use, by calling the [release] method.
-  jni$_.JString pigeon_implementIn(jni$_.JString string) {
+  jni$_.JString implementIn$1(jni$_.JString string) {
     final _$$selfRef = reference;
     final _$string = string.reference;
-    return _pigeon_implementIn(
+    return _implementIn$1(
       _$$selfRef.pointer,
-      _id_pigeon_implementIn.pointer,
+      _id_implementIn$1.pointer,
       _$string.pointer,
     ).object<jni$_.JString>();
   }
 
-  static final _id_pigeon_isNull = NativeInteropReservedNamesFlutterApiBridge._class
-      .instanceMethodId(r'pigeon_isNull', r'()Z');
+  static final _id_isNull$1 = NativeInteropReservedNamesFlutterApiBridge._class.instanceMethodId(
+    r'isNull',
+    r'()Z',
+  );
 
-  static final _pigeon_isNull =
+  static final _isNull$1 =
       jni$_.ProtectedJniExtensions.lookup<
             jni$_.NativeFunction<
               jni$_.JniResult Function(jni$_.Pointer<jni$_.Void>, jni$_.JMethodIDPtr)
@@ -17917,16 +17638,16 @@ extension NativeInteropReservedNamesFlutterApiBridge$$Methods
           >('globalEnv_CallBooleanMethod')
           .asFunction<jni$_.JniResult Function(jni$_.Pointer<jni$_.Void>, jni$_.JMethodIDPtr)>();
 
-  /// from: `public fun pigeon_isNull(): kotlin.Boolean`
-  core$_.bool pigeon_isNull() {
+  /// from: `public fun isNull(): kotlin.Boolean`
+  core$_.bool isNull$1() {
     final _$$selfRef = reference;
-    return _pigeon_isNull(_$$selfRef.pointer, _id_pigeon_isNull.pointer).boolean;
+    return _isNull$1(_$$selfRef.pointer, _id_isNull$1.pointer).boolean;
   }
 
-  static final _id_pigeon_getReference = NativeInteropReservedNamesFlutterApiBridge._class
-      .instanceMethodId(r'pigeon_getReference', r'()Ljava/lang/String;');
+  static final _id_getReference = NativeInteropReservedNamesFlutterApiBridge._class
+      .instanceMethodId(r'getReference', r'()Ljava/lang/String;');
 
-  static final _pigeon_getReference =
+  static final _getReference =
       jni$_.ProtectedJniExtensions.lookup<
             jni$_.NativeFunction<
               jni$_.JniResult Function(jni$_.Pointer<jni$_.Void>, jni$_.JMethodIDPtr)
@@ -17934,71 +17655,68 @@ extension NativeInteropReservedNamesFlutterApiBridge$$Methods
           >('globalEnv_CallObjectMethod')
           .asFunction<jni$_.JniResult Function(jni$_.Pointer<jni$_.Void>, jni$_.JMethodIDPtr)>();
 
-  /// from: `public fun pigeon_getReference(): kotlin.String`
+  /// from: `public fun getReference(): kotlin.String`
   /// The returned object must be released after use, by calling the [release] method.
-  jni$_.JString pigeon_getReference() {
+  jni$_.JString getReference() {
     final _$$selfRef = reference;
-    return _pigeon_getReference(
-      _$$selfRef.pointer,
-      _id_pigeon_getReference.pointer,
-    ).object<jni$_.JString>();
+    return _getReference(_$$selfRef.pointer, _id_getReference.pointer).object<jni$_.JString>();
   }
 }
 
 abstract base mixin class $NativeInteropReservedNamesFlutterApiBridge {
   factory $NativeInteropReservedNamesFlutterApiBridge({
-    required jni$_.JString Function(jni$_.JString string) pigeon_release,
-    required jni$_.JString Function() pigeon_type,
-    required jni$_.JString Function(jni$_.JString string) pigeon_implementIn,
-    required core$_.bool Function() pigeon_isNull,
-    required jni$_.JString Function() pigeon_getReference,
+    required jni$_.JString Function(jni$_.JString string) release$1,
+    required jni$_.JString Function() type$1,
+    required jni$_.JString Function(jni$_.JString string) implementIn$1,
+    required core$_.bool Function() isNull$1,
+    required jni$_.JString Function() getReference,
   }) = _$NativeInteropReservedNamesFlutterApiBridge;
 
-  jni$_.JString pigeon_release(jni$_.JString string);
-  jni$_.JString pigeon_type();
-  jni$_.JString pigeon_implementIn(jni$_.JString string);
-  core$_.bool pigeon_isNull();
-  jni$_.JString pigeon_getReference();
+  jni$_.JString release$1(jni$_.JString string);
+  jni$_.JString type$1();
+  jni$_.JString implementIn$1(jni$_.JString string);
+  core$_.bool isNull$1();
+  jni$_.JString getReference();
 }
 
 final class _$NativeInteropReservedNamesFlutterApiBridge
     with $NativeInteropReservedNamesFlutterApiBridge {
   _$NativeInteropReservedNamesFlutterApiBridge({
-    required jni$_.JString Function(jni$_.JString string) pigeon_release,
-    required jni$_.JString Function() pigeon_type,
-    required jni$_.JString Function(jni$_.JString string) pigeon_implementIn,
-    required core$_.bool Function() pigeon_isNull,
-    required jni$_.JString Function() pigeon_getReference,
-  }) : _pigeon_release = pigeon_release,
-       _pigeon_type = pigeon_type,
-       _pigeon_implementIn = pigeon_implementIn,
-       _pigeon_isNull = pigeon_isNull,
-       _pigeon_getReference = pigeon_getReference;
+    required jni$_.JString Function(jni$_.JString string) release$1,
+    required jni$_.JString Function() type$1,
+    required jni$_.JString Function(jni$_.JString string) implementIn$1,
+    required core$_.bool Function() isNull$1,
+    required jni$_.JString Function() getReference,
+  }) : _release$1 = release$1,
+       _type$1 = type$1,
+       _implementIn$1 = implementIn$1,
+       _isNull$1 = isNull$1,
+       _getReference = getReference;
 
-  final jni$_.JString Function(jni$_.JString string) _pigeon_release;
-  final jni$_.JString Function() _pigeon_type;
-  final jni$_.JString Function(jni$_.JString string) _pigeon_implementIn;
-  final core$_.bool Function() _pigeon_isNull;
-  final jni$_.JString Function() _pigeon_getReference;
+  final jni$_.JString Function(jni$_.JString string) _release$1;
+  final jni$_.JString Function() _type$1;
+  final jni$_.JString Function(jni$_.JString string) _implementIn$1;
+  final core$_.bool Function() _isNull$1;
+  final jni$_.JString Function() _getReference;
 
-  jni$_.JString pigeon_release(jni$_.JString string) {
-    return _pigeon_release(string);
+  jni$_.JString release$1(jni$_.JString string) {
+    return _release$1(string);
   }
 
-  jni$_.JString pigeon_type() {
-    return _pigeon_type();
+  jni$_.JString type$1() {
+    return _type$1();
   }
 
-  jni$_.JString pigeon_implementIn(jni$_.JString string) {
-    return _pigeon_implementIn(string);
+  jni$_.JString implementIn$1(jni$_.JString string) {
+    return _implementIn$1(string);
   }
 
-  core$_.bool pigeon_isNull() {
-    return _pigeon_isNull();
+  core$_.bool isNull$1() {
+    return _isNull$1();
   }
 
-  jni$_.JString pigeon_getReference() {
-    return _pigeon_getReference();
+  jni$_.JString getReference() {
+    return _getReference();
   }
 }
 
@@ -18245,10 +17963,12 @@ extension NativeInteropSealedClassHostApiRegistrar$$Methods
     ).object<NativeInteropSealedClassHostApiRegistrar?>();
   }
 
-  static final _id_pigeon_echoShape = NativeInteropSealedClassHostApiRegistrar._class
-      .instanceMethodId(r'pigeon_echoShape', r'([B)[B');
+  static final _id_echoShape = NativeInteropSealedClassHostApiRegistrar._class.instanceMethodId(
+    r'echoShape',
+    r'([B)[B',
+  );
 
-  static final _pigeon_echoShape =
+  static final _echoShape =
       jni$_.ProtectedJniExtensions.lookup<
             jni$_.NativeFunction<
               jni$_.JniResult Function(
@@ -18266,22 +17986,22 @@ extension NativeInteropSealedClassHostApiRegistrar$$Methods
             )
           >();
 
-  /// from: `public fun pigeon_echoShape(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
+  /// from: `public fun echoShape(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
   /// The returned object must be released after use, by calling the [release] method.
-  jni$_.JByteArray? pigeon_echoShape(jni$_.JByteArray bs) {
+  jni$_.JByteArray? echoShape(jni$_.JByteArray bs) {
     final _$$selfRef = reference;
     final _$bs = bs.reference;
-    return _pigeon_echoShape(
+    return _echoShape(
       _$$selfRef.pointer,
-      _id_pigeon_echoShape.pointer,
+      _id_echoShape.pointer,
       _$bs.pointer,
     ).object<jni$_.JByteArray?>();
   }
 
-  static final _id_pigeon_echoNullableShape = NativeInteropSealedClassHostApiRegistrar._class
-      .instanceMethodId(r'pigeon_echoNullableShape', r'([B)[B');
+  static final _id_echoNullableShape = NativeInteropSealedClassHostApiRegistrar._class
+      .instanceMethodId(r'echoNullableShape', r'([B)[B');
 
-  static final _pigeon_echoNullableShape =
+  static final _echoNullableShape =
       jni$_.ProtectedJniExtensions.lookup<
             jni$_.NativeFunction<
               jni$_.JniResult Function(
@@ -18299,22 +18019,24 @@ extension NativeInteropSealedClassHostApiRegistrar$$Methods
             )
           >();
 
-  /// from: `public fun pigeon_echoNullableShape(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
+  /// from: `public fun echoNullableShape(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
   /// The returned object must be released after use, by calling the [release] method.
-  jni$_.JByteArray? pigeon_echoNullableShape(jni$_.JByteArray bs) {
+  jni$_.JByteArray? echoNullableShape(jni$_.JByteArray bs) {
     final _$$selfRef = reference;
     final _$bs = bs.reference;
-    return _pigeon_echoNullableShape(
+    return _echoNullableShape(
       _$$selfRef.pointer,
-      _id_pigeon_echoNullableShape.pointer,
+      _id_echoNullableShape.pointer,
       _$bs.pointer,
     ).object<jni$_.JByteArray?>();
   }
 
-  static final _id_pigeon_echoShapeList = NativeInteropSealedClassHostApiRegistrar._class
-      .instanceMethodId(r'pigeon_echoShapeList', r'([B)[B');
+  static final _id_echoShapeList = NativeInteropSealedClassHostApiRegistrar._class.instanceMethodId(
+    r'echoShapeList',
+    r'([B)[B',
+  );
 
-  static final _pigeon_echoShapeList =
+  static final _echoShapeList =
       jni$_.ProtectedJniExtensions.lookup<
             jni$_.NativeFunction<
               jni$_.JniResult Function(
@@ -18332,22 +18054,24 @@ extension NativeInteropSealedClassHostApiRegistrar$$Methods
             )
           >();
 
-  /// from: `public fun pigeon_echoShapeList(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
+  /// from: `public fun echoShapeList(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
   /// The returned object must be released after use, by calling the [release] method.
-  jni$_.JByteArray? pigeon_echoShapeList(jni$_.JByteArray bs) {
+  jni$_.JByteArray? echoShapeList(jni$_.JByteArray bs) {
     final _$$selfRef = reference;
     final _$bs = bs.reference;
-    return _pigeon_echoShapeList(
+    return _echoShapeList(
       _$$selfRef.pointer,
-      _id_pigeon_echoShapeList.pointer,
+      _id_echoShapeList.pointer,
       _$bs.pointer,
     ).object<jni$_.JByteArray?>();
   }
 
-  static final _id_pigeon_echoShapeMap = NativeInteropSealedClassHostApiRegistrar._class
-      .instanceMethodId(r'pigeon_echoShapeMap', r'([B)[B');
+  static final _id_echoShapeMap = NativeInteropSealedClassHostApiRegistrar._class.instanceMethodId(
+    r'echoShapeMap',
+    r'([B)[B',
+  );
 
-  static final _pigeon_echoShapeMap =
+  static final _echoShapeMap =
       jni$_.ProtectedJniExtensions.lookup<
             jni$_.NativeFunction<
               jni$_.JniResult Function(
@@ -18365,25 +18089,25 @@ extension NativeInteropSealedClassHostApiRegistrar$$Methods
             )
           >();
 
-  /// from: `public fun pigeon_echoShapeMap(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
+  /// from: `public fun echoShapeMap(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
   /// The returned object must be released after use, by calling the [release] method.
-  jni$_.JByteArray? pigeon_echoShapeMap(jni$_.JByteArray bs) {
+  jni$_.JByteArray? echoShapeMap(jni$_.JByteArray bs) {
     final _$$selfRef = reference;
     final _$bs = bs.reference;
-    return _pigeon_echoShapeMap(
+    return _echoShapeMap(
       _$$selfRef.pointer,
-      _id_pigeon_echoShapeMap.pointer,
+      _id_echoShapeMap.pointer,
       _$bs.pointer,
     ).object<jni$_.JByteArray?>();
   }
 
-  static final _id_pigeon_echoAsyncShape = NativeInteropSealedClassHostApiRegistrar._class
+  static final _id_echoAsyncShape = NativeInteropSealedClassHostApiRegistrar._class
       .instanceMethodId(
-        r'pigeon_echoAsyncShape',
+        r'echoAsyncShape',
         r'([BLkotlin/coroutines/Continuation;)Ljava/lang/Object;',
       );
 
-  static final _pigeon_echoAsyncShape =
+  static final _echoAsyncShape =
       jni$_.ProtectedJniExtensions.lookup<
             jni$_.NativeFunction<
               jni$_.JniResult Function(
@@ -18402,16 +18126,16 @@ extension NativeInteropSealedClassHostApiRegistrar$$Methods
             )
           >();
 
-  /// from: `public suspend fun pigeon_echoAsyncShape(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
+  /// from: `public suspend fun echoAsyncShape(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
   /// The returned object must be released after use, by calling the [release] method.
-  core$_.Future<jni$_.JByteArray?> pigeon_echoAsyncShape(jni$_.JByteArray bs) async {
+  core$_.Future<jni$_.JByteArray?> echoAsyncShape(jni$_.JByteArray bs) async {
     final $p = jni$_.ReceivePort();
     final _$continuation = jni$_.ProtectedJniExtensions.newPortContinuation($p);
     final _$$selfRef = reference;
     final _$bs = bs.reference;
-    final $r = _pigeon_echoAsyncShape(
+    final $r = _echoAsyncShape(
       _$$selfRef.pointer,
-      _id_pigeon_echoAsyncShape.pointer,
+      _id_echoAsyncShape.pointer,
       _$bs.pointer,
       _$continuation.pointer,
     ).object<jni$_.JObject?>();
@@ -18436,10 +18160,10 @@ extension NativeInteropSealedClassHostApiRegistrar$$Methods
     return $o?.as<jni$_.JByteArray>(jni$_.JByteArray.type, releaseOriginal: true);
   }
 
-  static final _id_pigeon_callFlutterEchoShape = NativeInteropSealedClassHostApiRegistrar._class
-      .instanceMethodId(r'pigeon_callFlutterEchoShape', r'([B)[B');
+  static final _id_callFlutterEchoShape = NativeInteropSealedClassHostApiRegistrar._class
+      .instanceMethodId(r'callFlutterEchoShape', r'([B)[B');
 
-  static final _pigeon_callFlutterEchoShape =
+  static final _callFlutterEchoShape =
       jni$_.ProtectedJniExtensions.lookup<
             jni$_.NativeFunction<
               jni$_.JniResult Function(
@@ -18457,14 +18181,14 @@ extension NativeInteropSealedClassHostApiRegistrar$$Methods
             )
           >();
 
-  /// from: `public fun pigeon_callFlutterEchoShape(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
+  /// from: `public fun callFlutterEchoShape(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
   /// The returned object must be released after use, by calling the [release] method.
-  jni$_.JByteArray? pigeon_callFlutterEchoShape(jni$_.JByteArray bs) {
+  jni$_.JByteArray? callFlutterEchoShape(jni$_.JByteArray bs) {
     final _$$selfRef = reference;
     final _$bs = bs.reference;
-    return _pigeon_callFlutterEchoShape(
+    return _callFlutterEchoShape(
       _$$selfRef.pointer,
-      _id_pigeon_callFlutterEchoShape.pointer,
+      _id_callFlutterEchoShape.pointer,
       _$bs.pointer,
     ).object<jni$_.JByteArray?>();
   }
@@ -18513,8 +18237,8 @@ extension type NativeInteropSealedClassFlutterApiBridge._(jni$_.JObject _$this)
     try {
       final $d = $i.methodDescriptor.toDartString(releaseOriginal: true);
       final $a = $i.args;
-      if ($d == r'pigeon_echoShape([B)[B') {
-        final $r = _$impls[$p]!.pigeon_echoShape(($a![0] as jni$_.JByteArray));
+      if ($d == r'echoShape([B)[B') {
+        final $r = _$impls[$p]!.echoShape(($a![0] as jni$_.JByteArray));
         return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
             jni$_.nullptr;
       }
@@ -18561,10 +18285,12 @@ extension type NativeInteropSealedClassFlutterApiBridge._(jni$_.JObject _$this)
 
 extension NativeInteropSealedClassFlutterApiBridge$$Methods
     on NativeInteropSealedClassFlutterApiBridge {
-  static final _id_pigeon_echoShape = NativeInteropSealedClassFlutterApiBridge._class
-      .instanceMethodId(r'pigeon_echoShape', r'([B)[B');
+  static final _id_echoShape = NativeInteropSealedClassFlutterApiBridge._class.instanceMethodId(
+    r'echoShape',
+    r'([B)[B',
+  );
 
-  static final _pigeon_echoShape =
+  static final _echoShape =
       jni$_.ProtectedJniExtensions.lookup<
             jni$_.NativeFunction<
               jni$_.JniResult Function(
@@ -18582,14 +18308,14 @@ extension NativeInteropSealedClassFlutterApiBridge$$Methods
             )
           >();
 
-  /// from: `public fun pigeon_echoShape(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
+  /// from: `public fun echoShape(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
   /// The returned object must be released after use, by calling the [release] method.
-  jni$_.JByteArray? pigeon_echoShape(jni$_.JByteArray bs) {
+  jni$_.JByteArray? echoShape(jni$_.JByteArray bs) {
     final _$$selfRef = reference;
     final _$bs = bs.reference;
-    return _pigeon_echoShape(
+    return _echoShape(
       _$$selfRef.pointer,
-      _id_pigeon_echoShape.pointer,
+      _id_echoShape.pointer,
       _$bs.pointer,
     ).object<jni$_.JByteArray?>();
   }
@@ -18597,22 +18323,22 @@ extension NativeInteropSealedClassFlutterApiBridge$$Methods
 
 abstract base mixin class $NativeInteropSealedClassFlutterApiBridge {
   factory $NativeInteropSealedClassFlutterApiBridge({
-    required jni$_.JByteArray? Function(jni$_.JByteArray bs) pigeon_echoShape,
+    required jni$_.JByteArray? Function(jni$_.JByteArray bs) echoShape,
   }) = _$NativeInteropSealedClassFlutterApiBridge;
 
-  jni$_.JByteArray? pigeon_echoShape(jni$_.JByteArray bs);
+  jni$_.JByteArray? echoShape(jni$_.JByteArray bs);
 }
 
 final class _$NativeInteropSealedClassFlutterApiBridge
     with $NativeInteropSealedClassFlutterApiBridge {
   _$NativeInteropSealedClassFlutterApiBridge({
-    required jni$_.JByteArray? Function(jni$_.JByteArray bs) pigeon_echoShape,
-  }) : _pigeon_echoShape = pigeon_echoShape;
+    required jni$_.JByteArray? Function(jni$_.JByteArray bs) echoShape,
+  }) : _echoShape = echoShape;
 
-  final jni$_.JByteArray? Function(jni$_.JByteArray bs) _pigeon_echoShape;
+  final jni$_.JByteArray? Function(jni$_.JByteArray bs) _echoShape;
 
-  jni$_.JByteArray? pigeon_echoShape(jni$_.JByteArray bs) {
-    return _pigeon_echoShape(bs);
+  jni$_.JByteArray? echoShape(jni$_.JByteArray bs) {
+    return _echoShape(bs);
   }
 }
 

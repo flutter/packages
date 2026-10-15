@@ -2112,8 +2112,7 @@ abstract class NativeInteropReservedNamesFlutterApi {
   String getReference();
 }
 
-/// A sealed class, which native interop passes only with the hybrid
-/// transport, in the call's buffer.
+/// A sealed class passed in the call's buffer with the hybrid transport.
 sealed class NativeInteropShape {}
 
 class NativeInteropCircle extends NativeInteropShape {
@@ -2129,8 +2128,7 @@ class NativeInteropSquare extends NativeInteropShape {
   String? label;
 }
 
-/// Echoes sealed classes, which native interop supports only with the hybrid
-/// transport.
+/// Echoes [NativeInteropShape] sealed class hierarchies.
 @HostApi()
 abstract class NativeInteropSealedClassHostApi {
   NativeInteropShape echoShape(NativeInteropShape shape);

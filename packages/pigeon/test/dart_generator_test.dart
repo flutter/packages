@@ -2814,6 +2814,13 @@ name: foobar
         parameters: <Parameter>[Parameter(name: 'color', type: enumType(isNullable: true))],
         returnType: enumType(isNullable: true),
       ),
+      Method(
+        name: 'echoAsyncData',
+        location: location,
+        isAsynchronous: true,
+        parameters: <Parameter>[Parameter(name: 'data', type: dataType())],
+        returnType: dataType(isNullable: true),
+      ),
     ];
 
     String generate({required bool useJni, required bool useFfi, bool hybrid = true}) {
@@ -2853,15 +2860,16 @@ name: foobar
           'final JByteArray pigeonVar_args = _PigeonJniBuffers.encode(<Object?>[data, list]);',
         ),
       );
-      expect(code, contains('_jniApi.pigeon_echoData(count, pigeonVar_args)'));
+      expect(code, contains('_jniApi.echoData(count, pigeonVar_args)'));
+      expect(code, contains('await _jniApi.echoAsyncData(pigeonVar_args)'));
       expect(code, contains('return _PigeonJniBuffers.decode(pigeonVar_res) as Data?;'));
       expect(code, contains('pigeonVar_args.release();'));
     });
 
     test('jni host methods pass scalars and enums directly', () {
       final String code = generate(useJni: true, useFfi: false);
-      expect(code, contains('return _jniApi.pigeon_add(a, b);'));
-      expect(code, contains('_jniApi.pigeon_echoColor(color?.index ?? -1)'));
+      expect(code, contains('return _jniApi.add(a, b);'));
+      expect(code, contains('_jniApi.echoColor(color?.index ?? -1)'));
       expect(code, contains('return pigeonVar_res == -1 ? null : Color.values[pigeonVar_res];'));
     });
 
@@ -2869,12 +2877,9 @@ name: foobar
       final String code = generate(useJni: true, useFfi: false);
       expect(code, contains(r'final class FlutterApiRegistrar with jni_bridge.$FlutterApiBridge'));
       expect(code, contains('jni_bridge.FlutterApiBridge.implement(this)'));
-      expect(
-        code,
-        contains('JByteArray? pigeon_echoData(int arg_count, JByteArray pigeonVar_args)'),
-      );
+      expect(code, contains('JByteArray? echoData(int arg_count, JByteArray pigeonVar_args)'));
       expect(code, contains('return _PigeonJniBuffers.encodeOrNull(response);'));
-      expect(code, contains('int pigeon_add(int arg_a, int arg_b)'));
+      expect(code, contains('int add(int arg_a, int arg_b)'));
     });
 
     test('jni error details are decoded from the buffer', () {
@@ -2894,20 +2899,20 @@ name: foobar
       expect(
         code,
         contains(
-          '_ffiApi.pigeon_echoData(count, pigeonVar_args: pigeonVar_args, wrappedError: pigeonVar_error)',
+          '_ffiApi.echoDataWithCount(count, pigeonVar_args: pigeonVar_args, wrappedError: pigeonVar_error)',
         ),
       );
       expect(code, contains('return _PigeonFfiBuffers.decode(pigeonVar_res) as Data?;'));
-      expect(code, contains('_ffiApi.pigeon_add(a, b: b, wrappedError: pigeonVar_error)'));
+      expect(code, contains('_ffiApi.addWithA(a, b: b, wrappedError: pigeonVar_error)'));
     });
 
     test('ffi flutter api implements the buffer protocol', () {
       final String code = generate(useJni: false, useFfi: true);
       expect(
         code,
-        contains(r'FlutterApiBridge$Builder.pigeon_echoData_pigeonVar_args_error_.implement('),
+        contains(r'FlutterApiBridge$Builder.echoDataWithCount_pigeonVar_args_error_.implement('),
       );
-      expect(code, contains(r'FlutterApiBridge$Builder.pigeon_add_b_error_.implement('));
+      expect(code, contains(r'FlutterApiBridge$Builder.addWithA_b_error_.implement('));
       expect(code, contains('return _PigeonFfiBuffers.encodeOrNull(response);'));
     });
 
@@ -2915,7 +2920,7 @@ name: foobar
       final String code = generate(useJni: true, useFfi: true, hybrid: false);
       expect(code, isNot(contains('_PigeonJniBuffers')));
       expect(code, isNot(contains('_PigeonFfiBuffers')));
-      expect(code, isNot(contains('pigeon_echoData')));
+      expect(code, isNot(contains('pigeonVar_args')));
     });
 
     test('jni codec looks up each class once', () {

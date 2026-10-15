@@ -505,33 +505,6 @@ bool nativeInteropReturnsBuffer(TypeDeclaration type) {
   return !type.isVoid && !isNativeInteropDirectType(type);
 }
 
-/// The name of the method that the hybrid transport calls across the language
-/// boundary for the API method named [methodName].
-String nativeInteropEntryPointName(String methodName) => '$classMemberNamePrefix$methodName';
-
-/// The Objective-C selector of the hybrid transport entry point for the
-/// method named [methodName] with [parameters], with [errorLabel] as the label
-/// of the error parameter.
-///
-/// The first piece is the entry point name, and the other pieces are the
-/// labels of the directly passed parameters, the argument buffer, the error
-/// parameter and, for asynchronous methods, the completion handler.
-String nativeInteropHybridSelector(
-  String methodName,
-  List<Parameter> parameters, {
-  required String errorLabel,
-  required bool isAsynchronous,
-}) {
-  final labels = <String>[
-    for (final Parameter parameter in parameters)
-      if (isNativeInteropDirectType(parameter.type)) parameter.name,
-    if (nativeInteropEncodedParameters(parameters).isNotEmpty) nativeInteropArgsParameterName,
-    errorLabel,
-    if (isAsynchronous) 'completionHandler',
-  ];
-  return '${nativeInteropEntryPointName(methodName)}:${labels.skip(1).map((String label) => '$label:').join()}';
-}
-
 /// The name of the buffer parameter of hybrid transport entry points.
 const String nativeInteropArgsParameterName = '${varNamePrefix}args';
 
