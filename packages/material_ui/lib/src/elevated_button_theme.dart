@@ -65,7 +65,9 @@ class ElevatedButtonThemeData with Diagnosticable {
   ///
   /// An enclosing [ElevatedButtonTheme] takes precedence over
   /// [ThemeData.elevatedButtonTheme], even when a closer [Theme] specifies a
-  /// different variant. To change the variant of a subtree, wrap it in an
+  /// different variant. This matches [ElevatedButtonTheme.of], which only uses
+  /// [ThemeData.elevatedButtonTheme] when there is no enclosing
+  /// [ElevatedButtonTheme]. To change the variant of a subtree, wrap it in an
   /// [ElevatedButtonTheme].
   ///
   /// See also:
