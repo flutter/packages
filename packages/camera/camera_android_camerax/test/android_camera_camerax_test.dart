@@ -4737,7 +4737,7 @@ void main() {
   );
 
   test(
-    'setExposureOffset throws exception if exposure compensation could not be set due to camera being closed or newer value being set',
+    'setExposureOffset returns gracefully if exposure compensation could not be set due to camera being closed or newer value being set',
     () async {
       final camera = AndroidCameraCameraX();
       const cameraId = 21;
@@ -4750,6 +4750,8 @@ void main() {
       );
       final int expectedExposureCompensationIndex =
           (offset / exposureState.exposureCompensationStep).round();
+      final double expectedOffset =
+          expectedExposureCompensationIndex * exposureState.exposureCompensationStep;
 
       // Set directly for test versus calling createCamera.
       camera.cameraInfo = mockCameraInfo;
@@ -4760,7 +4762,7 @@ void main() {
         mockCameraControl.setExposureCompensationIndex(expectedExposureCompensationIndex),
       ).thenAnswer((_) async => Future<int?>.value());
 
-      expect(() => camera.setExposureOffset(cameraId, offset), throwsA(isA<CameraException>()));
+      expect(await camera.setExposureOffset(cameraId, offset), equals(expectedOffset));
     },
   );
 
@@ -4786,15 +4788,11 @@ void main() {
       when(mockCameraInfo.exposureState).thenReturn(exposureState);
       when(
         mockCameraControl.setExposureCompensationIndex(expectedExposureCompensationIndex),
-      ).thenAnswer(
-        (_) async => Future<int>.value(
-          (expectedExposureCompensationIndex * exposureState.exposureCompensationStep).round(),
-        ),
-      );
+      ).thenAnswer((_) async => Future<int>.value(expectedExposureCompensationIndex));
 
       // Exposure index * exposure offset step size = exposure offset, i.e.
-      // 15 * 0.2 = 3.
-      expect(await camera.setExposureOffset(cameraId, offset), equals(3));
+      // 15 * 0.2 = 3.0
+      expect(await camera.setExposureOffset(cameraId, offset), equals(3.0));
     },
   );
 
@@ -4880,6 +4878,48 @@ void main() {
       throwsA(isA<CameraException>()),
     );
   });
+
+  test(
+    'setFocusPoint does not add error to stream if focus and metering action is canceled',
+    () async {
+      final camera = AndroidCameraCameraX();
+      const cameraId = 23;
+      final mockCameraControl = MockCameraControl();
+      const focusPoint = Point<double>(0.5, 0.5);
+      final List<CameraEvent> errors = [];
+      camera.cameraEventStreamController.stream.listen(errors.add);
+
+      // Set directly for test versus calling createCamera.
+      camera.cameraControl = mockCameraControl;
+      camera.cameraInfo = MockCameraInfo();
+
+      final mockActionBuilder = MockFocusMeteringActionBuilder();
+      when(mockActionBuilder.build()).thenAnswer(
+        (_) async => FocusMeteringAction.pigeon_detached(
+          meteringPointsAe: const <MeteringPoint>[],
+          meteringPointsAf: const <MeteringPoint>[],
+          meteringPointsAwb: const <MeteringPoint>[],
+          isAutoCancelEnabled: false,
+        ),
+      );
+
+      setUpOverridesForExposureAndFocus(
+        withModeFocusMeteringActionBuilder:
+            ({required MeteringMode mode, required MeteringPoint point}) {
+              return mockActionBuilder;
+            },
+      );
+
+      when(
+        mockCameraControl.startFocusAndMetering(any),
+      ).thenAnswer((_) async => Future<FocusMeteringResult?>.value());
+
+      await camera.setFocusPoint(cameraId, focusPoint);
+
+      // Verify no errors were added to the stream.
+      expect(errors, isEmpty);
+    },
+  );
 
   test(
     'setFocusPoint adds new focus point to focus metering action to start as expected when previous metering points have been set',

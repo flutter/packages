@@ -28,7 +28,7 @@ dependencies:
   ffi: ^2.2.0
   flutter:
     sdk: flutter
-  jni: ^1.0.3
+  jni: ^1.1.0
 
 dev_dependencies:
   flutter_test:
