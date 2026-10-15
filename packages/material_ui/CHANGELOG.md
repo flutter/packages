@@ -1,3 +1,33 @@
+## 1.7.0
+
+- Accounts for `MediaQuery`'s `TextScaler` when calculating `SnackBar` action overflow and removes unnecessary blank right spacing in multi-line layout.
+- Allows `TabBar.indicatorWeight` of 0 when the indicator is supplied by `TabBarThemeData`.
+- Fixes showTimePicker input mode rejecting or misreading hours in locales that use a 24-hour format.
+- Adds the `scrollPadding` property to `DropdownMenuFormField`, forwarding it to the underlying `DropdownMenu`.
+- Fixes an Android semantics assertion when an `ExpansionTile` is embedded in a `WidgetSpan`.
+
+## 1.6.0
+
+- Documents that `TextField.decoration` is merged with the ambient
+  `InputDecorationTheme` rather than replacing it.
+- Fixes unresolved doc comment references.
+- Fixes `NavigationIndicator` not repainting when the selected destination changes without pointer interaction.
+- Removes the unconditional `dart:io` import from `AboutDialog`, so that `material_ui` is correctly detected as supporting the web platform and `showAboutDialog` no longer throws on the web when no application name is available.
+- Fix DropdownButtonFormField underline alignment at bottom.
+- Fixes floating-point rounding errors when calculating values for discrete `Slider` and `RangeSlider`.
+- Added `fontFeatures` and `fontVariations` parameters to `TextTheme.apply()`.
+
+## 1.5.0
+
+- Adds Material 3 Expressive support for IconButton.
+- Exposes `selected` state on `Autocomplete` option semantics.
+- Wraps `DrawerHeader` in `Semantics(header: true)`.
+- Adds `ignorePointer` to `TooltipThemeData` for WCAG 1.4.13 Hoverable support.
+- Fixes decorations on `MenuItemButton.leadingIcon`, such as `Badge`, being clipped to the icon's bounds in vertically expanding menus.
+- Introduces labelTextDirection property to InputDecoration.
+- Adds support for standard, medium, and high contrast Material 3 color scheme baselines.
+- Fixes LocalHistoryEntry leak when double tapping Drawer scrim
+
 ## 1.4.0
 
 - Updates minimum supported SDK version to Flutter 3.47/Dart 3.13.

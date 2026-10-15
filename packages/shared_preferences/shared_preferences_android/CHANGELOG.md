@@ -1,6 +1,10 @@
 ## 2.5.0
 
 * Updates internal implementation to use Pigeon JNI.
+
+## 2.4.29
+
+* Updates Robolectric to 4.17 and adds the JVM arguments it requires for unit tests.
 * Updates minimum supported SDK version to Flutter 3.41/Dart 3.11.
 
 ## 2.4.28
