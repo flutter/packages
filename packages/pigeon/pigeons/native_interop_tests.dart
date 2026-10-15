@@ -15,7 +15,6 @@ import 'package:pigeon/pigeon.dart';
       ffiModuleName: 'test_plugin',
       appDirectory: 'platform_tests/test_plugin/example/',
     ),
-    nativeInteropTransport: NativeInteropTransport.hybrid,
   ),
 )
 enum NativeInteropAnEnum { one, two, three, fortyTwo, fourHundredTwentyTwo }

@@ -94,7 +94,7 @@ class InternalPigeonOptions {
                   options.swiftOptions?.fileSpecificClassNameComponent ??
                   options.fileSpecificClassNameComponent,
               nativeInteropTransport:
-                  options.nativeInteropTransport ?? NativeInteropTransport.objects,
+                  options.nativeInteropTransport ?? NativeInteropTransport.hybrid,
             ),
       kotlinOptions = options.kotlinOut == null
           ? null
@@ -106,7 +106,7 @@ class InternalPigeonOptions {
                   options.kotlinOptions?.fileSpecificClassNameComponent ??
                   options.fileSpecificClassNameComponent,
               nativeInteropTransport:
-                  options.nativeInteropTransport ?? NativeInteropTransport.objects,
+                  options.nativeInteropTransport ?? NativeInteropTransport.hybrid,
             ),
       cppOptions = (options.cppHeaderOut == null || options.cppSourceOut == null)
           ? null
@@ -137,7 +137,7 @@ class InternalPigeonOptions {
               jniErrorClassName: options.kotlinOptions?.errorClassName ?? 'FlutterError',
               fileSpecificClassNameComponent: _dartNativeInteropClassNameComponent(options),
               nativeInteropTransport:
-                  options.nativeInteropTransport ?? NativeInteropTransport.objects,
+                  options.nativeInteropTransport ?? NativeInteropTransport.hybrid,
             ),
       copyrightHeader = options.copyrightHeader != null
           ? _lineReader(path.posix.join(options.basePath ?? '', options.copyrightHeader))

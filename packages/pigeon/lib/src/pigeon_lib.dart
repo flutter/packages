@@ -376,7 +376,9 @@ class PigeonOptions {
   /// How native interop moves values between Dart and the host platform.
   ///
   /// Only applies to files that use `KotlinOptions.useJni` or
-  /// `SwiftOptions.useFfi`. Defaults to [NativeInteropTransport.objects].
+  /// `SwiftOptions.useFfi`. Defaults to [NativeInteropTransport.hybrid];
+  /// [NativeInteropTransport.objects] is retained for testing, benchmarking,
+  /// and future lazy-access support.
   final NativeInteropTransport? nativeInteropTransport;
 
   /// Creates a [PigeonOptions] from a Map representation where:

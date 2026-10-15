@@ -1727,7 +1727,12 @@ void main() {
     String generate({required bool useJni}) {
       final sink = StringBuffer();
       const KotlinGenerator().generate(
-        InternalKotlinOptions(errorClassName: 'FooError', kotlinOut: '', useJni: useJni),
+        InternalKotlinOptions(
+          errorClassName: 'FooError',
+          kotlinOut: '',
+          useJni: useJni,
+          nativeInteropTransport: NativeInteropTransport.objects,
+        ),
         root,
         sink,
         dartPackageName: DEFAULT_PACKAGE_NAME,
@@ -2014,12 +2019,12 @@ void main() {
     generator.generate(kotlinOptions, root, sink, dartPackageName: DEFAULT_PACKAGE_NAME);
     final code = sink.toString();
     expect(code, contains('interface HostApi {'));
-    expect(code, contains('class HostApiRegistrar : HostApi {'));
+    expect(code, contains('class HostApiRegistrar {'));
     expect(code, contains('api: HostApi?,'));
     expect(code, contains('HostApiInstances.remove(name)'));
     expect(
       code,
-      contains('fun registerInstance(api: FlutterApi?, name: String = defaultInstanceName)'),
+      contains('fun registerInstance(api: FlutterApiBridge?, name: String = defaultInstanceName)'),
     );
     expect(code, contains('registeredFlutterApi.remove(name)'));
   });

@@ -1837,7 +1837,11 @@ void main() {
 
   test('ffi bridge of a sealed class dispatches to its subclasses', () {
     final sink = StringBuffer();
-    const swiftOptions = InternalSwiftOptions(swiftOut: '', useFfi: true);
+    const swiftOptions = InternalSwiftOptions(
+      swiftOut: '',
+      useFfi: true,
+      nativeInteropTransport: NativeInteropTransport.objects,
+    );
     const generator = SwiftGenerator();
     generator.generate(
       swiftOptions,
@@ -1948,7 +1952,11 @@ void main() {
       enums: <Enum>[],
     );
     final sink = StringBuffer();
-    const swiftOptions = InternalSwiftOptions(swiftOut: '', useFfi: true);
+    const swiftOptions = InternalSwiftOptions(
+      swiftOut: '',
+      useFfi: true,
+      nativeInteropTransport: NativeInteropTransport.objects,
+    );
     const generator = SwiftGenerator();
     generator.generate(swiftOptions, root, sink, dartPackageName: DEFAULT_PACKAGE_NAME);
     final code = sink.toString();
@@ -1998,7 +2006,11 @@ void main() {
       enums: <Enum>[],
     );
     final sink = StringBuffer();
-    const swiftOptions = InternalSwiftOptions(swiftOut: '', useFfi: true);
+    const swiftOptions = InternalSwiftOptions(
+      swiftOut: '',
+      useFfi: true,
+      nativeInteropTransport: NativeInteropTransport.objects,
+    );
     const generator = SwiftGenerator();
     generator.generate(swiftOptions, root, sink, dartPackageName: DEFAULT_PACKAGE_NAME);
     final code = sink.toString();

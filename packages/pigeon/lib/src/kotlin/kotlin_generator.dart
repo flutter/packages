@@ -153,7 +153,7 @@ class InternalKotlinOptions extends InternalOptions {
     this.fileSpecificClassNameComponent,
     this.useGeneratedAnnotation = false,
     this.jniClassPaths,
-    this.nativeInteropTransport = NativeInteropTransport.objects,
+    this.nativeInteropTransport = NativeInteropTransport.hybrid,
   });
 
   /// Creates InternalKotlinOptions from KotlinOptions.
@@ -162,7 +162,7 @@ class InternalKotlinOptions extends InternalOptions {
     required this.kotlinOut,
     Iterable<String>? copyrightHeader,
     String? fileSpecificClassNameComponent,
-    this.nativeInteropTransport = NativeInteropTransport.objects,
+    this.nativeInteropTransport = NativeInteropTransport.hybrid,
   }) : package = options.package,
        copyrightHeader = options.copyrightHeader ?? copyrightHeader,
        errorClassName = options.errorClassName,

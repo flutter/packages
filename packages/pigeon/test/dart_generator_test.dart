@@ -2255,7 +2255,12 @@ name: foobar
     final sink = StringBuffer();
     const generator = DartGenerator();
     generator.generate(
-      const InternalDartOptions(ignoreLints: false, useJni: true, dartOut: 'lib/foo.dart'),
+      const InternalDartOptions(
+        ignoreLints: false,
+        useJni: true,
+        dartOut: 'lib/foo.dart',
+        nativeInteropTransport: NativeInteropTransport.objects,
+      ),
       root,
       sink,
       dartPackageName: DEFAULT_PACKAGE_NAME,
@@ -2276,6 +2281,7 @@ name: foobar
         useJni: true,
         useFfi: true,
         dartOut: 'lib/foo.dart',
+        nativeInteropTransport: NativeInteropTransport.objects,
       ),
       buildSealedClassRoot(),
       sink,
@@ -2418,7 +2424,12 @@ name: foobar
     final sink = StringBuffer();
     const generator = DartGenerator();
     generator.generate(
-      const InternalDartOptions(ignoreLints: false, useJni: true, dartOut: 'lib/foo.dart'),
+      const InternalDartOptions(
+        ignoreLints: false,
+        useJni: true,
+        dartOut: 'lib/foo.dart',
+        nativeInteropTransport: NativeInteropTransport.objects,
+      ),
       root,
       sink,
       dartPackageName: DEFAULT_PACKAGE_NAME,
@@ -2499,6 +2510,7 @@ name: foobar
         useJni: true,
         ffiErrorClassName: 'PigeonError',
         dartOut: 'lib/foo.dart',
+        nativeInteropTransport: NativeInteropTransport.objects,
       ),
       root,
       sink,
@@ -2728,6 +2740,7 @@ name: foobar
         useFfi: true,
         ffiErrorClassName: 'PigeonError',
         dartOut: 'lib/foo.dart',
+        nativeInteropTransport: NativeInteropTransport.objects,
       ),
       root,
       sink,

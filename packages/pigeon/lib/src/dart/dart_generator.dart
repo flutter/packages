@@ -754,7 +754,7 @@ class InternalDartOptions extends InternalOptions {
     this.useFfi = false,
     this.ffiErrorClassName,
     this.jniErrorClassName,
-    this.nativeInteropTransport = NativeInteropTransport.objects,
+    this.nativeInteropTransport = NativeInteropTransport.hybrid,
     required bool ignoreLints,
   }) : _ignoreLints = ignoreLints;
 
@@ -769,7 +769,7 @@ class InternalDartOptions extends InternalOptions {
     this.ffiErrorClassName,
     this.jniErrorClassName,
     this.fileSpecificClassNameComponent,
-    this.nativeInteropTransport = NativeInteropTransport.objects,
+    this.nativeInteropTransport = NativeInteropTransport.hybrid,
   }) : copyrightHeader = copyrightHeader ?? options.copyrightHeader,
        dartOut = (dartOut ?? options.sourceOutPath)!,
        testOut = testOut ?? options.testOutPath,

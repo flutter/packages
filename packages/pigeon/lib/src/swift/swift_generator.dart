@@ -144,7 +144,7 @@ class InternalSwiftOptions extends InternalOptions {
     this.configDirectory,
     this.appleSdkPath,
     this.appleSdkTriple,
-    this.nativeInteropTransport = NativeInteropTransport.objects,
+    this.nativeInteropTransport = NativeInteropTransport.hybrid,
   });
 
   /// Creates InternalSwiftOptions from SwiftOptions.
@@ -154,7 +154,7 @@ class InternalSwiftOptions extends InternalOptions {
     String? swiftOut,
     Iterable<String>? copyrightHeader,
     String? fileSpecificClassNameComponent,
-    this.nativeInteropTransport = NativeInteropTransport.objects,
+    this.nativeInteropTransport = NativeInteropTransport.hybrid,
   }) : copyrightHeader = options.copyrightHeader ?? copyrightHeader,
        fileSpecificClassNameComponent = toUpperCamelCase(
          (options.useFfi
