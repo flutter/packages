@@ -209,11 +209,11 @@ final class InAppPurchase2PluginTests: XCTestCase {
   //TODO(louisehsu): Add testing for lower versions.
   @available(iOS 17.0, macOS 14.0, *)
   func testGetProductsWithStoreKitError() async throws {
-    let osVersion = ProcessInfo.processInfo.operatingSystemVersion
     try XCTSkipIf(
       // https://developer.apple.com/forums/thread/808030
-      osVersion.majorVersion == 26 && osVersion.minorVersion == 2,
-      "Known StoreKitTest bug on Xcode 26.2 with setSimulatedError() when used on .loadProducts API"
+      ProcessInfo.processInfo.isOperatingSystemAtLeast(
+        OperatingSystemVersion(majorVersion: 26, minorVersion: 2, patchVersion: 0)),
+      "Known StoreKitTest bug on Xcode 26.2+ with setSimulatedError() when used on .loadProducts API"
     )
 
     try await session.setSimulatedError(
@@ -235,6 +235,7 @@ final class InAppPurchase2PluginTests: XCTestCase {
       }
     }
     await fulfillment(of: [expectation], timeout: purchaseTimeout)
+    try await session.setSimulatedError(nil, forAPI: .loadProducts)
   }
 
   func testSuccessfulPurchase() async throws {
@@ -254,11 +255,11 @@ final class InAppPurchase2PluginTests: XCTestCase {
 
   @available(iOS 17.0, macOS 14.0, *)
   func testFailedNetworkErrorPurchase() async throws {
-    let osVersion = ProcessInfo.processInfo.operatingSystemVersion
     try XCTSkipIf(
       // https://developer.apple.com/forums/thread/808030
-      osVersion.majorVersion == 26 && osVersion.minorVersion == 2,
-      "Known StoreKitTest bug on Xcode 26.2 with setSimulatedError() when used on .loadProducts API"
+      ProcessInfo.processInfo.isOperatingSystemAtLeast(
+        OperatingSystemVersion(majorVersion: 26, minorVersion: 2, patchVersion: 0)),
+      "Known StoreKitTest bug on Xcode 26.2+ with setSimulatedError() when used on .loadProducts API"
     )
 
     // StoreKitTest aggressively caches products and transaction, which means sometimes it bypasses a simulated error.
@@ -279,6 +280,7 @@ final class InAppPurchase2PluginTests: XCTestCase {
       }
     }
     await fulfillment(of: [expectation], timeout: purchaseTimeout)
+    try await session.setSimulatedError(nil, forAPI: .loadProducts)
   }
 
   @available(iOS 17.0, macOS 14.0, *)
@@ -297,6 +299,7 @@ final class InAppPurchase2PluginTests: XCTestCase {
       }
     }
     await fulfillment(of: [expectation], timeout: purchaseTimeout)
+    try await session.setSimulatedError(nil, forAPI: .purchase)
   }
 
   func testInvalidProductPurchase() async throws {
