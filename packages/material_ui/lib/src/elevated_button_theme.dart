@@ -152,22 +152,21 @@ class ElevatedButtonTheme extends InheritedTheme {
   }
 
   /// Returns the [StyleVariant] that [ElevatedButton]s use at the given
-  /// [context], or null if no theme specifies one.
+  /// [context].
   ///
   /// The closest enclosing [ElevatedButtonTheme] whose
   /// [ElevatedButtonThemeData.variant] is non-null determines the variant, so
   /// an [ElevatedButtonTheme] that doesn't specify a variant inherits it from
   /// its ancestors. If none of the enclosing [ElevatedButtonTheme]s specify a
-  /// variant, the variant of [ThemeData.elevatedButtonTheme] is returned.
-  ///
-  /// [ElevatedButton] uses [StyleVariant.material3] if this returns null.
+  /// variant, the variant of [ThemeData.elevatedButtonTheme] is used. If that
+  /// is also null, [StyleVariant.material3] is returned.
   ///
   /// Typical usage is as follows:
   ///
   /// ```dart
-  /// final StyleVariant variant = ElevatedButtonTheme.variantOf(context) ?? StyleVariant.material3;
+  /// final StyleVariant variant = ElevatedButtonTheme.variantOf(context);
   /// ```
-  static StyleVariant? variantOf(BuildContext context) {
+  static StyleVariant variantOf(BuildContext context) {
     InheritedElement? element = context
         .getElementForInheritedWidgetOfExactType<ElevatedButtonTheme>();
     while (element != null) {
@@ -187,7 +186,7 @@ class ElevatedButtonTheme extends InheritedTheme {
       });
       element = parent?.getElementForInheritedWidgetOfExactType<ElevatedButtonTheme>();
     }
-    return Theme.of(context).elevatedButtonTheme.variant;
+    return Theme.of(context).elevatedButtonTheme.variant ?? StyleVariant.material3;
   }
 
   @override

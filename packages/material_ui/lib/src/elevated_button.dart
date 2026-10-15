@@ -496,8 +496,7 @@ class ElevatedButton extends ButtonStyleButton {
     final ThemeData theme = Theme.of(context);
     final ColorScheme colorScheme = theme.colorScheme;
     final ElevatedButtonThemeData elevatedButtonTheme = ElevatedButtonTheme.of(context);
-    final StyleVariant effectiveVariant =
-        ElevatedButtonTheme.variantOf(context) ?? StyleVariant.material3;
+    final StyleVariant effectiveVariant = ElevatedButtonTheme.variantOf(context);
     final ButtonSizeVariant? effectiveSize =
         style?.sizeVariant ?? elevatedButtonTheme.style?.sizeVariant;
     final ButtonShapeVariant? effectiveShape =
