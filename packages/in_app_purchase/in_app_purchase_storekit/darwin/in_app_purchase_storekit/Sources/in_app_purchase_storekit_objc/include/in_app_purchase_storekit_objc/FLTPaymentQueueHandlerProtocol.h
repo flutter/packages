@@ -13,7 +13,6 @@ typedef void (^TransactionsRemoved)(NSArray<SKPaymentTransaction *> *transaction
 typedef void (^RestoreTransactionFailed)(NSError *error);
 typedef void (^RestoreCompletedTransactionsFinished)(void);
 typedef BOOL (^ShouldAddStorePayment)(SKPayment *payment, SKProduct *product);
-typedef void (^UpdatedDownloads)(NSArray<SKDownload *> *downloads);
 
 /// A protocol that conforms to SKPaymentTransactionObserver and handles SKPaymentQueue methods
 @protocol FLTPaymentQueueHandlerProtocol <NSObject, SKPaymentTransactionObserver>
@@ -24,14 +23,14 @@ typedef void (^UpdatedDownloads)(NSArray<SKDownload *> *downloads);
 
 /// Creates a new FIAPaymentQueueHandler.
 ///
-/// The "transactionsUpdated", "transactionsRemoved" and "updatedDownloads"
-/// callbacks are only called while actively observing transactions. To start
+/// The "transactionsUpdated" and "transactionsRemoved" callbacks are only
+/// called while actively observing transactions. To start
 /// observing transactions send the "startObservingPaymentQueue" message.
 /// Sending the "stopObservingPaymentQueue" message will stop actively
 /// observing transactions. When transactions are not observed they are cached
 /// to the "transactionCache" and will be delivered via the
-/// "transactionsUpdated", "transactionsRemoved" and "updatedDownloads"
-/// callbacks as soon as the "startObservingPaymentQueue" message arrives.
+/// "transactionsUpdated" and "transactionsRemoved" callbacks as soon as the
+/// "startObservingPaymentQueue" message arrives.
 ///
 /// Note: cached transactions that are not processed when the application is
 /// killed will be delivered again by the App Store as soon as the application
@@ -53,8 +52,6 @@ typedef void (^UpdatedDownloads)(NSArray<SKDownload *> *downloads);
 /// @param shouldAddStorePayment Callback method that is called each time an
 ///                              in-app purchase has been initiated from the
 ///                              App Store.
-/// @param updatedDownloads Callback method that is called each time the App
-///                         Store indicates downloads are updated.
 /// @param transactionCache An empty [FIATransactionCache] instance that is
 ///                         responsible for keeping track of transactions that
 ///                         arrive when not actively observing transactions.
@@ -65,7 +62,6 @@ typedef void (^UpdatedDownloads)(NSArray<SKDownload *> *downloads);
     restoreCompletedTransactionsFinished:
         (nullable RestoreCompletedTransactionsFinished)restoreCompletedTransactionsFinished
                    shouldAddStorePayment:(nullable ShouldAddStorePayment)shouldAddStorePayment
-                        updatedDownloads:(nullable UpdatedDownloads)updatedDownloads
                         transactionCache:(nonnull id<FLTTransactionCacheProtocol>)transactionCache;
 
 /// Can throw exceptions if the transaction type is purchasing, should always used in a @try block.

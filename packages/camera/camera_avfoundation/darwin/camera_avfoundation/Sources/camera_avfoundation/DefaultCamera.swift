@@ -873,10 +873,33 @@ final class DefaultCamera: NSObject, Camera {
   private func updateOrientation(
     _ orientation: UIDeviceOrientation, forCaptureOutput captureOutput: CaptureOutput
   ) {
-    if let connection = captureOutput.connection(with: .video),
-      connection.isVideoOrientationSupported
-    {
+    guard let connection = captureOutput.connection(with: .video) else { return }
+
+    if #available(iOS 17.0, *) {
+      let angle = videoRotationAngle(forDeviceOrientation: orientation)
+      if connection.isVideoRotationAngleSupported(angle) {
+        connection.videoRotationAngle = angle
+      }
+    } else if connection.isVideoOrientationSupported {
       connection.videoOrientation = videoOrientation(forDeviceOrientation: orientation)
+    }
+  }
+
+  /// Matches the `AVCaptureVideoOrientation` mapping.
+  private func videoRotationAngle(forDeviceOrientation deviceOrientation: UIDeviceOrientation)
+    -> CGFloat
+  {
+    switch deviceOrientation {
+    case .portrait:
+      return 90
+    case .landscapeLeft:
+      return 0
+    case .landscapeRight:
+      return 180
+    case .portraitUpsideDown:
+      return 270
+    default:
+      return 90
     }
   }
 
@@ -1232,8 +1255,15 @@ final class DefaultCamera: NSObject, Camera {
     }
 
     // Keep the same orientation the old connections had.
-    if let oldConnection = oldConnection, newConnection.isVideoOrientationSupported {
-      newConnection.videoOrientation = oldConnection.videoOrientation
+    if let oldConnection = oldConnection {
+      if #available(iOS 17.0, *) {
+        let angle = oldConnection.videoRotationAngle
+        if newConnection.isVideoRotationAngleSupported(angle) {
+          newConnection.videoRotationAngle = angle
+        }
+      } else if newConnection.isVideoOrientationSupported {
+        newConnection.videoOrientation = oldConnection.videoOrientation
+      }
     }
 
     // Add the new connections to the session.
