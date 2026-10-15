@@ -2422,6 +2422,31 @@ dev_dependencies:
       expect(output, contains("classPath: [Uri.directory('foo/bar'), Uri.file('baz.jar')]"));
     });
 
+    test('JnigenConfigGenerator only binds the Registrar for host APIs', () {
+      final root = Root(
+        apis: <Api>[
+          AstHostApi(name: 'MyHostApi', methods: <Method>[]),
+          AstFlutterApi(name: 'MyFlutterApi', methods: <Method>[]),
+        ],
+        classes: <Class>[],
+        enums: <Enum>[],
+      );
+      final sink = StringBuffer();
+      final generator = JnigenConfigGenerator();
+      final options = InternalJnigenConfigOptions(
+        const InternalDartOptions(dartOut: 'lib/messages.dart', ignoreLints: false),
+        const InternalKotlinOptions(kotlinOut: 'android/Messages.kt', package: 'com.example'),
+        null,
+        null,
+      );
+      generator.generate(options, root, sink, dartPackageName: 'foo_package');
+      final output = sink.toString();
+      expect(output, isNot(contains("'com.example.MyHostApi',")));
+      expect(output, contains("'com.example.MyHostApiRegistrar',"));
+      expect(output, contains("'com.example.MyFlutterApi',"));
+      expect(output, contains("'com.example.MyFlutterApiRegistrar',"));
+    });
+
     test(
       'JnigenConfigGeneratorAdapter resolves relative output path using kotlinOptions.appDirectory',
       () {
@@ -2465,6 +2490,36 @@ dev_dependencies:
         expect(code, contains("dartFile: Uri.file('../lib/src/messages.g.ffi.dart')"));
       },
     );
+
+    test('FfigenConfigGeneratorAdapter only lists the Setup class for host APIs', () {
+      final root = Root(
+        apis: <Api>[
+          AstHostApi(name: 'MyHostApi', methods: <Method>[]),
+          AstFlutterApi(name: 'MyFlutterApi', methods: <Method>[]),
+        ],
+        classes: <Class>[],
+        enums: <Enum>[],
+      );
+      final sink = StringBuffer();
+      const adapter = FfigenConfigGeneratorAdapter();
+      final InternalPigeonOptions options = InternalPigeonOptions.fromPigeonOptions(
+        const PigeonOptions(
+          input: 'pigeons/messages.dart',
+          dartOut: 'lib/src/messages.g.dart',
+          swiftOut: 'darwin/Messages.g.swift',
+          swiftOptions: SwiftOptions(useFfi: true, appDirectory: 'example/'),
+        ),
+      );
+
+      adapter.generate(sink, options, root, FileType.na);
+      final code = sink.toString();
+
+      expect(code, isNot(contains("'MyHostApi',")));
+      expect(code, contains("'MyHostApiSetup',"));
+      expect(code, isNot(contains("'MyFlutterApi',")));
+      expect(code, contains("'MyFlutterApiBridge',"));
+      expect(code, contains("'MyFlutterApiRegistrar',"));
+    });
 
     test('SwiftGeneratorAdapter errors on TaskQueue when useFfi is true', () {
       final root = Root(
@@ -2649,58 +2704,19 @@ dev_dependencies:
 abstract class Events {
   int numbers();
 }
-
-sealed class Shape {}
-
-class Circle extends Shape {
-  Circle(this.radius);
-  double radius;
-}
-
-@HostApi()
-abstract class Api {
-  Circle circle();
-}
 ''';
 
-    test('Swift FFI rejects event channels and sealed classes', () {
+    test('Swift FFI rejects event channels', () {
       final List<Error> errors = validate(const SwiftGeneratorAdapter(), unsupportedFeaturesSource);
       expect(
         errors.map((Error e) => e.message),
         containsAll(<Matcher>[
           contains('Swift FFI does not support event channels yet (in API "Events")'),
-          contains('Swift FFI supports sealed classes only with `nativeInteropTransport'),
         ]),
       );
     });
 
-    test('native interop allows sealed classes with the hybrid transport', () {
-      const source = '''
-sealed class Shape {}
-
-class Circle extends Shape {
-  Circle(this.radius);
-  double radius;
-}
-
-@HostApi()
-abstract class Api {
-  Shape echoShape(Shape shape);
-}
-''';
-      for (final adapter in <GeneratorAdapter>[
-        const SwiftGeneratorAdapter(),
-        const KotlinGeneratorAdapter(),
-      ]) {
-        expect(
-          validate(adapter, source, nativeInteropTransport: NativeInteropTransport.hybrid),
-          isEmpty,
-        );
-        expect(validate(adapter, source), hasLength(1));
-      }
-    });
-
-    test('Swift without FFI allows event channels and sealed classes', () {
+    test('Swift without FFI allows event channels', () {
       final List<Error> errors = validate(
         const SwiftGeneratorAdapter(),
         unsupportedFeaturesSource,
@@ -2765,7 +2781,7 @@ abstract class Api {
       expect(errors[0].message, contains('Swift FFI requires `includeErrorClass: true`'));
     });
 
-    test('Kotlin JNI rejects event channels and sealed classes', () {
+    test('Kotlin JNI rejects event channels', () {
       final List<Error> errors = validate(
         const KotlinGeneratorAdapter(),
         unsupportedFeaturesSource,
@@ -2774,12 +2790,11 @@ abstract class Api {
         errors.map((Error e) => e.message),
         containsAll(<Matcher>[
           contains('Kotlin JNI does not support event channels yet (in API "Events")'),
-          contains('Kotlin JNI supports sealed classes only with `nativeInteropTransport'),
         ]),
       );
     });
 
-    test('Kotlin without JNI allows event channels and sealed classes', () {
+    test('Kotlin without JNI allows event channels', () {
       final List<Error> errors = validate(
         const KotlinGeneratorAdapter(),
         unsupportedFeaturesSource,
@@ -3079,7 +3094,7 @@ abstract class MyFlutterApi {
       }
 
       final String objectsConfig = generateConfig(NativeInteropTransport.objects);
-      expect(objectsConfig, contains("'com.example.MyHostApi',"));
+      expect(objectsConfig, isNot(contains("'com.example.MyHostApi',")));
       expect(objectsConfig, contains("'com.example.MyHostApiRegistrar',"));
       expect(objectsConfig, contains("'com.example.MyFlutterApi',"));
       expect(objectsConfig, isNot(contains("'com.example.MyFlutterApiBridge',")));

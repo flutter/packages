@@ -1039,6 +1039,7 @@ class DartGenerator extends StructuredGenerator<InternalDartOptions> {
     indent.write('${sealed}class ${classDefinition.name} $implements');
     indent.addScoped('{', '}', () {
       if (classDefinition.isSealed) {
+        _writeSealedClassNativeInteropConversions(generatorOptions, indent, classDefinition);
         return;
       }
       _writeConstructor(indent, classDefinition);
@@ -1127,7 +1128,59 @@ class DartGenerator extends StructuredGenerator<InternalDartOptions> {
     });
   }
 
+  /// Writes the native interop conversions of a sealed class.
+  ///
+  /// A sealed class has no native object of its own. Its subclasses implement
+  /// `toJni` and `toFfi`, and `fromJni` and `fromFfi` pick the subclass from
+  /// the runtime type of the native object.
+  void _writeSealedClassNativeInteropConversions(
+    InternalDartOptions generatorOptions,
+    Indent indent,
+    Class classDefinition,
+  ) {
+    if (generatorOptions.useJni) {
+      final String jniName = _JniType.fromClass(classDefinition).jniName;
+      indent.writeln('$jniName toJni();');
+      indent.newln();
+      indent.writeScoped('static ${classDefinition.name}? fromJni($jniName? jniClass) {', '}', () {
+        indent.writeScoped('if (jniClass == null) {', '}', () {
+          indent.writeln('return null;');
+        });
+        for (final Class child in classDefinition.children) {
+          final String childJniName = _JniType.fromClass(child).jniName;
+          indent.writeScoped('if (jniClass.isA<$childJniName>($childJniName.type)) {', '}', () {
+            indent.writeln('return ${child.name}.fromJni(jniClass.as($childJniName.type));');
+          });
+        }
+        indent.writeln('throw ArgumentError.value(jniClass);');
+      });
+    }
+    if (generatorOptions.useFfi) {
+      if (generatorOptions.useJni) {
+        indent.newln();
+      }
+      final String ffiName = _FfiType.fromClass(classDefinition).getFfiName();
+      indent.writeln('$ffiName toFfi();');
+      indent.newln();
+      indent.writeScoped('static ${classDefinition.name}? fromFfi($ffiName? ffiClass) {', '}', () {
+        indent.writeScoped('if (ffiClass == null) {', '}', () {
+          indent.writeln('return null;');
+        });
+        for (final Class child in classDefinition.children) {
+          final String childFfiName = _FfiType.fromClass(child).getFfiName();
+          indent.writeScoped('if ($childFfiName.isA(ffiClass)) {', '}', () {
+            indent.writeln('return ${child.name}.fromFfi($childFfiName.as(ffiClass));');
+          });
+        }
+        indent.writeln('throw ArgumentError.value(ffiClass);');
+      });
+    }
+  }
+
   void _writeToJni(Indent indent, Class classDefinition) {
+    if (classDefinition.superClass != null) {
+      indent.writeln('@override');
+    }
     indent.writeScoped('$_jniBridgePrefix.${classDefinition.name} toJni() {', '}', () {
       indent.writeScoped('return $_jniBridgePrefix.${classDefinition.name} (', ');', () {
         for (final NamedType field in getFieldsInSerializationOrder(classDefinition)) {
@@ -1140,6 +1193,9 @@ class DartGenerator extends StructuredGenerator<InternalDartOptions> {
 
   void _writeToFfi(Indent indent, Class classDefinition) {
     final _FfiType ffiClass = _FfiType.fromClass(classDefinition);
+    if (classDefinition.superClass != null) {
+      indent.writeln('@override');
+    }
     indent.writeScoped('${ffiClass.getFfiName()} toFfi() {', '}', () {
       final Iterable<NamedType> fields = getFieldsInSerializationOrder(classDefinition);
       if (fields.isEmpty) {
@@ -3059,6 +3115,9 @@ ${api.name}({
   }
 
   void _writeJniCodec(Indent indent, Root root) {
+    // Sealed classes have no native object of their own, and the branches for
+    // their subclasses already match every value they can hold.
+    final Iterable<Class> concreteClasses = root.classes.where((Class c) => !c.isSealed);
     indent.newln();
     // Each `JObject.isA` call looks up the class through the class loader and
     // `as` does it again, which dominates the cost of reading values. The
@@ -3212,7 +3271,7 @@ ${root.classes.where((Class c) => !c.isSealed).map((Class dataClass) => '  stati
         entryValue?.release();
       }
       return res;
-    ${root.classes.where((Class c) => !c.isSealed).map((Class dataClass) {
+    ${concreteClasses.map((Class dataClass) {
       final _JniType jniType = _JniType.fromClass(dataClass);
       return '''
       } else if (value.isInstanceOf(_class${dataClass.name})) {
@@ -3296,7 +3355,7 @@ ${root.classes.where((Class c) => !c.isSealed).map((Class dataClass) => '  stati
           .map<JObject?, JObject?>((k, v) =>
               MapEntry(writeValue<JObject?>(k), writeValue<JObject?>(v)))
           .toJMap() as T;
-    ${root.classes.where((Class c) => !c.isSealed).map((Class dataClass) {
+    ${concreteClasses.map((Class dataClass) {
       final _JniType jniType = _JniType.fromClass(dataClass);
       return '''
       } else if (value is ${jniType.type.baseName}) {
@@ -3445,6 +3504,9 @@ class _PigeonFfiBuffers {
   }
 
   void _writeFfiCodec(Indent indent, Root root) {
+    // Sealed classes have no native object of their own, and the branches for
+    // their subclasses already match every value they can hold.
+    final Iterable<Class> concreteClasses = root.classes.where((Class c) => !c.isSealed);
     indent.newln();
     indent.format('''
 // ignore: unused_element
@@ -3491,7 +3553,7 @@ class _PigeonFfiCodec {
       return res;
     } else if ($_ffiBridgePrefix.${_classNamePrefix}NumberWrapper.isA(value)) {
       return _convertNumberWrapperToDart($_ffiBridgePrefix.${_classNamePrefix}NumberWrapper.as(value));
-    ${root.classes.where((Class c) => !c.isSealed).map((Class dataClass) {
+    ${concreteClasses.map((Class dataClass) {
       final _FfiType ffiType = _FfiType.fromClass(dataClass);
       return '''
       } else if (${ffiType.getFfiName()}.isA(value)) {
@@ -3576,7 +3638,7 @@ class _PigeonFfiCodec {
         res.setObject(writeValue(entry.value, generic: true), forKey: NSCopying.as(writeValue(entry.key, generic: true)));
       }
       return res as T;
-    ${root.classes.where((Class c) => !c.isSealed).map((Class dataClass) {
+    ${concreteClasses.map((Class dataClass) {
       final _FfiType ffiType = _FfiType.fromClass(dataClass);
       return '''
       } else if (value is ${ffiType.type.baseName}) {

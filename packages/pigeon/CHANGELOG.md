@@ -7,11 +7,20 @@
   for every field and collection element. This makes calls with large data
   classes and collections many times faster. Scalars, strings, enums and typed
   data are still passed directly, and the user-facing Kotlin and Swift APIs
-  don't change. The hybrid transport also supports sealed classes.
+  don't change.
 * [dart] Speeds up native interop with the default transport: JNI type checks
   look up each class once instead of on every check, typed data return values
   are read without the dynamic converter, and FFI typed data is copied once.
 * [kotlin] Makes enum `ofRaw` constant time.
+
+## 29.0.10
+
+* [swift] [kotlin] Allows `sealed` classes in native interop files.
+
+## 29.0.9
+
+* [kotlin] Stops generating unused JNI bindings for host API interfaces, significantly
+  reducing the size of the generated `.jni.dart` file.
 
 ## 29.0.8
 

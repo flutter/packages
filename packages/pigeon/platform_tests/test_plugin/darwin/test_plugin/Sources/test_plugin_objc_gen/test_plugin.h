@@ -655,15 +655,40 @@ typedef SWIFT_ENUM(NSInteger, NativeInteropAnotherEnum, closed){
     NativeInteropAnotherEnumJustInCase = 0,
 };
 
+/// A sealed class, which native interop passes only with the hybrid
+/// transport, in the call’s buffer.
+/// Generated bridge class from Pigeon that moves data from Swift to
+/// Objective-C.
+SWIFT_CLASS("_TtC11test_plugin24NativeInteropShapeBridge")
+@interface NativeInteropShapeBridge : NSObject
+- (nonnull instancetype)init OBJC_DESIGNATED_INITIALIZER;
+@end
+
 /// Generated bridge class from Pigeon that moves data from Swift to
 /// Objective-C.
 SWIFT_CLASS("_TtC11test_plugin25NativeInteropCircleBridge")
-@interface NativeInteropCircleBridge : NSObject
+@interface NativeInteropCircleBridge : NativeInteropShapeBridge
 - (nonnull instancetype)initWithRadius:(double)radius
     OBJC_DESIGNATED_INITIALIZER;
 @property(nonatomic) double radius;
 - (nonnull instancetype)init SWIFT_UNAVAILABLE;
 + (nonnull instancetype)new SWIFT_UNAVAILABLE_MSG("-init is unavailable");
+@end
+
+/// A sealed class, to test sealed class handling.
+/// Generated bridge class from Pigeon that moves data from Swift to
+/// Objective-C.
+SWIFT_CLASS("_TtC11test_plugin30NativeInteropSealedClassBridge")
+@interface NativeInteropSealedClassBridge : NSObject
+- (nonnull instancetype)init OBJC_DESIGNATED_INITIALIZER;
+@end
+
+/// A subclass of <code>NativeInteropSealedClass</code> without fields.
+/// Generated bridge class from Pigeon that moves data from Swift to
+/// Objective-C.
+SWIFT_CLASS("_TtC11test_plugin35NativeInteropEmptySealedClassBridge")
+@interface NativeInteropEmptySealedClassBridge : NativeInteropSealedClassBridge
+- (nonnull instancetype)init OBJC_DESIGNATED_INITIALIZER;
 @end
 
 @class NativeInteropTestsError;
@@ -696,6 +721,11 @@ SWIFT_PROTOCOL(
     pigeon_echoNativeInteropAllNullableTypes:(NSData* _Nonnull)pigeonVar_args
                                        error:(NativeInteropTestsError* _Nonnull)
                                                  error SWIFT_WARN_UNUSED_RESULT;
+/// Returns the passed sealed class, to test sealed class handling.
+- (NSData* _Nullable)
+    pigeon_echoNativeInteropSealedClass:(NSData* _Nonnull)pigeonVar_args
+                                  error:(NativeInteropTestsError* _Nonnull)error
+    SWIFT_WARN_UNUSED_RESULT;
 /// Returns passed in arguments of multiple types.
 /// Tests multiple-arity FlutterApi handling.
 - (NSData* _Nullable)
@@ -1348,6 +1378,28 @@ SWIFT_CLASS("_TtC11test_plugin40NativeInteropHostIntegrationCoreApiSetup")
                                 wrappedError:(NativeInteropTestsError* _Nonnull)
                                                  wrappedError
     SWIFT_WARN_UNUSED_RESULT;
+/// Returns the passed sealed class, to test sealed class handling.
+- (NSData* _Nullable)pigeon_echoSealedClass:(NSData* _Nonnull)pigeonVar_args
+                               wrappedError:(NativeInteropTestsError* _Nonnull)
+                                                wrappedError
+    SWIFT_WARN_UNUSED_RESULT;
+/// Returns the passed sealed class, to test nullable sealed class handling.
+- (NSData* _Nullable)
+    pigeon_echoNullableSealedClass:(NSData* _Nonnull)pigeonVar_args
+                      wrappedError:
+                          (NativeInteropTestsError* _Nonnull)wrappedError
+    SWIFT_WARN_UNUSED_RESULT;
+/// Returns the passed list, to test sealed classes in lists.
+- (NSData* _Nullable)
+    pigeon_echoSealedClassList:(NSData* _Nonnull)pigeonVar_args
+                  wrappedError:(NativeInteropTestsError* _Nonnull)wrappedError
+    SWIFT_WARN_UNUSED_RESULT;
+/// Returns the passed wrapper, to test sealed classes in class fields.
+- (NSData* _Nullable)
+    pigeon_echoSealedClassWrapper:(NSData* _Nonnull)pigeonVar_args
+                     wrappedError:
+                         (NativeInteropTestsError* _Nonnull)wrappedError
+    SWIFT_WARN_UNUSED_RESULT;
 /// Returns the passed enum to test serialization and deserialization.
 - (NSNumber* _Nullable)pigeon_echoEnum:(int64_t)anEnumArg
                           wrappedError:
@@ -1700,6 +1752,12 @@ SWIFT_CLASS("_TtC11test_plugin40NativeInteropHostIntegrationCoreApiSetup")
                                  (NativeInteropTestsError* _Nonnull)wrappedError
                         completionHandler:(void (^_Nonnull)(NSData* _Nullable))
                                               completionHandler;
+/// Returns the passed sealed class asynchronously.
+- (void)pigeon_echoAsyncSealedClass:(NSData* _Nonnull)pigeonVar_args
+                       wrappedError:
+                           (NativeInteropTestsError* _Nonnull)wrappedError
+                  completionHandler:
+                      (void (^_Nonnull)(NSData* _Nullable))completionHandler;
 /// Returns the passed object, to test serialization and deserialization.
 - (void)
     pigeon_echoAsyncNullableNativeInteropAllNullableTypes:
@@ -1865,6 +1923,11 @@ SWIFT_CLASS("_TtC11test_plugin40NativeInteropHostIntegrationCoreApiSetup")
                                            wrappedError:
                                                (NativeInteropTestsError* _Nonnull)
                                                    wrappedError
+    SWIFT_WARN_UNUSED_RESULT;
+- (NSData* _Nullable)
+    pigeon_callFlutterEchoSealedClass:(NSData* _Nonnull)pigeonVar_args
+                         wrappedError:
+                             (NativeInteropTestsError* _Nonnull)wrappedError
     SWIFT_WARN_UNUSED_RESULT;
 - (NSData* _Nullable)
     pigeon_callFlutterSendMultipleNullableTypes:
@@ -2717,19 +2780,53 @@ SWIFT_CLASS("_TtC11test_plugin36NativeInteropSealedClassHostApiSetup")
     SWIFT_WARN_UNUSED_RESULT;
 @end
 
-/// A sealed class, which native interop passes only with the hybrid
-/// transport, in the call’s buffer.
+/// A subclass of <code>NativeInteropSealedClass</code> with fields.
 /// Generated bridge class from Pigeon that moves data from Swift to
 /// Objective-C.
-SWIFT_CLASS("_TtC11test_plugin24NativeInteropShapeBridge")
-@interface NativeInteropShapeBridge : NSObject
-- (nonnull instancetype)init OBJC_DESIGNATED_INITIALIZER;
+SWIFT_CLASS("_TtC11test_plugin40NativeInteropSealedClassWithFieldsBridge")
+@interface NativeInteropSealedClassWithFieldsBridge
+    : NativeInteropSealedClassBridge
+- (nonnull instancetype)
+    initWithAString:(NSString* _Nonnull)aString
+       aNullableInt:(NSNumber* _Nullable)aNullableInt
+             anEnum:(enum NativeInteropAnEnum)anEnum
+             aClass:
+                 (NativeInteropAllNullableTypesWithoutRecursionBridge* _Nullable)
+                     aClass OBJC_DESIGNATED_INITIALIZER;
+@property(nonatomic, strong) NSString* _Nonnull aString;
+@property(nonatomic, strong) NSNumber* _Nullable aNullableInt;
+@property(nonatomic) enum NativeInteropAnEnum anEnum;
+@property(nonatomic, strong)
+    NativeInteropAllNullableTypesWithoutRecursionBridge* _Nullable aClass;
+- (nonnull instancetype)init SWIFT_UNAVAILABLE;
++ (nonnull instancetype)new SWIFT_UNAVAILABLE_MSG("-init is unavailable");
+@end
+
+/// A class with sealed class fields, to test sealed classes nested in classes
+/// and lists.
+/// Generated bridge class from Pigeon that moves data from Swift to
+/// Objective-C.
+SWIFT_CLASS("_TtC11test_plugin37NativeInteropSealedClassWrapperBridge")
+@interface NativeInteropSealedClassWrapperBridge : NSObject
+- (nonnull instancetype)
+    initWithSealedClass:(NativeInteropSealedClassBridge* _Nonnull)sealedClass
+    nullableSealedClass:
+        (NativeInteropSealedClassBridge* _Nullable)nullableSealedClass
+        sealedClassList:(NSArray<NSObject*>* _Nonnull)sealedClassList
+    OBJC_DESIGNATED_INITIALIZER;
+@property(nonatomic, strong)
+    NativeInteropSealedClassBridge* _Nonnull sealedClass;
+@property(nonatomic, strong)
+    NativeInteropSealedClassBridge* _Nullable nullableSealedClass;
+@property(nonatomic, copy) NSArray<NSObject*>* _Nonnull sealedClassList;
+- (nonnull instancetype)init SWIFT_UNAVAILABLE;
++ (nonnull instancetype)new SWIFT_UNAVAILABLE_MSG("-init is unavailable");
 @end
 
 /// Generated bridge class from Pigeon that moves data from Swift to
 /// Objective-C.
 SWIFT_CLASS("_TtC11test_plugin25NativeInteropSquareBridge")
-@interface NativeInteropSquareBridge : NSObject
+@interface NativeInteropSquareBridge : NativeInteropShapeBridge
 - (nonnull instancetype)initWithSide:(double)side
                                label:(NSString* _Nullable)label
     OBJC_DESIGNATED_INITIALIZER;

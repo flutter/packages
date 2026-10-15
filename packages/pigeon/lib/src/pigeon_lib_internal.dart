@@ -442,14 +442,6 @@ void _errorOnSwiftFfiUnsupportedFeatures(
     }
   }
   for (final Class classDefinition in root.classes) {
-    if (classDefinition.isSealed && !swiftOptions.useFfiHybrid) {
-      errors.add(
-        Error(
-          message:
-              'Swift FFI supports sealed classes only with `nativeInteropTransport: NativeInteropTransport.hybrid` (class "${classDefinition.name}"). $_moveToNonFfiFileSuggestion',
-        ),
-      );
-    }
     for (final NamedType field in classDefinition.fields) {
       // `description` has its own error for all Swift generation.
       if (field.name != 'description' && _swiftFfiReservedFieldNames.contains(field.name)) {
@@ -475,7 +467,7 @@ void _errorOnSwiftFfiUnsupportedFeatures(
 const String _moveToNonJniFileSuggestion =
     "Move them to a separate pigeon file that doesn't use Kotlin JNI (`KotlinOptions.useJni` or `--kotlin_use_jni`).";
 
-void _errorOnKotlinJniUnsupportedFeatures(List<Error> errors, Root root, {required bool hybrid}) {
+void _errorOnKotlinJniUnsupportedFeatures(List<Error> errors, Root root) {
   for (final Api api in root.apis) {
     if (api is AstEventChannelApi) {
       errors.add(
@@ -492,18 +484,6 @@ void _errorOnKotlinJniUnsupportedFeatures(List<Error> errors, Root root, {requir
         ),
       );
     }
-  }
-  if (hybrid) {
-    // Sealed classes cross in the hybrid transport's buffers, like on channels.
-    return;
-  }
-  for (final Class classDefinition in root.classes.where((Class c) => c.isSealed)) {
-    errors.add(
-      Error(
-        message:
-            'Kotlin JNI supports sealed classes only with `nativeInteropTransport: NativeInteropTransport.hybrid` (class "${classDefinition.name}"). $_moveToNonJniFileSuggestion',
-      ),
-    );
   }
 }
 
@@ -967,11 +947,7 @@ class KotlinGeneratorAdapter implements GeneratorAdapter {
     if (options.kotlinOptions?.useJni ?? false) {
       _errorOnTaskQueueInNativeInterop(errors, 'Kotlin JNI', root);
       _errorOnJniPropertyCollisions(errors, root);
-      _errorOnKotlinJniUnsupportedFeatures(
-        errors,
-        root,
-        hybrid: options.kotlinOptions!.useJniHybrid,
-      );
+      _errorOnKotlinJniUnsupportedFeatures(errors, root);
     }
     return errors;
   }

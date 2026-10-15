@@ -1016,6 +1016,164 @@ data class NativeInteropAllClassesWrapper(
 }
 
 /**
+ * A sealed class, to test sealed class handling.
+ *
+ * Generated class from Pigeon that represents data sent in messages. This class should not be
+ * extended by any user class outside of the generated file.
+ */
+@Keep sealed class NativeInteropSealedClass
+/**
+ * A subclass of `NativeInteropSealedClass` with fields.
+ *
+ * Generated class from Pigeon that represents data sent in messages.
+ */
+@Keep
+data class NativeInteropSealedClassWithFields(
+    val aString: String,
+    val aNullableInt: Long? = null,
+    val anEnum: NativeInteropAnEnum,
+    val aClass: NativeInteropAllNullableTypesWithoutRecursion? = null
+) : NativeInteropSealedClass() {
+  companion object {
+    fun fromList(pigeonVar_list: List<Any?>): NativeInteropSealedClassWithFields {
+      val aString = pigeonVar_list[0] as String
+      val aNullableInt = pigeonVar_list[1] as Long?
+      val anEnum = pigeonVar_list[2] as NativeInteropAnEnum
+      val aClass = pigeonVar_list[3] as NativeInteropAllNullableTypesWithoutRecursion?
+      return NativeInteropSealedClassWithFields(aString, aNullableInt, anEnum, aClass)
+    }
+  }
+
+  fun toList(): List<Any?> {
+    return listOf(
+        aString,
+        aNullableInt,
+        anEnum,
+        aClass,
+    )
+  }
+
+  override fun equals(other: Any?): Boolean {
+    if (other == null || other.javaClass != javaClass) {
+      return false
+    }
+    if (this === other) {
+      return true
+    }
+    val other = other as NativeInteropSealedClassWithFields
+    return NativeInteropTestsPigeonUtils.deepEquals(this.aString, other.aString) &&
+        NativeInteropTestsPigeonUtils.deepEquals(this.aNullableInt, other.aNullableInt) &&
+        NativeInteropTestsPigeonUtils.deepEquals(this.anEnum, other.anEnum) &&
+        NativeInteropTestsPigeonUtils.deepEquals(this.aClass, other.aClass)
+  }
+
+  override fun hashCode(): Int {
+    var result = javaClass.hashCode()
+    result = 31 * result + NativeInteropTestsPigeonUtils.deepHash(this.aString)
+    result = 31 * result + NativeInteropTestsPigeonUtils.deepHash(this.aNullableInt)
+    result = 31 * result + NativeInteropTestsPigeonUtils.deepHash(this.anEnum)
+    result = 31 * result + NativeInteropTestsPigeonUtils.deepHash(this.aClass)
+    return result
+  }
+
+  override fun toString(): String {
+    return "NativeInteropSealedClassWithFields(aString=$aString, aNullableInt=$aNullableInt, anEnum=$anEnum, aClass=$aClass)"
+  }
+}
+
+/**
+ * A subclass of `NativeInteropSealedClass` without fields.
+ *
+ * Generated class from Pigeon that represents data sent in messages.
+ */
+@Keep
+class NativeInteropEmptySealedClass : NativeInteropSealedClass() {
+  companion object {
+    fun fromList(pigeonVar_list: List<Any?>): NativeInteropEmptySealedClass {
+      return NativeInteropEmptySealedClass()
+    }
+  }
+
+  fun toList(): List<Any?> {
+    return listOf()
+  }
+
+  override fun equals(other: Any?): Boolean {
+    if (other == null || other.javaClass != javaClass) {
+      return false
+    }
+    if (this === other) {
+      return true
+    }
+    return true
+  }
+
+  override fun hashCode(): Int {
+    var result = javaClass.hashCode()
+    return result
+  }
+
+  override fun toString(): String {
+    return "NativeInteropEmptySealedClass()"
+  }
+}
+
+/**
+ * A class with sealed class fields, to test sealed classes nested in classes and lists.
+ *
+ * Generated class from Pigeon that represents data sent in messages.
+ */
+@Keep
+data class NativeInteropSealedClassWrapper(
+    val sealedClass: NativeInteropSealedClass,
+    val nullableSealedClass: NativeInteropSealedClass? = null,
+    val sealedClassList: List<NativeInteropSealedClass>
+) {
+  companion object {
+    fun fromList(pigeonVar_list: List<Any?>): NativeInteropSealedClassWrapper {
+      val sealedClass = pigeonVar_list[0] as NativeInteropSealedClass
+      val nullableSealedClass = pigeonVar_list[1] as NativeInteropSealedClass?
+      val sealedClassList = pigeonVar_list[2] as List<NativeInteropSealedClass>
+      return NativeInteropSealedClassWrapper(sealedClass, nullableSealedClass, sealedClassList)
+    }
+  }
+
+  fun toList(): List<Any?> {
+    return listOf(
+        sealedClass,
+        nullableSealedClass,
+        sealedClassList,
+    )
+  }
+
+  override fun equals(other: Any?): Boolean {
+    if (other == null || other.javaClass != javaClass) {
+      return false
+    }
+    if (this === other) {
+      return true
+    }
+    val other = other as NativeInteropSealedClassWrapper
+    return NativeInteropTestsPigeonUtils.deepEquals(this.sealedClass, other.sealedClass) &&
+        NativeInteropTestsPigeonUtils.deepEquals(
+            this.nullableSealedClass, other.nullableSealedClass) &&
+        NativeInteropTestsPigeonUtils.deepEquals(this.sealedClassList, other.sealedClassList)
+  }
+
+  override fun hashCode(): Int {
+    var result = javaClass.hashCode()
+    result = 31 * result + NativeInteropTestsPigeonUtils.deepHash(this.sealedClass)
+    result = 31 * result + NativeInteropTestsPigeonUtils.deepHash(this.nullableSealedClass)
+    result = 31 * result + NativeInteropTestsPigeonUtils.deepHash(this.sealedClassList)
+    return result
+  }
+
+  override fun toString(): String {
+    return "NativeInteropSealedClassWrapper(sealedClass=$sealedClass, nullableSealedClass=$nullableSealedClass, sealedClassList=$sealedClassList)"
+  }
+}
+
+/**
  * A class whose field names collide with members of the bindings that JNIgen generates, so JNIgen
  * renames their accessors.
  *
@@ -1259,12 +1417,27 @@ private open class NativeInteropTestsPigeonCodec : StandardMessageCodec() {
         }
       }
       136.toByte() -> {
-        return (readValue(buffer) as? List<Any?>)?.let { NativeInteropReservedNames.fromList(it) }
+        return (readValue(buffer) as? List<Any?>)?.let {
+          NativeInteropSealedClassWithFields.fromList(it)
+        }
       }
       137.toByte() -> {
-        return (readValue(buffer) as? List<Any?>)?.let { NativeInteropCircle.fromList(it) }
+        return (readValue(buffer) as? List<Any?>)?.let {
+          NativeInteropEmptySealedClass.fromList(it)
+        }
       }
       138.toByte() -> {
+        return (readValue(buffer) as? List<Any?>)?.let {
+          NativeInteropSealedClassWrapper.fromList(it)
+        }
+      }
+      139.toByte() -> {
+        return (readValue(buffer) as? List<Any?>)?.let { NativeInteropReservedNames.fromList(it) }
+      }
+      140.toByte() -> {
+        return (readValue(buffer) as? List<Any?>)?.let { NativeInteropCircle.fromList(it) }
+      }
+      141.toByte() -> {
         return (readValue(buffer) as? List<Any?>)?.let { NativeInteropSquare.fromList(it) }
       }
       else -> super.readValueOfType(type, buffer)
@@ -1301,16 +1474,28 @@ private open class NativeInteropTestsPigeonCodec : StandardMessageCodec() {
         stream.write(135)
         writeValue(stream, value.toList())
       }
-      is NativeInteropReservedNames -> {
+      is NativeInteropSealedClassWithFields -> {
         stream.write(136)
         writeValue(stream, value.toList())
       }
-      is NativeInteropCircle -> {
+      is NativeInteropEmptySealedClass -> {
         stream.write(137)
         writeValue(stream, value.toList())
       }
-      is NativeInteropSquare -> {
+      is NativeInteropSealedClassWrapper -> {
         stream.write(138)
+        writeValue(stream, value.toList())
+      }
+      is NativeInteropReservedNames -> {
+        stream.write(139)
+        writeValue(stream, value.toList())
+      }
+      is NativeInteropCircle -> {
+        stream.write(140)
+        writeValue(stream, value.toList())
+      }
+      is NativeInteropSquare -> {
+        stream.write(141)
         writeValue(stream, value.toList())
       }
       else -> super.writeValue(stream, value)
@@ -1426,6 +1611,18 @@ interface NativeInteropHostIntegrationCoreApi {
   ): Map<Long, NativeInteropAllNullableTypes>
   /** Returns the passed class to test nested class serialization and deserialization. */
   fun echoClassWrapper(wrapper: NativeInteropAllClassesWrapper): NativeInteropAllClassesWrapper
+  /** Returns the passed sealed class, to test sealed class handling. */
+  fun echoSealedClass(sealedClass: NativeInteropSealedClass): NativeInteropSealedClass
+  /** Returns the passed sealed class, to test nullable sealed class handling. */
+  fun echoNullableSealedClass(sealedClass: NativeInteropSealedClass?): NativeInteropSealedClass?
+  /** Returns the passed list, to test sealed classes in lists. */
+  fun echoSealedClassList(
+      sealedClassList: List<NativeInteropSealedClass>
+  ): List<NativeInteropSealedClass>
+  /** Returns the passed wrapper, to test sealed classes in class fields. */
+  fun echoSealedClassWrapper(
+      wrapper: NativeInteropSealedClassWrapper
+  ): NativeInteropSealedClassWrapper
   /** Returns the passed enum to test serialization and deserialization. */
   fun echoEnum(anEnum: NativeInteropAnEnum): NativeInteropAnEnum
   /** Returns the passed enum to test serialization and deserialization. */
@@ -1589,6 +1786,8 @@ interface NativeInteropHostIntegrationCoreApi {
   suspend fun echoAsyncNativeInteropAllTypes(
       everything: NativeInteropAllTypes
   ): NativeInteropAllTypes
+  /** Returns the passed sealed class asynchronously. */
+  suspend fun echoAsyncSealedClass(sealedClass: NativeInteropSealedClass): NativeInteropSealedClass
   /** Returns the passed object, to test serialization and deserialization. */
   suspend fun echoAsyncNullableNativeInteropAllNullableTypes(
       everything: NativeInteropAllNullableTypes?
@@ -1657,6 +1856,8 @@ interface NativeInteropHostIntegrationCoreApi {
   fun callFlutterEchoNativeInteropAllNullableTypes(
       everything: NativeInteropAllNullableTypes?
   ): NativeInteropAllNullableTypes?
+
+  fun callFlutterEchoSealedClass(sealedClass: NativeInteropSealedClass): NativeInteropSealedClass
 
   fun callFlutterSendMultipleNullableTypes(
       aNullableBool: Boolean?,
@@ -2425,6 +2626,66 @@ class NativeInteropHostIntegrationCoreApiRegistrar {
       val wrapperArg = pigeonVar_decodedArgs[0] as NativeInteropAllClassesWrapper
       return NativeInteropTestsPigeonInteropCodec.encodeOrNull(
           pigeonVar_api.echoClassWrapper(wrapperArg))
+    } catch (e: NativeInteropTestsError) {
+      throw NativeInteropTestsError(
+              e.code, e.message, NativeInteropTestsPigeonInteropCodec.encodeOrNull(e.details))
+          .apply { stackTrace = e.stackTrace }
+    }
+  }
+
+  fun pigeon_echoSealedClass(pigeonVar_args: ByteArray): ByteArray? {
+    val pigeonVar_api = api ?: error("NativeInteropHostIntegrationCoreApi has not been registered")
+    try {
+      val pigeonVar_decodedArgs =
+          NativeInteropTestsPigeonInteropCodec.decodeArguments(pigeonVar_args)
+      val sealedClassArg = pigeonVar_decodedArgs[0] as NativeInteropSealedClass
+      return NativeInteropTestsPigeonInteropCodec.encodeOrNull(
+          pigeonVar_api.echoSealedClass(sealedClassArg))
+    } catch (e: NativeInteropTestsError) {
+      throw NativeInteropTestsError(
+              e.code, e.message, NativeInteropTestsPigeonInteropCodec.encodeOrNull(e.details))
+          .apply { stackTrace = e.stackTrace }
+    }
+  }
+
+  fun pigeon_echoNullableSealedClass(pigeonVar_args: ByteArray): ByteArray? {
+    val pigeonVar_api = api ?: error("NativeInteropHostIntegrationCoreApi has not been registered")
+    try {
+      val pigeonVar_decodedArgs =
+          NativeInteropTestsPigeonInteropCodec.decodeArguments(pigeonVar_args)
+      val sealedClassArg = pigeonVar_decodedArgs[0] as NativeInteropSealedClass?
+      return NativeInteropTestsPigeonInteropCodec.encodeOrNull(
+          pigeonVar_api.echoNullableSealedClass(sealedClassArg))
+    } catch (e: NativeInteropTestsError) {
+      throw NativeInteropTestsError(
+              e.code, e.message, NativeInteropTestsPigeonInteropCodec.encodeOrNull(e.details))
+          .apply { stackTrace = e.stackTrace }
+    }
+  }
+
+  fun pigeon_echoSealedClassList(pigeonVar_args: ByteArray): ByteArray? {
+    val pigeonVar_api = api ?: error("NativeInteropHostIntegrationCoreApi has not been registered")
+    try {
+      val pigeonVar_decodedArgs =
+          NativeInteropTestsPigeonInteropCodec.decodeArguments(pigeonVar_args)
+      val sealedClassListArg = pigeonVar_decodedArgs[0] as List<NativeInteropSealedClass>
+      return NativeInteropTestsPigeonInteropCodec.encodeOrNull(
+          pigeonVar_api.echoSealedClassList(sealedClassListArg))
+    } catch (e: NativeInteropTestsError) {
+      throw NativeInteropTestsError(
+              e.code, e.message, NativeInteropTestsPigeonInteropCodec.encodeOrNull(e.details))
+          .apply { stackTrace = e.stackTrace }
+    }
+  }
+
+  fun pigeon_echoSealedClassWrapper(pigeonVar_args: ByteArray): ByteArray? {
+    val pigeonVar_api = api ?: error("NativeInteropHostIntegrationCoreApi has not been registered")
+    try {
+      val pigeonVar_decodedArgs =
+          NativeInteropTestsPigeonInteropCodec.decodeArguments(pigeonVar_args)
+      val wrapperArg = pigeonVar_decodedArgs[0] as NativeInteropSealedClassWrapper
+      return NativeInteropTestsPigeonInteropCodec.encodeOrNull(
+          pigeonVar_api.echoSealedClassWrapper(wrapperArg))
     } catch (e: NativeInteropTestsError) {
       throw NativeInteropTestsError(
               e.code, e.message, NativeInteropTestsPigeonInteropCodec.encodeOrNull(e.details))
@@ -3249,6 +3510,21 @@ class NativeInteropHostIntegrationCoreApiRegistrar {
     }
   }
 
+  suspend fun pigeon_echoAsyncSealedClass(pigeonVar_args: ByteArray): ByteArray? {
+    val pigeonVar_api = api ?: error("NativeInteropHostIntegrationCoreApi has not been registered")
+    try {
+      val pigeonVar_decodedArgs =
+          NativeInteropTestsPigeonInteropCodec.decodeArguments(pigeonVar_args)
+      val sealedClassArg = pigeonVar_decodedArgs[0] as NativeInteropSealedClass
+      return NativeInteropTestsPigeonInteropCodec.encodeOrNull(
+          pigeonVar_api.echoAsyncSealedClass(sealedClassArg))
+    } catch (e: NativeInteropTestsError) {
+      throw NativeInteropTestsError(
+              e.code, e.message, NativeInteropTestsPigeonInteropCodec.encodeOrNull(e.details))
+          .apply { stackTrace = e.stackTrace }
+    }
+  }
+
   suspend fun pigeon_echoAsyncNullableNativeInteropAllNullableTypes(
       pigeonVar_args: ByteArray
   ): ByteArray? {
@@ -3594,6 +3870,21 @@ class NativeInteropHostIntegrationCoreApiRegistrar {
       val everythingArg = pigeonVar_decodedArgs[0] as NativeInteropAllNullableTypes?
       return NativeInteropTestsPigeonInteropCodec.encodeOrNull(
           pigeonVar_api.callFlutterEchoNativeInteropAllNullableTypes(everythingArg))
+    } catch (e: NativeInteropTestsError) {
+      throw NativeInteropTestsError(
+              e.code, e.message, NativeInteropTestsPigeonInteropCodec.encodeOrNull(e.details))
+          .apply { stackTrace = e.stackTrace }
+    }
+  }
+
+  fun pigeon_callFlutterEchoSealedClass(pigeonVar_args: ByteArray): ByteArray? {
+    val pigeonVar_api = api ?: error("NativeInteropHostIntegrationCoreApi has not been registered")
+    try {
+      val pigeonVar_decodedArgs =
+          NativeInteropTestsPigeonInteropCodec.decodeArguments(pigeonVar_args)
+      val sealedClassArg = pigeonVar_decodedArgs[0] as NativeInteropSealedClass
+      return NativeInteropTestsPigeonInteropCodec.encodeOrNull(
+          pigeonVar_api.callFlutterEchoSealedClass(sealedClassArg))
     } catch (e: NativeInteropTestsError) {
       throw NativeInteropTestsError(
               e.code, e.message, NativeInteropTestsPigeonInteropCodec.encodeOrNull(e.details))
@@ -5109,6 +5400,8 @@ interface NativeInteropFlutterIntegrationCoreApi {
   fun echoNativeInteropAllNullableTypes(
       everything: NativeInteropAllNullableTypes?
   ): NativeInteropAllNullableTypes?
+  /** Returns the passed sealed class, to test sealed class handling. */
+  fun echoNativeInteropSealedClass(sealedClass: NativeInteropSealedClass): NativeInteropSealedClass
   /**
    * Returns passed in arguments of multiple types.
    *
@@ -5403,6 +5696,8 @@ interface NativeInteropFlutterIntegrationCoreApiBridge {
 
   fun pigeon_echoNativeInteropAllNullableTypes(pigeonVar_args: ByteArray): ByteArray?
 
+  fun pigeon_echoNativeInteropSealedClass(pigeonVar_args: ByteArray): ByteArray?
+
   fun pigeon_sendMultipleNullableTypes(
       aNullableBool: Boolean?,
       aNullableInt: Long?,
@@ -5661,6 +5956,18 @@ private class NativeInteropFlutterIntegrationCoreApiBridgeAdapter(
         if (pigeonVar_result == null) null
         else NativeInteropTestsPigeonInteropCodec.decode(pigeonVar_result)
     return pigeonVar_decoded as NativeInteropAllNullableTypes?
+  }
+
+  override fun echoNativeInteropSealedClass(
+      sealedClass: NativeInteropSealedClass
+  ): NativeInteropSealedClass {
+    val pigeonVar_result =
+        bridge.pigeon_echoNativeInteropSealedClass(
+            NativeInteropTestsPigeonInteropCodec.encode(listOf<Any?>(sealedClass)))
+    val pigeonVar_decoded =
+        if (pigeonVar_result == null) null
+        else NativeInteropTestsPigeonInteropCodec.decode(pigeonVar_result)
+    return pigeonVar_decoded as NativeInteropSealedClass
   }
 
   override fun sendMultipleNullableTypes(
