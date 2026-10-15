@@ -1,0 +1,3 @@
+changelog: |
+  - Fix `GridTile` crash when the incoming constraints are unbounded (e.g. inside a horizontally scrolling `ListView`).
+version: patch
