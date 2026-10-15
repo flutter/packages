@@ -43,28 +43,22 @@ final class FIATransactionCacheTests: XCTestCase {
   func testClear() throws {
     let fakeUpdatedTransactions = [1, 2, 3]
     let fakeRemovedTransactions = ["Remove 1", "Remove 2", "Remove 3"]
-    let fakeUpdatedDownloads = ["Download 1", "Download 2"]
     let cache = FIATransactionCache()
 
     cache.add(fakeUpdatedTransactions, for: TransactionCacheKey.updatedTransactions)
     cache.add(fakeRemovedTransactions, for: TransactionCacheKey.removedTransactions)
-    cache.add(fakeUpdatedDownloads, for: TransactionCacheKey.updatedDownloads)
 
     let updatedTransactions = try XCTUnwrap(
       cache.getObjectsFor(TransactionCacheKey.updatedTransactions) as? [Int])
     let removedTransactions = try XCTUnwrap(
       cache.getObjectsFor(TransactionCacheKey.removedTransactions) as? [String])
-    let updatedDownloads = try XCTUnwrap(
-      cache.getObjectsFor(TransactionCacheKey.updatedDownloads) as? [String])
 
     XCTAssertEqual(fakeUpdatedTransactions, updatedTransactions)
     XCTAssertEqual(fakeRemovedTransactions, removedTransactions)
-    XCTAssertEqual(fakeUpdatedDownloads, updatedDownloads)
 
     cache.clear()
 
     XCTAssertTrue(cache.getObjectsFor(TransactionCacheKey.updatedTransactions).isEmpty)
     XCTAssertTrue(cache.getObjectsFor(TransactionCacheKey.removedTransactions).isEmpty)
-    XCTAssertTrue(cache.getObjectsFor(TransactionCacheKey.updatedDownloads).isEmpty)
   }
 }
