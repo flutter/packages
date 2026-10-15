@@ -1,3 +1,7 @@
+## 0.8.13+16
+
+* Converts the iOS example app and UI tests to Swift.
+
 ## 0.8.13+15
 
 * Switches Pigeon to Swift.
