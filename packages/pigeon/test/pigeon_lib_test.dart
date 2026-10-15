@@ -2462,7 +2462,10 @@ dev_dependencies:
 
     test('FfigenConfigGeneratorAdapter only lists the Setup class for host APIs', () {
       final root = Root(
-        apis: <Api>[AstHostApi(name: 'MyHostApi', methods: <Method>[])],
+        apis: <Api>[
+          AstHostApi(name: 'MyHostApi', methods: <Method>[]),
+          AstFlutterApi(name: 'MyFlutterApi', methods: <Method>[]),
+        ],
         classes: <Class>[],
         enums: <Enum>[],
       );
@@ -2482,6 +2485,9 @@ dev_dependencies:
 
       expect(code, isNot(contains("'MyHostApi',")));
       expect(code, contains("'MyHostApiSetup',"));
+      expect(code, isNot(contains("'MyFlutterApi',")));
+      expect(code, contains("'MyFlutterApiBridge',"));
+      expect(code, contains("'MyFlutterApiRegistrar',"));
     });
 
     test('SwiftGeneratorAdapter errors on TaskQueue when useFfi is true', () {
