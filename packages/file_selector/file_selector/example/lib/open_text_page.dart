@@ -94,11 +94,10 @@ class _TextDisplayState extends State<TextDisplay> {
   Widget build(BuildContext context) {
     return AlertDialog(
       title: Text(widget.fileName),
-      content: Scrollbar(child: SingleChildScrollView(child: Text(widget.fileContent))),
-      // content: Scrollbar(
-      //   controller: scrollController,
-      //   child: SingleChildScrollView(controller: scrollController, child: Text(widget.fileContent)),
-      // ),
+      content: Scrollbar(
+        controller: scrollController,
+        child: SingleChildScrollView(controller: scrollController, child: Text(widget.fileContent)),
+      ),
       actions: <Widget>[
         TextButton(child: const Text('Close'), onPressed: () => Navigator.pop(context)),
       ],
