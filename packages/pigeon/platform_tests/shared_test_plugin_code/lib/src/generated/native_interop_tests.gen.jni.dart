@@ -1375,6 +1375,153 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
     ).object<NativeInteropAllClassesWrapper>();
   }
 
+  static final _id_echoSealedClass = NativeInteropHostIntegrationCoreApiRegistrar._class
+      .instanceMethodId(
+        r'echoSealedClass',
+        r'(Lcom/example/test_plugin/NativeInteropSealedClass;)Lcom/example/test_plugin/NativeInteropSealedClass;',
+      );
+
+  static final _echoSealedClass =
+      jni$_.ProtectedJniExtensions.lookup<
+            jni$_.NativeFunction<
+              jni$_.JniResult Function(
+                jni$_.Pointer<jni$_.Void>,
+                jni$_.JMethodIDPtr,
+                jni$_.VarArgs<(jni$_.Pointer<jni$_.Void>,)>,
+              )
+            >
+          >('globalEnv_CallObjectMethod')
+          .asFunction<
+            jni$_.JniResult Function(
+              jni$_.Pointer<jni$_.Void>,
+              jni$_.JMethodIDPtr,
+              jni$_.Pointer<jni$_.Void>,
+            )
+          >();
+
+  /// from: `public fun echoSealedClass(sealedClass: com.example.test_plugin.NativeInteropSealedClass): com.example.test_plugin.NativeInteropSealedClass`
+  /// The returned object must be released after use, by calling the [release] method.
+  NativeInteropSealedClass echoSealedClass(NativeInteropSealedClass nativeInteropSealedClass) {
+    final _$$selfRef = reference;
+    final _$nativeInteropSealedClass = nativeInteropSealedClass.reference;
+    return _echoSealedClass(
+      _$$selfRef.pointer,
+      _id_echoSealedClass.pointer,
+      _$nativeInteropSealedClass.pointer,
+    ).object<NativeInteropSealedClass>();
+  }
+
+  static final _id_echoNullableSealedClass = NativeInteropHostIntegrationCoreApiRegistrar._class
+      .instanceMethodId(
+        r'echoNullableSealedClass',
+        r'(Lcom/example/test_plugin/NativeInteropSealedClass;)Lcom/example/test_plugin/NativeInteropSealedClass;',
+      );
+
+  static final _echoNullableSealedClass =
+      jni$_.ProtectedJniExtensions.lookup<
+            jni$_.NativeFunction<
+              jni$_.JniResult Function(
+                jni$_.Pointer<jni$_.Void>,
+                jni$_.JMethodIDPtr,
+                jni$_.VarArgs<(jni$_.Pointer<jni$_.Void>,)>,
+              )
+            >
+          >('globalEnv_CallObjectMethod')
+          .asFunction<
+            jni$_.JniResult Function(
+              jni$_.Pointer<jni$_.Void>,
+              jni$_.JMethodIDPtr,
+              jni$_.Pointer<jni$_.Void>,
+            )
+          >();
+
+  /// from: `public fun echoNullableSealedClass(sealedClass: com.example.test_plugin.NativeInteropSealedClass?): com.example.test_plugin.NativeInteropSealedClass?`
+  /// The returned object must be released after use, by calling the [release] method.
+  NativeInteropSealedClass? echoNullableSealedClass(
+    NativeInteropSealedClass? nativeInteropSealedClass,
+  ) {
+    final _$$selfRef = reference;
+    final _$nativeInteropSealedClass = nativeInteropSealedClass?.reference ?? jni$_.jNullReference;
+    return _echoNullableSealedClass(
+      _$$selfRef.pointer,
+      _id_echoNullableSealedClass.pointer,
+      _$nativeInteropSealedClass.pointer,
+    ).object<NativeInteropSealedClass?>();
+  }
+
+  static final _id_echoSealedClassList = NativeInteropHostIntegrationCoreApiRegistrar._class
+      .instanceMethodId(r'echoSealedClassList', r'(Ljava/util/List;)Ljava/util/List;');
+
+  static final _echoSealedClassList =
+      jni$_.ProtectedJniExtensions.lookup<
+            jni$_.NativeFunction<
+              jni$_.JniResult Function(
+                jni$_.Pointer<jni$_.Void>,
+                jni$_.JMethodIDPtr,
+                jni$_.VarArgs<(jni$_.Pointer<jni$_.Void>,)>,
+              )
+            >
+          >('globalEnv_CallObjectMethod')
+          .asFunction<
+            jni$_.JniResult Function(
+              jni$_.Pointer<jni$_.Void>,
+              jni$_.JMethodIDPtr,
+              jni$_.Pointer<jni$_.Void>,
+            )
+          >();
+
+  /// from: `public fun echoSealedClassList(sealedClassList: kotlin.collections.List<com.example.test_plugin.NativeInteropSealedClass>): kotlin.collections.List<com.example.test_plugin.NativeInteropSealedClass>`
+  /// The returned object must be released after use, by calling the [release] method.
+  jni$_.JList<NativeInteropSealedClass> echoSealedClassList(
+    jni$_.JList<NativeInteropSealedClass> list,
+  ) {
+    final _$$selfRef = reference;
+    final _$list = list.reference;
+    return _echoSealedClassList(
+      _$$selfRef.pointer,
+      _id_echoSealedClassList.pointer,
+      _$list.pointer,
+    ).object<jni$_.JList<NativeInteropSealedClass>>();
+  }
+
+  static final _id_echoSealedClassWrapper = NativeInteropHostIntegrationCoreApiRegistrar._class
+      .instanceMethodId(
+        r'echoSealedClassWrapper',
+        r'(Lcom/example/test_plugin/NativeInteropSealedClassWrapper;)Lcom/example/test_plugin/NativeInteropSealedClassWrapper;',
+      );
+
+  static final _echoSealedClassWrapper =
+      jni$_.ProtectedJniExtensions.lookup<
+            jni$_.NativeFunction<
+              jni$_.JniResult Function(
+                jni$_.Pointer<jni$_.Void>,
+                jni$_.JMethodIDPtr,
+                jni$_.VarArgs<(jni$_.Pointer<jni$_.Void>,)>,
+              )
+            >
+          >('globalEnv_CallObjectMethod')
+          .asFunction<
+            jni$_.JniResult Function(
+              jni$_.Pointer<jni$_.Void>,
+              jni$_.JMethodIDPtr,
+              jni$_.Pointer<jni$_.Void>,
+            )
+          >();
+
+  /// from: `public fun echoSealedClassWrapper(wrapper: com.example.test_plugin.NativeInteropSealedClassWrapper): com.example.test_plugin.NativeInteropSealedClassWrapper`
+  /// The returned object must be released after use, by calling the [release] method.
+  NativeInteropSealedClassWrapper echoSealedClassWrapper(
+    NativeInteropSealedClassWrapper nativeInteropSealedClassWrapper,
+  ) {
+    final _$$selfRef = reference;
+    final _$nativeInteropSealedClassWrapper = nativeInteropSealedClassWrapper.reference;
+    return _echoSealedClassWrapper(
+      _$$selfRef.pointer,
+      _id_echoSealedClassWrapper.pointer,
+      _$nativeInteropSealedClassWrapper.pointer,
+    ).object<NativeInteropSealedClassWrapper>();
+  }
+
   static final _id_echoEnum = NativeInteropHostIntegrationCoreApiRegistrar._class.instanceMethodId(
     r'echoEnum',
     r'(Lcom/example/test_plugin/NativeInteropAnEnum;)Lcom/example/test_plugin/NativeInteropAnEnum;',
@@ -4078,6 +4225,65 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
     return $o.as<NativeInteropAllTypes>(NativeInteropAllTypes.type, releaseOriginal: true);
   }
 
+  static final _id_echoAsyncSealedClass = NativeInteropHostIntegrationCoreApiRegistrar._class
+      .instanceMethodId(
+        r'echoAsyncSealedClass',
+        r'(Lcom/example/test_plugin/NativeInteropSealedClass;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;',
+      );
+
+  static final _echoAsyncSealedClass =
+      jni$_.ProtectedJniExtensions.lookup<
+            jni$_.NativeFunction<
+              jni$_.JniResult Function(
+                jni$_.Pointer<jni$_.Void>,
+                jni$_.JMethodIDPtr,
+                jni$_.VarArgs<(jni$_.Pointer<jni$_.Void>, jni$_.Pointer<jni$_.Void>)>,
+              )
+            >
+          >('globalEnv_CallObjectMethod')
+          .asFunction<
+            jni$_.JniResult Function(
+              jni$_.Pointer<jni$_.Void>,
+              jni$_.JMethodIDPtr,
+              jni$_.Pointer<jni$_.Void>,
+              jni$_.Pointer<jni$_.Void>,
+            )
+          >();
+
+  /// from: `public suspend fun echoAsyncSealedClass(sealedClass: com.example.test_plugin.NativeInteropSealedClass): com.example.test_plugin.NativeInteropSealedClass`
+  /// The returned object must be released after use, by calling the [release] method.
+  core$_.Future<NativeInteropSealedClass> echoAsyncSealedClass(
+    NativeInteropSealedClass nativeInteropSealedClass,
+  ) async {
+    final $p = jni$_.ReceivePort();
+    final _$continuation = jni$_.ProtectedJniExtensions.newPortContinuation($p);
+    final _$$selfRef = reference;
+    final _$nativeInteropSealedClass = nativeInteropSealedClass.reference;
+    final $r = _echoAsyncSealedClass(
+      _$$selfRef.pointer,
+      _id_echoAsyncSealedClass.pointer,
+      _$nativeInteropSealedClass.pointer,
+      _$continuation.pointer,
+    ).object<jni$_.JObject>();
+    _$continuation.release();
+    jni$_.JObject $o;
+    if ($r.isInstanceOf(jni$_.coroutineSingletonsClass)) {
+      $r.release();
+      final $a = await $p.first;
+      $o = jni$_.JObject.fromReference(jni$_.JGlobalReference(jni$_.JObjectPtr.fromAddress($a)));
+      if ($o.isInstanceOf(jni$_.result$Class)) {
+        $o = jni$_.resultValueField.get($o, const jni$_.$JObject$Type$());
+      } else if ($o.isInstanceOf(jni$_.result$FailureClass)) {
+        final $e = jni$_.failureExceptionField.get($o, const jni$_.$JObject$Type$());
+        $o.release();
+        jni$_.Jni.throwException($e.reference.toPointer());
+      }
+    } else {
+      $o = $r;
+    }
+    return $o.as<NativeInteropSealedClass>(NativeInteropSealedClass.type, releaseOriginal: true);
+  }
+
   static final _id_echoAsyncNullableNativeInteropAllNullableTypes =
       NativeInteropHostIntegrationCoreApiRegistrar._class.instanceMethodId(
         r'echoAsyncNullableNativeInteropAllNullableTypes',
@@ -5497,6 +5703,44 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
       _id_callFlutterEchoNativeInteropAllNullableTypes.pointer,
       _$nativeInteropAllNullableTypes.pointer,
     ).object<NativeInteropAllNullableTypes?>();
+  }
+
+  static final _id_callFlutterEchoSealedClass = NativeInteropHostIntegrationCoreApiRegistrar._class
+      .instanceMethodId(
+        r'callFlutterEchoSealedClass',
+        r'(Lcom/example/test_plugin/NativeInteropSealedClass;)Lcom/example/test_plugin/NativeInteropSealedClass;',
+      );
+
+  static final _callFlutterEchoSealedClass =
+      jni$_.ProtectedJniExtensions.lookup<
+            jni$_.NativeFunction<
+              jni$_.JniResult Function(
+                jni$_.Pointer<jni$_.Void>,
+                jni$_.JMethodIDPtr,
+                jni$_.VarArgs<(jni$_.Pointer<jni$_.Void>,)>,
+              )
+            >
+          >('globalEnv_CallObjectMethod')
+          .asFunction<
+            jni$_.JniResult Function(
+              jni$_.Pointer<jni$_.Void>,
+              jni$_.JMethodIDPtr,
+              jni$_.Pointer<jni$_.Void>,
+            )
+          >();
+
+  /// from: `public fun callFlutterEchoSealedClass(sealedClass: com.example.test_plugin.NativeInteropSealedClass): com.example.test_plugin.NativeInteropSealedClass`
+  /// The returned object must be released after use, by calling the [release] method.
+  NativeInteropSealedClass callFlutterEchoSealedClass(
+    NativeInteropSealedClass nativeInteropSealedClass,
+  ) {
+    final _$$selfRef = reference;
+    final _$nativeInteropSealedClass = nativeInteropSealedClass.reference;
+    return _callFlutterEchoSealedClass(
+      _$$selfRef.pointer,
+      _id_callFlutterEchoSealedClass.pointer,
+      _$nativeInteropSealedClass.pointer,
+    ).object<NativeInteropSealedClass>();
   }
 
   static final _id_callFlutterSendMultipleNullableTypes =
@@ -10508,6 +10752,12 @@ extension type NativeInteropFlutterIntegrationCoreApi._(jni$_.JObject _$this)
             jni$_.nullptr;
       }
       if ($d ==
+          r'echoNativeInteropSealedClass(Lcom/example/test_plugin/NativeInteropSealedClass;)Lcom/example/test_plugin/NativeInteropSealedClass;') {
+        final $r = _$impls[$p]!.echoNativeInteropSealedClass(($a![0] as NativeInteropSealedClass));
+        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
+            jni$_.nullptr;
+      }
+      if ($d ==
           r'sendMultipleNullableTypes(Ljava/lang/Boolean;Ljava/lang/Long;Ljava/lang/String;)Lcom/example/test_plugin/NativeInteropAllNullableTypes;') {
         final $r = _$impls[$p]!.sendMultipleNullableTypes(
           ($a![0] as jni$_.JBoolean?),
@@ -11462,6 +11712,44 @@ extension NativeInteropFlutterIntegrationCoreApi$$Methods
       _id_echoNativeInteropAllNullableTypes.pointer,
       _$nativeInteropAllNullableTypes.pointer,
     ).object<NativeInteropAllNullableTypes?>();
+  }
+
+  static final _id_echoNativeInteropSealedClass = NativeInteropFlutterIntegrationCoreApi._class
+      .instanceMethodId(
+        r'echoNativeInteropSealedClass',
+        r'(Lcom/example/test_plugin/NativeInteropSealedClass;)Lcom/example/test_plugin/NativeInteropSealedClass;',
+      );
+
+  static final _echoNativeInteropSealedClass =
+      jni$_.ProtectedJniExtensions.lookup<
+            jni$_.NativeFunction<
+              jni$_.JniResult Function(
+                jni$_.Pointer<jni$_.Void>,
+                jni$_.JMethodIDPtr,
+                jni$_.VarArgs<(jni$_.Pointer<jni$_.Void>,)>,
+              )
+            >
+          >('globalEnv_CallObjectMethod')
+          .asFunction<
+            jni$_.JniResult Function(
+              jni$_.Pointer<jni$_.Void>,
+              jni$_.JMethodIDPtr,
+              jni$_.Pointer<jni$_.Void>,
+            )
+          >();
+
+  /// from: `public fun echoNativeInteropSealedClass(sealedClass: com.example.test_plugin.NativeInteropSealedClass): com.example.test_plugin.NativeInteropSealedClass`
+  /// The returned object must be released after use, by calling the [release] method.
+  NativeInteropSealedClass echoNativeInteropSealedClass(
+    NativeInteropSealedClass nativeInteropSealedClass,
+  ) {
+    final _$$selfRef = reference;
+    final _$nativeInteropSealedClass = nativeInteropSealedClass.reference;
+    return _echoNativeInteropSealedClass(
+      _$$selfRef.pointer,
+      _id_echoNativeInteropSealedClass.pointer,
+      _$nativeInteropSealedClass.pointer,
+    ).object<NativeInteropSealedClass>();
   }
 
   static final _id_sendMultipleNullableTypes = NativeInteropFlutterIntegrationCoreApi._class
@@ -16046,6 +16334,8 @@ abstract base mixin class $NativeInteropFlutterIntegrationCoreApi {
       NativeInteropAllNullableTypes? nativeInteropAllNullableTypes,
     )
     echoNativeInteropAllNullableTypes,
+    required NativeInteropSealedClass Function(NativeInteropSealedClass nativeInteropSealedClass)
+    echoNativeInteropSealedClass,
     required NativeInteropAllNullableTypes Function(
       jni$_.JBoolean? boolean,
       jni$_.JLong? long,
@@ -16318,6 +16608,9 @@ abstract base mixin class $NativeInteropFlutterIntegrationCoreApi {
   NativeInteropAllNullableTypes? echoNativeInteropAllNullableTypes(
     NativeInteropAllNullableTypes? nativeInteropAllNullableTypes,
   );
+  NativeInteropSealedClass echoNativeInteropSealedClass(
+    NativeInteropSealedClass nativeInteropSealedClass,
+  );
   NativeInteropAllNullableTypes sendMultipleNullableTypes(
     jni$_.JBoolean? boolean,
     jni$_.JLong? long,
@@ -16538,6 +16831,8 @@ final class _$NativeInteropFlutterIntegrationCoreApi with $NativeInteropFlutterI
       NativeInteropAllNullableTypes? nativeInteropAllNullableTypes,
     )
     echoNativeInteropAllNullableTypes,
+    required NativeInteropSealedClass Function(NativeInteropSealedClass nativeInteropSealedClass)
+    echoNativeInteropSealedClass,
     required NativeInteropAllNullableTypes Function(
       jni$_.JBoolean? boolean,
       jni$_.JLong? long,
@@ -16804,6 +17099,7 @@ final class _$NativeInteropFlutterIntegrationCoreApi with $NativeInteropFlutterI
        _throwErrorFromVoid = throwErrorFromVoid,
        _echoNativeInteropAllTypes = echoNativeInteropAllTypes,
        _echoNativeInteropAllNullableTypes = echoNativeInteropAllNullableTypes,
+       _echoNativeInteropSealedClass = echoNativeInteropSealedClass,
        _sendMultipleNullableTypes = sendMultipleNullableTypes,
        _echoNativeInteropAllNullableTypesWithoutRecursion =
            echoNativeInteropAllNullableTypesWithoutRecursion,
@@ -16918,6 +17214,8 @@ final class _$NativeInteropFlutterIntegrationCoreApi with $NativeInteropFlutterI
     NativeInteropAllNullableTypes? nativeInteropAllNullableTypes,
   )
   _echoNativeInteropAllNullableTypes;
+  final NativeInteropSealedClass Function(NativeInteropSealedClass nativeInteropSealedClass)
+  _echoNativeInteropSealedClass;
   final NativeInteropAllNullableTypes Function(
     jni$_.JBoolean? boolean,
     jni$_.JLong? long,
@@ -17192,6 +17490,12 @@ final class _$NativeInteropFlutterIntegrationCoreApi with $NativeInteropFlutterI
     NativeInteropAllNullableTypes? nativeInteropAllNullableTypes,
   ) {
     return _echoNativeInteropAllNullableTypes(nativeInteropAllNullableTypes);
+  }
+
+  NativeInteropSealedClass echoNativeInteropSealedClass(
+    NativeInteropSealedClass nativeInteropSealedClass,
+  ) {
+    return _echoNativeInteropSealedClass(nativeInteropSealedClass);
   }
 
   NativeInteropAllNullableTypes sendMultipleNullableTypes(
@@ -25874,6 +26178,1334 @@ final class $NativeInteropAllClassesWrapper$Type$
   @jni$_.internal
   @core$_.override
   String get signature => r'Lcom/example/test_plugin/NativeInteropAllClassesWrapper;';
+}
+
+/// from: `com.example.test_plugin.NativeInteropSealedClass`
+extension type NativeInteropSealedClass._(jni$_.JObject _$this) implements jni$_.JObject {
+  static final _class = jni$_.JClass.forName(r'com/example/test_plugin/NativeInteropSealedClass');
+
+  /// The type which includes information such as the signature of this class.
+  static const jni$_.JType<NativeInteropSealedClass> type = $NativeInteropSealedClass$Type$();
+}
+
+final class $NativeInteropSealedClass$Type$ extends jni$_.JType<NativeInteropSealedClass> {
+  @jni$_.internal
+  const $NativeInteropSealedClass$Type$();
+
+  @jni$_.internal
+  @core$_.override
+  String get signature => r'Lcom/example/test_plugin/NativeInteropSealedClass;';
+}
+
+/// from: `com.example.test_plugin.NativeInteropSealedClassWithFields$Companion`
+extension type NativeInteropSealedClassWithFields$Companion._(jni$_.JObject _$this)
+    implements jni$_.JObject {
+  static final _class = jni$_.JClass.forName(
+    r'com/example/test_plugin/NativeInteropSealedClassWithFields$Companion',
+  );
+
+  /// The type which includes information such as the signature of this class.
+  static const jni$_.JType<NativeInteropSealedClassWithFields$Companion> type =
+      $NativeInteropSealedClassWithFields$Companion$Type$();
+  static final _id_new$ = _class.constructorId(
+    r'(Lkotlin/jvm/internal/DefaultConstructorMarker;)V',
+  );
+
+  static final _new$ =
+      jni$_.ProtectedJniExtensions.lookup<
+            jni$_.NativeFunction<
+              jni$_.JniResult Function(
+                jni$_.Pointer<jni$_.Void>,
+                jni$_.JMethodIDPtr,
+                jni$_.VarArgs<(jni$_.Pointer<jni$_.Void>,)>,
+              )
+            >
+          >('globalEnv_NewObject')
+          .asFunction<
+            jni$_.JniResult Function(
+              jni$_.Pointer<jni$_.Void>,
+              jni$_.JMethodIDPtr,
+              jni$_.Pointer<jni$_.Void>,
+            )
+          >();
+
+  /// from: `synthetic public void <init>(kotlin.jvm.internal.DefaultConstructorMarker defaultConstructorMarker)`
+  /// The returned object must be released after use, by calling the [release] method.
+  factory NativeInteropSealedClassWithFields$Companion(
+    DefaultConstructorMarker? defaultConstructorMarker,
+  ) {
+    final _$$classRef = _class.reference;
+    final _$defaultConstructorMarker = defaultConstructorMarker?.reference ?? jni$_.jNullReference;
+    return _new$(
+      _$$classRef.pointer,
+      _id_new$.pointer,
+      _$defaultConstructorMarker.pointer,
+    ).object<NativeInteropSealedClassWithFields$Companion>();
+  }
+}
+
+extension NativeInteropSealedClassWithFields$Companion$$Methods
+    on NativeInteropSealedClassWithFields$Companion {
+  static final _id_fromList = NativeInteropSealedClassWithFields$Companion._class.instanceMethodId(
+    r'fromList',
+    r'(Ljava/util/List;)Lcom/example/test_plugin/NativeInteropSealedClassWithFields;',
+  );
+
+  static final _fromList =
+      jni$_.ProtectedJniExtensions.lookup<
+            jni$_.NativeFunction<
+              jni$_.JniResult Function(
+                jni$_.Pointer<jni$_.Void>,
+                jni$_.JMethodIDPtr,
+                jni$_.VarArgs<(jni$_.Pointer<jni$_.Void>,)>,
+              )
+            >
+          >('globalEnv_CallObjectMethod')
+          .asFunction<
+            jni$_.JniResult Function(
+              jni$_.Pointer<jni$_.Void>,
+              jni$_.JMethodIDPtr,
+              jni$_.Pointer<jni$_.Void>,
+            )
+          >();
+
+  /// from: `public fun fromList(pigeonVar_list: kotlin.collections.List<kotlin.Any?>): com.example.test_plugin.NativeInteropSealedClassWithFields`
+  /// The returned object must be released after use, by calling the [release] method.
+  NativeInteropSealedClassWithFields fromList(jni$_.JList<jni$_.JObject?> list) {
+    final _$$selfRef = reference;
+    final _$list = list.reference;
+    return _fromList(
+      _$$selfRef.pointer,
+      _id_fromList.pointer,
+      _$list.pointer,
+    ).object<NativeInteropSealedClassWithFields>();
+  }
+}
+
+final class $NativeInteropSealedClassWithFields$Companion$Type$
+    extends jni$_.JType<NativeInteropSealedClassWithFields$Companion> {
+  @jni$_.internal
+  const $NativeInteropSealedClassWithFields$Companion$Type$();
+
+  @jni$_.internal
+  @core$_.override
+  String get signature => r'Lcom/example/test_plugin/NativeInteropSealedClassWithFields$Companion;';
+}
+
+/// from: `com.example.test_plugin.NativeInteropSealedClassWithFields`
+extension type NativeInteropSealedClassWithFields._(jni$_.JObject _$this)
+    implements NativeInteropSealedClass {
+  static final _class = jni$_.JClass.forName(
+    r'com/example/test_plugin/NativeInteropSealedClassWithFields',
+  );
+
+  /// The type which includes information such as the signature of this class.
+  static const jni$_.JType<NativeInteropSealedClassWithFields> type =
+      $NativeInteropSealedClassWithFields$Type$();
+  static final _id_Companion = _class.staticFieldId(
+    r'Companion',
+    r'Lcom/example/test_plugin/NativeInteropSealedClassWithFields$Companion;',
+  );
+
+  /// from: `static public final com.example.test_plugin.NativeInteropSealedClassWithFields$Companion Companion`
+  /// The returned object must be released after use, by calling the [release] method.
+  static NativeInteropSealedClassWithFields$Companion get Companion =>
+      _id_Companion.get(_class, NativeInteropSealedClassWithFields$Companion.type)
+          as NativeInteropSealedClassWithFields$Companion;
+
+  static final _id_new$ = _class.constructorId(
+    r'(Ljava/lang/String;Ljava/lang/Long;Lcom/example/test_plugin/NativeInteropAnEnum;Lcom/example/test_plugin/NativeInteropAllNullableTypesWithoutRecursion;)V',
+  );
+
+  static final _new$ =
+      jni$_.ProtectedJniExtensions.lookup<
+            jni$_.NativeFunction<
+              jni$_.JniResult Function(
+                jni$_.Pointer<jni$_.Void>,
+                jni$_.JMethodIDPtr,
+                jni$_.VarArgs<
+                  (
+                    jni$_.Pointer<jni$_.Void>,
+                    jni$_.Pointer<jni$_.Void>,
+                    jni$_.Pointer<jni$_.Void>,
+                    jni$_.Pointer<jni$_.Void>,
+                  )
+                >,
+              )
+            >
+          >('globalEnv_NewObject')
+          .asFunction<
+            jni$_.JniResult Function(
+              jni$_.Pointer<jni$_.Void>,
+              jni$_.JMethodIDPtr,
+              jni$_.Pointer<jni$_.Void>,
+              jni$_.Pointer<jni$_.Void>,
+              jni$_.Pointer<jni$_.Void>,
+              jni$_.Pointer<jni$_.Void>,
+            )
+          >();
+
+  /// from: `public void <init>(java.lang.String string, java.lang.Long long, com.example.test_plugin.NativeInteropAnEnum nativeInteropAnEnum, com.example.test_plugin.NativeInteropAllNullableTypesWithoutRecursion nativeInteropAllNullableTypesWithoutRecursion)`
+  /// The returned object must be released after use, by calling the [release] method.
+  factory NativeInteropSealedClassWithFields(
+    jni$_.JString string,
+    jni$_.JLong? long,
+    NativeInteropAnEnum nativeInteropAnEnum,
+    NativeInteropAllNullableTypesWithoutRecursion? nativeInteropAllNullableTypesWithoutRecursion,
+  ) {
+    final _$$classRef = _class.reference;
+    final _$string = string.reference;
+    final _$long = long?.reference ?? jni$_.jNullReference;
+    final _$nativeInteropAnEnum = nativeInteropAnEnum.reference;
+    final _$nativeInteropAllNullableTypesWithoutRecursion =
+        nativeInteropAllNullableTypesWithoutRecursion?.reference ?? jni$_.jNullReference;
+    return _new$(
+      _$$classRef.pointer,
+      _id_new$.pointer,
+      _$string.pointer,
+      _$long.pointer,
+      _$nativeInteropAnEnum.pointer,
+      _$nativeInteropAllNullableTypesWithoutRecursion.pointer,
+    ).object<NativeInteropSealedClassWithFields>();
+  }
+
+  static final _id_new$1 = _class.constructorId(
+    r'(Ljava/lang/String;Ljava/lang/Long;Lcom/example/test_plugin/NativeInteropAnEnum;Lcom/example/test_plugin/NativeInteropAllNullableTypesWithoutRecursion;ILkotlin/jvm/internal/DefaultConstructorMarker;)V',
+  );
+
+  static final _new$1 =
+      jni$_.ProtectedJniExtensions.lookup<
+            jni$_.NativeFunction<
+              jni$_.JniResult Function(
+                jni$_.Pointer<jni$_.Void>,
+                jni$_.JMethodIDPtr,
+                jni$_.VarArgs<
+                  (
+                    jni$_.Pointer<jni$_.Void>,
+                    jni$_.Pointer<jni$_.Void>,
+                    jni$_.Pointer<jni$_.Void>,
+                    jni$_.Pointer<jni$_.Void>,
+                    jni$_.Int32,
+                    jni$_.Pointer<jni$_.Void>,
+                  )
+                >,
+              )
+            >
+          >('globalEnv_NewObject')
+          .asFunction<
+            jni$_.JniResult Function(
+              jni$_.Pointer<jni$_.Void>,
+              jni$_.JMethodIDPtr,
+              jni$_.Pointer<jni$_.Void>,
+              jni$_.Pointer<jni$_.Void>,
+              jni$_.Pointer<jni$_.Void>,
+              jni$_.Pointer<jni$_.Void>,
+              core$_.int,
+              jni$_.Pointer<jni$_.Void>,
+            )
+          >();
+
+  /// from: `synthetic public void <init>(java.lang.String string, java.lang.Long long, com.example.test_plugin.NativeInteropAnEnum nativeInteropAnEnum, com.example.test_plugin.NativeInteropAllNullableTypesWithoutRecursion nativeInteropAllNullableTypesWithoutRecursion, int i, kotlin.jvm.internal.DefaultConstructorMarker defaultConstructorMarker)`
+  /// The returned object must be released after use, by calling the [release] method.
+  factory NativeInteropSealedClassWithFields.new$1(
+    jni$_.JString? string,
+    jni$_.JLong? long,
+    NativeInteropAnEnum? nativeInteropAnEnum,
+    NativeInteropAllNullableTypesWithoutRecursion? nativeInteropAllNullableTypesWithoutRecursion,
+    core$_.int i,
+    DefaultConstructorMarker? defaultConstructorMarker,
+  ) {
+    final _$$classRef = _class.reference;
+    final _$string = string?.reference ?? jni$_.jNullReference;
+    final _$long = long?.reference ?? jni$_.jNullReference;
+    final _$nativeInteropAnEnum = nativeInteropAnEnum?.reference ?? jni$_.jNullReference;
+    final _$nativeInteropAllNullableTypesWithoutRecursion =
+        nativeInteropAllNullableTypesWithoutRecursion?.reference ?? jni$_.jNullReference;
+    final _$defaultConstructorMarker = defaultConstructorMarker?.reference ?? jni$_.jNullReference;
+    return _new$1(
+      _$$classRef.pointer,
+      _id_new$1.pointer,
+      _$string.pointer,
+      _$long.pointer,
+      _$nativeInteropAnEnum.pointer,
+      _$nativeInteropAllNullableTypesWithoutRecursion.pointer,
+      i,
+      _$defaultConstructorMarker.pointer,
+    ).object<NativeInteropSealedClassWithFields>();
+  }
+}
+
+extension NativeInteropSealedClassWithFields$$Methods on NativeInteropSealedClassWithFields {
+  static final _id_get$aString = NativeInteropSealedClassWithFields._class.instanceMethodId(
+    r'getAString',
+    r'()Ljava/lang/String;',
+  );
+
+  static final _get$aString =
+      jni$_.ProtectedJniExtensions.lookup<
+            jni$_.NativeFunction<
+              jni$_.JniResult Function(jni$_.Pointer<jni$_.Void>, jni$_.JMethodIDPtr)
+            >
+          >('globalEnv_CallObjectMethod')
+          .asFunction<jni$_.JniResult Function(jni$_.Pointer<jni$_.Void>, jni$_.JMethodIDPtr)>();
+
+  /// from: `public final java.lang.String getAString()`
+  /// The returned object must be released after use, by calling the [release] method.
+  jni$_.JString get aString {
+    final _$$selfRef = reference;
+    return _get$aString(_$$selfRef.pointer, _id_get$aString.pointer).object<jni$_.JString>();
+  }
+
+  static final _id_get$aNullableInt = NativeInteropSealedClassWithFields._class.instanceMethodId(
+    r'getANullableInt',
+    r'()Ljava/lang/Long;',
+  );
+
+  static final _get$aNullableInt =
+      jni$_.ProtectedJniExtensions.lookup<
+            jni$_.NativeFunction<
+              jni$_.JniResult Function(jni$_.Pointer<jni$_.Void>, jni$_.JMethodIDPtr)
+            >
+          >('globalEnv_CallObjectMethod')
+          .asFunction<jni$_.JniResult Function(jni$_.Pointer<jni$_.Void>, jni$_.JMethodIDPtr)>();
+
+  /// from: `public final java.lang.Long getANullableInt()`
+  /// The returned object must be released after use, by calling the [release] method.
+  jni$_.JLong? get aNullableInt {
+    final _$$selfRef = reference;
+    return _get$aNullableInt(
+      _$$selfRef.pointer,
+      _id_get$aNullableInt.pointer,
+    ).object<jni$_.JLong?>();
+  }
+
+  static final _id_get$anEnum = NativeInteropSealedClassWithFields._class.instanceMethodId(
+    r'getAnEnum',
+    r'()Lcom/example/test_plugin/NativeInteropAnEnum;',
+  );
+
+  static final _get$anEnum =
+      jni$_.ProtectedJniExtensions.lookup<
+            jni$_.NativeFunction<
+              jni$_.JniResult Function(jni$_.Pointer<jni$_.Void>, jni$_.JMethodIDPtr)
+            >
+          >('globalEnv_CallObjectMethod')
+          .asFunction<jni$_.JniResult Function(jni$_.Pointer<jni$_.Void>, jni$_.JMethodIDPtr)>();
+
+  /// from: `public final com.example.test_plugin.NativeInteropAnEnum getAnEnum()`
+  /// The returned object must be released after use, by calling the [release] method.
+  NativeInteropAnEnum get anEnum {
+    final _$$selfRef = reference;
+    return _get$anEnum(_$$selfRef.pointer, _id_get$anEnum.pointer).object<NativeInteropAnEnum>();
+  }
+
+  static final _id_get$aClass = NativeInteropSealedClassWithFields._class.instanceMethodId(
+    r'getAClass',
+    r'()Lcom/example/test_plugin/NativeInteropAllNullableTypesWithoutRecursion;',
+  );
+
+  static final _get$aClass =
+      jni$_.ProtectedJniExtensions.lookup<
+            jni$_.NativeFunction<
+              jni$_.JniResult Function(jni$_.Pointer<jni$_.Void>, jni$_.JMethodIDPtr)
+            >
+          >('globalEnv_CallObjectMethod')
+          .asFunction<jni$_.JniResult Function(jni$_.Pointer<jni$_.Void>, jni$_.JMethodIDPtr)>();
+
+  /// from: `public final com.example.test_plugin.NativeInteropAllNullableTypesWithoutRecursion getAClass()`
+  /// The returned object must be released after use, by calling the [release] method.
+  NativeInteropAllNullableTypesWithoutRecursion? get aClass {
+    final _$$selfRef = reference;
+    return _get$aClass(
+      _$$selfRef.pointer,
+      _id_get$aClass.pointer,
+    ).object<NativeInteropAllNullableTypesWithoutRecursion?>();
+  }
+
+  static final _id_toList = NativeInteropSealedClassWithFields._class.instanceMethodId(
+    r'toList',
+    r'()Ljava/util/List;',
+  );
+
+  static final _toList =
+      jni$_.ProtectedJniExtensions.lookup<
+            jni$_.NativeFunction<
+              jni$_.JniResult Function(jni$_.Pointer<jni$_.Void>, jni$_.JMethodIDPtr)
+            >
+          >('globalEnv_CallObjectMethod')
+          .asFunction<jni$_.JniResult Function(jni$_.Pointer<jni$_.Void>, jni$_.JMethodIDPtr)>();
+
+  /// from: `public fun toList(): kotlin.collections.List<kotlin.Any?>`
+  /// The returned object must be released after use, by calling the [release] method.
+  jni$_.JList<jni$_.JObject?> toList() {
+    final _$$selfRef = reference;
+    return _toList(_$$selfRef.pointer, _id_toList.pointer).object<jni$_.JList<jni$_.JObject?>>();
+  }
+
+  static final _id_equals = NativeInteropSealedClassWithFields._class.instanceMethodId(
+    r'equals',
+    r'(Ljava/lang/Object;)Z',
+  );
+
+  static final _equals =
+      jni$_.ProtectedJniExtensions.lookup<
+            jni$_.NativeFunction<
+              jni$_.JniResult Function(
+                jni$_.Pointer<jni$_.Void>,
+                jni$_.JMethodIDPtr,
+                jni$_.VarArgs<(jni$_.Pointer<jni$_.Void>,)>,
+              )
+            >
+          >('globalEnv_CallBooleanMethod')
+          .asFunction<
+            jni$_.JniResult Function(
+              jni$_.Pointer<jni$_.Void>,
+              jni$_.JMethodIDPtr,
+              jni$_.Pointer<jni$_.Void>,
+            )
+          >();
+
+  /// from: `public operator fun equals(other: kotlin.Any?): kotlin.Boolean`
+  core$_.bool equals(jni$_.JObject? object) {
+    final _$$selfRef = reference;
+    final _$object = object?.reference ?? jni$_.jNullReference;
+    return _equals(_$$selfRef.pointer, _id_equals.pointer, _$object.pointer).boolean;
+  }
+
+  static final _id_hashCode$1 = NativeInteropSealedClassWithFields._class.instanceMethodId(
+    r'hashCode',
+    r'()I',
+  );
+
+  static final _hashCode$1 =
+      jni$_.ProtectedJniExtensions.lookup<
+            jni$_.NativeFunction<
+              jni$_.JniResult Function(jni$_.Pointer<jni$_.Void>, jni$_.JMethodIDPtr)
+            >
+          >('globalEnv_CallIntMethod')
+          .asFunction<jni$_.JniResult Function(jni$_.Pointer<jni$_.Void>, jni$_.JMethodIDPtr)>();
+
+  /// from: `public fun hashCode(): kotlin.Int`
+  core$_.int hashCode$1() {
+    final _$$selfRef = reference;
+    return _hashCode$1(_$$selfRef.pointer, _id_hashCode$1.pointer).integer;
+  }
+
+  static final _id_toString$1 = NativeInteropSealedClassWithFields._class.instanceMethodId(
+    r'toString',
+    r'()Ljava/lang/String;',
+  );
+
+  static final _toString$1 =
+      jni$_.ProtectedJniExtensions.lookup<
+            jni$_.NativeFunction<
+              jni$_.JniResult Function(jni$_.Pointer<jni$_.Void>, jni$_.JMethodIDPtr)
+            >
+          >('globalEnv_CallObjectMethod')
+          .asFunction<jni$_.JniResult Function(jni$_.Pointer<jni$_.Void>, jni$_.JMethodIDPtr)>();
+
+  /// from: `public fun toString(): kotlin.String`
+  /// The returned object must be released after use, by calling the [release] method.
+  jni$_.JString toString$1() {
+    final _$$selfRef = reference;
+    return _toString$1(_$$selfRef.pointer, _id_toString$1.pointer).object<jni$_.JString>();
+  }
+
+  static final _id_component1 = NativeInteropSealedClassWithFields._class.instanceMethodId(
+    r'component1',
+    r'()Ljava/lang/String;',
+  );
+
+  static final _component1 =
+      jni$_.ProtectedJniExtensions.lookup<
+            jni$_.NativeFunction<
+              jni$_.JniResult Function(jni$_.Pointer<jni$_.Void>, jni$_.JMethodIDPtr)
+            >
+          >('globalEnv_CallObjectMethod')
+          .asFunction<jni$_.JniResult Function(jni$_.Pointer<jni$_.Void>, jni$_.JMethodIDPtr)>();
+
+  /// from: `public operator fun component1(): kotlin.String`
+  /// The returned object must be released after use, by calling the [release] method.
+  jni$_.JString component1() {
+    final _$$selfRef = reference;
+    return _component1(_$$selfRef.pointer, _id_component1.pointer).object<jni$_.JString>();
+  }
+
+  static final _id_component2 = NativeInteropSealedClassWithFields._class.instanceMethodId(
+    r'component2',
+    r'()Ljava/lang/Long;',
+  );
+
+  static final _component2 =
+      jni$_.ProtectedJniExtensions.lookup<
+            jni$_.NativeFunction<
+              jni$_.JniResult Function(jni$_.Pointer<jni$_.Void>, jni$_.JMethodIDPtr)
+            >
+          >('globalEnv_CallObjectMethod')
+          .asFunction<jni$_.JniResult Function(jni$_.Pointer<jni$_.Void>, jni$_.JMethodIDPtr)>();
+
+  /// from: `public operator fun component2(): kotlin.Long?`
+  /// The returned object must be released after use, by calling the [release] method.
+  jni$_.JLong? component2() {
+    final _$$selfRef = reference;
+    return _component2(_$$selfRef.pointer, _id_component2.pointer).object<jni$_.JLong?>();
+  }
+
+  static final _id_component3 = NativeInteropSealedClassWithFields._class.instanceMethodId(
+    r'component3',
+    r'()Lcom/example/test_plugin/NativeInteropAnEnum;',
+  );
+
+  static final _component3 =
+      jni$_.ProtectedJniExtensions.lookup<
+            jni$_.NativeFunction<
+              jni$_.JniResult Function(jni$_.Pointer<jni$_.Void>, jni$_.JMethodIDPtr)
+            >
+          >('globalEnv_CallObjectMethod')
+          .asFunction<jni$_.JniResult Function(jni$_.Pointer<jni$_.Void>, jni$_.JMethodIDPtr)>();
+
+  /// from: `public operator fun component3(): com.example.test_plugin.NativeInteropAnEnum`
+  /// The returned object must be released after use, by calling the [release] method.
+  NativeInteropAnEnum component3() {
+    final _$$selfRef = reference;
+    return _component3(_$$selfRef.pointer, _id_component3.pointer).object<NativeInteropAnEnum>();
+  }
+
+  static final _id_component4 = NativeInteropSealedClassWithFields._class.instanceMethodId(
+    r'component4',
+    r'()Lcom/example/test_plugin/NativeInteropAllNullableTypesWithoutRecursion;',
+  );
+
+  static final _component4 =
+      jni$_.ProtectedJniExtensions.lookup<
+            jni$_.NativeFunction<
+              jni$_.JniResult Function(jni$_.Pointer<jni$_.Void>, jni$_.JMethodIDPtr)
+            >
+          >('globalEnv_CallObjectMethod')
+          .asFunction<jni$_.JniResult Function(jni$_.Pointer<jni$_.Void>, jni$_.JMethodIDPtr)>();
+
+  /// from: `public operator fun component4(): com.example.test_plugin.NativeInteropAllNullableTypesWithoutRecursion?`
+  /// The returned object must be released after use, by calling the [release] method.
+  NativeInteropAllNullableTypesWithoutRecursion? component4() {
+    final _$$selfRef = reference;
+    return _component4(
+      _$$selfRef.pointer,
+      _id_component4.pointer,
+    ).object<NativeInteropAllNullableTypesWithoutRecursion?>();
+  }
+
+  static final _id_copy = NativeInteropSealedClassWithFields._class.instanceMethodId(
+    r'copy',
+    r'(Ljava/lang/String;Ljava/lang/Long;Lcom/example/test_plugin/NativeInteropAnEnum;Lcom/example/test_plugin/NativeInteropAllNullableTypesWithoutRecursion;)Lcom/example/test_plugin/NativeInteropSealedClassWithFields;',
+  );
+
+  static final _copy =
+      jni$_.ProtectedJniExtensions.lookup<
+            jni$_.NativeFunction<
+              jni$_.JniResult Function(
+                jni$_.Pointer<jni$_.Void>,
+                jni$_.JMethodIDPtr,
+                jni$_.VarArgs<
+                  (
+                    jni$_.Pointer<jni$_.Void>,
+                    jni$_.Pointer<jni$_.Void>,
+                    jni$_.Pointer<jni$_.Void>,
+                    jni$_.Pointer<jni$_.Void>,
+                  )
+                >,
+              )
+            >
+          >('globalEnv_CallObjectMethod')
+          .asFunction<
+            jni$_.JniResult Function(
+              jni$_.Pointer<jni$_.Void>,
+              jni$_.JMethodIDPtr,
+              jni$_.Pointer<jni$_.Void>,
+              jni$_.Pointer<jni$_.Void>,
+              jni$_.Pointer<jni$_.Void>,
+              jni$_.Pointer<jni$_.Void>,
+            )
+          >();
+
+  /// from: `public fun copy(aString: kotlin.String, aNullableInt: kotlin.Long?, anEnum: com.example.test_plugin.NativeInteropAnEnum, aClass: com.example.test_plugin.NativeInteropAllNullableTypesWithoutRecursion?): com.example.test_plugin.NativeInteropSealedClassWithFields`
+  /// The returned object must be released after use, by calling the [release] method.
+  NativeInteropSealedClassWithFields copy(
+    jni$_.JString string,
+    jni$_.JLong? long,
+    NativeInteropAnEnum nativeInteropAnEnum,
+    NativeInteropAllNullableTypesWithoutRecursion? nativeInteropAllNullableTypesWithoutRecursion,
+  ) {
+    final _$$selfRef = reference;
+    final _$string = string.reference;
+    final _$long = long?.reference ?? jni$_.jNullReference;
+    final _$nativeInteropAnEnum = nativeInteropAnEnum.reference;
+    final _$nativeInteropAllNullableTypesWithoutRecursion =
+        nativeInteropAllNullableTypesWithoutRecursion?.reference ?? jni$_.jNullReference;
+    return _copy(
+      _$$selfRef.pointer,
+      _id_copy.pointer,
+      _$string.pointer,
+      _$long.pointer,
+      _$nativeInteropAnEnum.pointer,
+      _$nativeInteropAllNullableTypesWithoutRecursion.pointer,
+    ).object<NativeInteropSealedClassWithFields>();
+  }
+}
+
+final class $NativeInteropSealedClassWithFields$Type$
+    extends jni$_.JType<NativeInteropSealedClassWithFields> {
+  @jni$_.internal
+  const $NativeInteropSealedClassWithFields$Type$();
+
+  @jni$_.internal
+  @core$_.override
+  String get signature => r'Lcom/example/test_plugin/NativeInteropSealedClassWithFields;';
+}
+
+/// from: `com.example.test_plugin.NativeInteropEmptySealedClass$Companion`
+extension type NativeInteropEmptySealedClass$Companion._(jni$_.JObject _$this)
+    implements jni$_.JObject {
+  static final _class = jni$_.JClass.forName(
+    r'com/example/test_plugin/NativeInteropEmptySealedClass$Companion',
+  );
+
+  /// The type which includes information such as the signature of this class.
+  static const jni$_.JType<NativeInteropEmptySealedClass$Companion> type =
+      $NativeInteropEmptySealedClass$Companion$Type$();
+  static final _id_new$ = _class.constructorId(
+    r'(Lkotlin/jvm/internal/DefaultConstructorMarker;)V',
+  );
+
+  static final _new$ =
+      jni$_.ProtectedJniExtensions.lookup<
+            jni$_.NativeFunction<
+              jni$_.JniResult Function(
+                jni$_.Pointer<jni$_.Void>,
+                jni$_.JMethodIDPtr,
+                jni$_.VarArgs<(jni$_.Pointer<jni$_.Void>,)>,
+              )
+            >
+          >('globalEnv_NewObject')
+          .asFunction<
+            jni$_.JniResult Function(
+              jni$_.Pointer<jni$_.Void>,
+              jni$_.JMethodIDPtr,
+              jni$_.Pointer<jni$_.Void>,
+            )
+          >();
+
+  /// from: `synthetic public void <init>(kotlin.jvm.internal.DefaultConstructorMarker defaultConstructorMarker)`
+  /// The returned object must be released after use, by calling the [release] method.
+  factory NativeInteropEmptySealedClass$Companion(
+    DefaultConstructorMarker? defaultConstructorMarker,
+  ) {
+    final _$$classRef = _class.reference;
+    final _$defaultConstructorMarker = defaultConstructorMarker?.reference ?? jni$_.jNullReference;
+    return _new$(
+      _$$classRef.pointer,
+      _id_new$.pointer,
+      _$defaultConstructorMarker.pointer,
+    ).object<NativeInteropEmptySealedClass$Companion>();
+  }
+}
+
+extension NativeInteropEmptySealedClass$Companion$$Methods
+    on NativeInteropEmptySealedClass$Companion {
+  static final _id_fromList = NativeInteropEmptySealedClass$Companion._class.instanceMethodId(
+    r'fromList',
+    r'(Ljava/util/List;)Lcom/example/test_plugin/NativeInteropEmptySealedClass;',
+  );
+
+  static final _fromList =
+      jni$_.ProtectedJniExtensions.lookup<
+            jni$_.NativeFunction<
+              jni$_.JniResult Function(
+                jni$_.Pointer<jni$_.Void>,
+                jni$_.JMethodIDPtr,
+                jni$_.VarArgs<(jni$_.Pointer<jni$_.Void>,)>,
+              )
+            >
+          >('globalEnv_CallObjectMethod')
+          .asFunction<
+            jni$_.JniResult Function(
+              jni$_.Pointer<jni$_.Void>,
+              jni$_.JMethodIDPtr,
+              jni$_.Pointer<jni$_.Void>,
+            )
+          >();
+
+  /// from: `public fun fromList(pigeonVar_list: kotlin.collections.List<kotlin.Any?>): com.example.test_plugin.NativeInteropEmptySealedClass`
+  /// The returned object must be released after use, by calling the [release] method.
+  NativeInteropEmptySealedClass fromList(jni$_.JList<jni$_.JObject?> list) {
+    final _$$selfRef = reference;
+    final _$list = list.reference;
+    return _fromList(
+      _$$selfRef.pointer,
+      _id_fromList.pointer,
+      _$list.pointer,
+    ).object<NativeInteropEmptySealedClass>();
+  }
+}
+
+final class $NativeInteropEmptySealedClass$Companion$Type$
+    extends jni$_.JType<NativeInteropEmptySealedClass$Companion> {
+  @jni$_.internal
+  const $NativeInteropEmptySealedClass$Companion$Type$();
+
+  @jni$_.internal
+  @core$_.override
+  String get signature => r'Lcom/example/test_plugin/NativeInteropEmptySealedClass$Companion;';
+}
+
+/// from: `com.example.test_plugin.NativeInteropEmptySealedClass`
+extension type NativeInteropEmptySealedClass._(jni$_.JObject _$this)
+    implements NativeInteropSealedClass {
+  static final _class = jni$_.JClass.forName(
+    r'com/example/test_plugin/NativeInteropEmptySealedClass',
+  );
+
+  /// The type which includes information such as the signature of this class.
+  static const jni$_.JType<NativeInteropEmptySealedClass> type =
+      $NativeInteropEmptySealedClass$Type$();
+  static final _id_Companion = _class.staticFieldId(
+    r'Companion',
+    r'Lcom/example/test_plugin/NativeInteropEmptySealedClass$Companion;',
+  );
+
+  /// from: `static public final com.example.test_plugin.NativeInteropEmptySealedClass$Companion Companion`
+  /// The returned object must be released after use, by calling the [release] method.
+  static NativeInteropEmptySealedClass$Companion get Companion =>
+      _id_Companion.get(_class, NativeInteropEmptySealedClass$Companion.type)
+          as NativeInteropEmptySealedClass$Companion;
+
+  static final _id_new$ = _class.constructorId(r'()V');
+
+  static final _new$ =
+      jni$_.ProtectedJniExtensions.lookup<
+            jni$_.NativeFunction<
+              jni$_.JniResult Function(jni$_.Pointer<jni$_.Void>, jni$_.JMethodIDPtr)
+            >
+          >('globalEnv_NewObject')
+          .asFunction<jni$_.JniResult Function(jni$_.Pointer<jni$_.Void>, jni$_.JMethodIDPtr)>();
+
+  /// from: `public void <init>()`
+  /// The returned object must be released after use, by calling the [release] method.
+  factory NativeInteropEmptySealedClass() {
+    final _$$classRef = _class.reference;
+    return _new$(_$$classRef.pointer, _id_new$.pointer).object<NativeInteropEmptySealedClass>();
+  }
+}
+
+extension NativeInteropEmptySealedClass$$Methods on NativeInteropEmptySealedClass {
+  static final _id_toList = NativeInteropEmptySealedClass._class.instanceMethodId(
+    r'toList',
+    r'()Ljava/util/List;',
+  );
+
+  static final _toList =
+      jni$_.ProtectedJniExtensions.lookup<
+            jni$_.NativeFunction<
+              jni$_.JniResult Function(jni$_.Pointer<jni$_.Void>, jni$_.JMethodIDPtr)
+            >
+          >('globalEnv_CallObjectMethod')
+          .asFunction<jni$_.JniResult Function(jni$_.Pointer<jni$_.Void>, jni$_.JMethodIDPtr)>();
+
+  /// from: `public fun toList(): kotlin.collections.List<kotlin.Any?>`
+  /// The returned object must be released after use, by calling the [release] method.
+  jni$_.JList<jni$_.JObject?> toList() {
+    final _$$selfRef = reference;
+    return _toList(_$$selfRef.pointer, _id_toList.pointer).object<jni$_.JList<jni$_.JObject?>>();
+  }
+
+  static final _id_equals = NativeInteropEmptySealedClass._class.instanceMethodId(
+    r'equals',
+    r'(Ljava/lang/Object;)Z',
+  );
+
+  static final _equals =
+      jni$_.ProtectedJniExtensions.lookup<
+            jni$_.NativeFunction<
+              jni$_.JniResult Function(
+                jni$_.Pointer<jni$_.Void>,
+                jni$_.JMethodIDPtr,
+                jni$_.VarArgs<(jni$_.Pointer<jni$_.Void>,)>,
+              )
+            >
+          >('globalEnv_CallBooleanMethod')
+          .asFunction<
+            jni$_.JniResult Function(
+              jni$_.Pointer<jni$_.Void>,
+              jni$_.JMethodIDPtr,
+              jni$_.Pointer<jni$_.Void>,
+            )
+          >();
+
+  /// from: `public operator fun equals(other: kotlin.Any?): kotlin.Boolean`
+  core$_.bool equals(jni$_.JObject? object) {
+    final _$$selfRef = reference;
+    final _$object = object?.reference ?? jni$_.jNullReference;
+    return _equals(_$$selfRef.pointer, _id_equals.pointer, _$object.pointer).boolean;
+  }
+
+  static final _id_hashCode$1 = NativeInteropEmptySealedClass._class.instanceMethodId(
+    r'hashCode',
+    r'()I',
+  );
+
+  static final _hashCode$1 =
+      jni$_.ProtectedJniExtensions.lookup<
+            jni$_.NativeFunction<
+              jni$_.JniResult Function(jni$_.Pointer<jni$_.Void>, jni$_.JMethodIDPtr)
+            >
+          >('globalEnv_CallIntMethod')
+          .asFunction<jni$_.JniResult Function(jni$_.Pointer<jni$_.Void>, jni$_.JMethodIDPtr)>();
+
+  /// from: `public fun hashCode(): kotlin.Int`
+  core$_.int hashCode$1() {
+    final _$$selfRef = reference;
+    return _hashCode$1(_$$selfRef.pointer, _id_hashCode$1.pointer).integer;
+  }
+
+  static final _id_toString$1 = NativeInteropEmptySealedClass._class.instanceMethodId(
+    r'toString',
+    r'()Ljava/lang/String;',
+  );
+
+  static final _toString$1 =
+      jni$_.ProtectedJniExtensions.lookup<
+            jni$_.NativeFunction<
+              jni$_.JniResult Function(jni$_.Pointer<jni$_.Void>, jni$_.JMethodIDPtr)
+            >
+          >('globalEnv_CallObjectMethod')
+          .asFunction<jni$_.JniResult Function(jni$_.Pointer<jni$_.Void>, jni$_.JMethodIDPtr)>();
+
+  /// from: `public fun toString(): kotlin.String`
+  /// The returned object must be released after use, by calling the [release] method.
+  jni$_.JString toString$1() {
+    final _$$selfRef = reference;
+    return _toString$1(_$$selfRef.pointer, _id_toString$1.pointer).object<jni$_.JString>();
+  }
+}
+
+final class $NativeInteropEmptySealedClass$Type$
+    extends jni$_.JType<NativeInteropEmptySealedClass> {
+  @jni$_.internal
+  const $NativeInteropEmptySealedClass$Type$();
+
+  @jni$_.internal
+  @core$_.override
+  String get signature => r'Lcom/example/test_plugin/NativeInteropEmptySealedClass;';
+}
+
+/// from: `com.example.test_plugin.NativeInteropSealedClassWrapper$Companion`
+extension type NativeInteropSealedClassWrapper$Companion._(jni$_.JObject _$this)
+    implements jni$_.JObject {
+  static final _class = jni$_.JClass.forName(
+    r'com/example/test_plugin/NativeInteropSealedClassWrapper$Companion',
+  );
+
+  /// The type which includes information such as the signature of this class.
+  static const jni$_.JType<NativeInteropSealedClassWrapper$Companion> type =
+      $NativeInteropSealedClassWrapper$Companion$Type$();
+  static final _id_new$ = _class.constructorId(
+    r'(Lkotlin/jvm/internal/DefaultConstructorMarker;)V',
+  );
+
+  static final _new$ =
+      jni$_.ProtectedJniExtensions.lookup<
+            jni$_.NativeFunction<
+              jni$_.JniResult Function(
+                jni$_.Pointer<jni$_.Void>,
+                jni$_.JMethodIDPtr,
+                jni$_.VarArgs<(jni$_.Pointer<jni$_.Void>,)>,
+              )
+            >
+          >('globalEnv_NewObject')
+          .asFunction<
+            jni$_.JniResult Function(
+              jni$_.Pointer<jni$_.Void>,
+              jni$_.JMethodIDPtr,
+              jni$_.Pointer<jni$_.Void>,
+            )
+          >();
+
+  /// from: `synthetic public void <init>(kotlin.jvm.internal.DefaultConstructorMarker defaultConstructorMarker)`
+  /// The returned object must be released after use, by calling the [release] method.
+  factory NativeInteropSealedClassWrapper$Companion(
+    DefaultConstructorMarker? defaultConstructorMarker,
+  ) {
+    final _$$classRef = _class.reference;
+    final _$defaultConstructorMarker = defaultConstructorMarker?.reference ?? jni$_.jNullReference;
+    return _new$(
+      _$$classRef.pointer,
+      _id_new$.pointer,
+      _$defaultConstructorMarker.pointer,
+    ).object<NativeInteropSealedClassWrapper$Companion>();
+  }
+}
+
+extension NativeInteropSealedClassWrapper$Companion$$Methods
+    on NativeInteropSealedClassWrapper$Companion {
+  static final _id_fromList = NativeInteropSealedClassWrapper$Companion._class.instanceMethodId(
+    r'fromList',
+    r'(Ljava/util/List;)Lcom/example/test_plugin/NativeInteropSealedClassWrapper;',
+  );
+
+  static final _fromList =
+      jni$_.ProtectedJniExtensions.lookup<
+            jni$_.NativeFunction<
+              jni$_.JniResult Function(
+                jni$_.Pointer<jni$_.Void>,
+                jni$_.JMethodIDPtr,
+                jni$_.VarArgs<(jni$_.Pointer<jni$_.Void>,)>,
+              )
+            >
+          >('globalEnv_CallObjectMethod')
+          .asFunction<
+            jni$_.JniResult Function(
+              jni$_.Pointer<jni$_.Void>,
+              jni$_.JMethodIDPtr,
+              jni$_.Pointer<jni$_.Void>,
+            )
+          >();
+
+  /// from: `public fun fromList(pigeonVar_list: kotlin.collections.List<kotlin.Any?>): com.example.test_plugin.NativeInteropSealedClassWrapper`
+  /// The returned object must be released after use, by calling the [release] method.
+  NativeInteropSealedClassWrapper fromList(jni$_.JList<jni$_.JObject?> list) {
+    final _$$selfRef = reference;
+    final _$list = list.reference;
+    return _fromList(
+      _$$selfRef.pointer,
+      _id_fromList.pointer,
+      _$list.pointer,
+    ).object<NativeInteropSealedClassWrapper>();
+  }
+}
+
+final class $NativeInteropSealedClassWrapper$Companion$Type$
+    extends jni$_.JType<NativeInteropSealedClassWrapper$Companion> {
+  @jni$_.internal
+  const $NativeInteropSealedClassWrapper$Companion$Type$();
+
+  @jni$_.internal
+  @core$_.override
+  String get signature => r'Lcom/example/test_plugin/NativeInteropSealedClassWrapper$Companion;';
+}
+
+/// from: `com.example.test_plugin.NativeInteropSealedClassWrapper`
+extension type NativeInteropSealedClassWrapper._(jni$_.JObject _$this) implements jni$_.JObject {
+  static final _class = jni$_.JClass.forName(
+    r'com/example/test_plugin/NativeInteropSealedClassWrapper',
+  );
+
+  /// The type which includes information such as the signature of this class.
+  static const jni$_.JType<NativeInteropSealedClassWrapper> type =
+      $NativeInteropSealedClassWrapper$Type$();
+  static final _id_Companion = _class.staticFieldId(
+    r'Companion',
+    r'Lcom/example/test_plugin/NativeInteropSealedClassWrapper$Companion;',
+  );
+
+  /// from: `static public final com.example.test_plugin.NativeInteropSealedClassWrapper$Companion Companion`
+  /// The returned object must be released after use, by calling the [release] method.
+  static NativeInteropSealedClassWrapper$Companion get Companion =>
+      _id_Companion.get(_class, NativeInteropSealedClassWrapper$Companion.type)
+          as NativeInteropSealedClassWrapper$Companion;
+
+  static final _id_new$ = _class.constructorId(
+    r'(Lcom/example/test_plugin/NativeInteropSealedClass;Lcom/example/test_plugin/NativeInteropSealedClass;Ljava/util/List;)V',
+  );
+
+  static final _new$ =
+      jni$_.ProtectedJniExtensions.lookup<
+            jni$_.NativeFunction<
+              jni$_.JniResult Function(
+                jni$_.Pointer<jni$_.Void>,
+                jni$_.JMethodIDPtr,
+                jni$_.VarArgs<
+                  (jni$_.Pointer<jni$_.Void>, jni$_.Pointer<jni$_.Void>, jni$_.Pointer<jni$_.Void>)
+                >,
+              )
+            >
+          >('globalEnv_NewObject')
+          .asFunction<
+            jni$_.JniResult Function(
+              jni$_.Pointer<jni$_.Void>,
+              jni$_.JMethodIDPtr,
+              jni$_.Pointer<jni$_.Void>,
+              jni$_.Pointer<jni$_.Void>,
+              jni$_.Pointer<jni$_.Void>,
+            )
+          >();
+
+  /// from: `public void <init>(com.example.test_plugin.NativeInteropSealedClass nativeInteropSealedClass, com.example.test_plugin.NativeInteropSealedClass nativeInteropSealedClass1, java.util.List<? extends com.example.test_plugin.NativeInteropSealedClass> list)`
+  /// The returned object must be released after use, by calling the [release] method.
+  factory NativeInteropSealedClassWrapper(
+    NativeInteropSealedClass nativeInteropSealedClass,
+    NativeInteropSealedClass? nativeInteropSealedClass1,
+    jni$_.JList<NativeInteropSealedClass> list,
+  ) {
+    final _$$classRef = _class.reference;
+    final _$nativeInteropSealedClass = nativeInteropSealedClass.reference;
+    final _$nativeInteropSealedClass1 =
+        nativeInteropSealedClass1?.reference ?? jni$_.jNullReference;
+    final _$list = list.reference;
+    return _new$(
+      _$$classRef.pointer,
+      _id_new$.pointer,
+      _$nativeInteropSealedClass.pointer,
+      _$nativeInteropSealedClass1.pointer,
+      _$list.pointer,
+    ).object<NativeInteropSealedClassWrapper>();
+  }
+
+  static final _id_new$1 = _class.constructorId(
+    r'(Lcom/example/test_plugin/NativeInteropSealedClass;Lcom/example/test_plugin/NativeInteropSealedClass;Ljava/util/List;ILkotlin/jvm/internal/DefaultConstructorMarker;)V',
+  );
+
+  static final _new$1 =
+      jni$_.ProtectedJniExtensions.lookup<
+            jni$_.NativeFunction<
+              jni$_.JniResult Function(
+                jni$_.Pointer<jni$_.Void>,
+                jni$_.JMethodIDPtr,
+                jni$_.VarArgs<
+                  (
+                    jni$_.Pointer<jni$_.Void>,
+                    jni$_.Pointer<jni$_.Void>,
+                    jni$_.Pointer<jni$_.Void>,
+                    jni$_.Int32,
+                    jni$_.Pointer<jni$_.Void>,
+                  )
+                >,
+              )
+            >
+          >('globalEnv_NewObject')
+          .asFunction<
+            jni$_.JniResult Function(
+              jni$_.Pointer<jni$_.Void>,
+              jni$_.JMethodIDPtr,
+              jni$_.Pointer<jni$_.Void>,
+              jni$_.Pointer<jni$_.Void>,
+              jni$_.Pointer<jni$_.Void>,
+              core$_.int,
+              jni$_.Pointer<jni$_.Void>,
+            )
+          >();
+
+  /// from: `synthetic public void <init>(com.example.test_plugin.NativeInteropSealedClass nativeInteropSealedClass, com.example.test_plugin.NativeInteropSealedClass nativeInteropSealedClass1, java.util.List list, int i, kotlin.jvm.internal.DefaultConstructorMarker defaultConstructorMarker)`
+  /// The returned object must be released after use, by calling the [release] method.
+  factory NativeInteropSealedClassWrapper.new$1(
+    NativeInteropSealedClass? nativeInteropSealedClass,
+    NativeInteropSealedClass? nativeInteropSealedClass1,
+    jni$_.JList<jni$_.JObject?>? list,
+    core$_.int i,
+    DefaultConstructorMarker? defaultConstructorMarker,
+  ) {
+    final _$$classRef = _class.reference;
+    final _$nativeInteropSealedClass = nativeInteropSealedClass?.reference ?? jni$_.jNullReference;
+    final _$nativeInteropSealedClass1 =
+        nativeInteropSealedClass1?.reference ?? jni$_.jNullReference;
+    final _$list = list?.reference ?? jni$_.jNullReference;
+    final _$defaultConstructorMarker = defaultConstructorMarker?.reference ?? jni$_.jNullReference;
+    return _new$1(
+      _$$classRef.pointer,
+      _id_new$1.pointer,
+      _$nativeInteropSealedClass.pointer,
+      _$nativeInteropSealedClass1.pointer,
+      _$list.pointer,
+      i,
+      _$defaultConstructorMarker.pointer,
+    ).object<NativeInteropSealedClassWrapper>();
+  }
+}
+
+extension NativeInteropSealedClassWrapper$$Methods on NativeInteropSealedClassWrapper {
+  static final _id_get$sealedClass = NativeInteropSealedClassWrapper._class.instanceMethodId(
+    r'getSealedClass',
+    r'()Lcom/example/test_plugin/NativeInteropSealedClass;',
+  );
+
+  static final _get$sealedClass =
+      jni$_.ProtectedJniExtensions.lookup<
+            jni$_.NativeFunction<
+              jni$_.JniResult Function(jni$_.Pointer<jni$_.Void>, jni$_.JMethodIDPtr)
+            >
+          >('globalEnv_CallObjectMethod')
+          .asFunction<jni$_.JniResult Function(jni$_.Pointer<jni$_.Void>, jni$_.JMethodIDPtr)>();
+
+  /// from: `public final com.example.test_plugin.NativeInteropSealedClass getSealedClass()`
+  /// The returned object must be released after use, by calling the [release] method.
+  NativeInteropSealedClass get sealedClass {
+    final _$$selfRef = reference;
+    return _get$sealedClass(
+      _$$selfRef.pointer,
+      _id_get$sealedClass.pointer,
+    ).object<NativeInteropSealedClass>();
+  }
+
+  static final _id_get$nullableSealedClass = NativeInteropSealedClassWrapper._class
+      .instanceMethodId(
+        r'getNullableSealedClass',
+        r'()Lcom/example/test_plugin/NativeInteropSealedClass;',
+      );
+
+  static final _get$nullableSealedClass =
+      jni$_.ProtectedJniExtensions.lookup<
+            jni$_.NativeFunction<
+              jni$_.JniResult Function(jni$_.Pointer<jni$_.Void>, jni$_.JMethodIDPtr)
+            >
+          >('globalEnv_CallObjectMethod')
+          .asFunction<jni$_.JniResult Function(jni$_.Pointer<jni$_.Void>, jni$_.JMethodIDPtr)>();
+
+  /// from: `public final com.example.test_plugin.NativeInteropSealedClass getNullableSealedClass()`
+  /// The returned object must be released after use, by calling the [release] method.
+  NativeInteropSealedClass? get nullableSealedClass {
+    final _$$selfRef = reference;
+    return _get$nullableSealedClass(
+      _$$selfRef.pointer,
+      _id_get$nullableSealedClass.pointer,
+    ).object<NativeInteropSealedClass?>();
+  }
+
+  static final _id_get$sealedClassList = NativeInteropSealedClassWrapper._class.instanceMethodId(
+    r'getSealedClassList',
+    r'()Ljava/util/List;',
+  );
+
+  static final _get$sealedClassList =
+      jni$_.ProtectedJniExtensions.lookup<
+            jni$_.NativeFunction<
+              jni$_.JniResult Function(jni$_.Pointer<jni$_.Void>, jni$_.JMethodIDPtr)
+            >
+          >('globalEnv_CallObjectMethod')
+          .asFunction<jni$_.JniResult Function(jni$_.Pointer<jni$_.Void>, jni$_.JMethodIDPtr)>();
+
+  /// from: `public final java.util.List<com.example.test_plugin.NativeInteropSealedClass> getSealedClassList()`
+  /// The returned object must be released after use, by calling the [release] method.
+  jni$_.JList<NativeInteropSealedClass> get sealedClassList {
+    final _$$selfRef = reference;
+    return _get$sealedClassList(
+      _$$selfRef.pointer,
+      _id_get$sealedClassList.pointer,
+    ).object<jni$_.JList<NativeInteropSealedClass>>();
+  }
+
+  static final _id_toList = NativeInteropSealedClassWrapper._class.instanceMethodId(
+    r'toList',
+    r'()Ljava/util/List;',
+  );
+
+  static final _toList =
+      jni$_.ProtectedJniExtensions.lookup<
+            jni$_.NativeFunction<
+              jni$_.JniResult Function(jni$_.Pointer<jni$_.Void>, jni$_.JMethodIDPtr)
+            >
+          >('globalEnv_CallObjectMethod')
+          .asFunction<jni$_.JniResult Function(jni$_.Pointer<jni$_.Void>, jni$_.JMethodIDPtr)>();
+
+  /// from: `public fun toList(): kotlin.collections.List<kotlin.Any?>`
+  /// The returned object must be released after use, by calling the [release] method.
+  jni$_.JList<jni$_.JObject?> toList() {
+    final _$$selfRef = reference;
+    return _toList(_$$selfRef.pointer, _id_toList.pointer).object<jni$_.JList<jni$_.JObject?>>();
+  }
+
+  static final _id_equals = NativeInteropSealedClassWrapper._class.instanceMethodId(
+    r'equals',
+    r'(Ljava/lang/Object;)Z',
+  );
+
+  static final _equals =
+      jni$_.ProtectedJniExtensions.lookup<
+            jni$_.NativeFunction<
+              jni$_.JniResult Function(
+                jni$_.Pointer<jni$_.Void>,
+                jni$_.JMethodIDPtr,
+                jni$_.VarArgs<(jni$_.Pointer<jni$_.Void>,)>,
+              )
+            >
+          >('globalEnv_CallBooleanMethod')
+          .asFunction<
+            jni$_.JniResult Function(
+              jni$_.Pointer<jni$_.Void>,
+              jni$_.JMethodIDPtr,
+              jni$_.Pointer<jni$_.Void>,
+            )
+          >();
+
+  /// from: `public operator fun equals(other: kotlin.Any?): kotlin.Boolean`
+  core$_.bool equals(jni$_.JObject? object) {
+    final _$$selfRef = reference;
+    final _$object = object?.reference ?? jni$_.jNullReference;
+    return _equals(_$$selfRef.pointer, _id_equals.pointer, _$object.pointer).boolean;
+  }
+
+  static final _id_hashCode$1 = NativeInteropSealedClassWrapper._class.instanceMethodId(
+    r'hashCode',
+    r'()I',
+  );
+
+  static final _hashCode$1 =
+      jni$_.ProtectedJniExtensions.lookup<
+            jni$_.NativeFunction<
+              jni$_.JniResult Function(jni$_.Pointer<jni$_.Void>, jni$_.JMethodIDPtr)
+            >
+          >('globalEnv_CallIntMethod')
+          .asFunction<jni$_.JniResult Function(jni$_.Pointer<jni$_.Void>, jni$_.JMethodIDPtr)>();
+
+  /// from: `public fun hashCode(): kotlin.Int`
+  core$_.int hashCode$1() {
+    final _$$selfRef = reference;
+    return _hashCode$1(_$$selfRef.pointer, _id_hashCode$1.pointer).integer;
+  }
+
+  static final _id_toString$1 = NativeInteropSealedClassWrapper._class.instanceMethodId(
+    r'toString',
+    r'()Ljava/lang/String;',
+  );
+
+  static final _toString$1 =
+      jni$_.ProtectedJniExtensions.lookup<
+            jni$_.NativeFunction<
+              jni$_.JniResult Function(jni$_.Pointer<jni$_.Void>, jni$_.JMethodIDPtr)
+            >
+          >('globalEnv_CallObjectMethod')
+          .asFunction<jni$_.JniResult Function(jni$_.Pointer<jni$_.Void>, jni$_.JMethodIDPtr)>();
+
+  /// from: `public fun toString(): kotlin.String`
+  /// The returned object must be released after use, by calling the [release] method.
+  jni$_.JString toString$1() {
+    final _$$selfRef = reference;
+    return _toString$1(_$$selfRef.pointer, _id_toString$1.pointer).object<jni$_.JString>();
+  }
+
+  static final _id_component1 = NativeInteropSealedClassWrapper._class.instanceMethodId(
+    r'component1',
+    r'()Lcom/example/test_plugin/NativeInteropSealedClass;',
+  );
+
+  static final _component1 =
+      jni$_.ProtectedJniExtensions.lookup<
+            jni$_.NativeFunction<
+              jni$_.JniResult Function(jni$_.Pointer<jni$_.Void>, jni$_.JMethodIDPtr)
+            >
+          >('globalEnv_CallObjectMethod')
+          .asFunction<jni$_.JniResult Function(jni$_.Pointer<jni$_.Void>, jni$_.JMethodIDPtr)>();
+
+  /// from: `public operator fun component1(): com.example.test_plugin.NativeInteropSealedClass`
+  /// The returned object must be released after use, by calling the [release] method.
+  NativeInteropSealedClass component1() {
+    final _$$selfRef = reference;
+    return _component1(
+      _$$selfRef.pointer,
+      _id_component1.pointer,
+    ).object<NativeInteropSealedClass>();
+  }
+
+  static final _id_component2 = NativeInteropSealedClassWrapper._class.instanceMethodId(
+    r'component2',
+    r'()Lcom/example/test_plugin/NativeInteropSealedClass;',
+  );
+
+  static final _component2 =
+      jni$_.ProtectedJniExtensions.lookup<
+            jni$_.NativeFunction<
+              jni$_.JniResult Function(jni$_.Pointer<jni$_.Void>, jni$_.JMethodIDPtr)
+            >
+          >('globalEnv_CallObjectMethod')
+          .asFunction<jni$_.JniResult Function(jni$_.Pointer<jni$_.Void>, jni$_.JMethodIDPtr)>();
+
+  /// from: `public operator fun component2(): com.example.test_plugin.NativeInteropSealedClass?`
+  /// The returned object must be released after use, by calling the [release] method.
+  NativeInteropSealedClass? component2() {
+    final _$$selfRef = reference;
+    return _component2(
+      _$$selfRef.pointer,
+      _id_component2.pointer,
+    ).object<NativeInteropSealedClass?>();
+  }
+
+  static final _id_component3 = NativeInteropSealedClassWrapper._class.instanceMethodId(
+    r'component3',
+    r'()Ljava/util/List;',
+  );
+
+  static final _component3 =
+      jni$_.ProtectedJniExtensions.lookup<
+            jni$_.NativeFunction<
+              jni$_.JniResult Function(jni$_.Pointer<jni$_.Void>, jni$_.JMethodIDPtr)
+            >
+          >('globalEnv_CallObjectMethod')
+          .asFunction<jni$_.JniResult Function(jni$_.Pointer<jni$_.Void>, jni$_.JMethodIDPtr)>();
+
+  /// from: `public operator fun component3(): kotlin.collections.List<com.example.test_plugin.NativeInteropSealedClass>`
+  /// The returned object must be released after use, by calling the [release] method.
+  jni$_.JList<NativeInteropSealedClass> component3() {
+    final _$$selfRef = reference;
+    return _component3(
+      _$$selfRef.pointer,
+      _id_component3.pointer,
+    ).object<jni$_.JList<NativeInteropSealedClass>>();
+  }
+
+  static final _id_copy = NativeInteropSealedClassWrapper._class.instanceMethodId(
+    r'copy',
+    r'(Lcom/example/test_plugin/NativeInteropSealedClass;Lcom/example/test_plugin/NativeInteropSealedClass;Ljava/util/List;)Lcom/example/test_plugin/NativeInteropSealedClassWrapper;',
+  );
+
+  static final _copy =
+      jni$_.ProtectedJniExtensions.lookup<
+            jni$_.NativeFunction<
+              jni$_.JniResult Function(
+                jni$_.Pointer<jni$_.Void>,
+                jni$_.JMethodIDPtr,
+                jni$_.VarArgs<
+                  (jni$_.Pointer<jni$_.Void>, jni$_.Pointer<jni$_.Void>, jni$_.Pointer<jni$_.Void>)
+                >,
+              )
+            >
+          >('globalEnv_CallObjectMethod')
+          .asFunction<
+            jni$_.JniResult Function(
+              jni$_.Pointer<jni$_.Void>,
+              jni$_.JMethodIDPtr,
+              jni$_.Pointer<jni$_.Void>,
+              jni$_.Pointer<jni$_.Void>,
+              jni$_.Pointer<jni$_.Void>,
+            )
+          >();
+
+  /// from: `public fun copy(sealedClass: com.example.test_plugin.NativeInteropSealedClass, nullableSealedClass: com.example.test_plugin.NativeInteropSealedClass?, sealedClassList: kotlin.collections.List<com.example.test_plugin.NativeInteropSealedClass>): com.example.test_plugin.NativeInteropSealedClassWrapper`
+  /// The returned object must be released after use, by calling the [release] method.
+  NativeInteropSealedClassWrapper copy(
+    NativeInteropSealedClass nativeInteropSealedClass,
+    NativeInteropSealedClass? nativeInteropSealedClass1,
+    jni$_.JList<NativeInteropSealedClass> list,
+  ) {
+    final _$$selfRef = reference;
+    final _$nativeInteropSealedClass = nativeInteropSealedClass.reference;
+    final _$nativeInteropSealedClass1 =
+        nativeInteropSealedClass1?.reference ?? jni$_.jNullReference;
+    final _$list = list.reference;
+    return _copy(
+      _$$selfRef.pointer,
+      _id_copy.pointer,
+      _$nativeInteropSealedClass.pointer,
+      _$nativeInteropSealedClass1.pointer,
+      _$list.pointer,
+    ).object<NativeInteropSealedClassWrapper>();
+  }
+}
+
+final class $NativeInteropSealedClassWrapper$Type$
+    extends jni$_.JType<NativeInteropSealedClassWrapper> {
+  @jni$_.internal
+  const $NativeInteropSealedClassWrapper$Type$();
+
+  @jni$_.internal
+  @core$_.override
+  String get signature => r'Lcom/example/test_plugin/NativeInteropSealedClassWrapper;';
 }
 
 /// from: `com.example.test_plugin.NativeInteropReservedNames$Companion`

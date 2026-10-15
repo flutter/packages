@@ -51,6 +51,10 @@ Future<void> main(List<String> args) async {
     'NativeInteropAllNullableTypesBridge',
     'NativeInteropAllNullableTypesWithoutRecursionBridge',
     'NativeInteropAllClassesWrapperBridge',
+    'NativeInteropSealedClassBridge',
+    'NativeInteropSealedClassWithFieldsBridge',
+    'NativeInteropEmptySealedClassBridge',
+    'NativeInteropSealedClassWrapperBridge',
     'NativeInteropReservedNamesBridge',
     'NativeInteropTestsError',
   };

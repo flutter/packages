@@ -2671,32 +2671,19 @@ dev_dependencies:
 abstract class Events {
   int numbers();
 }
-
-sealed class Shape {}
-
-class Circle extends Shape {
-  Circle(this.radius);
-  double radius;
-}
-
-@HostApi()
-abstract class Api {
-  Circle circle();
-}
 ''';
 
-    test('Swift FFI rejects event channels and sealed classes', () {
+    test('Swift FFI rejects event channels', () {
       final List<Error> errors = validate(const SwiftGeneratorAdapter(), unsupportedFeaturesSource);
       expect(
         errors.map((Error e) => e.message),
         containsAll(<Matcher>[
           contains('Swift FFI does not support event channels yet (in API "Events")'),
-          contains('Swift FFI does not support sealed classes yet (class "Shape")'),
         ]),
       );
     });
 
-    test('Swift without FFI allows event channels and sealed classes', () {
+    test('Swift without FFI allows event channels', () {
       final List<Error> errors = validate(
         const SwiftGeneratorAdapter(),
         unsupportedFeaturesSource,
@@ -2761,7 +2748,7 @@ abstract class Api {
       expect(errors[0].message, contains('Swift FFI requires `includeErrorClass: true`'));
     });
 
-    test('Kotlin JNI rejects event channels and sealed classes', () {
+    test('Kotlin JNI rejects event channels', () {
       final List<Error> errors = validate(
         const KotlinGeneratorAdapter(),
         unsupportedFeaturesSource,
@@ -2770,12 +2757,11 @@ abstract class Api {
         errors.map((Error e) => e.message),
         containsAll(<Matcher>[
           contains('Kotlin JNI does not support event channels yet (in API "Events")'),
-          contains('Kotlin JNI does not support sealed classes yet (class "Shape")'),
         ]),
       );
     });
 
-    test('Kotlin without JNI allows event channels and sealed classes', () {
+    test('Kotlin without JNI allows event channels', () {
       final List<Error> errors = validate(
         const KotlinGeneratorAdapter(),
         unsupportedFeaturesSource,
