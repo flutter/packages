@@ -414,7 +414,7 @@ extension InAppPurchasePlugin: InAppPurchase2API {
   /// Presents the App Store sheet that lets the user manage their subscriptions.
   func showManageSubscriptions(completion: @escaping (Result<Void, Error>) -> Void) {
     #if os(iOS)
-      if #available(iOS 15.0, *) {
+      Task { @MainActor in
         guard let windowScene = self.registrar?.viewController?.view.window?.windowScene else {
           let error = PigeonError(
             code: "storekit2_missing_key_window_scene",
@@ -424,22 +424,12 @@ extension InAppPurchasePlugin: InAppPurchase2API {
           completion(.failure(error))
           return
         }
-        Task { @MainActor in
-          do {
-            try await AppStore.showManageSubscriptions(in: windowScene)
-            completion(.success(()))
-          } catch {
-            completion(.failure(error))
-          }
+        do {
+          try await AppStore.showManageSubscriptions(in: windowScene)
+          completion(.success(()))
+        } catch {
+          completion(.failure(error))
         }
-      } else {
-        completion(
-          .failure(
-            PigeonError(
-              code: "storekit2_unsupported_platform_version",
-              message: "Managing subscriptions requires iOS 15+",
-              details: nil
-            )))
       }
     #elseif os(macOS)
       // StoreKit does not provide showManageSubscriptions on macOS. Subscriptions are
