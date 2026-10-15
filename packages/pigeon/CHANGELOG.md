@@ -1,6 +1,11 @@
-## 29.0.9
+## 29.0.10
 
 * [swift] [kotlin] Allows `sealed` classes in native interop files.
+
+## 29.0.9
+
+* [kotlin] Stops generating unused JNI bindings for host API interfaces, significantly
+  reducing the size of the generated `.jni.dart` file.
 
 ## 29.0.8
 

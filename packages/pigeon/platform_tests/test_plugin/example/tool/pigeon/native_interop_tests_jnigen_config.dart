@@ -22,11 +22,9 @@ void main() async {
     input: Input(
       classes: [
         'com.example.test_plugin.NativeInteropTestsError',
-        'com.example.test_plugin.NativeInteropHostIntegrationCoreApi',
         'com.example.test_plugin.NativeInteropHostIntegrationCoreApiRegistrar',
         'com.example.test_plugin.NativeInteropFlutterIntegrationCoreApi',
         'com.example.test_plugin.NativeInteropFlutterIntegrationCoreApiRegistrar',
-        'com.example.test_plugin.NativeInteropReservedNamesHostApi',
         'com.example.test_plugin.NativeInteropReservedNamesHostApiRegistrar',
         'com.example.test_plugin.NativeInteropReservedNamesFlutterApi',
         'com.example.test_plugin.NativeInteropReservedNamesFlutterApiRegistrar',
