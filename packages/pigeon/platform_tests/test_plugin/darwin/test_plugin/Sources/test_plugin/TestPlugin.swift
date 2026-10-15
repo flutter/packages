@@ -1205,6 +1205,10 @@ class NativeInteropTestsClass: NSObject, NativeInteropHostIntegrationCoreApi {
     return everything
   }
 
+  func echoAsync(sealedClass: NativeInteropSealedClass) async throws -> NativeInteropSealedClass {
+    return sealedClass
+  }
+
   func echoAsync(_ everything: NativeInteropAllNullableTypes?) async throws
     -> NativeInteropAllNullableTypes?
   {
@@ -1753,6 +1757,11 @@ class NativeInteropTestsClass: NSObject, NativeInteropHostIntegrationCoreApi {
     return try flutterApi.echoNativeInteropAllNullableTypes(everything: everything)
   }
 
+  func callFlutterEcho(sealedClass: NativeInteropSealedClass) throws -> NativeInteropSealedClass {
+    let flutterApi = try getNativeInteropFlutterApi()
+    return try flutterApi.echoNativeInteropSealedClass(sealedClass: sealedClass)
+  }
+
   func callFlutterSendMultipleNullableTypes(
     aBool aNullableBool: Bool?, anInt aNullableInt: Int64?, aString aNullableString: String?
   ) throws -> NativeInteropAllNullableTypes {
@@ -1834,6 +1843,24 @@ class NativeInteropTestsClass: NSObject, NativeInteropHostIntegrationCoreApi {
 
   func echo(_ wrapper: NativeInteropAllClassesWrapper) throws -> NativeInteropAllClassesWrapper {
     return wrapper
+  }
+
+  func echo(sealedClass: NativeInteropSealedClass) throws -> NativeInteropSealedClass {
+    return sealedClass
+  }
+
+  func echoNullable(sealedClass: NativeInteropSealedClass?) throws -> NativeInteropSealedClass? {
+    return sealedClass
+  }
+
+  func echo(sealedClassList: [NativeInteropSealedClass]) throws -> [NativeInteropSealedClass] {
+    return sealedClassList
+  }
+
+  func echo(sealedClassWrapper: NativeInteropSealedClassWrapper) throws
+    -> NativeInteropSealedClassWrapper
+  {
+    return sealedClassWrapper
   }
 
   func echoNullable(_ everything: NativeInteropAllNullableTypesWithoutRecursion?) throws
