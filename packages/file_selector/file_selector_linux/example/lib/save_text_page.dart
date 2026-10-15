@@ -6,7 +6,7 @@ import 'dart:typed_data';
 import 'package:file_selector_platform_interface/file_selector_platform_interface.dart';
 import 'package:flutter/material.dart';
 
-/// Screen that allows the user to select a save location using `getSavePath`,
+/// Screen that allows the user to select a save location using `getSaveLocation`,
 /// then writes text to a file at that location.
 class SaveTextPage extends StatelessWidget {
   /// Default Constructor

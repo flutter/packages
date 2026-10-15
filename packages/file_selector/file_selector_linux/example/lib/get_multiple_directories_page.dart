@@ -5,7 +5,7 @@
 import 'package:file_selector_platform_interface/file_selector_platform_interface.dart';
 import 'package:flutter/material.dart';
 
-/// Screen that allows the user to select one or more directories using `_getDirectories`,
+/// Screen that allows the user to select one or more directories using `getDirectories`,
 /// then displays the selected directories in a dialog.
 class GetMultipleDirectoriesPage extends StatelessWidget {
   /// Default Constructor
