@@ -44,8 +44,10 @@ class _IconButtonM3EExampleState extends State<IconButtonM3EExample> {
 
   void _toggle(String id) {
     setState(() {
-      if (!_selectedButtonIds.add(id)) {
+      if (_selectedButtonIds.contains(id)) {
         _selectedButtonIds.remove(id);
+      } else {
+        _selectedButtonIds.add(id);
       }
     });
   }
