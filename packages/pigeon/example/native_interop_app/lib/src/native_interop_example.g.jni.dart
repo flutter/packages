@@ -221,131 +221,6 @@ final class $FlutterError$Type$ extends jni$_.JType<FlutterError> {
   String get signature => r'Ldev/flutter/pigeonnativeinteropapp/FlutterError;';
 }
 
-/// from: `dev.flutter.pigeonnativeinteropapp.NativeInteropExampleApi`
-extension type NativeInteropExampleApi._(jni$_.JObject _$this) implements jni$_.JObject {
-  static final _class = jni$_.JClass.forName(
-    r'dev/flutter/pigeonnativeinteropapp/NativeInteropExampleApi',
-  );
-
-  /// The type which includes information such as the signature of this class.
-  static const jni$_.JType<NativeInteropExampleApi> type = $NativeInteropExampleApi$Type$();
-
-  /// Maps a specific port to the implemented interface.
-  static final core$_.Map<core$_.int, $NativeInteropExampleApi> _$impls = {};
-  static jni$_.JObjectPtr _$invoke(
-    core$_.int port,
-    jni$_.JObjectPtr descriptor,
-    jni$_.JObjectPtr args,
-  ) {
-    return _$invokeMethod(
-      port,
-      jni$_.MethodInvocation.fromAddresses(0, descriptor.address, args.address),
-    );
-  }
-
-  static final jni$_.Pointer<
-    jni$_.NativeFunction<jni$_.JObjectPtr Function(jni$_.Int64, jni$_.JObjectPtr, jni$_.JObjectPtr)>
-  >
-  _$invokePointer = jni$_.Pointer.fromFunction(_$invoke);
-
-  static jni$_.Pointer<jni$_.Void> _$invokeMethod(core$_.int $p, jni$_.MethodInvocation $i) {
-    try {
-      final $d = $i.methodDescriptor.toDartString(releaseOriginal: true);
-      final $a = $i.args;
-      if ($d == r'doSomething()V') {
-        _$impls[$p]!.doSomething();
-        return jni$_.nullptr;
-      }
-    } catch (e) {
-      return jni$_.ProtectedJniExtensions.newDartException(e);
-    }
-    return jni$_.nullptr;
-  }
-
-  static void implementIn(jni$_.JImplementer implementer, $NativeInteropExampleApi $impl) {
-    late final jni$_.RawReceivePort $p;
-    $p = jni$_.RawReceivePort(($m) {
-      if ($m == null) {
-        _$impls.remove($p.sendPort.nativePort);
-        $p.close();
-        return;
-      }
-      final $i = jni$_.MethodInvocation.fromMessage($m);
-      final $r = _$invokeMethod($p.sendPort.nativePort, $i);
-      $i.args?.release();
-      jni$_.ProtectedJniExtensions.returnResult($i.result, $r);
-    });
-    implementer.add(
-      r'dev.flutter.pigeonnativeinteropapp.NativeInteropExampleApi',
-      $p,
-      _$invokePointer,
-      [if ($impl.doSomething$async) r'doSomething()V'],
-    );
-    final $a = $p.sendPort.nativePort;
-    _$impls[$a] = $impl;
-  }
-
-  factory NativeInteropExampleApi.implement($NativeInteropExampleApi $impl) {
-    final $i = jni$_.JImplementer();
-    implementIn($i, $impl);
-    return $i.implement<NativeInteropExampleApi>();
-  }
-}
-
-extension NativeInteropExampleApi$$Methods on NativeInteropExampleApi {
-  static final _id_doSomething = NativeInteropExampleApi._class.instanceMethodId(
-    r'doSomething',
-    r'()V',
-  );
-
-  static final _doSomething =
-      jni$_.ProtectedJniExtensions.lookup<
-            jni$_.NativeFunction<
-              jni$_.JThrowablePtr Function(jni$_.Pointer<jni$_.Void>, jni$_.JMethodIDPtr)
-            >
-          >('globalEnv_CallVoidMethod')
-          .asFunction<
-            jni$_.JThrowablePtr Function(jni$_.Pointer<jni$_.Void>, jni$_.JMethodIDPtr)
-          >();
-
-  /// from: `public fun doSomething(): kotlin.Unit`
-  void doSomething() {
-    final _$$selfRef = reference;
-    _doSomething(_$$selfRef.pointer, _id_doSomething.pointer).check();
-  }
-}
-
-abstract base mixin class $NativeInteropExampleApi {
-  factory $NativeInteropExampleApi({
-    required void Function() doSomething,
-    core$_.bool doSomething$async,
-  }) = _$NativeInteropExampleApi;
-
-  void doSomething();
-  core$_.bool get doSomething$async => false;
-}
-
-final class _$NativeInteropExampleApi with $NativeInteropExampleApi {
-  _$NativeInteropExampleApi({required void Function() doSomething, this.doSomething$async = false})
-    : _doSomething = doSomething;
-
-  final void Function() _doSomething;
-  final core$_.bool doSomething$async;
-
-  void doSomething() {
-    return _doSomething();
-  }
-}
-
-final class $NativeInteropExampleApi$Type$ extends jni$_.JType<NativeInteropExampleApi> {
-  @jni$_.internal
-  const $NativeInteropExampleApi$Type$();
-
-  @jni$_.internal
-  @core$_.override
-  String get signature => r'Ldev/flutter/pigeonnativeinteropapp/NativeInteropExampleApi;';
-}
-
 /// from: `dev.flutter.pigeonnativeinteropapp.NativeInteropExampleApiRegistrar`
 extension type NativeInteropExampleApiRegistrar._(jni$_.JObject _$this)
     implements jni$_.JObject, NativeInteropExampleApi {
@@ -517,4 +392,22 @@ final class $DefaultConstructorMarker$Type$ extends jni$_.JType<DefaultConstruct
   @jni$_.internal
   @core$_.override
   String get signature => r'Lkotlin/jvm/internal/DefaultConstructorMarker;';
+}
+
+/// from: `dev.flutter.pigeonnativeinteropapp.NativeInteropExampleApi`
+///
+/// WARNING: NativeInteropExampleApi is a stub. To generate bindings for this class, include
+/// dev.flutter.pigeonnativeinteropapp.NativeInteropExampleApi in your config's classes list.
+///
+extension type NativeInteropExampleApi._(jni$_.JObject _$this) implements jni$_.JObject {
+  static const jni$_.JType<NativeInteropExampleApi> type = $NativeInteropExampleApi$Type$();
+}
+
+final class $NativeInteropExampleApi$Type$ extends jni$_.JType<NativeInteropExampleApi> {
+  @jni$_.internal
+  const $NativeInteropExampleApi$Type$();
+
+  @jni$_.internal
+  @core$_.override
+  String get signature => r'Ldev/flutter/pigeonnativeinteropapp/NativeInteropExampleApi;';
 }
