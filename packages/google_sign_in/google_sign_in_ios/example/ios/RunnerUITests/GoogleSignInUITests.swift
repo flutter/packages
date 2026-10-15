@@ -39,8 +39,9 @@ class GoogleSignInUITests: XCTestCase {
       // buttons ("Cancel" and "Continue") in every localization.
       let alertButtons = permissionAlert.buttons
       let buttonCount = alertButtons.count
-      if buttonCount == 0 {
+      guard buttonCount > 0 else {
         XCTFail("Sign In permission alert has no buttons")
+        return
       }
       alertButtons.element(boundBy: buttonCount - 1).tap()
     } else {
