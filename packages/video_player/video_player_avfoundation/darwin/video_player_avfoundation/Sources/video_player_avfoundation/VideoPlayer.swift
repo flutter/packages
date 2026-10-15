@@ -138,12 +138,19 @@ class VideoPlayer: NSObject, VideoPlayerInstanceApi {
           // https://developer.apple.com/documentation/avfoundation/avplayeritem/1388818-videocomposition
           // Video composition can only be used with file-based media and is not supported for
           // use with media served using HTTP Live Streaming.
-          playerItem.videoComposition = self.createVideoComposition(
+          playerItem.videoComposition = await self.createVideoComposition(
             transform: self.preferredTransform, asset: asset, videoTrack: videoTrack)
         }
       } catch {
         NSLog("Error loading tracks: %@", error.localizedDescription)
       }
+    }
+  }
+
+  deinit {
+    if let playToEndObserver = playToEndObserver {
+      NotificationCenter.default.removeObserver(playToEndObserver)
+      self.playToEndObserver = nil
     }
   }
 
@@ -177,7 +184,7 @@ class VideoPlayer: NSObject, VideoPlayerInstanceApi {
     // Without adding tolerance when seeking to duration,
     // seek(to:) will never complete, and this call will hang.
     // see issue https://github.com/flutter/flutter/issues/124475.
-    let tolerance = position == duration ? CMTime(value: 1, timescale: 1000) : CMTime.zero
+    let tolerance = position == duration ? CMTime(value: 1, timescale: 1000) : .zero
     player.seek(to: targetCMTime, toleranceBefore: tolerance, toleranceAfter: tolerance) {
       completed in
       DispatchQueue.main.async {
@@ -388,7 +395,7 @@ class VideoPlayer: NSObject, VideoPlayerInstanceApi {
         item.observe(
           \.loadedTimeRanges,
           options: [.new]
-        ) { [weak self] object, change in
+        ) { [weak self] object, _ in
           guard let self = self else { return }
           let values = object.loadedTimeRanges.map { rangeValue in
             let range = rangeValue.timeRangeValue
@@ -404,7 +411,7 @@ class VideoPlayer: NSObject, VideoPlayerInstanceApi {
         item.observe(
           \.isPlaybackLikelyToKeepUp,
           options: [.new]
-        ) { [weak self] object, change in
+        ) { [weak self] object, _ in
           guard let self = self else { return }
           self.updatePlayingState()
           if object.isPlaybackLikelyToKeepUp {
@@ -418,7 +425,7 @@ class VideoPlayer: NSObject, VideoPlayerInstanceApi {
         item.observe(
           \.status,
           options: [.new]
-        ) { [weak self] object, change in
+        ) { [weak self] object, _ in
           self?.reportStatus(playerItem: object as AVPlayerItem)
         }
       )
@@ -426,7 +433,7 @@ class VideoPlayer: NSObject, VideoPlayerInstanceApi {
         player.observe(
           \.rate,
           options: [.new]
-        ) { [weak self] object, change in
+        ) { [weak self] object, _ in
           self?.eventListener?.videoPlayerDidSetPlaying(object.rate > 0)
         }
       )
@@ -442,7 +449,7 @@ class VideoPlayer: NSObject, VideoPlayerInstanceApi {
 
   private func itemDidPlayToEndTime(_ item: AVPlayerItem) {
     if isLooping {
-      item.seek(to: CMTime.zero) { _ in }
+      item.seek(to: .zero) { _ in }
     } else {
       eventListener?.videoPlayerDidComplete()
     }
@@ -453,7 +460,7 @@ class VideoPlayer: NSObject, VideoPlayerInstanceApi {
     // Fixes https://github.com/flutter/flutter/issues/48670
     if time.isIndefinite { return -9_223_372_036_854_775_807 }
     if time.timescale == 0 { return 0 }
-    return time.value * 1000 / Int64(time.timescale)
+    return CMTimeConvertScale(time, timescale: 1000, method: .roundHalfAwayFromZero).value
   }
 
   private func radiansToDegrees(_ radians: CGFloat) -> Float {
@@ -467,16 +474,16 @@ class VideoPlayer: NSObject, VideoPlayerInstanceApi {
     return degrees
   }
 
-  private func createVideoComposition(
+  @MainActor private func createVideoComposition(
     transform: CGAffineTransform,
     asset: WrappedAVAsset,
     videoTrack: AVAssetTrack
-  ) -> AVMutableVideoComposition {
+  ) async -> AVMutableVideoComposition {
     let instruction = AVMutableVideoCompositionInstruction()
-    instruction.timeRange = CMTimeRange(start: CMTime.zero, duration: asset.duration)
+    instruction.timeRange = CMTimeRange(start: .zero, duration: asset.duration)
     let layerInstruction = AVMutableVideoCompositionLayerInstruction(
       assetTrack: videoTrack)
-    layerInstruction.setTransform(transform, at: CMTime.zero)
+    layerInstruction.setTransform(transform, at: .zero)
 
     let videoComposition = AVMutableVideoComposition()
     instruction.layerInstructions = [layerInstruction]
@@ -494,8 +501,14 @@ class VideoPlayer: NSObject, VideoPlayerInstanceApi {
     videoComposition.renderSize = CGSize(width: width, height: height)
 
     videoComposition.sourceTrackIDForFrameTiming = videoTrack.trackID
-    if frameDurationIsValid(videoTrack.minFrameDuration) {
-      videoComposition.frameDuration = videoTrack.minFrameDuration
+    var minFrameDuration = CMTime.zero
+    do {
+      minFrameDuration = try await videoTrack.load(.minFrameDuration)
+    } catch {
+      NSLog("Unable to load minFrameDuration")
+    }
+    if frameDurationIsValid(minFrameDuration) {
+      videoComposition.frameDuration = minFrameDuration
     } else {
       NSLog(
         "Warning: videoTrack.minFrameDuration for input video is invalid, please report this to "
@@ -554,15 +567,14 @@ class VideoPlayer: NSObject, VideoPlayerInstanceApi {
 
   private func sendFailedToLoadVideoEvent() {
     // Prefer more detailed error information from tracks loading.
-    var nsError: NSError?
-    var error: Error?
-    if player.currentItem?.asset.statusOfValue(
-      forKey: "tracks",
-      error: &nsError) == .failed
-    {
-      error = nsError
-    } else {
-      error = player.currentItem?.error
+    var error = player.currentItem?.error
+    if let currentItem = player.currentItem {
+      switch currentItem.asset.status(of: .tracks) {
+      case .failed(let nsError):
+        error = nsError
+      case .notYetLoaded, .loading, .loaded(_):
+        break
+      }
     }
     let details = NSMutableOrderedSet(object: "Failed to load video")
     let addToDetails: (String?) -> Void = { detail in
@@ -594,7 +606,7 @@ class VideoPlayer: NSObject, VideoPlayerInstanceApi {
     // Note: https://openradar.appspot.com/radar?id=4968600712511488
     // `[AVPlayerItem duration]` can be `kCMTimeIndefinite`,
     // use `[[AVPlayerItem asset] duration]` instead.
-    return convertCMTimeToMillis(player.currentItem?.asset.duration ?? CMTime.zero)
+    return convertCMTimeToMillis(player.currentItem?.asset.duration ?? .zero)
   }
 
 }
