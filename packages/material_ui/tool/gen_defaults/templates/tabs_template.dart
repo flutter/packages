@@ -17,6 +17,9 @@ class TabsTemplateM3 extends TokenTemplateM3 {
   String get parentFilePath => 'tabs.dart';
 
   @override
+  String get className => '';
+
+  @override
   String generateContents(String className) =>
       '''
 class _TabsPrimaryDefaultsM3 extends TabBarThemeData {
