@@ -88,6 +88,7 @@ void main() {
       );
 
       expect(combineLists(await file.openRead().toList()), testBytes);
+      verify(mockInputStream.close()).called(1);
     });
 
     test('openRead finishes successfully with file larger than max array len', () async {
@@ -192,6 +193,7 @@ void main() {
 
     final mockInputStream = MockInputStream();
     when(mockInputStream.readAllBytes()).thenAnswer((_) async => testBytes);
+    when(mockInputStream.close()).thenAnswer((_) async {});
 
     final mockContentResolver = MockContentResolver();
     when(mockContentResolver.openInputStream(uri)).thenAnswer((_) async => mockInputStream);
@@ -202,6 +204,7 @@ void main() {
     );
 
     expect(await file.readAsBytes(), testBytes);
+    verify(mockInputStream.close()).called(1);
   });
 
   test('readAsString', () async {
@@ -406,6 +409,8 @@ void setUpInputStreamWithBytes(MockInputStream mockInputStream, Uint8List bytes)
 
     return Uint8List.fromList(bytesRead);
   });
+
+  when(mockInputStream.close()).thenAnswer((_) async {});
 }
 
 Uint8List combineLists(List<Uint8List> lists) {

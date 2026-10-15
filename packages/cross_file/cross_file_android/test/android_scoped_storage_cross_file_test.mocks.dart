@@ -27,26 +27,31 @@ import 'package:mockito/src/dummies.dart' as _i4;
 // ignore_for_file: subtype_of_sealed_class
 // ignore_for_file: invalid_use_of_internal_member
 
-class _FakePigeonInstanceManager_0 extends _i1.SmartFake implements _i2.PigeonInstanceManager {
+class _FakePigeonInstanceManager_0 extends _i1.SmartFake
+    implements _i2.PigeonInstanceManager {
   _FakePigeonInstanceManager_0(Object parent, Invocation parentInvocation)
     : super(parent, parentInvocation);
 }
 
-class _FakeContentResolver_1 extends _i1.SmartFake implements _i2.ContentResolver {
+class _FakeContentResolver_1 extends _i1.SmartFake
+    implements _i2.ContentResolver {
   _FakeContentResolver_1(Object parent, Invocation parentInvocation)
     : super(parent, parentInvocation);
 }
 
 class _FakeDocumentFile_2 extends _i1.SmartFake implements _i2.DocumentFile {
-  _FakeDocumentFile_2(Object parent, Invocation parentInvocation) : super(parent, parentInvocation);
+  _FakeDocumentFile_2(Object parent, Invocation parentInvocation)
+    : super(parent, parentInvocation);
 }
 
 class _FakeInputStream_3 extends _i1.SmartFake implements _i2.InputStream {
-  _FakeInputStream_3(Object parent, Invocation parentInvocation) : super(parent, parentInvocation);
+  _FakeInputStream_3(Object parent, Invocation parentInvocation)
+    : super(parent, parentInvocation);
 }
 
 class _FakeOutputStream_4 extends _i1.SmartFake implements _i2.OutputStream {
-  _FakeOutputStream_4(Object parent, Invocation parentInvocation) : super(parent, parentInvocation);
+  _FakeOutputStream_4(Object parent, Invocation parentInvocation)
+    : super(parent, parentInvocation);
 }
 
 /// A class which mocks [ContentResolver].
@@ -88,7 +93,10 @@ class MockContentResolver extends _i1.Mock implements _i2.ContentResolver {
   _i2.ContentResolver pigeon_copy() =>
       (super.noSuchMethod(
             Invocation.method(#pigeon_copy, []),
-            returnValue: _FakeContentResolver_1(this, Invocation.method(#pigeon_copy, [])),
+            returnValue: _FakeContentResolver_1(
+              this,
+              Invocation.method(#pigeon_copy, []),
+            ),
           )
           as _i2.ContentResolver);
 }
@@ -154,7 +162,10 @@ class MockDocumentFile extends _i1.Mock implements _i2.DocumentFile {
 
   @override
   _i3.Future<int> length() =>
-      (super.noSuchMethod(Invocation.method(#length, []), returnValue: _i3.Future<int>.value(0))
+      (super.noSuchMethod(
+            Invocation.method(#length, []),
+            returnValue: _i3.Future<int>.value(0),
+          )
           as _i3.Future<int>);
 
   @override
@@ -177,7 +188,9 @@ class MockDocumentFile extends _i1.Mock implements _i2.DocumentFile {
   _i3.Future<List<_i2.DocumentFile>> listFiles() =>
       (super.noSuchMethod(
             Invocation.method(#listFiles, []),
-            returnValue: _i3.Future<List<_i2.DocumentFile>>.value(<_i2.DocumentFile>[]),
+            returnValue: _i3.Future<List<_i2.DocumentFile>>.value(
+              <_i2.DocumentFile>[],
+            ),
           )
           as _i3.Future<List<_i2.DocumentFile>>);
 
@@ -193,7 +206,10 @@ class MockDocumentFile extends _i1.Mock implements _i2.DocumentFile {
 
   @override
   _i3.Future<String?> getName() =>
-      (super.noSuchMethod(Invocation.method(#getName, []), returnValue: _i3.Future<String?>.value())
+      (super.noSuchMethod(
+            Invocation.method(#getName, []),
+            returnValue: _i3.Future<String?>.value(),
+          )
           as _i3.Future<String?>);
 
   @override
@@ -216,7 +232,10 @@ class MockDocumentFile extends _i1.Mock implements _i2.DocumentFile {
   _i2.DocumentFile pigeon_copy() =>
       (super.noSuchMethod(
             Invocation.method(#pigeon_copy, []),
-            returnValue: _FakeDocumentFile_2(this, Invocation.method(#pigeon_copy, [])),
+            returnValue: _FakeDocumentFile_2(
+              this,
+              Invocation.method(#pigeon_copy, []),
+            ),
           )
           as _i2.DocumentFile);
 }
@@ -258,14 +277,29 @@ class MockInputStream extends _i1.Mock implements _i2.InputStream {
 
   @override
   _i3.Future<int> skip(int? n) =>
-      (super.noSuchMethod(Invocation.method(#skip, [n]), returnValue: _i3.Future<int>.value(0))
+      (super.noSuchMethod(
+            Invocation.method(#skip, [n]),
+            returnValue: _i3.Future<int>.value(0),
+          )
           as _i3.Future<int>);
+
+  @override
+  _i3.Future<void> close() =>
+      (super.noSuchMethod(
+            Invocation.method(#close, []),
+            returnValue: _i3.Future<void>.value(),
+            returnValueForMissingStub: _i3.Future<void>.value(),
+          )
+          as _i3.Future<void>);
 
   @override
   _i2.InputStream pigeon_copy() =>
       (super.noSuchMethod(
             Invocation.method(#pigeon_copy, []),
-            returnValue: _FakeInputStream_3(this, Invocation.method(#pigeon_copy, [])),
+            returnValue: _FakeInputStream_3(
+              this,
+              Invocation.method(#pigeon_copy, []),
+            ),
           )
           as _i2.InputStream);
 }
@@ -320,7 +354,10 @@ class MockOutputStream extends _i1.Mock implements _i2.OutputStream {
   _i2.OutputStream pigeon_copy() =>
       (super.noSuchMethod(
             Invocation.method(#pigeon_copy, []),
-            returnValue: _FakeOutputStream_4(this, Invocation.method(#pigeon_copy, [])),
+            returnValue: _FakeOutputStream_4(
+              this,
+              Invocation.method(#pigeon_copy, []),
+            ),
           )
           as _i2.OutputStream);
 }
