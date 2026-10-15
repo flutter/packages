@@ -1876,6 +1876,302 @@ struct NativeInteropAllClassesWrapper: Hashable, CustomStringConvertible {
   }
 }
 
+/// A sealed class, to test sealed class handling.
+///
+/// Generated class from Pigeon that represents data sent in messages.
+/// This protocol should not be extended by any user class outside of the generated file.
+protocol NativeInteropSealedClass {
+
+}
+
+/// A sealed class, to test sealed class handling.
+///
+/// Generated bridge class from Pigeon that moves data from Swift to Objective-C.
+@objc class NativeInteropSealedClassBridge: NSObject {
+  @objc override init() {
+  }
+
+  // swift-format-ignore: AlwaysUseLowerCamelCase
+  static func fromSwift(_ pigeonVar_Class: NativeInteropSealedClass?)
+    -> NativeInteropSealedClassBridge?
+  {
+    switch pigeonVar_Class {
+    case let pigeonVar_value as NativeInteropSealedClassWithFields:
+      return NativeInteropSealedClassWithFieldsBridge.fromSwift(pigeonVar_value)
+    case let pigeonVar_value as NativeInteropEmptySealedClass:
+      return NativeInteropEmptySealedClassBridge.fromSwift(pigeonVar_value)
+    default:
+      return nil
+    }
+  }
+  // swift-format-ignore: AlwaysUseLowerCamelCase
+  static func toSwift(_ pigeonVar_bridge: NativeInteropSealedClassBridge?)
+    -> NativeInteropSealedClass?
+  {
+    switch pigeonVar_bridge {
+    case let pigeonVar_value as NativeInteropSealedClassWithFieldsBridge:
+      return pigeonVar_value.toSwift()
+    case let pigeonVar_value as NativeInteropEmptySealedClassBridge:
+      return pigeonVar_value.toSwift()
+    default:
+      return nil
+    }
+  }
+}
+
+/// A subclass of `NativeInteropSealedClass` with fields.
+///
+/// Generated class from Pigeon that represents data sent in messages.
+struct NativeInteropSealedClassWithFields: NativeInteropSealedClass, Hashable,
+  CustomStringConvertible
+{
+  var aString: String
+  var aNullableInt: Int64? = nil
+  var anEnum: NativeInteropAnEnum
+  var aClass: NativeInteropAllNullableTypesWithoutRecursion? = nil
+
+  // swift-format-ignore: AlwaysUseLowerCamelCase
+  static func fromList(_ pigeonVar_list: [Any?]) -> NativeInteropSealedClassWithFields? {
+    let aString = pigeonVar_list[0] as! String
+    let aNullableInt: Int64? = nilOrValue(pigeonVar_list[1])
+    let anEnum = pigeonVar_list[2] as! NativeInteropAnEnum
+    let aClass: NativeInteropAllNullableTypesWithoutRecursion? = nilOrValue(pigeonVar_list[3])
+
+    return NativeInteropSealedClassWithFields(
+      aString: aString,
+      aNullableInt: aNullableInt,
+      anEnum: anEnum,
+      aClass: aClass
+    )
+  }
+  func toList() -> [Any?] {
+    return [
+      aString,
+      aNullableInt,
+      anEnum,
+      aClass,
+    ]
+  }
+  static func == (lhs: NativeInteropSealedClassWithFields, rhs: NativeInteropSealedClassWithFields)
+    -> Bool
+  {
+    if Swift.type(of: lhs) != Swift.type(of: rhs) {
+      return false
+    }
+    return NativeInteropTestsPigeonInternal.deepEquals(lhs.aString, rhs.aString)
+      && NativeInteropTestsPigeonInternal.deepEquals(lhs.aNullableInt, rhs.aNullableInt)
+      && NativeInteropTestsPigeonInternal.deepEquals(lhs.anEnum, rhs.anEnum)
+      && NativeInteropTestsPigeonInternal.deepEquals(lhs.aClass, rhs.aClass)
+  }
+
+  func hash(into hasher: inout Hasher) {
+    hasher.combine("NativeInteropSealedClassWithFields")
+    NativeInteropTestsPigeonInternal.deepHash(value: aString, hasher: &hasher)
+    NativeInteropTestsPigeonInternal.deepHash(value: aNullableInt, hasher: &hasher)
+    NativeInteropTestsPigeonInternal.deepHash(value: anEnum, hasher: &hasher)
+    NativeInteropTestsPigeonInternal.deepHash(value: aClass, hasher: &hasher)
+  }
+
+  public var description: String {
+    return
+      "NativeInteropSealedClassWithFields(aString: \(String(describing: aString)), aNullableInt: \(String(describing: aNullableInt)), anEnum: \(String(describing: anEnum)), aClass: \(String(describing: aClass)))"
+  }
+}
+
+/// A subclass of `NativeInteropSealedClass` with fields.
+///
+/// Generated bridge class from Pigeon that moves data from Swift to Objective-C.
+@objc class NativeInteropSealedClassWithFieldsBridge: NativeInteropSealedClassBridge {
+  @objc init(
+    aString: NSString,
+    aNullableInt: NSNumber? = nil,
+    anEnum: NativeInteropAnEnum,
+    aClass: NativeInteropAllNullableTypesWithoutRecursionBridge? = nil
+  ) {
+    self.aString = aString
+    self.aNullableInt = aNullableInt
+    self.anEnum = anEnum
+    self.aClass = aClass
+  }
+  @objc var aString: NSString
+  @objc var aNullableInt: NSNumber? = nil
+  @objc var anEnum: NativeInteropAnEnum
+  @objc var aClass: NativeInteropAllNullableTypesWithoutRecursionBridge? = nil
+
+  // swift-format-ignore: AlwaysUseLowerCamelCase
+  static func fromSwift(_ pigeonVar_Class: NativeInteropSealedClassWithFields?)
+    -> NativeInteropSealedClassWithFieldsBridge?
+  {
+    if NativeInteropTestsPigeonInternal.isNullish(pigeonVar_Class) {
+      return nil
+    }
+    return NativeInteropSealedClassWithFieldsBridge(
+      aString: pigeonVar_Class!.aString as NSString,
+      aNullableInt: NativeInteropTestsPigeonInternal.isNullish(pigeonVar_Class!.aNullableInt)
+        ? nil : NSNumber(value: pigeonVar_Class!.aNullableInt!),
+      anEnum: pigeonVar_Class!.anEnum,
+      aClass: NativeInteropAllNullableTypesWithoutRecursionBridge.fromSwift(
+        pigeonVar_Class!.aClass),
+    )
+  }
+  func toSwift() -> NativeInteropSealedClassWithFields {
+    return NativeInteropSealedClassWithFields(
+      aString: aString as String,
+      aNullableInt: NativeInteropTestsPigeonInternal.isNullish(aNullableInt)
+        ? nil : aNullableInt!.int64Value,
+      anEnum: anEnum,
+      aClass: NativeInteropTestsPigeonInternal.isNullish(aClass) ? nil : aClass!.toSwift(),
+    )
+  }
+}
+
+/// A subclass of `NativeInteropSealedClass` without fields.
+///
+/// Generated class from Pigeon that represents data sent in messages.
+struct NativeInteropEmptySealedClass: NativeInteropSealedClass, Hashable, CustomStringConvertible {
+
+  // swift-format-ignore: AlwaysUseLowerCamelCase
+  static func fromList(_ pigeonVar_list: [Any?]) -> NativeInteropEmptySealedClass? {
+
+    return NativeInteropEmptySealedClass()
+  }
+  func toList() -> [Any?] {
+    return []
+  }
+  static func == (lhs: NativeInteropEmptySealedClass, rhs: NativeInteropEmptySealedClass) -> Bool {
+    if Swift.type(of: lhs) != Swift.type(of: rhs) {
+      return false
+    }
+    return true
+  }
+
+  func hash(into hasher: inout Hasher) {
+    hasher.combine("NativeInteropEmptySealedClass")
+  }
+
+  public var description: String {
+    return "NativeInteropEmptySealedClass()"
+  }
+}
+
+/// A subclass of `NativeInteropSealedClass` without fields.
+///
+/// Generated bridge class from Pigeon that moves data from Swift to Objective-C.
+@objc class NativeInteropEmptySealedClassBridge: NativeInteropSealedClassBridge {
+  @objc override init() {
+  }
+
+  // swift-format-ignore: AlwaysUseLowerCamelCase
+  static func fromSwift(_ pigeonVar_Class: NativeInteropEmptySealedClass?)
+    -> NativeInteropEmptySealedClassBridge?
+  {
+    if NativeInteropTestsPigeonInternal.isNullish(pigeonVar_Class) {
+      return nil
+    }
+    return NativeInteropEmptySealedClassBridge()
+  }
+  func toSwift() -> NativeInteropEmptySealedClass {
+    return NativeInteropEmptySealedClass()
+  }
+}
+
+/// A class with sealed class fields, to test sealed classes nested in classes
+/// and lists.
+///
+/// Generated class from Pigeon that represents data sent in messages.
+struct NativeInteropSealedClassWrapper: Hashable, CustomStringConvertible {
+  var sealedClass: NativeInteropSealedClass
+  var nullableSealedClass: NativeInteropSealedClass? = nil
+  var sealedClassList: [NativeInteropSealedClass]
+
+  // swift-format-ignore: AlwaysUseLowerCamelCase
+  static func fromList(_ pigeonVar_list: [Any?]) -> NativeInteropSealedClassWrapper? {
+    let sealedClass = pigeonVar_list[0] as! NativeInteropSealedClass
+    let nullableSealedClass: NativeInteropSealedClass? = nilOrValue(pigeonVar_list[1])
+    let sealedClassList = pigeonVar_list[2] as! [NativeInteropSealedClass]
+
+    return NativeInteropSealedClassWrapper(
+      sealedClass: sealedClass,
+      nullableSealedClass: nullableSealedClass,
+      sealedClassList: sealedClassList
+    )
+  }
+  func toList() -> [Any?] {
+    return [
+      sealedClass,
+      nullableSealedClass,
+      sealedClassList,
+    ]
+  }
+  static func == (lhs: NativeInteropSealedClassWrapper, rhs: NativeInteropSealedClassWrapper)
+    -> Bool
+  {
+    if Swift.type(of: lhs) != Swift.type(of: rhs) {
+      return false
+    }
+    return NativeInteropTestsPigeonInternal.deepEquals(lhs.sealedClass, rhs.sealedClass)
+      && NativeInteropTestsPigeonInternal.deepEquals(
+        lhs.nullableSealedClass, rhs.nullableSealedClass)
+      && NativeInteropTestsPigeonInternal.deepEquals(lhs.sealedClassList, rhs.sealedClassList)
+  }
+
+  func hash(into hasher: inout Hasher) {
+    hasher.combine("NativeInteropSealedClassWrapper")
+    NativeInteropTestsPigeonInternal.deepHash(value: sealedClass, hasher: &hasher)
+    NativeInteropTestsPigeonInternal.deepHash(value: nullableSealedClass, hasher: &hasher)
+    NativeInteropTestsPigeonInternal.deepHash(value: sealedClassList, hasher: &hasher)
+  }
+
+  public var description: String {
+    return
+      "NativeInteropSealedClassWrapper(sealedClass: \(String(describing: sealedClass)), nullableSealedClass: \(String(describing: nullableSealedClass)), sealedClassList: \(String(describing: sealedClassList)))"
+  }
+}
+
+/// A class with sealed class fields, to test sealed classes nested in classes
+/// and lists.
+///
+/// Generated bridge class from Pigeon that moves data from Swift to Objective-C.
+@objc class NativeInteropSealedClassWrapperBridge: NSObject {
+  @objc init(
+    sealedClass: NativeInteropSealedClassBridge,
+    nullableSealedClass: NativeInteropSealedClassBridge? = nil,
+    sealedClassList: [NSObject]
+  ) {
+    self.sealedClass = sealedClass
+    self.nullableSealedClass = nullableSealedClass
+    self.sealedClassList = sealedClassList
+  }
+  @objc var sealedClass: NativeInteropSealedClassBridge
+  @objc var nullableSealedClass: NativeInteropSealedClassBridge? = nil
+  @objc var sealedClassList: [NSObject]
+
+  // swift-format-ignore: AlwaysUseLowerCamelCase
+  static func fromSwift(_ pigeonVar_Class: NativeInteropSealedClassWrapper?)
+    -> NativeInteropSealedClassWrapperBridge?
+  {
+    if NativeInteropTestsPigeonInternal.isNullish(pigeonVar_Class) {
+      return nil
+    }
+    return NativeInteropSealedClassWrapperBridge(
+      sealedClass: NativeInteropSealedClassBridge.fromSwift(pigeonVar_Class!.sealedClass)!,
+      nullableSealedClass: NativeInteropSealedClassBridge.fromSwift(
+        pigeonVar_Class!.nullableSealedClass),
+      sealedClassList: _PigeonFfiCodec.writeValue(value: pigeonVar_Class!.sealedClassList)
+        as! [NSObject],
+    )
+  }
+  func toSwift() -> NativeInteropSealedClassWrapper {
+    return NativeInteropSealedClassWrapper(
+      sealedClass: NativeInteropSealedClassBridge.toSwift(sealedClass)!,
+      nullableSealedClass: NativeInteropSealedClassBridge.toSwift(nullableSealedClass),
+      sealedClassList: _PigeonFfiCodec.readValue(
+        value: sealedClassList as NSObject, type: "NativeInteropSealedClass")
+        as! [NativeInteropSealedClass],
+    )
+  }
+}
+
 /// A class whose field names collide with members of the bindings that JNIgen
 /// generates, so JNIgen renames their accessors.
 ///
@@ -2164,6 +2460,12 @@ private class _PigeonFfiCodec {
       return (value! as! NativeInteropAllNullableTypesWithoutRecursionBridge).toSwift()
     } else if value is NativeInteropAllClassesWrapperBridge {
       return (value! as! NativeInteropAllClassesWrapperBridge).toSwift()
+    } else if value is NativeInteropSealedClassWithFieldsBridge {
+      return (value! as! NativeInteropSealedClassWithFieldsBridge).toSwift()
+    } else if value is NativeInteropEmptySealedClassBridge {
+      return (value! as! NativeInteropEmptySealedClassBridge).toSwift()
+    } else if value is NativeInteropSealedClassWrapperBridge {
+      return (value! as! NativeInteropSealedClassWrapperBridge).toSwift()
     } else if value is NativeInteropReservedNamesBridge {
       return (value! as! NativeInteropReservedNamesBridge).toSwift()
 
@@ -2245,6 +2547,14 @@ private class _PigeonFfiCodec {
     } else if value is NativeInteropAllClassesWrapper {
       return NativeInteropAllClassesWrapperBridge.fromSwift(
         value as? NativeInteropAllClassesWrapper)
+    } else if value is NativeInteropSealedClassWithFields {
+      return NativeInteropSealedClassWithFieldsBridge.fromSwift(
+        value as? NativeInteropSealedClassWithFields)
+    } else if value is NativeInteropEmptySealedClass {
+      return NativeInteropEmptySealedClassBridge.fromSwift(value as? NativeInteropEmptySealedClass)
+    } else if value is NativeInteropSealedClassWrapper {
+      return NativeInteropSealedClassWrapperBridge.fromSwift(
+        value as? NativeInteropSealedClassWrapper)
     } else if value is NativeInteropReservedNames {
       return NativeInteropReservedNamesBridge.fromSwift(value as? NativeInteropReservedNames)
 
@@ -2336,6 +2646,15 @@ protocol NativeInteropHostIntegrationCoreApi {
     NativeInteropAllNullableTypes]
   /// Returns the passed class to test nested class serialization and deserialization.
   func echo(_ wrapper: NativeInteropAllClassesWrapper) throws -> NativeInteropAllClassesWrapper
+  /// Returns the passed sealed class, to test sealed class handling.
+  func echo(sealedClass: NativeInteropSealedClass) throws -> NativeInteropSealedClass
+  /// Returns the passed sealed class, to test nullable sealed class handling.
+  func echoNullable(sealedClass: NativeInteropSealedClass?) throws -> NativeInteropSealedClass?
+  /// Returns the passed list, to test sealed classes in lists.
+  func echo(sealedClassList: [NativeInteropSealedClass]) throws -> [NativeInteropSealedClass]
+  /// Returns the passed wrapper, to test sealed classes in class fields.
+  func echo(sealedClassWrapper wrapper: NativeInteropSealedClassWrapper) throws
+    -> NativeInteropSealedClassWrapper
   /// Returns the passed enum to test serialization and deserialization.
   func echo(_ anEnum: NativeInteropAnEnum) throws -> NativeInteropAnEnum
   /// Returns the passed enum to test serialization and deserialization.
@@ -2475,6 +2794,8 @@ protocol NativeInteropHostIntegrationCoreApi {
   func throwAsyncFlutterError() async throws -> Any?
   /// Returns the passed object, to test async serialization and deserialization.
   func echoAsync(_ everything: NativeInteropAllTypes) async throws -> NativeInteropAllTypes
+  /// Returns the passed sealed class asynchronously.
+  func echoAsync(sealedClass: NativeInteropSealedClass) async throws -> NativeInteropSealedClass
   /// Returns the passed object, to test serialization and deserialization.
   func echoAsync(_ everything: NativeInteropAllNullableTypes?) async throws
     -> NativeInteropAllNullableTypes?
@@ -2529,6 +2850,7 @@ protocol NativeInteropHostIntegrationCoreApi {
   func callFlutterEcho(_ everything: NativeInteropAllTypes) throws -> NativeInteropAllTypes
   func callFlutterEcho(_ everything: NativeInteropAllNullableTypes?) throws
     -> NativeInteropAllNullableTypes?
+  func callFlutterEcho(sealedClass: NativeInteropSealedClass) throws -> NativeInteropSealedClass
   func callFlutterSendMultipleNullableTypes(
     aBool aNullableBool: Bool?, anInt aNullableInt: Int64?, aString aNullableString: String?
   ) throws -> NativeInteropAllNullableTypes
@@ -3340,6 +3662,86 @@ protocol NativeInteropHostIntegrationCoreApi {
     do {
       let res: NativeInteropAllClassesWrapper = try api!.echo(wrapperArg.toSwift())
       return NativeInteropAllClassesWrapperBridge.fromSwift(res)!
+    } catch let error as NativeInteropTestsError {
+      wrappedError.code = error.code
+      wrappedError.message = error.message
+      wrappedError.details = error.details
+    } catch let error {
+      wrappedError.code = "\(error)"
+      wrappedError.message = "\(Swift.type(of: error))"
+      wrappedError.details = "Stacktrace: \(Thread.callStackSymbols)"
+    }
+    return nil
+  }
+  /// Returns the passed sealed class, to test sealed class handling.
+  @objc func echoSealedClass(
+    sealedClass sealedClassArg: NativeInteropSealedClassBridge,
+    wrappedError: NativeInteropTestsError
+  ) -> NativeInteropSealedClassBridge? {
+    do {
+      let res: NativeInteropSealedClass = try api!.echo(
+        sealedClass: NativeInteropSealedClassBridge.toSwift(sealedClassArg)!)
+      return NativeInteropSealedClassBridge.fromSwift(res)!
+    } catch let error as NativeInteropTestsError {
+      wrappedError.code = error.code
+      wrappedError.message = error.message
+      wrappedError.details = error.details
+    } catch let error {
+      wrappedError.code = "\(error)"
+      wrappedError.message = "\(Swift.type(of: error))"
+      wrappedError.details = "Stacktrace: \(Thread.callStackSymbols)"
+    }
+    return nil
+  }
+  /// Returns the passed sealed class, to test nullable sealed class handling.
+  @objc func echoNullableSealedClass(
+    sealedClass sealedClassArg: NativeInteropSealedClassBridge?,
+    wrappedError: NativeInteropTestsError
+  ) -> NativeInteropSealedClassBridge? {
+    do {
+      let res: NativeInteropSealedClass? = try api!.echoNullable(
+        sealedClass: NativeInteropSealedClassBridge.toSwift(sealedClassArg))
+      return NativeInteropSealedClassBridge.fromSwift(res)
+    } catch let error as NativeInteropTestsError {
+      wrappedError.code = error.code
+      wrappedError.message = error.message
+      wrappedError.details = error.details
+    } catch let error {
+      wrappedError.code = "\(error)"
+      wrappedError.message = "\(Swift.type(of: error))"
+      wrappedError.details = "Stacktrace: \(Thread.callStackSymbols)"
+    }
+    return nil
+  }
+  /// Returns the passed list, to test sealed classes in lists.
+  @objc func echoSealedClassList(
+    sealedClassList sealedClassListArg: [NSObject], wrappedError: NativeInteropTestsError
+  ) -> [NSObject]? {
+    do {
+      let res: [NativeInteropSealedClass] = try api!.echo(
+        sealedClassList: _PigeonFfiCodec.readValue(
+          value: sealedClassListArg as NSObject, type: "NativeInteropSealedClass")
+          as! [NativeInteropSealedClass])
+      return _PigeonFfiCodec.writeValue(value: res) as? [NSObject]
+    } catch let error as NativeInteropTestsError {
+      wrappedError.code = error.code
+      wrappedError.message = error.message
+      wrappedError.details = error.details
+    } catch let error {
+      wrappedError.code = "\(error)"
+      wrappedError.message = "\(Swift.type(of: error))"
+      wrappedError.details = "Stacktrace: \(Thread.callStackSymbols)"
+    }
+    return nil
+  }
+  /// Returns the passed wrapper, to test sealed classes in class fields.
+  @objc func echoSealedClassWrapper(
+    wrapper wrapperArg: NativeInteropSealedClassWrapperBridge, wrappedError: NativeInteropTestsError
+  ) -> NativeInteropSealedClassWrapperBridge? {
+    do {
+      let res: NativeInteropSealedClassWrapper = try api!.echo(
+        sealedClassWrapper: wrapperArg.toSwift())
+      return NativeInteropSealedClassWrapperBridge.fromSwift(res)!
     } catch let error as NativeInteropTestsError {
       wrappedError.code = error.code
       wrappedError.message = error.message
@@ -4562,6 +4964,26 @@ protocol NativeInteropHostIntegrationCoreApi {
     }
     return nil
   }
+  /// Returns the passed sealed class asynchronously.
+  @objc func echoAsyncSealedClass(
+    sealedClass sealedClassArg: NativeInteropSealedClassBridge,
+    wrappedError: NativeInteropTestsError
+  ) async -> NativeInteropSealedClassBridge? {
+    do {
+      let res: NativeInteropSealedClass = try await api!.echoAsync(
+        sealedClass: NativeInteropSealedClassBridge.toSwift(sealedClassArg)!)
+      return NativeInteropSealedClassBridge.fromSwift(res)!
+    } catch let error as NativeInteropTestsError {
+      wrappedError.code = error.code
+      wrappedError.message = error.message
+      wrappedError.details = error.details
+    } catch let error {
+      wrappedError.code = "\(error)"
+      wrappedError.message = "\(Swift.type(of: error))"
+      wrappedError.details = "Stacktrace: \(Thread.callStackSymbols)"
+    }
+    return nil
+  }
   /// Returns the passed object, to test serialization and deserialization.
   @objc func echoAsyncNullableNativeInteropAllNullableTypes(
     everything everythingArg: NativeInteropAllNullableTypesBridge?,
@@ -5056,6 +5478,25 @@ protocol NativeInteropHostIntegrationCoreApi {
       let res: NativeInteropAllNullableTypes? = try api!.callFlutterEcho(
         NativeInteropTestsPigeonInternal.isNullish(everythingArg) ? nil : everythingArg!.toSwift())
       return NativeInteropAllNullableTypesBridge.fromSwift(res)
+    } catch let error as NativeInteropTestsError {
+      wrappedError.code = error.code
+      wrappedError.message = error.message
+      wrappedError.details = error.details
+    } catch let error {
+      wrappedError.code = "\(error)"
+      wrappedError.message = "\(Swift.type(of: error))"
+      wrappedError.details = "Stacktrace: \(Thread.callStackSymbols)"
+    }
+    return nil
+  }
+  @objc func callFlutterEchoSealedClass(
+    sealedClass sealedClassArg: NativeInteropSealedClassBridge,
+    wrappedError: NativeInteropTestsError
+  ) -> NativeInteropSealedClassBridge? {
+    do {
+      let res: NativeInteropSealedClass = try api!.callFlutterEcho(
+        sealedClass: NativeInteropSealedClassBridge.toSwift(sealedClassArg)!)
+      return NativeInteropSealedClassBridge.fromSwift(res)!
     } catch let error as NativeInteropTestsError {
       wrappedError.code = error.code
       wrappedError.message = error.message
@@ -7112,6 +7553,10 @@ protocol NativeInteropHostIntegrationCoreApi {
   @objc func echoNativeInteropAllNullableTypes(
     everything everythingArg: NativeInteropAllNullableTypesBridge?, error: NativeInteropTestsError
   ) -> NativeInteropAllNullableTypesBridge?
+  /// Returns the passed sealed class, to test sealed class handling.
+  @objc func echoNativeInteropSealedClass(
+    sealedClass sealedClassArg: NativeInteropSealedClassBridge?, error: NativeInteropTestsError
+  ) -> NativeInteropSealedClassBridge?
   /// Returns passed in arguments of multiple types.
   ///
   /// Tests multiple-arity FlutterApi handling.
@@ -7527,6 +7972,20 @@ class NativeInteropFlutterIntegrationCoreApi {
     }
     return _PigeonFfiCodec.readValue(value: (res), type: "NativeInteropAllNullableTypes")
       as! NativeInteropAllNullableTypes?
+  }
+
+  /// Returns the passed sealed class, to test sealed class handling.
+  func echoNativeInteropSealedClass(sealedClass sealedClassArg: NativeInteropSealedClass) throws
+    -> NativeInteropSealedClass
+  {
+    let error = NativeInteropTestsError()
+    let res = api.echoNativeInteropSealedClass(
+      sealedClass: NativeInteropSealedClassBridge.fromSwift(sealedClassArg)!, error: error)
+    if error.code != nil {
+      throw error
+    }
+    return _PigeonFfiCodec.readValue(value: (res), type: "NativeInteropSealedClass")
+      as! NativeInteropSealedClass
   }
 
   /// Returns passed in arguments of multiple types.
