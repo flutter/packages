@@ -1217,8 +1217,8 @@ class _DropdownMenuState<T> extends State<DropdownMenu<T>> {
         ? baseTextStyle
         : baseTextStyle?.copyWith(color: disabledColor) ?? TextStyle(color: disabledColor);
 
-    MenuStyle? effectiveMenuStyle = widget.menuStyle ?? theme.menuStyle ?? defaults.menuStyle!;
-    if (widget.menuStyle?.backgroundColor == null) {
+    MenuStyle effectiveMenuStyle = widget.menuStyle ?? theme.menuStyle ?? defaults.menuStyle!;
+    if (effectiveMenuStyle.backgroundColor == null) {
       effectiveMenuStyle = effectiveMenuStyle.copyWith(
         backgroundColor:
             theme.menuStyle?.backgroundColor ??
@@ -1231,7 +1231,7 @@ class _DropdownMenuState<T> extends State<DropdownMenu<T>> {
     if (widget.width != null) {
       effectiveMenuStyle = effectiveMenuStyle.copyWith(
         minimumSize: WidgetStateProperty.resolveWith<Size?>((Set<WidgetState> states) {
-          final double? effectiveMaximumWidth = effectiveMenuStyle!.maximumSize
+          final double? effectiveMaximumWidth = effectiveMenuStyle.maximumSize
               ?.resolve(states)
               ?.width;
           return Size(math.min(widget.width!, effectiveMaximumWidth ?? widget.width!), 0.0);
@@ -1240,7 +1240,7 @@ class _DropdownMenuState<T> extends State<DropdownMenu<T>> {
     } else if (anchorWidth != null) {
       effectiveMenuStyle = effectiveMenuStyle.copyWith(
         minimumSize: WidgetStateProperty.resolveWith<Size?>((Set<WidgetState> states) {
-          final double? effectiveMaximumWidth = effectiveMenuStyle!.maximumSize
+          final double? effectiveMaximumWidth = effectiveMenuStyle.maximumSize
               ?.resolve(states)
               ?.width;
           return Size(math.min(anchorWidth, effectiveMaximumWidth ?? anchorWidth), 0.0);
@@ -1757,7 +1757,9 @@ class _DropdownMenuDefaultsM3 extends DropdownMenuThemeData {
   @override
   MenuStyle get menuStyle {
     return MenuStyle(
-      backgroundColor: MaterialStatePropertyAll<Color>(_theme.colorScheme.surfaceContainerLow),
+      backgroundColor:
+          MenuTheme.of(context).style?.backgroundColor ??
+          MaterialStatePropertyAll<Color>(_theme.colorScheme.surfaceContainerLow),
       minimumSize: const MaterialStatePropertyAll<Size>(Size(_kMinimumWidth, 0.0)),
       maximumSize: const MaterialStatePropertyAll<Size>(Size.infinite),
       visualDensity: VisualDensity.standard,
