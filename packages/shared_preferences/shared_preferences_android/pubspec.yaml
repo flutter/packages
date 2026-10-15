@@ -30,7 +30,7 @@ dev_dependencies:
   jnigen: ^1.0.0
   logging: ^1.2.0
   path: ^1.9.0
-  pigeon: ^29.0.4
+  pigeon: ^29.0.10
 
 topics:
   - persistence

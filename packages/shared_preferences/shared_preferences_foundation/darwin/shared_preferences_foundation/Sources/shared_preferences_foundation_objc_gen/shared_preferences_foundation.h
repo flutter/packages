@@ -339,24 +339,25 @@ SWIFT_CLASS("_TtC29shared_preferences_foundation26LegacyUserDefaultsApiSetup")
 - (nonnull instancetype)init OBJC_DESIGNATED_INITIALIZER;
 + (LegacyUserDefaultsApiSetup* _Nullable)getInstanceWithName:
     (NSString* _Nonnull)name SWIFT_WARN_UNUSED_RESULT;
-- (void)removeWithKey:(NSString* _Nonnull)key
+- (void)removeWithKey:(NSString* _Nonnull)keyArg
          wrappedError:(PigeonError* _Nonnull)wrappedError;
-- (void)setBoolWithKey:(NSString* _Nonnull)key
-                 value:(BOOL)value
+- (void)setBoolWithKey:(NSString* _Nonnull)keyArg
+                 value:(BOOL)valueArg
           wrappedError:(PigeonError* _Nonnull)wrappedError;
-- (void)setDoubleWithKey:(NSString* _Nonnull)key
-                   value:(double)value
+- (void)setDoubleWithKey:(NSString* _Nonnull)keyArg
+                   value:(double)valueArg
             wrappedError:(PigeonError* _Nonnull)wrappedError;
-- (void)setValueWithKey:(NSString* _Nonnull)key
-                  value:(NSObject* _Nonnull)value
+- (void)setValueWithKey:(NSString* _Nonnull)keyArg
+                  value:(NSObject* _Nonnull)valueArg
            wrappedError:(PigeonError* _Nonnull)wrappedError;
 - (NSDictionary<id<NSCopying>, NSObject*>* _Nullable)
-    getAllWithPrefix:(NSString* _Nonnull)prefix
-           allowList:(NSArray<NSObject*>* _Nullable)allowList
+    getAllWithPrefix:(NSString* _Nonnull)prefixArg
+           allowList:(NSArray<NSObject*>* _Nullable)allowListArg
         wrappedError:(PigeonError* _Nonnull)wrappedError
     SWIFT_WARN_UNUSED_RESULT;
-- (NSNumber* _Nullable)clearWithPrefix:(NSString* _Nonnull)prefix
-                             allowList:(NSArray<NSObject*>* _Nullable)allowList
+- (NSNumber* _Nullable)clearWithPrefix:(NSString* _Nonnull)prefixArg
+                             allowList:
+                                 (NSArray<NSObject*>* _Nullable)allowListArg
                           wrappedError:(PigeonError* _Nonnull)wrappedError
     SWIFT_WARN_UNUSED_RESULT;
 @end
@@ -426,32 +427,34 @@ SWIFT_CLASS("_TtC29shared_preferences_foundation20UserDefaultsApiSetup")
 + (UserDefaultsApiSetup* _Nullable)getInstanceWithName:(NSString* _Nonnull)name
     SWIFT_WARN_UNUSED_RESULT;
 /// Adds property to shared preferences data set of type String.
-- (void)setWithKey:(NSString* _Nonnull)key
-             value:(NSObject* _Nonnull)value
-           options:(SharedPreferencesPigeonOptionsBridge* _Nonnull)options
+- (void)setWithKey:(NSString* _Nonnull)keyArg
+             value:(NSObject* _Nonnull)valueArg
+           options:(SharedPreferencesPigeonOptionsBridge* _Nonnull)optionsArg
       wrappedError:(PigeonError* _Nonnull)wrappedError;
 /// Removes all properties from shared preferences data set with matching
 /// prefix.
-- (void)clearWithAllowList:(NSArray<NSObject*>* _Nullable)allowList
-                   options:
-                       (SharedPreferencesPigeonOptionsBridge* _Nonnull)options
+- (void)clearWithAllowList:(NSArray<NSObject*>* _Nullable)allowListArg
+                   options:(SharedPreferencesPigeonOptionsBridge* _Nonnull)
+                               optionsArg
               wrappedError:(PigeonError* _Nonnull)wrappedError;
 /// Gets all properties from shared preferences data set with matching prefix.
 - (NSDictionary<id<NSCopying>, NSObject*>* _Nullable)
-    getAllWithAllowList:(NSArray<NSObject*>* _Nullable)allowList
-                options:(SharedPreferencesPigeonOptionsBridge* _Nonnull)options
+    getAllWithAllowList:(NSArray<NSObject*>* _Nullable)allowListArg
+                options:
+                    (SharedPreferencesPigeonOptionsBridge* _Nonnull)optionsArg
            wrappedError:(PigeonError* _Nonnull)wrappedError
     SWIFT_WARN_UNUSED_RESULT;
 /// Gets individual value stored with [key], if any.
 - (NSObject* _Nullable)
-    getValueWithKey:(NSString* _Nonnull)key
-            options:(SharedPreferencesPigeonOptionsBridge* _Nonnull)options
+    getValueWithKey:(NSString* _Nonnull)keyArg
+            options:(SharedPreferencesPigeonOptionsBridge* _Nonnull)optionsArg
        wrappedError:(PigeonError* _Nonnull)wrappedError
     SWIFT_WARN_UNUSED_RESULT;
 /// Gets all properties from shared preferences data set with matching prefix.
 - (NSArray<NSObject*>* _Nullable)
-    getKeysWithAllowList:(NSArray<NSObject*>* _Nullable)allowList
-                 options:(SharedPreferencesPigeonOptionsBridge* _Nonnull)options
+    getKeysWithAllowList:(NSArray<NSObject*>* _Nullable)allowListArg
+                 options:
+                     (SharedPreferencesPigeonOptionsBridge* _Nonnull)optionsArg
             wrappedError:(PigeonError* _Nonnull)wrappedError
     SWIFT_WARN_UNUSED_RESULT;
 @end

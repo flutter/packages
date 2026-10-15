@@ -83,12 +83,12 @@ extension type LegacyUserDefaultsApiSetup._(objc.ObjCObject object$)
 extension LegacyUserDefaultsApiSetup$Methods on LegacyUserDefaultsApiSetup {
   /// clearWithPrefix:allowList:wrappedError:
   objc.NSNumber? clearWithPrefix(
-    objc.NSString prefix, {
+    objc.NSString prefixArg, {
     objc.NSArray? allowList,
     required PigeonError wrappedError,
   }) {
     final _$$ref = object$.ref;
-    final _$$ref$1 = prefix.ref;
+    final _$$ref$1 = prefixArg.ref;
     final _$$ref$2 = allowList?.ref;
     final _$$ref$3 = wrappedError.ref;
     final $ret = _objc_msgSend_11spmsz(
@@ -103,12 +103,12 @@ extension LegacyUserDefaultsApiSetup$Methods on LegacyUserDefaultsApiSetup {
 
   /// getAllWithPrefix:allowList:wrappedError:
   objc.NSDictionary? getAllWithPrefix(
-    objc.NSString prefix, {
+    objc.NSString prefixArg, {
     objc.NSArray? allowList,
     required PigeonError wrappedError,
   }) {
     final _$$ref = object$.ref;
-    final _$$ref$1 = prefix.ref;
+    final _$$ref$1 = prefixArg.ref;
     final _$$ref$2 = allowList?.ref;
     final _$$ref$3 = wrappedError.ref;
     final $ret = _objc_msgSend_11spmsz(
@@ -136,9 +136,9 @@ extension LegacyUserDefaultsApiSetup$Methods on LegacyUserDefaultsApiSetup {
   }
 
   /// removeWithKey:wrappedError:
-  void removeWithKey(objc.NSString key, {required PigeonError wrappedError}) {
+  void removeWithKey(objc.NSString keyArg, {required PigeonError wrappedError}) {
     final _$$ref = object$.ref;
-    final _$$ref$1 = key.ref;
+    final _$$ref$1 = keyArg.ref;
     final _$$ref$2 = wrappedError.ref;
     _objc_msgSend_pfv6jd(
       _$$ref.pointer,
@@ -149,9 +149,13 @@ extension LegacyUserDefaultsApiSetup$Methods on LegacyUserDefaultsApiSetup {
   }
 
   /// setBoolWithKey:value:wrappedError:
-  void setBoolWithKey(objc.NSString key, {required bool value, required PigeonError wrappedError}) {
+  void setBoolWithKey(
+    objc.NSString keyArg, {
+    required bool value,
+    required PigeonError wrappedError,
+  }) {
     final _$$ref = object$.ref;
-    final _$$ref$1 = key.ref;
+    final _$$ref$1 = keyArg.ref;
     final _$$ref$2 = wrappedError.ref;
     _objc_msgSend_rnu2c5(
       _$$ref.pointer,
@@ -164,12 +168,12 @@ extension LegacyUserDefaultsApiSetup$Methods on LegacyUserDefaultsApiSetup {
 
   /// setDoubleWithKey:value:wrappedError:
   void setDoubleWithKey(
-    objc.NSString key, {
+    objc.NSString keyArg, {
     required double value,
     required PigeonError wrappedError,
   }) {
     final _$$ref = object$.ref;
-    final _$$ref$1 = key.ref;
+    final _$$ref$1 = keyArg.ref;
     final _$$ref$2 = wrappedError.ref;
     _objc_msgSend_r1s65y(
       _$$ref.pointer,
@@ -182,12 +186,12 @@ extension LegacyUserDefaultsApiSetup$Methods on LegacyUserDefaultsApiSetup {
 
   /// setValueWithKey:value:wrappedError:
   void setValueWithKey(
-    objc.NSString key, {
+    objc.NSString keyArg, {
     required objc.NSObject value,
     required PigeonError wrappedError,
   }) {
     final _$$ref = object$.ref;
-    final _$$ref$1 = key.ref;
+    final _$$ref$1 = keyArg.ref;
     final _$$ref$2 = value.ref;
     final _$$ref$3 = wrappedError.ref;
     _objc_msgSend_r8gdi7(
@@ -671,12 +675,12 @@ extension type UserDefaultsApiSetup._(objc.ObjCObject object$)
 extension UserDefaultsApiSetup$Methods on UserDefaultsApiSetup {
   /// Removes all properties from shared preferences data set with matching prefix.
   void clearWithAllowList(
-    objc.NSArray? allowList, {
+    objc.NSArray? allowListArg, {
     required SharedPreferencesPigeonOptionsBridge options,
     required PigeonError wrappedError,
   }) {
     final _$$ref = object$.ref;
-    final _$$ref$1 = allowList?.ref;
+    final _$$ref$1 = allowListArg?.ref;
     final _$$ref$2 = options.ref;
     final _$$ref$3 = wrappedError.ref;
     _objc_msgSend_r8gdi7(
@@ -690,12 +694,12 @@ extension UserDefaultsApiSetup$Methods on UserDefaultsApiSetup {
 
   /// Gets all properties from shared preferences data set with matching prefix.
   objc.NSDictionary? getAllWithAllowList(
-    objc.NSArray? allowList, {
+    objc.NSArray? allowListArg, {
     required SharedPreferencesPigeonOptionsBridge options,
     required PigeonError wrappedError,
   }) {
     final _$$ref = object$.ref;
-    final _$$ref$1 = allowList?.ref;
+    final _$$ref$1 = allowListArg?.ref;
     final _$$ref$2 = options.ref;
     final _$$ref$3 = wrappedError.ref;
     final $ret = _objc_msgSend_11spmsz(
@@ -712,12 +716,12 @@ extension UserDefaultsApiSetup$Methods on UserDefaultsApiSetup {
 
   /// Gets all properties from shared preferences data set with matching prefix.
   objc.NSArray? getKeysWithAllowList(
-    objc.NSArray? allowList, {
+    objc.NSArray? allowListArg, {
     required SharedPreferencesPigeonOptionsBridge options,
     required PigeonError wrappedError,
   }) {
     final _$$ref = object$.ref;
-    final _$$ref$1 = allowList?.ref;
+    final _$$ref$1 = allowListArg?.ref;
     final _$$ref$2 = options.ref;
     final _$$ref$3 = wrappedError.ref;
     final $ret = _objc_msgSend_11spmsz(
@@ -732,12 +736,12 @@ extension UserDefaultsApiSetup$Methods on UserDefaultsApiSetup {
 
   /// Gets individual value stored with [key], if any.
   objc.NSObject? getValueWithKey(
-    objc.NSString key, {
+    objc.NSString keyArg, {
     required SharedPreferencesPigeonOptionsBridge options,
     required PigeonError wrappedError,
   }) {
     final _$$ref = object$.ref;
-    final _$$ref$1 = key.ref;
+    final _$$ref$1 = keyArg.ref;
     final _$$ref$2 = options.ref;
     final _$$ref$3 = wrappedError.ref;
     final $ret = _objc_msgSend_11spmsz(
@@ -764,13 +768,13 @@ extension UserDefaultsApiSetup$Methods on UserDefaultsApiSetup {
 
   /// Adds property to shared preferences data set of type String.
   void setWithKey(
-    objc.NSString key, {
+    objc.NSString keyArg, {
     required objc.NSObject value,
     required SharedPreferencesPigeonOptionsBridge options,
     required PigeonError wrappedError,
   }) {
     final _$$ref = object$.ref;
-    final _$$ref$1 = key.ref;
+    final _$$ref$1 = keyArg.ref;
     final _$$ref$2 = value.ref;
     final _$$ref$3 = options.ref;
     final _$$ref$4 = wrappedError.ref;
