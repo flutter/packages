@@ -51,9 +51,9 @@ class GetDirectoryPage extends StatelessWidget {
   }
 }
 
-/// Widget that displays a text file in a dialog
+/// Widget that displays a text file in a dialog.
 class TextDisplay extends StatelessWidget {
-  /// Default Constructor
+  /// Default Constructor.
   const TextDisplay(this.directoryPath, {super.key});
 
   /// Directory path

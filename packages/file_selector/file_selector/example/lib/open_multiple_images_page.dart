@@ -2,8 +2,6 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import 'dart:io';
-
 import 'package:file_selector/file_selector.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -33,10 +31,15 @@ class OpenMultipleImagesPage extends StatelessWidget {
       // Operation was canceled by the user.
       return;
     }
+
+    final imageBytes = <Uint8List>[];
+    for (final file in files) {
+      imageBytes.add(await file.readAsBytes());
+    }
     if (context.mounted) {
       await showDialog<void>(
         context: context,
-        builder: (BuildContext context) => MultipleImagesDisplay(files),
+        builder: (BuildContext context) => MultipleImagesDisplay(imageBytes),
       );
     }
   }
@@ -64,13 +67,13 @@ class OpenMultipleImagesPage extends StatelessWidget {
   }
 }
 
-/// Widget that displays a text file in a dialog
+/// Widget that displays a text file in a dialog.
 class MultipleImagesDisplay extends StatelessWidget {
-  /// Default Constructor
-  const MultipleImagesDisplay(this.files, {super.key});
+  /// Default Constructor.
+  const MultipleImagesDisplay(this.fileBytes, {super.key});
 
-  /// The files containing the images
-  final List<XFile> files;
+  /// The bytes containing the images.
+  final List<Uint8List> fileBytes;
 
   @override
   Widget build(BuildContext context) {
@@ -81,10 +84,8 @@ class MultipleImagesDisplay extends StatelessWidget {
       content: Center(
         child: Row(
           children: <Widget>[
-            ...files.map(
-              (XFile file) =>
-                  Flexible(child: kIsWeb ? Image.network(file.uri) : Image.file(File(file.uri))),
-            ),
+            for (int i = 0; i < fileBytes.length; i++)
+              Flexible(key: Key('result_image_name$i'), child: Image.memory(fileBytes[i])),
           ],
         ),
       ),
