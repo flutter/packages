@@ -1219,6 +1219,78 @@ void main() {
     final Finder content = find.text('X');
     expect(tester.getSize(content).isEmpty, isTrue);
   });
+
+  // Regression test for https://github.com/flutter/flutter/issues/89705.
+  testWidgets('MaterialBanner can be dismissed after its creation route is popped', (
+    WidgetTester tester,
+  ) async {
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Scaffold(
+          appBar: AppBar(title: const Text('First Page')),
+          body: Builder(
+            builder: (BuildContext context) {
+              return ElevatedButton(
+                onPressed: () {
+                  Navigator.of(context).push(
+                    MaterialPageRoute<void>(
+                      builder: (BuildContext routeContext) {
+                        return Scaffold(
+                          appBar: AppBar(title: const Text('Second Page')),
+                          body: ElevatedButton(
+                            onPressed: () {
+                              final ScaffoldMessengerState messenger = ScaffoldMessenger.of(
+                                routeContext,
+                              );
+                              messenger.showMaterialBanner(
+                                MaterialBanner(
+                                  content: const Text('Persistent Banner'),
+                                  actions: <Widget>[
+                                    TextButton(
+                                      onPressed: messenger.hideCurrentMaterialBanner,
+                                      child: const Text('DISMISS'),
+                                    ),
+                                  ],
+                                ),
+                              );
+                            },
+                            child: const Text('Show Banner'),
+                          ),
+                        );
+                      },
+                    ),
+                  );
+                },
+                child: const Text('Go to Second Page'),
+              );
+            },
+          ),
+        ),
+      ),
+    );
+
+    // Navigate to Second Page.
+    await tester.tap(find.text('Go to Second Page'));
+    await tester.pumpAndSettle();
+    expect(find.text('Second Page'), findsOneWidget);
+
+    // Show the MaterialBanner from Second Page.
+    await tester.tap(find.text('Show Banner'));
+    await tester.pumpAndSettle();
+    expect(find.text('Persistent Banner'), findsOneWidget);
+
+    // Pop Second Page back to First Page. The banner remains visible.
+    await tester.pageBack();
+    await tester.pumpAndSettle();
+    expect(find.text('First Page'), findsOneWidget);
+    expect(find.text('Second Page'), findsNothing);
+    expect(find.text('Persistent Banner'), findsOneWidget);
+
+    // Dismiss the banner from First Page after Second Page's context is deactivated.
+    await tester.tap(find.text('DISMISS'));
+    await tester.pumpAndSettle();
+    expect(find.text('Persistent Banner'), findsNothing);
+  });
 }
 
 Material _getMaterialFromBanner(WidgetTester tester) {
