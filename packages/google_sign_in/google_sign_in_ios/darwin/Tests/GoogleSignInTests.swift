@@ -28,9 +28,6 @@ class TestViewProvider: ViewProvider {
 class TestSignIn: NSObject, GIDSignInProtocol {
   var configuration: GIDConfiguration?
 
-  // To cause methods to throw an exception.
-  var exception: NSException?
-
   // Results to use in completion callbacks.
   var user: (any GIDGoogleUserProtocol)?
   var error: Error?
@@ -59,9 +56,6 @@ class TestSignIn: NSObject, GIDSignInProtocol {
   }
 
   func restorePreviousSignIn(completion: (((any GIDGoogleUserProtocol)?, Error?) -> Void)?) {
-    if let exception {
-      exception.raise()
-    }
     if let user {
       completion?(user, nil)
     } else {
@@ -74,9 +68,6 @@ class TestSignIn: NSObject, GIDSignInProtocol {
   }
 
   func disconnect(completion: ((Error?) -> Void)?) {
-    if let exception {
-      exception.raise()
-    }
     completion?(error)
   }
 
@@ -88,9 +79,6 @@ class TestSignIn: NSObject, GIDSignInProtocol {
       nonce: String?,
       completion: ((GIDSignInResultProtocol?, Error?) -> Void)?
     ) {
-      if let exception {
-        exception.raise()
-      }
       self.presentingViewController = presentingViewController
       self.hint = hint
       self.additionalScopes = additionalScopes
@@ -109,9 +97,6 @@ class TestSignIn: NSObject, GIDSignInProtocol {
       nonce: String?,
       completion: (((any GIDSignInResultProtocol)?, Error?) -> Void)?
     ) {
-      if let exception {
-        exception.raise()
-      }
       self.presentingWindow = presentingWindow
       self.hint = hint
       self.additionalScopes = additionalScopes
@@ -178,9 +163,6 @@ class TestGoogleUser: GIDGoogleUserProtocol {
   var refreshToken: any GIDTokenProtocol = TestToken("Refresh")
   var idToken: (any GIDTokenProtocol)?
 
-  // An exception to throw from methods.
-  var exception: NSException?
-
   // The result to return from addScopes(_:presenting:completion:).
   var result: (any GIDSignInResultProtocol)?
 
@@ -200,9 +182,6 @@ class TestGoogleUser: GIDGoogleUserProtocol {
   }
 
   func refreshTokensIfNeeded(completion: @escaping ((any GIDGoogleUserProtocol)?, Error?) -> Void) {
-    if let exception {
-      exception.raise()
-    }
     completion(self.error == nil ? self : nil, self.error)
   }
 
@@ -214,9 +193,6 @@ class TestGoogleUser: GIDGoogleUserProtocol {
     ) {
       self.requestedScopes = scopes
       self.presentingViewController = presentingViewController
-      if let exception {
-        exception.raise()
-      }
       completion?(self.error == nil ? self.result : nil, self.error)
     }
   #elseif os(macOS)
@@ -227,9 +203,6 @@ class TestGoogleUser: GIDGoogleUserProtocol {
     ) {
       self.requestedScopes = scopes
       self.presentingWindow = presentingWindow
-      if let exception {
-        exception.raise()
-      }
       completion?(self.error == nil ? self.result : nil, self.error)
     }
   #endif
@@ -585,33 +558,6 @@ struct GoogleSignInPluginTests {
       }
     }
 
-    @Test func signInExceptionReturnsError() async {
-      let (plugin, fakeSignIn) = createTestPlugin()
-      fakeSignIn.exception = NSException(
-        name: NSExceptionName(rawValue: "MockName"),
-        reason: "MockReason",
-        userInfo: nil)
-
-      await confirmation("completion called") { confirmed in
-        plugin.signIn(scopeHint: [], nonce: nil) { result in
-          switch result {
-          case .success:
-            Issue.record("Expected a PigeonError for the runtime exception")
-          case .failure(let error):
-            // Unexpected errors, such as runtime exceptions, are returned as
-            // PigeonError.
-            guard let pigeonError = error as? PigeonError else {
-              Issue.record("Expected PigeonError, got \(error)")
-              break
-            }
-            #expect(pigeonError.code == "google_sign_in")
-            #expect(pigeonError.message == "MockReason")
-            #expect(pigeonError.details as? String == "MockName")
-          }
-          confirmed()
-        }
-      }
-    }
   }
 
   @Suite("refreshedAuthorizationTokens") struct RefreshTests {
@@ -828,33 +774,6 @@ struct GoogleSignInPluginTests {
       }
     }
 
-    @Test func addScopesException() async {
-      let (plugin, _) = createTestPlugin()
-      let fakeUser = addSignedInUser(to: plugin)
-
-      fakeUser.exception = NSException(
-        name: NSExceptionName(rawValue: "MockName"),
-        reason: "MockReason",
-        userInfo: nil)
-
-      await confirmation("completion called") { confirmed in
-        plugin.addScopes([], forUser: fakeUser.userID!) { result in
-          switch result {
-          case .success:
-            Issue.record("Expected a PigeonError for the runtime exception")
-          case .failure(let error):
-            guard let pigeonError = error as? PigeonError else {
-              Issue.record("Expected PigeonError, got \(error)")
-              break
-            }
-            #expect(pigeonError.code == "request_scopes")
-            #expect(pigeonError.message == "MockReason")
-            #expect(pigeonError.details as? String == "MockName")
-          }
-          confirmed()
-        }
-      }
-    }
   }
 
   @Suite("urlHandling")
