@@ -5,8 +5,8 @@
 import 'package:file_selector_platform_interface/file_selector_platform_interface.dart';
 import 'package:flutter/material.dart';
 
-/// Screen that allows the user to select a directory using `getDirectoryPath`,
-///  then displays the selected directory in a dialog.
+/// Screen that allows the user to select a directory using `getDirectory`,
+/// then displays the selected directory in a dialog.
 class GetDirectoryPage extends StatelessWidget {
   /// Default Constructor
   const GetDirectoryPage({super.key});
@@ -23,7 +23,7 @@ class GetDirectoryPage extends StatelessWidget {
     if (context.mounted) {
       await showDialog<void>(
         context: context,
-        builder: (BuildContext context) => TextDisplay((directory as FileSystemXDirectory).path),
+        builder: (BuildContext context) => TextDisplay(directory.uri),
       );
     }
   }

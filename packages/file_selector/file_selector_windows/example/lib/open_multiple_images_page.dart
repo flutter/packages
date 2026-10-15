@@ -72,7 +72,7 @@ class MultipleImagesDisplay extends StatelessWidget {
         child: Row(
           children: <Widget>[
             ...files.map(
-              (XFile file) => Flexible(child: Image.file(File((file as FileSystemXFile).path))),
+              (XFile file) => Flexible(child: Image.file(File(Uri.parse(file.uri).toFilePath()))),
             ),
           ],
         ),

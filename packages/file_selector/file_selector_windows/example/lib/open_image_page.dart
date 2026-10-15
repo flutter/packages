@@ -9,7 +9,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 /// Screen that allows the user to select an image file using
-/// `openFiles`, then displays the selected images in a gallery dialog.
+/// `openFile`, then displays the selected images in a gallery dialog.
 class OpenImagePage extends StatelessWidget {
   /// Default Constructor
   const OpenImagePage({super.key});
@@ -24,7 +24,7 @@ class OpenImagePage extends StatelessWidget {
       return;
     }
     final String? fileName = await file.name();
-    final String filePath = (file as FileSystemXFile).path;
+    final String filePath = Uri.parse(file.uri).toFilePath();
 
     if (context.mounted) {
       await showDialog<void>(
