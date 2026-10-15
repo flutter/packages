@@ -12,11 +12,7 @@ Enables Google Sign-In in Flutter apps.
   s.license          = { :type => 'BSD', :file => '../LICENSE' }
   s.author           = { 'Flutter Team' => 'flutter-dev@googlegroups.com' }
   s.source           = { :http => 'https://github.com/flutter/packages/tree/main/packages/google_sign_in/google_sign_in_ios' }
-  # Remaining Objective-C is ExceptionCatcher (NSException can't be caught from
-  # Swift) plus a CocoaPods placeholder header. SwiftPM needs a separate Obj-C
-  # target; CocoaPods compiles both into one pod.
-  s.source_files = 'google_sign_in_ios/Sources/google_sign_in_ios*/**/*.{h,m,swift}'
-  s.public_header_files = 'google_sign_in_ios/Sources/google_sign_in_ios_objc/include/**/*.h'
+  s.source_files = 'google_sign_in_ios/Sources/google_sign_in_ios/**/*.swift'
   s.swift_version = '5.0'
   s.xcconfig = {
     'LIBRARY_SEARCH_PATHS' => '$(TOOLCHAIN_DIR)/usr/lib/swift/$(PLATFORM_NAME)/ $(SDKROOT)/usr/lib/swift',
