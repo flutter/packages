@@ -2590,6 +2590,33 @@ void main() {
     }
   });
 
+  testWidgets('Checkbox.markInsets centers a half-size mark in the right half of the box', (
+    WidgetTester tester,
+  ) async {
+    await tester.pumpWidget(_padFrame(true));
+    await tester.pumpAndSettle();
+    final Rect uninset = _paintedCheckBounds(tester);
+    // The 18x18 box is centered in the checkbox's render box.
+    final Offset boxOrigin =
+        _checkboxRenderer(tester).size.center(Offset.zero) - const Offset(9.0, 9.0);
+
+    await tester.pumpWidget(_padFrame(true, markInsets: const EdgeInsets.only(left: 9.0)));
+    await tester.pumpAndSettle();
+    final Rect inset = _paintedCheckBounds(tester);
+
+    // The remaining space is 9x18, so the mark is drawn in a 9x9 square at
+    // (9, 4.5) within the box: half size, vertically centered.
+    Offset toHalfSquare(Offset p) => boxOrigin + const Offset(9.0, 4.5) + (p - boxOrigin) / 2.0;
+    final expected = Rect.fromPoints(
+      toHalfSquare(uninset.topLeft),
+      toHalfSquare(uninset.bottomRight),
+    );
+    expect(inset.left, moreOrLessEquals(expected.left, epsilon: 0.001));
+    expect(inset.top, moreOrLessEquals(expected.top, epsilon: 0.001));
+    expect(inset.width, moreOrLessEquals(uninset.width / 2.0, epsilon: 0.001));
+    expect(inset.height, moreOrLessEquals(uninset.height / 2.0, epsilon: 0.001));
+  });
+
   testWidgets('Checkbox.markInsets shrinks the indeterminate dash by the smaller inset', (
     WidgetTester tester,
   ) async {

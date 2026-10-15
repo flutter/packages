@@ -429,7 +429,11 @@ class Checkbox extends StatefulWidget {
   ///
   /// This insets the check mark inward; the size of the checkbox box itself
   /// is not affected. The check mark and its stroke shrink to fit the
-  /// remaining space, so the mark stays proportional.
+  /// remaining space, so the mark stays proportional. Its size is the smaller
+  /// of the remaining width and height, and it is centered in the remaining
+  /// space, so an inset on one axis also shrinks it on the other. For example,
+  /// `EdgeInsets.only(left: 9.0)` draws a half-size mark centered in the right
+  /// half of the box.
   ///
   /// On iOS and macOS, when using [Checkbox.adaptive], this property has no
   /// effect, because the checkbox delegates to [CupertinoCheckbox], which does
