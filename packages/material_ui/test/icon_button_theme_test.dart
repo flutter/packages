@@ -388,7 +388,7 @@ void main() {
     }
 
     // Builds the square button and reports the variant that applies to it.
-    Widget buttonWithVariant(ValueSetter<StyleVariant?> onVariant) {
+    Widget buttonWithVariant(ValueSetter<StyleVariant> onVariant) {
       return Builder(
         builder: (BuildContext context) {
           onVariant(IconButtonTheme.variantOf(context));
@@ -397,20 +397,20 @@ void main() {
       );
     }
 
-    testWidgets('returns null when no theme specifies a variant', (WidgetTester tester) async {
-      StyleVariant? variant = StyleVariant.material3Expressive;
+    testWidgets('returns material3 when no theme specifies a variant', (WidgetTester tester) async {
+      StyleVariant? variant;
       await tester.pumpWidget(
         MaterialApp(
           home: Center(
             child: IconButtonTheme(
               data: const IconButtonThemeData(style: customStyle),
-              child: buttonWithVariant((StyleVariant? value) => variant = value),
+              child: buttonWithVariant((StyleVariant value) => variant = value),
             ),
           ),
         ),
       );
 
-      expect(variant, isNull);
+      expect(variant, StyleVariant.material3);
       expect(buttonShape(tester), isA<StadiumBorder>());
     });
 
@@ -421,7 +421,7 @@ void main() {
           theme: ThemeData(
             iconButtonTheme: const IconButtonThemeData(variant: StyleVariant.material3Expressive),
           ),
-          home: Center(child: buttonWithVariant((StyleVariant? value) => variant = value)),
+          home: Center(child: buttonWithVariant((StyleVariant value) => variant = value)),
         ),
       );
 
@@ -440,7 +440,7 @@ void main() {
               data: const IconButtonThemeData(variant: StyleVariant.material3Expressive),
               child: IconButtonTheme(
                 data: const IconButtonThemeData(style: customStyle),
-                child: buttonWithVariant((StyleVariant? value) => variant = value),
+                child: buttonWithVariant((StyleVariant value) => variant = value),
               ),
             ),
           ),
@@ -463,7 +463,7 @@ void main() {
           home: Center(
             child: IconButtonTheme(
               data: const IconButtonThemeData(style: customStyle),
-              child: buttonWithVariant((StyleVariant? value) => variant = value),
+              child: buttonWithVariant((StyleVariant value) => variant = value),
             ),
           ),
         ),
@@ -487,7 +487,7 @@ void main() {
                   style: customStyle,
                   variant: StyleVariant.material3,
                 ),
-                child: buttonWithVariant((StyleVariant? value) => variant = value),
+                child: buttonWithVariant((StyleVariant value) => variant = value),
               ),
             ),
           ),
@@ -511,7 +511,7 @@ void main() {
                 data: ThemeData(
                   iconButtonTheme: const IconButtonThemeData(variant: StyleVariant.material3),
                 ),
-                child: buttonWithVariant((StyleVariant? value) => variant = value),
+                child: buttonWithVariant((StyleVariant value) => variant = value),
               ),
             ),
           ),
