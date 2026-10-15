@@ -108,6 +108,10 @@ abstract class InputStream {
 
   /// Skips over and discards n bytes of data from this input stream.
   int skip(int n);
+
+  /// Closes this input stream and releases any system resources associated with
+  /// the stream.
+  void close();
 }
 
 /// This abstract class is the superclass of all classes representing an output

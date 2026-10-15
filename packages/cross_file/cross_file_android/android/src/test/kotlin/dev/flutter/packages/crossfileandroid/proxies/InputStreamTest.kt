@@ -51,4 +51,13 @@ class InputStreamTest {
 
     assertEquals(value, api.skip(instance, n))
   }
+
+  @Test
+  fun close() {
+    val api = TestProxyApiRegistrar().getPigeonApiInputStream()
+    val instance = mock<InputStream>()
+
+    api.close(instance)
+    verify(instance).close()
+  }
 }

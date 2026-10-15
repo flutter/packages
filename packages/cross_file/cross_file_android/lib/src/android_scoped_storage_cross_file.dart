@@ -69,20 +69,24 @@ base class AndroidScopedStorageXFile extends PlatformScopedStorageXFile {
     if (inputStream case final android.InputStream inputStream) {
       int currentByteIndex = start ?? 0;
 
-      if (currentByteIndex > 0) {
-        await inputStream.skip(currentByteIndex);
-      }
-
-      Uint8List chunk = await inputStream.readBytes(maxByteArrayLen);
-      while (chunk.isNotEmpty && (end == null || currentByteIndex < end)) {
-        if (end == null) {
-          yield chunk;
-        } else {
-          yield Uint8List.sublistView(chunk, 0, min(chunk.length, end - currentByteIndex));
+      try {
+        if (currentByteIndex > 0) {
+          await inputStream.skip(currentByteIndex);
         }
-        currentByteIndex += chunk.length;
 
-        chunk = await inputStream.readBytes(maxByteArrayLen);
+        Uint8List chunk = await inputStream.readBytes(maxByteArrayLen);
+        while (chunk.isNotEmpty && (end == null || currentByteIndex < end)) {
+          if (end == null) {
+            yield chunk;
+          } else {
+            yield Uint8List.sublistView(chunk, 0, min(chunk.length, end - currentByteIndex));
+          }
+          currentByteIndex += chunk.length;
+
+          chunk = await inputStream.readBytes(maxByteArrayLen);
+        }
+      } finally {
+        await inputStream.close();
       }
     } else {
       throw NullInputStreamException(params.uri);
@@ -93,7 +97,11 @@ base class AndroidScopedStorageXFile extends PlatformScopedStorageXFile {
   Future<Uint8List> readAsBytes() async {
     final android.InputStream? inputStream = await _contentResolver.openInputStream(params.uri);
     if (inputStream case final android.InputStream inputStream) {
-      return inputStream.readAllBytes();
+      try {
+        return await inputStream.readAllBytes();
+      } finally {
+        await inputStream.close();
+      }
     }
 
     throw NullInputStreamException(params.uri);
