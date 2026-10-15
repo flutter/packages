@@ -54,22 +54,38 @@ class OpenTextPage extends StatelessWidget {
   }
 }
 
-/// Widget that displays a text file in a dialog.
-class TextDisplay extends StatelessWidget {
-  /// Default Constructor.
+/// Widget that displays a text file in a dialog
+class TextDisplay extends StatefulWidget {
+  /// Default Constructor
   const TextDisplay(this.fileName, this.fileContent, {super.key});
 
-  /// The name of the selected file.
+  /// File's name
   final String fileName;
 
-  /// The contents of the text file.
+  /// File to display
   final String fileContent;
+
+  @override
+  State<TextDisplay> createState() => _TextDisplayState();
+}
+
+class _TextDisplayState extends State<TextDisplay> {
+  late final scrollController = ScrollController();
+
+  @override
+  void dispose() {
+    scrollController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      title: Text(fileName),
-      content: Scrollbar(child: SingleChildScrollView(child: Text(fileContent))),
+      title: Text(widget.fileName),
+      content: Scrollbar(
+        controller: scrollController,
+        child: SingleChildScrollView(controller: scrollController, child: Text(widget.fileContent)),
+      ),
       actions: <Widget>[
         TextButton(child: const Text('Close'), onPressed: () => Navigator.pop(context)),
       ],
