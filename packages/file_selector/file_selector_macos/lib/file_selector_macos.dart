@@ -2,6 +2,8 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'dart:io';
+
 import 'package:file_selector_platform_interface/file_selector_platform_interface.dart';
 import 'package:flutter/foundation.dart' show visibleForTesting;
 
@@ -22,7 +24,7 @@ base class FileSelectorMacOS extends FileSelectorPlatform {
 
   @override
   Future<XFile?> openFile([OpenDialogOptions options = const OpenDialogOptions()]) async {
-    final List<String?> paths = await _hostApi.displayOpenPanel(
+    final List<String> paths = await _hostApi.displayOpenPanel(
       OpenPanelOptions(
         allowsMultipleSelection: false,
         canChooseDirectories: false,
@@ -34,12 +36,12 @@ base class FileSelectorMacOS extends FileSelectorPlatform {
         ),
       ),
     );
-    return paths.isEmpty ? null : XFile.scopedStorage(uri: paths.first!);
+    return paths.isEmpty ? null : _toXFile(paths.single);
   }
 
   @override
   Future<List<XFile>> openFiles([OpenDialogOptions options = const OpenDialogOptions()]) async {
-    final List<String?> paths = await _hostApi.displayOpenPanel(
+    final List<String> paths = await _hostApi.displayOpenPanel(
       OpenPanelOptions(
         allowsMultipleSelection: true,
         canChooseDirectories: false,
@@ -51,7 +53,7 @@ base class FileSelectorMacOS extends FileSelectorPlatform {
         ),
       ),
     );
-    return paths.map((String? path) => XFile.scopedStorage(uri: path!)).toList();
+    return paths.map((String path) => _toXFile(path)).toList();
   }
 
   @override
@@ -67,12 +69,12 @@ base class FileSelectorMacOS extends FileSelectorPlatform {
         canCreateDirectories: options.canCreateDirectories,
       ),
     );
-    return uri == null ? null : FileSaveLocation(XFile.scopedStorage(uri: uri));
+    return uri == null ? null : FileSaveLocation(_toXFile(uri));
   }
 
   @override
   Future<XDirectory?> getDirectory([FileDialogOptions options = const FileDialogOptions()]) async {
-    final List<String?> uris = await _hostApi.displayOpenPanel(
+    final List<String> uris = await _hostApi.displayOpenPanel(
       OpenPanelOptions(
         allowsMultipleSelection: false,
         canChooseDirectories: true,
@@ -84,7 +86,7 @@ base class FileSelectorMacOS extends FileSelectorPlatform {
         ),
       ),
     );
-    return uris.isEmpty ? null : XDirectory.scopedStorage(uri: uris.first!);
+    return uris.isEmpty ? null : _toXDirectory(uris.single);
   }
 
   @override
@@ -103,7 +105,7 @@ base class FileSelectorMacOS extends FileSelectorPlatform {
         ),
       ),
     );
-    return uris.map((String uri) => XDirectory.scopedStorage(uri: uri)).toList();
+    return uris.map((String uri) => _toXDirectory(uri)).toList();
   }
 
   // Converts the type group list into a flat list of all allowed types, since
@@ -141,5 +143,30 @@ base class FileSelectorMacOS extends FileSelectorPlatform {
     }
 
     return allowedTypes;
+  }
+
+  XFile _toXFile(String uri) {
+    // Uses scoped storage if the app is sandboxed because apps are expected
+    // to revoke access to the resource with `dispose`. See
+    // https://developer.apple.com/documentation/Security/accessing-files-from-the-macos-app-sandbox#Access-files-with-standard-user-interactions
+    if (_isAppSandboxMode()) {
+      return XFile.scopedStorage(uri: uri);
+    }
+    return XFile.fileSystem(path: uri);
+  }
+
+  XDirectory _toXDirectory(String uri) {
+    // Uses scoped storage if the app is sandboxed because apps are expected
+    // to revoke access to the resource with `dispose`. See
+    // https://developer.apple.com/documentation/Security/accessing-files-from-the-macos-app-sandbox#Access-files-with-standard-user-interactions
+    if (_isAppSandboxMode()) {
+      return XDirectory.scopedStorage(uri: uri);
+    }
+    return XDirectory.fileSystem(path: uri);
+  }
+
+  // Checks whether the app is sandboxed by checking for the container id.
+  bool _isAppSandboxMode() {
+    return Platform.environment.containsKey('APP_SANDBOX_CONTAINER_ID');
   }
 }
