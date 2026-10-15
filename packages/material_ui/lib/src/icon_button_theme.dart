@@ -65,8 +65,9 @@ class IconButtonThemeData with Diagnosticable {
   ///
   /// An enclosing [IconButtonTheme] takes precedence over
   /// [ThemeData.iconButtonTheme], even when a closer [Theme] specifies a
-  /// different variant. To change the variant of a subtree, wrap it in an
-  /// [IconButtonTheme].
+  /// different variant. This matches [IconButtonTheme.of], which only uses
+  /// [ThemeData.iconButtonTheme] when there is no enclosing [IconButtonTheme].
+  /// To change the variant of a subtree, wrap it in an [IconButtonTheme].
   ///
   /// See also:
   ///
