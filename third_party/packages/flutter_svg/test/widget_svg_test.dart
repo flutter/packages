@@ -802,10 +802,7 @@ void main() {
 ''';
 
       await tester.pumpWidget(
-        RepaintBoundary(
-          key: key,
-          child: SvgPicture.string(svgStr, width: 100.0, height: 100.0),
-        ),
+        RepaintBoundary(key: key, child: SvgPicture.string(svgStr, width: 100.0, height: 100.0)),
       );
 
       await tester.pumpAndSettle();
@@ -827,10 +824,7 @@ void main() {
 ''';
 
       await tester.pumpWidget(
-        RepaintBoundary(
-          key: key,
-          child: SvgPicture.string(svgStr, width: 100.0, height: 100.0),
-        ),
+        RepaintBoundary(key: key, child: SvgPicture.string(svgStr, width: 100.0, height: 100.0)),
       );
 
       await tester.pumpAndSettle();
@@ -854,10 +848,7 @@ void main() {
 ''';
 
       await tester.pumpWidget(
-        RepaintBoundary(
-          key: key,
-          child: SvgPicture.string(svgStr, width: 100.0, height: 100.0),
-        ),
+        RepaintBoundary(key: key, child: SvgPicture.string(svgStr, width: 100.0, height: 100.0)),
       );
 
       await tester.pumpAndSettle();
@@ -885,10 +876,7 @@ void main() {
 ''';
 
       await tester.pumpWidget(
-        RepaintBoundary(
-          key: key,
-          child: SvgPicture.string(svgStr, width: 100.0, height: 100.0),
-        ),
+        RepaintBoundary(key: key, child: SvgPicture.string(svgStr, width: 100.0, height: 100.0)),
       );
 
       await tester.pumpAndSettle();
