@@ -27,4 +27,24 @@ void main() {
     await tester.pumpAndSettle();
     expect(findHeadingLevelOnes, findsOne);
   });
+
+  testWidgets('drawer exposes the selected item', (WidgetTester tester) async {
+    await pumpsUseCase(tester, DrawerUseCase());
+
+    final ScaffoldState state = tester.firstState(find.byType(Scaffold));
+    state.openEndDrawer();
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.text('Profile'));
+    await tester.pumpAndSettle();
+
+    expect(
+      tester.getSemantics(find.text('Profile')),
+      containsSemantics(label: 'Profile', hasSelectedState: true, isSelected: true),
+    );
+    expect(
+      tester.getSemantics(find.text('Messages')),
+      containsSemantics(label: 'Messages', hasSelectedState: true, isSelected: false),
+    );
+  });
 }
