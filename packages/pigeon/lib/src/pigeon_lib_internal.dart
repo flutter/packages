@@ -2794,10 +2794,11 @@ String? _checkGeneratedBindingsPubspecVersion({
     }
     final dependencies = doc['dependencies'] as yaml.YamlMap?;
     final dependencyOverrides = doc['dependency_overrides'] as yaml.YamlMap?;
-    final Object? rawConstraint =
+    final Object? rawDependency =
         dependencyOverrides != null && dependencyOverrides.containsKey(packageName)
         ? dependencyOverrides[packageName]
         : dependencies?[packageName];
+    final Object? rawConstraint = rawDependency is Map ? rawDependency['version'] : rawDependency;
     if (rawConstraint is! String) {
       return null;
     }
