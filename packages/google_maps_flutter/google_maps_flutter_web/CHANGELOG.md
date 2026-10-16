@@ -1,3 +1,7 @@
+## 0.7.0
+
+* Adds support for configuring the color displayed behind unloaded map tiles.
+
 ## 0.6.4+1
 
 * Fixes AdvancedMarker anchor handling.

@@ -470,6 +470,7 @@ class PlatformMapConfiguration {
     required this.markerType,
     required this.mapId,
     required this.style,
+    required this.backgroundColor,
   });
 
   final bool? compassEnabled;
@@ -490,6 +491,7 @@ class PlatformMapConfiguration {
   final PlatformMarkerType markerType;
   final String? mapId;
   final String? style;
+  final PlatformColor? backgroundColor;
 }
 
 /// Pigeon representation of an x,y coordinate.

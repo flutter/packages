@@ -2090,6 +2090,7 @@ class PlatformMapConfiguration {
     required this.markerType,
     this.mapId,
     this.style,
+    this.backgroundColor,
   });
 
   bool? compassEnabled;
@@ -2134,6 +2135,8 @@ class PlatformMapConfiguration {
 
   String? style;
 
+  PlatformColor? backgroundColor;
+
   List<Object?> _toList() {
     return <Object?>[
       compassEnabled,
@@ -2157,6 +2160,7 @@ class PlatformMapConfiguration {
       markerType,
       mapId,
       style,
+      backgroundColor,
     ];
   }
 
@@ -2188,6 +2192,7 @@ class PlatformMapConfiguration {
       markerType: result[18]! as PlatformMarkerType,
       mapId: result[19] as String?,
       style: result[20] as String?,
+      backgroundColor: result[21] as PlatformColor?,
     );
   }
 
@@ -2220,7 +2225,8 @@ class PlatformMapConfiguration {
         _deepEquals(liteModeEnabled, other.liteModeEnabled) &&
         _deepEquals(markerType, other.markerType) &&
         _deepEquals(mapId, other.mapId) &&
-        _deepEquals(style, other.style);
+        _deepEquals(style, other.style) &&
+        _deepEquals(backgroundColor, other.backgroundColor);
   }
 
   @override
@@ -2229,7 +2235,7 @@ class PlatformMapConfiguration {
 
   @override
   String toString() {
-    return 'PlatformMapConfiguration(compassEnabled: $compassEnabled, cameraTargetBounds: $cameraTargetBounds, mapType: $mapType, minMaxZoomPreference: $minMaxZoomPreference, mapToolbarEnabled: $mapToolbarEnabled, rotateGesturesEnabled: $rotateGesturesEnabled, scrollGesturesEnabled: $scrollGesturesEnabled, tiltGesturesEnabled: $tiltGesturesEnabled, trackCameraPosition: $trackCameraPosition, zoomControlsEnabled: $zoomControlsEnabled, zoomGesturesEnabled: $zoomGesturesEnabled, myLocationEnabled: $myLocationEnabled, myLocationButtonEnabled: $myLocationButtonEnabled, padding: $padding, indoorViewEnabled: $indoorViewEnabled, trafficEnabled: $trafficEnabled, buildingsEnabled: $buildingsEnabled, liteModeEnabled: $liteModeEnabled, markerType: $markerType, mapId: $mapId, style: $style)';
+    return 'PlatformMapConfiguration(compassEnabled: $compassEnabled, cameraTargetBounds: $cameraTargetBounds, mapType: $mapType, minMaxZoomPreference: $minMaxZoomPreference, mapToolbarEnabled: $mapToolbarEnabled, rotateGesturesEnabled: $rotateGesturesEnabled, scrollGesturesEnabled: $scrollGesturesEnabled, tiltGesturesEnabled: $tiltGesturesEnabled, trackCameraPosition: $trackCameraPosition, zoomControlsEnabled: $zoomControlsEnabled, zoomGesturesEnabled: $zoomGesturesEnabled, myLocationEnabled: $myLocationEnabled, myLocationButtonEnabled: $myLocationButtonEnabled, padding: $padding, indoorViewEnabled: $indoorViewEnabled, trafficEnabled: $trafficEnabled, buildingsEnabled: $buildingsEnabled, liteModeEnabled: $liteModeEnabled, markerType: $markerType, mapId: $mapId, style: $style, backgroundColor: $backgroundColor)';
   }
 }
 

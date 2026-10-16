@@ -92,14 +92,10 @@ public class GoogleMapController: NSObject, GMSMapViewDelegate, FlutterPlatformV
     creationParameters: PlatformMapViewCreationParams,
     registrar: FlutterPluginRegistrar
   ) {
-    let camera = creationParameters.initialCameraPosition.toGMSCameraPosition()
-
-    let options = GMSMapViewOptions()
-    options.frame = frame
-    options.camera = camera
-    if let mapId = creationParameters.mapConfiguration.mapId, !mapId.isEmpty {
-      options.mapID = GMSMapID(identifier: mapId)
-    }
+    let options = GoogleMapController.mapViewOptions(
+      frame: frame,
+      creationParameters: creationParameters
+    )
 
     let binaryMessenger = registrar.messenger()
     let callbackHandler = MapsCallbackApi(
@@ -137,6 +133,25 @@ public class GoogleMapController: NSObject, GMSMapViewDelegate, FlutterPlatformV
       callbackHandler: callbackHandler,
       tileProvider: callbackHandler
     )
+  }
+
+  /// Creates the immutable options used to initialize a Google map view.
+  static func mapViewOptions(
+    frame: CGRect,
+    creationParameters: PlatformMapViewCreationParams
+  ) -> GMSMapViewOptions {
+    let camera = creationParameters.initialCameraPosition.toGMSCameraPosition()
+
+    let options = GMSMapViewOptions()
+    options.frame = frame
+    options.camera = camera
+    if let mapId = creationParameters.mapConfiguration.mapId, !mapId.isEmpty {
+      options.mapID = GMSMapID(identifier: mapId)
+    }
+    if let backgroundColor = creationParameters.mapConfiguration.backgroundColor {
+      options.backgroundColor = backgroundColor.toUIColor()
+    }
+    return options
   }
 
   init(

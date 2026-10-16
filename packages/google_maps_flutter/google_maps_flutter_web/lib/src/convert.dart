@@ -135,6 +135,10 @@ gmaps.MapOptions _configurationAndStyleToGmapsOptions(
     options.colorScheme = jsColorScheme;
   }
 
+  if (configuration.backgroundColor != null) {
+    options.backgroundColor = _getCssColorWithAlpha(configuration.backgroundColor!);
+  }
+
   return options;
 }
 
