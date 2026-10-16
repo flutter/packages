@@ -1,7 +1,8 @@
 ## 0.4.14+1
 
-* Suppresses deprecation warnings for StoreKit 1 APIs, which are intentionally
-  used as the fallback on iOS versions below 15 and macOS versions below 12.
+* Suppresses deprecation warnings for StoreKit 1 APIs, which are used as
+  the fallback on iOS < 15 and macOS < 12.
+* Replaces the deprecated `Locale.currencyCode` with `Locale.currency`.
 
 ## 0.4.14
 
