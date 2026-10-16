@@ -2,7 +2,6 @@
 
 * Updates minimum iOS version to 15 and minimum macOS version to 12.
 * Removes the pre-iOS 15/macOS 12 code path that used the deprecated `SecTrustGetCertificateAtIndex`.
-* Removes availability checks and fallbacks for OS versions below the new minimums.
 
 ## 3.27.0
 
