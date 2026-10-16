@@ -1,0 +1,4 @@
+changelog: |
+  - Adds `dayBuilder` and `weekdayBuilder` callbacks to `CalendarDatePicker`, `DatePickerDialog`, and `showDatePicker`.
+  - Adds `CalendarDatePickerDayDetails` and `CalendarDatePickerWeekdayDetails` to provide metadata and default widgets to the builders.
+version: minor
