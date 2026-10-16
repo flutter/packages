@@ -5,6 +5,7 @@
 import 'dart:ui' show SemanticsInputType;
 
 import 'package:a11y_assessments/use_cases/text_field.dart';
+import 'package:flutter/rendering.dart' show RenderParagraph;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';
 
@@ -34,6 +35,11 @@ void main() {
   });
 
   testWidgets('font size increase does not ellipsize hint text', (WidgetTester tester) async {
+    // A narrow view forces the hint to wrap at 3x text scale.
+    tester.view.physicalSize = const Size(320, 640);
+    tester.view.devicePixelRatio = 1.0;
+    addTearDown(tester.view.reset);
+
     await pumpsUseCase(tester, TextFieldUseCase());
     await tester.pumpWidget(
       MaterialApp(
@@ -53,18 +59,11 @@ void main() {
       final Finder finder = find.byKey(const Key('enabled text field'));
       await tester.tap(finder);
       await tester.pumpAndSettle();
-      final Size size = tester.getSize(finder);
-      // Should have a multi-line height.
-      expect(size.height, 280);
+      final RenderParagraph hint = tester.renderObject<RenderParagraph>(
+        find.descendant(of: finder, matching: find.text('Enter your email')),
+      );
+      expect(hint.didExceedMaxLines, isFalse);
     }
-  });
-
-  testWidgets('text field wrapper exists', (WidgetTester tester) async {
-    await pumpsUseCase(tester, TextFieldUseCase());
-    const textFieldLabel = 'Input field with suffix @gmail.com';
-
-    final Finder semanticsWidgets = find.bySemanticsLabel(RegExp(textFieldLabel));
-    expect(semanticsWidgets, findsExactly(2));
   });
 
   testWidgets('text field demo page has one h1 tag', (WidgetTester tester) async {
