@@ -1280,7 +1280,10 @@ final class DefaultCamera: NSObject, Camera {
             message: "Unable to switch video input",
             details: nil)))
     }
-    videoCaptureSession.addInputWithNoConnections(captureVideoInput)
+
+    // Do not use addInputWithNoConnections. The session still has the disconnected
+    // capturePhotoOutput, and we need to reconnect it to the captureVideoInput.
+    videoCaptureSession.addInput(captureVideoInput)
 
     if !videoCaptureSession.canAddOutput(captureVideoOutput.avOutput) {
       completion(
