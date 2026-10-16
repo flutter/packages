@@ -12,8 +12,9 @@ import kotlin.test.assertEquals
 import org.mockito.ArgumentCaptor
 import org.mockito.kotlin.mock
 import org.mockito.kotlin.whenever
+import org.mockito.kotlin.verify
 
-class InputStreamTest {
+class InputStreamTest {g
   @Test
   fun readBytes() {
     val api = TestProxyApiRegistrar().getPigeonApiInputStream()
