@@ -2,6 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'dart:async';
 import 'dart:convert' show JsonEncoder;
 import 'dart:io';
 
@@ -62,6 +63,60 @@ Future<void> main() async {
     );
     expect(isWasmScore.value, 1);
   }, timeout: Timeout.none);
+
+  test('Can stop a web benchmark while it is running', () async {
+    final server = BenchmarkServer(
+      benchmarkAppDirectory: Directory('testing/test_app'),
+      entryPoint: 'benchmark/test_infra/client/app_client.dart',
+      benchmarkServerPort: defaultBenchmarkServerPort,
+      chromeDebugPort: defaultChromeDebugPort,
+      headless: true,
+      treeShakeIcons: false,
+    );
+
+    // Stop the benchmark as soon as Chrome has connected to the benchmark
+    // server and asked for the first benchmark to run.
+    Future<void>? stopped;
+    final Future<BenchmarkResults> results = runZoned(
+      server.run,
+      zoneSpecification: ZoneSpecification(
+        print: (Zone self, ZoneDelegate parent, Zone zone, String line) {
+          parent.print(zone, line);
+          if (line.startsWith('Launching benchmark')) {
+            stopped ??= server.stop();
+          }
+        },
+      ),
+    );
+
+    await expectLater(results, throwsStateError);
+    expect(stopped, isNotNull);
+    await stopped;
+
+    // Neither the benchmark server nor Chrome should be listening anymore.
+    await _expectPortClosed(defaultBenchmarkServerPort);
+    await _expectPortClosed(defaultChromeDebugPort);
+  }, timeout: Timeout.none);
+}
+
+/// Expects that nothing accepts connections on `localhost:[port]`.
+///
+/// Chrome exits asynchronously after being killed, so this polls for a few
+/// seconds before giving up.
+Future<void> _expectPortClosed(int port) async {
+  final stopwatch = Stopwatch()..start();
+  while (true) {
+    try {
+      final Socket socket = await Socket.connect('localhost', port);
+      socket.destroy();
+    } on SocketException {
+      return;
+    }
+    if (stopwatch.elapsed > const Duration(seconds: 10)) {
+      fail('Expected nothing to be listening on port $port.');
+    }
+    await Future<void>.delayed(const Duration(milliseconds: 100));
+  }
 }
 
 Future<BenchmarkResults> _runBenchmarks({

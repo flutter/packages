@@ -14,6 +14,7 @@ import 'src/runner.dart';
 
 export 'src/benchmark_result.dart';
 export 'src/compilation_options.dart';
+export 'src/runner.dart' show BenchmarkServer;
 
 /// The default port number used by the local benchmark server.
 const int defaultBenchmarkServerPort = 9999;
@@ -50,6 +51,11 @@ const int defaultChromeDebugPort = 10000;
 ///
 /// [benchmarkPath] specifies the path for the URL that will be loaded upon
 /// opening the benchmark app in Chrome.
+///
+/// The returned future only completes once the benchmark finishes or fails.
+/// To be able to abort a benchmark that is still running (e.g. from a test's
+/// `tearDown` after the test timed out), construct a [BenchmarkServer]
+/// directly and call [BenchmarkServer.stop].
 Future<BenchmarkResults> serveWebBenchmark({
   required io.Directory benchmarkAppDirectory,
   required String entryPoint,
