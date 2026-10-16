@@ -17,7 +17,7 @@ import WebKit
 #endif
 
 @Suite struct FWFWebViewFlutterWKWebViewExternalAPITests {
-  // Silences the deprecation warning; the deprecated method is still public API and must be tested.
+  // Silences the deprecation warning, the deprecated method is still public API and should be tested.
   @available(*, deprecated)
   @MainActor @Test func webViewForIdentifier() throws {
     let registry = TestRegistry()
