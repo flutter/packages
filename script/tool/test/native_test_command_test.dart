@@ -162,7 +162,7 @@ void main() {
         ...extraFlags,
         if (treatWarningsAsErrors) ...[
           'GCC_TREAT_WARNINGS_AS_ERRORS=YES',
-          'SWIFT_TREAT_WARNINGS_AS_ERRORS=YES',
+          r'SWIFT_TREAT_WARNINGS_AS_ERRORS=$(SWIFT_SUPPRESS_WARNINGS:not)',
         ],
       ], package.path);
     }
