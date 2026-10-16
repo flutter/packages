@@ -2,6 +2,11 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+// Do not edit by hand. The code is generated from data in the Material
+// Design token database by the script:
+//   packages/material_ui/tool/gen_defaults/bin/gen_defaults.dart.
+part of '../range_slider.dart';
+
 class _RangeSliderDefaultsM3 extends SliderThemeData {
   _RangeSliderDefaultsM3(this.context) : super(trackHeight: 16.0);
 
