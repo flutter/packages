@@ -47,9 +47,13 @@ class PhotoHandler {
   // base_media_type: A pointer to base media type used as a base
   //                  for the actual photo capture media type.
   // file_path:       A string that hold file path for photo capture.
+  // source_stream_index: Source stream index used for photo sink (defaults to
+  //                      MF_CAPTURE_ENGINE_PREFERRED_SOURCE_STREAM_FOR_PHOTO).
   HRESULT TakePhoto(const std::string& file_path,
                     IMFCaptureEngine* capture_engine,
-                    IMFMediaType* base_media_type);
+                    IMFMediaType* base_media_type,
+                    DWORD source_stream_index = (DWORD)
+                        MF_CAPTURE_ENGINE_PREFERRED_SOURCE_STREAM_FOR_PHOTO);
 
   // Set the photo handler recording state to: kIdle.
   void OnPhotoTaken();
@@ -68,7 +72,8 @@ class PhotoHandler {
  private:
   // Initializes record sink for video file capture.
   HRESULT InitPhotoSink(IMFCaptureEngine* capture_engine,
-                        IMFMediaType* base_media_type);
+                        IMFMediaType* base_media_type,
+                        DWORD source_stream_index);
 
   std::string file_path_;
   PhotoState photo_state_ = PhotoState::kNotStarted;

@@ -56,6 +56,38 @@ void main() {
         expect(cameraId, 1);
       });
 
+      test(
+        'Should send photoResolutionPreset and videoResolutionPreset in MediaSettings',
+        () async {
+          final mockApi = MockCameraApi();
+          when(mockApi.create(any, any)).thenAnswer((_) async => 1);
+          final plugin = CameraWindows(api: mockApi);
+          const cameraName = 'Test';
+
+          final int cameraId = await plugin.createCameraWithSettings(
+            const CameraDescription(
+              name: cameraName,
+              lensDirection: CameraLensDirection.front,
+              sensorOrientation: 0,
+            ),
+            const MediaSettings(
+              resolutionPreset: ResolutionPreset.low,
+              photoResolutionPreset: ResolutionPreset.ultraHigh,
+              videoResolutionPreset: ResolutionPreset.medium,
+            ),
+          );
+
+          final VerificationResult verification = verify(mockApi.create(captureAny, captureAny));
+          expect(verification.captured[0], cameraName);
+          final settings = verification.captured[1] as PlatformMediaSettings?;
+          expect(settings, isNotNull);
+          expect(settings?.resolutionPreset, PlatformResolutionPreset.low);
+          expect(settings?.photoResolutionPreset, PlatformResolutionPreset.ultraHigh);
+          expect(settings?.videoResolutionPreset, PlatformResolutionPreset.medium);
+          expect(cameraId, 1);
+        },
+      );
+
       test('Should throw CameraException when create throws a PlatformException', () {
         // Arrange
         const exceptionCode = 'TESTING_ERROR_CODE';

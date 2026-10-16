@@ -94,4 +94,28 @@ final class CameraSessionPresetsTests: XCTestCase {
 
     waitForExpectations(timeout: 30, handler: nil)
   }
+
+  func testVideoResolutionPreset_overridesResolutionPresetForCaptureSessionPreset() {
+    let expectedPreset = AVCaptureSession.Preset.hd1280x720
+    let expectation = self.expectation(description: "Expected preset set")
+
+    let videoSessionMock = MockCaptureSession()
+    videoSessionMock.canSetSessionPresetStub = { _ in true }
+    videoSessionMock.setSessionPresetStub = { preset in
+      if preset == expectedPreset {
+        expectation.fulfill()
+      }
+    }
+
+    let configuration = CameraTestUtils.createTestCameraConfiguration()
+    configuration.videoCaptureSession = videoSessionMock
+    configuration.mediaSettings = CameraTestUtils.createDefaultMediaSettings(
+      resolutionPreset: PlatformResolutionPreset.ultraHigh,
+      videoResolutionPreset: PlatformResolutionPreset.high)
+    configuration.videoCaptureDeviceFactory = { _ in MockCaptureDevice() }
+
+    let _ = CameraTestUtils.createTestCamera(configuration)
+
+    waitForExpectations(timeout: 30, handler: nil)
+  }
 }

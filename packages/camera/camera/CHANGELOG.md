@@ -1,5 +1,6 @@
-## NEXT
+## 0.12.2
 
+* Adds `photoResolutionPreset` and `videoResolutionPreset` to `CameraController` to support separate photo and video resolution presets.
 * Updates minimum supported SDK version to Flutter 3.41/Dart 3.11.
 
 ## 0.12.1

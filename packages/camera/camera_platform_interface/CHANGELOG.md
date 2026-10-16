@@ -1,3 +1,7 @@
+## 2.16.0
+
+* Adds `photoResolutionPreset` and `videoResolutionPreset` to `MediaSettings`.
+
 ## 2.15.0
 
 * Adds `isZeroShutterLagSupported` and `setZeroShutterLagEnabled` for

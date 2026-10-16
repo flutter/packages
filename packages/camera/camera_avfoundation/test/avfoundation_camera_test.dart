@@ -88,10 +88,47 @@ void main() {
         final settings = verification.captured[1] as PlatformMediaSettings?;
         expect(settings, isNotNull);
         expect(settings?.resolutionPreset, PlatformResolutionPreset.low);
+        expect(settings?.photoResolutionPreset, isNull);
+        expect(settings?.videoResolutionPreset, isNull);
         expect(settings?.framesPerSecond, fps);
         expect(settings?.videoBitrate, videoBitrate);
         expect(settings?.audioBitrate, audioBitrate);
         expect(settings?.enableAudio, true);
+        expect(cameraId, 1);
+      },
+    );
+
+    test(
+      'Should pass photoResolutionPreset and videoResolutionPreset in createCameraWithSettings',
+      () async {
+        // Arrange
+        final mockApi = MockCameraApi();
+        when(mockApi.create(any, any)).thenAnswer((_) async => 1);
+        final camera = AVFoundationCamera(api: mockApi);
+        const cameraName = 'Test';
+
+        // Act
+        final int cameraId = await camera.createCameraWithSettings(
+          const CameraDescription(
+            name: cameraName,
+            lensDirection: CameraLensDirection.back,
+            sensorOrientation: 0,
+          ),
+          const MediaSettings(
+            resolutionPreset: ResolutionPreset.low,
+            photoResolutionPreset: ResolutionPreset.max,
+            videoResolutionPreset: ResolutionPreset.medium,
+          ),
+        );
+
+        // Assert
+        final VerificationResult verification = verify(mockApi.create(captureAny, captureAny));
+        expect(verification.captured[0], cameraName);
+        final settings = verification.captured[1] as PlatformMediaSettings?;
+        expect(settings, isNotNull);
+        expect(settings?.resolutionPreset, PlatformResolutionPreset.low);
+        expect(settings?.photoResolutionPreset, PlatformResolutionPreset.max);
+        expect(settings?.videoResolutionPreset, PlatformResolutionPreset.medium);
         expect(cameraId, 1);
       },
     );

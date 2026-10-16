@@ -283,7 +283,10 @@ void CaptureControllerImpl::ResetCaptureController() {
   audio_source_ = nullptr;
   video_source_ = nullptr;
   base_preview_media_type_ = nullptr;
-  base_capture_media_type_ = nullptr;
+  base_record_media_type_ = nullptr;
+  base_photo_media_type_ = nullptr;
+  photo_source_stream_index_ =
+      (DWORD)MF_CAPTURE_ENGINE_PREFERRED_SOURCE_STREAM_FOR_PHOTO;
 
   if (dxgi_device_manager_) {
     dxgi_device_manager_->ResetDevice(dx11_device_.Get(),
@@ -353,8 +356,8 @@ void CaptureControllerImpl::TakePicture(const std::string& file_path) {
 
   HRESULT hr = S_OK;
 
-  if (!base_capture_media_type_) {
-    // Enumerates mediatypes and finds media type for video capture.
+  if (!base_photo_media_type_) {
+    // Enumerates mediatypes and finds media type for photo capture.
     hr = FindBaseMediaTypes();
     if (FAILED(hr)) {
       return OnPicture(GetCameraResult(hr),
@@ -371,7 +374,8 @@ void CaptureControllerImpl::TakePicture(const std::string& file_path) {
   // Check MF_CAPTURE_ENGINE_PHOTO_TAKEN event handling
   // for response process.
   hr = photo_handler_->TakePhoto(file_path, capture_engine_.Get(),
-                                 base_capture_media_type_.Get());
+                                 base_photo_media_type_.Get(),
+                                 photo_source_stream_index_);
   if (FAILED(hr)) {
     // Destroy photo handler on error cases to make sure state is resetted.
     photo_handler_ = nullptr;
@@ -379,8 +383,14 @@ void CaptureControllerImpl::TakePicture(const std::string& file_path) {
   }
 }
 
-uint32_t CaptureControllerImpl::GetMaxPreviewHeight() const {
-  switch (media_settings_.resolution_preset()) {
+static PlatformResolutionPreset GetEffectivePreset(
+    const PlatformResolutionPreset* override_preset,
+    const PlatformResolutionPreset& default_preset) {
+  return override_preset ? *override_preset : default_preset;
+}
+
+static uint32_t GetMaxHeightForPreset(PlatformResolutionPreset preset) {
+  switch (preset) {
     case PlatformResolutionPreset::kLow:
       return 240;
     case PlatformResolutionPreset::kMedium:
@@ -398,6 +408,24 @@ uint32_t CaptureControllerImpl::GetMaxPreviewHeight() const {
   }
 }
 
+uint32_t CaptureControllerImpl::GetMaxPreviewHeight() const {
+  return GetMaxHeightForPreset(
+      GetEffectivePreset(media_settings_.video_resolution_preset(),
+                         media_settings_.resolution_preset()));
+}
+
+uint32_t CaptureControllerImpl::GetMaxVideoHeight() const {
+  return GetMaxHeightForPreset(
+      GetEffectivePreset(media_settings_.video_resolution_preset(),
+                         media_settings_.resolution_preset()));
+}
+
+uint32_t CaptureControllerImpl::GetMaxPhotoHeight() const {
+  return GetMaxHeightForPreset(
+      GetEffectivePreset(media_settings_.photo_resolution_preset(),
+                         media_settings_.resolution_preset()));
+}
+
 // Finds best media type for given source stream index and max height;
 bool FindBestMediaType(DWORD source_stream_index, IMFCaptureSource* source,
                        IMFMediaType** target_media_type, uint32_t max_height,
@@ -405,16 +433,19 @@ bool FindBestMediaType(DWORD source_stream_index, IMFCaptureSource* source,
                        uint32_t* target_frame_height,
                        float minimum_accepted_framerate = 15.f) {
   assert(source);
-  ComPtr<IMFMediaType> media_type;
+  assert(target_media_type);
 
+  ComPtr<IMFMediaType> best_media_type;
   uint32_t best_width = 0;
   uint32_t best_height = 0;
   float best_framerate = 0.f;
 
   // Loop native media types.
   for (int i = 0;; i++) {
+    ComPtr<IMFMediaType> media_type;
     if (FAILED(source->GetAvailableDeviceMediaType(
-            source_stream_index, i, media_type.GetAddressOf()))) {
+            source_stream_index, i, media_type.GetAddressOf())) ||
+        !media_type) {
       break;
     }
 
@@ -440,7 +471,7 @@ bool FindBestMediaType(DWORD source_stream_index, IMFCaptureSource* source,
       if (frame_height <= max_height &&
           (best_width < frame_width || best_height < frame_height ||
            best_framerate < frame_rate)) {
-        media_type.CopyTo(target_media_type);
+        best_media_type = media_type;
         best_width = frame_width;
         best_height = frame_height;
         best_framerate = frame_rate;
@@ -453,7 +484,11 @@ bool FindBestMediaType(DWORD source_stream_index, IMFCaptureSource* source,
     *target_frame_height = best_height;
   }
 
-  return *target_media_type != nullptr;
+  if (best_media_type) {
+    return SUCCEEDED(best_media_type.CopyTo(target_media_type));
+  }
+
+  return false;
 }
 
 HRESULT CaptureControllerImpl::FindBaseMediaTypes() {
@@ -472,6 +507,10 @@ HRESULT CaptureControllerImpl::FindBaseMediaTypes() {
 
 HRESULT CaptureControllerImpl::FindBaseMediaTypesForSource(
     IMFCaptureSource* source) {
+  base_preview_media_type_ = nullptr;
+  base_record_media_type_ = nullptr;
+  base_photo_media_type_ = nullptr;
+
   // Find base media type for previewing.
   if (!FindBestMediaType(
           (DWORD)MF_CAPTURE_ENGINE_PREFERRED_SOURCE_STREAM_FOR_VIDEO_PREVIEW,
@@ -481,12 +520,28 @@ HRESULT CaptureControllerImpl::FindBaseMediaTypesForSource(
     return E_FAIL;
   }
 
-  // Find base media type for record and photo capture.
+  // Find base media type for video recording.
   if (!FindBestMediaType(
           (DWORD)MF_CAPTURE_ENGINE_PREFERRED_SOURCE_STREAM_FOR_VIDEO_RECORD,
-          source, base_capture_media_type_.GetAddressOf(), 0xffffffff, nullptr,
-          nullptr)) {
+          source, base_record_media_type_.GetAddressOf(), GetMaxVideoHeight(),
+          nullptr, nullptr)) {
     return E_FAIL;
+  }
+
+  // Find base media type for photo capture.
+  // Query photo stream first; if unavailable, fall back to record stream.
+  photo_source_stream_index_ =
+      (DWORD)MF_CAPTURE_ENGINE_PREFERRED_SOURCE_STREAM_FOR_PHOTO;
+  if (!FindBestMediaType(photo_source_stream_index_, source,
+                         base_photo_media_type_.GetAddressOf(),
+                         GetMaxPhotoHeight(), nullptr, nullptr)) {
+    photo_source_stream_index_ =
+        (DWORD)MF_CAPTURE_ENGINE_PREFERRED_SOURCE_STREAM_FOR_VIDEO_RECORD;
+    if (!FindBestMediaType(photo_source_stream_index_, source,
+                           base_photo_media_type_.GetAddressOf(),
+                           GetMaxPhotoHeight(), nullptr, nullptr)) {
+      return E_FAIL;
+    }
   }
 
   return S_OK;
@@ -540,7 +595,7 @@ void CaptureControllerImpl::StartRecord(const std::string& file_path) {
 
   HRESULT hr = S_OK;
 
-  if (!base_capture_media_type_) {
+  if (!base_record_media_type_) {
     // Enumerates mediatypes and finds media type for video capture.
     hr = FindBaseMediaTypes();
     if (FAILED(hr)) {
@@ -561,7 +616,7 @@ void CaptureControllerImpl::StartRecord(const std::string& file_path) {
   // Check MF_CAPTURE_ENGINE_RECORD_STARTED event handling for response
   // process.
   hr = record_handler_->StartRecord(file_path, capture_engine_.Get(),
-                                    base_capture_media_type_.Get());
+                                    base_record_media_type_.Get());
   if (FAILED(hr)) {
     // Destroy record handler on error cases to make sure state is resetted.
     record_handler_ = nullptr;
