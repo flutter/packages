@@ -8,10 +8,9 @@ import 'package:file_selector_platform_interface/file_selector_platform_interfac
 import 'package:flutter/cupertino.dart';
 
 import 'file_selector_api.g.dart';
-import 'types/native_illegal_argument_exception.dart';
 
 /// An implementation of [FileSelectorPlatform] for Android.
-class FileSelectorAndroid extends FileSelectorPlatform {
+base class FileSelectorAndroid extends FileSelectorPlatform {
   FileSelectorAndroid({@visibleForTesting FileSelectorApi? api}) : _api = api ?? FileSelectorApi();
 
   final FileSelectorApi _api;
@@ -22,49 +21,27 @@ class FileSelectorAndroid extends FileSelectorPlatform {
   }
 
   @override
-  Future<XFile?> openFile({
-    List<XTypeGroup>? acceptedTypeGroups,
-    String? initialDirectory,
-    String? confirmButtonText,
-  }) async {
-    final FileResponse? file = await _api.openFile(
-      initialDirectory,
-      _fileTypesFromTypeGroups(acceptedTypeGroups),
+  Future<XFile?> openFile([OpenDialogOptions options = const OpenDialogOptions()]) async {
+    final String? uri = await _api.openFile(
+      options.initialDirectory,
+      _fileTypesFromTypeGroups(options.acceptedTypeGroups),
     );
-    return file == null ? null : _xFileFromFileResponse(file);
+    return uri == null ? null : XFile.scopedStorage(uri: uri);
   }
 
   @override
-  Future<List<XFile>> openFiles({
-    List<XTypeGroup>? acceptedTypeGroups,
-    String? initialDirectory,
-    String? confirmButtonText,
-  }) async {
-    final List<FileResponse> files = await _api.openFiles(
-      initialDirectory,
-      _fileTypesFromTypeGroups(acceptedTypeGroups),
+  Future<List<XFile>> openFiles([OpenDialogOptions options = const OpenDialogOptions()]) async {
+    final List<String> files = await _api.openFiles(
+      options.initialDirectory,
+      _fileTypesFromTypeGroups(options.acceptedTypeGroups),
     );
-    return files.map<XFile>(_xFileFromFileResponse).toList();
+    return files.map<XFile>((String uri) => XFile.scopedStorage(uri: uri)).toList();
   }
 
   @override
-  Future<String?> getDirectoryPath({String? initialDirectory, String? confirmButtonText}) async {
-    return _api.getDirectoryPath(initialDirectory);
-  }
-
-  XFile _xFileFromFileResponse(FileResponse file) {
-    if (file.fileSelectorNativeException != null) {
-      _resolveErrorCodeAndMaybeThrow(file.fileSelectorNativeException!);
-    }
-    return XFile.fromData(
-      file.bytes,
-      // Note: The name parameter is not used by XFile. The XFile.name returns
-      // the extracted file name from XFile.path.
-      name: file.name,
-      length: file.size,
-      mimeType: file.mimeType,
-      path: file.path,
-    );
+  Future<XDirectory?> getDirectory([FileDialogOptions options = const FileDialogOptions()]) async {
+    final String? uri = await _api.getDirectoryPath(options.initialDirectory);
+    return uri == null ? null : XDirectory.scopedStorage(uri: uri);
   }
 
   FileTypes _fileTypesFromTypeGroups(List<XTypeGroup>? typeGroups) {
@@ -89,18 +66,5 @@ class FileSelectorAndroid extends FileSelectorPlatform {
     }
 
     return FileTypes(mimeTypes: mimeTypes.toList(), extensions: extensions.toList());
-  }
-
-  /// Translates a [FileSelectorExceptionCode] to its corresponding error and
-  /// handles throwing.
-  void _resolveErrorCodeAndMaybeThrow(FileSelectorNativeException fileSelectorNativeException) {
-    switch (fileSelectorNativeException.fileSelectorExceptionCode) {
-      case FileSelectorExceptionCode.illegalArgumentException:
-        throw NativeIllegalArgumentException(fileSelectorNativeException.message);
-      case (FileSelectorExceptionCode.illegalStateException ||
-          FileSelectorExceptionCode.ioException ||
-          FileSelectorExceptionCode.securityException):
-      // unused for now
-    }
   }
 }

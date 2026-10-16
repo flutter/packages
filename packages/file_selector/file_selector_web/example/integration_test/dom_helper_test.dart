@@ -62,13 +62,11 @@ void main() {
         expect(files.length, 2);
 
         expect(files[0].name, 'file1.txt');
-        expect(files[0].mimeType, 'text/plain');
         expect(await files[0].length(), 6);
         expect(await files[0].readAsString(), '123456');
         expect(await files[0].lastModified(), isNotNull);
 
         expect(files[1].name, 'file2.txt');
-        expect(files[1].mimeType, 'text/plain');
         expect(await files[1].length(), 0);
         expect(await files[1].readAsString(), '');
         expect(await files[1].lastModified(), isNotNull);

@@ -27,8 +27,6 @@ void main() {
       expect(jsonMap['mimeTypes'], mimeTypes);
       expect(jsonMap['uniformTypeIdentifiers'], uniformTypeIdentifiers);
       expect(jsonMap['webWildCards'], webWildCards);
-      // Validate the legacy key for backwards compatibility.
-      expect(jsonMap['macUTIs'], uniformTypeIdentifiers);
     });
 
     test('a wildcard group can be created', () {
@@ -64,61 +62,6 @@ void main() {
       expect(mimeOnly.allowsAny, false);
       expect(utiOnly.allowsAny, false);
       expect(webOnly.allowsAny, false);
-    });
-
-    group('macUTIs -> uniformTypeIdentifiers transition', () {
-      test('passing only macUTIs should fill uniformTypeIdentifiers', () {
-        const uniformTypeIdentifiers = <String>['public.plain-text'];
-        const group = XTypeGroup(macUTIs: uniformTypeIdentifiers);
-
-        expect(group.uniformTypeIdentifiers, uniformTypeIdentifiers);
-      });
-
-      test('passing only uniformTypeIdentifiers should fill uniformTypeIdentifiers', () {
-        const uniformTypeIdentifiers = <String>['public.plain-text'];
-        const group = XTypeGroup(uniformTypeIdentifiers: uniformTypeIdentifiers);
-
-        expect(group.uniformTypeIdentifiers, uniformTypeIdentifiers);
-      });
-
-      test('macUTIs getter return macUTIs value passed in constructor', () {
-        const uniformTypeIdentifiers = <String>['public.plain-text'];
-        const group = XTypeGroup(macUTIs: uniformTypeIdentifiers);
-
-        expect(group.macUTIs, uniformTypeIdentifiers);
-      });
-
-      test('macUTIs getter returns uniformTypeIdentifiers value passed in constructor', () {
-        const uniformTypeIdentifiers = <String>['public.plain-text'];
-        const group = XTypeGroup(uniformTypeIdentifiers: uniformTypeIdentifiers);
-
-        expect(group.macUTIs, uniformTypeIdentifiers);
-      });
-
-      test('passing both uniformTypeIdentifiers and macUTIs should throw', () {
-        expect(
-          () => XTypeGroup(
-            macUTIs: const <String>['public.plain-text'],
-            uniformTypeIdentifiers: const <String>['public.plain-images'],
-          ),
-          throwsA(
-            predicate(
-              (Object? e) =>
-                  e is AssertionError &&
-                  e.message == 'Only one of uniformTypeIdentifiers or macUTIs can be non-null',
-            ),
-          ),
-        );
-      });
-
-      test(
-        'having uniformTypeIdentifiers and macUTIs as null should leave uniformTypeIdentifiers as null',
-        () {
-          const group = XTypeGroup();
-
-          expect(group.uniformTypeIdentifiers, null);
-        },
-      );
     });
 
     test('leading dots are removed from extensions', () {

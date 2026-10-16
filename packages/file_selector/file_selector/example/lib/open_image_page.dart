@@ -2,8 +2,6 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import 'dart:io';
-
 import 'package:file_selector/file_selector.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -26,13 +24,13 @@ class OpenImagePage extends StatelessWidget {
       // Operation was canceled by the user.
       return;
     }
-    final String fileName = file.name;
-    final String filePath = file.path;
+    final String? fileName = await file.name();
+    final Uint8List bytes = await file.readAsBytes();
 
     if (context.mounted) {
       await showDialog<void>(
         context: context,
-        builder: (BuildContext context) => ImageDisplay(fileName, filePath),
+        builder: (BuildContext context) => ImageDisplay(fileName ?? 'Unknown Filename', bytes),
       );
     }
   }
@@ -60,24 +58,22 @@ class OpenImagePage extends StatelessWidget {
   }
 }
 
-/// Widget that displays a text file in a dialog
+/// Widget that displays an image in a dialog.
 class ImageDisplay extends StatelessWidget {
-  /// Default Constructor
-  const ImageDisplay(this.fileName, this.filePath, {super.key});
+  /// Default Constructor.
+  const ImageDisplay(this.fileName, this.bytes, {super.key});
 
-  /// Image's name
+  /// The name of the selected file.
   final String fileName;
 
-  /// Image's path
-  final String filePath;
+  /// The bytes of the selected file.
+  final Uint8List bytes;
 
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      title: Text(fileName),
-      // On web the filePath is a blob url
-      // while on other platforms it is a system path.
-      content: kIsWeb ? Image.network(filePath) : Image.file(File(filePath)),
+      title: Text(key: const Key('result_image_name'), fileName),
+      content: Image.memory(bytes),
       actions: <Widget>[
         TextButton(
           child: const Text('Close'),

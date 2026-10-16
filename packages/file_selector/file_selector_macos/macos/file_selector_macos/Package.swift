@@ -15,11 +15,15 @@ let package = Package(
   products: [
     .library(name: "file-selector-macos", targets: ["file_selector_macos"])
   ],
-  dependencies: [],
+  dependencies: [
+    .package(name: "FlutterFramework", path: "../FlutterFramework")
+  ],
   targets: [
     .target(
       name: "file_selector_macos",
-      dependencies: [],
+      dependencies: [
+        .product(name: "FlutterFramework", package: "FlutterFramework")
+      ],
       resources: [
         .process("Resources")
       ]

@@ -17,20 +17,20 @@ class OpenTextPage extends StatelessWidget {
       extensions: <String>['txt', 'json'],
       uniformTypeIdentifiers: <String>['public.text'],
     );
-    final XFile? file = await FileSelectorPlatform.instance.openFile(
-      acceptedTypeGroups: <XTypeGroup>[typeGroup],
+    final XFile? file = await FileSelectorPlatform.instance!.openFile(
+      const OpenDialogOptions(acceptedTypeGroups: <XTypeGroup>[typeGroup]),
     );
     if (file == null) {
       // Operation was canceled by the user.
       return;
     }
-    final String fileName = file.name;
+    final String? fileName = await file.name();
     final String fileContent = await file.readAsString();
 
     if (context.mounted) {
       await showDialog<void>(
         context: context,
-        builder: (BuildContext context) => TextDisplay(fileName, fileContent),
+        builder: (BuildContext context) => TextDisplay(fileName ?? 'Unknown Filename', fileContent),
       );
     }
   }

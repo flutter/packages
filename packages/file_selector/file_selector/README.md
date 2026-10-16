@@ -73,18 +73,18 @@ if (result == null) {
   return;
 }
 
-final fileData = Uint8List.fromList('Hello World!'.codeUnits);
-const mimeType = 'text/plain';
-final textFile = XFile.fromData(fileData, mimeType: mimeType, name: fileName);
-await textFile.saveTo(result.path);
+if (result.file case final FileSystemXFile file) {
+  final fileData = Uint8List.fromList('Hello World!'.codeUnits);
+  await file.writeAsBytes(fileData);
+}
 ```
 
 #### Get a directory path
 
 <?code-excerpt "readme_standalone_excerpts.dart (GetDirectory)"?>
 ```dart
-final String? directoryPath = await getDirectoryPath();
-if (directoryPath == null) {
+final XDirectory? directory = await getDirectory();
+if (directory == null) {
   // Operation was canceled by the user.
   return;
 }
