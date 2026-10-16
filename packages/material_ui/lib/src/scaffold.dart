@@ -1708,6 +1708,59 @@ class _FloatingActionButtonTransitionState extends State<_FloatingActionButtonTr
 ///
 /// </callout-box>
 ///
+/// A few patterns commonly lead developers to nest Scaffolds. In each case,
+/// there is a better approach that uses a single Scaffold.
+///
+/// #### Positioning the [FloatingActionButton]
+///
+/// A nested Scaffold is sometimes used to pin a [FloatingActionButton] to a
+/// specific spot in the layout. Instead, use [floatingActionButtonLocation]
+/// with one of the built-in [FloatingActionButtonLocation] values, or provide
+/// a custom [FloatingActionButtonLocation] to compute an offset.
+///
+/// <callout-box>
+///
+/// Place the [FloatingActionButton] at the top-center of the body by setting
+/// [floatingActionButtonLocation] rather than wrapping the body in another
+/// Scaffold.
+///
+/// {@example /example/lib/scaffold/scaffold.snippet.1.dart#body indent=strip}
+///
+/// </callout-box>
+///
+/// #### Adding a second bottom bar
+///
+/// A nested Scaffold is sometimes used to stack an extra bar above the primary
+/// [bottomNavigationBar]. Instead, use [persistentFooterButtons] for a row of
+/// actions pinned above the bottom navigation bar, or place a [Column] inside
+/// [body] whose last child is the extra bar.
+///
+/// <callout-box>
+///
+/// Use [persistentFooterButtons] to show actions above the
+/// [bottomNavigationBar] without nesting a second Scaffold.
+///
+/// {@example /example/lib/scaffold/scaffold.snippet.2.dart#body indent=strip}
+///
+/// </callout-box>
+///
+/// #### Positioning a [SnackBar]
+///
+/// A nested Scaffold is sometimes used to show a [SnackBar] above the
+/// [bottomNavigationBar] or elsewhere on screen. Instead, pass a [SnackBar]
+/// configured with [SnackBarBehavior.floating] and a [SnackBar.margin] to
+/// [ScaffoldMessengerState.showSnackBar]; the enclosing Scaffold already
+/// accounts for the [bottomNavigationBar] height.
+///
+/// <callout-box>
+///
+/// Build a floating [SnackBar] with a custom margin so it sits above the
+/// [bottomNavigationBar] without a nested Scaffold.
+///
+/// {@example /example/lib/scaffold/scaffold.snippet.3.dart#body indent=strip}
+///
+/// </callout-box>
+///
 /// Although there are some use cases, like a presentation app that
 /// shows embedded flutter content, where nested scaffolds are
 /// appropriate, it's best to avoid nesting scaffolds.

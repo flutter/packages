@@ -1,0 +1,3 @@
+changelog: |
+  - Documents common anti-patterns that lead to nested `Scaffold`s and the single-`Scaffold` alternatives for each.
+version: patch
