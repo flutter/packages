@@ -2,21 +2,23 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import '../data/radio_button.dart';
 import 'template.dart';
 
-class RadioTemplate extends TokenTemplate {
-  const RadioTemplate(
-    super.blockName,
-    super.fileName,
-    super.tokens, {
-    super.colorSchemePrefix = '_colors.',
-  });
+class RadioTemplateM3 extends TokenTemplateM3 {
+  const RadioTemplateM3();
 
   @override
-  String generate() =>
+  String get name => 'Radio';
+
+  @override
+  String get parentFilePath => 'radio.dart';
+
+  @override
+  String generateContents(String className) =>
       '''
-class _RadioDefaultsM3 extends RadioThemeData {
-  _RadioDefaultsM3(this.context);
+class $className extends RadioThemeData {
+  $className(this.context);
 
   final BuildContext context;
   late final ThemeData _theme = Theme.of(context);
@@ -27,32 +29,32 @@ class _RadioDefaultsM3 extends RadioThemeData {
     return WidgetStateProperty.resolveWith((Set<WidgetState> states) {
       if (states.contains(WidgetState.selected)) {
         if (states.contains(WidgetState.disabled)) {
-          return ${componentColor('md.comp.radio-button.disabled.selected.icon')};
+          return ${colorWithOpacity(TokenRadioButton.disabledSelectedIconColor, TokenRadioButton.disabledSelectedIconOpacity)};
         }
         if (states.contains(WidgetState.pressed)) {
-          return ${componentColor('md.comp.radio-button.selected.pressed.icon')};
+          return ${color(TokenRadioButton.selectedPressedIconColor)};
         }
         if (states.contains(WidgetState.hovered)) {
-          return ${componentColor('md.comp.radio-button.selected.hover.icon')};
+          return ${color(TokenRadioButton.selectedHoverIconColor)};
         }
         if (states.contains(WidgetState.focused)) {
-          return ${componentColor('md.comp.radio-button.selected.focus.icon')};
+          return ${color(TokenRadioButton.selectedFocusIconColor)};
         }
-        return ${componentColor('md.comp.radio-button.selected.icon')};
+        return ${color(TokenRadioButton.selectedIconColor)};
       }
       if (states.contains(WidgetState.disabled)) {
-        return ${componentColor('md.comp.radio-button.disabled.unselected.icon')};
+        return ${colorWithOpacity(TokenRadioButton.disabledUnselectedIconColor, TokenRadioButton.disabledUnselectedIconOpacity)};
       }
       if (states.contains(WidgetState.pressed)) {
-        return ${componentColor('md.comp.radio-button.unselected.pressed.icon')};
+        return ${color(TokenRadioButton.unselectedPressedIconColor)};
       }
       if (states.contains(WidgetState.hovered)) {
-        return ${componentColor('md.comp.radio-button.unselected.hover.icon')};
+        return ${color(TokenRadioButton.unselectedHoverIconColor)};
       }
       if (states.contains(WidgetState.focused)) {
-        return ${componentColor('md.comp.radio-button.unselected.focus.icon')};
+        return ${color(TokenRadioButton.unselectedFocusIconColor)};
       }
-      return ${componentColor('md.comp.radio-button.unselected.icon')};
+      return ${color(TokenRadioButton.unselectedIconColor)};
     });
   }
 
@@ -61,24 +63,24 @@ class _RadioDefaultsM3 extends RadioThemeData {
     return WidgetStateProperty.resolveWith((Set<WidgetState> states) {
       if (states.contains(WidgetState.selected)) {
         if (states.contains(WidgetState.pressed)) {
-          return ${componentColor('md.comp.radio-button.selected.pressed.state-layer')};
+          return ${colorWithOpacity(TokenRadioButton.selectedPressedStateLayerColor, TokenRadioButton.selectedPressedStateLayerOpacity)};
         }
         if (states.contains(WidgetState.hovered)) {
-          return ${componentColor('md.comp.radio-button.selected.hover.state-layer')};
+          return ${colorWithOpacity(TokenRadioButton.selectedHoverStateLayerColor, TokenRadioButton.selectedHoverStateLayerOpacity)};
         }
         if (states.contains(WidgetState.focused)) {
-          return ${componentColor('md.comp.radio-button.selected.focus.state-layer')};
+          return ${colorWithOpacity(TokenRadioButton.selectedFocusStateLayerColor, TokenRadioButton.selectedFocusStateLayerOpacity)};
         }
         return Colors.transparent;
       }
       if (states.contains(WidgetState.pressed)) {
-        return ${componentColor('md.comp.radio-button.unselected.pressed.state-layer')};
+        return ${colorWithOpacity(TokenRadioButton.unselectedPressedStateLayerColor, TokenRadioButton.unselectedPressedStateLayerOpacity)};
       }
       if (states.contains(WidgetState.hovered)) {
-        return ${componentColor('md.comp.radio-button.unselected.hover.state-layer')};
+        return ${colorWithOpacity(TokenRadioButton.unselectedHoverStateLayerColor, TokenRadioButton.unselectedHoverStateLayerOpacity)};
       }
       if (states.contains(WidgetState.focused)) {
-        return ${componentColor('md.comp.radio-button.unselected.focus.state-layer')};
+        return ${colorWithOpacity(TokenRadioButton.unselectedFocusStateLayerColor, TokenRadioButton.unselectedFocusStateLayerOpacity)};
       }
       return Colors.transparent;
     });
