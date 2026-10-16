@@ -306,11 +306,11 @@ void main() {
 
   group('getDirectory', () {
     test('works as expected with no arguments', () async {
-      api.result = <String>['foo'];
+      api.result = <String>['foo/'];
 
       final XDirectory? dir = await plugin.getDirectory();
 
-      expect(dir?.uri, 'foo');
+      expect(dir?.uri, 'foo/');
       final OpenPanelOptions options = api.passedOpenPanelOptions!;
       expect(options.allowsMultipleSelection, false);
       expect(options.canChooseFiles, false);
@@ -346,14 +346,14 @@ void main() {
 
   group('getDirectories', () {
     test('works as expected with no arguments', () async {
-      api.result = <String>['firstDirectory', 'secondDirectory', 'thirdDirectory'];
+      api.result = <String>['firstDirectory/', 'secondDirectory/', 'thirdDirectory/'];
 
       final List<XDirectory> dirs = await plugin.getDirectories();
 
       expect(dirs.map((XDirectory dir) => dir.uri).toList(), <String>[
-        'firstDirectory',
-        'secondDirectory',
-        'thirdDirectory',
+        'firstDirectory/',
+        'secondDirectory/',
+        'thirdDirectory/',
       ]);
       final OpenPanelOptions options = api.passedOpenPanelOptions!;
       expect(options.allowsMultipleSelection, true);
