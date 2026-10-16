@@ -2,6 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'dart:async';
 import 'dart:convert';
 import 'dart:typed_data';
 
@@ -114,6 +115,18 @@ void main() {
       expect(await file.canRead(), canRead);
     });
 
+    test('canWrite', () async {
+      const canWrite = false;
+      CrossFilePlatform.instance = TestCrossFilePlatform(
+        onCreatePlatformScopedStorageXFile: (PlatformScopedStorageXFileCreationParams params) =>
+            TestScopedStorageXFile(params, onCanWrite: () async => canWrite),
+      );
+
+      final file = ScopedStorageXFile(uri: 'uri');
+
+      expect(await file.canWrite(), canWrite);
+    });
+
     test('dispose', () async {
       CrossFilePlatform.instance = TestCrossFilePlatform(
         onCreatePlatformScopedStorageXFile: (PlatformScopedStorageXFileCreationParams params) =>
@@ -123,6 +136,60 @@ void main() {
       final file = ScopedStorageXFile(uri: 'uri');
 
       await file.dispose();
+    });
+
+    test('writeAsString', () async {
+      const testString = 'Hello, World!';
+
+      CrossFilePlatform.instance = TestCrossFilePlatform(
+        onCreatePlatformScopedStorageXFile: (PlatformScopedStorageXFileCreationParams params) =>
+            TestScopedStorageXFile(
+              params,
+              onWriteAsString: expectAsync1((PlatformWriteAsStringParams writeParams) async {
+                expect(writeParams.contents, testString);
+                expect(writeParams.encoding, utf8);
+                return TestScopedStorageXFile(params);
+              }),
+            ),
+      );
+
+      final file = ScopedStorageXFile(uri: 'uri');
+
+      await file.writeAsString(testString);
+    });
+
+    test('openWrite', () async {
+      final StreamSink<Uint8List> mockSink = StreamController<Uint8List>().sink;
+
+      CrossFilePlatform.instance = TestCrossFilePlatform(
+        onCreatePlatformScopedStorageXFile: (PlatformScopedStorageXFileCreationParams params) =>
+            TestScopedStorageXFile(
+              params,
+              onOpenWrite: expectAsync1((PlatformOpenWriteParams params) {
+                return mockSink;
+              }),
+            ),
+      );
+
+      final file = ScopedStorageXFile(uri: 'uri');
+
+      expect(file.openWrite(), mockSink);
+    });
+
+    test('delete', () async {
+      CrossFilePlatform.instance = TestCrossFilePlatform(
+        onCreatePlatformScopedStorageXFile: (PlatformScopedStorageXFileCreationParams params) =>
+            TestScopedStorageXFile(
+              params,
+              onDelete: expectAsync1((PlatformFileDeleteParams params) async {
+                return true;
+              }),
+            ),
+      );
+
+      final file = ScopedStorageXFile(uri: 'uri');
+
+      expect(await file.delete(), true);
     });
   });
 }

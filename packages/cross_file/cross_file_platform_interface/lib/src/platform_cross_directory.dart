@@ -7,6 +7,7 @@ import 'dart:async';
 import 'package:flutter/foundation.dart' show immutable, protected;
 
 import 'platform_cross_entity.dart';
+import 'platform_cross_file.dart';
 
 /// Object specifying creation parameters for creating a [PlatformXDirectory].
 ///
@@ -68,7 +69,7 @@ base class PlatformXDirectoryCreationParams extends PlatformXEntityCreationParam
 /// ```
 mixin PlatformXDirectoryExtension implements PlatformXEntityExtension {}
 
-/// Interface for a reference to a container of local data resources.
+/// Interface for a reference to a container of data resources.
 abstract base class PlatformXDirectory extends PlatformXEntity {
   /// Constructs a [PlatformXDirectory].
   @protected
@@ -81,11 +82,35 @@ abstract base class PlatformXDirectory extends PlatformXEntity {
   @override
   PlatformXDirectoryExtension? get extension => null;
 
-  /// Lists the sub-directories and files of this Directory.
+  /// Lists the sub-directories and resources of this container.
   ///
   /// Platforms may throw an exception if there is an error listing entities in
   /// the directory
   Stream<PlatformXEntity> list(PlatformListParams params);
+
+  /// Creates a resource in this container.
+  ///
+  /// Platforms may throw an exception if there is an error creating the
+  /// resource.
+  Future<PlatformXFile> createFile(PlatformCreateParams params) {
+    throw UnimplementedError('`createFile` is not implemented on the current platform.');
+  }
+
+  /// Creates a container in this the container.
+  ///
+  /// Platforms may throw an exception if there is an error creating the
+  /// container.
+  Future<PlatformXDirectory> createDirectory(PlatformCreateParams params) {
+    throw UnimplementedError('`createDirectory` is not implemented on the current platform.');
+  }
+
+  /// Deletes the container.
+  ///
+  /// Platforms may throw an exception if there is an error deleting the
+  /// container.
+  Future<bool> delete(PlatformDirectoryDeleteParams params) {
+    throw UnimplementedError('`delete` is not implemented on the current platform.');
+  }
 }
 
 /// Base class for parameters passed to [PlatformXDirectory.list].
@@ -93,4 +118,21 @@ abstract base class PlatformXDirectory extends PlatformXEntity {
 base class PlatformListParams {
   /// Constructs a [PlatformListParams];
   const PlatformListParams();
+}
+
+/// Base class for parameters passed to [PlatformXDirectory.create].
+@immutable
+base class PlatformCreateParams {
+  /// Constructs a [PlatformCreateParams];
+  const PlatformCreateParams(this.name);
+
+  /// The path excluded name of the resource or container being created.
+  final String name;
+}
+
+/// Base class for parameters passed to [PlatformXDirectory.delete].
+@immutable
+base class PlatformDirectoryDeleteParams {
+  /// Constructs a [PlatformDirectoryDeleteParams];
+  const PlatformDirectoryDeleteParams();
 }

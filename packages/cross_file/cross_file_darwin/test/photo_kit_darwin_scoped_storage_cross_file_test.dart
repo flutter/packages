@@ -36,6 +36,14 @@ void main() {
     debugDefaultTargetPlatformOverride = null;
   });
 
+  test('canWrite', () async {
+    final file = DarwinScopedStorageXFile(
+      DarwinScopedStorageXFileCreationParams.photoKit(localIdentifier: 'id'),
+    );
+
+    expect(await file.canWrite(), isFalse);
+  });
+
   group('openRead pigeon', () {
     test('correctly reads all bytes with null start and null end', () async {
       debugDefaultTargetPlatformOverride = TargetPlatform.macOS;

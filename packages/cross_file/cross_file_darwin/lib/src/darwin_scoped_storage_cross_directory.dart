@@ -8,6 +8,7 @@ import 'dart:io';
 import 'package:cross_file_platform_interface/cross_file_platform_interface.dart';
 import 'package:flutter/foundation.dart';
 import 'package:objective_c/objective_c.dart';
+import 'package:path/path.dart' as path;
 
 import 'darwin_scoped_storage_cross_file.dart';
 import 'ffi_bindings.g.dart';
@@ -114,6 +115,43 @@ base class SecurityScopedDarwinScopedStorageXDirectory extends DarwinScopedStora
   Future<void> stopAccessingSecurityScopedResource() async {
     final NSURL? url = NSURL.URLWithString(NSString(params.uri));
     url?.stopAccessingSecurityScopedResource();
+  }
+
+  @override
+  Future<bool> canWrite() async {
+    return NSFileManager.getDefaultManager().isWritableFileAtPath(
+      NSString(Uri.parse(params.uri).toFilePath()),
+    );
+  }
+
+  @override
+  Future<PlatformXFile> createFile(PlatformCreateParams params) async {
+    var newFile = File(path.join(_directory.path, params.name));
+    newFile = await newFile.create();
+
+    return DarwinScopedStorageXFile(
+      DarwinScopedStorageXFileCreationParams.securityScoped(uri: newFile.uri.toString()),
+    );
+  }
+
+  @override
+  Future<PlatformXDirectory> createDirectory(PlatformCreateParams params) async {
+    var newDirectory = Directory(path.join(_directory.path, params.name));
+    newDirectory = await newDirectory.create();
+
+    return DarwinScopedStorageXDirectory(
+      DarwinScopedStorageXDirectoryCreationParams.securityScoped(uri: newDirectory.uri.toString()),
+    );
+  }
+
+  @override
+  Future<bool> delete(PlatformDirectoryDeleteParams params) async {
+    try {
+      await _directory.delete();
+      return true;
+    } on FileSystemException {
+      return false;
+    }
   }
 
   @override

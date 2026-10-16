@@ -10,7 +10,7 @@ void main() {
   final Uri packageRoot = Platform.script.resolve('../');
   FfiGenerator(
     output: Output(
-      dartFile: packageRoot.resolve('lib/src/ffi_bindings.g.dart'),
+      dart: DartOutput(path: packageRoot.resolve('lib/src/ffi_bindings.g.dart')),
       preamble:
           '// Copyright 2013 The Flutter Authors\n'
           '// Use of this source code is governed by a BSD-style license that can be\n'
@@ -19,16 +19,16 @@ void main() {
         'darwin/cross_file_darwin/Sources/cross_file_darwin_objc/ffi_bindings.g.m',
       ),
     ),
-    headers: Headers(
+    input: Input(
       entryPoints: <Uri>[
         Uri.file('$macSdkPath/System/Library/Frameworks/Photos.framework/Headers/Photos.h'),
       ],
-      compilerOptions: <String>['-include stdint.h'],
     ),
-    objectiveC: ObjectiveC(
-      interfaces: Interfaces(
-        include: (Declaration declaration) {
-          return <String>{
+    objectiveC: const ObjectiveC(),
+    visitors: [
+      Visitor(
+        objCInterface: (ObjCInterface declaration) {
+          declaration.isIncluded = <String>{
             'NSFileManager',
             'NSObject',
             'PHAsset',
@@ -40,15 +40,19 @@ void main() {
             'UTType',
           }.contains(declaration.originalName);
         },
-        includeMember: (Declaration declaration, String member) {
-          final String interfaceName = declaration.originalName;
-          final signature = member;
-          return switch (interfaceName) {
+        objCProtocol: (ObjCProtocol declaration) {
+          declaration.isIncluded = <String>{'NSKeyValueCoding'}.contains(declaration.originalName);
+        },
+        objCMethod: (ObjCMethod declaration) {
+          final String interfaceName = declaration.parent.originalName;
+          final String signature = declaration.originalName;
+          declaration.isIncluded = switch (interfaceName) {
             'NSFileManager' => <String>{
               'defaultManager',
               'isReadableFileAtPath:',
+              'isWritableFileAtPath:',
             }.contains(signature),
-            'NSObject' => <String>{'valueForKey:'}.contains(signature),
+            'NSKeyValueCoding' => <String>{'valueForKey:'}.contains(signature),
             'PHAsset' => <String>{
               'fetchAssetsWithLocalIdentifiers:options:',
               'modificationDate',
@@ -77,6 +81,6 @@ void main() {
           };
         },
       ),
-    ),
+    ],
   ).generate();
 }

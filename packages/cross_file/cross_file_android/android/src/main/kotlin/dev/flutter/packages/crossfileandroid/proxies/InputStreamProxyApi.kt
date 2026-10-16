@@ -36,4 +36,8 @@ class InputStreamProxyApi(override val pigeonRegistrar: ProxyApiRegistrar) :
   override fun skip(pigeon_instance: InputStream, n: Long): Long {
     return pigeon_instance.skip(n)
   }
+
+  override fun close(pigeon_instance: InputStream) {
+    pigeon_instance.close()
+  }
 }

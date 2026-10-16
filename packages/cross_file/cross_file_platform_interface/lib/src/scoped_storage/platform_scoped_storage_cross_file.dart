@@ -101,6 +101,12 @@ abstract base class PlatformScopedStorageXFile extends PlatformXFile {
   /// Whether the resource represented by this reference can be read.
   Future<bool> canRead();
 
+  /// Whether the resource represented by this reference can be modified or
+  /// written to.
+  Future<bool> canWrite() {
+    throw UnimplementedError('`canWrite` is not implemented on the current platform.');
+  }
+
   /// Release the reference this represents.
   Future<void> dispose();
 }
