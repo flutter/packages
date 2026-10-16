@@ -1,0 +1,3 @@
+changelog: |
+  - Fixes open menus not updating their animation behavior when animations are disabled while the menu is opening or open.
+version: patch
