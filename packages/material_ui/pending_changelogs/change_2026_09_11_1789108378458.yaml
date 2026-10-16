@@ -1,0 +1,3 @@
+changelog: |
+  - Allows custom `MaterialInkController` implementations by removing a private type cast in `InkFeature` and adding `MaterialInkController.removeInkFeature`.
+version: patch
