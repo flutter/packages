@@ -87,7 +87,15 @@ class FileUtils {
       String filePath = new File(targetDirectory, fileName).getPath();
       File outputFile = saferOpenFile(filePath, targetDirectory.getCanonicalPath());
       try (OutputStream outputStream = new FileOutputStream(outputFile)) {
-        copy(inputStream, outputStream);
+        long totalBytesCopied = copy(inputStream, outputStream);
+        
+        Long expectedSize = getImageSize(context, uri);
+        if (expectedSize != null && expectedSize > 0 && totalBytesCopied < expectedSize) {
+          Log.w("FileUtils", "File copied is smaller than expected size (" + totalBytesCopied + " < " + expectedSize + "); deleting partial file.");
+          outputFile.delete();
+          return null;
+        }
+        
         return outputFile.getPath();
       }
     } catch (IOException e) {
@@ -187,13 +195,26 @@ class FileUtils {
         .query(uriImage, new String[] {MediaStore.MediaColumns.DISPLAY_NAME}, null, null, null);
   }
 
-  private static void copy(InputStream in, OutputStream out) throws IOException {
+  private static Long getImageSize(Context context, Uri uriImage) {
+    try (Cursor cursor = context.getContentResolver().query(uriImage, new String[] {android.provider.OpenableColumns.SIZE}, null, null, null)) {
+      if (cursor == null || !cursor.moveToFirst() || cursor.getColumnCount() < 1) return null;
+      if (cursor.isNull(0)) return null;
+      return cursor.getLong(0);
+    } catch (Exception e) {
+      return null;
+    }
+  }
+
+  private static long copy(InputStream in, OutputStream out) throws IOException {
     final byte[] buffer = new byte[4 * 1024];
     int bytesRead;
+    long total = 0;
     while ((bytesRead = in.read(buffer)) != -1) {
       out.write(buffer, 0, bytesRead);
+      total += bytesRead;
     }
     out.flush();
+    return total;
   }
 
   private static String getBaseName(String fileName) {
