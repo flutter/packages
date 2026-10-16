@@ -8,6 +8,7 @@
 ///
 /// @docImport 'app.dart';
 /// @docImport 'text_button.dart';
+/// @docImport 'theme_data.dart';
 library;
 
 import 'dart:ui' show SemanticsHitTestBehavior, SemanticsRole, clampDouble, lerpDouble;
@@ -1571,10 +1572,12 @@ class _DialogContentPage extends Page<void> {
 ///
 /// The `barrierColor` argument is used to specify the color of the modal
 /// barrier that darkens everything below the dialog. If `null` the `barrierColor`
-/// field from `DialogThemeData` is used. If that is `null` the default color
-/// `Colors.black54` is used. If windowing is enabled via `flutter config
-/// --enable-windowing`, then this  argument is ignored as dialogs are displayed
-/// in their own windows which do not have a modal barrier.
+/// field from `DialogThemeData` is used. If that is also `null`,
+/// [ColorScheme.scrim] at 32% opacity is used in Material 3, and
+/// [Colors.black54] in Material 2.
+/// If windowing is enabled via `flutter config --enable-windowing`, then this
+/// argument is ignored as dialogs are displayed in their own windows which do
+/// not have a modal barrier.
 ///
 /// The `useSafeArea` argument is used to indicate if the dialog should only
 /// display in 'safe' areas of the screen not used by the operating system
@@ -1709,7 +1712,7 @@ Future<T?> showDialog<T>({
             barrierColor ??
             DialogTheme.of(context).barrierColor ??
             Theme.of(context).dialogTheme.barrierColor ??
-            Colors.black54,
+            _defaultBarrierColor(Theme.of(context)),
         barrierDismissible: barrierDismissible,
         barrierLabel: barrierLabel,
         useSafeArea: useSafeArea,
@@ -1747,6 +1750,13 @@ Future<T?> showDialog<T>({
       );
     },
   );
+}
+
+// The default barrier color used when neither the widget nor its component
+// theme provides one: [ColorScheme.scrim] at 32% opacity in Material 3, and
+// [Colors.black54] in Material 2.
+Color _defaultBarrierColor(ThemeData theme) {
+  return theme.useMaterial3 ? theme.colorScheme.scrim.withValues(alpha: 0.32) : Colors.black54;
 }
 
 /// Displays either a Material or Cupertino dialog depending on platform.
@@ -1847,8 +1857,10 @@ bool _debugIsActive(BuildContext context) {
 /// barrier will dismiss the dialog. It is `true` by default and cannot be `null`.
 ///
 /// The `barrierColor` argument is used to specify the color of the modal
-/// barrier that darkens everything below the dialog. If `null`, the default
-/// color `Colors.black54` is used.
+/// barrier that darkens everything below the dialog. If `null`, the
+/// `barrierColor` field from [DialogThemeData] is used. If that is also `null`,
+/// [ColorScheme.scrim] at 32% opacity is used in Material 3, and
+/// [Colors.black54] in Material 2.
 ///
 /// The `useSafeArea` argument is used to indicate if the dialog should only
 /// display in 'safe' areas of the screen not used by the operating system
@@ -1876,7 +1888,7 @@ class DialogRoute<T> extends RawDialogRoute<T> {
     required BuildContext context,
     required WidgetBuilder builder,
     CapturedThemes? themes,
-    super.barrierColor = Colors.black54,
+    Color? barrierColor,
     super.barrierDismissible,
     String? barrierLabel,
     bool useSafeArea = true,
@@ -1888,6 +1900,11 @@ class DialogRoute<T> extends RawDialogRoute<T> {
     AnimationStyle? animationStyle,
   }) : _animationStyle = animationStyle,
        super(
+         barrierColor:
+             barrierColor ??
+             DialogTheme.of(context).barrierColor ??
+             Theme.of(context).dialogTheme.barrierColor ??
+             _defaultBarrierColor(Theme.of(context)),
          pageBuilder:
              (
                BuildContext buildContext,

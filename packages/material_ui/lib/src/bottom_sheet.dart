@@ -3,6 +3,7 @@
 // found in the LICENSE file.
 
 /// @docImport 'dart:ui';
+/// @docImport 'theme_data.dart';
 library;
 
 import 'dart:math' as math;
@@ -973,7 +974,9 @@ class ModalBottomSheetRoute<T> extends PopupRoute<T> {
   /// Specifies the color of the modal barrier that darkens everything below the
   /// bottom sheet.
   ///
-  /// Defaults to `Colors.black54` if not provided.
+  /// If this is null, then [BottomSheetThemeData.modalBarrierColor] is used.
+  /// If that is also null, then [ColorScheme.scrim] at 32% opacity is used in
+  /// Material 3, and [Colors.black54] in Material 2.
   final Color? modalBarrierColor;
 
   /// Specifies whether the bottom sheet will be dismissed
@@ -1105,7 +1108,17 @@ class ModalBottomSheetRoute<T> extends PopupRoute<T> {
   final String? barrierLabel;
 
   @override
-  Color get barrierColor => modalBarrierColor ?? Colors.black54;
+  Color get barrierColor {
+    if (modalBarrierColor != null) {
+      return modalBarrierColor!;
+    }
+    if (navigator != null) {
+      final ThemeData theme = Theme.of(navigator!.context);
+      return theme.bottomSheetTheme.modalBarrierColor ?? _defaultModalBarrierColor(theme);
+    }
+    // The route is not in the tree yet, so there is no theme to read.
+    return Colors.black54;
+  }
 
   AnimationController? _animationController;
 
@@ -1346,7 +1359,10 @@ Future<T?> showModalBottomSheet<T>({
       clipBehavior: clipBehavior,
       constraints: constraints,
       isDismissible: isDismissible,
-      modalBarrierColor: barrierColor ?? Theme.of(context).bottomSheetTheme.modalBarrierColor,
+      modalBarrierColor:
+          barrierColor ??
+          Theme.of(context).bottomSheetTheme.modalBarrierColor ??
+          _defaultModalBarrierColor(Theme.of(context)),
       enableDrag: enableDrag,
       showDragHandle: showDragHandle,
       settings: routeSettings,
@@ -1357,6 +1373,13 @@ Future<T?> showModalBottomSheet<T>({
       requestFocus: requestFocus,
     ),
   );
+}
+
+// The default barrier color used when neither the widget nor its component
+// theme provides one: [ColorScheme.scrim] at 32% opacity in Material 3, and
+// [Colors.black54] in Material 2.
+Color _defaultModalBarrierColor(ThemeData theme) {
+  return theme.useMaterial3 ? theme.colorScheme.scrim.withValues(alpha: 0.32) : Colors.black54;
 }
 
 /// Shows a Material Design bottom sheet in the nearest [Scaffold] ancestor. To

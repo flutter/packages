@@ -109,7 +109,7 @@ void main() {
           borderRadius: BorderRadius.horizontal(right: Radius.circular(16.0)),
         ),
       );
-      expect(_scrim(tester).color, Colors.black54);
+      expect(_scrim(tester).color, theme.colorScheme.scrim.withValues(alpha: 0.32));
       expect(_drawerRenderBox(tester).size.width, 304.0);
       expect(_drawerMaterial(tester).clipBehavior, Clip.hardEdge);
     },
@@ -164,7 +164,7 @@ void main() {
           borderRadius: BorderRadius.horizontal(left: Radius.circular(16.0)),
         ),
       );
-      expect(_scrim(tester).color, Colors.black54);
+      expect(_scrim(tester).color, theme.colorScheme.scrim.withValues(alpha: 0.32));
       expect(_drawerRenderBox(tester).size.width, 304.0);
       expect(_drawerMaterial(tester).clipBehavior, Clip.hardEdge);
     },
