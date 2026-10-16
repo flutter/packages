@@ -407,6 +407,7 @@ class AndroidCameraCameraX extends CameraPlatform {
     preview = Preview(
       resolutionSelector: _presetResolutionSelector,
       targetFpsRange: _targetFpsRange,
+      targetRotation: await deviceOrientationManager.getDefaultDisplayRotation(),
     );
     _flutterSurfaceTextureId = await preview!.setSurfaceProvider(systemServicesManager);
 
@@ -578,6 +579,7 @@ class AndroidCameraCameraX extends CameraPlatform {
     _lockedCaptureOrientation = targetLockedRotation;
 
     // Update UseCases to use target device orientation.
+    await preview?.setTargetRotation(targetLockedRotation);
     await imageCapture!.setTargetRotation(targetLockedRotation);
     await imageAnalysis!.setTargetRotation(targetLockedRotation);
     await videoCapture!.setTargetRotation(targetLockedRotation);
@@ -589,6 +591,9 @@ class AndroidCameraCameraX extends CameraPlatform {
     // Flag that default rotation should be set for UseCases as needed.
     captureOrientationLocked = false;
     _lockedCaptureOrientation = null;
+    if (preview != null) {
+      await preview!.setTargetRotation(await deviceOrientationManager.getDefaultDisplayRotation());
+    }
   }
 
   /// Sets the exposure point for automatically determining the exposure values for
