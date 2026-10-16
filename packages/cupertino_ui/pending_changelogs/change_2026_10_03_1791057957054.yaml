@@ -1,0 +1,3 @@
+changelog: |
+  - Fix CupertinoMagnifier focalPointOffset during in/out animation.
+version: patch

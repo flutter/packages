@@ -149,7 +149,7 @@ protocol PlatformEvent {
 }
 
 /// Generated class from Pigeon that represents data sent in messages.
-struct IntEvent: PlatformEvent {
+struct IntEvent: PlatformEvent, Hashable, CustomStringConvertible {
   var data: Int64
 
   // swift-format-ignore: AlwaysUseLowerCamelCase
@@ -183,7 +183,7 @@ struct IntEvent: PlatformEvent {
 }
 
 /// Generated class from Pigeon that represents data sent in messages.
-struct StringEvent: PlatformEvent {
+struct StringEvent: PlatformEvent, Hashable, CustomStringConvertible {
   var data: String
 
   // swift-format-ignore: AlwaysUseLowerCamelCase
