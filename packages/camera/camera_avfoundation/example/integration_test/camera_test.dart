@@ -312,7 +312,11 @@ void main() {
         await controller.setImageFileFormat(fileFormat);
         final XFile file = await controller.takePicture();
         await controller.dispose();
-        expect(file.path.endsWith(fileFormat.name), true);
+        final String expectedExtension = switch (fileFormat) {
+          ImageFileFormat.jpeg => 'jpg',
+          ImageFileFormat.heif => 'heif',
+        };
+        expect(file.path.endsWith(expectedExtension), true);
       }
     }
   });
