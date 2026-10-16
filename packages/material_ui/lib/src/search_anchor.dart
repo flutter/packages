@@ -192,6 +192,12 @@ class SearchAnchor extends StatefulWidget {
   /// All the barX parameters are used to customize the anchor. Similarly, all the
   /// viewX parameters are used to override the view's defaults.
   ///
+  /// If `barFocusNode` is non-null, it is passed to the search bar as
+  /// [SearchBar.focusNode]. The search bar does not dispose it, so the caller
+  /// is responsible for calling [FocusNode.dispose] when it is no longer
+  /// needed. If null, the search bar creates and manages its own focus node.
+  /// The text field in the search view always uses its own focus node.
+  ///
   /// <callout-box>
   ///
   /// This example shows how to use a [SearchAnchor.bar] which uses a default search
@@ -249,6 +255,7 @@ class SearchAnchor extends StatefulWidget {
     bool enabled,
     SmartDashesType? smartDashesType,
     SmartQuotesType? smartQuotesType,
+    FocusNode? barFocusNode,
   }) = _SearchAnchorWithSearchBar;
 
   /// Whether the search view grows to fill the entire screen when the
@@ -1317,6 +1324,7 @@ class _SearchAnchorWithSearchBar extends SearchAnchor {
     super.enabled,
     super.smartDashesType,
     super.smartQuotesType,
+    FocusNode? barFocusNode,
   }) : super(
          viewHintText: viewHintText ?? barHintText,
          headerHeight: viewHeaderHeight,
@@ -1330,6 +1338,7 @@ class _SearchAnchorWithSearchBar extends SearchAnchor {
            return SearchBar(
              constraints: constraints,
              controller: controller,
+             focusNode: barFocusNode,
              onTap: () {
                controller.openView();
                onTap?.call();
