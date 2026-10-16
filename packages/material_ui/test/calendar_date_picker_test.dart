@@ -113,6 +113,44 @@ void main() {
       expect(selectedDate, equals(DateTime(2016, DateTime.january, 12)));
     });
 
+    testWidgets('Day numbers fit their cells with large text scale on narrow screens', (
+      WidgetTester tester,
+    ) async {
+      tester.view.physicalSize = const .new(320, 800);
+      tester.view.devicePixelRatio = 1.0;
+      addTearDown(tester.view.reset);
+
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Builder(
+            builder: (BuildContext context) => MediaQuery(
+              data: MediaQuery.of(context).copyWith(textScaler: const TextScaler.linear(3.0)),
+              child: Material(
+                child: CalendarDatePicker(
+                  initialDate: DateTime(2016, DateTime.january, 15),
+                  firstDate: DateTime(2001),
+                  lastDate: DateTime(2031, DateTime.december, 31),
+                  onDateChanged: (DateTime date) {},
+                ),
+              ),
+            ),
+          ),
+        ),
+      );
+
+      final Finder dayText = find.text('23');
+      final RenderParagraph paragraph = tester.renderObject(dayText);
+      expect(paragraph.size, paragraph.getDryLayout(const BoxConstraints()));
+
+      final Rect textRect = tester.getRect(dayText);
+      final Rect cellRect = tester.getRect(
+        find.ancestor(of: dayText, matching: find.byType(InkResponse)).first,
+      );
+      expect(cellRect.contains(textRect.topLeft), isTrue);
+      expect(cellRect.contains(textRect.bottomRight), isTrue);
+      expect(tester.takeException(), isNull);
+    });
+
     testWidgets('Can select a month', (WidgetTester tester) async {
       DateTime? displayedMonth;
       await tester.pumpWidget(
