@@ -1,5 +1,10 @@
-## NEXT
+## 4.2.0
 
+* Defaults `defaultBenchmarkServerPort` and `defaultChromeDebugPort` to 0 so
+  the OS allocates ephemeral ports, avoiding collisions on hardcoded ports
+  9999 and 10000.
+* Reads Chrome's DevTools host and port from its "DevTools listening" output
+  instead of assuming `localhost:<debugPort>`.
 * Updates minimum supported SDK version to Flutter 3.41/Dart 3.11.
 
 ## 4.1.2

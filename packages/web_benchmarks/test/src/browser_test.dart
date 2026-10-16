@@ -46,4 +46,28 @@ void main() {
       expect(anotherUnrelated.isEndMeasuredFrame, isFalse);
     });
   });
+
+  group('parseDevToolsListeningUri', () {
+    test('parses IPv4 host and OS-allocated port', () {
+      final Uri uri = parseDevToolsListeningUri(
+        'DevTools listening on ws://127.0.0.1:45678/devtools/browser/abc-123',
+      );
+
+      expect(uri.host, '127.0.0.1');
+      expect(uri.port, 45678);
+    });
+
+    test('parses IPv6 host', () {
+      final Uri uri = parseDevToolsListeningUri(
+        'DevTools listening on ws://[::1]:10000/devtools/browser/abc-123',
+      );
+
+      expect(uri.host, '::1');
+      expect(uri.port, 10000);
+    });
+
+    test('throws on a line without a WebSocket URL', () {
+      expect(() => parseDevToolsListeningUri('DevTools listening'), throwsFormatException);
+    });
+  });
 }
