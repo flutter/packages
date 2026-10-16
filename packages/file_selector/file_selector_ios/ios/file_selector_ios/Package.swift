@@ -22,7 +22,7 @@ let package = Package(
     .target(
       name: "file_selector_ios",
       dependencies: [
-        .product(name: "FlutterFramework", package: "FlutterFramework"),
+        .product(name: "FlutterFramework", package: "FlutterFramework")
       ],
       resources: [
         .process("Resources")
