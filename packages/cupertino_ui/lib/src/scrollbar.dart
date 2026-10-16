@@ -100,6 +100,7 @@ class CupertinoScrollbar extends RawScrollbar {
     ScrollNotificationPredicate? notificationPredicate,
     super.scrollbarOrientation,
     super.mainAxisMargin = _kScrollbarMainAxisMargin,
+    this.animationBehavior = AnimationBehavior.normal,
   }) : assert(thickness < double.infinity),
        assert(thicknessWhileDragging < double.infinity),
        super(
@@ -139,6 +140,11 @@ class CupertinoScrollbar extends RawScrollbar {
   /// dragging the scrollbar.
   final Radius radiusWhileDragging;
 
+  /// The behavior of the animation relative to the device's clock.
+  ///
+  /// Defaults to [AnimationBehavior.normal].
+  final AnimationBehavior animationBehavior;
+
   @override
   RawScrollbarState<CupertinoScrollbar> createState() => _CupertinoScrollbarState();
 }
@@ -165,6 +171,7 @@ class _CupertinoScrollbarState extends RawScrollbarState<CupertinoScrollbar> {
     _thicknessAnimationController = AnimationController(
       vsync: this,
       duration: _kScrollbarResizeDuration,
+      animationBehavior: widget.animationBehavior,
     );
     _thicknessAnimationController.addListener(() {
       updateScrollbarPainter();

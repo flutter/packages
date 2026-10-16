@@ -136,6 +136,7 @@ class CupertinoContextMenu extends StatefulWidget {
     required this.actions,
     required Widget this.child,
     this.enableHapticFeedback = false,
+    this.animationBehavior = AnimationBehavior.normal,
   }) : assert(actions.isNotEmpty),
        builder = ((BuildContext context, Animation<double> animation) => child);
 
@@ -150,6 +151,7 @@ class CupertinoContextMenu extends StatefulWidget {
     required this.actions,
     required this.builder,
     this.enableHapticFeedback = false,
+    this.animationBehavior = AnimationBehavior.normal,
   }) : assert(actions.isNotEmpty),
        child = null;
 
@@ -387,6 +389,11 @@ class CupertinoContextMenu extends StatefulWidget {
   /// Defaults to false.
   final bool enableHapticFeedback;
 
+  /// The behavior of the animation relative to the device's clock
+  ///
+  /// Defaults to [AnimationBehavior.normal]
+  final AnimationBehavior animationBehavior;
+
   @override
   State<CupertinoContextMenu> createState() => _CupertinoContextMenuState();
 }
@@ -410,6 +417,7 @@ class _CupertinoContextMenuState extends State<CupertinoContextMenu> with Ticker
       duration: _previewLongPressTimeout,
       vsync: this,
       upperBound: CupertinoContextMenu.animationOpensAt,
+      animationBehavior: widget.animationBehavior,
     );
     _openController.addStatusListener(_onDecoyAnimationStatusChange);
     _tapGestureRecognizer = TapGestureRecognizer()
@@ -503,6 +511,7 @@ class _CupertinoContextMenuState extends State<CupertinoContextMenu> with Ticker
       contextMenuLocation: _contextMenuLocation,
       previousChildRect: _decoyChildEndRect!,
       scaleFactor: _scaleFactor,
+      animationBehavior: widget.animationBehavior,
       builder: (BuildContext context, Animation<double> animation) {
         if (widget.child == null) {
           final Animation<double> localAnimation = Tween<double>(
@@ -790,6 +799,8 @@ class _ContextMenuRoute<T> extends PopupRoute<T> {
     super.filter,
     required this._previousChildRect,
     required this._scaleFactor,
+    super.settings,
+    required this.animationBehavior,
   }) : assert(actions.isNotEmpty),
        _actions = actions;
 
@@ -844,6 +855,8 @@ class _ContextMenuRoute<T> extends PopupRoute<T> {
   CurvedAnimation? _curvedAnimation;
 
   CurvedAnimation? _sheetOpacityCurvedAnimation;
+
+  final AnimationBehavior animationBehavior;
 
   // Getting the RenderBox doesn't include the scale from the Transform.scale,
   // so it's manually accounted for here.
@@ -1064,6 +1077,7 @@ class _ContextMenuRoute<T> extends PopupRoute<T> {
           orientation: orientation,
           sheetGlobalKey: _sheetGlobalKey,
           childRect: _previousChildRect,
+          animationBehavior: animationBehavior,
           child: _builder!(context, animation),
         );
       },
@@ -1090,6 +1104,7 @@ class _ContextMenuRouteStatic extends StatefulWidget {
     required this.orientation,
     this.sheetGlobalKey,
     required this.childRect,
+    required this.animationBehavior,
   });
 
   final List<Widget>? actions;
@@ -1100,6 +1115,7 @@ class _ContextMenuRouteStatic extends StatefulWidget {
   final Orientation orientation;
   final GlobalKey? sheetGlobalKey;
   final Rect childRect;
+  final AnimationBehavior animationBehavior;
 
   @override
   _ContextMenuRouteStaticState createState() => _ContextMenuRouteStaticState();
@@ -1301,12 +1317,14 @@ class _ContextMenuRouteStaticState extends State<_ContextMenuRouteStatic>
       duration: _kMoveControllerDuration,
       value: 1.0,
       vsync: this,
+      animationBehavior: widget.animationBehavior,
     );
     _moveCurvedAnimation = CurvedAnimation(parent: _moveController, curve: Curves.elasticIn);
     _sheetController = AnimationController(
       duration: const Duration(milliseconds: 100),
       reverseDuration: const Duration(milliseconds: 300),
       vsync: this,
+      animationBehavior: widget.animationBehavior,
     );
     _sheetCurvedAnimation = CurvedAnimation(
       parent: _sheetController,
