@@ -1,3 +1,9 @@
+## 0.3.0+1
+
+* Falls back to the system temp directory for captured pictures and videos when
+  the Pictures / Videos known folder cannot be used, e.g. when blocked by
+  Controlled Folder Access.
+
 ## 0.3.0
 
 * Adds support for custom video output path in video recording.
