@@ -185,6 +185,11 @@ class CaptureControllerImpl : public CaptureController,
   // for a given source.
   HRESULT FindBaseMediaTypesForSource(IMFCaptureSource* source);
 
+  // Resolves the source stream indices for preview, record and photo, falling
+  // back to a physical stream for devices that reject the
+  // MF_CAPTURE_ENGINE_PREFERRED_SOURCE_STREAM_FOR_* selectors.
+  void ResolveSourceStreamIndices(IMFCaptureSource* source);
+
   // Stops preview. Called internally on camera reset and dispose.
   HRESULT StopPreview();
 
@@ -231,6 +236,14 @@ class CaptureControllerImpl : public CaptureController,
   ComPtr<ID3D11Device> dx11_device_;
   ComPtr<IMFMediaType> base_capture_media_type_;
   ComPtr<IMFMediaType> base_preview_media_type_;
+
+  // Resolved by ResolveSourceStreamIndices().
+  DWORD preview_source_stream_index_ = static_cast<DWORD>(
+      MF_CAPTURE_ENGINE_PREFERRED_SOURCE_STREAM_FOR_VIDEO_PREVIEW);
+  DWORD record_source_stream_index_ = static_cast<DWORD>(
+      MF_CAPTURE_ENGINE_PREFERRED_SOURCE_STREAM_FOR_VIDEO_RECORD);
+  DWORD photo_source_stream_index_ =
+      static_cast<DWORD>(MF_CAPTURE_ENGINE_PREFERRED_SOURCE_STREAM_FOR_PHOTO);
   ComPtr<IMFMediaSource> video_source_;
   ComPtr<IMFMediaSource> audio_source_;
 
