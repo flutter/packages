@@ -213,7 +213,7 @@ void main() {
       RendererBinding.instance.mouseTracker.debugDeviceActiveCursor(1),
       SystemMouseCursors.basic,
     );
-  });
+  }, tags: 'reduced-web-test-set');
 
   testWidgets('Disabled DropdownMenuItem should not be focusable', (WidgetTester tester) async {
     await tester.pumpWidget(
