@@ -28,9 +28,6 @@ protocol PixelBufferSource {
 
 /// Protocol for abstracting access to an AVAsset, to enable unit testing.
 protocol WrappedAVAsset: AnyObject {
-  /// Wraps the underlying asset's duration property.
-  var duration: CMTime { get }
-
   /// Wraps the underlying asset's load(_:isolation:) method.
   func load<T>(_ property: AVAsyncProperty<AVAsset, T>, isolation: isolated (any Actor)?)
     async throws -> T
@@ -115,10 +112,6 @@ class DefaultAVAsset: WrappedAVAsset {
 
   init(asset: AVAsset) {
     self.avAsset = asset
-  }
-
-  var duration: CMTime {
-    return avAsset.duration
   }
 
   func load<T>(_ property: AVAsyncProperty<AVAsset, T>, isolation: isolated (any Actor)?)

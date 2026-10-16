@@ -17,12 +17,6 @@ import CoreMedia
   import video_player_avfoundation_objc
 #endif
 
-/// The key name for loading AVURLAsset variants property asynchronously.
-/// Note: Apple does not provide a constant for this key.
-/// AVURLAsset.variants is documented via Apple's current async-loading API docs:
-/// https://developer.apple.com/documentation/avfoundation/avpartialasyncproperty/variants
-private let assetVariantsKey = "variants"
-
 /// VideoPlayer manages video playback using AVPlayer.
 /// It provides methods for controlling playback, adjusting volume, and handling seeking.
 /// This class contains all functionalities needed to manage video playback in platform views and is
@@ -53,7 +47,7 @@ class VideoPlayer: NSObject, VideoPlayerInstanceApi {
   /// The view provider, to obtain view information from.
   let viewProvider: FVPViewProvider
   /// The preferred transform for the video. It can be used to handle the rotation of the video.
-  private var preferredTransform: CGAffineTransform = CGAffineTransform.identity
+  private var preferredTransform: CGAffineTransform = .identity
   /// The target playback speed requested by the plugin client.
   private var targetPlaybackSpeed: Double?
   /// Indicates whether an "initialized" message has been sent to the current Flutter event listener.
@@ -66,8 +60,8 @@ class VideoPlayer: NSObject, VideoPlayerInstanceApi {
   /// again.
   private var isInitialized = false
 
-  private var keyValueObservations: [NSKeyValueObservation?] = []
-  private var playToEndObserver: NSObjectProtocol? = nil
+  private var keyValueObservations: [NSKeyValueObservation] = []
+  private var playToEndObserver: NSObjectProtocol?
 
   /// Initializes a new instance of FVPVideoPlayer with the given AVPlayerItem, AV factory, and view
   /// provider.
@@ -129,7 +123,7 @@ class VideoPlayer: NSObject, VideoPlayerInstanceApi {
           }
           // Rotate the video by using a videoComposition and the preferredTransform
           self.preferredTransform = standardizedTrackTransform(
-            transform: transform, size: videoTrack.naturalSize)
+            transform: transform, size: try await videoTrack.load(.naturalSize))
           // Do not use video composition when it is not needed.
           if self.preferredTransform.isIdentity {
             return
@@ -138,7 +132,7 @@ class VideoPlayer: NSObject, VideoPlayerInstanceApi {
           // https://developer.apple.com/documentation/avfoundation/avplayeritem/1388818-videocomposition
           // Video composition can only be used with file-based media and is not supported for
           // use with media served using HTTP Live Streaming.
-          playerItem.videoComposition = await self.createVideoComposition(
+          playerItem.videoComposition = try await self.createVideoComposition(
             transform: self.preferredTransform, asset: asset, videoTrack: videoTrack)
         }
       } catch {
@@ -179,17 +173,20 @@ class VideoPlayer: NSObject, VideoPlayerInstanceApi {
   }
 
   func seek(to position: Int64, completion: @escaping (Result<Void, Error>) -> Void) {
-    let targetCMTime = CMTime(value: position, timescale: 1000)
-    let duration = player.currentItem?.asset.duration.value ?? 0
-    // Without adding tolerance when seeking to duration,
-    // seek(to:) will never complete, and this call will hang.
-    // see issue https://github.com/flutter/flutter/issues/124475.
-    let tolerance = position == duration ? CMTime(value: 1, timescale: 1000) : .zero
-    player.seek(to: targetCMTime, toleranceBefore: tolerance, toleranceAfter: tolerance) {
-      completed in
-      DispatchQueue.main.async {
-        completion(.success(()))
+    Task { @MainActor in
+      let targetCMTime = CMTime(value: position, timescale: 1000)
+      var duration: Int64 = 0
+      if let asset = player.currentItem?.asset {
+        do {
+          duration = try await asset.load(.duration).value
+        } catch {}
       }
+      // Without adding tolerance when seeking to duration,
+      // seek(to:) will never complete, and this call will hang.
+      // see issue https://github.com/flutter/flutter/issues/124475.
+      let tolerance = position == duration ? CMTime(value: 1, timescale: 1000) : .zero
+      await player.seek(to: targetCMTime, toleranceBefore: tolerance, toleranceAfter: tolerance)
+      completion(.success(()))
     }
   }
 
@@ -227,43 +224,66 @@ class VideoPlayer: NSObject, VideoPlayerInstanceApi {
 
     let asset = currentItem.asset
 
-    // Get tracks from media selection (for HLS streams)
-    asset.loadMediaSelectionGroup(for: .audible) { audioGroup, _ in
-      guard let audioGroup = audioGroup else {
-        completion(.success([]))
-        return
-      }
+    Task { @MainActor in
+      do {
+        // Get tracks from media selection (for HLS streams)
+        let audioGroup = try await asset.loadMediaSelectionGroup(for: .audible)
+        guard let audioGroup = audioGroup else {
+          completion(.success([]))
+          return
+        }
 
-      let mediaSelection = currentItem.currentMediaSelection
-      let currentSelection = mediaSelection.selectedMediaOption(in: audioGroup)
-      completion(
-        .success(
-          audioGroup.options.enumerated().map { i, option in
-            let titleItems = AVMetadataItem.metadataItems(
-              from: option.commonMetadata, withKey: AVMetadataKey.commonKeyTitle, keySpace: .common)
-            return MediaSelectionAudioTrackData(
+        let mediaSelection = currentItem.currentMediaSelection
+        let currentSelection = mediaSelection.selectedMediaOption(in: audioGroup)
+        var trackData: [MediaSelectionAudioTrackData] = []
+        for (i, option) in audioGroup.options.enumerated() {
+          let titleItems = AVMetadataItem.metadataItems(
+            from: option.commonMetadata, withKey: AVMetadataKey.commonKeyTitle, keySpace: .common)
+          let languageCode =
+            if #available(iOS 16.0, macOS 13.0, *) {
+              option.locale?.language.languageCode?.identifier
+            } else {
+              option.locale?.languageCode
+            }
+          var title: String?
+          if let firstTitleItem = titleItems.first {
+            do {
+              title = try await firstTitleItem.load(.stringValue)
+            } catch {}
+          }
+          trackData.append(
+            MediaSelectionAudioTrackData(
               index: Int64(i),
               displayName: option.displayName,
-              languageCode: option.locale?.languageCode,
+              languageCode: languageCode,
               isSelected: currentSelection == option,
-              commonMetadataTitle: titleItems.first?.stringValue)
-          }))
+              commonMetadataTitle: title))
+        }
+        completion(.success(trackData))
+      } catch {
+        completion(.success([]))
+      }
     }
   }
 
   func selectAudioTrack(
     atIndex trackIndex: Int64, completion: @escaping (Result<Void, Error>) -> Void
   ) {
-    guard let currentItem = player.currentItem else { return }
+    guard let currentItem = player.currentItem else {
+      completion(.success(()))
+      return
+    }
     let asset = currentItem.asset
 
-    asset.loadMediaSelectionGroup(for: .audible) { audioGroup, _ in
-      if let audioGroup = audioGroup {
-        if trackIndex >= 0 && trackIndex < audioGroup.options.count {
-          let option = audioGroup.options[Int(trackIndex)]
-          currentItem.select(option, in: audioGroup)
+    Task { @MainActor in
+      do {
+        if let audioGroup = try await asset.loadMediaSelectionGroup(for: .audible) {
+          if trackIndex >= 0 && trackIndex < audioGroup.options.count {
+            let option = audioGroup.options[Int(trackIndex)]
+            currentItem.select(option, in: audioGroup)
+          }
         }
-      }
+      } catch {}
       completion(.success(()))
     }
   }
@@ -293,7 +313,7 @@ class VideoPlayer: NSObject, VideoPlayerInstanceApi {
           let peakBitRate = variant.peakBitRate ?? 0.0
           var videoSize = CGSize.zero
           var frameRate = 0.0
-          var codec: String? = nil
+          var codec: String?
 
           // Get video attributes if available
           if let videoAttrs = variant.videoAttributes {
@@ -478,9 +498,10 @@ class VideoPlayer: NSObject, VideoPlayerInstanceApi {
     transform: CGAffineTransform,
     asset: WrappedAVAsset,
     videoTrack: AVAssetTrack
-  ) async -> AVMutableVideoComposition {
+  ) async throws -> AVMutableVideoComposition {
     let instruction = AVMutableVideoCompositionInstruction()
-    instruction.timeRange = CMTimeRange(start: .zero, duration: asset.duration)
+    let duration = try await asset.load(.duration, isolation: #isolation)
+    instruction.timeRange = CMTimeRange(start: .zero, duration: duration)
     let layerInstruction = AVMutableVideoCompositionLayerInstruction(
       assetTrack: videoTrack)
     layerInstruction.setTransform(transform, at: .zero)
@@ -490,23 +511,19 @@ class VideoPlayer: NSObject, VideoPlayerInstanceApi {
     videoComposition.instructions = [instruction]
 
     // If in portrait mode, switch the width and height of the video
-    var width = videoTrack.naturalSize.width
-    var height = videoTrack.naturalSize.height
+    let naturalSize = try await videoTrack.load(.naturalSize, isolation: #isolation)
+    var width = naturalSize.width
+    var height = naturalSize.height
     let rotationDegrees =
       Int(round(radiansToDegrees(atan2(transform.b, transform.a))))
     if rotationDegrees == 90 || rotationDegrees == 270 {
-      width = videoTrack.naturalSize.height
-      height = videoTrack.naturalSize.width
+      width = naturalSize.height
+      height = naturalSize.width
     }
     videoComposition.renderSize = CGSize(width: width, height: height)
 
     videoComposition.sourceTrackIDForFrameTiming = videoTrack.trackID
-    var minFrameDuration = CMTime.zero
-    do {
-      minFrameDuration = try await videoTrack.load(.minFrameDuration)
-    } catch {
-      NSLog("Unable to load minFrameDuration")
-    }
+    let minFrameDuration = try await videoTrack.load(.minFrameDuration)
     if frameDurationIsValid(minFrameDuration) {
       videoComposition.frameDuration = minFrameDuration
     } else {
@@ -522,7 +539,7 @@ class VideoPlayer: NSObject, VideoPlayerInstanceApi {
   private func reportStatus(playerItem item: AVPlayerItem) {
     assert(
       eventListener != nil,
-      "reportStatusForPlayerItem was called when the event listener was not set.")
+      "\(#function) was called when the event listener was not set.")
     switch item.status {
     case .failed:
       sendFailedToLoadVideoEvent()
@@ -595,18 +612,25 @@ class VideoPlayer: NSObject, VideoPlayerInstanceApi {
     let currentItem = player.currentItem
     assert(
       currentItem?.status == .readyToPlay,
-      "reportInitializedIfReadyToPlay was called when the item wasn't ready to play.")
-    assert(!isInitialized, "reportInitializedIfReadyToPlay should only be called once.")
+      "\(#function) was called when the item wasn't ready to play.")
+    assert(!isInitialized, "\(#function) should only be called once.")
     isInitialized = true
-    eventListener?.videoPlayerDidInitialize(
-      withDuration: duration(), size: currentItem?.presentationSize ?? CGSize.zero)
+    Task { @MainActor in
+      eventListener?.videoPlayerDidInitialize(
+        withDuration: await duration(), size: currentItem?.presentationSize ?? .zero)
+    }
   }
 
-  private func duration() -> Int64 {
+  @MainActor private func duration() async -> Int64 {
     // Note: https://openradar.appspot.com/radar?id=4968600712511488
-    // `[AVPlayerItem duration]` can be `kCMTimeIndefinite`,
-    // use `[[AVPlayerItem asset] duration]` instead.
-    return convertCMTimeToMillis(player.currentItem?.asset.duration ?? .zero)
+    // `AVPlayerItem.duration` can be `kCMTimeIndefinite`, so
+    // use its `AVAsset.duration` instead.
+    guard let asset = player.currentItem?.asset else { return 0 }
+    do {
+      return convertCMTimeToMillis(try await asset.load(.duration))
+    } catch {
+      return 0
+    }
   }
 
 }

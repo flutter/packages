@@ -38,8 +38,8 @@ import video_player_avfoundation_objc
 }
 
 final class TestAsset: WrappedAVAsset {
-  let duration: CMTime
-  let tracks: [AVAssetTrack]
+  private let duration: CMTime
+  private let tracks: [AVAssetTrack]
   var continuation: CheckedContinuation<Void, Never>?
 
   var loadedValue = false
@@ -62,6 +62,9 @@ final class TestAsset: WrappedAVAsset {
     continuation = nil
     if let tracks = tracks as? T {
       return tracks
+    }
+    if let duration = duration as? T {
+      return duration
     }
     fatalError("Unimplemented property in stub")
   }

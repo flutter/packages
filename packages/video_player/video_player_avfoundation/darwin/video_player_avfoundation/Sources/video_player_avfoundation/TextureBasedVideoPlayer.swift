@@ -151,7 +151,7 @@ class TextureBasedVideoPlayer: VideoPlayer, FlutterTexture {
     }
     targetTime += duration
 
-    var buffer: CVPixelBuffer? = nil
+    var buffer: CVPixelBuffer?
     let outputItemTime = pixelBufferSource.itemTime(forHostTime: targetTime)
     if pixelBufferSource.hasNewPixelBuffer(forItemTime: outputItemTime) {
       buffer = pixelBufferSource.copyPixelBuffer(

@@ -440,8 +440,8 @@ private let hlsAudioTestURI =
   @Test func doesNotCrashOnRateObservationAfterDisposal() async throws {
     let realObjectFactory = DefaultAVFactory()
 
-    var avPlayer: AVPlayer? = nil
-    weak var weakPlayer: VideoPlayer? = nil
+    var avPlayer: AVPlayer?
+    weak var weakPlayer: VideoPlayer?
 
     // Autoreleasepool is needed to simulate conditions of VideoPlayer deallocation.
     try autoreleasepool {
@@ -481,7 +481,7 @@ private let hlsAudioTestURI =
   // Both of these methods dispatch [VideoPlayer dispose] on the main thread
   // leading to a possible crash when de-registering observers twice.
   @Test func hotReloadDoesNotCrash() async throws {
-    weak var weakPlayer: VideoPlayer? = nil
+    weak var weakPlayer: VideoPlayer?
 
     // Autoreleasepool is needed to simulate conditions of VideoPlayer deallocation.
     try autoreleasepool {
