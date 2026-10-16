@@ -108,7 +108,7 @@ void main() {
 
     // Take Video
     await controller.startVideoRecording();
-    sleep(const Duration(milliseconds: 300));
+    await Future<void>.delayed(const Duration(milliseconds: 300));
     final XFile file = await controller.stopVideoRecording();
 
     // Load video metadata
@@ -163,23 +163,23 @@ void main() {
 
     await controller.startVideoRecording();
     final int recordingStart = DateTime.now().millisecondsSinceEpoch;
-    sleep(const Duration(milliseconds: 500));
+    await Future<void>.delayed(const Duration(milliseconds: 500));
 
     await controller.pauseVideoRecording();
     startPause = DateTime.now().millisecondsSinceEpoch;
-    sleep(const Duration(milliseconds: 500));
+    await Future<void>.delayed(const Duration(milliseconds: 500));
     await controller.resumeVideoRecording();
     timePaused += DateTime.now().millisecondsSinceEpoch - startPause;
 
-    sleep(const Duration(milliseconds: 500));
+    await Future<void>.delayed(const Duration(milliseconds: 500));
 
     await controller.pauseVideoRecording();
     startPause = DateTime.now().millisecondsSinceEpoch;
-    sleep(const Duration(milliseconds: 500));
+    await Future<void>.delayed(const Duration(milliseconds: 500));
     await controller.resumeVideoRecording();
     timePaused += DateTime.now().millisecondsSinceEpoch - startPause;
 
-    sleep(const Duration(milliseconds: 500));
+    await Future<void>.delayed(const Duration(milliseconds: 500));
 
     final XFile file = await controller.stopVideoRecording();
     final int recordingTime = DateTime.now().millisecondsSinceEpoch - recordingStart;
@@ -292,7 +292,7 @@ void main() {
         }
       },
     );
-    sleep(const Duration(milliseconds: 500));
+    await Future<void>.delayed(const Duration(milliseconds: 500));
     await controller.stopVideoRecording();
     await controller.dispose();
 
@@ -312,7 +312,11 @@ void main() {
         await controller.setImageFileFormat(fileFormat);
         final XFile file = await controller.takePicture();
         await controller.dispose();
-        expect(file.path.endsWith(fileFormat.name), true);
+        final String expectedExtension = switch (fileFormat) {
+          ImageFileFormat.jpeg => 'jpg',
+          ImageFileFormat.heif => 'heif',
+        };
+        expect(file.path.endsWith(expectedExtension), true);
       }
     }
   });
@@ -335,7 +339,7 @@ void main() {
 
         // Take Video
         await controller.startVideoRecording();
-        sleep(const Duration(milliseconds: 500));
+        await Future<void>.delayed(const Duration(milliseconds: 500));
         final XFile file = await controller.stopVideoRecording();
 
         // Load video size
@@ -376,7 +380,7 @@ void main() {
 
         // Take Video
         await controller.startVideoRecording();
-        sleep(const Duration(milliseconds: 500));
+        await Future<void>.delayed(const Duration(milliseconds: 500));
         final XFile file = await controller.stopVideoRecording();
 
         // Load video size
@@ -421,7 +425,7 @@ void main() {
 
         // Take Video
         await controller.startVideoRecording();
-        sleep(const Duration(milliseconds: 1000));
+        await Future<void>.delayed(const Duration(milliseconds: 1000));
         final XFile file = await controller.stopVideoRecording();
 
         // Load video metadata
