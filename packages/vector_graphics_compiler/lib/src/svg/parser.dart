@@ -1570,17 +1570,21 @@ class SvgParser {
     return attributeMap['display'] != 'none' && attributeMap['visibility'] != 'hidden';
   }
 
+  // Text and tspan can list one coordinate per character. Per-character
+  // positioning isn't supported, so only the first coordinate is used.
+  String? _firstListValue(String? raw) => raw?.trim().split(RegExp(r'[\s,]+')).first;
+
   SvgAttributes _createSvgAttributes(Map<String, String> attributeMap, {Color? currentColor}) {
     final String? id = attributeMap['id'];
     final double? opacity = parseDouble(attributeMap['opacity'])?.clamp(0.0, 1.0);
     final Color? color =
         parseColor(attributeMap['color'], attributeName: 'color', id: id) ?? currentColor;
 
-    final String? rawX = attributeMap['x'];
-    final String? rawY = attributeMap['y'];
+    final String? rawX = _firstListValue(attributeMap['x']);
+    final String? rawY = _firstListValue(attributeMap['y']);
 
-    final String? rawDx = attributeMap['dx'];
-    final String? rawDy = attributeMap['dy'];
+    final String? rawDx = _firstListValue(attributeMap['dx']);
+    final String? rawDy = _firstListValue(attributeMap['dy']);
 
     return SvgAttributes._(
       raw: attributeMap,
