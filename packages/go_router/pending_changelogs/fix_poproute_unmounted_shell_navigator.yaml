@@ -1,0 +1,5 @@
+changelog: |
+  - Fixes `popRoute()` crashing with "Null check operator used on a null value"
+    when the current configuration references a shell route whose navigator is
+    not mounted.
+version: patch
