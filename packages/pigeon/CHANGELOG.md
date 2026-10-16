@@ -1,6 +1,7 @@
 ## 29.0.11
 
 * [swift] Warns after FFI code generation if the `objective_c` version constraint in `pubspec.yaml` does not match the generated `ObjCVersionCheck`.
+* [kotlin] Warns after JNI code generation if the `jni` version constraint in `pubspec.yaml` does not match the generated `JniVersionCheck`.
 
 ## 29.0.10
 

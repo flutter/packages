@@ -2427,6 +2427,67 @@ const _$objcVersionCheck = objc.ObjCVersionCheck(9, 6);
       },
     );
 
+    test('checkJniPubspecVersion returns null when constraint matches JniVersionCheck', () {
+      final Directory tempDir = Directory.systemTemp.createTempSync('pigeon_jni_version_test_');
+      try {
+        File('${tempDir.path}/pubspec.yaml').writeAsStringSync('''
+name: my_package
+dependencies:
+  jni: ^1.1.0
+''');
+        final libDir = Directory('${tempDir.path}/lib')..createSync(recursive: true);
+        File('${libDir.path}/messages.g.jni.dart').writeAsStringSync(r'''
+const _$jniVersionCheck = jni$_.JniVersionCheck(1, 1);
+''');
+        final InternalPigeonOptions options = InternalPigeonOptions.fromPigeonOptions(
+          PigeonOptions(
+            input: 'foo.dart',
+            dartOut: '${libDir.path}/messages.g.dart',
+            kotlinOut: '${libDir.path}/Messages.g.kt',
+            kotlinOptions: const KotlinOptions(useJni: true),
+            dartPackageName: 'my_package',
+          ),
+        );
+        expect(checkJniPubspecVersion(options), isNull);
+      } finally {
+        tempDir.deleteSync(recursive: true);
+      }
+    });
+
+    test(
+      'checkJniPubspecVersion warns when constraint allows lower minor version than JniVersionCheck',
+      () {
+        final Directory tempDir = Directory.systemTemp.createTempSync('pigeon_jni_version_test_');
+        try {
+          File('${tempDir.path}/pubspec.yaml').writeAsStringSync('''
+name: my_package
+dependencies:
+  jni: ^1.0.0
+''');
+          final libDir = Directory('${tempDir.path}/lib')..createSync(recursive: true);
+          File('${libDir.path}/messages.g.jni.dart').writeAsStringSync(r'''
+const _$jniVersionCheck = jni$_.JniVersionCheck(1, 1);
+''');
+          final InternalPigeonOptions options = InternalPigeonOptions.fromPigeonOptions(
+            PigeonOptions(
+              input: 'foo.dart',
+              dartOut: '${libDir.path}/messages.g.dart',
+              kotlinOut: '${libDir.path}/Messages.g.kt',
+              kotlinOptions: const KotlinOptions(useJni: true),
+              dartPackageName: 'my_package',
+            ),
+          );
+          final String? warning = checkJniPubspecVersion(options);
+          expect(warning, isNotNull);
+          expect(warning, contains('require package:jni ^1.1.0'));
+          expect(warning, contains('JniVersionCheck(1, 1)'));
+          expect(warning, contains('jni: ^1.0.0'));
+        } finally {
+          tempDir.deleteSync(recursive: true);
+        }
+      },
+    );
+
     test('KotlinOptions serialization/deserialization with jniClassPaths', () {
       const options = KotlinOptions(jniClassPaths: <String>['foo/bar', 'baz.jar']);
       final Map<String, Object> map = options.toMap();

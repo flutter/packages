@@ -950,6 +950,10 @@ ${_argParser.usage}''';
         if (!success) {
           return 1;
         }
+        final String? jniVersionWarning = checkJniPubspecVersion(internalOptions);
+        if (jniVersionWarning != null) {
+          stderr.writeln('Warning: $jniVersionWarning');
+        }
       }
     }
 

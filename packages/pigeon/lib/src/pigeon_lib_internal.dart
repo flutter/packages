@@ -2706,6 +2706,41 @@ String? _findTargetPubspecPath({
 /// Returns a warning message if the constraint allows incompatible versions, or
 /// `null` if the constraint is compatible or cannot be checked.
 String? checkObjectiveCPubspecVersion(InternalPigeonOptions options) {
+  return _checkGeneratedBindingsPubspecVersion(
+    options: options,
+    appDirectory: options.swiftOptions?.appDirectory ?? options.appDirectory,
+    generatedFileSuffix: '.ffi.dart',
+    versionCheckName: 'ObjCVersionCheck',
+    packageName: 'objective_c',
+    bindingTypeLabel: 'FFI',
+  );
+}
+
+/// Checks whether the `jni` dependency constraint in `pubspec.yaml`
+/// matches the `JniVersionCheck(major, minor)` emitted by `jnigen` in the
+/// generated `.jni.dart` file.
+///
+/// Returns a warning message if the constraint allows incompatible versions, or
+/// `null` if the constraint is compatible or cannot be checked.
+String? checkJniPubspecVersion(InternalPigeonOptions options) {
+  return _checkGeneratedBindingsPubspecVersion(
+    options: options,
+    appDirectory: options.kotlinOptions?.appDirectory ?? options.appDirectory,
+    generatedFileSuffix: '.jni.dart',
+    versionCheckName: 'JniVersionCheck',
+    packageName: 'jni',
+    bindingTypeLabel: 'JNI',
+  );
+}
+
+String? _checkGeneratedBindingsPubspecVersion({
+  required InternalPigeonOptions options,
+  required String? appDirectory,
+  required String generatedFileSuffix,
+  required String versionCheckName,
+  required String packageName,
+  required String bindingTypeLabel,
+}) {
   final String? dartOutPath = options.dartOptions?.dartOut;
   if (dartOutPath == null || dartOutPath.isEmpty) {
     return null;
@@ -2714,21 +2749,21 @@ String? checkObjectiveCPubspecVersion(InternalPigeonOptions options) {
   final String fullDartOut = (basePath.isNotEmpty && !dartOutPath.startsWith(basePath))
       ? path.join(basePath, dartOutPath)
       : dartOutPath;
-  final ffiDartFile = File('${path.withoutExtension(fullDartOut)}.ffi.dart');
-  if (!ffiDartFile.existsSync()) {
+  final bindingsDartFile = File('${path.withoutExtension(fullDartOut)}$generatedFileSuffix');
+  if (!bindingsDartFile.existsSync()) {
     return null;
   }
 
-  final String ffiContent;
+  final String bindingsContent;
   try {
-    ffiContent = ffiDartFile.readAsStringSync();
+    bindingsContent = bindingsDartFile.readAsStringSync();
   } catch (_) {
     return null;
   }
 
   final RegExpMatch? match = RegExp(
-    r'ObjCVersionCheck\(\s*(\d+)\s*,\s*(\d+)\s*\)',
-  ).firstMatch(ffiContent);
+    '$versionCheckName\\(\\s*(\\d+)\\s*,\\s*(\\d+)\\s*\\)',
+  ).firstMatch(bindingsContent);
   if (match == null) {
     return null;
   }
@@ -2739,7 +2774,7 @@ String? checkObjectiveCPubspecVersion(InternalPigeonOptions options) {
   final nextMajorVersion = Version(major + 1, 0, 0);
 
   final String? pubspecPath = _findTargetPubspecPath(
-    appDirectory: options.swiftOptions?.appDirectory ?? options.appDirectory,
+    appDirectory: appDirectory,
     dartOutPath: dartOutPath,
     basePath: options.basePath,
   );
@@ -2760,9 +2795,9 @@ String? checkObjectiveCPubspecVersion(InternalPigeonOptions options) {
     final dependencies = doc['dependencies'] as yaml.YamlMap?;
     final dependencyOverrides = doc['dependency_overrides'] as yaml.YamlMap?;
     final Object? rawConstraint =
-        dependencyOverrides != null && dependencyOverrides.containsKey('objective_c')
-        ? dependencyOverrides['objective_c']
-        : dependencies?['objective_c'];
+        dependencyOverrides != null && dependencyOverrides.containsKey(packageName)
+        ? dependencyOverrides[packageName]
+        : dependencies?[packageName];
     if (rawConstraint is! String) {
       return null;
     }
@@ -2777,10 +2812,10 @@ String? checkObjectiveCPubspecVersion(InternalPigeonOptions options) {
     );
 
     if (!allowsValidVersion || allowsLowerVersion || allowsHigherMajorVersion) {
-      return 'Generated FFI bindings in "${path.basename(ffiDartFile.path)}" require '
-          'package:objective_c ^$major.$minor.0 (from ObjCVersionCheck($major, $minor)), '
-          'but "$pubspecPath" specifies "objective_c: $rawConstraint". '
-          'Consider updating pubspec.yaml to "objective_c: ^$major.$minor.0".';
+      return 'Generated $bindingTypeLabel bindings in "${path.basename(bindingsDartFile.path)}" require '
+          'package:$packageName ^$major.$minor.0 (from $versionCheckName($major, $minor)), '
+          'but "$pubspecPath" specifies "$packageName: $rawConstraint". '
+          'Consider updating pubspec.yaml to "$packageName: ^$major.$minor.0".';
     }
   } catch (_) {
     return null;
