@@ -328,6 +328,10 @@ class FakeStoreKit2Platform implements InAppPurchase2API {
   Map<String, Set<String>> eligibleWinBackOffers = <String, Set<String>>{};
   Map<String, bool> eligibleIntroductoryOffers = <String, bool>{};
 
+  /// Subscription info to attach to the product messages returned by
+  /// [products], keyed by product ID.
+  Map<String, SK2SubscriptionInfoMessage> subscriptionInfo = <String, SK2SubscriptionInfoMessage>{};
+
   /// Simulates purchase result for testing non-success scenarios.
   /// Set to userCancelled, pending, or unverified to test those cases.
   SK2ProductPurchaseResultMessage simulatedPurchaseResult = SK2ProductPurchaseResultMessage.success;
@@ -349,6 +353,7 @@ class FakeStoreKit2Platform implements InAppPurchase2API {
     }
     eligibleWinBackOffers = <String, Set<String>>{};
     eligibleIntroductoryOffers = <String, bool>{};
+    subscriptionInfo = <String, SK2SubscriptionInfoMessage>{};
     simulatedPurchaseResult = SK2ProductPurchaseResultMessage.success;
     transactionsList = <SK2TransactionMessage>[
       SK2TransactionMessage(
@@ -408,7 +413,9 @@ class FakeStoreKit2Platform implements InAppPurchase2API {
     }
     final result = <SK2ProductMessage>[];
     for (final p in products) {
-      result.add(p.convertToPigeon());
+      final SK2ProductMessage message = p.convertToPigeon();
+      message.subscription = subscriptionInfo[p.id];
+      result.add(message);
     }
 
     return Future<List<SK2ProductMessage>>.value(result);
