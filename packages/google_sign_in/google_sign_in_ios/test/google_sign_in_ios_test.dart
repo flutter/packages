@@ -148,6 +148,28 @@ void main() {
       verify(mockApi.signIn(any, nonce));
     });
 
+    test('passes the authenticate nonce instead of the init nonce', () async {
+      const nonce = 'authenticateNonce';
+      when(mockApi.signIn(any, nonce)).thenAnswer(
+        (_) async => SignInSuccess(
+          user: UserData(
+            displayName: _testUser.displayName,
+            email: _testUser.email,
+            userId: _testUser.id,
+            photoUrl: _testUser.photoUrl,
+            idToken: '',
+          ),
+          accessToken: '',
+          grantedScopes: <String>[],
+        ),
+      );
+
+      await googleSignIn.init(const InitParameters(nonce: 'initNonce'));
+      await googleSignIn.authenticate(const AuthenticateParameters(nonce: nonce));
+
+      verify(mockApi.signIn(any, nonce));
+    });
+
     test('passes success data to caller', () async {
       const idToken = 'idToken';
       when(mockApi.signIn(any, null)).thenAnswer(
