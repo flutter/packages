@@ -516,8 +516,10 @@ this command.
         extraFlags: <String>[
           if (testTarget != null) '-only-testing:$testTarget',
           ...extraFlags,
-          if (!_xcodeWarningsExceptions.contains(plugin.directory.basename))
+          if (!_xcodeWarningsExceptions.contains(plugin.directory.basename)) ...[
             'GCC_TREAT_WARNINGS_AS_ERRORS=YES',
+            'SWIFT_TREAT_WARNINGS_AS_ERRORS=YES',
+          ],
         ],
       );
 
