@@ -32,6 +32,7 @@ import 'material_state.dart';
 import 'search_bar_theme.dart';
 import 'search_view_theme.dart';
 import 'text_field.dart';
+import 'text_selection_theme.dart';
 import 'text_theme.dart';
 import 'theme.dart';
 
@@ -245,7 +246,7 @@ class SearchAnchor extends StatefulWidget {
     TextInputAction? textInputAction,
     TextInputType? keyboardType,
     EdgeInsets scrollPadding,
-    EditableTextContextMenuBuilder contextMenuBuilder,
+    EditableTextContextMenuBuilder? contextMenuBuilder,
     bool enabled,
     SmartDashesType? smartDashesType,
     SmartQuotesType? smartQuotesType,
@@ -1313,7 +1314,7 @@ class _SearchAnchorWithSearchBar extends SearchAnchor {
     super.textInputAction,
     super.keyboardType,
     EdgeInsets scrollPadding = const EdgeInsets.all(20.0),
-    EditableTextContextMenuBuilder contextMenuBuilder = SearchBar._defaultContextMenuBuilder,
+    EditableTextContextMenuBuilder? contextMenuBuilder = SearchBar._defaultContextMenuBuilder,
     super.enabled,
     super.smartDashesType,
     super.smartQuotesType,
@@ -1816,6 +1817,12 @@ class _SearchBarState extends State<SearchBar> {
         )
         .toList();
 
+    final EditableTextContextMenuBuilder? resolvedContextMenuBuilder =
+        widget.contextMenuBuilder == SearchBar._defaultContextMenuBuilder
+        ? (TextSelectionTheme.of(context).contextMenuBuilder ??
+              SearchBar._defaultContextMenuBuilder)
+        : widget.contextMenuBuilder;
+
     return ConstrainedBox(
       constraints: widget.constraints ?? searchBarTheme.constraints ?? defaults.constraints!,
       child: Opacity(
@@ -1879,7 +1886,7 @@ class _SearchBarState extends State<SearchBar> {
                             textInputAction: widget.textInputAction,
                             keyboardType: widget.keyboardType,
                             scrollPadding: widget.scrollPadding,
-                            contextMenuBuilder: widget.contextMenuBuilder,
+                            contextMenuBuilder: resolvedContextMenuBuilder,
                             smartDashesType: widget.smartDashesType,
                             smartQuotesType: widget.smartQuotesType,
                           ),
