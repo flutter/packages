@@ -1,0 +1,3 @@
+changelog: |
+  - **Breaking change**: `PopupMenuButton.padding` is now nullable and no longer defaults to `EdgeInsets.all(8.0)`, so that `ButtonStyle.iconButtonWidth` and `ButtonStyle.sizeVariant` are respected. If null, the padding is resolved by the `IconButton` (from `style`, then `IconButtonTheme`, then its defaults), which is 8 on all sides by default. As a result, padding set in `IconButtonTheme`'s style now applies to `PopupMenuButton`.
+version: minor
