@@ -1,3 +1,7 @@
+## 0.11.0+3
+
+* Fixes a crash when switching camera while recording video due to disconnected photo output.
+
 ## 0.11.0+2
 
 * Replaces the deprecated `videoOrientation` with `videoRotationAngle` on iOS 17 and later.
