@@ -77,20 +77,20 @@ public class SharedPreferencesPlugin: NSObject, FlutterPlugin, UserDefaultsApi {
   {
     #if os(iOS)
       if !(options.suiteName?.starts(with: "group.") ?? true) {
-        throw FlutterError(
+        throw PigeonError(
           code: argumentError,
           message:
             "The provided Suite Name '\(options.suiteName!)' does not follow the predefined requirements",
-          details: "") as! Error
+          details: "")
       }
     #endif
     let prefs = UserDefaults(suiteName: options.suiteName)
 
     if prefs == nil {
-      throw FlutterError(
+      throw PigeonError(
         code: argumentError,
         message: "The provided Suite Name '\(options.suiteName!)' does not exist",
-        details: "") as! Error
+        details: "")
     }
     return prefs!
   }

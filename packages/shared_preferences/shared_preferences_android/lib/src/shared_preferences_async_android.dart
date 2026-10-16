@@ -184,7 +184,8 @@ base class SharedPreferencesAsyncAndroid extends SharedPreferencesAsyncPlatform 
       final T? value = await method();
       return value;
     } on PlatformException catch (e) {
-      if (e.code == 'ClassCastException') {
+      if (e.code == 'ClassCastException' ||
+          (e.stacktrace?.startsWith('java.lang.ClassCastException') ?? false)) {
         throw TypeError();
       } else {
         rethrow;
