@@ -266,7 +266,10 @@ ErrorOr<FileDialogResult> ShowDialog(
 
 // Returns the top-level window that owns |view|.
 HWND GetRootWindow(flutter::FlutterView* view) {
-  return ::GetAncestor(view->GetNativeWindow(), GA_ROOT);
+  if (view && view->GetNativeWindow()) {
+    return ::GetAncestor(view->GetNativeWindow(), GA_ROOT);
+  }
+  return ::GetActiveWindow();
 }
 
 }  // namespace
