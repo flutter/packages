@@ -1,0 +1,3 @@
+changelog: |
+  - Fix bottom sheet dismissal when its extent is within floating-point precision of its minimum extent.
+version: patch
