@@ -28,6 +28,25 @@ import WebKit
 
     #expect(api.didReceiveScriptMessageArgs == [controller, message])
   }
+
+  @MainActor @Test func handlesMessageAfterRegistrarOwnerIsReleased() {
+    let api = TestScriptMessageHandlerApi()
+    var registrar: TestProxyApiRegistrar? = TestProxyApiRegistrar()
+    var instance: ScriptMessageHandlerImpl? = ScriptMessageHandlerImpl(
+      api: api, registrar: registrar!)
+    let registrarReference = WeakTestReference(registrar)
+    let controller = WKUserContentController()
+    let message = WKScriptMessage()
+
+    registrar = nil
+    #expect(registrarReference.value != nil)
+
+    instance!.userContentController(controller, didReceive: message)
+    #expect(api.didReceiveScriptMessageArgs == [controller, message])
+
+    instance = nil
+    #expect(registrarReference.value == nil)
+  }
 }
 
 class TestScriptMessageHandlerApi: PigeonApiProtocolWKScriptMessageHandler {

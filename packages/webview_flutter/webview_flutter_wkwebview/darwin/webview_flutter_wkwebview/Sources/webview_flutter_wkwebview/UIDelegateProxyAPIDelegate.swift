@@ -7,7 +7,7 @@ import WebKit
 /// Implementation of `WKUIDelegate` that calls to Dart in callback methods.
 class UIDelegateImpl: NSObject, WKUIDelegate {
   let api: PigeonApiProtocolWKUIDelegate
-  unowned let registrar: ProxyAPIRegistrar
+  let registrar: ProxyAPIRegistrar
 
   init(api: PigeonApiProtocolWKUIDelegate, registrar: ProxyAPIRegistrar) {
     self.api = api
