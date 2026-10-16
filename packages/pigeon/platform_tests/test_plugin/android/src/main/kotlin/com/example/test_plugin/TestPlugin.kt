@@ -49,6 +49,7 @@ class TestPlugin : FlutterPlugin, HostIntegrationCoreApi, HostCallbackCoreApi {
     niMessageApi =
         NativeInteropHostIntegrationCoreApiRegistrar().register(NativeInteropIntegrationTests())
     NativeInteropReservedNamesHostApiRegistrar().register(NativeInteropReservedNamesHostApiImpl())
+    NativeInteropSealedClassHostApiRegistrar().register(NativeInteropSealedClassHostApiImpl())
     flutterApi = FlutterIntegrationCoreApi(binding.binaryMessenger)
     flutterCallbackApi = FlutterCallbackCoreApi(binding.binaryMessenger)
     flutterSmallApiOne = FlutterSmallApi(binding.binaryMessenger, "suffixOne")
@@ -2344,5 +2345,33 @@ class SendConsistentNumbers(private val numberToSend: Long) :
           }
         }
     handler.postDelayed(r, 10)
+  }
+}
+
+class NativeInteropSealedClassHostApiImpl : NativeInteropSealedClassHostApi {
+  override fun echoShape(shape: NativeInteropShape): NativeInteropShape {
+    return shape
+  }
+
+  override fun echoNullableShape(shape: NativeInteropShape?): NativeInteropShape? {
+    return shape
+  }
+
+  override fun echoShapeList(shapes: List<NativeInteropShape>): List<NativeInteropShape> {
+    return shapes
+  }
+
+  override fun echoShapeMap(
+      shapes: Map<String, NativeInteropShape>
+  ): Map<String, NativeInteropShape> {
+    return shapes
+  }
+
+  override suspend fun echoAsyncShape(shape: NativeInteropShape): NativeInteropShape {
+    return shape
+  }
+
+  override fun callFlutterEchoShape(shape: NativeInteropShape): NativeInteropShape {
+    return NativeInteropSealedClassFlutterApiRegistrar().getInstance()!!.echoShape(shape)
   }
 }

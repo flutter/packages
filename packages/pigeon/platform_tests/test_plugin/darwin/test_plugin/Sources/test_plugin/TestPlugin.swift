@@ -72,6 +72,7 @@ public class TestPlugin: NSObject, FlutterPlugin, HostIntegrationCoreApi, HostCa
     proxyApiRegistrar!.setUp()
     NativeInteropHostIntegrationCoreApiSetup.register(api: NativeInteropTestsClass())
     NativeInteropReservedNamesHostApiSetup.register(api: NativeInteropReservedNamesHostApiImpl())
+    NativeInteropSealedClassHostApiSetup.register(api: NativeInteropSealedClassHostApiImpl())
   }
 
   public func detachFromEngine(for registrar: FlutterPluginRegistrar) {
@@ -2282,5 +2283,31 @@ class SendConsistentNumbers: StreamConsistentNumbersStreamHandler {
         }
       }
     }
+  }
+}
+
+class NativeInteropSealedClassHostApiImpl: NativeInteropSealedClassHostApi {
+  func echoShape(shape: NativeInteropShape) throws -> NativeInteropShape {
+    return shape
+  }
+
+  func echoNullableShape(shape: NativeInteropShape?) throws -> NativeInteropShape? {
+    return shape
+  }
+
+  func echoShapeList(shapes: [NativeInteropShape]) throws -> [NativeInteropShape] {
+    return shapes
+  }
+
+  func echoShapeMap(shapes: [String: NativeInteropShape]) throws -> [String: NativeInteropShape] {
+    return shapes
+  }
+
+  func echoAsyncShape(shape: NativeInteropShape) async throws -> NativeInteropShape {
+    return shape
+  }
+
+  func callFlutterEchoShape(shape: NativeInteropShape) throws -> NativeInteropShape {
+    return try NativeInteropSealedClassFlutterApi.getInstance()!.echoShape(shape: shape)
   }
 }

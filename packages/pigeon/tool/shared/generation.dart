@@ -147,7 +147,7 @@ Future<int> _compileNativeInteropExampleApp() async {
   final gradleCommand = Platform.isWindows ? r'.\gradlew.bat' : './gradlew';
   return runProcess(
     gradleCommand,
-    <String>[':app:compileReleaseKotlin'],
+    <String>[':app:compileReleaseKotlin', '-x', 'compileFlutterBuildRelease'],
     workingDirectory: androidDir,
     environment: environment,
     runInShell: Platform.isWindows,

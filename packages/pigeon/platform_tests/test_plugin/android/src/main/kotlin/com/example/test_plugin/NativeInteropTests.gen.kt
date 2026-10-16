@@ -10,6 +10,9 @@ package com.example.test_plugin
 
 import android.util.Log
 import androidx.annotation.Keep
+import io.flutter.plugin.common.StandardMessageCodec
+import java.io.ByteArrayOutputStream
+import java.nio.ByteBuffer
 
 private object NativeInteropTestsPigeonUtils {
 
@@ -204,8 +207,10 @@ enum class NativeInteropAnEnum(val raw: Int) {
 
   @Keep
   companion object {
+    private val pigeonValues = values()
+
     fun ofRaw(raw: Int): NativeInteropAnEnum? {
-      return values().firstOrNull { it.raw == raw }
+      return pigeonValues.getOrNull(raw)
     }
   }
 }
@@ -216,8 +221,10 @@ enum class NativeInteropAnotherEnum(val raw: Int) {
 
   @Keep
   companion object {
+    private val pigeonValues = values()
+
     fun ofRaw(raw: Int): NativeInteropAnotherEnum? {
-      return values().firstOrNull { it.raw == raw }
+      return pigeonValues.getOrNull(raw)
     }
   }
 }
@@ -1292,6 +1299,234 @@ data class NativeInteropReservedNames(
   }
 }
 
+/**
+ * A sealed class passed in the call's buffer with the hybrid transport.
+ *
+ * Generated class from Pigeon that represents data sent in messages. This class should not be
+ * extended by any user class outside of the generated file.
+ */
+@Keep sealed class NativeInteropShape
+/** Generated class from Pigeon that represents data sent in messages. */
+@Keep
+data class NativeInteropCircle(val radius: Double) : NativeInteropShape() {
+  companion object {
+    fun fromList(pigeonVar_list: List<Any?>): NativeInteropCircle {
+      val radius = pigeonVar_list[0] as Double
+      return NativeInteropCircle(radius)
+    }
+  }
+
+  fun toList(): List<Any?> {
+    return listOf(
+        radius,
+    )
+  }
+
+  override fun equals(other: Any?): Boolean {
+    if (other == null || other.javaClass != javaClass) {
+      return false
+    }
+    if (this === other) {
+      return true
+    }
+    val other = other as NativeInteropCircle
+    return NativeInteropTestsPigeonUtils.deepEquals(this.radius, other.radius)
+  }
+
+  override fun hashCode(): Int {
+    var result = javaClass.hashCode()
+    result = 31 * result + NativeInteropTestsPigeonUtils.deepHash(this.radius)
+    return result
+  }
+
+  override fun toString(): String {
+    return "NativeInteropCircle(radius=$radius)"
+  }
+}
+
+/** Generated class from Pigeon that represents data sent in messages. */
+@Keep
+data class NativeInteropSquare(val side: Double, val label: String? = null) : NativeInteropShape() {
+  companion object {
+    fun fromList(pigeonVar_list: List<Any?>): NativeInteropSquare {
+      val side = pigeonVar_list[0] as Double
+      val label = pigeonVar_list[1] as String?
+      return NativeInteropSquare(side, label)
+    }
+  }
+
+  fun toList(): List<Any?> {
+    return listOf(
+        side,
+        label,
+    )
+  }
+
+  override fun equals(other: Any?): Boolean {
+    if (other == null || other.javaClass != javaClass) {
+      return false
+    }
+    if (this === other) {
+      return true
+    }
+    val other = other as NativeInteropSquare
+    return NativeInteropTestsPigeonUtils.deepEquals(this.side, other.side) &&
+        NativeInteropTestsPigeonUtils.deepEquals(this.label, other.label)
+  }
+
+  override fun hashCode(): Int {
+    var result = javaClass.hashCode()
+    result = 31 * result + NativeInteropTestsPigeonUtils.deepHash(this.side)
+    result = 31 * result + NativeInteropTestsPigeonUtils.deepHash(this.label)
+    return result
+  }
+
+  override fun toString(): String {
+    return "NativeInteropSquare(side=$side, label=$label)"
+  }
+}
+
+private open class NativeInteropTestsPigeonCodec : StandardMessageCodec() {
+  override fun readValueOfType(type: Byte, buffer: ByteBuffer): Any? {
+    return when (type) {
+      129.toByte() -> {
+        return (readValue(buffer) as Long?)?.let { NativeInteropAnEnum.ofRaw(it.toInt()) }
+      }
+      130.toByte() -> {
+        return (readValue(buffer) as Long?)?.let { NativeInteropAnotherEnum.ofRaw(it.toInt()) }
+      }
+      131.toByte() -> {
+        return (readValue(buffer) as? List<Any?>)?.let { NativeInteropUnusedClass.fromList(it) }
+      }
+      132.toByte() -> {
+        return (readValue(buffer) as? List<Any?>)?.let { NativeInteropAllTypes.fromList(it) }
+      }
+      133.toByte() -> {
+        return (readValue(buffer) as? List<Any?>)?.let {
+          NativeInteropAllNullableTypes.fromList(it)
+        }
+      }
+      134.toByte() -> {
+        return (readValue(buffer) as? List<Any?>)?.let {
+          NativeInteropAllNullableTypesWithoutRecursion.fromList(it)
+        }
+      }
+      135.toByte() -> {
+        return (readValue(buffer) as? List<Any?>)?.let {
+          NativeInteropAllClassesWrapper.fromList(it)
+        }
+      }
+      136.toByte() -> {
+        return (readValue(buffer) as? List<Any?>)?.let {
+          NativeInteropSealedClassWithFields.fromList(it)
+        }
+      }
+      137.toByte() -> {
+        return (readValue(buffer) as? List<Any?>)?.let {
+          NativeInteropEmptySealedClass.fromList(it)
+        }
+      }
+      138.toByte() -> {
+        return (readValue(buffer) as? List<Any?>)?.let {
+          NativeInteropSealedClassWrapper.fromList(it)
+        }
+      }
+      139.toByte() -> {
+        return (readValue(buffer) as? List<Any?>)?.let { NativeInteropReservedNames.fromList(it) }
+      }
+      140.toByte() -> {
+        return (readValue(buffer) as? List<Any?>)?.let { NativeInteropCircle.fromList(it) }
+      }
+      141.toByte() -> {
+        return (readValue(buffer) as? List<Any?>)?.let { NativeInteropSquare.fromList(it) }
+      }
+      else -> super.readValueOfType(type, buffer)
+    }
+  }
+
+  override fun writeValue(stream: ByteArrayOutputStream, value: Any?) {
+    when (value) {
+      is NativeInteropAnEnum -> {
+        stream.write(129)
+        writeValue(stream, value.raw.toLong())
+      }
+      is NativeInteropAnotherEnum -> {
+        stream.write(130)
+        writeValue(stream, value.raw.toLong())
+      }
+      is NativeInteropUnusedClass -> {
+        stream.write(131)
+        writeValue(stream, value.toList())
+      }
+      is NativeInteropAllTypes -> {
+        stream.write(132)
+        writeValue(stream, value.toList())
+      }
+      is NativeInteropAllNullableTypes -> {
+        stream.write(133)
+        writeValue(stream, value.toList())
+      }
+      is NativeInteropAllNullableTypesWithoutRecursion -> {
+        stream.write(134)
+        writeValue(stream, value.toList())
+      }
+      is NativeInteropAllClassesWrapper -> {
+        stream.write(135)
+        writeValue(stream, value.toList())
+      }
+      is NativeInteropSealedClassWithFields -> {
+        stream.write(136)
+        writeValue(stream, value.toList())
+      }
+      is NativeInteropEmptySealedClass -> {
+        stream.write(137)
+        writeValue(stream, value.toList())
+      }
+      is NativeInteropSealedClassWrapper -> {
+        stream.write(138)
+        writeValue(stream, value.toList())
+      }
+      is NativeInteropReservedNames -> {
+        stream.write(139)
+        writeValue(stream, value.toList())
+      }
+      is NativeInteropCircle -> {
+        stream.write(140)
+        writeValue(stream, value.toList())
+      }
+      is NativeInteropSquare -> {
+        stream.write(141)
+        writeValue(stream, value.toList())
+      }
+      else -> super.writeValue(stream, value)
+    }
+  }
+}
+
+/**
+ * Encodes and decodes the buffers that native interop calls pass to and from Dart, in the same
+ * format as the message codec.
+ */
+private object NativeInteropTestsPigeonInteropCodec : NativeInteropTestsPigeonCodec() {
+  fun encode(value: Any?): ByteArray {
+    val stream = ByteArrayOutputStream()
+    writeValue(stream, value)
+    return stream.toByteArray()
+  }
+
+  fun encodeOrNull(value: Any?): ByteArray? {
+    return if (value == null) null else encode(value)
+  }
+
+  fun decode(bytes: ByteArray): Any? {
+    return decodeMessage(ByteBuffer.wrap(bytes))
+  }
+
+  fun decodeArguments(bytes: ByteArray): List<Any?> {
+    return decode(bytes) as List<Any?>
+  }
+}
+
 val NativeInteropHostIntegrationCoreApiInstances:
     MutableMap<String, NativeInteropHostIntegrationCoreApiRegistrar> =
     mutableMapOf()
@@ -1933,7 +2168,7 @@ interface NativeInteropHostIntegrationCoreApi {
 }
 
 @Keep
-class NativeInteropHostIntegrationCoreApiRegistrar : NativeInteropHostIntegrationCoreApi {
+class NativeInteropHostIntegrationCoreApiRegistrar {
   private var api: NativeInteropHostIntegrationCoreApi? = null
 
   fun register(
@@ -1953,2793 +2188,3161 @@ class NativeInteropHostIntegrationCoreApiRegistrar : NativeInteropHostIntegratio
   fun getInstance(name: String): NativeInteropHostIntegrationCoreApiRegistrar? {
     return NativeInteropHostIntegrationCoreApiInstances[name]
   }
-  /** A no-op function taking no arguments and returning no value, to sanity test basic calling. */
-  override fun noop() {
-    api?.let {
-      try {
-        return it.noop()
-      } catch (e: Exception) {
-        throw e
-      }
+
+  fun noop() {
+    val pigeonVar_api = api ?: error("NativeInteropHostIntegrationCoreApi has not been registered")
+    try {
+      pigeonVar_api.noop()
+    } catch (e: NativeInteropTestsError) {
+      throw NativeInteropTestsError(
+              e.code, e.message, NativeInteropTestsPigeonInteropCodec.encodeOrNull(e.details))
+          .apply { stackTrace = e.stackTrace }
     }
-    error("NativeInteropHostIntegrationCoreApi has not been registered")
-  }
-  /** Returns the passed object, to test serialization and deserialization. */
-  override fun echoAllTypes(everything: NativeInteropAllTypes): NativeInteropAllTypes {
-    api?.let {
-      try {
-        return it.echoAllTypes(everything)
-      } catch (e: Exception) {
-        throw e
-      }
-    }
-    error("NativeInteropHostIntegrationCoreApi has not been registered")
-  }
-  /** Returns an error, to test error handling. */
-  override fun throwError(): Any? {
-    api?.let {
-      try {
-        return it.throwError()
-      } catch (e: Exception) {
-        throw e
-      }
-    }
-    error("NativeInteropHostIntegrationCoreApi has not been registered")
-  }
-  /** Returns an error from a void function, to test error handling. */
-  override fun throwErrorFromVoid() {
-    api?.let {
-      try {
-        return it.throwErrorFromVoid()
-      } catch (e: Exception) {
-        throw e
-      }
-    }
-    error("NativeInteropHostIntegrationCoreApi has not been registered")
-  }
-  /** Returns a Flutter error, to test error handling. */
-  override fun throwFlutterError(): Any? {
-    api?.let {
-      try {
-        return it.throwFlutterError()
-      } catch (e: Exception) {
-        throw e
-      }
-    }
-    error("NativeInteropHostIntegrationCoreApi has not been registered")
-  }
-  /** Returns passed in int. */
-  override fun echoInt(anInt: Long): Long {
-    api?.let {
-      try {
-        return it.echoInt(anInt)
-      } catch (e: Exception) {
-        throw e
-      }
-    }
-    error("NativeInteropHostIntegrationCoreApi has not been registered")
-  }
-  /** Returns passed in double. */
-  override fun echoDouble(aDouble: Double): Double {
-    api?.let {
-      try {
-        return it.echoDouble(aDouble)
-      } catch (e: Exception) {
-        throw e
-      }
-    }
-    error("NativeInteropHostIntegrationCoreApi has not been registered")
-  }
-  /** Returns the passed in boolean. */
-  override fun echoBool(aBool: Boolean): Boolean {
-    api?.let {
-      try {
-        return it.echoBool(aBool)
-      } catch (e: Exception) {
-        throw e
-      }
-    }
-    error("NativeInteropHostIntegrationCoreApi has not been registered")
-  }
-  /** Returns the passed in string. */
-  override fun echoString(aString: String): String {
-    api?.let {
-      try {
-        return it.echoString(aString)
-      } catch (e: Exception) {
-        throw e
-      }
-    }
-    error("NativeInteropHostIntegrationCoreApi has not been registered")
-  }
-  /** Returns the passed in Uint8List. */
-  override fun echoUint8List(aUint8List: ByteArray): ByteArray {
-    api?.let {
-      try {
-        return it.echoUint8List(aUint8List)
-      } catch (e: Exception) {
-        throw e
-      }
-    }
-    error("NativeInteropHostIntegrationCoreApi has not been registered")
-  }
-  /** Returns the passed in Int32List. */
-  override fun echoInt32List(aInt32List: IntArray): IntArray {
-    api?.let {
-      try {
-        return it.echoInt32List(aInt32List)
-      } catch (e: Exception) {
-        throw e
-      }
-    }
-    error("NativeInteropHostIntegrationCoreApi has not been registered")
-  }
-  /** Returns the passed in Int64List. */
-  override fun echoInt64List(aInt64List: LongArray): LongArray {
-    api?.let {
-      try {
-        return it.echoInt64List(aInt64List)
-      } catch (e: Exception) {
-        throw e
-      }
-    }
-    error("NativeInteropHostIntegrationCoreApi has not been registered")
-  }
-  /** Returns the passed in Float64List. */
-  override fun echoFloat64List(aFloat64List: DoubleArray): DoubleArray {
-    api?.let {
-      try {
-        return it.echoFloat64List(aFloat64List)
-      } catch (e: Exception) {
-        throw e
-      }
-    }
-    error("NativeInteropHostIntegrationCoreApi has not been registered")
-  }
-  /** Returns the passed in generic Object. */
-  override fun echoObject(anObject: Any): Any {
-    api?.let {
-      try {
-        return it.echoObject(anObject)
-      } catch (e: Exception) {
-        throw e
-      }
-    }
-    error("NativeInteropHostIntegrationCoreApi has not been registered")
-  }
-  /** Returns the passed list, to test serialization and deserialization. */
-  override fun echoList(list: List<Any?>): List<Any?> {
-    api?.let {
-      try {
-        return it.echoList(list)
-      } catch (e: Exception) {
-        throw e
-      }
-    }
-    error("NativeInteropHostIntegrationCoreApi has not been registered")
-  }
-  /** Returns the passed list, to test serialization and deserialization. */
-  override fun echoStringList(stringList: List<String?>): List<String?> {
-    api?.let {
-      try {
-        return it.echoStringList(stringList)
-      } catch (e: Exception) {
-        throw e
-      }
-    }
-    error("NativeInteropHostIntegrationCoreApi has not been registered")
-  }
-  /** Returns the passed list, to test serialization and deserialization. */
-  override fun echoIntList(intList: List<Long?>): List<Long?> {
-    api?.let {
-      try {
-        return it.echoIntList(intList)
-      } catch (e: Exception) {
-        throw e
-      }
-    }
-    error("NativeInteropHostIntegrationCoreApi has not been registered")
-  }
-  /** Returns the passed list, to test serialization and deserialization. */
-  override fun echoDoubleList(doubleList: List<Double?>): List<Double?> {
-    api?.let {
-      try {
-        return it.echoDoubleList(doubleList)
-      } catch (e: Exception) {
-        throw e
-      }
-    }
-    error("NativeInteropHostIntegrationCoreApi has not been registered")
-  }
-  /** Returns the passed list, to test serialization and deserialization. */
-  override fun echoBoolList(boolList: List<Boolean?>): List<Boolean?> {
-    api?.let {
-      try {
-        return it.echoBoolList(boolList)
-      } catch (e: Exception) {
-        throw e
-      }
-    }
-    error("NativeInteropHostIntegrationCoreApi has not been registered")
-  }
-  /** Returns the passed list, to test serialization and deserialization. */
-  override fun echoEnumList(enumList: List<NativeInteropAnEnum?>): List<NativeInteropAnEnum?> {
-    api?.let {
-      try {
-        return it.echoEnumList(enumList)
-      } catch (e: Exception) {
-        throw e
-      }
-    }
-    error("NativeInteropHostIntegrationCoreApi has not been registered")
-  }
-  /** Returns the passed list, to test serialization and deserialization. */
-  override fun echoClassList(
-      classList: List<NativeInteropAllNullableTypes?>
-  ): List<NativeInteropAllNullableTypes?> {
-    api?.let {
-      try {
-        return it.echoClassList(classList)
-      } catch (e: Exception) {
-        throw e
-      }
-    }
-    error("NativeInteropHostIntegrationCoreApi has not been registered")
-  }
-  /** Returns the passed list, to test serialization and deserialization. */
-  override fun echoNonNullEnumList(enumList: List<NativeInteropAnEnum>): List<NativeInteropAnEnum> {
-    api?.let {
-      try {
-        return it.echoNonNullEnumList(enumList)
-      } catch (e: Exception) {
-        throw e
-      }
-    }
-    error("NativeInteropHostIntegrationCoreApi has not been registered")
-  }
-  /** Returns the passed list, to test serialization and deserialization. */
-  override fun echoNonNullClassList(
-      classList: List<NativeInteropAllNullableTypes>
-  ): List<NativeInteropAllNullableTypes> {
-    api?.let {
-      try {
-        return it.echoNonNullClassList(classList)
-      } catch (e: Exception) {
-        throw e
-      }
-    }
-    error("NativeInteropHostIntegrationCoreApi has not been registered")
-  }
-  /** Returns the passed map, to test serialization and deserialization. */
-  override fun echoMap(map: Map<Any?, Any?>): Map<Any?, Any?> {
-    api?.let {
-      try {
-        return it.echoMap(map)
-      } catch (e: Exception) {
-        throw e
-      }
-    }
-    error("NativeInteropHostIntegrationCoreApi has not been registered")
-  }
-  /** Returns the passed map, to test serialization and deserialization. */
-  override fun echoStringMap(stringMap: Map<String?, String?>): Map<String?, String?> {
-    api?.let {
-      try {
-        return it.echoStringMap(stringMap)
-      } catch (e: Exception) {
-        throw e
-      }
-    }
-    error("NativeInteropHostIntegrationCoreApi has not been registered")
-  }
-  /** Returns the passed map, to test serialization and deserialization. */
-  override fun echoIntMap(intMap: Map<Long?, Long?>): Map<Long?, Long?> {
-    api?.let {
-      try {
-        return it.echoIntMap(intMap)
-      } catch (e: Exception) {
-        throw e
-      }
-    }
-    error("NativeInteropHostIntegrationCoreApi has not been registered")
-  }
-  /** Returns the passed map, to test serialization and deserialization. */
-  override fun echoEnumMap(
-      enumMap: Map<NativeInteropAnEnum?, NativeInteropAnEnum?>
-  ): Map<NativeInteropAnEnum?, NativeInteropAnEnum?> {
-    api?.let {
-      try {
-        return it.echoEnumMap(enumMap)
-      } catch (e: Exception) {
-        throw e
-      }
-    }
-    error("NativeInteropHostIntegrationCoreApi has not been registered")
-  }
-  /** Returns the passed map, to test serialization and deserialization. */
-  override fun echoClassMap(
-      classMap: Map<Long?, NativeInteropAllNullableTypes?>
-  ): Map<Long?, NativeInteropAllNullableTypes?> {
-    api?.let {
-      try {
-        return it.echoClassMap(classMap)
-      } catch (e: Exception) {
-        throw e
-      }
-    }
-    error("NativeInteropHostIntegrationCoreApi has not been registered")
-  }
-  /** Returns the passed map, to test serialization and deserialization. */
-  override fun echoNonNullStringMap(stringMap: Map<String, String>): Map<String, String> {
-    api?.let {
-      try {
-        return it.echoNonNullStringMap(stringMap)
-      } catch (e: Exception) {
-        throw e
-      }
-    }
-    error("NativeInteropHostIntegrationCoreApi has not been registered")
-  }
-  /** Returns the passed map, to test serialization and deserialization. */
-  override fun echoNonNullIntMap(intMap: Map<Long, Long>): Map<Long, Long> {
-    api?.let {
-      try {
-        return it.echoNonNullIntMap(intMap)
-      } catch (e: Exception) {
-        throw e
-      }
-    }
-    error("NativeInteropHostIntegrationCoreApi has not been registered")
-  }
-  /** Returns the passed map, to test serialization and deserialization. */
-  override fun echoNonNullEnumMap(
-      enumMap: Map<NativeInteropAnEnum, NativeInteropAnEnum>
-  ): Map<NativeInteropAnEnum, NativeInteropAnEnum> {
-    api?.let {
-      try {
-        return it.echoNonNullEnumMap(enumMap)
-      } catch (e: Exception) {
-        throw e
-      }
-    }
-    error("NativeInteropHostIntegrationCoreApi has not been registered")
-  }
-  /** Returns the passed map, to test serialization and deserialization. */
-  override fun echoNonNullClassMap(
-      classMap: Map<Long, NativeInteropAllNullableTypes>
-  ): Map<Long, NativeInteropAllNullableTypes> {
-    api?.let {
-      try {
-        return it.echoNonNullClassMap(classMap)
-      } catch (e: Exception) {
-        throw e
-      }
-    }
-    error("NativeInteropHostIntegrationCoreApi has not been registered")
-  }
-  /** Returns the passed class to test nested class serialization and deserialization. */
-  override fun echoClassWrapper(
-      wrapper: NativeInteropAllClassesWrapper
-  ): NativeInteropAllClassesWrapper {
-    api?.let {
-      try {
-        return it.echoClassWrapper(wrapper)
-      } catch (e: Exception) {
-        throw e
-      }
-    }
-    error("NativeInteropHostIntegrationCoreApi has not been registered")
-  }
-  /** Returns the passed sealed class, to test sealed class handling. */
-  override fun echoSealedClass(sealedClass: NativeInteropSealedClass): NativeInteropSealedClass {
-    api?.let {
-      try {
-        return it.echoSealedClass(sealedClass)
-      } catch (e: Exception) {
-        throw e
-      }
-    }
-    error("NativeInteropHostIntegrationCoreApi has not been registered")
-  }
-  /** Returns the passed sealed class, to test nullable sealed class handling. */
-  override fun echoNullableSealedClass(
-      sealedClass: NativeInteropSealedClass?
-  ): NativeInteropSealedClass? {
-    api?.let {
-      try {
-        return it.echoNullableSealedClass(sealedClass)
-      } catch (e: Exception) {
-        throw e
-      }
-    }
-    error("NativeInteropHostIntegrationCoreApi has not been registered")
-  }
-  /** Returns the passed list, to test sealed classes in lists. */
-  override fun echoSealedClassList(
-      sealedClassList: List<NativeInteropSealedClass>
-  ): List<NativeInteropSealedClass> {
-    api?.let {
-      try {
-        return it.echoSealedClassList(sealedClassList)
-      } catch (e: Exception) {
-        throw e
-      }
-    }
-    error("NativeInteropHostIntegrationCoreApi has not been registered")
-  }
-  /** Returns the passed wrapper, to test sealed classes in class fields. */
-  override fun echoSealedClassWrapper(
-      wrapper: NativeInteropSealedClassWrapper
-  ): NativeInteropSealedClassWrapper {
-    api?.let {
-      try {
-        return it.echoSealedClassWrapper(wrapper)
-      } catch (e: Exception) {
-        throw e
-      }
-    }
-    error("NativeInteropHostIntegrationCoreApi has not been registered")
-  }
-  /** Returns the passed enum to test serialization and deserialization. */
-  override fun echoEnum(anEnum: NativeInteropAnEnum): NativeInteropAnEnum {
-    api?.let {
-      try {
-        return it.echoEnum(anEnum)
-      } catch (e: Exception) {
-        throw e
-      }
-    }
-    error("NativeInteropHostIntegrationCoreApi has not been registered")
-  }
-  /** Returns the passed enum to test serialization and deserialization. */
-  override fun echoAnotherEnum(anotherEnum: NativeInteropAnotherEnum): NativeInteropAnotherEnum {
-    api?.let {
-      try {
-        return it.echoAnotherEnum(anotherEnum)
-      } catch (e: Exception) {
-        throw e
-      }
-    }
-    error("NativeInteropHostIntegrationCoreApi has not been registered")
-  }
-  /** Returns the default string. */
-  override fun echoNamedDefaultString(aString: String): String {
-    api?.let {
-      try {
-        return it.echoNamedDefaultString(aString)
-      } catch (e: Exception) {
-        throw e
-      }
-    }
-    error("NativeInteropHostIntegrationCoreApi has not been registered")
-  }
-  /** Returns passed in double. */
-  override fun echoOptionalDefaultDouble(aDouble: Double): Double {
-    api?.let {
-      try {
-        return it.echoOptionalDefaultDouble(aDouble)
-      } catch (e: Exception) {
-        throw e
-      }
-    }
-    error("NativeInteropHostIntegrationCoreApi has not been registered")
-  }
-  /** Returns passed in int. */
-  override fun echoRequiredInt(anInt: Long): Long {
-    api?.let {
-      try {
-        return it.echoRequiredInt(anInt)
-      } catch (e: Exception) {
-        throw e
-      }
-    }
-    error("NativeInteropHostIntegrationCoreApi has not been registered")
-  }
-  /** Returns the passed object, to test serialization and deserialization. */
-  override fun echoAllNullableTypes(
-      everything: NativeInteropAllNullableTypes?
-  ): NativeInteropAllNullableTypes? {
-    api?.let {
-      try {
-        return it.echoAllNullableTypes(everything)
-      } catch (e: Exception) {
-        throw e
-      }
-    }
-    error("NativeInteropHostIntegrationCoreApi has not been registered")
-  }
-  /** Returns the passed object, to test serialization and deserialization. */
-  override fun echoAllNullableTypesWithoutRecursion(
-      everything: NativeInteropAllNullableTypesWithoutRecursion?
-  ): NativeInteropAllNullableTypesWithoutRecursion? {
-    api?.let {
-      try {
-        return it.echoAllNullableTypesWithoutRecursion(everything)
-      } catch (e: Exception) {
-        throw e
-      }
-    }
-    error("NativeInteropHostIntegrationCoreApi has not been registered")
-  }
-  /**
-   * Returns the inner `aString` value from the wrapped object, to test sending of nested objects.
-   */
-  override fun extractNestedNullableString(wrapper: NativeInteropAllClassesWrapper): String? {
-    api?.let {
-      try {
-        return it.extractNestedNullableString(wrapper)
-      } catch (e: Exception) {
-        throw e
-      }
-    }
-    error("NativeInteropHostIntegrationCoreApi has not been registered")
-  }
-  /**
-   * Returns the inner `aString` value from the wrapped object, to test sending of nested objects.
-   */
-  override fun createNestedNullableString(nullableString: String?): NativeInteropAllClassesWrapper {
-    api?.let {
-      try {
-        return it.createNestedNullableString(nullableString)
-      } catch (e: Exception) {
-        throw e
-      }
-    }
-    error("NativeInteropHostIntegrationCoreApi has not been registered")
   }
 
-  override fun sendMultipleNullableTypes(
+  fun echoAllTypes(pigeonVar_args: ByteArray): ByteArray? {
+    val pigeonVar_api = api ?: error("NativeInteropHostIntegrationCoreApi has not been registered")
+    try {
+      val pigeonVar_decodedArgs =
+          NativeInteropTestsPigeonInteropCodec.decodeArguments(pigeonVar_args)
+      val everythingArg = pigeonVar_decodedArgs[0] as NativeInteropAllTypes
+      return NativeInteropTestsPigeonInteropCodec.encodeOrNull(
+          pigeonVar_api.echoAllTypes(everythingArg))
+    } catch (e: NativeInteropTestsError) {
+      throw NativeInteropTestsError(
+              e.code, e.message, NativeInteropTestsPigeonInteropCodec.encodeOrNull(e.details))
+          .apply { stackTrace = e.stackTrace }
+    }
+  }
+
+  fun throwError(): ByteArray? {
+    val pigeonVar_api = api ?: error("NativeInteropHostIntegrationCoreApi has not been registered")
+    try {
+      return NativeInteropTestsPigeonInteropCodec.encodeOrNull(pigeonVar_api.throwError())
+    } catch (e: NativeInteropTestsError) {
+      throw NativeInteropTestsError(
+              e.code, e.message, NativeInteropTestsPigeonInteropCodec.encodeOrNull(e.details))
+          .apply { stackTrace = e.stackTrace }
+    }
+  }
+
+  fun throwErrorFromVoid() {
+    val pigeonVar_api = api ?: error("NativeInteropHostIntegrationCoreApi has not been registered")
+    try {
+      pigeonVar_api.throwErrorFromVoid()
+    } catch (e: NativeInteropTestsError) {
+      throw NativeInteropTestsError(
+              e.code, e.message, NativeInteropTestsPigeonInteropCodec.encodeOrNull(e.details))
+          .apply { stackTrace = e.stackTrace }
+    }
+  }
+
+  fun throwFlutterError(): ByteArray? {
+    val pigeonVar_api = api ?: error("NativeInteropHostIntegrationCoreApi has not been registered")
+    try {
+      return NativeInteropTestsPigeonInteropCodec.encodeOrNull(pigeonVar_api.throwFlutterError())
+    } catch (e: NativeInteropTestsError) {
+      throw NativeInteropTestsError(
+              e.code, e.message, NativeInteropTestsPigeonInteropCodec.encodeOrNull(e.details))
+          .apply { stackTrace = e.stackTrace }
+    }
+  }
+
+  fun echoInt(anInt: Long): Long {
+    val pigeonVar_api = api ?: error("NativeInteropHostIntegrationCoreApi has not been registered")
+    try {
+      return pigeonVar_api.echoInt(anInt)
+    } catch (e: NativeInteropTestsError) {
+      throw NativeInteropTestsError(
+              e.code, e.message, NativeInteropTestsPigeonInteropCodec.encodeOrNull(e.details))
+          .apply { stackTrace = e.stackTrace }
+    }
+  }
+
+  fun echoDouble(aDouble: Double): Double {
+    val pigeonVar_api = api ?: error("NativeInteropHostIntegrationCoreApi has not been registered")
+    try {
+      return pigeonVar_api.echoDouble(aDouble)
+    } catch (e: NativeInteropTestsError) {
+      throw NativeInteropTestsError(
+              e.code, e.message, NativeInteropTestsPigeonInteropCodec.encodeOrNull(e.details))
+          .apply { stackTrace = e.stackTrace }
+    }
+  }
+
+  fun echoBool(aBool: Boolean): Boolean {
+    val pigeonVar_api = api ?: error("NativeInteropHostIntegrationCoreApi has not been registered")
+    try {
+      return pigeonVar_api.echoBool(aBool)
+    } catch (e: NativeInteropTestsError) {
+      throw NativeInteropTestsError(
+              e.code, e.message, NativeInteropTestsPigeonInteropCodec.encodeOrNull(e.details))
+          .apply { stackTrace = e.stackTrace }
+    }
+  }
+
+  fun echoString(aString: String): String {
+    val pigeonVar_api = api ?: error("NativeInteropHostIntegrationCoreApi has not been registered")
+    try {
+      return pigeonVar_api.echoString(aString)
+    } catch (e: NativeInteropTestsError) {
+      throw NativeInteropTestsError(
+              e.code, e.message, NativeInteropTestsPigeonInteropCodec.encodeOrNull(e.details))
+          .apply { stackTrace = e.stackTrace }
+    }
+  }
+
+  fun echoUint8List(aUint8List: ByteArray): ByteArray {
+    val pigeonVar_api = api ?: error("NativeInteropHostIntegrationCoreApi has not been registered")
+    try {
+      return pigeonVar_api.echoUint8List(aUint8List)
+    } catch (e: NativeInteropTestsError) {
+      throw NativeInteropTestsError(
+              e.code, e.message, NativeInteropTestsPigeonInteropCodec.encodeOrNull(e.details))
+          .apply { stackTrace = e.stackTrace }
+    }
+  }
+
+  fun echoInt32List(aInt32List: IntArray): IntArray {
+    val pigeonVar_api = api ?: error("NativeInteropHostIntegrationCoreApi has not been registered")
+    try {
+      return pigeonVar_api.echoInt32List(aInt32List)
+    } catch (e: NativeInteropTestsError) {
+      throw NativeInteropTestsError(
+              e.code, e.message, NativeInteropTestsPigeonInteropCodec.encodeOrNull(e.details))
+          .apply { stackTrace = e.stackTrace }
+    }
+  }
+
+  fun echoInt64List(aInt64List: LongArray): LongArray {
+    val pigeonVar_api = api ?: error("NativeInteropHostIntegrationCoreApi has not been registered")
+    try {
+      return pigeonVar_api.echoInt64List(aInt64List)
+    } catch (e: NativeInteropTestsError) {
+      throw NativeInteropTestsError(
+              e.code, e.message, NativeInteropTestsPigeonInteropCodec.encodeOrNull(e.details))
+          .apply { stackTrace = e.stackTrace }
+    }
+  }
+
+  fun echoFloat64List(aFloat64List: DoubleArray): DoubleArray {
+    val pigeonVar_api = api ?: error("NativeInteropHostIntegrationCoreApi has not been registered")
+    try {
+      return pigeonVar_api.echoFloat64List(aFloat64List)
+    } catch (e: NativeInteropTestsError) {
+      throw NativeInteropTestsError(
+              e.code, e.message, NativeInteropTestsPigeonInteropCodec.encodeOrNull(e.details))
+          .apply { stackTrace = e.stackTrace }
+    }
+  }
+
+  fun echoObject(pigeonVar_args: ByteArray): ByteArray? {
+    val pigeonVar_api = api ?: error("NativeInteropHostIntegrationCoreApi has not been registered")
+    try {
+      val pigeonVar_decodedArgs =
+          NativeInteropTestsPigeonInteropCodec.decodeArguments(pigeonVar_args)
+      val anObjectArg = pigeonVar_decodedArgs[0] as Any
+      return NativeInteropTestsPigeonInteropCodec.encodeOrNull(
+          pigeonVar_api.echoObject(anObjectArg))
+    } catch (e: NativeInteropTestsError) {
+      throw NativeInteropTestsError(
+              e.code, e.message, NativeInteropTestsPigeonInteropCodec.encodeOrNull(e.details))
+          .apply { stackTrace = e.stackTrace }
+    }
+  }
+
+  fun echoList(pigeonVar_args: ByteArray): ByteArray? {
+    val pigeonVar_api = api ?: error("NativeInteropHostIntegrationCoreApi has not been registered")
+    try {
+      val pigeonVar_decodedArgs =
+          NativeInteropTestsPigeonInteropCodec.decodeArguments(pigeonVar_args)
+      val listArg = pigeonVar_decodedArgs[0] as List<Any?>
+      return NativeInteropTestsPigeonInteropCodec.encodeOrNull(pigeonVar_api.echoList(listArg))
+    } catch (e: NativeInteropTestsError) {
+      throw NativeInteropTestsError(
+              e.code, e.message, NativeInteropTestsPigeonInteropCodec.encodeOrNull(e.details))
+          .apply { stackTrace = e.stackTrace }
+    }
+  }
+
+  fun echoStringList(pigeonVar_args: ByteArray): ByteArray? {
+    val pigeonVar_api = api ?: error("NativeInteropHostIntegrationCoreApi has not been registered")
+    try {
+      val pigeonVar_decodedArgs =
+          NativeInteropTestsPigeonInteropCodec.decodeArguments(pigeonVar_args)
+      val stringListArg = pigeonVar_decodedArgs[0] as List<String?>
+      return NativeInteropTestsPigeonInteropCodec.encodeOrNull(
+          pigeonVar_api.echoStringList(stringListArg))
+    } catch (e: NativeInteropTestsError) {
+      throw NativeInteropTestsError(
+              e.code, e.message, NativeInteropTestsPigeonInteropCodec.encodeOrNull(e.details))
+          .apply { stackTrace = e.stackTrace }
+    }
+  }
+
+  fun echoIntList(pigeonVar_args: ByteArray): ByteArray? {
+    val pigeonVar_api = api ?: error("NativeInteropHostIntegrationCoreApi has not been registered")
+    try {
+      val pigeonVar_decodedArgs =
+          NativeInteropTestsPigeonInteropCodec.decodeArguments(pigeonVar_args)
+      val intListArg = pigeonVar_decodedArgs[0] as List<Long?>
+      return NativeInteropTestsPigeonInteropCodec.encodeOrNull(
+          pigeonVar_api.echoIntList(intListArg))
+    } catch (e: NativeInteropTestsError) {
+      throw NativeInteropTestsError(
+              e.code, e.message, NativeInteropTestsPigeonInteropCodec.encodeOrNull(e.details))
+          .apply { stackTrace = e.stackTrace }
+    }
+  }
+
+  fun echoDoubleList(pigeonVar_args: ByteArray): ByteArray? {
+    val pigeonVar_api = api ?: error("NativeInteropHostIntegrationCoreApi has not been registered")
+    try {
+      val pigeonVar_decodedArgs =
+          NativeInteropTestsPigeonInteropCodec.decodeArguments(pigeonVar_args)
+      val doubleListArg = pigeonVar_decodedArgs[0] as List<Double?>
+      return NativeInteropTestsPigeonInteropCodec.encodeOrNull(
+          pigeonVar_api.echoDoubleList(doubleListArg))
+    } catch (e: NativeInteropTestsError) {
+      throw NativeInteropTestsError(
+              e.code, e.message, NativeInteropTestsPigeonInteropCodec.encodeOrNull(e.details))
+          .apply { stackTrace = e.stackTrace }
+    }
+  }
+
+  fun echoBoolList(pigeonVar_args: ByteArray): ByteArray? {
+    val pigeonVar_api = api ?: error("NativeInteropHostIntegrationCoreApi has not been registered")
+    try {
+      val pigeonVar_decodedArgs =
+          NativeInteropTestsPigeonInteropCodec.decodeArguments(pigeonVar_args)
+      val boolListArg = pigeonVar_decodedArgs[0] as List<Boolean?>
+      return NativeInteropTestsPigeonInteropCodec.encodeOrNull(
+          pigeonVar_api.echoBoolList(boolListArg))
+    } catch (e: NativeInteropTestsError) {
+      throw NativeInteropTestsError(
+              e.code, e.message, NativeInteropTestsPigeonInteropCodec.encodeOrNull(e.details))
+          .apply { stackTrace = e.stackTrace }
+    }
+  }
+
+  fun echoEnumList(pigeonVar_args: ByteArray): ByteArray? {
+    val pigeonVar_api = api ?: error("NativeInteropHostIntegrationCoreApi has not been registered")
+    try {
+      val pigeonVar_decodedArgs =
+          NativeInteropTestsPigeonInteropCodec.decodeArguments(pigeonVar_args)
+      val enumListArg = pigeonVar_decodedArgs[0] as List<NativeInteropAnEnum?>
+      return NativeInteropTestsPigeonInteropCodec.encodeOrNull(
+          pigeonVar_api.echoEnumList(enumListArg))
+    } catch (e: NativeInteropTestsError) {
+      throw NativeInteropTestsError(
+              e.code, e.message, NativeInteropTestsPigeonInteropCodec.encodeOrNull(e.details))
+          .apply { stackTrace = e.stackTrace }
+    }
+  }
+
+  fun echoClassList(pigeonVar_args: ByteArray): ByteArray? {
+    val pigeonVar_api = api ?: error("NativeInteropHostIntegrationCoreApi has not been registered")
+    try {
+      val pigeonVar_decodedArgs =
+          NativeInteropTestsPigeonInteropCodec.decodeArguments(pigeonVar_args)
+      val classListArg = pigeonVar_decodedArgs[0] as List<NativeInteropAllNullableTypes?>
+      return NativeInteropTestsPigeonInteropCodec.encodeOrNull(
+          pigeonVar_api.echoClassList(classListArg))
+    } catch (e: NativeInteropTestsError) {
+      throw NativeInteropTestsError(
+              e.code, e.message, NativeInteropTestsPigeonInteropCodec.encodeOrNull(e.details))
+          .apply { stackTrace = e.stackTrace }
+    }
+  }
+
+  fun echoNonNullEnumList(pigeonVar_args: ByteArray): ByteArray? {
+    val pigeonVar_api = api ?: error("NativeInteropHostIntegrationCoreApi has not been registered")
+    try {
+      val pigeonVar_decodedArgs =
+          NativeInteropTestsPigeonInteropCodec.decodeArguments(pigeonVar_args)
+      val enumListArg = pigeonVar_decodedArgs[0] as List<NativeInteropAnEnum>
+      return NativeInteropTestsPigeonInteropCodec.encodeOrNull(
+          pigeonVar_api.echoNonNullEnumList(enumListArg))
+    } catch (e: NativeInteropTestsError) {
+      throw NativeInteropTestsError(
+              e.code, e.message, NativeInteropTestsPigeonInteropCodec.encodeOrNull(e.details))
+          .apply { stackTrace = e.stackTrace }
+    }
+  }
+
+  fun echoNonNullClassList(pigeonVar_args: ByteArray): ByteArray? {
+    val pigeonVar_api = api ?: error("NativeInteropHostIntegrationCoreApi has not been registered")
+    try {
+      val pigeonVar_decodedArgs =
+          NativeInteropTestsPigeonInteropCodec.decodeArguments(pigeonVar_args)
+      val classListArg = pigeonVar_decodedArgs[0] as List<NativeInteropAllNullableTypes>
+      return NativeInteropTestsPigeonInteropCodec.encodeOrNull(
+          pigeonVar_api.echoNonNullClassList(classListArg))
+    } catch (e: NativeInteropTestsError) {
+      throw NativeInteropTestsError(
+              e.code, e.message, NativeInteropTestsPigeonInteropCodec.encodeOrNull(e.details))
+          .apply { stackTrace = e.stackTrace }
+    }
+  }
+
+  fun echoMap(pigeonVar_args: ByteArray): ByteArray? {
+    val pigeonVar_api = api ?: error("NativeInteropHostIntegrationCoreApi has not been registered")
+    try {
+      val pigeonVar_decodedArgs =
+          NativeInteropTestsPigeonInteropCodec.decodeArguments(pigeonVar_args)
+      val mapArg = pigeonVar_decodedArgs[0] as Map<Any?, Any?>
+      return NativeInteropTestsPigeonInteropCodec.encodeOrNull(pigeonVar_api.echoMap(mapArg))
+    } catch (e: NativeInteropTestsError) {
+      throw NativeInteropTestsError(
+              e.code, e.message, NativeInteropTestsPigeonInteropCodec.encodeOrNull(e.details))
+          .apply { stackTrace = e.stackTrace }
+    }
+  }
+
+  fun echoStringMap(pigeonVar_args: ByteArray): ByteArray? {
+    val pigeonVar_api = api ?: error("NativeInteropHostIntegrationCoreApi has not been registered")
+    try {
+      val pigeonVar_decodedArgs =
+          NativeInteropTestsPigeonInteropCodec.decodeArguments(pigeonVar_args)
+      val stringMapArg = pigeonVar_decodedArgs[0] as Map<String?, String?>
+      return NativeInteropTestsPigeonInteropCodec.encodeOrNull(
+          pigeonVar_api.echoStringMap(stringMapArg))
+    } catch (e: NativeInteropTestsError) {
+      throw NativeInteropTestsError(
+              e.code, e.message, NativeInteropTestsPigeonInteropCodec.encodeOrNull(e.details))
+          .apply { stackTrace = e.stackTrace }
+    }
+  }
+
+  fun echoIntMap(pigeonVar_args: ByteArray): ByteArray? {
+    val pigeonVar_api = api ?: error("NativeInteropHostIntegrationCoreApi has not been registered")
+    try {
+      val pigeonVar_decodedArgs =
+          NativeInteropTestsPigeonInteropCodec.decodeArguments(pigeonVar_args)
+      val intMapArg = pigeonVar_decodedArgs[0] as Map<Long?, Long?>
+      return NativeInteropTestsPigeonInteropCodec.encodeOrNull(pigeonVar_api.echoIntMap(intMapArg))
+    } catch (e: NativeInteropTestsError) {
+      throw NativeInteropTestsError(
+              e.code, e.message, NativeInteropTestsPigeonInteropCodec.encodeOrNull(e.details))
+          .apply { stackTrace = e.stackTrace }
+    }
+  }
+
+  fun echoEnumMap(pigeonVar_args: ByteArray): ByteArray? {
+    val pigeonVar_api = api ?: error("NativeInteropHostIntegrationCoreApi has not been registered")
+    try {
+      val pigeonVar_decodedArgs =
+          NativeInteropTestsPigeonInteropCodec.decodeArguments(pigeonVar_args)
+      val enumMapArg = pigeonVar_decodedArgs[0] as Map<NativeInteropAnEnum?, NativeInteropAnEnum?>
+      return NativeInteropTestsPigeonInteropCodec.encodeOrNull(
+          pigeonVar_api.echoEnumMap(enumMapArg))
+    } catch (e: NativeInteropTestsError) {
+      throw NativeInteropTestsError(
+              e.code, e.message, NativeInteropTestsPigeonInteropCodec.encodeOrNull(e.details))
+          .apply { stackTrace = e.stackTrace }
+    }
+  }
+
+  fun echoClassMap(pigeonVar_args: ByteArray): ByteArray? {
+    val pigeonVar_api = api ?: error("NativeInteropHostIntegrationCoreApi has not been registered")
+    try {
+      val pigeonVar_decodedArgs =
+          NativeInteropTestsPigeonInteropCodec.decodeArguments(pigeonVar_args)
+      val classMapArg = pigeonVar_decodedArgs[0] as Map<Long?, NativeInteropAllNullableTypes?>
+      return NativeInteropTestsPigeonInteropCodec.encodeOrNull(
+          pigeonVar_api.echoClassMap(classMapArg))
+    } catch (e: NativeInteropTestsError) {
+      throw NativeInteropTestsError(
+              e.code, e.message, NativeInteropTestsPigeonInteropCodec.encodeOrNull(e.details))
+          .apply { stackTrace = e.stackTrace }
+    }
+  }
+
+  fun echoNonNullStringMap(pigeonVar_args: ByteArray): ByteArray? {
+    val pigeonVar_api = api ?: error("NativeInteropHostIntegrationCoreApi has not been registered")
+    try {
+      val pigeonVar_decodedArgs =
+          NativeInteropTestsPigeonInteropCodec.decodeArguments(pigeonVar_args)
+      val stringMapArg = pigeonVar_decodedArgs[0] as Map<String, String>
+      return NativeInteropTestsPigeonInteropCodec.encodeOrNull(
+          pigeonVar_api.echoNonNullStringMap(stringMapArg))
+    } catch (e: NativeInteropTestsError) {
+      throw NativeInteropTestsError(
+              e.code, e.message, NativeInteropTestsPigeonInteropCodec.encodeOrNull(e.details))
+          .apply { stackTrace = e.stackTrace }
+    }
+  }
+
+  fun echoNonNullIntMap(pigeonVar_args: ByteArray): ByteArray? {
+    val pigeonVar_api = api ?: error("NativeInteropHostIntegrationCoreApi has not been registered")
+    try {
+      val pigeonVar_decodedArgs =
+          NativeInteropTestsPigeonInteropCodec.decodeArguments(pigeonVar_args)
+      val intMapArg = pigeonVar_decodedArgs[0] as Map<Long, Long>
+      return NativeInteropTestsPigeonInteropCodec.encodeOrNull(
+          pigeonVar_api.echoNonNullIntMap(intMapArg))
+    } catch (e: NativeInteropTestsError) {
+      throw NativeInteropTestsError(
+              e.code, e.message, NativeInteropTestsPigeonInteropCodec.encodeOrNull(e.details))
+          .apply { stackTrace = e.stackTrace }
+    }
+  }
+
+  fun echoNonNullEnumMap(pigeonVar_args: ByteArray): ByteArray? {
+    val pigeonVar_api = api ?: error("NativeInteropHostIntegrationCoreApi has not been registered")
+    try {
+      val pigeonVar_decodedArgs =
+          NativeInteropTestsPigeonInteropCodec.decodeArguments(pigeonVar_args)
+      val enumMapArg = pigeonVar_decodedArgs[0] as Map<NativeInteropAnEnum, NativeInteropAnEnum>
+      return NativeInteropTestsPigeonInteropCodec.encodeOrNull(
+          pigeonVar_api.echoNonNullEnumMap(enumMapArg))
+    } catch (e: NativeInteropTestsError) {
+      throw NativeInteropTestsError(
+              e.code, e.message, NativeInteropTestsPigeonInteropCodec.encodeOrNull(e.details))
+          .apply { stackTrace = e.stackTrace }
+    }
+  }
+
+  fun echoNonNullClassMap(pigeonVar_args: ByteArray): ByteArray? {
+    val pigeonVar_api = api ?: error("NativeInteropHostIntegrationCoreApi has not been registered")
+    try {
+      val pigeonVar_decodedArgs =
+          NativeInteropTestsPigeonInteropCodec.decodeArguments(pigeonVar_args)
+      val classMapArg = pigeonVar_decodedArgs[0] as Map<Long, NativeInteropAllNullableTypes>
+      return NativeInteropTestsPigeonInteropCodec.encodeOrNull(
+          pigeonVar_api.echoNonNullClassMap(classMapArg))
+    } catch (e: NativeInteropTestsError) {
+      throw NativeInteropTestsError(
+              e.code, e.message, NativeInteropTestsPigeonInteropCodec.encodeOrNull(e.details))
+          .apply { stackTrace = e.stackTrace }
+    }
+  }
+
+  fun echoClassWrapper(pigeonVar_args: ByteArray): ByteArray? {
+    val pigeonVar_api = api ?: error("NativeInteropHostIntegrationCoreApi has not been registered")
+    try {
+      val pigeonVar_decodedArgs =
+          NativeInteropTestsPigeonInteropCodec.decodeArguments(pigeonVar_args)
+      val wrapperArg = pigeonVar_decodedArgs[0] as NativeInteropAllClassesWrapper
+      return NativeInteropTestsPigeonInteropCodec.encodeOrNull(
+          pigeonVar_api.echoClassWrapper(wrapperArg))
+    } catch (e: NativeInteropTestsError) {
+      throw NativeInteropTestsError(
+              e.code, e.message, NativeInteropTestsPigeonInteropCodec.encodeOrNull(e.details))
+          .apply { stackTrace = e.stackTrace }
+    }
+  }
+
+  fun echoSealedClass(pigeonVar_args: ByteArray): ByteArray? {
+    val pigeonVar_api = api ?: error("NativeInteropHostIntegrationCoreApi has not been registered")
+    try {
+      val pigeonVar_decodedArgs =
+          NativeInteropTestsPigeonInteropCodec.decodeArguments(pigeonVar_args)
+      val sealedClassArg = pigeonVar_decodedArgs[0] as NativeInteropSealedClass
+      return NativeInteropTestsPigeonInteropCodec.encodeOrNull(
+          pigeonVar_api.echoSealedClass(sealedClassArg))
+    } catch (e: NativeInteropTestsError) {
+      throw NativeInteropTestsError(
+              e.code, e.message, NativeInteropTestsPigeonInteropCodec.encodeOrNull(e.details))
+          .apply { stackTrace = e.stackTrace }
+    }
+  }
+
+  fun echoNullableSealedClass(pigeonVar_args: ByteArray): ByteArray? {
+    val pigeonVar_api = api ?: error("NativeInteropHostIntegrationCoreApi has not been registered")
+    try {
+      val pigeonVar_decodedArgs =
+          NativeInteropTestsPigeonInteropCodec.decodeArguments(pigeonVar_args)
+      val sealedClassArg = pigeonVar_decodedArgs[0] as NativeInteropSealedClass?
+      return NativeInteropTestsPigeonInteropCodec.encodeOrNull(
+          pigeonVar_api.echoNullableSealedClass(sealedClassArg))
+    } catch (e: NativeInteropTestsError) {
+      throw NativeInteropTestsError(
+              e.code, e.message, NativeInteropTestsPigeonInteropCodec.encodeOrNull(e.details))
+          .apply { stackTrace = e.stackTrace }
+    }
+  }
+
+  fun echoSealedClassList(pigeonVar_args: ByteArray): ByteArray? {
+    val pigeonVar_api = api ?: error("NativeInteropHostIntegrationCoreApi has not been registered")
+    try {
+      val pigeonVar_decodedArgs =
+          NativeInteropTestsPigeonInteropCodec.decodeArguments(pigeonVar_args)
+      val sealedClassListArg = pigeonVar_decodedArgs[0] as List<NativeInteropSealedClass>
+      return NativeInteropTestsPigeonInteropCodec.encodeOrNull(
+          pigeonVar_api.echoSealedClassList(sealedClassListArg))
+    } catch (e: NativeInteropTestsError) {
+      throw NativeInteropTestsError(
+              e.code, e.message, NativeInteropTestsPigeonInteropCodec.encodeOrNull(e.details))
+          .apply { stackTrace = e.stackTrace }
+    }
+  }
+
+  fun echoSealedClassWrapper(pigeonVar_args: ByteArray): ByteArray? {
+    val pigeonVar_api = api ?: error("NativeInteropHostIntegrationCoreApi has not been registered")
+    try {
+      val pigeonVar_decodedArgs =
+          NativeInteropTestsPigeonInteropCodec.decodeArguments(pigeonVar_args)
+      val wrapperArg = pigeonVar_decodedArgs[0] as NativeInteropSealedClassWrapper
+      return NativeInteropTestsPigeonInteropCodec.encodeOrNull(
+          pigeonVar_api.echoSealedClassWrapper(wrapperArg))
+    } catch (e: NativeInteropTestsError) {
+      throw NativeInteropTestsError(
+              e.code, e.message, NativeInteropTestsPigeonInteropCodec.encodeOrNull(e.details))
+          .apply { stackTrace = e.stackTrace }
+    }
+  }
+
+  fun echoEnum(anEnum: Long): Long {
+    val pigeonVar_api = api ?: error("NativeInteropHostIntegrationCoreApi has not been registered")
+    try {
+      return pigeonVar_api.echoEnum(NativeInteropAnEnum.ofRaw(anEnum.toInt())!!).raw.toLong()
+    } catch (e: NativeInteropTestsError) {
+      throw NativeInteropTestsError(
+              e.code, e.message, NativeInteropTestsPigeonInteropCodec.encodeOrNull(e.details))
+          .apply { stackTrace = e.stackTrace }
+    }
+  }
+
+  fun echoAnotherEnum(anotherEnum: Long): Long {
+    val pigeonVar_api = api ?: error("NativeInteropHostIntegrationCoreApi has not been registered")
+    try {
+      return pigeonVar_api
+          .echoAnotherEnum(NativeInteropAnotherEnum.ofRaw(anotherEnum.toInt())!!)
+          .raw
+          .toLong()
+    } catch (e: NativeInteropTestsError) {
+      throw NativeInteropTestsError(
+              e.code, e.message, NativeInteropTestsPigeonInteropCodec.encodeOrNull(e.details))
+          .apply { stackTrace = e.stackTrace }
+    }
+  }
+
+  fun echoNamedDefaultString(aString: String): String {
+    val pigeonVar_api = api ?: error("NativeInteropHostIntegrationCoreApi has not been registered")
+    try {
+      return pigeonVar_api.echoNamedDefaultString(aString)
+    } catch (e: NativeInteropTestsError) {
+      throw NativeInteropTestsError(
+              e.code, e.message, NativeInteropTestsPigeonInteropCodec.encodeOrNull(e.details))
+          .apply { stackTrace = e.stackTrace }
+    }
+  }
+
+  fun echoOptionalDefaultDouble(aDouble: Double): Double {
+    val pigeonVar_api = api ?: error("NativeInteropHostIntegrationCoreApi has not been registered")
+    try {
+      return pigeonVar_api.echoOptionalDefaultDouble(aDouble)
+    } catch (e: NativeInteropTestsError) {
+      throw NativeInteropTestsError(
+              e.code, e.message, NativeInteropTestsPigeonInteropCodec.encodeOrNull(e.details))
+          .apply { stackTrace = e.stackTrace }
+    }
+  }
+
+  fun echoRequiredInt(anInt: Long): Long {
+    val pigeonVar_api = api ?: error("NativeInteropHostIntegrationCoreApi has not been registered")
+    try {
+      return pigeonVar_api.echoRequiredInt(anInt)
+    } catch (e: NativeInteropTestsError) {
+      throw NativeInteropTestsError(
+              e.code, e.message, NativeInteropTestsPigeonInteropCodec.encodeOrNull(e.details))
+          .apply { stackTrace = e.stackTrace }
+    }
+  }
+
+  fun echoAllNullableTypes(pigeonVar_args: ByteArray): ByteArray? {
+    val pigeonVar_api = api ?: error("NativeInteropHostIntegrationCoreApi has not been registered")
+    try {
+      val pigeonVar_decodedArgs =
+          NativeInteropTestsPigeonInteropCodec.decodeArguments(pigeonVar_args)
+      val everythingArg = pigeonVar_decodedArgs[0] as NativeInteropAllNullableTypes?
+      return NativeInteropTestsPigeonInteropCodec.encodeOrNull(
+          pigeonVar_api.echoAllNullableTypes(everythingArg))
+    } catch (e: NativeInteropTestsError) {
+      throw NativeInteropTestsError(
+              e.code, e.message, NativeInteropTestsPigeonInteropCodec.encodeOrNull(e.details))
+          .apply { stackTrace = e.stackTrace }
+    }
+  }
+
+  fun echoAllNullableTypesWithoutRecursion(pigeonVar_args: ByteArray): ByteArray? {
+    val pigeonVar_api = api ?: error("NativeInteropHostIntegrationCoreApi has not been registered")
+    try {
+      val pigeonVar_decodedArgs =
+          NativeInteropTestsPigeonInteropCodec.decodeArguments(pigeonVar_args)
+      val everythingArg = pigeonVar_decodedArgs[0] as NativeInteropAllNullableTypesWithoutRecursion?
+      return NativeInteropTestsPigeonInteropCodec.encodeOrNull(
+          pigeonVar_api.echoAllNullableTypesWithoutRecursion(everythingArg))
+    } catch (e: NativeInteropTestsError) {
+      throw NativeInteropTestsError(
+              e.code, e.message, NativeInteropTestsPigeonInteropCodec.encodeOrNull(e.details))
+          .apply { stackTrace = e.stackTrace }
+    }
+  }
+
+  fun extractNestedNullableString(pigeonVar_args: ByteArray): String? {
+    val pigeonVar_api = api ?: error("NativeInteropHostIntegrationCoreApi has not been registered")
+    try {
+      val pigeonVar_decodedArgs =
+          NativeInteropTestsPigeonInteropCodec.decodeArguments(pigeonVar_args)
+      val wrapperArg = pigeonVar_decodedArgs[0] as NativeInteropAllClassesWrapper
+      return pigeonVar_api.extractNestedNullableString(wrapperArg)
+    } catch (e: NativeInteropTestsError) {
+      throw NativeInteropTestsError(
+              e.code, e.message, NativeInteropTestsPigeonInteropCodec.encodeOrNull(e.details))
+          .apply { stackTrace = e.stackTrace }
+    }
+  }
+
+  fun createNestedNullableString(nullableString: String?): ByteArray? {
+    val pigeonVar_api = api ?: error("NativeInteropHostIntegrationCoreApi has not been registered")
+    try {
+      return NativeInteropTestsPigeonInteropCodec.encodeOrNull(
+          pigeonVar_api.createNestedNullableString(nullableString))
+    } catch (e: NativeInteropTestsError) {
+      throw NativeInteropTestsError(
+              e.code, e.message, NativeInteropTestsPigeonInteropCodec.encodeOrNull(e.details))
+          .apply { stackTrace = e.stackTrace }
+    }
+  }
+
+  fun sendMultipleNullableTypes(
       aNullableBool: Boolean?,
       aNullableInt: Long?,
       aNullableString: String?
-  ): NativeInteropAllNullableTypes {
-    api?.let {
-      try {
-        return it.sendMultipleNullableTypes(aNullableBool, aNullableInt, aNullableString)
-      } catch (e: Exception) {
-        throw e
-      }
+  ): ByteArray? {
+    val pigeonVar_api = api ?: error("NativeInteropHostIntegrationCoreApi has not been registered")
+    try {
+      return NativeInteropTestsPigeonInteropCodec.encodeOrNull(
+          pigeonVar_api.sendMultipleNullableTypes(aNullableBool, aNullableInt, aNullableString))
+    } catch (e: NativeInteropTestsError) {
+      throw NativeInteropTestsError(
+              e.code, e.message, NativeInteropTestsPigeonInteropCodec.encodeOrNull(e.details))
+          .apply { stackTrace = e.stackTrace }
     }
-    error("NativeInteropHostIntegrationCoreApi has not been registered")
   }
-  /** Returns passed in arguments of multiple types. */
-  override fun sendMultipleNullableTypesWithoutRecursion(
+
+  fun sendMultipleNullableTypesWithoutRecursion(
       aNullableBool: Boolean?,
       aNullableInt: Long?,
       aNullableString: String?
-  ): NativeInteropAllNullableTypesWithoutRecursion {
-    api?.let {
-      try {
-        return it.sendMultipleNullableTypesWithoutRecursion(
-            aNullableBool, aNullableInt, aNullableString)
-      } catch (e: Exception) {
-        throw e
-      }
+  ): ByteArray? {
+    val pigeonVar_api = api ?: error("NativeInteropHostIntegrationCoreApi has not been registered")
+    try {
+      return NativeInteropTestsPigeonInteropCodec.encodeOrNull(
+          pigeonVar_api.sendMultipleNullableTypesWithoutRecursion(
+              aNullableBool, aNullableInt, aNullableString))
+    } catch (e: NativeInteropTestsError) {
+      throw NativeInteropTestsError(
+              e.code, e.message, NativeInteropTestsPigeonInteropCodec.encodeOrNull(e.details))
+          .apply { stackTrace = e.stackTrace }
     }
-    error("NativeInteropHostIntegrationCoreApi has not been registered")
-  }
-  /** Returns passed in int. */
-  override fun echoNullableInt(aNullableInt: Long?): Long? {
-    api?.let {
-      try {
-        return it.echoNullableInt(aNullableInt)
-      } catch (e: Exception) {
-        throw e
-      }
-    }
-    error("NativeInteropHostIntegrationCoreApi has not been registered")
-  }
-  /** Returns passed in double. */
-  override fun echoNullableDouble(aNullableDouble: Double?): Double? {
-    api?.let {
-      try {
-        return it.echoNullableDouble(aNullableDouble)
-      } catch (e: Exception) {
-        throw e
-      }
-    }
-    error("NativeInteropHostIntegrationCoreApi has not been registered")
-  }
-  /** Returns the passed in boolean. */
-  override fun echoNullableBool(aNullableBool: Boolean?): Boolean? {
-    api?.let {
-      try {
-        return it.echoNullableBool(aNullableBool)
-      } catch (e: Exception) {
-        throw e
-      }
-    }
-    error("NativeInteropHostIntegrationCoreApi has not been registered")
-  }
-  /** Returns the passed in string. */
-  override fun echoNullableString(aNullableString: String?): String? {
-    api?.let {
-      try {
-        return it.echoNullableString(aNullableString)
-      } catch (e: Exception) {
-        throw e
-      }
-    }
-    error("NativeInteropHostIntegrationCoreApi has not been registered")
-  }
-  /** Returns the passed in Uint8List. */
-  override fun echoNullableUint8List(aNullableUint8List: ByteArray?): ByteArray? {
-    api?.let {
-      try {
-        return it.echoNullableUint8List(aNullableUint8List)
-      } catch (e: Exception) {
-        throw e
-      }
-    }
-    error("NativeInteropHostIntegrationCoreApi has not been registered")
-  }
-  /** Returns the passed in Int32List. */
-  override fun echoNullableInt32List(aNullableInt32List: IntArray?): IntArray? {
-    api?.let {
-      try {
-        return it.echoNullableInt32List(aNullableInt32List)
-      } catch (e: Exception) {
-        throw e
-      }
-    }
-    error("NativeInteropHostIntegrationCoreApi has not been registered")
-  }
-  /** Returns the passed in Int64List. */
-  override fun echoNullableInt64List(aNullableInt64List: LongArray?): LongArray? {
-    api?.let {
-      try {
-        return it.echoNullableInt64List(aNullableInt64List)
-      } catch (e: Exception) {
-        throw e
-      }
-    }
-    error("NativeInteropHostIntegrationCoreApi has not been registered")
-  }
-  /** Returns the passed in Float64List. */
-  override fun echoNullableFloat64List(aNullableFloat64List: DoubleArray?): DoubleArray? {
-    api?.let {
-      try {
-        return it.echoNullableFloat64List(aNullableFloat64List)
-      } catch (e: Exception) {
-        throw e
-      }
-    }
-    error("NativeInteropHostIntegrationCoreApi has not been registered")
-  }
-  /** Returns the passed in generic Object. */
-  override fun echoNullableObject(aNullableObject: Any?): Any? {
-    api?.let {
-      try {
-        return it.echoNullableObject(aNullableObject)
-      } catch (e: Exception) {
-        throw e
-      }
-    }
-    error("NativeInteropHostIntegrationCoreApi has not been registered")
-  }
-  /** Returns the passed list, to test serialization and deserialization. */
-  override fun echoNullableList(aNullableList: List<Any?>?): List<Any?>? {
-    api?.let {
-      try {
-        return it.echoNullableList(aNullableList)
-      } catch (e: Exception) {
-        throw e
-      }
-    }
-    error("NativeInteropHostIntegrationCoreApi has not been registered")
-  }
-  /** Returns the passed list, to test serialization and deserialization. */
-  override fun echoNullableEnumList(
-      enumList: List<NativeInteropAnEnum?>?
-  ): List<NativeInteropAnEnum?>? {
-    api?.let {
-      try {
-        return it.echoNullableEnumList(enumList)
-      } catch (e: Exception) {
-        throw e
-      }
-    }
-    error("NativeInteropHostIntegrationCoreApi has not been registered")
-  }
-  /** Returns the passed list, to test serialization and deserialization. */
-  override fun echoNullableClassList(
-      classList: List<NativeInteropAllNullableTypes?>?
-  ): List<NativeInteropAllNullableTypes?>? {
-    api?.let {
-      try {
-        return it.echoNullableClassList(classList)
-      } catch (e: Exception) {
-        throw e
-      }
-    }
-    error("NativeInteropHostIntegrationCoreApi has not been registered")
-  }
-  /** Returns the passed list, to test serialization and deserialization. */
-  override fun echoNullableNonNullEnumList(
-      enumList: List<NativeInteropAnEnum>?
-  ): List<NativeInteropAnEnum>? {
-    api?.let {
-      try {
-        return it.echoNullableNonNullEnumList(enumList)
-      } catch (e: Exception) {
-        throw e
-      }
-    }
-    error("NativeInteropHostIntegrationCoreApi has not been registered")
-  }
-  /** Returns the passed list, to test serialization and deserialization. */
-  override fun echoNullableNonNullClassList(
-      classList: List<NativeInteropAllNullableTypes>?
-  ): List<NativeInteropAllNullableTypes>? {
-    api?.let {
-      try {
-        return it.echoNullableNonNullClassList(classList)
-      } catch (e: Exception) {
-        throw e
-      }
-    }
-    error("NativeInteropHostIntegrationCoreApi has not been registered")
-  }
-  /** Returns the passed map, to test serialization and deserialization. */
-  override fun echoNullableMap(map: Map<Any?, Any?>?): Map<Any?, Any?>? {
-    api?.let {
-      try {
-        return it.echoNullableMap(map)
-      } catch (e: Exception) {
-        throw e
-      }
-    }
-    error("NativeInteropHostIntegrationCoreApi has not been registered")
-  }
-  /** Returns the passed map, to test serialization and deserialization. */
-  override fun echoNullableStringMap(stringMap: Map<String?, String?>?): Map<String?, String?>? {
-    api?.let {
-      try {
-        return it.echoNullableStringMap(stringMap)
-      } catch (e: Exception) {
-        throw e
-      }
-    }
-    error("NativeInteropHostIntegrationCoreApi has not been registered")
-  }
-  /** Returns the passed map, to test serialization and deserialization. */
-  override fun echoNullableIntMap(intMap: Map<Long?, Long?>?): Map<Long?, Long?>? {
-    api?.let {
-      try {
-        return it.echoNullableIntMap(intMap)
-      } catch (e: Exception) {
-        throw e
-      }
-    }
-    error("NativeInteropHostIntegrationCoreApi has not been registered")
-  }
-  /** Returns the passed map, to test serialization and deserialization. */
-  override fun echoNullableEnumMap(
-      enumMap: Map<NativeInteropAnEnum?, NativeInteropAnEnum?>?
-  ): Map<NativeInteropAnEnum?, NativeInteropAnEnum?>? {
-    api?.let {
-      try {
-        return it.echoNullableEnumMap(enumMap)
-      } catch (e: Exception) {
-        throw e
-      }
-    }
-    error("NativeInteropHostIntegrationCoreApi has not been registered")
-  }
-  /** Returns the passed map, to test serialization and deserialization. */
-  override fun echoNullableClassMap(
-      classMap: Map<Long?, NativeInteropAllNullableTypes?>?
-  ): Map<Long?, NativeInteropAllNullableTypes?>? {
-    api?.let {
-      try {
-        return it.echoNullableClassMap(classMap)
-      } catch (e: Exception) {
-        throw e
-      }
-    }
-    error("NativeInteropHostIntegrationCoreApi has not been registered")
-  }
-  /** Returns the passed map, to test serialization and deserialization. */
-  override fun echoNullableNonNullStringMap(stringMap: Map<String, String>?): Map<String, String>? {
-    api?.let {
-      try {
-        return it.echoNullableNonNullStringMap(stringMap)
-      } catch (e: Exception) {
-        throw e
-      }
-    }
-    error("NativeInteropHostIntegrationCoreApi has not been registered")
-  }
-  /** Returns the passed map, to test serialization and deserialization. */
-  override fun echoNullableNonNullIntMap(intMap: Map<Long, Long>?): Map<Long, Long>? {
-    api?.let {
-      try {
-        return it.echoNullableNonNullIntMap(intMap)
-      } catch (e: Exception) {
-        throw e
-      }
-    }
-    error("NativeInteropHostIntegrationCoreApi has not been registered")
-  }
-  /** Returns the passed map, to test serialization and deserialization. */
-  override fun echoNullableNonNullEnumMap(
-      enumMap: Map<NativeInteropAnEnum, NativeInteropAnEnum>?
-  ): Map<NativeInteropAnEnum, NativeInteropAnEnum>? {
-    api?.let {
-      try {
-        return it.echoNullableNonNullEnumMap(enumMap)
-      } catch (e: Exception) {
-        throw e
-      }
-    }
-    error("NativeInteropHostIntegrationCoreApi has not been registered")
-  }
-  /** Returns the passed map, to test serialization and deserialization. */
-  override fun echoNullableNonNullClassMap(
-      classMap: Map<Long, NativeInteropAllNullableTypes>?
-  ): Map<Long, NativeInteropAllNullableTypes>? {
-    api?.let {
-      try {
-        return it.echoNullableNonNullClassMap(classMap)
-      } catch (e: Exception) {
-        throw e
-      }
-    }
-    error("NativeInteropHostIntegrationCoreApi has not been registered")
   }
 
-  override fun echoNullableEnum(anEnum: NativeInteropAnEnum?): NativeInteropAnEnum? {
-    api?.let {
-      try {
-        return it.echoNullableEnum(anEnum)
-      } catch (e: Exception) {
-        throw e
-      }
+  fun echoNullableInt(aNullableInt: Long?): Long? {
+    val pigeonVar_api = api ?: error("NativeInteropHostIntegrationCoreApi has not been registered")
+    try {
+      return pigeonVar_api.echoNullableInt(aNullableInt)
+    } catch (e: NativeInteropTestsError) {
+      throw NativeInteropTestsError(
+              e.code, e.message, NativeInteropTestsPigeonInteropCodec.encodeOrNull(e.details))
+          .apply { stackTrace = e.stackTrace }
     }
-    error("NativeInteropHostIntegrationCoreApi has not been registered")
   }
 
-  override fun echoAnotherNullableEnum(
-      anotherEnum: NativeInteropAnotherEnum?
-  ): NativeInteropAnotherEnum? {
-    api?.let {
-      try {
-        return it.echoAnotherNullableEnum(anotherEnum)
-      } catch (e: Exception) {
-        throw e
-      }
+  fun echoNullableDouble(aNullableDouble: Double?): Double? {
+    val pigeonVar_api = api ?: error("NativeInteropHostIntegrationCoreApi has not been registered")
+    try {
+      return pigeonVar_api.echoNullableDouble(aNullableDouble)
+    } catch (e: NativeInteropTestsError) {
+      throw NativeInteropTestsError(
+              e.code, e.message, NativeInteropTestsPigeonInteropCodec.encodeOrNull(e.details))
+          .apply { stackTrace = e.stackTrace }
     }
-    error("NativeInteropHostIntegrationCoreApi has not been registered")
-  }
-  /** Returns passed in int. */
-  override fun echoOptionalNullableInt(aNullableInt: Long?): Long? {
-    api?.let {
-      try {
-        return it.echoOptionalNullableInt(aNullableInt)
-      } catch (e: Exception) {
-        throw e
-      }
-    }
-    error("NativeInteropHostIntegrationCoreApi has not been registered")
-  }
-  /** Returns the passed in string. */
-  override fun echoNamedNullableString(aNullableString: String?): String? {
-    api?.let {
-      try {
-        return it.echoNamedNullableString(aNullableString)
-      } catch (e: Exception) {
-        throw e
-      }
-    }
-    error("NativeInteropHostIntegrationCoreApi has not been registered")
-  }
-  /**
-   * A no-op function taking no arguments and returning no value, to sanity test basic asynchronous
-   * calling.
-   */
-  override suspend fun noopAsync() {
-    api?.let {
-      try {
-        return it.noopAsync()
-      } catch (e: Exception) {
-        throw e
-      }
-    }
-    error("NativeInteropHostIntegrationCoreApi has not been registered")
-  }
-  /** Returns passed in int asynchronously. */
-  override suspend fun echoAsyncInt(anInt: Long): Long {
-    api?.let {
-      try {
-        return it.echoAsyncInt(anInt)
-      } catch (e: Exception) {
-        throw e
-      }
-    }
-    error("NativeInteropHostIntegrationCoreApi has not been registered")
-  }
-  /** Returns passed in double asynchronously. */
-  override suspend fun echoAsyncDouble(aDouble: Double): Double {
-    api?.let {
-      try {
-        return it.echoAsyncDouble(aDouble)
-      } catch (e: Exception) {
-        throw e
-      }
-    }
-    error("NativeInteropHostIntegrationCoreApi has not been registered")
-  }
-  /** Returns the passed in boolean asynchronously. */
-  override suspend fun echoAsyncBool(aBool: Boolean): Boolean {
-    api?.let {
-      try {
-        return it.echoAsyncBool(aBool)
-      } catch (e: Exception) {
-        throw e
-      }
-    }
-    error("NativeInteropHostIntegrationCoreApi has not been registered")
-  }
-  /** Returns the passed string asynchronously. */
-  override suspend fun echoAsyncString(aString: String): String {
-    api?.let {
-      try {
-        return it.echoAsyncString(aString)
-      } catch (e: Exception) {
-        throw e
-      }
-    }
-    error("NativeInteropHostIntegrationCoreApi has not been registered")
-  }
-  /** Returns the passed in Uint8List asynchronously. */
-  override suspend fun echoAsyncUint8List(aUint8List: ByteArray): ByteArray {
-    api?.let {
-      try {
-        return it.echoAsyncUint8List(aUint8List)
-      } catch (e: Exception) {
-        throw e
-      }
-    }
-    error("NativeInteropHostIntegrationCoreApi has not been registered")
-  }
-  /** Returns the passed in Int32List asynchronously. */
-  override suspend fun echoAsyncInt32List(aInt32List: IntArray): IntArray {
-    api?.let {
-      try {
-        return it.echoAsyncInt32List(aInt32List)
-      } catch (e: Exception) {
-        throw e
-      }
-    }
-    error("NativeInteropHostIntegrationCoreApi has not been registered")
-  }
-  /** Returns the passed in Int64List asynchronously. */
-  override suspend fun echoAsyncInt64List(aInt64List: LongArray): LongArray {
-    api?.let {
-      try {
-        return it.echoAsyncInt64List(aInt64List)
-      } catch (e: Exception) {
-        throw e
-      }
-    }
-    error("NativeInteropHostIntegrationCoreApi has not been registered")
-  }
-  /** Returns the passed in Float64List asynchronously. */
-  override suspend fun echoAsyncFloat64List(aFloat64List: DoubleArray): DoubleArray {
-    api?.let {
-      try {
-        return it.echoAsyncFloat64List(aFloat64List)
-      } catch (e: Exception) {
-        throw e
-      }
-    }
-    error("NativeInteropHostIntegrationCoreApi has not been registered")
-  }
-  /** Returns the passed in generic Object asynchronously. */
-  override suspend fun echoAsyncObject(anObject: Any): Any {
-    api?.let {
-      try {
-        return it.echoAsyncObject(anObject)
-      } catch (e: Exception) {
-        throw e
-      }
-    }
-    error("NativeInteropHostIntegrationCoreApi has not been registered")
-  }
-  /** Returns the passed list, to test asynchronous serialization and deserialization. */
-  override suspend fun echoAsyncList(list: List<Any?>): List<Any?> {
-    api?.let {
-      try {
-        return it.echoAsyncList(list)
-      } catch (e: Exception) {
-        throw e
-      }
-    }
-    error("NativeInteropHostIntegrationCoreApi has not been registered")
-  }
-  /** Returns the passed list, to test asynchronous serialization and deserialization. */
-  override suspend fun echoAsyncEnumList(
-      enumList: List<NativeInteropAnEnum?>
-  ): List<NativeInteropAnEnum?> {
-    api?.let {
-      try {
-        return it.echoAsyncEnumList(enumList)
-      } catch (e: Exception) {
-        throw e
-      }
-    }
-    error("NativeInteropHostIntegrationCoreApi has not been registered")
-  }
-  /** Returns the passed list, to test asynchronous serialization and deserialization. */
-  override suspend fun echoAsyncClassList(
-      classList: List<NativeInteropAllNullableTypes?>
-  ): List<NativeInteropAllNullableTypes?> {
-    api?.let {
-      try {
-        return it.echoAsyncClassList(classList)
-      } catch (e: Exception) {
-        throw e
-      }
-    }
-    error("NativeInteropHostIntegrationCoreApi has not been registered")
-  }
-  /** Returns the passed map, to test asynchronous serialization and deserialization. */
-  override suspend fun echoAsyncMap(map: Map<Any?, Any?>): Map<Any?, Any?> {
-    api?.let {
-      try {
-        return it.echoAsyncMap(map)
-      } catch (e: Exception) {
-        throw e
-      }
-    }
-    error("NativeInteropHostIntegrationCoreApi has not been registered")
-  }
-  /** Returns the passed map, to test asynchronous serialization and deserialization. */
-  override suspend fun echoAsyncStringMap(stringMap: Map<String?, String?>): Map<String?, String?> {
-    api?.let {
-      try {
-        return it.echoAsyncStringMap(stringMap)
-      } catch (e: Exception) {
-        throw e
-      }
-    }
-    error("NativeInteropHostIntegrationCoreApi has not been registered")
-  }
-  /** Returns the passed map, to test asynchronous serialization and deserialization. */
-  override suspend fun echoAsyncIntMap(intMap: Map<Long?, Long?>): Map<Long?, Long?> {
-    api?.let {
-      try {
-        return it.echoAsyncIntMap(intMap)
-      } catch (e: Exception) {
-        throw e
-      }
-    }
-    error("NativeInteropHostIntegrationCoreApi has not been registered")
-  }
-  /** Returns the passed map, to test asynchronous serialization and deserialization. */
-  override suspend fun echoAsyncEnumMap(
-      enumMap: Map<NativeInteropAnEnum?, NativeInteropAnEnum?>
-  ): Map<NativeInteropAnEnum?, NativeInteropAnEnum?> {
-    api?.let {
-      try {
-        return it.echoAsyncEnumMap(enumMap)
-      } catch (e: Exception) {
-        throw e
-      }
-    }
-    error("NativeInteropHostIntegrationCoreApi has not been registered")
-  }
-  /** Returns the passed map, to test asynchronous serialization and deserialization. */
-  override suspend fun echoAsyncClassMap(
-      classMap: Map<Long?, NativeInteropAllNullableTypes?>
-  ): Map<Long?, NativeInteropAllNullableTypes?> {
-    api?.let {
-      try {
-        return it.echoAsyncClassMap(classMap)
-      } catch (e: Exception) {
-        throw e
-      }
-    }
-    error("NativeInteropHostIntegrationCoreApi has not been registered")
-  }
-  /** Returns the passed enum, to test asynchronous serialization and deserialization. */
-  override suspend fun echoAsyncEnum(anEnum: NativeInteropAnEnum): NativeInteropAnEnum {
-    api?.let {
-      try {
-        return it.echoAsyncEnum(anEnum)
-      } catch (e: Exception) {
-        throw e
-      }
-    }
-    error("NativeInteropHostIntegrationCoreApi has not been registered")
-  }
-  /** Returns the passed enum, to test asynchronous serialization and deserialization. */
-  override suspend fun echoAnotherAsyncEnum(
-      anotherEnum: NativeInteropAnotherEnum
-  ): NativeInteropAnotherEnum {
-    api?.let {
-      try {
-        return it.echoAnotherAsyncEnum(anotherEnum)
-      } catch (e: Exception) {
-        throw e
-      }
-    }
-    error("NativeInteropHostIntegrationCoreApi has not been registered")
-  }
-  /** Responds with an error from an async function returning a value. */
-  override suspend fun throwAsyncError(): Any? {
-    api?.let {
-      try {
-        return it.throwAsyncError()
-      } catch (e: Exception) {
-        throw e
-      }
-    }
-    error("NativeInteropHostIntegrationCoreApi has not been registered")
-  }
-  /** Responds with an error from an async void function. */
-  override suspend fun throwAsyncErrorFromVoid() {
-    api?.let {
-      try {
-        return it.throwAsyncErrorFromVoid()
-      } catch (e: Exception) {
-        throw e
-      }
-    }
-    error("NativeInteropHostIntegrationCoreApi has not been registered")
-  }
-  /** Responds with a Flutter error from an async function returning a value. */
-  override suspend fun throwAsyncFlutterError(): Any? {
-    api?.let {
-      try {
-        return it.throwAsyncFlutterError()
-      } catch (e: Exception) {
-        throw e
-      }
-    }
-    error("NativeInteropHostIntegrationCoreApi has not been registered")
-  }
-  /** Returns the passed object, to test async serialization and deserialization. */
-  override suspend fun echoAsyncNativeInteropAllTypes(
-      everything: NativeInteropAllTypes
-  ): NativeInteropAllTypes {
-    api?.let {
-      try {
-        return it.echoAsyncNativeInteropAllTypes(everything)
-      } catch (e: Exception) {
-        throw e
-      }
-    }
-    error("NativeInteropHostIntegrationCoreApi has not been registered")
-  }
-  /** Returns the passed sealed class asynchronously. */
-  override suspend fun echoAsyncSealedClass(
-      sealedClass: NativeInteropSealedClass
-  ): NativeInteropSealedClass {
-    api?.let {
-      try {
-        return it.echoAsyncSealedClass(sealedClass)
-      } catch (e: Exception) {
-        throw e
-      }
-    }
-    error("NativeInteropHostIntegrationCoreApi has not been registered")
-  }
-  /** Returns the passed object, to test serialization and deserialization. */
-  override suspend fun echoAsyncNullableNativeInteropAllNullableTypes(
-      everything: NativeInteropAllNullableTypes?
-  ): NativeInteropAllNullableTypes? {
-    api?.let {
-      try {
-        return it.echoAsyncNullableNativeInteropAllNullableTypes(everything)
-      } catch (e: Exception) {
-        throw e
-      }
-    }
-    error("NativeInteropHostIntegrationCoreApi has not been registered")
-  }
-  /** Returns the passed object, to test serialization and deserialization. */
-  override suspend fun echoAsyncNullableNativeInteropAllNullableTypesWithoutRecursion(
-      everything: NativeInteropAllNullableTypesWithoutRecursion?
-  ): NativeInteropAllNullableTypesWithoutRecursion? {
-    api?.let {
-      try {
-        return it.echoAsyncNullableNativeInteropAllNullableTypesWithoutRecursion(everything)
-      } catch (e: Exception) {
-        throw e
-      }
-    }
-    error("NativeInteropHostIntegrationCoreApi has not been registered")
-  }
-  /** Returns passed in int asynchronously. */
-  override suspend fun echoAsyncNullableInt(anInt: Long?): Long? {
-    api?.let {
-      try {
-        return it.echoAsyncNullableInt(anInt)
-      } catch (e: Exception) {
-        throw e
-      }
-    }
-    error("NativeInteropHostIntegrationCoreApi has not been registered")
-  }
-  /** Returns passed in double asynchronously. */
-  override suspend fun echoAsyncNullableDouble(aDouble: Double?): Double? {
-    api?.let {
-      try {
-        return it.echoAsyncNullableDouble(aDouble)
-      } catch (e: Exception) {
-        throw e
-      }
-    }
-    error("NativeInteropHostIntegrationCoreApi has not been registered")
-  }
-  /** Returns the passed in boolean asynchronously. */
-  override suspend fun echoAsyncNullableBool(aBool: Boolean?): Boolean? {
-    api?.let {
-      try {
-        return it.echoAsyncNullableBool(aBool)
-      } catch (e: Exception) {
-        throw e
-      }
-    }
-    error("NativeInteropHostIntegrationCoreApi has not been registered")
-  }
-  /** Returns the passed string asynchronously. */
-  override suspend fun echoAsyncNullableString(aString: String?): String? {
-    api?.let {
-      try {
-        return it.echoAsyncNullableString(aString)
-      } catch (e: Exception) {
-        throw e
-      }
-    }
-    error("NativeInteropHostIntegrationCoreApi has not been registered")
-  }
-  /** Returns the passed in Uint8List asynchronously. */
-  override suspend fun echoAsyncNullableUint8List(aUint8List: ByteArray?): ByteArray? {
-    api?.let {
-      try {
-        return it.echoAsyncNullableUint8List(aUint8List)
-      } catch (e: Exception) {
-        throw e
-      }
-    }
-    error("NativeInteropHostIntegrationCoreApi has not been registered")
-  }
-  /** Returns the passed in Int32List asynchronously. */
-  override suspend fun echoAsyncNullableInt32List(aInt32List: IntArray?): IntArray? {
-    api?.let {
-      try {
-        return it.echoAsyncNullableInt32List(aInt32List)
-      } catch (e: Exception) {
-        throw e
-      }
-    }
-    error("NativeInteropHostIntegrationCoreApi has not been registered")
-  }
-  /** Returns the passed in Int64List asynchronously. */
-  override suspend fun echoAsyncNullableInt64List(aInt64List: LongArray?): LongArray? {
-    api?.let {
-      try {
-        return it.echoAsyncNullableInt64List(aInt64List)
-      } catch (e: Exception) {
-        throw e
-      }
-    }
-    error("NativeInteropHostIntegrationCoreApi has not been registered")
-  }
-  /** Returns the passed in Float64List asynchronously. */
-  override suspend fun echoAsyncNullableFloat64List(aFloat64List: DoubleArray?): DoubleArray? {
-    api?.let {
-      try {
-        return it.echoAsyncNullableFloat64List(aFloat64List)
-      } catch (e: Exception) {
-        throw e
-      }
-    }
-    error("NativeInteropHostIntegrationCoreApi has not been registered")
-  }
-  /** Returns the passed in generic Object asynchronously. */
-  override suspend fun echoAsyncNullableObject(anObject: Any?): Any? {
-    api?.let {
-      try {
-        return it.echoAsyncNullableObject(anObject)
-      } catch (e: Exception) {
-        throw e
-      }
-    }
-    error("NativeInteropHostIntegrationCoreApi has not been registered")
-  }
-  /** Returns the passed list, to test asynchronous serialization and deserialization. */
-  override suspend fun echoAsyncNullableList(list: List<Any?>?): List<Any?>? {
-    api?.let {
-      try {
-        return it.echoAsyncNullableList(list)
-      } catch (e: Exception) {
-        throw e
-      }
-    }
-    error("NativeInteropHostIntegrationCoreApi has not been registered")
-  }
-  /** Returns the passed list, to test asynchronous serialization and deserialization. */
-  override suspend fun echoAsyncNullableEnumList(
-      enumList: List<NativeInteropAnEnum?>?
-  ): List<NativeInteropAnEnum?>? {
-    api?.let {
-      try {
-        return it.echoAsyncNullableEnumList(enumList)
-      } catch (e: Exception) {
-        throw e
-      }
-    }
-    error("NativeInteropHostIntegrationCoreApi has not been registered")
-  }
-  /** Returns the passed list, to test asynchronous serialization and deserialization. */
-  override suspend fun echoAsyncNullableClassList(
-      classList: List<NativeInteropAllNullableTypes?>?
-  ): List<NativeInteropAllNullableTypes?>? {
-    api?.let {
-      try {
-        return it.echoAsyncNullableClassList(classList)
-      } catch (e: Exception) {
-        throw e
-      }
-    }
-    error("NativeInteropHostIntegrationCoreApi has not been registered")
-  }
-  /** Returns the passed map, to test asynchronous serialization and deserialization. */
-  override suspend fun echoAsyncNullableMap(map: Map<Any?, Any?>?): Map<Any?, Any?>? {
-    api?.let {
-      try {
-        return it.echoAsyncNullableMap(map)
-      } catch (e: Exception) {
-        throw e
-      }
-    }
-    error("NativeInteropHostIntegrationCoreApi has not been registered")
-  }
-  /** Returns the passed map, to test asynchronous serialization and deserialization. */
-  override suspend fun echoAsyncNullableStringMap(
-      stringMap: Map<String?, String?>?
-  ): Map<String?, String?>? {
-    api?.let {
-      try {
-        return it.echoAsyncNullableStringMap(stringMap)
-      } catch (e: Exception) {
-        throw e
-      }
-    }
-    error("NativeInteropHostIntegrationCoreApi has not been registered")
-  }
-  /** Returns the passed map, to test asynchronous serialization and deserialization. */
-  override suspend fun echoAsyncNullableIntMap(intMap: Map<Long?, Long?>?): Map<Long?, Long?>? {
-    api?.let {
-      try {
-        return it.echoAsyncNullableIntMap(intMap)
-      } catch (e: Exception) {
-        throw e
-      }
-    }
-    error("NativeInteropHostIntegrationCoreApi has not been registered")
-  }
-  /** Returns the passed map, to test asynchronous serialization and deserialization. */
-  override suspend fun echoAsyncNullableEnumMap(
-      enumMap: Map<NativeInteropAnEnum?, NativeInteropAnEnum?>?
-  ): Map<NativeInteropAnEnum?, NativeInteropAnEnum?>? {
-    api?.let {
-      try {
-        return it.echoAsyncNullableEnumMap(enumMap)
-      } catch (e: Exception) {
-        throw e
-      }
-    }
-    error("NativeInteropHostIntegrationCoreApi has not been registered")
-  }
-  /** Returns the passed map, to test asynchronous serialization and deserialization. */
-  override suspend fun echoAsyncNullableClassMap(
-      classMap: Map<Long?, NativeInteropAllNullableTypes?>?
-  ): Map<Long?, NativeInteropAllNullableTypes?>? {
-    api?.let {
-      try {
-        return it.echoAsyncNullableClassMap(classMap)
-      } catch (e: Exception) {
-        throw e
-      }
-    }
-    error("NativeInteropHostIntegrationCoreApi has not been registered")
-  }
-  /** Returns the passed enum, to test asynchronous serialization and deserialization. */
-  override suspend fun echoAsyncNullableEnum(anEnum: NativeInteropAnEnum?): NativeInteropAnEnum? {
-    api?.let {
-      try {
-        return it.echoAsyncNullableEnum(anEnum)
-      } catch (e: Exception) {
-        throw e
-      }
-    }
-    error("NativeInteropHostIntegrationCoreApi has not been registered")
-  }
-  /** Returns the passed enum, to test asynchronous serialization and deserialization. */
-  override suspend fun echoAnotherAsyncNullableEnum(
-      anotherEnum: NativeInteropAnotherEnum?
-  ): NativeInteropAnotherEnum? {
-    api?.let {
-      try {
-        return it.echoAnotherAsyncNullableEnum(anotherEnum)
-      } catch (e: Exception) {
-        throw e
-      }
-    }
-    error("NativeInteropHostIntegrationCoreApi has not been registered")
   }
 
-  override fun callFlutterNoop() {
-    api?.let {
-      try {
-        return it.callFlutterNoop()
-      } catch (e: Exception) {
-        throw e
-      }
+  fun echoNullableBool(aNullableBool: Boolean?): Boolean? {
+    val pigeonVar_api = api ?: error("NativeInteropHostIntegrationCoreApi has not been registered")
+    try {
+      return pigeonVar_api.echoNullableBool(aNullableBool)
+    } catch (e: NativeInteropTestsError) {
+      throw NativeInteropTestsError(
+              e.code, e.message, NativeInteropTestsPigeonInteropCodec.encodeOrNull(e.details))
+          .apply { stackTrace = e.stackTrace }
     }
-    error("NativeInteropHostIntegrationCoreApi has not been registered")
   }
 
-  override fun callFlutterThrowError(): Any? {
-    api?.let {
-      try {
-        return it.callFlutterThrowError()
-      } catch (e: Exception) {
-        throw e
-      }
+  fun echoNullableString(aNullableString: String?): String? {
+    val pigeonVar_api = api ?: error("NativeInteropHostIntegrationCoreApi has not been registered")
+    try {
+      return pigeonVar_api.echoNullableString(aNullableString)
+    } catch (e: NativeInteropTestsError) {
+      throw NativeInteropTestsError(
+              e.code, e.message, NativeInteropTestsPigeonInteropCodec.encodeOrNull(e.details))
+          .apply { stackTrace = e.stackTrace }
     }
-    error("NativeInteropHostIntegrationCoreApi has not been registered")
   }
 
-  override fun callFlutterThrowErrorFromVoid() {
-    api?.let {
-      try {
-        return it.callFlutterThrowErrorFromVoid()
-      } catch (e: Exception) {
-        throw e
-      }
+  fun echoNullableUint8List(aNullableUint8List: ByteArray?): ByteArray? {
+    val pigeonVar_api = api ?: error("NativeInteropHostIntegrationCoreApi has not been registered")
+    try {
+      return pigeonVar_api.echoNullableUint8List(aNullableUint8List)
+    } catch (e: NativeInteropTestsError) {
+      throw NativeInteropTestsError(
+              e.code, e.message, NativeInteropTestsPigeonInteropCodec.encodeOrNull(e.details))
+          .apply { stackTrace = e.stackTrace }
     }
-    error("NativeInteropHostIntegrationCoreApi has not been registered")
   }
 
-  override fun callFlutterEchoNativeInteropAllTypes(
-      everything: NativeInteropAllTypes
-  ): NativeInteropAllTypes {
-    api?.let {
-      try {
-        return it.callFlutterEchoNativeInteropAllTypes(everything)
-      } catch (e: Exception) {
-        throw e
-      }
+  fun echoNullableInt32List(aNullableInt32List: IntArray?): IntArray? {
+    val pigeonVar_api = api ?: error("NativeInteropHostIntegrationCoreApi has not been registered")
+    try {
+      return pigeonVar_api.echoNullableInt32List(aNullableInt32List)
+    } catch (e: NativeInteropTestsError) {
+      throw NativeInteropTestsError(
+              e.code, e.message, NativeInteropTestsPigeonInteropCodec.encodeOrNull(e.details))
+          .apply { stackTrace = e.stackTrace }
     }
-    error("NativeInteropHostIntegrationCoreApi has not been registered")
   }
 
-  override fun callFlutterEchoNativeInteropAllNullableTypes(
-      everything: NativeInteropAllNullableTypes?
-  ): NativeInteropAllNullableTypes? {
-    api?.let {
-      try {
-        return it.callFlutterEchoNativeInteropAllNullableTypes(everything)
-      } catch (e: Exception) {
-        throw e
-      }
+  fun echoNullableInt64List(aNullableInt64List: LongArray?): LongArray? {
+    val pigeonVar_api = api ?: error("NativeInteropHostIntegrationCoreApi has not been registered")
+    try {
+      return pigeonVar_api.echoNullableInt64List(aNullableInt64List)
+    } catch (e: NativeInteropTestsError) {
+      throw NativeInteropTestsError(
+              e.code, e.message, NativeInteropTestsPigeonInteropCodec.encodeOrNull(e.details))
+          .apply { stackTrace = e.stackTrace }
     }
-    error("NativeInteropHostIntegrationCoreApi has not been registered")
   }
 
-  override fun callFlutterEchoSealedClass(
-      sealedClass: NativeInteropSealedClass
-  ): NativeInteropSealedClass {
-    api?.let {
-      try {
-        return it.callFlutterEchoSealedClass(sealedClass)
-      } catch (e: Exception) {
-        throw e
-      }
+  fun echoNullableFloat64List(aNullableFloat64List: DoubleArray?): DoubleArray? {
+    val pigeonVar_api = api ?: error("NativeInteropHostIntegrationCoreApi has not been registered")
+    try {
+      return pigeonVar_api.echoNullableFloat64List(aNullableFloat64List)
+    } catch (e: NativeInteropTestsError) {
+      throw NativeInteropTestsError(
+              e.code, e.message, NativeInteropTestsPigeonInteropCodec.encodeOrNull(e.details))
+          .apply { stackTrace = e.stackTrace }
     }
-    error("NativeInteropHostIntegrationCoreApi has not been registered")
   }
 
-  override fun callFlutterSendMultipleNullableTypes(
+  fun echoNullableObject(pigeonVar_args: ByteArray): ByteArray? {
+    val pigeonVar_api = api ?: error("NativeInteropHostIntegrationCoreApi has not been registered")
+    try {
+      val pigeonVar_decodedArgs =
+          NativeInteropTestsPigeonInteropCodec.decodeArguments(pigeonVar_args)
+      val aNullableObjectArg = pigeonVar_decodedArgs[0]
+      return NativeInteropTestsPigeonInteropCodec.encodeOrNull(
+          pigeonVar_api.echoNullableObject(aNullableObjectArg))
+    } catch (e: NativeInteropTestsError) {
+      throw NativeInteropTestsError(
+              e.code, e.message, NativeInteropTestsPigeonInteropCodec.encodeOrNull(e.details))
+          .apply { stackTrace = e.stackTrace }
+    }
+  }
+
+  fun echoNullableList(pigeonVar_args: ByteArray): ByteArray? {
+    val pigeonVar_api = api ?: error("NativeInteropHostIntegrationCoreApi has not been registered")
+    try {
+      val pigeonVar_decodedArgs =
+          NativeInteropTestsPigeonInteropCodec.decodeArguments(pigeonVar_args)
+      val aNullableListArg = pigeonVar_decodedArgs[0] as List<Any?>?
+      return NativeInteropTestsPigeonInteropCodec.encodeOrNull(
+          pigeonVar_api.echoNullableList(aNullableListArg))
+    } catch (e: NativeInteropTestsError) {
+      throw NativeInteropTestsError(
+              e.code, e.message, NativeInteropTestsPigeonInteropCodec.encodeOrNull(e.details))
+          .apply { stackTrace = e.stackTrace }
+    }
+  }
+
+  fun echoNullableEnumList(pigeonVar_args: ByteArray): ByteArray? {
+    val pigeonVar_api = api ?: error("NativeInteropHostIntegrationCoreApi has not been registered")
+    try {
+      val pigeonVar_decodedArgs =
+          NativeInteropTestsPigeonInteropCodec.decodeArguments(pigeonVar_args)
+      val enumListArg = pigeonVar_decodedArgs[0] as List<NativeInteropAnEnum?>?
+      return NativeInteropTestsPigeonInteropCodec.encodeOrNull(
+          pigeonVar_api.echoNullableEnumList(enumListArg))
+    } catch (e: NativeInteropTestsError) {
+      throw NativeInteropTestsError(
+              e.code, e.message, NativeInteropTestsPigeonInteropCodec.encodeOrNull(e.details))
+          .apply { stackTrace = e.stackTrace }
+    }
+  }
+
+  fun echoNullableClassList(pigeonVar_args: ByteArray): ByteArray? {
+    val pigeonVar_api = api ?: error("NativeInteropHostIntegrationCoreApi has not been registered")
+    try {
+      val pigeonVar_decodedArgs =
+          NativeInteropTestsPigeonInteropCodec.decodeArguments(pigeonVar_args)
+      val classListArg = pigeonVar_decodedArgs[0] as List<NativeInteropAllNullableTypes?>?
+      return NativeInteropTestsPigeonInteropCodec.encodeOrNull(
+          pigeonVar_api.echoNullableClassList(classListArg))
+    } catch (e: NativeInteropTestsError) {
+      throw NativeInteropTestsError(
+              e.code, e.message, NativeInteropTestsPigeonInteropCodec.encodeOrNull(e.details))
+          .apply { stackTrace = e.stackTrace }
+    }
+  }
+
+  fun echoNullableNonNullEnumList(pigeonVar_args: ByteArray): ByteArray? {
+    val pigeonVar_api = api ?: error("NativeInteropHostIntegrationCoreApi has not been registered")
+    try {
+      val pigeonVar_decodedArgs =
+          NativeInteropTestsPigeonInteropCodec.decodeArguments(pigeonVar_args)
+      val enumListArg = pigeonVar_decodedArgs[0] as List<NativeInteropAnEnum>?
+      return NativeInteropTestsPigeonInteropCodec.encodeOrNull(
+          pigeonVar_api.echoNullableNonNullEnumList(enumListArg))
+    } catch (e: NativeInteropTestsError) {
+      throw NativeInteropTestsError(
+              e.code, e.message, NativeInteropTestsPigeonInteropCodec.encodeOrNull(e.details))
+          .apply { stackTrace = e.stackTrace }
+    }
+  }
+
+  fun echoNullableNonNullClassList(pigeonVar_args: ByteArray): ByteArray? {
+    val pigeonVar_api = api ?: error("NativeInteropHostIntegrationCoreApi has not been registered")
+    try {
+      val pigeonVar_decodedArgs =
+          NativeInteropTestsPigeonInteropCodec.decodeArguments(pigeonVar_args)
+      val classListArg = pigeonVar_decodedArgs[0] as List<NativeInteropAllNullableTypes>?
+      return NativeInteropTestsPigeonInteropCodec.encodeOrNull(
+          pigeonVar_api.echoNullableNonNullClassList(classListArg))
+    } catch (e: NativeInteropTestsError) {
+      throw NativeInteropTestsError(
+              e.code, e.message, NativeInteropTestsPigeonInteropCodec.encodeOrNull(e.details))
+          .apply { stackTrace = e.stackTrace }
+    }
+  }
+
+  fun echoNullableMap(pigeonVar_args: ByteArray): ByteArray? {
+    val pigeonVar_api = api ?: error("NativeInteropHostIntegrationCoreApi has not been registered")
+    try {
+      val pigeonVar_decodedArgs =
+          NativeInteropTestsPigeonInteropCodec.decodeArguments(pigeonVar_args)
+      val mapArg = pigeonVar_decodedArgs[0] as Map<Any?, Any?>?
+      return NativeInteropTestsPigeonInteropCodec.encodeOrNull(
+          pigeonVar_api.echoNullableMap(mapArg))
+    } catch (e: NativeInteropTestsError) {
+      throw NativeInteropTestsError(
+              e.code, e.message, NativeInteropTestsPigeonInteropCodec.encodeOrNull(e.details))
+          .apply { stackTrace = e.stackTrace }
+    }
+  }
+
+  fun echoNullableStringMap(pigeonVar_args: ByteArray): ByteArray? {
+    val pigeonVar_api = api ?: error("NativeInteropHostIntegrationCoreApi has not been registered")
+    try {
+      val pigeonVar_decodedArgs =
+          NativeInteropTestsPigeonInteropCodec.decodeArguments(pigeonVar_args)
+      val stringMapArg = pigeonVar_decodedArgs[0] as Map<String?, String?>?
+      return NativeInteropTestsPigeonInteropCodec.encodeOrNull(
+          pigeonVar_api.echoNullableStringMap(stringMapArg))
+    } catch (e: NativeInteropTestsError) {
+      throw NativeInteropTestsError(
+              e.code, e.message, NativeInteropTestsPigeonInteropCodec.encodeOrNull(e.details))
+          .apply { stackTrace = e.stackTrace }
+    }
+  }
+
+  fun echoNullableIntMap(pigeonVar_args: ByteArray): ByteArray? {
+    val pigeonVar_api = api ?: error("NativeInteropHostIntegrationCoreApi has not been registered")
+    try {
+      val pigeonVar_decodedArgs =
+          NativeInteropTestsPigeonInteropCodec.decodeArguments(pigeonVar_args)
+      val intMapArg = pigeonVar_decodedArgs[0] as Map<Long?, Long?>?
+      return NativeInteropTestsPigeonInteropCodec.encodeOrNull(
+          pigeonVar_api.echoNullableIntMap(intMapArg))
+    } catch (e: NativeInteropTestsError) {
+      throw NativeInteropTestsError(
+              e.code, e.message, NativeInteropTestsPigeonInteropCodec.encodeOrNull(e.details))
+          .apply { stackTrace = e.stackTrace }
+    }
+  }
+
+  fun echoNullableEnumMap(pigeonVar_args: ByteArray): ByteArray? {
+    val pigeonVar_api = api ?: error("NativeInteropHostIntegrationCoreApi has not been registered")
+    try {
+      val pigeonVar_decodedArgs =
+          NativeInteropTestsPigeonInteropCodec.decodeArguments(pigeonVar_args)
+      val enumMapArg = pigeonVar_decodedArgs[0] as Map<NativeInteropAnEnum?, NativeInteropAnEnum?>?
+      return NativeInteropTestsPigeonInteropCodec.encodeOrNull(
+          pigeonVar_api.echoNullableEnumMap(enumMapArg))
+    } catch (e: NativeInteropTestsError) {
+      throw NativeInteropTestsError(
+              e.code, e.message, NativeInteropTestsPigeonInteropCodec.encodeOrNull(e.details))
+          .apply { stackTrace = e.stackTrace }
+    }
+  }
+
+  fun echoNullableClassMap(pigeonVar_args: ByteArray): ByteArray? {
+    val pigeonVar_api = api ?: error("NativeInteropHostIntegrationCoreApi has not been registered")
+    try {
+      val pigeonVar_decodedArgs =
+          NativeInteropTestsPigeonInteropCodec.decodeArguments(pigeonVar_args)
+      val classMapArg = pigeonVar_decodedArgs[0] as Map<Long?, NativeInteropAllNullableTypes?>?
+      return NativeInteropTestsPigeonInteropCodec.encodeOrNull(
+          pigeonVar_api.echoNullableClassMap(classMapArg))
+    } catch (e: NativeInteropTestsError) {
+      throw NativeInteropTestsError(
+              e.code, e.message, NativeInteropTestsPigeonInteropCodec.encodeOrNull(e.details))
+          .apply { stackTrace = e.stackTrace }
+    }
+  }
+
+  fun echoNullableNonNullStringMap(pigeonVar_args: ByteArray): ByteArray? {
+    val pigeonVar_api = api ?: error("NativeInteropHostIntegrationCoreApi has not been registered")
+    try {
+      val pigeonVar_decodedArgs =
+          NativeInteropTestsPigeonInteropCodec.decodeArguments(pigeonVar_args)
+      val stringMapArg = pigeonVar_decodedArgs[0] as Map<String, String>?
+      return NativeInteropTestsPigeonInteropCodec.encodeOrNull(
+          pigeonVar_api.echoNullableNonNullStringMap(stringMapArg))
+    } catch (e: NativeInteropTestsError) {
+      throw NativeInteropTestsError(
+              e.code, e.message, NativeInteropTestsPigeonInteropCodec.encodeOrNull(e.details))
+          .apply { stackTrace = e.stackTrace }
+    }
+  }
+
+  fun echoNullableNonNullIntMap(pigeonVar_args: ByteArray): ByteArray? {
+    val pigeonVar_api = api ?: error("NativeInteropHostIntegrationCoreApi has not been registered")
+    try {
+      val pigeonVar_decodedArgs =
+          NativeInteropTestsPigeonInteropCodec.decodeArguments(pigeonVar_args)
+      val intMapArg = pigeonVar_decodedArgs[0] as Map<Long, Long>?
+      return NativeInteropTestsPigeonInteropCodec.encodeOrNull(
+          pigeonVar_api.echoNullableNonNullIntMap(intMapArg))
+    } catch (e: NativeInteropTestsError) {
+      throw NativeInteropTestsError(
+              e.code, e.message, NativeInteropTestsPigeonInteropCodec.encodeOrNull(e.details))
+          .apply { stackTrace = e.stackTrace }
+    }
+  }
+
+  fun echoNullableNonNullEnumMap(pigeonVar_args: ByteArray): ByteArray? {
+    val pigeonVar_api = api ?: error("NativeInteropHostIntegrationCoreApi has not been registered")
+    try {
+      val pigeonVar_decodedArgs =
+          NativeInteropTestsPigeonInteropCodec.decodeArguments(pigeonVar_args)
+      val enumMapArg = pigeonVar_decodedArgs[0] as Map<NativeInteropAnEnum, NativeInteropAnEnum>?
+      return NativeInteropTestsPigeonInteropCodec.encodeOrNull(
+          pigeonVar_api.echoNullableNonNullEnumMap(enumMapArg))
+    } catch (e: NativeInteropTestsError) {
+      throw NativeInteropTestsError(
+              e.code, e.message, NativeInteropTestsPigeonInteropCodec.encodeOrNull(e.details))
+          .apply { stackTrace = e.stackTrace }
+    }
+  }
+
+  fun echoNullableNonNullClassMap(pigeonVar_args: ByteArray): ByteArray? {
+    val pigeonVar_api = api ?: error("NativeInteropHostIntegrationCoreApi has not been registered")
+    try {
+      val pigeonVar_decodedArgs =
+          NativeInteropTestsPigeonInteropCodec.decodeArguments(pigeonVar_args)
+      val classMapArg = pigeonVar_decodedArgs[0] as Map<Long, NativeInteropAllNullableTypes>?
+      return NativeInteropTestsPigeonInteropCodec.encodeOrNull(
+          pigeonVar_api.echoNullableNonNullClassMap(classMapArg))
+    } catch (e: NativeInteropTestsError) {
+      throw NativeInteropTestsError(
+              e.code, e.message, NativeInteropTestsPigeonInteropCodec.encodeOrNull(e.details))
+          .apply { stackTrace = e.stackTrace }
+    }
+  }
+
+  fun echoNullableEnum(anEnum: Long): Long {
+    val pigeonVar_api = api ?: error("NativeInteropHostIntegrationCoreApi has not been registered")
+    try {
+      return (pigeonVar_api
+          .echoNullableEnum(if (anEnum == -1L) null else NativeInteropAnEnum.ofRaw(anEnum.toInt()))
+          ?.raw
+          ?.toLong() ?: -1L)
+    } catch (e: NativeInteropTestsError) {
+      throw NativeInteropTestsError(
+              e.code, e.message, NativeInteropTestsPigeonInteropCodec.encodeOrNull(e.details))
+          .apply { stackTrace = e.stackTrace }
+    }
+  }
+
+  fun echoAnotherNullableEnum(anotherEnum: Long): Long {
+    val pigeonVar_api = api ?: error("NativeInteropHostIntegrationCoreApi has not been registered")
+    try {
+      return (pigeonVar_api
+          .echoAnotherNullableEnum(
+              if (anotherEnum == -1L) null else NativeInteropAnotherEnum.ofRaw(anotherEnum.toInt()))
+          ?.raw
+          ?.toLong() ?: -1L)
+    } catch (e: NativeInteropTestsError) {
+      throw NativeInteropTestsError(
+              e.code, e.message, NativeInteropTestsPigeonInteropCodec.encodeOrNull(e.details))
+          .apply { stackTrace = e.stackTrace }
+    }
+  }
+
+  fun echoOptionalNullableInt(aNullableInt: Long?): Long? {
+    val pigeonVar_api = api ?: error("NativeInteropHostIntegrationCoreApi has not been registered")
+    try {
+      return pigeonVar_api.echoOptionalNullableInt(aNullableInt)
+    } catch (e: NativeInteropTestsError) {
+      throw NativeInteropTestsError(
+              e.code, e.message, NativeInteropTestsPigeonInteropCodec.encodeOrNull(e.details))
+          .apply { stackTrace = e.stackTrace }
+    }
+  }
+
+  fun echoNamedNullableString(aNullableString: String?): String? {
+    val pigeonVar_api = api ?: error("NativeInteropHostIntegrationCoreApi has not been registered")
+    try {
+      return pigeonVar_api.echoNamedNullableString(aNullableString)
+    } catch (e: NativeInteropTestsError) {
+      throw NativeInteropTestsError(
+              e.code, e.message, NativeInteropTestsPigeonInteropCodec.encodeOrNull(e.details))
+          .apply { stackTrace = e.stackTrace }
+    }
+  }
+
+  suspend fun noopAsync() {
+    val pigeonVar_api = api ?: error("NativeInteropHostIntegrationCoreApi has not been registered")
+    try {
+      pigeonVar_api.noopAsync()
+    } catch (e: NativeInteropTestsError) {
+      throw NativeInteropTestsError(
+              e.code, e.message, NativeInteropTestsPigeonInteropCodec.encodeOrNull(e.details))
+          .apply { stackTrace = e.stackTrace }
+    }
+  }
+
+  suspend fun echoAsyncInt(anInt: Long): Long {
+    val pigeonVar_api = api ?: error("NativeInteropHostIntegrationCoreApi has not been registered")
+    try {
+      return pigeonVar_api.echoAsyncInt(anInt)
+    } catch (e: NativeInteropTestsError) {
+      throw NativeInteropTestsError(
+              e.code, e.message, NativeInteropTestsPigeonInteropCodec.encodeOrNull(e.details))
+          .apply { stackTrace = e.stackTrace }
+    }
+  }
+
+  suspend fun echoAsyncDouble(aDouble: Double): Double {
+    val pigeonVar_api = api ?: error("NativeInteropHostIntegrationCoreApi has not been registered")
+    try {
+      return pigeonVar_api.echoAsyncDouble(aDouble)
+    } catch (e: NativeInteropTestsError) {
+      throw NativeInteropTestsError(
+              e.code, e.message, NativeInteropTestsPigeonInteropCodec.encodeOrNull(e.details))
+          .apply { stackTrace = e.stackTrace }
+    }
+  }
+
+  suspend fun echoAsyncBool(aBool: Boolean): Boolean {
+    val pigeonVar_api = api ?: error("NativeInteropHostIntegrationCoreApi has not been registered")
+    try {
+      return pigeonVar_api.echoAsyncBool(aBool)
+    } catch (e: NativeInteropTestsError) {
+      throw NativeInteropTestsError(
+              e.code, e.message, NativeInteropTestsPigeonInteropCodec.encodeOrNull(e.details))
+          .apply { stackTrace = e.stackTrace }
+    }
+  }
+
+  suspend fun echoAsyncString(aString: String): String {
+    val pigeonVar_api = api ?: error("NativeInteropHostIntegrationCoreApi has not been registered")
+    try {
+      return pigeonVar_api.echoAsyncString(aString)
+    } catch (e: NativeInteropTestsError) {
+      throw NativeInteropTestsError(
+              e.code, e.message, NativeInteropTestsPigeonInteropCodec.encodeOrNull(e.details))
+          .apply { stackTrace = e.stackTrace }
+    }
+  }
+
+  suspend fun echoAsyncUint8List(aUint8List: ByteArray): ByteArray {
+    val pigeonVar_api = api ?: error("NativeInteropHostIntegrationCoreApi has not been registered")
+    try {
+      return pigeonVar_api.echoAsyncUint8List(aUint8List)
+    } catch (e: NativeInteropTestsError) {
+      throw NativeInteropTestsError(
+              e.code, e.message, NativeInteropTestsPigeonInteropCodec.encodeOrNull(e.details))
+          .apply { stackTrace = e.stackTrace }
+    }
+  }
+
+  suspend fun echoAsyncInt32List(aInt32List: IntArray): IntArray {
+    val pigeonVar_api = api ?: error("NativeInteropHostIntegrationCoreApi has not been registered")
+    try {
+      return pigeonVar_api.echoAsyncInt32List(aInt32List)
+    } catch (e: NativeInteropTestsError) {
+      throw NativeInteropTestsError(
+              e.code, e.message, NativeInteropTestsPigeonInteropCodec.encodeOrNull(e.details))
+          .apply { stackTrace = e.stackTrace }
+    }
+  }
+
+  suspend fun echoAsyncInt64List(aInt64List: LongArray): LongArray {
+    val pigeonVar_api = api ?: error("NativeInteropHostIntegrationCoreApi has not been registered")
+    try {
+      return pigeonVar_api.echoAsyncInt64List(aInt64List)
+    } catch (e: NativeInteropTestsError) {
+      throw NativeInteropTestsError(
+              e.code, e.message, NativeInteropTestsPigeonInteropCodec.encodeOrNull(e.details))
+          .apply { stackTrace = e.stackTrace }
+    }
+  }
+
+  suspend fun echoAsyncFloat64List(aFloat64List: DoubleArray): DoubleArray {
+    val pigeonVar_api = api ?: error("NativeInteropHostIntegrationCoreApi has not been registered")
+    try {
+      return pigeonVar_api.echoAsyncFloat64List(aFloat64List)
+    } catch (e: NativeInteropTestsError) {
+      throw NativeInteropTestsError(
+              e.code, e.message, NativeInteropTestsPigeonInteropCodec.encodeOrNull(e.details))
+          .apply { stackTrace = e.stackTrace }
+    }
+  }
+
+  suspend fun echoAsyncObject(pigeonVar_args: ByteArray): ByteArray? {
+    val pigeonVar_api = api ?: error("NativeInteropHostIntegrationCoreApi has not been registered")
+    try {
+      val pigeonVar_decodedArgs =
+          NativeInteropTestsPigeonInteropCodec.decodeArguments(pigeonVar_args)
+      val anObjectArg = pigeonVar_decodedArgs[0] as Any
+      return NativeInteropTestsPigeonInteropCodec.encodeOrNull(
+          pigeonVar_api.echoAsyncObject(anObjectArg))
+    } catch (e: NativeInteropTestsError) {
+      throw NativeInteropTestsError(
+              e.code, e.message, NativeInteropTestsPigeonInteropCodec.encodeOrNull(e.details))
+          .apply { stackTrace = e.stackTrace }
+    }
+  }
+
+  suspend fun echoAsyncList(pigeonVar_args: ByteArray): ByteArray? {
+    val pigeonVar_api = api ?: error("NativeInteropHostIntegrationCoreApi has not been registered")
+    try {
+      val pigeonVar_decodedArgs =
+          NativeInteropTestsPigeonInteropCodec.decodeArguments(pigeonVar_args)
+      val listArg = pigeonVar_decodedArgs[0] as List<Any?>
+      return NativeInteropTestsPigeonInteropCodec.encodeOrNull(pigeonVar_api.echoAsyncList(listArg))
+    } catch (e: NativeInteropTestsError) {
+      throw NativeInteropTestsError(
+              e.code, e.message, NativeInteropTestsPigeonInteropCodec.encodeOrNull(e.details))
+          .apply { stackTrace = e.stackTrace }
+    }
+  }
+
+  suspend fun echoAsyncEnumList(pigeonVar_args: ByteArray): ByteArray? {
+    val pigeonVar_api = api ?: error("NativeInteropHostIntegrationCoreApi has not been registered")
+    try {
+      val pigeonVar_decodedArgs =
+          NativeInteropTestsPigeonInteropCodec.decodeArguments(pigeonVar_args)
+      val enumListArg = pigeonVar_decodedArgs[0] as List<NativeInteropAnEnum?>
+      return NativeInteropTestsPigeonInteropCodec.encodeOrNull(
+          pigeonVar_api.echoAsyncEnumList(enumListArg))
+    } catch (e: NativeInteropTestsError) {
+      throw NativeInteropTestsError(
+              e.code, e.message, NativeInteropTestsPigeonInteropCodec.encodeOrNull(e.details))
+          .apply { stackTrace = e.stackTrace }
+    }
+  }
+
+  suspend fun echoAsyncClassList(pigeonVar_args: ByteArray): ByteArray? {
+    val pigeonVar_api = api ?: error("NativeInteropHostIntegrationCoreApi has not been registered")
+    try {
+      val pigeonVar_decodedArgs =
+          NativeInteropTestsPigeonInteropCodec.decodeArguments(pigeonVar_args)
+      val classListArg = pigeonVar_decodedArgs[0] as List<NativeInteropAllNullableTypes?>
+      return NativeInteropTestsPigeonInteropCodec.encodeOrNull(
+          pigeonVar_api.echoAsyncClassList(classListArg))
+    } catch (e: NativeInteropTestsError) {
+      throw NativeInteropTestsError(
+              e.code, e.message, NativeInteropTestsPigeonInteropCodec.encodeOrNull(e.details))
+          .apply { stackTrace = e.stackTrace }
+    }
+  }
+
+  suspend fun echoAsyncMap(pigeonVar_args: ByteArray): ByteArray? {
+    val pigeonVar_api = api ?: error("NativeInteropHostIntegrationCoreApi has not been registered")
+    try {
+      val pigeonVar_decodedArgs =
+          NativeInteropTestsPigeonInteropCodec.decodeArguments(pigeonVar_args)
+      val mapArg = pigeonVar_decodedArgs[0] as Map<Any?, Any?>
+      return NativeInteropTestsPigeonInteropCodec.encodeOrNull(pigeonVar_api.echoAsyncMap(mapArg))
+    } catch (e: NativeInteropTestsError) {
+      throw NativeInteropTestsError(
+              e.code, e.message, NativeInteropTestsPigeonInteropCodec.encodeOrNull(e.details))
+          .apply { stackTrace = e.stackTrace }
+    }
+  }
+
+  suspend fun echoAsyncStringMap(pigeonVar_args: ByteArray): ByteArray? {
+    val pigeonVar_api = api ?: error("NativeInteropHostIntegrationCoreApi has not been registered")
+    try {
+      val pigeonVar_decodedArgs =
+          NativeInteropTestsPigeonInteropCodec.decodeArguments(pigeonVar_args)
+      val stringMapArg = pigeonVar_decodedArgs[0] as Map<String?, String?>
+      return NativeInteropTestsPigeonInteropCodec.encodeOrNull(
+          pigeonVar_api.echoAsyncStringMap(stringMapArg))
+    } catch (e: NativeInteropTestsError) {
+      throw NativeInteropTestsError(
+              e.code, e.message, NativeInteropTestsPigeonInteropCodec.encodeOrNull(e.details))
+          .apply { stackTrace = e.stackTrace }
+    }
+  }
+
+  suspend fun echoAsyncIntMap(pigeonVar_args: ByteArray): ByteArray? {
+    val pigeonVar_api = api ?: error("NativeInteropHostIntegrationCoreApi has not been registered")
+    try {
+      val pigeonVar_decodedArgs =
+          NativeInteropTestsPigeonInteropCodec.decodeArguments(pigeonVar_args)
+      val intMapArg = pigeonVar_decodedArgs[0] as Map<Long?, Long?>
+      return NativeInteropTestsPigeonInteropCodec.encodeOrNull(
+          pigeonVar_api.echoAsyncIntMap(intMapArg))
+    } catch (e: NativeInteropTestsError) {
+      throw NativeInteropTestsError(
+              e.code, e.message, NativeInteropTestsPigeonInteropCodec.encodeOrNull(e.details))
+          .apply { stackTrace = e.stackTrace }
+    }
+  }
+
+  suspend fun echoAsyncEnumMap(pigeonVar_args: ByteArray): ByteArray? {
+    val pigeonVar_api = api ?: error("NativeInteropHostIntegrationCoreApi has not been registered")
+    try {
+      val pigeonVar_decodedArgs =
+          NativeInteropTestsPigeonInteropCodec.decodeArguments(pigeonVar_args)
+      val enumMapArg = pigeonVar_decodedArgs[0] as Map<NativeInteropAnEnum?, NativeInteropAnEnum?>
+      return NativeInteropTestsPigeonInteropCodec.encodeOrNull(
+          pigeonVar_api.echoAsyncEnumMap(enumMapArg))
+    } catch (e: NativeInteropTestsError) {
+      throw NativeInteropTestsError(
+              e.code, e.message, NativeInteropTestsPigeonInteropCodec.encodeOrNull(e.details))
+          .apply { stackTrace = e.stackTrace }
+    }
+  }
+
+  suspend fun echoAsyncClassMap(pigeonVar_args: ByteArray): ByteArray? {
+    val pigeonVar_api = api ?: error("NativeInteropHostIntegrationCoreApi has not been registered")
+    try {
+      val pigeonVar_decodedArgs =
+          NativeInteropTestsPigeonInteropCodec.decodeArguments(pigeonVar_args)
+      val classMapArg = pigeonVar_decodedArgs[0] as Map<Long?, NativeInteropAllNullableTypes?>
+      return NativeInteropTestsPigeonInteropCodec.encodeOrNull(
+          pigeonVar_api.echoAsyncClassMap(classMapArg))
+    } catch (e: NativeInteropTestsError) {
+      throw NativeInteropTestsError(
+              e.code, e.message, NativeInteropTestsPigeonInteropCodec.encodeOrNull(e.details))
+          .apply { stackTrace = e.stackTrace }
+    }
+  }
+
+  suspend fun echoAsyncEnum(anEnum: Long): Long {
+    val pigeonVar_api = api ?: error("NativeInteropHostIntegrationCoreApi has not been registered")
+    try {
+      return pigeonVar_api.echoAsyncEnum(NativeInteropAnEnum.ofRaw(anEnum.toInt())!!).raw.toLong()
+    } catch (e: NativeInteropTestsError) {
+      throw NativeInteropTestsError(
+              e.code, e.message, NativeInteropTestsPigeonInteropCodec.encodeOrNull(e.details))
+          .apply { stackTrace = e.stackTrace }
+    }
+  }
+
+  suspend fun echoAnotherAsyncEnum(anotherEnum: Long): Long {
+    val pigeonVar_api = api ?: error("NativeInteropHostIntegrationCoreApi has not been registered")
+    try {
+      return pigeonVar_api
+          .echoAnotherAsyncEnum(NativeInteropAnotherEnum.ofRaw(anotherEnum.toInt())!!)
+          .raw
+          .toLong()
+    } catch (e: NativeInteropTestsError) {
+      throw NativeInteropTestsError(
+              e.code, e.message, NativeInteropTestsPigeonInteropCodec.encodeOrNull(e.details))
+          .apply { stackTrace = e.stackTrace }
+    }
+  }
+
+  suspend fun throwAsyncError(): ByteArray? {
+    val pigeonVar_api = api ?: error("NativeInteropHostIntegrationCoreApi has not been registered")
+    try {
+      return NativeInteropTestsPigeonInteropCodec.encodeOrNull(pigeonVar_api.throwAsyncError())
+    } catch (e: NativeInteropTestsError) {
+      throw NativeInteropTestsError(
+              e.code, e.message, NativeInteropTestsPigeonInteropCodec.encodeOrNull(e.details))
+          .apply { stackTrace = e.stackTrace }
+    }
+  }
+
+  suspend fun throwAsyncErrorFromVoid() {
+    val pigeonVar_api = api ?: error("NativeInteropHostIntegrationCoreApi has not been registered")
+    try {
+      pigeonVar_api.throwAsyncErrorFromVoid()
+    } catch (e: NativeInteropTestsError) {
+      throw NativeInteropTestsError(
+              e.code, e.message, NativeInteropTestsPigeonInteropCodec.encodeOrNull(e.details))
+          .apply { stackTrace = e.stackTrace }
+    }
+  }
+
+  suspend fun throwAsyncFlutterError(): ByteArray? {
+    val pigeonVar_api = api ?: error("NativeInteropHostIntegrationCoreApi has not been registered")
+    try {
+      return NativeInteropTestsPigeonInteropCodec.encodeOrNull(
+          pigeonVar_api.throwAsyncFlutterError())
+    } catch (e: NativeInteropTestsError) {
+      throw NativeInteropTestsError(
+              e.code, e.message, NativeInteropTestsPigeonInteropCodec.encodeOrNull(e.details))
+          .apply { stackTrace = e.stackTrace }
+    }
+  }
+
+  suspend fun echoAsyncNativeInteropAllTypes(pigeonVar_args: ByteArray): ByteArray? {
+    val pigeonVar_api = api ?: error("NativeInteropHostIntegrationCoreApi has not been registered")
+    try {
+      val pigeonVar_decodedArgs =
+          NativeInteropTestsPigeonInteropCodec.decodeArguments(pigeonVar_args)
+      val everythingArg = pigeonVar_decodedArgs[0] as NativeInteropAllTypes
+      return NativeInteropTestsPigeonInteropCodec.encodeOrNull(
+          pigeonVar_api.echoAsyncNativeInteropAllTypes(everythingArg))
+    } catch (e: NativeInteropTestsError) {
+      throw NativeInteropTestsError(
+              e.code, e.message, NativeInteropTestsPigeonInteropCodec.encodeOrNull(e.details))
+          .apply { stackTrace = e.stackTrace }
+    }
+  }
+
+  suspend fun echoAsyncSealedClass(pigeonVar_args: ByteArray): ByteArray? {
+    val pigeonVar_api = api ?: error("NativeInteropHostIntegrationCoreApi has not been registered")
+    try {
+      val pigeonVar_decodedArgs =
+          NativeInteropTestsPigeonInteropCodec.decodeArguments(pigeonVar_args)
+      val sealedClassArg = pigeonVar_decodedArgs[0] as NativeInteropSealedClass
+      return NativeInteropTestsPigeonInteropCodec.encodeOrNull(
+          pigeonVar_api.echoAsyncSealedClass(sealedClassArg))
+    } catch (e: NativeInteropTestsError) {
+      throw NativeInteropTestsError(
+              e.code, e.message, NativeInteropTestsPigeonInteropCodec.encodeOrNull(e.details))
+          .apply { stackTrace = e.stackTrace }
+    }
+  }
+
+  suspend fun echoAsyncNullableNativeInteropAllNullableTypes(
+      pigeonVar_args: ByteArray
+  ): ByteArray? {
+    val pigeonVar_api = api ?: error("NativeInteropHostIntegrationCoreApi has not been registered")
+    try {
+      val pigeonVar_decodedArgs =
+          NativeInteropTestsPigeonInteropCodec.decodeArguments(pigeonVar_args)
+      val everythingArg = pigeonVar_decodedArgs[0] as NativeInteropAllNullableTypes?
+      return NativeInteropTestsPigeonInteropCodec.encodeOrNull(
+          pigeonVar_api.echoAsyncNullableNativeInteropAllNullableTypes(everythingArg))
+    } catch (e: NativeInteropTestsError) {
+      throw NativeInteropTestsError(
+              e.code, e.message, NativeInteropTestsPigeonInteropCodec.encodeOrNull(e.details))
+          .apply { stackTrace = e.stackTrace }
+    }
+  }
+
+  suspend fun echoAsyncNullableNativeInteropAllNullableTypesWithoutRecursion(
+      pigeonVar_args: ByteArray
+  ): ByteArray? {
+    val pigeonVar_api = api ?: error("NativeInteropHostIntegrationCoreApi has not been registered")
+    try {
+      val pigeonVar_decodedArgs =
+          NativeInteropTestsPigeonInteropCodec.decodeArguments(pigeonVar_args)
+      val everythingArg = pigeonVar_decodedArgs[0] as NativeInteropAllNullableTypesWithoutRecursion?
+      return NativeInteropTestsPigeonInteropCodec.encodeOrNull(
+          pigeonVar_api.echoAsyncNullableNativeInteropAllNullableTypesWithoutRecursion(
+              everythingArg))
+    } catch (e: NativeInteropTestsError) {
+      throw NativeInteropTestsError(
+              e.code, e.message, NativeInteropTestsPigeonInteropCodec.encodeOrNull(e.details))
+          .apply { stackTrace = e.stackTrace }
+    }
+  }
+
+  suspend fun echoAsyncNullableInt(anInt: Long?): Long? {
+    val pigeonVar_api = api ?: error("NativeInteropHostIntegrationCoreApi has not been registered")
+    try {
+      return pigeonVar_api.echoAsyncNullableInt(anInt)
+    } catch (e: NativeInteropTestsError) {
+      throw NativeInteropTestsError(
+              e.code, e.message, NativeInteropTestsPigeonInteropCodec.encodeOrNull(e.details))
+          .apply { stackTrace = e.stackTrace }
+    }
+  }
+
+  suspend fun echoAsyncNullableDouble(aDouble: Double?): Double? {
+    val pigeonVar_api = api ?: error("NativeInteropHostIntegrationCoreApi has not been registered")
+    try {
+      return pigeonVar_api.echoAsyncNullableDouble(aDouble)
+    } catch (e: NativeInteropTestsError) {
+      throw NativeInteropTestsError(
+              e.code, e.message, NativeInteropTestsPigeonInteropCodec.encodeOrNull(e.details))
+          .apply { stackTrace = e.stackTrace }
+    }
+  }
+
+  suspend fun echoAsyncNullableBool(aBool: Boolean?): Boolean? {
+    val pigeonVar_api = api ?: error("NativeInteropHostIntegrationCoreApi has not been registered")
+    try {
+      return pigeonVar_api.echoAsyncNullableBool(aBool)
+    } catch (e: NativeInteropTestsError) {
+      throw NativeInteropTestsError(
+              e.code, e.message, NativeInteropTestsPigeonInteropCodec.encodeOrNull(e.details))
+          .apply { stackTrace = e.stackTrace }
+    }
+  }
+
+  suspend fun echoAsyncNullableString(aString: String?): String? {
+    val pigeonVar_api = api ?: error("NativeInteropHostIntegrationCoreApi has not been registered")
+    try {
+      return pigeonVar_api.echoAsyncNullableString(aString)
+    } catch (e: NativeInteropTestsError) {
+      throw NativeInteropTestsError(
+              e.code, e.message, NativeInteropTestsPigeonInteropCodec.encodeOrNull(e.details))
+          .apply { stackTrace = e.stackTrace }
+    }
+  }
+
+  suspend fun echoAsyncNullableUint8List(aUint8List: ByteArray?): ByteArray? {
+    val pigeonVar_api = api ?: error("NativeInteropHostIntegrationCoreApi has not been registered")
+    try {
+      return pigeonVar_api.echoAsyncNullableUint8List(aUint8List)
+    } catch (e: NativeInteropTestsError) {
+      throw NativeInteropTestsError(
+              e.code, e.message, NativeInteropTestsPigeonInteropCodec.encodeOrNull(e.details))
+          .apply { stackTrace = e.stackTrace }
+    }
+  }
+
+  suspend fun echoAsyncNullableInt32List(aInt32List: IntArray?): IntArray? {
+    val pigeonVar_api = api ?: error("NativeInteropHostIntegrationCoreApi has not been registered")
+    try {
+      return pigeonVar_api.echoAsyncNullableInt32List(aInt32List)
+    } catch (e: NativeInteropTestsError) {
+      throw NativeInteropTestsError(
+              e.code, e.message, NativeInteropTestsPigeonInteropCodec.encodeOrNull(e.details))
+          .apply { stackTrace = e.stackTrace }
+    }
+  }
+
+  suspend fun echoAsyncNullableInt64List(aInt64List: LongArray?): LongArray? {
+    val pigeonVar_api = api ?: error("NativeInteropHostIntegrationCoreApi has not been registered")
+    try {
+      return pigeonVar_api.echoAsyncNullableInt64List(aInt64List)
+    } catch (e: NativeInteropTestsError) {
+      throw NativeInteropTestsError(
+              e.code, e.message, NativeInteropTestsPigeonInteropCodec.encodeOrNull(e.details))
+          .apply { stackTrace = e.stackTrace }
+    }
+  }
+
+  suspend fun echoAsyncNullableFloat64List(aFloat64List: DoubleArray?): DoubleArray? {
+    val pigeonVar_api = api ?: error("NativeInteropHostIntegrationCoreApi has not been registered")
+    try {
+      return pigeonVar_api.echoAsyncNullableFloat64List(aFloat64List)
+    } catch (e: NativeInteropTestsError) {
+      throw NativeInteropTestsError(
+              e.code, e.message, NativeInteropTestsPigeonInteropCodec.encodeOrNull(e.details))
+          .apply { stackTrace = e.stackTrace }
+    }
+  }
+
+  suspend fun echoAsyncNullableObject(pigeonVar_args: ByteArray): ByteArray? {
+    val pigeonVar_api = api ?: error("NativeInteropHostIntegrationCoreApi has not been registered")
+    try {
+      val pigeonVar_decodedArgs =
+          NativeInteropTestsPigeonInteropCodec.decodeArguments(pigeonVar_args)
+      val anObjectArg = pigeonVar_decodedArgs[0]
+      return NativeInteropTestsPigeonInteropCodec.encodeOrNull(
+          pigeonVar_api.echoAsyncNullableObject(anObjectArg))
+    } catch (e: NativeInteropTestsError) {
+      throw NativeInteropTestsError(
+              e.code, e.message, NativeInteropTestsPigeonInteropCodec.encodeOrNull(e.details))
+          .apply { stackTrace = e.stackTrace }
+    }
+  }
+
+  suspend fun echoAsyncNullableList(pigeonVar_args: ByteArray): ByteArray? {
+    val pigeonVar_api = api ?: error("NativeInteropHostIntegrationCoreApi has not been registered")
+    try {
+      val pigeonVar_decodedArgs =
+          NativeInteropTestsPigeonInteropCodec.decodeArguments(pigeonVar_args)
+      val listArg = pigeonVar_decodedArgs[0] as List<Any?>?
+      return NativeInteropTestsPigeonInteropCodec.encodeOrNull(
+          pigeonVar_api.echoAsyncNullableList(listArg))
+    } catch (e: NativeInteropTestsError) {
+      throw NativeInteropTestsError(
+              e.code, e.message, NativeInteropTestsPigeonInteropCodec.encodeOrNull(e.details))
+          .apply { stackTrace = e.stackTrace }
+    }
+  }
+
+  suspend fun echoAsyncNullableEnumList(pigeonVar_args: ByteArray): ByteArray? {
+    val pigeonVar_api = api ?: error("NativeInteropHostIntegrationCoreApi has not been registered")
+    try {
+      val pigeonVar_decodedArgs =
+          NativeInteropTestsPigeonInteropCodec.decodeArguments(pigeonVar_args)
+      val enumListArg = pigeonVar_decodedArgs[0] as List<NativeInteropAnEnum?>?
+      return NativeInteropTestsPigeonInteropCodec.encodeOrNull(
+          pigeonVar_api.echoAsyncNullableEnumList(enumListArg))
+    } catch (e: NativeInteropTestsError) {
+      throw NativeInteropTestsError(
+              e.code, e.message, NativeInteropTestsPigeonInteropCodec.encodeOrNull(e.details))
+          .apply { stackTrace = e.stackTrace }
+    }
+  }
+
+  suspend fun echoAsyncNullableClassList(pigeonVar_args: ByteArray): ByteArray? {
+    val pigeonVar_api = api ?: error("NativeInteropHostIntegrationCoreApi has not been registered")
+    try {
+      val pigeonVar_decodedArgs =
+          NativeInteropTestsPigeonInteropCodec.decodeArguments(pigeonVar_args)
+      val classListArg = pigeonVar_decodedArgs[0] as List<NativeInteropAllNullableTypes?>?
+      return NativeInteropTestsPigeonInteropCodec.encodeOrNull(
+          pigeonVar_api.echoAsyncNullableClassList(classListArg))
+    } catch (e: NativeInteropTestsError) {
+      throw NativeInteropTestsError(
+              e.code, e.message, NativeInteropTestsPigeonInteropCodec.encodeOrNull(e.details))
+          .apply { stackTrace = e.stackTrace }
+    }
+  }
+
+  suspend fun echoAsyncNullableMap(pigeonVar_args: ByteArray): ByteArray? {
+    val pigeonVar_api = api ?: error("NativeInteropHostIntegrationCoreApi has not been registered")
+    try {
+      val pigeonVar_decodedArgs =
+          NativeInteropTestsPigeonInteropCodec.decodeArguments(pigeonVar_args)
+      val mapArg = pigeonVar_decodedArgs[0] as Map<Any?, Any?>?
+      return NativeInteropTestsPigeonInteropCodec.encodeOrNull(
+          pigeonVar_api.echoAsyncNullableMap(mapArg))
+    } catch (e: NativeInteropTestsError) {
+      throw NativeInteropTestsError(
+              e.code, e.message, NativeInteropTestsPigeonInteropCodec.encodeOrNull(e.details))
+          .apply { stackTrace = e.stackTrace }
+    }
+  }
+
+  suspend fun echoAsyncNullableStringMap(pigeonVar_args: ByteArray): ByteArray? {
+    val pigeonVar_api = api ?: error("NativeInteropHostIntegrationCoreApi has not been registered")
+    try {
+      val pigeonVar_decodedArgs =
+          NativeInteropTestsPigeonInteropCodec.decodeArguments(pigeonVar_args)
+      val stringMapArg = pigeonVar_decodedArgs[0] as Map<String?, String?>?
+      return NativeInteropTestsPigeonInteropCodec.encodeOrNull(
+          pigeonVar_api.echoAsyncNullableStringMap(stringMapArg))
+    } catch (e: NativeInteropTestsError) {
+      throw NativeInteropTestsError(
+              e.code, e.message, NativeInteropTestsPigeonInteropCodec.encodeOrNull(e.details))
+          .apply { stackTrace = e.stackTrace }
+    }
+  }
+
+  suspend fun echoAsyncNullableIntMap(pigeonVar_args: ByteArray): ByteArray? {
+    val pigeonVar_api = api ?: error("NativeInteropHostIntegrationCoreApi has not been registered")
+    try {
+      val pigeonVar_decodedArgs =
+          NativeInteropTestsPigeonInteropCodec.decodeArguments(pigeonVar_args)
+      val intMapArg = pigeonVar_decodedArgs[0] as Map<Long?, Long?>?
+      return NativeInteropTestsPigeonInteropCodec.encodeOrNull(
+          pigeonVar_api.echoAsyncNullableIntMap(intMapArg))
+    } catch (e: NativeInteropTestsError) {
+      throw NativeInteropTestsError(
+              e.code, e.message, NativeInteropTestsPigeonInteropCodec.encodeOrNull(e.details))
+          .apply { stackTrace = e.stackTrace }
+    }
+  }
+
+  suspend fun echoAsyncNullableEnumMap(pigeonVar_args: ByteArray): ByteArray? {
+    val pigeonVar_api = api ?: error("NativeInteropHostIntegrationCoreApi has not been registered")
+    try {
+      val pigeonVar_decodedArgs =
+          NativeInteropTestsPigeonInteropCodec.decodeArguments(pigeonVar_args)
+      val enumMapArg = pigeonVar_decodedArgs[0] as Map<NativeInteropAnEnum?, NativeInteropAnEnum?>?
+      return NativeInteropTestsPigeonInteropCodec.encodeOrNull(
+          pigeonVar_api.echoAsyncNullableEnumMap(enumMapArg))
+    } catch (e: NativeInteropTestsError) {
+      throw NativeInteropTestsError(
+              e.code, e.message, NativeInteropTestsPigeonInteropCodec.encodeOrNull(e.details))
+          .apply { stackTrace = e.stackTrace }
+    }
+  }
+
+  suspend fun echoAsyncNullableClassMap(pigeonVar_args: ByteArray): ByteArray? {
+    val pigeonVar_api = api ?: error("NativeInteropHostIntegrationCoreApi has not been registered")
+    try {
+      val pigeonVar_decodedArgs =
+          NativeInteropTestsPigeonInteropCodec.decodeArguments(pigeonVar_args)
+      val classMapArg = pigeonVar_decodedArgs[0] as Map<Long?, NativeInteropAllNullableTypes?>?
+      return NativeInteropTestsPigeonInteropCodec.encodeOrNull(
+          pigeonVar_api.echoAsyncNullableClassMap(classMapArg))
+    } catch (e: NativeInteropTestsError) {
+      throw NativeInteropTestsError(
+              e.code, e.message, NativeInteropTestsPigeonInteropCodec.encodeOrNull(e.details))
+          .apply { stackTrace = e.stackTrace }
+    }
+  }
+
+  suspend fun echoAsyncNullableEnum(anEnum: Long): Long {
+    val pigeonVar_api = api ?: error("NativeInteropHostIntegrationCoreApi has not been registered")
+    try {
+      return (pigeonVar_api
+          .echoAsyncNullableEnum(
+              if (anEnum == -1L) null else NativeInteropAnEnum.ofRaw(anEnum.toInt()))
+          ?.raw
+          ?.toLong() ?: -1L)
+    } catch (e: NativeInteropTestsError) {
+      throw NativeInteropTestsError(
+              e.code, e.message, NativeInteropTestsPigeonInteropCodec.encodeOrNull(e.details))
+          .apply { stackTrace = e.stackTrace }
+    }
+  }
+
+  suspend fun echoAnotherAsyncNullableEnum(anotherEnum: Long): Long {
+    val pigeonVar_api = api ?: error("NativeInteropHostIntegrationCoreApi has not been registered")
+    try {
+      return (pigeonVar_api
+          .echoAnotherAsyncNullableEnum(
+              if (anotherEnum == -1L) null else NativeInteropAnotherEnum.ofRaw(anotherEnum.toInt()))
+          ?.raw
+          ?.toLong() ?: -1L)
+    } catch (e: NativeInteropTestsError) {
+      throw NativeInteropTestsError(
+              e.code, e.message, NativeInteropTestsPigeonInteropCodec.encodeOrNull(e.details))
+          .apply { stackTrace = e.stackTrace }
+    }
+  }
+
+  fun callFlutterNoop() {
+    val pigeonVar_api = api ?: error("NativeInteropHostIntegrationCoreApi has not been registered")
+    try {
+      pigeonVar_api.callFlutterNoop()
+    } catch (e: NativeInteropTestsError) {
+      throw NativeInteropTestsError(
+              e.code, e.message, NativeInteropTestsPigeonInteropCodec.encodeOrNull(e.details))
+          .apply { stackTrace = e.stackTrace }
+    }
+  }
+
+  fun callFlutterThrowError(): ByteArray? {
+    val pigeonVar_api = api ?: error("NativeInteropHostIntegrationCoreApi has not been registered")
+    try {
+      return NativeInteropTestsPigeonInteropCodec.encodeOrNull(
+          pigeonVar_api.callFlutterThrowError())
+    } catch (e: NativeInteropTestsError) {
+      throw NativeInteropTestsError(
+              e.code, e.message, NativeInteropTestsPigeonInteropCodec.encodeOrNull(e.details))
+          .apply { stackTrace = e.stackTrace }
+    }
+  }
+
+  fun callFlutterThrowErrorFromVoid() {
+    val pigeonVar_api = api ?: error("NativeInteropHostIntegrationCoreApi has not been registered")
+    try {
+      pigeonVar_api.callFlutterThrowErrorFromVoid()
+    } catch (e: NativeInteropTestsError) {
+      throw NativeInteropTestsError(
+              e.code, e.message, NativeInteropTestsPigeonInteropCodec.encodeOrNull(e.details))
+          .apply { stackTrace = e.stackTrace }
+    }
+  }
+
+  fun callFlutterEchoNativeInteropAllTypes(pigeonVar_args: ByteArray): ByteArray? {
+    val pigeonVar_api = api ?: error("NativeInteropHostIntegrationCoreApi has not been registered")
+    try {
+      val pigeonVar_decodedArgs =
+          NativeInteropTestsPigeonInteropCodec.decodeArguments(pigeonVar_args)
+      val everythingArg = pigeonVar_decodedArgs[0] as NativeInteropAllTypes
+      return NativeInteropTestsPigeonInteropCodec.encodeOrNull(
+          pigeonVar_api.callFlutterEchoNativeInteropAllTypes(everythingArg))
+    } catch (e: NativeInteropTestsError) {
+      throw NativeInteropTestsError(
+              e.code, e.message, NativeInteropTestsPigeonInteropCodec.encodeOrNull(e.details))
+          .apply { stackTrace = e.stackTrace }
+    }
+  }
+
+  fun callFlutterEchoNativeInteropAllNullableTypes(pigeonVar_args: ByteArray): ByteArray? {
+    val pigeonVar_api = api ?: error("NativeInteropHostIntegrationCoreApi has not been registered")
+    try {
+      val pigeonVar_decodedArgs =
+          NativeInteropTestsPigeonInteropCodec.decodeArguments(pigeonVar_args)
+      val everythingArg = pigeonVar_decodedArgs[0] as NativeInteropAllNullableTypes?
+      return NativeInteropTestsPigeonInteropCodec.encodeOrNull(
+          pigeonVar_api.callFlutterEchoNativeInteropAllNullableTypes(everythingArg))
+    } catch (e: NativeInteropTestsError) {
+      throw NativeInteropTestsError(
+              e.code, e.message, NativeInteropTestsPigeonInteropCodec.encodeOrNull(e.details))
+          .apply { stackTrace = e.stackTrace }
+    }
+  }
+
+  fun callFlutterEchoSealedClass(pigeonVar_args: ByteArray): ByteArray? {
+    val pigeonVar_api = api ?: error("NativeInteropHostIntegrationCoreApi has not been registered")
+    try {
+      val pigeonVar_decodedArgs =
+          NativeInteropTestsPigeonInteropCodec.decodeArguments(pigeonVar_args)
+      val sealedClassArg = pigeonVar_decodedArgs[0] as NativeInteropSealedClass
+      return NativeInteropTestsPigeonInteropCodec.encodeOrNull(
+          pigeonVar_api.callFlutterEchoSealedClass(sealedClassArg))
+    } catch (e: NativeInteropTestsError) {
+      throw NativeInteropTestsError(
+              e.code, e.message, NativeInteropTestsPigeonInteropCodec.encodeOrNull(e.details))
+          .apply { stackTrace = e.stackTrace }
+    }
+  }
+
+  fun callFlutterSendMultipleNullableTypes(
       aNullableBool: Boolean?,
       aNullableInt: Long?,
       aNullableString: String?
-  ): NativeInteropAllNullableTypes {
-    api?.let {
-      try {
-        return it.callFlutterSendMultipleNullableTypes(aNullableBool, aNullableInt, aNullableString)
-      } catch (e: Exception) {
-        throw e
-      }
+  ): ByteArray? {
+    val pigeonVar_api = api ?: error("NativeInteropHostIntegrationCoreApi has not been registered")
+    try {
+      return NativeInteropTestsPigeonInteropCodec.encodeOrNull(
+          pigeonVar_api.callFlutterSendMultipleNullableTypes(
+              aNullableBool, aNullableInt, aNullableString))
+    } catch (e: NativeInteropTestsError) {
+      throw NativeInteropTestsError(
+              e.code, e.message, NativeInteropTestsPigeonInteropCodec.encodeOrNull(e.details))
+          .apply { stackTrace = e.stackTrace }
     }
-    error("NativeInteropHostIntegrationCoreApi has not been registered")
   }
 
-  override fun callFlutterEchoNativeInteropAllNullableTypesWithoutRecursion(
-      everything: NativeInteropAllNullableTypesWithoutRecursion?
-  ): NativeInteropAllNullableTypesWithoutRecursion? {
-    api?.let {
-      try {
-        return it.callFlutterEchoNativeInteropAllNullableTypesWithoutRecursion(everything)
-      } catch (e: Exception) {
-        throw e
-      }
+  fun callFlutterEchoNativeInteropAllNullableTypesWithoutRecursion(
+      pigeonVar_args: ByteArray
+  ): ByteArray? {
+    val pigeonVar_api = api ?: error("NativeInteropHostIntegrationCoreApi has not been registered")
+    try {
+      val pigeonVar_decodedArgs =
+          NativeInteropTestsPigeonInteropCodec.decodeArguments(pigeonVar_args)
+      val everythingArg = pigeonVar_decodedArgs[0] as NativeInteropAllNullableTypesWithoutRecursion?
+      return NativeInteropTestsPigeonInteropCodec.encodeOrNull(
+          pigeonVar_api.callFlutterEchoNativeInteropAllNullableTypesWithoutRecursion(everythingArg))
+    } catch (e: NativeInteropTestsError) {
+      throw NativeInteropTestsError(
+              e.code, e.message, NativeInteropTestsPigeonInteropCodec.encodeOrNull(e.details))
+          .apply { stackTrace = e.stackTrace }
     }
-    error("NativeInteropHostIntegrationCoreApi has not been registered")
   }
 
-  override fun callFlutterSendMultipleNullableTypesWithoutRecursion(
+  fun callFlutterSendMultipleNullableTypesWithoutRecursion(
       aNullableBool: Boolean?,
       aNullableInt: Long?,
       aNullableString: String?
-  ): NativeInteropAllNullableTypesWithoutRecursion {
-    api?.let {
-      try {
-        return it.callFlutterSendMultipleNullableTypesWithoutRecursion(
-            aNullableBool, aNullableInt, aNullableString)
-      } catch (e: Exception) {
-        throw e
-      }
+  ): ByteArray? {
+    val pigeonVar_api = api ?: error("NativeInteropHostIntegrationCoreApi has not been registered")
+    try {
+      return NativeInteropTestsPigeonInteropCodec.encodeOrNull(
+          pigeonVar_api.callFlutterSendMultipleNullableTypesWithoutRecursion(
+              aNullableBool, aNullableInt, aNullableString))
+    } catch (e: NativeInteropTestsError) {
+      throw NativeInteropTestsError(
+              e.code, e.message, NativeInteropTestsPigeonInteropCodec.encodeOrNull(e.details))
+          .apply { stackTrace = e.stackTrace }
+    }
+  }
+
+  fun callFlutterEchoBool(aBool: Boolean): Boolean {
+    val pigeonVar_api = api ?: error("NativeInteropHostIntegrationCoreApi has not been registered")
+    try {
+      return pigeonVar_api.callFlutterEchoBool(aBool)
+    } catch (e: NativeInteropTestsError) {
+      throw NativeInteropTestsError(
+              e.code, e.message, NativeInteropTestsPigeonInteropCodec.encodeOrNull(e.details))
+          .apply { stackTrace = e.stackTrace }
+    }
+  }
+
+  fun callFlutterEchoInt(anInt: Long): Long {
+    val pigeonVar_api = api ?: error("NativeInteropHostIntegrationCoreApi has not been registered")
+    try {
+      return pigeonVar_api.callFlutterEchoInt(anInt)
+    } catch (e: NativeInteropTestsError) {
+      throw NativeInteropTestsError(
+              e.code, e.message, NativeInteropTestsPigeonInteropCodec.encodeOrNull(e.details))
+          .apply { stackTrace = e.stackTrace }
     }
-    error("NativeInteropHostIntegrationCoreApi has not been registered")
-  }
-
-  override fun callFlutterEchoBool(aBool: Boolean): Boolean {
-    api?.let {
-      try {
-        return it.callFlutterEchoBool(aBool)
-      } catch (e: Exception) {
-        throw e
-      }
-    }
-    error("NativeInteropHostIntegrationCoreApi has not been registered")
-  }
-
-  override fun callFlutterEchoInt(anInt: Long): Long {
-    api?.let {
-      try {
-        return it.callFlutterEchoInt(anInt)
-      } catch (e: Exception) {
-        throw e
-      }
-    }
-    error("NativeInteropHostIntegrationCoreApi has not been registered")
-  }
-
-  override fun callFlutterEchoDouble(aDouble: Double): Double {
-    api?.let {
-      try {
-        return it.callFlutterEchoDouble(aDouble)
-      } catch (e: Exception) {
-        throw e
-      }
-    }
-    error("NativeInteropHostIntegrationCoreApi has not been registered")
-  }
-
-  override fun callFlutterEchoString(aString: String): String {
-    api?.let {
-      try {
-        return it.callFlutterEchoString(aString)
-      } catch (e: Exception) {
-        throw e
-      }
-    }
-    error("NativeInteropHostIntegrationCoreApi has not been registered")
-  }
-
-  override fun callFlutterEchoUint8List(list: ByteArray): ByteArray {
-    api?.let {
-      try {
-        return it.callFlutterEchoUint8List(list)
-      } catch (e: Exception) {
-        throw e
-      }
-    }
-    error("NativeInteropHostIntegrationCoreApi has not been registered")
-  }
-
-  override fun callFlutterEchoInt32List(list: IntArray): IntArray {
-    api?.let {
-      try {
-        return it.callFlutterEchoInt32List(list)
-      } catch (e: Exception) {
-        throw e
-      }
-    }
-    error("NativeInteropHostIntegrationCoreApi has not been registered")
-  }
-
-  override fun callFlutterEchoInt64List(list: LongArray): LongArray {
-    api?.let {
-      try {
-        return it.callFlutterEchoInt64List(list)
-      } catch (e: Exception) {
-        throw e
-      }
-    }
-    error("NativeInteropHostIntegrationCoreApi has not been registered")
-  }
-
-  override fun callFlutterEchoFloat64List(list: DoubleArray): DoubleArray {
-    api?.let {
-      try {
-        return it.callFlutterEchoFloat64List(list)
-      } catch (e: Exception) {
-        throw e
-      }
-    }
-    error("NativeInteropHostIntegrationCoreApi has not been registered")
-  }
-
-  override fun callFlutterEchoList(list: List<Any?>): List<Any?> {
-    api?.let {
-      try {
-        return it.callFlutterEchoList(list)
-      } catch (e: Exception) {
-        throw e
-      }
-    }
-    error("NativeInteropHostIntegrationCoreApi has not been registered")
-  }
-
-  override fun callFlutterEchoEnumList(
-      enumList: List<NativeInteropAnEnum?>
-  ): List<NativeInteropAnEnum?> {
-    api?.let {
-      try {
-        return it.callFlutterEchoEnumList(enumList)
-      } catch (e: Exception) {
-        throw e
-      }
-    }
-    error("NativeInteropHostIntegrationCoreApi has not been registered")
-  }
-
-  override fun callFlutterEchoClassList(
-      classList: List<NativeInteropAllNullableTypes?>
-  ): List<NativeInteropAllNullableTypes?> {
-    api?.let {
-      try {
-        return it.callFlutterEchoClassList(classList)
-      } catch (e: Exception) {
-        throw e
-      }
-    }
-    error("NativeInteropHostIntegrationCoreApi has not been registered")
-  }
-
-  override fun callFlutterEchoNonNullEnumList(
-      enumList: List<NativeInteropAnEnum>
-  ): List<NativeInteropAnEnum> {
-    api?.let {
-      try {
-        return it.callFlutterEchoNonNullEnumList(enumList)
-      } catch (e: Exception) {
-        throw e
-      }
-    }
-    error("NativeInteropHostIntegrationCoreApi has not been registered")
-  }
-
-  override fun callFlutterEchoNonNullClassList(
-      classList: List<NativeInteropAllNullableTypes>
-  ): List<NativeInteropAllNullableTypes> {
-    api?.let {
-      try {
-        return it.callFlutterEchoNonNullClassList(classList)
-      } catch (e: Exception) {
-        throw e
-      }
-    }
-    error("NativeInteropHostIntegrationCoreApi has not been registered")
-  }
-
-  override fun callFlutterEchoMap(map: Map<Any?, Any?>): Map<Any?, Any?> {
-    api?.let {
-      try {
-        return it.callFlutterEchoMap(map)
-      } catch (e: Exception) {
-        throw e
-      }
-    }
-    error("NativeInteropHostIntegrationCoreApi has not been registered")
-  }
-
-  override fun callFlutterEchoStringMap(stringMap: Map<String?, String?>): Map<String?, String?> {
-    api?.let {
-      try {
-        return it.callFlutterEchoStringMap(stringMap)
-      } catch (e: Exception) {
-        throw e
-      }
-    }
-    error("NativeInteropHostIntegrationCoreApi has not been registered")
-  }
-
-  override fun callFlutterEchoIntMap(intMap: Map<Long?, Long?>): Map<Long?, Long?> {
-    api?.let {
-      try {
-        return it.callFlutterEchoIntMap(intMap)
-      } catch (e: Exception) {
-        throw e
-      }
-    }
-    error("NativeInteropHostIntegrationCoreApi has not been registered")
-  }
-
-  override fun callFlutterEchoEnumMap(
-      enumMap: Map<NativeInteropAnEnum?, NativeInteropAnEnum?>
-  ): Map<NativeInteropAnEnum?, NativeInteropAnEnum?> {
-    api?.let {
-      try {
-        return it.callFlutterEchoEnumMap(enumMap)
-      } catch (e: Exception) {
-        throw e
-      }
-    }
-    error("NativeInteropHostIntegrationCoreApi has not been registered")
-  }
-
-  override fun callFlutterEchoClassMap(
-      classMap: Map<Long?, NativeInteropAllNullableTypes?>
-  ): Map<Long?, NativeInteropAllNullableTypes?> {
-    api?.let {
-      try {
-        return it.callFlutterEchoClassMap(classMap)
-      } catch (e: Exception) {
-        throw e
-      }
-    }
-    error("NativeInteropHostIntegrationCoreApi has not been registered")
-  }
-
-  override fun callFlutterEchoNonNullStringMap(
-      stringMap: Map<String, String>
-  ): Map<String, String> {
-    api?.let {
-      try {
-        return it.callFlutterEchoNonNullStringMap(stringMap)
-      } catch (e: Exception) {
-        throw e
-      }
-    }
-    error("NativeInteropHostIntegrationCoreApi has not been registered")
-  }
-
-  override fun callFlutterEchoNonNullIntMap(intMap: Map<Long, Long>): Map<Long, Long> {
-    api?.let {
-      try {
-        return it.callFlutterEchoNonNullIntMap(intMap)
-      } catch (e: Exception) {
-        throw e
-      }
-    }
-    error("NativeInteropHostIntegrationCoreApi has not been registered")
-  }
-
-  override fun callFlutterEchoNonNullEnumMap(
-      enumMap: Map<NativeInteropAnEnum, NativeInteropAnEnum>
-  ): Map<NativeInteropAnEnum, NativeInteropAnEnum> {
-    api?.let {
-      try {
-        return it.callFlutterEchoNonNullEnumMap(enumMap)
-      } catch (e: Exception) {
-        throw e
-      }
-    }
-    error("NativeInteropHostIntegrationCoreApi has not been registered")
-  }
-
-  override fun callFlutterEchoNonNullClassMap(
-      classMap: Map<Long, NativeInteropAllNullableTypes>
-  ): Map<Long, NativeInteropAllNullableTypes> {
-    api?.let {
-      try {
-        return it.callFlutterEchoNonNullClassMap(classMap)
-      } catch (e: Exception) {
-        throw e
-      }
-    }
-    error("NativeInteropHostIntegrationCoreApi has not been registered")
-  }
-
-  override fun callFlutterEchoEnum(anEnum: NativeInteropAnEnum): NativeInteropAnEnum {
-    api?.let {
-      try {
-        return it.callFlutterEchoEnum(anEnum)
-      } catch (e: Exception) {
-        throw e
-      }
-    }
-    error("NativeInteropHostIntegrationCoreApi has not been registered")
-  }
-
-  override fun callFlutterEchoNativeInteropAnotherEnum(
-      anotherEnum: NativeInteropAnotherEnum
-  ): NativeInteropAnotherEnum {
-    api?.let {
-      try {
-        return it.callFlutterEchoNativeInteropAnotherEnum(anotherEnum)
-      } catch (e: Exception) {
-        throw e
-      }
-    }
-    error("NativeInteropHostIntegrationCoreApi has not been registered")
-  }
-
-  override fun callFlutterEchoNullableBool(aBool: Boolean?): Boolean? {
-    api?.let {
-      try {
-        return it.callFlutterEchoNullableBool(aBool)
-      } catch (e: Exception) {
-        throw e
-      }
-    }
-    error("NativeInteropHostIntegrationCoreApi has not been registered")
-  }
-
-  override fun callFlutterEchoNullableInt(anInt: Long?): Long? {
-    api?.let {
-      try {
-        return it.callFlutterEchoNullableInt(anInt)
-      } catch (e: Exception) {
-        throw e
-      }
-    }
-    error("NativeInteropHostIntegrationCoreApi has not been registered")
-  }
-
-  override fun callFlutterEchoNullableDouble(aDouble: Double?): Double? {
-    api?.let {
-      try {
-        return it.callFlutterEchoNullableDouble(aDouble)
-      } catch (e: Exception) {
-        throw e
-      }
-    }
-    error("NativeInteropHostIntegrationCoreApi has not been registered")
-  }
-
-  override fun callFlutterEchoNullableString(aString: String?): String? {
-    api?.let {
-      try {
-        return it.callFlutterEchoNullableString(aString)
-      } catch (e: Exception) {
-        throw e
-      }
-    }
-    error("NativeInteropHostIntegrationCoreApi has not been registered")
-  }
-
-  override fun callFlutterEchoNullableUint8List(list: ByteArray?): ByteArray? {
-    api?.let {
-      try {
-        return it.callFlutterEchoNullableUint8List(list)
-      } catch (e: Exception) {
-        throw e
-      }
-    }
-    error("NativeInteropHostIntegrationCoreApi has not been registered")
-  }
-
-  override fun callFlutterEchoNullableInt32List(list: IntArray?): IntArray? {
-    api?.let {
-      try {
-        return it.callFlutterEchoNullableInt32List(list)
-      } catch (e: Exception) {
-        throw e
-      }
-    }
-    error("NativeInteropHostIntegrationCoreApi has not been registered")
-  }
-
-  override fun callFlutterEchoNullableInt64List(list: LongArray?): LongArray? {
-    api?.let {
-      try {
-        return it.callFlutterEchoNullableInt64List(list)
-      } catch (e: Exception) {
-        throw e
-      }
-    }
-    error("NativeInteropHostIntegrationCoreApi has not been registered")
-  }
-
-  override fun callFlutterEchoNullableFloat64List(list: DoubleArray?): DoubleArray? {
-    api?.let {
-      try {
-        return it.callFlutterEchoNullableFloat64List(list)
-      } catch (e: Exception) {
-        throw e
-      }
-    }
-    error("NativeInteropHostIntegrationCoreApi has not been registered")
-  }
-
-  override fun callFlutterEchoNullableList(list: List<Any?>?): List<Any?>? {
-    api?.let {
-      try {
-        return it.callFlutterEchoNullableList(list)
-      } catch (e: Exception) {
-        throw e
-      }
-    }
-    error("NativeInteropHostIntegrationCoreApi has not been registered")
-  }
-
-  override fun callFlutterEchoNullableEnumList(
-      enumList: List<NativeInteropAnEnum?>?
-  ): List<NativeInteropAnEnum?>? {
-    api?.let {
-      try {
-        return it.callFlutterEchoNullableEnumList(enumList)
-      } catch (e: Exception) {
-        throw e
-      }
-    }
-    error("NativeInteropHostIntegrationCoreApi has not been registered")
-  }
-
-  override fun callFlutterEchoNullableClassList(
-      classList: List<NativeInteropAllNullableTypes?>?
-  ): List<NativeInteropAllNullableTypes?>? {
-    api?.let {
-      try {
-        return it.callFlutterEchoNullableClassList(classList)
-      } catch (e: Exception) {
-        throw e
-      }
-    }
-    error("NativeInteropHostIntegrationCoreApi has not been registered")
-  }
-
-  override fun callFlutterEchoNullableNonNullEnumList(
-      enumList: List<NativeInteropAnEnum>?
-  ): List<NativeInteropAnEnum>? {
-    api?.let {
-      try {
-        return it.callFlutterEchoNullableNonNullEnumList(enumList)
-      } catch (e: Exception) {
-        throw e
-      }
-    }
-    error("NativeInteropHostIntegrationCoreApi has not been registered")
-  }
-
-  override fun callFlutterEchoNullableNonNullClassList(
-      classList: List<NativeInteropAllNullableTypes>?
-  ): List<NativeInteropAllNullableTypes>? {
-    api?.let {
-      try {
-        return it.callFlutterEchoNullableNonNullClassList(classList)
-      } catch (e: Exception) {
-        throw e
-      }
-    }
-    error("NativeInteropHostIntegrationCoreApi has not been registered")
-  }
-
-  override fun callFlutterEchoNullableMap(map: Map<Any?, Any?>?): Map<Any?, Any?>? {
-    api?.let {
-      try {
-        return it.callFlutterEchoNullableMap(map)
-      } catch (e: Exception) {
-        throw e
-      }
-    }
-    error("NativeInteropHostIntegrationCoreApi has not been registered")
-  }
-
-  override fun callFlutterEchoNullableStringMap(
-      stringMap: Map<String?, String?>?
-  ): Map<String?, String?>? {
-    api?.let {
-      try {
-        return it.callFlutterEchoNullableStringMap(stringMap)
-      } catch (e: Exception) {
-        throw e
-      }
-    }
-    error("NativeInteropHostIntegrationCoreApi has not been registered")
-  }
-
-  override fun callFlutterEchoNullableIntMap(intMap: Map<Long?, Long?>?): Map<Long?, Long?>? {
-    api?.let {
-      try {
-        return it.callFlutterEchoNullableIntMap(intMap)
-      } catch (e: Exception) {
-        throw e
-      }
-    }
-    error("NativeInteropHostIntegrationCoreApi has not been registered")
-  }
-
-  override fun callFlutterEchoNullableEnumMap(
-      enumMap: Map<NativeInteropAnEnum?, NativeInteropAnEnum?>?
-  ): Map<NativeInteropAnEnum?, NativeInteropAnEnum?>? {
-    api?.let {
-      try {
-        return it.callFlutterEchoNullableEnumMap(enumMap)
-      } catch (e: Exception) {
-        throw e
-      }
-    }
-    error("NativeInteropHostIntegrationCoreApi has not been registered")
-  }
-
-  override fun callFlutterEchoNullableClassMap(
-      classMap: Map<Long?, NativeInteropAllNullableTypes?>?
-  ): Map<Long?, NativeInteropAllNullableTypes?>? {
-    api?.let {
-      try {
-        return it.callFlutterEchoNullableClassMap(classMap)
-      } catch (e: Exception) {
-        throw e
-      }
-    }
-    error("NativeInteropHostIntegrationCoreApi has not been registered")
-  }
-
-  override fun callFlutterEchoNullableNonNullStringMap(
-      stringMap: Map<String, String>?
-  ): Map<String, String>? {
-    api?.let {
-      try {
-        return it.callFlutterEchoNullableNonNullStringMap(stringMap)
-      } catch (e: Exception) {
-        throw e
-      }
-    }
-    error("NativeInteropHostIntegrationCoreApi has not been registered")
-  }
-
-  override fun callFlutterEchoNullableNonNullIntMap(intMap: Map<Long, Long>?): Map<Long, Long>? {
-    api?.let {
-      try {
-        return it.callFlutterEchoNullableNonNullIntMap(intMap)
-      } catch (e: Exception) {
-        throw e
-      }
-    }
-    error("NativeInteropHostIntegrationCoreApi has not been registered")
-  }
-
-  override fun callFlutterEchoNullableNonNullEnumMap(
-      enumMap: Map<NativeInteropAnEnum, NativeInteropAnEnum>?
-  ): Map<NativeInteropAnEnum, NativeInteropAnEnum>? {
-    api?.let {
-      try {
-        return it.callFlutterEchoNullableNonNullEnumMap(enumMap)
-      } catch (e: Exception) {
-        throw e
-      }
-    }
-    error("NativeInteropHostIntegrationCoreApi has not been registered")
-  }
-
-  override fun callFlutterEchoNullableNonNullClassMap(
-      classMap: Map<Long, NativeInteropAllNullableTypes>?
-  ): Map<Long, NativeInteropAllNullableTypes>? {
-    api?.let {
-      try {
-        return it.callFlutterEchoNullableNonNullClassMap(classMap)
-      } catch (e: Exception) {
-        throw e
-      }
-    }
-    error("NativeInteropHostIntegrationCoreApi has not been registered")
-  }
-
-  override fun callFlutterEchoNullableEnum(anEnum: NativeInteropAnEnum?): NativeInteropAnEnum? {
-    api?.let {
-      try {
-        return it.callFlutterEchoNullableEnum(anEnum)
-      } catch (e: Exception) {
-        throw e
-      }
-    }
-    error("NativeInteropHostIntegrationCoreApi has not been registered")
-  }
-
-  override fun callFlutterEchoAnotherNullableEnum(
-      anotherEnum: NativeInteropAnotherEnum?
-  ): NativeInteropAnotherEnum? {
-    api?.let {
-      try {
-        return it.callFlutterEchoAnotherNullableEnum(anotherEnum)
-      } catch (e: Exception) {
-        throw e
-      }
-    }
-    error("NativeInteropHostIntegrationCoreApi has not been registered")
-  }
-
-  override suspend fun callFlutterNoopAsync() {
-    api?.let {
-      try {
-        return it.callFlutterNoopAsync()
-      } catch (e: Exception) {
-        throw e
-      }
-    }
-    error("NativeInteropHostIntegrationCoreApi has not been registered")
-  }
-
-  override suspend fun callFlutterEchoAsyncNativeInteropAllTypes(
-      everything: NativeInteropAllTypes
-  ): NativeInteropAllTypes {
-    api?.let {
-      try {
-        return it.callFlutterEchoAsyncNativeInteropAllTypes(everything)
-      } catch (e: Exception) {
-        throw e
-      }
-    }
-    error("NativeInteropHostIntegrationCoreApi has not been registered")
-  }
-
-  override suspend fun callFlutterEchoAsyncNullableNativeInteropAllNullableTypes(
-      everything: NativeInteropAllNullableTypes?
-  ): NativeInteropAllNullableTypes? {
-    api?.let {
-      try {
-        return it.callFlutterEchoAsyncNullableNativeInteropAllNullableTypes(everything)
-      } catch (e: Exception) {
-        throw e
-      }
-    }
-    error("NativeInteropHostIntegrationCoreApi has not been registered")
-  }
-
-  override suspend fun callFlutterEchoAsyncNullableNativeInteropAllNullableTypesWithoutRecursion(
-      everything: NativeInteropAllNullableTypesWithoutRecursion?
-  ): NativeInteropAllNullableTypesWithoutRecursion? {
-    api?.let {
-      try {
-        return it.callFlutterEchoAsyncNullableNativeInteropAllNullableTypesWithoutRecursion(
-            everything)
-      } catch (e: Exception) {
-        throw e
-      }
-    }
-    error("NativeInteropHostIntegrationCoreApi has not been registered")
-  }
-
-  override suspend fun callFlutterEchoAsyncBool(aBool: Boolean): Boolean {
-    api?.let {
-      try {
-        return it.callFlutterEchoAsyncBool(aBool)
-      } catch (e: Exception) {
-        throw e
-      }
-    }
-    error("NativeInteropHostIntegrationCoreApi has not been registered")
-  }
-
-  override suspend fun callFlutterEchoAsyncInt(anInt: Long): Long {
-    api?.let {
-      try {
-        return it.callFlutterEchoAsyncInt(anInt)
-      } catch (e: Exception) {
-        throw e
-      }
-    }
-    error("NativeInteropHostIntegrationCoreApi has not been registered")
-  }
-
-  override suspend fun callFlutterEchoAsyncDouble(aDouble: Double): Double {
-    api?.let {
-      try {
-        return it.callFlutterEchoAsyncDouble(aDouble)
-      } catch (e: Exception) {
-        throw e
-      }
-    }
-    error("NativeInteropHostIntegrationCoreApi has not been registered")
-  }
-
-  override suspend fun callFlutterEchoAsyncString(aString: String): String {
-    api?.let {
-      try {
-        return it.callFlutterEchoAsyncString(aString)
-      } catch (e: Exception) {
-        throw e
-      }
-    }
-    error("NativeInteropHostIntegrationCoreApi has not been registered")
-  }
-
-  override suspend fun callFlutterEchoAsyncUint8List(list: ByteArray): ByteArray {
-    api?.let {
-      try {
-        return it.callFlutterEchoAsyncUint8List(list)
-      } catch (e: Exception) {
-        throw e
-      }
-    }
-    error("NativeInteropHostIntegrationCoreApi has not been registered")
-  }
-
-  override suspend fun callFlutterEchoAsyncInt32List(list: IntArray): IntArray {
-    api?.let {
-      try {
-        return it.callFlutterEchoAsyncInt32List(list)
-      } catch (e: Exception) {
-        throw e
-      }
-    }
-    error("NativeInteropHostIntegrationCoreApi has not been registered")
-  }
-
-  override suspend fun callFlutterEchoAsyncInt64List(list: LongArray): LongArray {
-    api?.let {
-      try {
-        return it.callFlutterEchoAsyncInt64List(list)
-      } catch (e: Exception) {
-        throw e
-      }
-    }
-    error("NativeInteropHostIntegrationCoreApi has not been registered")
-  }
-
-  override suspend fun callFlutterEchoAsyncFloat64List(list: DoubleArray): DoubleArray {
-    api?.let {
-      try {
-        return it.callFlutterEchoAsyncFloat64List(list)
-      } catch (e: Exception) {
-        throw e
-      }
-    }
-    error("NativeInteropHostIntegrationCoreApi has not been registered")
-  }
-
-  override suspend fun callFlutterEchoAsyncObject(anObject: Any): Any {
-    api?.let {
-      try {
-        return it.callFlutterEchoAsyncObject(anObject)
-      } catch (e: Exception) {
-        throw e
-      }
-    }
-    error("NativeInteropHostIntegrationCoreApi has not been registered")
-  }
-
-  override suspend fun callFlutterEchoAsyncList(list: List<Any?>): List<Any?> {
-    api?.let {
-      try {
-        return it.callFlutterEchoAsyncList(list)
-      } catch (e: Exception) {
-        throw e
-      }
-    }
-    error("NativeInteropHostIntegrationCoreApi has not been registered")
-  }
-
-  override suspend fun callFlutterEchoAsyncEnumList(
-      enumList: List<NativeInteropAnEnum?>
-  ): List<NativeInteropAnEnum?> {
-    api?.let {
-      try {
-        return it.callFlutterEchoAsyncEnumList(enumList)
-      } catch (e: Exception) {
-        throw e
-      }
-    }
-    error("NativeInteropHostIntegrationCoreApi has not been registered")
-  }
-
-  override suspend fun callFlutterEchoAsyncClassList(
-      classList: List<NativeInteropAllNullableTypes?>
-  ): List<NativeInteropAllNullableTypes?> {
-    api?.let {
-      try {
-        return it.callFlutterEchoAsyncClassList(classList)
-      } catch (e: Exception) {
-        throw e
-      }
-    }
-    error("NativeInteropHostIntegrationCoreApi has not been registered")
-  }
-
-  override suspend fun callFlutterEchoAsyncNonNullEnumList(
-      enumList: List<NativeInteropAnEnum>
-  ): List<NativeInteropAnEnum> {
-    api?.let {
-      try {
-        return it.callFlutterEchoAsyncNonNullEnumList(enumList)
-      } catch (e: Exception) {
-        throw e
-      }
-    }
-    error("NativeInteropHostIntegrationCoreApi has not been registered")
-  }
-
-  override suspend fun callFlutterEchoAsyncNonNullClassList(
-      classList: List<NativeInteropAllNullableTypes>
-  ): List<NativeInteropAllNullableTypes> {
-    api?.let {
-      try {
-        return it.callFlutterEchoAsyncNonNullClassList(classList)
-      } catch (e: Exception) {
-        throw e
-      }
-    }
-    error("NativeInteropHostIntegrationCoreApi has not been registered")
-  }
-
-  override suspend fun callFlutterEchoAsyncMap(map: Map<Any?, Any?>): Map<Any?, Any?> {
-    api?.let {
-      try {
-        return it.callFlutterEchoAsyncMap(map)
-      } catch (e: Exception) {
-        throw e
-      }
-    }
-    error("NativeInteropHostIntegrationCoreApi has not been registered")
-  }
-
-  override suspend fun callFlutterEchoAsyncStringMap(
-      stringMap: Map<String?, String?>
-  ): Map<String?, String?> {
-    api?.let {
-      try {
-        return it.callFlutterEchoAsyncStringMap(stringMap)
-      } catch (e: Exception) {
-        throw e
-      }
-    }
-    error("NativeInteropHostIntegrationCoreApi has not been registered")
-  }
-
-  override suspend fun callFlutterEchoAsyncIntMap(intMap: Map<Long?, Long?>): Map<Long?, Long?> {
-    api?.let {
-      try {
-        return it.callFlutterEchoAsyncIntMap(intMap)
-      } catch (e: Exception) {
-        throw e
-      }
-    }
-    error("NativeInteropHostIntegrationCoreApi has not been registered")
-  }
-
-  override suspend fun callFlutterEchoAsyncEnumMap(
-      enumMap: Map<NativeInteropAnEnum?, NativeInteropAnEnum?>
-  ): Map<NativeInteropAnEnum?, NativeInteropAnEnum?> {
-    api?.let {
-      try {
-        return it.callFlutterEchoAsyncEnumMap(enumMap)
-      } catch (e: Exception) {
-        throw e
-      }
-    }
-    error("NativeInteropHostIntegrationCoreApi has not been registered")
-  }
-
-  override suspend fun callFlutterEchoAsyncClassMap(
-      classMap: Map<Long?, NativeInteropAllNullableTypes?>
-  ): Map<Long?, NativeInteropAllNullableTypes?> {
-    api?.let {
-      try {
-        return it.callFlutterEchoAsyncClassMap(classMap)
-      } catch (e: Exception) {
-        throw e
-      }
-    }
-    error("NativeInteropHostIntegrationCoreApi has not been registered")
-  }
-
-  override suspend fun callFlutterEchoAsyncEnum(anEnum: NativeInteropAnEnum): NativeInteropAnEnum {
-    api?.let {
-      try {
-        return it.callFlutterEchoAsyncEnum(anEnum)
-      } catch (e: Exception) {
-        throw e
-      }
-    }
-    error("NativeInteropHostIntegrationCoreApi has not been registered")
-  }
-
-  override suspend fun callFlutterEchoAnotherAsyncEnum(
-      anotherEnum: NativeInteropAnotherEnum
-  ): NativeInteropAnotherEnum {
-    api?.let {
-      try {
-        return it.callFlutterEchoAnotherAsyncEnum(anotherEnum)
-      } catch (e: Exception) {
-        throw e
-      }
-    }
-    error("NativeInteropHostIntegrationCoreApi has not been registered")
-  }
-
-  override suspend fun callFlutterEchoAsyncNullableBool(aBool: Boolean?): Boolean? {
-    api?.let {
-      try {
-        return it.callFlutterEchoAsyncNullableBool(aBool)
-      } catch (e: Exception) {
-        throw e
-      }
-    }
-    error("NativeInteropHostIntegrationCoreApi has not been registered")
-  }
-
-  override suspend fun callFlutterEchoAsyncNullableInt(anInt: Long?): Long? {
-    api?.let {
-      try {
-        return it.callFlutterEchoAsyncNullableInt(anInt)
-      } catch (e: Exception) {
-        throw e
-      }
-    }
-    error("NativeInteropHostIntegrationCoreApi has not been registered")
-  }
-
-  override suspend fun callFlutterEchoAsyncNullableDouble(aDouble: Double?): Double? {
-    api?.let {
-      try {
-        return it.callFlutterEchoAsyncNullableDouble(aDouble)
-      } catch (e: Exception) {
-        throw e
-      }
-    }
-    error("NativeInteropHostIntegrationCoreApi has not been registered")
-  }
-
-  override suspend fun callFlutterEchoAsyncNullableString(aString: String?): String? {
-    api?.let {
-      try {
-        return it.callFlutterEchoAsyncNullableString(aString)
-      } catch (e: Exception) {
-        throw e
-      }
-    }
-    error("NativeInteropHostIntegrationCoreApi has not been registered")
-  }
-
-  override suspend fun callFlutterEchoAsyncNullableUint8List(list: ByteArray?): ByteArray? {
-    api?.let {
-      try {
-        return it.callFlutterEchoAsyncNullableUint8List(list)
-      } catch (e: Exception) {
-        throw e
-      }
-    }
-    error("NativeInteropHostIntegrationCoreApi has not been registered")
-  }
-
-  override suspend fun callFlutterEchoAsyncNullableInt32List(list: IntArray?): IntArray? {
-    api?.let {
-      try {
-        return it.callFlutterEchoAsyncNullableInt32List(list)
-      } catch (e: Exception) {
-        throw e
-      }
-    }
-    error("NativeInteropHostIntegrationCoreApi has not been registered")
-  }
-
-  override suspend fun callFlutterEchoAsyncNullableInt64List(list: LongArray?): LongArray? {
-    api?.let {
-      try {
-        return it.callFlutterEchoAsyncNullableInt64List(list)
-      } catch (e: Exception) {
-        throw e
-      }
-    }
-    error("NativeInteropHostIntegrationCoreApi has not been registered")
-  }
-
-  override suspend fun callFlutterEchoAsyncNullableFloat64List(list: DoubleArray?): DoubleArray? {
-    api?.let {
-      try {
-        return it.callFlutterEchoAsyncNullableFloat64List(list)
-      } catch (e: Exception) {
-        throw e
-      }
-    }
-    error("NativeInteropHostIntegrationCoreApi has not been registered")
-  }
-
-  override suspend fun callFlutterThrowFlutterErrorAsync(): Any? {
-    api?.let {
-      try {
-        return it.callFlutterThrowFlutterErrorAsync()
-      } catch (e: Exception) {
-        throw e
-      }
+  }
+
+  fun callFlutterEchoDouble(aDouble: Double): Double {
+    val pigeonVar_api = api ?: error("NativeInteropHostIntegrationCoreApi has not been registered")
+    try {
+      return pigeonVar_api.callFlutterEchoDouble(aDouble)
+    } catch (e: NativeInteropTestsError) {
+      throw NativeInteropTestsError(
+              e.code, e.message, NativeInteropTestsPigeonInteropCodec.encodeOrNull(e.details))
+          .apply { stackTrace = e.stackTrace }
+    }
+  }
+
+  fun callFlutterEchoString(aString: String): String {
+    val pigeonVar_api = api ?: error("NativeInteropHostIntegrationCoreApi has not been registered")
+    try {
+      return pigeonVar_api.callFlutterEchoString(aString)
+    } catch (e: NativeInteropTestsError) {
+      throw NativeInteropTestsError(
+              e.code, e.message, NativeInteropTestsPigeonInteropCodec.encodeOrNull(e.details))
+          .apply { stackTrace = e.stackTrace }
+    }
+  }
+
+  fun callFlutterEchoUint8List(list: ByteArray): ByteArray {
+    val pigeonVar_api = api ?: error("NativeInteropHostIntegrationCoreApi has not been registered")
+    try {
+      return pigeonVar_api.callFlutterEchoUint8List(list)
+    } catch (e: NativeInteropTestsError) {
+      throw NativeInteropTestsError(
+              e.code, e.message, NativeInteropTestsPigeonInteropCodec.encodeOrNull(e.details))
+          .apply { stackTrace = e.stackTrace }
+    }
+  }
+
+  fun callFlutterEchoInt32List(list: IntArray): IntArray {
+    val pigeonVar_api = api ?: error("NativeInteropHostIntegrationCoreApi has not been registered")
+    try {
+      return pigeonVar_api.callFlutterEchoInt32List(list)
+    } catch (e: NativeInteropTestsError) {
+      throw NativeInteropTestsError(
+              e.code, e.message, NativeInteropTestsPigeonInteropCodec.encodeOrNull(e.details))
+          .apply { stackTrace = e.stackTrace }
+    }
+  }
+
+  fun callFlutterEchoInt64List(list: LongArray): LongArray {
+    val pigeonVar_api = api ?: error("NativeInteropHostIntegrationCoreApi has not been registered")
+    try {
+      return pigeonVar_api.callFlutterEchoInt64List(list)
+    } catch (e: NativeInteropTestsError) {
+      throw NativeInteropTestsError(
+              e.code, e.message, NativeInteropTestsPigeonInteropCodec.encodeOrNull(e.details))
+          .apply { stackTrace = e.stackTrace }
+    }
+  }
+
+  fun callFlutterEchoFloat64List(list: DoubleArray): DoubleArray {
+    val pigeonVar_api = api ?: error("NativeInteropHostIntegrationCoreApi has not been registered")
+    try {
+      return pigeonVar_api.callFlutterEchoFloat64List(list)
+    } catch (e: NativeInteropTestsError) {
+      throw NativeInteropTestsError(
+              e.code, e.message, NativeInteropTestsPigeonInteropCodec.encodeOrNull(e.details))
+          .apply { stackTrace = e.stackTrace }
+    }
+  }
+
+  fun callFlutterEchoList(pigeonVar_args: ByteArray): ByteArray? {
+    val pigeonVar_api = api ?: error("NativeInteropHostIntegrationCoreApi has not been registered")
+    try {
+      val pigeonVar_decodedArgs =
+          NativeInteropTestsPigeonInteropCodec.decodeArguments(pigeonVar_args)
+      val listArg = pigeonVar_decodedArgs[0] as List<Any?>
+      return NativeInteropTestsPigeonInteropCodec.encodeOrNull(
+          pigeonVar_api.callFlutterEchoList(listArg))
+    } catch (e: NativeInteropTestsError) {
+      throw NativeInteropTestsError(
+              e.code, e.message, NativeInteropTestsPigeonInteropCodec.encodeOrNull(e.details))
+          .apply { stackTrace = e.stackTrace }
+    }
+  }
+
+  fun callFlutterEchoEnumList(pigeonVar_args: ByteArray): ByteArray? {
+    val pigeonVar_api = api ?: error("NativeInteropHostIntegrationCoreApi has not been registered")
+    try {
+      val pigeonVar_decodedArgs =
+          NativeInteropTestsPigeonInteropCodec.decodeArguments(pigeonVar_args)
+      val enumListArg = pigeonVar_decodedArgs[0] as List<NativeInteropAnEnum?>
+      return NativeInteropTestsPigeonInteropCodec.encodeOrNull(
+          pigeonVar_api.callFlutterEchoEnumList(enumListArg))
+    } catch (e: NativeInteropTestsError) {
+      throw NativeInteropTestsError(
+              e.code, e.message, NativeInteropTestsPigeonInteropCodec.encodeOrNull(e.details))
+          .apply { stackTrace = e.stackTrace }
+    }
+  }
+
+  fun callFlutterEchoClassList(pigeonVar_args: ByteArray): ByteArray? {
+    val pigeonVar_api = api ?: error("NativeInteropHostIntegrationCoreApi has not been registered")
+    try {
+      val pigeonVar_decodedArgs =
+          NativeInteropTestsPigeonInteropCodec.decodeArguments(pigeonVar_args)
+      val classListArg = pigeonVar_decodedArgs[0] as List<NativeInteropAllNullableTypes?>
+      return NativeInteropTestsPigeonInteropCodec.encodeOrNull(
+          pigeonVar_api.callFlutterEchoClassList(classListArg))
+    } catch (e: NativeInteropTestsError) {
+      throw NativeInteropTestsError(
+              e.code, e.message, NativeInteropTestsPigeonInteropCodec.encodeOrNull(e.details))
+          .apply { stackTrace = e.stackTrace }
+    }
+  }
+
+  fun callFlutterEchoNonNullEnumList(pigeonVar_args: ByteArray): ByteArray? {
+    val pigeonVar_api = api ?: error("NativeInteropHostIntegrationCoreApi has not been registered")
+    try {
+      val pigeonVar_decodedArgs =
+          NativeInteropTestsPigeonInteropCodec.decodeArguments(pigeonVar_args)
+      val enumListArg = pigeonVar_decodedArgs[0] as List<NativeInteropAnEnum>
+      return NativeInteropTestsPigeonInteropCodec.encodeOrNull(
+          pigeonVar_api.callFlutterEchoNonNullEnumList(enumListArg))
+    } catch (e: NativeInteropTestsError) {
+      throw NativeInteropTestsError(
+              e.code, e.message, NativeInteropTestsPigeonInteropCodec.encodeOrNull(e.details))
+          .apply { stackTrace = e.stackTrace }
+    }
+  }
+
+  fun callFlutterEchoNonNullClassList(pigeonVar_args: ByteArray): ByteArray? {
+    val pigeonVar_api = api ?: error("NativeInteropHostIntegrationCoreApi has not been registered")
+    try {
+      val pigeonVar_decodedArgs =
+          NativeInteropTestsPigeonInteropCodec.decodeArguments(pigeonVar_args)
+      val classListArg = pigeonVar_decodedArgs[0] as List<NativeInteropAllNullableTypes>
+      return NativeInteropTestsPigeonInteropCodec.encodeOrNull(
+          pigeonVar_api.callFlutterEchoNonNullClassList(classListArg))
+    } catch (e: NativeInteropTestsError) {
+      throw NativeInteropTestsError(
+              e.code, e.message, NativeInteropTestsPigeonInteropCodec.encodeOrNull(e.details))
+          .apply { stackTrace = e.stackTrace }
+    }
+  }
+
+  fun callFlutterEchoMap(pigeonVar_args: ByteArray): ByteArray? {
+    val pigeonVar_api = api ?: error("NativeInteropHostIntegrationCoreApi has not been registered")
+    try {
+      val pigeonVar_decodedArgs =
+          NativeInteropTestsPigeonInteropCodec.decodeArguments(pigeonVar_args)
+      val mapArg = pigeonVar_decodedArgs[0] as Map<Any?, Any?>
+      return NativeInteropTestsPigeonInteropCodec.encodeOrNull(
+          pigeonVar_api.callFlutterEchoMap(mapArg))
+    } catch (e: NativeInteropTestsError) {
+      throw NativeInteropTestsError(
+              e.code, e.message, NativeInteropTestsPigeonInteropCodec.encodeOrNull(e.details))
+          .apply { stackTrace = e.stackTrace }
+    }
+  }
+
+  fun callFlutterEchoStringMap(pigeonVar_args: ByteArray): ByteArray? {
+    val pigeonVar_api = api ?: error("NativeInteropHostIntegrationCoreApi has not been registered")
+    try {
+      val pigeonVar_decodedArgs =
+          NativeInteropTestsPigeonInteropCodec.decodeArguments(pigeonVar_args)
+      val stringMapArg = pigeonVar_decodedArgs[0] as Map<String?, String?>
+      return NativeInteropTestsPigeonInteropCodec.encodeOrNull(
+          pigeonVar_api.callFlutterEchoStringMap(stringMapArg))
+    } catch (e: NativeInteropTestsError) {
+      throw NativeInteropTestsError(
+              e.code, e.message, NativeInteropTestsPigeonInteropCodec.encodeOrNull(e.details))
+          .apply { stackTrace = e.stackTrace }
+    }
+  }
+
+  fun callFlutterEchoIntMap(pigeonVar_args: ByteArray): ByteArray? {
+    val pigeonVar_api = api ?: error("NativeInteropHostIntegrationCoreApi has not been registered")
+    try {
+      val pigeonVar_decodedArgs =
+          NativeInteropTestsPigeonInteropCodec.decodeArguments(pigeonVar_args)
+      val intMapArg = pigeonVar_decodedArgs[0] as Map<Long?, Long?>
+      return NativeInteropTestsPigeonInteropCodec.encodeOrNull(
+          pigeonVar_api.callFlutterEchoIntMap(intMapArg))
+    } catch (e: NativeInteropTestsError) {
+      throw NativeInteropTestsError(
+              e.code, e.message, NativeInteropTestsPigeonInteropCodec.encodeOrNull(e.details))
+          .apply { stackTrace = e.stackTrace }
+    }
+  }
+
+  fun callFlutterEchoEnumMap(pigeonVar_args: ByteArray): ByteArray? {
+    val pigeonVar_api = api ?: error("NativeInteropHostIntegrationCoreApi has not been registered")
+    try {
+      val pigeonVar_decodedArgs =
+          NativeInteropTestsPigeonInteropCodec.decodeArguments(pigeonVar_args)
+      val enumMapArg = pigeonVar_decodedArgs[0] as Map<NativeInteropAnEnum?, NativeInteropAnEnum?>
+      return NativeInteropTestsPigeonInteropCodec.encodeOrNull(
+          pigeonVar_api.callFlutterEchoEnumMap(enumMapArg))
+    } catch (e: NativeInteropTestsError) {
+      throw NativeInteropTestsError(
+              e.code, e.message, NativeInteropTestsPigeonInteropCodec.encodeOrNull(e.details))
+          .apply { stackTrace = e.stackTrace }
+    }
+  }
+
+  fun callFlutterEchoClassMap(pigeonVar_args: ByteArray): ByteArray? {
+    val pigeonVar_api = api ?: error("NativeInteropHostIntegrationCoreApi has not been registered")
+    try {
+      val pigeonVar_decodedArgs =
+          NativeInteropTestsPigeonInteropCodec.decodeArguments(pigeonVar_args)
+      val classMapArg = pigeonVar_decodedArgs[0] as Map<Long?, NativeInteropAllNullableTypes?>
+      return NativeInteropTestsPigeonInteropCodec.encodeOrNull(
+          pigeonVar_api.callFlutterEchoClassMap(classMapArg))
+    } catch (e: NativeInteropTestsError) {
+      throw NativeInteropTestsError(
+              e.code, e.message, NativeInteropTestsPigeonInteropCodec.encodeOrNull(e.details))
+          .apply { stackTrace = e.stackTrace }
+    }
+  }
+
+  fun callFlutterEchoNonNullStringMap(pigeonVar_args: ByteArray): ByteArray? {
+    val pigeonVar_api = api ?: error("NativeInteropHostIntegrationCoreApi has not been registered")
+    try {
+      val pigeonVar_decodedArgs =
+          NativeInteropTestsPigeonInteropCodec.decodeArguments(pigeonVar_args)
+      val stringMapArg = pigeonVar_decodedArgs[0] as Map<String, String>
+      return NativeInteropTestsPigeonInteropCodec.encodeOrNull(
+          pigeonVar_api.callFlutterEchoNonNullStringMap(stringMapArg))
+    } catch (e: NativeInteropTestsError) {
+      throw NativeInteropTestsError(
+              e.code, e.message, NativeInteropTestsPigeonInteropCodec.encodeOrNull(e.details))
+          .apply { stackTrace = e.stackTrace }
+    }
+  }
+
+  fun callFlutterEchoNonNullIntMap(pigeonVar_args: ByteArray): ByteArray? {
+    val pigeonVar_api = api ?: error("NativeInteropHostIntegrationCoreApi has not been registered")
+    try {
+      val pigeonVar_decodedArgs =
+          NativeInteropTestsPigeonInteropCodec.decodeArguments(pigeonVar_args)
+      val intMapArg = pigeonVar_decodedArgs[0] as Map<Long, Long>
+      return NativeInteropTestsPigeonInteropCodec.encodeOrNull(
+          pigeonVar_api.callFlutterEchoNonNullIntMap(intMapArg))
+    } catch (e: NativeInteropTestsError) {
+      throw NativeInteropTestsError(
+              e.code, e.message, NativeInteropTestsPigeonInteropCodec.encodeOrNull(e.details))
+          .apply { stackTrace = e.stackTrace }
+    }
+  }
+
+  fun callFlutterEchoNonNullEnumMap(pigeonVar_args: ByteArray): ByteArray? {
+    val pigeonVar_api = api ?: error("NativeInteropHostIntegrationCoreApi has not been registered")
+    try {
+      val pigeonVar_decodedArgs =
+          NativeInteropTestsPigeonInteropCodec.decodeArguments(pigeonVar_args)
+      val enumMapArg = pigeonVar_decodedArgs[0] as Map<NativeInteropAnEnum, NativeInteropAnEnum>
+      return NativeInteropTestsPigeonInteropCodec.encodeOrNull(
+          pigeonVar_api.callFlutterEchoNonNullEnumMap(enumMapArg))
+    } catch (e: NativeInteropTestsError) {
+      throw NativeInteropTestsError(
+              e.code, e.message, NativeInteropTestsPigeonInteropCodec.encodeOrNull(e.details))
+          .apply { stackTrace = e.stackTrace }
+    }
+  }
+
+  fun callFlutterEchoNonNullClassMap(pigeonVar_args: ByteArray): ByteArray? {
+    val pigeonVar_api = api ?: error("NativeInteropHostIntegrationCoreApi has not been registered")
+    try {
+      val pigeonVar_decodedArgs =
+          NativeInteropTestsPigeonInteropCodec.decodeArguments(pigeonVar_args)
+      val classMapArg = pigeonVar_decodedArgs[0] as Map<Long, NativeInteropAllNullableTypes>
+      return NativeInteropTestsPigeonInteropCodec.encodeOrNull(
+          pigeonVar_api.callFlutterEchoNonNullClassMap(classMapArg))
+    } catch (e: NativeInteropTestsError) {
+      throw NativeInteropTestsError(
+              e.code, e.message, NativeInteropTestsPigeonInteropCodec.encodeOrNull(e.details))
+          .apply { stackTrace = e.stackTrace }
+    }
+  }
+
+  fun callFlutterEchoEnum(anEnum: Long): Long {
+    val pigeonVar_api = api ?: error("NativeInteropHostIntegrationCoreApi has not been registered")
+    try {
+      return pigeonVar_api
+          .callFlutterEchoEnum(NativeInteropAnEnum.ofRaw(anEnum.toInt())!!)
+          .raw
+          .toLong()
+    } catch (e: NativeInteropTestsError) {
+      throw NativeInteropTestsError(
+              e.code, e.message, NativeInteropTestsPigeonInteropCodec.encodeOrNull(e.details))
+          .apply { stackTrace = e.stackTrace }
+    }
+  }
+
+  fun callFlutterEchoNativeInteropAnotherEnum(anotherEnum: Long): Long {
+    val pigeonVar_api = api ?: error("NativeInteropHostIntegrationCoreApi has not been registered")
+    try {
+      return pigeonVar_api
+          .callFlutterEchoNativeInteropAnotherEnum(
+              NativeInteropAnotherEnum.ofRaw(anotherEnum.toInt())!!)
+          .raw
+          .toLong()
+    } catch (e: NativeInteropTestsError) {
+      throw NativeInteropTestsError(
+              e.code, e.message, NativeInteropTestsPigeonInteropCodec.encodeOrNull(e.details))
+          .apply { stackTrace = e.stackTrace }
+    }
+  }
+
+  fun callFlutterEchoNullableBool(aBool: Boolean?): Boolean? {
+    val pigeonVar_api = api ?: error("NativeInteropHostIntegrationCoreApi has not been registered")
+    try {
+      return pigeonVar_api.callFlutterEchoNullableBool(aBool)
+    } catch (e: NativeInteropTestsError) {
+      throw NativeInteropTestsError(
+              e.code, e.message, NativeInteropTestsPigeonInteropCodec.encodeOrNull(e.details))
+          .apply { stackTrace = e.stackTrace }
+    }
+  }
+
+  fun callFlutterEchoNullableInt(anInt: Long?): Long? {
+    val pigeonVar_api = api ?: error("NativeInteropHostIntegrationCoreApi has not been registered")
+    try {
+      return pigeonVar_api.callFlutterEchoNullableInt(anInt)
+    } catch (e: NativeInteropTestsError) {
+      throw NativeInteropTestsError(
+              e.code, e.message, NativeInteropTestsPigeonInteropCodec.encodeOrNull(e.details))
+          .apply { stackTrace = e.stackTrace }
+    }
+  }
+
+  fun callFlutterEchoNullableDouble(aDouble: Double?): Double? {
+    val pigeonVar_api = api ?: error("NativeInteropHostIntegrationCoreApi has not been registered")
+    try {
+      return pigeonVar_api.callFlutterEchoNullableDouble(aDouble)
+    } catch (e: NativeInteropTestsError) {
+      throw NativeInteropTestsError(
+              e.code, e.message, NativeInteropTestsPigeonInteropCodec.encodeOrNull(e.details))
+          .apply { stackTrace = e.stackTrace }
+    }
+  }
+
+  fun callFlutterEchoNullableString(aString: String?): String? {
+    val pigeonVar_api = api ?: error("NativeInteropHostIntegrationCoreApi has not been registered")
+    try {
+      return pigeonVar_api.callFlutterEchoNullableString(aString)
+    } catch (e: NativeInteropTestsError) {
+      throw NativeInteropTestsError(
+              e.code, e.message, NativeInteropTestsPigeonInteropCodec.encodeOrNull(e.details))
+          .apply { stackTrace = e.stackTrace }
+    }
+  }
+
+  fun callFlutterEchoNullableUint8List(list: ByteArray?): ByteArray? {
+    val pigeonVar_api = api ?: error("NativeInteropHostIntegrationCoreApi has not been registered")
+    try {
+      return pigeonVar_api.callFlutterEchoNullableUint8List(list)
+    } catch (e: NativeInteropTestsError) {
+      throw NativeInteropTestsError(
+              e.code, e.message, NativeInteropTestsPigeonInteropCodec.encodeOrNull(e.details))
+          .apply { stackTrace = e.stackTrace }
+    }
+  }
+
+  fun callFlutterEchoNullableInt32List(list: IntArray?): IntArray? {
+    val pigeonVar_api = api ?: error("NativeInteropHostIntegrationCoreApi has not been registered")
+    try {
+      return pigeonVar_api.callFlutterEchoNullableInt32List(list)
+    } catch (e: NativeInteropTestsError) {
+      throw NativeInteropTestsError(
+              e.code, e.message, NativeInteropTestsPigeonInteropCodec.encodeOrNull(e.details))
+          .apply { stackTrace = e.stackTrace }
+    }
+  }
+
+  fun callFlutterEchoNullableInt64List(list: LongArray?): LongArray? {
+    val pigeonVar_api = api ?: error("NativeInteropHostIntegrationCoreApi has not been registered")
+    try {
+      return pigeonVar_api.callFlutterEchoNullableInt64List(list)
+    } catch (e: NativeInteropTestsError) {
+      throw NativeInteropTestsError(
+              e.code, e.message, NativeInteropTestsPigeonInteropCodec.encodeOrNull(e.details))
+          .apply { stackTrace = e.stackTrace }
+    }
+  }
+
+  fun callFlutterEchoNullableFloat64List(list: DoubleArray?): DoubleArray? {
+    val pigeonVar_api = api ?: error("NativeInteropHostIntegrationCoreApi has not been registered")
+    try {
+      return pigeonVar_api.callFlutterEchoNullableFloat64List(list)
+    } catch (e: NativeInteropTestsError) {
+      throw NativeInteropTestsError(
+              e.code, e.message, NativeInteropTestsPigeonInteropCodec.encodeOrNull(e.details))
+          .apply { stackTrace = e.stackTrace }
+    }
+  }
+
+  fun callFlutterEchoNullableList(pigeonVar_args: ByteArray): ByteArray? {
+    val pigeonVar_api = api ?: error("NativeInteropHostIntegrationCoreApi has not been registered")
+    try {
+      val pigeonVar_decodedArgs =
+          NativeInteropTestsPigeonInteropCodec.decodeArguments(pigeonVar_args)
+      val listArg = pigeonVar_decodedArgs[0] as List<Any?>?
+      return NativeInteropTestsPigeonInteropCodec.encodeOrNull(
+          pigeonVar_api.callFlutterEchoNullableList(listArg))
+    } catch (e: NativeInteropTestsError) {
+      throw NativeInteropTestsError(
+              e.code, e.message, NativeInteropTestsPigeonInteropCodec.encodeOrNull(e.details))
+          .apply { stackTrace = e.stackTrace }
+    }
+  }
+
+  fun callFlutterEchoNullableEnumList(pigeonVar_args: ByteArray): ByteArray? {
+    val pigeonVar_api = api ?: error("NativeInteropHostIntegrationCoreApi has not been registered")
+    try {
+      val pigeonVar_decodedArgs =
+          NativeInteropTestsPigeonInteropCodec.decodeArguments(pigeonVar_args)
+      val enumListArg = pigeonVar_decodedArgs[0] as List<NativeInteropAnEnum?>?
+      return NativeInteropTestsPigeonInteropCodec.encodeOrNull(
+          pigeonVar_api.callFlutterEchoNullableEnumList(enumListArg))
+    } catch (e: NativeInteropTestsError) {
+      throw NativeInteropTestsError(
+              e.code, e.message, NativeInteropTestsPigeonInteropCodec.encodeOrNull(e.details))
+          .apply { stackTrace = e.stackTrace }
+    }
+  }
+
+  fun callFlutterEchoNullableClassList(pigeonVar_args: ByteArray): ByteArray? {
+    val pigeonVar_api = api ?: error("NativeInteropHostIntegrationCoreApi has not been registered")
+    try {
+      val pigeonVar_decodedArgs =
+          NativeInteropTestsPigeonInteropCodec.decodeArguments(pigeonVar_args)
+      val classListArg = pigeonVar_decodedArgs[0] as List<NativeInteropAllNullableTypes?>?
+      return NativeInteropTestsPigeonInteropCodec.encodeOrNull(
+          pigeonVar_api.callFlutterEchoNullableClassList(classListArg))
+    } catch (e: NativeInteropTestsError) {
+      throw NativeInteropTestsError(
+              e.code, e.message, NativeInteropTestsPigeonInteropCodec.encodeOrNull(e.details))
+          .apply { stackTrace = e.stackTrace }
+    }
+  }
+
+  fun callFlutterEchoNullableNonNullEnumList(pigeonVar_args: ByteArray): ByteArray? {
+    val pigeonVar_api = api ?: error("NativeInteropHostIntegrationCoreApi has not been registered")
+    try {
+      val pigeonVar_decodedArgs =
+          NativeInteropTestsPigeonInteropCodec.decodeArguments(pigeonVar_args)
+      val enumListArg = pigeonVar_decodedArgs[0] as List<NativeInteropAnEnum>?
+      return NativeInteropTestsPigeonInteropCodec.encodeOrNull(
+          pigeonVar_api.callFlutterEchoNullableNonNullEnumList(enumListArg))
+    } catch (e: NativeInteropTestsError) {
+      throw NativeInteropTestsError(
+              e.code, e.message, NativeInteropTestsPigeonInteropCodec.encodeOrNull(e.details))
+          .apply { stackTrace = e.stackTrace }
+    }
+  }
+
+  fun callFlutterEchoNullableNonNullClassList(pigeonVar_args: ByteArray): ByteArray? {
+    val pigeonVar_api = api ?: error("NativeInteropHostIntegrationCoreApi has not been registered")
+    try {
+      val pigeonVar_decodedArgs =
+          NativeInteropTestsPigeonInteropCodec.decodeArguments(pigeonVar_args)
+      val classListArg = pigeonVar_decodedArgs[0] as List<NativeInteropAllNullableTypes>?
+      return NativeInteropTestsPigeonInteropCodec.encodeOrNull(
+          pigeonVar_api.callFlutterEchoNullableNonNullClassList(classListArg))
+    } catch (e: NativeInteropTestsError) {
+      throw NativeInteropTestsError(
+              e.code, e.message, NativeInteropTestsPigeonInteropCodec.encodeOrNull(e.details))
+          .apply { stackTrace = e.stackTrace }
+    }
+  }
+
+  fun callFlutterEchoNullableMap(pigeonVar_args: ByteArray): ByteArray? {
+    val pigeonVar_api = api ?: error("NativeInteropHostIntegrationCoreApi has not been registered")
+    try {
+      val pigeonVar_decodedArgs =
+          NativeInteropTestsPigeonInteropCodec.decodeArguments(pigeonVar_args)
+      val mapArg = pigeonVar_decodedArgs[0] as Map<Any?, Any?>?
+      return NativeInteropTestsPigeonInteropCodec.encodeOrNull(
+          pigeonVar_api.callFlutterEchoNullableMap(mapArg))
+    } catch (e: NativeInteropTestsError) {
+      throw NativeInteropTestsError(
+              e.code, e.message, NativeInteropTestsPigeonInteropCodec.encodeOrNull(e.details))
+          .apply { stackTrace = e.stackTrace }
+    }
+  }
+
+  fun callFlutterEchoNullableStringMap(pigeonVar_args: ByteArray): ByteArray? {
+    val pigeonVar_api = api ?: error("NativeInteropHostIntegrationCoreApi has not been registered")
+    try {
+      val pigeonVar_decodedArgs =
+          NativeInteropTestsPigeonInteropCodec.decodeArguments(pigeonVar_args)
+      val stringMapArg = pigeonVar_decodedArgs[0] as Map<String?, String?>?
+      return NativeInteropTestsPigeonInteropCodec.encodeOrNull(
+          pigeonVar_api.callFlutterEchoNullableStringMap(stringMapArg))
+    } catch (e: NativeInteropTestsError) {
+      throw NativeInteropTestsError(
+              e.code, e.message, NativeInteropTestsPigeonInteropCodec.encodeOrNull(e.details))
+          .apply { stackTrace = e.stackTrace }
+    }
+  }
+
+  fun callFlutterEchoNullableIntMap(pigeonVar_args: ByteArray): ByteArray? {
+    val pigeonVar_api = api ?: error("NativeInteropHostIntegrationCoreApi has not been registered")
+    try {
+      val pigeonVar_decodedArgs =
+          NativeInteropTestsPigeonInteropCodec.decodeArguments(pigeonVar_args)
+      val intMapArg = pigeonVar_decodedArgs[0] as Map<Long?, Long?>?
+      return NativeInteropTestsPigeonInteropCodec.encodeOrNull(
+          pigeonVar_api.callFlutterEchoNullableIntMap(intMapArg))
+    } catch (e: NativeInteropTestsError) {
+      throw NativeInteropTestsError(
+              e.code, e.message, NativeInteropTestsPigeonInteropCodec.encodeOrNull(e.details))
+          .apply { stackTrace = e.stackTrace }
+    }
+  }
+
+  fun callFlutterEchoNullableEnumMap(pigeonVar_args: ByteArray): ByteArray? {
+    val pigeonVar_api = api ?: error("NativeInteropHostIntegrationCoreApi has not been registered")
+    try {
+      val pigeonVar_decodedArgs =
+          NativeInteropTestsPigeonInteropCodec.decodeArguments(pigeonVar_args)
+      val enumMapArg = pigeonVar_decodedArgs[0] as Map<NativeInteropAnEnum?, NativeInteropAnEnum?>?
+      return NativeInteropTestsPigeonInteropCodec.encodeOrNull(
+          pigeonVar_api.callFlutterEchoNullableEnumMap(enumMapArg))
+    } catch (e: NativeInteropTestsError) {
+      throw NativeInteropTestsError(
+              e.code, e.message, NativeInteropTestsPigeonInteropCodec.encodeOrNull(e.details))
+          .apply { stackTrace = e.stackTrace }
+    }
+  }
+
+  fun callFlutterEchoNullableClassMap(pigeonVar_args: ByteArray): ByteArray? {
+    val pigeonVar_api = api ?: error("NativeInteropHostIntegrationCoreApi has not been registered")
+    try {
+      val pigeonVar_decodedArgs =
+          NativeInteropTestsPigeonInteropCodec.decodeArguments(pigeonVar_args)
+      val classMapArg = pigeonVar_decodedArgs[0] as Map<Long?, NativeInteropAllNullableTypes?>?
+      return NativeInteropTestsPigeonInteropCodec.encodeOrNull(
+          pigeonVar_api.callFlutterEchoNullableClassMap(classMapArg))
+    } catch (e: NativeInteropTestsError) {
+      throw NativeInteropTestsError(
+              e.code, e.message, NativeInteropTestsPigeonInteropCodec.encodeOrNull(e.details))
+          .apply { stackTrace = e.stackTrace }
+    }
+  }
+
+  fun callFlutterEchoNullableNonNullStringMap(pigeonVar_args: ByteArray): ByteArray? {
+    val pigeonVar_api = api ?: error("NativeInteropHostIntegrationCoreApi has not been registered")
+    try {
+      val pigeonVar_decodedArgs =
+          NativeInteropTestsPigeonInteropCodec.decodeArguments(pigeonVar_args)
+      val stringMapArg = pigeonVar_decodedArgs[0] as Map<String, String>?
+      return NativeInteropTestsPigeonInteropCodec.encodeOrNull(
+          pigeonVar_api.callFlutterEchoNullableNonNullStringMap(stringMapArg))
+    } catch (e: NativeInteropTestsError) {
+      throw NativeInteropTestsError(
+              e.code, e.message, NativeInteropTestsPigeonInteropCodec.encodeOrNull(e.details))
+          .apply { stackTrace = e.stackTrace }
+    }
+  }
+
+  fun callFlutterEchoNullableNonNullIntMap(pigeonVar_args: ByteArray): ByteArray? {
+    val pigeonVar_api = api ?: error("NativeInteropHostIntegrationCoreApi has not been registered")
+    try {
+      val pigeonVar_decodedArgs =
+          NativeInteropTestsPigeonInteropCodec.decodeArguments(pigeonVar_args)
+      val intMapArg = pigeonVar_decodedArgs[0] as Map<Long, Long>?
+      return NativeInteropTestsPigeonInteropCodec.encodeOrNull(
+          pigeonVar_api.callFlutterEchoNullableNonNullIntMap(intMapArg))
+    } catch (e: NativeInteropTestsError) {
+      throw NativeInteropTestsError(
+              e.code, e.message, NativeInteropTestsPigeonInteropCodec.encodeOrNull(e.details))
+          .apply { stackTrace = e.stackTrace }
+    }
+  }
+
+  fun callFlutterEchoNullableNonNullEnumMap(pigeonVar_args: ByteArray): ByteArray? {
+    val pigeonVar_api = api ?: error("NativeInteropHostIntegrationCoreApi has not been registered")
+    try {
+      val pigeonVar_decodedArgs =
+          NativeInteropTestsPigeonInteropCodec.decodeArguments(pigeonVar_args)
+      val enumMapArg = pigeonVar_decodedArgs[0] as Map<NativeInteropAnEnum, NativeInteropAnEnum>?
+      return NativeInteropTestsPigeonInteropCodec.encodeOrNull(
+          pigeonVar_api.callFlutterEchoNullableNonNullEnumMap(enumMapArg))
+    } catch (e: NativeInteropTestsError) {
+      throw NativeInteropTestsError(
+              e.code, e.message, NativeInteropTestsPigeonInteropCodec.encodeOrNull(e.details))
+          .apply { stackTrace = e.stackTrace }
+    }
+  }
+
+  fun callFlutterEchoNullableNonNullClassMap(pigeonVar_args: ByteArray): ByteArray? {
+    val pigeonVar_api = api ?: error("NativeInteropHostIntegrationCoreApi has not been registered")
+    try {
+      val pigeonVar_decodedArgs =
+          NativeInteropTestsPigeonInteropCodec.decodeArguments(pigeonVar_args)
+      val classMapArg = pigeonVar_decodedArgs[0] as Map<Long, NativeInteropAllNullableTypes>?
+      return NativeInteropTestsPigeonInteropCodec.encodeOrNull(
+          pigeonVar_api.callFlutterEchoNullableNonNullClassMap(classMapArg))
+    } catch (e: NativeInteropTestsError) {
+      throw NativeInteropTestsError(
+              e.code, e.message, NativeInteropTestsPigeonInteropCodec.encodeOrNull(e.details))
+          .apply { stackTrace = e.stackTrace }
+    }
+  }
+
+  fun callFlutterEchoNullableEnum(anEnum: Long): Long {
+    val pigeonVar_api = api ?: error("NativeInteropHostIntegrationCoreApi has not been registered")
+    try {
+      return (pigeonVar_api
+          .callFlutterEchoNullableEnum(
+              if (anEnum == -1L) null else NativeInteropAnEnum.ofRaw(anEnum.toInt()))
+          ?.raw
+          ?.toLong() ?: -1L)
+    } catch (e: NativeInteropTestsError) {
+      throw NativeInteropTestsError(
+              e.code, e.message, NativeInteropTestsPigeonInteropCodec.encodeOrNull(e.details))
+          .apply { stackTrace = e.stackTrace }
+    }
+  }
+
+  fun callFlutterEchoAnotherNullableEnum(anotherEnum: Long): Long {
+    val pigeonVar_api = api ?: error("NativeInteropHostIntegrationCoreApi has not been registered")
+    try {
+      return (pigeonVar_api
+          .callFlutterEchoAnotherNullableEnum(
+              if (anotherEnum == -1L) null else NativeInteropAnotherEnum.ofRaw(anotherEnum.toInt()))
+          ?.raw
+          ?.toLong() ?: -1L)
+    } catch (e: NativeInteropTestsError) {
+      throw NativeInteropTestsError(
+              e.code, e.message, NativeInteropTestsPigeonInteropCodec.encodeOrNull(e.details))
+          .apply { stackTrace = e.stackTrace }
+    }
+  }
+
+  suspend fun callFlutterNoopAsync() {
+    val pigeonVar_api = api ?: error("NativeInteropHostIntegrationCoreApi has not been registered")
+    try {
+      pigeonVar_api.callFlutterNoopAsync()
+    } catch (e: NativeInteropTestsError) {
+      throw NativeInteropTestsError(
+              e.code, e.message, NativeInteropTestsPigeonInteropCodec.encodeOrNull(e.details))
+          .apply { stackTrace = e.stackTrace }
+    }
+  }
+
+  suspend fun callFlutterEchoAsyncNativeInteropAllTypes(pigeonVar_args: ByteArray): ByteArray? {
+    val pigeonVar_api = api ?: error("NativeInteropHostIntegrationCoreApi has not been registered")
+    try {
+      val pigeonVar_decodedArgs =
+          NativeInteropTestsPigeonInteropCodec.decodeArguments(pigeonVar_args)
+      val everythingArg = pigeonVar_decodedArgs[0] as NativeInteropAllTypes
+      return NativeInteropTestsPigeonInteropCodec.encodeOrNull(
+          pigeonVar_api.callFlutterEchoAsyncNativeInteropAllTypes(everythingArg))
+    } catch (e: NativeInteropTestsError) {
+      throw NativeInteropTestsError(
+              e.code, e.message, NativeInteropTestsPigeonInteropCodec.encodeOrNull(e.details))
+          .apply { stackTrace = e.stackTrace }
+    }
+  }
+
+  suspend fun callFlutterEchoAsyncNullableNativeInteropAllNullableTypes(
+      pigeonVar_args: ByteArray
+  ): ByteArray? {
+    val pigeonVar_api = api ?: error("NativeInteropHostIntegrationCoreApi has not been registered")
+    try {
+      val pigeonVar_decodedArgs =
+          NativeInteropTestsPigeonInteropCodec.decodeArguments(pigeonVar_args)
+      val everythingArg = pigeonVar_decodedArgs[0] as NativeInteropAllNullableTypes?
+      return NativeInteropTestsPigeonInteropCodec.encodeOrNull(
+          pigeonVar_api.callFlutterEchoAsyncNullableNativeInteropAllNullableTypes(everythingArg))
+    } catch (e: NativeInteropTestsError) {
+      throw NativeInteropTestsError(
+              e.code, e.message, NativeInteropTestsPigeonInteropCodec.encodeOrNull(e.details))
+          .apply { stackTrace = e.stackTrace }
+    }
+  }
+
+  suspend fun callFlutterEchoAsyncNullableNativeInteropAllNullableTypesWithoutRecursion(
+      pigeonVar_args: ByteArray
+  ): ByteArray? {
+    val pigeonVar_api = api ?: error("NativeInteropHostIntegrationCoreApi has not been registered")
+    try {
+      val pigeonVar_decodedArgs =
+          NativeInteropTestsPigeonInteropCodec.decodeArguments(pigeonVar_args)
+      val everythingArg = pigeonVar_decodedArgs[0] as NativeInteropAllNullableTypesWithoutRecursion?
+      return NativeInteropTestsPigeonInteropCodec.encodeOrNull(
+          pigeonVar_api.callFlutterEchoAsyncNullableNativeInteropAllNullableTypesWithoutRecursion(
+              everythingArg))
+    } catch (e: NativeInteropTestsError) {
+      throw NativeInteropTestsError(
+              e.code, e.message, NativeInteropTestsPigeonInteropCodec.encodeOrNull(e.details))
+          .apply { stackTrace = e.stackTrace }
+    }
+  }
+
+  suspend fun callFlutterEchoAsyncBool(aBool: Boolean): Boolean {
+    val pigeonVar_api = api ?: error("NativeInteropHostIntegrationCoreApi has not been registered")
+    try {
+      return pigeonVar_api.callFlutterEchoAsyncBool(aBool)
+    } catch (e: NativeInteropTestsError) {
+      throw NativeInteropTestsError(
+              e.code, e.message, NativeInteropTestsPigeonInteropCodec.encodeOrNull(e.details))
+          .apply { stackTrace = e.stackTrace }
+    }
+  }
+
+  suspend fun callFlutterEchoAsyncInt(anInt: Long): Long {
+    val pigeonVar_api = api ?: error("NativeInteropHostIntegrationCoreApi has not been registered")
+    try {
+      return pigeonVar_api.callFlutterEchoAsyncInt(anInt)
+    } catch (e: NativeInteropTestsError) {
+      throw NativeInteropTestsError(
+              e.code, e.message, NativeInteropTestsPigeonInteropCodec.encodeOrNull(e.details))
+          .apply { stackTrace = e.stackTrace }
+    }
+  }
+
+  suspend fun callFlutterEchoAsyncDouble(aDouble: Double): Double {
+    val pigeonVar_api = api ?: error("NativeInteropHostIntegrationCoreApi has not been registered")
+    try {
+      return pigeonVar_api.callFlutterEchoAsyncDouble(aDouble)
+    } catch (e: NativeInteropTestsError) {
+      throw NativeInteropTestsError(
+              e.code, e.message, NativeInteropTestsPigeonInteropCodec.encodeOrNull(e.details))
+          .apply { stackTrace = e.stackTrace }
+    }
+  }
+
+  suspend fun callFlutterEchoAsyncString(aString: String): String {
+    val pigeonVar_api = api ?: error("NativeInteropHostIntegrationCoreApi has not been registered")
+    try {
+      return pigeonVar_api.callFlutterEchoAsyncString(aString)
+    } catch (e: NativeInteropTestsError) {
+      throw NativeInteropTestsError(
+              e.code, e.message, NativeInteropTestsPigeonInteropCodec.encodeOrNull(e.details))
+          .apply { stackTrace = e.stackTrace }
+    }
+  }
+
+  suspend fun callFlutterEchoAsyncUint8List(list: ByteArray): ByteArray {
+    val pigeonVar_api = api ?: error("NativeInteropHostIntegrationCoreApi has not been registered")
+    try {
+      return pigeonVar_api.callFlutterEchoAsyncUint8List(list)
+    } catch (e: NativeInteropTestsError) {
+      throw NativeInteropTestsError(
+              e.code, e.message, NativeInteropTestsPigeonInteropCodec.encodeOrNull(e.details))
+          .apply { stackTrace = e.stackTrace }
+    }
+  }
+
+  suspend fun callFlutterEchoAsyncInt32List(list: IntArray): IntArray {
+    val pigeonVar_api = api ?: error("NativeInteropHostIntegrationCoreApi has not been registered")
+    try {
+      return pigeonVar_api.callFlutterEchoAsyncInt32List(list)
+    } catch (e: NativeInteropTestsError) {
+      throw NativeInteropTestsError(
+              e.code, e.message, NativeInteropTestsPigeonInteropCodec.encodeOrNull(e.details))
+          .apply { stackTrace = e.stackTrace }
+    }
+  }
+
+  suspend fun callFlutterEchoAsyncInt64List(list: LongArray): LongArray {
+    val pigeonVar_api = api ?: error("NativeInteropHostIntegrationCoreApi has not been registered")
+    try {
+      return pigeonVar_api.callFlutterEchoAsyncInt64List(list)
+    } catch (e: NativeInteropTestsError) {
+      throw NativeInteropTestsError(
+              e.code, e.message, NativeInteropTestsPigeonInteropCodec.encodeOrNull(e.details))
+          .apply { stackTrace = e.stackTrace }
+    }
+  }
+
+  suspend fun callFlutterEchoAsyncFloat64List(list: DoubleArray): DoubleArray {
+    val pigeonVar_api = api ?: error("NativeInteropHostIntegrationCoreApi has not been registered")
+    try {
+      return pigeonVar_api.callFlutterEchoAsyncFloat64List(list)
+    } catch (e: NativeInteropTestsError) {
+      throw NativeInteropTestsError(
+              e.code, e.message, NativeInteropTestsPigeonInteropCodec.encodeOrNull(e.details))
+          .apply { stackTrace = e.stackTrace }
+    }
+  }
+
+  suspend fun callFlutterEchoAsyncObject(pigeonVar_args: ByteArray): ByteArray? {
+    val pigeonVar_api = api ?: error("NativeInteropHostIntegrationCoreApi has not been registered")
+    try {
+      val pigeonVar_decodedArgs =
+          NativeInteropTestsPigeonInteropCodec.decodeArguments(pigeonVar_args)
+      val anObjectArg = pigeonVar_decodedArgs[0] as Any
+      return NativeInteropTestsPigeonInteropCodec.encodeOrNull(
+          pigeonVar_api.callFlutterEchoAsyncObject(anObjectArg))
+    } catch (e: NativeInteropTestsError) {
+      throw NativeInteropTestsError(
+              e.code, e.message, NativeInteropTestsPigeonInteropCodec.encodeOrNull(e.details))
+          .apply { stackTrace = e.stackTrace }
+    }
+  }
+
+  suspend fun callFlutterEchoAsyncList(pigeonVar_args: ByteArray): ByteArray? {
+    val pigeonVar_api = api ?: error("NativeInteropHostIntegrationCoreApi has not been registered")
+    try {
+      val pigeonVar_decodedArgs =
+          NativeInteropTestsPigeonInteropCodec.decodeArguments(pigeonVar_args)
+      val listArg = pigeonVar_decodedArgs[0] as List<Any?>
+      return NativeInteropTestsPigeonInteropCodec.encodeOrNull(
+          pigeonVar_api.callFlutterEchoAsyncList(listArg))
+    } catch (e: NativeInteropTestsError) {
+      throw NativeInteropTestsError(
+              e.code, e.message, NativeInteropTestsPigeonInteropCodec.encodeOrNull(e.details))
+          .apply { stackTrace = e.stackTrace }
+    }
+  }
+
+  suspend fun callFlutterEchoAsyncEnumList(pigeonVar_args: ByteArray): ByteArray? {
+    val pigeonVar_api = api ?: error("NativeInteropHostIntegrationCoreApi has not been registered")
+    try {
+      val pigeonVar_decodedArgs =
+          NativeInteropTestsPigeonInteropCodec.decodeArguments(pigeonVar_args)
+      val enumListArg = pigeonVar_decodedArgs[0] as List<NativeInteropAnEnum?>
+      return NativeInteropTestsPigeonInteropCodec.encodeOrNull(
+          pigeonVar_api.callFlutterEchoAsyncEnumList(enumListArg))
+    } catch (e: NativeInteropTestsError) {
+      throw NativeInteropTestsError(
+              e.code, e.message, NativeInteropTestsPigeonInteropCodec.encodeOrNull(e.details))
+          .apply { stackTrace = e.stackTrace }
+    }
+  }
+
+  suspend fun callFlutterEchoAsyncClassList(pigeonVar_args: ByteArray): ByteArray? {
+    val pigeonVar_api = api ?: error("NativeInteropHostIntegrationCoreApi has not been registered")
+    try {
+      val pigeonVar_decodedArgs =
+          NativeInteropTestsPigeonInteropCodec.decodeArguments(pigeonVar_args)
+      val classListArg = pigeonVar_decodedArgs[0] as List<NativeInteropAllNullableTypes?>
+      return NativeInteropTestsPigeonInteropCodec.encodeOrNull(
+          pigeonVar_api.callFlutterEchoAsyncClassList(classListArg))
+    } catch (e: NativeInteropTestsError) {
+      throw NativeInteropTestsError(
+              e.code, e.message, NativeInteropTestsPigeonInteropCodec.encodeOrNull(e.details))
+          .apply { stackTrace = e.stackTrace }
+    }
+  }
+
+  suspend fun callFlutterEchoAsyncNonNullEnumList(pigeonVar_args: ByteArray): ByteArray? {
+    val pigeonVar_api = api ?: error("NativeInteropHostIntegrationCoreApi has not been registered")
+    try {
+      val pigeonVar_decodedArgs =
+          NativeInteropTestsPigeonInteropCodec.decodeArguments(pigeonVar_args)
+      val enumListArg = pigeonVar_decodedArgs[0] as List<NativeInteropAnEnum>
+      return NativeInteropTestsPigeonInteropCodec.encodeOrNull(
+          pigeonVar_api.callFlutterEchoAsyncNonNullEnumList(enumListArg))
+    } catch (e: NativeInteropTestsError) {
+      throw NativeInteropTestsError(
+              e.code, e.message, NativeInteropTestsPigeonInteropCodec.encodeOrNull(e.details))
+          .apply { stackTrace = e.stackTrace }
+    }
+  }
+
+  suspend fun callFlutterEchoAsyncNonNullClassList(pigeonVar_args: ByteArray): ByteArray? {
+    val pigeonVar_api = api ?: error("NativeInteropHostIntegrationCoreApi has not been registered")
+    try {
+      val pigeonVar_decodedArgs =
+          NativeInteropTestsPigeonInteropCodec.decodeArguments(pigeonVar_args)
+      val classListArg = pigeonVar_decodedArgs[0] as List<NativeInteropAllNullableTypes>
+      return NativeInteropTestsPigeonInteropCodec.encodeOrNull(
+          pigeonVar_api.callFlutterEchoAsyncNonNullClassList(classListArg))
+    } catch (e: NativeInteropTestsError) {
+      throw NativeInteropTestsError(
+              e.code, e.message, NativeInteropTestsPigeonInteropCodec.encodeOrNull(e.details))
+          .apply { stackTrace = e.stackTrace }
+    }
+  }
+
+  suspend fun callFlutterEchoAsyncMap(pigeonVar_args: ByteArray): ByteArray? {
+    val pigeonVar_api = api ?: error("NativeInteropHostIntegrationCoreApi has not been registered")
+    try {
+      val pigeonVar_decodedArgs =
+          NativeInteropTestsPigeonInteropCodec.decodeArguments(pigeonVar_args)
+      val mapArg = pigeonVar_decodedArgs[0] as Map<Any?, Any?>
+      return NativeInteropTestsPigeonInteropCodec.encodeOrNull(
+          pigeonVar_api.callFlutterEchoAsyncMap(mapArg))
+    } catch (e: NativeInteropTestsError) {
+      throw NativeInteropTestsError(
+              e.code, e.message, NativeInteropTestsPigeonInteropCodec.encodeOrNull(e.details))
+          .apply { stackTrace = e.stackTrace }
+    }
+  }
+
+  suspend fun callFlutterEchoAsyncStringMap(pigeonVar_args: ByteArray): ByteArray? {
+    val pigeonVar_api = api ?: error("NativeInteropHostIntegrationCoreApi has not been registered")
+    try {
+      val pigeonVar_decodedArgs =
+          NativeInteropTestsPigeonInteropCodec.decodeArguments(pigeonVar_args)
+      val stringMapArg = pigeonVar_decodedArgs[0] as Map<String?, String?>
+      return NativeInteropTestsPigeonInteropCodec.encodeOrNull(
+          pigeonVar_api.callFlutterEchoAsyncStringMap(stringMapArg))
+    } catch (e: NativeInteropTestsError) {
+      throw NativeInteropTestsError(
+              e.code, e.message, NativeInteropTestsPigeonInteropCodec.encodeOrNull(e.details))
+          .apply { stackTrace = e.stackTrace }
+    }
+  }
+
+  suspend fun callFlutterEchoAsyncIntMap(pigeonVar_args: ByteArray): ByteArray? {
+    val pigeonVar_api = api ?: error("NativeInteropHostIntegrationCoreApi has not been registered")
+    try {
+      val pigeonVar_decodedArgs =
+          NativeInteropTestsPigeonInteropCodec.decodeArguments(pigeonVar_args)
+      val intMapArg = pigeonVar_decodedArgs[0] as Map<Long?, Long?>
+      return NativeInteropTestsPigeonInteropCodec.encodeOrNull(
+          pigeonVar_api.callFlutterEchoAsyncIntMap(intMapArg))
+    } catch (e: NativeInteropTestsError) {
+      throw NativeInteropTestsError(
+              e.code, e.message, NativeInteropTestsPigeonInteropCodec.encodeOrNull(e.details))
+          .apply { stackTrace = e.stackTrace }
+    }
+  }
+
+  suspend fun callFlutterEchoAsyncEnumMap(pigeonVar_args: ByteArray): ByteArray? {
+    val pigeonVar_api = api ?: error("NativeInteropHostIntegrationCoreApi has not been registered")
+    try {
+      val pigeonVar_decodedArgs =
+          NativeInteropTestsPigeonInteropCodec.decodeArguments(pigeonVar_args)
+      val enumMapArg = pigeonVar_decodedArgs[0] as Map<NativeInteropAnEnum?, NativeInteropAnEnum?>
+      return NativeInteropTestsPigeonInteropCodec.encodeOrNull(
+          pigeonVar_api.callFlutterEchoAsyncEnumMap(enumMapArg))
+    } catch (e: NativeInteropTestsError) {
+      throw NativeInteropTestsError(
+              e.code, e.message, NativeInteropTestsPigeonInteropCodec.encodeOrNull(e.details))
+          .apply { stackTrace = e.stackTrace }
+    }
+  }
+
+  suspend fun callFlutterEchoAsyncClassMap(pigeonVar_args: ByteArray): ByteArray? {
+    val pigeonVar_api = api ?: error("NativeInteropHostIntegrationCoreApi has not been registered")
+    try {
+      val pigeonVar_decodedArgs =
+          NativeInteropTestsPigeonInteropCodec.decodeArguments(pigeonVar_args)
+      val classMapArg = pigeonVar_decodedArgs[0] as Map<Long?, NativeInteropAllNullableTypes?>
+      return NativeInteropTestsPigeonInteropCodec.encodeOrNull(
+          pigeonVar_api.callFlutterEchoAsyncClassMap(classMapArg))
+    } catch (e: NativeInteropTestsError) {
+      throw NativeInteropTestsError(
+              e.code, e.message, NativeInteropTestsPigeonInteropCodec.encodeOrNull(e.details))
+          .apply { stackTrace = e.stackTrace }
+    }
+  }
+
+  suspend fun callFlutterEchoAsyncEnum(anEnum: Long): Long {
+    val pigeonVar_api = api ?: error("NativeInteropHostIntegrationCoreApi has not been registered")
+    try {
+      return pigeonVar_api
+          .callFlutterEchoAsyncEnum(NativeInteropAnEnum.ofRaw(anEnum.toInt())!!)
+          .raw
+          .toLong()
+    } catch (e: NativeInteropTestsError) {
+      throw NativeInteropTestsError(
+              e.code, e.message, NativeInteropTestsPigeonInteropCodec.encodeOrNull(e.details))
+          .apply { stackTrace = e.stackTrace }
+    }
+  }
+
+  suspend fun callFlutterEchoAnotherAsyncEnum(anotherEnum: Long): Long {
+    val pigeonVar_api = api ?: error("NativeInteropHostIntegrationCoreApi has not been registered")
+    try {
+      return pigeonVar_api
+          .callFlutterEchoAnotherAsyncEnum(NativeInteropAnotherEnum.ofRaw(anotherEnum.toInt())!!)
+          .raw
+          .toLong()
+    } catch (e: NativeInteropTestsError) {
+      throw NativeInteropTestsError(
+              e.code, e.message, NativeInteropTestsPigeonInteropCodec.encodeOrNull(e.details))
+          .apply { stackTrace = e.stackTrace }
+    }
+  }
+
+  suspend fun callFlutterEchoAsyncNullableBool(aBool: Boolean?): Boolean? {
+    val pigeonVar_api = api ?: error("NativeInteropHostIntegrationCoreApi has not been registered")
+    try {
+      return pigeonVar_api.callFlutterEchoAsyncNullableBool(aBool)
+    } catch (e: NativeInteropTestsError) {
+      throw NativeInteropTestsError(
+              e.code, e.message, NativeInteropTestsPigeonInteropCodec.encodeOrNull(e.details))
+          .apply { stackTrace = e.stackTrace }
+    }
+  }
+
+  suspend fun callFlutterEchoAsyncNullableInt(anInt: Long?): Long? {
+    val pigeonVar_api = api ?: error("NativeInteropHostIntegrationCoreApi has not been registered")
+    try {
+      return pigeonVar_api.callFlutterEchoAsyncNullableInt(anInt)
+    } catch (e: NativeInteropTestsError) {
+      throw NativeInteropTestsError(
+              e.code, e.message, NativeInteropTestsPigeonInteropCodec.encodeOrNull(e.details))
+          .apply { stackTrace = e.stackTrace }
+    }
+  }
+
+  suspend fun callFlutterEchoAsyncNullableDouble(aDouble: Double?): Double? {
+    val pigeonVar_api = api ?: error("NativeInteropHostIntegrationCoreApi has not been registered")
+    try {
+      return pigeonVar_api.callFlutterEchoAsyncNullableDouble(aDouble)
+    } catch (e: NativeInteropTestsError) {
+      throw NativeInteropTestsError(
+              e.code, e.message, NativeInteropTestsPigeonInteropCodec.encodeOrNull(e.details))
+          .apply { stackTrace = e.stackTrace }
+    }
+  }
+
+  suspend fun callFlutterEchoAsyncNullableString(aString: String?): String? {
+    val pigeonVar_api = api ?: error("NativeInteropHostIntegrationCoreApi has not been registered")
+    try {
+      return pigeonVar_api.callFlutterEchoAsyncNullableString(aString)
+    } catch (e: NativeInteropTestsError) {
+      throw NativeInteropTestsError(
+              e.code, e.message, NativeInteropTestsPigeonInteropCodec.encodeOrNull(e.details))
+          .apply { stackTrace = e.stackTrace }
+    }
+  }
+
+  suspend fun callFlutterEchoAsyncNullableUint8List(list: ByteArray?): ByteArray? {
+    val pigeonVar_api = api ?: error("NativeInteropHostIntegrationCoreApi has not been registered")
+    try {
+      return pigeonVar_api.callFlutterEchoAsyncNullableUint8List(list)
+    } catch (e: NativeInteropTestsError) {
+      throw NativeInteropTestsError(
+              e.code, e.message, NativeInteropTestsPigeonInteropCodec.encodeOrNull(e.details))
+          .apply { stackTrace = e.stackTrace }
+    }
+  }
+
+  suspend fun callFlutterEchoAsyncNullableInt32List(list: IntArray?): IntArray? {
+    val pigeonVar_api = api ?: error("NativeInteropHostIntegrationCoreApi has not been registered")
+    try {
+      return pigeonVar_api.callFlutterEchoAsyncNullableInt32List(list)
+    } catch (e: NativeInteropTestsError) {
+      throw NativeInteropTestsError(
+              e.code, e.message, NativeInteropTestsPigeonInteropCodec.encodeOrNull(e.details))
+          .apply { stackTrace = e.stackTrace }
+    }
+  }
+
+  suspend fun callFlutterEchoAsyncNullableInt64List(list: LongArray?): LongArray? {
+    val pigeonVar_api = api ?: error("NativeInteropHostIntegrationCoreApi has not been registered")
+    try {
+      return pigeonVar_api.callFlutterEchoAsyncNullableInt64List(list)
+    } catch (e: NativeInteropTestsError) {
+      throw NativeInteropTestsError(
+              e.code, e.message, NativeInteropTestsPigeonInteropCodec.encodeOrNull(e.details))
+          .apply { stackTrace = e.stackTrace }
+    }
+  }
+
+  suspend fun callFlutterEchoAsyncNullableFloat64List(list: DoubleArray?): DoubleArray? {
+    val pigeonVar_api = api ?: error("NativeInteropHostIntegrationCoreApi has not been registered")
+    try {
+      return pigeonVar_api.callFlutterEchoAsyncNullableFloat64List(list)
+    } catch (e: NativeInteropTestsError) {
+      throw NativeInteropTestsError(
+              e.code, e.message, NativeInteropTestsPigeonInteropCodec.encodeOrNull(e.details))
+          .apply { stackTrace = e.stackTrace }
+    }
+  }
+
+  suspend fun callFlutterThrowFlutterErrorAsync(): ByteArray? {
+    val pigeonVar_api = api ?: error("NativeInteropHostIntegrationCoreApi has not been registered")
+    try {
+      return NativeInteropTestsPigeonInteropCodec.encodeOrNull(
+          pigeonVar_api.callFlutterThrowFlutterErrorAsync())
+    } catch (e: NativeInteropTestsError) {
+      throw NativeInteropTestsError(
+              e.code, e.message, NativeInteropTestsPigeonInteropCodec.encodeOrNull(e.details))
+          .apply { stackTrace = e.stackTrace }
+    }
+  }
+
+  suspend fun callFlutterEchoAsyncNullableObject(pigeonVar_args: ByteArray): ByteArray? {
+    val pigeonVar_api = api ?: error("NativeInteropHostIntegrationCoreApi has not been registered")
+    try {
+      val pigeonVar_decodedArgs =
+          NativeInteropTestsPigeonInteropCodec.decodeArguments(pigeonVar_args)
+      val anObjectArg = pigeonVar_decodedArgs[0]
+      return NativeInteropTestsPigeonInteropCodec.encodeOrNull(
+          pigeonVar_api.callFlutterEchoAsyncNullableObject(anObjectArg))
+    } catch (e: NativeInteropTestsError) {
+      throw NativeInteropTestsError(
+              e.code, e.message, NativeInteropTestsPigeonInteropCodec.encodeOrNull(e.details))
+          .apply { stackTrace = e.stackTrace }
+    }
+  }
+
+  suspend fun callFlutterEchoAsyncNullableList(pigeonVar_args: ByteArray): ByteArray? {
+    val pigeonVar_api = api ?: error("NativeInteropHostIntegrationCoreApi has not been registered")
+    try {
+      val pigeonVar_decodedArgs =
+          NativeInteropTestsPigeonInteropCodec.decodeArguments(pigeonVar_args)
+      val listArg = pigeonVar_decodedArgs[0] as List<Any?>?
+      return NativeInteropTestsPigeonInteropCodec.encodeOrNull(
+          pigeonVar_api.callFlutterEchoAsyncNullableList(listArg))
+    } catch (e: NativeInteropTestsError) {
+      throw NativeInteropTestsError(
+              e.code, e.message, NativeInteropTestsPigeonInteropCodec.encodeOrNull(e.details))
+          .apply { stackTrace = e.stackTrace }
+    }
+  }
+
+  suspend fun callFlutterEchoAsyncNullableEnumList(pigeonVar_args: ByteArray): ByteArray? {
+    val pigeonVar_api = api ?: error("NativeInteropHostIntegrationCoreApi has not been registered")
+    try {
+      val pigeonVar_decodedArgs =
+          NativeInteropTestsPigeonInteropCodec.decodeArguments(pigeonVar_args)
+      val enumListArg = pigeonVar_decodedArgs[0] as List<NativeInteropAnEnum?>?
+      return NativeInteropTestsPigeonInteropCodec.encodeOrNull(
+          pigeonVar_api.callFlutterEchoAsyncNullableEnumList(enumListArg))
+    } catch (e: NativeInteropTestsError) {
+      throw NativeInteropTestsError(
+              e.code, e.message, NativeInteropTestsPigeonInteropCodec.encodeOrNull(e.details))
+          .apply { stackTrace = e.stackTrace }
+    }
+  }
+
+  suspend fun callFlutterEchoAsyncNullableClassList(pigeonVar_args: ByteArray): ByteArray? {
+    val pigeonVar_api = api ?: error("NativeInteropHostIntegrationCoreApi has not been registered")
+    try {
+      val pigeonVar_decodedArgs =
+          NativeInteropTestsPigeonInteropCodec.decodeArguments(pigeonVar_args)
+      val classListArg = pigeonVar_decodedArgs[0] as List<NativeInteropAllNullableTypes?>?
+      return NativeInteropTestsPigeonInteropCodec.encodeOrNull(
+          pigeonVar_api.callFlutterEchoAsyncNullableClassList(classListArg))
+    } catch (e: NativeInteropTestsError) {
+      throw NativeInteropTestsError(
+              e.code, e.message, NativeInteropTestsPigeonInteropCodec.encodeOrNull(e.details))
+          .apply { stackTrace = e.stackTrace }
+    }
+  }
+
+  suspend fun callFlutterEchoAsyncNullableNonNullEnumList(pigeonVar_args: ByteArray): ByteArray? {
+    val pigeonVar_api = api ?: error("NativeInteropHostIntegrationCoreApi has not been registered")
+    try {
+      val pigeonVar_decodedArgs =
+          NativeInteropTestsPigeonInteropCodec.decodeArguments(pigeonVar_args)
+      val enumListArg = pigeonVar_decodedArgs[0] as List<NativeInteropAnEnum>?
+      return NativeInteropTestsPigeonInteropCodec.encodeOrNull(
+          pigeonVar_api.callFlutterEchoAsyncNullableNonNullEnumList(enumListArg))
+    } catch (e: NativeInteropTestsError) {
+      throw NativeInteropTestsError(
+              e.code, e.message, NativeInteropTestsPigeonInteropCodec.encodeOrNull(e.details))
+          .apply { stackTrace = e.stackTrace }
+    }
+  }
+
+  suspend fun callFlutterEchoAsyncNullableNonNullClassList(pigeonVar_args: ByteArray): ByteArray? {
+    val pigeonVar_api = api ?: error("NativeInteropHostIntegrationCoreApi has not been registered")
+    try {
+      val pigeonVar_decodedArgs =
+          NativeInteropTestsPigeonInteropCodec.decodeArguments(pigeonVar_args)
+      val classListArg = pigeonVar_decodedArgs[0] as List<NativeInteropAllNullableTypes>?
+      return NativeInteropTestsPigeonInteropCodec.encodeOrNull(
+          pigeonVar_api.callFlutterEchoAsyncNullableNonNullClassList(classListArg))
+    } catch (e: NativeInteropTestsError) {
+      throw NativeInteropTestsError(
+              e.code, e.message, NativeInteropTestsPigeonInteropCodec.encodeOrNull(e.details))
+          .apply { stackTrace = e.stackTrace }
+    }
+  }
+
+  suspend fun callFlutterEchoAsyncNullableMap(pigeonVar_args: ByteArray): ByteArray? {
+    val pigeonVar_api = api ?: error("NativeInteropHostIntegrationCoreApi has not been registered")
+    try {
+      val pigeonVar_decodedArgs =
+          NativeInteropTestsPigeonInteropCodec.decodeArguments(pigeonVar_args)
+      val mapArg = pigeonVar_decodedArgs[0] as Map<Any?, Any?>?
+      return NativeInteropTestsPigeonInteropCodec.encodeOrNull(
+          pigeonVar_api.callFlutterEchoAsyncNullableMap(mapArg))
+    } catch (e: NativeInteropTestsError) {
+      throw NativeInteropTestsError(
+              e.code, e.message, NativeInteropTestsPigeonInteropCodec.encodeOrNull(e.details))
+          .apply { stackTrace = e.stackTrace }
+    }
+  }
+
+  suspend fun callFlutterEchoAsyncNullableStringMap(pigeonVar_args: ByteArray): ByteArray? {
+    val pigeonVar_api = api ?: error("NativeInteropHostIntegrationCoreApi has not been registered")
+    try {
+      val pigeonVar_decodedArgs =
+          NativeInteropTestsPigeonInteropCodec.decodeArguments(pigeonVar_args)
+      val stringMapArg = pigeonVar_decodedArgs[0] as Map<String?, String?>?
+      return NativeInteropTestsPigeonInteropCodec.encodeOrNull(
+          pigeonVar_api.callFlutterEchoAsyncNullableStringMap(stringMapArg))
+    } catch (e: NativeInteropTestsError) {
+      throw NativeInteropTestsError(
+              e.code, e.message, NativeInteropTestsPigeonInteropCodec.encodeOrNull(e.details))
+          .apply { stackTrace = e.stackTrace }
+    }
+  }
+
+  suspend fun callFlutterEchoAsyncNullableIntMap(pigeonVar_args: ByteArray): ByteArray? {
+    val pigeonVar_api = api ?: error("NativeInteropHostIntegrationCoreApi has not been registered")
+    try {
+      val pigeonVar_decodedArgs =
+          NativeInteropTestsPigeonInteropCodec.decodeArguments(pigeonVar_args)
+      val intMapArg = pigeonVar_decodedArgs[0] as Map<Long?, Long?>?
+      return NativeInteropTestsPigeonInteropCodec.encodeOrNull(
+          pigeonVar_api.callFlutterEchoAsyncNullableIntMap(intMapArg))
+    } catch (e: NativeInteropTestsError) {
+      throw NativeInteropTestsError(
+              e.code, e.message, NativeInteropTestsPigeonInteropCodec.encodeOrNull(e.details))
+          .apply { stackTrace = e.stackTrace }
+    }
+  }
+
+  suspend fun callFlutterEchoAsyncNullableEnumMap(pigeonVar_args: ByteArray): ByteArray? {
+    val pigeonVar_api = api ?: error("NativeInteropHostIntegrationCoreApi has not been registered")
+    try {
+      val pigeonVar_decodedArgs =
+          NativeInteropTestsPigeonInteropCodec.decodeArguments(pigeonVar_args)
+      val enumMapArg = pigeonVar_decodedArgs[0] as Map<NativeInteropAnEnum?, NativeInteropAnEnum?>?
+      return NativeInteropTestsPigeonInteropCodec.encodeOrNull(
+          pigeonVar_api.callFlutterEchoAsyncNullableEnumMap(enumMapArg))
+    } catch (e: NativeInteropTestsError) {
+      throw NativeInteropTestsError(
+              e.code, e.message, NativeInteropTestsPigeonInteropCodec.encodeOrNull(e.details))
+          .apply { stackTrace = e.stackTrace }
+    }
+  }
+
+  suspend fun callFlutterEchoAsyncNullableClassMap(pigeonVar_args: ByteArray): ByteArray? {
+    val pigeonVar_api = api ?: error("NativeInteropHostIntegrationCoreApi has not been registered")
+    try {
+      val pigeonVar_decodedArgs =
+          NativeInteropTestsPigeonInteropCodec.decodeArguments(pigeonVar_args)
+      val classMapArg = pigeonVar_decodedArgs[0] as Map<Long?, NativeInteropAllNullableTypes?>?
+      return NativeInteropTestsPigeonInteropCodec.encodeOrNull(
+          pigeonVar_api.callFlutterEchoAsyncNullableClassMap(classMapArg))
+    } catch (e: NativeInteropTestsError) {
+      throw NativeInteropTestsError(
+              e.code, e.message, NativeInteropTestsPigeonInteropCodec.encodeOrNull(e.details))
+          .apply { stackTrace = e.stackTrace }
+    }
+  }
+
+  suspend fun callFlutterEchoAsyncNullableEnum(anEnum: Long): Long {
+    val pigeonVar_api = api ?: error("NativeInteropHostIntegrationCoreApi has not been registered")
+    try {
+      return (pigeonVar_api
+          .callFlutterEchoAsyncNullableEnum(
+              if (anEnum == -1L) null else NativeInteropAnEnum.ofRaw(anEnum.toInt()))
+          ?.raw
+          ?.toLong() ?: -1L)
+    } catch (e: NativeInteropTestsError) {
+      throw NativeInteropTestsError(
+              e.code, e.message, NativeInteropTestsPigeonInteropCodec.encodeOrNull(e.details))
+          .apply { stackTrace = e.stackTrace }
+    }
+  }
+
+  suspend fun callFlutterEchoAnotherAsyncNullableEnum(anotherEnum: Long): Long {
+    val pigeonVar_api = api ?: error("NativeInteropHostIntegrationCoreApi has not been registered")
+    try {
+      return (pigeonVar_api
+          .callFlutterEchoAnotherAsyncNullableEnum(
+              if (anotherEnum == -1L) null else NativeInteropAnotherEnum.ofRaw(anotherEnum.toInt()))
+          ?.raw
+          ?.toLong() ?: -1L)
+    } catch (e: NativeInteropTestsError) {
+      throw NativeInteropTestsError(
+              e.code, e.message, NativeInteropTestsPigeonInteropCodec.encodeOrNull(e.details))
+          .apply { stackTrace = e.stackTrace }
+    }
+  }
+
+  fun isMainThread(): Boolean {
+    val pigeonVar_api = api ?: error("NativeInteropHostIntegrationCoreApi has not been registered")
+    try {
+      return pigeonVar_api.isMainThread()
+    } catch (e: NativeInteropTestsError) {
+      throw NativeInteropTestsError(
+              e.code, e.message, NativeInteropTestsPigeonInteropCodec.encodeOrNull(e.details))
+          .apply { stackTrace = e.stackTrace }
+    }
+  }
+
+  suspend fun asyncIsBackgroundThread(): Boolean {
+    val pigeonVar_api = api ?: error("NativeInteropHostIntegrationCoreApi has not been registered")
+    try {
+      return pigeonVar_api.asyncIsBackgroundThread()
+    } catch (e: NativeInteropTestsError) {
+      throw NativeInteropTestsError(
+              e.code, e.message, NativeInteropTestsPigeonInteropCodec.encodeOrNull(e.details))
+          .apply { stackTrace = e.stackTrace }
+    }
+  }
+
+  fun isGetter(): Boolean {
+    val pigeonVar_api = api ?: error("NativeInteropHostIntegrationCoreApi has not been registered")
+    try {
+      return pigeonVar_api.isGetter()
+    } catch (e: NativeInteropTestsError) {
+      throw NativeInteropTestsError(
+              e.code, e.message, NativeInteropTestsPigeonInteropCodec.encodeOrNull(e.details))
+          .apply { stackTrace = e.stackTrace }
+    }
+  }
+
+  fun getGetter(): Long {
+    val pigeonVar_api = api ?: error("NativeInteropHostIntegrationCoreApi has not been registered")
+    try {
+      return pigeonVar_api.getGetter()
+    } catch (e: NativeInteropTestsError) {
+      throw NativeInteropTestsError(
+              e.code, e.message, NativeInteropTestsPigeonInteropCodec.encodeOrNull(e.details))
+          .apply { stackTrace = e.stackTrace }
+    }
+  }
+
+  fun setSetter(value: Long) {
+    val pigeonVar_api = api ?: error("NativeInteropHostIntegrationCoreApi has not been registered")
+    try {
+      pigeonVar_api.setSetter(value)
+    } catch (e: NativeInteropTestsError) {
+      throw NativeInteropTestsError(
+              e.code, e.message, NativeInteropTestsPigeonInteropCodec.encodeOrNull(e.details))
+          .apply { stackTrace = e.stackTrace }
+    }
+  }
+
+  suspend fun callFlutterNoopOnBackgroundThread(): Boolean {
+    val pigeonVar_api = api ?: error("NativeInteropHostIntegrationCoreApi has not been registered")
+    try {
+      return pigeonVar_api.callFlutterNoopOnBackgroundThread()
+    } catch (e: NativeInteropTestsError) {
+      throw NativeInteropTestsError(
+              e.code, e.message, NativeInteropTestsPigeonInteropCodec.encodeOrNull(e.details))
+          .apply { stackTrace = e.stackTrace }
+    }
+  }
+
+  fun testDeregisterHostApi(): Boolean {
+    val pigeonVar_api = api ?: error("NativeInteropHostIntegrationCoreApi has not been registered")
+    try {
+      return pigeonVar_api.testDeregisterHostApi()
+    } catch (e: NativeInteropTestsError) {
+      throw NativeInteropTestsError(
+              e.code, e.message, NativeInteropTestsPigeonInteropCodec.encodeOrNull(e.details))
+          .apply { stackTrace = e.stackTrace }
+    }
+  }
+
+  fun testDeregisterFlutterApi(): Boolean {
+    val pigeonVar_api = api ?: error("NativeInteropHostIntegrationCoreApi has not been registered")
+    try {
+      return pigeonVar_api.testDeregisterFlutterApi()
+    } catch (e: NativeInteropTestsError) {
+      throw NativeInteropTestsError(
+              e.code, e.message, NativeInteropTestsPigeonInteropCodec.encodeOrNull(e.details))
+          .apply { stackTrace = e.stackTrace }
+    }
+  }
+
+  fun registerAndImmediatelyDeregisterHostApi(name: String) {
+    val pigeonVar_api = api ?: error("NativeInteropHostIntegrationCoreApi has not been registered")
+    try {
+      pigeonVar_api.registerAndImmediatelyDeregisterHostApi(name)
+    } catch (e: NativeInteropTestsError) {
+      throw NativeInteropTestsError(
+              e.code, e.message, NativeInteropTestsPigeonInteropCodec.encodeOrNull(e.details))
+          .apply { stackTrace = e.stackTrace }
+    }
+  }
+
+  fun testCallDeregisteredFlutterApi(name: String): Boolean {
+    val pigeonVar_api = api ?: error("NativeInteropHostIntegrationCoreApi has not been registered")
+    try {
+      return pigeonVar_api.testCallDeregisteredFlutterApi(name)
+    } catch (e: NativeInteropTestsError) {
+      throw NativeInteropTestsError(
+              e.code, e.message, NativeInteropTestsPigeonInteropCodec.encodeOrNull(e.details))
+          .apply { stackTrace = e.stackTrace }
     }
-    error("NativeInteropHostIntegrationCoreApi has not been registered")
-  }
-
-  override suspend fun callFlutterEchoAsyncNullableObject(anObject: Any?): Any? {
-    api?.let {
-      try {
-        return it.callFlutterEchoAsyncNullableObject(anObject)
-      } catch (e: Exception) {
-        throw e
-      }
-    }
-    error("NativeInteropHostIntegrationCoreApi has not been registered")
-  }
-
-  override suspend fun callFlutterEchoAsyncNullableList(list: List<Any?>?): List<Any?>? {
-    api?.let {
-      try {
-        return it.callFlutterEchoAsyncNullableList(list)
-      } catch (e: Exception) {
-        throw e
-      }
-    }
-    error("NativeInteropHostIntegrationCoreApi has not been registered")
-  }
-
-  override suspend fun callFlutterEchoAsyncNullableEnumList(
-      enumList: List<NativeInteropAnEnum?>?
-  ): List<NativeInteropAnEnum?>? {
-    api?.let {
-      try {
-        return it.callFlutterEchoAsyncNullableEnumList(enumList)
-      } catch (e: Exception) {
-        throw e
-      }
-    }
-    error("NativeInteropHostIntegrationCoreApi has not been registered")
-  }
-
-  override suspend fun callFlutterEchoAsyncNullableClassList(
-      classList: List<NativeInteropAllNullableTypes?>?
-  ): List<NativeInteropAllNullableTypes?>? {
-    api?.let {
-      try {
-        return it.callFlutterEchoAsyncNullableClassList(classList)
-      } catch (e: Exception) {
-        throw e
-      }
-    }
-    error("NativeInteropHostIntegrationCoreApi has not been registered")
-  }
-
-  override suspend fun callFlutterEchoAsyncNullableNonNullEnumList(
-      enumList: List<NativeInteropAnEnum>?
-  ): List<NativeInteropAnEnum>? {
-    api?.let {
-      try {
-        return it.callFlutterEchoAsyncNullableNonNullEnumList(enumList)
-      } catch (e: Exception) {
-        throw e
-      }
-    }
-    error("NativeInteropHostIntegrationCoreApi has not been registered")
-  }
-
-  override suspend fun callFlutterEchoAsyncNullableNonNullClassList(
-      classList: List<NativeInteropAllNullableTypes>?
-  ): List<NativeInteropAllNullableTypes>? {
-    api?.let {
-      try {
-        return it.callFlutterEchoAsyncNullableNonNullClassList(classList)
-      } catch (e: Exception) {
-        throw e
-      }
-    }
-    error("NativeInteropHostIntegrationCoreApi has not been registered")
-  }
-
-  override suspend fun callFlutterEchoAsyncNullableMap(map: Map<Any?, Any?>?): Map<Any?, Any?>? {
-    api?.let {
-      try {
-        return it.callFlutterEchoAsyncNullableMap(map)
-      } catch (e: Exception) {
-        throw e
-      }
-    }
-    error("NativeInteropHostIntegrationCoreApi has not been registered")
-  }
-
-  override suspend fun callFlutterEchoAsyncNullableStringMap(
-      stringMap: Map<String?, String?>?
-  ): Map<String?, String?>? {
-    api?.let {
-      try {
-        return it.callFlutterEchoAsyncNullableStringMap(stringMap)
-      } catch (e: Exception) {
-        throw e
-      }
-    }
-    error("NativeInteropHostIntegrationCoreApi has not been registered")
-  }
-
-  override suspend fun callFlutterEchoAsyncNullableIntMap(
-      intMap: Map<Long?, Long?>?
-  ): Map<Long?, Long?>? {
-    api?.let {
-      try {
-        return it.callFlutterEchoAsyncNullableIntMap(intMap)
-      } catch (e: Exception) {
-        throw e
-      }
-    }
-    error("NativeInteropHostIntegrationCoreApi has not been registered")
-  }
-
-  override suspend fun callFlutterEchoAsyncNullableEnumMap(
-      enumMap: Map<NativeInteropAnEnum?, NativeInteropAnEnum?>?
-  ): Map<NativeInteropAnEnum?, NativeInteropAnEnum?>? {
-    api?.let {
-      try {
-        return it.callFlutterEchoAsyncNullableEnumMap(enumMap)
-      } catch (e: Exception) {
-        throw e
-      }
-    }
-    error("NativeInteropHostIntegrationCoreApi has not been registered")
-  }
-
-  override suspend fun callFlutterEchoAsyncNullableClassMap(
-      classMap: Map<Long?, NativeInteropAllNullableTypes?>?
-  ): Map<Long?, NativeInteropAllNullableTypes?>? {
-    api?.let {
-      try {
-        return it.callFlutterEchoAsyncNullableClassMap(classMap)
-      } catch (e: Exception) {
-        throw e
-      }
-    }
-    error("NativeInteropHostIntegrationCoreApi has not been registered")
-  }
-
-  override suspend fun callFlutterEchoAsyncNullableEnum(
-      anEnum: NativeInteropAnEnum?
-  ): NativeInteropAnEnum? {
-    api?.let {
-      try {
-        return it.callFlutterEchoAsyncNullableEnum(anEnum)
-      } catch (e: Exception) {
-        throw e
-      }
-    }
-    error("NativeInteropHostIntegrationCoreApi has not been registered")
-  }
-
-  override suspend fun callFlutterEchoAnotherAsyncNullableEnum(
-      anotherEnum: NativeInteropAnotherEnum?
-  ): NativeInteropAnotherEnum? {
-    api?.let {
-      try {
-        return it.callFlutterEchoAnotherAsyncNullableEnum(anotherEnum)
-      } catch (e: Exception) {
-        throw e
-      }
-    }
-    error("NativeInteropHostIntegrationCoreApi has not been registered")
-  }
-  /** Returns true if the handler is run on a main thread. */
-  override fun isMainThread(): Boolean {
-    api?.let {
-      try {
-        return it.isMainThread()
-      } catch (e: Exception) {
-        throw e
-      }
-    }
-    error("NativeInteropHostIntegrationCoreApi has not been registered")
-  }
-  /** Returns true if the async handler runs on a background thread. */
-  override suspend fun asyncIsBackgroundThread(): Boolean {
-    api?.let {
-      try {
-        return it.asyncIsBackgroundThread()
-      } catch (e: Exception) {
-        throw e
-      }
-    }
-    error("NativeInteropHostIntegrationCoreApi has not been registered")
-  }
-  /**
-   * Tests that zero-argument boolean methods starting with 'is' are correctly invoked as JNI
-   * property getters (e.g., `_jniApi.isGetter`).
-   */
-  override fun isGetter(): Boolean {
-    api?.let {
-      try {
-        return it.isGetter()
-      } catch (e: Exception) {
-        throw e
-      }
-    }
-    error("NativeInteropHostIntegrationCoreApi has not been registered")
-  }
-  /**
-   * Tests that zero-argument methods starting with 'get' are correctly invoked as JNI property
-   * getters with decapitalized names (e.g., `_jniApi.getter`).
-   */
-  override fun getGetter(): Long {
-    api?.let {
-      try {
-        return it.getGetter()
-      } catch (e: Exception) {
-        throw e
-      }
-    }
-    error("NativeInteropHostIntegrationCoreApi has not been registered")
-  }
-  /**
-   * Tests that single-argument void methods starting with 'set' are correctly invoked as JNI
-   * property setters with decapitalized names (e.g., `_jniApi.setter = value`).
-   */
-  override fun setSetter(value: Long) {
-    api?.let {
-      try {
-        return it.setSetter(value)
-      } catch (e: Exception) {
-        throw e
-      }
-    }
-    error("NativeInteropHostIntegrationCoreApi has not been registered")
-  }
-  /**
-   * Spawns a background thread and calls `noop` on the [NativeInteropFlutterIntegrationCoreApi].
-   *
-   * Returns the result of whether the flutter call was successful.
-   */
-  override suspend fun callFlutterNoopOnBackgroundThread(): Boolean {
-    api?.let {
-      try {
-        return it.callFlutterNoopOnBackgroundThread()
-      } catch (e: Exception) {
-        throw e
-      }
-    }
-    error("NativeInteropHostIntegrationCoreApi has not been registered")
-  }
-  /** Tests deregistering a Host API natively. */
-  override fun testDeregisterHostApi(): Boolean {
-    api?.let {
-      try {
-        return it.testDeregisterHostApi()
-      } catch (e: Exception) {
-        throw e
-      }
-    }
-    error("NativeInteropHostIntegrationCoreApi has not been registered")
-  }
-  /** Tests deregistering a Flutter API natively. */
-  override fun testDeregisterFlutterApi(): Boolean {
-    api?.let {
-      try {
-        return it.testDeregisterFlutterApi()
-      } catch (e: Exception) {
-        throw e
-      }
-    }
-    error("NativeInteropHostIntegrationCoreApi has not been registered")
-  }
-  /** Registers and immediately deregisters a Host API under [name]. */
-  override fun registerAndImmediatelyDeregisterHostApi(name: String) {
-    api?.let {
-      try {
-        return it.registerAndImmediatelyDeregisterHostApi(name)
-      } catch (e: Exception) {
-        throw e
-      }
-    }
-    error("NativeInteropHostIntegrationCoreApi has not been registered")
-  }
-  /** Tests that calling a deregistered Flutter API under [name] fails / returns null. */
-  override fun testCallDeregisteredFlutterApi(name: String): Boolean {
-    api?.let {
-      try {
-        return it.testCallDeregisteredFlutterApi(name)
-      } catch (e: Exception) {
-        throw e
-      }
-    }
-    error("NativeInteropHostIntegrationCoreApi has not been registered")
   }
 }
 /**
@@ -4759,11 +5362,12 @@ class NativeInteropFlutterIntegrationCoreApiRegistrar() {
 
   /// Registers an instance with the given name.
   fun registerInstance(
-      api: NativeInteropFlutterIntegrationCoreApi?,
+      api: NativeInteropFlutterIntegrationCoreApiBridge?,
       name: String = defaultInstanceName
   ) {
     if (api != null) {
-      registeredNativeInteropFlutterIntegrationCoreApi[name] = api
+      registeredNativeInteropFlutterIntegrationCoreApi[name] =
+          NativeInteropFlutterIntegrationCoreApiBridgeAdapter(api)
     } else {
       registeredNativeInteropFlutterIntegrationCoreApi.remove(name)
     }
@@ -4775,7 +5379,6 @@ class NativeInteropFlutterIntegrationCoreApiRegistrar() {
   }
 }
 
-@Keep
 interface NativeInteropFlutterIntegrationCoreApi {
   /** A no-op function taking no arguments and returning no value, to sanity test basic calling. */
   fun noop()
@@ -5066,6 +5669,1133 @@ interface NativeInteropFlutterIntegrationCoreApi {
   ): NativeInteropAnotherEnum?
 }
 
+/**
+ * The interface that Dart implements for [NativeInteropFlutterIntegrationCoreApi].
+ *
+ * Values that the native interop transport passes directly are their own arguments and return
+ * values. All other arguments are encoded into one buffer, and other return values are returned in
+ * one.
+ */
+@Keep
+interface NativeInteropFlutterIntegrationCoreApiBridge {
+  fun noop()
+
+  fun throwFlutterError(): ByteArray?
+
+  fun throwError(): ByteArray?
+
+  fun throwErrorFromVoid()
+
+  fun echoNativeInteropAllTypes(pigeonVar_args: ByteArray): ByteArray?
+
+  fun echoNativeInteropAllNullableTypes(pigeonVar_args: ByteArray): ByteArray?
+
+  fun echoNativeInteropSealedClass(pigeonVar_args: ByteArray): ByteArray?
+
+  fun sendMultipleNullableTypes(
+      aNullableBool: Boolean?,
+      aNullableInt: Long?,
+      aNullableString: String?
+  ): ByteArray?
+
+  fun echoNativeInteropAllNullableTypesWithoutRecursion(pigeonVar_args: ByteArray): ByteArray?
+
+  fun sendMultipleNullableTypesWithoutRecursion(
+      aNullableBool: Boolean?,
+      aNullableInt: Long?,
+      aNullableString: String?
+  ): ByteArray?
+
+  fun echoBool(aBool: Boolean): Boolean
+
+  fun echoInt(anInt: Long): Long
+
+  fun echoDouble(aDouble: Double): Double
+
+  fun echoString(aString: String): String
+
+  fun echoUint8List(list: ByteArray): ByteArray
+
+  fun echoInt32List(list: IntArray): IntArray
+
+  fun echoInt64List(list: LongArray): LongArray
+
+  fun echoFloat64List(list: DoubleArray): DoubleArray
+
+  fun echoList(pigeonVar_args: ByteArray): ByteArray?
+
+  fun echoEnumList(pigeonVar_args: ByteArray): ByteArray?
+
+  fun echoClassList(pigeonVar_args: ByteArray): ByteArray?
+
+  fun echoNonNullEnumList(pigeonVar_args: ByteArray): ByteArray?
+
+  fun echoNonNullClassList(pigeonVar_args: ByteArray): ByteArray?
+
+  fun echoMap(pigeonVar_args: ByteArray): ByteArray?
+
+  fun echoStringMap(pigeonVar_args: ByteArray): ByteArray?
+
+  fun echoIntMap(pigeonVar_args: ByteArray): ByteArray?
+
+  fun echoEnumMap(pigeonVar_args: ByteArray): ByteArray?
+
+  fun echoClassMap(pigeonVar_args: ByteArray): ByteArray?
+
+  fun echoNonNullStringMap(pigeonVar_args: ByteArray): ByteArray?
+
+  fun echoNonNullIntMap(pigeonVar_args: ByteArray): ByteArray?
+
+  fun echoNonNullEnumMap(pigeonVar_args: ByteArray): ByteArray?
+
+  fun echoNonNullClassMap(pigeonVar_args: ByteArray): ByteArray?
+
+  fun echoEnum(anEnum: Long): Long
+
+  fun echoNativeInteropAnotherEnum(anotherEnum: Long): Long
+
+  fun echoNullableBool(aBool: Boolean?): Boolean?
+
+  fun echoNullableInt(anInt: Long?): Long?
+
+  fun echoNullableDouble(aDouble: Double?): Double?
+
+  fun echoNullableString(aString: String?): String?
+
+  fun echoNullableUint8List(list: ByteArray?): ByteArray?
+
+  fun echoNullableInt32List(list: IntArray?): IntArray?
+
+  fun echoNullableInt64List(list: LongArray?): LongArray?
+
+  fun echoNullableFloat64List(list: DoubleArray?): DoubleArray?
+
+  fun echoNullableList(pigeonVar_args: ByteArray): ByteArray?
+
+  fun echoNullableEnumList(pigeonVar_args: ByteArray): ByteArray?
+
+  fun echoNullableClassList(pigeonVar_args: ByteArray): ByteArray?
+
+  fun echoNullableNonNullEnumList(pigeonVar_args: ByteArray): ByteArray?
+
+  fun echoNullableNonNullClassList(pigeonVar_args: ByteArray): ByteArray?
+
+  fun echoNullableMap(pigeonVar_args: ByteArray): ByteArray?
+
+  fun echoNullableStringMap(pigeonVar_args: ByteArray): ByteArray?
+
+  fun echoNullableIntMap(pigeonVar_args: ByteArray): ByteArray?
+
+  fun echoNullableEnumMap(pigeonVar_args: ByteArray): ByteArray?
+
+  fun echoNullableClassMap(pigeonVar_args: ByteArray): ByteArray?
+
+  fun echoNullableNonNullStringMap(pigeonVar_args: ByteArray): ByteArray?
+
+  fun echoNullableNonNullIntMap(pigeonVar_args: ByteArray): ByteArray?
+
+  fun echoNullableNonNullEnumMap(pigeonVar_args: ByteArray): ByteArray?
+
+  fun echoNullableNonNullClassMap(pigeonVar_args: ByteArray): ByteArray?
+
+  fun echoNullableEnum(anEnum: Long): Long
+
+  fun echoAnotherNullableEnum(anotherEnum: Long): Long
+
+  suspend fun noopAsync()
+
+  suspend fun throwFlutterErrorAsync(): ByteArray?
+
+  suspend fun echoAsyncNativeInteropAllTypes(pigeonVar_args: ByteArray): ByteArray?
+
+  suspend fun echoAsyncNullableNativeInteropAllNullableTypes(pigeonVar_args: ByteArray): ByteArray?
+
+  suspend fun echoAsyncNullableNativeInteropAllNullableTypesWithoutRecursion(
+      pigeonVar_args: ByteArray
+  ): ByteArray?
+
+  suspend fun echoAsyncBool(aBool: Boolean): Boolean
+
+  suspend fun echoAsyncInt(anInt: Long): Long
+
+  suspend fun echoAsyncDouble(aDouble: Double): Double
+
+  suspend fun echoAsyncString(aString: String): String
+
+  suspend fun echoAsyncUint8List(list: ByteArray): ByteArray
+
+  suspend fun echoAsyncInt32List(list: IntArray): IntArray
+
+  suspend fun echoAsyncInt64List(list: LongArray): LongArray
+
+  suspend fun echoAsyncFloat64List(list: DoubleArray): DoubleArray
+
+  suspend fun echoAsyncObject(pigeonVar_args: ByteArray): ByteArray?
+
+  suspend fun echoAsyncList(pigeonVar_args: ByteArray): ByteArray?
+
+  suspend fun echoAsyncEnumList(pigeonVar_args: ByteArray): ByteArray?
+
+  suspend fun echoAsyncClassList(pigeonVar_args: ByteArray): ByteArray?
+
+  suspend fun echoAsyncNonNullEnumList(pigeonVar_args: ByteArray): ByteArray?
+
+  suspend fun echoAsyncNonNullClassList(pigeonVar_args: ByteArray): ByteArray?
+
+  suspend fun echoAsyncMap(pigeonVar_args: ByteArray): ByteArray?
+
+  suspend fun echoAsyncStringMap(pigeonVar_args: ByteArray): ByteArray?
+
+  suspend fun echoAsyncIntMap(pigeonVar_args: ByteArray): ByteArray?
+
+  suspend fun echoAsyncEnumMap(pigeonVar_args: ByteArray): ByteArray?
+
+  suspend fun echoAsyncClassMap(pigeonVar_args: ByteArray): ByteArray?
+
+  suspend fun echoAsyncEnum(anEnum: Long): Long
+
+  suspend fun echoAnotherAsyncEnum(anotherEnum: Long): Long
+
+  suspend fun echoAsyncNullableBool(aBool: Boolean?): Boolean?
+
+  suspend fun echoAsyncNullableInt(anInt: Long?): Long?
+
+  suspend fun echoAsyncNullableDouble(aDouble: Double?): Double?
+
+  suspend fun echoAsyncNullableString(aString: String?): String?
+
+  suspend fun echoAsyncNullableUint8List(list: ByteArray?): ByteArray?
+
+  suspend fun echoAsyncNullableInt32List(list: IntArray?): IntArray?
+
+  suspend fun echoAsyncNullableInt64List(list: LongArray?): LongArray?
+
+  suspend fun echoAsyncNullableFloat64List(list: DoubleArray?): DoubleArray?
+
+  suspend fun echoAsyncNullableObject(pigeonVar_args: ByteArray): ByteArray?
+
+  suspend fun echoAsyncNullableList(pigeonVar_args: ByteArray): ByteArray?
+
+  suspend fun echoAsyncNullableEnumList(pigeonVar_args: ByteArray): ByteArray?
+
+  suspend fun echoAsyncNullableClassList(pigeonVar_args: ByteArray): ByteArray?
+
+  suspend fun echoAsyncNullableNonNullEnumList(pigeonVar_args: ByteArray): ByteArray?
+
+  suspend fun echoAsyncNullableNonNullClassList(pigeonVar_args: ByteArray): ByteArray?
+
+  suspend fun echoAsyncNullableMap(pigeonVar_args: ByteArray): ByteArray?
+
+  suspend fun echoAsyncNullableStringMap(pigeonVar_args: ByteArray): ByteArray?
+
+  suspend fun echoAsyncNullableIntMap(pigeonVar_args: ByteArray): ByteArray?
+
+  suspend fun echoAsyncNullableEnumMap(pigeonVar_args: ByteArray): ByteArray?
+
+  suspend fun echoAsyncNullableClassMap(pigeonVar_args: ByteArray): ByteArray?
+
+  suspend fun echoAsyncNullableEnum(anEnum: Long): Long
+
+  suspend fun echoAnotherAsyncNullableEnum(anotherEnum: Long): Long
+}
+
+private class NativeInteropFlutterIntegrationCoreApiBridgeAdapter(
+    private val bridge: NativeInteropFlutterIntegrationCoreApiBridge
+) : NativeInteropFlutterIntegrationCoreApi {
+  override fun noop() {
+    bridge.noop()
+  }
+
+  override fun throwFlutterError(): Any? {
+    val pigeonVar_result = bridge.throwFlutterError()
+    val pigeonVar_decoded =
+        if (pigeonVar_result == null) null
+        else NativeInteropTestsPigeonInteropCodec.decode(pigeonVar_result)
+    return pigeonVar_decoded
+  }
+
+  override fun throwError(): Any? {
+    val pigeonVar_result = bridge.throwError()
+    val pigeonVar_decoded =
+        if (pigeonVar_result == null) null
+        else NativeInteropTestsPigeonInteropCodec.decode(pigeonVar_result)
+    return pigeonVar_decoded
+  }
+
+  override fun throwErrorFromVoid() {
+    bridge.throwErrorFromVoid()
+  }
+
+  override fun echoNativeInteropAllTypes(everything: NativeInteropAllTypes): NativeInteropAllTypes {
+    val pigeonVar_result =
+        bridge.echoNativeInteropAllTypes(
+            NativeInteropTestsPigeonInteropCodec.encode(listOf<Any?>(everything)))
+    val pigeonVar_decoded =
+        if (pigeonVar_result == null) null
+        else NativeInteropTestsPigeonInteropCodec.decode(pigeonVar_result)
+    return pigeonVar_decoded as NativeInteropAllTypes
+  }
+
+  override fun echoNativeInteropAllNullableTypes(
+      everything: NativeInteropAllNullableTypes?
+  ): NativeInteropAllNullableTypes? {
+    val pigeonVar_result =
+        bridge.echoNativeInteropAllNullableTypes(
+            NativeInteropTestsPigeonInteropCodec.encode(listOf<Any?>(everything)))
+    val pigeonVar_decoded =
+        if (pigeonVar_result == null) null
+        else NativeInteropTestsPigeonInteropCodec.decode(pigeonVar_result)
+    return pigeonVar_decoded as NativeInteropAllNullableTypes?
+  }
+
+  override fun echoNativeInteropSealedClass(
+      sealedClass: NativeInteropSealedClass
+  ): NativeInteropSealedClass {
+    val pigeonVar_result =
+        bridge.echoNativeInteropSealedClass(
+            NativeInteropTestsPigeonInteropCodec.encode(listOf<Any?>(sealedClass)))
+    val pigeonVar_decoded =
+        if (pigeonVar_result == null) null
+        else NativeInteropTestsPigeonInteropCodec.decode(pigeonVar_result)
+    return pigeonVar_decoded as NativeInteropSealedClass
+  }
+
+  override fun sendMultipleNullableTypes(
+      aNullableBool: Boolean?,
+      aNullableInt: Long?,
+      aNullableString: String?
+  ): NativeInteropAllNullableTypes {
+    val pigeonVar_result =
+        bridge.sendMultipleNullableTypes(aNullableBool, aNullableInt, aNullableString)
+    val pigeonVar_decoded =
+        if (pigeonVar_result == null) null
+        else NativeInteropTestsPigeonInteropCodec.decode(pigeonVar_result)
+    return pigeonVar_decoded as NativeInteropAllNullableTypes
+  }
+
+  override fun echoNativeInteropAllNullableTypesWithoutRecursion(
+      everything: NativeInteropAllNullableTypesWithoutRecursion?
+  ): NativeInteropAllNullableTypesWithoutRecursion? {
+    val pigeonVar_result =
+        bridge.echoNativeInteropAllNullableTypesWithoutRecursion(
+            NativeInteropTestsPigeonInteropCodec.encode(listOf<Any?>(everything)))
+    val pigeonVar_decoded =
+        if (pigeonVar_result == null) null
+        else NativeInteropTestsPigeonInteropCodec.decode(pigeonVar_result)
+    return pigeonVar_decoded as NativeInteropAllNullableTypesWithoutRecursion?
+  }
+
+  override fun sendMultipleNullableTypesWithoutRecursion(
+      aNullableBool: Boolean?,
+      aNullableInt: Long?,
+      aNullableString: String?
+  ): NativeInteropAllNullableTypesWithoutRecursion {
+    val pigeonVar_result =
+        bridge.sendMultipleNullableTypesWithoutRecursion(
+            aNullableBool, aNullableInt, aNullableString)
+    val pigeonVar_decoded =
+        if (pigeonVar_result == null) null
+        else NativeInteropTestsPigeonInteropCodec.decode(pigeonVar_result)
+    return pigeonVar_decoded as NativeInteropAllNullableTypesWithoutRecursion
+  }
+
+  override fun echoBool(aBool: Boolean): Boolean {
+    val pigeonVar_result = bridge.echoBool(aBool)
+    return pigeonVar_result
+  }
+
+  override fun echoInt(anInt: Long): Long {
+    val pigeonVar_result = bridge.echoInt(anInt)
+    return pigeonVar_result
+  }
+
+  override fun echoDouble(aDouble: Double): Double {
+    val pigeonVar_result = bridge.echoDouble(aDouble)
+    return pigeonVar_result
+  }
+
+  override fun echoString(aString: String): String {
+    val pigeonVar_result = bridge.echoString(aString)
+    return pigeonVar_result
+  }
+
+  override fun echoUint8List(list: ByteArray): ByteArray {
+    val pigeonVar_result = bridge.echoUint8List(list)
+    return pigeonVar_result
+  }
+
+  override fun echoInt32List(list: IntArray): IntArray {
+    val pigeonVar_result = bridge.echoInt32List(list)
+    return pigeonVar_result
+  }
+
+  override fun echoInt64List(list: LongArray): LongArray {
+    val pigeonVar_result = bridge.echoInt64List(list)
+    return pigeonVar_result
+  }
+
+  override fun echoFloat64List(list: DoubleArray): DoubleArray {
+    val pigeonVar_result = bridge.echoFloat64List(list)
+    return pigeonVar_result
+  }
+
+  override fun echoList(list: List<Any?>): List<Any?> {
+    val pigeonVar_result =
+        bridge.echoList(NativeInteropTestsPigeonInteropCodec.encode(listOf<Any?>(list)))
+    val pigeonVar_decoded =
+        if (pigeonVar_result == null) null
+        else NativeInteropTestsPigeonInteropCodec.decode(pigeonVar_result)
+    return pigeonVar_decoded as List<Any?>
+  }
+
+  override fun echoEnumList(enumList: List<NativeInteropAnEnum?>): List<NativeInteropAnEnum?> {
+    val pigeonVar_result =
+        bridge.echoEnumList(NativeInteropTestsPigeonInteropCodec.encode(listOf<Any?>(enumList)))
+    val pigeonVar_decoded =
+        if (pigeonVar_result == null) null
+        else NativeInteropTestsPigeonInteropCodec.decode(pigeonVar_result)
+    return pigeonVar_decoded as List<NativeInteropAnEnum?>
+  }
+
+  override fun echoClassList(
+      classList: List<NativeInteropAllNullableTypes?>
+  ): List<NativeInteropAllNullableTypes?> {
+    val pigeonVar_result =
+        bridge.echoClassList(NativeInteropTestsPigeonInteropCodec.encode(listOf<Any?>(classList)))
+    val pigeonVar_decoded =
+        if (pigeonVar_result == null) null
+        else NativeInteropTestsPigeonInteropCodec.decode(pigeonVar_result)
+    return pigeonVar_decoded as List<NativeInteropAllNullableTypes?>
+  }
+
+  override fun echoNonNullEnumList(enumList: List<NativeInteropAnEnum>): List<NativeInteropAnEnum> {
+    val pigeonVar_result =
+        bridge.echoNonNullEnumList(
+            NativeInteropTestsPigeonInteropCodec.encode(listOf<Any?>(enumList)))
+    val pigeonVar_decoded =
+        if (pigeonVar_result == null) null
+        else NativeInteropTestsPigeonInteropCodec.decode(pigeonVar_result)
+    return pigeonVar_decoded as List<NativeInteropAnEnum>
+  }
+
+  override fun echoNonNullClassList(
+      classList: List<NativeInteropAllNullableTypes>
+  ): List<NativeInteropAllNullableTypes> {
+    val pigeonVar_result =
+        bridge.echoNonNullClassList(
+            NativeInteropTestsPigeonInteropCodec.encode(listOf<Any?>(classList)))
+    val pigeonVar_decoded =
+        if (pigeonVar_result == null) null
+        else NativeInteropTestsPigeonInteropCodec.decode(pigeonVar_result)
+    return pigeonVar_decoded as List<NativeInteropAllNullableTypes>
+  }
+
+  override fun echoMap(map: Map<Any?, Any?>): Map<Any?, Any?> {
+    val pigeonVar_result =
+        bridge.echoMap(NativeInteropTestsPigeonInteropCodec.encode(listOf<Any?>(map)))
+    val pigeonVar_decoded =
+        if (pigeonVar_result == null) null
+        else NativeInteropTestsPigeonInteropCodec.decode(pigeonVar_result)
+    return pigeonVar_decoded as Map<Any?, Any?>
+  }
+
+  override fun echoStringMap(stringMap: Map<String?, String?>): Map<String?, String?> {
+    val pigeonVar_result =
+        bridge.echoStringMap(NativeInteropTestsPigeonInteropCodec.encode(listOf<Any?>(stringMap)))
+    val pigeonVar_decoded =
+        if (pigeonVar_result == null) null
+        else NativeInteropTestsPigeonInteropCodec.decode(pigeonVar_result)
+    return pigeonVar_decoded as Map<String?, String?>
+  }
+
+  override fun echoIntMap(intMap: Map<Long?, Long?>): Map<Long?, Long?> {
+    val pigeonVar_result =
+        bridge.echoIntMap(NativeInteropTestsPigeonInteropCodec.encode(listOf<Any?>(intMap)))
+    val pigeonVar_decoded =
+        if (pigeonVar_result == null) null
+        else NativeInteropTestsPigeonInteropCodec.decode(pigeonVar_result)
+    return pigeonVar_decoded as Map<Long?, Long?>
+  }
+
+  override fun echoEnumMap(
+      enumMap: Map<NativeInteropAnEnum?, NativeInteropAnEnum?>
+  ): Map<NativeInteropAnEnum?, NativeInteropAnEnum?> {
+    val pigeonVar_result =
+        bridge.echoEnumMap(NativeInteropTestsPigeonInteropCodec.encode(listOf<Any?>(enumMap)))
+    val pigeonVar_decoded =
+        if (pigeonVar_result == null) null
+        else NativeInteropTestsPigeonInteropCodec.decode(pigeonVar_result)
+    return pigeonVar_decoded as Map<NativeInteropAnEnum?, NativeInteropAnEnum?>
+  }
+
+  override fun echoClassMap(
+      classMap: Map<Long?, NativeInteropAllNullableTypes?>
+  ): Map<Long?, NativeInteropAllNullableTypes?> {
+    val pigeonVar_result =
+        bridge.echoClassMap(NativeInteropTestsPigeonInteropCodec.encode(listOf<Any?>(classMap)))
+    val pigeonVar_decoded =
+        if (pigeonVar_result == null) null
+        else NativeInteropTestsPigeonInteropCodec.decode(pigeonVar_result)
+    return pigeonVar_decoded as Map<Long?, NativeInteropAllNullableTypes?>
+  }
+
+  override fun echoNonNullStringMap(stringMap: Map<String, String>): Map<String, String> {
+    val pigeonVar_result =
+        bridge.echoNonNullStringMap(
+            NativeInteropTestsPigeonInteropCodec.encode(listOf<Any?>(stringMap)))
+    val pigeonVar_decoded =
+        if (pigeonVar_result == null) null
+        else NativeInteropTestsPigeonInteropCodec.decode(pigeonVar_result)
+    return pigeonVar_decoded as Map<String, String>
+  }
+
+  override fun echoNonNullIntMap(intMap: Map<Long, Long>): Map<Long, Long> {
+    val pigeonVar_result =
+        bridge.echoNonNullIntMap(NativeInteropTestsPigeonInteropCodec.encode(listOf<Any?>(intMap)))
+    val pigeonVar_decoded =
+        if (pigeonVar_result == null) null
+        else NativeInteropTestsPigeonInteropCodec.decode(pigeonVar_result)
+    return pigeonVar_decoded as Map<Long, Long>
+  }
+
+  override fun echoNonNullEnumMap(
+      enumMap: Map<NativeInteropAnEnum, NativeInteropAnEnum>
+  ): Map<NativeInteropAnEnum, NativeInteropAnEnum> {
+    val pigeonVar_result =
+        bridge.echoNonNullEnumMap(
+            NativeInteropTestsPigeonInteropCodec.encode(listOf<Any?>(enumMap)))
+    val pigeonVar_decoded =
+        if (pigeonVar_result == null) null
+        else NativeInteropTestsPigeonInteropCodec.decode(pigeonVar_result)
+    return pigeonVar_decoded as Map<NativeInteropAnEnum, NativeInteropAnEnum>
+  }
+
+  override fun echoNonNullClassMap(
+      classMap: Map<Long, NativeInteropAllNullableTypes>
+  ): Map<Long, NativeInteropAllNullableTypes> {
+    val pigeonVar_result =
+        bridge.echoNonNullClassMap(
+            NativeInteropTestsPigeonInteropCodec.encode(listOf<Any?>(classMap)))
+    val pigeonVar_decoded =
+        if (pigeonVar_result == null) null
+        else NativeInteropTestsPigeonInteropCodec.decode(pigeonVar_result)
+    return pigeonVar_decoded as Map<Long, NativeInteropAllNullableTypes>
+  }
+
+  override fun echoEnum(anEnum: NativeInteropAnEnum): NativeInteropAnEnum {
+    val pigeonVar_result = bridge.echoEnum(anEnum.raw.toLong())
+    return NativeInteropAnEnum.ofRaw(pigeonVar_result.toInt())!!
+  }
+
+  override fun echoNativeInteropAnotherEnum(
+      anotherEnum: NativeInteropAnotherEnum
+  ): NativeInteropAnotherEnum {
+    val pigeonVar_result = bridge.echoNativeInteropAnotherEnum(anotherEnum.raw.toLong())
+    return NativeInteropAnotherEnum.ofRaw(pigeonVar_result.toInt())!!
+  }
+
+  override fun echoNullableBool(aBool: Boolean?): Boolean? {
+    val pigeonVar_result = bridge.echoNullableBool(aBool)
+    return pigeonVar_result
+  }
+
+  override fun echoNullableInt(anInt: Long?): Long? {
+    val pigeonVar_result = bridge.echoNullableInt(anInt)
+    return pigeonVar_result
+  }
+
+  override fun echoNullableDouble(aDouble: Double?): Double? {
+    val pigeonVar_result = bridge.echoNullableDouble(aDouble)
+    return pigeonVar_result
+  }
+
+  override fun echoNullableString(aString: String?): String? {
+    val pigeonVar_result = bridge.echoNullableString(aString)
+    return pigeonVar_result
+  }
+
+  override fun echoNullableUint8List(list: ByteArray?): ByteArray? {
+    val pigeonVar_result = bridge.echoNullableUint8List(list)
+    return pigeonVar_result
+  }
+
+  override fun echoNullableInt32List(list: IntArray?): IntArray? {
+    val pigeonVar_result = bridge.echoNullableInt32List(list)
+    return pigeonVar_result
+  }
+
+  override fun echoNullableInt64List(list: LongArray?): LongArray? {
+    val pigeonVar_result = bridge.echoNullableInt64List(list)
+    return pigeonVar_result
+  }
+
+  override fun echoNullableFloat64List(list: DoubleArray?): DoubleArray? {
+    val pigeonVar_result = bridge.echoNullableFloat64List(list)
+    return pigeonVar_result
+  }
+
+  override fun echoNullableList(list: List<Any?>?): List<Any?>? {
+    val pigeonVar_result =
+        bridge.echoNullableList(NativeInteropTestsPigeonInteropCodec.encode(listOf<Any?>(list)))
+    val pigeonVar_decoded =
+        if (pigeonVar_result == null) null
+        else NativeInteropTestsPigeonInteropCodec.decode(pigeonVar_result)
+    return pigeonVar_decoded as List<Any?>?
+  }
+
+  override fun echoNullableEnumList(
+      enumList: List<NativeInteropAnEnum?>?
+  ): List<NativeInteropAnEnum?>? {
+    val pigeonVar_result =
+        bridge.echoNullableEnumList(
+            NativeInteropTestsPigeonInteropCodec.encode(listOf<Any?>(enumList)))
+    val pigeonVar_decoded =
+        if (pigeonVar_result == null) null
+        else NativeInteropTestsPigeonInteropCodec.decode(pigeonVar_result)
+    return pigeonVar_decoded as List<NativeInteropAnEnum?>?
+  }
+
+  override fun echoNullableClassList(
+      classList: List<NativeInteropAllNullableTypes?>?
+  ): List<NativeInteropAllNullableTypes?>? {
+    val pigeonVar_result =
+        bridge.echoNullableClassList(
+            NativeInteropTestsPigeonInteropCodec.encode(listOf<Any?>(classList)))
+    val pigeonVar_decoded =
+        if (pigeonVar_result == null) null
+        else NativeInteropTestsPigeonInteropCodec.decode(pigeonVar_result)
+    return pigeonVar_decoded as List<NativeInteropAllNullableTypes?>?
+  }
+
+  override fun echoNullableNonNullEnumList(
+      enumList: List<NativeInteropAnEnum>?
+  ): List<NativeInteropAnEnum>? {
+    val pigeonVar_result =
+        bridge.echoNullableNonNullEnumList(
+            NativeInteropTestsPigeonInteropCodec.encode(listOf<Any?>(enumList)))
+    val pigeonVar_decoded =
+        if (pigeonVar_result == null) null
+        else NativeInteropTestsPigeonInteropCodec.decode(pigeonVar_result)
+    return pigeonVar_decoded as List<NativeInteropAnEnum>?
+  }
+
+  override fun echoNullableNonNullClassList(
+      classList: List<NativeInteropAllNullableTypes>?
+  ): List<NativeInteropAllNullableTypes>? {
+    val pigeonVar_result =
+        bridge.echoNullableNonNullClassList(
+            NativeInteropTestsPigeonInteropCodec.encode(listOf<Any?>(classList)))
+    val pigeonVar_decoded =
+        if (pigeonVar_result == null) null
+        else NativeInteropTestsPigeonInteropCodec.decode(pigeonVar_result)
+    return pigeonVar_decoded as List<NativeInteropAllNullableTypes>?
+  }
+
+  override fun echoNullableMap(map: Map<Any?, Any?>?): Map<Any?, Any?>? {
+    val pigeonVar_result =
+        bridge.echoNullableMap(NativeInteropTestsPigeonInteropCodec.encode(listOf<Any?>(map)))
+    val pigeonVar_decoded =
+        if (pigeonVar_result == null) null
+        else NativeInteropTestsPigeonInteropCodec.decode(pigeonVar_result)
+    return pigeonVar_decoded as Map<Any?, Any?>?
+  }
+
+  override fun echoNullableStringMap(stringMap: Map<String?, String?>?): Map<String?, String?>? {
+    val pigeonVar_result =
+        bridge.echoNullableStringMap(
+            NativeInteropTestsPigeonInteropCodec.encode(listOf<Any?>(stringMap)))
+    val pigeonVar_decoded =
+        if (pigeonVar_result == null) null
+        else NativeInteropTestsPigeonInteropCodec.decode(pigeonVar_result)
+    return pigeonVar_decoded as Map<String?, String?>?
+  }
+
+  override fun echoNullableIntMap(intMap: Map<Long?, Long?>?): Map<Long?, Long?>? {
+    val pigeonVar_result =
+        bridge.echoNullableIntMap(NativeInteropTestsPigeonInteropCodec.encode(listOf<Any?>(intMap)))
+    val pigeonVar_decoded =
+        if (pigeonVar_result == null) null
+        else NativeInteropTestsPigeonInteropCodec.decode(pigeonVar_result)
+    return pigeonVar_decoded as Map<Long?, Long?>?
+  }
+
+  override fun echoNullableEnumMap(
+      enumMap: Map<NativeInteropAnEnum?, NativeInteropAnEnum?>?
+  ): Map<NativeInteropAnEnum?, NativeInteropAnEnum?>? {
+    val pigeonVar_result =
+        bridge.echoNullableEnumMap(
+            NativeInteropTestsPigeonInteropCodec.encode(listOf<Any?>(enumMap)))
+    val pigeonVar_decoded =
+        if (pigeonVar_result == null) null
+        else NativeInteropTestsPigeonInteropCodec.decode(pigeonVar_result)
+    return pigeonVar_decoded as Map<NativeInteropAnEnum?, NativeInteropAnEnum?>?
+  }
+
+  override fun echoNullableClassMap(
+      classMap: Map<Long?, NativeInteropAllNullableTypes?>?
+  ): Map<Long?, NativeInteropAllNullableTypes?>? {
+    val pigeonVar_result =
+        bridge.echoNullableClassMap(
+            NativeInteropTestsPigeonInteropCodec.encode(listOf<Any?>(classMap)))
+    val pigeonVar_decoded =
+        if (pigeonVar_result == null) null
+        else NativeInteropTestsPigeonInteropCodec.decode(pigeonVar_result)
+    return pigeonVar_decoded as Map<Long?, NativeInteropAllNullableTypes?>?
+  }
+
+  override fun echoNullableNonNullStringMap(stringMap: Map<String, String>?): Map<String, String>? {
+    val pigeonVar_result =
+        bridge.echoNullableNonNullStringMap(
+            NativeInteropTestsPigeonInteropCodec.encode(listOf<Any?>(stringMap)))
+    val pigeonVar_decoded =
+        if (pigeonVar_result == null) null
+        else NativeInteropTestsPigeonInteropCodec.decode(pigeonVar_result)
+    return pigeonVar_decoded as Map<String, String>?
+  }
+
+  override fun echoNullableNonNullIntMap(intMap: Map<Long, Long>?): Map<Long, Long>? {
+    val pigeonVar_result =
+        bridge.echoNullableNonNullIntMap(
+            NativeInteropTestsPigeonInteropCodec.encode(listOf<Any?>(intMap)))
+    val pigeonVar_decoded =
+        if (pigeonVar_result == null) null
+        else NativeInteropTestsPigeonInteropCodec.decode(pigeonVar_result)
+    return pigeonVar_decoded as Map<Long, Long>?
+  }
+
+  override fun echoNullableNonNullEnumMap(
+      enumMap: Map<NativeInteropAnEnum, NativeInteropAnEnum>?
+  ): Map<NativeInteropAnEnum, NativeInteropAnEnum>? {
+    val pigeonVar_result =
+        bridge.echoNullableNonNullEnumMap(
+            NativeInteropTestsPigeonInteropCodec.encode(listOf<Any?>(enumMap)))
+    val pigeonVar_decoded =
+        if (pigeonVar_result == null) null
+        else NativeInteropTestsPigeonInteropCodec.decode(pigeonVar_result)
+    return pigeonVar_decoded as Map<NativeInteropAnEnum, NativeInteropAnEnum>?
+  }
+
+  override fun echoNullableNonNullClassMap(
+      classMap: Map<Long, NativeInteropAllNullableTypes>?
+  ): Map<Long, NativeInteropAllNullableTypes>? {
+    val pigeonVar_result =
+        bridge.echoNullableNonNullClassMap(
+            NativeInteropTestsPigeonInteropCodec.encode(listOf<Any?>(classMap)))
+    val pigeonVar_decoded =
+        if (pigeonVar_result == null) null
+        else NativeInteropTestsPigeonInteropCodec.decode(pigeonVar_result)
+    return pigeonVar_decoded as Map<Long, NativeInteropAllNullableTypes>?
+  }
+
+  override fun echoNullableEnum(anEnum: NativeInteropAnEnum?): NativeInteropAnEnum? {
+    val pigeonVar_result = bridge.echoNullableEnum((anEnum?.raw?.toLong() ?: -1L))
+    return if (pigeonVar_result == -1L) null
+    else NativeInteropAnEnum.ofRaw(pigeonVar_result.toInt())
+  }
+
+  override fun echoAnotherNullableEnum(
+      anotherEnum: NativeInteropAnotherEnum?
+  ): NativeInteropAnotherEnum? {
+    val pigeonVar_result = bridge.echoAnotherNullableEnum((anotherEnum?.raw?.toLong() ?: -1L))
+    return if (pigeonVar_result == -1L) null
+    else NativeInteropAnotherEnum.ofRaw(pigeonVar_result.toInt())
+  }
+
+  override suspend fun noopAsync() {
+    bridge.noopAsync()
+  }
+
+  override suspend fun throwFlutterErrorAsync(): Any? {
+    val pigeonVar_result = bridge.throwFlutterErrorAsync()
+    val pigeonVar_decoded =
+        if (pigeonVar_result == null) null
+        else NativeInteropTestsPigeonInteropCodec.decode(pigeonVar_result)
+    return pigeonVar_decoded
+  }
+
+  override suspend fun echoAsyncNativeInteropAllTypes(
+      everything: NativeInteropAllTypes
+  ): NativeInteropAllTypes {
+    val pigeonVar_result =
+        bridge.echoAsyncNativeInteropAllTypes(
+            NativeInteropTestsPigeonInteropCodec.encode(listOf<Any?>(everything)))
+    val pigeonVar_decoded =
+        if (pigeonVar_result == null) null
+        else NativeInteropTestsPigeonInteropCodec.decode(pigeonVar_result)
+    return pigeonVar_decoded as NativeInteropAllTypes
+  }
+
+  override suspend fun echoAsyncNullableNativeInteropAllNullableTypes(
+      everything: NativeInteropAllNullableTypes?
+  ): NativeInteropAllNullableTypes? {
+    val pigeonVar_result =
+        bridge.echoAsyncNullableNativeInteropAllNullableTypes(
+            NativeInteropTestsPigeonInteropCodec.encode(listOf<Any?>(everything)))
+    val pigeonVar_decoded =
+        if (pigeonVar_result == null) null
+        else NativeInteropTestsPigeonInteropCodec.decode(pigeonVar_result)
+    return pigeonVar_decoded as NativeInteropAllNullableTypes?
+  }
+
+  override suspend fun echoAsyncNullableNativeInteropAllNullableTypesWithoutRecursion(
+      everything: NativeInteropAllNullableTypesWithoutRecursion?
+  ): NativeInteropAllNullableTypesWithoutRecursion? {
+    val pigeonVar_result =
+        bridge.echoAsyncNullableNativeInteropAllNullableTypesWithoutRecursion(
+            NativeInteropTestsPigeonInteropCodec.encode(listOf<Any?>(everything)))
+    val pigeonVar_decoded =
+        if (pigeonVar_result == null) null
+        else NativeInteropTestsPigeonInteropCodec.decode(pigeonVar_result)
+    return pigeonVar_decoded as NativeInteropAllNullableTypesWithoutRecursion?
+  }
+
+  override suspend fun echoAsyncBool(aBool: Boolean): Boolean {
+    val pigeonVar_result = bridge.echoAsyncBool(aBool)
+    return pigeonVar_result
+  }
+
+  override suspend fun echoAsyncInt(anInt: Long): Long {
+    val pigeonVar_result = bridge.echoAsyncInt(anInt)
+    return pigeonVar_result
+  }
+
+  override suspend fun echoAsyncDouble(aDouble: Double): Double {
+    val pigeonVar_result = bridge.echoAsyncDouble(aDouble)
+    return pigeonVar_result
+  }
+
+  override suspend fun echoAsyncString(aString: String): String {
+    val pigeonVar_result = bridge.echoAsyncString(aString)
+    return pigeonVar_result
+  }
+
+  override suspend fun echoAsyncUint8List(list: ByteArray): ByteArray {
+    val pigeonVar_result = bridge.echoAsyncUint8List(list)
+    return pigeonVar_result
+  }
+
+  override suspend fun echoAsyncInt32List(list: IntArray): IntArray {
+    val pigeonVar_result = bridge.echoAsyncInt32List(list)
+    return pigeonVar_result
+  }
+
+  override suspend fun echoAsyncInt64List(list: LongArray): LongArray {
+    val pigeonVar_result = bridge.echoAsyncInt64List(list)
+    return pigeonVar_result
+  }
+
+  override suspend fun echoAsyncFloat64List(list: DoubleArray): DoubleArray {
+    val pigeonVar_result = bridge.echoAsyncFloat64List(list)
+    return pigeonVar_result
+  }
+
+  override suspend fun echoAsyncObject(anObject: Any): Any {
+    val pigeonVar_result =
+        bridge.echoAsyncObject(NativeInteropTestsPigeonInteropCodec.encode(listOf<Any?>(anObject)))
+    val pigeonVar_decoded =
+        if (pigeonVar_result == null) null
+        else NativeInteropTestsPigeonInteropCodec.decode(pigeonVar_result)
+    return pigeonVar_decoded as Any
+  }
+
+  override suspend fun echoAsyncList(list: List<Any?>): List<Any?> {
+    val pigeonVar_result =
+        bridge.echoAsyncList(NativeInteropTestsPigeonInteropCodec.encode(listOf<Any?>(list)))
+    val pigeonVar_decoded =
+        if (pigeonVar_result == null) null
+        else NativeInteropTestsPigeonInteropCodec.decode(pigeonVar_result)
+    return pigeonVar_decoded as List<Any?>
+  }
+
+  override suspend fun echoAsyncEnumList(
+      enumList: List<NativeInteropAnEnum?>
+  ): List<NativeInteropAnEnum?> {
+    val pigeonVar_result =
+        bridge.echoAsyncEnumList(
+            NativeInteropTestsPigeonInteropCodec.encode(listOf<Any?>(enumList)))
+    val pigeonVar_decoded =
+        if (pigeonVar_result == null) null
+        else NativeInteropTestsPigeonInteropCodec.decode(pigeonVar_result)
+    return pigeonVar_decoded as List<NativeInteropAnEnum?>
+  }
+
+  override suspend fun echoAsyncClassList(
+      classList: List<NativeInteropAllNullableTypes?>
+  ): List<NativeInteropAllNullableTypes?> {
+    val pigeonVar_result =
+        bridge.echoAsyncClassList(
+            NativeInteropTestsPigeonInteropCodec.encode(listOf<Any?>(classList)))
+    val pigeonVar_decoded =
+        if (pigeonVar_result == null) null
+        else NativeInteropTestsPigeonInteropCodec.decode(pigeonVar_result)
+    return pigeonVar_decoded as List<NativeInteropAllNullableTypes?>
+  }
+
+  override suspend fun echoAsyncNonNullEnumList(
+      enumList: List<NativeInteropAnEnum>
+  ): List<NativeInteropAnEnum> {
+    val pigeonVar_result =
+        bridge.echoAsyncNonNullEnumList(
+            NativeInteropTestsPigeonInteropCodec.encode(listOf<Any?>(enumList)))
+    val pigeonVar_decoded =
+        if (pigeonVar_result == null) null
+        else NativeInteropTestsPigeonInteropCodec.decode(pigeonVar_result)
+    return pigeonVar_decoded as List<NativeInteropAnEnum>
+  }
+
+  override suspend fun echoAsyncNonNullClassList(
+      classList: List<NativeInteropAllNullableTypes>
+  ): List<NativeInteropAllNullableTypes> {
+    val pigeonVar_result =
+        bridge.echoAsyncNonNullClassList(
+            NativeInteropTestsPigeonInteropCodec.encode(listOf<Any?>(classList)))
+    val pigeonVar_decoded =
+        if (pigeonVar_result == null) null
+        else NativeInteropTestsPigeonInteropCodec.decode(pigeonVar_result)
+    return pigeonVar_decoded as List<NativeInteropAllNullableTypes>
+  }
+
+  override suspend fun echoAsyncMap(map: Map<Any?, Any?>): Map<Any?, Any?> {
+    val pigeonVar_result =
+        bridge.echoAsyncMap(NativeInteropTestsPigeonInteropCodec.encode(listOf<Any?>(map)))
+    val pigeonVar_decoded =
+        if (pigeonVar_result == null) null
+        else NativeInteropTestsPigeonInteropCodec.decode(pigeonVar_result)
+    return pigeonVar_decoded as Map<Any?, Any?>
+  }
+
+  override suspend fun echoAsyncStringMap(stringMap: Map<String?, String?>): Map<String?, String?> {
+    val pigeonVar_result =
+        bridge.echoAsyncStringMap(
+            NativeInteropTestsPigeonInteropCodec.encode(listOf<Any?>(stringMap)))
+    val pigeonVar_decoded =
+        if (pigeonVar_result == null) null
+        else NativeInteropTestsPigeonInteropCodec.decode(pigeonVar_result)
+    return pigeonVar_decoded as Map<String?, String?>
+  }
+
+  override suspend fun echoAsyncIntMap(intMap: Map<Long?, Long?>): Map<Long?, Long?> {
+    val pigeonVar_result =
+        bridge.echoAsyncIntMap(NativeInteropTestsPigeonInteropCodec.encode(listOf<Any?>(intMap)))
+    val pigeonVar_decoded =
+        if (pigeonVar_result == null) null
+        else NativeInteropTestsPigeonInteropCodec.decode(pigeonVar_result)
+    return pigeonVar_decoded as Map<Long?, Long?>
+  }
+
+  override suspend fun echoAsyncEnumMap(
+      enumMap: Map<NativeInteropAnEnum?, NativeInteropAnEnum?>
+  ): Map<NativeInteropAnEnum?, NativeInteropAnEnum?> {
+    val pigeonVar_result =
+        bridge.echoAsyncEnumMap(NativeInteropTestsPigeonInteropCodec.encode(listOf<Any?>(enumMap)))
+    val pigeonVar_decoded =
+        if (pigeonVar_result == null) null
+        else NativeInteropTestsPigeonInteropCodec.decode(pigeonVar_result)
+    return pigeonVar_decoded as Map<NativeInteropAnEnum?, NativeInteropAnEnum?>
+  }
+
+  override suspend fun echoAsyncClassMap(
+      classMap: Map<Long?, NativeInteropAllNullableTypes?>
+  ): Map<Long?, NativeInteropAllNullableTypes?> {
+    val pigeonVar_result =
+        bridge.echoAsyncClassMap(
+            NativeInteropTestsPigeonInteropCodec.encode(listOf<Any?>(classMap)))
+    val pigeonVar_decoded =
+        if (pigeonVar_result == null) null
+        else NativeInteropTestsPigeonInteropCodec.decode(pigeonVar_result)
+    return pigeonVar_decoded as Map<Long?, NativeInteropAllNullableTypes?>
+  }
+
+  override suspend fun echoAsyncEnum(anEnum: NativeInteropAnEnum): NativeInteropAnEnum {
+    val pigeonVar_result = bridge.echoAsyncEnum(anEnum.raw.toLong())
+    return NativeInteropAnEnum.ofRaw(pigeonVar_result.toInt())!!
+  }
+
+  override suspend fun echoAnotherAsyncEnum(
+      anotherEnum: NativeInteropAnotherEnum
+  ): NativeInteropAnotherEnum {
+    val pigeonVar_result = bridge.echoAnotherAsyncEnum(anotherEnum.raw.toLong())
+    return NativeInteropAnotherEnum.ofRaw(pigeonVar_result.toInt())!!
+  }
+
+  override suspend fun echoAsyncNullableBool(aBool: Boolean?): Boolean? {
+    val pigeonVar_result = bridge.echoAsyncNullableBool(aBool)
+    return pigeonVar_result
+  }
+
+  override suspend fun echoAsyncNullableInt(anInt: Long?): Long? {
+    val pigeonVar_result = bridge.echoAsyncNullableInt(anInt)
+    return pigeonVar_result
+  }
+
+  override suspend fun echoAsyncNullableDouble(aDouble: Double?): Double? {
+    val pigeonVar_result = bridge.echoAsyncNullableDouble(aDouble)
+    return pigeonVar_result
+  }
+
+  override suspend fun echoAsyncNullableString(aString: String?): String? {
+    val pigeonVar_result = bridge.echoAsyncNullableString(aString)
+    return pigeonVar_result
+  }
+
+  override suspend fun echoAsyncNullableUint8List(list: ByteArray?): ByteArray? {
+    val pigeonVar_result = bridge.echoAsyncNullableUint8List(list)
+    return pigeonVar_result
+  }
+
+  override suspend fun echoAsyncNullableInt32List(list: IntArray?): IntArray? {
+    val pigeonVar_result = bridge.echoAsyncNullableInt32List(list)
+    return pigeonVar_result
+  }
+
+  override suspend fun echoAsyncNullableInt64List(list: LongArray?): LongArray? {
+    val pigeonVar_result = bridge.echoAsyncNullableInt64List(list)
+    return pigeonVar_result
+  }
+
+  override suspend fun echoAsyncNullableFloat64List(list: DoubleArray?): DoubleArray? {
+    val pigeonVar_result = bridge.echoAsyncNullableFloat64List(list)
+    return pigeonVar_result
+  }
+
+  override suspend fun echoAsyncNullableObject(anObject: Any?): Any? {
+    val pigeonVar_result =
+        bridge.echoAsyncNullableObject(
+            NativeInteropTestsPigeonInteropCodec.encode(listOf<Any?>(anObject)))
+    val pigeonVar_decoded =
+        if (pigeonVar_result == null) null
+        else NativeInteropTestsPigeonInteropCodec.decode(pigeonVar_result)
+    return pigeonVar_decoded
+  }
+
+  override suspend fun echoAsyncNullableList(list: List<Any?>?): List<Any?>? {
+    val pigeonVar_result =
+        bridge.echoAsyncNullableList(
+            NativeInteropTestsPigeonInteropCodec.encode(listOf<Any?>(list)))
+    val pigeonVar_decoded =
+        if (pigeonVar_result == null) null
+        else NativeInteropTestsPigeonInteropCodec.decode(pigeonVar_result)
+    return pigeonVar_decoded as List<Any?>?
+  }
+
+  override suspend fun echoAsyncNullableEnumList(
+      enumList: List<NativeInteropAnEnum?>?
+  ): List<NativeInteropAnEnum?>? {
+    val pigeonVar_result =
+        bridge.echoAsyncNullableEnumList(
+            NativeInteropTestsPigeonInteropCodec.encode(listOf<Any?>(enumList)))
+    val pigeonVar_decoded =
+        if (pigeonVar_result == null) null
+        else NativeInteropTestsPigeonInteropCodec.decode(pigeonVar_result)
+    return pigeonVar_decoded as List<NativeInteropAnEnum?>?
+  }
+
+  override suspend fun echoAsyncNullableClassList(
+      classList: List<NativeInteropAllNullableTypes?>?
+  ): List<NativeInteropAllNullableTypes?>? {
+    val pigeonVar_result =
+        bridge.echoAsyncNullableClassList(
+            NativeInteropTestsPigeonInteropCodec.encode(listOf<Any?>(classList)))
+    val pigeonVar_decoded =
+        if (pigeonVar_result == null) null
+        else NativeInteropTestsPigeonInteropCodec.decode(pigeonVar_result)
+    return pigeonVar_decoded as List<NativeInteropAllNullableTypes?>?
+  }
+
+  override suspend fun echoAsyncNullableNonNullEnumList(
+      enumList: List<NativeInteropAnEnum>?
+  ): List<NativeInteropAnEnum>? {
+    val pigeonVar_result =
+        bridge.echoAsyncNullableNonNullEnumList(
+            NativeInteropTestsPigeonInteropCodec.encode(listOf<Any?>(enumList)))
+    val pigeonVar_decoded =
+        if (pigeonVar_result == null) null
+        else NativeInteropTestsPigeonInteropCodec.decode(pigeonVar_result)
+    return pigeonVar_decoded as List<NativeInteropAnEnum>?
+  }
+
+  override suspend fun echoAsyncNullableNonNullClassList(
+      classList: List<NativeInteropAllNullableTypes>?
+  ): List<NativeInteropAllNullableTypes>? {
+    val pigeonVar_result =
+        bridge.echoAsyncNullableNonNullClassList(
+            NativeInteropTestsPigeonInteropCodec.encode(listOf<Any?>(classList)))
+    val pigeonVar_decoded =
+        if (pigeonVar_result == null) null
+        else NativeInteropTestsPigeonInteropCodec.decode(pigeonVar_result)
+    return pigeonVar_decoded as List<NativeInteropAllNullableTypes>?
+  }
+
+  override suspend fun echoAsyncNullableMap(map: Map<Any?, Any?>?): Map<Any?, Any?>? {
+    val pigeonVar_result =
+        bridge.echoAsyncNullableMap(NativeInteropTestsPigeonInteropCodec.encode(listOf<Any?>(map)))
+    val pigeonVar_decoded =
+        if (pigeonVar_result == null) null
+        else NativeInteropTestsPigeonInteropCodec.decode(pigeonVar_result)
+    return pigeonVar_decoded as Map<Any?, Any?>?
+  }
+
+  override suspend fun echoAsyncNullableStringMap(
+      stringMap: Map<String?, String?>?
+  ): Map<String?, String?>? {
+    val pigeonVar_result =
+        bridge.echoAsyncNullableStringMap(
+            NativeInteropTestsPigeonInteropCodec.encode(listOf<Any?>(stringMap)))
+    val pigeonVar_decoded =
+        if (pigeonVar_result == null) null
+        else NativeInteropTestsPigeonInteropCodec.decode(pigeonVar_result)
+    return pigeonVar_decoded as Map<String?, String?>?
+  }
+
+  override suspend fun echoAsyncNullableIntMap(intMap: Map<Long?, Long?>?): Map<Long?, Long?>? {
+    val pigeonVar_result =
+        bridge.echoAsyncNullableIntMap(
+            NativeInteropTestsPigeonInteropCodec.encode(listOf<Any?>(intMap)))
+    val pigeonVar_decoded =
+        if (pigeonVar_result == null) null
+        else NativeInteropTestsPigeonInteropCodec.decode(pigeonVar_result)
+    return pigeonVar_decoded as Map<Long?, Long?>?
+  }
+
+  override suspend fun echoAsyncNullableEnumMap(
+      enumMap: Map<NativeInteropAnEnum?, NativeInteropAnEnum?>?
+  ): Map<NativeInteropAnEnum?, NativeInteropAnEnum?>? {
+    val pigeonVar_result =
+        bridge.echoAsyncNullableEnumMap(
+            NativeInteropTestsPigeonInteropCodec.encode(listOf<Any?>(enumMap)))
+    val pigeonVar_decoded =
+        if (pigeonVar_result == null) null
+        else NativeInteropTestsPigeonInteropCodec.decode(pigeonVar_result)
+    return pigeonVar_decoded as Map<NativeInteropAnEnum?, NativeInteropAnEnum?>?
+  }
+
+  override suspend fun echoAsyncNullableClassMap(
+      classMap: Map<Long?, NativeInteropAllNullableTypes?>?
+  ): Map<Long?, NativeInteropAllNullableTypes?>? {
+    val pigeonVar_result =
+        bridge.echoAsyncNullableClassMap(
+            NativeInteropTestsPigeonInteropCodec.encode(listOf<Any?>(classMap)))
+    val pigeonVar_decoded =
+        if (pigeonVar_result == null) null
+        else NativeInteropTestsPigeonInteropCodec.decode(pigeonVar_result)
+    return pigeonVar_decoded as Map<Long?, NativeInteropAllNullableTypes?>?
+  }
+
+  override suspend fun echoAsyncNullableEnum(anEnum: NativeInteropAnEnum?): NativeInteropAnEnum? {
+    val pigeonVar_result = bridge.echoAsyncNullableEnum((anEnum?.raw?.toLong() ?: -1L))
+    return if (pigeonVar_result == -1L) null
+    else NativeInteropAnEnum.ofRaw(pigeonVar_result.toInt())
+  }
+
+  override suspend fun echoAnotherAsyncNullableEnum(
+      anotherEnum: NativeInteropAnotherEnum?
+  ): NativeInteropAnotherEnum? {
+    val pigeonVar_result = bridge.echoAnotherAsyncNullableEnum((anotherEnum?.raw?.toLong() ?: -1L))
+    return if (pigeonVar_result == -1L) null
+    else NativeInteropAnotherEnum.ofRaw(pigeonVar_result.toInt())
+  }
+}
+
 val NativeInteropReservedNamesHostApiInstances:
     MutableMap<String, NativeInteropReservedNamesHostApiRegistrar> =
     mutableMapOf()
@@ -5110,7 +6840,7 @@ interface NativeInteropReservedNamesHostApi {
 }
 
 @Keep
-class NativeInteropReservedNamesHostApiRegistrar : NativeInteropReservedNamesHostApi {
+class NativeInteropReservedNamesHostApiRegistrar {
   private var api: NativeInteropReservedNamesHostApi? = null
 
   fun register(
@@ -5130,184 +6860,185 @@ class NativeInteropReservedNamesHostApiRegistrar : NativeInteropReservedNamesHos
   fun getInstance(name: String): NativeInteropReservedNamesHostApiRegistrar? {
     return NativeInteropReservedNamesHostApiInstances[name]
   }
-  /** Collides with `JObject.release`. */
-  override fun release(value: String): String {
-    api?.let {
-      try {
-        return it.release(value)
-      } catch (e: Exception) {
-        throw e
-      }
+
+  fun release(value: String): String {
+    val pigeonVar_api = api ?: error("NativeInteropReservedNamesHostApi has not been registered")
+    try {
+      return pigeonVar_api.release(value)
+    } catch (e: NativeInteropTestsError) {
+      throw NativeInteropTestsError(
+              e.code, e.message, NativeInteropTestsPigeonInteropCodec.encodeOrNull(e.details))
+          .apply { stackTrace = e.stackTrace }
     }
-    error("NativeInteropReservedNamesHostApi has not been registered")
   }
-  /** Collides with `JObject.use`. */
-  override fun use(value: Long): Long {
-    api?.let {
-      try {
-        return it.use(value)
-      } catch (e: Exception) {
-        throw e
-      }
+
+  fun use(value: Long): Long {
+    val pigeonVar_api = api ?: error("NativeInteropReservedNamesHostApi has not been registered")
+    try {
+      return pigeonVar_api.use(value)
+    } catch (e: NativeInteropTestsError) {
+      throw NativeInteropTestsError(
+              e.code, e.message, NativeInteropTestsPigeonInteropCodec.encodeOrNull(e.details))
+          .apply { stackTrace = e.stackTrace }
     }
-    error("NativeInteropReservedNamesHostApi has not been registered")
   }
-  /** Collides with the static `type` field that JNIgen adds to every class. */
-  override fun type(): String {
-    api?.let {
-      try {
-        return it.type()
-      } catch (e: Exception) {
-        throw e
-      }
+
+  fun type(): String {
+    val pigeonVar_api = api ?: error("NativeInteropReservedNamesHostApi has not been registered")
+    try {
+      return pigeonVar_api.type()
+    } catch (e: NativeInteropTestsError) {
+      throw NativeInteropTestsError(
+              e.code, e.message, NativeInteropTestsPigeonInteropCodec.encodeOrNull(e.details))
+          .apply { stackTrace = e.stackTrace }
     }
-    error("NativeInteropReservedNamesHostApi has not been registered")
   }
-  /** JNIgen makes this a getter, which collides with `JObject.isNull`. */
-  override fun isNull(): Boolean {
-    api?.let {
-      try {
-        return it.isNull()
-      } catch (e: Exception) {
-        throw e
-      }
+
+  fun isNull(): Boolean {
+    val pigeonVar_api = api ?: error("NativeInteropReservedNamesHostApi has not been registered")
+    try {
+      return pigeonVar_api.isNull()
+    } catch (e: NativeInteropTestsError) {
+      throw NativeInteropTestsError(
+              e.code, e.message, NativeInteropTestsPigeonInteropCodec.encodeOrNull(e.details))
+          .apply { stackTrace = e.stackTrace }
     }
-    error("NativeInteropReservedNamesHostApi has not been registered")
   }
-  /** JNIgen keeps this a method, since nullable booleans are boxed on the JVM. */
-  override fun isNullable(): Boolean? {
-    api?.let {
-      try {
-        return it.isNullable()
-      } catch (e: Exception) {
-        throw e
-      }
+
+  fun isNullable(): Boolean? {
+    val pigeonVar_api = api ?: error("NativeInteropReservedNamesHostApi has not been registered")
+    try {
+      return pigeonVar_api.isNullable()
+    } catch (e: NativeInteropTestsError) {
+      throw NativeInteropTestsError(
+              e.code, e.message, NativeInteropTestsPigeonInteropCodec.encodeOrNull(e.details))
+          .apply { stackTrace = e.stackTrace }
     }
-    error("NativeInteropReservedNamesHostApi has not been registered")
   }
-  /** JNIgen makes this a getter. */
-  override fun isOpen(): Boolean {
-    api?.let {
-      try {
-        return it.isOpen()
-      } catch (e: Exception) {
-        throw e
-      }
+
+  fun isOpen(): Boolean {
+    val pigeonVar_api = api ?: error("NativeInteropReservedNamesHostApi has not been registered")
+    try {
+      return pigeonVar_api.isOpen()
+    } catch (e: NativeInteropTestsError) {
+      throw NativeInteropTestsError(
+              e.code, e.message, NativeInteropTestsPigeonInteropCodec.encodeOrNull(e.details))
+          .apply { stackTrace = e.stackTrace }
     }
-    error("NativeInteropReservedNamesHostApi has not been registered")
   }
-  /**
-   * JNIgen combines this and [setReference] into a property, which collides with
-   * `JObject.reference`.
-   */
-  override fun getReference(): String {
-    api?.let {
-      try {
-        return it.getReference()
-      } catch (e: Exception) {
-        throw e
-      }
+
+  fun getReference(): String {
+    val pigeonVar_api = api ?: error("NativeInteropReservedNamesHostApi has not been registered")
+    try {
+      return pigeonVar_api.getReference()
+    } catch (e: NativeInteropTestsError) {
+      throw NativeInteropTestsError(
+              e.code, e.message, NativeInteropTestsPigeonInteropCodec.encodeOrNull(e.details))
+          .apply { stackTrace = e.stackTrace }
     }
-    error("NativeInteropReservedNamesHostApi has not been registered")
   }
-  /** See [getReference]. */
-  override fun setReference(value: String) {
-    api?.let {
-      try {
-        return it.setReference(value)
-      } catch (e: Exception) {
-        throw e
-      }
+
+  fun setReference(value: String) {
+    val pigeonVar_api = api ?: error("NativeInteropReservedNamesHostApi has not been registered")
+    try {
+      pigeonVar_api.setReference(value)
+    } catch (e: NativeInteropTestsError) {
+      throw NativeInteropTestsError(
+              e.code, e.message, NativeInteropTestsPigeonInteropCodec.encodeOrNull(e.details))
+          .apply { stackTrace = e.stackTrace }
     }
-    error("NativeInteropReservedNamesHostApi has not been registered")
   }
-  /** JNIgen makes this a getter named after a Dart keyword, `default`. */
-  override fun getDefault(): String {
-    api?.let {
-      try {
-        return it.getDefault()
-      } catch (e: Exception) {
-        throw e
-      }
+
+  fun getDefault(): String {
+    val pigeonVar_api = api ?: error("NativeInteropReservedNamesHostApi has not been registered")
+    try {
+      return pigeonVar_api.getDefault()
+    } catch (e: NativeInteropTestsError) {
+      throw NativeInteropTestsError(
+              e.code, e.message, NativeInteropTestsPigeonInteropCodec.encodeOrNull(e.details))
+          .apply { stackTrace = e.stackTrace }
     }
-    error("NativeInteropReservedNamesHostApi has not been registered")
   }
-  /** JNIgen keeps suspend functions as methods. */
-  override suspend fun getValueAsync(): String {
-    api?.let {
-      try {
-        return it.getValueAsync()
-      } catch (e: Exception) {
-        throw e
-      }
+
+  suspend fun getValueAsync(): String {
+    val pigeonVar_api = api ?: error("NativeInteropReservedNamesHostApi has not been registered")
+    try {
+      return pigeonVar_api.getValueAsync()
+    } catch (e: NativeInteropTestsError) {
+      throw NativeInteropTestsError(
+              e.code, e.message, NativeInteropTestsPigeonInteropCodec.encodeOrNull(e.details))
+          .apply { stackTrace = e.stackTrace }
     }
-    error("NativeInteropReservedNamesHostApi has not been registered")
   }
-  /** Returns the passed object, to test serialization and deserialization. */
-  override fun echoReservedNames(names: NativeInteropReservedNames): NativeInteropReservedNames {
-    api?.let {
-      try {
-        return it.echoReservedNames(names)
-      } catch (e: Exception) {
-        throw e
-      }
+
+  fun echoReservedNames(pigeonVar_args: ByteArray): ByteArray? {
+    val pigeonVar_api = api ?: error("NativeInteropReservedNamesHostApi has not been registered")
+    try {
+      val pigeonVar_decodedArgs =
+          NativeInteropTestsPigeonInteropCodec.decodeArguments(pigeonVar_args)
+      val namesArg = pigeonVar_decodedArgs[0] as NativeInteropReservedNames
+      return NativeInteropTestsPigeonInteropCodec.encodeOrNull(
+          pigeonVar_api.echoReservedNames(namesArg))
+    } catch (e: NativeInteropTestsError) {
+      throw NativeInteropTestsError(
+              e.code, e.message, NativeInteropTestsPigeonInteropCodec.encodeOrNull(e.details))
+          .apply { stackTrace = e.stackTrace }
     }
-    error("NativeInteropReservedNamesHostApi has not been registered")
   }
-  /** Returns the result of calling [NativeInteropReservedNamesFlutterApi.release]. */
-  override fun callFlutterRelease(value: String): String {
-    api?.let {
-      try {
-        return it.callFlutterRelease(value)
-      } catch (e: Exception) {
-        throw e
-      }
+
+  fun callFlutterRelease(value: String): String {
+    val pigeonVar_api = api ?: error("NativeInteropReservedNamesHostApi has not been registered")
+    try {
+      return pigeonVar_api.callFlutterRelease(value)
+    } catch (e: NativeInteropTestsError) {
+      throw NativeInteropTestsError(
+              e.code, e.message, NativeInteropTestsPigeonInteropCodec.encodeOrNull(e.details))
+          .apply { stackTrace = e.stackTrace }
     }
-    error("NativeInteropReservedNamesHostApi has not been registered")
   }
-  /** Returns the result of calling [NativeInteropReservedNamesFlutterApi.type]. */
-  override fun callFlutterType(): String {
-    api?.let {
-      try {
-        return it.callFlutterType()
-      } catch (e: Exception) {
-        throw e
-      }
+
+  fun callFlutterType(): String {
+    val pigeonVar_api = api ?: error("NativeInteropReservedNamesHostApi has not been registered")
+    try {
+      return pigeonVar_api.callFlutterType()
+    } catch (e: NativeInteropTestsError) {
+      throw NativeInteropTestsError(
+              e.code, e.message, NativeInteropTestsPigeonInteropCodec.encodeOrNull(e.details))
+          .apply { stackTrace = e.stackTrace }
     }
-    error("NativeInteropReservedNamesHostApi has not been registered")
   }
-  /** Returns the result of calling [NativeInteropReservedNamesFlutterApi.implementIn]. */
-  override fun callFlutterImplementIn(value: String): String {
-    api?.let {
-      try {
-        return it.callFlutterImplementIn(value)
-      } catch (e: Exception) {
-        throw e
-      }
+
+  fun callFlutterImplementIn(value: String): String {
+    val pigeonVar_api = api ?: error("NativeInteropReservedNamesHostApi has not been registered")
+    try {
+      return pigeonVar_api.callFlutterImplementIn(value)
+    } catch (e: NativeInteropTestsError) {
+      throw NativeInteropTestsError(
+              e.code, e.message, NativeInteropTestsPigeonInteropCodec.encodeOrNull(e.details))
+          .apply { stackTrace = e.stackTrace }
     }
-    error("NativeInteropReservedNamesHostApi has not been registered")
   }
-  /** Returns the result of calling [NativeInteropReservedNamesFlutterApi.isNull]. */
-  override fun callFlutterIsNull(): Boolean {
-    api?.let {
-      try {
-        return it.callFlutterIsNull()
-      } catch (e: Exception) {
-        throw e
-      }
+
+  fun callFlutterIsNull(): Boolean {
+    val pigeonVar_api = api ?: error("NativeInteropReservedNamesHostApi has not been registered")
+    try {
+      return pigeonVar_api.callFlutterIsNull()
+    } catch (e: NativeInteropTestsError) {
+      throw NativeInteropTestsError(
+              e.code, e.message, NativeInteropTestsPigeonInteropCodec.encodeOrNull(e.details))
+          .apply { stackTrace = e.stackTrace }
     }
-    error("NativeInteropReservedNamesHostApi has not been registered")
   }
-  /** Returns the result of calling [NativeInteropReservedNamesFlutterApi.getReference]. */
-  override fun callFlutterGetReference(): String {
-    api?.let {
-      try {
-        return it.callFlutterGetReference()
-      } catch (e: Exception) {
-        throw e
-      }
+
+  fun callFlutterGetReference(): String {
+    val pigeonVar_api = api ?: error("NativeInteropReservedNamesHostApi has not been registered")
+    try {
+      return pigeonVar_api.callFlutterGetReference()
+    } catch (e: NativeInteropTestsError) {
+      throw NativeInteropTestsError(
+              e.code, e.message, NativeInteropTestsPigeonInteropCodec.encodeOrNull(e.details))
+          .apply { stackTrace = e.stackTrace }
     }
-    error("NativeInteropReservedNamesHostApi has not been registered")
   }
 }
 /**
@@ -5328,11 +7059,12 @@ class NativeInteropReservedNamesFlutterApiRegistrar() {
 
   /// Registers an instance with the given name.
   fun registerInstance(
-      api: NativeInteropReservedNamesFlutterApi?,
+      api: NativeInteropReservedNamesFlutterApiBridge?,
       name: String = defaultInstanceName
   ) {
     if (api != null) {
-      registeredNativeInteropReservedNamesFlutterApi[name] = api
+      registeredNativeInteropReservedNamesFlutterApi[name] =
+          NativeInteropReservedNamesFlutterApiBridgeAdapter(api)
     } else {
       registeredNativeInteropReservedNamesFlutterApi.remove(name)
     }
@@ -5344,7 +7076,6 @@ class NativeInteropReservedNamesFlutterApiRegistrar() {
   }
 }
 
-@Keep
 interface NativeInteropReservedNamesFlutterApi {
   /** Collides with `JObject.release`. */
   fun release(value: String): String
@@ -5356,4 +7087,245 @@ interface NativeInteropReservedNamesFlutterApi {
   fun isNull(): Boolean
   /** JNIgen doesn't turn interface methods into properties. */
   fun getReference(): String
+}
+
+/**
+ * The interface that Dart implements for [NativeInteropReservedNamesFlutterApi].
+ *
+ * Values that the native interop transport passes directly are their own arguments and return
+ * values. All other arguments are encoded into one buffer, and other return values are returned in
+ * one.
+ */
+@Keep
+interface NativeInteropReservedNamesFlutterApiBridge {
+  fun release(value: String): String
+
+  fun type(): String
+
+  fun implementIn(value: String): String
+
+  fun isNull(): Boolean
+
+  fun getReference(): String
+}
+
+private class NativeInteropReservedNamesFlutterApiBridgeAdapter(
+    private val bridge: NativeInteropReservedNamesFlutterApiBridge
+) : NativeInteropReservedNamesFlutterApi {
+  override fun release(value: String): String {
+    val pigeonVar_result = bridge.release(value)
+    return pigeonVar_result
+  }
+
+  override fun type(): String {
+    val pigeonVar_result = bridge.type()
+    return pigeonVar_result
+  }
+
+  override fun implementIn(value: String): String {
+    val pigeonVar_result = bridge.implementIn(value)
+    return pigeonVar_result
+  }
+
+  override fun isNull(): Boolean {
+    val pigeonVar_result = bridge.isNull()
+    return pigeonVar_result
+  }
+
+  override fun getReference(): String {
+    val pigeonVar_result = bridge.getReference()
+    return pigeonVar_result
+  }
+}
+
+val NativeInteropSealedClassHostApiInstances:
+    MutableMap<String, NativeInteropSealedClassHostApiRegistrar> =
+    mutableMapOf()
+
+@Keep
+interface NativeInteropSealedClassHostApi {
+  fun echoShape(shape: NativeInteropShape): NativeInteropShape
+
+  fun echoNullableShape(shape: NativeInteropShape?): NativeInteropShape?
+
+  fun echoShapeList(shapes: List<NativeInteropShape>): List<NativeInteropShape>
+
+  fun echoShapeMap(shapes: Map<String, NativeInteropShape>): Map<String, NativeInteropShape>
+
+  suspend fun echoAsyncShape(shape: NativeInteropShape): NativeInteropShape
+
+  fun callFlutterEchoShape(shape: NativeInteropShape): NativeInteropShape
+}
+
+@Keep
+class NativeInteropSealedClassHostApiRegistrar {
+  private var api: NativeInteropSealedClassHostApi? = null
+
+  fun register(
+      api: NativeInteropSealedClassHostApi?,
+      name: String = defaultInstanceName
+  ): NativeInteropSealedClassHostApiRegistrar {
+    if (api != null) {
+      this.api = api
+      NativeInteropSealedClassHostApiInstances[name] = this
+    } else {
+      NativeInteropSealedClassHostApiInstances.remove(name)
+    }
+    return this
+  }
+
+  @Keep
+  fun getInstance(name: String): NativeInteropSealedClassHostApiRegistrar? {
+    return NativeInteropSealedClassHostApiInstances[name]
+  }
+
+  fun echoShape(pigeonVar_args: ByteArray): ByteArray? {
+    val pigeonVar_api = api ?: error("NativeInteropSealedClassHostApi has not been registered")
+    try {
+      val pigeonVar_decodedArgs =
+          NativeInteropTestsPigeonInteropCodec.decodeArguments(pigeonVar_args)
+      val shapeArg = pigeonVar_decodedArgs[0] as NativeInteropShape
+      return NativeInteropTestsPigeonInteropCodec.encodeOrNull(pigeonVar_api.echoShape(shapeArg))
+    } catch (e: NativeInteropTestsError) {
+      throw NativeInteropTestsError(
+              e.code, e.message, NativeInteropTestsPigeonInteropCodec.encodeOrNull(e.details))
+          .apply { stackTrace = e.stackTrace }
+    }
+  }
+
+  fun echoNullableShape(pigeonVar_args: ByteArray): ByteArray? {
+    val pigeonVar_api = api ?: error("NativeInteropSealedClassHostApi has not been registered")
+    try {
+      val pigeonVar_decodedArgs =
+          NativeInteropTestsPigeonInteropCodec.decodeArguments(pigeonVar_args)
+      val shapeArg = pigeonVar_decodedArgs[0] as NativeInteropShape?
+      return NativeInteropTestsPigeonInteropCodec.encodeOrNull(
+          pigeonVar_api.echoNullableShape(shapeArg))
+    } catch (e: NativeInteropTestsError) {
+      throw NativeInteropTestsError(
+              e.code, e.message, NativeInteropTestsPigeonInteropCodec.encodeOrNull(e.details))
+          .apply { stackTrace = e.stackTrace }
+    }
+  }
+
+  fun echoShapeList(pigeonVar_args: ByteArray): ByteArray? {
+    val pigeonVar_api = api ?: error("NativeInteropSealedClassHostApi has not been registered")
+    try {
+      val pigeonVar_decodedArgs =
+          NativeInteropTestsPigeonInteropCodec.decodeArguments(pigeonVar_args)
+      val shapesArg = pigeonVar_decodedArgs[0] as List<NativeInteropShape>
+      return NativeInteropTestsPigeonInteropCodec.encodeOrNull(
+          pigeonVar_api.echoShapeList(shapesArg))
+    } catch (e: NativeInteropTestsError) {
+      throw NativeInteropTestsError(
+              e.code, e.message, NativeInteropTestsPigeonInteropCodec.encodeOrNull(e.details))
+          .apply { stackTrace = e.stackTrace }
+    }
+  }
+
+  fun echoShapeMap(pigeonVar_args: ByteArray): ByteArray? {
+    val pigeonVar_api = api ?: error("NativeInteropSealedClassHostApi has not been registered")
+    try {
+      val pigeonVar_decodedArgs =
+          NativeInteropTestsPigeonInteropCodec.decodeArguments(pigeonVar_args)
+      val shapesArg = pigeonVar_decodedArgs[0] as Map<String, NativeInteropShape>
+      return NativeInteropTestsPigeonInteropCodec.encodeOrNull(
+          pigeonVar_api.echoShapeMap(shapesArg))
+    } catch (e: NativeInteropTestsError) {
+      throw NativeInteropTestsError(
+              e.code, e.message, NativeInteropTestsPigeonInteropCodec.encodeOrNull(e.details))
+          .apply { stackTrace = e.stackTrace }
+    }
+  }
+
+  suspend fun echoAsyncShape(pigeonVar_args: ByteArray): ByteArray? {
+    val pigeonVar_api = api ?: error("NativeInteropSealedClassHostApi has not been registered")
+    try {
+      val pigeonVar_decodedArgs =
+          NativeInteropTestsPigeonInteropCodec.decodeArguments(pigeonVar_args)
+      val shapeArg = pigeonVar_decodedArgs[0] as NativeInteropShape
+      return NativeInteropTestsPigeonInteropCodec.encodeOrNull(
+          pigeonVar_api.echoAsyncShape(shapeArg))
+    } catch (e: NativeInteropTestsError) {
+      throw NativeInteropTestsError(
+              e.code, e.message, NativeInteropTestsPigeonInteropCodec.encodeOrNull(e.details))
+          .apply { stackTrace = e.stackTrace }
+    }
+  }
+
+  fun callFlutterEchoShape(pigeonVar_args: ByteArray): ByteArray? {
+    val pigeonVar_api = api ?: error("NativeInteropSealedClassHostApi has not been registered")
+    try {
+      val pigeonVar_decodedArgs =
+          NativeInteropTestsPigeonInteropCodec.decodeArguments(pigeonVar_args)
+      val shapeArg = pigeonVar_decodedArgs[0] as NativeInteropShape
+      return NativeInteropTestsPigeonInteropCodec.encodeOrNull(
+          pigeonVar_api.callFlutterEchoShape(shapeArg))
+    } catch (e: NativeInteropTestsError) {
+      throw NativeInteropTestsError(
+              e.code, e.message, NativeInteropTestsPigeonInteropCodec.encodeOrNull(e.details))
+          .apply { stackTrace = e.stackTrace }
+    }
+  }
+}
+/**
+ * The Flutter API counterpart of [NativeInteropSealedClassHostApi].
+ *
+ * Generated class from Pigeon that represents Flutter messages that can be called from Kotlin.
+ */
+/// Map that stores instances
+val registeredNativeInteropSealedClassFlutterApi:
+    MutableMap<String, NativeInteropSealedClassFlutterApi> =
+    mutableMapOf()
+
+/// Class that stores instances
+@Keep
+class NativeInteropSealedClassFlutterApiRegistrar() {
+
+  /// Registers an instance with the given name.
+  fun registerInstance(
+      api: NativeInteropSealedClassFlutterApiBridge?,
+      name: String = defaultInstanceName
+  ) {
+    if (api != null) {
+      registeredNativeInteropSealedClassFlutterApi[name] =
+          NativeInteropSealedClassFlutterApiBridgeAdapter(api)
+    } else {
+      registeredNativeInteropSealedClassFlutterApi.remove(name)
+    }
+  }
+
+  /// Gets an instance with the given name.
+  fun getInstance(name: String = defaultInstanceName): NativeInteropSealedClassFlutterApi? {
+    return registeredNativeInteropSealedClassFlutterApi[name]
+  }
+}
+
+interface NativeInteropSealedClassFlutterApi {
+  fun echoShape(shape: NativeInteropShape): NativeInteropShape
+}
+
+/**
+ * The interface that Dart implements for [NativeInteropSealedClassFlutterApi].
+ *
+ * Values that the native interop transport passes directly are their own arguments and return
+ * values. All other arguments are encoded into one buffer, and other return values are returned in
+ * one.
+ */
+@Keep
+interface NativeInteropSealedClassFlutterApiBridge {
+  fun echoShape(pigeonVar_args: ByteArray): ByteArray?
+}
+
+private class NativeInteropSealedClassFlutterApiBridgeAdapter(
+    private val bridge: NativeInteropSealedClassFlutterApiBridge
+) : NativeInteropSealedClassFlutterApi {
+  override fun echoShape(shape: NativeInteropShape): NativeInteropShape {
+    val pigeonVar_result =
+        bridge.echoShape(NativeInteropTestsPigeonInteropCodec.encode(listOf<Any?>(shape)))
+    val pigeonVar_decoded =
+        if (pigeonVar_result == null) null
+        else NativeInteropTestsPigeonInteropCodec.decode(pigeonVar_result)
+    return pigeonVar_decoded as NativeInteropShape
+  }
 }

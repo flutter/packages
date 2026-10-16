@@ -222,8 +222,7 @@ final class $FlutterError$Type$ extends jni$_.JType<FlutterError> {
 }
 
 /// from: `dev.flutter.pigeonnativeinteropapp.NativeInteropExampleApiRegistrar`
-extension type NativeInteropExampleApiRegistrar._(jni$_.JObject _$this)
-    implements jni$_.JObject, NativeInteropExampleApi {
+extension type NativeInteropExampleApiRegistrar._(jni$_.JObject _$this) implements jni$_.JObject {
   static final _class = jni$_.JClass.forName(
     r'dev/flutter/pigeonnativeinteropapp/NativeInteropExampleApiRegistrar',
   );

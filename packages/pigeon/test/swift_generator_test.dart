@@ -2,7 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import 'package:pigeon/pigeon.dart' show TaskQueueType;
+import 'package:pigeon/pigeon.dart' show NativeInteropTransport, TaskQueueType;
 import 'package:pigeon/src/ast.dart';
 import 'package:pigeon/src/swift/swift_generator.dart';
 import 'package:test/test.dart';
@@ -1837,7 +1837,11 @@ void main() {
 
   test('ffi bridge of a sealed class dispatches to its subclasses', () {
     final sink = StringBuffer();
-    const swiftOptions = InternalSwiftOptions(swiftOut: '', useFfi: true);
+    const swiftOptions = InternalSwiftOptions(
+      swiftOut: '',
+      useFfi: true,
+      nativeInteropTransport: NativeInteropTransport.objects,
+    );
     const generator = SwiftGenerator();
     generator.generate(
       swiftOptions,
@@ -1948,7 +1952,11 @@ void main() {
       enums: <Enum>[],
     );
     final sink = StringBuffer();
-    const swiftOptions = InternalSwiftOptions(swiftOut: '', useFfi: true);
+    const swiftOptions = InternalSwiftOptions(
+      swiftOut: '',
+      useFfi: true,
+      nativeInteropTransport: NativeInteropTransport.objects,
+    );
     const generator = SwiftGenerator();
     generator.generate(swiftOptions, root, sink, dartPackageName: DEFAULT_PACKAGE_NAME);
     final code = sink.toString();
@@ -1998,7 +2006,11 @@ void main() {
       enums: <Enum>[],
     );
     final sink = StringBuffer();
-    const swiftOptions = InternalSwiftOptions(swiftOut: '', useFfi: true);
+    const swiftOptions = InternalSwiftOptions(
+      swiftOut: '',
+      useFfi: true,
+      nativeInteropTransport: NativeInteropTransport.objects,
+    );
     const generator = SwiftGenerator();
     generator.generate(swiftOptions, root, sink, dartPackageName: DEFAULT_PACKAGE_NAME);
     final code = sink.toString();
@@ -2007,5 +2019,217 @@ void main() {
       contains('@objc func report(error errorArg: NSString?, error: PigeonError) -> NSString?'),
     );
     expect(code, contains('func report(error errorArg: String) throws -> String {'));
+  });
+
+  group('hybrid native interop transport', () {
+    final dataClass = Class(
+      name: 'Data',
+      fields: <NamedType>[
+        NamedType(
+          name: 'value',
+          type: const TypeDeclaration(baseName: 'int', isNullable: false),
+        ),
+      ],
+    );
+    final dataType = TypeDeclaration(
+      baseName: 'Data',
+      isNullable: true,
+      associatedClass: dataClass,
+    );
+    const intType = TypeDeclaration(baseName: 'int', isNullable: false);
+    const bytesType = TypeDeclaration(baseName: 'Uint8List', isNullable: false);
+
+    List<Method> methods(ApiLocation location) => <Method>[
+      Method(
+        name: 'echoData',
+        location: location,
+        parameters: <Parameter>[
+          Parameter(name: 'count', type: intType),
+          Parameter(name: 'data', type: dataType),
+        ],
+        returnType: dataType,
+      ),
+      Method(
+        name: 'echoBytes',
+        location: location,
+        parameters: <Parameter>[Parameter(name: 'bytes', type: bytesType)],
+        returnType: bytesType,
+      ),
+      Method(
+        name: 'echoAsyncData',
+        location: location,
+        isAsynchronous: true,
+        parameters: <Parameter>[Parameter(name: 'data', type: dataType)],
+        returnType: dataType,
+      ),
+    ];
+
+    String generate({required bool hybrid}) {
+      final root = Root(
+        apis: <Api>[
+          AstHostApi(name: 'HostApi', methods: methods(ApiLocation.host)),
+          AstFlutterApi(name: 'FlutterApi', methods: methods(ApiLocation.flutter)),
+        ],
+        classes: <Class>[dataClass],
+        enums: <Enum>[],
+      );
+      final sink = StringBuffer();
+      const SwiftGenerator().generate(
+        InternalSwiftOptions(
+          swiftOut: '',
+          useFfi: true,
+          fileSpecificClassNameComponent: 'Foo',
+          nativeInteropTransport: hybrid
+              ? NativeInteropTransport.hybrid
+              : NativeInteropTransport.objects,
+        ),
+        root,
+        sink,
+        dartPackageName: DEFAULT_PACKAGE_NAME,
+      );
+      return sink.toString();
+    }
+
+    test('generates a Foundation-only fileprivate codec', () {
+      final String code = generate(hybrid: true);
+      expect(code, isNot(contains('import Flutter')));
+      expect(code, contains('fileprivate struct FooPigeonInteropWriter {'));
+      expect(code, contains('fileprivate struct FooPigeonInteropReader {'));
+      expect(code, contains('fileprivate enum FooPigeonInteropCodec {'));
+      expect(code, contains('if let value = value as? Data {'));
+      expect(code, contains('mutating func readData() -> Data {'));
+      expect(code, contains('value: read(Int64.self)'));
+      expect(code, contains('writeValue(value.value)'));
+    });
+
+    test('host api setup exposes entry points', () {
+      final String code = generate(hybrid: true);
+      expect(
+        code,
+        contains(
+          '@objc func echoData(count countArg: Int64, pigeonVar_args: NSData, wrappedError: PigeonError) -> NSData? {',
+        ),
+      );
+      expect(code, contains('return FooPigeonInteropCodec.encodeOrNil(res)'));
+      expect(
+        code,
+        contains(
+          '@objc func echoBytes(bytes bytesArg: NSData, wrappedError: PigeonError) -> NSData? {',
+        ),
+      );
+      expect(code, contains('FooPigeonInteropCodec.typedData(bytesArg, as: UInt8.self)'));
+      expect(
+        code,
+        contains(
+          '@objc func echoAsyncData(pigeonVar_args: NSData, wrappedError: PigeonError) async -> NSData? {',
+        ),
+      );
+    });
+
+    test('flutter api protocol takes and returns buffers', () {
+      final String code = generate(hybrid: true);
+      expect(
+        code,
+        contains(
+          '@objc func echoData(count countArg: Int64, pigeonVar_args: NSData, error: PigeonError) -> NSData?',
+        ),
+      );
+      expect(
+        code,
+        contains(
+          r'api.echoData(count: countArg, pigeonVar_args: FooPigeonInteropCodec.encode { $0.writeByte(12); $0.writeSize(1); $0.writeValue(dataArg) }, error: error)',
+        ),
+      );
+    });
+
+    test('codec writes lists and typed data by their declared types', () {
+      final numbers = Class(
+        name: 'Numbers',
+        fields: <NamedType>[
+          NamedType(
+            name: 'ints',
+            type: const TypeDeclaration(
+              baseName: 'List',
+              isNullable: false,
+              typeArguments: <TypeDeclaration>[intType],
+            ),
+          ),
+          NamedType(
+            name: 'longs',
+            type: const TypeDeclaration(baseName: 'Int64List', isNullable: true),
+          ),
+          NamedType(
+            name: 'nestedInts',
+            type: const TypeDeclaration(
+              baseName: 'List',
+              isNullable: false,
+              typeArguments: <TypeDeclaration>[
+                TypeDeclaration(
+                  baseName: 'List',
+                  isNullable: false,
+                  typeArguments: <TypeDeclaration>[intType],
+                ),
+              ],
+            ),
+          ),
+        ],
+      );
+      final root = Root(
+        apis: <Api>[
+          AstHostApi(
+            name: 'Api',
+            methods: <Method>[
+              Method(
+                name: 'echo',
+                location: ApiLocation.host,
+                parameters: <Parameter>[
+                  Parameter(
+                    name: 'numbers',
+                    type: TypeDeclaration(
+                      baseName: 'Numbers',
+                      isNullable: false,
+                      associatedClass: numbers,
+                    ),
+                  ),
+                ],
+                returnType: TypeDeclaration(
+                  baseName: 'Numbers',
+                  isNullable: false,
+                  associatedClass: numbers,
+                ),
+              ),
+            ],
+          ),
+        ],
+        classes: <Class>[numbers],
+        enums: <Enum>[],
+      );
+      final sink = StringBuffer();
+      const SwiftGenerator().generate(
+        const InternalSwiftOptions(swiftOut: '', useFfi: true),
+        root,
+        sink,
+        dartPackageName: DEFAULT_PACKAGE_NAME,
+      );
+      final code = sink.toString();
+      // Swift represents both `List<int>` and `Int64List` as `[Int64]`.
+      expect(code, contains('mutating func writeNumbers(_ value: Numbers)'));
+      expect(code, contains('writeList(value.ints)'));
+      expect(code, contains('writeTypedData(10, value.longs, alignment: 8)'));
+      expect(code, contains(r'writeList(value.nestedInts) { $0.writeList($1) }'));
+      expect(code, contains('ints: read([Int64].self)'));
+      expect(code, contains('longs: read([Int64]?.self)'));
+    });
+
+    test('objects transport keeps the object graph bridges', () {
+      final String code = generate(hybrid: false);
+      expect(code, isNot(contains('PigeonInteropCodec')));
+      expect(
+        code,
+        contains(
+          '@objc func echoData(count countArg: Int64, data dataArg: DataBridge?, wrappedError: PigeonError) -> DataBridge? {',
+        ),
+      );
+    });
   });
 }

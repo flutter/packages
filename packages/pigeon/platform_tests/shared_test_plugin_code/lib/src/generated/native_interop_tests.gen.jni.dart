@@ -228,7 +228,7 @@ final class $NativeInteropTestsError$Type$ extends jni$_.JType<NativeInteropTest
 
 /// from: `com.example.test_plugin.NativeInteropHostIntegrationCoreApiRegistrar`
 extension type NativeInteropHostIntegrationCoreApiRegistrar._(jni$_.JObject _$this)
-    implements jni$_.JObject, NativeInteropHostIntegrationCoreApi {
+    implements jni$_.JObject {
   static final _class = jni$_.JClass.forName(
     r'com/example/test_plugin/NativeInteropHostIntegrationCoreApiRegistrar',
   );
@@ -357,10 +357,8 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
     _noop(_$$selfRef.pointer, _id_noop.pointer).check();
   }
 
-  static final _id_echoAllTypes = NativeInteropHostIntegrationCoreApiRegistrar._class.instanceMethodId(
-    r'echoAllTypes',
-    r'(Lcom/example/test_plugin/NativeInteropAllTypes;)Lcom/example/test_plugin/NativeInteropAllTypes;',
-  );
+  static final _id_echoAllTypes = NativeInteropHostIntegrationCoreApiRegistrar._class
+      .instanceMethodId(r'echoAllTypes', r'([B)[B');
 
   static final _echoAllTypes =
       jni$_.ProtectedJniExtensions.lookup<
@@ -380,20 +378,20 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
             )
           >();
 
-  /// from: `public fun echoAllTypes(everything: com.example.test_plugin.NativeInteropAllTypes): com.example.test_plugin.NativeInteropAllTypes`
+  /// from: `public fun echoAllTypes(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
   /// The returned object must be released after use, by calling the [release] method.
-  NativeInteropAllTypes echoAllTypes(NativeInteropAllTypes nativeInteropAllTypes) {
+  jni$_.JByteArray? echoAllTypes(jni$_.JByteArray bs) {
     final _$$selfRef = reference;
-    final _$nativeInteropAllTypes = nativeInteropAllTypes.reference;
+    final _$bs = bs.reference;
     return _echoAllTypes(
       _$$selfRef.pointer,
       _id_echoAllTypes.pointer,
-      _$nativeInteropAllTypes.pointer,
-    ).object<NativeInteropAllTypes>();
+      _$bs.pointer,
+    ).object<jni$_.JByteArray?>();
   }
 
   static final _id_throwError = NativeInteropHostIntegrationCoreApiRegistrar._class
-      .instanceMethodId(r'throwError', r'()Ljava/lang/Object;');
+      .instanceMethodId(r'throwError', r'()[B');
 
   static final _throwError =
       jni$_.ProtectedJniExtensions.lookup<
@@ -403,11 +401,11 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
           >('globalEnv_CallObjectMethod')
           .asFunction<jni$_.JniResult Function(jni$_.Pointer<jni$_.Void>, jni$_.JMethodIDPtr)>();
 
-  /// from: `public fun throwError(): kotlin.Any?`
+  /// from: `public fun throwError(): kotlin.ByteArray?`
   /// The returned object must be released after use, by calling the [release] method.
-  jni$_.JObject? throwError() {
+  jni$_.JByteArray? throwError() {
     final _$$selfRef = reference;
-    return _throwError(_$$selfRef.pointer, _id_throwError.pointer).object<jni$_.JObject?>();
+    return _throwError(_$$selfRef.pointer, _id_throwError.pointer).object<jni$_.JByteArray?>();
   }
 
   static final _id_throwErrorFromVoid = NativeInteropHostIntegrationCoreApiRegistrar._class
@@ -430,7 +428,7 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
   }
 
   static final _id_throwFlutterError = NativeInteropHostIntegrationCoreApiRegistrar._class
-      .instanceMethodId(r'throwFlutterError', r'()Ljava/lang/Object;');
+      .instanceMethodId(r'throwFlutterError', r'()[B');
 
   static final _throwFlutterError =
       jni$_.ProtectedJniExtensions.lookup<
@@ -440,14 +438,14 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
           >('globalEnv_CallObjectMethod')
           .asFunction<jni$_.JniResult Function(jni$_.Pointer<jni$_.Void>, jni$_.JMethodIDPtr)>();
 
-  /// from: `public fun throwFlutterError(): kotlin.Any?`
+  /// from: `public fun throwFlutterError(): kotlin.ByteArray?`
   /// The returned object must be released after use, by calling the [release] method.
-  jni$_.JObject? throwFlutterError() {
+  jni$_.JByteArray? throwFlutterError() {
     final _$$selfRef = reference;
     return _throwFlutterError(
       _$$selfRef.pointer,
       _id_throwFlutterError.pointer,
-    ).object<jni$_.JObject?>();
+    ).object<jni$_.JByteArray?>();
   }
 
   static final _id_echoInt = NativeInteropHostIntegrationCoreApiRegistrar._class.instanceMethodId(
@@ -689,7 +687,7 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
   }
 
   static final _id_echoObject = NativeInteropHostIntegrationCoreApiRegistrar._class
-      .instanceMethodId(r'echoObject', r'(Ljava/lang/Object;)Ljava/lang/Object;');
+      .instanceMethodId(r'echoObject', r'([B)[B');
 
   static final _echoObject =
       jni$_.ProtectedJniExtensions.lookup<
@@ -709,21 +707,21 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
             )
           >();
 
-  /// from: `public fun echoObject(anObject: kotlin.Any): kotlin.Any`
+  /// from: `public fun echoObject(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
   /// The returned object must be released after use, by calling the [release] method.
-  jni$_.JObject echoObject(jni$_.JObject object) {
+  jni$_.JByteArray? echoObject(jni$_.JByteArray bs) {
     final _$$selfRef = reference;
-    final _$object = object.reference;
+    final _$bs = bs.reference;
     return _echoObject(
       _$$selfRef.pointer,
       _id_echoObject.pointer,
-      _$object.pointer,
-    ).object<jni$_.JObject>();
+      _$bs.pointer,
+    ).object<jni$_.JByteArray?>();
   }
 
   static final _id_echoList = NativeInteropHostIntegrationCoreApiRegistrar._class.instanceMethodId(
     r'echoList',
-    r'(Ljava/util/List;)Ljava/util/List;',
+    r'([B)[B',
   );
 
   static final _echoList =
@@ -744,20 +742,20 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
             )
           >();
 
-  /// from: `public fun echoList(list: kotlin.collections.List<kotlin.Any?>): kotlin.collections.List<kotlin.Any?>`
+  /// from: `public fun echoList(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
   /// The returned object must be released after use, by calling the [release] method.
-  jni$_.JList<jni$_.JObject?> echoList(jni$_.JList<jni$_.JObject?> list) {
+  jni$_.JByteArray? echoList(jni$_.JByteArray bs) {
     final _$$selfRef = reference;
-    final _$list = list.reference;
+    final _$bs = bs.reference;
     return _echoList(
       _$$selfRef.pointer,
       _id_echoList.pointer,
-      _$list.pointer,
-    ).object<jni$_.JList<jni$_.JObject?>>();
+      _$bs.pointer,
+    ).object<jni$_.JByteArray?>();
   }
 
   static final _id_echoStringList = NativeInteropHostIntegrationCoreApiRegistrar._class
-      .instanceMethodId(r'echoStringList', r'(Ljava/util/List;)Ljava/util/List;');
+      .instanceMethodId(r'echoStringList', r'([B)[B');
 
   static final _echoStringList =
       jni$_.ProtectedJniExtensions.lookup<
@@ -777,20 +775,20 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
             )
           >();
 
-  /// from: `public fun echoStringList(stringList: kotlin.collections.List<kotlin.String?>): kotlin.collections.List<kotlin.String?>`
+  /// from: `public fun echoStringList(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
   /// The returned object must be released after use, by calling the [release] method.
-  jni$_.JList<jni$_.JString?> echoStringList(jni$_.JList<jni$_.JString?> list) {
+  jni$_.JByteArray? echoStringList(jni$_.JByteArray bs) {
     final _$$selfRef = reference;
-    final _$list = list.reference;
+    final _$bs = bs.reference;
     return _echoStringList(
       _$$selfRef.pointer,
       _id_echoStringList.pointer,
-      _$list.pointer,
-    ).object<jni$_.JList<jni$_.JString?>>();
+      _$bs.pointer,
+    ).object<jni$_.JByteArray?>();
   }
 
   static final _id_echoIntList = NativeInteropHostIntegrationCoreApiRegistrar._class
-      .instanceMethodId(r'echoIntList', r'(Ljava/util/List;)Ljava/util/List;');
+      .instanceMethodId(r'echoIntList', r'([B)[B');
 
   static final _echoIntList =
       jni$_.ProtectedJniExtensions.lookup<
@@ -810,20 +808,20 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
             )
           >();
 
-  /// from: `public fun echoIntList(intList: kotlin.collections.List<kotlin.Long?>): kotlin.collections.List<kotlin.Long?>`
+  /// from: `public fun echoIntList(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
   /// The returned object must be released after use, by calling the [release] method.
-  jni$_.JList<jni$_.JLong?> echoIntList(jni$_.JList<jni$_.JLong?> list) {
+  jni$_.JByteArray? echoIntList(jni$_.JByteArray bs) {
     final _$$selfRef = reference;
-    final _$list = list.reference;
+    final _$bs = bs.reference;
     return _echoIntList(
       _$$selfRef.pointer,
       _id_echoIntList.pointer,
-      _$list.pointer,
-    ).object<jni$_.JList<jni$_.JLong?>>();
+      _$bs.pointer,
+    ).object<jni$_.JByteArray?>();
   }
 
   static final _id_echoDoubleList = NativeInteropHostIntegrationCoreApiRegistrar._class
-      .instanceMethodId(r'echoDoubleList', r'(Ljava/util/List;)Ljava/util/List;');
+      .instanceMethodId(r'echoDoubleList', r'([B)[B');
 
   static final _echoDoubleList =
       jni$_.ProtectedJniExtensions.lookup<
@@ -843,20 +841,20 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
             )
           >();
 
-  /// from: `public fun echoDoubleList(doubleList: kotlin.collections.List<kotlin.Double?>): kotlin.collections.List<kotlin.Double?>`
+  /// from: `public fun echoDoubleList(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
   /// The returned object must be released after use, by calling the [release] method.
-  jni$_.JList<jni$_.JDouble?> echoDoubleList(jni$_.JList<jni$_.JDouble?> list) {
+  jni$_.JByteArray? echoDoubleList(jni$_.JByteArray bs) {
     final _$$selfRef = reference;
-    final _$list = list.reference;
+    final _$bs = bs.reference;
     return _echoDoubleList(
       _$$selfRef.pointer,
       _id_echoDoubleList.pointer,
-      _$list.pointer,
-    ).object<jni$_.JList<jni$_.JDouble?>>();
+      _$bs.pointer,
+    ).object<jni$_.JByteArray?>();
   }
 
   static final _id_echoBoolList = NativeInteropHostIntegrationCoreApiRegistrar._class
-      .instanceMethodId(r'echoBoolList', r'(Ljava/util/List;)Ljava/util/List;');
+      .instanceMethodId(r'echoBoolList', r'([B)[B');
 
   static final _echoBoolList =
       jni$_.ProtectedJniExtensions.lookup<
@@ -876,20 +874,20 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
             )
           >();
 
-  /// from: `public fun echoBoolList(boolList: kotlin.collections.List<kotlin.Boolean?>): kotlin.collections.List<kotlin.Boolean?>`
+  /// from: `public fun echoBoolList(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
   /// The returned object must be released after use, by calling the [release] method.
-  jni$_.JList<jni$_.JBoolean?> echoBoolList(jni$_.JList<jni$_.JBoolean?> list) {
+  jni$_.JByteArray? echoBoolList(jni$_.JByteArray bs) {
     final _$$selfRef = reference;
-    final _$list = list.reference;
+    final _$bs = bs.reference;
     return _echoBoolList(
       _$$selfRef.pointer,
       _id_echoBoolList.pointer,
-      _$list.pointer,
-    ).object<jni$_.JList<jni$_.JBoolean?>>();
+      _$bs.pointer,
+    ).object<jni$_.JByteArray?>();
   }
 
   static final _id_echoEnumList = NativeInteropHostIntegrationCoreApiRegistrar._class
-      .instanceMethodId(r'echoEnumList', r'(Ljava/util/List;)Ljava/util/List;');
+      .instanceMethodId(r'echoEnumList', r'([B)[B');
 
   static final _echoEnumList =
       jni$_.ProtectedJniExtensions.lookup<
@@ -909,20 +907,20 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
             )
           >();
 
-  /// from: `public fun echoEnumList(enumList: kotlin.collections.List<com.example.test_plugin.NativeInteropAnEnum?>): kotlin.collections.List<com.example.test_plugin.NativeInteropAnEnum?>`
+  /// from: `public fun echoEnumList(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
   /// The returned object must be released after use, by calling the [release] method.
-  jni$_.JList<NativeInteropAnEnum?> echoEnumList(jni$_.JList<NativeInteropAnEnum?> list) {
+  jni$_.JByteArray? echoEnumList(jni$_.JByteArray bs) {
     final _$$selfRef = reference;
-    final _$list = list.reference;
+    final _$bs = bs.reference;
     return _echoEnumList(
       _$$selfRef.pointer,
       _id_echoEnumList.pointer,
-      _$list.pointer,
-    ).object<jni$_.JList<NativeInteropAnEnum?>>();
+      _$bs.pointer,
+    ).object<jni$_.JByteArray?>();
   }
 
   static final _id_echoClassList = NativeInteropHostIntegrationCoreApiRegistrar._class
-      .instanceMethodId(r'echoClassList', r'(Ljava/util/List;)Ljava/util/List;');
+      .instanceMethodId(r'echoClassList', r'([B)[B');
 
   static final _echoClassList =
       jni$_.ProtectedJniExtensions.lookup<
@@ -942,22 +940,20 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
             )
           >();
 
-  /// from: `public fun echoClassList(classList: kotlin.collections.List<com.example.test_plugin.NativeInteropAllNullableTypes?>): kotlin.collections.List<com.example.test_plugin.NativeInteropAllNullableTypes?>`
+  /// from: `public fun echoClassList(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
   /// The returned object must be released after use, by calling the [release] method.
-  jni$_.JList<NativeInteropAllNullableTypes?> echoClassList(
-    jni$_.JList<NativeInteropAllNullableTypes?> list,
-  ) {
+  jni$_.JByteArray? echoClassList(jni$_.JByteArray bs) {
     final _$$selfRef = reference;
-    final _$list = list.reference;
+    final _$bs = bs.reference;
     return _echoClassList(
       _$$selfRef.pointer,
       _id_echoClassList.pointer,
-      _$list.pointer,
-    ).object<jni$_.JList<NativeInteropAllNullableTypes?>>();
+      _$bs.pointer,
+    ).object<jni$_.JByteArray?>();
   }
 
   static final _id_echoNonNullEnumList = NativeInteropHostIntegrationCoreApiRegistrar._class
-      .instanceMethodId(r'echoNonNullEnumList', r'(Ljava/util/List;)Ljava/util/List;');
+      .instanceMethodId(r'echoNonNullEnumList', r'([B)[B');
 
   static final _echoNonNullEnumList =
       jni$_.ProtectedJniExtensions.lookup<
@@ -977,20 +973,20 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
             )
           >();
 
-  /// from: `public fun echoNonNullEnumList(enumList: kotlin.collections.List<com.example.test_plugin.NativeInteropAnEnum>): kotlin.collections.List<com.example.test_plugin.NativeInteropAnEnum>`
+  /// from: `public fun echoNonNullEnumList(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
   /// The returned object must be released after use, by calling the [release] method.
-  jni$_.JList<NativeInteropAnEnum> echoNonNullEnumList(jni$_.JList<NativeInteropAnEnum> list) {
+  jni$_.JByteArray? echoNonNullEnumList(jni$_.JByteArray bs) {
     final _$$selfRef = reference;
-    final _$list = list.reference;
+    final _$bs = bs.reference;
     return _echoNonNullEnumList(
       _$$selfRef.pointer,
       _id_echoNonNullEnumList.pointer,
-      _$list.pointer,
-    ).object<jni$_.JList<NativeInteropAnEnum>>();
+      _$bs.pointer,
+    ).object<jni$_.JByteArray?>();
   }
 
   static final _id_echoNonNullClassList = NativeInteropHostIntegrationCoreApiRegistrar._class
-      .instanceMethodId(r'echoNonNullClassList', r'(Ljava/util/List;)Ljava/util/List;');
+      .instanceMethodId(r'echoNonNullClassList', r'([B)[B');
 
   static final _echoNonNullClassList =
       jni$_.ProtectedJniExtensions.lookup<
@@ -1010,23 +1006,21 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
             )
           >();
 
-  /// from: `public fun echoNonNullClassList(classList: kotlin.collections.List<com.example.test_plugin.NativeInteropAllNullableTypes>): kotlin.collections.List<com.example.test_plugin.NativeInteropAllNullableTypes>`
+  /// from: `public fun echoNonNullClassList(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
   /// The returned object must be released after use, by calling the [release] method.
-  jni$_.JList<NativeInteropAllNullableTypes> echoNonNullClassList(
-    jni$_.JList<NativeInteropAllNullableTypes> list,
-  ) {
+  jni$_.JByteArray? echoNonNullClassList(jni$_.JByteArray bs) {
     final _$$selfRef = reference;
-    final _$list = list.reference;
+    final _$bs = bs.reference;
     return _echoNonNullClassList(
       _$$selfRef.pointer,
       _id_echoNonNullClassList.pointer,
-      _$list.pointer,
-    ).object<jni$_.JList<NativeInteropAllNullableTypes>>();
+      _$bs.pointer,
+    ).object<jni$_.JByteArray?>();
   }
 
   static final _id_echoMap = NativeInteropHostIntegrationCoreApiRegistrar._class.instanceMethodId(
     r'echoMap',
-    r'(Ljava/util/Map;)Ljava/util/Map;',
+    r'([B)[B',
   );
 
   static final _echoMap =
@@ -1047,22 +1041,20 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
             )
           >();
 
-  /// from: `public fun echoMap(map: kotlin.collections.Map<kotlin.Any?, kotlin.Any?>): kotlin.collections.Map<kotlin.Any?, kotlin.Any?>`
+  /// from: `public fun echoMap(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
   /// The returned object must be released after use, by calling the [release] method.
-  jni$_.JMap<jni$_.JObject?, jni$_.JObject?> echoMap(
-    jni$_.JMap<jni$_.JObject?, jni$_.JObject?> map,
-  ) {
+  jni$_.JByteArray? echoMap(jni$_.JByteArray bs) {
     final _$$selfRef = reference;
-    final _$map = map.reference;
+    final _$bs = bs.reference;
     return _echoMap(
       _$$selfRef.pointer,
       _id_echoMap.pointer,
-      _$map.pointer,
-    ).object<jni$_.JMap<jni$_.JObject?, jni$_.JObject?>>();
+      _$bs.pointer,
+    ).object<jni$_.JByteArray?>();
   }
 
   static final _id_echoStringMap = NativeInteropHostIntegrationCoreApiRegistrar._class
-      .instanceMethodId(r'echoStringMap', r'(Ljava/util/Map;)Ljava/util/Map;');
+      .instanceMethodId(r'echoStringMap', r'([B)[B');
 
   static final _echoStringMap =
       jni$_.ProtectedJniExtensions.lookup<
@@ -1082,22 +1074,20 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
             )
           >();
 
-  /// from: `public fun echoStringMap(stringMap: kotlin.collections.Map<kotlin.String?, kotlin.String?>): kotlin.collections.Map<kotlin.String?, kotlin.String?>`
+  /// from: `public fun echoStringMap(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
   /// The returned object must be released after use, by calling the [release] method.
-  jni$_.JMap<jni$_.JString?, jni$_.JString?> echoStringMap(
-    jni$_.JMap<jni$_.JString?, jni$_.JString?> map,
-  ) {
+  jni$_.JByteArray? echoStringMap(jni$_.JByteArray bs) {
     final _$$selfRef = reference;
-    final _$map = map.reference;
+    final _$bs = bs.reference;
     return _echoStringMap(
       _$$selfRef.pointer,
       _id_echoStringMap.pointer,
-      _$map.pointer,
-    ).object<jni$_.JMap<jni$_.JString?, jni$_.JString?>>();
+      _$bs.pointer,
+    ).object<jni$_.JByteArray?>();
   }
 
   static final _id_echoIntMap = NativeInteropHostIntegrationCoreApiRegistrar._class
-      .instanceMethodId(r'echoIntMap', r'(Ljava/util/Map;)Ljava/util/Map;');
+      .instanceMethodId(r'echoIntMap', r'([B)[B');
 
   static final _echoIntMap =
       jni$_.ProtectedJniExtensions.lookup<
@@ -1117,20 +1107,20 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
             )
           >();
 
-  /// from: `public fun echoIntMap(intMap: kotlin.collections.Map<kotlin.Long?, kotlin.Long?>): kotlin.collections.Map<kotlin.Long?, kotlin.Long?>`
+  /// from: `public fun echoIntMap(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
   /// The returned object must be released after use, by calling the [release] method.
-  jni$_.JMap<jni$_.JLong?, jni$_.JLong?> echoIntMap(jni$_.JMap<jni$_.JLong?, jni$_.JLong?> map) {
+  jni$_.JByteArray? echoIntMap(jni$_.JByteArray bs) {
     final _$$selfRef = reference;
-    final _$map = map.reference;
+    final _$bs = bs.reference;
     return _echoIntMap(
       _$$selfRef.pointer,
       _id_echoIntMap.pointer,
-      _$map.pointer,
-    ).object<jni$_.JMap<jni$_.JLong?, jni$_.JLong?>>();
+      _$bs.pointer,
+    ).object<jni$_.JByteArray?>();
   }
 
   static final _id_echoEnumMap = NativeInteropHostIntegrationCoreApiRegistrar._class
-      .instanceMethodId(r'echoEnumMap', r'(Ljava/util/Map;)Ljava/util/Map;');
+      .instanceMethodId(r'echoEnumMap', r'([B)[B');
 
   static final _echoEnumMap =
       jni$_.ProtectedJniExtensions.lookup<
@@ -1150,22 +1140,20 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
             )
           >();
 
-  /// from: `public fun echoEnumMap(enumMap: kotlin.collections.Map<com.example.test_plugin.NativeInteropAnEnum?, com.example.test_plugin.NativeInteropAnEnum?>): kotlin.collections.Map<com.example.test_plugin.NativeInteropAnEnum?, com.example.test_plugin.NativeInteropAnEnum?>`
+  /// from: `public fun echoEnumMap(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
   /// The returned object must be released after use, by calling the [release] method.
-  jni$_.JMap<NativeInteropAnEnum?, NativeInteropAnEnum?> echoEnumMap(
-    jni$_.JMap<NativeInteropAnEnum?, NativeInteropAnEnum?> map,
-  ) {
+  jni$_.JByteArray? echoEnumMap(jni$_.JByteArray bs) {
     final _$$selfRef = reference;
-    final _$map = map.reference;
+    final _$bs = bs.reference;
     return _echoEnumMap(
       _$$selfRef.pointer,
       _id_echoEnumMap.pointer,
-      _$map.pointer,
-    ).object<jni$_.JMap<NativeInteropAnEnum?, NativeInteropAnEnum?>>();
+      _$bs.pointer,
+    ).object<jni$_.JByteArray?>();
   }
 
   static final _id_echoClassMap = NativeInteropHostIntegrationCoreApiRegistrar._class
-      .instanceMethodId(r'echoClassMap', r'(Ljava/util/Map;)Ljava/util/Map;');
+      .instanceMethodId(r'echoClassMap', r'([B)[B');
 
   static final _echoClassMap =
       jni$_.ProtectedJniExtensions.lookup<
@@ -1185,22 +1173,20 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
             )
           >();
 
-  /// from: `public fun echoClassMap(classMap: kotlin.collections.Map<kotlin.Long?, com.example.test_plugin.NativeInteropAllNullableTypes?>): kotlin.collections.Map<kotlin.Long?, com.example.test_plugin.NativeInteropAllNullableTypes?>`
+  /// from: `public fun echoClassMap(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
   /// The returned object must be released after use, by calling the [release] method.
-  jni$_.JMap<jni$_.JLong?, NativeInteropAllNullableTypes?> echoClassMap(
-    jni$_.JMap<jni$_.JLong?, NativeInteropAllNullableTypes?> map,
-  ) {
+  jni$_.JByteArray? echoClassMap(jni$_.JByteArray bs) {
     final _$$selfRef = reference;
-    final _$map = map.reference;
+    final _$bs = bs.reference;
     return _echoClassMap(
       _$$selfRef.pointer,
       _id_echoClassMap.pointer,
-      _$map.pointer,
-    ).object<jni$_.JMap<jni$_.JLong?, NativeInteropAllNullableTypes?>>();
+      _$bs.pointer,
+    ).object<jni$_.JByteArray?>();
   }
 
   static final _id_echoNonNullStringMap = NativeInteropHostIntegrationCoreApiRegistrar._class
-      .instanceMethodId(r'echoNonNullStringMap', r'(Ljava/util/Map;)Ljava/util/Map;');
+      .instanceMethodId(r'echoNonNullStringMap', r'([B)[B');
 
   static final _echoNonNullStringMap =
       jni$_.ProtectedJniExtensions.lookup<
@@ -1220,22 +1206,20 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
             )
           >();
 
-  /// from: `public fun echoNonNullStringMap(stringMap: kotlin.collections.Map<kotlin.String, kotlin.String>): kotlin.collections.Map<kotlin.String, kotlin.String>`
+  /// from: `public fun echoNonNullStringMap(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
   /// The returned object must be released after use, by calling the [release] method.
-  jni$_.JMap<jni$_.JString, jni$_.JString> echoNonNullStringMap(
-    jni$_.JMap<jni$_.JString, jni$_.JString> map,
-  ) {
+  jni$_.JByteArray? echoNonNullStringMap(jni$_.JByteArray bs) {
     final _$$selfRef = reference;
-    final _$map = map.reference;
+    final _$bs = bs.reference;
     return _echoNonNullStringMap(
       _$$selfRef.pointer,
       _id_echoNonNullStringMap.pointer,
-      _$map.pointer,
-    ).object<jni$_.JMap<jni$_.JString, jni$_.JString>>();
+      _$bs.pointer,
+    ).object<jni$_.JByteArray?>();
   }
 
   static final _id_echoNonNullIntMap = NativeInteropHostIntegrationCoreApiRegistrar._class
-      .instanceMethodId(r'echoNonNullIntMap', r'(Ljava/util/Map;)Ljava/util/Map;');
+      .instanceMethodId(r'echoNonNullIntMap', r'([B)[B');
 
   static final _echoNonNullIntMap =
       jni$_.ProtectedJniExtensions.lookup<
@@ -1255,20 +1239,20 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
             )
           >();
 
-  /// from: `public fun echoNonNullIntMap(intMap: kotlin.collections.Map<kotlin.Long, kotlin.Long>): kotlin.collections.Map<kotlin.Long, kotlin.Long>`
+  /// from: `public fun echoNonNullIntMap(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
   /// The returned object must be released after use, by calling the [release] method.
-  jni$_.JMap<jni$_.JLong, jni$_.JLong> echoNonNullIntMap(jni$_.JMap<jni$_.JLong, jni$_.JLong> map) {
+  jni$_.JByteArray? echoNonNullIntMap(jni$_.JByteArray bs) {
     final _$$selfRef = reference;
-    final _$map = map.reference;
+    final _$bs = bs.reference;
     return _echoNonNullIntMap(
       _$$selfRef.pointer,
       _id_echoNonNullIntMap.pointer,
-      _$map.pointer,
-    ).object<jni$_.JMap<jni$_.JLong, jni$_.JLong>>();
+      _$bs.pointer,
+    ).object<jni$_.JByteArray?>();
   }
 
   static final _id_echoNonNullEnumMap = NativeInteropHostIntegrationCoreApiRegistrar._class
-      .instanceMethodId(r'echoNonNullEnumMap', r'(Ljava/util/Map;)Ljava/util/Map;');
+      .instanceMethodId(r'echoNonNullEnumMap', r'([B)[B');
 
   static final _echoNonNullEnumMap =
       jni$_.ProtectedJniExtensions.lookup<
@@ -1288,22 +1272,20 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
             )
           >();
 
-  /// from: `public fun echoNonNullEnumMap(enumMap: kotlin.collections.Map<com.example.test_plugin.NativeInteropAnEnum, com.example.test_plugin.NativeInteropAnEnum>): kotlin.collections.Map<com.example.test_plugin.NativeInteropAnEnum, com.example.test_plugin.NativeInteropAnEnum>`
+  /// from: `public fun echoNonNullEnumMap(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
   /// The returned object must be released after use, by calling the [release] method.
-  jni$_.JMap<NativeInteropAnEnum, NativeInteropAnEnum> echoNonNullEnumMap(
-    jni$_.JMap<NativeInteropAnEnum, NativeInteropAnEnum> map,
-  ) {
+  jni$_.JByteArray? echoNonNullEnumMap(jni$_.JByteArray bs) {
     final _$$selfRef = reference;
-    final _$map = map.reference;
+    final _$bs = bs.reference;
     return _echoNonNullEnumMap(
       _$$selfRef.pointer,
       _id_echoNonNullEnumMap.pointer,
-      _$map.pointer,
-    ).object<jni$_.JMap<NativeInteropAnEnum, NativeInteropAnEnum>>();
+      _$bs.pointer,
+    ).object<jni$_.JByteArray?>();
   }
 
   static final _id_echoNonNullClassMap = NativeInteropHostIntegrationCoreApiRegistrar._class
-      .instanceMethodId(r'echoNonNullClassMap', r'(Ljava/util/Map;)Ljava/util/Map;');
+      .instanceMethodId(r'echoNonNullClassMap', r'([B)[B');
 
   static final _echoNonNullClassMap =
       jni$_.ProtectedJniExtensions.lookup<
@@ -1323,25 +1305,20 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
             )
           >();
 
-  /// from: `public fun echoNonNullClassMap(classMap: kotlin.collections.Map<kotlin.Long, com.example.test_plugin.NativeInteropAllNullableTypes>): kotlin.collections.Map<kotlin.Long, com.example.test_plugin.NativeInteropAllNullableTypes>`
+  /// from: `public fun echoNonNullClassMap(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
   /// The returned object must be released after use, by calling the [release] method.
-  jni$_.JMap<jni$_.JLong, NativeInteropAllNullableTypes> echoNonNullClassMap(
-    jni$_.JMap<jni$_.JLong, NativeInteropAllNullableTypes> map,
-  ) {
+  jni$_.JByteArray? echoNonNullClassMap(jni$_.JByteArray bs) {
     final _$$selfRef = reference;
-    final _$map = map.reference;
+    final _$bs = bs.reference;
     return _echoNonNullClassMap(
       _$$selfRef.pointer,
       _id_echoNonNullClassMap.pointer,
-      _$map.pointer,
-    ).object<jni$_.JMap<jni$_.JLong, NativeInteropAllNullableTypes>>();
+      _$bs.pointer,
+    ).object<jni$_.JByteArray?>();
   }
 
   static final _id_echoClassWrapper = NativeInteropHostIntegrationCoreApiRegistrar._class
-      .instanceMethodId(
-        r'echoClassWrapper',
-        r'(Lcom/example/test_plugin/NativeInteropAllClassesWrapper;)Lcom/example/test_plugin/NativeInteropAllClassesWrapper;',
-      );
+      .instanceMethodId(r'echoClassWrapper', r'([B)[B');
 
   static final _echoClassWrapper =
       jni$_.ProtectedJniExtensions.lookup<
@@ -1361,25 +1338,20 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
             )
           >();
 
-  /// from: `public fun echoClassWrapper(wrapper: com.example.test_plugin.NativeInteropAllClassesWrapper): com.example.test_plugin.NativeInteropAllClassesWrapper`
+  /// from: `public fun echoClassWrapper(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
   /// The returned object must be released after use, by calling the [release] method.
-  NativeInteropAllClassesWrapper echoClassWrapper(
-    NativeInteropAllClassesWrapper nativeInteropAllClassesWrapper,
-  ) {
+  jni$_.JByteArray? echoClassWrapper(jni$_.JByteArray bs) {
     final _$$selfRef = reference;
-    final _$nativeInteropAllClassesWrapper = nativeInteropAllClassesWrapper.reference;
+    final _$bs = bs.reference;
     return _echoClassWrapper(
       _$$selfRef.pointer,
       _id_echoClassWrapper.pointer,
-      _$nativeInteropAllClassesWrapper.pointer,
-    ).object<NativeInteropAllClassesWrapper>();
+      _$bs.pointer,
+    ).object<jni$_.JByteArray?>();
   }
 
   static final _id_echoSealedClass = NativeInteropHostIntegrationCoreApiRegistrar._class
-      .instanceMethodId(
-        r'echoSealedClass',
-        r'(Lcom/example/test_plugin/NativeInteropSealedClass;)Lcom/example/test_plugin/NativeInteropSealedClass;',
-      );
+      .instanceMethodId(r'echoSealedClass', r'([B)[B');
 
   static final _echoSealedClass =
       jni$_.ProtectedJniExtensions.lookup<
@@ -1399,23 +1371,20 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
             )
           >();
 
-  /// from: `public fun echoSealedClass(sealedClass: com.example.test_plugin.NativeInteropSealedClass): com.example.test_plugin.NativeInteropSealedClass`
+  /// from: `public fun echoSealedClass(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
   /// The returned object must be released after use, by calling the [release] method.
-  NativeInteropSealedClass echoSealedClass(NativeInteropSealedClass nativeInteropSealedClass) {
+  jni$_.JByteArray? echoSealedClass(jni$_.JByteArray bs) {
     final _$$selfRef = reference;
-    final _$nativeInteropSealedClass = nativeInteropSealedClass.reference;
+    final _$bs = bs.reference;
     return _echoSealedClass(
       _$$selfRef.pointer,
       _id_echoSealedClass.pointer,
-      _$nativeInteropSealedClass.pointer,
-    ).object<NativeInteropSealedClass>();
+      _$bs.pointer,
+    ).object<jni$_.JByteArray?>();
   }
 
   static final _id_echoNullableSealedClass = NativeInteropHostIntegrationCoreApiRegistrar._class
-      .instanceMethodId(
-        r'echoNullableSealedClass',
-        r'(Lcom/example/test_plugin/NativeInteropSealedClass;)Lcom/example/test_plugin/NativeInteropSealedClass;',
-      );
+      .instanceMethodId(r'echoNullableSealedClass', r'([B)[B');
 
   static final _echoNullableSealedClass =
       jni$_.ProtectedJniExtensions.lookup<
@@ -1435,22 +1404,20 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
             )
           >();
 
-  /// from: `public fun echoNullableSealedClass(sealedClass: com.example.test_plugin.NativeInteropSealedClass?): com.example.test_plugin.NativeInteropSealedClass?`
+  /// from: `public fun echoNullableSealedClass(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
   /// The returned object must be released after use, by calling the [release] method.
-  NativeInteropSealedClass? echoNullableSealedClass(
-    NativeInteropSealedClass? nativeInteropSealedClass,
-  ) {
+  jni$_.JByteArray? echoNullableSealedClass(jni$_.JByteArray bs) {
     final _$$selfRef = reference;
-    final _$nativeInteropSealedClass = nativeInteropSealedClass?.reference ?? jni$_.jNullReference;
+    final _$bs = bs.reference;
     return _echoNullableSealedClass(
       _$$selfRef.pointer,
       _id_echoNullableSealedClass.pointer,
-      _$nativeInteropSealedClass.pointer,
-    ).object<NativeInteropSealedClass?>();
+      _$bs.pointer,
+    ).object<jni$_.JByteArray?>();
   }
 
   static final _id_echoSealedClassList = NativeInteropHostIntegrationCoreApiRegistrar._class
-      .instanceMethodId(r'echoSealedClassList', r'(Ljava/util/List;)Ljava/util/List;');
+      .instanceMethodId(r'echoSealedClassList', r'([B)[B');
 
   static final _echoSealedClassList =
       jni$_.ProtectedJniExtensions.lookup<
@@ -1470,25 +1437,20 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
             )
           >();
 
-  /// from: `public fun echoSealedClassList(sealedClassList: kotlin.collections.List<com.example.test_plugin.NativeInteropSealedClass>): kotlin.collections.List<com.example.test_plugin.NativeInteropSealedClass>`
+  /// from: `public fun echoSealedClassList(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
   /// The returned object must be released after use, by calling the [release] method.
-  jni$_.JList<NativeInteropSealedClass> echoSealedClassList(
-    jni$_.JList<NativeInteropSealedClass> list,
-  ) {
+  jni$_.JByteArray? echoSealedClassList(jni$_.JByteArray bs) {
     final _$$selfRef = reference;
-    final _$list = list.reference;
+    final _$bs = bs.reference;
     return _echoSealedClassList(
       _$$selfRef.pointer,
       _id_echoSealedClassList.pointer,
-      _$list.pointer,
-    ).object<jni$_.JList<NativeInteropSealedClass>>();
+      _$bs.pointer,
+    ).object<jni$_.JByteArray?>();
   }
 
   static final _id_echoSealedClassWrapper = NativeInteropHostIntegrationCoreApiRegistrar._class
-      .instanceMethodId(
-        r'echoSealedClassWrapper',
-        r'(Lcom/example/test_plugin/NativeInteropSealedClassWrapper;)Lcom/example/test_plugin/NativeInteropSealedClassWrapper;',
-      );
+      .instanceMethodId(r'echoSealedClassWrapper', r'([B)[B');
 
   static final _echoSealedClassWrapper =
       jni$_.ProtectedJniExtensions.lookup<
@@ -1508,23 +1470,21 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
             )
           >();
 
-  /// from: `public fun echoSealedClassWrapper(wrapper: com.example.test_plugin.NativeInteropSealedClassWrapper): com.example.test_plugin.NativeInteropSealedClassWrapper`
+  /// from: `public fun echoSealedClassWrapper(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
   /// The returned object must be released after use, by calling the [release] method.
-  NativeInteropSealedClassWrapper echoSealedClassWrapper(
-    NativeInteropSealedClassWrapper nativeInteropSealedClassWrapper,
-  ) {
+  jni$_.JByteArray? echoSealedClassWrapper(jni$_.JByteArray bs) {
     final _$$selfRef = reference;
-    final _$nativeInteropSealedClassWrapper = nativeInteropSealedClassWrapper.reference;
+    final _$bs = bs.reference;
     return _echoSealedClassWrapper(
       _$$selfRef.pointer,
       _id_echoSealedClassWrapper.pointer,
-      _$nativeInteropSealedClassWrapper.pointer,
-    ).object<NativeInteropSealedClassWrapper>();
+      _$bs.pointer,
+    ).object<jni$_.JByteArray?>();
   }
 
   static final _id_echoEnum = NativeInteropHostIntegrationCoreApiRegistrar._class.instanceMethodId(
     r'echoEnum',
-    r'(Lcom/example/test_plugin/NativeInteropAnEnum;)Lcom/example/test_plugin/NativeInteropAnEnum;',
+    r'(J)J',
   );
 
   static final _echoEnum =
@@ -1533,35 +1493,22 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
               jni$_.JniResult Function(
                 jni$_.Pointer<jni$_.Void>,
                 jni$_.JMethodIDPtr,
-                jni$_.VarArgs<(jni$_.Pointer<jni$_.Void>,)>,
+                jni$_.VarArgs<(jni$_.Int64,)>,
               )
             >
-          >('globalEnv_CallObjectMethod')
+          >('globalEnv_CallLongMethod')
           .asFunction<
-            jni$_.JniResult Function(
-              jni$_.Pointer<jni$_.Void>,
-              jni$_.JMethodIDPtr,
-              jni$_.Pointer<jni$_.Void>,
-            )
+            jni$_.JniResult Function(jni$_.Pointer<jni$_.Void>, jni$_.JMethodIDPtr, core$_.int)
           >();
 
-  /// from: `public fun echoEnum(anEnum: com.example.test_plugin.NativeInteropAnEnum): com.example.test_plugin.NativeInteropAnEnum`
-  /// The returned object must be released after use, by calling the [release] method.
-  NativeInteropAnEnum echoEnum(NativeInteropAnEnum nativeInteropAnEnum) {
+  /// from: `public fun echoEnum(anEnum: kotlin.Long): kotlin.Long`
+  core$_.int echoEnum(core$_.int j) {
     final _$$selfRef = reference;
-    final _$nativeInteropAnEnum = nativeInteropAnEnum.reference;
-    return _echoEnum(
-      _$$selfRef.pointer,
-      _id_echoEnum.pointer,
-      _$nativeInteropAnEnum.pointer,
-    ).object<NativeInteropAnEnum>();
+    return _echoEnum(_$$selfRef.pointer, _id_echoEnum.pointer, j).long;
   }
 
   static final _id_echoAnotherEnum = NativeInteropHostIntegrationCoreApiRegistrar._class
-      .instanceMethodId(
-        r'echoAnotherEnum',
-        r'(Lcom/example/test_plugin/NativeInteropAnotherEnum;)Lcom/example/test_plugin/NativeInteropAnotherEnum;',
-      );
+      .instanceMethodId(r'echoAnotherEnum', r'(J)J');
 
   static final _echoAnotherEnum =
       jni$_.ProtectedJniExtensions.lookup<
@@ -1569,28 +1516,18 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
               jni$_.JniResult Function(
                 jni$_.Pointer<jni$_.Void>,
                 jni$_.JMethodIDPtr,
-                jni$_.VarArgs<(jni$_.Pointer<jni$_.Void>,)>,
+                jni$_.VarArgs<(jni$_.Int64,)>,
               )
             >
-          >('globalEnv_CallObjectMethod')
+          >('globalEnv_CallLongMethod')
           .asFunction<
-            jni$_.JniResult Function(
-              jni$_.Pointer<jni$_.Void>,
-              jni$_.JMethodIDPtr,
-              jni$_.Pointer<jni$_.Void>,
-            )
+            jni$_.JniResult Function(jni$_.Pointer<jni$_.Void>, jni$_.JMethodIDPtr, core$_.int)
           >();
 
-  /// from: `public fun echoAnotherEnum(anotherEnum: com.example.test_plugin.NativeInteropAnotherEnum): com.example.test_plugin.NativeInteropAnotherEnum`
-  /// The returned object must be released after use, by calling the [release] method.
-  NativeInteropAnotherEnum echoAnotherEnum(NativeInteropAnotherEnum nativeInteropAnotherEnum) {
+  /// from: `public fun echoAnotherEnum(anotherEnum: kotlin.Long): kotlin.Long`
+  core$_.int echoAnotherEnum(core$_.int j) {
     final _$$selfRef = reference;
-    final _$nativeInteropAnotherEnum = nativeInteropAnotherEnum.reference;
-    return _echoAnotherEnum(
-      _$$selfRef.pointer,
-      _id_echoAnotherEnum.pointer,
-      _$nativeInteropAnotherEnum.pointer,
-    ).object<NativeInteropAnotherEnum>();
+    return _echoAnotherEnum(_$$selfRef.pointer, _id_echoAnotherEnum.pointer, j).long;
   }
 
   static final _id_echoNamedDefaultString = NativeInteropHostIntegrationCoreApiRegistrar._class
@@ -1677,10 +1614,7 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
   }
 
   static final _id_echoAllNullableTypes = NativeInteropHostIntegrationCoreApiRegistrar._class
-      .instanceMethodId(
-        r'echoAllNullableTypes',
-        r'(Lcom/example/test_plugin/NativeInteropAllNullableTypes;)Lcom/example/test_plugin/NativeInteropAllNullableTypes;',
-      );
+      .instanceMethodId(r'echoAllNullableTypes', r'([B)[B');
 
   static final _echoAllNullableTypes =
       jni$_.ProtectedJniExtensions.lookup<
@@ -1700,25 +1634,22 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
             )
           >();
 
-  /// from: `public fun echoAllNullableTypes(everything: com.example.test_plugin.NativeInteropAllNullableTypes?): com.example.test_plugin.NativeInteropAllNullableTypes?`
+  /// from: `public fun echoAllNullableTypes(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
   /// The returned object must be released after use, by calling the [release] method.
-  NativeInteropAllNullableTypes? echoAllNullableTypes(
-    NativeInteropAllNullableTypes? nativeInteropAllNullableTypes,
-  ) {
+  jni$_.JByteArray? echoAllNullableTypes(jni$_.JByteArray bs) {
     final _$$selfRef = reference;
-    final _$nativeInteropAllNullableTypes =
-        nativeInteropAllNullableTypes?.reference ?? jni$_.jNullReference;
+    final _$bs = bs.reference;
     return _echoAllNullableTypes(
       _$$selfRef.pointer,
       _id_echoAllNullableTypes.pointer,
-      _$nativeInteropAllNullableTypes.pointer,
-    ).object<NativeInteropAllNullableTypes?>();
+      _$bs.pointer,
+    ).object<jni$_.JByteArray?>();
   }
 
   static final _id_echoAllNullableTypesWithoutRecursion =
       NativeInteropHostIntegrationCoreApiRegistrar._class.instanceMethodId(
         r'echoAllNullableTypesWithoutRecursion',
-        r'(Lcom/example/test_plugin/NativeInteropAllNullableTypesWithoutRecursion;)Lcom/example/test_plugin/NativeInteropAllNullableTypesWithoutRecursion;',
+        r'([B)[B',
       );
 
   static final _echoAllNullableTypesWithoutRecursion =
@@ -1739,26 +1670,20 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
             )
           >();
 
-  /// from: `public fun echoAllNullableTypesWithoutRecursion(everything: com.example.test_plugin.NativeInteropAllNullableTypesWithoutRecursion?): com.example.test_plugin.NativeInteropAllNullableTypesWithoutRecursion?`
+  /// from: `public fun echoAllNullableTypesWithoutRecursion(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
   /// The returned object must be released after use, by calling the [release] method.
-  NativeInteropAllNullableTypesWithoutRecursion? echoAllNullableTypesWithoutRecursion(
-    NativeInteropAllNullableTypesWithoutRecursion? nativeInteropAllNullableTypesWithoutRecursion,
-  ) {
+  jni$_.JByteArray? echoAllNullableTypesWithoutRecursion(jni$_.JByteArray bs) {
     final _$$selfRef = reference;
-    final _$nativeInteropAllNullableTypesWithoutRecursion =
-        nativeInteropAllNullableTypesWithoutRecursion?.reference ?? jni$_.jNullReference;
+    final _$bs = bs.reference;
     return _echoAllNullableTypesWithoutRecursion(
       _$$selfRef.pointer,
       _id_echoAllNullableTypesWithoutRecursion.pointer,
-      _$nativeInteropAllNullableTypesWithoutRecursion.pointer,
-    ).object<NativeInteropAllNullableTypesWithoutRecursion?>();
+      _$bs.pointer,
+    ).object<jni$_.JByteArray?>();
   }
 
   static final _id_extractNestedNullableString = NativeInteropHostIntegrationCoreApiRegistrar._class
-      .instanceMethodId(
-        r'extractNestedNullableString',
-        r'(Lcom/example/test_plugin/NativeInteropAllClassesWrapper;)Ljava/lang/String;',
-      );
+      .instanceMethodId(r'extractNestedNullableString', r'([B)Ljava/lang/String;');
 
   static final _extractNestedNullableString =
       jni$_.ProtectedJniExtensions.lookup<
@@ -1778,25 +1703,20 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
             )
           >();
 
-  /// from: `public fun extractNestedNullableString(wrapper: com.example.test_plugin.NativeInteropAllClassesWrapper): kotlin.String?`
+  /// from: `public fun extractNestedNullableString(pigeonVar_args: kotlin.ByteArray): kotlin.String?`
   /// The returned object must be released after use, by calling the [release] method.
-  jni$_.JString? extractNestedNullableString(
-    NativeInteropAllClassesWrapper nativeInteropAllClassesWrapper,
-  ) {
+  jni$_.JString? extractNestedNullableString(jni$_.JByteArray bs) {
     final _$$selfRef = reference;
-    final _$nativeInteropAllClassesWrapper = nativeInteropAllClassesWrapper.reference;
+    final _$bs = bs.reference;
     return _extractNestedNullableString(
       _$$selfRef.pointer,
       _id_extractNestedNullableString.pointer,
-      _$nativeInteropAllClassesWrapper.pointer,
+      _$bs.pointer,
     ).object<jni$_.JString?>();
   }
 
   static final _id_createNestedNullableString = NativeInteropHostIntegrationCoreApiRegistrar._class
-      .instanceMethodId(
-        r'createNestedNullableString',
-        r'(Ljava/lang/String;)Lcom/example/test_plugin/NativeInteropAllClassesWrapper;',
-      );
+      .instanceMethodId(r'createNestedNullableString', r'(Ljava/lang/String;)[B');
 
   static final _createNestedNullableString =
       jni$_.ProtectedJniExtensions.lookup<
@@ -1816,22 +1736,22 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
             )
           >();
 
-  /// from: `public fun createNestedNullableString(nullableString: kotlin.String?): com.example.test_plugin.NativeInteropAllClassesWrapper`
+  /// from: `public fun createNestedNullableString(nullableString: kotlin.String?): kotlin.ByteArray?`
   /// The returned object must be released after use, by calling the [release] method.
-  NativeInteropAllClassesWrapper createNestedNullableString(jni$_.JString? string) {
+  jni$_.JByteArray? createNestedNullableString(jni$_.JString? string) {
     final _$$selfRef = reference;
     final _$string = string?.reference ?? jni$_.jNullReference;
     return _createNestedNullableString(
       _$$selfRef.pointer,
       _id_createNestedNullableString.pointer,
       _$string.pointer,
-    ).object<NativeInteropAllClassesWrapper>();
+    ).object<jni$_.JByteArray?>();
   }
 
   static final _id_sendMultipleNullableTypes = NativeInteropHostIntegrationCoreApiRegistrar._class
       .instanceMethodId(
         r'sendMultipleNullableTypes',
-        r'(Ljava/lang/Boolean;Ljava/lang/Long;Ljava/lang/String;)Lcom/example/test_plugin/NativeInteropAllNullableTypes;',
+        r'(Ljava/lang/Boolean;Ljava/lang/Long;Ljava/lang/String;)[B',
       );
 
   static final _sendMultipleNullableTypes =
@@ -1856,9 +1776,9 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
             )
           >();
 
-  /// from: `public fun sendMultipleNullableTypes(aNullableBool: kotlin.Boolean?, aNullableInt: kotlin.Long?, aNullableString: kotlin.String?): com.example.test_plugin.NativeInteropAllNullableTypes`
+  /// from: `public fun sendMultipleNullableTypes(aNullableBool: kotlin.Boolean?, aNullableInt: kotlin.Long?, aNullableString: kotlin.String?): kotlin.ByteArray?`
   /// The returned object must be released after use, by calling the [release] method.
-  NativeInteropAllNullableTypes sendMultipleNullableTypes(
+  jni$_.JByteArray? sendMultipleNullableTypes(
     jni$_.JBoolean? boolean,
     jni$_.JLong? long,
     jni$_.JString? string,
@@ -1873,13 +1793,13 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
       _$boolean.pointer,
       _$long.pointer,
       _$string.pointer,
-    ).object<NativeInteropAllNullableTypes>();
+    ).object<jni$_.JByteArray?>();
   }
 
   static final _id_sendMultipleNullableTypesWithoutRecursion =
       NativeInteropHostIntegrationCoreApiRegistrar._class.instanceMethodId(
         r'sendMultipleNullableTypesWithoutRecursion',
-        r'(Ljava/lang/Boolean;Ljava/lang/Long;Ljava/lang/String;)Lcom/example/test_plugin/NativeInteropAllNullableTypesWithoutRecursion;',
+        r'(Ljava/lang/Boolean;Ljava/lang/Long;Ljava/lang/String;)[B',
       );
 
   static final _sendMultipleNullableTypesWithoutRecursion =
@@ -1904,9 +1824,9 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
             )
           >();
 
-  /// from: `public fun sendMultipleNullableTypesWithoutRecursion(aNullableBool: kotlin.Boolean?, aNullableInt: kotlin.Long?, aNullableString: kotlin.String?): com.example.test_plugin.NativeInteropAllNullableTypesWithoutRecursion`
+  /// from: `public fun sendMultipleNullableTypesWithoutRecursion(aNullableBool: kotlin.Boolean?, aNullableInt: kotlin.Long?, aNullableString: kotlin.String?): kotlin.ByteArray?`
   /// The returned object must be released after use, by calling the [release] method.
-  NativeInteropAllNullableTypesWithoutRecursion sendMultipleNullableTypesWithoutRecursion(
+  jni$_.JByteArray? sendMultipleNullableTypesWithoutRecursion(
     jni$_.JBoolean? boolean,
     jni$_.JLong? long,
     jni$_.JString? string,
@@ -1921,7 +1841,7 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
       _$boolean.pointer,
       _$long.pointer,
       _$string.pointer,
-    ).object<NativeInteropAllNullableTypesWithoutRecursion>();
+    ).object<jni$_.JByteArray?>();
   }
 
   static final _id_echoNullableInt = NativeInteropHostIntegrationCoreApiRegistrar._class
@@ -2189,7 +2109,7 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
   }
 
   static final _id_echoNullableObject = NativeInteropHostIntegrationCoreApiRegistrar._class
-      .instanceMethodId(r'echoNullableObject', r'(Ljava/lang/Object;)Ljava/lang/Object;');
+      .instanceMethodId(r'echoNullableObject', r'([B)[B');
 
   static final _echoNullableObject =
       jni$_.ProtectedJniExtensions.lookup<
@@ -2209,20 +2129,20 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
             )
           >();
 
-  /// from: `public fun echoNullableObject(aNullableObject: kotlin.Any?): kotlin.Any?`
+  /// from: `public fun echoNullableObject(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
   /// The returned object must be released after use, by calling the [release] method.
-  jni$_.JObject? echoNullableObject(jni$_.JObject? object) {
+  jni$_.JByteArray? echoNullableObject(jni$_.JByteArray bs) {
     final _$$selfRef = reference;
-    final _$object = object?.reference ?? jni$_.jNullReference;
+    final _$bs = bs.reference;
     return _echoNullableObject(
       _$$selfRef.pointer,
       _id_echoNullableObject.pointer,
-      _$object.pointer,
-    ).object<jni$_.JObject?>();
+      _$bs.pointer,
+    ).object<jni$_.JByteArray?>();
   }
 
   static final _id_echoNullableList = NativeInteropHostIntegrationCoreApiRegistrar._class
-      .instanceMethodId(r'echoNullableList', r'(Ljava/util/List;)Ljava/util/List;');
+      .instanceMethodId(r'echoNullableList', r'([B)[B');
 
   static final _echoNullableList =
       jni$_.ProtectedJniExtensions.lookup<
@@ -2242,20 +2162,20 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
             )
           >();
 
-  /// from: `public fun echoNullableList(aNullableList: kotlin.collections.List<kotlin.Any?>?): kotlin.collections.List<kotlin.Any?>?`
+  /// from: `public fun echoNullableList(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
   /// The returned object must be released after use, by calling the [release] method.
-  jni$_.JList<jni$_.JObject?>? echoNullableList(jni$_.JList<jni$_.JObject?>? list) {
+  jni$_.JByteArray? echoNullableList(jni$_.JByteArray bs) {
     final _$$selfRef = reference;
-    final _$list = list?.reference ?? jni$_.jNullReference;
+    final _$bs = bs.reference;
     return _echoNullableList(
       _$$selfRef.pointer,
       _id_echoNullableList.pointer,
-      _$list.pointer,
-    ).object<jni$_.JList<jni$_.JObject?>?>();
+      _$bs.pointer,
+    ).object<jni$_.JByteArray?>();
   }
 
   static final _id_echoNullableEnumList = NativeInteropHostIntegrationCoreApiRegistrar._class
-      .instanceMethodId(r'echoNullableEnumList', r'(Ljava/util/List;)Ljava/util/List;');
+      .instanceMethodId(r'echoNullableEnumList', r'([B)[B');
 
   static final _echoNullableEnumList =
       jni$_.ProtectedJniExtensions.lookup<
@@ -2275,20 +2195,20 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
             )
           >();
 
-  /// from: `public fun echoNullableEnumList(enumList: kotlin.collections.List<com.example.test_plugin.NativeInteropAnEnum?>?): kotlin.collections.List<com.example.test_plugin.NativeInteropAnEnum?>?`
+  /// from: `public fun echoNullableEnumList(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
   /// The returned object must be released after use, by calling the [release] method.
-  jni$_.JList<NativeInteropAnEnum?>? echoNullableEnumList(jni$_.JList<NativeInteropAnEnum?>? list) {
+  jni$_.JByteArray? echoNullableEnumList(jni$_.JByteArray bs) {
     final _$$selfRef = reference;
-    final _$list = list?.reference ?? jni$_.jNullReference;
+    final _$bs = bs.reference;
     return _echoNullableEnumList(
       _$$selfRef.pointer,
       _id_echoNullableEnumList.pointer,
-      _$list.pointer,
-    ).object<jni$_.JList<NativeInteropAnEnum?>?>();
+      _$bs.pointer,
+    ).object<jni$_.JByteArray?>();
   }
 
   static final _id_echoNullableClassList = NativeInteropHostIntegrationCoreApiRegistrar._class
-      .instanceMethodId(r'echoNullableClassList', r'(Ljava/util/List;)Ljava/util/List;');
+      .instanceMethodId(r'echoNullableClassList', r'([B)[B');
 
   static final _echoNullableClassList =
       jni$_.ProtectedJniExtensions.lookup<
@@ -2308,22 +2228,20 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
             )
           >();
 
-  /// from: `public fun echoNullableClassList(classList: kotlin.collections.List<com.example.test_plugin.NativeInteropAllNullableTypes?>?): kotlin.collections.List<com.example.test_plugin.NativeInteropAllNullableTypes?>?`
+  /// from: `public fun echoNullableClassList(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
   /// The returned object must be released after use, by calling the [release] method.
-  jni$_.JList<NativeInteropAllNullableTypes?>? echoNullableClassList(
-    jni$_.JList<NativeInteropAllNullableTypes?>? list,
-  ) {
+  jni$_.JByteArray? echoNullableClassList(jni$_.JByteArray bs) {
     final _$$selfRef = reference;
-    final _$list = list?.reference ?? jni$_.jNullReference;
+    final _$bs = bs.reference;
     return _echoNullableClassList(
       _$$selfRef.pointer,
       _id_echoNullableClassList.pointer,
-      _$list.pointer,
-    ).object<jni$_.JList<NativeInteropAllNullableTypes?>?>();
+      _$bs.pointer,
+    ).object<jni$_.JByteArray?>();
   }
 
   static final _id_echoNullableNonNullEnumList = NativeInteropHostIntegrationCoreApiRegistrar._class
-      .instanceMethodId(r'echoNullableNonNullEnumList', r'(Ljava/util/List;)Ljava/util/List;');
+      .instanceMethodId(r'echoNullableNonNullEnumList', r'([B)[B');
 
   static final _echoNullableNonNullEnumList =
       jni$_.ProtectedJniExtensions.lookup<
@@ -2343,23 +2261,21 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
             )
           >();
 
-  /// from: `public fun echoNullableNonNullEnumList(enumList: kotlin.collections.List<com.example.test_plugin.NativeInteropAnEnum>?): kotlin.collections.List<com.example.test_plugin.NativeInteropAnEnum>?`
+  /// from: `public fun echoNullableNonNullEnumList(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
   /// The returned object must be released after use, by calling the [release] method.
-  jni$_.JList<NativeInteropAnEnum>? echoNullableNonNullEnumList(
-    jni$_.JList<NativeInteropAnEnum>? list,
-  ) {
+  jni$_.JByteArray? echoNullableNonNullEnumList(jni$_.JByteArray bs) {
     final _$$selfRef = reference;
-    final _$list = list?.reference ?? jni$_.jNullReference;
+    final _$bs = bs.reference;
     return _echoNullableNonNullEnumList(
       _$$selfRef.pointer,
       _id_echoNullableNonNullEnumList.pointer,
-      _$list.pointer,
-    ).object<jni$_.JList<NativeInteropAnEnum>?>();
+      _$bs.pointer,
+    ).object<jni$_.JByteArray?>();
   }
 
   static final _id_echoNullableNonNullClassList = NativeInteropHostIntegrationCoreApiRegistrar
       ._class
-      .instanceMethodId(r'echoNullableNonNullClassList', r'(Ljava/util/List;)Ljava/util/List;');
+      .instanceMethodId(r'echoNullableNonNullClassList', r'([B)[B');
 
   static final _echoNullableNonNullClassList =
       jni$_.ProtectedJniExtensions.lookup<
@@ -2379,22 +2295,20 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
             )
           >();
 
-  /// from: `public fun echoNullableNonNullClassList(classList: kotlin.collections.List<com.example.test_plugin.NativeInteropAllNullableTypes>?): kotlin.collections.List<com.example.test_plugin.NativeInteropAllNullableTypes>?`
+  /// from: `public fun echoNullableNonNullClassList(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
   /// The returned object must be released after use, by calling the [release] method.
-  jni$_.JList<NativeInteropAllNullableTypes>? echoNullableNonNullClassList(
-    jni$_.JList<NativeInteropAllNullableTypes>? list,
-  ) {
+  jni$_.JByteArray? echoNullableNonNullClassList(jni$_.JByteArray bs) {
     final _$$selfRef = reference;
-    final _$list = list?.reference ?? jni$_.jNullReference;
+    final _$bs = bs.reference;
     return _echoNullableNonNullClassList(
       _$$selfRef.pointer,
       _id_echoNullableNonNullClassList.pointer,
-      _$list.pointer,
-    ).object<jni$_.JList<NativeInteropAllNullableTypes>?>();
+      _$bs.pointer,
+    ).object<jni$_.JByteArray?>();
   }
 
   static final _id_echoNullableMap = NativeInteropHostIntegrationCoreApiRegistrar._class
-      .instanceMethodId(r'echoNullableMap', r'(Ljava/util/Map;)Ljava/util/Map;');
+      .instanceMethodId(r'echoNullableMap', r'([B)[B');
 
   static final _echoNullableMap =
       jni$_.ProtectedJniExtensions.lookup<
@@ -2414,22 +2328,20 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
             )
           >();
 
-  /// from: `public fun echoNullableMap(map: kotlin.collections.Map<kotlin.Any?, kotlin.Any?>?): kotlin.collections.Map<kotlin.Any?, kotlin.Any?>?`
+  /// from: `public fun echoNullableMap(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
   /// The returned object must be released after use, by calling the [release] method.
-  jni$_.JMap<jni$_.JObject?, jni$_.JObject?>? echoNullableMap(
-    jni$_.JMap<jni$_.JObject?, jni$_.JObject?>? map,
-  ) {
+  jni$_.JByteArray? echoNullableMap(jni$_.JByteArray bs) {
     final _$$selfRef = reference;
-    final _$map = map?.reference ?? jni$_.jNullReference;
+    final _$bs = bs.reference;
     return _echoNullableMap(
       _$$selfRef.pointer,
       _id_echoNullableMap.pointer,
-      _$map.pointer,
-    ).object<jni$_.JMap<jni$_.JObject?, jni$_.JObject?>?>();
+      _$bs.pointer,
+    ).object<jni$_.JByteArray?>();
   }
 
   static final _id_echoNullableStringMap = NativeInteropHostIntegrationCoreApiRegistrar._class
-      .instanceMethodId(r'echoNullableStringMap', r'(Ljava/util/Map;)Ljava/util/Map;');
+      .instanceMethodId(r'echoNullableStringMap', r'([B)[B');
 
   static final _echoNullableStringMap =
       jni$_.ProtectedJniExtensions.lookup<
@@ -2449,22 +2361,20 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
             )
           >();
 
-  /// from: `public fun echoNullableStringMap(stringMap: kotlin.collections.Map<kotlin.String?, kotlin.String?>?): kotlin.collections.Map<kotlin.String?, kotlin.String?>?`
+  /// from: `public fun echoNullableStringMap(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
   /// The returned object must be released after use, by calling the [release] method.
-  jni$_.JMap<jni$_.JString?, jni$_.JString?>? echoNullableStringMap(
-    jni$_.JMap<jni$_.JString?, jni$_.JString?>? map,
-  ) {
+  jni$_.JByteArray? echoNullableStringMap(jni$_.JByteArray bs) {
     final _$$selfRef = reference;
-    final _$map = map?.reference ?? jni$_.jNullReference;
+    final _$bs = bs.reference;
     return _echoNullableStringMap(
       _$$selfRef.pointer,
       _id_echoNullableStringMap.pointer,
-      _$map.pointer,
-    ).object<jni$_.JMap<jni$_.JString?, jni$_.JString?>?>();
+      _$bs.pointer,
+    ).object<jni$_.JByteArray?>();
   }
 
   static final _id_echoNullableIntMap = NativeInteropHostIntegrationCoreApiRegistrar._class
-      .instanceMethodId(r'echoNullableIntMap', r'(Ljava/util/Map;)Ljava/util/Map;');
+      .instanceMethodId(r'echoNullableIntMap', r'([B)[B');
 
   static final _echoNullableIntMap =
       jni$_.ProtectedJniExtensions.lookup<
@@ -2484,22 +2394,20 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
             )
           >();
 
-  /// from: `public fun echoNullableIntMap(intMap: kotlin.collections.Map<kotlin.Long?, kotlin.Long?>?): kotlin.collections.Map<kotlin.Long?, kotlin.Long?>?`
+  /// from: `public fun echoNullableIntMap(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
   /// The returned object must be released after use, by calling the [release] method.
-  jni$_.JMap<jni$_.JLong?, jni$_.JLong?>? echoNullableIntMap(
-    jni$_.JMap<jni$_.JLong?, jni$_.JLong?>? map,
-  ) {
+  jni$_.JByteArray? echoNullableIntMap(jni$_.JByteArray bs) {
     final _$$selfRef = reference;
-    final _$map = map?.reference ?? jni$_.jNullReference;
+    final _$bs = bs.reference;
     return _echoNullableIntMap(
       _$$selfRef.pointer,
       _id_echoNullableIntMap.pointer,
-      _$map.pointer,
-    ).object<jni$_.JMap<jni$_.JLong?, jni$_.JLong?>?>();
+      _$bs.pointer,
+    ).object<jni$_.JByteArray?>();
   }
 
   static final _id_echoNullableEnumMap = NativeInteropHostIntegrationCoreApiRegistrar._class
-      .instanceMethodId(r'echoNullableEnumMap', r'(Ljava/util/Map;)Ljava/util/Map;');
+      .instanceMethodId(r'echoNullableEnumMap', r'([B)[B');
 
   static final _echoNullableEnumMap =
       jni$_.ProtectedJniExtensions.lookup<
@@ -2519,22 +2427,20 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
             )
           >();
 
-  /// from: `public fun echoNullableEnumMap(enumMap: kotlin.collections.Map<com.example.test_plugin.NativeInteropAnEnum?, com.example.test_plugin.NativeInteropAnEnum?>?): kotlin.collections.Map<com.example.test_plugin.NativeInteropAnEnum?, com.example.test_plugin.NativeInteropAnEnum?>?`
+  /// from: `public fun echoNullableEnumMap(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
   /// The returned object must be released after use, by calling the [release] method.
-  jni$_.JMap<NativeInteropAnEnum?, NativeInteropAnEnum?>? echoNullableEnumMap(
-    jni$_.JMap<NativeInteropAnEnum?, NativeInteropAnEnum?>? map,
-  ) {
+  jni$_.JByteArray? echoNullableEnumMap(jni$_.JByteArray bs) {
     final _$$selfRef = reference;
-    final _$map = map?.reference ?? jni$_.jNullReference;
+    final _$bs = bs.reference;
     return _echoNullableEnumMap(
       _$$selfRef.pointer,
       _id_echoNullableEnumMap.pointer,
-      _$map.pointer,
-    ).object<jni$_.JMap<NativeInteropAnEnum?, NativeInteropAnEnum?>?>();
+      _$bs.pointer,
+    ).object<jni$_.JByteArray?>();
   }
 
   static final _id_echoNullableClassMap = NativeInteropHostIntegrationCoreApiRegistrar._class
-      .instanceMethodId(r'echoNullableClassMap', r'(Ljava/util/Map;)Ljava/util/Map;');
+      .instanceMethodId(r'echoNullableClassMap', r'([B)[B');
 
   static final _echoNullableClassMap =
       jni$_.ProtectedJniExtensions.lookup<
@@ -2554,23 +2460,21 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
             )
           >();
 
-  /// from: `public fun echoNullableClassMap(classMap: kotlin.collections.Map<kotlin.Long?, com.example.test_plugin.NativeInteropAllNullableTypes?>?): kotlin.collections.Map<kotlin.Long?, com.example.test_plugin.NativeInteropAllNullableTypes?>?`
+  /// from: `public fun echoNullableClassMap(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
   /// The returned object must be released after use, by calling the [release] method.
-  jni$_.JMap<jni$_.JLong?, NativeInteropAllNullableTypes?>? echoNullableClassMap(
-    jni$_.JMap<jni$_.JLong?, NativeInteropAllNullableTypes?>? map,
-  ) {
+  jni$_.JByteArray? echoNullableClassMap(jni$_.JByteArray bs) {
     final _$$selfRef = reference;
-    final _$map = map?.reference ?? jni$_.jNullReference;
+    final _$bs = bs.reference;
     return _echoNullableClassMap(
       _$$selfRef.pointer,
       _id_echoNullableClassMap.pointer,
-      _$map.pointer,
-    ).object<jni$_.JMap<jni$_.JLong?, NativeInteropAllNullableTypes?>?>();
+      _$bs.pointer,
+    ).object<jni$_.JByteArray?>();
   }
 
   static final _id_echoNullableNonNullStringMap = NativeInteropHostIntegrationCoreApiRegistrar
       ._class
-      .instanceMethodId(r'echoNullableNonNullStringMap', r'(Ljava/util/Map;)Ljava/util/Map;');
+      .instanceMethodId(r'echoNullableNonNullStringMap', r'([B)[B');
 
   static final _echoNullableNonNullStringMap =
       jni$_.ProtectedJniExtensions.lookup<
@@ -2590,22 +2494,20 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
             )
           >();
 
-  /// from: `public fun echoNullableNonNullStringMap(stringMap: kotlin.collections.Map<kotlin.String, kotlin.String>?): kotlin.collections.Map<kotlin.String, kotlin.String>?`
+  /// from: `public fun echoNullableNonNullStringMap(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
   /// The returned object must be released after use, by calling the [release] method.
-  jni$_.JMap<jni$_.JString, jni$_.JString>? echoNullableNonNullStringMap(
-    jni$_.JMap<jni$_.JString, jni$_.JString>? map,
-  ) {
+  jni$_.JByteArray? echoNullableNonNullStringMap(jni$_.JByteArray bs) {
     final _$$selfRef = reference;
-    final _$map = map?.reference ?? jni$_.jNullReference;
+    final _$bs = bs.reference;
     return _echoNullableNonNullStringMap(
       _$$selfRef.pointer,
       _id_echoNullableNonNullStringMap.pointer,
-      _$map.pointer,
-    ).object<jni$_.JMap<jni$_.JString, jni$_.JString>?>();
+      _$bs.pointer,
+    ).object<jni$_.JByteArray?>();
   }
 
   static final _id_echoNullableNonNullIntMap = NativeInteropHostIntegrationCoreApiRegistrar._class
-      .instanceMethodId(r'echoNullableNonNullIntMap', r'(Ljava/util/Map;)Ljava/util/Map;');
+      .instanceMethodId(r'echoNullableNonNullIntMap', r'([B)[B');
 
   static final _echoNullableNonNullIntMap =
       jni$_.ProtectedJniExtensions.lookup<
@@ -2625,22 +2527,20 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
             )
           >();
 
-  /// from: `public fun echoNullableNonNullIntMap(intMap: kotlin.collections.Map<kotlin.Long, kotlin.Long>?): kotlin.collections.Map<kotlin.Long, kotlin.Long>?`
+  /// from: `public fun echoNullableNonNullIntMap(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
   /// The returned object must be released after use, by calling the [release] method.
-  jni$_.JMap<jni$_.JLong, jni$_.JLong>? echoNullableNonNullIntMap(
-    jni$_.JMap<jni$_.JLong, jni$_.JLong>? map,
-  ) {
+  jni$_.JByteArray? echoNullableNonNullIntMap(jni$_.JByteArray bs) {
     final _$$selfRef = reference;
-    final _$map = map?.reference ?? jni$_.jNullReference;
+    final _$bs = bs.reference;
     return _echoNullableNonNullIntMap(
       _$$selfRef.pointer,
       _id_echoNullableNonNullIntMap.pointer,
-      _$map.pointer,
-    ).object<jni$_.JMap<jni$_.JLong, jni$_.JLong>?>();
+      _$bs.pointer,
+    ).object<jni$_.JByteArray?>();
   }
 
   static final _id_echoNullableNonNullEnumMap = NativeInteropHostIntegrationCoreApiRegistrar._class
-      .instanceMethodId(r'echoNullableNonNullEnumMap', r'(Ljava/util/Map;)Ljava/util/Map;');
+      .instanceMethodId(r'echoNullableNonNullEnumMap', r'([B)[B');
 
   static final _echoNullableNonNullEnumMap =
       jni$_.ProtectedJniExtensions.lookup<
@@ -2660,22 +2560,20 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
             )
           >();
 
-  /// from: `public fun echoNullableNonNullEnumMap(enumMap: kotlin.collections.Map<com.example.test_plugin.NativeInteropAnEnum, com.example.test_plugin.NativeInteropAnEnum>?): kotlin.collections.Map<com.example.test_plugin.NativeInteropAnEnum, com.example.test_plugin.NativeInteropAnEnum>?`
+  /// from: `public fun echoNullableNonNullEnumMap(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
   /// The returned object must be released after use, by calling the [release] method.
-  jni$_.JMap<NativeInteropAnEnum, NativeInteropAnEnum>? echoNullableNonNullEnumMap(
-    jni$_.JMap<NativeInteropAnEnum, NativeInteropAnEnum>? map,
-  ) {
+  jni$_.JByteArray? echoNullableNonNullEnumMap(jni$_.JByteArray bs) {
     final _$$selfRef = reference;
-    final _$map = map?.reference ?? jni$_.jNullReference;
+    final _$bs = bs.reference;
     return _echoNullableNonNullEnumMap(
       _$$selfRef.pointer,
       _id_echoNullableNonNullEnumMap.pointer,
-      _$map.pointer,
-    ).object<jni$_.JMap<NativeInteropAnEnum, NativeInteropAnEnum>?>();
+      _$bs.pointer,
+    ).object<jni$_.JByteArray?>();
   }
 
   static final _id_echoNullableNonNullClassMap = NativeInteropHostIntegrationCoreApiRegistrar._class
-      .instanceMethodId(r'echoNullableNonNullClassMap', r'(Ljava/util/Map;)Ljava/util/Map;');
+      .instanceMethodId(r'echoNullableNonNullClassMap', r'([B)[B');
 
   static final _echoNullableNonNullClassMap =
       jni$_.ProtectedJniExtensions.lookup<
@@ -2695,25 +2593,20 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
             )
           >();
 
-  /// from: `public fun echoNullableNonNullClassMap(classMap: kotlin.collections.Map<kotlin.Long, com.example.test_plugin.NativeInteropAllNullableTypes>?): kotlin.collections.Map<kotlin.Long, com.example.test_plugin.NativeInteropAllNullableTypes>?`
+  /// from: `public fun echoNullableNonNullClassMap(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
   /// The returned object must be released after use, by calling the [release] method.
-  jni$_.JMap<jni$_.JLong, NativeInteropAllNullableTypes>? echoNullableNonNullClassMap(
-    jni$_.JMap<jni$_.JLong, NativeInteropAllNullableTypes>? map,
-  ) {
+  jni$_.JByteArray? echoNullableNonNullClassMap(jni$_.JByteArray bs) {
     final _$$selfRef = reference;
-    final _$map = map?.reference ?? jni$_.jNullReference;
+    final _$bs = bs.reference;
     return _echoNullableNonNullClassMap(
       _$$selfRef.pointer,
       _id_echoNullableNonNullClassMap.pointer,
-      _$map.pointer,
-    ).object<jni$_.JMap<jni$_.JLong, NativeInteropAllNullableTypes>?>();
+      _$bs.pointer,
+    ).object<jni$_.JByteArray?>();
   }
 
   static final _id_echoNullableEnum = NativeInteropHostIntegrationCoreApiRegistrar._class
-      .instanceMethodId(
-        r'echoNullableEnum',
-        r'(Lcom/example/test_plugin/NativeInteropAnEnum;)Lcom/example/test_plugin/NativeInteropAnEnum;',
-      );
+      .instanceMethodId(r'echoNullableEnum', r'(J)J');
 
   static final _echoNullableEnum =
       jni$_.ProtectedJniExtensions.lookup<
@@ -2721,35 +2614,22 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
               jni$_.JniResult Function(
                 jni$_.Pointer<jni$_.Void>,
                 jni$_.JMethodIDPtr,
-                jni$_.VarArgs<(jni$_.Pointer<jni$_.Void>,)>,
+                jni$_.VarArgs<(jni$_.Int64,)>,
               )
             >
-          >('globalEnv_CallObjectMethod')
+          >('globalEnv_CallLongMethod')
           .asFunction<
-            jni$_.JniResult Function(
-              jni$_.Pointer<jni$_.Void>,
-              jni$_.JMethodIDPtr,
-              jni$_.Pointer<jni$_.Void>,
-            )
+            jni$_.JniResult Function(jni$_.Pointer<jni$_.Void>, jni$_.JMethodIDPtr, core$_.int)
           >();
 
-  /// from: `public fun echoNullableEnum(anEnum: com.example.test_plugin.NativeInteropAnEnum?): com.example.test_plugin.NativeInteropAnEnum?`
-  /// The returned object must be released after use, by calling the [release] method.
-  NativeInteropAnEnum? echoNullableEnum(NativeInteropAnEnum? nativeInteropAnEnum) {
+  /// from: `public fun echoNullableEnum(anEnum: kotlin.Long): kotlin.Long`
+  core$_.int echoNullableEnum(core$_.int j) {
     final _$$selfRef = reference;
-    final _$nativeInteropAnEnum = nativeInteropAnEnum?.reference ?? jni$_.jNullReference;
-    return _echoNullableEnum(
-      _$$selfRef.pointer,
-      _id_echoNullableEnum.pointer,
-      _$nativeInteropAnEnum.pointer,
-    ).object<NativeInteropAnEnum?>();
+    return _echoNullableEnum(_$$selfRef.pointer, _id_echoNullableEnum.pointer, j).long;
   }
 
   static final _id_echoAnotherNullableEnum = NativeInteropHostIntegrationCoreApiRegistrar._class
-      .instanceMethodId(
-        r'echoAnotherNullableEnum',
-        r'(Lcom/example/test_plugin/NativeInteropAnotherEnum;)Lcom/example/test_plugin/NativeInteropAnotherEnum;',
-      );
+      .instanceMethodId(r'echoAnotherNullableEnum', r'(J)J');
 
   static final _echoAnotherNullableEnum =
       jni$_.ProtectedJniExtensions.lookup<
@@ -2757,30 +2637,22 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
               jni$_.JniResult Function(
                 jni$_.Pointer<jni$_.Void>,
                 jni$_.JMethodIDPtr,
-                jni$_.VarArgs<(jni$_.Pointer<jni$_.Void>,)>,
+                jni$_.VarArgs<(jni$_.Int64,)>,
               )
             >
-          >('globalEnv_CallObjectMethod')
+          >('globalEnv_CallLongMethod')
           .asFunction<
-            jni$_.JniResult Function(
-              jni$_.Pointer<jni$_.Void>,
-              jni$_.JMethodIDPtr,
-              jni$_.Pointer<jni$_.Void>,
-            )
+            jni$_.JniResult Function(jni$_.Pointer<jni$_.Void>, jni$_.JMethodIDPtr, core$_.int)
           >();
 
-  /// from: `public fun echoAnotherNullableEnum(anotherEnum: com.example.test_plugin.NativeInteropAnotherEnum?): com.example.test_plugin.NativeInteropAnotherEnum?`
-  /// The returned object must be released after use, by calling the [release] method.
-  NativeInteropAnotherEnum? echoAnotherNullableEnum(
-    NativeInteropAnotherEnum? nativeInteropAnotherEnum,
-  ) {
+  /// from: `public fun echoAnotherNullableEnum(anotherEnum: kotlin.Long): kotlin.Long`
+  core$_.int echoAnotherNullableEnum(core$_.int j) {
     final _$$selfRef = reference;
-    final _$nativeInteropAnotherEnum = nativeInteropAnotherEnum?.reference ?? jni$_.jNullReference;
     return _echoAnotherNullableEnum(
       _$$selfRef.pointer,
       _id_echoAnotherNullableEnum.pointer,
-      _$nativeInteropAnotherEnum.pointer,
-    ).object<NativeInteropAnotherEnum?>();
+      j,
+    ).long;
   }
 
   static final _id_echoOptionalNullableInt = NativeInteropHostIntegrationCoreApiRegistrar._class
@@ -3352,7 +3224,7 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
   static final _id_echoAsyncObject = NativeInteropHostIntegrationCoreApiRegistrar._class
       .instanceMethodId(
         r'echoAsyncObject',
-        r'(Ljava/lang/Object;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;',
+        r'([BLkotlin/coroutines/Continuation;)Ljava/lang/Object;',
       );
 
   static final _echoAsyncObject =
@@ -3374,28 +3246,30 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
             )
           >();
 
-  /// from: `public suspend fun echoAsyncObject(anObject: kotlin.Any): kotlin.Any`
+  /// from: `public suspend fun echoAsyncObject(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
   /// The returned object must be released after use, by calling the [release] method.
-  core$_.Future<jni$_.JObject> echoAsyncObject(jni$_.JObject object) async {
+  core$_.Future<jni$_.JByteArray?> echoAsyncObject(jni$_.JByteArray bs) async {
     final $p = jni$_.ReceivePort();
     final _$continuation = jni$_.ProtectedJniExtensions.newPortContinuation($p);
     final _$$selfRef = reference;
-    final _$object = object.reference;
+    final _$bs = bs.reference;
     final $r = _echoAsyncObject(
       _$$selfRef.pointer,
       _id_echoAsyncObject.pointer,
-      _$object.pointer,
+      _$bs.pointer,
       _$continuation.pointer,
-    ).object<jni$_.JObject>();
+    ).object<jni$_.JObject?>();
     _$continuation.release();
-    jni$_.JObject $o;
-    if ($r.isInstanceOf(jni$_.coroutineSingletonsClass)) {
+    jni$_.JObject? $o;
+    if ($r != null && $r.isInstanceOf(jni$_.coroutineSingletonsClass)) {
       $r.release();
       final $a = await $p.first;
-      $o = jni$_.JObject.fromReference(jni$_.JGlobalReference(jni$_.JObjectPtr.fromAddress($a)));
-      if ($o.isInstanceOf(jni$_.result$Class)) {
+      $o = $a == 0
+          ? null
+          : jni$_.JObject.fromReference(jni$_.JGlobalReference(jni$_.JObjectPtr.fromAddress($a)));
+      if ($o != null && $o.isInstanceOf(jni$_.result$Class)) {
         $o = jni$_.resultValueField.get($o, const jni$_.$JObject$Type$());
-      } else if ($o.isInstanceOf(jni$_.result$FailureClass)) {
+      } else if ($o != null && $o.isInstanceOf(jni$_.result$FailureClass)) {
         final $e = jni$_.failureExceptionField.get($o, const jni$_.$JObject$Type$());
         $o.release();
         jni$_.Jni.throwException($e.reference.toPointer());
@@ -3403,13 +3277,13 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
     } else {
       $o = $r;
     }
-    return $o.as<jni$_.JObject>(const jni$_.$JObject$Type$(), releaseOriginal: true);
+    return $o?.as<jni$_.JByteArray>(jni$_.JByteArray.type, releaseOriginal: true);
   }
 
   static final _id_echoAsyncList = NativeInteropHostIntegrationCoreApiRegistrar._class
       .instanceMethodId(
         r'echoAsyncList',
-        r'(Ljava/util/List;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;',
+        r'([BLkotlin/coroutines/Continuation;)Ljava/lang/Object;',
       );
 
   static final _echoAsyncList =
@@ -3431,28 +3305,30 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
             )
           >();
 
-  /// from: `public suspend fun echoAsyncList(list: kotlin.collections.List<kotlin.Any?>): kotlin.collections.List<kotlin.Any?>`
+  /// from: `public suspend fun echoAsyncList(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
   /// The returned object must be released after use, by calling the [release] method.
-  core$_.Future<jni$_.JList<jni$_.JObject?>> echoAsyncList(jni$_.JList<jni$_.JObject?> list) async {
+  core$_.Future<jni$_.JByteArray?> echoAsyncList(jni$_.JByteArray bs) async {
     final $p = jni$_.ReceivePort();
     final _$continuation = jni$_.ProtectedJniExtensions.newPortContinuation($p);
     final _$$selfRef = reference;
-    final _$list = list.reference;
+    final _$bs = bs.reference;
     final $r = _echoAsyncList(
       _$$selfRef.pointer,
       _id_echoAsyncList.pointer,
-      _$list.pointer,
+      _$bs.pointer,
       _$continuation.pointer,
-    ).object<jni$_.JObject>();
+    ).object<jni$_.JObject?>();
     _$continuation.release();
-    jni$_.JObject $o;
-    if ($r.isInstanceOf(jni$_.coroutineSingletonsClass)) {
+    jni$_.JObject? $o;
+    if ($r != null && $r.isInstanceOf(jni$_.coroutineSingletonsClass)) {
       $r.release();
       final $a = await $p.first;
-      $o = jni$_.JObject.fromReference(jni$_.JGlobalReference(jni$_.JObjectPtr.fromAddress($a)));
-      if ($o.isInstanceOf(jni$_.result$Class)) {
+      $o = $a == 0
+          ? null
+          : jni$_.JObject.fromReference(jni$_.JGlobalReference(jni$_.JObjectPtr.fromAddress($a)));
+      if ($o != null && $o.isInstanceOf(jni$_.result$Class)) {
         $o = jni$_.resultValueField.get($o, const jni$_.$JObject$Type$());
-      } else if ($o.isInstanceOf(jni$_.result$FailureClass)) {
+      } else if ($o != null && $o.isInstanceOf(jni$_.result$FailureClass)) {
         final $e = jni$_.failureExceptionField.get($o, const jni$_.$JObject$Type$());
         $o.release();
         jni$_.Jni.throwException($e.reference.toPointer());
@@ -3460,14 +3336,13 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
     } else {
       $o = $r;
     }
-    return $o.as<jni$_.JList>(jni$_.JList.type, releaseOriginal: true)
-        as jni$_.JList<jni$_.JObject?>;
+    return $o?.as<jni$_.JByteArray>(jni$_.JByteArray.type, releaseOriginal: true);
   }
 
   static final _id_echoAsyncEnumList = NativeInteropHostIntegrationCoreApiRegistrar._class
       .instanceMethodId(
         r'echoAsyncEnumList',
-        r'(Ljava/util/List;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;',
+        r'([BLkotlin/coroutines/Continuation;)Ljava/lang/Object;',
       );
 
   static final _echoAsyncEnumList =
@@ -3489,30 +3364,30 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
             )
           >();
 
-  /// from: `public suspend fun echoAsyncEnumList(enumList: kotlin.collections.List<com.example.test_plugin.NativeInteropAnEnum?>): kotlin.collections.List<com.example.test_plugin.NativeInteropAnEnum?>`
+  /// from: `public suspend fun echoAsyncEnumList(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
   /// The returned object must be released after use, by calling the [release] method.
-  core$_.Future<jni$_.JList<NativeInteropAnEnum?>> echoAsyncEnumList(
-    jni$_.JList<NativeInteropAnEnum?> list,
-  ) async {
+  core$_.Future<jni$_.JByteArray?> echoAsyncEnumList(jni$_.JByteArray bs) async {
     final $p = jni$_.ReceivePort();
     final _$continuation = jni$_.ProtectedJniExtensions.newPortContinuation($p);
     final _$$selfRef = reference;
-    final _$list = list.reference;
+    final _$bs = bs.reference;
     final $r = _echoAsyncEnumList(
       _$$selfRef.pointer,
       _id_echoAsyncEnumList.pointer,
-      _$list.pointer,
+      _$bs.pointer,
       _$continuation.pointer,
-    ).object<jni$_.JObject>();
+    ).object<jni$_.JObject?>();
     _$continuation.release();
-    jni$_.JObject $o;
-    if ($r.isInstanceOf(jni$_.coroutineSingletonsClass)) {
+    jni$_.JObject? $o;
+    if ($r != null && $r.isInstanceOf(jni$_.coroutineSingletonsClass)) {
       $r.release();
       final $a = await $p.first;
-      $o = jni$_.JObject.fromReference(jni$_.JGlobalReference(jni$_.JObjectPtr.fromAddress($a)));
-      if ($o.isInstanceOf(jni$_.result$Class)) {
+      $o = $a == 0
+          ? null
+          : jni$_.JObject.fromReference(jni$_.JGlobalReference(jni$_.JObjectPtr.fromAddress($a)));
+      if ($o != null && $o.isInstanceOf(jni$_.result$Class)) {
         $o = jni$_.resultValueField.get($o, const jni$_.$JObject$Type$());
-      } else if ($o.isInstanceOf(jni$_.result$FailureClass)) {
+      } else if ($o != null && $o.isInstanceOf(jni$_.result$FailureClass)) {
         final $e = jni$_.failureExceptionField.get($o, const jni$_.$JObject$Type$());
         $o.release();
         jni$_.Jni.throwException($e.reference.toPointer());
@@ -3520,14 +3395,13 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
     } else {
       $o = $r;
     }
-    return $o.as<jni$_.JList>(jni$_.JList.type, releaseOriginal: true)
-        as jni$_.JList<NativeInteropAnEnum?>;
+    return $o?.as<jni$_.JByteArray>(jni$_.JByteArray.type, releaseOriginal: true);
   }
 
   static final _id_echoAsyncClassList = NativeInteropHostIntegrationCoreApiRegistrar._class
       .instanceMethodId(
         r'echoAsyncClassList',
-        r'(Ljava/util/List;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;',
+        r'([BLkotlin/coroutines/Continuation;)Ljava/lang/Object;',
       );
 
   static final _echoAsyncClassList =
@@ -3549,30 +3423,30 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
             )
           >();
 
-  /// from: `public suspend fun echoAsyncClassList(classList: kotlin.collections.List<com.example.test_plugin.NativeInteropAllNullableTypes?>): kotlin.collections.List<com.example.test_plugin.NativeInteropAllNullableTypes?>`
+  /// from: `public suspend fun echoAsyncClassList(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
   /// The returned object must be released after use, by calling the [release] method.
-  core$_.Future<jni$_.JList<NativeInteropAllNullableTypes?>> echoAsyncClassList(
-    jni$_.JList<NativeInteropAllNullableTypes?> list,
-  ) async {
+  core$_.Future<jni$_.JByteArray?> echoAsyncClassList(jni$_.JByteArray bs) async {
     final $p = jni$_.ReceivePort();
     final _$continuation = jni$_.ProtectedJniExtensions.newPortContinuation($p);
     final _$$selfRef = reference;
-    final _$list = list.reference;
+    final _$bs = bs.reference;
     final $r = _echoAsyncClassList(
       _$$selfRef.pointer,
       _id_echoAsyncClassList.pointer,
-      _$list.pointer,
+      _$bs.pointer,
       _$continuation.pointer,
-    ).object<jni$_.JObject>();
+    ).object<jni$_.JObject?>();
     _$continuation.release();
-    jni$_.JObject $o;
-    if ($r.isInstanceOf(jni$_.coroutineSingletonsClass)) {
+    jni$_.JObject? $o;
+    if ($r != null && $r.isInstanceOf(jni$_.coroutineSingletonsClass)) {
       $r.release();
       final $a = await $p.first;
-      $o = jni$_.JObject.fromReference(jni$_.JGlobalReference(jni$_.JObjectPtr.fromAddress($a)));
-      if ($o.isInstanceOf(jni$_.result$Class)) {
+      $o = $a == 0
+          ? null
+          : jni$_.JObject.fromReference(jni$_.JGlobalReference(jni$_.JObjectPtr.fromAddress($a)));
+      if ($o != null && $o.isInstanceOf(jni$_.result$Class)) {
         $o = jni$_.resultValueField.get($o, const jni$_.$JObject$Type$());
-      } else if ($o.isInstanceOf(jni$_.result$FailureClass)) {
+      } else if ($o != null && $o.isInstanceOf(jni$_.result$FailureClass)) {
         final $e = jni$_.failureExceptionField.get($o, const jni$_.$JObject$Type$());
         $o.release();
         jni$_.Jni.throwException($e.reference.toPointer());
@@ -3580,15 +3454,11 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
     } else {
       $o = $r;
     }
-    return $o.as<jni$_.JList>(jni$_.JList.type, releaseOriginal: true)
-        as jni$_.JList<NativeInteropAllNullableTypes?>;
+    return $o?.as<jni$_.JByteArray>(jni$_.JByteArray.type, releaseOriginal: true);
   }
 
   static final _id_echoAsyncMap = NativeInteropHostIntegrationCoreApiRegistrar._class
-      .instanceMethodId(
-        r'echoAsyncMap',
-        r'(Ljava/util/Map;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;',
-      );
+      .instanceMethodId(r'echoAsyncMap', r'([BLkotlin/coroutines/Continuation;)Ljava/lang/Object;');
 
   static final _echoAsyncMap =
       jni$_.ProtectedJniExtensions.lookup<
@@ -3609,30 +3479,30 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
             )
           >();
 
-  /// from: `public suspend fun echoAsyncMap(map: kotlin.collections.Map<kotlin.Any?, kotlin.Any?>): kotlin.collections.Map<kotlin.Any?, kotlin.Any?>`
+  /// from: `public suspend fun echoAsyncMap(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
   /// The returned object must be released after use, by calling the [release] method.
-  core$_.Future<jni$_.JMap<jni$_.JObject?, jni$_.JObject?>> echoAsyncMap(
-    jni$_.JMap<jni$_.JObject?, jni$_.JObject?> map,
-  ) async {
+  core$_.Future<jni$_.JByteArray?> echoAsyncMap(jni$_.JByteArray bs) async {
     final $p = jni$_.ReceivePort();
     final _$continuation = jni$_.ProtectedJniExtensions.newPortContinuation($p);
     final _$$selfRef = reference;
-    final _$map = map.reference;
+    final _$bs = bs.reference;
     final $r = _echoAsyncMap(
       _$$selfRef.pointer,
       _id_echoAsyncMap.pointer,
-      _$map.pointer,
+      _$bs.pointer,
       _$continuation.pointer,
-    ).object<jni$_.JObject>();
+    ).object<jni$_.JObject?>();
     _$continuation.release();
-    jni$_.JObject $o;
-    if ($r.isInstanceOf(jni$_.coroutineSingletonsClass)) {
+    jni$_.JObject? $o;
+    if ($r != null && $r.isInstanceOf(jni$_.coroutineSingletonsClass)) {
       $r.release();
       final $a = await $p.first;
-      $o = jni$_.JObject.fromReference(jni$_.JGlobalReference(jni$_.JObjectPtr.fromAddress($a)));
-      if ($o.isInstanceOf(jni$_.result$Class)) {
+      $o = $a == 0
+          ? null
+          : jni$_.JObject.fromReference(jni$_.JGlobalReference(jni$_.JObjectPtr.fromAddress($a)));
+      if ($o != null && $o.isInstanceOf(jni$_.result$Class)) {
         $o = jni$_.resultValueField.get($o, const jni$_.$JObject$Type$());
-      } else if ($o.isInstanceOf(jni$_.result$FailureClass)) {
+      } else if ($o != null && $o.isInstanceOf(jni$_.result$FailureClass)) {
         final $e = jni$_.failureExceptionField.get($o, const jni$_.$JObject$Type$());
         $o.release();
         jni$_.Jni.throwException($e.reference.toPointer());
@@ -3640,14 +3510,13 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
     } else {
       $o = $r;
     }
-    return $o.as<jni$_.JMap>(jni$_.JMap.type, releaseOriginal: true)
-        as jni$_.JMap<jni$_.JObject?, jni$_.JObject?>;
+    return $o?.as<jni$_.JByteArray>(jni$_.JByteArray.type, releaseOriginal: true);
   }
 
   static final _id_echoAsyncStringMap = NativeInteropHostIntegrationCoreApiRegistrar._class
       .instanceMethodId(
         r'echoAsyncStringMap',
-        r'(Ljava/util/Map;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;',
+        r'([BLkotlin/coroutines/Continuation;)Ljava/lang/Object;',
       );
 
   static final _echoAsyncStringMap =
@@ -3669,30 +3538,30 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
             )
           >();
 
-  /// from: `public suspend fun echoAsyncStringMap(stringMap: kotlin.collections.Map<kotlin.String?, kotlin.String?>): kotlin.collections.Map<kotlin.String?, kotlin.String?>`
+  /// from: `public suspend fun echoAsyncStringMap(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
   /// The returned object must be released after use, by calling the [release] method.
-  core$_.Future<jni$_.JMap<jni$_.JString?, jni$_.JString?>> echoAsyncStringMap(
-    jni$_.JMap<jni$_.JString?, jni$_.JString?> map,
-  ) async {
+  core$_.Future<jni$_.JByteArray?> echoAsyncStringMap(jni$_.JByteArray bs) async {
     final $p = jni$_.ReceivePort();
     final _$continuation = jni$_.ProtectedJniExtensions.newPortContinuation($p);
     final _$$selfRef = reference;
-    final _$map = map.reference;
+    final _$bs = bs.reference;
     final $r = _echoAsyncStringMap(
       _$$selfRef.pointer,
       _id_echoAsyncStringMap.pointer,
-      _$map.pointer,
+      _$bs.pointer,
       _$continuation.pointer,
-    ).object<jni$_.JObject>();
+    ).object<jni$_.JObject?>();
     _$continuation.release();
-    jni$_.JObject $o;
-    if ($r.isInstanceOf(jni$_.coroutineSingletonsClass)) {
+    jni$_.JObject? $o;
+    if ($r != null && $r.isInstanceOf(jni$_.coroutineSingletonsClass)) {
       $r.release();
       final $a = await $p.first;
-      $o = jni$_.JObject.fromReference(jni$_.JGlobalReference(jni$_.JObjectPtr.fromAddress($a)));
-      if ($o.isInstanceOf(jni$_.result$Class)) {
+      $o = $a == 0
+          ? null
+          : jni$_.JObject.fromReference(jni$_.JGlobalReference(jni$_.JObjectPtr.fromAddress($a)));
+      if ($o != null && $o.isInstanceOf(jni$_.result$Class)) {
         $o = jni$_.resultValueField.get($o, const jni$_.$JObject$Type$());
-      } else if ($o.isInstanceOf(jni$_.result$FailureClass)) {
+      } else if ($o != null && $o.isInstanceOf(jni$_.result$FailureClass)) {
         final $e = jni$_.failureExceptionField.get($o, const jni$_.$JObject$Type$());
         $o.release();
         jni$_.Jni.throwException($e.reference.toPointer());
@@ -3700,14 +3569,13 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
     } else {
       $o = $r;
     }
-    return $o.as<jni$_.JMap>(jni$_.JMap.type, releaseOriginal: true)
-        as jni$_.JMap<jni$_.JString?, jni$_.JString?>;
+    return $o?.as<jni$_.JByteArray>(jni$_.JByteArray.type, releaseOriginal: true);
   }
 
   static final _id_echoAsyncIntMap = NativeInteropHostIntegrationCoreApiRegistrar._class
       .instanceMethodId(
         r'echoAsyncIntMap',
-        r'(Ljava/util/Map;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;',
+        r'([BLkotlin/coroutines/Continuation;)Ljava/lang/Object;',
       );
 
   static final _echoAsyncIntMap =
@@ -3729,30 +3597,30 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
             )
           >();
 
-  /// from: `public suspend fun echoAsyncIntMap(intMap: kotlin.collections.Map<kotlin.Long?, kotlin.Long?>): kotlin.collections.Map<kotlin.Long?, kotlin.Long?>`
+  /// from: `public suspend fun echoAsyncIntMap(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
   /// The returned object must be released after use, by calling the [release] method.
-  core$_.Future<jni$_.JMap<jni$_.JLong?, jni$_.JLong?>> echoAsyncIntMap(
-    jni$_.JMap<jni$_.JLong?, jni$_.JLong?> map,
-  ) async {
+  core$_.Future<jni$_.JByteArray?> echoAsyncIntMap(jni$_.JByteArray bs) async {
     final $p = jni$_.ReceivePort();
     final _$continuation = jni$_.ProtectedJniExtensions.newPortContinuation($p);
     final _$$selfRef = reference;
-    final _$map = map.reference;
+    final _$bs = bs.reference;
     final $r = _echoAsyncIntMap(
       _$$selfRef.pointer,
       _id_echoAsyncIntMap.pointer,
-      _$map.pointer,
+      _$bs.pointer,
       _$continuation.pointer,
-    ).object<jni$_.JObject>();
+    ).object<jni$_.JObject?>();
     _$continuation.release();
-    jni$_.JObject $o;
-    if ($r.isInstanceOf(jni$_.coroutineSingletonsClass)) {
+    jni$_.JObject? $o;
+    if ($r != null && $r.isInstanceOf(jni$_.coroutineSingletonsClass)) {
       $r.release();
       final $a = await $p.first;
-      $o = jni$_.JObject.fromReference(jni$_.JGlobalReference(jni$_.JObjectPtr.fromAddress($a)));
-      if ($o.isInstanceOf(jni$_.result$Class)) {
+      $o = $a == 0
+          ? null
+          : jni$_.JObject.fromReference(jni$_.JGlobalReference(jni$_.JObjectPtr.fromAddress($a)));
+      if ($o != null && $o.isInstanceOf(jni$_.result$Class)) {
         $o = jni$_.resultValueField.get($o, const jni$_.$JObject$Type$());
-      } else if ($o.isInstanceOf(jni$_.result$FailureClass)) {
+      } else if ($o != null && $o.isInstanceOf(jni$_.result$FailureClass)) {
         final $e = jni$_.failureExceptionField.get($o, const jni$_.$JObject$Type$());
         $o.release();
         jni$_.Jni.throwException($e.reference.toPointer());
@@ -3760,14 +3628,13 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
     } else {
       $o = $r;
     }
-    return $o.as<jni$_.JMap>(jni$_.JMap.type, releaseOriginal: true)
-        as jni$_.JMap<jni$_.JLong?, jni$_.JLong?>;
+    return $o?.as<jni$_.JByteArray>(jni$_.JByteArray.type, releaseOriginal: true);
   }
 
   static final _id_echoAsyncEnumMap = NativeInteropHostIntegrationCoreApiRegistrar._class
       .instanceMethodId(
         r'echoAsyncEnumMap',
-        r'(Ljava/util/Map;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;',
+        r'([BLkotlin/coroutines/Continuation;)Ljava/lang/Object;',
       );
 
   static final _echoAsyncEnumMap =
@@ -3789,30 +3656,30 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
             )
           >();
 
-  /// from: `public suspend fun echoAsyncEnumMap(enumMap: kotlin.collections.Map<com.example.test_plugin.NativeInteropAnEnum?, com.example.test_plugin.NativeInteropAnEnum?>): kotlin.collections.Map<com.example.test_plugin.NativeInteropAnEnum?, com.example.test_plugin.NativeInteropAnEnum?>`
+  /// from: `public suspend fun echoAsyncEnumMap(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
   /// The returned object must be released after use, by calling the [release] method.
-  core$_.Future<jni$_.JMap<NativeInteropAnEnum?, NativeInteropAnEnum?>> echoAsyncEnumMap(
-    jni$_.JMap<NativeInteropAnEnum?, NativeInteropAnEnum?> map,
-  ) async {
+  core$_.Future<jni$_.JByteArray?> echoAsyncEnumMap(jni$_.JByteArray bs) async {
     final $p = jni$_.ReceivePort();
     final _$continuation = jni$_.ProtectedJniExtensions.newPortContinuation($p);
     final _$$selfRef = reference;
-    final _$map = map.reference;
+    final _$bs = bs.reference;
     final $r = _echoAsyncEnumMap(
       _$$selfRef.pointer,
       _id_echoAsyncEnumMap.pointer,
-      _$map.pointer,
+      _$bs.pointer,
       _$continuation.pointer,
-    ).object<jni$_.JObject>();
+    ).object<jni$_.JObject?>();
     _$continuation.release();
-    jni$_.JObject $o;
-    if ($r.isInstanceOf(jni$_.coroutineSingletonsClass)) {
+    jni$_.JObject? $o;
+    if ($r != null && $r.isInstanceOf(jni$_.coroutineSingletonsClass)) {
       $r.release();
       final $a = await $p.first;
-      $o = jni$_.JObject.fromReference(jni$_.JGlobalReference(jni$_.JObjectPtr.fromAddress($a)));
-      if ($o.isInstanceOf(jni$_.result$Class)) {
+      $o = $a == 0
+          ? null
+          : jni$_.JObject.fromReference(jni$_.JGlobalReference(jni$_.JObjectPtr.fromAddress($a)));
+      if ($o != null && $o.isInstanceOf(jni$_.result$Class)) {
         $o = jni$_.resultValueField.get($o, const jni$_.$JObject$Type$());
-      } else if ($o.isInstanceOf(jni$_.result$FailureClass)) {
+      } else if ($o != null && $o.isInstanceOf(jni$_.result$FailureClass)) {
         final $e = jni$_.failureExceptionField.get($o, const jni$_.$JObject$Type$());
         $o.release();
         jni$_.Jni.throwException($e.reference.toPointer());
@@ -3820,14 +3687,13 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
     } else {
       $o = $r;
     }
-    return $o.as<jni$_.JMap>(jni$_.JMap.type, releaseOriginal: true)
-        as jni$_.JMap<NativeInteropAnEnum?, NativeInteropAnEnum?>;
+    return $o?.as<jni$_.JByteArray>(jni$_.JByteArray.type, releaseOriginal: true);
   }
 
   static final _id_echoAsyncClassMap = NativeInteropHostIntegrationCoreApiRegistrar._class
       .instanceMethodId(
         r'echoAsyncClassMap',
-        r'(Ljava/util/Map;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;',
+        r'([BLkotlin/coroutines/Continuation;)Ljava/lang/Object;',
       );
 
   static final _echoAsyncClassMap =
@@ -3849,30 +3715,30 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
             )
           >();
 
-  /// from: `public suspend fun echoAsyncClassMap(classMap: kotlin.collections.Map<kotlin.Long?, com.example.test_plugin.NativeInteropAllNullableTypes?>): kotlin.collections.Map<kotlin.Long?, com.example.test_plugin.NativeInteropAllNullableTypes?>`
+  /// from: `public suspend fun echoAsyncClassMap(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
   /// The returned object must be released after use, by calling the [release] method.
-  core$_.Future<jni$_.JMap<jni$_.JLong?, NativeInteropAllNullableTypes?>> echoAsyncClassMap(
-    jni$_.JMap<jni$_.JLong?, NativeInteropAllNullableTypes?> map,
-  ) async {
+  core$_.Future<jni$_.JByteArray?> echoAsyncClassMap(jni$_.JByteArray bs) async {
     final $p = jni$_.ReceivePort();
     final _$continuation = jni$_.ProtectedJniExtensions.newPortContinuation($p);
     final _$$selfRef = reference;
-    final _$map = map.reference;
+    final _$bs = bs.reference;
     final $r = _echoAsyncClassMap(
       _$$selfRef.pointer,
       _id_echoAsyncClassMap.pointer,
-      _$map.pointer,
+      _$bs.pointer,
       _$continuation.pointer,
-    ).object<jni$_.JObject>();
+    ).object<jni$_.JObject?>();
     _$continuation.release();
-    jni$_.JObject $o;
-    if ($r.isInstanceOf(jni$_.coroutineSingletonsClass)) {
+    jni$_.JObject? $o;
+    if ($r != null && $r.isInstanceOf(jni$_.coroutineSingletonsClass)) {
       $r.release();
       final $a = await $p.first;
-      $o = jni$_.JObject.fromReference(jni$_.JGlobalReference(jni$_.JObjectPtr.fromAddress($a)));
-      if ($o.isInstanceOf(jni$_.result$Class)) {
+      $o = $a == 0
+          ? null
+          : jni$_.JObject.fromReference(jni$_.JGlobalReference(jni$_.JObjectPtr.fromAddress($a)));
+      if ($o != null && $o.isInstanceOf(jni$_.result$Class)) {
         $o = jni$_.resultValueField.get($o, const jni$_.$JObject$Type$());
-      } else if ($o.isInstanceOf(jni$_.result$FailureClass)) {
+      } else if ($o != null && $o.isInstanceOf(jni$_.result$FailureClass)) {
         final $e = jni$_.failureExceptionField.get($o, const jni$_.$JObject$Type$());
         $o.release();
         jni$_.Jni.throwException($e.reference.toPointer());
@@ -3880,14 +3746,11 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
     } else {
       $o = $r;
     }
-    return $o.as<jni$_.JMap>(jni$_.JMap.type, releaseOriginal: true)
-        as jni$_.JMap<jni$_.JLong?, NativeInteropAllNullableTypes?>;
+    return $o?.as<jni$_.JByteArray>(jni$_.JByteArray.type, releaseOriginal: true);
   }
 
-  static final _id_echoAsyncEnum = NativeInteropHostIntegrationCoreApiRegistrar._class.instanceMethodId(
-    r'echoAsyncEnum',
-    r'(Lcom/example/test_plugin/NativeInteropAnEnum;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;',
-  );
+  static final _id_echoAsyncEnum = NativeInteropHostIntegrationCoreApiRegistrar._class
+      .instanceMethodId(r'echoAsyncEnum', r'(JLkotlin/coroutines/Continuation;)Ljava/lang/Object;');
 
   static final _echoAsyncEnum =
       jni$_.ProtectedJniExtensions.lookup<
@@ -3895,7 +3758,7 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
               jni$_.JniResult Function(
                 jni$_.Pointer<jni$_.Void>,
                 jni$_.JMethodIDPtr,
-                jni$_.VarArgs<(jni$_.Pointer<jni$_.Void>, jni$_.Pointer<jni$_.Void>)>,
+                jni$_.VarArgs<(jni$_.Int64, jni$_.Pointer<jni$_.Void>)>,
               )
             >
           >('globalEnv_CallObjectMethod')
@@ -3903,22 +3766,21 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
             jni$_.JniResult Function(
               jni$_.Pointer<jni$_.Void>,
               jni$_.JMethodIDPtr,
-              jni$_.Pointer<jni$_.Void>,
+              core$_.int,
               jni$_.Pointer<jni$_.Void>,
             )
           >();
 
-  /// from: `public suspend fun echoAsyncEnum(anEnum: com.example.test_plugin.NativeInteropAnEnum): com.example.test_plugin.NativeInteropAnEnum`
+  /// from: `public suspend fun echoAsyncEnum(anEnum: kotlin.Long): kotlin.Long`
   /// The returned object must be released after use, by calling the [release] method.
-  core$_.Future<NativeInteropAnEnum> echoAsyncEnum(NativeInteropAnEnum nativeInteropAnEnum) async {
+  core$_.Future<jni$_.JLong> echoAsyncEnum(core$_.int j) async {
     final $p = jni$_.ReceivePort();
     final _$continuation = jni$_.ProtectedJniExtensions.newPortContinuation($p);
     final _$$selfRef = reference;
-    final _$nativeInteropAnEnum = nativeInteropAnEnum.reference;
     final $r = _echoAsyncEnum(
       _$$selfRef.pointer,
       _id_echoAsyncEnum.pointer,
-      _$nativeInteropAnEnum.pointer,
+      j,
       _$continuation.pointer,
     ).object<jni$_.JObject>();
     _$continuation.release();
@@ -3937,13 +3799,13 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
     } else {
       $o = $r;
     }
-    return $o.as<NativeInteropAnEnum>(NativeInteropAnEnum.type, releaseOriginal: true);
+    return $o.as<jni$_.JLong>(jni$_.JLong.type, releaseOriginal: true);
   }
 
   static final _id_echoAnotherAsyncEnum = NativeInteropHostIntegrationCoreApiRegistrar._class
       .instanceMethodId(
         r'echoAnotherAsyncEnum',
-        r'(Lcom/example/test_plugin/NativeInteropAnotherEnum;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;',
+        r'(JLkotlin/coroutines/Continuation;)Ljava/lang/Object;',
       );
 
   static final _echoAnotherAsyncEnum =
@@ -3952,7 +3814,7 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
               jni$_.JniResult Function(
                 jni$_.Pointer<jni$_.Void>,
                 jni$_.JMethodIDPtr,
-                jni$_.VarArgs<(jni$_.Pointer<jni$_.Void>, jni$_.Pointer<jni$_.Void>)>,
+                jni$_.VarArgs<(jni$_.Int64, jni$_.Pointer<jni$_.Void>)>,
               )
             >
           >('globalEnv_CallObjectMethod')
@@ -3960,24 +3822,21 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
             jni$_.JniResult Function(
               jni$_.Pointer<jni$_.Void>,
               jni$_.JMethodIDPtr,
-              jni$_.Pointer<jni$_.Void>,
+              core$_.int,
               jni$_.Pointer<jni$_.Void>,
             )
           >();
 
-  /// from: `public suspend fun echoAnotherAsyncEnum(anotherEnum: com.example.test_plugin.NativeInteropAnotherEnum): com.example.test_plugin.NativeInteropAnotherEnum`
+  /// from: `public suspend fun echoAnotherAsyncEnum(anotherEnum: kotlin.Long): kotlin.Long`
   /// The returned object must be released after use, by calling the [release] method.
-  core$_.Future<NativeInteropAnotherEnum> echoAnotherAsyncEnum(
-    NativeInteropAnotherEnum nativeInteropAnotherEnum,
-  ) async {
+  core$_.Future<jni$_.JLong> echoAnotherAsyncEnum(core$_.int j) async {
     final $p = jni$_.ReceivePort();
     final _$continuation = jni$_.ProtectedJniExtensions.newPortContinuation($p);
     final _$$selfRef = reference;
-    final _$nativeInteropAnotherEnum = nativeInteropAnotherEnum.reference;
     final $r = _echoAnotherAsyncEnum(
       _$$selfRef.pointer,
       _id_echoAnotherAsyncEnum.pointer,
-      _$nativeInteropAnotherEnum.pointer,
+      j,
       _$continuation.pointer,
     ).object<jni$_.JObject>();
     _$continuation.release();
@@ -3996,7 +3855,7 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
     } else {
       $o = $r;
     }
-    return $o.as<NativeInteropAnotherEnum>(NativeInteropAnotherEnum.type, releaseOriginal: true);
+    return $o.as<jni$_.JLong>(jni$_.JLong.type, releaseOriginal: true);
   }
 
   static final _id_throwAsyncError = NativeInteropHostIntegrationCoreApiRegistrar._class
@@ -4023,9 +3882,9 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
             )
           >();
 
-  /// from: `public suspend fun throwAsyncError(): kotlin.Any?`
+  /// from: `public suspend fun throwAsyncError(): kotlin.ByteArray?`
   /// The returned object must be released after use, by calling the [release] method.
-  core$_.Future<jni$_.JObject?> throwAsyncError() async {
+  core$_.Future<jni$_.JByteArray?> throwAsyncError() async {
     final $p = jni$_.ReceivePort();
     final _$continuation = jni$_.ProtectedJniExtensions.newPortContinuation($p);
     final _$$selfRef = reference;
@@ -4052,7 +3911,7 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
     } else {
       $o = $r;
     }
-    return $o?.as<jni$_.JObject>(const jni$_.$JObject$Type$(), releaseOriginal: true);
+    return $o?.as<jni$_.JByteArray>(jni$_.JByteArray.type, releaseOriginal: true);
   }
 
   static final _id_throwAsyncErrorFromVoid = NativeInteropHostIntegrationCoreApiRegistrar._class
@@ -4133,9 +3992,9 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
             )
           >();
 
-  /// from: `public suspend fun throwAsyncFlutterError(): kotlin.Any?`
+  /// from: `public suspend fun throwAsyncFlutterError(): kotlin.ByteArray?`
   /// The returned object must be released after use, by calling the [release] method.
-  core$_.Future<jni$_.JObject?> throwAsyncFlutterError() async {
+  core$_.Future<jni$_.JByteArray?> throwAsyncFlutterError() async {
     final $p = jni$_.ReceivePort();
     final _$continuation = jni$_.ProtectedJniExtensions.newPortContinuation($p);
     final _$$selfRef = reference;
@@ -4162,14 +4021,14 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
     } else {
       $o = $r;
     }
-    return $o?.as<jni$_.JObject>(const jni$_.$JObject$Type$(), releaseOriginal: true);
+    return $o?.as<jni$_.JByteArray>(jni$_.JByteArray.type, releaseOriginal: true);
   }
 
   static final _id_echoAsyncNativeInteropAllTypes = NativeInteropHostIntegrationCoreApiRegistrar
       ._class
       .instanceMethodId(
         r'echoAsyncNativeInteropAllTypes',
-        r'(Lcom/example/test_plugin/NativeInteropAllTypes;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;',
+        r'([BLkotlin/coroutines/Continuation;)Ljava/lang/Object;',
       );
 
   static final _echoAsyncNativeInteropAllTypes =
@@ -4191,30 +4050,30 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
             )
           >();
 
-  /// from: `public suspend fun echoAsyncNativeInteropAllTypes(everything: com.example.test_plugin.NativeInteropAllTypes): com.example.test_plugin.NativeInteropAllTypes`
+  /// from: `public suspend fun echoAsyncNativeInteropAllTypes(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
   /// The returned object must be released after use, by calling the [release] method.
-  core$_.Future<NativeInteropAllTypes> echoAsyncNativeInteropAllTypes(
-    NativeInteropAllTypes nativeInteropAllTypes,
-  ) async {
+  core$_.Future<jni$_.JByteArray?> echoAsyncNativeInteropAllTypes(jni$_.JByteArray bs) async {
     final $p = jni$_.ReceivePort();
     final _$continuation = jni$_.ProtectedJniExtensions.newPortContinuation($p);
     final _$$selfRef = reference;
-    final _$nativeInteropAllTypes = nativeInteropAllTypes.reference;
+    final _$bs = bs.reference;
     final $r = _echoAsyncNativeInteropAllTypes(
       _$$selfRef.pointer,
       _id_echoAsyncNativeInteropAllTypes.pointer,
-      _$nativeInteropAllTypes.pointer,
+      _$bs.pointer,
       _$continuation.pointer,
-    ).object<jni$_.JObject>();
+    ).object<jni$_.JObject?>();
     _$continuation.release();
-    jni$_.JObject $o;
-    if ($r.isInstanceOf(jni$_.coroutineSingletonsClass)) {
+    jni$_.JObject? $o;
+    if ($r != null && $r.isInstanceOf(jni$_.coroutineSingletonsClass)) {
       $r.release();
       final $a = await $p.first;
-      $o = jni$_.JObject.fromReference(jni$_.JGlobalReference(jni$_.JObjectPtr.fromAddress($a)));
-      if ($o.isInstanceOf(jni$_.result$Class)) {
+      $o = $a == 0
+          ? null
+          : jni$_.JObject.fromReference(jni$_.JGlobalReference(jni$_.JObjectPtr.fromAddress($a)));
+      if ($o != null && $o.isInstanceOf(jni$_.result$Class)) {
         $o = jni$_.resultValueField.get($o, const jni$_.$JObject$Type$());
-      } else if ($o.isInstanceOf(jni$_.result$FailureClass)) {
+      } else if ($o != null && $o.isInstanceOf(jni$_.result$FailureClass)) {
         final $e = jni$_.failureExceptionField.get($o, const jni$_.$JObject$Type$());
         $o.release();
         jni$_.Jni.throwException($e.reference.toPointer());
@@ -4222,13 +4081,13 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
     } else {
       $o = $r;
     }
-    return $o.as<NativeInteropAllTypes>(NativeInteropAllTypes.type, releaseOriginal: true);
+    return $o?.as<jni$_.JByteArray>(jni$_.JByteArray.type, releaseOriginal: true);
   }
 
   static final _id_echoAsyncSealedClass = NativeInteropHostIntegrationCoreApiRegistrar._class
       .instanceMethodId(
         r'echoAsyncSealedClass',
-        r'(Lcom/example/test_plugin/NativeInteropSealedClass;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;',
+        r'([BLkotlin/coroutines/Continuation;)Ljava/lang/Object;',
       );
 
   static final _echoAsyncSealedClass =
@@ -4250,30 +4109,30 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
             )
           >();
 
-  /// from: `public suspend fun echoAsyncSealedClass(sealedClass: com.example.test_plugin.NativeInteropSealedClass): com.example.test_plugin.NativeInteropSealedClass`
+  /// from: `public suspend fun echoAsyncSealedClass(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
   /// The returned object must be released after use, by calling the [release] method.
-  core$_.Future<NativeInteropSealedClass> echoAsyncSealedClass(
-    NativeInteropSealedClass nativeInteropSealedClass,
-  ) async {
+  core$_.Future<jni$_.JByteArray?> echoAsyncSealedClass(jni$_.JByteArray bs) async {
     final $p = jni$_.ReceivePort();
     final _$continuation = jni$_.ProtectedJniExtensions.newPortContinuation($p);
     final _$$selfRef = reference;
-    final _$nativeInteropSealedClass = nativeInteropSealedClass.reference;
+    final _$bs = bs.reference;
     final $r = _echoAsyncSealedClass(
       _$$selfRef.pointer,
       _id_echoAsyncSealedClass.pointer,
-      _$nativeInteropSealedClass.pointer,
+      _$bs.pointer,
       _$continuation.pointer,
-    ).object<jni$_.JObject>();
+    ).object<jni$_.JObject?>();
     _$continuation.release();
-    jni$_.JObject $o;
-    if ($r.isInstanceOf(jni$_.coroutineSingletonsClass)) {
+    jni$_.JObject? $o;
+    if ($r != null && $r.isInstanceOf(jni$_.coroutineSingletonsClass)) {
       $r.release();
       final $a = await $p.first;
-      $o = jni$_.JObject.fromReference(jni$_.JGlobalReference(jni$_.JObjectPtr.fromAddress($a)));
-      if ($o.isInstanceOf(jni$_.result$Class)) {
+      $o = $a == 0
+          ? null
+          : jni$_.JObject.fromReference(jni$_.JGlobalReference(jni$_.JObjectPtr.fromAddress($a)));
+      if ($o != null && $o.isInstanceOf(jni$_.result$Class)) {
         $o = jni$_.resultValueField.get($o, const jni$_.$JObject$Type$());
-      } else if ($o.isInstanceOf(jni$_.result$FailureClass)) {
+      } else if ($o != null && $o.isInstanceOf(jni$_.result$FailureClass)) {
         final $e = jni$_.failureExceptionField.get($o, const jni$_.$JObject$Type$());
         $o.release();
         jni$_.Jni.throwException($e.reference.toPointer());
@@ -4281,13 +4140,13 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
     } else {
       $o = $r;
     }
-    return $o.as<NativeInteropSealedClass>(NativeInteropSealedClass.type, releaseOriginal: true);
+    return $o?.as<jni$_.JByteArray>(jni$_.JByteArray.type, releaseOriginal: true);
   }
 
   static final _id_echoAsyncNullableNativeInteropAllNullableTypes =
       NativeInteropHostIntegrationCoreApiRegistrar._class.instanceMethodId(
         r'echoAsyncNullableNativeInteropAllNullableTypes',
-        r'(Lcom/example/test_plugin/NativeInteropAllNullableTypes;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;',
+        r'([BLkotlin/coroutines/Continuation;)Ljava/lang/Object;',
       );
 
   static final _echoAsyncNullableNativeInteropAllNullableTypes =
@@ -4309,20 +4168,19 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
             )
           >();
 
-  /// from: `public suspend fun echoAsyncNullableNativeInteropAllNullableTypes(everything: com.example.test_plugin.NativeInteropAllNullableTypes?): com.example.test_plugin.NativeInteropAllNullableTypes?`
+  /// from: `public suspend fun echoAsyncNullableNativeInteropAllNullableTypes(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
   /// The returned object must be released after use, by calling the [release] method.
-  core$_.Future<NativeInteropAllNullableTypes?> echoAsyncNullableNativeInteropAllNullableTypes(
-    NativeInteropAllNullableTypes? nativeInteropAllNullableTypes,
+  core$_.Future<jni$_.JByteArray?> echoAsyncNullableNativeInteropAllNullableTypes(
+    jni$_.JByteArray bs,
   ) async {
     final $p = jni$_.ReceivePort();
     final _$continuation = jni$_.ProtectedJniExtensions.newPortContinuation($p);
     final _$$selfRef = reference;
-    final _$nativeInteropAllNullableTypes =
-        nativeInteropAllNullableTypes?.reference ?? jni$_.jNullReference;
+    final _$bs = bs.reference;
     final $r = _echoAsyncNullableNativeInteropAllNullableTypes(
       _$$selfRef.pointer,
       _id_echoAsyncNullableNativeInteropAllNullableTypes.pointer,
-      _$nativeInteropAllNullableTypes.pointer,
+      _$bs.pointer,
       _$continuation.pointer,
     ).object<jni$_.JObject?>();
     _$continuation.release();
@@ -4343,16 +4201,13 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
     } else {
       $o = $r;
     }
-    return $o?.as<NativeInteropAllNullableTypes>(
-      NativeInteropAllNullableTypes.type,
-      releaseOriginal: true,
-    );
+    return $o?.as<jni$_.JByteArray>(jni$_.JByteArray.type, releaseOriginal: true);
   }
 
   static final _id_echoAsyncNullableNativeInteropAllNullableTypesWithoutRecursion =
       NativeInteropHostIntegrationCoreApiRegistrar._class.instanceMethodId(
         r'echoAsyncNullableNativeInteropAllNullableTypesWithoutRecursion',
-        r'(Lcom/example/test_plugin/NativeInteropAllNullableTypesWithoutRecursion;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;',
+        r'([BLkotlin/coroutines/Continuation;)Ljava/lang/Object;',
       );
 
   static final _echoAsyncNullableNativeInteropAllNullableTypesWithoutRecursion =
@@ -4374,21 +4229,19 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
             )
           >();
 
-  /// from: `public suspend fun echoAsyncNullableNativeInteropAllNullableTypesWithoutRecursion(everything: com.example.test_plugin.NativeInteropAllNullableTypesWithoutRecursion?): com.example.test_plugin.NativeInteropAllNullableTypesWithoutRecursion?`
+  /// from: `public suspend fun echoAsyncNullableNativeInteropAllNullableTypesWithoutRecursion(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
   /// The returned object must be released after use, by calling the [release] method.
-  core$_.Future<NativeInteropAllNullableTypesWithoutRecursion?>
-  echoAsyncNullableNativeInteropAllNullableTypesWithoutRecursion(
-    NativeInteropAllNullableTypesWithoutRecursion? nativeInteropAllNullableTypesWithoutRecursion,
+  core$_.Future<jni$_.JByteArray?> echoAsyncNullableNativeInteropAllNullableTypesWithoutRecursion(
+    jni$_.JByteArray bs,
   ) async {
     final $p = jni$_.ReceivePort();
     final _$continuation = jni$_.ProtectedJniExtensions.newPortContinuation($p);
     final _$$selfRef = reference;
-    final _$nativeInteropAllNullableTypesWithoutRecursion =
-        nativeInteropAllNullableTypesWithoutRecursion?.reference ?? jni$_.jNullReference;
+    final _$bs = bs.reference;
     final $r = _echoAsyncNullableNativeInteropAllNullableTypesWithoutRecursion(
       _$$selfRef.pointer,
       _id_echoAsyncNullableNativeInteropAllNullableTypesWithoutRecursion.pointer,
-      _$nativeInteropAllNullableTypesWithoutRecursion.pointer,
+      _$bs.pointer,
       _$continuation.pointer,
     ).object<jni$_.JObject?>();
     _$continuation.release();
@@ -4409,10 +4262,7 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
     } else {
       $o = $r;
     }
-    return $o?.as<NativeInteropAllNullableTypesWithoutRecursion>(
-      NativeInteropAllNullableTypesWithoutRecursion.type,
-      releaseOriginal: true,
-    );
+    return $o?.as<jni$_.JByteArray>(jni$_.JByteArray.type, releaseOriginal: true);
   }
 
   static final _id_echoAsyncNullableInt = NativeInteropHostIntegrationCoreApiRegistrar._class
@@ -4891,7 +4741,7 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
   static final _id_echoAsyncNullableObject = NativeInteropHostIntegrationCoreApiRegistrar._class
       .instanceMethodId(
         r'echoAsyncNullableObject',
-        r'(Ljava/lang/Object;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;',
+        r'([BLkotlin/coroutines/Continuation;)Ljava/lang/Object;',
       );
 
   static final _echoAsyncNullableObject =
@@ -4913,17 +4763,17 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
             )
           >();
 
-  /// from: `public suspend fun echoAsyncNullableObject(anObject: kotlin.Any?): kotlin.Any?`
+  /// from: `public suspend fun echoAsyncNullableObject(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
   /// The returned object must be released after use, by calling the [release] method.
-  core$_.Future<jni$_.JObject?> echoAsyncNullableObject(jni$_.JObject? object) async {
+  core$_.Future<jni$_.JByteArray?> echoAsyncNullableObject(jni$_.JByteArray bs) async {
     final $p = jni$_.ReceivePort();
     final _$continuation = jni$_.ProtectedJniExtensions.newPortContinuation($p);
     final _$$selfRef = reference;
-    final _$object = object?.reference ?? jni$_.jNullReference;
+    final _$bs = bs.reference;
     final $r = _echoAsyncNullableObject(
       _$$selfRef.pointer,
       _id_echoAsyncNullableObject.pointer,
-      _$object.pointer,
+      _$bs.pointer,
       _$continuation.pointer,
     ).object<jni$_.JObject?>();
     _$continuation.release();
@@ -4944,13 +4794,13 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
     } else {
       $o = $r;
     }
-    return $o?.as<jni$_.JObject>(const jni$_.$JObject$Type$(), releaseOriginal: true);
+    return $o?.as<jni$_.JByteArray>(jni$_.JByteArray.type, releaseOriginal: true);
   }
 
   static final _id_echoAsyncNullableList = NativeInteropHostIntegrationCoreApiRegistrar._class
       .instanceMethodId(
         r'echoAsyncNullableList',
-        r'(Ljava/util/List;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;',
+        r'([BLkotlin/coroutines/Continuation;)Ljava/lang/Object;',
       );
 
   static final _echoAsyncNullableList =
@@ -4972,19 +4822,17 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
             )
           >();
 
-  /// from: `public suspend fun echoAsyncNullableList(list: kotlin.collections.List<kotlin.Any?>?): kotlin.collections.List<kotlin.Any?>?`
+  /// from: `public suspend fun echoAsyncNullableList(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
   /// The returned object must be released after use, by calling the [release] method.
-  core$_.Future<jni$_.JList<jni$_.JObject?>?> echoAsyncNullableList(
-    jni$_.JList<jni$_.JObject?>? list,
-  ) async {
+  core$_.Future<jni$_.JByteArray?> echoAsyncNullableList(jni$_.JByteArray bs) async {
     final $p = jni$_.ReceivePort();
     final _$continuation = jni$_.ProtectedJniExtensions.newPortContinuation($p);
     final _$$selfRef = reference;
-    final _$list = list?.reference ?? jni$_.jNullReference;
+    final _$bs = bs.reference;
     final $r = _echoAsyncNullableList(
       _$$selfRef.pointer,
       _id_echoAsyncNullableList.pointer,
-      _$list.pointer,
+      _$bs.pointer,
       _$continuation.pointer,
     ).object<jni$_.JObject?>();
     _$continuation.release();
@@ -5005,14 +4853,13 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
     } else {
       $o = $r;
     }
-    return $o?.as<jni$_.JList>(jni$_.JList.type, releaseOriginal: true)
-        as jni$_.JList<jni$_.JObject?>?;
+    return $o?.as<jni$_.JByteArray>(jni$_.JByteArray.type, releaseOriginal: true);
   }
 
   static final _id_echoAsyncNullableEnumList = NativeInteropHostIntegrationCoreApiRegistrar._class
       .instanceMethodId(
         r'echoAsyncNullableEnumList',
-        r'(Ljava/util/List;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;',
+        r'([BLkotlin/coroutines/Continuation;)Ljava/lang/Object;',
       );
 
   static final _echoAsyncNullableEnumList =
@@ -5034,19 +4881,17 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
             )
           >();
 
-  /// from: `public suspend fun echoAsyncNullableEnumList(enumList: kotlin.collections.List<com.example.test_plugin.NativeInteropAnEnum?>?): kotlin.collections.List<com.example.test_plugin.NativeInteropAnEnum?>?`
+  /// from: `public suspend fun echoAsyncNullableEnumList(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
   /// The returned object must be released after use, by calling the [release] method.
-  core$_.Future<jni$_.JList<NativeInteropAnEnum?>?> echoAsyncNullableEnumList(
-    jni$_.JList<NativeInteropAnEnum?>? list,
-  ) async {
+  core$_.Future<jni$_.JByteArray?> echoAsyncNullableEnumList(jni$_.JByteArray bs) async {
     final $p = jni$_.ReceivePort();
     final _$continuation = jni$_.ProtectedJniExtensions.newPortContinuation($p);
     final _$$selfRef = reference;
-    final _$list = list?.reference ?? jni$_.jNullReference;
+    final _$bs = bs.reference;
     final $r = _echoAsyncNullableEnumList(
       _$$selfRef.pointer,
       _id_echoAsyncNullableEnumList.pointer,
-      _$list.pointer,
+      _$bs.pointer,
       _$continuation.pointer,
     ).object<jni$_.JObject?>();
     _$continuation.release();
@@ -5067,14 +4912,13 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
     } else {
       $o = $r;
     }
-    return $o?.as<jni$_.JList>(jni$_.JList.type, releaseOriginal: true)
-        as jni$_.JList<NativeInteropAnEnum?>?;
+    return $o?.as<jni$_.JByteArray>(jni$_.JByteArray.type, releaseOriginal: true);
   }
 
   static final _id_echoAsyncNullableClassList = NativeInteropHostIntegrationCoreApiRegistrar._class
       .instanceMethodId(
         r'echoAsyncNullableClassList',
-        r'(Ljava/util/List;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;',
+        r'([BLkotlin/coroutines/Continuation;)Ljava/lang/Object;',
       );
 
   static final _echoAsyncNullableClassList =
@@ -5096,19 +4940,17 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
             )
           >();
 
-  /// from: `public suspend fun echoAsyncNullableClassList(classList: kotlin.collections.List<com.example.test_plugin.NativeInteropAllNullableTypes?>?): kotlin.collections.List<com.example.test_plugin.NativeInteropAllNullableTypes?>?`
+  /// from: `public suspend fun echoAsyncNullableClassList(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
   /// The returned object must be released after use, by calling the [release] method.
-  core$_.Future<jni$_.JList<NativeInteropAllNullableTypes?>?> echoAsyncNullableClassList(
-    jni$_.JList<NativeInteropAllNullableTypes?>? list,
-  ) async {
+  core$_.Future<jni$_.JByteArray?> echoAsyncNullableClassList(jni$_.JByteArray bs) async {
     final $p = jni$_.ReceivePort();
     final _$continuation = jni$_.ProtectedJniExtensions.newPortContinuation($p);
     final _$$selfRef = reference;
-    final _$list = list?.reference ?? jni$_.jNullReference;
+    final _$bs = bs.reference;
     final $r = _echoAsyncNullableClassList(
       _$$selfRef.pointer,
       _id_echoAsyncNullableClassList.pointer,
-      _$list.pointer,
+      _$bs.pointer,
       _$continuation.pointer,
     ).object<jni$_.JObject?>();
     _$continuation.release();
@@ -5129,14 +4971,13 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
     } else {
       $o = $r;
     }
-    return $o?.as<jni$_.JList>(jni$_.JList.type, releaseOriginal: true)
-        as jni$_.JList<NativeInteropAllNullableTypes?>?;
+    return $o?.as<jni$_.JByteArray>(jni$_.JByteArray.type, releaseOriginal: true);
   }
 
   static final _id_echoAsyncNullableMap = NativeInteropHostIntegrationCoreApiRegistrar._class
       .instanceMethodId(
         r'echoAsyncNullableMap',
-        r'(Ljava/util/Map;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;',
+        r'([BLkotlin/coroutines/Continuation;)Ljava/lang/Object;',
       );
 
   static final _echoAsyncNullableMap =
@@ -5158,19 +4999,17 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
             )
           >();
 
-  /// from: `public suspend fun echoAsyncNullableMap(map: kotlin.collections.Map<kotlin.Any?, kotlin.Any?>?): kotlin.collections.Map<kotlin.Any?, kotlin.Any?>?`
+  /// from: `public suspend fun echoAsyncNullableMap(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
   /// The returned object must be released after use, by calling the [release] method.
-  core$_.Future<jni$_.JMap<jni$_.JObject?, jni$_.JObject?>?> echoAsyncNullableMap(
-    jni$_.JMap<jni$_.JObject?, jni$_.JObject?>? map,
-  ) async {
+  core$_.Future<jni$_.JByteArray?> echoAsyncNullableMap(jni$_.JByteArray bs) async {
     final $p = jni$_.ReceivePort();
     final _$continuation = jni$_.ProtectedJniExtensions.newPortContinuation($p);
     final _$$selfRef = reference;
-    final _$map = map?.reference ?? jni$_.jNullReference;
+    final _$bs = bs.reference;
     final $r = _echoAsyncNullableMap(
       _$$selfRef.pointer,
       _id_echoAsyncNullableMap.pointer,
-      _$map.pointer,
+      _$bs.pointer,
       _$continuation.pointer,
     ).object<jni$_.JObject?>();
     _$continuation.release();
@@ -5191,14 +5030,13 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
     } else {
       $o = $r;
     }
-    return $o?.as<jni$_.JMap>(jni$_.JMap.type, releaseOriginal: true)
-        as jni$_.JMap<jni$_.JObject?, jni$_.JObject?>?;
+    return $o?.as<jni$_.JByteArray>(jni$_.JByteArray.type, releaseOriginal: true);
   }
 
   static final _id_echoAsyncNullableStringMap = NativeInteropHostIntegrationCoreApiRegistrar._class
       .instanceMethodId(
         r'echoAsyncNullableStringMap',
-        r'(Ljava/util/Map;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;',
+        r'([BLkotlin/coroutines/Continuation;)Ljava/lang/Object;',
       );
 
   static final _echoAsyncNullableStringMap =
@@ -5220,19 +5058,17 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
             )
           >();
 
-  /// from: `public suspend fun echoAsyncNullableStringMap(stringMap: kotlin.collections.Map<kotlin.String?, kotlin.String?>?): kotlin.collections.Map<kotlin.String?, kotlin.String?>?`
+  /// from: `public suspend fun echoAsyncNullableStringMap(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
   /// The returned object must be released after use, by calling the [release] method.
-  core$_.Future<jni$_.JMap<jni$_.JString?, jni$_.JString?>?> echoAsyncNullableStringMap(
-    jni$_.JMap<jni$_.JString?, jni$_.JString?>? map,
-  ) async {
+  core$_.Future<jni$_.JByteArray?> echoAsyncNullableStringMap(jni$_.JByteArray bs) async {
     final $p = jni$_.ReceivePort();
     final _$continuation = jni$_.ProtectedJniExtensions.newPortContinuation($p);
     final _$$selfRef = reference;
-    final _$map = map?.reference ?? jni$_.jNullReference;
+    final _$bs = bs.reference;
     final $r = _echoAsyncNullableStringMap(
       _$$selfRef.pointer,
       _id_echoAsyncNullableStringMap.pointer,
-      _$map.pointer,
+      _$bs.pointer,
       _$continuation.pointer,
     ).object<jni$_.JObject?>();
     _$continuation.release();
@@ -5253,14 +5089,13 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
     } else {
       $o = $r;
     }
-    return $o?.as<jni$_.JMap>(jni$_.JMap.type, releaseOriginal: true)
-        as jni$_.JMap<jni$_.JString?, jni$_.JString?>?;
+    return $o?.as<jni$_.JByteArray>(jni$_.JByteArray.type, releaseOriginal: true);
   }
 
   static final _id_echoAsyncNullableIntMap = NativeInteropHostIntegrationCoreApiRegistrar._class
       .instanceMethodId(
         r'echoAsyncNullableIntMap',
-        r'(Ljava/util/Map;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;',
+        r'([BLkotlin/coroutines/Continuation;)Ljava/lang/Object;',
       );
 
   static final _echoAsyncNullableIntMap =
@@ -5282,19 +5117,17 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
             )
           >();
 
-  /// from: `public suspend fun echoAsyncNullableIntMap(intMap: kotlin.collections.Map<kotlin.Long?, kotlin.Long?>?): kotlin.collections.Map<kotlin.Long?, kotlin.Long?>?`
+  /// from: `public suspend fun echoAsyncNullableIntMap(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
   /// The returned object must be released after use, by calling the [release] method.
-  core$_.Future<jni$_.JMap<jni$_.JLong?, jni$_.JLong?>?> echoAsyncNullableIntMap(
-    jni$_.JMap<jni$_.JLong?, jni$_.JLong?>? map,
-  ) async {
+  core$_.Future<jni$_.JByteArray?> echoAsyncNullableIntMap(jni$_.JByteArray bs) async {
     final $p = jni$_.ReceivePort();
     final _$continuation = jni$_.ProtectedJniExtensions.newPortContinuation($p);
     final _$$selfRef = reference;
-    final _$map = map?.reference ?? jni$_.jNullReference;
+    final _$bs = bs.reference;
     final $r = _echoAsyncNullableIntMap(
       _$$selfRef.pointer,
       _id_echoAsyncNullableIntMap.pointer,
-      _$map.pointer,
+      _$bs.pointer,
       _$continuation.pointer,
     ).object<jni$_.JObject?>();
     _$continuation.release();
@@ -5315,14 +5148,13 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
     } else {
       $o = $r;
     }
-    return $o?.as<jni$_.JMap>(jni$_.JMap.type, releaseOriginal: true)
-        as jni$_.JMap<jni$_.JLong?, jni$_.JLong?>?;
+    return $o?.as<jni$_.JByteArray>(jni$_.JByteArray.type, releaseOriginal: true);
   }
 
   static final _id_echoAsyncNullableEnumMap = NativeInteropHostIntegrationCoreApiRegistrar._class
       .instanceMethodId(
         r'echoAsyncNullableEnumMap',
-        r'(Ljava/util/Map;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;',
+        r'([BLkotlin/coroutines/Continuation;)Ljava/lang/Object;',
       );
 
   static final _echoAsyncNullableEnumMap =
@@ -5344,19 +5176,17 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
             )
           >();
 
-  /// from: `public suspend fun echoAsyncNullableEnumMap(enumMap: kotlin.collections.Map<com.example.test_plugin.NativeInteropAnEnum?, com.example.test_plugin.NativeInteropAnEnum?>?): kotlin.collections.Map<com.example.test_plugin.NativeInteropAnEnum?, com.example.test_plugin.NativeInteropAnEnum?>?`
+  /// from: `public suspend fun echoAsyncNullableEnumMap(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
   /// The returned object must be released after use, by calling the [release] method.
-  core$_.Future<jni$_.JMap<NativeInteropAnEnum?, NativeInteropAnEnum?>?> echoAsyncNullableEnumMap(
-    jni$_.JMap<NativeInteropAnEnum?, NativeInteropAnEnum?>? map,
-  ) async {
+  core$_.Future<jni$_.JByteArray?> echoAsyncNullableEnumMap(jni$_.JByteArray bs) async {
     final $p = jni$_.ReceivePort();
     final _$continuation = jni$_.ProtectedJniExtensions.newPortContinuation($p);
     final _$$selfRef = reference;
-    final _$map = map?.reference ?? jni$_.jNullReference;
+    final _$bs = bs.reference;
     final $r = _echoAsyncNullableEnumMap(
       _$$selfRef.pointer,
       _id_echoAsyncNullableEnumMap.pointer,
-      _$map.pointer,
+      _$bs.pointer,
       _$continuation.pointer,
     ).object<jni$_.JObject?>();
     _$continuation.release();
@@ -5377,14 +5207,13 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
     } else {
       $o = $r;
     }
-    return $o?.as<jni$_.JMap>(jni$_.JMap.type, releaseOriginal: true)
-        as jni$_.JMap<NativeInteropAnEnum?, NativeInteropAnEnum?>?;
+    return $o?.as<jni$_.JByteArray>(jni$_.JByteArray.type, releaseOriginal: true);
   }
 
   static final _id_echoAsyncNullableClassMap = NativeInteropHostIntegrationCoreApiRegistrar._class
       .instanceMethodId(
         r'echoAsyncNullableClassMap',
-        r'(Ljava/util/Map;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;',
+        r'([BLkotlin/coroutines/Continuation;)Ljava/lang/Object;',
       );
 
   static final _echoAsyncNullableClassMap =
@@ -5406,18 +5235,17 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
             )
           >();
 
-  /// from: `public suspend fun echoAsyncNullableClassMap(classMap: kotlin.collections.Map<kotlin.Long?, com.example.test_plugin.NativeInteropAllNullableTypes?>?): kotlin.collections.Map<kotlin.Long?, com.example.test_plugin.NativeInteropAllNullableTypes?>?`
+  /// from: `public suspend fun echoAsyncNullableClassMap(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
   /// The returned object must be released after use, by calling the [release] method.
-  core$_.Future<jni$_.JMap<jni$_.JLong?, NativeInteropAllNullableTypes?>?>
-  echoAsyncNullableClassMap(jni$_.JMap<jni$_.JLong?, NativeInteropAllNullableTypes?>? map) async {
+  core$_.Future<jni$_.JByteArray?> echoAsyncNullableClassMap(jni$_.JByteArray bs) async {
     final $p = jni$_.ReceivePort();
     final _$continuation = jni$_.ProtectedJniExtensions.newPortContinuation($p);
     final _$$selfRef = reference;
-    final _$map = map?.reference ?? jni$_.jNullReference;
+    final _$bs = bs.reference;
     final $r = _echoAsyncNullableClassMap(
       _$$selfRef.pointer,
       _id_echoAsyncNullableClassMap.pointer,
-      _$map.pointer,
+      _$bs.pointer,
       _$continuation.pointer,
     ).object<jni$_.JObject?>();
     _$continuation.release();
@@ -5438,14 +5266,13 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
     } else {
       $o = $r;
     }
-    return $o?.as<jni$_.JMap>(jni$_.JMap.type, releaseOriginal: true)
-        as jni$_.JMap<jni$_.JLong?, NativeInteropAllNullableTypes?>?;
+    return $o?.as<jni$_.JByteArray>(jni$_.JByteArray.type, releaseOriginal: true);
   }
 
   static final _id_echoAsyncNullableEnum = NativeInteropHostIntegrationCoreApiRegistrar._class
       .instanceMethodId(
         r'echoAsyncNullableEnum',
-        r'(Lcom/example/test_plugin/NativeInteropAnEnum;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;',
+        r'(JLkotlin/coroutines/Continuation;)Ljava/lang/Object;',
       );
 
   static final _echoAsyncNullableEnum =
@@ -5454,7 +5281,7 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
               jni$_.JniResult Function(
                 jni$_.Pointer<jni$_.Void>,
                 jni$_.JMethodIDPtr,
-                jni$_.VarArgs<(jni$_.Pointer<jni$_.Void>, jni$_.Pointer<jni$_.Void>)>,
+                jni$_.VarArgs<(jni$_.Int64, jni$_.Pointer<jni$_.Void>)>,
               )
             >
           >('globalEnv_CallObjectMethod')
@@ -5462,37 +5289,32 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
             jni$_.JniResult Function(
               jni$_.Pointer<jni$_.Void>,
               jni$_.JMethodIDPtr,
-              jni$_.Pointer<jni$_.Void>,
+              core$_.int,
               jni$_.Pointer<jni$_.Void>,
             )
           >();
 
-  /// from: `public suspend fun echoAsyncNullableEnum(anEnum: com.example.test_plugin.NativeInteropAnEnum?): com.example.test_plugin.NativeInteropAnEnum?`
+  /// from: `public suspend fun echoAsyncNullableEnum(anEnum: kotlin.Long): kotlin.Long`
   /// The returned object must be released after use, by calling the [release] method.
-  core$_.Future<NativeInteropAnEnum?> echoAsyncNullableEnum(
-    NativeInteropAnEnum? nativeInteropAnEnum,
-  ) async {
+  core$_.Future<jni$_.JLong> echoAsyncNullableEnum(core$_.int j) async {
     final $p = jni$_.ReceivePort();
     final _$continuation = jni$_.ProtectedJniExtensions.newPortContinuation($p);
     final _$$selfRef = reference;
-    final _$nativeInteropAnEnum = nativeInteropAnEnum?.reference ?? jni$_.jNullReference;
     final $r = _echoAsyncNullableEnum(
       _$$selfRef.pointer,
       _id_echoAsyncNullableEnum.pointer,
-      _$nativeInteropAnEnum.pointer,
+      j,
       _$continuation.pointer,
-    ).object<jni$_.JObject?>();
+    ).object<jni$_.JObject>();
     _$continuation.release();
-    jni$_.JObject? $o;
-    if ($r != null && $r.isInstanceOf(jni$_.coroutineSingletonsClass)) {
+    jni$_.JObject $o;
+    if ($r.isInstanceOf(jni$_.coroutineSingletonsClass)) {
       $r.release();
       final $a = await $p.first;
-      $o = $a == 0
-          ? null
-          : jni$_.JObject.fromReference(jni$_.JGlobalReference(jni$_.JObjectPtr.fromAddress($a)));
-      if ($o != null && $o.isInstanceOf(jni$_.result$Class)) {
+      $o = jni$_.JObject.fromReference(jni$_.JGlobalReference(jni$_.JObjectPtr.fromAddress($a)));
+      if ($o.isInstanceOf(jni$_.result$Class)) {
         $o = jni$_.resultValueField.get($o, const jni$_.$JObject$Type$());
-      } else if ($o != null && $o.isInstanceOf(jni$_.result$FailureClass)) {
+      } else if ($o.isInstanceOf(jni$_.result$FailureClass)) {
         final $e = jni$_.failureExceptionField.get($o, const jni$_.$JObject$Type$());
         $o.release();
         jni$_.Jni.throwException($e.reference.toPointer());
@@ -5500,14 +5322,14 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
     } else {
       $o = $r;
     }
-    return $o?.as<NativeInteropAnEnum>(NativeInteropAnEnum.type, releaseOriginal: true);
+    return $o.as<jni$_.JLong>(jni$_.JLong.type, releaseOriginal: true);
   }
 
   static final _id_echoAnotherAsyncNullableEnum = NativeInteropHostIntegrationCoreApiRegistrar
       ._class
       .instanceMethodId(
         r'echoAnotherAsyncNullableEnum',
-        r'(Lcom/example/test_plugin/NativeInteropAnotherEnum;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;',
+        r'(JLkotlin/coroutines/Continuation;)Ljava/lang/Object;',
       );
 
   static final _echoAnotherAsyncNullableEnum =
@@ -5516,7 +5338,7 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
               jni$_.JniResult Function(
                 jni$_.Pointer<jni$_.Void>,
                 jni$_.JMethodIDPtr,
-                jni$_.VarArgs<(jni$_.Pointer<jni$_.Void>, jni$_.Pointer<jni$_.Void>)>,
+                jni$_.VarArgs<(jni$_.Int64, jni$_.Pointer<jni$_.Void>)>,
               )
             >
           >('globalEnv_CallObjectMethod')
@@ -5524,37 +5346,32 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
             jni$_.JniResult Function(
               jni$_.Pointer<jni$_.Void>,
               jni$_.JMethodIDPtr,
-              jni$_.Pointer<jni$_.Void>,
+              core$_.int,
               jni$_.Pointer<jni$_.Void>,
             )
           >();
 
-  /// from: `public suspend fun echoAnotherAsyncNullableEnum(anotherEnum: com.example.test_plugin.NativeInteropAnotherEnum?): com.example.test_plugin.NativeInteropAnotherEnum?`
+  /// from: `public suspend fun echoAnotherAsyncNullableEnum(anotherEnum: kotlin.Long): kotlin.Long`
   /// The returned object must be released after use, by calling the [release] method.
-  core$_.Future<NativeInteropAnotherEnum?> echoAnotherAsyncNullableEnum(
-    NativeInteropAnotherEnum? nativeInteropAnotherEnum,
-  ) async {
+  core$_.Future<jni$_.JLong> echoAnotherAsyncNullableEnum(core$_.int j) async {
     final $p = jni$_.ReceivePort();
     final _$continuation = jni$_.ProtectedJniExtensions.newPortContinuation($p);
     final _$$selfRef = reference;
-    final _$nativeInteropAnotherEnum = nativeInteropAnotherEnum?.reference ?? jni$_.jNullReference;
     final $r = _echoAnotherAsyncNullableEnum(
       _$$selfRef.pointer,
       _id_echoAnotherAsyncNullableEnum.pointer,
-      _$nativeInteropAnotherEnum.pointer,
+      j,
       _$continuation.pointer,
-    ).object<jni$_.JObject?>();
+    ).object<jni$_.JObject>();
     _$continuation.release();
-    jni$_.JObject? $o;
-    if ($r != null && $r.isInstanceOf(jni$_.coroutineSingletonsClass)) {
+    jni$_.JObject $o;
+    if ($r.isInstanceOf(jni$_.coroutineSingletonsClass)) {
       $r.release();
       final $a = await $p.first;
-      $o = $a == 0
-          ? null
-          : jni$_.JObject.fromReference(jni$_.JGlobalReference(jni$_.JObjectPtr.fromAddress($a)));
-      if ($o != null && $o.isInstanceOf(jni$_.result$Class)) {
+      $o = jni$_.JObject.fromReference(jni$_.JGlobalReference(jni$_.JObjectPtr.fromAddress($a)));
+      if ($o.isInstanceOf(jni$_.result$Class)) {
         $o = jni$_.resultValueField.get($o, const jni$_.$JObject$Type$());
-      } else if ($o != null && $o.isInstanceOf(jni$_.result$FailureClass)) {
+      } else if ($o.isInstanceOf(jni$_.result$FailureClass)) {
         final $e = jni$_.failureExceptionField.get($o, const jni$_.$JObject$Type$());
         $o.release();
         jni$_.Jni.throwException($e.reference.toPointer());
@@ -5562,7 +5379,7 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
     } else {
       $o = $r;
     }
-    return $o?.as<NativeInteropAnotherEnum>(NativeInteropAnotherEnum.type, releaseOriginal: true);
+    return $o.as<jni$_.JLong>(jni$_.JLong.type, releaseOriginal: true);
   }
 
   static final _id_callFlutterNoop = NativeInteropHostIntegrationCoreApiRegistrar._class
@@ -5585,7 +5402,7 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
   }
 
   static final _id_callFlutterThrowError = NativeInteropHostIntegrationCoreApiRegistrar._class
-      .instanceMethodId(r'callFlutterThrowError', r'()Ljava/lang/Object;');
+      .instanceMethodId(r'callFlutterThrowError', r'()[B');
 
   static final _callFlutterThrowError =
       jni$_.ProtectedJniExtensions.lookup<
@@ -5595,14 +5412,14 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
           >('globalEnv_CallObjectMethod')
           .asFunction<jni$_.JniResult Function(jni$_.Pointer<jni$_.Void>, jni$_.JMethodIDPtr)>();
 
-  /// from: `public fun callFlutterThrowError(): kotlin.Any?`
+  /// from: `public fun callFlutterThrowError(): kotlin.ByteArray?`
   /// The returned object must be released after use, by calling the [release] method.
-  jni$_.JObject? callFlutterThrowError() {
+  jni$_.JByteArray? callFlutterThrowError() {
     final _$$selfRef = reference;
     return _callFlutterThrowError(
       _$$selfRef.pointer,
       _id_callFlutterThrowError.pointer,
-    ).object<jni$_.JObject?>();
+    ).object<jni$_.JByteArray?>();
   }
 
   static final _id_callFlutterThrowErrorFromVoid = NativeInteropHostIntegrationCoreApiRegistrar
@@ -5631,7 +5448,7 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
   static final _id_callFlutterEchoNativeInteropAllTypes =
       NativeInteropHostIntegrationCoreApiRegistrar._class.instanceMethodId(
         r'callFlutterEchoNativeInteropAllTypes',
-        r'(Lcom/example/test_plugin/NativeInteropAllTypes;)Lcom/example/test_plugin/NativeInteropAllTypes;',
+        r'([B)[B',
       );
 
   static final _callFlutterEchoNativeInteropAllTypes =
@@ -5652,24 +5469,22 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
             )
           >();
 
-  /// from: `public fun callFlutterEchoNativeInteropAllTypes(everything: com.example.test_plugin.NativeInteropAllTypes): com.example.test_plugin.NativeInteropAllTypes`
+  /// from: `public fun callFlutterEchoNativeInteropAllTypes(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
   /// The returned object must be released after use, by calling the [release] method.
-  NativeInteropAllTypes callFlutterEchoNativeInteropAllTypes(
-    NativeInteropAllTypes nativeInteropAllTypes,
-  ) {
+  jni$_.JByteArray? callFlutterEchoNativeInteropAllTypes(jni$_.JByteArray bs) {
     final _$$selfRef = reference;
-    final _$nativeInteropAllTypes = nativeInteropAllTypes.reference;
+    final _$bs = bs.reference;
     return _callFlutterEchoNativeInteropAllTypes(
       _$$selfRef.pointer,
       _id_callFlutterEchoNativeInteropAllTypes.pointer,
-      _$nativeInteropAllTypes.pointer,
-    ).object<NativeInteropAllTypes>();
+      _$bs.pointer,
+    ).object<jni$_.JByteArray?>();
   }
 
   static final _id_callFlutterEchoNativeInteropAllNullableTypes =
       NativeInteropHostIntegrationCoreApiRegistrar._class.instanceMethodId(
         r'callFlutterEchoNativeInteropAllNullableTypes',
-        r'(Lcom/example/test_plugin/NativeInteropAllNullableTypes;)Lcom/example/test_plugin/NativeInteropAllNullableTypes;',
+        r'([B)[B',
       );
 
   static final _callFlutterEchoNativeInteropAllNullableTypes =
@@ -5690,26 +5505,20 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
             )
           >();
 
-  /// from: `public fun callFlutterEchoNativeInteropAllNullableTypes(everything: com.example.test_plugin.NativeInteropAllNullableTypes?): com.example.test_plugin.NativeInteropAllNullableTypes?`
+  /// from: `public fun callFlutterEchoNativeInteropAllNullableTypes(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
   /// The returned object must be released after use, by calling the [release] method.
-  NativeInteropAllNullableTypes? callFlutterEchoNativeInteropAllNullableTypes(
-    NativeInteropAllNullableTypes? nativeInteropAllNullableTypes,
-  ) {
+  jni$_.JByteArray? callFlutterEchoNativeInteropAllNullableTypes(jni$_.JByteArray bs) {
     final _$$selfRef = reference;
-    final _$nativeInteropAllNullableTypes =
-        nativeInteropAllNullableTypes?.reference ?? jni$_.jNullReference;
+    final _$bs = bs.reference;
     return _callFlutterEchoNativeInteropAllNullableTypes(
       _$$selfRef.pointer,
       _id_callFlutterEchoNativeInteropAllNullableTypes.pointer,
-      _$nativeInteropAllNullableTypes.pointer,
-    ).object<NativeInteropAllNullableTypes?>();
+      _$bs.pointer,
+    ).object<jni$_.JByteArray?>();
   }
 
   static final _id_callFlutterEchoSealedClass = NativeInteropHostIntegrationCoreApiRegistrar._class
-      .instanceMethodId(
-        r'callFlutterEchoSealedClass',
-        r'(Lcom/example/test_plugin/NativeInteropSealedClass;)Lcom/example/test_plugin/NativeInteropSealedClass;',
-      );
+      .instanceMethodId(r'callFlutterEchoSealedClass', r'([B)[B');
 
   static final _callFlutterEchoSealedClass =
       jni$_.ProtectedJniExtensions.lookup<
@@ -5729,24 +5538,22 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
             )
           >();
 
-  /// from: `public fun callFlutterEchoSealedClass(sealedClass: com.example.test_plugin.NativeInteropSealedClass): com.example.test_plugin.NativeInteropSealedClass`
+  /// from: `public fun callFlutterEchoSealedClass(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
   /// The returned object must be released after use, by calling the [release] method.
-  NativeInteropSealedClass callFlutterEchoSealedClass(
-    NativeInteropSealedClass nativeInteropSealedClass,
-  ) {
+  jni$_.JByteArray? callFlutterEchoSealedClass(jni$_.JByteArray bs) {
     final _$$selfRef = reference;
-    final _$nativeInteropSealedClass = nativeInteropSealedClass.reference;
+    final _$bs = bs.reference;
     return _callFlutterEchoSealedClass(
       _$$selfRef.pointer,
       _id_callFlutterEchoSealedClass.pointer,
-      _$nativeInteropSealedClass.pointer,
-    ).object<NativeInteropSealedClass>();
+      _$bs.pointer,
+    ).object<jni$_.JByteArray?>();
   }
 
   static final _id_callFlutterSendMultipleNullableTypes =
       NativeInteropHostIntegrationCoreApiRegistrar._class.instanceMethodId(
         r'callFlutterSendMultipleNullableTypes',
-        r'(Ljava/lang/Boolean;Ljava/lang/Long;Ljava/lang/String;)Lcom/example/test_plugin/NativeInteropAllNullableTypes;',
+        r'(Ljava/lang/Boolean;Ljava/lang/Long;Ljava/lang/String;)[B',
       );
 
   static final _callFlutterSendMultipleNullableTypes =
@@ -5771,9 +5578,9 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
             )
           >();
 
-  /// from: `public fun callFlutterSendMultipleNullableTypes(aNullableBool: kotlin.Boolean?, aNullableInt: kotlin.Long?, aNullableString: kotlin.String?): com.example.test_plugin.NativeInteropAllNullableTypes`
+  /// from: `public fun callFlutterSendMultipleNullableTypes(aNullableBool: kotlin.Boolean?, aNullableInt: kotlin.Long?, aNullableString: kotlin.String?): kotlin.ByteArray?`
   /// The returned object must be released after use, by calling the [release] method.
-  NativeInteropAllNullableTypes callFlutterSendMultipleNullableTypes(
+  jni$_.JByteArray? callFlutterSendMultipleNullableTypes(
     jni$_.JBoolean? boolean,
     jni$_.JLong? long,
     jni$_.JString? string,
@@ -5788,13 +5595,13 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
       _$boolean.pointer,
       _$long.pointer,
       _$string.pointer,
-    ).object<NativeInteropAllNullableTypes>();
+    ).object<jni$_.JByteArray?>();
   }
 
   static final _id_callFlutterEchoNativeInteropAllNullableTypesWithoutRecursion =
       NativeInteropHostIntegrationCoreApiRegistrar._class.instanceMethodId(
         r'callFlutterEchoNativeInteropAllNullableTypesWithoutRecursion',
-        r'(Lcom/example/test_plugin/NativeInteropAllNullableTypesWithoutRecursion;)Lcom/example/test_plugin/NativeInteropAllNullableTypesWithoutRecursion;',
+        r'([B)[B',
       );
 
   static final _callFlutterEchoNativeInteropAllNullableTypesWithoutRecursion =
@@ -5815,26 +5622,24 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
             )
           >();
 
-  /// from: `public fun callFlutterEchoNativeInteropAllNullableTypesWithoutRecursion(everything: com.example.test_plugin.NativeInteropAllNullableTypesWithoutRecursion?): com.example.test_plugin.NativeInteropAllNullableTypesWithoutRecursion?`
+  /// from: `public fun callFlutterEchoNativeInteropAllNullableTypesWithoutRecursion(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
   /// The returned object must be released after use, by calling the [release] method.
-  NativeInteropAllNullableTypesWithoutRecursion?
-  callFlutterEchoNativeInteropAllNullableTypesWithoutRecursion(
-    NativeInteropAllNullableTypesWithoutRecursion? nativeInteropAllNullableTypesWithoutRecursion,
+  jni$_.JByteArray? callFlutterEchoNativeInteropAllNullableTypesWithoutRecursion(
+    jni$_.JByteArray bs,
   ) {
     final _$$selfRef = reference;
-    final _$nativeInteropAllNullableTypesWithoutRecursion =
-        nativeInteropAllNullableTypesWithoutRecursion?.reference ?? jni$_.jNullReference;
+    final _$bs = bs.reference;
     return _callFlutterEchoNativeInteropAllNullableTypesWithoutRecursion(
       _$$selfRef.pointer,
       _id_callFlutterEchoNativeInteropAllNullableTypesWithoutRecursion.pointer,
-      _$nativeInteropAllNullableTypesWithoutRecursion.pointer,
-    ).object<NativeInteropAllNullableTypesWithoutRecursion?>();
+      _$bs.pointer,
+    ).object<jni$_.JByteArray?>();
   }
 
   static final _id_callFlutterSendMultipleNullableTypesWithoutRecursion =
       NativeInteropHostIntegrationCoreApiRegistrar._class.instanceMethodId(
         r'callFlutterSendMultipleNullableTypesWithoutRecursion',
-        r'(Ljava/lang/Boolean;Ljava/lang/Long;Ljava/lang/String;)Lcom/example/test_plugin/NativeInteropAllNullableTypesWithoutRecursion;',
+        r'(Ljava/lang/Boolean;Ljava/lang/Long;Ljava/lang/String;)[B',
       );
 
   static final _callFlutterSendMultipleNullableTypesWithoutRecursion =
@@ -5859,10 +5664,9 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
             )
           >();
 
-  /// from: `public fun callFlutterSendMultipleNullableTypesWithoutRecursion(aNullableBool: kotlin.Boolean?, aNullableInt: kotlin.Long?, aNullableString: kotlin.String?): com.example.test_plugin.NativeInteropAllNullableTypesWithoutRecursion`
+  /// from: `public fun callFlutterSendMultipleNullableTypesWithoutRecursion(aNullableBool: kotlin.Boolean?, aNullableInt: kotlin.Long?, aNullableString: kotlin.String?): kotlin.ByteArray?`
   /// The returned object must be released after use, by calling the [release] method.
-  NativeInteropAllNullableTypesWithoutRecursion
-  callFlutterSendMultipleNullableTypesWithoutRecursion(
+  jni$_.JByteArray? callFlutterSendMultipleNullableTypesWithoutRecursion(
     jni$_.JBoolean? boolean,
     jni$_.JLong? long,
     jni$_.JString? string,
@@ -5877,7 +5681,7 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
       _$boolean.pointer,
       _$long.pointer,
       _$string.pointer,
-    ).object<NativeInteropAllNullableTypesWithoutRecursion>();
+    ).object<jni$_.JByteArray?>();
   }
 
   static final _id_callFlutterEchoBool = NativeInteropHostIntegrationCoreApiRegistrar._class
@@ -6123,7 +5927,7 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
   }
 
   static final _id_callFlutterEchoList = NativeInteropHostIntegrationCoreApiRegistrar._class
-      .instanceMethodId(r'callFlutterEchoList', r'(Ljava/util/List;)Ljava/util/List;');
+      .instanceMethodId(r'callFlutterEchoList', r'([B)[B');
 
   static final _callFlutterEchoList =
       jni$_.ProtectedJniExtensions.lookup<
@@ -6143,20 +5947,20 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
             )
           >();
 
-  /// from: `public fun callFlutterEchoList(list: kotlin.collections.List<kotlin.Any?>): kotlin.collections.List<kotlin.Any?>`
+  /// from: `public fun callFlutterEchoList(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
   /// The returned object must be released after use, by calling the [release] method.
-  jni$_.JList<jni$_.JObject?> callFlutterEchoList(jni$_.JList<jni$_.JObject?> list) {
+  jni$_.JByteArray? callFlutterEchoList(jni$_.JByteArray bs) {
     final _$$selfRef = reference;
-    final _$list = list.reference;
+    final _$bs = bs.reference;
     return _callFlutterEchoList(
       _$$selfRef.pointer,
       _id_callFlutterEchoList.pointer,
-      _$list.pointer,
-    ).object<jni$_.JList<jni$_.JObject?>>();
+      _$bs.pointer,
+    ).object<jni$_.JByteArray?>();
   }
 
   static final _id_callFlutterEchoEnumList = NativeInteropHostIntegrationCoreApiRegistrar._class
-      .instanceMethodId(r'callFlutterEchoEnumList', r'(Ljava/util/List;)Ljava/util/List;');
+      .instanceMethodId(r'callFlutterEchoEnumList', r'([B)[B');
 
   static final _callFlutterEchoEnumList =
       jni$_.ProtectedJniExtensions.lookup<
@@ -6176,22 +5980,20 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
             )
           >();
 
-  /// from: `public fun callFlutterEchoEnumList(enumList: kotlin.collections.List<com.example.test_plugin.NativeInteropAnEnum?>): kotlin.collections.List<com.example.test_plugin.NativeInteropAnEnum?>`
+  /// from: `public fun callFlutterEchoEnumList(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
   /// The returned object must be released after use, by calling the [release] method.
-  jni$_.JList<NativeInteropAnEnum?> callFlutterEchoEnumList(
-    jni$_.JList<NativeInteropAnEnum?> list,
-  ) {
+  jni$_.JByteArray? callFlutterEchoEnumList(jni$_.JByteArray bs) {
     final _$$selfRef = reference;
-    final _$list = list.reference;
+    final _$bs = bs.reference;
     return _callFlutterEchoEnumList(
       _$$selfRef.pointer,
       _id_callFlutterEchoEnumList.pointer,
-      _$list.pointer,
-    ).object<jni$_.JList<NativeInteropAnEnum?>>();
+      _$bs.pointer,
+    ).object<jni$_.JByteArray?>();
   }
 
   static final _id_callFlutterEchoClassList = NativeInteropHostIntegrationCoreApiRegistrar._class
-      .instanceMethodId(r'callFlutterEchoClassList', r'(Ljava/util/List;)Ljava/util/List;');
+      .instanceMethodId(r'callFlutterEchoClassList', r'([B)[B');
 
   static final _callFlutterEchoClassList =
       jni$_.ProtectedJniExtensions.lookup<
@@ -6211,23 +6013,21 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
             )
           >();
 
-  /// from: `public fun callFlutterEchoClassList(classList: kotlin.collections.List<com.example.test_plugin.NativeInteropAllNullableTypes?>): kotlin.collections.List<com.example.test_plugin.NativeInteropAllNullableTypes?>`
+  /// from: `public fun callFlutterEchoClassList(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
   /// The returned object must be released after use, by calling the [release] method.
-  jni$_.JList<NativeInteropAllNullableTypes?> callFlutterEchoClassList(
-    jni$_.JList<NativeInteropAllNullableTypes?> list,
-  ) {
+  jni$_.JByteArray? callFlutterEchoClassList(jni$_.JByteArray bs) {
     final _$$selfRef = reference;
-    final _$list = list.reference;
+    final _$bs = bs.reference;
     return _callFlutterEchoClassList(
       _$$selfRef.pointer,
       _id_callFlutterEchoClassList.pointer,
-      _$list.pointer,
-    ).object<jni$_.JList<NativeInteropAllNullableTypes?>>();
+      _$bs.pointer,
+    ).object<jni$_.JByteArray?>();
   }
 
   static final _id_callFlutterEchoNonNullEnumList = NativeInteropHostIntegrationCoreApiRegistrar
       ._class
-      .instanceMethodId(r'callFlutterEchoNonNullEnumList', r'(Ljava/util/List;)Ljava/util/List;');
+      .instanceMethodId(r'callFlutterEchoNonNullEnumList', r'([B)[B');
 
   static final _callFlutterEchoNonNullEnumList =
       jni$_.ProtectedJniExtensions.lookup<
@@ -6247,23 +6047,21 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
             )
           >();
 
-  /// from: `public fun callFlutterEchoNonNullEnumList(enumList: kotlin.collections.List<com.example.test_plugin.NativeInteropAnEnum>): kotlin.collections.List<com.example.test_plugin.NativeInteropAnEnum>`
+  /// from: `public fun callFlutterEchoNonNullEnumList(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
   /// The returned object must be released after use, by calling the [release] method.
-  jni$_.JList<NativeInteropAnEnum> callFlutterEchoNonNullEnumList(
-    jni$_.JList<NativeInteropAnEnum> list,
-  ) {
+  jni$_.JByteArray? callFlutterEchoNonNullEnumList(jni$_.JByteArray bs) {
     final _$$selfRef = reference;
-    final _$list = list.reference;
+    final _$bs = bs.reference;
     return _callFlutterEchoNonNullEnumList(
       _$$selfRef.pointer,
       _id_callFlutterEchoNonNullEnumList.pointer,
-      _$list.pointer,
-    ).object<jni$_.JList<NativeInteropAnEnum>>();
+      _$bs.pointer,
+    ).object<jni$_.JByteArray?>();
   }
 
   static final _id_callFlutterEchoNonNullClassList = NativeInteropHostIntegrationCoreApiRegistrar
       ._class
-      .instanceMethodId(r'callFlutterEchoNonNullClassList', r'(Ljava/util/List;)Ljava/util/List;');
+      .instanceMethodId(r'callFlutterEchoNonNullClassList', r'([B)[B');
 
   static final _callFlutterEchoNonNullClassList =
       jni$_.ProtectedJniExtensions.lookup<
@@ -6283,22 +6081,20 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
             )
           >();
 
-  /// from: `public fun callFlutterEchoNonNullClassList(classList: kotlin.collections.List<com.example.test_plugin.NativeInteropAllNullableTypes>): kotlin.collections.List<com.example.test_plugin.NativeInteropAllNullableTypes>`
+  /// from: `public fun callFlutterEchoNonNullClassList(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
   /// The returned object must be released after use, by calling the [release] method.
-  jni$_.JList<NativeInteropAllNullableTypes> callFlutterEchoNonNullClassList(
-    jni$_.JList<NativeInteropAllNullableTypes> list,
-  ) {
+  jni$_.JByteArray? callFlutterEchoNonNullClassList(jni$_.JByteArray bs) {
     final _$$selfRef = reference;
-    final _$list = list.reference;
+    final _$bs = bs.reference;
     return _callFlutterEchoNonNullClassList(
       _$$selfRef.pointer,
       _id_callFlutterEchoNonNullClassList.pointer,
-      _$list.pointer,
-    ).object<jni$_.JList<NativeInteropAllNullableTypes>>();
+      _$bs.pointer,
+    ).object<jni$_.JByteArray?>();
   }
 
   static final _id_callFlutterEchoMap = NativeInteropHostIntegrationCoreApiRegistrar._class
-      .instanceMethodId(r'callFlutterEchoMap', r'(Ljava/util/Map;)Ljava/util/Map;');
+      .instanceMethodId(r'callFlutterEchoMap', r'([B)[B');
 
   static final _callFlutterEchoMap =
       jni$_.ProtectedJniExtensions.lookup<
@@ -6318,22 +6114,20 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
             )
           >();
 
-  /// from: `public fun callFlutterEchoMap(map: kotlin.collections.Map<kotlin.Any?, kotlin.Any?>): kotlin.collections.Map<kotlin.Any?, kotlin.Any?>`
+  /// from: `public fun callFlutterEchoMap(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
   /// The returned object must be released after use, by calling the [release] method.
-  jni$_.JMap<jni$_.JObject?, jni$_.JObject?> callFlutterEchoMap(
-    jni$_.JMap<jni$_.JObject?, jni$_.JObject?> map,
-  ) {
+  jni$_.JByteArray? callFlutterEchoMap(jni$_.JByteArray bs) {
     final _$$selfRef = reference;
-    final _$map = map.reference;
+    final _$bs = bs.reference;
     return _callFlutterEchoMap(
       _$$selfRef.pointer,
       _id_callFlutterEchoMap.pointer,
-      _$map.pointer,
-    ).object<jni$_.JMap<jni$_.JObject?, jni$_.JObject?>>();
+      _$bs.pointer,
+    ).object<jni$_.JByteArray?>();
   }
 
   static final _id_callFlutterEchoStringMap = NativeInteropHostIntegrationCoreApiRegistrar._class
-      .instanceMethodId(r'callFlutterEchoStringMap', r'(Ljava/util/Map;)Ljava/util/Map;');
+      .instanceMethodId(r'callFlutterEchoStringMap', r'([B)[B');
 
   static final _callFlutterEchoStringMap =
       jni$_.ProtectedJniExtensions.lookup<
@@ -6353,22 +6147,20 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
             )
           >();
 
-  /// from: `public fun callFlutterEchoStringMap(stringMap: kotlin.collections.Map<kotlin.String?, kotlin.String?>): kotlin.collections.Map<kotlin.String?, kotlin.String?>`
+  /// from: `public fun callFlutterEchoStringMap(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
   /// The returned object must be released after use, by calling the [release] method.
-  jni$_.JMap<jni$_.JString?, jni$_.JString?> callFlutterEchoStringMap(
-    jni$_.JMap<jni$_.JString?, jni$_.JString?> map,
-  ) {
+  jni$_.JByteArray? callFlutterEchoStringMap(jni$_.JByteArray bs) {
     final _$$selfRef = reference;
-    final _$map = map.reference;
+    final _$bs = bs.reference;
     return _callFlutterEchoStringMap(
       _$$selfRef.pointer,
       _id_callFlutterEchoStringMap.pointer,
-      _$map.pointer,
-    ).object<jni$_.JMap<jni$_.JString?, jni$_.JString?>>();
+      _$bs.pointer,
+    ).object<jni$_.JByteArray?>();
   }
 
   static final _id_callFlutterEchoIntMap = NativeInteropHostIntegrationCoreApiRegistrar._class
-      .instanceMethodId(r'callFlutterEchoIntMap', r'(Ljava/util/Map;)Ljava/util/Map;');
+      .instanceMethodId(r'callFlutterEchoIntMap', r'([B)[B');
 
   static final _callFlutterEchoIntMap =
       jni$_.ProtectedJniExtensions.lookup<
@@ -6388,22 +6180,20 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
             )
           >();
 
-  /// from: `public fun callFlutterEchoIntMap(intMap: kotlin.collections.Map<kotlin.Long?, kotlin.Long?>): kotlin.collections.Map<kotlin.Long?, kotlin.Long?>`
+  /// from: `public fun callFlutterEchoIntMap(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
   /// The returned object must be released after use, by calling the [release] method.
-  jni$_.JMap<jni$_.JLong?, jni$_.JLong?> callFlutterEchoIntMap(
-    jni$_.JMap<jni$_.JLong?, jni$_.JLong?> map,
-  ) {
+  jni$_.JByteArray? callFlutterEchoIntMap(jni$_.JByteArray bs) {
     final _$$selfRef = reference;
-    final _$map = map.reference;
+    final _$bs = bs.reference;
     return _callFlutterEchoIntMap(
       _$$selfRef.pointer,
       _id_callFlutterEchoIntMap.pointer,
-      _$map.pointer,
-    ).object<jni$_.JMap<jni$_.JLong?, jni$_.JLong?>>();
+      _$bs.pointer,
+    ).object<jni$_.JByteArray?>();
   }
 
   static final _id_callFlutterEchoEnumMap = NativeInteropHostIntegrationCoreApiRegistrar._class
-      .instanceMethodId(r'callFlutterEchoEnumMap', r'(Ljava/util/Map;)Ljava/util/Map;');
+      .instanceMethodId(r'callFlutterEchoEnumMap', r'([B)[B');
 
   static final _callFlutterEchoEnumMap =
       jni$_.ProtectedJniExtensions.lookup<
@@ -6423,22 +6213,20 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
             )
           >();
 
-  /// from: `public fun callFlutterEchoEnumMap(enumMap: kotlin.collections.Map<com.example.test_plugin.NativeInteropAnEnum?, com.example.test_plugin.NativeInteropAnEnum?>): kotlin.collections.Map<com.example.test_plugin.NativeInteropAnEnum?, com.example.test_plugin.NativeInteropAnEnum?>`
+  /// from: `public fun callFlutterEchoEnumMap(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
   /// The returned object must be released after use, by calling the [release] method.
-  jni$_.JMap<NativeInteropAnEnum?, NativeInteropAnEnum?> callFlutterEchoEnumMap(
-    jni$_.JMap<NativeInteropAnEnum?, NativeInteropAnEnum?> map,
-  ) {
+  jni$_.JByteArray? callFlutterEchoEnumMap(jni$_.JByteArray bs) {
     final _$$selfRef = reference;
-    final _$map = map.reference;
+    final _$bs = bs.reference;
     return _callFlutterEchoEnumMap(
       _$$selfRef.pointer,
       _id_callFlutterEchoEnumMap.pointer,
-      _$map.pointer,
-    ).object<jni$_.JMap<NativeInteropAnEnum?, NativeInteropAnEnum?>>();
+      _$bs.pointer,
+    ).object<jni$_.JByteArray?>();
   }
 
   static final _id_callFlutterEchoClassMap = NativeInteropHostIntegrationCoreApiRegistrar._class
-      .instanceMethodId(r'callFlutterEchoClassMap', r'(Ljava/util/Map;)Ljava/util/Map;');
+      .instanceMethodId(r'callFlutterEchoClassMap', r'([B)[B');
 
   static final _callFlutterEchoClassMap =
       jni$_.ProtectedJniExtensions.lookup<
@@ -6458,23 +6246,21 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
             )
           >();
 
-  /// from: `public fun callFlutterEchoClassMap(classMap: kotlin.collections.Map<kotlin.Long?, com.example.test_plugin.NativeInteropAllNullableTypes?>): kotlin.collections.Map<kotlin.Long?, com.example.test_plugin.NativeInteropAllNullableTypes?>`
+  /// from: `public fun callFlutterEchoClassMap(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
   /// The returned object must be released after use, by calling the [release] method.
-  jni$_.JMap<jni$_.JLong?, NativeInteropAllNullableTypes?> callFlutterEchoClassMap(
-    jni$_.JMap<jni$_.JLong?, NativeInteropAllNullableTypes?> map,
-  ) {
+  jni$_.JByteArray? callFlutterEchoClassMap(jni$_.JByteArray bs) {
     final _$$selfRef = reference;
-    final _$map = map.reference;
+    final _$bs = bs.reference;
     return _callFlutterEchoClassMap(
       _$$selfRef.pointer,
       _id_callFlutterEchoClassMap.pointer,
-      _$map.pointer,
-    ).object<jni$_.JMap<jni$_.JLong?, NativeInteropAllNullableTypes?>>();
+      _$bs.pointer,
+    ).object<jni$_.JByteArray?>();
   }
 
   static final _id_callFlutterEchoNonNullStringMap = NativeInteropHostIntegrationCoreApiRegistrar
       ._class
-      .instanceMethodId(r'callFlutterEchoNonNullStringMap', r'(Ljava/util/Map;)Ljava/util/Map;');
+      .instanceMethodId(r'callFlutterEchoNonNullStringMap', r'([B)[B');
 
   static final _callFlutterEchoNonNullStringMap =
       jni$_.ProtectedJniExtensions.lookup<
@@ -6494,23 +6280,21 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
             )
           >();
 
-  /// from: `public fun callFlutterEchoNonNullStringMap(stringMap: kotlin.collections.Map<kotlin.String, kotlin.String>): kotlin.collections.Map<kotlin.String, kotlin.String>`
+  /// from: `public fun callFlutterEchoNonNullStringMap(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
   /// The returned object must be released after use, by calling the [release] method.
-  jni$_.JMap<jni$_.JString, jni$_.JString> callFlutterEchoNonNullStringMap(
-    jni$_.JMap<jni$_.JString, jni$_.JString> map,
-  ) {
+  jni$_.JByteArray? callFlutterEchoNonNullStringMap(jni$_.JByteArray bs) {
     final _$$selfRef = reference;
-    final _$map = map.reference;
+    final _$bs = bs.reference;
     return _callFlutterEchoNonNullStringMap(
       _$$selfRef.pointer,
       _id_callFlutterEchoNonNullStringMap.pointer,
-      _$map.pointer,
-    ).object<jni$_.JMap<jni$_.JString, jni$_.JString>>();
+      _$bs.pointer,
+    ).object<jni$_.JByteArray?>();
   }
 
   static final _id_callFlutterEchoNonNullIntMap = NativeInteropHostIntegrationCoreApiRegistrar
       ._class
-      .instanceMethodId(r'callFlutterEchoNonNullIntMap', r'(Ljava/util/Map;)Ljava/util/Map;');
+      .instanceMethodId(r'callFlutterEchoNonNullIntMap', r'([B)[B');
 
   static final _callFlutterEchoNonNullIntMap =
       jni$_.ProtectedJniExtensions.lookup<
@@ -6530,23 +6314,21 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
             )
           >();
 
-  /// from: `public fun callFlutterEchoNonNullIntMap(intMap: kotlin.collections.Map<kotlin.Long, kotlin.Long>): kotlin.collections.Map<kotlin.Long, kotlin.Long>`
+  /// from: `public fun callFlutterEchoNonNullIntMap(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
   /// The returned object must be released after use, by calling the [release] method.
-  jni$_.JMap<jni$_.JLong, jni$_.JLong> callFlutterEchoNonNullIntMap(
-    jni$_.JMap<jni$_.JLong, jni$_.JLong> map,
-  ) {
+  jni$_.JByteArray? callFlutterEchoNonNullIntMap(jni$_.JByteArray bs) {
     final _$$selfRef = reference;
-    final _$map = map.reference;
+    final _$bs = bs.reference;
     return _callFlutterEchoNonNullIntMap(
       _$$selfRef.pointer,
       _id_callFlutterEchoNonNullIntMap.pointer,
-      _$map.pointer,
-    ).object<jni$_.JMap<jni$_.JLong, jni$_.JLong>>();
+      _$bs.pointer,
+    ).object<jni$_.JByteArray?>();
   }
 
   static final _id_callFlutterEchoNonNullEnumMap = NativeInteropHostIntegrationCoreApiRegistrar
       ._class
-      .instanceMethodId(r'callFlutterEchoNonNullEnumMap', r'(Ljava/util/Map;)Ljava/util/Map;');
+      .instanceMethodId(r'callFlutterEchoNonNullEnumMap', r'([B)[B');
 
   static final _callFlutterEchoNonNullEnumMap =
       jni$_.ProtectedJniExtensions.lookup<
@@ -6566,23 +6348,21 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
             )
           >();
 
-  /// from: `public fun callFlutterEchoNonNullEnumMap(enumMap: kotlin.collections.Map<com.example.test_plugin.NativeInteropAnEnum, com.example.test_plugin.NativeInteropAnEnum>): kotlin.collections.Map<com.example.test_plugin.NativeInteropAnEnum, com.example.test_plugin.NativeInteropAnEnum>`
+  /// from: `public fun callFlutterEchoNonNullEnumMap(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
   /// The returned object must be released after use, by calling the [release] method.
-  jni$_.JMap<NativeInteropAnEnum, NativeInteropAnEnum> callFlutterEchoNonNullEnumMap(
-    jni$_.JMap<NativeInteropAnEnum, NativeInteropAnEnum> map,
-  ) {
+  jni$_.JByteArray? callFlutterEchoNonNullEnumMap(jni$_.JByteArray bs) {
     final _$$selfRef = reference;
-    final _$map = map.reference;
+    final _$bs = bs.reference;
     return _callFlutterEchoNonNullEnumMap(
       _$$selfRef.pointer,
       _id_callFlutterEchoNonNullEnumMap.pointer,
-      _$map.pointer,
-    ).object<jni$_.JMap<NativeInteropAnEnum, NativeInteropAnEnum>>();
+      _$bs.pointer,
+    ).object<jni$_.JByteArray?>();
   }
 
   static final _id_callFlutterEchoNonNullClassMap = NativeInteropHostIntegrationCoreApiRegistrar
       ._class
-      .instanceMethodId(r'callFlutterEchoNonNullClassMap', r'(Ljava/util/Map;)Ljava/util/Map;');
+      .instanceMethodId(r'callFlutterEchoNonNullClassMap', r'([B)[B');
 
   static final _callFlutterEchoNonNullClassMap =
       jni$_.ProtectedJniExtensions.lookup<
@@ -6602,25 +6382,20 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
             )
           >();
 
-  /// from: `public fun callFlutterEchoNonNullClassMap(classMap: kotlin.collections.Map<kotlin.Long, com.example.test_plugin.NativeInteropAllNullableTypes>): kotlin.collections.Map<kotlin.Long, com.example.test_plugin.NativeInteropAllNullableTypes>`
+  /// from: `public fun callFlutterEchoNonNullClassMap(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
   /// The returned object must be released after use, by calling the [release] method.
-  jni$_.JMap<jni$_.JLong, NativeInteropAllNullableTypes> callFlutterEchoNonNullClassMap(
-    jni$_.JMap<jni$_.JLong, NativeInteropAllNullableTypes> map,
-  ) {
+  jni$_.JByteArray? callFlutterEchoNonNullClassMap(jni$_.JByteArray bs) {
     final _$$selfRef = reference;
-    final _$map = map.reference;
+    final _$bs = bs.reference;
     return _callFlutterEchoNonNullClassMap(
       _$$selfRef.pointer,
       _id_callFlutterEchoNonNullClassMap.pointer,
-      _$map.pointer,
-    ).object<jni$_.JMap<jni$_.JLong, NativeInteropAllNullableTypes>>();
+      _$bs.pointer,
+    ).object<jni$_.JByteArray?>();
   }
 
   static final _id_callFlutterEchoEnum = NativeInteropHostIntegrationCoreApiRegistrar._class
-      .instanceMethodId(
-        r'callFlutterEchoEnum',
-        r'(Lcom/example/test_plugin/NativeInteropAnEnum;)Lcom/example/test_plugin/NativeInteropAnEnum;',
-      );
+      .instanceMethodId(r'callFlutterEchoEnum', r'(J)J');
 
   static final _callFlutterEchoEnum =
       jni$_.ProtectedJniExtensions.lookup<
@@ -6628,34 +6403,24 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
               jni$_.JniResult Function(
                 jni$_.Pointer<jni$_.Void>,
                 jni$_.JMethodIDPtr,
-                jni$_.VarArgs<(jni$_.Pointer<jni$_.Void>,)>,
+                jni$_.VarArgs<(jni$_.Int64,)>,
               )
             >
-          >('globalEnv_CallObjectMethod')
+          >('globalEnv_CallLongMethod')
           .asFunction<
-            jni$_.JniResult Function(
-              jni$_.Pointer<jni$_.Void>,
-              jni$_.JMethodIDPtr,
-              jni$_.Pointer<jni$_.Void>,
-            )
+            jni$_.JniResult Function(jni$_.Pointer<jni$_.Void>, jni$_.JMethodIDPtr, core$_.int)
           >();
 
-  /// from: `public fun callFlutterEchoEnum(anEnum: com.example.test_plugin.NativeInteropAnEnum): com.example.test_plugin.NativeInteropAnEnum`
-  /// The returned object must be released after use, by calling the [release] method.
-  NativeInteropAnEnum callFlutterEchoEnum(NativeInteropAnEnum nativeInteropAnEnum) {
+  /// from: `public fun callFlutterEchoEnum(anEnum: kotlin.Long): kotlin.Long`
+  core$_.int callFlutterEchoEnum(core$_.int j) {
     final _$$selfRef = reference;
-    final _$nativeInteropAnEnum = nativeInteropAnEnum.reference;
-    return _callFlutterEchoEnum(
-      _$$selfRef.pointer,
-      _id_callFlutterEchoEnum.pointer,
-      _$nativeInteropAnEnum.pointer,
-    ).object<NativeInteropAnEnum>();
+    return _callFlutterEchoEnum(_$$selfRef.pointer, _id_callFlutterEchoEnum.pointer, j).long;
   }
 
   static final _id_callFlutterEchoNativeInteropAnotherEnum =
       NativeInteropHostIntegrationCoreApiRegistrar._class.instanceMethodId(
         r'callFlutterEchoNativeInteropAnotherEnum',
-        r'(Lcom/example/test_plugin/NativeInteropAnotherEnum;)Lcom/example/test_plugin/NativeInteropAnotherEnum;',
+        r'(J)J',
       );
 
   static final _callFlutterEchoNativeInteropAnotherEnum =
@@ -6664,30 +6429,22 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
               jni$_.JniResult Function(
                 jni$_.Pointer<jni$_.Void>,
                 jni$_.JMethodIDPtr,
-                jni$_.VarArgs<(jni$_.Pointer<jni$_.Void>,)>,
+                jni$_.VarArgs<(jni$_.Int64,)>,
               )
             >
-          >('globalEnv_CallObjectMethod')
+          >('globalEnv_CallLongMethod')
           .asFunction<
-            jni$_.JniResult Function(
-              jni$_.Pointer<jni$_.Void>,
-              jni$_.JMethodIDPtr,
-              jni$_.Pointer<jni$_.Void>,
-            )
+            jni$_.JniResult Function(jni$_.Pointer<jni$_.Void>, jni$_.JMethodIDPtr, core$_.int)
           >();
 
-  /// from: `public fun callFlutterEchoNativeInteropAnotherEnum(anotherEnum: com.example.test_plugin.NativeInteropAnotherEnum): com.example.test_plugin.NativeInteropAnotherEnum`
-  /// The returned object must be released after use, by calling the [release] method.
-  NativeInteropAnotherEnum callFlutterEchoNativeInteropAnotherEnum(
-    NativeInteropAnotherEnum nativeInteropAnotherEnum,
-  ) {
+  /// from: `public fun callFlutterEchoNativeInteropAnotherEnum(anotherEnum: kotlin.Long): kotlin.Long`
+  core$_.int callFlutterEchoNativeInteropAnotherEnum(core$_.int j) {
     final _$$selfRef = reference;
-    final _$nativeInteropAnotherEnum = nativeInteropAnotherEnum.reference;
     return _callFlutterEchoNativeInteropAnotherEnum(
       _$$selfRef.pointer,
       _id_callFlutterEchoNativeInteropAnotherEnum.pointer,
-      _$nativeInteropAnotherEnum.pointer,
-    ).object<NativeInteropAnotherEnum>();
+      j,
+    ).long;
   }
 
   static final _id_callFlutterEchoNullableBool = NativeInteropHostIntegrationCoreApiRegistrar._class
@@ -6970,7 +6727,7 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
   }
 
   static final _id_callFlutterEchoNullableList = NativeInteropHostIntegrationCoreApiRegistrar._class
-      .instanceMethodId(r'callFlutterEchoNullableList', r'(Ljava/util/List;)Ljava/util/List;');
+      .instanceMethodId(r'callFlutterEchoNullableList', r'([B)[B');
 
   static final _callFlutterEchoNullableList =
       jni$_.ProtectedJniExtensions.lookup<
@@ -6990,21 +6747,21 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
             )
           >();
 
-  /// from: `public fun callFlutterEchoNullableList(list: kotlin.collections.List<kotlin.Any?>?): kotlin.collections.List<kotlin.Any?>?`
+  /// from: `public fun callFlutterEchoNullableList(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
   /// The returned object must be released after use, by calling the [release] method.
-  jni$_.JList<jni$_.JObject?>? callFlutterEchoNullableList(jni$_.JList<jni$_.JObject?>? list) {
+  jni$_.JByteArray? callFlutterEchoNullableList(jni$_.JByteArray bs) {
     final _$$selfRef = reference;
-    final _$list = list?.reference ?? jni$_.jNullReference;
+    final _$bs = bs.reference;
     return _callFlutterEchoNullableList(
       _$$selfRef.pointer,
       _id_callFlutterEchoNullableList.pointer,
-      _$list.pointer,
-    ).object<jni$_.JList<jni$_.JObject?>?>();
+      _$bs.pointer,
+    ).object<jni$_.JByteArray?>();
   }
 
   static final _id_callFlutterEchoNullableEnumList = NativeInteropHostIntegrationCoreApiRegistrar
       ._class
-      .instanceMethodId(r'callFlutterEchoNullableEnumList', r'(Ljava/util/List;)Ljava/util/List;');
+      .instanceMethodId(r'callFlutterEchoNullableEnumList', r'([B)[B');
 
   static final _callFlutterEchoNullableEnumList =
       jni$_.ProtectedJniExtensions.lookup<
@@ -7024,23 +6781,21 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
             )
           >();
 
-  /// from: `public fun callFlutterEchoNullableEnumList(enumList: kotlin.collections.List<com.example.test_plugin.NativeInteropAnEnum?>?): kotlin.collections.List<com.example.test_plugin.NativeInteropAnEnum?>?`
+  /// from: `public fun callFlutterEchoNullableEnumList(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
   /// The returned object must be released after use, by calling the [release] method.
-  jni$_.JList<NativeInteropAnEnum?>? callFlutterEchoNullableEnumList(
-    jni$_.JList<NativeInteropAnEnum?>? list,
-  ) {
+  jni$_.JByteArray? callFlutterEchoNullableEnumList(jni$_.JByteArray bs) {
     final _$$selfRef = reference;
-    final _$list = list?.reference ?? jni$_.jNullReference;
+    final _$bs = bs.reference;
     return _callFlutterEchoNullableEnumList(
       _$$selfRef.pointer,
       _id_callFlutterEchoNullableEnumList.pointer,
-      _$list.pointer,
-    ).object<jni$_.JList<NativeInteropAnEnum?>?>();
+      _$bs.pointer,
+    ).object<jni$_.JByteArray?>();
   }
 
   static final _id_callFlutterEchoNullableClassList = NativeInteropHostIntegrationCoreApiRegistrar
       ._class
-      .instanceMethodId(r'callFlutterEchoNullableClassList', r'(Ljava/util/List;)Ljava/util/List;');
+      .instanceMethodId(r'callFlutterEchoNullableClassList', r'([B)[B');
 
   static final _callFlutterEchoNullableClassList =
       jni$_.ProtectedJniExtensions.lookup<
@@ -7060,24 +6815,22 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
             )
           >();
 
-  /// from: `public fun callFlutterEchoNullableClassList(classList: kotlin.collections.List<com.example.test_plugin.NativeInteropAllNullableTypes?>?): kotlin.collections.List<com.example.test_plugin.NativeInteropAllNullableTypes?>?`
+  /// from: `public fun callFlutterEchoNullableClassList(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
   /// The returned object must be released after use, by calling the [release] method.
-  jni$_.JList<NativeInteropAllNullableTypes?>? callFlutterEchoNullableClassList(
-    jni$_.JList<NativeInteropAllNullableTypes?>? list,
-  ) {
+  jni$_.JByteArray? callFlutterEchoNullableClassList(jni$_.JByteArray bs) {
     final _$$selfRef = reference;
-    final _$list = list?.reference ?? jni$_.jNullReference;
+    final _$bs = bs.reference;
     return _callFlutterEchoNullableClassList(
       _$$selfRef.pointer,
       _id_callFlutterEchoNullableClassList.pointer,
-      _$list.pointer,
-    ).object<jni$_.JList<NativeInteropAllNullableTypes?>?>();
+      _$bs.pointer,
+    ).object<jni$_.JByteArray?>();
   }
 
   static final _id_callFlutterEchoNullableNonNullEnumList =
       NativeInteropHostIntegrationCoreApiRegistrar._class.instanceMethodId(
         r'callFlutterEchoNullableNonNullEnumList',
-        r'(Ljava/util/List;)Ljava/util/List;',
+        r'([B)[B',
       );
 
   static final _callFlutterEchoNullableNonNullEnumList =
@@ -7098,24 +6851,22 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
             )
           >();
 
-  /// from: `public fun callFlutterEchoNullableNonNullEnumList(enumList: kotlin.collections.List<com.example.test_plugin.NativeInteropAnEnum>?): kotlin.collections.List<com.example.test_plugin.NativeInteropAnEnum>?`
+  /// from: `public fun callFlutterEchoNullableNonNullEnumList(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
   /// The returned object must be released after use, by calling the [release] method.
-  jni$_.JList<NativeInteropAnEnum>? callFlutterEchoNullableNonNullEnumList(
-    jni$_.JList<NativeInteropAnEnum>? list,
-  ) {
+  jni$_.JByteArray? callFlutterEchoNullableNonNullEnumList(jni$_.JByteArray bs) {
     final _$$selfRef = reference;
-    final _$list = list?.reference ?? jni$_.jNullReference;
+    final _$bs = bs.reference;
     return _callFlutterEchoNullableNonNullEnumList(
       _$$selfRef.pointer,
       _id_callFlutterEchoNullableNonNullEnumList.pointer,
-      _$list.pointer,
-    ).object<jni$_.JList<NativeInteropAnEnum>?>();
+      _$bs.pointer,
+    ).object<jni$_.JByteArray?>();
   }
 
   static final _id_callFlutterEchoNullableNonNullClassList =
       NativeInteropHostIntegrationCoreApiRegistrar._class.instanceMethodId(
         r'callFlutterEchoNullableNonNullClassList',
-        r'(Ljava/util/List;)Ljava/util/List;',
+        r'([B)[B',
       );
 
   static final _callFlutterEchoNullableNonNullClassList =
@@ -7136,22 +6887,20 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
             )
           >();
 
-  /// from: `public fun callFlutterEchoNullableNonNullClassList(classList: kotlin.collections.List<com.example.test_plugin.NativeInteropAllNullableTypes>?): kotlin.collections.List<com.example.test_plugin.NativeInteropAllNullableTypes>?`
+  /// from: `public fun callFlutterEchoNullableNonNullClassList(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
   /// The returned object must be released after use, by calling the [release] method.
-  jni$_.JList<NativeInteropAllNullableTypes>? callFlutterEchoNullableNonNullClassList(
-    jni$_.JList<NativeInteropAllNullableTypes>? list,
-  ) {
+  jni$_.JByteArray? callFlutterEchoNullableNonNullClassList(jni$_.JByteArray bs) {
     final _$$selfRef = reference;
-    final _$list = list?.reference ?? jni$_.jNullReference;
+    final _$bs = bs.reference;
     return _callFlutterEchoNullableNonNullClassList(
       _$$selfRef.pointer,
       _id_callFlutterEchoNullableNonNullClassList.pointer,
-      _$list.pointer,
-    ).object<jni$_.JList<NativeInteropAllNullableTypes>?>();
+      _$bs.pointer,
+    ).object<jni$_.JByteArray?>();
   }
 
   static final _id_callFlutterEchoNullableMap = NativeInteropHostIntegrationCoreApiRegistrar._class
-      .instanceMethodId(r'callFlutterEchoNullableMap', r'(Ljava/util/Map;)Ljava/util/Map;');
+      .instanceMethodId(r'callFlutterEchoNullableMap', r'([B)[B');
 
   static final _callFlutterEchoNullableMap =
       jni$_.ProtectedJniExtensions.lookup<
@@ -7171,23 +6920,21 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
             )
           >();
 
-  /// from: `public fun callFlutterEchoNullableMap(map: kotlin.collections.Map<kotlin.Any?, kotlin.Any?>?): kotlin.collections.Map<kotlin.Any?, kotlin.Any?>?`
+  /// from: `public fun callFlutterEchoNullableMap(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
   /// The returned object must be released after use, by calling the [release] method.
-  jni$_.JMap<jni$_.JObject?, jni$_.JObject?>? callFlutterEchoNullableMap(
-    jni$_.JMap<jni$_.JObject?, jni$_.JObject?>? map,
-  ) {
+  jni$_.JByteArray? callFlutterEchoNullableMap(jni$_.JByteArray bs) {
     final _$$selfRef = reference;
-    final _$map = map?.reference ?? jni$_.jNullReference;
+    final _$bs = bs.reference;
     return _callFlutterEchoNullableMap(
       _$$selfRef.pointer,
       _id_callFlutterEchoNullableMap.pointer,
-      _$map.pointer,
-    ).object<jni$_.JMap<jni$_.JObject?, jni$_.JObject?>?>();
+      _$bs.pointer,
+    ).object<jni$_.JByteArray?>();
   }
 
   static final _id_callFlutterEchoNullableStringMap = NativeInteropHostIntegrationCoreApiRegistrar
       ._class
-      .instanceMethodId(r'callFlutterEchoNullableStringMap', r'(Ljava/util/Map;)Ljava/util/Map;');
+      .instanceMethodId(r'callFlutterEchoNullableStringMap', r'([B)[B');
 
   static final _callFlutterEchoNullableStringMap =
       jni$_.ProtectedJniExtensions.lookup<
@@ -7207,23 +6954,21 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
             )
           >();
 
-  /// from: `public fun callFlutterEchoNullableStringMap(stringMap: kotlin.collections.Map<kotlin.String?, kotlin.String?>?): kotlin.collections.Map<kotlin.String?, kotlin.String?>?`
+  /// from: `public fun callFlutterEchoNullableStringMap(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
   /// The returned object must be released after use, by calling the [release] method.
-  jni$_.JMap<jni$_.JString?, jni$_.JString?>? callFlutterEchoNullableStringMap(
-    jni$_.JMap<jni$_.JString?, jni$_.JString?>? map,
-  ) {
+  jni$_.JByteArray? callFlutterEchoNullableStringMap(jni$_.JByteArray bs) {
     final _$$selfRef = reference;
-    final _$map = map?.reference ?? jni$_.jNullReference;
+    final _$bs = bs.reference;
     return _callFlutterEchoNullableStringMap(
       _$$selfRef.pointer,
       _id_callFlutterEchoNullableStringMap.pointer,
-      _$map.pointer,
-    ).object<jni$_.JMap<jni$_.JString?, jni$_.JString?>?>();
+      _$bs.pointer,
+    ).object<jni$_.JByteArray?>();
   }
 
   static final _id_callFlutterEchoNullableIntMap = NativeInteropHostIntegrationCoreApiRegistrar
       ._class
-      .instanceMethodId(r'callFlutterEchoNullableIntMap', r'(Ljava/util/Map;)Ljava/util/Map;');
+      .instanceMethodId(r'callFlutterEchoNullableIntMap', r'([B)[B');
 
   static final _callFlutterEchoNullableIntMap =
       jni$_.ProtectedJniExtensions.lookup<
@@ -7243,23 +6988,21 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
             )
           >();
 
-  /// from: `public fun callFlutterEchoNullableIntMap(intMap: kotlin.collections.Map<kotlin.Long?, kotlin.Long?>?): kotlin.collections.Map<kotlin.Long?, kotlin.Long?>?`
+  /// from: `public fun callFlutterEchoNullableIntMap(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
   /// The returned object must be released after use, by calling the [release] method.
-  jni$_.JMap<jni$_.JLong?, jni$_.JLong?>? callFlutterEchoNullableIntMap(
-    jni$_.JMap<jni$_.JLong?, jni$_.JLong?>? map,
-  ) {
+  jni$_.JByteArray? callFlutterEchoNullableIntMap(jni$_.JByteArray bs) {
     final _$$selfRef = reference;
-    final _$map = map?.reference ?? jni$_.jNullReference;
+    final _$bs = bs.reference;
     return _callFlutterEchoNullableIntMap(
       _$$selfRef.pointer,
       _id_callFlutterEchoNullableIntMap.pointer,
-      _$map.pointer,
-    ).object<jni$_.JMap<jni$_.JLong?, jni$_.JLong?>?>();
+      _$bs.pointer,
+    ).object<jni$_.JByteArray?>();
   }
 
   static final _id_callFlutterEchoNullableEnumMap = NativeInteropHostIntegrationCoreApiRegistrar
       ._class
-      .instanceMethodId(r'callFlutterEchoNullableEnumMap', r'(Ljava/util/Map;)Ljava/util/Map;');
+      .instanceMethodId(r'callFlutterEchoNullableEnumMap', r'([B)[B');
 
   static final _callFlutterEchoNullableEnumMap =
       jni$_.ProtectedJniExtensions.lookup<
@@ -7279,23 +7022,21 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
             )
           >();
 
-  /// from: `public fun callFlutterEchoNullableEnumMap(enumMap: kotlin.collections.Map<com.example.test_plugin.NativeInteropAnEnum?, com.example.test_plugin.NativeInteropAnEnum?>?): kotlin.collections.Map<com.example.test_plugin.NativeInteropAnEnum?, com.example.test_plugin.NativeInteropAnEnum?>?`
+  /// from: `public fun callFlutterEchoNullableEnumMap(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
   /// The returned object must be released after use, by calling the [release] method.
-  jni$_.JMap<NativeInteropAnEnum?, NativeInteropAnEnum?>? callFlutterEchoNullableEnumMap(
-    jni$_.JMap<NativeInteropAnEnum?, NativeInteropAnEnum?>? map,
-  ) {
+  jni$_.JByteArray? callFlutterEchoNullableEnumMap(jni$_.JByteArray bs) {
     final _$$selfRef = reference;
-    final _$map = map?.reference ?? jni$_.jNullReference;
+    final _$bs = bs.reference;
     return _callFlutterEchoNullableEnumMap(
       _$$selfRef.pointer,
       _id_callFlutterEchoNullableEnumMap.pointer,
-      _$map.pointer,
-    ).object<jni$_.JMap<NativeInteropAnEnum?, NativeInteropAnEnum?>?>();
+      _$bs.pointer,
+    ).object<jni$_.JByteArray?>();
   }
 
   static final _id_callFlutterEchoNullableClassMap = NativeInteropHostIntegrationCoreApiRegistrar
       ._class
-      .instanceMethodId(r'callFlutterEchoNullableClassMap', r'(Ljava/util/Map;)Ljava/util/Map;');
+      .instanceMethodId(r'callFlutterEchoNullableClassMap', r'([B)[B');
 
   static final _callFlutterEchoNullableClassMap =
       jni$_.ProtectedJniExtensions.lookup<
@@ -7315,24 +7056,22 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
             )
           >();
 
-  /// from: `public fun callFlutterEchoNullableClassMap(classMap: kotlin.collections.Map<kotlin.Long?, com.example.test_plugin.NativeInteropAllNullableTypes?>?): kotlin.collections.Map<kotlin.Long?, com.example.test_plugin.NativeInteropAllNullableTypes?>?`
+  /// from: `public fun callFlutterEchoNullableClassMap(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
   /// The returned object must be released after use, by calling the [release] method.
-  jni$_.JMap<jni$_.JLong?, NativeInteropAllNullableTypes?>? callFlutterEchoNullableClassMap(
-    jni$_.JMap<jni$_.JLong?, NativeInteropAllNullableTypes?>? map,
-  ) {
+  jni$_.JByteArray? callFlutterEchoNullableClassMap(jni$_.JByteArray bs) {
     final _$$selfRef = reference;
-    final _$map = map?.reference ?? jni$_.jNullReference;
+    final _$bs = bs.reference;
     return _callFlutterEchoNullableClassMap(
       _$$selfRef.pointer,
       _id_callFlutterEchoNullableClassMap.pointer,
-      _$map.pointer,
-    ).object<jni$_.JMap<jni$_.JLong?, NativeInteropAllNullableTypes?>?>();
+      _$bs.pointer,
+    ).object<jni$_.JByteArray?>();
   }
 
   static final _id_callFlutterEchoNullableNonNullStringMap =
       NativeInteropHostIntegrationCoreApiRegistrar._class.instanceMethodId(
         r'callFlutterEchoNullableNonNullStringMap',
-        r'(Ljava/util/Map;)Ljava/util/Map;',
+        r'([B)[B',
       );
 
   static final _callFlutterEchoNullableNonNullStringMap =
@@ -7353,24 +7092,22 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
             )
           >();
 
-  /// from: `public fun callFlutterEchoNullableNonNullStringMap(stringMap: kotlin.collections.Map<kotlin.String, kotlin.String>?): kotlin.collections.Map<kotlin.String, kotlin.String>?`
+  /// from: `public fun callFlutterEchoNullableNonNullStringMap(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
   /// The returned object must be released after use, by calling the [release] method.
-  jni$_.JMap<jni$_.JString, jni$_.JString>? callFlutterEchoNullableNonNullStringMap(
-    jni$_.JMap<jni$_.JString, jni$_.JString>? map,
-  ) {
+  jni$_.JByteArray? callFlutterEchoNullableNonNullStringMap(jni$_.JByteArray bs) {
     final _$$selfRef = reference;
-    final _$map = map?.reference ?? jni$_.jNullReference;
+    final _$bs = bs.reference;
     return _callFlutterEchoNullableNonNullStringMap(
       _$$selfRef.pointer,
       _id_callFlutterEchoNullableNonNullStringMap.pointer,
-      _$map.pointer,
-    ).object<jni$_.JMap<jni$_.JString, jni$_.JString>?>();
+      _$bs.pointer,
+    ).object<jni$_.JByteArray?>();
   }
 
   static final _id_callFlutterEchoNullableNonNullIntMap =
       NativeInteropHostIntegrationCoreApiRegistrar._class.instanceMethodId(
         r'callFlutterEchoNullableNonNullIntMap',
-        r'(Ljava/util/Map;)Ljava/util/Map;',
+        r'([B)[B',
       );
 
   static final _callFlutterEchoNullableNonNullIntMap =
@@ -7391,24 +7128,22 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
             )
           >();
 
-  /// from: `public fun callFlutterEchoNullableNonNullIntMap(intMap: kotlin.collections.Map<kotlin.Long, kotlin.Long>?): kotlin.collections.Map<kotlin.Long, kotlin.Long>?`
+  /// from: `public fun callFlutterEchoNullableNonNullIntMap(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
   /// The returned object must be released after use, by calling the [release] method.
-  jni$_.JMap<jni$_.JLong, jni$_.JLong>? callFlutterEchoNullableNonNullIntMap(
-    jni$_.JMap<jni$_.JLong, jni$_.JLong>? map,
-  ) {
+  jni$_.JByteArray? callFlutterEchoNullableNonNullIntMap(jni$_.JByteArray bs) {
     final _$$selfRef = reference;
-    final _$map = map?.reference ?? jni$_.jNullReference;
+    final _$bs = bs.reference;
     return _callFlutterEchoNullableNonNullIntMap(
       _$$selfRef.pointer,
       _id_callFlutterEchoNullableNonNullIntMap.pointer,
-      _$map.pointer,
-    ).object<jni$_.JMap<jni$_.JLong, jni$_.JLong>?>();
+      _$bs.pointer,
+    ).object<jni$_.JByteArray?>();
   }
 
   static final _id_callFlutterEchoNullableNonNullEnumMap =
       NativeInteropHostIntegrationCoreApiRegistrar._class.instanceMethodId(
         r'callFlutterEchoNullableNonNullEnumMap',
-        r'(Ljava/util/Map;)Ljava/util/Map;',
+        r'([B)[B',
       );
 
   static final _callFlutterEchoNullableNonNullEnumMap =
@@ -7429,24 +7164,22 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
             )
           >();
 
-  /// from: `public fun callFlutterEchoNullableNonNullEnumMap(enumMap: kotlin.collections.Map<com.example.test_plugin.NativeInteropAnEnum, com.example.test_plugin.NativeInteropAnEnum>?): kotlin.collections.Map<com.example.test_plugin.NativeInteropAnEnum, com.example.test_plugin.NativeInteropAnEnum>?`
+  /// from: `public fun callFlutterEchoNullableNonNullEnumMap(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
   /// The returned object must be released after use, by calling the [release] method.
-  jni$_.JMap<NativeInteropAnEnum, NativeInteropAnEnum>? callFlutterEchoNullableNonNullEnumMap(
-    jni$_.JMap<NativeInteropAnEnum, NativeInteropAnEnum>? map,
-  ) {
+  jni$_.JByteArray? callFlutterEchoNullableNonNullEnumMap(jni$_.JByteArray bs) {
     final _$$selfRef = reference;
-    final _$map = map?.reference ?? jni$_.jNullReference;
+    final _$bs = bs.reference;
     return _callFlutterEchoNullableNonNullEnumMap(
       _$$selfRef.pointer,
       _id_callFlutterEchoNullableNonNullEnumMap.pointer,
-      _$map.pointer,
-    ).object<jni$_.JMap<NativeInteropAnEnum, NativeInteropAnEnum>?>();
+      _$bs.pointer,
+    ).object<jni$_.JByteArray?>();
   }
 
   static final _id_callFlutterEchoNullableNonNullClassMap =
       NativeInteropHostIntegrationCoreApiRegistrar._class.instanceMethodId(
         r'callFlutterEchoNullableNonNullClassMap',
-        r'(Ljava/util/Map;)Ljava/util/Map;',
+        r'([B)[B',
       );
 
   static final _callFlutterEchoNullableNonNullClassMap =
@@ -7467,25 +7200,20 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
             )
           >();
 
-  /// from: `public fun callFlutterEchoNullableNonNullClassMap(classMap: kotlin.collections.Map<kotlin.Long, com.example.test_plugin.NativeInteropAllNullableTypes>?): kotlin.collections.Map<kotlin.Long, com.example.test_plugin.NativeInteropAllNullableTypes>?`
+  /// from: `public fun callFlutterEchoNullableNonNullClassMap(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
   /// The returned object must be released after use, by calling the [release] method.
-  jni$_.JMap<jni$_.JLong, NativeInteropAllNullableTypes>? callFlutterEchoNullableNonNullClassMap(
-    jni$_.JMap<jni$_.JLong, NativeInteropAllNullableTypes>? map,
-  ) {
+  jni$_.JByteArray? callFlutterEchoNullableNonNullClassMap(jni$_.JByteArray bs) {
     final _$$selfRef = reference;
-    final _$map = map?.reference ?? jni$_.jNullReference;
+    final _$bs = bs.reference;
     return _callFlutterEchoNullableNonNullClassMap(
       _$$selfRef.pointer,
       _id_callFlutterEchoNullableNonNullClassMap.pointer,
-      _$map.pointer,
-    ).object<jni$_.JMap<jni$_.JLong, NativeInteropAllNullableTypes>?>();
+      _$bs.pointer,
+    ).object<jni$_.JByteArray?>();
   }
 
   static final _id_callFlutterEchoNullableEnum = NativeInteropHostIntegrationCoreApiRegistrar._class
-      .instanceMethodId(
-        r'callFlutterEchoNullableEnum',
-        r'(Lcom/example/test_plugin/NativeInteropAnEnum;)Lcom/example/test_plugin/NativeInteropAnEnum;',
-      );
+      .instanceMethodId(r'callFlutterEchoNullableEnum', r'(J)J');
 
   static final _callFlutterEchoNullableEnum =
       jni$_.ProtectedJniExtensions.lookup<
@@ -7493,36 +7221,27 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
               jni$_.JniResult Function(
                 jni$_.Pointer<jni$_.Void>,
                 jni$_.JMethodIDPtr,
-                jni$_.VarArgs<(jni$_.Pointer<jni$_.Void>,)>,
+                jni$_.VarArgs<(jni$_.Int64,)>,
               )
             >
-          >('globalEnv_CallObjectMethod')
+          >('globalEnv_CallLongMethod')
           .asFunction<
-            jni$_.JniResult Function(
-              jni$_.Pointer<jni$_.Void>,
-              jni$_.JMethodIDPtr,
-              jni$_.Pointer<jni$_.Void>,
-            )
+            jni$_.JniResult Function(jni$_.Pointer<jni$_.Void>, jni$_.JMethodIDPtr, core$_.int)
           >();
 
-  /// from: `public fun callFlutterEchoNullableEnum(anEnum: com.example.test_plugin.NativeInteropAnEnum?): com.example.test_plugin.NativeInteropAnEnum?`
-  /// The returned object must be released after use, by calling the [release] method.
-  NativeInteropAnEnum? callFlutterEchoNullableEnum(NativeInteropAnEnum? nativeInteropAnEnum) {
+  /// from: `public fun callFlutterEchoNullableEnum(anEnum: kotlin.Long): kotlin.Long`
+  core$_.int callFlutterEchoNullableEnum(core$_.int j) {
     final _$$selfRef = reference;
-    final _$nativeInteropAnEnum = nativeInteropAnEnum?.reference ?? jni$_.jNullReference;
     return _callFlutterEchoNullableEnum(
       _$$selfRef.pointer,
       _id_callFlutterEchoNullableEnum.pointer,
-      _$nativeInteropAnEnum.pointer,
-    ).object<NativeInteropAnEnum?>();
+      j,
+    ).long;
   }
 
   static final _id_callFlutterEchoAnotherNullableEnum = NativeInteropHostIntegrationCoreApiRegistrar
       ._class
-      .instanceMethodId(
-        r'callFlutterEchoAnotherNullableEnum',
-        r'(Lcom/example/test_plugin/NativeInteropAnotherEnum;)Lcom/example/test_plugin/NativeInteropAnotherEnum;',
-      );
+      .instanceMethodId(r'callFlutterEchoAnotherNullableEnum', r'(J)J');
 
   static final _callFlutterEchoAnotherNullableEnum =
       jni$_.ProtectedJniExtensions.lookup<
@@ -7530,30 +7249,22 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
               jni$_.JniResult Function(
                 jni$_.Pointer<jni$_.Void>,
                 jni$_.JMethodIDPtr,
-                jni$_.VarArgs<(jni$_.Pointer<jni$_.Void>,)>,
+                jni$_.VarArgs<(jni$_.Int64,)>,
               )
             >
-          >('globalEnv_CallObjectMethod')
+          >('globalEnv_CallLongMethod')
           .asFunction<
-            jni$_.JniResult Function(
-              jni$_.Pointer<jni$_.Void>,
-              jni$_.JMethodIDPtr,
-              jni$_.Pointer<jni$_.Void>,
-            )
+            jni$_.JniResult Function(jni$_.Pointer<jni$_.Void>, jni$_.JMethodIDPtr, core$_.int)
           >();
 
-  /// from: `public fun callFlutterEchoAnotherNullableEnum(anotherEnum: com.example.test_plugin.NativeInteropAnotherEnum?): com.example.test_plugin.NativeInteropAnotherEnum?`
-  /// The returned object must be released after use, by calling the [release] method.
-  NativeInteropAnotherEnum? callFlutterEchoAnotherNullableEnum(
-    NativeInteropAnotherEnum? nativeInteropAnotherEnum,
-  ) {
+  /// from: `public fun callFlutterEchoAnotherNullableEnum(anotherEnum: kotlin.Long): kotlin.Long`
+  core$_.int callFlutterEchoAnotherNullableEnum(core$_.int j) {
     final _$$selfRef = reference;
-    final _$nativeInteropAnotherEnum = nativeInteropAnotherEnum?.reference ?? jni$_.jNullReference;
     return _callFlutterEchoAnotherNullableEnum(
       _$$selfRef.pointer,
       _id_callFlutterEchoAnotherNullableEnum.pointer,
-      _$nativeInteropAnotherEnum.pointer,
-    ).object<NativeInteropAnotherEnum?>();
+      j,
+    ).long;
   }
 
   static final _id_callFlutterNoopAsync = NativeInteropHostIntegrationCoreApiRegistrar._class
@@ -7613,7 +7324,7 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
   static final _id_callFlutterEchoAsyncNativeInteropAllTypes =
       NativeInteropHostIntegrationCoreApiRegistrar._class.instanceMethodId(
         r'callFlutterEchoAsyncNativeInteropAllTypes',
-        r'(Lcom/example/test_plugin/NativeInteropAllTypes;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;',
+        r'([BLkotlin/coroutines/Continuation;)Ljava/lang/Object;',
       );
 
   static final _callFlutterEchoAsyncNativeInteropAllTypes =
@@ -7635,30 +7346,32 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
             )
           >();
 
-  /// from: `public suspend fun callFlutterEchoAsyncNativeInteropAllTypes(everything: com.example.test_plugin.NativeInteropAllTypes): com.example.test_plugin.NativeInteropAllTypes`
+  /// from: `public suspend fun callFlutterEchoAsyncNativeInteropAllTypes(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
   /// The returned object must be released after use, by calling the [release] method.
-  core$_.Future<NativeInteropAllTypes> callFlutterEchoAsyncNativeInteropAllTypes(
-    NativeInteropAllTypes nativeInteropAllTypes,
+  core$_.Future<jni$_.JByteArray?> callFlutterEchoAsyncNativeInteropAllTypes(
+    jni$_.JByteArray bs,
   ) async {
     final $p = jni$_.ReceivePort();
     final _$continuation = jni$_.ProtectedJniExtensions.newPortContinuation($p);
     final _$$selfRef = reference;
-    final _$nativeInteropAllTypes = nativeInteropAllTypes.reference;
+    final _$bs = bs.reference;
     final $r = _callFlutterEchoAsyncNativeInteropAllTypes(
       _$$selfRef.pointer,
       _id_callFlutterEchoAsyncNativeInteropAllTypes.pointer,
-      _$nativeInteropAllTypes.pointer,
+      _$bs.pointer,
       _$continuation.pointer,
-    ).object<jni$_.JObject>();
+    ).object<jni$_.JObject?>();
     _$continuation.release();
-    jni$_.JObject $o;
-    if ($r.isInstanceOf(jni$_.coroutineSingletonsClass)) {
+    jni$_.JObject? $o;
+    if ($r != null && $r.isInstanceOf(jni$_.coroutineSingletonsClass)) {
       $r.release();
       final $a = await $p.first;
-      $o = jni$_.JObject.fromReference(jni$_.JGlobalReference(jni$_.JObjectPtr.fromAddress($a)));
-      if ($o.isInstanceOf(jni$_.result$Class)) {
+      $o = $a == 0
+          ? null
+          : jni$_.JObject.fromReference(jni$_.JGlobalReference(jni$_.JObjectPtr.fromAddress($a)));
+      if ($o != null && $o.isInstanceOf(jni$_.result$Class)) {
         $o = jni$_.resultValueField.get($o, const jni$_.$JObject$Type$());
-      } else if ($o.isInstanceOf(jni$_.result$FailureClass)) {
+      } else if ($o != null && $o.isInstanceOf(jni$_.result$FailureClass)) {
         final $e = jni$_.failureExceptionField.get($o, const jni$_.$JObject$Type$());
         $o.release();
         jni$_.Jni.throwException($e.reference.toPointer());
@@ -7666,13 +7379,13 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
     } else {
       $o = $r;
     }
-    return $o.as<NativeInteropAllTypes>(NativeInteropAllTypes.type, releaseOriginal: true);
+    return $o?.as<jni$_.JByteArray>(jni$_.JByteArray.type, releaseOriginal: true);
   }
 
   static final _id_callFlutterEchoAsyncNullableNativeInteropAllNullableTypes =
       NativeInteropHostIntegrationCoreApiRegistrar._class.instanceMethodId(
         r'callFlutterEchoAsyncNullableNativeInteropAllNullableTypes',
-        r'(Lcom/example/test_plugin/NativeInteropAllNullableTypes;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;',
+        r'([BLkotlin/coroutines/Continuation;)Ljava/lang/Object;',
       );
 
   static final _callFlutterEchoAsyncNullableNativeInteropAllNullableTypes =
@@ -7694,21 +7407,19 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
             )
           >();
 
-  /// from: `public suspend fun callFlutterEchoAsyncNullableNativeInteropAllNullableTypes(everything: com.example.test_plugin.NativeInteropAllNullableTypes?): com.example.test_plugin.NativeInteropAllNullableTypes?`
+  /// from: `public suspend fun callFlutterEchoAsyncNullableNativeInteropAllNullableTypes(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
   /// The returned object must be released after use, by calling the [release] method.
-  core$_.Future<NativeInteropAllNullableTypes?>
-  callFlutterEchoAsyncNullableNativeInteropAllNullableTypes(
-    NativeInteropAllNullableTypes? nativeInteropAllNullableTypes,
+  core$_.Future<jni$_.JByteArray?> callFlutterEchoAsyncNullableNativeInteropAllNullableTypes(
+    jni$_.JByteArray bs,
   ) async {
     final $p = jni$_.ReceivePort();
     final _$continuation = jni$_.ProtectedJniExtensions.newPortContinuation($p);
     final _$$selfRef = reference;
-    final _$nativeInteropAllNullableTypes =
-        nativeInteropAllNullableTypes?.reference ?? jni$_.jNullReference;
+    final _$bs = bs.reference;
     final $r = _callFlutterEchoAsyncNullableNativeInteropAllNullableTypes(
       _$$selfRef.pointer,
       _id_callFlutterEchoAsyncNullableNativeInteropAllNullableTypes.pointer,
-      _$nativeInteropAllNullableTypes.pointer,
+      _$bs.pointer,
       _$continuation.pointer,
     ).object<jni$_.JObject?>();
     _$continuation.release();
@@ -7729,16 +7440,13 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
     } else {
       $o = $r;
     }
-    return $o?.as<NativeInteropAllNullableTypes>(
-      NativeInteropAllNullableTypes.type,
-      releaseOriginal: true,
-    );
+    return $o?.as<jni$_.JByteArray>(jni$_.JByteArray.type, releaseOriginal: true);
   }
 
   static final _id_callFlutterEchoAsyncNullableNativeInteropAllNullableTypesWithoutRecursion =
       NativeInteropHostIntegrationCoreApiRegistrar._class.instanceMethodId(
         r'callFlutterEchoAsyncNullableNativeInteropAllNullableTypesWithoutRecursion',
-        r'(Lcom/example/test_plugin/NativeInteropAllNullableTypesWithoutRecursion;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;',
+        r'([BLkotlin/coroutines/Continuation;)Ljava/lang/Object;',
       );
 
   static final _callFlutterEchoAsyncNullableNativeInteropAllNullableTypesWithoutRecursion =
@@ -7760,21 +7468,20 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
             )
           >();
 
-  /// from: `public suspend fun callFlutterEchoAsyncNullableNativeInteropAllNullableTypesWithoutRecursion(everything: com.example.test_plugin.NativeInteropAllNullableTypesWithoutRecursion?): com.example.test_plugin.NativeInteropAllNullableTypesWithoutRecursion?`
+  /// from: `public suspend fun callFlutterEchoAsyncNullableNativeInteropAllNullableTypesWithoutRecursion(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
   /// The returned object must be released after use, by calling the [release] method.
-  core$_.Future<NativeInteropAllNullableTypesWithoutRecursion?>
+  core$_.Future<jni$_.JByteArray?>
   callFlutterEchoAsyncNullableNativeInteropAllNullableTypesWithoutRecursion(
-    NativeInteropAllNullableTypesWithoutRecursion? nativeInteropAllNullableTypesWithoutRecursion,
+    jni$_.JByteArray bs,
   ) async {
     final $p = jni$_.ReceivePort();
     final _$continuation = jni$_.ProtectedJniExtensions.newPortContinuation($p);
     final _$$selfRef = reference;
-    final _$nativeInteropAllNullableTypesWithoutRecursion =
-        nativeInteropAllNullableTypesWithoutRecursion?.reference ?? jni$_.jNullReference;
+    final _$bs = bs.reference;
     final $r = _callFlutterEchoAsyncNullableNativeInteropAllNullableTypesWithoutRecursion(
       _$$selfRef.pointer,
       _id_callFlutterEchoAsyncNullableNativeInteropAllNullableTypesWithoutRecursion.pointer,
-      _$nativeInteropAllNullableTypesWithoutRecursion.pointer,
+      _$bs.pointer,
       _$continuation.pointer,
     ).object<jni$_.JObject?>();
     _$continuation.release();
@@ -7795,10 +7502,7 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
     } else {
       $o = $r;
     }
-    return $o?.as<NativeInteropAllNullableTypesWithoutRecursion>(
-      NativeInteropAllNullableTypesWithoutRecursion.type,
-      releaseOriginal: true,
-    );
+    return $o?.as<jni$_.JByteArray>(jni$_.JByteArray.type, releaseOriginal: true);
   }
 
   static final _id_callFlutterEchoAsyncBool = NativeInteropHostIntegrationCoreApiRegistrar._class
@@ -8261,7 +7965,7 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
   static final _id_callFlutterEchoAsyncObject = NativeInteropHostIntegrationCoreApiRegistrar._class
       .instanceMethodId(
         r'callFlutterEchoAsyncObject',
-        r'(Ljava/lang/Object;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;',
+        r'([BLkotlin/coroutines/Continuation;)Ljava/lang/Object;',
       );
 
   static final _callFlutterEchoAsyncObject =
@@ -8283,28 +7987,30 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
             )
           >();
 
-  /// from: `public suspend fun callFlutterEchoAsyncObject(anObject: kotlin.Any): kotlin.Any`
+  /// from: `public suspend fun callFlutterEchoAsyncObject(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
   /// The returned object must be released after use, by calling the [release] method.
-  core$_.Future<jni$_.JObject> callFlutterEchoAsyncObject(jni$_.JObject object) async {
+  core$_.Future<jni$_.JByteArray?> callFlutterEchoAsyncObject(jni$_.JByteArray bs) async {
     final $p = jni$_.ReceivePort();
     final _$continuation = jni$_.ProtectedJniExtensions.newPortContinuation($p);
     final _$$selfRef = reference;
-    final _$object = object.reference;
+    final _$bs = bs.reference;
     final $r = _callFlutterEchoAsyncObject(
       _$$selfRef.pointer,
       _id_callFlutterEchoAsyncObject.pointer,
-      _$object.pointer,
+      _$bs.pointer,
       _$continuation.pointer,
-    ).object<jni$_.JObject>();
+    ).object<jni$_.JObject?>();
     _$continuation.release();
-    jni$_.JObject $o;
-    if ($r.isInstanceOf(jni$_.coroutineSingletonsClass)) {
+    jni$_.JObject? $o;
+    if ($r != null && $r.isInstanceOf(jni$_.coroutineSingletonsClass)) {
       $r.release();
       final $a = await $p.first;
-      $o = jni$_.JObject.fromReference(jni$_.JGlobalReference(jni$_.JObjectPtr.fromAddress($a)));
-      if ($o.isInstanceOf(jni$_.result$Class)) {
+      $o = $a == 0
+          ? null
+          : jni$_.JObject.fromReference(jni$_.JGlobalReference(jni$_.JObjectPtr.fromAddress($a)));
+      if ($o != null && $o.isInstanceOf(jni$_.result$Class)) {
         $o = jni$_.resultValueField.get($o, const jni$_.$JObject$Type$());
-      } else if ($o.isInstanceOf(jni$_.result$FailureClass)) {
+      } else if ($o != null && $o.isInstanceOf(jni$_.result$FailureClass)) {
         final $e = jni$_.failureExceptionField.get($o, const jni$_.$JObject$Type$());
         $o.release();
         jni$_.Jni.throwException($e.reference.toPointer());
@@ -8312,13 +8018,13 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
     } else {
       $o = $r;
     }
-    return $o.as<jni$_.JObject>(const jni$_.$JObject$Type$(), releaseOriginal: true);
+    return $o?.as<jni$_.JByteArray>(jni$_.JByteArray.type, releaseOriginal: true);
   }
 
   static final _id_callFlutterEchoAsyncList = NativeInteropHostIntegrationCoreApiRegistrar._class
       .instanceMethodId(
         r'callFlutterEchoAsyncList',
-        r'(Ljava/util/List;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;',
+        r'([BLkotlin/coroutines/Continuation;)Ljava/lang/Object;',
       );
 
   static final _callFlutterEchoAsyncList =
@@ -8340,30 +8046,30 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
             )
           >();
 
-  /// from: `public suspend fun callFlutterEchoAsyncList(list: kotlin.collections.List<kotlin.Any?>): kotlin.collections.List<kotlin.Any?>`
+  /// from: `public suspend fun callFlutterEchoAsyncList(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
   /// The returned object must be released after use, by calling the [release] method.
-  core$_.Future<jni$_.JList<jni$_.JObject?>> callFlutterEchoAsyncList(
-    jni$_.JList<jni$_.JObject?> list,
-  ) async {
+  core$_.Future<jni$_.JByteArray?> callFlutterEchoAsyncList(jni$_.JByteArray bs) async {
     final $p = jni$_.ReceivePort();
     final _$continuation = jni$_.ProtectedJniExtensions.newPortContinuation($p);
     final _$$selfRef = reference;
-    final _$list = list.reference;
+    final _$bs = bs.reference;
     final $r = _callFlutterEchoAsyncList(
       _$$selfRef.pointer,
       _id_callFlutterEchoAsyncList.pointer,
-      _$list.pointer,
+      _$bs.pointer,
       _$continuation.pointer,
-    ).object<jni$_.JObject>();
+    ).object<jni$_.JObject?>();
     _$continuation.release();
-    jni$_.JObject $o;
-    if ($r.isInstanceOf(jni$_.coroutineSingletonsClass)) {
+    jni$_.JObject? $o;
+    if ($r != null && $r.isInstanceOf(jni$_.coroutineSingletonsClass)) {
       $r.release();
       final $a = await $p.first;
-      $o = jni$_.JObject.fromReference(jni$_.JGlobalReference(jni$_.JObjectPtr.fromAddress($a)));
-      if ($o.isInstanceOf(jni$_.result$Class)) {
+      $o = $a == 0
+          ? null
+          : jni$_.JObject.fromReference(jni$_.JGlobalReference(jni$_.JObjectPtr.fromAddress($a)));
+      if ($o != null && $o.isInstanceOf(jni$_.result$Class)) {
         $o = jni$_.resultValueField.get($o, const jni$_.$JObject$Type$());
-      } else if ($o.isInstanceOf(jni$_.result$FailureClass)) {
+      } else if ($o != null && $o.isInstanceOf(jni$_.result$FailureClass)) {
         final $e = jni$_.failureExceptionField.get($o, const jni$_.$JObject$Type$());
         $o.release();
         jni$_.Jni.throwException($e.reference.toPointer());
@@ -8371,15 +8077,14 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
     } else {
       $o = $r;
     }
-    return $o.as<jni$_.JList>(jni$_.JList.type, releaseOriginal: true)
-        as jni$_.JList<jni$_.JObject?>;
+    return $o?.as<jni$_.JByteArray>(jni$_.JByteArray.type, releaseOriginal: true);
   }
 
   static final _id_callFlutterEchoAsyncEnumList = NativeInteropHostIntegrationCoreApiRegistrar
       ._class
       .instanceMethodId(
         r'callFlutterEchoAsyncEnumList',
-        r'(Ljava/util/List;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;',
+        r'([BLkotlin/coroutines/Continuation;)Ljava/lang/Object;',
       );
 
   static final _callFlutterEchoAsyncEnumList =
@@ -8401,30 +8106,30 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
             )
           >();
 
-  /// from: `public suspend fun callFlutterEchoAsyncEnumList(enumList: kotlin.collections.List<com.example.test_plugin.NativeInteropAnEnum?>): kotlin.collections.List<com.example.test_plugin.NativeInteropAnEnum?>`
+  /// from: `public suspend fun callFlutterEchoAsyncEnumList(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
   /// The returned object must be released after use, by calling the [release] method.
-  core$_.Future<jni$_.JList<NativeInteropAnEnum?>> callFlutterEchoAsyncEnumList(
-    jni$_.JList<NativeInteropAnEnum?> list,
-  ) async {
+  core$_.Future<jni$_.JByteArray?> callFlutterEchoAsyncEnumList(jni$_.JByteArray bs) async {
     final $p = jni$_.ReceivePort();
     final _$continuation = jni$_.ProtectedJniExtensions.newPortContinuation($p);
     final _$$selfRef = reference;
-    final _$list = list.reference;
+    final _$bs = bs.reference;
     final $r = _callFlutterEchoAsyncEnumList(
       _$$selfRef.pointer,
       _id_callFlutterEchoAsyncEnumList.pointer,
-      _$list.pointer,
+      _$bs.pointer,
       _$continuation.pointer,
-    ).object<jni$_.JObject>();
+    ).object<jni$_.JObject?>();
     _$continuation.release();
-    jni$_.JObject $o;
-    if ($r.isInstanceOf(jni$_.coroutineSingletonsClass)) {
+    jni$_.JObject? $o;
+    if ($r != null && $r.isInstanceOf(jni$_.coroutineSingletonsClass)) {
       $r.release();
       final $a = await $p.first;
-      $o = jni$_.JObject.fromReference(jni$_.JGlobalReference(jni$_.JObjectPtr.fromAddress($a)));
-      if ($o.isInstanceOf(jni$_.result$Class)) {
+      $o = $a == 0
+          ? null
+          : jni$_.JObject.fromReference(jni$_.JGlobalReference(jni$_.JObjectPtr.fromAddress($a)));
+      if ($o != null && $o.isInstanceOf(jni$_.result$Class)) {
         $o = jni$_.resultValueField.get($o, const jni$_.$JObject$Type$());
-      } else if ($o.isInstanceOf(jni$_.result$FailureClass)) {
+      } else if ($o != null && $o.isInstanceOf(jni$_.result$FailureClass)) {
         final $e = jni$_.failureExceptionField.get($o, const jni$_.$JObject$Type$());
         $o.release();
         jni$_.Jni.throwException($e.reference.toPointer());
@@ -8432,15 +8137,14 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
     } else {
       $o = $r;
     }
-    return $o.as<jni$_.JList>(jni$_.JList.type, releaseOriginal: true)
-        as jni$_.JList<NativeInteropAnEnum?>;
+    return $o?.as<jni$_.JByteArray>(jni$_.JByteArray.type, releaseOriginal: true);
   }
 
   static final _id_callFlutterEchoAsyncClassList = NativeInteropHostIntegrationCoreApiRegistrar
       ._class
       .instanceMethodId(
         r'callFlutterEchoAsyncClassList',
-        r'(Ljava/util/List;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;',
+        r'([BLkotlin/coroutines/Continuation;)Ljava/lang/Object;',
       );
 
   static final _callFlutterEchoAsyncClassList =
@@ -8462,30 +8166,30 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
             )
           >();
 
-  /// from: `public suspend fun callFlutterEchoAsyncClassList(classList: kotlin.collections.List<com.example.test_plugin.NativeInteropAllNullableTypes?>): kotlin.collections.List<com.example.test_plugin.NativeInteropAllNullableTypes?>`
+  /// from: `public suspend fun callFlutterEchoAsyncClassList(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
   /// The returned object must be released after use, by calling the [release] method.
-  core$_.Future<jni$_.JList<NativeInteropAllNullableTypes?>> callFlutterEchoAsyncClassList(
-    jni$_.JList<NativeInteropAllNullableTypes?> list,
-  ) async {
+  core$_.Future<jni$_.JByteArray?> callFlutterEchoAsyncClassList(jni$_.JByteArray bs) async {
     final $p = jni$_.ReceivePort();
     final _$continuation = jni$_.ProtectedJniExtensions.newPortContinuation($p);
     final _$$selfRef = reference;
-    final _$list = list.reference;
+    final _$bs = bs.reference;
     final $r = _callFlutterEchoAsyncClassList(
       _$$selfRef.pointer,
       _id_callFlutterEchoAsyncClassList.pointer,
-      _$list.pointer,
+      _$bs.pointer,
       _$continuation.pointer,
-    ).object<jni$_.JObject>();
+    ).object<jni$_.JObject?>();
     _$continuation.release();
-    jni$_.JObject $o;
-    if ($r.isInstanceOf(jni$_.coroutineSingletonsClass)) {
+    jni$_.JObject? $o;
+    if ($r != null && $r.isInstanceOf(jni$_.coroutineSingletonsClass)) {
       $r.release();
       final $a = await $p.first;
-      $o = jni$_.JObject.fromReference(jni$_.JGlobalReference(jni$_.JObjectPtr.fromAddress($a)));
-      if ($o.isInstanceOf(jni$_.result$Class)) {
+      $o = $a == 0
+          ? null
+          : jni$_.JObject.fromReference(jni$_.JGlobalReference(jni$_.JObjectPtr.fromAddress($a)));
+      if ($o != null && $o.isInstanceOf(jni$_.result$Class)) {
         $o = jni$_.resultValueField.get($o, const jni$_.$JObject$Type$());
-      } else if ($o.isInstanceOf(jni$_.result$FailureClass)) {
+      } else if ($o != null && $o.isInstanceOf(jni$_.result$FailureClass)) {
         final $e = jni$_.failureExceptionField.get($o, const jni$_.$JObject$Type$());
         $o.release();
         jni$_.Jni.throwException($e.reference.toPointer());
@@ -8493,14 +8197,13 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
     } else {
       $o = $r;
     }
-    return $o.as<jni$_.JList>(jni$_.JList.type, releaseOriginal: true)
-        as jni$_.JList<NativeInteropAllNullableTypes?>;
+    return $o?.as<jni$_.JByteArray>(jni$_.JByteArray.type, releaseOriginal: true);
   }
 
   static final _id_callFlutterEchoAsyncNonNullEnumList =
       NativeInteropHostIntegrationCoreApiRegistrar._class.instanceMethodId(
         r'callFlutterEchoAsyncNonNullEnumList',
-        r'(Ljava/util/List;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;',
+        r'([BLkotlin/coroutines/Continuation;)Ljava/lang/Object;',
       );
 
   static final _callFlutterEchoAsyncNonNullEnumList =
@@ -8522,30 +8225,30 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
             )
           >();
 
-  /// from: `public suspend fun callFlutterEchoAsyncNonNullEnumList(enumList: kotlin.collections.List<com.example.test_plugin.NativeInteropAnEnum>): kotlin.collections.List<com.example.test_plugin.NativeInteropAnEnum>`
+  /// from: `public suspend fun callFlutterEchoAsyncNonNullEnumList(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
   /// The returned object must be released after use, by calling the [release] method.
-  core$_.Future<jni$_.JList<NativeInteropAnEnum>> callFlutterEchoAsyncNonNullEnumList(
-    jni$_.JList<NativeInteropAnEnum?> list,
-  ) async {
+  core$_.Future<jni$_.JByteArray?> callFlutterEchoAsyncNonNullEnumList(jni$_.JByteArray bs) async {
     final $p = jni$_.ReceivePort();
     final _$continuation = jni$_.ProtectedJniExtensions.newPortContinuation($p);
     final _$$selfRef = reference;
-    final _$list = list.reference;
+    final _$bs = bs.reference;
     final $r = _callFlutterEchoAsyncNonNullEnumList(
       _$$selfRef.pointer,
       _id_callFlutterEchoAsyncNonNullEnumList.pointer,
-      _$list.pointer,
+      _$bs.pointer,
       _$continuation.pointer,
-    ).object<jni$_.JObject>();
+    ).object<jni$_.JObject?>();
     _$continuation.release();
-    jni$_.JObject $o;
-    if ($r.isInstanceOf(jni$_.coroutineSingletonsClass)) {
+    jni$_.JObject? $o;
+    if ($r != null && $r.isInstanceOf(jni$_.coroutineSingletonsClass)) {
       $r.release();
       final $a = await $p.first;
-      $o = jni$_.JObject.fromReference(jni$_.JGlobalReference(jni$_.JObjectPtr.fromAddress($a)));
-      if ($o.isInstanceOf(jni$_.result$Class)) {
+      $o = $a == 0
+          ? null
+          : jni$_.JObject.fromReference(jni$_.JGlobalReference(jni$_.JObjectPtr.fromAddress($a)));
+      if ($o != null && $o.isInstanceOf(jni$_.result$Class)) {
         $o = jni$_.resultValueField.get($o, const jni$_.$JObject$Type$());
-      } else if ($o.isInstanceOf(jni$_.result$FailureClass)) {
+      } else if ($o != null && $o.isInstanceOf(jni$_.result$FailureClass)) {
         final $e = jni$_.failureExceptionField.get($o, const jni$_.$JObject$Type$());
         $o.release();
         jni$_.Jni.throwException($e.reference.toPointer());
@@ -8553,14 +8256,13 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
     } else {
       $o = $r;
     }
-    return $o.as<jni$_.JList>(jni$_.JList.type, releaseOriginal: true)
-        as jni$_.JList<NativeInteropAnEnum>;
+    return $o?.as<jni$_.JByteArray>(jni$_.JByteArray.type, releaseOriginal: true);
   }
 
   static final _id_callFlutterEchoAsyncNonNullClassList =
       NativeInteropHostIntegrationCoreApiRegistrar._class.instanceMethodId(
         r'callFlutterEchoAsyncNonNullClassList',
-        r'(Ljava/util/List;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;',
+        r'([BLkotlin/coroutines/Continuation;)Ljava/lang/Object;',
       );
 
   static final _callFlutterEchoAsyncNonNullClassList =
@@ -8582,30 +8284,30 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
             )
           >();
 
-  /// from: `public suspend fun callFlutterEchoAsyncNonNullClassList(classList: kotlin.collections.List<com.example.test_plugin.NativeInteropAllNullableTypes>): kotlin.collections.List<com.example.test_plugin.NativeInteropAllNullableTypes>`
+  /// from: `public suspend fun callFlutterEchoAsyncNonNullClassList(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
   /// The returned object must be released after use, by calling the [release] method.
-  core$_.Future<jni$_.JList<NativeInteropAllNullableTypes>> callFlutterEchoAsyncNonNullClassList(
-    jni$_.JList<NativeInteropAllNullableTypes?> list,
-  ) async {
+  core$_.Future<jni$_.JByteArray?> callFlutterEchoAsyncNonNullClassList(jni$_.JByteArray bs) async {
     final $p = jni$_.ReceivePort();
     final _$continuation = jni$_.ProtectedJniExtensions.newPortContinuation($p);
     final _$$selfRef = reference;
-    final _$list = list.reference;
+    final _$bs = bs.reference;
     final $r = _callFlutterEchoAsyncNonNullClassList(
       _$$selfRef.pointer,
       _id_callFlutterEchoAsyncNonNullClassList.pointer,
-      _$list.pointer,
+      _$bs.pointer,
       _$continuation.pointer,
-    ).object<jni$_.JObject>();
+    ).object<jni$_.JObject?>();
     _$continuation.release();
-    jni$_.JObject $o;
-    if ($r.isInstanceOf(jni$_.coroutineSingletonsClass)) {
+    jni$_.JObject? $o;
+    if ($r != null && $r.isInstanceOf(jni$_.coroutineSingletonsClass)) {
       $r.release();
       final $a = await $p.first;
-      $o = jni$_.JObject.fromReference(jni$_.JGlobalReference(jni$_.JObjectPtr.fromAddress($a)));
-      if ($o.isInstanceOf(jni$_.result$Class)) {
+      $o = $a == 0
+          ? null
+          : jni$_.JObject.fromReference(jni$_.JGlobalReference(jni$_.JObjectPtr.fromAddress($a)));
+      if ($o != null && $o.isInstanceOf(jni$_.result$Class)) {
         $o = jni$_.resultValueField.get($o, const jni$_.$JObject$Type$());
-      } else if ($o.isInstanceOf(jni$_.result$FailureClass)) {
+      } else if ($o != null && $o.isInstanceOf(jni$_.result$FailureClass)) {
         final $e = jni$_.failureExceptionField.get($o, const jni$_.$JObject$Type$());
         $o.release();
         jni$_.Jni.throwException($e.reference.toPointer());
@@ -8613,14 +8315,13 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
     } else {
       $o = $r;
     }
-    return $o.as<jni$_.JList>(jni$_.JList.type, releaseOriginal: true)
-        as jni$_.JList<NativeInteropAllNullableTypes>;
+    return $o?.as<jni$_.JByteArray>(jni$_.JByteArray.type, releaseOriginal: true);
   }
 
   static final _id_callFlutterEchoAsyncMap = NativeInteropHostIntegrationCoreApiRegistrar._class
       .instanceMethodId(
         r'callFlutterEchoAsyncMap',
-        r'(Ljava/util/Map;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;',
+        r'([BLkotlin/coroutines/Continuation;)Ljava/lang/Object;',
       );
 
   static final _callFlutterEchoAsyncMap =
@@ -8642,30 +8343,30 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
             )
           >();
 
-  /// from: `public suspend fun callFlutterEchoAsyncMap(map: kotlin.collections.Map<kotlin.Any?, kotlin.Any?>): kotlin.collections.Map<kotlin.Any?, kotlin.Any?>`
+  /// from: `public suspend fun callFlutterEchoAsyncMap(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
   /// The returned object must be released after use, by calling the [release] method.
-  core$_.Future<jni$_.JMap<jni$_.JObject?, jni$_.JObject?>> callFlutterEchoAsyncMap(
-    jni$_.JMap<jni$_.JObject?, jni$_.JObject?> map,
-  ) async {
+  core$_.Future<jni$_.JByteArray?> callFlutterEchoAsyncMap(jni$_.JByteArray bs) async {
     final $p = jni$_.ReceivePort();
     final _$continuation = jni$_.ProtectedJniExtensions.newPortContinuation($p);
     final _$$selfRef = reference;
-    final _$map = map.reference;
+    final _$bs = bs.reference;
     final $r = _callFlutterEchoAsyncMap(
       _$$selfRef.pointer,
       _id_callFlutterEchoAsyncMap.pointer,
-      _$map.pointer,
+      _$bs.pointer,
       _$continuation.pointer,
-    ).object<jni$_.JObject>();
+    ).object<jni$_.JObject?>();
     _$continuation.release();
-    jni$_.JObject $o;
-    if ($r.isInstanceOf(jni$_.coroutineSingletonsClass)) {
+    jni$_.JObject? $o;
+    if ($r != null && $r.isInstanceOf(jni$_.coroutineSingletonsClass)) {
       $r.release();
       final $a = await $p.first;
-      $o = jni$_.JObject.fromReference(jni$_.JGlobalReference(jni$_.JObjectPtr.fromAddress($a)));
-      if ($o.isInstanceOf(jni$_.result$Class)) {
+      $o = $a == 0
+          ? null
+          : jni$_.JObject.fromReference(jni$_.JGlobalReference(jni$_.JObjectPtr.fromAddress($a)));
+      if ($o != null && $o.isInstanceOf(jni$_.result$Class)) {
         $o = jni$_.resultValueField.get($o, const jni$_.$JObject$Type$());
-      } else if ($o.isInstanceOf(jni$_.result$FailureClass)) {
+      } else if ($o != null && $o.isInstanceOf(jni$_.result$FailureClass)) {
         final $e = jni$_.failureExceptionField.get($o, const jni$_.$JObject$Type$());
         $o.release();
         jni$_.Jni.throwException($e.reference.toPointer());
@@ -8673,15 +8374,14 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
     } else {
       $o = $r;
     }
-    return $o.as<jni$_.JMap>(jni$_.JMap.type, releaseOriginal: true)
-        as jni$_.JMap<jni$_.JObject?, jni$_.JObject?>;
+    return $o?.as<jni$_.JByteArray>(jni$_.JByteArray.type, releaseOriginal: true);
   }
 
   static final _id_callFlutterEchoAsyncStringMap = NativeInteropHostIntegrationCoreApiRegistrar
       ._class
       .instanceMethodId(
         r'callFlutterEchoAsyncStringMap',
-        r'(Ljava/util/Map;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;',
+        r'([BLkotlin/coroutines/Continuation;)Ljava/lang/Object;',
       );
 
   static final _callFlutterEchoAsyncStringMap =
@@ -8703,30 +8403,30 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
             )
           >();
 
-  /// from: `public suspend fun callFlutterEchoAsyncStringMap(stringMap: kotlin.collections.Map<kotlin.String?, kotlin.String?>): kotlin.collections.Map<kotlin.String?, kotlin.String?>`
+  /// from: `public suspend fun callFlutterEchoAsyncStringMap(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
   /// The returned object must be released after use, by calling the [release] method.
-  core$_.Future<jni$_.JMap<jni$_.JString?, jni$_.JString?>> callFlutterEchoAsyncStringMap(
-    jni$_.JMap<jni$_.JString?, jni$_.JString?> map,
-  ) async {
+  core$_.Future<jni$_.JByteArray?> callFlutterEchoAsyncStringMap(jni$_.JByteArray bs) async {
     final $p = jni$_.ReceivePort();
     final _$continuation = jni$_.ProtectedJniExtensions.newPortContinuation($p);
     final _$$selfRef = reference;
-    final _$map = map.reference;
+    final _$bs = bs.reference;
     final $r = _callFlutterEchoAsyncStringMap(
       _$$selfRef.pointer,
       _id_callFlutterEchoAsyncStringMap.pointer,
-      _$map.pointer,
+      _$bs.pointer,
       _$continuation.pointer,
-    ).object<jni$_.JObject>();
+    ).object<jni$_.JObject?>();
     _$continuation.release();
-    jni$_.JObject $o;
-    if ($r.isInstanceOf(jni$_.coroutineSingletonsClass)) {
+    jni$_.JObject? $o;
+    if ($r != null && $r.isInstanceOf(jni$_.coroutineSingletonsClass)) {
       $r.release();
       final $a = await $p.first;
-      $o = jni$_.JObject.fromReference(jni$_.JGlobalReference(jni$_.JObjectPtr.fromAddress($a)));
-      if ($o.isInstanceOf(jni$_.result$Class)) {
+      $o = $a == 0
+          ? null
+          : jni$_.JObject.fromReference(jni$_.JGlobalReference(jni$_.JObjectPtr.fromAddress($a)));
+      if ($o != null && $o.isInstanceOf(jni$_.result$Class)) {
         $o = jni$_.resultValueField.get($o, const jni$_.$JObject$Type$());
-      } else if ($o.isInstanceOf(jni$_.result$FailureClass)) {
+      } else if ($o != null && $o.isInstanceOf(jni$_.result$FailureClass)) {
         final $e = jni$_.failureExceptionField.get($o, const jni$_.$JObject$Type$());
         $o.release();
         jni$_.Jni.throwException($e.reference.toPointer());
@@ -8734,14 +8434,13 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
     } else {
       $o = $r;
     }
-    return $o.as<jni$_.JMap>(jni$_.JMap.type, releaseOriginal: true)
-        as jni$_.JMap<jni$_.JString?, jni$_.JString?>;
+    return $o?.as<jni$_.JByteArray>(jni$_.JByteArray.type, releaseOriginal: true);
   }
 
   static final _id_callFlutterEchoAsyncIntMap = NativeInteropHostIntegrationCoreApiRegistrar._class
       .instanceMethodId(
         r'callFlutterEchoAsyncIntMap',
-        r'(Ljava/util/Map;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;',
+        r'([BLkotlin/coroutines/Continuation;)Ljava/lang/Object;',
       );
 
   static final _callFlutterEchoAsyncIntMap =
@@ -8763,30 +8462,30 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
             )
           >();
 
-  /// from: `public suspend fun callFlutterEchoAsyncIntMap(intMap: kotlin.collections.Map<kotlin.Long?, kotlin.Long?>): kotlin.collections.Map<kotlin.Long?, kotlin.Long?>`
+  /// from: `public suspend fun callFlutterEchoAsyncIntMap(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
   /// The returned object must be released after use, by calling the [release] method.
-  core$_.Future<jni$_.JMap<jni$_.JLong?, jni$_.JLong?>> callFlutterEchoAsyncIntMap(
-    jni$_.JMap<jni$_.JLong?, jni$_.JLong?> map,
-  ) async {
+  core$_.Future<jni$_.JByteArray?> callFlutterEchoAsyncIntMap(jni$_.JByteArray bs) async {
     final $p = jni$_.ReceivePort();
     final _$continuation = jni$_.ProtectedJniExtensions.newPortContinuation($p);
     final _$$selfRef = reference;
-    final _$map = map.reference;
+    final _$bs = bs.reference;
     final $r = _callFlutterEchoAsyncIntMap(
       _$$selfRef.pointer,
       _id_callFlutterEchoAsyncIntMap.pointer,
-      _$map.pointer,
+      _$bs.pointer,
       _$continuation.pointer,
-    ).object<jni$_.JObject>();
+    ).object<jni$_.JObject?>();
     _$continuation.release();
-    jni$_.JObject $o;
-    if ($r.isInstanceOf(jni$_.coroutineSingletonsClass)) {
+    jni$_.JObject? $o;
+    if ($r != null && $r.isInstanceOf(jni$_.coroutineSingletonsClass)) {
       $r.release();
       final $a = await $p.first;
-      $o = jni$_.JObject.fromReference(jni$_.JGlobalReference(jni$_.JObjectPtr.fromAddress($a)));
-      if ($o.isInstanceOf(jni$_.result$Class)) {
+      $o = $a == 0
+          ? null
+          : jni$_.JObject.fromReference(jni$_.JGlobalReference(jni$_.JObjectPtr.fromAddress($a)));
+      if ($o != null && $o.isInstanceOf(jni$_.result$Class)) {
         $o = jni$_.resultValueField.get($o, const jni$_.$JObject$Type$());
-      } else if ($o.isInstanceOf(jni$_.result$FailureClass)) {
+      } else if ($o != null && $o.isInstanceOf(jni$_.result$FailureClass)) {
         final $e = jni$_.failureExceptionField.get($o, const jni$_.$JObject$Type$());
         $o.release();
         jni$_.Jni.throwException($e.reference.toPointer());
@@ -8794,14 +8493,13 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
     } else {
       $o = $r;
     }
-    return $o.as<jni$_.JMap>(jni$_.JMap.type, releaseOriginal: true)
-        as jni$_.JMap<jni$_.JLong?, jni$_.JLong?>;
+    return $o?.as<jni$_.JByteArray>(jni$_.JByteArray.type, releaseOriginal: true);
   }
 
   static final _id_callFlutterEchoAsyncEnumMap = NativeInteropHostIntegrationCoreApiRegistrar._class
       .instanceMethodId(
         r'callFlutterEchoAsyncEnumMap',
-        r'(Ljava/util/Map;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;',
+        r'([BLkotlin/coroutines/Continuation;)Ljava/lang/Object;',
       );
 
   static final _callFlutterEchoAsyncEnumMap =
@@ -8823,30 +8521,30 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
             )
           >();
 
-  /// from: `public suspend fun callFlutterEchoAsyncEnumMap(enumMap: kotlin.collections.Map<com.example.test_plugin.NativeInteropAnEnum?, com.example.test_plugin.NativeInteropAnEnum?>): kotlin.collections.Map<com.example.test_plugin.NativeInteropAnEnum?, com.example.test_plugin.NativeInteropAnEnum?>`
+  /// from: `public suspend fun callFlutterEchoAsyncEnumMap(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
   /// The returned object must be released after use, by calling the [release] method.
-  core$_.Future<jni$_.JMap<NativeInteropAnEnum?, NativeInteropAnEnum?>> callFlutterEchoAsyncEnumMap(
-    jni$_.JMap<NativeInteropAnEnum?, NativeInteropAnEnum?> map,
-  ) async {
+  core$_.Future<jni$_.JByteArray?> callFlutterEchoAsyncEnumMap(jni$_.JByteArray bs) async {
     final $p = jni$_.ReceivePort();
     final _$continuation = jni$_.ProtectedJniExtensions.newPortContinuation($p);
     final _$$selfRef = reference;
-    final _$map = map.reference;
+    final _$bs = bs.reference;
     final $r = _callFlutterEchoAsyncEnumMap(
       _$$selfRef.pointer,
       _id_callFlutterEchoAsyncEnumMap.pointer,
-      _$map.pointer,
+      _$bs.pointer,
       _$continuation.pointer,
-    ).object<jni$_.JObject>();
+    ).object<jni$_.JObject?>();
     _$continuation.release();
-    jni$_.JObject $o;
-    if ($r.isInstanceOf(jni$_.coroutineSingletonsClass)) {
+    jni$_.JObject? $o;
+    if ($r != null && $r.isInstanceOf(jni$_.coroutineSingletonsClass)) {
       $r.release();
       final $a = await $p.first;
-      $o = jni$_.JObject.fromReference(jni$_.JGlobalReference(jni$_.JObjectPtr.fromAddress($a)));
-      if ($o.isInstanceOf(jni$_.result$Class)) {
+      $o = $a == 0
+          ? null
+          : jni$_.JObject.fromReference(jni$_.JGlobalReference(jni$_.JObjectPtr.fromAddress($a)));
+      if ($o != null && $o.isInstanceOf(jni$_.result$Class)) {
         $o = jni$_.resultValueField.get($o, const jni$_.$JObject$Type$());
-      } else if ($o.isInstanceOf(jni$_.result$FailureClass)) {
+      } else if ($o != null && $o.isInstanceOf(jni$_.result$FailureClass)) {
         final $e = jni$_.failureExceptionField.get($o, const jni$_.$JObject$Type$());
         $o.release();
         jni$_.Jni.throwException($e.reference.toPointer());
@@ -8854,15 +8552,14 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
     } else {
       $o = $r;
     }
-    return $o.as<jni$_.JMap>(jni$_.JMap.type, releaseOriginal: true)
-        as jni$_.JMap<NativeInteropAnEnum?, NativeInteropAnEnum?>;
+    return $o?.as<jni$_.JByteArray>(jni$_.JByteArray.type, releaseOriginal: true);
   }
 
   static final _id_callFlutterEchoAsyncClassMap = NativeInteropHostIntegrationCoreApiRegistrar
       ._class
       .instanceMethodId(
         r'callFlutterEchoAsyncClassMap',
-        r'(Ljava/util/Map;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;',
+        r'([BLkotlin/coroutines/Continuation;)Ljava/lang/Object;',
       );
 
   static final _callFlutterEchoAsyncClassMap =
@@ -8884,29 +8581,30 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
             )
           >();
 
-  /// from: `public suspend fun callFlutterEchoAsyncClassMap(classMap: kotlin.collections.Map<kotlin.Long?, com.example.test_plugin.NativeInteropAllNullableTypes?>): kotlin.collections.Map<kotlin.Long?, com.example.test_plugin.NativeInteropAllNullableTypes?>`
+  /// from: `public suspend fun callFlutterEchoAsyncClassMap(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
   /// The returned object must be released after use, by calling the [release] method.
-  core$_.Future<jni$_.JMap<jni$_.JLong?, NativeInteropAllNullableTypes?>>
-  callFlutterEchoAsyncClassMap(jni$_.JMap<jni$_.JLong?, NativeInteropAllNullableTypes?> map) async {
+  core$_.Future<jni$_.JByteArray?> callFlutterEchoAsyncClassMap(jni$_.JByteArray bs) async {
     final $p = jni$_.ReceivePort();
     final _$continuation = jni$_.ProtectedJniExtensions.newPortContinuation($p);
     final _$$selfRef = reference;
-    final _$map = map.reference;
+    final _$bs = bs.reference;
     final $r = _callFlutterEchoAsyncClassMap(
       _$$selfRef.pointer,
       _id_callFlutterEchoAsyncClassMap.pointer,
-      _$map.pointer,
+      _$bs.pointer,
       _$continuation.pointer,
-    ).object<jni$_.JObject>();
+    ).object<jni$_.JObject?>();
     _$continuation.release();
-    jni$_.JObject $o;
-    if ($r.isInstanceOf(jni$_.coroutineSingletonsClass)) {
+    jni$_.JObject? $o;
+    if ($r != null && $r.isInstanceOf(jni$_.coroutineSingletonsClass)) {
       $r.release();
       final $a = await $p.first;
-      $o = jni$_.JObject.fromReference(jni$_.JGlobalReference(jni$_.JObjectPtr.fromAddress($a)));
-      if ($o.isInstanceOf(jni$_.result$Class)) {
+      $o = $a == 0
+          ? null
+          : jni$_.JObject.fromReference(jni$_.JGlobalReference(jni$_.JObjectPtr.fromAddress($a)));
+      if ($o != null && $o.isInstanceOf(jni$_.result$Class)) {
         $o = jni$_.resultValueField.get($o, const jni$_.$JObject$Type$());
-      } else if ($o.isInstanceOf(jni$_.result$FailureClass)) {
+      } else if ($o != null && $o.isInstanceOf(jni$_.result$FailureClass)) {
         final $e = jni$_.failureExceptionField.get($o, const jni$_.$JObject$Type$());
         $o.release();
         jni$_.Jni.throwException($e.reference.toPointer());
@@ -8914,14 +8612,13 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
     } else {
       $o = $r;
     }
-    return $o.as<jni$_.JMap>(jni$_.JMap.type, releaseOriginal: true)
-        as jni$_.JMap<jni$_.JLong?, NativeInteropAllNullableTypes?>;
+    return $o?.as<jni$_.JByteArray>(jni$_.JByteArray.type, releaseOriginal: true);
   }
 
   static final _id_callFlutterEchoAsyncEnum = NativeInteropHostIntegrationCoreApiRegistrar._class
       .instanceMethodId(
         r'callFlutterEchoAsyncEnum',
-        r'(Lcom/example/test_plugin/NativeInteropAnEnum;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;',
+        r'(JLkotlin/coroutines/Continuation;)Ljava/lang/Object;',
       );
 
   static final _callFlutterEchoAsyncEnum =
@@ -8930,7 +8627,7 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
               jni$_.JniResult Function(
                 jni$_.Pointer<jni$_.Void>,
                 jni$_.JMethodIDPtr,
-                jni$_.VarArgs<(jni$_.Pointer<jni$_.Void>, jni$_.Pointer<jni$_.Void>)>,
+                jni$_.VarArgs<(jni$_.Int64, jni$_.Pointer<jni$_.Void>)>,
               )
             >
           >('globalEnv_CallObjectMethod')
@@ -8938,24 +8635,21 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
             jni$_.JniResult Function(
               jni$_.Pointer<jni$_.Void>,
               jni$_.JMethodIDPtr,
-              jni$_.Pointer<jni$_.Void>,
+              core$_.int,
               jni$_.Pointer<jni$_.Void>,
             )
           >();
 
-  /// from: `public suspend fun callFlutterEchoAsyncEnum(anEnum: com.example.test_plugin.NativeInteropAnEnum): com.example.test_plugin.NativeInteropAnEnum`
+  /// from: `public suspend fun callFlutterEchoAsyncEnum(anEnum: kotlin.Long): kotlin.Long`
   /// The returned object must be released after use, by calling the [release] method.
-  core$_.Future<NativeInteropAnEnum> callFlutterEchoAsyncEnum(
-    NativeInteropAnEnum nativeInteropAnEnum,
-  ) async {
+  core$_.Future<jni$_.JLong> callFlutterEchoAsyncEnum(core$_.int j) async {
     final $p = jni$_.ReceivePort();
     final _$continuation = jni$_.ProtectedJniExtensions.newPortContinuation($p);
     final _$$selfRef = reference;
-    final _$nativeInteropAnEnum = nativeInteropAnEnum.reference;
     final $r = _callFlutterEchoAsyncEnum(
       _$$selfRef.pointer,
       _id_callFlutterEchoAsyncEnum.pointer,
-      _$nativeInteropAnEnum.pointer,
+      j,
       _$continuation.pointer,
     ).object<jni$_.JObject>();
     _$continuation.release();
@@ -8974,14 +8668,14 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
     } else {
       $o = $r;
     }
-    return $o.as<NativeInteropAnEnum>(NativeInteropAnEnum.type, releaseOriginal: true);
+    return $o.as<jni$_.JLong>(jni$_.JLong.type, releaseOriginal: true);
   }
 
   static final _id_callFlutterEchoAnotherAsyncEnum = NativeInteropHostIntegrationCoreApiRegistrar
       ._class
       .instanceMethodId(
         r'callFlutterEchoAnotherAsyncEnum',
-        r'(Lcom/example/test_plugin/NativeInteropAnotherEnum;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;',
+        r'(JLkotlin/coroutines/Continuation;)Ljava/lang/Object;',
       );
 
   static final _callFlutterEchoAnotherAsyncEnum =
@@ -8990,7 +8684,7 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
               jni$_.JniResult Function(
                 jni$_.Pointer<jni$_.Void>,
                 jni$_.JMethodIDPtr,
-                jni$_.VarArgs<(jni$_.Pointer<jni$_.Void>, jni$_.Pointer<jni$_.Void>)>,
+                jni$_.VarArgs<(jni$_.Int64, jni$_.Pointer<jni$_.Void>)>,
               )
             >
           >('globalEnv_CallObjectMethod')
@@ -8998,24 +8692,21 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
             jni$_.JniResult Function(
               jni$_.Pointer<jni$_.Void>,
               jni$_.JMethodIDPtr,
-              jni$_.Pointer<jni$_.Void>,
+              core$_.int,
               jni$_.Pointer<jni$_.Void>,
             )
           >();
 
-  /// from: `public suspend fun callFlutterEchoAnotherAsyncEnum(anotherEnum: com.example.test_plugin.NativeInteropAnotherEnum): com.example.test_plugin.NativeInteropAnotherEnum`
+  /// from: `public suspend fun callFlutterEchoAnotherAsyncEnum(anotherEnum: kotlin.Long): kotlin.Long`
   /// The returned object must be released after use, by calling the [release] method.
-  core$_.Future<NativeInteropAnotherEnum> callFlutterEchoAnotherAsyncEnum(
-    NativeInteropAnotherEnum nativeInteropAnotherEnum,
-  ) async {
+  core$_.Future<jni$_.JLong> callFlutterEchoAnotherAsyncEnum(core$_.int j) async {
     final $p = jni$_.ReceivePort();
     final _$continuation = jni$_.ProtectedJniExtensions.newPortContinuation($p);
     final _$$selfRef = reference;
-    final _$nativeInteropAnotherEnum = nativeInteropAnotherEnum.reference;
     final $r = _callFlutterEchoAnotherAsyncEnum(
       _$$selfRef.pointer,
       _id_callFlutterEchoAnotherAsyncEnum.pointer,
-      _$nativeInteropAnotherEnum.pointer,
+      j,
       _$continuation.pointer,
     ).object<jni$_.JObject>();
     _$continuation.release();
@@ -9034,7 +8725,7 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
     } else {
       $o = $r;
     }
-    return $o.as<NativeInteropAnotherEnum>(NativeInteropAnotherEnum.type, releaseOriginal: true);
+    return $o.as<jni$_.JLong>(jni$_.JLong.type, releaseOriginal: true);
   }
 
   static final _id_callFlutterEchoAsyncNullableBool = NativeInteropHostIntegrationCoreApiRegistrar
@@ -9546,9 +9237,9 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
             )
           >();
 
-  /// from: `public suspend fun callFlutterThrowFlutterErrorAsync(): kotlin.Any?`
+  /// from: `public suspend fun callFlutterThrowFlutterErrorAsync(): kotlin.ByteArray?`
   /// The returned object must be released after use, by calling the [release] method.
-  core$_.Future<jni$_.JObject?> callFlutterThrowFlutterErrorAsync() async {
+  core$_.Future<jni$_.JByteArray?> callFlutterThrowFlutterErrorAsync() async {
     final $p = jni$_.ReceivePort();
     final _$continuation = jni$_.ProtectedJniExtensions.newPortContinuation($p);
     final _$$selfRef = reference;
@@ -9575,14 +9266,14 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
     } else {
       $o = $r;
     }
-    return $o?.as<jni$_.JObject>(const jni$_.$JObject$Type$(), releaseOriginal: true);
+    return $o?.as<jni$_.JByteArray>(jni$_.JByteArray.type, releaseOriginal: true);
   }
 
   static final _id_callFlutterEchoAsyncNullableObject = NativeInteropHostIntegrationCoreApiRegistrar
       ._class
       .instanceMethodId(
         r'callFlutterEchoAsyncNullableObject',
-        r'(Ljava/lang/Object;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;',
+        r'([BLkotlin/coroutines/Continuation;)Ljava/lang/Object;',
       );
 
   static final _callFlutterEchoAsyncNullableObject =
@@ -9604,17 +9295,17 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
             )
           >();
 
-  /// from: `public suspend fun callFlutterEchoAsyncNullableObject(anObject: kotlin.Any?): kotlin.Any?`
+  /// from: `public suspend fun callFlutterEchoAsyncNullableObject(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
   /// The returned object must be released after use, by calling the [release] method.
-  core$_.Future<jni$_.JObject?> callFlutterEchoAsyncNullableObject(jni$_.JObject? object) async {
+  core$_.Future<jni$_.JByteArray?> callFlutterEchoAsyncNullableObject(jni$_.JByteArray bs) async {
     final $p = jni$_.ReceivePort();
     final _$continuation = jni$_.ProtectedJniExtensions.newPortContinuation($p);
     final _$$selfRef = reference;
-    final _$object = object?.reference ?? jni$_.jNullReference;
+    final _$bs = bs.reference;
     final $r = _callFlutterEchoAsyncNullableObject(
       _$$selfRef.pointer,
       _id_callFlutterEchoAsyncNullableObject.pointer,
-      _$object.pointer,
+      _$bs.pointer,
       _$continuation.pointer,
     ).object<jni$_.JObject?>();
     _$continuation.release();
@@ -9635,14 +9326,14 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
     } else {
       $o = $r;
     }
-    return $o?.as<jni$_.JObject>(const jni$_.$JObject$Type$(), releaseOriginal: true);
+    return $o?.as<jni$_.JByteArray>(jni$_.JByteArray.type, releaseOriginal: true);
   }
 
   static final _id_callFlutterEchoAsyncNullableList = NativeInteropHostIntegrationCoreApiRegistrar
       ._class
       .instanceMethodId(
         r'callFlutterEchoAsyncNullableList',
-        r'(Ljava/util/List;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;',
+        r'([BLkotlin/coroutines/Continuation;)Ljava/lang/Object;',
       );
 
   static final _callFlutterEchoAsyncNullableList =
@@ -9664,19 +9355,17 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
             )
           >();
 
-  /// from: `public suspend fun callFlutterEchoAsyncNullableList(list: kotlin.collections.List<kotlin.Any?>?): kotlin.collections.List<kotlin.Any?>?`
+  /// from: `public suspend fun callFlutterEchoAsyncNullableList(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
   /// The returned object must be released after use, by calling the [release] method.
-  core$_.Future<jni$_.JList<jni$_.JObject?>?> callFlutterEchoAsyncNullableList(
-    jni$_.JList<jni$_.JObject?>? list,
-  ) async {
+  core$_.Future<jni$_.JByteArray?> callFlutterEchoAsyncNullableList(jni$_.JByteArray bs) async {
     final $p = jni$_.ReceivePort();
     final _$continuation = jni$_.ProtectedJniExtensions.newPortContinuation($p);
     final _$$selfRef = reference;
-    final _$list = list?.reference ?? jni$_.jNullReference;
+    final _$bs = bs.reference;
     final $r = _callFlutterEchoAsyncNullableList(
       _$$selfRef.pointer,
       _id_callFlutterEchoAsyncNullableList.pointer,
-      _$list.pointer,
+      _$bs.pointer,
       _$continuation.pointer,
     ).object<jni$_.JObject?>();
     _$continuation.release();
@@ -9697,14 +9386,13 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
     } else {
       $o = $r;
     }
-    return $o?.as<jni$_.JList>(jni$_.JList.type, releaseOriginal: true)
-        as jni$_.JList<jni$_.JObject?>?;
+    return $o?.as<jni$_.JByteArray>(jni$_.JByteArray.type, releaseOriginal: true);
   }
 
   static final _id_callFlutterEchoAsyncNullableEnumList =
       NativeInteropHostIntegrationCoreApiRegistrar._class.instanceMethodId(
         r'callFlutterEchoAsyncNullableEnumList',
-        r'(Ljava/util/List;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;',
+        r'([BLkotlin/coroutines/Continuation;)Ljava/lang/Object;',
       );
 
   static final _callFlutterEchoAsyncNullableEnumList =
@@ -9726,19 +9414,17 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
             )
           >();
 
-  /// from: `public suspend fun callFlutterEchoAsyncNullableEnumList(enumList: kotlin.collections.List<com.example.test_plugin.NativeInteropAnEnum?>?): kotlin.collections.List<com.example.test_plugin.NativeInteropAnEnum?>?`
+  /// from: `public suspend fun callFlutterEchoAsyncNullableEnumList(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
   /// The returned object must be released after use, by calling the [release] method.
-  core$_.Future<jni$_.JList<NativeInteropAnEnum?>?> callFlutterEchoAsyncNullableEnumList(
-    jni$_.JList<NativeInteropAnEnum?>? list,
-  ) async {
+  core$_.Future<jni$_.JByteArray?> callFlutterEchoAsyncNullableEnumList(jni$_.JByteArray bs) async {
     final $p = jni$_.ReceivePort();
     final _$continuation = jni$_.ProtectedJniExtensions.newPortContinuation($p);
     final _$$selfRef = reference;
-    final _$list = list?.reference ?? jni$_.jNullReference;
+    final _$bs = bs.reference;
     final $r = _callFlutterEchoAsyncNullableEnumList(
       _$$selfRef.pointer,
       _id_callFlutterEchoAsyncNullableEnumList.pointer,
-      _$list.pointer,
+      _$bs.pointer,
       _$continuation.pointer,
     ).object<jni$_.JObject?>();
     _$continuation.release();
@@ -9759,14 +9445,13 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
     } else {
       $o = $r;
     }
-    return $o?.as<jni$_.JList>(jni$_.JList.type, releaseOriginal: true)
-        as jni$_.JList<NativeInteropAnEnum?>?;
+    return $o?.as<jni$_.JByteArray>(jni$_.JByteArray.type, releaseOriginal: true);
   }
 
   static final _id_callFlutterEchoAsyncNullableClassList =
       NativeInteropHostIntegrationCoreApiRegistrar._class.instanceMethodId(
         r'callFlutterEchoAsyncNullableClassList',
-        r'(Ljava/util/List;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;',
+        r'([BLkotlin/coroutines/Continuation;)Ljava/lang/Object;',
       );
 
   static final _callFlutterEchoAsyncNullableClassList =
@@ -9788,19 +9473,19 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
             )
           >();
 
-  /// from: `public suspend fun callFlutterEchoAsyncNullableClassList(classList: kotlin.collections.List<com.example.test_plugin.NativeInteropAllNullableTypes?>?): kotlin.collections.List<com.example.test_plugin.NativeInteropAllNullableTypes?>?`
+  /// from: `public suspend fun callFlutterEchoAsyncNullableClassList(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
   /// The returned object must be released after use, by calling the [release] method.
-  core$_.Future<jni$_.JList<NativeInteropAllNullableTypes?>?> callFlutterEchoAsyncNullableClassList(
-    jni$_.JList<NativeInteropAllNullableTypes?>? list,
+  core$_.Future<jni$_.JByteArray?> callFlutterEchoAsyncNullableClassList(
+    jni$_.JByteArray bs,
   ) async {
     final $p = jni$_.ReceivePort();
     final _$continuation = jni$_.ProtectedJniExtensions.newPortContinuation($p);
     final _$$selfRef = reference;
-    final _$list = list?.reference ?? jni$_.jNullReference;
+    final _$bs = bs.reference;
     final $r = _callFlutterEchoAsyncNullableClassList(
       _$$selfRef.pointer,
       _id_callFlutterEchoAsyncNullableClassList.pointer,
-      _$list.pointer,
+      _$bs.pointer,
       _$continuation.pointer,
     ).object<jni$_.JObject?>();
     _$continuation.release();
@@ -9821,14 +9506,13 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
     } else {
       $o = $r;
     }
-    return $o?.as<jni$_.JList>(jni$_.JList.type, releaseOriginal: true)
-        as jni$_.JList<NativeInteropAllNullableTypes?>?;
+    return $o?.as<jni$_.JByteArray>(jni$_.JByteArray.type, releaseOriginal: true);
   }
 
   static final _id_callFlutterEchoAsyncNullableNonNullEnumList =
       NativeInteropHostIntegrationCoreApiRegistrar._class.instanceMethodId(
         r'callFlutterEchoAsyncNullableNonNullEnumList',
-        r'(Ljava/util/List;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;',
+        r'([BLkotlin/coroutines/Continuation;)Ljava/lang/Object;',
       );
 
   static final _callFlutterEchoAsyncNullableNonNullEnumList =
@@ -9850,19 +9534,19 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
             )
           >();
 
-  /// from: `public suspend fun callFlutterEchoAsyncNullableNonNullEnumList(enumList: kotlin.collections.List<com.example.test_plugin.NativeInteropAnEnum>?): kotlin.collections.List<com.example.test_plugin.NativeInteropAnEnum>?`
+  /// from: `public suspend fun callFlutterEchoAsyncNullableNonNullEnumList(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
   /// The returned object must be released after use, by calling the [release] method.
-  core$_.Future<jni$_.JList<NativeInteropAnEnum>?> callFlutterEchoAsyncNullableNonNullEnumList(
-    jni$_.JList<NativeInteropAnEnum?>? list,
+  core$_.Future<jni$_.JByteArray?> callFlutterEchoAsyncNullableNonNullEnumList(
+    jni$_.JByteArray bs,
   ) async {
     final $p = jni$_.ReceivePort();
     final _$continuation = jni$_.ProtectedJniExtensions.newPortContinuation($p);
     final _$$selfRef = reference;
-    final _$list = list?.reference ?? jni$_.jNullReference;
+    final _$bs = bs.reference;
     final $r = _callFlutterEchoAsyncNullableNonNullEnumList(
       _$$selfRef.pointer,
       _id_callFlutterEchoAsyncNullableNonNullEnumList.pointer,
-      _$list.pointer,
+      _$bs.pointer,
       _$continuation.pointer,
     ).object<jni$_.JObject?>();
     _$continuation.release();
@@ -9883,14 +9567,13 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
     } else {
       $o = $r;
     }
-    return $o?.as<jni$_.JList>(jni$_.JList.type, releaseOriginal: true)
-        as jni$_.JList<NativeInteropAnEnum>?;
+    return $o?.as<jni$_.JByteArray>(jni$_.JByteArray.type, releaseOriginal: true);
   }
 
   static final _id_callFlutterEchoAsyncNullableNonNullClassList =
       NativeInteropHostIntegrationCoreApiRegistrar._class.instanceMethodId(
         r'callFlutterEchoAsyncNullableNonNullClassList',
-        r'(Ljava/util/List;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;',
+        r'([BLkotlin/coroutines/Continuation;)Ljava/lang/Object;',
       );
 
   static final _callFlutterEchoAsyncNullableNonNullClassList =
@@ -9912,20 +9595,19 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
             )
           >();
 
-  /// from: `public suspend fun callFlutterEchoAsyncNullableNonNullClassList(classList: kotlin.collections.List<com.example.test_plugin.NativeInteropAllNullableTypes>?): kotlin.collections.List<com.example.test_plugin.NativeInteropAllNullableTypes>?`
+  /// from: `public suspend fun callFlutterEchoAsyncNullableNonNullClassList(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
   /// The returned object must be released after use, by calling the [release] method.
-  core$_.Future<jni$_.JList<NativeInteropAllNullableTypes>?>
-  callFlutterEchoAsyncNullableNonNullClassList(
-    jni$_.JList<NativeInteropAllNullableTypes?>? list,
+  core$_.Future<jni$_.JByteArray?> callFlutterEchoAsyncNullableNonNullClassList(
+    jni$_.JByteArray bs,
   ) async {
     final $p = jni$_.ReceivePort();
     final _$continuation = jni$_.ProtectedJniExtensions.newPortContinuation($p);
     final _$$selfRef = reference;
-    final _$list = list?.reference ?? jni$_.jNullReference;
+    final _$bs = bs.reference;
     final $r = _callFlutterEchoAsyncNullableNonNullClassList(
       _$$selfRef.pointer,
       _id_callFlutterEchoAsyncNullableNonNullClassList.pointer,
-      _$list.pointer,
+      _$bs.pointer,
       _$continuation.pointer,
     ).object<jni$_.JObject?>();
     _$continuation.release();
@@ -9946,15 +9628,14 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
     } else {
       $o = $r;
     }
-    return $o?.as<jni$_.JList>(jni$_.JList.type, releaseOriginal: true)
-        as jni$_.JList<NativeInteropAllNullableTypes>?;
+    return $o?.as<jni$_.JByteArray>(jni$_.JByteArray.type, releaseOriginal: true);
   }
 
   static final _id_callFlutterEchoAsyncNullableMap = NativeInteropHostIntegrationCoreApiRegistrar
       ._class
       .instanceMethodId(
         r'callFlutterEchoAsyncNullableMap',
-        r'(Ljava/util/Map;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;',
+        r'([BLkotlin/coroutines/Continuation;)Ljava/lang/Object;',
       );
 
   static final _callFlutterEchoAsyncNullableMap =
@@ -9976,19 +9657,17 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
             )
           >();
 
-  /// from: `public suspend fun callFlutterEchoAsyncNullableMap(map: kotlin.collections.Map<kotlin.Any?, kotlin.Any?>?): kotlin.collections.Map<kotlin.Any?, kotlin.Any?>?`
+  /// from: `public suspend fun callFlutterEchoAsyncNullableMap(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
   /// The returned object must be released after use, by calling the [release] method.
-  core$_.Future<jni$_.JMap<jni$_.JObject?, jni$_.JObject?>?> callFlutterEchoAsyncNullableMap(
-    jni$_.JMap<jni$_.JObject?, jni$_.JObject?>? map,
-  ) async {
+  core$_.Future<jni$_.JByteArray?> callFlutterEchoAsyncNullableMap(jni$_.JByteArray bs) async {
     final $p = jni$_.ReceivePort();
     final _$continuation = jni$_.ProtectedJniExtensions.newPortContinuation($p);
     final _$$selfRef = reference;
-    final _$map = map?.reference ?? jni$_.jNullReference;
+    final _$bs = bs.reference;
     final $r = _callFlutterEchoAsyncNullableMap(
       _$$selfRef.pointer,
       _id_callFlutterEchoAsyncNullableMap.pointer,
-      _$map.pointer,
+      _$bs.pointer,
       _$continuation.pointer,
     ).object<jni$_.JObject?>();
     _$continuation.release();
@@ -10009,14 +9688,13 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
     } else {
       $o = $r;
     }
-    return $o?.as<jni$_.JMap>(jni$_.JMap.type, releaseOriginal: true)
-        as jni$_.JMap<jni$_.JObject?, jni$_.JObject?>?;
+    return $o?.as<jni$_.JByteArray>(jni$_.JByteArray.type, releaseOriginal: true);
   }
 
   static final _id_callFlutterEchoAsyncNullableStringMap =
       NativeInteropHostIntegrationCoreApiRegistrar._class.instanceMethodId(
         r'callFlutterEchoAsyncNullableStringMap',
-        r'(Ljava/util/Map;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;',
+        r'([BLkotlin/coroutines/Continuation;)Ljava/lang/Object;',
       );
 
   static final _callFlutterEchoAsyncNullableStringMap =
@@ -10038,19 +9716,19 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
             )
           >();
 
-  /// from: `public suspend fun callFlutterEchoAsyncNullableStringMap(stringMap: kotlin.collections.Map<kotlin.String?, kotlin.String?>?): kotlin.collections.Map<kotlin.String?, kotlin.String?>?`
+  /// from: `public suspend fun callFlutterEchoAsyncNullableStringMap(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
   /// The returned object must be released after use, by calling the [release] method.
-  core$_.Future<jni$_.JMap<jni$_.JString?, jni$_.JString?>?> callFlutterEchoAsyncNullableStringMap(
-    jni$_.JMap<jni$_.JString?, jni$_.JString?>? map,
+  core$_.Future<jni$_.JByteArray?> callFlutterEchoAsyncNullableStringMap(
+    jni$_.JByteArray bs,
   ) async {
     final $p = jni$_.ReceivePort();
     final _$continuation = jni$_.ProtectedJniExtensions.newPortContinuation($p);
     final _$$selfRef = reference;
-    final _$map = map?.reference ?? jni$_.jNullReference;
+    final _$bs = bs.reference;
     final $r = _callFlutterEchoAsyncNullableStringMap(
       _$$selfRef.pointer,
       _id_callFlutterEchoAsyncNullableStringMap.pointer,
-      _$map.pointer,
+      _$bs.pointer,
       _$continuation.pointer,
     ).object<jni$_.JObject?>();
     _$continuation.release();
@@ -10071,15 +9749,14 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
     } else {
       $o = $r;
     }
-    return $o?.as<jni$_.JMap>(jni$_.JMap.type, releaseOriginal: true)
-        as jni$_.JMap<jni$_.JString?, jni$_.JString?>?;
+    return $o?.as<jni$_.JByteArray>(jni$_.JByteArray.type, releaseOriginal: true);
   }
 
   static final _id_callFlutterEchoAsyncNullableIntMap = NativeInteropHostIntegrationCoreApiRegistrar
       ._class
       .instanceMethodId(
         r'callFlutterEchoAsyncNullableIntMap',
-        r'(Ljava/util/Map;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;',
+        r'([BLkotlin/coroutines/Continuation;)Ljava/lang/Object;',
       );
 
   static final _callFlutterEchoAsyncNullableIntMap =
@@ -10101,19 +9778,17 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
             )
           >();
 
-  /// from: `public suspend fun callFlutterEchoAsyncNullableIntMap(intMap: kotlin.collections.Map<kotlin.Long?, kotlin.Long?>?): kotlin.collections.Map<kotlin.Long?, kotlin.Long?>?`
+  /// from: `public suspend fun callFlutterEchoAsyncNullableIntMap(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
   /// The returned object must be released after use, by calling the [release] method.
-  core$_.Future<jni$_.JMap<jni$_.JLong?, jni$_.JLong?>?> callFlutterEchoAsyncNullableIntMap(
-    jni$_.JMap<jni$_.JLong?, jni$_.JLong?>? map,
-  ) async {
+  core$_.Future<jni$_.JByteArray?> callFlutterEchoAsyncNullableIntMap(jni$_.JByteArray bs) async {
     final $p = jni$_.ReceivePort();
     final _$continuation = jni$_.ProtectedJniExtensions.newPortContinuation($p);
     final _$$selfRef = reference;
-    final _$map = map?.reference ?? jni$_.jNullReference;
+    final _$bs = bs.reference;
     final $r = _callFlutterEchoAsyncNullableIntMap(
       _$$selfRef.pointer,
       _id_callFlutterEchoAsyncNullableIntMap.pointer,
-      _$map.pointer,
+      _$bs.pointer,
       _$continuation.pointer,
     ).object<jni$_.JObject?>();
     _$continuation.release();
@@ -10134,14 +9809,13 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
     } else {
       $o = $r;
     }
-    return $o?.as<jni$_.JMap>(jni$_.JMap.type, releaseOriginal: true)
-        as jni$_.JMap<jni$_.JLong?, jni$_.JLong?>?;
+    return $o?.as<jni$_.JByteArray>(jni$_.JByteArray.type, releaseOriginal: true);
   }
 
   static final _id_callFlutterEchoAsyncNullableEnumMap =
       NativeInteropHostIntegrationCoreApiRegistrar._class.instanceMethodId(
         r'callFlutterEchoAsyncNullableEnumMap',
-        r'(Ljava/util/Map;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;',
+        r'([BLkotlin/coroutines/Continuation;)Ljava/lang/Object;',
       );
 
   static final _callFlutterEchoAsyncNullableEnumMap =
@@ -10163,20 +9837,17 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
             )
           >();
 
-  /// from: `public suspend fun callFlutterEchoAsyncNullableEnumMap(enumMap: kotlin.collections.Map<com.example.test_plugin.NativeInteropAnEnum?, com.example.test_plugin.NativeInteropAnEnum?>?): kotlin.collections.Map<com.example.test_plugin.NativeInteropAnEnum?, com.example.test_plugin.NativeInteropAnEnum?>?`
+  /// from: `public suspend fun callFlutterEchoAsyncNullableEnumMap(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
   /// The returned object must be released after use, by calling the [release] method.
-  core$_.Future<jni$_.JMap<NativeInteropAnEnum?, NativeInteropAnEnum?>?>
-  callFlutterEchoAsyncNullableEnumMap(
-    jni$_.JMap<NativeInteropAnEnum?, NativeInteropAnEnum?>? map,
-  ) async {
+  core$_.Future<jni$_.JByteArray?> callFlutterEchoAsyncNullableEnumMap(jni$_.JByteArray bs) async {
     final $p = jni$_.ReceivePort();
     final _$continuation = jni$_.ProtectedJniExtensions.newPortContinuation($p);
     final _$$selfRef = reference;
-    final _$map = map?.reference ?? jni$_.jNullReference;
+    final _$bs = bs.reference;
     final $r = _callFlutterEchoAsyncNullableEnumMap(
       _$$selfRef.pointer,
       _id_callFlutterEchoAsyncNullableEnumMap.pointer,
-      _$map.pointer,
+      _$bs.pointer,
       _$continuation.pointer,
     ).object<jni$_.JObject?>();
     _$continuation.release();
@@ -10197,14 +9868,13 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
     } else {
       $o = $r;
     }
-    return $o?.as<jni$_.JMap>(jni$_.JMap.type, releaseOriginal: true)
-        as jni$_.JMap<NativeInteropAnEnum?, NativeInteropAnEnum?>?;
+    return $o?.as<jni$_.JByteArray>(jni$_.JByteArray.type, releaseOriginal: true);
   }
 
   static final _id_callFlutterEchoAsyncNullableClassMap =
       NativeInteropHostIntegrationCoreApiRegistrar._class.instanceMethodId(
         r'callFlutterEchoAsyncNullableClassMap',
-        r'(Ljava/util/Map;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;',
+        r'([BLkotlin/coroutines/Continuation;)Ljava/lang/Object;',
       );
 
   static final _callFlutterEchoAsyncNullableClassMap =
@@ -10226,20 +9896,17 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
             )
           >();
 
-  /// from: `public suspend fun callFlutterEchoAsyncNullableClassMap(classMap: kotlin.collections.Map<kotlin.Long?, com.example.test_plugin.NativeInteropAllNullableTypes?>?): kotlin.collections.Map<kotlin.Long?, com.example.test_plugin.NativeInteropAllNullableTypes?>?`
+  /// from: `public suspend fun callFlutterEchoAsyncNullableClassMap(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
   /// The returned object must be released after use, by calling the [release] method.
-  core$_.Future<jni$_.JMap<jni$_.JLong?, NativeInteropAllNullableTypes?>?>
-  callFlutterEchoAsyncNullableClassMap(
-    jni$_.JMap<jni$_.JLong?, NativeInteropAllNullableTypes?>? map,
-  ) async {
+  core$_.Future<jni$_.JByteArray?> callFlutterEchoAsyncNullableClassMap(jni$_.JByteArray bs) async {
     final $p = jni$_.ReceivePort();
     final _$continuation = jni$_.ProtectedJniExtensions.newPortContinuation($p);
     final _$$selfRef = reference;
-    final _$map = map?.reference ?? jni$_.jNullReference;
+    final _$bs = bs.reference;
     final $r = _callFlutterEchoAsyncNullableClassMap(
       _$$selfRef.pointer,
       _id_callFlutterEchoAsyncNullableClassMap.pointer,
-      _$map.pointer,
+      _$bs.pointer,
       _$continuation.pointer,
     ).object<jni$_.JObject?>();
     _$continuation.release();
@@ -10260,15 +9927,14 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
     } else {
       $o = $r;
     }
-    return $o?.as<jni$_.JMap>(jni$_.JMap.type, releaseOriginal: true)
-        as jni$_.JMap<jni$_.JLong?, NativeInteropAllNullableTypes?>?;
+    return $o?.as<jni$_.JByteArray>(jni$_.JByteArray.type, releaseOriginal: true);
   }
 
   static final _id_callFlutterEchoAsyncNullableEnum = NativeInteropHostIntegrationCoreApiRegistrar
       ._class
       .instanceMethodId(
         r'callFlutterEchoAsyncNullableEnum',
-        r'(Lcom/example/test_plugin/NativeInteropAnEnum;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;',
+        r'(JLkotlin/coroutines/Continuation;)Ljava/lang/Object;',
       );
 
   static final _callFlutterEchoAsyncNullableEnum =
@@ -10277,7 +9943,7 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
               jni$_.JniResult Function(
                 jni$_.Pointer<jni$_.Void>,
                 jni$_.JMethodIDPtr,
-                jni$_.VarArgs<(jni$_.Pointer<jni$_.Void>, jni$_.Pointer<jni$_.Void>)>,
+                jni$_.VarArgs<(jni$_.Int64, jni$_.Pointer<jni$_.Void>)>,
               )
             >
           >('globalEnv_CallObjectMethod')
@@ -10285,37 +9951,32 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
             jni$_.JniResult Function(
               jni$_.Pointer<jni$_.Void>,
               jni$_.JMethodIDPtr,
-              jni$_.Pointer<jni$_.Void>,
+              core$_.int,
               jni$_.Pointer<jni$_.Void>,
             )
           >();
 
-  /// from: `public suspend fun callFlutterEchoAsyncNullableEnum(anEnum: com.example.test_plugin.NativeInteropAnEnum?): com.example.test_plugin.NativeInteropAnEnum?`
+  /// from: `public suspend fun callFlutterEchoAsyncNullableEnum(anEnum: kotlin.Long): kotlin.Long`
   /// The returned object must be released after use, by calling the [release] method.
-  core$_.Future<NativeInteropAnEnum?> callFlutterEchoAsyncNullableEnum(
-    NativeInteropAnEnum? nativeInteropAnEnum,
-  ) async {
+  core$_.Future<jni$_.JLong> callFlutterEchoAsyncNullableEnum(core$_.int j) async {
     final $p = jni$_.ReceivePort();
     final _$continuation = jni$_.ProtectedJniExtensions.newPortContinuation($p);
     final _$$selfRef = reference;
-    final _$nativeInteropAnEnum = nativeInteropAnEnum?.reference ?? jni$_.jNullReference;
     final $r = _callFlutterEchoAsyncNullableEnum(
       _$$selfRef.pointer,
       _id_callFlutterEchoAsyncNullableEnum.pointer,
-      _$nativeInteropAnEnum.pointer,
+      j,
       _$continuation.pointer,
-    ).object<jni$_.JObject?>();
+    ).object<jni$_.JObject>();
     _$continuation.release();
-    jni$_.JObject? $o;
-    if ($r != null && $r.isInstanceOf(jni$_.coroutineSingletonsClass)) {
+    jni$_.JObject $o;
+    if ($r.isInstanceOf(jni$_.coroutineSingletonsClass)) {
       $r.release();
       final $a = await $p.first;
-      $o = $a == 0
-          ? null
-          : jni$_.JObject.fromReference(jni$_.JGlobalReference(jni$_.JObjectPtr.fromAddress($a)));
-      if ($o != null && $o.isInstanceOf(jni$_.result$Class)) {
+      $o = jni$_.JObject.fromReference(jni$_.JGlobalReference(jni$_.JObjectPtr.fromAddress($a)));
+      if ($o.isInstanceOf(jni$_.result$Class)) {
         $o = jni$_.resultValueField.get($o, const jni$_.$JObject$Type$());
-      } else if ($o != null && $o.isInstanceOf(jni$_.result$FailureClass)) {
+      } else if ($o.isInstanceOf(jni$_.result$FailureClass)) {
         final $e = jni$_.failureExceptionField.get($o, const jni$_.$JObject$Type$());
         $o.release();
         jni$_.Jni.throwException($e.reference.toPointer());
@@ -10323,13 +9984,13 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
     } else {
       $o = $r;
     }
-    return $o?.as<NativeInteropAnEnum>(NativeInteropAnEnum.type, releaseOriginal: true);
+    return $o.as<jni$_.JLong>(jni$_.JLong.type, releaseOriginal: true);
   }
 
   static final _id_callFlutterEchoAnotherAsyncNullableEnum =
       NativeInteropHostIntegrationCoreApiRegistrar._class.instanceMethodId(
         r'callFlutterEchoAnotherAsyncNullableEnum',
-        r'(Lcom/example/test_plugin/NativeInteropAnotherEnum;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;',
+        r'(JLkotlin/coroutines/Continuation;)Ljava/lang/Object;',
       );
 
   static final _callFlutterEchoAnotherAsyncNullableEnum =
@@ -10338,7 +9999,7 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
               jni$_.JniResult Function(
                 jni$_.Pointer<jni$_.Void>,
                 jni$_.JMethodIDPtr,
-                jni$_.VarArgs<(jni$_.Pointer<jni$_.Void>, jni$_.Pointer<jni$_.Void>)>,
+                jni$_.VarArgs<(jni$_.Int64, jni$_.Pointer<jni$_.Void>)>,
               )
             >
           >('globalEnv_CallObjectMethod')
@@ -10346,37 +10007,32 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
             jni$_.JniResult Function(
               jni$_.Pointer<jni$_.Void>,
               jni$_.JMethodIDPtr,
-              jni$_.Pointer<jni$_.Void>,
+              core$_.int,
               jni$_.Pointer<jni$_.Void>,
             )
           >();
 
-  /// from: `public suspend fun callFlutterEchoAnotherAsyncNullableEnum(anotherEnum: com.example.test_plugin.NativeInteropAnotherEnum?): com.example.test_plugin.NativeInteropAnotherEnum?`
+  /// from: `public suspend fun callFlutterEchoAnotherAsyncNullableEnum(anotherEnum: kotlin.Long): kotlin.Long`
   /// The returned object must be released after use, by calling the [release] method.
-  core$_.Future<NativeInteropAnotherEnum?> callFlutterEchoAnotherAsyncNullableEnum(
-    NativeInteropAnotherEnum? nativeInteropAnotherEnum,
-  ) async {
+  core$_.Future<jni$_.JLong> callFlutterEchoAnotherAsyncNullableEnum(core$_.int j) async {
     final $p = jni$_.ReceivePort();
     final _$continuation = jni$_.ProtectedJniExtensions.newPortContinuation($p);
     final _$$selfRef = reference;
-    final _$nativeInteropAnotherEnum = nativeInteropAnotherEnum?.reference ?? jni$_.jNullReference;
     final $r = _callFlutterEchoAnotherAsyncNullableEnum(
       _$$selfRef.pointer,
       _id_callFlutterEchoAnotherAsyncNullableEnum.pointer,
-      _$nativeInteropAnotherEnum.pointer,
+      j,
       _$continuation.pointer,
-    ).object<jni$_.JObject?>();
+    ).object<jni$_.JObject>();
     _$continuation.release();
-    jni$_.JObject? $o;
-    if ($r != null && $r.isInstanceOf(jni$_.coroutineSingletonsClass)) {
+    jni$_.JObject $o;
+    if ($r.isInstanceOf(jni$_.coroutineSingletonsClass)) {
       $r.release();
       final $a = await $p.first;
-      $o = $a == 0
-          ? null
-          : jni$_.JObject.fromReference(jni$_.JGlobalReference(jni$_.JObjectPtr.fromAddress($a)));
-      if ($o != null && $o.isInstanceOf(jni$_.result$Class)) {
+      $o = jni$_.JObject.fromReference(jni$_.JGlobalReference(jni$_.JObjectPtr.fromAddress($a)));
+      if ($o.isInstanceOf(jni$_.result$Class)) {
         $o = jni$_.resultValueField.get($o, const jni$_.$JObject$Type$());
-      } else if ($o != null && $o.isInstanceOf(jni$_.result$FailureClass)) {
+      } else if ($o.isInstanceOf(jni$_.result$FailureClass)) {
         final $e = jni$_.failureExceptionField.get($o, const jni$_.$JObject$Type$());
         $o.release();
         jni$_.Jni.throwException($e.reference.toPointer());
@@ -10384,7 +10040,7 @@ extension NativeInteropHostIntegrationCoreApiRegistrar$$Methods
     } else {
       $o = $r;
     }
-    return $o?.as<NativeInteropAnotherEnum>(NativeInteropAnotherEnum.type, releaseOriginal: true);
+    return $o.as<jni$_.JLong>(jni$_.JLong.type, releaseOriginal: true);
   }
 
   static final _id_get$isMainThread = NativeInteropHostIntegrationCoreApiRegistrar._class
@@ -10686,19 +10342,19 @@ final class $NativeInteropHostIntegrationCoreApiRegistrar$Type$
   String get signature => r'Lcom/example/test_plugin/NativeInteropHostIntegrationCoreApiRegistrar;';
 }
 
-/// from: `com.example.test_plugin.NativeInteropFlutterIntegrationCoreApi`
-extension type NativeInteropFlutterIntegrationCoreApi._(jni$_.JObject _$this)
+/// from: `com.example.test_plugin.NativeInteropFlutterIntegrationCoreApiBridge`
+extension type NativeInteropFlutterIntegrationCoreApiBridge._(jni$_.JObject _$this)
     implements jni$_.JObject {
   static final _class = jni$_.JClass.forName(
-    r'com/example/test_plugin/NativeInteropFlutterIntegrationCoreApi',
+    r'com/example/test_plugin/NativeInteropFlutterIntegrationCoreApiBridge',
   );
 
   /// The type which includes information such as the signature of this class.
-  static const jni$_.JType<NativeInteropFlutterIntegrationCoreApi> type =
-      $NativeInteropFlutterIntegrationCoreApi$Type$();
+  static const jni$_.JType<NativeInteropFlutterIntegrationCoreApiBridge> type =
+      $NativeInteropFlutterIntegrationCoreApiBridge$Type$();
 
   /// Maps a specific port to the implemented interface.
-  static final core$_.Map<core$_.int, $NativeInteropFlutterIntegrationCoreApi> _$impls = {};
+  static final core$_.Map<core$_.int, $NativeInteropFlutterIntegrationCoreApiBridge> _$impls = {};
   static jni$_.JObjectPtr _$invoke(
     core$_.int port,
     jni$_.JObjectPtr descriptor,
@@ -10723,12 +10379,12 @@ extension type NativeInteropFlutterIntegrationCoreApi._(jni$_.JObject _$this)
         _$impls[$p]!.noop();
         return jni$_.nullptr;
       }
-      if ($d == r'throwFlutterError()Ljava/lang/Object;') {
+      if ($d == r'throwFlutterError()[B') {
         final $r = _$impls[$p]!.throwFlutterError();
         return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
             jni$_.nullptr;
       }
-      if ($d == r'throwError()Ljava/lang/Object;') {
+      if ($d == r'throwError()[B') {
         final $r = _$impls[$p]!.throwError();
         return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
             jni$_.nullptr;
@@ -10737,28 +10393,23 @@ extension type NativeInteropFlutterIntegrationCoreApi._(jni$_.JObject _$this)
         _$impls[$p]!.throwErrorFromVoid();
         return jni$_.nullptr;
       }
-      if ($d ==
-          r'echoNativeInteropAllTypes(Lcom/example/test_plugin/NativeInteropAllTypes;)Lcom/example/test_plugin/NativeInteropAllTypes;') {
-        final $r = _$impls[$p]!.echoNativeInteropAllTypes(($a![0] as NativeInteropAllTypes));
+      if ($d == r'echoNativeInteropAllTypes([B)[B') {
+        final $r = _$impls[$p]!.echoNativeInteropAllTypes(($a![0] as jni$_.JByteArray));
+        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
+            jni$_.nullptr;
+      }
+      if ($d == r'echoNativeInteropAllNullableTypes([B)[B') {
+        final $r = _$impls[$p]!.echoNativeInteropAllNullableTypes(($a![0] as jni$_.JByteArray));
+        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
+            jni$_.nullptr;
+      }
+      if ($d == r'echoNativeInteropSealedClass([B)[B') {
+        final $r = _$impls[$p]!.echoNativeInteropSealedClass(($a![0] as jni$_.JByteArray));
         return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
             jni$_.nullptr;
       }
       if ($d ==
-          r'echoNativeInteropAllNullableTypes(Lcom/example/test_plugin/NativeInteropAllNullableTypes;)Lcom/example/test_plugin/NativeInteropAllNullableTypes;') {
-        final $r = _$impls[$p]!.echoNativeInteropAllNullableTypes(
-          ($a![0] as NativeInteropAllNullableTypes?),
-        );
-        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
-            jni$_.nullptr;
-      }
-      if ($d ==
-          r'echoNativeInteropSealedClass(Lcom/example/test_plugin/NativeInteropSealedClass;)Lcom/example/test_plugin/NativeInteropSealedClass;') {
-        final $r = _$impls[$p]!.echoNativeInteropSealedClass(($a![0] as NativeInteropSealedClass));
-        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
-            jni$_.nullptr;
-      }
-      if ($d ==
-          r'sendMultipleNullableTypes(Ljava/lang/Boolean;Ljava/lang/Long;Ljava/lang/String;)Lcom/example/test_plugin/NativeInteropAllNullableTypes;') {
+          r'sendMultipleNullableTypes(Ljava/lang/Boolean;Ljava/lang/Long;Ljava/lang/String;)[B') {
         final $r = _$impls[$p]!.sendMultipleNullableTypes(
           ($a![0] as jni$_.JBoolean?),
           ($a![1] as jni$_.JLong?),
@@ -10767,16 +10418,15 @@ extension type NativeInteropFlutterIntegrationCoreApi._(jni$_.JObject _$this)
         return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
             jni$_.nullptr;
       }
-      if ($d ==
-          r'echoNativeInteropAllNullableTypesWithoutRecursion(Lcom/example/test_plugin/NativeInteropAllNullableTypesWithoutRecursion;)Lcom/example/test_plugin/NativeInteropAllNullableTypesWithoutRecursion;') {
+      if ($d == r'echoNativeInteropAllNullableTypesWithoutRecursion([B)[B') {
         final $r = _$impls[$p]!.echoNativeInteropAllNullableTypesWithoutRecursion(
-          ($a![0] as NativeInteropAllNullableTypesWithoutRecursion?),
+          ($a![0] as jni$_.JByteArray),
         );
         return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
             jni$_.nullptr;
       }
       if ($d ==
-          r'sendMultipleNullableTypesWithoutRecursion(Ljava/lang/Boolean;Ljava/lang/Long;Ljava/lang/String;)Lcom/example/test_plugin/NativeInteropAllNullableTypesWithoutRecursion;') {
+          r'sendMultipleNullableTypesWithoutRecursion(Ljava/lang/Boolean;Ljava/lang/Long;Ljava/lang/String;)[B') {
         final $r = _$impls[$p]!.sendMultipleNullableTypesWithoutRecursion(
           ($a![0] as jni$_.JBoolean?),
           ($a![1] as jni$_.JLong?),
@@ -10826,103 +10476,85 @@ extension type NativeInteropFlutterIntegrationCoreApi._(jni$_.JObject _$this)
         return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
             jni$_.nullptr;
       }
-      if ($d == r'echoList(Ljava/util/List;)Ljava/util/List;') {
-        final $r = _$impls[$p]!.echoList(($a![0] as jni$_.JList<jni$_.JObject?>));
+      if ($d == r'echoList([B)[B') {
+        final $r = _$impls[$p]!.echoList(($a![0] as jni$_.JByteArray));
         return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
             jni$_.nullptr;
       }
-      if ($d == r'echoEnumList(Ljava/util/List;)Ljava/util/List;') {
-        final $r = _$impls[$p]!.echoEnumList(($a![0] as jni$_.JList<NativeInteropAnEnum?>));
+      if ($d == r'echoEnumList([B)[B') {
+        final $r = _$impls[$p]!.echoEnumList(($a![0] as jni$_.JByteArray));
         return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
             jni$_.nullptr;
       }
-      if ($d == r'echoClassList(Ljava/util/List;)Ljava/util/List;') {
-        final $r = _$impls[$p]!.echoClassList(
-          ($a![0] as jni$_.JList<NativeInteropAllNullableTypes?>),
+      if ($d == r'echoClassList([B)[B') {
+        final $r = _$impls[$p]!.echoClassList(($a![0] as jni$_.JByteArray));
+        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
+            jni$_.nullptr;
+      }
+      if ($d == r'echoNonNullEnumList([B)[B') {
+        final $r = _$impls[$p]!.echoNonNullEnumList(($a![0] as jni$_.JByteArray));
+        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
+            jni$_.nullptr;
+      }
+      if ($d == r'echoNonNullClassList([B)[B') {
+        final $r = _$impls[$p]!.echoNonNullClassList(($a![0] as jni$_.JByteArray));
+        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
+            jni$_.nullptr;
+      }
+      if ($d == r'echoMap([B)[B') {
+        final $r = _$impls[$p]!.echoMap(($a![0] as jni$_.JByteArray));
+        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
+            jni$_.nullptr;
+      }
+      if ($d == r'echoStringMap([B)[B') {
+        final $r = _$impls[$p]!.echoStringMap(($a![0] as jni$_.JByteArray));
+        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
+            jni$_.nullptr;
+      }
+      if ($d == r'echoIntMap([B)[B') {
+        final $r = _$impls[$p]!.echoIntMap(($a![0] as jni$_.JByteArray));
+        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
+            jni$_.nullptr;
+      }
+      if ($d == r'echoEnumMap([B)[B') {
+        final $r = _$impls[$p]!.echoEnumMap(($a![0] as jni$_.JByteArray));
+        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
+            jni$_.nullptr;
+      }
+      if ($d == r'echoClassMap([B)[B') {
+        final $r = _$impls[$p]!.echoClassMap(($a![0] as jni$_.JByteArray));
+        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
+            jni$_.nullptr;
+      }
+      if ($d == r'echoNonNullStringMap([B)[B') {
+        final $r = _$impls[$p]!.echoNonNullStringMap(($a![0] as jni$_.JByteArray));
+        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
+            jni$_.nullptr;
+      }
+      if ($d == r'echoNonNullIntMap([B)[B') {
+        final $r = _$impls[$p]!.echoNonNullIntMap(($a![0] as jni$_.JByteArray));
+        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
+            jni$_.nullptr;
+      }
+      if ($d == r'echoNonNullEnumMap([B)[B') {
+        final $r = _$impls[$p]!.echoNonNullEnumMap(($a![0] as jni$_.JByteArray));
+        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
+            jni$_.nullptr;
+      }
+      if ($d == r'echoNonNullClassMap([B)[B') {
+        final $r = _$impls[$p]!.echoNonNullClassMap(($a![0] as jni$_.JByteArray));
+        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
+            jni$_.nullptr;
+      }
+      if ($d == r'echoEnum(J)J') {
+        final $r = _$impls[$p]!.echoEnum(($a![0] as jni$_.JLong).toDartInt(releaseOriginal: true));
+        return $r.toJLong().reference.toPointer();
+      }
+      if ($d == r'echoNativeInteropAnotherEnum(J)J') {
+        final $r = _$impls[$p]!.echoNativeInteropAnotherEnum(
+          ($a![0] as jni$_.JLong).toDartInt(releaseOriginal: true),
         );
-        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
-            jni$_.nullptr;
-      }
-      if ($d == r'echoNonNullEnumList(Ljava/util/List;)Ljava/util/List;') {
-        final $r = _$impls[$p]!.echoNonNullEnumList(($a![0] as jni$_.JList<NativeInteropAnEnum>));
-        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
-            jni$_.nullptr;
-      }
-      if ($d == r'echoNonNullClassList(Ljava/util/List;)Ljava/util/List;') {
-        final $r = _$impls[$p]!.echoNonNullClassList(
-          ($a![0] as jni$_.JList<NativeInteropAllNullableTypes>),
-        );
-        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
-            jni$_.nullptr;
-      }
-      if ($d == r'echoMap(Ljava/util/Map;)Ljava/util/Map;') {
-        final $r = _$impls[$p]!.echoMap(($a![0] as jni$_.JMap<jni$_.JObject?, jni$_.JObject?>));
-        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
-            jni$_.nullptr;
-      }
-      if ($d == r'echoStringMap(Ljava/util/Map;)Ljava/util/Map;') {
-        final $r = _$impls[$p]!.echoStringMap(
-          ($a![0] as jni$_.JMap<jni$_.JString?, jni$_.JString?>),
-        );
-        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
-            jni$_.nullptr;
-      }
-      if ($d == r'echoIntMap(Ljava/util/Map;)Ljava/util/Map;') {
-        final $r = _$impls[$p]!.echoIntMap(($a![0] as jni$_.JMap<jni$_.JLong?, jni$_.JLong?>));
-        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
-            jni$_.nullptr;
-      }
-      if ($d == r'echoEnumMap(Ljava/util/Map;)Ljava/util/Map;') {
-        final $r = _$impls[$p]!.echoEnumMap(
-          ($a![0] as jni$_.JMap<NativeInteropAnEnum?, NativeInteropAnEnum?>),
-        );
-        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
-            jni$_.nullptr;
-      }
-      if ($d == r'echoClassMap(Ljava/util/Map;)Ljava/util/Map;') {
-        final $r = _$impls[$p]!.echoClassMap(
-          ($a![0] as jni$_.JMap<jni$_.JLong?, NativeInteropAllNullableTypes?>),
-        );
-        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
-            jni$_.nullptr;
-      }
-      if ($d == r'echoNonNullStringMap(Ljava/util/Map;)Ljava/util/Map;') {
-        final $r = _$impls[$p]!.echoNonNullStringMap(
-          ($a![0] as jni$_.JMap<jni$_.JString, jni$_.JString>),
-        );
-        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
-            jni$_.nullptr;
-      }
-      if ($d == r'echoNonNullIntMap(Ljava/util/Map;)Ljava/util/Map;') {
-        final $r = _$impls[$p]!.echoNonNullIntMap(($a![0] as jni$_.JMap<jni$_.JLong, jni$_.JLong>));
-        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
-            jni$_.nullptr;
-      }
-      if ($d == r'echoNonNullEnumMap(Ljava/util/Map;)Ljava/util/Map;') {
-        final $r = _$impls[$p]!.echoNonNullEnumMap(
-          ($a![0] as jni$_.JMap<NativeInteropAnEnum, NativeInteropAnEnum>),
-        );
-        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
-            jni$_.nullptr;
-      }
-      if ($d == r'echoNonNullClassMap(Ljava/util/Map;)Ljava/util/Map;') {
-        final $r = _$impls[$p]!.echoNonNullClassMap(
-          ($a![0] as jni$_.JMap<jni$_.JLong, NativeInteropAllNullableTypes>),
-        );
-        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
-            jni$_.nullptr;
-      }
-      if ($d ==
-          r'echoEnum(Lcom/example/test_plugin/NativeInteropAnEnum;)Lcom/example/test_plugin/NativeInteropAnEnum;') {
-        final $r = _$impls[$p]!.echoEnum(($a![0] as NativeInteropAnEnum));
-        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
-            jni$_.nullptr;
-      }
-      if ($d ==
-          r'echoNativeInteropAnotherEnum(Lcom/example/test_plugin/NativeInteropAnotherEnum;)Lcom/example/test_plugin/NativeInteropAnotherEnum;') {
-        final $r = _$impls[$p]!.echoNativeInteropAnotherEnum(($a![0] as NativeInteropAnotherEnum));
-        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
-            jni$_.nullptr;
+        return $r.toJLong().reference.toPointer();
       }
       if ($d == r'echoNullableBool(Ljava/lang/Boolean;)Ljava/lang/Boolean;') {
         final $r = _$impls[$p]!.echoNullableBool(($a![0] as jni$_.JBoolean?));
@@ -10964,113 +10596,87 @@ extension type NativeInteropFlutterIntegrationCoreApi._(jni$_.JObject _$this)
         return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
             jni$_.nullptr;
       }
-      if ($d == r'echoNullableList(Ljava/util/List;)Ljava/util/List;') {
-        final $r = _$impls[$p]!.echoNullableList(($a![0] as jni$_.JList<jni$_.JObject?>?));
+      if ($d == r'echoNullableList([B)[B') {
+        final $r = _$impls[$p]!.echoNullableList(($a![0] as jni$_.JByteArray));
         return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
             jni$_.nullptr;
       }
-      if ($d == r'echoNullableEnumList(Ljava/util/List;)Ljava/util/List;') {
-        final $r = _$impls[$p]!.echoNullableEnumList(
-          ($a![0] as jni$_.JList<NativeInteropAnEnum?>?),
+      if ($d == r'echoNullableEnumList([B)[B') {
+        final $r = _$impls[$p]!.echoNullableEnumList(($a![0] as jni$_.JByteArray));
+        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
+            jni$_.nullptr;
+      }
+      if ($d == r'echoNullableClassList([B)[B') {
+        final $r = _$impls[$p]!.echoNullableClassList(($a![0] as jni$_.JByteArray));
+        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
+            jni$_.nullptr;
+      }
+      if ($d == r'echoNullableNonNullEnumList([B)[B') {
+        final $r = _$impls[$p]!.echoNullableNonNullEnumList(($a![0] as jni$_.JByteArray));
+        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
+            jni$_.nullptr;
+      }
+      if ($d == r'echoNullableNonNullClassList([B)[B') {
+        final $r = _$impls[$p]!.echoNullableNonNullClassList(($a![0] as jni$_.JByteArray));
+        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
+            jni$_.nullptr;
+      }
+      if ($d == r'echoNullableMap([B)[B') {
+        final $r = _$impls[$p]!.echoNullableMap(($a![0] as jni$_.JByteArray));
+        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
+            jni$_.nullptr;
+      }
+      if ($d == r'echoNullableStringMap([B)[B') {
+        final $r = _$impls[$p]!.echoNullableStringMap(($a![0] as jni$_.JByteArray));
+        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
+            jni$_.nullptr;
+      }
+      if ($d == r'echoNullableIntMap([B)[B') {
+        final $r = _$impls[$p]!.echoNullableIntMap(($a![0] as jni$_.JByteArray));
+        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
+            jni$_.nullptr;
+      }
+      if ($d == r'echoNullableEnumMap([B)[B') {
+        final $r = _$impls[$p]!.echoNullableEnumMap(($a![0] as jni$_.JByteArray));
+        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
+            jni$_.nullptr;
+      }
+      if ($d == r'echoNullableClassMap([B)[B') {
+        final $r = _$impls[$p]!.echoNullableClassMap(($a![0] as jni$_.JByteArray));
+        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
+            jni$_.nullptr;
+      }
+      if ($d == r'echoNullableNonNullStringMap([B)[B') {
+        final $r = _$impls[$p]!.echoNullableNonNullStringMap(($a![0] as jni$_.JByteArray));
+        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
+            jni$_.nullptr;
+      }
+      if ($d == r'echoNullableNonNullIntMap([B)[B') {
+        final $r = _$impls[$p]!.echoNullableNonNullIntMap(($a![0] as jni$_.JByteArray));
+        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
+            jni$_.nullptr;
+      }
+      if ($d == r'echoNullableNonNullEnumMap([B)[B') {
+        final $r = _$impls[$p]!.echoNullableNonNullEnumMap(($a![0] as jni$_.JByteArray));
+        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
+            jni$_.nullptr;
+      }
+      if ($d == r'echoNullableNonNullClassMap([B)[B') {
+        final $r = _$impls[$p]!.echoNullableNonNullClassMap(($a![0] as jni$_.JByteArray));
+        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
+            jni$_.nullptr;
+      }
+      if ($d == r'echoNullableEnum(J)J') {
+        final $r = _$impls[$p]!.echoNullableEnum(
+          ($a![0] as jni$_.JLong).toDartInt(releaseOriginal: true),
         );
-        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
-            jni$_.nullptr;
+        return $r.toJLong().reference.toPointer();
       }
-      if ($d == r'echoNullableClassList(Ljava/util/List;)Ljava/util/List;') {
-        final $r = _$impls[$p]!.echoNullableClassList(
-          ($a![0] as jni$_.JList<NativeInteropAllNullableTypes?>?),
+      if ($d == r'echoAnotherNullableEnum(J)J') {
+        final $r = _$impls[$p]!.echoAnotherNullableEnum(
+          ($a![0] as jni$_.JLong).toDartInt(releaseOriginal: true),
         );
-        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
-            jni$_.nullptr;
-      }
-      if ($d == r'echoNullableNonNullEnumList(Ljava/util/List;)Ljava/util/List;') {
-        final $r = _$impls[$p]!.echoNullableNonNullEnumList(
-          ($a![0] as jni$_.JList<NativeInteropAnEnum>?),
-        );
-        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
-            jni$_.nullptr;
-      }
-      if ($d == r'echoNullableNonNullClassList(Ljava/util/List;)Ljava/util/List;') {
-        final $r = _$impls[$p]!.echoNullableNonNullClassList(
-          ($a![0] as jni$_.JList<NativeInteropAllNullableTypes>?),
-        );
-        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
-            jni$_.nullptr;
-      }
-      if ($d == r'echoNullableMap(Ljava/util/Map;)Ljava/util/Map;') {
-        final $r = _$impls[$p]!.echoNullableMap(
-          ($a![0] as jni$_.JMap<jni$_.JObject?, jni$_.JObject?>?),
-        );
-        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
-            jni$_.nullptr;
-      }
-      if ($d == r'echoNullableStringMap(Ljava/util/Map;)Ljava/util/Map;') {
-        final $r = _$impls[$p]!.echoNullableStringMap(
-          ($a![0] as jni$_.JMap<jni$_.JString?, jni$_.JString?>?),
-        );
-        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
-            jni$_.nullptr;
-      }
-      if ($d == r'echoNullableIntMap(Ljava/util/Map;)Ljava/util/Map;') {
-        final $r = _$impls[$p]!.echoNullableIntMap(
-          ($a![0] as jni$_.JMap<jni$_.JLong?, jni$_.JLong?>?),
-        );
-        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
-            jni$_.nullptr;
-      }
-      if ($d == r'echoNullableEnumMap(Ljava/util/Map;)Ljava/util/Map;') {
-        final $r = _$impls[$p]!.echoNullableEnumMap(
-          ($a![0] as jni$_.JMap<NativeInteropAnEnum?, NativeInteropAnEnum?>?),
-        );
-        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
-            jni$_.nullptr;
-      }
-      if ($d == r'echoNullableClassMap(Ljava/util/Map;)Ljava/util/Map;') {
-        final $r = _$impls[$p]!.echoNullableClassMap(
-          ($a![0] as jni$_.JMap<jni$_.JLong?, NativeInteropAllNullableTypes?>?),
-        );
-        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
-            jni$_.nullptr;
-      }
-      if ($d == r'echoNullableNonNullStringMap(Ljava/util/Map;)Ljava/util/Map;') {
-        final $r = _$impls[$p]!.echoNullableNonNullStringMap(
-          ($a![0] as jni$_.JMap<jni$_.JString, jni$_.JString>?),
-        );
-        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
-            jni$_.nullptr;
-      }
-      if ($d == r'echoNullableNonNullIntMap(Ljava/util/Map;)Ljava/util/Map;') {
-        final $r = _$impls[$p]!.echoNullableNonNullIntMap(
-          ($a![0] as jni$_.JMap<jni$_.JLong, jni$_.JLong>?),
-        );
-        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
-            jni$_.nullptr;
-      }
-      if ($d == r'echoNullableNonNullEnumMap(Ljava/util/Map;)Ljava/util/Map;') {
-        final $r = _$impls[$p]!.echoNullableNonNullEnumMap(
-          ($a![0] as jni$_.JMap<NativeInteropAnEnum, NativeInteropAnEnum>?),
-        );
-        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
-            jni$_.nullptr;
-      }
-      if ($d == r'echoNullableNonNullClassMap(Ljava/util/Map;)Ljava/util/Map;') {
-        final $r = _$impls[$p]!.echoNullableNonNullClassMap(
-          ($a![0] as jni$_.JMap<jni$_.JLong, NativeInteropAllNullableTypes>?),
-        );
-        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
-            jni$_.nullptr;
-      }
-      if ($d ==
-          r'echoNullableEnum(Lcom/example/test_plugin/NativeInteropAnEnum;)Lcom/example/test_plugin/NativeInteropAnEnum;') {
-        final $r = _$impls[$p]!.echoNullableEnum(($a![0] as NativeInteropAnEnum?));
-        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
-            jni$_.nullptr;
-      }
-      if ($d ==
-          r'echoAnotherNullableEnum(Lcom/example/test_plugin/NativeInteropAnotherEnum;)Lcom/example/test_plugin/NativeInteropAnotherEnum;') {
-        final $r = _$impls[$p]!.echoAnotherNullableEnum(($a![0] as NativeInteropAnotherEnum?));
-        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
-            jni$_.nullptr;
+        return $r.toJLong().reference.toPointer();
       }
       if ($d == r'noopAsync(Lkotlin/coroutines/Continuation;)Ljava/lang/Object;') {
         final _$$contRef = ($a![0] as Continuation).reference;
@@ -11089,31 +10695,29 @@ extension type NativeInteropFlutterIntegrationCoreApi._(jni$_.JObject _$this)
             jni$_.nullptr;
       }
       if ($d ==
-          r'echoAsyncNativeInteropAllTypes(Lcom/example/test_plugin/NativeInteropAllTypes;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;') {
+          r'echoAsyncNativeInteropAllTypes([BLkotlin/coroutines/Continuation;)Ljava/lang/Object;') {
         final _$$contRef = ($a![1] as Continuation).reference;
         final $r = jni$_.KotlinContinuation.fromReference(_$$contRef).resumeWithFuture(
-          _$impls[$p]!.echoAsyncNativeInteropAllTypes(($a![0] as NativeInteropAllTypes)),
+          _$impls[$p]!.echoAsyncNativeInteropAllTypes(($a![0] as jni$_.JByteArray)),
         );
         return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
             jni$_.nullptr;
       }
       if ($d ==
-          r'echoAsyncNullableNativeInteropAllNullableTypes(Lcom/example/test_plugin/NativeInteropAllNullableTypes;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;') {
+          r'echoAsyncNullableNativeInteropAllNullableTypes([BLkotlin/coroutines/Continuation;)Ljava/lang/Object;') {
         final _$$contRef = ($a![1] as Continuation).reference;
         final $r = jni$_.KotlinContinuation.fromReference(_$$contRef).resumeWithFuture(
-          _$impls[$p]!.echoAsyncNullableNativeInteropAllNullableTypes(
-            ($a![0] as NativeInteropAllNullableTypes?),
-          ),
+          _$impls[$p]!.echoAsyncNullableNativeInteropAllNullableTypes(($a![0] as jni$_.JByteArray)),
         );
         return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
             jni$_.nullptr;
       }
       if ($d ==
-          r'echoAsyncNullableNativeInteropAllNullableTypesWithoutRecursion(Lcom/example/test_plugin/NativeInteropAllNullableTypesWithoutRecursion;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;') {
+          r'echoAsyncNullableNativeInteropAllNullableTypesWithoutRecursion([BLkotlin/coroutines/Continuation;)Ljava/lang/Object;') {
         final _$$contRef = ($a![1] as Continuation).reference;
         final $r = jni$_.KotlinContinuation.fromReference(_$$contRef).resumeWithFuture(
           _$impls[$p]!.echoAsyncNullableNativeInteropAllNullableTypesWithoutRecursion(
-            ($a![0] as NativeInteropAllNullableTypesWithoutRecursion?),
+            ($a![0] as jni$_.JByteArray),
           ),
         );
         return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
@@ -11186,126 +10790,110 @@ extension type NativeInteropFlutterIntegrationCoreApi._(jni$_.JObject _$this)
         return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
             jni$_.nullptr;
       }
-      if ($d ==
-          r'echoAsyncObject(Ljava/lang/Object;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;') {
+      if ($d == r'echoAsyncObject([BLkotlin/coroutines/Continuation;)Ljava/lang/Object;') {
         final _$$contRef = ($a![1] as Continuation).reference;
         final $r = jni$_.KotlinContinuation.fromReference(
           _$$contRef,
-        ).resumeWithFuture(_$impls[$p]!.echoAsyncObject(($a![0] as jni$_.JObject)));
+        ).resumeWithFuture(_$impls[$p]!.echoAsyncObject(($a![0] as jni$_.JByteArray)));
         return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
             jni$_.nullptr;
       }
-      if ($d ==
-          r'echoAsyncList(Ljava/util/List;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;') {
+      if ($d == r'echoAsyncList([BLkotlin/coroutines/Continuation;)Ljava/lang/Object;') {
         final _$$contRef = ($a![1] as Continuation).reference;
         final $r = jni$_.KotlinContinuation.fromReference(
           _$$contRef,
-        ).resumeWithFuture(_$impls[$p]!.echoAsyncList(($a![0] as jni$_.JList<jni$_.JObject?>)));
+        ).resumeWithFuture(_$impls[$p]!.echoAsyncList(($a![0] as jni$_.JByteArray)));
+        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
+            jni$_.nullptr;
+      }
+      if ($d == r'echoAsyncEnumList([BLkotlin/coroutines/Continuation;)Ljava/lang/Object;') {
+        final _$$contRef = ($a![1] as Continuation).reference;
+        final $r = jni$_.KotlinContinuation.fromReference(
+          _$$contRef,
+        ).resumeWithFuture(_$impls[$p]!.echoAsyncEnumList(($a![0] as jni$_.JByteArray)));
+        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
+            jni$_.nullptr;
+      }
+      if ($d == r'echoAsyncClassList([BLkotlin/coroutines/Continuation;)Ljava/lang/Object;') {
+        final _$$contRef = ($a![1] as Continuation).reference;
+        final $r = jni$_.KotlinContinuation.fromReference(
+          _$$contRef,
+        ).resumeWithFuture(_$impls[$p]!.echoAsyncClassList(($a![0] as jni$_.JByteArray)));
+        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
+            jni$_.nullptr;
+      }
+      if ($d == r'echoAsyncNonNullEnumList([BLkotlin/coroutines/Continuation;)Ljava/lang/Object;') {
+        final _$$contRef = ($a![1] as Continuation).reference;
+        final $r = jni$_.KotlinContinuation.fromReference(
+          _$$contRef,
+        ).resumeWithFuture(_$impls[$p]!.echoAsyncNonNullEnumList(($a![0] as jni$_.JByteArray)));
         return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
             jni$_.nullptr;
       }
       if ($d ==
-          r'echoAsyncEnumList(Ljava/util/List;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;') {
+          r'echoAsyncNonNullClassList([BLkotlin/coroutines/Continuation;)Ljava/lang/Object;') {
+        final _$$contRef = ($a![1] as Continuation).reference;
+        final $r = jni$_.KotlinContinuation.fromReference(
+          _$$contRef,
+        ).resumeWithFuture(_$impls[$p]!.echoAsyncNonNullClassList(($a![0] as jni$_.JByteArray)));
+        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
+            jni$_.nullptr;
+      }
+      if ($d == r'echoAsyncMap([BLkotlin/coroutines/Continuation;)Ljava/lang/Object;') {
+        final _$$contRef = ($a![1] as Continuation).reference;
+        final $r = jni$_.KotlinContinuation.fromReference(
+          _$$contRef,
+        ).resumeWithFuture(_$impls[$p]!.echoAsyncMap(($a![0] as jni$_.JByteArray)));
+        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
+            jni$_.nullptr;
+      }
+      if ($d == r'echoAsyncStringMap([BLkotlin/coroutines/Continuation;)Ljava/lang/Object;') {
+        final _$$contRef = ($a![1] as Continuation).reference;
+        final $r = jni$_.KotlinContinuation.fromReference(
+          _$$contRef,
+        ).resumeWithFuture(_$impls[$p]!.echoAsyncStringMap(($a![0] as jni$_.JByteArray)));
+        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
+            jni$_.nullptr;
+      }
+      if ($d == r'echoAsyncIntMap([BLkotlin/coroutines/Continuation;)Ljava/lang/Object;') {
+        final _$$contRef = ($a![1] as Continuation).reference;
+        final $r = jni$_.KotlinContinuation.fromReference(
+          _$$contRef,
+        ).resumeWithFuture(_$impls[$p]!.echoAsyncIntMap(($a![0] as jni$_.JByteArray)));
+        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
+            jni$_.nullptr;
+      }
+      if ($d == r'echoAsyncEnumMap([BLkotlin/coroutines/Continuation;)Ljava/lang/Object;') {
+        final _$$contRef = ($a![1] as Continuation).reference;
+        final $r = jni$_.KotlinContinuation.fromReference(
+          _$$contRef,
+        ).resumeWithFuture(_$impls[$p]!.echoAsyncEnumMap(($a![0] as jni$_.JByteArray)));
+        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
+            jni$_.nullptr;
+      }
+      if ($d == r'echoAsyncClassMap([BLkotlin/coroutines/Continuation;)Ljava/lang/Object;') {
+        final _$$contRef = ($a![1] as Continuation).reference;
+        final $r = jni$_.KotlinContinuation.fromReference(
+          _$$contRef,
+        ).resumeWithFuture(_$impls[$p]!.echoAsyncClassMap(($a![0] as jni$_.JByteArray)));
+        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
+            jni$_.nullptr;
+      }
+      if ($d == r'echoAsyncEnum(JLkotlin/coroutines/Continuation;)Ljava/lang/Object;') {
         final _$$contRef = ($a![1] as Continuation).reference;
         final $r = jni$_.KotlinContinuation.fromReference(_$$contRef).resumeWithFuture(
-          _$impls[$p]!.echoAsyncEnumList(($a![0] as jni$_.JList<NativeInteropAnEnum?>)),
+          _$impls[$p]!.echoAsyncEnum(($a![0] as jni$_.JLong).toDartInt(releaseOriginal: true)),
         );
         return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
             jni$_.nullptr;
       }
-      if ($d ==
-          r'echoAsyncClassList(Ljava/util/List;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;') {
+      if ($d == r'echoAnotherAsyncEnum(JLkotlin/coroutines/Continuation;)Ljava/lang/Object;') {
         final _$$contRef = ($a![1] as Continuation).reference;
         final $r = jni$_.KotlinContinuation.fromReference(_$$contRef).resumeWithFuture(
-          _$impls[$p]!.echoAsyncClassList(($a![0] as jni$_.JList<NativeInteropAllNullableTypes?>)),
-        );
-        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
-            jni$_.nullptr;
-      }
-      if ($d ==
-          r'echoAsyncNonNullEnumList(Ljava/util/List;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;') {
-        final _$$contRef = ($a![1] as Continuation).reference;
-        final $r = jni$_.KotlinContinuation.fromReference(_$$contRef).resumeWithFuture(
-          _$impls[$p]!.echoAsyncNonNullEnumList(($a![0] as jni$_.JList<NativeInteropAnEnum?>)),
-        );
-        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
-            jni$_.nullptr;
-      }
-      if ($d ==
-          r'echoAsyncNonNullClassList(Ljava/util/List;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;') {
-        final _$$contRef = ($a![1] as Continuation).reference;
-        final $r = jni$_.KotlinContinuation.fromReference(_$$contRef).resumeWithFuture(
-          _$impls[$p]!.echoAsyncNonNullClassList(
-            ($a![0] as jni$_.JList<NativeInteropAllNullableTypes?>),
+          _$impls[$p]!.echoAnotherAsyncEnum(
+            ($a![0] as jni$_.JLong).toDartInt(releaseOriginal: true),
           ),
         );
-        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
-            jni$_.nullptr;
-      }
-      if ($d ==
-          r'echoAsyncMap(Ljava/util/Map;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;') {
-        final _$$contRef = ($a![1] as Continuation).reference;
-        final $r = jni$_.KotlinContinuation.fromReference(_$$contRef).resumeWithFuture(
-          _$impls[$p]!.echoAsyncMap(($a![0] as jni$_.JMap<jni$_.JObject?, jni$_.JObject?>)),
-        );
-        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
-            jni$_.nullptr;
-      }
-      if ($d ==
-          r'echoAsyncStringMap(Ljava/util/Map;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;') {
-        final _$$contRef = ($a![1] as Continuation).reference;
-        final $r = jni$_.KotlinContinuation.fromReference(_$$contRef).resumeWithFuture(
-          _$impls[$p]!.echoAsyncStringMap(($a![0] as jni$_.JMap<jni$_.JString?, jni$_.JString?>)),
-        );
-        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
-            jni$_.nullptr;
-      }
-      if ($d ==
-          r'echoAsyncIntMap(Ljava/util/Map;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;') {
-        final _$$contRef = ($a![1] as Continuation).reference;
-        final $r = jni$_.KotlinContinuation.fromReference(_$$contRef).resumeWithFuture(
-          _$impls[$p]!.echoAsyncIntMap(($a![0] as jni$_.JMap<jni$_.JLong?, jni$_.JLong?>)),
-        );
-        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
-            jni$_.nullptr;
-      }
-      if ($d ==
-          r'echoAsyncEnumMap(Ljava/util/Map;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;') {
-        final _$$contRef = ($a![1] as Continuation).reference;
-        final $r = jni$_.KotlinContinuation.fromReference(_$$contRef).resumeWithFuture(
-          _$impls[$p]!.echoAsyncEnumMap(
-            ($a![0] as jni$_.JMap<NativeInteropAnEnum?, NativeInteropAnEnum?>),
-          ),
-        );
-        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
-            jni$_.nullptr;
-      }
-      if ($d ==
-          r'echoAsyncClassMap(Ljava/util/Map;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;') {
-        final _$$contRef = ($a![1] as Continuation).reference;
-        final $r = jni$_.KotlinContinuation.fromReference(_$$contRef).resumeWithFuture(
-          _$impls[$p]!.echoAsyncClassMap(
-            ($a![0] as jni$_.JMap<jni$_.JLong?, NativeInteropAllNullableTypes?>),
-          ),
-        );
-        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
-            jni$_.nullptr;
-      }
-      if ($d ==
-          r'echoAsyncEnum(Lcom/example/test_plugin/NativeInteropAnEnum;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;') {
-        final _$$contRef = ($a![1] as Continuation).reference;
-        final $r = jni$_.KotlinContinuation.fromReference(
-          _$$contRef,
-        ).resumeWithFuture(_$impls[$p]!.echoAsyncEnum(($a![0] as NativeInteropAnEnum)));
-        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
-            jni$_.nullptr;
-      }
-      if ($d ==
-          r'echoAnotherAsyncEnum(Lcom/example/test_plugin/NativeInteropAnotherEnum;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;') {
-        final _$$contRef = ($a![1] as Continuation).reference;
-        final $r = jni$_.KotlinContinuation.fromReference(
-          _$$contRef,
-        ).resumeWithFuture(_$impls[$p]!.echoAnotherAsyncEnum(($a![0] as NativeInteropAnotherEnum)));
         return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
             jni$_.nullptr;
       }
@@ -11381,133 +10969,117 @@ extension type NativeInteropFlutterIntegrationCoreApi._(jni$_.JObject _$this)
         return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
             jni$_.nullptr;
       }
-      if ($d ==
-          r'echoAsyncNullableObject(Ljava/lang/Object;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;') {
+      if ($d == r'echoAsyncNullableObject([BLkotlin/coroutines/Continuation;)Ljava/lang/Object;') {
         final _$$contRef = ($a![1] as Continuation).reference;
         final $r = jni$_.KotlinContinuation.fromReference(
           _$$contRef,
-        ).resumeWithFuture(_$impls[$p]!.echoAsyncNullableObject(($a![0] as jni$_.JObject?)));
+        ).resumeWithFuture(_$impls[$p]!.echoAsyncNullableObject(($a![0] as jni$_.JByteArray)));
         return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
             jni$_.nullptr;
       }
-      if ($d ==
-          r'echoAsyncNullableList(Ljava/util/List;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;') {
-        final _$$contRef = ($a![1] as Continuation).reference;
-        final $r = jni$_.KotlinContinuation.fromReference(_$$contRef).resumeWithFuture(
-          _$impls[$p]!.echoAsyncNullableList(($a![0] as jni$_.JList<jni$_.JObject?>?)),
-        );
-        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
-            jni$_.nullptr;
-      }
-      if ($d ==
-          r'echoAsyncNullableEnumList(Ljava/util/List;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;') {
-        final _$$contRef = ($a![1] as Continuation).reference;
-        final $r = jni$_.KotlinContinuation.fromReference(_$$contRef).resumeWithFuture(
-          _$impls[$p]!.echoAsyncNullableEnumList(($a![0] as jni$_.JList<NativeInteropAnEnum?>?)),
-        );
-        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
-            jni$_.nullptr;
-      }
-      if ($d ==
-          r'echoAsyncNullableClassList(Ljava/util/List;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;') {
-        final _$$contRef = ($a![1] as Continuation).reference;
-        final $r = jni$_.KotlinContinuation.fromReference(_$$contRef).resumeWithFuture(
-          _$impls[$p]!.echoAsyncNullableClassList(
-            ($a![0] as jni$_.JList<NativeInteropAllNullableTypes?>?),
-          ),
-        );
-        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
-            jni$_.nullptr;
-      }
-      if ($d ==
-          r'echoAsyncNullableNonNullEnumList(Ljava/util/List;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;') {
-        final _$$contRef = ($a![1] as Continuation).reference;
-        final $r = jni$_.KotlinContinuation.fromReference(_$$contRef).resumeWithFuture(
-          _$impls[$p]!.echoAsyncNullableNonNullEnumList(
-            ($a![0] as jni$_.JList<NativeInteropAnEnum?>?),
-          ),
-        );
-        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
-            jni$_.nullptr;
-      }
-      if ($d ==
-          r'echoAsyncNullableNonNullClassList(Ljava/util/List;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;') {
-        final _$$contRef = ($a![1] as Continuation).reference;
-        final $r = jni$_.KotlinContinuation.fromReference(_$$contRef).resumeWithFuture(
-          _$impls[$p]!.echoAsyncNullableNonNullClassList(
-            ($a![0] as jni$_.JList<NativeInteropAllNullableTypes?>?),
-          ),
-        );
-        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
-            jni$_.nullptr;
-      }
-      if ($d ==
-          r'echoAsyncNullableMap(Ljava/util/Map;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;') {
-        final _$$contRef = ($a![1] as Continuation).reference;
-        final $r = jni$_.KotlinContinuation.fromReference(_$$contRef).resumeWithFuture(
-          _$impls[$p]!.echoAsyncNullableMap(
-            ($a![0] as jni$_.JMap<jni$_.JObject?, jni$_.JObject?>?),
-          ),
-        );
-        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
-            jni$_.nullptr;
-      }
-      if ($d ==
-          r'echoAsyncNullableStringMap(Ljava/util/Map;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;') {
-        final _$$contRef = ($a![1] as Continuation).reference;
-        final $r = jni$_.KotlinContinuation.fromReference(_$$contRef).resumeWithFuture(
-          _$impls[$p]!.echoAsyncNullableStringMap(
-            ($a![0] as jni$_.JMap<jni$_.JString?, jni$_.JString?>?),
-          ),
-        );
-        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
-            jni$_.nullptr;
-      }
-      if ($d ==
-          r'echoAsyncNullableIntMap(Ljava/util/Map;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;') {
-        final _$$contRef = ($a![1] as Continuation).reference;
-        final $r = jni$_.KotlinContinuation.fromReference(_$$contRef).resumeWithFuture(
-          _$impls[$p]!.echoAsyncNullableIntMap(($a![0] as jni$_.JMap<jni$_.JLong?, jni$_.JLong?>?)),
-        );
-        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
-            jni$_.nullptr;
-      }
-      if ($d ==
-          r'echoAsyncNullableEnumMap(Ljava/util/Map;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;') {
-        final _$$contRef = ($a![1] as Continuation).reference;
-        final $r = jni$_.KotlinContinuation.fromReference(_$$contRef).resumeWithFuture(
-          _$impls[$p]!.echoAsyncNullableEnumMap(
-            ($a![0] as jni$_.JMap<NativeInteropAnEnum?, NativeInteropAnEnum?>?),
-          ),
-        );
-        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
-            jni$_.nullptr;
-      }
-      if ($d ==
-          r'echoAsyncNullableClassMap(Ljava/util/Map;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;') {
-        final _$$contRef = ($a![1] as Continuation).reference;
-        final $r = jni$_.KotlinContinuation.fromReference(_$$contRef).resumeWithFuture(
-          _$impls[$p]!.echoAsyncNullableClassMap(
-            ($a![0] as jni$_.JMap<jni$_.JLong?, NativeInteropAllNullableTypes?>?),
-          ),
-        );
-        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
-            jni$_.nullptr;
-      }
-      if ($d ==
-          r'echoAsyncNullableEnum(Lcom/example/test_plugin/NativeInteropAnEnum;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;') {
+      if ($d == r'echoAsyncNullableList([BLkotlin/coroutines/Continuation;)Ljava/lang/Object;') {
         final _$$contRef = ($a![1] as Continuation).reference;
         final $r = jni$_.KotlinContinuation.fromReference(
           _$$contRef,
-        ).resumeWithFuture(_$impls[$p]!.echoAsyncNullableEnum(($a![0] as NativeInteropAnEnum?)));
+        ).resumeWithFuture(_$impls[$p]!.echoAsyncNullableList(($a![0] as jni$_.JByteArray)));
         return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
             jni$_.nullptr;
       }
       if ($d ==
-          r'echoAnotherAsyncNullableEnum(Lcom/example/test_plugin/NativeInteropAnotherEnum;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;') {
+          r'echoAsyncNullableEnumList([BLkotlin/coroutines/Continuation;)Ljava/lang/Object;') {
+        final _$$contRef = ($a![1] as Continuation).reference;
+        final $r = jni$_.KotlinContinuation.fromReference(
+          _$$contRef,
+        ).resumeWithFuture(_$impls[$p]!.echoAsyncNullableEnumList(($a![0] as jni$_.JByteArray)));
+        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
+            jni$_.nullptr;
+      }
+      if ($d ==
+          r'echoAsyncNullableClassList([BLkotlin/coroutines/Continuation;)Ljava/lang/Object;') {
+        final _$$contRef = ($a![1] as Continuation).reference;
+        final $r = jni$_.KotlinContinuation.fromReference(
+          _$$contRef,
+        ).resumeWithFuture(_$impls[$p]!.echoAsyncNullableClassList(($a![0] as jni$_.JByteArray)));
+        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
+            jni$_.nullptr;
+      }
+      if ($d ==
+          r'echoAsyncNullableNonNullEnumList([BLkotlin/coroutines/Continuation;)Ljava/lang/Object;') {
         final _$$contRef = ($a![1] as Continuation).reference;
         final $r = jni$_.KotlinContinuation.fromReference(_$$contRef).resumeWithFuture(
-          _$impls[$p]!.echoAnotherAsyncNullableEnum(($a![0] as NativeInteropAnotherEnum?)),
+          _$impls[$p]!.echoAsyncNullableNonNullEnumList(($a![0] as jni$_.JByteArray)),
+        );
+        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
+            jni$_.nullptr;
+      }
+      if ($d ==
+          r'echoAsyncNullableNonNullClassList([BLkotlin/coroutines/Continuation;)Ljava/lang/Object;') {
+        final _$$contRef = ($a![1] as Continuation).reference;
+        final $r = jni$_.KotlinContinuation.fromReference(_$$contRef).resumeWithFuture(
+          _$impls[$p]!.echoAsyncNullableNonNullClassList(($a![0] as jni$_.JByteArray)),
+        );
+        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
+            jni$_.nullptr;
+      }
+      if ($d == r'echoAsyncNullableMap([BLkotlin/coroutines/Continuation;)Ljava/lang/Object;') {
+        final _$$contRef = ($a![1] as Continuation).reference;
+        final $r = jni$_.KotlinContinuation.fromReference(
+          _$$contRef,
+        ).resumeWithFuture(_$impls[$p]!.echoAsyncNullableMap(($a![0] as jni$_.JByteArray)));
+        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
+            jni$_.nullptr;
+      }
+      if ($d ==
+          r'echoAsyncNullableStringMap([BLkotlin/coroutines/Continuation;)Ljava/lang/Object;') {
+        final _$$contRef = ($a![1] as Continuation).reference;
+        final $r = jni$_.KotlinContinuation.fromReference(
+          _$$contRef,
+        ).resumeWithFuture(_$impls[$p]!.echoAsyncNullableStringMap(($a![0] as jni$_.JByteArray)));
+        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
+            jni$_.nullptr;
+      }
+      if ($d == r'echoAsyncNullableIntMap([BLkotlin/coroutines/Continuation;)Ljava/lang/Object;') {
+        final _$$contRef = ($a![1] as Continuation).reference;
+        final $r = jni$_.KotlinContinuation.fromReference(
+          _$$contRef,
+        ).resumeWithFuture(_$impls[$p]!.echoAsyncNullableIntMap(($a![0] as jni$_.JByteArray)));
+        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
+            jni$_.nullptr;
+      }
+      if ($d == r'echoAsyncNullableEnumMap([BLkotlin/coroutines/Continuation;)Ljava/lang/Object;') {
+        final _$$contRef = ($a![1] as Continuation).reference;
+        final $r = jni$_.KotlinContinuation.fromReference(
+          _$$contRef,
+        ).resumeWithFuture(_$impls[$p]!.echoAsyncNullableEnumMap(($a![0] as jni$_.JByteArray)));
+        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
+            jni$_.nullptr;
+      }
+      if ($d ==
+          r'echoAsyncNullableClassMap([BLkotlin/coroutines/Continuation;)Ljava/lang/Object;') {
+        final _$$contRef = ($a![1] as Continuation).reference;
+        final $r = jni$_.KotlinContinuation.fromReference(
+          _$$contRef,
+        ).resumeWithFuture(_$impls[$p]!.echoAsyncNullableClassMap(($a![0] as jni$_.JByteArray)));
+        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
+            jni$_.nullptr;
+      }
+      if ($d == r'echoAsyncNullableEnum(JLkotlin/coroutines/Continuation;)Ljava/lang/Object;') {
+        final _$$contRef = ($a![1] as Continuation).reference;
+        final $r = jni$_.KotlinContinuation.fromReference(_$$contRef).resumeWithFuture(
+          _$impls[$p]!.echoAsyncNullableEnum(
+            ($a![0] as jni$_.JLong).toDartInt(releaseOriginal: true),
+          ),
+        );
+        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
+            jni$_.nullptr;
+      }
+      if ($d ==
+          r'echoAnotherAsyncNullableEnum(JLkotlin/coroutines/Continuation;)Ljava/lang/Object;') {
+        final _$$contRef = ($a![1] as Continuation).reference;
+        final $r = jni$_.KotlinContinuation.fromReference(_$$contRef).resumeWithFuture(
+          _$impls[$p]!.echoAnotherAsyncNullableEnum(
+            ($a![0] as jni$_.JLong).toDartInt(releaseOriginal: true),
+          ),
         );
         return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
             jni$_.nullptr;
@@ -11520,7 +11092,7 @@ extension type NativeInteropFlutterIntegrationCoreApi._(jni$_.JObject _$this)
 
   static void implementIn(
     jni$_.JImplementer implementer,
-    $NativeInteropFlutterIntegrationCoreApi $impl,
+    $NativeInteropFlutterIntegrationCoreApiBridge $impl,
   ) {
     late final jni$_.RawReceivePort $p;
     $p = jni$_.RawReceivePort(($m) {
@@ -11535,7 +11107,7 @@ extension type NativeInteropFlutterIntegrationCoreApi._(jni$_.JObject _$this)
       jni$_.ProtectedJniExtensions.returnResult($i.result, $r);
     });
     implementer.add(
-      r'com.example.test_plugin.NativeInteropFlutterIntegrationCoreApi',
+      r'com.example.test_plugin.NativeInteropFlutterIntegrationCoreApiBridge',
       $p,
       _$invokePointer,
       [
@@ -11547,18 +11119,18 @@ extension type NativeInteropFlutterIntegrationCoreApi._(jni$_.JObject _$this)
     _$impls[$a] = $impl;
   }
 
-  factory NativeInteropFlutterIntegrationCoreApi.implement(
-    $NativeInteropFlutterIntegrationCoreApi $impl,
+  factory NativeInteropFlutterIntegrationCoreApiBridge.implement(
+    $NativeInteropFlutterIntegrationCoreApiBridge $impl,
   ) {
     final $i = jni$_.JImplementer();
     implementIn($i, $impl);
-    return $i.implement<NativeInteropFlutterIntegrationCoreApi>();
+    return $i.implement<NativeInteropFlutterIntegrationCoreApiBridge>();
   }
 }
 
-extension NativeInteropFlutterIntegrationCoreApi$$Methods
-    on NativeInteropFlutterIntegrationCoreApi {
-  static final _id_noop = NativeInteropFlutterIntegrationCoreApi._class.instanceMethodId(
+extension NativeInteropFlutterIntegrationCoreApiBridge$$Methods
+    on NativeInteropFlutterIntegrationCoreApiBridge {
+  static final _id_noop = NativeInteropFlutterIntegrationCoreApiBridge._class.instanceMethodId(
     r'noop',
     r'()V',
   );
@@ -11579,8 +11151,8 @@ extension NativeInteropFlutterIntegrationCoreApi$$Methods
     _noop(_$$selfRef.pointer, _id_noop.pointer).check();
   }
 
-  static final _id_throwFlutterError = NativeInteropFlutterIntegrationCoreApi._class
-      .instanceMethodId(r'throwFlutterError', r'()Ljava/lang/Object;');
+  static final _id_throwFlutterError = NativeInteropFlutterIntegrationCoreApiBridge._class
+      .instanceMethodId(r'throwFlutterError', r'()[B');
 
   static final _throwFlutterError =
       jni$_.ProtectedJniExtensions.lookup<
@@ -11590,20 +11162,18 @@ extension NativeInteropFlutterIntegrationCoreApi$$Methods
           >('globalEnv_CallObjectMethod')
           .asFunction<jni$_.JniResult Function(jni$_.Pointer<jni$_.Void>, jni$_.JMethodIDPtr)>();
 
-  /// from: `public fun throwFlutterError(): kotlin.Any?`
+  /// from: `public fun throwFlutterError(): kotlin.ByteArray?`
   /// The returned object must be released after use, by calling the [release] method.
-  jni$_.JObject? throwFlutterError() {
+  jni$_.JByteArray? throwFlutterError() {
     final _$$selfRef = reference;
     return _throwFlutterError(
       _$$selfRef.pointer,
       _id_throwFlutterError.pointer,
-    ).object<jni$_.JObject?>();
+    ).object<jni$_.JByteArray?>();
   }
 
-  static final _id_throwError = NativeInteropFlutterIntegrationCoreApi._class.instanceMethodId(
-    r'throwError',
-    r'()Ljava/lang/Object;',
-  );
+  static final _id_throwError = NativeInteropFlutterIntegrationCoreApiBridge._class
+      .instanceMethodId(r'throwError', r'()[B');
 
   static final _throwError =
       jni$_.ProtectedJniExtensions.lookup<
@@ -11613,14 +11183,14 @@ extension NativeInteropFlutterIntegrationCoreApi$$Methods
           >('globalEnv_CallObjectMethod')
           .asFunction<jni$_.JniResult Function(jni$_.Pointer<jni$_.Void>, jni$_.JMethodIDPtr)>();
 
-  /// from: `public fun throwError(): kotlin.Any?`
+  /// from: `public fun throwError(): kotlin.ByteArray?`
   /// The returned object must be released after use, by calling the [release] method.
-  jni$_.JObject? throwError() {
+  jni$_.JByteArray? throwError() {
     final _$$selfRef = reference;
-    return _throwError(_$$selfRef.pointer, _id_throwError.pointer).object<jni$_.JObject?>();
+    return _throwError(_$$selfRef.pointer, _id_throwError.pointer).object<jni$_.JByteArray?>();
   }
 
-  static final _id_throwErrorFromVoid = NativeInteropFlutterIntegrationCoreApi._class
+  static final _id_throwErrorFromVoid = NativeInteropFlutterIntegrationCoreApiBridge._class
       .instanceMethodId(r'throwErrorFromVoid', r'()V');
 
   static final _throwErrorFromVoid =
@@ -11639,11 +11209,8 @@ extension NativeInteropFlutterIntegrationCoreApi$$Methods
     _throwErrorFromVoid(_$$selfRef.pointer, _id_throwErrorFromVoid.pointer).check();
   }
 
-  static final _id_echoNativeInteropAllTypes = NativeInteropFlutterIntegrationCoreApi._class
-      .instanceMethodId(
-        r'echoNativeInteropAllTypes',
-        r'(Lcom/example/test_plugin/NativeInteropAllTypes;)Lcom/example/test_plugin/NativeInteropAllTypes;',
-      );
+  static final _id_echoNativeInteropAllTypes = NativeInteropFlutterIntegrationCoreApiBridge._class
+      .instanceMethodId(r'echoNativeInteropAllTypes', r'([B)[B');
 
   static final _echoNativeInteropAllTypes =
       jni$_.ProtectedJniExtensions.lookup<
@@ -11663,23 +11230,21 @@ extension NativeInteropFlutterIntegrationCoreApi$$Methods
             )
           >();
 
-  /// from: `public fun echoNativeInteropAllTypes(everything: com.example.test_plugin.NativeInteropAllTypes): com.example.test_plugin.NativeInteropAllTypes`
+  /// from: `public fun echoNativeInteropAllTypes(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
   /// The returned object must be released after use, by calling the [release] method.
-  NativeInteropAllTypes echoNativeInteropAllTypes(NativeInteropAllTypes nativeInteropAllTypes) {
+  jni$_.JByteArray? echoNativeInteropAllTypes(jni$_.JByteArray bs) {
     final _$$selfRef = reference;
-    final _$nativeInteropAllTypes = nativeInteropAllTypes.reference;
+    final _$bs = bs.reference;
     return _echoNativeInteropAllTypes(
       _$$selfRef.pointer,
       _id_echoNativeInteropAllTypes.pointer,
-      _$nativeInteropAllTypes.pointer,
-    ).object<NativeInteropAllTypes>();
+      _$bs.pointer,
+    ).object<jni$_.JByteArray?>();
   }
 
-  static final _id_echoNativeInteropAllNullableTypes = NativeInteropFlutterIntegrationCoreApi._class
-      .instanceMethodId(
-        r'echoNativeInteropAllNullableTypes',
-        r'(Lcom/example/test_plugin/NativeInteropAllNullableTypes;)Lcom/example/test_plugin/NativeInteropAllNullableTypes;',
-      );
+  static final _id_echoNativeInteropAllNullableTypes = NativeInteropFlutterIntegrationCoreApiBridge
+      ._class
+      .instanceMethodId(r'echoNativeInteropAllNullableTypes', r'([B)[B');
 
   static final _echoNativeInteropAllNullableTypes =
       jni$_.ProtectedJniExtensions.lookup<
@@ -11699,26 +11264,21 @@ extension NativeInteropFlutterIntegrationCoreApi$$Methods
             )
           >();
 
-  /// from: `public fun echoNativeInteropAllNullableTypes(everything: com.example.test_plugin.NativeInteropAllNullableTypes?): com.example.test_plugin.NativeInteropAllNullableTypes?`
+  /// from: `public fun echoNativeInteropAllNullableTypes(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
   /// The returned object must be released after use, by calling the [release] method.
-  NativeInteropAllNullableTypes? echoNativeInteropAllNullableTypes(
-    NativeInteropAllNullableTypes? nativeInteropAllNullableTypes,
-  ) {
+  jni$_.JByteArray? echoNativeInteropAllNullableTypes(jni$_.JByteArray bs) {
     final _$$selfRef = reference;
-    final _$nativeInteropAllNullableTypes =
-        nativeInteropAllNullableTypes?.reference ?? jni$_.jNullReference;
+    final _$bs = bs.reference;
     return _echoNativeInteropAllNullableTypes(
       _$$selfRef.pointer,
       _id_echoNativeInteropAllNullableTypes.pointer,
-      _$nativeInteropAllNullableTypes.pointer,
-    ).object<NativeInteropAllNullableTypes?>();
+      _$bs.pointer,
+    ).object<jni$_.JByteArray?>();
   }
 
-  static final _id_echoNativeInteropSealedClass = NativeInteropFlutterIntegrationCoreApi._class
-      .instanceMethodId(
-        r'echoNativeInteropSealedClass',
-        r'(Lcom/example/test_plugin/NativeInteropSealedClass;)Lcom/example/test_plugin/NativeInteropSealedClass;',
-      );
+  static final _id_echoNativeInteropSealedClass = NativeInteropFlutterIntegrationCoreApiBridge
+      ._class
+      .instanceMethodId(r'echoNativeInteropSealedClass', r'([B)[B');
 
   static final _echoNativeInteropSealedClass =
       jni$_.ProtectedJniExtensions.lookup<
@@ -11738,24 +11298,22 @@ extension NativeInteropFlutterIntegrationCoreApi$$Methods
             )
           >();
 
-  /// from: `public fun echoNativeInteropSealedClass(sealedClass: com.example.test_plugin.NativeInteropSealedClass): com.example.test_plugin.NativeInteropSealedClass`
+  /// from: `public fun echoNativeInteropSealedClass(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
   /// The returned object must be released after use, by calling the [release] method.
-  NativeInteropSealedClass echoNativeInteropSealedClass(
-    NativeInteropSealedClass nativeInteropSealedClass,
-  ) {
+  jni$_.JByteArray? echoNativeInteropSealedClass(jni$_.JByteArray bs) {
     final _$$selfRef = reference;
-    final _$nativeInteropSealedClass = nativeInteropSealedClass.reference;
+    final _$bs = bs.reference;
     return _echoNativeInteropSealedClass(
       _$$selfRef.pointer,
       _id_echoNativeInteropSealedClass.pointer,
-      _$nativeInteropSealedClass.pointer,
-    ).object<NativeInteropSealedClass>();
+      _$bs.pointer,
+    ).object<jni$_.JByteArray?>();
   }
 
-  static final _id_sendMultipleNullableTypes = NativeInteropFlutterIntegrationCoreApi._class
+  static final _id_sendMultipleNullableTypes = NativeInteropFlutterIntegrationCoreApiBridge._class
       .instanceMethodId(
         r'sendMultipleNullableTypes',
-        r'(Ljava/lang/Boolean;Ljava/lang/Long;Ljava/lang/String;)Lcom/example/test_plugin/NativeInteropAllNullableTypes;',
+        r'(Ljava/lang/Boolean;Ljava/lang/Long;Ljava/lang/String;)[B',
       );
 
   static final _sendMultipleNullableTypes =
@@ -11780,9 +11338,9 @@ extension NativeInteropFlutterIntegrationCoreApi$$Methods
             )
           >();
 
-  /// from: `public fun sendMultipleNullableTypes(aNullableBool: kotlin.Boolean?, aNullableInt: kotlin.Long?, aNullableString: kotlin.String?): com.example.test_plugin.NativeInteropAllNullableTypes`
+  /// from: `public fun sendMultipleNullableTypes(aNullableBool: kotlin.Boolean?, aNullableInt: kotlin.Long?, aNullableString: kotlin.String?): kotlin.ByteArray?`
   /// The returned object must be released after use, by calling the [release] method.
-  NativeInteropAllNullableTypes sendMultipleNullableTypes(
+  jni$_.JByteArray? sendMultipleNullableTypes(
     jni$_.JBoolean? boolean,
     jni$_.JLong? long,
     jni$_.JString? string,
@@ -11797,13 +11355,13 @@ extension NativeInteropFlutterIntegrationCoreApi$$Methods
       _$boolean.pointer,
       _$long.pointer,
       _$string.pointer,
-    ).object<NativeInteropAllNullableTypes>();
+    ).object<jni$_.JByteArray?>();
   }
 
   static final _id_echoNativeInteropAllNullableTypesWithoutRecursion =
-      NativeInteropFlutterIntegrationCoreApi._class.instanceMethodId(
+      NativeInteropFlutterIntegrationCoreApiBridge._class.instanceMethodId(
         r'echoNativeInteropAllNullableTypesWithoutRecursion',
-        r'(Lcom/example/test_plugin/NativeInteropAllNullableTypesWithoutRecursion;)Lcom/example/test_plugin/NativeInteropAllNullableTypesWithoutRecursion;',
+        r'([B)[B',
       );
 
   static final _echoNativeInteropAllNullableTypesWithoutRecursion =
@@ -11824,25 +11382,22 @@ extension NativeInteropFlutterIntegrationCoreApi$$Methods
             )
           >();
 
-  /// from: `public fun echoNativeInteropAllNullableTypesWithoutRecursion(everything: com.example.test_plugin.NativeInteropAllNullableTypesWithoutRecursion?): com.example.test_plugin.NativeInteropAllNullableTypesWithoutRecursion?`
+  /// from: `public fun echoNativeInteropAllNullableTypesWithoutRecursion(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
   /// The returned object must be released after use, by calling the [release] method.
-  NativeInteropAllNullableTypesWithoutRecursion? echoNativeInteropAllNullableTypesWithoutRecursion(
-    NativeInteropAllNullableTypesWithoutRecursion? nativeInteropAllNullableTypesWithoutRecursion,
-  ) {
+  jni$_.JByteArray? echoNativeInteropAllNullableTypesWithoutRecursion(jni$_.JByteArray bs) {
     final _$$selfRef = reference;
-    final _$nativeInteropAllNullableTypesWithoutRecursion =
-        nativeInteropAllNullableTypesWithoutRecursion?.reference ?? jni$_.jNullReference;
+    final _$bs = bs.reference;
     return _echoNativeInteropAllNullableTypesWithoutRecursion(
       _$$selfRef.pointer,
       _id_echoNativeInteropAllNullableTypesWithoutRecursion.pointer,
-      _$nativeInteropAllNullableTypesWithoutRecursion.pointer,
-    ).object<NativeInteropAllNullableTypesWithoutRecursion?>();
+      _$bs.pointer,
+    ).object<jni$_.JByteArray?>();
   }
 
   static final _id_sendMultipleNullableTypesWithoutRecursion =
-      NativeInteropFlutterIntegrationCoreApi._class.instanceMethodId(
+      NativeInteropFlutterIntegrationCoreApiBridge._class.instanceMethodId(
         r'sendMultipleNullableTypesWithoutRecursion',
-        r'(Ljava/lang/Boolean;Ljava/lang/Long;Ljava/lang/String;)Lcom/example/test_plugin/NativeInteropAllNullableTypesWithoutRecursion;',
+        r'(Ljava/lang/Boolean;Ljava/lang/Long;Ljava/lang/String;)[B',
       );
 
   static final _sendMultipleNullableTypesWithoutRecursion =
@@ -11867,9 +11422,9 @@ extension NativeInteropFlutterIntegrationCoreApi$$Methods
             )
           >();
 
-  /// from: `public fun sendMultipleNullableTypesWithoutRecursion(aNullableBool: kotlin.Boolean?, aNullableInt: kotlin.Long?, aNullableString: kotlin.String?): com.example.test_plugin.NativeInteropAllNullableTypesWithoutRecursion`
+  /// from: `public fun sendMultipleNullableTypesWithoutRecursion(aNullableBool: kotlin.Boolean?, aNullableInt: kotlin.Long?, aNullableString: kotlin.String?): kotlin.ByteArray?`
   /// The returned object must be released after use, by calling the [release] method.
-  NativeInteropAllNullableTypesWithoutRecursion sendMultipleNullableTypesWithoutRecursion(
+  jni$_.JByteArray? sendMultipleNullableTypesWithoutRecursion(
     jni$_.JBoolean? boolean,
     jni$_.JLong? long,
     jni$_.JString? string,
@@ -11884,10 +11439,10 @@ extension NativeInteropFlutterIntegrationCoreApi$$Methods
       _$boolean.pointer,
       _$long.pointer,
       _$string.pointer,
-    ).object<NativeInteropAllNullableTypesWithoutRecursion>();
+    ).object<jni$_.JByteArray?>();
   }
 
-  static final _id_echoBool = NativeInteropFlutterIntegrationCoreApi._class.instanceMethodId(
+  static final _id_echoBool = NativeInteropFlutterIntegrationCoreApiBridge._class.instanceMethodId(
     r'echoBool',
     r'(Z)Z',
   );
@@ -11912,7 +11467,7 @@ extension NativeInteropFlutterIntegrationCoreApi$$Methods
     return _echoBool(_$$selfRef.pointer, _id_echoBool.pointer, z ? 1 : 0).boolean;
   }
 
-  static final _id_echoInt = NativeInteropFlutterIntegrationCoreApi._class.instanceMethodId(
+  static final _id_echoInt = NativeInteropFlutterIntegrationCoreApiBridge._class.instanceMethodId(
     r'echoInt',
     r'(J)J',
   );
@@ -11937,10 +11492,8 @@ extension NativeInteropFlutterIntegrationCoreApi$$Methods
     return _echoInt(_$$selfRef.pointer, _id_echoInt.pointer, j).long;
   }
 
-  static final _id_echoDouble = NativeInteropFlutterIntegrationCoreApi._class.instanceMethodId(
-    r'echoDouble',
-    r'(D)D',
-  );
+  static final _id_echoDouble = NativeInteropFlutterIntegrationCoreApiBridge._class
+      .instanceMethodId(r'echoDouble', r'(D)D');
 
   static final _echoDouble =
       jni$_.ProtectedJniExtensions.lookup<
@@ -11962,10 +11515,8 @@ extension NativeInteropFlutterIntegrationCoreApi$$Methods
     return _echoDouble(_$$selfRef.pointer, _id_echoDouble.pointer, d).doubleFloat;
   }
 
-  static final _id_echoString = NativeInteropFlutterIntegrationCoreApi._class.instanceMethodId(
-    r'echoString',
-    r'(Ljava/lang/String;)Ljava/lang/String;',
-  );
+  static final _id_echoString = NativeInteropFlutterIntegrationCoreApiBridge._class
+      .instanceMethodId(r'echoString', r'(Ljava/lang/String;)Ljava/lang/String;');
 
   static final _echoString =
       jni$_.ProtectedJniExtensions.lookup<
@@ -11997,10 +11548,8 @@ extension NativeInteropFlutterIntegrationCoreApi$$Methods
     ).object<jni$_.JString>();
   }
 
-  static final _id_echoUint8List = NativeInteropFlutterIntegrationCoreApi._class.instanceMethodId(
-    r'echoUint8List',
-    r'([B)[B',
-  );
+  static final _id_echoUint8List = NativeInteropFlutterIntegrationCoreApiBridge._class
+      .instanceMethodId(r'echoUint8List', r'([B)[B');
 
   static final _echoUint8List =
       jni$_.ProtectedJniExtensions.lookup<
@@ -12032,10 +11581,8 @@ extension NativeInteropFlutterIntegrationCoreApi$$Methods
     ).object<jni$_.JByteArray>();
   }
 
-  static final _id_echoInt32List = NativeInteropFlutterIntegrationCoreApi._class.instanceMethodId(
-    r'echoInt32List',
-    r'([I)[I',
-  );
+  static final _id_echoInt32List = NativeInteropFlutterIntegrationCoreApiBridge._class
+      .instanceMethodId(r'echoInt32List', r'([I)[I');
 
   static final _echoInt32List =
       jni$_.ProtectedJniExtensions.lookup<
@@ -12067,10 +11614,8 @@ extension NativeInteropFlutterIntegrationCoreApi$$Methods
     ).object<jni$_.JIntArray>();
   }
 
-  static final _id_echoInt64List = NativeInteropFlutterIntegrationCoreApi._class.instanceMethodId(
-    r'echoInt64List',
-    r'([J)[J',
-  );
+  static final _id_echoInt64List = NativeInteropFlutterIntegrationCoreApiBridge._class
+      .instanceMethodId(r'echoInt64List', r'([J)[J');
 
   static final _echoInt64List =
       jni$_.ProtectedJniExtensions.lookup<
@@ -12102,10 +11647,8 @@ extension NativeInteropFlutterIntegrationCoreApi$$Methods
     ).object<jni$_.JLongArray>();
   }
 
-  static final _id_echoFloat64List = NativeInteropFlutterIntegrationCoreApi._class.instanceMethodId(
-    r'echoFloat64List',
-    r'([D)[D',
-  );
+  static final _id_echoFloat64List = NativeInteropFlutterIntegrationCoreApiBridge._class
+      .instanceMethodId(r'echoFloat64List', r'([D)[D');
 
   static final _echoFloat64List =
       jni$_.ProtectedJniExtensions.lookup<
@@ -12137,9 +11680,9 @@ extension NativeInteropFlutterIntegrationCoreApi$$Methods
     ).object<jni$_.JDoubleArray>();
   }
 
-  static final _id_echoList = NativeInteropFlutterIntegrationCoreApi._class.instanceMethodId(
+  static final _id_echoList = NativeInteropFlutterIntegrationCoreApiBridge._class.instanceMethodId(
     r'echoList',
-    r'(Ljava/util/List;)Ljava/util/List;',
+    r'([B)[B',
   );
 
   static final _echoList =
@@ -12160,22 +11703,20 @@ extension NativeInteropFlutterIntegrationCoreApi$$Methods
             )
           >();
 
-  /// from: `public fun echoList(list: kotlin.collections.List<kotlin.Any?>): kotlin.collections.List<kotlin.Any?>`
+  /// from: `public fun echoList(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
   /// The returned object must be released after use, by calling the [release] method.
-  jni$_.JList<jni$_.JObject?> echoList(jni$_.JList<jni$_.JObject?> list) {
+  jni$_.JByteArray? echoList(jni$_.JByteArray bs) {
     final _$$selfRef = reference;
-    final _$list = list.reference;
+    final _$bs = bs.reference;
     return _echoList(
       _$$selfRef.pointer,
       _id_echoList.pointer,
-      _$list.pointer,
-    ).object<jni$_.JList<jni$_.JObject?>>();
+      _$bs.pointer,
+    ).object<jni$_.JByteArray?>();
   }
 
-  static final _id_echoEnumList = NativeInteropFlutterIntegrationCoreApi._class.instanceMethodId(
-    r'echoEnumList',
-    r'(Ljava/util/List;)Ljava/util/List;',
-  );
+  static final _id_echoEnumList = NativeInteropFlutterIntegrationCoreApiBridge._class
+      .instanceMethodId(r'echoEnumList', r'([B)[B');
 
   static final _echoEnumList =
       jni$_.ProtectedJniExtensions.lookup<
@@ -12195,22 +11736,20 @@ extension NativeInteropFlutterIntegrationCoreApi$$Methods
             )
           >();
 
-  /// from: `public fun echoEnumList(enumList: kotlin.collections.List<com.example.test_plugin.NativeInteropAnEnum?>): kotlin.collections.List<com.example.test_plugin.NativeInteropAnEnum?>`
+  /// from: `public fun echoEnumList(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
   /// The returned object must be released after use, by calling the [release] method.
-  jni$_.JList<NativeInteropAnEnum?> echoEnumList(jni$_.JList<NativeInteropAnEnum?> list) {
+  jni$_.JByteArray? echoEnumList(jni$_.JByteArray bs) {
     final _$$selfRef = reference;
-    final _$list = list.reference;
+    final _$bs = bs.reference;
     return _echoEnumList(
       _$$selfRef.pointer,
       _id_echoEnumList.pointer,
-      _$list.pointer,
-    ).object<jni$_.JList<NativeInteropAnEnum?>>();
+      _$bs.pointer,
+    ).object<jni$_.JByteArray?>();
   }
 
-  static final _id_echoClassList = NativeInteropFlutterIntegrationCoreApi._class.instanceMethodId(
-    r'echoClassList',
-    r'(Ljava/util/List;)Ljava/util/List;',
-  );
+  static final _id_echoClassList = NativeInteropFlutterIntegrationCoreApiBridge._class
+      .instanceMethodId(r'echoClassList', r'([B)[B');
 
   static final _echoClassList =
       jni$_.ProtectedJniExtensions.lookup<
@@ -12230,22 +11769,20 @@ extension NativeInteropFlutterIntegrationCoreApi$$Methods
             )
           >();
 
-  /// from: `public fun echoClassList(classList: kotlin.collections.List<com.example.test_plugin.NativeInteropAllNullableTypes?>): kotlin.collections.List<com.example.test_plugin.NativeInteropAllNullableTypes?>`
+  /// from: `public fun echoClassList(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
   /// The returned object must be released after use, by calling the [release] method.
-  jni$_.JList<NativeInteropAllNullableTypes?> echoClassList(
-    jni$_.JList<NativeInteropAllNullableTypes?> list,
-  ) {
+  jni$_.JByteArray? echoClassList(jni$_.JByteArray bs) {
     final _$$selfRef = reference;
-    final _$list = list.reference;
+    final _$bs = bs.reference;
     return _echoClassList(
       _$$selfRef.pointer,
       _id_echoClassList.pointer,
-      _$list.pointer,
-    ).object<jni$_.JList<NativeInteropAllNullableTypes?>>();
+      _$bs.pointer,
+    ).object<jni$_.JByteArray?>();
   }
 
-  static final _id_echoNonNullEnumList = NativeInteropFlutterIntegrationCoreApi._class
-      .instanceMethodId(r'echoNonNullEnumList', r'(Ljava/util/List;)Ljava/util/List;');
+  static final _id_echoNonNullEnumList = NativeInteropFlutterIntegrationCoreApiBridge._class
+      .instanceMethodId(r'echoNonNullEnumList', r'([B)[B');
 
   static final _echoNonNullEnumList =
       jni$_.ProtectedJniExtensions.lookup<
@@ -12265,20 +11802,20 @@ extension NativeInteropFlutterIntegrationCoreApi$$Methods
             )
           >();
 
-  /// from: `public fun echoNonNullEnumList(enumList: kotlin.collections.List<com.example.test_plugin.NativeInteropAnEnum>): kotlin.collections.List<com.example.test_plugin.NativeInteropAnEnum>`
+  /// from: `public fun echoNonNullEnumList(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
   /// The returned object must be released after use, by calling the [release] method.
-  jni$_.JList<NativeInteropAnEnum> echoNonNullEnumList(jni$_.JList<NativeInteropAnEnum> list) {
+  jni$_.JByteArray? echoNonNullEnumList(jni$_.JByteArray bs) {
     final _$$selfRef = reference;
-    final _$list = list.reference;
+    final _$bs = bs.reference;
     return _echoNonNullEnumList(
       _$$selfRef.pointer,
       _id_echoNonNullEnumList.pointer,
-      _$list.pointer,
-    ).object<jni$_.JList<NativeInteropAnEnum>>();
+      _$bs.pointer,
+    ).object<jni$_.JByteArray?>();
   }
 
-  static final _id_echoNonNullClassList = NativeInteropFlutterIntegrationCoreApi._class
-      .instanceMethodId(r'echoNonNullClassList', r'(Ljava/util/List;)Ljava/util/List;');
+  static final _id_echoNonNullClassList = NativeInteropFlutterIntegrationCoreApiBridge._class
+      .instanceMethodId(r'echoNonNullClassList', r'([B)[B');
 
   static final _echoNonNullClassList =
       jni$_.ProtectedJniExtensions.lookup<
@@ -12298,23 +11835,21 @@ extension NativeInteropFlutterIntegrationCoreApi$$Methods
             )
           >();
 
-  /// from: `public fun echoNonNullClassList(classList: kotlin.collections.List<com.example.test_plugin.NativeInteropAllNullableTypes>): kotlin.collections.List<com.example.test_plugin.NativeInteropAllNullableTypes>`
+  /// from: `public fun echoNonNullClassList(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
   /// The returned object must be released after use, by calling the [release] method.
-  jni$_.JList<NativeInteropAllNullableTypes> echoNonNullClassList(
-    jni$_.JList<NativeInteropAllNullableTypes> list,
-  ) {
+  jni$_.JByteArray? echoNonNullClassList(jni$_.JByteArray bs) {
     final _$$selfRef = reference;
-    final _$list = list.reference;
+    final _$bs = bs.reference;
     return _echoNonNullClassList(
       _$$selfRef.pointer,
       _id_echoNonNullClassList.pointer,
-      _$list.pointer,
-    ).object<jni$_.JList<NativeInteropAllNullableTypes>>();
+      _$bs.pointer,
+    ).object<jni$_.JByteArray?>();
   }
 
-  static final _id_echoMap = NativeInteropFlutterIntegrationCoreApi._class.instanceMethodId(
+  static final _id_echoMap = NativeInteropFlutterIntegrationCoreApiBridge._class.instanceMethodId(
     r'echoMap',
-    r'(Ljava/util/Map;)Ljava/util/Map;',
+    r'([B)[B',
   );
 
   static final _echoMap =
@@ -12335,24 +11870,20 @@ extension NativeInteropFlutterIntegrationCoreApi$$Methods
             )
           >();
 
-  /// from: `public fun echoMap(map: kotlin.collections.Map<kotlin.Any?, kotlin.Any?>): kotlin.collections.Map<kotlin.Any?, kotlin.Any?>`
+  /// from: `public fun echoMap(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
   /// The returned object must be released after use, by calling the [release] method.
-  jni$_.JMap<jni$_.JObject?, jni$_.JObject?> echoMap(
-    jni$_.JMap<jni$_.JObject?, jni$_.JObject?> map,
-  ) {
+  jni$_.JByteArray? echoMap(jni$_.JByteArray bs) {
     final _$$selfRef = reference;
-    final _$map = map.reference;
+    final _$bs = bs.reference;
     return _echoMap(
       _$$selfRef.pointer,
       _id_echoMap.pointer,
-      _$map.pointer,
-    ).object<jni$_.JMap<jni$_.JObject?, jni$_.JObject?>>();
+      _$bs.pointer,
+    ).object<jni$_.JByteArray?>();
   }
 
-  static final _id_echoStringMap = NativeInteropFlutterIntegrationCoreApi._class.instanceMethodId(
-    r'echoStringMap',
-    r'(Ljava/util/Map;)Ljava/util/Map;',
-  );
+  static final _id_echoStringMap = NativeInteropFlutterIntegrationCoreApiBridge._class
+      .instanceMethodId(r'echoStringMap', r'([B)[B');
 
   static final _echoStringMap =
       jni$_.ProtectedJniExtensions.lookup<
@@ -12372,24 +11903,20 @@ extension NativeInteropFlutterIntegrationCoreApi$$Methods
             )
           >();
 
-  /// from: `public fun echoStringMap(stringMap: kotlin.collections.Map<kotlin.String?, kotlin.String?>): kotlin.collections.Map<kotlin.String?, kotlin.String?>`
+  /// from: `public fun echoStringMap(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
   /// The returned object must be released after use, by calling the [release] method.
-  jni$_.JMap<jni$_.JString?, jni$_.JString?> echoStringMap(
-    jni$_.JMap<jni$_.JString?, jni$_.JString?> map,
-  ) {
+  jni$_.JByteArray? echoStringMap(jni$_.JByteArray bs) {
     final _$$selfRef = reference;
-    final _$map = map.reference;
+    final _$bs = bs.reference;
     return _echoStringMap(
       _$$selfRef.pointer,
       _id_echoStringMap.pointer,
-      _$map.pointer,
-    ).object<jni$_.JMap<jni$_.JString?, jni$_.JString?>>();
+      _$bs.pointer,
+    ).object<jni$_.JByteArray?>();
   }
 
-  static final _id_echoIntMap = NativeInteropFlutterIntegrationCoreApi._class.instanceMethodId(
-    r'echoIntMap',
-    r'(Ljava/util/Map;)Ljava/util/Map;',
-  );
+  static final _id_echoIntMap = NativeInteropFlutterIntegrationCoreApiBridge._class
+      .instanceMethodId(r'echoIntMap', r'([B)[B');
 
   static final _echoIntMap =
       jni$_.ProtectedJniExtensions.lookup<
@@ -12409,22 +11936,20 @@ extension NativeInteropFlutterIntegrationCoreApi$$Methods
             )
           >();
 
-  /// from: `public fun echoIntMap(intMap: kotlin.collections.Map<kotlin.Long?, kotlin.Long?>): kotlin.collections.Map<kotlin.Long?, kotlin.Long?>`
+  /// from: `public fun echoIntMap(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
   /// The returned object must be released after use, by calling the [release] method.
-  jni$_.JMap<jni$_.JLong?, jni$_.JLong?> echoIntMap(jni$_.JMap<jni$_.JLong?, jni$_.JLong?> map) {
+  jni$_.JByteArray? echoIntMap(jni$_.JByteArray bs) {
     final _$$selfRef = reference;
-    final _$map = map.reference;
+    final _$bs = bs.reference;
     return _echoIntMap(
       _$$selfRef.pointer,
       _id_echoIntMap.pointer,
-      _$map.pointer,
-    ).object<jni$_.JMap<jni$_.JLong?, jni$_.JLong?>>();
+      _$bs.pointer,
+    ).object<jni$_.JByteArray?>();
   }
 
-  static final _id_echoEnumMap = NativeInteropFlutterIntegrationCoreApi._class.instanceMethodId(
-    r'echoEnumMap',
-    r'(Ljava/util/Map;)Ljava/util/Map;',
-  );
+  static final _id_echoEnumMap = NativeInteropFlutterIntegrationCoreApiBridge._class
+      .instanceMethodId(r'echoEnumMap', r'([B)[B');
 
   static final _echoEnumMap =
       jni$_.ProtectedJniExtensions.lookup<
@@ -12444,24 +11969,20 @@ extension NativeInteropFlutterIntegrationCoreApi$$Methods
             )
           >();
 
-  /// from: `public fun echoEnumMap(enumMap: kotlin.collections.Map<com.example.test_plugin.NativeInteropAnEnum?, com.example.test_plugin.NativeInteropAnEnum?>): kotlin.collections.Map<com.example.test_plugin.NativeInteropAnEnum?, com.example.test_plugin.NativeInteropAnEnum?>`
+  /// from: `public fun echoEnumMap(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
   /// The returned object must be released after use, by calling the [release] method.
-  jni$_.JMap<NativeInteropAnEnum?, NativeInteropAnEnum?> echoEnumMap(
-    jni$_.JMap<NativeInteropAnEnum?, NativeInteropAnEnum?> map,
-  ) {
+  jni$_.JByteArray? echoEnumMap(jni$_.JByteArray bs) {
     final _$$selfRef = reference;
-    final _$map = map.reference;
+    final _$bs = bs.reference;
     return _echoEnumMap(
       _$$selfRef.pointer,
       _id_echoEnumMap.pointer,
-      _$map.pointer,
-    ).object<jni$_.JMap<NativeInteropAnEnum?, NativeInteropAnEnum?>>();
+      _$bs.pointer,
+    ).object<jni$_.JByteArray?>();
   }
 
-  static final _id_echoClassMap = NativeInteropFlutterIntegrationCoreApi._class.instanceMethodId(
-    r'echoClassMap',
-    r'(Ljava/util/Map;)Ljava/util/Map;',
-  );
+  static final _id_echoClassMap = NativeInteropFlutterIntegrationCoreApiBridge._class
+      .instanceMethodId(r'echoClassMap', r'([B)[B');
 
   static final _echoClassMap =
       jni$_.ProtectedJniExtensions.lookup<
@@ -12481,22 +12002,20 @@ extension NativeInteropFlutterIntegrationCoreApi$$Methods
             )
           >();
 
-  /// from: `public fun echoClassMap(classMap: kotlin.collections.Map<kotlin.Long?, com.example.test_plugin.NativeInteropAllNullableTypes?>): kotlin.collections.Map<kotlin.Long?, com.example.test_plugin.NativeInteropAllNullableTypes?>`
+  /// from: `public fun echoClassMap(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
   /// The returned object must be released after use, by calling the [release] method.
-  jni$_.JMap<jni$_.JLong?, NativeInteropAllNullableTypes?> echoClassMap(
-    jni$_.JMap<jni$_.JLong?, NativeInteropAllNullableTypes?> map,
-  ) {
+  jni$_.JByteArray? echoClassMap(jni$_.JByteArray bs) {
     final _$$selfRef = reference;
-    final _$map = map.reference;
+    final _$bs = bs.reference;
     return _echoClassMap(
       _$$selfRef.pointer,
       _id_echoClassMap.pointer,
-      _$map.pointer,
-    ).object<jni$_.JMap<jni$_.JLong?, NativeInteropAllNullableTypes?>>();
+      _$bs.pointer,
+    ).object<jni$_.JByteArray?>();
   }
 
-  static final _id_echoNonNullStringMap = NativeInteropFlutterIntegrationCoreApi._class
-      .instanceMethodId(r'echoNonNullStringMap', r'(Ljava/util/Map;)Ljava/util/Map;');
+  static final _id_echoNonNullStringMap = NativeInteropFlutterIntegrationCoreApiBridge._class
+      .instanceMethodId(r'echoNonNullStringMap', r'([B)[B');
 
   static final _echoNonNullStringMap =
       jni$_.ProtectedJniExtensions.lookup<
@@ -12516,22 +12035,20 @@ extension NativeInteropFlutterIntegrationCoreApi$$Methods
             )
           >();
 
-  /// from: `public fun echoNonNullStringMap(stringMap: kotlin.collections.Map<kotlin.String, kotlin.String>): kotlin.collections.Map<kotlin.String, kotlin.String>`
+  /// from: `public fun echoNonNullStringMap(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
   /// The returned object must be released after use, by calling the [release] method.
-  jni$_.JMap<jni$_.JString, jni$_.JString> echoNonNullStringMap(
-    jni$_.JMap<jni$_.JString, jni$_.JString> map,
-  ) {
+  jni$_.JByteArray? echoNonNullStringMap(jni$_.JByteArray bs) {
     final _$$selfRef = reference;
-    final _$map = map.reference;
+    final _$bs = bs.reference;
     return _echoNonNullStringMap(
       _$$selfRef.pointer,
       _id_echoNonNullStringMap.pointer,
-      _$map.pointer,
-    ).object<jni$_.JMap<jni$_.JString, jni$_.JString>>();
+      _$bs.pointer,
+    ).object<jni$_.JByteArray?>();
   }
 
-  static final _id_echoNonNullIntMap = NativeInteropFlutterIntegrationCoreApi._class
-      .instanceMethodId(r'echoNonNullIntMap', r'(Ljava/util/Map;)Ljava/util/Map;');
+  static final _id_echoNonNullIntMap = NativeInteropFlutterIntegrationCoreApiBridge._class
+      .instanceMethodId(r'echoNonNullIntMap', r'([B)[B');
 
   static final _echoNonNullIntMap =
       jni$_.ProtectedJniExtensions.lookup<
@@ -12551,20 +12068,20 @@ extension NativeInteropFlutterIntegrationCoreApi$$Methods
             )
           >();
 
-  /// from: `public fun echoNonNullIntMap(intMap: kotlin.collections.Map<kotlin.Long, kotlin.Long>): kotlin.collections.Map<kotlin.Long, kotlin.Long>`
+  /// from: `public fun echoNonNullIntMap(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
   /// The returned object must be released after use, by calling the [release] method.
-  jni$_.JMap<jni$_.JLong, jni$_.JLong> echoNonNullIntMap(jni$_.JMap<jni$_.JLong, jni$_.JLong> map) {
+  jni$_.JByteArray? echoNonNullIntMap(jni$_.JByteArray bs) {
     final _$$selfRef = reference;
-    final _$map = map.reference;
+    final _$bs = bs.reference;
     return _echoNonNullIntMap(
       _$$selfRef.pointer,
       _id_echoNonNullIntMap.pointer,
-      _$map.pointer,
-    ).object<jni$_.JMap<jni$_.JLong, jni$_.JLong>>();
+      _$bs.pointer,
+    ).object<jni$_.JByteArray?>();
   }
 
-  static final _id_echoNonNullEnumMap = NativeInteropFlutterIntegrationCoreApi._class
-      .instanceMethodId(r'echoNonNullEnumMap', r'(Ljava/util/Map;)Ljava/util/Map;');
+  static final _id_echoNonNullEnumMap = NativeInteropFlutterIntegrationCoreApiBridge._class
+      .instanceMethodId(r'echoNonNullEnumMap', r'([B)[B');
 
   static final _echoNonNullEnumMap =
       jni$_.ProtectedJniExtensions.lookup<
@@ -12584,22 +12101,20 @@ extension NativeInteropFlutterIntegrationCoreApi$$Methods
             )
           >();
 
-  /// from: `public fun echoNonNullEnumMap(enumMap: kotlin.collections.Map<com.example.test_plugin.NativeInteropAnEnum, com.example.test_plugin.NativeInteropAnEnum>): kotlin.collections.Map<com.example.test_plugin.NativeInteropAnEnum, com.example.test_plugin.NativeInteropAnEnum>`
+  /// from: `public fun echoNonNullEnumMap(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
   /// The returned object must be released after use, by calling the [release] method.
-  jni$_.JMap<NativeInteropAnEnum, NativeInteropAnEnum> echoNonNullEnumMap(
-    jni$_.JMap<NativeInteropAnEnum, NativeInteropAnEnum> map,
-  ) {
+  jni$_.JByteArray? echoNonNullEnumMap(jni$_.JByteArray bs) {
     final _$$selfRef = reference;
-    final _$map = map.reference;
+    final _$bs = bs.reference;
     return _echoNonNullEnumMap(
       _$$selfRef.pointer,
       _id_echoNonNullEnumMap.pointer,
-      _$map.pointer,
-    ).object<jni$_.JMap<NativeInteropAnEnum, NativeInteropAnEnum>>();
+      _$bs.pointer,
+    ).object<jni$_.JByteArray?>();
   }
 
-  static final _id_echoNonNullClassMap = NativeInteropFlutterIntegrationCoreApi._class
-      .instanceMethodId(r'echoNonNullClassMap', r'(Ljava/util/Map;)Ljava/util/Map;');
+  static final _id_echoNonNullClassMap = NativeInteropFlutterIntegrationCoreApiBridge._class
+      .instanceMethodId(r'echoNonNullClassMap', r'([B)[B');
 
   static final _echoNonNullClassMap =
       jni$_.ProtectedJniExtensions.lookup<
@@ -12619,23 +12134,21 @@ extension NativeInteropFlutterIntegrationCoreApi$$Methods
             )
           >();
 
-  /// from: `public fun echoNonNullClassMap(classMap: kotlin.collections.Map<kotlin.Long, com.example.test_plugin.NativeInteropAllNullableTypes>): kotlin.collections.Map<kotlin.Long, com.example.test_plugin.NativeInteropAllNullableTypes>`
+  /// from: `public fun echoNonNullClassMap(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
   /// The returned object must be released after use, by calling the [release] method.
-  jni$_.JMap<jni$_.JLong, NativeInteropAllNullableTypes> echoNonNullClassMap(
-    jni$_.JMap<jni$_.JLong, NativeInteropAllNullableTypes> map,
-  ) {
+  jni$_.JByteArray? echoNonNullClassMap(jni$_.JByteArray bs) {
     final _$$selfRef = reference;
-    final _$map = map.reference;
+    final _$bs = bs.reference;
     return _echoNonNullClassMap(
       _$$selfRef.pointer,
       _id_echoNonNullClassMap.pointer,
-      _$map.pointer,
-    ).object<jni$_.JMap<jni$_.JLong, NativeInteropAllNullableTypes>>();
+      _$bs.pointer,
+    ).object<jni$_.JByteArray?>();
   }
 
-  static final _id_echoEnum = NativeInteropFlutterIntegrationCoreApi._class.instanceMethodId(
+  static final _id_echoEnum = NativeInteropFlutterIntegrationCoreApiBridge._class.instanceMethodId(
     r'echoEnum',
-    r'(Lcom/example/test_plugin/NativeInteropAnEnum;)Lcom/example/test_plugin/NativeInteropAnEnum;',
+    r'(J)J',
   );
 
   static final _echoEnum =
@@ -12644,35 +12157,23 @@ extension NativeInteropFlutterIntegrationCoreApi$$Methods
               jni$_.JniResult Function(
                 jni$_.Pointer<jni$_.Void>,
                 jni$_.JMethodIDPtr,
-                jni$_.VarArgs<(jni$_.Pointer<jni$_.Void>,)>,
+                jni$_.VarArgs<(jni$_.Int64,)>,
               )
             >
-          >('globalEnv_CallObjectMethod')
+          >('globalEnv_CallLongMethod')
           .asFunction<
-            jni$_.JniResult Function(
-              jni$_.Pointer<jni$_.Void>,
-              jni$_.JMethodIDPtr,
-              jni$_.Pointer<jni$_.Void>,
-            )
+            jni$_.JniResult Function(jni$_.Pointer<jni$_.Void>, jni$_.JMethodIDPtr, core$_.int)
           >();
 
-  /// from: `public fun echoEnum(anEnum: com.example.test_plugin.NativeInteropAnEnum): com.example.test_plugin.NativeInteropAnEnum`
-  /// The returned object must be released after use, by calling the [release] method.
-  NativeInteropAnEnum echoEnum(NativeInteropAnEnum nativeInteropAnEnum) {
+  /// from: `public fun echoEnum(anEnum: kotlin.Long): kotlin.Long`
+  core$_.int echoEnum(core$_.int j) {
     final _$$selfRef = reference;
-    final _$nativeInteropAnEnum = nativeInteropAnEnum.reference;
-    return _echoEnum(
-      _$$selfRef.pointer,
-      _id_echoEnum.pointer,
-      _$nativeInteropAnEnum.pointer,
-    ).object<NativeInteropAnEnum>();
+    return _echoEnum(_$$selfRef.pointer, _id_echoEnum.pointer, j).long;
   }
 
-  static final _id_echoNativeInteropAnotherEnum = NativeInteropFlutterIntegrationCoreApi._class
-      .instanceMethodId(
-        r'echoNativeInteropAnotherEnum',
-        r'(Lcom/example/test_plugin/NativeInteropAnotherEnum;)Lcom/example/test_plugin/NativeInteropAnotherEnum;',
-      );
+  static final _id_echoNativeInteropAnotherEnum = NativeInteropFlutterIntegrationCoreApiBridge
+      ._class
+      .instanceMethodId(r'echoNativeInteropAnotherEnum', r'(J)J');
 
   static final _echoNativeInteropAnotherEnum =
       jni$_.ProtectedJniExtensions.lookup<
@@ -12680,33 +12181,25 @@ extension NativeInteropFlutterIntegrationCoreApi$$Methods
               jni$_.JniResult Function(
                 jni$_.Pointer<jni$_.Void>,
                 jni$_.JMethodIDPtr,
-                jni$_.VarArgs<(jni$_.Pointer<jni$_.Void>,)>,
+                jni$_.VarArgs<(jni$_.Int64,)>,
               )
             >
-          >('globalEnv_CallObjectMethod')
+          >('globalEnv_CallLongMethod')
           .asFunction<
-            jni$_.JniResult Function(
-              jni$_.Pointer<jni$_.Void>,
-              jni$_.JMethodIDPtr,
-              jni$_.Pointer<jni$_.Void>,
-            )
+            jni$_.JniResult Function(jni$_.Pointer<jni$_.Void>, jni$_.JMethodIDPtr, core$_.int)
           >();
 
-  /// from: `public fun echoNativeInteropAnotherEnum(anotherEnum: com.example.test_plugin.NativeInteropAnotherEnum): com.example.test_plugin.NativeInteropAnotherEnum`
-  /// The returned object must be released after use, by calling the [release] method.
-  NativeInteropAnotherEnum echoNativeInteropAnotherEnum(
-    NativeInteropAnotherEnum nativeInteropAnotherEnum,
-  ) {
+  /// from: `public fun echoNativeInteropAnotherEnum(anotherEnum: kotlin.Long): kotlin.Long`
+  core$_.int echoNativeInteropAnotherEnum(core$_.int j) {
     final _$$selfRef = reference;
-    final _$nativeInteropAnotherEnum = nativeInteropAnotherEnum.reference;
     return _echoNativeInteropAnotherEnum(
       _$$selfRef.pointer,
       _id_echoNativeInteropAnotherEnum.pointer,
-      _$nativeInteropAnotherEnum.pointer,
-    ).object<NativeInteropAnotherEnum>();
+      j,
+    ).long;
   }
 
-  static final _id_echoNullableBool = NativeInteropFlutterIntegrationCoreApi._class
+  static final _id_echoNullableBool = NativeInteropFlutterIntegrationCoreApiBridge._class
       .instanceMethodId(r'echoNullableBool', r'(Ljava/lang/Boolean;)Ljava/lang/Boolean;');
 
   static final _echoNullableBool =
@@ -12739,10 +12232,8 @@ extension NativeInteropFlutterIntegrationCoreApi$$Methods
     ).object<jni$_.JBoolean?>();
   }
 
-  static final _id_echoNullableInt = NativeInteropFlutterIntegrationCoreApi._class.instanceMethodId(
-    r'echoNullableInt',
-    r'(Ljava/lang/Long;)Ljava/lang/Long;',
-  );
+  static final _id_echoNullableInt = NativeInteropFlutterIntegrationCoreApiBridge._class
+      .instanceMethodId(r'echoNullableInt', r'(Ljava/lang/Long;)Ljava/lang/Long;');
 
   static final _echoNullableInt =
       jni$_.ProtectedJniExtensions.lookup<
@@ -12774,7 +12265,7 @@ extension NativeInteropFlutterIntegrationCoreApi$$Methods
     ).object<jni$_.JLong?>();
   }
 
-  static final _id_echoNullableDouble = NativeInteropFlutterIntegrationCoreApi._class
+  static final _id_echoNullableDouble = NativeInteropFlutterIntegrationCoreApiBridge._class
       .instanceMethodId(r'echoNullableDouble', r'(Ljava/lang/Double;)Ljava/lang/Double;');
 
   static final _echoNullableDouble =
@@ -12807,7 +12298,7 @@ extension NativeInteropFlutterIntegrationCoreApi$$Methods
     ).object<jni$_.JDouble?>();
   }
 
-  static final _id_echoNullableString = NativeInteropFlutterIntegrationCoreApi._class
+  static final _id_echoNullableString = NativeInteropFlutterIntegrationCoreApiBridge._class
       .instanceMethodId(r'echoNullableString', r'(Ljava/lang/String;)Ljava/lang/String;');
 
   static final _echoNullableString =
@@ -12840,7 +12331,7 @@ extension NativeInteropFlutterIntegrationCoreApi$$Methods
     ).object<jni$_.JString?>();
   }
 
-  static final _id_echoNullableUint8List = NativeInteropFlutterIntegrationCoreApi._class
+  static final _id_echoNullableUint8List = NativeInteropFlutterIntegrationCoreApiBridge._class
       .instanceMethodId(r'echoNullableUint8List', r'([B)[B');
 
   static final _echoNullableUint8List =
@@ -12873,7 +12364,7 @@ extension NativeInteropFlutterIntegrationCoreApi$$Methods
     ).object<jni$_.JByteArray?>();
   }
 
-  static final _id_echoNullableInt32List = NativeInteropFlutterIntegrationCoreApi._class
+  static final _id_echoNullableInt32List = NativeInteropFlutterIntegrationCoreApiBridge._class
       .instanceMethodId(r'echoNullableInt32List', r'([I)[I');
 
   static final _echoNullableInt32List =
@@ -12906,7 +12397,7 @@ extension NativeInteropFlutterIntegrationCoreApi$$Methods
     ).object<jni$_.JIntArray?>();
   }
 
-  static final _id_echoNullableInt64List = NativeInteropFlutterIntegrationCoreApi._class
+  static final _id_echoNullableInt64List = NativeInteropFlutterIntegrationCoreApiBridge._class
       .instanceMethodId(r'echoNullableInt64List', r'([J)[J');
 
   static final _echoNullableInt64List =
@@ -12939,7 +12430,7 @@ extension NativeInteropFlutterIntegrationCoreApi$$Methods
     ).object<jni$_.JLongArray?>();
   }
 
-  static final _id_echoNullableFloat64List = NativeInteropFlutterIntegrationCoreApi._class
+  static final _id_echoNullableFloat64List = NativeInteropFlutterIntegrationCoreApiBridge._class
       .instanceMethodId(r'echoNullableFloat64List', r'([D)[D');
 
   static final _echoNullableFloat64List =
@@ -12972,8 +12463,8 @@ extension NativeInteropFlutterIntegrationCoreApi$$Methods
     ).object<jni$_.JDoubleArray?>();
   }
 
-  static final _id_echoNullableList = NativeInteropFlutterIntegrationCoreApi._class
-      .instanceMethodId(r'echoNullableList', r'(Ljava/util/List;)Ljava/util/List;');
+  static final _id_echoNullableList = NativeInteropFlutterIntegrationCoreApiBridge._class
+      .instanceMethodId(r'echoNullableList', r'([B)[B');
 
   static final _echoNullableList =
       jni$_.ProtectedJniExtensions.lookup<
@@ -12993,20 +12484,20 @@ extension NativeInteropFlutterIntegrationCoreApi$$Methods
             )
           >();
 
-  /// from: `public fun echoNullableList(list: kotlin.collections.List<kotlin.Any?>?): kotlin.collections.List<kotlin.Any?>?`
+  /// from: `public fun echoNullableList(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
   /// The returned object must be released after use, by calling the [release] method.
-  jni$_.JList<jni$_.JObject?>? echoNullableList(jni$_.JList<jni$_.JObject?>? list) {
+  jni$_.JByteArray? echoNullableList(jni$_.JByteArray bs) {
     final _$$selfRef = reference;
-    final _$list = list?.reference ?? jni$_.jNullReference;
+    final _$bs = bs.reference;
     return _echoNullableList(
       _$$selfRef.pointer,
       _id_echoNullableList.pointer,
-      _$list.pointer,
-    ).object<jni$_.JList<jni$_.JObject?>?>();
+      _$bs.pointer,
+    ).object<jni$_.JByteArray?>();
   }
 
-  static final _id_echoNullableEnumList = NativeInteropFlutterIntegrationCoreApi._class
-      .instanceMethodId(r'echoNullableEnumList', r'(Ljava/util/List;)Ljava/util/List;');
+  static final _id_echoNullableEnumList = NativeInteropFlutterIntegrationCoreApiBridge._class
+      .instanceMethodId(r'echoNullableEnumList', r'([B)[B');
 
   static final _echoNullableEnumList =
       jni$_.ProtectedJniExtensions.lookup<
@@ -13026,20 +12517,20 @@ extension NativeInteropFlutterIntegrationCoreApi$$Methods
             )
           >();
 
-  /// from: `public fun echoNullableEnumList(enumList: kotlin.collections.List<com.example.test_plugin.NativeInteropAnEnum?>?): kotlin.collections.List<com.example.test_plugin.NativeInteropAnEnum?>?`
+  /// from: `public fun echoNullableEnumList(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
   /// The returned object must be released after use, by calling the [release] method.
-  jni$_.JList<NativeInteropAnEnum?>? echoNullableEnumList(jni$_.JList<NativeInteropAnEnum?>? list) {
+  jni$_.JByteArray? echoNullableEnumList(jni$_.JByteArray bs) {
     final _$$selfRef = reference;
-    final _$list = list?.reference ?? jni$_.jNullReference;
+    final _$bs = bs.reference;
     return _echoNullableEnumList(
       _$$selfRef.pointer,
       _id_echoNullableEnumList.pointer,
-      _$list.pointer,
-    ).object<jni$_.JList<NativeInteropAnEnum?>?>();
+      _$bs.pointer,
+    ).object<jni$_.JByteArray?>();
   }
 
-  static final _id_echoNullableClassList = NativeInteropFlutterIntegrationCoreApi._class
-      .instanceMethodId(r'echoNullableClassList', r'(Ljava/util/List;)Ljava/util/List;');
+  static final _id_echoNullableClassList = NativeInteropFlutterIntegrationCoreApiBridge._class
+      .instanceMethodId(r'echoNullableClassList', r'([B)[B');
 
   static final _echoNullableClassList =
       jni$_.ProtectedJniExtensions.lookup<
@@ -13059,22 +12550,20 @@ extension NativeInteropFlutterIntegrationCoreApi$$Methods
             )
           >();
 
-  /// from: `public fun echoNullableClassList(classList: kotlin.collections.List<com.example.test_plugin.NativeInteropAllNullableTypes?>?): kotlin.collections.List<com.example.test_plugin.NativeInteropAllNullableTypes?>?`
+  /// from: `public fun echoNullableClassList(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
   /// The returned object must be released after use, by calling the [release] method.
-  jni$_.JList<NativeInteropAllNullableTypes?>? echoNullableClassList(
-    jni$_.JList<NativeInteropAllNullableTypes?>? list,
-  ) {
+  jni$_.JByteArray? echoNullableClassList(jni$_.JByteArray bs) {
     final _$$selfRef = reference;
-    final _$list = list?.reference ?? jni$_.jNullReference;
+    final _$bs = bs.reference;
     return _echoNullableClassList(
       _$$selfRef.pointer,
       _id_echoNullableClassList.pointer,
-      _$list.pointer,
-    ).object<jni$_.JList<NativeInteropAllNullableTypes?>?>();
+      _$bs.pointer,
+    ).object<jni$_.JByteArray?>();
   }
 
-  static final _id_echoNullableNonNullEnumList = NativeInteropFlutterIntegrationCoreApi._class
-      .instanceMethodId(r'echoNullableNonNullEnumList', r'(Ljava/util/List;)Ljava/util/List;');
+  static final _id_echoNullableNonNullEnumList = NativeInteropFlutterIntegrationCoreApiBridge._class
+      .instanceMethodId(r'echoNullableNonNullEnumList', r'([B)[B');
 
   static final _echoNullableNonNullEnumList =
       jni$_.ProtectedJniExtensions.lookup<
@@ -13094,22 +12583,21 @@ extension NativeInteropFlutterIntegrationCoreApi$$Methods
             )
           >();
 
-  /// from: `public fun echoNullableNonNullEnumList(enumList: kotlin.collections.List<com.example.test_plugin.NativeInteropAnEnum>?): kotlin.collections.List<com.example.test_plugin.NativeInteropAnEnum>?`
+  /// from: `public fun echoNullableNonNullEnumList(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
   /// The returned object must be released after use, by calling the [release] method.
-  jni$_.JList<NativeInteropAnEnum>? echoNullableNonNullEnumList(
-    jni$_.JList<NativeInteropAnEnum>? list,
-  ) {
+  jni$_.JByteArray? echoNullableNonNullEnumList(jni$_.JByteArray bs) {
     final _$$selfRef = reference;
-    final _$list = list?.reference ?? jni$_.jNullReference;
+    final _$bs = bs.reference;
     return _echoNullableNonNullEnumList(
       _$$selfRef.pointer,
       _id_echoNullableNonNullEnumList.pointer,
-      _$list.pointer,
-    ).object<jni$_.JList<NativeInteropAnEnum>?>();
+      _$bs.pointer,
+    ).object<jni$_.JByteArray?>();
   }
 
-  static final _id_echoNullableNonNullClassList = NativeInteropFlutterIntegrationCoreApi._class
-      .instanceMethodId(r'echoNullableNonNullClassList', r'(Ljava/util/List;)Ljava/util/List;');
+  static final _id_echoNullableNonNullClassList = NativeInteropFlutterIntegrationCoreApiBridge
+      ._class
+      .instanceMethodId(r'echoNullableNonNullClassList', r'([B)[B');
 
   static final _echoNullableNonNullClassList =
       jni$_.ProtectedJniExtensions.lookup<
@@ -13129,24 +12617,20 @@ extension NativeInteropFlutterIntegrationCoreApi$$Methods
             )
           >();
 
-  /// from: `public fun echoNullableNonNullClassList(classList: kotlin.collections.List<com.example.test_plugin.NativeInteropAllNullableTypes>?): kotlin.collections.List<com.example.test_plugin.NativeInteropAllNullableTypes>?`
+  /// from: `public fun echoNullableNonNullClassList(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
   /// The returned object must be released after use, by calling the [release] method.
-  jni$_.JList<NativeInteropAllNullableTypes>? echoNullableNonNullClassList(
-    jni$_.JList<NativeInteropAllNullableTypes>? list,
-  ) {
+  jni$_.JByteArray? echoNullableNonNullClassList(jni$_.JByteArray bs) {
     final _$$selfRef = reference;
-    final _$list = list?.reference ?? jni$_.jNullReference;
+    final _$bs = bs.reference;
     return _echoNullableNonNullClassList(
       _$$selfRef.pointer,
       _id_echoNullableNonNullClassList.pointer,
-      _$list.pointer,
-    ).object<jni$_.JList<NativeInteropAllNullableTypes>?>();
+      _$bs.pointer,
+    ).object<jni$_.JByteArray?>();
   }
 
-  static final _id_echoNullableMap = NativeInteropFlutterIntegrationCoreApi._class.instanceMethodId(
-    r'echoNullableMap',
-    r'(Ljava/util/Map;)Ljava/util/Map;',
-  );
+  static final _id_echoNullableMap = NativeInteropFlutterIntegrationCoreApiBridge._class
+      .instanceMethodId(r'echoNullableMap', r'([B)[B');
 
   static final _echoNullableMap =
       jni$_.ProtectedJniExtensions.lookup<
@@ -13166,22 +12650,20 @@ extension NativeInteropFlutterIntegrationCoreApi$$Methods
             )
           >();
 
-  /// from: `public fun echoNullableMap(map: kotlin.collections.Map<kotlin.Any?, kotlin.Any?>?): kotlin.collections.Map<kotlin.Any?, kotlin.Any?>?`
+  /// from: `public fun echoNullableMap(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
   /// The returned object must be released after use, by calling the [release] method.
-  jni$_.JMap<jni$_.JObject?, jni$_.JObject?>? echoNullableMap(
-    jni$_.JMap<jni$_.JObject?, jni$_.JObject?>? map,
-  ) {
+  jni$_.JByteArray? echoNullableMap(jni$_.JByteArray bs) {
     final _$$selfRef = reference;
-    final _$map = map?.reference ?? jni$_.jNullReference;
+    final _$bs = bs.reference;
     return _echoNullableMap(
       _$$selfRef.pointer,
       _id_echoNullableMap.pointer,
-      _$map.pointer,
-    ).object<jni$_.JMap<jni$_.JObject?, jni$_.JObject?>?>();
+      _$bs.pointer,
+    ).object<jni$_.JByteArray?>();
   }
 
-  static final _id_echoNullableStringMap = NativeInteropFlutterIntegrationCoreApi._class
-      .instanceMethodId(r'echoNullableStringMap', r'(Ljava/util/Map;)Ljava/util/Map;');
+  static final _id_echoNullableStringMap = NativeInteropFlutterIntegrationCoreApiBridge._class
+      .instanceMethodId(r'echoNullableStringMap', r'([B)[B');
 
   static final _echoNullableStringMap =
       jni$_.ProtectedJniExtensions.lookup<
@@ -13201,22 +12683,20 @@ extension NativeInteropFlutterIntegrationCoreApi$$Methods
             )
           >();
 
-  /// from: `public fun echoNullableStringMap(stringMap: kotlin.collections.Map<kotlin.String?, kotlin.String?>?): kotlin.collections.Map<kotlin.String?, kotlin.String?>?`
+  /// from: `public fun echoNullableStringMap(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
   /// The returned object must be released after use, by calling the [release] method.
-  jni$_.JMap<jni$_.JString?, jni$_.JString?>? echoNullableStringMap(
-    jni$_.JMap<jni$_.JString?, jni$_.JString?>? map,
-  ) {
+  jni$_.JByteArray? echoNullableStringMap(jni$_.JByteArray bs) {
     final _$$selfRef = reference;
-    final _$map = map?.reference ?? jni$_.jNullReference;
+    final _$bs = bs.reference;
     return _echoNullableStringMap(
       _$$selfRef.pointer,
       _id_echoNullableStringMap.pointer,
-      _$map.pointer,
-    ).object<jni$_.JMap<jni$_.JString?, jni$_.JString?>?>();
+      _$bs.pointer,
+    ).object<jni$_.JByteArray?>();
   }
 
-  static final _id_echoNullableIntMap = NativeInteropFlutterIntegrationCoreApi._class
-      .instanceMethodId(r'echoNullableIntMap', r'(Ljava/util/Map;)Ljava/util/Map;');
+  static final _id_echoNullableIntMap = NativeInteropFlutterIntegrationCoreApiBridge._class
+      .instanceMethodId(r'echoNullableIntMap', r'([B)[B');
 
   static final _echoNullableIntMap =
       jni$_.ProtectedJniExtensions.lookup<
@@ -13236,22 +12716,20 @@ extension NativeInteropFlutterIntegrationCoreApi$$Methods
             )
           >();
 
-  /// from: `public fun echoNullableIntMap(intMap: kotlin.collections.Map<kotlin.Long?, kotlin.Long?>?): kotlin.collections.Map<kotlin.Long?, kotlin.Long?>?`
+  /// from: `public fun echoNullableIntMap(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
   /// The returned object must be released after use, by calling the [release] method.
-  jni$_.JMap<jni$_.JLong?, jni$_.JLong?>? echoNullableIntMap(
-    jni$_.JMap<jni$_.JLong?, jni$_.JLong?>? map,
-  ) {
+  jni$_.JByteArray? echoNullableIntMap(jni$_.JByteArray bs) {
     final _$$selfRef = reference;
-    final _$map = map?.reference ?? jni$_.jNullReference;
+    final _$bs = bs.reference;
     return _echoNullableIntMap(
       _$$selfRef.pointer,
       _id_echoNullableIntMap.pointer,
-      _$map.pointer,
-    ).object<jni$_.JMap<jni$_.JLong?, jni$_.JLong?>?>();
+      _$bs.pointer,
+    ).object<jni$_.JByteArray?>();
   }
 
-  static final _id_echoNullableEnumMap = NativeInteropFlutterIntegrationCoreApi._class
-      .instanceMethodId(r'echoNullableEnumMap', r'(Ljava/util/Map;)Ljava/util/Map;');
+  static final _id_echoNullableEnumMap = NativeInteropFlutterIntegrationCoreApiBridge._class
+      .instanceMethodId(r'echoNullableEnumMap', r'([B)[B');
 
   static final _echoNullableEnumMap =
       jni$_.ProtectedJniExtensions.lookup<
@@ -13271,22 +12749,20 @@ extension NativeInteropFlutterIntegrationCoreApi$$Methods
             )
           >();
 
-  /// from: `public fun echoNullableEnumMap(enumMap: kotlin.collections.Map<com.example.test_plugin.NativeInteropAnEnum?, com.example.test_plugin.NativeInteropAnEnum?>?): kotlin.collections.Map<com.example.test_plugin.NativeInteropAnEnum?, com.example.test_plugin.NativeInteropAnEnum?>?`
+  /// from: `public fun echoNullableEnumMap(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
   /// The returned object must be released after use, by calling the [release] method.
-  jni$_.JMap<NativeInteropAnEnum?, NativeInteropAnEnum?>? echoNullableEnumMap(
-    jni$_.JMap<NativeInteropAnEnum?, NativeInteropAnEnum?>? map,
-  ) {
+  jni$_.JByteArray? echoNullableEnumMap(jni$_.JByteArray bs) {
     final _$$selfRef = reference;
-    final _$map = map?.reference ?? jni$_.jNullReference;
+    final _$bs = bs.reference;
     return _echoNullableEnumMap(
       _$$selfRef.pointer,
       _id_echoNullableEnumMap.pointer,
-      _$map.pointer,
-    ).object<jni$_.JMap<NativeInteropAnEnum?, NativeInteropAnEnum?>?>();
+      _$bs.pointer,
+    ).object<jni$_.JByteArray?>();
   }
 
-  static final _id_echoNullableClassMap = NativeInteropFlutterIntegrationCoreApi._class
-      .instanceMethodId(r'echoNullableClassMap', r'(Ljava/util/Map;)Ljava/util/Map;');
+  static final _id_echoNullableClassMap = NativeInteropFlutterIntegrationCoreApiBridge._class
+      .instanceMethodId(r'echoNullableClassMap', r'([B)[B');
 
   static final _echoNullableClassMap =
       jni$_.ProtectedJniExtensions.lookup<
@@ -13306,22 +12782,21 @@ extension NativeInteropFlutterIntegrationCoreApi$$Methods
             )
           >();
 
-  /// from: `public fun echoNullableClassMap(classMap: kotlin.collections.Map<kotlin.Long?, com.example.test_plugin.NativeInteropAllNullableTypes?>?): kotlin.collections.Map<kotlin.Long?, com.example.test_plugin.NativeInteropAllNullableTypes?>?`
+  /// from: `public fun echoNullableClassMap(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
   /// The returned object must be released after use, by calling the [release] method.
-  jni$_.JMap<jni$_.JLong?, NativeInteropAllNullableTypes?>? echoNullableClassMap(
-    jni$_.JMap<jni$_.JLong?, NativeInteropAllNullableTypes?>? map,
-  ) {
+  jni$_.JByteArray? echoNullableClassMap(jni$_.JByteArray bs) {
     final _$$selfRef = reference;
-    final _$map = map?.reference ?? jni$_.jNullReference;
+    final _$bs = bs.reference;
     return _echoNullableClassMap(
       _$$selfRef.pointer,
       _id_echoNullableClassMap.pointer,
-      _$map.pointer,
-    ).object<jni$_.JMap<jni$_.JLong?, NativeInteropAllNullableTypes?>?>();
+      _$bs.pointer,
+    ).object<jni$_.JByteArray?>();
   }
 
-  static final _id_echoNullableNonNullStringMap = NativeInteropFlutterIntegrationCoreApi._class
-      .instanceMethodId(r'echoNullableNonNullStringMap', r'(Ljava/util/Map;)Ljava/util/Map;');
+  static final _id_echoNullableNonNullStringMap = NativeInteropFlutterIntegrationCoreApiBridge
+      ._class
+      .instanceMethodId(r'echoNullableNonNullStringMap', r'([B)[B');
 
   static final _echoNullableNonNullStringMap =
       jni$_.ProtectedJniExtensions.lookup<
@@ -13341,22 +12816,20 @@ extension NativeInteropFlutterIntegrationCoreApi$$Methods
             )
           >();
 
-  /// from: `public fun echoNullableNonNullStringMap(stringMap: kotlin.collections.Map<kotlin.String, kotlin.String>?): kotlin.collections.Map<kotlin.String, kotlin.String>?`
+  /// from: `public fun echoNullableNonNullStringMap(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
   /// The returned object must be released after use, by calling the [release] method.
-  jni$_.JMap<jni$_.JString, jni$_.JString>? echoNullableNonNullStringMap(
-    jni$_.JMap<jni$_.JString, jni$_.JString>? map,
-  ) {
+  jni$_.JByteArray? echoNullableNonNullStringMap(jni$_.JByteArray bs) {
     final _$$selfRef = reference;
-    final _$map = map?.reference ?? jni$_.jNullReference;
+    final _$bs = bs.reference;
     return _echoNullableNonNullStringMap(
       _$$selfRef.pointer,
       _id_echoNullableNonNullStringMap.pointer,
-      _$map.pointer,
-    ).object<jni$_.JMap<jni$_.JString, jni$_.JString>?>();
+      _$bs.pointer,
+    ).object<jni$_.JByteArray?>();
   }
 
-  static final _id_echoNullableNonNullIntMap = NativeInteropFlutterIntegrationCoreApi._class
-      .instanceMethodId(r'echoNullableNonNullIntMap', r'(Ljava/util/Map;)Ljava/util/Map;');
+  static final _id_echoNullableNonNullIntMap = NativeInteropFlutterIntegrationCoreApiBridge._class
+      .instanceMethodId(r'echoNullableNonNullIntMap', r'([B)[B');
 
   static final _echoNullableNonNullIntMap =
       jni$_.ProtectedJniExtensions.lookup<
@@ -13376,22 +12849,20 @@ extension NativeInteropFlutterIntegrationCoreApi$$Methods
             )
           >();
 
-  /// from: `public fun echoNullableNonNullIntMap(intMap: kotlin.collections.Map<kotlin.Long, kotlin.Long>?): kotlin.collections.Map<kotlin.Long, kotlin.Long>?`
+  /// from: `public fun echoNullableNonNullIntMap(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
   /// The returned object must be released after use, by calling the [release] method.
-  jni$_.JMap<jni$_.JLong, jni$_.JLong>? echoNullableNonNullIntMap(
-    jni$_.JMap<jni$_.JLong, jni$_.JLong>? map,
-  ) {
+  jni$_.JByteArray? echoNullableNonNullIntMap(jni$_.JByteArray bs) {
     final _$$selfRef = reference;
-    final _$map = map?.reference ?? jni$_.jNullReference;
+    final _$bs = bs.reference;
     return _echoNullableNonNullIntMap(
       _$$selfRef.pointer,
       _id_echoNullableNonNullIntMap.pointer,
-      _$map.pointer,
-    ).object<jni$_.JMap<jni$_.JLong, jni$_.JLong>?>();
+      _$bs.pointer,
+    ).object<jni$_.JByteArray?>();
   }
 
-  static final _id_echoNullableNonNullEnumMap = NativeInteropFlutterIntegrationCoreApi._class
-      .instanceMethodId(r'echoNullableNonNullEnumMap', r'(Ljava/util/Map;)Ljava/util/Map;');
+  static final _id_echoNullableNonNullEnumMap = NativeInteropFlutterIntegrationCoreApiBridge._class
+      .instanceMethodId(r'echoNullableNonNullEnumMap', r'([B)[B');
 
   static final _echoNullableNonNullEnumMap =
       jni$_.ProtectedJniExtensions.lookup<
@@ -13411,22 +12882,20 @@ extension NativeInteropFlutterIntegrationCoreApi$$Methods
             )
           >();
 
-  /// from: `public fun echoNullableNonNullEnumMap(enumMap: kotlin.collections.Map<com.example.test_plugin.NativeInteropAnEnum, com.example.test_plugin.NativeInteropAnEnum>?): kotlin.collections.Map<com.example.test_plugin.NativeInteropAnEnum, com.example.test_plugin.NativeInteropAnEnum>?`
+  /// from: `public fun echoNullableNonNullEnumMap(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
   /// The returned object must be released after use, by calling the [release] method.
-  jni$_.JMap<NativeInteropAnEnum, NativeInteropAnEnum>? echoNullableNonNullEnumMap(
-    jni$_.JMap<NativeInteropAnEnum, NativeInteropAnEnum>? map,
-  ) {
+  jni$_.JByteArray? echoNullableNonNullEnumMap(jni$_.JByteArray bs) {
     final _$$selfRef = reference;
-    final _$map = map?.reference ?? jni$_.jNullReference;
+    final _$bs = bs.reference;
     return _echoNullableNonNullEnumMap(
       _$$selfRef.pointer,
       _id_echoNullableNonNullEnumMap.pointer,
-      _$map.pointer,
-    ).object<jni$_.JMap<NativeInteropAnEnum, NativeInteropAnEnum>?>();
+      _$bs.pointer,
+    ).object<jni$_.JByteArray?>();
   }
 
-  static final _id_echoNullableNonNullClassMap = NativeInteropFlutterIntegrationCoreApi._class
-      .instanceMethodId(r'echoNullableNonNullClassMap', r'(Ljava/util/Map;)Ljava/util/Map;');
+  static final _id_echoNullableNonNullClassMap = NativeInteropFlutterIntegrationCoreApiBridge._class
+      .instanceMethodId(r'echoNullableNonNullClassMap', r'([B)[B');
 
   static final _echoNullableNonNullClassMap =
       jni$_.ProtectedJniExtensions.lookup<
@@ -13446,24 +12915,20 @@ extension NativeInteropFlutterIntegrationCoreApi$$Methods
             )
           >();
 
-  /// from: `public fun echoNullableNonNullClassMap(classMap: kotlin.collections.Map<kotlin.Long, com.example.test_plugin.NativeInteropAllNullableTypes>?): kotlin.collections.Map<kotlin.Long, com.example.test_plugin.NativeInteropAllNullableTypes>?`
+  /// from: `public fun echoNullableNonNullClassMap(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
   /// The returned object must be released after use, by calling the [release] method.
-  jni$_.JMap<jni$_.JLong, NativeInteropAllNullableTypes>? echoNullableNonNullClassMap(
-    jni$_.JMap<jni$_.JLong, NativeInteropAllNullableTypes>? map,
-  ) {
+  jni$_.JByteArray? echoNullableNonNullClassMap(jni$_.JByteArray bs) {
     final _$$selfRef = reference;
-    final _$map = map?.reference ?? jni$_.jNullReference;
+    final _$bs = bs.reference;
     return _echoNullableNonNullClassMap(
       _$$selfRef.pointer,
       _id_echoNullableNonNullClassMap.pointer,
-      _$map.pointer,
-    ).object<jni$_.JMap<jni$_.JLong, NativeInteropAllNullableTypes>?>();
+      _$bs.pointer,
+    ).object<jni$_.JByteArray?>();
   }
 
-  static final _id_echoNullableEnum = NativeInteropFlutterIntegrationCoreApi._class.instanceMethodId(
-    r'echoNullableEnum',
-    r'(Lcom/example/test_plugin/NativeInteropAnEnum;)Lcom/example/test_plugin/NativeInteropAnEnum;',
-  );
+  static final _id_echoNullableEnum = NativeInteropFlutterIntegrationCoreApiBridge._class
+      .instanceMethodId(r'echoNullableEnum', r'(J)J');
 
   static final _echoNullableEnum =
       jni$_.ProtectedJniExtensions.lookup<
@@ -13471,35 +12936,22 @@ extension NativeInteropFlutterIntegrationCoreApi$$Methods
               jni$_.JniResult Function(
                 jni$_.Pointer<jni$_.Void>,
                 jni$_.JMethodIDPtr,
-                jni$_.VarArgs<(jni$_.Pointer<jni$_.Void>,)>,
+                jni$_.VarArgs<(jni$_.Int64,)>,
               )
             >
-          >('globalEnv_CallObjectMethod')
+          >('globalEnv_CallLongMethod')
           .asFunction<
-            jni$_.JniResult Function(
-              jni$_.Pointer<jni$_.Void>,
-              jni$_.JMethodIDPtr,
-              jni$_.Pointer<jni$_.Void>,
-            )
+            jni$_.JniResult Function(jni$_.Pointer<jni$_.Void>, jni$_.JMethodIDPtr, core$_.int)
           >();
 
-  /// from: `public fun echoNullableEnum(anEnum: com.example.test_plugin.NativeInteropAnEnum?): com.example.test_plugin.NativeInteropAnEnum?`
-  /// The returned object must be released after use, by calling the [release] method.
-  NativeInteropAnEnum? echoNullableEnum(NativeInteropAnEnum? nativeInteropAnEnum) {
+  /// from: `public fun echoNullableEnum(anEnum: kotlin.Long): kotlin.Long`
+  core$_.int echoNullableEnum(core$_.int j) {
     final _$$selfRef = reference;
-    final _$nativeInteropAnEnum = nativeInteropAnEnum?.reference ?? jni$_.jNullReference;
-    return _echoNullableEnum(
-      _$$selfRef.pointer,
-      _id_echoNullableEnum.pointer,
-      _$nativeInteropAnEnum.pointer,
-    ).object<NativeInteropAnEnum?>();
+    return _echoNullableEnum(_$$selfRef.pointer, _id_echoNullableEnum.pointer, j).long;
   }
 
-  static final _id_echoAnotherNullableEnum = NativeInteropFlutterIntegrationCoreApi._class
-      .instanceMethodId(
-        r'echoAnotherNullableEnum',
-        r'(Lcom/example/test_plugin/NativeInteropAnotherEnum;)Lcom/example/test_plugin/NativeInteropAnotherEnum;',
-      );
+  static final _id_echoAnotherNullableEnum = NativeInteropFlutterIntegrationCoreApiBridge._class
+      .instanceMethodId(r'echoAnotherNullableEnum', r'(J)J');
 
   static final _echoAnotherNullableEnum =
       jni$_.ProtectedJniExtensions.lookup<
@@ -13507,33 +12959,25 @@ extension NativeInteropFlutterIntegrationCoreApi$$Methods
               jni$_.JniResult Function(
                 jni$_.Pointer<jni$_.Void>,
                 jni$_.JMethodIDPtr,
-                jni$_.VarArgs<(jni$_.Pointer<jni$_.Void>,)>,
+                jni$_.VarArgs<(jni$_.Int64,)>,
               )
             >
-          >('globalEnv_CallObjectMethod')
+          >('globalEnv_CallLongMethod')
           .asFunction<
-            jni$_.JniResult Function(
-              jni$_.Pointer<jni$_.Void>,
-              jni$_.JMethodIDPtr,
-              jni$_.Pointer<jni$_.Void>,
-            )
+            jni$_.JniResult Function(jni$_.Pointer<jni$_.Void>, jni$_.JMethodIDPtr, core$_.int)
           >();
 
-  /// from: `public fun echoAnotherNullableEnum(anotherEnum: com.example.test_plugin.NativeInteropAnotherEnum?): com.example.test_plugin.NativeInteropAnotherEnum?`
-  /// The returned object must be released after use, by calling the [release] method.
-  NativeInteropAnotherEnum? echoAnotherNullableEnum(
-    NativeInteropAnotherEnum? nativeInteropAnotherEnum,
-  ) {
+  /// from: `public fun echoAnotherNullableEnum(anotherEnum: kotlin.Long): kotlin.Long`
+  core$_.int echoAnotherNullableEnum(core$_.int j) {
     final _$$selfRef = reference;
-    final _$nativeInteropAnotherEnum = nativeInteropAnotherEnum?.reference ?? jni$_.jNullReference;
     return _echoAnotherNullableEnum(
       _$$selfRef.pointer,
       _id_echoAnotherNullableEnum.pointer,
-      _$nativeInteropAnotherEnum.pointer,
-    ).object<NativeInteropAnotherEnum?>();
+      j,
+    ).long;
   }
 
-  static final _id_noopAsync = NativeInteropFlutterIntegrationCoreApi._class.instanceMethodId(
+  static final _id_noopAsync = NativeInteropFlutterIntegrationCoreApiBridge._class.instanceMethodId(
     r'noopAsync',
     r'(Lkotlin/coroutines/Continuation;)Ljava/lang/Object;',
   );
@@ -13586,7 +13030,7 @@ extension NativeInteropFlutterIntegrationCoreApi$$Methods
     return;
   }
 
-  static final _id_throwFlutterErrorAsync = NativeInteropFlutterIntegrationCoreApi._class
+  static final _id_throwFlutterErrorAsync = NativeInteropFlutterIntegrationCoreApiBridge._class
       .instanceMethodId(
         r'throwFlutterErrorAsync',
         r'(Lkotlin/coroutines/Continuation;)Ljava/lang/Object;',
@@ -13610,9 +13054,9 @@ extension NativeInteropFlutterIntegrationCoreApi$$Methods
             )
           >();
 
-  /// from: `public suspend fun throwFlutterErrorAsync(): kotlin.Any?`
+  /// from: `public suspend fun throwFlutterErrorAsync(): kotlin.ByteArray?`
   /// The returned object must be released after use, by calling the [release] method.
-  core$_.Future<jni$_.JObject?> throwFlutterErrorAsync() async {
+  core$_.Future<jni$_.JByteArray?> throwFlutterErrorAsync() async {
     final $p = jni$_.ReceivePort();
     final _$continuation = jni$_.ProtectedJniExtensions.newPortContinuation($p);
     final _$$selfRef = reference;
@@ -13639,13 +13083,14 @@ extension NativeInteropFlutterIntegrationCoreApi$$Methods
     } else {
       $o = $r;
     }
-    return $o?.as<jni$_.JObject>(const jni$_.$JObject$Type$(), releaseOriginal: true);
+    return $o?.as<jni$_.JByteArray>(jni$_.JByteArray.type, releaseOriginal: true);
   }
 
-  static final _id_echoAsyncNativeInteropAllTypes = NativeInteropFlutterIntegrationCoreApi._class
+  static final _id_echoAsyncNativeInteropAllTypes = NativeInteropFlutterIntegrationCoreApiBridge
+      ._class
       .instanceMethodId(
         r'echoAsyncNativeInteropAllTypes',
-        r'(Lcom/example/test_plugin/NativeInteropAllTypes;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;',
+        r'([BLkotlin/coroutines/Continuation;)Ljava/lang/Object;',
       );
 
   static final _echoAsyncNativeInteropAllTypes =
@@ -13667,30 +13112,30 @@ extension NativeInteropFlutterIntegrationCoreApi$$Methods
             )
           >();
 
-  /// from: `public suspend fun echoAsyncNativeInteropAllTypes(everything: com.example.test_plugin.NativeInteropAllTypes): com.example.test_plugin.NativeInteropAllTypes`
+  /// from: `public suspend fun echoAsyncNativeInteropAllTypes(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
   /// The returned object must be released after use, by calling the [release] method.
-  core$_.Future<NativeInteropAllTypes> echoAsyncNativeInteropAllTypes(
-    NativeInteropAllTypes nativeInteropAllTypes,
-  ) async {
+  core$_.Future<jni$_.JByteArray?> echoAsyncNativeInteropAllTypes(jni$_.JByteArray bs) async {
     final $p = jni$_.ReceivePort();
     final _$continuation = jni$_.ProtectedJniExtensions.newPortContinuation($p);
     final _$$selfRef = reference;
-    final _$nativeInteropAllTypes = nativeInteropAllTypes.reference;
+    final _$bs = bs.reference;
     final $r = _echoAsyncNativeInteropAllTypes(
       _$$selfRef.pointer,
       _id_echoAsyncNativeInteropAllTypes.pointer,
-      _$nativeInteropAllTypes.pointer,
+      _$bs.pointer,
       _$continuation.pointer,
-    ).object<jni$_.JObject>();
+    ).object<jni$_.JObject?>();
     _$continuation.release();
-    jni$_.JObject $o;
-    if ($r.isInstanceOf(jni$_.coroutineSingletonsClass)) {
+    jni$_.JObject? $o;
+    if ($r != null && $r.isInstanceOf(jni$_.coroutineSingletonsClass)) {
       $r.release();
       final $a = await $p.first;
-      $o = jni$_.JObject.fromReference(jni$_.JGlobalReference(jni$_.JObjectPtr.fromAddress($a)));
-      if ($o.isInstanceOf(jni$_.result$Class)) {
+      $o = $a == 0
+          ? null
+          : jni$_.JObject.fromReference(jni$_.JGlobalReference(jni$_.JObjectPtr.fromAddress($a)));
+      if ($o != null && $o.isInstanceOf(jni$_.result$Class)) {
         $o = jni$_.resultValueField.get($o, const jni$_.$JObject$Type$());
-      } else if ($o.isInstanceOf(jni$_.result$FailureClass)) {
+      } else if ($o != null && $o.isInstanceOf(jni$_.result$FailureClass)) {
         final $e = jni$_.failureExceptionField.get($o, const jni$_.$JObject$Type$());
         $o.release();
         jni$_.Jni.throwException($e.reference.toPointer());
@@ -13698,13 +13143,13 @@ extension NativeInteropFlutterIntegrationCoreApi$$Methods
     } else {
       $o = $r;
     }
-    return $o.as<NativeInteropAllTypes>(NativeInteropAllTypes.type, releaseOriginal: true);
+    return $o?.as<jni$_.JByteArray>(jni$_.JByteArray.type, releaseOriginal: true);
   }
 
   static final _id_echoAsyncNullableNativeInteropAllNullableTypes =
-      NativeInteropFlutterIntegrationCoreApi._class.instanceMethodId(
+      NativeInteropFlutterIntegrationCoreApiBridge._class.instanceMethodId(
         r'echoAsyncNullableNativeInteropAllNullableTypes',
-        r'(Lcom/example/test_plugin/NativeInteropAllNullableTypes;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;',
+        r'([BLkotlin/coroutines/Continuation;)Ljava/lang/Object;',
       );
 
   static final _echoAsyncNullableNativeInteropAllNullableTypes =
@@ -13726,20 +13171,19 @@ extension NativeInteropFlutterIntegrationCoreApi$$Methods
             )
           >();
 
-  /// from: `public suspend fun echoAsyncNullableNativeInteropAllNullableTypes(everything: com.example.test_plugin.NativeInteropAllNullableTypes?): com.example.test_plugin.NativeInteropAllNullableTypes?`
+  /// from: `public suspend fun echoAsyncNullableNativeInteropAllNullableTypes(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
   /// The returned object must be released after use, by calling the [release] method.
-  core$_.Future<NativeInteropAllNullableTypes?> echoAsyncNullableNativeInteropAllNullableTypes(
-    NativeInteropAllNullableTypes? nativeInteropAllNullableTypes,
+  core$_.Future<jni$_.JByteArray?> echoAsyncNullableNativeInteropAllNullableTypes(
+    jni$_.JByteArray bs,
   ) async {
     final $p = jni$_.ReceivePort();
     final _$continuation = jni$_.ProtectedJniExtensions.newPortContinuation($p);
     final _$$selfRef = reference;
-    final _$nativeInteropAllNullableTypes =
-        nativeInteropAllNullableTypes?.reference ?? jni$_.jNullReference;
+    final _$bs = bs.reference;
     final $r = _echoAsyncNullableNativeInteropAllNullableTypes(
       _$$selfRef.pointer,
       _id_echoAsyncNullableNativeInteropAllNullableTypes.pointer,
-      _$nativeInteropAllNullableTypes.pointer,
+      _$bs.pointer,
       _$continuation.pointer,
     ).object<jni$_.JObject?>();
     _$continuation.release();
@@ -13760,16 +13204,13 @@ extension NativeInteropFlutterIntegrationCoreApi$$Methods
     } else {
       $o = $r;
     }
-    return $o?.as<NativeInteropAllNullableTypes>(
-      NativeInteropAllNullableTypes.type,
-      releaseOriginal: true,
-    );
+    return $o?.as<jni$_.JByteArray>(jni$_.JByteArray.type, releaseOriginal: true);
   }
 
   static final _id_echoAsyncNullableNativeInteropAllNullableTypesWithoutRecursion =
-      NativeInteropFlutterIntegrationCoreApi._class.instanceMethodId(
+      NativeInteropFlutterIntegrationCoreApiBridge._class.instanceMethodId(
         r'echoAsyncNullableNativeInteropAllNullableTypesWithoutRecursion',
-        r'(Lcom/example/test_plugin/NativeInteropAllNullableTypesWithoutRecursion;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;',
+        r'([BLkotlin/coroutines/Continuation;)Ljava/lang/Object;',
       );
 
   static final _echoAsyncNullableNativeInteropAllNullableTypesWithoutRecursion =
@@ -13791,21 +13232,19 @@ extension NativeInteropFlutterIntegrationCoreApi$$Methods
             )
           >();
 
-  /// from: `public suspend fun echoAsyncNullableNativeInteropAllNullableTypesWithoutRecursion(everything: com.example.test_plugin.NativeInteropAllNullableTypesWithoutRecursion?): com.example.test_plugin.NativeInteropAllNullableTypesWithoutRecursion?`
+  /// from: `public suspend fun echoAsyncNullableNativeInteropAllNullableTypesWithoutRecursion(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
   /// The returned object must be released after use, by calling the [release] method.
-  core$_.Future<NativeInteropAllNullableTypesWithoutRecursion?>
-  echoAsyncNullableNativeInteropAllNullableTypesWithoutRecursion(
-    NativeInteropAllNullableTypesWithoutRecursion? nativeInteropAllNullableTypesWithoutRecursion,
+  core$_.Future<jni$_.JByteArray?> echoAsyncNullableNativeInteropAllNullableTypesWithoutRecursion(
+    jni$_.JByteArray bs,
   ) async {
     final $p = jni$_.ReceivePort();
     final _$continuation = jni$_.ProtectedJniExtensions.newPortContinuation($p);
     final _$$selfRef = reference;
-    final _$nativeInteropAllNullableTypesWithoutRecursion =
-        nativeInteropAllNullableTypesWithoutRecursion?.reference ?? jni$_.jNullReference;
+    final _$bs = bs.reference;
     final $r = _echoAsyncNullableNativeInteropAllNullableTypesWithoutRecursion(
       _$$selfRef.pointer,
       _id_echoAsyncNullableNativeInteropAllNullableTypesWithoutRecursion.pointer,
-      _$nativeInteropAllNullableTypesWithoutRecursion.pointer,
+      _$bs.pointer,
       _$continuation.pointer,
     ).object<jni$_.JObject?>();
     _$continuation.release();
@@ -13826,16 +13265,11 @@ extension NativeInteropFlutterIntegrationCoreApi$$Methods
     } else {
       $o = $r;
     }
-    return $o?.as<NativeInteropAllNullableTypesWithoutRecursion>(
-      NativeInteropAllNullableTypesWithoutRecursion.type,
-      releaseOriginal: true,
-    );
+    return $o?.as<jni$_.JByteArray>(jni$_.JByteArray.type, releaseOriginal: true);
   }
 
-  static final _id_echoAsyncBool = NativeInteropFlutterIntegrationCoreApi._class.instanceMethodId(
-    r'echoAsyncBool',
-    r'(ZLkotlin/coroutines/Continuation;)Ljava/lang/Object;',
-  );
+  static final _id_echoAsyncBool = NativeInteropFlutterIntegrationCoreApiBridge._class
+      .instanceMethodId(r'echoAsyncBool', r'(ZLkotlin/coroutines/Continuation;)Ljava/lang/Object;');
 
   static final _echoAsyncBool =
       jni$_.ProtectedJniExtensions.lookup<
@@ -13887,10 +13321,8 @@ extension NativeInteropFlutterIntegrationCoreApi$$Methods
     return $o.as<jni$_.JBoolean>(jni$_.JBoolean.type, releaseOriginal: true);
   }
 
-  static final _id_echoAsyncInt = NativeInteropFlutterIntegrationCoreApi._class.instanceMethodId(
-    r'echoAsyncInt',
-    r'(JLkotlin/coroutines/Continuation;)Ljava/lang/Object;',
-  );
+  static final _id_echoAsyncInt = NativeInteropFlutterIntegrationCoreApiBridge._class
+      .instanceMethodId(r'echoAsyncInt', r'(JLkotlin/coroutines/Continuation;)Ljava/lang/Object;');
 
   static final _echoAsyncInt =
       jni$_.ProtectedJniExtensions.lookup<
@@ -13942,10 +13374,11 @@ extension NativeInteropFlutterIntegrationCoreApi$$Methods
     return $o.as<jni$_.JLong>(jni$_.JLong.type, releaseOriginal: true);
   }
 
-  static final _id_echoAsyncDouble = NativeInteropFlutterIntegrationCoreApi._class.instanceMethodId(
-    r'echoAsyncDouble',
-    r'(DLkotlin/coroutines/Continuation;)Ljava/lang/Object;',
-  );
+  static final _id_echoAsyncDouble = NativeInteropFlutterIntegrationCoreApiBridge._class
+      .instanceMethodId(
+        r'echoAsyncDouble',
+        r'(DLkotlin/coroutines/Continuation;)Ljava/lang/Object;',
+      );
 
   static final _echoAsyncDouble =
       jni$_.ProtectedJniExtensions.lookup<
@@ -13997,10 +13430,11 @@ extension NativeInteropFlutterIntegrationCoreApi$$Methods
     return $o.as<jni$_.JDouble>(jni$_.JDouble.type, releaseOriginal: true);
   }
 
-  static final _id_echoAsyncString = NativeInteropFlutterIntegrationCoreApi._class.instanceMethodId(
-    r'echoAsyncString',
-    r'(Ljava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;',
-  );
+  static final _id_echoAsyncString = NativeInteropFlutterIntegrationCoreApiBridge._class
+      .instanceMethodId(
+        r'echoAsyncString',
+        r'(Ljava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;',
+      );
 
   static final _echoAsyncString =
       jni$_.ProtectedJniExtensions.lookup<
@@ -14053,7 +13487,7 @@ extension NativeInteropFlutterIntegrationCoreApi$$Methods
     return $o.as<jni$_.JString>(jni$_.JString.type, releaseOriginal: true);
   }
 
-  static final _id_echoAsyncUint8List = NativeInteropFlutterIntegrationCoreApi._class
+  static final _id_echoAsyncUint8List = NativeInteropFlutterIntegrationCoreApiBridge._class
       .instanceMethodId(
         r'echoAsyncUint8List',
         r'([BLkotlin/coroutines/Continuation;)Ljava/lang/Object;',
@@ -14110,7 +13544,7 @@ extension NativeInteropFlutterIntegrationCoreApi$$Methods
     return $o.as<jni$_.JByteArray>(jni$_.JByteArray.type, releaseOriginal: true);
   }
 
-  static final _id_echoAsyncInt32List = NativeInteropFlutterIntegrationCoreApi._class
+  static final _id_echoAsyncInt32List = NativeInteropFlutterIntegrationCoreApiBridge._class
       .instanceMethodId(
         r'echoAsyncInt32List',
         r'([ILkotlin/coroutines/Continuation;)Ljava/lang/Object;',
@@ -14167,7 +13601,7 @@ extension NativeInteropFlutterIntegrationCoreApi$$Methods
     return $o.as<jni$_.JIntArray>(jni$_.JIntArray.type, releaseOriginal: true);
   }
 
-  static final _id_echoAsyncInt64List = NativeInteropFlutterIntegrationCoreApi._class
+  static final _id_echoAsyncInt64List = NativeInteropFlutterIntegrationCoreApiBridge._class
       .instanceMethodId(
         r'echoAsyncInt64List',
         r'([JLkotlin/coroutines/Continuation;)Ljava/lang/Object;',
@@ -14224,7 +13658,7 @@ extension NativeInteropFlutterIntegrationCoreApi$$Methods
     return $o.as<jni$_.JLongArray>(jni$_.JLongArray.type, releaseOriginal: true);
   }
 
-  static final _id_echoAsyncFloat64List = NativeInteropFlutterIntegrationCoreApi._class
+  static final _id_echoAsyncFloat64List = NativeInteropFlutterIntegrationCoreApiBridge._class
       .instanceMethodId(
         r'echoAsyncFloat64List',
         r'([DLkotlin/coroutines/Continuation;)Ljava/lang/Object;',
@@ -14281,10 +13715,11 @@ extension NativeInteropFlutterIntegrationCoreApi$$Methods
     return $o.as<jni$_.JDoubleArray>(jni$_.JDoubleArray.type, releaseOriginal: true);
   }
 
-  static final _id_echoAsyncObject = NativeInteropFlutterIntegrationCoreApi._class.instanceMethodId(
-    r'echoAsyncObject',
-    r'(Ljava/lang/Object;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;',
-  );
+  static final _id_echoAsyncObject = NativeInteropFlutterIntegrationCoreApiBridge._class
+      .instanceMethodId(
+        r'echoAsyncObject',
+        r'([BLkotlin/coroutines/Continuation;)Ljava/lang/Object;',
+      );
 
   static final _echoAsyncObject =
       jni$_.ProtectedJniExtensions.lookup<
@@ -14305,28 +13740,30 @@ extension NativeInteropFlutterIntegrationCoreApi$$Methods
             )
           >();
 
-  /// from: `public suspend fun echoAsyncObject(anObject: kotlin.Any): kotlin.Any`
+  /// from: `public suspend fun echoAsyncObject(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
   /// The returned object must be released after use, by calling the [release] method.
-  core$_.Future<jni$_.JObject> echoAsyncObject(jni$_.JObject object) async {
+  core$_.Future<jni$_.JByteArray?> echoAsyncObject(jni$_.JByteArray bs) async {
     final $p = jni$_.ReceivePort();
     final _$continuation = jni$_.ProtectedJniExtensions.newPortContinuation($p);
     final _$$selfRef = reference;
-    final _$object = object.reference;
+    final _$bs = bs.reference;
     final $r = _echoAsyncObject(
       _$$selfRef.pointer,
       _id_echoAsyncObject.pointer,
-      _$object.pointer,
+      _$bs.pointer,
       _$continuation.pointer,
-    ).object<jni$_.JObject>();
+    ).object<jni$_.JObject?>();
     _$continuation.release();
-    jni$_.JObject $o;
-    if ($r.isInstanceOf(jni$_.coroutineSingletonsClass)) {
+    jni$_.JObject? $o;
+    if ($r != null && $r.isInstanceOf(jni$_.coroutineSingletonsClass)) {
       $r.release();
       final $a = await $p.first;
-      $o = jni$_.JObject.fromReference(jni$_.JGlobalReference(jni$_.JObjectPtr.fromAddress($a)));
-      if ($o.isInstanceOf(jni$_.result$Class)) {
+      $o = $a == 0
+          ? null
+          : jni$_.JObject.fromReference(jni$_.JGlobalReference(jni$_.JObjectPtr.fromAddress($a)));
+      if ($o != null && $o.isInstanceOf(jni$_.result$Class)) {
         $o = jni$_.resultValueField.get($o, const jni$_.$JObject$Type$());
-      } else if ($o.isInstanceOf(jni$_.result$FailureClass)) {
+      } else if ($o != null && $o.isInstanceOf(jni$_.result$FailureClass)) {
         final $e = jni$_.failureExceptionField.get($o, const jni$_.$JObject$Type$());
         $o.release();
         jni$_.Jni.throwException($e.reference.toPointer());
@@ -14334,13 +13771,14 @@ extension NativeInteropFlutterIntegrationCoreApi$$Methods
     } else {
       $o = $r;
     }
-    return $o.as<jni$_.JObject>(const jni$_.$JObject$Type$(), releaseOriginal: true);
+    return $o?.as<jni$_.JByteArray>(jni$_.JByteArray.type, releaseOriginal: true);
   }
 
-  static final _id_echoAsyncList = NativeInteropFlutterIntegrationCoreApi._class.instanceMethodId(
-    r'echoAsyncList',
-    r'(Ljava/util/List;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;',
-  );
+  static final _id_echoAsyncList = NativeInteropFlutterIntegrationCoreApiBridge._class
+      .instanceMethodId(
+        r'echoAsyncList',
+        r'([BLkotlin/coroutines/Continuation;)Ljava/lang/Object;',
+      );
 
   static final _echoAsyncList =
       jni$_.ProtectedJniExtensions.lookup<
@@ -14361,28 +13799,30 @@ extension NativeInteropFlutterIntegrationCoreApi$$Methods
             )
           >();
 
-  /// from: `public suspend fun echoAsyncList(list: kotlin.collections.List<kotlin.Any?>): kotlin.collections.List<kotlin.Any?>`
+  /// from: `public suspend fun echoAsyncList(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
   /// The returned object must be released after use, by calling the [release] method.
-  core$_.Future<jni$_.JList<jni$_.JObject?>> echoAsyncList(jni$_.JList<jni$_.JObject?> list) async {
+  core$_.Future<jni$_.JByteArray?> echoAsyncList(jni$_.JByteArray bs) async {
     final $p = jni$_.ReceivePort();
     final _$continuation = jni$_.ProtectedJniExtensions.newPortContinuation($p);
     final _$$selfRef = reference;
-    final _$list = list.reference;
+    final _$bs = bs.reference;
     final $r = _echoAsyncList(
       _$$selfRef.pointer,
       _id_echoAsyncList.pointer,
-      _$list.pointer,
+      _$bs.pointer,
       _$continuation.pointer,
-    ).object<jni$_.JObject>();
+    ).object<jni$_.JObject?>();
     _$continuation.release();
-    jni$_.JObject $o;
-    if ($r.isInstanceOf(jni$_.coroutineSingletonsClass)) {
+    jni$_.JObject? $o;
+    if ($r != null && $r.isInstanceOf(jni$_.coroutineSingletonsClass)) {
       $r.release();
       final $a = await $p.first;
-      $o = jni$_.JObject.fromReference(jni$_.JGlobalReference(jni$_.JObjectPtr.fromAddress($a)));
-      if ($o.isInstanceOf(jni$_.result$Class)) {
+      $o = $a == 0
+          ? null
+          : jni$_.JObject.fromReference(jni$_.JGlobalReference(jni$_.JObjectPtr.fromAddress($a)));
+      if ($o != null && $o.isInstanceOf(jni$_.result$Class)) {
         $o = jni$_.resultValueField.get($o, const jni$_.$JObject$Type$());
-      } else if ($o.isInstanceOf(jni$_.result$FailureClass)) {
+      } else if ($o != null && $o.isInstanceOf(jni$_.result$FailureClass)) {
         final $e = jni$_.failureExceptionField.get($o, const jni$_.$JObject$Type$());
         $o.release();
         jni$_.Jni.throwException($e.reference.toPointer());
@@ -14390,14 +13830,13 @@ extension NativeInteropFlutterIntegrationCoreApi$$Methods
     } else {
       $o = $r;
     }
-    return $o.as<jni$_.JList>(jni$_.JList.type, releaseOriginal: true)
-        as jni$_.JList<jni$_.JObject?>;
+    return $o?.as<jni$_.JByteArray>(jni$_.JByteArray.type, releaseOriginal: true);
   }
 
-  static final _id_echoAsyncEnumList = NativeInteropFlutterIntegrationCoreApi._class
+  static final _id_echoAsyncEnumList = NativeInteropFlutterIntegrationCoreApiBridge._class
       .instanceMethodId(
         r'echoAsyncEnumList',
-        r'(Ljava/util/List;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;',
+        r'([BLkotlin/coroutines/Continuation;)Ljava/lang/Object;',
       );
 
   static final _echoAsyncEnumList =
@@ -14419,30 +13858,30 @@ extension NativeInteropFlutterIntegrationCoreApi$$Methods
             )
           >();
 
-  /// from: `public suspend fun echoAsyncEnumList(enumList: kotlin.collections.List<com.example.test_plugin.NativeInteropAnEnum?>): kotlin.collections.List<com.example.test_plugin.NativeInteropAnEnum?>`
+  /// from: `public suspend fun echoAsyncEnumList(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
   /// The returned object must be released after use, by calling the [release] method.
-  core$_.Future<jni$_.JList<NativeInteropAnEnum?>> echoAsyncEnumList(
-    jni$_.JList<NativeInteropAnEnum?> list,
-  ) async {
+  core$_.Future<jni$_.JByteArray?> echoAsyncEnumList(jni$_.JByteArray bs) async {
     final $p = jni$_.ReceivePort();
     final _$continuation = jni$_.ProtectedJniExtensions.newPortContinuation($p);
     final _$$selfRef = reference;
-    final _$list = list.reference;
+    final _$bs = bs.reference;
     final $r = _echoAsyncEnumList(
       _$$selfRef.pointer,
       _id_echoAsyncEnumList.pointer,
-      _$list.pointer,
+      _$bs.pointer,
       _$continuation.pointer,
-    ).object<jni$_.JObject>();
+    ).object<jni$_.JObject?>();
     _$continuation.release();
-    jni$_.JObject $o;
-    if ($r.isInstanceOf(jni$_.coroutineSingletonsClass)) {
+    jni$_.JObject? $o;
+    if ($r != null && $r.isInstanceOf(jni$_.coroutineSingletonsClass)) {
       $r.release();
       final $a = await $p.first;
-      $o = jni$_.JObject.fromReference(jni$_.JGlobalReference(jni$_.JObjectPtr.fromAddress($a)));
-      if ($o.isInstanceOf(jni$_.result$Class)) {
+      $o = $a == 0
+          ? null
+          : jni$_.JObject.fromReference(jni$_.JGlobalReference(jni$_.JObjectPtr.fromAddress($a)));
+      if ($o != null && $o.isInstanceOf(jni$_.result$Class)) {
         $o = jni$_.resultValueField.get($o, const jni$_.$JObject$Type$());
-      } else if ($o.isInstanceOf(jni$_.result$FailureClass)) {
+      } else if ($o != null && $o.isInstanceOf(jni$_.result$FailureClass)) {
         final $e = jni$_.failureExceptionField.get($o, const jni$_.$JObject$Type$());
         $o.release();
         jni$_.Jni.throwException($e.reference.toPointer());
@@ -14450,14 +13889,13 @@ extension NativeInteropFlutterIntegrationCoreApi$$Methods
     } else {
       $o = $r;
     }
-    return $o.as<jni$_.JList>(jni$_.JList.type, releaseOriginal: true)
-        as jni$_.JList<NativeInteropAnEnum?>;
+    return $o?.as<jni$_.JByteArray>(jni$_.JByteArray.type, releaseOriginal: true);
   }
 
-  static final _id_echoAsyncClassList = NativeInteropFlutterIntegrationCoreApi._class
+  static final _id_echoAsyncClassList = NativeInteropFlutterIntegrationCoreApiBridge._class
       .instanceMethodId(
         r'echoAsyncClassList',
-        r'(Ljava/util/List;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;',
+        r'([BLkotlin/coroutines/Continuation;)Ljava/lang/Object;',
       );
 
   static final _echoAsyncClassList =
@@ -14479,30 +13917,30 @@ extension NativeInteropFlutterIntegrationCoreApi$$Methods
             )
           >();
 
-  /// from: `public suspend fun echoAsyncClassList(classList: kotlin.collections.List<com.example.test_plugin.NativeInteropAllNullableTypes?>): kotlin.collections.List<com.example.test_plugin.NativeInteropAllNullableTypes?>`
+  /// from: `public suspend fun echoAsyncClassList(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
   /// The returned object must be released after use, by calling the [release] method.
-  core$_.Future<jni$_.JList<NativeInteropAllNullableTypes?>> echoAsyncClassList(
-    jni$_.JList<NativeInteropAllNullableTypes?> list,
-  ) async {
+  core$_.Future<jni$_.JByteArray?> echoAsyncClassList(jni$_.JByteArray bs) async {
     final $p = jni$_.ReceivePort();
     final _$continuation = jni$_.ProtectedJniExtensions.newPortContinuation($p);
     final _$$selfRef = reference;
-    final _$list = list.reference;
+    final _$bs = bs.reference;
     final $r = _echoAsyncClassList(
       _$$selfRef.pointer,
       _id_echoAsyncClassList.pointer,
-      _$list.pointer,
+      _$bs.pointer,
       _$continuation.pointer,
-    ).object<jni$_.JObject>();
+    ).object<jni$_.JObject?>();
     _$continuation.release();
-    jni$_.JObject $o;
-    if ($r.isInstanceOf(jni$_.coroutineSingletonsClass)) {
+    jni$_.JObject? $o;
+    if ($r != null && $r.isInstanceOf(jni$_.coroutineSingletonsClass)) {
       $r.release();
       final $a = await $p.first;
-      $o = jni$_.JObject.fromReference(jni$_.JGlobalReference(jni$_.JObjectPtr.fromAddress($a)));
-      if ($o.isInstanceOf(jni$_.result$Class)) {
+      $o = $a == 0
+          ? null
+          : jni$_.JObject.fromReference(jni$_.JGlobalReference(jni$_.JObjectPtr.fromAddress($a)));
+      if ($o != null && $o.isInstanceOf(jni$_.result$Class)) {
         $o = jni$_.resultValueField.get($o, const jni$_.$JObject$Type$());
-      } else if ($o.isInstanceOf(jni$_.result$FailureClass)) {
+      } else if ($o != null && $o.isInstanceOf(jni$_.result$FailureClass)) {
         final $e = jni$_.failureExceptionField.get($o, const jni$_.$JObject$Type$());
         $o.release();
         jni$_.Jni.throwException($e.reference.toPointer());
@@ -14510,14 +13948,13 @@ extension NativeInteropFlutterIntegrationCoreApi$$Methods
     } else {
       $o = $r;
     }
-    return $o.as<jni$_.JList>(jni$_.JList.type, releaseOriginal: true)
-        as jni$_.JList<NativeInteropAllNullableTypes?>;
+    return $o?.as<jni$_.JByteArray>(jni$_.JByteArray.type, releaseOriginal: true);
   }
 
-  static final _id_echoAsyncNonNullEnumList = NativeInteropFlutterIntegrationCoreApi._class
+  static final _id_echoAsyncNonNullEnumList = NativeInteropFlutterIntegrationCoreApiBridge._class
       .instanceMethodId(
         r'echoAsyncNonNullEnumList',
-        r'(Ljava/util/List;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;',
+        r'([BLkotlin/coroutines/Continuation;)Ljava/lang/Object;',
       );
 
   static final _echoAsyncNonNullEnumList =
@@ -14539,30 +13976,30 @@ extension NativeInteropFlutterIntegrationCoreApi$$Methods
             )
           >();
 
-  /// from: `public suspend fun echoAsyncNonNullEnumList(enumList: kotlin.collections.List<com.example.test_plugin.NativeInteropAnEnum>): kotlin.collections.List<com.example.test_plugin.NativeInteropAnEnum>`
+  /// from: `public suspend fun echoAsyncNonNullEnumList(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
   /// The returned object must be released after use, by calling the [release] method.
-  core$_.Future<jni$_.JList<NativeInteropAnEnum>> echoAsyncNonNullEnumList(
-    jni$_.JList<NativeInteropAnEnum?> list,
-  ) async {
+  core$_.Future<jni$_.JByteArray?> echoAsyncNonNullEnumList(jni$_.JByteArray bs) async {
     final $p = jni$_.ReceivePort();
     final _$continuation = jni$_.ProtectedJniExtensions.newPortContinuation($p);
     final _$$selfRef = reference;
-    final _$list = list.reference;
+    final _$bs = bs.reference;
     final $r = _echoAsyncNonNullEnumList(
       _$$selfRef.pointer,
       _id_echoAsyncNonNullEnumList.pointer,
-      _$list.pointer,
+      _$bs.pointer,
       _$continuation.pointer,
-    ).object<jni$_.JObject>();
+    ).object<jni$_.JObject?>();
     _$continuation.release();
-    jni$_.JObject $o;
-    if ($r.isInstanceOf(jni$_.coroutineSingletonsClass)) {
+    jni$_.JObject? $o;
+    if ($r != null && $r.isInstanceOf(jni$_.coroutineSingletonsClass)) {
       $r.release();
       final $a = await $p.first;
-      $o = jni$_.JObject.fromReference(jni$_.JGlobalReference(jni$_.JObjectPtr.fromAddress($a)));
-      if ($o.isInstanceOf(jni$_.result$Class)) {
+      $o = $a == 0
+          ? null
+          : jni$_.JObject.fromReference(jni$_.JGlobalReference(jni$_.JObjectPtr.fromAddress($a)));
+      if ($o != null && $o.isInstanceOf(jni$_.result$Class)) {
         $o = jni$_.resultValueField.get($o, const jni$_.$JObject$Type$());
-      } else if ($o.isInstanceOf(jni$_.result$FailureClass)) {
+      } else if ($o != null && $o.isInstanceOf(jni$_.result$FailureClass)) {
         final $e = jni$_.failureExceptionField.get($o, const jni$_.$JObject$Type$());
         $o.release();
         jni$_.Jni.throwException($e.reference.toPointer());
@@ -14570,14 +14007,13 @@ extension NativeInteropFlutterIntegrationCoreApi$$Methods
     } else {
       $o = $r;
     }
-    return $o.as<jni$_.JList>(jni$_.JList.type, releaseOriginal: true)
-        as jni$_.JList<NativeInteropAnEnum>;
+    return $o?.as<jni$_.JByteArray>(jni$_.JByteArray.type, releaseOriginal: true);
   }
 
-  static final _id_echoAsyncNonNullClassList = NativeInteropFlutterIntegrationCoreApi._class
+  static final _id_echoAsyncNonNullClassList = NativeInteropFlutterIntegrationCoreApiBridge._class
       .instanceMethodId(
         r'echoAsyncNonNullClassList',
-        r'(Ljava/util/List;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;',
+        r'([BLkotlin/coroutines/Continuation;)Ljava/lang/Object;',
       );
 
   static final _echoAsyncNonNullClassList =
@@ -14599,30 +14035,30 @@ extension NativeInteropFlutterIntegrationCoreApi$$Methods
             )
           >();
 
-  /// from: `public suspend fun echoAsyncNonNullClassList(classList: kotlin.collections.List<com.example.test_plugin.NativeInteropAllNullableTypes>): kotlin.collections.List<com.example.test_plugin.NativeInteropAllNullableTypes>`
+  /// from: `public suspend fun echoAsyncNonNullClassList(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
   /// The returned object must be released after use, by calling the [release] method.
-  core$_.Future<jni$_.JList<NativeInteropAllNullableTypes>> echoAsyncNonNullClassList(
-    jni$_.JList<NativeInteropAllNullableTypes?> list,
-  ) async {
+  core$_.Future<jni$_.JByteArray?> echoAsyncNonNullClassList(jni$_.JByteArray bs) async {
     final $p = jni$_.ReceivePort();
     final _$continuation = jni$_.ProtectedJniExtensions.newPortContinuation($p);
     final _$$selfRef = reference;
-    final _$list = list.reference;
+    final _$bs = bs.reference;
     final $r = _echoAsyncNonNullClassList(
       _$$selfRef.pointer,
       _id_echoAsyncNonNullClassList.pointer,
-      _$list.pointer,
+      _$bs.pointer,
       _$continuation.pointer,
-    ).object<jni$_.JObject>();
+    ).object<jni$_.JObject?>();
     _$continuation.release();
-    jni$_.JObject $o;
-    if ($r.isInstanceOf(jni$_.coroutineSingletonsClass)) {
+    jni$_.JObject? $o;
+    if ($r != null && $r.isInstanceOf(jni$_.coroutineSingletonsClass)) {
       $r.release();
       final $a = await $p.first;
-      $o = jni$_.JObject.fromReference(jni$_.JGlobalReference(jni$_.JObjectPtr.fromAddress($a)));
-      if ($o.isInstanceOf(jni$_.result$Class)) {
+      $o = $a == 0
+          ? null
+          : jni$_.JObject.fromReference(jni$_.JGlobalReference(jni$_.JObjectPtr.fromAddress($a)));
+      if ($o != null && $o.isInstanceOf(jni$_.result$Class)) {
         $o = jni$_.resultValueField.get($o, const jni$_.$JObject$Type$());
-      } else if ($o.isInstanceOf(jni$_.result$FailureClass)) {
+      } else if ($o != null && $o.isInstanceOf(jni$_.result$FailureClass)) {
         final $e = jni$_.failureExceptionField.get($o, const jni$_.$JObject$Type$());
         $o.release();
         jni$_.Jni.throwException($e.reference.toPointer());
@@ -14630,14 +14066,11 @@ extension NativeInteropFlutterIntegrationCoreApi$$Methods
     } else {
       $o = $r;
     }
-    return $o.as<jni$_.JList>(jni$_.JList.type, releaseOriginal: true)
-        as jni$_.JList<NativeInteropAllNullableTypes>;
+    return $o?.as<jni$_.JByteArray>(jni$_.JByteArray.type, releaseOriginal: true);
   }
 
-  static final _id_echoAsyncMap = NativeInteropFlutterIntegrationCoreApi._class.instanceMethodId(
-    r'echoAsyncMap',
-    r'(Ljava/util/Map;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;',
-  );
+  static final _id_echoAsyncMap = NativeInteropFlutterIntegrationCoreApiBridge._class
+      .instanceMethodId(r'echoAsyncMap', r'([BLkotlin/coroutines/Continuation;)Ljava/lang/Object;');
 
   static final _echoAsyncMap =
       jni$_.ProtectedJniExtensions.lookup<
@@ -14658,30 +14091,30 @@ extension NativeInteropFlutterIntegrationCoreApi$$Methods
             )
           >();
 
-  /// from: `public suspend fun echoAsyncMap(map: kotlin.collections.Map<kotlin.Any?, kotlin.Any?>): kotlin.collections.Map<kotlin.Any?, kotlin.Any?>`
+  /// from: `public suspend fun echoAsyncMap(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
   /// The returned object must be released after use, by calling the [release] method.
-  core$_.Future<jni$_.JMap<jni$_.JObject?, jni$_.JObject?>> echoAsyncMap(
-    jni$_.JMap<jni$_.JObject?, jni$_.JObject?> map,
-  ) async {
+  core$_.Future<jni$_.JByteArray?> echoAsyncMap(jni$_.JByteArray bs) async {
     final $p = jni$_.ReceivePort();
     final _$continuation = jni$_.ProtectedJniExtensions.newPortContinuation($p);
     final _$$selfRef = reference;
-    final _$map = map.reference;
+    final _$bs = bs.reference;
     final $r = _echoAsyncMap(
       _$$selfRef.pointer,
       _id_echoAsyncMap.pointer,
-      _$map.pointer,
+      _$bs.pointer,
       _$continuation.pointer,
-    ).object<jni$_.JObject>();
+    ).object<jni$_.JObject?>();
     _$continuation.release();
-    jni$_.JObject $o;
-    if ($r.isInstanceOf(jni$_.coroutineSingletonsClass)) {
+    jni$_.JObject? $o;
+    if ($r != null && $r.isInstanceOf(jni$_.coroutineSingletonsClass)) {
       $r.release();
       final $a = await $p.first;
-      $o = jni$_.JObject.fromReference(jni$_.JGlobalReference(jni$_.JObjectPtr.fromAddress($a)));
-      if ($o.isInstanceOf(jni$_.result$Class)) {
+      $o = $a == 0
+          ? null
+          : jni$_.JObject.fromReference(jni$_.JGlobalReference(jni$_.JObjectPtr.fromAddress($a)));
+      if ($o != null && $o.isInstanceOf(jni$_.result$Class)) {
         $o = jni$_.resultValueField.get($o, const jni$_.$JObject$Type$());
-      } else if ($o.isInstanceOf(jni$_.result$FailureClass)) {
+      } else if ($o != null && $o.isInstanceOf(jni$_.result$FailureClass)) {
         final $e = jni$_.failureExceptionField.get($o, const jni$_.$JObject$Type$());
         $o.release();
         jni$_.Jni.throwException($e.reference.toPointer());
@@ -14689,14 +14122,13 @@ extension NativeInteropFlutterIntegrationCoreApi$$Methods
     } else {
       $o = $r;
     }
-    return $o.as<jni$_.JMap>(jni$_.JMap.type, releaseOriginal: true)
-        as jni$_.JMap<jni$_.JObject?, jni$_.JObject?>;
+    return $o?.as<jni$_.JByteArray>(jni$_.JByteArray.type, releaseOriginal: true);
   }
 
-  static final _id_echoAsyncStringMap = NativeInteropFlutterIntegrationCoreApi._class
+  static final _id_echoAsyncStringMap = NativeInteropFlutterIntegrationCoreApiBridge._class
       .instanceMethodId(
         r'echoAsyncStringMap',
-        r'(Ljava/util/Map;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;',
+        r'([BLkotlin/coroutines/Continuation;)Ljava/lang/Object;',
       );
 
   static final _echoAsyncStringMap =
@@ -14718,30 +14150,30 @@ extension NativeInteropFlutterIntegrationCoreApi$$Methods
             )
           >();
 
-  /// from: `public suspend fun echoAsyncStringMap(stringMap: kotlin.collections.Map<kotlin.String?, kotlin.String?>): kotlin.collections.Map<kotlin.String?, kotlin.String?>`
+  /// from: `public suspend fun echoAsyncStringMap(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
   /// The returned object must be released after use, by calling the [release] method.
-  core$_.Future<jni$_.JMap<jni$_.JString?, jni$_.JString?>> echoAsyncStringMap(
-    jni$_.JMap<jni$_.JString?, jni$_.JString?> map,
-  ) async {
+  core$_.Future<jni$_.JByteArray?> echoAsyncStringMap(jni$_.JByteArray bs) async {
     final $p = jni$_.ReceivePort();
     final _$continuation = jni$_.ProtectedJniExtensions.newPortContinuation($p);
     final _$$selfRef = reference;
-    final _$map = map.reference;
+    final _$bs = bs.reference;
     final $r = _echoAsyncStringMap(
       _$$selfRef.pointer,
       _id_echoAsyncStringMap.pointer,
-      _$map.pointer,
+      _$bs.pointer,
       _$continuation.pointer,
-    ).object<jni$_.JObject>();
+    ).object<jni$_.JObject?>();
     _$continuation.release();
-    jni$_.JObject $o;
-    if ($r.isInstanceOf(jni$_.coroutineSingletonsClass)) {
+    jni$_.JObject? $o;
+    if ($r != null && $r.isInstanceOf(jni$_.coroutineSingletonsClass)) {
       $r.release();
       final $a = await $p.first;
-      $o = jni$_.JObject.fromReference(jni$_.JGlobalReference(jni$_.JObjectPtr.fromAddress($a)));
-      if ($o.isInstanceOf(jni$_.result$Class)) {
+      $o = $a == 0
+          ? null
+          : jni$_.JObject.fromReference(jni$_.JGlobalReference(jni$_.JObjectPtr.fromAddress($a)));
+      if ($o != null && $o.isInstanceOf(jni$_.result$Class)) {
         $o = jni$_.resultValueField.get($o, const jni$_.$JObject$Type$());
-      } else if ($o.isInstanceOf(jni$_.result$FailureClass)) {
+      } else if ($o != null && $o.isInstanceOf(jni$_.result$FailureClass)) {
         final $e = jni$_.failureExceptionField.get($o, const jni$_.$JObject$Type$());
         $o.release();
         jni$_.Jni.throwException($e.reference.toPointer());
@@ -14749,14 +14181,14 @@ extension NativeInteropFlutterIntegrationCoreApi$$Methods
     } else {
       $o = $r;
     }
-    return $o.as<jni$_.JMap>(jni$_.JMap.type, releaseOriginal: true)
-        as jni$_.JMap<jni$_.JString?, jni$_.JString?>;
+    return $o?.as<jni$_.JByteArray>(jni$_.JByteArray.type, releaseOriginal: true);
   }
 
-  static final _id_echoAsyncIntMap = NativeInteropFlutterIntegrationCoreApi._class.instanceMethodId(
-    r'echoAsyncIntMap',
-    r'(Ljava/util/Map;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;',
-  );
+  static final _id_echoAsyncIntMap = NativeInteropFlutterIntegrationCoreApiBridge._class
+      .instanceMethodId(
+        r'echoAsyncIntMap',
+        r'([BLkotlin/coroutines/Continuation;)Ljava/lang/Object;',
+      );
 
   static final _echoAsyncIntMap =
       jni$_.ProtectedJniExtensions.lookup<
@@ -14777,30 +14209,30 @@ extension NativeInteropFlutterIntegrationCoreApi$$Methods
             )
           >();
 
-  /// from: `public suspend fun echoAsyncIntMap(intMap: kotlin.collections.Map<kotlin.Long?, kotlin.Long?>): kotlin.collections.Map<kotlin.Long?, kotlin.Long?>`
+  /// from: `public suspend fun echoAsyncIntMap(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
   /// The returned object must be released after use, by calling the [release] method.
-  core$_.Future<jni$_.JMap<jni$_.JLong?, jni$_.JLong?>> echoAsyncIntMap(
-    jni$_.JMap<jni$_.JLong?, jni$_.JLong?> map,
-  ) async {
+  core$_.Future<jni$_.JByteArray?> echoAsyncIntMap(jni$_.JByteArray bs) async {
     final $p = jni$_.ReceivePort();
     final _$continuation = jni$_.ProtectedJniExtensions.newPortContinuation($p);
     final _$$selfRef = reference;
-    final _$map = map.reference;
+    final _$bs = bs.reference;
     final $r = _echoAsyncIntMap(
       _$$selfRef.pointer,
       _id_echoAsyncIntMap.pointer,
-      _$map.pointer,
+      _$bs.pointer,
       _$continuation.pointer,
-    ).object<jni$_.JObject>();
+    ).object<jni$_.JObject?>();
     _$continuation.release();
-    jni$_.JObject $o;
-    if ($r.isInstanceOf(jni$_.coroutineSingletonsClass)) {
+    jni$_.JObject? $o;
+    if ($r != null && $r.isInstanceOf(jni$_.coroutineSingletonsClass)) {
       $r.release();
       final $a = await $p.first;
-      $o = jni$_.JObject.fromReference(jni$_.JGlobalReference(jni$_.JObjectPtr.fromAddress($a)));
-      if ($o.isInstanceOf(jni$_.result$Class)) {
+      $o = $a == 0
+          ? null
+          : jni$_.JObject.fromReference(jni$_.JGlobalReference(jni$_.JObjectPtr.fromAddress($a)));
+      if ($o != null && $o.isInstanceOf(jni$_.result$Class)) {
         $o = jni$_.resultValueField.get($o, const jni$_.$JObject$Type$());
-      } else if ($o.isInstanceOf(jni$_.result$FailureClass)) {
+      } else if ($o != null && $o.isInstanceOf(jni$_.result$FailureClass)) {
         final $e = jni$_.failureExceptionField.get($o, const jni$_.$JObject$Type$());
         $o.release();
         jni$_.Jni.throwException($e.reference.toPointer());
@@ -14808,14 +14240,13 @@ extension NativeInteropFlutterIntegrationCoreApi$$Methods
     } else {
       $o = $r;
     }
-    return $o.as<jni$_.JMap>(jni$_.JMap.type, releaseOriginal: true)
-        as jni$_.JMap<jni$_.JLong?, jni$_.JLong?>;
+    return $o?.as<jni$_.JByteArray>(jni$_.JByteArray.type, releaseOriginal: true);
   }
 
-  static final _id_echoAsyncEnumMap = NativeInteropFlutterIntegrationCoreApi._class
+  static final _id_echoAsyncEnumMap = NativeInteropFlutterIntegrationCoreApiBridge._class
       .instanceMethodId(
         r'echoAsyncEnumMap',
-        r'(Ljava/util/Map;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;',
+        r'([BLkotlin/coroutines/Continuation;)Ljava/lang/Object;',
       );
 
   static final _echoAsyncEnumMap =
@@ -14837,30 +14268,30 @@ extension NativeInteropFlutterIntegrationCoreApi$$Methods
             )
           >();
 
-  /// from: `public suspend fun echoAsyncEnumMap(enumMap: kotlin.collections.Map<com.example.test_plugin.NativeInteropAnEnum?, com.example.test_plugin.NativeInteropAnEnum?>): kotlin.collections.Map<com.example.test_plugin.NativeInteropAnEnum?, com.example.test_plugin.NativeInteropAnEnum?>`
+  /// from: `public suspend fun echoAsyncEnumMap(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
   /// The returned object must be released after use, by calling the [release] method.
-  core$_.Future<jni$_.JMap<NativeInteropAnEnum?, NativeInteropAnEnum?>> echoAsyncEnumMap(
-    jni$_.JMap<NativeInteropAnEnum?, NativeInteropAnEnum?> map,
-  ) async {
+  core$_.Future<jni$_.JByteArray?> echoAsyncEnumMap(jni$_.JByteArray bs) async {
     final $p = jni$_.ReceivePort();
     final _$continuation = jni$_.ProtectedJniExtensions.newPortContinuation($p);
     final _$$selfRef = reference;
-    final _$map = map.reference;
+    final _$bs = bs.reference;
     final $r = _echoAsyncEnumMap(
       _$$selfRef.pointer,
       _id_echoAsyncEnumMap.pointer,
-      _$map.pointer,
+      _$bs.pointer,
       _$continuation.pointer,
-    ).object<jni$_.JObject>();
+    ).object<jni$_.JObject?>();
     _$continuation.release();
-    jni$_.JObject $o;
-    if ($r.isInstanceOf(jni$_.coroutineSingletonsClass)) {
+    jni$_.JObject? $o;
+    if ($r != null && $r.isInstanceOf(jni$_.coroutineSingletonsClass)) {
       $r.release();
       final $a = await $p.first;
-      $o = jni$_.JObject.fromReference(jni$_.JGlobalReference(jni$_.JObjectPtr.fromAddress($a)));
-      if ($o.isInstanceOf(jni$_.result$Class)) {
+      $o = $a == 0
+          ? null
+          : jni$_.JObject.fromReference(jni$_.JGlobalReference(jni$_.JObjectPtr.fromAddress($a)));
+      if ($o != null && $o.isInstanceOf(jni$_.result$Class)) {
         $o = jni$_.resultValueField.get($o, const jni$_.$JObject$Type$());
-      } else if ($o.isInstanceOf(jni$_.result$FailureClass)) {
+      } else if ($o != null && $o.isInstanceOf(jni$_.result$FailureClass)) {
         final $e = jni$_.failureExceptionField.get($o, const jni$_.$JObject$Type$());
         $o.release();
         jni$_.Jni.throwException($e.reference.toPointer());
@@ -14868,14 +14299,13 @@ extension NativeInteropFlutterIntegrationCoreApi$$Methods
     } else {
       $o = $r;
     }
-    return $o.as<jni$_.JMap>(jni$_.JMap.type, releaseOriginal: true)
-        as jni$_.JMap<NativeInteropAnEnum?, NativeInteropAnEnum?>;
+    return $o?.as<jni$_.JByteArray>(jni$_.JByteArray.type, releaseOriginal: true);
   }
 
-  static final _id_echoAsyncClassMap = NativeInteropFlutterIntegrationCoreApi._class
+  static final _id_echoAsyncClassMap = NativeInteropFlutterIntegrationCoreApiBridge._class
       .instanceMethodId(
         r'echoAsyncClassMap',
-        r'(Ljava/util/Map;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;',
+        r'([BLkotlin/coroutines/Continuation;)Ljava/lang/Object;',
       );
 
   static final _echoAsyncClassMap =
@@ -14897,30 +14327,30 @@ extension NativeInteropFlutterIntegrationCoreApi$$Methods
             )
           >();
 
-  /// from: `public suspend fun echoAsyncClassMap(classMap: kotlin.collections.Map<kotlin.Long?, com.example.test_plugin.NativeInteropAllNullableTypes?>): kotlin.collections.Map<kotlin.Long?, com.example.test_plugin.NativeInteropAllNullableTypes?>`
+  /// from: `public suspend fun echoAsyncClassMap(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
   /// The returned object must be released after use, by calling the [release] method.
-  core$_.Future<jni$_.JMap<jni$_.JLong?, NativeInteropAllNullableTypes?>> echoAsyncClassMap(
-    jni$_.JMap<jni$_.JLong?, NativeInteropAllNullableTypes?> map,
-  ) async {
+  core$_.Future<jni$_.JByteArray?> echoAsyncClassMap(jni$_.JByteArray bs) async {
     final $p = jni$_.ReceivePort();
     final _$continuation = jni$_.ProtectedJniExtensions.newPortContinuation($p);
     final _$$selfRef = reference;
-    final _$map = map.reference;
+    final _$bs = bs.reference;
     final $r = _echoAsyncClassMap(
       _$$selfRef.pointer,
       _id_echoAsyncClassMap.pointer,
-      _$map.pointer,
+      _$bs.pointer,
       _$continuation.pointer,
-    ).object<jni$_.JObject>();
+    ).object<jni$_.JObject?>();
     _$continuation.release();
-    jni$_.JObject $o;
-    if ($r.isInstanceOf(jni$_.coroutineSingletonsClass)) {
+    jni$_.JObject? $o;
+    if ($r != null && $r.isInstanceOf(jni$_.coroutineSingletonsClass)) {
       $r.release();
       final $a = await $p.first;
-      $o = jni$_.JObject.fromReference(jni$_.JGlobalReference(jni$_.JObjectPtr.fromAddress($a)));
-      if ($o.isInstanceOf(jni$_.result$Class)) {
+      $o = $a == 0
+          ? null
+          : jni$_.JObject.fromReference(jni$_.JGlobalReference(jni$_.JObjectPtr.fromAddress($a)));
+      if ($o != null && $o.isInstanceOf(jni$_.result$Class)) {
         $o = jni$_.resultValueField.get($o, const jni$_.$JObject$Type$());
-      } else if ($o.isInstanceOf(jni$_.result$FailureClass)) {
+      } else if ($o != null && $o.isInstanceOf(jni$_.result$FailureClass)) {
         final $e = jni$_.failureExceptionField.get($o, const jni$_.$JObject$Type$());
         $o.release();
         jni$_.Jni.throwException($e.reference.toPointer());
@@ -14928,14 +14358,11 @@ extension NativeInteropFlutterIntegrationCoreApi$$Methods
     } else {
       $o = $r;
     }
-    return $o.as<jni$_.JMap>(jni$_.JMap.type, releaseOriginal: true)
-        as jni$_.JMap<jni$_.JLong?, NativeInteropAllNullableTypes?>;
+    return $o?.as<jni$_.JByteArray>(jni$_.JByteArray.type, releaseOriginal: true);
   }
 
-  static final _id_echoAsyncEnum = NativeInteropFlutterIntegrationCoreApi._class.instanceMethodId(
-    r'echoAsyncEnum',
-    r'(Lcom/example/test_plugin/NativeInteropAnEnum;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;',
-  );
+  static final _id_echoAsyncEnum = NativeInteropFlutterIntegrationCoreApiBridge._class
+      .instanceMethodId(r'echoAsyncEnum', r'(JLkotlin/coroutines/Continuation;)Ljava/lang/Object;');
 
   static final _echoAsyncEnum =
       jni$_.ProtectedJniExtensions.lookup<
@@ -14943,7 +14370,7 @@ extension NativeInteropFlutterIntegrationCoreApi$$Methods
               jni$_.JniResult Function(
                 jni$_.Pointer<jni$_.Void>,
                 jni$_.JMethodIDPtr,
-                jni$_.VarArgs<(jni$_.Pointer<jni$_.Void>, jni$_.Pointer<jni$_.Void>)>,
+                jni$_.VarArgs<(jni$_.Int64, jni$_.Pointer<jni$_.Void>)>,
               )
             >
           >('globalEnv_CallObjectMethod')
@@ -14951,22 +14378,21 @@ extension NativeInteropFlutterIntegrationCoreApi$$Methods
             jni$_.JniResult Function(
               jni$_.Pointer<jni$_.Void>,
               jni$_.JMethodIDPtr,
-              jni$_.Pointer<jni$_.Void>,
+              core$_.int,
               jni$_.Pointer<jni$_.Void>,
             )
           >();
 
-  /// from: `public suspend fun echoAsyncEnum(anEnum: com.example.test_plugin.NativeInteropAnEnum): com.example.test_plugin.NativeInteropAnEnum`
+  /// from: `public suspend fun echoAsyncEnum(anEnum: kotlin.Long): kotlin.Long`
   /// The returned object must be released after use, by calling the [release] method.
-  core$_.Future<NativeInteropAnEnum> echoAsyncEnum(NativeInteropAnEnum nativeInteropAnEnum) async {
+  core$_.Future<jni$_.JLong> echoAsyncEnum(core$_.int j) async {
     final $p = jni$_.ReceivePort();
     final _$continuation = jni$_.ProtectedJniExtensions.newPortContinuation($p);
     final _$$selfRef = reference;
-    final _$nativeInteropAnEnum = nativeInteropAnEnum.reference;
     final $r = _echoAsyncEnum(
       _$$selfRef.pointer,
       _id_echoAsyncEnum.pointer,
-      _$nativeInteropAnEnum.pointer,
+      j,
       _$continuation.pointer,
     ).object<jni$_.JObject>();
     _$continuation.release();
@@ -14985,13 +14411,13 @@ extension NativeInteropFlutterIntegrationCoreApi$$Methods
     } else {
       $o = $r;
     }
-    return $o.as<NativeInteropAnEnum>(NativeInteropAnEnum.type, releaseOriginal: true);
+    return $o.as<jni$_.JLong>(jni$_.JLong.type, releaseOriginal: true);
   }
 
-  static final _id_echoAnotherAsyncEnum = NativeInteropFlutterIntegrationCoreApi._class
+  static final _id_echoAnotherAsyncEnum = NativeInteropFlutterIntegrationCoreApiBridge._class
       .instanceMethodId(
         r'echoAnotherAsyncEnum',
-        r'(Lcom/example/test_plugin/NativeInteropAnotherEnum;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;',
+        r'(JLkotlin/coroutines/Continuation;)Ljava/lang/Object;',
       );
 
   static final _echoAnotherAsyncEnum =
@@ -15000,7 +14426,7 @@ extension NativeInteropFlutterIntegrationCoreApi$$Methods
               jni$_.JniResult Function(
                 jni$_.Pointer<jni$_.Void>,
                 jni$_.JMethodIDPtr,
-                jni$_.VarArgs<(jni$_.Pointer<jni$_.Void>, jni$_.Pointer<jni$_.Void>)>,
+                jni$_.VarArgs<(jni$_.Int64, jni$_.Pointer<jni$_.Void>)>,
               )
             >
           >('globalEnv_CallObjectMethod')
@@ -15008,24 +14434,21 @@ extension NativeInteropFlutterIntegrationCoreApi$$Methods
             jni$_.JniResult Function(
               jni$_.Pointer<jni$_.Void>,
               jni$_.JMethodIDPtr,
-              jni$_.Pointer<jni$_.Void>,
+              core$_.int,
               jni$_.Pointer<jni$_.Void>,
             )
           >();
 
-  /// from: `public suspend fun echoAnotherAsyncEnum(anotherEnum: com.example.test_plugin.NativeInteropAnotherEnum): com.example.test_plugin.NativeInteropAnotherEnum`
+  /// from: `public suspend fun echoAnotherAsyncEnum(anotherEnum: kotlin.Long): kotlin.Long`
   /// The returned object must be released after use, by calling the [release] method.
-  core$_.Future<NativeInteropAnotherEnum> echoAnotherAsyncEnum(
-    NativeInteropAnotherEnum nativeInteropAnotherEnum,
-  ) async {
+  core$_.Future<jni$_.JLong> echoAnotherAsyncEnum(core$_.int j) async {
     final $p = jni$_.ReceivePort();
     final _$continuation = jni$_.ProtectedJniExtensions.newPortContinuation($p);
     final _$$selfRef = reference;
-    final _$nativeInteropAnotherEnum = nativeInteropAnotherEnum.reference;
     final $r = _echoAnotherAsyncEnum(
       _$$selfRef.pointer,
       _id_echoAnotherAsyncEnum.pointer,
-      _$nativeInteropAnotherEnum.pointer,
+      j,
       _$continuation.pointer,
     ).object<jni$_.JObject>();
     _$continuation.release();
@@ -15044,10 +14467,10 @@ extension NativeInteropFlutterIntegrationCoreApi$$Methods
     } else {
       $o = $r;
     }
-    return $o.as<NativeInteropAnotherEnum>(NativeInteropAnotherEnum.type, releaseOriginal: true);
+    return $o.as<jni$_.JLong>(jni$_.JLong.type, releaseOriginal: true);
   }
 
-  static final _id_echoAsyncNullableBool = NativeInteropFlutterIntegrationCoreApi._class
+  static final _id_echoAsyncNullableBool = NativeInteropFlutterIntegrationCoreApiBridge._class
       .instanceMethodId(
         r'echoAsyncNullableBool',
         r'(Ljava/lang/Boolean;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;',
@@ -15106,7 +14529,7 @@ extension NativeInteropFlutterIntegrationCoreApi$$Methods
     return $o?.as<jni$_.JBoolean>(jni$_.JBoolean.type, releaseOriginal: true);
   }
 
-  static final _id_echoAsyncNullableInt = NativeInteropFlutterIntegrationCoreApi._class
+  static final _id_echoAsyncNullableInt = NativeInteropFlutterIntegrationCoreApiBridge._class
       .instanceMethodId(
         r'echoAsyncNullableInt',
         r'(Ljava/lang/Long;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;',
@@ -15165,7 +14588,7 @@ extension NativeInteropFlutterIntegrationCoreApi$$Methods
     return $o?.as<jni$_.JLong>(jni$_.JLong.type, releaseOriginal: true);
   }
 
-  static final _id_echoAsyncNullableDouble = NativeInteropFlutterIntegrationCoreApi._class
+  static final _id_echoAsyncNullableDouble = NativeInteropFlutterIntegrationCoreApiBridge._class
       .instanceMethodId(
         r'echoAsyncNullableDouble',
         r'(Ljava/lang/Double;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;',
@@ -15224,7 +14647,7 @@ extension NativeInteropFlutterIntegrationCoreApi$$Methods
     return $o?.as<jni$_.JDouble>(jni$_.JDouble.type, releaseOriginal: true);
   }
 
-  static final _id_echoAsyncNullableString = NativeInteropFlutterIntegrationCoreApi._class
+  static final _id_echoAsyncNullableString = NativeInteropFlutterIntegrationCoreApiBridge._class
       .instanceMethodId(
         r'echoAsyncNullableString',
         r'(Ljava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;',
@@ -15283,7 +14706,7 @@ extension NativeInteropFlutterIntegrationCoreApi$$Methods
     return $o?.as<jni$_.JString>(jni$_.JString.type, releaseOriginal: true);
   }
 
-  static final _id_echoAsyncNullableUint8List = NativeInteropFlutterIntegrationCoreApi._class
+  static final _id_echoAsyncNullableUint8List = NativeInteropFlutterIntegrationCoreApiBridge._class
       .instanceMethodId(
         r'echoAsyncNullableUint8List',
         r'([BLkotlin/coroutines/Continuation;)Ljava/lang/Object;',
@@ -15342,7 +14765,7 @@ extension NativeInteropFlutterIntegrationCoreApi$$Methods
     return $o?.as<jni$_.JByteArray>(jni$_.JByteArray.type, releaseOriginal: true);
   }
 
-  static final _id_echoAsyncNullableInt32List = NativeInteropFlutterIntegrationCoreApi._class
+  static final _id_echoAsyncNullableInt32List = NativeInteropFlutterIntegrationCoreApiBridge._class
       .instanceMethodId(
         r'echoAsyncNullableInt32List',
         r'([ILkotlin/coroutines/Continuation;)Ljava/lang/Object;',
@@ -15401,7 +14824,7 @@ extension NativeInteropFlutterIntegrationCoreApi$$Methods
     return $o?.as<jni$_.JIntArray>(jni$_.JIntArray.type, releaseOriginal: true);
   }
 
-  static final _id_echoAsyncNullableInt64List = NativeInteropFlutterIntegrationCoreApi._class
+  static final _id_echoAsyncNullableInt64List = NativeInteropFlutterIntegrationCoreApiBridge._class
       .instanceMethodId(
         r'echoAsyncNullableInt64List',
         r'([JLkotlin/coroutines/Continuation;)Ljava/lang/Object;',
@@ -15460,7 +14883,8 @@ extension NativeInteropFlutterIntegrationCoreApi$$Methods
     return $o?.as<jni$_.JLongArray>(jni$_.JLongArray.type, releaseOriginal: true);
   }
 
-  static final _id_echoAsyncNullableFloat64List = NativeInteropFlutterIntegrationCoreApi._class
+  static final _id_echoAsyncNullableFloat64List = NativeInteropFlutterIntegrationCoreApiBridge
+      ._class
       .instanceMethodId(
         r'echoAsyncNullableFloat64List',
         r'([DLkotlin/coroutines/Continuation;)Ljava/lang/Object;',
@@ -15519,10 +14943,10 @@ extension NativeInteropFlutterIntegrationCoreApi$$Methods
     return $o?.as<jni$_.JDoubleArray>(jni$_.JDoubleArray.type, releaseOriginal: true);
   }
 
-  static final _id_echoAsyncNullableObject = NativeInteropFlutterIntegrationCoreApi._class
+  static final _id_echoAsyncNullableObject = NativeInteropFlutterIntegrationCoreApiBridge._class
       .instanceMethodId(
         r'echoAsyncNullableObject',
-        r'(Ljava/lang/Object;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;',
+        r'([BLkotlin/coroutines/Continuation;)Ljava/lang/Object;',
       );
 
   static final _echoAsyncNullableObject =
@@ -15544,17 +14968,17 @@ extension NativeInteropFlutterIntegrationCoreApi$$Methods
             )
           >();
 
-  /// from: `public suspend fun echoAsyncNullableObject(anObject: kotlin.Any?): kotlin.Any?`
+  /// from: `public suspend fun echoAsyncNullableObject(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
   /// The returned object must be released after use, by calling the [release] method.
-  core$_.Future<jni$_.JObject?> echoAsyncNullableObject(jni$_.JObject? object) async {
+  core$_.Future<jni$_.JByteArray?> echoAsyncNullableObject(jni$_.JByteArray bs) async {
     final $p = jni$_.ReceivePort();
     final _$continuation = jni$_.ProtectedJniExtensions.newPortContinuation($p);
     final _$$selfRef = reference;
-    final _$object = object?.reference ?? jni$_.jNullReference;
+    final _$bs = bs.reference;
     final $r = _echoAsyncNullableObject(
       _$$selfRef.pointer,
       _id_echoAsyncNullableObject.pointer,
-      _$object.pointer,
+      _$bs.pointer,
       _$continuation.pointer,
     ).object<jni$_.JObject?>();
     _$continuation.release();
@@ -15575,13 +14999,13 @@ extension NativeInteropFlutterIntegrationCoreApi$$Methods
     } else {
       $o = $r;
     }
-    return $o?.as<jni$_.JObject>(const jni$_.$JObject$Type$(), releaseOriginal: true);
+    return $o?.as<jni$_.JByteArray>(jni$_.JByteArray.type, releaseOriginal: true);
   }
 
-  static final _id_echoAsyncNullableList = NativeInteropFlutterIntegrationCoreApi._class
+  static final _id_echoAsyncNullableList = NativeInteropFlutterIntegrationCoreApiBridge._class
       .instanceMethodId(
         r'echoAsyncNullableList',
-        r'(Ljava/util/List;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;',
+        r'([BLkotlin/coroutines/Continuation;)Ljava/lang/Object;',
       );
 
   static final _echoAsyncNullableList =
@@ -15603,19 +15027,17 @@ extension NativeInteropFlutterIntegrationCoreApi$$Methods
             )
           >();
 
-  /// from: `public suspend fun echoAsyncNullableList(list: kotlin.collections.List<kotlin.Any?>?): kotlin.collections.List<kotlin.Any?>?`
+  /// from: `public suspend fun echoAsyncNullableList(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
   /// The returned object must be released after use, by calling the [release] method.
-  core$_.Future<jni$_.JList<jni$_.JObject?>?> echoAsyncNullableList(
-    jni$_.JList<jni$_.JObject?>? list,
-  ) async {
+  core$_.Future<jni$_.JByteArray?> echoAsyncNullableList(jni$_.JByteArray bs) async {
     final $p = jni$_.ReceivePort();
     final _$continuation = jni$_.ProtectedJniExtensions.newPortContinuation($p);
     final _$$selfRef = reference;
-    final _$list = list?.reference ?? jni$_.jNullReference;
+    final _$bs = bs.reference;
     final $r = _echoAsyncNullableList(
       _$$selfRef.pointer,
       _id_echoAsyncNullableList.pointer,
-      _$list.pointer,
+      _$bs.pointer,
       _$continuation.pointer,
     ).object<jni$_.JObject?>();
     _$continuation.release();
@@ -15636,14 +15058,13 @@ extension NativeInteropFlutterIntegrationCoreApi$$Methods
     } else {
       $o = $r;
     }
-    return $o?.as<jni$_.JList>(jni$_.JList.type, releaseOriginal: true)
-        as jni$_.JList<jni$_.JObject?>?;
+    return $o?.as<jni$_.JByteArray>(jni$_.JByteArray.type, releaseOriginal: true);
   }
 
-  static final _id_echoAsyncNullableEnumList = NativeInteropFlutterIntegrationCoreApi._class
+  static final _id_echoAsyncNullableEnumList = NativeInteropFlutterIntegrationCoreApiBridge._class
       .instanceMethodId(
         r'echoAsyncNullableEnumList',
-        r'(Ljava/util/List;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;',
+        r'([BLkotlin/coroutines/Continuation;)Ljava/lang/Object;',
       );
 
   static final _echoAsyncNullableEnumList =
@@ -15665,19 +15086,17 @@ extension NativeInteropFlutterIntegrationCoreApi$$Methods
             )
           >();
 
-  /// from: `public suspend fun echoAsyncNullableEnumList(enumList: kotlin.collections.List<com.example.test_plugin.NativeInteropAnEnum?>?): kotlin.collections.List<com.example.test_plugin.NativeInteropAnEnum?>?`
+  /// from: `public suspend fun echoAsyncNullableEnumList(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
   /// The returned object must be released after use, by calling the [release] method.
-  core$_.Future<jni$_.JList<NativeInteropAnEnum?>?> echoAsyncNullableEnumList(
-    jni$_.JList<NativeInteropAnEnum?>? list,
-  ) async {
+  core$_.Future<jni$_.JByteArray?> echoAsyncNullableEnumList(jni$_.JByteArray bs) async {
     final $p = jni$_.ReceivePort();
     final _$continuation = jni$_.ProtectedJniExtensions.newPortContinuation($p);
     final _$$selfRef = reference;
-    final _$list = list?.reference ?? jni$_.jNullReference;
+    final _$bs = bs.reference;
     final $r = _echoAsyncNullableEnumList(
       _$$selfRef.pointer,
       _id_echoAsyncNullableEnumList.pointer,
-      _$list.pointer,
+      _$bs.pointer,
       _$continuation.pointer,
     ).object<jni$_.JObject?>();
     _$continuation.release();
@@ -15698,14 +15117,13 @@ extension NativeInteropFlutterIntegrationCoreApi$$Methods
     } else {
       $o = $r;
     }
-    return $o?.as<jni$_.JList>(jni$_.JList.type, releaseOriginal: true)
-        as jni$_.JList<NativeInteropAnEnum?>?;
+    return $o?.as<jni$_.JByteArray>(jni$_.JByteArray.type, releaseOriginal: true);
   }
 
-  static final _id_echoAsyncNullableClassList = NativeInteropFlutterIntegrationCoreApi._class
+  static final _id_echoAsyncNullableClassList = NativeInteropFlutterIntegrationCoreApiBridge._class
       .instanceMethodId(
         r'echoAsyncNullableClassList',
-        r'(Ljava/util/List;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;',
+        r'([BLkotlin/coroutines/Continuation;)Ljava/lang/Object;',
       );
 
   static final _echoAsyncNullableClassList =
@@ -15727,19 +15145,17 @@ extension NativeInteropFlutterIntegrationCoreApi$$Methods
             )
           >();
 
-  /// from: `public suspend fun echoAsyncNullableClassList(classList: kotlin.collections.List<com.example.test_plugin.NativeInteropAllNullableTypes?>?): kotlin.collections.List<com.example.test_plugin.NativeInteropAllNullableTypes?>?`
+  /// from: `public suspend fun echoAsyncNullableClassList(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
   /// The returned object must be released after use, by calling the [release] method.
-  core$_.Future<jni$_.JList<NativeInteropAllNullableTypes?>?> echoAsyncNullableClassList(
-    jni$_.JList<NativeInteropAllNullableTypes?>? list,
-  ) async {
+  core$_.Future<jni$_.JByteArray?> echoAsyncNullableClassList(jni$_.JByteArray bs) async {
     final $p = jni$_.ReceivePort();
     final _$continuation = jni$_.ProtectedJniExtensions.newPortContinuation($p);
     final _$$selfRef = reference;
-    final _$list = list?.reference ?? jni$_.jNullReference;
+    final _$bs = bs.reference;
     final $r = _echoAsyncNullableClassList(
       _$$selfRef.pointer,
       _id_echoAsyncNullableClassList.pointer,
-      _$list.pointer,
+      _$bs.pointer,
       _$continuation.pointer,
     ).object<jni$_.JObject?>();
     _$continuation.release();
@@ -15760,14 +15176,14 @@ extension NativeInteropFlutterIntegrationCoreApi$$Methods
     } else {
       $o = $r;
     }
-    return $o?.as<jni$_.JList>(jni$_.JList.type, releaseOriginal: true)
-        as jni$_.JList<NativeInteropAllNullableTypes?>?;
+    return $o?.as<jni$_.JByteArray>(jni$_.JByteArray.type, releaseOriginal: true);
   }
 
-  static final _id_echoAsyncNullableNonNullEnumList = NativeInteropFlutterIntegrationCoreApi._class
+  static final _id_echoAsyncNullableNonNullEnumList = NativeInteropFlutterIntegrationCoreApiBridge
+      ._class
       .instanceMethodId(
         r'echoAsyncNullableNonNullEnumList',
-        r'(Ljava/util/List;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;',
+        r'([BLkotlin/coroutines/Continuation;)Ljava/lang/Object;',
       );
 
   static final _echoAsyncNullableNonNullEnumList =
@@ -15789,19 +15205,17 @@ extension NativeInteropFlutterIntegrationCoreApi$$Methods
             )
           >();
 
-  /// from: `public suspend fun echoAsyncNullableNonNullEnumList(enumList: kotlin.collections.List<com.example.test_plugin.NativeInteropAnEnum>?): kotlin.collections.List<com.example.test_plugin.NativeInteropAnEnum>?`
+  /// from: `public suspend fun echoAsyncNullableNonNullEnumList(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
   /// The returned object must be released after use, by calling the [release] method.
-  core$_.Future<jni$_.JList<NativeInteropAnEnum>?> echoAsyncNullableNonNullEnumList(
-    jni$_.JList<NativeInteropAnEnum?>? list,
-  ) async {
+  core$_.Future<jni$_.JByteArray?> echoAsyncNullableNonNullEnumList(jni$_.JByteArray bs) async {
     final $p = jni$_.ReceivePort();
     final _$continuation = jni$_.ProtectedJniExtensions.newPortContinuation($p);
     final _$$selfRef = reference;
-    final _$list = list?.reference ?? jni$_.jNullReference;
+    final _$bs = bs.reference;
     final $r = _echoAsyncNullableNonNullEnumList(
       _$$selfRef.pointer,
       _id_echoAsyncNullableNonNullEnumList.pointer,
-      _$list.pointer,
+      _$bs.pointer,
       _$continuation.pointer,
     ).object<jni$_.JObject?>();
     _$continuation.release();
@@ -15822,14 +15236,14 @@ extension NativeInteropFlutterIntegrationCoreApi$$Methods
     } else {
       $o = $r;
     }
-    return $o?.as<jni$_.JList>(jni$_.JList.type, releaseOriginal: true)
-        as jni$_.JList<NativeInteropAnEnum>?;
+    return $o?.as<jni$_.JByteArray>(jni$_.JByteArray.type, releaseOriginal: true);
   }
 
-  static final _id_echoAsyncNullableNonNullClassList = NativeInteropFlutterIntegrationCoreApi._class
+  static final _id_echoAsyncNullableNonNullClassList = NativeInteropFlutterIntegrationCoreApiBridge
+      ._class
       .instanceMethodId(
         r'echoAsyncNullableNonNullClassList',
-        r'(Ljava/util/List;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;',
+        r'([BLkotlin/coroutines/Continuation;)Ljava/lang/Object;',
       );
 
   static final _echoAsyncNullableNonNullClassList =
@@ -15851,19 +15265,17 @@ extension NativeInteropFlutterIntegrationCoreApi$$Methods
             )
           >();
 
-  /// from: `public suspend fun echoAsyncNullableNonNullClassList(classList: kotlin.collections.List<com.example.test_plugin.NativeInteropAllNullableTypes>?): kotlin.collections.List<com.example.test_plugin.NativeInteropAllNullableTypes>?`
+  /// from: `public suspend fun echoAsyncNullableNonNullClassList(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
   /// The returned object must be released after use, by calling the [release] method.
-  core$_.Future<jni$_.JList<NativeInteropAllNullableTypes>?> echoAsyncNullableNonNullClassList(
-    jni$_.JList<NativeInteropAllNullableTypes?>? list,
-  ) async {
+  core$_.Future<jni$_.JByteArray?> echoAsyncNullableNonNullClassList(jni$_.JByteArray bs) async {
     final $p = jni$_.ReceivePort();
     final _$continuation = jni$_.ProtectedJniExtensions.newPortContinuation($p);
     final _$$selfRef = reference;
-    final _$list = list?.reference ?? jni$_.jNullReference;
+    final _$bs = bs.reference;
     final $r = _echoAsyncNullableNonNullClassList(
       _$$selfRef.pointer,
       _id_echoAsyncNullableNonNullClassList.pointer,
-      _$list.pointer,
+      _$bs.pointer,
       _$continuation.pointer,
     ).object<jni$_.JObject?>();
     _$continuation.release();
@@ -15884,14 +15296,13 @@ extension NativeInteropFlutterIntegrationCoreApi$$Methods
     } else {
       $o = $r;
     }
-    return $o?.as<jni$_.JList>(jni$_.JList.type, releaseOriginal: true)
-        as jni$_.JList<NativeInteropAllNullableTypes>?;
+    return $o?.as<jni$_.JByteArray>(jni$_.JByteArray.type, releaseOriginal: true);
   }
 
-  static final _id_echoAsyncNullableMap = NativeInteropFlutterIntegrationCoreApi._class
+  static final _id_echoAsyncNullableMap = NativeInteropFlutterIntegrationCoreApiBridge._class
       .instanceMethodId(
         r'echoAsyncNullableMap',
-        r'(Ljava/util/Map;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;',
+        r'([BLkotlin/coroutines/Continuation;)Ljava/lang/Object;',
       );
 
   static final _echoAsyncNullableMap =
@@ -15913,19 +15324,17 @@ extension NativeInteropFlutterIntegrationCoreApi$$Methods
             )
           >();
 
-  /// from: `public suspend fun echoAsyncNullableMap(map: kotlin.collections.Map<kotlin.Any?, kotlin.Any?>?): kotlin.collections.Map<kotlin.Any?, kotlin.Any?>?`
+  /// from: `public suspend fun echoAsyncNullableMap(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
   /// The returned object must be released after use, by calling the [release] method.
-  core$_.Future<jni$_.JMap<jni$_.JObject?, jni$_.JObject?>?> echoAsyncNullableMap(
-    jni$_.JMap<jni$_.JObject?, jni$_.JObject?>? map,
-  ) async {
+  core$_.Future<jni$_.JByteArray?> echoAsyncNullableMap(jni$_.JByteArray bs) async {
     final $p = jni$_.ReceivePort();
     final _$continuation = jni$_.ProtectedJniExtensions.newPortContinuation($p);
     final _$$selfRef = reference;
-    final _$map = map?.reference ?? jni$_.jNullReference;
+    final _$bs = bs.reference;
     final $r = _echoAsyncNullableMap(
       _$$selfRef.pointer,
       _id_echoAsyncNullableMap.pointer,
-      _$map.pointer,
+      _$bs.pointer,
       _$continuation.pointer,
     ).object<jni$_.JObject?>();
     _$continuation.release();
@@ -15946,14 +15355,13 @@ extension NativeInteropFlutterIntegrationCoreApi$$Methods
     } else {
       $o = $r;
     }
-    return $o?.as<jni$_.JMap>(jni$_.JMap.type, releaseOriginal: true)
-        as jni$_.JMap<jni$_.JObject?, jni$_.JObject?>?;
+    return $o?.as<jni$_.JByteArray>(jni$_.JByteArray.type, releaseOriginal: true);
   }
 
-  static final _id_echoAsyncNullableStringMap = NativeInteropFlutterIntegrationCoreApi._class
+  static final _id_echoAsyncNullableStringMap = NativeInteropFlutterIntegrationCoreApiBridge._class
       .instanceMethodId(
         r'echoAsyncNullableStringMap',
-        r'(Ljava/util/Map;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;',
+        r'([BLkotlin/coroutines/Continuation;)Ljava/lang/Object;',
       );
 
   static final _echoAsyncNullableStringMap =
@@ -15975,19 +15383,17 @@ extension NativeInteropFlutterIntegrationCoreApi$$Methods
             )
           >();
 
-  /// from: `public suspend fun echoAsyncNullableStringMap(stringMap: kotlin.collections.Map<kotlin.String?, kotlin.String?>?): kotlin.collections.Map<kotlin.String?, kotlin.String?>?`
+  /// from: `public suspend fun echoAsyncNullableStringMap(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
   /// The returned object must be released after use, by calling the [release] method.
-  core$_.Future<jni$_.JMap<jni$_.JString?, jni$_.JString?>?> echoAsyncNullableStringMap(
-    jni$_.JMap<jni$_.JString?, jni$_.JString?>? map,
-  ) async {
+  core$_.Future<jni$_.JByteArray?> echoAsyncNullableStringMap(jni$_.JByteArray bs) async {
     final $p = jni$_.ReceivePort();
     final _$continuation = jni$_.ProtectedJniExtensions.newPortContinuation($p);
     final _$$selfRef = reference;
-    final _$map = map?.reference ?? jni$_.jNullReference;
+    final _$bs = bs.reference;
     final $r = _echoAsyncNullableStringMap(
       _$$selfRef.pointer,
       _id_echoAsyncNullableStringMap.pointer,
-      _$map.pointer,
+      _$bs.pointer,
       _$continuation.pointer,
     ).object<jni$_.JObject?>();
     _$continuation.release();
@@ -16008,14 +15414,13 @@ extension NativeInteropFlutterIntegrationCoreApi$$Methods
     } else {
       $o = $r;
     }
-    return $o?.as<jni$_.JMap>(jni$_.JMap.type, releaseOriginal: true)
-        as jni$_.JMap<jni$_.JString?, jni$_.JString?>?;
+    return $o?.as<jni$_.JByteArray>(jni$_.JByteArray.type, releaseOriginal: true);
   }
 
-  static final _id_echoAsyncNullableIntMap = NativeInteropFlutterIntegrationCoreApi._class
+  static final _id_echoAsyncNullableIntMap = NativeInteropFlutterIntegrationCoreApiBridge._class
       .instanceMethodId(
         r'echoAsyncNullableIntMap',
-        r'(Ljava/util/Map;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;',
+        r'([BLkotlin/coroutines/Continuation;)Ljava/lang/Object;',
       );
 
   static final _echoAsyncNullableIntMap =
@@ -16037,19 +15442,17 @@ extension NativeInteropFlutterIntegrationCoreApi$$Methods
             )
           >();
 
-  /// from: `public suspend fun echoAsyncNullableIntMap(intMap: kotlin.collections.Map<kotlin.Long?, kotlin.Long?>?): kotlin.collections.Map<kotlin.Long?, kotlin.Long?>?`
+  /// from: `public suspend fun echoAsyncNullableIntMap(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
   /// The returned object must be released after use, by calling the [release] method.
-  core$_.Future<jni$_.JMap<jni$_.JLong?, jni$_.JLong?>?> echoAsyncNullableIntMap(
-    jni$_.JMap<jni$_.JLong?, jni$_.JLong?>? map,
-  ) async {
+  core$_.Future<jni$_.JByteArray?> echoAsyncNullableIntMap(jni$_.JByteArray bs) async {
     final $p = jni$_.ReceivePort();
     final _$continuation = jni$_.ProtectedJniExtensions.newPortContinuation($p);
     final _$$selfRef = reference;
-    final _$map = map?.reference ?? jni$_.jNullReference;
+    final _$bs = bs.reference;
     final $r = _echoAsyncNullableIntMap(
       _$$selfRef.pointer,
       _id_echoAsyncNullableIntMap.pointer,
-      _$map.pointer,
+      _$bs.pointer,
       _$continuation.pointer,
     ).object<jni$_.JObject?>();
     _$continuation.release();
@@ -16070,14 +15473,13 @@ extension NativeInteropFlutterIntegrationCoreApi$$Methods
     } else {
       $o = $r;
     }
-    return $o?.as<jni$_.JMap>(jni$_.JMap.type, releaseOriginal: true)
-        as jni$_.JMap<jni$_.JLong?, jni$_.JLong?>?;
+    return $o?.as<jni$_.JByteArray>(jni$_.JByteArray.type, releaseOriginal: true);
   }
 
-  static final _id_echoAsyncNullableEnumMap = NativeInteropFlutterIntegrationCoreApi._class
+  static final _id_echoAsyncNullableEnumMap = NativeInteropFlutterIntegrationCoreApiBridge._class
       .instanceMethodId(
         r'echoAsyncNullableEnumMap',
-        r'(Ljava/util/Map;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;',
+        r'([BLkotlin/coroutines/Continuation;)Ljava/lang/Object;',
       );
 
   static final _echoAsyncNullableEnumMap =
@@ -16099,19 +15501,17 @@ extension NativeInteropFlutterIntegrationCoreApi$$Methods
             )
           >();
 
-  /// from: `public suspend fun echoAsyncNullableEnumMap(enumMap: kotlin.collections.Map<com.example.test_plugin.NativeInteropAnEnum?, com.example.test_plugin.NativeInteropAnEnum?>?): kotlin.collections.Map<com.example.test_plugin.NativeInteropAnEnum?, com.example.test_plugin.NativeInteropAnEnum?>?`
+  /// from: `public suspend fun echoAsyncNullableEnumMap(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
   /// The returned object must be released after use, by calling the [release] method.
-  core$_.Future<jni$_.JMap<NativeInteropAnEnum?, NativeInteropAnEnum?>?> echoAsyncNullableEnumMap(
-    jni$_.JMap<NativeInteropAnEnum?, NativeInteropAnEnum?>? map,
-  ) async {
+  core$_.Future<jni$_.JByteArray?> echoAsyncNullableEnumMap(jni$_.JByteArray bs) async {
     final $p = jni$_.ReceivePort();
     final _$continuation = jni$_.ProtectedJniExtensions.newPortContinuation($p);
     final _$$selfRef = reference;
-    final _$map = map?.reference ?? jni$_.jNullReference;
+    final _$bs = bs.reference;
     final $r = _echoAsyncNullableEnumMap(
       _$$selfRef.pointer,
       _id_echoAsyncNullableEnumMap.pointer,
-      _$map.pointer,
+      _$bs.pointer,
       _$continuation.pointer,
     ).object<jni$_.JObject?>();
     _$continuation.release();
@@ -16132,14 +15532,13 @@ extension NativeInteropFlutterIntegrationCoreApi$$Methods
     } else {
       $o = $r;
     }
-    return $o?.as<jni$_.JMap>(jni$_.JMap.type, releaseOriginal: true)
-        as jni$_.JMap<NativeInteropAnEnum?, NativeInteropAnEnum?>?;
+    return $o?.as<jni$_.JByteArray>(jni$_.JByteArray.type, releaseOriginal: true);
   }
 
-  static final _id_echoAsyncNullableClassMap = NativeInteropFlutterIntegrationCoreApi._class
+  static final _id_echoAsyncNullableClassMap = NativeInteropFlutterIntegrationCoreApiBridge._class
       .instanceMethodId(
         r'echoAsyncNullableClassMap',
-        r'(Ljava/util/Map;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;',
+        r'([BLkotlin/coroutines/Continuation;)Ljava/lang/Object;',
       );
 
   static final _echoAsyncNullableClassMap =
@@ -16161,18 +15560,17 @@ extension NativeInteropFlutterIntegrationCoreApi$$Methods
             )
           >();
 
-  /// from: `public suspend fun echoAsyncNullableClassMap(classMap: kotlin.collections.Map<kotlin.Long?, com.example.test_plugin.NativeInteropAllNullableTypes?>?): kotlin.collections.Map<kotlin.Long?, com.example.test_plugin.NativeInteropAllNullableTypes?>?`
+  /// from: `public suspend fun echoAsyncNullableClassMap(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
   /// The returned object must be released after use, by calling the [release] method.
-  core$_.Future<jni$_.JMap<jni$_.JLong?, NativeInteropAllNullableTypes?>?>
-  echoAsyncNullableClassMap(jni$_.JMap<jni$_.JLong?, NativeInteropAllNullableTypes?>? map) async {
+  core$_.Future<jni$_.JByteArray?> echoAsyncNullableClassMap(jni$_.JByteArray bs) async {
     final $p = jni$_.ReceivePort();
     final _$continuation = jni$_.ProtectedJniExtensions.newPortContinuation($p);
     final _$$selfRef = reference;
-    final _$map = map?.reference ?? jni$_.jNullReference;
+    final _$bs = bs.reference;
     final $r = _echoAsyncNullableClassMap(
       _$$selfRef.pointer,
       _id_echoAsyncNullableClassMap.pointer,
-      _$map.pointer,
+      _$bs.pointer,
       _$continuation.pointer,
     ).object<jni$_.JObject?>();
     _$continuation.release();
@@ -16193,14 +15591,13 @@ extension NativeInteropFlutterIntegrationCoreApi$$Methods
     } else {
       $o = $r;
     }
-    return $o?.as<jni$_.JMap>(jni$_.JMap.type, releaseOriginal: true)
-        as jni$_.JMap<jni$_.JLong?, NativeInteropAllNullableTypes?>?;
+    return $o?.as<jni$_.JByteArray>(jni$_.JByteArray.type, releaseOriginal: true);
   }
 
-  static final _id_echoAsyncNullableEnum = NativeInteropFlutterIntegrationCoreApi._class
+  static final _id_echoAsyncNullableEnum = NativeInteropFlutterIntegrationCoreApiBridge._class
       .instanceMethodId(
         r'echoAsyncNullableEnum',
-        r'(Lcom/example/test_plugin/NativeInteropAnEnum;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;',
+        r'(JLkotlin/coroutines/Continuation;)Ljava/lang/Object;',
       );
 
   static final _echoAsyncNullableEnum =
@@ -16209,7 +15606,7 @@ extension NativeInteropFlutterIntegrationCoreApi$$Methods
               jni$_.JniResult Function(
                 jni$_.Pointer<jni$_.Void>,
                 jni$_.JMethodIDPtr,
-                jni$_.VarArgs<(jni$_.Pointer<jni$_.Void>, jni$_.Pointer<jni$_.Void>)>,
+                jni$_.VarArgs<(jni$_.Int64, jni$_.Pointer<jni$_.Void>)>,
               )
             >
           >('globalEnv_CallObjectMethod')
@@ -16217,37 +15614,32 @@ extension NativeInteropFlutterIntegrationCoreApi$$Methods
             jni$_.JniResult Function(
               jni$_.Pointer<jni$_.Void>,
               jni$_.JMethodIDPtr,
-              jni$_.Pointer<jni$_.Void>,
+              core$_.int,
               jni$_.Pointer<jni$_.Void>,
             )
           >();
 
-  /// from: `public suspend fun echoAsyncNullableEnum(anEnum: com.example.test_plugin.NativeInteropAnEnum?): com.example.test_plugin.NativeInteropAnEnum?`
+  /// from: `public suspend fun echoAsyncNullableEnum(anEnum: kotlin.Long): kotlin.Long`
   /// The returned object must be released after use, by calling the [release] method.
-  core$_.Future<NativeInteropAnEnum?> echoAsyncNullableEnum(
-    NativeInteropAnEnum? nativeInteropAnEnum,
-  ) async {
+  core$_.Future<jni$_.JLong> echoAsyncNullableEnum(core$_.int j) async {
     final $p = jni$_.ReceivePort();
     final _$continuation = jni$_.ProtectedJniExtensions.newPortContinuation($p);
     final _$$selfRef = reference;
-    final _$nativeInteropAnEnum = nativeInteropAnEnum?.reference ?? jni$_.jNullReference;
     final $r = _echoAsyncNullableEnum(
       _$$selfRef.pointer,
       _id_echoAsyncNullableEnum.pointer,
-      _$nativeInteropAnEnum.pointer,
+      j,
       _$continuation.pointer,
-    ).object<jni$_.JObject?>();
+    ).object<jni$_.JObject>();
     _$continuation.release();
-    jni$_.JObject? $o;
-    if ($r != null && $r.isInstanceOf(jni$_.coroutineSingletonsClass)) {
+    jni$_.JObject $o;
+    if ($r.isInstanceOf(jni$_.coroutineSingletonsClass)) {
       $r.release();
       final $a = await $p.first;
-      $o = $a == 0
-          ? null
-          : jni$_.JObject.fromReference(jni$_.JGlobalReference(jni$_.JObjectPtr.fromAddress($a)));
-      if ($o != null && $o.isInstanceOf(jni$_.result$Class)) {
+      $o = jni$_.JObject.fromReference(jni$_.JGlobalReference(jni$_.JObjectPtr.fromAddress($a)));
+      if ($o.isInstanceOf(jni$_.result$Class)) {
         $o = jni$_.resultValueField.get($o, const jni$_.$JObject$Type$());
-      } else if ($o != null && $o.isInstanceOf(jni$_.result$FailureClass)) {
+      } else if ($o.isInstanceOf(jni$_.result$FailureClass)) {
         final $e = jni$_.failureExceptionField.get($o, const jni$_.$JObject$Type$());
         $o.release();
         jni$_.Jni.throwException($e.reference.toPointer());
@@ -16255,13 +15647,14 @@ extension NativeInteropFlutterIntegrationCoreApi$$Methods
     } else {
       $o = $r;
     }
-    return $o?.as<NativeInteropAnEnum>(NativeInteropAnEnum.type, releaseOriginal: true);
+    return $o.as<jni$_.JLong>(jni$_.JLong.type, releaseOriginal: true);
   }
 
-  static final _id_echoAnotherAsyncNullableEnum = NativeInteropFlutterIntegrationCoreApi._class
+  static final _id_echoAnotherAsyncNullableEnum = NativeInteropFlutterIntegrationCoreApiBridge
+      ._class
       .instanceMethodId(
         r'echoAnotherAsyncNullableEnum',
-        r'(Lcom/example/test_plugin/NativeInteropAnotherEnum;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;',
+        r'(JLkotlin/coroutines/Continuation;)Ljava/lang/Object;',
       );
 
   static final _echoAnotherAsyncNullableEnum =
@@ -16270,7 +15663,7 @@ extension NativeInteropFlutterIntegrationCoreApi$$Methods
               jni$_.JniResult Function(
                 jni$_.Pointer<jni$_.Void>,
                 jni$_.JMethodIDPtr,
-                jni$_.VarArgs<(jni$_.Pointer<jni$_.Void>, jni$_.Pointer<jni$_.Void>)>,
+                jni$_.VarArgs<(jni$_.Int64, jni$_.Pointer<jni$_.Void>)>,
               )
             >
           >('globalEnv_CallObjectMethod')
@@ -16278,37 +15671,32 @@ extension NativeInteropFlutterIntegrationCoreApi$$Methods
             jni$_.JniResult Function(
               jni$_.Pointer<jni$_.Void>,
               jni$_.JMethodIDPtr,
-              jni$_.Pointer<jni$_.Void>,
+              core$_.int,
               jni$_.Pointer<jni$_.Void>,
             )
           >();
 
-  /// from: `public suspend fun echoAnotherAsyncNullableEnum(anotherEnum: com.example.test_plugin.NativeInteropAnotherEnum?): com.example.test_plugin.NativeInteropAnotherEnum?`
+  /// from: `public suspend fun echoAnotherAsyncNullableEnum(anotherEnum: kotlin.Long): kotlin.Long`
   /// The returned object must be released after use, by calling the [release] method.
-  core$_.Future<NativeInteropAnotherEnum?> echoAnotherAsyncNullableEnum(
-    NativeInteropAnotherEnum? nativeInteropAnotherEnum,
-  ) async {
+  core$_.Future<jni$_.JLong> echoAnotherAsyncNullableEnum(core$_.int j) async {
     final $p = jni$_.ReceivePort();
     final _$continuation = jni$_.ProtectedJniExtensions.newPortContinuation($p);
     final _$$selfRef = reference;
-    final _$nativeInteropAnotherEnum = nativeInteropAnotherEnum?.reference ?? jni$_.jNullReference;
     final $r = _echoAnotherAsyncNullableEnum(
       _$$selfRef.pointer,
       _id_echoAnotherAsyncNullableEnum.pointer,
-      _$nativeInteropAnotherEnum.pointer,
+      j,
       _$continuation.pointer,
-    ).object<jni$_.JObject?>();
+    ).object<jni$_.JObject>();
     _$continuation.release();
-    jni$_.JObject? $o;
-    if ($r != null && $r.isInstanceOf(jni$_.coroutineSingletonsClass)) {
+    jni$_.JObject $o;
+    if ($r.isInstanceOf(jni$_.coroutineSingletonsClass)) {
       $r.release();
       final $a = await $p.first;
-      $o = $a == 0
-          ? null
-          : jni$_.JObject.fromReference(jni$_.JGlobalReference(jni$_.JObjectPtr.fromAddress($a)));
-      if ($o != null && $o.isInstanceOf(jni$_.result$Class)) {
+      $o = jni$_.JObject.fromReference(jni$_.JGlobalReference(jni$_.JObjectPtr.fromAddress($a)));
+      if ($o.isInstanceOf(jni$_.result$Class)) {
         $o = jni$_.resultValueField.get($o, const jni$_.$JObject$Type$());
-      } else if ($o != null && $o.isInstanceOf(jni$_.result$FailureClass)) {
+      } else if ($o.isInstanceOf(jni$_.result$FailureClass)) {
         final $e = jni$_.failureExceptionField.get($o, const jni$_.$JObject$Type$());
         $o.release();
         jni$_.Jni.throwException($e.reference.toPointer());
@@ -16316,37 +15704,30 @@ extension NativeInteropFlutterIntegrationCoreApi$$Methods
     } else {
       $o = $r;
     }
-    return $o?.as<NativeInteropAnotherEnum>(NativeInteropAnotherEnum.type, releaseOriginal: true);
+    return $o.as<jni$_.JLong>(jni$_.JLong.type, releaseOriginal: true);
   }
 }
 
-abstract base mixin class $NativeInteropFlutterIntegrationCoreApi {
-  factory $NativeInteropFlutterIntegrationCoreApi({
+abstract base mixin class $NativeInteropFlutterIntegrationCoreApiBridge {
+  factory $NativeInteropFlutterIntegrationCoreApiBridge({
     required void Function() noop,
     core$_.bool noop$async,
-    required jni$_.JObject? Function() throwFlutterError,
-    required jni$_.JObject? Function() throwError,
+    required jni$_.JByteArray? Function() throwFlutterError,
+    required jni$_.JByteArray? Function() throwError,
     required void Function() throwErrorFromVoid,
     core$_.bool throwErrorFromVoid$async,
-    required NativeInteropAllTypes Function(NativeInteropAllTypes nativeInteropAllTypes)
-    echoNativeInteropAllTypes,
-    required NativeInteropAllNullableTypes? Function(
-      NativeInteropAllNullableTypes? nativeInteropAllNullableTypes,
-    )
-    echoNativeInteropAllNullableTypes,
-    required NativeInteropSealedClass Function(NativeInteropSealedClass nativeInteropSealedClass)
-    echoNativeInteropSealedClass,
-    required NativeInteropAllNullableTypes Function(
+    required jni$_.JByteArray? Function(jni$_.JByteArray bs) echoNativeInteropAllTypes,
+    required jni$_.JByteArray? Function(jni$_.JByteArray bs) echoNativeInteropAllNullableTypes,
+    required jni$_.JByteArray? Function(jni$_.JByteArray bs) echoNativeInteropSealedClass,
+    required jni$_.JByteArray? Function(
       jni$_.JBoolean? boolean,
       jni$_.JLong? long,
       jni$_.JString? string,
     )
     sendMultipleNullableTypes,
-    required NativeInteropAllNullableTypesWithoutRecursion? Function(
-      NativeInteropAllNullableTypesWithoutRecursion? nativeInteropAllNullableTypesWithoutRecursion,
-    )
+    required jni$_.JByteArray? Function(jni$_.JByteArray bs)
     echoNativeInteropAllNullableTypesWithoutRecursion,
-    required NativeInteropAllNullableTypesWithoutRecursion Function(
+    required jni$_.JByteArray? Function(
       jni$_.JBoolean? boolean,
       jni$_.JLong? long,
       jni$_.JString? string,
@@ -16360,56 +15741,22 @@ abstract base mixin class $NativeInteropFlutterIntegrationCoreApi {
     required jni$_.JIntArray Function(jni$_.JIntArray is$) echoInt32List,
     required jni$_.JLongArray Function(jni$_.JLongArray js) echoInt64List,
     required jni$_.JDoubleArray Function(jni$_.JDoubleArray ds) echoFloat64List,
-    required jni$_.JList<jni$_.JObject?> Function(jni$_.JList<jni$_.JObject?> list) echoList,
-    required jni$_.JList<NativeInteropAnEnum?> Function(jni$_.JList<NativeInteropAnEnum?> list)
-    echoEnumList,
-    required jni$_.JList<NativeInteropAllNullableTypes?> Function(
-      jni$_.JList<NativeInteropAllNullableTypes?> list,
-    )
-    echoClassList,
-    required jni$_.JList<NativeInteropAnEnum> Function(jni$_.JList<NativeInteropAnEnum> list)
-    echoNonNullEnumList,
-    required jni$_.JList<NativeInteropAllNullableTypes> Function(
-      jni$_.JList<NativeInteropAllNullableTypes> list,
-    )
-    echoNonNullClassList,
-    required jni$_.JMap<jni$_.JObject?, jni$_.JObject?> Function(
-      jni$_.JMap<jni$_.JObject?, jni$_.JObject?> map,
-    )
-    echoMap,
-    required jni$_.JMap<jni$_.JString?, jni$_.JString?> Function(
-      jni$_.JMap<jni$_.JString?, jni$_.JString?> map,
-    )
-    echoStringMap,
-    required jni$_.JMap<jni$_.JLong?, jni$_.JLong?> Function(
-      jni$_.JMap<jni$_.JLong?, jni$_.JLong?> map,
-    )
-    echoIntMap,
-    required jni$_.JMap<NativeInteropAnEnum?, NativeInteropAnEnum?> Function(
-      jni$_.JMap<NativeInteropAnEnum?, NativeInteropAnEnum?> map,
-    )
-    echoEnumMap,
-    required jni$_.JMap<jni$_.JLong?, NativeInteropAllNullableTypes?> Function(
-      jni$_.JMap<jni$_.JLong?, NativeInteropAllNullableTypes?> map,
-    )
-    echoClassMap,
-    required jni$_.JMap<jni$_.JString, jni$_.JString> Function(
-      jni$_.JMap<jni$_.JString, jni$_.JString> map,
-    )
-    echoNonNullStringMap,
-    required jni$_.JMap<jni$_.JLong, jni$_.JLong> Function(jni$_.JMap<jni$_.JLong, jni$_.JLong> map)
-    echoNonNullIntMap,
-    required jni$_.JMap<NativeInteropAnEnum, NativeInteropAnEnum> Function(
-      jni$_.JMap<NativeInteropAnEnum, NativeInteropAnEnum> map,
-    )
-    echoNonNullEnumMap,
-    required jni$_.JMap<jni$_.JLong, NativeInteropAllNullableTypes> Function(
-      jni$_.JMap<jni$_.JLong, NativeInteropAllNullableTypes> map,
-    )
-    echoNonNullClassMap,
-    required NativeInteropAnEnum Function(NativeInteropAnEnum nativeInteropAnEnum) echoEnum,
-    required NativeInteropAnotherEnum Function(NativeInteropAnotherEnum nativeInteropAnotherEnum)
-    echoNativeInteropAnotherEnum,
+    required jni$_.JByteArray? Function(jni$_.JByteArray bs) echoList,
+    required jni$_.JByteArray? Function(jni$_.JByteArray bs) echoEnumList,
+    required jni$_.JByteArray? Function(jni$_.JByteArray bs) echoClassList,
+    required jni$_.JByteArray? Function(jni$_.JByteArray bs) echoNonNullEnumList,
+    required jni$_.JByteArray? Function(jni$_.JByteArray bs) echoNonNullClassList,
+    required jni$_.JByteArray? Function(jni$_.JByteArray bs) echoMap,
+    required jni$_.JByteArray? Function(jni$_.JByteArray bs) echoStringMap,
+    required jni$_.JByteArray? Function(jni$_.JByteArray bs) echoIntMap,
+    required jni$_.JByteArray? Function(jni$_.JByteArray bs) echoEnumMap,
+    required jni$_.JByteArray? Function(jni$_.JByteArray bs) echoClassMap,
+    required jni$_.JByteArray? Function(jni$_.JByteArray bs) echoNonNullStringMap,
+    required jni$_.JByteArray? Function(jni$_.JByteArray bs) echoNonNullIntMap,
+    required jni$_.JByteArray? Function(jni$_.JByteArray bs) echoNonNullEnumMap,
+    required jni$_.JByteArray? Function(jni$_.JByteArray bs) echoNonNullClassMap,
+    required core$_.int Function(core$_.int j) echoEnum,
+    required core$_.int Function(core$_.int j) echoNativeInteropAnotherEnum,
     required jni$_.JBoolean? Function(jni$_.JBoolean? boolean) echoNullableBool,
     required jni$_.JLong? Function(jni$_.JLong? long) echoNullableInt,
     required jni$_.JDouble? Function(jni$_.JDouble? double) echoNullableDouble,
@@ -16418,73 +15765,29 @@ abstract base mixin class $NativeInteropFlutterIntegrationCoreApi {
     required jni$_.JIntArray? Function(jni$_.JIntArray? is$) echoNullableInt32List,
     required jni$_.JLongArray? Function(jni$_.JLongArray? js) echoNullableInt64List,
     required jni$_.JDoubleArray? Function(jni$_.JDoubleArray? ds) echoNullableFloat64List,
-    required jni$_.JList<jni$_.JObject?>? Function(jni$_.JList<jni$_.JObject?>? list)
-    echoNullableList,
-    required jni$_.JList<NativeInteropAnEnum?>? Function(jni$_.JList<NativeInteropAnEnum?>? list)
-    echoNullableEnumList,
-    required jni$_.JList<NativeInteropAllNullableTypes?>? Function(
-      jni$_.JList<NativeInteropAllNullableTypes?>? list,
-    )
-    echoNullableClassList,
-    required jni$_.JList<NativeInteropAnEnum>? Function(jni$_.JList<NativeInteropAnEnum>? list)
-    echoNullableNonNullEnumList,
-    required jni$_.JList<NativeInteropAllNullableTypes>? Function(
-      jni$_.JList<NativeInteropAllNullableTypes>? list,
-    )
-    echoNullableNonNullClassList,
-    required jni$_.JMap<jni$_.JObject?, jni$_.JObject?>? Function(
-      jni$_.JMap<jni$_.JObject?, jni$_.JObject?>? map,
-    )
-    echoNullableMap,
-    required jni$_.JMap<jni$_.JString?, jni$_.JString?>? Function(
-      jni$_.JMap<jni$_.JString?, jni$_.JString?>? map,
-    )
-    echoNullableStringMap,
-    required jni$_.JMap<jni$_.JLong?, jni$_.JLong?>? Function(
-      jni$_.JMap<jni$_.JLong?, jni$_.JLong?>? map,
-    )
-    echoNullableIntMap,
-    required jni$_.JMap<NativeInteropAnEnum?, NativeInteropAnEnum?>? Function(
-      jni$_.JMap<NativeInteropAnEnum?, NativeInteropAnEnum?>? map,
-    )
-    echoNullableEnumMap,
-    required jni$_.JMap<jni$_.JLong?, NativeInteropAllNullableTypes?>? Function(
-      jni$_.JMap<jni$_.JLong?, NativeInteropAllNullableTypes?>? map,
-    )
-    echoNullableClassMap,
-    required jni$_.JMap<jni$_.JString, jni$_.JString>? Function(
-      jni$_.JMap<jni$_.JString, jni$_.JString>? map,
-    )
-    echoNullableNonNullStringMap,
-    required jni$_.JMap<jni$_.JLong, jni$_.JLong>? Function(
-      jni$_.JMap<jni$_.JLong, jni$_.JLong>? map,
-    )
-    echoNullableNonNullIntMap,
-    required jni$_.JMap<NativeInteropAnEnum, NativeInteropAnEnum>? Function(
-      jni$_.JMap<NativeInteropAnEnum, NativeInteropAnEnum>? map,
-    )
-    echoNullableNonNullEnumMap,
-    required jni$_.JMap<jni$_.JLong, NativeInteropAllNullableTypes>? Function(
-      jni$_.JMap<jni$_.JLong, NativeInteropAllNullableTypes>? map,
-    )
-    echoNullableNonNullClassMap,
-    required NativeInteropAnEnum? Function(NativeInteropAnEnum? nativeInteropAnEnum)
-    echoNullableEnum,
-    required NativeInteropAnotherEnum? Function(NativeInteropAnotherEnum? nativeInteropAnotherEnum)
-    echoAnotherNullableEnum,
+    required jni$_.JByteArray? Function(jni$_.JByteArray bs) echoNullableList,
+    required jni$_.JByteArray? Function(jni$_.JByteArray bs) echoNullableEnumList,
+    required jni$_.JByteArray? Function(jni$_.JByteArray bs) echoNullableClassList,
+    required jni$_.JByteArray? Function(jni$_.JByteArray bs) echoNullableNonNullEnumList,
+    required jni$_.JByteArray? Function(jni$_.JByteArray bs) echoNullableNonNullClassList,
+    required jni$_.JByteArray? Function(jni$_.JByteArray bs) echoNullableMap,
+    required jni$_.JByteArray? Function(jni$_.JByteArray bs) echoNullableStringMap,
+    required jni$_.JByteArray? Function(jni$_.JByteArray bs) echoNullableIntMap,
+    required jni$_.JByteArray? Function(jni$_.JByteArray bs) echoNullableEnumMap,
+    required jni$_.JByteArray? Function(jni$_.JByteArray bs) echoNullableClassMap,
+    required jni$_.JByteArray? Function(jni$_.JByteArray bs) echoNullableNonNullStringMap,
+    required jni$_.JByteArray? Function(jni$_.JByteArray bs) echoNullableNonNullIntMap,
+    required jni$_.JByteArray? Function(jni$_.JByteArray bs) echoNullableNonNullEnumMap,
+    required jni$_.JByteArray? Function(jni$_.JByteArray bs) echoNullableNonNullClassMap,
+    required core$_.int Function(core$_.int j) echoNullableEnum,
+    required core$_.int Function(core$_.int j) echoAnotherNullableEnum,
     required core$_.Future<void> Function() noopAsync,
-    required core$_.Future<jni$_.JObject?> Function() throwFlutterErrorAsync,
-    required core$_.Future<NativeInteropAllTypes> Function(
-      NativeInteropAllTypes nativeInteropAllTypes,
-    )
+    required core$_.Future<jni$_.JByteArray?> Function() throwFlutterErrorAsync,
+    required core$_.Future<jni$_.JByteArray?> Function(jni$_.JByteArray bs)
     echoAsyncNativeInteropAllTypes,
-    required core$_.Future<NativeInteropAllNullableTypes?> Function(
-      NativeInteropAllNullableTypes? nativeInteropAllNullableTypes,
-    )
+    required core$_.Future<jni$_.JByteArray?> Function(jni$_.JByteArray bs)
     echoAsyncNullableNativeInteropAllNullableTypes,
-    required core$_.Future<NativeInteropAllNullableTypesWithoutRecursion?> Function(
-      NativeInteropAllNullableTypesWithoutRecursion? nativeInteropAllNullableTypesWithoutRecursion,
-    )
+    required core$_.Future<jni$_.JByteArray?> Function(jni$_.JByteArray bs)
     echoAsyncNullableNativeInteropAllNullableTypesWithoutRecursion,
     required core$_.Future<jni$_.JBoolean> Function(core$_.bool z) echoAsyncBool,
     required core$_.Future<jni$_.JLong> Function(core$_.int j) echoAsyncInt,
@@ -16494,51 +15797,21 @@ abstract base mixin class $NativeInteropFlutterIntegrationCoreApi {
     required core$_.Future<jni$_.JIntArray> Function(jni$_.JIntArray is$) echoAsyncInt32List,
     required core$_.Future<jni$_.JLongArray> Function(jni$_.JLongArray js) echoAsyncInt64List,
     required core$_.Future<jni$_.JDoubleArray> Function(jni$_.JDoubleArray ds) echoAsyncFloat64List,
-    required core$_.Future<jni$_.JObject> Function(jni$_.JObject object) echoAsyncObject,
-    required core$_.Future<jni$_.JList<jni$_.JObject?>> Function(jni$_.JList<jni$_.JObject?> list)
-    echoAsyncList,
-    required core$_.Future<jni$_.JList<NativeInteropAnEnum?>> Function(
-      jni$_.JList<NativeInteropAnEnum?> list,
-    )
-    echoAsyncEnumList,
-    required core$_.Future<jni$_.JList<NativeInteropAllNullableTypes?>> Function(
-      jni$_.JList<NativeInteropAllNullableTypes?> list,
-    )
-    echoAsyncClassList,
-    required core$_.Future<jni$_.JList<NativeInteropAnEnum>> Function(
-      jni$_.JList<NativeInteropAnEnum?> list,
-    )
+    required core$_.Future<jni$_.JByteArray?> Function(jni$_.JByteArray bs) echoAsyncObject,
+    required core$_.Future<jni$_.JByteArray?> Function(jni$_.JByteArray bs) echoAsyncList,
+    required core$_.Future<jni$_.JByteArray?> Function(jni$_.JByteArray bs) echoAsyncEnumList,
+    required core$_.Future<jni$_.JByteArray?> Function(jni$_.JByteArray bs) echoAsyncClassList,
+    required core$_.Future<jni$_.JByteArray?> Function(jni$_.JByteArray bs)
     echoAsyncNonNullEnumList,
-    required core$_.Future<jni$_.JList<NativeInteropAllNullableTypes>> Function(
-      jni$_.JList<NativeInteropAllNullableTypes?> list,
-    )
+    required core$_.Future<jni$_.JByteArray?> Function(jni$_.JByteArray bs)
     echoAsyncNonNullClassList,
-    required core$_.Future<jni$_.JMap<jni$_.JObject?, jni$_.JObject?>> Function(
-      jni$_.JMap<jni$_.JObject?, jni$_.JObject?> map,
-    )
-    echoAsyncMap,
-    required core$_.Future<jni$_.JMap<jni$_.JString?, jni$_.JString?>> Function(
-      jni$_.JMap<jni$_.JString?, jni$_.JString?> map,
-    )
-    echoAsyncStringMap,
-    required core$_.Future<jni$_.JMap<jni$_.JLong?, jni$_.JLong?>> Function(
-      jni$_.JMap<jni$_.JLong?, jni$_.JLong?> map,
-    )
-    echoAsyncIntMap,
-    required core$_.Future<jni$_.JMap<NativeInteropAnEnum?, NativeInteropAnEnum?>> Function(
-      jni$_.JMap<NativeInteropAnEnum?, NativeInteropAnEnum?> map,
-    )
-    echoAsyncEnumMap,
-    required core$_.Future<jni$_.JMap<jni$_.JLong?, NativeInteropAllNullableTypes?>> Function(
-      jni$_.JMap<jni$_.JLong?, NativeInteropAllNullableTypes?> map,
-    )
-    echoAsyncClassMap,
-    required core$_.Future<NativeInteropAnEnum> Function(NativeInteropAnEnum nativeInteropAnEnum)
-    echoAsyncEnum,
-    required core$_.Future<NativeInteropAnotherEnum> Function(
-      NativeInteropAnotherEnum nativeInteropAnotherEnum,
-    )
-    echoAnotherAsyncEnum,
+    required core$_.Future<jni$_.JByteArray?> Function(jni$_.JByteArray bs) echoAsyncMap,
+    required core$_.Future<jni$_.JByteArray?> Function(jni$_.JByteArray bs) echoAsyncStringMap,
+    required core$_.Future<jni$_.JByteArray?> Function(jni$_.JByteArray bs) echoAsyncIntMap,
+    required core$_.Future<jni$_.JByteArray?> Function(jni$_.JByteArray bs) echoAsyncEnumMap,
+    required core$_.Future<jni$_.JByteArray?> Function(jni$_.JByteArray bs) echoAsyncClassMap,
+    required core$_.Future<jni$_.JLong> Function(core$_.int j) echoAsyncEnum,
+    required core$_.Future<jni$_.JLong> Function(core$_.int j) echoAnotherAsyncEnum,
     required core$_.Future<jni$_.JBoolean?> Function(jni$_.JBoolean? boolean) echoAsyncNullableBool,
     required core$_.Future<jni$_.JLong?> Function(jni$_.JLong? long) echoAsyncNullableInt,
     required core$_.Future<jni$_.JDouble?> Function(jni$_.JDouble? double) echoAsyncNullableDouble,
@@ -16551,75 +15824,44 @@ abstract base mixin class $NativeInteropFlutterIntegrationCoreApi {
     echoAsyncNullableInt64List,
     required core$_.Future<jni$_.JDoubleArray?> Function(jni$_.JDoubleArray? ds)
     echoAsyncNullableFloat64List,
-    required core$_.Future<jni$_.JObject?> Function(jni$_.JObject? object) echoAsyncNullableObject,
-    required core$_.Future<jni$_.JList<jni$_.JObject?>?> Function(jni$_.JList<jni$_.JObject?>? list)
-    echoAsyncNullableList,
-    required core$_.Future<jni$_.JList<NativeInteropAnEnum?>?> Function(
-      jni$_.JList<NativeInteropAnEnum?>? list,
-    )
+    required core$_.Future<jni$_.JByteArray?> Function(jni$_.JByteArray bs) echoAsyncNullableObject,
+    required core$_.Future<jni$_.JByteArray?> Function(jni$_.JByteArray bs) echoAsyncNullableList,
+    required core$_.Future<jni$_.JByteArray?> Function(jni$_.JByteArray bs)
     echoAsyncNullableEnumList,
-    required core$_.Future<jni$_.JList<NativeInteropAllNullableTypes?>?> Function(
-      jni$_.JList<NativeInteropAllNullableTypes?>? list,
-    )
+    required core$_.Future<jni$_.JByteArray?> Function(jni$_.JByteArray bs)
     echoAsyncNullableClassList,
-    required core$_.Future<jni$_.JList<NativeInteropAnEnum>?> Function(
-      jni$_.JList<NativeInteropAnEnum?>? list,
-    )
+    required core$_.Future<jni$_.JByteArray?> Function(jni$_.JByteArray bs)
     echoAsyncNullableNonNullEnumList,
-    required core$_.Future<jni$_.JList<NativeInteropAllNullableTypes>?> Function(
-      jni$_.JList<NativeInteropAllNullableTypes?>? list,
-    )
+    required core$_.Future<jni$_.JByteArray?> Function(jni$_.JByteArray bs)
     echoAsyncNullableNonNullClassList,
-    required core$_.Future<jni$_.JMap<jni$_.JObject?, jni$_.JObject?>?> Function(
-      jni$_.JMap<jni$_.JObject?, jni$_.JObject?>? map,
-    )
-    echoAsyncNullableMap,
-    required core$_.Future<jni$_.JMap<jni$_.JString?, jni$_.JString?>?> Function(
-      jni$_.JMap<jni$_.JString?, jni$_.JString?>? map,
-    )
+    required core$_.Future<jni$_.JByteArray?> Function(jni$_.JByteArray bs) echoAsyncNullableMap,
+    required core$_.Future<jni$_.JByteArray?> Function(jni$_.JByteArray bs)
     echoAsyncNullableStringMap,
-    required core$_.Future<jni$_.JMap<jni$_.JLong?, jni$_.JLong?>?> Function(
-      jni$_.JMap<jni$_.JLong?, jni$_.JLong?>? map,
-    )
-    echoAsyncNullableIntMap,
-    required core$_.Future<jni$_.JMap<NativeInteropAnEnum?, NativeInteropAnEnum?>?> Function(
-      jni$_.JMap<NativeInteropAnEnum?, NativeInteropAnEnum?>? map,
-    )
+    required core$_.Future<jni$_.JByteArray?> Function(jni$_.JByteArray bs) echoAsyncNullableIntMap,
+    required core$_.Future<jni$_.JByteArray?> Function(jni$_.JByteArray bs)
     echoAsyncNullableEnumMap,
-    required core$_.Future<jni$_.JMap<jni$_.JLong?, NativeInteropAllNullableTypes?>?> Function(
-      jni$_.JMap<jni$_.JLong?, NativeInteropAllNullableTypes?>? map,
-    )
+    required core$_.Future<jni$_.JByteArray?> Function(jni$_.JByteArray bs)
     echoAsyncNullableClassMap,
-    required core$_.Future<NativeInteropAnEnum?> Function(NativeInteropAnEnum? nativeInteropAnEnum)
-    echoAsyncNullableEnum,
-    required core$_.Future<NativeInteropAnotherEnum?> Function(
-      NativeInteropAnotherEnum? nativeInteropAnotherEnum,
-    )
-    echoAnotherAsyncNullableEnum,
-  }) = _$NativeInteropFlutterIntegrationCoreApi;
+    required core$_.Future<jni$_.JLong> Function(core$_.int j) echoAsyncNullableEnum,
+    required core$_.Future<jni$_.JLong> Function(core$_.int j) echoAnotherAsyncNullableEnum,
+  }) = _$NativeInteropFlutterIntegrationCoreApiBridge;
 
   void noop();
   core$_.bool get noop$async => false;
-  jni$_.JObject? throwFlutterError();
-  jni$_.JObject? throwError();
+  jni$_.JByteArray? throwFlutterError();
+  jni$_.JByteArray? throwError();
   void throwErrorFromVoid();
   core$_.bool get throwErrorFromVoid$async => false;
-  NativeInteropAllTypes echoNativeInteropAllTypes(NativeInteropAllTypes nativeInteropAllTypes);
-  NativeInteropAllNullableTypes? echoNativeInteropAllNullableTypes(
-    NativeInteropAllNullableTypes? nativeInteropAllNullableTypes,
-  );
-  NativeInteropSealedClass echoNativeInteropSealedClass(
-    NativeInteropSealedClass nativeInteropSealedClass,
-  );
-  NativeInteropAllNullableTypes sendMultipleNullableTypes(
+  jni$_.JByteArray? echoNativeInteropAllTypes(jni$_.JByteArray bs);
+  jni$_.JByteArray? echoNativeInteropAllNullableTypes(jni$_.JByteArray bs);
+  jni$_.JByteArray? echoNativeInteropSealedClass(jni$_.JByteArray bs);
+  jni$_.JByteArray? sendMultipleNullableTypes(
     jni$_.JBoolean? boolean,
     jni$_.JLong? long,
     jni$_.JString? string,
   );
-  NativeInteropAllNullableTypesWithoutRecursion? echoNativeInteropAllNullableTypesWithoutRecursion(
-    NativeInteropAllNullableTypesWithoutRecursion? nativeInteropAllNullableTypesWithoutRecursion,
-  );
-  NativeInteropAllNullableTypesWithoutRecursion sendMultipleNullableTypesWithoutRecursion(
+  jni$_.JByteArray? echoNativeInteropAllNullableTypesWithoutRecursion(jni$_.JByteArray bs);
+  jni$_.JByteArray? sendMultipleNullableTypesWithoutRecursion(
     jni$_.JBoolean? boolean,
     jni$_.JLong? long,
     jni$_.JString? string,
@@ -16632,42 +15874,22 @@ abstract base mixin class $NativeInteropFlutterIntegrationCoreApi {
   jni$_.JIntArray echoInt32List(jni$_.JIntArray is$);
   jni$_.JLongArray echoInt64List(jni$_.JLongArray js);
   jni$_.JDoubleArray echoFloat64List(jni$_.JDoubleArray ds);
-  jni$_.JList<jni$_.JObject?> echoList(jni$_.JList<jni$_.JObject?> list);
-  jni$_.JList<NativeInteropAnEnum?> echoEnumList(jni$_.JList<NativeInteropAnEnum?> list);
-  jni$_.JList<NativeInteropAllNullableTypes?> echoClassList(
-    jni$_.JList<NativeInteropAllNullableTypes?> list,
-  );
-  jni$_.JList<NativeInteropAnEnum> echoNonNullEnumList(jni$_.JList<NativeInteropAnEnum> list);
-  jni$_.JList<NativeInteropAllNullableTypes> echoNonNullClassList(
-    jni$_.JList<NativeInteropAllNullableTypes> list,
-  );
-  jni$_.JMap<jni$_.JObject?, jni$_.JObject?> echoMap(
-    jni$_.JMap<jni$_.JObject?, jni$_.JObject?> map,
-  );
-  jni$_.JMap<jni$_.JString?, jni$_.JString?> echoStringMap(
-    jni$_.JMap<jni$_.JString?, jni$_.JString?> map,
-  );
-  jni$_.JMap<jni$_.JLong?, jni$_.JLong?> echoIntMap(jni$_.JMap<jni$_.JLong?, jni$_.JLong?> map);
-  jni$_.JMap<NativeInteropAnEnum?, NativeInteropAnEnum?> echoEnumMap(
-    jni$_.JMap<NativeInteropAnEnum?, NativeInteropAnEnum?> map,
-  );
-  jni$_.JMap<jni$_.JLong?, NativeInteropAllNullableTypes?> echoClassMap(
-    jni$_.JMap<jni$_.JLong?, NativeInteropAllNullableTypes?> map,
-  );
-  jni$_.JMap<jni$_.JString, jni$_.JString> echoNonNullStringMap(
-    jni$_.JMap<jni$_.JString, jni$_.JString> map,
-  );
-  jni$_.JMap<jni$_.JLong, jni$_.JLong> echoNonNullIntMap(jni$_.JMap<jni$_.JLong, jni$_.JLong> map);
-  jni$_.JMap<NativeInteropAnEnum, NativeInteropAnEnum> echoNonNullEnumMap(
-    jni$_.JMap<NativeInteropAnEnum, NativeInteropAnEnum> map,
-  );
-  jni$_.JMap<jni$_.JLong, NativeInteropAllNullableTypes> echoNonNullClassMap(
-    jni$_.JMap<jni$_.JLong, NativeInteropAllNullableTypes> map,
-  );
-  NativeInteropAnEnum echoEnum(NativeInteropAnEnum nativeInteropAnEnum);
-  NativeInteropAnotherEnum echoNativeInteropAnotherEnum(
-    NativeInteropAnotherEnum nativeInteropAnotherEnum,
-  );
+  jni$_.JByteArray? echoList(jni$_.JByteArray bs);
+  jni$_.JByteArray? echoEnumList(jni$_.JByteArray bs);
+  jni$_.JByteArray? echoClassList(jni$_.JByteArray bs);
+  jni$_.JByteArray? echoNonNullEnumList(jni$_.JByteArray bs);
+  jni$_.JByteArray? echoNonNullClassList(jni$_.JByteArray bs);
+  jni$_.JByteArray? echoMap(jni$_.JByteArray bs);
+  jni$_.JByteArray? echoStringMap(jni$_.JByteArray bs);
+  jni$_.JByteArray? echoIntMap(jni$_.JByteArray bs);
+  jni$_.JByteArray? echoEnumMap(jni$_.JByteArray bs);
+  jni$_.JByteArray? echoClassMap(jni$_.JByteArray bs);
+  jni$_.JByteArray? echoNonNullStringMap(jni$_.JByteArray bs);
+  jni$_.JByteArray? echoNonNullIntMap(jni$_.JByteArray bs);
+  jni$_.JByteArray? echoNonNullEnumMap(jni$_.JByteArray bs);
+  jni$_.JByteArray? echoNonNullClassMap(jni$_.JByteArray bs);
+  core$_.int echoEnum(core$_.int j);
+  core$_.int echoNativeInteropAnotherEnum(core$_.int j);
   jni$_.JBoolean? echoNullableBool(jni$_.JBoolean? boolean);
   jni$_.JLong? echoNullableInt(jni$_.JLong? long);
   jni$_.JDouble? echoNullableDouble(jni$_.JDouble? double);
@@ -16676,59 +15898,30 @@ abstract base mixin class $NativeInteropFlutterIntegrationCoreApi {
   jni$_.JIntArray? echoNullableInt32List(jni$_.JIntArray? is$);
   jni$_.JLongArray? echoNullableInt64List(jni$_.JLongArray? js);
   jni$_.JDoubleArray? echoNullableFloat64List(jni$_.JDoubleArray? ds);
-  jni$_.JList<jni$_.JObject?>? echoNullableList(jni$_.JList<jni$_.JObject?>? list);
-  jni$_.JList<NativeInteropAnEnum?>? echoNullableEnumList(jni$_.JList<NativeInteropAnEnum?>? list);
-  jni$_.JList<NativeInteropAllNullableTypes?>? echoNullableClassList(
-    jni$_.JList<NativeInteropAllNullableTypes?>? list,
-  );
-  jni$_.JList<NativeInteropAnEnum>? echoNullableNonNullEnumList(
-    jni$_.JList<NativeInteropAnEnum>? list,
-  );
-  jni$_.JList<NativeInteropAllNullableTypes>? echoNullableNonNullClassList(
-    jni$_.JList<NativeInteropAllNullableTypes>? list,
-  );
-  jni$_.JMap<jni$_.JObject?, jni$_.JObject?>? echoNullableMap(
-    jni$_.JMap<jni$_.JObject?, jni$_.JObject?>? map,
-  );
-  jni$_.JMap<jni$_.JString?, jni$_.JString?>? echoNullableStringMap(
-    jni$_.JMap<jni$_.JString?, jni$_.JString?>? map,
-  );
-  jni$_.JMap<jni$_.JLong?, jni$_.JLong?>? echoNullableIntMap(
-    jni$_.JMap<jni$_.JLong?, jni$_.JLong?>? map,
-  );
-  jni$_.JMap<NativeInteropAnEnum?, NativeInteropAnEnum?>? echoNullableEnumMap(
-    jni$_.JMap<NativeInteropAnEnum?, NativeInteropAnEnum?>? map,
-  );
-  jni$_.JMap<jni$_.JLong?, NativeInteropAllNullableTypes?>? echoNullableClassMap(
-    jni$_.JMap<jni$_.JLong?, NativeInteropAllNullableTypes?>? map,
-  );
-  jni$_.JMap<jni$_.JString, jni$_.JString>? echoNullableNonNullStringMap(
-    jni$_.JMap<jni$_.JString, jni$_.JString>? map,
-  );
-  jni$_.JMap<jni$_.JLong, jni$_.JLong>? echoNullableNonNullIntMap(
-    jni$_.JMap<jni$_.JLong, jni$_.JLong>? map,
-  );
-  jni$_.JMap<NativeInteropAnEnum, NativeInteropAnEnum>? echoNullableNonNullEnumMap(
-    jni$_.JMap<NativeInteropAnEnum, NativeInteropAnEnum>? map,
-  );
-  jni$_.JMap<jni$_.JLong, NativeInteropAllNullableTypes>? echoNullableNonNullClassMap(
-    jni$_.JMap<jni$_.JLong, NativeInteropAllNullableTypes>? map,
-  );
-  NativeInteropAnEnum? echoNullableEnum(NativeInteropAnEnum? nativeInteropAnEnum);
-  NativeInteropAnotherEnum? echoAnotherNullableEnum(
-    NativeInteropAnotherEnum? nativeInteropAnotherEnum,
-  );
+  jni$_.JByteArray? echoNullableList(jni$_.JByteArray bs);
+  jni$_.JByteArray? echoNullableEnumList(jni$_.JByteArray bs);
+  jni$_.JByteArray? echoNullableClassList(jni$_.JByteArray bs);
+  jni$_.JByteArray? echoNullableNonNullEnumList(jni$_.JByteArray bs);
+  jni$_.JByteArray? echoNullableNonNullClassList(jni$_.JByteArray bs);
+  jni$_.JByteArray? echoNullableMap(jni$_.JByteArray bs);
+  jni$_.JByteArray? echoNullableStringMap(jni$_.JByteArray bs);
+  jni$_.JByteArray? echoNullableIntMap(jni$_.JByteArray bs);
+  jni$_.JByteArray? echoNullableEnumMap(jni$_.JByteArray bs);
+  jni$_.JByteArray? echoNullableClassMap(jni$_.JByteArray bs);
+  jni$_.JByteArray? echoNullableNonNullStringMap(jni$_.JByteArray bs);
+  jni$_.JByteArray? echoNullableNonNullIntMap(jni$_.JByteArray bs);
+  jni$_.JByteArray? echoNullableNonNullEnumMap(jni$_.JByteArray bs);
+  jni$_.JByteArray? echoNullableNonNullClassMap(jni$_.JByteArray bs);
+  core$_.int echoNullableEnum(core$_.int j);
+  core$_.int echoAnotherNullableEnum(core$_.int j);
   core$_.Future<void> noopAsync();
-  core$_.Future<jni$_.JObject?> throwFlutterErrorAsync();
-  core$_.Future<NativeInteropAllTypes> echoAsyncNativeInteropAllTypes(
-    NativeInteropAllTypes nativeInteropAllTypes,
+  core$_.Future<jni$_.JByteArray?> throwFlutterErrorAsync();
+  core$_.Future<jni$_.JByteArray?> echoAsyncNativeInteropAllTypes(jni$_.JByteArray bs);
+  core$_.Future<jni$_.JByteArray?> echoAsyncNullableNativeInteropAllNullableTypes(
+    jni$_.JByteArray bs,
   );
-  core$_.Future<NativeInteropAllNullableTypes?> echoAsyncNullableNativeInteropAllNullableTypes(
-    NativeInteropAllNullableTypes? nativeInteropAllNullableTypes,
-  );
-  core$_.Future<NativeInteropAllNullableTypesWithoutRecursion?>
-  echoAsyncNullableNativeInteropAllNullableTypesWithoutRecursion(
-    NativeInteropAllNullableTypesWithoutRecursion? nativeInteropAllNullableTypesWithoutRecursion,
+  core$_.Future<jni$_.JByteArray?> echoAsyncNullableNativeInteropAllNullableTypesWithoutRecursion(
+    jni$_.JByteArray bs,
   );
   core$_.Future<jni$_.JBoolean> echoAsyncBool(core$_.bool z);
   core$_.Future<jni$_.JLong> echoAsyncInt(core$_.int j);
@@ -16738,39 +15931,19 @@ abstract base mixin class $NativeInteropFlutterIntegrationCoreApi {
   core$_.Future<jni$_.JIntArray> echoAsyncInt32List(jni$_.JIntArray is$);
   core$_.Future<jni$_.JLongArray> echoAsyncInt64List(jni$_.JLongArray js);
   core$_.Future<jni$_.JDoubleArray> echoAsyncFloat64List(jni$_.JDoubleArray ds);
-  core$_.Future<jni$_.JObject> echoAsyncObject(jni$_.JObject object);
-  core$_.Future<jni$_.JList<jni$_.JObject?>> echoAsyncList(jni$_.JList<jni$_.JObject?> list);
-  core$_.Future<jni$_.JList<NativeInteropAnEnum?>> echoAsyncEnumList(
-    jni$_.JList<NativeInteropAnEnum?> list,
-  );
-  core$_.Future<jni$_.JList<NativeInteropAllNullableTypes?>> echoAsyncClassList(
-    jni$_.JList<NativeInteropAllNullableTypes?> list,
-  );
-  core$_.Future<jni$_.JList<NativeInteropAnEnum>> echoAsyncNonNullEnumList(
-    jni$_.JList<NativeInteropAnEnum?> list,
-  );
-  core$_.Future<jni$_.JList<NativeInteropAllNullableTypes>> echoAsyncNonNullClassList(
-    jni$_.JList<NativeInteropAllNullableTypes?> list,
-  );
-  core$_.Future<jni$_.JMap<jni$_.JObject?, jni$_.JObject?>> echoAsyncMap(
-    jni$_.JMap<jni$_.JObject?, jni$_.JObject?> map,
-  );
-  core$_.Future<jni$_.JMap<jni$_.JString?, jni$_.JString?>> echoAsyncStringMap(
-    jni$_.JMap<jni$_.JString?, jni$_.JString?> map,
-  );
-  core$_.Future<jni$_.JMap<jni$_.JLong?, jni$_.JLong?>> echoAsyncIntMap(
-    jni$_.JMap<jni$_.JLong?, jni$_.JLong?> map,
-  );
-  core$_.Future<jni$_.JMap<NativeInteropAnEnum?, NativeInteropAnEnum?>> echoAsyncEnumMap(
-    jni$_.JMap<NativeInteropAnEnum?, NativeInteropAnEnum?> map,
-  );
-  core$_.Future<jni$_.JMap<jni$_.JLong?, NativeInteropAllNullableTypes?>> echoAsyncClassMap(
-    jni$_.JMap<jni$_.JLong?, NativeInteropAllNullableTypes?> map,
-  );
-  core$_.Future<NativeInteropAnEnum> echoAsyncEnum(NativeInteropAnEnum nativeInteropAnEnum);
-  core$_.Future<NativeInteropAnotherEnum> echoAnotherAsyncEnum(
-    NativeInteropAnotherEnum nativeInteropAnotherEnum,
-  );
+  core$_.Future<jni$_.JByteArray?> echoAsyncObject(jni$_.JByteArray bs);
+  core$_.Future<jni$_.JByteArray?> echoAsyncList(jni$_.JByteArray bs);
+  core$_.Future<jni$_.JByteArray?> echoAsyncEnumList(jni$_.JByteArray bs);
+  core$_.Future<jni$_.JByteArray?> echoAsyncClassList(jni$_.JByteArray bs);
+  core$_.Future<jni$_.JByteArray?> echoAsyncNonNullEnumList(jni$_.JByteArray bs);
+  core$_.Future<jni$_.JByteArray?> echoAsyncNonNullClassList(jni$_.JByteArray bs);
+  core$_.Future<jni$_.JByteArray?> echoAsyncMap(jni$_.JByteArray bs);
+  core$_.Future<jni$_.JByteArray?> echoAsyncStringMap(jni$_.JByteArray bs);
+  core$_.Future<jni$_.JByteArray?> echoAsyncIntMap(jni$_.JByteArray bs);
+  core$_.Future<jni$_.JByteArray?> echoAsyncEnumMap(jni$_.JByteArray bs);
+  core$_.Future<jni$_.JByteArray?> echoAsyncClassMap(jni$_.JByteArray bs);
+  core$_.Future<jni$_.JLong> echoAsyncEnum(core$_.int j);
+  core$_.Future<jni$_.JLong> echoAnotherAsyncEnum(core$_.int j);
   core$_.Future<jni$_.JBoolean?> echoAsyncNullableBool(jni$_.JBoolean? boolean);
   core$_.Future<jni$_.JLong?> echoAsyncNullableInt(jni$_.JLong? long);
   core$_.Future<jni$_.JDouble?> echoAsyncNullableDouble(jni$_.JDouble? double);
@@ -16779,71 +15952,42 @@ abstract base mixin class $NativeInteropFlutterIntegrationCoreApi {
   core$_.Future<jni$_.JIntArray?> echoAsyncNullableInt32List(jni$_.JIntArray? is$);
   core$_.Future<jni$_.JLongArray?> echoAsyncNullableInt64List(jni$_.JLongArray? js);
   core$_.Future<jni$_.JDoubleArray?> echoAsyncNullableFloat64List(jni$_.JDoubleArray? ds);
-  core$_.Future<jni$_.JObject?> echoAsyncNullableObject(jni$_.JObject? object);
-  core$_.Future<jni$_.JList<jni$_.JObject?>?> echoAsyncNullableList(
-    jni$_.JList<jni$_.JObject?>? list,
-  );
-  core$_.Future<jni$_.JList<NativeInteropAnEnum?>?> echoAsyncNullableEnumList(
-    jni$_.JList<NativeInteropAnEnum?>? list,
-  );
-  core$_.Future<jni$_.JList<NativeInteropAllNullableTypes?>?> echoAsyncNullableClassList(
-    jni$_.JList<NativeInteropAllNullableTypes?>? list,
-  );
-  core$_.Future<jni$_.JList<NativeInteropAnEnum>?> echoAsyncNullableNonNullEnumList(
-    jni$_.JList<NativeInteropAnEnum?>? list,
-  );
-  core$_.Future<jni$_.JList<NativeInteropAllNullableTypes>?> echoAsyncNullableNonNullClassList(
-    jni$_.JList<NativeInteropAllNullableTypes?>? list,
-  );
-  core$_.Future<jni$_.JMap<jni$_.JObject?, jni$_.JObject?>?> echoAsyncNullableMap(
-    jni$_.JMap<jni$_.JObject?, jni$_.JObject?>? map,
-  );
-  core$_.Future<jni$_.JMap<jni$_.JString?, jni$_.JString?>?> echoAsyncNullableStringMap(
-    jni$_.JMap<jni$_.JString?, jni$_.JString?>? map,
-  );
-  core$_.Future<jni$_.JMap<jni$_.JLong?, jni$_.JLong?>?> echoAsyncNullableIntMap(
-    jni$_.JMap<jni$_.JLong?, jni$_.JLong?>? map,
-  );
-  core$_.Future<jni$_.JMap<NativeInteropAnEnum?, NativeInteropAnEnum?>?> echoAsyncNullableEnumMap(
-    jni$_.JMap<NativeInteropAnEnum?, NativeInteropAnEnum?>? map,
-  );
-  core$_.Future<jni$_.JMap<jni$_.JLong?, NativeInteropAllNullableTypes?>?>
-  echoAsyncNullableClassMap(jni$_.JMap<jni$_.JLong?, NativeInteropAllNullableTypes?>? map);
-  core$_.Future<NativeInteropAnEnum?> echoAsyncNullableEnum(
-    NativeInteropAnEnum? nativeInteropAnEnum,
-  );
-  core$_.Future<NativeInteropAnotherEnum?> echoAnotherAsyncNullableEnum(
-    NativeInteropAnotherEnum? nativeInteropAnotherEnum,
-  );
+  core$_.Future<jni$_.JByteArray?> echoAsyncNullableObject(jni$_.JByteArray bs);
+  core$_.Future<jni$_.JByteArray?> echoAsyncNullableList(jni$_.JByteArray bs);
+  core$_.Future<jni$_.JByteArray?> echoAsyncNullableEnumList(jni$_.JByteArray bs);
+  core$_.Future<jni$_.JByteArray?> echoAsyncNullableClassList(jni$_.JByteArray bs);
+  core$_.Future<jni$_.JByteArray?> echoAsyncNullableNonNullEnumList(jni$_.JByteArray bs);
+  core$_.Future<jni$_.JByteArray?> echoAsyncNullableNonNullClassList(jni$_.JByteArray bs);
+  core$_.Future<jni$_.JByteArray?> echoAsyncNullableMap(jni$_.JByteArray bs);
+  core$_.Future<jni$_.JByteArray?> echoAsyncNullableStringMap(jni$_.JByteArray bs);
+  core$_.Future<jni$_.JByteArray?> echoAsyncNullableIntMap(jni$_.JByteArray bs);
+  core$_.Future<jni$_.JByteArray?> echoAsyncNullableEnumMap(jni$_.JByteArray bs);
+  core$_.Future<jni$_.JByteArray?> echoAsyncNullableClassMap(jni$_.JByteArray bs);
+  core$_.Future<jni$_.JLong> echoAsyncNullableEnum(core$_.int j);
+  core$_.Future<jni$_.JLong> echoAnotherAsyncNullableEnum(core$_.int j);
 }
 
-final class _$NativeInteropFlutterIntegrationCoreApi with $NativeInteropFlutterIntegrationCoreApi {
-  _$NativeInteropFlutterIntegrationCoreApi({
+final class _$NativeInteropFlutterIntegrationCoreApiBridge
+    with $NativeInteropFlutterIntegrationCoreApiBridge {
+  _$NativeInteropFlutterIntegrationCoreApiBridge({
     required void Function() noop,
     this.noop$async = false,
-    required jni$_.JObject? Function() throwFlutterError,
-    required jni$_.JObject? Function() throwError,
+    required jni$_.JByteArray? Function() throwFlutterError,
+    required jni$_.JByteArray? Function() throwError,
     required void Function() throwErrorFromVoid,
     this.throwErrorFromVoid$async = false,
-    required NativeInteropAllTypes Function(NativeInteropAllTypes nativeInteropAllTypes)
-    echoNativeInteropAllTypes,
-    required NativeInteropAllNullableTypes? Function(
-      NativeInteropAllNullableTypes? nativeInteropAllNullableTypes,
-    )
-    echoNativeInteropAllNullableTypes,
-    required NativeInteropSealedClass Function(NativeInteropSealedClass nativeInteropSealedClass)
-    echoNativeInteropSealedClass,
-    required NativeInteropAllNullableTypes Function(
+    required jni$_.JByteArray? Function(jni$_.JByteArray bs) echoNativeInteropAllTypes,
+    required jni$_.JByteArray? Function(jni$_.JByteArray bs) echoNativeInteropAllNullableTypes,
+    required jni$_.JByteArray? Function(jni$_.JByteArray bs) echoNativeInteropSealedClass,
+    required jni$_.JByteArray? Function(
       jni$_.JBoolean? boolean,
       jni$_.JLong? long,
       jni$_.JString? string,
     )
     sendMultipleNullableTypes,
-    required NativeInteropAllNullableTypesWithoutRecursion? Function(
-      NativeInteropAllNullableTypesWithoutRecursion? nativeInteropAllNullableTypesWithoutRecursion,
-    )
+    required jni$_.JByteArray? Function(jni$_.JByteArray bs)
     echoNativeInteropAllNullableTypesWithoutRecursion,
-    required NativeInteropAllNullableTypesWithoutRecursion Function(
+    required jni$_.JByteArray? Function(
       jni$_.JBoolean? boolean,
       jni$_.JLong? long,
       jni$_.JString? string,
@@ -16857,56 +16001,22 @@ final class _$NativeInteropFlutterIntegrationCoreApi with $NativeInteropFlutterI
     required jni$_.JIntArray Function(jni$_.JIntArray is$) echoInt32List,
     required jni$_.JLongArray Function(jni$_.JLongArray js) echoInt64List,
     required jni$_.JDoubleArray Function(jni$_.JDoubleArray ds) echoFloat64List,
-    required jni$_.JList<jni$_.JObject?> Function(jni$_.JList<jni$_.JObject?> list) echoList,
-    required jni$_.JList<NativeInteropAnEnum?> Function(jni$_.JList<NativeInteropAnEnum?> list)
-    echoEnumList,
-    required jni$_.JList<NativeInteropAllNullableTypes?> Function(
-      jni$_.JList<NativeInteropAllNullableTypes?> list,
-    )
-    echoClassList,
-    required jni$_.JList<NativeInteropAnEnum> Function(jni$_.JList<NativeInteropAnEnum> list)
-    echoNonNullEnumList,
-    required jni$_.JList<NativeInteropAllNullableTypes> Function(
-      jni$_.JList<NativeInteropAllNullableTypes> list,
-    )
-    echoNonNullClassList,
-    required jni$_.JMap<jni$_.JObject?, jni$_.JObject?> Function(
-      jni$_.JMap<jni$_.JObject?, jni$_.JObject?> map,
-    )
-    echoMap,
-    required jni$_.JMap<jni$_.JString?, jni$_.JString?> Function(
-      jni$_.JMap<jni$_.JString?, jni$_.JString?> map,
-    )
-    echoStringMap,
-    required jni$_.JMap<jni$_.JLong?, jni$_.JLong?> Function(
-      jni$_.JMap<jni$_.JLong?, jni$_.JLong?> map,
-    )
-    echoIntMap,
-    required jni$_.JMap<NativeInteropAnEnum?, NativeInteropAnEnum?> Function(
-      jni$_.JMap<NativeInteropAnEnum?, NativeInteropAnEnum?> map,
-    )
-    echoEnumMap,
-    required jni$_.JMap<jni$_.JLong?, NativeInteropAllNullableTypes?> Function(
-      jni$_.JMap<jni$_.JLong?, NativeInteropAllNullableTypes?> map,
-    )
-    echoClassMap,
-    required jni$_.JMap<jni$_.JString, jni$_.JString> Function(
-      jni$_.JMap<jni$_.JString, jni$_.JString> map,
-    )
-    echoNonNullStringMap,
-    required jni$_.JMap<jni$_.JLong, jni$_.JLong> Function(jni$_.JMap<jni$_.JLong, jni$_.JLong> map)
-    echoNonNullIntMap,
-    required jni$_.JMap<NativeInteropAnEnum, NativeInteropAnEnum> Function(
-      jni$_.JMap<NativeInteropAnEnum, NativeInteropAnEnum> map,
-    )
-    echoNonNullEnumMap,
-    required jni$_.JMap<jni$_.JLong, NativeInteropAllNullableTypes> Function(
-      jni$_.JMap<jni$_.JLong, NativeInteropAllNullableTypes> map,
-    )
-    echoNonNullClassMap,
-    required NativeInteropAnEnum Function(NativeInteropAnEnum nativeInteropAnEnum) echoEnum,
-    required NativeInteropAnotherEnum Function(NativeInteropAnotherEnum nativeInteropAnotherEnum)
-    echoNativeInteropAnotherEnum,
+    required jni$_.JByteArray? Function(jni$_.JByteArray bs) echoList,
+    required jni$_.JByteArray? Function(jni$_.JByteArray bs) echoEnumList,
+    required jni$_.JByteArray? Function(jni$_.JByteArray bs) echoClassList,
+    required jni$_.JByteArray? Function(jni$_.JByteArray bs) echoNonNullEnumList,
+    required jni$_.JByteArray? Function(jni$_.JByteArray bs) echoNonNullClassList,
+    required jni$_.JByteArray? Function(jni$_.JByteArray bs) echoMap,
+    required jni$_.JByteArray? Function(jni$_.JByteArray bs) echoStringMap,
+    required jni$_.JByteArray? Function(jni$_.JByteArray bs) echoIntMap,
+    required jni$_.JByteArray? Function(jni$_.JByteArray bs) echoEnumMap,
+    required jni$_.JByteArray? Function(jni$_.JByteArray bs) echoClassMap,
+    required jni$_.JByteArray? Function(jni$_.JByteArray bs) echoNonNullStringMap,
+    required jni$_.JByteArray? Function(jni$_.JByteArray bs) echoNonNullIntMap,
+    required jni$_.JByteArray? Function(jni$_.JByteArray bs) echoNonNullEnumMap,
+    required jni$_.JByteArray? Function(jni$_.JByteArray bs) echoNonNullClassMap,
+    required core$_.int Function(core$_.int j) echoEnum,
+    required core$_.int Function(core$_.int j) echoNativeInteropAnotherEnum,
     required jni$_.JBoolean? Function(jni$_.JBoolean? boolean) echoNullableBool,
     required jni$_.JLong? Function(jni$_.JLong? long) echoNullableInt,
     required jni$_.JDouble? Function(jni$_.JDouble? double) echoNullableDouble,
@@ -16915,73 +16025,29 @@ final class _$NativeInteropFlutterIntegrationCoreApi with $NativeInteropFlutterI
     required jni$_.JIntArray? Function(jni$_.JIntArray? is$) echoNullableInt32List,
     required jni$_.JLongArray? Function(jni$_.JLongArray? js) echoNullableInt64List,
     required jni$_.JDoubleArray? Function(jni$_.JDoubleArray? ds) echoNullableFloat64List,
-    required jni$_.JList<jni$_.JObject?>? Function(jni$_.JList<jni$_.JObject?>? list)
-    echoNullableList,
-    required jni$_.JList<NativeInteropAnEnum?>? Function(jni$_.JList<NativeInteropAnEnum?>? list)
-    echoNullableEnumList,
-    required jni$_.JList<NativeInteropAllNullableTypes?>? Function(
-      jni$_.JList<NativeInteropAllNullableTypes?>? list,
-    )
-    echoNullableClassList,
-    required jni$_.JList<NativeInteropAnEnum>? Function(jni$_.JList<NativeInteropAnEnum>? list)
-    echoNullableNonNullEnumList,
-    required jni$_.JList<NativeInteropAllNullableTypes>? Function(
-      jni$_.JList<NativeInteropAllNullableTypes>? list,
-    )
-    echoNullableNonNullClassList,
-    required jni$_.JMap<jni$_.JObject?, jni$_.JObject?>? Function(
-      jni$_.JMap<jni$_.JObject?, jni$_.JObject?>? map,
-    )
-    echoNullableMap,
-    required jni$_.JMap<jni$_.JString?, jni$_.JString?>? Function(
-      jni$_.JMap<jni$_.JString?, jni$_.JString?>? map,
-    )
-    echoNullableStringMap,
-    required jni$_.JMap<jni$_.JLong?, jni$_.JLong?>? Function(
-      jni$_.JMap<jni$_.JLong?, jni$_.JLong?>? map,
-    )
-    echoNullableIntMap,
-    required jni$_.JMap<NativeInteropAnEnum?, NativeInteropAnEnum?>? Function(
-      jni$_.JMap<NativeInteropAnEnum?, NativeInteropAnEnum?>? map,
-    )
-    echoNullableEnumMap,
-    required jni$_.JMap<jni$_.JLong?, NativeInteropAllNullableTypes?>? Function(
-      jni$_.JMap<jni$_.JLong?, NativeInteropAllNullableTypes?>? map,
-    )
-    echoNullableClassMap,
-    required jni$_.JMap<jni$_.JString, jni$_.JString>? Function(
-      jni$_.JMap<jni$_.JString, jni$_.JString>? map,
-    )
-    echoNullableNonNullStringMap,
-    required jni$_.JMap<jni$_.JLong, jni$_.JLong>? Function(
-      jni$_.JMap<jni$_.JLong, jni$_.JLong>? map,
-    )
-    echoNullableNonNullIntMap,
-    required jni$_.JMap<NativeInteropAnEnum, NativeInteropAnEnum>? Function(
-      jni$_.JMap<NativeInteropAnEnum, NativeInteropAnEnum>? map,
-    )
-    echoNullableNonNullEnumMap,
-    required jni$_.JMap<jni$_.JLong, NativeInteropAllNullableTypes>? Function(
-      jni$_.JMap<jni$_.JLong, NativeInteropAllNullableTypes>? map,
-    )
-    echoNullableNonNullClassMap,
-    required NativeInteropAnEnum? Function(NativeInteropAnEnum? nativeInteropAnEnum)
-    echoNullableEnum,
-    required NativeInteropAnotherEnum? Function(NativeInteropAnotherEnum? nativeInteropAnotherEnum)
-    echoAnotherNullableEnum,
+    required jni$_.JByteArray? Function(jni$_.JByteArray bs) echoNullableList,
+    required jni$_.JByteArray? Function(jni$_.JByteArray bs) echoNullableEnumList,
+    required jni$_.JByteArray? Function(jni$_.JByteArray bs) echoNullableClassList,
+    required jni$_.JByteArray? Function(jni$_.JByteArray bs) echoNullableNonNullEnumList,
+    required jni$_.JByteArray? Function(jni$_.JByteArray bs) echoNullableNonNullClassList,
+    required jni$_.JByteArray? Function(jni$_.JByteArray bs) echoNullableMap,
+    required jni$_.JByteArray? Function(jni$_.JByteArray bs) echoNullableStringMap,
+    required jni$_.JByteArray? Function(jni$_.JByteArray bs) echoNullableIntMap,
+    required jni$_.JByteArray? Function(jni$_.JByteArray bs) echoNullableEnumMap,
+    required jni$_.JByteArray? Function(jni$_.JByteArray bs) echoNullableClassMap,
+    required jni$_.JByteArray? Function(jni$_.JByteArray bs) echoNullableNonNullStringMap,
+    required jni$_.JByteArray? Function(jni$_.JByteArray bs) echoNullableNonNullIntMap,
+    required jni$_.JByteArray? Function(jni$_.JByteArray bs) echoNullableNonNullEnumMap,
+    required jni$_.JByteArray? Function(jni$_.JByteArray bs) echoNullableNonNullClassMap,
+    required core$_.int Function(core$_.int j) echoNullableEnum,
+    required core$_.int Function(core$_.int j) echoAnotherNullableEnum,
     required core$_.Future<void> Function() noopAsync,
-    required core$_.Future<jni$_.JObject?> Function() throwFlutterErrorAsync,
-    required core$_.Future<NativeInteropAllTypes> Function(
-      NativeInteropAllTypes nativeInteropAllTypes,
-    )
+    required core$_.Future<jni$_.JByteArray?> Function() throwFlutterErrorAsync,
+    required core$_.Future<jni$_.JByteArray?> Function(jni$_.JByteArray bs)
     echoAsyncNativeInteropAllTypes,
-    required core$_.Future<NativeInteropAllNullableTypes?> Function(
-      NativeInteropAllNullableTypes? nativeInteropAllNullableTypes,
-    )
+    required core$_.Future<jni$_.JByteArray?> Function(jni$_.JByteArray bs)
     echoAsyncNullableNativeInteropAllNullableTypes,
-    required core$_.Future<NativeInteropAllNullableTypesWithoutRecursion?> Function(
-      NativeInteropAllNullableTypesWithoutRecursion? nativeInteropAllNullableTypesWithoutRecursion,
-    )
+    required core$_.Future<jni$_.JByteArray?> Function(jni$_.JByteArray bs)
     echoAsyncNullableNativeInteropAllNullableTypesWithoutRecursion,
     required core$_.Future<jni$_.JBoolean> Function(core$_.bool z) echoAsyncBool,
     required core$_.Future<jni$_.JLong> Function(core$_.int j) echoAsyncInt,
@@ -16991,51 +16057,21 @@ final class _$NativeInteropFlutterIntegrationCoreApi with $NativeInteropFlutterI
     required core$_.Future<jni$_.JIntArray> Function(jni$_.JIntArray is$) echoAsyncInt32List,
     required core$_.Future<jni$_.JLongArray> Function(jni$_.JLongArray js) echoAsyncInt64List,
     required core$_.Future<jni$_.JDoubleArray> Function(jni$_.JDoubleArray ds) echoAsyncFloat64List,
-    required core$_.Future<jni$_.JObject> Function(jni$_.JObject object) echoAsyncObject,
-    required core$_.Future<jni$_.JList<jni$_.JObject?>> Function(jni$_.JList<jni$_.JObject?> list)
-    echoAsyncList,
-    required core$_.Future<jni$_.JList<NativeInteropAnEnum?>> Function(
-      jni$_.JList<NativeInteropAnEnum?> list,
-    )
-    echoAsyncEnumList,
-    required core$_.Future<jni$_.JList<NativeInteropAllNullableTypes?>> Function(
-      jni$_.JList<NativeInteropAllNullableTypes?> list,
-    )
-    echoAsyncClassList,
-    required core$_.Future<jni$_.JList<NativeInteropAnEnum>> Function(
-      jni$_.JList<NativeInteropAnEnum?> list,
-    )
+    required core$_.Future<jni$_.JByteArray?> Function(jni$_.JByteArray bs) echoAsyncObject,
+    required core$_.Future<jni$_.JByteArray?> Function(jni$_.JByteArray bs) echoAsyncList,
+    required core$_.Future<jni$_.JByteArray?> Function(jni$_.JByteArray bs) echoAsyncEnumList,
+    required core$_.Future<jni$_.JByteArray?> Function(jni$_.JByteArray bs) echoAsyncClassList,
+    required core$_.Future<jni$_.JByteArray?> Function(jni$_.JByteArray bs)
     echoAsyncNonNullEnumList,
-    required core$_.Future<jni$_.JList<NativeInteropAllNullableTypes>> Function(
-      jni$_.JList<NativeInteropAllNullableTypes?> list,
-    )
+    required core$_.Future<jni$_.JByteArray?> Function(jni$_.JByteArray bs)
     echoAsyncNonNullClassList,
-    required core$_.Future<jni$_.JMap<jni$_.JObject?, jni$_.JObject?>> Function(
-      jni$_.JMap<jni$_.JObject?, jni$_.JObject?> map,
-    )
-    echoAsyncMap,
-    required core$_.Future<jni$_.JMap<jni$_.JString?, jni$_.JString?>> Function(
-      jni$_.JMap<jni$_.JString?, jni$_.JString?> map,
-    )
-    echoAsyncStringMap,
-    required core$_.Future<jni$_.JMap<jni$_.JLong?, jni$_.JLong?>> Function(
-      jni$_.JMap<jni$_.JLong?, jni$_.JLong?> map,
-    )
-    echoAsyncIntMap,
-    required core$_.Future<jni$_.JMap<NativeInteropAnEnum?, NativeInteropAnEnum?>> Function(
-      jni$_.JMap<NativeInteropAnEnum?, NativeInteropAnEnum?> map,
-    )
-    echoAsyncEnumMap,
-    required core$_.Future<jni$_.JMap<jni$_.JLong?, NativeInteropAllNullableTypes?>> Function(
-      jni$_.JMap<jni$_.JLong?, NativeInteropAllNullableTypes?> map,
-    )
-    echoAsyncClassMap,
-    required core$_.Future<NativeInteropAnEnum> Function(NativeInteropAnEnum nativeInteropAnEnum)
-    echoAsyncEnum,
-    required core$_.Future<NativeInteropAnotherEnum> Function(
-      NativeInteropAnotherEnum nativeInteropAnotherEnum,
-    )
-    echoAnotherAsyncEnum,
+    required core$_.Future<jni$_.JByteArray?> Function(jni$_.JByteArray bs) echoAsyncMap,
+    required core$_.Future<jni$_.JByteArray?> Function(jni$_.JByteArray bs) echoAsyncStringMap,
+    required core$_.Future<jni$_.JByteArray?> Function(jni$_.JByteArray bs) echoAsyncIntMap,
+    required core$_.Future<jni$_.JByteArray?> Function(jni$_.JByteArray bs) echoAsyncEnumMap,
+    required core$_.Future<jni$_.JByteArray?> Function(jni$_.JByteArray bs) echoAsyncClassMap,
+    required core$_.Future<jni$_.JLong> Function(core$_.int j) echoAsyncEnum,
+    required core$_.Future<jni$_.JLong> Function(core$_.int j) echoAnotherAsyncEnum,
     required core$_.Future<jni$_.JBoolean?> Function(jni$_.JBoolean? boolean) echoAsyncNullableBool,
     required core$_.Future<jni$_.JLong?> Function(jni$_.JLong? long) echoAsyncNullableInt,
     required core$_.Future<jni$_.JDouble?> Function(jni$_.JDouble? double) echoAsyncNullableDouble,
@@ -17048,51 +16084,26 @@ final class _$NativeInteropFlutterIntegrationCoreApi with $NativeInteropFlutterI
     echoAsyncNullableInt64List,
     required core$_.Future<jni$_.JDoubleArray?> Function(jni$_.JDoubleArray? ds)
     echoAsyncNullableFloat64List,
-    required core$_.Future<jni$_.JObject?> Function(jni$_.JObject? object) echoAsyncNullableObject,
-    required core$_.Future<jni$_.JList<jni$_.JObject?>?> Function(jni$_.JList<jni$_.JObject?>? list)
-    echoAsyncNullableList,
-    required core$_.Future<jni$_.JList<NativeInteropAnEnum?>?> Function(
-      jni$_.JList<NativeInteropAnEnum?>? list,
-    )
+    required core$_.Future<jni$_.JByteArray?> Function(jni$_.JByteArray bs) echoAsyncNullableObject,
+    required core$_.Future<jni$_.JByteArray?> Function(jni$_.JByteArray bs) echoAsyncNullableList,
+    required core$_.Future<jni$_.JByteArray?> Function(jni$_.JByteArray bs)
     echoAsyncNullableEnumList,
-    required core$_.Future<jni$_.JList<NativeInteropAllNullableTypes?>?> Function(
-      jni$_.JList<NativeInteropAllNullableTypes?>? list,
-    )
+    required core$_.Future<jni$_.JByteArray?> Function(jni$_.JByteArray bs)
     echoAsyncNullableClassList,
-    required core$_.Future<jni$_.JList<NativeInteropAnEnum>?> Function(
-      jni$_.JList<NativeInteropAnEnum?>? list,
-    )
+    required core$_.Future<jni$_.JByteArray?> Function(jni$_.JByteArray bs)
     echoAsyncNullableNonNullEnumList,
-    required core$_.Future<jni$_.JList<NativeInteropAllNullableTypes>?> Function(
-      jni$_.JList<NativeInteropAllNullableTypes?>? list,
-    )
+    required core$_.Future<jni$_.JByteArray?> Function(jni$_.JByteArray bs)
     echoAsyncNullableNonNullClassList,
-    required core$_.Future<jni$_.JMap<jni$_.JObject?, jni$_.JObject?>?> Function(
-      jni$_.JMap<jni$_.JObject?, jni$_.JObject?>? map,
-    )
-    echoAsyncNullableMap,
-    required core$_.Future<jni$_.JMap<jni$_.JString?, jni$_.JString?>?> Function(
-      jni$_.JMap<jni$_.JString?, jni$_.JString?>? map,
-    )
+    required core$_.Future<jni$_.JByteArray?> Function(jni$_.JByteArray bs) echoAsyncNullableMap,
+    required core$_.Future<jni$_.JByteArray?> Function(jni$_.JByteArray bs)
     echoAsyncNullableStringMap,
-    required core$_.Future<jni$_.JMap<jni$_.JLong?, jni$_.JLong?>?> Function(
-      jni$_.JMap<jni$_.JLong?, jni$_.JLong?>? map,
-    )
-    echoAsyncNullableIntMap,
-    required core$_.Future<jni$_.JMap<NativeInteropAnEnum?, NativeInteropAnEnum?>?> Function(
-      jni$_.JMap<NativeInteropAnEnum?, NativeInteropAnEnum?>? map,
-    )
+    required core$_.Future<jni$_.JByteArray?> Function(jni$_.JByteArray bs) echoAsyncNullableIntMap,
+    required core$_.Future<jni$_.JByteArray?> Function(jni$_.JByteArray bs)
     echoAsyncNullableEnumMap,
-    required core$_.Future<jni$_.JMap<jni$_.JLong?, NativeInteropAllNullableTypes?>?> Function(
-      jni$_.JMap<jni$_.JLong?, NativeInteropAllNullableTypes?>? map,
-    )
+    required core$_.Future<jni$_.JByteArray?> Function(jni$_.JByteArray bs)
     echoAsyncNullableClassMap,
-    required core$_.Future<NativeInteropAnEnum?> Function(NativeInteropAnEnum? nativeInteropAnEnum)
-    echoAsyncNullableEnum,
-    required core$_.Future<NativeInteropAnotherEnum?> Function(
-      NativeInteropAnotherEnum? nativeInteropAnotherEnum,
-    )
-    echoAnotherAsyncNullableEnum,
+    required core$_.Future<jni$_.JLong> Function(core$_.int j) echoAsyncNullableEnum,
+    required core$_.Future<jni$_.JLong> Function(core$_.int j) echoAnotherAsyncNullableEnum,
   }) : _noop = noop,
        _throwFlutterError = throwFlutterError,
        _throwError = throwError,
@@ -17204,29 +16215,22 @@ final class _$NativeInteropFlutterIntegrationCoreApi with $NativeInteropFlutterI
 
   final void Function() _noop;
   final core$_.bool noop$async;
-  final jni$_.JObject? Function() _throwFlutterError;
-  final jni$_.JObject? Function() _throwError;
+  final jni$_.JByteArray? Function() _throwFlutterError;
+  final jni$_.JByteArray? Function() _throwError;
   final void Function() _throwErrorFromVoid;
   final core$_.bool throwErrorFromVoid$async;
-  final NativeInteropAllTypes Function(NativeInteropAllTypes nativeInteropAllTypes)
-  _echoNativeInteropAllTypes;
-  final NativeInteropAllNullableTypes? Function(
-    NativeInteropAllNullableTypes? nativeInteropAllNullableTypes,
-  )
-  _echoNativeInteropAllNullableTypes;
-  final NativeInteropSealedClass Function(NativeInteropSealedClass nativeInteropSealedClass)
-  _echoNativeInteropSealedClass;
-  final NativeInteropAllNullableTypes Function(
+  final jni$_.JByteArray? Function(jni$_.JByteArray bs) _echoNativeInteropAllTypes;
+  final jni$_.JByteArray? Function(jni$_.JByteArray bs) _echoNativeInteropAllNullableTypes;
+  final jni$_.JByteArray? Function(jni$_.JByteArray bs) _echoNativeInteropSealedClass;
+  final jni$_.JByteArray? Function(
     jni$_.JBoolean? boolean,
     jni$_.JLong? long,
     jni$_.JString? string,
   )
   _sendMultipleNullableTypes;
-  final NativeInteropAllNullableTypesWithoutRecursion? Function(
-    NativeInteropAllNullableTypesWithoutRecursion? nativeInteropAllNullableTypesWithoutRecursion,
-  )
+  final jni$_.JByteArray? Function(jni$_.JByteArray bs)
   _echoNativeInteropAllNullableTypesWithoutRecursion;
-  final NativeInteropAllNullableTypesWithoutRecursion Function(
+  final jni$_.JByteArray? Function(
     jni$_.JBoolean? boolean,
     jni$_.JLong? long,
     jni$_.JString? string,
@@ -17240,54 +16244,22 @@ final class _$NativeInteropFlutterIntegrationCoreApi with $NativeInteropFlutterI
   final jni$_.JIntArray Function(jni$_.JIntArray is$) _echoInt32List;
   final jni$_.JLongArray Function(jni$_.JLongArray js) _echoInt64List;
   final jni$_.JDoubleArray Function(jni$_.JDoubleArray ds) _echoFloat64List;
-  final jni$_.JList<jni$_.JObject?> Function(jni$_.JList<jni$_.JObject?> list) _echoList;
-  final jni$_.JList<NativeInteropAnEnum?> Function(jni$_.JList<NativeInteropAnEnum?> list)
-  _echoEnumList;
-  final jni$_.JList<NativeInteropAllNullableTypes?> Function(
-    jni$_.JList<NativeInteropAllNullableTypes?> list,
-  )
-  _echoClassList;
-  final jni$_.JList<NativeInteropAnEnum> Function(jni$_.JList<NativeInteropAnEnum> list)
-  _echoNonNullEnumList;
-  final jni$_.JList<NativeInteropAllNullableTypes> Function(
-    jni$_.JList<NativeInteropAllNullableTypes> list,
-  )
-  _echoNonNullClassList;
-  final jni$_.JMap<jni$_.JObject?, jni$_.JObject?> Function(
-    jni$_.JMap<jni$_.JObject?, jni$_.JObject?> map,
-  )
-  _echoMap;
-  final jni$_.JMap<jni$_.JString?, jni$_.JString?> Function(
-    jni$_.JMap<jni$_.JString?, jni$_.JString?> map,
-  )
-  _echoStringMap;
-  final jni$_.JMap<jni$_.JLong?, jni$_.JLong?> Function(jni$_.JMap<jni$_.JLong?, jni$_.JLong?> map)
-  _echoIntMap;
-  final jni$_.JMap<NativeInteropAnEnum?, NativeInteropAnEnum?> Function(
-    jni$_.JMap<NativeInteropAnEnum?, NativeInteropAnEnum?> map,
-  )
-  _echoEnumMap;
-  final jni$_.JMap<jni$_.JLong?, NativeInteropAllNullableTypes?> Function(
-    jni$_.JMap<jni$_.JLong?, NativeInteropAllNullableTypes?> map,
-  )
-  _echoClassMap;
-  final jni$_.JMap<jni$_.JString, jni$_.JString> Function(
-    jni$_.JMap<jni$_.JString, jni$_.JString> map,
-  )
-  _echoNonNullStringMap;
-  final jni$_.JMap<jni$_.JLong, jni$_.JLong> Function(jni$_.JMap<jni$_.JLong, jni$_.JLong> map)
-  _echoNonNullIntMap;
-  final jni$_.JMap<NativeInteropAnEnum, NativeInteropAnEnum> Function(
-    jni$_.JMap<NativeInteropAnEnum, NativeInteropAnEnum> map,
-  )
-  _echoNonNullEnumMap;
-  final jni$_.JMap<jni$_.JLong, NativeInteropAllNullableTypes> Function(
-    jni$_.JMap<jni$_.JLong, NativeInteropAllNullableTypes> map,
-  )
-  _echoNonNullClassMap;
-  final NativeInteropAnEnum Function(NativeInteropAnEnum nativeInteropAnEnum) _echoEnum;
-  final NativeInteropAnotherEnum Function(NativeInteropAnotherEnum nativeInteropAnotherEnum)
-  _echoNativeInteropAnotherEnum;
+  final jni$_.JByteArray? Function(jni$_.JByteArray bs) _echoList;
+  final jni$_.JByteArray? Function(jni$_.JByteArray bs) _echoEnumList;
+  final jni$_.JByteArray? Function(jni$_.JByteArray bs) _echoClassList;
+  final jni$_.JByteArray? Function(jni$_.JByteArray bs) _echoNonNullEnumList;
+  final jni$_.JByteArray? Function(jni$_.JByteArray bs) _echoNonNullClassList;
+  final jni$_.JByteArray? Function(jni$_.JByteArray bs) _echoMap;
+  final jni$_.JByteArray? Function(jni$_.JByteArray bs) _echoStringMap;
+  final jni$_.JByteArray? Function(jni$_.JByteArray bs) _echoIntMap;
+  final jni$_.JByteArray? Function(jni$_.JByteArray bs) _echoEnumMap;
+  final jni$_.JByteArray? Function(jni$_.JByteArray bs) _echoClassMap;
+  final jni$_.JByteArray? Function(jni$_.JByteArray bs) _echoNonNullStringMap;
+  final jni$_.JByteArray? Function(jni$_.JByteArray bs) _echoNonNullIntMap;
+  final jni$_.JByteArray? Function(jni$_.JByteArray bs) _echoNonNullEnumMap;
+  final jni$_.JByteArray? Function(jni$_.JByteArray bs) _echoNonNullClassMap;
+  final core$_.int Function(core$_.int j) _echoEnum;
+  final core$_.int Function(core$_.int j) _echoNativeInteropAnotherEnum;
   final jni$_.JBoolean? Function(jni$_.JBoolean? boolean) _echoNullableBool;
   final jni$_.JLong? Function(jni$_.JLong? long) _echoNullableInt;
   final jni$_.JDouble? Function(jni$_.JDouble? double) _echoNullableDouble;
@@ -17296,67 +16268,29 @@ final class _$NativeInteropFlutterIntegrationCoreApi with $NativeInteropFlutterI
   final jni$_.JIntArray? Function(jni$_.JIntArray? is$) _echoNullableInt32List;
   final jni$_.JLongArray? Function(jni$_.JLongArray? js) _echoNullableInt64List;
   final jni$_.JDoubleArray? Function(jni$_.JDoubleArray? ds) _echoNullableFloat64List;
-  final jni$_.JList<jni$_.JObject?>? Function(jni$_.JList<jni$_.JObject?>? list) _echoNullableList;
-  final jni$_.JList<NativeInteropAnEnum?>? Function(jni$_.JList<NativeInteropAnEnum?>? list)
-  _echoNullableEnumList;
-  final jni$_.JList<NativeInteropAllNullableTypes?>? Function(
-    jni$_.JList<NativeInteropAllNullableTypes?>? list,
-  )
-  _echoNullableClassList;
-  final jni$_.JList<NativeInteropAnEnum>? Function(jni$_.JList<NativeInteropAnEnum>? list)
-  _echoNullableNonNullEnumList;
-  final jni$_.JList<NativeInteropAllNullableTypes>? Function(
-    jni$_.JList<NativeInteropAllNullableTypes>? list,
-  )
-  _echoNullableNonNullClassList;
-  final jni$_.JMap<jni$_.JObject?, jni$_.JObject?>? Function(
-    jni$_.JMap<jni$_.JObject?, jni$_.JObject?>? map,
-  )
-  _echoNullableMap;
-  final jni$_.JMap<jni$_.JString?, jni$_.JString?>? Function(
-    jni$_.JMap<jni$_.JString?, jni$_.JString?>? map,
-  )
-  _echoNullableStringMap;
-  final jni$_.JMap<jni$_.JLong?, jni$_.JLong?>? Function(
-    jni$_.JMap<jni$_.JLong?, jni$_.JLong?>? map,
-  )
-  _echoNullableIntMap;
-  final jni$_.JMap<NativeInteropAnEnum?, NativeInteropAnEnum?>? Function(
-    jni$_.JMap<NativeInteropAnEnum?, NativeInteropAnEnum?>? map,
-  )
-  _echoNullableEnumMap;
-  final jni$_.JMap<jni$_.JLong?, NativeInteropAllNullableTypes?>? Function(
-    jni$_.JMap<jni$_.JLong?, NativeInteropAllNullableTypes?>? map,
-  )
-  _echoNullableClassMap;
-  final jni$_.JMap<jni$_.JString, jni$_.JString>? Function(
-    jni$_.JMap<jni$_.JString, jni$_.JString>? map,
-  )
-  _echoNullableNonNullStringMap;
-  final jni$_.JMap<jni$_.JLong, jni$_.JLong>? Function(jni$_.JMap<jni$_.JLong, jni$_.JLong>? map)
-  _echoNullableNonNullIntMap;
-  final jni$_.JMap<NativeInteropAnEnum, NativeInteropAnEnum>? Function(
-    jni$_.JMap<NativeInteropAnEnum, NativeInteropAnEnum>? map,
-  )
-  _echoNullableNonNullEnumMap;
-  final jni$_.JMap<jni$_.JLong, NativeInteropAllNullableTypes>? Function(
-    jni$_.JMap<jni$_.JLong, NativeInteropAllNullableTypes>? map,
-  )
-  _echoNullableNonNullClassMap;
-  final NativeInteropAnEnum? Function(NativeInteropAnEnum? nativeInteropAnEnum) _echoNullableEnum;
-  final NativeInteropAnotherEnum? Function(NativeInteropAnotherEnum? nativeInteropAnotherEnum)
-  _echoAnotherNullableEnum;
+  final jni$_.JByteArray? Function(jni$_.JByteArray bs) _echoNullableList;
+  final jni$_.JByteArray? Function(jni$_.JByteArray bs) _echoNullableEnumList;
+  final jni$_.JByteArray? Function(jni$_.JByteArray bs) _echoNullableClassList;
+  final jni$_.JByteArray? Function(jni$_.JByteArray bs) _echoNullableNonNullEnumList;
+  final jni$_.JByteArray? Function(jni$_.JByteArray bs) _echoNullableNonNullClassList;
+  final jni$_.JByteArray? Function(jni$_.JByteArray bs) _echoNullableMap;
+  final jni$_.JByteArray? Function(jni$_.JByteArray bs) _echoNullableStringMap;
+  final jni$_.JByteArray? Function(jni$_.JByteArray bs) _echoNullableIntMap;
+  final jni$_.JByteArray? Function(jni$_.JByteArray bs) _echoNullableEnumMap;
+  final jni$_.JByteArray? Function(jni$_.JByteArray bs) _echoNullableClassMap;
+  final jni$_.JByteArray? Function(jni$_.JByteArray bs) _echoNullableNonNullStringMap;
+  final jni$_.JByteArray? Function(jni$_.JByteArray bs) _echoNullableNonNullIntMap;
+  final jni$_.JByteArray? Function(jni$_.JByteArray bs) _echoNullableNonNullEnumMap;
+  final jni$_.JByteArray? Function(jni$_.JByteArray bs) _echoNullableNonNullClassMap;
+  final core$_.int Function(core$_.int j) _echoNullableEnum;
+  final core$_.int Function(core$_.int j) _echoAnotherNullableEnum;
   final core$_.Future<void> Function() _noopAsync;
-  final core$_.Future<jni$_.JObject?> Function() _throwFlutterErrorAsync;
-  final core$_.Future<NativeInteropAllTypes> Function(NativeInteropAllTypes nativeInteropAllTypes)
+  final core$_.Future<jni$_.JByteArray?> Function() _throwFlutterErrorAsync;
+  final core$_.Future<jni$_.JByteArray?> Function(jni$_.JByteArray bs)
   _echoAsyncNativeInteropAllTypes;
-  final core$_.Future<NativeInteropAllNullableTypes?> Function(
-    NativeInteropAllNullableTypes? nativeInteropAllNullableTypes,
-  )
+  final core$_.Future<jni$_.JByteArray?> Function(jni$_.JByteArray bs)
   _echoAsyncNullableNativeInteropAllNullableTypes;
-  final core$_.Future<NativeInteropAllNullableTypesWithoutRecursion?> Function(
-    NativeInteropAllNullableTypesWithoutRecursion? nativeInteropAllNullableTypesWithoutRecursion,
-  )
+  final core$_.Future<jni$_.JByteArray?> Function(jni$_.JByteArray bs)
   _echoAsyncNullableNativeInteropAllNullableTypesWithoutRecursion;
   final core$_.Future<jni$_.JBoolean> Function(core$_.bool z) _echoAsyncBool;
   final core$_.Future<jni$_.JLong> Function(core$_.int j) _echoAsyncInt;
@@ -17366,51 +16300,19 @@ final class _$NativeInteropFlutterIntegrationCoreApi with $NativeInteropFlutterI
   final core$_.Future<jni$_.JIntArray> Function(jni$_.JIntArray is$) _echoAsyncInt32List;
   final core$_.Future<jni$_.JLongArray> Function(jni$_.JLongArray js) _echoAsyncInt64List;
   final core$_.Future<jni$_.JDoubleArray> Function(jni$_.JDoubleArray ds) _echoAsyncFloat64List;
-  final core$_.Future<jni$_.JObject> Function(jni$_.JObject object) _echoAsyncObject;
-  final core$_.Future<jni$_.JList<jni$_.JObject?>> Function(jni$_.JList<jni$_.JObject?> list)
-  _echoAsyncList;
-  final core$_.Future<jni$_.JList<NativeInteropAnEnum?>> Function(
-    jni$_.JList<NativeInteropAnEnum?> list,
-  )
-  _echoAsyncEnumList;
-  final core$_.Future<jni$_.JList<NativeInteropAllNullableTypes?>> Function(
-    jni$_.JList<NativeInteropAllNullableTypes?> list,
-  )
-  _echoAsyncClassList;
-  final core$_.Future<jni$_.JList<NativeInteropAnEnum>> Function(
-    jni$_.JList<NativeInteropAnEnum?> list,
-  )
-  _echoAsyncNonNullEnumList;
-  final core$_.Future<jni$_.JList<NativeInteropAllNullableTypes>> Function(
-    jni$_.JList<NativeInteropAllNullableTypes?> list,
-  )
-  _echoAsyncNonNullClassList;
-  final core$_.Future<jni$_.JMap<jni$_.JObject?, jni$_.JObject?>> Function(
-    jni$_.JMap<jni$_.JObject?, jni$_.JObject?> map,
-  )
-  _echoAsyncMap;
-  final core$_.Future<jni$_.JMap<jni$_.JString?, jni$_.JString?>> Function(
-    jni$_.JMap<jni$_.JString?, jni$_.JString?> map,
-  )
-  _echoAsyncStringMap;
-  final core$_.Future<jni$_.JMap<jni$_.JLong?, jni$_.JLong?>> Function(
-    jni$_.JMap<jni$_.JLong?, jni$_.JLong?> map,
-  )
-  _echoAsyncIntMap;
-  final core$_.Future<jni$_.JMap<NativeInteropAnEnum?, NativeInteropAnEnum?>> Function(
-    jni$_.JMap<NativeInteropAnEnum?, NativeInteropAnEnum?> map,
-  )
-  _echoAsyncEnumMap;
-  final core$_.Future<jni$_.JMap<jni$_.JLong?, NativeInteropAllNullableTypes?>> Function(
-    jni$_.JMap<jni$_.JLong?, NativeInteropAllNullableTypes?> map,
-  )
-  _echoAsyncClassMap;
-  final core$_.Future<NativeInteropAnEnum> Function(NativeInteropAnEnum nativeInteropAnEnum)
-  _echoAsyncEnum;
-  final core$_.Future<NativeInteropAnotherEnum> Function(
-    NativeInteropAnotherEnum nativeInteropAnotherEnum,
-  )
-  _echoAnotherAsyncEnum;
+  final core$_.Future<jni$_.JByteArray?> Function(jni$_.JByteArray bs) _echoAsyncObject;
+  final core$_.Future<jni$_.JByteArray?> Function(jni$_.JByteArray bs) _echoAsyncList;
+  final core$_.Future<jni$_.JByteArray?> Function(jni$_.JByteArray bs) _echoAsyncEnumList;
+  final core$_.Future<jni$_.JByteArray?> Function(jni$_.JByteArray bs) _echoAsyncClassList;
+  final core$_.Future<jni$_.JByteArray?> Function(jni$_.JByteArray bs) _echoAsyncNonNullEnumList;
+  final core$_.Future<jni$_.JByteArray?> Function(jni$_.JByteArray bs) _echoAsyncNonNullClassList;
+  final core$_.Future<jni$_.JByteArray?> Function(jni$_.JByteArray bs) _echoAsyncMap;
+  final core$_.Future<jni$_.JByteArray?> Function(jni$_.JByteArray bs) _echoAsyncStringMap;
+  final core$_.Future<jni$_.JByteArray?> Function(jni$_.JByteArray bs) _echoAsyncIntMap;
+  final core$_.Future<jni$_.JByteArray?> Function(jni$_.JByteArray bs) _echoAsyncEnumMap;
+  final core$_.Future<jni$_.JByteArray?> Function(jni$_.JByteArray bs) _echoAsyncClassMap;
+  final core$_.Future<jni$_.JLong> Function(core$_.int j) _echoAsyncEnum;
+  final core$_.Future<jni$_.JLong> Function(core$_.int j) _echoAnotherAsyncEnum;
   final core$_.Future<jni$_.JBoolean?> Function(jni$_.JBoolean? boolean) _echoAsyncNullableBool;
   final core$_.Future<jni$_.JLong?> Function(jni$_.JLong? long) _echoAsyncNullableInt;
   final core$_.Future<jni$_.JDouble?> Function(jni$_.JDouble? double) _echoAsyncNullableDouble;
@@ -17420,61 +16322,31 @@ final class _$NativeInteropFlutterIntegrationCoreApi with $NativeInteropFlutterI
   final core$_.Future<jni$_.JLongArray?> Function(jni$_.JLongArray? js) _echoAsyncNullableInt64List;
   final core$_.Future<jni$_.JDoubleArray?> Function(jni$_.JDoubleArray? ds)
   _echoAsyncNullableFloat64List;
-  final core$_.Future<jni$_.JObject?> Function(jni$_.JObject? object) _echoAsyncNullableObject;
-  final core$_.Future<jni$_.JList<jni$_.JObject?>?> Function(jni$_.JList<jni$_.JObject?>? list)
-  _echoAsyncNullableList;
-  final core$_.Future<jni$_.JList<NativeInteropAnEnum?>?> Function(
-    jni$_.JList<NativeInteropAnEnum?>? list,
-  )
-  _echoAsyncNullableEnumList;
-  final core$_.Future<jni$_.JList<NativeInteropAllNullableTypes?>?> Function(
-    jni$_.JList<NativeInteropAllNullableTypes?>? list,
-  )
-  _echoAsyncNullableClassList;
-  final core$_.Future<jni$_.JList<NativeInteropAnEnum>?> Function(
-    jni$_.JList<NativeInteropAnEnum?>? list,
-  )
+  final core$_.Future<jni$_.JByteArray?> Function(jni$_.JByteArray bs) _echoAsyncNullableObject;
+  final core$_.Future<jni$_.JByteArray?> Function(jni$_.JByteArray bs) _echoAsyncNullableList;
+  final core$_.Future<jni$_.JByteArray?> Function(jni$_.JByteArray bs) _echoAsyncNullableEnumList;
+  final core$_.Future<jni$_.JByteArray?> Function(jni$_.JByteArray bs) _echoAsyncNullableClassList;
+  final core$_.Future<jni$_.JByteArray?> Function(jni$_.JByteArray bs)
   _echoAsyncNullableNonNullEnumList;
-  final core$_.Future<jni$_.JList<NativeInteropAllNullableTypes>?> Function(
-    jni$_.JList<NativeInteropAllNullableTypes?>? list,
-  )
+  final core$_.Future<jni$_.JByteArray?> Function(jni$_.JByteArray bs)
   _echoAsyncNullableNonNullClassList;
-  final core$_.Future<jni$_.JMap<jni$_.JObject?, jni$_.JObject?>?> Function(
-    jni$_.JMap<jni$_.JObject?, jni$_.JObject?>? map,
-  )
-  _echoAsyncNullableMap;
-  final core$_.Future<jni$_.JMap<jni$_.JString?, jni$_.JString?>?> Function(
-    jni$_.JMap<jni$_.JString?, jni$_.JString?>? map,
-  )
-  _echoAsyncNullableStringMap;
-  final core$_.Future<jni$_.JMap<jni$_.JLong?, jni$_.JLong?>?> Function(
-    jni$_.JMap<jni$_.JLong?, jni$_.JLong?>? map,
-  )
-  _echoAsyncNullableIntMap;
-  final core$_.Future<jni$_.JMap<NativeInteropAnEnum?, NativeInteropAnEnum?>?> Function(
-    jni$_.JMap<NativeInteropAnEnum?, NativeInteropAnEnum?>? map,
-  )
-  _echoAsyncNullableEnumMap;
-  final core$_.Future<jni$_.JMap<jni$_.JLong?, NativeInteropAllNullableTypes?>?> Function(
-    jni$_.JMap<jni$_.JLong?, NativeInteropAllNullableTypes?>? map,
-  )
-  _echoAsyncNullableClassMap;
-  final core$_.Future<NativeInteropAnEnum?> Function(NativeInteropAnEnum? nativeInteropAnEnum)
-  _echoAsyncNullableEnum;
-  final core$_.Future<NativeInteropAnotherEnum?> Function(
-    NativeInteropAnotherEnum? nativeInteropAnotherEnum,
-  )
-  _echoAnotherAsyncNullableEnum;
+  final core$_.Future<jni$_.JByteArray?> Function(jni$_.JByteArray bs) _echoAsyncNullableMap;
+  final core$_.Future<jni$_.JByteArray?> Function(jni$_.JByteArray bs) _echoAsyncNullableStringMap;
+  final core$_.Future<jni$_.JByteArray?> Function(jni$_.JByteArray bs) _echoAsyncNullableIntMap;
+  final core$_.Future<jni$_.JByteArray?> Function(jni$_.JByteArray bs) _echoAsyncNullableEnumMap;
+  final core$_.Future<jni$_.JByteArray?> Function(jni$_.JByteArray bs) _echoAsyncNullableClassMap;
+  final core$_.Future<jni$_.JLong> Function(core$_.int j) _echoAsyncNullableEnum;
+  final core$_.Future<jni$_.JLong> Function(core$_.int j) _echoAnotherAsyncNullableEnum;
 
   void noop() {
     return _noop();
   }
 
-  jni$_.JObject? throwFlutterError() {
+  jni$_.JByteArray? throwFlutterError() {
     return _throwFlutterError();
   }
 
-  jni$_.JObject? throwError() {
+  jni$_.JByteArray? throwError() {
     return _throwError();
   }
 
@@ -17482,23 +16354,19 @@ final class _$NativeInteropFlutterIntegrationCoreApi with $NativeInteropFlutterI
     return _throwErrorFromVoid();
   }
 
-  NativeInteropAllTypes echoNativeInteropAllTypes(NativeInteropAllTypes nativeInteropAllTypes) {
-    return _echoNativeInteropAllTypes(nativeInteropAllTypes);
+  jni$_.JByteArray? echoNativeInteropAllTypes(jni$_.JByteArray bs) {
+    return _echoNativeInteropAllTypes(bs);
   }
 
-  NativeInteropAllNullableTypes? echoNativeInteropAllNullableTypes(
-    NativeInteropAllNullableTypes? nativeInteropAllNullableTypes,
-  ) {
-    return _echoNativeInteropAllNullableTypes(nativeInteropAllNullableTypes);
+  jni$_.JByteArray? echoNativeInteropAllNullableTypes(jni$_.JByteArray bs) {
+    return _echoNativeInteropAllNullableTypes(bs);
   }
 
-  NativeInteropSealedClass echoNativeInteropSealedClass(
-    NativeInteropSealedClass nativeInteropSealedClass,
-  ) {
-    return _echoNativeInteropSealedClass(nativeInteropSealedClass);
+  jni$_.JByteArray? echoNativeInteropSealedClass(jni$_.JByteArray bs) {
+    return _echoNativeInteropSealedClass(bs);
   }
 
-  NativeInteropAllNullableTypes sendMultipleNullableTypes(
+  jni$_.JByteArray? sendMultipleNullableTypes(
     jni$_.JBoolean? boolean,
     jni$_.JLong? long,
     jni$_.JString? string,
@@ -17506,15 +16374,11 @@ final class _$NativeInteropFlutterIntegrationCoreApi with $NativeInteropFlutterI
     return _sendMultipleNullableTypes(boolean, long, string);
   }
 
-  NativeInteropAllNullableTypesWithoutRecursion? echoNativeInteropAllNullableTypesWithoutRecursion(
-    NativeInteropAllNullableTypesWithoutRecursion? nativeInteropAllNullableTypesWithoutRecursion,
-  ) {
-    return _echoNativeInteropAllNullableTypesWithoutRecursion(
-      nativeInteropAllNullableTypesWithoutRecursion,
-    );
+  jni$_.JByteArray? echoNativeInteropAllNullableTypesWithoutRecursion(jni$_.JByteArray bs) {
+    return _echoNativeInteropAllNullableTypesWithoutRecursion(bs);
   }
 
-  NativeInteropAllNullableTypesWithoutRecursion sendMultipleNullableTypesWithoutRecursion(
+  jni$_.JByteArray? sendMultipleNullableTypesWithoutRecursion(
     jni$_.JBoolean? boolean,
     jni$_.JLong? long,
     jni$_.JString? string,
@@ -17554,88 +16418,68 @@ final class _$NativeInteropFlutterIntegrationCoreApi with $NativeInteropFlutterI
     return _echoFloat64List(ds);
   }
 
-  jni$_.JList<jni$_.JObject?> echoList(jni$_.JList<jni$_.JObject?> list) {
-    return _echoList(list);
+  jni$_.JByteArray? echoList(jni$_.JByteArray bs) {
+    return _echoList(bs);
   }
 
-  jni$_.JList<NativeInteropAnEnum?> echoEnumList(jni$_.JList<NativeInteropAnEnum?> list) {
-    return _echoEnumList(list);
+  jni$_.JByteArray? echoEnumList(jni$_.JByteArray bs) {
+    return _echoEnumList(bs);
   }
 
-  jni$_.JList<NativeInteropAllNullableTypes?> echoClassList(
-    jni$_.JList<NativeInteropAllNullableTypes?> list,
-  ) {
-    return _echoClassList(list);
+  jni$_.JByteArray? echoClassList(jni$_.JByteArray bs) {
+    return _echoClassList(bs);
   }
 
-  jni$_.JList<NativeInteropAnEnum> echoNonNullEnumList(jni$_.JList<NativeInteropAnEnum> list) {
-    return _echoNonNullEnumList(list);
+  jni$_.JByteArray? echoNonNullEnumList(jni$_.JByteArray bs) {
+    return _echoNonNullEnumList(bs);
   }
 
-  jni$_.JList<NativeInteropAllNullableTypes> echoNonNullClassList(
-    jni$_.JList<NativeInteropAllNullableTypes> list,
-  ) {
-    return _echoNonNullClassList(list);
+  jni$_.JByteArray? echoNonNullClassList(jni$_.JByteArray bs) {
+    return _echoNonNullClassList(bs);
   }
 
-  jni$_.JMap<jni$_.JObject?, jni$_.JObject?> echoMap(
-    jni$_.JMap<jni$_.JObject?, jni$_.JObject?> map,
-  ) {
-    return _echoMap(map);
+  jni$_.JByteArray? echoMap(jni$_.JByteArray bs) {
+    return _echoMap(bs);
   }
 
-  jni$_.JMap<jni$_.JString?, jni$_.JString?> echoStringMap(
-    jni$_.JMap<jni$_.JString?, jni$_.JString?> map,
-  ) {
-    return _echoStringMap(map);
+  jni$_.JByteArray? echoStringMap(jni$_.JByteArray bs) {
+    return _echoStringMap(bs);
   }
 
-  jni$_.JMap<jni$_.JLong?, jni$_.JLong?> echoIntMap(jni$_.JMap<jni$_.JLong?, jni$_.JLong?> map) {
-    return _echoIntMap(map);
+  jni$_.JByteArray? echoIntMap(jni$_.JByteArray bs) {
+    return _echoIntMap(bs);
   }
 
-  jni$_.JMap<NativeInteropAnEnum?, NativeInteropAnEnum?> echoEnumMap(
-    jni$_.JMap<NativeInteropAnEnum?, NativeInteropAnEnum?> map,
-  ) {
-    return _echoEnumMap(map);
+  jni$_.JByteArray? echoEnumMap(jni$_.JByteArray bs) {
+    return _echoEnumMap(bs);
   }
 
-  jni$_.JMap<jni$_.JLong?, NativeInteropAllNullableTypes?> echoClassMap(
-    jni$_.JMap<jni$_.JLong?, NativeInteropAllNullableTypes?> map,
-  ) {
-    return _echoClassMap(map);
+  jni$_.JByteArray? echoClassMap(jni$_.JByteArray bs) {
+    return _echoClassMap(bs);
   }
 
-  jni$_.JMap<jni$_.JString, jni$_.JString> echoNonNullStringMap(
-    jni$_.JMap<jni$_.JString, jni$_.JString> map,
-  ) {
-    return _echoNonNullStringMap(map);
+  jni$_.JByteArray? echoNonNullStringMap(jni$_.JByteArray bs) {
+    return _echoNonNullStringMap(bs);
   }
 
-  jni$_.JMap<jni$_.JLong, jni$_.JLong> echoNonNullIntMap(jni$_.JMap<jni$_.JLong, jni$_.JLong> map) {
-    return _echoNonNullIntMap(map);
+  jni$_.JByteArray? echoNonNullIntMap(jni$_.JByteArray bs) {
+    return _echoNonNullIntMap(bs);
   }
 
-  jni$_.JMap<NativeInteropAnEnum, NativeInteropAnEnum> echoNonNullEnumMap(
-    jni$_.JMap<NativeInteropAnEnum, NativeInteropAnEnum> map,
-  ) {
-    return _echoNonNullEnumMap(map);
+  jni$_.JByteArray? echoNonNullEnumMap(jni$_.JByteArray bs) {
+    return _echoNonNullEnumMap(bs);
   }
 
-  jni$_.JMap<jni$_.JLong, NativeInteropAllNullableTypes> echoNonNullClassMap(
-    jni$_.JMap<jni$_.JLong, NativeInteropAllNullableTypes> map,
-  ) {
-    return _echoNonNullClassMap(map);
+  jni$_.JByteArray? echoNonNullClassMap(jni$_.JByteArray bs) {
+    return _echoNonNullClassMap(bs);
   }
 
-  NativeInteropAnEnum echoEnum(NativeInteropAnEnum nativeInteropAnEnum) {
-    return _echoEnum(nativeInteropAnEnum);
+  core$_.int echoEnum(core$_.int j) {
+    return _echoEnum(j);
   }
 
-  NativeInteropAnotherEnum echoNativeInteropAnotherEnum(
-    NativeInteropAnotherEnum nativeInteropAnotherEnum,
-  ) {
-    return _echoNativeInteropAnotherEnum(nativeInteropAnotherEnum);
+  core$_.int echoNativeInteropAnotherEnum(core$_.int j) {
+    return _echoNativeInteropAnotherEnum(j);
   }
 
   jni$_.JBoolean? echoNullableBool(jni$_.JBoolean? boolean) {
@@ -17670,123 +16514,92 @@ final class _$NativeInteropFlutterIntegrationCoreApi with $NativeInteropFlutterI
     return _echoNullableFloat64List(ds);
   }
 
-  jni$_.JList<jni$_.JObject?>? echoNullableList(jni$_.JList<jni$_.JObject?>? list) {
-    return _echoNullableList(list);
+  jni$_.JByteArray? echoNullableList(jni$_.JByteArray bs) {
+    return _echoNullableList(bs);
   }
 
-  jni$_.JList<NativeInteropAnEnum?>? echoNullableEnumList(jni$_.JList<NativeInteropAnEnum?>? list) {
-    return _echoNullableEnumList(list);
+  jni$_.JByteArray? echoNullableEnumList(jni$_.JByteArray bs) {
+    return _echoNullableEnumList(bs);
   }
 
-  jni$_.JList<NativeInteropAllNullableTypes?>? echoNullableClassList(
-    jni$_.JList<NativeInteropAllNullableTypes?>? list,
-  ) {
-    return _echoNullableClassList(list);
+  jni$_.JByteArray? echoNullableClassList(jni$_.JByteArray bs) {
+    return _echoNullableClassList(bs);
   }
 
-  jni$_.JList<NativeInteropAnEnum>? echoNullableNonNullEnumList(
-    jni$_.JList<NativeInteropAnEnum>? list,
-  ) {
-    return _echoNullableNonNullEnumList(list);
+  jni$_.JByteArray? echoNullableNonNullEnumList(jni$_.JByteArray bs) {
+    return _echoNullableNonNullEnumList(bs);
   }
 
-  jni$_.JList<NativeInteropAllNullableTypes>? echoNullableNonNullClassList(
-    jni$_.JList<NativeInteropAllNullableTypes>? list,
-  ) {
-    return _echoNullableNonNullClassList(list);
+  jni$_.JByteArray? echoNullableNonNullClassList(jni$_.JByteArray bs) {
+    return _echoNullableNonNullClassList(bs);
   }
 
-  jni$_.JMap<jni$_.JObject?, jni$_.JObject?>? echoNullableMap(
-    jni$_.JMap<jni$_.JObject?, jni$_.JObject?>? map,
-  ) {
-    return _echoNullableMap(map);
+  jni$_.JByteArray? echoNullableMap(jni$_.JByteArray bs) {
+    return _echoNullableMap(bs);
   }
 
-  jni$_.JMap<jni$_.JString?, jni$_.JString?>? echoNullableStringMap(
-    jni$_.JMap<jni$_.JString?, jni$_.JString?>? map,
-  ) {
-    return _echoNullableStringMap(map);
+  jni$_.JByteArray? echoNullableStringMap(jni$_.JByteArray bs) {
+    return _echoNullableStringMap(bs);
   }
 
-  jni$_.JMap<jni$_.JLong?, jni$_.JLong?>? echoNullableIntMap(
-    jni$_.JMap<jni$_.JLong?, jni$_.JLong?>? map,
-  ) {
-    return _echoNullableIntMap(map);
+  jni$_.JByteArray? echoNullableIntMap(jni$_.JByteArray bs) {
+    return _echoNullableIntMap(bs);
   }
 
-  jni$_.JMap<NativeInteropAnEnum?, NativeInteropAnEnum?>? echoNullableEnumMap(
-    jni$_.JMap<NativeInteropAnEnum?, NativeInteropAnEnum?>? map,
-  ) {
-    return _echoNullableEnumMap(map);
+  jni$_.JByteArray? echoNullableEnumMap(jni$_.JByteArray bs) {
+    return _echoNullableEnumMap(bs);
   }
 
-  jni$_.JMap<jni$_.JLong?, NativeInteropAllNullableTypes?>? echoNullableClassMap(
-    jni$_.JMap<jni$_.JLong?, NativeInteropAllNullableTypes?>? map,
-  ) {
-    return _echoNullableClassMap(map);
+  jni$_.JByteArray? echoNullableClassMap(jni$_.JByteArray bs) {
+    return _echoNullableClassMap(bs);
   }
 
-  jni$_.JMap<jni$_.JString, jni$_.JString>? echoNullableNonNullStringMap(
-    jni$_.JMap<jni$_.JString, jni$_.JString>? map,
-  ) {
-    return _echoNullableNonNullStringMap(map);
+  jni$_.JByteArray? echoNullableNonNullStringMap(jni$_.JByteArray bs) {
+    return _echoNullableNonNullStringMap(bs);
   }
 
-  jni$_.JMap<jni$_.JLong, jni$_.JLong>? echoNullableNonNullIntMap(
-    jni$_.JMap<jni$_.JLong, jni$_.JLong>? map,
-  ) {
-    return _echoNullableNonNullIntMap(map);
+  jni$_.JByteArray? echoNullableNonNullIntMap(jni$_.JByteArray bs) {
+    return _echoNullableNonNullIntMap(bs);
   }
 
-  jni$_.JMap<NativeInteropAnEnum, NativeInteropAnEnum>? echoNullableNonNullEnumMap(
-    jni$_.JMap<NativeInteropAnEnum, NativeInteropAnEnum>? map,
-  ) {
-    return _echoNullableNonNullEnumMap(map);
+  jni$_.JByteArray? echoNullableNonNullEnumMap(jni$_.JByteArray bs) {
+    return _echoNullableNonNullEnumMap(bs);
   }
 
-  jni$_.JMap<jni$_.JLong, NativeInteropAllNullableTypes>? echoNullableNonNullClassMap(
-    jni$_.JMap<jni$_.JLong, NativeInteropAllNullableTypes>? map,
-  ) {
-    return _echoNullableNonNullClassMap(map);
+  jni$_.JByteArray? echoNullableNonNullClassMap(jni$_.JByteArray bs) {
+    return _echoNullableNonNullClassMap(bs);
   }
 
-  NativeInteropAnEnum? echoNullableEnum(NativeInteropAnEnum? nativeInteropAnEnum) {
-    return _echoNullableEnum(nativeInteropAnEnum);
+  core$_.int echoNullableEnum(core$_.int j) {
+    return _echoNullableEnum(j);
   }
 
-  NativeInteropAnotherEnum? echoAnotherNullableEnum(
-    NativeInteropAnotherEnum? nativeInteropAnotherEnum,
-  ) {
-    return _echoAnotherNullableEnum(nativeInteropAnotherEnum);
+  core$_.int echoAnotherNullableEnum(core$_.int j) {
+    return _echoAnotherNullableEnum(j);
   }
 
   core$_.Future<void> noopAsync() {
     return _noopAsync();
   }
 
-  core$_.Future<jni$_.JObject?> throwFlutterErrorAsync() {
+  core$_.Future<jni$_.JByteArray?> throwFlutterErrorAsync() {
     return _throwFlutterErrorAsync();
   }
 
-  core$_.Future<NativeInteropAllTypes> echoAsyncNativeInteropAllTypes(
-    NativeInteropAllTypes nativeInteropAllTypes,
-  ) {
-    return _echoAsyncNativeInteropAllTypes(nativeInteropAllTypes);
+  core$_.Future<jni$_.JByteArray?> echoAsyncNativeInteropAllTypes(jni$_.JByteArray bs) {
+    return _echoAsyncNativeInteropAllTypes(bs);
   }
 
-  core$_.Future<NativeInteropAllNullableTypes?> echoAsyncNullableNativeInteropAllNullableTypes(
-    NativeInteropAllNullableTypes? nativeInteropAllNullableTypes,
+  core$_.Future<jni$_.JByteArray?> echoAsyncNullableNativeInteropAllNullableTypes(
+    jni$_.JByteArray bs,
   ) {
-    return _echoAsyncNullableNativeInteropAllNullableTypes(nativeInteropAllNullableTypes);
+    return _echoAsyncNullableNativeInteropAllNullableTypes(bs);
   }
 
-  core$_.Future<NativeInteropAllNullableTypesWithoutRecursion?>
-  echoAsyncNullableNativeInteropAllNullableTypesWithoutRecursion(
-    NativeInteropAllNullableTypesWithoutRecursion? nativeInteropAllNullableTypesWithoutRecursion,
+  core$_.Future<jni$_.JByteArray?> echoAsyncNullableNativeInteropAllNullableTypesWithoutRecursion(
+    jni$_.JByteArray bs,
   ) {
-    return _echoAsyncNullableNativeInteropAllNullableTypesWithoutRecursion(
-      nativeInteropAllNullableTypesWithoutRecursion,
-    );
+    return _echoAsyncNullableNativeInteropAllNullableTypesWithoutRecursion(bs);
   }
 
   core$_.Future<jni$_.JBoolean> echoAsyncBool(core$_.bool z) {
@@ -17821,76 +16634,56 @@ final class _$NativeInteropFlutterIntegrationCoreApi with $NativeInteropFlutterI
     return _echoAsyncFloat64List(ds);
   }
 
-  core$_.Future<jni$_.JObject> echoAsyncObject(jni$_.JObject object) {
-    return _echoAsyncObject(object);
+  core$_.Future<jni$_.JByteArray?> echoAsyncObject(jni$_.JByteArray bs) {
+    return _echoAsyncObject(bs);
   }
 
-  core$_.Future<jni$_.JList<jni$_.JObject?>> echoAsyncList(jni$_.JList<jni$_.JObject?> list) {
-    return _echoAsyncList(list);
+  core$_.Future<jni$_.JByteArray?> echoAsyncList(jni$_.JByteArray bs) {
+    return _echoAsyncList(bs);
   }
 
-  core$_.Future<jni$_.JList<NativeInteropAnEnum?>> echoAsyncEnumList(
-    jni$_.JList<NativeInteropAnEnum?> list,
-  ) {
-    return _echoAsyncEnumList(list);
+  core$_.Future<jni$_.JByteArray?> echoAsyncEnumList(jni$_.JByteArray bs) {
+    return _echoAsyncEnumList(bs);
   }
 
-  core$_.Future<jni$_.JList<NativeInteropAllNullableTypes?>> echoAsyncClassList(
-    jni$_.JList<NativeInteropAllNullableTypes?> list,
-  ) {
-    return _echoAsyncClassList(list);
+  core$_.Future<jni$_.JByteArray?> echoAsyncClassList(jni$_.JByteArray bs) {
+    return _echoAsyncClassList(bs);
   }
 
-  core$_.Future<jni$_.JList<NativeInteropAnEnum>> echoAsyncNonNullEnumList(
-    jni$_.JList<NativeInteropAnEnum?> list,
-  ) {
-    return _echoAsyncNonNullEnumList(list);
+  core$_.Future<jni$_.JByteArray?> echoAsyncNonNullEnumList(jni$_.JByteArray bs) {
+    return _echoAsyncNonNullEnumList(bs);
   }
 
-  core$_.Future<jni$_.JList<NativeInteropAllNullableTypes>> echoAsyncNonNullClassList(
-    jni$_.JList<NativeInteropAllNullableTypes?> list,
-  ) {
-    return _echoAsyncNonNullClassList(list);
+  core$_.Future<jni$_.JByteArray?> echoAsyncNonNullClassList(jni$_.JByteArray bs) {
+    return _echoAsyncNonNullClassList(bs);
   }
 
-  core$_.Future<jni$_.JMap<jni$_.JObject?, jni$_.JObject?>> echoAsyncMap(
-    jni$_.JMap<jni$_.JObject?, jni$_.JObject?> map,
-  ) {
-    return _echoAsyncMap(map);
+  core$_.Future<jni$_.JByteArray?> echoAsyncMap(jni$_.JByteArray bs) {
+    return _echoAsyncMap(bs);
   }
 
-  core$_.Future<jni$_.JMap<jni$_.JString?, jni$_.JString?>> echoAsyncStringMap(
-    jni$_.JMap<jni$_.JString?, jni$_.JString?> map,
-  ) {
-    return _echoAsyncStringMap(map);
+  core$_.Future<jni$_.JByteArray?> echoAsyncStringMap(jni$_.JByteArray bs) {
+    return _echoAsyncStringMap(bs);
   }
 
-  core$_.Future<jni$_.JMap<jni$_.JLong?, jni$_.JLong?>> echoAsyncIntMap(
-    jni$_.JMap<jni$_.JLong?, jni$_.JLong?> map,
-  ) {
-    return _echoAsyncIntMap(map);
+  core$_.Future<jni$_.JByteArray?> echoAsyncIntMap(jni$_.JByteArray bs) {
+    return _echoAsyncIntMap(bs);
   }
 
-  core$_.Future<jni$_.JMap<NativeInteropAnEnum?, NativeInteropAnEnum?>> echoAsyncEnumMap(
-    jni$_.JMap<NativeInteropAnEnum?, NativeInteropAnEnum?> map,
-  ) {
-    return _echoAsyncEnumMap(map);
+  core$_.Future<jni$_.JByteArray?> echoAsyncEnumMap(jni$_.JByteArray bs) {
+    return _echoAsyncEnumMap(bs);
   }
 
-  core$_.Future<jni$_.JMap<jni$_.JLong?, NativeInteropAllNullableTypes?>> echoAsyncClassMap(
-    jni$_.JMap<jni$_.JLong?, NativeInteropAllNullableTypes?> map,
-  ) {
-    return _echoAsyncClassMap(map);
+  core$_.Future<jni$_.JByteArray?> echoAsyncClassMap(jni$_.JByteArray bs) {
+    return _echoAsyncClassMap(bs);
   }
 
-  core$_.Future<NativeInteropAnEnum> echoAsyncEnum(NativeInteropAnEnum nativeInteropAnEnum) {
-    return _echoAsyncEnum(nativeInteropAnEnum);
+  core$_.Future<jni$_.JLong> echoAsyncEnum(core$_.int j) {
+    return _echoAsyncEnum(j);
   }
 
-  core$_.Future<NativeInteropAnotherEnum> echoAnotherAsyncEnum(
-    NativeInteropAnotherEnum nativeInteropAnotherEnum,
-  ) {
-    return _echoAnotherAsyncEnum(nativeInteropAnotherEnum);
+  core$_.Future<jni$_.JLong> echoAnotherAsyncEnum(core$_.int j) {
+    return _echoAnotherAsyncEnum(j);
   }
 
   core$_.Future<jni$_.JBoolean?> echoAsyncNullableBool(jni$_.JBoolean? boolean) {
@@ -17925,90 +16718,67 @@ final class _$NativeInteropFlutterIntegrationCoreApi with $NativeInteropFlutterI
     return _echoAsyncNullableFloat64List(ds);
   }
 
-  core$_.Future<jni$_.JObject?> echoAsyncNullableObject(jni$_.JObject? object) {
-    return _echoAsyncNullableObject(object);
+  core$_.Future<jni$_.JByteArray?> echoAsyncNullableObject(jni$_.JByteArray bs) {
+    return _echoAsyncNullableObject(bs);
   }
 
-  core$_.Future<jni$_.JList<jni$_.JObject?>?> echoAsyncNullableList(
-    jni$_.JList<jni$_.JObject?>? list,
-  ) {
-    return _echoAsyncNullableList(list);
+  core$_.Future<jni$_.JByteArray?> echoAsyncNullableList(jni$_.JByteArray bs) {
+    return _echoAsyncNullableList(bs);
   }
 
-  core$_.Future<jni$_.JList<NativeInteropAnEnum?>?> echoAsyncNullableEnumList(
-    jni$_.JList<NativeInteropAnEnum?>? list,
-  ) {
-    return _echoAsyncNullableEnumList(list);
+  core$_.Future<jni$_.JByteArray?> echoAsyncNullableEnumList(jni$_.JByteArray bs) {
+    return _echoAsyncNullableEnumList(bs);
   }
 
-  core$_.Future<jni$_.JList<NativeInteropAllNullableTypes?>?> echoAsyncNullableClassList(
-    jni$_.JList<NativeInteropAllNullableTypes?>? list,
-  ) {
-    return _echoAsyncNullableClassList(list);
+  core$_.Future<jni$_.JByteArray?> echoAsyncNullableClassList(jni$_.JByteArray bs) {
+    return _echoAsyncNullableClassList(bs);
   }
 
-  core$_.Future<jni$_.JList<NativeInteropAnEnum>?> echoAsyncNullableNonNullEnumList(
-    jni$_.JList<NativeInteropAnEnum?>? list,
-  ) {
-    return _echoAsyncNullableNonNullEnumList(list);
+  core$_.Future<jni$_.JByteArray?> echoAsyncNullableNonNullEnumList(jni$_.JByteArray bs) {
+    return _echoAsyncNullableNonNullEnumList(bs);
   }
 
-  core$_.Future<jni$_.JList<NativeInteropAllNullableTypes>?> echoAsyncNullableNonNullClassList(
-    jni$_.JList<NativeInteropAllNullableTypes?>? list,
-  ) {
-    return _echoAsyncNullableNonNullClassList(list);
+  core$_.Future<jni$_.JByteArray?> echoAsyncNullableNonNullClassList(jni$_.JByteArray bs) {
+    return _echoAsyncNullableNonNullClassList(bs);
   }
 
-  core$_.Future<jni$_.JMap<jni$_.JObject?, jni$_.JObject?>?> echoAsyncNullableMap(
-    jni$_.JMap<jni$_.JObject?, jni$_.JObject?>? map,
-  ) {
-    return _echoAsyncNullableMap(map);
+  core$_.Future<jni$_.JByteArray?> echoAsyncNullableMap(jni$_.JByteArray bs) {
+    return _echoAsyncNullableMap(bs);
   }
 
-  core$_.Future<jni$_.JMap<jni$_.JString?, jni$_.JString?>?> echoAsyncNullableStringMap(
-    jni$_.JMap<jni$_.JString?, jni$_.JString?>? map,
-  ) {
-    return _echoAsyncNullableStringMap(map);
+  core$_.Future<jni$_.JByteArray?> echoAsyncNullableStringMap(jni$_.JByteArray bs) {
+    return _echoAsyncNullableStringMap(bs);
   }
 
-  core$_.Future<jni$_.JMap<jni$_.JLong?, jni$_.JLong?>?> echoAsyncNullableIntMap(
-    jni$_.JMap<jni$_.JLong?, jni$_.JLong?>? map,
-  ) {
-    return _echoAsyncNullableIntMap(map);
+  core$_.Future<jni$_.JByteArray?> echoAsyncNullableIntMap(jni$_.JByteArray bs) {
+    return _echoAsyncNullableIntMap(bs);
   }
 
-  core$_.Future<jni$_.JMap<NativeInteropAnEnum?, NativeInteropAnEnum?>?> echoAsyncNullableEnumMap(
-    jni$_.JMap<NativeInteropAnEnum?, NativeInteropAnEnum?>? map,
-  ) {
-    return _echoAsyncNullableEnumMap(map);
+  core$_.Future<jni$_.JByteArray?> echoAsyncNullableEnumMap(jni$_.JByteArray bs) {
+    return _echoAsyncNullableEnumMap(bs);
   }
 
-  core$_.Future<jni$_.JMap<jni$_.JLong?, NativeInteropAllNullableTypes?>?>
-  echoAsyncNullableClassMap(jni$_.JMap<jni$_.JLong?, NativeInteropAllNullableTypes?>? map) {
-    return _echoAsyncNullableClassMap(map);
+  core$_.Future<jni$_.JByteArray?> echoAsyncNullableClassMap(jni$_.JByteArray bs) {
+    return _echoAsyncNullableClassMap(bs);
   }
 
-  core$_.Future<NativeInteropAnEnum?> echoAsyncNullableEnum(
-    NativeInteropAnEnum? nativeInteropAnEnum,
-  ) {
-    return _echoAsyncNullableEnum(nativeInteropAnEnum);
+  core$_.Future<jni$_.JLong> echoAsyncNullableEnum(core$_.int j) {
+    return _echoAsyncNullableEnum(j);
   }
 
-  core$_.Future<NativeInteropAnotherEnum?> echoAnotherAsyncNullableEnum(
-    NativeInteropAnotherEnum? nativeInteropAnotherEnum,
-  ) {
-    return _echoAnotherAsyncNullableEnum(nativeInteropAnotherEnum);
+  core$_.Future<jni$_.JLong> echoAnotherAsyncNullableEnum(core$_.int j) {
+    return _echoAnotherAsyncNullableEnum(j);
   }
 }
 
-final class $NativeInteropFlutterIntegrationCoreApi$Type$
-    extends jni$_.JType<NativeInteropFlutterIntegrationCoreApi> {
+final class $NativeInteropFlutterIntegrationCoreApiBridge$Type$
+    extends jni$_.JType<NativeInteropFlutterIntegrationCoreApiBridge> {
   @jni$_.internal
-  const $NativeInteropFlutterIntegrationCoreApi$Type$();
+  const $NativeInteropFlutterIntegrationCoreApiBridge$Type$();
 
   @jni$_.internal
   @core$_.override
-  String get signature => r'Lcom/example/test_plugin/NativeInteropFlutterIntegrationCoreApi;';
+  String get signature => r'Lcom/example/test_plugin/NativeInteropFlutterIntegrationCoreApiBridge;';
 }
 
 /// from: `com.example.test_plugin.NativeInteropFlutterIntegrationCoreApiRegistrar`
@@ -18047,7 +16817,7 @@ extension NativeInteropFlutterIntegrationCoreApiRegistrar$$Methods
   static final _id_registerInstance = NativeInteropFlutterIntegrationCoreApiRegistrar._class
       .instanceMethodId(
         r'registerInstance',
-        r'(Lcom/example/test_plugin/NativeInteropFlutterIntegrationCoreApi;Ljava/lang/String;)V',
+        r'(Lcom/example/test_plugin/NativeInteropFlutterIntegrationCoreApiBridge;Ljava/lang/String;)V',
       );
 
   static final _registerInstance =
@@ -18069,19 +16839,19 @@ extension NativeInteropFlutterIntegrationCoreApiRegistrar$$Methods
             )
           >();
 
-  /// from: `public fun registerInstance(api: com.example.test_plugin.NativeInteropFlutterIntegrationCoreApi?, name: kotlin.String): kotlin.Unit`
+  /// from: `public fun registerInstance(api: com.example.test_plugin.NativeInteropFlutterIntegrationCoreApiBridge?, name: kotlin.String): kotlin.Unit`
   void registerInstance(
-    NativeInteropFlutterIntegrationCoreApi? nativeInteropFlutterIntegrationCoreApi,
+    NativeInteropFlutterIntegrationCoreApiBridge? nativeInteropFlutterIntegrationCoreApiBridge,
     jni$_.JString string,
   ) {
     final _$$selfRef = reference;
-    final _$nativeInteropFlutterIntegrationCoreApi =
-        nativeInteropFlutterIntegrationCoreApi?.reference ?? jni$_.jNullReference;
+    final _$nativeInteropFlutterIntegrationCoreApiBridge =
+        nativeInteropFlutterIntegrationCoreApiBridge?.reference ?? jni$_.jNullReference;
     final _$string = string.reference;
     _registerInstance(
       _$$selfRef.pointer,
       _id_registerInstance.pointer,
-      _$nativeInteropFlutterIntegrationCoreApi.pointer,
+      _$nativeInteropFlutterIntegrationCoreApiBridge.pointer,
       _$string.pointer,
     ).check();
   }
@@ -18136,7 +16906,7 @@ final class $NativeInteropFlutterIntegrationCoreApiRegistrar$Type$
 
 /// from: `com.example.test_plugin.NativeInteropReservedNamesHostApiRegistrar`
 extension type NativeInteropReservedNamesHostApiRegistrar._(jni$_.JObject _$this)
-    implements jni$_.JObject, NativeInteropReservedNamesHostApi {
+    implements jni$_.JObject {
   static final _class = jni$_.JClass.forName(
     r'com/example/test_plugin/NativeInteropReservedNamesHostApiRegistrar',
   );
@@ -18499,10 +17269,7 @@ extension NativeInteropReservedNamesHostApiRegistrar$$Methods
   }
 
   static final _id_echoReservedNames = NativeInteropReservedNamesHostApiRegistrar._class
-      .instanceMethodId(
-        r'echoReservedNames',
-        r'(Lcom/example/test_plugin/NativeInteropReservedNames;)Lcom/example/test_plugin/NativeInteropReservedNames;',
-      );
+      .instanceMethodId(r'echoReservedNames', r'([B)[B');
 
   static final _echoReservedNames =
       jni$_.ProtectedJniExtensions.lookup<
@@ -18522,18 +17289,16 @@ extension NativeInteropReservedNamesHostApiRegistrar$$Methods
             )
           >();
 
-  /// from: `public fun echoReservedNames(names: com.example.test_plugin.NativeInteropReservedNames): com.example.test_plugin.NativeInteropReservedNames`
+  /// from: `public fun echoReservedNames(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
   /// The returned object must be released after use, by calling the [release] method.
-  NativeInteropReservedNames echoReservedNames(
-    NativeInteropReservedNames nativeInteropReservedNames,
-  ) {
+  jni$_.JByteArray? echoReservedNames(jni$_.JByteArray bs) {
     final _$$selfRef = reference;
-    final _$nativeInteropReservedNames = nativeInteropReservedNames.reference;
+    final _$bs = bs.reference;
     return _echoReservedNames(
       _$$selfRef.pointer,
       _id_echoReservedNames.pointer,
-      _$nativeInteropReservedNames.pointer,
-    ).object<NativeInteropReservedNames>();
+      _$bs.pointer,
+    ).object<jni$_.JByteArray?>();
   }
 
   static final _id_callFlutterRelease = NativeInteropReservedNamesHostApiRegistrar._class
@@ -18672,19 +17437,19 @@ final class $NativeInteropReservedNamesHostApiRegistrar$Type$
   String get signature => r'Lcom/example/test_plugin/NativeInteropReservedNamesHostApiRegistrar;';
 }
 
-/// from: `com.example.test_plugin.NativeInteropReservedNamesFlutterApi`
-extension type NativeInteropReservedNamesFlutterApi._(jni$_.JObject _$this)
+/// from: `com.example.test_plugin.NativeInteropReservedNamesFlutterApiBridge`
+extension type NativeInteropReservedNamesFlutterApiBridge._(jni$_.JObject _$this)
     implements jni$_.JObject {
   static final _class = jni$_.JClass.forName(
-    r'com/example/test_plugin/NativeInteropReservedNamesFlutterApi',
+    r'com/example/test_plugin/NativeInteropReservedNamesFlutterApiBridge',
   );
 
   /// The type which includes information such as the signature of this class.
-  static const jni$_.JType<NativeInteropReservedNamesFlutterApi> type =
-      $NativeInteropReservedNamesFlutterApi$Type$();
+  static const jni$_.JType<NativeInteropReservedNamesFlutterApiBridge> type =
+      $NativeInteropReservedNamesFlutterApiBridge$Type$();
 
   /// Maps a specific port to the implemented interface.
-  static final core$_.Map<core$_.int, $NativeInteropReservedNamesFlutterApi> _$impls = {};
+  static final core$_.Map<core$_.int, $NativeInteropReservedNamesFlutterApiBridge> _$impls = {};
   static jni$_.JObjectPtr _$invoke(
     core$_.int port,
     jni$_.JObjectPtr descriptor,
@@ -18737,7 +17502,7 @@ extension type NativeInteropReservedNamesFlutterApi._(jni$_.JObject _$this)
 
   static void implementIn(
     jni$_.JImplementer implementer,
-    $NativeInteropReservedNamesFlutterApi $impl,
+    $NativeInteropReservedNamesFlutterApiBridge $impl,
   ) {
     late final jni$_.RawReceivePort $p;
     $p = jni$_.RawReceivePort(($m) {
@@ -18752,7 +17517,7 @@ extension type NativeInteropReservedNamesFlutterApi._(jni$_.JObject _$this)
       jni$_.ProtectedJniExtensions.returnResult($i.result, $r);
     });
     implementer.add(
-      r'com.example.test_plugin.NativeInteropReservedNamesFlutterApi',
+      r'com.example.test_plugin.NativeInteropReservedNamesFlutterApiBridge',
       $p,
       _$invokePointer,
       [],
@@ -18761,17 +17526,18 @@ extension type NativeInteropReservedNamesFlutterApi._(jni$_.JObject _$this)
     _$impls[$a] = $impl;
   }
 
-  factory NativeInteropReservedNamesFlutterApi.implement(
-    $NativeInteropReservedNamesFlutterApi $impl,
+  factory NativeInteropReservedNamesFlutterApiBridge.implement(
+    $NativeInteropReservedNamesFlutterApiBridge $impl,
   ) {
     final $i = jni$_.JImplementer();
     implementIn($i, $impl);
-    return $i.implement<NativeInteropReservedNamesFlutterApi>();
+    return $i.implement<NativeInteropReservedNamesFlutterApiBridge>();
   }
 }
 
-extension NativeInteropReservedNamesFlutterApi$$Methods on NativeInteropReservedNamesFlutterApi {
-  static final _id_release$1 = NativeInteropReservedNamesFlutterApi._class.instanceMethodId(
+extension NativeInteropReservedNamesFlutterApiBridge$$Methods
+    on NativeInteropReservedNamesFlutterApiBridge {
+  static final _id_release$1 = NativeInteropReservedNamesFlutterApiBridge._class.instanceMethodId(
     r'release',
     r'(Ljava/lang/String;)Ljava/lang/String;',
   );
@@ -18806,7 +17572,7 @@ extension NativeInteropReservedNamesFlutterApi$$Methods on NativeInteropReserved
     ).object<jni$_.JString>();
   }
 
-  static final _id_type$1 = NativeInteropReservedNamesFlutterApi._class.instanceMethodId(
+  static final _id_type$1 = NativeInteropReservedNamesFlutterApiBridge._class.instanceMethodId(
     r'type',
     r'()Ljava/lang/String;',
   );
@@ -18826,10 +17592,8 @@ extension NativeInteropReservedNamesFlutterApi$$Methods on NativeInteropReserved
     return _type$1(_$$selfRef.pointer, _id_type$1.pointer).object<jni$_.JString>();
   }
 
-  static final _id_implementIn$1 = NativeInteropReservedNamesFlutterApi._class.instanceMethodId(
-    r'implementIn',
-    r'(Ljava/lang/String;)Ljava/lang/String;',
-  );
+  static final _id_implementIn$1 = NativeInteropReservedNamesFlutterApiBridge._class
+      .instanceMethodId(r'implementIn', r'(Ljava/lang/String;)Ljava/lang/String;');
 
   static final _implementIn$1 =
       jni$_.ProtectedJniExtensions.lookup<
@@ -18861,7 +17625,7 @@ extension NativeInteropReservedNamesFlutterApi$$Methods on NativeInteropReserved
     ).object<jni$_.JString>();
   }
 
-  static final _id_isNull$1 = NativeInteropReservedNamesFlutterApi._class.instanceMethodId(
+  static final _id_isNull$1 = NativeInteropReservedNamesFlutterApiBridge._class.instanceMethodId(
     r'isNull',
     r'()Z',
   );
@@ -18880,10 +17644,8 @@ extension NativeInteropReservedNamesFlutterApi$$Methods on NativeInteropReserved
     return _isNull$1(_$$selfRef.pointer, _id_isNull$1.pointer).boolean;
   }
 
-  static final _id_getReference = NativeInteropReservedNamesFlutterApi._class.instanceMethodId(
-    r'getReference',
-    r'()Ljava/lang/String;',
-  );
+  static final _id_getReference = NativeInteropReservedNamesFlutterApiBridge._class
+      .instanceMethodId(r'getReference', r'()Ljava/lang/String;');
 
   static final _getReference =
       jni$_.ProtectedJniExtensions.lookup<
@@ -18901,14 +17663,14 @@ extension NativeInteropReservedNamesFlutterApi$$Methods on NativeInteropReserved
   }
 }
 
-abstract base mixin class $NativeInteropReservedNamesFlutterApi {
-  factory $NativeInteropReservedNamesFlutterApi({
+abstract base mixin class $NativeInteropReservedNamesFlutterApiBridge {
+  factory $NativeInteropReservedNamesFlutterApiBridge({
     required jni$_.JString Function(jni$_.JString string) release$1,
     required jni$_.JString Function() type$1,
     required jni$_.JString Function(jni$_.JString string) implementIn$1,
     required core$_.bool Function() isNull$1,
     required jni$_.JString Function() getReference,
-  }) = _$NativeInteropReservedNamesFlutterApi;
+  }) = _$NativeInteropReservedNamesFlutterApiBridge;
 
   jni$_.JString release$1(jni$_.JString string);
   jni$_.JString type$1();
@@ -18917,8 +17679,9 @@ abstract base mixin class $NativeInteropReservedNamesFlutterApi {
   jni$_.JString getReference();
 }
 
-final class _$NativeInteropReservedNamesFlutterApi with $NativeInteropReservedNamesFlutterApi {
-  _$NativeInteropReservedNamesFlutterApi({
+final class _$NativeInteropReservedNamesFlutterApiBridge
+    with $NativeInteropReservedNamesFlutterApiBridge {
+  _$NativeInteropReservedNamesFlutterApiBridge({
     required jni$_.JString Function(jni$_.JString string) release$1,
     required jni$_.JString Function() type$1,
     required jni$_.JString Function(jni$_.JString string) implementIn$1,
@@ -18957,14 +17720,14 @@ final class _$NativeInteropReservedNamesFlutterApi with $NativeInteropReservedNa
   }
 }
 
-final class $NativeInteropReservedNamesFlutterApi$Type$
-    extends jni$_.JType<NativeInteropReservedNamesFlutterApi> {
+final class $NativeInteropReservedNamesFlutterApiBridge$Type$
+    extends jni$_.JType<NativeInteropReservedNamesFlutterApiBridge> {
   @jni$_.internal
-  const $NativeInteropReservedNamesFlutterApi$Type$();
+  const $NativeInteropReservedNamesFlutterApiBridge$Type$();
 
   @jni$_.internal
   @core$_.override
-  String get signature => r'Lcom/example/test_plugin/NativeInteropReservedNamesFlutterApi;';
+  String get signature => r'Lcom/example/test_plugin/NativeInteropReservedNamesFlutterApiBridge;';
 }
 
 /// from: `com.example.test_plugin.NativeInteropReservedNamesFlutterApiRegistrar`
@@ -19003,7 +17766,7 @@ extension NativeInteropReservedNamesFlutterApiRegistrar$$Methods
   static final _id_registerInstance = NativeInteropReservedNamesFlutterApiRegistrar._class
       .instanceMethodId(
         r'registerInstance',
-        r'(Lcom/example/test_plugin/NativeInteropReservedNamesFlutterApi;Ljava/lang/String;)V',
+        r'(Lcom/example/test_plugin/NativeInteropReservedNamesFlutterApiBridge;Ljava/lang/String;)V',
       );
 
   static final _registerInstance =
@@ -19025,19 +17788,19 @@ extension NativeInteropReservedNamesFlutterApiRegistrar$$Methods
             )
           >();
 
-  /// from: `public fun registerInstance(api: com.example.test_plugin.NativeInteropReservedNamesFlutterApi?, name: kotlin.String): kotlin.Unit`
+  /// from: `public fun registerInstance(api: com.example.test_plugin.NativeInteropReservedNamesFlutterApiBridge?, name: kotlin.String): kotlin.Unit`
   void registerInstance(
-    NativeInteropReservedNamesFlutterApi? nativeInteropReservedNamesFlutterApi,
+    NativeInteropReservedNamesFlutterApiBridge? nativeInteropReservedNamesFlutterApiBridge,
     jni$_.JString string,
   ) {
     final _$$selfRef = reference;
-    final _$nativeInteropReservedNamesFlutterApi =
-        nativeInteropReservedNamesFlutterApi?.reference ?? jni$_.jNullReference;
+    final _$nativeInteropReservedNamesFlutterApiBridge =
+        nativeInteropReservedNamesFlutterApiBridge?.reference ?? jni$_.jNullReference;
     final _$string = string.reference;
     _registerInstance(
       _$$selfRef.pointer,
       _id_registerInstance.pointer,
-      _$nativeInteropReservedNamesFlutterApi.pointer,
+      _$nativeInteropReservedNamesFlutterApiBridge.pointer,
       _$string.pointer,
     ).check();
   }
@@ -19088,6 +17851,627 @@ final class $NativeInteropReservedNamesFlutterApiRegistrar$Type$
   @core$_.override
   String get signature =>
       r'Lcom/example/test_plugin/NativeInteropReservedNamesFlutterApiRegistrar;';
+}
+
+/// from: `com.example.test_plugin.NativeInteropSealedClassHostApiRegistrar`
+extension type NativeInteropSealedClassHostApiRegistrar._(jni$_.JObject _$this)
+    implements jni$_.JObject {
+  static final _class = jni$_.JClass.forName(
+    r'com/example/test_plugin/NativeInteropSealedClassHostApiRegistrar',
+  );
+
+  /// The type which includes information such as the signature of this class.
+  static const jni$_.JType<NativeInteropSealedClassHostApiRegistrar> type =
+      $NativeInteropSealedClassHostApiRegistrar$Type$();
+  static final _id_new$ = _class.constructorId(r'()V');
+
+  static final _new$ =
+      jni$_.ProtectedJniExtensions.lookup<
+            jni$_.NativeFunction<
+              jni$_.JniResult Function(jni$_.Pointer<jni$_.Void>, jni$_.JMethodIDPtr)
+            >
+          >('globalEnv_NewObject')
+          .asFunction<jni$_.JniResult Function(jni$_.Pointer<jni$_.Void>, jni$_.JMethodIDPtr)>();
+
+  /// from: `public void <init>()`
+  /// The returned object must be released after use, by calling the [release] method.
+  factory NativeInteropSealedClassHostApiRegistrar() {
+    final _$$classRef = _class.reference;
+    return _new$(
+      _$$classRef.pointer,
+      _id_new$.pointer,
+    ).object<NativeInteropSealedClassHostApiRegistrar>();
+  }
+}
+
+extension NativeInteropSealedClassHostApiRegistrar$$Methods
+    on NativeInteropSealedClassHostApiRegistrar {
+  static final _id_register = NativeInteropSealedClassHostApiRegistrar._class.instanceMethodId(
+    r'register',
+    r'(Lcom/example/test_plugin/NativeInteropSealedClassHostApi;Ljava/lang/String;)Lcom/example/test_plugin/NativeInteropSealedClassHostApiRegistrar;',
+  );
+
+  static final _register =
+      jni$_.ProtectedJniExtensions.lookup<
+            jni$_.NativeFunction<
+              jni$_.JniResult Function(
+                jni$_.Pointer<jni$_.Void>,
+                jni$_.JMethodIDPtr,
+                jni$_.VarArgs<(jni$_.Pointer<jni$_.Void>, jni$_.Pointer<jni$_.Void>)>,
+              )
+            >
+          >('globalEnv_CallObjectMethod')
+          .asFunction<
+            jni$_.JniResult Function(
+              jni$_.Pointer<jni$_.Void>,
+              jni$_.JMethodIDPtr,
+              jni$_.Pointer<jni$_.Void>,
+              jni$_.Pointer<jni$_.Void>,
+            )
+          >();
+
+  /// from: `public fun register(api: com.example.test_plugin.NativeInteropSealedClassHostApi?, name: kotlin.String): com.example.test_plugin.NativeInteropSealedClassHostApiRegistrar`
+  /// The returned object must be released after use, by calling the [release] method.
+  NativeInteropSealedClassHostApiRegistrar register(
+    NativeInteropSealedClassHostApi? nativeInteropSealedClassHostApi,
+    jni$_.JString string,
+  ) {
+    final _$$selfRef = reference;
+    final _$nativeInteropSealedClassHostApi =
+        nativeInteropSealedClassHostApi?.reference ?? jni$_.jNullReference;
+    final _$string = string.reference;
+    return _register(
+      _$$selfRef.pointer,
+      _id_register.pointer,
+      _$nativeInteropSealedClassHostApi.pointer,
+      _$string.pointer,
+    ).object<NativeInteropSealedClassHostApiRegistrar>();
+  }
+
+  static final _id_getInstance = NativeInteropSealedClassHostApiRegistrar._class.instanceMethodId(
+    r'getInstance',
+    r'(Ljava/lang/String;)Lcom/example/test_plugin/NativeInteropSealedClassHostApiRegistrar;',
+  );
+
+  static final _getInstance =
+      jni$_.ProtectedJniExtensions.lookup<
+            jni$_.NativeFunction<
+              jni$_.JniResult Function(
+                jni$_.Pointer<jni$_.Void>,
+                jni$_.JMethodIDPtr,
+                jni$_.VarArgs<(jni$_.Pointer<jni$_.Void>,)>,
+              )
+            >
+          >('globalEnv_CallObjectMethod')
+          .asFunction<
+            jni$_.JniResult Function(
+              jni$_.Pointer<jni$_.Void>,
+              jni$_.JMethodIDPtr,
+              jni$_.Pointer<jni$_.Void>,
+            )
+          >();
+
+  /// from: `public fun getInstance(name: kotlin.String): com.example.test_plugin.NativeInteropSealedClassHostApiRegistrar?`
+  /// The returned object must be released after use, by calling the [release] method.
+  NativeInteropSealedClassHostApiRegistrar? getInstance(jni$_.JString string) {
+    final _$$selfRef = reference;
+    final _$string = string.reference;
+    return _getInstance(
+      _$$selfRef.pointer,
+      _id_getInstance.pointer,
+      _$string.pointer,
+    ).object<NativeInteropSealedClassHostApiRegistrar?>();
+  }
+
+  static final _id_echoShape = NativeInteropSealedClassHostApiRegistrar._class.instanceMethodId(
+    r'echoShape',
+    r'([B)[B',
+  );
+
+  static final _echoShape =
+      jni$_.ProtectedJniExtensions.lookup<
+            jni$_.NativeFunction<
+              jni$_.JniResult Function(
+                jni$_.Pointer<jni$_.Void>,
+                jni$_.JMethodIDPtr,
+                jni$_.VarArgs<(jni$_.Pointer<jni$_.Void>,)>,
+              )
+            >
+          >('globalEnv_CallObjectMethod')
+          .asFunction<
+            jni$_.JniResult Function(
+              jni$_.Pointer<jni$_.Void>,
+              jni$_.JMethodIDPtr,
+              jni$_.Pointer<jni$_.Void>,
+            )
+          >();
+
+  /// from: `public fun echoShape(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
+  /// The returned object must be released after use, by calling the [release] method.
+  jni$_.JByteArray? echoShape(jni$_.JByteArray bs) {
+    final _$$selfRef = reference;
+    final _$bs = bs.reference;
+    return _echoShape(
+      _$$selfRef.pointer,
+      _id_echoShape.pointer,
+      _$bs.pointer,
+    ).object<jni$_.JByteArray?>();
+  }
+
+  static final _id_echoNullableShape = NativeInteropSealedClassHostApiRegistrar._class
+      .instanceMethodId(r'echoNullableShape', r'([B)[B');
+
+  static final _echoNullableShape =
+      jni$_.ProtectedJniExtensions.lookup<
+            jni$_.NativeFunction<
+              jni$_.JniResult Function(
+                jni$_.Pointer<jni$_.Void>,
+                jni$_.JMethodIDPtr,
+                jni$_.VarArgs<(jni$_.Pointer<jni$_.Void>,)>,
+              )
+            >
+          >('globalEnv_CallObjectMethod')
+          .asFunction<
+            jni$_.JniResult Function(
+              jni$_.Pointer<jni$_.Void>,
+              jni$_.JMethodIDPtr,
+              jni$_.Pointer<jni$_.Void>,
+            )
+          >();
+
+  /// from: `public fun echoNullableShape(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
+  /// The returned object must be released after use, by calling the [release] method.
+  jni$_.JByteArray? echoNullableShape(jni$_.JByteArray bs) {
+    final _$$selfRef = reference;
+    final _$bs = bs.reference;
+    return _echoNullableShape(
+      _$$selfRef.pointer,
+      _id_echoNullableShape.pointer,
+      _$bs.pointer,
+    ).object<jni$_.JByteArray?>();
+  }
+
+  static final _id_echoShapeList = NativeInteropSealedClassHostApiRegistrar._class.instanceMethodId(
+    r'echoShapeList',
+    r'([B)[B',
+  );
+
+  static final _echoShapeList =
+      jni$_.ProtectedJniExtensions.lookup<
+            jni$_.NativeFunction<
+              jni$_.JniResult Function(
+                jni$_.Pointer<jni$_.Void>,
+                jni$_.JMethodIDPtr,
+                jni$_.VarArgs<(jni$_.Pointer<jni$_.Void>,)>,
+              )
+            >
+          >('globalEnv_CallObjectMethod')
+          .asFunction<
+            jni$_.JniResult Function(
+              jni$_.Pointer<jni$_.Void>,
+              jni$_.JMethodIDPtr,
+              jni$_.Pointer<jni$_.Void>,
+            )
+          >();
+
+  /// from: `public fun echoShapeList(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
+  /// The returned object must be released after use, by calling the [release] method.
+  jni$_.JByteArray? echoShapeList(jni$_.JByteArray bs) {
+    final _$$selfRef = reference;
+    final _$bs = bs.reference;
+    return _echoShapeList(
+      _$$selfRef.pointer,
+      _id_echoShapeList.pointer,
+      _$bs.pointer,
+    ).object<jni$_.JByteArray?>();
+  }
+
+  static final _id_echoShapeMap = NativeInteropSealedClassHostApiRegistrar._class.instanceMethodId(
+    r'echoShapeMap',
+    r'([B)[B',
+  );
+
+  static final _echoShapeMap =
+      jni$_.ProtectedJniExtensions.lookup<
+            jni$_.NativeFunction<
+              jni$_.JniResult Function(
+                jni$_.Pointer<jni$_.Void>,
+                jni$_.JMethodIDPtr,
+                jni$_.VarArgs<(jni$_.Pointer<jni$_.Void>,)>,
+              )
+            >
+          >('globalEnv_CallObjectMethod')
+          .asFunction<
+            jni$_.JniResult Function(
+              jni$_.Pointer<jni$_.Void>,
+              jni$_.JMethodIDPtr,
+              jni$_.Pointer<jni$_.Void>,
+            )
+          >();
+
+  /// from: `public fun echoShapeMap(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
+  /// The returned object must be released after use, by calling the [release] method.
+  jni$_.JByteArray? echoShapeMap(jni$_.JByteArray bs) {
+    final _$$selfRef = reference;
+    final _$bs = bs.reference;
+    return _echoShapeMap(
+      _$$selfRef.pointer,
+      _id_echoShapeMap.pointer,
+      _$bs.pointer,
+    ).object<jni$_.JByteArray?>();
+  }
+
+  static final _id_echoAsyncShape = NativeInteropSealedClassHostApiRegistrar._class
+      .instanceMethodId(
+        r'echoAsyncShape',
+        r'([BLkotlin/coroutines/Continuation;)Ljava/lang/Object;',
+      );
+
+  static final _echoAsyncShape =
+      jni$_.ProtectedJniExtensions.lookup<
+            jni$_.NativeFunction<
+              jni$_.JniResult Function(
+                jni$_.Pointer<jni$_.Void>,
+                jni$_.JMethodIDPtr,
+                jni$_.VarArgs<(jni$_.Pointer<jni$_.Void>, jni$_.Pointer<jni$_.Void>)>,
+              )
+            >
+          >('globalEnv_CallObjectMethod')
+          .asFunction<
+            jni$_.JniResult Function(
+              jni$_.Pointer<jni$_.Void>,
+              jni$_.JMethodIDPtr,
+              jni$_.Pointer<jni$_.Void>,
+              jni$_.Pointer<jni$_.Void>,
+            )
+          >();
+
+  /// from: `public suspend fun echoAsyncShape(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
+  /// The returned object must be released after use, by calling the [release] method.
+  core$_.Future<jni$_.JByteArray?> echoAsyncShape(jni$_.JByteArray bs) async {
+    final $p = jni$_.ReceivePort();
+    final _$continuation = jni$_.ProtectedJniExtensions.newPortContinuation($p);
+    final _$$selfRef = reference;
+    final _$bs = bs.reference;
+    final $r = _echoAsyncShape(
+      _$$selfRef.pointer,
+      _id_echoAsyncShape.pointer,
+      _$bs.pointer,
+      _$continuation.pointer,
+    ).object<jni$_.JObject?>();
+    _$continuation.release();
+    jni$_.JObject? $o;
+    if ($r != null && $r.isInstanceOf(jni$_.coroutineSingletonsClass)) {
+      $r.release();
+      final $a = await $p.first;
+      $o = $a == 0
+          ? null
+          : jni$_.JObject.fromReference(jni$_.JGlobalReference(jni$_.JObjectPtr.fromAddress($a)));
+      if ($o != null && $o.isInstanceOf(jni$_.result$Class)) {
+        $o = jni$_.resultValueField.get($o, const jni$_.$JObject$Type$());
+      } else if ($o != null && $o.isInstanceOf(jni$_.result$FailureClass)) {
+        final $e = jni$_.failureExceptionField.get($o, const jni$_.$JObject$Type$());
+        $o.release();
+        jni$_.Jni.throwException($e.reference.toPointer());
+      }
+    } else {
+      $o = $r;
+    }
+    return $o?.as<jni$_.JByteArray>(jni$_.JByteArray.type, releaseOriginal: true);
+  }
+
+  static final _id_callFlutterEchoShape = NativeInteropSealedClassHostApiRegistrar._class
+      .instanceMethodId(r'callFlutterEchoShape', r'([B)[B');
+
+  static final _callFlutterEchoShape =
+      jni$_.ProtectedJniExtensions.lookup<
+            jni$_.NativeFunction<
+              jni$_.JniResult Function(
+                jni$_.Pointer<jni$_.Void>,
+                jni$_.JMethodIDPtr,
+                jni$_.VarArgs<(jni$_.Pointer<jni$_.Void>,)>,
+              )
+            >
+          >('globalEnv_CallObjectMethod')
+          .asFunction<
+            jni$_.JniResult Function(
+              jni$_.Pointer<jni$_.Void>,
+              jni$_.JMethodIDPtr,
+              jni$_.Pointer<jni$_.Void>,
+            )
+          >();
+
+  /// from: `public fun callFlutterEchoShape(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
+  /// The returned object must be released after use, by calling the [release] method.
+  jni$_.JByteArray? callFlutterEchoShape(jni$_.JByteArray bs) {
+    final _$$selfRef = reference;
+    final _$bs = bs.reference;
+    return _callFlutterEchoShape(
+      _$$selfRef.pointer,
+      _id_callFlutterEchoShape.pointer,
+      _$bs.pointer,
+    ).object<jni$_.JByteArray?>();
+  }
+}
+
+final class $NativeInteropSealedClassHostApiRegistrar$Type$
+    extends jni$_.JType<NativeInteropSealedClassHostApiRegistrar> {
+  @jni$_.internal
+  const $NativeInteropSealedClassHostApiRegistrar$Type$();
+
+  @jni$_.internal
+  @core$_.override
+  String get signature => r'Lcom/example/test_plugin/NativeInteropSealedClassHostApiRegistrar;';
+}
+
+/// from: `com.example.test_plugin.NativeInteropSealedClassFlutterApiBridge`
+extension type NativeInteropSealedClassFlutterApiBridge._(jni$_.JObject _$this)
+    implements jni$_.JObject {
+  static final _class = jni$_.JClass.forName(
+    r'com/example/test_plugin/NativeInteropSealedClassFlutterApiBridge',
+  );
+
+  /// The type which includes information such as the signature of this class.
+  static const jni$_.JType<NativeInteropSealedClassFlutterApiBridge> type =
+      $NativeInteropSealedClassFlutterApiBridge$Type$();
+
+  /// Maps a specific port to the implemented interface.
+  static final core$_.Map<core$_.int, $NativeInteropSealedClassFlutterApiBridge> _$impls = {};
+  static jni$_.JObjectPtr _$invoke(
+    core$_.int port,
+    jni$_.JObjectPtr descriptor,
+    jni$_.JObjectPtr args,
+  ) {
+    return _$invokeMethod(
+      port,
+      jni$_.MethodInvocation.fromAddresses(0, descriptor.address, args.address),
+    );
+  }
+
+  static final jni$_.Pointer<
+    jni$_.NativeFunction<jni$_.JObjectPtr Function(jni$_.Int64, jni$_.JObjectPtr, jni$_.JObjectPtr)>
+  >
+  _$invokePointer = jni$_.Pointer.fromFunction(_$invoke);
+
+  static jni$_.Pointer<jni$_.Void> _$invokeMethod(core$_.int $p, jni$_.MethodInvocation $i) {
+    try {
+      final $d = $i.methodDescriptor.toDartString(releaseOriginal: true);
+      final $a = $i.args;
+      if ($d == r'echoShape([B)[B') {
+        final $r = _$impls[$p]!.echoShape(($a![0] as jni$_.JByteArray));
+        return ($r as jni$_.JObject?)?.as(const jni$_.$JObject$Type$()).reference.toPointer() ??
+            jni$_.nullptr;
+      }
+    } catch (e) {
+      return jni$_.ProtectedJniExtensions.newDartException(e);
+    }
+    return jni$_.nullptr;
+  }
+
+  static void implementIn(
+    jni$_.JImplementer implementer,
+    $NativeInteropSealedClassFlutterApiBridge $impl,
+  ) {
+    late final jni$_.RawReceivePort $p;
+    $p = jni$_.RawReceivePort(($m) {
+      if ($m == null) {
+        _$impls.remove($p.sendPort.nativePort);
+        $p.close();
+        return;
+      }
+      final $i = jni$_.MethodInvocation.fromMessage($m);
+      final $r = _$invokeMethod($p.sendPort.nativePort, $i);
+      $i.args?.release();
+      jni$_.ProtectedJniExtensions.returnResult($i.result, $r);
+    });
+    implementer.add(
+      r'com.example.test_plugin.NativeInteropSealedClassFlutterApiBridge',
+      $p,
+      _$invokePointer,
+      [],
+    );
+    final $a = $p.sendPort.nativePort;
+    _$impls[$a] = $impl;
+  }
+
+  factory NativeInteropSealedClassFlutterApiBridge.implement(
+    $NativeInteropSealedClassFlutterApiBridge $impl,
+  ) {
+    final $i = jni$_.JImplementer();
+    implementIn($i, $impl);
+    return $i.implement<NativeInteropSealedClassFlutterApiBridge>();
+  }
+}
+
+extension NativeInteropSealedClassFlutterApiBridge$$Methods
+    on NativeInteropSealedClassFlutterApiBridge {
+  static final _id_echoShape = NativeInteropSealedClassFlutterApiBridge._class.instanceMethodId(
+    r'echoShape',
+    r'([B)[B',
+  );
+
+  static final _echoShape =
+      jni$_.ProtectedJniExtensions.lookup<
+            jni$_.NativeFunction<
+              jni$_.JniResult Function(
+                jni$_.Pointer<jni$_.Void>,
+                jni$_.JMethodIDPtr,
+                jni$_.VarArgs<(jni$_.Pointer<jni$_.Void>,)>,
+              )
+            >
+          >('globalEnv_CallObjectMethod')
+          .asFunction<
+            jni$_.JniResult Function(
+              jni$_.Pointer<jni$_.Void>,
+              jni$_.JMethodIDPtr,
+              jni$_.Pointer<jni$_.Void>,
+            )
+          >();
+
+  /// from: `public fun echoShape(pigeonVar_args: kotlin.ByteArray): kotlin.ByteArray?`
+  /// The returned object must be released after use, by calling the [release] method.
+  jni$_.JByteArray? echoShape(jni$_.JByteArray bs) {
+    final _$$selfRef = reference;
+    final _$bs = bs.reference;
+    return _echoShape(
+      _$$selfRef.pointer,
+      _id_echoShape.pointer,
+      _$bs.pointer,
+    ).object<jni$_.JByteArray?>();
+  }
+}
+
+abstract base mixin class $NativeInteropSealedClassFlutterApiBridge {
+  factory $NativeInteropSealedClassFlutterApiBridge({
+    required jni$_.JByteArray? Function(jni$_.JByteArray bs) echoShape,
+  }) = _$NativeInteropSealedClassFlutterApiBridge;
+
+  jni$_.JByteArray? echoShape(jni$_.JByteArray bs);
+}
+
+final class _$NativeInteropSealedClassFlutterApiBridge
+    with $NativeInteropSealedClassFlutterApiBridge {
+  _$NativeInteropSealedClassFlutterApiBridge({
+    required jni$_.JByteArray? Function(jni$_.JByteArray bs) echoShape,
+  }) : _echoShape = echoShape;
+
+  final jni$_.JByteArray? Function(jni$_.JByteArray bs) _echoShape;
+
+  jni$_.JByteArray? echoShape(jni$_.JByteArray bs) {
+    return _echoShape(bs);
+  }
+}
+
+final class $NativeInteropSealedClassFlutterApiBridge$Type$
+    extends jni$_.JType<NativeInteropSealedClassFlutterApiBridge> {
+  @jni$_.internal
+  const $NativeInteropSealedClassFlutterApiBridge$Type$();
+
+  @jni$_.internal
+  @core$_.override
+  String get signature => r'Lcom/example/test_plugin/NativeInteropSealedClassFlutterApiBridge;';
+}
+
+/// from: `com.example.test_plugin.NativeInteropSealedClassFlutterApiRegistrar`
+extension type NativeInteropSealedClassFlutterApiRegistrar._(jni$_.JObject _$this)
+    implements jni$_.JObject {
+  static final _class = jni$_.JClass.forName(
+    r'com/example/test_plugin/NativeInteropSealedClassFlutterApiRegistrar',
+  );
+
+  /// The type which includes information such as the signature of this class.
+  static const jni$_.JType<NativeInteropSealedClassFlutterApiRegistrar> type =
+      $NativeInteropSealedClassFlutterApiRegistrar$Type$();
+  static final _id_new$ = _class.constructorId(r'()V');
+
+  static final _new$ =
+      jni$_.ProtectedJniExtensions.lookup<
+            jni$_.NativeFunction<
+              jni$_.JniResult Function(jni$_.Pointer<jni$_.Void>, jni$_.JMethodIDPtr)
+            >
+          >('globalEnv_NewObject')
+          .asFunction<jni$_.JniResult Function(jni$_.Pointer<jni$_.Void>, jni$_.JMethodIDPtr)>();
+
+  /// from: `public void <init>()`
+  /// The returned object must be released after use, by calling the [release] method.
+  factory NativeInteropSealedClassFlutterApiRegistrar() {
+    final _$$classRef = _class.reference;
+    return _new$(
+      _$$classRef.pointer,
+      _id_new$.pointer,
+    ).object<NativeInteropSealedClassFlutterApiRegistrar>();
+  }
+}
+
+extension NativeInteropSealedClassFlutterApiRegistrar$$Methods
+    on NativeInteropSealedClassFlutterApiRegistrar {
+  static final _id_registerInstance = NativeInteropSealedClassFlutterApiRegistrar._class
+      .instanceMethodId(
+        r'registerInstance',
+        r'(Lcom/example/test_plugin/NativeInteropSealedClassFlutterApiBridge;Ljava/lang/String;)V',
+      );
+
+  static final _registerInstance =
+      jni$_.ProtectedJniExtensions.lookup<
+            jni$_.NativeFunction<
+              jni$_.JThrowablePtr Function(
+                jni$_.Pointer<jni$_.Void>,
+                jni$_.JMethodIDPtr,
+                jni$_.VarArgs<(jni$_.Pointer<jni$_.Void>, jni$_.Pointer<jni$_.Void>)>,
+              )
+            >
+          >('globalEnv_CallVoidMethod')
+          .asFunction<
+            jni$_.JThrowablePtr Function(
+              jni$_.Pointer<jni$_.Void>,
+              jni$_.JMethodIDPtr,
+              jni$_.Pointer<jni$_.Void>,
+              jni$_.Pointer<jni$_.Void>,
+            )
+          >();
+
+  /// from: `public fun registerInstance(api: com.example.test_plugin.NativeInteropSealedClassFlutterApiBridge?, name: kotlin.String): kotlin.Unit`
+  void registerInstance(
+    NativeInteropSealedClassFlutterApiBridge? nativeInteropSealedClassFlutterApiBridge,
+    jni$_.JString string,
+  ) {
+    final _$$selfRef = reference;
+    final _$nativeInteropSealedClassFlutterApiBridge =
+        nativeInteropSealedClassFlutterApiBridge?.reference ?? jni$_.jNullReference;
+    final _$string = string.reference;
+    _registerInstance(
+      _$$selfRef.pointer,
+      _id_registerInstance.pointer,
+      _$nativeInteropSealedClassFlutterApiBridge.pointer,
+      _$string.pointer,
+    ).check();
+  }
+
+  static final _id_getInstance = NativeInteropSealedClassFlutterApiRegistrar._class
+      .instanceMethodId(
+        r'getInstance',
+        r'(Ljava/lang/String;)Lcom/example/test_plugin/NativeInteropSealedClassFlutterApi;',
+      );
+
+  static final _getInstance =
+      jni$_.ProtectedJniExtensions.lookup<
+            jni$_.NativeFunction<
+              jni$_.JniResult Function(
+                jni$_.Pointer<jni$_.Void>,
+                jni$_.JMethodIDPtr,
+                jni$_.VarArgs<(jni$_.Pointer<jni$_.Void>,)>,
+              )
+            >
+          >('globalEnv_CallObjectMethod')
+          .asFunction<
+            jni$_.JniResult Function(
+              jni$_.Pointer<jni$_.Void>,
+              jni$_.JMethodIDPtr,
+              jni$_.Pointer<jni$_.Void>,
+            )
+          >();
+
+  /// from: `public fun getInstance(name: kotlin.String): com.example.test_plugin.NativeInteropSealedClassFlutterApi?`
+  /// The returned object must be released after use, by calling the [release] method.
+  NativeInteropSealedClassFlutterApi? getInstance(jni$_.JString string) {
+    final _$$selfRef = reference;
+    final _$string = string.reference;
+    return _getInstance(
+      _$$selfRef.pointer,
+      _id_getInstance.pointer,
+      _$string.pointer,
+    ).object<NativeInteropSealedClassFlutterApi?>();
+  }
+}
+
+final class $NativeInteropSealedClassFlutterApiRegistrar$Type$
+    extends jni$_.JType<NativeInteropSealedClassFlutterApiRegistrar> {
+  @jni$_.internal
+  const $NativeInteropSealedClassFlutterApiRegistrar$Type$();
+
+  @jni$_.internal
+  @core$_.override
+  String get signature => r'Lcom/example/test_plugin/NativeInteropSealedClassFlutterApiRegistrar;';
 }
 
 /// from: `com.example.test_plugin.NativeInteropUnusedClass$Companion`
@@ -28602,6 +27986,707 @@ final class $NativeInteropReservedNames$Type$ extends jni$_.JType<NativeInteropR
   String get signature => r'Lcom/example/test_plugin/NativeInteropReservedNames;';
 }
 
+/// from: `com.example.test_plugin.NativeInteropShape`
+extension type NativeInteropShape._(jni$_.JObject _$this) implements jni$_.JObject {
+  static final _class = jni$_.JClass.forName(r'com/example/test_plugin/NativeInteropShape');
+
+  /// The type which includes information such as the signature of this class.
+  static const jni$_.JType<NativeInteropShape> type = $NativeInteropShape$Type$();
+}
+
+final class $NativeInteropShape$Type$ extends jni$_.JType<NativeInteropShape> {
+  @jni$_.internal
+  const $NativeInteropShape$Type$();
+
+  @jni$_.internal
+  @core$_.override
+  String get signature => r'Lcom/example/test_plugin/NativeInteropShape;';
+}
+
+/// from: `com.example.test_plugin.NativeInteropCircle$Companion`
+extension type NativeInteropCircle$Companion._(jni$_.JObject _$this) implements jni$_.JObject {
+  static final _class = jni$_.JClass.forName(
+    r'com/example/test_plugin/NativeInteropCircle$Companion',
+  );
+
+  /// The type which includes information such as the signature of this class.
+  static const jni$_.JType<NativeInteropCircle$Companion> type =
+      $NativeInteropCircle$Companion$Type$();
+  static final _id_new$ = _class.constructorId(
+    r'(Lkotlin/jvm/internal/DefaultConstructorMarker;)V',
+  );
+
+  static final _new$ =
+      jni$_.ProtectedJniExtensions.lookup<
+            jni$_.NativeFunction<
+              jni$_.JniResult Function(
+                jni$_.Pointer<jni$_.Void>,
+                jni$_.JMethodIDPtr,
+                jni$_.VarArgs<(jni$_.Pointer<jni$_.Void>,)>,
+              )
+            >
+          >('globalEnv_NewObject')
+          .asFunction<
+            jni$_.JniResult Function(
+              jni$_.Pointer<jni$_.Void>,
+              jni$_.JMethodIDPtr,
+              jni$_.Pointer<jni$_.Void>,
+            )
+          >();
+
+  /// from: `synthetic public void <init>(kotlin.jvm.internal.DefaultConstructorMarker defaultConstructorMarker)`
+  /// The returned object must be released after use, by calling the [release] method.
+  factory NativeInteropCircle$Companion(DefaultConstructorMarker? defaultConstructorMarker) {
+    final _$$classRef = _class.reference;
+    final _$defaultConstructorMarker = defaultConstructorMarker?.reference ?? jni$_.jNullReference;
+    return _new$(
+      _$$classRef.pointer,
+      _id_new$.pointer,
+      _$defaultConstructorMarker.pointer,
+    ).object<NativeInteropCircle$Companion>();
+  }
+}
+
+extension NativeInteropCircle$Companion$$Methods on NativeInteropCircle$Companion {
+  static final _id_fromList = NativeInteropCircle$Companion._class.instanceMethodId(
+    r'fromList',
+    r'(Ljava/util/List;)Lcom/example/test_plugin/NativeInteropCircle;',
+  );
+
+  static final _fromList =
+      jni$_.ProtectedJniExtensions.lookup<
+            jni$_.NativeFunction<
+              jni$_.JniResult Function(
+                jni$_.Pointer<jni$_.Void>,
+                jni$_.JMethodIDPtr,
+                jni$_.VarArgs<(jni$_.Pointer<jni$_.Void>,)>,
+              )
+            >
+          >('globalEnv_CallObjectMethod')
+          .asFunction<
+            jni$_.JniResult Function(
+              jni$_.Pointer<jni$_.Void>,
+              jni$_.JMethodIDPtr,
+              jni$_.Pointer<jni$_.Void>,
+            )
+          >();
+
+  /// from: `public fun fromList(pigeonVar_list: kotlin.collections.List<kotlin.Any?>): com.example.test_plugin.NativeInteropCircle`
+  /// The returned object must be released after use, by calling the [release] method.
+  NativeInteropCircle fromList(jni$_.JList<jni$_.JObject?> list) {
+    final _$$selfRef = reference;
+    final _$list = list.reference;
+    return _fromList(
+      _$$selfRef.pointer,
+      _id_fromList.pointer,
+      _$list.pointer,
+    ).object<NativeInteropCircle>();
+  }
+}
+
+final class $NativeInteropCircle$Companion$Type$
+    extends jni$_.JType<NativeInteropCircle$Companion> {
+  @jni$_.internal
+  const $NativeInteropCircle$Companion$Type$();
+
+  @jni$_.internal
+  @core$_.override
+  String get signature => r'Lcom/example/test_plugin/NativeInteropCircle$Companion;';
+}
+
+/// from: `com.example.test_plugin.NativeInteropCircle`
+extension type NativeInteropCircle._(jni$_.JObject _$this) implements NativeInteropShape {
+  static final _class = jni$_.JClass.forName(r'com/example/test_plugin/NativeInteropCircle');
+
+  /// The type which includes information such as the signature of this class.
+  static const jni$_.JType<NativeInteropCircle> type = $NativeInteropCircle$Type$();
+  static final _id_Companion = _class.staticFieldId(
+    r'Companion',
+    r'Lcom/example/test_plugin/NativeInteropCircle$Companion;',
+  );
+
+  /// from: `static public final com.example.test_plugin.NativeInteropCircle$Companion Companion`
+  /// The returned object must be released after use, by calling the [release] method.
+  static NativeInteropCircle$Companion get Companion =>
+      _id_Companion.get(_class, NativeInteropCircle$Companion.type)
+          as NativeInteropCircle$Companion;
+
+  static final _id_new$ = _class.constructorId(r'(D)V');
+
+  static final _new$ =
+      jni$_.ProtectedJniExtensions.lookup<
+            jni$_.NativeFunction<
+              jni$_.JniResult Function(
+                jni$_.Pointer<jni$_.Void>,
+                jni$_.JMethodIDPtr,
+                jni$_.VarArgs<(jni$_.Double,)>,
+              )
+            >
+          >('globalEnv_NewObject')
+          .asFunction<
+            jni$_.JniResult Function(jni$_.Pointer<jni$_.Void>, jni$_.JMethodIDPtr, core$_.double)
+          >();
+
+  /// from: `public void <init>(double d)`
+  /// The returned object must be released after use, by calling the [release] method.
+  factory NativeInteropCircle(core$_.double d) {
+    final _$$classRef = _class.reference;
+    return _new$(_$$classRef.pointer, _id_new$.pointer, d).object<NativeInteropCircle>();
+  }
+}
+
+extension NativeInteropCircle$$Methods on NativeInteropCircle {
+  static final _id_get$radius = NativeInteropCircle._class.instanceMethodId(r'getRadius', r'()D');
+
+  static final _get$radius =
+      jni$_.ProtectedJniExtensions.lookup<
+            jni$_.NativeFunction<
+              jni$_.JniResult Function(jni$_.Pointer<jni$_.Void>, jni$_.JMethodIDPtr)
+            >
+          >('globalEnv_CallDoubleMethod')
+          .asFunction<jni$_.JniResult Function(jni$_.Pointer<jni$_.Void>, jni$_.JMethodIDPtr)>();
+
+  /// from: `public final double getRadius()`
+  core$_.double get radius {
+    final _$$selfRef = reference;
+    return _get$radius(_$$selfRef.pointer, _id_get$radius.pointer).doubleFloat;
+  }
+
+  static final _id_toList = NativeInteropCircle._class.instanceMethodId(
+    r'toList',
+    r'()Ljava/util/List;',
+  );
+
+  static final _toList =
+      jni$_.ProtectedJniExtensions.lookup<
+            jni$_.NativeFunction<
+              jni$_.JniResult Function(jni$_.Pointer<jni$_.Void>, jni$_.JMethodIDPtr)
+            >
+          >('globalEnv_CallObjectMethod')
+          .asFunction<jni$_.JniResult Function(jni$_.Pointer<jni$_.Void>, jni$_.JMethodIDPtr)>();
+
+  /// from: `public fun toList(): kotlin.collections.List<kotlin.Any?>`
+  /// The returned object must be released after use, by calling the [release] method.
+  jni$_.JList<jni$_.JObject?> toList() {
+    final _$$selfRef = reference;
+    return _toList(_$$selfRef.pointer, _id_toList.pointer).object<jni$_.JList<jni$_.JObject?>>();
+  }
+
+  static final _id_equals = NativeInteropCircle._class.instanceMethodId(
+    r'equals',
+    r'(Ljava/lang/Object;)Z',
+  );
+
+  static final _equals =
+      jni$_.ProtectedJniExtensions.lookup<
+            jni$_.NativeFunction<
+              jni$_.JniResult Function(
+                jni$_.Pointer<jni$_.Void>,
+                jni$_.JMethodIDPtr,
+                jni$_.VarArgs<(jni$_.Pointer<jni$_.Void>,)>,
+              )
+            >
+          >('globalEnv_CallBooleanMethod')
+          .asFunction<
+            jni$_.JniResult Function(
+              jni$_.Pointer<jni$_.Void>,
+              jni$_.JMethodIDPtr,
+              jni$_.Pointer<jni$_.Void>,
+            )
+          >();
+
+  /// from: `public operator fun equals(other: kotlin.Any?): kotlin.Boolean`
+  core$_.bool equals(jni$_.JObject? object) {
+    final _$$selfRef = reference;
+    final _$object = object?.reference ?? jni$_.jNullReference;
+    return _equals(_$$selfRef.pointer, _id_equals.pointer, _$object.pointer).boolean;
+  }
+
+  static final _id_hashCode$1 = NativeInteropCircle._class.instanceMethodId(r'hashCode', r'()I');
+
+  static final _hashCode$1 =
+      jni$_.ProtectedJniExtensions.lookup<
+            jni$_.NativeFunction<
+              jni$_.JniResult Function(jni$_.Pointer<jni$_.Void>, jni$_.JMethodIDPtr)
+            >
+          >('globalEnv_CallIntMethod')
+          .asFunction<jni$_.JniResult Function(jni$_.Pointer<jni$_.Void>, jni$_.JMethodIDPtr)>();
+
+  /// from: `public fun hashCode(): kotlin.Int`
+  core$_.int hashCode$1() {
+    final _$$selfRef = reference;
+    return _hashCode$1(_$$selfRef.pointer, _id_hashCode$1.pointer).integer;
+  }
+
+  static final _id_toString$1 = NativeInteropCircle._class.instanceMethodId(
+    r'toString',
+    r'()Ljava/lang/String;',
+  );
+
+  static final _toString$1 =
+      jni$_.ProtectedJniExtensions.lookup<
+            jni$_.NativeFunction<
+              jni$_.JniResult Function(jni$_.Pointer<jni$_.Void>, jni$_.JMethodIDPtr)
+            >
+          >('globalEnv_CallObjectMethod')
+          .asFunction<jni$_.JniResult Function(jni$_.Pointer<jni$_.Void>, jni$_.JMethodIDPtr)>();
+
+  /// from: `public fun toString(): kotlin.String`
+  /// The returned object must be released after use, by calling the [release] method.
+  jni$_.JString toString$1() {
+    final _$$selfRef = reference;
+    return _toString$1(_$$selfRef.pointer, _id_toString$1.pointer).object<jni$_.JString>();
+  }
+
+  static final _id_component1 = NativeInteropCircle._class.instanceMethodId(r'component1', r'()D');
+
+  static final _component1 =
+      jni$_.ProtectedJniExtensions.lookup<
+            jni$_.NativeFunction<
+              jni$_.JniResult Function(jni$_.Pointer<jni$_.Void>, jni$_.JMethodIDPtr)
+            >
+          >('globalEnv_CallDoubleMethod')
+          .asFunction<jni$_.JniResult Function(jni$_.Pointer<jni$_.Void>, jni$_.JMethodIDPtr)>();
+
+  /// from: `public operator fun component1(): kotlin.Double`
+  core$_.double component1() {
+    final _$$selfRef = reference;
+    return _component1(_$$selfRef.pointer, _id_component1.pointer).doubleFloat;
+  }
+
+  static final _id_copy = NativeInteropCircle._class.instanceMethodId(
+    r'copy',
+    r'(D)Lcom/example/test_plugin/NativeInteropCircle;',
+  );
+
+  static final _copy =
+      jni$_.ProtectedJniExtensions.lookup<
+            jni$_.NativeFunction<
+              jni$_.JniResult Function(
+                jni$_.Pointer<jni$_.Void>,
+                jni$_.JMethodIDPtr,
+                jni$_.VarArgs<(jni$_.Double,)>,
+              )
+            >
+          >('globalEnv_CallObjectMethod')
+          .asFunction<
+            jni$_.JniResult Function(jni$_.Pointer<jni$_.Void>, jni$_.JMethodIDPtr, core$_.double)
+          >();
+
+  /// from: `public fun copy(radius: kotlin.Double): com.example.test_plugin.NativeInteropCircle`
+  /// The returned object must be released after use, by calling the [release] method.
+  NativeInteropCircle copy(core$_.double d) {
+    final _$$selfRef = reference;
+    return _copy(_$$selfRef.pointer, _id_copy.pointer, d).object<NativeInteropCircle>();
+  }
+}
+
+final class $NativeInteropCircle$Type$ extends jni$_.JType<NativeInteropCircle> {
+  @jni$_.internal
+  const $NativeInteropCircle$Type$();
+
+  @jni$_.internal
+  @core$_.override
+  String get signature => r'Lcom/example/test_plugin/NativeInteropCircle;';
+}
+
+/// from: `com.example.test_plugin.NativeInteropSquare$Companion`
+extension type NativeInteropSquare$Companion._(jni$_.JObject _$this) implements jni$_.JObject {
+  static final _class = jni$_.JClass.forName(
+    r'com/example/test_plugin/NativeInteropSquare$Companion',
+  );
+
+  /// The type which includes information such as the signature of this class.
+  static const jni$_.JType<NativeInteropSquare$Companion> type =
+      $NativeInteropSquare$Companion$Type$();
+  static final _id_new$ = _class.constructorId(
+    r'(Lkotlin/jvm/internal/DefaultConstructorMarker;)V',
+  );
+
+  static final _new$ =
+      jni$_.ProtectedJniExtensions.lookup<
+            jni$_.NativeFunction<
+              jni$_.JniResult Function(
+                jni$_.Pointer<jni$_.Void>,
+                jni$_.JMethodIDPtr,
+                jni$_.VarArgs<(jni$_.Pointer<jni$_.Void>,)>,
+              )
+            >
+          >('globalEnv_NewObject')
+          .asFunction<
+            jni$_.JniResult Function(
+              jni$_.Pointer<jni$_.Void>,
+              jni$_.JMethodIDPtr,
+              jni$_.Pointer<jni$_.Void>,
+            )
+          >();
+
+  /// from: `synthetic public void <init>(kotlin.jvm.internal.DefaultConstructorMarker defaultConstructorMarker)`
+  /// The returned object must be released after use, by calling the [release] method.
+  factory NativeInteropSquare$Companion(DefaultConstructorMarker? defaultConstructorMarker) {
+    final _$$classRef = _class.reference;
+    final _$defaultConstructorMarker = defaultConstructorMarker?.reference ?? jni$_.jNullReference;
+    return _new$(
+      _$$classRef.pointer,
+      _id_new$.pointer,
+      _$defaultConstructorMarker.pointer,
+    ).object<NativeInteropSquare$Companion>();
+  }
+}
+
+extension NativeInteropSquare$Companion$$Methods on NativeInteropSquare$Companion {
+  static final _id_fromList = NativeInteropSquare$Companion._class.instanceMethodId(
+    r'fromList',
+    r'(Ljava/util/List;)Lcom/example/test_plugin/NativeInteropSquare;',
+  );
+
+  static final _fromList =
+      jni$_.ProtectedJniExtensions.lookup<
+            jni$_.NativeFunction<
+              jni$_.JniResult Function(
+                jni$_.Pointer<jni$_.Void>,
+                jni$_.JMethodIDPtr,
+                jni$_.VarArgs<(jni$_.Pointer<jni$_.Void>,)>,
+              )
+            >
+          >('globalEnv_CallObjectMethod')
+          .asFunction<
+            jni$_.JniResult Function(
+              jni$_.Pointer<jni$_.Void>,
+              jni$_.JMethodIDPtr,
+              jni$_.Pointer<jni$_.Void>,
+            )
+          >();
+
+  /// from: `public fun fromList(pigeonVar_list: kotlin.collections.List<kotlin.Any?>): com.example.test_plugin.NativeInteropSquare`
+  /// The returned object must be released after use, by calling the [release] method.
+  NativeInteropSquare fromList(jni$_.JList<jni$_.JObject?> list) {
+    final _$$selfRef = reference;
+    final _$list = list.reference;
+    return _fromList(
+      _$$selfRef.pointer,
+      _id_fromList.pointer,
+      _$list.pointer,
+    ).object<NativeInteropSquare>();
+  }
+}
+
+final class $NativeInteropSquare$Companion$Type$
+    extends jni$_.JType<NativeInteropSquare$Companion> {
+  @jni$_.internal
+  const $NativeInteropSquare$Companion$Type$();
+
+  @jni$_.internal
+  @core$_.override
+  String get signature => r'Lcom/example/test_plugin/NativeInteropSquare$Companion;';
+}
+
+/// from: `com.example.test_plugin.NativeInteropSquare`
+extension type NativeInteropSquare._(jni$_.JObject _$this) implements NativeInteropShape {
+  static final _class = jni$_.JClass.forName(r'com/example/test_plugin/NativeInteropSquare');
+
+  /// The type which includes information such as the signature of this class.
+  static const jni$_.JType<NativeInteropSquare> type = $NativeInteropSquare$Type$();
+  static final _id_Companion = _class.staticFieldId(
+    r'Companion',
+    r'Lcom/example/test_plugin/NativeInteropSquare$Companion;',
+  );
+
+  /// from: `static public final com.example.test_plugin.NativeInteropSquare$Companion Companion`
+  /// The returned object must be released after use, by calling the [release] method.
+  static NativeInteropSquare$Companion get Companion =>
+      _id_Companion.get(_class, NativeInteropSquare$Companion.type)
+          as NativeInteropSquare$Companion;
+
+  static final _id_new$ = _class.constructorId(r'(DLjava/lang/String;)V');
+
+  static final _new$ =
+      jni$_.ProtectedJniExtensions.lookup<
+            jni$_.NativeFunction<
+              jni$_.JniResult Function(
+                jni$_.Pointer<jni$_.Void>,
+                jni$_.JMethodIDPtr,
+                jni$_.VarArgs<(jni$_.Double, jni$_.Pointer<jni$_.Void>)>,
+              )
+            >
+          >('globalEnv_NewObject')
+          .asFunction<
+            jni$_.JniResult Function(
+              jni$_.Pointer<jni$_.Void>,
+              jni$_.JMethodIDPtr,
+              core$_.double,
+              jni$_.Pointer<jni$_.Void>,
+            )
+          >();
+
+  /// from: `public void <init>(double d, java.lang.String string)`
+  /// The returned object must be released after use, by calling the [release] method.
+  factory NativeInteropSquare(core$_.double d, jni$_.JString? string) {
+    final _$$classRef = _class.reference;
+    final _$string = string?.reference ?? jni$_.jNullReference;
+    return _new$(
+      _$$classRef.pointer,
+      _id_new$.pointer,
+      d,
+      _$string.pointer,
+    ).object<NativeInteropSquare>();
+  }
+
+  static final _id_new$1 = _class.constructorId(
+    r'(DLjava/lang/String;ILkotlin/jvm/internal/DefaultConstructorMarker;)V',
+  );
+
+  static final _new$1 =
+      jni$_.ProtectedJniExtensions.lookup<
+            jni$_.NativeFunction<
+              jni$_.JniResult Function(
+                jni$_.Pointer<jni$_.Void>,
+                jni$_.JMethodIDPtr,
+                jni$_.VarArgs<
+                  (jni$_.Double, jni$_.Pointer<jni$_.Void>, jni$_.Int32, jni$_.Pointer<jni$_.Void>)
+                >,
+              )
+            >
+          >('globalEnv_NewObject')
+          .asFunction<
+            jni$_.JniResult Function(
+              jni$_.Pointer<jni$_.Void>,
+              jni$_.JMethodIDPtr,
+              core$_.double,
+              jni$_.Pointer<jni$_.Void>,
+              core$_.int,
+              jni$_.Pointer<jni$_.Void>,
+            )
+          >();
+
+  /// from: `synthetic public void <init>(double d, java.lang.String string, int i, kotlin.jvm.internal.DefaultConstructorMarker defaultConstructorMarker)`
+  /// The returned object must be released after use, by calling the [release] method.
+  factory NativeInteropSquare.new$1(
+    core$_.double d,
+    jni$_.JString? string,
+    core$_.int i,
+    DefaultConstructorMarker? defaultConstructorMarker,
+  ) {
+    final _$$classRef = _class.reference;
+    final _$string = string?.reference ?? jni$_.jNullReference;
+    final _$defaultConstructorMarker = defaultConstructorMarker?.reference ?? jni$_.jNullReference;
+    return _new$1(
+      _$$classRef.pointer,
+      _id_new$1.pointer,
+      d,
+      _$string.pointer,
+      i,
+      _$defaultConstructorMarker.pointer,
+    ).object<NativeInteropSquare>();
+  }
+}
+
+extension NativeInteropSquare$$Methods on NativeInteropSquare {
+  static final _id_get$side = NativeInteropSquare._class.instanceMethodId(r'getSide', r'()D');
+
+  static final _get$side =
+      jni$_.ProtectedJniExtensions.lookup<
+            jni$_.NativeFunction<
+              jni$_.JniResult Function(jni$_.Pointer<jni$_.Void>, jni$_.JMethodIDPtr)
+            >
+          >('globalEnv_CallDoubleMethod')
+          .asFunction<jni$_.JniResult Function(jni$_.Pointer<jni$_.Void>, jni$_.JMethodIDPtr)>();
+
+  /// from: `public final double getSide()`
+  core$_.double get side {
+    final _$$selfRef = reference;
+    return _get$side(_$$selfRef.pointer, _id_get$side.pointer).doubleFloat;
+  }
+
+  static final _id_get$label = NativeInteropSquare._class.instanceMethodId(
+    r'getLabel',
+    r'()Ljava/lang/String;',
+  );
+
+  static final _get$label =
+      jni$_.ProtectedJniExtensions.lookup<
+            jni$_.NativeFunction<
+              jni$_.JniResult Function(jni$_.Pointer<jni$_.Void>, jni$_.JMethodIDPtr)
+            >
+          >('globalEnv_CallObjectMethod')
+          .asFunction<jni$_.JniResult Function(jni$_.Pointer<jni$_.Void>, jni$_.JMethodIDPtr)>();
+
+  /// from: `public final java.lang.String getLabel()`
+  /// The returned object must be released after use, by calling the [release] method.
+  jni$_.JString? get label {
+    final _$$selfRef = reference;
+    return _get$label(_$$selfRef.pointer, _id_get$label.pointer).object<jni$_.JString?>();
+  }
+
+  static final _id_toList = NativeInteropSquare._class.instanceMethodId(
+    r'toList',
+    r'()Ljava/util/List;',
+  );
+
+  static final _toList =
+      jni$_.ProtectedJniExtensions.lookup<
+            jni$_.NativeFunction<
+              jni$_.JniResult Function(jni$_.Pointer<jni$_.Void>, jni$_.JMethodIDPtr)
+            >
+          >('globalEnv_CallObjectMethod')
+          .asFunction<jni$_.JniResult Function(jni$_.Pointer<jni$_.Void>, jni$_.JMethodIDPtr)>();
+
+  /// from: `public fun toList(): kotlin.collections.List<kotlin.Any?>`
+  /// The returned object must be released after use, by calling the [release] method.
+  jni$_.JList<jni$_.JObject?> toList() {
+    final _$$selfRef = reference;
+    return _toList(_$$selfRef.pointer, _id_toList.pointer).object<jni$_.JList<jni$_.JObject?>>();
+  }
+
+  static final _id_equals = NativeInteropSquare._class.instanceMethodId(
+    r'equals',
+    r'(Ljava/lang/Object;)Z',
+  );
+
+  static final _equals =
+      jni$_.ProtectedJniExtensions.lookup<
+            jni$_.NativeFunction<
+              jni$_.JniResult Function(
+                jni$_.Pointer<jni$_.Void>,
+                jni$_.JMethodIDPtr,
+                jni$_.VarArgs<(jni$_.Pointer<jni$_.Void>,)>,
+              )
+            >
+          >('globalEnv_CallBooleanMethod')
+          .asFunction<
+            jni$_.JniResult Function(
+              jni$_.Pointer<jni$_.Void>,
+              jni$_.JMethodIDPtr,
+              jni$_.Pointer<jni$_.Void>,
+            )
+          >();
+
+  /// from: `public operator fun equals(other: kotlin.Any?): kotlin.Boolean`
+  core$_.bool equals(jni$_.JObject? object) {
+    final _$$selfRef = reference;
+    final _$object = object?.reference ?? jni$_.jNullReference;
+    return _equals(_$$selfRef.pointer, _id_equals.pointer, _$object.pointer).boolean;
+  }
+
+  static final _id_hashCode$1 = NativeInteropSquare._class.instanceMethodId(r'hashCode', r'()I');
+
+  static final _hashCode$1 =
+      jni$_.ProtectedJniExtensions.lookup<
+            jni$_.NativeFunction<
+              jni$_.JniResult Function(jni$_.Pointer<jni$_.Void>, jni$_.JMethodIDPtr)
+            >
+          >('globalEnv_CallIntMethod')
+          .asFunction<jni$_.JniResult Function(jni$_.Pointer<jni$_.Void>, jni$_.JMethodIDPtr)>();
+
+  /// from: `public fun hashCode(): kotlin.Int`
+  core$_.int hashCode$1() {
+    final _$$selfRef = reference;
+    return _hashCode$1(_$$selfRef.pointer, _id_hashCode$1.pointer).integer;
+  }
+
+  static final _id_toString$1 = NativeInteropSquare._class.instanceMethodId(
+    r'toString',
+    r'()Ljava/lang/String;',
+  );
+
+  static final _toString$1 =
+      jni$_.ProtectedJniExtensions.lookup<
+            jni$_.NativeFunction<
+              jni$_.JniResult Function(jni$_.Pointer<jni$_.Void>, jni$_.JMethodIDPtr)
+            >
+          >('globalEnv_CallObjectMethod')
+          .asFunction<jni$_.JniResult Function(jni$_.Pointer<jni$_.Void>, jni$_.JMethodIDPtr)>();
+
+  /// from: `public fun toString(): kotlin.String`
+  /// The returned object must be released after use, by calling the [release] method.
+  jni$_.JString toString$1() {
+    final _$$selfRef = reference;
+    return _toString$1(_$$selfRef.pointer, _id_toString$1.pointer).object<jni$_.JString>();
+  }
+
+  static final _id_component1 = NativeInteropSquare._class.instanceMethodId(r'component1', r'()D');
+
+  static final _component1 =
+      jni$_.ProtectedJniExtensions.lookup<
+            jni$_.NativeFunction<
+              jni$_.JniResult Function(jni$_.Pointer<jni$_.Void>, jni$_.JMethodIDPtr)
+            >
+          >('globalEnv_CallDoubleMethod')
+          .asFunction<jni$_.JniResult Function(jni$_.Pointer<jni$_.Void>, jni$_.JMethodIDPtr)>();
+
+  /// from: `public operator fun component1(): kotlin.Double`
+  core$_.double component1() {
+    final _$$selfRef = reference;
+    return _component1(_$$selfRef.pointer, _id_component1.pointer).doubleFloat;
+  }
+
+  static final _id_component2 = NativeInteropSquare._class.instanceMethodId(
+    r'component2',
+    r'()Ljava/lang/String;',
+  );
+
+  static final _component2 =
+      jni$_.ProtectedJniExtensions.lookup<
+            jni$_.NativeFunction<
+              jni$_.JniResult Function(jni$_.Pointer<jni$_.Void>, jni$_.JMethodIDPtr)
+            >
+          >('globalEnv_CallObjectMethod')
+          .asFunction<jni$_.JniResult Function(jni$_.Pointer<jni$_.Void>, jni$_.JMethodIDPtr)>();
+
+  /// from: `public operator fun component2(): kotlin.String?`
+  /// The returned object must be released after use, by calling the [release] method.
+  jni$_.JString? component2() {
+    final _$$selfRef = reference;
+    return _component2(_$$selfRef.pointer, _id_component2.pointer).object<jni$_.JString?>();
+  }
+
+  static final _id_copy = NativeInteropSquare._class.instanceMethodId(
+    r'copy',
+    r'(DLjava/lang/String;)Lcom/example/test_plugin/NativeInteropSquare;',
+  );
+
+  static final _copy =
+      jni$_.ProtectedJniExtensions.lookup<
+            jni$_.NativeFunction<
+              jni$_.JniResult Function(
+                jni$_.Pointer<jni$_.Void>,
+                jni$_.JMethodIDPtr,
+                jni$_.VarArgs<(jni$_.Double, jni$_.Pointer<jni$_.Void>)>,
+              )
+            >
+          >('globalEnv_CallObjectMethod')
+          .asFunction<
+            jni$_.JniResult Function(
+              jni$_.Pointer<jni$_.Void>,
+              jni$_.JMethodIDPtr,
+              core$_.double,
+              jni$_.Pointer<jni$_.Void>,
+            )
+          >();
+
+  /// from: `public fun copy(side: kotlin.Double, label: kotlin.String?): com.example.test_plugin.NativeInteropSquare`
+  /// The returned object must be released after use, by calling the [release] method.
+  NativeInteropSquare copy(core$_.double d, jni$_.JString? string) {
+    final _$$selfRef = reference;
+    final _$string = string?.reference ?? jni$_.jNullReference;
+    return _copy(
+      _$$selfRef.pointer,
+      _id_copy.pointer,
+      d,
+      _$string.pointer,
+    ).object<NativeInteropSquare>();
+  }
+}
+
+final class $NativeInteropSquare$Type$ extends jni$_.JType<NativeInteropSquare> {
+  @jni$_.internal
+  const $NativeInteropSquare$Type$();
+
+  @jni$_.internal
+  @core$_.override
+  String get signature => r'Lcom/example/test_plugin/NativeInteropSquare;';
+}
+
 /// from: `com.example.test_plugin.NativeInteropAnEnum$Companion`
 extension type NativeInteropAnEnum$Companion._(jni$_.JObject _$this) implements jni$_.JObject {
   static final _class = jni$_.JClass.forName(
@@ -29165,6 +29250,27 @@ final class $Unit$Type$ extends jni$_.JType<Unit> {
   String get signature => r'Lkotlin/Unit;';
 }
 
+/// from: `com.example.test_plugin.NativeInteropFlutterIntegrationCoreApi`
+///
+/// WARNING: NativeInteropFlutterIntegrationCoreApi is a stub. To generate bindings for this class, include
+/// com.example.test_plugin.NativeInteropFlutterIntegrationCoreApi in your config's classes list.
+///
+extension type NativeInteropFlutterIntegrationCoreApi._(jni$_.JObject _$this)
+    implements jni$_.JObject {
+  static const jni$_.JType<NativeInteropFlutterIntegrationCoreApi> type =
+      $NativeInteropFlutterIntegrationCoreApi$Type$();
+}
+
+final class $NativeInteropFlutterIntegrationCoreApi$Type$
+    extends jni$_.JType<NativeInteropFlutterIntegrationCoreApi> {
+  @jni$_.internal
+  const $NativeInteropFlutterIntegrationCoreApi$Type$();
+
+  @jni$_.internal
+  @core$_.override
+  String get signature => r'Lcom/example/test_plugin/NativeInteropFlutterIntegrationCoreApi;';
+}
+
 /// from: `com.example.test_plugin.NativeInteropReservedNamesHostApi`
 ///
 /// WARNING: NativeInteropReservedNamesHostApi is a stub. To generate bindings for this class, include
@@ -29183,6 +29289,67 @@ final class $NativeInteropReservedNamesHostApi$Type$
   @jni$_.internal
   @core$_.override
   String get signature => r'Lcom/example/test_plugin/NativeInteropReservedNamesHostApi;';
+}
+
+/// from: `com.example.test_plugin.NativeInteropReservedNamesFlutterApi`
+///
+/// WARNING: NativeInteropReservedNamesFlutterApi is a stub. To generate bindings for this class, include
+/// com.example.test_plugin.NativeInteropReservedNamesFlutterApi in your config's classes list.
+///
+extension type NativeInteropReservedNamesFlutterApi._(jni$_.JObject _$this)
+    implements jni$_.JObject {
+  static const jni$_.JType<NativeInteropReservedNamesFlutterApi> type =
+      $NativeInteropReservedNamesFlutterApi$Type$();
+}
+
+final class $NativeInteropReservedNamesFlutterApi$Type$
+    extends jni$_.JType<NativeInteropReservedNamesFlutterApi> {
+  @jni$_.internal
+  const $NativeInteropReservedNamesFlutterApi$Type$();
+
+  @jni$_.internal
+  @core$_.override
+  String get signature => r'Lcom/example/test_plugin/NativeInteropReservedNamesFlutterApi;';
+}
+
+/// from: `com.example.test_plugin.NativeInteropSealedClassHostApi`
+///
+/// WARNING: NativeInteropSealedClassHostApi is a stub. To generate bindings for this class, include
+/// com.example.test_plugin.NativeInteropSealedClassHostApi in your config's classes list.
+///
+extension type NativeInteropSealedClassHostApi._(jni$_.JObject _$this) implements jni$_.JObject {
+  static const jni$_.JType<NativeInteropSealedClassHostApi> type =
+      $NativeInteropSealedClassHostApi$Type$();
+}
+
+final class $NativeInteropSealedClassHostApi$Type$
+    extends jni$_.JType<NativeInteropSealedClassHostApi> {
+  @jni$_.internal
+  const $NativeInteropSealedClassHostApi$Type$();
+
+  @jni$_.internal
+  @core$_.override
+  String get signature => r'Lcom/example/test_plugin/NativeInteropSealedClassHostApi;';
+}
+
+/// from: `com.example.test_plugin.NativeInteropSealedClassFlutterApi`
+///
+/// WARNING: NativeInteropSealedClassFlutterApi is a stub. To generate bindings for this class, include
+/// com.example.test_plugin.NativeInteropSealedClassFlutterApi in your config's classes list.
+///
+extension type NativeInteropSealedClassFlutterApi._(jni$_.JObject _$this) implements jni$_.JObject {
+  static const jni$_.JType<NativeInteropSealedClassFlutterApi> type =
+      $NativeInteropSealedClassFlutterApi$Type$();
+}
+
+final class $NativeInteropSealedClassFlutterApi$Type$
+    extends jni$_.JType<NativeInteropSealedClassFlutterApi> {
+  @jni$_.internal
+  const $NativeInteropSealedClassFlutterApi$Type$();
+
+  @jni$_.internal
+  @core$_.override
+  String get signature => r'Lcom/example/test_plugin/NativeInteropSealedClassFlutterApi;';
 }
 
 /// from: `java.lang.Enum`

@@ -7,7 +7,7 @@ This guide describes Pigeon's Native Interop feature, which allows for direct, h
 
 ## 1. Overview
 
-Pigeon Native Interop allows Dart code to make direct function calls into native platform code, and vice versa, without the overhead of platform-channel-based message passing. Instead of serializing data into binary buffers, Native Interop establishes direct memory-bound bridges using native pointers and JVM references.
+Pigeon Native Interop allows Dart code to make direct function calls into native platform code, and vice versa, without the overhead of platform-channel-based message passing. Values of type `bool`, `int`, `double`, `String`, enums, `Uint8List`, `Int32List`, `Int64List` and `Float64List` (nullable or not) cross the language boundary directly as their own arguments and return values, while data classes, `List`, `Map` and `Object` values of a call are encoded together into a single buffer per call.
 For a detailed comparison between platform-channel-based communication and Native Interop—including advantages, limitations, and recommended use cases—see the [Pigeon README](./README.md#communication-options-platform-channels-vs-native-interop).
 
 ### Threading & Isolates Model
