@@ -171,7 +171,7 @@ class SharedPreferencesPlugin() : FlutterPlugin, SharedPreferencesAsyncApi {
         val preferencesKey = longPreferencesKey(key)
         val preferenceFlow: Flow<Long?> =
             context.sharedPreferencesDataStore.data.map { preferences ->
-              preferences[preferencesKey]
+              (preferences[preferencesKey] as Any?) as Long?
             }
         preferenceFlow.firstOrNull()
       }
@@ -182,7 +182,7 @@ class SharedPreferencesPlugin() : FlutterPlugin, SharedPreferencesAsyncApi {
         val preferencesKey = booleanPreferencesKey(key)
         val preferenceFlow: Flow<Boolean?> =
             context.sharedPreferencesDataStore.data.map { preferences ->
-              preferences[preferencesKey]
+              (preferences[preferencesKey] as Any?) as Boolean?
             }
         preferenceFlow.firstOrNull()
       }
@@ -204,7 +204,7 @@ class SharedPreferencesPlugin() : FlutterPlugin, SharedPreferencesAsyncApi {
         val preferencesKey = stringPreferencesKey(key)
         val preferenceFlow: Flow<String?> =
             context.sharedPreferencesDataStore.data.map { preferences ->
-              preferences[preferencesKey]
+              (preferences[preferencesKey] as Any?) as String?
             }
         preferenceFlow.firstOrNull()
       }

@@ -15,6 +15,7 @@ import 'package:ffi/ffi.dart';
 import 'package:flutter/services.dart';
 import 'package:meta/meta.dart' show immutable, protected, visibleForTesting;
 import 'package:objective_c/objective_c.dart';
+
 import './messages.g.ffi.dart' as ffi_bridge;
 
 Object? _extractReplyValueOrThrow(
