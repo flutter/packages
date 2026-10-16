@@ -3192,6 +3192,27 @@ void main() {
       expect(tester.getSize(buttonMaterial()).height, 36.0);
       expect(tester.widget<Material>(buttonMaterial()).shape, rounded(4.0));
     });
+
+    testWidgets('does not crash at zero area', (WidgetTester tester) async {
+      for (final ButtonSizeVariant size in ButtonSizeVariant.values) {
+        await tester.pumpWidget(
+          MaterialApp(
+            theme: m3eTheme(style: ButtonStyle(sizeVariant: size)),
+            home: Center(
+              child: SizedBox.shrink(
+                child: ElevatedButton.icon(
+                  onPressed: () {},
+                  isSelected: true,
+                  icon: const Icon(Icons.add),
+                  label: const Text('X'),
+                ),
+              ),
+            ),
+          ),
+        );
+        expect(tester.getSize(find.byType(ElevatedButton)), Size.zero);
+      }
+    });
   });
 
   testWidgets('ElevatedButton isSelected updates a provided statesController', (

@@ -61,6 +61,11 @@ part 'generated/elevated_button_defaults_m3e.g.dart';
 /// [ButtonStyle.sizeVariant] and [ButtonStyle.shapeVariant], and the button
 /// becomes a toggle button when [isSelected] is non-null.
 ///
+/// With the Material 3 style, [isSelected] updates [WidgetState.selected] and
+/// the button's semantics, but the default style doesn't change the button's
+/// appearance when it's selected. To show the selected state, use a [style]
+/// that resolves [WidgetState.selected].
+///
 /// <callout-box>
 ///
 /// This sample produces an enabled and a disabled ElevatedButton.

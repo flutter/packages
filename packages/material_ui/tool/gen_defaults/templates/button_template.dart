@@ -336,7 +336,7 @@ class ButtonTemplateM3E extends TokenTemplateM3E {
   // The token data does not include a hovered container elevation for the
   // elevated button. The Material 3 Expressive spec uses elevation level 2
   // (3dp) when hovered: https://m3.material.io/components/buttons/specs
-  // TODO(QuncCccccc): Replace this value with a token once it is available.
+  // TODO(QuncCccccc): Replace this value with a token once it is available, https://github.com/flutter/flutter/issues/184937.
   static const double _hoveredContainerElevation = 3.0;
 
   String _sizeSwitch({
