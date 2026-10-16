@@ -22,7 +22,7 @@ class SliderTemplateM3 extends TokenTemplateM3 {
       '''
 class $className extends SliderThemeData {
   $className(this.context)
-    : super(trackHeight: ${number(TokenSlider.activeTrackHeight)});
+    : super(trackHeight: ${TokenSlider.activeTrackHeight});
 
   final BuildContext context;
   late final ColorScheme _colors = Theme.of(context).colorScheme;
@@ -46,10 +46,10 @@ class $className extends SliderThemeData {
   Color? get disabledSecondaryActiveTrackColor => ${colorWithOpacity(TokenSlider.disabledActiveTrackColor, TokenSlider.disabledActiveTrackOpacity)};
 
   @override
-  Color? get activeTickMarkColor => ${color(TokenSlider.activeStopIndicatorContainerColor)}.withOpacity(${number(TokenSlider.activeStopIndicatorContainerOpacity)});
+  Color? get activeTickMarkColor => ${color(TokenSlider.activeStopIndicatorContainerColor)}.withOpacity(${TokenSlider.activeStopIndicatorContainerOpacity});
 
   @override
-  Color? get inactiveTickMarkColor => ${color(TokenSlider.inactiveStopIndicatorContainerColor)}.withOpacity(${number(TokenSlider.inactiveStopIndicatorContainerOpacity)});
+  Color? get inactiveTickMarkColor => ${color(TokenSlider.inactiveStopIndicatorContainerColor)}.withOpacity(${TokenSlider.inactiveStopIndicatorContainerOpacity});
 
   @override
   Color? get disabledActiveTickMarkColor => ${color(TokenSlider.disabledActiveStopIndicatorContainerColor)};
@@ -99,29 +99,29 @@ class $className extends SliderThemeData {
   SliderComponentShape? get overlayShape => const RoundSliderOverlayShape();
 
   @override
-  SliderTickMarkShape? get tickMarkShape => const RoundSliderTickMarkShape(tickMarkRadius: ${number(TokenSlider.stopIndicatorSize)} / 2);
+  SliderTickMarkShape? get tickMarkShape => const RoundSliderTickMarkShape(tickMarkRadius: ${TokenSlider.stopIndicatorSize} / 2);
 
   @override
   WidgetStateProperty<Size?>? get thumbSize {
     return WidgetStateProperty.resolveWith((Set<WidgetState> states) {
       if (states.contains(WidgetState.disabled)) {
-        return const Size(${number(TokenSlider.disabledHandleWidth)}, ${number(TokenSlider.handleHeight)});
+        return const Size(${TokenSlider.disabledHandleWidth}, ${TokenSlider.handleHeight});
       }
       if (states.contains(WidgetState.hovered)) {
-        return const Size(${number(TokenSlider.hoverHandleWidth)}, ${number(TokenSlider.handleHeight)});
+        return const Size(${TokenSlider.hoverHandleWidth}, ${TokenSlider.handleHeight});
       }
       if (states.contains(WidgetState.focused)) {
-        return const Size(${number(TokenSlider.focusHandleWidth)}, ${number(TokenSlider.handleHeight)});
+        return const Size(${TokenSlider.focusHandleWidth}, ${TokenSlider.handleHeight});
       }
       if (states.contains(WidgetState.pressed)) {
-        return const Size(${number(TokenSlider.pressedHandleWidth)}, ${number(TokenSlider.handleHeight)});
+        return const Size(${TokenSlider.pressedHandleWidth}, ${TokenSlider.handleHeight});
       }
-      return const Size(${number(TokenSlider.handleWidth)}, ${number(TokenSlider.handleHeight)});
+      return const Size(${TokenSlider.handleWidth}, ${TokenSlider.handleHeight});
     });
   }
 
   @override
-  double? get trackGap => ${number(TokenSlider.activeHandlePadding)};
+  double? get trackGap => ${TokenSlider.activeHandlePadding};
 }
 ''';
 }
