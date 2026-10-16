@@ -60,11 +60,13 @@ void setUpGenerics({BinaryMessenger? pigeonBinaryMessenger}) {
           int sensorRotationDegrees,
           camerax.LensFacing lensFacing,
           camerax.ExposureState exposureState,
+          bool hasFlashUnit,
         ) {
           return CameraInfo.detached(
             sensorRotationDegrees: sensorRotationDegrees,
             lensFacing: lensFacing,
             exposureState: exposureState,
+            hasFlashUnit: hasFlashUnit,
             pigeon_binaryMessenger: pigeonBinaryMessenger,
           );
         },
@@ -121,6 +123,7 @@ class CameraInfo extends camerax.CameraInfo {
     required super.sensorRotationDegrees,
     required super.lensFacing,
     required super.exposureState,
+    required super.hasFlashUnit,
     // ignore: non_constant_identifier_names
     super.pigeon_binaryMessenger,
   }) : super.pigeon_detached();
@@ -142,6 +145,7 @@ class CameraInfo extends camerax.CameraInfo {
       sensorRotationDegrees: sensorRotationDegrees,
       lensFacing: lensFacing,
       exposureState: exposureState,
+      hasFlashUnit: hasFlashUnit,
       pigeon_binaryMessenger: pigeon_binaryMessenger,
     );
   }

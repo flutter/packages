@@ -48,6 +48,11 @@ class CameraInfoProxyApi extends PigeonApiCameraInfo {
     return pigeonInstance.getExposureState();
   }
 
+  @Override
+  public boolean hasFlashUnit(CameraInfo pigeonInstance) {
+    return pigeonInstance.hasFlashUnit();
+  }
+
   @NonNull
   @Override
   public LiveDataProxyApi.LiveDataWrapper getCameraState(CameraInfo pigeonInstance) {

@@ -236,6 +236,9 @@ abstract class CameraInfo {
   /// Returns a ExposureState.
   late ExposureState exposureState;
 
+  /// Returns whether or not the camera has a flash unit.
+  late bool hasFlashUnit;
+
   /// A LiveData of the camera's state.
   LiveData getCameraState();
 

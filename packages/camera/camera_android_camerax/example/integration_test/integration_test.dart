@@ -286,4 +286,57 @@ void main() {
 
     await newController.dispose();
   });
+
+  testWidgets('Torch mode is retained after switching cameras', (WidgetTester tester) async {
+    final List<CameraDescription> cameras = await availableCameras();
+    final CameraDescription? backCamera = cameras
+        .where((CameraDescription camera) => camera.lensDirection == CameraLensDirection.back)
+        .firstOrNull;
+    final CameraDescription? frontCamera = cameras
+        .where((CameraDescription camera) => camera.lensDirection == CameraLensDirection.front)
+        .firstOrNull;
+    if (backCamera == null || frontCamera == null) {
+      return;
+    }
+
+    final controller = CameraController(
+      backCamera,
+      mediaSettings: const MediaSettings(resolutionPreset: ResolutionPreset.low),
+    );
+    await controller.initialize();
+
+    final camerax = CameraPlatform.instance as AndroidCameraCameraX;
+    if (!camerax.cameraInfo!.hasFlashUnit) {
+      // Torch mode cannot be tested without a flash unit.
+      await controller.dispose();
+      return;
+    }
+
+    final errors = <String>[];
+    final StreamSubscription<String> errorSubscription = AndroidCameraCameraX
+        .cameraErrorStreamController
+        .stream
+        .listen(errors.add);
+
+    await controller.setFlashMode(FlashMode.torch);
+    expect(camerax.torchEnabled, isTrue);
+
+    // Switch to the front camera and back without turning the torch off.
+    await controller.setDescription(frontCamera);
+    await controller.setDescription(backCamera);
+
+    expect(controller.value.flashMode, FlashMode.torch);
+    expect(camerax.torchEnabled, isTrue);
+
+    // Torch mode is already enabled, so requesting it again is a no-op, and it
+    // can still be turned off.
+    await controller.setFlashMode(FlashMode.torch);
+    await controller.setFlashMode(FlashMode.off);
+    expect(camerax.torchEnabled, isFalse);
+
+    expect(errors, isEmpty);
+
+    await errorSubscription.cancel();
+    await controller.dispose();
+  });
 }

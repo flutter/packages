@@ -1799,6 +1799,7 @@ class CameraInfo extends PigeonInternalProxyApiBaseClass {
     required this.sensorRotationDegrees,
     required this.lensFacing,
     required this.exposureState,
+    required this.hasFlashUnit,
   });
 
   late final _PigeonInternalProxyApiBaseCodec _pigeonVar_codecCameraInfo =
@@ -1814,6 +1815,9 @@ class CameraInfo extends PigeonInternalProxyApiBaseClass {
   /// Returns a ExposureState.
   final ExposureState exposureState;
 
+  /// Returns whether or not the camera has a flash unit.
+  final bool hasFlashUnit;
+
   static void pigeon_setUpMessageHandlers({
     bool pigeon_clearHandlers = false,
     BinaryMessenger? pigeon_binaryMessenger,
@@ -1822,6 +1826,7 @@ class CameraInfo extends PigeonInternalProxyApiBaseClass {
       int sensorRotationDegrees,
       LensFacing lensFacing,
       ExposureState exposureState,
+      bool hasFlashUnit,
     )?
     pigeon_newInstance,
   }) {
@@ -1844,12 +1849,14 @@ class CameraInfo extends PigeonInternalProxyApiBaseClass {
           final int arg_sensorRotationDegrees = args[1]! as int;
           final LensFacing arg_lensFacing = args[2]! as LensFacing;
           final ExposureState arg_exposureState = args[3]! as ExposureState;
+          final bool arg_hasFlashUnit = args[4]! as bool;
           try {
             (pigeon_instanceManager ?? PigeonInstanceManager.instance).addHostCreatedInstance(
               pigeon_newInstance?.call(
                     arg_sensorRotationDegrees,
                     arg_lensFacing,
                     arg_exposureState,
+                    arg_hasFlashUnit,
                   ) ??
                   CameraInfo.pigeon_detached(
                     pigeon_binaryMessenger: pigeon_binaryMessenger,
@@ -1857,6 +1864,7 @@ class CameraInfo extends PigeonInternalProxyApiBaseClass {
                     sensorRotationDegrees: arg_sensorRotationDegrees,
                     lensFacing: arg_lensFacing,
                     exposureState: arg_exposureState,
+                    hasFlashUnit: arg_hasFlashUnit,
                   ),
               arg_pigeon_instanceIdentifier,
             );
@@ -1925,6 +1933,7 @@ class CameraInfo extends PigeonInternalProxyApiBaseClass {
       sensorRotationDegrees: sensorRotationDegrees,
       lensFacing: lensFacing,
       exposureState: exposureState,
+      hasFlashUnit: hasFlashUnit,
     );
   }
 }

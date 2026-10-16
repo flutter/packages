@@ -1,3 +1,7 @@
+## 0.7.5+3
+
+* Fixes torch mode not being retained after switching cameras.
+
 ## 0.7.5+2
 
 * Updates Robolectric to 4.17 and adds the JVM arguments it requires for unit tests.
