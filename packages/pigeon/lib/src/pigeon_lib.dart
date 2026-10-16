@@ -918,6 +918,10 @@ ${_argParser.usage}''';
         if (exitCode != 0) {
           return exitCode;
         }
+        final String? objcVersionWarning = checkObjectiveCPubspecVersion(internalOptions);
+        if (objcVersionWarning != null) {
+          stderr.writeln('Warning: $objcVersionWarning');
+        }
       }
     }
 

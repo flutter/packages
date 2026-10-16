@@ -2668,16 +2668,11 @@ int calculateLineNumber(String contents, int offset) {
   return result;
 }
 
-List<Error> _validateDependencies({
+String? _findTargetPubspecPath({
   required String? appDirectory,
   required String? dartOutPath,
   String? basePath,
-  required String apiName,
-  required List<String> requiredDeps,
-  List<String> requiredDevDeps = const <String>[],
 }) {
-  final errors = <Error>[];
-
   String? pubspecPath;
   if (dartOutPath != null && dartOutPath.isNotEmpty) {
     final String fullDartOut =
@@ -2701,6 +2696,114 @@ List<Error> _validateDependencies({
       (dartOutPath == null || dartOutPath.isEmpty)) {
     pubspecPath = findPubspecPath(Directory.current);
   }
+  return pubspecPath;
+}
+
+/// Checks whether the `objective_c` dependency constraint in `pubspec.yaml`
+/// matches the `ObjCVersionCheck(major, minor)` emitted by `ffigen` in the
+/// generated `.ffi.dart` file.
+///
+/// Returns a warning message if the constraint allows incompatible versions, or
+/// `null` if the constraint is compatible or cannot be checked.
+String? checkObjectiveCPubspecVersion(InternalPigeonOptions options) {
+  final String? dartOutPath = options.dartOptions?.dartOut;
+  if (dartOutPath == null || dartOutPath.isEmpty) {
+    return null;
+  }
+  final String basePath = options.basePath ?? '';
+  final String fullDartOut = (basePath.isNotEmpty && !dartOutPath.startsWith(basePath))
+      ? path.join(basePath, dartOutPath)
+      : dartOutPath;
+  final ffiDartFile = File('${path.withoutExtension(fullDartOut)}.ffi.dart');
+  if (!ffiDartFile.existsSync()) {
+    return null;
+  }
+
+  final String ffiContent;
+  try {
+    ffiContent = ffiDartFile.readAsStringSync();
+  } catch (_) {
+    return null;
+  }
+
+  final RegExpMatch? match = RegExp(
+    r'ObjCVersionCheck\(\s*(\d+)\s*,\s*(\d+)\s*\)',
+  ).firstMatch(ffiContent);
+  if (match == null) {
+    return null;
+  }
+
+  final int major = int.parse(match.group(1)!);
+  final int minor = int.parse(match.group(2)!);
+  final requiredMinVersion = Version(major, minor, 0);
+  final nextMajorVersion = Version(major + 1, 0, 0);
+
+  final String? pubspecPath = _findTargetPubspecPath(
+    appDirectory: options.swiftOptions?.appDirectory ?? options.appDirectory,
+    dartOutPath: dartOutPath,
+    basePath: options.basePath,
+  );
+  if (pubspecPath == null) {
+    return null;
+  }
+
+  final resolvedPubspec = File(pubspecPath);
+  if (!resolvedPubspec.existsSync()) {
+    return null;
+  }
+
+  try {
+    final dynamic doc = yaml.loadYaml(resolvedPubspec.readAsStringSync());
+    if (doc is! yaml.YamlMap) {
+      return null;
+    }
+    final dependencies = doc['dependencies'] as yaml.YamlMap?;
+    final dependencyOverrides = doc['dependency_overrides'] as yaml.YamlMap?;
+    final Object? rawConstraint =
+        dependencyOverrides != null && dependencyOverrides.containsKey('objective_c')
+        ? dependencyOverrides['objective_c']
+        : dependencies?['objective_c'];
+    if (rawConstraint is! String) {
+      return null;
+    }
+
+    final constraint = VersionConstraint.parse(rawConstraint);
+    final bool allowsValidVersion = constraint.allowsAny(
+      VersionRange(min: requiredMinVersion, max: nextMajorVersion, includeMin: true),
+    );
+    final bool allowsLowerVersion = constraint.allowsAny(VersionRange(max: requiredMinVersion));
+    final bool allowsHigherMajorVersion = constraint.allowsAny(
+      VersionRange(min: nextMajorVersion, includeMin: true),
+    );
+
+    if (!allowsValidVersion || allowsLowerVersion || allowsHigherMajorVersion) {
+      return 'Generated FFI bindings in "${path.basename(ffiDartFile.path)}" require '
+          'package:objective_c ^$major.$minor.0 (from ObjCVersionCheck($major, $minor)), '
+          'but "$pubspecPath" specifies "objective_c: $rawConstraint". '
+          'Consider updating pubspec.yaml to "objective_c: ^$major.$minor.0".';
+    }
+  } catch (_) {
+    return null;
+  }
+
+  return null;
+}
+
+List<Error> _validateDependencies({
+  required String? appDirectory,
+  required String? dartOutPath,
+  String? basePath,
+  required String apiName,
+  required List<String> requiredDeps,
+  List<String> requiredDevDeps = const <String>[],
+}) {
+  final errors = <Error>[];
+
+  final String? pubspecPath = _findTargetPubspecPath(
+    appDirectory: appDirectory,
+    dartOutPath: dartOutPath,
+    basePath: basePath,
+  );
 
   if (pubspecPath == null) {
     errors.add(

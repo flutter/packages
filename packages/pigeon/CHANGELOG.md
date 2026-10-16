@@ -1,3 +1,7 @@
+## 29.0.11
+
+* [swift] Warns after FFI code generation if the `objective_c` version constraint in `pubspec.yaml` does not match the generated `ObjCVersionCheck`.
+
 ## 29.0.10
 
 * [swift] [kotlin] Allows `sealed` classes in native interop files.
