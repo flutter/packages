@@ -82,9 +82,16 @@
                              suffix:(NSString *)suffix
                                type:(FLTImagePickerMIMEType)type
                        imageQuality:(NSNumber *)imageQuality {
+  if (image == nil) {
+    return nil;
+  }
   NSData *data = [FLTImagePickerMetaDataUtil convertImage:image
                                                 usingType:type
                                                   quality:imageQuality];
+  // Without encoded data there is nothing to save; an empty file is not a usable image.
+  if (data.length == 0) {
+    return nil;
+  }
   if (metaData) {
     NSData *updatedData = [FLTImagePickerMetaDataUtil imageFromImage:data withMetaData:metaData];
     // If updating the metadata fails, just save the original.
@@ -102,6 +109,9 @@
   CGImageDestinationRef destination = CGImageDestinationCreateWithURL(
       (__bridge CFURLRef)[NSURL fileURLWithPath:path], (__bridge CFStringRef)UTTypeGIF.identifier,
       gifInfo.images.count, NULL);
+  if (destination == NULL) {
+    return nil;
+  }
 
   NSDictionary *frameProperties = @{
     (__bridge NSString *)kCGImagePropertyGIFDictionary : @{
@@ -126,8 +136,13 @@
                                (__bridge CFDictionaryRef)frameProperties);
   }
 
-  CGImageDestinationFinalize(destination);
+  BOOL finalized = CGImageDestinationFinalize(destination);
   CFRelease(destination);
+  if (!finalized) {
+    // Don't leave a partially written file behind.
+    [[NSFileManager defaultManager] removeItemAtPath:path error:nil];
+    return nil;
+  }
 
   return path;
 }
@@ -145,10 +160,8 @@
   NSString *tmpPath = [self temporaryFilePath:suffix];
   if ([[NSFileManager defaultManager] createFileAtPath:tmpPath contents:data attributes:nil]) {
     return tmpPath;
-  } else {
-    nil;
   }
-  return tmpPath;
+  return nil;
 }
 
 @end

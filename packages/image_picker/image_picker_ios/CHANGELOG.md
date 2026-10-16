@@ -1,3 +1,7 @@
+## 0.8.13+13
+
+* Returns an `invalid_image` error instead of an empty or missing file when a picked image cannot be saved.
+
 ## 0.8.13+12
 
 * Updates minimum supported SDK version to Flutter 3.47/Dart 3.13.

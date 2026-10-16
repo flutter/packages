@@ -19,6 +19,8 @@ NS_ASSUME_NONNULL_BEGIN
 @interface FLTImagePickerImageUtil : NSObject
 
 // Resizes the given image to fit within maxWidth (if non-nil) and maxHeight (if non-nil)
+//
+// Returns nil if the image is nil or the scaled width or height rounds to 0.
 + (nullable UIImage *)scaledImage:(nullable UIImage *)image
                          maxWidth:(nullable NSNumber *)maxWidth
                         maxHeight:(nullable NSNumber *)maxHeight

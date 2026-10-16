@@ -246,8 +246,9 @@ struct ImageUtilTests {
     #expect(scaledImage.size.width == 1920)
     #expect(scaledImage.size.height == 1440)
 
-    let encodedData = FLTImagePickerMetaDataUtil.convert(
-      scaledImage, using: FLTImagePickerMIMETypeJPEG, quality: 0.8)
+    let encodedData = try #require(
+      FLTImagePickerMetaDataUtil.convert(
+        scaledImage, using: FLTImagePickerMIMETypeJPEG, quality: 0.8))
     #expect(!encodedData.isEmpty)
     #expect(UIImage(data: encodedData) != nil)
   }
