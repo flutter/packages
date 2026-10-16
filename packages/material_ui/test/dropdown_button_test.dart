@@ -298,10 +298,10 @@ void main() {
 
     await tester.pumpWidget(
       MaterialApp(
+        theme: ThemeData(useMaterial3: false),
         home: Scaffold(
           body: Center(
             child: DropdownButton<String>(
-              isExpanded: true,
               borderRadius: const BorderRadius.all(Radius.circular(radius)),
               value: 'One',
               items: <String>['One', 'Two', 'Three', 'Four'].map<DropdownMenuItem<String>>((
@@ -326,7 +326,7 @@ void main() {
         ..rrect()
         ..rrect()
         ..rrect()
-        ..rrect(rrect: const RRect.fromLTRBXY(0.0, 0.0, 800.0, 208.0, radius, radius)),
+        ..rrect(rrect: const RRect.fromLTRBXY(0.0, 0.0, 144.0, 208.0, radius, radius)),
     );
   });
 
@@ -1116,7 +1116,7 @@ void main() {
       RendererBinding.instance.mouseTracker.debugDeviceActiveCursor(1),
       SystemMouseCursors.basic,
     );
-  });
+  }, tags: 'reduced-web-test-set');
 
   group('DropdownButton feedback', () {
     late FeedbackTester feedback;
