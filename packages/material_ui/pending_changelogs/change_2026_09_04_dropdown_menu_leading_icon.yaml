@@ -1,0 +1,3 @@
+changelog: |
+  - Fixes `DropdownMenuFormField.leadingIcon` not being shown in the text field.
+version: patch
