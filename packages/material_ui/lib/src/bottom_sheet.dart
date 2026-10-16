@@ -684,6 +684,9 @@ class _ModalBottomSheet<T> extends StatefulWidget {
 class _ModalBottomSheetState<T> extends State<_ModalBottomSheet<T>> {
   late final ProxyAnimation _sheetAnimation;
   late final CurvedAnimation _curvedSheetAnimation;
+  // The CurvedAnimation created for the most recent drag end, tracked so it can
+  // be disposed when it is replaced or the state is disposed.
+  CurvedAnimation? _dragEndCurvedAnimation;
 
   @override
   void initState() {
@@ -715,6 +718,7 @@ class _ModalBottomSheetState<T> extends State<_ModalBottomSheet<T>> {
     // Detach to avoid leaking listeners on the route animation.
     _sheetAnimation.parent = kAlwaysDismissedAnimation;
     _curvedSheetAnimation.dispose();
+    _dragEndCurvedAnimation?.dispose();
     super.dispose();
   }
 
@@ -733,6 +737,11 @@ class _ModalBottomSheetState<T> extends State<_ModalBottomSheet<T>> {
   void handleDragStart(DragStartDetails details) {
     // Allow the bottom sheet to track the user's finger accurately.
     _sheetAnimation.parent = widget.route.animation;
+    // The CurvedAnimation from the previous drag end is no longer the parent of
+    // [_sheetAnimation], so dispose it to avoid leaking its listeners on the
+    // route animation.
+    _dragEndCurvedAnimation?.dispose();
+    _dragEndCurvedAnimation = null;
   }
 
   void handleDragEnd(DragEndDetails details, {bool? isClosing}) {
@@ -741,7 +750,8 @@ class _ModalBottomSheetState<T> extends State<_ModalBottomSheet<T>> {
     // Rebind the animation using CurvedAnimation and Split so the
     // remaining transition continues smoothly from the exact point
     // where the drag gesture ended.
-    _sheetAnimation.parent = CurvedAnimation(
+    final CurvedAnimation? oldDragEndCurvedAnimation = _dragEndCurvedAnimation;
+    _dragEndCurvedAnimation = CurvedAnimation(
       parent: widget.route.animation!,
       curve: Split(
         currentProgress,
@@ -752,6 +762,10 @@ class _ModalBottomSheetState<T> extends State<_ModalBottomSheet<T>> {
         endCurve: widget.animationStyle?.reverseCurve ?? _kModalBottomSheetCurve,
       ),
     );
+    _sheetAnimation.parent = _dragEndCurvedAnimation;
+    // Dispose the previous drag-end CurvedAnimation only after detaching it
+    // from [_sheetAnimation], so it is never disposed while still in use.
+    oldDragEndCurvedAnimation?.dispose();
   }
 
   @override
