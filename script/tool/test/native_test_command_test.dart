@@ -160,7 +160,10 @@ void main() {
         'Debug',
         if (destination != null) ...<String>['-destination', destination],
         ...extraFlags,
-        if (treatWarningsAsErrors) 'GCC_TREAT_WARNINGS_AS_ERRORS=YES',
+        if (treatWarningsAsErrors) ...[
+          'GCC_TREAT_WARNINGS_AS_ERRORS=YES',
+          r'SWIFT_TREAT_WARNINGS_AS_ERRORS=$(SWIFT_SUPPRESS_WARNINGS:not)',
+        ],
       ], package.path);
     }
 

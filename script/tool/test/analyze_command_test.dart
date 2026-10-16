@@ -1466,6 +1466,7 @@ packages/package_a/lib/foo.dart
               '-destination',
               'generic/platform=iOS Simulator',
               'GCC_TREAT_WARNINGS_AS_ERRORS=YES',
+              r'SWIFT_TREAT_WARNINGS_AS_ERRORS=$(SWIFT_SUPPRESS_WARNINGS:not)',
             ], pluginExampleDirectory.path),
           ]),
         );
@@ -1520,6 +1521,7 @@ packages/package_a/lib/foo.dart
               'generic/platform=iOS Simulator',
               'IPHONEOS_DEPLOYMENT_TARGET=14.0',
               'GCC_TREAT_WARNINGS_AS_ERRORS=YES',
+              r'SWIFT_TREAT_WARNINGS_AS_ERRORS=$(SWIFT_SUPPRESS_WARNINGS:not)',
             ], pluginExampleDirectory.path),
           ]),
         );
@@ -1628,6 +1630,7 @@ packages/package_a/lib/foo.dart
               '-configuration',
               'Debug',
               'GCC_TREAT_WARNINGS_AS_ERRORS=YES',
+              r'SWIFT_TREAT_WARNINGS_AS_ERRORS=$(SWIFT_SUPPRESS_WARNINGS:not)',
             ], pluginExampleDirectory.path),
           ]),
         );
@@ -1674,6 +1677,7 @@ packages/package_a/lib/foo.dart
               'Debug',
               'MACOSX_DEPLOYMENT_TARGET=12.0',
               'GCC_TREAT_WARNINGS_AS_ERRORS=YES',
+              r'SWIFT_TREAT_WARNINGS_AS_ERRORS=$(SWIFT_SUPPRESS_WARNINGS:not)',
             ], pluginExampleDirectory.path),
           ]),
         );
@@ -1762,6 +1766,7 @@ packages/package_a/lib/foo.dart
               '-destination',
               'generic/platform=iOS Simulator',
               'GCC_TREAT_WARNINGS_AS_ERRORS=YES',
+              r'SWIFT_TREAT_WARNINGS_AS_ERRORS=$(SWIFT_SUPPRESS_WARNINGS:not)',
             ], pluginExampleDirectory.path),
             ProcessCall('flutter', const <String>[
               'build',
@@ -1780,6 +1785,7 @@ packages/package_a/lib/foo.dart
               '-configuration',
               'Debug',
               'GCC_TREAT_WARNINGS_AS_ERRORS=YES',
+              r'SWIFT_TREAT_WARNINGS_AS_ERRORS=$(SWIFT_SUPPRESS_WARNINGS:not)',
             ], pluginExampleDirectory.path),
           ]),
         );
@@ -1828,6 +1834,7 @@ packages/package_a/lib/foo.dart
               '-configuration',
               'Debug',
               'GCC_TREAT_WARNINGS_AS_ERRORS=YES',
+              r'SWIFT_TREAT_WARNINGS_AS_ERRORS=$(SWIFT_SUPPRESS_WARNINGS:not)',
             ], pluginExampleDirectory.path),
           ]),
         );
@@ -1878,6 +1885,7 @@ packages/package_a/lib/foo.dart
               '-destination',
               'generic/platform=iOS Simulator',
               'GCC_TREAT_WARNINGS_AS_ERRORS=YES',
+              r'SWIFT_TREAT_WARNINGS_AS_ERRORS=$(SWIFT_SUPPRESS_WARNINGS:not)',
             ], pluginExampleDirectory.path),
           ]),
         );
