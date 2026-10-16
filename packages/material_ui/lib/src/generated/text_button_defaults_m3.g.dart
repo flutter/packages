@@ -103,7 +103,8 @@ class _TextButtonDefaultsM3 extends ButtonStyle {
       const MaterialStatePropertyAll<OutlinedBorder>(StadiumBorder());
 
   @override
-  WidgetStateProperty<MouseCursor?>? get mouseCursor => WidgetStateMouseCursor.adaptiveClickable;
+  WidgetStateProperty<MouseCursor?>? get mouseCursor =>
+      Theme.of(context).mouseCursor ?? WidgetStateMouseCursor.adaptiveClickable;
 
   @override
   VisualDensity? get visualDensity => Theme.of(context).visualDensity;

@@ -123,7 +123,8 @@ class RawMaterialButton extends StatefulWidget {
   ///  * [WidgetState.disabled].
   /// {@endtemplate}
   ///
-  /// If this property is null, [WidgetStateMouseCursor.adaptiveClickable] will be used.
+  /// If this property is null, [ThemeData.mouseCursor] is used. If that is
+  /// also null, [WidgetStateMouseCursor.adaptiveClickable] is used.
   final MouseCursor? mouseCursor;
 
   /// Defines the default text style, with [Material.textStyle], for the
@@ -361,10 +362,10 @@ class _RawMaterialButtonState extends State<RawMaterialButton> with MaterialStat
     final BoxConstraints effectiveConstraints = widget.visualDensity.effectiveConstraints(
       widget.constraints,
     );
-    final MouseCursor? effectiveMouseCursor = WidgetStateProperty.resolveAs<MouseCursor?>(
-      widget.mouseCursor ?? WidgetStateMouseCursor.adaptiveClickable,
-      materialStates,
-    );
+    final MouseCursor effectiveMouseCursor =
+        WidgetStateProperty.resolveAs<MouseCursor?>(widget.mouseCursor, materialStates) ??
+        Theme.of(context).mouseCursor?.resolve(materialStates) ??
+        WidgetStateMouseCursor.adaptiveClickable.resolve(materialStates);
     final EdgeInsetsGeometry padding = widget.padding
         .add(
           EdgeInsets.only(

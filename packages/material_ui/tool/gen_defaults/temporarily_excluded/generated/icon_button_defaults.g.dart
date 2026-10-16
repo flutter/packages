@@ -93,7 +93,8 @@ class _IconButtonDefaultsM3 extends ButtonStyle {
       const MaterialStatePropertyAll<OutlinedBorder>(StadiumBorder());
 
   @override
-  WidgetStateProperty<MouseCursor?>? get mouseCursor => WidgetStateMouseCursor.adaptiveClickable;
+  WidgetStateProperty<MouseCursor?>? get mouseCursor =>
+      Theme.of(context).mouseCursor ?? WidgetStateMouseCursor.adaptiveClickable;
 
   @override
   VisualDensity? get visualDensity => VisualDensity.standard;
