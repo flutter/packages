@@ -64,11 +64,11 @@ public final class VideoPlayerPlugin: NSObject, FlutterPlugin, AVFoundationVideo
   private let binaryMessenger: FlutterBinaryMessenger
   private let textureRegistry: FlutterTextureRegistry
   private let displayLinkFactory: DisplayLinkFactory
-  private let avFactory: FVPAVFactory
+  private let avFactory: WrappedAVObjectFactory
   private let viewProvider: FVPViewProvider
   private let assetProvider: FVPAssetProvider
   private var nextPlayerIdentifier: Int64 = 1
-  var playersByIdentifier: [Int64: FVPVideoPlayer] = [:]
+  private(set) var playersByIdentifier: [Int64: VideoPlayer] = [:]
 
   public static func register(with registrar: FlutterPluginRegistrar) {
     let instance = VideoPlayerPlugin(registrar: registrar)
@@ -83,7 +83,7 @@ public final class VideoPlayerPlugin: NSObject, FlutterPlugin, AVFoundationVideo
     let factory = NativeVideoViewFactory(
       messenger: messenger,
       playerByIdentifierProvider: {
-        [weak instance] (playerIdentifier: Int64) -> FVPVideoPlayer? in
+        [weak instance] (playerIdentifier: Int64) -> VideoPlayer? in
         return instance?.playersByIdentifier[playerIdentifier]
       }
     )
@@ -101,7 +101,7 @@ public final class VideoPlayerPlugin: NSObject, FlutterPlugin, AVFoundationVideo
       let textures = registrar.textures
     #endif
     self.init(
-      avFactory: FVPDefaultAVFactory(),
+      avFactory: DefaultAVFactory(),
       displayLinkFactory: DefaultDisplayLinkFactory(),
       binaryMessenger: messenger,
       textureRegistry: textures,
@@ -111,7 +111,7 @@ public final class VideoPlayerPlugin: NSObject, FlutterPlugin, AVFoundationVideo
   }
 
   init(
-    avFactory: FVPAVFactory,
+    avFactory: WrappedAVObjectFactory,
     displayLinkFactory: DisplayLinkFactory,
     binaryMessenger: FlutterBinaryMessenger,
     textureRegistry: FlutterTextureRegistry,
@@ -133,8 +133,7 @@ public final class VideoPlayerPlugin: NSObject, FlutterPlugin, AVFoundationVideo
       // doesn't message the engine that is no longer connected.
       player.onDisposed = nil
       player.eventListener = nil
-      var error: FlutterError?
-      player.disposeWithError(&error)
+      player.dispose()
     }
     playersByIdentifier.removeAll()
     #if os(iOS)
@@ -157,15 +156,14 @@ public final class VideoPlayerPlugin: NSObject, FlutterPlugin, AVFoundationVideo
     #endif
 
     for player in playersByIdentifier.values {
-      var error: FlutterError?
-      player.disposeWithError(&error)
+      player.dispose()
     }
     playersByIdentifier.removeAll()
   }
 
   func createPlatformViewPlayer(options params: CreationOptions) throws -> Int64 {
     let item = try playerItem(with: params)
-    let player = FVPVideoPlayer(playerItem: item, avFactory: avFactory, viewProvider: viewProvider)
+    let player = VideoPlayer(playerItem: item, avFactory: avFactory, viewProvider: viewProvider)
     return configurePlayer(player, extraDisposeHandler: nil)
   }
 
@@ -176,7 +174,7 @@ public final class VideoPlayerPlugin: NSObject, FlutterPlugin, AVFoundationVideo
       frameUpdater.displayLinkFired()
     }
 
-    let player = FVPTextureBasedVideoPlayer(
+    let player = TextureBasedVideoPlayer(
       playerItem: item,
       frameUpdater: frameUpdater,
       displayLink: displayLink,
@@ -242,7 +240,7 @@ public final class VideoPlayerPlugin: NSObject, FlutterPlugin, AVFoundationVideo
   // MARK: - Private
 
   private func configurePlayer(
-    _ player: FVPVideoPlayer,
+    _ player: VideoPlayer,
     extraDisposeHandler: (() -> Void)?
   ) -> Int64 {
     let playerId = nextPlayerIdentifier
@@ -251,11 +249,13 @@ public final class VideoPlayerPlugin: NSObject, FlutterPlugin, AVFoundationVideo
 
     let channelSuffix = "\(playerId)"
     // Set up the player-specific API handler, and its onDispose unregistration.
-    SetUpFVPVideoPlayerInstanceApiWithSuffix(binaryMessenger, player, channelSuffix)
+    VideoPlayerInstanceApiSetup.setUp(
+      binaryMessenger: binaryMessenger, api: player, messageChannelSuffix: channelSuffix)
 
     player.onDisposed = { [weak self] in
       guard let strongSelf = self else { return }
-      SetUpFVPVideoPlayerInstanceApiWithSuffix(strongSelf.binaryMessenger, nil, channelSuffix)
+      VideoPlayerInstanceApiSetup.setUp(
+        binaryMessenger: strongSelf.binaryMessenger, api: nil, messageChannelSuffix: channelSuffix)
       extraDisposeHandler?()
       strongSelf.playersByIdentifier.removeValue(forKey: playerId)
     }
@@ -270,7 +270,7 @@ public final class VideoPlayerPlugin: NSObject, FlutterPlugin, AVFoundationVideo
     return playerId
   }
 
-  private func playerItem(with options: CreationOptions) throws -> FVPAVPlayerItem {
+  private func playerItem(with options: CreationOptions) throws -> WrappedAVPlayerItem {
     let headers = options.httpHeaders
     let itemOptions = headers.isEmpty ? nil : ["AVURLAssetHTTPHeaderFieldsKey": headers]
     guard let url = URL(string: options.uri) else {
@@ -291,7 +291,7 @@ public final class VideoPlayerPlugin: NSObject, FlutterPlugin, AVFoundationVideo
   // that could affect other plugins which depend on this global state. Only change
   // category or options if there is change to prevent unnecessary lags and silence.
   private func upgradeAudioSessionCategory(
-    session: FVPAVAudioSession,
+    session: WrappedAVAudioSession,
     requestedCategory: AVAudioSession.Category,
     options: AVAudioSession.CategoryOptions,
     clearOptions: AVAudioSession.CategoryOptions
