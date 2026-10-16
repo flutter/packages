@@ -1314,6 +1314,85 @@ void main() {
     expect(tappedIndex, 2);
   });
 
+  testWidgets('CarouselView.builder onTap passes wrapped index in infinite carousel', (
+    WidgetTester tester,
+  ) async {
+    var tappedIndex = -1;
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Scaffold(
+          body: CarouselView.builder(
+            itemExtent: 350,
+            itemCount: 3,
+            infinite: true,
+            onTap: (int index) {
+              tappedIndex = index;
+            },
+            itemBuilder: (BuildContext context, int index) {
+              return Center(child: Text('Item $index'));
+            },
+          ),
+        ),
+      ),
+    );
+
+    await tester.pumpAndSettle();
+
+    // Scroll by an amount that reveals a repeated item.
+    // 3 items with 350 extent = 1050. Dragging by -1050 will show the repeated Item 0 at sliver index 3.
+    await tester.drag(find.byType(CarouselView), const Offset(-1050, 0));
+    await tester.pumpAndSettle();
+
+    final Finder carouselItem = find.text('Item 0');
+    expect(carouselItem, findsOneWidget);
+
+    await tester.tap(carouselItem, warnIfMissed: false);
+    await tester.pumpAndSettle();
+
+    // Verify that the onTap callback was called with the wrapped index 0, not 3.
+    expect(tappedIndex, 0);
+  });
+
+  testWidgets('CarouselView.weightedBuilder onTap passes wrapped index in infinite carousel', (
+    WidgetTester tester,
+  ) async {
+    var tappedIndex = -1;
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Scaffold(
+          body: CarouselView.weightedBuilder(
+            flexWeights: const <int>[1],
+            itemCount: 3,
+            infinite: true,
+            onTap: (int index) {
+              tappedIndex = index;
+            },
+            itemBuilder: (BuildContext context, int index) {
+              return Center(child: Text('Item $index'));
+            },
+          ),
+        ),
+      ),
+    );
+
+    await tester.pumpAndSettle();
+
+    // Scroll to reveal repeated items.
+    // Screen width is 800. A single weight 1 means the item takes full 800 width.
+    // Dragging by -2400 scrolls exactly 3 full items.
+    await tester.drag(find.byType(CarouselView), const Offset(-2400, 0));
+    await tester.pumpAndSettle();
+
+    final Finder carouselItem = find.text('Item 0');
+    expect(carouselItem, findsOneWidget);
+
+    await tester.tap(carouselItem, warnIfMissed: false);
+    await tester.pumpAndSettle();
+
+    // Verify that the onTap callback was called with the wrapped index 0, not 3.
+    expect(tappedIndex, 0);
+  });
+
   testWidgets('CarouselView with enableSplash true - children are not directly interactive', (
     WidgetTester tester,
   ) async {
@@ -1434,6 +1513,53 @@ void main() {
         ),
       ),
     );
+
+    expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('CarouselView does not crash if itemCount is zero', (WidgetTester tester) async {
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Scaffold(
+          body: CarouselView.builder(
+            itemExtent: 100,
+            itemCount: 0,
+            itemBuilder: (BuildContext context, int index) {
+              return const SizedBox();
+            },
+          ),
+        ),
+      ),
+    );
+
+    expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('CarouselController.animateToItem does not crash on empty carousel', (
+    WidgetTester tester,
+  ) async {
+    final controller = CarouselController();
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Scaffold(
+          body: CarouselView.builder(
+            itemExtent: 100,
+            itemCount: 0,
+            controller: controller,
+            itemBuilder: (BuildContext context, int index) {
+              return const SizedBox();
+            },
+          ),
+        ),
+      ),
+    );
+
+    await tester.pumpAndSettle();
+    expect(tester.takeException(), isNull);
+
+    // This should just return early and not crash.
+    await controller.animateToItem(0);
+    await tester.pumpAndSettle();
 
     expect(tester.takeException(), isNull);
   });
@@ -2996,6 +3122,104 @@ void main() {
 
     // Verify no SliverGeometry exception was thrown.
     expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('CarouselView.builder items customization', (WidgetTester tester) async {
+    final Key key = UniqueKey();
+    final theme = ThemeData();
+    int? tappedIndex;
+
+    await tester.pumpWidget(
+      MaterialApp(
+        theme: theme,
+        home: Scaffold(
+          body: CarouselView.builder(
+            padding: const EdgeInsets.all(20.0),
+            backgroundColor: Colors.amber,
+            elevation: 10.0,
+            shape: const StadiumBorder(),
+            onTap: (int index) {
+              tappedIndex = index;
+            },
+            itemExtent: 200,
+            itemCount: 10,
+            itemBuilder: (BuildContext context, int index) {
+              if (index == 0) {
+                return Center(key: key, child: Text('Item $index'));
+              }
+              return Center(child: Text('Item $index'));
+            },
+          ),
+        ),
+      ),
+    );
+
+    final Finder carouselViewMaterial = find
+        .descendant(of: find.byType(CarouselView), matching: find.byType(Material))
+        .first;
+
+    expect(
+      tester.getSize(carouselViewMaterial).width,
+      200 - 20 - 20,
+    ); // Padding is 20 on both side.
+    final Material material = tester.widget<Material>(carouselViewMaterial);
+    expect(material.color, Colors.amber);
+    expect(material.elevation, 10.0);
+    expect(material.shape, const StadiumBorder());
+    expect(find.byKey(key), findsOneWidget);
+
+    await tester.tap(find.byKey(key), warnIfMissed: false);
+    expect(tappedIndex, 0);
+  });
+
+  testWidgets('CarouselView.weightedBuilder items customization', (WidgetTester tester) async {
+    final Key key = UniqueKey();
+    final theme = ThemeData();
+    int? tappedIndex;
+
+    await tester.pumpWidget(
+      MaterialApp(
+        theme: theme,
+        home: Scaffold(
+          body: CarouselView.weightedBuilder(
+            padding: const EdgeInsets.all(20.0),
+            backgroundColor: Colors.amber,
+            elevation: 10.0,
+            shape: const StadiumBorder(),
+            onTap: (int index) {
+              tappedIndex = index;
+            },
+            flexWeights: const <int>[1, 7, 1],
+            itemCount: 10,
+            itemBuilder: (BuildContext context, int index) {
+              if (index == 0) {
+                return Center(key: key, child: Text('Item $index'));
+              }
+              return Center(child: Text('Item $index'));
+            },
+          ),
+        ),
+      ),
+    );
+
+    final Finder carouselViewMaterial = find
+        .descendant(of: find.byType(CarouselView), matching: find.byType(Material))
+        .first;
+
+    // Viewport width is 800. The max weight is 7, and the sum of weights is 9.
+    // The first item should be placed at the slot with max weight.
+    expect(
+      tester.getSize(carouselViewMaterial).width,
+      (800 * 7 / 9) - 20 - 20,
+    ); // Padding is 20 on both sides.
+    final Material material = tester.widget<Material>(carouselViewMaterial);
+    expect(material.color, Colors.amber);
+    expect(material.elevation, 10.0);
+    expect(material.shape, const StadiumBorder());
+    expect(find.byKey(key), findsOneWidget);
+
+    await tester.tap(find.byKey(key), warnIfMissed: false);
+    expect(tappedIndex, 0);
   });
 }
 
