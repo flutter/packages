@@ -52,7 +52,7 @@ import '../templates/snackbar_template.dart';
 // import '../templates/switch_template.dart';
 // import '../templates/tabs_template.dart';
 // import '../templates/text_field_template.dart';
-// import '../templates/time_picker_template.dart';
+import '../templates/time_picker_template.dart';
 import '../templates/typography_template.dart';
 
 Future<void> main(List<String> args) async {
@@ -114,6 +114,6 @@ Future<void> main(List<String> args) async {
   // const SwitchTemplateM3().generateFile(verbose: verbose);
   // const TabsTemplateM3().generateFile(verbose: verbose);
   // const TextFieldTemplateM3().generateFile(verbose: verbose);
-  // const TimePickerTemplateM3().generateFile(verbose: verbose);
+  const TimePickerTemplateM3().generateFile(verbose: verbose);
   const TypographyTemplateM3().generateFile(verbose: verbose);
 }

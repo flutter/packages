@@ -52,6 +52,7 @@ import '../templates/snackbar_template.dart';
 import '../templates/template.dart';
 // import '../templates/text_field_template.dart';
 // import '../templates/time_picker_template.dart';
+import '../templates/time_picker_template.dart';
 import '../templates/typography_template.dart';
 import 'test_fixtures/test_templates.dart';
 
@@ -821,8 +822,32 @@ void main() {
     });
 
     test('TimePickerTemplateM3 emits M3 TimePicker defaults from tokens', () {
-      // Intentionally empty, will be implemented during migration. See:
-      // https://github.com/flutter/flutter/issues/187899
+      const template = TimePickerTemplateM3();
+      final String contents = _generateContents(template);
+      expect(contents, contains('class _TimePickerDefaultsM3 extends _TimePickerDefaults'));
+      expect(
+        contents,
+        contains('''
+  Size get dayPeriodPortraitSize {
+    return const Size(52.0, 80.0);
+  }'''),
+      );
+
+      expect(
+        contents,
+        contains('''
+  double get dotRadius {
+    return 48.0 / 2;
+  }'''),
+      );
+
+      expect(
+        contents,
+        contains('''
+  ShapeBorder get hourMinuteShape {
+    return const RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(8.0)));
+  }'''),
+      );
     });
 
     test('TypographyTemplateM3 emits M3 Typography defaults from tokens', () {
