@@ -39,7 +39,7 @@ import '../templates/motion_template.dart';
 // import '../templates/navigation_bar_template.dart';
 // import '../templates/navigation_drawer_template.dart';
 // import '../templates/navigation_rail_template.dart';
-// import '../templates/popup_menu_template.dart';
+import '../templates/popup_menu_template.dart';
 // import '../templates/progress_indicator_template.dart';
 // import '../templates/radio_template.dart';
 // import '../templates/range_slider_template.dart';
@@ -101,7 +101,7 @@ Future<void> main(List<String> args) async {
   // const NavigationBarTemplateM3().generateFile(verbose: verbose);
   // const NavigationDrawerTemplateM3().generateFile(verbose: verbose);
   // const NavigationRailTemplateM3().generateFile(verbose: verbose);
-  // const PopupMenuTemplateM3().generateFile(verbose: verbose);
+  const PopupMenuTemplateM3().generateFile(verbose: verbose);
   // const ProgressIndicatorTemplateM3().generateFile(verbose: verbose);
   // const RadioTemplateM3().generateFile(verbose: verbose);
   // const RangeSliderTemplateM3().generateFile(verbose: verbose);
