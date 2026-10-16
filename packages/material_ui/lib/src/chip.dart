@@ -235,6 +235,10 @@ abstract interface class ChipAttributes {
   /// the chip is enabled, and [IconThemeData] with a [ColorScheme.onSurface]
   /// color and a size of 18.0 is used when the chip is disabled. Otherwise,
   /// it defaults to null.
+  ///
+  /// The [IconThemeData.color] can be a [WidgetStateColor], in which case it is
+  /// resolved against the chip's current [WidgetState]s when it is applied to
+  /// the [avatar] and to the delete icon.
   IconThemeData? get iconTheme;
 
   /// Optional size constraints for the avatar.
@@ -1416,8 +1420,17 @@ class _RawChipState extends State<RawChip> with TickerProviderStateMixin<RawChip
       statesController.value,
     );
     final TextStyle resolvedLabelStyle = effectiveLabelStyle.copyWith(color: resolvedLabelColor);
-    final Widget? avatar = iconTheme != null && hasAvatar
-        ? IconTheme.merge(data: chipDefaults.iconTheme!.merge(iconTheme), child: widget.avatar!)
+    final IconThemeData? mergedAvatarIconTheme = iconTheme == null
+        ? null
+        : chipDefaults.iconTheme!.merge(iconTheme);
+    final IconThemeData? effectiveAvatarIconTheme = mergedAvatarIconTheme?.copyWith(
+      color: WidgetStateProperty.resolveAs<Color?>(
+        mergedAvatarIconTheme.color,
+        statesController.value,
+      ),
+    );
+    final Widget? avatar = effectiveAvatarIconTheme != null && hasAvatar
+        ? IconTheme.merge(data: effectiveAvatarIconTheme, child: widget.avatar!)
         : widget.avatar;
 
     /// The chip at text scale 1 starts with 8px on each side and as text scaling
