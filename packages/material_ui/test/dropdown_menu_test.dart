@@ -78,7 +78,7 @@ void main() {
 
   bool isItemHighlighted(WidgetTester tester, ThemeData themeData, String itemLabel) {
     final Color? color = getButtonMaterial(tester, itemLabel).color;
-    return color == themeData.colorScheme.onSurface.withOpacity(0.12);
+    return color == themeData.colorScheme.tertiaryContainer;
   }
 
   Finder findMenuPanel() {
@@ -113,7 +113,7 @@ void main() {
     expect(find.byType(MenuAnchor), findsOneWidget);
 
     Material material = tester.widget<Material>(findMenuMaterial());
-    expect(material.color, themeData.colorScheme.surfaceContainer);
+    expect(material.color, themeData.colorScheme.surfaceContainerLow);
     expect(material.shadowColor, themeData.colorScheme.shadow);
     expect(material.surfaceTintColor, Colors.transparent);
     expect(material.elevation, 3.0);
@@ -224,11 +224,15 @@ void main() {
       await tester.pump();
 
       final Material selectedButtonMaterial = getButtonMaterial(tester, selectedItem.label);
-      expect(selectedButtonMaterial.color, themeData.colorScheme.onSurface.withOpacity(0.12));
-      expect(selectedButtonMaterial.textStyle?.color, themeData.colorScheme.onSurface);
+      expect(selectedButtonMaterial.color, themeData.colorScheme.tertiaryContainer);
+      expect(selectedButtonMaterial.textStyle?.color, themeData.colorScheme.onTertiaryContainer);
       expect(
         iconStyle(tester, leadingIconKey(selectedItem))?.color,
-        themeData.colorScheme.onSurfaceVariant,
+        themeData.colorScheme.onTertiaryContainer,
+      );
+      expect(
+        iconStyle(tester, trailingIconKey(selectedItem))?.color,
+        themeData.colorScheme.onTertiaryContainer,
       );
 
       final Material nonSelectedButtonMaterial = getButtonMaterial(tester, nonSelectedItem.label);
@@ -250,7 +254,8 @@ void main() {
 
       expect(
         overlayPainter(tester, selectedItem),
-        paints..rect(color: themeData.colorScheme.onSurface.withOpacity(0.1).withAlpha(0)),
+        paints
+          ..rect(color: themeData.colorScheme.onTertiaryContainer.withOpacity(0.1).withAlpha(0)),
       );
 
       // Hover a non-selected item.
@@ -3140,7 +3145,7 @@ void main() {
           matching: find.byType(Material),
         );
         final Material itemMaterial = tester.widget<Material>(material);
-        expect(itemMaterial.color, theme.colorScheme.onSurface.withOpacity(0.12));
+        expect(itemMaterial.color, theme.colorScheme.tertiaryContainer);
       }
 
       for (final nonHighlight in otherItems) {
