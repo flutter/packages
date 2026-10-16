@@ -1,3 +1,8 @@
+## 0.4.13+4
+
+* Suppresses deprecation warnings for StoreKit 1 APIs, which are intentionally
+  used as the fallback on iOS versions below 15 and macOS versions below 12.
+
 ## 0.4.13+3
 
 * Removes unused handling of the deprecated `SKDownload` hosted content
