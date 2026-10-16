@@ -398,5 +398,32 @@ void main() {
         expect(lengths[n], greaterThan(0));
       }
     });
+
+    testWidgets('stopVideoRecording returns mp4 after takePicture during recording', (
+      WidgetTester tester,
+    ) async {
+      final List<CameraDescription> cameras = await CameraPlatform.instance.availableCameras();
+      if (cameras.isEmpty) {
+        return;
+      }
+
+      final controller = CameraController(cameras[0]);
+      await controller.initialize();
+      await controller.prepareForVideoRecording();
+
+      await controller.startVideoRecording();
+      await Future<void>.delayed(const Duration(milliseconds: 500));
+
+      final XFile photo = await controller.takePicture();
+      expect(photo.path.toLowerCase(), endsWith('.jpg'));
+
+      await Future<void>.delayed(const Duration(seconds: 1));
+
+      final XFile video = await controller.stopVideoRecording();
+      expect(video.path.toLowerCase(), endsWith('.mp4'));
+      expect(video.path, isNot(equals(photo.path)));
+
+      await controller.dispose();
+    });
   });
 }
