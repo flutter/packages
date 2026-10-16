@@ -305,10 +305,6 @@ void main() {
     if (cameras.isEmpty) {
       return;
     }
-    const expectedExtensions = <ImageFileFormat, String>{
-      ImageFileFormat.jpeg: 'jpg',
-      ImageFileFormat.heif: 'heif',
-    };
     for (final cameraDescription in cameras) {
       for (final ImageFileFormat fileFormat in ImageFileFormat.values) {
         final controller = CameraController(cameraDescription, ResolutionPreset.low);
@@ -316,7 +312,11 @@ void main() {
         await controller.setImageFileFormat(fileFormat);
         final XFile file = await controller.takePicture();
         await controller.dispose();
-        expect(file.path.endsWith(expectedExtensions[fileFormat]!), true);
+        final String expectedExtension = switch (fileFormat) {
+          ImageFileFormat.jpeg => 'jpg',
+          ImageFileFormat.heif => 'heif',
+        };
+        expect(file.path.endsWith(expectedExtension), true);
       }
     }
   });
