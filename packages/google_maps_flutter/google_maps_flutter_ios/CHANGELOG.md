@@ -2,6 +2,9 @@
 
 * Updates README to note that `GoogleMap.onPointOfInterestTap` is not supported.
 * Updates minimum supported SDK version to Flutter 3.41/Dart 3.11.
+* Fixes corrupted and missing marker icons on maps with many markers created from
+  `BitmapDescriptor.bytes`, by sharing a single `UIImage` between markers that use the same
+  bytes and scaling.
 
 ## 2.18.6
 
