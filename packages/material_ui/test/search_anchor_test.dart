@@ -3671,6 +3671,51 @@ void main() {
     expect(suggestionsLoadingCount, 1);
   });
 
+  // Regression test for https://github.com/flutter/flutter/issues/179503.
+  testWidgets('non-fullscreen SearchAnchor stays above the keyboard', (WidgetTester tester) async {
+    const double keyboardHeight = 300.0;
+    tester.view.physicalSize = const Size(800, 1000);
+    tester.view.devicePixelRatio = 1.0;
+    addTearDown(tester.view.reset);
+
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Scaffold(
+          body: Align(
+            alignment: Alignment.topCenter,
+            child: SearchAnchor(
+              isFullScreen: false,
+              builder: (BuildContext context, SearchController controller) {
+                return IconButton(
+                  icon: const Icon(Icons.search),
+                  onPressed: () {
+                    controller.openView();
+                  },
+                );
+              },
+              suggestionsBuilder: (BuildContext context, SearchController controller) {
+                return List<Widget>.generate(20, (int index) {
+                  return ListTile(title: Text('Suggestion $index'));
+                });
+              },
+            ),
+          ),
+        ),
+      ),
+    );
+
+    await tester.tap(find.widgetWithIcon(IconButton, Icons.search));
+    await tester.pumpAndSettle();
+
+    tester.view.viewInsets = const FakeViewPadding(bottom: keyboardHeight);
+    await tester.pumpAndSettle();
+
+    final Rect searchViewRect = tester.getRect(
+      find.descendant(of: findViewContent(), matching: find.byType(ConstrainedBox)).first,
+    );
+    expect(searchViewRect.bottom, lessThanOrEqualTo(1000 - keyboardHeight));
+  });
+
   // This is a regression test for https://github.com/flutter/flutter/issues/139880.
   testWidgets('suggestionsBuilder is not called when the search value does not change', (
     WidgetTester tester,
