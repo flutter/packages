@@ -1,0 +1,3 @@
+changelog: |
+  - Fixes discrete `Slider` and `RangeSlider` snapping to the wrong division when tapping the lower half of a tick mark on a rounded track.
+version: patch
