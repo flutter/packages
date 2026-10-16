@@ -758,7 +758,7 @@ struct ImagePickerPluginTests {
     let rootViewController = UIViewController()
     window.rootViewController = rootViewController
     rootViewController.loadViewIfNeeded()
-    window.makeKeyAndVisible()
+    window.addSubview(rootViewController.view)
     let plugin = FLTImagePickerPlugin(
       viewProvider: StubViewProvider(viewController: rootViewController))
     let presenter = plugin.presentingViewControllerForImagePickerInNewWindow()
