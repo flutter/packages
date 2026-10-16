@@ -1,0 +1,3 @@
+changelog: |
+  - Fixes `Tooltip` losing its semantics label when wrapped in `TooltipVisibility(visible: false)`. The visual tooltip overlay is still suppressed, but the semantics label is now preserved so assistive technologies (e.g. TalkBack/VoiceOver) continue to announce it.
+version: patch
