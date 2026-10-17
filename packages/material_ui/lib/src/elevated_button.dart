@@ -109,8 +109,9 @@ class ElevatedButton extends ButtonStyleButton {
   /// The icon and label are arranged in a row and padded by 12 logical pixels
   /// at the start, and 16 at the end, with an 8 pixel gap in between.
   ///
-  /// With the Material 3 Expressive style, the padding and the gap depend on
-  /// [ButtonStyle.sizeVariant]. See [defaultStyleOf].
+  /// With the Material 3 Expressive style, the padding and the gap between the
+  /// icon and the label depend on [ButtonStyle.sizeVariant]. See
+  /// [defaultStyleOf].
   ///
   /// If [icon] is null, this constructor will create an [ElevatedButton]
   /// that doesn't display an icon.
