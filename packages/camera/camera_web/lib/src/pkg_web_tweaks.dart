@@ -71,8 +71,6 @@ extension type WebTweakImageDataSettings._(JSObject _) implements ImageDataSetti
     WebTweakPredefinedFormat? format,
   });
 
-  external PredefinedColorSpace get colorSpace;
-  external set colorSpace(PredefinedColorSpace value);
   external WebTweakPredefinedFormat? get format;
   external set format(WebTweakPredefinedFormat? value);
 }
