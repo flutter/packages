@@ -128,7 +128,7 @@ void main() {
       }
 
       addTemporaryInstance();
-      while (!weakReferencedRemovedCalled) {
+      for (var i = 0; i < 5 && !weakReferencedRemovedCalled; i++) {
         await forceGC();
       }
 
