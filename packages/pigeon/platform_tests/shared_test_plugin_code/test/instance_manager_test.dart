@@ -120,12 +120,17 @@ void main() {
         },
       );
 
-      CopyableObject? object = CopyableObject(pigeon_instanceManager: instanceManager);
+      @pragma('vm:never-inline')
+      void addTemporaryInstance() {
+        instanceManager.addDartCreatedInstance(
+          CopyableObject(pigeon_instanceManager: instanceManager),
+        );
+      }
 
-      instanceManager.addDartCreatedInstance(object);
-
-      object = null;
-      await forceGC(fullGcCycles: 2);
+      addTemporaryInstance();
+      while (!weakReferencedRemovedCalled) {
+        await forceGC();
+      }
 
       expect(weakReferencedRemovedCalled, isTrue);
     });
