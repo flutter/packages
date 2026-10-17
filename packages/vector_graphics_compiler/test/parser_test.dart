@@ -414,6 +414,19 @@ ${[for (var i = 2; i <= 30; i++) '    <pattern id="lvl$i" width="10" height="10"
     ]);
   });
 
+  test('text and tspan with coordinate lists use the first coordinate', () {
+    final VectorInstructions instructions = parseWithoutOptimizers('''
+<svg width="100" height="100" xmlns="http://www.w3.org/2000/svg">
+  <text x="10 20 30" y="40, 50">ABC<tspan dx="1 2" dy="3 4">DE</tspan></text>
+</svg>
+''');
+
+    expect(instructions.textPositions, const <TextPosition>[
+      TextPosition(x: 10, y: 40, reset: true),
+      TextPosition(dx: 1, dy: 3),
+    ]);
+  });
+
   test('tspan without position does not apply the group transform twice', () {
     final VectorInstructions instructions = parseWithoutOptimizers('''
 <svg width="400" height="100" xmlns="http://www.w3.org/2000/svg">
