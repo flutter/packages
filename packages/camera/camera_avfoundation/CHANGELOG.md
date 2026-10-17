@@ -1,3 +1,7 @@
+## 0.11.0+4
+
+* Fixes a Swift 6 Sendability mismatch in the `CaptureDevice` protocol's `setExposureTargetBias` completion handler.
+
 ## 0.11.0+3
 
 * Fixes a crash when switching camera while recording video due to disconnected photo output.
