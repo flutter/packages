@@ -1536,6 +1536,18 @@ void main() {
           await expectCameraFrameStreamError(null);
         });
 
+        testWidgets('closes the stream on dispose', (WidgetTester tester) async {
+          final camera = Camera(textureId: textureId, cameraService: cameraService);
+
+          await camera.initialize();
+          await camera.play();
+
+          final Future<void> done = camera.cameraFrameStream().drain<void>();
+          await camera.dispose();
+
+          await done.timeout(const Duration(seconds: 5));
+        });
+
         testWidgets('continues streaming after unableToCloneFrame error', (
           WidgetTester tester,
         ) async {
