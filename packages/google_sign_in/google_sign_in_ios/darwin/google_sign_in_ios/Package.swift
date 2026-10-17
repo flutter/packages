@@ -9,8 +9,8 @@ import PackageDescription
 let package = Package(
   name: "google_sign_in_ios",
   platforms: [
-    .iOS("13.0"),
-    .macOS("10.15"),
+    .iOS("15.0"),
+    .macOS("12.0"),
   ],
   products: [
     .library(name: "google-sign-in-ios", targets: ["google_sign_in_ios"])
@@ -18,7 +18,7 @@ let package = Package(
   dependencies: [
     .package(
       url: "https://github.com/google/GoogleSignIn-iOS.git",
-      from: "9.0.0")
+      "9.0.0"..<"11.0.0")
   ],
   targets: [
     .target(
