@@ -1977,25 +1977,16 @@ class _RenderBaselineAlignedStack extends RenderBox
       final double overflowBottom =
           (placeholderParentData.offset.dy + placeholder.size.height) - size.height;
       if (overflowBottom > 0.0) {
-        placeholderParentData.offset = Offset(
-          placeholderParentData.offset.dx,
-          placeholderParentData.offset.dy - overflowBottom,
-        );
-        editableTextParentData.offset = Offset(
-          editableTextParentData.offset.dx,
-          editableTextParentData.offset.dy - overflowBottom,
+        placeholderParentData.offset = placeholderParentData.offset.translate(0.0, -overflowBottom);
+        editableTextParentData.offset = editableTextParentData.offset.translate(
+          0.0,
+          -overflowBottom,
         );
       }
       if (placeholderParentData.offset.dy < 0.0) {
         final double overflowTop = -placeholderParentData.offset.dy;
-        placeholderParentData.offset = Offset(
-          placeholderParentData.offset.dx,
-          placeholderParentData.offset.dy + overflowTop,
-        );
-        editableTextParentData.offset = Offset(
-          editableTextParentData.offset.dx,
-          editableTextParentData.offset.dy + overflowTop,
-        );
+        placeholderParentData.offset = placeholderParentData.offset.translate(0.0, overflowTop);
+        editableTextParentData.offset = editableTextParentData.offset.translate(0.0, overflowTop);
       }
     }
   }
