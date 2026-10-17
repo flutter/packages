@@ -120,9 +120,6 @@ class _ElevatedButtonDefaultsM3E extends ButtonStyle {
         if (states.contains(WidgetState.pressed)) {
           return 1.0;
         }
-        if (states.contains(WidgetState.hovered)) {
-          return 3.0;
-        }
         if (states.contains(WidgetState.focused)) {
           return 1.0;
         }

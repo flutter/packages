@@ -3089,7 +3089,7 @@ void main() {
       expect(style.overlayColor?.resolve(pressed), colors.primary.withValues(alpha: 0.1));
 
       expect(style.elevation?.resolve(<WidgetState>{}), 1.0);
-      expect(style.elevation?.resolve(hovered), 3.0);
+      expect(style.elevation?.resolve(hovered), 1.0);
       expect(style.elevation?.resolve(focused), 1.0);
       expect(style.elevation?.resolve(pressed), 1.0);
       expect(style.elevation?.resolve(disabled), 0.0);

@@ -461,7 +461,6 @@ class ElevatedButton extends ButtonStyleButton {
   /// * `surfaceTintColor` - Colors.transparent
   /// * `elevation`
   ///   * disabled - 0
-  ///   * hovered - 3
   ///   * others - 1
   /// * `padding` - based on [ButtonStyle.sizeVariant]; horizontal(12),
   ///   horizontal(16), horizontal(24), horizontal(48), horizontal(64). The
