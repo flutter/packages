@@ -430,11 +430,16 @@ class Slider extends StatefulWidget {
   /// If null, the slider is continuous.
   final int? divisions;
 
-  /// A label to show above the slider when the slider is active and
-  /// [SliderThemeData.showValueIndicator] is satisfied.
+  /// A label to show inside the value indicator above the slider's thumb.
   ///
-  /// It is used to display the value of a discrete slider, and it is displayed
-  /// as part of the value indicator shape.
+  /// By default, the label is shown while dragging a discrete slider, where
+  /// [divisions] is non-null. It can also be shown for a continuous slider, where
+  /// [divisions] is null, by setting [showValueIndicator] to
+  /// [ShowValueIndicator.onlyForContinuous], [ShowValueIndicator.onDrag], or
+  /// [ShowValueIndicator.alwaysVisible].
+  ///
+  /// If [showValueIndicator] is null, the ambient
+  /// [SliderThemeData.showValueIndicator] determines when the label is shown.
   ///
   /// The label is rendered using the active [ThemeData]'s [TextTheme.bodyLarge]
   /// text style, with the theme data's [ColorScheme.onPrimary] color. The
@@ -804,6 +809,10 @@ class _SliderState extends State<Slider> with TickerProviderStateMixin {
   double _lerp(double value) {
     assert(value >= 0.0);
     assert(value <= 1.0);
+    final int? divisions = widget.divisions;
+    if (divisions != null) {
+      return widget.min + (value * divisions).round() * (widget.max - widget.min) / divisions;
+    }
     return value * (widget.max - widget.min) + widget.min;
   }
 
@@ -1242,6 +1251,13 @@ class _RenderSlider extends RenderBox with RelayoutWhenSystemFontsChangeMixin {
   // This value is the touch target, 48, multiplied by 3.
   static const double _minPreferredTrackWidth = 144.0;
 
+  // Buffer to account for the internal padding of standard Material value indicator shapes,
+  // preventing them from bleeding off the screen edges.
+  //
+  // The value 64.0 is a heuristic that covers the minimum size of the shape
+  // (padding + minimum label width) at a text scale factor of roughly 2.0.
+  static const double _kValueIndicatorHorizontalBuffer = 64.0;
+
   // Compute the largest width and height needed to paint the slider shapes,
   // other than the track shape. It is assumed that these shapes are vertically
   // centered on the track.
@@ -1533,11 +1549,24 @@ class _RenderSlider extends RenderBox with RelayoutWhenSystemFontsChangeMixin {
 
   void _updateLabelPainter() {
     if (label != null) {
+      // Reserve space for the bubble's internal padding and screen margins.
+      final double safeMaxWidth = math.max(
+        0.0,
+        screenSize.width - _kValueIndicatorHorizontalBuffer,
+      );
+
       _labelPainter
         ..text = TextSpan(style: _sliderTheme.valueIndicatorTextStyle, text: label)
         ..textDirection = textDirection
-        ..textScaleFactor = textScaleFactor
-        ..layout();
+        ..textScaler = TextScaler.linear(textScaleFactor)
+        ..maxLines = 1
+        ..ellipsis =
+            '\u2026' // Standard Unicode ellipsis
+        ..layout(
+          maxWidth: screenSize.width.isFinite && screenSize.width > 0
+              ? safeMaxWidth
+              : double.infinity,
+        );
     } else {
       _labelPainter.text = null;
     }

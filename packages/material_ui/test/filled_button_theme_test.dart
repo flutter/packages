@@ -108,9 +108,8 @@ void main() {
         },
       );
       return MaterialApp(
-        theme: ThemeData.from(
-          colorScheme: const ColorScheme.light(),
-        ).copyWith(filledButtonTheme: FilledButtonThemeData(style: overallStyle)),
+        theme: ThemeData.from(colorScheme: const ColorScheme.light())
+            .copyWith(filledButtonTheme: FilledButtonThemeData(style: overallStyle)),
         home: Scaffold(
           body: Center(
             // If the FilledButtonTheme widget is present, it's used
@@ -230,7 +229,7 @@ void main() {
     );
   });
 
-  testWidgets('FilledButton repsects Theme shadowColor', (WidgetTester tester) async {
+  testWidgets('FilledButton respects Theme shadowColor', (WidgetTester tester) async {
     const colorScheme = ColorScheme.light();
     const shadowColor = Color(0xff000001);
     const overriddenColor = Color(0xff000002);

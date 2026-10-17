@@ -50,14 +50,12 @@ void main() {
     });
 
     test('clearCookies', () async {
-      when(
-        mockWebsiteDataStore.removeDataOfTypes(<WebsiteDataType>[WebsiteDataType.cookies], any),
-      ).thenAnswer((_) => Future<bool>.value(true));
+      when(mockWebsiteDataStore.removeDataOfTypes(<WebsiteDataType>[WebsiteDataType.cookies], any))
+          .thenAnswer((_) => Future<bool>.value(true));
       expect(cookieManager.clearCookies(), completion(true));
 
-      when(
-        mockWebsiteDataStore.removeDataOfTypes(<WebsiteDataType>[WebsiteDataType.cookies], any),
-      ).thenAnswer((_) => Future<bool>.value(false));
+      when(mockWebsiteDataStore.removeDataOfTypes(<WebsiteDataType>[WebsiteDataType.cookies], any))
+          .thenAnswer((_) => Future<bool>.value(false));
       expect(cookieManager.clearCookies(), completion(false));
     });
 

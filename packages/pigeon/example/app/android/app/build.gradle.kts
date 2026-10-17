@@ -37,3 +37,7 @@ kotlin {
 flutter {
     source = "../.."
 }
+
+dependencies {
+    implementation(project(":integration_test"))
+}

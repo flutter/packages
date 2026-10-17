@@ -1,3 +1,13 @@
+## 1.3.2
+
+* Fixes a `tspan` without its own position being drawn with its parent group
+  transform applied twice.
+
+## 1.3.1
+
+* Adds support for SVG alpha masks (`mask-type="alpha"`).
+* Updates minimum supported SDK version to Flutter 3.41/Dart 3.11.
+
 ## 1.3.0
 
 * An unrecognized `font-weight` value is now ignored with a warning (and still

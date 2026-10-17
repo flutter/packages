@@ -1,0 +1,111 @@
+RouteBase get $homeRoute => GoRouteData.$route(
+  path: '/home',
+  hasOverriddenOnExit: false,
+  factory: $HomeRoute._fromState,
+  routes: [
+    GoRouteData.$route(
+      path: 'details',
+      hasOverriddenOnExit: false,
+      factory: $DetailsRoute._fromState,
+      routes: [
+        GoRouteData.$route(
+          path: 'sub',
+          hasOverriddenOnExit: false,
+          factory: $FirstSubRoute._fromState,
+        ),
+      ],
+    ),
+    GoRouteData.$route(
+      path: 'details',
+      hasOverriddenOnExit: false,
+      factory: $DetailsRoute._fromState,
+      routes: [
+        GoRouteData.$route(
+          path: 'sub',
+          hasOverriddenOnExit: false,
+          factory: $SecondSubRoute._fromState,
+        ),
+      ],
+    ),
+  ],
+);
+
+mixin $HomeRoute on GoRouteData {
+  static HomeRoute _fromState(GoRouterState state) => HomeRoute();
+
+  @override
+  String get location => GoRouteData.$location('/home');
+
+  @override
+  void go(BuildContext context) => context.go(location);
+
+  @override
+  Future<T?> push<T>(BuildContext context) => context.push<T>(location);
+
+  @override
+  void pushReplacement(BuildContext context) =>
+      context.pushReplacement(location);
+
+  @override
+  void replace(BuildContext context) => context.replace(location);
+}
+
+mixin $DetailsRoute on GoRouteData {
+  static DetailsRoute _fromState(GoRouterState state) => DetailsRoute();
+
+  @override
+  String get location => GoRouteData.$location('/home/details');
+
+  @override
+  void go(BuildContext context) => context.go(location);
+
+  @override
+  Future<T?> push<T>(BuildContext context) => context.push<T>(location);
+
+  @override
+  void pushReplacement(BuildContext context) =>
+      context.pushReplacement(location);
+
+  @override
+  void replace(BuildContext context) => context.replace(location);
+}
+
+mixin $FirstSubRoute on GoRouteData {
+  static FirstSubRoute _fromState(GoRouterState state) => FirstSubRoute();
+
+  @override
+  String get location => GoRouteData.$location('/home/details/sub');
+
+  @override
+  void go(BuildContext context) => context.go(location);
+
+  @override
+  Future<T?> push<T>(BuildContext context) => context.push<T>(location);
+
+  @override
+  void pushReplacement(BuildContext context) =>
+      context.pushReplacement(location);
+
+  @override
+  void replace(BuildContext context) => context.replace(location);
+}
+
+mixin $SecondSubRoute on GoRouteData {
+  static SecondSubRoute _fromState(GoRouterState state) => SecondSubRoute();
+
+  @override
+  String get location => GoRouteData.$location('/home/details/sub');
+
+  @override
+  void go(BuildContext context) => context.go(location);
+
+  @override
+  Future<T?> push<T>(BuildContext context) => context.push<T>(location);
+
+  @override
+  void pushReplacement(BuildContext context) =>
+      context.pushReplacement(location);
+
+  @override
+  void replace(BuildContext context) => context.replace(location);
+}

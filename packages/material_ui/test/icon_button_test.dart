@@ -16,6 +16,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';
 
 import 'feedback_tester.dart';
+import 'finders.dart';
 import 'semantics_tester.dart';
 
 class MockOnPressedFunction {
@@ -437,9 +438,9 @@ void main() {
     await tester.pumpWidget(buildIconButton(tooltip: tooltipText));
 
     expect(find.byType(Tooltip), findsOneWidget);
-    expect(find.byTooltip(tooltipText), findsOneWidget);
+    expect(findByTooltip(tooltipText), findsOneWidget);
 
-    await tester.tap(find.byTooltip(tooltipText));
+    await tester.tap(findByTooltip(tooltipText));
     expect(mockOnPressedFunction.called, 1);
 
     // Hovering over the button should show the tooltip.
@@ -832,7 +833,7 @@ void main() {
 
     expect(focusNode1.hasPrimaryFocus, !kIsWeb);
     expect(focusNode2.hasPrimaryFocus, isFalse);
-  });
+  }, tags: 'reduced-web-test-set');
 
   group('feedback', () {
     late FeedbackTester feedback;
@@ -993,7 +994,7 @@ void main() {
       RendererBinding.instance.mouseTracker.debugDeviceActiveCursor(1),
       kIsWeb ? SystemMouseCursors.click : SystemMouseCursors.basic,
     );
-  });
+  }, tags: 'reduced-web-test-set');
 
   testWidgets('disabled IconButton has basic mouse cursor', (WidgetTester tester) async {
     await tester.pumpWidget(
@@ -2797,9 +2798,8 @@ void main() {
       // Theme's IconTheme
       await tester.pumpWidget(
         MaterialApp(
-          theme: ThemeData.from(
-            colorScheme: const ColorScheme.light(),
-          ).copyWith(iconTheme: const IconThemeData(color: Colors.red, size: 37)),
+          theme: ThemeData.from(colorScheme: const ColorScheme.light())
+              .copyWith(iconTheme: const IconThemeData(color: Colors.red, size: 37)),
           home: IconButton(icon: const Icon(Icons.account_box), onPressed: () {}),
         ),
       );
@@ -2895,9 +2895,8 @@ void main() {
     ) async {
       await tester.pumpWidget(
         MaterialApp(
-          theme: ThemeData.from(
-            colorScheme: const ColorScheme.dark(),
-          ).copyWith(iconTheme: const IconThemeData(color: Colors.white)),
+          theme: ThemeData.from(colorScheme: const ColorScheme.dark())
+              .copyWith(iconTheme: const IconThemeData(color: Colors.white)),
           home: IconButton(icon: const Icon(Icons.account_box), onPressed: () {}),
         ),
       );
@@ -3374,61 +3373,64 @@ void main() {
     expect(onLongPressed, false);
   });
 
-  testWidgets('does not draw focus color when focused by semantics on the web', (
-    WidgetTester tester,
-  ) async {
-    // Regression test for https://github.com/flutter/flutter/issues/158527.
+  testWidgets(
+    'does not draw focus color when focused by semantics on the web',
+    (WidgetTester tester) async {
+      // Regression test for https://github.com/flutter/flutter/issues/158527.
 
-    final focusNode = FocusNode();
-    addTearDown(focusNode.dispose);
+      final focusNode = FocusNode();
+      addTearDown(focusNode.dispose);
 
-    const Color focusColor = Colors.orange;
+      const Color focusColor = Colors.orange;
 
-    await tester.pumpWidget(
-      MaterialApp(
-        home: Center(
-          child: IconButton(
-            focusColor: focusColor,
-            focusNode: focusNode,
-            icon: const Icon(Icons.headphones),
-            onPressed: () {},
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Center(
+            child: IconButton(
+              focusColor: focusColor,
+              focusNode: focusNode,
+              icon: const Icon(Icons.headphones),
+              onPressed: () {},
+            ),
           ),
         ),
-      ),
-    );
+      );
 
-    // Make sure we are in "traditional mode" where the button could potentially draw focus highlights.
-    await tester.sendKeyEvent(LogicalKeyboardKey.enter);
-    await tester.pumpAndSettle();
-    expect(FocusManager.instance.highlightMode, equals(FocusHighlightMode.traditional));
+      // Make sure we are in "traditional mode" where the button could potentially draw focus highlights.
+      await tester.sendKeyEvent(LogicalKeyboardKey.enter);
+      await tester.pumpAndSettle();
+      expect(FocusManager.instance.highlightMode, equals(FocusHighlightMode.traditional));
 
-    expect(focusNode.hasFocus, isFalse);
+      expect(focusNode.hasFocus, isFalse);
 
-    // Focus on it with semantics.
-    tester.platformDispatcher.onSemanticsActionEvent!(
-      SemanticsActionEvent(
-        type: SemanticsAction.focus,
-        viewId: tester.view.viewId,
-        nodeId: tester.semantics.find(find.byIcon(Icons.headphones)).id,
-      ),
-    );
-    await tester.pumpAndSettle();
+      // Focus on it with semantics.
+      tester.platformDispatcher.onSemanticsActionEvent!(
+        SemanticsActionEvent(
+          type: SemanticsAction.focus,
+          viewId: tester.view.viewId,
+          nodeId: tester.semantics.find(find.byIcon(Icons.headphones)).id,
+        ),
+      );
+      await tester.pumpAndSettle();
 
-    // Make sure no focus highlight was drawn.
-    final RenderObject inkFeatures = tester.allRenderObjects.firstWhere((RenderObject object) {
-      return object.runtimeType.toString() == '_RenderInkFeatures';
-    });
-    expect(focusNode.hasFocus, isTrue);
-    expect(FocusManager.instance.highlightMode, equals(FocusHighlightMode.touch));
-    expect(inkFeatures, isNot(paints..rect(color: focusColor)));
+      // Make sure no focus highlight was drawn.
+      final RenderObject inkFeatures = tester.allRenderObjects.firstWhere((RenderObject object) {
+        return object.runtimeType.toString() == '_RenderInkFeatures';
+      });
+      expect(focusNode.hasFocus, isTrue);
+      expect(FocusManager.instance.highlightMode, equals(FocusHighlightMode.touch));
+      expect(inkFeatures, isNot(paints..rect(color: focusColor)));
 
-    // Check that focus highlight is drawn in traditional mode.
-    await tester.sendKeyEvent(LogicalKeyboardKey.enter);
-    await tester.pumpAndSettle();
-    expect(focusNode.hasFocus, isTrue);
-    expect(FocusManager.instance.highlightMode, equals(FocusHighlightMode.traditional));
-    expect(inkFeatures, paints..rect(color: focusColor));
-  }, skip: !isBrowser); // [intended] tests web-specific behavior.
+      // Check that focus highlight is drawn in traditional mode.
+      await tester.sendKeyEvent(LogicalKeyboardKey.enter);
+      await tester.pumpAndSettle();
+      expect(focusNode.hasFocus, isTrue);
+      expect(FocusManager.instance.highlightMode, equals(FocusHighlightMode.traditional));
+      expect(inkFeatures, paints..rect(color: focusColor));
+    },
+    tags: 'reduced-web-test-set',
+    skip: !isBrowser, // [intended] tests web-specific behavior.
+  );
 
   testWidgets("IconButton's outline should be behind its child", (WidgetTester tester) async {
     // Regression test for https://github.com/flutter/flutter/issues/167431
@@ -3570,6 +3572,766 @@ void main() {
       ),
     );
     expect(tester.getSize(find.byType(IconButton)), Size.zero);
+  });
+
+  Widget buildM3EApp({required Widget child, ThemeData? theme}) {
+    return MaterialApp(
+      theme:
+          theme ??
+          ThemeData(
+            iconButtonTheme: const IconButtonThemeData(variant: StyleVariant.material3Expressive),
+          ),
+      home: Scaffold(body: Center(child: child)),
+    );
+  }
+
+  Finder m3eIconButtonMaterialFinder() {
+    return find.descendant(of: find.byType(IconButton), matching: find.byType(Material));
+  }
+
+  Material m3eIconButtonMaterial(WidgetTester tester) {
+    return tester.widget<Material>(m3eIconButtonMaterialFinder());
+  }
+
+  Size m3eIconButtonMaterialSize(WidgetTester tester) {
+    return tester.getSize(m3eIconButtonMaterialFinder());
+  }
+
+  ColorScheme m3eColorScheme(WidgetTester tester) {
+    return Theme.of(tester.element(find.byType(IconButton))).colorScheme;
+  }
+
+  Color? m3eIconColor(WidgetTester tester, IconData icon) {
+    return IconTheme.of(tester.element(find.byIcon(icon))).color;
+  }
+
+  group('M3E IconButton size variants', () {
+    testWidgets('default size is small (40x40)', (WidgetTester tester) async {
+      await tester.pumpWidget(
+        buildM3EApp(
+          child: IconButton(onPressed: () {}, icon: const Icon(Icons.add)),
+        ),
+      );
+
+      // ButtonStyleButton renders with minimum size 40x40, but tap target
+      // padding brings it to 48x48.
+      expect(m3eIconButtonMaterialSize(tester), const Size(40.0, 40.0));
+      expect(tester.getSize(find.byType(IconButton)), const Size(48.0, 48.0));
+    });
+
+    testWidgets('xSmall size renders at 32dp minimum with 48dp tap target', (
+      WidgetTester tester,
+    ) async {
+      var pressCount = 0;
+      await tester.pumpWidget(
+        buildM3EApp(
+          child: IconButton(
+            onPressed: () {
+              pressCount += 1;
+            },
+            icon: const Icon(Icons.add),
+            style: const ButtonStyle(sizeVariant: ButtonSizeVariant.xSmall),
+          ),
+        ),
+      );
+
+      expect(m3eIconButtonMaterialSize(tester), const Size(32.0, 32.0));
+      expect(tester.getSize(find.byType(IconButton)), const Size(48.0, 48.0));
+
+      final Offset center = tester.getCenter(find.byType(IconButton));
+      for (final offset in const <Offset>[
+        Offset(23.0, 0.0),
+        Offset(-23.0, 0.0),
+        Offset(0.0, 23.0),
+        Offset(0.0, -23.0),
+      ]) {
+        await tester.tapAt(center + offset);
+        await tester.pump();
+      }
+
+      expect(pressCount, 4);
+    });
+
+    testWidgets('styleFrom sets the size variant', (WidgetTester tester) async {
+      await tester.pumpWidget(
+        buildM3EApp(
+          child: IconButton(
+            onPressed: () {},
+            icon: const Icon(Icons.add),
+            style: IconButton.styleFrom(sizeVariant: ButtonSizeVariant.medium),
+          ),
+        ),
+      );
+
+      expect(m3eIconButtonMaterialSize(tester), const Size(56.0, 56.0));
+      expect(tester.getSize(find.byType(IconButton)), const Size(56.0, 56.0));
+    });
+
+    testWidgets('medium size renders at 56dp minimum', (WidgetTester tester) async {
+      await tester.pumpWidget(
+        buildM3EApp(
+          child: IconButton(
+            onPressed: () {},
+            icon: const Icon(Icons.add),
+            style: const ButtonStyle(sizeVariant: ButtonSizeVariant.medium),
+          ),
+        ),
+      );
+
+      expect(m3eIconButtonMaterialSize(tester), const Size(56.0, 56.0));
+      expect(tester.getSize(find.byType(IconButton)), const Size(56.0, 56.0));
+    });
+
+    testWidgets('large size renders at 96dp minimum', (WidgetTester tester) async {
+      await tester.pumpWidget(
+        buildM3EApp(
+          child: IconButton(
+            onPressed: () {},
+            icon: const Icon(Icons.add),
+            style: const ButtonStyle(sizeVariant: ButtonSizeVariant.large),
+          ),
+        ),
+      );
+
+      expect(m3eIconButtonMaterialSize(tester), const Size(96.0, 96.0));
+      expect(tester.getSize(find.byType(IconButton)), const Size(96.0, 96.0));
+    });
+
+    testWidgets('xLarge size renders at 136dp minimum', (WidgetTester tester) async {
+      await tester.pumpWidget(
+        buildM3EApp(
+          child: IconButton(
+            onPressed: () {},
+            icon: const Icon(Icons.add),
+            style: const ButtonStyle(sizeVariant: ButtonSizeVariant.xLarge),
+          ),
+        ),
+      );
+
+      expect(m3eIconButtonMaterialSize(tester), const Size(136.0, 136.0));
+      expect(tester.getSize(find.byType(IconButton)), const Size(136.0, 136.0));
+    });
+  });
+
+  group('M3E IconButton width variants', () {
+    testWidgets('small IconButton supports narrow, standard, and wide widths', (
+      WidgetTester tester,
+    ) async {
+      Future<Size> materialSizeFor(IconButtonWidthVariant width) async {
+        await tester.pumpWidget(
+          buildM3EApp(
+            child: IconButton(
+              onPressed: () {},
+              icon: const Icon(Icons.add),
+              style: ButtonStyle(iconButtonWidth: width),
+            ),
+          ),
+        );
+        return m3eIconButtonMaterialSize(tester);
+      }
+
+      expect(await materialSizeFor(IconButtonWidthVariant.narrow), const Size(32.0, 40.0));
+      expect(await materialSizeFor(IconButtonWidthVariant.standard), const Size(40.0, 40.0));
+      expect(await materialSizeFor(IconButtonWidthVariant.wide), const Size(52.0, 40.0));
+
+      expect(m3eIconButtonMaterial(tester).animationDuration, kThemeChangeDuration);
+    });
+
+    testWidgets('IconButtonThemeData style width sets default width', (WidgetTester tester) async {
+      await tester.pumpWidget(
+        buildM3EApp(
+          theme: ThemeData(
+            iconButtonTheme: const IconButtonThemeData(
+              style: ButtonStyle(iconButtonWidth: IconButtonWidthVariant.wide),
+              variant: StyleVariant.material3Expressive,
+            ),
+          ),
+          child: IconButton(onPressed: () {}, icon: const Icon(Icons.add)),
+        ),
+      );
+
+      expect(m3eIconButtonMaterialSize(tester), const Size(52.0, 40.0));
+    });
+  });
+
+  group('M3E IconButton shape', () {
+    OutlinedBorder materialShape(WidgetTester tester) {
+      final Material material = tester.widget<Material>(
+        find.descendant(of: find.byType(IconButton), matching: find.byType(Material)),
+      );
+      return material.shape! as OutlinedBorder;
+    }
+
+    testWidgets('default shape resolves M3E token shapes by state', (WidgetTester tester) async {
+      final statesController = MaterialStatesController();
+      await tester.pumpWidget(
+        buildM3EApp(
+          child: IconButton(
+            statesController: statesController,
+            isSelected: true,
+            onPressed: () {},
+            icon: const Icon(Icons.add),
+          ),
+        ),
+      );
+      expect(
+        materialShape(tester),
+        const RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(12.0))),
+      );
+
+      statesController.update(WidgetState.pressed, true);
+      await tester.pumpAndSettle();
+
+      expect(
+        materialShape(tester),
+        const RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(8.0))),
+      );
+      statesController.dispose();
+    });
+
+    testWidgets('square shape resolves M3E token shapes by state', (WidgetTester tester) async {
+      final statesController = MaterialStatesController();
+      await tester.pumpWidget(
+        buildM3EApp(
+          child: IconButton(
+            statesController: statesController,
+            isSelected: false,
+            onPressed: () {},
+            icon: const Icon(Icons.add),
+            style: const ButtonStyle(
+              sizeVariant: ButtonSizeVariant.medium,
+              shapeVariant: ButtonShapeVariant.square,
+            ),
+          ),
+        ),
+      );
+
+      expect(
+        materialShape(tester),
+        const RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(16.0))),
+      );
+
+      statesController.update(WidgetState.pressed, true);
+      await tester.pumpAndSettle();
+
+      expect(
+        materialShape(tester),
+        const RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(12.0))),
+      );
+
+      statesController.update(WidgetState.pressed, false);
+      await tester.pumpWidget(
+        buildM3EApp(
+          child: IconButton(
+            statesController: statesController,
+            isSelected: true,
+            onPressed: () {},
+            icon: const Icon(Icons.add),
+            style: const ButtonStyle(
+              sizeVariant: ButtonSizeVariant.medium,
+              shapeVariant: ButtonShapeVariant.square,
+            ),
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      expect(materialShape(tester), const StadiumBorder());
+      statesController.dispose();
+    });
+
+    testWidgets('ButtonStyle.shape remains the stateful shape override API', (
+      WidgetTester tester,
+    ) async {
+      final statesController = MaterialStatesController();
+      await tester.pumpWidget(
+        buildM3EApp(
+          child: IconButton(
+            statesController: statesController,
+            onPressed: () {},
+            icon: const Icon(Icons.add),
+            style: ButtonStyle(
+              shape: WidgetStateProperty.resolveWith((Set<WidgetState> states) {
+                if (states.contains(WidgetState.pressed)) {
+                  return const RoundedRectangleBorder(
+                    borderRadius: BorderRadius.all(Radius.circular(4.0)),
+                  );
+                }
+                return const StadiumBorder();
+              }),
+            ),
+          ),
+        ),
+      );
+
+      expect(materialShape(tester), const StadiumBorder());
+
+      statesController.update(WidgetState.pressed, true);
+      await tester.pumpAndSettle();
+
+      expect(
+        materialShape(tester),
+        const RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(4.0))),
+      );
+      statesController.dispose();
+    });
+  });
+
+  group('M3E IconButton variants', () {
+    testWidgets('standard variant has transparent background', (WidgetTester tester) async {
+      await tester.pumpWidget(
+        buildM3EApp(
+          child: IconButton(onPressed: () {}, icon: const Icon(Icons.add)),
+        ),
+      );
+
+      expect(m3eIconButtonMaterial(tester).color, Colors.transparent);
+      expect(m3eIconButtonMaterial(tester).shape, const StadiumBorder());
+    });
+
+    testWidgets('filled variant resolves default container color', (WidgetTester tester) async {
+      await tester.pumpWidget(
+        buildM3EApp(
+          child: IconButton.filled(onPressed: () {}, icon: const Icon(Icons.add)),
+        ),
+      );
+
+      expect(m3eIconButtonMaterial(tester).color, m3eColorScheme(tester).primary);
+      expect(m3eIconButtonMaterial(tester).shape, const StadiumBorder());
+    });
+
+    testWidgets('filledTonal variant resolves default container color', (
+      WidgetTester tester,
+    ) async {
+      await tester.pumpWidget(
+        buildM3EApp(
+          child: IconButton.filledTonal(onPressed: () {}, icon: const Icon(Icons.add)),
+        ),
+      );
+
+      expect(m3eIconButtonMaterial(tester).color, m3eColorScheme(tester).secondaryContainer);
+      expect(m3eIconButtonMaterial(tester).shape, const StadiumBorder());
+    });
+
+    testWidgets('outlined variant resolves default side and transparent background', (
+      WidgetTester tester,
+    ) async {
+      await tester.pumpWidget(
+        buildM3EApp(
+          child: IconButton.outlined(onPressed: () {}, icon: const Icon(Icons.add)),
+        ),
+      );
+
+      final shape = m3eIconButtonMaterial(tester).shape! as StadiumBorder;
+      expect(m3eIconButtonMaterial(tester).color, Colors.transparent);
+      expect(shape.side, BorderSide(color: m3eColorScheme(tester).outlineVariant));
+    });
+
+    testWidgets('filled variant with style size', (WidgetTester tester) async {
+      await tester.pumpWidget(
+        buildM3EApp(
+          child: IconButton.filled(
+            onPressed: () {},
+            icon: const Icon(Icons.add),
+            style: const ButtonStyle(sizeVariant: ButtonSizeVariant.large),
+          ),
+        ),
+      );
+
+      expect(m3eIconButtonMaterialSize(tester), const Size(96.0, 96.0));
+      expect(tester.getSize(find.byType(IconButton)), const Size(96.0, 96.0));
+    });
+
+    testWidgets('outlined variant with style size', (WidgetTester tester) async {
+      await tester.pumpWidget(
+        buildM3EApp(
+          child: IconButton.outlined(
+            onPressed: () {},
+            icon: const Icon(Icons.add),
+            style: const ButtonStyle(sizeVariant: ButtonSizeVariant.medium),
+          ),
+        ),
+      );
+
+      expect(m3eIconButtonMaterialSize(tester), const Size(56.0, 56.0));
+      expect(tester.getSize(find.byType(IconButton)), const Size(56.0, 56.0));
+    });
+  });
+
+  group('M3E IconButton theme integration', () {
+    testWidgets('IconButtonThemeData style size sets default size', (WidgetTester tester) async {
+      await tester.pumpWidget(
+        buildM3EApp(
+          theme: ThemeData(
+            iconButtonTheme: const IconButtonThemeData(
+              style: ButtonStyle(sizeVariant: ButtonSizeVariant.large),
+              variant: StyleVariant.material3Expressive,
+            ),
+          ),
+          child: IconButton(onPressed: () {}, icon: const Icon(Icons.add)),
+        ),
+      );
+
+      expect(m3eIconButtonMaterialSize(tester), const Size(96.0, 96.0));
+      expect(tester.getSize(find.byType(IconButton)), const Size(96.0, 96.0));
+    });
+
+    testWidgets('widget size overrides theme size', (WidgetTester tester) async {
+      await tester.pumpWidget(
+        buildM3EApp(
+          theme: ThemeData(
+            iconButtonTheme: const IconButtonThemeData(
+              style: ButtonStyle(sizeVariant: ButtonSizeVariant.large),
+              variant: StyleVariant.material3Expressive,
+            ),
+          ),
+          child: IconButton(
+            onPressed: () {},
+            icon: const Icon(Icons.add),
+            style: const ButtonStyle(sizeVariant: ButtonSizeVariant.xSmall),
+          ),
+        ),
+      );
+
+      expect(m3eIconButtonMaterialSize(tester), const Size(32.0, 32.0));
+      expect(tester.getSize(find.byType(IconButton)), const Size(48.0, 48.0));
+    });
+
+    testWidgets('IconButtonTheme wrapping sets size', (WidgetTester tester) async {
+      await tester.pumpWidget(
+        buildM3EApp(
+          child: IconButtonTheme(
+            data: const IconButtonThemeData(
+              style: ButtonStyle(sizeVariant: ButtonSizeVariant.medium),
+              variant: StyleVariant.material3Expressive,
+            ),
+            child: IconButton(onPressed: () {}, icon: const Icon(Icons.add)),
+          ),
+        ),
+      );
+
+      expect(m3eIconButtonMaterialSize(tester), const Size(56.0, 56.0));
+      expect(tester.getSize(find.byType(IconButton)), const Size(56.0, 56.0));
+    });
+  });
+
+  group('M3E IconButton selection', () {
+    testWidgets('isSelected shows selectedIcon', (WidgetTester tester) async {
+      await tester.pumpWidget(
+        buildM3EApp(
+          child: IconButton(
+            onPressed: () {},
+            isSelected: true,
+            icon: const Icon(Icons.favorite_border),
+            selectedIcon: const Icon(Icons.favorite),
+          ),
+        ),
+      );
+
+      expect(find.byIcon(Icons.favorite), findsOneWidget);
+      expect(find.byIcon(Icons.favorite_border), findsNothing);
+    });
+
+    testWidgets('isSelected exposes selected semantics', (WidgetTester tester) async {
+      final SemanticsHandle handle = tester.ensureSemantics();
+      await tester.pumpWidget(
+        buildM3EApp(
+          child: IconButton(
+            onPressed: () {},
+            isSelected: true,
+            icon: const Icon(Icons.favorite_border, semanticLabel: 'favorite'),
+            selectedIcon: const Icon(Icons.favorite, semanticLabel: 'favorite'),
+          ),
+        ),
+      );
+
+      expect(
+        tester.getSemantics(find.byType(IconButton)),
+        matchesSemantics(
+          hasTapAction: true,
+          hasFocusAction: true,
+          hasEnabledState: true,
+          isButton: true,
+          isEnabled: true,
+          isFocusable: true,
+          hasSelectedState: true,
+          isSelected: true,
+          label: 'favorite',
+        ),
+      );
+      handle.dispose();
+    });
+
+    testWidgets('external selected state does not affect non-toggleable visual state', (
+      WidgetTester tester,
+    ) async {
+      final statesController = MaterialStatesController();
+      statesController.update(WidgetState.selected, true);
+
+      await tester.pumpWidget(
+        buildM3EApp(
+          child: IconButton(
+            onPressed: () {},
+            statesController: statesController,
+            icon: const Icon(Icons.favorite_border),
+            selectedIcon: const Icon(Icons.favorite),
+          ),
+        ),
+      );
+
+      final Material material = tester.widget<Material>(
+        find.descendant(of: find.byType(IconButton), matching: find.byType(Material)),
+      );
+      expect(material.shape, const StadiumBorder());
+      expect(find.byIcon(Icons.favorite_border), findsOneWidget);
+      expect(find.byIcon(Icons.favorite), findsNothing);
+    });
+
+    testWidgets('isSelected false shows regular icon', (WidgetTester tester) async {
+      await tester.pumpWidget(
+        buildM3EApp(
+          child: IconButton(
+            onPressed: () {},
+            isSelected: false,
+            icon: const Icon(Icons.favorite_border),
+            selectedIcon: const Icon(Icons.favorite),
+          ),
+        ),
+      );
+
+      expect(find.byIcon(Icons.favorite_border), findsOneWidget);
+      expect(find.byIcon(Icons.favorite), findsNothing);
+    });
+
+    testWidgets('isSelected updates selected widget state when toggled through null', (
+      WidgetTester tester,
+    ) async {
+      final statesController = MaterialStatesController();
+
+      await tester.pumpWidget(
+        buildM3EApp(
+          child: IconButton(
+            onPressed: () {},
+            isSelected: true,
+            statesController: statesController,
+            icon: const Icon(Icons.favorite_border),
+            selectedIcon: const Icon(Icons.favorite),
+          ),
+        ),
+      );
+      expect(statesController.value, contains(WidgetState.selected));
+
+      await tester.pumpWidget(
+        buildM3EApp(
+          child: IconButton(
+            onPressed: () {},
+            statesController: statesController,
+            icon: const Icon(Icons.favorite_border),
+            selectedIcon: const Icon(Icons.favorite),
+          ),
+        ),
+      );
+      expect(statesController.value, isNot(contains(WidgetState.selected)));
+
+      await tester.pumpWidget(
+        buildM3EApp(
+          child: IconButton(
+            onPressed: () {},
+            isSelected: false,
+            statesController: statesController,
+            icon: const Icon(Icons.favorite_border),
+            selectedIcon: const Icon(Icons.favorite),
+          ),
+        ),
+      );
+      expect(statesController.value, isNot(contains(WidgetState.selected)));
+
+      await tester.pumpWidget(
+        buildM3EApp(
+          child: IconButton(
+            onPressed: () {},
+            isSelected: true,
+            statesController: statesController,
+            icon: const Icon(Icons.favorite_border),
+            selectedIcon: const Icon(Icons.favorite),
+          ),
+        ),
+      );
+      expect(statesController.value, contains(WidgetState.selected));
+    });
+  });
+
+  group('M3E IconButton disabled state', () {
+    testWidgets('disabled button has reduced opacity colors', (WidgetTester tester) async {
+      await tester.pumpWidget(
+        buildM3EApp(child: const IconButton(onPressed: null, icon: Icon(Icons.add))),
+      );
+
+      expect(m3eIconButtonMaterial(tester).color, Colors.transparent);
+      expect(
+        m3eIconColor(tester, Icons.add),
+        m3eColorScheme(tester).onSurface.withValues(alpha: 0.38),
+      );
+    });
+
+    testWidgets('onLongPress without onPressed keeps button disabled', (WidgetTester tester) async {
+      var longPressed = false;
+      final SemanticsHandle handle = tester.ensureSemantics();
+
+      await tester.pumpWidget(
+        buildM3EApp(
+          child: IconButton(
+            onPressed: null,
+            onLongPress: () {
+              longPressed = true;
+            },
+            icon: const Icon(Icons.add, semanticLabel: 'add'),
+          ),
+        ),
+      );
+
+      expect(
+        tester.getSemantics(find.byType(IconButton)),
+        matchesSemantics(hasEnabledState: true, isButton: true, label: 'add'),
+      );
+
+      await tester.longPress(find.byType(IconButton));
+      expect(longPressed, isFalse);
+      handle.dispose();
+    });
+
+    testWidgets('disabled filled button has reduced background', (WidgetTester tester) async {
+      await tester.pumpWidget(
+        buildM3EApp(child: const IconButton.filled(onPressed: null, icon: Icon(Icons.add))),
+      );
+
+      expect(
+        m3eIconButtonMaterial(tester).color,
+        m3eColorScheme(tester).onSurface.withValues(alpha: 0.1),
+      );
+      expect(
+        m3eIconColor(tester, Icons.add),
+        m3eColorScheme(tester).onSurface.withValues(alpha: 0.38),
+      );
+    });
+  });
+
+  group('IconButtonThemeData', () {
+    test('equality', () {
+      const a = IconButtonThemeData(
+        style: ButtonStyle(
+          sizeVariant: ButtonSizeVariant.small,
+          iconButtonWidth: IconButtonWidthVariant.standard,
+          shapeVariant: ButtonShapeVariant.round,
+        ),
+      );
+      const b = IconButtonThemeData(
+        style: ButtonStyle(
+          sizeVariant: ButtonSizeVariant.small,
+          iconButtonWidth: IconButtonWidthVariant.standard,
+          shapeVariant: ButtonShapeVariant.round,
+        ),
+      );
+      const c = IconButtonThemeData(
+        style: ButtonStyle(
+          sizeVariant: ButtonSizeVariant.large,
+          iconButtonWidth: IconButtonWidthVariant.wide,
+          shapeVariant: ButtonShapeVariant.square,
+        ),
+      );
+
+      expect(a, equals(b));
+      expect(a, isNot(equals(c)));
+    });
+
+    test('hashCode', () {
+      const a = IconButtonThemeData(
+        style: ButtonStyle(
+          sizeVariant: ButtonSizeVariant.small,
+          iconButtonWidth: IconButtonWidthVariant.narrow,
+          shapeVariant: ButtonShapeVariant.round,
+        ),
+      );
+      const b = IconButtonThemeData(
+        style: ButtonStyle(
+          sizeVariant: ButtonSizeVariant.small,
+          iconButtonWidth: IconButtonWidthVariant.narrow,
+          shapeVariant: ButtonShapeVariant.round,
+        ),
+      );
+
+      expect(a.hashCode, equals(b.hashCode));
+    });
+
+    test('lerp', () {
+      const a = IconButtonThemeData(
+        style: ButtonStyle(
+          sizeVariant: ButtonSizeVariant.small,
+          iconButtonWidth: IconButtonWidthVariant.narrow,
+          shapeVariant: ButtonShapeVariant.round,
+        ),
+      );
+      const b = IconButtonThemeData(
+        style: ButtonStyle(
+          sizeVariant: ButtonSizeVariant.large,
+          iconButtonWidth: IconButtonWidthVariant.wide,
+          shapeVariant: ButtonShapeVariant.square,
+        ),
+      );
+
+      expect(IconButtonThemeData.lerp(a, b, 0.0)?.style?.sizeVariant, ButtonSizeVariant.small);
+      expect(IconButtonThemeData.lerp(a, b, 0.4)?.style?.sizeVariant, ButtonSizeVariant.small);
+      expect(IconButtonThemeData.lerp(a, b, 0.5)?.style?.sizeVariant, ButtonSizeVariant.large);
+      expect(IconButtonThemeData.lerp(a, b, 1.0)?.style?.sizeVariant, ButtonSizeVariant.large);
+      expect(
+        IconButtonThemeData.lerp(a, b, 0.4)?.style?.iconButtonWidth,
+        IconButtonWidthVariant.narrow,
+      );
+      expect(
+        IconButtonThemeData.lerp(a, b, 0.5)?.style?.iconButtonWidth,
+        IconButtonWidthVariant.wide,
+      );
+      expect(IconButtonThemeData.lerp(a, b, 0.4)?.style?.shapeVariant, ButtonShapeVariant.round);
+      expect(IconButtonThemeData.lerp(a, b, 0.5)?.style?.shapeVariant, ButtonShapeVariant.square);
+    });
+
+    test('debugFillProperties includes size variant, width, and shape variant', () {
+      const data = IconButtonThemeData(
+        style: ButtonStyle(
+          sizeVariant: ButtonSizeVariant.medium,
+          iconButtonWidth: IconButtonWidthVariant.wide,
+          shapeVariant: ButtonShapeVariant.square,
+        ),
+      );
+      final builder = DiagnosticPropertiesBuilder();
+      data.debugFillProperties(builder);
+
+      final List<String> descriptions = builder.properties
+          .where((DiagnosticsNode node) => !node.isFiltered(DiagnosticLevel.info))
+          .map((DiagnosticsNode node) => node.toString())
+          .toList();
+
+      expect(descriptions, contains(contains('sizeVariant: medium')));
+      expect(descriptions, contains(contains('iconButtonWidth: wide')));
+      expect(descriptions, contains(contains('shapeVariant: square')));
+    });
+  });
+
+  group('M3E IconButton variant opt in', () {
+    testWidgets('IconButtonThemeData variant enables M3E defaults', (WidgetTester tester) async {
+      await tester.pumpWidget(
+        buildM3EApp(
+          child: IconButton(
+            onPressed: () {},
+            icon: const Icon(Icons.add),
+            style: const ButtonStyle(sizeVariant: ButtonSizeVariant.medium),
+          ),
+        ),
+      );
+
+      expect(m3eIconButtonMaterialSize(tester), const Size(56.0, 56.0));
+      expect(tester.getSize(find.byType(IconButton)), const Size(56.0, 56.0));
+    });
   });
 }
 

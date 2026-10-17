@@ -19,7 +19,7 @@ class CMakeProject {
     this.flutterProject, {
     required this.buildMode,
     this.processRunner = const ProcessRunner(),
-    this.platform = const LocalPlatform(),
+    required this.platform,
     required this.arch,
   });
 
@@ -30,7 +30,7 @@ class CMakeProject {
   final ProcessRunner processRunner;
 
   /// The platform that commands are being run on.
-  final Platform platform;
+  final NativePlatform platform;
 
   /// The architecture subdirectory of the build.
   final String arch;

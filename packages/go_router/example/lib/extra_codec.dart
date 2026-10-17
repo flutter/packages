@@ -4,8 +4,8 @@
 
 import 'dart:convert';
 
-import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:material_ui/material_ui.dart';
 
 /// This sample app demonstrates how to provide a codec for complex extra data.
 void main() => runApp(const MyApp());

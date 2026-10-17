@@ -162,9 +162,8 @@ void main() {
         },
       );
       return MaterialApp(
-        theme: ThemeData.from(
-          colorScheme: const ColorScheme.light(),
-        ).copyWith(textButtonTheme: TextButtonThemeData(style: overallStyle)),
+        theme: ThemeData.from(colorScheme: const ColorScheme.light())
+            .copyWith(textButtonTheme: TextButtonThemeData(style: overallStyle)),
         home: Scaffold(
           body: Center(
             // If the TextButtonTheme widget is present, it's used
@@ -287,7 +286,7 @@ void main() {
     );
   });
 
-  testWidgets('Material3 - TextButton repsects Theme shadowColor', (WidgetTester tester) async {
+  testWidgets('Material3 - TextButton respects Theme shadowColor', (WidgetTester tester) async {
     const colorScheme = ColorScheme.light();
     const shadowColor = Color(0xff000001);
     const overriddenColor = Color(0xff000002);
@@ -353,7 +352,7 @@ void main() {
     expect(material.shadowColor, shadowColor);
   });
 
-  testWidgets('Material2 - TextButton repsects Theme shadowColor', (WidgetTester tester) async {
+  testWidgets('Material2 - TextButton respects Theme shadowColor', (WidgetTester tester) async {
     const colorScheme = ColorScheme.light();
     const shadowColor = Color(0xff000001);
     const overriddenColor = Color(0xff000002);

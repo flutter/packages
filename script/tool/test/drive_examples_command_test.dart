@@ -21,17 +21,32 @@ import 'util.dart';
 
 const String _fakeIOSDevice = '67d5c3d1-8bdf-46ad-8f6b-b00e2a972dda';
 const String _fakeAndroidDevice = 'emulator-1234';
+const List<String> _defaultWebBrowserFlags = <String>[
+  '--web-browser-flag=--no-sandbox',
+  '--web-browser-flag=--disable-background-timer-throttling',
+  '--web-browser-flag=--disable-renderer-backgrounding',
+  '--web-browser-flag=--disable-background-networking',
+  '--web-browser-flag=--disable-search-engine-choice-screen',
+  '--web-browser-flag=--disable-extensions',
+  '--web-browser-flag=--disable-popup-blocking',
+  '--web-browser-flag=--disable-translate',
+  '--web-browser-flag=--disable-default-apps',
+  '--web-browser-flag=--no-default-browser-check',
+  '--web-browser-flag=--no-first-run',
+  '--web-browser-flag=--password-store=basic',
+  '--web-browser-flag=--bwsi',
+];
 
 void main() {
   group('test drive_example_command', () {
-    late Platform mockPlatform;
+    late NativePlatform mockPlatform;
     late Directory packagesDir;
     late CommandRunner<void> runner;
     late RecordingProcessRunner processRunner;
     late RecordingProcessRunner gitProcessRunner;
 
     setUp(() {
-      mockPlatform = MockPlatform();
+      mockPlatform = createMockPlatform();
       final GitDir gitDir;
       (:packagesDir, :processRunner, :gitProcessRunner, :gitDir) = configureBaseCommandMocks(
         platform: mockPlatform,
@@ -776,6 +791,7 @@ void main() {
             'web-server',
             '--web-port=7357',
             '--browser-name=chrome',
+            ..._defaultWebBrowserFlags,
             '--screenshot=/path/to/logs/plugin_example-drive',
             '--driver',
             'test_driver/integration_test.dart',
@@ -823,6 +839,7 @@ void main() {
             '--web-port=7357',
             '--browser-name=chrome',
             '--wasm',
+            ..._defaultWebBrowserFlags,
             '--screenshot=/path/to/logs/plugin_example-drive',
             '--driver',
             'test_driver/integration_test.dart',
@@ -870,6 +887,7 @@ void main() {
             'web-server',
             '--web-port=7357',
             '--browser-name=chrome',
+            ..._defaultWebBrowserFlags,
             '--screenshot=/path/to/logs/plugin_example-drive',
             '--driver',
             'test_driver/integration_test.dart',
@@ -918,6 +936,7 @@ void main() {
             '--web-port=7357',
             '--browser-name=chrome',
             '--chrome-binary=/path/to/chrome',
+            ..._defaultWebBrowserFlags,
             '--screenshot=/path/to/logs/plugin_example-drive',
             '--driver',
             'test_driver/integration_test.dart',
@@ -1370,6 +1389,7 @@ void main() {
             'web-server',
             '--web-port=7357',
             '--browser-name=chrome',
+            ..._defaultWebBrowserFlags,
             '--screenshot=/path/to/logs/plugin_example-drive',
             '--driver',
             'test_driver/integration_test.dart',
@@ -1382,6 +1402,7 @@ void main() {
             'web-server',
             '--web-port=7357',
             '--browser-name=chrome',
+            ..._defaultWebBrowserFlags,
             '--screenshot=/path/to/logs/plugin_example-drive',
             '--driver',
             'test_driver/integration_test.dart',
@@ -1488,6 +1509,7 @@ void main() {
               'web-server',
               '--web-port=7357',
               '--browser-name=chrome',
+              ..._defaultWebBrowserFlags,
               '--screenshot=/path/to/logs/a_package_example-drive',
               '--driver',
               'test_driver/integration_test.dart',
@@ -1534,6 +1556,7 @@ void main() {
               'web-server',
               '--web-port=7357',
               '--browser-name=chrome',
+              ..._defaultWebBrowserFlags,
               '--driver',
               'test_driver/integration_test.dart',
               '--target',
@@ -1617,6 +1640,7 @@ void main() {
               'web-server',
               '--web-port=7357',
               '--browser-name=chrome',
+              ..._defaultWebBrowserFlags,
               '--screenshot=/path/to/logs/a_package_example_with_web-drive',
               '--driver',
               'test_driver/integration_test.dart',
@@ -1714,6 +1738,79 @@ packages/package_a/CHANGELOG.md
         expect(output, isNot(containsAllInOrder(<Matcher>[contains('Running for package_a')])));
         expect(output, containsAllInOrder(<Matcher>[contains('SKIPPING ALL PACKAGES')]));
       });
+    });
+  });
+
+  group('on macOS', () {
+    late NativePlatform mockPlatform;
+    late Directory packagesDir;
+    late CommandRunner<void> runner;
+    late RecordingProcessRunner processRunner;
+
+    setUp(() {
+      mockPlatform = createMockPlatform(isMacOS: true);
+      final GitDir gitDir;
+      (:packagesDir, :processRunner, gitProcessRunner: _, :gitDir) = configureBaseCommandMocks(
+        platform: mockPlatform,
+      );
+      final command = DriveExamplesCommand(
+        packagesDir,
+        processRunner: processRunner,
+        platform: mockPlatform,
+        gitDir: gitDir,
+      );
+
+      runner = CommandRunner<void>('drive_examples_command', 'Test for drive_example_command');
+      runner.addCommand(command);
+
+      mockPlatform.environment['FLUTTER_LOGS_DIR'] = '/path/to/logs';
+    });
+
+    test('drives a web plugin on macOS with mock keychain', () async {
+      final RepositoryPackage plugin = createFakePlugin(
+        'plugin',
+        packagesDir,
+        extraFiles: <String>[
+          'example/integration_test/plugin_test.dart',
+          'example/test_driver/integration_test.dart',
+          'example/web/index.html',
+        ],
+        platformSupport: <String, PlatformDetails>{
+          platformWeb: const PlatformDetails(PlatformSupport.inline),
+        },
+      );
+
+      final Directory pluginExampleDirectory = getExampleDir(plugin);
+
+      final List<String> output = await runCapturingPrint(runner, <String>[
+        'drive-examples',
+        '--web',
+      ]);
+
+      expect(
+        output,
+        containsAllInOrder(<Matcher>[contains('Running for plugin'), contains('No issues found!')]),
+      );
+
+      expect(
+        processRunner.recordedCalls,
+        orderedEquals(<ProcessCall>[
+          ProcessCall(getFlutterCommand(mockPlatform), const <String>[
+            'drive',
+            '-d',
+            'web-server',
+            '--web-port=7357',
+            '--browser-name=chrome',
+            ..._defaultWebBrowserFlags,
+            '--web-browser-flag=--use-mock-keychain',
+            '--screenshot=/path/to/logs/plugin_example-drive',
+            '--driver',
+            'test_driver/integration_test.dart',
+            '--target',
+            'integration_test/plugin_test.dart',
+          ], pluginExampleDirectory.path),
+        ]),
+      );
     });
   });
 }

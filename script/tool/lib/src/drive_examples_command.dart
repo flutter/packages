@@ -51,6 +51,22 @@ class DriveExamplesCommand extends PackageLoopingCommand {
 
   static const String _chromeDriverFlag = 'run-chromedriver';
 
+  static const List<String> _webChromeBrowserFlags = <String>[
+    '--web-browser-flag=--no-sandbox',
+    '--web-browser-flag=--disable-background-timer-throttling',
+    '--web-browser-flag=--disable-renderer-backgrounding',
+    '--web-browser-flag=--disable-background-networking',
+    '--web-browser-flag=--disable-search-engine-choice-screen',
+    '--web-browser-flag=--disable-extensions',
+    '--web-browser-flag=--disable-popup-blocking',
+    '--web-browser-flag=--disable-translate',
+    '--web-browser-flag=--disable-default-apps',
+    '--web-browser-flag=--no-default-browser-check',
+    '--web-browser-flag=--no-first-run',
+    '--web-browser-flag=--password-store=basic',
+    '--web-browser-flag=--bwsi',
+  ];
+
   @override
   final String name = 'drive-examples';
 
@@ -139,6 +155,8 @@ class DriveExamplesCommand extends PackageLoopingCommand {
           if (useWasm) '--wasm',
           if (platform.environment.containsKey('CHROME_EXECUTABLE'))
             '--chrome-binary=${platform.environment['CHROME_EXECUTABLE']}',
+          ..._webChromeBrowserFlags,
+          if (platform.isMacOS) '--web-browser-flag=--use-mock-keychain',
         ],
       if (getBoolArg(platformWindows)) platformWindows: <String>['-d', 'windows'],
     };

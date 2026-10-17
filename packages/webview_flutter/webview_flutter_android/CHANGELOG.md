@@ -1,3 +1,11 @@
+## NEXT
+
+* Updates minimum supported SDK version to Flutter 3.41/Dart 3.11.
+
+## 4.14.1
+
+* Updates pigeon dev_dependency to ^27.3.2 for analyzer 14 compatibility.
+
 ## 4.14.0
 * Adds support for configuring Web Authentication in `AndroidWebViewController` with `setWebAuthenticationSupport` to enable Passkey and other related Authentication.
 

@@ -66,6 +66,8 @@ class ButtonSegment<T> {
 
 /// A Material button that allows the user to select from limited set of options.
 ///
+/// Learn more about [SegmentedButton] on the [Flutter YouTube channel](https://www.youtube.com/watch?v=Kj6jwKsVC3A).
+///
 /// Segmented buttons are used to help people select options, switch views, or
 /// sort elements. They are typically used in cases where there are only 2-5
 /// options.
@@ -566,9 +568,8 @@ class SegmentedButtonState<T> extends State<SegmentedButton<T>> {
     }
 
     final ButtonStyle segmentStyle = segmentStyleFor(widget.style);
-    final ButtonStyle segmentThemeStyle = segmentStyleFor(
-      theme.style,
-    ).merge(segmentStyleFor(defaults.style));
+    final ButtonStyle segmentThemeStyle = segmentStyleFor(theme.style)
+        .merge(segmentStyleFor(defaults.style));
     final Widget? selectedIcon = widget.showSelectedIcon
         ? widget.selectedIcon ?? theme.selectedIcon ?? defaults.selectedIcon
         : null;
@@ -735,7 +736,6 @@ class SegmentedButtonState<T> extends State<SegmentedButton<T>> {
 
 class _SegmentedButtonRenderWidget<T> extends MultiChildRenderObjectWidget {
   const _SegmentedButtonRenderWidget({
-    super.key,
     required this.segments,
     required this.enabledBorder,
     required this.disabledBorder,

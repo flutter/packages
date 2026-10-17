@@ -90,6 +90,7 @@ void main() {
       );
 
       await showMagnifier(tester, defaultText.indexOf('e'));
+
       expect(find.byType(example.CustomMagnifier), findsOneWidget);
 
       await expectLater(

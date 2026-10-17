@@ -11,6 +11,7 @@ import androidx.camera.video.PendingRecording;
 import androidx.camera.video.QualitySelector;
 import androidx.camera.video.Recorder;
 import java.io.File;
+import java.util.Locale;
 
 /**
  * ProxyApi implementation for {@link Recorder}. This class may handle instantiating native object
@@ -60,6 +61,7 @@ class RecorderProxyApi extends PigeonApiRecorder {
   @NonNull
   @Override
   public PendingRecording prepareRecording(Recorder pigeonInstance, @NonNull String path) {
+    validateOutputPath(path);
     final File temporaryCaptureFile = openTempFile(path);
     final FileOutputOptions fileOutputOptions =
         new FileOutputOptions.Builder(temporaryCaptureFile).build();
@@ -70,12 +72,29 @@ class RecorderProxyApi extends PigeonApiRecorder {
     return pendingRecording;
   }
 
+  private void validateOutputPath(@NonNull String path) {
+    File file = new File(path);
+    if (file.isDirectory()) {
+      throw new IllegalArgumentException("The output path is a directory: " + path);
+    }
+    File parent = file.getParentFile();
+    if (parent != null && !parent.exists()) {
+      throw new IllegalArgumentException(
+          "The parent directory does not exist: " + parent.getAbsolutePath());
+    }
+
+    String lowerPath = path.toLowerCase(Locale.ROOT);
+    if (!lowerPath.endsWith(".mp4")) {
+      throw new IllegalArgumentException("Invalid video extension. Supported: .mp4");
+    }
+  }
+
   @NonNull
   File openTempFile(@NonNull String path) {
     try {
       return new File(path);
     } catch (NullPointerException | SecurityException e) {
-      throw new RuntimeException(e);
+      throw new IllegalArgumentException(e.getMessage());
     }
   }
 

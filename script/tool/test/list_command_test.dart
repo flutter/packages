@@ -5,6 +5,7 @@
 import 'package:args/command_runner.dart';
 import 'package:file/file.dart';
 import 'package:flutter_plugin_tools/src/list_command.dart';
+import 'package:platform/platform.dart';
 import 'package:test/test.dart';
 
 import 'mocks.dart';
@@ -12,12 +13,12 @@ import 'util.dart';
 
 void main() {
   group('ListCommand', () {
-    late MockPlatform mockPlatform;
+    late NativePlatform mockPlatform;
     late Directory packagesDir;
     late CommandRunner<void> runner;
 
     setUp(() {
-      mockPlatform = MockPlatform();
+      mockPlatform = createMockPlatform();
       (:packagesDir, processRunner: _, gitProcessRunner: _, gitDir: _) = configureBaseCommandMocks(
         platform: mockPlatform,
       );

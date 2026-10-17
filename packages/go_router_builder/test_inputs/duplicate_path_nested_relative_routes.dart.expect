@@ -1,0 +1,114 @@
+RouteBase get $homeRoute => GoRouteData.$route(
+  path: '/home',
+  hasOverriddenOnExit: false,
+  factory: $HomeRoute._fromState,
+  routes: [
+    RelativeGoRouteData.$route(
+      path: 'details',
+      hasOverriddenOnExit: false,
+      factory: $DetailsRoute._fromState,
+      routes: [
+        RelativeGoRouteData.$route(
+          path: 'edit',
+          hasOverriddenOnExit: false,
+          factory: $NestedEditRoute._fromState,
+        ),
+      ],
+    ),
+    GoRouteData.$route(
+      path: 'edit',
+      hasOverriddenOnExit: false,
+      factory: $SiblingEditRoute._fromState,
+    ),
+  ],
+);
+
+mixin $HomeRoute on GoRouteData {
+  static HomeRoute _fromState(GoRouterState state) => HomeRoute();
+
+  @override
+  String get location => GoRouteData.$location('/home');
+
+  @override
+  void go(BuildContext context) => context.go(location);
+
+  @override
+  Future<T?> push<T>(BuildContext context) => context.push<T>(location);
+
+  @override
+  void pushReplacement(BuildContext context) =>
+      context.pushReplacement(location);
+
+  @override
+  void replace(BuildContext context) => context.replace(location);
+}
+
+mixin $DetailsRoute on RelativeGoRouteData {
+  static DetailsRoute _fromState(GoRouterState state) => DetailsRoute();
+
+  @override
+  String get subLocation => RelativeGoRouteData.$location('details');
+
+  @override
+  String get relativeLocation => './$subLocation';
+
+  @override
+  void goRelative(BuildContext context) => context.go(relativeLocation);
+
+  @override
+  Future<T?> pushRelative<T>(BuildContext context) =>
+      context.push<T>(relativeLocation);
+
+  @override
+  void pushReplacementRelative(BuildContext context) =>
+      context.pushReplacement(relativeLocation);
+
+  @override
+  void replaceRelative(BuildContext context) =>
+      context.replace(relativeLocation);
+}
+
+mixin $NestedEditRoute on RelativeGoRouteData {
+  static NestedEditRoute _fromState(GoRouterState state) => NestedEditRoute();
+
+  @override
+  String get subLocation => RelativeGoRouteData.$location('edit');
+
+  @override
+  String get relativeLocation => './$subLocation';
+
+  @override
+  void goRelative(BuildContext context) => context.go(relativeLocation);
+
+  @override
+  Future<T?> pushRelative<T>(BuildContext context) =>
+      context.push<T>(relativeLocation);
+
+  @override
+  void pushReplacementRelative(BuildContext context) =>
+      context.pushReplacement(relativeLocation);
+
+  @override
+  void replaceRelative(BuildContext context) =>
+      context.replace(relativeLocation);
+}
+
+mixin $SiblingEditRoute on GoRouteData {
+  static SiblingEditRoute _fromState(GoRouterState state) => SiblingEditRoute();
+
+  @override
+  String get location => GoRouteData.$location('/home/edit');
+
+  @override
+  void go(BuildContext context) => context.go(location);
+
+  @override
+  Future<T?> push<T>(BuildContext context) => context.push<T>(location);
+
+  @override
+  void pushReplacement(BuildContext context) =>
+      context.pushReplacement(location);
+
+  @override
+  void replace(BuildContext context) => context.replace(location);
+}

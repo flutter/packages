@@ -37,16 +37,16 @@ class RunnerUITests: XCTestCase {
   }
 
   func testQuickActionWithFreshStart() throws {
-    // See https://github.com/flutter/flutter/issues/169928
-    throw XCTSkip("Temporarily disabled")
-
     let springboard = XCUIApplication(bundleIdentifier: "com.apple.springboard")
-    let quickActionsAppIcon = springboard.icons["quick_actions_example"]
+    let quickActionsAppIcon = springboard.icons["Quick Actions Example"]
 
     findAndTapQuickActionButton(
       buttonName: "Action two", quickActionsAppIcon: quickActionsAppIcon, springboard: springboard)
 
-    let actionTwoConfirmation = exampleApp.otherElements["action_two"]
+    // The semantics type of this element changed between Flutter 3.44 and 3.47.
+    // Using descendants(matching: .any) allows finding it regardless of whether
+    // it is a staticText or otherElement.
+    let actionTwoConfirmation = exampleApp.descendants(matching: .any)["action_two"]
     if !actionTwoConfirmation.waitForExistence(timeout: elementWaitingTime) {
       XCTFail(
         "Failed due to not able to find the actionTwoConfirmation in the app with \(elementWaitingTime) seconds. Springboard debug description: \(springboard.debugDescription)"
@@ -57,12 +57,12 @@ class RunnerUITests: XCTestCase {
   }
 
   func testQuickActionWhenAppIsInBackground() throws {
-    // See https://github.com/flutter/flutter/issues/169928
-    throw XCTSkip("Temporarily disabled")
-
     exampleApp.launch()
 
-    let actionsReady = exampleApp.otherElements["actions ready"]
+    // The semantics type of this element changed between Flutter 3.44 and 3.47.
+    // Using descendants(matching: .any) allows finding it regardless of whether
+    // it is a staticText or otherElement.
+    let actionsReady = exampleApp.descendants(matching: .any)["actions ready"]
 
     if !actionsReady.waitForExistence(timeout: elementWaitingTime) {
       XCTFail(
@@ -73,7 +73,7 @@ class RunnerUITests: XCTestCase {
     XCUIDevice.shared.press(.home)
 
     let springboard = XCUIApplication(bundleIdentifier: "com.apple.springboard")
-    let quickActionsAppIcon = springboard.icons["quick_actions_example"]
+    let quickActionsAppIcon = springboard.icons["Quick Actions Example"]
     if !quickActionsAppIcon.waitForExistence(timeout: elementWaitingTime) {
       XCTFail(
         "Failed due to not able to find the example app from springboard with \(elementWaitingTime) seconds. Springboard debug description: \(springboard.debugDescription)"
@@ -84,7 +84,10 @@ class RunnerUITests: XCTestCase {
       buttonName: "Action one, Action one subtitle", quickActionsAppIcon: quickActionsAppIcon,
       springboard: springboard)
 
-    let actionOneConfirmation = exampleApp.otherElements["action_one"]
+    // The semantics type of this element changed between Flutter 3.44 and 3.47.
+    // Using descendants(matching: .any) allows finding it regardless of whether
+    // it is a staticText or otherElement.
+    let actionOneConfirmation = exampleApp.descendants(matching: .any)["action_one"]
     if !actionOneConfirmation.waitForExistence(timeout: elementWaitingTime) {
       XCTFail(
         "Failed due to not able to find the actionOneConfirmation in the app with \(elementWaitingTime) seconds. Springboard debug description: \(springboard.debugDescription)"
