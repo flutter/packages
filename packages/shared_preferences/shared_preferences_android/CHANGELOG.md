@@ -1,3 +1,7 @@
+## 2.5.1
+
+* Fixes a `NoSuchMethodError` at startup in Android release builds by adding consumer R8 rules that keep the Kotlin classes looked up through JNI.
+
 ## 2.5.0
 
 * Updates internal implementation to use Pigeon JNI.
