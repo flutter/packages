@@ -286,7 +286,8 @@ class _FilledTonalIconButtonDefaultsM3E extends ButtonStyle {
   WidgetStateProperty<BorderSide?>? get side => null;
 
   @override
-  WidgetStateProperty<MouseCursor?>? get mouseCursor => WidgetStateMouseCursor.adaptiveClickable;
+  WidgetStateProperty<MouseCursor?>? get mouseCursor =>
+      Theme.of(context).mouseCursor ?? WidgetStateMouseCursor.adaptiveClickable;
 
   @override
   VisualDensity? get visualDensity => VisualDensity.standard;

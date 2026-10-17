@@ -209,7 +209,8 @@ class Checkbox extends StatefulWidget {
   /// included as a state.
   ///
   /// If this property is null, the value of [CheckboxThemeData.mouseCursor] is used.
-  /// If that is also null, [WidgetStateMouseCursor.adaptiveClickable] is used.
+  /// If that is also null, [ThemeData.mouseCursor] is used. If that is also
+  /// null, [WidgetStateMouseCursor.adaptiveClickable] is used.
   final MouseCursor? mouseCursor;
 
   /// The color to use when this checkbox is checked.
@@ -509,7 +510,9 @@ class _CheckboxState extends State<Checkbox> with TickerProviderStateMixin, Togg
 
     assert(debugCheckHasMaterial(context));
     final CheckboxThemeData checkboxTheme = CheckboxTheme.of(context);
-    final CheckboxThemeData defaults = Theme.of(context).useMaterial3
+    final ThemeData theme = Theme.of(context);
+    final WidgetStateProperty<MouseCursor>? themeDataMouseCursor = theme.mouseCursor;
+    final CheckboxThemeData defaults = theme.useMaterial3
         ? _CheckboxDefaultsM3(context)
         : _CheckboxDefaultsM2(context);
     final MaterialTapTargetSize effectiveMaterialTapTargetSize =
@@ -534,6 +537,7 @@ class _CheckboxState extends State<Checkbox> with TickerProviderStateMixin, Togg
         WidgetStateProperty.resolveWith<MouseCursor>((Set<WidgetState> states) {
           return WidgetStateProperty.resolveAs<MouseCursor?>(widget.mouseCursor, states) ??
               checkboxTheme.mouseCursor?.resolve(states) ??
+              themeDataMouseCursor?.resolve(states) ??
               WidgetStateMouseCursor.adaptiveClickable.resolve(states);
         });
 

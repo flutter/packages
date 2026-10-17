@@ -331,7 +331,7 @@ class TextButton extends ButtonStyleButton {
   /// * `maximumSize` - Size.infinite
   /// * `side` - null
   /// * `shape` - RoundedRectangleBorder(borderRadius: BorderRadius.circular(4))
-  /// * `mouseCursor` - WidgetStateMouseCursor.adaptiveClickable
+  /// * `mouseCursor` - theme.mouseCursor ?? WidgetStateMouseCursor.adaptiveClickable
   /// * `visualDensity` - theme.visualDensity
   /// * `tapTargetSize` - theme.materialTapTargetSize
   /// * `animationDuration` - kThemeChangeDuration
@@ -379,7 +379,7 @@ class TextButton extends ButtonStyleButton {
   /// * `maximumSize` - Size.infinite
   /// * `side` - null
   /// * `shape` - StadiumBorder()
-  /// * `mouseCursor` - WidgetStateMouseCursor.adaptiveClickable
+  /// * `mouseCursor` - theme.mouseCursor ?? WidgetStateMouseCursor.adaptiveClickable
   /// * `visualDensity` - theme.visualDensity
   /// * `tapTargetSize` - theme.materialTapTargetSize
   /// * `animationDuration` - kThemeChangeDuration
@@ -416,7 +416,7 @@ class TextButton extends ButtonStyleButton {
             enableFeedback: true,
             alignment: Alignment.center,
             splashFactory: InkRipple.splashFactory,
-          );
+          ).copyWith(mouseCursor: theme.mouseCursor);
 
     // Only apply padding when TextButton has an Icon.
     if (_addPadding) {

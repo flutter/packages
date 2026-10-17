@@ -6,6 +6,7 @@ import 'dart:ui';
 
 import 'package:cupertino_ui/cupertino_ui.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter/rendering.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';
 
@@ -1345,6 +1346,7 @@ void main() {
         border: const OutlineInputBorder(),
       ),
       materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+      mouseCursor: WidgetStateMouseCursor.clickable,
       pageTransitionsTheme: pageTransitionTheme,
       platform: TargetPlatform.iOS,
       scrollbarTheme: const ScrollbarThemeData(radius: Radius.circular(10.0)),
@@ -1474,6 +1476,7 @@ void main() {
       },
       inputDecorationTheme: ThemeData().inputDecorationTheme.copyWith(border: InputBorder.none),
       materialTapTargetSize: MaterialTapTargetSize.padded,
+      mouseCursor: const WidgetStatePropertyAll<MouseCursor>(SystemMouseCursors.grab),
       pageTransitionsTheme: const PageTransitionsTheme(),
       platform: TargetPlatform.android,
       scrollbarTheme: const ScrollbarThemeData(radius: Radius.circular(10.0)),
@@ -1578,6 +1581,7 @@ void main() {
       extensions: otherTheme.extensions.values,
       inputDecorationTheme: otherTheme.inputDecorationTheme,
       materialTapTargetSize: otherTheme.materialTapTargetSize,
+      mouseCursor: otherTheme.mouseCursor,
       pageTransitionsTheme: otherTheme.pageTransitionsTheme,
       platform: otherTheme.platform,
       scrollbarTheme: otherTheme.scrollbarTheme,
@@ -1670,6 +1674,7 @@ void main() {
     expect(themeDataCopy.extensions, equals(otherTheme.extensions));
     expect(themeDataCopy.inputDecorationTheme, equals(otherTheme.inputDecorationTheme));
     expect(themeDataCopy.materialTapTargetSize, equals(otherTheme.materialTapTargetSize));
+    expect(themeDataCopy.mouseCursor, equals(otherTheme.mouseCursor));
     expect(themeDataCopy.pageTransitionsTheme, equals(otherTheme.pageTransitionsTheme));
     expect(themeDataCopy.platform, equals(otherTheme.platform));
     expect(themeDataCopy.scrollbarTheme, equals(otherTheme.scrollbarTheme));
@@ -1816,6 +1821,7 @@ void main() {
       'extensions',
       'inputDecorationTheme',
       'materialTapTargetSize',
+      'mouseCursor',
       'pageTransitionsTheme',
       'platform',
       'scrollbarTheme',
@@ -2074,6 +2080,389 @@ void main() {
       );
     },
   );
+
+  group('ThemeData.mouseCursor', () {
+    const targetKey = Key('target');
+
+    final clickables = <String, Widget Function({required bool enabled})>{
+      'InkWell': ({required bool enabled}) => InkWell(
+        key: targetKey,
+        onTap: enabled ? () {} : null,
+        child: const SizedBox.square(dimension: 50),
+      ),
+      'RawMaterialButton': ({required bool enabled}) => RawMaterialButton(
+        key: targetKey,
+        onPressed: enabled ? () {} : null,
+        child: const Text('button'),
+      ),
+      'MaterialButton': ({required bool enabled}) => MaterialButton(
+        key: targetKey,
+        onPressed: enabled ? () {} : null,
+        child: const Text('button'),
+      ),
+      'ElevatedButton': ({required bool enabled}) => ElevatedButton(
+        key: targetKey,
+        onPressed: enabled ? () {} : null,
+        child: const Text('button'),
+      ),
+      'FilledButton': ({required bool enabled}) => FilledButton(
+        key: targetKey,
+        onPressed: enabled ? () {} : null,
+        child: const Text('button'),
+      ),
+      'FilledButton.tonal': ({required bool enabled}) => FilledButton.tonal(
+        key: targetKey,
+        onPressed: enabled ? () {} : null,
+        child: const Text('button'),
+      ),
+      'OutlinedButton': ({required bool enabled}) => OutlinedButton(
+        key: targetKey,
+        onPressed: enabled ? () {} : null,
+        child: const Text('button'),
+      ),
+      'TextButton': ({required bool enabled}) => TextButton(
+        key: targetKey,
+        onPressed: enabled ? () {} : null,
+        child: const Text('button'),
+      ),
+      'IconButton': ({required bool enabled}) => IconButton(
+        key: targetKey,
+        onPressed: enabled ? () {} : null,
+        icon: const Icon(Icons.add),
+      ),
+      'IconButton.filled': ({required bool enabled}) => IconButton.filled(
+        key: targetKey,
+        onPressed: enabled ? () {} : null,
+        icon: const Icon(Icons.add),
+      ),
+      'IconButton.filledTonal': ({required bool enabled}) => IconButton.filledTonal(
+        key: targetKey,
+        onPressed: enabled ? () {} : null,
+        icon: const Icon(Icons.add),
+      ),
+      'IconButton.outlined': ({required bool enabled}) => IconButton.outlined(
+        key: targetKey,
+        onPressed: enabled ? () {} : null,
+        icon: const Icon(Icons.add),
+      ),
+      'IconButton (Material 3 Expressive)': ({required bool enabled}) => IconButtonTheme(
+        data: const IconButtonThemeData(variant: StyleVariant.material3Expressive),
+        child: IconButton(
+          key: targetKey,
+          onPressed: enabled ? () {} : null,
+          icon: const Icon(Icons.add),
+        ),
+      ),
+      'IconButton.filled (Material 3 Expressive)': ({required bool enabled}) => IconButtonTheme(
+        data: const IconButtonThemeData(variant: StyleVariant.material3Expressive),
+        child: IconButton.filled(
+          key: targetKey,
+          onPressed: enabled ? () {} : null,
+          icon: const Icon(Icons.add),
+        ),
+      ),
+      'IconButton.filledTonal (Material 3 Expressive)': ({required bool enabled}) =>
+          IconButtonTheme(
+            data: const IconButtonThemeData(variant: StyleVariant.material3Expressive),
+            child: IconButton.filledTonal(
+              key: targetKey,
+              onPressed: enabled ? () {} : null,
+              icon: const Icon(Icons.add),
+            ),
+          ),
+      'IconButton.outlined (Material 3 Expressive)': ({required bool enabled}) => IconButtonTheme(
+        data: const IconButtonThemeData(variant: StyleVariant.material3Expressive),
+        child: IconButton.outlined(
+          key: targetKey,
+          onPressed: enabled ? () {} : null,
+          icon: const Icon(Icons.add),
+        ),
+      ),
+      'FloatingActionButton': ({required bool enabled}) => FloatingActionButton(
+        key: targetKey,
+        onPressed: enabled ? () {} : null,
+        child: const Icon(Icons.add),
+      ),
+      'MenuItemButton': ({required bool enabled}) => MenuItemButton(
+        key: targetKey,
+        onPressed: enabled ? () {} : null,
+        child: const Text('item'),
+      ),
+      'ToggleButtons': ({required bool enabled}) => ToggleButtons(
+        key: targetKey,
+        isSelected: const <bool>[false],
+        onPressed: enabled ? (_) {} : null,
+        children: const <Widget>[Icon(Icons.add)],
+      ),
+      'Checkbox': ({required bool enabled}) =>
+          Checkbox(key: targetKey, value: false, onChanged: enabled ? (_) {} : null),
+      'Radio': ({required bool enabled}) => RadioGroup<int>(
+        groupValue: 0,
+        onChanged: (_) {},
+        child: Radio<int>(key: targetKey, value: 1, enabled: enabled),
+      ),
+      'ActionChip': ({required bool enabled}) =>
+          ActionChip(key: targetKey, onPressed: enabled ? () {} : null, label: const Text('chip')),
+      'FilterChip': ({required bool enabled}) => FilterChip(
+        key: targetKey,
+        onSelected: enabled ? (_) {} : null,
+        label: const Text('chip'),
+      ),
+      'ChoiceChip': ({required bool enabled}) => ChoiceChip(
+        key: targetKey,
+        selected: false,
+        onSelected: enabled ? (_) {} : null,
+        label: const Text('chip'),
+      ),
+      'SegmentedButton': ({required bool enabled}) => SegmentedButton<int>(
+        key: targetKey,
+        segments: const <ButtonSegment<int>>[ButtonSegment<int>(value: 1, label: Text('1'))],
+        selected: const <int>{1},
+        onSelectionChanged: enabled ? (_) {} : null,
+      ),
+      'DropdownButton': ({required bool enabled}) => DropdownButton<int>(
+        key: targetKey,
+        value: 1,
+        onChanged: enabled ? (_) {} : null,
+        items: const <DropdownMenuItem<int>>[DropdownMenuItem<int>(value: 1, child: Text('1'))],
+      ),
+    };
+
+    final themeCursor = WidgetStateMouseCursor.resolveWith(
+      (Set<WidgetState> states) => states.contains(WidgetState.disabled)
+          ? SystemMouseCursors.forbidden
+          : SystemMouseCursors.grab,
+    );
+
+    Future<MouseCursor?> hoverCursor(WidgetTester tester, Finder finder) async {
+      final TestGesture gesture = await tester.createGesture(
+        kind: PointerDeviceKind.mouse,
+        pointer: 1,
+      );
+      await gesture.addPointer(location: tester.getCenter(finder));
+      await tester.pump();
+      final MouseCursor? cursor = RendererBinding.instance.mouseTracker.debugDeviceActiveCursor(1);
+      await gesture.removePointer();
+      return cursor;
+    }
+
+    Future<MouseCursor?> cursorOver(
+      WidgetTester tester, {
+      required Widget child,
+      ThemeData? theme,
+    }) async {
+      await tester.pumpWidget(
+        MaterialApp(
+          theme: theme,
+          home: Scaffold(body: Center(child: child)),
+        ),
+      );
+      await tester.pumpAndSettle();
+      return hoverCursor(tester, find.byKey(targetKey));
+    }
+
+    test('==, hashCode and lerp include mouseCursor', () {
+      final withCursor = ThemeData(mouseCursor: themeCursor);
+      final withoutCursor = ThemeData();
+
+      expect(withCursor, isNot(withoutCursor));
+      expect(withCursor.hashCode, isNot(withoutCursor.hashCode));
+      expect(withCursor, ThemeData(mouseCursor: themeCursor));
+      expect(ThemeData.lerp(withCursor, withoutCursor, 0.4).mouseCursor, themeCursor);
+      expect(ThemeData.lerp(withCursor, withoutCursor, 0.6).mouseCursor, isNull);
+    });
+
+    for (final useMaterial3 in <bool>[true, false]) {
+      for (final String name in clickables.keys) {
+        if (!useMaterial3 && name.contains('Material 3 Expressive')) {
+          continue;
+        }
+        testWidgets('$name uses ThemeData.mouseCursor (useMaterial3: $useMaterial3)', (
+          WidgetTester tester,
+        ) async {
+          final Widget Function({required bool enabled}) builder = clickables[name]!;
+
+          final defaultTheme = ThemeData(useMaterial3: useMaterial3);
+          expect(
+            await cursorOver(tester, theme: defaultTheme, child: builder(enabled: true)),
+            kIsWeb ? SystemMouseCursors.click : SystemMouseCursors.basic,
+          );
+          expect(
+            await cursorOver(tester, theme: defaultTheme, child: builder(enabled: false)),
+            SystemMouseCursors.basic,
+          );
+
+          final theme = ThemeData(useMaterial3: useMaterial3, mouseCursor: themeCursor);
+          expect(
+            await cursorOver(tester, theme: theme, child: builder(enabled: true)),
+            SystemMouseCursors.grab,
+          );
+          expect(
+            await cursorOver(tester, theme: theme, child: builder(enabled: false)),
+            SystemMouseCursors.forbidden,
+          );
+        });
+      }
+    }
+
+    testWidgets('PopupMenuItem uses ThemeData.mouseCursor', (WidgetTester tester) async {
+      Future<MouseCursor?> itemCursor({ThemeData? theme, required bool enabled}) async {
+        await tester.pumpWidget(
+          MaterialApp(
+            theme: theme,
+            home: Scaffold(
+              body: Center(
+                child: PopupMenuButton<int>(
+                  itemBuilder: (BuildContext context) => <PopupMenuEntry<int>>[
+                    PopupMenuItem<int>(
+                      key: targetKey,
+                      value: 1,
+                      enabled: enabled,
+                      child: const Text('item'),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        );
+        await tester.tap(find.byType(PopupMenuButton<int>));
+        await tester.pumpAndSettle();
+        final MouseCursor? cursor = await hoverCursor(tester, find.byKey(targetKey));
+        await tester.tapAt(Offset.zero);
+        await tester.pumpAndSettle();
+        return cursor;
+      }
+
+      expect(
+        await itemCursor(enabled: true),
+        kIsWeb ? SystemMouseCursors.click : SystemMouseCursors.basic,
+      );
+      final theme = ThemeData(mouseCursor: themeCursor);
+      expect(await itemCursor(theme: theme, enabled: true), SystemMouseCursors.grab);
+      expect(await itemCursor(theme: theme, enabled: false), SystemMouseCursors.forbidden);
+      expect(
+        await itemCursor(
+          theme: theme.copyWith(
+            popupMenuTheme: const PopupMenuThemeData(
+              mouseCursor: WidgetStatePropertyAll<MouseCursor?>(SystemMouseCursors.help),
+            ),
+          ),
+          enabled: true,
+        ),
+        SystemMouseCursors.help,
+      );
+    });
+
+    testWidgets('DropdownButton menu items use ThemeData.mouseCursor', (WidgetTester tester) async {
+      const itemKey = Key('item');
+      await tester.pumpWidget(
+        MaterialApp(
+          theme: ThemeData(mouseCursor: themeCursor),
+          home: Scaffold(
+            body: Center(
+              child: DropdownButton<int>(
+                key: targetKey,
+                value: 1,
+                onChanged: (_) {},
+                items: const <DropdownMenuItem<int>>[
+                  DropdownMenuItem<int>(value: 1, child: Text('1')),
+                  DropdownMenuItem<int>(value: 2, child: Text('2', key: itemKey)),
+                ],
+              ),
+            ),
+          ),
+        ),
+      );
+      await tester.tap(find.byKey(targetKey));
+      await tester.pumpAndSettle();
+
+      expect(await hoverCursor(tester, find.byKey(itemKey).last), SystemMouseCursors.grab);
+    });
+
+    testWidgets('Widget and component theme cursors take precedence over ThemeData.mouseCursor', (
+      WidgetTester tester,
+    ) async {
+      const componentCursor = WidgetStatePropertyAll<MouseCursor?>(SystemMouseCursors.help);
+      final theme = ThemeData(
+        mouseCursor: themeCursor,
+        elevatedButtonTheme: ElevatedButtonThemeData(
+          style: ElevatedButton.styleFrom(enabledMouseCursor: SystemMouseCursors.help),
+        ),
+        iconButtonTheme: IconButtonThemeData(
+          style: IconButton.styleFrom(enabledMouseCursor: SystemMouseCursors.help),
+        ),
+        menuButtonTheme: MenuButtonThemeData(
+          style: MenuItemButton.styleFrom(enabledMouseCursor: SystemMouseCursors.help),
+        ),
+        floatingActionButtonTheme: const FloatingActionButtonThemeData(
+          mouseCursor: componentCursor,
+        ),
+        checkboxTheme: const CheckboxThemeData(mouseCursor: componentCursor),
+        radioTheme: const RadioThemeData(mouseCursor: componentCursor),
+      );
+
+      for (final name in <String>[
+        'ElevatedButton',
+        'IconButton',
+        'MenuItemButton',
+        'FloatingActionButton',
+        'Checkbox',
+        'Radio',
+      ]) {
+        expect(
+          await cursorOver(tester, theme: theme, child: clickables[name]!(enabled: true)),
+          SystemMouseCursors.help,
+          reason: name,
+        );
+      }
+
+      expect(
+        await cursorOver(
+          tester,
+          theme: theme,
+          child: ElevatedButton(
+            key: targetKey,
+            style: ElevatedButton.styleFrom(enabledMouseCursor: SystemMouseCursors.text),
+            onPressed: () {},
+            child: const Text('button'),
+          ),
+        ),
+        SystemMouseCursors.text,
+      );
+      expect(
+        await cursorOver(
+          tester,
+          theme: theme,
+          child: FloatingActionButton(
+            key: targetKey,
+            mouseCursor: SystemMouseCursors.text,
+            onPressed: () {},
+            child: const Icon(Icons.add),
+          ),
+        ),
+        SystemMouseCursors.text,
+      );
+      expect(
+        await cursorOver(
+          tester,
+          theme: theme,
+          child: InkWell(
+            key: targetKey,
+            mouseCursor: SystemMouseCursors.text,
+            onTap: () {},
+            child: const SizedBox.square(dimension: 50),
+          ),
+        ),
+        SystemMouseCursors.text,
+      );
+
+      expect(
+        await cursorOver(tester, theme: theme, child: clickables['TextButton']!(enabled: true)),
+        SystemMouseCursors.grab,
+      );
+    });
+  });
 }
 
 @immutable

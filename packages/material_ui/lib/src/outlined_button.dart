@@ -307,7 +307,7 @@ class OutlinedButton extends ButtonStyleButton {
   /// * `maximumSize` - Size.infinite
   /// * `side` - BorderSide(width: 1, color: Theme.colorScheme.onSurface(0.12))
   /// * `shape` - RoundedRectangleBorder(borderRadius: BorderRadius.circular(4))
-  /// * `mouseCursor` - WidgetStateMouseCursor.adaptiveClickable
+  /// * `mouseCursor` - theme.mouseCursor ?? WidgetStateMouseCursor.adaptiveClickable
   /// * `visualDensity` - theme.visualDensity
   /// * `tapTargetSize` - theme.materialTapTargetSize
   /// * `animationDuration` - kThemeChangeDuration
@@ -344,7 +344,7 @@ class OutlinedButton extends ButtonStyleButton {
   ///   * disabled - BorderSide(color: Theme.colorScheme.onSurface(0.12))
   ///   * others - BorderSide(color: Theme.colorScheme.outline)
   /// * `shape` - StadiumBorder()
-  /// * `mouseCursor` - WidgetStateMouseCursor.adaptiveClickable
+  /// * `mouseCursor` - theme.mouseCursor ?? WidgetStateMouseCursor.adaptiveClickable
   /// * `visualDensity` - theme.visualDensity
   /// * `tapTargetSize` - theme.materialTapTargetSize
   /// * `animationDuration` - kThemeChangeDuration
@@ -381,7 +381,7 @@ class OutlinedButton extends ButtonStyleButton {
             enableFeedback: true,
             alignment: Alignment.center,
             splashFactory: InkRipple.splashFactory,
-          );
+          ).copyWith(mouseCursor: theme.mouseCursor);
 
     // Only apply paddings when OutlinedButton has an Icon
     if (_addPadding && theme.useMaterial3) {

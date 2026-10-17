@@ -354,6 +354,7 @@ class ThemeData with Diagnosticable {
     // TODO(bleroux): Change the parameter type to InputDecorationThemeData.
     Object? inputDecorationTheme,
     MaterialTapTargetSize? materialTapTargetSize,
+    WidgetStateProperty<MouseCursor>? mouseCursor,
     PageTransitionsTheme? pageTransitionsTheme,
     TargetPlatform? platform,
     ScrollbarThemeData? scrollbarTheme,
@@ -694,6 +695,7 @@ class ThemeData with Diagnosticable {
       extensions: _themeExtensionIterableToMap(extensions),
       inputDecorationTheme: inputDecorationTheme as InputDecorationThemeData,
       materialTapTargetSize: materialTapTargetSize,
+      mouseCursor: mouseCursor,
       pageTransitionsTheme: pageTransitionsTheme,
       platform: platform,
       scrollbarTheme: scrollbarTheme,
@@ -804,6 +806,7 @@ class ThemeData with Diagnosticable {
     required this.extensions,
     required this.inputDecorationTheme,
     required this.materialTapTargetSize,
+    this.mouseCursor,
     required this.pageTransitionsTheme,
     required this.platform,
     required this.scrollbarTheme,
@@ -1115,6 +1118,31 @@ class ThemeData with Diagnosticable {
   /// on mobile platforms, [MaterialTapTargetSize.shrinkWrap] on desktop
   /// platforms.
   final MaterialTapTargetSize materialTapTargetSize;
+
+  /// The default mouse cursor for Material widgets that otherwise default to
+  /// [WidgetStateMouseCursor.adaptiveClickable].
+  ///
+  /// This applies to widgets such as [InkWell], [ElevatedButton],
+  /// [TextButton], [IconButton], [FloatingActionButton], [Checkbox], [Radio],
+  /// [DropdownButton], [PopupMenuItem] and [MenuItemButton]. A cursor
+  /// provided directly to the widget, or by the widget's own component theme
+  /// (such as [ElevatedButtonThemeData.style] or
+  /// [CheckboxThemeData.mouseCursor]), takes precedence over this value.
+  ///
+  /// Widgets with a different default mouse cursor, such as [ListTile],
+  /// [Switch], [Slider] and [TabBar], are not affected.
+  ///
+  /// If null, these widgets use [WidgetStateMouseCursor.adaptiveClickable],
+  /// which resolves to [SystemMouseCursors.click] over enabled widgets on the
+  /// web, and to [SystemMouseCursors.basic] otherwise.
+  ///
+  /// For example, to show [SystemMouseCursors.click] over enabled widgets on
+  /// all platforms, and [SystemMouseCursors.basic] over disabled ones:
+  ///
+  /// ```dart
+  /// final theme = ThemeData(mouseCursor: WidgetStateMouseCursor.clickable);
+  /// ```
+  final WidgetStateProperty<MouseCursor>? mouseCursor;
 
   /// Default [MaterialPageRoute] transitions per [TargetPlatform].
   ///
@@ -1599,6 +1627,7 @@ class ThemeData with Diagnosticable {
     Iterable<ThemeExtension<dynamic>>? extensions,
     Object? inputDecorationTheme,
     MaterialTapTargetSize? materialTapTargetSize,
+    WidgetStateProperty<MouseCursor>? mouseCursor,
     PageTransitionsTheme? pageTransitionsTheme,
     TargetPlatform? platform,
     ScrollbarThemeData? scrollbarTheme,
@@ -1732,6 +1761,7 @@ class ThemeData with Diagnosticable {
       inputDecorationTheme:
           inputDecorationTheme as InputDecorationThemeData? ?? this.inputDecorationTheme,
       materialTapTargetSize: materialTapTargetSize ?? this.materialTapTargetSize,
+      mouseCursor: mouseCursor ?? this.mouseCursor,
       pageTransitionsTheme: pageTransitionsTheme ?? this.pageTransitionsTheme,
       platform: platform ?? this.platform,
       scrollbarTheme: scrollbarTheme ?? this.scrollbarTheme,
@@ -2059,6 +2089,7 @@ class ThemeData with Diagnosticable {
       extensions: _lerpThemeExtensions(a, b, t),
       inputDecorationTheme: t < 0.5 ? a.inputDecorationTheme : b.inputDecorationTheme,
       materialTapTargetSize: t < 0.5 ? a.materialTapTargetSize : b.materialTapTargetSize,
+      mouseCursor: t < 0.5 ? a.mouseCursor : b.mouseCursor,
       pageTransitionsTheme: t < 0.5 ? a.pageTransitionsTheme : b.pageTransitionsTheme,
       platform: t < 0.5 ? a.platform : b.platform,
       scrollbarTheme: ScrollbarThemeData.lerp(a.scrollbarTheme, b.scrollbarTheme, t),
@@ -2207,6 +2238,7 @@ class ThemeData with Diagnosticable {
         mapEquals(other.extensions, extensions) &&
         other.inputDecorationTheme == inputDecorationTheme &&
         other.materialTapTargetSize == materialTapTargetSize &&
+        other.mouseCursor == mouseCursor &&
         other.pageTransitionsTheme == pageTransitionsTheme &&
         other.platform == platform &&
         other.scrollbarTheme == scrollbarTheme &&
@@ -2307,6 +2339,7 @@ class ThemeData with Diagnosticable {
       ...extensions.values,
       inputDecorationTheme,
       materialTapTargetSize,
+      mouseCursor,
       pageTransitionsTheme,
       platform,
       scrollbarTheme,
@@ -2444,6 +2477,14 @@ class ThemeData with Diagnosticable {
       DiagnosticsProperty<MaterialTapTargetSize>(
         'materialTapTargetSize',
         materialTapTargetSize,
+        level: DiagnosticLevel.debug,
+      ),
+    );
+    properties.add(
+      DiagnosticsProperty<WidgetStateProperty<MouseCursor>>(
+        'mouseCursor',
+        mouseCursor,
+        defaultValue: defaultData.mouseCursor,
         level: DiagnosticLevel.debug,
       ),
     );

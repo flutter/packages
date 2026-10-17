@@ -553,8 +553,11 @@ class IconButton extends StatelessWidget {
 
   /// {@macro material_ui.RawMaterialButton.mouseCursor}
   ///
-  /// If set to null, will default to [SystemMouseCursors.basic] if [onPressed]
-  /// is null, otherwise [WidgetStateMouseCursor.adaptiveClickable].
+  /// If this property is null, then in Material 3 the mouse cursor of [style]
+  /// is used, then that of [IconButtonThemeData.style]. If those are also
+  /// null, or in Material 2, [ThemeData.mouseCursor] is used. If that is also
+  /// null, [WidgetStateMouseCursor.adaptiveClickable] is used, which resolves
+  /// to [SystemMouseCursors.basic] when [onPressed] is null.
   final MouseCursor? mouseCursor;
 
   /// {@macro flutter.widgets.Focus.focusNode}
@@ -880,9 +883,7 @@ class IconButton extends StatelessWidget {
       onTap: onPressed,
       onHover: onHover,
       onLongPress: onPressed != null ? onLongPress : null,
-      mouseCursor:
-          mouseCursor ??
-          (onPressed != null ? WidgetStateMouseCursor.adaptiveClickable : SystemMouseCursors.basic),
+      mouseCursor: mouseCursor,
       enableFeedback: effectiveEnableFeedback,
       focusColor: focusColor ?? theme.focusColor,
       hoverColor: hoverColor ?? theme.hoverColor,
@@ -1080,7 +1081,7 @@ class _IconButtonM3 extends ButtonStyleButton {
   /// * `iconSize` - 24
   /// * `side` - null
   /// * `shape` - StadiumBorder()
-  /// * `mouseCursor` - WidgetStateMouseCursor.adaptiveClickable
+  /// * `mouseCursor` - theme.mouseCursor ?? WidgetStateMouseCursor.adaptiveClickable
   /// * `visualDensity` - VisualDensity.standard
   /// * `tapTargetSize` - theme.materialTapTargetSize
   /// * `animationDuration` - kThemeChangeDuration
@@ -1120,7 +1121,7 @@ class _IconButtonM3 extends ButtonStyleButton {
   /// * `side` - null
   /// * `shape` - based on [ButtonStyle.sizeVariant],
   ///   [ButtonStyle.shapeVariant], and state; defaults to StadiumBorder()
-  /// * `mouseCursor` - WidgetStateMouseCursor.adaptiveClickable
+  /// * `mouseCursor` - theme.mouseCursor ?? WidgetStateMouseCursor.adaptiveClickable
   /// * `visualDensity` - VisualDensity.standard
   /// * `tapTargetSize` - MaterialTapTargetSize.padded
   /// * `animationDuration` - kThemeChangeDuration
@@ -1304,7 +1305,8 @@ class _IconButtonDefaultsM3 extends ButtonStyle {
     const MaterialStatePropertyAll<OutlinedBorder>(StadiumBorder());
 
   @override
-  WidgetStateProperty<MouseCursor?>? get mouseCursor => WidgetStateMouseCursor.adaptiveClickable;
+  WidgetStateProperty<MouseCursor?>? get mouseCursor =>
+      Theme.of(context).mouseCursor ?? WidgetStateMouseCursor.adaptiveClickable;
 
   @override
   VisualDensity? get visualDensity => VisualDensity.standard;
@@ -1446,7 +1448,8 @@ class _FilledIconButtonDefaultsM3 extends ButtonStyle {
     const MaterialStatePropertyAll<OutlinedBorder>(StadiumBorder());
 
   @override
-  WidgetStateProperty<MouseCursor?>? get mouseCursor => WidgetStateMouseCursor.adaptiveClickable;
+  WidgetStateProperty<MouseCursor?>? get mouseCursor =>
+      Theme.of(context).mouseCursor ?? WidgetStateMouseCursor.adaptiveClickable;
 
   @override
   VisualDensity? get visualDensity => VisualDensity.standard;
@@ -1588,7 +1591,8 @@ class _FilledTonalIconButtonDefaultsM3 extends ButtonStyle {
     const MaterialStatePropertyAll<OutlinedBorder>(StadiumBorder());
 
   @override
-  WidgetStateProperty<MouseCursor?>? get mouseCursor => WidgetStateMouseCursor.adaptiveClickable;
+  WidgetStateProperty<MouseCursor?>? get mouseCursor =>
+      Theme.of(context).mouseCursor ?? WidgetStateMouseCursor.adaptiveClickable;
 
   @override
   VisualDensity? get visualDensity => VisualDensity.standard;
@@ -1725,7 +1729,8 @@ class _OutlinedIconButtonDefaultsM3 extends ButtonStyle {
     const MaterialStatePropertyAll<OutlinedBorder>(StadiumBorder());
 
   @override
-  WidgetStateProperty<MouseCursor?>? get mouseCursor => WidgetStateMouseCursor.adaptiveClickable;
+  WidgetStateProperty<MouseCursor?>? get mouseCursor =>
+      Theme.of(context).mouseCursor ?? WidgetStateMouseCursor.adaptiveClickable;
 
   @override
   VisualDensity? get visualDensity => VisualDensity.standard;

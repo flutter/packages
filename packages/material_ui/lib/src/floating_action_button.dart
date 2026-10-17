@@ -344,7 +344,8 @@ class FloatingActionButton extends StatelessWidget {
   /// {@macro material_ui.RawMaterialButton.mouseCursor}
   ///
   /// If this property is null, [FloatingActionButtonThemeData.mouseCursor] is used.
-  /// If that is null, [WidgetStateMouseCursor.adaptiveClickable] will be used.
+  /// If that is also null, [ThemeData.mouseCursor] is used. If that is also
+  /// null, [WidgetStateMouseCursor.adaptiveClickable] is used.
   final MouseCursor? mouseCursor;
 
   /// The z-coordinate at which to place this button relative to its parent.
@@ -598,7 +599,11 @@ class FloatingActionButton extends StatelessWidget {
 
     Widget result = RawMaterialButton(
       onPressed: onPressed,
-      mouseCursor: _EffectiveMouseCursor(mouseCursor, floatingActionButtonTheme.mouseCursor),
+      mouseCursor: _EffectiveMouseCursor(
+        mouseCursor,
+        floatingActionButtonTheme.mouseCursor,
+        theme.mouseCursor,
+      ),
       elevation: elevation,
       focusElevation: focusElevation,
       hoverElevation: hoverElevation,
@@ -663,15 +668,17 @@ class FloatingActionButton extends StatelessWidget {
 // resolves the property against WidgetState.pressed, WidgetState.hovered,
 // WidgetState.focused, WidgetState.disabled.
 class _EffectiveMouseCursor extends WidgetStateMouseCursor {
-  const _EffectiveMouseCursor(this.widgetCursor, this.themeCursor);
+  const _EffectiveMouseCursor(this.widgetCursor, this.themeCursor, this.themeDataCursor);
 
   final MouseCursor? widgetCursor;
   final WidgetStateProperty<MouseCursor?>? themeCursor;
+  final WidgetStateProperty<MouseCursor>? themeDataCursor;
 
   @override
   MouseCursor resolve(Set<WidgetState> states) {
     return WidgetStateProperty.resolveAs<MouseCursor?>(widgetCursor, states) ??
         themeCursor?.resolve(states) ??
+        themeDataCursor?.resolve(states) ??
         WidgetStateMouseCursor.adaptiveClickable.resolve(states);
   }
 
