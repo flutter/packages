@@ -344,8 +344,8 @@ class FloatingActionButton extends StatelessWidget {
   /// {@macro material_ui.RawMaterialButton.mouseCursor}
   ///
   /// If this property is null, [FloatingActionButtonThemeData.mouseCursor] is used.
-  /// If that is also null, [ThemeData.mouseCursor] is used. If that is also null,
-  /// [WidgetStateMouseCursor.adaptiveClickable] is used.
+  /// If that is also null, [ThemeData.mouseCursor] is used. If that is also
+  /// null, [WidgetStateMouseCursor.adaptiveClickable] is used.
   final MouseCursor? mouseCursor;
 
   /// The z-coordinate at which to place this button relative to its parent.

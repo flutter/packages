@@ -284,8 +284,9 @@ class ToggleButtons extends StatelessWidget {
   /// {@macro material_ui.RawMaterialButton.mouseCursor}
   ///
   /// Each button is a [TextButton], so if this property is null, the mouse
-  /// cursor of [TextButtonThemeData.style] is used. If that is also null, [ThemeData.mouseCursor] is used. If that is
-  /// also null, [WidgetStateMouseCursor.adaptiveClickable] is used.
+  /// cursor of [TextButtonThemeData.style] is used. If that is also null,
+  /// [ThemeData.mouseCursor] is used. If that is also null,
+  /// [WidgetStateMouseCursor.adaptiveClickable] is used.
   final MouseCursor? mouseCursor;
 
   /// Configures the minimum size of the area within which the buttons may
