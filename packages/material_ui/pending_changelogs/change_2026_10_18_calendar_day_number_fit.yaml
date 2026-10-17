@@ -1,0 +1,3 @@
+changelog: |
+  - Scales down `CalendarDatePicker` day numbers that are too wide for their cells, such as with large text scales on narrow screens.
+version: patch

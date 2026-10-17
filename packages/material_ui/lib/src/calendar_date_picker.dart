@@ -1272,12 +1272,16 @@ class _DayState extends State<_Day> {
     Widget dayWidget = Ink(
       decoration: decoration,
       child: Center(
-        child: FittedBox(
-          fit: .scaleDown,
-          child: Text(
-            localizations.formatDecimal(widget.day.day),
-            style: dayStyle?.apply(color: dayForegroundColor),
-            maxLines: 1,
+        // Scales down only to fit the width.
+        child: OverflowBox(
+          maxHeight: .infinity,
+          child: FittedBox(
+            fit: .scaleDown,
+            child: Text(
+              localizations.formatDecimal(widget.day.day),
+              style: dayStyle?.apply(color: dayForegroundColor),
+              maxLines: 1,
+            ),
           ),
         ),
       ),
