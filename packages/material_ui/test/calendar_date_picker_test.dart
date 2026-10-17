@@ -124,7 +124,7 @@ void main() {
     testWidgets('Day numbers fit their cells with large text scale on narrow screens', (
       WidgetTester tester,
     ) async {
-      tester.view.physicalSize = const .new(320, 800);
+      tester.view.physicalSize = const Size(320, 800);
       tester.view.devicePixelRatio = 1.0;
       addTearDown(tester.view.reset);
 
