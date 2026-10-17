@@ -2760,8 +2760,11 @@ void main() {
     expect(tester.getSize(find.byType(ElevatedButton)).height, 56.0);
   });
 
-  testWidgets('M3E ElevatedButton scales size-specific padding', (WidgetTester tester) async {
-    Future<void> expectPadding(double textScaleFactor, double horizontalPadding) async {
+  testWidgets('M3E ElevatedButton keeps size-specific padding when text scales', (
+    WidgetTester tester,
+  ) async {
+    Future<void> expectPadding(double textScaleFactor, {required bool withIcon}) async {
+      const style = ButtonStyle(sizeVariant: ButtonSizeVariant.medium);
       await tester.pumpWidget(
         MaterialApp(
           theme: ThemeData(
@@ -2775,11 +2778,14 @@ void main() {
                 minScaleFactor: textScaleFactor,
                 maxScaleFactor: textScaleFactor,
                 child: Center(
-                  child: ElevatedButton(
-                    style: const ButtonStyle(sizeVariant: ButtonSizeVariant.medium),
-                    onPressed: () {},
-                    child: const Text('Button'),
-                  ),
+                  child: withIcon
+                      ? ElevatedButton.icon(
+                          style: style,
+                          onPressed: () {},
+                          icon: const Icon(Icons.add),
+                          label: const Text('Button'),
+                        )
+                      : ElevatedButton(style: style, onPressed: () {}, child: const Text('Button')),
                 ),
               );
             },
@@ -2790,12 +2796,13 @@ void main() {
       final Padding paddingWidget = tester.widget<Padding>(
         find.descendant(of: find.byType(ElevatedButton), matching: find.byType(Padding)),
       );
-      expect(paddingWidget.padding, EdgeInsets.symmetric(horizontal: horizontalPadding));
+      expect(paddingWidget.padding, const EdgeInsets.symmetric(horizontal: 24.0));
     }
 
-    await expectPadding(1.0, 24.0);
-    await expectPadding(2.0, 12.0);
-    await expectPadding(3.0, 6.0);
+    for (final textScaleFactor in const <double>[1.0, 2.0, 3.0]) {
+      await expectPadding(textScaleFactor, withIcon: false);
+      await expectPadding(textScaleFactor, withIcon: true);
+    }
   });
 
   testWidgets('ElevatedButton isSelected exposes selected semantics', (WidgetTester tester) async {

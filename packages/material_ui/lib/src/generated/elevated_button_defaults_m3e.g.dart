@@ -127,36 +127,14 @@ class _ElevatedButtonDefaultsM3E extends ButtonStyle {
       });
 
   @override
-  WidgetStateProperty<EdgeInsetsGeometry>? get padding {
-    final double fontSize = textStyle.resolve(const <WidgetState>{})?.fontSize ?? 14.0;
-    final double effectiveTextScale = MediaQuery.textScalerOf(context).scale(fontSize) / fontSize;
-    return WidgetStatePropertyAll<EdgeInsetsGeometry>(
-      ButtonStyleButton.scaledPadding(
-        switch (sizeVariant) {
-          ButtonSizeVariant.xSmall => const EdgeInsets.symmetric(horizontal: 12.0),
-          ButtonSizeVariant.small => const EdgeInsets.symmetric(horizontal: 16.0),
-          ButtonSizeVariant.medium => const EdgeInsets.symmetric(horizontal: 24.0),
-          ButtonSizeVariant.large => const EdgeInsets.symmetric(horizontal: 48.0),
-          ButtonSizeVariant.xLarge => const EdgeInsets.symmetric(horizontal: 64.0),
-        },
-        switch (sizeVariant) {
-          ButtonSizeVariant.xSmall => const EdgeInsets.symmetric(horizontal: 6.0),
-          ButtonSizeVariant.small => const EdgeInsets.symmetric(horizontal: 8.0),
-          ButtonSizeVariant.medium => const EdgeInsets.symmetric(horizontal: 12.0),
-          ButtonSizeVariant.large => const EdgeInsets.symmetric(horizontal: 24.0),
-          ButtonSizeVariant.xLarge => const EdgeInsets.symmetric(horizontal: 32.0),
-        },
-        switch (sizeVariant) {
-          ButtonSizeVariant.xSmall => const EdgeInsets.symmetric(horizontal: 3.0),
-          ButtonSizeVariant.small => const EdgeInsets.symmetric(horizontal: 4.0),
-          ButtonSizeVariant.medium => const EdgeInsets.symmetric(horizontal: 6.0),
-          ButtonSizeVariant.large => const EdgeInsets.symmetric(horizontal: 12.0),
-          ButtonSizeVariant.xLarge => const EdgeInsets.symmetric(horizontal: 16.0),
-        },
-        effectiveTextScale,
-      ),
-    );
-  }
+  WidgetStateProperty<EdgeInsetsGeometry>? get padding =>
+      WidgetStatePropertyAll<EdgeInsetsGeometry>(switch (sizeVariant) {
+        ButtonSizeVariant.xSmall => const EdgeInsets.symmetric(horizontal: 12.0),
+        ButtonSizeVariant.small => const EdgeInsets.symmetric(horizontal: 16.0),
+        ButtonSizeVariant.medium => const EdgeInsets.symmetric(horizontal: 24.0),
+        ButtonSizeVariant.large => const EdgeInsets.symmetric(horizontal: 48.0),
+        ButtonSizeVariant.xLarge => const EdgeInsets.symmetric(horizontal: 64.0),
+      });
 
   @override
   WidgetStateProperty<Size>? get minimumSize => WidgetStatePropertyAll<Size>(switch (sizeVariant) {

@@ -465,8 +465,7 @@ class ElevatedButton extends ButtonStyleButton {
   ///   * disabled - 0
   ///   * others - 1
   /// * `padding` - based on [ButtonStyle.sizeVariant]; horizontal(12),
-  ///   horizontal(16), horizontal(24), horizontal(48), horizontal(64). The
-  ///   padding is halved at 2x text scale and quartered at 3x text scale.
+  ///   horizontal(16), horizontal(24), horizontal(48), horizontal(64)
   /// * `minimumSize` - based on [ButtonStyle.sizeVariant]; Size(64, 32),
   ///   Size(64, 40), Size(64, 56), Size(64, 96), Size(64, 136)
   /// * `fixedSize` - null
@@ -541,11 +540,14 @@ class ElevatedButton extends ButtonStyleButton {
             splashFactory: InkRipple.splashFactory,
           );
 
+    // The Material 3 Expressive defaults use the same padding with or without
+    // an icon.
+    if (useExpressive) {
+      return buttonStyle;
+    }
+
     // Only apply padding when the ElevatedButton has an Icon.
     if (_addPadding) {
-      if (useExpressive) {
-        return buttonStyle;
-      }
       final double defaultFontSize =
           buttonStyle.textStyle?.resolve(const <WidgetState>{})?.fontSize ?? 14.0;
       final double effectiveTextScale =

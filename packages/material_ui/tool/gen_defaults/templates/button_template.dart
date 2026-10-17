@@ -357,12 +357,12 @@ switch (sizeVariant) {
     xLarge: textStyle(TokenButtonXlarge.labelText, 'Theme.of(context).textTheme'),
   );
 
-  String _paddingSwitch(double scale) => _sizeSwitch(
-    xSmall: 'const EdgeInsets.symmetric(horizontal: ${TokenButtonXsmall.leadingSpace * scale})',
-    small: 'const EdgeInsets.symmetric(horizontal: ${TokenButtonSmall.leadingSpace * scale})',
-    medium: 'const EdgeInsets.symmetric(horizontal: ${TokenButtonMedium.leadingSpace * scale})',
-    large: 'const EdgeInsets.symmetric(horizontal: ${TokenButtonLarge.leadingSpace * scale})',
-    xLarge: 'const EdgeInsets.symmetric(horizontal: ${TokenButtonXlarge.leadingSpace * scale})',
+  String get _paddingSwitch => _sizeSwitch(
+    xSmall: 'const EdgeInsets.symmetric(horizontal: ${TokenButtonXsmall.leadingSpace})',
+    small: 'const EdgeInsets.symmetric(horizontal: ${TokenButtonSmall.leadingSpace})',
+    medium: 'const EdgeInsets.symmetric(horizontal: ${TokenButtonMedium.leadingSpace})',
+    large: 'const EdgeInsets.symmetric(horizontal: ${TokenButtonLarge.leadingSpace})',
+    xLarge: 'const EdgeInsets.symmetric(horizontal: ${TokenButtonXlarge.leadingSpace})',
   );
 
   String get _minimumSizeSwitch => _sizeSwitch(
@@ -541,19 +541,8 @@ class $className extends ButtonStyle {
       });
 
   @override
-  WidgetStateProperty<EdgeInsetsGeometry>? get padding {
-    final double fontSize = textStyle.resolve(const <WidgetState>{})?.fontSize ?? 14.0;
-    final double effectiveTextScale =
-        MediaQuery.textScalerOf(context).scale(fontSize) / fontSize;
-    return WidgetStatePropertyAll<EdgeInsetsGeometry>(
-      ButtonStyleButton.scaledPadding(
-        ${_paddingSwitch(1.0)},
-        ${_paddingSwitch(0.5)},
-        ${_paddingSwitch(0.25)},
-        effectiveTextScale,
-      ),
-    );
-  }
+  WidgetStateProperty<EdgeInsetsGeometry>? get padding =>
+      WidgetStatePropertyAll<EdgeInsetsGeometry>($_paddingSwitch);
 
   @override
   WidgetStateProperty<Size>? get minimumSize =>
