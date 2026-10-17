@@ -228,15 +228,37 @@ abstract final class Easing {
 
 /// The set of spring descriptions in the Material specification.
 ///
+/// Material motion uses springs, grouped into two motion schemes. The
+/// expressive scheme overshoots and bounces into place, and is recommended for
+/// most situations. The standard scheme has minimal bounce and suits more
+/// utilitarian products.
+///
+/// Each scheme has springs for two types of motion, in three speeds: default,
+/// fast, and slow.
+///
+///  * Spatial springs animate movement, such as position, size, rotation, and
+///    corner radius.
+///  * Effects springs animate properties that shouldn't overshoot, such as
+///    color and opacity.
+///
+/// Most motion should use the default speed. Smaller elements can use the fast
+/// speed, and larger elements can use the slow speed. In the Material
+/// specification, components are animated with [expressiveFastSpatial] and
+/// [expressiveFastEffects].
+///
 /// Material spring tokens do not include mass. These constants use unit mass
 /// to convert Material's damping ratio and stiffness tokens to Flutter's
-/// [SpringDescription].
+/// [SpringDescription]. Use them with a `SpringSimulation`, for example through
+/// [AnimationController.animateWith].
 ///
 /// See also:
 ///
+/// * [M3 guidelines: How motion works](https://m3.material.io/styles/motion/overview/how-it-works)
 /// * [M3 guidelines: Spring tokens](https://m3.material.io/styles/motion/overview/specs)
 abstract final class MotionSprings {
-  /// The standard default spatial spring description in the Material specification.
+  /// The standard default spatial spring in the Material specification.
+  ///
+  /// It has a stiffness of 700.0 and a damping ratio of 0.9.
   ///
   /// See also:
   ///
@@ -247,7 +269,9 @@ abstract final class MotionSprings {
     damping: 47.62352359916263,
   );
 
-  /// The standard fast spatial spring description in the Material specification.
+  /// The standard fast spatial spring in the Material specification.
+  ///
+  /// It has a stiffness of 1400.0 and a damping ratio of 0.9.
   ///
   /// See also:
   ///
@@ -258,7 +282,9 @@ abstract final class MotionSprings {
     damping: 67.34983296193096,
   );
 
-  /// The standard slow spatial spring description in the Material specification.
+  /// The standard slow spatial spring in the Material specification.
+  ///
+  /// It has a stiffness of 300.0 and a damping ratio of 0.9.
   ///
   /// See also:
   ///
@@ -269,7 +295,9 @@ abstract final class MotionSprings {
     damping: 31.176914536239796,
   );
 
-  /// The standard default effects spring description in the Material specification.
+  /// The standard default effects spring in the Material specification.
+  ///
+  /// It has a stiffness of 1600.0 and a damping ratio of 1.0.
   ///
   /// See also:
   ///
@@ -280,7 +308,9 @@ abstract final class MotionSprings {
     damping: 80.0,
   );
 
-  /// The standard fast effects spring description in the Material specification.
+  /// The standard fast effects spring in the Material specification.
+  ///
+  /// It has a stiffness of 3800.0 and a damping ratio of 1.0.
   ///
   /// See also:
   ///
@@ -291,7 +321,9 @@ abstract final class MotionSprings {
     damping: 123.28828005937953,
   );
 
-  /// The standard slow effects spring description in the Material specification.
+  /// The standard slow effects spring in the Material specification.
+  ///
+  /// It has a stiffness of 800.0 and a damping ratio of 1.0.
   ///
   /// See also:
   ///
@@ -302,7 +334,9 @@ abstract final class MotionSprings {
     damping: 56.568542494923804,
   );
 
-  /// The expressive default spatial spring description in the Material specification.
+  /// The expressive default spatial spring in the Material specification.
+  ///
+  /// It has a stiffness of 380.0 and a damping ratio of 0.8.
   ///
   /// See also:
   ///
@@ -313,7 +347,9 @@ abstract final class MotionSprings {
     damping: 31.189741903388683,
   );
 
-  /// The expressive fast spatial spring description in the Material specification.
+  /// The expressive fast spatial spring in the Material specification.
+  ///
+  /// It has a stiffness of 800.0 and a damping ratio of 0.6.
   ///
   /// See also:
   ///
@@ -324,7 +360,9 @@ abstract final class MotionSprings {
     damping: 33.94112549695428,
   );
 
-  /// The expressive slow spatial spring description in the Material specification.
+  /// The expressive slow spatial spring in the Material specification.
+  ///
+  /// It has a stiffness of 200.0 and a damping ratio of 0.8.
   ///
   /// See also:
   ///
@@ -335,7 +373,9 @@ abstract final class MotionSprings {
     damping: 22.627416997969522,
   );
 
-  /// The expressive default effects spring description in the Material specification.
+  /// The expressive default effects spring in the Material specification.
+  ///
+  /// It has a stiffness of 1600.0 and a damping ratio of 1.0.
   ///
   /// See also:
   ///
@@ -346,7 +386,9 @@ abstract final class MotionSprings {
     damping: 80.0,
   );
 
-  /// The expressive fast effects spring description in the Material specification.
+  /// The expressive fast effects spring in the Material specification.
+  ///
+  /// It has a stiffness of 3800.0 and a damping ratio of 1.0.
   ///
   /// See also:
   ///
@@ -357,7 +399,9 @@ abstract final class MotionSprings {
     damping: 123.28828005937953,
   );
 
-  /// The expressive slow effects spring description in the Material specification.
+  /// The expressive slow effects spring in the Material specification.
+  ///
+  /// It has a stiffness of 800.0 and a damping ratio of 1.0.
   ///
   /// See also:
   ///

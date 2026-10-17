@@ -728,11 +728,18 @@ void main() {
       expect(contents, contains('emphasizedAccelerate = Cubic(0.3, 0.0, 0.8, 0.15)'));
       expect(contents, contains('legacy = Cubic(0.4, 0.0, 0.2, 1.0)'));
       expect(contents, contains('abstract final class MotionSprings'));
-      expect(contents, contains('standardDefaultSpatial = SpringDescription('));
-      expect(contents, contains('mass: 1.0,'));
-      expect(contents, contains('stiffness: 700.0,'));
-      expect(contents, contains('damping: 47.62352359916263'));
-      expect(contents, contains('expressiveFastSpatial = SpringDescription('));
+      expect(
+        contents,
+        contains(
+          'standardDefaultSpatial = SpringDescription(mass: 1.0, stiffness: 700.0, damping: 47.62352359916263)',
+        ),
+      );
+      expect(
+        contents,
+        contains(
+          'expressiveFastSpatial = SpringDescription(mass: 1.0, stiffness: 800.0, damping: 33.94112549695428)',
+        ),
+      );
     });
 
     test('NavigationBarTemplateM3 emits M3 NavigationBar defaults from tokens', () {

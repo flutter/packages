@@ -1,0 +1,3 @@
+changelog: |
+  - Adds `MotionSprings`, the Material spring tokens for the standard and expressive motion schemes.
+version: minor

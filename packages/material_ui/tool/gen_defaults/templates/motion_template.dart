@@ -56,12 +56,14 @@ class MotionTemplateM3 extends TokenTemplateM3 {
     );
     final double damping = dampingRatio * 2.0 * math.sqrt(stiffness);
     return '''
-  /// The $tokenDescription spring description in the Material specification.
+  /// The $tokenDescription spring in the Material specification.
+  ///
+  /// It has a stiffness of $stiffness and a damping ratio of $dampingRatio.
   ///
   /// See also:
   ///
   /// * [M3 guidelines: Spring tokens](https://m3.material.io/styles/motion/overview/specs)
-  static const SpringDescription $tokenName = SpringDescription(mass: 1.0, stiffness: ${number(stiffness)}, damping: ${number(damping)});
+  static const SpringDescription $tokenName = SpringDescription(mass: 1.0, stiffness: $stiffness, damping: $damping);
 ''';
   }
 
@@ -116,12 +118,32 @@ ${_easingCurveTokenString('legacy', TokenMotion.easingLegacy).trimRight()}
 
 /// The set of spring descriptions in the Material specification.
 ///
+/// Material motion uses springs, grouped into two motion schemes. The
+/// expressive scheme overshoots and bounces into place, and is recommended for
+/// most situations. The standard scheme has minimal bounce and suits more
+/// utilitarian products.
+///
+/// Each scheme has springs for two types of motion, in three speeds: default,
+/// fast, and slow.
+///
+///  * Spatial springs animate movement, such as position, size, rotation, and
+///    corner radius.
+///  * Effects springs animate properties that shouldn't overshoot, such as
+///    color and opacity.
+///
+/// Most motion should use the default speed. Smaller elements can use the fast
+/// speed, and larger elements can use the slow speed. In the Material
+/// specification, components are animated with [expressiveFastSpatial] and
+/// [expressiveFastEffects].
+///
 /// Material spring tokens do not include mass. These constants use unit mass
 /// to convert Material's damping ratio and stiffness tokens to Flutter's
-/// [SpringDescription].
+/// [SpringDescription]. Use them with a `SpringSimulation`, for example through
+/// [AnimationController.animateWith].
 ///
 /// See also:
 ///
+/// * [M3 guidelines: How motion works](https://m3.material.io/styles/motion/overview/how-it-works)
 /// * [M3 guidelines: Spring tokens](https://m3.material.io/styles/motion/overview/specs)
 abstract final class MotionSprings {
 ${_springDescriptionTokenString(tokenName: 'standardDefaultSpatial', dampingRatio: TokenMotion.springDefaultSpatialDamping, stiffness: TokenMotion.springDefaultSpatialStiffness)}
