@@ -432,6 +432,7 @@ class ElevatedButton extends ButtonStyleButton {
   ///
   /// ## Material 3 Expressive defaults
   ///
+  // TODO(QuncCccccc): Clean up [ThemeData.useMaterial3] once useMaterial3 is removed.
   /// If [ThemeData.useMaterial3] is true and [ElevatedButtonThemeData.variant]
   /// is [StyleVariant.material3Expressive], the following defaults will be
   /// used. Values listed per size are for [ButtonSizeVariant.xSmall],
