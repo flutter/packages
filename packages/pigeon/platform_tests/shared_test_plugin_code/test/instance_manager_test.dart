@@ -143,11 +143,15 @@ void main() {
         },
       );
 
-      CopyableObject? object = CopyableObject(pigeon_instanceManager: instanceManager);
+      @pragma('vm:never-inline')
+      void addTemporaryInstance() {
+        instanceManager.addHostCreatedInstance(
+          CopyableObject(pigeon_instanceManager: instanceManager),
+          0,
+        );
+      }
 
-      instanceManager.addHostCreatedInstance(object, 0);
-
-      object = null;
+      addTemporaryInstance();
       await forceGC(fullGcCycles: 2);
 
       expect(weakReferencedRemovedCalled, isFalse);
