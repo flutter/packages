@@ -8,58 +8,31 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';
 
 void main() {
-  test('MotionSprings exposes standard spring tokens', () {
+  test('Springs exposes standard spring tokens', () {
+    expect(Springs.standardDefaultSpatial, _springDescription(stiffness: 700.0, dampingRatio: 0.9));
+    expect(Springs.standardFastSpatial, _springDescription(stiffness: 1400.0, dampingRatio: 0.9));
+    expect(Springs.standardSlowSpatial, _springDescription(stiffness: 300.0, dampingRatio: 0.9));
     expect(
-      MotionSprings.standardDefaultSpatial,
-      _springDescription(stiffness: 700.0, dampingRatio: 0.9),
-    );
-    expect(
-      MotionSprings.standardFastSpatial,
-      _springDescription(stiffness: 1400.0, dampingRatio: 0.9),
-    );
-    expect(
-      MotionSprings.standardSlowSpatial,
-      _springDescription(stiffness: 300.0, dampingRatio: 0.9),
-    );
-    expect(
-      MotionSprings.standardDefaultEffects,
+      Springs.standardDefaultEffects,
       _springDescription(stiffness: 1600.0, dampingRatio: 1.0),
     );
-    expect(
-      MotionSprings.standardFastEffects,
-      _springDescription(stiffness: 3800.0, dampingRatio: 1.0),
-    );
-    expect(
-      MotionSprings.standardSlowEffects,
-      _springDescription(stiffness: 800.0, dampingRatio: 1.0),
-    );
+    expect(Springs.standardFastEffects, _springDescription(stiffness: 3800.0, dampingRatio: 1.0));
+    expect(Springs.standardSlowEffects, _springDescription(stiffness: 800.0, dampingRatio: 1.0));
   });
 
-  test('MotionSprings exposes expressive spring tokens', () {
+  test('Springs exposes expressive spring tokens', () {
     expect(
-      MotionSprings.expressiveDefaultSpatial,
+      Springs.expressiveDefaultSpatial,
       _springDescription(stiffness: 380.0, dampingRatio: 0.8),
     );
+    expect(Springs.expressiveFastSpatial, _springDescription(stiffness: 800.0, dampingRatio: 0.6));
+    expect(Springs.expressiveSlowSpatial, _springDescription(stiffness: 200.0, dampingRatio: 0.8));
     expect(
-      MotionSprings.expressiveFastSpatial,
-      _springDescription(stiffness: 800.0, dampingRatio: 0.6),
-    );
-    expect(
-      MotionSprings.expressiveSlowSpatial,
-      _springDescription(stiffness: 200.0, dampingRatio: 0.8),
-    );
-    expect(
-      MotionSprings.expressiveDefaultEffects,
+      Springs.expressiveDefaultEffects,
       _springDescription(stiffness: 1600.0, dampingRatio: 1.0),
     );
-    expect(
-      MotionSprings.expressiveFastEffects,
-      _springDescription(stiffness: 3800.0, dampingRatio: 1.0),
-    );
-    expect(
-      MotionSprings.expressiveSlowEffects,
-      _springDescription(stiffness: 800.0, dampingRatio: 1.0),
-    );
+    expect(Springs.expressiveFastEffects, _springDescription(stiffness: 3800.0, dampingRatio: 1.0));
+    expect(Springs.expressiveSlowEffects, _springDescription(stiffness: 800.0, dampingRatio: 1.0));
   });
 }
 

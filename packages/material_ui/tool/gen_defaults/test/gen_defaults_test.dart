@@ -727,7 +727,15 @@ void main() {
       expect(contents, contains('extralong4 = Duration(milliseconds: 1000)'));
       expect(contents, contains('emphasizedAccelerate = Cubic(0.3, 0.0, 0.8, 0.15)'));
       expect(contents, contains('legacy = Cubic(0.4, 0.0, 0.2, 1.0)'));
-      expect(contents, contains('abstract final class MotionSprings'));
+    });
+
+    test('MotionTemplateM3E emits M3E motion springs from tokens', () {
+      const template = MotionTemplateM3E();
+      final String contents = _generateContents(template);
+      expect(template.className, isEmpty);
+      expect(template.outputFileName, 'motion_defaults_m3e.g.dart');
+      expect(template.parentFilePath, 'motion.dart');
+      expect(contents, contains('abstract final class Springs'));
       expect(
         contents,
         contains(

@@ -45,28 +45,6 @@ class MotionTemplateM3 extends TokenTemplateM3 {
   static const Curve $tokenName = Cubic(${tokenValue.a}, ${tokenValue.b}, ${tokenValue.c}, ${tokenValue.d});
 ''';
 
-  String _springDescriptionTokenString({
-    required String tokenName,
-    required double dampingRatio,
-    required double stiffness,
-  }) {
-    final String tokenDescription = tokenName.replaceAllMapped(
-      RegExp('[A-Z]'),
-      (Match match) => ' ${match.group(0)!.toLowerCase()}',
-    );
-    final double damping = dampingRatio * 2.0 * math.sqrt(stiffness);
-    return '''
-  /// The $tokenDescription spring in the Material specification.
-  ///
-  /// It has a stiffness of $stiffness and a damping ratio of $dampingRatio.
-  ///
-  /// See also:
-  ///
-  /// * [M3 guidelines: Spring tokens](https://m3.material.io/styles/motion/overview/specs)
-  static const SpringDescription $tokenName = SpringDescription(mass: 1.0, stiffness: $stiffness, damping: $damping);
-''';
-  }
-
   @override
   String generateContents(String className) =>
       '''
@@ -115,21 +93,60 @@ ${_easingCurveTokenString('legacyDecelerate', TokenMotion.easingLegacyDecelerate
 ${_easingCurveTokenString('legacyAccelerate', TokenMotion.easingLegacyAccelerate)}
 ${_easingCurveTokenString('legacy', TokenMotion.easingLegacy).trimRight()}
 }
+''';
+}
 
-/// The set of spring descriptions in the Material specification.
+class MotionTemplateM3E extends TokenTemplateM3E {
+  const MotionTemplateM3E();
+
+  @override
+  String get name => 'Motion';
+
+  @override
+  String get parentFilePath => 'motion.dart';
+
+  @override
+  String get className => '';
+
+  String _springDescriptionTokenString({
+    required String tokenName,
+    required double dampingRatio,
+    required double stiffness,
+  }) {
+    final String tokenDescription = tokenName.replaceAllMapped(
+      RegExp('[A-Z]'),
+      (Match match) => ' ${match.group(0)!.toLowerCase()}',
+    );
+    final double damping = dampingRatio * 2.0 * math.sqrt(stiffness);
+    return '''
+  /// The $tokenDescription spring in the Material specification.
+  ///
+  /// It has a stiffness of $stiffness and a damping ratio of $dampingRatio.
+  ///
+  /// See also:
+  ///
+  /// * [M3 guidelines: Spring tokens](https://m3.material.io/styles/motion/overview/specs)
+  static const SpringDescription $tokenName = SpringDescription(mass: 1.0, stiffness: $stiffness, damping: $damping);
+''';
+  }
+
+  @override
+  String generateContents(String className) =>
+      '''
+/// The set of springs in the Material specification.
 ///
-/// Material motion uses springs, grouped into two motion schemes. The
-/// expressive scheme overshoots and bounces into place, and is recommended for
-/// most situations. The standard scheme has minimal bounce and suits more
+/// Material 3 Expressive motion uses springs, grouped into two motion schemes.
+/// The expressive scheme overshoots and bounces into place, and is recommended
+/// for most situations. The standard scheme has minimal bounce and suits more
 /// utilitarian products.
 ///
 /// Each scheme has springs for two types of motion, in three speeds: default,
 /// fast, and slow.
 ///
-///  * Spatial springs animate movement, such as position, size, rotation, and
-///    corner radius.
-///  * Effects springs animate properties that shouldn't overshoot, such as
-///    color and opacity.
+/// * Spatial springs animate movement, such as position, size, rotation, and
+///   corner radius.
+/// * Effects springs animate properties that shouldn't overshoot, such as
+///   color and opacity.
 ///
 /// Most motion should use the default speed. Smaller elements can use the fast
 /// speed, and larger elements can use the slow speed. In the Material
@@ -143,9 +160,11 @@ ${_easingCurveTokenString('legacy', TokenMotion.easingLegacy).trimRight()}
 ///
 /// See also:
 ///
+/// * [Durations] and [Easing], which are the Material tokens for curve-based
+///   animations.
 /// * [M3 guidelines: How motion works](https://m3.material.io/styles/motion/overview/how-it-works)
 /// * [M3 guidelines: Spring tokens](https://m3.material.io/styles/motion/overview/specs)
-abstract final class MotionSprings {
+abstract final class Springs {
 ${_springDescriptionTokenString(tokenName: 'standardDefaultSpatial', dampingRatio: TokenMotion.springDefaultSpatialDamping, stiffness: TokenMotion.springDefaultSpatialStiffness)}
 ${_springDescriptionTokenString(tokenName: 'standardFastSpatial', dampingRatio: TokenMotion.springFastSpatialDamping, stiffness: TokenMotion.springFastSpatialStiffness)}
 ${_springDescriptionTokenString(tokenName: 'standardSlowSpatial', dampingRatio: TokenMotion.springSlowSpatialDamping, stiffness: TokenMotion.springSlowSpatialStiffness)}
