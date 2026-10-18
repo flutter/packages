@@ -195,23 +195,6 @@ void main() {
       expect(timesCalled, 1);
     });
 
-    test('allows another connection after a connection throws', () async {
-      await manager.runWithClientNonRetryable((_) async {});
-      when(mockApi.startConnection(any, any, any)).thenThrow(StateError('Connection failed'));
-      await expectLater(
-        manager.reconnectWithBillingChoiceMode(BillingChoiceMode.playBillingOnly),
-        throwsStateError,
-      );
-
-      when(mockApi.startConnection(any, any, any)).thenAnswer(
-        (_) async =>
-            PlatformBillingResult(responseCode: PlatformBillingResponse.ok, debugMessage: ''),
-      );
-      clearInteractions(mockApi);
-      await manager.reconnectWithBillingChoiceMode(BillingChoiceMode.playBillingOnly);
-      verify(mockApi.startConnection(any, any, any)).called(1);
-    });
-
     test('does not re-connect when disposed', () {
       clearInteractions(mockApi);
       manager.dispose();

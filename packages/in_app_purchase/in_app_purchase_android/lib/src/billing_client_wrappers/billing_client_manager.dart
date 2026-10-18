@@ -190,15 +190,13 @@ class BillingClientManager {
     }
     _isConnecting = true;
     _readyFuture = Future<BillingResultWrapper>.sync(() async {
-      try {
-        return await client.startConnection(
-          onBillingServiceDisconnected: _connect,
-          billingChoiceMode: _billingChoiceMode,
-          pendingPurchasesParams: _pendingPurchasesParams,
-        );
-      } finally {
-        _isConnecting = false;
-      }
+      final BillingResultWrapper result = await client.startConnection(
+        onBillingServiceDisconnected: _connect,
+        billingChoiceMode: _billingChoiceMode,
+        pendingPurchasesParams: _pendingPurchasesParams,
+      );
+      _isConnecting = false;
+      return result;
     });
     return _readyFuture;
   }
