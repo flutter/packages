@@ -131,6 +131,87 @@ void main() {
       expect(result.responseCode, equals(BillingResponse.ok));
     });
 
+    test('returns the disconnected result when reconnection fails', () async {
+      await manager.runWithClientNonRetryable((_) async {});
+      when(mockApi.startConnection(any, any, any)).thenAnswer(
+        (_) async => PlatformBillingResult(
+          responseCode: PlatformBillingResponse.billingUnavailable,
+          debugMessage: 'Billing service unavailable',
+        ),
+      );
+      clearInteractions(mockApi);
+
+      var timesCalled = 0;
+      final BillingResultWrapper result = await manager.runWithClient((_) async {
+        timesCalled++;
+        return BillingResultWrapper(
+          responseCode: timesCalled < 3 ? BillingResponse.serviceDisconnected : BillingResponse.ok,
+        );
+      });
+
+      expect(result.responseCode, BillingResponse.serviceDisconnected);
+      expect(timesCalled, 1);
+      verify(mockApi.startConnection(any, any, any)).called(1);
+    });
+
+    test('does not retry a disconnected operation more than once', () async {
+      await manager.runWithClientNonRetryable((_) async {});
+      clearInteractions(mockApi);
+
+      var timesCalled = 0;
+      final BillingResultWrapper result = await manager.runWithClient((_) async {
+        timesCalled++;
+        return BillingResultWrapper(
+          responseCode: timesCalled < 3 ? BillingResponse.serviceDisconnected : BillingResponse.ok,
+        );
+      });
+
+      expect(result.responseCode, BillingResponse.serviceDisconnected);
+      expect(timesCalled, 2);
+      verify(mockApi.startConnection(any, any, any)).called(1);
+    });
+
+    test('does not retry when disposed during reconnection', () async {
+      await manager.runWithClientNonRetryable((_) async {});
+      final connection = Completer<PlatformBillingResult>();
+      final reconnectStarted = Completer<void>();
+      when(mockApi.startConnection(any, any, any)).thenAnswer((_) {
+        reconnectStarted.complete();
+        return connection.future;
+      });
+
+      var timesCalled = 0;
+      final Future<BillingResultWrapper> operation = manager.runWithClient((_) async {
+        timesCalled++;
+        return const BillingResultWrapper(responseCode: BillingResponse.serviceDisconnected);
+      });
+      await reconnectStarted.future;
+      manager.dispose();
+      connection.complete(
+        PlatformBillingResult(responseCode: PlatformBillingResponse.ok, debugMessage: ''),
+      );
+
+      expect((await operation).responseCode, BillingResponse.serviceDisconnected);
+      expect(timesCalled, 1);
+    });
+
+    test('allows another connection after a connection throws', () async {
+      await manager.runWithClientNonRetryable((_) async {});
+      when(mockApi.startConnection(any, any, any)).thenThrow(StateError('Connection failed'));
+      await expectLater(
+        manager.reconnectWithBillingChoiceMode(BillingChoiceMode.playBillingOnly),
+        throwsStateError,
+      );
+
+      when(mockApi.startConnection(any, any, any)).thenAnswer(
+        (_) async =>
+            PlatformBillingResult(responseCode: PlatformBillingResponse.ok, debugMessage: ''),
+      );
+      clearInteractions(mockApi);
+      await manager.reconnectWithBillingChoiceMode(BillingChoiceMode.playBillingOnly);
+      verify(mockApi.startConnection(any, any, any)).called(1);
+    });
+
     test('does not re-connect when disposed', () {
       clearInteractions(mockApi);
       manager.dispose();

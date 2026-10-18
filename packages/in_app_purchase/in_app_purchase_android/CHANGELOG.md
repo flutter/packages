@@ -1,3 +1,8 @@
+## 0.5.4+1
+
+* Limits retries when the billing service is disconnected and avoids retaining
+  duplicate disconnection callbacks.
+
 ## 0.5.4
 
 * Fixes a crash (`IllegalStateException: Reply already submitted`) when the

@@ -103,6 +103,24 @@ void main() {
       );
     });
 
+    test('reuses handles for the same disconnect callback', () async {
+      var firstCalls = 0;
+      var secondCalls = 0;
+      void firstCallback() => firstCalls++;
+      void secondCallback() => secondCalls++;
+
+      await billingClient.startConnection(onBillingServiceDisconnected: firstCallback);
+      await billingClient.startConnection(onBillingServiceDisconnected: firstCallback);
+      await billingClient.startConnection(onBillingServiceDisconnected: secondCallback);
+
+      expect(verify(mockApi.startConnection(captureAny, any, any)).captured, <int>[0, 0, 1]);
+      expect(billingClient.hostCallbackHandler.disconnectCallbacks, hasLength(2));
+      billingClient.hostCallbackHandler.onBillingServiceDisconnected(0);
+      billingClient.hostCallbackHandler.onBillingServiceDisconnected(1);
+      expect(firstCalls, 1);
+      expect(secondCalls, 1);
+    });
+
     test('passes billingChoiceMode alternativeBillingOnly when set', () async {
       await billingClient.startConnection(
         onBillingServiceDisconnected: () {},
