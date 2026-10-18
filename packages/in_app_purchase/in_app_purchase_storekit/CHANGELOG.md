@@ -1,3 +1,8 @@
+## 0.4.14
+
+* Adds `showManageSubscriptions` to `InAppPurchaseStoreKitPlatformAddition`, which presents the
+  App Store sheet for managing subscriptions. Requires StoreKit 2 and iOS 15+.
+
 ## 0.4.13+3
 
 * Removes unused handling of the deprecated `SKDownload` hosted content
