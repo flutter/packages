@@ -136,9 +136,9 @@ class MotionTemplateM3E extends TokenTemplateM3E {
 /// The set of springs in the Material specification.
 ///
 /// Material 3 Expressive motion uses springs, grouped into two motion schemes.
-/// The expressive scheme overshoots and bounces into place, and is recommended
-/// for most situations. The standard scheme has minimal bounce and suits more
-/// utilitarian products.
+/// The standard scheme eases into place with minimal bounce, and suits more
+/// utilitarian products. The expressive scheme overshoots and bounces into
+/// place, and suits hero moments and key interactions.
 ///
 /// Each scheme has springs for two types of motion, in three speeds: default,
 /// fast, and slow.
@@ -149,9 +149,8 @@ class MotionTemplateM3E extends TokenTemplateM3E {
 ///   color and opacity.
 ///
 /// Most motion should use the default speed. Smaller elements can use the fast
-/// speed, and larger elements can use the slow speed. In the Material
-/// specification, components are animated with [expressiveFastSpatial] and
-/// [expressiveFastEffects].
+/// speed, and larger elements can use the slow speed. Material components use
+/// the fast spatial and fast effects springs of the selected scheme.
 ///
 /// Material spring tokens do not include mass. These constants use unit mass
 /// to convert Material's damping ratio and stiffness tokens to Flutter's
