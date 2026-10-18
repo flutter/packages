@@ -1,3 +1,7 @@
+## 2.5.0
+
+* Updates internal implementation to use Pigeon JNI.
+
 ## 2.4.29
 
 * Updates Robolectric to 4.17 and adds the JVM arguments it requires for unit tests.
