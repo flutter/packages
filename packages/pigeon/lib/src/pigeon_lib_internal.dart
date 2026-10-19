@@ -2775,7 +2775,7 @@ String? _checkGeneratedBindingsPubspecVersion({
 
   final String? pubspecPath = _findTargetPubspecPath(
     appDirectory: appDirectory,
-    dartOutPath: dartOutPath,
+    dartOutPath: fullDartOut,
     basePath: options.basePath,
   );
   if (pubspecPath == null) {
@@ -2794,11 +2794,30 @@ String? _checkGeneratedBindingsPubspecVersion({
     }
     final dependencies = doc['dependencies'] as yaml.YamlMap?;
     final dependencyOverrides = doc['dependency_overrides'] as yaml.YamlMap?;
-    final Object? rawDependency =
-        dependencyOverrides != null && dependencyOverrides.containsKey(packageName)
+    final bool hasOverride =
+        dependencyOverrides != null && dependencyOverrides.containsKey(packageName);
+    final bool hasDependency =
+        hasOverride || (dependencies != null && dependencies.containsKey(packageName));
+    if (!hasDependency) {
+      return null;
+    }
+    final Object? rawDependency = hasOverride
         ? dependencyOverrides[packageName]
-        : dependencies?[packageName];
-    final Object? rawConstraint = rawDependency is Map ? rawDependency['version'] : rawDependency;
+        : dependencies![packageName];
+    final Object? rawConstraint;
+    if (rawDependency == null) {
+      rawConstraint = 'any';
+    } else if (rawDependency is Map) {
+      if (!rawDependency.containsKey('version') &&
+          (rawDependency.containsKey('path') ||
+              rawDependency.containsKey('git') ||
+              rawDependency.containsKey('sdk'))) {
+        return null;
+      }
+      rawConstraint = rawDependency['version'] ?? 'any';
+    } else {
+      rawConstraint = rawDependency;
+    }
     if (rawConstraint is! String) {
       return null;
     }
@@ -2809,7 +2828,7 @@ String? _checkGeneratedBindingsPubspecVersion({
     );
     final bool allowsLowerVersion = constraint.allowsAny(VersionRange(max: requiredMinVersion));
     final bool allowsHigherMajorVersion = constraint.allowsAny(
-      VersionRange(min: nextMajorVersion, includeMin: true),
+      VersionRange(min: nextMajorVersion.firstPreRelease, includeMin: true),
     );
 
     if (!allowsValidVersion || allowsLowerVersion || allowsHigherMajorVersion) {

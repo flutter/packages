@@ -2521,6 +2521,95 @@ const _$objcVersionCheck = objc.ObjCVersionCheck(9, 6);
       }
     });
 
+    test(
+      'checkObjectiveCPubspecVersion warns on disjoint major, higher major range, bare, and versionless hosted dependencies, and skips path dependencies',
+      () {
+        final Directory tempDir = Directory.systemTemp.createTempSync('pigeon_objc_version_test_');
+        try {
+          final libDir = Directory('${tempDir.path}/lib')..createSync(recursive: true);
+          File('${libDir.path}/messages.g.ffi.dart').writeAsStringSync(r'''
+const _$objcVersionCheck = objc.ObjCVersionCheck(9, 6);
+''');
+          final InternalPigeonOptions options = InternalPigeonOptions.fromPigeonOptions(
+            PigeonOptions(
+              input: 'foo.dart',
+              dartOut: 'lib/messages.g.dart',
+              swiftOut: 'lib/messages.g.swift',
+              swiftOptions: const SwiftOptions(useFfi: true),
+              dartPackageName: 'my_package',
+              basePath: tempDir.path,
+            ),
+          );
+
+          // Constraint allowing no valid version (^10.0.0)
+          File('${tempDir.path}/pubspec.yaml').writeAsStringSync('''
+name: my_package
+dependencies:
+  objective_c: ^10.0.0
+''');
+          expect(
+            checkObjectiveCPubspecVersion(options),
+            allOf(isNotNull, contains('objective_c: ^10.0.0')),
+          );
+
+          // Constraint allowing a higher major (>=9.6.0 <11.0.0)
+          File('${tempDir.path}/pubspec.yaml').writeAsStringSync('''
+name: my_package
+dependencies:
+  objective_c: ">=9.6.0 <11.0.0"
+''');
+          expect(
+            checkObjectiveCPubspecVersion(options),
+            allOf(isNotNull, contains('objective_c: >=9.6.0 <11.0.0')),
+          );
+
+          // Bare dependency (parsed as null -> treated as 'any')
+          File('${tempDir.path}/pubspec.yaml').writeAsStringSync('''
+name: my_package
+dependencies:
+  objective_c:
+''');
+          expect(
+            checkObjectiveCPubspecVersion(options),
+            allOf(isNotNull, contains('objective_c: any')),
+          );
+
+          // Versionless hosted dependency (treated as 'any')
+          File('${tempDir.path}/pubspec.yaml').writeAsStringSync('''
+name: my_package
+dependencies:
+  objective_c:
+    hosted: https://some-package-server.com
+''');
+          expect(
+            checkObjectiveCPubspecVersion(options),
+            allOf(isNotNull, contains('objective_c: any')),
+          );
+
+          // Path dependency without version is skipped
+          File('${tempDir.path}/pubspec.yaml').writeAsStringSync('''
+name: my_package
+dependencies:
+  objective_c:
+    path: ../objective_c
+''');
+          expect(checkObjectiveCPubspecVersion(options), isNull);
+
+          // dependency_overrides takes precedence over dependencies
+          File('${tempDir.path}/pubspec.yaml').writeAsStringSync('''
+name: my_package
+dependencies:
+  objective_c: ^9.5.0
+dependency_overrides:
+  objective_c: ^9.6.0
+''');
+          expect(checkObjectiveCPubspecVersion(options), isNull);
+        } finally {
+          tempDir.deleteSync(recursive: true);
+        }
+      },
+    );
+
     test('KotlinOptions serialization/deserialization with jniClassPaths', () {
       const options = KotlinOptions(jniClassPaths: <String>['foo/bar', 'baz.jar']);
       final Map<String, Object> map = options.toMap();
