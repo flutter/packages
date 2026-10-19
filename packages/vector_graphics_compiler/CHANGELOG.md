@@ -1,7 +1,7 @@
 ## 1.3.3
 
-* Fixes a crash when `text` or `tspan` has a list of `x`, `y`, `dx` or `dy`
-  values. The first value is used.
+* Throws an `UnimplementedError` instead of a `FormatException` when `text` or
+  `tspan` has a list of `x`, `y`, `dx` or `dy` values, which isn't supported.
 
 ## 1.3.2
 

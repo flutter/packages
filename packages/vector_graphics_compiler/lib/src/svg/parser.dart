@@ -1572,15 +1572,17 @@ class SvgParser {
 
   static final RegExp _listSeparator = RegExp(r'[\s,]');
 
-  // Text and tspan can list one coordinate per character. Per-character
-  // positioning isn't supported, so only the first coordinate is used.
-  String? _firstListValue(String? raw) {
+  // Text and tspan can list one coordinate per character, which isn't
+  // supported. Fail with a clear message instead of a FormatException.
+  String? _singleCoordinate(String name, String? raw) {
     if (raw == null) {
       return null;
     }
     final String trimmed = raw.trim();
-    final int end = trimmed.indexOf(_listSeparator);
-    return end == -1 ? trimmed : trimmed.substring(0, end);
+    if (trimmed.contains(_listSeparator)) {
+      throw UnimplementedError('A list of values for "$name" is not supported: "$trimmed"');
+    }
+    return trimmed;
   }
 
   SvgAttributes _createSvgAttributes(Map<String, String> attributeMap, {Color? currentColor}) {
@@ -1589,11 +1591,11 @@ class SvgParser {
     final Color? color =
         parseColor(attributeMap['color'], attributeName: 'color', id: id) ?? currentColor;
 
-    final String? rawX = _firstListValue(attributeMap['x']);
-    final String? rawY = _firstListValue(attributeMap['y']);
+    final String? rawX = _singleCoordinate('x', attributeMap['x']);
+    final String? rawY = _singleCoordinate('y', attributeMap['y']);
 
-    final String? rawDx = _firstListValue(attributeMap['dx']);
-    final String? rawDy = _firstListValue(attributeMap['dy']);
+    final String? rawDx = _singleCoordinate('dx', attributeMap['dx']);
+    final String? rawDy = _singleCoordinate('dy', attributeMap['dy']);
 
     return SvgAttributes._(
       raw: attributeMap,
