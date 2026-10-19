@@ -67,8 +67,12 @@ const Duration _kToolbarTransitionDuration = Duration(milliseconds: 125);
 ///   * [CupertinoTextSelectionToolbar.toolbarBuilder], which is of this type.
 ///   * [TextSelectionToolbar.toolbarBuilder], which is similar, but for an
 ///     Material-style toolbar.
-typedef CupertinoToolbarBuilder =
-    Widget Function(BuildContext context, Offset anchorAbove, Offset anchorBelow, Widget child);
+typedef CupertinoToolbarBuilder = Widget Function(
+  BuildContext context,
+  Offset anchorAbove,
+  Offset anchorBelow,
+  Widget child,
+);
 
 /// An iOS-style text selection toolbar.
 ///
@@ -292,9 +296,8 @@ class _RenderCupertinoTextSelectionToolbarShape extends RenderShiftedBox {
   bool _isAbove(double childHeight) => anchorAbove.dy >= childHeight - _kToolbarArrowSize.height;
 
   BoxConstraints _constraintsForChild(BoxConstraints constraints) {
-    return BoxConstraints(
-      minWidth: _kToolbarArrowSize.width + _kToolbarBorderRadius.x * 2,
-    ).enforce(constraints.loosen());
+    return BoxConstraints(minWidth: _kToolbarArrowSize.width + _kToolbarBorderRadius.x * 2)
+        .enforce(constraints.loosen());
   }
 
   Offset _computeChildOffset(Size childSize) {

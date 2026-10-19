@@ -21,9 +21,8 @@ void main() {
     );
 
     expect(
-      IterableRouteWithDefaultValues(
-        doubleSetField: <double>{0.0, 1.0},
-      ).location,
+      IterableRouteWithDefaultValues(doubleSetField: <double>{0.0, 1.0})
+          .location,
       '/iterable-route-with-default-values?double-set-field=0.0&double-set-field=1.0',
     );
 
@@ -36,9 +35,8 @@ void main() {
     );
 
     expect(
-      const IterableRouteWithDefaultValues(
-        intSetField: <int>{0, 1, 2},
-      ).location,
+      const IterableRouteWithDefaultValues(intSetField: <int>{0, 1, 2})
+          .location,
       '/iterable-route-with-default-values?int-set-field=0&int-set-field=1&int-set-field=2',
     );
   });

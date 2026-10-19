@@ -11,6 +11,7 @@
 #import <PhotosUI/PHPhotoLibrary+PhotosUISupport.h>
 #import <PhotosUI/PhotosUI.h>
 #import <UIKit/UIKit.h>
+#import <UniformTypeIdentifiers/UniformTypeIdentifiers.h>
 
 #import "./include/image_picker_ios/messages.g.h"
 #import "FLTImagePickerImageUtil.h"
@@ -40,14 +41,6 @@
 
 /// The view provider to use for displaying native view controllers.
 @property(nonatomic, nonnull) NSObject<FIPViewProvider> *viewProvider;
-/// A temporary UIWindow placed above Flutter's window to swallow all user
-/// interactions while UIImagePickerController is dismissing. This prevents
-/// stray taps from leaking to the Flutter view during the dismissal animation.
-@property(strong, nonatomic) UIWindow *interactionBlockerWindow;
-
-/// The previously active key window before the interactionBlockerWindow is
-/// shown. Stored so we can restore the original key window after dismissal.
-@property(weak, nonatomic) UIWindow *previousKeyWindow;
 
 @end
 
@@ -65,6 +58,13 @@ typedef NS_ENUM(NSInteger, ImagePickerClassType) { UIImagePickerClassType, PHPic
   self = [super init];
   if (self) {
     _viewProvider = viewProvider;
+    _cameraAvailability = [[FIPDefaultCameraAvailability alloc] init];
+    _cameraPermissionChecker = [[FIPDefaultCameraPermissionChecker alloc] init];
+    _photoLibraryPermissionChecker = [[FIPDefaultPhotoLibraryPermissionChecker alloc] init];
+    if (@available(iOS 14.0, *)) {
+      _phPickerCreator = [[FIPDefaultPHPickerCreator alloc] init];
+    }
+    _imageDataRequester = [[FIPDefaultImageDataRequester alloc] init];
   }
   return self;
 }
@@ -112,7 +112,7 @@ typedef NS_ENUM(NSInteger, ImagePickerClassType) { UIImagePickerClassType, PHPic
   config.filter = [PHPickerFilter anyFilterMatchingSubfilters:filters];
 
   PHPickerViewController *pickerViewController =
-      [[PHPickerViewController alloc] initWithConfiguration:config];
+      [self.phPickerCreator makePickerWithConfiguration:config];
   pickerViewController.delegate = self;
   pickerViewController.presentationController.delegate = self;
   self.callContext = context;
@@ -127,10 +127,10 @@ typedef NS_ENUM(NSInteger, ImagePickerClassType) { UIImagePickerClassType, PHPic
   imagePickerController.delegate = self;
   NSMutableArray<NSString *> *mediaTypes = [[NSMutableArray alloc] init];
   if (context.includeImages) {
-    [mediaTypes addObject:(NSString *)kUTTypeImage];
+    [mediaTypes addObject:UTTypeImage.identifier];
   }
   if (context.includeVideo) {
-    [mediaTypes addObject:(NSString *)kUTTypeMovie];
+    [mediaTypes addObject:UTTypeMovie.identifier];
     imagePickerController.videoQuality = UIImagePickerControllerQualityTypeHigh;
   }
   imagePickerController.mediaTypes = mediaTypes;
@@ -321,8 +321,8 @@ typedef NS_ENUM(NSInteger, ImagePickerClassType) { UIImagePickerClassType, PHPic
     }
   }
   // Camera is not available on simulators
-  if ([UIImagePickerController isSourceTypeAvailable:UIImagePickerControllerSourceTypeCamera] &&
-      [UIImagePickerController isCameraDeviceAvailable:device]) {
+  if ([self.cameraAvailability isSourceTypeAvailable:UIImagePickerControllerSourceTypeCamera] &&
+      [self.cameraAvailability isCameraDeviceAvailable:device]) {
     imagePickerController.sourceType = UIImagePickerControllerSourceTypeCamera;
     imagePickerController.cameraDevice = device;
     UIViewController *presentingController =
@@ -349,23 +349,25 @@ typedef NS_ENUM(NSInteger, ImagePickerClassType) { UIImagePickerClassType, PHPic
 
 - (void)checkCameraAuthorizationWithImagePicker:(UIImagePickerController *)imagePickerController
                                          camera:(UIImagePickerControllerCameraDevice)device {
-  AVAuthorizationStatus status = [AVCaptureDevice authorizationStatusForMediaType:AVMediaTypeVideo];
+  AVAuthorizationStatus status =
+      [self.cameraPermissionChecker authorizationStatusForMediaType:AVMediaTypeVideo];
 
   switch (status) {
     case AVAuthorizationStatusAuthorized:
       [self showCamera:device withImagePicker:imagePickerController];
       break;
     case AVAuthorizationStatusNotDetermined: {
-      [AVCaptureDevice requestAccessForMediaType:AVMediaTypeVideo
-                               completionHandler:^(BOOL granted) {
-                                 dispatch_async(dispatch_get_main_queue(), ^{
-                                   if (granted) {
-                                     [self showCamera:device withImagePicker:imagePickerController];
-                                   } else {
-                                     [self errorNoCameraAccess:AVAuthorizationStatusDenied];
-                                   }
-                                 });
-                               }];
+      [self.cameraPermissionChecker
+          requestAccessForMediaType:AVMediaTypeVideo
+                  completionHandler:^(BOOL granted) {
+                    dispatch_async(dispatch_get_main_queue(), ^{
+                      if (granted) {
+                        [self showCamera:device withImagePicker:imagePickerController];
+                      } else {
+                        [self errorNoCameraAccess:AVAuthorizationStatusDenied];
+                      }
+                    });
+                  }];
       break;
     }
     case AVAuthorizationStatusDenied:
@@ -377,10 +379,10 @@ typedef NS_ENUM(NSInteger, ImagePickerClassType) { UIImagePickerClassType, PHPic
 }
 
 - (void)checkPhotoAuthorizationWithImagePicker:(UIImagePickerController *)imagePickerController {
-  PHAuthorizationStatus status = [PHPhotoLibrary authorizationStatus];
+  PHAuthorizationStatus status = [self.photoLibraryPermissionChecker authorizationStatus];
   switch (status) {
     case PHAuthorizationStatusNotDetermined: {
-      [PHPhotoLibrary requestAuthorization:^(PHAuthorizationStatus status) {
+      [self.photoLibraryPermissionChecker requestAuthorization:^(PHAuthorizationStatus status) {
         dispatch_async(dispatch_get_main_queue(), ^{
           if (status == PHAuthorizationStatusAuthorized) {
             [self showPhotoLibraryWithImagePicker:imagePickerController];
@@ -473,6 +475,11 @@ typedef NS_ENUM(NSInteger, ImagePickerClassType) { UIImagePickerClassType, PHPic
 
 - (void)picker:(PHPickerViewController *)picker
     didFinishPicking:(NSArray<PHPickerResult *> *)results API_AVAILABLE(ios(14)) {
+  [self processPickerItems:(NSArray<id<FIPPickerItem>> *)results fromPicker:picker];
+}
+
+- (void)processPickerItems:(NSArray<id<FIPPickerItem>> *)results
+                fromPicker:(PHPickerViewController *)picker API_AVAILABLE(ios(14)) {
   [picker dismissViewControllerAnimated:YES completion:nil];
   if (results.count == 0) {
     [self sendCallResultWithSavedPathList:nil];
@@ -503,7 +510,7 @@ typedef NS_ENUM(NSInteger, ImagePickerClassType) { UIImagePickerClassType, PHPic
     saveQueue = nil;
   }];
 
-  [results enumerateObjectsUsingBlock:^(PHPickerResult *result, NSUInteger index, BOOL *stop) {
+  [results enumerateObjectsUsingBlock:^(id<FIPPickerItem> result, NSUInteger index, BOOL *stop) {
     // NSNull means it hasn't saved yet.
     [pathList addObject:[NSNull null]];
     FLTPHPickerSaveImageToPathOperation *saveOperation =
@@ -596,29 +603,15 @@ typedef NS_ENUM(NSInteger, ImagePickerClassType) { UIImagePickerClassType, PHPic
                                    maxHeight:maxHeight
                                 imageQuality:desiredImageQuality];
       };
-      if (@available(iOS 13.0, *)) {
-        [[PHImageManager defaultManager]
-            requestImageDataAndOrientationForAsset:originalAsset
-                                           options:nil
-                                     resultHandler:^(NSData *_Nullable imageData,
-                                                     NSString *_Nullable dataUTI,
-                                                     CGImagePropertyOrientation orientation,
-                                                     NSDictionary *_Nullable info) {
-                                       resultHandler(imageData, dataUTI, info);
-                                     }];
-      } else {
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-declarations"
-        [[PHImageManager defaultManager]
-            requestImageDataForAsset:originalAsset
-                             options:nil
-                       resultHandler:^(NSData *_Nullable imageData, NSString *_Nullable dataUTI,
-                                       UIImageOrientation orientation,
-                                       NSDictionary *_Nullable info) {
-                         resultHandler(imageData, dataUTI, info);
-                       }];
-#pragma clang diagnostic pop
-      }
+      [self.imageDataRequester
+          requestImageDataAndOrientationForAsset:originalAsset
+                                         options:nil
+                                   resultHandler:^(NSData *_Nullable imageData,
+                                                   NSString *_Nullable dataUTI,
+                                                   CGImagePropertyOrientation orientation,
+                                                   NSDictionary *_Nullable info) {
+                                     resultHandler(imageData, dataUTI, info);
+                                   }];
     }
   }
 }

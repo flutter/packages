@@ -48,6 +48,14 @@ void main() {
     expect(code, isNot(contains('containsKey')));
   });
 
+  test('fileSpecificClassNameComponent defaults to UpperCamelCase from kotlinOut', () {
+    final kotlinOptions = InternalKotlinOptions.fromKotlinOptions(
+      const KotlinOptions(),
+      kotlinOut: 'path/to/messages.g.kt',
+    );
+    expect(kotlinOptions.fileSpecificClassNameComponent, equals('Messages'));
+  });
+
   test('gen one enum', () {
     final anEnum = Enum(
       name: 'Foobar',
@@ -1665,6 +1673,91 @@ void main() {
     expect(code, contains(': RuntimeException()'));
   });
 
+  group('native interop @Keep', () {
+    final anEnum = Enum(
+      name: 'AnEnum',
+      members: <EnumMember>[
+        EnumMember(name: 'one'),
+        EnumMember(name: 'two'),
+      ],
+    );
+    final dataClass = Class(
+      name: 'DataClass',
+      fields: <NamedType>[
+        NamedType(
+          name: 'anEnum',
+          type: TypeDeclaration(baseName: 'AnEnum', isNullable: true, associatedEnum: anEnum),
+        ),
+      ],
+    );
+    final dataClassType = TypeDeclaration(
+      baseName: 'DataClass',
+      isNullable: false,
+      associatedClass: dataClass,
+    );
+    final root = Root(
+      apis: <Api>[
+        AstHostApi(
+          name: 'HostApi',
+          methods: <Method>[
+            Method(
+              name: 'echo',
+              location: ApiLocation.host,
+              returnType: dataClassType,
+              parameters: <Parameter>[Parameter(name: 'value', type: dataClassType)],
+            ),
+          ],
+        ),
+        AstFlutterApi(
+          name: 'FlutterApi',
+          methods: <Method>[
+            Method(
+              name: 'onEvent',
+              location: ApiLocation.flutter,
+              returnType: const TypeDeclaration.voidDeclaration(),
+              parameters: <Parameter>[],
+            ),
+          ],
+        ),
+      ],
+      classes: <Class>[dataClass],
+      enums: <Enum>[anEnum],
+    );
+
+    String generate({required bool useJni}) {
+      final sink = StringBuffer();
+      const KotlinGenerator().generate(
+        InternalKotlinOptions(errorClassName: 'FooError', kotlinOut: '', useJni: useJni),
+        root,
+        sink,
+        dartPackageName: DEFAULT_PACKAGE_NAME,
+      );
+      return sink.toString();
+    }
+
+    test('is added to every type the generated Dart reaches through JNI', () {
+      final String code = generate(useJni: true);
+      expect(code, contains('import androidx.annotation.Keep'));
+      expect(code, contains('@Keep\nclass FooError ('));
+      expect(code, contains('@Keep\nenum class AnEnum('));
+      expect(code, contains('@Keep\n  companion object {\n    fun ofRaw(raw: Int): AnEnum?'));
+      expect(code, contains('@Keep\ndata class DataClass ('));
+      expect(code, contains('@Keep\ninterface HostApi {'));
+      expect(code, contains('@Keep\nclass HostApiRegistrar : HostApi {'));
+      expect(code, contains('@Keep\ninterface FlutterApi {'));
+      expect(code, contains('@Keep\nclass FlutterApiRegistrar() {'));
+    });
+
+    test('is not added when not using JNI', () {
+      final String code = generate(useJni: false);
+      expect(code, contains('class FooError ('));
+      expect(code, contains('enum class AnEnum('));
+      expect(code, contains('data class DataClass ('));
+      expect(code, isNot(contains('@Keep')));
+      expect(code, isNot(contains('import androidx.annotation.Keep')));
+    });
+  });
+
   test('do not generate duplicated entries in writeValue', () {
     final root = Root(
       apis: <Api>[
@@ -1879,6 +1972,51 @@ void main() {
     expect(code, contains('const val boolConst: Boolean = true'));
     expect(code, contains(r'const val stringWithBackslashDollar: String = "\\\$"'));
     expect(code, contains(r'const val stringWithTwoBackslashesDollar: String = "\\\\\$"'));
+  });
+
+  test('kotlin generator handles HostApi and FlutterApi deregistration with null', () {
+    final root = Root(
+      apis: <Api>[
+        AstHostApi(
+          name: 'HostApi',
+          methods: <Method>[
+            Method(
+              name: 'doSomething',
+              location: ApiLocation.host,
+              returnType: const TypeDeclaration.voidDeclaration(),
+              parameters: <Parameter>[],
+            ),
+          ],
+        ),
+        AstFlutterApi(
+          name: 'FlutterApi',
+          methods: <Method>[
+            Method(
+              name: 'onEvent',
+              location: ApiLocation.flutter,
+              returnType: const TypeDeclaration.voidDeclaration(),
+              parameters: <Parameter>[],
+            ),
+          ],
+        ),
+      ],
+      classes: <Class>[],
+      enums: <Enum>[],
+    );
+    final sink = StringBuffer();
+    const kotlinOptions = InternalKotlinOptions(kotlinOut: '', useJni: true);
+    const generator = KotlinGenerator();
+    generator.generate(kotlinOptions, root, sink, dartPackageName: DEFAULT_PACKAGE_NAME);
+    final code = sink.toString();
+    expect(code, contains('interface HostApi {'));
+    expect(code, contains('class HostApiRegistrar : HostApi {'));
+    expect(code, contains('api: HostApi?,'));
+    expect(code, contains('HostApiInstances.remove(name)'));
+    expect(
+      code,
+      contains('fun registerInstance(api: FlutterApi?, name: String = defaultInstanceName)'),
+    );
+    expect(code, contains('registeredFlutterApi.remove(name)'));
   });
 
   test('asyncCallback emits callback-based host api method', () {

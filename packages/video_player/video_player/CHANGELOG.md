@@ -5,6 +5,12 @@
   implementation packages: `WidevineDrmConfiguration` from `video_player_android`
   and `FairPlayDrmConfiguration` from `video_player_avfoundation`.
 
+## 2.14.1
+
+* Fixes late position updates after a controller is disposed.
+* Updates the example app to Robolectric 4.17.
+* Updates minimum supported SDK version to Flutter 3.41/Dart 3.11.
+
 ## 2.14.0
 
 * Adds video quality selection support for HLS/DASH adaptive streams via

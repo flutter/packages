@@ -3,6 +3,11 @@
 * Adds `WidevineDrmConfiguration`, allowing playback of Widevine-protected
   network streams via Media3's DRM support.
 
+## 2.12.3
+
+* Updates Robolectric to 4.17 and adds the JVM arguments it requires for unit tests.
+* Updates minimum supported SDK version to Flutter 3.41/Dart 3.11.
+
 ## 2.12.2
 
 * Fixes a [bug](https://github.com/flutter/flutter/issues/132934) where videos with a pixel aspect ratio other than 1.0 (anamorphic content) reported their coded size instead of their display size, causing them to be rendered stretched.

@@ -3,6 +3,11 @@
 * Adds `FairPlayDrmConfiguration`, allowing playback of FairPlay-protected
   network streams on iOS and macOS.
 
+## 2.12.1
+
+* Fixes a crash when a video track reports a zero `minFrameDuration`.
+* Updates minimum supported SDK version to Flutter 3.41/Dart 3.11.
+
 ## 2.12.0
 
 * Routes video over AirPlay when an external screen is active, by setting
