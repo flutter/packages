@@ -97,12 +97,12 @@ Different platforms support different type group filter options. To avoid
 filters that cover all platforms you are targeting, or that you conditionally
 pass different `XTypeGroup`s based on `Platform`.
 
-|                          | Andoid | iOS | Linux | macOS  | Web | Windows     |
-|--------------------------|--------|-----|-------|--------|-----|-------------|
-| `extensions`             | ✔️      |     | ✔️     | ✔️      | ✔️   | ✔️           |
-| `mimeTypes`              | ✔️      |     | ✔️     | ✔️      | ✔️   |             |
-| `uniformTypeIdentifiers` |        | ✔️   |       | ✔️      |     |             |
-| `webWildCards`           |        |     |       |        | ✔️   |             |
+|                          | Android | iOS | Linux | macOS | Web | Windows |
+|--------------------------|---------|-----|-------|-------|-----|---------|
+| `extensions`             | ✔️      |     | ✔️    | ✔️    | ✔️  | ✔️      |
+| `mimeTypes`              | ✔️      |     | ✔️    | ✔️    | ✔️  |         |
+| `uniformTypeIdentifiers` |         | ✔️  |       | ✔️    |     |         |
+| `webWildCards`           |         |     |       |       | ✔️  |         |
 
 ### Features supported by platform
 
