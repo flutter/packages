@@ -556,6 +556,10 @@ data class PlatformWidevineDrmConfiguration(
     result = 31 * result + MessagesPigeonUtils.deepHash(this.licenseHeaders)
     return result
   }
+
+  override fun toString(): String {
+    return "PlatformWidevineDrmConfiguration(licenseUri=$licenseUri, licenseHeaders=$licenseHeaders)"
+  }
 }
 
 /** Generated class from Pigeon that represents data sent in messages. */
@@ -619,7 +623,7 @@ data class CreationOptions(
   }
 
   override fun toString(): String {
-    return "CreationOptions(uri=$uri, formatHint=$formatHint, httpHeaders=$httpHeaders, userAgent=$userAgent, backBufferDurationMs=$backBufferDurationMs)"
+    return "CreationOptions(uri=$uri, formatHint=$formatHint, httpHeaders=$httpHeaders, userAgent=$userAgent, backBufferDurationMs=$backBufferDurationMs, widevineDrm=$widevineDrm)"
   }
 }
 

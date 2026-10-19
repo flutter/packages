@@ -429,6 +429,11 @@ class PlatformWidevineDrmConfiguration {
   @override
   // ignore: avoid_equals_and_hash_code_on_mutable_classes
   int get hashCode => _deepHash(<Object?>[runtimeType, ..._toList()]);
+
+  @override
+  String toString() {
+    return 'PlatformWidevineDrmConfiguration(licenseUri: $licenseUri, licenseHeaders: $licenseHeaders)';
+  }
 }
 
 class CreationOptions {
@@ -496,7 +501,7 @@ class CreationOptions {
 
   @override
   String toString() {
-    return 'CreationOptions(uri: $uri, formatHint: $formatHint, httpHeaders: $httpHeaders, userAgent: $userAgent, backBufferDurationMs: $backBufferDurationMs)';
+    return 'CreationOptions(uri: $uri, formatHint: $formatHint, httpHeaders: $httpHeaders, userAgent: $userAgent, backBufferDurationMs: $backBufferDurationMs, widevineDrm: $widevineDrm)';
   }
 }
 
