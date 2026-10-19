@@ -1456,8 +1456,9 @@ class _CupertinoDraggableScrollableSheetState<T>
   void _dragUpdate(double delta) {
     assert(mounted);
     if (_dragGestureController != null) {
+      final double sheetHeight = _sheetHeight;
       _dragGestureController!.dragUpdate(
-        delta / (_sheetHeight - (_sheetHeight * _kTopGapRatio)),
+        delta / (sheetHeight - (sheetHeight * _kTopGapRatio)),
         null,
       );
     }
