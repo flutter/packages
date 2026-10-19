@@ -1,3 +1,1 @@
 # Packages excluded from the deprecated-API Xcode analyze check.
-# TODO(jmagman): Remove after https://github.com/flutter/packages/pull/13197 lands.
-- video_player_avfoundation
