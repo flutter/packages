@@ -469,7 +469,7 @@ protocol PlatformEvent {
 }
 
 /// Generated class from Pigeon that represents data sent in messages.
-struct IntEvent: PlatformEvent {
+struct IntEvent: PlatformEvent, Hashable, CustomStringConvertible {
   var value: Int64
 
   // swift-format-ignore: AlwaysUseLowerCamelCase
@@ -503,7 +503,7 @@ struct IntEvent: PlatformEvent {
 }
 
 /// Generated class from Pigeon that represents data sent in messages.
-struct StringEvent: PlatformEvent {
+struct StringEvent: PlatformEvent, Hashable, CustomStringConvertible {
   var value: String
 
   // swift-format-ignore: AlwaysUseLowerCamelCase
@@ -537,7 +537,7 @@ struct StringEvent: PlatformEvent {
 }
 
 /// Generated class from Pigeon that represents data sent in messages.
-struct BoolEvent: PlatformEvent {
+struct BoolEvent: PlatformEvent, Hashable, CustomStringConvertible {
   var value: Bool
 
   // swift-format-ignore: AlwaysUseLowerCamelCase
@@ -571,7 +571,7 @@ struct BoolEvent: PlatformEvent {
 }
 
 /// Generated class from Pigeon that represents data sent in messages.
-struct DoubleEvent: PlatformEvent {
+struct DoubleEvent: PlatformEvent, Hashable, CustomStringConvertible {
   var value: Double
 
   // swift-format-ignore: AlwaysUseLowerCamelCase
@@ -605,7 +605,7 @@ struct DoubleEvent: PlatformEvent {
 }
 
 /// Generated class from Pigeon that represents data sent in messages.
-struct ObjectsEvent: PlatformEvent {
+struct ObjectsEvent: PlatformEvent, Hashable, CustomStringConvertible {
   var value: Any
 
   // swift-format-ignore: AlwaysUseLowerCamelCase
@@ -639,7 +639,7 @@ struct ObjectsEvent: PlatformEvent {
 }
 
 /// Generated class from Pigeon that represents data sent in messages.
-struct EnumEvent: PlatformEvent {
+struct EnumEvent: PlatformEvent, Hashable, CustomStringConvertible {
   var value: EventEnum
 
   // swift-format-ignore: AlwaysUseLowerCamelCase
@@ -673,7 +673,7 @@ struct EnumEvent: PlatformEvent {
 }
 
 /// Generated class from Pigeon that represents data sent in messages.
-struct ClassEvent: PlatformEvent {
+struct ClassEvent: PlatformEvent, Hashable, CustomStringConvertible {
   var value: EventAllNullableTypes
 
   // swift-format-ignore: AlwaysUseLowerCamelCase
@@ -707,7 +707,7 @@ struct ClassEvent: PlatformEvent {
 }
 
 /// Generated class from Pigeon that represents data sent in messages.
-struct EmptyEvent: PlatformEvent {
+struct EmptyEvent: PlatformEvent, Hashable, CustomStringConvertible {
 
   // swift-format-ignore: AlwaysUseLowerCamelCase
   static func fromList(_ pigeonVar_list: [Any?]) -> EmptyEvent? {

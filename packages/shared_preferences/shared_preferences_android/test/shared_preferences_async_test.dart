@@ -6,7 +6,7 @@
 
 import 'dart:convert';
 
-import 'package:flutter/src/services/binary_messenger.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences_android/shared_preferences_android.dart';
 import 'package:shared_preferences_android/src/messages_async.g.dart';
@@ -212,6 +212,22 @@ void main() {
       expect(await preferences.getDouble(doubleKey, emptyOptions), testDouble);
       expect(await preferences.getStringList(listKey, emptyOptions), testList);
     });
+
+    test('throws TypeError when backend throws ClassCastException with $backend', () async {
+      final api = _FakeSharedPreferencesApi()
+        ..exceptionToThrow = PlatformException(
+          code: 'PlatformException',
+          message: 'java.lang.String cannot be cast to java.lang.Boolean',
+          stacktrace:
+              'java.lang.ClassCastException: java.lang.String cannot be cast to java.lang.Boolean\n\tat ...',
+        );
+      final preferences = SharedPreferencesAsyncAndroid(
+        dataStoreApi: api,
+        sharedPreferencesApi: api,
+      );
+
+      await expectLater(preferences.getBool(stringKey, emptyOptions), throwsA(isA<TypeError>()));
+    });
   }
 
   runTests(true);
@@ -220,6 +236,7 @@ void main() {
 
 class _FakeSharedPreferencesApi implements SharedPreferencesAsyncApi {
   final Map<String, Object> items = <String, Object>{};
+  PlatformException? exceptionToThrow;
 
   @override
   BinaryMessenger? get pigeonVar_binaryMessenger => throw UnimplementedError();
@@ -252,6 +269,9 @@ class _FakeSharedPreferencesApi implements SharedPreferencesAsyncApi {
 
   @override
   Future<bool?> getBool(String key, SharedPreferencesPigeonOptions options) async {
+    if (exceptionToThrow != null) {
+      throw exceptionToThrow!;
+    }
     return items[key] as bool?;
   }
 

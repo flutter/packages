@@ -82,4 +82,25 @@ NS_SWIFT_NAME(DefaultPHPickerCreator)
 @interface FIPDefaultPHPickerCreator : NSObject <FIPPHPickerCreating>
 @end
 
+#pragma mark -
+
+/// Requests image bytes for a `PHAsset`.
+///
+/// This protocol exists to allow injecting an alternate implementation for testing.
+NS_SWIFT_NAME(ImageDataRequesting)
+@protocol FIPImageDataRequesting <NSObject>
+- (void)requestImageDataAndOrientationForAsset:(PHAsset *)asset
+                                       options:(nullable PHImageRequestOptions *)options
+                                 resultHandler:(void (^)(NSData *_Nullable imageData,
+                                                         NSString *_Nullable dataUTI,
+                                                         CGImagePropertyOrientation orientation,
+                                                         NSDictionary *_Nullable info))resultHandler
+    NS_SWIFT_NAME(requestImageDataAndOrientation(for:options:resultHandler:));
+@end
+
+/// Production implementation that forwards to `PHImageManager`.
+NS_SWIFT_NAME(DefaultImageDataRequester)
+@interface FIPDefaultImageDataRequester : NSObject <FIPImageDataRequesting>
+@end
+
 NS_ASSUME_NONNULL_END

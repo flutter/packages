@@ -147,6 +147,7 @@ class _MyAppState extends State<_MyApp> {
             _buildProductList(),
             _buildConsumableBox(),
             _buildCodeRedemptionButton(),
+            _buildShowManageSubscriptionsButton(),
             _buildRestoreButton(),
           ],
         ),
@@ -413,6 +414,29 @@ class _MyAppState extends State<_MyApp> {
             ),
             onPressed: () => _iapStoreKitPlatformAddition.presentCodeRedemptionSheet(),
             child: const Text('Show code redemption sheet'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildShowManageSubscriptionsButton() {
+    if (_loading) {
+      return Container();
+    }
+
+    return Padding(
+      padding: const EdgeInsets.all(4.0),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.end,
+        children: <Widget>[
+          TextButton(
+            style: TextButton.styleFrom(
+              backgroundColor: Theme.of(context).colorScheme.primary,
+              foregroundColor: Colors.white,
+            ),
+            onPressed: () => _iapStoreKitPlatformAddition.showManageSubscriptions(),
+            child: const Text('Manage subscriptions'),
           ),
         ],
       ),

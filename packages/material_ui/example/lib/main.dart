@@ -9,7 +9,7 @@ import 'badge/badge.0.dart' as badge_0;
 import 'button_style/button_style.0.dart' as button_style_0;
 import 'floating_action_button/floating_action_button.1.dart'
     as floating_action_button_1;
-import 'icon_button/icon_button.3.dart' as icon_button_3;
+import 'icon_button/icon_button.4.dart' as icon_button_4;
 import 'segmented_button/segmented_button.0.dart' as segmented_button_0;
 import 'card/card.2.dart' as card_2;
 import 'carousel/carousel.0.dart' as carousel_0;
@@ -28,6 +28,7 @@ import 'progress_indicator/linear_progress_indicator.0.dart'
 import 'progress_indicator/circular_progress_indicator.0.dart'
     as circular_progress_indicator_0;
 import 'dropdown_menu/dropdown_menu.1.dart' as dropdown_menu_1;
+import 'material_shapes/material_shapes.0.dart' as material_shapes_0;
 import 'navigation_bar/navigation_bar.1.dart' as navigation_bar_1;
 import 'navigation_rail/navigation_rail.0.dart' as navigation_rail_0;
 import 'navigation_drawer/navigation_drawer.0.dart' as navigation_drawer_0;
@@ -75,10 +76,10 @@ class ExampleApp extends StatelessWidget {
           const floating_action_button_1.FloatingActionButtonExampleApp(),
     ),
     _Example(
-      filepath: 'icon_button/icon_button.3.dart',
+      filepath: 'icon_button/icon_button.4.dart',
       title: 'Icon buttons',
       builder: (BuildContext context) =>
-          const icon_button_3.IconButtonToggleApp(),
+          const icon_button_4.IconButtonM3EExampleApp(),
     ),
     _Example(
       filepath: 'segmented_button/segmented_button.0.dart',
@@ -160,6 +161,12 @@ class ExampleApp extends StatelessWidget {
       title: 'Circular progress indicators',
       builder: (BuildContext context) =>
           const circular_progress_indicator_0.ProgressIndicatorExampleApp(),
+    ),
+    _Example(
+      filepath: 'material_shapes/material_shapes.0.dart',
+      title: 'Material 3 Expressive shapes',
+      builder: (BuildContext context) =>
+          const material_shapes_0.MaterialShapesExampleApp(),
     ),
     _Example(
       filepath: 'dropdown_menu/dropdown_menu.1.dart',

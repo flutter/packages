@@ -150,7 +150,6 @@ import 'package:swiftgen/swiftgen.dart';
         }
         for (final Api api in root.apis) {
           if (api is AstHostApi) {
-            indent.writeln("'${api.name}',");
             indent.writeln("'${api.name}Setup',");
           }
           if (api is AstFlutterApi) {

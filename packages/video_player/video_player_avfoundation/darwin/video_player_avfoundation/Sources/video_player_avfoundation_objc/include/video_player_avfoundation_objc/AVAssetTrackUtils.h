@@ -10,3 +10,6 @@
 /// Note: https://stackoverflow.com/questions/64161544
 /// `AVAssetTrack.preferredTransform` can have wrong `tx` and `ty`.
 CGAffineTransform FVPGetStandardizedTrackTransform(CGAffineTransform t, CGSize size);
+
+/// Returns true if the given CMTime is valid and strictly positive.
+BOOL FVPFrameDurationIsValid(CMTime frameDuration);

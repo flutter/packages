@@ -1,6 +1,6 @@
 ## 18.1.0
 
-- Adds support for generated redirect-only routes that conditionally allow child routes to render.
+- Adds `clipBehavior` to `ShellRoute` and `StatefulShellBranch`, forwarded to the nested `Navigator`.
 
 ## 18.0.2
 

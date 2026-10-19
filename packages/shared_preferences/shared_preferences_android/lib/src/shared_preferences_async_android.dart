@@ -22,14 +22,20 @@ base class SharedPreferencesAsyncAndroid extends SharedPreferencesAsyncPlatform 
   SharedPreferencesAsyncAndroid({
     @visibleForTesting SharedPreferencesAsyncApi? dataStoreApi,
     @visibleForTesting SharedPreferencesAsyncApi? sharedPreferencesApi,
-  }) : _dataStoreApi =
-           dataStoreApi ?? SharedPreferencesAsyncApi(messageChannelSuffix: 'data_store'),
-       _sharedPreferencesApi =
-           sharedPreferencesApi ??
-           SharedPreferencesAsyncApi(messageChannelSuffix: 'shared_preferences');
+  }) : _dataStoreApiOverride = dataStoreApi,
+       _sharedPreferencesApiOverride = sharedPreferencesApi;
 
-  final SharedPreferencesAsyncApi _dataStoreApi;
-  final SharedPreferencesAsyncApi _sharedPreferencesApi;
+  final SharedPreferencesAsyncApi? _dataStoreApiOverride;
+  final SharedPreferencesAsyncApi? _sharedPreferencesApiOverride;
+
+  late final SharedPreferencesAsyncApi _dataStoreApi =
+      _dataStoreApiOverride ??
+      SharedPreferencesAsyncApi.createWithNativeInteropApi(messageChannelSuffix: 'data_store');
+  late final SharedPreferencesAsyncApi _sharedPreferencesApi =
+      _sharedPreferencesApiOverride ??
+      SharedPreferencesAsyncApi.createWithNativeInteropApi(
+        messageChannelSuffix: 'shared_preferences',
+      );
 
   /// Registers this class as the default instance of [SharedPreferencesAsyncPlatform].
   static void registerWith() {
@@ -178,7 +184,8 @@ base class SharedPreferencesAsyncAndroid extends SharedPreferencesAsyncPlatform 
       final T? value = await method();
       return value;
     } on PlatformException catch (e) {
-      if (e.code == 'ClassCastException') {
+      if (e.code == 'ClassCastException' ||
+          (e.stacktrace?.startsWith('java.lang.ClassCastException') ?? false)) {
         throw TypeError();
       } else {
         rethrow;

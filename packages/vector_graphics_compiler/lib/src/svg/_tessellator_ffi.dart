@@ -61,6 +61,7 @@ class Tessellator extends Visitor<Node, void>
       child: maskNode.child.accept(this, data),
       mask: maskNode.mask,
       blendMode: maskNode.blendMode,
+      maskType: maskNode.maskType,
     );
   }
 

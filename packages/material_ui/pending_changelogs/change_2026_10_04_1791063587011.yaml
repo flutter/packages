@@ -1,0 +1,3 @@
+changelog: |
+  - Clarifies how `Slider.label` can be displayed for continuous sliders.
+version: patch

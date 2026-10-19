@@ -110,7 +110,7 @@ struct ImageUtilTests {
 
   @Test func scaledImageShouldBeCorrectRotation() throws {
     let imageURL = try #require(
-      Bundle(for: ImagePickerTestImages.self).url(
+      ImagePickerTestImages.bundle.url(
         forResource: "jpgImageWithRightOrientation", withExtension: "jpg"))
     let imageData = try Data(contentsOf: imageURL)
     let image = try #require(UIImage(data: imageData))

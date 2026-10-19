@@ -288,7 +288,7 @@ Future<void> main() async {
             final double currentTime = double.parse(message.message);
             // Let it play for at least 1 second to make sure the related video's properties are set.
             if (currentTime > 1 && !videoPlaying.isCompleted) {
-              videoPlaying.complete(null);
+              videoPlaying.complete();
             }
           },
         );

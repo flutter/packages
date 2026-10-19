@@ -7,7 +7,8 @@ import android.content.Context
 import android.content.SharedPreferences
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener
 import io.flutter.embedding.engine.plugins.FlutterPlugin.FlutterPluginBinding
-import io.flutter.plugin.common.BinaryMessenger
+import kotlinx.coroutines.async
+import kotlinx.coroutines.runBlocking
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNull
@@ -20,8 +21,6 @@ import org.mockito.Mockito
 class LegacySharedPreferencesTest {
   private lateinit var plugin: LegacySharedPreferencesPlugin
 
-  private lateinit var mockMessenger: BinaryMessenger
-
   private lateinit var flutterPluginBinding: FlutterPluginBinding
 
   @Before
@@ -29,10 +28,8 @@ class LegacySharedPreferencesTest {
     val context = Mockito.mock(Context::class.java)
     val sharedPrefs: SharedPreferences = FakeSharedPreferences()
 
-    mockMessenger = Mockito.mock(BinaryMessenger::class.java)
     flutterPluginBinding = Mockito.mock(FlutterPluginBinding::class.java)
 
-    Mockito.`when`(flutterPluginBinding.binaryMessenger).thenReturn(mockMessenger)
     Mockito.`when`(flutterPluginBinding.applicationContext).thenReturn(context)
     Mockito.`when`(
             context.getSharedPreferences(ArgumentMatchers.anyString(), ArgumentMatchers.anyInt()))
@@ -43,7 +40,7 @@ class LegacySharedPreferencesTest {
   }
 
   @Test
-  fun getAll() {
+  fun getAll() = runBlocking {
     assertEquals(0, plugin.getAll("", null).size)
 
     addData()
@@ -63,7 +60,7 @@ class LegacySharedPreferencesTest {
   }
 
   @Test
-  fun allowList() {
+  fun allowList() = runBlocking {
     assertEquals(0, plugin.getAll("", null).size)
 
     addData()
@@ -89,7 +86,7 @@ class LegacySharedPreferencesTest {
   }
 
   @Test
-  fun setString() {
+  fun setString() = runBlocking {
     val key = "language"
     val value = "Kotlin"
     plugin.setString(key, value)
@@ -98,7 +95,7 @@ class LegacySharedPreferencesTest {
   }
 
   @Test
-  fun setInt() {
+  fun setInt() = runBlocking {
     val key = "Counter"
     val value = 0L
     plugin.setInt(key, value)
@@ -107,7 +104,7 @@ class LegacySharedPreferencesTest {
   }
 
   @Test
-  fun setDouble() {
+  fun setDouble() = runBlocking {
     val key = "Pie"
     val value = 3.14
     plugin.setDouble(key, value)
@@ -116,7 +113,7 @@ class LegacySharedPreferencesTest {
   }
 
   @Test
-  fun setEncodedStringListSetsAndGetsString() {
+  fun setEncodedStringListSetsAndGetsString() = runBlocking {
     val key = "Names"
     val value = listOf("Flutter", "Dart").toString()
     plugin.setEncodedStringList(key, value)
@@ -125,7 +122,7 @@ class LegacySharedPreferencesTest {
   }
 
   @Test
-  fun setBool() {
+  fun setBool() = runBlocking {
     val key = "NewToFlutter"
     val value = false
     plugin.setBool(key, value)
@@ -134,7 +131,7 @@ class LegacySharedPreferencesTest {
   }
 
   @Test
-  fun clearWithNoAllowList() {
+  fun clearWithNoAllowList() = runBlocking {
     addData()
 
     assertEquals(15, plugin.getAll("", null).size)
@@ -145,7 +142,7 @@ class LegacySharedPreferencesTest {
   }
 
   @Test
-  fun clearWithAllowList() {
+  fun clearWithAllowList() = runBlocking {
     addData()
 
     assertEquals(15, plugin.getAll("", null).size)
@@ -156,7 +153,7 @@ class LegacySharedPreferencesTest {
   }
 
   @Test
-  fun clearAll() {
+  fun clearAll() = runBlocking {
     addData()
 
     assertEquals(15, plugin.getAll("", null).size)
@@ -167,7 +164,7 @@ class LegacySharedPreferencesTest {
   }
 
   @Test
-  fun testRemove() {
+  fun testRemove() = runBlocking {
     val key = "NewToFlutter"
     val value = true
     plugin.setBool(key, value)
@@ -176,7 +173,51 @@ class LegacySharedPreferencesTest {
     assertFalse(plugin.getAll("", null).containsKey(key))
   }
 
-  private fun addData() {
+  @Test
+  fun executesOnBackgroundThreadSeriallyInFifoOrder() = runBlocking {
+    val callerThread = Thread.currentThread()
+    val executionThreads = java.util.Collections.synchronizedList(mutableListOf<Thread>())
+    val executionOrder = java.util.Collections.synchronizedList(mutableListOf<Int>())
+    val activeCount = java.util.concurrent.atomic.AtomicInteger(0)
+    val maxConcurrent = java.util.concurrent.atomic.AtomicInteger(0)
+
+    val trackingEncoder =
+        object : SharedPreferencesListEncoder {
+          override fun encode(list: List<String>): String {
+            val currentActive = activeCount.incrementAndGet()
+            maxConcurrent.updateAndGet { maxOf(it, currentActive) }
+            executionThreads.add(Thread.currentThread())
+            val index = list.first().toInt()
+            if (index == 0) {
+              // Hold the first task briefly to verify subsequent concurrent calls queue behind it
+              // rather than overtaking it on another Dispatchers.IO thread.
+              Thread.sleep(50)
+            }
+            executionOrder.add(index)
+            activeCount.decrementAndGet()
+            return list.joinToString(separator = ";-;")
+          }
+
+          override fun decode(listString: String): List<String> = listString.split(";-;")
+        }
+
+    val testPlugin = LegacySharedPreferencesPlugin(trackingEncoder)
+    testPlugin.onAttachedToEngine(flutterPluginBinding)
+
+    val jobs =
+        (0 until 5).map { i ->
+          async {
+            @Suppress("DEPRECATION") testPlugin.setDeprecatedStringList("key_$i", listOf("$i"))
+          }
+        }
+    jobs.forEach { it.await() }
+
+    assertEquals(listOf(0, 1, 2, 3, 4), executionOrder)
+    assertEquals(1, maxConcurrent.get())
+    assertTrue(executionThreads.all { it != callerThread })
+  }
+
+  private suspend fun addData() {
     plugin.setString("Language", "Kotlin")
     plugin.setInt("Counter", 0L)
     plugin.setDouble("Pie", 3.14)

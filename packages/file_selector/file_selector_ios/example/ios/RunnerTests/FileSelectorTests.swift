@@ -4,6 +4,7 @@
 
 import Flutter
 import Testing
+import UniformTypeIdentifiers
 
 @testable import file_selector_ios
 
@@ -30,7 +31,7 @@ final class StubViewPresenterProvider: ViewPresenterProvider {
     let presenter = TestViewPresenter()
     let plugin = FileSelectorPlugin(
       viewPresenterProvider: StubViewPresenterProvider(viewPresenter: presenter))
-    let picker = UIDocumentPickerViewController(documentTypes: [], in: UIDocumentPickerMode.import)
+    let picker = UIDocumentPickerViewController(forOpeningContentTypes: [.item], asCopy: true)
     plugin.documentPickerViewControllerOverride = picker
 
     plugin.openFile(
@@ -45,7 +46,7 @@ final class StubViewPresenterProvider: ViewPresenterProvider {
   @Test func returnsPickedFiles() async throws {
     let plugin = FileSelectorPlugin(
       viewPresenterProvider: StubViewPresenterProvider(viewPresenter: TestViewPresenter()))
-    let picker = UIDocumentPickerViewController(documentTypes: [], in: UIDocumentPickerMode.import)
+    let picker = UIDocumentPickerViewController(forOpeningContentTypes: [.item], asCopy: true)
     plugin.documentPickerViewControllerOverride = picker
 
     try await confirmation("completion") { completionWasCalled in
@@ -71,7 +72,7 @@ final class StubViewPresenterProvider: ViewPresenterProvider {
   @Test func cancellingPickerReturnsEmptyList() async throws {
     let plugin = FileSelectorPlugin(
       viewPresenterProvider: StubViewPresenterProvider(viewPresenter: TestViewPresenter()))
-    let picker = UIDocumentPickerViewController(documentTypes: [], in: UIDocumentPickerMode.import)
+    let picker = UIDocumentPickerViewController(forOpeningContentTypes: [.item], asCopy: true)
     plugin.documentPickerViewControllerOverride = picker
 
     try await confirmation("completion") { completionWasCalled in

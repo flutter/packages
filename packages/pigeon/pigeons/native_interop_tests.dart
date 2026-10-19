@@ -284,6 +284,83 @@ class NativeInteropAllClassesWrapper {
   Map<int?, NativeInteropAllNullableTypesWithoutRecursion?>? nullableClassMap;
 }
 
+/// A sealed class, to test sealed class handling.
+sealed class NativeInteropSealedClass {}
+
+/// A subclass of `NativeInteropSealedClass` with fields.
+class NativeInteropSealedClassWithFields extends NativeInteropSealedClass {
+  NativeInteropSealedClassWithFields(this.aString, this.aNullableInt, this.anEnum, this.aClass);
+
+  String aString;
+  int? aNullableInt;
+  NativeInteropAnEnum anEnum;
+  NativeInteropAllNullableTypesWithoutRecursion? aClass;
+}
+
+/// A subclass of `NativeInteropSealedClass` without fields.
+class NativeInteropEmptySealedClass extends NativeInteropSealedClass {}
+
+/// A class with sealed class fields, to test sealed classes nested in classes
+/// and lists.
+class NativeInteropSealedClassWrapper {
+  NativeInteropSealedClassWrapper(this.sealedClass, this.nullableSealedClass, this.sealedClassList);
+
+  NativeInteropSealedClass sealedClass;
+  NativeInteropSealedClass? nullableSealedClass;
+  List<NativeInteropSealedClass> sealedClassList;
+}
+
+/// A class whose field names collide with members of the bindings that JNIgen
+/// generates, so JNIgen renames their accessors.
+///
+/// The Dart generator has to predict those names, since it is generated before
+/// JNIgen runs.
+class NativeInteropReservedNames {
+  NativeInteropReservedNames({
+    this.type,
+    this.use,
+    this.reference,
+    this.releasedBy,
+    this.fromReference,
+    this.jClass,
+    this.isInstanceOf,
+    this.isNull,
+    this.isReleased = false,
+    this.equals,
+    this.isEnabled = false,
+    this.isMaybe,
+    this.isCount,
+    this.getValue,
+  });
+
+  // Collide with `JObject` members, or with members JNIgen adds to every
+  // class.
+  String? type;
+  String? use;
+  String? reference;
+  String? releasedBy;
+  String? fromReference;
+  String? jClass;
+
+  // Kotlin keeps the `is` prefix for these getters, and JNIgen only turns `is`
+  // methods that return a primitive boolean into Dart getters. These also
+  // collide with `JObject` members.
+  String? isInstanceOf;
+  String? isNull;
+  bool isReleased;
+
+  // Collides with the data class's `equals` method, which JNIgen visits after
+  // the property getters, so the method is the one that gets renamed.
+  String? equals;
+
+  bool isEnabled;
+  bool? isMaybe;
+  int? isCount;
+
+  // JNIgen only removes the `get` prefix that Kotlin adds to the getter.
+  String? getValue;
+}
+
 /// The core interface that each host language plugin must implement in
 /// platform_test integration tests.
 @HostApi()
@@ -459,6 +536,28 @@ abstract class NativeInteropHostIntegrationCoreApi {
   @ObjCSelector('echoClassWrapper:')
   @SwiftFunction('echo(_:)')
   NativeInteropAllClassesWrapper echoClassWrapper(NativeInteropAllClassesWrapper wrapper);
+
+  /// Returns the passed sealed class, to test sealed class handling.
+  @ObjCSelector('echoSealedClass:')
+  @SwiftFunction('echo(sealedClass:)')
+  NativeInteropSealedClass echoSealedClass(NativeInteropSealedClass sealedClass);
+
+  /// Returns the passed sealed class, to test nullable sealed class handling.
+  @ObjCSelector('echoNullableSealedClass:')
+  @SwiftFunction('echoNullable(sealedClass:)')
+  NativeInteropSealedClass? echoNullableSealedClass(NativeInteropSealedClass? sealedClass);
+
+  /// Returns the passed list, to test sealed classes in lists.
+  @ObjCSelector('echoSealedClassList:')
+  @SwiftFunction('echo(sealedClassList:)')
+  List<NativeInteropSealedClass> echoSealedClassList(
+    List<NativeInteropSealedClass> sealedClassList,
+  );
+
+  /// Returns the passed wrapper, to test sealed classes in class fields.
+  @ObjCSelector('echoSealedClassWrapper:')
+  @SwiftFunction('echo(sealedClassWrapper:)')
+  NativeInteropSealedClassWrapper echoSealedClassWrapper(NativeInteropSealedClassWrapper wrapper);
 
   /// Returns the passed enum to test serialization and deserialization.
   @ObjCSelector('echoEnum:')
@@ -819,6 +918,12 @@ abstract class NativeInteropHostIntegrationCoreApi {
   @SwiftFunction('echoAsync(_:)')
   NativeInteropAllTypes echoAsyncNativeInteropAllTypes(NativeInteropAllTypes everything);
 
+  /// Returns the passed sealed class asynchronously.
+  @async
+  @ObjCSelector('echoAsyncSealedClass:')
+  @SwiftFunction('echoAsync(sealedClass:)')
+  NativeInteropSealedClass echoAsyncSealedClass(NativeInteropSealedClass sealedClass);
+
   /// Returns the passed object, to test serialization and deserialization.
   @async
   @ObjCSelector('echoAsyncNullableNativeInteropAllNullableTypes:')
@@ -971,6 +1076,10 @@ abstract class NativeInteropHostIntegrationCoreApi {
   NativeInteropAllNullableTypes? callFlutterEchoNativeInteropAllNullableTypes(
     NativeInteropAllNullableTypes? everything,
   );
+
+  @ObjCSelector('callFlutterEchoSealedClass:')
+  @SwiftFunction('callFlutterEcho(sealedClass:)')
+  NativeInteropSealedClass callFlutterEchoSealedClass(NativeInteropSealedClass sealedClass);
 
   @ObjCSelector('callFlutterSendMultipleNullableTypesABool:anInt:aString:')
   @SwiftFunction('callFlutterSendMultipleNullableTypes(aBool:anInt:aString:)')
@@ -1457,6 +1566,11 @@ abstract class NativeInteropFlutterIntegrationCoreApi {
     NativeInteropAllNullableTypes? everything,
   );
 
+  /// Returns the passed sealed class, to test sealed class handling.
+  @ObjCSelector('echoNativeInteropSealedClass:')
+  @SwiftFunction('echo(sealedClass:)')
+  NativeInteropSealedClass echoNativeInteropSealedClass(NativeInteropSealedClass sealedClass);
+
   /// Returns passed in arguments of multiple types.
   ///
   /// Tests multiple-arity FlutterApi handling.
@@ -1919,4 +2033,81 @@ abstract class NativeInteropFlutterIntegrationCoreApi {
 
   @async
   NativeInteropAnotherEnum? echoAnotherAsyncNullableEnum(NativeInteropAnotherEnum? anotherEnum);
+}
+
+/// Methods whose names collide with members of the bindings that JNIgen
+/// generates, or that JNIgen turns into Dart properties.
+@HostApi()
+abstract class NativeInteropReservedNamesHostApi {
+  /// Collides with `JObject.release`.
+  String release(String value);
+
+  /// Collides with `JObject.use`.
+  int use(int value);
+
+  /// Collides with the static `type` field that JNIgen adds to every class.
+  String type();
+
+  /// JNIgen makes this a getter, which collides with `JObject.isNull`.
+  bool isNull();
+
+  /// JNIgen keeps this a method, since nullable booleans are boxed on the JVM.
+  bool? isNullable();
+
+  /// JNIgen makes this a getter.
+  bool isOpen();
+
+  /// JNIgen combines this and [setReference] into a property, which collides
+  /// with `JObject.reference`.
+  String getReference();
+
+  /// See [getReference].
+  void setReference(String value);
+
+  /// JNIgen makes this a getter named after a Dart keyword, `default`.
+  String getDefault();
+
+  /// JNIgen keeps suspend functions as methods.
+  @async
+  String getValueAsync();
+
+  /// Returns the passed object, to test serialization and deserialization.
+  NativeInteropReservedNames echoReservedNames(NativeInteropReservedNames names);
+
+  /// Returns the result of calling [NativeInteropReservedNamesFlutterApi.release].
+  String callFlutterRelease(String value);
+
+  /// Returns the result of calling [NativeInteropReservedNamesFlutterApi.type].
+  String callFlutterType();
+
+  /// Returns the result of calling [NativeInteropReservedNamesFlutterApi.implementIn].
+  String callFlutterImplementIn(String value);
+
+  /// Returns the result of calling [NativeInteropReservedNamesFlutterApi.isNull].
+  bool callFlutterIsNull();
+
+  /// Returns the result of calling [NativeInteropReservedNamesFlutterApi.getReference].
+  String callFlutterGetReference();
+}
+
+/// The Flutter API counterpart of [NativeInteropReservedNamesHostApi].
+///
+/// JNIgen generates interfaces for Flutter APIs, which it renames differently
+/// than classes.
+@FlutterApi()
+abstract class NativeInteropReservedNamesFlutterApi {
+  /// Collides with `JObject.release`.
+  String release(String value);
+
+  /// Collides with the static `type` field that JNIgen adds to every class.
+  String type();
+
+  /// Collides with the `implementIn` method that JNIgen adds to interfaces.
+  String implementIn(String value);
+
+  /// Collides with `JObject.isNull`.
+  bool isNull();
+
+  /// JNIgen doesn't turn interface methods into properties.
+  String getReference();
 }

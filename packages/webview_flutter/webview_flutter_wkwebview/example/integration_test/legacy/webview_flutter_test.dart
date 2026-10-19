@@ -201,10 +201,10 @@ Future<void> main() async {
             ),
           },
           onPageStarted: (String url) {
-            pageStarted.complete(null);
+            pageStarted.complete();
           },
           onPageFinished: (String url) {
-            pageLoaded.complete(null);
+            pageLoaded.complete();
           },
         ),
       ),
@@ -351,7 +351,7 @@ Future<void> main() async {
                 },
                 javascriptMode: JavascriptMode.unrestricted,
                 onPageFinished: (String url) {
-                  pageLoaded.complete(null);
+                  pageLoaded.complete();
                 },
                 initialMediaPlaybackPolicy: AutoMediaPlaybackPolicy.always_allow,
               ),
@@ -378,7 +378,7 @@ Future<void> main() async {
                 },
                 javascriptMode: JavascriptMode.unrestricted,
                 onPageFinished: (String url) {
-                  pageLoaded.complete(null);
+                  pageLoaded.complete();
                 },
               ),
             ),
@@ -413,7 +413,7 @@ Future<void> main() async {
                 },
                 javascriptMode: JavascriptMode.unrestricted,
                 onPageFinished: (String url) {
-                  pageLoaded.complete(null);
+                  pageLoaded.complete();
                 },
                 initialMediaPlaybackPolicy: AutoMediaPlaybackPolicy.always_allow,
               ),
@@ -438,7 +438,7 @@ Future<void> main() async {
                 },
                 javascriptMode: JavascriptMode.unrestricted,
                 onPageFinished: (String url) {
-                  pageLoaded.complete(null);
+                  pageLoaded.complete();
                 },
               ),
             ),
@@ -479,13 +479,13 @@ Future<void> main() async {
                     final double currentTime = double.parse(message.message);
                     // Let it play for at least 1 second to make sure the related video's properties are set.
                     if (currentTime > 1 && !videoPlaying.isCompleted) {
-                      videoPlaying.complete(null);
+                      videoPlaying.complete();
                     }
                   },
                 ),
               },
               onPageFinished: (String url) {
-                pageLoaded.complete(null);
+                pageLoaded.complete();
               },
               initialMediaPlaybackPolicy: AutoMediaPlaybackPolicy.always_allow,
               allowsInlineMediaPlayback: true,
@@ -529,13 +529,13 @@ Future<void> main() async {
                     final double currentTime = double.parse(message.message);
                     // Let it play for at least 1 second to make sure the related video's properties are set.
                     if (currentTime > 1 && !videoPlaying.isCompleted) {
-                      videoPlaying.complete(null);
+                      videoPlaying.complete();
                     }
                   },
                 ),
               },
               onPageFinished: (String url) {
-                pageLoaded.complete(null);
+                pageLoaded.complete();
               },
               initialMediaPlaybackPolicy: AutoMediaPlaybackPolicy.always_allow,
             ),
@@ -606,10 +606,10 @@ Future<void> main() async {
               },
               javascriptMode: JavascriptMode.unrestricted,
               onPageStarted: (String url) {
-                pageStarted.complete(null);
+                pageStarted.complete();
               },
               onPageFinished: (String url) {
-                pageLoaded.complete(null);
+                pageLoaded.complete();
               },
               initialMediaPlaybackPolicy: AutoMediaPlaybackPolicy.always_allow,
             ),
@@ -638,10 +638,10 @@ Future<void> main() async {
               },
               javascriptMode: JavascriptMode.unrestricted,
               onPageStarted: (String url) {
-                pageStarted.complete(null);
+                pageStarted.complete();
               },
               onPageFinished: (String url) {
-                pageLoaded.complete(null);
+                pageLoaded.complete();
               },
             ),
           ),
@@ -672,10 +672,10 @@ Future<void> main() async {
               },
               javascriptMode: JavascriptMode.unrestricted,
               onPageStarted: (String url) {
-                pageStarted.complete(null);
+                pageStarted.complete();
               },
               onPageFinished: (String url) {
-                pageLoaded.complete(null);
+                pageLoaded.complete();
               },
               initialMediaPlaybackPolicy: AutoMediaPlaybackPolicy.always_allow,
             ),
@@ -702,10 +702,10 @@ Future<void> main() async {
               },
               javascriptMode: JavascriptMode.unrestricted,
               onPageStarted: (String url) {
-                pageStarted.complete(null);
+                pageStarted.complete();
               },
               onPageFinished: (String url) {
-                pageLoaded.complete(null);
+                pageLoaded.complete();
               },
             ),
           ),
@@ -749,10 +749,10 @@ Future<void> main() async {
             controllerCompleter.complete(controller);
           },
           onPageStarted: (String url) {
-            pageStarted.complete(null);
+            pageStarted.complete();
           },
           onPageFinished: (String url) {
-            pageLoaded.complete(null);
+            pageLoaded.complete();
           },
         ),
       ),
@@ -813,7 +813,7 @@ Future<void> main() async {
                 controllerCompleter.complete(controller);
               },
               onPageFinished: (String url) {
-                pageLoaded.complete(null);
+                pageLoaded.complete();
               },
             ),
           ),
@@ -1086,7 +1086,7 @@ Future<void> main() async {
           },
           javascriptMode: JavascriptMode.unrestricted,
           onPageFinished: (String url) {
-            pageLoaded.complete(null);
+            pageLoaded.complete();
           },
         ),
       ),

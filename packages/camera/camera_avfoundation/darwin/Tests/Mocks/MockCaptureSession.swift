@@ -17,8 +17,10 @@ final class MockCaptureSession: NSObject, CaptureSession {
   var canSetSessionPresetStub: ((AVCaptureSession.Preset) -> Bool)?
 
   var _sessionPreset = AVCaptureSession.Preset.high
+  private(set) var captureInputs = [CaptureInput]()
   var inputs = [AVCaptureInput]()
   var outputs = [AVCaptureOutput]()
+  private(set) var connections = [AVCaptureConnection]()
 
   private(set) var addedAudioOutputCount: Int = 0
 
@@ -54,24 +56,55 @@ final class MockCaptureSession: NSObject, CaptureSession {
     return canSetSessionPresetStub?(preset) ?? true
   }
 
-  func addInputWithNoConnections(_ input: CaptureInput) {}
+  func addInputWithNoConnections(_ input: CaptureInput) {
+    captureInputs.append(input)
+  }
 
-  func addOutputWithNoConnections(_ output: AVCaptureOutput) {}
+  func addOutputWithNoConnections(_ output: AVCaptureOutput) {
+    outputs.append(output)
+  }
 
-  func addConnection(_: AVCaptureConnection) {}
+  func addConnection(_ connection: AVCaptureConnection) {
+    connections.append(connection)
+  }
 
-  func addInput(_: CaptureInput) {}
+  func addInput(_ input: CaptureInput) {
+    captureInputs.append(input)
+    for output in outputs where !connections.contains(where: { $0.output === output }) {
+      connections.append(AVCaptureConnection(inputPorts: input.ports, output: output))
+    }
+  }
 
   func addOutput(_ output: AVCaptureOutput) {
-
+    outputs.append(output)
+    if !captureInputs.isEmpty && !connections.contains(where: { $0.output === output }) {
+      connections.append(
+        AVCaptureConnection(inputPorts: captureInputs.flatMap(\.ports), output: output))
+    }
     if output is AVCaptureAudioDataOutput {
       addedAudioOutputCount += 1
     }
   }
 
-  func removeInput(_: CaptureInput) {}
+  func removeInput(_ input: CaptureInput) {
+    captureInputs.removeAll { $0 === input }
+    // In unit tests, `MockCaptureInput.ports` is empty because `AVCaptureInput.Port` cannot be
+    // instantiated without a real hardware device.
+    if captureInputs.isEmpty {
+      connections.removeAll()
+    } else {
+      connections.removeAll { connection in
+        connection.inputPorts.contains { port in
+          input.ports.contains { $0 === port }
+        }
+      }
+    }
+  }
 
-  func removeOutput(_: AVCaptureOutput) {}
+  func removeOutput(_ output: AVCaptureOutput) {
+    outputs.removeAll { $0 === output }
+    connections.removeAll { $0.output === output }
+  }
 
   func canAddInput(_: CaptureInput) -> Bool {
     return true
@@ -81,7 +114,8 @@ final class MockCaptureSession: NSObject, CaptureSession {
     return true
   }
 
-  func canAddConnection(_: AVCaptureConnection) -> Bool {
-    return true
+  func canAddConnection(_ connection: AVCaptureConnection) -> Bool {
+    guard let output = connection.output else { return true }
+    return !connections.contains(where: { $0.output === output })
   }
 }

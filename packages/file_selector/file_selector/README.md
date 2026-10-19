@@ -8,7 +8,7 @@ A Flutter plugin that manages files and interactions with file dialogs.
 
 |             | Android | iOS     | Linux | macOS  | Web | Windows     |
 |-------------|---------|---------|-------|--------|-----|-------------|
-| **Support** | SDK 24+ | iOS 13+ | Any   | 10.15+ | Any | Windows 10+ |
+| **Support** | SDK 24+ | iOS 15+ | Any   | 10.15+ | Any | Windows 10+ |
 
 ## Setup
 

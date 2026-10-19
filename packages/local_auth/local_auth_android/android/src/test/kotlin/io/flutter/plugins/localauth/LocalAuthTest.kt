@@ -14,12 +14,13 @@ import io.flutter.embedding.engine.plugins.FlutterPlugin.FlutterPluginBinding
 import io.flutter.embedding.engine.plugins.activity.ActivityPluginBinding
 import io.flutter.embedding.engine.plugins.lifecycle.HiddenLifecycleReference
 import io.flutter.plugin.common.BinaryMessenger
+import kotlinx.coroutines.test.runTest
 import org.junit.Assert
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.mockito.kotlin.any
 import org.mockito.kotlin.argumentCaptor
-import org.mockito.kotlin.doNothing
+import org.mockito.kotlin.doAnswer
 import org.mockito.kotlin.eq
 import org.mockito.kotlin.mock
 import org.mockito.kotlin.spy
@@ -30,56 +31,38 @@ import org.robolectric.annotation.Config
 @RunWith(RobolectricTestRunner::class)
 class LocalAuthTest {
   @Test
-  fun authenticate_returnsErrorWhenAuthInProgress() {
+  fun authenticate_returnsErrorWhenAuthInProgress() = runTest {
     val plugin = LocalAuthPlugin()
     plugin.authInProgress.set(true)
-    var callbackCalled = false
-    plugin.authenticate(defaultOptions, dummyStrings) { reply ->
-      callbackCalled = true
-      Assert.assertEquals(AuthResultCode.ALREADY_IN_PROGRESS, reply.getOrNull()?.code)
-    }
-    Assert.assertTrue(callbackCalled)
+    val result = plugin.authenticate(defaultOptions, dummyStrings)
+    Assert.assertEquals(AuthResultCode.ALREADY_IN_PROGRESS, result.code)
   }
 
   @Test
-  fun authenticate_returnsErrorWithNoForegroundActivity() {
+  fun authenticate_returnsErrorWithNoForegroundActivity() = runTest {
     val plugin = LocalAuthPlugin()
-    var callbackCalled = false
-
-    plugin.authenticate(defaultOptions, dummyStrings) { reply ->
-      callbackCalled = true
-      Assert.assertEquals(AuthResultCode.NO_ACTIVITY, reply.getOrNull()?.code)
-    }
-    Assert.assertTrue(callbackCalled)
+    val result = plugin.authenticate(defaultOptions, dummyStrings)
+    Assert.assertEquals(AuthResultCode.NO_ACTIVITY, result.code)
   }
 
   @Test
-  fun authenticate_returnsErrorWhenActivityNotFragmentActivity() {
+  fun authenticate_returnsErrorWhenActivityNotFragmentActivity() = runTest {
     val plugin = LocalAuthPlugin()
     setPluginActivity(plugin, buildMockActivityWithContext(mock<NativeActivity>()))
-    var callbackCalled = false
-    plugin.authenticate(defaultOptions, dummyStrings) { reply ->
-      callbackCalled = true
-      Assert.assertEquals(AuthResultCode.NOT_FRAGMENT_ACTIVITY, reply.getOrNull()?.code)
-    }
-    Assert.assertTrue(callbackCalled)
+    val result = plugin.authenticate(defaultOptions, dummyStrings)
+    Assert.assertEquals(AuthResultCode.NOT_FRAGMENT_ACTIVITY, result.code)
   }
 
   @Test
-  fun authenticate_returnsErrorWhenDeviceNotSupported() {
+  fun authenticate_returnsErrorWhenDeviceNotSupported() = runTest {
     val plugin = LocalAuthPlugin()
     setPluginActivity(plugin, buildMockActivityWithContext(mock<FragmentActivity>()))
-    var callbackCalled = false
-
-    plugin.authenticate(defaultOptions, dummyStrings) { reply ->
-      callbackCalled = true
-      Assert.assertEquals(AuthResultCode.NO_CREDENTIALS, reply.getOrNull()?.code)
-    }
-    Assert.assertTrue(callbackCalled)
+    val result = plugin.authenticate(defaultOptions, dummyStrings)
+    Assert.assertEquals(AuthResultCode.NO_CREDENTIALS, result.code)
   }
 
   @Test
-  fun authenticate_properlyConfiguresBiometricOnlyAuthenticationRequest() {
+  fun authenticate_properlyConfiguresBiometricOnlyAuthenticationRequest() = runTest {
     val plugin = spy(LocalAuthPlugin())
     val activity = buildMockActivityWithContext(mock<FragmentActivity>())
     setPluginActivity(plugin, activity)
@@ -94,19 +77,22 @@ class LocalAuthTest {
     plugin.setBiometricManager(mockBiometricManager)
 
     val allowCredentialsCaptor = argumentCaptor<Boolean>()
-    doNothing()
+    doAnswer {
+          val completionHandler = it.getArgument<(AuthResult) -> Unit>(4)
+          completionHandler(AuthResult(AuthResultCode.SUCCESS, null))
+        }
         .whenever(plugin)
         .sendAuthenticationRequest(
             any(), any(), allowCredentialsCaptor.capture(), eq(activity), any())
     val options = AuthOptions(biometricOnly = true, sensitiveTransaction = false, sticky = false)
 
-    plugin.authenticate(options, dummyStrings) {}
+    plugin.authenticate(options, dummyStrings)
     Assert.assertFalse(allowCredentialsCaptor.firstValue)
   }
 
   @Test
   @Config(sdk = [30])
-  fun authenticate_properlyConfiguresBiometricAndDeviceCredentialAuthenticationRequest() {
+  fun authenticate_properlyConfiguresBiometricAndDeviceCredentialAuthenticationRequest() = runTest {
     val plugin = spy(LocalAuthPlugin())
     val activity = buildMockActivityWithContext(mock<FragmentActivity>())
     setPluginActivity(plugin, activity)
@@ -119,17 +105,20 @@ class LocalAuthTest {
     plugin.setBiometricManager(mockBiometricManager)
 
     val allowCredentialsCaptor = argumentCaptor<Boolean>()
-    doNothing()
+    doAnswer {
+          val completionHandler = it.getArgument<(AuthResult) -> Unit>(4)
+          completionHandler(AuthResult(AuthResultCode.SUCCESS, null))
+        }
         .whenever(plugin)
         .sendAuthenticationRequest(
             any(), any(), allowCredentialsCaptor.capture(), eq(activity), any())
-    plugin.authenticate(defaultOptions, dummyStrings) {}
+    plugin.authenticate(defaultOptions, dummyStrings)
     Assert.assertTrue(allowCredentialsCaptor.firstValue)
   }
 
   @Test
   @Config(sdk = [30])
-  fun authenticate_properlyConfiguresDeviceCredentialOnlyAuthenticationRequest() {
+  fun authenticate_properlyConfiguresDeviceCredentialOnlyAuthenticationRequest() = runTest {
     val plugin = spy(LocalAuthPlugin())
     val activity = buildMockActivityWithContext(mock<FragmentActivity>())
     setPluginActivity(plugin, activity)
@@ -144,12 +133,38 @@ class LocalAuthTest {
     plugin.setBiometricManager(mockBiometricManager)
 
     val allowCredentialsCaptor = argumentCaptor<Boolean>()
-    doNothing()
+    doAnswer {
+          val completionHandler = it.getArgument<(AuthResult) -> Unit>(4)
+          completionHandler(AuthResult(AuthResultCode.SUCCESS, null))
+        }
         .whenever(plugin)
         .sendAuthenticationRequest(
             any(), any(), allowCredentialsCaptor.capture(), eq(activity), any())
-    plugin.authenticate(defaultOptions, dummyStrings) {}
+    plugin.authenticate(defaultOptions, dummyStrings)
     Assert.assertTrue(allowCredentialsCaptor.firstValue)
+  }
+
+  @Test
+  fun authenticate_returnsResultFromCompletionHandler() = runTest {
+    val plugin = spy(LocalAuthPlugin())
+    val activity = buildMockActivityWithContext(mock<FragmentActivity>())
+    setPluginActivity(plugin, activity)
+    whenever(plugin.isDeviceSupported()).thenReturn(true)
+
+    val mockBiometricManager = mock<BiometricManager>()
+    whenever(mockBiometricManager.canAuthenticate(BiometricManager.Authenticators.BIOMETRIC_WEAK))
+        .thenReturn(BiometricManager.BIOMETRIC_SUCCESS)
+    plugin.setBiometricManager(mockBiometricManager)
+
+    doAnswer {
+          val completionHandler = it.getArgument<(AuthResult) -> Unit>(4)
+          completionHandler(AuthResult(AuthResultCode.SUCCESS, null))
+        }
+        .whenever(plugin)
+        .sendAuthenticationRequest(any(), any(), any(), eq(activity), any())
+
+    val result = plugin.authenticate(defaultOptions, dummyStrings)
+    Assert.assertEquals(AuthResultCode.SUCCESS, result.code)
   }
 
   @Test

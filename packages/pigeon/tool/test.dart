@@ -70,6 +70,7 @@ ${parser.usage}''');
       androidKotlinUnitTests,
       androidJavaIntegrationTests,
       androidKotlinIntegrationTests,
+      androidKotlinNativeInteropReleaseTests,
       androidJavaLint,
       androidKotlinLint,
     ];

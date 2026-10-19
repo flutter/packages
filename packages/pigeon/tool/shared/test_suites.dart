@@ -4,7 +4,9 @@
 
 // ignore_for_file: avoid_print
 
-import 'dart:io' show Directory, File;
+import 'dart:async';
+import 'dart:convert';
+import 'dart:io' show Directory, File, Process, ProcessSignal;
 
 import 'package:meta/meta.dart';
 import 'package:path/path.dart' as p;
@@ -22,6 +24,7 @@ const String _testPluginRelativePath = 'platform_tests/$_testPluginName';
 const String _alternateLanguageTestPluginRelativePath =
     'platform_tests/$_alternateLanguageTestPluginName';
 const String _integrationTestFileRelativePath = 'integration_test/test.dart';
+const String _nativeInteropIntegrationTestFileRelativePath = 'integration_test/native_interop.dart';
 
 /// Information about a test suite.
 @immutable
@@ -42,6 +45,9 @@ const String androidJavaIntegrationTests = 'android_java_integration_tests';
 const String androidKotlinUnitTests = 'android_kotlin_unittests';
 const String androidKotlinLint = 'android_kotlin_lint';
 const String androidKotlinIntegrationTests = 'android_kotlin_integration_tests';
+// This name deliberately doesn't contain "integration", so that CI doesn't run
+// the suite again after generating overflow types, which these tests don't use.
+const String androidKotlinNativeInteropReleaseTests = 'android_kotlin_native_interop_release_tests';
 const String iOSObjCUnitTests = 'ios_objc_unittests';
 const String iOSObjCIntegrationTests = 'ios_objc_integration_tests';
 const String iOSSwiftUnitTests = 'ios_swift_unittests';
@@ -89,6 +95,11 @@ const Map<String, TestInfo> testSuites = <String, TestInfo>{
   androidKotlinIntegrationTests: TestInfo(
     function: _runAndroidKotlinIntegrationTests,
     description: 'Integration tests on generated Kotlin code.',
+  ),
+  androidKotlinNativeInteropReleaseTests: TestInfo(
+    function: _runAndroidKotlinNativeInteropReleaseTests,
+    description:
+        'Native interop integration tests on generated Kotlin code in a minified release build.',
   ),
   dartUnitTests: TestInfo(
     function: _runDartUnitTests,
@@ -218,6 +229,98 @@ Future<int> _runMobileIntegrationTests(String platform, String testPluginPath) a
     '-d',
     device,
   ]);
+}
+
+Future<int> _runAndroidKotlinNativeInteropReleaseTests({bool ciMode = false}) async {
+  final String? device = await getDeviceForPlatform('android');
+  if (device == null) {
+    print(
+      'No Android device available. Attach an Android device or start '
+      'an emulator to run integration tests',
+    );
+    return _noDeviceAvailableExitCode;
+  }
+
+  const examplePath = './$_testPluginRelativePath/example';
+  return _runIntegrationTestsInReleaseMode(
+    examplePath,
+    _nativeInteropIntegrationTestFileRelativePath,
+    device: device,
+  );
+}
+
+/// Runs the tests in [testFile] in a release build on [device], and returns 0
+/// if they all pass.
+///
+/// Only release builds are minified, but neither `flutter test` nor
+/// `flutter drive` supports release mode on mobile devices. Instead, this runs
+/// [testFile] as the app's entrypoint with `flutter run`. Without a test
+/// runner, `flutter_test` runs the tests itself and prints a summary when they
+/// finish, which this waits for.
+Future<int> _runIntegrationTestsInReleaseMode(
+  String projectDirectory,
+  String testFile, {
+  required String device,
+  Duration timeout = const Duration(minutes: 20),
+}) async {
+  final Process process = await Process.start(getFlutterCommand(), <String>[
+    'run',
+    '--release',
+    '--target',
+    testFile,
+    '--device-id',
+    device,
+  ], workingDirectory: projectDirectory);
+
+  final result = Completer<int>();
+  void checkForSummary(String line) {
+    print(line);
+    if (result.isCompleted) {
+      return;
+    }
+    if (line.contains('All tests passed!')) {
+      result.complete(0);
+    } else if (line.contains('Some tests failed.') || line.contains('All tests skipped.')) {
+      result.complete(1);
+    }
+  }
+
+  final List<StreamSubscription<String>> subscriptions =
+      <Stream<List<int>>>[process.stdout, process.stderr].map((Stream<List<int>> output) {
+        return output
+            .transform(utf8.decoder)
+            .transform(const LineSplitter())
+            .listen(checkForSummary);
+      }).toList();
+  unawaited(
+    process.exitCode.then((int exitCode) {
+      if (!result.isCompleted) {
+        print('flutter run exited with code $exitCode before the tests finished.');
+        result.complete(exitCode == 0 ? 1 : exitCode);
+      }
+    }),
+  );
+
+  try {
+    return await result.future.timeout(
+      timeout,
+      onTimeout: () {
+        print('Timed out after $timeout waiting for the tests to finish.');
+        return 1;
+      },
+    );
+  } finally {
+    // `flutter run` stays attached to the app until it's stopped.
+    process.kill();
+    await process.exitCode.timeout(
+      const Duration(minutes: 1),
+      onTimeout: () {
+        process.kill(ProcessSignal.sigkill);
+        return process.exitCode;
+      },
+    );
+    await Future.wait(subscriptions.map((StreamSubscription<String> s) => s.cancel()));
+  }
 }
 
 Future<int> _runDartUnitTests({bool ciMode = false}) async {
