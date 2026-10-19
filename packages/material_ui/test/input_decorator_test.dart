@@ -1820,9 +1820,8 @@ void main() {
           ..rrect(
             style: PaintingStyle.fill,
             color: const Color(0xFF00FF00),
-            rrect: BorderRadius.circular(
-              borderRadius,
-            ).toRRect(const Rect.fromLTWH(0, 0, inputDecoratorWidth, inputDecoratorHeight)),
+            rrect: BorderRadius.circular(borderRadius)
+                .toRRect(const Rect.fromLTWH(0, 0, inputDecoratorWidth, inputDecoratorHeight)),
           )
           ..path(style: PaintingStyle.stroke)
           ..restore(),
