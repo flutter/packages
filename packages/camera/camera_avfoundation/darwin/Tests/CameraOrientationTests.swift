@@ -125,7 +125,7 @@ final class CameraOrientationTests: XCTestCase {
         globalAPI: mockEventAPI,
         deviceDiscoverer: mockDeviceDiscoverer,
         permissionManager: MockCameraPermissionManager(),
-        deviceFactory: { [weak mockDevice] _ in mockDevice! },
+        deviceFactory: { _ in mockDevice },
         captureSessionFactory: { MockCaptureSession() },
         captureDeviceInputFactory: MockCaptureDeviceInputFactory(),
         captureSessionQueue: captureSessionQueue
@@ -155,9 +155,9 @@ final class CameraOrientationTests: XCTestCase {
 
     // Must check in captureSessionQueue since orientationChanged dispatches to this queue.
     let expectation = self.expectation(description: "Dispatched to capture session queue")
-    captureSessionQueue.async { [weak mockEventAPI] in
+    captureSessionQueue.async {
       XCTAssertFalse(setDeviceOrientationCalled)
-      XCTAssertFalse(mockEventAPI?.deviceOrientationChangedCalled ?? false)
+      XCTAssertFalse(mockEventAPI.deviceOrientationChangedCalled)
       expectation.fulfill()
     }
 
