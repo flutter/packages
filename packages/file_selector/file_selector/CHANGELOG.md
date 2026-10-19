@@ -1,6 +1,10 @@
 ## NEXT
 
 * Updates minimum supported SDK version to Flutter 3.41/Dart 3.11.
+* Updates README to reflect that the latest version of `file_selector_ios`
+  requires iOS 15.
+  * Applications built with older versions of Flutter will continue to use
+    compatible versions of the platform implementation.
 
 ## 1.1.0
 

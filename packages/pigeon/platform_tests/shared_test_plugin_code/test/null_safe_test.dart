@@ -203,7 +203,7 @@ void main() {
         'dev.flutter.pigeon.pigeon_integration_tests.NullableReturnFlutterApi.doit',
         NullableReturnFlutterApi.pigeonChannelCodec.encodeMessage(<Object?>[]),
         (ByteData? data) {
-          resultCompleter.complete(null);
+          resultCompleter.complete();
         },
       ),
     );
@@ -226,7 +226,7 @@ void main() {
         'dev.flutter.pigeon.pigeon_integration_tests.NullableCollectionReturnFlutterApi.doit',
         NullableCollectionReturnFlutterApi.pigeonChannelCodec.encodeMessage(<Object?>[]),
         (ByteData? data) {
-          resultCompleter.complete(null);
+          resultCompleter.complete();
         },
       ),
     );

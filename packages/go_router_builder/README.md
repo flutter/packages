@@ -8,7 +8,7 @@ To use `go_router_builder`, you need to have the following dependencies in
 ```yaml
 dependencies:
   # ...along with your other dependencies
-  go_router: ^18.1.0
+  go_router: ^18.2.0
 
 dev_dependencies:
   # ...along with your other dev-dependencies
@@ -389,7 +389,7 @@ class RedirectRoute extends GoRouteData {
 ```
 
 When a route overrides `redirect` but neither `build` nor `buildPage`, the
-generated route is redirect-only with `go_router` 18.1.0 or later. Older
+generated route is redirect-only with `go_router` 18.2.0 or later. Older
 `go_router` versions retain the existing generated callbacks. A conditional
 redirect can return `null` for
 a descendant location to let the child route render without building its
