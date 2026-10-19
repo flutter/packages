@@ -1,3 +1,7 @@
+## 0.7.5+3
+
+* Fixes video recording duration discrepancy by waiting for the first recorded frame before completing `startVideoCapturing`, and validates errors on `stopVideoRecording`.
+
 ## 0.7.5+2
 
 * Updates Robolectric to 4.17 and adds the JVM arguments it requires for unit tests.

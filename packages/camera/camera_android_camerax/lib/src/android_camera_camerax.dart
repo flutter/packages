@@ -1187,9 +1187,30 @@ class AndroidCameraCameraX extends CameraPlatform {
       onStreamedFrameAvailable(options.cameraId).listen(streamCallback);
     }
 
-    // Wait for video recording to start.
+    // Wait for video recording to start and for the first frame to be recorded.
+    await _waitForRecordingToStart();
+  }
+
+  /// Waits for the video recording to start and for the first frame to be recorded.
+  Future<void> _waitForRecordingToStart() async {
     VideoRecordEvent event = await videoRecordingEventStreamQueue.next;
-    while (event is! VideoRecordEventStart) {
+    while (true) {
+      if (event is VideoRecordEventFinalize) {
+        final int errorCode = await event.getError();
+        recording = null;
+        pendingRecording = null;
+        await _unbindUseCaseFromLifecycle(videoCapture!);
+        throw CameraException(
+          'videoRecordingFailed',
+          'Video recording finalized before recording started with error code $errorCode.',
+        );
+      }
+      if (event is VideoRecordEventStatus) {
+        final RecordingStats stats = await event.getRecordingStats();
+        if (stats.numBytesRecorded > 0 || stats.recordedDurationNanos > 0) {
+          break;
+        }
+      }
       event = await videoRecordingEventStreamQueue.next;
     }
   }
@@ -1230,6 +1251,15 @@ class AndroidCameraCameraX extends CameraPlatform {
     }
 
     await _unbindUseCaseFromLifecycle(videoCapture!);
+
+    if (await event.hasError()) {
+      final int errorCode = await event.getError();
+      throw CameraException(
+        'videoRecordingFailed',
+        'Video recording finalized with error: $errorCode',
+      );
+    }
+
     final videoFile = XFile(videoOutputPath!);
     cameraEventStreamController.add(VideoRecordedEvent(cameraId, videoFile, /* duration */ null));
     return videoFile;
