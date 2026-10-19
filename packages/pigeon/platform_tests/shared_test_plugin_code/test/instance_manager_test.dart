@@ -120,6 +120,9 @@ void main() {
         },
       );
 
+      // Allocate and register the instance inside a non-inlined helper so the
+      // async test frame does not retain a hidden stack/register reference to
+      // the object across `await forceGC()`.
       @pragma('vm:never-inline')
       void addTemporaryInstance() {
         instanceManager.addDartCreatedInstance(
@@ -143,6 +146,9 @@ void main() {
         },
       );
 
+      // Allocate and register the instance inside a non-inlined helper so the
+      // async test frame does not retain a hidden stack/register reference to
+      // the object across `await forceGC()`.
       @pragma('vm:never-inline')
       void addTemporaryInstance() {
         instanceManager.addHostCreatedInstance(
