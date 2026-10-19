@@ -1,0 +1,15 @@
+RouteBase get $statefulShellRouteNotifyRootObserver =>
+    StatefulShellRouteData.$route(
+      notifyRootObserver: false,
+      factory: $StatefulShellRouteNotifyRootObserverExtension._fromState,
+      branches: [
+        StatefulShellBranchData.$branch(),
+      ],
+    );
+
+extension $StatefulShellRouteNotifyRootObserverExtension
+    on StatefulShellRouteNotifyRootObserver {
+  static StatefulShellRouteNotifyRootObserver _fromState(
+          GoRouterState state) =>
+      const StatefulShellRouteNotifyRootObserver();
+}

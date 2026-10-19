@@ -1,3 +1,7 @@
+## 4.5.2
+
+- Forwards `notifyRootObserver` from `TypedShellRoute` and `TypedStatefulShellRoute` into generated `$route` calls.
+
 ## 4.5.1
 
 - Migrates examples to `material_ui` package (1.4.0).
