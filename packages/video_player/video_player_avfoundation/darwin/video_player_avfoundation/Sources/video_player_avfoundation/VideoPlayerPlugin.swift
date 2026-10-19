@@ -60,6 +60,9 @@ final class DefaultAssetProvider: NSObject, FVPAssetProvider {
   }
 }
 
+// TODO(stuartmorgan): Make this entire class @MainActor once the protocols allow it. See
+// https://github.com/flutter/flutter/issues/160969 and
+// https://github.com/flutter/flutter/issues/194655
 public final class VideoPlayerPlugin: NSObject, FlutterPlugin, AVFoundationVideoPlayerApi {
   private let binaryMessenger: FlutterBinaryMessenger
   private let textureRegistry: FlutterTextureRegistry
@@ -128,68 +131,88 @@ public final class VideoPlayerPlugin: NSObject, FlutterPlugin, AVFoundationVideo
   }
 
   public func detachFromEngine(for registrar: FlutterPluginRegistrar) {
-    for player in playersByIdentifier.values {
-      // Remove the channel and texture cleanup, and the event listener, to ensure that the player
-      // doesn't message the engine that is no longer connected.
-      player.onDisposed = nil
-      player.eventListener = nil
-      player.dispose()
+    // Work around the lack of actor annotations on FlutterPlugin; this method is
+    // guaranteed to be called from the main thread.
+    // See https://github.com/flutter/flutter/issues/160969
+    MainActor.assumeIsolated {
+      for player in playersByIdentifier.values {
+        // Remove the channel and texture cleanup, and the event listener, to ensure that the player
+        // doesn't message the engine that is no longer connected.
+        player.onDisposed = nil
+        player.eventListener = nil
+        player.dispose()
+      }
+      playersByIdentifier.removeAll()
+      #if os(iOS)
+        let messenger = registrar.messenger()
+      #else
+        let messenger = registrar.messenger
+      #endif
+      AVFoundationVideoPlayerApiSetup.setUp(binaryMessenger: messenger, api: nil)
     }
-    playersByIdentifier.removeAll()
-    #if os(iOS)
-      let messenger = registrar.messenger()
-    #else
-      let messenger = registrar.messenger
-    #endif
-    AVFoundationVideoPlayerApiSetup.setUp(binaryMessenger: messenger, api: nil)
   }
 
   func initialize() throws {
-    #if os(iOS)
-      // Allow audio playback when the Ring/Silent switch is set to silent
-      upgradeAudioSessionCategory(
-        session: avFactory.sharedAudioSession(),
-        requestedCategory: .playback,
-        options: [],
-        clearOptions: []
-      )
-    #endif
+    // Work around the lack of annotations on HostApi protocols; this method is
+    // guaranteed to be called from the main thread.
+    // See https://github.com/flutter/flutter/issues/194655
+    MainActor.assumeIsolated {
+      #if os(iOS)
+        // Allow audio playback when the Ring/Silent switch is set to silent
+        upgradeAudioSessionCategory(
+          session: avFactory.sharedAudioSession(),
+          requestedCategory: .playback,
+          options: [],
+          clearOptions: []
+        )
+      #endif
 
-    for player in playersByIdentifier.values {
-      player.dispose()
+      for player in playersByIdentifier.values {
+        player.dispose()
+      }
+      playersByIdentifier.removeAll()
     }
-    playersByIdentifier.removeAll()
   }
 
   func createPlatformViewPlayer(options params: CreationOptions) throws -> Int64 {
-    let item = try playerItem(with: params)
-    let player = VideoPlayer(playerItem: item, avFactory: avFactory, viewProvider: viewProvider)
-    return configurePlayer(player, extraDisposeHandler: nil)
+    // Work around the lack of annotations on HostApi protocols; this method is
+    // guaranteed to be called from the main thread.
+    // See https://github.com/flutter/flutter/issues/194655
+    try MainActor.assumeIsolated {
+      let item = try playerItem(with: params)
+      let player = VideoPlayer(playerItem: item, avFactory: avFactory, viewProvider: viewProvider)
+      return configurePlayer(player, extraDisposeHandler: nil)
+    }
   }
 
   func createTexturePlayer(options creationOptions: CreationOptions) throws -> TexturePlayerIds {
-    let item = try playerItem(with: creationOptions)
-    let frameUpdater = FVPFrameUpdater(registry: textureRegistry)
-    let displayLink = displayLinkFactory.displayLink(with: viewProvider) {
-      frameUpdater.displayLinkFired()
+    // Work around the lack of annotations on HostApi protocols; this method is
+    // guaranteed to be called from the main thread.
+    // See https://github.com/flutter/flutter/issues/194655
+    try MainActor.assumeIsolated {
+      let item = try playerItem(with: creationOptions)
+      let frameUpdater = FVPFrameUpdater(registry: textureRegistry)
+      let displayLink = displayLinkFactory.displayLink(with: viewProvider) {
+        frameUpdater.displayLinkFired()
+      }
+
+      let player = TextureBasedVideoPlayer(
+        playerItem: item,
+        frameUpdater: frameUpdater,
+        displayLink: displayLink,
+        avFactory: avFactory,
+        viewProvider: viewProvider
+      )
+
+      let textureId = textureRegistry.register(player)
+      player.setTextureIdentifier(textureId)
+
+      let playerId = configurePlayer(player) { [weak self] in
+        self?.textureRegistry.unregisterTexture(textureId)
+      }
+
+      return TexturePlayerIds(playerId: playerId, textureId: textureId)
     }
-
-    let player = TextureBasedVideoPlayer(
-      playerItem: item,
-      frameUpdater: frameUpdater,
-      displayLink: displayLink,
-      avFactory: avFactory,
-      viewProvider: viewProvider
-    )
-
-    let textureId = textureRegistry.register(player)
-    player.setTextureIdentifier(textureId)
-
-    let playerId = configurePlayer(player) { [weak self] in
-      self?.textureRegistry.unregisterTexture(textureId)
-    }
-
-    return TexturePlayerIds(playerId: playerId, textureId: textureId)
   }
 
   func setMixWithOthers(_ mixWithOthers: Bool) throws {
@@ -239,7 +262,7 @@ public final class VideoPlayerPlugin: NSObject, FlutterPlugin, AVFoundationVideo
 
   // MARK: - Private
 
-  private func configurePlayer(
+  @MainActor private func configurePlayer(
     _ player: VideoPlayer,
     extraDisposeHandler: (() -> Void)?
   ) -> Int64 {
@@ -250,7 +273,8 @@ public final class VideoPlayerPlugin: NSObject, FlutterPlugin, AVFoundationVideo
     let channelSuffix = "\(playerId)"
     // Set up the player-specific API handler, and its onDispose unregistration.
     VideoPlayerInstanceApiSetup.setUp(
-      binaryMessenger: binaryMessenger, api: player, messageChannelSuffix: channelSuffix)
+      binaryMessenger: binaryMessenger, api: player.hostApiBridge,
+      messageChannelSuffix: channelSuffix)
 
     player.onDisposed = { [weak self] in
       guard let strongSelf = self else { return }
@@ -270,7 +294,7 @@ public final class VideoPlayerPlugin: NSObject, FlutterPlugin, AVFoundationVideo
     return playerId
   }
 
-  private func playerItem(with options: CreationOptions) throws -> WrappedAVPlayerItem {
+  @MainActor private func playerItem(with options: CreationOptions) throws -> WrappedAVPlayerItem {
     let headers = options.httpHeaders
     let itemOptions = headers.isEmpty ? nil : ["AVURLAssetHTTPHeaderFieldsKey": headers]
     guard let url = URL(string: options.uri) else {

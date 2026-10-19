@@ -205,12 +205,13 @@ final class StubAVFactory: NSObject, WrappedAVObjectFactory {
   init(
     player: AVPlayer? = nil,
     playerItem: WrappedAVPlayerItem? = nil,
-    pixelBufferSource: PixelBufferSource? = nil
+    pixelBufferSource: PixelBufferSource? = nil,
+    assetURL: String? = nil,
   ) {
-    let dummyURL = URL(string: "https://flutter.dev")!
+    let url = URL(string: assetURL ?? "https://flutter.dev")!
     self.player =
       player
-      ?? AVPlayer(playerItem: AVPlayerItem(url: dummyURL))
+      ?? AVPlayer(playerItem: AVPlayerItem(url: url))
     self.playerItem = playerItem ?? StubPlayerItem()
     self.pixelBufferSource = pixelBufferSource
     #if os(iOS)

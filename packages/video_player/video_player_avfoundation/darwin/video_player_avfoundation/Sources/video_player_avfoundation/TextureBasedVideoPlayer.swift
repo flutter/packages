@@ -98,30 +98,28 @@ class TextureBasedVideoPlayer: VideoPlayer, FlutterTexture {
 
   // MARK: Overrides
 
-  override func updatePlayingState() {
+  @MainActor override func updatePlayingState() {
     super.updatePlayingState()
     // If the texture is still waiting for an expected frame, the display link needs to keep
     // running until it arrives regardless of the play/pause state.
     displayLink?.running = isPlaying || waitingForFrame
   }
 
-  override func seek(to position: Int64, completion: @escaping (Result<Void, Error>) -> Void) {
+  @MainActor override func seek(to position: Int64) async throws {
     let previousCMTime = player.currentTime()
-    super.seek(to: position) { [weak self] error in
-      if let self = self, self.player.currentTime() != previousCMTime {
-        // Ensure that a frame is drawn once available, even if currently paused. In theory a
-        // race is possible here where the new frame has already drawn by the time this code
-        // runs, and the display link stays on indefinitely, but that should be relatively
-        // harmless. This must use the display link rather than just informing the engine that a
-        // new frame is available because the seek completing doesn't guarantee that the pixel
-        // buffer is already available.
-        self.expectFrame()
-      }
-      completion(error)
+    try await super.seek(to: position)
+    if self.player.currentTime() != previousCMTime {
+      // Ensure that a frame is drawn once available, even if currently paused. In theory a
+      // race is possible here where the new frame has already drawn by the time this code
+      // runs, and the display link stays on indefinitely, but that should be relatively
+      // harmless. This must use the display link rather than just informing the engine that a
+      // new frame is available because the seek completing doesn't guarantee that the pixel
+      // buffer is already available.
+      self.expectFrame()
     }
   }
 
-  override func dispose() {
+  @MainActor override func dispose() {
     super.dispose()
 
     playerLayer?.removeFromSuperlayer()

@@ -68,21 +68,22 @@ private let hlsAudioTestURI =
   @Test func seekToWhilePausedStartsDisplayLinkTemporarily() async throws {
     let stubDisplayLinkFactory = StubFVPDisplayLinkFactory()
     let mockVideoOutput = TestPixelBufferSource()
+    let url = hlsTestURI
     // Display link and frame updater wire-up is currently done in VideoPlayerPlugin, so create
     // the player via the plugin instead of directly to include that logic in the test.
     let videoPlayerPlugin = try createInitializedPlugin(
-      avFactory: StubAVFactory(pixelBufferSource: mockVideoOutput),
+      avFactory: StubAVFactory(pixelBufferSource: mockVideoOutput, assetURL: url),
       displayLinkFactory: stubDisplayLinkFactory)
 
     let identifiers = try videoPlayerPlugin.createTexturePlayer(
-      options: CreationOptions(uri: hlsTestURI, httpHeaders: [:]))
+      options: CreationOptions(uri: url, httpHeaders: [:]))
     let player =
       videoPlayerPlugin.playersByIdentifier[identifiers.playerId] as! TextureBasedVideoPlayer
 
     // Ensure that the video playback is paused before seeking.
     player.pause()
 
-    await asyncSeekTo(player: player, time: 1234)
+    try await player.seek(to: 1234)
 
     // Seeking to a new position should start the display link temporarily.
     #expect(stubDisplayLinkFactory.displayLink.running)
@@ -101,12 +102,13 @@ private let hlsAudioTestURI =
   @Test func initStartsDisplayLinkTemporarily() throws {
     let stubDisplayLinkFactory = StubFVPDisplayLinkFactory()
     let mockVideoOutput = TestPixelBufferSource()
+    let url = hlsTestURI
     let videoPlayerPlugin = try createInitializedPlugin(
-      avFactory: StubAVFactory(pixelBufferSource: mockVideoOutput),
+      avFactory: StubAVFactory(pixelBufferSource: mockVideoOutput, assetURL: hlsTestURI),
       displayLinkFactory: stubDisplayLinkFactory)
 
     let identifiers = try videoPlayerPlugin.createTexturePlayer(
-      options: CreationOptions(uri: hlsTestURI, httpHeaders: [:]))
+      options: CreationOptions(uri: url, httpHeaders: [:]))
 
     // Init should start the display link temporarily.
     #expect(stubDisplayLinkFactory.displayLink.running)
@@ -127,19 +129,20 @@ private let hlsAudioTestURI =
   @Test func seekToWhilePlayingDoesNotStopDisplayLink() async throws {
     let stubDisplayLinkFactory = StubFVPDisplayLinkFactory()
     let mockVideoOutput = TestPixelBufferSource()
+    let url = hlsTestURI
     let videoPlayerPlugin = try createInitializedPlugin(
-      avFactory: StubAVFactory(pixelBufferSource: mockVideoOutput),
+      avFactory: StubAVFactory(pixelBufferSource: mockVideoOutput, assetURL: url),
       displayLinkFactory: stubDisplayLinkFactory)
 
     let identifiers = try videoPlayerPlugin.createTexturePlayer(
-      options: CreationOptions(uri: hlsTestURI, httpHeaders: [:]))
+      options: CreationOptions(uri: url, httpHeaders: [:]))
     let player =
       videoPlayerPlugin.playersByIdentifier[identifiers.playerId] as! TextureBasedVideoPlayer
 
     // Ensure that the video is playing before seeking.
     player.play()
 
-    await asyncSeekTo(player: player, time: 1234)
+    try await player.seek(to: 1234)
 
     #expect(stubDisplayLinkFactory.displayLink.running)
 
@@ -330,7 +333,7 @@ private let hlsAudioTestURI =
     #expect(t.ty == 0)
   }
 
-  @Test func seekToleranceWhenNotSeekingToEnd() async {
+  @Test func seekToleranceWhenNotSeekingToEnd() async throws {
     let inspectableAVPlayer = InspectableAVPlayer()
     let stubAVFactory = StubAVFactory(player: inspectableAVPlayer)
     let player = VideoPlayer(
@@ -340,13 +343,13 @@ private let hlsAudioTestURI =
     let listener = StubEventListener()
     player.eventListener = listener
 
-    await asyncSeekTo(player: player, time: 1234)
+    try await player.seek(to: 1234)
 
     #expect(inspectableAVPlayer.beforeTolerance?.intValue == 0)
     #expect(inspectableAVPlayer.afterTolerance?.intValue == 0)
   }
 
-  @Test func seekToleranceWhenSeekingToEnd() async {
+  @Test func seekToleranceWhenSeekingToEnd() async throws {
     let inspectableAVPlayer = InspectableAVPlayer()
     let stubAVFactory = StubAVFactory(player: inspectableAVPlayer)
     let player = VideoPlayer(
@@ -356,7 +359,7 @@ private let hlsAudioTestURI =
     let listener = StubEventListener()
     player.eventListener = listener
 
-    await asyncSeekTo(player: player, time: 0)
+    try await player.seek(to: 0)
 
     #expect((inspectableAVPlayer.beforeTolerance?.intValue ?? 0) > 0)
     #expect((inspectableAVPlayer.afterTolerance?.intValue ?? 0) > 0)
@@ -648,20 +651,11 @@ private let hlsAudioTestURI =
       player.eventListener = listener
     }
 
-    // Now test getAudioTracks
-    await withCheckedContinuation { continuation in
-      player.getAudioTracks { result in
-        switch result {
-        case .success(let tracks):
-          // Regular MP4 files do not have media selection groups for audio.
-          // getAudioTracks only returns selectable audio tracks from HLS streams.
-          #expect(tracks.isEmpty)
-        case .failure(let error):
-          Issue.record("Failed to get tracks: \(error)")
-        }
-        continuation.resume()
-      }
-    }
+    let tracks = try await player.getAudioTracks()
+
+    // Regular MP4 files do not have media selection groups for audio.
+    // getAudioTracks only returns selectable audio tracks from HLS streams.
+    #expect(tracks.isEmpty)
 
     player.dispose()
   }
@@ -683,22 +677,14 @@ private let hlsAudioTestURI =
     }
 
     // Now test getAudioTracks
-    await withCheckedContinuation { continuation in
-      player.getAudioTracks { result in
-        switch result {
-        case .success(let tracks):
-          // For HLS streams with multiple audio options, we get media selection tracks.
-          // The bee.m3u8 stream may or may not have multiple audio tracks.
-          // We verify the method returns valid data without crashing.
-          for track in tracks {
-            #expect(track.displayName != nil)
-            #expect(track.index >= 0)
-          }
-        case .failure(let error):
-          Issue.record("Failed to get tracks: \(error)")
-        }
-        continuation.resume()
-      }
+    let tracks = try await player.getAudioTracks()
+
+    // For HLS streams with multiple audio options, we get media selection tracks.
+    // The bee.m3u8 stream may or may not have multiple audio tracks.
+    // We verify the method returns valid data without crashing.
+    for track in tracks {
+      #expect(track.displayName != nil)
+      #expect(track.index >= 0)
     }
 
     player.dispose()
@@ -722,20 +708,11 @@ private let hlsAudioTestURI =
       player.eventListener = listener
     }
 
-    // Now test getAudioTracks
-    await withCheckedContinuation { continuation in
-      player.getAudioTracks { result in
-        switch result {
-        case .success(let tracks):
-          // Regular audio files do not have media selection groups.
-          // getAudioTracks only returns selectable audio tracks from HLS streams.
-          #expect(tracks.isEmpty)
-        case .failure(let error):
-          Issue.record("Failed to get tracks: \(error)")
-        }
-        continuation.resume()
-      }
-    }
+    let tracks = try await player.getAudioTracks()
+
+    // Regular audio files do not have media selection groups.
+    // getAudioTracks only returns selectable audio tracks from HLS streams.
+    #expect(tracks.isEmpty)
 
     player.dispose()
   }
@@ -759,20 +736,11 @@ private let hlsAudioTestURI =
       player.eventListener = listener
     }
 
-    // Now test getAudioTracks
-    await withCheckedContinuation { continuation in
-      player.getAudioTracks { result in
-        switch result {
-        case .success(let tracks):
-          // Regular MP4 files do not have media selection groups.
-          // getAudioTracks only returns selectable audio tracks from HLS streams.
-          #expect(tracks.isEmpty)
-        case .failure(let error):
-          Issue.record("Failed to get tracks: \(error)")
-        }
-        continuation.resume()
-      }
-    }
+    let tracks = try await player.getAudioTracks()
+
+    // Regular MP4 files do not have media selection groups.
+    // getAudioTracks only returns selectable audio tracks from HLS streams.
+    #expect(tracks.isEmpty)
 
     player.dispose()
   }
@@ -834,17 +802,11 @@ private let hlsAudioTestURI =
       player.eventListener = listener
     }
 
-    // Now test getVideoTracks
-    await withCheckedContinuation { continuation in
-      player.getVideoTracks { result in
-        if case .failure(let error) = result {
-          Issue.record("Failed to get tracks: \(error)")
-        }
-        // For regular MP4 files, media selection tracks should be nil (no HLS variants)
-        // The method returns empty data for non-HLS content
-        continuation.resume()
-      }
-    }
+    let tracks = try await player.getVideoTracks()
+
+    // For regular MP4 files, media selection tracks should be empty or nil (no HLS variants)
+    // The method returns empty data for non-HLS content
+    #expect(tracks.mediaSelectionTracks?.isEmpty ?? true)
 
     player.dispose()
   }
@@ -867,27 +829,18 @@ private let hlsAudioTestURI =
       player.eventListener = listener
     }
 
-    // Now test getVideoTracks
-    await withCheckedContinuation { continuation in
-      player.getVideoTracks { result in
-        switch result {
-        case .success(let trackInfo):
-          // The bee.m3u8 stream may or may not have multiple video variants.
-          // We verify the method returns valid data without crashing.
-          if let mediaSelectionTracks = trackInfo.mediaSelectionTracks {
-            // If media selection tracks exist, they should have valid structure
-            for track in mediaSelectionTracks {
-              #expect(track.variantIndex >= 0)
-              // Bitrate should be positive if present
-              if let bitrate = track.bitrate {
-                #expect(bitrate > 0)
-              }
-            }
-          }
-        case .failure(let error):
-          Issue.record("Failed to get tracks: \(error)")
+    let tracks = try await player.getVideoTracks()
+
+    // The bee.m3u8 stream may or may not have multiple video variants.
+    // We verify the method returns valid data without crashing.
+    if let mediaSelectionTracks = tracks.mediaSelectionTracks {
+      // If media selection tracks exist, they should have valid structure
+      for track in mediaSelectionTracks {
+        #expect(track.variantIndex >= 0)
+        // Bitrate should be positive if present
+        if let bitrate = track.bitrate {
+          #expect(bitrate > 0)
         }
-        continuation.resume()
       }
     }
 
@@ -962,15 +915,8 @@ private let hlsAudioTestURI =
     let item = try #require(player.player.currentItem)
     try await waitForPlayerItemStatus(item, state: .readyToPlay)
 
-    // Now test getVideoTracks
-    await withCheckedContinuation { continuation in
-      player.getVideoTracks { result in
-        if case .failure(let error) = result {
-          Issue.record("Failed to get tracks: \(error)")
-        }
-        continuation.resume()
-      }
-    }
+    // Just test that the call completes successfully.
+    let _ = try await player.getVideoTracks()
 
     player.dispose()
   }
@@ -1087,22 +1033,6 @@ private let hlsAudioTestURI =
           continuation.resume(
             throwing: observedItem.error ?? NSError(domain: "VideoPlayerTests", code: 1))
         }
-      }
-    }
-  }
-
-  // TODO(stuartmorgan): Remove this in favor of just `await player.seek(...)` once
-  // Pigeon is generating Swift 6-friendly output. Currently using the automatic async
-  // conversion generates warnings due to the lack of concurrency annotations
-  // ("non-sendable type 'FlutterError?' returned by implicitly asynchronous call to
-  // nonisolated function cannot cross actor boundary").
-  private func asyncSeekTo(player: VideoPlayer, time: Int64) async {
-    await withCheckedContinuation { continuation in
-      player.seek(to: time) { result in
-        if case .failure(let error) = result {
-          Issue.record("Seek failed: \(error)")
-        }
-        continuation.resume()
       }
     }
   }

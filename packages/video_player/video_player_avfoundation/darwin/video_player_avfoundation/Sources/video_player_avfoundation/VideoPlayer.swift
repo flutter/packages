@@ -17,6 +17,94 @@ import CoreMedia
   import video_player_avfoundation_objc
 #endif
 
+// Forwarding bridge to handle Pigeon callbacks without preventing VideoPlayer from
+// being annotated as @MainActor. Synchronous methods use assumeIsolated since they
+// are guaranteed to be called on the main thread, and async methods rely on the `await`
+// moving to the correct thread if the call to this bridge jumped off of main.
+// TODO(stuartmorgan): Remove this once https://github.com/flutter/flutter/issues/194655
+// is fixed, by making VideoPlayerInstanceApi a @MainActor protocol and returning to
+// having VideoPlayer conform to it.
+class VideoPlayerInstanceBridge: VideoPlayerInstanceApi {
+  private unowned let player: VideoPlayer
+
+  init(player: VideoPlayer) {
+    self.player = player
+  }
+
+  func setLooping(_ looping: Bool) throws {
+    MainActor.assumeIsolated {
+      player.setLooping(looping)
+    }
+  }
+
+  func setVolume(_ volume: Double) throws {
+    MainActor.assumeIsolated {
+      player.setVolume(volume)
+    }
+  }
+
+  func setPlaybackSpeed(_ speed: Double) throws {
+    MainActor.assumeIsolated {
+      player.setPlaybackSpeed(speed)
+    }
+  }
+
+  func play() throws {
+    MainActor.assumeIsolated {
+      player.play()
+    }
+  }
+
+  func getPosition() throws -> Int64 {
+    MainActor.assumeIsolated {
+      return player.getPosition()
+    }
+  }
+
+  func seek(to position: Int64) async throws {
+    try await player.seek(to: position)
+  }
+
+  func pause() throws {
+    MainActor.assumeIsolated {
+      player.pause()
+    }
+  }
+
+  func dispose() throws {
+    MainActor.assumeIsolated {
+      player.dispose()
+    }
+  }
+
+  func getAudioTracks() async throws -> [MediaSelectionAudioTrackData] {
+    return try await player.getAudioTracks()
+  }
+
+  func selectAudioTrack(atIndex trackIndex: Int64) async throws {
+    return try await player.selectAudioTrack(atIndex: trackIndex)
+  }
+
+  func getVideoTracks() async throws -> NativeVideoTrackData {
+    return try await player.getVideoTracks()
+  }
+
+  func selectVideoTrack(withBitrate bitrate: Int64) throws {
+    MainActor.assumeIsolated {
+      player.selectVideoTrack(withBitrate: bitrate)
+    }
+  }
+
+  func setPreventsDisplaySleepDuringVideoPlayback(_ preventsDisplaySleepDuringVideoPlayback: Bool)
+    throws
+  {
+    MainActor.assumeIsolated {
+      player.setPreventsDisplaySleepDuringVideoPlayback(preventsDisplaySleepDuringVideoPlayback)
+    }
+  }
+
+}
+
 /// VideoPlayer manages video playback using AVPlayer.
 /// It provides methods for controlling playback, adjusting volume, and handling seeking.
 /// This class contains all functionalities needed to manage video playback in platform views and is
@@ -24,9 +112,14 @@ import CoreMedia
 /// texture, use TextureBasedVideoPlayer instead.
 // TODO(stuartmorgan): Consider moving TextureBasedVideoPlayer's FlutterTexture implementation
 // to a small bridge object to avoid the need to inherit from NSObject here.
-class VideoPlayer: NSObject, VideoPlayerInstanceApi {
+// TODO(stuartmorgan): Add VideoPlayerInstanceApi conformance here once it has actor
+// annotations. See TODO on VideoPlayerInstanceBridge above.
+@MainActor
+class VideoPlayer: NSObject {
   /// The AVPlayer instance used for video playback.
   let player: AVPlayer
+  /// The VideoPlayerInstanceApi implementation that forwards calls to this object.
+  private(set) var hostApiBridge: VideoPlayerInstanceBridge!
   /// Indicates whether the video player has been disposed.
   private(set) var disposed = false
   /// Indicates whether the video player is set to loop.
@@ -36,7 +129,9 @@ class VideoPlayer: NSObject, VideoPlayerInstanceApi {
   /// The event listener to report video events to.
   var eventListener: FVPVideoEventListener? {
     didSet {
-      registerInternalEventListeners()
+      Task {
+        await registerInternalEventListeners()
+      }
     }
   }
   /// A block that will be called when dispose is called.
@@ -110,6 +205,8 @@ class VideoPlayer: NSObject, VideoPlayerInstanceApi {
 
     super.init()
 
+    hostApiBridge = VideoPlayerInstanceBridge(player: self)
+
     Task { @MainActor [weak self] in
       do {
         let tracks = try await asset.load(.tracks, isolation: #isolation)
@@ -132,6 +229,9 @@ class VideoPlayer: NSObject, VideoPlayerInstanceApi {
           // https://developer.apple.com/documentation/avfoundation/avplayeritem/1388818-videocomposition
           // Video composition can only be used with file-based media and is not supported for
           // use with media served using HTTP Live Streaming.
+          if self.disposed {
+            return
+          }
           playerItem.videoComposition = try await self.createVideoComposition(
             transform: self.preferredTransform, asset: asset, videoTrack: videoTrack)
         }
@@ -172,22 +272,17 @@ class VideoPlayer: NSObject, VideoPlayerInstanceApi {
     return convertCMTimeToMillis(player.currentTime())
   }
 
-  func seek(to position: Int64, completion: @escaping (Result<Void, Error>) -> Void) {
-    Task { @MainActor in
-      let targetCMTime = CMTime(value: position, timescale: 1000)
-      var duration: Int64 = 0
-      if let asset = player.currentItem?.asset {
-        do {
-          duration = try await asset.load(.duration).value
-        } catch {}
-      }
-      // Without adding tolerance when seeking to duration,
-      // seek(to:) will never complete, and this call will hang.
-      // see issue https://github.com/flutter/flutter/issues/124475.
-      let tolerance = position == duration ? CMTime(value: 1, timescale: 1000) : .zero
-      await player.seek(to: targetCMTime, toleranceBefore: tolerance, toleranceAfter: tolerance)
-      completion(.success(()))
+  func seek(to position: Int64) async throws {
+    let targetCMTime = CMTime(value: position, timescale: 1000)
+    var duration: Int64 = 0
+    if let asset = player.currentItem?.asset {
+      duration = try await asset.load(.duration).value
     }
+    // Without adding tolerance when seeking to duration,
+    // seek(to:) will never complete, and this call will hang.
+    // see issue https://github.com/flutter/flutter/issues/124475.
+    let tolerance = position == duration ? CMTime(value: 1, timescale: 1000) : .zero
+    await player.seek(to: targetCMTime, toleranceBefore: tolerance, toleranceAfter: tolerance)
   }
 
   func pause() {
@@ -215,153 +310,121 @@ class VideoPlayer: NSObject, VideoPlayerInstanceApi {
     eventListener?.videoPlayerWasDisposed()
   }
 
-  func getAudioTracks(completion: @escaping (Result<[MediaSelectionAudioTrackData], Error>) -> Void)
-  {
+  @MainActor func getAudioTracks() async throws -> [MediaSelectionAudioTrackData] {
     guard let currentItem = player.currentItem else {
-      completion(.success([]))
-      return
+      return []
     }
 
     let asset = currentItem.asset
 
-    Task { @MainActor in
-      do {
-        // Get tracks from media selection (for HLS streams)
-        let audioGroup = try await asset.loadMediaSelectionGroup(for: .audible)
-        guard let audioGroup = audioGroup else {
-          completion(.success([]))
-          return
-        }
+    // Get tracks from media selection (for HLS streams)
+    let audioGroup = try await asset.loadMediaSelectionGroup(for: .audible)
+    guard let audioGroup = audioGroup else {
+      return []
+    }
 
-        let mediaSelection = currentItem.currentMediaSelection
-        let currentSelection = mediaSelection.selectedMediaOption(in: audioGroup)
-        var trackData: [MediaSelectionAudioTrackData] = []
-        for (i, option) in audioGroup.options.enumerated() {
-          let titleItems = AVMetadataItem.metadataItems(
-            from: option.commonMetadata, withKey: AVMetadataKey.commonKeyTitle, keySpace: .common)
-          let languageCode =
-            if #available(iOS 16.0, macOS 13.0, *) {
-              option.locale?.language.languageCode?.identifier
-            } else {
-              option.locale?.languageCode
-            }
-          var title: String?
-          if let firstTitleItem = titleItems.first {
-            do {
-              title = try await firstTitleItem.load(.stringValue)
-            } catch {}
-          }
-          trackData.append(
-            MediaSelectionAudioTrackData(
-              index: Int64(i),
-              displayName: option.displayName,
-              languageCode: languageCode,
-              isSelected: currentSelection == option,
-              commonMetadataTitle: title))
+    let mediaSelection = currentItem.currentMediaSelection
+    let currentSelection = mediaSelection.selectedMediaOption(in: audioGroup)
+    var trackData: [MediaSelectionAudioTrackData] = []
+    for (i, option) in audioGroup.options.enumerated() {
+      let titleItems = AVMetadataItem.metadataItems(
+        from: option.commonMetadata, withKey: AVMetadataKey.commonKeyTitle, keySpace: .common)
+      let languageCode =
+        if #available(iOS 16.0, macOS 13.0, *) {
+          option.locale?.language.languageCode?.identifier
+        } else {
+          option.locale?.languageCode
         }
-        completion(.success(trackData))
-      } catch {
-        completion(.success([]))
+      var title: String?
+      if let firstTitleItem = titleItems.first {
+        do {
+          title = try await firstTitleItem.load(.stringValue)
+        } catch {
+          // Ignore failure to load a title, since titles are optional anyway.
+        }
+      }
+      trackData.append(
+        MediaSelectionAudioTrackData(
+          index: Int64(i),
+          displayName: option.displayName,
+          languageCode: languageCode,
+          isSelected: currentSelection == option,
+          commonMetadataTitle: title))
+    }
+    return trackData
+  }
+
+  @MainActor func selectAudioTrack(atIndex trackIndex: Int64) async throws {
+    guard let currentItem = player.currentItem else {
+      return
+    }
+    let asset = currentItem.asset
+
+    if let audioGroup = try await asset.loadMediaSelectionGroup(for: .audible) {
+      if trackIndex >= 0 && trackIndex < audioGroup.options.count {
+        let option = audioGroup.options[Int(trackIndex)]
+        currentItem.select(option, in: audioGroup)
       }
     }
   }
 
-  func selectAudioTrack(
-    atIndex trackIndex: Int64, completion: @escaping (Result<Void, Error>) -> Void
-  ) {
+  @MainActor func getVideoTracks() async throws -> NativeVideoTrackData {
     guard let currentItem = player.currentItem else {
-      completion(.success(()))
-      return
-    }
-    let asset = currentItem.asset
-
-    Task { @MainActor in
-      do {
-        if let audioGroup = try await asset.loadMediaSelectionGroup(for: .audible) {
-          if trackIndex >= 0 && trackIndex < audioGroup.options.count {
-            let option = audioGroup.options[Int(trackIndex)]
-            currentItem.select(option, in: audioGroup)
-          }
-        }
-      } catch {}
-      completion(.success(()))
-    }
-  }
-
-  func getVideoTracks(completion: @escaping (Result<NativeVideoTrackData, Error>) -> Void) {
-    guard let currentItem = player.currentItem else {
-      completion(
-        .failure(PigeonError(code: "State Error", message: "No current player item", details: nil)))
-      return
+      throw PigeonError(code: "State Error", message: "No current player item", details: nil)
     }
 
     guard let urlAsset = currentItem.asset as? AVURLAsset else {
-      completion(
-        .failure(PigeonError(code: "State Error", message: "No current player asset", details: nil))
-      )
-      return
+      throw PigeonError(code: "State Error", message: "No current player asset", details: nil)
     }
 
-    Task { @MainActor in
-      do {
-        let variants = try await urlAsset.load(.variants)
-        var mediaSelectionTracks: [MediaSelectionVideoTrackData] = []
-        let currentBitrate = max(currentItem.preferredPeakBitRate, 0)
+    let variants = try await urlAsset.load(.variants)
+    var mediaSelectionTracks: [MediaSelectionVideoTrackData] = []
+    let currentBitrate = max(currentItem.preferredPeakBitRate, 0)
 
-        var variantIndex = 0
-        for variant in variants {
-          let peakBitRate = variant.peakBitRate ?? 0.0
-          var videoSize = CGSize.zero
-          var frameRate = 0.0
-          var codec: String?
+    var variantIndex = 0
+    for variant in variants {
+      let peakBitRate = variant.peakBitRate ?? 0.0
+      var videoSize = CGSize.zero
+      var frameRate = 0.0
+      var codec: String?
 
-          // Get video attributes if available
-          if let videoAttrs = variant.videoAttributes {
-            videoSize = videoAttrs.presentationSize
-            frameRate = videoAttrs.nominalFrameRate ?? 0.0
-            // Get codec from media sub types
-            let codecTypes = videoAttrs.codecTypes
-            if !codecTypes.isEmpty {
-              codec = codecStringFromFourCharCode(codecTypes[0])
-            }
-          }
-
-          // Determine if this variant is currently selected by comparing
-          // bitrates. Since AVPlayer doesn't expose the exact selected variant,
-          // we use a 10% tolerance to account for minor bitrate variations in
-          // adaptive streaming.
-          let isSelected =
-            currentBitrate > 0 && abs(peakBitRate - currentBitrate) < peakBitRate * 0.1
-
-          // Generate a human-readable resolution label (e.g., "1080p")
-          let resolutionLabel: String? =
-            videoSize.height > 0 ? String(format: "%.0fp", videoSize.height) : nil
-
-          let trackData = createVideoTrackData(
-            index: variantIndex,
-            label: resolutionLabel,
-            peakBitRate: peakBitRate,
-            videoSize: videoSize,
-            frameRate: frameRate,
-            codec: codec,
-            isSelected: isSelected)
-          mediaSelectionTracks.append(trackData)
-          variantIndex += 1
+      // Get video attributes if available
+      if let videoAttrs = variant.videoAttributes {
+        videoSize = videoAttrs.presentationSize
+        frameRate = videoAttrs.nominalFrameRate ?? 0.0
+        // Get codec from media sub types
+        let codecTypes = videoAttrs.codecTypes
+        if !codecTypes.isEmpty {
+          codec = codecStringFromFourCharCode(codecTypes[0])
         }
-
-        completion(
-          .success(
-            NativeVideoTrackData(
-              assetTracks: nil,
-              mediaSelectionTracks: mediaSelectionTracks)))
-      } catch {
-        completion(
-          .success(
-            NativeVideoTrackData(
-              assetTracks: nil,
-              mediaSelectionTracks: [])))
       }
+
+      // Determine if this variant is currently selected by comparing
+      // bitrates. Since AVPlayer doesn't expose the exact selected variant,
+      // we use a 10% tolerance to account for minor bitrate variations in
+      // adaptive streaming.
+      let isSelected =
+        currentBitrate > 0 && abs(peakBitRate - currentBitrate) < peakBitRate * 0.1
+
+      // Generate a human-readable resolution label (e.g., "1080p")
+      let resolutionLabel: String? =
+        videoSize.height > 0 ? String(format: "%.0fp", videoSize.height) : nil
+
+      let trackData = createVideoTrackData(
+        index: variantIndex,
+        label: resolutionLabel,
+        peakBitRate: peakBitRate,
+        videoSize: videoSize,
+        frameRate: frameRate,
+        codec: codec,
+        isSelected: isSelected)
+      mediaSelectionTracks.append(trackData)
+      variantIndex += 1
     }
+
+    return NativeVideoTrackData(
+      assetTracks: nil,
+      mediaSelectionTracks: mediaSelectionTracks)
   }
 
   func selectVideoTrack(withBitrate bitrate: Int64) {
@@ -402,29 +465,31 @@ class VideoPlayer: NSObject, VideoPlayerInstanceApi {
 
   // MARK: Private
 
-  private func registerInternalEventListeners() {
+  @MainActor private func registerInternalEventListeners() async {
     // The first time an event listener is set, set up video event listeners to relay status changes
     // changes to the event listener.
     if eventListener != nil && keyValueObservations.isEmpty && !disposed,
       let item = player.currentItem
     {
       // If the item is already ready to play, ensure that the intialized event is sent first.
-      reportStatus(playerItem: item)
+      await reportStatus(playerItem: item)
       // Set up all necessary observers to report video events.
       keyValueObservations.append(
         item.observe(
           \.loadedTimeRanges,
           options: [.new]
         ) { [weak self] object, _ in
-          guard let self = self else { return }
-          let values = object.loadedTimeRanges.map { rangeValue in
-            let range = rangeValue.timeRangeValue
-            return [
-              NSNumber(value: self.convertCMTimeToMillis(range.start)),
-              NSNumber(value: self.convertCMTimeToMillis(range.duration)),
-            ]
+          Task { @MainActor in
+            guard let self = self else { return }
+            let values = object.loadedTimeRanges.map { rangeValue in
+              let range = rangeValue.timeRangeValue
+              return [
+                NSNumber(value: self.convertCMTimeToMillis(range.start)),
+                NSNumber(value: self.convertCMTimeToMillis(range.duration)),
+              ]
+            }
+            self.eventListener?.videoPlayerDidUpdateBufferRegions(values)
           }
-          self.eventListener?.videoPlayerDidUpdateBufferRegions(values)
         }
       )
       keyValueObservations.append(
@@ -432,12 +497,14 @@ class VideoPlayer: NSObject, VideoPlayerInstanceApi {
           \.isPlaybackLikelyToKeepUp,
           options: [.new]
         ) { [weak self] object, _ in
-          guard let self = self else { return }
-          self.updatePlayingState()
-          if object.isPlaybackLikelyToKeepUp {
-            self.eventListener?.videoPlayerDidEndBuffering()
-          } else {
-            self.eventListener?.videoPlayerDidStartBuffering()
+          Task { @MainActor in
+            guard let self = self else { return }
+            self.updatePlayingState()
+            if object.isPlaybackLikelyToKeepUp {
+              self.eventListener?.videoPlayerDidEndBuffering()
+            } else {
+              self.eventListener?.videoPlayerDidStartBuffering()
+            }
           }
         }
       )
@@ -446,7 +513,9 @@ class VideoPlayer: NSObject, VideoPlayerInstanceApi {
           \.status,
           options: [.new]
         ) { [weak self] object, _ in
-          self?.reportStatus(playerItem: object as AVPlayerItem)
+          Task { @MainActor in
+            await self?.reportStatus(playerItem: object as AVPlayerItem)
+          }
         }
       )
       keyValueObservations.append(
@@ -454,15 +523,19 @@ class VideoPlayer: NSObject, VideoPlayerInstanceApi {
           \.rate,
           options: [.new]
         ) { [weak self] object, _ in
-          self?.eventListener?.videoPlayerDidSetPlaying(object.rate > 0)
+          Task { @MainActor in
+            self?.eventListener?.videoPlayerDidSetPlaying(object.rate > 0)
+          }
         }
       )
 
       playToEndObserver = NotificationCenter.default.addObserver(
         forName: .AVPlayerItemDidPlayToEndTime, object: item, queue: .main
       ) { [weak self] notification in
-        guard let item = notification.object as? AVPlayerItem else { return }
-        self?.itemDidPlayToEndTime(item)
+        Task { @MainActor in
+          guard let item = notification.object as? AVPlayerItem else { return }
+          self?.itemDidPlayToEndTime(item)
+        }
       }
     }
   }
@@ -536,7 +609,7 @@ class VideoPlayer: NSObject, VideoPlayerInstanceApi {
     return videoComposition
   }
 
-  private func reportStatus(playerItem item: AVPlayerItem) {
+  @MainActor private func reportStatus(playerItem item: AVPlayerItem) async {
     assert(
       eventListener != nil,
       "\(#function) was called when the event listener was not set.")
@@ -546,7 +619,7 @@ class VideoPlayer: NSObject, VideoPlayerInstanceApi {
     case .readyToPlay:
       if !isInitialized {
         item.add(pixelBufferSource.videoOutput)
-        reportInitialized()
+        await reportInitialized()
         updatePlayingState()
       }
     case .unknown:
@@ -608,17 +681,15 @@ class VideoPlayer: NSObject, VideoPlayerInstanceApi {
       withMessage: (details.array as! [String]).joined(separator: ": "))
   }
 
-  private func reportInitialized() {
+  @MainActor private func reportInitialized() async {
     let currentItem = player.currentItem
     assert(
       currentItem?.status == .readyToPlay,
       "\(#function) was called when the item wasn't ready to play.")
     assert(!isInitialized, "\(#function) should only be called once.")
     isInitialized = true
-    Task { @MainActor in
-      eventListener?.videoPlayerDidInitialize(
-        withDuration: await duration(), size: currentItem?.presentationSize ?? .zero)
-    }
+    eventListener?.videoPlayerDidInitialize(
+      withDuration: await duration(), size: currentItem?.presentationSize ?? .zero)
   }
 
   @MainActor private func duration() async -> Int64 {
