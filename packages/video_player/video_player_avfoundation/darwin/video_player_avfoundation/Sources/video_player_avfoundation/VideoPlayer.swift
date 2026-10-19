@@ -127,13 +127,7 @@ class VideoPlayer: NSObject {
   /// Indicates whether the video player is currently playing.
   private(set) var isPlaying = false
   /// The event listener to report video events to.
-  var eventListener: FVPVideoEventListener? {
-    didSet {
-      Task {
-        await registerInternalEventListeners()
-      }
-    }
-  }
+  private var eventListener: FVPVideoEventListener?
   /// A block that will be called when dispose is called.
   var onDisposed: (() -> Void)?
 
@@ -246,6 +240,86 @@ class VideoPlayer: NSObject {
       NotificationCenter.default.removeObserver(playToEndObserver)
       self.playToEndObserver = nil
     }
+  }
+
+  @MainActor func setEventListener(_ eventListener: FVPVideoEventListener) async {
+    self.eventListener = eventListener
+    // The first time an event listener is set, set up video event listeners to relay status changes
+    // changes to the event listener.
+    if keyValueObservations.isEmpty && !disposed,
+      let item = player.currentItem
+    {
+      // If the item is already ready to play, ensure that the intialized event is sent first.
+      await reportStatus(playerItem: item)
+      // Set up all necessary observers to report video events.
+      keyValueObservations.append(
+        item.observe(
+          \.loadedTimeRanges,
+          options: [.new]
+        ) { [weak self] object, _ in
+          Task { @MainActor in
+            guard let self = self else { return }
+            let values = object.loadedTimeRanges.map { rangeValue in
+              let range = rangeValue.timeRangeValue
+              return [
+                NSNumber(value: self.convertCMTimeToMillis(range.start)),
+                NSNumber(value: self.convertCMTimeToMillis(range.duration)),
+              ]
+            }
+            self.eventListener?.videoPlayerDidUpdateBufferRegions(values)
+          }
+        }
+      )
+      keyValueObservations.append(
+        item.observe(
+          \.isPlaybackLikelyToKeepUp,
+          options: [.new]
+        ) { [weak self] object, _ in
+          Task { @MainActor in
+            guard let self = self else { return }
+            self.updatePlayingState()
+            if object.isPlaybackLikelyToKeepUp {
+              self.eventListener?.videoPlayerDidEndBuffering()
+            } else {
+              self.eventListener?.videoPlayerDidStartBuffering()
+            }
+          }
+        }
+      )
+      keyValueObservations.append(
+        item.observe(
+          \.status,
+          options: [.new]
+        ) { [weak self] object, _ in
+          Task { @MainActor in
+            await self?.reportStatus(playerItem: object as AVPlayerItem)
+          }
+        }
+      )
+      keyValueObservations.append(
+        player.observe(
+          \.rate,
+          options: [.new]
+        ) { [weak self] object, _ in
+          Task { @MainActor in
+            self?.eventListener?.videoPlayerDidSetPlaying(object.rate > 0)
+          }
+        }
+      )
+
+      playToEndObserver = NotificationCenter.default.addObserver(
+        forName: .AVPlayerItemDidPlayToEndTime, object: item, queue: .main
+      ) { [weak self] notification in
+        Task { @MainActor in
+          guard let item = notification.object as? AVPlayerItem else { return }
+          self?.itemDidPlayToEndTime(item)
+        }
+      }
+    }
+  }
+
+  @MainActor func removeEventListener() {
+    eventListener = nil
   }
 
   // MARK: VideoPlayerInstanceApi
@@ -464,81 +538,6 @@ class VideoPlayer: NSObject {
   }
 
   // MARK: Private
-
-  @MainActor private func registerInternalEventListeners() async {
-    // The first time an event listener is set, set up video event listeners to relay status changes
-    // changes to the event listener.
-    if eventListener != nil && keyValueObservations.isEmpty && !disposed,
-      let item = player.currentItem
-    {
-      // If the item is already ready to play, ensure that the intialized event is sent first.
-      await reportStatus(playerItem: item)
-      // Set up all necessary observers to report video events.
-      keyValueObservations.append(
-        item.observe(
-          \.loadedTimeRanges,
-          options: [.new]
-        ) { [weak self] object, _ in
-          Task { @MainActor in
-            guard let self = self else { return }
-            let values = object.loadedTimeRanges.map { rangeValue in
-              let range = rangeValue.timeRangeValue
-              return [
-                NSNumber(value: self.convertCMTimeToMillis(range.start)),
-                NSNumber(value: self.convertCMTimeToMillis(range.duration)),
-              ]
-            }
-            self.eventListener?.videoPlayerDidUpdateBufferRegions(values)
-          }
-        }
-      )
-      keyValueObservations.append(
-        item.observe(
-          \.isPlaybackLikelyToKeepUp,
-          options: [.new]
-        ) { [weak self] object, _ in
-          Task { @MainActor in
-            guard let self = self else { return }
-            self.updatePlayingState()
-            if object.isPlaybackLikelyToKeepUp {
-              self.eventListener?.videoPlayerDidEndBuffering()
-            } else {
-              self.eventListener?.videoPlayerDidStartBuffering()
-            }
-          }
-        }
-      )
-      keyValueObservations.append(
-        item.observe(
-          \.status,
-          options: [.new]
-        ) { [weak self] object, _ in
-          Task { @MainActor in
-            await self?.reportStatus(playerItem: object as AVPlayerItem)
-          }
-        }
-      )
-      keyValueObservations.append(
-        player.observe(
-          \.rate,
-          options: [.new]
-        ) { [weak self] object, _ in
-          Task { @MainActor in
-            self?.eventListener?.videoPlayerDidSetPlaying(object.rate > 0)
-          }
-        }
-      )
-
-      playToEndObserver = NotificationCenter.default.addObserver(
-        forName: .AVPlayerItemDidPlayToEndTime, object: item, queue: .main
-      ) { [weak self] notification in
-        Task { @MainActor in
-          guard let item = notification.object as? AVPlayerItem else { return }
-          self?.itemDidPlayToEndTime(item)
-        }
-      }
-    }
-  }
 
   private func itemDidPlayToEndTime(_ item: AVPlayerItem) {
     if isLooping {

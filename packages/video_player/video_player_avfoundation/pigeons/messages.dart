@@ -111,9 +111,11 @@ abstract class AVFoundationVideoPlayerApi {
   void initialize();
   // Creates a new player using a platform view for rendering and returns its
   // ID.
+  @async
   @SwiftFunction('createPlatformViewPlayer(options:)')
-  int createForPlatformView(CreationOptions params);
+  int createForPlatformView(CreationOptions creationOptions);
   // Creates a new player using a texture for rendering and returns its IDs.
+  @async
   @SwiftFunction('createTexturePlayer(options:)')
   TexturePlayerIds createForTextureView(CreationOptions creationOptions);
   @SwiftFunction('setMixWithOthers(_:)')

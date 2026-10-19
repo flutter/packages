@@ -25,6 +25,7 @@ private let hlsAudioTestURI =
 @MainActor struct VideoPlayerTests {
 
   @Test func blankVideoBugWithEncryptedVideoStreamAndInvertedAspectRatioBugForSomeVideoStream()
+    async
     throws
   {
     // This is to fix 2 bugs: 1. blank video for encrypted video streams on iOS 16
@@ -44,7 +45,7 @@ private let hlsAudioTestURI =
     #endif
     let videoPlayerPlugin = try createInitializedPlugin(viewProvider: viewProvider)
 
-    let identifiers = try videoPlayerPlugin.createTexturePlayer(
+    let identifiers = try await videoPlayerPlugin.createTexturePlayer(
       options: CreationOptions(uri: mp4TestURI, httpHeaders: [:]))
     let player =
       videoPlayerPlugin.playersByIdentifier[identifiers.playerId] as! TextureBasedVideoPlayer
@@ -52,14 +53,14 @@ private let hlsAudioTestURI =
     #expect(player.playerLayer?.superlayer == view.layer)
   }
 
-  @Test func playerForPlatformViewDoesNotRegisterTexture() throws {
+  @Test func playerForPlatformViewDoesNotRegisterTexture() async throws {
     let textureRegistry = TestTextureRegistry()
     let stubDisplayLinkFactory = StubFVPDisplayLinkFactory()
     let videoPlayerPlugin = try createInitializedPlugin(
       displayLinkFactory: stubDisplayLinkFactory,
       textureRegistry: textureRegistry)
 
-    _ = try videoPlayerPlugin.createPlatformViewPlayer(
+    _ = try await videoPlayerPlugin.createPlatformViewPlayer(
       options: CreationOptions(uri: hlsTestURI, httpHeaders: [:]))
 
     #expect(!textureRegistry.registeredTexture)
@@ -75,7 +76,7 @@ private let hlsAudioTestURI =
       avFactory: StubAVFactory(pixelBufferSource: mockVideoOutput, assetURL: url),
       displayLinkFactory: stubDisplayLinkFactory)
 
-    let identifiers = try videoPlayerPlugin.createTexturePlayer(
+    let identifiers = try await videoPlayerPlugin.createTexturePlayer(
       options: CreationOptions(uri: url, httpHeaders: [:]))
     let player =
       videoPlayerPlugin.playersByIdentifier[identifiers.playerId] as! TextureBasedVideoPlayer
@@ -99,7 +100,7 @@ private let hlsAudioTestURI =
     #expect(!stubDisplayLinkFactory.displayLink.running)
   }
 
-  @Test func initStartsDisplayLinkTemporarily() throws {
+  @Test func initStartsDisplayLinkTemporarily() async throws {
     let stubDisplayLinkFactory = StubFVPDisplayLinkFactory()
     let mockVideoOutput = TestPixelBufferSource()
     let url = hlsTestURI
@@ -107,7 +108,7 @@ private let hlsAudioTestURI =
       avFactory: StubAVFactory(pixelBufferSource: mockVideoOutput, assetURL: hlsTestURI),
       displayLinkFactory: stubDisplayLinkFactory)
 
-    let identifiers = try videoPlayerPlugin.createTexturePlayer(
+    let identifiers = try await videoPlayerPlugin.createTexturePlayer(
       options: CreationOptions(uri: url, httpHeaders: [:]))
 
     // Init should start the display link temporarily.
@@ -134,7 +135,7 @@ private let hlsAudioTestURI =
       avFactory: StubAVFactory(pixelBufferSource: mockVideoOutput, assetURL: url),
       displayLinkFactory: stubDisplayLinkFactory)
 
-    let identifiers = try videoPlayerPlugin.createTexturePlayer(
+    let identifiers = try await videoPlayerPlugin.createTexturePlayer(
       options: CreationOptions(uri: url, httpHeaders: [:]))
     let player =
       videoPlayerPlugin.playersByIdentifier[identifiers.playerId] as! TextureBasedVideoPlayer
@@ -156,13 +157,13 @@ private let hlsAudioTestURI =
     #expect(stubDisplayLinkFactory.displayLink.running)
   }
 
-  @Test func pauseWhileWaitingForFrameDoesNotStopDisplayLink() throws {
+  @Test func pauseWhileWaitingForFrameDoesNotStopDisplayLink() async throws {
     let stubDisplayLinkFactory = StubFVPDisplayLinkFactory()
     // Display link and frame updater wire-up is currently done in VideoPlayerPlugin, so create
     // the player via the plugin instead of directly to include that logic in the test.
     let videoPlayerPlugin = try createInitializedPlugin(displayLinkFactory: stubDisplayLinkFactory)
 
-    let identifiers = try videoPlayerPlugin.createTexturePlayer(
+    let identifiers = try await videoPlayerPlugin.createTexturePlayer(
       options: CreationOptions(uri: hlsTestURI, httpHeaders: [:]))
     let player =
       videoPlayerPlugin.playersByIdentifier[identifiers.playerId] as! TextureBasedVideoPlayer
@@ -182,7 +183,7 @@ private let hlsAudioTestURI =
       avFactory: StubAVFactory(pixelBufferSource: mockVideoOutput),
       displayLinkFactory: stubDisplayLinkFactory)
 
-    let identifiers = try videoPlayerPlugin.createTexturePlayer(
+    let identifiers = try await videoPlayerPlugin.createTexturePlayer(
       options: CreationOptions(uri: hlsTestURI, httpHeaders: [:]))
     let player =
       videoPlayerPlugin.playersByIdentifier[identifiers.playerId] as! TextureBasedVideoPlayer
@@ -193,10 +194,10 @@ private let hlsAudioTestURI =
     #expect(!stubDisplayLinkFactory.displayLink.running)
   }
 
-  @Test func deregistersFromPlayer() throws {
+  @Test func deregistersFromPlayer() async throws {
     let videoPlayerPlugin = try createInitializedPlugin()
 
-    let identifiers = try videoPlayerPlugin.createTexturePlayer(
+    let identifiers = try await videoPlayerPlugin.createTexturePlayer(
       options: CreationOptions(uri: mp4TestURI, httpHeaders: [:]))
     let player = try #require(videoPlayerPlugin.playersByIdentifier[identifiers.playerId])
 
@@ -210,7 +211,7 @@ private let hlsAudioTestURI =
     let realObjectFactory = DefaultAVFactory()
     let videoPlayerPlugin = try createInitializedPlugin(avFactory: realObjectFactory)
 
-    let identifiers = try videoPlayerPlugin.createTexturePlayer(
+    let identifiers = try await videoPlayerPlugin.createTexturePlayer(
       options: CreationOptions(uri: mp4TestURI, httpHeaders: [:]))
     let player = try #require(videoPlayerPlugin.playersByIdentifier[identifiers.playerId])
     let avPlayer = player.player
@@ -341,7 +342,7 @@ private let hlsAudioTestURI =
       avFactory: stubAVFactory,
       viewProvider: StubViewProvider())
     let listener = StubEventListener()
-    player.eventListener = listener
+    await player.setEventListener(listener)
 
     try await player.seek(to: 1234)
 
@@ -357,7 +358,7 @@ private let hlsAudioTestURI =
       avFactory: stubAVFactory,
       viewProvider: StubViewProvider())
     let listener = StubEventListener()
-    player.eventListener = listener
+    await player.setEventListener(listener)
 
     try await player.seek(to: 0)
 
@@ -365,14 +366,14 @@ private let hlsAudioTestURI =
     #expect((inspectableAVPlayer.afterTolerance?.intValue ?? 0) > 0)
   }
 
-  @Test func setPreventsDisplaySleepDuringVideoPlayback() {
+  @Test func setPreventsDisplaySleepDuringVideoPlayback() async {
     let stubAVFactory = StubAVFactory(player: AVPlayer())
     let player = VideoPlayer(
       playerItem: StubPlayerItem(),
       avFactory: stubAVFactory,
       viewProvider: StubViewProvider())
     let listener = StubEventListener()
-    player.eventListener = listener
+    await player.setEventListener(listener)
 
     // The setter should update the underlying AVPlayer in both directions.
     player.setPreventsDisplaySleepDuringVideoPlayback(false)
@@ -414,7 +415,7 @@ private let hlsAudioTestURI =
     let listener = StubEventListener()
     await withCheckedContinuation { continuation in
       listener.onInitialized = { continuation.resume() }
-      player.eventListener = listener
+      Task { @MainActor in await player.setEventListener(listener) }
     }
 
     // Starts paused.
@@ -450,7 +451,7 @@ private let hlsAudioTestURI =
     try autoreleasepool {
       let videoPlayerPlugin = try createInitializedPlugin(avFactory: realObjectFactory)
 
-      let identifiers = try videoPlayerPlugin.createTexturePlayer(
+      let identifiers = try await videoPlayerPlugin.createTexturePlayer(
         options: CreationOptions(uri: mp4TestURI, httpHeaders: [:]))
 
       let player = try #require(videoPlayerPlugin.playersByIdentifier[identifiers.playerId])
@@ -490,7 +491,7 @@ private let hlsAudioTestURI =
     try autoreleasepool {
       let videoPlayerPlugin = try createInitializedPlugin(avFactory: StubAVFactory())
 
-      let identifiers = try videoPlayerPlugin.createTexturePlayer(
+      let identifiers = try await videoPlayerPlugin.createTexturePlayer(
         options: CreationOptions(uri: mp4TestURI, httpHeaders: [:]))
 
       let player =
@@ -520,7 +521,7 @@ private let hlsAudioTestURI =
     let videoPlayerPlugin = try createInitializedPlugin(avFactory: realObjectFactory)
 
     // Provide a URI that is a valid URI, but not a video, to trigger a failure inside AVPlayer.
-    let identifiers = try videoPlayerPlugin.createTexturePlayer(
+    let identifiers = try await videoPlayerPlugin.createTexturePlayer(
       options: CreationOptions(uri: "https://flutter.dev", httpHeaders: [:]))
     let player = try #require(videoPlayerPlugin.playersByIdentifier[identifiers.playerId])
 
@@ -547,7 +548,7 @@ private let hlsAudioTestURI =
 
     await withCheckedContinuation { continuation in
       let listener = StubEventListener(onInitialized: { continuation.resume() })
-      player.eventListener = listener
+      Task { @MainActor in await player.setEventListener(listener) }
     }
 
     player.setPlaybackSpeed(2)
@@ -564,7 +565,7 @@ private let hlsAudioTestURI =
       displayLinkFactory: stubDisplayLinkFactory,
       textureRegistry: textureRegistry)
 
-    let identifiers = try videoPlayerPlugin.createTexturePlayer(
+    let identifiers = try await videoPlayerPlugin.createTexturePlayer(
       options: CreationOptions(uri: mp4TestURI, httpHeaders: [:]))
     let playerIdentifier = identifiers.playerId
     let player =
@@ -591,14 +592,14 @@ private let hlsAudioTestURI =
     let realObjectFactory = DefaultAVFactory()
     let videoPlayerPlugin = try createInitializedPlugin(avFactory: realObjectFactory)
 
-    let identifiers = try videoPlayerPlugin.createTexturePlayer(
+    let identifiers = try await videoPlayerPlugin.createTexturePlayer(
       options: CreationOptions(uri: mp4TestURI, httpHeaders: [:]))
     let player = try #require(videoPlayerPlugin.playersByIdentifier[identifiers.playerId])
 
     let listener = StubEventListener()
     await withCheckedContinuation { continuation in
       listener.onInitialized = { continuation.resume() }
-      player.eventListener = listener
+      Task { @MainActor in await player.setEventListener(listener) }
     }
 
     let item = try #require(player.player.currentItem)
@@ -648,7 +649,7 @@ private let hlsAudioTestURI =
 
     await withCheckedContinuation { continuation in
       let listener = StubEventListener(onInitialized: { continuation.resume() })
-      player.eventListener = listener
+      Task { @MainActor in await player.setEventListener(listener) }
     }
 
     let tracks = try await player.getAudioTracks()
@@ -673,7 +674,7 @@ private let hlsAudioTestURI =
 
     await withCheckedContinuation { continuation in
       let listener = StubEventListener(onInitialized: { continuation.resume() })
-      player.eventListener = listener
+      Task { @MainActor in await player.setEventListener(listener) }
     }
 
     // Now test getAudioTracks
@@ -705,7 +706,7 @@ private let hlsAudioTestURI =
 
     await withCheckedContinuation { continuation in
       let listener = StubEventListener(onInitialized: { continuation.resume() })
-      player.eventListener = listener
+      Task { @MainActor in await player.setEventListener(listener) }
     }
 
     let tracks = try await player.getAudioTracks()
@@ -733,7 +734,7 @@ private let hlsAudioTestURI =
     let listener = StubEventListener()
     await withCheckedContinuation { continuation in
       listener.onInitialized = { continuation.resume() }
-      player.eventListener = listener
+      Task { @MainActor in await player.setEventListener(listener) }
     }
 
     let tracks = try await player.getAudioTracks()
@@ -799,7 +800,7 @@ private let hlsAudioTestURI =
 
     await withCheckedContinuation { continuation in
       let listener = StubEventListener(onInitialized: { continuation.resume() })
-      player.eventListener = listener
+      Task { @MainActor in await player.setEventListener(listener) }
     }
 
     let tracks = try await player.getVideoTracks()
@@ -826,7 +827,7 @@ private let hlsAudioTestURI =
 
     await withCheckedContinuation { continuation in
       let listener = StubEventListener(onInitialized: { continuation.resume() })
-      player.eventListener = listener
+      Task { @MainActor in await player.setEventListener(listener) }
     }
 
     let tracks = try await player.getVideoTracks()
@@ -861,7 +862,7 @@ private let hlsAudioTestURI =
 
     await withCheckedContinuation { continuation in
       let listener = StubEventListener(onInitialized: { continuation.resume() })
-      player.eventListener = listener
+      Task { @MainActor in await player.setEventListener(listener) }
     }
 
     // Set a specific bitrate
@@ -885,7 +886,7 @@ private let hlsAudioTestURI =
 
     await withCheckedContinuation { continuation in
       let listener = StubEventListener(onInitialized: { continuation.resume() })
-      player.eventListener = listener
+      Task { @MainActor in await player.setEventListener(listener) }
     }
 
     // First set a specific bitrate
@@ -906,7 +907,7 @@ private let hlsAudioTestURI =
     let realObjectFactory = DefaultAVFactory()
     let videoPlayerPlugin = try createInitializedPlugin(avFactory: realObjectFactory)
 
-    let identifiers = try videoPlayerPlugin.createTexturePlayer(
+    let identifiers = try await videoPlayerPlugin.createTexturePlayer(
       options: CreationOptions(uri: mp4TestURI, httpHeaders: [:]))
 
     let player = try #require(videoPlayerPlugin.playersByIdentifier[identifiers.playerId])
@@ -929,7 +930,7 @@ private let hlsAudioTestURI =
     let videoPlayerPlugin = try createInitializedPlugin(avFactory: realObjectFactory)
 
     // Use HLS stream which supports adaptive bitrate
-    let identifiers = try videoPlayerPlugin.createTexturePlayer(
+    let identifiers = try await videoPlayerPlugin.createTexturePlayer(
       options: CreationOptions(uri: hlsTestURI, httpHeaders: [:]))
 
     let player = try #require(videoPlayerPlugin.playersByIdentifier[identifiers.playerId])

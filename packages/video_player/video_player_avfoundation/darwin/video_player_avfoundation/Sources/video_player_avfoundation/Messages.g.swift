@@ -633,8 +633,9 @@ class MessagesPigeonCodec: FlutterStandardMessageCodec, @unchecked Sendable {
 /// Generated protocol from Pigeon that represents a handler of messages from Flutter.
 protocol AVFoundationVideoPlayerApi {
   func initialize() throws
-  func createPlatformViewPlayer(options params: CreationOptions) throws -> Int64
-  func createTexturePlayer(options creationOptions: CreationOptions) throws -> TexturePlayerIds
+  func createPlatformViewPlayer(options creationOptions: CreationOptions) async throws -> Int64
+  func createTexturePlayer(options creationOptions: CreationOptions) async throws
+    -> TexturePlayerIds
   func setMixWithOthers(_ mixWithOthers: Bool) throws
   func fileURLForAsset(name asset: String, package: String?) throws -> String?
 }
@@ -671,12 +672,14 @@ class AVFoundationVideoPlayerApiSetup {
     if let api = api {
       createForPlatformViewChannel.setMessageHandler { message, reply in
         let args = message as! [Any?]
-        let paramsArg = args[0] as! CreationOptions
-        do {
-          let result = try api.createPlatformViewPlayer(options: paramsArg)
-          reply(wrapResult(result))
-        } catch {
-          reply(wrapError(error))
+        let creationOptionsArg = args[0] as! CreationOptions
+        Task { @MainActor in
+          do {
+            let result = try await api.createPlatformViewPlayer(options: creationOptionsArg)
+            reply(wrapResult(result))
+          } catch {
+            reply(wrapError(error))
+          }
         }
       }
     } else {
@@ -690,11 +693,13 @@ class AVFoundationVideoPlayerApiSetup {
       createForTextureViewChannel.setMessageHandler { message, reply in
         let args = message as! [Any?]
         let creationOptionsArg = args[0] as! CreationOptions
-        do {
-          let result = try api.createTexturePlayer(options: creationOptionsArg)
-          reply(wrapResult(result))
-        } catch {
-          reply(wrapError(error))
+        Task { @MainActor in
+          do {
+            let result = try await api.createTexturePlayer(options: creationOptionsArg)
+            reply(wrapResult(result))
+          } catch {
+            reply(wrapError(error))
+          }
         }
       }
     } else {
