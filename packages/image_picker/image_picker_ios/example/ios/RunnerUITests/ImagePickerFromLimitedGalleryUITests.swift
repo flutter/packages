@@ -16,10 +16,8 @@ class ImagePickerFromLimitedGalleryUITests: XCTestCase {
 
     continueAfterFailure = false
     app = XCUIApplication()
-    if #available(iOS 13.4, *) {
-      // Reset the authorization status for Photos to test permission popups.
-      app.resetAuthorizationStatus(for: .photos)
-    }
+    // Reset the authorization status for Photos to test permission popups.
+    app.resetAuthorizationStatus(for: .photos)
     app.launch()
     addUIInterruptionMonitor(withDescription: "Permission popups") {
       [weak self] interruptingElement in
@@ -74,8 +72,6 @@ class ImagePickerFromLimitedGalleryUITests: XCTestCase {
     }
   }
 
-  /// Test the `Select Photos` button which is available after iOS 14.
-  @available(iOS 14, *)
   func testSelectingFromGallery() throws {
     // Find and tap on the pick from gallery button.
     let imageFromGalleryButton = app.otherElements["image_picker_example_from_gallery"].firstMatch

@@ -16,10 +16,8 @@ class ImagePickerFromGalleryUITests: XCTestCase {
 
     continueAfterFailure = false
     app = XCUIApplication()
-    if #available(iOS 13.4, *) {
-      // Reset the authorization status for Photos to test permission popups.
-      app.resetAuthorizationStatus(for: .photos)
-    }
+    // Reset the authorization status for Photos to test permission popups.
+    app.resetAuthorizationStatus(for: .photos)
     app.launch()
     interceptedPermissionInterruption = false
     addUIInterruptionMonitor(withDescription: "Permission popups") {
@@ -27,24 +25,14 @@ class ImagePickerFromGalleryUITests: XCTestCase {
       guard let self else {
         return false
       }
-      if #available(iOS 14, *) {
-        let allPhotoPermission = interruptingElement.buttons[self.allowAccessPermissionText]
-        if !allPhotoPermission.waitForExistence(timeout: self.elementWaitingTime) {
-          os_log(.error, "%{public}@", self.app.debugDescription)
-          XCTFail(
-            "Failed due to not able to find allPhotoPermission button with \(self.elementWaitingTime) seconds"
-          )
-        }
-        allPhotoPermission.tap()
-      } else {
-        let ok = interruptingElement.buttons["OK"]
-        if !ok.waitForExistence(timeout: self.elementWaitingTime) {
-          os_log(.error, "%{public}@", self.app.debugDescription)
-          XCTFail(
-            "Failed due to not able to find ok button with \(self.elementWaitingTime) seconds")
-        }
-        ok.tap()
+      let allPhotoPermission = interruptingElement.buttons[self.allowAccessPermissionText]
+      if !allPhotoPermission.waitForExistence(timeout: self.elementWaitingTime) {
+        os_log(.error, "%{public}@", self.app.debugDescription)
+        XCTFail(
+          "Failed due to not able to find allPhotoPermission button with \(self.elementWaitingTime) seconds"
+        )
       }
+      allPhotoPermission.tap()
       self.interceptedPermissionInterruption = true
       return true
     }
@@ -180,23 +168,9 @@ class ImagePickerFromGalleryUITests: XCTestCase {
 
     handlePermissionInterruption()
 
-    // Find an image and tap on it. (IOS 14 UI, images are showing directly)
-    let aImage: XCUIElement
-    if #available(iOS 14, *) {
-      let imagePredicate = NSPredicate(format: "label BEGINSWITH 'Photo, '")
-      aImage = app.images.matching(imagePredicate).firstMatch
-    } else {
-      let allPhotosCell = app.cells["All Photos"].firstMatch
-      if !allPhotosCell.waitForExistence(timeout: elementWaitingTime) {
-        os_log(.error, "%{public}@", app.debugDescription)
-        XCTFail(
-          "Failed due to not able to find \"All Photos\" cell with \(elementWaitingTime) seconds")
-      }
-      allPhotosCell.tap()
-      aImage =
-        app.collectionViews.element(matching: .collectionView, identifier: "PhotosGridView").cells
-        .firstMatch
-    }
+    // Find an image and tap on it.
+    let imagePredicate = NSPredicate(format: "label BEGINSWITH 'Photo, '")
+    let aImage = app.images.matching(imagePredicate).firstMatch
     os_log(.error, "description before picking image %{public}@", app.debugDescription)
     if !aImage.waitForExistence(timeout: elementWaitingTime) {
       os_log(.error, "%{public}@", app.debugDescription)
