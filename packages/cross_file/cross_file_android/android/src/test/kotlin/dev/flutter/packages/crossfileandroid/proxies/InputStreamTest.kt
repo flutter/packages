@@ -11,8 +11,8 @@ import kotlin.test.Test
 import kotlin.test.assertEquals
 import org.mockito.ArgumentCaptor
 import org.mockito.kotlin.mock
-import org.mockito.kotlin.whenever
 import org.mockito.kotlin.verify
+import org.mockito.kotlin.whenever
 
 class InputStreamTest {
   @Test
