@@ -1,3 +1,10 @@
+## 0.5.5
+
+* Fixes a rare uncatchable native crash (`SIGABRT` in
+  `FlutterViewHandlePlatformMessage`) on billing-service disconnect: the
+  reconnect no longer issues `startConnection` synchronously from inside the
+  `onBillingServiceDisconnected` platform-message callback.
+
 ## 0.5.4
 
 * Fixes a crash (`IllegalStateException: Reply already submitted`) when the
