@@ -117,6 +117,10 @@ static NSError *_Nullable FVPValidateResponse(NSData *_Nullable data,
   // AVFoundation gives up on the request when this is called - for example on seek, item
   // replacement, or teardown - so stop the exchange and make sure nothing finishes the request
   // afterwards.
+  //
+  // This is called on the resource loader's queue, but the key exchange's completion handlers run
+  // on the NSURLSession's delegate queue and may be about to finish this same request, so the
+  // lookup and removal have to be synchronized with them.
   NSURLSessionTask *task;
   @synchronized(self) {
     task = [self.tasksByRequest objectForKey:loadingRequest];
