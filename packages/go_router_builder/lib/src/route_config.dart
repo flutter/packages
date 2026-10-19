@@ -670,7 +670,7 @@ abstract class RouteBaseConfig {
             classElement,
             parameterName: r'$restorationScopeId',
           ),
-          notifyRootObserver: reader.read('notifyRootObserver').boolValue,
+          notifyRootObserver: reader.peek('notifyRootObserver')?.boolValue ?? true,
         );
       case 'TypedStatefulShellRoute':
         value = StatefulShellRouteConfig._(
@@ -688,7 +688,7 @@ abstract class RouteBaseConfig {
             classElement,
             parameterName: r'$navigatorContainerBuilder',
           ),
-          notifyRootObserver: reader.read('notifyRootObserver').boolValue,
+          notifyRootObserver: reader.peek('notifyRootObserver')?.boolValue ?? true,
         );
       case 'TypedStatefulShellBranch':
         value = StatefulShellBranchConfig._(
