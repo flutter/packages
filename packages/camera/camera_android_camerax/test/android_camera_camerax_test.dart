@@ -115,10 +115,12 @@ void main() {
     );
     when(mockStatusEvent.getRecordingStats()).thenAnswer((_) async => stats);
 
-    AndroidCameraCameraX.videoRecordingEventStreamController.add(
-      VideoRecordEventStart.pigeon_detached(),
-    );
-    AndroidCameraCameraX.videoRecordingEventStreamController.add(mockStatusEvent);
+    scheduleMicrotask(() {
+      AndroidCameraCameraX.videoRecordingEventStreamController.add(
+        VideoRecordEventStart.pigeon_detached(),
+      );
+      AndroidCameraCameraX.videoRecordingEventStreamController.add(mockStatusEvent);
+    });
   }
 
   /// Helper method to simulate video recording finalize events.
@@ -127,7 +129,9 @@ void main() {
     when(mockFinalizeEvent.hasError()).thenAnswer((_) async => hasError);
     when(mockFinalizeEvent.getError()).thenAnswer((_) async => error);
 
-    AndroidCameraCameraX.videoRecordingEventStreamController.add(mockFinalizeEvent);
+    scheduleMicrotask(() {
+      AndroidCameraCameraX.videoRecordingEventStreamController.add(mockFinalizeEvent);
+    });
   }
 
   /// Set up testing functionality related to the configuration
@@ -2652,11 +2656,79 @@ void main() {
         );
         when(mockDataStatus.getRecordingStats()).thenAnswer((_) async => dataStats);
 
-        AndroidCameraCameraX.videoRecordingEventStreamController.add(
-          VideoRecordEventStart.pigeon_detached(),
+        scheduleMicrotask(() {
+          AndroidCameraCameraX.videoRecordingEventStreamController.add(
+            VideoRecordEventStart.pigeon_detached(),
+          );
+          AndroidCameraCameraX.videoRecordingEventStreamController.add(mockZeroStatus);
+          AndroidCameraCameraX.videoRecordingEventStreamController.add(mockDataStatus);
+        });
+
+        await camera.startVideoCapturing(
+          const VideoCaptureOptions(cameraId, videoOutputPath: '/test/output/path'),
         );
-        AndroidCameraCameraX.videoRecordingEventStreamController.add(mockZeroStatus);
-        AndroidCameraCameraX.videoRecordingEventStreamController.add(mockDataStatus);
+
+        expect(camera.recording, equals(mockRecording));
+      },
+    );
+
+    test(
+      'startVideoCapturing recreates stream queue and ignores leftover events from previous recording',
+      () async {
+        final camera = AndroidCameraCameraX();
+        final mockProcessCameraProvider = MockProcessCameraProvider();
+        final mockCamera = MockCamera();
+        final mockCameraInfo = MockCameraInfo();
+        final mockCameraControl = MockCameraControl();
+        final mockCamera2CameraInfo = MockCamera2CameraInfo();
+        final mockRecorder = MockRecorder();
+        final mockVideoCapture = MockVideoCapture();
+        final mockPendingRecording = MockPendingRecording();
+        final mockRecording = MockRecording();
+        final mockImageAnalysis = MockImageAnalysis();
+        const cameraId = 0;
+
+        camera.processCameraProvider = mockProcessCameraProvider;
+        camera.cameraSelector = MockCameraSelector();
+        camera.camera = mockCamera;
+        camera.cameraInfo = mockCameraInfo;
+        camera.cameraControl = mockCameraControl;
+        camera.recorder = mockRecorder;
+        camera.videoCapture = mockVideoCapture;
+        camera.imageAnalysis = mockImageAnalysis;
+        camera.enableRecordingAudio = false;
+
+        PigeonOverrides.camera2CameraInfo_from = ({required dynamic cameraInfo}) =>
+            mockCamera2CameraInfo;
+        PigeonOverrides.videoRecordEventListener_new =
+            ({required void Function(VideoRecordEventListener, VideoRecordEvent) onEvent}) {
+              return VideoRecordEventListener.pigeon_detached(onEvent: onEvent);
+            };
+        PigeonOverrides.cameraCharacteristics_infoSupportedHardwareLevel =
+            MockCameraCharacteristicsKey();
+        when(
+          mockCamera2CameraInfo.getCameraCharacteristic(any),
+        ).thenAnswer((_) async => InfoSupportedHardwareLevel.limited);
+
+        when(mockRecorder.prepareRecording(any)).thenAnswer((_) async => mockPendingRecording);
+        when(
+          mockPendingRecording.withAudioEnabled(any),
+        ).thenAnswer((_) async => mockPendingRecording);
+        when(
+          mockPendingRecording.asPersistentRecording(),
+        ).thenAnswer((_) async => mockPendingRecording);
+        when(mockPendingRecording.start(any)).thenAnswer((_) async => mockRecording);
+        when(mockProcessCameraProvider.isBound(mockVideoCapture)).thenAnswer((_) async => true);
+        when(mockProcessCameraProvider.isBound(mockImageAnalysis)).thenAnswer((_) async => false);
+
+        // Simulate a leftover finalize event from a previous session that ended
+        // without calling stopVideoRecording().
+        final mockLeftoverFinalize = MockVideoRecordEventFinalize();
+        when(mockLeftoverFinalize.getError()).thenAnswer((_) async => 8);
+        AndroidCameraCameraX.videoRecordingEventStreamController.add(mockLeftoverFinalize);
+
+        // Simulate the new recording session emitting its own start and status events.
+        emitRecordingStarted();
 
         await camera.startVideoCapturing(
           const VideoCaptureOptions(cameraId, videoOutputPath: '/test/output/path'),
@@ -3211,9 +3283,6 @@ void main() {
       when(newMockCamera.cameraControl).thenReturn(mockCameraControl);
       when(mockCameraInfo.getCameraState()).thenAnswer((_) async => newMockLiveCameraState);
 
-      // Simulate video recording being started so startVideoRecording completes.
-      emitRecordingStarted();
-
       await camera.availableCameras();
 
       final int flutterSurfaceTextureId = await camera.createCameraWithSettings(
@@ -3221,6 +3290,9 @@ void main() {
         const MediaSettings(enableAudio: true),
       );
       await camera.initializeCamera(flutterSurfaceTextureId);
+
+      // Simulate video recording being started so startVideoRecording completes.
+      emitRecordingStarted();
 
       await camera.startVideoCapturing(VideoCaptureOptions(flutterSurfaceTextureId));
       await camera.setDescriptionWhileRecording(testFrontCameraDescription);
@@ -3413,9 +3485,6 @@ void main() {
       when(mockCameraInfo.getCameraState()).thenAnswer((_) async => MockLiveCameraState());
       when(mockCamera.cameraControl).thenAnswer((_) => mockCameraControl);
 
-      // Simulate video recording being started so startVideoRecording completes.
-      emitRecordingStarted();
-
       await camera.availableCameras();
 
       final int flutterSurfaceTextureId = await camera.createCameraWithSettings(
@@ -3423,6 +3492,9 @@ void main() {
         const MediaSettings(enableAudio: true),
       );
       await camera.initializeCamera(flutterSurfaceTextureId);
+
+      // Simulate video recording being started so startVideoRecording completes.
+      emitRecordingStarted();
 
       await camera.startVideoCapturing(VideoCaptureOptions(flutterSurfaceTextureId));
 

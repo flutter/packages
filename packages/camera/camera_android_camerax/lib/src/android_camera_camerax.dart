@@ -103,10 +103,12 @@ class AndroidCameraCameraX extends CameraPlatform {
   deviceOrientationChangedStreamController =
       StreamController<DeviceOrientationChangedEvent>.broadcast();
 
-  /// Stream queue to pick up finalized viceo recording events in
+  /// Stream queue to pick up finalized video recording events in
   /// [stopVideoRecording].
-  final StreamQueue<VideoRecordEvent> videoRecordingEventStreamQueue =
-      StreamQueue<VideoRecordEvent>(videoRecordingEventStreamController.stream);
+  @visibleForTesting
+  StreamQueue<VideoRecordEvent> videoRecordingEventStreamQueue = StreamQueue<VideoRecordEvent>(
+    videoRecordingEventStreamController.stream,
+  );
 
   late final VideoRecordEventListener _videoRecordingEventListener = VideoRecordEventListener(
     onEvent: (_, VideoRecordEvent event) {
@@ -1147,6 +1149,10 @@ class AndroidCameraCameraX extends CameraPlatform {
       // There is currently an active recording, so do not start a new one.
       return;
     }
+    unawaited(videoRecordingEventStreamQueue.cancel());
+    videoRecordingEventStreamQueue = StreamQueue<VideoRecordEvent>(
+      videoRecordingEventStreamController.stream,
+    );
     final dynamic Function(CameraImageData)? streamCallback = options.streamCallback;
     if (streamCallback == null) {
       // For potential performance improvements, unbind imageAnalysis if not in use.
