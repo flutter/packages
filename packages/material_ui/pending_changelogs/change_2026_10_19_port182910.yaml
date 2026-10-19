@@ -1,0 +1,3 @@
+changelog: |
+  - Fixes `OutlineInputBorder` appearing straight instead of rounded during the floating label animation by correctly resuming corner arcs when the gap ends inside a radius (ported from flutter/flutter#182910).
+version: patch
