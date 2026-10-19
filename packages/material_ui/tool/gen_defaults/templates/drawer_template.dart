@@ -2,6 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import '../data/color_role.dart';
 import '../data/navigation_drawer.dart';
 import 'template.dart';
 
@@ -29,6 +30,9 @@ class $className extends DrawerThemeData {
 
   @override
   Color? get backgroundColor => ${color(TokenNavigationDrawer.modalContainerColor, 'Theme.of(context).colorScheme')};
+
+  @override
+  Color? get scrimColor => ${colorWithOpacity(TokenColorRole.scrim, 0.32, 'Theme.of(context).colorScheme')};
 
   @override
   Color? get surfaceTintColor => Colors.transparent;

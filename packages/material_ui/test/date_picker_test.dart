@@ -473,7 +473,7 @@ void main() {
       await tester.pumpAndSettle();
       expect(
         tester.widget<ModalBarrier>(find.byType(ModalBarrier).last).color,
-        Theme.of(tester.element(find.byType(ElevatedButton))).colorScheme.scrim.withValues(alpha: 0.32),
+        Theme.of(tester.element(find.byType(ElevatedButton))).colorScheme.scrim.withAlpha(0x52),
       );
 
       // Dismiss the dialog.

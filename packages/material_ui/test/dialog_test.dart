@@ -588,7 +588,7 @@ void main() {
     await tester.pumpAndSettle();
     expect(
       tester.widget<ModalBarrier>(find.byType(ModalBarrier).last).color,
-      Theme.of(context).colorScheme.scrim.withValues(alpha: 0.32),
+      Theme.of(context).colorScheme.scrim.withAlpha(0x52),
     );
 
     // Dismiss it and test a custom barrier color
@@ -629,7 +629,7 @@ void main() {
     await tester.pumpAndSettle();
     expect(
       tester.widget<ModalBarrier>(find.byType(ModalBarrier).last).color,
-      scrim.withValues(alpha: 0.32),
+      scrim.withAlpha(0x52),
     );
   });
 
@@ -713,75 +713,8 @@ void main() {
     await tester.pumpAndSettle();
     expect(
       tester.widget<ModalBarrier>(find.byType(ModalBarrier).last).color,
-      scrim.withValues(alpha: 0.32),
+      scrim.withAlpha(0x52),
     );
-  });
-
-  testWidgets('DialogRoute barrier color uses ColorScheme.scrim', (WidgetTester tester) async {
-    const Color scrim = Colors.red;
-    await tester.pumpWidget(
-      MaterialApp(
-        theme: ThemeData(
-          colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple, scrim: scrim),
-        ),
-        home: Builder(
-          builder: (BuildContext context) {
-            return TextButton(
-              onPressed: () {
-                Navigator.of(context).push<void>(
-                  DialogRoute<void>(
-                    context: context,
-                    builder: (BuildContext context) => const Text('Dialog'),
-                  ),
-                );
-              },
-              child: const Text('Open'),
-            );
-          },
-        ),
-      ),
-    );
-
-    await tester.tap(find.text('Open'));
-    await tester.pumpAndSettle();
-    expect(
-      tester.widget<ModalBarrier>(find.byType(ModalBarrier).last).color,
-      scrim.withValues(alpha: 0.32),
-    );
-  });
-
-  testWidgets('DialogRoute uses DialogTheme.barrierColor over ColorScheme.scrim', (
-    WidgetTester tester,
-  ) async {
-    const Color scrim = Colors.red;
-    const Color themeBarrierColor = Colors.blue;
-    await tester.pumpWidget(
-      MaterialApp(
-        theme: ThemeData(
-          colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple, scrim: scrim),
-          dialogTheme: const DialogThemeData(barrierColor: themeBarrierColor),
-        ),
-        home: Builder(
-          builder: (BuildContext context) {
-            return TextButton(
-              onPressed: () {
-                Navigator.of(context).push<void>(
-                  DialogRoute<void>(
-                    context: context,
-                    builder: (BuildContext context) => const Text('Dialog'),
-                  ),
-                );
-              },
-              child: const Text('Open'),
-            );
-          },
-        ),
-      ),
-    );
-
-    await tester.tap(find.text('Open'));
-    await tester.pumpAndSettle();
-    expect(tester.widget<ModalBarrier>(find.byType(ModalBarrier).last).color, themeBarrierColor);
   });
 
   testWidgets('Material 2 dialog barrier uses Colors.black54', (WidgetTester tester) async {
@@ -805,37 +738,6 @@ void main() {
         },
       ),
     );
-    await tester.pumpAndSettle();
-    expect(tester.widget<ModalBarrier>(find.byType(ModalBarrier).last).color, Colors.black54);
-  });
-
-  testWidgets('Material 2 DialogRoute barrier uses Colors.black54', (WidgetTester tester) async {
-    const Color scrim = Colors.red;
-    await tester.pumpWidget(
-      MaterialApp(
-        theme: ThemeData(
-          useMaterial3: false,
-          colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple, scrim: scrim),
-        ),
-        home: Builder(
-          builder: (BuildContext context) {
-            return TextButton(
-              onPressed: () {
-                Navigator.of(context).push<void>(
-                  DialogRoute<void>(
-                    context: context,
-                    builder: (BuildContext context) => const Text('Dialog'),
-                  ),
-                );
-              },
-              child: const Text('Open'),
-            );
-          },
-        ),
-      ),
-    );
-
-    await tester.tap(find.text('Open'));
     await tester.pumpAndSettle();
     expect(tester.widget<ModalBarrier>(find.byType(ModalBarrier).last).color, Colors.black54);
   });

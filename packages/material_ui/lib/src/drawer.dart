@@ -737,12 +737,12 @@ class DrawerControllerState extends State<DrawerController> with SingleTickerPro
         TargetPlatform.windows => false,
       };
 
-      final ThemeData theme = Theme.of(context);
-      final Color defaultScrimColor = theme.useMaterial3
-          ? theme.colorScheme.scrim.withValues(alpha: 0.32)
-          : Colors.black54;
       final Color scrimColor =
-          widget.scrimColor ?? DrawerTheme.of(context).scrimColor ?? defaultScrimColor;
+          widget.scrimColor ??
+          DrawerTheme.of(context).scrimColor ??
+          (Theme.of(context).useMaterial3
+              ? _DrawerDefaultsM3(context).scrimColor!
+              : Colors.black54);
       final Color effectiveScrimColor = scrimColor.withValues(
         alpha: scrimColor.a * _controller.value,
       );

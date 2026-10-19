@@ -31,6 +31,9 @@ class _BottomSheetDefaultsM3 extends BottomSheetThemeData {
   Color? get shadowColor => Colors.transparent;
 
   @override
+  Color? get modalBarrierColor => _colors.scrim.withOpacity(0.32);
+
+  @override
   Color? get dragHandleColor => _colors.onSurfaceVariant;
 
   @override

@@ -974,9 +974,7 @@ class ModalBottomSheetRoute<T> extends PopupRoute<T> {
   /// Specifies the color of the modal barrier that darkens everything below the
   /// bottom sheet.
   ///
-  /// If this is null, then [BottomSheetThemeData.modalBarrierColor] is used.
-  /// If that is also null, then [ColorScheme.scrim] at 32% opacity is used in
-  /// Material 3, and [Colors.black54] in Material 2.
+  /// Defaults to `Colors.black54` if not provided.
   final Color? modalBarrierColor;
 
   /// Specifies whether the bottom sheet will be dismissed
@@ -1108,17 +1106,7 @@ class ModalBottomSheetRoute<T> extends PopupRoute<T> {
   final String? barrierLabel;
 
   @override
-  Color get barrierColor {
-    if (modalBarrierColor != null) {
-      return modalBarrierColor!;
-    }
-    if (navigator != null) {
-      final ThemeData theme = Theme.of(navigator!.context);
-      return theme.bottomSheetTheme.modalBarrierColor ?? _defaultModalBarrierColor(theme);
-    }
-    // The route is not in the tree yet, so there is no theme to read.
-    return Colors.black54;
-  }
+  Color get barrierColor => modalBarrierColor ?? Colors.black54;
 
   AnimationController? _animationController;
 
@@ -1362,7 +1350,9 @@ Future<T?> showModalBottomSheet<T>({
       modalBarrierColor:
           barrierColor ??
           Theme.of(context).bottomSheetTheme.modalBarrierColor ??
-          _defaultModalBarrierColor(Theme.of(context)),
+          (Theme.of(context).useMaterial3
+              ? _BottomSheetDefaultsM3(context).modalBarrierColor!
+              : Colors.black54),
       enableDrag: enableDrag,
       showDragHandle: showDragHandle,
       settings: routeSettings,
@@ -1373,13 +1363,6 @@ Future<T?> showModalBottomSheet<T>({
       requestFocus: requestFocus,
     ),
   );
-}
-
-// The default barrier color used when neither the widget nor its component
-// theme provides one: [ColorScheme.scrim] at 32% opacity in Material 3, and
-// [Colors.black54] in Material 2.
-Color _defaultModalBarrierColor(ThemeData theme) {
-  return theme.useMaterial3 ? theme.colorScheme.scrim.withValues(alpha: 0.32) : Colors.black54;
 }
 
 /// Shows a Material Design bottom sheet in the nearest [Scaffold] ancestor. To
