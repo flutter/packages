@@ -30,6 +30,7 @@ import 'theme.dart';
 const double _kTabHeight = 46.0;
 const double _kTextAndIconTabHeight = 72.0;
 const double _kStartOffset = 52.0;
+const double _kMinPrimaryTabIndicatorWidth = 24.0;
 
 /// Defines how the bounds of the selected tab indicator are computed.
 ///
@@ -490,6 +491,7 @@ class _IndicatorPainter extends CustomPainter {
     required TabController controller,
     required Decoration indicator,
     required TabBarIndicatorSize indicatorSize,
+    required double? minimumIndicatorWidth,
     required List<GlobalKey> tabKeys,
     required _IndicatorPainter? old,
     required EdgeInsetsGeometry indicatorPadding,
@@ -511,6 +513,7 @@ class _IndicatorPainter extends CustomPainter {
       controller: controller,
       indicator: indicator,
       indicatorSize: indicatorSize,
+      minimumIndicatorWidth: minimumIndicatorWidth,
       tabKeys: tabKeys,
       old: old,
       indicatorPadding: indicatorPadding,
@@ -529,6 +532,7 @@ class _IndicatorPainter extends CustomPainter {
     required this.controller,
     required this.indicator,
     required this.indicatorSize,
+    required this.minimumIndicatorWidth,
     required this.tabKeys,
     required _IndicatorPainter? old,
     required this.indicatorPadding,
@@ -551,6 +555,7 @@ class _IndicatorPainter extends CustomPainter {
   final TabController controller;
   final Decoration indicator;
   final TabBarIndicatorSize indicatorSize;
+  final double? minimumIndicatorWidth;
   final EdgeInsetsGeometry indicatorPadding;
   final List<GlobalKey> tabKeys;
   final List<EdgeInsetsGeometry> labelPaddings;
@@ -618,6 +623,14 @@ class _IndicatorPainter extends CustomPainter {
       final double delta = ((tabRight - tabLeft) - (tabWidth + insets.horizontal)) / 2.0;
       tabLeft += delta + insets.left;
       tabRight = tabLeft + tabWidth;
+    }
+
+    final double indicatorWidth = tabRight - tabLeft;
+    final double? minimumWidth = minimumIndicatorWidth;
+    if (minimumWidth != null && indicatorWidth < minimumWidth) {
+      final double tabCenter = (tabLeft + tabRight) / 2.0;
+      tabLeft = tabCenter - minimumWidth / 2.0;
+      tabRight = tabCenter + minimumWidth / 2.0;
     }
 
     final EdgeInsets insets = indicatorPadding.resolve(_currentTextDirection);
@@ -770,6 +783,7 @@ class _IndicatorPainter extends CustomPainter {
     return _needsPaint ||
         controller != old.controller ||
         indicator != old.indicator ||
+        minimumIndicatorWidth != old.minimumIndicatorWidth ||
         tabKeys.length != old.tabKeys.length ||
         (!listEquals(_currentTabOffsets, old._currentTabOffsets)) ||
         _currentTextDirection != old._currentTextDirection;
@@ -1769,6 +1783,12 @@ class _TabBarState extends State<TabBar> {
     final TabBarThemeData tabBarTheme = TabBarTheme.of(context);
     final TabBarIndicatorSize indicatorSize =
         widget.indicatorSize ?? tabBarTheme.indicatorSize ?? _defaults.indicatorSize!;
+    final bool usesDefaultPrimaryLabelIndicator =
+        theme.useMaterial3 &&
+        widget._isPrimary &&
+        indicatorSize == TabBarIndicatorSize.label &&
+        widget.indicator == null &&
+        tabBarTheme.indicator == null;
 
     final _IndicatorPainter? oldPainter = _indicatorPainter;
 
@@ -1783,6 +1803,9 @@ class _TabBarState extends State<TabBar> {
             controller: _controller!,
             indicator: _getIndicator(indicatorSize),
             indicatorSize: indicatorSize,
+            minimumIndicatorWidth: usesDefaultPrimaryLabelIndicator
+                ? _kMinPrimaryTabIndicatorWidth
+                : null,
             indicatorPadding: widget.indicatorPadding,
             tabKeys: _tabKeys,
             // Passing old painter so that the constructor can copy some values from it.
