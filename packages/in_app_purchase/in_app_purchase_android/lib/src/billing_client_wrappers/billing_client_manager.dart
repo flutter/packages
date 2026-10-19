@@ -8,6 +8,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
 
 import 'billing_client_wrapper.dart';
+import 'billing_response_wrapper.dart';
 import 'pending_purchases_params_wrapper.dart';
 import 'purchase_wrapper.dart';
 import 'user_choice_details_wrapper.dart';
@@ -95,17 +96,17 @@ class BillingClientManager {
   bool _isDisposed = false;
 
   // Initialized immediately in the constructor, so it's always safe to access.
-  late Future<void> _readyFuture;
+  late Future<BillingResultWrapper> _readyFuture;
 
   /// Executes the given [action] with access to the underlying [BillingClient].
   ///
   /// If necessary, waits for the underlying [BillingClient] to connect.
   /// If given [action] returns [BillingResponse.serviceDisconnected], it will
-  /// be transparently retried after the connection is restored. Because
-  /// of this, [action] may be called multiple times.
+  /// be retried once if the connection is successfully restored.
   ///
   /// A response with [BillingResponse.serviceDisconnected] may be returned
-  /// in case of [dispose] being called during the operation.
+  /// if reconnection fails, the retry is disconnected, or [dispose] is called
+  /// during the operation.
   ///
   /// See [runWithClientNonRetryable] for operations that do not return
   /// a subclass of [HasBillingResponse].
@@ -116,11 +117,12 @@ class BillingClientManager {
     await _readyFuture;
     final R result = await action(client);
     if (result.responseCode == BillingResponse.serviceDisconnected && !_isDisposed) {
-      await _connect();
-      return runWithClient(action);
-    } else {
-      return result;
+      final BillingResultWrapper connectionResult = await _connect();
+      if (connectionResult.responseCode == BillingResponse.ok && !_isDisposed) {
+        return action(client);
+      }
     }
+    return result;
   }
 
   /// Executes the given [action] with access to the underlying [BillingClient].
@@ -174,24 +176,27 @@ class BillingClientManager {
     await _reconnect();
   }
 
-  // If disposed, does nothing.
+  // If disposed, returns a disconnected result without starting a connection.
   // If currently connecting, waits for it to complete.
   // Otherwise, starts a new connection.
-  Future<void> _connect() {
+  Future<BillingResultWrapper> _connect() {
     if (_isDisposed) {
-      return Future<void>.value();
+      return Future<BillingResultWrapper>.value(
+        const BillingResultWrapper(responseCode: BillingResponse.serviceDisconnected),
+      );
     }
     if (_isConnecting) {
       return _readyFuture;
     }
     _isConnecting = true;
-    _readyFuture = Future<void>.sync(() async {
-      await client.startConnection(
+    _readyFuture = Future<BillingResultWrapper>.sync(() async {
+      final BillingResultWrapper result = await client.startConnection(
         onBillingServiceDisconnected: _connect,
         billingChoiceMode: _billingChoiceMode,
         pendingPurchasesParams: _pendingPurchasesParams,
       );
       _isConnecting = false;
+      return result;
     });
     return _readyFuture;
   }
