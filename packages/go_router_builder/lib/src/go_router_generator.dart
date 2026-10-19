@@ -8,10 +8,10 @@ import 'package:analyzer/dart/element/element.dart';
 import 'package:analyzer/dart/element/type.dart';
 import 'package:build/build.dart';
 import 'package:source_gen/source_gen.dart';
+import 'package:source_helper/source_helper.dart';
 
 import 'duplicate_path_severity.dart';
 import 'route_config.dart';
-import 'type_helpers.dart';
 
 const String _routeDataUrl = 'package:go_router/src/route_data.dart';
 
@@ -81,9 +81,7 @@ ${getters.map((String e) => "$e,").join('\n')}
   }
 
   RouteBaseConfig _configForAnnotatedElement(Element element, ConstantReader annotation) {
-    final String typedAnnotation = withoutNullability(
-      annotation.objectValue.type!.getDisplayString(),
-    );
+    final String typedAnnotation = annotation.objectValue.type!.toStringNonNullable();
     final String type = typedAnnotation.substring(0, typedAnnotation.indexOf('<'));
     final String routeData = _annotations[type]!;
     if (element is! ClassElement) {
