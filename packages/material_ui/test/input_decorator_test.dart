@@ -16123,4 +16123,40 @@ void main() {
     final Text label = tester.widget<Text>(find.text(labelText));
     expect(label.textDirection, TextDirection.rtl);
   });
+
+  // Regression test for https://github.com/flutter/flutter/issues/145324.
+  for (final TextDirection textDirection in TextDirection.values) {
+    testWidgets('Floating label hit test matches its painted position ($textDirection)', (
+      WidgetTester tester,
+    ) async {
+      var tapCount = 0;
+      await tester.pumpWidget(
+        buildInputDecorator(
+          textDirection: textDirection,
+          decoration: InputDecoration(
+            border: const OutlineInputBorder(),
+            label: GestureDetector(
+              behavior: HitTestBehavior.opaque,
+              onTap: () => tapCount++,
+              child: const SizedBox(width: 100.0, height: 20.0),
+            ),
+          ),
+        ),
+      );
+
+      // The label floats (isEmpty is false), so it is painted scaled and moved up
+      // onto the border, above its layout position.
+      final Rect labelRect = tester.getRect(find.byType(GestureDetector));
+      expect(labelRect.width, 75.0);
+
+      // Taps at the painted label hit the label.
+      await tester.tapAt(labelRect.center);
+      await tester.tapAt(labelRect.bottomLeft + const Offset(1.0, -1.0));
+      expect(tapCount, 2);
+
+      // A tap below the painted label, inside its layout position, misses the label.
+      await tester.tapAt(labelRect.bottomCenter + const Offset(0.0, 10.0));
+      expect(tapCount, 2);
+    });
+  }
 }
