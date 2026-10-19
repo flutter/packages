@@ -1,5 +1,21 @@
-## NEXT
+## 0.4.14
 
+* Adds `showManageSubscriptions` to `InAppPurchaseStoreKitPlatformAddition`, which presents the
+  App Store sheet for managing subscriptions. Requires StoreKit 2 and iOS 15+.
+
+## 0.4.13+3
+
+* Removes unused handling of the deprecated `SKDownload` hosted content
+  callbacks.
+
+## 0.4.13+2
+
+* Removes availability checks for iOS and macOS versions below the package minimum (iOS 13 and macOS 10.15).
+
+## 0.4.13+1
+
+* Fixes `completePurchase` never completing with StoreKit 2 when the transaction
+  is not found, such as an already finished consumable.
 * Updates minimum supported SDK version to Flutter 3.41/Dart 3.11.
 * Fixes lint issues.
 

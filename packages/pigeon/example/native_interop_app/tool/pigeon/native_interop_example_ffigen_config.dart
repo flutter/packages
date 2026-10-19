@@ -38,7 +38,6 @@ Future<void> main(List<String> args) async {
     'NativeInteropExamplePigeonInternalNull',
     'NativeInteropExamplePigeonTypedData',
     'NativeInteropExampleNumberWrapper',
-    'NativeInteropExampleApi',
     'NativeInteropExampleApiSetup',
     'PigeonError',
   };

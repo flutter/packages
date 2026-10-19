@@ -16,7 +16,7 @@ package, which is Flutter's official iOS- and macOS-style design library.
 Install the package with the following command:
 
 ```dart
-flutter add material_ui
+flutter pub add material_ui
 ```
 
 See Flutter's main [getting started

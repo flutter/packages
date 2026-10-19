@@ -125,13 +125,7 @@ static UIImage *FLTImagePickerDrawScaledImage(UIImage *imageToScale, double widt
                   maxHeight:(NSNumber *)maxHeight {
   NSMutableDictionary<NSString *, id> *options = [NSMutableDictionary dictionary];
   options[(NSString *)kCGImageSourceShouldCache] = @YES;
-  NSString *gifTypeIdentifier;
-  if (@available(iOS 14.0, *)) {
-    gifTypeIdentifier = UTTypeGIF.identifier;
-  } else {
-    gifTypeIdentifier = (NSString *)kUTTypeGIF;
-  }
-  options[(NSString *)kCGImageSourceTypeIdentifierHint] = gifTypeIdentifier;
+  options[(NSString *)kCGImageSourceTypeIdentifierHint] = UTTypeGIF.identifier;
 
   CGImageSourceRef imageSource =
       CGImageSourceCreateWithData((__bridge CFDataRef)data, (__bridge CFDictionaryRef)options);
