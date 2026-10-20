@@ -2364,6 +2364,252 @@ dev_dependencies:
       }
     });
 
+    test('checkObjectiveCPubspecVersion returns null when constraint matches ObjCVersionCheck', () {
+      final Directory tempDir = Directory.systemTemp.createTempSync('pigeon_objc_version_test_');
+      try {
+        File('${tempDir.path}/pubspec.yaml').writeAsStringSync('''
+name: my_package
+dependencies:
+  ffi: ^2.0.0
+  objective_c: ^9.6.2
+''');
+        final libDir = Directory('${tempDir.path}/lib')..createSync(recursive: true);
+        File('${libDir.path}/messages.g.ffi.dart').writeAsStringSync(r'''
+const _$objcVersionCheck = objc.ObjCVersionCheck(9, 6);
+''');
+        final InternalPigeonOptions options = InternalPigeonOptions.fromPigeonOptions(
+          PigeonOptions(
+            input: 'foo.dart',
+            dartOut: '${libDir.path}/messages.g.dart',
+            swiftOut: '${libDir.path}/messages.g.swift',
+            swiftOptions: const SwiftOptions(useFfi: true),
+            dartPackageName: 'my_package',
+          ),
+        );
+        expect(checkObjectiveCPubspecVersion(options), isNull);
+      } finally {
+        tempDir.deleteSync(recursive: true);
+      }
+    });
+
+    test(
+      'checkObjectiveCPubspecVersion warns when constraint allows lower minor version than ObjCVersionCheck',
+      () {
+        final Directory tempDir = Directory.systemTemp.createTempSync('pigeon_objc_version_test_');
+        try {
+          File('${tempDir.path}/pubspec.yaml').writeAsStringSync('''
+name: my_package
+dependencies:
+  ffi: ^2.0.0
+  objective_c: ^9.5.0
+''');
+          final libDir = Directory('${tempDir.path}/lib')..createSync(recursive: true);
+          File('${libDir.path}/messages.g.ffi.dart').writeAsStringSync(r'''
+const _$objcVersionCheck = objc.ObjCVersionCheck(9, 6);
+''');
+          final InternalPigeonOptions options = InternalPigeonOptions.fromPigeonOptions(
+            PigeonOptions(
+              input: 'foo.dart',
+              dartOut: '${libDir.path}/messages.g.dart',
+              swiftOut: '${libDir.path}/messages.g.swift',
+              swiftOptions: const SwiftOptions(useFfi: true),
+              dartPackageName: 'my_package',
+            ),
+          );
+          final String? warning = checkObjectiveCPubspecVersion(options);
+          expect(warning, isNotNull);
+          expect(warning, contains('require package:objective_c ^9.6.0'));
+          expect(warning, contains('ObjCVersionCheck(9, 6)'));
+          expect(warning, contains('objective_c: ^9.5.0'));
+        } finally {
+          tempDir.deleteSync(recursive: true);
+        }
+      },
+    );
+
+    test('checkJniPubspecVersion returns null when constraint matches JniVersionCheck', () {
+      final Directory tempDir = Directory.systemTemp.createTempSync('pigeon_jni_version_test_');
+      try {
+        File('${tempDir.path}/pubspec.yaml').writeAsStringSync('''
+name: my_package
+dependencies:
+  jni: ^1.1.0
+''');
+        final libDir = Directory('${tempDir.path}/lib')..createSync(recursive: true);
+        File('${libDir.path}/messages.g.jni.dart').writeAsStringSync(r'''
+const _$jniVersionCheck = jni$_.JniVersionCheck(1, 1);
+''');
+        final InternalPigeonOptions options = InternalPigeonOptions.fromPigeonOptions(
+          PigeonOptions(
+            input: 'foo.dart',
+            dartOut: '${libDir.path}/messages.g.dart',
+            kotlinOut: '${libDir.path}/Messages.g.kt',
+            kotlinOptions: const KotlinOptions(useJni: true),
+            dartPackageName: 'my_package',
+          ),
+        );
+        expect(checkJniPubspecVersion(options), isNull);
+      } finally {
+        tempDir.deleteSync(recursive: true);
+      }
+    });
+
+    test(
+      'checkJniPubspecVersion warns when constraint allows lower minor version than JniVersionCheck',
+      () {
+        final Directory tempDir = Directory.systemTemp.createTempSync('pigeon_jni_version_test_');
+        try {
+          File('${tempDir.path}/pubspec.yaml').writeAsStringSync('''
+name: my_package
+dependencies:
+  jni: ^1.0.0
+''');
+          final libDir = Directory('${tempDir.path}/lib')..createSync(recursive: true);
+          File('${libDir.path}/messages.g.jni.dart').writeAsStringSync(r'''
+const _$jniVersionCheck = jni$_.JniVersionCheck(1, 1);
+''');
+          final InternalPigeonOptions options = InternalPigeonOptions.fromPigeonOptions(
+            PigeonOptions(
+              input: 'foo.dart',
+              dartOut: '${libDir.path}/messages.g.dart',
+              kotlinOut: '${libDir.path}/Messages.g.kt',
+              kotlinOptions: const KotlinOptions(useJni: true),
+              dartPackageName: 'my_package',
+            ),
+          );
+          final String? warning = checkJniPubspecVersion(options);
+          expect(warning, isNotNull);
+          expect(warning, contains('require package:jni ^1.1.0'));
+          expect(warning, contains('JniVersionCheck(1, 1)'));
+          expect(warning, contains('jni: ^1.0.0'));
+        } finally {
+          tempDir.deleteSync(recursive: true);
+        }
+      },
+    );
+
+    test('checkObjectiveCPubspecVersion checks version key when dependency is a map', () {
+      final Directory tempDir = Directory.systemTemp.createTempSync('pigeon_objc_version_test_');
+      try {
+        File('${tempDir.path}/pubspec.yaml').writeAsStringSync('''
+name: my_package
+dependencies:
+  ffi: ^2.0.0
+  objective_c:
+    hosted: https://some-package-server.com
+    version: ^9.5.0
+''');
+        final libDir = Directory('${tempDir.path}/lib')..createSync(recursive: true);
+        File('${libDir.path}/messages.g.ffi.dart').writeAsStringSync(r'''
+const _$objcVersionCheck = objc.ObjCVersionCheck(9, 6);
+''');
+        final InternalPigeonOptions options = InternalPigeonOptions.fromPigeonOptions(
+          PigeonOptions(
+            input: 'foo.dart',
+            dartOut: '${libDir.path}/messages.g.dart',
+            swiftOut: '${libDir.path}/messages.g.swift',
+            swiftOptions: const SwiftOptions(useFfi: true),
+            dartPackageName: 'my_package',
+          ),
+        );
+        final String? warning = checkObjectiveCPubspecVersion(options);
+        expect(warning, isNotNull);
+        expect(warning, contains('require package:objective_c ^9.6.0'));
+        expect(warning, contains('objective_c: ^9.5.0'));
+      } finally {
+        tempDir.deleteSync(recursive: true);
+      }
+    });
+
+    test(
+      'checkObjectiveCPubspecVersion warns on disjoint major, higher major range, bare, and versionless hosted dependencies, and skips path dependencies',
+      () {
+        final Directory tempDir = Directory.systemTemp.createTempSync('pigeon_objc_version_test_');
+        try {
+          final libDir = Directory('${tempDir.path}/lib')..createSync(recursive: true);
+          File('${libDir.path}/messages.g.ffi.dart').writeAsStringSync(r'''
+const _$objcVersionCheck = objc.ObjCVersionCheck(9, 6);
+''');
+          final InternalPigeonOptions options = InternalPigeonOptions.fromPigeonOptions(
+            PigeonOptions(
+              input: 'foo.dart',
+              dartOut: 'lib/messages.g.dart',
+              swiftOut: 'lib/messages.g.swift',
+              swiftOptions: const SwiftOptions(useFfi: true),
+              dartPackageName: 'my_package',
+              basePath: tempDir.path,
+            ),
+          );
+
+          // Constraint allowing no valid version (^10.0.0)
+          File('${tempDir.path}/pubspec.yaml').writeAsStringSync('''
+name: my_package
+dependencies:
+  objective_c: ^10.0.0
+''');
+          expect(
+            checkObjectiveCPubspecVersion(options),
+            allOf(isNotNull, contains('objective_c: ^10.0.0')),
+          );
+
+          // Constraint allowing a higher major (>=9.6.0 <11.0.0)
+          File('${tempDir.path}/pubspec.yaml').writeAsStringSync('''
+name: my_package
+dependencies:
+  objective_c: ">=9.6.0 <11.0.0"
+''');
+          expect(
+            checkObjectiveCPubspecVersion(options),
+            allOf(isNotNull, contains('objective_c: >=9.6.0 <11.0.0')),
+          );
+
+          // Bare dependency (parsed as null -> treated as 'any')
+          File('${tempDir.path}/pubspec.yaml').writeAsStringSync('''
+name: my_package
+dependencies:
+  objective_c:
+''');
+          expect(
+            checkObjectiveCPubspecVersion(options),
+            allOf(isNotNull, contains('objective_c: any')),
+          );
+
+          // Versionless hosted dependency (treated as 'any')
+          File('${tempDir.path}/pubspec.yaml').writeAsStringSync('''
+name: my_package
+dependencies:
+  objective_c:
+    hosted: https://some-package-server.com
+''');
+          expect(
+            checkObjectiveCPubspecVersion(options),
+            allOf(isNotNull, contains('objective_c: any')),
+          );
+
+          // Path dependency without version is skipped
+          File('${tempDir.path}/pubspec.yaml').writeAsStringSync('''
+name: my_package
+dependencies:
+  objective_c:
+    path: ../objective_c
+''');
+          expect(checkObjectiveCPubspecVersion(options), isNull);
+
+          // dependency_overrides takes precedence over dependencies
+          File('${tempDir.path}/pubspec.yaml').writeAsStringSync('''
+name: my_package
+dependencies:
+  objective_c: ^9.5.0
+dependency_overrides:
+  objective_c: ^9.6.0
+''');
+          expect(checkObjectiveCPubspecVersion(options), isNull);
+        } finally {
+          tempDir.deleteSync(recursive: true);
+        }
+      },
+    );
+
     test('KotlinOptions serialization/deserialization with jniClassPaths', () {
       const options = KotlinOptions(jniClassPaths: <String>['foo/bar', 'baz.jar']);
       final Map<String, Object> map = options.toMap();
