@@ -100,6 +100,7 @@ import WebKit
     #endif
   }
 
+  @available(iOS 14.0, macOS 11.0, *)
   @MainActor @Test func setLimitsNavigationsToAppBoundDomains() throws {
     let registrar = TestProxyApiRegistrar()
     let api = registrar.apiDelegate.pigeonApiWKWebViewConfiguration(registrar)

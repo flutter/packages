@@ -32,6 +32,7 @@ class UIDelegateImpl: NSObject, WKUIDelegate {
   }
 
   #if compiler(>=6.0)
+    @available(iOS 15.0, macOS 12.0, *)
     func webView(
       _ webView: WKWebView, requestMediaCapturePermissionFor origin: WKSecurityOrigin,
       initiatedByFrame frame: WKFrameInfo, type: WKMediaCaptureType,
@@ -74,6 +75,7 @@ class UIDelegateImpl: NSObject, WKUIDelegate {
       }
     }
   #else
+    @available(iOS 15.0, macOS 12.0, *)
     func webView(
       _ webView: WKWebView, requestMediaCapturePermissionFor origin: WKSecurityOrigin,
       initiatedByFrame frame: WKFrameInfo, type: WKMediaCaptureType,
