@@ -1008,13 +1008,17 @@ void main() {
     });
 
     test('fails when chromedriver exits without reporting a port', () async {
-      createFakePlugin(
+      final RepositoryPackage plugin = createFakePlugin(
         'plugin',
         packagesDir,
+        examples: <String>['example_1', 'example_2'],
         extraFiles: <String>[
-          'example/integration_test/plugin_test.dart',
-          'example/test_driver/integration_test.dart',
-          'example/web/index.html',
+          'example/example_1/integration_test/plugin_test.dart',
+          'example/example_1/test_driver/integration_test.dart',
+          'example/example_1/web/index.html',
+          'example/example_2/integration_test/plugin_test.dart',
+          'example/example_2/test_driver/integration_test.dart',
+          'example/example_2/web/index.html',
         ],
         platformSupport: <String, PlatformDetails>{
           platformWeb: const PlatformDetails(PlatformSupport.inline),
@@ -1026,7 +1030,13 @@ void main() {
           MockProcess(exitCode: 1, stderr: 'bind() failed: Address already in use\n'),
           <String>['--port=0'],
         ),
+        FakeProcessInfo(
+          MockProcess(stdout: 'ChromeDriver was started successfully on port 12346.\n'),
+          <String>['--port=0'],
+        ),
       ];
+
+      final Directory example2Dir = getExampleDir(plugin).childDirectory('example_2');
 
       Error? commandError;
       final List<String> output = await runCapturingPrint(
@@ -1046,12 +1056,31 @@ void main() {
             contains('chromedriver exited before reporting its port.'),
             contains('bind() failed: Address already in use'),
           ),
+          contains('Started chromedriver on port 12346'),
+          contains('The following packages had errors:'),
+          contains('chromedriver failed to start for plugin/example/example_1'),
         ]),
       );
+      expect(output, isNot(contains(contains('Unhandled exception'))));
       expect(
         processRunner.recordedCalls,
         orderedEquals(<ProcessCall>[
           const ProcessCall('chromedriver', <String>['--port=0'], null),
+          const ProcessCall('chromedriver', <String>['--port=0'], null),
+          ProcessCall(getFlutterCommand(mockPlatform), const <String>[
+            'drive',
+            '-d',
+            'web-server',
+            '--web-port=7357',
+            '--browser-name=chrome',
+            ..._defaultWebBrowserFlags,
+            '--driver-port=12346',
+            '--screenshot=/path/to/logs/plugin_example_example_2-drive',
+            '--driver',
+            'test_driver/integration_test.dart',
+            '--target',
+            'integration_test/plugin_test.dart',
+          ], example2Dir.path),
         ]),
       );
     });

@@ -233,13 +233,20 @@ class DriveExamplesCommand extends PackageLoopingCommand {
 
       testsRan = true;
       if (useFlutterDrive) {
-        final List<File> failingTargets = await _driveExample(
-          example,
-          drivers,
-          testTargets,
-          deviceFlags: deviceFlags,
-          exampleName: exampleName,
-        );
+        final List<File> failingTargets;
+        try {
+          failingTargets = await _driveExample(
+            example,
+            drivers,
+            testTargets,
+            deviceFlags: deviceFlags,
+            exampleName: exampleName,
+          );
+        } on _ChromeDriverStartException catch (e) {
+          printError(e.message);
+          errors.add('chromedriver failed to start for $exampleName');
+          continue;
+        }
         for (final failingTarget in failingTargets) {
           errors.add(getRelativePosixPath(failingTarget, from: package.directory));
         }
@@ -576,7 +583,7 @@ class _ChromeDriver {
               await _stderrDone.future;
               if (!_portCompleter.isCompleted) {
                 _portCompleter.completeError(
-                  StateError(
+                  _ChromeDriverStartException(
                     'chromedriver exited before reporting its port.\n'
                     'stdout:\n$_stdoutBuffer'
                     'stderr:\n$_stderrBuffer',
@@ -610,4 +617,14 @@ class _ChromeDriver {
     await _process.exitCode;
     await Future.wait(<Future<void>>[_stdoutSubscription.cancel(), _stderrSubscription.cancel()]);
   }
+}
+
+/// Thrown when `chromedriver` exits before reporting the port it listens on.
+class _ChromeDriverStartException implements Exception {
+  _ChromeDriverStartException(this.message);
+
+  final String message;
+
+  @override
+  String toString() => message;
 }
