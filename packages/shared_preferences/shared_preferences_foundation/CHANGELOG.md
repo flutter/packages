@@ -1,3 +1,8 @@
+## 2.6.0
+
+* Updates internal implementation to use Pigeon FFI.
+* Updates minimum supported SDK version to Flutter 3.47/Dart 3.13.
+
 ## 2.5.7
 
 * Updates pigeon dev_dependency to ^27.3.2 for analyzer 14 compatibility.

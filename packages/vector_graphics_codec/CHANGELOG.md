@@ -1,6 +1,7 @@
-## NEXT
+## 1.2.0
 
-* Updates minimum supported SDK version to Flutter 3.38/Dart 3.10.
+* Adds support for encoding and decoding paint blur commands (`writePaintBlur` and `onPaintBlur`) for SVG filters.
+* Updates minimum supported SDK version to Flutter 3.41/Dart 3.11.
 
 ## 1.1.13
 

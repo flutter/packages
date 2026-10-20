@@ -520,8 +520,7 @@ void main() {
         ),
       ),
     );
-    await tester
-        .pump(); // this would fail if heroTag was the same on both FloatingActionButtons (see below).
+    await tester.pump(); // this would fail if heroTag was the same on both FloatingActionButtons (see below).
   });
 
   testWidgets('Floating Action Button heroTag - with duplicate', (WidgetTester tester) async {
@@ -898,7 +897,7 @@ void main() {
       RendererBinding.instance.mouseTracker.debugDeviceActiveCursor(1),
       SystemMouseCursors.basic,
     );
-  });
+  }, tags: 'reduced-web-test-set');
 
   testWidgets('Floating Action Button has no clip by default', (WidgetTester tester) async {
     final focusNode = FocusNode();

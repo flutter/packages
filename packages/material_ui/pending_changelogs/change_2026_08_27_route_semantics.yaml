@@ -1,3 +1,0 @@
-changelog: |
-  - Adds an option for `MaterialPageRoute` and `MaterialPage` to opt out of introducing a semantics route scope.
-version: minor

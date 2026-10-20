@@ -60,21 +60,17 @@ import Foundation
 }
 
 private func wrapNumber(number: Any) -> NativeInteropExampleNumberWrapper {
-  switch number {
-  case let value as Int:
-    return NativeInteropExampleNumberWrapper(number: NSNumber(value: value), type: 1)
-  case let value as Int64:
-    return NativeInteropExampleNumberWrapper(number: NSNumber(value: value), type: 1)
-  case let value as Double:
-    return NativeInteropExampleNumberWrapper(number: NSNumber(value: value), type: 2)
-  case let value as Float:
-    return NativeInteropExampleNumberWrapper(number: NSNumber(value: value), type: 2)
-  case let value as Bool:
-    return NativeInteropExampleNumberWrapper(number: NSNumber(value: value), type: 3)
-
-  default:
-    return NativeInteropExampleNumberWrapper(number: NSNumber(value: 0), type: 0)
+  if let nsNumber = number as? NSNumber {
+    if CFGetTypeID(nsNumber as CFTypeRef) == CFBooleanGetTypeID() {
+      return NativeInteropExampleNumberWrapper(number: nsNumber, type: 3)
+    }
+    if CFNumberIsFloatType(nsNumber) {
+      return NativeInteropExampleNumberWrapper(number: nsNumber, type: 2)
+    }
+    return NativeInteropExampleNumberWrapper(number: nsNumber, type: 1)
   }
+
+  return NativeInteropExampleNumberWrapper(number: NSNumber(value: 0), type: 0)
 }
 
 private func unwrapNumber(wrappedNumber: NativeInteropExampleNumberWrapper) -> Any {
@@ -201,7 +197,7 @@ private func nilOrValue<T>(_ value: Any?) -> T? {
 
 @objc class NativeInteropExamplePigeonInternalNull: NSObject {}
 
-class _PigeonFfiCodec {
+private class _PigeonFfiCodec {
   static func readValue(value: NSObject?, type: String? = nil, type2: String? = nil) -> Any? {
     if NativeInteropExamplePigeonInternal.isNullish(value) {
       return nil
@@ -307,7 +303,7 @@ class _PigeonFfiCodec {
       let res: NSMutableDictionary = NSMutableDictionary(capacity: dict.count)
       for (key, value) in dict {
         res.setObject(
-          NativeInteropExamplePigeonInternal.isNullish(key)
+          NativeInteropExamplePigeonInternal.isNullish(value)
             ? NativeInteropExamplePigeonInternalNull()
             : writeValue(value: value, isObject: true) as! NSObject,
           forKey: writeValue(value: key, isObject: true) as! NSCopying)
@@ -355,14 +351,15 @@ protocol NativeInteropExampleApi {
   }
   @objc func doSomething(wrappedError: PigeonError) {
     do {
-      return try api!.doSomething()
+      try api!.doSomething()
+      return
     } catch let error as PigeonError {
       wrappedError.code = error.code
       wrappedError.message = error.message
       wrappedError.details = error.details
     } catch let error {
       wrappedError.code = "\(error)"
-      wrappedError.message = "\(type(of: error))"
+      wrappedError.message = "\(Swift.type(of: error))"
       wrappedError.details = "Stacktrace: \(Thread.callStackSymbols)"
     }
     return

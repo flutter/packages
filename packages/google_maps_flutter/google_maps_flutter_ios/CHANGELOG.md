@@ -1,3 +1,8 @@
+## 2.18.7
+
+* Updates README to note that `GoogleMap.onPointOfInterestTap` is not supported.
+* Updates minimum supported SDK version to Flutter 3.41/Dart 3.11.
+
 ## 2.18.6
 
 * Updates pigeon dev_dependency to ^27.3.2 for analyzer 14 compatibility.

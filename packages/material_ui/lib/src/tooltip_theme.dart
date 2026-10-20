@@ -4,6 +4,7 @@
 
 /// @docImport 'app.dart';
 /// @docImport 'tooltip.dart';
+/// @docImport 'tooltip_visibility.dart';
 library;
 
 import 'dart:ui' show lerpDouble;
@@ -54,6 +55,7 @@ class TooltipThemeData with Diagnosticable {
     this.exitDuration,
     this.triggerMode,
     this.enableFeedback,
+    this.ignorePointer,
   }) : assert(
          height == null || constraints == null,
          'Only one of `height` and `constraints` may be specified.',
@@ -137,6 +139,14 @@ class TooltipThemeData with Diagnosticable {
   ///   * [Feedback], for providing platform-specific feedback to certain actions.
   final bool? enableFeedback;
 
+  /// Whether the tooltip overlay should be invisible to hit testing.
+  ///
+  /// If `false`, moving the mouse pointer onto the tooltip overlay keeps the
+  /// tooltip visible (satisfying WCAG 1.4.13 Hoverable).
+  ///
+  /// This value is used if [Tooltip.ignorePointer] is null.
+  final bool? ignorePointer;
+
   /// Creates a copy of this object but with the given fields replaced with the
   /// new values.
   TooltipThemeData copyWith({
@@ -159,6 +169,7 @@ class TooltipThemeData with Diagnosticable {
     Duration? exitDuration,
     TooltipTriggerMode? triggerMode,
     bool? enableFeedback,
+    bool? ignorePointer,
   }) {
     return TooltipThemeData(
       height: height ?? this.height,
@@ -173,8 +184,10 @@ class TooltipThemeData with Diagnosticable {
       textAlign: textAlign ?? this.textAlign,
       waitDuration: waitDuration ?? this.waitDuration,
       showDuration: showDuration ?? this.showDuration,
+      exitDuration: exitDuration ?? this.exitDuration,
       triggerMode: triggerMode ?? this.triggerMode,
       enableFeedback: enableFeedback ?? this.enableFeedback,
+      ignorePointer: ignorePointer ?? this.ignorePointer,
     );
   }
 
@@ -198,6 +211,12 @@ class TooltipThemeData with Diagnosticable {
       decoration: Decoration.lerp(a?.decoration, b?.decoration, t),
       textStyle: TextStyle.lerp(a?.textStyle, b?.textStyle, t),
       textAlign: t < 0.5 ? a?.textAlign : b?.textAlign,
+      waitDuration: t < 0.5 ? a?.waitDuration : b?.waitDuration,
+      showDuration: t < 0.5 ? a?.showDuration : b?.showDuration,
+      exitDuration: t < 0.5 ? a?.exitDuration : b?.exitDuration,
+      triggerMode: t < 0.5 ? a?.triggerMode : b?.triggerMode,
+      enableFeedback: t < 0.5 ? a?.enableFeedback : b?.enableFeedback,
+      ignorePointer: t < 0.5 ? a?.ignorePointer : b?.ignorePointer,
     );
   }
 
@@ -218,6 +237,7 @@ class TooltipThemeData with Diagnosticable {
     exitDuration,
     triggerMode,
     enableFeedback,
+    ignorePointer,
   );
 
   @override
@@ -243,7 +263,8 @@ class TooltipThemeData with Diagnosticable {
         other.showDuration == showDuration &&
         other.exitDuration == exitDuration &&
         other.triggerMode == triggerMode &&
-        other.enableFeedback == enableFeedback;
+        other.enableFeedback == enableFeedback &&
+        other.ignorePointer == ignorePointer;
   }
 
   @override
@@ -286,6 +307,7 @@ class TooltipThemeData with Diagnosticable {
     properties.add(
       FlagProperty('enableFeedback', value: enableFeedback, ifTrue: 'true', showName: true),
     );
+    properties.add(DiagnosticsProperty<bool>('ignorePointer', ignorePointer, defaultValue: null));
   }
 }
 

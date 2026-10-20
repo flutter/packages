@@ -26,14 +26,7 @@ class UserContentControllerProxyAPIDelegate: PigeonApiDelegateWKUserContentContr
   func removeAllScriptMessageHandlers(
     pigeonApi: PigeonApiWKUserContentController, pigeonInstance: WKUserContentController
   ) throws {
-    if #available(iOS 14.0, macOS 11.0, *) {
-      pigeonInstance.removeAllScriptMessageHandlers()
-    } else {
-      throw (pigeonApi.pigeonRegistrar as! ProxyAPIRegistrar)
-        .createUnsupportedVersionError(
-          method: "WKUserContentController.removeAllScriptMessageHandlers",
-          versionRequirements: "iOS 14.0, macOS 11.0")
-    }
+    pigeonInstance.removeAllScriptMessageHandlers()
   }
 
   func addUserScript(

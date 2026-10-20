@@ -1,3 +1,26 @@
+## 0.8.13+12
+
+* Updates minimum supported SDK version to Flutter 3.47/Dart 3.13.
+* Updates minimum iOS version to 15.
+* Removes the iOS 13 code paths that used the deprecated `kUTTypeGIF`, `kUTTypeImage`, and `kUTTypeMovie` constants, which fail to compile with Xcode 27.
+
+## 0.8.13+11
+
+* Adds an injectable protocol seam for PHImageManager image data requests.
+
+## 0.8.13+10
+
+* Returns an error when selected image data cannot be decoded.
+
+## 0.8.13+9
+
+* Adds injectable protocol seams for camera, photo library, and PHPicker APIs.
+
+## 0.8.13+8
+
+* Fixes scaling 10-bit images on iOS.
+* Updates minimum supported SDK version to Flutter 3.41/Dart 3.11.
+
 ## 0.8.13+7
 
 * Updates pigeon dev_dependency to ^27.3.2 for analyzer 14 compatibility.

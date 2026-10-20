@@ -5,8 +5,11 @@
 import 'package:go_router/go_router.dart';
 
 mixin $HomeRoute {}
+
 mixin $ShellRoute {}
+
 mixin $RelativeRoute {}
+
 mixin $AbsoluteRoute {}
 
 @TypedGoRoute<HomeRoute>(path: '/', routes: <TypedRoute<RouteData>>[relativeRoute])

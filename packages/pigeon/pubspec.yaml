@@ -21,12 +21,18 @@ dependencies:
 
 dev_dependencies:
   ffi: ^2.2.0
-  ffigen: ^22.0.0
-  jni: ^1.0.3
-  jnigen: ^1.0.0
-  objective_c: ^9.6.0
-  swift2objc: ^0.3.0
-  swiftgen: ^0.2.0
+  # When updating ffigen or objective_c, check that _swiftObjcSelectorFirstPiece
+  # in lib/src/dart/dart_generator.dart and _swiftFfiReservedFieldNames in
+  # lib/src/pigeon_lib_internal.dart still match the Dart names FFIgen generates.
+  ffigen: 22.0.0
+  jni: ^1.1.0
+  # When updating jnigen, check that _JniBindingNamer in
+  # lib/src/dart/dart_generator.dart, and the name lists it uses, still match
+  # JNIgen's renamer, then update the version linked in its doc comment.
+  jnigen: 1.0.1
+  objective_c: ^9.6.2
+  swift2objc: 0.3.1
+  swiftgen: 0.2.0
   test: ^1.11.1
 
 topics:

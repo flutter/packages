@@ -170,9 +170,8 @@ void main() {
       when(
         nonNullMockWebViewConfiguration.getPreferences(),
       ).thenAnswer((_) => Future<MockWKPreferences>.value(mockPreferences ?? MockWKPreferences()));
-      when(
-        nonNullMockWebViewConfiguration.getDefaultWebpagePreferences(),
-      ).thenAnswer((_) async => mockWebpagePreferences ?? MockWKWebpagePreferences());
+      when(nonNullMockWebViewConfiguration.getDefaultWebpagePreferences())
+          .thenAnswer((_) async => mockWebpagePreferences ?? MockWKWebpagePreferences());
       when(nonNullMockWebViewConfiguration.getUserContentController()).thenAnswer(
         (_) => Future<MockWKUserContentController>.value(
           mockUserContentController ?? MockWKUserContentController(),
@@ -483,9 +482,8 @@ void main() {
       );
 
       final result = Object();
-      when(
-        mockWebView.evaluateJavaScript('runJavaScript'),
-      ).thenAnswer((_) => Future<Object>.value(result));
+      when(mockWebView.evaluateJavaScript('runJavaScript'))
+          .thenAnswer((_) => Future<Object>.value(result));
       expect(controller.runJavaScriptReturningResult('runJavaScript'), completion(result));
     });
 
@@ -496,9 +494,8 @@ void main() {
         createMockWebView: (_, {dynamic observeValue}) => mockWebView,
       );
 
-      when(
-        mockWebView.evaluateJavaScript('runJavaScript'),
-      ).thenAnswer((_) => Future<String?>.value());
+      when(mockWebView.evaluateJavaScript('runJavaScript'))
+          .thenAnswer((_) => Future<String?>.value());
       expect(() => controller.runJavaScriptReturningResult('runJavaScript'), throwsArgumentError);
     });
 
@@ -509,9 +506,8 @@ void main() {
         createMockWebView: (_, {dynamic observeValue}) => mockWebView,
       );
 
-      when(
-        mockWebView.evaluateJavaScript('runJavaScript'),
-      ).thenAnswer((_) => Future<String>.value('returnString'));
+      when(mockWebView.evaluateJavaScript('runJavaScript'))
+          .thenAnswer((_) => Future<String>.value('returnString'));
       expect(controller.runJavaScript('runJavaScript'), completes);
     });
 
@@ -596,9 +592,8 @@ void main() {
 
       debugDefaultTargetPlatformOverride = TargetPlatform.iOS;
 
-      when(
-        mockScrollView.getContentOffset(),
-      ).thenAnswer((_) => Future<List<double>>.value(<double>[8.0, 16.0]));
+      when(mockScrollView.getContentOffset())
+          .thenAnswer((_) => Future<List<double>>.value(<double>[8.0, 16.0]));
       expect(controller.getScrollPosition(), completion(const Offset(8.0, 16.0)));
 
       debugDefaultTargetPlatformOverride = null;
@@ -772,9 +767,8 @@ void main() {
     test('enable JavaScript calls WKPreferences.setJavaScriptEnabled for lower versions', () async {
       final mockPreferences = MockWKPreferences();
       final mockWebpagePreferences = MockWKWebpagePreferences();
-      when(
-        mockWebpagePreferences.setAllowsContentJavaScript(any),
-      ).thenThrow(PlatformException(code: 'PigeonUnsupportedOperationError'));
+      when(mockWebpagePreferences.setAllowsContentJavaScript(any))
+          .thenThrow(PlatformException(code: 'PigeonUnsupportedOperationError'));
 
       final WebKitWebViewController controller = createControllerWithMocks(
         mockPreferences: mockPreferences,

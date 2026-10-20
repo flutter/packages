@@ -27,13 +27,13 @@ class $className extends MaterialBannerThemeData {
   late final TextTheme _textTheme = Theme.of(context).textTheme;
 
   @override
-  Color? get backgroundColor => ${color(TokenBanner.containerColor, '_colors')};
+  Color? get backgroundColor => ${color(TokenBanner.containerColor)};
 
   @override
   Color? get surfaceTintColor => Colors.transparent;
 
   @override
-  Color? get dividerColor => ${color(TokenDivider.color, '_colors')};
+  Color? get dividerColor => ${color(TokenDivider.color)};
 
   @override
   TextStyle? get contentTextStyle => ${textStyle(TokenBanner.supportingTextType, '_textTheme')};

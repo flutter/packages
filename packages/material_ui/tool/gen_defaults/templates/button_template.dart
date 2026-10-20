@@ -146,20 +146,20 @@ class ButtonTemplateM3 extends TokenTemplateM3 {
     return '''
 WidgetStateProperty.resolveWith((Set<WidgetState> states) {
   if (states.contains(WidgetState.disabled)) {
-    return ${colorWithOpacity(TokenButton.disabledContainerColor, _legacyDisabledContainerOpacity, '_colors')};
+    return ${colorWithOpacity(TokenButton.disabledContainerColor, _legacyDisabledContainerOpacity)};
   }
-  return ${color(containerColor, '_colors')};
+  return ${color(containerColor)};
 })''';
   }
 
   String get _shadowColor {
     return switch (_variant) {
       _ButtonVariant.elevated =>
-        'MaterialStatePropertyAll<Color>(${color(TokenButtonElevated.containerShadowColor, '_colors')})',
+        'MaterialStatePropertyAll<Color>(${color(TokenButtonElevated.containerShadowColor)})',
       _ButtonVariant.filled =>
-        'MaterialStatePropertyAll<Color>(${color(TokenButtonFilled.containerShadowColor, '_colors')})',
+        'MaterialStatePropertyAll<Color>(${color(TokenButtonFilled.containerShadowColor)})',
       _ButtonVariant.filledTonal =>
-        'MaterialStatePropertyAll<Color>(${color(TokenButtonTonal.containerShadowColor, '_colors')})',
+        'MaterialStatePropertyAll<Color>(${color(TokenButtonTonal.containerShadowColor)})',
       _ButtonVariant.outlined ||
       _ButtonVariant.text => 'const MaterialStatePropertyAll<Color>(Colors.transparent)',
     };
@@ -196,12 +196,12 @@ WidgetStateProperty.resolveWith((Set<WidgetState> states) {
 WidgetStateProperty<BorderSide>? get side =>
   WidgetStateProperty.resolveWith((Set<WidgetState> states) {
     if (states.contains(WidgetState.disabled)) {
-      return BorderSide(color: ${colorWithOpacity(TokenButton.disabledContainerColor, _legacyDisabledContainerOpacity, '_colors')});
+      return BorderSide(color: ${colorWithOpacity(TokenButton.disabledContainerColor, _legacyDisabledContainerOpacity)});
     }
     if (states.contains(WidgetState.focused)) {
-      return BorderSide(color: ${color(TokenColorRole.primary, '_colors')});
+      return BorderSide(color: ${color(TokenColorRole.primary)});
     }
-    return BorderSide(color: ${color(TokenColorRole.outline, '_colors')});
+    return BorderSide(color: ${color(TokenColorRole.outline)});
   });''';
   }
 
@@ -230,22 +230,22 @@ class $className extends ButtonStyle {
   WidgetStateProperty<Color?>? get foregroundColor =>
       WidgetStateProperty.resolveWith((Set<WidgetState> states) {
         if (states.contains(WidgetState.disabled)) {
-          return ${colorWithOpacity(TokenButton.disabledLabelTextColor, TokenButton.disabledLabelTextOpacity, '_colors')};
+          return ${colorWithOpacity(TokenButton.disabledLabelTextColor, TokenButton.disabledLabelTextOpacity)};
         }
-        return ${color(_labelTextColor, '_colors')};
+        return ${color(_labelTextColor)};
       });
 
   @override
   WidgetStateProperty<Color?>? get overlayColor =>
       WidgetStateProperty.resolveWith((Set<WidgetState> states) {
         if (states.contains(WidgetState.pressed)) {
-          return ${colorWithOpacity(_stateLayerColor, _pressedStateLayerOpacity, '_colors')};
+          return ${colorWithOpacity(_stateLayerColor, _pressedStateLayerOpacity)};
         }
         if (states.contains(WidgetState.hovered)) {
-          return ${colorWithOpacity(_stateLayerColor, _hoveredStateLayerOpacity, '_colors')};
+          return ${colorWithOpacity(_stateLayerColor, _hoveredStateLayerOpacity)};
         }
         if (states.contains(WidgetState.focused)) {
-          return ${colorWithOpacity(_stateLayerColor, _focusedStateLayerOpacity, '_colors')};
+          return ${colorWithOpacity(_stateLayerColor, _focusedStateLayerOpacity)};
         }
         return null;
       });
@@ -277,18 +277,18 @@ class $className extends ButtonStyle {
   WidgetStateProperty<Color>? get iconColor {
     return WidgetStateProperty.resolveWith((Set<WidgetState> states) {
       if (states.contains(WidgetState.disabled)) {
-        return ${colorWithOpacity(TokenButton.disabledIconColor, TokenButton.disabledIconOpacity, '_colors')};
+        return ${colorWithOpacity(TokenButton.disabledIconColor, TokenButton.disabledIconOpacity)};
       }
       if (states.contains(WidgetState.pressed)) {
-        return ${color(_iconColor, '_colors')};
+        return ${color(_iconColor)};
       }
       if (states.contains(WidgetState.hovered)) {
-        return ${color(_iconColor, '_colors')};
+        return ${color(_iconColor)};
       }
       if (states.contains(WidgetState.focused)) {
-        return ${color(_iconColor, '_colors')};
+        return ${color(_iconColor)};
       }
-      return ${color(_iconColor, '_colors')};
+      return ${color(_iconColor)};
     });
   }
 

@@ -840,7 +840,9 @@ protocol CameraApi {
   func prepareForVideoRecording(completion: @escaping (Result<Void, Error>) -> Void)
   /// Begins recording video, optionally enabling streaming to Dart at the same
   /// time.
-  func startVideoRecording(enableStream: Bool, completion: @escaping (Result<Void, Error>) -> Void)
+  func startVideoRecording(
+    enableStream: Bool, videoOutputPath: String?,
+    completion: @escaping (Result<Void, Error>) -> Void)
   /// Stops recording video, and results the path to the resulting file.
   func stopVideoRecording(completion: @escaping (Result<String, Error>) -> Void)
   /// Pauses video recording.
@@ -894,6 +896,11 @@ protocol CameraApi {
     format: PlatformImageFileFormat, completion: @escaping (Result<Void, Error>) -> Void)
   /// Sets the JPEG compression quality for still image capture.
   func setJpegImageQuality(quality: Int64, completion: @escaping (Result<Void, Error>) -> Void)
+  /// Returns whether the current session configuration supports
+  /// zero-shutter-lag capture.
+  func isZeroShutterLagSupported(completion: @escaping (Result<Bool, Error>) -> Void)
+  /// Enables or disables zero-shutter-lag capture.
+  func setZeroShutterLagEnabled(enabled: Bool, completion: @escaping (Result<Void, Error>) -> Void)
 }
 
 /// Generated setup class from Pigeon to handle messages through the `binaryMessenger`.
@@ -1131,7 +1138,9 @@ class CameraApiSetup {
       startVideoRecordingChannel.setMessageHandler { message, reply in
         let args = message as! [Any?]
         let enableStreamArg = args[0] as! Bool
-        api.startVideoRecording(enableStream: enableStreamArg) { result in
+        let videoOutputPathArg: String? = nilOrValue(args[1])
+        api.startVideoRecording(enableStream: enableStreamArg, videoOutputPath: videoOutputPathArg)
+        { result in
           switch result {
           case .success:
             reply(wrapResult(nil))
@@ -1553,6 +1562,47 @@ class CameraApiSetup {
       }
     } else {
       setJpegImageQualityChannel.setMessageHandler(nil)
+    }
+    /// Returns whether the current session configuration supports
+    /// zero-shutter-lag capture.
+    let isZeroShutterLagSupportedChannel = FlutterBasicMessageChannel(
+      name:
+        "dev.flutter.pigeon.camera_avfoundation.CameraApi.isZeroShutterLagSupported\(channelSuffix)",
+      binaryMessenger: binaryMessenger, codec: codec)
+    if let api = api {
+      isZeroShutterLagSupportedChannel.setMessageHandler { _, reply in
+        api.isZeroShutterLagSupported { result in
+          switch result {
+          case .success(let res):
+            reply(wrapResult(res))
+          case .failure(let error):
+            reply(wrapError(error))
+          }
+        }
+      }
+    } else {
+      isZeroShutterLagSupportedChannel.setMessageHandler(nil)
+    }
+    /// Enables or disables zero-shutter-lag capture.
+    let setZeroShutterLagEnabledChannel = FlutterBasicMessageChannel(
+      name:
+        "dev.flutter.pigeon.camera_avfoundation.CameraApi.setZeroShutterLagEnabled\(channelSuffix)",
+      binaryMessenger: binaryMessenger, codec: codec)
+    if let api = api {
+      setZeroShutterLagEnabledChannel.setMessageHandler { message, reply in
+        let args = message as! [Any?]
+        let enabledArg = args[0] as! Bool
+        api.setZeroShutterLagEnabled(enabled: enabledArg) { result in
+          switch result {
+          case .success:
+            reply(wrapResult(nil))
+          case .failure(let error):
+            reply(wrapError(error))
+          }
+        }
+      }
+    } else {
+      setZeroShutterLagEnabledChannel.setMessageHandler(nil)
     }
   }
 }

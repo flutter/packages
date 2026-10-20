@@ -682,7 +682,7 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.byWidget(flexibleSpace), findsOneWidget);
-  });
+  }, tags: 'reduced-web-test-set');
 
   group('contributes semantics with custom flexibleSpace', () {
     const Widget flexibleSpace = Text('FlexibleSpace');
@@ -888,6 +888,7 @@ void main() {
         TargetPlatform.iOS,
         TargetPlatform.macOS,
       }),
+      tags: 'reduced-web-test-set',
     );
   });
 
