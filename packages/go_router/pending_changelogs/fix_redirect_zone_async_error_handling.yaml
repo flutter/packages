@@ -1,3 +1,0 @@
-changelog: |
-  - Fixes unrelated async errors started during redirects being wrapped as `GoException`.
-version: patch

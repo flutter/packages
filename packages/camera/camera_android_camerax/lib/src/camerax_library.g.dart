@@ -125,6 +125,7 @@ class PigeonOverrides {
     int? targetRotation,
     CameraXFlashMode? flashMode,
     int? jpegQuality,
+    bool? zeroShutterLagEnabled,
   })?
   imageCapture_new;
 
@@ -2143,6 +2144,30 @@ class CameraInfo extends PigeonInternalProxyApiBaseClass {
       isNullValid: false,
     );
     return pigeonVar_replyValue! as LiveData;
+  }
+
+  /// Returns whether the camera supports zero-shutter-lag capture.
+  ///
+  /// See https://developer.android.com/reference/androidx/camera/core/CameraInfo#isZslSupported().
+  Future<bool> isZslSupported() async {
+    final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec = _pigeonVar_codecCameraInfo;
+    final BinaryMessenger? pigeonVar_binaryMessenger = pigeon_binaryMessenger;
+    const pigeonVar_channelName =
+        'dev.flutter.pigeon.camera_android_camerax.CameraInfo.isZslSupported';
+    final pigeonVar_channel = BasicMessageChannel<Object?>(
+      pigeonVar_channelName,
+      pigeonChannelCodec,
+      binaryMessenger: pigeonVar_binaryMessenger,
+    );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[this]);
+    final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
+
+    final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
+      pigeonVar_replyList,
+      pigeonVar_channelName,
+      isNullValid: false,
+    );
+    return pigeonVar_replyValue! as bool;
   }
 
   @override
@@ -4309,6 +4334,7 @@ class ImageCapture extends UseCase {
     int? targetRotation,
     CameraXFlashMode? flashMode,
     int? jpegQuality,
+    bool? zeroShutterLagEnabled,
   }) {
     if (PigeonOverrides.imageCapture_new != null) {
       return PigeonOverrides.imageCapture_new!(
@@ -4316,6 +4342,7 @@ class ImageCapture extends UseCase {
         targetRotation: targetRotation,
         flashMode: flashMode,
         jpegQuality: jpegQuality,
+        zeroShutterLagEnabled: zeroShutterLagEnabled,
       );
     }
     return ImageCapture.pigeon_new(
@@ -4325,6 +4352,7 @@ class ImageCapture extends UseCase {
       targetRotation: targetRotation,
       flashMode: flashMode,
       jpegQuality: jpegQuality,
+      zeroShutterLagEnabled: zeroShutterLagEnabled,
     );
   }
 
@@ -4336,6 +4364,7 @@ class ImageCapture extends UseCase {
     int? targetRotation,
     CameraXFlashMode? flashMode,
     int? jpegQuality,
+    bool? zeroShutterLagEnabled,
   }) : super.pigeon_detached() {
     final int pigeonVar_instanceIdentifier = pigeon_instanceManager.addDartCreatedInstance(this);
     final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec = _pigeonVar_codecImageCapture;
@@ -4353,6 +4382,7 @@ class ImageCapture extends UseCase {
       targetRotation,
       flashMode,
       jpegQuality,
+      zeroShutterLagEnabled,
     ]);
     () async {
       final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;

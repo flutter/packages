@@ -1,6 +1,11 @@
-## 0.7.5+3
+## 0.7.6+1
 
 * Fixes video recording duration discrepancy by waiting for the first recorded frame before completing `startVideoCapturing`, and validates errors on `stopVideoRecording`.
+
+## 0.7.6
+
+* Adds support for zero-shutter-lag still image capture via
+  `isZeroShutterLagSupported` and `setZeroShutterLagEnabled`.
 
 ## 0.7.5+2
 
