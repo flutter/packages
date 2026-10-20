@@ -380,7 +380,7 @@ class DriveExamplesCommand extends PackageLoopingCommand {
       );
     }
 
-    final (Process chromedriver, int chromeDriverPort) = await _startChromeDriver();
+    final (_ChromeDriver chromedriver, int chromeDriverPort) = await _startChromeDriver();
     try {
       return await _driveTestsForDrivers(
         example,
@@ -391,75 +391,23 @@ class DriveExamplesCommand extends PackageLoopingCommand {
       );
     } finally {
       print('Stopping chromedriver');
-      chromedriver.kill();
-      await chromedriver.exitCode;
+      await chromedriver.stop();
     }
   }
 
   /// Starts `chromedriver --port=0` and waits for it to report the bound port
   /// on stdout.
-  Future<(Process, int)> _startChromeDriver() async {
+  Future<(_ChromeDriver, int)> _startChromeDriver() async {
     print('Starting chromedriver...');
-    final Process chromedriver = await processRunner.start('chromedriver', <String>['--port=0']);
-    final portCompleter = Completer<int>();
-    final stderrDone = Completer<void>();
-    final stdoutBuffer = StringBuffer();
-    final stderrBuffer = StringBuffer();
-    final portPattern = RegExp(r'started successfully on port (\d+)');
-    chromedriver.stderr
-        .transform(utf8.decoder)
-        .transform(const LineSplitter())
-        .listen(
-          stderrBuffer.writeln,
-          onError: (Object _) {
-            if (!stderrDone.isCompleted) {
-              stderrDone.complete();
-            }
-          },
-          onDone: () {
-            if (!stderrDone.isCompleted) {
-              stderrDone.complete();
-            }
-          },
-        );
-    chromedriver.stdout
-        .transform(utf8.decoder)
-        .transform(const LineSplitter())
-        .listen(
-          (String line) {
-            stdoutBuffer.writeln(line);
-            if (portPattern.firstMatch(line) case final RegExpMatch match
-                when !portCompleter.isCompleted) {
-              portCompleter.complete(int.parse(match.group(1)!));
-            }
-          },
-          onError: (Object error, StackTrace stackTrace) {
-            if (!portCompleter.isCompleted) {
-              portCompleter.completeError(error, stackTrace);
-            }
-          },
-          onDone: () async {
-            if (!portCompleter.isCompleted) {
-              await stderrDone.future;
-              if (!portCompleter.isCompleted) {
-                portCompleter.completeError(
-                  StateError(
-                    'chromedriver exited before reporting its port.\n'
-                    'stdout:\n$stdoutBuffer'
-                    'stderr:\n$stderrBuffer',
-                  ),
-                );
-              }
-            }
-          },
-        );
+    final chromedriver = _ChromeDriver(
+      await processRunner.start('chromedriver', <String>['--port=0']),
+    );
     try {
-      final int port = await portCompleter.future;
+      final int port = await chromedriver.port;
       print('Started chromedriver on port $port');
       return (chromedriver, port);
     } on Object {
-      chromedriver.kill();
-      await chromedriver.exitCode;
+      await chromedriver.stop();
       rethrow;
     }
   }
@@ -579,5 +527,87 @@ class DriveExamplesCommand extends PackageLoopingCommand {
       passed = passed && (exitCode == 0);
     }
     return passed;
+  }
+}
+
+/// A running `chromedriver` process started with `--port=0`.
+class _ChromeDriver {
+  _ChromeDriver(this._process) {
+    _stderrSubscription = _process.stderr
+        .transform(utf8.decoder)
+        .transform(const LineSplitter())
+        .listen(
+          (String line) {
+            if (!_portCompleter.isCompleted) {
+              _stderrBuffer.writeln(line);
+            }
+          },
+          onError: (Object _) {
+            if (!_stderrDone.isCompleted) {
+              _stderrDone.complete();
+            }
+          },
+          onDone: () {
+            if (!_stderrDone.isCompleted) {
+              _stderrDone.complete();
+            }
+          },
+        );
+    _stdoutSubscription = _process.stdout
+        .transform(utf8.decoder)
+        .transform(const LineSplitter())
+        .listen(
+          (String line) {
+            if (_portCompleter.isCompleted) {
+              return;
+            }
+            _stdoutBuffer.writeln(line);
+            if (_portPattern.firstMatch(line) case final RegExpMatch match) {
+              _portCompleter.complete(int.parse(match.group(1)!));
+            }
+          },
+          onError: (Object error, StackTrace stackTrace) {
+            if (!_portCompleter.isCompleted) {
+              _portCompleter.completeError(error, stackTrace);
+            }
+          },
+          onDone: () async {
+            if (!_portCompleter.isCompleted) {
+              await _stderrDone.future;
+              if (!_portCompleter.isCompleted) {
+                _portCompleter.completeError(
+                  StateError(
+                    'chromedriver exited before reporting its port.\n'
+                    'stdout:\n$_stdoutBuffer'
+                    'stderr:\n$_stderrBuffer',
+                  ),
+                );
+              }
+            }
+          },
+        );
+  }
+
+  static final RegExp _portPattern = RegExp(r'started successfully on port (\d+)');
+
+  final Process _process;
+  final Completer<int> _portCompleter = Completer<int>();
+  final Completer<void> _stderrDone = Completer<void>();
+  final StringBuffer _stdoutBuffer = StringBuffer();
+  final StringBuffer _stderrBuffer = StringBuffer();
+
+  // Both subscriptions stay active until the process exits, since
+  // `Process.start` requires reading all of its output.
+  late final StreamSubscription<String> _stdoutSubscription;
+  late final StreamSubscription<String> _stderrSubscription;
+
+  /// The port that `chromedriver` reports on stdout once it is listening.
+  Future<int> get port => _portCompleter.future;
+
+  /// Kills `chromedriver`, waits for it to exit, and stops reading its output.
+  Future<void> stop() async {
+    _process.kill();
+    await _process.exitCode;
+    await Future.wait(<Future<void>>[_stdoutSubscription.cancel(), _stderrSubscription.cancel()]);
   }
 }
