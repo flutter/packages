@@ -108,6 +108,9 @@ class SK2PurchaseDetails extends PurchaseDetails {
 
   /// Points back to the [SK2Transaction] which was used to generate this
   /// [SK2PurchaseDetails] object.
+  ///
+  /// Null if the purchase has not produced a transaction (for example, when
+  /// [status] is [PurchaseStatus.pending] or [PurchaseStatus.canceled]).
   final SK2Transaction? sk2Transaction;
 
   @override

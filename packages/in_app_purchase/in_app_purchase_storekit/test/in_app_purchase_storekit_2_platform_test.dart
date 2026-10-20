@@ -388,6 +388,7 @@ void main() {
       expect(result.first.productID, dummyProductWrapper.id);
       expect(result.first.status, PurchaseStatus.canceled);
       expect(result.first.pendingCompletePurchase, false);
+      expect((result.first as SK2PurchaseDetails).sk2Transaction, isNull);
     });
 
     test('pending purchase should emit pending status to purchaseStream', () async {
@@ -413,6 +414,7 @@ void main() {
       expect(result.first.productID, dummyProductWrapper.id);
       expect(result.first.status, PurchaseStatus.pending);
       expect(result.first.pendingCompletePurchase, false);
+      expect((result.first as SK2PurchaseDetails).sk2Transaction, isNull);
     });
 
     test('unverified purchase should receive transaction with purchased status', () async {
