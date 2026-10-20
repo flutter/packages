@@ -940,6 +940,10 @@ ${_argParser.usage}''';
           return exitCode;
         }
       }
+      final String? objcVersionWarning = checkObjectiveCPubspecVersion(internalOptions);
+      if (objcVersionWarning != null) {
+        stderr.writeln('Warning: $objcVersionWarning');
+      }
     }
 
     if (useJni) {
@@ -967,6 +971,10 @@ ${_argParser.usage}''';
         if (!success) {
           return 1;
         }
+      }
+      final String? jniVersionWarning = checkJniPubspecVersion(internalOptions);
+      if (jniVersionWarning != null) {
+        stderr.writeln('Warning: $jniVersionWarning');
       }
     }
 

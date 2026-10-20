@@ -29,6 +29,16 @@ class InAppPurchaseStoreKitPlatformAddition extends InAppPurchasePlatformAdditio
     return SKPaymentQueueWrapper().presentCodeRedemptionSheet();
   }
 
+  /// Presents the App Store sheet that lets the user manage their
+  /// subscriptions.
+  ///
+  /// Available on devices running iOS 15 and iPadOS 15 and later.
+  /// StoreKit 2 only; StoreKit 1 has no equivalent API. Not supported on macOS,
+  /// where subscriptions are managed through the App Store app instead.
+  Future<void> showManageSubscriptions() {
+    return AppStore().showManageSubscriptions();
+  }
+
   /// Retry loading purchase data after an initial failure.
   ///
   /// If no results, a `null` value is returned.
