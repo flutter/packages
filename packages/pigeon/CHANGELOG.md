@@ -1,3 +1,7 @@
+## 29.0.11
+
+* Fixes `basePath` resolution when an output or directory path shares a string prefix with `basePath`.
+
 ## 29.0.10
 
 * [swift] [kotlin] Allows `sealed` classes in native interop files.

@@ -65,14 +65,14 @@ class JnigenConfigGenerator extends Generator<InternalJnigenConfigOptions> {
     final String rawConfigDir =
         (basePath.isNotEmpty &&
             configDirSetting.isNotEmpty &&
-            !configDirSetting.startsWith(basePath))
+            !isWithinOrEquals(basePath, configDirSetting))
         ? path.posix.join(basePath, configDirSetting)
         : (configDirSetting.isNotEmpty ? configDirSetting : basePath);
 
     final String appDir =
         generatorOptions.kotlinOptions.appDirectory ?? generatorOptions.appDirectory ?? '';
     final String rawAppDir =
-        (basePath.isNotEmpty && appDir.isNotEmpty && !appDir.startsWith(basePath))
+        (basePath.isNotEmpty && appDir.isNotEmpty && !isWithinOrEquals(basePath, appDir))
         ? path.posix.join(basePath, appDir)
         : appDir;
 
@@ -87,7 +87,7 @@ class JnigenConfigGenerator extends Generator<InternalJnigenConfigOptions> {
 
     final String dartOutPath = generatorOptions.dartOptions.dartOut ?? '';
     final String rawDartOut =
-        (basePath.isNotEmpty && dartOutPath.isNotEmpty && !dartOutPath.startsWith(basePath))
+        (basePath.isNotEmpty && dartOutPath.isNotEmpty && !isWithinOrEquals(basePath, dartOutPath))
         ? path.posix.join(basePath, dartOutPath)
         : dartOutPath;
     final String fullDartOut = rawConfigDir.isNotEmpty

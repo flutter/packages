@@ -911,7 +911,7 @@ ${_argParser.usage}''';
             (internalOptions.basePath != null &&
                 targetConfigDir != null &&
                 targetConfigDir.isNotEmpty &&
-                !targetConfigDir.startsWith(internalOptions.basePath!))
+                !isWithinOrEquals(internalOptions.basePath!, targetConfigDir))
             ? path.join(internalOptions.basePath!, targetConfigDir)
             : (targetConfigDir ?? internalOptions.basePath ?? '');
         final int exitCode = await _runFfigen(fullConfigDir, internalOptions.input, dartExecutable);
@@ -934,7 +934,7 @@ ${_argParser.usage}''';
             (internalOptions.basePath != null &&
                 targetConfigDir != null &&
                 targetConfigDir.isNotEmpty &&
-                !targetConfigDir.startsWith(internalOptions.basePath!))
+                !isWithinOrEquals(internalOptions.basePath!, targetConfigDir))
             ? path.join(internalOptions.basePath!, targetConfigDir)
             : (targetConfigDir ?? internalOptions.basePath ?? '');
         final bool success = await _runJnigen(
