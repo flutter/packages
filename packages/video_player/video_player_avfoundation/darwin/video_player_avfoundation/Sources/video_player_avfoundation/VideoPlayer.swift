@@ -209,23 +209,16 @@ class VideoPlayer: NSObject {
           let videoTrack = videoTracks[0]
           let transform = try await videoTrack.load(.preferredTransform)
           guard let self = self else { return }
-          if self.disposed {
-            return
-          }
+          if self.disposed { return }
           // Rotate the video by using a videoComposition and the preferredTransform
           self.preferredTransform = standardizedTrackTransform(
             transform: transform, size: try await videoTrack.load(.naturalSize))
           // Do not use video composition when it is not needed.
-          if self.preferredTransform.isIdentity {
-            return
-          }
+          if self.preferredTransform.isIdentity || self.disposed { return }
           // Note:
           // https://developer.apple.com/documentation/avfoundation/avplayeritem/1388818-videocomposition
           // Video composition can only be used with file-based media and is not supported for
           // use with media served using HTTP Live Streaming.
-          if self.disposed {
-            return
-          }
           playerItem.videoComposition = try await self.createVideoComposition(
             transform: self.preferredTransform, asset: asset, videoTrack: videoTrack)
         }
@@ -251,6 +244,7 @@ class VideoPlayer: NSObject {
     {
       // If the item is already ready to play, ensure that the intialized event is sent first.
       await reportStatus(playerItem: item)
+      if disposed { return }
       // Set up all necessary observers to report video events.
       keyValueObservations.append(
         item.observe(
@@ -352,6 +346,7 @@ class VideoPlayer: NSObject {
     if let asset = player.currentItem?.asset {
       duration = try await asset.load(.duration).value
     }
+    if disposed { return }
     // Without adding tolerance when seeking to duration,
     // seek(to:) will never complete, and this call will hang.
     // see issue https://github.com/flutter/flutter/issues/124475.
@@ -366,9 +361,7 @@ class VideoPlayer: NSObject {
 
   func dispose() {
     // In some hot restart scenarios, dispose can be called twice, so no-op after the first time.
-    if disposed {
-      return
-    }
+    if disposed { return }
     disposed = true
 
     // Remove all observers.
@@ -385,17 +378,14 @@ class VideoPlayer: NSObject {
   }
 
   @MainActor func getAudioTracks() async throws -> [MediaSelectionAudioTrackData] {
-    guard let currentItem = player.currentItem else {
-      return []
-    }
+    guard let currentItem = player.currentItem else { return [] }
 
     let asset = currentItem.asset
 
     // Get tracks from media selection (for HLS streams)
     let audioGroup = try await asset.loadMediaSelectionGroup(for: .audible)
-    guard let audioGroup = audioGroup else {
-      return []
-    }
+    guard let audioGroup = audioGroup else { return [] }
+    if disposed { return [] }
 
     let mediaSelection = currentItem.currentMediaSelection
     let currentSelection = mediaSelection.selectedMediaOption(in: audioGroup)
@@ -416,6 +406,7 @@ class VideoPlayer: NSObject {
         } catch {
           // Ignore failure to load a title, since titles are optional anyway.
         }
+        if disposed { return [] }
       }
       trackData.append(
         MediaSelectionAudioTrackData(
@@ -429,13 +420,11 @@ class VideoPlayer: NSObject {
   }
 
   @MainActor func selectAudioTrack(atIndex trackIndex: Int64) async throws {
-    guard let currentItem = player.currentItem else {
-      return
-    }
+    guard let currentItem = player.currentItem else { return }
     let asset = currentItem.asset
 
     if let audioGroup = try await asset.loadMediaSelectionGroup(for: .audible) {
-      if trackIndex >= 0 && trackIndex < audioGroup.options.count {
+      if !disposed && trackIndex >= 0 && trackIndex < audioGroup.options.count {
         let option = audioGroup.options[Int(trackIndex)]
         currentItem.select(option, in: audioGroup)
       }
@@ -452,6 +441,7 @@ class VideoPlayer: NSObject {
     }
 
     let variants = try await urlAsset.load(.variants)
+    if disposed { return NativeVideoTrackData(assetTracks: nil, mediaSelectionTracks: nil) }
     var mediaSelectionTracks: [MediaSelectionVideoTrackData] = []
     let currentBitrate = max(currentItem.preferredPeakBitRate, 0)
 
@@ -502,9 +492,7 @@ class VideoPlayer: NSObject {
   }
 
   func selectVideoTrack(withBitrate bitrate: Int64) {
-    guard let currentItem = player.currentItem else {
-      return
-    }
+    guard let currentItem = player.currentItem else { return }
 
     // Set preferredPeakBitRate to select the quality
     // 0 means auto quality (adaptive streaming)
@@ -519,9 +507,7 @@ class VideoPlayer: NSObject {
 
   /// Updates the playing state of the video player.
   func updatePlayingState() {
-    if !isInitialized {
-      return
-    }
+    if !isInitialized { return }
     if isPlaying {
       // Calling play is the same as setting the rate to 1.0 (or to defaultRate depending on iOS
       // version) so last set playback speed must be set here if any instead.
@@ -558,10 +544,8 @@ class VideoPlayer: NSObject {
   private func radiansToDegrees(_ radians: CGFloat) -> Float {
     // Input range [-pi, pi] or [-180, 180]
     var degrees = Float(radians) * 180.0 / .pi
-    if degrees < 0 {
-      // Convert -90 to 270 and -180 to 180
-      degrees += 360
-    }
+    // Convert -90 to 270 and -180 to 180
+    if degrees < 0 { degrees += 360 }
     // Output degrees in between [0, 360]
     return degrees
   }
@@ -571,6 +555,8 @@ class VideoPlayer: NSObject {
     asset: WrappedAVAsset,
     videoTrack: AVAssetTrack
   ) async throws -> AVMutableVideoComposition {
+    let videoComposition = AVMutableVideoComposition()
+
     let instruction = AVMutableVideoCompositionInstruction()
     let duration = try await asset.load(.duration, isolation: #isolation)
     instruction.timeRange = CMTimeRange(start: .zero, duration: duration)
@@ -578,7 +564,6 @@ class VideoPlayer: NSObject {
       assetTrack: videoTrack)
     layerInstruction.setTransform(transform, at: .zero)
 
-    let videoComposition = AVMutableVideoComposition()
     instruction.layerInstructions = [layerInstruction]
     videoComposition.instructions = [instruction]
 
@@ -619,6 +604,7 @@ class VideoPlayer: NSObject {
       if !isInitialized {
         item.add(pixelBufferSource.videoOutput)
         await reportInitialized()
+        if disposed { return }
         updatePlayingState()
       }
     case .unknown:
@@ -640,15 +626,11 @@ class VideoPlayer: NSObject {
     var speed = targetPlaybackSpeed ?? 1.0
     let readyToPlay = player.currentItem?.status == .readyToPlay
     if speed > 2.0 && !(player.currentItem?.canPlayFastForward ?? false) {
-      if !readyToPlay {
-        return
-      }
+      if !readyToPlay { return }
       speed = 2.0
     }
     if speed < 1.0 && !(player.currentItem?.canPlaySlowForward ?? false) {
-      if !readyToPlay {
-        return
-      }
+      if !readyToPlay { return }
       speed = 1.0
     }
     player.rate = Float(speed)
@@ -687,8 +669,9 @@ class VideoPlayer: NSObject {
       "\(#function) was called when the item wasn't ready to play.")
     assert(!isInitialized, "\(#function) should only be called once.")
     isInitialized = true
+    let duration = await duration()
     eventListener?.videoPlayerDidInitialize(
-      withDuration: await duration(), size: currentItem?.presentationSize ?? .zero)
+      withDuration: duration, size: currentItem?.presentationSize ?? .zero)
   }
 
   @MainActor private func duration() async -> Int64 {
