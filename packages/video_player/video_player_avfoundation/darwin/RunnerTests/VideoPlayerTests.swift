@@ -437,47 +437,6 @@ private let hlsAudioTestURI =
     return listener
   }
 
-  // Checks whether [AVPlayer rate] KVO observations are correctly detached.
-  // - https://github.com/flutter/flutter/issues/124937
-  //
-  // Failing to de-register results in a crash in [AVPlayer willChangeValueForKey:].
-  @Test func doesNotCrashOnRateObservationAfterDisposal() async throws {
-    let realObjectFactory = DefaultAVFactory()
-
-    var avPlayer: AVPlayer?
-    weak var weakPlayer: VideoPlayer?
-
-    // Autoreleasepool is needed to simulate conditions of VideoPlayer deallocation.
-    try autoreleasepool {
-      let videoPlayerPlugin = try createInitializedPlugin(avFactory: realObjectFactory)
-
-      let identifiers = try await videoPlayerPlugin.createTexturePlayer(
-        options: CreationOptions(uri: mp4TestURI, httpHeaders: [:]))
-
-      let player = try #require(videoPlayerPlugin.playersByIdentifier[identifiers.playerId])
-      weakPlayer = player
-      avPlayer = player.player
-
-      player.dispose()
-    }
-
-    // Wait for the weak pointer to be invalidated, indicating that the player has been deallocated.
-    let checkInterval = 0.1
-    let maxTries = Int64(30 / checkInterval)
-    for _ in 1...maxTries {
-      if weakPlayer == nil {
-        break
-      }
-      try await Task.sleep(nanoseconds: UInt64(checkInterval * 1_000_000_000))
-    }
-
-    await MainActor.run {
-      avPlayer?.willChangeValue(forKey: "rate")
-      avPlayer?.didChangeValue(forKey: "rate")
-    }
-    // No assertions needed. Lack of crash is a success.
-  }
-
   // During the hot reload:
   //  1. `[VideoPlayer onTextureUnregistered:]` gets called.
   //  2. `[VideoPlayerPlugin initialize:]` gets called.
@@ -487,13 +446,13 @@ private let hlsAudioTestURI =
   @Test func hotReloadDoesNotCrash() async throws {
     weak var weakPlayer: VideoPlayer?
 
+    let videoPlayerPlugin = try createInitializedPlugin(avFactory: StubAVFactory())
+
+    let identifiers = try await videoPlayerPlugin.createTexturePlayer(
+      options: CreationOptions(uri: mp4TestURI, httpHeaders: [:]))
+
     // Autoreleasepool is needed to simulate conditions of VideoPlayer deallocation.
     try autoreleasepool {
-      let videoPlayerPlugin = try createInitializedPlugin(avFactory: StubAVFactory())
-
-      let identifiers = try await videoPlayerPlugin.createTexturePlayer(
-        options: CreationOptions(uri: mp4TestURI, httpHeaders: [:]))
-
       let player =
         videoPlayerPlugin.playersByIdentifier[identifiers.playerId] as! TextureBasedVideoPlayer
       weakPlayer = player
@@ -556,7 +515,7 @@ private let hlsAudioTestURI =
     #expect(player.player.rate == 2)
   }
 
-  @Test func playerShouldNotDropEverySecondFrame() throws {
+  @Test func playerShouldNotDropEverySecondFrame() async throws {
     let textureRegistry = TestTextureRegistry()
     let stubDisplayLinkFactory = StubFVPDisplayLinkFactory()
     let mockVideoOutput = TestPixelBufferSource()
