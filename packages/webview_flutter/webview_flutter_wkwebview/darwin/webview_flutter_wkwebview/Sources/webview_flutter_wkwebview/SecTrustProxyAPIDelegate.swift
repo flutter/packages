@@ -123,22 +123,14 @@ class SecTrustProxyAPIDelegate: PigeonApiDelegateSecTrust {
     return SecTrustCopyCertificateChain(trust)
   }
 
-  // Overridable for testing.
-  //
-  // Marked deprecated to match the wrapped `SecTrustGetCertificateCount`, which
-  // suppresses the deprecation warning when building with an iOS 15/macOS 12 or
-  // later deployment target. The only caller is the pre-iOS 15/macOS 12 fallback.
+  // Overridable for testing. Deprecated to silence the wrapped API's deprecation warning.
   @available(iOS, deprecated: 15.0, message: "Use SecTrustCopyCertificateChain")
   @available(macOS, deprecated: 12.0, message: "Use SecTrustCopyCertificateChain")
   internal func secTrustGetCertificateCount(_ trust: SecTrust) -> CFIndex {
     return SecTrustGetCertificateCount(trust)
   }
 
-  // Overridable for testing.
-  //
-  // Marked deprecated to match the wrapped `SecTrustGetCertificateAtIndex`, which
-  // suppresses the deprecation warning when building with an iOS 15/macOS 12 or
-  // later deployment target. The only caller is the pre-iOS 15/macOS 12 fallback.
+  // Overridable for testing. Deprecated to silence the wrapped API's deprecation warning.
   @available(iOS, deprecated: 15.0, message: "Use SecTrustCopyCertificateChain")
   @available(macOS, deprecated: 12.0, message: "Use SecTrustCopyCertificateChain")
   internal func secTrustGetCertificateAtIndex(_ trust: SecTrust, _ ix: CFIndex) -> SecCertificate? {
