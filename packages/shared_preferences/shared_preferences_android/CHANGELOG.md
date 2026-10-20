@@ -1,3 +1,7 @@
+## 2.5.1
+
+* Updates `androidx.datastore:datastore` to 1.2.1.
+
 ## 2.5.0
 
 * Updates internal implementation to use Pigeon JNI.
