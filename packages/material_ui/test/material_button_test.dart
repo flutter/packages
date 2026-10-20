@@ -275,37 +275,33 @@ void main() {
     expect(material.color, const Color(0xff00ff00));
   });
 
-  testWidgets(
-    'Default MaterialButton meets a11y contrast guidelines',
-    (WidgetTester tester) async {
-      await tester.pumpWidget(
-        MaterialApp(
-          home: Scaffold(
-            body: Center(
-              child: MaterialButton(child: const Text('MaterialButton'), onPressed: () {}),
-            ),
+  testWidgets('Default MaterialButton meets a11y contrast guidelines', (WidgetTester tester) async {
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Scaffold(
+          body: Center(
+            child: MaterialButton(child: const Text('MaterialButton'), onPressed: () {}),
           ),
         ),
-      );
+      ),
+    );
 
-      // Default, not disabled.
-      await expectLater(tester, meetsGuideline(textContrastGuideline));
+    // Default, not disabled.
+    await expectLater(tester, meetsGuideline(textContrastGuideline));
 
-      // Highlighted (pressed).
-      final Offset center = tester.getCenter(find.byType(MaterialButton));
-      final TestGesture gesture = await tester.startGesture(center);
-      await tester.pump(); // Start the splash and highlight animations.
-      await tester.pump(
-        const Duration(milliseconds: 800),
-      ); // Wait for splash and highlight to be well under way.
-      await expectLater(tester, meetsGuideline(textContrastGuideline));
+    // Highlighted (pressed).
+    final Offset center = tester.getCenter(find.byType(MaterialButton));
+    final TestGesture gesture = await tester.startGesture(center);
+    await tester.pump(); // Start the splash and highlight animations.
+    await tester.pump(
+      const Duration(milliseconds: 800),
+    ); // Wait for splash and highlight to be well under way.
+    await expectLater(tester, meetsGuideline(textContrastGuideline));
 
-      // Finish gesture to release resources.
-      await gesture.up();
-      await tester.pumpAndSettle();
-    },
-    skip: isBrowser, // https://github.com/flutter/flutter/issues/44115
-  );
+    // Finish gesture to release resources.
+    await gesture.up();
+    await tester.pumpAndSettle();
+  });
 
   testWidgets('MaterialButton gets focus when autofocus is set.', (WidgetTester tester) async {
     final focusNode = FocusNode(debugLabel: 'MaterialButton');
@@ -953,5 +949,18 @@ void main() {
 
     final RawMaterialButton rawMaterialButton = tester.widget(rawMaterialButtonFinder);
     expect(rawMaterialButton.disabledElevation, equals(0.0));
+  });
+
+  testWidgets('MaterialButton does not crash at zero area', (WidgetTester tester) async {
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Center(
+          child: SizedBox.shrink(
+            child: MaterialButton(onPressed: () {}, child: const Text('X')),
+          ),
+        ),
+      ),
+    );
+    expect(tester.getSize(find.byType(MaterialButton)), Size.zero);
   });
 }

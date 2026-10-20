@@ -14,13 +14,14 @@ import android.util.Log
 import androidx.annotation.VisibleForTesting
 import io.flutter.embedding.engine.plugins.FlutterPlugin
 import io.flutter.embedding.engine.plugins.FlutterPlugin.FlutterPluginBinding
-import io.flutter.plugin.common.BinaryMessenger
 import java.io.ByteArrayInputStream
 import java.io.ByteArrayOutputStream
 import java.io.IOException
 import java.io.ObjectInputStream
 import java.io.ObjectOutputStream
 import java.math.BigInteger
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 
 /** LegacySharedPreferencesPlugin */
 @SuppressLint("UseKtx")
@@ -29,77 +30,79 @@ class LegacySharedPreferencesPlugin
 internal constructor(private val listEncoder: SharedPreferencesListEncoder) :
     FlutterPlugin, SharedPreferencesApi {
   private lateinit var preferences: SharedPreferences
+  private val backgroundDispatcher = Dispatchers.IO.limitedParallelism(1)
 
   constructor() : this(ListEncoder())
 
-  private fun setUp(messenger: BinaryMessenger, context: Context) {
+  private fun setUp(context: Context) {
     preferences = context.getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE)
     try {
-      SharedPreferencesApi.setUp(messenger, this)
+      SharedPreferencesApiRegistrar().register(this)
     } catch (ex: Exception) {
       Log.e(TAG, "Received exception while setting up SharedPreferencesPlugin", ex)
     }
   }
 
   override fun onAttachedToEngine(binding: FlutterPluginBinding) {
-    setUp(binding.binaryMessenger, binding.applicationContext)
+    setUp(binding.applicationContext)
   }
 
   override fun onDetachedFromEngine(binding: FlutterPluginBinding) {
-    SharedPreferencesApi.setUp(binding.binaryMessenger, null)
+    SharedPreferencesApiRegistrar().register(null)
   }
 
-  override fun setBool(key: String, value: Boolean): Boolean {
-    return preferences.edit().putBoolean(key, value).commit()
-  }
+  override suspend fun setBool(key: String, value: Boolean): Boolean =
+      withContext(backgroundDispatcher) { preferences.edit().putBoolean(key, value).commit() }
 
-  override fun setString(key: String, value: String): Boolean {
-    // TODO (tarrinneal): Move this string prefix checking logic to Dart code and make it an
-    // Argument Error.
-    if (value.startsWith(LIST_PREFIX) ||
-        value.startsWith(BIG_INTEGER_PREFIX) ||
-        value.startsWith(DOUBLE_PREFIX)) {
-      throw RuntimeException(
-          "StorageError: This string cannot be stored as it clashes with special identifier" +
-              " prefixes")
-    }
-    return preferences.edit().putString(key, value).commit()
-  }
+  override suspend fun setString(key: String, value: String): Boolean =
+      withContext(backgroundDispatcher) {
+        // TODO (tarrinneal): Move this string prefix checking logic to Dart code and make it an
+        // Argument Error.
+        if (value.startsWith(LIST_PREFIX) ||
+            value.startsWith(BIG_INTEGER_PREFIX) ||
+            value.startsWith(DOUBLE_PREFIX)) {
+          throw RuntimeException(
+              "StorageError: This string cannot be stored as it clashes with special identifier" +
+                  " prefixes")
+        }
+        preferences.edit().putString(key, value).commit()
+      }
 
-  override fun setInt(key: String, value: Long): Boolean {
-    return preferences.edit().putLong(key, value).commit()
-  }
+  override suspend fun setInt(key: String, value: Long): Boolean =
+      withContext(backgroundDispatcher) { preferences.edit().putLong(key, value).commit() }
 
-  override fun setDouble(key: String, value: Double): Boolean {
-    val doubleValueStr = value.toString()
-    return preferences.edit().putString(key, DOUBLE_PREFIX + doubleValueStr).commit()
-  }
+  override suspend fun setDouble(key: String, value: Double): Boolean =
+      withContext(backgroundDispatcher) {
+        val doubleValueStr = value.toString()
+        preferences.edit().putString(key, DOUBLE_PREFIX + doubleValueStr).commit()
+      }
 
-  override fun remove(key: String): Boolean {
-    return preferences.edit().remove(key).commit()
-  }
+  override suspend fun remove(key: String): Boolean =
+      withContext(backgroundDispatcher) { preferences.edit().remove(key).commit() }
 
-  override fun setEncodedStringList(key: String, value: String): Boolean {
-    return preferences.edit().putString(key, value).commit()
-  }
+  override suspend fun setEncodedStringList(key: String, value: String): Boolean =
+      withContext(backgroundDispatcher) { preferences.edit().putString(key, value).commit() }
 
   @Deprecated("Exists for testing purposes only")
-  override fun setDeprecatedStringList(key: String, value: List<String>): Boolean {
-    return preferences.edit().putString(key, LIST_PREFIX + listEncoder.encode(value)).commit()
-  }
+  override suspend fun setDeprecatedStringList(key: String, value: List<String>): Boolean =
+      withContext(backgroundDispatcher) {
+        preferences.edit().putString(key, LIST_PREFIX + listEncoder.encode(value)).commit()
+      }
 
-  override fun getAll(prefix: String, allowList: List<String>?): Map<String, Any> {
-    return getAllPrefs(prefix, allowList?.toSet())
-  }
+  override suspend fun getAll(prefix: String, allowList: List<String>?): Map<String, Any> =
+      withContext(backgroundDispatcher) { getAllPrefs(prefix, allowList?.toSet()) }
 
-  override fun clear(prefix: String, allowList: List<String>?): Boolean {
-    val clearEditor = preferences.edit()
-    val allowSet = allowList?.toSet()
-    preferences.all.keys
-        .filter { key -> key.startsWith(prefix) && (allowSet == null || allowSet.contains(key)) }
-        .forEach { key -> clearEditor.remove(key) }
-    return clearEditor.commit()
-  }
+  override suspend fun clear(prefix: String, allowList: List<String>?): Boolean =
+      withContext(backgroundDispatcher) {
+        val clearEditor = preferences.edit()
+        val allowSet = allowList?.toSet()
+        preferences.all.keys
+            .filter { key ->
+              key.startsWith(prefix) && (allowSet == null || allowSet.contains(key))
+            }
+            .forEach { key -> clearEditor.remove(key) }
+        clearEditor.commit()
+      }
 
   // Gets all shared preferences, filtered to only those set with the given prefix.
   // Optionally filtered also to only those items in the optional [allowList].

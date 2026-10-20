@@ -1,5 +1,6 @@
-## NEXT
+## 2.0.5
 
+* Fixes Swift 6 concurrency analyzer errors from `@MainActor` lifecycle delegate methods.
 * Updates minimum supported SDK version to Flutter 3.41/Dart 3.11.
 
 ## 2.0.4

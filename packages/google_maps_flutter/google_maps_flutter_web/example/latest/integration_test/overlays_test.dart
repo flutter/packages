@@ -140,38 +140,33 @@ void main() {
       verifyZeroInteractions(tileProviders[2]);
     });
 
-    testWidgets(
-      'clearTileCache',
-      (WidgetTester tester) async {
-        final GoogleMapController controller = await pumpMap(
-          tester,
-          (void Function(GoogleMapController) onMapCreated) => MaterialApp(
-            home: Scaffold(
-              body: GoogleMap(
-                initialCameraPosition: const CameraPosition(
-                  target: LatLng(43.3078, -5.6958),
-                  zoom: 14,
-                ),
-                tileOverlays: <TileOverlay>{...tileOverlays.take(2)},
-                onMapCreated: onMapCreated,
+    testWidgets('clearTileCache', (WidgetTester tester) async {
+      final GoogleMapController controller = await pumpMap(
+        tester,
+        (void Function(GoogleMapController) onMapCreated) => MaterialApp(
+          home: Scaffold(
+            body: GoogleMap(
+              initialCameraPosition: const CameraPosition(
+                target: LatLng(43.3078, -5.6958),
+                zoom: 14,
               ),
+              tileOverlays: <TileOverlay>{...tileOverlays.take(2)},
+              onMapCreated: onMapCreated,
             ),
           ),
-        );
-        addTearDown(controller.dispose);
+        ),
+      );
+      addTearDown(controller.dispose);
 
-        await tester.pump();
-        verify(tileProviders[0].getTile(any, any, any));
-        verify(tileProviders[1].getTile(any, any, any));
+      await tester.pump();
+      verify(tileProviders[0].getTile(any, any, any));
+      verify(tileProviders[1].getTile(any, any, any));
 
-        await controller.clearTileCache(tileOverlays[0].tileOverlayId);
+      await controller.clearTileCache(tileOverlays[0].tileOverlayId);
 
-        await tester.pump();
-        verify(tileProviders[0].getTile(any, any, any));
-        verifyNoMoreInteractions(tileProviders[1]);
-      },
-      // Flaky; see https://github.com/flutter/flutter/issues/193452
-      skip: true,
-    );
+      await tester.pump();
+      verify(tileProviders[0].getTile(any, any, any));
+      verifyNoMoreInteractions(tileProviders[1]);
+    });
   });
 }

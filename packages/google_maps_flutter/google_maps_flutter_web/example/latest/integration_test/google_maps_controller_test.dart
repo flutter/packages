@@ -250,6 +250,41 @@ void main() {
         expect(events[4], isA<CameraIdleEvent>());
       });
 
+      testWidgets('reports the map as ready on idle only once its div is laid out', (
+        WidgetTester tester,
+      ) async {
+        controller = createController()
+          ..debugSetOverrides(
+            createMap: (_, _) => map,
+            circles: circles,
+            heatmaps: heatmaps,
+            markers: markers,
+            polygons: polygons,
+            polylines: polylines,
+            groundOverlays: groundOverlays,
+          )
+          ..init();
+        final readyEvents = <MapEvent<Object?>>[];
+        final StreamSubscription<MapEvent<Object?>> subscription = stream.stream
+            .where((MapEvent<Object?> event) => event is WebMapReadyEvent)
+            .listen(readyEvents.add);
+        addTearDown(subscription.cancel);
+
+        // The map div is not in the DOM yet: idle must not report readiness.
+        gmaps.event.trigger(map, 'idle');
+        await tester.pump();
+        expect(readyEvents, isEmpty);
+
+        await tester.pumpWidget(
+          Center(child: SizedBox(width: 100, height: 100, child: controller.widget)),
+        );
+        // The platform view is created asynchronously; wait for it to render.
+        await tester.pumpAndSettle();
+        gmaps.event.trigger(map, 'idle');
+        await tester.pump();
+        expect(readyEvents, hasLength(1));
+      });
+
       testWidgets('emits point of interest tap when click has placeId', (
         WidgetTester tester,
       ) async {

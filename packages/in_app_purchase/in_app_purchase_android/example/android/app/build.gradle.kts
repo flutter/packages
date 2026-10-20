@@ -97,7 +97,7 @@ flutter {
 }
 
 dependencies {
-    implementation("com.android.billingclient:billing:6.1.0")
+    implementation("com.android.billingclient:billing:9.1.0")
     testImplementation("junit:junit:4.13.2")
     testImplementation("org.mockito:mockito-core:5.1.1")
     testImplementation("org.json:json:20260814")
