@@ -1026,10 +1026,7 @@ void main() {
       );
 
       processRunner.mockProcessesForExecutable['chromedriver'] = <FakeProcessInfo>[
-        FakeProcessInfo(
-          MockProcess(exitCode: 1, stderr: 'bind() failed: Address already in use\n'),
-          <String>['--port=0'],
-        ),
+        FakeProcessInfo(_LateStderrMockProcess(), <String>['--port=0']),
         FakeProcessInfo(
           MockProcess(stdout: 'ChromeDriver was started successfully on port 12346.\n'),
           <String>['--port=0'],
@@ -2035,5 +2032,17 @@ class _SlowExitMockProcess extends MockProcess {
     await Future<void>.delayed(Duration.zero);
     exited = true;
     return 0;
+  }
+}
+
+/// A failed `chromedriver` whose stderr arrives after its stdout has closed,
+/// as can happen with real pipes.
+class _LateStderrMockProcess extends MockProcess {
+  _LateStderrMockProcess() : super(exitCode: 1);
+
+  @override
+  Stream<List<int>> get stderr async* {
+    await Future<void>.delayed(Duration.zero);
+    yield utf8.encode('bind() failed: Address already in use\n');
   }
 }
