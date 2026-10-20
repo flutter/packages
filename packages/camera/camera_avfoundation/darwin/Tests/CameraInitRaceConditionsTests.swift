@@ -59,7 +59,7 @@ final class CameraInitRaceConditionsTests: XCTestCase {
   }
 
   func testFlutterChannelInitializedWhenStartingImageStream() {
-    let (cameraPlugin, _captureSessionQueue) = createCameraPlugin()
+    let (cameraPlugin, _) = createCameraPlugin()
     let createExpectation = expectation(description: "create's result block must be called")
 
     cameraPlugin.createCameraOnSessionQueue(
