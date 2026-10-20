@@ -1,0 +1,3 @@
+changelog: |
+  - Fixes web text fields losing focus when an autocomplete overlay opens inside a shell route.
+version: patch
