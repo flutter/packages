@@ -436,14 +436,6 @@ void _errorOnSwiftFfiUnsupportedFeatures(
     }
   }
   for (final Class classDefinition in root.classes) {
-    if (classDefinition.isSealed) {
-      errors.add(
-        Error(
-          message:
-              'Swift FFI does not support sealed classes yet (class "${classDefinition.name}"). $_moveToNonFfiFileSuggestion',
-        ),
-      );
-    }
     for (final NamedType field in classDefinition.fields) {
       // `description` has its own error for all Swift generation.
       if (field.name != 'description' && _swiftFfiReservedFieldNames.contains(field.name)) {
@@ -486,14 +478,6 @@ void _errorOnKotlinJniUnsupportedFeatures(List<Error> errors, Root root) {
         ),
       );
     }
-  }
-  for (final Class classDefinition in root.classes.where((Class c) => c.isSealed)) {
-    errors.add(
-      Error(
-        message:
-            'Kotlin JNI does not support sealed classes yet (class "${classDefinition.name}"). $_moveToNonJniFileSuggestion',
-      ),
-    );
   }
 }
 

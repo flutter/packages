@@ -1,3 +1,11 @@
+## 1.7.0
+
+- Accounts for `MediaQuery`'s `TextScaler` when calculating `SnackBar` action overflow and removes unnecessary blank right spacing in multi-line layout.
+- Allows `TabBar.indicatorWeight` of 0 when the indicator is supplied by `TabBarThemeData`.
+- Fixes showTimePicker input mode rejecting or misreading hours in locales that use a 24-hour format.
+- Adds the `scrollPadding` property to `DropdownMenuFormField`, forwarding it to the underlying `DropdownMenu`.
+- Fixes an Android semantics assertion when an `ExpansionTile` is embedded in a `WidgetSpan`.
+
 ## 1.6.0
 
 - Documents that `TextField.decoration` is merged with the ambient
