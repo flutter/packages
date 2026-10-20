@@ -477,9 +477,10 @@ void main() {
         expect(actual.status, PurchaseStatus.restored);
         // In storekit 2, restored purchases don't have to finished.
         expect(actual.pendingCompletePurchase, false);
-        expect((actual as SK2PurchaseDetails).sk2Transaction, isNotNull);
-        expect(actual.sk2Transaction!.id, expected.id.toString());
-        expect(actual.sk2Transaction!.originalId, expected.originalId.toString());
+        final sk2Details = actual as SK2PurchaseDetails;
+        expect(sk2Details.sk2Transaction, isNotNull);
+        expect(sk2Details.sk2Transaction!.id, expected.id.toString());
+        expect(sk2Details.sk2Transaction!.originalId, expected.originalId.toString());
       }
     });
   });
