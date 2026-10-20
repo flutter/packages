@@ -44,7 +44,7 @@ const int kHalf = 24;
 void main() {
   // Gradient sigma from the fragment's position within the region.
   vec2 rn = clamp(
-      (FlutterFragCoord().xy - uRegionOriginPx) / uRegionSizePx, 0.0, 1.0);
+      (FlutterFragCoord().xy - uRegionOriginPx) / max(uRegionSizePx, vec2(1.0)), 0.0, 1.0);
   float g;
   if (uDirection < 0.5)      g = rn.y;        // strong TOP
   else if (uDirection < 1.5) g = 1.0 - rn.y;  // strong BOTTOM
