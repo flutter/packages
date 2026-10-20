@@ -3,9 +3,9 @@
 # classes can't be annotated, so without these rules R8 renames them in release
 # builds and the JNI calls fail with NoSuchMethodError.
 #
-# TODO(ybeshkarov): Delete this file and its consumerProguardFiles entry in
-# build.gradle.kts once package:jni ships these rules:
-# https://github.com/dart-lang/native/issues/3732
+# TODO(https://github.com/dart-lang/native/issues/3732): Delete this file and
+# its consumerProguardFiles entry in build.gradle.kts once package:jni ships
+# these rules.
 -keep class kotlin.Unit { *; }
 -keep class kotlin.Result { *; }
 -keep class kotlin.Result$Failure { *; }

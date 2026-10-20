@@ -49,8 +49,8 @@ android {
     defaultConfig {
         minSdk = 24
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
-        // TODO(ybeshkarov): Remove, along with consumer-rules.pro, once package:jni
-        // ships the Kotlin keep rules: https://github.com/dart-lang/native/issues/3732
+        // TODO(https://github.com/dart-lang/native/issues/3732): Remove, along with
+        // consumer-rules.pro, once package:jni ships the Kotlin keep rules.
         consumerProguardFiles("consumer-rules.pro")
     }
 
