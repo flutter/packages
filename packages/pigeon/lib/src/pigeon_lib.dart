@@ -909,6 +909,7 @@ ${_argParser.usage}''';
             internalOptions.swiftOptions?.configDirectory ?? internalOptions.configDirectory;
         final String fullConfigDir =
             (internalOptions.basePath != null &&
+                internalOptions.basePath!.isNotEmpty &&
                 targetConfigDir != null &&
                 targetConfigDir.isNotEmpty &&
                 !isWithinOrEquals(internalOptions.basePath!, targetConfigDir))
@@ -932,6 +933,7 @@ ${_argParser.usage}''';
             internalOptions.kotlinOptions?.configDirectory ?? internalOptions.configDirectory;
         final String fullConfigDir =
             (internalOptions.basePath != null &&
+                internalOptions.basePath!.isNotEmpty &&
                 targetConfigDir != null &&
                 targetConfigDir.isNotEmpty &&
                 !isWithinOrEquals(internalOptions.basePath!, targetConfigDir))
