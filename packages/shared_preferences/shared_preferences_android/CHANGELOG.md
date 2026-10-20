@@ -1,3 +1,8 @@
+## 2.5.2
+
+* Adds R8 consumer keep rules for Kotlin standard library classes looked up by
+  JNI in release builds.
+
 ## 2.5.1
 
 * Updates `androidx.datastore:datastore` to 1.2.1.
