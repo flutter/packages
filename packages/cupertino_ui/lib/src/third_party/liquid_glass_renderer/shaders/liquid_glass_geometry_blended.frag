@@ -110,6 +110,11 @@ void main() {
         return;
     }
 
+    if (uThickness <= 0.0) {
+        fragColor = vec4(0.0);
+        return;
+    }
+
     float n_cos = max(uThickness + sdN, 0.0) / uThickness;
     float n_sin = sqrt(max(0.0, 1.0 - n_cos * n_cos));
 
@@ -118,8 +123,19 @@ void main() {
     // normal, which is why storing the normal (not displacement) fixes lighting.
     vec3 normal = normalize(vec3(dx * n_cos, dy * n_cos, n_sin));
 
-    if (sdN >= 0.0 || uThickness <= 0.0) {
-        fragColor = vec4(0.0);
+    // Fragments just outside the silhouette (0 <= sdN < smoothing * 0.5)
+    // still carry the outer half of the smoothstep's AA coverage. The dome
+    // meets the ground plane there — height is 0 and the surface normal is
+    // horizontal along the gradient (the n_sin == 0 limit of the same
+    // profile), so the texel stays continuous with the rim while alpha
+    // ramps to 0. Clearing alpha at the SDF edge instead truncates the band
+    // at its midpoint — a hard ~0.5 → 0 step that stair-steps the rounded
+    // silhouette, most visibly when the matte is resampled under the
+    // indicator's drag/stretch transform.
+    if (sdN >= 0.0) {
+        vec2 edgeNormal = length(normal.xy) > 1e-4 ? normal.xy : vec2(0.0);
+        fragColor =
+            encodeGeometryData(edgeNormal, 0.0, uThickness, foregroundAlpha);
         return;
     }
 

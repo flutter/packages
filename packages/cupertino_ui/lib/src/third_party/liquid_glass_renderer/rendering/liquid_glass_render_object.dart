@@ -1019,7 +1019,16 @@ abstract class LiquidGlassRenderObject extends RenderProxyBox {
         case UnrenderedGeometryCache(matte: final picture):
           canvas.drawPicture(picture);
         case RenderedGeometryCache(matte: final image):
-          canvas.drawImage(image, Offset.zero, Paint());
+          // The geometry-local transform above can scale this matte (shapes
+          // under a Transform/LiquidStretch inside a shared layer). Paint()
+          // defaults to FilterQuality.none — nearest — which stair-steps
+          // the edge under any non-1:1 mapping; medium restores bilinear
+          // resampling.
+          canvas.drawImage(
+            image,
+            Offset.zero,
+            Paint()..filterQuality = FilterQuality.medium,
+          );
       }
 
       canvas.restore();
@@ -1051,6 +1060,10 @@ class GeometryRenderLink {
     RenderLiquidGlassGeometry renderObject,
   ) {
     _dirty = true;
+    // Idempotent: the layer paints one matte per entry, and [unregisterGeometry]
+    // removes a single entry, so a duplicate would be painted twice and
+    // outlive its detach.
+    if (_shapeGeometries.contains(renderObject)) return;
     _shapeGeometries.add(renderObject);
   }
 
@@ -1068,7 +1081,9 @@ class GeometryRenderLink {
   }
 
   void unregisterGeometry(RenderLiquidGlassGeometry renderObject) {
-    _shapeGeometries.remove(renderObject);
+    if (_shapeGeometries.remove(renderObject)) {
+      _dirty = true;
+    }
   }
 
   void dispose() {

@@ -10,6 +10,7 @@
 
 import 'dart:ui' as ui;
 
+import 'package:flutter/foundation.dart' show listEquals;
 import 'package:flutter/widgets.dart';
 
 /// A callback used by [MultiShaderBuilder].
@@ -168,12 +169,37 @@ class _MultiShaderBuilderState extends State<MultiShaderBuilder> {
   @override
   void didUpdateWidget(covariant MultiShaderBuilder oldWidget) {
     super.didUpdateWidget(oldWidget);
-    if (oldWidget.assetKeys != widget.assetKeys) {
+    // Compare by content: ShaderBuilder passes a new list on every build, and
+    // reloading would hand out a new FragmentShader on every rebuild.
+    if (!listEquals(oldWidget.assetKeys, widget.assetKeys)) {
       _loadShaders(widget.assetKeys);
     }
   }
 
+  @override
+  void dispose() {
+    // Render objects built from these shaders are unmounted before this state
+    // is, so nothing is still drawing with them.
+    for (final shader in _shaders.values) {
+      shader.dispose();
+    }
+    _shaders.clear();
+    _programs.clear();
+    super.dispose();
+  }
+
   void _loadShaders(List<String> assetKeys) {
+    // The shaders this state created for the previous keys. Disposed after the
+    // frame rather than now: consumers still hold them until they rebuild with
+    // the new ones, and this frame may yet paint with them.
+    final replaced = _shaders.values.toList();
+    if (replaced.isNotEmpty) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        for (final shader in replaced) {
+          shader.dispose();
+        }
+      });
+    }
     _programs.clear();
     _shaders.clear();
 
@@ -197,13 +223,17 @@ class _MultiShaderBuilderState extends State<MultiShaderBuilder> {
     for (final assetKey in uncachedKeys) {
       ui.FragmentProgram.fromAsset(assetKey).then(
         (ui.FragmentProgram program) {
-          if (!mounted) {
+          _shaderCache[assetKey] = program;
+          // A load that overlapped another for the same key (the keys changed
+          // and changed back) must not replace a shader already handed out.
+          if (!mounted ||
+              !widget.assetKeys.contains(assetKey) ||
+              _shaders.containsKey(assetKey)) {
             return;
           }
           setState(() {
             _programs[assetKey] = program;
             _shaders[assetKey] = program.fragmentShader();
-            _shaderCache[assetKey] = program;
           });
         },
         onError: (Object error, StackTrace stackTrace) {
@@ -217,8 +247,12 @@ class _MultiShaderBuilderState extends State<MultiShaderBuilder> {
 
   @override
   Widget build(BuildContext context) {
-    // Check if all shaders are loaded
-    if (_shaders.length != widget.assetKeys.length) {
+    // Check if all shaders requested by the current widget are loaded.
+    // Checking key presence rather than map length prevents crashes if stale
+    // shaders finished loading after assetKeys changed.
+    final allLoaded =
+        widget.assetKeys.every((key) => _shaders.containsKey(key));
+    if (!allLoaded) {
       return widget.child ?? const SizedBox.shrink();
     }
 

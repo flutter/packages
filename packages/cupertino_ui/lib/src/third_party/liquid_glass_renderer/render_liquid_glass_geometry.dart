@@ -101,7 +101,13 @@ abstract class RenderLiquidGlassGeometry extends RenderProxyBox {
     if (_renderLink == value) return;
     _renderLink?.unregisterGeometry(this);
     _renderLink = value;
-    _renderLink?.registerGeometry(this);
+    // Registration follows attachment: [attach] registers and [detach]
+    // unregisters. Registering here while detached would add this object a
+    // second time on the next attach.
+    if (attached) _renderLink?.registerGeometry(this);
+    // The matte is laid out in the new layer's space.
+    markGeometryNeedsUpdate(force: true);
+    markNeedsPaint();
   }
 
   /// The current state of the geometry.
@@ -356,6 +362,7 @@ class UnrenderedGeometryCache extends GeometryCache {
     // rapid layout changes (jelly animations, modal expansion). Return a
     // minimal 1×1 cache rather than handing the GPU an invalid texture request.
     if (width < 1 || height < 1) {
+      dispose();
       final recorder = PictureRecorder();
       Canvas(recorder);
       final fallback = recorder.endRecording();
@@ -370,6 +377,9 @@ class UnrenderedGeometryCache extends GeometryCache {
       );
     }
     final image = await matte.toImage(width, height);
+    // Like [render], this cache is consumed: release the recorded Picture
+    // now rather than leaving it to the finalizer.
+    dispose();
     return RenderedGeometryCache(
       matte: image,
       matteBounds: matteBounds,

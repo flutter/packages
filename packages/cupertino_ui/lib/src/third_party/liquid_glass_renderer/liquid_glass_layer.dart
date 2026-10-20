@@ -509,12 +509,19 @@ class RenderLiquidGlassLayer extends LiquidGlassRenderObject
   @visibleForTesting
   bool debugResolveSharing() => _resolveSharing();
 
+  /// Whether this surface has a visible backer pad painted beneath it (see
+  /// `AdaptiveGlass._wrapWithBacker`). The glass's blur has to read that pad
+  /// back; a read shared with other members is taken when the first of them
+  /// paints, before this surface's pad exists, and would be drawn over it.
+  bool get _hasBacker => (settings.effectiveBackerColor?.a ?? 0) > 0;
+
   /// Joins or leaves the enclosing group for this paint, and says whether
   /// the blur and frost share its backdrop read: only with another member
-  /// in it, and only while no render pass of its own opens between this
-  /// layer and the group (see [opensRenderPassBelow]).
+  /// in it, only while no render pass of its own opens between this layer
+  /// and the group (see [opensRenderPassBelow]), and never with a backer of
+  /// its own to read back.
   bool _resolveSharing() {
-    final group = sharedBackdrop && backdropKey != null
+    final group = sharedBackdrop && backdropKey != null && !_hasBacker
         ? enclosingBackdropGroup(this)
         : null;
     if (!identical(group, _group)) {

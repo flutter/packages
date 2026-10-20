@@ -189,6 +189,7 @@ class _RawLiquidGlassBlendGroup extends SingleChildRenderObjectWidget {
     RenderLiquidGlassBlendGroup renderObject,
   ) {
     renderObject
+      ..renderLink = renderLink
       ..blend = blend
       ..devicePixelRatio = MediaQuery.devicePixelRatioOf(context)
       ..settings = settings
@@ -219,12 +220,32 @@ class RenderLiquidGlassBlendGroup extends RenderLiquidGlassGeometry
 
   set link(GlassGroupLink value) {
     if (_link == value) return;
-    _link.removeListener(_onLinkUpdate);
-    _link.onShapeTransformChanged = null;
+    _releaseLink();
     _link = value;
     value.addListener(_onLinkUpdate);
     value.onShapeTransformChanged = _onShapeTransformChanged;
     markNeedsPaint();
+  }
+
+  /// Stops listening to [_link].
+  ///
+  /// The transform callback is a single slot, and Flutter creates a
+  /// replacement render object before it disposes this one, so the slot is
+  /// only cleared if it still holds this object's callback.
+  void _releaseLink() {
+    _link.removeListener(_onLinkUpdate);
+    if (_link.onShapeTransformChanged == _onShapeTransformChanged) {
+      _link.onShapeTransformChanged = null;
+    }
+  }
+
+  @override
+  void dispose() {
+    // The link belongs to the LiquidGlassBlendGroup state and can outlive
+    // this render object; it must not keep calling into it.
+    // ChangeNotifier allows removeListener after it is disposed.
+    _releaseLink();
+    super.dispose();
   }
 
   double _blend = 0;
