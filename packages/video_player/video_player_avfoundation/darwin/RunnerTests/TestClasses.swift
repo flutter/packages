@@ -184,7 +184,7 @@ final class TestPixelBufferSource: PixelBufferSource {
 
     func setCategory(
       _ category: AVAudioSession.Category,
-      with options: AVAudioSession.CategoryOptions
+      options: AVAudioSession.CategoryOptions
     ) throws {
       setCategoryCalled = true
       self.category = category

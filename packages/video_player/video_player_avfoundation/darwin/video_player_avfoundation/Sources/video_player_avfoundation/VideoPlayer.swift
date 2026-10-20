@@ -219,8 +219,10 @@ class VideoPlayer: NSObject {
           // https://developer.apple.com/documentation/avfoundation/avplayeritem/1388818-videocomposition
           // Video composition can only be used with file-based media and is not supported for
           // use with media served using HTTP Live Streaming.
-          playerItem.videoComposition = try await self.createVideoComposition(
+          let composition = try await self.createVideoComposition(
             transform: self.preferredTransform, asset: asset, videoTrack: videoTrack)
+          if self.disposed { return }
+          playerItem.videoComposition = composition
         }
       } catch {
         NSLog("Error loading tracks: %@", error.localizedDescription)
@@ -231,7 +233,6 @@ class VideoPlayer: NSObject {
   deinit {
     if let playToEndObserver = playToEndObserver {
       NotificationCenter.default.removeObserver(playToEndObserver)
-      self.playToEndObserver = nil
     }
   }
 
@@ -399,15 +400,9 @@ class VideoPlayer: NSObject {
         } else {
           option.locale?.languageCode
         }
-      var title: String?
-      if let firstTitleItem = titleItems.first {
-        do {
-          title = try await firstTitleItem.load(.stringValue)
-        } catch {
-          // Ignore failure to load a title, since titles are optional anyway.
-        }
-        if disposed { return [] }
-      }
+      // Ignore failure to load a title, since titles are optional anyway.
+      let title = try? await titleItems.first?.load(.stringValue)
+      if disposed { return [] }
       trackData.append(
         MediaSelectionAudioTrackData(
           index: Int64(i),
@@ -538,7 +533,7 @@ class VideoPlayer: NSObject {
     // Fixes https://github.com/flutter/flutter/issues/48670
     if time.isIndefinite { return -9_223_372_036_854_775_807 }
     if time.timescale == 0 { return 0 }
-    return CMTimeConvertScale(time, timescale: 1000, method: .roundHalfAwayFromZero).value
+    return CMTimeConvertScale(time, timescale: 1000, method: .roundTowardZero).value
   }
 
   private func radiansToDegrees(_ radians: CGFloat) -> Float {
@@ -639,13 +634,8 @@ class VideoPlayer: NSObject {
   private func sendFailedToLoadVideoEvent() {
     // Prefer more detailed error information from tracks loading.
     var error = player.currentItem?.error
-    if let currentItem = player.currentItem {
-      switch currentItem.asset.status(of: .tracks) {
-      case .failed(let nsError):
-        error = nsError
-      case .notYetLoaded, .loading, .loaded(_):
-        break
-      }
+    if case .failed(let trackError)? = player.currentItem?.asset.status(of: .tracks) {
+      error = trackError
     }
     let details = NSMutableOrderedSet(object: "Failed to load video")
     let addToDetails: (String?) -> Void = { detail in
@@ -679,11 +669,7 @@ class VideoPlayer: NSObject {
     // `AVPlayerItem.duration` can be `kCMTimeIndefinite`, so
     // use its `AVAsset.duration` instead.
     guard let asset = player.currentItem?.asset else { return 0 }
-    do {
-      return convertCMTimeToMillis(try await asset.load(.duration))
-    } catch {
-      return 0
-    }
+    return convertCMTimeToMillis((try? await asset.load(.duration)) ?? .zero)
   }
 
 }

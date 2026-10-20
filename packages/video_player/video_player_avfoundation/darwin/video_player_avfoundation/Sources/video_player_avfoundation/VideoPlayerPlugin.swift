@@ -350,6 +350,6 @@ public final class VideoPlayerPlugin: NSObject, FlutterPlugin, AVFoundationVideo
       return
     }
 
-    try? session.setCategory(finalCategory, with: newOptions)
+    try? session.setCategory(finalCategory, options: newOptions)
   }
 #endif

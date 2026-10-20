@@ -52,7 +52,7 @@ protocol WrappedAVPlayerItem: AnyObject {
     /// Wraps the AVAudioSession method of the same name.
     func setCategory(
       _ category: AVAudioSession.Category,
-      with options: AVAudioSession.CategoryOptions) throws
+      options: AVAudioSession.CategoryOptions) throws
   }
 #endif
 
@@ -177,9 +177,9 @@ class DefaultAVPlayerItemVideoOutput: PixelBufferSource {
     }
 
     func setCategory(
-      _ category: AVAudioSession.Category, with options: AVAudioSession.CategoryOptions
+      _ category: AVAudioSession.Category, options: AVAudioSession.CategoryOptions
     ) throws {
-      return try AVAudioSession.sharedInstance().setCategory(category, options: options)
+      try AVAudioSession.sharedInstance().setCategory(category, options: options)
     }
   }
 #endif
