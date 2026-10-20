@@ -68,11 +68,13 @@ class PreviewProxyApi extends PigeonApiPreview {
 
   @Override
   public long setSurfaceProvider(
-      @NonNull Preview pigeonInstance, @NonNull SystemServicesManager systemServicesManager) {
+      @NonNull Preview pigeonInstance,
+      @NonNull SystemServicesManager systemServicesManager,
+      @Nullable SurfaceRequest.TransformationInfoListener transformationInfoListener) {
     final TextureRegistry.SurfaceProducer surfaceProducer =
         getPigeonRegistrar().getTextureRegistry().createSurfaceProducer();
     final Preview.SurfaceProvider surfaceProvider =
-        createSurfaceProvider(surfaceProducer, systemServicesManager);
+        createSurfaceProvider(surfaceProducer, systemServicesManager, transformationInfoListener);
 
     pigeonInstance.setSurfaceProvider(surfaceProvider);
     surfaceProducers.put(pigeonInstance, surfaceProducer);
@@ -117,8 +119,17 @@ class PreviewProxyApi extends PigeonApiPreview {
   @NonNull
   Preview.SurfaceProvider createSurfaceProvider(
       @NonNull TextureRegistry.SurfaceProducer surfaceProducer,
-      @NonNull SystemServicesManager systemServicesManager) {
+      @NonNull SystemServicesManager systemServicesManager,
+      @Nullable SurfaceRequest.TransformationInfoListener transformationInfoListener) {
     return request -> {
+      if (transformationInfoListener != null) {
+        // Each SurfaceRequest carries its own TransformationInfo (e.g. CameraX makes a new
+        // request when it starts or stops stream sharing), so the listener is set on every
+        // request. The listener posts to the main thread itself, so it can run directly on
+        // the thread CameraX calls it from.
+        request.setTransformationInfoListener(Runnable::run, transformationInfoListener);
+      }
+
       // Set callback for surfaceProducer to invalidate Surfaces that it produces when they
       // get destroyed.
       surfaceProducer.setCallback(

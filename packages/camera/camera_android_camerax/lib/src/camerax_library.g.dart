@@ -97,6 +97,16 @@ class PigeonOverrides {
   })?
   preview_new;
 
+  /// Overrides [TransformationInfoListener.new].
+  static TransformationInfoListener Function({
+    required void Function(
+      TransformationInfoListener pigeon_instance,
+      TransformationInfo transformationInfo,
+    )
+    onTransformationInfoUpdate,
+  })?
+  transformationInfoListener_new;
+
   /// Overrides [VideoCapture.withOutput].
   static VideoCapture Function({
     required VideoOutput videoOutput,
@@ -282,6 +292,7 @@ class PigeonOverrides {
     systemServicesManager_new = null;
     deviceOrientationManager_new = null;
     preview_new = null;
+    transformationInfoListener_new = null;
     videoCapture_withOutput = null;
     recorder_new = null;
     videoRecordEventListener_new = null;
@@ -440,6 +451,8 @@ class PigeonInstanceManager {
     CameraPermissionsError.pigeon_setUpMessageHandlers(pigeon_instanceManager: instanceManager);
     DeviceOrientationManager.pigeon_setUpMessageHandlers(pigeon_instanceManager: instanceManager);
     Preview.pigeon_setUpMessageHandlers(pigeon_instanceManager: instanceManager);
+    TransformationInfo.pigeon_setUpMessageHandlers(pigeon_instanceManager: instanceManager);
+    TransformationInfoListener.pigeon_setUpMessageHandlers(pigeon_instanceManager: instanceManager);
     VideoCapture.pigeon_setUpMessageHandlers(pigeon_instanceManager: instanceManager);
     VideoOutput.pigeon_setUpMessageHandlers(pigeon_instanceManager: instanceManager);
     Recorder.pigeon_setUpMessageHandlers(pigeon_instanceManager: instanceManager);
@@ -3144,7 +3157,13 @@ class Preview extends UseCase {
   /// 2. Sets this method with the created `SurfaceProvider`.
   /// 3. Returns the texture id of the `TextureEntry` that provided the
   /// `SurfaceProducer`.
-  Future<int> setSurfaceProvider(SystemServicesManager systemServicesManager) async {
+  ///
+  /// If [transformationInfoListener] is provided, it is set on every
+  /// `SurfaceRequest` that the created `SurfaceProvider` receives.
+  Future<int> setSurfaceProvider(
+    SystemServicesManager systemServicesManager,
+    TransformationInfoListener? transformationInfoListener,
+  ) async {
     final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec = _pigeonVar_codecPreview;
     final BinaryMessenger? pigeonVar_binaryMessenger = pigeon_binaryMessenger;
     const pigeonVar_channelName =
@@ -3157,6 +3176,7 @@ class Preview extends UseCase {
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[
       this,
       systemServicesManager,
+      transformationInfoListener,
     ]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
 
@@ -3254,6 +3274,249 @@ class Preview extends UseCase {
       pigeon_binaryMessenger: pigeon_binaryMessenger,
       pigeon_instanceManager: pigeon_instanceManager,
       resolutionSelector: resolutionSelector,
+    );
+  }
+}
+
+/// Transformation associated with the preview output.
+///
+/// See https://developer.android.com/reference/androidx/camera/core/SurfaceRequest.TransformationInfo.
+class TransformationInfo extends PigeonInternalProxyApiBaseClass {
+  /// Constructs [TransformationInfo] without creating the associated native object.
+  ///
+  /// This should only be used by subclasses created by this library or to
+  /// create copies for an [PigeonInstanceManager].
+  @protected
+  TransformationInfo.pigeon_detached({
+    super.pigeon_binaryMessenger,
+    super.pigeon_instanceManager,
+    required this.rotationDegrees,
+    required this.hasCameraTransform,
+    required this.isMirroring,
+  });
+
+  /// The clockwise rotation in degrees that needs to be applied to the preview
+  /// buffer to reach the target rotation of the `Preview`.
+  final int rotationDegrees;
+
+  /// Whether or not the `Surface` contains the camera transform.
+  final bool hasCameraTransform;
+
+  /// Whether or not the buffer should be mirrored across the vertical axis
+  /// after [rotationDegrees] is applied.
+  final bool isMirroring;
+
+  static void pigeon_setUpMessageHandlers({
+    bool pigeon_clearHandlers = false,
+    BinaryMessenger? pigeon_binaryMessenger,
+    PigeonInstanceManager? pigeon_instanceManager,
+    TransformationInfo Function(int rotationDegrees, bool hasCameraTransform, bool isMirroring)?
+    pigeon_newInstance,
+  }) {
+    final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec = _PigeonInternalProxyApiBaseCodec(
+      pigeon_instanceManager ?? PigeonInstanceManager.instance,
+    );
+    final BinaryMessenger? binaryMessenger = pigeon_binaryMessenger;
+    {
+      final pigeonVar_channel = BasicMessageChannel<Object?>(
+        'dev.flutter.pigeon.camera_android_camerax.TransformationInfo.pigeon_newInstance',
+        pigeonChannelCodec,
+        binaryMessenger: binaryMessenger,
+      );
+      if (pigeon_clearHandlers) {
+        pigeonVar_channel.setMessageHandler(null);
+      } else {
+        pigeonVar_channel.setMessageHandler((Object? message) async {
+          final List<Object?> args = message! as List<Object?>;
+          final int arg_pigeon_instanceIdentifier = args[0]! as int;
+          final int arg_rotationDegrees = args[1]! as int;
+          final bool arg_hasCameraTransform = args[2]! as bool;
+          final bool arg_isMirroring = args[3]! as bool;
+          try {
+            (pigeon_instanceManager ?? PigeonInstanceManager.instance).addHostCreatedInstance(
+              pigeon_newInstance?.call(
+                    arg_rotationDegrees,
+                    arg_hasCameraTransform,
+                    arg_isMirroring,
+                  ) ??
+                  TransformationInfo.pigeon_detached(
+                    pigeon_binaryMessenger: pigeon_binaryMessenger,
+                    pigeon_instanceManager: pigeon_instanceManager,
+                    rotationDegrees: arg_rotationDegrees,
+                    hasCameraTransform: arg_hasCameraTransform,
+                    isMirroring: arg_isMirroring,
+                  ),
+              arg_pigeon_instanceIdentifier,
+            );
+            return wrapResponse(empty: true);
+          } on PlatformException catch (e) {
+            return wrapResponse(error: e);
+          } catch (e) {
+            return wrapResponse(
+              error: PlatformException(code: 'error', message: e.toString()),
+            );
+          }
+        });
+      }
+    }
+  }
+
+  @override
+  TransformationInfo pigeon_copy() {
+    return TransformationInfo.pigeon_detached(
+      pigeon_binaryMessenger: pigeon_binaryMessenger,
+      pigeon_instanceManager: pigeon_instanceManager,
+      rotationDegrees: rotationDegrees,
+      hasCameraTransform: hasCameraTransform,
+      isMirroring: isMirroring,
+    );
+  }
+}
+
+/// Listener that receives updates of the [TransformationInfo] associated with
+/// a preview `SurfaceRequest`.
+///
+/// See https://developer.android.com/reference/androidx/camera/core/SurfaceRequest.TransformationInfoListener.
+class TransformationInfoListener extends PigeonInternalProxyApiBaseClass {
+  factory TransformationInfoListener({
+    BinaryMessenger? pigeon_binaryMessenger,
+    PigeonInstanceManager? pigeon_instanceManager,
+    required void Function(
+      TransformationInfoListener pigeon_instance,
+      TransformationInfo transformationInfo,
+    )
+    onTransformationInfoUpdate,
+  }) {
+    if (PigeonOverrides.transformationInfoListener_new != null) {
+      return PigeonOverrides.transformationInfoListener_new!(
+        onTransformationInfoUpdate: onTransformationInfoUpdate,
+      );
+    }
+    return TransformationInfoListener.pigeon_new(
+      pigeon_binaryMessenger: pigeon_binaryMessenger,
+      pigeon_instanceManager: pigeon_instanceManager,
+      onTransformationInfoUpdate: onTransformationInfoUpdate,
+    );
+  }
+
+  @protected
+  TransformationInfoListener.pigeon_new({
+    super.pigeon_binaryMessenger,
+    super.pigeon_instanceManager,
+    required this.onTransformationInfoUpdate,
+  }) {
+    final int pigeonVar_instanceIdentifier = pigeon_instanceManager.addDartCreatedInstance(this);
+    final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
+        _pigeonVar_codecTransformationInfoListener;
+    final BinaryMessenger? pigeonVar_binaryMessenger = pigeon_binaryMessenger;
+    const pigeonVar_channelName =
+        'dev.flutter.pigeon.camera_android_camerax.TransformationInfoListener.pigeon_defaultConstructor';
+    final pigeonVar_channel = BasicMessageChannel<Object?>(
+      pigeonVar_channelName,
+      pigeonChannelCodec,
+      binaryMessenger: pigeonVar_binaryMessenger,
+    );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[
+      pigeonVar_instanceIdentifier,
+    ]);
+    () async {
+      final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
+
+      _extractReplyValueOrThrow(pigeonVar_replyList, pigeonVar_channelName, isNullValid: true);
+    }();
+  }
+
+  /// Constructs [TransformationInfoListener] without creating the associated native object.
+  ///
+  /// This should only be used by subclasses created by this library or to
+  /// create copies for an [PigeonInstanceManager].
+  @protected
+  TransformationInfoListener.pigeon_detached({
+    super.pigeon_binaryMessenger,
+    super.pigeon_instanceManager,
+    required this.onTransformationInfoUpdate,
+  });
+
+  late final _PigeonInternalProxyApiBaseCodec _pigeonVar_codecTransformationInfoListener =
+      _PigeonInternalProxyApiBaseCodec(pigeon_instanceManager);
+
+  /// Called when the [TransformationInfo] becomes available or is updated.
+  ///
+  /// For the associated Native object to be automatically garbage collected,
+  /// it is required that the implementation of this `Function` doesn't have a
+  /// strong reference to the encapsulating class instance. When this `Function`
+  /// references a non-local variable, it is strongly recommended to access it
+  /// with a `WeakReference`:
+  ///
+  /// ```dart
+  /// final WeakReference weakMyVariable = WeakReference(myVariable);
+  /// final TransformationInfoListener instance = TransformationInfoListener(
+  ///  onTransformationInfoUpdate: (TransformationInfoListener pigeon_instance, ...) {
+  ///    print(weakMyVariable?.target);
+  ///  },
+  /// );
+  /// ```
+  ///
+  /// Alternatively, [PigeonInstanceManager.removeWeakReference] can be used to
+  /// release the associated Native object manually.
+  final void Function(
+    TransformationInfoListener pigeon_instance,
+    TransformationInfo transformationInfo,
+  )
+  onTransformationInfoUpdate;
+
+  static void pigeon_setUpMessageHandlers({
+    bool pigeon_clearHandlers = false,
+    BinaryMessenger? pigeon_binaryMessenger,
+    PigeonInstanceManager? pigeon_instanceManager,
+    void Function(
+      TransformationInfoListener pigeon_instance,
+      TransformationInfo transformationInfo,
+    )?
+    onTransformationInfoUpdate,
+  }) {
+    final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec = _PigeonInternalProxyApiBaseCodec(
+      pigeon_instanceManager ?? PigeonInstanceManager.instance,
+    );
+    final BinaryMessenger? binaryMessenger = pigeon_binaryMessenger;
+    {
+      final pigeonVar_channel = BasicMessageChannel<Object?>(
+        'dev.flutter.pigeon.camera_android_camerax.TransformationInfoListener.onTransformationInfoUpdate',
+        pigeonChannelCodec,
+        binaryMessenger: binaryMessenger,
+      );
+      if (pigeon_clearHandlers) {
+        pigeonVar_channel.setMessageHandler(null);
+      } else {
+        pigeonVar_channel.setMessageHandler((Object? message) async {
+          final List<Object?> args = message! as List<Object?>;
+          final TransformationInfoListener arg_pigeon_instance =
+              args[0]! as TransformationInfoListener;
+          final TransformationInfo arg_transformationInfo = args[1]! as TransformationInfo;
+          try {
+            (onTransformationInfoUpdate ?? arg_pigeon_instance.onTransformationInfoUpdate).call(
+              arg_pigeon_instance,
+              arg_transformationInfo,
+            );
+            return wrapResponse(empty: true);
+          } on PlatformException catch (e) {
+            return wrapResponse(error: e);
+          } catch (e) {
+            return wrapResponse(
+              error: PlatformException(code: 'error', message: e.toString()),
+            );
+          }
+        });
+      }
+    }
+  }
+
+  @override
+  TransformationInfoListener pigeon_copy() {
+    return TransformationInfoListener.pigeon_detached(
+      pigeon_binaryMessenger: pigeon_binaryMessenger,
+      pigeon_instanceManager: pigeon_instanceManager,
+      onTransformationInfoUpdate: onTransformationInfoUpdate,
     );
   }
 }

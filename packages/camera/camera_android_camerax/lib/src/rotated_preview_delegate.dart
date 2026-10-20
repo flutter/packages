@@ -27,6 +27,9 @@ final class RotatedPreviewDelegate extends StatelessWidget {
     required this.initialDeviceOrientation,
     required this.initialDefaultDisplayRotation,
     required this.deviceOrientationStream,
+    required this.initialTransformationInfo,
+    required this.transformationInfoStream,
+    required this.previewTargetRotation,
     required this.sensorOrientationDegrees,
     required this.cameraIsFrontFacing,
     required this.deviceOrientationManager,
@@ -36,6 +39,8 @@ final class RotatedPreviewDelegate extends StatelessWidget {
   /// Whether or not the Android surface producer automatically handles
   /// correcting the rotation of camera previews for the device this plugin
   /// runs on.
+  ///
+  /// This is determined when the camera is created and does not change.
   final bool handlesCropAndRotation;
 
   /// The initial orientation of the device when the camera is created.
@@ -47,6 +52,16 @@ final class RotatedPreviewDelegate extends StatelessWidget {
 
   /// Stream of changes to the device orientation.
   final Stream<DeviceOrientation> deviceOrientationStream;
+
+  /// The most recent [TransformationInfo] of the camera preview, if any.
+  final TransformationInfo? initialTransformationInfo;
+
+  /// Stream of updates to the [TransformationInfo] of the camera preview.
+  final Stream<TransformationInfo> transformationInfoStream;
+
+  /// The target rotation of the camera preview `Preview`, in terms of a Surface
+  /// rotation constant.
+  final int previewTargetRotation;
 
   /// The orientation of the camera sensor in degrees.
   final double sensorOrientationDegrees;
@@ -66,32 +81,30 @@ final class RotatedPreviewDelegate extends StatelessWidget {
   Widget build(BuildContext context) {
     if (handlesCropAndRotation) {
       return SurfaceTextureRotatedPreview(
-        initialDeviceOrientation,
-        initialDefaultDisplayRotation,
-        deviceOrientationStream,
-        deviceOrientationManager,
+        initialDeviceOrientation: initialDeviceOrientation,
+        initialDefaultDisplayRotation: initialDefaultDisplayRotation,
+        deviceOrientationStream: deviceOrientationStream,
+        deviceOrientationManager: deviceOrientationManager,
+        initialTransformationInfo: initialTransformationInfo,
+        transformationInfoStream: transformationInfoStream,
+        previewTargetRotation: previewTargetRotation,
+        sensorOrientationDegrees: sensorOrientationDegrees,
+        cameraIsFrontFacing: cameraIsFrontFacing,
         child: child,
       );
     }
 
-    if (cameraIsFrontFacing) {
-      return ImageReaderRotatedPreview.frontFacingCamera(
-        initialDeviceOrientation,
-        initialDefaultDisplayRotation,
-        deviceOrientationStream,
-        sensorOrientationDegrees,
-        deviceOrientationManager,
-        child: child,
-      );
-    } else {
-      return ImageReaderRotatedPreview.backFacingCamera(
-        initialDeviceOrientation,
-        initialDefaultDisplayRotation,
-        deviceOrientationStream,
-        sensorOrientationDegrees,
-        deviceOrientationManager,
-        child: child,
-      );
-    }
+    return ImageReaderRotatedPreview(
+      initialDeviceOrientation: initialDeviceOrientation,
+      initialDefaultDisplayRotation: initialDefaultDisplayRotation,
+      deviceOrientationStream: deviceOrientationStream,
+      deviceOrientationManager: deviceOrientationManager,
+      initialTransformationInfo: initialTransformationInfo,
+      transformationInfoStream: transformationInfoStream,
+      previewTargetRotation: previewTargetRotation,
+      sensorOrientationDegrees: sensorOrientationDegrees,
+      cameraIsFrontFacing: cameraIsFrontFacing,
+      child: child,
+    );
   }
 }

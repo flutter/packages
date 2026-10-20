@@ -1,3 +1,8 @@
+## 0.7.6+1
+
+* Fixes camera preview rotation when image streaming and video recording are
+  active at the same time by using CameraX's `SurfaceRequest.TransformationInfo`.
+
 ## 0.7.6
 
 * Adds support for zero-shutter-lag still image capture via

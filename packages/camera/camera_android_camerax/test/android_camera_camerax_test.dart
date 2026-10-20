@@ -66,6 +66,10 @@ void main() {
   setUp(() {
     PigeonOverrides.pigeon_reset();
     GenericsPigeonOverrides.reset();
+
+    // Avoid calls to native Android when the camera creates its listener for
+    // preview TransformationInfo updates.
+    PigeonOverrides.transformationInfoListener_new = TransformationInfoListener.pigeon_detached;
   });
 
   /// Helper method for testing sending/receiving CameraErrorEvents.
@@ -626,7 +630,7 @@ void main() {
       PigeonOverrides.cameraIntegerRange_new = CameraIntegerRange.pigeon_detached;
 
       when(
-        mockPreview.setSurfaceProvider(mockSystemServicesManager),
+        mockPreview.setSurfaceProvider(mockSystemServicesManager, any),
       ).thenAnswer((_) async => testSurfaceTextureId);
       when(
         mockProcessCameraProvider.bindToLifecycle(mockBackCameraSelector, <UseCase>[
@@ -670,8 +674,14 @@ void main() {
       expect(recorderTargetVideoEncodingBitRate, equals(200000));
       expect(camera.videoCapture, equals(mockVideoCapture));
 
-      // Verify the camera's Preview instance has its surface provider set.
-      verify(camera.preview!.setSurfaceProvider(mockSystemServicesManager));
+      // Verify the camera's Preview instance has its surface provider set with a
+      // listener for TransformationInfo updates.
+      verify(
+        camera.preview!.setSurfaceProvider(
+          mockSystemServicesManager,
+          argThat(isA<TransformationInfoListener>()),
+        ),
+      );
     },
   );
 
@@ -1675,7 +1685,7 @@ void main() {
     when(mockCamera.getCameraInfo()).thenAnswer((_) async => mockCameraInfo);
     when(mockCameraInfo.getCameraState()).thenAnswer((_) async => mockLiveCameraState);
     when(mockPreview.getResolutionInfo()).thenAnswer((_) async => testResolutionInfo);
-    when(mockPreview.setSurfaceProvider(any)).thenAnswer((_) async => testSurfaceTextureId);
+    when(mockPreview.setSurfaceProvider(any, any)).thenAnswer((_) async => testSurfaceTextureId);
     camera.processCameraProvider = mockProcessCameraProvider;
 
     // Tell plugin to create mock/detached objects for testing createCamera
@@ -1735,7 +1745,7 @@ void main() {
     when(mockCamera.getCameraInfo()).thenAnswer((_) async => mockCameraInfo);
     when(mockCameraInfo.getCameraState()).thenAnswer((_) async => mockLiveCameraState);
     when(mockPreview.getResolutionInfo()).thenAnswer((_) async => testResolutionInfo);
-    when(mockPreview.setSurfaceProvider(any)).thenAnswer((_) async => testSurfaceTextureId);
+    when(mockPreview.setSurfaceProvider(any, any)).thenAnswer((_) async => testSurfaceTextureId);
     camera.processCameraProvider = mockProcessCameraProvider;
 
     for (final ImageFormatGroup imageFormatGroup in ImageFormatGroup.values) {
@@ -1907,7 +1917,7 @@ void main() {
     );
 
     // Call createCamera.
-    when(mockPreview.setSurfaceProvider(any)).thenAnswer((_) async => cameraId);
+    when(mockPreview.setSurfaceProvider(any, any)).thenAnswer((_) async => cameraId);
 
     when(
       mockProcessCameraProvider.bindToLifecycle(mockBackCameraSelector, <UseCase>[
@@ -2922,7 +2932,7 @@ void main() {
             int? targetRotation,
             CameraIntegerRange? targetFpsRange,
           }) {
-            when(mockPreview.setSurfaceProvider(any)).thenAnswer((_) async => 19);
+            when(mockPreview.setSurfaceProvider(any, any)).thenAnswer((_) async => 19);
             final testResolutionInfo = ResolutionInfo.pigeon_detached(resolution: MockCameraSize());
             when(
               mockPreview.surfaceProducerHandlesCropAndRotation(),
@@ -3137,7 +3147,7 @@ void main() {
             int? targetRotation,
             CameraIntegerRange? targetFpsRange,
           }) {
-            when(mockPreview.setSurfaceProvider(any)).thenAnswer((_) async => 19);
+            when(mockPreview.setSurfaceProvider(any, any)).thenAnswer((_) async => 19);
             final testResolutionInfo = ResolutionInfo.pigeon_detached(resolution: MockCameraSize());
             when(
               mockPreview.surfaceProducerHandlesCropAndRotation(),

@@ -3,8 +3,9 @@
 // found in the LICENSE file.
 
 import 'package:flutter/services.dart';
+import 'package:flutter/widgets.dart';
 
-import 'camerax_library.dart' show Surface;
+import 'camerax_library.dart' show Surface, TransformationInfo;
 
 /// Returns the number of counter-clockwise quarter turns represented by
 /// [surfaceRotationConstant], a [Surface] constant representing a clockwise
@@ -31,4 +32,98 @@ int getPreAppliedQuarterTurnsRotationFromDeviceOrientation(DeviceOrientation ori
     DeviceOrientation.portraitDown => 2,
     DeviceOrientation.landscapeLeft => 3,
   };
+}
+
+/// Returns the clockwise rotation in degrees needed to display a camera
+/// preview buffer upright when the camera transform has not been applied to
+/// it.
+///
+/// This is the case for previews backed by an `ImageReader`, which ignores the
+/// camera transform, and for previews backed by a `SurfaceTexture` whose
+/// surface is not connected to the camera directly (e.g. when CameraX copies
+/// the camera stream with OpenGL for stream sharing).
+///
+/// This follows CameraX's convention for preview rotation, `sensor - T` for
+/// back cameras and `sensor + T` for front cameras, where `T` is a [Surface]
+/// rotation in degrees. [Surface] rotation constants are clockwise quarter
+/// turns (`0..3`), so their degrees are `constant * 90`.
+///
+/// [displayRotation] and [previewTargetRotation] are [Surface] rotation
+/// constants.
+int computeUntransformedPreviewRotation({
+  required TransformationInfo? transformationInfo,
+  required bool cameraIsFrontFacing,
+  required int sensorOrientationDegrees,
+  required int displayRotation,
+  required int previewTargetRotation,
+}) {
+  final int displayRotationDegrees = displayRotation * 90;
+
+  final int rotationDegrees;
+  if (transformationInfo == null) {
+    // No TransformationInfo has been received yet, so assume the buffer is in
+    // the orientation of the camera sensor.
+    rotationDegrees = cameraIsFrontFacing
+        ? sensorOrientationDegrees + displayRotationDegrees
+        : sensorOrientationDegrees - displayRotationDegrees;
+  } else {
+    // rotationDegrees is computed by CameraX for the preview target rotation and
+    // accounts for any rotation CameraX already applied to the buffer (e.g. under
+    // stream sharing). The preview target rotation never changes, so shift
+    // rotationDegrees by how much the display has rotated since then.
+    final int displayRotationDelta = displayRotationDegrees - previewTargetRotation * 90;
+    rotationDegrees = cameraIsFrontFacing
+        ? transformationInfo.rotationDegrees + displayRotationDelta
+        : transformationInfo.rotationDegrees - displayRotationDelta;
+  }
+
+  // Dart's % always returns a non-negative result for a positive divisor.
+  return rotationDegrees % 360;
+}
+
+/// Rotates, and mirrors if needed, [child], a camera preview whose buffer does
+/// not have the camera transform applied, so that it is upright according to
+/// the current user interface orientation.
+///
+/// See [computeUntransformedPreviewRotation] for the cases where the camera
+/// transform is not applied.
+///
+/// [displayRotation] and [previewTargetRotation] are [Surface] rotation
+/// constants.
+Widget buildUntransformedPreview({
+  required Widget child,
+  required TransformationInfo? transformationInfo,
+  required bool cameraIsFrontFacing,
+  required int sensorOrientationDegrees,
+  required int displayRotation,
+  required int previewTargetRotation,
+  required DeviceOrientation deviceOrientation,
+}) {
+  final int rotationDegrees =
+      computeUntransformedPreviewRotation(
+        transformationInfo: transformationInfo,
+        cameraIsFrontFacing: cameraIsFrontFacing,
+        sensorOrientationDegrees: sensorOrientationDegrees,
+        displayRotation: displayRotation,
+        previewTargetRotation: previewTargetRotation,
+      ) -
+      // Subtract the rotation already applied in the CameraPreview widget
+      // (see camera/camera/lib/src/camera_preview.dart) that is not correct
+      // for this plugin.
+      getPreAppliedQuarterTurnsRotationFromDeviceOrientation(deviceOrientation) * 90;
+
+  // Mirror the camera preview if CameraX reports that the buffer needs to be
+  // mirrored. Until a TransformationInfo is received, assume front facing
+  // camera previews need to be mirrored.
+  var cameraPreview = child;
+  if (transformationInfo?.isMirroring ?? cameraIsFrontFacing) {
+    if (deviceOrientation == DeviceOrientation.portraitDown ||
+        deviceOrientation == DeviceOrientation.portraitUp) {
+      cameraPreview = Transform.scale(scaleY: -1, child: cameraPreview);
+    } else {
+      cameraPreview = Transform.scale(scaleX: -1, child: cameraPreview);
+    }
+  }
+
+  return RotatedBox(quarterTurns: rotationDegrees ~/ 90, child: cameraPreview);
 }

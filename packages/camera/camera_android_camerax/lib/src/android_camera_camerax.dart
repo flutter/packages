@@ -87,6 +87,32 @@ class AndroidCameraCameraX extends CameraPlatform {
     },
   );
 
+  /// Receives the [TransformationInfo] of every `SurfaceRequest` made for [preview].
+  ///
+  /// This is held by the plugin so that it stays alive as long as the
+  /// `SurfaceProvider` it was given to.
+  late final TransformationInfoListener _transformationInfoListener = TransformationInfoListener(
+    onTransformationInfoUpdate: (_, TransformationInfo transformationInfo) {
+      _latestTransformationInfo = transformationInfo;
+      _transformationInfoStreamController.add(transformationInfo);
+    },
+  );
+
+  /// Stream that emits the [TransformationInfo] of [preview] whenever it becomes
+  /// available or changes (e.g. when CameraX starts or stops stream sharing).
+  final StreamController<TransformationInfo> _transformationInfoStreamController =
+      StreamController<TransformationInfo>.broadcast();
+
+  /// The most recent [TransformationInfo] of [preview], if any has been received.
+  TransformationInfo? _latestTransformationInfo;
+
+  /// The target rotation [preview] was created with, as a [Surface] rotation
+  /// constant.
+  ///
+  /// This is never changed after [preview] is created, so the
+  /// [TransformationInfo.rotationDegrees] of [preview] is always relative to it.
+  late int _previewTargetRotation;
+
   /// Stream that emits an event when the corresponding video recording is finalized.
   static final StreamController<VideoRecordEvent> videoRecordingEventStreamController =
       StreamController<VideoRecordEvent>.broadcast();
@@ -411,12 +437,20 @@ class AndroidCameraCameraX extends CameraPlatform {
     processCameraProvider ??= await ProcessCameraProvider.getInstance();
     unawaited(processCameraProvider!.unbindAll());
 
-    // Configure Preview instance.
+    // Configure Preview instance. Its target rotation is set once here and never
+    // changed, so the preview rotation can be derived from its TransformationInfo
+    // (see RotatedPreview).
+    _latestTransformationInfo = null;
+    _previewTargetRotation = await deviceOrientationManager.getDefaultDisplayRotation();
     preview = Preview(
       resolutionSelector: _presetResolutionSelector,
+      targetRotation: _previewTargetRotation,
       targetFpsRange: _targetFpsRange,
     );
-    _flutterSurfaceTextureId = await preview!.setSurfaceProvider(systemServicesManager);
+    _flutterSurfaceTextureId = await preview!.setSurfaceProvider(
+      systemServicesManager,
+      _transformationInfoListener,
+    );
 
     // Configure ImageCapture instance.
     imageCapture = ImageCapture(
@@ -535,6 +569,9 @@ class AndroidCameraCameraX extends CameraPlatform {
     recording = null;
     pendingRecording = null;
     videoOutputPath = null;
+
+    // The TransformationInfo belongs to the released preview surface.
+    _latestTransformationInfo = null;
   }
 
   /// The camera with ID [cameraId] has been initialized.
@@ -1020,6 +1057,9 @@ class AndroidCameraCameraX extends CameraPlatform {
       initialDeviceOrientation: _initialDeviceOrientation,
       initialDefaultDisplayRotation: _initialDefaultDisplayRotation,
       deviceOrientationStream: deviceOrientationStream,
+      initialTransformationInfo: _latestTransformationInfo,
+      transformationInfoStream: _transformationInfoStreamController.stream,
+      previewTargetRotation: _previewTargetRotation,
       sensorOrientationDegrees: sensorOrientationDegrees,
       cameraIsFrontFacing: cameraIsFrontFacing,
       deviceOrientationManager: deviceOrientationManager,
