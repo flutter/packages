@@ -18,9 +18,6 @@ import 'common/repository_package.dart';
 const int _exitInvalidArgs = 2;
 const int _exitNoAvailableDevice = 3;
 
-// From https://flutter.dev/to/integration-test-on-web
-const int _chromeDriverPort = 4444;
-
 /// A command to run the integration tests for a package's example applications.
 class DriveExamplesCommand extends PackageLoopingCommand {
   /// Creates an instance of the drive command.
@@ -236,28 +233,15 @@ class DriveExamplesCommand extends PackageLoopingCommand {
 
       testsRan = true;
       if (useFlutterDrive) {
-        Process? chromedriver;
-        if (getBoolArg(_chromeDriverFlag)) {
-          print('Starting chromedriver on port $_chromeDriverPort');
-          chromedriver = await processRunner.start('chromedriver', <String>[
-            '--port=$_chromeDriverPort',
-          ]);
-        }
-        for (final driver in drivers) {
-          final List<File> failingTargets = await _driveTests(
-            example,
-            driver,
-            testTargets,
-            deviceFlags: deviceFlags,
-            exampleName: exampleName,
-          );
-          for (final failingTarget in failingTargets) {
-            errors.add(getRelativePosixPath(failingTarget, from: package.directory));
-          }
-        }
-        if (chromedriver != null) {
-          print('Stopping chromedriver');
-          chromedriver.kill();
+        final List<File> failingTargets = await _driveExample(
+          example,
+          drivers,
+          testTargets,
+          deviceFlags: deviceFlags,
+          exampleName: exampleName,
+        );
+        for (final failingTarget in failingTargets) {
+          errors.add(getRelativePosixPath(failingTarget, from: package.directory));
         }
       } else {
         if (!await _runTests(example, deviceFlags: deviceFlags, testFiles: testTargets)) {
@@ -375,6 +359,131 @@ class DriveExamplesCommand extends PackageLoopingCommand {
     }
 
     return true;
+  }
+
+  /// Drives [testTargets] for [example] across all [drivers], starting and
+  /// stopping `chromedriver` when `--run-chromedriver` is enabled.
+  Future<List<File>> _driveExample(
+    RepositoryPackage example,
+    List<File> drivers,
+    List<File> testTargets, {
+    required List<String> deviceFlags,
+    required String exampleName,
+  }) async {
+    if (!getBoolArg(_chromeDriverFlag)) {
+      return _driveTestsForDrivers(
+        example,
+        drivers,
+        testTargets,
+        deviceFlags: deviceFlags,
+        exampleName: exampleName,
+      );
+    }
+
+    final (Process chromedriver, int chromeDriverPort) = await _startChromeDriver();
+    try {
+      return await _driveTestsForDrivers(
+        example,
+        drivers,
+        testTargets,
+        deviceFlags: <String>[...deviceFlags, '--driver-port=$chromeDriverPort'],
+        exampleName: exampleName,
+      );
+    } finally {
+      print('Stopping chromedriver');
+      chromedriver.kill();
+      await chromedriver.exitCode;
+    }
+  }
+
+  /// Starts `chromedriver --port=0` and waits for it to report the bound port
+  /// on stdout.
+  Future<(Process, int)> _startChromeDriver() async {
+    print('Starting chromedriver...');
+    final Process chromedriver = await processRunner.start('chromedriver', <String>['--port=0']);
+    final portCompleter = Completer<int>();
+    final stderrDone = Completer<void>();
+    final stdoutBuffer = StringBuffer();
+    final stderrBuffer = StringBuffer();
+    final portPattern = RegExp(r'started successfully on port (\d+)');
+    chromedriver.stderr
+        .transform(utf8.decoder)
+        .transform(const LineSplitter())
+        .listen(
+          stderrBuffer.writeln,
+          onError: (Object _) {
+            if (!stderrDone.isCompleted) {
+              stderrDone.complete();
+            }
+          },
+          onDone: () {
+            if (!stderrDone.isCompleted) {
+              stderrDone.complete();
+            }
+          },
+        );
+    chromedriver.stdout
+        .transform(utf8.decoder)
+        .transform(const LineSplitter())
+        .listen(
+          (String line) {
+            stdoutBuffer.writeln(line);
+            if (portPattern.firstMatch(line) case final RegExpMatch match
+                when !portCompleter.isCompleted) {
+              portCompleter.complete(int.parse(match.group(1)!));
+            }
+          },
+          onError: (Object error, StackTrace stackTrace) {
+            if (!portCompleter.isCompleted) {
+              portCompleter.completeError(error, stackTrace);
+            }
+          },
+          onDone: () async {
+            if (!portCompleter.isCompleted) {
+              await stderrDone.future;
+              if (!portCompleter.isCompleted) {
+                portCompleter.completeError(
+                  StateError(
+                    'chromedriver exited before reporting its port.\n'
+                    'stdout:\n$stdoutBuffer'
+                    'stderr:\n$stderrBuffer',
+                  ),
+                );
+              }
+            }
+          },
+        );
+    try {
+      final int port = await portCompleter.future;
+      print('Started chromedriver on port $port');
+      return (chromedriver, port);
+    } on Object {
+      chromedriver.kill();
+      await chromedriver.exitCode;
+      rethrow;
+    }
+  }
+
+  Future<List<File>> _driveTestsForDrivers(
+    RepositoryPackage example,
+    List<File> drivers,
+    List<File> testTargets, {
+    required List<String> deviceFlags,
+    required String exampleName,
+  }) async {
+    final failingTargets = <File>[];
+    for (final driver in drivers) {
+      failingTargets.addAll(
+        await _driveTests(
+          example,
+          driver,
+          testTargets,
+          deviceFlags: deviceFlags,
+          exampleName: exampleName,
+        ),
+      );
+    }
+    return failingTargets;
   }
 
   /// For each file in [targets], uses
