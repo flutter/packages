@@ -79,7 +79,7 @@ Before applying or re-applying the `autosubmit` label (`gh pr edit <number> --re
 
 ## 4. Version, CHANGELOG, and Override Labels (`Linux repo_checks`)
 
-* In `flutter/packages`, `Linux repo_checks` runs [validate.sh](../../../.ci/scripts/validate.sh) to enforce version and `CHANGELOG.md` (or `pending_changelogs` for batch-released packages) requirements.
+* In flutter/packages, Linux repo_checks runs the repository tooling (pubspec-check and changelog-check) to enforce version and CHANGELOG.md (or pending_changelogs for batch-released packages) requirements.
 * If `Linux repo_checks` fails due to a missing version or changelog change, check whether the PR has a comment explaining a valid exemption and whether an override label is needed:
   * `override: no versioning needed`: Allows skipping a `pubspec.yaml` version bump when a change does not require publishing.
   * `override: no changelog needed`: Allows skipping a `CHANGELOG.md` or `pending_changelogs` entry when a change is not user-facing.
