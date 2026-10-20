@@ -114,7 +114,7 @@ void main() {
       expect(
         collapsedCode,
         contains(
-          r'func pigeonNewInstance(pigeonInstance: MyLibraryApi, completion: @escaping (Result<Void, PigeonError>) -> Void) ',
+          r'func pigeonNewInstance(pigeonInstance: MyLibraryApi, completion: @escaping @MainActor (Result<Void, PigeonError>) -> Void) ',
         ),
       );
 
@@ -144,7 +144,7 @@ void main() {
       expect(
         code,
         contains(
-          'func doSomethingElse(pigeonInstance pigeonInstanceArg: MyLibraryApi, input inputArg: Input, completion: @escaping (Result<String, PigeonError>) -> Void)',
+          'func doSomethingElse(pigeonInstance pigeonInstanceArg: MyLibraryApi, input inputArg: Input, completion: @escaping @MainActor (Result<String, PigeonError>) -> Void)',
         ),
       );
     });
@@ -665,7 +665,7 @@ void main() {
           contains(
             'func name(pigeonApi: '
             'PigeonApiApi, validType: Int64, enumType: AnEnum, proxyApiType: Api2, nullableValidType: Int64?, nullableEnumType: AnEnum?, '
-            'nullableProxyApiType: Api2?) throws -> Api func validType(pigeonApi: PigeonApiApi, pigeonInstance: Api) throws -> Int64 ',
+            'nullableProxyApiType: Api2?) throws -> Api @MainActor func validType(pigeonApi: PigeonApiApi, pigeonInstance: Api) throws -> Int64 ',
           ),
         );
         expect(
@@ -1021,7 +1021,7 @@ void main() {
             'func doSomething(pigeonInstance pigeonInstanceArg: Api, validType validTypeArg: Int64, enumType '
             'enumTypeArg: AnEnum, proxyApiType proxyApiTypeArg: Api2, nullableValidType nullableValidTypeArg: Int64?, nullableEnumType '
             'nullableEnumTypeArg: AnEnum?, nullableProxyApiType nullableProxyApiTypeArg: Api2?, '
-            'completion: @escaping (Result<Void, PigeonError>) -> Void)',
+            'completion: @escaping @MainActor (Result<Void, PigeonError>) -> Void)',
           ),
         );
         expect(
@@ -1074,7 +1074,7 @@ void main() {
         final sink = StringBuffer();
         const generator = SwiftGenerator();
         generator.generate(
-          const InternalSwiftOptions(swiftOut: '', strictConcurrency: true),
+          const InternalSwiftOptions(swiftOut: ''),
           root,
           sink,
           dartPackageName: DEFAULT_PACKAGE_NAME,

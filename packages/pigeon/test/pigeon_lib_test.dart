@@ -190,7 +190,7 @@ void main() {
       '--swift_error_class_name',
       'MyError',
       '--no-swift_include_error_class',
-      '--swift_strict_concurrency',
+      '--no-swift_strict_concurrency',
       '--swift_use_ffi',
       '--swift_ffi_module_name',
       'MyModule',
@@ -203,7 +203,7 @@ void main() {
     ]);
     expect(opts.swiftOptions?.errorClassName, equals('MyError'));
     expect(opts.swiftOptions?.includeErrorClass, isFalse);
-    expect(opts.swiftOptions?.strictConcurrency, isTrue);
+    expect(opts.swiftOptions?.strictConcurrency, isFalse);
     expect(opts.swiftOptions?.useFfi, isTrue);
     expect(opts.swiftOptions?.ffiModuleName, equals('MyModule'));
     expect(opts.swiftOptions?.appDirectory, equals('./app/'));

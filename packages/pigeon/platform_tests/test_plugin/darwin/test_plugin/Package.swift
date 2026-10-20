@@ -1,4 +1,4 @@
-// swift-tools-version: 5.9
+// swift-tools-version: 6.0
 // The swift-tools-version declares the minimum version of Swift required to build this package.
 
 // Copyright 2013 The Flutter Authors
@@ -28,6 +28,7 @@ let package = Package(
       name: "test_plugin",
       dependencies: ["test_plugin_objc_gen"]
     ),
-  ]
+  ],
   // #enddocregion swiftpm-targets
+  swiftLanguageModes: [.v6]
 )

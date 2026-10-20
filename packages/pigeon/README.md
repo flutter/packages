@@ -16,7 +16,7 @@ For usage examples, see the [Example README](./example/README.md).
 
 Currently pigeon supports generating:
 * Kotlin and Java code for Android
-* Swift and Objective-C code for iOS and macOS
+* Swift (requires Swift compiler >= 5.10) and Objective-C code for iOS and macOS
 * C++ code for Windows
 * GObject code for Linux
 

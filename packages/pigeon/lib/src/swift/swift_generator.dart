@@ -30,7 +30,7 @@ class SwiftOptions {
     this.fileSpecificClassNameComponent,
     this.errorClassName,
     this.includeErrorClass = true,
-    this.strictConcurrency = false,
+    this.strictConcurrency = true,
     this.useFfi = false,
     this.ffiModuleName,
     this.appDirectory,
@@ -56,7 +56,7 @@ class SwiftOptions {
 
   /// Whether the generated Swift code should include strict concurrency annotations.
   ///
-  /// Defaults to `false`. When enabled, generated Swift code includes strict
+  /// Defaults to `true`. When enabled, generated Swift code includes strict
   /// concurrency annotations (such as `@Sendable` or `@MainActor`) that allows
   /// the Swift compiler to catch data races in the client plugin's Swift code.
   ///
@@ -109,7 +109,7 @@ class SwiftOptions {
       fileSpecificClassNameComponent: map['fileSpecificClassNameComponent'] as String?,
       errorClassName: map['errorClassName'] as String?,
       includeErrorClass: map['includeErrorClass'] as bool? ?? true,
-      strictConcurrency: map['strictConcurrency'] as bool? ?? false,
+      strictConcurrency: map['strictConcurrency'] as bool? ?? true,
       useFfi: map['useFfi'] as bool? ?? false,
       ffiModuleName: map['ffiModuleName'] as String?,
       appDirectory: map['appDirectory'] as String?,
@@ -156,7 +156,7 @@ class InternalSwiftOptions extends InternalOptions {
     this.fileSpecificClassNameComponent,
     this.errorClassName,
     this.includeErrorClass = true,
-    this.strictConcurrency = false,
+    this.strictConcurrency = true,
     this.useFfi = false,
     this.ffiModuleName,
     this.appDirectory,
@@ -2587,9 +2587,11 @@ enum ${_classNamePrefix}PigeonInternalNumberType: Int {
     final mainActor = generatorOptions.strictConcurrency ? '@MainActor' : '';
     indent.newln();
     // TODO(tarrinneal): Prefix this class to avoid name collisions.
-    indent.format('''
+    String pigeonStreamHandlerDeclaration({required bool preconcurrency}) {
+      final preconcurrencyAnnotation = preconcurrency ? '@preconcurrency ' : '';
+      return '''
       $mainActor
-      private class PigeonStreamHandler<ReturnType>: NSObject, @preconcurrency FlutterStreamHandler {
+      private class PigeonStreamHandler<ReturnType>: NSObject, ${preconcurrencyAnnotation}FlutterStreamHandler {
         private let wrapper: PigeonEventChannelWrapper<ReturnType>
         private var pigeonSink: PigeonEventSink<ReturnType>? = nil
 
@@ -2610,7 +2612,19 @@ enum ${_classNamePrefix}PigeonInternalNumberType: Int {
           wrapper.onCancel(withArguments: arguments)
           return nil
         }
-      }''');
+      }''';
+    }
+
+    if (generatorOptions.strictConcurrency) {
+      indent.format('''
+      #if compiler(>=6.0)
+${pigeonStreamHandlerDeclaration(preconcurrency: true)}
+      #else
+${pigeonStreamHandlerDeclaration(preconcurrency: false)}
+      #endif''');
+    } else {
+      indent.format(pigeonStreamHandlerDeclaration(preconcurrency: false));
+    }
     if (api.swiftOptions?.includeSharedClasses ?? true) {
       // TODO(tarrinneal): Prefix these classes to avoid name collisions.
       indent.format('''

@@ -302,16 +302,16 @@ class MessagesPigeonCodec: FlutterStandardMessageCodec, @unchecked Sendable {
 
 /// Generated protocol from Pigeon that represents a handler of messages from Flutter.
 protocol ExampleHostApi {
-  func getHostLanguage() throws -> String
-  func add(_ a: Int64, to b: Int64) throws -> Int64
-  func sendMessage(message: MessageData) async throws -> Bool
+  @MainActor func getHostLanguage() throws -> String
+  @MainActor func add(_ a: Int64, to b: Int64) throws -> Int64
+  @MainActor func sendMessage(message: MessageData) async throws -> Bool
 }
 
 /// Generated setup class from Pigeon to handle messages through the `binaryMessenger`.
 class ExampleHostApiSetup {
   static var codec: FlutterStandardMessageCodec { MessagesPigeonCodec.shared }
   /// Sets up an instance of `ExampleHostApi` to handle messages through the `binaryMessenger`.
-  static func setUp(
+  @MainActor static func setUp(
     binaryMessenger: FlutterBinaryMessenger, api: ExampleHostApi?, messageChannelSuffix: String = ""
   ) {
     let channelSuffix = messageChannelSuffix.count > 0 ? ".\(messageChannelSuffix)" : ""
@@ -320,7 +320,7 @@ class ExampleHostApiSetup {
         "dev.flutter.pigeon.pigeon_example_package.ExampleHostApi.getHostLanguage\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      func handler(_: Any?, reply: @escaping FlutterReply) {
+      @MainActor func handler(_: Any?, reply: @escaping @Sendable (Any?) -> Void) {
         do {
           let result = try api.getHostLanguage()
           reply(wrapResult(result))
@@ -336,7 +336,7 @@ class ExampleHostApiSetup {
       name: "dev.flutter.pigeon.pigeon_example_package.ExampleHostApi.add\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      func handler(message: Any?, reply: @escaping FlutterReply) {
+      @MainActor func handler(message: Any?, reply: @escaping @Sendable (Any?) -> Void) {
         let args = message as! [Any?]
         let aArg = args[0] as! Int64
         let bArg = args[1] as! Int64
@@ -355,7 +355,7 @@ class ExampleHostApiSetup {
       name: "dev.flutter.pigeon.pigeon_example_package.ExampleHostApi.sendMessage\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      func handler(message: Any?, reply: @escaping FlutterReply) {
+      @MainActor func handler(message: Any?, reply: @escaping @Sendable (Any?) -> Void) {
         let args = message as! [Any?]
         let messageArg = args[0] as! MessageData
         Task { @MainActor in
@@ -394,24 +394,27 @@ class MessageFlutterApi: MessageFlutterApiProtocol {
         "dev.flutter.pigeon.pigeon_example_package.MessageFlutterApi.flutterMethod\(messageChannelSuffix)"
       let channel = FlutterBasicMessageChannel(
         name: channelName, binaryMessenger: binaryMessenger, codec: codec)
-      channel.sendMessage([aStringArg] as [Any?]) { response in
-        guard let listResponse = response as? [Any?] else {
-          continuation.resume(throwing: createConnectionError(withChannelName: channelName))
-          return
-        }
-        if listResponse.count > 1 {
-          let code: String = listResponse[0] as! String
-          let message: String? = nilOrValue(listResponse[1])
-          let details: String? = nilOrValue(listResponse[2])
-          continuation.resume(throwing: PigeonError(code: code, message: message, details: details))
-        } else if listResponse[0] == nil || listResponse[0] is NSNull {
-          continuation.resume(
-            throwing: PigeonError(
-              code: "null-error",
-              message: "Flutter api returned null value for non-null return value.", details: ""))
-        } else {
-          let result = listResponse[0] as! String
-          continuation.resume(returning: result)
+      channel.sendMessage([aStringArg] as [Any?]) { (response: any Sendable) in
+        MainActor.assumeIsolated {
+          guard let listResponse = response as? [Any?] else {
+            continuation.resume(throwing: createConnectionError(withChannelName: channelName))
+            return
+          }
+          if listResponse.count > 1 {
+            let code: String = listResponse[0] as! String
+            let message: String? = nilOrValue(listResponse[1])
+            let details: String? = nilOrValue(listResponse[2])
+            continuation.resume(
+              throwing: PigeonError(code: code, message: message, details: details))
+          } else if listResponse[0] == nil || listResponse[0] is NSNull {
+            continuation.resume(
+              throwing: PigeonError(
+                code: "null-error",
+                message: "Flutter api returned null value for non-null return value.", details: ""))
+          } else {
+            let result = listResponse[0] as! String
+            continuation.resume(returning: result)
+          }
         }
       }
     }

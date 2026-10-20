@@ -774,7 +774,7 @@ void main() {
     expect(
       code,
       contains(
-        'func doSomething(arg: Input, completion: @escaping (Result<Output, Error>) -> Void)',
+        'func doSomething(arg: Input, completion: @escaping @Sendable (Result<Output, Error>) -> Void)',
       ),
     );
     expect(code, contains('api.doSomething(arg: argArg) { result in'));
@@ -810,7 +810,7 @@ void main() {
     );
 
     final sink = StringBuffer();
-    const swiftOptions = InternalSwiftOptions(swiftOut: '', strictConcurrency: true);
+    const swiftOptions = InternalSwiftOptions(swiftOut: '');
     const generator = SwiftGenerator();
     generator.generate(swiftOptions, root, sink, dartPackageName: DEFAULT_PACKAGE_NAME);
     final code = sink.toString();
@@ -852,7 +852,7 @@ void main() {
     );
 
     final sink = StringBuffer();
-    const swiftOptions = InternalSwiftOptions(swiftOut: '', strictConcurrency: true);
+    const swiftOptions = InternalSwiftOptions(swiftOut: '');
     const generator = SwiftGenerator();
     generator.generate(swiftOptions, root, sink, dartPackageName: DEFAULT_PACKAGE_NAME);
     final code = sink.toString();
@@ -923,46 +923,6 @@ void main() {
     expect(code, contains('class Api'));
     expect(code, matches(r'@MainActor func doSomething.*Input.*async throws -> Output'));
     expect(code, isNot(contains('if (')));
-  });
-
-  test('flutter api methods use @MainActor for async but not callback', () {
-    final root = Root(
-      apis: <Api>[
-        AstFlutterApi(
-          name: 'Api',
-          methods: <Method>[
-            Method(
-              name: 'asyncMethod',
-              location: ApiLocation.flutter,
-              parameters: <Parameter>[],
-              returnType: const TypeDeclaration.voidDeclaration(),
-              isAsynchronous: true,
-            ),
-            Method(
-              name: 'callbackMethod',
-              location: ApiLocation.flutter,
-              parameters: <Parameter>[],
-              returnType: const TypeDeclaration.voidDeclaration(),
-              isAsynchronous: true,
-              isAsynchronousCallback: true,
-            ),
-          ],
-        ),
-      ],
-      classes: <Class>[],
-      enums: <Enum>[],
-    );
-    final sink = StringBuffer();
-    const swiftOptions = InternalSwiftOptions(swiftOut: '');
-    const generator = SwiftGenerator();
-    generator.generate(swiftOptions, root, sink, dartPackageName: DEFAULT_PACKAGE_NAME);
-    final code = sink.toString();
-    expect(code, contains('@MainActor func asyncMethod() async throws'));
-    expect(
-      code,
-      contains('func callbackMethod(completion: @escaping (Result<Void, PigeonError>) -> Void)'),
-    );
-    expect(code, isNot(contains('@MainActor func callbackMethod')));
   });
 
   test('gen one enum class', () {
@@ -1278,7 +1238,10 @@ void main() {
     expect(code, contains('let result = listResponse[0] as! Int64'));
     expect(code, contains('continuation.resume(returning: result)'));
     expect(code, contains('func add(x xArg: Int64, y yArg: Int64) async throws -> Int64'));
-    expect(code, contains('channel.sendMessage([xArg, yArg] as [Any?]) { response in'));
+    expect(
+      code,
+      contains('channel.sendMessage([xArg, yArg] as [Any?]) { (response: any Sendable) in'),
+    );
   });
 
   test('non-null return from flutter api treats NSNull as null', () {
@@ -1846,37 +1809,37 @@ void main() {
   });
 
   group('SwiftOptions strictConcurrency', () {
-    test('defaults to false', () {
+    test('defaults to true', () {
       const options = SwiftOptions();
-      expect(options.strictConcurrency, isFalse);
+      expect(options.strictConcurrency, isTrue);
 
       const internalOptions = InternalSwiftOptions(swiftOut: 'path.swift');
-      expect(internalOptions.strictConcurrency, isFalse);
+      expect(internalOptions.strictConcurrency, isTrue);
     });
 
     test('round trips through toMap and fromList', () {
-      const options = SwiftOptions(strictConcurrency: true);
+      const options = SwiftOptions(strictConcurrency: false);
       final Map<String, Object> map = options.toMap();
-      expect(map['strictConcurrency'], isTrue);
+      expect(map['strictConcurrency'], isFalse);
 
       final SwiftOptions fromMap = SwiftOptions.fromList(map);
-      expect(fromMap.strictConcurrency, isTrue);
+      expect(fromMap.strictConcurrency, isFalse);
     });
 
     test('merges correctly', () {
       const options1 = SwiftOptions();
-      const options2 = SwiftOptions(strictConcurrency: true);
+      const options2 = SwiftOptions(strictConcurrency: false);
       final SwiftOptions merged = options1.merge(options2);
-      expect(merged.strictConcurrency, isTrue);
+      expect(merged.strictConcurrency, isFalse);
     });
 
     test('InternalSwiftOptions.fromSwiftOptions propagates strictConcurrency', () {
-      const options = SwiftOptions(strictConcurrency: true);
+      const options = SwiftOptions(strictConcurrency: false);
       final internalOptions = InternalSwiftOptions.fromSwiftOptions(
         options,
         swiftOut: 'path.swift',
       );
-      expect(internalOptions.strictConcurrency, isTrue);
+      expect(internalOptions.strictConcurrency, isFalse);
     });
 
     test('adds @MainActor to serial host API methods', () {
@@ -1898,25 +1861,16 @@ void main() {
         enums: <Enum>[],
       );
 
-      final sinkDisabled = StringBuffer();
+      final sink = StringBuffer();
       const generator = SwiftGenerator();
       generator.generate(
         const InternalSwiftOptions(swiftOut: ''),
         root,
-        sinkDisabled,
+        sink,
         dartPackageName: DEFAULT_PACKAGE_NAME,
       );
 
-      final sinkEnabled = StringBuffer();
-      generator.generate(
-        const InternalSwiftOptions(swiftOut: '', strictConcurrency: true),
-        root,
-        sinkEnabled,
-        dartPackageName: DEFAULT_PACKAGE_NAME,
-      );
-
-      expect(sinkDisabled.toString(), contains('  func doWork() throws\n'));
-      expect(sinkEnabled.toString(), contains('  @MainActor func doWork() throws\n'));
+      expect(sink.toString(), contains('  @MainActor func doWork() throws\n'));
     });
 
     test('emits (response: any Sendable) on Flutter API sendMessage with strictConcurrency', () {
@@ -1943,29 +1897,17 @@ void main() {
         enums: <Enum>[],
       );
 
-      final sinkDisabled = StringBuffer();
+      final sink = StringBuffer();
       const generator = SwiftGenerator();
       generator.generate(
         const InternalSwiftOptions(swiftOut: ''),
         root,
-        sinkDisabled,
-        dartPackageName: DEFAULT_PACKAGE_NAME,
-      );
-
-      final sinkEnabled = StringBuffer();
-      generator.generate(
-        const InternalSwiftOptions(swiftOut: '', strictConcurrency: true),
-        root,
-        sinkEnabled,
+        sink,
         dartPackageName: DEFAULT_PACKAGE_NAME,
       );
 
       expect(
-        sinkDisabled.toString(),
-        contains('channel.sendMessage([argArg] as [Any?]) { response in'),
-      );
-      expect(
-        sinkEnabled.toString(),
+        sink.toString(),
         contains('channel.sendMessage([argArg] as [Any?]) { (response: any Sendable) in'),
       );
     });
@@ -1994,35 +1936,63 @@ void main() {
         enums: <Enum>[],
       );
 
-      final sinkDisabled = StringBuffer();
+      final sink = StringBuffer();
       const generator = SwiftGenerator();
       generator.generate(
         const InternalSwiftOptions(swiftOut: ''),
         root,
-        sinkDisabled,
-        dartPackageName: DEFAULT_PACKAGE_NAME,
-      );
-
-      final sinkEnabled = StringBuffer();
-      generator.generate(
-        const InternalSwiftOptions(swiftOut: '', strictConcurrency: true),
-        root,
-        sinkEnabled,
+        sink,
         dartPackageName: DEFAULT_PACKAGE_NAME,
       );
 
       expect(
-        sinkDisabled.toString(),
-        contains('func handler(message: Any?, reply: @escaping FlutterReply) {'),
-      );
-      expect(sinkDisabled.toString(), contains('doWorkChannel.setMessageHandler(handler)'));
-      expect(
-        sinkEnabled.toString(),
+        sink.toString(),
         contains(
           '@MainActor func handler(message: Any?, reply: @escaping @Sendable (Any?) -> Void) {',
         ),
       );
-      expect(sinkEnabled.toString(), contains('doWorkChannel.setMessageHandler(handler)'));
+      expect(sink.toString(), contains('doWorkChannel.setMessageHandler(handler)'));
+    });
+
+    test('guards @preconcurrency FlutterStreamHandler conformance with #if compiler(>=6.0)', () {
+      final root = Root(
+        apis: <Api>[
+          AstEventChannelApi(
+            name: 'EventApi',
+            methods: <Method>[
+              Method(
+                name: 'streamInts',
+                location: ApiLocation.host,
+                returnType: const TypeDeclaration(baseName: 'int', isNullable: false),
+                parameters: <Parameter>[],
+              ),
+            ],
+          ),
+        ],
+        classes: <Class>[],
+        enums: <Enum>[],
+      );
+
+      final sink = StringBuffer();
+      const generator = SwiftGenerator();
+      generator.generate(
+        const InternalSwiftOptions(swiftOut: ''),
+        root,
+        sink,
+        dartPackageName: DEFAULT_PACKAGE_NAME,
+      );
+
+      expect(sink.toString(), contains('#if compiler(>=6.0)'));
+      expect(
+        sink.toString(),
+        contains(
+          'private class PigeonStreamHandler<ReturnType>: NSObject, @preconcurrency FlutterStreamHandler',
+        ),
+      );
+      expect(
+        sink.toString(),
+        contains('private class PigeonStreamHandler<ReturnType>: NSObject, FlutterStreamHandler'),
+      );
     });
   });
 

@@ -195,14 +195,10 @@ Future<void> main(List<String> args) async {
     // not supported by macOS).
     // iOSObjCIntegrationTests,
     // iOSSwiftIntegrationTests,
-    // iOSSwiftStrictConcurrencyIntegrationTests,
     iOSSwiftUnitTests,
-    iOSSwiftStrictConcurrencyUnitTests,
     macOSObjCIntegrationTests,
     macOSSwiftUnitTests,
     macOSSwiftIntegrationTests,
-    macOSSwiftStrictConcurrencyUnitTests,
-    macOSSwiftStrictConcurrencyIntegrationTests,
   ];
   // Run Windows tests on Windows, since that's the only place they can run.
   const windowsHostTests = <String>[windowsUnitTests, windowsIntegrationTests];
@@ -216,7 +212,6 @@ Future<void> main(List<String> args) async {
       // See comments in macOSHostTests:
       iOSObjCIntegrationTests,
       iOSSwiftIntegrationTests,
-      iOSSwiftStrictConcurrencyIntegrationTests,
       // These are Dart unit tests, which are already run by the normal
       // test-dart repo tools command.
       dartUnitTests,

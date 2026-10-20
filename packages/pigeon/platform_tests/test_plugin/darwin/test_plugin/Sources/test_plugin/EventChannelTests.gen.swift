@@ -831,34 +831,63 @@ class EventChannelTestsPigeonCodec: FlutterStandardMessageCodec, @unchecked Send
 let eventChannelTestsPigeonMethodCodec = FlutterStandardMethodCodec(
   readerWriter: EventChannelTestsPigeonCodecReaderWriter())
 
-private class PigeonStreamHandler<ReturnType>: NSObject, @preconcurrency FlutterStreamHandler {
-  private let wrapper: PigeonEventChannelWrapper<ReturnType>
-  private var pigeonSink: PigeonEventSink<ReturnType>? = nil
+#if compiler(>=6.0)
+  @MainActor
+  private class PigeonStreamHandler<ReturnType>: NSObject, @preconcurrency FlutterStreamHandler {
+    private let wrapper: PigeonEventChannelWrapper<ReturnType>
+    private var pigeonSink: PigeonEventSink<ReturnType>? = nil
 
-  init(wrapper: PigeonEventChannelWrapper<ReturnType>) {
-    self.wrapper = wrapper
+    init(wrapper: PigeonEventChannelWrapper<ReturnType>) {
+      self.wrapper = wrapper
+    }
+
+    func onListen(withArguments arguments: Any?, eventSink events: @escaping FlutterEventSink)
+      -> FlutterError?
+    {
+      pigeonSink = PigeonEventSink<ReturnType>(events)
+      wrapper.onListen(withArguments: arguments, sink: pigeonSink!)
+      return nil
+    }
+
+    func onCancel(withArguments arguments: Any?) -> FlutterError? {
+      pigeonSink = nil
+      wrapper.onCancel(withArguments: arguments)
+      return nil
+    }
   }
+#else
+  @MainActor
+  private class PigeonStreamHandler<ReturnType>: NSObject, FlutterStreamHandler {
+    private let wrapper: PigeonEventChannelWrapper<ReturnType>
+    private var pigeonSink: PigeonEventSink<ReturnType>? = nil
 
-  func onListen(withArguments arguments: Any?, eventSink events: @escaping FlutterEventSink)
-    -> FlutterError?
-  {
-    pigeonSink = PigeonEventSink<ReturnType>(events)
-    wrapper.onListen(withArguments: arguments, sink: pigeonSink!)
-    return nil
+    init(wrapper: PigeonEventChannelWrapper<ReturnType>) {
+      self.wrapper = wrapper
+    }
+
+    func onListen(withArguments arguments: Any?, eventSink events: @escaping FlutterEventSink)
+      -> FlutterError?
+    {
+      pigeonSink = PigeonEventSink<ReturnType>(events)
+      wrapper.onListen(withArguments: arguments, sink: pigeonSink!)
+      return nil
+    }
+
+    func onCancel(withArguments arguments: Any?) -> FlutterError? {
+      pigeonSink = nil
+      wrapper.onCancel(withArguments: arguments)
+      return nil
+    }
   }
+#endif
 
-  func onCancel(withArguments arguments: Any?) -> FlutterError? {
-    pigeonSink = nil
-    wrapper.onCancel(withArguments: arguments)
-    return nil
-  }
-}
-
+@MainActor
 class PigeonEventChannelWrapper<ReturnType> {
   func onListen(withArguments arguments: Any?, sink: PigeonEventSink<ReturnType>) {}
   func onCancel(withArguments arguments: Any?) {}
 }
 
+@MainActor
 class PigeonEventSink<ReturnType> {
   private let sink: FlutterEventSink
 
@@ -880,6 +909,7 @@ class PigeonEventSink<ReturnType> {
 
 }
 
+@MainActor
 class StreamIntsStreamHandler: PigeonEventChannelWrapper<Int64> {
   static func register(
     with messenger: FlutterBinaryMessenger,
@@ -897,6 +927,7 @@ class StreamIntsStreamHandler: PigeonEventChannelWrapper<Int64> {
   }
 }
 
+@MainActor
 class StreamEventsStreamHandler: PigeonEventChannelWrapper<PlatformEvent> {
   static func register(
     with messenger: FlutterBinaryMessenger,
@@ -914,6 +945,7 @@ class StreamEventsStreamHandler: PigeonEventChannelWrapper<PlatformEvent> {
   }
 }
 
+@MainActor
 class StreamConsistentNumbersStreamHandler: PigeonEventChannelWrapper<Int64> {
   static func register(
     with messenger: FlutterBinaryMessenger,

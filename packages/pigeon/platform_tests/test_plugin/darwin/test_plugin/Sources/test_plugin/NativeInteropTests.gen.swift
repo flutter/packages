@@ -2032,7 +2032,7 @@ class _PigeonFfiCodec {
 }
 
 class NativeInteropHostIntegrationCoreApiInstanceTracker {
-  static var instancesOfNativeInteropHostIntegrationCoreApi = [
+  nonisolated(unsafe) static var instancesOfNativeInteropHostIntegrationCoreApi = [
     String: NativeInteropHostIntegrationCoreApiSetup?
   ]()
 }
@@ -7133,7 +7133,7 @@ protocol NativeInteropHostIntegrationCoreApi {
 }
 
 @objc class NativeInteropFlutterIntegrationCoreApiRegistrar: NSObject {
-  static var registeredNativeInteropFlutterIntegrationCoreApi = [
+  nonisolated(unsafe) static var registeredNativeInteropFlutterIntegrationCoreApi = [
     String: NativeInteropFlutterIntegrationCoreApi
   ]()
 
