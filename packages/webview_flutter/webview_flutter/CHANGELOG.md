@@ -1,3 +1,11 @@
+## NEXT
+
+* Updates minimum supported SDK version to Flutter 3.41/Dart 3.11.
+* Updates README to reflect that the latest version of `webview_flutter_wkwebview`
+  requires iOS 15 and macOS 12.
+  * Applications built with older versions of Flutter will continue to use
+    compatible versions of the platform implementation.
+
 ## 4.14.1
 
 * Adds documentation for `NavigationDelegate` callback parameters.

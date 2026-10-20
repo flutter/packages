@@ -67,14 +67,7 @@ class WebViewConfigurationProxyAPIDelegate: PigeonApiDelegateWKWebViewConfigurat
   func setLimitsNavigationsToAppBoundDomains(
     pigeonApi: PigeonApiWKWebViewConfiguration, pigeonInstance: WKWebViewConfiguration, limit: Bool
   ) throws {
-    if #available(iOS 14.0, macOS 11.0, *) {
-      pigeonInstance.limitsNavigationsToAppBoundDomains = limit
-    } else {
-      throw (pigeonApi.pigeonRegistrar as! ProxyAPIRegistrar)
-        .createUnsupportedVersionError(
-          method: "WKWebViewConfiguration.limitsNavigationsToAppBoundDomains",
-          versionRequirements: "iOS 14.0, macOS 11.0")
-    }
+    pigeonInstance.limitsNavigationsToAppBoundDomains = limit
   }
 
   func setMediaTypesRequiringUserActionForPlayback(

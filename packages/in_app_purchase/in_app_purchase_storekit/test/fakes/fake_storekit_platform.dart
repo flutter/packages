@@ -327,6 +327,7 @@ class FakeStoreKit2Platform implements InAppPurchase2API {
   SK2ProductPurchaseOptionsMessage? lastPurchaseOptions;
   Map<String, Set<String>> eligibleWinBackOffers = <String, Set<String>>{};
   Map<String, bool> eligibleIntroductoryOffers = <String, bool>{};
+  int showManageSubscriptionsCallCount = 0;
 
   /// Simulates purchase result for testing non-success scenarios.
   /// Set to userCancelled, pending, or unverified to test those cases.
@@ -350,6 +351,7 @@ class FakeStoreKit2Platform implements InAppPurchase2API {
     eligibleWinBackOffers = <String, Set<String>>{};
     eligibleIntroductoryOffers = <String, bool>{};
     simulatedPurchaseResult = SK2ProductPurchaseResultMessage.success;
+    showManageSubscriptionsCallCount = 0;
     transactionsList = <SK2TransactionMessage>[
       SK2TransactionMessage(
         id: 123,
@@ -557,6 +559,11 @@ class FakeStoreKit2Platform implements InAppPurchase2API {
 
   @override
   Future<void> presentOfferCodeRedeemSheet() async {}
+
+  @override
+  Future<void> showManageSubscriptions() async {
+    showManageSubscriptionsCallCount++;
+  }
 }
 
 SK2TransactionMessage createPendingTransaction(String id, {int quantity = 1}) {

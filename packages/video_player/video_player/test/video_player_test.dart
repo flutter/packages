@@ -672,6 +672,24 @@ void main() {
     });
 
     group('seekTo', () {
+      test('ignores a pending seek result after disposal', () async {
+        final controller = VideoPlayerController.networkUrl(_localhostUri);
+        addTearDown(controller.dispose);
+        await controller.initialize();
+
+        final seekCompleter = Completer<void>();
+        fakeVideoPlayerPlatform.seekCompleter = seekCompleter;
+        final VideoPlayerValue valueBeforeSeek = controller.value;
+        final Future<void> pendingSeek = controller.seekTo(const Duration(milliseconds: 500));
+        expect(fakeVideoPlayerPlatform.calls.last, 'seekTo');
+
+        await controller.dispose();
+        seekCompleter.complete();
+        await pendingSeek;
+
+        expect(controller.value, valueBeforeSeek);
+      });
+
       test('works', () async {
         final controller = VideoPlayerController.networkUrl(_localhostUri);
         addTearDown(controller.dispose);
@@ -1454,6 +1472,28 @@ void main() {
     });
 
     group('Platform callbacks', () {
+      testWidgets('ignores a pending completion seek result after disposal', (
+        WidgetTester tester,
+      ) async {
+        final controller = VideoPlayerController.networkUrl(_localhostUri);
+        addTearDown(controller.dispose);
+        await controller.initialize();
+
+        final seekCompleter = Completer<void>();
+        fakeVideoPlayerPlatform.seekCompleter = seekCompleter;
+        fakeVideoPlayerPlatform.streams[controller.playerId]!.add(
+          VideoEvent(eventType: VideoEventType.completed),
+        );
+        await tester.pump();
+        expect(fakeVideoPlayerPlatform.calls.last, 'seekTo');
+        final VideoPlayerValue valueBeforeDisposal = controller.value;
+
+        await tester.runAsync(controller.dispose);
+        seekCompleter.complete();
+        await tester.pump();
+        expect(controller.value, valueBeforeDisposal);
+      });
+
       testWidgets('playing completed', (WidgetTester tester) async {
         final controller = VideoPlayerController.networkUrl(_localhostUri);
 
@@ -2038,6 +2078,7 @@ void main() {
 
 class FakeVideoPlayerPlatform extends VideoPlayerPlatform {
   Completer<bool> initialized = Completer<bool>();
+  Completer<void>? seekCompleter;
   List<String> calls = <String>[];
   List<VideoCreationOptions> creationOptions = <VideoCreationOptions>[];
   List<DataSource> dataSources = <DataSource>[];
@@ -2127,6 +2168,7 @@ class FakeVideoPlayerPlatform extends VideoPlayerPlatform {
   @override
   Future<void> seekTo(int playerId, Duration position) async {
     calls.add('seekTo');
+    await seekCompleter?.future;
     _positions[playerId] = position;
   }
 

@@ -5,10 +5,6 @@
 import Flutter
 import GoogleMaps
 
-#if canImport(google_maps_flutter_ios_sdk10_objc)
-  import google_maps_flutter_ios_sdk10_objc
-#endif
-
 class GoogleMapFactory: NSObject, FlutterPlatformViewFactory {
   weak var registrar: FlutterPluginRegistrar?
   static var sharedMapServices = GMSServices.sharedServices()
@@ -25,10 +21,10 @@ class GoogleMapFactory: NSObject, FlutterPlatformViewFactory {
 
     return GoogleMapController(
       frame: frame, viewIdentifier: viewId,
-      creationParameters: args as! FGMPlatformMapViewCreationParams, registrar: registrar!)
+      creationParameters: args as! PlatformMapViewCreationParams, registrar: registrar!)
   }
 
   func createArgsCodec() -> any FlutterMessageCodec & NSObjectProtocol {
-    return FGMGetGoogleMapsFlutterPigeonMessagesCodec()
+    return MessagesPigeonCodec.shared
   }
 }

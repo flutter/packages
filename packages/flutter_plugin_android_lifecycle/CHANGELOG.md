@@ -1,3 +1,7 @@
+## NEXT
+
+* Updates minimum supported SDK version to Flutter 3.41/Dart 3.11.
+
 ## 2.0.35
 
 * Bumps the androidx group across 10 directories with 1 update.

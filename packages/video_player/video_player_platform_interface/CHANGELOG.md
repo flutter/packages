@@ -1,6 +1,7 @@
 ## 6.10.0
 
 * Adds `VideoPlayerAndroidOptions` and forwards Android-specific creation options through `VideoPlayerOptions`.
+* Updates minimum supported SDK version to Flutter 3.41/Dart 3.11.
 
 ## 6.9.0
 

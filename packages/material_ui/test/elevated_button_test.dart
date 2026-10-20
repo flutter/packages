@@ -330,45 +330,41 @@ void main() {
     expect(find.text('label'), findsOneWidget);
   });
 
-  testWidgets(
-    'Default ElevatedButton meets a11y contrast guidelines',
-    (WidgetTester tester) async {
-      final focusNode = FocusNode();
+  testWidgets('Default ElevatedButton meets a11y contrast guidelines', (WidgetTester tester) async {
+    final focusNode = FocusNode();
 
-      await tester.pumpWidget(
-        MaterialApp(
-          theme: ThemeData.from(colorScheme: const ColorScheme.light()),
-          home: Scaffold(
-            body: Center(
-              child: ElevatedButton(
-                onPressed: () {},
-                focusNode: focusNode,
-                child: const Text('ElevatedButton'),
-              ),
+    await tester.pumpWidget(
+      MaterialApp(
+        theme: ThemeData.from(colorScheme: const ColorScheme.light()),
+        home: Scaffold(
+          body: Center(
+            child: ElevatedButton(
+              onPressed: () {},
+              focusNode: focusNode,
+              child: const Text('ElevatedButton'),
             ),
           ),
         ),
-      );
+      ),
+    );
 
-      // Default, not disabled.
-      await expectLater(tester, meetsGuideline(textContrastGuideline));
+    // Default, not disabled.
+    await expectLater(tester, meetsGuideline(textContrastGuideline));
 
-      // Focused.
-      focusNode.requestFocus();
-      await tester.pumpAndSettle();
-      await expectLater(tester, meetsGuideline(textContrastGuideline));
+    // Focused.
+    focusNode.requestFocus();
+    await tester.pumpAndSettle();
+    await expectLater(tester, meetsGuideline(textContrastGuideline));
 
-      // Hovered.
-      final Offset center = tester.getCenter(find.byType(ElevatedButton));
-      final TestGesture gesture = await tester.createGesture(kind: PointerDeviceKind.mouse);
-      await gesture.addPointer();
-      await gesture.moveTo(center);
-      await tester.pumpAndSettle();
-      await expectLater(tester, meetsGuideline(textContrastGuideline));
-      focusNode.dispose();
-    },
-    skip: isBrowser, // https://github.com/flutter/flutter/issues/44115
-  );
+    // Hovered.
+    final Offset center = tester.getCenter(find.byType(ElevatedButton));
+    final TestGesture gesture = await tester.createGesture(kind: PointerDeviceKind.mouse);
+    await gesture.addPointer();
+    await gesture.moveTo(center);
+    await tester.pumpAndSettle();
+    await expectLater(tester, meetsGuideline(textContrastGuideline));
+    focusNode.dispose();
+  });
 
   testWidgets('ElevatedButton default overlayColor and elevation resolve pressed state', (
     WidgetTester tester,
@@ -1629,30 +1625,33 @@ void main() {
     }
   });
 
-  testWidgets('ElevatedButton uses InkSparkle only for Android non-web when useMaterial3 is true', (
-    WidgetTester tester,
-  ) async {
-    final theme = ThemeData();
+  testWidgets(
+    'ElevatedButton uses InkSparkle only for Android non-web when useMaterial3 is true',
+    (WidgetTester tester) async {
+      final theme = ThemeData();
 
-    await tester.pumpWidget(
-      MaterialApp(
-        theme: theme,
-        home: Center(
-          child: ElevatedButton(onPressed: () {}, child: const Text('button')),
+      await tester.pumpWidget(
+        MaterialApp(
+          theme: theme,
+          home: Center(
+            child: ElevatedButton(onPressed: () {}, child: const Text('button')),
+          ),
         ),
-      ),
-    );
+      );
 
-    final InkWell buttonInkWell = tester.widget<InkWell>(
-      find.descendant(of: find.byType(ElevatedButton), matching: find.byType(InkWell)),
-    );
+      final InkWell buttonInkWell = tester.widget<InkWell>(
+        find.descendant(of: find.byType(ElevatedButton), matching: find.byType(InkWell)),
+      );
 
-    if (debugDefaultTargetPlatformOverride! == TargetPlatform.android && !kIsWeb) {
-      expect(buttonInkWell.splashFactory, equals(InkSparkle.splashFactory));
-    } else {
-      expect(buttonInkWell.splashFactory, equals(InkRipple.splashFactory));
-    }
-  }, variant: TargetPlatformVariant.all());
+      if (debugDefaultTargetPlatformOverride! == TargetPlatform.android && !kIsWeb) {
+        expect(buttonInkWell.splashFactory, equals(InkSparkle.splashFactory));
+      } else {
+        expect(buttonInkWell.splashFactory, equals(InkRipple.splashFactory));
+      }
+    },
+    variant: TargetPlatformVariant.all(),
+    tags: 'reduced-web-test-set',
+  );
 
   testWidgets('ElevatedButton uses InkRipple when useMaterial3 is false', (
     WidgetTester tester,
@@ -1892,7 +1891,7 @@ void main() {
       RendererBinding.instance.mouseTracker.debugDeviceActiveCursor(1),
       SystemMouseCursors.basic,
     );
-  });
+  }, tags: 'reduced-web-test-set');
 
   testWidgets('ElevatedButton in SelectionArea changes mouse cursor when hovered', (
     WidgetTester tester,

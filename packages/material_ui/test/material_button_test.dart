@@ -483,7 +483,7 @@ void main() {
       RendererBinding.instance.mouseTracker.debugDeviceActiveCursor(1),
       SystemMouseCursors.basic,
     );
-  });
+  }, tags: 'reduced-web-test-set');
 
   // This test is very similar to the '...explicit splashColor and highlightColor' test
   // in icon_button_test.dart. If you change this one, you may want to also change that one.
@@ -953,5 +953,18 @@ void main() {
 
     final RawMaterialButton rawMaterialButton = tester.widget(rawMaterialButtonFinder);
     expect(rawMaterialButton.disabledElevation, equals(0.0));
+  });
+
+  testWidgets('MaterialButton does not crash at zero area', (WidgetTester tester) async {
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Center(
+          child: SizedBox.shrink(
+            child: MaterialButton(onPressed: () {}, child: const Text('X')),
+          ),
+        ),
+      ),
+    );
+    expect(tester.getSize(find.byType(MaterialButton)), Size.zero);
   });
 }
