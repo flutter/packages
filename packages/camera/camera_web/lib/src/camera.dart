@@ -15,7 +15,6 @@ import 'package:web/web.dart';
 import 'camera_service.dart';
 import 'pkg_web_tweaks.dart';
 import 'types/types.dart';
-import 'types/video_frame_buffer_holder.dart';
 
 String _getViewType(int cameraId) => 'plugins.flutter.io/camera_$cameraId';
 
@@ -730,7 +729,8 @@ class Camera {
     required void Function(Object) onError,
   }) async {
     web.ReadableStreamDefaultReader? reader;
-    VideoFrameBufferHolder? holder;
+    final copyOptions = web.VideoFrameCopyToOptions(format: 'RGBA');
+
     bool isNonFatal(Object e) =>
         e is CameraWebException &&
         [
@@ -743,7 +743,6 @@ class Camera {
       reader = _cameraService.getMediaStreamTrackReader(
         _cameraService.getMediaStreamVideoTrack(stream, cameraId: textureId),
       );
-      holder = VideoFrameBufferHolder();
 
       while (shouldContinue()) {
         final web.VideoFrame videoFrame = await _cameraService.readVideoTrack(
@@ -752,12 +751,11 @@ class Camera {
         );
 
         try {
-          final int requiredSize = videoFrame.allocationSize(holder.copyOptions);
-          holder.ensureBufferSize(requiredSize);
+          final destination = JSUint8Array.withLength(videoFrame.allocationSize(copyOptions));
           final int stride = await _cameraService.copyVideoFrameToBufferAndGetStride(
             videoFrame,
-            destination: holder.reusableJSBuffer!,
-            copyOptions: holder.copyOptions,
+            destination: destination,
+            copyOptions: copyOptions,
             cameraId: textureId,
           );
 
@@ -768,7 +766,7 @@ class Camera {
             width: videoFrame.visibleRect!.width.toInt(),
             height: videoFrame.visibleRect!.height.toInt(),
             bytesPerRow: stride,
-            bytes: holder.reusableDartView!,
+            bytes: destination.toDart,
           );
 
           onImageAvailable(imageData);
@@ -788,7 +786,6 @@ class Camera {
     } finally {
       onClose();
       reader?.releaseLock();
-      holder?.dispose();
     }
   }
 }
