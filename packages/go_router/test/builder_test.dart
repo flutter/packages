@@ -439,71 +439,75 @@ void main() {
         WidgetTester tester,
       ) async {
         final SemanticsHandle semantics = tester.ensureSemantics();
-        final router = GoRouter(
-          routes: <RouteBase>[
-            ShellRoute(
-              builder: (BuildContext context, GoRouterState state, Widget child) => child,
-              routes: <RouteBase>[
-                GoRoute(
-                  path: '/',
-                  builder: (BuildContext context, GoRouterState state) => Scaffold(
-                    body: Column(
-                      children: <Widget>[
-                        const TextField(key: ValueKey<String>('previous-field')),
-                        Autocomplete<String>(
-                          optionsBuilder: (TextEditingValue value) =>
-                              <String>['Texas', 'Tennessee'].where(
-                                (String option) =>
-                                    option.toLowerCase().contains(value.text.toLowerCase()),
-                              ),
-                          fieldViewBuilder:
-                              (
-                                BuildContext context,
-                                TextEditingController controller,
-                                FocusNode focusNode,
-                                VoidCallback onFieldSubmitted,
-                              ) => TextField(
-                                key: const ValueKey<String>('state-field'),
-                                controller: controller,
-                                focusNode: focusNode,
-                              ),
-                        ),
-                      ],
+        // Widget tests verify semantics handles before addTearDown callbacks run.
+        try {
+          final router = GoRouter(
+            routes: <RouteBase>[
+              ShellRoute(
+                builder: (BuildContext context, GoRouterState state, Widget child) => child,
+                routes: <RouteBase>[
+                  GoRoute(
+                    path: '/',
+                    builder: (BuildContext context, GoRouterState state) => Scaffold(
+                      body: Column(
+                        children: <Widget>[
+                          const TextField(key: ValueKey<String>('previous-field')),
+                          Autocomplete<String>(
+                            optionsBuilder: (TextEditingValue value) =>
+                                <String>['Texas', 'Tennessee'].where(
+                                  (String option) =>
+                                      option.toLowerCase().contains(value.text.toLowerCase()),
+                                ),
+                            fieldViewBuilder:
+                                (
+                                  BuildContext context,
+                                  TextEditingController controller,
+                                  FocusNode focusNode,
+                                  VoidCallback onFieldSubmitted,
+                                ) => TextField(
+                                  key: const ValueKey<String>('state-field'),
+                                  controller: controller,
+                                  focusNode: focusNode,
+                                ),
+                          ),
+                        ],
+                      ),
                     ),
                   ),
-                ),
-              ],
-            ),
-          ],
-        );
-        addTearDown(router.dispose);
+                ],
+              ),
+            ],
+          );
+          addTearDown(router.dispose);
 
-        await tester.pumpWidget(MaterialApp.router(routerConfig: router));
-        await tester.pumpAndSettle();
-        final Finder stateField = find.descendant(
-          of: find.byKey(const ValueKey<String>('state-field')),
-          matching: find.byType(EditableText),
-        );
-        List<int> ancestors() => <int>[
-          for (
-            SemanticsNode? node = tester.getSemantics(stateField);
-            node != null;
-            node = node.parent
-          )
-            node.id,
-        ];
+          await tester.pumpWidget(MaterialApp.router(routerConfig: router));
+          await tester.pumpAndSettle();
+          final Finder stateField = find.descendant(
+            of: find.byKey(const ValueKey<String>('state-field')),
+            matching: find.byType(EditableText),
+          );
+          List<int> ancestors() => <int>[
+            for (
+              SemanticsNode? node = tester.getSemantics(stateField);
+              node != null;
+              node = node.parent
+            )
+              node.id,
+          ];
 
-        await tester.tap(find.byKey(const ValueKey<String>('previous-field')));
-        await tester.pumpAndSettle();
-        final List<int> before = ancestors();
+          await tester.tap(find.byKey(const ValueKey<String>('previous-field')));
+          await tester.pumpAndSettle();
+          final List<int> before = ancestors();
 
-        await tester.tap(stateField);
-        await tester.pump();
-        expect(find.text('Texas'), findsOneWidget);
-        // A new semantics parent detaches the focused web input from the DOM.
-        final List<int> after = ancestors();
-        semantics.dispose();
-        expect(after, before);
+          await tester.tap(stateField);
+          await tester.pump();
+          expect(find.text('Texas'), findsOneWidget);
+          // A new semantics parent detaches the focused web input from the DOM.
+          final List<int> after = ancestors();
+          expect(after, before);
+        } finally {
+          semantics.dispose();
+        }
       });
 
       testWidgets('Chrome painted before a ShellRoute Navigator stays in the '
