@@ -387,13 +387,13 @@ class DriveExamplesCommand extends PackageLoopingCommand {
       );
     }
 
-    final (_ChromeDriver chromedriver, int chromeDriverPort) = await _startChromeDriver();
+    final _ChromeDriver chromedriver = await _startChromeDriver();
     try {
       return await _driveTestsForDrivers(
         example,
         drivers,
         testTargets,
-        deviceFlags: <String>[...deviceFlags, '--driver-port=$chromeDriverPort'],
+        deviceFlags: <String>[...deviceFlags, '--driver-port=${await chromedriver.port}'],
         exampleName: exampleName,
       );
     } finally {
@@ -404,7 +404,7 @@ class DriveExamplesCommand extends PackageLoopingCommand {
 
   /// Starts `chromedriver --port=0` and waits for it to report the bound port
   /// on stdout.
-  Future<(_ChromeDriver, int)> _startChromeDriver() async {
+  Future<_ChromeDriver> _startChromeDriver() async {
     print('Starting chromedriver...');
     final chromedriver = _ChromeDriver(
       await processRunner.start('chromedriver', <String>['--port=0']),
@@ -412,7 +412,7 @@ class DriveExamplesCommand extends PackageLoopingCommand {
     try {
       final int port = await chromedriver.port;
       print('Started chromedriver on port $port');
-      return (chromedriver, port);
+      return chromedriver;
     } on Object {
       await chromedriver.stop();
       rethrow;
