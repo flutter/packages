@@ -1,3 +1,11 @@
+## 18.1.1
+
+- Fixes unrelated async errors started during redirects being wrapped as `GoException`.
+- Fixes `ShellRoute` page and navigator key collisions when pushing between nested shell routes.
+- Preserves and updates loaded `StatefulShellRoute` branches when the routing configuration changes, including resetting removed branch locations.
+- Preserves branch and root navigator observers when rebuilding inactive or preloaded shell branches.
+- Adds a link from `ShellRoute` to `StatefulShellRoute` for navigation with persistent branch state.
+
 ## 18.1.0
 
 - Adds `clipBehavior` to `ShellRoute` and `StatefulShellBranch`, forwarded to the nested `Navigator`.
