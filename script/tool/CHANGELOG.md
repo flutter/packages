@@ -1,6 +1,8 @@
 ## NEXT
 
 * Exempts `test_apps/` from requiring version and changelog changes.
+* Runs `chromedriver` for `drive-examples --run-chromedriver` on an
+  OS-assigned port, and waits for it to exit before starting the next example.
 
 ## 0.14.4+4
 
