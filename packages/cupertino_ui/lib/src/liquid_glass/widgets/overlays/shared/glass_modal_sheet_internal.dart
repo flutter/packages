@@ -1,3 +1,7 @@
+// Copyright 2013 The Flutter Authors
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
 part of '../glass_modal_sheet.dart';
 
 class _SheetLayout extends StatelessWidget {
@@ -859,6 +863,11 @@ class GlassModalSheetScaffold extends StatelessWidget {
   /// rubber-bands at its lowest detent instead. Forwarded to the sheet.
   final bool dismissible;
 
+  /// Whether a tap on [body] outside the sheet dismisses it, as a modal
+  /// barrier's would. Applies only in [GlassSheetMode.dismissible]; the swipe
+  /// is [dismissible]'s. Default: true.
+  final bool barrierDismissible;
+
   /// Horizontal padding specifically for the 'peek' state.
   final double? peekHorizontalMargin;
 
@@ -929,6 +938,7 @@ class GlassModalSheetScaffold extends StatelessWidget {
     this.fullStateContentSettings,
     this.detents = const {GlassSheetDetent.medium, GlassSheetDetent.large},
     this.dismissible = true,
+    this.barrierDismissible = true,
     this.peekHorizontalMargin,
     this.peekBottomMargin,
     this.peekWidth,
@@ -956,9 +966,9 @@ class GlassModalSheetScaffold extends StatelessWidget {
                   // (showDragIndicator); without it the app's own close
                   // control is the way out.
                   excludeFromSemantics: true,
-                  onTap: () {
-                    controller?.snapToState(GlassSheetState.hidden);
-                  },
+                  onTap: barrierDismissible
+                      ? () => controller?.snapToState(GlassSheetState.hidden)
+                      : null,
                   child: RepaintBoundary(child: body),
                 )
               : RepaintBoundary(child: body),

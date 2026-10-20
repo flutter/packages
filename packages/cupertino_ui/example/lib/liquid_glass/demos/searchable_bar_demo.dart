@@ -1,3 +1,7 @@
+// Copyright 2013 The Flutter Authors
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
 /// GlassSearchableBottomBar — Visual Regression & Issue Repro
 ///
 /// Exercises edge cases in isolation and provides a global playground configuration

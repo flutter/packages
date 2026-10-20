@@ -1,6 +1,6 @@
-// Copyright 2026, Sebastian Degenaar for pixel-innovations.com (liquid_glass_widgets)
-//
-// SPDX-License-Identifier: MIT
+// Copyright 2013 The Flutter Authors
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
 
 /// Tab Bar Menus Showcase (Issue #275).
 ///

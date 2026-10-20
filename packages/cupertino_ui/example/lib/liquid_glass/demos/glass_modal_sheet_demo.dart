@@ -1,3 +1,7 @@
+// Copyright 2013 The Flutter Authors
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
 /// GlassModalSheet showcase — demonstrates all sheet modes, peek geometry,
 /// smart silence, and the Apple Maps-style floating sheet experience.
 ///

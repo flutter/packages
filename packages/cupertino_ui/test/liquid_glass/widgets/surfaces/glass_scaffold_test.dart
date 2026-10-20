@@ -1,3 +1,7 @@
+// Copyright 2013 The Flutter Authors
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -51,6 +55,27 @@ void main() {
     });
 
     // ── Edge fade: top fade height calculation ──────────────────────────────
+
+    testWidgets('forwards edgeFadeAbsorbsPointers to GlassScrollEdgeEffect',
+        (tester) async {
+      await tester.pumpWidget(
+        createTestApp(
+          child: AdaptiveLiquidGlassLayer(
+            settings: defaultTestGlassSettings,
+            child: const GlassScaffold(
+              bottomEdgeFade: true,
+              edgeFadeAbsorbsPointers: true,
+              body: SizedBox.expand(),
+            ),
+          ),
+        ),
+      );
+
+      final scrollEdge = tester.widget<GlassScrollEdgeEffect>(
+        find.byType(GlassScrollEdgeEffect),
+      );
+      expect(scrollEdge.absorbPointer, isTrue);
+    });
 
     testWidgets('top fade excludes appBarHeight when no appBar is provided',
         (tester) async {
@@ -125,6 +150,7 @@ void main() {
         find.byType(GlassScrollEdgeEffect),
       );
       expect(scrollEdge.style, GlassScrollEdgeStyle.soft);
+      expect(scrollEdge.absorbPointer, isFalse);
       expect(find.byType(ProgressiveBlur), findsNothing);
     });
 

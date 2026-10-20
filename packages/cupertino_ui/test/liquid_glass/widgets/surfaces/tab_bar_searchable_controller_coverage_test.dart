@@ -1,3 +1,7 @@
+// Copyright 2013 The Flutter Authors
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
 // Coverage for SearchablePillLayout, SpringRetarget, SearchableBottomBarController.
 // All uncovered lines (60-124) are pure Dart — no widget tree needed.
 

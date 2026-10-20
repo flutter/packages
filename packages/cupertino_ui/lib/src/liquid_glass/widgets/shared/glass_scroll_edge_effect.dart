@@ -1,3 +1,7 @@
+// Copyright 2013 The Flutter Authors
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
 import 'dart:ui' as ui;
 
 import 'package:flutter/cupertino.dart';
@@ -76,6 +80,7 @@ enum GlassScrollEdgeStyle {
 /// GlassScrollEdgeEffect(
 ///   topFadeHeight: 100,
 ///   bottomFadeHeight: 80,
+///   absorbPointer: true,
 ///   child: ListView.builder(
 ///     itemBuilder: (_, i) => ListTile(title: Text('Item $i')),
 ///   ),
@@ -118,6 +123,7 @@ class GlassScrollEdgeEffect extends StatefulWidget {
     this.bottomFadeHeight = 60.0,
     this.fadeTop = true,
     this.fadeBottom = true,
+    this.absorbPointer = false,
     this.style = GlassScrollEdgeStyle.soft,
     this.maxSigma = 18.0,
     this.fadeColor,
@@ -152,6 +158,13 @@ class GlassScrollEdgeEffect extends StatefulWidget {
   ///
   /// Defaults to true.
   final bool fadeBottom;
+
+  /// Whether the fade overlays absorb pointer events instead of passing them
+  /// through to [child]. Defaults to `false`.
+  ///
+  /// When enabled, taps and gestures are blocked across the full visible fade
+  /// zones, including content that is still visible beneath the fades.
+  final bool absorbPointer;
 
   /// The edge effect style.
   ///
@@ -380,6 +393,7 @@ class _GlassScrollEdgeEffectState extends State<GlassScrollEdgeEffect> {
     required Size screenSize,
     required bool hasTexture,
   }) {
+    // Ignore the visual layer unless the opt-in absorber is enabled.
     if (widget.style == GlassScrollEdgeStyle.blur) {
       return Positioned(
         top: isTop ? 0 : null,
@@ -387,18 +401,21 @@ class _GlassScrollEdgeEffectState extends State<GlassScrollEdgeEffect> {
         left: 0,
         right: 0,
         height: height,
-        child: IgnorePointer(
-          child: ProgressiveBlur(
-            maxSigma: widget.maxSigma,
-            // ease-in quadratic falloff: keeps sigma near-zero for the first
-            // ~40% of the zone so content stays perceptually sharp until it
-            // is well inside the bar area. Default ProgressiveBlur falloff
-            // (1.2) is near-linear and makes the blur visible too early.
-            // No shader changes — uFalloff is already a uniform.
-            falloff: 2.0,
-            direction: isTop
-                ? ProgressiveBlurDirection.topToBottom
-                : ProgressiveBlurDirection.bottomToTop,
+        child: AbsorbPointer(
+          absorbing: widget.absorbPointer,
+          child: IgnorePointer(
+            child: ProgressiveBlur(
+              maxSigma: widget.maxSigma,
+              // ease-in quadratic falloff: keeps sigma near-zero for the first
+              // ~40% of the zone so content stays perceptually sharp until it
+              // is well inside the bar area. Default ProgressiveBlur falloff
+              // (1.2) is near-linear and makes the blur visible too early.
+              // No shader changes — uFalloff is already a uniform.
+              falloff: 2.0,
+              direction: isTop
+                  ? ProgressiveBlurDirection.topToBottom
+                  : ProgressiveBlurDirection.bottomToTop,
+            ),
           ),
         ),
       );
@@ -410,18 +427,21 @@ class _GlassScrollEdgeEffectState extends State<GlassScrollEdgeEffect> {
       left: 0,
       right: 0,
       height: height,
-      child: IgnorePointer(
-        child: hasTexture
-            ? CustomPaint(
-                size: Size(screenSize.width, height),
-                painter: _TextureFadePainter(
-                  image: _backgroundImage!,
-                  isTop: isTop,
-                  screenHeight: screenSize.height,
-                  style: widget.style,
-                ),
-              )
-            : _buildColorOverlay(isTop: isTop),
+      child: AbsorbPointer(
+        absorbing: widget.absorbPointer,
+        child: IgnorePointer(
+          child: hasTexture
+              ? CustomPaint(
+                  size: Size(screenSize.width, height),
+                  painter: _TextureFadePainter(
+                    image: _backgroundImage!,
+                    isTop: isTop,
+                    screenHeight: screenSize.height,
+                    style: widget.style,
+                  ),
+                )
+              : _buildColorOverlay(isTop: isTop),
+        ),
       ),
     );
   }

@@ -1,3 +1,7 @@
+// Copyright 2013 The Flutter Authors
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
 import 'package:flutter/widgets.dart';
 
 import '../overlays/glass_menu.dart';
@@ -128,10 +132,16 @@ sealed class GlassBarItem {
   ///
   /// [onTap] is optional here, unlike on [GlassBarItem.icon]: a custom view is
   /// as often a status readout as it is a button, and one that handles its own
-  /// gestures wants the cluster to stay out of the way.
+  /// gestures wants the cluster to stay out of the way. When [onTap] is
+  /// omitted (or `null`), the slot is passive — it adds no outer button
+  /// semantics, focus stop, or tap recognizer around [child], and is excluded
+  /// from the vertical strip's overflow menu. Leave [label] `null` when
+  /// [child] provides its own accessible semantics (such as a button or
+  /// tooltip); supply [label] to name a passive readout as a single semantic
+  /// node (replacing [child]'s own text semantics).
   const factory GlassBarItem.custom({
     required Widget child,
-    VoidCallback onTap,
+    VoidCallback? onTap,
     Object? id,
     String? label,
     bool enabled,
@@ -246,6 +256,10 @@ sealed class GlassBarActionItem extends GlassBarItem {
   final Object? id;
 
   /// Optional semantic label.
+  ///
+  /// On passive [GlassBarItem.custom] items, a non-empty [label] names the
+  /// slot as a single semantic node (replacing the child's own text
+  /// semantics); leave it `null` when the child provides its own semantics.
   final String? label;
 
   /// Whether the item responds to taps. Disabled items render dimmed.
@@ -286,6 +300,15 @@ sealed class GlassBarActionItem extends GlassBarItem {
         GlassBarItemAxisBehavior.automatic => this is! GlassBarCustomItem,
       };
 
+  /// Whether this item has an active tap action of its own.
+  ///
+  /// True for [GlassBarItem.icon], [GlassBarItem.menu], and
+  /// [GlassBarItem.sheet], as well as [GlassBarItem.custom] when an [onTap]
+  /// callback was supplied. False for a passive [GlassBarItem.custom], which
+  /// lets its child handle its own gestures and semantics without the cluster
+  /// wrapping it in a button.
+  bool get hasTap => this is! GlassBarCustomItem || !identical(onTap, _noOp);
+
   /// The widget rendered inside the cluster.
   Widget get content;
 }
@@ -322,14 +345,14 @@ final class GlassBarCustomItem extends GlassBarActionItem {
   /// Creates a custom item. Prefer [GlassBarItem.custom].
   const GlassBarCustomItem({
     required this.child,
-    super.onTap = GlassBarActionItem._noOp,
+    VoidCallback? onTap,
     super.id,
     super.label,
     super.enabled,
     super.background,
     super.tintColor,
     super.axisBehavior,
-  });
+  }) : super(onTap: onTap ?? GlassBarActionItem._noOp);
 
   /// The widget rendered inside the cluster, measured at its intrinsic width.
   final Widget child;

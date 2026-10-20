@@ -1,3 +1,7 @@
+// Copyright 2013 The Flutter Authors
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -238,6 +242,39 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.text('Item 1'), findsOneWidget);
+  });
+
+  testWidgets('GlassPullDownButton preserves submenu when onSelected is set',
+      (tester) async {
+    await tester.pumpWidget(
+      CupertinoApp(
+        home: CupertinoPageScaffold(
+          child: AdaptiveLiquidGlassLayer(
+            child: Center(
+              child: GlassPullDownButton(
+                icon: const Icon(CupertinoIcons.ellipsis_circle),
+                onSelected: (title) {},
+                items: const [
+                  GlassMenuItem(
+                    title: 'Share',
+                    onTap: _noop,
+                    submenu: [
+                      GlassMenuItem(title: 'Sub 1', onTap: _noop),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+    await tester.pump();
+
+    final menu = tester.widget<GlassMenu>(find.byType(GlassMenu));
+    final item = menu.items.first as GlassMenuItem;
+    expect(item.submenu, isNotNull);
+    expect(item.submenu!.length, 1);
   });
 }
 

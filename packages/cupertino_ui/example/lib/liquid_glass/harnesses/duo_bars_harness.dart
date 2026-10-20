@@ -1,3 +1,7 @@
+// Copyright 2013 The Flutter Authors
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
 // Parity harness — the package's bars beside iPhone Duo's native vertical bars.
 //
 // Each scenario rebuilds one of the native reference screens (a SwiftUI
@@ -29,9 +33,13 @@
 //
 // Scenarios: nav, navbottom, tabs, tabsnav, root, search, axis, alert (a
 // dialog over the detail screen, 1.5s in), popover (a popover from the
-// strip's compose button, 1.5s in), sheet (a sheet over a root screen, 1s in)
-// and push (the detail screen pushed 1s in and popped 2.5s later, to record
-// the morph). A `DIRECTION=rtl` line
+// strip's compose button, 1.5s in), menu (the ••• of [_routeMenuItem],
+// tapped open 1.5s in and closed 2s later), sheet (a sheet over a root
+// screen, 1s in) push (the detail screen pushed 1s in and popped 2.5s later,
+// to record the morph) and nested (the detail screen in a nested navigator,
+// kept out of
+// the shell, with a bar that draws its own capsules; the native `nav` is its
+// reference). A `DIRECTION=rtl` line
 // lays the app out right to left, `BARS=disabled` sets
 // GlassVerticalBarBehavior.disabled on the shell, `COMPRESSION=` one of
 // GlassVerticalBarCompression's names sets that, and
@@ -42,13 +50,20 @@
 // the search 1s in; `SCROLL=<row>` scrolls a large-title screen 1s in, to
 // bring that row to the top; and `DETENT=medium` and
 // `PLACEMENT=leading|center|trailing` present the sheet that way.
+// `SHOWPILL=NO` takes the search pill off the searchable tab bar
+// (GlassSearchBarConfig.showPill), which natively is the TabView without its
+// search tab.
 // `REDUCETRANSPARENCY=YES` turns on the package's stand-in for Reduce
 // Transparency, which the native screens are shot with from DeviceHub.
+// `SCAFFOLD=none` lays the tabs scenario's bar over its body in a plain Stack,
+// at GlassQuality.premium, rather than as a GlassScaffold's bottom bar.
 library;
 
 import 'dart:io' show Directory, File;
+import 'dart:ui' show DisplayFeatureType;
 
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/services.dart';
 import 'package:liquid_glass_widgets/liquid_glass_widgets.dart';
 
@@ -73,9 +88,11 @@ final bool _rtl = _env['DIRECTION'] == 'rtl';
 final bool _barsDisabled = _env['BARS'] == 'disabled';
 final bool _searchTab = _env['SEARCHTAB'] == 'YES';
 final bool _searchActive = _env['SEARCH'] == 'active';
+final bool _showPill = _env['SHOWPILL'] != 'NO';
 final int _scrollTo = int.tryParse(_env['SCROLL'] ?? '') ?? 0;
 final bool _mediumDetent = _env['DETENT'] == 'medium';
 final bool _reduceTransparency = _env['REDUCETRANSPARENCY'] == 'YES';
+final bool _noScaffold = _env['SCAFFOLD'] == 'none';
 final GlassSheetPlacement _placement = GlassSheetPlacement.values.firstWhere(
   (value) => value.name == _env['PLACEMENT'],
   orElse: () => GlassSheetPlacement.automatic,
@@ -144,6 +161,10 @@ class _App extends StatelessWidget {
             _route(const _ListScreen(title: 'Inbox')),
             _route(const _DetailScreen(popover: true)),
           ],
+        'menu' => [
+            _route(const _ListScreen(title: 'Inbox')),
+            _route(const _DetailScreen(menu: true)),
+          ],
         'search' => [_route(const _RootScreen(searchable: true))],
         'tabs' => [_route(const _TabsScreen(pushed: false))],
         'tabsnav' => [_route(const _TabsScreen())],
@@ -160,6 +181,7 @@ class _App extends StatelessWidget {
             _route(const _DetailScreen(alert: true)),
           ],
         'push' => [_route(const _ListScreen(title: 'Inbox', pushes: true))],
+        'nested' => [_route(const _NestedScreen())],
         _ => [
             _route(const _ListScreen(title: 'Inbox')),
             _route(const _DetailScreen()),
@@ -200,17 +222,37 @@ class _Rows extends StatelessWidget {
   Widget build(BuildContext context) {
     final padding = MediaQuery.paddingOf(context);
     // Natively the content starts 82pt down in the strip layout, below the
-    // title row, and under the navigation bar otherwise. DemoList pads it by
-    // another 16pt, less the row's own 6pt.
-    final top = GlassVerticalBar.maybeOf(context) == null
-        ? padding.top + barTop
-        : stripTop + 10;
+    // title row, under the inset where the bar shares the status bar's row,
+    // and under the navigation bar otherwise. DemoList pads it by another
+    // 16pt, less the row's own 6pt.
+    final top = GlassVerticalBar.maybeOf(context) != null
+        ? stripTop + 10
+        : _barInStatusRow(context)
+            ? padding.top + 10
+            : padding.top + barTop;
     return ListView.builder(
       padding: EdgeInsets.only(top: top, bottom: 120),
       itemCount: count,
       itemBuilder: (context, i) => _Row(title: title, index: i),
     );
   }
+}
+
+/// Whether the bar shares the status bar's row, as natively on the inner
+/// display held upright: beside a status cluster in a top corner, as tall as
+/// the top inset. The content then starts right under the inset.
+bool _barInStatusRow(BuildContext context) {
+  final padding = MediaQuery.viewPaddingOf(context);
+  final width = MediaQuery.sizeOf(context).width;
+  return GlassVerticalBar.maybeOf(context) == null &&
+      padding.top > 0 &&
+      MediaQuery.displayFeaturesOf(context).any((feature) {
+        final bounds = feature.bounds;
+        return feature.type == DisplayFeatureType.cutout &&
+            bounds.top <= 0 &&
+            (bounds.bottom - padding.top).abs() <= 1 &&
+            (bounds.left <= 1) != (bounds.right >= width - 1);
+      });
 }
 
 /// One coloured row.
@@ -357,7 +399,11 @@ List<GlassBarItem> _detailActions() => [
     ];
 
 class _DetailScreen extends StatefulWidget {
-  const _DetailScreen({this.alert = false, this.popover = false});
+  const _DetailScreen({
+    this.alert = false,
+    this.popover = false,
+    this.menu = false,
+  });
 
   /// Whether to present a dialog over the screen 1.5s in, as the native
   /// `alert` scenario does.
@@ -366,6 +412,10 @@ class _DetailScreen extends StatefulWidget {
   /// Whether the compose button opens a popover, 1.5s in, as in the native
   /// `popover` scenario.
   final bool popover;
+
+  /// Whether the screen keeps only its ••• menu, which is tapped open 1.5s
+  /// in and closed again 2s later, as in the `menu` scenario.
+  final bool menu;
 
   @override
   State<_DetailScreen> createState() => _DetailScreenState();
@@ -383,6 +433,16 @@ class _DetailScreenState extends State<_DetailScreen> {
         const Duration(milliseconds: 1500),
         () => _openPopover?.call(),
       );
+    }
+    if (widget.menu) {
+      Future<void>.delayed(const Duration(milliseconds: 1500), () async {
+        final trigger = _iconCentre(CupertinoIcons.ellipsis);
+        if (trigger == null) return;
+        _tap(trigger);
+        await Future<void>.delayed(const Duration(seconds: 2));
+        // Anywhere off the menu lands on its dismiss barrier.
+        _tap(const Offset(40, 400));
+      });
     }
     if (!widget.alert) return;
     Future<void>.delayed(const Duration(milliseconds: 1500), () {
@@ -405,28 +465,163 @@ class _DetailScreenState extends State<_DetailScreen> {
   }
 
   @override
-  Widget build(BuildContext context) => GlassScaffold(
-        backgroundColor: CupertinoColors.white,
-        appBar: GlassAppBar.pinned(
-          title: const Text('Detail'),
-          buttonSettings: _glass,
-          actions: [
-            if (widget.popover)
-              GlassBarItem.custom(
-                child: _ComposePopover(
-                  onReady: (open) => _openPopover = open,
-                ),
-                label: 'Compose',
-                background: GlassBarItemBackground.separate,
-                axisBehavior: GlassBarItemAxisBehavior.verticalPreferred,
-              )
-            else
-              _detailActions().first,
-            ..._detailActions().skip(1),
-          ],
+  Widget build(BuildContext context) {
+    final screen = GlassScaffold(
+      backgroundColor: CupertinoColors.white,
+      appBar: GlassAppBar.pinned(
+        title: const Text('Detail'),
+        buttonSettings: _glass,
+        actions: [
+          if (widget.menu)
+            _routeMenuItem(context)
+          else if (widget.popover)
+            GlassBarItem.custom(
+              child: _ComposePopover(
+                onReady: (open) => _openPopover = open,
+              ),
+              label: 'Compose',
+              background: GlassBarItemBackground.separate,
+              axisBehavior: GlassBarItemAxisBehavior.verticalPreferred,
+            )
+          else
+            _detailActions().first,
+          if (!widget.menu) ..._detailActions().skip(1),
+        ],
+      ),
+      body: const _Rows(title: 'Detail'),
+    );
+    // Kept clear of the strip, as an app laying its whole screen out in the
+    // safe area does, so the bar stops short of the strip.
+    return widget.menu
+        ? ColoredBox(
+            color: CupertinoColors.white,
+            child: SafeArea(top: false, bottom: false, child: screen),
+          )
+        : screen;
+  }
+}
+
+/// An overflow menu as an app builds its own: a [GlassBarItem.sheet] whose
+/// tap pushes a transparent route holding a [GlassMenu] over the icon, so the
+/// menu can take content of any height.
+GlassBarItem _routeMenuItem(BuildContext screen) {
+  BuildContext? iconContext;
+  return GlassBarItem.sheet(
+    id: 'more',
+    label: 'More',
+    icon: Builder(builder: (context) {
+      iconContext = context;
+      return const Icon(CupertinoIcons.ellipsis);
+    }),
+    onPresent: (_) {
+      // The icon drawn in the strip lives above the navigator, so the route
+      // is pushed from the screen.
+      final context = iconContext;
+      if (context == null || !context.mounted) return;
+      final box = context.findRenderObject()! as RenderBox;
+      final icon = box.localToGlobal(Offset.zero) & box.size;
+      Navigator.of(screen, rootNavigator: true).push(RawDialogRoute<void>(
+        barrierDismissible: false,
+        barrierColor: const Color(0x00000000),
+        transitionDuration: Duration.zero,
+        pageBuilder: (_, __, ___) => _RouteMenu(
+          source: Rect.fromCenter(center: icon.center, width: 48, height: 48),
         ),
-        body: const _Rows(title: 'Detail'),
-      );
+      ));
+    },
+  );
+}
+
+class _RouteMenu extends StatefulWidget {
+  const _RouteMenu({required this.source});
+
+  /// Where the tapped control is on screen.
+  final Rect source;
+
+  @override
+  State<_RouteMenu> createState() => _RouteMenuState();
+}
+
+class _RouteMenuState extends State<_RouteMenu> {
+  final _controller = GlassMenuController();
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) => _controller.open());
+  }
+
+  @override
+  Widget build(BuildContext context) => Stack(children: [
+        Positioned.fromRect(
+          rect: widget.source,
+          child: GlassMenu(
+            controller: _controller,
+            settings: _glass,
+            trigger: const SizedBox.expand(),
+            menuWidth: 250,
+            autoAdjustToScreen: true,
+            // Pop once the droplet is home.
+            onClose: () {
+              final navigator = Navigator.of(context);
+              Future<void>.delayed(
+                const Duration(milliseconds: 700),
+                () {
+                  if (mounted) navigator.pop();
+                },
+              );
+            },
+            // As tall as the native `menu` scenario's: taller than the room
+            // between the item's centre and the status cluster.
+            items: [
+              for (final (title, icon) in [
+                ('Unpin', CupertinoIcons.pin_slash),
+                ('Share', CupertinoIcons.share),
+                ('Invite', CupertinoIcons.person_badge_plus),
+                ('Copy ID', CupertinoIcons.doc_on_doc),
+                ('Add to folder', CupertinoIcons.folder_badge_plus),
+                ('Edit', CupertinoIcons.pencil),
+              ])
+                GlassMenuItem(title: title, icon: Icon(icon), onTap: () {}),
+              GlassMenuItem(
+                title: 'Delete',
+                icon: const Icon(CupertinoIcons.delete),
+                isDestructive: true,
+                onTap: () {},
+              ),
+            ],
+          ),
+        ),
+      ]);
+}
+
+/// The global centre of the painted [icon], or null where none is painted.
+///
+/// The bar keeps an unpainted copy of each item to measure, under a zero
+/// [Opacity], which is not the one to tap.
+Offset? _iconCentre(IconData icon) {
+  Offset? centre;
+  void visit(Element element) {
+    final widget = element.widget;
+    if (centre == null &&
+        widget is Icon &&
+        widget.icon == icon &&
+        element.findAncestorWidgetOfExactType<Opacity>()?.opacity != 0) {
+      final box = element.renderObject! as RenderBox;
+      centre = box.localToGlobal(box.size.center(Offset.zero));
+    }
+    element.visitChildren(visit);
+  }
+
+  WidgetsBinding.instance.rootElement?.visitChildren(visit);
+  return centre;
+}
+
+/// A finger's tap at [position], through the gesture binding.
+void _tap(Offset position) {
+  GestureBinding.instance
+    ..handlePointerEvent(PointerDownEvent(pointer: 1 << 20, position: position))
+    ..handlePointerEvent(PointerUpEvent(pointer: 1 << 20, position: position));
 }
 
 /// The compose button with a popover, as the native `popover` scenario
@@ -747,10 +942,15 @@ class _LargeTitleRowsState extends State<_LargeTitleRows> {
       child: CustomScrollView(
         controller: widget.controller.scrollController,
         slivers: [
-          // Clears a horizontal navigation bar. The strip's title row is the
-          // large title's own to place.
+          // Clears a horizontal navigation bar, which in the status bar's row
+          // takes no room below the inset. The strip's title row is the large
+          // title's own to place.
           if (!vertical)
-            SliverToBoxAdapter(child: SizedBox(height: padding.top + 44)),
+            SliverToBoxAdapter(
+              child: SizedBox(
+                height: padding.top + (_barInStatusRow(context) ? 0 : 44),
+              ),
+            ),
           GlassLargeTitle(
             text: widget.title,
             controller: widget.controller,
@@ -862,6 +1062,87 @@ class _AxisScreen extends StatelessWidget {
       );
 }
 
+/// The detail screen in a nested navigator, its bar drawn by the app from
+/// [GlassPinnedBarChrome.builder] rather than by the package.
+///
+/// The nested stack is kept out of the shell, as
+/// [GlassPinnedBarChrome.enabled] advises, so the chrome is never hoisted and
+/// the strip is drawn in-route. The bar draws its own back button and
+/// capsules while the package does not; the strip is the package's either
+/// way.
+class _NestedScreen extends StatelessWidget {
+  const _NestedScreen();
+
+  @override
+  Widget build(BuildContext context) => Navigator(
+        onGenerateInitialRoutes: (_, __) => [
+          _route(const ColoredBox(color: CupertinoColors.white)),
+          _route(const _OwnBarDetail()),
+        ],
+      );
+}
+
+class _OwnBarDetail extends StatelessWidget {
+  const _OwnBarDetail();
+
+  @override
+  Widget build(BuildContext context) => GlassPinnedBarChrome(
+        enabled: false,
+        buttonSettings: _glass,
+        actions: _detailActions(),
+        builder: (context, chrome) {
+          final ownChrome = !chrome.hoisted && !chrome.inStrip;
+          return ColoredBox(
+            color: CupertinoColors.white,
+            child: Stack(children: [
+              const _Rows(title: 'Detail'),
+              Positioned(
+                top: MediaQuery.paddingOf(context).top + 24,
+                left: 20,
+                right: 20,
+                height: GlassVerticalBarMetrics.rowHeight,
+                child: Row(spacing: 12, children: [
+                  if (ownChrome)
+                    GlassButton(
+                      settings: _glass,
+                      icon: const Icon(CupertinoIcons.back),
+                      width: 44,
+                      height: 44,
+                      onTap: () => Navigator.of(context).maybePop(),
+                    ),
+                  const Text(
+                    'Detail',
+                    style: TextStyle(
+                      fontSize: 17,
+                      fontWeight: FontWeight.w600,
+                      color: CupertinoColors.label,
+                    ),
+                  ),
+                  const Spacer(),
+                  if (ownChrome)
+                    GlassButtonGroup.icons(
+                      settings: _glass,
+                      items: [
+                        for (final icon in [
+                          CupertinoIcons.square_pencil,
+                          CupertinoIcons.share,
+                          CupertinoIcons.heart,
+                          CupertinoIcons.ellipsis,
+                        ])
+                          GlassButtonGroupItem(
+                            icon: Icon(icon),
+                            onTap: () {},
+                          ),
+                      ],
+                    ),
+                ]),
+              ),
+            ]),
+          );
+        },
+      );
+}
+
 /// Four tabs, each its own navigation stack: opened on a pushed detail screen
 /// (`tabsnav`), or on a root screen with a large title (`tabs`). `SEARCHTAB`
 /// adds the search tab, as GlassTabBar.searchable.
@@ -903,52 +1184,61 @@ class _TabsScreenState extends State<_TabsScreen> {
   }
 
   @override
-  Widget build(BuildContext context) => GlassScaffold(
-        backgroundColor: CupertinoColors.white,
-        bottomBar: _searchTab
-            ? GlassTabBar.searchable(
-                settings: _glass,
-                selectedIndex: _tab,
-                onTabSelected: (i) => setState(() => _tab = i),
-                selectedIconColor: CupertinoColors.systemBlue,
-                isSearchActive: _searching,
-                searchConfig: GlassSearchBarConfig(
-                  onSearchToggle: (active) =>
-                      setState(() => _searching = active),
-                ),
-                tabs: _tabs,
+  Widget build(BuildContext context) {
+    final bar = _searchTab
+        ? GlassTabBar.searchable(
+            settings: _glass,
+            quality: _noScaffold ? GlassQuality.premium : null,
+            selectedIndex: _tab,
+            onTabSelected: (i) => setState(() => _tab = i),
+            selectedIconColor: CupertinoColors.systemBlue,
+            isSearchActive: _searching,
+            searchConfig: GlassSearchBarConfig(
+              onSearchToggle: (active) => setState(() => _searching = active),
+              showPill: _showPill,
+            ),
+            tabs: _tabs,
+          )
+        : GlassTabBar.bottom(
+            settings: _glass,
+            quality: _noScaffold ? GlassQuality.premium : null,
+            selectedIndex: _tab,
+            onTabSelected: (i) => setState(() => _tab = i),
+            // The native TabView's selected tab takes the app's tint.
+            selectedIconColor: CupertinoColors.systemBlue,
+            tabs: _tabs,
+          );
+    // Only the selected tab is built: the shell ranks the routes of one
+    // Navigator, and the stacks of the tabs behind would keep their chrome
+    // registered.
+    final body = _searching
+        // The search tab's screen. In a compact width the open field takes
+        // its title's row; in a regular width the title stays beside it.
+        ? MediaQuery.sizeOf(context).width < 800
+            ? const GlassScaffold(
+                backgroundColor: CupertinoColors.white,
+                body: _Rows(title: 'Search', stripTop: 78),
               )
-            : GlassTabBar.bottom(
-                settings: _glass,
-                selectedIndex: _tab,
-                onTabSelected: (i) => setState(() => _tab = i),
-                // The native TabView's selected tab takes the app's tint.
-                selectedIconColor: CupertinoColors.systemBlue,
-                tabs: _tabs,
-              ),
-        // Only the selected tab is built: the shell ranks the routes of one
-        // Navigator, and the stacks of the tabs behind would keep their
-        // chrome registered.
-        body: _searching
-            // The search tab's screen. In a compact width the open field takes
-            // its title's row; in a regular width the title stays beside it.
-            ? MediaQuery.sizeOf(context).width < 800
-                ? const GlassScaffold(
-                    backgroundColor: CupertinoColors.white,
-                    body: _Rows(title: 'Search', stripTop: 78),
-                  )
-                : const _TabRootScreen(title: 'Search', adds: false)
-            : Navigator(
-                key: ValueKey(_tab),
-                onGenerateInitialRoutes: (_, __) => [
-                  if (widget.pushed) ...[
-                    _route(_ListScreen(title: _titles[_tab])),
-                    _route(const _DetailScreen()),
-                  ] else
-                    _route(_TabRootScreen(title: _titles[_tab])),
-                ],
-              ),
-      );
+            : const _TabRootScreen(title: 'Search', adds: false)
+        : Navigator(
+            key: ValueKey(_tab),
+            onGenerateInitialRoutes: (_, __) => [
+              if (widget.pushed) ...[
+                _route(_ListScreen(title: _titles[_tab])),
+                _route(const _DetailScreen()),
+              ] else
+                _route(_TabRootScreen(title: _titles[_tab])),
+            ],
+          );
+    if (_noScaffold) {
+      return Stack(children: [body, Positioned.fill(child: bar)]);
+    }
+    return GlassScaffold(
+      backgroundColor: CupertinoColors.white,
+      bottomBar: bar,
+      body: body,
+    );
+  }
 }
 
 /// A tab's root screen, with a large title and an add button.

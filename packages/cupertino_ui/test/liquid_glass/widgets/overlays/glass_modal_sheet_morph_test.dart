@@ -1,3 +1,7 @@
+// Copyright 2013 The Flutter Authors
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
 // Coverage for the Liquid Morph presentation of GlassModalSheet:
 // SheetMorphGeometry (pure) and GlassSheetMorphPresenter (widget), plus the
 // capability fallback GlassModalSheet.show() applies before pushing the route.

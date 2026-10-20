@@ -1,3 +1,7 @@
+// Copyright 2013 The Flutter Authors
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
 // The frost's ghost at the floor sigma takes 6 taps instead of 45.
 //
 // uFrost.z is 0 whenever the blur runs as a pass of its own or is 0, and the

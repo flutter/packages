@@ -1,3 +1,7 @@
+// Copyright 2013 The Flutter Authors
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -5,6 +9,88 @@ import 'package:liquid_glass_widgets/liquid_glass_widgets.dart';
 
 void main() {
   group('GlassScrollEdgeEffect', () {
+    testWidgets('passes taps through the bottom fade by default',
+        (tester) async {
+      var tapped = false;
+      await tester.pumpWidget(
+        CupertinoApp(
+          home: GlassScrollEdgeEffect(
+            fadeTop: false,
+            bottomFadeHeight: 100,
+            child: ListView.builder(
+              itemCount: 20,
+              itemExtent: 50,
+              itemBuilder: (_, index) => GestureDetector(
+                onTap: () => tapped = true,
+                behavior: HitTestBehavior.opaque,
+                child: Text('$index'),
+              ),
+            ),
+          ),
+        ),
+      );
+
+      await tester.tap(find.text('11'));
+
+      expect(tapped, isTrue);
+      await tester.pumpWidget(const SizedBox());
+    });
+
+    testWidgets('absorbs bottom fade drag events when enabled', (tester) async {
+      final controller = ScrollController();
+      await tester.pumpWidget(
+        CupertinoApp(
+          home: GlassScrollEdgeEffect(
+            fadeTop: false,
+            bottomFadeHeight: 100,
+            absorbPointer: true,
+            child: ListView.builder(
+              controller: controller,
+              itemCount: 20,
+              itemExtent: 50,
+              itemBuilder: (_, index) => Text('$index'),
+            ),
+          ),
+        ),
+      );
+
+      await tester.dragFrom(const Offset(400, 550), const Offset(0, -150));
+      await tester.pumpAndSettle();
+
+      expect(controller.offset, 0);
+      await tester.pumpWidget(const SizedBox());
+      controller.dispose();
+    });
+
+    testWidgets('absorbs top fade drag events when enabled', (tester) async {
+      final controller = ScrollController();
+      await tester.pumpWidget(
+        CupertinoApp(
+          home: GlassScrollEdgeEffect(
+            topFadeHeight: 100,
+            fadeBottom: false,
+            absorbPointer: true,
+            style: GlassScrollEdgeStyle.blur,
+            child: ListView.builder(
+              controller: controller,
+              itemCount: 20,
+              itemExtent: 50,
+              itemBuilder: (_, index) => Text('$index'),
+            ),
+          ),
+        ),
+      );
+      controller.jumpTo(300);
+      await tester.pump();
+
+      await tester.dragFrom(const Offset(400, 50), const Offset(0, 150));
+      await tester.pumpAndSettle();
+
+      expect(controller.offset, 300);
+      await tester.pumpWidget(const SizedBox());
+      controller.dispose();
+    });
+
     testWidgets(
         'renders children and DecoratedBox overlays by default (soft style)',
         (tester) async {

@@ -1,3 +1,7 @@
+// Copyright 2013 The Flutter Authors
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
 // Adapted from liquid_glass_renderer 0.2.0-dev.4
 // Original: test/src/liquid_glass_test.dart
 // Changes:

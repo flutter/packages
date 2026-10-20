@@ -1,6 +1,6 @@
-// Copyright 2026, Sebastian Degenaar for pixel-innovations.com (liquid_glass_widgets)
-//
-// SPDX-License-Identifier: MIT
+// Copyright 2013 The Flutter Authors
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
 
 /// Scroll Edge Effect Showcase — `GlassScrollEdgeStyle` Interactive Playground.
 ///
@@ -131,7 +131,7 @@ class _ScrollEdgeStyleDemoState extends State<ScrollEdgeStyleDemo> {
     (
       '🚀',
       '120 FPS ProMotion Ready',
-      'Zero per-frame allocations during scrolling. Overlays are non-interactive via IgnorePointer.',
+      'Touch absorption is opt-in with absorbPointer: true.',
       Color(0xFFFF453A),
     ),
     (

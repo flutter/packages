@@ -1,3 +1,7 @@
+// Copyright 2013 The Flutter Authors
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
 import 'package:flutter/cupertino.dart';
 import '../../src/renderer/liquid_glass_renderer.dart';
 
@@ -58,13 +62,18 @@ class GlassButtonGroupItem {
   // No-op used by GlassButtonGroupItem.menu so onTap is always non-null.
   static void _noOp() {}
 
-  /// Creates a group item with an icon and tap callback.
+  /// Creates a group item with an icon and optional tap callback.
+  ///
+  /// When [onTap] is omitted (or `null`), the item renders passively without
+  /// outer button semantics, keyboard focus stop, or tap handling, allowing
+  /// custom child widgets to expose their own semantics and gestures.
   const GlassButtonGroupItem({
     required this.icon,
-    required this.onTap,
+    VoidCallback? onTap,
     this.label,
     this.enabled = true,
-  })  : menuItems = null,
+  })  : onTap = onTap ?? _noOp,
+        menuItems = null,
         menuAlignment = null,
         menuWidth = 200,
         menuHeight = null;
@@ -106,9 +115,18 @@ class GlassButtonGroupItem {
   /// Not used when [menuItems] is non-null — the tap opens the menu instead.
   final VoidCallback onTap;
 
+  /// Whether this item has an active tap action of its own.
+  ///
+  /// False when constructed without an [onTap] callback and without
+  /// [menuItems], allowing passive custom content inside the group to manage
+  /// its own gestures and semantics.
+  bool get hasTap => menuItems != null || !identical(onTap, _noOp);
+
   /// Optional semantic label for accessibility.
   ///
-  /// If provided, wraps the item in [Semantics] with `button: true`.
+  /// When provided, names this slot as a single semantic node (with
+  /// `button: true` when [hasTap] is true, or as a passive semantic boundary
+  /// when [hasTap] is false), replacing the child's own text semantics.
   final String? label;
 
   /// Whether the item is interactive.
@@ -480,22 +498,43 @@ class _GlassGroupItemWidgetState extends State<_GlassGroupItemWidget>
 
   @override
   Widget build(BuildContext context) {
+    final paddedIcon = Padding(
+      padding: widget.padding,
+      child: IconTheme(
+        data: IconThemeData(
+          color: widget.iconColor,
+          size: widget.iconSize,
+        ),
+        child: widget.item.icon,
+      ),
+    );
+
+    final effectiveOnTap =
+        widget.onTapOverride ?? (widget.item.hasTap ? widget.item.onTap : null);
+    if (effectiveOnTap == null) {
+      final passive = widget.item.enabled
+          ? paddedIcon
+          : Opacity(opacity: 0.5, child: paddedIcon);
+      if (widget.item.label != null && widget.item.label!.isNotEmpty) {
+        return Semantics(
+          container: true,
+          label: widget.item.label,
+          child: ExcludeSemantics(child: passive),
+        );
+      }
+      return Semantics(explicitChildNodes: true, child: passive);
+    }
+
     return GlassFocusRegion(
       enabled: widget.item.enabled,
       isButton: true,
       semanticLabel: widget.item.label,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
       isHoveredNotifier: isHovered,
-      onKeyboardActivate: widget.item.enabled
-          ? (widget.onTapOverride ?? widget.item.onTap)
-          : null,
-      semanticOnTap: widget.item.enabled
-          ? (widget.onTapOverride ?? widget.item.onTap)
-          : null,
+      onKeyboardActivate: widget.item.enabled ? effectiveOnTap : null,
+      semanticOnTap: widget.item.enabled ? effectiveOnTap : null,
       child: GestureDetector(
-        onTap: widget.item.enabled
-            ? (widget.onTapOverride ?? widget.item.onTap)
-            : null,
+        onTap: widget.item.enabled ? effectiveOnTap : null,
         behavior: HitTestBehavior.opaque,
         // Semantics (label, role, tap) live on the GlassFocusRegion node.
         excludeFromSemantics: true,
@@ -517,16 +556,7 @@ class _GlassGroupItemWidgetState extends State<_GlassGroupItemWidget>
               ),
             );
           },
-          child: Padding(
-            padding: widget.padding,
-            child: IconTheme(
-              data: IconThemeData(
-                color: widget.iconColor,
-                size: widget.iconSize,
-              ),
-              child: widget.item.icon,
-            ),
-          ),
+          child: paddedIcon,
         ),
       ),
     );

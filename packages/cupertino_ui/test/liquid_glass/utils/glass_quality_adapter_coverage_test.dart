@@ -1,3 +1,7 @@
+// Copyright 2013 The Flutter Authors
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
 // ignore_for_file: invalid_use_of_visible_for_testing_member
 // Additional branch coverage for GlassQualityAdapter
 // Complements glass_quality_adapter_test.dart by targeting paths not

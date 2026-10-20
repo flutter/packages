@@ -1,3 +1,7 @@
+// Copyright 2013 The Flutter Authors
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
 // Iteration harness for the pinned capsule's morph choreography.
 //
 // The morph is a pure function of route progress, so the whole animation can

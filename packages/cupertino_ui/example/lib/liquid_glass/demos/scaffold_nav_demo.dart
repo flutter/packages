@@ -1,3 +1,7 @@
+// Copyright 2013 The Flutter Authors
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
 /// Scaffold Navigation Bug Repro — Issue #177
 ///
 /// Tests whether GlassScaffold appears transparent when navigating between

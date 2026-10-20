@@ -1,3 +1,7 @@
+// Copyright 2013 The Flutter Authors
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:liquid_glass_widgets/utils/glass_morph_controller.dart';
@@ -478,6 +482,94 @@ void main() {
       ctrl.setDisableAnimations(true);
       // No open() called — value must still be 0.
       expect(ctrl.value, equals(0.0));
+    });
+  });
+
+  group('GlassMorphController — settling', () {
+    /// Pumps 120 Hz frames until the controller stops; returns how long that
+    /// took, in milliseconds.
+    Future<int> runUntilStill(
+        WidgetTester tester, GlassMorphController c) async {
+      var elapsed = 0;
+      await tester.pump();
+      while (c.animation.isAnimating && elapsed < 3000) {
+        await tester.pump(const Duration(microseconds: 8333));
+        elapsed += 8;
+      }
+      return elapsed;
+    }
+
+    testWidgets('an open stops once nothing visibly moves, on its target',
+        (tester) async {
+      final ctrl = await _mount(tester);
+      ctrl.open();
+      final ms = await runUntilStill(tester, ctrl);
+
+      // The default tolerance ran the normal open spring for about 1.2 s.
+      expect(ms, lessThan(950));
+      expect(ctrl.value, 1.0);
+      expect(ctrl.velocity, 0.0);
+    });
+
+    testWidgets('a close stops on 0 and reports itself settled',
+        (tester) async {
+      final ctrl = await _mount(tester);
+      ctrl.open();
+      await runUntilStill(tester, ctrl);
+      ctrl.close();
+      final ms = await runUntilStill(tester, ctrl);
+
+      // The default tolerance ran the normal close spring for about 0.93 s.
+      expect(ms, lessThan(750));
+      expect(ctrl.value, 0.0);
+      expect(ctrl.hasHandedOff, isTrue);
+      expect(ctrl.isShowing, isFalse);
+    });
+
+    testWidgets(
+        'a spring interrupted by another does not snap to the old target',
+        (tester) async {
+      final ctrl = await _mount(tester);
+      ctrl.open();
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 50));
+      ctrl.close();
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 16));
+
+      // Still on its way down, nowhere near the open target it abandoned.
+      expect(ctrl.value, lessThan(1.0));
+      await runUntilStill(tester, ctrl);
+      expect(ctrl.value, 0.0);
+    });
+
+    testWidgets(
+        'settling keeps the status at completed, with no event after it',
+        (tester) async {
+      final ctrl = await _mount(tester);
+      final statuses = <AnimationStatus>[];
+      ctrl.animation.addStatusListener(statuses.add);
+
+      ctrl.open();
+      await runUntilStill(tester, ctrl);
+      // Let any microtask queued by the completion run before asserting.
+      await tester.pump(const Duration(milliseconds: 50));
+
+      expect(ctrl.value, 1.0);
+      expect(ctrl.status, AnimationStatus.completed);
+      expect(ctrl.animation.isCompleted, isTrue);
+      // Landing on the target must not report a status after `completed`:
+      // GlassMenu and GlassPopover gate their hide logic on `forward`.
+      expect(statuses, [AnimationStatus.forward, AnimationStatus.completed]);
+
+      statuses.clear();
+      ctrl.close();
+      await runUntilStill(tester, ctrl);
+      await tester.pump(const Duration(milliseconds: 50));
+
+      expect(ctrl.value, 0.0);
+      expect(ctrl.status, AnimationStatus.completed);
+      expect(statuses.last, AnimationStatus.completed);
     });
   });
 }

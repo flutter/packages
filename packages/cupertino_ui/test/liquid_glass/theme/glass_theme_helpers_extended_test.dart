@@ -1,3 +1,7 @@
+// Copyright 2013 The Flutter Authors
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
 // Tests for GlassThemeHelpers covering the one remaining uncovered path:
 // resolveQuality when an InheritedLiquidGlass ancestor is present but its
 // quality is a specific value — and the GlassTheme (priority 3) path.

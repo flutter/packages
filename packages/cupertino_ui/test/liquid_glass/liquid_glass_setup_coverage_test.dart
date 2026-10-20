@@ -1,3 +1,7 @@
+// Copyright 2013 The Flutter Authors
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
 // Coverage for LiquidGlassWidgets.wrap() uncovered branches (lines 249,255,257,259)
 // and glass_modal_sheet.dart L292,365-369 (assert block + onStateChanged close).
 

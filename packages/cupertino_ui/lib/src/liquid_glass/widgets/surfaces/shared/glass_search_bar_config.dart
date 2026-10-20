@@ -1,3 +1,7 @@
+// Copyright 2013 The Flutter Authors
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
 import 'package:flutter/cupertino.dart';
 
 /// Configuration for the morphing search bar in [GlassTabBar.searchable].
@@ -275,7 +279,9 @@ class GlassSearchBarConfig {
   /// layout. `false` removes it entirely: the tab pill takes over the
   /// reclaimed width, and the pill is genuinely absent rather than
   /// invisible — it contributes no glass shape to the blend layer, so
-  /// nothing fuses with the tab pill's trailing edge.
+  /// nothing fuses with the tab pill's trailing edge. In iPhone Duo's
+  /// vertical bar strip the capsule likewise ends at the last tab, with no
+  /// search slot.
   ///
   /// The value may change at runtime: the pill spring-scales in and out in
   /// place at its slot, on the same spring the pill morphs use. That is the

@@ -1,3 +1,7 @@
+// Copyright 2013 The Flutter Authors
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
 /// Visual style of a glass button.
 enum GlassButtonStyle {
   /// Standard button with glass background and shape.

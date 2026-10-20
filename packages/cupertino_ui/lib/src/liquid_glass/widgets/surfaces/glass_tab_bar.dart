@@ -1,3 +1,7 @@
+// Copyright 2013 The Flutter Authors
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart' show ValueListenable;
 
@@ -501,6 +505,7 @@ class GlassTabBar extends StatefulWidget with GlassDynamicPreferredSize {
     double magnification = 1.15,
     double innerBlur = 0.0,
     bool platformViewBackdrop = false,
+    bool passthroughOverPlatformView = false,
     MaskingQuality maskingQuality = MaskingQuality.high,
     GlobalKey? backgroundKey,
     SpringDescription? springDescription,
@@ -570,6 +575,7 @@ class GlassTabBar extends StatefulWidget with GlassDynamicPreferredSize {
           magnification: magnification,
           innerBlur: innerBlur,
           platformViewBackdrop: platformViewBackdrop,
+          passthroughOverPlatformView: passthroughOverPlatformView,
           maskingQuality: maskingQuality,
           backgroundKey: backgroundKey,
           springDescription: springDescription,
@@ -703,6 +709,7 @@ class GlassTabBar extends StatefulWidget with GlassDynamicPreferredSize {
     double magnification = 1.15,
     double innerBlur = 0.0,
     bool platformViewBackdrop = false,
+    bool passthroughOverPlatformView = false,
     MaskingQuality maskingQuality = MaskingQuality.high,
     GlobalKey? backgroundKey,
     SpringDescription? springDescription,
@@ -773,6 +780,7 @@ class GlassTabBar extends StatefulWidget with GlassDynamicPreferredSize {
           magnification: magnification,
           innerBlur: innerBlur,
           platformViewBackdrop: platformViewBackdrop,
+          passthroughOverPlatformView: passthroughOverPlatformView,
           maskingQuality: maskingQuality,
           backgroundKey: backgroundKey,
           springDescription: springDescription,
@@ -844,6 +852,7 @@ class GlassTabBar extends StatefulWidget with GlassDynamicPreferredSize {
       this.interactionGlowColor,
       this.interactionGlowRadius,
       this.platformViewBackdrop = false,
+      this.passthroughOverPlatformView = false,
       this.adaptiveBrightness = false,
       this.onBrightnessChanged,
       this.brightnessOverride,
@@ -1102,6 +1111,17 @@ class GlassTabBar extends StatefulWidget with GlassDynamicPreferredSize {
   /// Forces BackdropFilter rendering over iOS PlatformViews. Defaults to false.
   final bool platformViewBackdrop;
 
+  /// Lifts the selected tab's content above the indicator's glass over a
+  /// platform view, for the searchable and minimizable placements.
+  ///
+  /// Set it together with [platformViewBackdrop] when the bar floats over a
+  /// map, camera preview or other platform view and its glass is configured
+  /// to stay transparent there ([LiquidGlassSettings.platformViewMode]). The
+  /// indicator refracts the bar's own icon layer, which is also drawn on
+  /// screen; without a body behind it both copies show and each label reads
+  /// twice. Defaults to false.
+  final bool passthroughOverPlatformView;
+
   /// Adapts brightness to content scrolling underneath. Defaults to false.
   final bool adaptiveBrightness;
 
@@ -1332,7 +1352,10 @@ class _GlassTabBarState extends State<GlassTabBar> {
   /// Dispatches to [TabBarVerticalLayout] — the bar in iPhone Duo's vertical
   /// bar strip.
   Widget _buildVertical(BuildContext context, GlassVerticalBarData bar) {
-    final searchable = widget._placement == _GlassTabBarPlacement.searchable;
+    // A bar without its pill ([GlassSearchBarConfig.showPill]) has no search
+    // slot either, as natively a TabView whose search tab is left out.
+    final searchable = widget._placement == _GlassTabBarPlacement.searchable &&
+        widget.searchConfig!.showPill;
     return TabBarVerticalLayout(
       bar: bar,
       tabs: widget.tabs,
@@ -1341,6 +1364,7 @@ class _GlassTabBarState extends State<GlassTabBar> {
       settings: widget.settings,
       quality: widget.quality,
       indicatorColor: widget.indicatorColor,
+      indicatorSettings: widget.indicatorSettings,
       selectedIconColor: widget.selectedIconColor,
       unselectedIconColor: widget.unselectedIconColor,
       iconSize: widget.iconSize,
@@ -1547,6 +1571,7 @@ class _GlassTabBarState extends State<GlassTabBar> {
       magnification: widget.magnification,
       innerBlur: widget.innerBlur,
       platformViewBackdrop: widget.platformViewBackdrop,
+      passthroughOverPlatformView: widget.passthroughOverPlatformView,
       maskingQuality: widget.maskingQuality,
       backgroundKey: widget.backgroundKey,
       springDescription: widget.springDescription,

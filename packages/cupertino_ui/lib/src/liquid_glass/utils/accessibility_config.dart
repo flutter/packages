@@ -1,3 +1,7 @@
+// Copyright 2013 The Flutter Authors
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
 // Internal bridge — holds the single global accessibility flag set by
 // LiquidGlassWidgets.initialize(). Kept in its own file to avoid circular
 // imports between liquid_glass_setup.dart and glass_accessibility_scope.dart.

@@ -1,3 +1,7 @@
+// Copyright 2013 The Flutter Authors
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
 import 'package:flutter/material.dart';
 import 'package:flutter/semantics.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -129,7 +133,159 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(find.text('Modal Content'), findsOneWidget);
+      final route = ModalRoute.of(tester.element(find.text('Modal Content')))!;
+      expect(route.settings.name, isNull);
+      expect(route.settings.arguments, isNull);
     });
+
+    for (final useRootNavigator in [false, true]) {
+      testWidgets(
+          'show() exposes routeSettings with useRootNavigator: $useRootNavigator',
+          (tester) async {
+        final rootObserver = _SheetRouteObserver();
+        final nestedObserver = _SheetRouteObserver();
+        final routeSettings = RouteSettings(
+          name: '/sheet/details',
+          arguments: {'itemId': 42},
+        );
+        Future<int?>? result;
+        RouteSettings? contentSettings;
+
+        await tester.pumpWidget(MaterialApp(
+          navigatorObservers: [rootObserver],
+          home: Navigator(
+            observers: [nestedObserver],
+            onGenerateRoute: (_) => MaterialPageRoute<void>(
+              builder: (context) => Scaffold(
+                body: ElevatedButton(
+                  onPressed: () {
+                    result = GlassModalSheet.show<int>(
+                      context: context,
+                      useRootNavigator: useRootNavigator,
+                      routeSettings: routeSettings,
+                      builder: (context) {
+                        contentSettings = ModalRoute.of(context)!.settings;
+                        return const Text('Named Sheet');
+                      },
+                    );
+                  },
+                  child: const Text('Show'),
+                ),
+              ),
+            ),
+          ),
+        ));
+        rootObserver.pushedRoutes.clear();
+        nestedObserver.pushedRoutes.clear();
+
+        await tester.tap(find.text('Show'));
+        await tester.pumpAndSettle();
+
+        final selectedObserver =
+            useRootNavigator ? rootObserver : nestedObserver;
+        final otherObserver = useRootNavigator ? nestedObserver : rootObserver;
+        expect(selectedObserver.pushedRoutes, hasLength(1));
+        expect(otherObserver.pushedRoutes, isEmpty);
+        final route = selectedObserver.pushedRoutes.single;
+        expect(route, isA<PopupRoute<int>>());
+        expect(route.settings, same(routeSettings));
+        expect(contentSettings, same(routeSettings));
+
+        Navigator.of(tester.element(find.text('Named Sheet'))).pop(42);
+        await tester.pumpAndSettle();
+
+        expect(await result, 42);
+        expect(selectedObserver.poppedRoutes, [route]);
+        expect(otherObserver.poppedRoutes, isEmpty);
+        expect(find.text('Named Sheet'), findsNothing);
+      });
+    }
+
+    /// Shows a sheet from a bare page and hands back its route once settled.
+    Future<TransitionRoute<void>> showSheet(
+      WidgetTester tester, {
+      AnimationStyle? sheetAnimationStyle,
+      Rect? morphFromRect,
+    }) async {
+      await tester.pumpWidget(createTestApp(child: const Placeholder()));
+      GlassModalSheet.show<void>(
+        context: tester.element(find.byType(Placeholder)),
+        sheetAnimationStyle: sheetAnimationStyle,
+        morphFromRect: morphFromRect,
+        builder: (context) => const Text('Modal Content'),
+      );
+      await tester.pumpAndSettle();
+      return ModalRoute.of(tester.element(find.text('Modal Content')))!
+          as TransitionRoute<void>;
+    }
+
+    const ms300 = Duration(milliseconds: 300);
+    const ms500 = Duration(milliseconds: 500);
+    const ms600 = Duration(milliseconds: 600);
+    const split = AnimationStyle(duration: ms300, reverseDuration: ms600);
+    for (final (label, style, forward, reverse) in [
+      ('defaults to 500 ms each way', null, ms500, ms500),
+      (
+        'takes duration both ways',
+        const AnimationStyle(duration: ms300),
+        ms300,
+        ms300
+      ),
+      ('takes reverseDuration on the way out', split, ms300, ms600),
+    ]) {
+      testWidgets('show() slide $label', (tester) async {
+        final route = await showSheet(tester, sheetAnimationStyle: style);
+
+        expect(route.transitionDuration, forward);
+        expect(route.reverseTransitionDuration, reverse);
+      });
+    }
+
+    testWidgets('show() morph ignores sheetAnimationStyle', (tester) async {
+      GlassModalSheet.debugMorphSupportsBlending = true;
+      addTearDown(() => GlassModalSheet.debugMorphSupportsBlending = null);
+
+      final route = await showSheet(
+        tester,
+        sheetAnimationStyle: split,
+        morphFromRect: const Rect.fromLTWH(372, 500, 56, 56),
+      );
+
+      // MorphSpeed.normal's route duration, both ways.
+      const morphDuration = Duration(milliseconds: 380);
+      expect(route.transitionDuration, morphDuration);
+      expect(route.reverseTransitionDuration, morphDuration);
+    });
+
+    for (final isDismissible in [true, false]) {
+      testWidgets('show() with isDismissible: $isDismissible on an outside tap',
+          (tester) async {
+        await tester.pumpWidget(
+          MaterialApp(
+            home: Scaffold(
+              body: Builder(
+                builder: (context) => ElevatedButton(
+                  onPressed: () => GlassModalSheet.show(
+                    context: context,
+                    isDismissible: isDismissible,
+                    builder: (context) => const Text('Modal Content'),
+                  ),
+                  child: const Text('Show'),
+                ),
+              ),
+            ),
+          ),
+        );
+
+        await tester.tap(find.text('Show'));
+        await tester.pumpAndSettle();
+        await tester.tapAt(const Offset(20, 40));
+        await tester.pumpAndSettle();
+
+        expect(find.text('Modal Content'),
+            isDismissible ? findsNothing : findsOneWidget);
+      });
+    }
 
     testWidgets('show() falls back when initialState is not an offered detent',
         (tester) async {
@@ -1106,6 +1262,33 @@ void main() {
       expect(controller.currentState, GlassSheetState.full);
     });
 
+    for (final barrierDismissible in [true, false]) {
+      testWidgets(
+          'barrierDismissible: $barrierDismissible on a tap on the body',
+          (tester) async {
+        final controller = GlassModalSheetController();
+
+        await tester.pumpWidget(
+          createTestApp(
+            child: GlassModalSheetScaffold(
+              controller: controller,
+              initialState: GlassSheetState.half,
+              barrierDismissible: barrierDismissible,
+              body: const SizedBox.expand(),
+              sheet: const SizedBox.expand(),
+            ),
+          ),
+        );
+        await tester.pumpAndSettle();
+
+        await tester.tapAt(const Offset(20, 40));
+        await tester.pumpAndSettle();
+
+        expect(controller.currentState,
+            barrierDismissible ? GlassSheetState.hidden : GlassSheetState.half);
+      });
+    }
+
     testWidgets('onStateChanged fires when state changes', (tester) async {
       final controller = GlassModalSheetController();
       final states = <GlassSheetState>[];
@@ -1404,6 +1587,21 @@ void main() {
 // ---------------------------------------------------------------------------
 // Test helpers
 // ---------------------------------------------------------------------------
+
+class _SheetRouteObserver extends NavigatorObserver {
+  final pushedRoutes = <Route<dynamic>>[];
+  final poppedRoutes = <Route<dynamic>>[];
+
+  @override
+  void didPush(Route<dynamic> route, Route<dynamic>? previousRoute) {
+    pushedRoutes.add(route);
+  }
+
+  @override
+  void didPop(Route<dynamic> route, Route<dynamic>? previousRoute) {
+    poppedRoutes.add(route);
+  }
+}
 
 /// A minimal StatefulWidget that calls [onInitState] each time its
 /// [State.initState] runs. Used to detect spurious Element teardowns caused

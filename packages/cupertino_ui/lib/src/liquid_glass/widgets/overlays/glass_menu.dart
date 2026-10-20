@@ -1,3 +1,7 @@
+// Copyright 2013 The Flutter Authors
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
 import 'dart:async' show scheduleMicrotask;
 import 'dart:math' as math;
 import 'dart:ui';
@@ -207,6 +211,15 @@ class GlassMenu extends StatefulWidget {
   /// If provided, the menu will have a fixed height and internal scrolling.
   final double? menuHeight;
 
+  /// Maximum vertical extent of the root and all layered submenu cards.
+  ///
+  /// External placement owners can set their available bounds height without
+  /// enabling [autoAdjustToScreen]. Each card uses the space remaining after
+  /// its source-row offset and scrolls when necessary. In exceptionally short
+  /// viewports the header moves toward the anchor to keep navigation reachable.
+  /// Null imposes no external limit; automatic screen adjustment still applies.
+  final double? maxStackHeight;
+
   /// The minimum distance between the menu and the screen edges.
   ///
   /// Only applies when [autoAdjustToScreen] is true.
@@ -297,6 +310,24 @@ class GlassMenu extends StatefulWidget {
   /// Defaults to 10.0.
   final double continuousSwipeSlop;
 
+  /// Called with the submenu depth (0 = root list) and the resting height of
+  /// the whole visible stack — the menu body, plus every open submenu card
+  /// that extends past it — whenever the stack changes: when the menu opens,
+  /// and on every [GlassMenuItem.submenu] push or header pop, just before the
+  /// layering morph animates.
+  ///
+  /// The height is measured from the menu's anchored edge, the way
+  /// [GlassMenu.menuAlignment] grows the body: a menu anchored at its top
+  /// (growing down) reports the distance from the body's top to the stack's
+  /// lowest edge, one anchored at its bottom reports the distance from the
+  /// body's bottom to the stack's highest edge.
+  ///
+  /// Lets an external owner that positions the menu itself (typically with
+  /// [autoAdjustToScreen] off) make room for a taller stack — or give it back
+  /// when a card closes — for example by moving the menu with
+  /// [GlassMenuController.setFollowOffset].
+  final void Function(int depth, double height)? onLevelChanged;
+
   /// Creates a liquid glass menu.
   const GlassMenu({
     super.key,
@@ -319,6 +350,7 @@ class GlassMenu extends StatefulWidget {
     this.allowPositiveY,
     this.allowNegativeY,
     this.menuHeight,
+    this.maxStackHeight,
     this.menuPadding = EdgeInsets.zero,
     this.selectionColor = const Color(0x3DFFFFFF),
     this.enableInteractionGlow = true,
@@ -335,7 +367,9 @@ class GlassMenu extends StatefulWidget {
     this.enableContinuousSwipe = false,
     this.continuousSwipeSlop = 10.0,
     this.semanticLabel,
-  }) : assert(trigger != null || triggerBuilder != null,
+    this.onLevelChanged,
+  })  : assert(maxStackHeight == null || maxStackHeight > 0),
+        assert(trigger != null || triggerBuilder != null,
             'Either trigger or triggerBuilder must be provided');
 
   @override
@@ -394,12 +428,16 @@ class GlassMenuController {
 
   /// Ends a glide started with [glideTo], typically when the finger lifts.
   ///
-  /// Activates the highlighted item exactly as a tap would and returns
-  /// `true`. With nothing highlighted, it clears the glide, leaves the menu
-  /// open, and returns `false`.
+  /// Activates the highlighted item exactly as a tap would (runs it and
+  /// closes, or opens its [GlassMenuItem.submenu]) and returns `true`. With
+  /// nothing highlighted, it clears the glide, leaves the menu open, and
+  /// returns `false`.
   bool endGlide() => _state?._endGlide() ?? false;
 
   /// Clears a glide's highlight without activating anything, for example
   /// when the gesture that owns the finger is cancelled.
   void cancelGlide() => _state?._cancelGlide();
+
+  /// How many submenus deep the open menu currently is (0 = root list).
+  int get submenuDepth => _state?._submenuStack.length ?? 0;
 }

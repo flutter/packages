@@ -1,3 +1,9 @@
+// Copyright 2013 The Flutter Authors
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
+import 'dart:math' as math;
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart' show defaultTargetPlatform;
 import 'package:flutter/services.dart';
@@ -6,6 +12,7 @@ import '../../theme/glass_theme.dart';
 
 import '../../src/renderer/liquid_glass_renderer.dart';
 import '../../src/widgets/surfaces/dynamic_preferred_size.dart';
+import '../../src/widgets/surfaces/status_bar_row.dart';
 import '../../src/widgets/surfaces/vertical_bar_background.dart';
 import '../../src/widgets/surfaces/vertical_bar_title_row.dart';
 import '../../types/glass_quality.dart';
@@ -135,6 +142,7 @@ class GlassScaffold extends StatelessWidget {
     this.edgeFade = true,
     this.topEdgeFade,
     this.bottomEdgeFade,
+    this.edgeFadeAbsorbsPointers = false,
     this.topEdgeFadeExtent = 20.0,
     this.bottomEdgeFadeExtent = 20.0,
     this.edgeStyle = GlassScrollEdgeStyle.soft,
@@ -248,6 +256,12 @@ class GlassScaffold extends StatelessWidget {
   /// Whether to fade content at the bottom edge. When `null`, follows
   /// [edgeFade]. Automatically set to `true` when [bottomBar] is provided.
   final bool? bottomEdgeFade;
+
+  /// Whether the edge fades absorb pointer events. Defaults to `false`.
+  ///
+  /// When enabled, taps and gestures are blocked across each visible fade
+  /// zone, including content that is still visible beneath the fade.
+  final bool edgeFadeAbsorbsPointers;
 
   /// Extra fade height beyond the auto-calculated app bar area.
   ///
@@ -442,6 +456,11 @@ class GlassScaffold extends StatelessWidget {
     final bar = appBar;
     final appBarInStrip =
         verticalBar != null && bar is GlassAppBar && bar.pinnedActions != null;
+    // On iPhone Duo's inner display held upright it shares the status bar's
+    // row, and the content starts under the status bar, as natively.
+    final statusRow = bar is GlassAppBar && bar.pinnedActions != null
+        ? StatusBarRow.of(context)
+        : null;
     final bottom = bottomBar;
     final bottomBarInStrip = verticalBar != null &&
         (bottom is GlassToolbar ||
@@ -452,9 +471,11 @@ class GlassScaffold extends StatelessWidget {
     // otherwise fall back to the explicit appBarHeight parameter.
     final effectiveAppBarHeight = appBarInStrip
         ? verticalBar.rowTop + GlassVerticalBarMetrics.rowHeight
-        : appBar is PreferredSizeWidget
-            ? (appBar! as PreferredSizeWidget).preferredSize.height
-            : appBarHeight;
+        : statusRow != null
+            ? math.max(0.0, statusRow.bottom - topPad)
+            : appBar is PreferredSizeWidget
+                ? (appBar! as PreferredSizeWidget).preferredSize.height
+                : appBarHeight;
     final effectiveBottomBarHeight = bottomBarInStrip
         ? 0.0
         : bottomBar is PreferredSizeWidget
@@ -486,6 +507,7 @@ class GlassScaffold extends StatelessWidget {
             bottomFadeHeight: bottomFadeHeight,
             fadeTop: doFadeTop,
             fadeBottom: doFadeBottom,
+            absorbPointer: edgeFadeAbsorbsPointers,
             style: edgeStyle,
             maxSigma: maxSigma,
             // Pass the explicit background colour so the async-capture

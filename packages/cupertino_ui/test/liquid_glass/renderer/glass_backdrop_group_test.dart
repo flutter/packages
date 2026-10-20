@@ -1,3 +1,7 @@
+// Copyright 2013 The Flutter Authors
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:liquid_glass_widgets/liquid_glass_widgets.dart';
@@ -11,7 +15,9 @@ import 'package:liquid_glass_widgets/src/widgets/surfaces/tab_bar_searchable_int
 /// group like LiquidGlassLayer does. Offstage in the tests: what is checked
 /// is the group bookkeeping, not the shader.
 class _Member extends SingleChildRenderObjectWidget {
-  const _Member({super.key});
+  const _Member({super.key, this.settings = const LiquidGlassSettings()});
+
+  final LiquidGlassSettings settings;
 
   @override
   RenderLiquidGlassLayer createRenderObject(BuildContext context) {
@@ -19,11 +25,19 @@ class _Member extends SingleChildRenderObjectWidget {
     return RenderLiquidGlassLayer(
       renderShader: null,
       devicePixelRatio: 3,
-      settings: const LiquidGlassSettings(),
+      settings: settings,
       shadows: const [],
       link: GeometryRenderLink(),
       backdropKey: key,
     )..sharedBackdrop = key != null;
+  }
+
+  @override
+  void updateRenderObject(
+    BuildContext context,
+    RenderLiquidGlassLayer renderObject,
+  ) {
+    renderObject.settings = settings;
   }
 }
 
@@ -165,6 +179,73 @@ void main() {
       expect(_layer(tester, c).debugSharesBackdrop, isFalse);
       // The two members outside the fade still share.
       expect(_layer(tester, a).debugResolveSharing(), isTrue);
+    });
+
+    // #412: a backer is painted beneath the glass and the blur reads it back.
+    // The shared read is taken when the first member paints, before a later
+    // member's backer exists, and would be drawn over it.
+    testWidgets('stay out of the group with a backer of their own',
+        (tester) async {
+      const backer = LiquidGlassSettings(backerColor: Color(0x59000000));
+      await tester.pumpWidget(Offstage(
+        child: GlassBackdropGroup(
+          child: Column(children: const [
+            _Member(key: a),
+            _Member(key: b, settings: backer),
+            _Member(key: c),
+          ]),
+        ),
+      ));
+      expect(_layer(tester, a).debugResolveSharing(), isFalse);
+      expect(_layer(tester, b).debugResolveSharing(), isFalse);
+      expect(_layer(tester, c).debugResolveSharing(), isTrue);
+      expect(_layer(tester, a).debugResolveSharing(), isTrue);
+      expect(_layer(tester, b).debugSharesBackdrop, isFalse);
+      final group = tester.renderObject<RenderGlassBackdropGroupBoundary>(
+          find.byType(GlassBackdropGroupBoundary, skipOffstage: false));
+      expect(group.memberCount, 2);
+    });
+
+    testWidgets('a fully transparent backer does not keep a member out',
+        (tester) async {
+      const clear = LiquidGlassSettings(backerColor: Color(0x00000000));
+      await tester.pumpWidget(Offstage(
+        child: GlassBackdropGroup(
+          child: Column(children: const [
+            _Member(key: a),
+            _Member(key: b, settings: clear),
+            _Member(key: c),
+          ]),
+        ),
+      ));
+      for (final key in [a, b, c]) {
+        _layer(tester, key).debugResolveSharing();
+      }
+      expect(_layer(tester, b).debugResolveSharing(), isTrue);
+    });
+
+    testWidgets('leave the group when a backer is added, rejoin when removed',
+        (tester) async {
+      Future<void> pumpB(LiquidGlassSettings s) => tester.pumpWidget(Offstage(
+            child: GlassBackdropGroup(
+              child: Column(children: [
+                const _Member(key: a),
+                _Member(key: b, settings: s),
+                const _Member(key: c),
+              ]),
+            ),
+          ));
+      await pumpB(const LiquidGlassSettings());
+      for (final key in [a, b, c]) {
+        _layer(tester, key).debugResolveSharing();
+      }
+      expect(_layer(tester, b).debugResolveSharing(), isTrue);
+
+      await pumpB(const LiquidGlassSettings(backerColor: Color(0x59000000)));
+      expect(_layer(tester, b).debugResolveSharing(), isFalse);
+
+      await pumpB(const LiquidGlassSettings());
+      expect(_layer(tester, b).debugResolveSharing(), isTrue);
     });
 
     testWidgets('leave on detach', (tester) async {

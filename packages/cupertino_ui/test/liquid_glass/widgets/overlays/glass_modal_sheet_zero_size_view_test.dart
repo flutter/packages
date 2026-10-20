@@ -1,3 +1,7 @@
+// Copyright 2013 The Flutter Authors
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
 // A sheet built while the window has no size — an app the system launched
 // in the background for a push, before it was ever shown — must pick up the
 // real size when it arrives and drag normally afterwards. It used to keep

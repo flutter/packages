@@ -1,3 +1,7 @@
+// Copyright 2013 The Flutter Authors
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
 // Shared drag gesture state and handlers for bottom bar tab indicators.
 //
 // Eliminates duplication between [TabIndicatorState] and
@@ -46,6 +50,23 @@ mixin TabDragGestureMixin<T extends StatefulWidget> on State<T> {
   /// Always invoked unconditionally — callers may use repeat-tap to trigger
   /// scroll-to-top or refresh on the active tab (issue #22).
   void notifyTabChanged(int index);
+
+  /// The axis the tabs run along: horizontal, except in iPhone Duo's vertical
+  /// bar strip.
+  Axis get tabAxis => Axis.horizontal;
+
+  /// The context whose box the tabs span, which positions map against.
+  ///
+  /// This state's own by default; a bar whose tabs fill only part of what it
+  /// builds returns theirs.
+  BuildContext get tabTrackContext => context;
+
+  /// Whether a tap selects its tab on release rather than on touch-down.
+  ///
+  /// Over a platform view the selection waits for the release (the hybrid
+  /// tap). A vertical bar always waits, as UIKit's does, so that touching and
+  /// holding a tab shows the labels without switching to it.
+  bool get selectsOnRelease => isPlatformViewBackdrop;
 
   // ── Shared state ──────────────────────────────────────────────────────────
 
@@ -127,7 +148,7 @@ mixin TabDragGestureMixin<T extends StatefulWidget> on State<T> {
   void _handleGlobalPointer(PointerEvent event) {
     if (!mounted) return;
     if (event is PointerDownEvent) {
-      final renderObject = context.findRenderObject();
+      final renderObject = tabTrackContext.findRenderObject();
       if (renderObject is RenderBox) {
         final positionInBox = renderObject.globalToLocal(event.position);
         if (renderObject.paintBounds.contains(positionInBox)) {
@@ -210,8 +231,9 @@ mixin TabDragGestureMixin<T extends StatefulWidget> on State<T> {
   double alignmentFromGlobal(Offset globalPosition) =>
       DraggableIndicatorPhysics.getAlignmentFromGlobalPosition(
         globalPosition,
-        context,
+        tabTrackContext,
         tabCount,
+        direction: tabAxis,
         mirrorForRtl: false,
       );
 
@@ -228,8 +250,9 @@ mixin TabDragGestureMixin<T extends StatefulWidget> on State<T> {
   int tabIndexFromGlobal(Offset globalPosition) =>
       DraggableIndicatorPhysics.tabIndexFromGlobalPosition(
         globalPosition,
-        context,
+        tabTrackContext,
         tabCount,
+        direction: tabAxis,
       );
 
   // ── Gesture handlers ──────────────────────────────────────────────────────
@@ -307,9 +330,9 @@ mixin TabDragGestureMixin<T extends StatefulWidget> on State<T> {
       tabIsDragging = true;
       tabXAlign = alignmentFromGlobal(d.globalPosition);
       // Velocity-gated lateral sway: only fast flicks cause movement.
-      if (d.delta.dx.abs() > _swayVelocityThreshold) {
-        barSwayOffset =
-            (d.delta.dx * _swayScale).clamp(-_maxSwayPx, _maxSwayPx);
+      final delta = tabAxis == Axis.horizontal ? d.delta.dx : d.delta.dy;
+      if (delta.abs() > _swayVelocityThreshold) {
+        barSwayOffset = (delta * _swayScale).clamp(-_maxSwayPx, _maxSwayPx);
       } else {
         barSwayOffset = 0.0;
       }
@@ -355,11 +378,13 @@ mixin TabDragGestureMixin<T extends StatefulWidget> on State<T> {
     final positionIndex =
         (relX * (tabCount - 1)).round().clamp(0, tabCount - 1);
 
-    final renderObject = context.findRenderObject();
+    final renderObject = tabTrackContext.findRenderObject();
     if (renderObject is! RenderBox) return;
     final box = renderObject;
     // Raw horizontal velocity as a fraction of bar width.
-    var rawVelX = d.velocity.pixelsPerSecond.dx / box.size.width;
+    var rawVelX = tabAxis == Axis.horizontal
+        ? d.velocity.pixelsPerSecond.dx / box.size.width
+        : d.velocity.pixelsPerSecond.dy / box.size.height;
 
     const velocityThreshold = 0.5;
     int target = positionIndex;
@@ -420,7 +445,7 @@ mixin TabDragGestureMixin<T extends StatefulWidget> on State<T> {
   void onBarTapDown(TapDownDetails d) {
     final index = tabIndexFromGlobal(d.globalPosition);
 
-    if (isPlatformViewBackdrop) {
+    if (selectsOnRelease) {
       // Hybrid mode: instantly slide the visual indicator for native responsiveness,
       // but delay the actual content swap (PlatformView unmount) until onTapUp
       // to prevent iOS mid-gesture touch drops.
@@ -442,7 +467,7 @@ mixin TabDragGestureMixin<T extends StatefulWidget> on State<T> {
       tabIsDown = false;
     });
 
-    if (isPlatformViewBackdrop && _pendingHybridTabIndex != null) {
+    if (selectsOnRelease && _pendingHybridTabIndex != null) {
       final target = _pendingHybridTabIndex!;
       notifyTabChanged(target);
       _pendingHybridTabIndex = null;

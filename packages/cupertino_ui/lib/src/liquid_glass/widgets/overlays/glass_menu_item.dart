@@ -1,3 +1,7 @@
+// Copyright 2013 The Flutter Authors
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
 import 'package:flutter/cupertino.dart';
 import '../shared/glass_focus_region.dart';
 import '../shared/glass_interaction_state_mixin.dart';
@@ -28,6 +32,7 @@ class GlassMenuItem extends StatefulWidget {
     this.maxLines = 1,
     this.enablePressScale = true,
     this.closeDelay,
+    this.submenu,
   });
 
   /// The primary text of the item.
@@ -98,6 +103,18 @@ class GlassMenuItem extends StatefulWidget {
   /// widget (e.g. a [GlassSwitch]) whose state transition should be visible
   /// before the menu morphs away.
   final Duration? closeDelay;
+
+  /// Child items shown when this item is activated inside a [GlassMenu].
+  ///
+  /// When non-null, activating the item (tap, slide-and-release, or
+  /// [GlassMenuController.endGlide]) does not call [onTap] or close the menu.
+  /// Instead a card opens over the parent, which remains visible but recedes
+  /// and dims. The card's header repeats this item's icon and title, in bold,
+  /// with a downward chevron. Activating the header collapses the card.
+  /// Submenus may nest; only the frontmost card's actions are interactive.
+  ///
+  /// When [trailing] is null a submenu item shows a chevron.
+  final List<Widget>? submenu;
 
   @override
   State<GlassMenuItem> createState() => _GlassMenuItemState();
@@ -295,6 +312,16 @@ class _GlassMenuItemState extends State<GlassMenuItem>
                 opacity: widget.enabled ? 1.0 : 0.4,
                 child: LayoutBuilder(
                   builder: (context, constraints) {
+                    // A submenu row shows a chevron unless the caller supplied
+                    // its own trailing widget.
+                    final Widget? trailing = widget.trailing ??
+                        (widget.submenu != null
+                            ? Icon(
+                                CupertinoIcons.chevron_right,
+                                size: 16,
+                                color: iconColor.withValues(alpha: 0.6),
+                              )
+                            : null);
                     final row = Row(
                       children: [
                         // Icon
@@ -343,7 +370,7 @@ class _GlassMenuItemState extends State<GlassMenuItem>
                         ),
 
                         // Trailing
-                        if (widget.trailing != null) widget.trailing!,
+                        if (trailing != null) trailing,
                       ],
                     );
 
@@ -351,7 +378,7 @@ class _GlassMenuItemState extends State<GlassMenuItem>
                       final double minRequired = (widget.icon != null
                               ? (widget.iconSize + 12.0)
                               : 0.0) +
-                          (widget.trailing != null ? 24.0 : 0.0);
+                          (trailing != null ? 24.0 : 0.0);
                       if (constraints.maxWidth < minRequired) {
                         return OverflowBox(
                           alignment: Alignment.centerLeft,

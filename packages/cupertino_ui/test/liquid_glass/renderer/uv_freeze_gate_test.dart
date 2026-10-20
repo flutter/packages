@@ -1,3 +1,7 @@
+// Copyright 2013 The Flutter Authors
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
 // test/renderer/uv_freeze_gate_test.dart
 //
 // Unit tests for the LiquidGlassPushBackScope gate in _hasScale().

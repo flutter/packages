@@ -23,6 +23,7 @@ Settings for the primary content and the sheet's basic behavior.
 | `morphFrom` | `GlassMorphAnchor?` | `null` | (In `show`) Presents by morphing out of a `GlassMorphTrigger` instead of sliding up. The anchor both locates the trigger and empties it for the duration. |
 | `morphFromRect` | `Rect?` | `null` | (In `show`) For triggers that can't be wrapped — an explicit global rect. The trigger stays painted, so the anchor blob is suppressed and the droplet blooms from the rect's centre. Mutually exclusive with `morphFrom`. |
 | `morphSpeed` | `MorphSpeed` | `normal` | (In `show`) Spring profile for the morph. `normal` is the 375 ms iOS 26 native-parity profile. Also sizes the route transition so the page stays mounted for the whole morph. |
+| `sheetAnimationStyle` | `AnimationStyle?` | `null` | (In `show`) Customizes the slide presentation's `duration`, `reverseDuration`, `curve`, and `reverseCurve` (defaults to 500 ms `Curves.easeOutQuart` each way). Ignored while a morph (`morphFrom` / `morphFromRect`) is running, which uses its own spring; still applies when the morph falls back to the slide. |
 
 ---
 

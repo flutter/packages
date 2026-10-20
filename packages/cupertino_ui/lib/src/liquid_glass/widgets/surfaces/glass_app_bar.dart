@@ -1,9 +1,14 @@
+// Copyright 2013 The Flutter Authors
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
 import 'dart:math' as math;
 
 import 'package:flutter/cupertino.dart';
 
 import '../../src/renderer/glass_backdrop_group.dart';
 import '../../src/renderer/liquid_glass_renderer.dart';
+import '../../src/widgets/surfaces/status_bar_row.dart';
 import '../../src/widgets/surfaces/vertical_bar_title_row.dart';
 import '../../types/glass_quality.dart';
 import '../interactive/glass_button.dart';
@@ -116,7 +121,8 @@ class GlassAppBar extends StatelessWidget
         pinnedLeading = const <GlassBarItem>[],
         pinnedBackButton = true,
         pinnedLeadingItemsSupplementBackButton = false,
-        onBack = null;
+        onBack = null,
+        buttonSize = null;
 
   /// Creates a glass app bar whose chrome pins above the [Navigator].
   ///
@@ -149,6 +155,7 @@ class GlassAppBar extends StatelessWidget
     bool backButton = true,
     bool leadingItemsSupplementBackButton = false,
     this.onBack,
+    this.buttonSize,
     this.centerTitle = true,
     // Whitelisted: Structural transparent default, not a Material colour.
     this.backgroundColor = const Color(0x00000000),
@@ -158,7 +165,8 @@ class GlassAppBar extends StatelessWidget
     this.largeTitleController,
     this.bottom,
     this.groupBackdrop = true,
-  })  : pinnedActions = actions,
+  })  : assert(buttonSize == null || buttonSize > 0),
+        pinnedActions = actions,
         pinnedLeading = leading,
         pinnedBackButton = backButton,
         pinnedLeadingItemsSupplementBackButton =
@@ -191,8 +199,23 @@ class GlassAppBar extends StatelessWidget
 
   /// The height of the toolbar row (excluding [bottom]).
   ///
-  /// Defaults to `44.0` to match iOS 26 navigation bar height.
+  /// Defaults to `44.0` to match iOS 26 navigation bar height. When
+  /// [buttonSize] exceeds [toolbarHeight], the effective toolbar height
+  /// expands to [buttonSize] so buttons are never clipped.
   final double toolbarHeight;
+
+  /// Diameter of standalone bar buttons (the automatic back button and
+  /// non-shared items) on a [GlassAppBar.pinned] bar, in logical pixels.
+  ///
+  /// Defaults to `44.0` when null. Shared multi-item capsules scale
+  /// proportionally (`buttonSize + 2.0`), and custom items
+  /// ([GlassBarItem.custom]) are constrained to this height in a horizontal
+  /// bar. When [buttonSize] exceeds [toolbarHeight], the toolbar row and
+  /// [preferredSize] expand to accommodate it.
+  final double? buttonSize;
+
+  double get _effectiveToolbarHeight =>
+      math.max(toolbarHeight, buttonSize ?? 0.0);
 
   /// A widget to display at the bottom of the app bar, below the title row.
   ///
@@ -248,7 +271,7 @@ class GlassAppBar extends StatelessWidget
   /// The total preferred size of the app bar (toolbar + bottom widget).
   @override
   Size get preferredSize => Size.fromHeight(
-        toolbarHeight + (bottom?.preferredSize.height ?? 0.0),
+        _effectiveToolbarHeight + (bottom?.preferredSize.height ?? 0.0),
       );
 
   /// Whether this app bar fully obstructs the content behind it.
@@ -325,6 +348,8 @@ class GlassAppBar extends StatelessWidget
         leadingItemsSupplementBackButton:
             pinnedLeadingItemsSupplementBackButton,
         onBack: onBack,
+        buttonSize: buttonSize,
+        toolbarHeight: _effectiveToolbarHeight,
         buttonSettings: buttonSettings,
         largeTitleController: largeTitleController,
         builder: (context, chrome) => _buildBar(context, chrome: chrome),
@@ -351,31 +376,43 @@ class GlassAppBar extends StatelessWidget
     // owns, and the shell is this bar's container.
     final verticalBar =
         chrome == null ? null : GlassVerticalBar.maybeOf(context);
+    // On iPhone Duo's inner display held upright it moves up into the status
+    // bar's row instead, beside the status cluster, the title leading.
+    final statusRow = chrome == null ? null : StatusBarRow.of(context);
+    final inRow = verticalBar != null || statusRow != null;
 
     Widget toolbarRow = SafeArea(
+      top: statusRow == null,
       bottom: false,
       child: Padding(
-        padding: verticalBar == null
-            ? padding
-            : verticalBar.edge == GlassVerticalBarEdge.trailing
-                ? EdgeInsetsDirectional.only(
-                    start: verticalBar.titleInset,
-                    end: GlassVerticalBarMetrics.rowInset,
-                    top: verticalBar.rowTop,
-                  )
-                : EdgeInsetsDirectional.only(
-                    start: GlassVerticalBarMetrics.rowInset,
-                    end: verticalBar.titleInset,
-                    top: verticalBar.rowTop,
-                  ),
+        padding: statusRow != null
+            ? EdgeInsets.only(
+                left: statusRow.left,
+                right: statusRow.right,
+                top: statusRow.top,
+              )
+            : verticalBar == null
+                ? padding
+                : verticalBar.edge == GlassVerticalBarEdge.trailing
+                    ? EdgeInsetsDirectional.only(
+                        start: verticalBar.titleInset,
+                        end: GlassVerticalBarMetrics.rowInset,
+                        top: verticalBar.rowTop,
+                      )
+                    : EdgeInsetsDirectional.only(
+                        start: GlassVerticalBarMetrics.rowInset,
+                        end: verticalBar.titleInset,
+                        top: verticalBar.rowTop,
+                      ),
         child: SizedBox(
-          height: verticalBar == null
-              ? toolbarHeight
-              : GlassVerticalBarMetrics.rowHeight,
+          height: inRow
+              ? GlassVerticalBarMetrics.rowHeight
+              : _effectiveToolbarHeight,
           child: CustomMultiChildLayout(
             delegate: _ToolbarLayout(
-              centerTitle: centerTitle && verticalBar == null,
+              centerTitle: centerTitle && !inRow,
               textDirection: Directionality.of(context),
+              pinned: chrome != null,
             ),
             children: [
               if (effectiveLeading != null)
@@ -567,10 +604,12 @@ class _ToolbarLayout extends MultiChildLayoutDelegate {
   _ToolbarLayout({
     required this.centerTitle,
     required this.textDirection,
+    this.pinned = false,
   });
 
   final bool centerTitle;
   final TextDirection textDirection;
+  final bool pinned;
 
   /// Horizontal gap between the leading widget and the title.
   static const double _titleGap = 8.0;
@@ -585,12 +624,15 @@ class _ToolbarLayout extends MultiChildLayoutDelegate {
   void performLayout(Size size) {
     double leadingWidth = 0.0;
     double actionsWidth = 0.0;
+    final slotConstraints = pinned
+        ? BoxConstraints(maxWidth: size.width)
+        : BoxConstraints.loose(size);
 
     // ── Leading ──────────────────────────────────────────────────────────────
     if (hasChild(_ToolbarSlot.leading)) {
       final Size ls = layoutChild(
         _ToolbarSlot.leading,
-        BoxConstraints.loose(size),
+        slotConstraints,
       );
       leadingWidth = ls.width;
       positionChild(
@@ -606,7 +648,7 @@ class _ToolbarLayout extends MultiChildLayoutDelegate {
     if (hasChild(_ToolbarSlot.actions)) {
       final Size as = layoutChild(
         _ToolbarSlot.actions,
-        BoxConstraints.loose(size),
+        slotConstraints,
       );
       actionsWidth = as.width;
       positionChild(
@@ -676,5 +718,7 @@ class _ToolbarLayout extends MultiChildLayoutDelegate {
 
   @override
   bool shouldRelayout(_ToolbarLayout old) =>
-      old.centerTitle != centerTitle || old.textDirection != textDirection;
+      old.centerTitle != centerTitle ||
+      old.textDirection != textDirection ||
+      old.pinned != pinned;
 }

@@ -1,3 +1,7 @@
+// Copyright 2013 The Flutter Authors
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
 // Regression tests for issue #289:
 // GlassScaffold fails to adapt brightness in dark mode when using MaterialApp.
 //

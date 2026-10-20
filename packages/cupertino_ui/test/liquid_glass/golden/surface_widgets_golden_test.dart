@@ -1,3 +1,7 @@
+// Copyright 2013 The Flutter Authors
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
 import 'package:liquid_glass_widgets/widgets/interactive/glass_button.dart';
 import 'package:liquid_glass_widgets/widgets/surfaces/glass_app_bar.dart';
 import 'package:liquid_glass_widgets/widgets/surfaces/glass_tab_bar.dart';

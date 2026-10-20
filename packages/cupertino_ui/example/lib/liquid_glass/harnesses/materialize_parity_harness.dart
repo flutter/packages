@@ -1,3 +1,7 @@
+// Copyright 2013 The Flutter Authors
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
 // Parity harness — the package's materialize transition beside iOS's own.
 //
 // The top button is a native SwiftUI `glassEffect` circle whose entrance and

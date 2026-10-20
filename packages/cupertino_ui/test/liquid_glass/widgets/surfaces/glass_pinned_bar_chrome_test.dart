@@ -1,3 +1,7 @@
+// Copyright 2013 The Flutter Authors
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -444,6 +448,31 @@ void main() {
       expect(find.byIcon(CupertinoIcons.back), findsNothing);
     });
 
+    testWidgets('survives the screen resizing under an opaque route',
+        (tester) async {
+      // flutter/flutter#192030: the bar's portal child, laid out against the
+      // overlay's size from before the resize, asserted.
+      await tester.pumpWidget(shellApp(
+        shell: false,
+        const Scaffold(
+          appBar: GlassAppBar.pinned(title: Text('Inbox')),
+        ),
+      ));
+      final navigator = tester.state<NavigatorState>(find.byType(Navigator));
+      navigator.push(MaterialPageRoute<void>(
+        builder: (_) => const SizedBox.expand(),
+      ));
+      await settle(tester);
+
+      tester.view.physicalSize = tester.view.physicalSize.flipped;
+      addTearDown(tester.view.resetPhysicalSize);
+      await settle(tester);
+      navigator.pop();
+      await settle(tester);
+
+      expect(find.text('Inbox'), findsOneWidget);
+    });
+
     testWidgets('the in-route capsule matches the one the shell draws',
         (tester) async {
       // Larger than the default icon, which happened to fit the padded slot.
@@ -655,6 +684,364 @@ void main() {
     // One widget per shell, which the shell's own cluster matches.
     expect(data.actions, hasLength(2));
     expect(find.byType(GlassButtonGroup), findsNWidgets(2));
+  });
+
+  testWidgets(
+      'buttonSize sizes both hoisted and in-route chrome identically (#425)',
+      (tester) async {
+    Widget buildScreen() => GlassPinnedBarChrome(
+          buttonSize: 48,
+          actions: [
+            GlassBarItem.icon(
+              icon: const Icon(CupertinoIcons.add),
+              background: GlassBarItemBackground.separate,
+              onTap: () {},
+            ),
+          ],
+          builder: (context, chrome) => Scaffold(
+            appBar: AppBar(
+              automaticallyImplyLeading: false,
+              leading: chrome.leading,
+              actions: chrome.actions,
+            ),
+          ),
+        );
+
+    await tester.pumpWidget(shellApp(buildScreen()));
+    await settle(tester);
+    final pinnedSize = tester.getSize(inHost(find.byType(GlassButton)).first);
+    expect(pinnedSize, const Size(48, 48));
+
+    await tester.pumpWidget(shellApp(buildScreen(), shell: false));
+    await settle(tester);
+    final inRouteSize = tester.getSize(inBar(find.byType(GlassButtonGroup)));
+    expect(inRouteSize, const Size(48, 48));
+  });
+
+  group('passive GlassBarItem.custom (#432)', () {
+    testWidgets(
+      'GlassBarItem.custom without onTap adds no button in-route and forwards taps to child',
+      (tester) async {
+        final handle = tester.ensureSemantics();
+        var taps = 0;
+        await tester.pumpWidget(CupertinoApp(
+          home: CupertinoPageScaffold(
+            child: GlassAppBar.pinned(
+              title: const Text('Title'),
+              actions: [
+                GlassBarItem.custom(
+                  child: CupertinoButton(
+                    onPressed: () => taps++,
+                    child: const Icon(
+                      CupertinoIcons.gear_alt_fill,
+                      semanticLabel: 'Settings',
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ));
+
+        final node = tester.getSemantics(find.bySemanticsLabel('Settings'));
+        expect(
+          node,
+          isSemantics(
+            label: 'Settings',
+            isButton: true,
+            hasTapAction: true,
+          ),
+        );
+        expect(
+          node.parent,
+          isNot(isSemantics(isButton: true, hasTapAction: true)),
+        );
+        await expectLater(tester, meetsGuideline(labeledTapTargetGuideline));
+        await tester.tap(find.bySemanticsLabel('Settings'));
+        expect(taps, 1);
+        handle.dispose();
+      },
+    );
+
+    testWidgets(
+      'GlassBarItem.custom without onTap adds no button when hoisted in GlassNavigationShell and forwards taps to child',
+      (tester) async {
+        final handle = tester.ensureSemantics();
+        var taps = 0;
+        await tester.pumpWidget(CupertinoApp(
+          builder: (context, child) => GlassNavigationShell(child: child!),
+          home: CupertinoPageScaffold(
+            navigationBar: GlassAppBar.pinned(
+              title: const Text('Title'),
+              actions: [
+                GlassBarItem.custom(
+                  onTap: null,
+                  child: CupertinoButton(
+                    onPressed: () => taps++,
+                    child: const Icon(
+                      CupertinoIcons.gear_alt_fill,
+                      semanticLabel: 'Settings',
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            child: const SizedBox.expand(),
+          ),
+        ));
+        await settle(tester);
+
+        expect(inHost(find.bySemanticsLabel('Settings')), findsOneWidget);
+        final node = tester.getSemantics(
+          inHost(find.bySemanticsLabel('Settings')),
+        );
+        expect(
+          node,
+          isSemantics(
+            label: 'Settings',
+            isButton: true,
+            hasTapAction: true,
+          ),
+        );
+        expect(
+          node.parent,
+          isNot(isSemantics(isButton: true, hasTapAction: true)),
+        );
+        await expectLater(tester, meetsGuideline(labeledTapTargetGuideline));
+        await tester.tap(inHost(find.bySemanticsLabel('Settings')));
+        expect(taps, 1);
+        handle.dispose();
+      },
+    );
+
+    testWidgets(
+      'GlassBarItem.custom without onTap with background: none adds no outer button and forwards taps to child',
+      (tester) async {
+        final handle = tester.ensureSemantics();
+        for (final useShell in [false, true]) {
+          var taps = 0;
+          await tester.pumpWidget(shellApp(
+            shell: useShell,
+            Scaffold(
+              appBar: GlassAppBar.pinned(
+                title: const Text('Title'),
+                actions: [
+                  GlassBarItem.custom(
+                    background: GlassBarItemBackground.none,
+                    child: CupertinoButton(
+                      onPressed: () => taps++,
+                      child: const Icon(
+                        CupertinoIcons.gear_alt_fill,
+                        semanticLabel: 'Settings',
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ));
+          await settle(tester);
+
+          final finder = useShell
+              ? inHost(find.bySemanticsLabel('Settings'))
+              : find.bySemanticsLabel('Settings');
+          final node = tester.getSemantics(finder);
+          expect(
+            node,
+            isSemantics(
+              label: 'Settings',
+              isButton: true,
+              hasTapAction: true,
+            ),
+          );
+          expect(
+            node.parent,
+            isNot(isSemantics(isButton: true, hasTapAction: true)),
+          );
+          await expectLater(tester, meetsGuideline(labeledTapTargetGuideline));
+          await tester.tap(finder);
+          expect(taps, 1);
+        }
+        handle.dispose();
+      },
+    );
+
+    testWidgets(
+      'labelled passive GlassBarItem.custom exposes exact label without button role or tap action, and dims when disabled',
+      (tester) async {
+        final handle = tester.ensureSemantics();
+        for (final useShell in [false, true]) {
+          for (final background in [
+            GlassBarItemBackground.shared,
+            GlassBarItemBackground.none,
+          ]) {
+            await tester.pumpWidget(shellApp(
+              shell: useShell,
+              Scaffold(
+                appBar: GlassAppBar.pinned(
+                  title: const Text('Title'),
+                  actions: [
+                    GlassBarItem.custom(
+                      label: '3 unread messages',
+                      enabled: false,
+                      background: background,
+                      child: const Text('3'),
+                    ),
+                  ],
+                ),
+              ),
+            ));
+            await settle(tester);
+
+            final finder = useShell
+                ? inHost(find.bySemanticsLabel('3 unread messages'))
+                : find.bySemanticsLabel('3 unread messages');
+            final node = tester.getSemantics(finder);
+            expect(node.label, '3 unread messages');
+            expect(
+              node,
+              isNot(isSemantics(isButton: true, hasTapAction: true)),
+            );
+
+            final textFinder =
+                useShell ? inHost(find.text('3')) : find.text('3');
+            final opacityFinder = find.ancestor(
+              of: textFinder,
+              matching: find.byWidgetPredicate(
+                (w) => w is Opacity && w.opacity == 0.5,
+              ),
+            );
+            expect(opacityFinder, findsOneWidget);
+          }
+        }
+        handle.dispose();
+      },
+    );
+
+    testWidgets(
+      'GlassBarItem.custom with onTap still acts as a button',
+      (tester) async {
+        final handle = tester.ensureSemantics();
+        var taps = 0;
+        await tester.pumpWidget(shellApp(
+          shell: false,
+          Scaffold(
+            appBar: GlassAppBar.pinned(
+              title: const Text('Title'),
+              actions: [
+                GlassBarItem.custom(
+                  label: 'Inbox',
+                  onTap: () => taps++,
+                  child: const Text('3'),
+                ),
+              ],
+            ),
+          ),
+        ));
+        await settle(tester);
+
+        final node = tester.getSemantics(find.bySemanticsLabel('Inbox'));
+        expect(
+          node,
+          isSemantics(
+            label: 'Inbox',
+            isButton: true,
+            hasTapAction: true,
+          ),
+        );
+        await tester.tap(find.text('3'));
+        expect(taps, 1);
+        handle.dispose();
+      },
+    );
+
+    testWidgets(
+      'fitGlassNavStripGroups skips passive custom items in overflow menu',
+      (tester) async {
+        final groups = groupGlassNavBarItems(
+          [
+            GlassBarItem.icon(
+              icon: const Icon(CupertinoIcons.add),
+              label: 'Add',
+              onTap: () {},
+            ),
+            const GlassBarItem.custom(
+              axisBehavior: GlassBarItemAxisBehavior.verticalPreferred,
+              child: Text('Badge'),
+            ),
+          ],
+          axis: Axis.vertical,
+        );
+
+        // Tight budget forces the second item into overflow; since it is
+        // passive, no empty overflow menu is appended.
+        final fitted = fitGlassNavStripGroups(groups, 50.0);
+        expect(fitted, hasLength(1));
+        expect(fitted.single.items, hasLength(1));
+      },
+    );
+
+    testWidgets(
+      'standalone GlassButtonGroup.icons with passive GlassButtonGroupItem and GlassButton.custom(excludeFromSemantics: true) add no outer button semantics',
+      (tester) async {
+        final handle = tester.ensureSemantics();
+        var taps = 0;
+        await tester.pumpWidget(CupertinoApp(
+          home: CupertinoPageScaffold(
+            child: Column(
+              children: [
+                GlassButtonGroup.icons(
+                  useOwnLayer: true,
+                  items: [
+                    GlassButtonGroupItem(
+                      icon: CupertinoButton(
+                        onPressed: () => taps++,
+                        child: const Icon(
+                          CupertinoIcons.bell_fill,
+                          semanticLabel: 'Notifications',
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                GlassButton.custom(
+                  useOwnLayer: true,
+                  canRequestFocus: false,
+                  excludeFromSemantics: true,
+                  onTap: () {},
+                  child: CupertinoButton(
+                    onPressed: () => taps++,
+                    child: const Icon(
+                      CupertinoIcons.person_fill,
+                      semanticLabel: 'Profile',
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ));
+
+        for (final label in ['Notifications', 'Profile']) {
+          final node = tester.getSemantics(find.bySemanticsLabel(label));
+          expect(
+            node,
+            isSemantics(
+              label: label,
+              isButton: true,
+              hasTapAction: true,
+            ),
+          );
+          expect(
+            node.parent,
+            isNot(isSemantics(isButton: true, hasTapAction: true)),
+          );
+          await tester.tap(find.bySemanticsLabel(label));
+        }
+        expect(taps, 2);
+        handle.dispose();
+      },
+    );
   });
 }
 

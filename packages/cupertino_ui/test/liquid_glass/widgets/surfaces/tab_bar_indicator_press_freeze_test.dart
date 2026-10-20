@@ -1,3 +1,7 @@
+// Copyright 2013 The Flutter Authors
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
 // Regression tests for the "bottom bar freezes over an iOS PlatformView" fix.
 //
 // The freeze is iOS clip-chain reconstruction: a clip layer added/removed over a

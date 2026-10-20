@@ -1,3 +1,7 @@
+// Copyright 2013 The Flutter Authors
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
 /// Apple Messages iOS 26 — GlassMenu Spring Physics Test Case
 ///
 /// This is a clone of the iOS 26 Messages app, built

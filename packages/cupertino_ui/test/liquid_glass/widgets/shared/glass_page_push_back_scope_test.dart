@@ -1,3 +1,7 @@
+// Copyright 2013 The Flutter Authors
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
 // test/widgets/shared/glass_page_push_back_scope_test.dart
 //
 // Integration tests for _GlassPageState's push-back scope subscription.

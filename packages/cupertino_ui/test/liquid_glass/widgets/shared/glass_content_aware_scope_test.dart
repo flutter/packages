@@ -1,3 +1,7 @@
+// Copyright 2013 The Flutter Authors
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
 // ignore_for_file: require_trailing_commas
 // Behavior tests for the content-aware brightness system:
 //   - GlassContentAwareScope.computeVerdict (WCAG contrast vote, sticky

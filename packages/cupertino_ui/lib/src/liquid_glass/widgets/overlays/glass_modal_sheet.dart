@@ -1,3 +1,7 @@
+// Copyright 2013 The Flutter Authors
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
 import 'dart:async';
 import 'dart:math' as math;
 import 'dart:ui';
@@ -317,7 +321,47 @@ class GlassModalSheet extends StatefulWidget {
             'GlassModalSheet needs at least one detent — add medium and/or large '
             '(small alone is a floor, not a resting height).');
 
+  /// The width a sheet presented from [context] rests at, at [state].
+  ///
+  /// For a sheet that sizes itself to content measured before it is presented:
+  /// measure at this width, or wrapping content gains a row the sheet's height
+  /// does not allow for. Pass the [placement] and [horizontalMargin] the sheet
+  /// is presented with; at [GlassSheetState.peek], pass its
+  /// `peekHorizontalMargin` as [horizontalMargin] where it has one; one with
+  /// a `peekWidth` rests at that instead.
+  ///
+  /// The screen's width less [horizontalMargin] on each side, and at
+  /// [GlassSheetState.full] the whole width. In iPhone Duo's vertical bar strip
+  /// layout the sheet keeps its margins at every detent, and in a window
+  /// 800pt wide or more it is a card no wider than the display's shorter side.
+  /// On a half-folded display it is measured in the side it is presented into.
+  static double restingWidthOf(
+    BuildContext context, {
+    GlassSheetState state = GlassSheetState.half,
+    GlassSheetPlacement placement = GlassSheetPlacement.automatic,
+    double horizontalMargin = 8.0,
+  }) {
+    final size = _subScreenFor(context)?.size ?? MediaQuery.sizeOf(context);
+    if (GlassVerticalBar.maybeOf(context) == null) {
+      return state == GlassSheetState.full
+          ? size.width
+          : size.width - 2 * horizontalMargin;
+    }
+    return size.width -
+        _stripSheetInsets(
+          screenSize: size,
+          regularWidth: VerticalBarTitleRow.regularWidth(context),
+          margin: horizontalMargin,
+          placement: placement,
+          textDirection: Directionality.of(context),
+        ).horizontal;
+  }
+
   /// Shows a high-fidelity glass modal sheet.
+  ///
+  /// The optional [routeSettings] are passed to the underlying dialog route,
+  /// allowing [NavigatorObserver]s to identify the sheet by name and arguments.
+  /// They are also available through [ModalRoute.of] in [builder].
   ///
   /// ## Morphing from a trigger
   ///
@@ -354,6 +398,11 @@ class GlassModalSheet extends StatefulWidget {
   /// Leave both null and the sheet presents exactly as it always has — the
   /// slide transition is untouched. [morphSpeed] tunes the spring profile; the
   /// default [MorphSpeed.normal] is the 375 ms native-parity profile.
+  ///
+  /// [sheetAnimationStyle] sets the slide's durations and curves; the slide
+  /// otherwise takes 500 ms each way on [Curves.easeOutQuart]. A null
+  /// `reverseDuration` takes `duration`, and a null `reverseCurve` takes
+  /// `curve`. The morph runs on its own spring and ignores it.
   ///
   /// The morph needs the metaball blend that draws the teardrop neck, so it
   /// falls back to the slide transition when that is unavailable: on Skia/web
@@ -392,6 +441,7 @@ class GlassModalSheet extends StatefulWidget {
     Color barrierColor = GlassDefaults.barrierColor,
     bool isDismissible = true,
     bool useRootNavigator = false,
+    RouteSettings? routeSettings,
     double interactionScale = 1.01,
     bool enableInteractionGlow = true,
     bool enableSaturationGlow = true,
@@ -437,6 +487,7 @@ class GlassModalSheet extends StatefulWidget {
     GlassMorphAnchor? morphFrom,
     Rect? morphFromRect,
     MorphSpeed morphSpeed = MorphSpeed.normal,
+    AnimationStyle? sheetAnimationStyle,
   }) {
     assert(
         morphFrom == null || morphFromRect == null,
@@ -487,12 +538,24 @@ class GlassModalSheet extends StatefulWidget {
     // long enough to keep the page mounted (and the barrier fading) for as long
     // as the morph runs — most visibly on the way out, where the route reverse
     // is the window the closing morph plays in.
+    const slideDuration = Duration(milliseconds: 500);
     final transitionDuration = morphing
         ? _morphRouteDuration(morphSpeed)
-        : const Duration(milliseconds: 500);
+        : sheetAnimationStyle?.duration ?? slideDuration;
+    final reverseTransitionDuration = morphing
+        ? transitionDuration
+        : sheetAnimationStyle?.reverseDuration ??
+            sheetAnimationStyle?.duration ??
+            slideDuration;
 
-    return showGeneralDialog<T>(
-      context: context,
+    // On a half-folded display the route presents into one side of the fold,
+    // as [DisplayFeatureSubScreen] does for any dialog. The sheet is laid out
+    // in that side rather than across the screen.
+    final subScreen = _subScreenFor(context);
+
+    return Navigator.of(context, rootNavigator: useRootNavigator)
+        .push<T>(_GlassModalSheetRoute<T>(
+      anchorPoint: subScreen?.center,
       barrierDismissible: isDismissible,
       barrierLabel: 'Dismiss',
       barrierColor: morphing
@@ -500,12 +563,13 @@ class GlassModalSheet extends StatefulWidget {
           // spring so it stays in lockstep with the blob. A route-level barrier
           // would fade linearly on an independent clock, creating the "two
           // separate things" visual that GlassMenu avoids by having no route
-          // barrier at all. Pass transparent here so showGeneralDialog's built-in
+          // barrier at all. Pass transparent here so the route's built-in
           // linear fade does not run alongside the spring-driven scrim.
           ? const Color(0x00000000)
           : barrierColor,
-      useRootNavigator: useRootNavigator,
+      settings: routeSettings,
       transitionDuration: transitionDuration,
+      reverseTransitionDuration: reverseTransitionDuration,
       transitionBuilder: (context, animation, secondaryAnimation, child) {
         // Morphing: the droplet IS the transition. Mapping the engine onto this
         // linear route animation would flatten the J-curve and the underdamped
@@ -514,12 +578,17 @@ class GlassModalSheet extends StatefulWidget {
         return SlideTransition(
           position: Tween<Offset>(begin: const Offset(0, 1), end: Offset.zero)
               .animate(
-            CurvedAnimation(parent: animation, curve: Curves.easeOutQuart),
+            CurvedAnimation(
+              parent: animation,
+              curve: sheetAnimationStyle?.curve ?? Curves.easeOutQuart,
+              reverseCurve: sheetAnimationStyle?.reverseCurve,
+            ),
           ),
           child: child,
         );
       },
-      pageBuilder: (context, animation, secondaryAnimation) {
+      pageBuilder: (context, animation, secondaryAnimation) =>
+          _inSubScreen(context, subScreen, () {
         final scaffold = GlassModalSheetScaffold(
           controller: effectiveController,
           halfSize: halfSize,
@@ -565,6 +634,7 @@ class GlassModalSheet extends StatefulWidget {
           fullStateContentSettings: fullStateContentSettings,
           detents: detents,
           dismissible: dismissible,
+          barrierDismissible: isDismissible,
           peekHorizontalMargin: peekHorizontalMargin,
           peekBottomMargin: peekBottomMargin,
           peekWidth: peekWidth,
@@ -630,8 +700,8 @@ class GlassModalSheet extends StatefulWidget {
           placement: placement,
           child: scaffold,
         );
-      },
-    );
+      }),
+    ));
   }
 
   /// Resolves the trigger's global rect from whichever of [morphFrom] /
@@ -736,6 +806,95 @@ class GlassModalSheet extends StatefulWidget {
     }
   }
 
+  /// The side of a half-folded display a sheet presented from [context]
+  /// goes to, or null where nothing divides the screen.
+  ///
+  /// Picked as [DisplayFeatureSubScreen] picks it for a dialog: the side
+  /// nearest the top-leading corner.
+  static Rect? _subScreenFor(BuildContext context) {
+    final mediaQuery = MediaQuery.of(context);
+    final screen = Offset.zero & mediaQuery.size;
+    final sides = DisplayFeatureSubScreen.subScreensInBounds(
+      screen,
+      DisplayFeatureSubScreen.avoidBounds(mediaQuery),
+    ).toList();
+    if (sides.length < 2) return null;
+    final corner = Directionality.of(context) == TextDirection.rtl
+        ? screen.topRight
+        : screen.topLeft;
+    double distance(Rect side) => (Offset(
+                corner.dx.clamp(side.left, side.right),
+                corner.dy.clamp(side.top, side.bottom)) -
+            corner)
+        .distance;
+    return sides.reduce((a, b) => distance(b) < distance(a) ? b : a);
+  }
+
+  /// [build]'s sheet, laid out in [subScreen] where the screen is divided.
+  ///
+  /// The side's [MediaQueryData] keeps only the insets that reach it, and its
+  /// size is the side's, which the sheet sizes its detents and margins from.
+  /// The sheet keeps the strip layout, and moves its bar into the strip only
+  /// where it reaches it, measured from where the side sits on the screen.
+  static Widget _inSubScreen(
+    BuildContext context,
+    Rect? subScreen,
+    Widget Function() build,
+  ) {
+    if (subScreen == null) return build();
+    final mediaQuery = MediaQuery.of(context);
+    return MediaQuery(
+      data: mediaQuery
+          .removeDisplayFeatures(subScreen)
+          .copyWith(size: subScreen.size),
+      child: _SheetSubScreen(
+        rect: subScreen,
+        screenSize: mediaQuery.size,
+        child: Builder(builder: (_) => build()),
+      ),
+    );
+  }
+
   @override
   State<GlassModalSheet> createState() => _GlassModalSheetState();
+}
+
+/// The side of a half-folded display a sheet is presented into, and the
+/// screen it is a side of.
+class _SheetSubScreen extends InheritedWidget {
+  const _SheetSubScreen({
+    required this.rect,
+    required this.screenSize,
+    required super.child,
+  });
+
+  final Rect rect;
+  final Size screenSize;
+
+  static _SheetSubScreen? maybeOf(BuildContext context) =>
+      context.dependOnInheritedWidgetOfExactType<_SheetSubScreen>();
+
+  @override
+  bool updateShouldNotify(_SheetSubScreen oldWidget) =>
+      rect != oldWidget.rect || screenSize != oldWidget.screenSize;
+}
+
+/// The dialog route [GlassModalSheet.show] pushes: a [RawDialogRoute] whose
+/// reverse duration can differ from its forward one, as a modal bottom
+/// sheet's can.
+class _GlassModalSheetRoute<T> extends RawDialogRoute<T> {
+  _GlassModalSheetRoute({
+    required super.pageBuilder,
+    required this.reverseTransitionDuration,
+    super.barrierDismissible,
+    super.barrierColor,
+    super.barrierLabel,
+    super.transitionDuration,
+    super.transitionBuilder,
+    super.settings,
+    super.anchorPoint,
+  });
+
+  @override
+  final Duration reverseTransitionDuration;
 }

@@ -1,3 +1,7 @@
+// Copyright 2013 The Flutter Authors
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
 import 'dart:math' as math;
 
 import 'package:flutter/cupertino.dart';
@@ -489,8 +493,9 @@ class _GlassTitleSliverState extends State<GlassLargeTitle> {
   ///
   /// The title is drawn by the [GlassAppBar] in the row at the top of the
   /// content, so this keeps only its place: enough height that the content
-  /// after it starts [VerticalBarTitleRow.contentTop] from the top, however
-  /// much the app has put above it.
+  /// after it starts [VerticalBarTitleRow.contentTop] below the strip's
+  /// [GlassVerticalBarData.rowTop] margin, however much the app has put above
+  /// it.
   Widget _buildVertical(BuildContext context, GlassVerticalBarData bar) {
     final searchBar = widget.searchBar;
     return SliverLayoutBuilder(
@@ -498,8 +503,10 @@ class _GlassTitleSliverState extends State<GlassLargeTitle> {
         // While the search is open the navigation bar is hidden, and the
         // content moves up into the row's place, as natively.
         final top = widget.controller.isSearchPresented
-            ? GlassVerticalBarMetrics.edgeMargin
-            : VerticalBarTitleRow.contentTop;
+            ? bar.rowTop
+            : bar.rowTop +
+                VerticalBarTitleRow.contentTop -
+                GlassVerticalBarMetrics.edgeMargin;
         Widget place = AnimatedContainer(
           duration: const Duration(milliseconds: 250),
           curve: Curves.easeInOut,

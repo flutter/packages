@@ -1,9 +1,14 @@
+// Copyright 2013 The Flutter Authors
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
 import 'package:flutter/foundation.dart' show defaultTargetPlatform;
 import 'package:flutter/scheduler.dart' show SchedulerPhase;
 import 'package:flutter/widgets.dart';
 
 import '../../constants/glass_defaults.dart';
 import '../../src/engine/liquid_glass_settings.dart';
+import '../../src/widgets/surfaces/vertical_bar_regions.dart';
 import '../effects/glass_materialize.dart';
 import '../overlays/glass_modal_sheet.dart';
 import 'glass_bar_item.dart';
@@ -24,6 +29,8 @@ class GlassNavBarRegistration {
     required this.showsBackButton,
     this.onBack,
     this.buttonSettings,
+    this.buttonSize,
+    this.toolbarHeight,
     @Deprecated(
       'A hoisted sheet item presents out of the hoisted capsule; the tap is '
       'no longer handed back.',
@@ -32,7 +39,15 @@ class GlassNavBarRegistration {
     this.horizontalInset,
     this.platformViewBackdrop = false,
     this.largeTitleController,
-  });
+    this.stripRowTop,
+  })  : assert(
+          buttonSize == null || buttonSize > 0,
+          'buttonSize must be positive',
+        ),
+        assert(
+          toolbarHeight == null || toolbarHeight >= 0,
+          'toolbarHeight must not be negative',
+        );
 
   /// The trailing cluster items for this route.
   final List<GlassBarItem> actions;
@@ -52,6 +67,26 @@ class GlassNavBarRegistration {
 
   /// Glass settings applied to this route's pinned chrome.
   final LiquidGlassSettings? buttonSettings;
+
+  /// Diameter of standalone bar buttons (including the automatic back button
+  /// and [GlassBarItemBackground.separate], [GlassBarItemBackground.own], and
+  /// [GlassBarItemBackground.none] items), in logical pixels.
+  ///
+  /// Defaults to [GlassNavPinnedMetrics.backDiameter] (`44.0`). Shared
+  /// multi-item capsules ([GlassBarItemBackground.shared]) use
+  /// `buttonSize + (GlassNavPinnedMetrics.slot - GlassNavPinnedMetrics.backDiameter)`
+  /// (`buttonSize + 2.0`), preserving the `46 / 44` ratio.
+  ///
+  /// Ignored in iPhone Duo's vertical bar strip, where controls use
+  /// [GlassVerticalBarMetrics.controlExtent].
+  final double? buttonSize;
+
+  /// Height of the horizontal toolbar row that the pinned chrome centres
+  /// within, in logical pixels.
+  ///
+  /// Defaults to [GlassNavPinnedMetrics.toolbarHeight] (`44.0`), or
+  /// [buttonSize] when [buttonSize] is larger.
+  final double? toolbarHeight;
 
   /// No longer called: a [GlassBarItem.sheet] presents out of the hoisted
   /// capsule itself, which the shell keeps through the presentation. See
@@ -74,6 +109,15 @@ class GlassNavBarRegistration {
   /// while the two renderings land on the same guide. A bar aligned to its
   /// app's page gutter rather than to this default passes that gutter here.
   final double? horizontalInset;
+
+  /// Distance from the top of the screen to the row that keeps the items
+  /// staying horizontal, in iPhone Duo's vertical bar strip.
+  ///
+  /// Defaults to [GlassVerticalBarMetrics.edgeMargin], the row [GlassAppBar]
+  /// draws its title in. A bar the app draws with a header of its own passes the top
+  /// of that header's row, so the items land in it rather than above it.
+  /// Elsewhere it is not read.
+  final double? stripRowTop;
 
   /// Whether the pinned chrome floats over a native platform view.
   ///
@@ -360,6 +404,8 @@ class GlassNavigationShellState extends State<GlassNavigationShell>
       ..addStatusListener((status) {
         if (status == AnimationStatus.completed) _scheduleNotify();
       });
+    VerticalBarRegions.instance.addListener(_onVerticalBarRegions);
+    VerticalBarRegions.instance.edge.addListener(_onVerticalBarRegions);
   }
 
   @override
@@ -947,6 +993,8 @@ class GlassNavigationShellState extends State<GlassNavigationShell>
 
   @override
   void dispose() {
+    VerticalBarRegions.instance.removeListener(_onVerticalBarRegions);
+    VerticalBarRegions.instance.edge.removeListener(_onVerticalBarRegions);
     for (final animation in _listened) {
       animation.removeListener(_onAnimationTick);
       animation.removeStatusListener(_onAnimationStatus);
@@ -966,6 +1014,17 @@ class GlassNavigationShellState extends State<GlassNavigationShell>
   // ---------------------------------------------------------------------------
   // Vertical bar strip
   // ---------------------------------------------------------------------------
+
+  /// The strip resolved by the last build, or null.
+  GlassVerticalBarData? _verticalBar;
+
+  /// The strip this shell resolved for the screen, or null where its bars are
+  /// horizontal.
+  ///
+  /// A subtree can keep its own bars horizontal under it with
+  /// [GlassVerticalBar.disabled]; [GlassVerticalBar.maybeOf] answers for a
+  /// particular context.
+  GlassVerticalBarData? get verticalBar => _verticalBar;
 
   /// Height each bar at the bottom of the strip takes, keyed by its owner.
   final Map<Object, double> _verticalBarBottom = <Object, double>{};
@@ -995,33 +1054,94 @@ class GlassNavigationShellState extends State<GlassNavigationShell>
     if (_verticalBarBottom.remove(owner) != null) _scheduleNotify();
   }
 
+  void _onVerticalBarRegions() => setState(() {});
+
   /// The strip this shell's bars lay out in, or null where they are
   /// horizontal.
   ///
   /// Read from the insets the shell itself sees, which is above any [SafeArea]
-  /// a page puts around its content. See [GlassVerticalBar.resolve].
+  /// a page puts around its content, and from the regions UIKit reserves for
+  /// the status cluster and the camera, which Flutter does not report on iOS
+  /// yet. See [GlassVerticalBar.resolve].
   GlassVerticalBarData? _resolveVerticalBar(BuildContext context) {
     if (!isActive ||
         widget.verticalBarBehavior == GlassVerticalBarBehavior.disabled) {
       return null;
     }
-    return GlassVerticalBar.resolve(
+    final bar = GlassVerticalBar.resolve(
       viewPadding: MediaQuery.viewPaddingOf(context),
       size: MediaQuery.sizeOf(context),
       platform: defaultTargetPlatform,
       textDirection: Directionality.maybeOf(context) ?? TextDirection.ltr,
+      displayFeatures: [
+        ...MediaQuery.displayFeaturesOf(context),
+        ...VerticalBarRegions.instance.value,
+      ],
+      systemEdge: VerticalBarRegions.instance.edge.value,
       compression: widget.verticalBarCompression,
     );
+    // Followed on iOS whether or not a strip is up yet: where UIKit leaves the
+    // strip to the app, its edge is the only sign of it.
+    if (defaultTargetPlatform == TargetPlatform.iOS) {
+      VerticalBarRegions.instance.observe();
+    }
+    return bar;
+  }
+
+  /// [child] under the media query the app should see.
+  ///
+  /// The regions UIKit reserves join [MediaQueryData.displayFeatures], which
+  /// is where Flutter will report them once it does on iOS
+  /// (flutter/flutter#193025): the status cluster and the camera as cutouts,
+  /// and the fold of a half-folded display as a hinge, which
+  /// [DisplayFeatureSubScreen] keeps dialogs and sheets to one side of. And
+  /// for a strip UIKit leaves to the app, its width joins the insets on its
+  /// side, so the content keeps clear of it as it does of a strip the system
+  /// insets for.
+  Widget _mediaQueryFor(
+    BuildContext context,
+    GlassVerticalBarData? bar,
+    Widget child,
+  ) {
+    final regions = VerticalBarRegions.instance.value;
+    final insetsStrip = bar != null && !bar.systemInset;
+    if (regions.isEmpty && !insetsStrip) return child;
+    var data = MediaQuery.of(context);
+    if (regions.isNotEmpty) {
+      final reported = {for (final f in data.displayFeatures) f.bounds};
+      data = data.copyWith(displayFeatures: [
+        ...data.displayFeatures,
+        for (final region in regions)
+          if (!reported.contains(region.bounds)) region,
+      ]);
+    }
+    if (insetsStrip) {
+      final ltr = (Directionality.maybeOf(context) ?? TextDirection.ltr) ==
+          TextDirection.ltr;
+      final onLeft = (bar.edge == GlassVerticalBarEdge.leading) == ltr;
+      EdgeInsets add(EdgeInsets insets) => insets.copyWith(
+            left: onLeft ? insets.left + bar.width : insets.left,
+            right: onLeft ? insets.right : insets.right + bar.width,
+          );
+      data = data.copyWith(
+        padding: add(data.padding),
+        viewPadding: add(data.viewPadding),
+      );
+    }
+    return MediaQuery(data: data, child: child);
   }
 
   @override
   Widget build(BuildContext context) {
-    final verticalBar = _resolveVerticalBar(context);
+    final verticalBar = _verticalBar = _resolveVerticalBar(context);
     return _GlassNavigationShellScope(
       state: this,
       child: Stack(
         children: [
-          GlassVerticalBar(data: verticalBar, child: widget.child),
+          GlassVerticalBar(
+            data: verticalBar,
+            child: _mediaQueryFor(context, verticalBar, widget.child),
+          ),
           // The chrome gets an Overlay of its own because it deliberately sits
           // above the app's Navigator, and therefore outside the Navigator's
           // Overlay — a GlassBarItem.menu portals to the root overlay, and up

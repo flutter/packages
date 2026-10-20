@@ -1,3 +1,7 @@
+// Copyright 2013 The Flutter Authors
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
 // Widget tests for the internal sub-widgets extracted from
 // GlassTabBar.searchable into searchable_bottom_bar_internal.dart.
 //

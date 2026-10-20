@@ -1,3 +1,7 @@
+// Copyright 2013 The Flutter Authors
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
 // Scrollable segmented control — re-grid morph + selection seating
 //
 // The scrollable control's hard case is a list whose LENGTH changes while a

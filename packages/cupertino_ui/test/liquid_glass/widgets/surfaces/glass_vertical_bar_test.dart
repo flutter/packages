@@ -1,14 +1,43 @@
+// Copyright 2013 The Flutter Authors
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
+import 'dart:ui' show DisplayFeature, DisplayFeatureState, DisplayFeatureType;
+
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:liquid_glass_widgets/liquid_glass_widgets.dart';
+import 'package:liquid_glass_widgets/src/widgets/surfaces/status_bar_row.dart';
 import 'package:liquid_glass_widgets/src/widgets/surfaces/tab_bar_vertical_layout.dart';
 import 'package:liquid_glass_widgets/src/widgets/surfaces/vertical_bar_background.dart';
+import 'package:liquid_glass_widgets/src/widgets/surfaces/vertical_bar_regions.dart';
 import 'package:liquid_glass_widgets/widgets/surfaces/shared/glass_nav_pinned_host.dart';
 
 /// iPhone Duo's outer display in portrait, as the iOS 27.1 simulator reports
 /// it: a zero top inset, the status bar and the 84pt strip on the right.
 const _outerPortrait = Size(466, 678);
 const _outerPortraitPadding = EdgeInsets.fromLTRB(0, 0, 84, 34);
+
+/// iPhone Duo's inner display held upright: an 82pt top inset beside the
+/// status cluster, and no strip.
+const _innerPortrait = Size(669, 951);
+const _innerPortraitPadding = EdgeInsets.fromLTRB(0, 82, 0, 34);
+
+/// An occlusion region UIKit reports, as Flutter would surface it.
+DisplayFeature _cutout(double left, double top, double right, double bottom) =>
+    DisplayFeature(
+      bounds: Rect.fromLTRB(left, top, right, bottom),
+      type: DisplayFeatureType.cutout,
+      state: DisplayFeatureState.unknown,
+    );
+
+/// The outer display's regions in portrait, from the 27.1 simulator: the
+/// status cluster at the top of the strip, and the camera inside it.
+final _outerPortraitRegions = [
+  _cutout(399, 29, 436, 66),
+  _cutout(382, 0, 466, 170),
+];
 
 void main() {
   setUp(() {
@@ -17,6 +46,7 @@ void main() {
 
   tearDown(() {
     GlassNavigationShellState.debugPinningSupported = null;
+    VerticalBarRegions.instance.debugReset();
   });
 
   /// A widget test on iOS, the only platform that reserves a strip.
@@ -91,14 +121,18 @@ void main() {
       Size size = _outerPortrait,
       TargetPlatform platform = TargetPlatform.iOS,
       TextDirection textDirection = TextDirection.ltr,
+      List<DisplayFeature> displayFeatures = const [],
+      GlassVerticalBarEdge? systemEdge,
       GlassVerticalBarCompression compression =
           GlassVerticalBarCompression.automatic,
     }) =>
         GlassVerticalBar.resolve(
+          systemEdge: systemEdge,
           viewPadding: viewPadding,
           size: size,
           platform: platform,
           textDirection: textDirection,
+          displayFeatures: displayFeatures,
           compression: compression,
         );
 
@@ -165,6 +199,20 @@ void main() {
       expect(bar.bottom, 24);
     });
 
+    test('follows the system to the left in Split View, below the status bar',
+        () {
+      final bar = resolve(
+        viewPadding: const EdgeInsets.fromLTRB(84, 24, 0, 20),
+        size: const Size(472, 669),
+      )!;
+      expect(bar.edge, GlassVerticalBarEdge.leading);
+      expect(bar.width, 84);
+      expect(bar.top, 24 + 24);
+      expect(bar.rowTop, 24 + 24);
+      expect(bar.bottom, 24);
+      expect(bar.collapsesTabBar, isFalse);
+    });
+
     test('collapses the tab bar as the compression asks', () {
       const landscape = Size(678, 466);
       expect(resolve(size: landscape)!.collapsesTabBar, isTrue);
@@ -182,6 +230,75 @@ void main() {
         isTrue,
       );
     });
+
+    test('starts below the status cluster UIKit reports', () {
+      expect(resolve(displayFeatures: _outerPortraitRegions)!.top, 170);
+      // A live activity grows the cluster; the controls follow it down.
+      final grown = resolve(displayFeatures: [_cutout(382, 0, 466, 214)])!;
+      expect(grown.top, 214);
+      expect(grown.bottom, 24);
+    });
+
+    test('keeps clear of the camera region at either end', () {
+      const size = Size(678, 466);
+      final left = resolve(
+        viewPadding: const EdgeInsets.fromLTRB(84, 0, 0, 34),
+        size: size,
+        displayFeatures: [_cutout(0, 0, 84, 82)],
+      )!;
+      expect(left.top, 82);
+      expect(left.bottom, 24);
+      final right = resolve(
+        viewPadding: const EdgeInsets.fromLTRB(0, 0, 84, 34),
+        size: size,
+        displayFeatures: [_cutout(594, 384, 678, 466)],
+      )!;
+      expect(right.top, 24);
+      expect(right.bottom, 82);
+    });
+
+    test('ignores regions outside the strip, and folds and hinges', () {
+      final bar = resolve(
+        size: const Size(951, 669),
+        displayFeatures: [
+          // The inner display's hinge, and a region on the far side.
+          const DisplayFeature(
+            bounds: Rect.fromLTRB(455, 0, 495, 669),
+            type: DisplayFeatureType.hinge,
+            state: DisplayFeatureState.postureHalfOpened,
+          ),
+          _cutout(0, 0, 60, 300),
+          _cutout(867, 0, 951, 120),
+        ],
+      )!;
+      expect(bar.top, 120);
+      expect(bar.bottom, 24);
+    });
+
+    test('keeps a strip on the edge UIKit names where it gives no inset', () {
+      // The left-hand app in Split View: no lateral inset, no status bar.
+      const split = Size(469, 669);
+      const padding = EdgeInsets.only(bottom: 34);
+      expect(resolve(viewPadding: padding, size: split), isNull);
+
+      final bar = resolve(
+        viewPadding: padding,
+        size: split,
+        systemEdge: GlassVerticalBarEdge.leading,
+      )!;
+      expect(bar.edge, GlassVerticalBarEdge.leading);
+      expect(bar.width, 84);
+      expect(bar.systemInset, isFalse);
+      // No status cluster or camera in this window's strip.
+      expect(bar.top, 24);
+      expect(bar.bottom, 24);
+    });
+
+    test('follows the insets over the edge where UIKit gives both', () {
+      final bar = resolve(systemEdge: GlassVerticalBarEdge.trailing)!;
+      expect(bar.systemInset, isTrue);
+      expect(bar.top, 170);
+    });
   });
 
   group('GlassNavigationShell', () {
@@ -193,6 +310,117 @@ void main() {
         return const SizedBox();
       })));
       expect(seen?.edge, GlassVerticalBarEdge.trailing);
+    });
+
+    testDuo('follows the regions Flutter reports', (tester) async {
+      setScreen(tester);
+      tester.view.displayFeatures = [_cutout(382, 0, 466, 214)];
+      GlassVerticalBarData? seen;
+      await tester.pumpWidget(shellApp(Builder(builder: (context) {
+        seen = GlassVerticalBar.maybeOf(context);
+        return const SizedBox();
+      })));
+      expect(seen?.top, 214);
+    });
+
+    testDuo('follows the regions UIKit reports while Flutter does not',
+        (tester) async {
+      setScreen(tester);
+      const channel = MethodChannel('liquid_glass_widgets/reserved_regions');
+      final messenger = tester.binding.defaultBinaryMessenger;
+      messenger.setMockMethodCallHandler(channel, (call) async {
+        if (call.method == 'verticalBarEdge') return null;
+        expect(call.method, 'observe');
+        return [
+          [382.0, 0.0, 466.0, 190.0],
+        ];
+      });
+      addTearDown(() => messenger.setMockMethodCallHandler(channel, null));
+
+      GlassVerticalBarData? seen;
+      await tester.pumpWidget(shellApp(Builder(builder: (context) {
+        seen = GlassVerticalBar.maybeOf(context);
+        return const SizedBox();
+      })));
+      // The table until UIKit answers.
+      expect(seen?.top, 170);
+      await tester.pump();
+      expect(seen?.top, 190);
+
+      // The cluster grows with a live activity.
+      await messenger.handlePlatformMessage(
+        channel.name,
+        channel.codec.encodeMethodCall(const MethodCall('didChange', [
+          [382.0, 0.0, 466.0, 214.0],
+        ])),
+        (_) {},
+      );
+      await tester.pump();
+      expect(seen?.top, 214);
+    });
+
+    testDuo('publishes the fold UIKit reports, and dialogs avoid it',
+        (tester) async {
+      setScreen(
+        tester,
+        size: const Size(951, 669),
+        padding: const EdgeInsets.fromLTRB(0, 0, 84, 34),
+      );
+      const channel = MethodChannel('liquid_glass_widgets/reserved_regions');
+      final messenger = tester.binding.defaultBinaryMessenger;
+      messenger.setMockMethodCallHandler(channel, (call) async {
+        if (call.method == 'verticalBarEdge') return null;
+        // Half folded: the cluster, and the fold the division's margins
+        // reach to.
+        return [
+          [867.0, 0.0, 951.0, 120.0, 0.0],
+          [475.0, 0.0, 475.0, 669.0, 1.0],
+        ];
+      });
+      addTearDown(() => messenger.setMockMethodCallHandler(channel, null));
+
+      await tester.pumpWidget(shellApp(const _Screen(title: 'Root')));
+      await tester.pump();
+      final fold = MediaQuery.displayFeaturesOf(
+              tester.element(find.text('Root body')))
+          .singleWhere((feature) => feature.type == DisplayFeatureType.hinge);
+      expect(fold.bounds, const Rect.fromLTRB(475, 0, 475, 669));
+      expect(fold.state, DisplayFeatureState.postureHalfOpened);
+
+      GlassDialog.show<void>(
+        context: tester.element(find.text('Root body')),
+        title: 'Delete message?',
+        actions: [GlassDialogAction(label: 'Delete', onPressed: () {})],
+      );
+      await settle(tester);
+      expect(
+        tester.getCenter(find.byType(GlassDialog)).dx,
+        closeTo(475 / 2, 0.05),
+      );
+    });
+
+    testDuo('insets the content for a strip UIKit leaves to the app',
+        (tester) async {
+      // The left-hand app in Split View: no lateral inset, only the edge.
+      setScreen(
+        tester,
+        size: const Size(469, 669),
+        padding: const EdgeInsets.only(bottom: 34),
+      );
+      const channel = MethodChannel('liquid_glass_widgets/reserved_regions');
+      final messenger = tester.binding.defaultBinaryMessenger;
+      messenger.setMockMethodCallHandler(
+        channel,
+        (call) async => call.method == 'verticalBarEdge' ? 'leading' : [],
+      );
+      addTearDown(() => messenger.setMockMethodCallHandler(channel, null));
+
+      await tester.pumpWidget(shellApp(const _Screen(title: 'Root')));
+      await tester.pump();
+      final context = tester.element(find.text('Root body'));
+      expect(MediaQuery.paddingOf(context).left, 84);
+      expect(MediaQuery.viewPaddingOf(context).left, 84);
+      expect(MediaQuery.paddingOf(context).right, 0);
     });
 
     testDuo('publishes nothing when disabled', (tester) async {
@@ -377,6 +605,154 @@ void main() {
       // The bar's own row, at the top of the screen, as before.
       expect(pinned(tester, CupertinoIcons.bell).dy, lessThan(44));
     });
+
+    testDuo('tells a bar drawing its own chrome that the strip is drawn for it',
+        (tester) async {
+      setScreen(tester);
+      final chrome = <GlassPinnedBarChromeData>[];
+      await tester.pumpWidget(shellApp(const _Screen(title: 'Root')));
+      await settle(tester);
+      // Kept out of the shell, as a nested navigator's routes are, so the
+      // strip is drawn in-route and the chrome is never hoisted.
+      _push(
+        tester,
+        GlassPinnedBarChrome(
+          enabled: false,
+          actions: [
+            GlassBarItem.icon(
+              icon: const Icon(CupertinoIcons.share),
+              onTap: () {},
+            ),
+          ],
+          builder: (context, data) {
+            chrome.add(data);
+            return const SizedBox.expand();
+          },
+        ),
+      );
+      await settle(tester);
+
+      expect(chrome.last.hoisted, isFalse);
+      expect(chrome.last.inStrip, isTrue);
+      expect(chrome.last.leading, isNull);
+      expect(chrome.last.actions, isEmpty);
+      expect(find.byIcon(CupertinoIcons.back), findsOneWidget);
+      expect(find.byIcon(CupertinoIcons.share), findsOneWidget);
+    });
+
+    testDuo('draws the strip in-route against the screen, not the bar',
+        (tester) async {
+      setScreen(tester);
+      await tester.pumpWidget(shellApp(const _Screen(title: 'Root')));
+      await settle(tester);
+      // A bar laid out clear of the strip, as one under a SafeArea is.
+      _push(
+        tester,
+        SafeArea(
+          child: GlassPinnedBarChrome(
+            enabled: false,
+            actions: [
+              GlassBarItem.icon(
+                icon: const Icon(CupertinoIcons.share),
+                onTap: () {},
+              ),
+            ],
+            builder: (context, chrome) => const SizedBox.expand(),
+          ),
+        ),
+      );
+      await settle(tester);
+
+      // Where the shell draws them, not 84pt into the content.
+      expect(
+        tester.getCenter(find.byIcon(CupertinoIcons.back)).dx,
+        closeTo(418, 0.01),
+      );
+      expect(
+        tester.getCenter(find.byIcon(CupertinoIcons.share)).dx,
+        closeTo(418, 0.01),
+      );
+    });
+
+    testDuo('redraws the strip for a screen that changed while it was covered',
+        (tester) async {
+      setScreen(tester);
+      await tester.pumpWidget(shellApp(GlassPinnedBarChrome(
+        enabled: false,
+        actions: [
+          GlassBarItem.icon(
+            icon: const Icon(CupertinoIcons.share),
+            onTap: () {},
+          ),
+        ],
+        builder: (context, chrome) => const SizedBox.expand(),
+      )));
+      await settle(tester);
+      _push(tester, const _Screen(title: 'Covering'));
+      await settle(tester);
+
+      // Unfolded to the inner display under the covering route: drawn where
+      // it is for a screen that started out that size.
+      setScreen(
+        tester,
+        size: const Size(1040, 720),
+        padding: const EdgeInsets.fromLTRB(0, 0, 84, 20),
+      );
+      await settle(tester);
+      tester.state<NavigatorState>(find.byType(Navigator)).pop();
+      await settle(tester);
+
+      expect(
+        tester.getCenter(find.byIcon(CupertinoIcons.share)).dx,
+        closeTo(992, 0.01),
+      );
+    });
+
+    testDuo('puts the horizontal row where the bar says its header is',
+        (tester) async {
+      setScreen(tester);
+      await tester.pumpWidget(shellApp(GlassPinnedBarChrome(
+        stripRowTop: 100,
+        actions: [
+          GlassBarItem.custom(child: const Text('Pro')),
+        ],
+        builder: (context, chrome) => const SizedBox.expand(),
+      )));
+      await settle(tester);
+
+      final pro = tester.getCenter(find.descendant(
+        of: find.byType(GlassNavPinnedHost),
+        matching: find.text('Pro'),
+      ));
+      expect(pro.dy, closeTo(100 + 24, 0.5));
+    });
+
+    testDuo('stays horizontal and in-route under GlassVerticalBar.disabled',
+        (tester) async {
+      setScreen(tester);
+      await tester.pumpWidget(shellApp(GlassVerticalBar.disabled(
+        child: _Screen(title: 'Root', actions: [
+          GlassBarItem.icon(
+            icon: const Icon(CupertinoIcons.bell),
+            onTap: () {},
+          ),
+        ]),
+      )));
+      await settle(tester);
+
+      // Not handed to the shell, which would pin it in the strip...
+      expect(
+        find.descendant(
+          of: find.byType(GlassNavPinnedHost),
+          matching: find.byIcon(CupertinoIcons.bell),
+        ),
+        findsNothing,
+      );
+      // ...but drawn by the bar, in its horizontal row clear of the strip.
+      final bell = tester.getCenter(find.byIcon(CupertinoIcons.bell));
+      expect(bell.dx, lessThan(382));
+      expect(bell.dy, lessThan(100));
+    });
   });
 
   group('GlassTabBar in the strip', () {
@@ -393,7 +769,7 @@ void main() {
         find.byIcon(CupertinoIcons.person_crop_circle),
       );
       expect(profile.dx, closeTo(418, 0.01));
-      expect(profile.dy, 678 - 24 - 6 - 25);
+      expect(profile.dy, closeTo(678 - 24 - 6 - 25, 0.01));
     });
 
     testDuo('selects a tab on a tap', (tester) async {
@@ -404,6 +780,56 @@ void main() {
       await tester.tap(find.byIcon(CupertinoIcons.book));
       await settle(tester);
       expect(find.text('Library body'), findsOneWidget);
+    });
+
+    testDuo('swells under a held finger, then shows the labels',
+        (tester) async {
+      setScreen(tester);
+      await tester.pumpWidget(shellApp(const _TabsScreen()));
+      await settle(tester);
+
+      final gesture = await tester.startGesture(
+        tester.getCenter(find.byIcon(CupertinoIcons.book)),
+      );
+      await tester.pump(const Duration(milliseconds: 100));
+      // Swollen, but no labels yet, and the tab is not selected on touch.
+      expect(find.text('Library'), findsNothing);
+      expect(find.text('Home body'), findsOneWidget);
+
+      await tester.pump(const Duration(milliseconds: 200));
+      await tester.pumpAndSettle();
+      expect(find.text('Library'), findsWidgets);
+      expect(find.text('Home body'), findsOneWidget);
+
+      // Lifting the finger selects the tab under it and hides the labels.
+      await gesture.up();
+      await settle(tester);
+      expect(find.text('Library body'), findsOneWidget);
+      expect(find.text('Library'), findsNothing);
+    });
+
+    testDuo(
+        'shows the labels as soon as a finger drags, and selects where it '
+        'lets go', (tester) async {
+      setScreen(tester);
+      await tester.pumpWidget(shellApp(const _TabsScreen()));
+      await settle(tester);
+
+      final from = tester.getCenter(find.byIcon(CupertinoIcons.house).first);
+      final gesture = await tester.startGesture(from);
+      await gesture.moveBy(const Offset(0, 10));
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 16));
+      expect(find.text('Home'), findsWidgets);
+
+      final profile = tester.getCenter(
+        find.byIcon(CupertinoIcons.person_crop_circle).first,
+      );
+      await gesture.moveTo(profile);
+      await tester.pump();
+      await gesture.up();
+      await settle(tester);
+      expect(find.text('Profile body'), findsOneWidget);
     });
 
     testDuo('collapses to the selected tab and opens on a tap', (tester) async {
@@ -425,6 +851,34 @@ void main() {
       await settle(tester);
       expect(find.text('Library body'), findsOneWidget);
       expect(find.byIcon(CupertinoIcons.house), findsNothing);
+    });
+
+    testDuo('brings its own layer outside a GlassScaffold', (tester) async {
+      setScreen(tester);
+      await tester.pumpWidget(shellApp(
+        Stack(
+          children: [
+            Positioned.fill(
+              child: GlassTabBar.bottom(
+                quality: GlassQuality.premium,
+                selectedIndex: 0,
+                onTabSelected: (_) {},
+                tabs: const [
+                  GlassTab(icon: Icon(CupertinoIcons.house), label: 'Home'),
+                  GlassTab(icon: Icon(CupertinoIcons.book), label: 'Library'),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ));
+      await settle(tester);
+
+      final capsule = tester.widget<GlassButton>(find.descendant(
+        of: find.byType(TabBarVerticalLayout),
+        matching: find.byType(GlassButton),
+      ));
+      expect(capsule.useOwnLayer, isTrue);
     });
 
     testDuo('stays horizontal on a regular iPhone', (tester) async {
@@ -451,11 +905,11 @@ void main() {
       // Four tabs and search: 6 + 5 × 50 + 6, ending 24pt above the bottom.
       final search = tester.getCenter(find.byIcon(CupertinoIcons.search));
       expect(search.dx, closeTo(418, 0.01));
-      expect(search.dy, 678 - 24 - 6 - 25);
+      expect(search.dy, closeTo(678 - 24 - 6 - 25, 0.01));
       final profile = tester.getCenter(
         find.byIcon(CupertinoIcons.person_crop_circle),
       );
-      expect(profile.dy, search.dy - 50);
+      expect(profile.dy, closeTo(search.dy - 50, 0.01));
     });
 
     testDuo('opens its field across the top of the content', (tester) async {
@@ -529,6 +983,22 @@ void main() {
       await settle(tester);
       expect(find.byType(GlassTextField), findsNothing);
       expect(find.text('Library body'), findsOneWidget);
+    });
+
+    testDuo('leaves search out without its pill', (tester) async {
+      setScreen(tester);
+      await tester.pumpWidget(
+        shellApp(const _SearchableTabsScreen(showPill: false)),
+      );
+      await settle(tester);
+
+      // The capsule holds the four tabs alone and ends where search would.
+      expect(find.byType(TabBarVerticalLayout), findsOneWidget);
+      expect(find.byIcon(CupertinoIcons.search), findsNothing);
+      final profile = tester.getCenter(
+        find.byIcon(CupertinoIcons.person_crop_circle),
+      );
+      expect(profile.dy, closeTo(678 - 24 - 6 - 25, 0.01));
     });
   });
 
@@ -734,6 +1204,123 @@ void main() {
     });
   });
 
+  group('the status bar row in inner portrait', () {
+    /// The status cluster in the top-right corner, from the 27.1 simulator.
+    final cluster = _cutout(535, 0, 669, 82);
+
+    StatusBarRow? resolve({
+      Size size = _innerPortrait,
+      EdgeInsets viewPadding = _innerPortraitPadding,
+      List<DisplayFeature>? displayFeatures,
+      TargetPlatform platform = TargetPlatform.iOS,
+    }) =>
+        StatusBarRow.resolve(
+          size: size,
+          viewPadding: viewPadding,
+          displayFeatures: displayFeatures ?? [cluster],
+          platform: platform,
+        );
+
+    test('runs from the title inset to just short of the cluster', () {
+      final row = resolve()!;
+      expect(row.left, 20);
+      expect(row.right, 669 - 535 + 2);
+      expect(row.top, 24);
+      expect(row.bottom, 72);
+    });
+
+    test('mirrors for a cluster in the top-left corner', () {
+      final row = resolve(displayFeatures: [_cutout(0, 0, 134, 82)])!;
+      expect(row.left, 134 + 2);
+      expect(row.right, 20);
+    });
+
+    test('is null without a cluster as tall as the top inset', () {
+      expect(resolve(displayFeatures: const []), isNull);
+      // A Dynamic Island stops short of the inset and of both sides.
+      expect(
+        resolve(
+          size: const Size(402, 874),
+          viewPadding: const EdgeInsets.fromLTRB(0, 62, 0, 34),
+          displayFeatures: [_cutout(138, 11, 264, 48)],
+        ),
+        isNull,
+      );
+      // The strip's own cluster leaves no top inset.
+      expect(
+        resolve(
+          size: _outerPortrait,
+          viewPadding: _outerPortraitPadding,
+          displayFeatures: _outerPortraitRegions,
+        ),
+        isNull,
+      );
+    });
+
+    test('is null off iOS', () {
+      expect(resolve(platform: TargetPlatform.android), isNull);
+    });
+
+    testDuo('lays the pinned chrome and the title out beside the cluster',
+        (tester) async {
+      setScreen(
+        tester,
+        size: _innerPortrait,
+        padding: _innerPortraitPadding,
+      );
+      // As on the device: the cluster comes from the package's own reading of
+      // UIKit's regions, not from Flutter.
+      VerticalBarRegions.instance.value = [cluster];
+      await tester.pumpWidget(shellApp(const _Screen(title: 'Root')));
+      await settle(tester);
+      _push(
+        tester,
+        _Screen(title: 'Detail', actions: [
+          GlassBarItem.icon(
+            icon: const Icon(CupertinoIcons.share),
+            onTap: () {},
+          ),
+        ]),
+      );
+      await settle(tester);
+
+      // The 44pt back circle starts 20pt in, centred in the row at y 24–72.
+      final back = pinned(tester, CupertinoIcons.back);
+      expect(back.dx, closeTo(20 + 22, 0.01));
+      expect(back.dy, closeTo(48, 0.01));
+      // The action ends 2pt short of the cluster at x 535.
+      final share = tester.getRect(find.descendant(
+        of: find.byType(GlassNavPinnedHost),
+        matching: find.byIcon(CupertinoIcons.share),
+      ));
+      // A capsule is 46pt in the bar's 44pt band, as in any bar.
+      expect(share.center.dy, closeTo(48, 1));
+      expect(share.right, lessThanOrEqualTo(533));
+      // The title leads, beside the back button, in the same row.
+      final title = tester.getRect(find.text('Detail'));
+      expect(title.center.dy, closeTo(48, 0.5));
+      expect(title.left, greaterThan(back.dx + 22));
+      expect(title.center.dx, lessThan(669 / 2));
+    });
+
+    testDuo('starts the content under the status bar', (tester) async {
+      setScreen(
+        tester,
+        size: _innerPortrait,
+        padding: _innerPortraitPadding,
+      );
+      tester.view.displayFeatures = [cluster];
+      await tester.pumpWidget(shellApp(const _Screen(title: 'Root')));
+      await settle(tester);
+
+      // The row sits inside the 82pt inset, so the bar adds nothing below it.
+      final effect = tester.widget<GlassScrollEdgeEffect>(
+        find.byType(GlassScrollEdgeEffect),
+      );
+      expect(effect.topFadeHeight, 82 + 20);
+    });
+  });
+
   group('GlassScaffold in the strip', () {
     testDuo('drops the bottom fade for a bar that left the bottom edge',
         (tester) async {
@@ -810,8 +1397,12 @@ void main() {
       WidgetTester tester, {
       GlassSheetPlacement placement = GlassSheetPlacement.automatic,
       bool medium = false,
+      TextDirection textDirection = TextDirection.ltr,
     }) async {
-      await tester.pumpWidget(shellApp(const _Screen(title: 'Root')));
+      await tester.pumpWidget(shellApp(
+        const _Screen(title: 'Root'),
+        textDirection: textDirection,
+      ));
       await settle(tester);
       GlassModalSheet.show<void>(
         context: tester.element(find.text('Root body')),
@@ -837,6 +1428,37 @@ void main() {
       expect(frame.top, closeTo(8, 0.01));
       expect(frame.left, closeTo(8, 0.05));
       expect(frame.right, closeTo(466 - 8, 0.05));
+    });
+
+    testDuo('rests at the width restingWidthOf reports', (tester) async {
+      setScreen(tester);
+      await present(tester, medium: true);
+
+      expect(
+        sheet(tester).width,
+        closeTo(
+          GlassModalSheet.restingWidthOf(
+              tester.element(find.text('Root body'))),
+          0.05,
+        ),
+      );
+      expect(sheet(tester).width, closeTo(466 - 2 * 8, 0.05));
+    });
+
+    testDuo('reports a card the shorter side wide in a regular width',
+        (tester) async {
+      setScreen(tester, size: innerLandscape, padding: innerLandscapePadding);
+      await present(tester, medium: true);
+
+      expect(
+        sheet(tester).width,
+        closeTo(
+          GlassModalSheet.restingWidthOf(
+              tester.element(find.text('Root body'))),
+          0.05,
+        ),
+      );
+      expect(sheet(tester).width, closeTo(669 - 2 * 8, 0.05));
     });
 
     testDuo('moves its bar into its own strip on the outer display',
@@ -953,6 +1575,55 @@ void main() {
       expect(frame.right, closeTo(402, 0.05));
       expect(frame.top, closeTo(90, 0.01));
     });
+
+    testDuo('is a card in one side of a half-folded display', (tester) async {
+      setScreen(tester, size: innerLandscape, padding: innerLandscapePadding);
+      tester.view.displayFeatures = [
+        const DisplayFeature(
+          bounds: Rect.fromLTRB(475, 0, 475, 669),
+          type: DisplayFeatureType.hinge,
+          state: DisplayFeatureState.postureHalfOpened,
+        ),
+      ];
+      await present(tester);
+
+      // Natively the card keeps its margins in the left side, 8pt from the
+      // top, with its bar across it.
+      final frame = sheet(tester);
+      expect(frame.left, closeTo(8, 0.05));
+      expect(frame.right, closeTo(475 - 8, 0.05));
+      expect(frame.top, closeTo(8, 0.01));
+      final close = tester.getCenter(find.byIcon(CupertinoIcons.xmark));
+      final done = tester.getCenter(find.byIcon(CupertinoIcons.checkmark));
+      expect(close.dy, closeTo(done.dy, 0.05));
+      expect(
+        GlassModalSheet.restingWidthOf(tester.element(find.text('Root body'))),
+        closeTo(frame.width, 0.05),
+      );
+
+      // It keeps to its side as the keyboard rises.
+      tester.view.viewInsets = const FakeViewPadding(bottom: 300 * 3.0);
+      await settle(tester);
+      expect(sheet(tester).left, closeTo(8, 0.05));
+      expect(sheet(tester).right, closeTo(475 - 8, 0.05));
+    });
+
+    testDuo('takes the side nearest the leading corner right to left',
+        (tester) async {
+      setScreen(tester, size: innerLandscape, padding: innerLandscapePadding);
+      tester.view.displayFeatures = [
+        const DisplayFeature(
+          bounds: Rect.fromLTRB(475, 0, 475, 669),
+          type: DisplayFeatureType.hinge,
+          state: DisplayFeatureState.postureHalfOpened,
+        ),
+      ];
+      await present(tester, textDirection: TextDirection.rtl);
+
+      final frame = sheet(tester);
+      expect(frame.left, closeTo(475 + 8, 0.05));
+      expect(frame.right, closeTo(951 - 8, 0.05));
+    });
   });
 
   group('popovers and menus from the strip', () {
@@ -998,6 +1669,61 @@ void main() {
       await openPopover(tester, trigger: const Offset(300, 230));
 
       expect(popover(tester).top, closeTo(230, 0.5));
+    });
+
+    Future<void> openMenu(
+      WidgetTester tester, {
+      required Offset trigger,
+      int items = 3,
+    }) async {
+      setScreen(tester);
+      await tester.pumpWidget(shellApp(Stack(children: [
+        Positioned(
+          left: trigger.dx,
+          top: trigger.dy,
+          child: GlassMenu(
+            autoAdjustToScreen: true,
+            trigger: const SizedBox.square(
+              dimension: 48,
+              child: ColoredBox(color: CupertinoColors.white),
+            ),
+            items: [
+              for (var i = 1; i <= items; i++)
+                GlassMenuItem(title: 'Item $i', onTap: () {}),
+            ],
+          ),
+        ),
+      ])));
+      await settle(tester);
+      await tester.tapAt(trigger + const Offset(24, 24));
+      await settle(tester);
+    }
+
+    Rect item(WidgetTester tester, int i) =>
+        tester.getRect(find.byType(GlassMenuItem).at(i - 1));
+
+    testDuo('opens a menu over its item, down from the upper half',
+        (tester) async {
+      await openMenu(tester, trigger: const Offset(394, 230));
+
+      // Its top and outer edges lie on the item's, inside the menu's 12pt
+      // padding, rather than centred on it as a popover is.
+      expect(item(tester, 1).top, closeTo(230 + 12, 0.5));
+      expect(item(tester, 1).right, closeTo(394 + 48 - 12, 0.5));
+    });
+
+    testDuo('opens a menu up from the lower half', (tester) async {
+      await openMenu(tester, trigger: const Offset(394, 450));
+
+      expect(item(tester, 3).bottom, closeTo(450 + 48 - 12, 0.5));
+    });
+
+    testDuo('keeps a menu clear of the status cluster', (tester) async {
+      await openMenu(tester, trigger: const Offset(394, 450), items: 12);
+
+      // Taller than the room above the item: it stops level with the strip's
+      // first control, at y 170, and scrolls.
+      expect(item(tester, 1).top, closeTo(170 + 12, 0.5));
     });
   });
 
@@ -1098,7 +1824,9 @@ class _TabsScreenState extends State<_TabsScreen> {
 }
 
 class _SearchableTabsScreen extends StatefulWidget {
-  const _SearchableTabsScreen();
+  const _SearchableTabsScreen({this.showPill = true});
+
+  final bool showPill;
 
   @override
   State<_SearchableTabsScreen> createState() => _SearchableTabsScreenState();
@@ -1117,6 +1845,7 @@ class _SearchableTabsScreenState extends State<_SearchableTabsScreen> {
           isSearchActive: _searching,
           searchConfig: GlassSearchBarConfig(
             onSearchToggle: (active) => setState(() => _searching = active),
+            showPill: widget.showPill,
           ),
           tabs: const [
             GlassTab(icon: Icon(CupertinoIcons.house), label: 'Home'),

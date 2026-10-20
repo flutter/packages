@@ -1,3 +1,7 @@
+// Copyright 2013 The Flutter Authors
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
 import 'dart:math';
 import 'dart:ui' as ui;
 
@@ -154,6 +158,64 @@ void main() {
       expect(layer.matte.width, matteWidth(size, dpr));
     }
     expect(tester.binding.hasScheduledFrame, isFalse);
+  });
+
+  testWidgets('removing one of two shapes rebuilds the matte', (tester) async {
+    // Fixed sizes throughout, so neither the layer nor the remaining shape
+    // lays out again: only the removal itself can trigger the rebuild.
+    Future<_Layer> pumpShapes({required bool both}) async {
+      await tester.pumpWidget(Align(
+        alignment: Alignment.topLeft,
+        child: SizedBox(
+          width: 300,
+          height: 100,
+          child: _LayerWidget(
+            link: link,
+            renderShader: renderShader,
+            child: Stack(
+              textDirection: TextDirection.ltr,
+              children: [
+                Positioned(
+                  key: const ValueKey('kept'),
+                  left: 0,
+                  top: 0,
+                  width: 80,
+                  height: 40,
+                  child: _ShapeWidget(
+                    link: link,
+                    geometryShader: geometryShader,
+                    child: const SizedBox.expand(),
+                  ),
+                ),
+                if (both)
+                  Positioned(
+                    key: const ValueKey('removed'),
+                    left: 160,
+                    top: 0,
+                    width: 80,
+                    height: 40,
+                    child: _ShapeWidget(
+                      link: link,
+                      geometryShader: geometryShader,
+                      child: const SizedBox.expand(),
+                    ),
+                  ),
+              ],
+            ),
+          ),
+        ),
+      ));
+      return tester.allRenderObjects.whereType<_Layer>().single;
+    }
+
+    final layer = await pumpShapes(both: true);
+    expect(link.shapes, hasLength(2));
+    final matte = layer.matte;
+
+    await pumpShapes(both: false);
+    expect(link.shapes, hasLength(1));
+    // A matte kept from before still draws the removed shape.
+    expect(identical(layer.matte, matte), isFalse);
   });
 }
 

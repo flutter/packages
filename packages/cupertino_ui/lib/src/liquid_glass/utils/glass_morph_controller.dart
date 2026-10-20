@@ -1,3 +1,7 @@
+// Copyright 2013 The Flutter Authors
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
 import 'package:flutter/animation.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/physics.dart';
@@ -338,14 +342,32 @@ class GlassMorphController extends ChangeNotifier {
     }
   }
 
+  /// When a morph counts as settled.
+  ///
+  /// The value spans the whole change in size, so a distance of 0.001 is at
+  /// most half a pixel on a 500 px surface, and 0.05 a second moves it by well
+  /// under a pixel a frame. The default [Tolerance] (0.001 a second) kept the
+  /// controller ticking, and the surface repainting, for about half a second
+  /// after anything visibly moved: an open settled after 1.2 s, a close after
+  /// 0.93 s, while the motion ended at 0.72 s and 0.53 s.
+  static const Tolerance _settleTolerance =
+      Tolerance(distance: 0.001, velocity: 0.05);
+
   void _runSpring(double target, {required double velocityHint}) {
-    final sim = SpringSimulation(
-      _effectiveSpring,
-      _animationController.value,
-      target,
-      velocityHint,
+    _animationController.animateWith(
+      SpringSimulation(
+        _effectiveSpring,
+        _animationController.value,
+        target,
+        velocityHint,
+        // The spring is "done" within [_settleTolerance] of its target, not on
+        // it. snapToEnd reports the exact target on that final tick, so the
+        // controller lands on 1.0 / 0.0 in the same tick it completes and its
+        // AnimationStatus goes forward -> completed as usual.
+        snapToEnd: true,
+        tolerance: _settleTolerance,
+      ),
     );
-    _animationController.animateWith(sim);
   }
 
   void _onTick() {

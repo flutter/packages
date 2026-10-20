@@ -1,3 +1,7 @@
+// Copyright 2013 The Flutter Authors
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
 /// GlassMenu Demo — all 9 alignment positions, adjustable item count,
 /// scrollable overflow handling, continuous swipe-to-select, and premium glass quality.
 ///
@@ -125,6 +129,45 @@ class _MenuDemoPageState extends State<MenuDemoPage> {
               ),
             );
           },
+        ),
+        GlassMenuItem(
+          title: 'Share…',
+          icon: const Icon(CupertinoIcons.share),
+          onTap: () {},
+          submenu: [
+            GlassMenuItem(
+              title: 'AirDrop',
+              icon: const Icon(CupertinoIcons.wifi),
+              onTap: () => debugPrint('AirDrop tapped'),
+            ),
+            GlassMenuItem(
+              title: 'Messages',
+              icon: const Icon(CupertinoIcons.chat_bubble_fill),
+              onTap: () => debugPrint('Messages tapped'),
+            ),
+            GlassMenuItem(
+              title: 'Mail',
+              icon: const Icon(CupertinoIcons.mail_solid),
+              onTap: () => debugPrint('Mail tapped'),
+            ),
+            GlassMenuItem(
+              title: 'More…',
+              icon: const Icon(CupertinoIcons.ellipsis_circle),
+              onTap: () {},
+              submenu: [
+                GlassMenuItem(
+                  title: 'Copy Link',
+                  icon: const Icon(CupertinoIcons.link),
+                  onTap: () => debugPrint('Copy Link tapped'),
+                ),
+                GlassMenuItem(
+                  title: 'Save to Files',
+                  icon: const Icon(CupertinoIcons.folder_badge_plus),
+                  onTap: () => debugPrint('Save to Files tapped'),
+                ),
+              ],
+            ),
+          ],
         ),
         ...List.generate(
           _itemCount,
@@ -451,6 +494,28 @@ class _MenuDemoPageState extends State<MenuDemoPage> {
         title: '🔔  Notifications',
         icon: const Icon(CupertinoIcons.bell_fill),
         onTap: () => setState(() => _lastSelected = 'Notifications'),
+      ),
+      GlassMenuItem(
+        title: 'Share…',
+        icon: const Icon(CupertinoIcons.share),
+        onTap: () {},
+        submenu: [
+          GlassMenuItem(
+            title: 'AirDrop',
+            icon: const Icon(CupertinoIcons.wifi),
+            onTap: () => setState(() => _lastSelected = 'AirDrop'),
+          ),
+          GlassMenuItem(
+            title: 'Messages',
+            icon: const Icon(CupertinoIcons.chat_bubble_fill),
+            onTap: () => setState(() => _lastSelected = 'Messages'),
+          ),
+          GlassMenuItem(
+            title: 'Mail',
+            icon: const Icon(CupertinoIcons.mail_solid),
+            onTap: () => setState(() => _lastSelected = 'Mail'),
+          ),
+        ],
       ),
       GlassMenuItem(
         title: '📷  Camera',

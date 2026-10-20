@@ -1,3 +1,7 @@
+// Copyright 2013 The Flutter Authors
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
 // Regression tests for GitHub issue #175:
 // _RenderLightweightGlass (and _RenderGlassEffect) never called
 // markNeedsCompositingBitsUpdate() after async shader load, leaving a stale

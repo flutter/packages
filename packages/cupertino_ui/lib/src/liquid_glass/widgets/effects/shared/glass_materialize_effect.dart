@@ -1,3 +1,7 @@
+// Copyright 2013 The Flutter Authors
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
 // NOT part of the public API — do not export from liquid_glass_widgets.dart.
 //
 // The progress-driven core of the materialize transition. The public widgets

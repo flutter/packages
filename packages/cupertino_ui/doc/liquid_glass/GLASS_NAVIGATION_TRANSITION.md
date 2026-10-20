@@ -160,7 +160,13 @@ bar.
   capsule sizes itself around it. There is deliberately no API to offset or
   reposition a cluster — iOS 26 has none either, which is exactly why custom
   content needs no coordination: the widget *is* an item, and layout flows
-  from that.
+  from that. `onTap` is optional here. Omit it and the slot is passive — no
+  outer button semantics, focus stop or tap recognizer around the child, and no
+  entry in the vertical strip's overflow menu — which is what you want when the
+  child already handles its own gestures (a `GlassButton`, say) or is a status
+  readout. Supplying `onTap` makes the whole slot one button. A `label` on a
+  passive slot names it as a single semantic node; leave it `null` when the
+  child provides its own accessible semantics.
 - **`GlassBarItem.menu` is the `UIBarButtonItem.menu` analogue.** The whole
   capsule morphs into the pull-down, matching iOS 26's `GlassEffectContainer`
   and `GlassButtonGroupItem.menu`. Only the first menu item in a cluster opens
@@ -181,6 +187,14 @@ bar.
 - **Participation is the constructor.** A `GlassAppBar.pinned` screen keeps
   the chrome pinned even with no actions; a plain `GlassAppBar` screen does
   not participate, and the pinned chrome retreats while it covers the bar.
+- **`buttonSize` sizes the bar's buttons.** `GlassAppBar.pinned` and
+  `GlassPinnedBarChrome` take an optional `buttonSize` (default 44pt) that sizes
+  the automatic back button and standalone `separate` / `own` / `none` items,
+  scales shared multi-item capsules proportionally (`buttonSize + 2.0`), and
+  grows the toolbar to fit when it exceeds `toolbarHeight`. It is ignored in
+  iPhone Duo's vertical strip, which keeps its native metrics, and in the
+  upright status-row layout the chrome keeps its 44pt row rather than
+  re-centring for a larger `buttonSize`.
 
 ## Pinning from a bar that isn't `GlassAppBar`
 
@@ -239,11 +253,12 @@ has nothing to refract there. The flag routes it to a live `BackdropFilter`
 instead, as `GlassButton.platformViewBackdrop` does for the bar's own, and is
 applied in-route as well so the two agree across the hand-over.
 
-`leading`, `backButton`, `leadingItemsSupplementBackButton`, `onBack` and
-`buttonSettings` mean exactly what they do on `GlassAppBar.pinned` — a
-non-empty `leading` replaces the back button in `chrome.leading` unless
-`leadingItemsSupplementBackButton` is set. The one addition is `enabled`,
-which is how an app with a **nested navigator** keeps the nested stack's roots
+`leading`, `backButton`, `leadingItemsSupplementBackButton`, `onBack`,
+`buttonSettings` and `buttonSize` mean exactly what they do on
+`GlassAppBar.pinned` — a non-empty `leading` replaces the back button in
+`chrome.leading` unless `leadingItemsSupplementBackButton` is set. The one
+addition is `enabled`, which is how an app with a **nested navigator** keeps
+the nested stack's roots
 out of the shell — the shell ranks registered routes against one another,
 which only has meaning inside a single `Navigator`:
 

@@ -1,3 +1,7 @@
+// Copyright 2013 The Flutter Authors
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
 // Parity harness — the package's press interaction beside iOS's own.
 //
 // Each row pairs a native SwiftUI `glassEffect(.regular.interactive())` shape

@@ -1,3 +1,7 @@
+// Copyright 2013 The Flutter Authors
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
 // Coverage for GlassSheet widget uncovered branches:
 //   L381-404: _handlePointerDown (suppressed interaction + enableInteractionGlow=false)
 //   L454-471: isScrollable=false path

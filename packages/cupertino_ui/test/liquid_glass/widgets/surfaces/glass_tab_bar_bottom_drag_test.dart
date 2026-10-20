@@ -1,3 +1,7 @@
+// Copyright 2013 The Flutter Authors
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
 // Drag-gesture tests for GlassTabBar.bottom tab indicator.
 //
 // Covers the _onDragEnd snap-to-tab logic and _onDragCancel paths that are

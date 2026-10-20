@@ -1,3 +1,7 @@
+// Copyright 2013 The Flutter Authors
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
 part of '../glass_modal_sheet.dart';
 
 // ===========================================================================
@@ -960,8 +964,7 @@ class GlassSheetMorphPresenter extends StatefulWidget {
   /// [GlassMenu] has no independently-animating route barrier.
   ///
   /// Callers should pass [Colors.transparent] as `barrierColor` to their
-  /// [showGeneralDialog] call and route the actual barrier colour through here
-  /// instead.
+  /// dialog route and route the actual barrier colour through here instead.
   final Color? barrierColor;
 
   @override

@@ -1,3 +1,7 @@
+// Copyright 2013 The Flutter Authors
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
 import 'package:flutter/cupertino.dart';
 
 import '../../types/glass_quality.dart';
@@ -175,11 +179,22 @@ class GlassPullDownButton extends StatelessWidget {
             isDestructive: item.isDestructive,
             subtitle: item.subtitle,
             enabled: item.enabled,
+            height: item.height,
+            isPressed: item.isPressed,
+            isSelected: item.isSelected,
+            titleStyle: item.titleStyle,
+            subtitleStyle: item.subtitleStyle,
+            iconColor: item.iconColor,
+            iconSize: item.iconSize,
+            maxLines: item.maxLines,
+            enablePressScale: item.enablePressScale,
+            closeDelay: item.closeDelay,
+            submenu: item.submenu,
+            trailing: item.trailing,
             onTap: () {
               item.onTap.call();
               onSelected!(item.title);
             },
-            trailing: item.trailing,
           );
         }
         return item;

@@ -1,3 +1,7 @@
+// Copyright 2013 The Flutter Authors
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
 import 'package:liquid_glass_widgets/src/renderer/liquid_glass_renderer.dart';
 import 'package:liquid_glass_widgets/theme/glass_interaction_settings.dart';
 import 'package:liquid_glass_widgets/theme/glass_theme.dart';

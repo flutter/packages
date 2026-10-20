@@ -1,3 +1,7 @@
+// Copyright 2013 The Flutter Authors
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
 // Tests for LiquidGlassSettings.ambientRim (full-perimeter rim on the
 // moving indicator): constructor default, copyWith, lerp, equality, and
 // preservation through copyWithPinch.

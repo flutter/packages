@@ -1,3 +1,7 @@
+// Copyright 2013 The Flutter Authors
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
 /// Indicator Parity Demo
 ///
 /// Shows all five [AnimatedGlassIndicator]-powered widgets side-by-side with

@@ -1,3 +1,10 @@
+// Copyright 2013 The Flutter Authors
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
+import 'dart:math' as math;
+import 'dart:ui' show DisplayFeature, DisplayFeatureType;
+
 import 'package:flutter/widgets.dart';
 
 import '../overlays/glass_modal_sheet.dart';
@@ -102,6 +109,13 @@ abstract final class GlassVerticalBarMetrics {
   /// the items that stay horizontal in a right-to-left one.
   static const double titleInset = 20.0;
 
+  /// Width of the strip, from the screen edge to the content.
+  ///
+  /// UIKit reports it as the lateral inset where it reserves the strip. Where
+  /// it leaves the strip to the app, as for the left-hand app in Split View,
+  /// it reports only the edge, and the strip is this wide, as natively.
+  static const double stripWidth = 84.0;
+
   /// Gap between the strip and the horizontal row.
   ///
   /// Natively the row runs almost against the strip, where a horizontal bar
@@ -131,6 +145,7 @@ class GlassVerticalBarData {
     this.collapsesTabBar = false,
     this.rowTop = GlassVerticalBarMetrics.edgeMargin,
     this.titleInset = GlassVerticalBarMetrics.titleInset,
+    this.systemInset = true,
   });
 
   /// The side of the screen the strip is on.
@@ -163,8 +178,9 @@ class GlassVerticalBarData {
 
   /// Distance from the top to the horizontal row that keeps the title.
   ///
-  /// [GlassVerticalBarMetrics.edgeMargin] on a screen. A modal sheet's own
-  /// strip measures it from the sheet's top edge, 16pt down.
+  /// [GlassVerticalBarMetrics.edgeMargin] on a screen, below the status bar
+  /// where it keeps a top inset. A modal sheet's own strip measures it from
+  /// the sheet's top edge, 16pt down.
   final double rowTop;
 
   /// Distance from the edge away from the strip to the horizontal row.
@@ -173,9 +189,18 @@ class GlassVerticalBarData {
   /// strip measures it from the sheet's edge, 16pt in.
   final double titleInset;
 
+  /// Whether the system already keeps the content clear of the strip,
+  /// through the view's insets.
+  ///
+  /// False for the left-hand app in Split View: UIKit names the strip's edge
+  /// there but leaves its space to the app, and [GlassNavigationShell] insets
+  /// the content itself.
+  final bool systemInset;
+
   @override
   bool operator ==(Object other) =>
       other is GlassVerticalBarData &&
+      other.systemInset == systemInset &&
       other.edge == edge &&
       other.width == width &&
       other.top == top &&
@@ -185,13 +210,13 @@ class GlassVerticalBarData {
       other.titleInset == titleInset;
 
   @override
-  int get hashCode => Object.hash(
-      edge, width, top, bottom, collapsesTabBar, rowTop, titleInset);
+  int get hashCode => Object.hash(edge, width, top, bottom, collapsesTabBar,
+      rowTop, titleInset, systemInset);
 
   @override
   String toString() => 'GlassVerticalBarData(${edge.name}, width: $width, '
       'top: $top, bottom: $bottom, collapsesTabBar: $collapsesTabBar, '
-      'rowTop: $rowTop, titleInset: $titleInset)';
+      'rowTop: $rowTop, titleInset: $titleInset, systemInset: $systemInset)';
 }
 
 /// Tells the bars below a [GlassNavigationShell] whether to lay out
@@ -221,13 +246,27 @@ class GlassVerticalBar extends InheritedWidget {
     required super.child,
   });
 
+  /// Keeps the bars in [child] horizontal under a strip.
+  ///
+  /// For a column the strip does not belong to. Natively a
+  /// `UISplitViewController` gives the strip to the column against it, and the
+  /// column beside it keeps a horizontal tab bar and navigation bar; wrap that
+  /// column in this.
+  ///
+  /// A [GlassPinnedBarChrome] or [GlassAppBar.pinned] inside it stays out of
+  /// the [GlassNavigationShell] while the shell has a strip, and draws its
+  /// chrome in-route: the shell pins chrome against the window, not against
+  /// the column.
+  const GlassVerticalBar.disabled({super.key, required super.child})
+      : data = null;
+
   /// The strip, or null where bars are horizontal.
   final GlassVerticalBarData? data;
 
   /// The strip bars below [context] should use, or null where they are
   /// horizontal — on every device but iPhone Duo, in inner portrait, with no
-  /// [GlassNavigationShell] above, or with
-  /// [GlassVerticalBarBehavior.disabled].
+  /// [GlassNavigationShell] above, with [GlassVerticalBarBehavior.disabled],
+  /// or under [GlassVerticalBar.disabled].
   static GlassVerticalBarData? maybeOf(BuildContext context) =>
       context.dependOnInheritedWidgetOfExactType<GlassVerticalBar>()?.data;
 
@@ -238,12 +277,17 @@ class GlassVerticalBar extends InheritedWidget {
 
   /// The strip the system has reserved, read from the view's insets.
   ///
-  /// iPhone Duo reports its strip only as a lateral inset: the status bar
-  /// moves into the strip, so the top inset is zero, and the strip's side
-  /// carries its full width. That is the only case with a zero top inset and
-  /// exactly one lateral inset — a regular iPhone in landscape also has no top
-  /// inset, but insets both sides equally (`(62, 0, 62, 20)` on iPhone 17), so
-  /// a single lateral inset is required rather than a particular width.
+  /// iPhone Duo reports its strip only as a lateral inset, which carries the
+  /// strip's full width on its side. Nothing else insets exactly one side: a
+  /// regular iPhone in landscape insets both equally (`(62, 0, 62, 20)` on
+  /// iPhone 17), and an iPad neither, so a single lateral inset is required
+  /// rather than a particular width.
+  ///
+  /// The side is the system's to choose, so it is never assumed. A full-screen
+  /// app has the strip on the right, and the status bar moves into it, leaving
+  /// a zero top inset. In Split View each app has it on its outer edge, the
+  /// left for the app on the left, and the status bar stays along the top of
+  /// the window.
   ///
   /// [viewPadding] rather than `padding`, so the strip stays put while the
   /// keyboard is up, and it has to be read above any [SafeArea], which removes
@@ -252,16 +296,24 @@ class GlassVerticalBar extends InheritedWidget {
   /// [GlassVerticalBarEdge.leading] edge.
   ///
   /// [GlassVerticalBarData.top] and [GlassVerticalBarData.bottom] are what
-  /// the insets do not carry: where the status cluster and the camera end,
-  /// which Flutter does not surface yet. Until `displayFeatures` is populated
-  /// on iOS (flutter/flutter#193025) they come from a table keyed on the
-  /// screen size, measured on the 27.1 simulator. The first control is at
-  /// 170pt on the outer display, below the status cluster, and at 120pt on the
-  /// inner display in landscape. Outer landscape hides the status bar but
-  /// leaves the camera at one end of the strip — the top when the strip is on
-  /// the left, the bottom when it is on the right — and the controls keep
-  /// 82pt clear of it, and [GlassVerticalBarMetrics.edgeMargin] clear of the
-  /// other end.
+  /// the insets do not carry: where the status cluster and the camera end.
+  /// UIKit reports both as occlusion regions, which move — the cluster grows
+  /// with live activities and goes with the status bar — and they are read
+  /// from [displayFeatures]: the controls start below the cutouts that
+  /// overlap the top half of the strip and end above those in the bottom
+  /// half, and keep [GlassVerticalBarMetrics.edgeMargin] clear of an end with
+  /// none. Flutter does not report them on iOS yet (flutter/flutter#193025),
+  /// so [GlassNavigationShell] adds the regions the package reads from UIKit
+  /// itself.
+  ///
+  /// Until a region is reported they come from a table keyed on the screen
+  /// size, measured on the 27.1 simulator: 170pt on the outer display, 120pt
+  /// on the inner display in landscape, and in outer landscape, which hides
+  /// the status bar, 82pt clear of the camera — at the top when the strip is
+  /// on the left, at the bottom when it is on the right.
+  ///
+  /// Where the status bar keeps a top inset, as in Split View, the strip and
+  /// the title row start [GlassVerticalBarMetrics.edgeMargin] below it.
   ///
   /// [compression] resolves [GlassVerticalBarData.collapsesTabBar]; under
   /// [GlassVerticalBarCompression.automatic] the tab bar collapses in outer
@@ -271,39 +323,85 @@ class GlassVerticalBar extends InheritedWidget {
     required Size size,
     required TargetPlatform platform,
     required TextDirection textDirection,
+    List<DisplayFeature> displayFeatures = const <DisplayFeature>[],
+    GlassVerticalBarEdge? systemEdge,
     GlassVerticalBarCompression compression =
         GlassVerticalBarCompression.automatic,
   }) {
-    if (platform != TargetPlatform.iOS || viewPadding.top != 0) return null;
-    final left = viewPadding.left > 0;
+    if (platform != TargetPlatform.iOS) return null;
+    var left = viewPadding.left > 0;
     final right = viewPadding.right > 0;
-    if (left == right) return null;
+    // Without an inset on one side only, the strip is the app's to keep, on
+    // the edge UIKit names, if it names one.
+    final systemInset = left != right;
+    if (!systemInset) {
+      if (systemEdge == null) return null;
+      left = (systemEdge == GlassVerticalBarEdge.leading) ==
+          (textDirection == TextDirection.ltr);
+    }
     final onStart = left == (textDirection == TextDirection.ltr);
+
+    final stripWidth = !systemInset
+        ? GlassVerticalBarMetrics.stripWidth
+        : left
+            ? viewPadding.left
+            : viewPadding.right;
+    final strip = left
+        ? Rect.fromLTWH(0, 0, stripWidth, size.height)
+        : Rect.fromLTWH(size.width - stripWidth, 0, stripWidth, size.height);
 
     final width = size.width.round();
     final height = size.height.round();
+    // A window that keeps its status bar along the top, as in Split View.
+    final statusBarOnTop = viewPadding.top > 0;
     // Inner display, landscape: the status cluster sits in the strip above
     // the controls, shorter than on the outer display.
     final innerLandscape = width == 951 && height == 669;
     // Landscape on the outer display hides the status bar entirely.
-    final outerLandscape = !innerLandscape && width > height;
+    final outerLandscape = !statusBarOnTop && !innerLandscape && width > height;
 
     // The camera's end of the strip in outer landscape.
     const cameraClearance = 82.0;
+    final belowStatusBar = viewPadding.top + GlassVerticalBarMetrics.edgeMargin;
+
+    double? top;
+    double? bottom;
+    for (final feature in displayFeatures) {
+      final bounds = feature.bounds;
+      if (feature.type != DisplayFeatureType.cutout ||
+          !bounds.overlaps(strip)) {
+        continue;
+      }
+      if (bounds.center.dy < size.height / 2) {
+        top =
+            math.max(top ?? GlassVerticalBarMetrics.edgeMargin, bounds.bottom);
+      } else {
+        bottom = math.max(bottom ?? GlassVerticalBarMetrics.edgeMargin,
+            size.height - bounds.top);
+      }
+    }
+    if (statusBarOnTop) {
+      top = math.max(top ?? 0, belowStatusBar);
+    } else if (top == null && bottom == null && systemInset) {
+      // Where the system keeps the strip, its status cluster and camera sit
+      // at its ends; a strip the app keeps has neither.
+      top = innerLandscape
+          ? 120.0
+          : outerLandscape
+              ? (left ? cameraClearance : null)
+              : 170.0;
+      bottom = outerLandscape && right ? cameraClearance : null;
+    }
 
     return GlassVerticalBarData(
       edge: onStart
           ? GlassVerticalBarEdge.leading
           : GlassVerticalBarEdge.trailing,
-      width: left ? viewPadding.left : viewPadding.right,
-      top: innerLandscape
-          ? 120.0
-          : outerLandscape
-              ? (left ? cameraClearance : GlassVerticalBarMetrics.edgeMargin)
-              : 170.0,
-      bottom: outerLandscape && right
-          ? cameraClearance
-          : GlassVerticalBarMetrics.edgeMargin,
+      width: stripWidth,
+      top: top ?? GlassVerticalBarMetrics.edgeMargin,
+      bottom: bottom ?? GlassVerticalBarMetrics.edgeMargin,
+      rowTop: belowStatusBar,
+      systemInset: systemInset,
       collapsesTabBar: switch (compression) {
         GlassVerticalBarCompression.automatic => outerLandscape,
         GlassVerticalBarCompression.prefersBarItems => true,

@@ -1,3 +1,7 @@
+// Copyright 2013 The Flutter Authors
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
 // Tests for GlassThemeHelpers.resolveSettings — the 0.8.0 transparency
 // regression fix.  Every priority level of the 5-step resolution chain is
 // covered so a future refactor cannot silently break the visible-glass

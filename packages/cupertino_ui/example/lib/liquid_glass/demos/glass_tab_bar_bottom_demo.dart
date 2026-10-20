@@ -1,3 +1,7 @@
+// Copyright 2013 The Flutter Authors
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
 /// Simple demo showcasing GlassBottomBar features:
 /// - Magic lens masking effect (MaskingQuality.high)
 /// - Icon-only tab support (null labels)

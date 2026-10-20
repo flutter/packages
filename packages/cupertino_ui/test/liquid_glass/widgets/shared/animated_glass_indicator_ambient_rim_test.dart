@@ -1,3 +1,7 @@
+// Copyright 2013 The Flutter Authors
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
 // AnimatedGlassIndicator: LiquidGlassSettings.ambientRim forwarding.
 //
 // A caller-provided ambientRim (> 0) must reach the GlassEffect; when unset
