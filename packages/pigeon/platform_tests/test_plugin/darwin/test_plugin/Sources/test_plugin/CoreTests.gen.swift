@@ -4968,13 +4968,15 @@ class HostIntegrationCoreApiSetup {
 ///
 /// Generated protocol from Pigeon that represents Flutter messages that can be called from Swift.
 protocol FlutterCallbackCoreApiProtocol {
-  @MainActor func noop(completion: @escaping @MainActor (Result<Void, PigeonError>) -> Void)
+  @MainActor func noop(
+    completion: @escaping @Sendable @MainActor (Result<Void, PigeonError>) -> Void)
   @MainActor func echo(
     string aStringArg: String,
-    completion: @escaping @MainActor (Result<String, PigeonError>) -> Void)
-  @MainActor func throwError(completion: @escaping @MainActor (Result<Any?, PigeonError>) -> Void)
+    completion: @escaping @Sendable @MainActor (Result<String, PigeonError>) -> Void)
+  @MainActor func throwError(
+    completion: @escaping @Sendable @MainActor (Result<Any?, PigeonError>) -> Void)
   @MainActor func throwErrorFromVoid(
-    completion: @escaping @MainActor (Result<Void, PigeonError>) -> Void)
+    completion: @escaping @Sendable @MainActor (Result<Void, PigeonError>) -> Void)
 }
 class FlutterCallbackCoreApi: FlutterCallbackCoreApiProtocol {
   private let binaryMessenger: FlutterBinaryMessenger
@@ -4986,7 +4988,9 @@ class FlutterCallbackCoreApi: FlutterCallbackCoreApiProtocol {
   var codec: CoreTestsPigeonCodec {
     return CoreTestsPigeonCodec.shared
   }
-  @MainActor func noop(completion: @escaping @MainActor (Result<Void, PigeonError>) -> Void) {
+  @MainActor func noop(
+    completion: @escaping @Sendable @MainActor (Result<Void, PigeonError>) -> Void
+  ) {
     let channelName: String =
       "dev.flutter.pigeon.pigeon_integration_tests.FlutterCallbackCoreApi.noop\(messageChannelSuffix)"
     let channel = FlutterBasicMessageChannel(
@@ -5010,7 +5014,7 @@ class FlutterCallbackCoreApi: FlutterCallbackCoreApiProtocol {
   }
   @MainActor func echo(
     string aStringArg: String,
-    completion: @escaping @MainActor (Result<String, PigeonError>) -> Void
+    completion: @escaping @Sendable @MainActor (Result<String, PigeonError>) -> Void
   ) {
     let channelName: String =
       "dev.flutter.pigeon.pigeon_integration_tests.FlutterCallbackCoreApi.echoString\(messageChannelSuffix)"
@@ -5041,7 +5045,9 @@ class FlutterCallbackCoreApi: FlutterCallbackCoreApiProtocol {
       }
     }
   }
-  @MainActor func throwError(completion: @escaping @MainActor (Result<Any?, PigeonError>) -> Void) {
+  @MainActor func throwError(
+    completion: @escaping @Sendable @MainActor (Result<Any?, PigeonError>) -> Void
+  ) {
     let channelName: String =
       "dev.flutter.pigeon.pigeon_integration_tests.FlutterCallbackCoreApi.throwError\(messageChannelSuffix)"
     let channel = FlutterBasicMessageChannel(
@@ -5065,7 +5071,7 @@ class FlutterCallbackCoreApi: FlutterCallbackCoreApiProtocol {
     }
   }
   @MainActor func throwErrorFromVoid(
-    completion: @escaping @MainActor (Result<Void, PigeonError>) -> Void
+    completion: @escaping @Sendable @MainActor (Result<Void, PigeonError>) -> Void
   ) {
     let channelName: String =
       "dev.flutter.pigeon.pigeon_integration_tests.FlutterCallbackCoreApi.throwErrorFromVoid\(messageChannelSuffix)"

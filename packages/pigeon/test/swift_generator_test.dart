@@ -859,7 +859,7 @@ void main() {
     expect(
       code,
       contains(
-        '@MainActor func doSomething(arg argArg: Input, completion: @escaping @MainActor (Result<Output, PigeonError>) -> Void)',
+        '@MainActor func doSomething(arg argArg: Input, completion: @escaping @Sendable @MainActor (Result<Output, PigeonError>) -> Void)',
       ),
     );
   });

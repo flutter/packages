@@ -14,7 +14,7 @@ import Foundation
 /// allowing integration tests and host handlers to `await` Flutter API calls.
 @MainActor
 private func awaitFlutterApi<T>(
-  _ block: @escaping (@escaping @MainActor (Result<T, PigeonError>) -> Void) -> Void
+  _ block: @escaping (@escaping @Sendable @MainActor (Result<T, PigeonError>) -> Void) -> Void
 ) async throws -> T {
   try await withCheckedThrowingContinuation { continuation in
     block { result in

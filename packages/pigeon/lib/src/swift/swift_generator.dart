@@ -69,7 +69,7 @@ class SwiftOptions {
   /// Pigeon may still add concurrency annotations to generated Swift code when
   /// this is disabled, as some concurrency annotations predate this flag and are
   /// crucial to the execution semantics of the Swift code (`@MainActor` on async
-  /// APIs for example), for backward compatibility those annotatons are always
+  /// APIs for example), for backward compatibility those annotations are always
   /// added regardless of this flag.
   ///
   /// To get the full benefit, consider enabling Swift strict concurrency checking
@@ -1360,7 +1360,7 @@ if (wrapped == nil) {
               // https://github.com/flutter/flutter/issues/192199
               if (generatorOptions.strictConcurrency || !func.isAsynchronousCallback) '@MainActor',
             ],
-            isCompletionClosureMainActor: generatorOptions.strictConcurrency,
+            completionClosureAnnotation: generatorOptions.strictConcurrency ? .mainActor : .none,
             swiftFunction: func.swiftFunction,
             getParameterName: _getSafeArgumentName,
           ),
@@ -1721,8 +1721,10 @@ if (wrapped == nil) {
               if (generatorOptions.strictConcurrency && !generatorOptions.useFfi)
                 _ActorIsolation.from(taskQueueType: method.taskQueueType).annotation,
             ],
-            isCompletionClosureSendable:
-                generatorOptions.strictConcurrency && !generatorOptions.useFfi,
+            completionClosureAnnotation:
+                generatorOptions.strictConcurrency && !generatorOptions.useFfi
+                ? .sendable
+                : .none,
             ffiUserApi: generatorOptions.useFfi,
           ),
         );
@@ -2719,7 +2721,7 @@ ${pigeonStreamHandlerDeclaration(preconcurrency: false)}
     if (api.swiftOptions?.includeSharedClasses ?? true) {
       // TODO(tarrinneal): Prefix these classes to avoid name collisions.
       indent.format('''
- 
+
       $mainActor
       class PigeonEventChannelWrapper<ReturnType> {
         func onListen(withArguments arguments: Any?, sink: PigeonEventSink<ReturnType>) {}
@@ -2792,7 +2794,7 @@ ${pigeonStreamHandlerDeclaration(preconcurrency: false)}
         if (generatorOptions.strictConcurrency || (isAsynchronous && !isAsynchronousCallback))
           '@MainActor',
       ],
-      isCompletionClosureMainActor: generatorOptions.strictConcurrency,
+      completionClosureAnnotation: generatorOptions.strictConcurrency ? .mainActor : .none,
       swiftFunction: swiftFunction,
       getParameterName: _getSafeArgumentName,
     );
@@ -3376,7 +3378,7 @@ ${pigeonStreamHandlerDeclaration(preconcurrency: false)}
         isAsynchronousCallback: true,
         errorTypeName: 'Error',
         methodAnnotations: <String>[if (generatorOptions.strictConcurrency) '@MainActor'],
-        isCompletionClosureSendable: generatorOptions.strictConcurrency,
+        completionClosureAnnotation: generatorOptions.strictConcurrency ? .sendable : .none,
       );
       indent.writeln(methodSignature);
 
@@ -3640,7 +3642,7 @@ ${pigeonStreamHandlerDeclaration(preconcurrency: false)}
       isAsynchronousCallback: true,
       errorTypeName: _getErrorClassName(generatorOptions),
       methodAnnotations: <String>[if (generatorOptions.strictConcurrency) '@MainActor'],
-      isCompletionClosureMainActor: generatorOptions.strictConcurrency,
+      completionClosureAnnotation: generatorOptions.strictConcurrency ? .mainActor : .none,
     );
     indent.writeScoped('$methodSignature {', '}', () {
       indent.writeScoped('if pigeonRegistrar.ignoreCallsToDart {', '}', () {
@@ -3750,7 +3752,7 @@ ${pigeonStreamHandlerDeclaration(preconcurrency: false)}
         isAsynchronousCallback: true,
         errorTypeName: _getErrorClassName(generatorOptions),
         methodAnnotations: <String>[if (generatorOptions.strictConcurrency) '@MainActor'],
-        isCompletionClosureMainActor: generatorOptions.strictConcurrency,
+        completionClosureAnnotation: generatorOptions.strictConcurrency ? .mainActor : .none,
         getParameterName: _getSafeArgumentName,
       );
 
@@ -4206,6 +4208,18 @@ enum _ActorIsolation {
   }
 }
 
+enum _CompletionClosureAnnotation {
+  none(''),
+  sendable('@Sendable '),
+  // With the "approachable concurrency" (the default in Swift 6.0+), @MainActor implies
+  // @Sendable. Explicitly add @Sendable even when @MainActor in case the feature flag
+  // is not on or the target is compiled with an old compiler.
+  mainActor('@Sendable @MainActor ');
+
+  const _CompletionClosureAnnotation(this.prefix);
+  final String prefix;
+}
+
 String _getMethodSignature({
   required String name,
   required Iterable<Parameter> parameters,
@@ -4214,8 +4228,7 @@ String _getMethodSignature({
   bool isAsynchronous = false,
   bool ffiUserApi = false,
   bool isAsynchronousCallback = false,
-  bool isCompletionClosureSendable = false,
-  bool isCompletionClosureMainActor = false,
+  _CompletionClosureAnnotation completionClosureAnnotation = .none,
   Iterable<String> methodAnnotations = const <Never>[],
   String? swiftFunction,
   bool ffiBridgeApi = false,
@@ -4286,13 +4299,8 @@ String _getMethodSignature({
   }
 
   if (isAsynchronous) {
-    // With the "approchable concurrency" (the default in Swift 6.0+), @MainActor implies
-    // @Sendable. Explicitly add @Sendable even when @MainActor in case the feature flag
-    // is not on or the target is compiled with an old compiler.
-    final sendablePrefix = isCompletionClosureSendable ? '@Sendable ' : '';
-    final mainActorCompletionPrefix = isCompletionClosureMainActor ? '@MainActor ' : '';
     final completion =
-        'completion: @escaping $sendablePrefix$mainActorCompletionPrefix(Result<$returnTypeString, $errorTypeName>) -> Void';
+        'completion: @escaping ${completionClosureAnnotation.prefix}(Result<$returnTypeString, $errorTypeName>) -> Void';
     final params = parameters.isEmpty ? completion : '$parameterSignature, $completion';
     return '${prefix}func $methodName($params)';
   }

@@ -114,7 +114,7 @@ void main() {
       expect(
         collapsedCode,
         contains(
-          r'func pigeonNewInstance(pigeonInstance: MyLibraryApi, completion: @escaping @MainActor (Result<Void, PigeonError>) -> Void) ',
+          r'func pigeonNewInstance(pigeonInstance: MyLibraryApi, completion: @escaping @Sendable @MainActor (Result<Void, PigeonError>) -> Void) ',
         ),
       );
 
@@ -144,7 +144,7 @@ void main() {
       expect(
         code,
         contains(
-          'func doSomethingElse(pigeonInstance pigeonInstanceArg: MyLibraryApi, input inputArg: Input, completion: @escaping @MainActor (Result<String, PigeonError>) -> Void)',
+          'func doSomethingElse(pigeonInstance pigeonInstanceArg: MyLibraryApi, input inputArg: Input, completion: @escaping @Sendable @MainActor (Result<String, PigeonError>) -> Void)',
         ),
       );
     });
@@ -1021,7 +1021,7 @@ void main() {
             'func doSomething(pigeonInstance pigeonInstanceArg: Api, validType validTypeArg: Int64, enumType '
             'enumTypeArg: AnEnum, proxyApiType proxyApiTypeArg: Api2, nullableValidType nullableValidTypeArg: Int64?, nullableEnumType '
             'nullableEnumTypeArg: AnEnum?, nullableProxyApiType nullableProxyApiTypeArg: Api2?, '
-            'completion: @escaping @MainActor (Result<Void, PigeonError>) -> Void)',
+            'completion: @escaping @Sendable @MainActor (Result<Void, PigeonError>) -> Void)',
           ),
         );
         expect(
@@ -1102,13 +1102,13 @@ void main() {
         expect(
           code,
           contains(
-            '@MainActor func doFlutterWork(pigeonInstance pigeonInstanceArg: Api, completion: @escaping @MainActor (Result<Void, PigeonError>) -> Void)',
+            '@MainActor func doFlutterWork(pigeonInstance pigeonInstanceArg: Api, completion: @escaping @Sendable @MainActor (Result<Void, PigeonError>) -> Void)',
           ),
         );
         expect(
           code,
           contains(
-            '@MainActor func pigeonNewInstance(pigeonInstance: Api, completion: @escaping @MainActor (Result<Void, PigeonError>) -> Void)',
+            '@MainActor func pigeonNewInstance(pigeonInstance: Api, completion: @escaping @Sendable @MainActor (Result<Void, PigeonError>) -> Void)',
           ),
         );
       });
