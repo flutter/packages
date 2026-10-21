@@ -15,8 +15,8 @@ class GoogleSignInUITests: XCTestCase {
     app.launch()
   }
 
-  func testSignInPopUp() {
-    let app = self.app!
+  func testSignInPopUp() throws {
+    let app = try XCTUnwrap(self.app)
 
     let signInButton = app.buttons["SIGN IN"]
     if !signInButton.waitForExistence(timeout: 30.0) {
