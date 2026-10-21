@@ -24,20 +24,11 @@ let package = Package(
     .target(
       name: "google_sign_in_ios",
       dependencies: [
-        .product(name: "GoogleSignIn", package: "GoogleSignIn-iOS"),
-        "google_sign_in_ios_objc",
+        .product(name: "GoogleSignIn", package: "GoogleSignIn-iOS")
       ],
       resources: [
         .process("Resources")
       ]
-    ),
-    .target(
-      name: "google_sign_in_ios_objc",
-      publicHeadersPath: "include",
-      cSettings: [
-        .headerSearchPath("include/google_sign_in_ios"),
-        .headerSearchPath("include/google_sign_in_ios_objc"),
-      ]
-    ),
+    )
   ]
 )

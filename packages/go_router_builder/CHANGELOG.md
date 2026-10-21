@@ -1,6 +1,11 @@
-## NEXT
+## 4.5.2
 
-* Updates minimum supported SDK version to Flutter 3.41/Dart 3.11.
+- Adopts shared analyzer helpers from `package:source_helper` `^1.4.0`.
+
+## 4.5.1
+
+- Migrates examples to `material_ui` package (1.4.0).
+- Updates minimum supported SDK version to Flutter 3.47/Dart 3.13.
 
 ## 4.5.0
 

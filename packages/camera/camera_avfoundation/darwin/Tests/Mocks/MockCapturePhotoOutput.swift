@@ -12,6 +12,7 @@ final class MockCapturePhotoOutput: NSObject, CapturePhotoOutput {
   var avOutput = AVCapturePhotoOutput()
   var availablePhotoCodecTypes: [AVVideoCodecType] = []
   var isHighResolutionCaptureEnabled = false
+  var maxPhotoDimensions = CMVideoDimensions()
   var supportedFlashModes: [AVCaptureDevice.FlashMode] = []
   var flutterZeroShutterLagSupported = false
   var flutterZeroShutterLagEnabled = false

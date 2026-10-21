@@ -3337,6 +3337,50 @@ void main() {
       expect(exception, isAssertionError);
     });
 
+    // This is a regression test for https://github.com/flutter/flutter/issues/192732.
+    testWidgets('MenuItemButton does not clip leadingIcon', (WidgetTester tester) async {
+      const label = 'This is a very long menu item label that must be clipped';
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: MenuAnchor(
+              menuChildren: <Widget>[
+                SizedBox(
+                  width: 200.0,
+                  child: MenuItemButton(
+                    leadingIcon: const Badge(
+                      label: Text('1'),
+                      child: Icon(Icons.add, key: Key('leading')),
+                    ),
+                    onPressed: () {},
+                    child: const Text(label, maxLines: 1),
+                  ),
+                ),
+              ],
+              builder: (BuildContext context, MenuController controller, Widget? child) {
+                return TextButton(onPressed: controller.open, child: const Text('Open'));
+              },
+            ),
+          ),
+        ),
+      );
+
+      await tester.tap(find.text('Open'));
+      await tester.pumpAndSettle();
+
+      // Decorations that paint outside the leading icon's bounds stay visible.
+      expect(
+        find.ancestor(of: find.byKey(const Key('leading')), matching: find.byType(ClipRect)),
+        findsNothing,
+      );
+
+      // The label itself is still clipped so that long labels truncate.
+      final Finder labelFinder = find.text(label);
+      expect(find.ancestor(of: labelFinder, matching: find.byType(ClipRect)), findsOneWidget);
+      final RenderParagraph paragraph = tester.renderObject<RenderParagraph>(labelFinder);
+      expect(paragraph.didExceedMaxLines, isTrue);
+    });
+
     testWidgets('MenuItemButton.styleFrom overlayColor overrides default overlay color', (
       WidgetTester tester,
     ) async {

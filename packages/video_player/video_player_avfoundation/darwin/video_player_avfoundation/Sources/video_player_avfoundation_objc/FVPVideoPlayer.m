@@ -286,7 +286,7 @@ NS_INLINE CGFloat radiansToDegrees(CGFloat radians) {
   videoComposition.renderSize = CGSizeMake(width, height);
 
   videoComposition.sourceTrackIDForFrameTiming = videoTrack.trackID;
-  if (CMTIME_IS_VALID(videoTrack.minFrameDuration)) {
+  if (FVPFrameDurationIsValid(videoTrack.minFrameDuration)) {
     videoComposition.frameDuration = videoTrack.minFrameDuration;
   } else {
     NSLog(@"Warning: videoTrack.minFrameDuration for input video is invalid, please report this to "

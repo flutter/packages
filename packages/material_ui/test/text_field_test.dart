@@ -3170,8 +3170,99 @@ void main() {
     expect(controller.selection.extentOffset, testValue.indexOf('g'));
   });
 
+  testWidgets('Can drag handles to change selection on iOS', (WidgetTester tester) async {
+    final TextEditingController controller = _textEditingController();
+
+    await tester.pumpWidget(
+      overlay(
+        child: TextField(dragStartBehavior: DragStartBehavior.down, controller: controller),
+      ),
+    );
+
+    const testValue = 'abc def ghi';
+    await tester.enterText(find.byType(TextField), testValue);
+    await skipPastScrollingAnimation(tester);
+
+    // Double tap the 'e' to select 'def'.
+    final Offset ePos = textOffsetToPosition(tester, testValue.indexOf('e'));
+    // The first tap.
+    TestGesture gesture = await tester.startGesture(ePos, pointer: 7);
+    await tester.pump();
+    await gesture.up();
+    await tester.pump();
+    await tester.pump(
+      const Duration(milliseconds: 200),
+    ); // skip past the frame where the opacity is zero
+
+    // The second tap.
+    await gesture.down(ePos);
+    await tester.pump();
+    await gesture.up();
+    await tester.pump();
+
+    final TextSelection selection = controller.selection;
+    expect(selection.baseOffset, 4);
+    expect(selection.extentOffset, 7);
+
+    final RenderEditable renderEditable = findRenderEditable(tester);
+    List<TextSelectionPoint> endpoints = globalize(
+      renderEditable.getEndpointsForSelection(selection),
+      renderEditable,
+    );
+    expect(endpoints.length, 2);
+
+    // Drag the right handle 2 letters to the right.
+    // We use a small offset because the endpoint is on the very corner
+    // of the handle.
+    Offset handlePos = endpoints[1].point + const Offset(1.0, 1.0);
+    Offset newHandlePos = textOffsetToPosition(tester, testValue.length);
+    gesture = await tester.startGesture(handlePos, pointer: 7);
+    await tester.pump();
+    await gesture.moveTo(newHandlePos);
+    await tester.pump();
+    await gesture.up();
+    await tester.pump();
+
+    expect(controller.selection.baseOffset, 4);
+    expect(controller.selection.extentOffset, 11);
+
+    // Drag the left handle 2 letters to the left. The Cupertino start handle
+    // sits above the line with its anchor at the line's bottom edge, so grab
+    // just inside its bottom-left corner.
+    handlePos = endpoints[0].point + const Offset(-1.0, -1.0);
+    newHandlePos = textOffsetToPosition(tester, 2);
+    gesture = await tester.startGesture(handlePos, pointer: 7);
+    await tester.pump();
+    await gesture.moveTo(newHandlePos);
+    await tester.pump();
+    await gesture.up();
+    await tester.pump();
+
+    // On iOS, dragging the base handle makes it the extent.
+    expect(controller.selection.baseOffset, 11);
+    expect(controller.selection.extentOffset, 2);
+
+    // Drag the left handle 2 letters to the left again.
+    endpoints = globalize(
+      renderEditable.getEndpointsForSelection(controller.selection),
+      renderEditable,
+    );
+    handlePos = endpoints[0].point + const Offset(-1.0, -1.0);
+    newHandlePos = textOffsetToPosition(tester, 0);
+    gesture = await tester.startGesture(handlePos, pointer: 7);
+    await tester.pump();
+    await gesture.moveTo(newHandlePos);
+    await tester.pump();
+    await gesture.up();
+    await tester.pump();
+
+    // The left handle was already the extent, and it remains so.
+    expect(controller.selection.baseOffset, 11);
+    expect(controller.selection.extentOffset, 0);
+  }, variant: TargetPlatformVariant.only(TargetPlatform.iOS));
+
   testWidgets(
-    'Can drag handles to change selection on Apple platforms',
+    'Can drag handles to change selection on Android and Fuchsia',
     (WidgetTester tester) async {
       final TextEditingController controller = _textEditingController();
 
@@ -3185,26 +3276,24 @@ void main() {
       await tester.enterText(find.byType(TextField), testValue);
       await skipPastScrollingAnimation(tester);
 
-      // Double tap the 'e' to select 'def'.
+      // Long press the 'e' to select 'def'.
       final Offset ePos = textOffsetToPosition(tester, testValue.indexOf('e'));
-      // The first tap.
       TestGesture gesture = await tester.startGesture(ePos, pointer: 7);
-      await tester.pump();
+      await tester.pump(const Duration(seconds: 2));
       await gesture.up();
       await tester.pump();
       await tester.pump(
         const Duration(milliseconds: 200),
       ); // skip past the frame where the opacity is zero
 
-      // The second tap.
-      await gesture.down(ePos);
-      await tester.pump();
-      await gesture.up();
-      await tester.pump();
-
       final TextSelection selection = controller.selection;
       expect(selection.baseOffset, 4);
       expect(selection.extentOffset, 7);
+
+      // On Fuchsia the desktop-style toolbar shown by the long press covers the
+      // handles; hide it so the drags below reach them.
+      tester.state<EditableTextState>(find.byType(EditableText)).hideToolbar(false);
+      await tester.pump();
 
       final RenderEditable renderEditable = findRenderEditable(tester);
       List<TextSelectionPoint> endpoints = globalize(
@@ -3281,118 +3370,48 @@ void main() {
       }
     },
     variant: const TargetPlatformVariant(<TargetPlatform>{
-      TargetPlatform.iOS,
-      TargetPlatform.macOS,
+      TargetPlatform.android,
+      TargetPlatform.fuchsia,
     }),
   );
 
-  testWidgets(
-    'Can drag handles to change selection on non-Apple platforms',
-    (WidgetTester tester) async {
-      final TextEditingController controller = _textEditingController();
+  testWidgets('Desktop platforms do not show selection handles by default', (
+    WidgetTester tester,
+  ) async {
+    final TextEditingController controller = _textEditingController();
 
-      await tester.pumpWidget(
-        overlay(
-          child: TextField(dragStartBehavior: DragStartBehavior.down, controller: controller),
-        ),
-      );
+    await tester.pumpWidget(
+      overlay(
+        child: TextField(dragStartBehavior: DragStartBehavior.down, controller: controller),
+      ),
+    );
 
-      const testValue = 'abc def ghi';
-      await tester.enterText(find.byType(TextField), testValue);
-      await skipPastScrollingAnimation(tester);
+    const testValue = 'abc def ghi';
+    await tester.enterText(find.byType(TextField), testValue);
+    await skipPastScrollingAnimation(tester);
 
-      // Long press the 'e' to select 'def'.
-      final Offset ePos = textOffsetToPosition(tester, testValue.indexOf('e'));
-      TestGesture gesture = await tester.startGesture(ePos, pointer: 7);
-      await tester.pump(const Duration(seconds: 2));
-      await gesture.up();
-      await tester.pump();
-      await tester.pump(
-        const Duration(milliseconds: 200),
-      ); // skip past the frame where the opacity is zero
+    // Double tap the 'e' to select 'def'.
+    final Offset ePos = textOffsetToPosition(tester, testValue.indexOf('e'));
+    final TestGesture gesture = await tester.startGesture(ePos, pointer: 7);
+    await tester.pump();
+    await gesture.up();
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 200));
+    await gesture.down(ePos);
+    await tester.pump();
+    await gesture.up();
+    await tester.pump();
 
-      final TextSelection selection = controller.selection;
-      expect(selection.baseOffset, 4);
-      expect(selection.extentOffset, 7);
-
-      final RenderEditable renderEditable = findRenderEditable(tester);
-      List<TextSelectionPoint> endpoints = globalize(
-        renderEditable.getEndpointsForSelection(selection),
-        renderEditable,
-      );
-      expect(endpoints.length, 2);
-
-      // Drag the right handle 2 letters to the right.
-      // We use a small offset because the endpoint is on the very corner
-      // of the handle.
-      Offset handlePos = endpoints[1].point + const Offset(1.0, 1.0);
-      Offset newHandlePos = textOffsetToPosition(tester, testValue.length);
-      gesture = await tester.startGesture(handlePos, pointer: 7);
-      await tester.pump();
-      await gesture.moveTo(newHandlePos);
-      await tester.pump();
-      await gesture.up();
-      await tester.pump();
-
-      expect(controller.selection.baseOffset, 4);
-      expect(controller.selection.extentOffset, 11);
-
-      // Drag the left handle 2 letters to the left.
-      handlePos = endpoints[0].point + const Offset(-1.0, 1.0);
-      newHandlePos = textOffsetToPosition(tester, 2);
-      gesture = await tester.startGesture(handlePos, pointer: 7);
-      await tester.pump();
-      await gesture.moveTo(newHandlePos);
-      await tester.pump();
-      await gesture.up();
-      await tester.pump();
-
-      switch (defaultTargetPlatform) {
-        // On Apple platforms, dragging the base handle makes it the extent.
-        case TargetPlatform.iOS:
-        case TargetPlatform.macOS:
-          expect(controller.selection.baseOffset, 11);
-          expect(controller.selection.extentOffset, 2);
-        case TargetPlatform.android:
-        case TargetPlatform.fuchsia:
-        case TargetPlatform.linux:
-        case TargetPlatform.windows:
-          expect(controller.selection.baseOffset, 2);
-          expect(controller.selection.extentOffset, 11);
-      }
-
-      // Drag the left handle 2 letters to the left again.
-      endpoints = globalize(
-        renderEditable.getEndpointsForSelection(controller.selection),
-        renderEditable,
-      );
-      handlePos = endpoints[0].point + const Offset(-1.0, 1.0);
-      newHandlePos = textOffsetToPosition(tester, 0);
-      gesture = await tester.startGesture(handlePos, pointer: 7);
-      await tester.pump();
-      await gesture.moveTo(newHandlePos);
-      await tester.pump();
-      await gesture.up();
-      await tester.pump();
-
-      switch (defaultTargetPlatform) {
-        case TargetPlatform.iOS:
-        case TargetPlatform.macOS:
-          // The left handle was already the extent, and it remains so.
-          expect(controller.selection.baseOffset, 11);
-          expect(controller.selection.extentOffset, 0);
-        case TargetPlatform.android:
-        case TargetPlatform.fuchsia:
-        case TargetPlatform.linux:
-        case TargetPlatform.windows:
-          expect(controller.selection.baseOffset, 0);
-          expect(controller.selection.extentOffset, 11);
-      }
-    },
-    variant: TargetPlatformVariant.all(
-      excluding: <TargetPlatform>{TargetPlatform.iOS, TargetPlatform.macOS},
-    ),
-  );
+    expect(controller.selection.baseOffset, 4);
+    expect(controller.selection.extentOffset, 7);
+    expect(
+      find.descendant(
+        of: find.byWidgetPredicate((Widget w) => '${w.runtimeType}' == '_SelectionHandleOverlay'),
+        matching: find.byType(CustomPaint),
+      ),
+      findsNothing,
+    );
+  }, variant: TargetPlatformVariant.desktop());
 
   testWidgets(
     'assertion error is not thrown when attempting to drag both selection handles',
@@ -5148,8 +5167,8 @@ void main() {
     // Adding a counter causes the EditableText to shrink to fit the counter
     // inside the parent as well.
     const counterHeight = 40.0;
-    const subtextGap = 8.0;
-    const double counterSpace = counterHeight + subtextGap;
+    const supportingTextGap = 8.0;
+    const double counterSpace = counterHeight + supportingTextGap;
     await tester.pumpWidget(containedTextFieldBuilder(counter: Container(height: counterHeight)));
     expect(findEditableText(), equals(inputBox));
     expect(inputBox.size.height, height - padding - counterSpace);
@@ -5159,7 +5178,7 @@ void main() {
     await tester.pumpWidget(containedTextFieldBuilder(helperText: 'I am helperText'));
     expect(findEditableText(), equals(inputBox));
     const helperTextSpace = 12.0;
-    expect(inputBox.size.height, height - padding - helperTextSpace - subtextGap);
+    expect(inputBox.size.height, height - padding - helperTextSpace - supportingTextGap);
 
     // When both helperText and counter are present, EditableText shrinks by the
     // height of the taller of the two in order to fit both within the parent.
@@ -14263,81 +14282,69 @@ void main() {
     );
   });
 
-  testWidgets(
-    'strut no force large strut',
-    (WidgetTester tester) async {
-      await tester.pumpWidget(
-        MaterialApp(
-          theme: ThemeData(platform: TargetPlatform.android, useMaterial3: false),
-          home: const Material(
-            child: Center(child: TextField(maxLines: 6, strutStyle: StrutStyle(fontSize: 25))),
-          ),
+  testWidgets('strut no force large strut', (WidgetTester tester) async {
+    await tester.pumpWidget(
+      MaterialApp(
+        theme: ThemeData(platform: TargetPlatform.android, useMaterial3: false),
+        home: const Material(
+          child: Center(child: TextField(maxLines: 6, strutStyle: StrutStyle(fontSize: 25))),
         ),
-      );
+      ),
+    );
 
-      expect(
-        tester.getSize(find.byType(TextField)),
-        // When the strut's height is larger than TextStyle's and forceStrutHeight
-        // is disabled, then the StrutStyle takes precedence.
-        const Size(800, 174),
-      );
-    },
-    skip: isBrowser, // TODO(mdebbar): https://github.com/flutter/flutter/issues/32243
-  );
+    expect(
+      tester.getSize(find.byType(TextField)),
+      // When the strut's height is larger than TextStyle's and forceStrutHeight
+      // is disabled, then the StrutStyle takes precedence.
+      const Size(800, 174),
+    );
+  });
 
-  testWidgets(
-    'strut height override',
-    (WidgetTester tester) async {
-      await tester.pumpWidget(
-        MaterialApp(
-          theme: ThemeData(platform: TargetPlatform.android, useMaterial3: false),
-          home: const Material(
-            child: Center(
-              child: TextField(
-                maxLines: 3,
-                strutStyle: StrutStyle(fontSize: 8, forceStrutHeight: true),
-              ),
+  testWidgets('strut height override', (WidgetTester tester) async {
+    await tester.pumpWidget(
+      MaterialApp(
+        theme: ThemeData(platform: TargetPlatform.android, useMaterial3: false),
+        home: const Material(
+          child: Center(
+            child: TextField(
+              maxLines: 3,
+              strutStyle: StrutStyle(fontSize: 8, forceStrutHeight: true),
             ),
           ),
         ),
-      );
+      ),
+    );
 
-      expect(
-        tester.getSize(find.byType(TextField)),
-        // The smaller font size of strut make the field shorter than normal.
-        const Size(800, 48),
-      );
-    },
-    skip: isBrowser, // TODO(mdebbar): https://github.com/flutter/flutter/issues/32243
-  );
+    expect(
+      tester.getSize(find.byType(TextField)),
+      // The smaller font size of strut make the field shorter than normal.
+      const Size(800, 48),
+    );
+  });
 
-  testWidgets(
-    'strut forces field taller',
-    (WidgetTester tester) async {
-      await tester.pumpWidget(
-        MaterialApp(
-          theme: ThemeData(platform: TargetPlatform.android, useMaterial3: false),
-          home: const Material(
-            child: Center(
-              child: TextField(
-                maxLines: 3,
-                style: TextStyle(fontSize: 10),
-                strutStyle: StrutStyle(fontSize: 18, forceStrutHeight: true),
-              ),
+  testWidgets('strut forces field taller', (WidgetTester tester) async {
+    await tester.pumpWidget(
+      MaterialApp(
+        theme: ThemeData(platform: TargetPlatform.android, useMaterial3: false),
+        home: const Material(
+          child: Center(
+            child: TextField(
+              maxLines: 3,
+              style: TextStyle(fontSize: 10),
+              strutStyle: StrutStyle(fontSize: 18, forceStrutHeight: true),
             ),
           ),
         ),
-      );
+      ),
+    );
 
-      expect(
-        tester.getSize(find.byType(TextField)),
-        // When the strut fontSize is larger than a provided TextStyle, the
-        // strut's height takes precedence.
-        const Size(800, 78),
-      );
-    },
-    skip: isBrowser, // TODO(mdebbar): https://github.com/flutter/flutter/issues/32243
-  );
+    expect(
+      tester.getSize(find.byType(TextField)),
+      // When the strut fontSize is larger than a provided TextStyle, the
+      // strut's height takes precedence.
+      const Size(800, 78),
+    );
+  });
 
   testWidgets('Caret center position', (WidgetTester tester) async {
     await tester.pumpWidget(

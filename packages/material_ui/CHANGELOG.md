@@ -1,3 +1,52 @@
+## 1.8.0
+
+- Adds `RoundedPolygon` and `CornerRounding` for creating rounded polygonal shapes.
+- Adds `MaterialShapes`, the catalog of predefined Material Design shapes.
+- Adds `MaterialShapeBorder` for drawing a `RoundedPolygon` as an `OutlinedBorder`, which morphs between shapes when lerped.
+- Adds an example that morphs through the shapes in `MaterialShapes.all`.
+- Adds `enableInlinePrediction` to `TextFormField`.
+- Adds the `supportingTextPadding` property to `InputDecoration` and `InputDecorationThemeData`.
+- Adds an `enabled` parameter to `DropdownButtonFormField` and makes its
+  `onChanged` parameter optional. When `enabled` is true, the field is
+  interactive without an `onChanged` callback.
+- Adds a Material 3 Expressive IconButton example.
+- Fix `GridTile` crash when the incoming constraints are unbounded (e.g. inside a horizontally scrolling `ListView`).
+- Adds `onTertiaryTapDown`, `onTertiaryTapUp` and `onTertiaryTapCancel` to `InkResponse` and `InkWell`, so a tertiary (middle) button click can be handled directly.
+- Clarifies how `Slider.label` can be displayed for continuous sliders.
+- The FadeForwards page transition on Android now takes 20-40% less time to render thanks to snapshotting.
+- Fixes the installation command in README.md
+- Fixes `Theme.of` returning a fallback `ThemeData` whose `platform` was frozen to the first `defaultTargetPlatform` seen by the process. A subtree without a `Theme` ancestor now adapts when `defaultTargetPlatform` changes, for example under a `TargetPlatformVariant` or the platform override.
+
+## 1.7.0
+
+- Accounts for `MediaQuery`'s `TextScaler` when calculating `SnackBar` action overflow and removes unnecessary blank right spacing in multi-line layout.
+- Allows `TabBar.indicatorWeight` of 0 when the indicator is supplied by `TabBarThemeData`.
+- Fixes showTimePicker input mode rejecting or misreading hours in locales that use a 24-hour format.
+- Adds the `scrollPadding` property to `DropdownMenuFormField`, forwarding it to the underlying `DropdownMenu`.
+- Fixes an Android semantics assertion when an `ExpansionTile` is embedded in a `WidgetSpan`.
+
+## 1.6.0
+
+- Documents that `TextField.decoration` is merged with the ambient
+  `InputDecorationTheme` rather than replacing it.
+- Fixes unresolved doc comment references.
+- Fixes `NavigationIndicator` not repainting when the selected destination changes without pointer interaction.
+- Removes the unconditional `dart:io` import from `AboutDialog`, so that `material_ui` is correctly detected as supporting the web platform and `showAboutDialog` no longer throws on the web when no application name is available.
+- Fix DropdownButtonFormField underline alignment at bottom.
+- Fixes floating-point rounding errors when calculating values for discrete `Slider` and `RangeSlider`.
+- Added `fontFeatures` and `fontVariations` parameters to `TextTheme.apply()`.
+
+## 1.5.0
+
+- Adds Material 3 Expressive support for IconButton.
+- Exposes `selected` state on `Autocomplete` option semantics.
+- Wraps `DrawerHeader` in `Semantics(header: true)`.
+- Adds `ignorePointer` to `TooltipThemeData` for WCAG 1.4.13 Hoverable support.
+- Fixes decorations on `MenuItemButton.leadingIcon`, such as `Badge`, being clipped to the icon's bounds in vertically expanding menus.
+- Introduces labelTextDirection property to InputDecoration.
+- Adds support for standard, medium, and high contrast Material 3 color scheme baselines.
+- Fixes LocalHistoryEntry leak when double tapping Drawer scrim
+
 ## 1.4.0
 
 - Updates minimum supported SDK version to Flutter 3.47/Dart 3.13.

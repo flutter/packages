@@ -8,7 +8,9 @@
 import 'package:go_router/go_router.dart';
 
 mixin $HomeRoute {}
+
 mixin $LowerRoute {}
+
 mixin $UpperRoute {}
 
 @TypedGoRoute<HomeRoute>(

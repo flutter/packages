@@ -5,8 +5,11 @@
 import 'package:go_router/go_router.dart';
 
 mixin $Route1 {}
+
 mixin $Route2 {}
+
 mixin $RelativeRoute {}
+
 mixin $InnerRelativeRoute {}
 
 const TypedRelativeGoRoute<RelativeRoute> relativeRoute = TypedRelativeGoRoute<RelativeRoute>(
