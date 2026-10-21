@@ -259,7 +259,6 @@ class Typography with Diagnosticable {
     required TextTheme dense,
     required TextTheme tall,
   }) {
-    assert(platform != null || (black != null && white != null));
     final base = Typography._withPlatform(platform, black, white, englishLike, dense, tall);
 
     // Ensure they are all uniformly dark or light, with
