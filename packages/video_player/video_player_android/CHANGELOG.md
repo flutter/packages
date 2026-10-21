@@ -1,3 +1,7 @@
+## 2.13.0
+
+* Adds per-player Android renderer options for decoder fallback and MediaCodec asynchronous queueing.
+
 ## 2.12.3
 
 * Updates Robolectric to 4.17 and adds the JVM arguments it requires for unit tests.

@@ -1,3 +1,7 @@
+## 2.15.0
+
+* Adds `VideoPlayerAndroidOptions` to configure Android renderer settings during player creation.
+
 ## 2.14.1
 
 * Fixes late position updates after a controller is disposed.
