@@ -57,22 +57,37 @@ struct MetaDataUtilTests {
     #expect(newData == nil)
   }
 
-  @Test func convertImageToData() {
+  @Test func updateMetaDataReturnsNilWhenWritingFails() throws {
+    let dataJPG = ImagePickerTestImages.jpgTestData
+    // Truncated data is still recognized as JPEG, but has no decodable image, so writing it fails.
+    let truncatedJPG = Data(dataJPG.prefix(dataJPG.count / 2))
+    #expect(UIImage(data: truncatedJPG) == nil)
+    let source = try #require(CGImageSourceCreateWithData(truncatedJPG as CFData, nil))
+    #expect(CGImageSourceGetType(source) as String? == "public.jpeg")
+    let metaData = FLTImagePickerMetaDataUtil.getMetaData(fromImageData: dataJPG)
+    let newData = FLTImagePickerMetaDataUtil.image(fromImage: truncatedJPG, withMetaData: metaData)
+    #expect(newData == nil, "Returned \(newData?.count ?? 0) bytes of data.")
+  }
+
+  @Test func convertImageToData() throws {
     let imageJPG = UIImage(data: ImagePickerTestImages.jpgTestData)!
-    let convertedDataJPG = FLTImagePickerMetaDataUtil.convert(
-      imageJPG, using: FLTImagePickerMIMETypeJPEG, quality: 0.5)
+    let convertedDataJPG = try #require(
+      FLTImagePickerMetaDataUtil.convert(
+        imageJPG, using: FLTImagePickerMIMETypeJPEG, quality: 0.5))
     #expect(
       FLTImagePickerMetaDataUtil.getImageMIMEType(fromImageData: convertedDataJPG)
         == FLTImagePickerMIMETypeJPEG)
 
-    let convertedDataPNG = FLTImagePickerMetaDataUtil.convert(
-      imageJPG, using: FLTImagePickerMIMETypePNG, quality: nil)
+    let convertedDataPNG = try #require(
+      FLTImagePickerMetaDataUtil.convert(
+        imageJPG, using: FLTImagePickerMIMETypePNG, quality: nil))
     #expect(
       FLTImagePickerMetaDataUtil.getImageMIMEType(fromImageData: convertedDataPNG)
         == FLTImagePickerMIMETypePNG)
 
-    let convertedJPEGDefaultQuality = FLTImagePickerMetaDataUtil.convert(
-      imageJPG, using: FLTImagePickerMIMETypeJPEG, quality: nil)
+    let convertedJPEGDefaultQuality = try #require(
+      FLTImagePickerMetaDataUtil.convert(
+        imageJPG, using: FLTImagePickerMIMETypeJPEG, quality: nil))
     #expect(
       FLTImagePickerMetaDataUtil.getImageMIMEType(fromImageData: convertedJPEGDefaultQuality)
         == FLTImagePickerMIMETypeJPEG)
@@ -85,25 +100,28 @@ struct MetaDataUtilTests {
         == FLTImagePickerMIMETypeOther)
   }
 
-  @Test func convertImageIgnoresQualityForPNG() {
+  @Test func convertImageIgnoresQualityForPNG() throws {
     let imageJPG = UIImage(data: ImagePickerTestImages.jpgTestData)!
-    let convertedDataPNG = FLTImagePickerMetaDataUtil.convert(
-      imageJPG, using: FLTImagePickerMIMETypePNG, quality: 0.5)
+    let convertedDataPNG = try #require(
+      FLTImagePickerMetaDataUtil.convert(
+        imageJPG, using: FLTImagePickerMIMETypePNG, quality: 0.5))
     #expect(
       FLTImagePickerMetaDataUtil.getImageMIMEType(fromImageData: convertedDataPNG)
         == FLTImagePickerMIMETypePNG)
   }
 
-  @Test func convertImageDefaultsNonJPEGNonPNGToJPEG() {
+  @Test func convertImageDefaultsNonJPEGNonPNGToJPEG() throws {
     let imageJPG = UIImage(data: ImagePickerTestImages.jpgTestData)!
-    let convertedGIF = FLTImagePickerMetaDataUtil.convert(
-      imageJPG, using: FLTImagePickerMIMETypeGIF, quality: 0.5)
+    let convertedGIF = try #require(
+      FLTImagePickerMetaDataUtil.convert(
+        imageJPG, using: FLTImagePickerMIMETypeGIF, quality: 0.5))
     #expect(
       FLTImagePickerMetaDataUtil.getImageMIMEType(fromImageData: convertedGIF)
         == FLTImagePickerMIMETypeJPEG)
 
-    let convertedOther = FLTImagePickerMetaDataUtil.convert(
-      imageJPG, using: FLTImagePickerMIMETypeOther, quality: nil)
+    let convertedOther = try #require(
+      FLTImagePickerMetaDataUtil.convert(
+        imageJPG, using: FLTImagePickerMIMETypeOther, quality: nil))
     #expect(
       FLTImagePickerMetaDataUtil.getImageMIMEType(fromImageData: convertedOther)
         == FLTImagePickerMIMETypeJPEG)

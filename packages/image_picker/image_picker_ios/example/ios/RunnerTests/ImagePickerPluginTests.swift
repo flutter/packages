@@ -986,6 +986,58 @@ struct ImagePickerPluginTests {
     #expect(received?.count == 1)
   }
 
+  @Test func imagePickerDidFinishPickingImageSaveFailure() async {
+    let plugin = FLTImagePickerPlugin(viewProvider: StubViewProvider())
+    // An image with no underlying bitmap cannot be encoded, so it cannot be saved.
+    let image = UIImage()
+    nonisolated(unsafe) var received: [String]?
+    nonisolated(unsafe) var receivedError: FlutterError?
+    await confirmation("result") { confirmed in
+      plugin.callContext = FLTImagePickerMethodCallContext { result, error in
+        received = result
+        receivedError = error
+        confirmed()
+      }
+      plugin.callContext?.maxSize = FLTMaxSize()
+      plugin.callContext?.requestFullMetadata = false
+      plugin.imagePickerController(
+        UIImagePickerController(),
+        didFinishPickingMediaWithInfo: [.originalImage: image])
+    }
+    #expect(received == nil)
+    #expect(receivedError?.code == "invalid_image")
+  }
+
+  @Test func imagePickerDidFinishPickingWithFullMetadataAssetSaveFailure() async {
+    let plugin = FLTImagePickerPlugin(viewProvider: StubViewProvider())
+    let requester = FakeImageDataRequester()
+    requester.imageData = ImagePickerTestImages.jpgTestData
+    plugin.imageDataRequester = requester
+    // An image with no underlying bitmap cannot be encoded, so it cannot be saved.
+    let image = UIImage()
+    let asset = PHAsset()
+    nonisolated(unsafe) var received: [String]?
+    nonisolated(unsafe) var receivedError: FlutterError?
+    await confirmation("result") { confirmed in
+      plugin.callContext = FLTImagePickerMethodCallContext { result, error in
+        received = result
+        receivedError = error
+        confirmed()
+      }
+      plugin.callContext?.maxSize = FLTMaxSize()
+      plugin.callContext?.requestFullMetadata = true
+      plugin.imagePickerController(
+        UIImagePickerController(),
+        didFinishPickingMediaWithInfo: [
+          .originalImage: image,
+          .phAsset: asset,
+        ])
+    }
+    #expect(requester.requestedAsset === asset)
+    #expect(received == nil)
+    #expect(receivedError?.code == "invalid_image")
+  }
+
   @Test func defaultViewProviderReturnsRegistrarViewController() {
     let host = UIViewController()
     let registrar = TestFlutterPluginRegistrar()
