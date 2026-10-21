@@ -4381,6 +4381,48 @@ void main() {
         expect(find.text(allExpected), findsOneWidget);
         expect(find.text(charExpected), findsOneWidget);
       }, variant: TargetPlatformVariant.all());
+
+      testWidgets('getShortcutLabel formats unlocalized non-Unicode keys', (
+        WidgetTester tester,
+      ) async {
+        final (String expectedCtrl, String expectedSeparator) = switch (defaultTargetPlatform) {
+          TargetPlatform.android ||
+          TargetPlatform.fuchsia ||
+          TargetPlatform.linux ||
+          TargetPlatform.windows => ('Ctrl', '+'),
+          TargetPlatform.iOS || TargetPlatform.macOS => ('⌃', ' '),
+        };
+
+        await tester.pumpWidget(
+          MaterialApp(
+            home: Material(
+              child: MenuBar(
+                controller: controller,
+                children: <Widget>[
+                  SubmenuButton(
+                    menuChildren: <Widget>[
+                      MenuItemButton(
+                        shortcut: const SingleActivator(LogicalKeyboardKey.tab, control: true),
+                        child: Text(TestMenu.subMenu10.label),
+                      ),
+                      MenuItemButton(
+                        shortcut: const SingleActivator(LogicalKeyboardKey.f1, control: true),
+                        child: Text(TestMenu.subMenu11.label),
+                      ),
+                    ],
+                    child: Text(TestMenu.mainMenu0.label),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        );
+        await tester.tap(find.text(TestMenu.mainMenu0.label));
+        await tester.pump();
+
+        expect(find.text('$expectedCtrl${expectedSeparator}Tab'), findsOneWidget);
+        expect(find.text('$expectedCtrl${expectedSeparator}F1'), findsOneWidget);
+      }, variant: TargetPlatformVariant.all());
     });
 
     group('CheckboxMenuButton', () {
