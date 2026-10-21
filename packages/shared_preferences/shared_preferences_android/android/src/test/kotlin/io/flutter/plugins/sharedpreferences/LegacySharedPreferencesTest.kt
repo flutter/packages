@@ -9,6 +9,7 @@ import android.content.SharedPreferences.OnSharedPreferenceChangeListener
 import io.flutter.embedding.engine.plugins.FlutterPlugin.FlutterPluginBinding
 import kotlinx.coroutines.async
 import kotlinx.coroutines.runBlocking
+import org.junit.After
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNull
@@ -57,6 +58,11 @@ class LegacySharedPreferencesTest {
     val allData: Map<String, Any> = plugin.getAll("", null)
 
     assertEquals(data, allData)
+  }
+
+  @After
+  fun clearAttachedPlugins() {
+    LegacySharedPreferencesPlugin.attachedPlugins.clear()
   }
 
   @Test

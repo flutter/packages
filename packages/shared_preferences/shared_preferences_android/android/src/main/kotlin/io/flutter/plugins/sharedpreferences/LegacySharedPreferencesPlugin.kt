@@ -20,7 +20,6 @@ import java.io.IOException
 import java.io.ObjectInputStream
 import java.io.ObjectOutputStream
 import java.math.BigInteger
-import java.util.Collections
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
@@ -38,8 +37,10 @@ internal constructor(private val listEncoder: SharedPreferencesListEncoder) :
   private fun setUp(context: Context) {
     preferences = context.getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE)
     try {
-      attachedPlugins.add(this)
-      SharedPreferencesApiRegistrar().register(this)
+      synchronized(attachedPlugins) {
+        attachedPlugins.add(this)
+        SharedPreferencesApiRegistrar().register(this)
+      }
     } catch (ex: Exception) {
       Log.e(TAG, "Received exception while setting up SharedPreferencesPlugin", ex)
     }
@@ -50,8 +51,10 @@ internal constructor(private val listEncoder: SharedPreferencesListEncoder) :
   }
 
   override fun onDetachedFromEngine(binding: FlutterPluginBinding) {
-    attachedPlugins.remove(this)
-    SharedPreferencesApiRegistrar().register(attachedPlugins.lastOrNull())
+    synchronized(attachedPlugins) {
+      attachedPlugins.remove(this)
+      SharedPreferencesApiRegistrar().register(attachedPlugins.lastOrNull())
+    }
   }
 
   override suspend fun setBool(key: String, value: Boolean): Boolean =
@@ -185,8 +188,7 @@ internal constructor(private val listEncoder: SharedPreferencesListEncoder) :
   }
 
   companion object {
-    private val attachedPlugins =
-        Collections.synchronizedList(mutableListOf<LegacySharedPreferencesPlugin>())
+    @VisibleForTesting internal val attachedPlugins = mutableListOf<LegacySharedPreferencesPlugin>()
     private const val BIG_INTEGER_PREFIX = "VGhpcyBpcyB0aGUgcHJlZml4IGZvciBCaWdJbnRlZ2Vy"
   }
 }
