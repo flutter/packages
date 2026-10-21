@@ -521,4 +521,19 @@ void main() {
 
     expect(nonDefaultPropertyNames, <String>['displayLarge', 'bodyMedium']);
   });
+
+  test('TextTheme debugFillProperties does not report styles that match the default', () {
+    final builder = DiagnosticPropertiesBuilder();
+    TextTheme(
+      displayLarge: ThemeData.fallback().textTheme.displayLarge,
+      bodyMedium: const TextStyle(color: Color(0xFF123456)),
+    ).debugFillProperties(builder);
+
+    final List<String> nonDefaultPropertyNames = builder.properties
+        .where((DiagnosticsNode node) => !node.isFiltered(DiagnosticLevel.info))
+        .map((DiagnosticsNode node) => node.name!)
+        .toList();
+
+    expect(nonDefaultPropertyNames, <String>['bodyMedium']);
+  });
 }

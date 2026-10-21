@@ -801,102 +801,32 @@ class TextTheme with Diagnosticable {
   void debugFillProperties(DiagnosticPropertiesBuilder properties) {
     super.debugFillProperties(properties);
     final TextTheme defaultTheme = ThemeData.fallback().textTheme;
-    properties.add(
-      DiagnosticsProperty<TextStyle>(
-        'displayLarge',
-        displayLarge,
-        defaultValue: defaultTheme.displayLarge,
-      ),
-    );
-    properties.add(
-      DiagnosticsProperty<TextStyle>(
-        'displayMedium',
-        displayMedium,
-        defaultValue: defaultTheme.displayMedium,
-      ),
-    );
-    properties.add(
-      DiagnosticsProperty<TextStyle>(
-        'displaySmall',
-        displaySmall,
-        defaultValue: defaultTheme.displaySmall,
-      ),
-    );
-    properties.add(
-      DiagnosticsProperty<TextStyle>(
-        'headlineLarge',
-        headlineLarge,
-        defaultValue: defaultTheme.headlineLarge,
-      ),
-    );
-    properties.add(
-      DiagnosticsProperty<TextStyle>(
-        'headlineMedium',
-        headlineMedium,
-        defaultValue: defaultTheme.headlineMedium,
-      ),
-    );
-    properties.add(
-      DiagnosticsProperty<TextStyle>(
-        'headlineSmall',
-        headlineSmall,
-        defaultValue: defaultTheme.headlineSmall,
-      ),
-    );
-    properties.add(
-      DiagnosticsProperty<TextStyle>(
-        'titleLarge',
-        titleLarge,
-        defaultValue: defaultTheme.titleLarge,
-      ),
-    );
-    properties.add(
-      DiagnosticsProperty<TextStyle>(
-        'titleMedium',
-        titleMedium,
-        defaultValue: defaultTheme.titleMedium,
-      ),
-    );
-    properties.add(
-      DiagnosticsProperty<TextStyle>(
-        'titleSmall',
-        titleSmall,
-        defaultValue: defaultTheme.titleSmall,
-      ),
-    );
-    properties.add(
-      DiagnosticsProperty<TextStyle>('bodyLarge', bodyLarge, defaultValue: defaultTheme.bodyLarge),
-    );
-    properties.add(
-      DiagnosticsProperty<TextStyle>(
-        'bodyMedium',
-        bodyMedium,
-        defaultValue: defaultTheme.bodyMedium,
-      ),
-    );
-    properties.add(
-      DiagnosticsProperty<TextStyle>('bodySmall', bodySmall, defaultValue: defaultTheme.bodySmall),
-    );
-    properties.add(
-      DiagnosticsProperty<TextStyle>(
-        'labelLarge',
-        labelLarge,
-        defaultValue: defaultTheme.labelLarge,
-      ),
-    );
-    properties.add(
-      DiagnosticsProperty<TextStyle>(
-        'labelMedium',
-        labelMedium,
-        defaultValue: defaultTheme.labelMedium,
-      ),
-    );
-    properties.add(
-      DiagnosticsProperty<TextStyle>(
-        'labelSmall',
-        labelSmall,
-        defaultValue: defaultTheme.labelSmall,
-      ),
-    );
+    // A null style falls back to the default style when merged into a
+    // ThemeData, so it is not reported as differing from the default.
+    void add(String name, TextStyle? style, TextStyle? defaultStyle) {
+      properties.add(
+        DiagnosticsProperty<TextStyle>(
+          name,
+          style,
+          defaultValue: style == null ? null : defaultStyle,
+        ),
+      );
+    }
+
+    add('displayLarge', displayLarge, defaultTheme.displayLarge);
+    add('displayMedium', displayMedium, defaultTheme.displayMedium);
+    add('displaySmall', displaySmall, defaultTheme.displaySmall);
+    add('headlineLarge', headlineLarge, defaultTheme.headlineLarge);
+    add('headlineMedium', headlineMedium, defaultTheme.headlineMedium);
+    add('headlineSmall', headlineSmall, defaultTheme.headlineSmall);
+    add('titleLarge', titleLarge, defaultTheme.titleLarge);
+    add('titleMedium', titleMedium, defaultTheme.titleMedium);
+    add('titleSmall', titleSmall, defaultTheme.titleSmall);
+    add('bodyLarge', bodyLarge, defaultTheme.bodyLarge);
+    add('bodyMedium', bodyMedium, defaultTheme.bodyMedium);
+    add('bodySmall', bodySmall, defaultTheme.bodySmall);
+    add('labelLarge', labelLarge, defaultTheme.labelLarge);
+    add('labelMedium', labelMedium, defaultTheme.labelMedium);
+    add('labelSmall', labelSmall, defaultTheme.labelSmall);
   }
 }
