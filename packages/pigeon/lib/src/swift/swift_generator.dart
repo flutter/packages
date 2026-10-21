@@ -75,6 +75,18 @@ class SwiftOptions {
   /// To get the full benefit, consider enabling Swift strict concurrency checking
   /// in your plugin's Swift targets. For more details, see the
   /// [Swift Concurrency Migration Guide](https://www.swift.org/migration/documentation/swift-6-concurrency-migration-guide/).
+  ///
+  /// This flag does not instruct Pigeon to emit `Sendable` conformance on
+  /// generated data classes or structs. The Swift compiler can automatically
+  /// infer `Sendable` conformance for structs whose stored properties are all
+  /// `Sendable`. In the case where the compiler cannot prove a generated struct
+  /// or class is `Sendable` (for example, if it contains an `Object?` (`Any?`)
+  /// field or uses `@SwiftClass`), you can use an extension to declare that the
+  /// Pigeon-generated data class or struct is guaranteed `Sendable`:
+  ///
+  /// ```swift
+  /// extension MyDataClass: @unchecked Sendable {}
+  /// ```
   final bool strictConcurrency;
 
   /// Whether to use FFI when possible.
@@ -347,11 +359,12 @@ class SwiftGenerator extends StructuredGenerator<InternalSwiftOptions> {
     _writeProxyApiImports(indent, root.apis.whereType<AstProxyApi>());
     indent.newln();
     if (!generatorOptions.useFfi) {
+      final preconcurrency = generatorOptions.strictConcurrency ? '@preconcurrency ' : '';
       indent.format('''
 #if os(iOS)
-  @preconcurrency import Flutter
+  ${preconcurrency}import Flutter
 #elseif os(macOS)
-  @preconcurrency import FlutterMacOS
+  ${preconcurrency}import FlutterMacOS
 #else
   #error("Unsupported platform.")
 #endif''');
@@ -721,6 +734,11 @@ private class _PigeonFfiCodec {
             : '${classDefinition.superClass!.name}Bridge',
       );
     } else {
+      // `Sendable` is intentionally not added here; Swift automatically infers
+      // `Sendable` for structs whose stored properties are all `Sendable`, and
+      // for types that cannot be proven `Sendable` by the compiler (e.g., those
+      // with `Any?` fields or `@SwiftClass`), it is the client's responsibility
+      // to declare `@unchecked Sendable` if needed.
       if (classDefinition.superClass != null) {
         protocols.add(classDefinition.superClass!.name);
       }
@@ -2030,7 +2048,8 @@ if (wrapped == nil) {
                   <TypeDeclaration>[apiAsTypeDecl],
                 );
                 final String className = api.swiftOptions?.name ?? api.name;
-                indent.format('''
+                if (generatorOptions.strictConcurrency) {
+                  indent.format('''
                       ${unsupportedPlatforms != null ? '#if $unsupportedPlatforms' : ''}
                       if ${availability != null ? '#$availability, ' : ''}let instance = value as? $className {
                         nonisolated(unsafe) let instance = instance
@@ -2046,6 +2065,20 @@ if (wrapped == nil) {
                         return
                       }
                       ${unsupportedPlatforms != null ? '#endif' : ''}''');
+                } else {
+                  indent.format('''
+                      ${unsupportedPlatforms != null ? '#if $unsupportedPlatforms' : ''}
+                      if ${availability != null ? '#$availability, ' : ''}let instance = value as? $className {
+                        pigeonRegistrar.apiDelegate.pigeonApi${api.name}(pigeonRegistrar).pigeonNewInstance(
+                          pigeonInstance: instance
+                        ) { _ in }
+                        super.writeByte($proxyApiCodecInstanceManagerKey)
+                        super.writeValue(
+                          pigeonRegistrar.instanceManager.identifierWithStrongReference(forInstance: instance as AnyObject)!)
+                        return
+                      }
+                      ${unsupportedPlatforms != null ? '#endif' : ''}''');
+                }
               });
               indent.newln();
 
@@ -2965,8 +2998,11 @@ ${pigeonStreamHandlerDeclaration(preconcurrency: false)}
       });
     }
 
-    final mainActorIfSerialQueue =
-        generatorOptions.strictConcurrency && serialBackgroundQueue == null ? '@MainActor ' : '';
+    final handlerAnnotation = switch ((generatorOptions.strictConcurrency, serialBackgroundQueue)) {
+      (true, null) => '@MainActor ',
+      (true, _?) => '@Sendable ',
+      (false, _) => '',
+    };
     final replyType = generatorOptions.strictConcurrency
         ? '@Sendable (Any?) -> Void'
         : 'FlutterReply';
@@ -2975,7 +3011,7 @@ ${pigeonStreamHandlerDeclaration(preconcurrency: false)}
     indent.addScoped('{', '}', () {
       final messageVarName = components.arguments.isNotEmpty ? 'message' : '_';
       indent.writeScoped(
-        '${mainActorIfSerialQueue}func handler($messageVarName: Any?, reply: @escaping $replyType) {',
+        '${handlerAnnotation}func handler($messageVarName: Any?, reply: @escaping $replyType) {',
         '}',
         () {
           final methodArgument = <String>[];

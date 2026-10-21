@@ -96,6 +96,16 @@ the threading model for handling HostApi methods can be selected with the
 
 > **Note**: `TaskQueue` is only supported with platform channels. Native Interop (FFI/JNI) calls execute directly on the caller's thread; specifying `@TaskQueue` with Native Interop will result in a code generation error.
 
+### Swift Concurrency
+
+By default, Pigeon generates Swift code with strict concurrency annotations (such as `@MainActor` and `@Sendable`), controlled by `SwiftOptions(strictConcurrency: true)`.
+
+This flag does not instruct Pigeon to emit `Sendable` conformance on generated data classes or structs. The Swift compiler can automatically infer `Sendable` conformance for structs whose stored properties are all `Sendable`. In the case where the compiler cannot prove a generated struct or class is `Sendable` (for example, if it contains an `Object?` (`Any?`) field or uses `@SwiftClass`), you can use an extension to declare that the Pigeon-generated data class or struct is `Sendable`:
+
+```swift
+extension MyDataClass: @unchecked Sendable {}
+```
+
 ### Multi-Instance Support
 
 Host and Flutter APIs support the ability to provide a unique message channel suffix string

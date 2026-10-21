@@ -1954,6 +1954,59 @@ void main() {
       expect(sink.toString(), contains('doWorkChannel.setMessageHandler(handler)'));
     });
 
+    test(
+      'emits @Sendable func handler on serialBackgroundThread Host API with strictConcurrency',
+      () {
+        final root = Root(
+          apis: <Api>[
+            AstHostApi(
+              name: 'Api',
+              methods: <Method>[
+                Method(
+                  name: 'doWork',
+                  location: ApiLocation.host,
+                  taskQueueType: TaskQueueType.serialBackgroundThread,
+                  parameters: <Parameter>[],
+                  returnType: const TypeDeclaration.voidDeclaration(),
+                ),
+              ],
+            ),
+          ],
+          classes: <Class>[],
+          enums: <Enum>[],
+        );
+
+        final sink = StringBuffer();
+        const generator = SwiftGenerator();
+        generator.generate(
+          const InternalSwiftOptions(swiftOut: ''),
+          root,
+          sink,
+          dartPackageName: DEFAULT_PACKAGE_NAME,
+        );
+
+        expect(
+          sink.toString(),
+          contains('@Sendable func handler(_: Any?, reply: @escaping @Sendable (Any?) -> Void) {'),
+        );
+      },
+    );
+
+    test('omits @preconcurrency on Flutter import when strictConcurrency is false', () {
+      final root = Root(apis: <Api>[], classes: <Class>[], enums: <Enum>[]);
+      final sink = StringBuffer();
+      const generator = SwiftGenerator();
+      generator.generate(
+        const InternalSwiftOptions(swiftOut: '', strictConcurrency: false),
+        root,
+        sink,
+        dartPackageName: DEFAULT_PACKAGE_NAME,
+      );
+
+      expect(sink.toString(), isNot(contains('@preconcurrency import Flutter')));
+      expect(sink.toString(), contains('  import Flutter\n'));
+    });
+
     test('guards @preconcurrency FlutterStreamHandler conformance with #if compiler(>=6.0)', () {
       final root = Root(
         apis: <Api>[

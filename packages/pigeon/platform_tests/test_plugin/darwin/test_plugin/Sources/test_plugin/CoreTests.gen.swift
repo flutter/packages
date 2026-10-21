@@ -3754,7 +3754,7 @@ class HostIntegrationCoreApiSetup {
           "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.taskQueueIsBackgroundThread\(channelSuffix)",
         binaryMessenger: binaryMessenger, codec: codec, taskQueue: taskQueue)
     if let api = api {
-      func handler(_: Any?, reply: @escaping @Sendable (Any?) -> Void) {
+      @Sendable func handler(_: Any?, reply: @escaping @Sendable (Any?) -> Void) {
         do {
           let result = try api.taskQueueIsBackgroundThread()
           reply(wrapResult(result))
@@ -3779,7 +3779,7 @@ class HostIntegrationCoreApiSetup {
           "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.asyncTaskQueueIsBackgroundThread\(channelSuffix)",
         binaryMessenger: binaryMessenger, codec: codec, taskQueue: taskQueue)
     if let api = api {
-      func handler(_: Any?, reply: @escaping @Sendable (Any?) -> Void) {
+      @Sendable func handler(_: Any?, reply: @escaping @Sendable (Any?) -> Void) {
         Task {
           do {
             let result = try await api.asyncTaskQueueIsBackgroundThread()
@@ -7024,7 +7024,7 @@ class HostCallbackCoreApiSetup {
           "dev.flutter.pigeon.pigeon_integration_tests.HostCallbackCoreApi.taskQueueIsBackgroundThread\(channelSuffix)",
         binaryMessenger: binaryMessenger, codec: codec, taskQueue: taskQueue)
     if let api = api {
-      func handler(_: Any?, reply: @escaping @Sendable (Any?) -> Void) {
+      @Sendable func handler(_: Any?, reply: @escaping @Sendable (Any?) -> Void) {
         api.taskQueueIsBackgroundThread { result in
           switch result {
           case .success(let res):
