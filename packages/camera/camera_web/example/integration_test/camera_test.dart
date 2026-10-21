@@ -1547,6 +1547,39 @@ void main() {
           await done.timeout(const Duration(seconds: 5));
         });
 
+        testWidgets('emits a separate buffer for each frame', (WidgetTester tester) async {
+          var frame = 0;
+          when(
+            cameraService.copyVideoFrameToBufferAndGetStride(
+              any,
+              cameraId: anyNamed('cameraId'),
+              copyOptions: anyNamed('copyOptions'),
+              destination: anyNamed('destination'),
+            ),
+          ).thenAnswer((Invocation invocation) async {
+            final Uint8List bytes =
+                (invocation.namedArguments[#destination] as JSUint8Array).toDart;
+            bytes.fillRange(0, bytes.length, ++frame);
+            return mockVideoFrame.width * 4;
+          });
+          final camera = Camera(textureId: textureId, cameraService: cameraService);
+
+          await camera.initialize();
+          await camera.play();
+          await camera.cameraFrameStream().take(2).drain<void>();
+
+          final List<Object?> bytes = verify(
+            cameraService.getCameraImageData(
+              width: anyNamed('width'),
+              height: anyNamed('height'),
+              bytes: captureAnyNamed('bytes'),
+              bytesPerRow: anyNamed('bytesPerRow'),
+            ),
+          ).captured;
+          expect((bytes[0]! as Uint8List).first, 1);
+          expect((bytes[1]! as Uint8List).first, 2);
+        });
+
         testWidgets('continues streaming after unableToCloneFrame error', (
           WidgetTester tester,
         ) async {
