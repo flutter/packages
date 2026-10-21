@@ -1,3 +1,7 @@
+## NEXT
+
+* Fixes `specify_nonobvious_local_variable_types` lint in example.
+
 ## 2.14.1
 
 * Fixes late position updates after a controller is disposed.

@@ -1,3 +1,7 @@
+## 6.3.9
+
+* Adds explicit type annotations to pattern variable declarations for `specify_nonobvious_local_variable_types`.
+
 ## 6.3.8
 
 * Removes the public iOS `handleOpen` helper. On macOS `handleOpen` remains public because it implements `FlutterAppLifecycleDelegate`.
