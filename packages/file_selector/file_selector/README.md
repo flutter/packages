@@ -8,7 +8,7 @@ A Flutter plugin that manages files and interactions with file dialogs.
 
 |             | Android | iOS     | Linux | macOS  | Web | Windows     |
 |-------------|---------|---------|-------|--------|-----|-------------|
-| **Support** | SDK 24+ | iOS 15+ | Any   | 10.15+ | Any | Windows 10+ |
+| **Support** | SDK 24+ | iOS 15+ | Any   | 12+    | Any | Windows 10+ |
 
 ## Setup
 
@@ -97,14 +97,12 @@ Different platforms support different type group filter options. To avoid
 filters that cover all platforms you are targeting, or that you conditionally
 pass different `XTypeGroup`s based on `Platform`.
 
-|                          | Andoid | iOS | Linux | macOS  | Web | Windows     |
-|--------------------------|--------|-----|-------|--------|-----|-------------|
-| `extensions`             | ✔️      |     | ✔️     | ✔️      | ✔️   | ✔️           |
-| `mimeTypes`              | ✔️      |     | ✔️     | ✔️†     | ✔️   |             |
-| `uniformTypeIdentifiers` |        | ✔️   |       | ✔️      |     |             |
-| `webWildCards`           |        |     |       |        | ✔️   |             |
-
-† `mimeTypes` are not supported on version of macOS earlier than 11 (Big Sur).
+|                          | Android | iOS | Linux | macOS | Web | Windows |
+|--------------------------|---------|-----|-------|-------|-----|---------|
+| `extensions`             | ✔️      |     | ✔️    | ✔️    | ✔️  | ✔️      |
+| `mimeTypes`              | ✔️      |     | ✔️    | ✔️    | ✔️  |         |
+| `uniformTypeIdentifiers` |         | ✔️  |       | ✔️    |     |         |
+| `webWildCards`           |         |     |       |       | ✔️  |         |
 
 ### Features supported by platform
 
