@@ -1,3 +1,7 @@
+## 2.15.0
+
+* Forwards `VideoPlayerOptions.preferredAudioLanguage` during player creation so platform implementations can apply the preferred audio language per player instance.
+
 ## 2.14.1
 
 * Fixes late position updates after a controller is disposed.

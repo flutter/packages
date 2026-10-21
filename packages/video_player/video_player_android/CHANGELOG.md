@@ -1,3 +1,7 @@
+## 2.13.0
+
+* Adds support for setting a preferred audio language during player creation via `VideoPlayerOptions.preferredAudioLanguage`.
+
 ## 2.12.3
 
 * Updates Robolectric to 4.17 and adds the JVM arguments it requires for unit tests.

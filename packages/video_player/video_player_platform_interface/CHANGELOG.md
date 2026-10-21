@@ -2,6 +2,10 @@
 
 * Updates minimum supported SDK version to Flutter 3.41/Dart 3.11.
 
+## 6.10.0
+
+* Adds support for setting a preferred audio language during player creation via `VideoPlayerOptions preferredAudioLanguage`.
+
 ## 6.9.0
 
 * Adds `backBufferDurationMs` to `VideoPlayerOptions` to support configuring the back buffer duration.

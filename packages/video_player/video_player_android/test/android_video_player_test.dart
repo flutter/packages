@@ -467,6 +467,47 @@ void main() {
       expect(creationOptions.backBufferDurationMs, 20000);
     });
 
+    test('createWithOptions passes preferredAudioLanguage for texture view', () async {
+      final (AndroidVideoPlayer player, MockAndroidVideoPlayerApi api, _) = setUpMockPlayer(
+        playerId: 1,
+        textureId: 100,
+      );
+      when(
+        api.createForTextureView(any),
+      ).thenAnswer((_) async => TexturePlayerIds(playerId: 2, textureId: 100));
+
+      await player.createWithOptions(
+        VideoCreationOptions(
+          dataSource: DataSource(sourceType: DataSourceType.network, uri: 'https://example.com'),
+          viewType: VideoViewType.textureView,
+          videoPlayerOptions: VideoPlayerOptions(preferredAudioLanguage: 'es'),
+        ),
+      );
+
+      final VerificationResult verification = verify(api.createForTextureView(captureAny));
+      final creationOptions = verification.captured[0] as CreationOptions;
+      expect(creationOptions.preferredAudioLanguage, 'es');
+    });
+
+    test('createWithOptions passes preferredAudioLanguage for platform view', () async {
+      final (AndroidVideoPlayer player, MockAndroidVideoPlayerApi api, _) = setUpMockPlayer(
+        playerId: 1,
+      );
+      when(api.createForPlatformView(any)).thenAnswer((_) async => 2);
+
+      await player.createWithOptions(
+        VideoCreationOptions(
+          dataSource: DataSource(sourceType: DataSourceType.network, uri: 'https://example.com'),
+          viewType: VideoViewType.platformView,
+          videoPlayerOptions: VideoPlayerOptions(preferredAudioLanguage: 'fr'),
+        ),
+      );
+
+      final VerificationResult verification = verify(api.createForPlatformView(captureAny));
+      final creationOptions = verification.captured[0] as CreationOptions;
+      expect(creationOptions.preferredAudioLanguage, 'fr');
+    });
+
     test('setLooping', () async {
       final (AndroidVideoPlayer player, _, MockVideoPlayerInstanceApi playerApi) = setUpMockPlayer(
         playerId: 1,
