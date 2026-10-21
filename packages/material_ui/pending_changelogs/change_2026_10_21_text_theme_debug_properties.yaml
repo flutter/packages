@@ -1,0 +1,3 @@
+changelog: |
+  - Fixes `TextTheme.debugFillProperties` to compare against the default `ThemeData` text theme, so that only non-default styles are reported.
+version: patch
