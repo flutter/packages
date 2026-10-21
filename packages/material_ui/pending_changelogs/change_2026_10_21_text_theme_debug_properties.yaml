@@ -1,3 +1,4 @@
 changelog: |
-  - Fixes `TextTheme.debugFillProperties` to compare against the default `ThemeData` text theme, so that only non-default styles are reported. Null styles are treated as default.
+  - Fixes `TextTheme.debugFillProperties` to use the default `ThemeData` text theme, instead of `Typography.material2018(...).black`.
+  - Fixes `Typography.debugFillProperties` to use the default `ThemeData` typography, instead of `Typography.material2014`.
 version: patch

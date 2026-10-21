@@ -4,7 +4,6 @@
 
 /// @docImport 'material_localizations.dart';
 /// @docImport 'theme.dart';
-/// @docImport 'theme_data.dart';
 library;
 
 import 'package:flutter/foundation.dart';
@@ -13,6 +12,7 @@ import 'package:flutter/painting.dart';
 import 'color_scheme.dart';
 import 'colors.dart';
 import 'text_theme.dart';
+import 'theme_data.dart';
 
 part 'generated/typography_defaults_m3.g.dart';
 
@@ -350,7 +350,7 @@ class Typography with Diagnosticable {
   @override
   void debugFillProperties(DiagnosticPropertiesBuilder properties) {
     super.debugFillProperties(properties);
-    final defaultTypography = Typography.material2014();
+    final Typography defaultTypography = ThemeData.fallback().typography;
     properties.add(
       DiagnosticsProperty<TextTheme>('black', black, defaultValue: defaultTypography.black),
     );
