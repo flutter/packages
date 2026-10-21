@@ -71,6 +71,7 @@ public class TestPlugin: NSObject, FlutterPlugin, HostIntegrationCoreApi, HostCa
       binaryMessenger: binaryMessenger, apiDelegate: ProxyApiDelegate())
     proxyApiRegistrar!.setUp()
     NativeInteropHostIntegrationCoreApiSetup.register(api: NativeInteropTestsClass())
+    NativeInteropReservedNamesHostApiSetup.register(api: NativeInteropReservedNamesHostApiImpl())
   }
 
   public func detachFromEngine(for registrar: FlutterPluginRegistrar) {
@@ -1204,6 +1205,10 @@ class NativeInteropTestsClass: NSObject, NativeInteropHostIntegrationCoreApi {
     return everything
   }
 
+  func echoAsync(sealedClass: NativeInteropSealedClass) async throws -> NativeInteropSealedClass {
+    return sealedClass
+  }
+
   func echoAsync(_ everything: NativeInteropAllNullableTypes?) async throws
     -> NativeInteropAllNullableTypes?
   {
@@ -1752,6 +1757,11 @@ class NativeInteropTestsClass: NSObject, NativeInteropHostIntegrationCoreApi {
     return try flutterApi.echoNativeInteropAllNullableTypes(everything: everything)
   }
 
+  func callFlutterEcho(sealedClass: NativeInteropSealedClass) throws -> NativeInteropSealedClass {
+    let flutterApi = try getNativeInteropFlutterApi()
+    return try flutterApi.echoNativeInteropSealedClass(sealedClass: sealedClass)
+  }
+
   func callFlutterSendMultipleNullableTypes(
     aBool aNullableBool: Bool?, anInt aNullableInt: Int64?, aString aNullableString: String?
   ) throws -> NativeInteropAllNullableTypes {
@@ -1833,6 +1843,24 @@ class NativeInteropTestsClass: NSObject, NativeInteropHostIntegrationCoreApi {
 
   func echo(_ wrapper: NativeInteropAllClassesWrapper) throws -> NativeInteropAllClassesWrapper {
     return wrapper
+  }
+
+  func echo(sealedClass: NativeInteropSealedClass) throws -> NativeInteropSealedClass {
+    return sealedClass
+  }
+
+  func echoNullable(sealedClass: NativeInteropSealedClass?) throws -> NativeInteropSealedClass? {
+    return sealedClass
+  }
+
+  func echo(sealedClassList: [NativeInteropSealedClass]) throws -> [NativeInteropSealedClass] {
+    return sealedClassList
+  }
+
+  func echo(sealedClassWrapper: NativeInteropSealedClassWrapper) throws
+    -> NativeInteropSealedClassWrapper
+  {
+    return sealedClassWrapper
   }
 
   func echoNullable(_ everything: NativeInteropAllNullableTypesWithoutRecursion?) throws
@@ -2073,6 +2101,83 @@ class NativeInteropTestsClass: NSObject, NativeInteropHostIntegrationCoreApi {
   func testCallDeregisteredFlutterApi(name: String) throws -> Bool {
     NativeInteropFlutterIntegrationCoreApiRegistrar.registerInstance(api: nil, name: name)
     return NativeInteropFlutterIntegrationCoreApi.getInstance(name: name) == nil
+  }
+}
+
+class NativeInteropReservedNamesHostApiImpl: NativeInteropReservedNamesHostApi {
+  private var storedReference = ""
+
+  func release(value: String) throws -> String {
+    return value
+  }
+
+  func use(value: Int64) throws -> Int64 {
+    return value
+  }
+
+  func type() throws -> String {
+    return "type"
+  }
+
+  func isNull() throws -> Bool {
+    return true
+  }
+
+  func isNullable() throws -> Bool? {
+    return true
+  }
+
+  func isOpen() throws -> Bool {
+    return true
+  }
+
+  func getReference() throws -> String {
+    return storedReference
+  }
+
+  func setReference(value: String) throws {
+    storedReference = value
+  }
+
+  func getDefault() throws -> String {
+    return "default"
+  }
+
+  func getValueAsync() async throws -> String {
+    return "value"
+  }
+
+  func echoReservedNames(names: NativeInteropReservedNames) throws -> NativeInteropReservedNames {
+    return names
+  }
+
+  private func flutterApi() throws -> NativeInteropReservedNamesFlutterApi {
+    guard let flutterApi = NativeInteropReservedNamesFlutterApi.getInstance() else {
+      throw NativeInteropTestsError(
+        code: "not_registered", message: "NativeInteropReservedNamesFlutterApi not registered",
+        details: nil)
+    }
+    return flutterApi
+  }
+
+  func callFlutterRelease(value: String) throws -> String {
+    return try flutterApi().release(value: value)
+  }
+
+  func callFlutterType() throws -> String {
+    return try flutterApi().type()
+  }
+
+  func callFlutterImplementIn(value: String) throws -> String {
+    return try flutterApi().implementIn(value: value)
+  }
+
+  func callFlutterIsNull() throws -> Bool {
+    return try flutterApi().isNull()
+  }
+
+  func callFlutterGetReference() throws -> String {
+    return try flutterApi().getReference()
   }
 }
 

@@ -19,9 +19,7 @@ public class InAppPurchasePlugin: NSObject, FlutterPlugin, FIAInAppPurchaseAPI {
   private let receiptManager: FIAPReceiptManager
   private var productsCache: NSMutableDictionary = [:]
   private var paymentQueueDelegateCallbackChannel: FlutterMethodChannel?
-  // note - the type should be FIAPPaymentQueueDelegate, but this is only available >= iOS 13,
-  // FIAPPaymentQueueDelegate only gets set/used in registerPaymentQueueDelegateWithError or removePaymentQueueDelegateWithError, which both are ios13+ only
-  private var paymentQueueDelegate: Any?
+  private var paymentQueueDelegate: FIAPPaymentQueueDelegate?
   // Swift sets do not accept protocols, only concrete implementations
   // TODO(louisehsu): Change it back to a set when removing obj-c dependancies from this file via type erasure
   private var requestHandlers = NSHashTable<FLTRequestHandlerProtocol>()
@@ -98,9 +96,6 @@ public class InAppPurchasePlugin: NSObject, FlutterPlugin, FIAInAppPurchaseAPI {
       },
       shouldAddStorePayment: { [weak self] (payment, product) -> Bool in
         return self?.shouldAddStorePayment(payment: payment, product: product) ?? false
-      },
-      updatedDownloads: { [weak self] _ in
-        self?.updatedDownloads()
       },
       transactionCache: DefaultTransactionCache(cache: FIATransactionCache()))
     #if os(iOS)
@@ -349,7 +344,7 @@ public class InAppPurchasePlugin: NSObject, FlutterPlugin, FIAInAppPurchaseAPI {
       paymentQueueDelegate = FIAPPaymentQueueDelegate(
         methodChannel: DefaultMethodChannel(channel: unwrappedChannel))
 
-      getPaymentQueueHandler().delegate = paymentQueueDelegate as? SKPaymentQueueDelegate
+      getPaymentQueueHandler().delegate = paymentQueueDelegate
     #endif
   }
 
@@ -408,10 +403,6 @@ public class InAppPurchasePlugin: NSObject, FlutterPlugin, FIAInAppPurchaseAPI {
         "product": FIAObjectTranslator.getMapFrom(product),
       ])
     return false
-  }
-
-  public func updatedDownloads() {
-    NSLog("Received an updatedDownloads callback, but downloads are not supported.")
   }
 
   public func supportsStoreKit2WithError(_ error: AutoreleasingUnsafeMutablePointer<FlutterError?>)
