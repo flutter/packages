@@ -8,13 +8,13 @@
 /// @docImport 'text_button.dart';
 /// @docImport 'theme.dart';
 /// @docImport 'theme_data.dart';
+/// @docImport 'typography.dart';
 library;
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
 
 import 'theme.dart';
-import 'typography.dart';
 
 /// Material design text theme.
 ///
@@ -800,7 +800,7 @@ class TextTheme with Diagnosticable {
   @override
   void debugFillProperties(DiagnosticPropertiesBuilder properties) {
     super.debugFillProperties(properties);
-    final TextTheme defaultTheme = Typography.material2018(platform: defaultTargetPlatform).black;
+    final TextTheme defaultTheme = ThemeData.fallback().textTheme;
     properties.add(
       DiagnosticsProperty<TextStyle>(
         'displayLarge',

@@ -8,9 +8,9 @@
 part of '../typography.dart';
 
 abstract final class _M3Typography {
-  static const TextTheme englishLike = TextTheme(
+  static const TextTheme alphabetic = TextTheme(
     displayLarge: TextStyle(
-      debugLabel: 'englishLike displayLarge 2021',
+      debugLabel: 'alphabetic displayLarge 2021',
       inherit: false,
       fontSize: 57.0,
       fontWeight: FontWeight.w400,
@@ -20,7 +20,7 @@ abstract final class _M3Typography {
       leadingDistribution: TextLeadingDistribution.even,
     ),
     displayMedium: TextStyle(
-      debugLabel: 'englishLike displayMedium 2021',
+      debugLabel: 'alphabetic displayMedium 2021',
       inherit: false,
       fontSize: 45.0,
       fontWeight: FontWeight.w400,
@@ -30,7 +30,7 @@ abstract final class _M3Typography {
       leadingDistribution: TextLeadingDistribution.even,
     ),
     displaySmall: TextStyle(
-      debugLabel: 'englishLike displaySmall 2021',
+      debugLabel: 'alphabetic displaySmall 2021',
       inherit: false,
       fontSize: 36.0,
       fontWeight: FontWeight.w400,
@@ -40,7 +40,7 @@ abstract final class _M3Typography {
       leadingDistribution: TextLeadingDistribution.even,
     ),
     headlineLarge: TextStyle(
-      debugLabel: 'englishLike headlineLarge 2021',
+      debugLabel: 'alphabetic headlineLarge 2021',
       inherit: false,
       fontSize: 32.0,
       fontWeight: FontWeight.w400,
@@ -50,7 +50,7 @@ abstract final class _M3Typography {
       leadingDistribution: TextLeadingDistribution.even,
     ),
     headlineMedium: TextStyle(
-      debugLabel: 'englishLike headlineMedium 2021',
+      debugLabel: 'alphabetic headlineMedium 2021',
       inherit: false,
       fontSize: 28.0,
       fontWeight: FontWeight.w400,
@@ -60,7 +60,7 @@ abstract final class _M3Typography {
       leadingDistribution: TextLeadingDistribution.even,
     ),
     headlineSmall: TextStyle(
-      debugLabel: 'englishLike headlineSmall 2021',
+      debugLabel: 'alphabetic headlineSmall 2021',
       inherit: false,
       fontSize: 24.0,
       fontWeight: FontWeight.w400,
@@ -70,7 +70,7 @@ abstract final class _M3Typography {
       leadingDistribution: TextLeadingDistribution.even,
     ),
     titleLarge: TextStyle(
-      debugLabel: 'englishLike titleLarge 2021',
+      debugLabel: 'alphabetic titleLarge 2021',
       inherit: false,
       fontSize: 22.0,
       fontWeight: FontWeight.w400,
@@ -80,7 +80,7 @@ abstract final class _M3Typography {
       leadingDistribution: TextLeadingDistribution.even,
     ),
     titleMedium: TextStyle(
-      debugLabel: 'englishLike titleMedium 2021',
+      debugLabel: 'alphabetic titleMedium 2021',
       inherit: false,
       fontSize: 16.0,
       fontWeight: FontWeight.w500,
@@ -90,7 +90,7 @@ abstract final class _M3Typography {
       leadingDistribution: TextLeadingDistribution.even,
     ),
     titleSmall: TextStyle(
-      debugLabel: 'englishLike titleSmall 2021',
+      debugLabel: 'alphabetic titleSmall 2021',
       inherit: false,
       fontSize: 14.0,
       fontWeight: FontWeight.w500,
@@ -100,7 +100,7 @@ abstract final class _M3Typography {
       leadingDistribution: TextLeadingDistribution.even,
     ),
     labelLarge: TextStyle(
-      debugLabel: 'englishLike labelLarge 2021',
+      debugLabel: 'alphabetic labelLarge 2021',
       inherit: false,
       fontSize: 14.0,
       fontWeight: FontWeight.w500,
@@ -110,7 +110,7 @@ abstract final class _M3Typography {
       leadingDistribution: TextLeadingDistribution.even,
     ),
     labelMedium: TextStyle(
-      debugLabel: 'englishLike labelMedium 2021',
+      debugLabel: 'alphabetic labelMedium 2021',
       inherit: false,
       fontSize: 12.0,
       fontWeight: FontWeight.w500,
@@ -120,7 +120,7 @@ abstract final class _M3Typography {
       leadingDistribution: TextLeadingDistribution.even,
     ),
     labelSmall: TextStyle(
-      debugLabel: 'englishLike labelSmall 2021',
+      debugLabel: 'alphabetic labelSmall 2021',
       inherit: false,
       fontSize: 11.0,
       fontWeight: FontWeight.w500,
@@ -130,7 +130,7 @@ abstract final class _M3Typography {
       leadingDistribution: TextLeadingDistribution.even,
     ),
     bodyLarge: TextStyle(
-      debugLabel: 'englishLike bodyLarge 2021',
+      debugLabel: 'alphabetic bodyLarge 2021',
       inherit: false,
       fontSize: 16.0,
       fontWeight: FontWeight.w400,
@@ -140,7 +140,7 @@ abstract final class _M3Typography {
       leadingDistribution: TextLeadingDistribution.even,
     ),
     bodyMedium: TextStyle(
-      debugLabel: 'englishLike bodyMedium 2021',
+      debugLabel: 'alphabetic bodyMedium 2021',
       inherit: false,
       fontSize: 14.0,
       fontWeight: FontWeight.w400,
@@ -150,7 +150,7 @@ abstract final class _M3Typography {
       leadingDistribution: TextLeadingDistribution.even,
     ),
     bodySmall: TextStyle(
-      debugLabel: 'englishLike bodySmall 2021',
+      debugLabel: 'alphabetic bodySmall 2021',
       inherit: false,
       fontSize: 12.0,
       fontWeight: FontWeight.w400,
@@ -161,9 +161,9 @@ abstract final class _M3Typography {
     ),
   );
 
-  static const TextTheme dense = TextTheme(
+  static const TextTheme ideographic = TextTheme(
     displayLarge: TextStyle(
-      debugLabel: 'dense displayLarge 2021',
+      debugLabel: 'ideographic displayLarge 2021',
       inherit: false,
       fontSize: 57.0,
       fontWeight: FontWeight.w400,
@@ -173,7 +173,7 @@ abstract final class _M3Typography {
       leadingDistribution: TextLeadingDistribution.even,
     ),
     displayMedium: TextStyle(
-      debugLabel: 'dense displayMedium 2021',
+      debugLabel: 'ideographic displayMedium 2021',
       inherit: false,
       fontSize: 45.0,
       fontWeight: FontWeight.w400,
@@ -183,7 +183,7 @@ abstract final class _M3Typography {
       leadingDistribution: TextLeadingDistribution.even,
     ),
     displaySmall: TextStyle(
-      debugLabel: 'dense displaySmall 2021',
+      debugLabel: 'ideographic displaySmall 2021',
       inherit: false,
       fontSize: 36.0,
       fontWeight: FontWeight.w400,
@@ -193,7 +193,7 @@ abstract final class _M3Typography {
       leadingDistribution: TextLeadingDistribution.even,
     ),
     headlineLarge: TextStyle(
-      debugLabel: 'dense headlineLarge 2021',
+      debugLabel: 'ideographic headlineLarge 2021',
       inherit: false,
       fontSize: 32.0,
       fontWeight: FontWeight.w400,
@@ -203,7 +203,7 @@ abstract final class _M3Typography {
       leadingDistribution: TextLeadingDistribution.even,
     ),
     headlineMedium: TextStyle(
-      debugLabel: 'dense headlineMedium 2021',
+      debugLabel: 'ideographic headlineMedium 2021',
       inherit: false,
       fontSize: 28.0,
       fontWeight: FontWeight.w400,
@@ -213,7 +213,7 @@ abstract final class _M3Typography {
       leadingDistribution: TextLeadingDistribution.even,
     ),
     headlineSmall: TextStyle(
-      debugLabel: 'dense headlineSmall 2021',
+      debugLabel: 'ideographic headlineSmall 2021',
       inherit: false,
       fontSize: 24.0,
       fontWeight: FontWeight.w400,
@@ -223,7 +223,7 @@ abstract final class _M3Typography {
       leadingDistribution: TextLeadingDistribution.even,
     ),
     titleLarge: TextStyle(
-      debugLabel: 'dense titleLarge 2021',
+      debugLabel: 'ideographic titleLarge 2021',
       inherit: false,
       fontSize: 22.0,
       fontWeight: FontWeight.w400,
@@ -233,7 +233,7 @@ abstract final class _M3Typography {
       leadingDistribution: TextLeadingDistribution.even,
     ),
     titleMedium: TextStyle(
-      debugLabel: 'dense titleMedium 2021',
+      debugLabel: 'ideographic titleMedium 2021',
       inherit: false,
       fontSize: 16.0,
       fontWeight: FontWeight.w500,
@@ -243,7 +243,7 @@ abstract final class _M3Typography {
       leadingDistribution: TextLeadingDistribution.even,
     ),
     titleSmall: TextStyle(
-      debugLabel: 'dense titleSmall 2021',
+      debugLabel: 'ideographic titleSmall 2021',
       inherit: false,
       fontSize: 14.0,
       fontWeight: FontWeight.w500,
@@ -253,7 +253,7 @@ abstract final class _M3Typography {
       leadingDistribution: TextLeadingDistribution.even,
     ),
     labelLarge: TextStyle(
-      debugLabel: 'dense labelLarge 2021',
+      debugLabel: 'ideographic labelLarge 2021',
       inherit: false,
       fontSize: 14.0,
       fontWeight: FontWeight.w500,
@@ -263,7 +263,7 @@ abstract final class _M3Typography {
       leadingDistribution: TextLeadingDistribution.even,
     ),
     labelMedium: TextStyle(
-      debugLabel: 'dense labelMedium 2021',
+      debugLabel: 'ideographic labelMedium 2021',
       inherit: false,
       fontSize: 12.0,
       fontWeight: FontWeight.w500,
@@ -273,7 +273,7 @@ abstract final class _M3Typography {
       leadingDistribution: TextLeadingDistribution.even,
     ),
     labelSmall: TextStyle(
-      debugLabel: 'dense labelSmall 2021',
+      debugLabel: 'ideographic labelSmall 2021',
       inherit: false,
       fontSize: 11.0,
       fontWeight: FontWeight.w500,
@@ -283,7 +283,7 @@ abstract final class _M3Typography {
       leadingDistribution: TextLeadingDistribution.even,
     ),
     bodyLarge: TextStyle(
-      debugLabel: 'dense bodyLarge 2021',
+      debugLabel: 'ideographic bodyLarge 2021',
       inherit: false,
       fontSize: 16.0,
       fontWeight: FontWeight.w400,
@@ -293,7 +293,7 @@ abstract final class _M3Typography {
       leadingDistribution: TextLeadingDistribution.even,
     ),
     bodyMedium: TextStyle(
-      debugLabel: 'dense bodyMedium 2021',
+      debugLabel: 'ideographic bodyMedium 2021',
       inherit: false,
       fontSize: 14.0,
       fontWeight: FontWeight.w400,
@@ -303,166 +303,13 @@ abstract final class _M3Typography {
       leadingDistribution: TextLeadingDistribution.even,
     ),
     bodySmall: TextStyle(
-      debugLabel: 'dense bodySmall 2021',
+      debugLabel: 'ideographic bodySmall 2021',
       inherit: false,
       fontSize: 12.0,
       fontWeight: FontWeight.w400,
       letterSpacing: 0.4,
       height: 1.33,
       textBaseline: TextBaseline.ideographic,
-      leadingDistribution: TextLeadingDistribution.even,
-    ),
-  );
-
-  static const TextTheme tall = TextTheme(
-    displayLarge: TextStyle(
-      debugLabel: 'tall displayLarge 2021',
-      inherit: false,
-      fontSize: 57.0,
-      fontWeight: FontWeight.w400,
-      letterSpacing: -0.25,
-      height: 1.12,
-      textBaseline: TextBaseline.alphabetic,
-      leadingDistribution: TextLeadingDistribution.even,
-    ),
-    displayMedium: TextStyle(
-      debugLabel: 'tall displayMedium 2021',
-      inherit: false,
-      fontSize: 45.0,
-      fontWeight: FontWeight.w400,
-      letterSpacing: 0.0,
-      height: 1.16,
-      textBaseline: TextBaseline.alphabetic,
-      leadingDistribution: TextLeadingDistribution.even,
-    ),
-    displaySmall: TextStyle(
-      debugLabel: 'tall displaySmall 2021',
-      inherit: false,
-      fontSize: 36.0,
-      fontWeight: FontWeight.w400,
-      letterSpacing: 0.0,
-      height: 1.22,
-      textBaseline: TextBaseline.alphabetic,
-      leadingDistribution: TextLeadingDistribution.even,
-    ),
-    headlineLarge: TextStyle(
-      debugLabel: 'tall headlineLarge 2021',
-      inherit: false,
-      fontSize: 32.0,
-      fontWeight: FontWeight.w400,
-      letterSpacing: 0.0,
-      height: 1.25,
-      textBaseline: TextBaseline.alphabetic,
-      leadingDistribution: TextLeadingDistribution.even,
-    ),
-    headlineMedium: TextStyle(
-      debugLabel: 'tall headlineMedium 2021',
-      inherit: false,
-      fontSize: 28.0,
-      fontWeight: FontWeight.w400,
-      letterSpacing: 0.0,
-      height: 1.29,
-      textBaseline: TextBaseline.alphabetic,
-      leadingDistribution: TextLeadingDistribution.even,
-    ),
-    headlineSmall: TextStyle(
-      debugLabel: 'tall headlineSmall 2021',
-      inherit: false,
-      fontSize: 24.0,
-      fontWeight: FontWeight.w400,
-      letterSpacing: 0.0,
-      height: 1.33,
-      textBaseline: TextBaseline.alphabetic,
-      leadingDistribution: TextLeadingDistribution.even,
-    ),
-    titleLarge: TextStyle(
-      debugLabel: 'tall titleLarge 2021',
-      inherit: false,
-      fontSize: 22.0,
-      fontWeight: FontWeight.w400,
-      letterSpacing: 0.0,
-      height: 1.27,
-      textBaseline: TextBaseline.alphabetic,
-      leadingDistribution: TextLeadingDistribution.even,
-    ),
-    titleMedium: TextStyle(
-      debugLabel: 'tall titleMedium 2021',
-      inherit: false,
-      fontSize: 16.0,
-      fontWeight: FontWeight.w500,
-      letterSpacing: 0.15,
-      height: 1.50,
-      textBaseline: TextBaseline.alphabetic,
-      leadingDistribution: TextLeadingDistribution.even,
-    ),
-    titleSmall: TextStyle(
-      debugLabel: 'tall titleSmall 2021',
-      inherit: false,
-      fontSize: 14.0,
-      fontWeight: FontWeight.w500,
-      letterSpacing: 0.1,
-      height: 1.43,
-      textBaseline: TextBaseline.alphabetic,
-      leadingDistribution: TextLeadingDistribution.even,
-    ),
-    labelLarge: TextStyle(
-      debugLabel: 'tall labelLarge 2021',
-      inherit: false,
-      fontSize: 14.0,
-      fontWeight: FontWeight.w500,
-      letterSpacing: 0.1,
-      height: 1.43,
-      textBaseline: TextBaseline.alphabetic,
-      leadingDistribution: TextLeadingDistribution.even,
-    ),
-    labelMedium: TextStyle(
-      debugLabel: 'tall labelMedium 2021',
-      inherit: false,
-      fontSize: 12.0,
-      fontWeight: FontWeight.w500,
-      letterSpacing: 0.5,
-      height: 1.33,
-      textBaseline: TextBaseline.alphabetic,
-      leadingDistribution: TextLeadingDistribution.even,
-    ),
-    labelSmall: TextStyle(
-      debugLabel: 'tall labelSmall 2021',
-      inherit: false,
-      fontSize: 11.0,
-      fontWeight: FontWeight.w500,
-      letterSpacing: 0.5,
-      height: 1.45,
-      textBaseline: TextBaseline.alphabetic,
-      leadingDistribution: TextLeadingDistribution.even,
-    ),
-    bodyLarge: TextStyle(
-      debugLabel: 'tall bodyLarge 2021',
-      inherit: false,
-      fontSize: 16.0,
-      fontWeight: FontWeight.w400,
-      letterSpacing: 0.5,
-      height: 1.50,
-      textBaseline: TextBaseline.alphabetic,
-      leadingDistribution: TextLeadingDistribution.even,
-    ),
-    bodyMedium: TextStyle(
-      debugLabel: 'tall bodyMedium 2021',
-      inherit: false,
-      fontSize: 14.0,
-      fontWeight: FontWeight.w400,
-      letterSpacing: 0.25,
-      height: 1.43,
-      textBaseline: TextBaseline.alphabetic,
-      leadingDistribution: TextLeadingDistribution.even,
-    ),
-    bodySmall: TextStyle(
-      debugLabel: 'tall bodySmall 2021',
-      inherit: false,
-      fontSize: 12.0,
-      fontWeight: FontWeight.w400,
-      letterSpacing: 0.4,
-      height: 1.33,
-      textBaseline: TextBaseline.alphabetic,
       leadingDistribution: TextLeadingDistribution.even,
     ),
   );
