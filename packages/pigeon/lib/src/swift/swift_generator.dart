@@ -1740,9 +1740,7 @@ if (wrapped == nil) {
                 _ActorIsolation.from(taskQueueType: method.taskQueueType).annotation,
             ],
             completionClosureAnnotation:
-                generatorOptions.strictConcurrency && !generatorOptions.useFfi
-                ? .sendable
-                : .none,
+                generatorOptions.strictConcurrency && !generatorOptions.useFfi ? .sendable : .none,
             ffiUserApi: generatorOptions.useFfi,
           ),
         );
@@ -2998,7 +2996,10 @@ ${pigeonStreamHandlerDeclaration(preconcurrency: false)}
       });
     }
 
-    final handlerAnnotation = switch ((generatorOptions.strictConcurrency, serialBackgroundQueue)) {
+    final String handlerAnnotation = switch ((
+      generatorOptions.strictConcurrency,
+      serialBackgroundQueue,
+    )) {
       (true, null) => '@MainActor ',
       (true, _?) => '@Sendable ',
       (false, _) => '',
