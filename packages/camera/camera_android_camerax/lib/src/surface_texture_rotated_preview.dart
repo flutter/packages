@@ -5,6 +5,7 @@
 import 'package:flutter/widgets.dart';
 import 'package:meta/meta.dart';
 
+import 'camerax_library.dart' show TransformationInfo;
 import 'rotated_preview_state.dart';
 import 'rotated_preview_utils.dart';
 
@@ -45,8 +46,8 @@ final class _SurfaceTextureRotatedPreviewState extends State<SurfaceTextureRotat
     return buildWithDefaultDisplayRotation((int defaultDisplayRotation) {
       // Until a TransformationInfo is received, assume the surface is connected
       // to the camera directly.
-      final bool surfaceHasCameraTransform = transformationInfo?.hasCameraTransform ?? true;
-      if (!surfaceHasCameraTransform) {
+      final TransformationInfo? info = transformationInfo;
+      if (info != null && surfaceIsProcessedByCameraX(info)) {
         // The SurfaceTexture will not apply the camera transform, so the preview
         // needs the same correction as previews backed by an ImageReader.
         return buildUntransformedPreview(

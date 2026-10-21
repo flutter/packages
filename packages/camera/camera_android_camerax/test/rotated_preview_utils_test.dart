@@ -75,23 +75,57 @@ void main() {
       );
     });
 
-    test(
-      'uses rotationDegrees instead of the sensor orientation when TransformationInfo is set',
-      () {
-        // Simulates a buffer that CameraX already rotated (e.g. under stream
-        // sharing), so its rotationDegrees no longer matches the sensor orientation.
-        expect(
-          computeUntransformedPreviewRotation(
-            transformationInfo: _createTransformationInfo(rotationDegrees: 0),
-            cameraIsFrontFacing: false,
+    test('uses rotationDegrees instead of the sensor orientation when the surface does not have '
+        'the camera transform', () {
+      // Simulates a buffer that CameraX already rotated (e.g. under stream
+      // sharing), so its rotationDegrees no longer matches the sensor orientation.
+      expect(
+        computeUntransformedPreviewRotation(
+          transformationInfo: _createTransformationInfo(rotationDegrees: 0),
+          cameraIsFrontFacing: false,
+          sensorOrientationDegrees: 90,
+          displayRotation: Surface.rotation0,
+          previewTargetRotation: Surface.rotation0,
+        ),
+        0,
+      );
+    });
+
+    test('uses the sensor orientation when the surface has the camera transform', () {
+      for (final cameraIsFrontFacing in <bool>[true, false]) {
+        for (final displayRotation in surfaceRotations) {
+          final int sensorBasedRotation = computeUntransformedPreviewRotation(
+            transformationInfo: null,
+            cameraIsFrontFacing: cameraIsFrontFacing,
             sensorOrientationDegrees: 90,
-            displayRotation: Surface.rotation0,
+            displayRotation: displayRotation,
             previewTargetRotation: Surface.rotation0,
-          ),
-          0,
-        );
-      },
-    );
+          );
+
+          // rotationDegrees and isMirroring are deliberately inconsistent with
+          // the sensor orientation to show they are ignored.
+          for (final isMirroring in <bool>[true, false]) {
+            expect(
+              computeUntransformedPreviewRotation(
+                transformationInfo: _createTransformationInfo(
+                  rotationDegrees: 180,
+                  hasCameraTransform: true,
+                  isMirroring: isMirroring,
+                ),
+                cameraIsFrontFacing: cameraIsFrontFacing,
+                sensorOrientationDegrees: 90,
+                displayRotation: displayRotation,
+                previewTargetRotation: Surface.rotation0,
+              ),
+              sensorBasedRotation,
+              reason:
+                  'front facing: $cameraIsFrontFacing, display rotation: $displayRotation, '
+                  'isMirroring: $isMirroring',
+            );
+          }
+        }
+      }
+    });
 
     test('shifts rotationDegrees by the change in display rotation since the target rotation', () {
       // Back camera (raw buffer, not mirrored): R - (D - T0) = 0 - (90 - 0) = -90 = 270.
@@ -317,6 +351,31 @@ void main() {
       final RotatedBox rotatedBox = buildPreview();
 
       expect(rotatedBox.child, child);
+    });
+
+    test('mirrors only front camera previews when the surface has the camera transform', () {
+      // isMirroring is deliberately inconsistent with the camera facing to show
+      // it is ignored.
+      expect(
+        buildPreview(
+          transformationInfo: _createTransformationInfo(
+            rotationDegrees: 90,
+            hasCameraTransform: true,
+          ),
+          cameraIsFrontFacing: true,
+        ).child,
+        isA<Transform>(),
+      );
+      expect(
+        buildPreview(
+          transformationInfo: _createTransformationInfo(
+            rotationDegrees: 90,
+            hasCameraTransform: true,
+            isMirroring: true,
+          ),
+        ).child,
+        child,
+      );
     });
 
     test('mirrors across the y-axis in portrait and the x-axis in landscape', () {

@@ -43,13 +43,15 @@ int getPreAppliedQuarterTurnsRotationFromDeviceOrientation(DeviceOrientation ori
 /// surface is not connected to the camera directly (e.g. when CameraX copies
 /// the camera stream with OpenGL for stream sharing).
 ///
-/// This follows CameraX's convention for preview rotation, `sensor - T` for
-/// back cameras and `sensor + T` for front cameras, where `T` is a [Surface]
-/// rotation in degrees. [Surface] rotation constants are clockwise quarter
-/// turns (`0..3`), so their degrees are `constant * 90`.
+/// The rotation is only taken from [transformationInfo] when its surface does
+/// not have the camera transform (see [surfaceIsProcessedByCameraX]), as the
+/// buffer may then not be in the orientation of the camera sensor. Otherwise,
+/// the rotation is calculated from the orientation of the camera sensor so that
+/// it is unchanged from before [TransformationInfo] was used.
 ///
 /// [displayRotation] and [previewTargetRotation] are [Surface] rotation
-/// constants.
+/// constants. [Surface] rotation constants are clockwise quarter turns
+/// (`0..3`), so their degrees are `constant * 90`.
 int computeUntransformedPreviewRotation({
   required TransformationInfo? transformationInfo,
   required bool cameraIsFrontFacing,
@@ -60,13 +62,7 @@ int computeUntransformedPreviewRotation({
   final int displayRotationDegrees = displayRotation * 90;
 
   final int rotationDegrees;
-  if (transformationInfo == null) {
-    // No TransformationInfo has been received yet, so assume the buffer is in
-    // the orientation of the camera sensor.
-    rotationDegrees = cameraIsFrontFacing
-        ? sensorOrientationDegrees + displayRotationDegrees
-        : sensorOrientationDegrees - displayRotationDegrees;
-  } else {
+  if (transformationInfo != null && surfaceIsProcessedByCameraX(transformationInfo)) {
     // rotationDegrees is computed by CameraX for the preview target rotation and
     // accounts for any rotation CameraX already applied to the buffer (e.g. under
     // stream sharing). The preview target rotation never changes, so shift
@@ -83,10 +79,27 @@ int computeUntransformedPreviewRotation({
     rotationDegrees = transformationInfo.isMirroring
         ? transformationInfo.rotationDegrees + displayRotationDelta
         : transformationInfo.rotationDegrees - displayRotationDelta;
+  } else {
+    // Rotate the camera preview according to
+    // https://developer.android.com/media/camera/camera2/camera-preview#orientation_calculation,
+    // assuming the buffer is in the orientation of the camera sensor.
+    rotationDegrees = cameraIsFrontFacing
+        ? sensorOrientationDegrees + displayRotationDegrees
+        : sensorOrientationDegrees - displayRotationDegrees;
   }
 
   // Dart's % always returns a non-negative result for a positive divisor.
   return rotationDegrees % 360;
+}
+
+/// Whether or not the preview surface described by [transformationInfo] is
+/// not connected to the camera directly, so CameraX may have processed (e.g.
+/// rotated or mirrored) its buffer before providing it.
+///
+/// This is the case when CameraX copies the camera stream with OpenGL, for
+/// example for stream sharing.
+bool surfaceIsProcessedByCameraX(TransformationInfo transformationInfo) {
+  return !transformationInfo.hasCameraTransform;
 }
 
 /// Rotates, and mirrors if needed, [child], a camera preview whose buffer does
@@ -120,11 +133,16 @@ Widget buildUntransformedPreview({
       // for this plugin.
       getPreAppliedQuarterTurnsRotationFromDeviceOrientation(deviceOrientation) * 90;
 
-  // Mirror the camera preview if CameraX reports that the buffer needs to be
-  // mirrored. Until a TransformationInfo is received, assume front facing
-  // camera previews need to be mirrored.
+  // If CameraX may have processed the buffer, mirror the camera preview only if
+  // CameraX reports that the buffer still needs to be mirrored. Otherwise, the
+  // buffer comes directly from the camera, so mirror front facing camera
+  // previews.
+  final bool shouldMirror =
+      transformationInfo != null && surfaceIsProcessedByCameraX(transformationInfo)
+      ? transformationInfo.isMirroring
+      : cameraIsFrontFacing;
   var cameraPreview = child;
-  if (transformationInfo?.isMirroring ?? cameraIsFrontFacing) {
+  if (shouldMirror) {
     if (deviceOrientation == DeviceOrientation.portraitDown ||
         deviceOrientation == DeviceOrientation.portraitUp) {
       cameraPreview = Transform.scale(scaleY: -1, child: cameraPreview);

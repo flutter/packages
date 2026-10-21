@@ -2128,6 +2128,34 @@ void main() {
     });
 
     group('and handlesCropAndRotation is false,', () {
+      testWidgets('the preview keeps the sensor-based rotation and mirroring if the surface has '
+          'the camera transform', (WidgetTester tester) async {
+        await createCameraAndBuildPreview(
+          tester,
+          cameraId: 46,
+          handlesCropAndRotation: false,
+          isCameraFrontFacing: true,
+          sensorRotationDegrees: 270,
+          mockDeviceOrientationManager: createMockDeviceOrientationManager(
+            uiOrientation: DeviceOrientation.portraitUp,
+            defaultDisplayRotation: Surface.rotation0,
+          ),
+        );
+
+        // Before any TransformationInfo is received: 270 + 0 = 270 degrees, mirrored.
+        RotatedBox rotatedBox = tester.widget<RotatedBox>(find.byType(RotatedBox));
+        expect(rotatedBox.quarterTurns, _270DegreesClockwise);
+        expect(rotatedBox.child, isA<Transform>());
+
+        // rotationDegrees and isMirroring are deliberately inconsistent with the
+        // sensor orientation and camera facing to show they are ignored.
+        sendTransformationInfo(rotationDegrees: 90, hasCameraTransform: true, isMirroring: false);
+        await tester.pumpAndSettle();
+
+        rotatedBox = tester.widget<RotatedBox>(find.byType(RotatedBox));
+        expect(rotatedBox.quarterTurns, _270DegreesClockwise);
+        expect(rotatedBox.child, isA<Transform>());
+      });
       testWidgets(
         'the preview is rotated by TransformationInfo.rotationDegrees instead of the sensor orientation',
         (WidgetTester tester) async {
