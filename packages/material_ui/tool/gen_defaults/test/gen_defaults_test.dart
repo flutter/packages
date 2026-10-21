@@ -811,7 +811,7 @@ void main() {
     });
 
     test('TabsTemplateM3 emits M3 Tabs defaults from tokens', () {
-      final String contents = const TabsTemplateM3().generateContents('_TabsDefaultsM3');
+      final String contents = const TabsTemplateM3().generateContents('');
       expect(contents, contains('class _TabsPrimaryDefaultsM3 extends TabBarThemeData'));
       expect(contents, contains('Color? get indicatorColor => _colors.primary;'));
       expect(contents, contains('Color? get labelColor => _colors.primary;'));
