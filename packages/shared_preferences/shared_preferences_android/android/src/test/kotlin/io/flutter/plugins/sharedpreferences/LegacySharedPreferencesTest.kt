@@ -60,6 +60,29 @@ class LegacySharedPreferencesTest {
   }
 
   @Test
+  fun registrationSurvivesOtherEngineDetaching() = runBlocking {
+    val mainPrefs = FakeSharedPreferences()
+    val mainPlugin = attachNewPlugin(mainPrefs)
+    val backgroundPlugin = attachNewPlugin(FakeSharedPreferences())
+
+    mainPlugin.setString("flutter.owner", "main")
+    backgroundPlugin.onDetachedFromEngine(flutterPluginBinding)
+
+    val registered = SharedPreferencesApiInstances.values.single()
+    assertEquals("main", registered.getAll("flutter.", null)["flutter.owner"])
+  }
+
+  private fun attachNewPlugin(prefs: SharedPreferences): LegacySharedPreferencesPlugin {
+    val context = Mockito.mock(Context::class.java)
+    Mockito.`when`(
+            context.getSharedPreferences(ArgumentMatchers.anyString(), ArgumentMatchers.anyInt()))
+        .thenReturn(prefs)
+    val binding = Mockito.mock(FlutterPluginBinding::class.java)
+    Mockito.`when`(binding.applicationContext).thenReturn(context)
+    return LegacySharedPreferencesPlugin(ListEncoder()).also { it.onAttachedToEngine(binding) }
+  }
+
+  @Test
   fun allowList() = runBlocking {
     assertEquals(0, plugin.getAll("", null).size)
 

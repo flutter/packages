@@ -1,3 +1,7 @@
+## 2.5.3
+
+* Fixes `No instance with no name has been registered` errors when another Flutter engine in the same process detaches while the plugin is still attached to a different engine.
+
 ## 2.5.2
 
 * Fixes a `NoSuchMethodError` at startup in Android release builds by adding consumer R8 rules that keep the Kotlin classes looked up through JNI.
