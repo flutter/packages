@@ -129,7 +129,7 @@ Future<AndroidMapRenderer?> initializeMapRenderer() async {
           ),
     );
   } else {
-    completer.complete(null);
+    completer.complete();
   }
 
   return completer.future;

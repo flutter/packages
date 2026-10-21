@@ -1,3 +1,0 @@
-changelog: |
-  - Fixes `CupertinoMagnifier` focal point not being vertically centered when a custom `size` is used.
-version: patch
