@@ -71,8 +71,16 @@ int computeUntransformedPreviewRotation({
     // accounts for any rotation CameraX already applied to the buffer (e.g. under
     // stream sharing). The preview target rotation never changes, so shift
     // rotationDegrees by how much the display has rotated since then.
+    //
+    // The direction of the shift depends on which way the buffer content turns
+    // when the device rotates: the opposite way for raw back camera buffers and
+    // the same way for raw front camera buffers. A front camera buffer that
+    // CameraX has already mirrored (e.g. by an OpenGL copy for stream sharing)
+    // turns like a back camera buffer. With CameraX's default Preview mirror
+    // mode, which this plugin does not allow changing, isMirroring is true
+    // exactly for raw front camera buffers, so it determines the direction.
     final int displayRotationDelta = displayRotationDegrees - previewTargetRotation * 90;
-    rotationDegrees = cameraIsFrontFacing
+    rotationDegrees = transformationInfo.isMirroring
         ? transformationInfo.rotationDegrees + displayRotationDelta
         : transformationInfo.rotationDegrees - displayRotationDelta;
   }

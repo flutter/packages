@@ -94,7 +94,7 @@ void main() {
     );
 
     test('shifts rotationDegrees by the change in display rotation since the target rotation', () {
-      // Back camera: R - (D - T0) = 0 - (90 - 0) = -90 = 270.
+      // Back camera (raw buffer, not mirrored): R - (D - T0) = 0 - (90 - 0) = -90 = 270.
       expect(
         computeUntransformedPreviewRotation(
           transformationInfo: _createTransformationInfo(rotationDegrees: 0),
@@ -106,16 +106,32 @@ void main() {
         270,
       );
 
-      // Front camera: R + (D - T0) = 0 + (90 - 0) = 90.
+      // Front camera (raw buffer, mirrored): R + (D - T0) = 0 + (90 - 0) = 90.
       expect(
         computeUntransformedPreviewRotation(
-          transformationInfo: _createTransformationInfo(rotationDegrees: 0),
+          transformationInfo: _createTransformationInfo(rotationDegrees: 0, isMirroring: true),
           cameraIsFrontFacing: true,
           sensorOrientationDegrees: 270,
           displayRotation: Surface.rotation90,
           previewTargetRotation: Surface.rotation0,
         ),
         90,
+      );
+    });
+
+    test('shifts rotationDegrees like a back camera for front camera buffers that CameraX '
+        'already mirrored', () {
+      // Front camera buffer already mirrored by CameraX (isMirroring is false):
+      // R - (D - T0) = 90 - (90 - 0) = 0.
+      expect(
+        computeUntransformedPreviewRotation(
+          transformationInfo: _createTransformationInfo(rotationDegrees: 90),
+          cameraIsFrontFacing: true,
+          sensorOrientationDegrees: 270,
+          displayRotation: Surface.rotation90,
+          previewTargetRotation: Surface.rotation0,
+        ),
+        0,
       );
     });
 
@@ -126,7 +142,8 @@ void main() {
           for (final cameraIsFrontFacing in <bool>[true, false]) {
             for (final previewTargetRotation in surfaceRotations) {
               // CameraX's rotationDegrees for a buffer in sensor orientation:
-              // back `sensor - T0`, front `sensor + T0`.
+              // back `sensor - T0`, front `sensor + T0`. With CameraX's default
+              // mirror mode, only front camera buffers are mirrored.
               final int targetRotationDegrees = previewTargetRotation * 90;
               final int cameraXRotationDegrees =
                   (cameraIsFrontFacing
@@ -147,6 +164,7 @@ void main() {
                   computeUntransformedPreviewRotation(
                     transformationInfo: _createTransformationInfo(
                       rotationDegrees: cameraXRotationDegrees,
+                      isMirroring: cameraIsFrontFacing,
                     ),
                     cameraIsFrontFacing: cameraIsFrontFacing,
                     sensorOrientationDegrees: sensorOrientationDegrees,
@@ -164,6 +182,46 @@ void main() {
         }
       },
     );
+
+    test('rotates front camera buffers that CameraX already mirrored to match the raw buffer '
+        'displayed mirrored', () {
+      // A raw front camera buffer B is displayed as mirror(rotate(r, B)). If
+      // CameraX mirrors the buffer itself (M = mirror(B)), the same image is
+      // rotate(-r, M), so CameraX reports rotationDegrees -(sensor + T0) with
+      // isMirroring false, and the preview must be rotated by -(sensor + D).
+      for (final sensorOrientationDegrees in <int>[0, 90, 180, 270]) {
+        for (final previewTargetRotation in surfaceRotations) {
+          final int alreadyMirroredRotationDegrees =
+              -(sensorOrientationDegrees + previewTargetRotation * 90) % 360;
+
+          for (final displayRotation in surfaceRotations) {
+            final int rawBufferRotation = computeUntransformedPreviewRotation(
+              transformationInfo: null,
+              cameraIsFrontFacing: true,
+              sensorOrientationDegrees: sensorOrientationDegrees,
+              displayRotation: displayRotation,
+              previewTargetRotation: previewTargetRotation,
+            );
+
+            expect(
+              computeUntransformedPreviewRotation(
+                transformationInfo: _createTransformationInfo(
+                  rotationDegrees: alreadyMirroredRotationDegrees,
+                ),
+                cameraIsFrontFacing: true,
+                sensorOrientationDegrees: sensorOrientationDegrees,
+                displayRotation: displayRotation,
+                previewTargetRotation: previewTargetRotation,
+              ),
+              -rawBufferRotation % 360,
+              reason:
+                  'sensor: $sensorOrientationDegrees, target rotation: $previewTargetRotation, '
+                  'display rotation: $displayRotation',
+            );
+          }
+        }
+      }
+    });
 
     test('always returns a rotation in [0, 360)', () {
       for (final rotationDegrees in <int>[0, 90, 180, 270]) {
