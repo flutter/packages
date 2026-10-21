@@ -150,6 +150,108 @@ void main() {
     expect(themeStyles.every((TextStyle style) => style.decoration == decoration), true);
   });
 
+  test('TextTheme apply forwards all parameters to each non-null style', () {
+    const displayColor = Color(0x00000001);
+    const bodyColor = Color(0x00000002);
+    const decorationColor = Color(0x00000003);
+    const fontFeatures = <FontFeature>[FontFeature.slashedZero()];
+    const fontVariations = <FontVariation>[FontVariation('wght', 500)];
+    TextStyle style(double fontSize) =>
+        TextStyle(fontSize: fontSize, letterSpacing: 0.5, wordSpacing: 1.0, height: 1.2);
+    final base = TextTheme(
+      displayLarge: style(15.0),
+      displayMedium: style(14.0),
+      displaySmall: style(13.0),
+      headlineLarge: style(12.0),
+      headlineMedium: style(11.0),
+      headlineSmall: style(10.0),
+      titleLarge: style(9.0),
+      titleMedium: style(8.0),
+      titleSmall: style(7.0),
+      bodyLarge: style(6.0),
+      bodyMedium: style(5.0),
+      bodySmall: style(4.0),
+      labelLarge: style(3.0),
+      labelMedium: style(2.0),
+      labelSmall: style(1.0),
+    );
+
+    TextStyle expected(TextStyle? style, Color color) => style!.apply(
+      color: color,
+      decoration: TextDecoration.underline,
+      decorationColor: decorationColor,
+      decorationStyle: TextDecorationStyle.dotted,
+      fontFamily: 'fontFamily',
+      fontFamilyFallback: const <String>['fallback'],
+      fontSizeFactor: 1.5,
+      fontSizeDelta: 1.0,
+      letterSpacingFactor: 1.5,
+      letterSpacingDelta: 1.0,
+      wordSpacingFactor: 1.5,
+      wordSpacingDelta: 1.0,
+      heightFactor: 1.5,
+      heightDelta: 1.0,
+      package: 'package',
+      fontFeatures: fontFeatures,
+      fontVariations: fontVariations,
+    );
+
+    final TextTheme theme = base.apply(
+      displayColor: displayColor,
+      bodyColor: bodyColor,
+      decoration: TextDecoration.underline,
+      decorationColor: decorationColor,
+      decorationStyle: TextDecorationStyle.dotted,
+      fontFamily: 'fontFamily',
+      fontFamilyFallback: const <String>['fallback'],
+      fontSizeFactor: 1.5,
+      fontSizeDelta: 1.0,
+      letterSpacingFactor: 1.5,
+      letterSpacingDelta: 1.0,
+      wordSpacingFactor: 1.5,
+      wordSpacingDelta: 1.0,
+      heightFactor: 1.5,
+      heightDelta: 1.0,
+      package: 'package',
+      fontFeatures: fontFeatures,
+      fontVariations: fontVariations,
+    );
+
+    expect(
+      theme,
+      TextTheme(
+        displayLarge: expected(base.displayLarge, displayColor),
+        displayMedium: expected(base.displayMedium, displayColor),
+        displaySmall: expected(base.displaySmall, displayColor),
+        headlineLarge: expected(base.headlineLarge, displayColor),
+        headlineMedium: expected(base.headlineMedium, displayColor),
+        headlineSmall: expected(base.headlineSmall, bodyColor),
+        titleLarge: expected(base.titleLarge, bodyColor),
+        titleMedium: expected(base.titleMedium, bodyColor),
+        titleSmall: expected(base.titleSmall, bodyColor),
+        bodyLarge: expected(base.bodyLarge, bodyColor),
+        bodyMedium: expected(base.bodyMedium, bodyColor),
+        bodySmall: expected(base.bodySmall, displayColor),
+        labelLarge: expected(base.labelLarge, bodyColor),
+        labelMedium: expected(base.labelMedium, bodyColor),
+        labelSmall: expected(base.labelSmall, bodyColor),
+      ),
+    );
+  });
+
+  test('TextTheme apply leaves null styles null', () {
+    const bodyColor = Color(0x00000002);
+    final TextTheme theme = const TextTheme(bodyMedium: TextStyle(fontSize: 10.0))
+        .apply(bodyColor: bodyColor, displayColor: bodyColor, fontFamily: 'fontFamily');
+
+    expect(
+      theme,
+      const TextTheme(
+        bodyMedium: TextStyle(fontSize: 10.0, color: bodyColor, fontFamily: 'fontFamily'),
+      ),
+    );
+  });
+
   test('TextTheme apply fontFeatures fontVariations', () {
     const fontFeatures = <FontFeature>[FontFeature.enable('smcp')];
     const fontVariations = <FontVariation>[FontVariation('wght', 400.0)];
