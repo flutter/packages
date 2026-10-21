@@ -941,7 +941,8 @@ void main() {
     group('copyVideoFrameToBufferAndGetStride', () {
       web.VideoFrame stubVideoFrameCopyTo(JSPromise<JSArray<web.PlaneLayout>> Function() result) {
         final mockFrame = MockVideoFrame(width: 10, height: 10, bufferSize: 32);
-        mockFrame.copyTo = (JSAny? destination, web.VideoFrameCopyToOptions options) => result();
+        mockFrame.copyTo =
+            ((JSAny? destination, web.VideoFrameCopyToOptions options) => result()).toJS;
         return createJSInteropWrapper(mockFrame) as web.VideoFrame;
       }
 

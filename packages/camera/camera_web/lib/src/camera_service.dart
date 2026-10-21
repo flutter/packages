@@ -654,5 +654,5 @@ class CameraService {
   /// Used to return [web.DOMException] if provided object is of the type
   @visibleForTesting
   web.DOMException? Function(Object) asDOMException = (error) =>
-      error.isA<web.DOMException>() ? error as web.DOMException : null;
+      error is JSObject && error.isA<web.DOMException>() ? error as web.DOMException : null;
 }
