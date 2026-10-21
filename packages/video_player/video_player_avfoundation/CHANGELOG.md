@@ -1,3 +1,7 @@
+## 2.12.4
+
+* Converts internal event channel implementation to Swift.
+
 ## 2.12.3
 
 * Fixes a potential crash when a player is disposed while an async method is in progress.
@@ -318,4 +322,6 @@
 
 ## 2.2.17
 
+## 2.12.3
+* Converts internal event channel implementation to Swift.
 * Splits from `video_player` as a federated implementation.
