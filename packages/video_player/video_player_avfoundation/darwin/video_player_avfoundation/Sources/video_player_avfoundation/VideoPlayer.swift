@@ -145,14 +145,14 @@ class VideoPlayer: NSObject {
   /// AVPlayerItem is ready to play and the event listener is set to a non-nil value, whichever occurs
   /// last.
   ///
-  /// This flag is set to YES when the "initialized" message is first sent, and is never set to NO
-  /// again.
+  /// This flag is set to true when the "initialized" message is first sent, and is never set to
+  /// false again.
   private var isInitialized = false
 
   private var keyValueObservations: [NSKeyValueObservation] = []
   private var playToEndObserver: NSObjectProtocol?
 
-  /// Initializes a new instance of FVPVideoPlayer with the given AVPlayerItem, AV factory, and view
+  /// Initializes a new instance of VideoPlayer with the given AVPlayerItem, AV factory, and view
   /// provider.
   init(
     playerItem: WrappedAVPlayerItem,
@@ -236,7 +236,7 @@ class VideoPlayer: NSObject {
     }
   }
 
-  @MainActor func setEventListener(_ eventListener: FVPVideoEventListener) async {
+  func setEventListener(_ eventListener: FVPVideoEventListener) async {
     self.eventListener = eventListener
     // The first time an event listener is set, set up video event listeners to relay status changes
     // changes to the event listener.
@@ -247,6 +247,9 @@ class VideoPlayer: NSObject {
       await reportStatus(playerItem: item)
       if disposed { return }
       // Set up all necessary observers to report video events.
+      // In theory these callbacks should all be on the main thread, so could use
+      // MainActor.assumeIsolated instead, but for now use Tasks in case they
+      // are on an unexpected thread.
       keyValueObservations.append(
         item.observe(
           \.loadedTimeRanges,
@@ -305,7 +308,7 @@ class VideoPlayer: NSObject {
       playToEndObserver = NotificationCenter.default.addObserver(
         forName: .AVPlayerItemDidPlayToEndTime, object: item, queue: .main
       ) { [weak self] notification in
-        Task { @MainActor in
+        MainActor.assumeIsolated {
           guard let item = notification.object as? AVPlayerItem else { return }
           self?.itemDidPlayToEndTime(item)
         }
@@ -313,7 +316,7 @@ class VideoPlayer: NSObject {
     }
   }
 
-  @MainActor func removeEventListener() {
+  func removeEventListener() {
     eventListener = nil
   }
 
@@ -378,7 +381,7 @@ class VideoPlayer: NSObject {
     eventListener?.videoPlayerWasDisposed()
   }
 
-  @MainActor func getAudioTracks() async throws -> [MediaSelectionAudioTrackData] {
+  func getAudioTracks() async throws -> [MediaSelectionAudioTrackData] {
     guard let currentItem = player.currentItem else { return [] }
 
     let asset = currentItem.asset
@@ -414,7 +417,7 @@ class VideoPlayer: NSObject {
     return trackData
   }
 
-  @MainActor func selectAudioTrack(atIndex trackIndex: Int64) async throws {
+  func selectAudioTrack(atIndex trackIndex: Int64) async throws {
     guard let currentItem = player.currentItem else { return }
     let asset = currentItem.asset
 
@@ -426,7 +429,7 @@ class VideoPlayer: NSObject {
     }
   }
 
-  @MainActor func getVideoTracks() async throws -> NativeVideoTrackData {
+  func getVideoTracks() async throws -> NativeVideoTrackData {
     guard let currentItem = player.currentItem else {
       throw PigeonError(code: "State Error", message: "No current player item", details: nil)
     }
@@ -545,7 +548,7 @@ class VideoPlayer: NSObject {
     return degrees
   }
 
-  @MainActor private func createVideoComposition(
+  private func createVideoComposition(
     transform: CGAffineTransform,
     asset: WrappedAVAsset,
     videoTrack: AVAssetTrack
@@ -588,7 +591,7 @@ class VideoPlayer: NSObject {
     return videoComposition
   }
 
-  @MainActor private func reportStatus(playerItem item: AVPlayerItem) async {
+  private func reportStatus(playerItem item: AVPlayerItem) async {
     assert(
       eventListener != nil,
       "\(#function) was called when the event listener was not set.")
@@ -652,7 +655,7 @@ class VideoPlayer: NSObject {
       withMessage: (details.array as! [String]).joined(separator: ": "))
   }
 
-  @MainActor private func reportInitialized() async {
+  private func reportInitialized() async {
     let currentItem = player.currentItem
     assert(
       currentItem?.status == .readyToPlay,
@@ -664,7 +667,7 @@ class VideoPlayer: NSObject {
       withDuration: duration, size: currentItem?.presentationSize ?? .zero)
   }
 
-  @MainActor private func duration() async -> Int64 {
+  private func duration() async -> Int64 {
     // Note: https://openradar.appspot.com/radar?id=4968600712511488
     // `AVPlayerItem.duration` can be `kCMTimeIndefinite`, so
     // use its `AVAsset.duration` instead.
