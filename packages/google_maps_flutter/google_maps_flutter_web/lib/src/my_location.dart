@@ -84,7 +84,7 @@ class MyLocationController {
         if (completer.isCompleted) {
           return;
         }
-        completer.complete(null);
+        completer.complete();
       },
     );
 
