@@ -183,28 +183,14 @@ class Typography with Diagnosticable {
     TextTheme? dense,
     TextTheme? tall,
   }) {
-    assert(platform != null || (black != null && white != null));
-    final base = Typography._withPlatform(
-      platform,
-      black,
-      white,
-      englishLike ?? englishLike2021,
-      dense ?? dense2021,
-      tall ?? tall2021,
-    );
-
-    // Ensure they are all uniformly dark or light, with
-    // no color variation based on style as it was in previous
-    // versions of Material Design.
-    final Color dark = colorScheme.brightness == Brightness.light
-        ? colorScheme.onSurface
-        : colorScheme.surface;
-    final Color light = colorScheme.brightness == Brightness.light
-        ? colorScheme.surface
-        : colorScheme.onSurface;
-    return base.copyWith(
-      black: base.black.apply(displayColor: dark, bodyColor: dark, decorationColor: dark),
-      white: base.white.apply(displayColor: light, bodyColor: light, decorationColor: light),
+    return Typography._withM3Colors(
+      platform: platform,
+      colorScheme: colorScheme,
+      black: black,
+      white: white,
+      englishLike: englishLike ?? englishLike2021,
+      dense: dense ?? dense2021,
+      tall: tall ?? tall2021,
     );
   }
 
@@ -227,6 +213,36 @@ class Typography with Diagnosticable {
       null => (black!, white!),
     };
     return Typography._(blackResolved, whiteResolved, englishLike, dense, tall);
+  }
+
+  /// Creates a typography instance whose [black] and [white] text themes are
+  /// uniformly colored based on the [colorScheme], as specified by Material 3
+  /// onwards.
+  factory Typography._withM3Colors({
+    required TargetPlatform? platform,
+    required ColorScheme colorScheme,
+    required TextTheme? black,
+    required TextTheme? white,
+    required TextTheme englishLike,
+    required TextTheme dense,
+    required TextTheme tall,
+  }) {
+    assert(platform != null || (black != null && white != null));
+    final base = Typography._withPlatform(platform, black, white, englishLike, dense, tall);
+
+    // Ensure they are all uniformly dark or light, with
+    // no color variation based on style as it was in previous
+    // versions of Material Design.
+    final Color dark = colorScheme.brightness == Brightness.light
+        ? colorScheme.onSurface
+        : colorScheme.surface;
+    final Color light = colorScheme.brightness == Brightness.light
+        ? colorScheme.surface
+        : colorScheme.onSurface;
+    return base.copyWith(
+      black: base.black.apply(displayColor: dark, bodyColor: dark, decorationColor: dark),
+      white: base.white.apply(displayColor: light, bodyColor: light, decorationColor: light),
+    );
   }
 
   const Typography._(this.black, this.white, this.englishLike, this.dense, this.tall);
