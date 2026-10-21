@@ -110,7 +110,6 @@ class _DropdownMenuPainter extends CustomPainter {
 // The widget that is the button wrapping the menu items.
 class _DropdownMenuItemButton<T> extends StatefulWidget {
   const _DropdownMenuItemButton({
-    super.key,
     this.padding,
     required this.route,
     required this.buttonRect,
@@ -249,7 +248,6 @@ class _DropdownMenuItemButtonState<T> extends State<_DropdownMenuItemButton<T>> 
 
 class _DropdownMenu<T> extends StatefulWidget {
   const _DropdownMenu({
-    super.key,
     this.padding,
     required this.route,
     required this.buttonRect,
@@ -258,7 +256,6 @@ class _DropdownMenu<T> extends StatefulWidget {
     required this.enableFeedback,
     this.borderRadius,
     required this.scrollController,
-    this.menuWidth,
     this.mouseCursor,
   });
 
@@ -270,7 +267,6 @@ class _DropdownMenu<T> extends StatefulWidget {
   final bool enableFeedback;
   final BorderRadius? borderRadius;
   final ScrollController scrollController;
-  final double? menuWidth;
   final MouseCursor? mouseCursor;
 
   @override
@@ -649,7 +645,6 @@ class _DropdownRoute<T> extends PopupRoute<_DropdownRouteResult<T>> {
 
 class _DropdownRoutePage<T> extends StatefulWidget {
   const _DropdownRoutePage({
-    super.key,
     required this.route,
     required this.constraints,
     this.items,
@@ -758,7 +753,7 @@ class _DropdownRoutePageState<T> extends State<_DropdownRoutePage<T>> {
 // selected item lines up with the vertical center of the dropdown button,
 // as closely as possible.
 class _MenuItem<T> extends SingleChildRenderObjectWidget {
-  const _MenuItem({super.key, required this.onLayout, required this.item}) : super(child: item);
+  const _MenuItem({required this.onLayout, required this.item}) : super(child: item);
 
   final ValueChanged<Size> onLayout;
   final DropdownMenuItem<T>? item;
@@ -1050,11 +1045,11 @@ class DropdownButton<T> extends StatefulWidget {
          'with the same value',
        ),
        assert(itemHeight == null || itemHeight >= kMinInteractiveDimension),
+       isVerticallyExpanded = true,
        _inputDecoration = null,
        _isEmpty = false;
 
   DropdownButton._formField({
-    super.key,
     required this.items,
     this.selectedItemBuilder,
     this.value,
@@ -1064,7 +1059,6 @@ class DropdownButton<T> extends StatefulWidget {
     this.onTap,
     this.elevation = 8,
     this.style,
-    this.underline,
     this.icon,
     this.iconDisabledColor,
     this.iconEnabledColor,
@@ -1072,7 +1066,6 @@ class DropdownButton<T> extends StatefulWidget {
     this.isDense = false,
     this.isExpanded = false,
     this.itemHeight = kMinInteractiveDimension,
-    this.menuWidth,
     this.focusColor,
     this.focusNode,
     this.autofocus = false,
@@ -1085,9 +1078,12 @@ class DropdownButton<T> extends StatefulWidget {
     this.barrierDismissible = true,
     this.mouseCursor,
     this.dropdownMenuItemMouseCursor,
+    this.isVerticallyExpanded = false,
     required this._inputDecoration,
     required this._isEmpty,
-  }) : assert(
+  }) : underline = null,
+       menuWidth = null,
+       assert(
          items == null ||
              items.isEmpty ||
              value == null ||
@@ -1256,6 +1252,10 @@ class DropdownButton<T> extends StatefulWidget {
   /// By default this button's inner width is the minimum size of its contents.
   /// If [isExpanded] is true, the inner width is expanded to fill its
   /// surrounding container.
+  /// See also:
+  ///
+  ///  * [DropdownButton.isVerticallyExpanded], which expands the inner height of the
+  ///    dropdown to fill the available vertical space.
   final bool isExpanded;
 
   /// If null, then the menu item heights will vary according to each menu item's
@@ -1361,6 +1361,26 @@ class DropdownButton<T> extends StatefulWidget {
   ///
   /// If this property is null, [WidgetStateMouseCursor.adaptiveClickable] will be used.
   final MouseCursor? dropdownMenuItemMouseCursor;
+
+  /// Whether the dropdown's inner contents expand to fill the
+  /// available vertical space.
+  ///
+  /// When true, the inner height of the dropdown is expanded to match its
+  /// parent container. When false, the inner height is determined by the
+  /// height of the selected item (its intrinsic height).
+  ///
+  /// This is particularly useful when the dropdown is used inside a fixed-height
+  /// container, ensuring that the underline and items align properly within
+  /// the allocated space.
+  ///
+  /// Defaults to false for [DropdownButtonFormField] to ensure the input decorator
+  /// handles the vertical constraints correctly by default.
+  ///
+  /// See also:
+  ///
+  ///  * [DropdownButton.isExpanded], which expands the inner width of the
+  ///    dropdown to fill the available horizontal space.
+  final bool isVerticallyExpanded;
 
   final InputDecoration? _inputDecoration;
 
@@ -1772,6 +1792,7 @@ class _DropdownButtonState<T> extends State<DropdownButton<T>> with WidgetsBindi
               isEmpty: widget._isEmpty,
               isFocused: _hasPrimaryFocus,
               isHovering: _isHovering,
+              expands: widget.isVerticallyExpanded,
               child: widget.padding == null
                   ? result
                   : Padding(padding: widget.padding!, child: result),
@@ -1779,6 +1800,13 @@ class _DropdownButtonState<T> extends State<DropdownButton<T>> with WidgetsBindi
           ),
         ),
       );
+
+      // When vertical expansion is disabled, wrap with Align
+      // to prevent the widget from stretching to fill the parent's
+      // available height.
+      if (!widget.isVerticallyExpanded) {
+        result = Align(alignment: AlignmentDirectional.topStart, heightFactor: 1.0, child: result);
+      }
     } else {
       result = InkWell(
         mouseCursor: effectiveMouseCursor,
@@ -1795,6 +1823,7 @@ class _DropdownButtonState<T> extends State<DropdownButton<T>> with WidgetsBindi
 
     final bool childHasButtonSemantic =
         hintIndex != null || (_selectedIndex != null && widget.selectedItemBuilder == null);
+
     return Semantics(
       button: !childHasButtonSemantic,
       expanded: _isMenuExpanded,
@@ -1823,6 +1852,22 @@ class DropdownButtonFormField<T> extends FormField<T> {
   /// Creates a [DropdownButton] widget that is a [FormField], wrapped in an
   /// [InputDecorator].
   ///
+  /// The `enabled` argument controls whether the user can interact with the
+  /// field:
+  ///
+  ///  * If true, the field is interactive even if [onChanged] is null. The
+  ///    selected value is stored in the [FormFieldState].
+  ///  * If false, the field is not interactive and its own [autovalidateMode]
+  ///    is ignored, even if [onChanged] is non-null. [FormState.validate] and
+  ///    the parent [Form]'s [Form.autovalidateMode] still validate it.
+  ///
+  ///  * If null, the field is interactive if and only if [onChanged] is
+  ///    non-null. In either case, it is still validated. This matches the
+  ///    behavior before `enabled` was added.
+  ///
+  /// The resolved [FormField.enabled] is true unless `enabled` is explicitly
+  /// false.
+  ///
   /// For a description of the `onSaved`, `validator`, or `autovalidateMode`
   /// parameters, see [FormField]. For the rest (other than [decoration]), see
   /// [DropdownButton].
@@ -1839,7 +1884,7 @@ class DropdownButtonFormField<T> extends FormField<T> {
     T? initialValue,
     Widget? hint,
     Widget? disabledHint,
-    required this.onChanged,
+    this.onChanged,
     VoidCallback? onTap,
     int elevation = 8,
     TextStyle? style,
@@ -1859,6 +1904,7 @@ class DropdownButtonFormField<T> extends FormField<T> {
     super.validator,
     super.errorBuilder,
     super.forceErrorText,
+    bool? enabled,
     AutovalidateMode? autovalidateMode,
     double? menuMaxHeight,
     bool? enableFeedback,
@@ -1868,6 +1914,7 @@ class DropdownButtonFormField<T> extends FormField<T> {
     this.barrierDismissible = true,
     this.mouseCursor,
     this.dropdownMenuItemMouseCursor,
+    bool isVerticallyExpanded = false,
     // When adding new arguments, consider adding similar arguments to
     // DropdownButton.
   }) : assert(
@@ -1892,6 +1939,7 @@ class DropdownButtonFormField<T> extends FormField<T> {
        super(
          initialValue: initialValue ?? value,
          autovalidateMode: autovalidateMode ?? AutovalidateMode.disabled,
+         enabled: enabled ?? true,
          builder: (FormFieldState<T> field) {
            final state = field as _DropdownButtonFormFieldState<T>;
            InputDecoration effectiveDecoration = (decoration ?? const InputDecoration())
@@ -1900,7 +1948,8 @@ class DropdownButtonFormField<T> extends FormField<T> {
            final bool showSelectedItem =
                items != null &&
                items.where((DropdownMenuItem<T> item) => item.value == state.value).isNotEmpty;
-           final bool isDropdownEnabled = onChanged != null && items != null && items.isNotEmpty;
+           final bool isDropdownEnabled =
+               (enabled ?? onChanged != null) && items != null && items.isNotEmpty;
            // If decoration hintText is provided, use it as the default value for both hint and disabledHint.
            final Widget? decorationHint = effectiveDecoration.hintText != null
                ? Text(effectiveDecoration.hintText!)
@@ -1939,7 +1988,7 @@ class DropdownButtonFormField<T> extends FormField<T> {
                  value: state.value,
                  hint: effectiveHint,
                  disabledHint: effectiveDisabledHint,
-                 onChanged: onChanged == null ? null : state.didChange,
+                 onChanged: isDropdownEnabled ? state.didChange : null,
                  onTap: onTap,
                  elevation: elevation,
                  style: style,
@@ -1964,6 +2013,7 @@ class DropdownButtonFormField<T> extends FormField<T> {
                  barrierDismissible: barrierDismissible,
                  mouseCursor: mouseCursor,
                  dropdownMenuItemMouseCursor: dropdownMenuItemMouseCursor,
+                 isVerticallyExpanded: isVerticallyExpanded,
                ),
              ),
            );
@@ -1975,6 +2025,9 @@ class DropdownButtonFormField<T> extends FormField<T> {
   /// This callback is invoked after the parent [Form]'s [Form.onChanged] callback.
   /// The field's updated value is available in the [Form.onChanged] callback
   /// via [FormFieldState.value].
+  ///
+  /// If the constructor's `enabled` argument is true, the field is interactive even
+  /// when [onChanged] is null.
   final ValueChanged<T?>? onChanged;
 
   /// The decoration to show around the dropdown button form field.

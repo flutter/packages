@@ -37,9 +37,6 @@ let package = Package(
       ],
       resources: [
         .process("Resources")
-      ],
-      cSettings: [
-        .headerSearchPath("include/google_maps_flutter_ios_sdk10")
       ]
     )
   ]

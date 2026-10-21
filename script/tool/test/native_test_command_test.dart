@@ -61,7 +61,7 @@ const String _fakeCmakeCommand = 'path/to/cmake';
 const String _archDirX64 = 'x64';
 const String _archDirArm64 = 'arm64';
 
-void _createFakeCMakeCache(RepositoryPackage plugin, Platform platform, String archDir) {
+void _createFakeCMakeCache(RepositoryPackage plugin, NativePlatform platform, String archDir) {
   final project = CMakeProject(
     getExampleDir(plugin),
     platform: platform,
@@ -79,17 +79,16 @@ void main() {
   const kDestination = '--ios-destination';
 
   group('test native_test_command on Posix', () {
-    late MockPlatform mockPlatform;
+    late NativePlatform mockPlatform;
     late Directory packagesDir;
     late CommandRunner<void> runner;
     late RecordingProcessRunner processRunner;
     late RecordingProcessRunner gitProcessRunner;
 
     setUp(() {
-      // iOS and macOS tests expect macOS, Linux tests expect Linux; nothing
-      // needs to distinguish between Linux and macOS, so set both to true to
-      // allow them to share a setup group.
-      mockPlatform = MockPlatform(isMacOS: true, isLinux: true);
+      // Currently nothing in the logic specifically checks for isMacOS, so just use Linux for both
+      // test groups.
+      mockPlatform = createMockPlatform(isLinux: true);
       final GitDir gitDir;
       (:packagesDir, :processRunner, :gitProcessRunner, :gitDir) = configureBaseCommandMocks(
         platform: mockPlatform,
@@ -1961,14 +1960,14 @@ public class FlutterActivityTest {
   });
 
   group('test native_test_command on Windows', () {
-    late MockPlatform mockPlatform;
+    late NativePlatform mockPlatform;
     late Directory packagesDir;
     late CommandRunner<void> runner;
     late RecordingProcessRunner processRunner;
     late GitDir gitDir;
 
     setUp(() {
-      mockPlatform = MockPlatform(isWindows: true);
+      mockPlatform = createMockPlatform(isWindows: true);
       (:packagesDir, :processRunner, gitProcessRunner: _, :gitDir) = configureBaseCommandMocks(
         platform: mockPlatform,
       );

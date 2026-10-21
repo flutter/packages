@@ -51,16 +51,20 @@ const double _kDisableSearchBarOpacity = 0.38;
 ///
 /// The `controller` callback provided to [SearchAnchor.builder] can be used
 /// to open the search view and control the editable field on the view.
-typedef SearchAnchorChildBuilder =
-    Widget Function(BuildContext context, SearchController controller);
+typedef SearchAnchorChildBuilder = Widget Function(
+  BuildContext context,
+  SearchController controller,
+);
 
 /// Signature for a function that creates a [Widget] to build the suggestion list
 /// based on the input in the search bar.
 ///
 /// The `controller` callback provided to [SearchAnchor.suggestionsBuilder] can be used
 /// to close the search view and control the editable field on the view.
-typedef SuggestionsBuilder =
-    FutureOr<Iterable<Widget>> Function(BuildContext context, SearchController controller);
+typedef SuggestionsBuilder = FutureOr<Iterable<Widget>> Function(
+  BuildContext context,
+  SearchController controller,
+);
 
 /// Signature for a function that creates a [Widget] to layout the suggestion list.
 ///
@@ -82,6 +86,55 @@ typedef ViewBuilder = Widget Function(Iterable<Widget> suggestions);
 /// The search view is usually opened by a [SearchBar], an [IconButton] or an [Icon].
 /// If [builder] returns an Icon, or any un-tappable widgets, we don't have
 /// to explicitly call [SearchController.openView].
+///
+/// ## Tap handling on the anchor
+///
+/// By default, [SearchAnchor] wraps the widget returned by [builder] in a
+/// [GestureDetector] that calls [SearchController.openView] on tap. This
+/// behavior is controlled by [enableTapHandling], which defaults to true.
+///
+/// ### When to enable tap handling
+///
+/// Keep [enableTapHandling] set to true (the default) when [builder]
+/// returns a passive widget, such as an [Icon] or [Text]. The outer
+/// [GestureDetector] handles taps and provides tap semantics for accessibility
+/// services.
+///
+/// ### When to disable tap handling
+///
+/// Set [enableTapHandling] to false when the widget returned by [builder]
+/// handles its own tap events or provides its own semantics. For example:
+///
+/// * When returning a [SearchBar] that handles taps through its own callbacks.
+/// * When returning buttons like [IconButton] or other interactive widgets that
+///   already call [SearchController.openView].
+///
+/// Setting [enableTapHandling] to false avoids duplicate gesture recognizers
+/// in the gesture arena and prevents duplicate tap semantics (which can cause
+/// accessibility guideline violations, such as unlabeled tap targets).
+///
+/// When using [SearchAnchor.bar], [enableTapHandling] is already set to
+/// false because the factory constructor's [SearchBar] handles its own taps.
+///
+/// ```dart
+/// SearchAnchor(
+///   enableTapHandling: false,
+///   builder: (BuildContext context, SearchController controller) {
+///     return SearchBar(
+///       controller: controller,
+///       onTap: () {
+///         controller.openView();
+///       },
+///       onChanged: (_) {
+///         controller.openView();
+///       },
+///     );
+///   },
+///   suggestionsBuilder: (BuildContext context, SearchController controller) {
+///     return const <Widget>[];
+///   },
+/// )
+/// ```
 ///
 /// The search view route will be popped if the window size is changed and the
 /// search view route is not in full-screen mode. However, if the search view route
@@ -181,12 +234,19 @@ class SearchAnchor extends StatefulWidget {
     this.enabled = true,
     this.smartDashesType,
     this.smartQuotesType,
+    this.enableTapHandling = true,
   });
 
   /// Create a [SearchAnchor] that has a [SearchBar] which opens a search view.
   ///
   /// All the barX parameters are used to customize the anchor. Similarly, all the
   /// viewX parameters are used to override the view's defaults.
+  ///
+  /// If `barFocusNode` is non-null, it is passed to the search bar as
+  /// [SearchBar.focusNode]. The search bar does not dispose it, so the caller
+  /// is responsible for calling [FocusNode.dispose] when it is no longer
+  /// needed. If null, the search bar creates and manages its own focus node.
+  /// The text field in the search view always uses its own focus node.
   ///
   /// <callout-box>
   ///
@@ -246,8 +306,10 @@ class SearchAnchor extends StatefulWidget {
     bool enabled = true,
     SmartDashesType? smartDashesType,
     SmartQuotesType? smartQuotesType,
+    FocusNode? barFocusNode,
   }) : this(
          key: key,
+         enableTapHandling: false,
          viewBarPadding: viewBarPadding,
          viewBuilder: viewBuilder,
          viewLeading: viewLeading,
@@ -281,6 +343,7 @@ class SearchAnchor extends StatefulWidget {
            return SearchBar(
              constraints: constraints,
              controller: controller,
+             focusNode: barFocusNode,
              onTap: () {
                controller.openView();
                onTap?.call();
@@ -538,6 +601,16 @@ class SearchAnchor extends StatefulWidget {
   ///    configuration option on a standalone [TextField].
   final SmartQuotesType? smartQuotesType;
 
+  /// Whether to wrap the widget returned by [builder] with a [GestureDetector]
+  /// that opens the search view route when tapped.
+  ///
+  /// Defaults to true.
+  ///
+  /// Set this to false if the widget returned by [builder] handles its own
+  /// tap gestures (such as a [SearchBar] or [IconButton]) to avoid duplicate
+  /// gestures and semantics actions.
+  final bool enableTapHandling;
+
   @override
   State<SearchAnchor> createState() => _SearchAnchorState();
 }
@@ -666,14 +739,15 @@ class _SearchAnchorState extends State<SearchAnchor> {
 
   @override
   Widget build(BuildContext context) {
+    Widget child = widget.builder(context, _searchController);
+    if (widget.enableTapHandling) {
+      child = GestureDetector(onTap: _openView, child: child);
+    }
     return AnimatedOpacity(
       key: _anchorKey,
       opacity: _getOpacity(),
       duration: _kAnchorFadeDuration,
-      child: IgnorePointer(
-        ignoring: !widget.enabled,
-        child: GestureDetector(onTap: _openView, child: widget.builder(context, _searchController)),
-      ),
+      child: IgnorePointer(ignoring: !widget.enabled, child: child),
     );
   }
 }
@@ -1040,6 +1114,8 @@ class _ViewContentState extends State<_ViewContent> {
   Iterable<Widget> result = <Widget>[];
   String? searchValue;
   Timer? _timer;
+  // Identifies the latest call so that older async results cannot replace newer ones.
+  int _suggestionsCallId = 0;
 
   @override
   void initState() {
@@ -1076,14 +1152,9 @@ class _ViewContentState extends State<_ViewContent> {
       _timer?.cancel();
       _timer = Timer(Duration.zero, () async {
         searchValue = _controller.text;
-        final Iterable<Widget> suggestions = await widget.suggestionsBuilder(context, _controller);
+        await _buildSuggestions();
         _timer?.cancel();
         _timer = null;
-        if (mounted) {
-          setState(() {
-            result = suggestions;
-          });
-        }
       });
     }
   }
@@ -1124,13 +1195,19 @@ class _ViewContentState extends State<_ViewContent> {
   Future<void> updateSuggestions() async {
     if (searchValue != _controller.text) {
       searchValue = _controller.text;
-      final Iterable<Widget> suggestions = await widget.suggestionsBuilder(context, _controller);
-      if (mounted) {
-        setState(() {
-          result = suggestions;
-        });
-      }
+      await _buildSuggestions();
     }
+  }
+
+  Future<void> _buildSuggestions() async {
+    final int callId = ++_suggestionsCallId;
+    final Iterable<Widget> suggestions = await widget.suggestionsBuilder(context, _controller);
+    if (!mounted || callId != _suggestionsCallId) {
+      return;
+    }
+    setState(() {
+      result = suggestions;
+    });
   }
 
   @override
@@ -1796,6 +1873,11 @@ class _SearchBarState extends State<SearchBar> {
           child: IgnorePointer(
             ignoring: !widget.enabled,
             child: InkWell(
+              // Avoid creating a redundant focus stop and focusable/tappable
+              // semantics node on the InkWell, since the inner TextField
+              // already handles focus and semantics for the SearchBar.
+              canRequestFocus: false,
+              excludeFromSemantics: true,
               onTap: () {
                 widget.onTap?.call();
                 if (!_focusNode.hasFocus) {

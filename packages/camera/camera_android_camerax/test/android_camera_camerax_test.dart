@@ -170,6 +170,7 @@ void main() {
           CameraXFlashMode? flashMode,
           ResolutionSelector? resolutionSelector,
           int? jpegQuality,
+          bool? zeroShutterLagEnabled,
         }) {
           final mockImageCapture = MockImageCapture();
           when(mockImageCapture.resolutionSelector).thenReturn(resolutionSelector);
@@ -531,6 +532,7 @@ void main() {
             CameraXFlashMode? flashMode,
             ResolutionSelector? resolutionSelector,
             int? jpegQuality,
+            bool? zeroShutterLagEnabled,
           }) {
             return mockImageCapture;
           };
@@ -1069,6 +1071,7 @@ void main() {
             CameraXFlashMode? flashMode,
             ResolutionSelector? resolutionSelector,
             int? jpegQuality,
+            bool? zeroShutterLagEnabled,
           }) {
             return mockImageCapture;
           };
@@ -1476,6 +1479,7 @@ void main() {
           CameraXFlashMode? flashMode,
           ResolutionSelector? resolutionSelector,
           int? jpegQuality,
+          bool? zeroShutterLagEnabled,
         }) {
           return mockImageCapture;
         };
@@ -1829,6 +1833,7 @@ void main() {
           CameraXFlashMode? flashMode,
           ResolutionSelector? resolutionSelector,
           int? jpegQuality,
+          bool? zeroShutterLagEnabled,
         }) => mockImageCapture;
     PigeonOverrides.recorder_new =
         ({int? aspectRatio, int? targetVideoEncodingBitRate, QualitySelector? qualitySelector}) =>
@@ -2423,6 +2428,81 @@ void main() {
       verifyNoMoreInteractions(mockPendingRecording);
     });
 
+    test('startVideoCapturing uses the provided videoOutputPath if available', () async {
+      // Set up mocks and constants.
+      final camera = AndroidCameraCameraX();
+      final mockPendingRecording = MockPendingRecording();
+      final mockRecording = MockRecording();
+      final mockCamera = MockCamera();
+      final mockCameraInfo = MockCameraInfo();
+      final mockCamera2CameraInfo = MockCamera2CameraInfo();
+      const videoOutputPath = '/test/custom/path.mp4';
+
+      // Set directly for test versus calling createCamera.
+      camera.processCameraProvider = MockProcessCameraProvider();
+      camera.recorder = MockRecorder();
+      camera.videoCapture = MockVideoCapture();
+      camera.cameraSelector = MockCameraSelector();
+      camera.cameraInfo = MockCameraInfo();
+      camera.imageAnalysis = MockImageAnalysis();
+      camera.enableRecordingAudio = false;
+
+      // Ignore setting target rotation for this test; tested separately.
+      camera.captureOrientationLocked = true;
+
+      // Tell plugin to create detached Observer when camera info updated.
+      GenericsPigeonOverrides.observerNew =
+          <T>({required void Function(Observer<T>, T) onChanged}) {
+            return Observer<T>.detached(onChanged: onChanged);
+          };
+
+      PigeonOverrides.camera2CameraInfo_from = ({required dynamic cameraInfo}) =>
+          mockCamera2CameraInfo;
+      PigeonOverrides.videoRecordEventListener_new =
+          ({required void Function(VideoRecordEventListener, VideoRecordEvent) onEvent}) {
+            return VideoRecordEventListener.pigeon_detached(onEvent: onEvent);
+          };
+      PigeonOverrides.cameraCharacteristics_infoSupportedHardwareLevel =
+          MockCameraCharacteristicsKey();
+
+      // Mock method calls.
+      when(
+        camera.recorder!.prepareRecording(videoOutputPath),
+      ).thenAnswer((_) async => mockPendingRecording);
+      when(
+        mockPendingRecording.withAudioEnabled(any),
+      ).thenAnswer((_) async => mockPendingRecording);
+      when(
+        mockPendingRecording.asPersistentRecording(),
+      ).thenAnswer((_) async => mockPendingRecording);
+      when(mockPendingRecording.start(any)).thenAnswer((_) async => mockRecording);
+      when(
+        camera.processCameraProvider!.isBound(camera.videoCapture!),
+      ).thenAnswer((_) async => false);
+      when(
+        camera.processCameraProvider!.bindToLifecycle(camera.cameraSelector!, <UseCase>[
+          camera.videoCapture!,
+        ]),
+      ).thenAnswer((_) async => mockCamera);
+      when(mockCamera.getCameraInfo()).thenAnswer((_) => Future<CameraInfo>.value(mockCameraInfo));
+      when(mockCameraInfo.getCameraState()).thenAnswer((_) async => MockLiveCameraState());
+      when(
+        mockCamera2CameraInfo.getCameraCharacteristic(any),
+      ).thenAnswer((_) async => InfoSupportedHardwareLevel.limited);
+
+      // Simulate video recording being started so startVideoRecording completes.
+      AndroidCameraCameraX.videoRecordingEventStreamController.add(
+        VideoRecordEventStart.pigeon_detached(),
+      );
+
+      await camera.startVideoCapturing(
+        const VideoCaptureOptions(1, videoOutputPath: videoOutputPath),
+      );
+
+      verify(camera.recorder!.prepareRecording(videoOutputPath)).called(1);
+      expect(camera.videoOutputPath, videoOutputPath);
+    });
+
     test('startVideoCapturing called with stream options starts image streaming', () async {
       // Set up mocks and constants.
       final camera = AndroidCameraCameraX();
@@ -2857,6 +2937,7 @@ void main() {
             ResolutionSelector? resolutionSelector,
             int? targetRotation,
             int? jpegQuality,
+            bool? zeroShutterLagEnabled,
           }) {
             return mockImageCapture;
           };
@@ -3071,6 +3152,7 @@ void main() {
             ResolutionSelector? resolutionSelector,
             int? targetRotation,
             int? jpegQuality,
+            bool? zeroShutterLagEnabled,
           }) {
             return mockImageCapture;
           };
@@ -3327,6 +3409,7 @@ void main() {
           CameraXFlashMode? flashMode,
           ResolutionSelector? resolutionSelector,
           int? jpegQuality,
+          bool? zeroShutterLagEnabled,
         }) {
           actualTargetRotation = targetRotation;
           actualJpegQuality = jpegQuality;
@@ -3382,6 +3465,7 @@ void main() {
             CameraXFlashMode? flashMode,
             ResolutionSelector? resolutionSelector,
             int? jpegQuality,
+            bool? zeroShutterLagEnabled,
           }) {
             actualTargetRotation = targetRotation;
             actualJpegQuality = jpegQuality;
@@ -3430,6 +3514,7 @@ void main() {
             CameraXFlashMode? flashMode,
             ResolutionSelector? resolutionSelector,
             int? jpegQuality,
+            bool? zeroShutterLagEnabled,
           }) {
             return mockNewImageCapture;
           };
@@ -3468,6 +3553,237 @@ void main() {
       expect(imageFile.path, equals(testPicturePath));
     },
   );
+
+  test('isZeroShutterLagSupported returns the value reported by CameraInfo', () async {
+    final camera = AndroidCameraCameraX();
+    final mockCameraInfo = MockCameraInfo();
+    const cameraId = 9;
+
+    camera.cameraInfo = mockCameraInfo;
+    when(mockCameraInfo.isZslSupported()).thenAnswer((_) async => true);
+
+    expect(await camera.isZeroShutterLagSupported(cameraId), isTrue);
+  });
+
+  test('isZeroShutterLagSupported returns false when no camera has been selected yet', () async {
+    final camera = AndroidCameraCameraX();
+    const cameraId = 9;
+
+    expect(await camera.isZeroShutterLagSupported(cameraId), isFalse);
+  });
+
+  test(
+    'setZeroShutterLagEnabled unbinds and recreates ImageCapture with the requested mode',
+    () async {
+      final camera = AndroidCameraCameraX();
+      final mockProcessCameraProvider = MockProcessCameraProvider();
+      final mockDeviceOrientationManager = MockDeviceOrientationManager();
+      final mockImageCapture = MockImageCapture();
+      final mockNewImageCapture = MockImageCapture();
+      final mockCameraInfo = MockCameraInfo();
+      const int defaultTargetRotation = Surface.rotation90;
+      const cameraId = 9;
+      bool? actualZeroShutterLagEnabled;
+
+      camera.processCameraProvider = mockProcessCameraProvider;
+      camera.imageCapture = mockImageCapture;
+      camera.cameraInfo = mockCameraInfo;
+      when(mockCameraInfo.isZslSupported()).thenAnswer((_) async => true);
+
+      PigeonOverrides.deviceOrientationManager_new =
+          ({required void Function(DeviceOrientationManager, String) onDeviceOrientationChanged}) {
+            when(
+              mockDeviceOrientationManager.getDefaultDisplayRotation(),
+            ).thenAnswer((_) async => defaultTargetRotation);
+            return mockDeviceOrientationManager;
+          };
+      PigeonOverrides.imageCapture_new =
+          ({
+            int? targetRotation,
+            CameraXFlashMode? flashMode,
+            ResolutionSelector? resolutionSelector,
+            int? jpegQuality,
+            bool? zeroShutterLagEnabled,
+          }) {
+            actualZeroShutterLagEnabled = zeroShutterLagEnabled;
+            return mockNewImageCapture;
+          };
+
+      when(mockProcessCameraProvider.isBound(mockImageCapture)).thenAnswer((_) async => true);
+
+      await camera.setZeroShutterLagEnabled(cameraId, true);
+
+      verify(mockProcessCameraProvider.unbind(<UseCase>[mockImageCapture])).called(1);
+      expect(actualZeroShutterLagEnabled, isTrue);
+      expect(camera.imageCapture, same(mockNewImageCapture));
+    },
+  );
+
+  test(
+    'setZeroShutterLagEnabled does not recreate ImageCapture when zero-shutter-lag is unsupported',
+    () async {
+      final camera = AndroidCameraCameraX();
+      final mockProcessCameraProvider = MockProcessCameraProvider();
+      final mockImageCapture = MockImageCapture();
+      final mockCameraInfo = MockCameraInfo();
+      const cameraId = 9;
+      var imageCaptureCreated = false;
+
+      camera.processCameraProvider = mockProcessCameraProvider;
+      camera.imageCapture = mockImageCapture;
+      camera.cameraInfo = mockCameraInfo;
+      when(mockCameraInfo.isZslSupported()).thenAnswer((_) async => false);
+
+      PigeonOverrides.imageCapture_new =
+          ({
+            int? targetRotation,
+            CameraXFlashMode? flashMode,
+            ResolutionSelector? resolutionSelector,
+            int? jpegQuality,
+            bool? zeroShutterLagEnabled,
+          }) {
+            imageCaptureCreated = true;
+            return MockImageCapture();
+          };
+
+      await camera.setZeroShutterLagEnabled(cameraId, true);
+
+      verifyNever(mockProcessCameraProvider.unbind(any));
+      expect(imageCaptureCreated, isFalse);
+      expect(camera.imageCapture, same(mockImageCapture));
+    },
+  );
+
+  test('setZeroShutterLagEnabled preserves a previously requested JPEG quality', () async {
+    final camera = AndroidCameraCameraX();
+    final mockProcessCameraProvider = MockProcessCameraProvider();
+    final mockDeviceOrientationManager = MockDeviceOrientationManager();
+    final mockImageCapture = MockImageCapture();
+    final mockNewImageCapture = MockImageCapture();
+    final mockCameraInfo = MockCameraInfo();
+    const int defaultTargetRotation = Surface.rotation90;
+    const jpegQuality = 73;
+    const cameraId = 9;
+    int? actualJpegQuality;
+
+    camera.processCameraProvider = mockProcessCameraProvider;
+    camera.imageCapture = mockImageCapture;
+    camera.cameraInfo = mockCameraInfo;
+    when(mockCameraInfo.isZslSupported()).thenAnswer((_) async => true);
+
+    PigeonOverrides.deviceOrientationManager_new =
+        ({required void Function(DeviceOrientationManager, String) onDeviceOrientationChanged}) {
+          when(
+            mockDeviceOrientationManager.getDefaultDisplayRotation(),
+          ).thenAnswer((_) async => defaultTargetRotation);
+          return mockDeviceOrientationManager;
+        };
+    PigeonOverrides.imageCapture_new =
+        ({
+          int? targetRotation,
+          CameraXFlashMode? flashMode,
+          ResolutionSelector? resolutionSelector,
+          int? jpegQuality,
+          bool? zeroShutterLagEnabled,
+        }) {
+          actualJpegQuality = jpegQuality;
+          return mockNewImageCapture;
+        };
+
+    when(mockProcessCameraProvider.isBound(mockImageCapture)).thenAnswer((_) async => true);
+
+    await camera.setJpegImageQuality(cameraId, jpegQuality);
+    await camera.setZeroShutterLagEnabled(cameraId, true);
+
+    expect(actualJpegQuality, jpegQuality);
+  });
+
+  test('setJpegImageQuality preserves a previously requested zero-shutter-lag setting', () async {
+    final camera = AndroidCameraCameraX();
+    final mockProcessCameraProvider = MockProcessCameraProvider();
+    final mockDeviceOrientationManager = MockDeviceOrientationManager();
+    final mockImageCapture = MockImageCapture();
+    final mockNewImageCapture = MockImageCapture();
+    final mockCameraInfo = MockCameraInfo();
+    const int defaultTargetRotation = Surface.rotation90;
+    const cameraId = 9;
+    bool? actualZeroShutterLagEnabled;
+
+    camera.processCameraProvider = mockProcessCameraProvider;
+    camera.imageCapture = mockImageCapture;
+    camera.cameraInfo = mockCameraInfo;
+    when(mockCameraInfo.isZslSupported()).thenAnswer((_) async => true);
+
+    PigeonOverrides.deviceOrientationManager_new =
+        ({required void Function(DeviceOrientationManager, String) onDeviceOrientationChanged}) {
+          when(
+            mockDeviceOrientationManager.getDefaultDisplayRotation(),
+          ).thenAnswer((_) async => defaultTargetRotation);
+          return mockDeviceOrientationManager;
+        };
+    PigeonOverrides.imageCapture_new =
+        ({
+          int? targetRotation,
+          CameraXFlashMode? flashMode,
+          ResolutionSelector? resolutionSelector,
+          int? jpegQuality,
+          bool? zeroShutterLagEnabled,
+        }) {
+          actualZeroShutterLagEnabled = zeroShutterLagEnabled;
+          return mockNewImageCapture;
+        };
+
+    when(mockProcessCameraProvider.isBound(mockImageCapture)).thenAnswer((_) async => true);
+
+    await camera.setZeroShutterLagEnabled(cameraId, true);
+    await camera.setJpegImageQuality(cameraId, 73);
+
+    expect(actualZeroShutterLagEnabled, isTrue);
+  });
+
+  test('createCamera applies a previously requested zero-shutter-lag setting', () async {
+    final camera = AndroidCameraCameraX();
+    const testCameraDescription = CameraDescription(
+      name: 'cameraName',
+      lensDirection: CameraLensDirection.back,
+      sensorOrientation: 90,
+    );
+    final mockCamera = MockCamera();
+    final mockProcessCameraProvider = MockProcessCameraProvider();
+    final mockCameraInfo = MockCameraInfo();
+    bool? actualZeroShutterLagEnabled;
+
+    // A prior call to setZeroShutterLagEnabled sets this field; set it
+    // directly here since imageCapture is null before createCamera runs,
+    // so setZeroShutterLagEnabled itself would not recreate ImageCapture.
+    await camera.setZeroShutterLagEnabled(9, true);
+
+    setUpOverridesForTestingUseCaseConfiguration(mockProcessCameraProvider);
+    // setUpOverridesForTestingUseCaseConfiguration sets a fixed
+    // imageCapture_new override; replace it to capture the argument this
+    // test cares about.
+    PigeonOverrides.imageCapture_new =
+        ({
+          int? targetRotation,
+          CameraXFlashMode? flashMode,
+          ResolutionSelector? resolutionSelector,
+          int? jpegQuality,
+          bool? zeroShutterLagEnabled,
+        }) {
+          actualZeroShutterLagEnabled = zeroShutterLagEnabled;
+          final mockImageCapture = MockImageCapture();
+          when(mockImageCapture.resolutionSelector).thenReturn(resolutionSelector);
+          return mockImageCapture;
+        };
+
+    when(mockProcessCameraProvider.bindToLifecycle(any, any)).thenAnswer((_) async => mockCamera);
+    when(mockCamera.getCameraInfo()).thenAnswer((_) async => mockCameraInfo);
+    when(mockCameraInfo.getCameraState()).thenAnswer((_) async => MockLiveCameraState());
+
+    await camera.createCamera(testCameraDescription, ResolutionPreset.low);
+
+    expect(actualZeroShutterLagEnabled, isTrue);
+  });
 
   test('takePicture turns non-torch flash mode off when torch mode enabled', () async {
     final camera = AndroidCameraCameraX();
@@ -4662,7 +4978,7 @@ void main() {
   );
 
   test(
-    'setExposureOffset throws exception if exposure compensation could not be set due to camera being closed or newer value being set',
+    'setExposureOffset returns gracefully if exposure compensation could not be set due to camera being closed or newer value being set',
     () async {
       final camera = AndroidCameraCameraX();
       const cameraId = 21;
@@ -4675,6 +4991,8 @@ void main() {
       );
       final int expectedExposureCompensationIndex =
           (offset / exposureState.exposureCompensationStep).round();
+      final double expectedOffset =
+          expectedExposureCompensationIndex * exposureState.exposureCompensationStep;
 
       // Set directly for test versus calling createCamera.
       camera.cameraInfo = mockCameraInfo;
@@ -4685,7 +5003,7 @@ void main() {
         mockCameraControl.setExposureCompensationIndex(expectedExposureCompensationIndex),
       ).thenAnswer((_) async => Future<int?>.value());
 
-      expect(() => camera.setExposureOffset(cameraId, offset), throwsA(isA<CameraException>()));
+      expect(await camera.setExposureOffset(cameraId, offset), equals(expectedOffset));
     },
   );
 
@@ -4711,15 +5029,11 @@ void main() {
       when(mockCameraInfo.exposureState).thenReturn(exposureState);
       when(
         mockCameraControl.setExposureCompensationIndex(expectedExposureCompensationIndex),
-      ).thenAnswer(
-        (_) async => Future<int>.value(
-          (expectedExposureCompensationIndex * exposureState.exposureCompensationStep).round(),
-        ),
-      );
+      ).thenAnswer((_) async => Future<int>.value(expectedExposureCompensationIndex));
 
       // Exposure index * exposure offset step size = exposure offset, i.e.
-      // 15 * 0.2 = 3.
-      expect(await camera.setExposureOffset(cameraId, offset), equals(3));
+      // 15 * 0.2 = 3.0
+      expect(await camera.setExposureOffset(cameraId, offset), equals(3.0));
     },
   );
 
@@ -4805,6 +5119,48 @@ void main() {
       throwsA(isA<CameraException>()),
     );
   });
+
+  test(
+    'setFocusPoint does not add error to stream if focus and metering action is canceled',
+    () async {
+      final camera = AndroidCameraCameraX();
+      const cameraId = 23;
+      final mockCameraControl = MockCameraControl();
+      const focusPoint = Point<double>(0.5, 0.5);
+      final List<CameraEvent> errors = [];
+      camera.cameraEventStreamController.stream.listen(errors.add);
+
+      // Set directly for test versus calling createCamera.
+      camera.cameraControl = mockCameraControl;
+      camera.cameraInfo = MockCameraInfo();
+
+      final mockActionBuilder = MockFocusMeteringActionBuilder();
+      when(mockActionBuilder.build()).thenAnswer(
+        (_) async => FocusMeteringAction.pigeon_detached(
+          meteringPointsAe: const <MeteringPoint>[],
+          meteringPointsAf: const <MeteringPoint>[],
+          meteringPointsAwb: const <MeteringPoint>[],
+          isAutoCancelEnabled: false,
+        ),
+      );
+
+      setUpOverridesForExposureAndFocus(
+        withModeFocusMeteringActionBuilder:
+            ({required MeteringMode mode, required MeteringPoint point}) {
+              return mockActionBuilder;
+            },
+      );
+
+      when(
+        mockCameraControl.startFocusAndMetering(any),
+      ).thenAnswer((_) async => Future<FocusMeteringResult?>.value());
+
+      await camera.setFocusPoint(cameraId, focusPoint);
+
+      // Verify no errors were added to the stream.
+      expect(errors, isEmpty);
+    },
+  );
 
   test(
     'setFocusPoint adds new focus point to focus metering action to start as expected when previous metering points have been set',

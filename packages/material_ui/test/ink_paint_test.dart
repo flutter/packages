@@ -153,7 +153,7 @@ void main() {
     );
 
     await gesture.up();
-  });
+  }, tags: 'reduced-web-test-set');
 
   testWidgets('The InkWell widget renders an ink ripple', (WidgetTester tester) async {
     const highlightColor = Color(0xAAFF0000);

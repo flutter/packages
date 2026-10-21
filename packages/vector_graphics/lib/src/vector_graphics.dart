@@ -382,9 +382,12 @@ class _VectorGraphicWidgetState extends State<VectorGraphic> {
           return _PictureData(pictureInfo, 0, key);
         });
     _pendingPictures[key] = result;
+    // The future whenComplete returns carries the same error as result, and
+    // nothing listens to it: ignore it, or every failed load is reported as
+    // unhandled even though the caller handles result's error.
     result.whenComplete(() {
       _pendingPictures.remove(key);
-    });
+    }).ignore();
     return result;
   }
 
@@ -400,7 +403,7 @@ class _VectorGraphicWidgetState extends State<VectorGraphic> {
   }
 
   Future<void> _loadAssetBytes() async {
-    // First check if we have an avilable picture and use this immediately.
+    // First check if we have an available picture and use this immediately.
     final Object loaderKey = widget.loader.cacheKey(context);
     final key = _PictureKey(loaderKey, locale, textDirection, widget.clipViewbox);
     final _PictureData? data = _livePictureCache[key];
@@ -494,8 +497,8 @@ class _VectorGraphicWidgetState extends State<VectorGraphic> {
         if (direction == TextDirection.rtl) {
           child = Transform(
             transform: Matrix4.identity()
-              ..translate(pictureInfo.size.width)
-              ..scale(-1.0, 1.0),
+              ..translateByDouble(pictureInfo.size.width, 0, 0, 1)
+              ..scaleByDouble(-1, 1, -1, 1),
             child: child,
           );
         }

@@ -45,6 +45,9 @@ void main() {
     expect(style.splashFactory, isNull);
     expect(style.backgroundBuilder, isNull);
     expect(style.foregroundBuilder, isNull);
+    expect(style.sizeVariant, isNull);
+    expect(style.iconButtonWidth, isNull);
+    expect(style.shapeVariant, isNull);
   });
 
   testWidgets('Default ButtonStyle debugFillProperties', (WidgetTester tester) async {
@@ -80,6 +83,9 @@ void main() {
       tapTargetSize: MaterialTapTargetSize.shrinkWrap,
       animationDuration: Duration(seconds: 1),
       enableFeedback: true,
+      sizeVariant: ButtonSizeVariant.small,
+      iconButtonWidth: IconButtonWidthVariant.standard,
+      shapeVariant: ButtonShapeVariant.round,
     ).debugFillProperties(builder);
 
     final List<String> description = builder.properties
@@ -106,6 +112,9 @@ void main() {
       'tapTargetSize: shrinkWrap',
       'animationDuration: 0:00:01.000000',
       'enableFeedback: true',
+      'sizeVariant: small',
+      'iconButtonWidth: standard',
+      'shapeVariant: round',
     ]);
   });
 
@@ -148,6 +157,9 @@ void main() {
     const MaterialTapTargetSize tapTargetSize = MaterialTapTargetSize.shrinkWrap;
     const animationDuration = Duration(seconds: 1);
     const enableFeedback = true;
+    const ButtonSizeVariant sizeVariant = ButtonSizeVariant.small;
+    const IconButtonWidthVariant iconButtonWidth = IconButtonWidthVariant.standard;
+    const ButtonShapeVariant shapeVariant = ButtonShapeVariant.round;
 
     const style = ButtonStyle(
       textStyle: textStyle,
@@ -170,6 +182,9 @@ void main() {
       tapTargetSize: tapTargetSize,
       animationDuration: animationDuration,
       enableFeedback: enableFeedback,
+      sizeVariant: sizeVariant,
+      iconButtonWidth: iconButtonWidth,
+      shapeVariant: shapeVariant,
     );
 
     expect(
@@ -195,12 +210,35 @@ void main() {
         tapTargetSize: tapTargetSize,
         animationDuration: animationDuration,
         enableFeedback: enableFeedback,
+        sizeVariant: sizeVariant,
+        iconButtonWidth: iconButtonWidth,
+        shapeVariant: shapeVariant,
       ),
     );
 
     expect(style, const ButtonStyle().merge(style));
 
     expect(style.copyWith(), style.merge(const ButtonStyle()));
+  });
+
+  test('ButtonStyle.lerp selects discrete variants at midpoint', () {
+    const a = ButtonStyle(
+      sizeVariant: ButtonSizeVariant.xSmall,
+      iconButtonWidth: IconButtonWidthVariant.narrow,
+      shapeVariant: ButtonShapeVariant.round,
+    );
+    const b = ButtonStyle(
+      sizeVariant: ButtonSizeVariant.xLarge,
+      iconButtonWidth: IconButtonWidthVariant.wide,
+      shapeVariant: ButtonShapeVariant.square,
+    );
+
+    expect(ButtonStyle.lerp(a, b, 0.49)?.sizeVariant, ButtonSizeVariant.xSmall);
+    expect(ButtonStyle.lerp(a, b, 0.49)?.iconButtonWidth, IconButtonWidthVariant.narrow);
+    expect(ButtonStyle.lerp(a, b, 0.49)?.shapeVariant, ButtonShapeVariant.round);
+    expect(ButtonStyle.lerp(a, b, 0.5)?.sizeVariant, ButtonSizeVariant.xLarge);
+    expect(ButtonStyle.lerp(a, b, 0.5)?.iconButtonWidth, IconButtonWidthVariant.wide);
+    expect(ButtonStyle.lerp(a, b, 0.5)?.shapeVariant, ButtonShapeVariant.square);
   });
 
   test('ButtonStyle.lerp BorderSide', () {

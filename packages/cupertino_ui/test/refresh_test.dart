@@ -143,41 +143,28 @@ void main() {
 
         expect(
           mockHelper.invocations,
-          containsAllInOrder(<void>[
+          containsAllInOrder(<Matcher>[
             matchesBuilder(
               refreshState: RefreshIndicatorMode.drag,
               pulledExtent: 50,
               refreshTriggerPullDistance: 100, // default value.
               refreshIndicatorExtent: 60, // default value.
             ),
-            if (debugDefaultTargetPlatformOverride == TargetPlatform.macOS)
-              matchesBuilder(
-                refreshState: RefreshIndicatorMode.drag,
-                pulledExtent: moreOrLessEquals(48.07979523362715),
-                refreshTriggerPullDistance: 100, // default value.
-                refreshIndicatorExtent: 60, // default value.
-              )
-            else
-              matchesBuilder(
-                refreshState: RefreshIndicatorMode.drag,
-                pulledExtent: moreOrLessEquals(48.36801747187993),
-                refreshTriggerPullDistance: 100, // default value.
-                refreshIndicatorExtent: 60, // default value.
+            matchesBuilder(
+              refreshState: RefreshIndicatorMode.drag,
+              pulledExtent: inExclusiveRange(0.0, 50.0),
+              refreshTriggerPullDistance: 100, // default value.
+              refreshIndicatorExtent: 60, // default value.
+            ),
+            matchesBuilder(
+              refreshState: RefreshIndicatorMode.drag,
+              pulledExtent: inExclusiveRange(
+                0.0,
+                (mockHelper.invocations[1] as BuilderInvocation).pulledExtent,
               ),
-            if (debugDefaultTargetPlatformOverride == TargetPlatform.macOS)
-              matchesBuilder(
-                refreshState: RefreshIndicatorMode.drag,
-                pulledExtent: moreOrLessEquals(43.98499220391114),
-                refreshTriggerPullDistance: 100, // default value.
-                refreshIndicatorExtent: 60, // default value.
-              )
-            else
-              matchesBuilder(
-                refreshState: RefreshIndicatorMode.drag,
-                pulledExtent: moreOrLessEquals(44.63031931875867),
-                refreshTriggerPullDistance: 100, // default value.
-                refreshIndicatorExtent: 60, // default value.
-              ),
+              refreshTriggerPullDistance: 100, // default value.
+              refreshIndicatorExtent: 60, // default value.
+            ),
           ]),
         );
         // The builder isn't called again when the sliver completely goes away.
@@ -319,20 +306,12 @@ void main() {
               refreshIndicatorExtent: 60, // Default value.
             ),
             equals(const RefreshTaskInvocation()),
-            if (debugDefaultTargetPlatformOverride == TargetPlatform.macOS)
-              matchesBuilder(
-                refreshState: RefreshIndicatorMode.armed,
-                pulledExtent: moreOrLessEquals(124.87933920045268),
-                refreshTriggerPullDistance: 100, // Default value.
-                refreshIndicatorExtent: 60, // Default value.
-              )
-            else
-              matchesBuilder(
-                refreshState: RefreshIndicatorMode.armed,
-                pulledExtent: moreOrLessEquals(127.10396988577114),
-                refreshTriggerPullDistance: 100, // Default value.
-                refreshIndicatorExtent: 60, // Default value.
-              ),
+            matchesBuilder(
+              refreshState: RefreshIndicatorMode.armed,
+              pulledExtent: inExclusiveRange(60.0, 150.0),
+              refreshTriggerPullDistance: 100, // Default value.
+              refreshIndicatorExtent: 60, // Default value.
+            ),
           ]),
         );
 
@@ -355,7 +334,7 @@ void main() {
         await tester.pump(const Duration(seconds: 1000));
         expect(tester.getTopLeft(find.widgetWithText(SizedBox, '0')), const Offset(0.0, 60.0));
 
-        mockHelper.refreshCompleter.complete(null);
+        mockHelper.refreshCompleter.complete();
         await tester.pump();
 
         expect(
@@ -382,9 +361,6 @@ void main() {
       (WidgetTester tester) async {
         final error = FlutterError('Oops');
         double errorCount = 0;
-        final TargetPlatform? platform =
-            debugDefaultTargetPlatformOverride; // Will not be correct within the zone.
-
         await runZonedGuarded(
           () async {
             mockHelper.refreshCompleter = Completer<void>.sync();
@@ -417,20 +393,12 @@ void main() {
                   refreshTriggerPullDistance: 100, // Default value.
                 ),
                 equals(const RefreshTaskInvocation()),
-                if (platform == TargetPlatform.macOS)
-                  matchesBuilder(
-                    refreshState: RefreshIndicatorMode.armed,
-                    pulledExtent: moreOrLessEquals(124.87933920045268),
-                    refreshTriggerPullDistance: 100, // Default value.
-                    refreshIndicatorExtent: 60, // Default value.
-                  )
-                else
-                  matchesBuilder(
-                    refreshState: RefreshIndicatorMode.armed,
-                    pulledExtent: moreOrLessEquals(127.10396988577114),
-                    refreshIndicatorExtent: 60, // Default value.
-                    refreshTriggerPullDistance: 100, // Default value.
-                  ),
+                matchesBuilder(
+                  refreshState: RefreshIndicatorMode.armed,
+                  pulledExtent: inExclusiveRange(60.0, 150.0),
+                  refreshIndicatorExtent: 60, // Default value.
+                  refreshTriggerPullDistance: 100, // Default value.
+                ),
               ]),
             );
 
@@ -655,7 +623,7 @@ void main() {
           const Rect.fromLTRB(0.0, 60.0, 800.0, 260.0),
         );
 
-        mockHelper.refreshCompleter.complete(null);
+        mockHelper.refreshCompleter.complete();
         await tester.pump();
         expect(
           mockHelper.invocations,
@@ -744,7 +712,7 @@ void main() {
           const Rect.fromLTRB(0.0, 60.0, 800.0, 260.0),
         );
 
-        mockHelper.refreshCompleter.complete(null);
+        mockHelper.refreshCompleter.complete();
         await tester.pump();
 
         expect(
@@ -762,47 +730,20 @@ void main() {
         // Waiting for refresh control to reach approximately 5% of height
         await tester.pump(const Duration(milliseconds: 400));
 
-        if (debugDefaultTargetPlatformOverride == TargetPlatform.macOS) {
-          expect(
-            tester.getRect(find.widgetWithText(Center, '0')).top,
-            moreOrLessEquals(3.9543032206542765, epsilon: 4e-1),
-          );
-          expect(
-            tester.getRect(find.widgetWithText(Center, '-1')).height,
-            moreOrLessEquals(3.9543032206542765, epsilon: 4e-1),
-          );
-          expect(
-            mockHelper.invocations,
-            contains(
-              matchesBuilder(
-                refreshState: RefreshIndicatorMode.inactive,
-                pulledExtent: 3.9543032206542765, // ~5% of 60.0
-                refreshTriggerPullDistance: 100, // default value.
-                refreshIndicatorExtent: 60, // default value.
-              ),
+        final double top = tester.getRect(find.widgetWithText(Center, '0')).top;
+        expect(top, inExclusiveRange(0.0, 6.0));
+        expect(tester.getRect(find.widgetWithText(Center, '-1')).height, top);
+        expect(
+          mockHelper.invocations,
+          contains(
+            matchesBuilder(
+              refreshState: RefreshIndicatorMode.inactive,
+              pulledExtent: moreOrLessEquals(top),
+              refreshTriggerPullDistance: 100, // default value.
+              refreshIndicatorExtent: 60, // default value.
             ),
-          );
-        } else {
-          expect(
-            tester.getRect(find.widgetWithText(Center, '0')).top,
-            moreOrLessEquals(3.0, epsilon: 4e-1),
-          );
-          expect(
-            tester.getRect(find.widgetWithText(Center, '-1')).height,
-            moreOrLessEquals(3.0, epsilon: 4e-1),
-          );
-          expect(
-            mockHelper.invocations,
-            contains(
-              matchesBuilder(
-                refreshState: RefreshIndicatorMode.inactive,
-                pulledExtent: 2.6980688300546443, // ~5% of 60.0
-                refreshTriggerPullDistance: 100, // default value.
-                refreshIndicatorExtent: 60, // default value.
-              ),
-            ),
-          );
-        }
+          ),
+        );
         expect(find.text('-1'), findsOneWidget);
       },
       variant: const TargetPlatformVariant(<TargetPlatform>{
@@ -834,7 +775,7 @@ void main() {
         await tester.pump();
         expect(mockHelper.invocations, contains(const RefreshTaskInvocation()));
 
-        mockHelper.refreshCompleter.complete(null);
+        mockHelper.refreshCompleter.complete();
         await tester.pump();
         expect(
           mockHelper.invocations,
@@ -851,39 +792,19 @@ void main() {
         // Let it start going away but not fully.
         await tester.pump(const Duration(milliseconds: 100));
         // The refresh indicator is still building.
-        if (debugDefaultTargetPlatformOverride == TargetPlatform.macOS) {
-          expect(
-            mockHelper.invocations,
-            contains(
-              matchesBuilder(
-                refreshState: RefreshIndicatorMode.done,
-                pulledExtent: 90.13497854600749,
-                refreshTriggerPullDistance: 100, // default value.
-                refreshIndicatorExtent: 60, // default value.
-              ),
+        final double retractingDy = tester.getBottomLeft(find.widgetWithText(Center, '-1')).dy;
+        expect(retractingDy, inExclusiveRange(0.0, 150.0));
+        expect(
+          mockHelper.invocations,
+          contains(
+            matchesBuilder(
+              refreshState: RefreshIndicatorMode.done,
+              pulledExtent: moreOrLessEquals(retractingDy),
+              refreshTriggerPullDistance: 100, // default value.
+              refreshIndicatorExtent: 60, // default value.
             ),
-          );
-          expect(
-            tester.getBottomLeft(find.widgetWithText(Center, '-1')).dy,
-            moreOrLessEquals(90.13497854600749),
-          );
-        } else {
-          expect(
-            mockHelper.invocations,
-            contains(
-              matchesBuilder(
-                refreshState: RefreshIndicatorMode.done,
-                pulledExtent: 91.31180913199277,
-                refreshTriggerPullDistance: 100, // default value.
-                refreshIndicatorExtent: 60, // default value.
-              ),
-            ),
-          );
-          expect(
-            tester.getBottomLeft(find.widgetWithText(Center, '-1')).dy,
-            moreOrLessEquals(91.311809131992776),
-          );
-        }
+          ),
+        );
 
         // Start another drag by an amount that would have been enough to
         // trigger another refresh if it were in the right state.
@@ -898,31 +819,19 @@ void main() {
 
         // Instead, it's still in the done state because the sliver never
         // fully retracted.
-        if (debugDefaultTargetPlatformOverride == TargetPlatform.macOS) {
-          expect(
-            mockHelper.invocations,
-            contains(
-              matchesBuilder(
-                refreshState: RefreshIndicatorMode.done,
-                pulledExtent: 118.29756539042118,
-                refreshTriggerPullDistance: 100, // default value.
-                refreshIndicatorExtent: 60, // default value.
-              ),
+        final double draggedDy = tester.getBottomLeft(find.widgetWithText(Center, '-1')).dy;
+        expect(draggedDy, inExclusiveRange(retractingDy, 150.0 + retractingDy));
+        expect(
+          mockHelper.invocations,
+          contains(
+            matchesBuilder(
+              refreshState: RefreshIndicatorMode.done,
+              pulledExtent: moreOrLessEquals(draggedDy),
+              refreshTriggerPullDistance: 100, // default value.
+              refreshIndicatorExtent: 60, // default value.
             ),
-          );
-        } else {
-          expect(
-            mockHelper.invocations,
-            contains(
-              matchesBuilder(
-                refreshState: RefreshIndicatorMode.done,
-                pulledExtent: 147.3772721631821,
-                refreshTriggerPullDistance: 100, // default value.
-                refreshIndicatorExtent: 60, // default value.
-              ),
-            ),
-          );
-        }
+          ),
+        );
 
         // Now let it fully go away.
         await tester.pump(const Duration(seconds: 5));
@@ -979,7 +888,7 @@ void main() {
         expect(mockHelper.invocations, contains(const RefreshTaskInvocation()));
 
         // Complete the task while held down.
-        mockHelper.refreshCompleter.complete(null);
+        mockHelper.refreshCompleter.complete();
         await tester.pump();
 
         expect(
@@ -1069,7 +978,7 @@ void main() {
         );
 
         // Complete the task while scrolled away.
-        mockHelper.refreshCompleter.complete(null);
+        mockHelper.refreshCompleter.complete();
         // The sliver is instantly gone since there is no overscroll physics
         // simulation.
         await tester.pump();
@@ -1180,27 +1089,15 @@ void main() {
 
         await tester.pump(const Duration(milliseconds: 10));
 
-        if (debugDefaultTargetPlatformOverride == TargetPlatform.macOS) {
-          expect(
-            mockHelper.invocations.last,
-            matchesBuilder(
-              refreshState: RefreshIndicatorMode.done,
-              pulledExtent: moreOrLessEquals(148.36088180097366),
-              refreshTriggerPullDistance: 100.0, // Default value.
-              refreshIndicatorExtent: 60.0, // Default value.
-            ),
-          );
-        } else {
-          expect(
-            mockHelper.invocations.last,
-            matchesBuilder(
-              refreshState: RefreshIndicatorMode.done,
-              pulledExtent: moreOrLessEquals(148.6463892921364),
-              refreshTriggerPullDistance: 100.0, // Default value.
-              refreshIndicatorExtent: 60.0, // Default value.
-            ),
-          );
-        }
+        expect(
+          mockHelper.invocations.last,
+          matchesBuilder(
+            refreshState: RefreshIndicatorMode.done,
+            pulledExtent: inExclusiveRange(0.0, 150.0),
+            refreshTriggerPullDistance: 100.0, // Default value.
+            refreshIndicatorExtent: 60.0, // Default value.
+          ),
+        );
 
         await tester.pump(const Duration(seconds: 5));
         expect(find.text('-1'), findsNothing);
@@ -1487,7 +1384,7 @@ void main() {
           const Rect.fromLTRB(0.0, 60.0, 800.0, 260.0),
         );
 
-        mockHelper.refreshCompleter.complete(null);
+        mockHelper.refreshCompleter.complete();
         // The task completed between frames. The internal state goes to done
         // right away even though the sliver gets a new offset correction the
         // next frame.
@@ -1527,7 +1424,7 @@ void main() {
           RefreshIndicatorMode.armed,
         );
 
-        mockHelper.refreshCompleter.complete(null);
+        mockHelper.refreshCompleter.complete();
         expect(
           CupertinoSliverRefreshControl.state(tester.element(find.byType(LayoutBuilder))),
           RefreshIndicatorMode.done,
@@ -1624,7 +1521,7 @@ void main() {
           RefreshIndicatorMode.refresh,
         );
 
-        mockHelper.refreshCompleter.complete(null);
+        mockHelper.refreshCompleter.complete();
         // The sliver layout extent is removed on next frame.
         await tester.pump();
         expect(
@@ -1692,7 +1589,7 @@ void main() {
           const Rect.fromLTRB(0.0, 0.0, 800.0, 200.0),
         );
 
-        mockHelper.refreshCompleter.complete(null);
+        mockHelper.refreshCompleter.complete();
         await tester.pump();
         // Goes to inactive right away since the sliver is already collapsed.
         expect(

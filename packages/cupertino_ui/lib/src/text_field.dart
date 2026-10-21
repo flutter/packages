@@ -340,9 +340,9 @@ class CupertinoTextField extends StatefulWidget {
        assert(maxLength == null || maxLength > 0),
        // Assert the following instead of setting it directly to avoid surprising the user by silently changing the value they set.
        assert(
-         !identical(textInputAction, TextInputAction.newline) ||
+         textInputAction != TextInputAction.newline ||
              maxLines == 1 ||
-             !identical(keyboardType, TextInputType.text),
+             keyboardType != TextInputType.text,
          'Use keyboardType TextInputType.multiline when using TextInputAction.newline on a multiline TextField.',
        ),
        keyboardType =
@@ -480,9 +480,9 @@ class CupertinoTextField extends StatefulWidget {
        assert(maxLength == null || maxLength > 0),
        // Assert the following instead of setting it directly to avoid surprising the user by silently changing the value they set.
        assert(
-         !identical(textInputAction, TextInputAction.newline) ||
+         textInputAction != TextInputAction.newline ||
              maxLines == 1 ||
-             !identical(keyboardType, TextInputType.text),
+             keyboardType != TextInputType.text,
          'Use keyboardType TextInputType.multiline when using TextInputAction.newline on a multiline TextField.',
        ),
        keyboardType =

@@ -1,5 +1,12 @@
-## NEXT
+## 0.9.5+2
 
+* Updates minimum supported SDK version to Flutter 3.47/Dart 3.13.
+* Updates minimum macOS version to 12.
+* Removes the macOS 10.15 code path that used the deprecated `allowedFileTypes` property.
+
+## 0.9.5+1
+
+* Updates pigeon dev_dependency to ^27.3.2 for analyzer 14 compatibility.
 * Updates minimum supported SDK version to Flutter 3.38/Dart 3.10.
 
 ## 0.9.5

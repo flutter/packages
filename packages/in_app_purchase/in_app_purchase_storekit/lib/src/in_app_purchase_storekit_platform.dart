@@ -108,6 +108,8 @@ class InAppPurchaseStoreKitPlatform extends InAppPurchasePlatform {
   /// - [Sk2PurchaseParam] — to include StoreKit2-specific fields like:
   ///   - [winBackOfferId]: Applies a win-back offer.
   ///   - [promotionalOffer]: Applies a promotional offer (requires a valid signature).
+  ///   - [introductoryOfferEligibilityCompactJWS]: Sets introductory offer
+  ///     eligibility from a server-signed compact JWS.
   ///
   /// - [AppStorePurchaseParam] — for StoreKit1 flows using `SKPaymentQueue`.
   ///
@@ -163,6 +165,8 @@ class InAppPurchaseStoreKitPlatform extends InAppPurchasePlatform {
           quantity: purchaseParam.quantity,
           winBackOfferId: purchaseParam.winBackOfferId,
           promotionalOffer: _convertPromotionalOffer(purchaseParam.promotionalOffer),
+          introductoryOfferEligibilityCompactJWS:
+              purchaseParam.introductoryOfferEligibilityCompactJWS,
         );
       } else {
         options = SK2ProductPurchaseOptions(

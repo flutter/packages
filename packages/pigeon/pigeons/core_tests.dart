@@ -1159,6 +1159,9 @@ abstract class HostIntegrationCoreApi {
 
   @async
   void callFlutterCallbackThrowErrorFromVoid();
+
+  @async
+  bool callFlutterIsAsyncFlutterApiOnRoot();
 }
 
 /// A Flutter API using callback-based asynchronous methods (@asyncCallback).
@@ -1447,9 +1450,6 @@ abstract class FlutterIntegrationCoreApi {
   AnotherEnum? echoAnotherNullableEnum(AnotherEnum? anotherEnum);
 
   // ========== Async tests ==========
-  // These are minimal since async FlutterApi only changes Dart generation.
-  // Currently they aren't integration tested, but having them here ensures
-  // analysis coverage.
 
   /// A no-op function taking no arguments and returning no value, to sanity
   /// test basic asynchronous calling.
@@ -1461,6 +1461,10 @@ abstract class FlutterIntegrationCoreApi {
   @ObjCSelector('echoAsyncString:')
   @SwiftFunction('echoAsync(_:)')
   String echoAsyncString(String aString);
+
+  /// Returns true if the async FlutterApi method is run on the root isolate.
+  @async
+  bool isAsyncFlutterApiOnRoot();
 }
 
 /// A Host API using callback-based asynchronous methods (@asyncCallback).

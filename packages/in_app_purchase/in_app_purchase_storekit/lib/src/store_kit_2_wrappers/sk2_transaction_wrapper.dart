@@ -162,6 +162,8 @@ extension on SK2TransactionMessage {
       status: purchaseStatus,
       purchaseID: id > 0 ? id.toString() : null,
       appAccountToken: appAccountToken,
+      expirationDate: _secondsToMillisecondsSinceEpochString(expirationDate),
+      sk2Transaction: id > 0 ? convertFromPigeon() : null,
     );
   }
 

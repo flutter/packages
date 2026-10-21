@@ -8,6 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:leak_tracker_flutter_testing/leak_tracker_flutter_testing.dart';
 import 'package:two_dimensional_scrollables/two_dimensional_scrollables.dart';
 
 const TableSpan span = TableSpan(extent: FixedTableSpanExtent(100));
@@ -38,16 +39,37 @@ TableSpan getMouseTrackingSpan(
   );
 }
 
+// Counts how many times a span's decoration is painted, keyed by span index.
+class CountingSpanDecoration extends TableSpanDecoration {
+  const CountingSpanDecoration({required this.index, required this.paintCounts});
+
+  final int index;
+  final Map<int, int> paintCounts;
+
+  @override
+  void paint(TableSpanDecorationPaintDetails details) {
+    paintCounts.update(index, (int count) => count + 1, ifAbsent: () => 1);
+    super.paint(details);
+  }
+}
+
 void main() {
   group('TableView.builder', () {
-    test('creates correct delegate', () {
-      final tableView = TableView.builder(
+    testWidgets('creates correct delegate', (WidgetTester tester) async {
+      final widget = TableView.builder(
         columnCount: 3,
         rowCount: 2,
         rowBuilder: (_) => span,
         columnBuilder: (_) => span,
         cellBuilder: (_, _) => cell,
       );
+
+      await tester.pumpWidget(widget);
+
+      final TwoDimensionalScrollView tableView = tester.widget<TwoDimensionalScrollView>(
+        find.byWidgetPredicate((widget) => widget is TwoDimensionalScrollView),
+      );
+
       final delegate = tableView.delegate as TableCellBuilderDelegate;
       expect(delegate.pinnedRowCount, 0);
       expect(delegate.pinnedRowCount, 0);
@@ -1797,97 +1819,109 @@ void main() {
         expect(tester.getRect(find.text('R1:C1')), const Rect.fromLTRB(200.0, 200.0, 400.0, 400.0));
       });
 
-      testWidgets('merged column that exceeds metrics will assert', (WidgetTester tester) async {
-        final exceptions = <Object>[];
-        final FlutterExceptionHandler? oldHandler = FlutterError.onError;
-        FlutterError.onError = (FlutterErrorDetails details) {
-          exceptions.add(details.exception);
-        };
-        const ({int start, int span}) columnConfig = (start: 1, span: 10);
-        final mergedColumns = List<int>.generate(10, (int index) => index + 1);
-        await tester.pumpWidget(
-          MaterialApp(
-            home: getTableView(
-              columnBuilder: (int index) {
-                // There will only be 8 columns, but the merge is set up for 10.
-                if (index == 8) {
-                  return null;
-                }
-                return largeSpan;
-              },
-              cellBuilder: (_, TableVicinity vicinity) {
-                // Merged column
-                if (mergedColumns.contains(vicinity.column) && vicinity.row == 0) {
-                  return TableViewCell(
-                    columnMergeStart: columnConfig.start,
-                    columnMergeSpan: columnConfig.span,
-                    child: const Text('R0:C1'),
-                  );
-                }
-                return TableViewCell(child: Text('R${vicinity.row}:C${vicinity.column}'));
-              },
+      testWidgets(
+        'merged column that exceeds metrics will assert',
+        // The build throws an assertion error which prevents the table from
+        // properly disposing the elements.
+        experimentalLeakTesting: LeakTesting.settings.withIgnoredAll(),
+        (WidgetTester tester) async {
+          final exceptions = <Object>[];
+          final FlutterExceptionHandler? oldHandler = FlutterError.onError;
+          FlutterError.onError = (FlutterErrorDetails details) {
+            exceptions.add(details.exception);
+          };
+          const ({int start, int span}) columnConfig = (start: 1, span: 10);
+          final mergedColumns = List<int>.generate(10, (int index) => index + 1);
+          await tester.pumpWidget(
+            MaterialApp(
+              home: getTableView(
+                columnBuilder: (int index) {
+                  // There will only be 8 columns, but the merge is set up for 10.
+                  if (index == 8) {
+                    return null;
+                  }
+                  return largeSpan;
+                },
+                cellBuilder: (_, TableVicinity vicinity) {
+                  // Merged column
+                  if (mergedColumns.contains(vicinity.column) && vicinity.row == 0) {
+                    return TableViewCell(
+                      columnMergeStart: columnConfig.start,
+                      columnMergeSpan: columnConfig.span,
+                      child: const Text('R0:C1'),
+                    );
+                  }
+                  return TableViewCell(child: Text('R${vicinity.row}:C${vicinity.column}'));
+                },
+              ),
             ),
-          ),
-        );
-        await tester.pumpWidget(Container());
-        FlutterError.onError = oldHandler;
-        expect(exceptions.length, 3);
-        expect(
-          exceptions.first.toString(),
-          contains(
-            'The merged cell containing (row: 0, column: 1) is '
-            'missing TableSpan information necessary for layout. The '
-            'columnBuilder returned null, signifying the end, at column 8 but '
-            'the merged cell is configured to end with column 10.',
-          ),
-        );
-      });
+          );
+          await tester.pumpWidget(const SizedBox());
+          FlutterError.onError = oldHandler;
+          expect(exceptions, hasLength(3));
+          expect(
+            exceptions.first.toString(),
+            contains(
+              'The merged cell containing (row: 0, column: 1) is '
+              'missing TableSpan information necessary for layout. The '
+              'columnBuilder returned null, signifying the end, at column 8 but '
+              'the merged cell is configured to end with column 10.',
+            ),
+          );
+        },
+      );
 
-      testWidgets('merged row that exceeds metrics will assert', (WidgetTester tester) async {
-        final exceptions = <Object>[];
-        final FlutterExceptionHandler? oldHandler = FlutterError.onError;
-        FlutterError.onError = (FlutterErrorDetails details) {
-          exceptions.add(details.exception);
-        };
-        const ({int start, int span}) rowConfig = (start: 0, span: 10);
-        final mergedRows = List<int>.generate(10, (int index) => index);
-        await tester.pumpWidget(
-          MaterialApp(
-            home: getTableView(
-              rowBuilder: (int index) {
-                // There will only be 8 rows, but the merge is set up for 9.
-                if (index == 8) {
-                  return null;
-                }
-                return largeSpan;
-              },
-              cellBuilder: (_, TableVicinity vicinity) {
-                // Merged column
-                if (mergedRows.contains(vicinity.row) && vicinity.column == 0) {
-                  return TableViewCell(
-                    rowMergeStart: rowConfig.start,
-                    rowMergeSpan: rowConfig.span,
-                    child: const Text('R0:C0'),
-                  );
-                }
-                return TableViewCell(child: Text('R${vicinity.row}:C${vicinity.column}'));
-              },
+      testWidgets(
+        'merged row that exceeds metrics will assert',
+        // The build throws an assertion error which prevents the table from
+        // properly disposing the elements.
+        experimentalLeakTesting: LeakTesting.settings.withIgnoredAll(),
+        (WidgetTester tester) async {
+          final exceptions = <Object>[];
+          final FlutterExceptionHandler? oldHandler = FlutterError.onError;
+          FlutterError.onError = (FlutterErrorDetails details) {
+            exceptions.add(details.exception);
+          };
+          const ({int start, int span}) rowConfig = (start: 0, span: 10);
+          final mergedRows = List<int>.generate(10, (int index) => index);
+          await tester.pumpWidget(
+            MaterialApp(
+              home: getTableView(
+                rowBuilder: (int index) {
+                  // There will only be 8 rows, but the merge is set up for 9.
+                  if (index == 8) {
+                    return null;
+                  }
+                  return largeSpan;
+                },
+                cellBuilder: (_, TableVicinity vicinity) {
+                  // Merged column
+                  if (mergedRows.contains(vicinity.row) && vicinity.column == 0) {
+                    return TableViewCell(
+                      rowMergeStart: rowConfig.start,
+                      rowMergeSpan: rowConfig.span,
+                      child: const Text('R0:C0'),
+                    );
+                  }
+                  return TableViewCell(child: Text('R${vicinity.row}:C${vicinity.column}'));
+                },
+              ),
             ),
-          ),
-        );
-        await tester.pumpWidget(Container());
-        FlutterError.onError = oldHandler;
-        expect(exceptions.length, 3);
-        expect(
-          exceptions.first.toString(),
-          contains(
-            'The merged cell containing (row: 0, column: 0) is '
-            'missing TableSpan information necessary for layout. The '
-            'rowBuilder returned null, signifying the end, at row 8 but '
-            'the merged cell is configured to end with row 9.',
-          ),
-        );
-      });
+          );
+          await tester.pumpWidget(const SizedBox());
+          FlutterError.onError = oldHandler;
+          expect(exceptions, hasLength(3));
+          expect(
+            exceptions.first.toString(),
+            contains(
+              'The merged cell containing (row: 0, column: 0) is '
+              'missing TableSpan information necessary for layout. The '
+              'rowBuilder returned null, signifying the end, at row 8 but '
+              'the merged cell is configured to end with row 9.',
+            ),
+          );
+        },
+      );
 
       testWidgets('Binary search correctly finds first/last non-pinned cells', (
         WidgetTester tester,
@@ -1921,8 +1955,8 @@ void main() {
   });
 
   group('TableView.list', () {
-    test('creates correct delegate', () {
-      final tableView = TableView.list(
+    testWidgets('creates correct delegate', (WidgetTester tester) async {
+      final widget = TableView.list(
         rowBuilder: (_) => span,
         columnBuilder: (_) => span,
         cells: const <List<TableViewCell>>[
@@ -1930,6 +1964,13 @@ void main() {
           <TableViewCell>[cell, cell, cell],
         ],
       );
+
+      await tester.pumpWidget(widget);
+
+      final TwoDimensionalScrollView tableView = tester.widget<TwoDimensionalScrollView>(
+        find.byWidgetPredicate((widget) => widget is TwoDimensionalScrollView),
+      );
+
       final delegate = tableView.delegate as TableCellListDelegate;
       expect(delegate.pinnedRowCount, 0);
       expect(delegate.pinnedRowCount, 0);
@@ -2312,7 +2353,11 @@ void main() {
       final rowExtent = TestTableSpanExtent();
       final verticalController = ScrollController();
       final horizontalController = ScrollController();
-      final tableView = TableView.builder(
+      addTearDown(() {
+        verticalController.dispose();
+        horizontalController.dispose();
+      });
+      final Widget tableView = TableView.builder(
         rowCount: 10,
         columnCount: 10,
         columnBuilder: (_) => TableSpan(extent: columnExtent),
@@ -2548,7 +2593,11 @@ void main() {
     testWidgets('regular layout - no pinning', (WidgetTester tester) async {
       final verticalController = ScrollController();
       final horizontalController = ScrollController();
-      final tableView = TableView.builder(
+      addTearDown(() {
+        verticalController.dispose();
+        horizontalController.dispose();
+      });
+      final Widget tableView = TableView.builder(
         rowCount: 50,
         columnCount: 50,
         columnBuilder: (_) => span,
@@ -2623,7 +2672,11 @@ void main() {
       // Just pinned rows
       final verticalController = ScrollController();
       final horizontalController = ScrollController();
-      var tableView = TableView.builder(
+      addTearDown(() {
+        verticalController.dispose();
+        horizontalController.dispose();
+      });
+      Widget tableView = TableView.builder(
         rowCount: 50,
         pinnedRowCount: 1,
         columnCount: 50,
@@ -2853,7 +2906,11 @@ void main() {
     testWidgets('only paints visible cells', (WidgetTester tester) async {
       final verticalController = ScrollController();
       final horizontalController = ScrollController();
-      final tableView = TableView.builder(
+      addTearDown(() {
+        verticalController.dispose();
+        horizontalController.dispose();
+      });
+      final Widget tableView = TableView.builder(
         rowCount: 50,
         columnCount: 50,
         columnBuilder: (_) => span,
@@ -3377,7 +3434,11 @@ void main() {
       testWidgets('Normal axes', (WidgetTester tester) async {
         final verticalController = ScrollController();
         final horizontalController = ScrollController();
-        final tableView = TableView.builder(
+        addTearDown(() {
+          verticalController.dispose();
+          horizontalController.dispose();
+        });
+        final Widget tableView = TableView.builder(
           verticalDetails: ScrollableDetails.vertical(controller: verticalController),
           horizontalDetails: ScrollableDetails.horizontal(controller: horizontalController),
           columnCount: 20,
@@ -3434,7 +3495,11 @@ void main() {
       testWidgets('Vertical reversed', (WidgetTester tester) async {
         final verticalController = ScrollController();
         final horizontalController = ScrollController();
-        final tableView = TableView.builder(
+        addTearDown(() {
+          verticalController.dispose();
+          horizontalController.dispose();
+        });
+        final Widget tableView = TableView.builder(
           verticalDetails: ScrollableDetails.vertical(
             reverse: true,
             controller: verticalController,
@@ -3494,7 +3559,11 @@ void main() {
       testWidgets('Horizontal reversed', (WidgetTester tester) async {
         final verticalController = ScrollController();
         final horizontalController = ScrollController();
-        final tableView = TableView.builder(
+        addTearDown(() {
+          verticalController.dispose();
+          horizontalController.dispose();
+        });
+        final Widget tableView = TableView.builder(
           verticalDetails: ScrollableDetails.vertical(controller: verticalController),
           horizontalDetails: ScrollableDetails.horizontal(
             reverse: true,
@@ -3554,7 +3623,11 @@ void main() {
       testWidgets('Both reversed', (WidgetTester tester) async {
         final verticalController = ScrollController();
         final horizontalController = ScrollController();
-        final tableView = TableView.builder(
+        addTearDown(() {
+          verticalController.dispose();
+          horizontalController.dispose();
+        });
+        final Widget tableView = TableView.builder(
           verticalDetails: ScrollableDetails.vertical(
             reverse: true,
             controller: verticalController,
@@ -3621,13 +3694,17 @@ void main() {
   ) async {
     final verticalController = ScrollController();
     final horizontalController = ScrollController();
+    addTearDown(() {
+      verticalController.dispose();
+      horizontalController.dispose();
+    });
     final mergedCell = <TableVicinity>{
       const TableVicinity(row: 2, column: 2),
       const TableVicinity(row: 3, column: 2),
       const TableVicinity(row: 2, column: 3),
       const TableVicinity(row: 3, column: 3),
     };
-    final tableView = TableView.builder(
+    final Widget tableView = TableView.builder(
       columnCount: 10,
       rowCount: 10,
       columnBuilder: (_) => const TableSpan(extent: FixedTableSpanExtent(100)),
@@ -3880,6 +3957,10 @@ void main() {
   testWidgets('Trailing pinned columns and rows - smoke test', (WidgetTester tester) async {
     final horizontalController = ScrollController();
     final verticalController = ScrollController();
+    addTearDown(() {
+      verticalController.dispose();
+      horizontalController.dispose();
+    });
 
     Widget getTableView({
       int? columnCount = 10,
@@ -3939,6 +4020,247 @@ void main() {
     expect(tester.getRect(find.text('R9 C0')).top, 300);
     expect(tester.getRect(find.text('R9 C9')).left, 300);
     expect(tester.getRect(find.text('R9 C9')).top, 300);
+  });
+
+  // Regression test for https://github.com/flutter/flutter/issues/185842.
+  testWidgets('Trailing pinned columns are excluded from the non-pinned column range', (
+    WidgetTester tester,
+  ) async {
+    final horizontalController = ScrollController();
+    addTearDown(horizontalController.dispose);
+    final paintCounts = <int, int>{};
+
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Scaffold(
+          body: SizedBox(
+            height: 400,
+            width: 400,
+            child: TableView.builder(
+              columnCount: 20,
+              rowCount: 4,
+              trailingPinnedColumnCount: 1,
+              horizontalDetails: ScrollableDetails.horizontal(controller: horizontalController),
+              columnBuilder: (int index) => TableSpan(
+                extent: const FixedTableSpanExtent(100),
+                backgroundDecoration: CountingSpanDecoration(
+                  index: index,
+                  paintCounts: paintCounts,
+                ),
+              ),
+              rowBuilder: (int index) => const TableSpan(extent: FixedTableSpanExtent(100)),
+              cellBuilder: (BuildContext context, TableVicinity vicinity) {
+                return TableViewCell(child: Text('R${vicinity.row} C${vicinity.column}'));
+              },
+            ),
+          ),
+        ),
+      ),
+    );
+
+    // Once scrolled to the end, no regular column reaches the trailing edge of
+    // the layout target. That is where the range of non-pinned columns used to
+    // fall back to the last column of the table, which is a trailing pinned
+    // one, making it part of both the non-pinned and the trailing pinned
+    // region.
+    paintCounts.clear();
+    horizontalController.jumpTo(horizontalController.position.maxScrollExtent);
+    await tester.pump();
+
+    expect(tester.takeException(), isNull);
+    // The trailing pinned column is decorated once, by the trailing pinned
+    // region only.
+    expect(paintCounts[19], 1);
+    expect(find.text('R0 C19'), findsOneWidget);
+  });
+
+  // Regression test for https://github.com/flutter/flutter/issues/185842.
+  testWidgets('Trailing pinned rows are excluded from the non-pinned row range', (
+    WidgetTester tester,
+  ) async {
+    final verticalController = ScrollController();
+    addTearDown(verticalController.dispose);
+    final paintCounts = <int, int>{};
+
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Scaffold(
+          body: SizedBox(
+            height: 400,
+            width: 400,
+            child: TableView.builder(
+              columnCount: 4,
+              rowCount: 20,
+              trailingPinnedRowCount: 1,
+              verticalDetails: ScrollableDetails.vertical(controller: verticalController),
+              columnBuilder: (int index) => const TableSpan(extent: FixedTableSpanExtent(100)),
+              rowBuilder: (int index) => TableSpan(
+                extent: const FixedTableSpanExtent(100),
+                backgroundDecoration: CountingSpanDecoration(
+                  index: index,
+                  paintCounts: paintCounts,
+                ),
+              ),
+              cellBuilder: (BuildContext context, TableVicinity vicinity) {
+                return TableViewCell(child: Text('R${vicinity.row} C${vicinity.column}'));
+              },
+            ),
+          ),
+        ),
+      ),
+    );
+
+    paintCounts.clear();
+    verticalController.jumpTo(verticalController.position.maxScrollExtent);
+    await tester.pump();
+
+    expect(tester.takeException(), isNull);
+    expect(paintCounts[19], 1);
+    expect(find.text('R19 C0'), findsOneWidget);
+  });
+
+  // Regression test for https://github.com/flutter/flutter/issues/185842.
+  testWidgets('Trailing pinned rows and columns are excluded from the non-pinned ranges together', (
+    WidgetTester tester,
+  ) async {
+    final verticalController = ScrollController();
+    addTearDown(verticalController.dispose);
+    final horizontalController = ScrollController();
+    addTearDown(horizontalController.dispose);
+    final rowPaintCounts = <int, int>{};
+    final columnPaintCounts = <int, int>{};
+
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Scaffold(
+          body: SizedBox(
+            height: 400,
+            width: 400,
+            child: TableView.builder(
+              columnCount: 20,
+              rowCount: 20,
+              trailingPinnedColumnCount: 1,
+              trailingPinnedRowCount: 1,
+              verticalDetails: ScrollableDetails.vertical(controller: verticalController),
+              horizontalDetails: ScrollableDetails.horizontal(controller: horizontalController),
+              columnBuilder: (int index) => TableSpan(
+                extent: const FixedTableSpanExtent(100),
+                backgroundDecoration: CountingSpanDecoration(
+                  index: index,
+                  paintCounts: columnPaintCounts,
+                ),
+              ),
+              rowBuilder: (int index) => TableSpan(
+                extent: const FixedTableSpanExtent(100),
+                backgroundDecoration: CountingSpanDecoration(
+                  index: index,
+                  paintCounts: rowPaintCounts,
+                ),
+              ),
+              cellBuilder: (BuildContext context, TableVicinity vicinity) {
+                return TableViewCell(child: Text('R${vicinity.row} C${vicinity.column}'));
+              },
+            ),
+          ),
+        ),
+      ),
+    );
+
+    rowPaintCounts.clear();
+    columnPaintCounts.clear();
+    verticalController.jumpTo(verticalController.position.maxScrollExtent);
+    horizontalController.jumpTo(horizontalController.position.maxScrollExtent);
+    await tester.pump();
+
+    expect(tester.takeException(), isNull);
+    // Each trailing pinned span is decorated once for each region it shares
+    // with the other axis: the regular region and the trailing pinned one.
+    expect(rowPaintCounts[19], 2);
+    expect(columnPaintCounts[19], 2);
+    // The corner cell belongs to the trailing pinned row and column only.
+    expect(find.text('R19 C19'), findsOneWidget);
+    expect(find.text('R19 C18'), findsOneWidget);
+    expect(find.text('R18 C19'), findsOneWidget);
+  });
+
+  testWidgets('Regular columns are found when more than one column is trailing pinned', (
+    WidgetTester tester,
+  ) async {
+    final verticalController = ScrollController();
+    addTearDown(verticalController.dispose);
+
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Scaffold(
+          body: SizedBox(
+            height: 400,
+            width: 400,
+            child: TableView.builder(
+              columnCount: 3,
+              rowCount: 20,
+              trailingPinnedColumnCount: 2,
+              verticalDetails: ScrollableDetails.vertical(controller: verticalController),
+              columnBuilder: (int index) => const TableSpan(extent: FixedTableSpanExtent(100)),
+              rowBuilder: (int index) => const TableSpan(extent: FixedTableSpanExtent(100)),
+              cellBuilder: (BuildContext context, TableVicinity vicinity) {
+                return TableViewCell(child: Text('R${vicinity.row} C${vicinity.column}'));
+              },
+            ),
+          ),
+        ),
+      ),
+    );
+    expect(find.text('R0 C0'), findsOneWidget);
+
+    // Scrolling lays the table out again from the cached metrics, which binary
+    // searches them for the first and last regular column. The trailing pinned
+    // columns at the end of the metrics must not steer that search away from
+    // the only regular column.
+    verticalController.jumpTo(100);
+    await tester.pump();
+
+    expect(tester.takeException(), isNull);
+    expect(find.text('R1 C0'), findsOneWidget);
+    expect(find.text('R1 C1'), findsOneWidget);
+    expect(find.text('R1 C2'), findsOneWidget);
+  });
+
+  testWidgets('Regular rows are found when more than one row is trailing pinned', (
+    WidgetTester tester,
+  ) async {
+    final horizontalController = ScrollController();
+    addTearDown(horizontalController.dispose);
+
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Scaffold(
+          body: SizedBox(
+            height: 400,
+            width: 400,
+            child: TableView.builder(
+              columnCount: 20,
+              rowCount: 3,
+              trailingPinnedRowCount: 2,
+              horizontalDetails: ScrollableDetails.horizontal(controller: horizontalController),
+              columnBuilder: (int index) => const TableSpan(extent: FixedTableSpanExtent(100)),
+              rowBuilder: (int index) => const TableSpan(extent: FixedTableSpanExtent(100)),
+              cellBuilder: (BuildContext context, TableVicinity vicinity) {
+                return TableViewCell(child: Text('R${vicinity.row} C${vicinity.column}'));
+              },
+            ),
+          ),
+        ),
+      ),
+    );
+    expect(find.text('R0 C0'), findsOneWidget);
+
+    horizontalController.jumpTo(100);
+    await tester.pump();
+
+    expect(tester.takeException(), isNull);
+    expect(find.text('R0 C1'), findsOneWidget);
+    expect(find.text('R1 C1'), findsOneWidget);
+    expect(find.text('R2 C1'), findsOneWidget);
   });
 
   testWidgets('Intersections of leading and trailing pinned', (WidgetTester tester) async {

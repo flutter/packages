@@ -40,9 +40,10 @@ abstract class PackageCommand extends Command<void> {
   PackageCommand(
     this.packagesDir, {
     this.processRunner = const ProcessRunner(),
-    this.platform = const LocalPlatform(),
+    NativePlatform? platform,
     GitDir? gitDir,
   }) : _gitDir = gitDir {
+    this.platform = platform ?? NativePlatform.current!;
     thirdPartyPackagesDir = rootDir.childDirectory('third_party').childDirectory('packages');
 
     argParser.addMultiOption(
@@ -206,7 +207,7 @@ abstract class PackageCommand extends Command<void> {
   /// The current platform.
   ///
   /// This can be overridden for testing.
-  final Platform platform;
+  late final NativePlatform platform;
 
   /// The git directory to use. If unset, [gitDir] populates it from the
   /// packages directory's enclosing repository.
@@ -642,6 +643,21 @@ abstract class PackageCommand extends Command<void> {
       baseBranch: baseBranch,
     );
     return gitVersionFinder;
+  }
+
+  /// Appends `name=value` to the file that GitHub Actions reads step outputs
+  /// from, making it available to later steps as `steps.<id>.outputs.<name>`.
+  ///
+  /// Does nothing when not running in GitHub Actions, where `GITHUB_OUTPUT` is
+  /// unset.
+  void writeGitHubActionsOutput(String name, String value) {
+    final String? githubOutput = platform.environment['GITHUB_OUTPUT'];
+    if (githubOutput == null || githubOutput.isEmpty) {
+      return;
+    }
+    packagesDir.fileSystem
+        .file(githubOutput)
+        .writeAsStringSync('$name=$value\n', mode: io.FileMode.append);
   }
 
   // Returns the names of packages that have been changed given a list of

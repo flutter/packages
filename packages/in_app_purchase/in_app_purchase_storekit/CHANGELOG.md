@@ -1,3 +1,49 @@
+## 0.4.15
+
+* Exposes `sk2Transaction` on `SK2PurchaseDetails`.
+
+## 0.4.14+1
+
+* Suppresses deprecation warnings for StoreKit 1 APIs, which are used as
+  the fallback on iOS < 15 and macOS < 12.
+* Replaces the deprecated `Locale.currencyCode` with `Locale.currency`.
+
+## 0.4.14
+
+* Adds `showManageSubscriptions` to `InAppPurchaseStoreKitPlatformAddition`, which presents the
+  App Store sheet for managing subscriptions. Requires StoreKit 2 and iOS 15+.
+
+## 0.4.13+3
+
+* Removes unused handling of the deprecated `SKDownload` hosted content
+  callbacks.
+
+## 0.4.13+2
+
+* Removes availability checks for iOS and macOS versions below the package minimum (iOS 13 and macOS 10.15).
+
+## 0.4.13+1
+
+* Fixes `completePurchase` never completing with StoreKit 2 when the transaction
+  is not found, such as an already finished consumable.
+* Updates minimum supported SDK version to Flutter 3.41/Dart 3.11.
+* Fixes lint issues.
+
+## 0.4.13
+
+* Exposes expirationDate on SK2PurchaseDetails.
+
+## 0.4.12
+
+* Adds support for setting introductory offer eligibility from a server-signed
+  compact JWS via `Sk2PurchaseParam.introductoryOfferEligibilityCompactJWS`,
+  which is forwarded to StoreKit 2 as
+  `Product.PurchaseOption.introductoryOfferEligibility(compactJWS:)`.
+
+## 0.4.11+2
+
+* Updates pigeon dev_dependency to ^27.3.2 for analyzer 14 compatibility.
+
 ## 0.4.11+1
 
 * Fixes StoreKit 2 restore transactions not grouping purchases into a single event.

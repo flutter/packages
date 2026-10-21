@@ -1,3 +1,7 @@
+## NEXT
+
+* Updates minimum supported SDK version to Flutter 3.41/Dart 3.11.
+
 ## 2.2.2
 
 * Fixes getApplicationId() behavior on Linux when GLib development packages are not installed.

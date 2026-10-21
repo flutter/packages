@@ -396,6 +396,23 @@ private let hlsAudioTestURI =
     #expect(player.player.preventsDisplaySleepDuringVideoPlayback == true)
   }
 
+  #if os(iOS)
+    @Test func externalPlaybackIsEnabledForAirPlay() {
+      let stubAVFactory = StubFVPAVFactory(player: AVPlayer())
+      let player = FVPVideoPlayer(
+        playerItem: StubPlayerItem(),
+        avFactory: stubAVFactory,
+        viewProvider: StubViewProvider())
+
+      // usesExternalPlaybackWhileExternalScreenIsActive defaults to NO, which
+      // keeps the video on the device whenever an external screen is active. An
+      // AirPlay route then moves only the audio, and the receiver shows a
+      // mirrored screen rather than playing the stream itself.
+      #expect(player.player.allowsExternalPlayback == true)
+      #expect(player.player.usesExternalPlaybackWhileExternalScreenIsActive == true)
+    }
+  #endif
+
   /// Sanity checks a video player playing the given URL with the actual AVPlayer. This is essentially
   /// a mini integration test of the player component.
   ///
@@ -997,6 +1014,32 @@ private let hlsAudioTestURI =
     #expect(player.player.currentItem?.preferredPeakBitRate == 0)
 
     player.disposeWithError(&error)
+  }
+
+  @Test func validFrameDurationWithPositiveTime() {
+    let duration = CMTimeMake(value: 1, timescale: 30)
+    #expect(FVPFrameDurationIsValid(duration))
+  }
+
+  @Test func validFrameDurationWithZeroTime() {
+    #expect(!FVPFrameDurationIsValid(CMTime.zero))
+  }
+
+  @Test func validFrameDurationWithInvalidTime() {
+    #expect(!FVPFrameDurationIsValid(CMTime.invalid))
+  }
+
+  @Test func validFrameDurationWithNegativeTime() {
+    let duration = CMTimeMake(value: -1, timescale: 30)
+    #expect(!FVPFrameDurationIsValid(duration))
+  }
+
+  @Test func validFrameDurationWithPositiveInfinity() {
+    #expect(!FVPFrameDurationIsValid(CMTime.positiveInfinity))
+  }
+
+  @Test func validFrameDurationWithIndefinite() {
+    #expect(!FVPFrameDurationIsValid(CMTime.indefinite))
   }
 
   // MARK: - Helper Methods

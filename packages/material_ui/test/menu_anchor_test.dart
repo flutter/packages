@@ -2477,7 +2477,7 @@ void main() {
       await tester.sendKeyEvent(LogicalKeyboardKey.arrowDown);
       await tester.pump();
       expect(focusedMenu, equals('MenuItemButton(Text("Submenu item 1"))'));
-    });
+    }, tags: 'reduced-web-test-set');
   });
 
   group('Accelerators', () {
@@ -3337,6 +3337,50 @@ void main() {
       expect(exception, isAssertionError);
     });
 
+    // This is a regression test for https://github.com/flutter/flutter/issues/192732.
+    testWidgets('MenuItemButton does not clip leadingIcon', (WidgetTester tester) async {
+      const label = 'This is a very long menu item label that must be clipped';
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: MenuAnchor(
+              menuChildren: <Widget>[
+                SizedBox(
+                  width: 200.0,
+                  child: MenuItemButton(
+                    leadingIcon: const Badge(
+                      label: Text('1'),
+                      child: Icon(Icons.add, key: Key('leading')),
+                    ),
+                    onPressed: () {},
+                    child: const Text(label, maxLines: 1),
+                  ),
+                ),
+              ],
+              builder: (BuildContext context, MenuController controller, Widget? child) {
+                return TextButton(onPressed: controller.open, child: const Text('Open'));
+              },
+            ),
+          ),
+        ),
+      );
+
+      await tester.tap(find.text('Open'));
+      await tester.pumpAndSettle();
+
+      // Decorations that paint outside the leading icon's bounds stay visible.
+      expect(
+        find.ancestor(of: find.byKey(const Key('leading')), matching: find.byType(ClipRect)),
+        findsNothing,
+      );
+
+      // The label itself is still clipped so that long labels truncate.
+      final Finder labelFinder = find.text(label);
+      expect(find.ancestor(of: labelFinder, matching: find.byType(ClipRect)), findsOneWidget);
+      final RenderParagraph paragraph = tester.renderObject<RenderParagraph>(labelFinder);
+      expect(paragraph.didExceedMaxLines, isTrue);
+    });
+
     testWidgets('MenuItemButton.styleFrom overlayColor overrides default overlay color', (
       WidgetTester tester,
     ) async {
@@ -4068,9 +4112,8 @@ void main() {
         MaterialApp(
           builder: (BuildContext context, Widget? child) {
             return MediaQuery(
-              data: MediaQuery.of(
-                context,
-              ).copyWith(viewInsets: const EdgeInsets.only(bottom: keyboardHeight)),
+              data: MediaQuery.of(context)
+                  .copyWith(viewInsets: const EdgeInsets.only(bottom: keyboardHeight)),
               child: child!,
             );
           },
@@ -4508,7 +4551,7 @@ void main() {
         );
 
         semantics.dispose();
-      });
+      }, tags: 'reduced-web-test-set');
 
       testWidgets('MenuItemButton semantics respects label', (WidgetTester tester) async {
         final semantics = SemanticsTester(tester);
@@ -4578,7 +4621,7 @@ void main() {
         );
 
         semantics.dispose();
-      });
+      }, tags: 'reduced-web-test-set');
 
       testWidgets('SubmenuButton expanded/collapsed state', (WidgetTester tester) async {
         final semantics = SemanticsTester(tester);
@@ -4742,7 +4785,7 @@ void main() {
         );
 
         semantics.dispose();
-      });
+      }, tags: 'reduced-web-test-set');
 
       testWidgets('Animated SubmenuButton expanded/collapsed state', (WidgetTester tester) async {
         final semantics = SemanticsTester(tester);
@@ -5486,7 +5529,7 @@ void main() {
         RendererBinding.instance.mouseTracker.debugDeviceActiveCursor(1),
         kIsWeb ? SystemMouseCursors.click : SystemMouseCursors.basic,
       );
-    });
+    }, tags: 'reduced-web-test-set');
 
     testWidgets('MenuItemButton has expected default mouse cursor on hover', (
       WidgetTester tester,
@@ -5530,7 +5573,7 @@ void main() {
         RendererBinding.instance.mouseTracker.debugDeviceActiveCursor(1),
         kIsWeb ? SystemMouseCursors.click : SystemMouseCursors.basic,
       );
-    });
+    }, tags: 'reduced-web-test-set');
 
     testWidgets('CheckboxMenuButton has expected default mouse cursor on hover', (
       WidgetTester tester,
@@ -5566,7 +5609,7 @@ void main() {
         RendererBinding.instance.mouseTracker.debugDeviceActiveCursor(1),
         kIsWeb ? SystemMouseCursors.click : SystemMouseCursors.basic,
       );
-    });
+    }, tags: 'reduced-web-test-set');
 
     testWidgets('RadioMenuButton has expected default mouse cursor on hover', (
       WidgetTester tester,
@@ -5603,7 +5646,7 @@ void main() {
         RendererBinding.instance.mouseTracker.debugDeviceActiveCursor(1),
         kIsWeb ? SystemMouseCursors.click : SystemMouseCursors.basic,
       );
-    });
+    }, tags: 'reduced-web-test-set');
 
     testWidgets('MenuItemButton has expected mouse cursor when explicitly configured', (
       WidgetTester tester,
@@ -7003,6 +7046,36 @@ void main() {
     menuController.open();
     await tester.pump();
     expect(find.text('X'), findsOne);
+  });
+
+  testWidgets('MenuAnchor applies semanticLabel to the expanded menu overlay', (
+    WidgetTester tester,
+  ) async {
+    final SemanticsHandle handle = tester.ensureSemantics();
+    final controller = MenuController();
+
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Material(
+          child: Center(
+            child: MenuAnchor(
+              controller: controller,
+              semanticLabel: 'Custom Menu Label',
+              menuChildren: const <Widget>[Text('Menu Item')],
+            ),
+          ),
+        ),
+      ),
+    );
+
+    expect(find.bySemanticsLabel('Custom Menu Label'), findsNothing);
+
+    controller.open();
+    await tester.pumpAndSettle();
+
+    expect(find.bySemanticsLabel('Custom Menu Label'), findsOneWidget);
+
+    handle.dispose();
   });
 }
 

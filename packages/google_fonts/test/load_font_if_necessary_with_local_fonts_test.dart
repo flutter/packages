@@ -8,7 +8,6 @@ library;
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -17,6 +16,7 @@ import 'package:google_fonts/src/google_fonts_descriptor.dart';
 import 'package:google_fonts/src/google_fonts_family_with_variant.dart';
 import 'package:google_fonts/src/google_fonts_variant.dart';
 import 'package:http/http.dart' as http;
+import 'package:material_ui/material_ui.dart';
 import 'package:mockito/mockito.dart';
 import 'package:path_provider_platform_interface/path_provider_platform_interface.dart';
 import 'package:plugin_platform_interface/plugin_platform_interface.dart';
@@ -55,7 +55,7 @@ const String _fakeResponse = 'fake response body - success';
 const int _fakeResponseLengthInBytes = 28;
 // Computed by converting _fakeResponse to bytes and getting sha 256 hash.
 const String _fakeResponseHash = '1194f6ffe4d2f05258573616a77932c38041f3102763096c19437c3db1818a04';
-final GoogleFontsFile _fakeResponseFile = GoogleFontsFile(
+const GoogleFontsFile _fakeResponseFile = GoogleFontsFile(
   _fakeResponseHash,
   _fakeResponseLengthInBytes,
 );
@@ -99,8 +99,8 @@ void main() {
 
   test('loadFontIfNecessary method does nothing if the font is in the '
       'Asset Manifest', () async {
-    final descriptorInAssets = GoogleFontsDescriptor(
-      familyWithVariant: const GoogleFontsFamilyWithVariant(
+    const descriptorInAssets = GoogleFontsDescriptor(
+      familyWithVariant: GoogleFontsFamilyWithVariant(
         family: 'Foo',
         googleFontsVariant: GoogleFontsVariant(
           fontWeight: FontWeight.w900,
@@ -115,8 +115,8 @@ void main() {
     await loadFontIfNecessary(descriptorInAssets);
     verifyNever(mockHttpClient.gets(anything));
 
-    final descriptorNotInAssets = GoogleFontsDescriptor(
-      familyWithVariant: const GoogleFontsFamilyWithVariant(
+    const descriptorNotInAssets = GoogleFontsDescriptor(
+      familyWithVariant: GoogleFontsFamilyWithVariant(
         family: 'Bar',
         googleFontsVariant: GoogleFontsVariant(
           fontWeight: FontWeight.w700,

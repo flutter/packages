@@ -520,6 +520,14 @@ abstract class ShellRouteBase extends RouteBase {
   /// Defaults to `true`.
   final bool notifyRootObserver;
 
+  /// The stable identity used to build this shell's page key.
+  ///
+  /// Applications that replace their routing table using
+  /// [GoRouter.routingConfig] must reuse this identity for an equivalent shell
+  /// to preserve the shell's page and nested navigator state.
+  @meta.internal
+  Object get pageIdentity;
+
   static void _debugCheckSubRouteParentNavigatorKeys(
     List<RouteBase> subRoutes,
     GlobalKey<NavigatorState> navigatorKey,
@@ -601,6 +609,20 @@ class ShellRouteContext {
     bool notifyRootObserver,
     String? restorationScopeId,
   ) {
+    return navigatorBuilder(
+      navigatorKey,
+      match,
+      routeMatchList,
+      _effectiveObservers(context, observers, notifyRootObserver),
+      restorationScopeId,
+    );
+  }
+
+  List<NavigatorObserver> _effectiveObservers(
+    BuildContext context,
+    List<NavigatorObserver>? observers,
+    bool notifyRootObserver,
+  ) {
     final effectiveObservers = <NavigatorObserver>[...?observers];
 
     if (notifyRootObserver) {
@@ -610,13 +632,7 @@ class ShellRouteContext {
       }
     }
 
-    return navigatorBuilder(
-      navigatorKey,
-      match,
-      routeMatchList,
-      effectiveObservers,
-      restorationScopeId,
-    );
+    return effectiveObservers;
   }
 }
 
@@ -714,6 +730,11 @@ class ShellRouteContext {
 /// ),
 /// ```
 ///
+/// See also:
+///
+/// * [StatefulShellRoute], which maintains separate navigation stacks for its
+///   branches and preserves their state when switching between them.
+///
 /// {@category Configuration}
 class ShellRoute extends ShellRouteBase {
   /// Constructs a [ShellRoute].
@@ -728,6 +749,7 @@ class ShellRoute extends ShellRouteBase {
     super.parentNavigatorKey,
     GlobalKey<NavigatorState>? navigatorKey,
     this.restorationScopeId,
+    this.clipBehavior = Clip.hardEdge,
   }) : assert(routes.isNotEmpty),
        navigatorKey = navigatorKey ?? GlobalKey<NavigatorState>(),
        super._() {
@@ -798,11 +820,32 @@ class ShellRoute extends ShellRouteBase {
   /// The [GlobalKey] to be used by the [Navigator] built for this route.
   /// All ShellRoutes build a Navigator by default. Child GoRoutes
   /// are placed onto this Navigator instead of the root Navigator.
+  ///
+  /// Applications that rebuild their routing table using
+  /// [GoRouter.routingConfig] should provide and reuse this key to preserve the
+  /// shell's page and navigator state.
   final GlobalKey<NavigatorState> navigatorKey;
 
   /// Restoration ID to save and restore the state of the navigator, including
   /// its history.
   final String? restorationScopeId;
+
+  /// The clip behavior of the [Navigator] built for this route.
+  ///
+  /// {@template go_router.ShellRoute.clipBehavior}
+  /// The nested Navigator clips its contents by default, so that the route
+  /// transitions of its sub-routes are not painted outside the bounds the
+  /// shell lays out for them. Set this to [Clip.none] when a sub-route needs
+  /// to paint outside those bounds, for example to render a box shadow or an
+  /// overflowing menu. Note that this also allows route transition animations
+  /// to paint outside the bounds of the shell.
+  ///
+  /// Defaults to [Clip.hardEdge].
+  /// {@endtemplate}
+  final Clip clipBehavior;
+
+  @override
+  Object get pageIdentity => navigatorKey;
 
   @override
   GlobalKey<NavigatorState> navigatorKeyForSubRoute(RouteBase subRoute) {
@@ -814,6 +857,7 @@ class ShellRoute extends ShellRouteBase {
   void debugFillProperties(DiagnosticPropertiesBuilder properties) {
     super.debugFillProperties(properties);
     properties.add(DiagnosticsProperty<GlobalKey<NavigatorState>>('navigatorKey', navigatorKey));
+    properties.add(EnumProperty<Clip>('clipBehavior', clipBehavior, defaultValue: Clip.hardEdge));
   }
 }
 
@@ -893,6 +937,10 @@ class StatefulShellRoute extends ShellRouteBase {
   /// the navigator key specified in [StatefulShellBranch]. The Widget
   /// implementing the container for the branch Navigators is provided by
   /// [navigatorContainerBuilder].
+  ///
+  /// Applications that rebuild their routing table using
+  /// [GoRouter.routingConfig] should provide and reuse [key] to preserve the
+  /// shell's page and branch navigator state.
   StatefulShellRoute({
     required this.branches,
     super.redirect,
@@ -928,6 +976,10 @@ class StatefulShellRoute extends ShellRouteBase {
   ///
   /// See [Stateful Nested Navigation](https://github.com/flutter/packages/blob/main/packages/go_router/example/lib/stacked_shell_route.dart)
   /// for a complete runnable example using StatefulShellRoute.indexedStack.
+  ///
+  /// Applications that rebuild their routing table using
+  /// [GoRouter.routingConfig] should provide and reuse [key] to preserve the
+  /// shell's page and branch navigator state.
   StatefulShellRoute.indexedStack({
     required List<StatefulShellBranch> branches,
     bool notifyRootObserver = true,
@@ -1003,6 +1055,9 @@ class StatefulShellRoute extends ShellRouteBase {
   final List<StatefulShellBranch> branches;
 
   final GlobalKey<StatefulNavigationShellState> _shellStateKey;
+
+  @override
+  Object get pageIdentity => _shellStateKey;
 
   @override
   Widget? buildWidget(
@@ -1117,6 +1172,10 @@ class StatefulShellRoute extends ShellRouteBase {
 /// provided when creating a StatefulShellBranch, which can be useful when the
 /// Navigator needs to be accessed elsewhere. If no key is provided, a default
 /// one will be created.
+///
+/// Applications that rebuild their routing table using
+/// [GoRouter.routingConfig] should provide and reuse [navigatorKey] to preserve
+/// this branch's navigator state.
 @immutable
 class StatefulShellBranch {
   /// Constructs a [StatefulShellBranch].
@@ -1127,6 +1186,7 @@ class StatefulShellBranch {
     this.restorationScopeId,
     this.observers,
     this.preload = false,
+    this.clipBehavior = Clip.hardEdge,
   }) : navigatorKey = navigatorKey ?? GlobalKey<NavigatorState>() {
     assert(() {
       ShellRouteBase._debugCheckSubRouteParentNavigatorKeys(routes, this.navigatorKey);
@@ -1161,6 +1221,14 @@ class StatefulShellBranch {
   ///
   /// The observers parameter is used by the [Navigator] built for this branch.
   final List<NavigatorObserver>? observers;
+
+  /// The clip behavior of the [Navigator] built for this branch.
+  ///
+  /// Each branch of a [StatefulShellRoute] builds its own [Navigator], so the
+  /// clip behavior is configured per branch rather than on the shell route.
+  ///
+  /// {@macro go_router.ShellRoute.clipBehavior}
+  final Clip clipBehavior;
 
   /// Whether this route branch should be eagerly loaded when navigating to the
   /// associated StatefulShellRoute for the first time.
@@ -1325,17 +1393,19 @@ class StatefulNavigationShell extends StatefulWidget {
 
 /// State for StatefulNavigationShell.
 class StatefulNavigationShellState extends State<StatefulNavigationShell> with RestorationMixin {
-  final Map<StatefulShellBranch, _StatefulShellBranchState> _branchState =
-      <StatefulShellBranch, _StatefulShellBranchState>{};
+  final Map<GlobalKey<NavigatorState>, _StatefulShellBranchState> _branchState =
+      <GlobalKey<NavigatorState>, _StatefulShellBranchState>{};
 
   /// The associated [StatefulShellRoute].
   StatefulShellRoute get route => widget.route;
 
   GoRouter get _router => widget._router;
 
-  bool _isBranchLoaded(StatefulShellBranch branch) => _branchState[branch] != null;
+  bool _isBranchLoaded(StatefulShellBranch branch) => _branchState[branch.navigatorKey] != null;
 
-  List<StatefulShellBranch> get _loadedBranches => _branchState.keys.toList();
+  List<StatefulShellBranch> get _loadedBranches => route.branches
+      .where((StatefulShellBranch branch) => _branchState.containsKey(branch.navigatorKey))
+      .toList();
 
   @override
   String? get restorationId => route.restorationScopeId;
@@ -1350,7 +1420,7 @@ class StatefulNavigationShellState extends State<StatefulNavigationShell> with R
   }
 
   _StatefulShellBranchState _branchStateFor(StatefulShellBranch branch, [bool register = true]) {
-    return _branchState.putIfAbsent(branch, () {
+    return _branchState.putIfAbsent(branch.navigatorKey, () {
       final branchState = _StatefulShellBranchState(
         location: _RestorableRouteMatchList(_router.configuration),
       );
@@ -1362,7 +1432,7 @@ class StatefulNavigationShellState extends State<StatefulNavigationShell> with R
   }
 
   RouteMatchList? _matchListForBranch(int index) =>
-      _branchState[route.branches[index]]?.location.value;
+      _branchState[route.branches[index].navigatorKey]?.location.value;
 
   /// Creates a new RouteMatchList that is scoped to the Navigators of the
   /// current shell route or it's descendants. This involves removing all the
@@ -1436,7 +1506,11 @@ class StatefulNavigationShellState extends State<StatefulNavigationShell> with R
           branch.navigatorKey,
           match!,
           matchList,
-          branch.observers,
+          widget.shellRouteContext._effectiveObservers(
+            context,
+            branch.observers,
+            route.notifyRootObserver,
+          ),
           branch.restorationScopeId,
         );
 
@@ -1448,13 +1522,66 @@ class StatefulNavigationShellState extends State<StatefulNavigationShell> with R
   }
 
   void _cleanUpObsoleteBranches() {
-    _branchState.removeWhere((StatefulShellBranch branch, _StatefulShellBranchState branchState) {
-      if (!route.branches.contains(branch)) {
+    final Set<GlobalKey<NavigatorState>> validKeys = route.branches
+        .map((StatefulShellBranch branch) => branch.navigatorKey)
+        .toSet();
+    _branchState.removeWhere((
+      GlobalKey<NavigatorState> navigatorKey,
+      _StatefulShellBranchState branchState,
+    ) {
+      if (!validKeys.contains(navigatorKey)) {
         branchState.dispose();
         return true;
       }
       return false;
     });
+  }
+
+  void _reparseInactiveBranches() {
+    // Their saved matches and navigator widgets still reference the old routes.
+    for (final StatefulShellBranch branch in route.branches) {
+      if (branch.navigatorKey == route.branches[widget.currentIndex].navigatorKey) {
+        continue;
+      }
+      final _StatefulShellBranchState? branchState = _branchState[branch.navigatorKey];
+      if (branchState == null || branchState.location.value.isEmpty) {
+        continue;
+      }
+
+      final RouteMatchList matchList = _scopedMatchList(
+        _router.configuration.reparse(branchState.location.value),
+      );
+      ShellRouteMatch? match;
+      matchList.visitRouteMatches((RouteMatchBase candidate) {
+        if (candidate is ShellRouteMatch && candidate.route == route) {
+          match = candidate;
+          return false;
+        }
+        return true;
+      });
+      final branchMatch = match;
+      if (matchList.isError ||
+          branchMatch == null ||
+          branchMatch.matches.isEmpty ||
+          branchMatch.navigatorKey != branch.navigatorKey) {
+        // The saved location was removed or moved to another branch.
+        _branchState.remove(branch.navigatorKey)!.dispose();
+        continue;
+      }
+
+      branchState.location.value = matchList;
+      branchState.navigator = widget.shellRouteContext.navigatorBuilder(
+        branch.navigatorKey,
+        branchMatch,
+        matchList,
+        widget.shellRouteContext._effectiveObservers(
+          context,
+          branch.observers,
+          route.notifyRootObserver,
+        ),
+        branch.restorationScopeId,
+      );
+    }
   }
 
   /// The index of the currently active [StatefulShellBranch].
@@ -1501,6 +1628,9 @@ class StatefulNavigationShellState extends State<StatefulNavigationShell> with R
   @override
   void didUpdateWidget(covariant StatefulNavigationShell oldWidget) {
     super.didUpdateWidget(oldWidget);
+    if (oldWidget.route != route) {
+      _reparseInactiveBranches();
+    }
     _updateCurrentBranchStateFromWidget();
   }
 
@@ -1509,9 +1639,10 @@ class StatefulNavigationShellState extends State<StatefulNavigationShell> with R
     final List<Widget> children = route.branches
         .map(
           (StatefulShellBranch branch) => _BranchNavigatorProxy(
-            key: ObjectKey(branch),
+            key: ValueKey<GlobalKey<NavigatorState>>(branch.navigatorKey),
             branch: branch,
-            navigatorForBranch: (StatefulShellBranch branch) => _branchState[branch]?.navigator,
+            navigatorForBranch: (StatefulShellBranch branch) =>
+                _branchState[branch.navigatorKey]?.navigator,
           ),
         )
         .toList();

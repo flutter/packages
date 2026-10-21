@@ -1,9 +1,6 @@
 # Code sharing
 
-This package shares most of its code with the other `google_maps_flutter_ios_*`
-packages in this repository, so after changing any code files in this package
-run:
-`dart run tool/sync_shared_files.dart`
-
-See [the shared directory README](../google_maps_flutter_ios_shared_code/README.md)
-for more details.
+This package is essentially frozen; future development is only expected to
+happen in the `_sdk*` variants, as this package cannot share code due to
+being unable to adopt Swift. Only critical fixes should be made in this
+package.

@@ -14,8 +14,6 @@ import com.google.android.gms.maps.model.GroundOverlayOptions;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import kotlin.Result;
-import kotlin.Unit;
 
 class GroundOverlaysController {
   private final Map<String, GroundOverlayController> groundOverlayIdToController;
@@ -127,7 +125,7 @@ class GroundOverlaysController {
     if (groundOverlayId == null) {
       return;
     }
-    flutterApi.onGroundOverlayTap(groundOverlayId, (Result<Unit> result) -> Unit.INSTANCE);
+    flutterApi.onGroundOverlayTap(groundOverlayId, ResultUtilsKt.emptyContinuation());
   }
 
   boolean isCreatedWithBounds(@NonNull String groundOverlayId) {
