@@ -1,3 +1,7 @@
+## 2.12.3
+
+* Converts internal event channel implementation to Swift.
+
 ## 2.12.2
 
 * Converts native player implementation to Swift.
