@@ -1,3 +1,10 @@
+## 2.15.0
+
+* Adds `drmConfiguration` to the network constructors, to allow playback of
+  DRM-protected streams. The configuration types are provided by the platform
+  implementation packages: `WidevineDrmConfiguration` from `video_player_android`
+  and `FairPlayDrmConfiguration` from `video_player_avfoundation`.
+
 ## 2.14.1
 
 * Fixes late position updates after a controller is disposed.

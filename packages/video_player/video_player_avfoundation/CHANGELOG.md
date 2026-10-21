@@ -1,3 +1,8 @@
+## 2.13.0
+
+* Adds `FairPlayDrmConfiguration`, allowing playback of FairPlay-protected
+  network streams on iOS and macOS.
+
 ## 2.12.1
 
 * Fixes a crash when a video track reports a zero `minFrameDuration`.

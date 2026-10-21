@@ -139,6 +139,84 @@ void main() {
       expect(creationOptions.httpHeaders, headers);
     });
 
+    test('create with network passes FairPlay DRM configuration', () async {
+      final (AVFoundationVideoPlayer player, MockAVFoundationVideoPlayerApi api, _) =
+          setUpMockPlayer(playerId: 1, textureId: 101);
+      when(
+        api.createForTextureView(any),
+      ).thenAnswer((_) async => TexturePlayerIds(playerId: 2, textureId: 102));
+
+      await player.create(
+        DataSource(
+          sourceType: DataSourceType.network,
+          uri: 'https://example.com/video.m3u8',
+          drmConfiguration: FairPlayDrmConfiguration(
+            certificateUri: Uri.parse('https://example.com/certificate'),
+            licenseUri: Uri.parse('https://example.com/license'),
+            licenseHeaders: const <String, String>{'Authorization': 'Bearer token'},
+            contentId: 'content-id',
+          ),
+        ),
+      );
+
+      final VerificationResult verification = verify(api.createForTextureView(captureAny));
+      final creationOptions = verification.captured[0] as CreationOptions;
+      final PlatformFairPlayDrmConfiguration? fairPlayDrm = creationOptions.fairPlayDrm;
+      expect(fairPlayDrm, isNotNull);
+      expect(fairPlayDrm!.certificateUri, 'https://example.com/certificate');
+      expect(fairPlayDrm.licenseUri, 'https://example.com/license');
+      expect(fairPlayDrm.licenseHeaders, <String, String>{'Authorization': 'Bearer token'});
+      expect(fairPlayDrm.contentId, 'content-id');
+    });
+
+    test('create with network sends no DRM configuration by default', () async {
+      final (AVFoundationVideoPlayer player, MockAVFoundationVideoPlayerApi api, _) =
+          setUpMockPlayer(playerId: 1, textureId: 101);
+      when(
+        api.createForTextureView(any),
+      ).thenAnswer((_) async => TexturePlayerIds(playerId: 2, textureId: 102));
+
+      await player.create(
+        DataSource(sourceType: DataSourceType.network, uri: 'https://example.com/video.m3u8'),
+      );
+
+      final VerificationResult verification = verify(api.createForTextureView(captureAny));
+      expect((verification.captured[0] as CreationOptions).fairPlayDrm, isNull);
+    });
+
+    test('create rejects DRM for a non-network source', () async {
+      final (AVFoundationVideoPlayer player, _, _) = setUpMockPlayer(playerId: 1, textureId: 101);
+
+      await expectLater(
+        player.create(
+          DataSource(
+            sourceType: DataSourceType.file,
+            uri: 'file:///video.mp4',
+            drmConfiguration: FairPlayDrmConfiguration(
+              certificateUri: Uri.parse('https://example.com/certificate'),
+              licenseUri: Uri.parse('https://example.com/license'),
+            ),
+          ),
+        ),
+        throwsArgumentError,
+      );
+    });
+
+    test('create rejects a DRM configuration for another platform', () async {
+      final (AVFoundationVideoPlayer player, _, _) = setUpMockPlayer(playerId: 1, textureId: 101);
+
+      await expectLater(
+        player.create(
+          DataSource(
+            sourceType: DataSourceType.network,
+            uri: 'https://example.com/video.m3u8',
+            drmConfiguration: const _OtherDrmConfiguration(),
+          ),
+        ),
+        throwsArgumentError,
+      );
+    });
+
     test('create with file', () async {
       final (AVFoundationVideoPlayer player, MockAVFoundationVideoPlayerApi api, _) =
           setUpMockPlayer(playerId: 1, textureId: 101);
@@ -628,4 +706,10 @@ void main() {
       });
     });
   });
+}
+
+/// A DRM configuration type that the AVFoundation implementation doesn't
+/// support.
+class _OtherDrmConfiguration extends VideoDrmConfiguration {
+  const _OtherDrmConfiguration();
 }
