@@ -40,9 +40,11 @@ class TypographyTemplateM3 extends TokenTemplateM3 {
   String generateContents(String className) =>
       '''
 abstract final class $className {
-  ${_textTheme('alphabetic', 'alphabetic')}
+  ${_textTheme('englishLike', 'alphabetic')}
 
-  ${_textTheme('ideographic', 'ideographic')}
+  ${_textTheme('dense', 'ideographic')}
+
+  ${_textTheme('tall', 'alphabetic')}
 }
 ''';
 
