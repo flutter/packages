@@ -4,4 +4,6 @@
 
 import 'package:integration_test/integration_test_driver.dart';
 
-Future<void> main() => integrationDriver();
+// Fail a hung test file after 5 minutes instead of the default 20, so a single
+// hang doesn't use up most of the CI shard's 60-minute budget.
+Future<void> main() => integrationDriver(timeout: const Duration(minutes: 5));

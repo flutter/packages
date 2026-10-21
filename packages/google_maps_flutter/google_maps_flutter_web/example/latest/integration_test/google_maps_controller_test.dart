@@ -15,6 +15,7 @@ import 'package:integration_test/integration_test.dart';
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
 import 'google_maps_controller_test.mocks.dart';
+import 'resources/pump_map.dart';
 
 // This value is used when comparing long~num, like
 // LatLng values.
@@ -38,16 +39,17 @@ void main() {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
 
   group('GoogleMapController', () {
-    const mapId = 33930;
+    late int mapId;
     late GoogleMapController controller;
     late StreamController<MapEvent<Object?>> stream;
 
-    // Creates a controller with the default mapId and stream controller, and any `options` needed.
+    // Creates a controller with a fresh mapId and the test's stream controller.
     GoogleMapController createController({
       CameraPosition initialCameraPosition = const CameraPosition(target: LatLng(0, 0)),
       MapObjects mapObjects = const MapObjects(),
       MapConfiguration mapConfiguration = const MapConfiguration(),
     }) {
+      mapId = getNextMapId();
       return GoogleMapController(
         mapId: mapId,
         streamController: stream,
@@ -246,6 +248,41 @@ void main() {
         expect(events[2], isA<CameraMoveStartedEvent>());
         expect(events[3], isA<CameraMoveEvent>());
         expect(events[4], isA<CameraIdleEvent>());
+      });
+
+      testWidgets('reports the map as ready on idle only once its div is laid out', (
+        WidgetTester tester,
+      ) async {
+        controller = createController()
+          ..debugSetOverrides(
+            createMap: (_, _) => map,
+            circles: circles,
+            heatmaps: heatmaps,
+            markers: markers,
+            polygons: polygons,
+            polylines: polylines,
+            groundOverlays: groundOverlays,
+          )
+          ..init();
+        final readyEvents = <MapEvent<Object?>>[];
+        final StreamSubscription<MapEvent<Object?>> subscription = stream.stream
+            .where((MapEvent<Object?> event) => event is WebMapReadyEvent)
+            .listen(readyEvents.add);
+        addTearDown(subscription.cancel);
+
+        // The map div is not in the DOM yet: idle must not report readiness.
+        gmaps.event.trigger(map, 'idle');
+        await tester.pump();
+        expect(readyEvents, isEmpty);
+
+        await tester.pumpWidget(
+          Center(child: SizedBox(width: 100, height: 100, child: controller.widget)),
+        );
+        // The platform view is created asynchronously; wait for it to render.
+        await tester.pumpAndSettle();
+        gmaps.event.trigger(map, 'idle');
+        await tester.pump();
+        expect(readyEvents, hasLength(1));
       });
 
       testWidgets('emits point of interest tap when click has placeId', (

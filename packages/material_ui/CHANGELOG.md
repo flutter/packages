@@ -1,3 +1,22 @@
+## 1.8.0
+
+- Adds `RoundedPolygon` and `CornerRounding` for creating rounded polygonal shapes.
+- Adds `MaterialShapes`, the catalog of predefined Material Design shapes.
+- Adds `MaterialShapeBorder` for drawing a `RoundedPolygon` as an `OutlinedBorder`, which morphs between shapes when lerped.
+- Adds an example that morphs through the shapes in `MaterialShapes.all`.
+- Adds `enableInlinePrediction` to `TextFormField`.
+- Adds the `supportingTextPadding` property to `InputDecoration` and `InputDecorationThemeData`.
+- Adds an `enabled` parameter to `DropdownButtonFormField` and makes its
+  `onChanged` parameter optional. When `enabled` is true, the field is
+  interactive without an `onChanged` callback.
+- Adds a Material 3 Expressive IconButton example.
+- Fix `GridTile` crash when the incoming constraints are unbounded (e.g. inside a horizontally scrolling `ListView`).
+- Adds `onTertiaryTapDown`, `onTertiaryTapUp` and `onTertiaryTapCancel` to `InkResponse` and `InkWell`, so a tertiary (middle) button click can be handled directly.
+- Clarifies how `Slider.label` can be displayed for continuous sliders.
+- The FadeForwards page transition on Android now takes 20-40% less time to render thanks to snapshotting.
+- Fixes the installation command in README.md
+- Fixes `Theme.of` returning a fallback `ThemeData` whose `platform` was frozen to the first `defaultTargetPlatform` seen by the process. A subtree without a `Theme` ancestor now adapts when `defaultTargetPlatform` changes, for example under a `TargetPlatformVariant` or the platform override.
+
 ## 1.7.0
 
 - Accounts for `MediaQuery`'s `TextScaler` when calculating `SnackBar` action overflow and removes unnecessary blank right spacing in multi-line layout.

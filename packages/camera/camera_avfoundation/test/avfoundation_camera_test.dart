@@ -794,5 +794,17 @@ void main() {
 
       verify(mockApi.setJpegImageQuality(50));
     });
+
+    test('Should report zero-shutter-lag support from the host API', () async {
+      when(mockApi.isZeroShutterLagSupported()).thenAnswer((_) async => true);
+
+      expect(await camera.isZeroShutterLagSupported(cameraId), isTrue);
+    });
+
+    test('Should set zero-shutter-lag enabled', () async {
+      await camera.setZeroShutterLagEnabled(cameraId, true);
+
+      verify(mockApi.setZeroShutterLagEnabled(true));
+    });
   });
 }
