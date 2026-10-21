@@ -1,5 +1,7 @@
-## NEXT
+## 2.15.0
 
+* Adds `isZeroShutterLagSupported` and `setZeroShutterLagEnabled` for
+  zero-shutter-lag still image capture on platforms that support it.
 * Updates minimum supported SDK version to Flutter 3.41/Dart 3.11.
 
 ## 2.14.0

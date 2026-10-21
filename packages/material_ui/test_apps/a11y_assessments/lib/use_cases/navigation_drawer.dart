@@ -84,7 +84,7 @@ class _NavigationDrawerExampleState extends State<NavigationDrawerExample> {
           Padding(
             padding: const EdgeInsets.fromLTRB(28, 16, 16, 10),
             child: Semantics(
-              container: true,
+              header: true,
               headingLevel: 2,
               child: Text('Header', style: Theme.of(context).textTheme.titleSmall),
             ),

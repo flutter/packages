@@ -28,7 +28,6 @@ void main() {
       final Finder finder = find.byKey(const Key('disabled password'));
       final TextField passwordField = tester.widget<TextField>(finder);
       expect(passwordField.enabled, isFalse);
-      expect(passwordField.autofillHints, contains(AutofillHints.password));
     }
   });
 
@@ -56,5 +55,16 @@ void main() {
     final Finder findHeadingLevelOnes = find.bySemanticsLabel('TextField password Demo');
     await tester.pumpAndSettle();
     expect(findHeadingLevelOnes, findsOne);
+  });
+
+  testWidgets('password fields expose their input purpose', (WidgetTester tester) async {
+    await pumpsUseCase(tester, TextFieldPasswordUseCase());
+
+    for (final key in <Key>[const Key('enabled password'), const Key('disabled password')]) {
+      final EditableText editableText = tester.widget<EditableText>(
+        find.descendant(of: find.byKey(key), matching: find.byType(EditableText)),
+      );
+      expect(editableText.autofillHints, contains(AutofillHints.password));
+    }
   });
 }

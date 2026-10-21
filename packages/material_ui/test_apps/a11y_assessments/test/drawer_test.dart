@@ -19,10 +19,6 @@ void main() {
     await tester.pump(const Duration(seconds: 1));
 
     expect(find.byType(Drawer), findsExactly(1));
-    final List<ListTile> tiles = tester.widgetList<ListTile>(find.byType(ListTile)).toList();
-    expect(tiles[0].selected, isTrue);
-    expect(tiles[1].selected, isFalse);
-    expect(tiles[2].selected, isFalse);
   });
 
   testWidgets('drawer has one h1 tag', (WidgetTester tester) async {
@@ -30,5 +26,25 @@ void main() {
     final Finder findHeadingLevelOnes = find.bySemanticsLabel('drawer Demo');
     await tester.pumpAndSettle();
     expect(findHeadingLevelOnes, findsOne);
+  });
+
+  testWidgets('drawer exposes the selected item', (WidgetTester tester) async {
+    await pumpsUseCase(tester, DrawerUseCase());
+
+    final ScaffoldState state = tester.firstState(find.byType(Scaffold));
+    state.openEndDrawer();
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.text('Profile'));
+    await tester.pumpAndSettle();
+
+    expect(
+      tester.getSemantics(find.text('Profile')),
+      containsSemantics(label: 'Profile', hasSelectedState: true, isSelected: true),
+    );
+    expect(
+      tester.getSemantics(find.text('Messages')),
+      containsSemantics(label: 'Messages', hasSelectedState: true, isSelected: false),
+    );
   });
 }

@@ -29,40 +29,35 @@ class _MainWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final int? maxLines = MediaQuery.textScalerOf(context).scale(1.0) > 1.0 ? null : 1;
     return Scaffold(
       appBar: AppBar(title: Semantics(headingLevel: 1, child: Text('$pageTitle Demo'))),
       body: ListView(
         children: <Widget>[
-          Semantics(
-            label: 'Input field with suffix @gmail.com',
-            child: TextField(
-              key: const Key('enabled text field'),
-              maxLines: maxLines,
-              keyboardType: TextInputType.emailAddress,
-              autofillHints: const <String>[AutofillHints.email],
-              decoration: const InputDecoration(
-                labelText: 'Email',
-                suffixText: '@gmail.com',
-                hintText: 'Enter your email',
-              ),
+          const TextField(
+            key: Key('enabled text field'),
+            keyboardType: TextInputType.emailAddress,
+            autofillHints: <String>[AutofillHints.email],
+            decoration: InputDecoration(
+              labelText: 'Email',
+              hintText: 'Enter your email',
+              // The field is single-line, so let the hint wrap at large
+              // text scales, one line per word.
+              hintMaxLines: 3,
             ),
           ),
-          Semantics(
-            label: 'Input field with suffix @gmail.com',
-            child: TextField(
-              key: const Key('disabled text field'),
-              maxLines: maxLines,
-              keyboardType: TextInputType.emailAddress,
-              autofillHints: const <String>[AutofillHints.email],
-              decoration: const InputDecoration(
-                labelText: 'Email',
-                suffixText: '@gmail.com',
-                hintText: 'Enter your email',
-              ),
-              enabled: false,
-              controller: TextEditingController(text: 'xyz'),
+          TextField(
+            key: const Key('disabled text field'),
+            keyboardType: TextInputType.emailAddress,
+            autofillHints: const <String>[AutofillHints.email],
+            decoration: const InputDecoration(
+              labelText: 'Email',
+              hintText: 'Enter your email',
+              // The field is single-line, so let the hint wrap at large
+              // text scales, one line per word.
+              hintMaxLines: 3,
             ),
+            enabled: false,
+            controller: TextEditingController(text: 'xyz'),
           ),
         ],
       ),

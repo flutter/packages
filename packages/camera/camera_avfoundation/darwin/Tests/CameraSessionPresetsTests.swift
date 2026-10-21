@@ -25,7 +25,7 @@ final class CameraSessionPresetsTests: XCTestCase {
     let captureFormatMock = MockCaptureDeviceFormat()
     let captureDeviceMock = MockCaptureDevice()
     captureDeviceMock.flutterFormats = [captureFormatMock]
-    var currentFormat: CaptureDeviceFormat = captureFormatMock
+    let currentFormat: CaptureDeviceFormat = captureFormatMock
     captureDeviceMock.activeFormatStub = {
       return currentFormat
     }

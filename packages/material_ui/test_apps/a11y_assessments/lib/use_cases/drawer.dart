@@ -30,7 +30,7 @@ class DrawerExample extends StatefulWidget {
 }
 
 class _DrawerExampleState extends State<DrawerExample> {
-  String selectedPage = 'Messages';
+  String selectedPage = '';
 
   String pageTitle = getUseCaseName(DrawerUseCase());
 
