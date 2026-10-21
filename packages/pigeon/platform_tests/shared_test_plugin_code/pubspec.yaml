@@ -19,12 +19,12 @@ dependencies:
     sdk: flutter
   integration_test:
     sdk: flutter
-  jni: ^1.0.3
+  jni: ^1.1.0
   meta: ^1.17.0
   mockito: ^5.4.4
-  objective_c: ^9.5.0
+  objective_c: ^9.6.2
 
 dev_dependencies:
-  ffigen: ^22.0.0
-  jnigen: ^1.0.0
+  ffigen: 22.0.0
+  jnigen: 1.0.1
   leak_tracker: any
