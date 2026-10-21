@@ -1,0 +1,2 @@
+changelog: Makes `SearchAnchor.bar` use `SearchBarThemeData.padding` when `barPadding` is null.
+version: patch
