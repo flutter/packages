@@ -38,7 +38,7 @@ import '../templates/motion_template.dart';
 // import '../templates/navigation_drawer_template.dart';
 // import '../templates/navigation_rail_template.dart';
 // import '../templates/popup_menu_template.dart';
-// import '../templates/progress_indicator_template.dart';
+import '../templates/progress_indicator_template.dart';
 // import '../templates/radio_template.dart';
 // import '../templates/range_slider_template.dart';
 // import '../templates/search_bar_template.dart';
@@ -750,8 +750,42 @@ void main() {
     });
 
     test('ProgressIndicatorTemplateM3 emits M3 ProgressIndicator defaults from tokens', () {
-      // Intentionally empty, will be implemented during migration. See:
-      // https://github.com/flutter/flutter/issues/187899
+      final String contents = _generateContents(const ProgressIndicatorTemplateM3());
+      expect(
+        contents,
+        contains('class _CircularProgressIndicatorDefaultsM3 extends ProgressIndicatorThemeData'),
+      );
+      expect(contents, contains('Color get color => _colors.primary'));
+      expect(
+        contents,
+        contains(
+          'Color? get circularTrackColor => indeterminate ? null : _colors.secondaryContainer',
+        ),
+      );
+      expect(contents, contains('double get strokeWidth => 4.0'));
+      expect(
+        contents,
+        contains('double? get strokeAlign => CircularProgressIndicator.strokeAlignInside;'),
+      );
+      expect(contents, contains('double? get trackGap => 4.0'));
+      expect(
+        contents,
+        contains('EdgeInsetsGeometry? get circularTrackPadding => const EdgeInsets.all(4.0)'),
+      );
+      expect(
+        contents,
+        contains('class _LinearProgressIndicatorDefaultsM3 extends ProgressIndicatorThemeData'),
+      );
+      expect(contents, contains('Color get linearTrackColor => _colors.secondaryContainer'));
+      expect(contents, contains('double get linearMinHeight => 4.0'));
+      expect(
+        contents,
+        contains(
+          'BorderRadius get borderRadius => const BorderRadius.all(Radius.circular(4.0 / 2))',
+        ),
+      );
+      expect(contents, contains('Color get stopIndicatorColor => _colors.primary'));
+      expect(contents, contains('double? get stopIndicatorRadius => 4.0 / 2'));
     });
 
     test('RadioTemplateM3 emits M3 Radio defaults from tokens', () {
