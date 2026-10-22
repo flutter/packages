@@ -108,10 +108,15 @@ enum ImagePickerPhotoAssetUtil {
     if let metaData {
       gifMetaProperties.addEntries(from: metaData)
     }
-    let gifProperties =
-      gifMetaProperties[kCGImagePropertyGIFDictionary] as? NSMutableDictionary
-    // Messaging a nil gifProperties is a no-op in Objective-C; keep that behavior.
-    gifProperties?[kCGImagePropertyGIFLoopCount] = 0
+    // ImageIO dictionaries are immutable, so the nested GIF dictionary has to be
+    // copied before the loop count can be written back.
+    if let existingGifProperties = gifMetaProperties[kCGImagePropertyGIFDictionary]
+      as? NSDictionary,
+      let gifProperties = existingGifProperties.mutableCopy() as? NSMutableDictionary
+    {
+      gifProperties[kCGImagePropertyGIFLoopCount] = 0
+      gifMetaProperties[kCGImagePropertyGIFDictionary] = gifProperties
+    }
 
     CGImageDestinationSetProperties(destination, gifMetaProperties)
 

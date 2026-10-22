@@ -22,10 +22,9 @@ enum ImagePickerImageUtil {
   private static func drawScaledImage(_ imageToScale: UIImage?, width: Double, height: Double)
     -> UIImage?
   {
-    if imageToScale == nil || width == 0 || height == 0 {
+    guard let imageToScale, width != 0, height != 0 else {
       return nil
     }
-    let imageToScale = imageToScale!
     // The source format can request an unsupported 10-bit integer bitmap context,
     // producing an empty scaled image. Use a fresh standard-range format while
     // preserving the source scale and opacity.
@@ -90,7 +89,7 @@ enum ImagePickerImageUtil {
     }
 
     guard let image, let cgImage = image.cgImage else {
-      return drawScaledImage(nil, width: width, height: height)
+      return nil
     }
 
     if !isMetadataAvailable {

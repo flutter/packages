@@ -3,6 +3,7 @@
 * Migrates the view provider from Objective-C to Swift.
 * Migrates the PHPicker save operation from Objective-C to Swift.
 * Migrates image, metadata, and photo-asset utilities from Objective-C to Swift.
+* Keeps animated GIFs looping when the source metadata dictionary is immutable.
 
 ## 0.8.13+13
 
