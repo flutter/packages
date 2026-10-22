@@ -533,7 +533,7 @@ struct ImagePickerPluginTests {
     let picker = PHPickerViewController(configuration: PHPickerConfiguration())
     await confirmation("cancelled") { confirmed in
       plugin.callContext = FLTImagePickerMethodCallContext { result, error in
-        #expect(result as? [String] == [])
+        #expect(result == [])
         #expect(error == nil)
         confirmed()
       }
@@ -549,7 +549,7 @@ struct ImagePickerPluginTests {
       presentedViewController: presented, presenting: presenting)
     await confirmation("dismissed") { confirmed in
       plugin.callContext = FLTImagePickerMethodCallContext { result, error in
-        #expect(result as? [String] == [])
+        #expect(result == [])
         #expect(error == nil)
         confirmed()
       }
@@ -753,14 +753,18 @@ struct ImagePickerPluginTests {
     plugin.removeInteractionBlocker()
   }
 
-  @Test func presentingViewControllerWithoutWindowSceneUsesFrame() {
+  @Test func presentingViewControllerWithoutWindowSceneUsesFrame() throws {
     let window = UIWindow(frame: CGRect(x: 0, y: 0, width: 320, height: 480))
     let rootViewController = UIViewController()
     window.rootViewController = rootViewController
     rootViewController.loadViewIfNeeded()
+    window.addSubview(rootViewController.view)
     let plugin = FLTImagePickerPlugin(
       viewProvider: StubViewProvider(viewController: rootViewController))
-    #expect(plugin.presentingViewControllerForImagePickerInNewWindow() != nil)
+    let presenter = plugin.presentingViewControllerForImagePickerInNewWindow()
+    let blockerWindow = try #require(plugin.interactionBlockerWindow)
+    #expect(blockerWindow.rootViewController === presenter)
+    #expect(blockerWindow.frame == window.bounds)
     plugin.removeInteractionBlocker()
   }
 
