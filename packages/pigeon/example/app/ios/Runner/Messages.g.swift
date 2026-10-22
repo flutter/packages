@@ -63,6 +63,22 @@ private func wrapError(_ error: Any) -> [Any?] {
   ]
 }
 
+/// Allows a `FlutterReply` to be captured by a `Task` or a `@Sendable` closure.
+///
+/// `FlutterReply` isn't annotated as `Sendable`, but Flutter documents that it
+/// can be invoked from any thread.
+private struct PigeonInternalSendableReply: @unchecked Sendable {
+  let reply: FlutterReply
+
+  init(_ reply: @escaping FlutterReply) {
+    self.reply = reply
+  }
+
+  func callAsFunction(_ result: Any?) {
+    reply(result)
+  }
+}
+
 private func createConnectionError(withChannelName channelName: String) -> PigeonError {
   return PigeonError(
     code: "channel-error", message: "Unable to establish connection on channel: '\(channelName)'.",
@@ -320,7 +336,7 @@ class ExampleHostApiSetup {
         "dev.flutter.pigeon.pigeon_example_package.ExampleHostApi.getHostLanguage\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      @MainActor func handler(_: Any?, reply: @escaping @Sendable (Any?) -> Void) {
+      @MainActor func handler(_: Any?, reply: @escaping FlutterReply) {
         do {
           let result = try api.getHostLanguage()
           reply(wrapResult(result))
@@ -336,7 +352,7 @@ class ExampleHostApiSetup {
       name: "dev.flutter.pigeon.pigeon_example_package.ExampleHostApi.add\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      @MainActor func handler(message: Any?, reply: @escaping @Sendable (Any?) -> Void) {
+      @MainActor func handler(message: Any?, reply: @escaping FlutterReply) {
         let args = message as! [Any?]
         let aArg = args[0] as! Int64
         let bArg = args[1] as! Int64
@@ -355,7 +371,8 @@ class ExampleHostApiSetup {
       name: "dev.flutter.pigeon.pigeon_example_package.ExampleHostApi.sendMessage\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      @MainActor func handler(message: Any?, reply: @escaping @Sendable (Any?) -> Void) {
+      @MainActor func handler(message: Any?, reply: @escaping FlutterReply) {
+        let reply = PigeonInternalSendableReply(reply)
         let args = message as! [Any?]
         let messageArg = args[0] as! MessageData
         Task { @MainActor in

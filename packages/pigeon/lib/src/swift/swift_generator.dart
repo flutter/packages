@@ -22,6 +22,8 @@ const DocumentCommentSpecification _docCommentSpec = DocumentCommentSpecificatio
 
 const String _overflowClassName = '${classNamePrefix}CodecOverflow';
 
+const String _sendableReplyName = '${classNamePrefix}SendableReply';
+
 /// Options that control how Swift code will be generated.
 class SwiftOptions {
   /// Creates a [SwiftOptions] object
@@ -734,11 +736,6 @@ private class _PigeonFfiCodec {
             : '${classDefinition.superClass!.name}Bridge',
       );
     } else {
-      // `Sendable` is intentionally not added here; Swift automatically infers
-      // `Sendable` for structs whose stored properties are all `Sendable`, and
-      // for types that cannot be proven `Sendable` by the compiler (e.g., those
-      // with `Any?` fields or `@SwiftClass`), it is the client's responsibility
-      // to declare `@unchecked Sendable` if needed.
       if (classDefinition.superClass != null) {
         protocols.add(classDefinition.superClass!.name);
       }
@@ -2313,6 +2310,66 @@ static func isNullish(_ value: Any?) -> Bool {
     });
   }
 
+  /// Whether any ProxyApi has an asynchronous host method.
+  bool _hasAsyncProxyApiHostMethod(Root root) {
+    return root.apis.any(
+      (Api api) =>
+          api is AstProxyApi && api.hostMethods.any((Method method) => method.isAsynchronous),
+    );
+  }
+
+  /// Whether any generated message handler passes its `FlutterReply` to a
+  /// `Task` or a `@Sendable` completion, which requires [_sendableReplyName].
+  bool _needsSendableReply(InternalSwiftOptions generatorOptions, Root root) {
+    return generatorOptions.strictConcurrency &&
+        (_hasAsyncProxyApiHostMethod(root) ||
+            root.apis.any(
+              (Api api) =>
+                  api is AstHostApi &&
+                  !generatorOptions.useFfi &&
+                  api.methods.any((Method method) => method.isAsynchronous),
+            ));
+  }
+
+  /// Writes [_sendableReplyName].
+  ///
+  /// [includeOnMainThread] adds `onMainThread(_:)`, used by asynchronous
+  /// ProxyApi host methods whose completion may be called from any thread.
+  void _writeSendableReply(Indent indent, {required bool includeOnMainThread}) {
+    final onMainThread = includeOnMainThread
+        ? '''
+
+
+  /// Sends the reply from the main thread.
+  ///
+  /// Encoding a ProxyApi instance that Dart doesn't know about yet first sends
+  /// it to Dart, which must happen on the platform thread and before the reply
+  /// that references it.
+  func onMainThread(_ result: Any?) {
+    guard !Thread.isMainThread else { return reply(result) }
+    nonisolated(unsafe) let result = result
+    DispatchQueue.main.async { self.reply(result) }
+  }'''
+        : '';
+    indent.format('''
+
+/// Allows a `FlutterReply` to be captured by a `Task` or a `@Sendable` closure.
+///
+/// `FlutterReply` isn't annotated as `Sendable`, but Flutter documents that it
+/// can be invoked from any thread.
+private struct $_sendableReplyName: @unchecked Sendable {
+  let reply: FlutterReply
+
+  init(_ reply: @escaping FlutterReply) {
+    self.reply = reply
+  }
+
+  func callAsFunction(_ result: Any?) {
+    reply(result)
+  }$onMainThread
+}''');
+  }
+
   void _writeNilOrValue(Indent indent) {
     indent.format('''
 
@@ -2688,6 +2745,9 @@ enum ${_classNamePrefix}PigeonInternalNumberType: Int {
       _writeWrapResult(indent);
       _writeWrapError(generatorOptions, indent);
     }
+    if (_needsSendableReply(generatorOptions, root)) {
+      _writeSendableReply(indent, includeOnMainThread: _hasAsyncProxyApiHostMethod(root));
+    }
     if (root.containsFlutterApi || root.containsProxyApi) {
       _writeCreateConnectionError(generatorOptions, indent);
     }
@@ -2962,6 +3022,7 @@ ${pigeonStreamHandlerDeclaration(preconcurrency: false)}
     String setHandlerCondition = 'let api = api',
     List<String> documentationComments = const <String>[],
     String Function(List<String> safeArgNames, {required String apiVarName})? onCreateCall,
+    bool replyOnMainThread = false,
   }) {
     final components = _SwiftFunctionComponents(
       name: name,
@@ -3004,17 +3065,21 @@ ${pigeonStreamHandlerDeclaration(preconcurrency: false)}
       (true, _?) => '@Sendable ',
       (false, _) => '',
     };
-    final replyType = generatorOptions.strictConcurrency
-        ? '@Sendable (Any?) -> Void'
-        : 'FlutterReply';
 
     indent.write('if $setHandlerCondition ');
     indent.addScoped('{', '}', () {
       final messageVarName = components.arguments.isNotEmpty ? 'message' : '_';
+      // The parameter types must match `FlutterMessageHandler` exactly, or
+      // `setMessageHandler(handler)` warns about converting a non-Sendable
+      // function value.
       indent.writeScoped(
-        '${handlerAnnotation}func handler($messageVarName: Any?, reply: @escaping $replyType) {',
+        '${handlerAnnotation}func handler($messageVarName: Any?, reply: @escaping FlutterReply) {',
         '}',
         () {
+          if (generatorOptions.strictConcurrency && isAsynchronous) {
+            // `reply` is captured by a `Task` or a `@Sendable` completion below.
+            indent.writeln('let reply = $_sendableReplyName(reply)');
+          }
           final methodArgument = <String>[];
           if (components.arguments.isNotEmpty) {
             indent.writeln('let args = message as! [Any?]');
@@ -3081,6 +3146,12 @@ ${pigeonStreamHandlerDeclaration(preconcurrency: false)}
           } else if (isAsynchronous) {
             final resultName = returnType.isVoid ? 'nil' : 'res';
             final successVariableInit = returnType.isVoid ? '' : '(let res)';
+            // The completion may be called from any thread, but encoding a
+            // ProxyApi result may first need to send the instance to Dart,
+            // which must happen on the platform thread.
+            final replyFunction = generatorOptions.strictConcurrency && replyOnMainThread
+                ? 'reply.onMainThread'
+                : 'reply';
             indent.write('$call ');
 
             indent.addScoped('{ result in', '}', () {
@@ -3088,11 +3159,11 @@ ${pigeonStreamHandlerDeclaration(preconcurrency: false)}
               indent.addScoped('{', '}', nestCount: 0, () {
                 indent.writeln('case .success$successVariableInit:');
                 indent.nest(1, () {
-                  indent.writeln('reply(wrapResult($resultName))');
+                  indent.writeln('$replyFunction(wrapResult($resultName))');
                 });
                 indent.writeln('case .failure(let error):');
                 indent.nest(1, () {
-                  indent.writeln('reply(wrapError(error))');
+                  indent.writeln('$replyFunction(wrapError(error))');
                 });
               });
             });
@@ -3635,6 +3706,7 @@ ${pigeonStreamHandlerDeclaration(preconcurrency: false)}
                     Parameter(name: 'pigeonInstance', type: apiAsTypeDeclaration),
                   ...method.parameters,
                 ],
+                replyOnMainThread: true,
               );
             },
           );

@@ -1945,13 +1945,14 @@ void main() {
         dartPackageName: DEFAULT_PACKAGE_NAME,
       );
 
+      final code = sink.toString();
       expect(
-        sink.toString(),
-        contains(
-          '@MainActor func handler(message: Any?, reply: @escaping @Sendable (Any?) -> Void) {',
-        ),
+        code,
+        contains('@MainActor func handler(message: Any?, reply: @escaping FlutterReply) {'),
       );
-      expect(sink.toString(), contains('doWorkChannel.setMessageHandler(handler)'));
+      expect(code, contains('doWorkChannel.setMessageHandler(handler)'));
+      // Synchronous handlers call `reply` directly, so no box is needed.
+      expect(code, isNot(contains('PigeonInternalSendableReply')));
     });
 
     test(
@@ -1987,10 +1988,77 @@ void main() {
 
         expect(
           sink.toString(),
-          contains('@Sendable func handler(_: Any?, reply: @escaping @Sendable (Any?) -> Void) {'),
+          contains('@Sendable func handler(_: Any?, reply: @escaping FlutterReply) {'),
         );
       },
     );
+
+    Root rootWithAsyncHostMethods() {
+      return Root(
+        apis: <Api>[
+          AstHostApi(
+            name: 'Api',
+            methods: <Method>[
+              Method(
+                name: 'doAsync',
+                location: ApiLocation.host,
+                isAsynchronous: true,
+                parameters: <Parameter>[],
+                returnType: const TypeDeclaration.voidDeclaration(),
+              ),
+              Method(
+                name: 'doCallback',
+                location: ApiLocation.host,
+                isAsynchronous: true,
+                isAsynchronousCallback: true,
+                taskQueueType: TaskQueueType.serialBackgroundThread,
+                parameters: <Parameter>[],
+                returnType: const TypeDeclaration.voidDeclaration(),
+              ),
+            ],
+          ),
+        ],
+        classes: <Class>[],
+        enums: <Enum>[],
+      );
+    }
+
+    test('boxes FlutterReply for async and callback Host API handlers with strictConcurrency', () {
+      final sink = StringBuffer();
+      const generator = SwiftGenerator();
+      generator.generate(
+        const InternalSwiftOptions(swiftOut: ''),
+        rootWithAsyncHostMethods(),
+        sink,
+        dartPackageName: DEFAULT_PACKAGE_NAME,
+      );
+
+      final code = sink.toString();
+      expect(code, contains('private struct PigeonInternalSendableReply: @unchecked Sendable {'));
+      expect(
+        RegExp(r'let reply = PigeonInternalSendableReply\(reply\)').allMatches(code).length,
+        2,
+      );
+      expect(code, isNot(contains('@Sendable (Any?) -> Void')));
+      // Regular host API replies never send messages to Dart, so they can be
+      // sent from whichever thread the completion is called on.
+      expect(code, isNot(contains('onMainThread')));
+    });
+
+    test('does not box FlutterReply when strictConcurrency is false', () {
+      final sink = StringBuffer();
+      const generator = SwiftGenerator();
+      generator.generate(
+        const InternalSwiftOptions(swiftOut: '', strictConcurrency: false),
+        rootWithAsyncHostMethods(),
+        sink,
+        dartPackageName: DEFAULT_PACKAGE_NAME,
+      );
+
+      final code = sink.toString();
+      expect(code, contains('func handler(_: Any?, reply: @escaping FlutterReply) {'));
+      expect(code, isNot(contains('PigeonInternalSendableReply')));
+    });
 
     test('omits @preconcurrency on Flutter import when strictConcurrency is false', () {
       final root = Root(apis: <Api>[], classes: <Class>[], enums: <Enum>[]);

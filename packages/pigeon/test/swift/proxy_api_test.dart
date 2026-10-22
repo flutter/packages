@@ -1112,6 +1112,71 @@ void main() {
           ),
         );
       });
+
+      Root rootWithAsyncHostMethod() {
+        return Root(
+          apis: <Api>[
+            AstProxyApi(
+              name: 'Api',
+              constructors: <Constructor>[],
+              fields: <ApiField>[],
+              methods: <Method>[
+                Method(
+                  name: 'doAsyncHostWork',
+                  location: ApiLocation.host,
+                  isAsynchronous: true,
+                  returnType: const TypeDeclaration.voidDeclaration(),
+                  parameters: <Parameter>[],
+                ),
+              ],
+            ),
+          ],
+          classes: <Class>[],
+          enums: <Enum>[],
+        );
+      }
+
+      test('async host method handlers box FlutterReply and reply on the main thread', () {
+        final sink = StringBuffer();
+        const generator = SwiftGenerator();
+        generator.generate(
+          const InternalSwiftOptions(swiftOut: ''),
+          rootWithAsyncHostMethod(),
+          sink,
+          dartPackageName: DEFAULT_PACKAGE_NAME,
+        );
+
+        final code = sink.toString();
+        expect(code, contains('private struct PigeonInternalSendableReply: @unchecked Sendable {'));
+        expect(code, contains('func onMainThread(_ result: Any?) {'));
+        // Only the async ProxyApi handler is boxed; the synchronous
+        // InstanceManager handlers call `reply` directly.
+        expect(
+          RegExp(r'let reply = PigeonInternalSendableReply\(reply\)').allMatches(code).length,
+          1,
+        );
+        // The completion can be called from any thread, but encoding a
+        // ProxyApi result may need to send a new instance to Dart first.
+        expect(code, contains('reply.onMainThread(wrapResult(nil))'));
+        expect(code, contains('reply.onMainThread(wrapError(error))'));
+        expect(code, isNot(contains('@Sendable (Any?) -> Void')));
+      });
+
+      test('async host method handlers reply directly when strictConcurrency is false', () {
+        final sink = StringBuffer();
+        const generator = SwiftGenerator();
+        generator.generate(
+          const InternalSwiftOptions(swiftOut: '', strictConcurrency: false),
+          rootWithAsyncHostMethod(),
+          sink,
+          dartPackageName: DEFAULT_PACKAGE_NAME,
+        );
+
+        final code = sink.toString();
+        expect(code, contains('reply(wrapResult(nil))'));
+        expect(code, isNot(contains('PigeonInternalSendableReply')));
+        expect(code, isNot(contains('onMainThread')));
+      });
     });
   });
 }
