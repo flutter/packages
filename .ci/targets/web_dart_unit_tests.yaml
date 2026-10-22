@@ -10,3 +10,13 @@ tasks:
       "--package-tags=script/configs/web_dart_unit_test_tags.yaml",
       "--exclude=script/configs/dart_unit_tests_exceptions.yaml"
     ]
+    # Re-run tests with path-based dependencies to ensure that publishing
+    # the changes won't break web tests of other packages in the repository
+    # that depend on it (e.g., a native-only dependency that doesn't compile
+    # for web).
+  - name: Dart unit tests - web - pathified
+    script: .ci/scripts/dart_unit_tests_pathified.sh
+    args: [
+      "--platform=chrome",
+      "--package-tags=script/configs/web_dart_unit_test_tags.yaml"
+    ]
