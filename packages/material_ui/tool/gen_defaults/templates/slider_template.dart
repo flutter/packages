@@ -14,9 +14,13 @@ class SliderTemplateM3 extends TokenTemplateM3 {
   @override
   String get parentFilePath => 'slider.dart';
 
-  // TODO(Crdzbird): Using hard-coded values for the secondary active track
-  // opacity, the overlay state layer opacities, and the value indicator text
-  // style due to missing tokens.
+  // TODO(Crdzbird): Replace with tokens when/if they become available.
+  static const double _secondaryActiveTrackOpacity = 0.54;
+  static const double _draggedOverlayOpacity = 0.1;
+  static const double _hoveredOverlayOpacity = 0.08;
+  static const double _focusedOverlayOpacity = 0.1;
+  static const String _valueIndicatorTextStyle = 'Theme.of(context).textTheme.labelLarge';
+
   @override
   String generateContents(String className) =>
       '''
@@ -34,7 +38,7 @@ class $className extends SliderThemeData {
   Color? get inactiveTrackColor => ${color(TokenSlider.inactiveTrackColor)};
 
   @override
-  Color? get secondaryActiveTrackColor => ${colorWithOpacity(TokenSlider.activeTrackColor, 0.54)};
+  Color? get secondaryActiveTrackColor => ${colorWithOpacity(TokenSlider.activeTrackColor, _secondaryActiveTrackOpacity)};
 
   @override
   Color? get disabledActiveTrackColor => ${colorWithOpacity(TokenSlider.disabledActiveTrackColor, TokenSlider.disabledActiveTrackOpacity)};
@@ -66,20 +70,20 @@ class $className extends SliderThemeData {
   @override
   Color? get overlayColor => WidgetStateColor.resolveWith((Set<WidgetState> states) {
     if (states.contains(WidgetState.dragged)) {
-      return _colors.primary.withOpacity(0.1);
+      return _colors.primary.withOpacity($_draggedOverlayOpacity);
     }
     if (states.contains(WidgetState.hovered)) {
-      return _colors.primary.withOpacity(0.08);
+      return _colors.primary.withOpacity($_hoveredOverlayOpacity);
     }
     if (states.contains(WidgetState.focused)) {
-      return _colors.primary.withOpacity(0.1);
+      return _colors.primary.withOpacity($_focusedOverlayOpacity);
     }
 
     return Colors.transparent;
   });
 
   @override
-  TextStyle? get valueIndicatorTextStyle => Theme.of(context).textTheme.labelLarge!.copyWith(
+  TextStyle? get valueIndicatorTextStyle => $_valueIndicatorTextStyle!.copyWith(
     color: ${color(TokenSlider.valueIndicatorLabelLabelTextColor)},
   );
 
