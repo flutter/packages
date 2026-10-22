@@ -88,7 +88,7 @@ class $className extends SegmentedButtonThemeData {
       }),
       surfaceTintColor: const WidgetStatePropertyAll<Color>(Colors.transparent),
       elevation: const WidgetStatePropertyAll<double>(0),
-      iconSize: const WidgetStatePropertyAll<double?>(${number(TokenOutlinedSegmentedButton.withIconIconSize)}),
+      iconSize: const WidgetStatePropertyAll<double?>(${TokenOutlinedSegmentedButton.withIconIconSize}),
       side: WidgetStateProperty.resolveWith((Set<WidgetState> states) {
         if (states.contains(WidgetState.disabled)) {
           return ${border(colorWithOpacity(TokenOutlinedSegmentedButton.disabledOutlineColor, TokenOutlinedSegmentedButton.disabledOutlineOpacity), width: TokenOutlinedSegmentedButton.outlineWidth)};
@@ -96,7 +96,7 @@ class $className extends SegmentedButtonThemeData {
         return ${border(color(TokenOutlinedSegmentedButton.outlineColor), width: TokenOutlinedSegmentedButton.outlineWidth)};
       }),
       shape: const WidgetStatePropertyAll<OutlinedBorder>(${shape(TokenOutlinedSegmentedButton.shape, '')}),
-      minimumSize: const WidgetStatePropertyAll<Size?>(Size.fromHeight(${number(TokenOutlinedSegmentedButton.containerHeight)})),
+      minimumSize: const WidgetStatePropertyAll<Size?>(Size.fromHeight(${TokenOutlinedSegmentedButton.containerHeight})),
     );
   }
   @override
@@ -111,12 +111,12 @@ class $className extends SegmentedButtonThemeData {
     final Color? unselected = overlayColor ?? unselectedColor;
     return WidgetStateProperty<Color?>.fromMap(
       <WidgetStatesConstraint, Color?>{
-        WidgetState.selected & WidgetState.pressed: selected?.withOpacity(${number(TokenOutlinedSegmentedButton.pressedStateLayerOpacity)}),
-        WidgetState.selected & WidgetState.hovered: selected?.withOpacity(${number(TokenOutlinedSegmentedButton.hoverStateLayerOpacity)}),
-        WidgetState.selected & WidgetState.focused: selected?.withOpacity(${number(TokenOutlinedSegmentedButton.focusStateLayerOpacity)}),
-        WidgetState.pressed: unselected?.withOpacity(${number(TokenOutlinedSegmentedButton.pressedStateLayerOpacity)}),
-        WidgetState.hovered: unselected?.withOpacity(${number(TokenOutlinedSegmentedButton.hoverStateLayerOpacity)}),
-        WidgetState.focused: unselected?.withOpacity(${number(TokenOutlinedSegmentedButton.focusStateLayerOpacity)}),
+        WidgetState.selected & WidgetState.pressed: selected?.withOpacity(${TokenOutlinedSegmentedButton.pressedStateLayerOpacity}),
+        WidgetState.selected & WidgetState.hovered: selected?.withOpacity(${TokenOutlinedSegmentedButton.hoverStateLayerOpacity}),
+        WidgetState.selected & WidgetState.focused: selected?.withOpacity(${TokenOutlinedSegmentedButton.focusStateLayerOpacity}),
+        WidgetState.pressed: unselected?.withOpacity(${TokenOutlinedSegmentedButton.pressedStateLayerOpacity}),
+        WidgetState.hovered: unselected?.withOpacity(${TokenOutlinedSegmentedButton.hoverStateLayerOpacity}),
+        WidgetState.focused: unselected?.withOpacity(${TokenOutlinedSegmentedButton.focusStateLayerOpacity}),
         WidgetState.any: Colors.transparent,
       },
     );
