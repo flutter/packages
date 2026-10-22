@@ -46,7 +46,6 @@ import '../templates/search_view_template.dart';
 // import '../templates/segmented_button_template.dart';
 // import '../templates/slider_template.dart';
 import '../templates/snackbar_template.dart';
-// import '../templates/surface_tint_template.dart';
 import '../templates/switch_template.dart';
 import '../templates/tabs_template.dart';
 import '../templates/template.dart';
@@ -878,11 +877,6 @@ void main() {
       expect(contents, contains('SnackBarBehavior get behavior => SnackBarBehavior.fixed'));
       expect(contents, contains('Color? get closeIconColor => _colors.onInverseSurface'));
       expect(contents, contains('double get actionOverflowThreshold => 0.25'));
-    });
-
-    test('SurfaceTintTemplateM3 emits M3 SurfaceTint defaults from tokens', () {
-      // Intentionally empty, will be implemented during migration. See:
-      // https://github.com/flutter/flutter/issues/187899
     });
 
     test('SwitchTemplateM3 emits M3 Switch defaults from tokens', () {
