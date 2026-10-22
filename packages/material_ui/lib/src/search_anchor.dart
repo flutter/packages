@@ -35,6 +35,7 @@ import 'text_field.dart';
 import 'text_theme.dart';
 import 'theme.dart';
 
+part 'generated/search_bar_defaults_m3.g.dart';
 part 'generated/search_view_defaults_m3.g.dart';
 
 const int _kOpenViewMilliseconds = 600;
@@ -88,6 +89,55 @@ typedef ViewBuilder = Widget Function(Iterable<Widget> suggestions);
 /// The search view is usually opened by a [SearchBar], an [IconButton] or an [Icon].
 /// If [builder] returns an Icon, or any un-tappable widgets, we don't have
 /// to explicitly call [SearchController.openView].
+///
+/// ## Tap handling on the anchor
+///
+/// By default, [SearchAnchor] wraps the widget returned by [builder] in a
+/// [GestureDetector] that calls [SearchController.openView] on tap. This
+/// behavior is controlled by [enableTapHandling], which defaults to true.
+///
+/// ### When to enable tap handling
+///
+/// Keep [enableTapHandling] set to true (the default) when [builder]
+/// returns a passive widget, such as an [Icon] or [Text]. The outer
+/// [GestureDetector] handles taps and provides tap semantics for accessibility
+/// services.
+///
+/// ### When to disable tap handling
+///
+/// Set [enableTapHandling] to false when the widget returned by [builder]
+/// handles its own tap events or provides its own semantics. For example:
+///
+/// * When returning a [SearchBar] that handles taps through its own callbacks.
+/// * When returning buttons like [IconButton] or other interactive widgets that
+///   already call [SearchController.openView].
+///
+/// Setting [enableTapHandling] to false avoids duplicate gesture recognizers
+/// in the gesture arena and prevents duplicate tap semantics (which can cause
+/// accessibility guideline violations, such as unlabeled tap targets).
+///
+/// When using [SearchAnchor.bar], [enableTapHandling] is already set to
+/// false because the factory constructor's [SearchBar] handles its own taps.
+///
+/// ```dart
+/// SearchAnchor(
+///   enableTapHandling: false,
+///   builder: (BuildContext context, SearchController controller) {
+///     return SearchBar(
+///       controller: controller,
+///       onTap: () {
+///         controller.openView();
+///       },
+///       onChanged: (_) {
+///         controller.openView();
+///       },
+///     );
+///   },
+///   suggestionsBuilder: (BuildContext context, SearchController controller) {
+///     return const <Widget>[];
+///   },
+/// )
+/// ```
 ///
 /// The search view route will be popped if the window size is changed and the
 /// search view route is not in full-screen mode. However, if the search view route
@@ -187,12 +237,19 @@ class SearchAnchor extends StatefulWidget {
     this.enabled = true,
     this.smartDashesType,
     this.smartQuotesType,
+    this.enableTapHandling = true,
   });
 
   /// Create a [SearchAnchor] that has a [SearchBar] which opens a search view.
   ///
   /// All the barX parameters are used to customize the anchor. Similarly, all the
   /// viewX parameters are used to override the view's defaults.
+  ///
+  /// If `barFocusNode` is non-null, it is passed to the search bar as
+  /// [SearchBar.focusNode]. The search bar does not dispose it, so the caller
+  /// is responsible for calling [FocusNode.dispose] when it is no longer
+  /// needed. If null, the search bar creates and manages its own focus node.
+  /// The text field in the search view always uses its own focus node.
   ///
   /// <callout-box>
   ///
@@ -251,6 +308,7 @@ class SearchAnchor extends StatefulWidget {
     bool enabled,
     SmartDashesType? smartDashesType,
     SmartQuotesType? smartQuotesType,
+    FocusNode? barFocusNode,
   }) = _SearchAnchorWithSearchBar;
 
   /// Whether the search view grows to fill the entire screen when the
@@ -478,6 +536,16 @@ class SearchAnchor extends StatefulWidget {
   ///    configuration option on a standalone [TextField].
   final SmartQuotesType? smartQuotesType;
 
+  /// Whether to wrap the widget returned by [builder] with a [GestureDetector]
+  /// that opens the search view route when tapped.
+  ///
+  /// Defaults to true.
+  ///
+  /// Set this to false if the widget returned by [builder] handles its own
+  /// tap gestures (such as a [SearchBar] or [IconButton]) to avoid duplicate
+  /// gestures and semantics actions.
+  final bool enableTapHandling;
+
   @override
   State<SearchAnchor> createState() => _SearchAnchorState();
 }
@@ -606,14 +674,15 @@ class _SearchAnchorState extends State<SearchAnchor> {
 
   @override
   Widget build(BuildContext context) {
+    Widget child = widget.builder(context, _searchController);
+    if (widget.enableTapHandling) {
+      child = GestureDetector(onTap: _openView, child: child);
+    }
     return AnimatedOpacity(
       key: _anchorKey,
       opacity: _getOpacity(),
       duration: _kAnchorFadeDuration,
-      child: IgnorePointer(
-        ignoring: !widget.enabled,
-        child: GestureDetector(onTap: _openView, child: widget.builder(context, _searchController)),
-      ),
+      child: IgnorePointer(ignoring: !widget.enabled, child: child),
     );
   }
 }
@@ -1319,7 +1388,9 @@ class _SearchAnchorWithSearchBar extends SearchAnchor {
     super.enabled,
     super.smartDashesType,
     super.smartQuotesType,
+    FocusNode? barFocusNode,
   }) : super(
+         enableTapHandling: false,
          viewHintText: viewHintText ?? barHintText,
          headerHeight: viewHeaderHeight,
          headerTextStyle: viewHeaderTextStyle,
@@ -1332,6 +1403,7 @@ class _SearchAnchorWithSearchBar extends SearchAnchor {
            return SearchBar(
              constraints: constraints,
              controller: controller,
+             focusNode: barFocusNode,
              onTap: () {
                controller.openView();
                onTap?.call();
@@ -1831,6 +1903,11 @@ class _SearchBarState extends State<SearchBar> {
           child: IgnorePointer(
             ignoring: !widget.enabled,
             child: InkWell(
+              // Avoid creating a redundant focus stop and focusable/tappable
+              // semantics node on the InkWell, since the inner TextField
+              // already handles focus and semantics for the SearchBar.
+              canRequestFocus: false,
+              excludeFromSemantics: true,
               onTap: () {
                 widget.onTap?.call();
                 if (!_focusNode.hasFocus) {
@@ -1899,78 +1976,3 @@ class _SearchBarState extends State<SearchBar> {
     );
   }
 }
-
-// BEGIN GENERATED TOKEN PROPERTIES - SearchBar
-
-// Do not edit by hand. The code between the "BEGIN GENERATED" and
-// "END GENERATED" comments are generated from data in the Material
-// Design token database by the script:
-//   dev/tools/gen_defaults/bin/gen_defaults.dart.
-
-// dart format off
-class _SearchBarDefaultsM3 extends SearchBarThemeData {
-  _SearchBarDefaultsM3(this.context);
-
-  final BuildContext context;
-  late final ColorScheme _colors = Theme.of(context).colorScheme;
-  late final TextTheme _textTheme = Theme.of(context).textTheme;
-
-  @override
-  WidgetStateProperty<Color?>? get backgroundColor =>
-    MaterialStatePropertyAll<Color>(_colors.surfaceContainerHigh);
-
-  @override
-  WidgetStateProperty<double>? get elevation =>
-    const MaterialStatePropertyAll<double>(6.0);
-
-  @override
-  WidgetStateProperty<Color>? get shadowColor =>
-    MaterialStatePropertyAll<Color>(_colors.shadow);
-
-  @override
-  WidgetStateProperty<Color>? get surfaceTintColor =>
-    const MaterialStatePropertyAll<Color>(Colors.transparent);
-
-  @override
-  WidgetStateProperty<Color?>? get overlayColor =>
-    WidgetStateProperty.resolveWith((Set<WidgetState> states) {
-      if (states.contains(WidgetState.pressed)) {
-        return _colors.onSurface.withOpacity(0.1);
-      }
-      if (states.contains(WidgetState.hovered)) {
-        return _colors.onSurface.withOpacity(0.08);
-      }
-      if (states.contains(WidgetState.focused)) {
-        return Colors.transparent;
-      }
-      return Colors.transparent;
-    });
-
-  // No default side
-
-  @override
-  WidgetStateProperty<OutlinedBorder>? get shape =>
-    const MaterialStatePropertyAll<OutlinedBorder>(StadiumBorder());
-
-  @override
-  WidgetStateProperty<EdgeInsetsGeometry>? get padding =>
-    const MaterialStatePropertyAll<EdgeInsetsGeometry>(EdgeInsets.symmetric(horizontal: 8.0));
-
-  @override
-  WidgetStateProperty<TextStyle?> get textStyle =>
-    MaterialStatePropertyAll<TextStyle?>(_textTheme.bodyLarge?.copyWith(color: _colors.onSurface));
-
-  @override
-  WidgetStateProperty<TextStyle?> get hintStyle =>
-    MaterialStatePropertyAll<TextStyle?>(_textTheme.bodyLarge?.copyWith(color: _colors.onSurfaceVariant));
-
-  @override
-  BoxConstraints get constraints =>
-    const BoxConstraints(minWidth: 360.0, maxWidth: 800.0, minHeight: 56.0);
-
-  @override
-  TextCapitalization get textCapitalization => TextCapitalization.none;
-}
-// dart format on
-
-// END GENERATED TOKEN PROPERTIES - SearchBar

@@ -3716,6 +3716,18 @@ class _MenuPanelState extends State<_MenuPanel> {
     final EdgeInsetsGeometry padding =
         resolve<EdgeInsetsGeometry?>((MenuStyle? style) => style?.padding) ?? EdgeInsets.zero;
     final Offset densityAdjustment = visualDensity.baseSizeAdjustment;
+    // Scrollbar uses the `MediaQuery.padding` as its painter padding by
+    // default. Menu overlays are already positioned within the safe area, so
+    // applying that padding again shortens the scrollbar track and stops the
+    // thumb from reaching the end of the menu. Remove the padding only for the
+    // Scrollbar and restore the ambient MediaQuery for menu children.
+    final MediaQueryData ambientMediaQuery = MediaQuery.of(context);
+    final MediaQueryData scrollbarMediaQuery = ambientMediaQuery.removePadding(
+      removeLeft: true,
+      removeTop: true,
+      removeRight: true,
+      removeBottom: true,
+    );
     // Per the Material Design team: don't allow the VisualDensity
     // adjustment to reduce the width of the left/right padding. If we
     // did, VisualDensity.compact, the default for desktop/web, would
@@ -3775,17 +3787,23 @@ class _MenuPanelState extends State<_MenuPanel> {
             .copyWith(scrollbars: false, overscroll: false, physics: const ClampingScrollPhysics()),
         child: PrimaryScrollController(
           controller: scrollController,
-          child: Scrollbar(
-            thumbVisibility: displayScrollbar,
-            child: SingleChildScrollView(
-              controller: scrollController,
-              scrollDirection: widget.orientation,
-              child: Flex(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                textDirection: Directionality.of(context),
-                direction: widget.orientation,
-                mainAxisSize: MainAxisSize.min,
-                children: children,
+          child: MediaQuery(
+            data: scrollbarMediaQuery,
+            child: Scrollbar(
+              thumbVisibility: displayScrollbar,
+              child: MediaQuery(
+                data: ambientMediaQuery,
+                child: SingleChildScrollView(
+                  controller: scrollController,
+                  scrollDirection: widget.orientation,
+                  child: Flex(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    textDirection: Directionality.of(context),
+                    direction: widget.orientation,
+                    mainAxisSize: MainAxisSize.min,
+                    children: children,
+                  ),
+                ),
               ),
             ),
           ),
