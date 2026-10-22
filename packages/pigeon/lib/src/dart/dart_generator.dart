@@ -870,6 +870,7 @@ class DartGenerator extends StructuredGenerator<InternalDartOptions> {
     indent.write('${sealed}class ${classDefinition.name} $implements');
     indent.addScoped('{', '}', () {
       if (classDefinition.isSealed) {
+        _writeSealedClassNativeInteropConversions(generatorOptions, indent, classDefinition);
         return;
       }
       _writeConstructor(indent, classDefinition);
@@ -958,7 +959,59 @@ class DartGenerator extends StructuredGenerator<InternalDartOptions> {
     });
   }
 
+  /// Writes the native interop conversions of a sealed class.
+  ///
+  /// A sealed class has no native object of its own. Its subclasses implement
+  /// `toJni` and `toFfi`, and `fromJni` and `fromFfi` pick the subclass from
+  /// the runtime type of the native object.
+  void _writeSealedClassNativeInteropConversions(
+    InternalDartOptions generatorOptions,
+    Indent indent,
+    Class classDefinition,
+  ) {
+    if (generatorOptions.useJni) {
+      final String jniName = _JniType.fromClass(classDefinition).jniName;
+      indent.writeln('$jniName toJni();');
+      indent.newln();
+      indent.writeScoped('static ${classDefinition.name}? fromJni($jniName? jniClass) {', '}', () {
+        indent.writeScoped('if (jniClass == null) {', '}', () {
+          indent.writeln('return null;');
+        });
+        for (final Class child in classDefinition.children) {
+          final String childJniName = _JniType.fromClass(child).jniName;
+          indent.writeScoped('if (jniClass.isA<$childJniName>($childJniName.type)) {', '}', () {
+            indent.writeln('return ${child.name}.fromJni(jniClass.as($childJniName.type));');
+          });
+        }
+        indent.writeln('throw ArgumentError.value(jniClass);');
+      });
+    }
+    if (generatorOptions.useFfi) {
+      if (generatorOptions.useJni) {
+        indent.newln();
+      }
+      final String ffiName = _FfiType.fromClass(classDefinition).getFfiName();
+      indent.writeln('$ffiName toFfi();');
+      indent.newln();
+      indent.writeScoped('static ${classDefinition.name}? fromFfi($ffiName? ffiClass) {', '}', () {
+        indent.writeScoped('if (ffiClass == null) {', '}', () {
+          indent.writeln('return null;');
+        });
+        for (final Class child in classDefinition.children) {
+          final String childFfiName = _FfiType.fromClass(child).getFfiName();
+          indent.writeScoped('if ($childFfiName.isA(ffiClass)) {', '}', () {
+            indent.writeln('return ${child.name}.fromFfi($childFfiName.as(ffiClass));');
+          });
+        }
+        indent.writeln('throw ArgumentError.value(ffiClass);');
+      });
+    }
+  }
+
   void _writeToJni(Indent indent, Class classDefinition) {
+    if (classDefinition.superClass != null) {
+      indent.writeln('@override');
+    }
     indent.writeScoped('$_jniBridgePrefix.${classDefinition.name} toJni() {', '}', () {
       indent.writeScoped('return $_jniBridgePrefix.${classDefinition.name} (', ');', () {
         for (final NamedType field in getFieldsInSerializationOrder(classDefinition)) {
@@ -971,10 +1024,17 @@ class DartGenerator extends StructuredGenerator<InternalDartOptions> {
 
   void _writeToFfi(Indent indent, Class classDefinition) {
     final _FfiType ffiClass = _FfiType.fromClass(classDefinition);
+    if (classDefinition.superClass != null) {
+      indent.writeln('@override');
+    }
     indent.writeScoped('${ffiClass.getFfiName()} toFfi() {', '}', () {
       final Iterable<NamedType> fields = getFieldsInSerializationOrder(classDefinition);
+      if (fields.isEmpty) {
+        indent.writeln('return ${ffiClass.getFfiName()}.alloc().init();');
+        return;
+      }
       indent.writeScoped(
-        'return ${ffiClass.getFfiName()}.alloc().initWith${toUpperCamelCase(fields.first.name)}(',
+        'return ${ffiClass.getFfiName()}.alloc().${_swiftObjcSelectorFirstPiece('init', fields.first.name)}(',
         ');',
         () {
           var needsName = false;
@@ -990,23 +1050,21 @@ class DartGenerator extends StructuredGenerator<InternalDartOptions> {
     });
   }
 
-  String _getJniFieldName(String name) {
-    const jniReservedNames = <String>{'type', 'hashCode', 'toString', 'equals'};
-    return jniReservedNames.contains(name) ? '$name\$1' : name;
-  }
-
   void _writeFromJni(Indent indent, Class classDefinition) {
     final _JniType jniClass = _JniType.fromClass(classDefinition);
     indent.writeScoped(
       'static ${jniClass.type.baseName}? fromJni(${jniClass.jniName}? jniClass) {',
       '}',
       () {
+        final namer = _JniBindingNamer(isInterface: false);
         indent.writeScoped('return jniClass == null ? null : ${jniClass.type.baseName}(', ');', () {
           for (final NamedType field in getFieldsInSerializationOrder(classDefinition)) {
             final _JniType jniType = _JniType.fromTypeDeclaration(field.type);
-            final String jniFieldName = _getJniFieldName(field.name);
+            final String jniField = namer
+                .nextKotlinGetter(field.name, type: field.type)
+                .access('jniClass');
             indent.writeln(
-              '${field.name}: ${jniType.getToDartCall(field.type, varName: 'jniClass.$jniFieldName')},',
+              '${field.name}: ${jniType.getToDartCall(field.type, varName: jniField)},',
             );
           }
         });
@@ -1272,9 +1330,9 @@ class DartGenerator extends StructuredGenerator<InternalDartOptions> {
                   indent.writeScoped('try {', '}', () {
                     indent.writeScoped('if (dartApi != null) {', '}', () {
                       final methodCall =
-                          'dartApi!.${method.name}(${method.parameters.map((p) {
+                          'dartApi!.${method.name}(${indexMap(method.parameters, (int index, Parameter p) {
                             final _FfiType ffiType = _FfiType.fromTypeDeclaration(p.type);
-                            return ffiType.getToDartCall(p.type, varName: p.name, forceNullable: true);
+                            return ffiType.getToDartCall(p.type, varName: _getSafeArgumentName(index, p), forceNullable: true);
                           }).join(', ')})';
                       if (method.isAsynchronous) {
                         indent.writeScoped('$methodCall.then((response) {', '},', () {
@@ -1387,6 +1445,7 @@ class DartGenerator extends StructuredGenerator<InternalDartOptions> {
       });
 
       if (generatorOptions.useJni) {
+        final jniNamer = _JniBindingNamer(isInterface: true);
         for (final Method method
             in root.apis
                 .whereType<AstFlutterApi>()
@@ -1403,12 +1462,13 @@ class DartGenerator extends StructuredGenerator<InternalDartOptions> {
             useJni: true,
             isAsynchronous: method.isAsynchronous,
           );
-          indent.writeScoped('$returnType ${method.name}($params) {', '}', () {
+          final String jniMethodName = jniNamer.nextApiMethod(method).name;
+          indent.writeScoped('$returnType $jniMethodName($params) {', '}', () {
             indent.writeScoped('if (dartApi != null) {', '} ', () {
               final methodCall =
-                  'dartApi!.${method.name}(${method.parameters.map((p) {
+                  'dartApi!.${method.name}(${indexMap(method.parameters, (int index, Parameter p) {
                     final _JniType jniType = _JniType.fromTypeDeclaration(p.type);
-                    return jniType.getToDartCall(p.type, varName: p.name);
+                    return jniType.getToDartCall(p.type, varName: _getSafeArgumentName(index, p));
                   }).join(', ')})';
 
               if (method.isAsynchronous) {
@@ -1669,7 +1729,13 @@ class DartGenerator extends StructuredGenerator<InternalDartOptions> {
 
       indent.newln();
 
+      // The Kotlin registrar declares these before the API methods.
+      final jniNamer = _JniBindingNamer(
+        isInterface: false,
+        declaredFirst: const <String>['register', 'getInstance'],
+      );
       for (final Method method in api.methods) {
+        final _JniMember jniMember = jniNamer.nextApiMethod(method);
         indent.writeScoped(
           '${method.isAsynchronous ? 'Future<' : ''}${addGenericTypes(method.returnType)}${method.isAsynchronous ? '>' : ''} ${method.name}(${_getMethodParameterSignature(method.parameters)}) ${method.isAsynchronous ? 'async ' : ''}{',
           '}',
@@ -1679,60 +1745,39 @@ class DartGenerator extends StructuredGenerator<InternalDartOptions> {
               if (generatorOptions.useJni) {
                 indent.writeScoped('if (_jniApi != null) {', '}', () {
                   final _JniType returnType = _JniType.fromTypeDeclaration(method.returnType);
-                  final bool isJniGetter =
-                      !method.isAsynchronous &&
-                      method.parameters.isEmpty &&
-                      ((RegExp(r'^is[A-Z]').hasMatch(method.name) &&
-                              method.returnType.baseName == 'bool') ||
-                          (RegExp(r'^get[A-Z]').hasMatch(method.name) &&
-                              !method.returnType.isVoid));
-                  final bool isJniSetter =
-                      !method.isAsynchronous &&
-                      method.parameters.length == 1 &&
-                      method.returnType.isVoid &&
-                      RegExp(r'^set[A-Z]').hasMatch(method.name);
-
-                  final String jniAccess;
-                  final String methodCallReturnString;
-
-                  if (isJniSetter) {
-                    final propertyName =
-                        '${method.name[3].toLowerCase()}${method.name.substring(4)}';
-                    final String arg = _getJniMethodCallArguments(method.parameters);
-                    jniAccess = '$propertyName = $arg';
-                    methodCallReturnString = '';
-                  } else if (isJniGetter) {
-                    final String propertyName = RegExp(r'^is[A-Z]').hasMatch(method.name)
-                        ? method.name
-                        : '${method.name[3].toLowerCase()}${method.name.substring(4)}';
-                    jniAccess = propertyName;
-                    methodCallReturnString =
-                        (!returnType.nonNullableNeedsUnwrapping && !method.returnType.isNullable)
-                        ? 'return '
-                        : 'final ${returnType.getJniCallReturnType(false)} res = ';
-                  } else {
-                    jniAccess = '${method.name}(${_getJniMethodCallArguments(method.parameters)})';
-                    methodCallReturnString =
-                        returnType.type.baseName == 'void' && method.isAsynchronous
-                        ? ''
-                        : (!returnType.nonNullableNeedsUnwrapping &&
-                              !method.returnType.isNullable &&
-                              !method.isAsynchronous)
-                        ? 'return '
-                        : 'final ${returnType.getJniCallReturnType(method.isAsynchronous)} res = ';
-                  }
+                  const resultVar = '${varNamePrefix}res';
+                  const dartResultVar = '${varNamePrefix}dartTypeRes';
+                  final String methodCallReturnString = switch (jniMember.kind) {
+                    _JniMemberKind.setter => '',
+                    _JniMemberKind.getter =>
+                      (!returnType.nonNullableNeedsUnwrapping && !method.returnType.isNullable)
+                          ? 'return '
+                          : 'final ${returnType.getJniCallReturnType(false)} $resultVar = ',
+                    _JniMemberKind.method =>
+                      returnType.type.baseName == 'void' && method.isAsynchronous
+                          ? ''
+                          : (!returnType.nonNullableNeedsUnwrapping &&
+                                !method.returnType.isNullable &&
+                                !method.isAsynchronous)
+                          ? 'return '
+                          : 'final ${returnType.getJniCallReturnType(method.isAsynchronous)} $resultVar = ',
+                  };
+                  final String jniAccess = jniMember.access(
+                    '_jniApi',
+                    _getJniMethodCallArguments(method.parameters),
+                  );
 
                   indent.writeln(
-                    '$methodCallReturnString${method.isAsynchronous ? 'await ' : ''}_jniApi.$jniAccess;',
+                    '$methodCallReturnString${method.isAsynchronous ? 'await ' : ''}$jniAccess;',
                   );
                   if ((method.returnType.isNullable ||
                           method.isAsynchronous ||
                           returnType.nonNullableNeedsUnwrapping) &&
                       returnType.type.baseName != 'void') {
                     indent.writeln(
-                      'final ${returnType.getDartReturnType(method.isAsynchronous)} dartTypeRes = ${returnType.getToDartCall(method.returnType, varName: 'res', forceConversion: method.isAsynchronous)};',
+                      'final ${returnType.getDartReturnType(method.isAsynchronous)} $dartResultVar = ${returnType.getToDartCall(method.returnType, varName: resultVar, forceConversion: method.isAsynchronous)};',
                     );
-                    indent.writeln('return dartTypeRes;');
+                    indent.writeln('return $dartResultVar;');
                   }
                 }, addTrailingNewline: false);
                 isFirstBranch = false;
@@ -1740,12 +1785,16 @@ class DartGenerator extends StructuredGenerator<InternalDartOptions> {
               if (generatorOptions.useFfi) {
                 final elseStr = isFirstBranch ? '' : ' else';
                 indent.addScoped('$elseStr if (_ffiApi != null) {', '}', () {
+                  const errorVar = '${varNamePrefix}error';
+                  const resultVar = '${varNamePrefix}res';
+                  const dartResultVar = '${varNamePrefix}dartTypeRes';
+                  const completerVar = '${varNamePrefix}completer';
                   final _FfiType returnType = _FfiType.fromTypeDeclaration(method.returnType);
                   final methodCallReturnString = returnType.type.isVoid || method.isAsynchronous
                       ? ''
-                      : 'final ${returnType.getFfiCallReturnType(forceNullable: true)} res = ';
+                      : 'final ${returnType.getFfiCallReturnType(forceNullable: true)} $resultVar = ';
                   indent.writeln(
-                    'final error = $_ffiBridgePrefix.${generatorOptions.ffiErrorClassName}();',
+                    'final $errorVar = $_ffiBridgePrefix.${generatorOptions.ffiErrorClassName}();',
                   );
                   final forceRes =
                       !returnType.type.isNullable &&
@@ -1754,31 +1803,31 @@ class DartGenerator extends StructuredGenerator<InternalDartOptions> {
                       : '';
                   if (method.isAsynchronous) {
                     indent.format('''
-final Completer<${method.returnType.getFullName()}> completer = Completer<${method.returnType.getFullName()}>();
+final Completer<${method.returnType.getFullName()}> $completerVar = Completer<${method.returnType.getFullName()}>();
 _ffiApi.${_getFfiMethodCallName(method)}(
-  ${method.parameters.isEmpty ? '' : '${_getFfiMethodCallArguments(method.parameters)},\nwrappedError: '}error,
+  ${method.parameters.isEmpty ? '' : '${_getFfiMethodCallArguments(method.parameters)},\nwrappedError: '}$errorVar,
   completionHandler: $_ffiBridgePrefix.ObjCBlock_ffiVoid${method.returnType.isVoid ? '' : '_${returnType.getFfiCallReturnType(withPrefix: false, asyncBlockMethod: true).replaceAll('?', '')}'}.listener(
-    (${method.returnType.isVoid ? '' : '${returnType.getFfiCallReturnType(forceNullable: true)} res'}) {
-      if (error.code != null) {
-        completer.completeError(_wrapFfiError(error));
+    (${method.returnType.isVoid ? '' : '${returnType.getFfiCallReturnType(forceNullable: true)} $resultVar'}) {
+      if ($errorVar.code != null) {
+        $completerVar.completeError(_wrapFfiError($errorVar));
       } else {
-        completer.complete(${method.returnType.isVoid ? '' : returnType.getToDartCall(method.returnType, varName: 'res$forceRes', forceConversion: true)});
+        $completerVar.complete(${method.returnType.isVoid ? '' : returnType.getToDartCall(method.returnType, varName: '$resultVar$forceRes', forceConversion: true)});
       }
     },
   ),
 );
-return ${generatorOptions.useJni ? 'await ' : ''}completer.future;
+return ${generatorOptions.useJni ? 'await ' : ''}$completerVar.future;
 ''');
                   } else {
                     indent.writeln(
-                      '$methodCallReturnString _ffiApi.${_getFfiMethodCallName(method)}(${_getFfiMethodCallArguments(method.parameters)}${method.parameters.isEmpty ? '' : ', wrappedError: '}error);',
+                      '$methodCallReturnString _ffiApi.${_getFfiMethodCallName(method)}(${_getFfiMethodCallArguments(method.parameters)}${method.parameters.isEmpty ? '' : ', wrappedError: '}$errorVar);',
                     );
-                    indent.writeln('_throwIfFfiError(error);');
+                    indent.writeln('_throwIfFfiError($errorVar);');
                     if (!returnType.type.isVoid) {
                       indent.writeln(
-                        'final ${returnType.getDartReturnType(method.isAsynchronous)} dartTypeRes = ${returnType.getToDartCall(method.returnType, varName: 'res$forceRes')};',
+                        'final ${returnType.getDartReturnType(method.isAsynchronous)} $dartResultVar = ${returnType.getToDartCall(method.returnType, varName: '$resultVar$forceRes')};',
                       );
-                      indent.writeln('return dartTypeRes;');
+                      indent.writeln('return $dartResultVar;');
                     } else {
                       indent.writeln('return;');
                     }
@@ -1807,7 +1856,10 @@ return ${generatorOptions.useJni ? 'await ' : ''}completer.future;
   }
 
   String _getFfiMethodCallName(Method method) {
-    return '${method.name}${method.parameters.isNotEmpty ? 'With${toUpperCamelCase(method.parameters.first.name)}' : 'WithWrappedError'}';
+    return _swiftObjcSelectorFirstPiece(
+      method.name,
+      method.parameters.isNotEmpty ? method.parameters.first.name : 'wrappedError',
+    );
   }
 
   String _getJniMethodCallArguments(Iterable<Parameter> parameters) {
@@ -1821,9 +1873,9 @@ return ${generatorOptions.useJni ? 'await ' : ''}completer.future;
 
   String _getFfiCallbackName(Method method) {
     if (method.parameters.isEmpty) {
-      return '${method.name}WithError_${method.isAsynchronous ? 'completionHandler_' : ''}';
+      return '${_swiftObjcSelectorFirstPiece(method.name, 'error')}_${method.isAsynchronous ? 'completionHandler_' : ''}';
     }
-    var name = '${method.name}With${toUpperCamelCase(method.parameters.first.name)}';
+    String name = _swiftObjcSelectorFirstPiece(method.name, method.parameters.first.name);
     for (final Parameter parameter in method.parameters.skip(1)) {
       name += '_${parameter.name}';
     }
@@ -1833,10 +1885,10 @@ return ${generatorOptions.useJni ? 'await ' : ''}completer.future;
 
   String _getFfiCallbackArgSignature(Method method, InternalDartOptions generatorOptions) {
     final List<String> args = [];
-    for (final Parameter parameter in method.parameters) {
+    for (final (int index, Parameter parameter) in method.parameters.indexed) {
       final _FfiType ffiType = _FfiType.fromTypeDeclaration(parameter.type);
       final String type = ffiType.getFfiCallReturnType(forceNullable: true);
-      args.add('$type ${parameter.name}');
+      args.add('$type ${_getSafeArgumentName(index, parameter)}');
     }
     args.add('$_ffiBridgePrefix.${generatorOptions.ffiErrorClassName} errorOut');
     if (method.isAsynchronous) {
@@ -2403,11 +2455,21 @@ ${api.name}({
     required String dartPackageName,
     required String dartOutputPackageName,
   }) {
+    // Mock handlers intercept method channel messages, so the test file has no
+    // use for the native interop code, which also references bindings and
+    // private codecs that only the main file can see.
+    final methodChannelOptions = InternalDartOptions(
+      copyrightHeader: generatorOptions.copyrightHeader,
+      dartOut: generatorOptions.dartOut,
+      testOut: generatorOptions.testOut,
+      fileSpecificClassNameComponent: generatorOptions.fileSpecificClassNameComponent,
+      ignoreLints: generatorOptions._ignoreLints,
+    );
     final indent = Indent();
-    final String sourceOutPath = generatorOptions.dartOut ?? '';
-    final String testOutPath = generatorOptions.testOut ?? '';
-    _writeTestPrologue(generatorOptions, root, indent);
-    _writeTestImports(generatorOptions, root, indent);
+    final String sourceOutPath = methodChannelOptions.dartOut ?? '';
+    final String testOutPath = methodChannelOptions.testOut ?? '';
+    _writeTestPrologue(methodChannelOptions, root, indent);
+    _writeTestImports(methodChannelOptions, root, indent);
     final String relativeDartPath = path.Context(
       style: path.Style.posix,
     ).relative(_posixify(sourceOutPath), from: _posixify(path.dirname(testOutPath)));
@@ -2421,7 +2483,7 @@ ${api.name}({
       final String path = relativeDartPath.replaceFirst(RegExp(r'^.*/lib/'), '');
       indent.writeln("import 'package:$dartOutputPackageName/$path';");
     }
-    writeGeneralCodec(generatorOptions, root, indent, dartPackageName: dartPackageName);
+    writeGeneralCodec(methodChannelOptions, root, indent, dartPackageName: dartPackageName);
     for (final AstHostApi api in root.apis.whereType<AstHostApi>()) {
       if (api.dartHostTestHandler != null) {
         final mockApi = AstFlutterApi(
@@ -2430,7 +2492,7 @@ ${api.name}({
           documentationComments: api.documentationComments,
         );
         writeFlutterApi(
-          generatorOptions,
+          methodChannelOptions,
           root,
           indent,
           mockApi,
@@ -2519,6 +2581,9 @@ ${api.name}({
   }
 
   void _writeJniCodec(Indent indent, Root root) {
+    // Sealed classes have no native object of their own, and the branches for
+    // their subclasses already match every value they can hold.
+    final Iterable<Class> concreteClasses = root.classes.where((Class c) => !c.isSealed);
     indent.newln();
     indent.format('''
 class _PigeonJniCodec {
@@ -2547,16 +2612,16 @@ class _PigeonJniCodec {
       return value.as(JBoolean.type).booleanValue();
     } else if (value.isA<JByteArray>(JByteArray.type)) {
       final JByteArray array = value.as(JByteArray.type);
-      return array.getRange(0, array.length).buffer.asUint8List();
+      return Uint8List.fromList(array.getRange(0, array.length).buffer.asUint8List());
     } else if (value.isA<JIntArray>(JIntArray.type)) {
       final JIntArray array = value.as(JIntArray.type);
-      return array.getRange(0, array.length);
+      return Int32List.fromList(array.getRange(0, array.length));
     } else if (value.isA<JLongArray>(JLongArray.type)) {
       final JLongArray array = value.as(JLongArray.type);
-      return array.getRange(0, array.length);
+      return Int64List.fromList(array.getRange(0, array.length));
     } else if (value.isA<JDoubleArray>(JDoubleArray.type)) {
       final JDoubleArray array = value.as(JDoubleArray.type);
-      return array.getRange(0, array.length);
+      return Float64List.fromList(array.getRange(0, array.length));
     } else if (value.isA<JList<JObject>>(JList.type as JType<JList<JObject>>)) {
       final List<JObject?> list = value.as(JList.type).asDart();
       final res = <Object?>[];
@@ -2575,7 +2640,7 @@ class _PigeonJniCodec {
         res[readValue(entry.key)] = readValue(entry.value);
       }
       return res;
-    ${root.classes.map((Class dataClass) {
+    ${concreteClasses.map((Class dataClass) {
       final _JniType jniType = _JniType.fromClass(dataClass);
       return '''
       } else if (value.isA<${jniType.jniName}>(
@@ -2626,7 +2691,7 @@ class _PigeonJniCodec {
       array.setRange(0, value.length, value);
       return array as T;
     ${root.lists.values.sorted(sortByObjectCount).map((TypeDeclaration list) {
-      if (list.typeArguments.isEmpty || list.typeArguments.first.baseName == 'Object') {
+      if (list.typeArguments.isEmpty || list.typeArguments.first.baseName == 'Object' || _containsProxyApi(list)) {
         return '';
       }
       final _JniType jniType = _JniType.fromTypeDeclaration(list);
@@ -2642,7 +2707,7 @@ class _PigeonJniCodec {
     } else if (value is List) {
       return value.map<JObject?>((e) => writeValue<JObject?>(e)).toJList() as T;
     ${root.maps.entries.sorted((MapEntry<String, TypeDeclaration> a, MapEntry<String, TypeDeclaration> b) => sortByObjectCount(a.value, b.value)).map((MapEntry<String, TypeDeclaration> mapType) {
-      if (mapType.value.typeArguments.isEmpty || (mapType.value.typeArguments.first.baseName == 'Object' && mapType.value.typeArguments.last.baseName == 'Object')) {
+      if (mapType.value.typeArguments.isEmpty || (mapType.value.typeArguments.first.baseName == 'Object' && mapType.value.typeArguments.last.baseName == 'Object') || _containsProxyApi(mapType.value)) {
         return '';
       }
       final _JniType jniType = _JniType.fromTypeDeclaration(mapType.value);
@@ -2669,7 +2734,7 @@ class _PigeonJniCodec {
           .map<JObject?, JObject?>((k, v) =>
               MapEntry(writeValue<JObject?>(k), writeValue<JObject?>(v)))
           .toJMap() as T;
-    ${root.classes.map((Class dataClass) {
+    ${concreteClasses.map((Class dataClass) {
       final _JniType jniType = _JniType.fromClass(dataClass);
       return '''
       } else if (value is ${jniType.type.baseName}) {
@@ -2744,6 +2809,9 @@ class _PigeonJniCodec {
   }
 
   void _writeFfiCodec(Indent indent, Root root) {
+    // Sealed classes have no native object of their own, and the branches for
+    // their subclasses already match every value they can hold.
+    final Iterable<Class> concreteClasses = root.classes.where((Class c) => !c.isSealed);
     indent.newln();
     indent.format('''
 class _PigeonFfiCodec {
@@ -2785,7 +2853,7 @@ class _PigeonFfiCodec {
       return res;
     } else if ($_ffiBridgePrefix.${_classNamePrefix}NumberWrapper.isA(value)) {
       return _convertNumberWrapperToDart($_ffiBridgePrefix.${_classNamePrefix}NumberWrapper.as(value));
-    ${root.classes.map((Class dataClass) {
+    ${concreteClasses.map((Class dataClass) {
       final _FfiType ffiType = _FfiType.fromClass(dataClass);
       return '''
       } else if (${ffiType.getFfiName()}.isA(value)) {
@@ -2829,7 +2897,7 @@ class _PigeonFfiCodec {
     } else if (value is TypedData) {
       return _toPigeonTypedData(value) as T;
     ${root.lists.values.sorted(sortByObjectCount).map((TypeDeclaration list) {
-      if (list.typeArguments.isEmpty || list.typeArguments.first.baseName == 'Object') {
+      if (list.typeArguments.isEmpty || list.typeArguments.first.baseName == 'Object' || _containsProxyApi(list)) {
         return '';
       }
       final _FfiType ffiType = _FfiType.fromTypeDeclaration(list);
@@ -2851,7 +2919,7 @@ class _PigeonFfiCodec {
       }
       return res as T;
     ${root.maps.entries.sorted((MapEntry<String, TypeDeclaration> a, MapEntry<String, TypeDeclaration> b) => sortByObjectCount(a.value, b.value)).map((MapEntry<String, TypeDeclaration> mapType) {
-      if (mapType.value.typeArguments.isEmpty || (mapType.value.typeArguments.first.baseName == 'Object' && mapType.value.typeArguments.last.baseName == 'Object')) {
+      if (mapType.value.typeArguments.isEmpty || (mapType.value.typeArguments.first.baseName == 'Object' && mapType.value.typeArguments.last.baseName == 'Object') || _containsProxyApi(mapType.value)) {
         return '';
       }
       final _FfiType ffiType = _FfiType.fromTypeDeclaration(mapType.value);
@@ -2870,7 +2938,7 @@ class _PigeonFfiCodec {
         res.setObject(writeValue(entry.value, generic: true), forKey: NSCopying.as(writeValue(entry.key, generic: true)));
       }
       return res as T;
-    ${root.classes.map((Class dataClass) {
+    ${concreteClasses.map((Class dataClass) {
       final _FfiType ffiType = _FfiType.fromClass(dataClass);
       return '''
       } else if (value is ${ffiType.type.baseName}) {
@@ -2930,25 +2998,48 @@ $_ffiBridgePrefix.${_classNamePrefix}PigeonTypedData _toPigeonTypedData(TypedDat
 }
 
 
+''');
+    // `bytes` is owned by `data`, so `data` must stay alive until the copy is
+    // complete. `NSData` itself isn't `Finalizable`, so holding the local isn't
+    // enough; holding its `ObjCObjectRef` and releasing it explicitly in
+    // `finally` guarantees liveness, and frees it immediately rather than
+    // waiting for its finalizer.
+    indent.format('''
 Object? _getValueFromPigeonTypedData($_ffiBridgePrefix.${_classNamePrefix}PigeonTypedData value) {
   final NSData data = value.data;
-  final Pointer<Void> bytes = data.bytes;
-  return switch (value.type) {
-    0 => Uint8List.fromList(bytes.cast<Uint8>().asTypedList(data.length)),
-    1 => Int32List.fromList(
-      bytes.cast<Int32>().asTypedList(data.length ~/ 4),
-    ),
-    2 => Int64List.fromList(
-      bytes.cast<Int64>().asTypedList(data.length ~/ 8),
-    ),
-    3 => Float32List.fromList(
-      bytes.cast<Float>().asTypedList(data.length ~/ 4),
-    ),
-    4 => Float64List.fromList(
-      bytes.cast<Double>().asTypedList(data.length ~/ 8),
-    ),
-    _ => throw ArgumentError.value(value),
-  };
+  final ObjCObjectRef dataRef = data.object\$.ref;
+  try {
+    final int lengthInBytes = data.length;
+    if (lengthInBytes == 0) {
+      return switch (value.type) {
+        0 => Uint8List(0),
+        1 => Int32List(0),
+        2 => Int64List(0),
+        3 => Float32List(0),
+        4 => Float64List(0),
+        _ => throw ArgumentError.value(value),
+      };
+    }
+    final Pointer<Void> bytes = data.bytes;
+    return switch (value.type) {
+      0 => Uint8List.fromList(bytes.cast<Uint8>().asTypedList(lengthInBytes)),
+      1 => Int32List.fromList(
+        bytes.cast<Int32>().asTypedList(lengthInBytes ~/ 4),
+      ),
+      2 => Int64List.fromList(
+        bytes.cast<Int64>().asTypedList(lengthInBytes ~/ 8),
+      ),
+      3 => Float32List.fromList(
+        bytes.cast<Float>().asTypedList(lengthInBytes ~/ 4),
+      ),
+      4 => Float64List.fromList(
+        bytes.cast<Double>().asTypedList(lengthInBytes ~/ 8),
+      ),
+      _ => throw ArgumentError.value(value),
+    };
+  } finally {
+    dataRef.release();
+  }
 }
     ''');
   }
@@ -3367,6 +3458,321 @@ String _castValue(String value, TypeDeclaration type) {
   return '($valueWithTypeCast)$castCall';
 }
 
+/// Whether [type] is, or has a type argument that is, a ProxyApi.
+///
+/// ProxyApis are only sent over method channels, so the native interop codecs
+/// have no conversion for them.
+bool _containsProxyApi(TypeDeclaration type) =>
+    type.isProxyApi || type.typeArguments.any(_containsProxyApi);
+
+/// Members that every JNIgen binding already has, so JNIgen renames any Java
+/// member with one of these names.
+const Set<String> _jniObjectMemberNames = <String>{
+  'as',
+  'fromReference',
+  'toString',
+  'hashCode',
+  'runtimeType',
+  'noSuchMethod',
+  'reference',
+  'isA',
+  'isInstanceOf',
+  'isReleased',
+  'isNull',
+  'use',
+  'release',
+  'releasedBy',
+  'jClass',
+  'type',
+};
+
+/// Dart reserved words that JNIgen can't use as method names.
+const Set<String> _jniReservedMethodNames = <String>{
+  'assert',
+  'await',
+  'break',
+  'case',
+  'catch',
+  'class',
+  'const',
+  'continue',
+  'default',
+  'do',
+  'else',
+  'enum',
+  'extends',
+  'false',
+  'final',
+  'finally',
+  'for',
+  'if',
+  'in',
+  'is',
+  'new',
+  'null',
+  'rethrow',
+  'return',
+  'super',
+  'switch',
+  'this',
+  'throw',
+  'true',
+  'try',
+  'var',
+  'void',
+  'while',
+  'with',
+  'yield',
+};
+
+enum _JniMemberKind { method, getter, setter }
+
+/// A Dart member that JNIgen generates for a Java method.
+class _JniMember {
+  const _JniMember(this.name, this.kind);
+
+  final String name;
+  final _JniMemberKind kind;
+
+  /// Dart code that uses this member on [receiver], passing [arguments] to a
+  /// method or assigning them to a setter.
+  String access(String receiver, [String arguments = '']) {
+    return switch (kind) {
+      _JniMemberKind.method => '$receiver.$name($arguments)',
+      _JniMemberKind.getter => '$receiver.$name',
+      _JniMemberKind.setter => '$receiver.$name = $arguments',
+    };
+  }
+}
+
+/// Predicts the names JNIgen gives the Dart members of one binding class.
+///
+/// This mirrors JNIgen 1.0.1's renamer
+/// (https://github.com/dart-lang/native/blob/jnigen-v1.0.1/pkgs/jnigen/lib/src/bindings/renamer.dart):
+/// members are named in declaration order, Java getters and setters on classes
+/// (but not interfaces) become Dart properties, names that are already taken
+/// get a `$<count>` suffix, and Dart reserved words get a `$` suffix.
+class _JniBindingNamer {
+  /// [declaredFirst] are the names of methods that the Kotlin class declares
+  /// before the ones Pigeon will ask about.
+  _JniBindingNamer({required this.isInterface, Iterable<String> declaredFirst = const <String>[]}) {
+    for (final name in <String>[
+      ..._jniObjectMemberNames,
+      if (isInterface) ...<String>['implement', 'implementIn'],
+    ]) {
+      _counts[name] = 1;
+    }
+    declaredFirst.forEach(_claim);
+  }
+
+  final bool isInterface;
+  final Map<String, int> _counts = <String, int>{};
+  final Map<String, String> _propertyNames = <String, String>{};
+
+  /// Names the next Java method of the class.
+  ///
+  /// [propertyType] identifies the type a getter returns or a setter takes,
+  /// because JNIgen only gives a getter and setter the same name when their
+  /// types match.
+  _JniMember next(
+    String javaName, {
+    int parameterCount = 0,
+    bool returnsVoid = false,
+    bool returnsPrimitiveBool = false,
+    bool isSuspend = false,
+    String propertyType = '',
+  }) {
+    _JniMemberKind kind = _JniMemberKind.method;
+    var rawName = javaName;
+    if (!isInterface && !isSuspend) {
+      if (RegExp(r'^get[A-Z]').hasMatch(javaName) && parameterCount == 0 && !returnsVoid) {
+        kind = _JniMemberKind.getter;
+        rawName = _jniPropertyName(javaName);
+      } else if (RegExp(r'^is[A-Z]').hasMatch(javaName) &&
+          parameterCount == 0 &&
+          returnsPrimitiveBool) {
+        kind = _JniMemberKind.getter;
+      } else if (RegExp(r'^set[A-Z]').hasMatch(javaName) && parameterCount == 1 && returnsVoid) {
+        kind = _JniMemberKind.setter;
+        rawName = _jniPropertyName(javaName);
+      }
+    }
+    if (kind == _JniMemberKind.method) {
+      return _JniMember(_claim(rawName), kind);
+    }
+    final propertySignature = '$propertyType $rawName';
+    final String name = _propertyNames[propertySignature] ??= _claim(rawName);
+    return _JniMember(name, kind);
+  }
+
+  /// Names the getter Kotlin generates for the property [propertyName].
+  _JniMember nextKotlinGetter(String propertyName, {required TypeDeclaration type}) {
+    return next(
+      _kotlinGetterName(propertyName),
+      returnsPrimitiveBool: _isJvmPrimitiveBool(type),
+      propertyType: _jvmTypeKey(type),
+    );
+  }
+
+  /// Names a method of a Pigeon API.
+  _JniMember nextApiMethod(Method method) {
+    final TypeDeclaration? propertyType = method.returnType.isVoid
+        ? method.parameters.firstOrNull?.type
+        : method.returnType;
+    return next(
+      method.name,
+      parameterCount: method.parameters.length,
+      returnsVoid: method.returnType.isVoid,
+      returnsPrimitiveBool: _isJvmPrimitiveBool(method.returnType),
+      isSuspend: method.isAsynchronous,
+      propertyType: propertyType == null ? '' : _jvmTypeKey(propertyType),
+    );
+  }
+
+  String _claim(String name) {
+    final int? count = _counts[name];
+    if (count != null) {
+      _counts[name] = count + 1;
+      return '$name\$$count';
+    }
+    _counts[name] = 1;
+    return _jniReservedMethodNames.contains(name) ? '$name\$' : name;
+  }
+
+  static String _jniPropertyName(String accessorName) {
+    final String property = accessorName.substring(3);
+    return '${property[0].toLowerCase()}${property.substring(1)}';
+  }
+
+  /// Kotlin keeps the name of an `is` property, regardless of its type, as
+  /// the name of its getter.
+  static String _kotlinGetterName(String propertyName) {
+    if (RegExp(r'^is[^a-z]').hasMatch(propertyName)) {
+      return propertyName;
+    }
+    return 'get${propertyName[0].toUpperCase()}${propertyName.substring(1)}';
+  }
+
+  /// Only non-null Kotlin `Boolean`s compile to the JVM `boolean` that JNIgen
+  /// requires for an `is` getter.
+  static bool _isJvmPrimitiveBool(TypeDeclaration type) =>
+      type.baseName == 'bool' && !type.isNullable;
+
+  static String _jvmTypeKey(TypeDeclaration type) {
+    const primitives = <String>{'bool', 'int', 'double'};
+    final boxed = type.isNullable && primitives.contains(type.baseName) ? '?' : '';
+    return '${type.getFullName(withNullable: false)}$boxed';
+  }
+}
+
+/// The words that stop Swift from adding `With` when it infers an
+/// Objective-C selector.
+///
+/// From https://github.com/swiftlang/swift/blob/main/lib/Basic/PartsOfSpeech.def.
+const Set<String> _swiftPrepositions = <String>{
+  'above',
+  'after',
+  'along',
+  'alongside',
+  'as',
+  'at',
+  'before',
+  'below',
+  'by',
+  'following',
+  'for',
+  'from',
+  'given',
+  'in',
+  'including',
+  'inside',
+  'into',
+  'matching',
+  'of',
+  'on',
+  'passing',
+  'preceding',
+  'since',
+  'to',
+  'until',
+  'using',
+  'via',
+  'when',
+  'with',
+  'within',
+};
+
+/// Returns the first piece of the Objective-C selector that Swift infers for
+/// an `@objc` method or initializer named [baseName] whose first argument
+/// label is [label], which FFIgen uses as the name of the Dart binding.
+///
+/// Swift joins them with `With`, unless the last word of [baseName] or the
+/// first word of [label] is a preposition. For example, `signIn(value:)`
+/// becomes `signInValue:`, but `signOut(value:)` becomes `signOutWithValue:`.
+String _swiftObjcSelectorFirstPiece(String baseName, String label) {
+  if (label.isEmpty) {
+    return baseName;
+  }
+  final bool addWith =
+      !_swiftPrepositions.contains(_swiftLastWord(baseName).toLowerCase()) &&
+      !_swiftPrepositions.contains(_swiftFirstWord(label).toLowerCase());
+  return '$baseName${addWith ? 'With' : ''}${label[0].toUpperCase()}${label.substring(1)}';
+}
+
+bool _isAsciiUppercase(String text, int index) {
+  final int codeUnit = text.codeUnitAt(index);
+  return codeUnit >= 0x41 && codeUnit <= 0x5A;
+}
+
+bool _isAsciiLowercase(String text, int index) {
+  final int codeUnit = text.codeUnitAt(index);
+  return codeUnit >= 0x61 && codeUnit <= 0x7A;
+}
+
+/// Returns the first word of [name], split like Swift's
+/// `camel_case::getFirstWord`.
+String _swiftFirstWord(String name) {
+  if (name.isEmpty || name.startsWith('_')) {
+    return name.isEmpty ? '' : '_';
+  }
+  var end = 0;
+  while (end < name.length && _isAsciiUppercase(name, end)) {
+    end++;
+  }
+  if (end > 1) {
+    // An acronym ends before its last capital letter when that letter starts
+    // the next word, like `URL` in `URLFor`.
+    return name.substring(0, end < name.length && _isAsciiLowercase(name, end) ? end - 1 : end);
+  }
+  while (end < name.length && !_isAsciiUppercase(name, end) && name[end] != '_') {
+    end++;
+  }
+  return name.substring(0, end);
+}
+
+/// Returns the last word of [name], split like Swift's
+/// `camel_case::getLastWord`.
+String _swiftLastWord(String name) {
+  int start = name.length;
+  while (start > 0 && !_isAsciiUppercase(name, start - 1) && name[start - 1] != '_') {
+    start--;
+  }
+  if (start == 0) {
+    return name;
+  }
+  if (name[start - 1] == '_') {
+    return start == name.length ? '_' : name.substring(start);
+  }
+  if (start < name.length) {
+    return name.substring(start - 1);
+  }
+  // The name ends with an acronym, like `ID` in `lookUpID`.
+  while (start > 0 && _isAsciiUppercase(name, start - 1)) {
+    start--;
+  }
+  return name.substring(start);
+}
+
 /// Returns an argument name that can be used in a context where it is possible to collide.
 String _getSafeArgumentName(int count, NamedType field) =>
     field.name.isEmpty ? 'arg$count' : 'arg_${field.name}';
@@ -3375,6 +3781,8 @@ String _getSafeArgumentName(int count, NamedType field) =>
 String getParameterName(int count, NamedType field) =>
     field.name.isEmpty ? 'arg$count' : field.name;
 
+/// Uses [_getSafeArgumentName]s, so callers must refer to the parameters by
+/// those names.
 String _getJniMethodParameterSignature(
   Iterable<Parameter> parameters, {
   bool addTrailingComma = false,
@@ -3384,14 +3792,14 @@ String _getJniMethodParameterSignature(
     return '';
   }
   final comma = addTrailingComma || parameters.length > 1 ? ',' : '';
-  return parameters.map((Parameter parameter) {
+  return indexMap(parameters, (int index, Parameter parameter) {
     final _JniType jniType = _JniType.fromTypeDeclaration(parameter.type);
     final String type = jniType.getJniCallReturnType(
       false,
       isParameter: true,
       isAsynchronous: isAsynchronous,
     );
-    return '$type ${parameter.name}$comma';
+    return '$type ${_getSafeArgumentName(index, parameter)}$comma';
   }).join();
 }
 

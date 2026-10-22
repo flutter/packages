@@ -2,10 +2,11 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-// Version: 38.2.31
+// Version: 38.2.83
 
 // dart format off
 import 'color_role.dart';
+import 'motion.dart';
 import 'shape_struct.dart';
 import 'typescale.dart';
 import 'typescale_struct.dart';
@@ -124,10 +125,12 @@ class TokenButton {
   static const double leadingSpace = 24.00;
 
   /// md.comp.button.pressed.container.corner-size.motion.spring.damping
-  static const double pressedContainerCornerSizeMotionSpringDamping = 0.60;
+  static const double pressedContainerCornerSizeMotionSpringDamping =
+      TokenMotion.springFastSpatialDamping;
 
   /// md.comp.button.pressed.container.corner-size.motion.spring.stiffness
-  static const double pressedContainerCornerSizeMotionSpringStiffness = 800.00;
+  static const double pressedContainerCornerSizeMotionSpringStiffness =
+      TokenMotion.springFastSpatialStiffness;
 
   /// md.comp.button.pressed.container.elevation
   static const double pressedContainerElevation = 0.00;

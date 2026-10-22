@@ -120,12 +120,20 @@ void main() {
         },
       );
 
-      CopyableObject? object = CopyableObject(pigeon_instanceManager: instanceManager);
+      // Allocate and register the instance inside a non-inlined helper so the
+      // async test frame does not retain a hidden stack/register reference to
+      // the object across `await forceGC()`.
+      @pragma('vm:never-inline')
+      void addTemporaryInstance() {
+        instanceManager.addDartCreatedInstance(
+          CopyableObject(pigeon_instanceManager: instanceManager),
+        );
+      }
 
-      instanceManager.addDartCreatedInstance(object);
-
-      object = null;
-      await forceGC(fullGcCycles: 2);
+      addTemporaryInstance();
+      for (var i = 0; i < 5 && !weakReferencedRemovedCalled; i++) {
+        await forceGC();
+      }
 
       expect(weakReferencedRemovedCalled, isTrue);
     });
@@ -138,11 +146,18 @@ void main() {
         },
       );
 
-      CopyableObject? object = CopyableObject(pigeon_instanceManager: instanceManager);
+      // Allocate and register the instance inside a non-inlined helper so the
+      // async test frame does not retain a hidden stack/register reference to
+      // the object across `await forceGC()`.
+      @pragma('vm:never-inline')
+      void addTemporaryInstance() {
+        instanceManager.addHostCreatedInstance(
+          CopyableObject(pigeon_instanceManager: instanceManager),
+          0,
+        );
+      }
 
-      instanceManager.addHostCreatedInstance(object, 0);
-
-      object = null;
+      addTemporaryInstance();
       await forceGC(fullGcCycles: 2);
 
       expect(weakReferencedRemovedCalled, isFalse);
