@@ -369,22 +369,26 @@ class TextTheme with Diagnosticable {
     if (other == null) {
       return this;
     }
+
+    TextStyle? mergeStyles(TextStyle? style, TextStyle? otherStyle) =>
+        style?.merge(otherStyle) ?? otherStyle;
+
     return copyWith(
-      displayLarge: displayLarge?.merge(other.displayLarge) ?? other.displayLarge,
-      displayMedium: displayMedium?.merge(other.displayMedium) ?? other.displayMedium,
-      displaySmall: displaySmall?.merge(other.displaySmall) ?? other.displaySmall,
-      headlineLarge: headlineLarge?.merge(other.headlineLarge) ?? other.headlineLarge,
-      headlineMedium: headlineMedium?.merge(other.headlineMedium) ?? other.headlineMedium,
-      headlineSmall: headlineSmall?.merge(other.headlineSmall) ?? other.headlineSmall,
-      titleLarge: titleLarge?.merge(other.titleLarge) ?? other.titleLarge,
-      titleMedium: titleMedium?.merge(other.titleMedium) ?? other.titleMedium,
-      titleSmall: titleSmall?.merge(other.titleSmall) ?? other.titleSmall,
-      bodyLarge: bodyLarge?.merge(other.bodyLarge) ?? other.bodyLarge,
-      bodyMedium: bodyMedium?.merge(other.bodyMedium) ?? other.bodyMedium,
-      bodySmall: bodySmall?.merge(other.bodySmall) ?? other.bodySmall,
-      labelLarge: labelLarge?.merge(other.labelLarge) ?? other.labelLarge,
-      labelMedium: labelMedium?.merge(other.labelMedium) ?? other.labelMedium,
-      labelSmall: labelSmall?.merge(other.labelSmall) ?? other.labelSmall,
+      displayLarge: mergeStyles(displayLarge, other.displayLarge),
+      displayMedium: mergeStyles(displayMedium, other.displayMedium),
+      displaySmall: mergeStyles(displaySmall, other.displaySmall),
+      headlineLarge: mergeStyles(headlineLarge, other.headlineLarge),
+      headlineMedium: mergeStyles(headlineMedium, other.headlineMedium),
+      headlineSmall: mergeStyles(headlineSmall, other.headlineSmall),
+      titleLarge: mergeStyles(titleLarge, other.titleLarge),
+      titleMedium: mergeStyles(titleMedium, other.titleMedium),
+      titleSmall: mergeStyles(titleSmall, other.titleSmall),
+      bodyLarge: mergeStyles(bodyLarge, other.bodyLarge),
+      bodyMedium: mergeStyles(bodyMedium, other.bodyMedium),
+      bodySmall: mergeStyles(bodySmall, other.bodySmall),
+      labelLarge: mergeStyles(labelLarge, other.labelLarge),
+      labelMedium: mergeStyles(labelMedium, other.labelMedium),
+      labelSmall: mergeStyles(labelSmall, other.labelSmall),
     );
   }
 
