@@ -42,7 +42,7 @@ import '../templates/progress_indicator_template.dart';
 // import '../templates/radio_template.dart';
 import '../templates/range_slider_template.dart';
 import '../templates/search_bar_template.dart';
-// import '../templates/search_view_template.dart';
+import '../templates/search_view_template.dart';
 // import '../templates/segmented_button_template.dart';
 // import '../templates/slider_template.dart';
 import '../templates/snackbar_template.dart';
@@ -822,8 +822,17 @@ void main() {
     });
 
     test('SearchViewTemplateM3 emits M3 SearchView defaults from tokens', () {
-      // Intentionally empty, will be implemented during migration. See:
-      // https://github.com/flutter/flutter/issues/187899
+      final String contents = _generateContents(const SearchViewTemplateM3());
+      expect(contents, contains('class _SearchViewDefaultsM3 extends SearchViewThemeData'));
+      expect(contents, contains('Color? get backgroundColor => _colors.surfaceContainerHigh'));
+      expect(contents, contains('static double fullScreenBarHeight = 72.0'));
+      expect(
+        contents,
+        contains(
+          'TextStyle? get headerHintStyle => _textTheme.bodyLarge?.copyWith(color: _colors.onSurfaceVariant)',
+        ),
+      );
+      expect(contents, contains('Color? get dividerColor => _colors.outline'));
     });
 
     test('SegmentedButtonTemplateM3 emits M3 SegmentedButton defaults from tokens', () {

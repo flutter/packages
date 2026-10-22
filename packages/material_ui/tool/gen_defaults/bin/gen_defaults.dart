@@ -46,7 +46,7 @@ import '../templates/progress_indicator_template.dart';
 // import '../templates/radio_template.dart';
 import '../templates/range_slider_template.dart';
 import '../templates/search_bar_template.dart';
-// import '../templates/search_view_template.dart';
+import '../templates/search_view_template.dart';
 // import '../templates/segmented_button_template.dart';
 // import '../templates/slider_template.dart';
 import '../templates/snackbar_template.dart';
@@ -109,7 +109,7 @@ Future<void> main(List<String> args) async {
   // const RadioTemplateM3().generateFile(verbose: verbose);
   const RangeSliderTemplateM3().generateFile(verbose: verbose);
   const SearchBarTemplateM3().generateFile(verbose: verbose);
-  // const SearchViewTemplateM3().generateFile(verbose: verbose);
+  const SearchViewTemplateM3().generateFile(verbose: verbose);
   // const SegmentedButtonTemplateM3().generateFile(verbose: verbose);
   // const SliderTemplateM3().generateFile(verbose: verbose);
   const SnackbarTemplateM3().generateFile(verbose: verbose);
