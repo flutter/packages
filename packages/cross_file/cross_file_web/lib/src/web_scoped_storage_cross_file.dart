@@ -47,8 +47,8 @@ sealed class WebScopedStorageXFileCreationParams extends PlatformScopedStorageXF
   /// Creates an Object URL using the bytes provided the blob. See
   /// [URL.createObjectURL].
   ///
-  /// If a `fileName` is provided, the underlying [Blob] is created as a [File]
-  /// with the `fileName` passed to it.
+  /// If a [fileName] is provided, the underlying [Blob] is created as a [File]
+  /// with the [fileName] passed to it.
   ///
   /// `autoRevokeObjectUrl`: Whether the unique object url obtained created with
   /// [blob] should be revoked when this instance is garbage collected. See
