@@ -40,7 +40,7 @@ import '../templates/navigation_rail_template.dart';
 // import '../templates/popup_menu_template.dart';
 import '../templates/progress_indicator_template.dart';
 // import '../templates/radio_template.dart';
-// import '../templates/range_slider_template.dart';
+import '../templates/range_slider_template.dart';
 import '../templates/search_bar_template.dart';
 // import '../templates/search_view_template.dart';
 // import '../templates/segmented_button_template.dart';
@@ -799,8 +799,18 @@ void main() {
     });
 
     test('RangeSliderTemplateM3 emits M3 RangeSlider defaults from tokens', () {
-      // Intentionally empty, will be implemented during migration. See:
-      // https://github.com/flutter/flutter/issues/187899
+      const template = RangeSliderTemplateM3();
+      final String contents = _generateContents(template);
+      expect(contents, contains('class _RangeSliderDefaultsM3 extends SliderThemeData'));
+      expect(
+        contents,
+        contains('Color? get disabledActiveTrackColor => _colors.onSurface.withOpacity(0.38);'),
+      );
+      expect(
+        contents,
+        contains('Color? get activeTickMarkColor => _colors.onPrimary.withOpacity(1.0);'),
+      );
+      expect(contents, contains('Theme.of(context).textTheme.labelLarge!.copyWith'));
     });
 
     test('SearchBarTemplateM3 emits M3 SearchBar defaults from tokens', () {
