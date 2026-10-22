@@ -37,7 +37,7 @@ import '../templates/motion_template.dart';
 // import '../templates/navigation_bar_template.dart';
 // import '../templates/navigation_drawer_template.dart';
 import '../templates/navigation_rail_template.dart';
-// import '../templates/popup_menu_template.dart';
+import '../templates/popup_menu_template.dart';
 import '../templates/progress_indicator_template.dart';
 // import '../templates/radio_template.dart';
 import '../templates/range_slider_template.dart';
@@ -750,8 +750,16 @@ void main() {
     });
 
     test('PopupMenuTemplateM3 emits M3 PopupMenu defaults from tokens', () {
-      // Intentionally empty, will be implemented during migration. See:
-      // https://github.com/flutter/flutter/issues/187899
+      final String contents = _generateContents(const PopupMenuTemplateM3());
+      expect(contents, contains('super(elevation: 3.0)'));
+      expect(contents, contains('_colors.onSurface.withOpacity(0.38)'));
+      expect(contents, contains('Color? get color => _colors.surfaceContainer;'));
+      expect(
+        contents,
+        contains(
+          'ShapeBorder? get shape => const RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(4.0)))',
+        ),
+      );
     });
 
     test('ProgressIndicatorTemplateM3 emits M3 ProgressIndicator defaults from tokens', () {

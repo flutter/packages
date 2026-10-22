@@ -2,23 +2,25 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import '../data/list.dart';
+import '../data/menu.dart';
 import 'template.dart';
 
-class PopupMenuTemplate extends TokenTemplate {
-  const PopupMenuTemplate(
-    super.blockName,
-    super.fileName,
-    super.tokens, {
-    super.colorSchemePrefix = '_colors.',
-    super.textThemePrefix = '_textTheme.',
-  });
+class PopupMenuTemplateM3 extends TokenTemplateM3 {
+  const PopupMenuTemplateM3();
 
   @override
-  String generate() =>
+  String get name => 'Popup Menu';
+
+  @override
+  String get parentFilePath => 'popup_menu.dart';
+
+  @override
+  String generateContents(String className) =>
       '''
-class _${blockName}DefaultsM3 extends PopupMenuThemeData {
-  _${blockName}DefaultsM3(this.context)
-    : super(elevation: ${elevation('md.comp.menu.container')});
+class $className extends PopupMenuThemeData {
+  $className(this.context)
+    : super(elevation: ${TokenMenu.containerElevation});
 
   final BuildContext context;
   late final ThemeData _theme = Theme.of(context);
@@ -30,23 +32,23 @@ class _${blockName}DefaultsM3 extends PopupMenuThemeData {
     // TODO(quncheng): Update this hard-coded value to use the latest tokens.
     final TextStyle style = _textTheme.labelLarge!;
       if (states.contains(WidgetState.disabled)) {
-        return style.apply(color: ${componentColor('md.comp.list.list-item.disabled.label-text')});
+        return style.apply(color: ${colorWithOpacity(TokenList.listItemDisabledLabelTextColor, TokenList.listItemDisabledLabelTextOpacity)});
       }
-      return style.apply(color: ${componentColor('md.comp.list.list-item.label-text')});
+      return style.apply(color: ${color(TokenList.listItemLabelTextColor)});
     });
   }
 
   @override
-  Color? get color => ${componentColor('md.comp.menu.container')};
+  Color? get color => ${color(TokenMenu.containerColor)};
 
   @override
-  Color? get shadowColor => ${color("md.comp.menu.container.shadow-color")};
+  Color? get shadowColor => ${color(TokenMenu.containerShadowColor)};
 
   @override
-  Color? get surfaceTintColor => ${colorOrTransparent("md.comp.menu.container.surface-tint-layer.color")};
+  Color? get surfaceTintColor => Colors.transparent;
 
   @override
-  ShapeBorder? get shape => ${shape("md.comp.menu.container")};
+  ShapeBorder? get shape => ${shape(TokenMenu.containerShape)};
 
   // TODO(bleroux): This is taken from https://m3.material.io/components/menus/specs
   // Update this when the token is available.
