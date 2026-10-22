@@ -218,13 +218,9 @@ private let hlsAudioTestURI =
     avPlayer.play()
 
     let eventSink: FlutterEventSink = { event in
-      guard let event = event as? [String: Any], let eventType = event["event"] as? String else {
-        return
-      }
-      if eventType == "bufferingEnd" {
+      if event is BufferingEndEvent {
         #expect(avPlayer.currentItem!.isPlaybackLikelyToKeepUp)
-      }
-      if eventType == "bufferingStart" {
+      } else if event is BufferingStartEvent {
         #expect(!avPlayer.currentItem!.isPlaybackLikelyToKeepUp)
       }
     }
@@ -486,7 +482,7 @@ private let hlsAudioTestURI =
 
     await withCheckedContinuation { continuation in
       // TODO(stuartmorgan): Update this test to instead use a mock listener, and add separate unit
-      // tests of FVPEventBridge.
+      // tests of EventBridge.
       let eventSink: FlutterEventSink = { event in
         if event is FlutterError {
           continuation.resume()

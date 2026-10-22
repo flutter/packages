@@ -12,7 +12,12 @@ import Foundation
   #error("Unsupported platform.")
 #endif
 
-@MainActor class EventBridge: VideoEventsStreamHandler, VideoEventListener {
+private enum QueueableEvent {
+  case event(PlatformVideoEvent)
+  case error(FlutterError)
+}
+
+@MainActor final class EventBridge: VideoEventsStreamHandler, VideoEventListener {
   /// The event sink associated with eventChannel.
   ///
   /// Will be nil both before the channel listener is ready on the Dart side, and after it has been
@@ -21,7 +26,7 @@ import Foundation
 
   /// A queue of events received before eventSink is ready, to dispatch once the channel is fully
   /// set up.
-  private var queuedEvents: [Any]? = []
+  private var queuedEvents: [QueueableEvent]? = []
 
   init(messenger: FlutterBinaryMessenger, channelSuffix: String) {
     super.init()
@@ -41,20 +46,18 @@ import Foundation
       eventSink = sink
 
       // Send any events that came in before the sink was ready.
-      if var queuedEvents = queuedEvents {
+      if let queuedEvents = queuedEvents {
         for event in queuedEvents {
           switch event {
-          case let videoEvent as PlatformVideoEvent:
+          case .event(let videoEvent):
             sink.success(videoEvent)
-          case let errorEvent as FlutterError:
+          case .error(let errorEvent):
             sink.error(
               code: errorEvent.code, message: errorEvent.message, details: errorEvent.details)
-          default:
-            assertionFailure("Invalid event type")
           }
         }
-        queuedEvents.removeAll()
       }
+      self.queuedEvents?.removeAll()
     }
   }
 
@@ -68,7 +71,7 @@ import Foundation
     }
   }
 
-  // MARK: FVPVideoEventListener
+  // MARK: VideoEventListener
 
   func videoPlayerDidInitialize(withDuration duration: Int64, size: CGSize) {
     sendOrQueueEvent(
@@ -113,7 +116,7 @@ import Foundation
     if let eventSink = self.eventSink {
       eventSink.success(event)
     } else {
-      self.queuedEvents?.append(event)
+      self.queuedEvents?.append(.event(event))
     }
   }
 
@@ -121,7 +124,7 @@ import Foundation
     if let eventSink = self.eventSink {
       eventSink.error(code: error.code, message: error.message, details: error.details)
     } else {
-      self.queuedEvents?.append(error)
+      self.queuedEvents?.append(.error(error))
     }
   }
 }
