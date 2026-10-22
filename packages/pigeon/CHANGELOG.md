@@ -1,3 +1,17 @@
+## 29.0.11
+
+* [swift] Warns after FFI code generation if the `objective_c` version constraint in `pubspec.yaml` does not match the generated `ObjCVersionCheck`.
+* [kotlin] Warns after JNI code generation if the `jni` version constraint in `pubspec.yaml` does not match the generated `JniVersionCheck`.
+
+## 29.0.10
+
+* [swift] [kotlin] Allows `sealed` classes in native interop files.
+
+## 29.0.9
+
+* [kotlin] Stops generating unused JNI bindings for host API interfaces, significantly
+  reducing the size of the generated `.jni.dart` file.
+
 ## 29.0.8
 
 * [swift] Adds validation errors for code that Swift FFI doesn't support:

@@ -99,14 +99,9 @@
 + (NSString *)saveImageWithMetaData:(NSDictionary *)metaData
                             gifInfo:(GIFInfo *)gifInfo
                                path:(NSString *)path {
-  CFStringRef imageType;
-  if (@available(iOS 14.0, *)) {
-    imageType = (__bridge CFStringRef)UTTypeGIF.identifier;
-  } else {
-    imageType = kUTTypeGIF;
-  }
   CGImageDestinationRef destination = CGImageDestinationCreateWithURL(
-      (__bridge CFURLRef)[NSURL fileURLWithPath:path], imageType, gifInfo.images.count, NULL);
+      (__bridge CFURLRef)[NSURL fileURLWithPath:path], (__bridge CFStringRef)UTTypeGIF.identifier,
+      gifInfo.images.count, NULL);
 
   NSDictionary *frameProperties = @{
     (__bridge NSString *)kCGImagePropertyGIFDictionary : @{

@@ -2364,6 +2364,252 @@ dev_dependencies:
       }
     });
 
+    test('checkObjectiveCPubspecVersion returns null when constraint matches ObjCVersionCheck', () {
+      final Directory tempDir = Directory.systemTemp.createTempSync('pigeon_objc_version_test_');
+      try {
+        File('${tempDir.path}/pubspec.yaml').writeAsStringSync('''
+name: my_package
+dependencies:
+  ffi: ^2.0.0
+  objective_c: ^9.6.2
+''');
+        final libDir = Directory('${tempDir.path}/lib')..createSync(recursive: true);
+        File('${libDir.path}/messages.g.ffi.dart').writeAsStringSync(r'''
+const _$objcVersionCheck = objc.ObjCVersionCheck(9, 6);
+''');
+        final InternalPigeonOptions options = InternalPigeonOptions.fromPigeonOptions(
+          PigeonOptions(
+            input: 'foo.dart',
+            dartOut: '${libDir.path}/messages.g.dart',
+            swiftOut: '${libDir.path}/messages.g.swift',
+            swiftOptions: const SwiftOptions(useFfi: true),
+            dartPackageName: 'my_package',
+          ),
+        );
+        expect(checkObjectiveCPubspecVersion(options), isNull);
+      } finally {
+        tempDir.deleteSync(recursive: true);
+      }
+    });
+
+    test(
+      'checkObjectiveCPubspecVersion warns when constraint allows lower minor version than ObjCVersionCheck',
+      () {
+        final Directory tempDir = Directory.systemTemp.createTempSync('pigeon_objc_version_test_');
+        try {
+          File('${tempDir.path}/pubspec.yaml').writeAsStringSync('''
+name: my_package
+dependencies:
+  ffi: ^2.0.0
+  objective_c: ^9.5.0
+''');
+          final libDir = Directory('${tempDir.path}/lib')..createSync(recursive: true);
+          File('${libDir.path}/messages.g.ffi.dart').writeAsStringSync(r'''
+const _$objcVersionCheck = objc.ObjCVersionCheck(9, 6);
+''');
+          final InternalPigeonOptions options = InternalPigeonOptions.fromPigeonOptions(
+            PigeonOptions(
+              input: 'foo.dart',
+              dartOut: '${libDir.path}/messages.g.dart',
+              swiftOut: '${libDir.path}/messages.g.swift',
+              swiftOptions: const SwiftOptions(useFfi: true),
+              dartPackageName: 'my_package',
+            ),
+          );
+          final String? warning = checkObjectiveCPubspecVersion(options);
+          expect(warning, isNotNull);
+          expect(warning, contains('require package:objective_c ^9.6.0'));
+          expect(warning, contains('ObjCVersionCheck(9, 6)'));
+          expect(warning, contains('objective_c: ^9.5.0'));
+        } finally {
+          tempDir.deleteSync(recursive: true);
+        }
+      },
+    );
+
+    test('checkJniPubspecVersion returns null when constraint matches JniVersionCheck', () {
+      final Directory tempDir = Directory.systemTemp.createTempSync('pigeon_jni_version_test_');
+      try {
+        File('${tempDir.path}/pubspec.yaml').writeAsStringSync('''
+name: my_package
+dependencies:
+  jni: ^1.1.0
+''');
+        final libDir = Directory('${tempDir.path}/lib')..createSync(recursive: true);
+        File('${libDir.path}/messages.g.jni.dart').writeAsStringSync(r'''
+const _$jniVersionCheck = jni$_.JniVersionCheck(1, 1);
+''');
+        final InternalPigeonOptions options = InternalPigeonOptions.fromPigeonOptions(
+          PigeonOptions(
+            input: 'foo.dart',
+            dartOut: '${libDir.path}/messages.g.dart',
+            kotlinOut: '${libDir.path}/Messages.g.kt',
+            kotlinOptions: const KotlinOptions(useJni: true),
+            dartPackageName: 'my_package',
+          ),
+        );
+        expect(checkJniPubspecVersion(options), isNull);
+      } finally {
+        tempDir.deleteSync(recursive: true);
+      }
+    });
+
+    test(
+      'checkJniPubspecVersion warns when constraint allows lower minor version than JniVersionCheck',
+      () {
+        final Directory tempDir = Directory.systemTemp.createTempSync('pigeon_jni_version_test_');
+        try {
+          File('${tempDir.path}/pubspec.yaml').writeAsStringSync('''
+name: my_package
+dependencies:
+  jni: ^1.0.0
+''');
+          final libDir = Directory('${tempDir.path}/lib')..createSync(recursive: true);
+          File('${libDir.path}/messages.g.jni.dart').writeAsStringSync(r'''
+const _$jniVersionCheck = jni$_.JniVersionCheck(1, 1);
+''');
+          final InternalPigeonOptions options = InternalPigeonOptions.fromPigeonOptions(
+            PigeonOptions(
+              input: 'foo.dart',
+              dartOut: '${libDir.path}/messages.g.dart',
+              kotlinOut: '${libDir.path}/Messages.g.kt',
+              kotlinOptions: const KotlinOptions(useJni: true),
+              dartPackageName: 'my_package',
+            ),
+          );
+          final String? warning = checkJniPubspecVersion(options);
+          expect(warning, isNotNull);
+          expect(warning, contains('require package:jni ^1.1.0'));
+          expect(warning, contains('JniVersionCheck(1, 1)'));
+          expect(warning, contains('jni: ^1.0.0'));
+        } finally {
+          tempDir.deleteSync(recursive: true);
+        }
+      },
+    );
+
+    test('checkObjectiveCPubspecVersion checks version key when dependency is a map', () {
+      final Directory tempDir = Directory.systemTemp.createTempSync('pigeon_objc_version_test_');
+      try {
+        File('${tempDir.path}/pubspec.yaml').writeAsStringSync('''
+name: my_package
+dependencies:
+  ffi: ^2.0.0
+  objective_c:
+    hosted: https://some-package-server.com
+    version: ^9.5.0
+''');
+        final libDir = Directory('${tempDir.path}/lib')..createSync(recursive: true);
+        File('${libDir.path}/messages.g.ffi.dart').writeAsStringSync(r'''
+const _$objcVersionCheck = objc.ObjCVersionCheck(9, 6);
+''');
+        final InternalPigeonOptions options = InternalPigeonOptions.fromPigeonOptions(
+          PigeonOptions(
+            input: 'foo.dart',
+            dartOut: '${libDir.path}/messages.g.dart',
+            swiftOut: '${libDir.path}/messages.g.swift',
+            swiftOptions: const SwiftOptions(useFfi: true),
+            dartPackageName: 'my_package',
+          ),
+        );
+        final String? warning = checkObjectiveCPubspecVersion(options);
+        expect(warning, isNotNull);
+        expect(warning, contains('require package:objective_c ^9.6.0'));
+        expect(warning, contains('objective_c: ^9.5.0'));
+      } finally {
+        tempDir.deleteSync(recursive: true);
+      }
+    });
+
+    test(
+      'checkObjectiveCPubspecVersion warns on disjoint major, higher major range, bare, and versionless hosted dependencies, and skips path dependencies',
+      () {
+        final Directory tempDir = Directory.systemTemp.createTempSync('pigeon_objc_version_test_');
+        try {
+          final libDir = Directory('${tempDir.path}/lib')..createSync(recursive: true);
+          File('${libDir.path}/messages.g.ffi.dart').writeAsStringSync(r'''
+const _$objcVersionCheck = objc.ObjCVersionCheck(9, 6);
+''');
+          final InternalPigeonOptions options = InternalPigeonOptions.fromPigeonOptions(
+            PigeonOptions(
+              input: 'foo.dart',
+              dartOut: 'lib/messages.g.dart',
+              swiftOut: 'lib/messages.g.swift',
+              swiftOptions: const SwiftOptions(useFfi: true),
+              dartPackageName: 'my_package',
+              basePath: tempDir.path,
+            ),
+          );
+
+          // Constraint allowing no valid version (^10.0.0)
+          File('${tempDir.path}/pubspec.yaml').writeAsStringSync('''
+name: my_package
+dependencies:
+  objective_c: ^10.0.0
+''');
+          expect(
+            checkObjectiveCPubspecVersion(options),
+            allOf(isNotNull, contains('objective_c: ^10.0.0')),
+          );
+
+          // Constraint allowing a higher major (>=9.6.0 <11.0.0)
+          File('${tempDir.path}/pubspec.yaml').writeAsStringSync('''
+name: my_package
+dependencies:
+  objective_c: ">=9.6.0 <11.0.0"
+''');
+          expect(
+            checkObjectiveCPubspecVersion(options),
+            allOf(isNotNull, contains('objective_c: >=9.6.0 <11.0.0')),
+          );
+
+          // Bare dependency (parsed as null -> treated as 'any')
+          File('${tempDir.path}/pubspec.yaml').writeAsStringSync('''
+name: my_package
+dependencies:
+  objective_c:
+''');
+          expect(
+            checkObjectiveCPubspecVersion(options),
+            allOf(isNotNull, contains('objective_c: any')),
+          );
+
+          // Versionless hosted dependency (treated as 'any')
+          File('${tempDir.path}/pubspec.yaml').writeAsStringSync('''
+name: my_package
+dependencies:
+  objective_c:
+    hosted: https://some-package-server.com
+''');
+          expect(
+            checkObjectiveCPubspecVersion(options),
+            allOf(isNotNull, contains('objective_c: any')),
+          );
+
+          // Path dependency without version is skipped
+          File('${tempDir.path}/pubspec.yaml').writeAsStringSync('''
+name: my_package
+dependencies:
+  objective_c:
+    path: ../objective_c
+''');
+          expect(checkObjectiveCPubspecVersion(options), isNull);
+
+          // dependency_overrides takes precedence over dependencies
+          File('${tempDir.path}/pubspec.yaml').writeAsStringSync('''
+name: my_package
+dependencies:
+  objective_c: ^9.5.0
+dependency_overrides:
+  objective_c: ^9.6.0
+''');
+          expect(checkObjectiveCPubspecVersion(options), isNull);
+        } finally {
+          tempDir.deleteSync(recursive: true);
+        }
+      },
+    );
+
     test('KotlinOptions serialization/deserialization with jniClassPaths', () {
       const options = KotlinOptions(jniClassPaths: <String>['foo/bar', 'baz.jar']);
       final Map<String, Object> map = options.toMap();
@@ -2389,6 +2635,31 @@ dev_dependencies:
       generator.generate(options, root, sink, dartPackageName: 'foo_package');
       final output = sink.toString();
       expect(output, contains("classPath: [Uri.directory('foo/bar'), Uri.file('baz.jar')]"));
+    });
+
+    test('JnigenConfigGenerator only binds the Registrar for host APIs', () {
+      final root = Root(
+        apis: <Api>[
+          AstHostApi(name: 'MyHostApi', methods: <Method>[]),
+          AstFlutterApi(name: 'MyFlutterApi', methods: <Method>[]),
+        ],
+        classes: <Class>[],
+        enums: <Enum>[],
+      );
+      final sink = StringBuffer();
+      final generator = JnigenConfigGenerator();
+      final options = InternalJnigenConfigOptions(
+        const InternalDartOptions(dartOut: 'lib/messages.dart', ignoreLints: false),
+        const InternalKotlinOptions(kotlinOut: 'android/Messages.kt', package: 'com.example'),
+        null,
+        null,
+      );
+      generator.generate(options, root, sink, dartPackageName: 'foo_package');
+      final output = sink.toString();
+      expect(output, isNot(contains("'com.example.MyHostApi',")));
+      expect(output, contains("'com.example.MyHostApiRegistrar',"));
+      expect(output, contains("'com.example.MyFlutterApi',"));
+      expect(output, contains("'com.example.MyFlutterApiRegistrar',"));
     });
 
     test(
@@ -2434,6 +2705,36 @@ dev_dependencies:
         expect(code, contains("dartFile: Uri.file('../lib/src/messages.g.ffi.dart')"));
       },
     );
+
+    test('FfigenConfigGeneratorAdapter only lists the Setup class for host APIs', () {
+      final root = Root(
+        apis: <Api>[
+          AstHostApi(name: 'MyHostApi', methods: <Method>[]),
+          AstFlutterApi(name: 'MyFlutterApi', methods: <Method>[]),
+        ],
+        classes: <Class>[],
+        enums: <Enum>[],
+      );
+      final sink = StringBuffer();
+      const adapter = FfigenConfigGeneratorAdapter();
+      final InternalPigeonOptions options = InternalPigeonOptions.fromPigeonOptions(
+        const PigeonOptions(
+          input: 'pigeons/messages.dart',
+          dartOut: 'lib/src/messages.g.dart',
+          swiftOut: 'darwin/Messages.g.swift',
+          swiftOptions: SwiftOptions(useFfi: true, appDirectory: 'example/'),
+        ),
+      );
+
+      adapter.generate(sink, options, root, FileType.na);
+      final code = sink.toString();
+
+      expect(code, isNot(contains("'MyHostApi',")));
+      expect(code, contains("'MyHostApiSetup',"));
+      expect(code, isNot(contains("'MyFlutterApi',")));
+      expect(code, contains("'MyFlutterApiBridge',"));
+      expect(code, contains("'MyFlutterApiRegistrar',"));
+    });
 
     test('SwiftGeneratorAdapter errors on TaskQueue when useFfi is true', () {
       final root = Root(
@@ -2616,32 +2917,19 @@ dev_dependencies:
 abstract class Events {
   int numbers();
 }
-
-sealed class Shape {}
-
-class Circle extends Shape {
-  Circle(this.radius);
-  double radius;
-}
-
-@HostApi()
-abstract class Api {
-  Circle circle();
-}
 ''';
 
-    test('Swift FFI rejects event channels and sealed classes', () {
+    test('Swift FFI rejects event channels', () {
       final List<Error> errors = validate(const SwiftGeneratorAdapter(), unsupportedFeaturesSource);
       expect(
         errors.map((Error e) => e.message),
         containsAll(<Matcher>[
           contains('Swift FFI does not support event channels yet (in API "Events")'),
-          contains('Swift FFI does not support sealed classes yet (class "Shape")'),
         ]),
       );
     });
 
-    test('Swift without FFI allows event channels and sealed classes', () {
+    test('Swift without FFI allows event channels', () {
       final List<Error> errors = validate(
         const SwiftGeneratorAdapter(),
         unsupportedFeaturesSource,
@@ -2706,7 +2994,7 @@ abstract class Api {
       expect(errors[0].message, contains('Swift FFI requires `includeErrorClass: true`'));
     });
 
-    test('Kotlin JNI rejects event channels and sealed classes', () {
+    test('Kotlin JNI rejects event channels', () {
       final List<Error> errors = validate(
         const KotlinGeneratorAdapter(),
         unsupportedFeaturesSource,
@@ -2715,12 +3003,11 @@ abstract class Api {
         errors.map((Error e) => e.message),
         containsAll(<Matcher>[
           contains('Kotlin JNI does not support event channels yet (in API "Events")'),
-          contains('Kotlin JNI does not support sealed classes yet (class "Shape")'),
         ]),
       );
     });
 
-    test('Kotlin without JNI allows event channels and sealed classes', () {
+    test('Kotlin without JNI allows event channels', () {
       final List<Error> errors = validate(
         const KotlinGeneratorAdapter(),
         unsupportedFeaturesSource,
