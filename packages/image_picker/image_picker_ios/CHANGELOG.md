@@ -1,3 +1,7 @@
+## 0.8.14
+
+* Adds support for `getRecentMedia`.
+
 ## 0.8.13+12
 
 * Updates minimum supported SDK version to Flutter 3.47/Dart 3.13.

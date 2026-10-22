@@ -137,6 +137,16 @@ static id GetNullableObjectAtIndex(NSArray<id> *array, NSInteger key) {
 }
 @end
 
+@implementation FLTRecentMediaKindBox
+- (instancetype)initWithValue:(FLTRecentMediaKind)value {
+  self = [super init];
+  if (self) {
+    _value = value;
+  }
+  return self;
+}
+@end
+
 @interface FLTMaxSize ()
 + (FLTMaxSize *)fromList:(NSArray<id> *)list;
 + (nullable FLTMaxSize *)nullableFromList:(NSArray<id> *)list;
@@ -152,6 +162,18 @@ static id GetNullableObjectAtIndex(NSArray<id> *array, NSInteger key) {
 @interface FLTSourceSpecification ()
 + (FLTSourceSpecification *)fromList:(NSArray<id> *)list;
 + (nullable FLTSourceSpecification *)nullableFromList:(NSArray<id> *)list;
+- (NSArray<id> *)toList;
+@end
+
+@interface FLTRecentMediaRequest ()
++ (FLTRecentMediaRequest *)fromList:(NSArray<id> *)list;
++ (nullable FLTRecentMediaRequest *)nullableFromList:(NSArray<id> *)list;
+- (NSArray<id> *)toList;
+@end
+
+@interface FLTRecentMediaItem ()
++ (FLTRecentMediaItem *)fromList:(NSArray<id> *)list;
++ (nullable FLTRecentMediaItem *)nullableFromList:(NSArray<id> *)list;
 - (NSArray<id> *)toList;
 @end
 
@@ -314,6 +336,118 @@ static id GetNullableObjectAtIndex(NSArray<id> *array, NSInteger key) {
 }
 @end
 
+@implementation FLTRecentMediaRequest
++ (instancetype)makeWithLimit:(NSInteger)limit
+                includeImages:(BOOL)includeImages
+                includeVideos:(BOOL)includeVideos
+                        width:(NSInteger)width
+                       height:(NSInteger)height {
+  FLTRecentMediaRequest *pigeonResult = [[FLTRecentMediaRequest alloc] init];
+  pigeonResult.limit = limit;
+  pigeonResult.includeImages = includeImages;
+  pigeonResult.includeVideos = includeVideos;
+  pigeonResult.width = width;
+  pigeonResult.height = height;
+  return pigeonResult;
+}
++ (FLTRecentMediaRequest *)fromList:(NSArray<id> *)list {
+  FLTRecentMediaRequest *pigeonResult = [[FLTRecentMediaRequest alloc] init];
+  pigeonResult.limit = [GetNullableObjectAtIndex(list, 0) integerValue];
+  pigeonResult.includeImages = [GetNullableObjectAtIndex(list, 1) boolValue];
+  pigeonResult.includeVideos = [GetNullableObjectAtIndex(list, 2) boolValue];
+  pigeonResult.width = [GetNullableObjectAtIndex(list, 3) integerValue];
+  pigeonResult.height = [GetNullableObjectAtIndex(list, 4) integerValue];
+  return pigeonResult;
+}
++ (nullable FLTRecentMediaRequest *)nullableFromList:(NSArray<id> *)list {
+  return (list) ? [FLTRecentMediaRequest fromList:list] : nil;
+}
+- (NSArray<id> *)toList {
+  return @[
+    @(self.limit),
+    @(self.includeImages),
+    @(self.includeVideos),
+    @(self.width),
+    @(self.height),
+  ];
+}
+- (BOOL)isEqual:(id)object {
+  if (self == object) {
+    return YES;
+  }
+  if (![object isKindOfClass:[self class]]) {
+    return NO;
+  }
+  FLTRecentMediaRequest *other = (FLTRecentMediaRequest *)object;
+  return self.limit == other.limit && self.includeImages == other.includeImages &&
+         self.includeVideos == other.includeVideos && self.width == other.width &&
+         self.height == other.height;
+}
+
+- (NSUInteger)hash {
+  NSUInteger result = [self class].hash;
+  result = result * 31 + @(self.limit).hash;
+  result = result * 31 + @(self.includeImages).hash;
+  result = result * 31 + @(self.includeVideos).hash;
+  result = result * 31 + @(self.width).hash;
+  result = result * 31 + @(self.height).hash;
+  return result;
+}
+- (NSString *)description {
+  return [NSString stringWithFormat:@"FLTRecentMediaRequest(limit: %ld, includeImages: %@, "
+                                    @"includeVideos: %@, width: %ld, height: %ld)",
+                                    (long)self.limit, self.includeImages ? @"true" : @"false",
+                                    self.includeVideos ? @"true" : @"false", (long)self.width,
+                                    (long)self.height];
+}
+@end
+
+@implementation FLTRecentMediaItem
++ (instancetype)makeWithPath:(NSString *)path kind:(FLTRecentMediaKind)kind {
+  FLTRecentMediaItem *pigeonResult = [[FLTRecentMediaItem alloc] init];
+  pigeonResult.path = path;
+  pigeonResult.kind = kind;
+  return pigeonResult;
+}
++ (FLTRecentMediaItem *)fromList:(NSArray<id> *)list {
+  FLTRecentMediaItem *pigeonResult = [[FLTRecentMediaItem alloc] init];
+  pigeonResult.path = GetNullableObjectAtIndex(list, 0);
+  FLTRecentMediaKindBox *boxedFLTRecentMediaKind = GetNullableObjectAtIndex(list, 1);
+  pigeonResult.kind = boxedFLTRecentMediaKind.value;
+  return pigeonResult;
+}
++ (nullable FLTRecentMediaItem *)nullableFromList:(NSArray<id> *)list {
+  return (list) ? [FLTRecentMediaItem fromList:list] : nil;
+}
+- (NSArray<id> *)toList {
+  return @[
+    self.path ?: [NSNull null],
+    [[FLTRecentMediaKindBox alloc] initWithValue:self.kind],
+  ];
+}
+- (BOOL)isEqual:(id)object {
+  if (self == object) {
+    return YES;
+  }
+  if (![object isKindOfClass:[self class]]) {
+    return NO;
+  }
+  FLTRecentMediaItem *other = (FLTRecentMediaItem *)object;
+  return FLTPigeonDeepEquals(self.path, other.path) && self.kind == other.kind;
+}
+
+- (NSUInteger)hash {
+  NSUInteger result = [self class].hash;
+  result = result * 31 + FLTPigeonDeepHash(self.path);
+  result = result * 31 + @(self.kind).hash;
+  return result;
+}
+- (NSString *)description {
+  return [NSString
+      stringWithFormat:@"FLTRecentMediaItem(path: %@, kind: %ld)", self.path, (long)self.kind];
+}
+@end
+
 @interface FLTMessagesPigeonCodecReader : FlutterStandardReader
 @end
 @implementation FLTMessagesPigeonCodecReader
@@ -331,12 +465,22 @@ static id GetNullableObjectAtIndex(NSArray<id> *array, NSInteger key) {
                  ? nil
                  : [[FLTSourceTypeBox alloc] initWithValue:[enumAsNumber integerValue]];
     }
-    case 131:
-      return [FLTMaxSize fromList:[self readValue]];
+    case 131: {
+      NSNumber *enumAsNumber = [self readValue];
+      return enumAsNumber == nil
+                 ? nil
+                 : [[FLTRecentMediaKindBox alloc] initWithValue:[enumAsNumber integerValue]];
+    }
     case 132:
-      return [FLTMediaSelectionOptions fromList:[self readValue]];
+      return [FLTMaxSize fromList:[self readValue]];
     case 133:
+      return [FLTMediaSelectionOptions fromList:[self readValue]];
+    case 134:
       return [FLTSourceSpecification fromList:[self readValue]];
+    case 135:
+      return [FLTRecentMediaRequest fromList:[self readValue]];
+    case 136:
+      return [FLTRecentMediaItem fromList:[self readValue]];
     default:
       return [super readValueOfType:type];
   }
@@ -355,14 +499,24 @@ static id GetNullableObjectAtIndex(NSArray<id> *array, NSInteger key) {
     FLTSourceTypeBox *box = (FLTSourceTypeBox *)value;
     [self writeByte:130];
     [self writeValue:(value == nil ? [NSNull null] : [NSNumber numberWithInteger:box.value])];
-  } else if ([value isKindOfClass:[FLTMaxSize class]]) {
+  } else if ([value isKindOfClass:[FLTRecentMediaKindBox class]]) {
+    FLTRecentMediaKindBox *box = (FLTRecentMediaKindBox *)value;
     [self writeByte:131];
-    [self writeValue:[value toList]];
-  } else if ([value isKindOfClass:[FLTMediaSelectionOptions class]]) {
+    [self writeValue:(value == nil ? [NSNull null] : [NSNumber numberWithInteger:box.value])];
+  } else if ([value isKindOfClass:[FLTMaxSize class]]) {
     [self writeByte:132];
     [self writeValue:[value toList]];
-  } else if ([value isKindOfClass:[FLTSourceSpecification class]]) {
+  } else if ([value isKindOfClass:[FLTMediaSelectionOptions class]]) {
     [self writeByte:133];
+    [self writeValue:[value toList]];
+  } else if ([value isKindOfClass:[FLTSourceSpecification class]]) {
+    [self writeByte:134];
+    [self writeValue:[value toList]];
+  } else if ([value isKindOfClass:[FLTRecentMediaRequest class]]) {
+    [self writeByte:135];
+    [self writeValue:[value toList]];
+  } else if ([value isKindOfClass:[FLTRecentMediaItem class]]) {
+    [self writeByte:136];
     [self writeValue:[value toList]];
   } else {
     [super writeValue:value];
@@ -412,11 +566,13 @@ void SetUpFLTImagePickerApiWithSuffix(id<FlutterBinaryMessenger> binaryMessenger
         binaryMessenger:binaryMessenger
                   codec:FLTGetMessagesCodec()];
     if (api) {
-      NSCAssert([api respondsToSelector:@selector
-                     (pickImageWithSource:maxSize:quality:fullMetadata:completion:)],
-                @"FLTImagePickerApi api (%@) doesn't respond to "
-                @"@selector(pickImageWithSource:maxSize:quality:fullMetadata:completion:)",
-                api);
+      NSCAssert(
+          [api
+              respondsToSelector:@selector(
+                                     pickImageWithSource:maxSize:quality:fullMetadata:completion:)],
+          @"FLTImagePickerApi api (%@) doesn't respond to "
+          @"@selector(pickImageWithSource:maxSize:quality:fullMetadata:completion:)",
+          api);
       [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
         NSArray<id> *args = message;
         FLTSourceSpecification *arg_source = GetNullableObjectAtIndex(args, 0);
@@ -444,8 +600,8 @@ void SetUpFLTImagePickerApiWithSuffix(id<FlutterBinaryMessenger> binaryMessenger
         binaryMessenger:binaryMessenger
                   codec:FLTGetMessagesCodec()];
     if (api) {
-      NSCAssert([api respondsToSelector:@selector
-                     (pickMultiImageWithMaxSize:quality:fullMetadata:limit:completion:)],
+      NSCAssert([api respondsToSelector:@selector(pickMultiImageWithMaxSize:quality:fullMetadata:
+                                                  limit:completion:)],
                 @"FLTImagePickerApi api (%@) doesn't respond to "
                 @"@selector(pickMultiImageWithMaxSize:quality:fullMetadata:limit:completion:)",
                 api);
@@ -547,6 +703,33 @@ void SetUpFLTImagePickerApiWithSuffix(id<FlutterBinaryMessenger> binaryMessenger
                                                   FlutterError *_Nullable error) {
                                        callback(wrapResult(output, error));
                                      }];
+      }];
+    } else {
+      [channel setMessageHandler:nil];
+    }
+  }
+  /// Returns thumbnails of the most recent items in the photo library.
+  {
+    FlutterBasicMessageChannel *channel = [[FlutterBasicMessageChannel alloc]
+           initWithName:[NSString stringWithFormat:@"%@%@",
+                                                   @"dev.flutter.pigeon.image_picker_ios."
+                                                   @"ImagePickerApi.getRecentMedia",
+                                                   messageChannelSuffix]
+        binaryMessenger:binaryMessenger
+                  codec:FLTGetMessagesCodec()];
+    if (api) {
+      NSCAssert([api respondsToSelector:@selector(getRecentMediaWithRequest:completion:)],
+                @"FLTImagePickerApi api (%@) doesn't respond to "
+                @"@selector(getRecentMediaWithRequest:completion:)",
+                api);
+      [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
+        NSArray<id> *args = message;
+        FLTRecentMediaRequest *arg_request = GetNullableObjectAtIndex(args, 0);
+        [api getRecentMediaWithRequest:arg_request
+                            completion:^(NSArray<FLTRecentMediaItem *> *_Nullable output,
+                                         FlutterError *_Nullable error) {
+                              callback(wrapResult(output, error));
+                            }];
       }];
     } else {
       [channel setMessageHandler:nil];

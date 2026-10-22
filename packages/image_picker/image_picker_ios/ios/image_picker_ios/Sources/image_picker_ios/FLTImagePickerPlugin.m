@@ -65,6 +65,8 @@ typedef NS_ENUM(NSInteger, ImagePickerClassType) { UIImagePickerClassType, PHPic
       _phPickerCreator = [[FIPDefaultPHPickerCreator alloc] init];
     }
     _imageDataRequester = [[FIPDefaultImageDataRequester alloc] init];
+    _recentAssetsFetcher = [[FIPDefaultRecentAssetsFetcher alloc] init];
+    _thumbnailRequester = [[FIPDefaultThumbnailRequester alloc] init];
   }
   return self;
 }
@@ -298,7 +300,137 @@ typedef NS_ENUM(NSInteger, ImagePickerClassType) { UIImagePickerClassType, PHPic
   }
 }
 
+// This intentionally does not use callContext, so that it does not cancel a picker in progress.
+- (void)getRecentMediaWithRequest:(nonnull FLTRecentMediaRequest *)request
+                       completion:(nonnull void (^)(NSArray<FLTRecentMediaItem *> *_Nullable,
+                                                    FlutterError *_Nullable))completion {
+  PHAuthorizationStatus status =
+      [self.photoLibraryPermissionChecker authorizationStatusForAccessLevel:PHAccessLevelReadWrite];
+  switch (status) {
+    case PHAuthorizationStatusAuthorized:
+    case PHAuthorizationStatusLimited:
+      [self loadRecentMediaWithRequest:request completion:completion];
+      break;
+    case PHAuthorizationStatusNotDetermined: {
+      [self.photoLibraryPermissionChecker
+          requestAuthorizationForAccessLevel:PHAccessLevelReadWrite
+                                     handler:^(PHAuthorizationStatus newStatus) {
+                                       if (newStatus == PHAuthorizationStatusAuthorized ||
+                                           newStatus == PHAuthorizationStatusLimited) {
+                                         [self loadRecentMediaWithRequest:request
+                                                               completion:completion];
+                                       } else {
+                                         dispatch_async(dispatch_get_main_queue(), ^{
+                                           completion(@[], nil);
+                                         });
+                                       }
+                                     }];
+      break;
+    }
+    case PHAuthorizationStatusDenied:
+    case PHAuthorizationStatusRestricted:
+    default:
+      completion(@[], nil);
+      break;
+  }
+}
+
 #pragma mark -
+
+/// Fetches the most recent assets and writes their thumbnails on a background queue, then calls
+/// |completion| on the main queue with the results in fetch order. Assets whose thumbnail cannot be
+/// loaded or written are skipped.
+- (void)loadRecentMediaWithRequest:(FLTRecentMediaRequest *)request
+                        completion:(void (^)(NSArray<FLTRecentMediaItem *> *_Nullable,
+                                             FlutterError *_Nullable))completion {
+  dispatch_queue_t queue = dispatch_get_global_queue(QOS_CLASS_USER_INITIATED, 0);
+  dispatch_async(queue, ^{
+    NSArray<PHAsset *> *assets =
+        [self.recentAssetsFetcher fetchAssetsWithOptions:[self recentAssetsFetchOptions:request]];
+    NSMutableArray *results = [NSMutableArray arrayWithCapacity:assets.count];
+    for (NSUInteger i = 0; i < assets.count; i++) {
+      [results addObject:[NSNull null]];
+    }
+
+    PHImageRequestOptions *options = [[PHImageRequestOptions alloc] init];
+    options.deliveryMode = PHImageRequestOptionsDeliveryModeHighQualityFormat;
+    options.resizeMode = PHImageRequestOptionsResizeModeFast;
+    // Don't download originals from iCloud just to show a thumbnail.
+    options.networkAccessAllowed = NO;
+    CGSize targetSize = CGSizeMake(request.width, request.height);
+
+    dispatch_group_t group = dispatch_group_create();
+    [assets enumerateObjectsUsingBlock:^(PHAsset *asset, NSUInteger index, BOOL *stop) {
+      FLTRecentMediaKind kind = asset.mediaType == PHAssetMediaTypeVideo ? FLTRecentMediaKindVideo
+                                                                         : FLTRecentMediaKindImage;
+      NSString *path = [self recentMediaThumbnailPathForAsset:asset request:request];
+      if ([[NSFileManager defaultManager] fileExistsAtPath:path]) {
+        @synchronized(results) {
+          results[index] = [FLTRecentMediaItem makeWithPath:path kind:kind];
+        }
+        return;
+      }
+
+      dispatch_group_enter(group);
+      [self.thumbnailRequester
+          requestImageForAsset:asset
+                    targetSize:targetSize
+                   contentMode:PHImageContentModeAspectFit
+                       options:options
+                 resultHandler:^(UIImage *_Nullable image, NSDictionary *_Nullable info) {
+                   // The handler may be called on the main queue, so encode and write elsewhere.
+                   dispatch_async(queue, ^{
+                     NSData *data = image ? UIImageJPEGRepresentation(image, 0.9) : nil;
+                     if (data && [data writeToFile:path atomically:YES]) {
+                       @synchronized(results) {
+                         results[index] = [FLTRecentMediaItem makeWithPath:path kind:kind];
+                       }
+                     }
+                     dispatch_group_leave(group);
+                   });
+                 }];
+    }];
+
+    dispatch_group_notify(group, dispatch_get_main_queue(), ^{
+      NSMutableArray<FLTRecentMediaItem *> *items = [NSMutableArray array];
+      for (id result in results) {
+        if (result != [NSNull null]) {
+          [items addObject:result];
+        }
+      }
+      completion(items, nil);
+    });
+  });
+}
+
+- (PHFetchOptions *)recentAssetsFetchOptions:(FLTRecentMediaRequest *)request {
+  NSMutableArray<NSNumber *> *mediaTypes = [NSMutableArray array];
+  if (request.includeImages) {
+    [mediaTypes addObject:@(PHAssetMediaTypeImage)];
+  }
+  if (request.includeVideos) {
+    [mediaTypes addObject:@(PHAssetMediaTypeVideo)];
+  }
+  PHFetchOptions *options = [[PHFetchOptions alloc] init];
+  options.predicate = [NSPredicate predicateWithFormat:@"mediaType IN %@", mediaTypes];
+  options.sortDescriptors = @[ [NSSortDescriptor sortDescriptorWithKey:@"creationDate"
+                                                             ascending:NO] ];
+  options.fetchLimit = request.limit;
+  return options;
+}
+
+/// Returns a deterministic path for the thumbnail of |asset| at the requested size, so that
+/// repeated calls reuse the file until the asset is modified.
+- (NSString *)recentMediaThumbnailPathForAsset:(PHAsset *)asset
+                                       request:(FLTRecentMediaRequest *)request {
+  NSString *identifier = [asset.localIdentifier stringByReplacingOccurrencesOfString:@"/"
+                                                                          withString:@"_"];
+  long long modified = (long long)asset.modificationDate.timeIntervalSince1970;
+  NSString *fileName =
+      [NSString stringWithFormat:@"recent_media_%@_%ldx%ld_%lld.jpg", identifier,
+                                 (long)request.width, (long)request.height, modified];
+  return [NSTemporaryDirectory() stringByAppendingPathComponent:fileName];
+}
 
 /// If a call is still in progress, cancels it by returning an error and then clearing state.
 ///

@@ -134,6 +134,9 @@ public class ImagePickerPlugin implements FlutterPlugin, ActivityAware, ImagePic
     }
 
     void release() {
+      if (delegate != null) {
+        delegate.cancelPendingRecentMediaCall();
+      }
       if (activityBinding != null) {
         activityBinding.removeActivityResultListener(delegate);
         activityBinding.removeRequestPermissionsResultListener(delegate);
@@ -358,6 +361,25 @@ public class ImagePickerPlugin implements FlutterPlugin, ActivityAware, ImagePic
           break;
       }
     }
+  }
+
+  @Override
+  public void getRecentMedia(
+      @NonNull RecentMediaRequest request,
+      @NonNull
+          Function1<
+                  ? super @NotNull Result<? extends @NotNull List<@NotNull RecentMediaItem>>,
+                  @NotNull Unit>
+              callback) {
+    ImagePickerDelegate delegate = getImagePickerDelegate();
+    if (delegate == null) {
+      ResultUtilsKt.completeWithError(
+          callback,
+          new FlutterError(
+              "no_activity", "image_picker plugin requires a foreground activity.", null));
+      return;
+    }
+    delegate.getRecentMedia(request, callback);
   }
 
   @Nullable

@@ -33,6 +33,15 @@
 - (void)requestAuthorization:(void (^)(PHAuthorizationStatus status))handler {
   [PHPhotoLibrary requestAuthorization:handler];
 }
+
+- (PHAuthorizationStatus)authorizationStatusForAccessLevel:(PHAccessLevel)accessLevel {
+  return [PHPhotoLibrary authorizationStatusForAccessLevel:accessLevel];
+}
+
+- (void)requestAuthorizationForAccessLevel:(PHAccessLevel)accessLevel
+                                   handler:(void (^)(PHAuthorizationStatus status))handler {
+  [PHPhotoLibrary requestAuthorizationForAccessLevel:accessLevel handler:handler];
+}
 @end
 
 @implementation FIPDefaultPHPickerCreator
@@ -58,5 +67,28 @@
   [[PHImageManager defaultManager] requestImageDataAndOrientationForAsset:asset
                                                                   options:options
                                                             resultHandler:resultHandler];
+}
+@end
+
+@implementation FIPDefaultRecentAssetsFetcher
+- (NSArray<PHAsset *> *)fetchAssetsWithOptions:(PHFetchOptions *)options {
+  PHFetchResult<PHAsset *> *result = [PHAsset fetchAssetsWithOptions:options];
+  return [result
+      objectsAtIndexes:[NSIndexSet indexSetWithIndexesInRange:NSMakeRange(0, result.count)]];
+}
+@end
+
+@implementation FIPDefaultThumbnailRequester
+- (void)requestImageForAsset:(PHAsset *)asset
+                  targetSize:(CGSize)targetSize
+                 contentMode:(PHImageContentMode)contentMode
+                     options:(nullable PHImageRequestOptions *)options
+               resultHandler:(void (^)(UIImage *_Nullable result,
+                                       NSDictionary *_Nullable info))resultHandler {
+  [[PHImageManager defaultManager] requestImageForAsset:asset
+                                             targetSize:targetSize
+                                            contentMode:contentMode
+                                                options:options
+                                          resultHandler:resultHandler];
 }
 @end

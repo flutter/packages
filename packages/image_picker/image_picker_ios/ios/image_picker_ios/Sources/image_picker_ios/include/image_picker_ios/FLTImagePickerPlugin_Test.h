@@ -81,6 +81,12 @@ typedef void (^FlutterResultAdapter)(NSArray<NSString *> *_Nullable, FlutterErro
 /// PHAsset image-data requests. Overridable for tests.
 @property(nonatomic, strong) NSObject<FIPImageDataRequesting> *imageDataRequester;
 
+/// Photo library asset fetches for recent media. Overridable for tests.
+@property(nonatomic, strong) NSObject<FIPRecentAssetsFetching> *recentAssetsFetcher;
+
+/// PHAsset thumbnail requests for recent media. Overridable for tests.
+@property(nonatomic, strong) NSObject<FIPThumbnailRequesting> *thumbnailRequester;
+
 /// Temporary window that swallows taps while UIImagePickerController dismisses.
 @property(nonatomic, strong, nullable) UIWindow *interactionBlockerWindow;
 

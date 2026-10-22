@@ -49,6 +49,11 @@ NS_SWIFT_NAME(PhotoLibraryPermissionChecking)
 @protocol FIPPhotoLibraryPermissionChecking <NSObject>
 - (PHAuthorizationStatus)authorizationStatus;
 - (void)requestAuthorization:(void (^)(PHAuthorizationStatus status))handler;
+- (PHAuthorizationStatus)authorizationStatusForAccessLevel:(PHAccessLevel)accessLevel
+    NS_SWIFT_NAME(authorizationStatus(for:));
+- (void)requestAuthorizationForAccessLevel:(PHAccessLevel)accessLevel
+                                   handler:(void (^)(PHAuthorizationStatus status))handler
+    NS_SWIFT_NAME(requestAuthorization(for:handler:));
 @end
 
 /// Production implementation that forwards to PHPhotoLibrary.
@@ -101,6 +106,43 @@ NS_SWIFT_NAME(ImageDataRequesting)
 /// Production implementation that forwards to `PHImageManager`.
 NS_SWIFT_NAME(DefaultImageDataRequester)
 @interface FIPDefaultImageDataRequester : NSObject <FIPImageDataRequesting>
+@end
+
+#pragma mark -
+
+/// Fetches assets from the photo library.
+///
+/// This protocol exists to allow injecting an alternate implementation for testing.
+NS_SWIFT_NAME(RecentAssetsFetching)
+@protocol FIPRecentAssetsFetching <NSObject>
+- (NSArray<PHAsset *> *)fetchAssetsWithOptions:(PHFetchOptions *)options
+    NS_SWIFT_NAME(fetchAssets(options:));
+@end
+
+/// Production implementation that forwards to `PHAsset`.
+NS_SWIFT_NAME(DefaultRecentAssetsFetcher)
+@interface FIPDefaultRecentAssetsFetcher : NSObject <FIPRecentAssetsFetching>
+@end
+
+#pragma mark -
+
+/// Requests a thumbnail image for a `PHAsset`.
+///
+/// This protocol exists to allow injecting an alternate implementation for testing.
+NS_SWIFT_NAME(ThumbnailRequesting)
+@protocol FIPThumbnailRequesting <NSObject>
+- (void)requestImageForAsset:(PHAsset *)asset
+                  targetSize:(CGSize)targetSize
+                 contentMode:(PHImageContentMode)contentMode
+                     options:(nullable PHImageRequestOptions *)options
+               resultHandler:
+                   (void (^)(UIImage *_Nullable result, NSDictionary *_Nullable info))resultHandler
+    NS_SWIFT_NAME(requestImage(for:targetSize:contentMode:options:resultHandler:));
+@end
+
+/// Production implementation that forwards to `PHImageManager`.
+NS_SWIFT_NAME(DefaultThumbnailRequester)
+@interface FIPDefaultThumbnailRequester : NSObject <FIPThumbnailRequesting>
 @end
 
 NS_ASSUME_NONNULL_END

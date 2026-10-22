@@ -329,4 +329,39 @@ class ImagePickerIOS extends ImagePickerPlatform {
       options.limit,
     )).map((String path) => XFile(path)).toList();
   }
+
+  @override
+  bool supportsRecentMedia() => true;
+
+  @override
+  Future<List<RecentMedia>> getRecentMedia({
+    RecentMediaOptions options = const RecentMediaOptions(),
+  }) async {
+    final List<RecentMediaItem> items = await _hostApi.getRecentMedia(
+      RecentMediaRequest(
+        limit: options.limit,
+        includeImages: options.types.contains(MediaSelectionType.image),
+        includeVideos: options.types.contains(MediaSelectionType.video),
+        width: options.thumbnailWidth,
+        height: options.thumbnailHeight,
+      ),
+    );
+    return items
+        .map(
+          (RecentMediaItem item) => RecentMedia(
+            thumbnail: XFile(item.path),
+            type: _mediaSelectionTypeForRecentMediaKind(item.kind),
+          ),
+        )
+        .toList();
+  }
+
+  MediaSelectionType _mediaSelectionTypeForRecentMediaKind(RecentMediaKind kind) {
+    switch (kind) {
+      case RecentMediaKind.image:
+        return MediaSelectionType.image;
+      case RecentMediaKind.video:
+        return MediaSelectionType.video;
+    }
+  }
 }

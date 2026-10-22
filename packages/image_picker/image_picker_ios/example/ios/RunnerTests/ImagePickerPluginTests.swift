@@ -1037,6 +1037,204 @@ struct ImagePickerPluginTests {
       didFinishPickingMediaWithInfo: [.originalImage: image])
   }
 
+  // MARK: - getRecentMedia
+
+  private func recentMediaPlugin(
+    status: PHAuthorizationStatus, requestAuthorizationResult: PHAuthorizationStatus? = nil
+  ) -> (
+    FLTImagePickerPlugin, FakePhotoLibraryPermissionChecker, FakeRecentAssetsFetcher,
+    FakeThumbnailRequester
+  ) {
+    let plugin = FLTImagePickerPlugin(viewProvider: StubViewProvider())
+    let photo = FakePhotoLibraryPermissionChecker()
+    photo.status = status
+    photo.requestAuthorizationResult = requestAuthorizationResult
+    plugin.photoLibraryPermissionChecker = photo
+    let fetcher = FakeRecentAssetsFetcher()
+    plugin.recentAssetsFetcher = fetcher
+    let thumbnails = FakeThumbnailRequester()
+    plugin.thumbnailRequester = thumbnails
+    return (plugin, photo, fetcher, thumbnails)
+  }
+
+  /// Adds an asset with a unique identifier, so files from other tests or runs are not reused.
+  private func addAsset(
+    _ mediaType: PHAssetMediaType, to fetcher: FakeRecentAssetsFetcher,
+    thumbnails: FakeThumbnailRequester, hasThumbnail: Bool = true
+  ) -> FakeAsset {
+    let asset = FakeAsset(
+      localIdentifier: "\(UUID().uuidString)/L0/001", mediaType: mediaType,
+      modificationDate: Date(timeIntervalSince1970: 1000))
+    fetcher.assets.append(asset)
+    if hasThumbnail {
+      thumbnails.images[asset.localIdentifier] = UIGraphicsImageRenderer(
+        size: CGSize(width: 10, height: 10)
+      ).image { context in
+        UIColor.red.setFill()
+        context.fill(CGRect(x: 0, y: 0, width: 10, height: 10))
+      }
+    }
+    return asset
+  }
+
+  private func getRecentMedia(
+    _ plugin: FLTImagePickerPlugin,
+    request: FLTRecentMediaRequest = FLTRecentMediaRequest.make(
+      withLimit: 3, includeImages: true, includeVideos: true, width: 100, height: 200)
+  ) async -> (items: [FLTRecentMediaItem]?, error: FlutterError?, onMainThread: Bool) {
+    await withCheckedContinuation {
+      (
+        continuation: CheckedContinuation<
+          (items: [FLTRecentMediaItem]?, error: FlutterError?, onMainThread: Bool), Never
+        >
+      ) in
+      plugin.getRecentMedia(with: request) { items, error in
+        continuation.resume(returning: (items, error, Thread.isMainThread))
+      }
+    }
+  }
+
+  @Test func getRecentMediaAuthorizedReturnsThumbnailsInOrder() async throws {
+    let (plugin, _, fetcher, thumbnails) = recentMediaPlugin(status: .authorized)
+    let video = addAsset(.video, to: fetcher, thumbnails: thumbnails)
+    let image = addAsset(.image, to: fetcher, thumbnails: thumbnails)
+
+    let (items, error, onMainThread) = await getRecentMedia(plugin)
+
+    #expect(error == nil)
+    #expect(onMainThread)
+    let results = try #require(items)
+    #expect(results.count == 2)
+    #expect(results[0].kind == .video)
+    #expect(results[1].kind == .image)
+    #expect(
+      results[0].path.contains(video.localIdentifier.replacingOccurrences(of: "/", with: "_")))
+    #expect(
+      results[1].path.contains(image.localIdentifier.replacingOccurrences(of: "/", with: "_")))
+    #expect(results[0].path.hasSuffix("_100x200_1000.jpg"))
+    for item in results {
+      #expect(FileManager.default.fileExists(atPath: item.path))
+    }
+  }
+
+  @Test func getRecentMediaUsesExpectedFetchOptions() async throws {
+    let (plugin, _, fetcher, _) = recentMediaPlugin(status: .authorized)
+
+    _ = await getRecentMedia(
+      plugin,
+      request: FLTRecentMediaRequest.make(
+        withLimit: 5, includeImages: true, includeVideos: false, width: 100, height: 200))
+
+    let options = try #require(fetcher.lastOptions)
+    #expect(options.fetchLimit == 5)
+    #expect(options.sortDescriptors?.first?.key == "creationDate")
+    #expect(options.sortDescriptors?.first?.ascending == false)
+    #expect(options.predicate?.predicateFormat == "mediaType IN {1}")
+  }
+
+  @Test func getRecentMediaUsesExpectedThumbnailOptions() async throws {
+    let (plugin, _, fetcher, thumbnails) = recentMediaPlugin(status: .authorized)
+    _ = addAsset(.image, to: fetcher, thumbnails: thumbnails)
+
+    _ = await getRecentMedia(plugin)
+
+    #expect(thumbnails.lastTargetSize == CGSize(width: 100, height: 200))
+    #expect(thumbnails.lastContentMode == .aspectFit)
+    let options = try #require(thumbnails.lastOptions)
+    #expect(options.isNetworkAccessAllowed == false)
+    #expect(options.deliveryMode == .highQualityFormat)
+    #expect(options.resizeMode == .fast)
+  }
+
+  @Test func getRecentMediaLimitedReturnsThumbnails() async {
+    let (plugin, photo, fetcher, thumbnails) = recentMediaPlugin(status: .limited)
+    _ = addAsset(.image, to: fetcher, thumbnails: thumbnails)
+
+    let (items, _, _) = await getRecentMedia(plugin)
+
+    #expect(items?.count == 1)
+    #expect(photo.requestAuthorizationCallCount == 0)
+  }
+
+  @Test(arguments: [PHAuthorizationStatus.denied, .restricted])
+  func getRecentMediaWithoutAccessReturnsEmptyList(status: PHAuthorizationStatus) async {
+    let (plugin, photo, fetcher, thumbnails) = recentMediaPlugin(status: status)
+    _ = addAsset(.image, to: fetcher, thumbnails: thumbnails)
+
+    let (items, error, _) = await getRecentMedia(plugin)
+
+    #expect(items?.isEmpty == true)
+    #expect(error == nil)
+    #expect(fetcher.lastOptions == nil)
+    #expect(photo.requestAuthorizationCallCount == 0)
+  }
+
+  @Test(arguments: [PHAuthorizationStatus.authorized, .limited])
+  func getRecentMediaNotDeterminedGrantedReturnsThumbnails(result: PHAuthorizationStatus) async {
+    let (plugin, photo, fetcher, thumbnails) = recentMediaPlugin(
+      status: .notDetermined, requestAuthorizationResult: result)
+    _ = addAsset(.image, to: fetcher, thumbnails: thumbnails)
+
+    let (items, _, onMainThread) = await getRecentMedia(plugin)
+
+    #expect(photo.requestAuthorizationCallCount == 1)
+    #expect(items?.count == 1)
+    #expect(onMainThread)
+  }
+
+  @Test func getRecentMediaNotDeterminedDeniedReturnsEmptyList() async {
+    let (plugin, photo, fetcher, thumbnails) = recentMediaPlugin(
+      status: .notDetermined, requestAuthorizationResult: .denied)
+    _ = addAsset(.image, to: fetcher, thumbnails: thumbnails)
+
+    let (items, error, onMainThread) = await getRecentMedia(plugin)
+
+    #expect(photo.requestAuthorizationCallCount == 1)
+    #expect(items?.isEmpty == true)
+    #expect(error == nil)
+    #expect(onMainThread)
+    #expect(fetcher.lastOptions == nil)
+  }
+
+  @Test func getRecentMediaSkipsMissingThumbnails() async throws {
+    let (plugin, _, fetcher, thumbnails) = recentMediaPlugin(status: .authorized)
+    _ = addAsset(.image, to: fetcher, thumbnails: thumbnails, hasThumbnail: false)
+    let image = addAsset(.image, to: fetcher, thumbnails: thumbnails)
+
+    let (items, _, _) = await getRecentMedia(plugin)
+
+    let results = try #require(items)
+    #expect(results.count == 1)
+    #expect(
+      results[0].path.contains(image.localIdentifier.replacingOccurrences(of: "/", with: "_")))
+  }
+
+  @Test func getRecentMediaReusesExistingThumbnailFile() async throws {
+    let (plugin, _, fetcher, thumbnails) = recentMediaPlugin(status: .authorized)
+    let asset = addAsset(.image, to: fetcher, thumbnails: thumbnails)
+    let identifier = asset.localIdentifier.replacingOccurrences(of: "/", with: "_")
+    let existingPath = (NSTemporaryDirectory() as NSString).appendingPathComponent(
+      "recent_media_\(identifier)_100x200_1000.jpg")
+    #expect(FileManager.default.createFile(atPath: existingPath, contents: Data()))
+
+    let (items, _, _) = await getRecentMedia(plugin)
+
+    #expect(items?.first?.path == existingPath)
+    #expect(thumbnails.requestedAssets.isEmpty)
+  }
+
+  @Test func getRecentMediaDoesNotCancelInProgressPicker() async {
+    let (plugin, _, _, _) = recentMediaPlugin(status: .authorized)
+    var pickerCompleted = false
+    let context = FLTImagePickerMethodCallContext { _, _ in pickerCompleted = true }
+    plugin.callContext = context
+
+    _ = await getRecentMedia(plugin)
+
+    #expect(plugin.callContext === context)
+    #expect(!pickerCompleted)
+  }
+
   private func expectPhotoAccessError(_ status: PHAuthorizationStatus, code: String) async {
     let plugin = FLTImagePickerPlugin(viewProvider: StubViewProvider())
     let photo = FakePhotoLibraryPermissionChecker()
