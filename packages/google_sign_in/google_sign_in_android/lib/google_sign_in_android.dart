@@ -86,6 +86,7 @@ class GoogleSignInAndroid extends GoogleSignInPlatform {
     final PlatformGoogleIdTokenCredential? credential = await _authenticate(
       useButtonFlow: true,
       throwForNoAuth: true,
+      nonce: params.nonce,
       // Ignored, since useButtonFlow is true.
       nonButtonFlowOptions: _LightweightAuthenticationOptions(
         filterToAuthorized: false,
@@ -168,6 +169,7 @@ class GoogleSignInAndroid extends GoogleSignInPlatform {
     required bool useButtonFlow,
     required _LightweightAuthenticationOptions nonButtonFlowOptions,
     bool throwForNoAuth = false,
+    String? nonce,
   }) async {
     final GetCredentialResult authnResult = await _hostApi.getCredential(
       GetCredentialRequestParams(
@@ -178,7 +180,7 @@ class GoogleSignInAndroid extends GoogleSignInPlatform {
         ),
         serverClientId: _serverClientId,
         hostedDomain: _hostedDomain,
-        nonce: _nonce,
+        nonce: nonce ?? _nonce,
       ),
     );
     switch (authnResult) {

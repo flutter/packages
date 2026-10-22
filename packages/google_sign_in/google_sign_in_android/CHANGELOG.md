@@ -1,3 +1,8 @@
+## 7.3.0
+
+* Uses the `nonce` from `AuthenticateParameters`, when provided, instead of
+  the nonce passed to `init`.
+
 ## 7.2.18
 
 * Converts Java implementation code to Kotlin.
