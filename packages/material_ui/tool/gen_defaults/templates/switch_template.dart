@@ -33,7 +33,7 @@ class $className extends SwitchThemeData {
     return WidgetStateProperty.resolveWith((Set<WidgetState> states) {
       if (states.contains(WidgetState.disabled)) {
         if (states.contains(WidgetState.selected)) {
-          return ${color(TokenSwitch.disabledSelectedHandleColor)}.withOpacity(${TokenSwitch.disabledSelectedHandleOpacity});
+          return ${colorWithOpacity(TokenSwitch.disabledSelectedHandleColor, TokenSwitch.disabledSelectedHandleOpacity)};
         }
         return ${colorWithOpacity(TokenSwitch.disabledUnselectedHandleColor, TokenSwitch.disabledUnselectedHandleOpacity)};
       }
