@@ -850,7 +850,7 @@ void main() {
     test('SwitchTemplateM3 emits M3 Switch defaults from tokens', () {
       final String contents = _generateContents(const SwitchTemplateM3());
       expect(contents, contains('class _SwitchDefaultsM3 extends SwitchThemeData'));
-      expect(contents, contains('return _colors.surface.withOpacity(1.0)'));
+      expect(contents, contains('return _colors.surface;'));
       expect(contents, contains('return _colors.onSurface.withOpacity(0.12)'));
       expect(contents, contains('class _SwitchConfigM3 with _SwitchConfig'));
       expect(contents, contains('return _colors.onPrimaryContainer'));

@@ -18,7 +18,7 @@ class _SwitchDefaultsM3 extends SwitchThemeData {
     return WidgetStateProperty.resolveWith((Set<WidgetState> states) {
       if (states.contains(WidgetState.disabled)) {
         if (states.contains(WidgetState.selected)) {
-          return _colors.surface.withOpacity(1.0);
+          return _colors.surface;
         }
         return _colors.onSurface.withOpacity(0.38);
       }

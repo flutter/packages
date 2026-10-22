@@ -15,8 +15,12 @@ class SwitchTemplateM3 extends TokenTemplateM3 {
   @override
   String get parentFilePath => 'switch.dart';
 
-  // TODO(QuncCccccc): Remove this legacy color when the selected icon color
-  // change can be made separately from this template migration.
+  // TODO(QuncCccccc): This color is out of date. It comes from older Material
+  // tokens (v6.1.0), but in the latest tokens the selected icon colors
+  // (`md.comp.switch.selected.icon.color` and its hover, focus, and pressed
+  // variants) are `primary`. It is kept here so this migration doesn't change
+  // how the Switch looks. Update to use the latest token value once the
+  // migration is done.
   static const TokenColorRole _legacySelectedIconColor = TokenColorRole.onPrimaryContainer;
 
   @override
