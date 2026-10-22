@@ -1,3 +1,7 @@
+## 29.0.12
+
+* [dart] Separates generated Dart native interop bindings into a conditionally imported companion file (`*.native_interop.g.dart`) so that the main generated Dart file can be imported on Web without pulling in `dart:ffi` or `dart:io`.
+
 ## 29.0.11
 
 * [swift] Warns after FFI code generation if the `objective_c` version constraint in `pubspec.yaml` does not match the generated `ObjCVersionCheck`.

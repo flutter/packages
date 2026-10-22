@@ -3270,5 +3270,46 @@ const String myConst = 'hello ${1 + 2}';
       final String configPath = getFfigenConfigPath(targetDir, options.input);
       expect(configPath, equals('example/tool/pigeon/messages_ffigen_config.dart'));
     });
+
+    test(
+      'DartGeneratorAdapter writes .native_interop.g.dart companion file when native interop is enabled',
+      () {
+        final Directory dir = Directory.systemTemp.createTempSync();
+        try {
+          final String dartOutPath = path.join(dir.path, 'messages.g.dart');
+          final String nativeInteropPath = path.join(dir.path, 'messages.native_interop.g.dart');
+          final InternalPigeonOptions options = InternalPigeonOptions.fromPigeonOptions(
+            PigeonOptions(
+              dartOut: dartOutPath,
+              swiftOut: path.join(dir.path, 'Messages.swift'),
+              swiftOptions: const SwiftOptions(useFfi: true),
+              dartPackageName: 'test_package',
+            ),
+          );
+          const adapter = DartGeneratorAdapter();
+          final sink = StringBuffer();
+          adapter.generate(
+            sink,
+            options,
+            Root(apis: <Api>[], classes: <Class>[], enums: <Enum>[]),
+            FileType.na,
+          );
+
+          expect(
+            sink.toString(),
+            contains(
+              "import './messages.g.dart'\n"
+              "    if (dart.library.ffi) './messages.native_interop.g.dart'\n"
+              '    as pigeon_native;',
+            ),
+          );
+          final companionFile = File(nativeInteropPath);
+          expect(companionFile.existsSync(), isTrue);
+          expect(companionFile.readAsStringSync(), contains('class _PigeonFfiCodec'));
+        } finally {
+          dir.deleteSync(recursive: true);
+        }
+      },
+    );
   });
 }

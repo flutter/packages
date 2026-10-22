@@ -288,7 +288,7 @@ class _FfiType extends _NativeInteropType<_FfiType> {
     bool forceNullable = false,
   }) {
     if (type.isClass) {
-      return '${type.baseName}.fromFfi($varName)${getForceNonNullSymbol(!type.isNullable)}';
+      return '${type.baseName}NativeInterop.fromFfi($varName)${getForceNonNullSymbol(!type.isNullable)}';
     }
     if (type.isEnum && classField) {
       if (type.isNullable) {
@@ -473,7 +473,7 @@ class _JniType extends _NativeInteropType<_JniType> {
   /// Generates a Dart code expression that converts a JNI object representation back to its corresponding Dart value.
   String getToDartCall(TypeDeclaration type, {String varName = '', bool forceConversion = false}) {
     if (type.isClass || type.isEnum) {
-      return '${type.baseName}.fromJni($varName)${getForceNonNullSymbol(!type.isNullable)}';
+      return '${type.baseName}NativeInterop.fromJni($varName)${getForceNonNullSymbol(!type.isNullable)}';
     }
     var asType = ' as ${getDartReturnType(true)}';
     var castCall = '';
@@ -693,47 +693,73 @@ class DartGenerator extends StructuredGenerator<InternalDartOptions> {
     required String dartPackageName,
   }) {
     indent.writeln("import 'dart:async';");
-    if (generatorOptions.useFfi) {
-      indent.writeln("import 'dart:ffi';");
-    }
-    if (usesNativeInterop(generatorOptions) || root.containsProxyApi) {
+    if (root.containsProxyApi) {
       indent.writeln("import 'dart:io' show Platform;");
     }
 
+    final typedDataClasses = <String>['Float64List', 'Int32List', 'Int64List'];
+    indent.writeln("import 'dart:typed_data' show ${typedDataClasses.join(', ')};");
+    indent.newln();
+    if (usesNativeInterop(generatorOptions)) {
+      indent.writeln(
+        "import 'package:flutter/foundation.dart' show TargetPlatform, defaultTargetPlatform, kIsWeb;",
+      );
+    }
+    indent.writeln("import 'package:flutter/services.dart';");
+    if (root.containsProxyApi) {
+      indent.writeln("import 'package:flutter/widgets.dart' show WidgetsFlutterBinding;");
+    }
+    indent.writeln("import 'package:meta/meta.dart' show immutable, protected, visibleForTesting;");
+    if (usesNativeInterop(generatorOptions) && generatorOptions.dartOut != null) {
+      final String baseName = path.basename(generatorOptions.dartOut!);
+      final String nativeInteropBaseName = path.basename(
+        getNativeInteropDartPath(generatorOptions.dartOut!),
+      );
+      indent.writeln(
+        "import './$baseName'\n"
+        "    if (dart.library.ffi) './$nativeInteropBaseName'\n"
+        '    as pigeon_native;',
+      );
+    }
+  }
+
+  void _writeNativeInteropFileImports(InternalDartOptions generatorOptions, Indent indent) {
+    indent.writeln("import 'dart:async';");
+    if (generatorOptions.useFfi) {
+      indent.writeln("import 'dart:ffi';");
+    }
+    indent.writeln("import 'dart:io' show Platform;");
+
     final typedDataClasses = <String>[
-      if (usesNativeInterop(generatorOptions)) 'Float32List',
+      'Float32List',
       'Float64List',
       'Int32List',
       'Int64List',
       if (generatorOptions.useJni) 'Int8List',
-      if (usesNativeInterop(generatorOptions)) 'TypedData',
+      'TypedData',
     ];
     indent.writeln("import 'dart:typed_data' show ${typedDataClasses.join(', ')};");
     indent.newln();
     if (generatorOptions.useFfi) {
       indent.writeln("import 'package:ffi/ffi.dart';");
     }
-
     indent.writeln("import 'package:flutter/services.dart';");
-    if (root.containsProxyApi) {
-      indent.writeln("import 'package:flutter/widgets.dart' show WidgetsFlutterBinding;");
-    }
     if (generatorOptions.useJni) {
       indent.writeln("import 'package:jni/jni.dart';");
     }
-    indent.writeln("import 'package:meta/meta.dart' show immutable, protected, visibleForTesting;");
     if (generatorOptions.useFfi) {
       indent.writeln("import 'package:objective_c/objective_c.dart';");
-
-      final String ffiFileImportName = path.basename(generatorOptions.dartOut!);
+    }
+    final String baseName = path.basename(generatorOptions.dartOut!);
+    indent.writeln("import './$baseName';");
+    if (generatorOptions.useFfi) {
       indent.writeln(
-        "import './${path.withoutExtension(ffiFileImportName)}.ffi.dart' as $_ffiBridgePrefix;",
+        "import './${path.withoutExtension(baseName)}.ffi.dart' as $_ffiBridgePrefix;",
       );
     }
     if (generatorOptions.useJni) {
-      final String jniFileImportName = path.basename(generatorOptions.dartOut!);
       indent.writeln(
-        "import './${path.withoutExtension(jniFileImportName)}.jni.dart' as $_jniBridgePrefix;",
+        "import './${path.withoutExtension(baseName)}.jni.dart' as $_jniBridgePrefix;",
       );
     }
   }
@@ -813,10 +839,14 @@ class DartGenerator extends StructuredGenerator<InternalDartOptions> {
         addDocumentationComments(indent, member.documentationComments, docCommentSpec);
         indent.writeln('${member.name}$separatorSymbol');
       }
+    });
+  }
 
+  void _writeNativeInteropEnum(InternalDartOptions generatorOptions, Indent indent, Enum anEnum) {
+    indent.newln();
+    indent.writeScoped('extension ${anEnum.name}NativeInterop on ${anEnum.name} {', '}', () {
       if (generatorOptions.useJni) {
         final _JniType jniType = _JniType.fromEnum(anEnum);
-        indent.newln();
         indent.writeScoped('${jniType.jniName} toJni() {', '}', () {
           indent.writeln('return ${jniType.jniName}.Companion.ofRaw(index)!;');
         });
@@ -831,8 +861,10 @@ class DartGenerator extends StructuredGenerator<InternalDartOptions> {
         );
       }
       if (generatorOptions.useFfi) {
+        if (generatorOptions.useJni) {
+          indent.newln();
+        }
         final _FfiType ffiType = _FfiType.fromEnum(anEnum);
-        indent.newln();
         indent.writeScoped('${ffiType.getFfiName()} toFfi() {', '}', () {
           indent.writeln('return _PigeonFfiCodec.writeValue<NSNumber>(index);');
         });
@@ -870,7 +902,6 @@ class DartGenerator extends StructuredGenerator<InternalDartOptions> {
     indent.write('${sealed}class ${classDefinition.name} $implements');
     indent.addScoped('{', '}', () {
       if (classDefinition.isSealed) {
-        _writeSealedClassNativeInteropConversions(generatorOptions, indent, classDefinition);
         return;
       }
       _writeConstructor(indent, classDefinition);
@@ -912,6 +943,37 @@ class DartGenerator extends StructuredGenerator<InternalDartOptions> {
     });
   }
 
+  void _writeNativeInteropDataClass(
+    InternalDartOptions generatorOptions,
+    Indent indent,
+    Class classDefinition,
+  ) {
+    indent.newln();
+    indent.writeScoped(
+      'extension ${classDefinition.name}NativeInterop on ${classDefinition.name} {',
+      '}',
+      () {
+        if (classDefinition.isSealed) {
+          _writeSealedClassNativeInteropConversions(generatorOptions, indent, classDefinition);
+          return;
+        }
+        if (generatorOptions.useJni) {
+          _writeToJni(indent, classDefinition);
+          indent.newln();
+          _writeFromJni(indent, classDefinition);
+        }
+        if (generatorOptions.useFfi) {
+          if (generatorOptions.useJni) {
+            indent.newln();
+          }
+          _writeToFfi(indent, classDefinition);
+          indent.newln();
+          _writeFromFfi(indent, classDefinition);
+        }
+      },
+    );
+  }
+
   void _writeConstructor(Indent indent, Class classDefinition) {
     indent.write(classDefinition.name);
     if (classDefinition.fields.isEmpty) {
@@ -935,14 +997,6 @@ class DartGenerator extends StructuredGenerator<InternalDartOptions> {
     Class classDefinition, {
     required String dartPackageName,
   }) {
-    if (generatorOptions.useJni) {
-      _writeToJni(indent, classDefinition);
-      indent.newln();
-    }
-    if (generatorOptions.useFfi) {
-      _writeToFfi(indent, classDefinition);
-      indent.newln();
-    }
     indent.write('Object encode() ');
     indent.addScoped('{', '}', () {
       indent.write('return _toList();');
@@ -971,7 +1025,13 @@ class DartGenerator extends StructuredGenerator<InternalDartOptions> {
   ) {
     if (generatorOptions.useJni) {
       final String jniName = _JniType.fromClass(classDefinition).jniName;
-      indent.writeln('$jniName toJni();');
+      indent.writeScoped('$jniName toJni() {', '}', () {
+        indent.writeScoped('return switch (this) {', '};', () {
+          for (final Class child in classDefinition.children) {
+            indent.writeln('${child.name} child => child.toJni(),');
+          }
+        });
+      });
       indent.newln();
       indent.writeScoped('static ${classDefinition.name}? fromJni($jniName? jniClass) {', '}', () {
         indent.writeScoped('if (jniClass == null) {', '}', () {
@@ -980,7 +1040,9 @@ class DartGenerator extends StructuredGenerator<InternalDartOptions> {
         for (final Class child in classDefinition.children) {
           final String childJniName = _JniType.fromClass(child).jniName;
           indent.writeScoped('if (jniClass.isA<$childJniName>($childJniName.type)) {', '}', () {
-            indent.writeln('return ${child.name}.fromJni(jniClass.as($childJniName.type));');
+            indent.writeln(
+              'return ${child.name}NativeInterop.fromJni(jniClass.as($childJniName.type));',
+            );
           });
         }
         indent.writeln('throw ArgumentError.value(jniClass);');
@@ -991,7 +1053,13 @@ class DartGenerator extends StructuredGenerator<InternalDartOptions> {
         indent.newln();
       }
       final String ffiName = _FfiType.fromClass(classDefinition).getFfiName();
-      indent.writeln('$ffiName toFfi();');
+      indent.writeScoped('$ffiName toFfi() {', '}', () {
+        indent.writeScoped('return switch (this) {', '};', () {
+          for (final Class child in classDefinition.children) {
+            indent.writeln('${child.name} child => child.toFfi(),');
+          }
+        });
+      });
       indent.newln();
       indent.writeScoped('static ${classDefinition.name}? fromFfi($ffiName? ffiClass) {', '}', () {
         indent.writeScoped('if (ffiClass == null) {', '}', () {
@@ -1000,7 +1068,9 @@ class DartGenerator extends StructuredGenerator<InternalDartOptions> {
         for (final Class child in classDefinition.children) {
           final String childFfiName = _FfiType.fromClass(child).getFfiName();
           indent.writeScoped('if ($childFfiName.isA(ffiClass)) {', '}', () {
-            indent.writeln('return ${child.name}.fromFfi($childFfiName.as(ffiClass));');
+            indent.writeln(
+              'return ${child.name}NativeInterop.fromFfi($childFfiName.as(ffiClass));',
+            );
           });
         }
         indent.writeln('throw ArgumentError.value(ffiClass);');
@@ -1009,9 +1079,6 @@ class DartGenerator extends StructuredGenerator<InternalDartOptions> {
   }
 
   void _writeToJni(Indent indent, Class classDefinition) {
-    if (classDefinition.superClass != null) {
-      indent.writeln('@override');
-    }
     indent.writeScoped('$_jniBridgePrefix.${classDefinition.name} toJni() {', '}', () {
       indent.writeScoped('return $_jniBridgePrefix.${classDefinition.name} (', ');', () {
         for (final NamedType field in getFieldsInSerializationOrder(classDefinition)) {
@@ -1024,9 +1091,6 @@ class DartGenerator extends StructuredGenerator<InternalDartOptions> {
 
   void _writeToFfi(Indent indent, Class classDefinition) {
     final _FfiType ffiClass = _FfiType.fromClass(classDefinition);
-    if (classDefinition.superClass != null) {
-      indent.writeln('@override');
-    }
     indent.writeScoped('${ffiClass.getFfiName()} toFfi() {', '}', () {
       final Iterable<NamedType> fields = getFieldsInSerializationOrder(classDefinition);
       if (fields.isEmpty) {
@@ -1098,15 +1162,6 @@ class DartGenerator extends StructuredGenerator<InternalDartOptions> {
     Class classDefinition, {
     required String dartPackageName,
   }) {
-    if (generatorOptions.useJni) {
-      _writeFromJni(indent, classDefinition);
-      indent.newln();
-    }
-    if (generatorOptions.useFfi) {
-      _writeFromFfi(indent, classDefinition);
-      indent.newln();
-    }
-
     indent.writeScoped('static ${classDefinition.name} decode(Object result) {', '}', () {
       indent.writeln('result as List<Object?>;');
       indent.write('return ${classDefinition.name}');
@@ -1291,7 +1346,7 @@ class DartGenerator extends StructuredGenerator<InternalDartOptions> {
     required String dartPackageName,
   }) {
     final mixin = generatorOptions.useJni ? ' with $_jniBridgePrefix.\$${api.name}' : '';
-    indent.writeScoped('final class ${api.name}Registrar$mixin {', '}', () {
+    indent.writeScoped('final class _${api.name}Registrar$mixin {', '}', () {
       indent.writeln('${api.name}? dartApi;');
       indent.newln();
       indent.writeScoped('${api.name} register(', ') ', () {
@@ -1511,6 +1566,13 @@ class DartGenerator extends StructuredGenerator<InternalDartOptions> {
         }
       }
     });
+    indent.newln();
+    indent.format('''
+${api.name} pigeonRegister_${api.name}(
+  ${api.name} api, {
+  String name = defaultInstanceName,
+}) => _${api.name}Registrar().register(api, name: name);
+''');
   }
 
   /// Writes the code for host [Api], [api].
@@ -1535,16 +1597,32 @@ class DartGenerator extends StructuredGenerator<InternalDartOptions> {
     required String dartPackageName,
   }) {
     indent.newln();
-    addDocumentationComments(indent, api.documentationComments, docCommentSpec);
     if (usesNativeInterop(generatorOptions)) {
-      _writeNativeInteropFlutterApi(
-        generatorOptions,
-        root,
-        indent,
-        api,
-        dartPackageName: dartPackageName,
-      );
+      indent.format('''
+${api.name} pigeonRegister_${api.name}(
+  ${api.name} api, {
+  String name = defaultInstanceName,
+}) {
+  throw UnsupportedError(
+    'Native Interop is not supported on this platform. Use ${api.name}.setUp instead.',
+  );
+}
+
+final class ${api.name}Registrar {
+  ${api.name}? dartApi;
+
+  ${api.name} register(
+    ${api.name} api, {
+    String name = defaultInstanceName,
+  }) {
+    dartApi = api;
+    return pigeon_native.pigeonRegister_${api.name}(api, name: name);
+  }
+}
+''');
+      indent.newln();
     }
+    addDocumentationComments(indent, api.documentationComments, docCommentSpec);
 
     indent.write('abstract class ${api.name} ');
     indent.addScoped('{', '}', () {
@@ -1577,7 +1655,7 @@ class DartGenerator extends StructuredGenerator<InternalDartOptions> {
       indent.addScoped('{', '}', () {
         if (generatorOptions.useJni) {
           indent.format('''
-            if (Platform.isAndroid && api != null) {
+            if (!kIsWeb && defaultTargetPlatform == TargetPlatform.android && api != null) {
               ${api.name}Registrar().register(api, name: messageChannelSuffix.isEmpty
                   ? defaultInstanceName
                   : messageChannelSuffix);
@@ -1586,7 +1664,7 @@ class DartGenerator extends StructuredGenerator<InternalDartOptions> {
         }
         if (generatorOptions.useFfi) {
           indent.format('''
-            if ((Platform.isIOS || Platform.isMacOS) && api != null) {
+            if (!kIsWeb && (defaultTargetPlatform == TargetPlatform.iOS || defaultTargetPlatform == TargetPlatform.macOS) && api != null) {
               ${api.name}Registrar().register(api, name: messageChannelSuffix.isEmpty
                   ? defaultInstanceName
                   : messageChannelSuffix);
@@ -1645,10 +1723,17 @@ class DartGenerator extends StructuredGenerator<InternalDartOptions> {
     required String dartPackageName,
   }) {
     final dartApiName = '${api.name}ForNativeInterop';
+    final implClassName = '_$dartApiName';
     final jniApiRegistrarName = '$_jniBridgePrefix.${api.name}Registrar';
     final ffiApiRegistrarName = '$_ffiBridgePrefix.${api.name}Setup';
     indent.newln();
-    indent.writeScoped('class $dartApiName {', '}', () {
+    indent.format('''
+$dartApiName? pigeonGetInstance_${api.name}({
+  String channelName = defaultInstanceName,
+}) => $implClassName.getInstance(channelName: channelName);
+''');
+    indent.newln();
+    indent.writeScoped('class $implClassName implements $dartApiName {', '}', () {
       final List<String> constructorParams = [];
       final List<String> constructorInitializers = [];
       final List<String> fields = [];
@@ -1670,7 +1755,7 @@ class DartGenerator extends StructuredGenerator<InternalDartOptions> {
           ? ''
           : ' : ${constructorInitializers.join(', ')}';
       indent.writeln(
-        '$dartApiName._withRegistrar($constructorSignature)$constructorInitializerList;',
+        '$implClassName._withRegistrar($constructorSignature)$constructorInitializerList;',
       );
 
       indent.newln();
@@ -1691,7 +1776,7 @@ class DartGenerator extends StructuredGenerator<InternalDartOptions> {
               indent.writeScoped('if (link == null) {', '}', () {
                 indent.writeln('_throwNoInstanceError(channelName);');
               });
-              indent.writeln('res = $dartApiName._withRegistrar(jniApi: link);');
+              indent.writeln('res = $implClassName._withRegistrar(jniApi: link);');
             }, addTrailingNewline: false);
             isFirst = false;
           }
@@ -1705,7 +1790,7 @@ class DartGenerator extends StructuredGenerator<InternalDartOptions> {
               indent.writeScoped('if (link == null) {', '}', () {
                 indent.writeln('_throwNoInstanceError(channelName);');
               });
-              indent.writeln('res = $dartApiName._withRegistrar(ffiApi: link);');
+              indent.writeln('res = $implClassName._withRegistrar(ffiApi: link);');
             }, addTrailingNewline: false);
             isFirst = false;
           }
@@ -1736,6 +1821,7 @@ class DartGenerator extends StructuredGenerator<InternalDartOptions> {
       );
       for (final Method method in api.methods) {
         final _JniMember jniMember = jniNamer.nextApiMethod(method);
+        indent.writeln('@override');
         indent.writeScoped(
           '${method.isAsynchronous ? 'Future<' : ''}${addGenericTypes(method.returnType)}${method.isAsynchronous ? '>' : ''} ${method.name}(${_getMethodParameterSignature(method.parameters)}) ${method.isAsynchronous ? 'async ' : ''}{',
           '}',
@@ -1984,6 +2070,34 @@ return ${generatorOptions.useJni ? 'await ' : ''}$completerVar.future;
         .join(', ');
   }
 
+  void _writeHostApiNativeInteropInterface(Indent indent, AstHostApi api) {
+    final dartApiName = '${api.name}ForNativeInterop';
+    indent.newln();
+    indent.format('''
+$dartApiName? pigeonGetInstance_${api.name}({
+  String channelName = defaultInstanceName,
+}) {
+  throw UnsupportedError(
+    'Native Interop is not supported on this platform. Use ${api.name} instead.',
+  );
+}
+
+abstract class $dartApiName {
+  /// Returns instance of $dartApiName with specified [channelName] if one has been registered.
+  static $dartApiName? getInstance({String channelName = defaultInstanceName}) =>
+      pigeon_native.pigeonGetInstance_${api.name}(channelName: channelName);
+''');
+    indent.inc();
+    for (final Method method in api.methods) {
+      indent.newln();
+      indent.writeln(
+        '${method.isAsynchronous ? 'Future<' : ''}${addGenericTypes(method.returnType)}${method.isAsynchronous ? '>' : ''} ${method.name}(${_getMethodParameterSignature(method.parameters)});',
+      );
+    }
+    indent.dec();
+    indent.writeln('}');
+  }
+
   /// Writes the code for host [Api], [api].
   /// Example:
   /// ```dart
@@ -2012,13 +2126,7 @@ return ${generatorOptions.useJni ? 'await ' : ''}$completerVar.future;
     required String dartPackageName,
   }) {
     if (usesNativeInterop(generatorOptions)) {
-      _writeNativeInteropHostApi(
-        generatorOptions,
-        root,
-        indent,
-        api,
-        dartPackageName: dartPackageName,
-      );
+      _writeHostApiNativeInteropInterface(indent, api);
     }
     indent.newln();
     addDocumentationComments(indent, api.documentationComments, docCommentSpec);
@@ -2039,13 +2147,15 @@ ${api.name}({
       if (usesNativeInterop(generatorOptions)) {
         final List<String> platforms = [];
         if (generatorOptions.useJni) {
-          platforms.add('Platform.isAndroid');
+          platforms.add('defaultTargetPlatform == TargetPlatform.android');
         }
         if (generatorOptions.useFfi) {
-          platforms.add('Platform.isIOS');
-          platforms.add('Platform.isMacOS');
+          platforms.add('defaultTargetPlatform == TargetPlatform.iOS');
+          platforms.add('defaultTargetPlatform == TargetPlatform.macOS');
         }
-        final String platformsCondition = platforms.join(' || ');
+        final platformsCondition = platforms.length == 1
+            ? '!kIsWeb && ${platforms.single}'
+            : '!kIsWeb && (${platforms.join(' || ')})';
         indent.format('''
   /// Creates an instance of [${api.name}] that requests an instance of
   /// [${api.name}ForNativeInterop] from the host platform with a matching instance name
@@ -2444,6 +2554,47 @@ ${api.name}({
     indent.format(_formatter.format('${proxyApi.accept(emitter)}'));
   }
 
+  /// Generates Dart source code for the native interop companion file (`*.native_interop.g.dart`)
+  /// based on the given AST represented by [root], outputting the code to [sink].
+  void generateNativeInterop(
+    InternalDartOptions generatorOptions,
+    Root root,
+    StringSink sink, {
+    required String dartPackageName,
+  }) {
+    final indent = Indent();
+    writeFilePrologue(generatorOptions, root, indent, dartPackageName: dartPackageName);
+    _writeNativeInteropFileImports(generatorOptions, indent);
+    _writeNativeInteropGeneralUtilities(generatorOptions, root, indent);
+    for (final Enum anEnum in root.enums) {
+      _writeNativeInteropEnum(generatorOptions, indent, anEnum);
+    }
+    for (final Class classDefinition in root.classes) {
+      _writeNativeInteropDataClass(generatorOptions, indent, classDefinition);
+    }
+    for (final Api api in root.apis) {
+      if (api is AstHostApi) {
+        _writeNativeInteropHostApi(
+          generatorOptions,
+          root,
+          indent,
+          api,
+          dartPackageName: dartPackageName,
+        );
+      } else if (api is AstFlutterApi) {
+        indent.newln();
+        _writeNativeInteropFlutterApi(
+          generatorOptions,
+          root,
+          indent,
+          api,
+          dartPackageName: dartPackageName,
+        );
+      }
+    }
+    sink.write(indent.toString());
+  }
+
   /// Generates Dart source code for test support libraries based on the given AST
   /// represented by [root], outputting the code to [sink]. [sourceOutPath] is the
   /// path of the generated Dart code to be tested. [testOutPath] is where the
@@ -2552,20 +2703,26 @@ ${api.name}({
         proxyApis: root.apis.whereType(),
       );
     }
-    if (usesNativeInterop(generatorOptions)) {
-      if (generatorOptions.useJni) {
-        _writeJniCodec(indent, root);
-      }
-      if (generatorOptions.useFfi) {
-        _writeFfiCodec(indent, root);
-        _writeConvertNumberWrapper(indent, root);
-      }
+  }
 
-      indent.writeln('bool _isType<T>(Type t) => T == t;');
+  void _writeNativeInteropGeneralUtilities(
+    InternalDartOptions generatorOptions,
+    Root root,
+    Indent indent,
+  ) {
+    if (generatorOptions.useJni) {
+      _writeJniCodec(indent, root);
+    }
+    if (generatorOptions.useFfi) {
+      _writeFfiCodec(indent, root);
+      _writeConvertNumberWrapper(indent, root);
+    }
 
-      indent.writeln('bool _isTypeOrNullableType<T>(Type t) => _isType<T>(t) || _isType<T?>(t);');
-      indent.newln();
-      indent.format(r'''
+    indent.writeln('bool _isType<T>(Type t) => T == t;');
+
+    indent.writeln('bool _isTypeOrNullableType<T>(Type t) => _isType<T>(t) || _isType<T?>(t);');
+    indent.newln();
+    indent.format(r'''
   void _throwNoInstanceError(String channelName) {
     String nameString = 'named $channelName';
     if (channelName == defaultInstanceName) {
@@ -2575,9 +2732,8 @@ ${api.name}({
     throw ArgumentError(error);
   }
 ''');
-      _writeErrorHelpers(indent, generatorOptions);
-      indent.newln();
-    }
+    _writeErrorHelpers(indent, generatorOptions);
+    indent.newln();
   }
 
   void _writeJniCodec(Indent indent, Root root) {
@@ -2645,7 +2801,7 @@ class _PigeonJniCodec {
       return '''
       } else if (value.isA<${jniType.jniName}>(
           ${jniType.jniName}.type)) {
-      return ${jniType.type.baseName}.fromJni(value.as(${jniType.jniName}.type));
+      return ${jniType.type.baseName}NativeInterop.fromJni(value.as(${jniType.jniName}.type));
         ''';
     }).join()}
     ${root.enums.map((Enum enumDefinition) {
@@ -2653,7 +2809,7 @@ class _PigeonJniCodec {
       return '''
       } else if (value.isA<${jniType.jniName}>(
           ${jniType.jniName}.type)) {
-      return ${jniType.type.baseName}.fromJni(value.as(${jniType.jniName}.type));
+      return ${jniType.type.baseName}NativeInterop.fromJni(value.as(${jniType.jniName}.type));
         ''';
     }).join()}
     } else {
@@ -2772,7 +2928,7 @@ class _PigeonJniCodec {
     for (final Enum anEnum in root.enums) {
       indent.format('''
         case ${typeNum++}:
-          return ${anEnum.name}.fromNSNumber(value.number);''');
+          return ${anEnum.name}NativeInterop.fromNSNumber(value.number);''');
     }
     indent.dec(2);
     indent.format('''
@@ -2827,7 +2983,7 @@ class _PigeonFfiCodec {
       }
       ${root.enums.map((Enum enumDefinition) => '''
       else if (type == ${enumDefinition.name}) {
-        return ${enumDefinition.name}.fromNSNumber(numValue);
+        return ${enumDefinition.name}NativeInterop.fromNSNumber(numValue);
       }''').join('\n')}
 
       return numValue.longValue;
@@ -2857,7 +3013,7 @@ class _PigeonFfiCodec {
       final _FfiType ffiType = _FfiType.fromClass(dataClass);
       return '''
       } else if (${ffiType.getFfiName()}.isA(value)) {
-        return ${ffiType.type.baseName}.fromFfi(${ffiType.getFfiName()}.as(value));
+        return ${ffiType.type.baseName}NativeInterop.fromFfi(${ffiType.getFfiName()}.as(value));
         ''';
     }).join()}
     } else {
@@ -3946,4 +4102,19 @@ String? _getArgumentsForMethodCall(Iterable<Parameter> parameters) {
 /// Returns true if the generated code should use native interop (FFI or JNI).
 bool usesNativeInterop(InternalDartOptions options) {
   return options.useFfi || options.useJni;
+}
+
+/// Returns the path of the generated native interop Dart file corresponding to
+/// [dartOutPath].
+String getNativeInteropDartPath(String dartOutPath) {
+  if (dartOutPath.endsWith('.g.dart')) {
+    return '${dartOutPath.substring(0, dartOutPath.length - '.g.dart'.length)}.native_interop.g.dart';
+  }
+  if (dartOutPath.endsWith('.gen.dart')) {
+    return '${dartOutPath.substring(0, dartOutPath.length - '.gen.dart'.length)}.native_interop.gen.dart';
+  }
+  if (dartOutPath.endsWith('.dart')) {
+    return '${dartOutPath.substring(0, dartOutPath.length - '.dart'.length)}.native_interop.dart';
+  }
+  return '$dartOutPath.native_interop.dart';
 }
