@@ -7,33 +7,35 @@
 #import "FLTPaymentQueueProtocol.h"
 #import "FLTTransactionCacheProtocol.h"
 
+// StoreKit 1 is intentionally used as the fallback on iOS < 15 and macOS < 12,
+// where StoreKit 2 is unavailable. Suppress its deprecation warnings.
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
+
 NS_ASSUME_NONNULL_BEGIN
 typedef void (^TransactionsUpdated)(NSArray<SKPaymentTransaction *> *transactions);
 typedef void (^TransactionsRemoved)(NSArray<SKPaymentTransaction *> *transactions);
 typedef void (^RestoreTransactionFailed)(NSError *error);
 typedef void (^RestoreCompletedTransactionsFinished)(void);
 typedef BOOL (^ShouldAddStorePayment)(SKPayment *payment, SKProduct *product);
-typedef void (^UpdatedDownloads)(NSArray<SKDownload *> *downloads);
 
 /// A protocol that conforms to SKPaymentTransactionObserver and handles SKPaymentQueue methods
 @protocol FLTPaymentQueueHandlerProtocol <NSObject, SKPaymentTransactionObserver>
 /// An object that provides information needed to complete transactions.
-@property(nonatomic, weak, nullable) id<SKPaymentQueueDelegate> delegate API_AVAILABLE(
-    ios(13.0), macos(10.15), watchos(6.2));
+@property(nonatomic, weak, nullable) id<SKPaymentQueueDelegate> delegate;
 /// An object containing the location and unique identifier of an Apple App Store storefront.
-@property(nonatomic, readonly, nullable)
-    SKStorefront *storefront API_AVAILABLE(ios(13.0), macos(10.15), watchos(6.2));
+@property(nonatomic, readonly, nullable) SKStorefront *storefront;
 
 /// Creates a new FIAPaymentQueueHandler.
 ///
-/// The "transactionsUpdated", "transactionsRemoved" and "updatedDownloads"
-/// callbacks are only called while actively observing transactions. To start
+/// The "transactionsUpdated" and "transactionsRemoved" callbacks are only
+/// called while actively observing transactions. To start
 /// observing transactions send the "startObservingPaymentQueue" message.
 /// Sending the "stopObservingPaymentQueue" message will stop actively
 /// observing transactions. When transactions are not observed they are cached
 /// to the "transactionCache" and will be delivered via the
-/// "transactionsUpdated", "transactionsRemoved" and "updatedDownloads"
-/// callbacks as soon as the "startObservingPaymentQueue" message arrives.
+/// "transactionsUpdated" and "transactionsRemoved" callbacks as soon as the
+/// "startObservingPaymentQueue" message arrives.
 ///
 /// Note: cached transactions that are not processed when the application is
 /// killed will be delivered again by the App Store as soon as the application
@@ -55,8 +57,6 @@ typedef void (^UpdatedDownloads)(NSArray<SKDownload *> *downloads);
 /// @param shouldAddStorePayment Callback method that is called each time an
 ///                              in-app purchase has been initiated from the
 ///                              App Store.
-/// @param updatedDownloads Callback method that is called each time the App
-///                         Store indicates downloads are updated.
 /// @param transactionCache An empty [FIATransactionCache] instance that is
 ///                         responsible for keeping track of transactions that
 ///                         arrive when not actively observing transactions.
@@ -67,7 +67,6 @@ typedef void (^UpdatedDownloads)(NSArray<SKDownload *> *downloads);
     restoreCompletedTransactionsFinished:
         (nullable RestoreCompletedTransactionsFinished)restoreCompletedTransactionsFinished
                    shouldAddStorePayment:(nullable ShouldAddStorePayment)shouldAddStorePayment
-                        updatedDownloads:(nullable UpdatedDownloads)updatedDownloads
                         transactionCache:(nonnull id<FLTTransactionCacheProtocol>)transactionCache;
 
 /// Can throw exceptions if the transaction type is purchasing, should always used in a @try block.
@@ -105,3 +104,5 @@ typedef void (^UpdatedDownloads)(NSArray<SKDownload *> *downloads);
 
 @end
 NS_ASSUME_NONNULL_END
+
+#pragma clang diagnostic pop

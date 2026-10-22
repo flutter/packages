@@ -131,20 +131,7 @@ class InternalPigeonOptions {
               useFfi: options.swiftOptions?.useFfi ?? false,
               ffiErrorClassName: options.swiftOptions?.errorClassName ?? 'PigeonError',
               jniErrorClassName: options.kotlinOptions?.errorClassName ?? 'FlutterError',
-              fileSpecificClassNameComponent:
-                  options.fileSpecificClassNameComponent ??
-                  (options.swiftOptions?.useFfi ?? false
-                      ? options.swiftOptions?.fileSpecificClassNameComponent ??
-                            (options.swiftOutPaths?.firstOrNull == null
-                                ? null
-                                : deduceClassNameComponent(options.swiftOutPaths!.first))
-                      : null) ??
-                  (options.kotlinOptions?.useJni ?? false
-                      ? options.kotlinOptions?.fileSpecificClassNameComponent ??
-                            (options.kotlinOut == null
-                                ? null
-                                : deduceClassNameComponent(options.kotlinOut))
-                      : null),
+              fileSpecificClassNameComponent: _dartNativeInteropClassNameComponent(options),
             ),
       copyrightHeader = options.copyrightHeader != null
           ? _lineReader(path.posix.join(options.basePath ?? '', options.copyrightHeader))
@@ -216,6 +203,30 @@ Iterable<String> _lineReader(String path) sync* {
   for (final line in lines) {
     yield line;
   }
+}
+
+/// The class name component that the Dart generator uses to reference the
+/// per-file helper classes declared by the native interop generators.
+///
+/// This must match the derivation in `InternalSwiftOptions.fromSwiftOptions`
+/// and `InternalKotlinOptions.fromKotlinOptions`, including the precedence of
+/// the language-specific option and the conversion to UpperCamelCase.
+String? _dartNativeInteropClassNameComponent(PigeonOptions options) {
+  final String? component;
+  if (options.swiftOptions?.useFfi ?? false) {
+    component =
+        options.swiftOptions?.fileSpecificClassNameComponent ??
+        options.fileSpecificClassNameComponent ??
+        deduceClassNameComponent(options.swiftOutPaths?.firstOrNull);
+  } else if (options.kotlinOptions?.useJni ?? false) {
+    component =
+        options.kotlinOptions?.fileSpecificClassNameComponent ??
+        options.fileSpecificClassNameComponent ??
+        deduceClassNameComponent(options.kotlinOut);
+  } else {
+    component = options.fileSpecificClassNameComponent;
+  }
+  return component == null ? null : toUpperCamelCase(component);
 }
 
 File _getFile(String output, {String basePath = ''}) {
@@ -325,6 +336,151 @@ void _errorOnJniPropertyCollisions(List<Error> errors, Root root) {
   }
 }
 
+/// Names that Swift FFI data class fields can't use.
+///
+/// FFI bridge classes subclass `NSObject`, so a field with one of these names
+/// either fails to compile in Swift, because it conflicts with an `NSObject`
+/// member, or is renamed by FFIgen, because it conflicts with a member of the
+/// Dart `NSObject` bindings.
+const Set<String> _swiftFfiReservedFieldNames = <String>{
+  // Swift compile errors.
+  'attributeKeys',
+  'autoContentAccessingProxy',
+  'autorelease',
+  'classCode',
+  'classDescription',
+  'classForArchiver',
+  'classForCoder',
+  'classForKeyedArchiver',
+  'classForPortCoder',
+  'className',
+  'copy',
+  'dealloc',
+  'debugDescription',
+  'description',
+  'finalize',
+  'hash',
+  'hashValue',
+  'isProxy',
+  'mutableCopy',
+  'objectSpecifier',
+  'observationInfo',
+  'release',
+  'retain',
+  'retainCount',
+  'scriptingProperties',
+  'superclass',
+  'toManyRelationshipKeys',
+  'toOneRelationshipKeys',
+  'zone',
+  // FFIgen renames.
+  'alloc',
+  'allocWithZone',
+  'conformsToProtocol',
+  'copyWithZone',
+  'doesNotRecognizeSelector',
+  'forwardInvocation',
+  'forwardingTargetForSelector',
+  'initialize',
+  'instanceMethodForSelector',
+  'instanceMethodSignatureForSelector',
+  'instancesRespondToSelector',
+  'isA',
+  'isEqual',
+  'isKindOfClass',
+  'isMemberOfClass',
+  'isSubclassOfClass',
+  'load',
+  'methodSignatureForSelector',
+  'mutableCopyWithZone',
+  'performSelector',
+  'ref',
+  'resolveClassMethod',
+  'resolveInstanceMethod',
+};
+
+const String _moveToNonFfiFileSuggestion =
+    "Move them to a separate pigeon file that doesn't use Swift FFI (`SwiftOptions.useFfi` or `--swift_use_ffi`).";
+
+void _errorOnSwiftFfiUnsupportedFeatures(
+  List<Error> errors,
+  InternalSwiftOptions swiftOptions,
+  Root root,
+) {
+  for (final Api api in root.apis) {
+    if (api is AstEventChannelApi) {
+      errors.add(
+        Error(
+          message:
+              'Swift FFI does not support event channels yet (in API "${api.name}"). $_moveToNonFfiFileSuggestion',
+        ),
+      );
+    } else if (api is AstProxyApi) {
+      errors.add(
+        Error(
+          message:
+              'Swift FFI does not support ProxyApis yet (in API "${api.name}"). $_moveToNonFfiFileSuggestion',
+        ),
+      );
+    } else if (api is AstHostApi) {
+      for (final Method method in api.methods) {
+        if (method.parameters.any((Parameter parameter) => parameter.name == 'wrappedError')) {
+          errors.add(
+            Error(
+              message:
+                  'Parameter "wrappedError" in method "${method.name}" in API "${api.name}" conflicts with the error parameter that Swift FFI adds to host API methods. Rename the parameter.',
+            ),
+          );
+        }
+      }
+    }
+  }
+  for (final Class classDefinition in root.classes) {
+    for (final NamedType field in classDefinition.fields) {
+      // `description` has its own error for all Swift generation.
+      if (field.name != 'description' && _swiftFfiReservedFieldNames.contains(field.name)) {
+        errors.add(
+          Error(
+            message:
+                'Field "${field.name}" is not allowed in class "${classDefinition.name}" with Swift FFI because it conflicts with a member of NSObject, which FFI bridge classes extend. Rename the field.',
+          ),
+        );
+      }
+    }
+  }
+  if (!swiftOptions.includeErrorClass) {
+    errors.add(
+      Error(
+        message:
+            'Swift FFI requires `includeErrorClass: true`, because the FFI bindings are generated from this file alone, so the error class "${swiftOptions.errorClassName ?? 'PigeonError'}" must be declared in it. To use Swift FFI in more than one pigeon file in the same module, give each file a different `errorClassName` instead.',
+      ),
+    );
+  }
+}
+
+const String _moveToNonJniFileSuggestion =
+    "Move them to a separate pigeon file that doesn't use Kotlin JNI (`KotlinOptions.useJni` or `--kotlin_use_jni`).";
+
+void _errorOnKotlinJniUnsupportedFeatures(List<Error> errors, Root root) {
+  for (final Api api in root.apis) {
+    if (api is AstEventChannelApi) {
+      errors.add(
+        Error(
+          message:
+              'Kotlin JNI does not support event channels yet (in API "${api.name}"). $_moveToNonJniFileSuggestion',
+        ),
+      );
+    } else if (api is AstProxyApi) {
+      errors.add(
+        Error(
+          message:
+              'Kotlin JNI does not support ProxyApis yet (in API "${api.name}"). $_moveToNonJniFileSuggestion',
+        ),
+      );
+    }
+  }
+}
+
 /// A [GeneratorAdapter] that generates the AST.
 class AstGeneratorAdapter implements GeneratorAdapter {
   /// Constructor for [AstGeneratorAdapter].
@@ -372,7 +528,42 @@ class DartGeneratorAdapter implements GeneratorAdapter {
       _openSink(options.dartOptions?.dartOut, basePath: options.basePath ?? '');
 
   @override
-  List<Error> validate(InternalPigeonOptions options, Root root) => <Error>[];
+  List<Error> validate(InternalPigeonOptions options, Root root) {
+    final InternalDartOptions? dartOptions = options.dartOptions;
+    if (dartOptions == null || !usesNativeInterop(dartOptions)) {
+      return <Error>[];
+    }
+    return _errorOnNativeInteropReservedMethodNames(root, useJni: dartOptions.useJni);
+  }
+}
+
+/// Returns errors for API methods whose names conflict with members of the
+/// Dart classes that native interop generates for the API.
+List<Error> _errorOnNativeInteropReservedMethodNames(Root root, {required bool useJni}) {
+  final errors = <Error>[];
+  for (final Api api in root.apis) {
+    final Set<String> reservedNames = switch (api) {
+      AstHostApi() => const <String>{'createWithNativeInteropApi', 'getInstance'},
+      // The JNI registrar implements the JNIgen interface for the API, so it
+      // shares a namespace with the API's methods.
+      AstFlutterApi() => <String>{
+        'implement',
+        if (useJni) ...<String>{'dartApi', 'register'},
+      },
+      _ => const <String>{},
+    };
+    for (final Method method in api.methods) {
+      if (reservedNames.contains(method.name)) {
+        errors.add(
+          Error(
+            message:
+                'Method name "${method.name}" in API "${api.name}" conflicts with a member of the Dart code that native interop generates for the API. Rename the method.',
+          ),
+        );
+      }
+    }
+  }
+  return errors;
 }
 
 /// A [GeneratorAdapter] that generates Dart test source code.
@@ -555,6 +746,7 @@ class SwiftGeneratorAdapter implements GeneratorAdapter {
     }
     if (options.swiftOptions?.useFfi ?? false) {
       _errorOnTaskQueueInNativeInterop(errors, 'Swift FFI', root);
+      _errorOnSwiftFfiUnsupportedFeatures(errors, options.swiftOptions!, root);
     }
     return errors;
   }
@@ -749,6 +941,7 @@ class KotlinGeneratorAdapter implements GeneratorAdapter {
     if (options.kotlinOptions?.useJni ?? false) {
       _errorOnTaskQueueInNativeInterop(errors, 'Kotlin JNI', root);
       _errorOnJniPropertyCollisions(errors, root);
+      _errorOnKotlinJniUnsupportedFeatures(errors, root);
     }
     return errors;
   }
@@ -2475,16 +2668,11 @@ int calculateLineNumber(String contents, int offset) {
   return result;
 }
 
-List<Error> _validateDependencies({
+String? _findTargetPubspecPath({
   required String? appDirectory,
   required String? dartOutPath,
   String? basePath,
-  required String apiName,
-  required List<String> requiredDeps,
-  List<String> requiredDevDeps = const <String>[],
 }) {
-  final errors = <Error>[];
-
   String? pubspecPath;
   if (dartOutPath != null && dartOutPath.isNotEmpty) {
     final String fullDartOut =
@@ -2508,6 +2696,169 @@ List<Error> _validateDependencies({
       (dartOutPath == null || dartOutPath.isEmpty)) {
     pubspecPath = findPubspecPath(Directory.current);
   }
+  return pubspecPath;
+}
+
+/// Checks whether the `objective_c` dependency constraint in `pubspec.yaml`
+/// matches the `ObjCVersionCheck(major, minor)` emitted by `ffigen` in the
+/// generated `.ffi.dart` file.
+///
+/// Returns a warning message if the constraint allows incompatible versions, or
+/// `null` if the constraint is compatible or cannot be checked.
+String? checkObjectiveCPubspecVersion(InternalPigeonOptions options) {
+  return _checkGeneratedBindingsPubspecVersion(
+    options: options,
+    appDirectory: options.swiftOptions?.appDirectory ?? options.appDirectory,
+    generatedFileSuffix: '.ffi.dart',
+    versionCheckName: 'ObjCVersionCheck',
+    packageName: 'objective_c',
+    bindingTypeLabel: 'FFI',
+  );
+}
+
+/// Checks whether the `jni` dependency constraint in `pubspec.yaml`
+/// matches the `JniVersionCheck(major, minor)` emitted by `jnigen` in the
+/// generated `.jni.dart` file.
+///
+/// Returns a warning message if the constraint allows incompatible versions, or
+/// `null` if the constraint is compatible or cannot be checked.
+String? checkJniPubspecVersion(InternalPigeonOptions options) {
+  return _checkGeneratedBindingsPubspecVersion(
+    options: options,
+    appDirectory: options.kotlinOptions?.appDirectory ?? options.appDirectory,
+    generatedFileSuffix: '.jni.dart',
+    versionCheckName: 'JniVersionCheck',
+    packageName: 'jni',
+    bindingTypeLabel: 'JNI',
+  );
+}
+
+String? _checkGeneratedBindingsPubspecVersion({
+  required InternalPigeonOptions options,
+  required String? appDirectory,
+  required String generatedFileSuffix,
+  required String versionCheckName,
+  required String packageName,
+  required String bindingTypeLabel,
+}) {
+  final String? dartOutPath = options.dartOptions?.dartOut;
+  if (dartOutPath == null || dartOutPath.isEmpty) {
+    return null;
+  }
+  final String basePath = options.basePath ?? '';
+  final String fullDartOut = (basePath.isNotEmpty && !dartOutPath.startsWith(basePath))
+      ? path.join(basePath, dartOutPath)
+      : dartOutPath;
+  final bindingsDartFile = File('${path.withoutExtension(fullDartOut)}$generatedFileSuffix');
+  if (!bindingsDartFile.existsSync()) {
+    return null;
+  }
+
+  final String bindingsContent;
+  try {
+    bindingsContent = bindingsDartFile.readAsStringSync();
+  } catch (_) {
+    return null;
+  }
+
+  final RegExpMatch? match = RegExp(
+    '$versionCheckName\\(\\s*(\\d+)\\s*,\\s*(\\d+)\\s*\\)',
+  ).firstMatch(bindingsContent);
+  if (match == null) {
+    return null;
+  }
+
+  final int major = int.parse(match.group(1)!);
+  final int minor = int.parse(match.group(2)!);
+  final requiredMinVersion = Version(major, minor, 0);
+  final nextMajorVersion = Version(major + 1, 0, 0);
+
+  final String? pubspecPath = _findTargetPubspecPath(
+    appDirectory: appDirectory,
+    dartOutPath: fullDartOut,
+    basePath: options.basePath,
+  );
+  if (pubspecPath == null) {
+    return null;
+  }
+
+  final resolvedPubspec = File(pubspecPath);
+  if (!resolvedPubspec.existsSync()) {
+    return null;
+  }
+
+  try {
+    final dynamic doc = yaml.loadYaml(resolvedPubspec.readAsStringSync());
+    if (doc is! yaml.YamlMap) {
+      return null;
+    }
+    final dependencies = doc['dependencies'] as yaml.YamlMap?;
+    final dependencyOverrides = doc['dependency_overrides'] as yaml.YamlMap?;
+    final bool hasOverride =
+        dependencyOverrides != null && dependencyOverrides.containsKey(packageName);
+    final bool hasDependency =
+        hasOverride || (dependencies != null && dependencies.containsKey(packageName));
+    if (!hasDependency) {
+      return null;
+    }
+    final Object? rawDependency = hasOverride
+        ? dependencyOverrides[packageName]
+        : dependencies![packageName];
+    final Object? rawConstraint;
+    if (rawDependency == null) {
+      rawConstraint = 'any';
+    } else if (rawDependency is Map) {
+      if (!rawDependency.containsKey('version') &&
+          (rawDependency.containsKey('path') ||
+              rawDependency.containsKey('git') ||
+              rawDependency.containsKey('sdk'))) {
+        return null;
+      }
+      rawConstraint = rawDependency['version'] ?? 'any';
+    } else {
+      rawConstraint = rawDependency;
+    }
+    if (rawConstraint is! String) {
+      return null;
+    }
+
+    final constraint = VersionConstraint.parse(rawConstraint);
+    final bool allowsValidVersion = constraint.allowsAny(
+      VersionRange(min: requiredMinVersion, max: nextMajorVersion, includeMin: true),
+    );
+    final bool allowsLowerVersion = constraint.allowsAny(VersionRange(max: requiredMinVersion));
+    final bool allowsHigherMajorVersion = constraint.allowsAny(
+      VersionRange(min: nextMajorVersion.firstPreRelease, includeMin: true),
+    );
+
+    if (!allowsValidVersion || allowsLowerVersion || allowsHigherMajorVersion) {
+      return 'Generated $bindingTypeLabel bindings in "${path.basename(bindingsDartFile.path)}" require '
+          'package:$packageName ^$major.$minor.0 (from $versionCheckName($major, $minor)), '
+          'but "$pubspecPath" specifies "$packageName: $rawConstraint". '
+          'Consider updating pubspec.yaml to "$packageName: ^$major.$minor.0".';
+    }
+  } catch (_) {
+    return null;
+  }
+
+  return null;
+}
+
+List<Error> _validateDependencies({
+  required String? appDirectory,
+  required String? dartOutPath,
+  String? basePath,
+  required String apiName,
+  required List<String> requiredDeps,
+  List<String> requiredDevDeps = const <String>[],
+}) {
+  final errors = <Error>[];
+
+  final String? pubspecPath = _findTargetPubspecPath(
+    appDirectory: appDirectory,
+    dartOutPath: dartOutPath,
+    basePath: basePath,
+  );
 
   if (pubspecPath == null) {
     errors.add(
