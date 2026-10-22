@@ -1,7 +1,12 @@
 ## 0.6.0
 
 * **Breaking Change** Updates `file_selector_platform_interface` to `3.0.0`.
-* Updates minimum supported SDK version to Flutter 3.41/Dart 3.11.
+
+## 0.5.3+7
+
+* Updates minimum supported SDK version to Flutter 3.47/Dart 3.13.
+* Updates minimum iOS version to 15.
+* Replaces the `UIDocumentPickerViewController` initializer deprecated in iOS 14.
 
 ## 0.5.3+6
 
