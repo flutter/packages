@@ -41,7 +41,7 @@ import '../templates/motion_template.dart';
 import '../templates/progress_indicator_template.dart';
 // import '../templates/radio_template.dart';
 // import '../templates/range_slider_template.dart';
-// import '../templates/search_bar_template.dart';
+import '../templates/search_bar_template.dart';
 // import '../templates/search_view_template.dart';
 // import '../templates/segmented_button_template.dart';
 // import '../templates/slider_template.dart';
@@ -799,8 +799,11 @@ void main() {
     });
 
     test('SearchBarTemplateM3 emits M3 SearchBar defaults from tokens', () {
-      // Intentionally empty, will be implemented during migration. See:
-      // https://github.com/flutter/flutter/issues/187899
+      final String contents = _generateContents(const SearchBarTemplateM3());
+      expect(contents, contains('class _SearchBarDefaultsM3 extends SearchBarThemeData'));
+      expect(contents, contains('_colors.surfaceContainerHigh'));
+      expect(contents, contains('_colors.onSurface.withOpacity(0.1)'));
+      expect(contents, contains('const MaterialStatePropertyAll<OutlinedBorder>(StadiumBorder())'));
     });
 
     test('SearchViewTemplateM3 emits M3 SearchView defaults from tokens', () {
