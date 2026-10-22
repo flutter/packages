@@ -50,7 +50,7 @@ import '../templates/snackbar_template.dart';
 // import '../templates/switch_template.dart';
 import '../templates/tabs_template.dart';
 import '../templates/template.dart';
-// import '../templates/text_field_template.dart';
+import '../templates/text_field_template.dart';
 // import '../templates/time_picker_template.dart';
 import '../templates/typography_template.dart';
 import 'test_fixtures/test_templates.dart';
@@ -874,8 +874,21 @@ void main() {
     });
 
     test('TextFieldTemplateM3 emits M3 TextField defaults from tokens', () {
-      // Intentionally empty, will be implemented during migration. See:
-      // https://github.com/flutter/flutter/issues/187899
+      final String contents = _generateContents(const TextFieldTemplateM3());
+      expect(contents, contains('TextStyle? _m3StateInputStyle(BuildContext context)'));
+      expect(contents, contains('Theme.of(context).textTheme.bodyLarge!.color?.withOpacity(0.38)'));
+      expect(
+        contents,
+        contains(
+          'TextStyle _m3InputStyle(BuildContext context) => Theme.of(context).textTheme.bodyLarge!',
+        ),
+      );
+      expect(
+        contents,
+        contains(
+          'Theme.of(context).textTheme.bodySmall!.copyWith(color: Theme.of(context).colorScheme.error)',
+        ),
+      );
     });
 
     test('TimePickerTemplateM3 emits M3 TimePicker defaults from tokens', () {
