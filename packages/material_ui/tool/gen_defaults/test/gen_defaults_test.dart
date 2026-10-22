@@ -47,7 +47,7 @@ import '../templates/search_view_template.dart';
 // import '../templates/slider_template.dart';
 import '../templates/snackbar_template.dart';
 // import '../templates/surface_tint_template.dart';
-// import '../templates/switch_template.dart';
+import '../templates/switch_template.dart';
 import '../templates/tabs_template.dart';
 import '../templates/template.dart';
 import '../templates/text_field_template.dart';
@@ -875,8 +875,13 @@ void main() {
     });
 
     test('SwitchTemplateM3 emits M3 Switch defaults from tokens', () {
-      // Intentionally empty, will be implemented during migration. See:
-      // https://github.com/flutter/flutter/issues/187899
+      final String contents = _generateContents(const SwitchTemplateM3());
+      expect(contents, contains('class _SwitchDefaultsM3 extends SwitchThemeData'));
+      expect(contents, contains('return _colors.surface;'));
+      expect(contents, contains('return _colors.onSurface.withOpacity(0.12)'));
+      expect(contents, contains('class _SwitchConfigM3 with _SwitchConfig'));
+      expect(contents, contains('return _colors.onPrimaryContainer'));
+      expect(contents, contains('double get trackWidth => 52.0'));
     });
 
     test('TabsTemplateM3 emits M3 Tabs defaults from tokens', () {

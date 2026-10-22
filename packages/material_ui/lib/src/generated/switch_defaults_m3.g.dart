@@ -2,6 +2,11 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+// Do not edit by hand. The code is generated from data in the Material
+// Design token database by the script:
+//   packages/material_ui/tool/gen_defaults/bin/gen_defaults.dart.
+part of '../switch.dart';
+
 class _SwitchDefaultsM3 extends SwitchThemeData {
   _SwitchDefaultsM3(this.context);
 
@@ -13,7 +18,7 @@ class _SwitchDefaultsM3 extends SwitchThemeData {
     return WidgetStateProperty.resolveWith((Set<WidgetState> states) {
       if (states.contains(WidgetState.disabled)) {
         if (states.contains(WidgetState.selected)) {
-          return _colors.surface.withOpacity(1.0);
+          return _colors.surface;
         }
         return _colors.onSurface.withOpacity(0.38);
       }
