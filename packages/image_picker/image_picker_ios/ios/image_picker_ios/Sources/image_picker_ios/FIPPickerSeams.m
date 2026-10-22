@@ -46,3 +46,17 @@
 
 @implementation PHPickerResult (FIPPickerItem)
 @end
+
+@implementation FIPDefaultImageDataRequester
+- (void)requestImageDataAndOrientationForAsset:(PHAsset *)asset
+                                       options:(nullable PHImageRequestOptions *)options
+                                 resultHandler:
+                                     (void (^)(NSData *_Nullable imageData,
+                                               NSString *_Nullable dataUTI,
+                                               CGImagePropertyOrientation orientation,
+                                               NSDictionary *_Nullable info))resultHandler {
+  [[PHImageManager defaultManager] requestImageDataAndOrientationForAsset:asset
+                                                                  options:options
+                                                            resultHandler:resultHandler];
+}
+@end

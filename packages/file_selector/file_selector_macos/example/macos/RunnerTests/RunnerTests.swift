@@ -170,15 +170,10 @@ class TestViewProvider: NSObject, ViewProvider {
     }
 
     let panel = try #require(panelController.openPanel)
-    if #available(macOS 11.0, *) {
-      #expect(panel.allowedContentTypes.contains(UTType.plainText))
-      #expect(panel.allowedContentTypes.contains(UTType.json))
-      #expect(panel.allowedContentTypes.contains(UTType.html))
-      #expect(panel.allowedContentTypes.contains(UTType.image))
-    } else {
-      // MIME type is not supported for the legacy codepath, but the rest should be set.
-      #expect(panel.allowedFileTypes == ["txt", "json", "public.text", "public.image"])
-    }
+    #expect(panel.allowedContentTypes.contains(UTType.plainText))
+    #expect(panel.allowedContentTypes.contains(UTType.json))
+    #expect(panel.allowedContentTypes.contains(UTType.html))
+    #expect(panel.allowedContentTypes.contains(UTType.image))
   }
 
   @Test func filterUnknownFileExtension() async throws {
@@ -213,61 +208,12 @@ class TestViewProvider: NSObject, ViewProvider {
     }
 
     let panel = try #require(panelController.openPanel)
-    if #available(macOS 11.0, *) {
-      #expect(panel.allowedContentTypes.count == 1)
-      let allowedType = try #require(panel.allowedContentTypes.first)
-      #expect(allowedType.preferredFilenameExtension == unknownExtension)
-      // If this isn't true, the dynamic type created for the extension won't work as a file
-      // extension filter.
-      #expect(allowedType.conforms(to: UTType.data))
-    } else {
-      #expect(panel.allowedFileTypes == [unknownExtension])
-    }
-  }
-
-  @Test func openWithFilterLegacy() async throws {
-    let panelController = TestPanelController()
-    let plugin = FileSelectorPlugin(
-      viewProvider: TestViewProvider(),
-      panelController: panelController)
-    plugin.forceLegacyTypes = true
-
-    let returnPath = "/foo/bar"
-    panelController.openURLs = [URL(fileURLWithPath: returnPath)]
-
-    await confirmation("completion") { called in
-      let options = OpenPanelOptions(
-        allowsMultipleSelection: true,
-        canChooseDirectories: false,
-        canChooseFiles: true,
-        baseOptions: SavePanelOptions(
-          allowedFileTypes: AllowedTypes(
-            extensions: ["txt", "json"],
-            mimeTypes: ["text/html"],
-            utis: ["public.text", "public.image"])))
-      plugin.displayOpenPanel(options: options) { result in
-        switch result {
-        case .success(let paths):
-          #expect(paths == [returnPath])
-        case .failure(let error):
-          Issue.record("\(error)")
-        }
-        called()
-      }
-    }
-
-    let panel = try #require(panelController.openPanel)
-    // On the legacy path, the allowedFileTypes should be set directly.
-    #expect(panel.allowedFileTypes == ["txt", "json", "public.text", "public.image"])
-
-    // They should also be translated to corresponding allowed content types.
-    if #available(macOS 11.0, *) {
-      #expect(panel.allowedContentTypes.contains(UTType.plainText))
-      #expect(panel.allowedContentTypes.contains(UTType.json))
-      #expect(panel.allowedContentTypes.contains(UTType.image))
-      // MIME type is not supported for the legacy codepath.
-      #expect(!panel.allowedContentTypes.contains(UTType.html))
-    }
+    #expect(panel.allowedContentTypes.count == 1)
+    let allowedType = try #require(panel.allowedContentTypes.first)
+    #expect(allowedType.preferredFilenameExtension == unknownExtension)
+    // If this isn't true, the dynamic type created for the extension won't work as a file
+    // extension filter.
+    #expect(allowedType.conforms(to: UTType.data))
   }
 
   @Test func openCancel() async throws {
