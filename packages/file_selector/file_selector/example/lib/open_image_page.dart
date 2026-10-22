@@ -2,11 +2,10 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import 'dart:io';
-
 import 'package:file_selector/file_selector.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+
+import 'image_loader.dart';
 
 /// Screen that shows an example of openFiles
 class OpenImagePage extends StatelessWidget {
@@ -72,42 +71,11 @@ class ImageDisplay extends StatelessWidget {
   /// The name of the selected file.
   final String fileName;
 
-  Future<Image> _getImage() async {
-    if (kIsWeb) {
-      return Image.network(file.uri);
-    } else if (defaultTargetPlatform == TargetPlatform.macOS) {
-      return Image.file(File(Uri.parse(file.uri).toFilePath()));
-    } else if (file case final FileSystemXFile file) {
-      return Image.file(File(file.path));
-    }
-
-    return Image.memory(await file.readAsBytes());
-  }
-
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
       title: Text(key: const Key('result_image_name'), fileName),
-      content: FutureBuilder<Image>(
-        future: _getImage(),
-        builder: (_, AsyncSnapshot<Image> snapshot) {
-          if (snapshot.hasData) {
-            return snapshot.data!;
-          } else if (snapshot.hasError) {
-            return Center(
-              child: Column(
-                mainAxisAlignment: .center,
-                children: <Widget>[
-                  const Icon(Icons.error_outline, color: Colors.red, size: 60),
-                  Padding(padding: const .only(top: 16), child: Text('Error: ${snapshot.error}')),
-                ],
-              ),
-            );
-          }
-
-          return const SizedBox.square(dimension: 60, child: CircularProgressIndicator());
-        },
-      ),
+      content: ImageBuilder(file),
       actions: <Widget>[
         TextButton(
           child: const Text('Close'),
