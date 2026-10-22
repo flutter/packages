@@ -128,7 +128,7 @@ class HomePageState extends State<HomePage> {
             builder: (BuildContext context, MenuController controller, Widget? child) {
               return IconButton(
                 tooltip: 'Filter by tags',
-                icon: const Icon(Icons.filter_list),
+                icon: Semantics(expanded: controller.isOpen, child: const Icon(Icons.filter_list)),
                 onPressed: () {
                   if (controller.isOpen) {
                     controller.close();

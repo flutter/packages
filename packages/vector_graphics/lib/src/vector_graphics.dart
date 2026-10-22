@@ -382,9 +382,12 @@ class _VectorGraphicWidgetState extends State<VectorGraphic> {
           return _PictureData(pictureInfo, 0, key);
         });
     _pendingPictures[key] = result;
+    // The future whenComplete returns carries the same error as result, and
+    // nothing listens to it: ignore it, or every failed load is reported as
+    // unhandled even though the caller handles result's error.
     result.whenComplete(() {
       _pendingPictures.remove(key);
-    });
+    }).ignore();
     return result;
   }
 
