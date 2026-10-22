@@ -205,12 +205,12 @@ public final class ImagePickerPlugin: NSObject, FlutterPlugin, FLTImagePickerApi
     cancelInProgressCall()
     let context = ImagePickerMethodCallContext { paths, error in
       if (paths?.count ?? 0) > 1 {
-        completion(
-          nil,
-          FlutterError(
-            code: "invalid_result",
-            message: "Incorrect number of return paths provided",
-            details: nil))
+        let invalidResult = FlutterError(
+          code: "invalid_result",
+          message: "Incorrect number of return paths provided",
+          details: nil)
+        completion(nil, invalidResult)
+        return
       }
       completion(paths?.first, error)
     }
@@ -221,11 +221,7 @@ public final class ImagePickerPlugin: NSObject, FlutterPlugin, FLTImagePickerApi
     context.requestFullMetadata = fullMetadata
 
     if source.type == .gallery {
-      if #available(iOS 14, *) {
-        launchPHPicker(with: context)
-      } else {
-        launchUIImagePicker(with: source, context: context)
-      }
+      launchPHPicker(with: context)
     } else {
       launchUIImagePicker(with: source, context: context)
     }
@@ -248,12 +244,7 @@ public final class ImagePickerPlugin: NSObject, FlutterPlugin, FLTImagePickerApi
     context.requestFullMetadata = fullMetadata
     context.maxItemCount = limit?.intValue ?? 0
 
-    if #available(iOS 14, *) {
-      launchPHPicker(with: context)
-    } else {
-      launchUIImagePicker(
-        with: FLTSourceSpecification.make(with: .gallery, camera: .rear), context: context)
-    }
+    launchPHPicker(with: context)
   }
 
   public func pickMedia(
@@ -276,12 +267,7 @@ public final class ImagePickerPlugin: NSObject, FlutterPlugin, FLTImagePickerApi
       context.maxItemCount = limit.intValue
     }
 
-    if #available(iOS 14, *) {
-      launchPHPicker(with: context)
-    } else {
-      launchUIImagePicker(
-        with: FLTSourceSpecification.make(with: .gallery, camera: .rear), context: context)
-    }
+    launchPHPicker(with: context)
   }
 
   public func pickVideo(
@@ -292,12 +278,12 @@ public final class ImagePickerPlugin: NSObject, FlutterPlugin, FLTImagePickerApi
     cancelInProgressCall()
     let context = ImagePickerMethodCallContext { paths, error in
       if (paths?.count ?? 0) > 1 {
-        completion(
-          nil,
-          FlutterError(
-            code: "invalid_result",
-            message: "Incorrect number of return paths provided",
-            details: nil))
+        let invalidResult = FlutterError(
+          code: "invalid_result",
+          message: "Incorrect number of return paths provided",
+          details: nil)
+        completion(nil, invalidResult)
+        return
       }
       completion(paths?.first, error)
     }
@@ -306,11 +292,7 @@ public final class ImagePickerPlugin: NSObject, FlutterPlugin, FLTImagePickerApi
     context.maxDuration = maxDurationSeconds?.doubleValue ?? 0
 
     if source.type == .gallery {
-      if #available(iOS 14, *) {
-        launchPHPicker(with: context)
-      } else {
-        launchUIImagePicker(with: source, context: context)
-      }
+      launchPHPicker(with: context)
     } else {
       launchUIImagePicker(with: source, context: context)
     }
@@ -328,12 +310,7 @@ public final class ImagePickerPlugin: NSObject, FlutterPlugin, FLTImagePickerApi
     context.maxItemCount = limit?.intValue ?? 0
     context.maxDuration = maxDurationSeconds?.doubleValue ?? 0
 
-    if #available(iOS 14, *) {
-      launchPHPicker(with: context)
-    } else {
-      launchUIImagePicker(
-        with: FLTSourceSpecification.make(with: .gallery, camera: .rear), context: context)
-    }
+    launchPHPicker(with: context)
   }
 
   /// If a call is still in progress, cancels it by returning an error and then clearing state.
@@ -505,9 +482,11 @@ public final class ImagePickerPlugin: NSObject, FlutterPlugin, FLTImagePickerApi
     let maxHeight = currentCallContext?.maxSize?.height
     let desiredImageQuality = self.desiredImageQuality(currentCallContext?.imageQuality)
     let requestFullMetadata = currentCallContext?.requestFullMetadata ?? false
-    // Item-provider completions run concurrently on a private queue.
     var pathList = [String?](repeating: nil, count: results.count)
     var saveError: FlutterError?
+    // savedPathBlock runs concurrently on PHPicker's private queue, and the
+    // main-queue operation reads both values. The Objective-C implementation
+    // wrote them without a lock.
     let lock = NSLock()
 
     let sendListOperation = BlockOperation {

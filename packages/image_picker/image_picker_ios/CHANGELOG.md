@@ -2,6 +2,7 @@
 
 * Splits the iOS implementation into mixed-language Swift Package Manager targets.
 * Migrates the plugin class from Objective-C to Swift.
+* Calls the single-item image and video completions once when more than one path is returned.
 
 ## 0.8.13+12
 

@@ -81,48 +81,6 @@ struct ImagePickerPluginTests {
     #expect(controller.cameraDevice == .front)
   }
 
-  // CI builds RunnerTests for iOS 15, where @available(obsoleted: 14) is a
-  // compile error inside the @Test macro. Skip these tests on iOS 14 and later.
-  @Test(
-    .enabled(
-      if: ProcessInfo.processInfo.operatingSystemVersion.majorVersion < 14,
-      "PHPicker is used on iOS 14 and later."))
-  func pickMultiImageShouldUseUIImagePickerControllerOnPreiOS14() {
-    let plugin = ImagePickerPlugin(viewProvider: StubViewProvider())
-    let photo = FakePhotoLibraryPermissionChecker()
-    photo.status = .authorized
-    plugin.photoLibraryPermissionChecker = photo
-    let controller = UIImagePickerController()
-    plugin.setImagePickerControllerOverrides([controller])
-    plugin.pickMultiImage(
-      with: FLTMaxSize.make(withWidth: 100, height: 200), quality: 50, fullMetadata: true,
-      limit: nil
-    ) { _, _ in }
-    #expect(controller.sourceType == .photoLibrary)
-  }
-
-  @Test(
-    .enabled(
-      if: ProcessInfo.processInfo.operatingSystemVersion.majorVersion < 14,
-      "PHPicker is used on iOS 14 and later."))
-  func pickMediaShouldUseUIImagePickerControllerOnPreiOS14() {
-    let plugin = ImagePickerPlugin(viewProvider: StubViewProvider())
-    let photo = FakePhotoLibraryPermissionChecker()
-    photo.status = .authorized
-    plugin.photoLibraryPermissionChecker = photo
-    let controller = UIImagePickerController()
-    plugin.setImagePickerControllerOverrides([controller])
-    plugin.pickMedia(
-      with: FLTMediaSelectionOptions.make(
-        with: FLTMaxSize.make(withWidth: 100, height: 200),
-        imageQuality: 50,
-        requestFullMetadata: true,
-        allowMultiple: true,
-        limit: nil)
-    ) { _, _ in }
-    #expect(controller.sourceType == .photoLibrary)
-  }
-
   @Test func pickImageWithoutFullMetadata() {
     let plugin = ImagePickerPlugin(viewProvider: StubViewProvider())
     let photo = FakePhotoLibraryPermissionChecker()
@@ -490,21 +448,15 @@ struct ImagePickerPluginTests {
 
   @Test func pickImageInvalidResultWhenMultiplePathsReturned() async {
     let plugin = ImagePickerPlugin(viewProvider: StubViewProvider())
-    await confirmation("two results", expectedCount: 2) { confirmed in
-      var completionCount = 0
+    await confirmation("one result") { confirmed in
       plugin.pickImage(
         withSource: FLTSourceSpecification.make(with: .gallery, camera: .rear),
         maxSize: FLTMaxSize(),
         quality: nil,
         fullMetadata: false
       ) { result, error in
-        completionCount += 1
-        if completionCount == 1 {
-          #expect(result == nil)
-          #expect(error?.code == "invalid_result")
-        } else {
-          #expect(result == "a")
-        }
+        #expect(result == nil)
+        #expect(error?.code == "invalid_result")
         confirmed()
       }
       plugin.sendCallResult(withSavedPathList: ["a", "b"])
@@ -513,19 +465,13 @@ struct ImagePickerPluginTests {
 
   @Test func pickVideoInvalidResultWhenMultiplePathsReturned() async {
     let plugin = ImagePickerPlugin(viewProvider: StubViewProvider())
-    await confirmation("two results", expectedCount: 2) { confirmed in
-      var completionCount = 0
+    await confirmation("one result") { confirmed in
       plugin.pickVideo(
         withSource: FLTSourceSpecification.make(with: .gallery, camera: .rear),
         maxDuration: nil
       ) { result, error in
-        completionCount += 1
-        if completionCount == 1 {
-          #expect(result == nil)
-          #expect(error?.code == "invalid_result")
-        } else {
-          #expect(result == "a")
-        }
+        #expect(result == nil)
+        #expect(error?.code == "invalid_result")
         confirmed()
       }
       plugin.sendCallResult(withSavedPathList: ["a", "b"])
