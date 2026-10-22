@@ -1,3 +1,8 @@
+## 1.3.2
+
+* Fixes a `tspan` without its own position being drawn with its parent group
+  transform applied twice.
+
 ## 1.3.1
 
 * Adds support for SVG alpha masks (`mask-type="alpha"`).
