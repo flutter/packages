@@ -121,6 +121,10 @@ class TestSecTrustProxyAPIDelegate: SecTrustProxyAPIDelegate {
   }
 
   override func secTrustCopyCertificateChain(_ trust: SecTrust) -> CFArray? {
-    return [createDummyCertificate()] as CFArray
+    if #available(iOS 15.0, macOS 12.0, *) {
+      return [createDummyCertificate()] as CFArray
+    }
+
+    return nil
   }
 }
