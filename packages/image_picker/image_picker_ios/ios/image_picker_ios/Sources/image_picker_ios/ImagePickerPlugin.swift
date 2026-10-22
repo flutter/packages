@@ -16,7 +16,7 @@ import UniformTypeIdentifiers
 
 /// The return handler used for all method calls, which internally adapts the provided result list
 /// to return either a list or a single element depending on the original call.
-typealias FlutterResultAdapter = ([String]?, FlutterError?) -> Void
+typealias FlutterResultAdapter = (_ paths: [String]?, _ error: FlutterError?) -> Void
 
 /// A container class for context to use when handling a method call from the Dart side.
 final class ImagePickerMethodCallContext {
@@ -39,7 +39,7 @@ final class ImagePickerMethodCallContext {
   var imageQuality: NSNumber?
 
   /// Maximum number of items to select. 0 indicates no maximum.
-  var maxItemCount: Int = 0
+  var maxItemCount = 0
 
   /// Whether the image should be picked with full metadata (requires gallery permissions).
   var requestFullMetadata = false
@@ -70,7 +70,7 @@ public final class ImagePickerPlugin: NSObject, FlutterPlugin, FLTImagePickerApi
   let viewProvider: FIPViewProvider
 
   /// Camera source/device availability. Overridable for tests.
-  var cameraAvailability: CameraAvailabilityChecking = DefaultCameraAvailability()
+  var cameraAvailability: CameraAvailabilityChecking = DefaultCameraAvailabilityChecker()
 
   /// Camera authorization. Overridable for tests.
   var cameraPermissionChecker: CameraPermissionChecking = DefaultCameraPermissionChecker()
@@ -128,7 +128,6 @@ public final class ImagePickerPlugin: NSObject, FlutterPlugin, FLTImagePickerApi
     }
   }
 
-  @available(iOS 14, *)
   func launchPHPicker(with context: ImagePickerMethodCallContext) {
     var config = PHPickerConfiguration(photoLibrary: PHPhotoLibrary.shared())
     config.selectionLimit = context.maxItemCount
@@ -180,7 +179,7 @@ public final class ImagePickerPlugin: NSObject, FlutterPlugin, FLTImagePickerApi
     switch source.type {
     case .camera:
       checkCameraAuthorization(
-        with: imagePickerController, camera: cameraDevice(for: source))
+        with: imagePickerController, cameraDevice: cameraDevice(for: source))
     case .gallery:
       if context.requestFullMetadata {
         checkPhotoAuthorization(with: imagePickerController)
@@ -197,8 +196,11 @@ public final class ImagePickerPlugin: NSObject, FlutterPlugin, FLTImagePickerApi
   }
 
   public func pickImage(
-    withSource source: FLTSourceSpecification, maxSize: FLTMaxSize, quality imageQuality: NSNumber?,
-    fullMetadata: Bool, completion: @escaping (String?, FlutterError?) -> Void
+    withSource source: FLTSourceSpecification,
+    maxSize: FLTMaxSize,
+    quality imageQuality: NSNumber?,
+    fullMetadata: Bool,
+    completion: @escaping (String?, FlutterError?) -> Void
   ) {
     cancelInProgressCall()
     let context = ImagePickerMethodCallContext { paths, error in
@@ -230,7 +232,9 @@ public final class ImagePickerPlugin: NSObject, FlutterPlugin, FLTImagePickerApi
   }
 
   public func pickMultiImage(
-    with maxSize: FLTMaxSize, quality imageQuality: NSNumber?, fullMetadata: Bool,
+    with maxSize: FLTMaxSize,
+    quality imageQuality: NSNumber?,
+    fullMetadata: Bool,
     limit: NSNumber?,
     completion: @escaping ([String]?, FlutterError?) -> Void
   ) {
@@ -281,7 +285,8 @@ public final class ImagePickerPlugin: NSObject, FlutterPlugin, FLTImagePickerApi
   }
 
   public func pickVideo(
-    withSource source: FLTSourceSpecification, maxDuration maxDurationSeconds: NSNumber?,
+    withSource source: FLTSourceSpecification,
+    maxDuration maxDurationSeconds: NSNumber?,
     completion: @escaping (String?, FlutterError?) -> Void
   ) {
     cancelInProgressCall()
@@ -377,19 +382,19 @@ public final class ImagePickerPlugin: NSObject, FlutterPlugin, FLTImagePickerApi
 
   func checkCameraAuthorization(
     with imagePickerController: UIImagePickerController,
-    camera device: UIImagePickerController.CameraDevice
+    cameraDevice: UIImagePickerController.CameraDevice
   ) {
     let status = cameraPermissionChecker.authorizationStatus(for: .video)
     switch status {
     case .authorized:
-      showCamera(device, with: imagePickerController)
+      showCamera(cameraDevice, with: imagePickerController)
     case .notDetermined:
-      cameraPermissionChecker.requestAccess(for: .video) { granted in
+      cameraPermissionChecker.requestAccess(for: .video) { [weak self] granted in
         DispatchQueue.main.async {
           if granted {
-            self.showCamera(device, with: imagePickerController)
+            self?.showCamera(cameraDevice, with: imagePickerController)
           } else {
-            self.errorNoCameraAccess(.denied)
+            self?.errorNoCameraAccess(.denied)
           }
         }
       }
@@ -404,12 +409,12 @@ public final class ImagePickerPlugin: NSObject, FlutterPlugin, FLTImagePickerApi
     let status = photoLibraryPermissionChecker.authorizationStatus()
     switch status {
     case .notDetermined:
-      photoLibraryPermissionChecker.requestAuthorization { status in
+      photoLibraryPermissionChecker.requestAuthorization { [weak self] status in
         DispatchQueue.main.async {
           if status == .authorized {
-            self.showPhotoLibrary(with: imagePickerController)
+            self?.showPhotoLibrary(with: imagePickerController)
           } else {
-            self.errorNoPhotoAccess(status)
+            self?.errorNoPhotoAccess(status)
           }
         }
       }

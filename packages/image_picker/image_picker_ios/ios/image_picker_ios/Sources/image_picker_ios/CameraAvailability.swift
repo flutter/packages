@@ -13,7 +13,7 @@ protocol CameraAvailabilityChecking {
 }
 
 /// Production implementation that forwards to UIImagePickerController.
-struct DefaultCameraAvailability: CameraAvailabilityChecking {
+struct DefaultCameraAvailabilityChecker: CameraAvailabilityChecking {
   func isSourceTypeAvailable(_ sourceType: UIImagePickerController.SourceType) -> Bool {
     UIImagePickerController.isSourceTypeAvailable(sourceType)
   }
