@@ -40,6 +40,10 @@ class IconButtonTemplateM3 extends TokenTemplateM3 {
   // TODO(QuncCccccc): Replace these values with tokens.
   static const double _legacyDisabledContainerOpacity = 0.12;
 
+  // TODO(QuncCccccc): This opacity is out of date. Update to use the latest
+  // token value once the migration is done.
+  static const double _legacyOutlinedFocusedStateLayerOpacity = 0.08;
+
   String get _backgroundColor => switch (_variant) {
     _IconButtonVariant.standard => 'const MaterialStatePropertyAll<Color?>(Colors.transparent)',
     _IconButtonVariant.filled =>
@@ -254,7 +258,7 @@ WidgetStateProperty.resolveWith((Set<WidgetState> states) {
       return ${colorWithOpacity(TokenIconButtonOutlined.selectedHoveredStateLayerColor, TokenIconButtonOutlined.hoveredStateLayerOpacity)};
     }
     if (states.contains(WidgetState.focused)) {
-      return ${colorWithOpacity(TokenIconButtonOutlined.selectedFocusedStateLayerColor, TokenIconButtonOutlined.hoveredStateLayerOpacity)};
+      return ${colorWithOpacity(TokenIconButtonOutlined.selectedFocusedStateLayerColor, _legacyOutlinedFocusedStateLayerOpacity)};
     }
   }
   if (states.contains(WidgetState.pressed)) {
@@ -264,7 +268,7 @@ WidgetStateProperty.resolveWith((Set<WidgetState> states) {
     return ${colorWithOpacity(TokenIconButtonOutlined.unselectedHoveredStateLayerColor, TokenIconButtonOutlined.hoveredStateLayerOpacity)};
   }
   if (states.contains(WidgetState.focused)) {
-    return ${colorWithOpacity(TokenIconButtonOutlined.unselectedFocusedStateLayerColor, TokenIconButtonOutlined.hoveredStateLayerOpacity)};
+    return ${colorWithOpacity(TokenIconButtonOutlined.unselectedFocusedStateLayerColor, _legacyOutlinedFocusedStateLayerOpacity)};
   }
   return Colors.transparent;
 })''',
