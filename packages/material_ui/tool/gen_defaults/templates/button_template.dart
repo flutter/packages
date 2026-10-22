@@ -357,20 +357,30 @@ switch (sizeVariant) {
     xLarge: textStyle(TokenButtonXlarge.labelText, 'Theme.of(context).textTheme'),
   );
 
+  // Uses symmetric padding when the leading and trailing spaces are equal, and
+  // directional padding otherwise.
+  String _horizontalPadding(double leadingSpace, double trailingSpace) =>
+      leadingSpace == trailingSpace
+      ? 'const EdgeInsets.symmetric(horizontal: $leadingSpace)'
+      : 'const EdgeInsetsDirectional.only(start: $leadingSpace, end: $trailingSpace)';
+
   String get _paddingSwitch => _sizeSwitch(
-    xSmall: 'const EdgeInsets.symmetric(horizontal: ${TokenButtonXsmall.leadingSpace})',
-    small: 'const EdgeInsets.symmetric(horizontal: ${TokenButtonSmall.leadingSpace})',
-    medium: 'const EdgeInsets.symmetric(horizontal: ${TokenButtonMedium.leadingSpace})',
-    large: 'const EdgeInsets.symmetric(horizontal: ${TokenButtonLarge.leadingSpace})',
-    xLarge: 'const EdgeInsets.symmetric(horizontal: ${TokenButtonXlarge.leadingSpace})',
+    xSmall: _horizontalPadding(TokenButtonXsmall.leadingSpace, TokenButtonXsmall.trailingSpace),
+    small: _horizontalPadding(TokenButtonSmall.leadingSpace, TokenButtonSmall.trailingSpace),
+    medium: _horizontalPadding(TokenButtonMedium.leadingSpace, TokenButtonMedium.trailingSpace),
+    large: _horizontalPadding(TokenButtonLarge.leadingSpace, TokenButtonLarge.trailingSpace),
+    xLarge: _horizontalPadding(TokenButtonXlarge.leadingSpace, TokenButtonXlarge.trailingSpace),
   );
 
+  // No token defines the minimum width. Keep the existing buttons' default.
+  static const double _minimumWidth = 64.0;
+
   String get _minimumSizeSwitch => _sizeSwitch(
-    xSmall: 'const Size(64.0, ${TokenButtonXsmall.containerHeight})',
-    small: 'const Size(64.0, ${TokenButtonSmall.containerHeight})',
-    medium: 'const Size(64.0, ${TokenButtonMedium.containerHeight})',
-    large: 'const Size(64.0, ${TokenButtonLarge.containerHeight})',
-    xLarge: 'const Size(64.0, ${TokenButtonXlarge.containerHeight})',
+    xSmall: 'const Size($_minimumWidth, ${TokenButtonXsmall.containerHeight})',
+    small: 'const Size($_minimumWidth, ${TokenButtonSmall.containerHeight})',
+    medium: 'const Size($_minimumWidth, ${TokenButtonMedium.containerHeight})',
+    large: 'const Size($_minimumWidth, ${TokenButtonLarge.containerHeight})',
+    xLarge: 'const Size($_minimumWidth, ${TokenButtonXlarge.containerHeight})',
   );
 
   String get _iconSizeSwitch => _sizeSwitch(
