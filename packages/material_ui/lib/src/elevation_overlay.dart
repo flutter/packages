@@ -158,6 +158,8 @@ class _ElevationOpacity {
 
 // Surface tint is no longer recommended by the Material 3 specification, but
 // these values are preserved for backwards compatibility.
+// TODO(QuncCccccc): Remove the out-of-date surface tint feature, including
+// these values. https://github.com/flutter/flutter/issues/188435
 const List<_ElevationOpacity> _surfaceTintElevationOpacities = <_ElevationOpacity>[
   _ElevationOpacity(0.0, 0.0), // Elevation level 0
   _ElevationOpacity(1.0, 0.05), // Elevation level 1
