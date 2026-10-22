@@ -4368,6 +4368,7 @@ void main() {
       WidgetTester tester,
     ) async {
       final horizontalController = ScrollController();
+      addTearDown(horizontalController.dispose);
       TableVicinity? lastTapped;
 
       await tester.pumpWidget(
@@ -4419,6 +4420,7 @@ void main() {
       WidgetTester tester,
     ) async {
       final verticalController = ScrollController();
+      addTearDown(verticalController.dispose);
       TableVicinity? lastTapped;
 
       await tester.pumpWidget(
@@ -4469,7 +4471,9 @@ void main() {
       WidgetTester tester,
     ) async {
       final horizontalController = ScrollController();
+      addTearDown(horizontalController.dispose);
       final verticalController = ScrollController();
+      addTearDown(verticalController.dispose);
       TableVicinity? lastTapped;
 
       await tester.pumpWidget(
@@ -4525,6 +4529,7 @@ void main() {
       WidgetTester tester,
     ) async {
       final horizontalController = ScrollController();
+      addTearDown(horizontalController.dispose);
       final tappedColumns = <int>[];
 
       await tester.pumpWidget(
@@ -4820,6 +4825,220 @@ void main() {
             'Leading pinned col 0 is at x = 350..450 in a reversed + aligned table; a tap at x = 400 must reach it.',
       );
     });
+
+    testWidgets('Trailing pinned row takes precedence when the vertical axis is reversed', (
+      WidgetTester tester,
+    ) async {
+      final verticalController = ScrollController();
+      addTearDown(verticalController.dispose);
+      TableVicinity? lastTapped;
+
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: SizedBox(
+              height: 400,
+              width: 400,
+              child: TableView.builder(
+                cacheExtent: 0.0,
+                columnCount: 1,
+                rowCount: 10,
+                trailingPinnedRowCount: 1,
+                verticalDetails: ScrollableDetails.vertical(
+                  controller: verticalController,
+                  reverse: true,
+                ),
+                columnBuilder: (_) => const TableSpan(extent: FixedTableSpanExtent(100)),
+                rowBuilder: (_) => const TableSpan(extent: FixedTableSpanExtent(100)),
+                cellBuilder: (_, TableVicinity vicinity) {
+                  return TableViewCell(
+                    child: GestureDetector(
+                      behavior: HitTestBehavior.opaque,
+                      onTap: () => lastTapped = vicinity,
+                      child: const SizedBox.expand(),
+                    ),
+                  );
+                },
+              ),
+            ),
+          ),
+        ),
+      );
+
+      // Mirrored vertically: row 8 (regular) lands at y = 25..125, overlapping
+      // the trailing pinned row 9 at y = 0..100.
+      verticalController.jumpTo(525);
+      await tester.pump();
+
+      await tester.tapAt(const Offset(50, 50));
+      await tester.pumpAndSettle();
+
+      expect(
+        lastTapped?.row,
+        9,
+        reason: 'Trailing pinned row 9 must receive the tap; row 8 (scrolled underneath) must not.',
+      );
+    });
+
+    testWidgets('Trailing pinned corner cell takes precedence when both axes are reversed', (
+      WidgetTester tester,
+    ) async {
+      final horizontalController = ScrollController();
+      addTearDown(horizontalController.dispose);
+      final verticalController = ScrollController();
+      addTearDown(verticalController.dispose);
+      TableVicinity? lastTapped;
+
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: SizedBox(
+              height: 400,
+              width: 400,
+              child: TableView.builder(
+                cacheExtent: 0.0,
+                columnCount: 10,
+                rowCount: 10,
+                trailingPinnedColumnCount: 1,
+                trailingPinnedRowCount: 1,
+                horizontalDetails: ScrollableDetails.horizontal(
+                  controller: horizontalController,
+                  reverse: true,
+                ),
+                verticalDetails: ScrollableDetails.vertical(
+                  controller: verticalController,
+                  reverse: true,
+                ),
+                columnBuilder: (_) => const TableSpan(extent: FixedTableSpanExtent(100)),
+                rowBuilder: (_) => const TableSpan(extent: FixedTableSpanExtent(100)),
+                cellBuilder: (_, TableVicinity vicinity) {
+                  return TableViewCell(
+                    child: GestureDetector(
+                      behavior: HitTestBehavior.opaque,
+                      onTap: () => lastTapped = vicinity,
+                      child: const SizedBox.expand(),
+                    ),
+                  );
+                },
+              ),
+            ),
+          ),
+        ),
+      );
+
+      // Mirrored on both axes: the regular cell (row 8, col 8) lands at
+      // x = 25..125, y = 25..125, overlapping the trailing corner cell
+      // (row 9, col 9) at x = 0..100, y = 0..100.
+      horizontalController.jumpTo(525);
+      verticalController.jumpTo(525);
+      await tester.pump();
+
+      await tester.tapAt(const Offset(50, 50));
+      await tester.pumpAndSettle();
+
+      expect(
+        lastTapped,
+        const TableVicinity(column: 9, row: 9),
+        reason:
+            'Trailing pinned corner cell (row 9, col 9) must receive the tap; the regular cell (row 8, col 8) scrolled underneath must not.',
+      );
+    });
+
+    testWidgets(
+      'Tapping on a pinned row in a vertically reversed + aligned table registers correctly',
+      (WidgetTester tester) async {
+        TableVicinity? lastTapped;
+
+        await tester.pumpWidget(
+          MaterialApp(
+            home: Scaffold(
+              body: SizedBox(
+                height: 600,
+                width: 100,
+                child: TableView.builder(
+                  columnCount: 1,
+                  rowCount: 3,
+                  pinnedRowCount: 1,
+                  alignment: Alignment.center,
+                  verticalDetails: const ScrollableDetails.vertical(reverse: true),
+                  columnBuilder: (_) => const TableSpan(extent: FixedTableSpanExtent(100)),
+                  rowBuilder: (_) => const TableSpan(extent: FixedTableSpanExtent(100)),
+                  cellBuilder: (_, TableVicinity vicinity) {
+                    return TableViewCell(
+                      child: GestureDetector(
+                        behavior: HitTestBehavior.opaque,
+                        onTap: () => lastTapped = vicinity,
+                        child: const SizedBox.expand(),
+                      ),
+                    );
+                  },
+                ),
+              ),
+            ),
+          ),
+        );
+
+        // Leading pinned row 0 is at y = 350..450 (shifted up by alignment
+        // in the reversed direction).
+        await tester.tapAt(const Offset(50, 400));
+        await tester.pumpAndSettle();
+        expect(
+          lastTapped?.row,
+          0,
+          reason:
+              'Leading pinned row 0 is at y = 350..450 in a reversed + aligned table; a tap at y = 400 must reach it.',
+        );
+      },
+    );
+
+    testWidgets(
+      'Tapping on a pinned column in an RTL table with directional alignment registers correctly',
+      (WidgetTester tester) async {
+        TableVicinity? lastTapped;
+
+        await tester.pumpWidget(
+          MaterialApp(
+            home: Directionality(
+              textDirection: TextDirection.rtl,
+              child: Scaffold(
+                body: SizedBox(
+                  height: 100,
+                  width: 600,
+                  child: TableView.builder(
+                    columnCount: 3,
+                    rowCount: 1,
+                    pinnedColumnCount: 1,
+                    alignment: AlignmentDirectional.centerStart,
+                    columnBuilder: (_) => const TableSpan(extent: FixedTableSpanExtent(100)),
+                    rowBuilder: (_) => const TableSpan(extent: FixedTableSpanExtent(100)),
+                    cellBuilder: (_, TableVicinity vicinity) {
+                      return TableViewCell(
+                        child: GestureDetector(
+                          behavior: HitTestBehavior.opaque,
+                          onTap: () => lastTapped = vicinity,
+                          child: const SizedBox.expand(),
+                        ),
+                      );
+                    },
+                  ),
+                ),
+              ),
+            ),
+          ),
+        );
+
+        // In RTL, centerStart resolves to centerRight, so the table is pushed to
+        // the right edge and leading pinned col 0 is at x = 300..400.
+        await tester.tapAt(const Offset(350, 50));
+        await tester.pumpAndSettle();
+        expect(
+          lastTapped?.column,
+          0,
+          reason:
+              'Leading pinned col 0 is at x = 300..400 in an RTL table aligned to centerStart; a tap at x = 350 must reach it.',
+        );
+      },
+    );
   });
 }
 
