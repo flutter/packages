@@ -61,7 +61,11 @@ class GoogleSignInIOS extends GoogleSignInPlatform {
     switch (result) {
       case SignInFailure(type: GoogleSignInErrorCode.noAuthInKeychain):
         return null;
-      case SignInFailure(:final type, :final message, :final details):
+      case SignInFailure(
+        :final GoogleSignInErrorCode type,
+        :final String? message,
+        :final Object? details,
+      ):
         throw GoogleSignInException(
           code: _exceptionCodeForErrorPlatformErrorCode(type),
           description: message,
@@ -86,7 +90,11 @@ class GoogleSignInIOS extends GoogleSignInPlatform {
           code: GoogleSignInExceptionCode.unknownError,
           description: 'No auth reported during interactive sign in.',
         );
-      case SignInFailure(:final type, :final message, :final details):
+      case SignInFailure(
+        :final GoogleSignInErrorCode type,
+        :final String? message,
+        :final Object? details,
+      ):
         throw GoogleSignInException(
           code: _exceptionCodeForErrorPlatformErrorCode(type),
           description: message,
@@ -207,7 +215,11 @@ class GoogleSignInIOS extends GoogleSignInPlatform {
     SignInResult result,
   ) async {
     switch (result) {
-      case SignInFailure(:final type, :final message, :final details):
+      case SignInFailure(
+        :final GoogleSignInErrorCode type,
+        :final String? message,
+        :final Object? details,
+      ):
         throw GoogleSignInException(
           code: _exceptionCodeForErrorPlatformErrorCode(type),
           description: message,
