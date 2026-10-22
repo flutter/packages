@@ -125,7 +125,8 @@ class MaterialButton extends StatelessWidget {
 
   /// {@macro material_ui.RawMaterialButton.mouseCursor}
   ///
-  /// If this property is null, [WidgetStateMouseCursor.adaptiveClickable] will be used.
+  /// If this property is null, [ThemeData.mouseCursor] is used. If that is
+  /// also null, [WidgetStateMouseCursor.adaptiveClickable] is used.
   final MouseCursor? mouseCursor;
 
   /// Defines the button's base colors, and the defaults for the button's minimum

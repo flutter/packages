@@ -408,7 +408,8 @@ $_sizeDependentProperties
   WidgetStateProperty<BorderSide?>? get side => null;
 
   @override
-  WidgetStateProperty<MouseCursor?>? get mouseCursor => WidgetStateMouseCursor.adaptiveClickable;
+  WidgetStateProperty<MouseCursor?>? get mouseCursor =>
+      Theme.of(context).mouseCursor ?? WidgetStateMouseCursor.adaptiveClickable;
 
   @override
   VisualDensity? get visualDensity => VisualDensity.standard;
@@ -532,7 +533,8 @@ $_sizeDependentProperties
   WidgetStateProperty<BorderSide?>? get side => null;
 
   @override
-  WidgetStateProperty<MouseCursor?>? get mouseCursor => WidgetStateMouseCursor.adaptiveClickable;
+  WidgetStateProperty<MouseCursor?>? get mouseCursor =>
+      Theme.of(context).mouseCursor ?? WidgetStateMouseCursor.adaptiveClickable;
 
   @override
   VisualDensity? get visualDensity => VisualDensity.standard;
@@ -656,7 +658,8 @@ $_sizeDependentProperties
   WidgetStateProperty<BorderSide?>? get side => null;
 
   @override
-  WidgetStateProperty<MouseCursor?>? get mouseCursor => WidgetStateMouseCursor.adaptiveClickable;
+  WidgetStateProperty<MouseCursor?>? get mouseCursor =>
+      Theme.of(context).mouseCursor ?? WidgetStateMouseCursor.adaptiveClickable;
 
   @override
   VisualDensity? get visualDensity => VisualDensity.standard;
@@ -775,7 +778,8 @@ $_sizeDependentProperties
     });
 
   @override
-  WidgetStateProperty<MouseCursor?>? get mouseCursor => WidgetStateMouseCursor.adaptiveClickable;
+  WidgetStateProperty<MouseCursor?>? get mouseCursor =>
+      Theme.of(context).mouseCursor ?? WidgetStateMouseCursor.adaptiveClickable;
 
   @override
   VisualDensity? get visualDensity => VisualDensity.standard;

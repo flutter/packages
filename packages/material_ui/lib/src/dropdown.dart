@@ -1351,7 +1351,8 @@ class DropdownButton<T> extends StatefulWidget {
   ///
   /// {@macro material_ui.InkWell.mouseCursor}
   ///
-  /// If this property is null, [WidgetStateMouseCursor.adaptiveClickable] will be used.
+  /// If this property is null, [ThemeData.mouseCursor] is used. If that is
+  /// also null, [WidgetStateMouseCursor.adaptiveClickable] is used.
   final MouseCursor? mouseCursor;
 
   /// The cursor for a mouse pointer when it enters or is hovering over the
@@ -1359,7 +1360,8 @@ class DropdownButton<T> extends StatefulWidget {
   ///
   /// {@macro material_ui.InkWell.mouseCursor}
   ///
-  /// If this property is null, [WidgetStateMouseCursor.adaptiveClickable] will be used.
+  /// If this property is null, [ThemeData.mouseCursor] is used. If that is
+  /// also null, [WidgetStateMouseCursor.adaptiveClickable] is used.
   final MouseCursor? dropdownMenuItemMouseCursor;
 
   /// Whether the dropdown's inner contents expand to fill the
@@ -1722,10 +1724,11 @@ class _DropdownButtonState<T> extends State<DropdownButton<T>> with WidgetsBindi
       );
     }
 
-    final MouseCursor effectiveMouseCursor = WidgetStateProperty.resolveAs<MouseCursor>(
-      widget.mouseCursor ?? WidgetStateMouseCursor.adaptiveClickable,
-      <WidgetState>{if (!_enabled) WidgetState.disabled},
-    );
+    final mouseCursorStates = <WidgetState>{if (!_enabled) WidgetState.disabled};
+    final MouseCursor effectiveMouseCursor =
+        WidgetStateProperty.resolveAs<MouseCursor?>(widget.mouseCursor, mouseCursorStates) ??
+        Theme.of(context).mouseCursor?.resolve(mouseCursorStates) ??
+        WidgetStateMouseCursor.adaptiveClickable.resolve(mouseCursorStates);
 
     // When an InputDecoration is provided, use it instead of using an InkWell
     // that overflows in some cases (such as showing an errorText) and requires
@@ -2049,7 +2052,8 @@ class DropdownButtonFormField<T> extends FormField<T> {
   ///
   /// {@macro material_ui.InkWell.mouseCursor}
   ///
-  /// If this property is null, [WidgetStateMouseCursor.adaptiveClickable] will be used.
+  /// If this property is null, [ThemeData.mouseCursor] is used. If that is
+  /// also null, [WidgetStateMouseCursor.adaptiveClickable] is used.
   final MouseCursor? mouseCursor;
 
   /// The cursor for a mouse pointer when it enters or is hovering over the
@@ -2057,7 +2061,8 @@ class DropdownButtonFormField<T> extends FormField<T> {
   ///
   /// {@macro material_ui.InkWell.mouseCursor}
   ///
-  /// If this property is null, [WidgetStateMouseCursor.adaptiveClickable] will be used.
+  /// If this property is null, [ThemeData.mouseCursor] is used. If that is
+  /// also null, [WidgetStateMouseCursor.adaptiveClickable] is used.
   final MouseCursor? dropdownMenuItemMouseCursor;
 
   @override

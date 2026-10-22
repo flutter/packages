@@ -1,0 +1,3 @@
+changelog: |
+  - Adds `ThemeData.mouseCursor`, which sets the default mouse cursor of clickable Material widgets when neither the widget nor its component theme specifies one.
+version: minor

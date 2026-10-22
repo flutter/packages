@@ -475,7 +475,8 @@ class InkResponse extends StatelessWidget {
   ///  * [WidgetState.disabled].
   /// {@endtemplate}
   ///
-  /// If this property is null, [WidgetStateMouseCursor.adaptiveClickable] will be used.
+  /// If this property is null, [ThemeData.mouseCursor] is used. If that is
+  /// also null, [WidgetStateMouseCursor.adaptiveClickable] is used.
   final MouseCursor? mouseCursor;
 
   /// Whether this ink response should be clipped its bounds.
@@ -1442,10 +1443,11 @@ class _InkResponseState extends State<_InkResponseStateWidget>
         widget.splashColor ??
         Theme.of(context).splashColor;
 
-    final MouseCursor effectiveMouseCursor = WidgetStateProperty.resolveAs<MouseCursor>(
-      widget.mouseCursor ?? WidgetStateMouseCursor.adaptiveClickable,
-      statesController.value,
-    );
+    final Set<WidgetState> states = statesController.value;
+    final MouseCursor effectiveMouseCursor =
+        WidgetStateProperty.resolveAs<MouseCursor?>(widget.mouseCursor, states) ??
+        theme.mouseCursor?.resolve(states) ??
+        WidgetStateMouseCursor.adaptiveClickable.resolve(states);
 
     return _ParentInkResponseProvider(
       state: this,

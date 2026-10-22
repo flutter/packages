@@ -355,7 +355,8 @@ class PopupMenuItem<T> extends PopupMenuEntry<T> {
   /// {@endtemplate}
   ///
   /// If null, then the value of [PopupMenuThemeData.mouseCursor] is used. If
-  /// that is also null, then [WidgetStateMouseCursor.adaptiveClickable] is used.
+  /// that is also null, then [ThemeData.mouseCursor] is used. If that is also
+  /// null, then [WidgetStateMouseCursor.adaptiveClickable] is used.
   final MouseCursor? mouseCursor;
 
   /// The widget below this widget in the tree.
@@ -463,7 +464,11 @@ class PopupMenuItemState<T, W extends PopupMenuItem<T>> extends State<W> {
         child: InkWell(
           onTap: widget.enabled ? handleTap : null,
           canRequestFocus: widget.enabled,
-          mouseCursor: _EffectiveMouseCursor(widget.mouseCursor, popupMenuTheme.mouseCursor),
+          mouseCursor: _EffectiveMouseCursor(
+            widget.mouseCursor,
+            popupMenuTheme.mouseCursor,
+            theme.mouseCursor,
+          ),
           child: ListTileTheme.merge(
             contentPadding: EdgeInsets.zero,
             titleTextStyle: style,
@@ -1842,15 +1847,17 @@ class PopupMenuButtonState<T> extends State<PopupMenuButton<T>> {
 // resolves the property against WidgetState.disabled, WidgetState.hovered,
 // WidgetState.focused.
 class _EffectiveMouseCursor extends WidgetStateMouseCursor {
-  const _EffectiveMouseCursor(this.widgetCursor, this.themeCursor);
+  const _EffectiveMouseCursor(this.widgetCursor, this.themeCursor, this.themeDataCursor);
 
   final MouseCursor? widgetCursor;
   final WidgetStateProperty<MouseCursor?>? themeCursor;
+  final WidgetStateProperty<MouseCursor>? themeDataCursor;
 
   @override
   MouseCursor resolve(Set<WidgetState> states) {
     return WidgetStateProperty.resolveAs<MouseCursor?>(widgetCursor, states) ??
         themeCursor?.resolve(states) ??
+        themeDataCursor?.resolve(states) ??
         WidgetStateMouseCursor.adaptiveClickable.resolve(states);
   }
 
