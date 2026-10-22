@@ -26,9 +26,9 @@ API_AVAILABLE(ios(14))
   FLTGetSavedPath getSavedPath;
 }
 
-- (instancetype)initWithResult:(NSObject<FIPPickerItem> *)result
-                     maxHeight:(NSNumber *)maxHeight
-                      maxWidth:(NSNumber *)maxWidth
+- (instancetype)initWithResult:(nullable NSObject<FIPPickerItem> *)result
+                     maxHeight:(nullable NSNumber *)maxHeight
+                      maxWidth:(nullable NSNumber *)maxWidth
            desiredImageQuality:(NSNumber *)desiredImageQuality
                   fullMetadata:(BOOL)fullMetadata
                 savedPathBlock:(FLTGetSavedPath)savedPathBlock API_AVAILABLE(ios(14)) {
