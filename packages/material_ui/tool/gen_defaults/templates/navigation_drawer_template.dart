@@ -15,8 +15,8 @@ class NavigationDrawerTemplateM3 extends TokenTemplateM3 {
   @override
   String get parentFilePath => 'navigation_drawer.dart';
 
-  // Disabled-state tokens are not currently available. Preserve the existing
-  // defaults during this template migration.
+  // TODO(QuncCccccc): Replace these with token values once disabled-state
+  // tokens are available.
   static const TokenColorRole _legacyDisabledColor = TokenColorRole.onSurfaceVariant;
   static const double _legacyDisabledOpacity = 0.38;
 
