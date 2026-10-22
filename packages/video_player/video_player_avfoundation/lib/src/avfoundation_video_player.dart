@@ -398,33 +398,29 @@ class _PlayerInstance {
   }
 
   void _onStreamEvent(PlatformVideoEvent event) {
-    switch (event) {
-      case InitializationEvent _:
-        _eventStreamController.add(
-          VideoEvent(
-            eventType: VideoEventType.initialized,
-            duration: Duration(milliseconds: event.durationMilliseconds),
-            size: Size(event.width, event.height),
-          ),
-        );
-      case PlaybackCompleteEvent():
-        _eventStreamController.add(VideoEvent(eventType: VideoEventType.completed));
-      case BufferingUpdateEvent():
-        _eventStreamController.add(
-          VideoEvent(
-            buffered: event.bufferedRanges.map<DurationRange>(_toDurationRange).toList(),
-            eventType: VideoEventType.bufferingUpdate,
-          ),
-        );
-      case BufferingStartEvent():
-        _eventStreamController.add(VideoEvent(eventType: VideoEventType.bufferingStart));
-      case BufferingEndEvent():
-        _eventStreamController.add(VideoEvent(eventType: VideoEventType.bufferingEnd));
-      case IsPlayingStateEvent(:final bool isPlaying):
-        _eventStreamController.add(
-          VideoEvent(eventType: VideoEventType.isPlayingStateUpdate, isPlaying: isPlaying),
-        );
-    }
+    _eventStreamController.add(switch (event) {
+      InitializationEvent(
+        :final int durationMilliseconds,
+        :final double width,
+        :final double height,
+      ) =>
+        VideoEvent(
+          eventType: VideoEventType.initialized,
+          duration: Duration(milliseconds: durationMilliseconds),
+          size: Size(width, height),
+        ),
+      PlaybackCompleteEvent() => VideoEvent(eventType: VideoEventType.completed),
+      BufferingUpdateEvent(:final List<PlatformDurationRange> bufferedRanges) => VideoEvent(
+        buffered: bufferedRanges.map<DurationRange>(_toDurationRange).toList(),
+        eventType: VideoEventType.bufferingUpdate,
+      ),
+      BufferingStartEvent() => VideoEvent(eventType: VideoEventType.bufferingStart),
+      BufferingEndEvent() => VideoEvent(eventType: VideoEventType.bufferingEnd),
+      IsPlayingStateEvent(:final bool isPlaying) => VideoEvent(
+        eventType: VideoEventType.isPlayingStateUpdate,
+        isPlaying: isPlaying,
+      ),
+    });
   }
 
   DurationRange _toDurationRange(PlatformDurationRange range) {

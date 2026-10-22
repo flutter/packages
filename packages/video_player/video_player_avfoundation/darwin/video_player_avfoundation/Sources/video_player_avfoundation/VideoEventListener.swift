@@ -15,9 +15,9 @@ import Foundation
   func videoPlayerDidError(withMessage errorMessage: String)
   /// Called when the video player plays to the end and then stops (i.e., looping is not enabled).
   func videoPlayerDidComplete()
-  /// Called when the video player needs to buffer more in order to play witohut stopping.
+  /// Called when the video player needs to buffer more in order to play without stopping.
   func videoPlayerDidStartBuffering()
-  /// Called when the video player has buffered enough to likely be able to play witohut stopping.
+  /// Called when the video player has buffered enough to likely be able to play without stopping.
   func videoPlayerDidEndBuffering()
   /// Called when the buffered regions change.
   ///

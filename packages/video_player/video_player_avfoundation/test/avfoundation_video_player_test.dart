@@ -400,7 +400,7 @@ void main() {
       // Sets up a mock player that emits the given event structure as a success
       // callback on the internal platform channel event stream, and returns
       // the player's videoEventsFor(...) stream.
-      Stream<VideoEvent> mockPlayerEmitingEvents(List<PlatformVideoEvent> events) {
+      Stream<VideoEvent> mockPlayerEmittingEvents(List<PlatformVideoEvent> events) {
         const playerId = 1;
         final (
           AVFoundationVideoPlayer player,
@@ -417,7 +417,7 @@ void main() {
       }
 
       test('initialize', () async {
-        final Stream<VideoEvent> eventStream = mockPlayerEmitingEvents(<PlatformVideoEvent>[
+        final Stream<VideoEvent> eventStream = mockPlayerEmittingEvents(<PlatformVideoEvent>[
           InitializationEvent(durationMilliseconds: 98765, width: 1920, height: 1080),
         ]);
 
@@ -434,7 +434,7 @@ void main() {
       });
 
       test('completed', () async {
-        final Stream<VideoEvent> eventStream = mockPlayerEmitingEvents(<PlatformVideoEvent>[
+        final Stream<VideoEvent> eventStream = mockPlayerEmittingEvents(<PlatformVideoEvent>[
           PlaybackCompleteEvent(),
         ]);
 
@@ -445,7 +445,7 @@ void main() {
       });
 
       test('buffering update', () async {
-        final Stream<VideoEvent> eventStream = mockPlayerEmitingEvents(<PlatformVideoEvent>[
+        final Stream<VideoEvent> eventStream = mockPlayerEmittingEvents(<PlatformVideoEvent>[
           BufferingUpdateEvent(
             bufferedRanges: [
               PlatformDurationRange(startMilliseconds: 0, durationMilliseconds: 1234),
@@ -472,7 +472,7 @@ void main() {
       });
 
       test('buffering start', () async {
-        final Stream<VideoEvent> eventStream = mockPlayerEmitingEvents(<PlatformVideoEvent>[
+        final Stream<VideoEvent> eventStream = mockPlayerEmittingEvents(<PlatformVideoEvent>[
           BufferingStartEvent(),
         ]);
 
@@ -483,7 +483,7 @@ void main() {
       });
 
       test('buffering end', () async {
-        final Stream<VideoEvent> eventStream = mockPlayerEmitingEvents(<PlatformVideoEvent>[
+        final Stream<VideoEvent> eventStream = mockPlayerEmittingEvents(<PlatformVideoEvent>[
           BufferingEndEvent(),
         ]);
 
@@ -494,7 +494,7 @@ void main() {
       });
 
       test('playback start', () async {
-        final Stream<VideoEvent> eventStream = mockPlayerEmitingEvents(<PlatformVideoEvent>[
+        final Stream<VideoEvent> eventStream = mockPlayerEmittingEvents(<PlatformVideoEvent>[
           IsPlayingStateEvent(isPlaying: true),
         ]);
 
@@ -507,7 +507,7 @@ void main() {
       });
 
       test('playback stop', () async {
-        final Stream<VideoEvent> eventStream = mockPlayerEmitingEvents(<PlatformVideoEvent>[
+        final Stream<VideoEvent> eventStream = mockPlayerEmittingEvents(<PlatformVideoEvent>[
           IsPlayingStateEvent(isPlaying: false),
         ]);
 
