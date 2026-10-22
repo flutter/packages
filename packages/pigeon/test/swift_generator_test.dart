@@ -2008,4 +2008,310 @@ void main() {
     );
     expect(code, contains('func report(error errorArg: String) throws -> String {'));
   });
+
+  test('SwiftAccessLevel.public generates public and open declarations', () {
+    final sealedParent = Class(name: 'Parent', fields: <NamedType>[], isSealed: true);
+    final root = Root(
+      apis: <Api>[
+        AstHostApi(
+          name: 'MyHostApi',
+          methods: <Method>[
+            Method(
+              name: 'doSomething',
+              location: ApiLocation.host,
+              parameters: <Parameter>[],
+              returnType: const TypeDeclaration.voidDeclaration(),
+            ),
+          ],
+        ),
+        AstFlutterApi(
+          name: 'MyFlutterApi',
+          methods: <Method>[
+            Method(
+              name: 'onEvent',
+              location: ApiLocation.flutter,
+              isAsynchronous: true,
+              parameters: <Parameter>[],
+              returnType: const TypeDeclaration.voidDeclaration(),
+            ),
+            Method(
+              name: 'onCallback',
+              location: ApiLocation.flutter,
+              isAsynchronous: true,
+              isAsynchronousCallback: true,
+              parameters: <Parameter>[],
+              returnType: const TypeDeclaration.voidDeclaration(),
+            ),
+          ],
+        ),
+        AstEventChannelApi(
+          name: 'MyEventChannelApi',
+          methods: <Method>[
+            Method(
+              name: 'streamEvents',
+              location: ApiLocation.host,
+              parameters: <Parameter>[],
+              returnType: const TypeDeclaration(baseName: 'String', isNullable: false),
+            ),
+          ],
+        ),
+        AstProxyApi(
+          name: 'MyProxyApi',
+          constructors: <Constructor>[Constructor(name: '', parameters: <Parameter>[])],
+          fields: <ApiField>[],
+          methods: <Method>[
+            Method(
+              name: 'onProxyCallback',
+              location: ApiLocation.flutter,
+              parameters: <Parameter>[],
+              returnType: const TypeDeclaration.voidDeclaration(),
+            ),
+          ],
+        ),
+        AstProxyApi(
+          name: 'EmptyProxyApi',
+          constructors: <Constructor>[],
+          fields: <ApiField>[],
+          methods: <Method>[],
+        ),
+      ],
+      classes: <Class>[
+        sealedParent,
+        Class(
+          name: 'MyStruct',
+          superClassName: 'Parent',
+          superClass: sealedParent,
+          fields: <NamedType>[
+            NamedType(
+              name: 'field',
+              type: const TypeDeclaration(baseName: 'String', isNullable: true),
+            ),
+          ],
+        ),
+        Class(name: 'EmptyStruct', fields: <NamedType>[]),
+        Class(
+          name: 'MySwiftClass',
+          isSwiftClass: true,
+          fields: <NamedType>[
+            NamedType(
+              name: 'count',
+              type: const TypeDeclaration(baseName: 'int', isNullable: false),
+            ),
+          ],
+        ),
+      ],
+      enums: <Enum>[
+        Enum(
+          name: 'MyEnum',
+          members: <EnumMember>[EnumMember(name: 'one')],
+        ),
+      ],
+    );
+    final sink = StringBuffer();
+    const swiftOptions = InternalSwiftOptions(
+      swiftOut: 'Messages.g.swift',
+      accessLevel: SwiftAccessLevel.public,
+    );
+    const generator = SwiftGenerator();
+    generator.generate(swiftOptions, root, sink, dartPackageName: DEFAULT_PACKAGE_NAME);
+    final code = sink.toString();
+
+    // Error class
+    expect(code, contains('public final class PigeonError: Error {'));
+    expect(code, contains('public let code: String'));
+    expect(code, contains('public init(code: String, message: String?, details: Sendable?) {'));
+    expect(code, contains('public var localizedDescription: String {'));
+
+    // Enum
+    expect(code, contains('public enum MyEnum: Int, CaseIterable {'));
+
+    // Sealed protocol, structs, and @SwiftClass
+    expect(code, contains('public protocol Parent {'));
+    expect(code, contains('public struct MyStruct: Parent, Hashable, CustomStringConvertible {'));
+    expect(code, contains('public init(\n    field: String? = nil\n  ) {'));
+    expect(code, contains('public var field: String? = nil'));
+    expect(code, contains('public static func == (lhs: MyStruct, rhs: MyStruct) -> Bool {'));
+    expect(code, contains('public func hash(into hasher: inout Hasher) {'));
+    expect(code, contains('public struct EmptyStruct: Hashable, CustomStringConvertible {'));
+    expect(code, contains('public init() {}'));
+    expect(code, contains('public class MySwiftClass: Hashable, CustomStringConvertible {'));
+    expect(code, contains('public init(\n    count: Int64\n  ) {'));
+    expect(code, contains('public var count: Int64'));
+
+    // HostApi
+    expect(code, contains('public protocol MyHostApi {'));
+    expect(code, contains('  func doSomething() throws'));
+    expect(code, contains('public class MyHostApiSetup {'));
+    expect(code, contains('public static var codec: FlutterStandardMessageCodec'));
+    expect(
+      code,
+      contains(
+        'public static func setUp(binaryMessenger: FlutterBinaryMessenger, api: MyHostApi?, messageChannelSuffix: String = "")',
+      ),
+    );
+
+    // FlutterApi
+    expect(code, contains('public protocol MyFlutterApiProtocol {'));
+    expect(code, contains('  @MainActor func onEvent() async throws'));
+    expect(
+      code,
+      contains('  func onCallback(completion: @escaping (Result<Void, PigeonError>) -> Void)'),
+    );
+    expect(code, contains('public class MyFlutterApi: MyFlutterApiProtocol {'));
+    expect(
+      code,
+      contains(
+        'public init(binaryMessenger: FlutterBinaryMessenger, messageChannelSuffix: String = "")',
+      ),
+    );
+    expect(code, contains('@MainActor public func onEvent() async throws {'));
+    expect(
+      code,
+      contains(
+        'public func onCallback(completion: @escaping (Result<Void, PigeonError>) -> Void) {',
+      ),
+    );
+
+    // EventChannelApi
+    expect(code, contains('open class PigeonEventChannelWrapper<ReturnType> {'));
+    expect(code, contains('public init() {}'));
+    expect(
+      code,
+      contains(
+        'open func onListen(withArguments arguments: Any?, sink: PigeonEventSink<ReturnType>) {}',
+      ),
+    );
+    expect(code, contains('open func onCancel(withArguments arguments: Any?) {}'));
+    expect(code, contains('public class PigeonEventSink<ReturnType> {'));
+    expect(code, contains('public func success(_ value: ReturnType) {'));
+    expect(code, contains('public func error(code: String, message: String?, details: Any?) {'));
+    expect(code, contains('public func endOfStream() {'));
+    expect(
+      code,
+      contains('open class StreamEventsStreamHandler: PigeonEventChannelWrapper<String> {'),
+    );
+    expect(code, contains('public override init() {}'));
+    expect(code, contains('public static func register(with messenger: FlutterBinaryMessenger,'));
+
+    // ProxyApi
+    expect(code, contains('public protocol PigeonInternalFinalizerDelegate: AnyObject {'));
+    expect(code, contains('  func onDeinit(identifier: Int64)'));
+    expect(code, contains('public final class PigeonInstanceManager {'));
+    expect(code, contains('public protocol PigeonProxyApiDelegate {'));
+    expect(
+      code,
+      contains(
+        'public func pigeonApiEmptyProxyApi(_ registrar: PigeonProxyApiRegistrar) -> PigeonApiEmptyProxyApi {',
+      ),
+    );
+    expect(code, contains('open class PigeonProxyApiRegistrar {'));
+    expect(
+      code,
+      contains(
+        'public init(binaryMessenger: FlutterBinaryMessenger, apiDelegate: PigeonProxyApiDelegate) {',
+      ),
+    );
+    expect(code, contains('public func setUp() {'));
+    expect(code, contains('public func tearDown() {'));
+    expect(code, contains('public protocol PigeonApiDelegateMyProxyApi {'));
+    expect(code, contains('open class PigeonApiDelegateEmptyProxyApi {'));
+    expect(code, contains('public protocol PigeonApiProtocolMyProxyApi {'));
+    expect(
+      code,
+      contains('public final class PigeonApiMyProxyApi: PigeonApiProtocolMyProxyApi  {'),
+    );
+    expect(
+      code,
+      contains(
+        'public func pigeonNewInstance(pigeonInstance: MyProxyApi, completion: @escaping (Result<Void, PigeonError>) -> Void) {',
+      ),
+    );
+    expect(
+      code,
+      contains(
+        'public func onProxyCallback(pigeonInstance pigeonInstanceArg: MyProxyApi, completion: @escaping (Result<Void, PigeonError>) -> Void)',
+      ),
+    );
+  });
+
+  test('SwiftAccessLevel.package generates package declarations and open subclassable classes', () {
+    final root = Root(
+      apis: <Api>[
+        AstHostApi(
+          name: 'MyHostApi',
+          methods: <Method>[
+            Method(
+              name: 'doSomething',
+              location: ApiLocation.host,
+              parameters: <Parameter>[],
+              returnType: const TypeDeclaration.voidDeclaration(),
+            ),
+          ],
+        ),
+        AstEventChannelApi(
+          name: 'MyEventChannelApi',
+          methods: <Method>[
+            Method(
+              name: 'streamEvents',
+              location: ApiLocation.host,
+              parameters: <Parameter>[],
+              returnType: const TypeDeclaration(baseName: 'String', isNullable: false),
+            ),
+          ],
+        ),
+      ],
+      classes: <Class>[
+        Class(
+          name: 'MyStruct',
+          fields: <NamedType>[
+            NamedType(
+              name: 'field',
+              type: const TypeDeclaration(baseName: 'String', isNullable: true),
+            ),
+          ],
+        ),
+      ],
+      enums: <Enum>[
+        Enum(
+          name: 'MyEnum',
+          members: <EnumMember>[EnumMember(name: 'one')],
+        ),
+      ],
+    );
+    final sink = StringBuffer();
+    const swiftOptions = InternalSwiftOptions(
+      swiftOut: 'Messages.g.swift',
+      accessLevel: SwiftAccessLevel.package,
+    );
+    const generator = SwiftGenerator();
+    generator.generate(swiftOptions, root, sink, dartPackageName: DEFAULT_PACKAGE_NAME);
+    final code = sink.toString();
+
+    expect(code, contains('package final class PigeonError: Error {'));
+    expect(code, contains('package enum MyEnum: Int, CaseIterable {'));
+    expect(code, contains('package struct MyStruct: Hashable, CustomStringConvertible {'));
+    expect(code, contains('package init(\n    field: String? = nil\n  ) {'));
+    expect(code, contains('package var field: String? = nil'));
+    expect(code, contains('package protocol MyHostApi {'));
+    expect(code, contains('package class MyHostApiSetup {'));
+    expect(code, contains('package static func setUp('));
+    // Subclassable classes must remain open/public even in package mode because
+    // Swift SE-0386 does not support cross-module inheritance without `open`.
+    expect(code, contains('open class PigeonEventChannelWrapper<ReturnType> {'));
+    expect(code, contains('public init() {}'));
+    expect(
+      code,
+      contains(
+        'open func onListen(withArguments arguments: Any?, sink: PigeonEventSink<ReturnType>) {}',
+      ),
+    );
+    expect(code, contains('package class PigeonEventSink<ReturnType> {'));
+    expect(code, contains('package func success(_ value: ReturnType) {'));
+    expect(
+      code,
+      contains('open class StreamEventsStreamHandler: PigeonEventChannelWrapper<String> {'),
+    );
+    expect(code, contains('public override init() {}'));
+    expect(code, contains('package static func register(with messenger: FlutterBinaryMessenger,'));
+  });
 }

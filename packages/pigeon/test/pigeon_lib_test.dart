@@ -187,6 +187,8 @@ void main() {
 
   test('parse args - swift options', () {
     final PigeonOptions opts = Pigeon.parseArgs(<String>[
+      '--swift_access_level',
+      'public',
       '--swift_error_class_name',
       'MyError',
       '--no-swift_include_error_class',
@@ -200,6 +202,7 @@ void main() {
       '--swift_apple_sdk_triple',
       'arm64-apple-ios',
     ]);
+    expect(opts.swiftOptions?.accessLevel, equals(SwiftAccessLevel.public));
     expect(opts.swiftOptions?.errorClassName, equals('MyError'));
     expect(opts.swiftOptions?.includeErrorClass, isFalse);
     expect(opts.swiftOptions?.useFfi, isTrue);
@@ -1560,6 +1563,21 @@ class Message {
     final PigeonOptions options = PigeonOptions.fromMap(results.pigeonOptions!);
     expect(options.swiftOut, <String>['Foo.swift', 'Bar.swift']);
     expect(options.swiftOutPaths, <String>['Foo.swift', 'Bar.swift']);
+  });
+
+  test('@ConfigurePigeon SwiftOptions.accessLevel', () {
+    const code = '''
+@ConfigurePigeon(PigeonOptions(
+  swiftOptions: SwiftOptions(accessLevel: SwiftAccessLevel.public),
+))
+class Message {
+  int? id;
+}
+''';
+
+    final ParseResults results = parseSource(code);
+    final PigeonOptions options = PigeonOptions.fromMap(results.pigeonOptions!);
+    expect(options.swiftOptions?.accessLevel, SwiftAccessLevel.public);
   });
 
   test('multiple swiftOut generation', () async {
