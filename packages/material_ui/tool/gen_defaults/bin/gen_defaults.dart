@@ -43,7 +43,7 @@ import '../templates/navigation_rail_template.dart';
 import '../templates/popup_menu_template.dart';
 import '../templates/progress_indicator_template.dart';
 
-// import '../templates/radio_template.dart';
+import '../templates/radio_template.dart';
 import '../templates/range_slider_template.dart';
 import '../templates/search_bar_template.dart';
 import '../templates/search_view_template.dart';
@@ -106,7 +106,7 @@ Future<void> main(List<String> args) async {
   const NavigationRailTemplateM3().generateFile(verbose: verbose);
   const PopupMenuTemplateM3().generateFile(verbose: verbose);
   const ProgressIndicatorTemplateM3().generateFile(verbose: verbose);
-  // const RadioTemplateM3().generateFile(verbose: verbose);
+  const RadioTemplateM3().generateFile(verbose: verbose);
   const RangeSliderTemplateM3().generateFile(verbose: verbose);
   const SearchBarTemplateM3().generateFile(verbose: verbose);
   const SearchViewTemplateM3().generateFile(verbose: verbose);

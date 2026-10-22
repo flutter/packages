@@ -39,7 +39,7 @@ import '../templates/navigation_drawer_template.dart';
 import '../templates/navigation_rail_template.dart';
 import '../templates/popup_menu_template.dart';
 import '../templates/progress_indicator_template.dart';
-// import '../templates/radio_template.dart';
+import '../templates/radio_template.dart';
 import '../templates/range_slider_template.dart';
 import '../templates/search_bar_template.dart';
 import '../templates/search_view_template.dart';
@@ -810,8 +810,11 @@ void main() {
     });
 
     test('RadioTemplateM3 emits M3 Radio defaults from tokens', () {
-      // Intentionally empty, will be implemented during migration. See:
-      // https://github.com/flutter/flutter/issues/187899
+      final String contents = _generateContents(const RadioTemplateM3());
+      expect(contents, contains('class _RadioDefaultsM3 extends RadioThemeData'));
+      expect(contents, contains('_colors.onSurface.withOpacity(0.38)'));
+      expect(contents, contains('_colors.onSurface.withOpacity(0.1)'));
+      expect(contents, contains('_colors.onSurfaceVariant'));
     });
 
     test('RangeSliderTemplateM3 emits M3 RangeSlider defaults from tokens', () {
