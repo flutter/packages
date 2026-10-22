@@ -6,7 +6,7 @@ import 'package:file_selector/file_selector.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
-/// Screen that shows an example of getDirectory.
+/// Screen that shows an example of [getDirectory].
 class GetDirectoryPage extends StatelessWidget {
   /// Default Constructor
   GetDirectoryPage({super.key});
