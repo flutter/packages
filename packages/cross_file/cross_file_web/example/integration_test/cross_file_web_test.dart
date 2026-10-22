@@ -144,14 +144,25 @@ void main() {
       });
     });
 
-    testWidgets('Create with bytes', (_) async {
-      const testName = 'goodbye.txt';
-      final file = PlatformScopedStorageXFile(
-        WebScopedStorageXFileCreationParams.fromBytes(testFileBytes, fileName: testName),
-      );
+    group('Create with bytes', () {
+      testWidgets('Create with bytes and fileName', (_) async {
+        const testName = 'goodbye.txt';
+        final file = PlatformScopedStorageXFile(
+          WebScopedStorageXFileCreationParams.fromBytes(testFileBytes, fileName: testName),
+        );
 
-      expect(await file.readAsBytes(), testFileBytes);
-      expect(await file.name(), testName);
+        expect(await file.readAsBytes(), testFileBytes);
+        expect(await file.name(), testName);
+      });
+
+      testWidgets('Create with bytes and no fileName', (_) async {
+        final file = PlatformScopedStorageXFile(
+          WebScopedStorageXFileCreationParams.fromBytes(testFileBytes),
+        );
+
+        expect(await file.readAsBytes(), testFileBytes);
+        expect(await file.name(), null);
+      });
     });
 
     group('download', () {

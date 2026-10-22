@@ -28,8 +28,8 @@ sealed class WebScopedStorageXFileCreationParams extends PlatformScopedStorageXF
   ///
   /// Creates an Object URL using the provided blob. See [URL.createObjectURL].
   ///
-  /// `autoRevokeObjectUrl`: Whether the unique object url obtained created with
-  /// [blob] should be revoked when this instance is garbage collected. See
+  /// `autoRevokeObjectUrl`: Whether the unique object url created with [blob]
+  /// should be revoked when this instance is garbage collected. See
   /// [URL.revokeObjectURL].
   factory WebScopedStorageXFileCreationParams.fromBlob(
     Blob blob, {
@@ -44,15 +44,14 @@ sealed class WebScopedStorageXFileCreationParams extends PlatformScopedStorageXF
   /// Constructs a [WebScopedStorageXFileCreationParams] by creating a [Blob]
   /// from [bytes].
   ///
-  /// Creates an Object URL using the bytes provided the blob. See
-  /// [URL.createObjectURL].
+  /// Creates an Object URL from the [Blob] created from the provided bytes.
+  /// See [URL.createObjectURL].
   ///
   /// If a [fileName] is provided, the underlying [Blob] is created as a [File]
   /// with the [fileName] passed to it.
   ///
-  /// `autoRevokeObjectUrl`: Whether the unique object url obtained created with
-  /// [blob] should be revoked when this instance is garbage collected. See
-  /// [URL.revokeObjectURL].
+  /// `autoRevokeObjectUrl`: Whether the created object url should be revoked
+  /// when this instance is garbage collected. See [URL.revokeObjectURL].
   factory WebScopedStorageXFileCreationParams.fromBytes(
     Uint8List bytes, {
     String? fileName,
