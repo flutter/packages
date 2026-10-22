@@ -2070,11 +2070,11 @@ class SvgAttributes {
   }
 }
 
-/// A value that represents either an absolute pixel coordinate or a percentage
-/// of a bounding dimension.
+/// A value that represents either an absolute pixel coordinate, a percentage
+/// of a bounding dimension, or a multiple of the font size (`em`).
 @immutable
 class DoubleOrPercentage {
-  const DoubleOrPercentage._(this._value, this._isPercentage);
+  const DoubleOrPercentage._(this._value, this._isPercentage, {bool isEm = false}) : _isEm = isEm;
 
   /// Constructs a [DoubleOrPercentage] from a raw SVG attribute string.
   static DoubleOrPercentage? fromString(String? raw) {
@@ -2085,30 +2085,38 @@ class DoubleOrPercentage {
     if (isPercentage(raw)) {
       return DoubleOrPercentage._(parsePercentage(raw), true);
     }
-    return DoubleOrPercentage._(parseDouble(raw)!, false);
+    final String trimmed = raw.trim();
+    final bool isEm = trimmed.endsWith('em') && !trimmed.endsWith('rem');
+    return DoubleOrPercentage._(parseDouble(raw)!, false, isEm: isEm);
   }
 
   final double _value;
   final bool _isPercentage;
+  final bool _isEm;
 
   /// Calculates the result of applying this dimension within [bound].
   ///
-  /// If this is a percentage, it will return a percentage of bound. Otherwise,
-  /// it returns the value of this.
-  double calculate(double bound) {
+  /// If this is a percentage, it will return a percentage of bound. If this is
+  /// an `em` value, it will return a multiple of [fontSize], which defaults to
+  /// 16. Otherwise, it returns the value of this.
+  double calculate(double bound, {double? fontSize}) {
     if (_isPercentage) {
       return _value * bound;
+    }
+    if (_isEm) {
+      return _value * (fontSize ?? 16);
     }
     return _value;
   }
 
   @override
-  int get hashCode => Object.hash(_value, _isPercentage);
+  int get hashCode => Object.hash(_value, _isPercentage, _isEm);
 
   @override
   bool operator ==(Object other) {
     return other is DoubleOrPercentage &&
         other._isPercentage == _isPercentage &&
+        other._isEm == _isEm &&
         other._value == _value;
   }
 }
