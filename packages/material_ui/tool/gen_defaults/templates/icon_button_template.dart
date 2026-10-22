@@ -35,13 +35,11 @@ class IconButtonTemplateM3 extends TokenTemplateM3 {
   };
 
   // The exported md.comp.icon-button.* tokens differ from Flutter's existing
-  // M3 icon button defaults. Preserve the old disabled opacity and use direct
-  // color roles where needed so this migration does not change the defaults.
-  // TODO(QuncCccccc): Replace these values with tokens.
+  // M3 icon button defaults. Preserve the old opacities and use direct color
+  // roles where needed so this migration does not change the defaults.
+  // TODO(QuncCccccc): These values are out of date. Update to use the latest
+  // token values once the migration is done.
   static const double _legacyDisabledContainerOpacity = 0.12;
-
-  // TODO(QuncCccccc): This opacity is out of date. Update to use the latest
-  // token value once the migration is done.
   static const double _legacyOutlinedFocusedStateLayerOpacity = 0.08;
 
   String get _backgroundColor => switch (_variant) {
