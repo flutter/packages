@@ -18,6 +18,7 @@ Downloaded by pub (not CocoaPods).
   # pod, unlike SwiftPM, where separate Swift and Objective-C targets are required.
   s.source_files = 'image_picker_ios/Sources/image_picker_ios*/**/*.{h,m,swift}'
   s.public_header_files = 'image_picker_ios/Sources/image_picker_ios_objc/include/**/*.h'
+  s.module_map = 'image_picker_ios/Sources/image_picker_ios_objc/include/ImagePickerPlugin.modulemap'
   s.dependency 'Flutter'
   s.platform = :ios, '15.0'
   s.pod_target_xcconfig = { 'DEFINES_MODULE' => 'YES' }
