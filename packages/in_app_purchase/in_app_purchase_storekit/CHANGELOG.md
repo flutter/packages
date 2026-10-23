@@ -1,3 +1,10 @@
+## 0.4.16
+
+* Adds support for StoreKit 2 monthly billing plans with a 12-month commitment.
+  `SK2SubscriptionInfo.pricingTerms` reports the billing plans available in the
+  customer's storefront, and `Sk2PurchaseParam.billingPlanType` selects one for
+  a purchase.
+
 ## 0.4.15
 
 * Exposes `sk2Transaction` on `SK2PurchaseDetails`.
