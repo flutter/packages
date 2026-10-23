@@ -12,6 +12,7 @@ import 'package:camera_platform_interface/camera_platform_interface.dart';
 // ignore_for_file: implementation_imports
 import 'package:camera_web/src/camera.dart';
 import 'package:camera_web/src/types/types.dart';
+import 'package:cross_file_web/cross_file_web.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:integration_test/integration_test.dart';
@@ -1109,9 +1110,12 @@ void main() {
 
           expect(videoFile, isNotNull);
 
-          expect(videoFile.mimeType, equals(supportedVideoType));
+          expect(
+            (await videoFile.getExtension<WebScopedStorageXFileExtension>()!.getBlob()).type,
+            equals(supportedVideoType),
+          );
 
-          expect(videoFile.name, equals(finalVideo.hashCode.toString()));
+          expect(await videoFile.name(), equals(finalVideo.hashCode.toString()));
 
           expect(videoParts, equals(capturedVideoParts));
         });
@@ -1305,20 +1309,16 @@ void main() {
           );
           videoRecordingStoppedListener.callAsFunction(null, Event('stop'));
 
+          final VideoRecordedEvent event = await streamQueue.next;
+          expect(event.cameraId, textureId);
+          expect(event.file, isA<ScopedStorageXFile>());
+          expect(event.toJson()['path'], event.file.uri);
+          expect(VideoRecordedEvent.fromJson(event.toJson()).file.uri, event.file.uri);
           expect(
-            await streamQueue.next,
-            equals(
-              isA<VideoRecordedEvent>()
-                  .having((VideoRecordedEvent e) => e.cameraId, 'cameraId', textureId)
-                  .having(
-                    (VideoRecordedEvent e) => e.file,
-                    'file',
-                    isA<XFile>()
-                        .having((XFile f) => f.mimeType, 'mimeType', supportedVideoType)
-                        .having((XFile f) => f.name, 'name', finalVideo.hashCode.toString()),
-                  ),
-            ),
+            (await event.file.getExtension<WebScopedStorageXFileExtension>()!.getBlob()).type,
+            supportedVideoType,
           );
+          expect(await event.file.name(), finalVideo.hashCode.toString());
 
           await streamQueue.cancel();
         });

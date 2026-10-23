@@ -9,6 +9,7 @@ import 'package:async/async.dart';
 import 'package:camera_platform_interface/camera_platform_interface.dart';
 import 'package:camera_platform_interface/src/method_channel/method_channel_camera.dart';
 import 'package:camera_platform_interface/src/utils/utils.dart';
+import 'package:cross_file_io/cross_file_io.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -16,6 +17,7 @@ import 'package:flutter_test/flutter_test.dart';
 import '../utils/method_channel_mock.dart';
 
 void main() {
+  CrossFileIO.registerWith();
   TestWidgetsFlutterBinding.ensureInitialized();
 
   group('$MethodChannelCamera', () {
@@ -551,7 +553,7 @@ void main() {
         expect(channel.log, <Matcher>[
           isMethodCall('takePicture', arguments: <String, Object?>{'cameraId': cameraId}),
         ]);
-        expect(file.path, '/test/path.jpg');
+        expect((file as FileSystemXFile).path, '/test/path.jpg');
       });
 
       test('Should prepare for video recording', () async {
@@ -656,7 +658,7 @@ void main() {
         expect(channel.log, <Matcher>[
           isMethodCall('stopVideoRecording', arguments: <String, Object?>{'cameraId': cameraId}),
         ]);
-        expect(file.path, '/test/path.mp4');
+        expect((file as FileSystemXFile).path, '/test/path.mp4');
       });
 
       test('Should pause a video recording', () async {

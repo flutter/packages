@@ -10,6 +10,7 @@ import 'package:camera_android/src/android_camera.dart';
 import 'package:camera_android/src/messages.g.dart';
 import 'package:camera_android/src/utils.dart';
 import 'package:camera_platform_interface/camera_platform_interface.dart';
+import 'package:cross_file_io/cross_file_io.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -20,6 +21,7 @@ import 'android_camera_test.mocks.dart';
 
 @GenerateNiceMocks(<MockSpec<dynamic>>[MockSpec<CameraApi>()])
 void main() {
+  CrossFileIO.registerWith();
   TestWidgetsFlutterBinding.ensureInitialized();
 
   test('registers instance', () async {
@@ -464,7 +466,7 @@ void main() {
       final XFile file = await camera.takePicture(cameraId);
 
       // Assert
-      expect(file.path, '/test/path.jpg');
+      expect((file as FileSystemXFile).path, '/test/path.jpg');
     });
 
     test('Should start recording a video', () async {
@@ -507,7 +509,7 @@ void main() {
       final XFile file = await camera.stopVideoRecording(cameraId);
 
       // Assert
-      expect(file.path, '/test/path.mp4');
+      expect((file as FileSystemXFile).path, '/test/path.mp4');
     });
 
     test('Should pause a video recording', () async {

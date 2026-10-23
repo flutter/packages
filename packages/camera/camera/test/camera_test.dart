@@ -7,6 +7,7 @@ import 'dart:math';
 
 import 'package:camera/camera.dart';
 import 'package:camera_platform_interface/camera_platform_interface.dart';
+import 'package:cross_file_io/cross_file_io.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
@@ -39,13 +40,14 @@ CameraClosingEvent get mockOnCameraClosingEvent => const CameraClosingEvent(13);
 
 CameraErrorEvent get mockOnCameraErrorEvent => const CameraErrorEvent(13, 'closing');
 
-XFile mockTakePicture = XFile('foo/bar.png');
+XFile mockTakePicture = XFile.fileSystem(path: 'foo/bar.png');
 
-XFile mockVideoRecordingXFile = XFile('foo/bar.mpeg');
+XFile mockVideoRecordingXFile = XFile.fileSystem(path: 'foo/bar.mpeg');
 
 bool mockPlatformException = false;
 
 void main() {
+  CrossFileIO.registerWith();
   WidgetsFlutterBinding.ensureInitialized();
 
   group('camera', () {
@@ -342,7 +344,7 @@ void main() {
       await cameraController.initialize();
       final XFile xFile = await cameraController.takePicture();
 
-      expect(xFile.path, mockTakePicture.path);
+      expect(Uri.parse(xFile.uri).toFilePath(), Uri.parse(mockTakePicture.uri).toFilePath());
     });
 
     test('takePicture() throws $CameraException on $PlatformException', () async {

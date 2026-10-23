@@ -1049,7 +1049,7 @@ class AndroidCameraCameraX extends CameraPlatform {
     }
 
     final String picturePath = await imageCapture!.takePicture(systemServicesManager);
-    return XFile(picturePath);
+    return XFile.fileSystem(path: picturePath);
   }
 
   /// Sets the flash mode for the camera with ID [cameraId].
@@ -1284,7 +1284,7 @@ class AndroidCameraCameraX extends CameraPlatform {
     }
 
     await _unbindUseCaseFromLifecycle(videoCapture!);
-    final videoFile = XFile(videoOutputPath!);
+    final videoFile = XFile.fileSystem(path: videoOutputPath!);
     cameraEventStreamController.add(VideoRecordedEvent(cameraId, videoFile, /* duration */ null));
     return videoFile;
   }
