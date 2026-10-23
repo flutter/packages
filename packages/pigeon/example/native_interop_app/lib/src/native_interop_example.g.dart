@@ -9,7 +9,7 @@
 import 'dart:async';
 import 'dart:typed_data' show Float64List, Int32List, Int64List;
 
-import 'package:flutter/foundation.dart' show TargetPlatform, defaultTargetPlatform, kIsWeb;
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/services.dart';
 import 'package:meta/meta.dart' show immutable, protected, visibleForTesting;
 import './native_interop_example.g.dart'
@@ -106,10 +106,7 @@ class NativeInteropExampleApi {
   }) {
     NativeInteropExampleApiForNativeInterop? nativeInteropApi;
     String nativeInteropApiInstanceName = '';
-    if (!kIsWeb &&
-        (defaultTargetPlatform == TargetPlatform.android ||
-            defaultTargetPlatform == TargetPlatform.iOS ||
-            defaultTargetPlatform == TargetPlatform.macOS)) {
+    if (!kIsWeb) {
       if (messageChannelSuffix.isEmpty) {
         nativeInteropApi = NativeInteropExampleApiForNativeInterop.getInstance();
       } else {
@@ -147,7 +144,7 @@ class NativeInteropExampleApi {
       return _nativeInteropApi.doSomething();
     }
     final pigeonVar_channelName =
-        'dev.flutter.pigeon.pigeon_native_interop_example_app.NativeInteropExampleApi.doSomething$pigeonVar_messageChannelSuffix';
+        'dev.flutter.pigeon.pigeon.NativeInteropExampleApi.doSomething$pigeonVar_messageChannelSuffix';
     final pigeonVar_channel = BasicMessageChannel<Object?>(
       pigeonVar_channelName,
       pigeonChannelCodec,

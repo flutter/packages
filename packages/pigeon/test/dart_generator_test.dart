@@ -2284,7 +2284,7 @@ name: foobar
     final code = sink.toString();
 
     expect(code, contains('jni_bridge.Shape toJni() {'));
-    expect(code, contains('Circle child => child.toJni(),'));
+    expect(code, contains('final Circle child => child.toJni(),'));
     expect(code, contains('static Shape? fromJni(jni_bridge.Shape? jniClass) {'));
     expect(code, contains('if (jniClass.isA<jni_bridge.Circle>(jni_bridge.Circle.type)) {'));
     expect(
@@ -2292,7 +2292,7 @@ name: foobar
       contains('return CircleNativeInterop.fromJni(jniClass.as(jni_bridge.Circle.type));'),
     );
     expect(code, contains('ffi_bridge.ShapeBridge toFfi() {'));
-    expect(code, contains('Circle child => child.toFfi(),'));
+    expect(code, contains('final Circle child => child.toFfi(),'));
     expect(code, contains('static Shape? fromFfi(ffi_bridge.ShapeBridge? ffiClass) {'));
     expect(code, contains('if (ffi_bridge.CircleBridge.isA(ffiClass)) {'));
     expect(
@@ -2837,12 +2837,9 @@ name: foobar
           '    as pigeon_native;',
         ),
       );
-      expect(
-        code,
-        contains(
-          '!kIsWeb && (defaultTargetPlatform == TargetPlatform.android || defaultTargetPlatform == TargetPlatform.iOS || defaultTargetPlatform == TargetPlatform.macOS)',
-        ),
-      );
+      expect(code, contains("import 'package:flutter/foundation.dart' show kIsWeb;"));
+      expect(code, contains('if (!kIsWeb) {'));
+      expect(code, contains('if (!kIsWeb && api != null) {'));
       expect(code, contains('pigeon_native.pigeonGetInstance_Api(channelName: channelName)'));
       expect(code, contains('final class CallbacksRegistrar'));
       expect(code, contains('pigeon_native.pigeonRegister_Callbacks(api, name: name)'));

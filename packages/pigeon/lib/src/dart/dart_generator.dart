@@ -701,9 +701,7 @@ class DartGenerator extends StructuredGenerator<InternalDartOptions> {
     indent.writeln("import 'dart:typed_data' show ${typedDataClasses.join(', ')};");
     indent.newln();
     if (usesNativeInterop(generatorOptions)) {
-      indent.writeln(
-        "import 'package:flutter/foundation.dart' show TargetPlatform, defaultTargetPlatform, kIsWeb;",
-      );
+      indent.writeln("import 'package:flutter/foundation.dart' show kIsWeb;");
     }
     indent.writeln("import 'package:flutter/services.dart';");
     if (root.containsProxyApi) {
@@ -1028,7 +1026,7 @@ class DartGenerator extends StructuredGenerator<InternalDartOptions> {
       indent.writeScoped('$jniName toJni() {', '}', () {
         indent.writeScoped('return switch (this) {', '};', () {
           for (final Class child in classDefinition.children) {
-            indent.writeln('${child.name} child => child.toJni(),');
+            indent.writeln('final ${child.name} child => child.toJni(),');
           }
         });
       });
@@ -1056,7 +1054,7 @@ class DartGenerator extends StructuredGenerator<InternalDartOptions> {
       indent.writeScoped('$ffiName toFfi() {', '}', () {
         indent.writeScoped('return switch (this) {', '};', () {
           for (final Class child in classDefinition.children) {
-            indent.writeln('${child.name} child => child.toFfi(),');
+            indent.writeln('final ${child.name} child => child.toFfi(),');
           }
         });
       });
@@ -1653,18 +1651,9 @@ final class ${api.name}Registrar {
             }) ''');
 
       indent.addScoped('{', '}', () {
-        if (generatorOptions.useJni) {
+        if (usesNativeInterop(generatorOptions)) {
           indent.format('''
-            if (!kIsWeb && defaultTargetPlatform == TargetPlatform.android && api != null) {
-              ${api.name}Registrar().register(api, name: messageChannelSuffix.isEmpty
-                  ? defaultInstanceName
-                  : messageChannelSuffix);
-            }
-            ''');
-        }
-        if (generatorOptions.useFfi) {
-          indent.format('''
-            if (!kIsWeb && (defaultTargetPlatform == TargetPlatform.iOS || defaultTargetPlatform == TargetPlatform.macOS) && api != null) {
+            if (!kIsWeb && api != null) {
               ${api.name}Registrar().register(api, name: messageChannelSuffix.isEmpty
                   ? defaultInstanceName
                   : messageChannelSuffix);
@@ -2145,17 +2134,6 @@ ${api.name}({
 ''');
 
       if (usesNativeInterop(generatorOptions)) {
-        final List<String> platforms = [];
-        if (generatorOptions.useJni) {
-          platforms.add('defaultTargetPlatform == TargetPlatform.android');
-        }
-        if (generatorOptions.useFfi) {
-          platforms.add('defaultTargetPlatform == TargetPlatform.iOS');
-          platforms.add('defaultTargetPlatform == TargetPlatform.macOS');
-        }
-        final platformsCondition = platforms.length == 1
-            ? '!kIsWeb && ${platforms.single}'
-            : '!kIsWeb && (${platforms.join(' || ')})';
         indent.format('''
   /// Creates an instance of [${api.name}] that requests an instance of
   /// [${api.name}ForNativeInterop] from the host platform with a matching instance name
@@ -2168,7 +2146,7 @@ ${api.name}({
   }) {
     ${api.name}ForNativeInterop? nativeInteropApi;
     String nativeInteropApiInstanceName = '';
-    if ($platformsCondition) {
+    if (!kIsWeb) {
       if (messageChannelSuffix.isEmpty) {
         nativeInteropApi = ${api.name}ForNativeInterop.getInstance();
       } else {
