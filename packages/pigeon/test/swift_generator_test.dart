@@ -2197,6 +2197,7 @@ void main() {
     expect(code, contains('public protocol PigeonInternalFinalizerDelegate: AnyObject {'));
     expect(code, contains('  func onDeinit(identifier: Int64)'));
     expect(code, contains('public final class PigeonInstanceManager {'));
+    expect(code, contains('public init(finalizerDelegate: PigeonInternalFinalizerDelegate) {'));
     expect(code, contains('public protocol PigeonProxyApiDelegate {'));
     expect(
       code,
@@ -2234,7 +2235,7 @@ void main() {
     );
   });
 
-  test('SwiftAccessLevel.package generates package declarations and open subclassable classes', () {
+  test('SwiftAccessLevel.package generates package declarations', () {
     final root = Root(
       apis: <Api>[
         AstHostApi(
@@ -2279,9 +2280,9 @@ void main() {
       ],
     );
     final sink = StringBuffer();
-    const swiftOptions = InternalSwiftOptions(
+    final swiftOptions = InternalSwiftOptions.fromSwiftOptions(
+      const SwiftOptions(accessLevel: SwiftAccessLevel.package),
       swiftOut: 'Messages.g.swift',
-      accessLevel: SwiftAccessLevel.package,
     );
     const generator = SwiftGenerator();
     generator.generate(swiftOptions, root, sink, dartPackageName: DEFAULT_PACKAGE_NAME);
@@ -2292,28 +2293,89 @@ void main() {
     expect(code, contains('package struct MyStruct: Hashable, CustomStringConvertible {'));
     expect(code, contains('package init(\n    field: String? = nil\n  ) {'));
     expect(code, contains('package var field: String? = nil'));
+    expect(
+      code,
+      contains(
+        'package class MessagesPigeonCodec: FlutterStandardMessageCodec, @unchecked Sendable',
+      ),
+    );
+    expect(code, contains('package static let shared = MessagesPigeonCodec('));
     expect(code, contains('package protocol MyHostApi {'));
     expect(code, contains('package class MyHostApiSetup {'));
     expect(code, contains('package static func setUp('));
-    // Subclassable classes must remain open even in package mode because
-    // Swift SE-0386 does not support cross-module inheritance without `open`.
-    expect(code, contains('open class PigeonEventChannelWrapper<ReturnType> {'));
+    expect(code, contains('package class PigeonEventChannelWrapper<ReturnType> {'));
     expect(code, contains('package init() {}'));
     expect(
       code,
       contains(
-        'open func onListen(withArguments arguments: Any?, sink: PigeonEventSink<ReturnType>) {}',
+        'package func onListen(withArguments arguments: Any?, sink: PigeonEventSink<ReturnType>) {}',
       ),
     );
     expect(code, contains('package class PigeonEventSink<ReturnType> {'));
     expect(code, contains('package func success(_ value: ReturnType) {'));
     expect(
       code,
-      contains('open class StreamEventsStreamHandler: PigeonEventChannelWrapper<String> {'),
+      contains('package class StreamEventsStreamHandler: PigeonEventChannelWrapper<String> {'),
     );
     expect(code, contains('package override init() {}'));
     expect(code, contains('package static func register(with messenger: FlutterBinaryMessenger,'));
-    expect(code, contains('open class StreamEventsStreamHandler'));
     expect(SwiftAccessLevel.fromName('unknown'), isNull);
+  });
+
+  test('SwiftAccessLevel.public with useFfi generates public FFI setup and default instance name', () {
+    final root = Root(
+      apis: <Api>[
+        AstHostApi(
+          name: 'MyHostApi',
+          methods: <Method>[
+            Method(
+              name: 'doSomething',
+              location: ApiLocation.host,
+              parameters: <Parameter>[],
+              returnType: const TypeDeclaration.voidDeclaration(),
+            ),
+          ],
+        ),
+        AstFlutterApi(
+          name: 'MyFlutterApi',
+          methods: <Method>[
+            Method(
+              name: 'onEvent',
+              location: ApiLocation.flutter,
+              parameters: <Parameter>[],
+              returnType: const TypeDeclaration.voidDeclaration(),
+            ),
+          ],
+        ),
+      ],
+      classes: <Class>[],
+      enums: <Enum>[],
+    );
+    final sink = StringBuffer();
+    const swiftOptions = InternalSwiftOptions(
+      swiftOut: 'Messages.g.swift',
+      useFfi: true,
+      accessLevel: SwiftAccessLevel.public,
+    );
+    const generator = SwiftGenerator();
+    generator.generate(swiftOptions, root, sink, dartPackageName: DEFAULT_PACKAGE_NAME);
+    final code = sink.toString();
+
+    expect(code, contains('public enum PigeonInternal {'));
+    expect(code, contains('public static let defaultInstanceName = "'));
+    expect(code, contains('@objc public class MyHostApiSetup: NSObject {'));
+    expect(
+      code,
+      contains(
+        'public static func register(api: MyHostApi?, name: String = PigeonInternal.defaultInstanceName) {',
+      ),
+    );
+    expect(code, contains('public class MyFlutterApi {'));
+    expect(
+      code,
+      contains(
+        'public static func getInstance(name: String = PigeonInternal.defaultInstanceName) -> MyFlutterApi? {',
+      ),
+    );
   });
 }

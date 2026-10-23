@@ -107,7 +107,7 @@ ${options.accessModifier}final class ${swiftInstanceManagerClassName(options)} {
   private let finalizerDelegate: ${instanceManagerFinalizerDelegateName(options)}
   private var nextIdentifier: Int64 = minHostCreatedIdentifier
 
-  public init(finalizerDelegate: ${instanceManagerFinalizerDelegateName(options)}) {
+  ${options.accessModifier}init(finalizerDelegate: ${instanceManagerFinalizerDelegateName(options)}) {
     self.finalizerDelegate = finalizerDelegate
   }
 

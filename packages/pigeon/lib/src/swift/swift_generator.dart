@@ -28,8 +28,7 @@ enum SwiftAccessLevel {
   internal,
 
   /// Declarations use `package` visibility (accessible across modules in the
-  /// same Swift package). Classes intended for subclassing across modules are
-  /// emitted as `open`.
+  /// same Swift package).
   package,
 
   /// Declarations use `public` visibility (and `open` for classes intended for
@@ -271,18 +270,21 @@ class InternalSwiftOptions extends InternalOptions {
   };
 
   /// Class declaration prefix for generated classes intended to be subclassed
-  /// by user code (`'class '` for internal, `'open class '` across modules).
+  /// by user code (`'class '` for internal, `'package class '` for package,
+  /// and `'open class '` for public).
   String get subclassableClassModifier => switch (accessLevel) {
     SwiftAccessLevel.internal => 'class ',
-    SwiftAccessLevel.package || SwiftAccessLevel.public => 'open class ',
+    SwiftAccessLevel.package => 'package class ',
+    SwiftAccessLevel.public => 'open class ',
   };
 
   /// Function declaration prefix for overridable methods on classes intended
-  /// to be subclassed by user code (`'func '` for internal, `'open func '`
-  /// across modules).
+  /// to be subclassed by user code (`'func '` for internal, `'package func '`
+  /// for package, and `'open func '` for public).
   String get subclassableFuncModifier => switch (accessLevel) {
     SwiftAccessLevel.internal => 'func ',
-    SwiftAccessLevel.package || SwiftAccessLevel.public => 'open func ',
+    SwiftAccessLevel.package => 'package func ',
+    SwiftAccessLevel.public => 'open func ',
   };
 
   /// Initializer access prefix on `open` classes (`''` for internal,
@@ -729,9 +731,13 @@ private class _PigeonFfiCodec {
     indent.newln();
 
     // Generate Codec
-    indent.write('class $codecName: FlutterStandardMessageCodec, @unchecked Sendable ');
+    indent.write(
+      '${generatorOptions.accessModifier}class $codecName: FlutterStandardMessageCodec, @unchecked Sendable ',
+    );
     indent.addScoped('{', '}', () {
-      indent.writeln('static let shared = $codecName(readerWriter: $readerWriterName())');
+      indent.writeln(
+        '${generatorOptions.accessModifier}static let shared = $codecName(readerWriter: $readerWriterName())',
+      );
     });
     indent.newln();
     if (root.containsEventChannel) {
@@ -1445,7 +1451,7 @@ if (wrapped == nil) {
         );
       });
       final String codecName = _getMessageCodecName(generatorOptions);
-      indent.write('var codec: $codecName ');
+      indent.write('${generatorOptions.accessModifier}var codec: $codecName ');
       indent.addScoped('{', '}', () {
         indent.writeln('return $codecName.shared');
       });
@@ -1614,12 +1620,12 @@ if (wrapped == nil) {
     indent.writeln(
       '$_docCommentPrefix Generated setup class from Pigeon to register implemented ${api.name} classes.',
     );
-    indent.writeScoped('@objc class ${api.name}Setup: NSObject {', '}', () {
+    indent.writeScoped('@objc ${generatorOptions.accessModifier}class ${api.name}Setup: NSObject {', '}', () {
       if (generatorOptions.useFfi) {
         indent.writeln('private var api: ${api.name}?');
         indent.writeln('override init() {}');
         indent.writeScoped(
-          'static func register(api: ${api.name}?, name: String = ${_classNamePrefix}PigeonInternal.defaultInstanceName) {',
+          '${generatorOptions.accessModifier}static func register(api: ${api.name}?, name: String = ${_classNamePrefix}PigeonInternal.defaultInstanceName) {',
           '}',
           () {
             indent.writeScoped('if let api = api {', '}', () {
@@ -2681,15 +2687,21 @@ enum ${_classNamePrefix}PigeonInternalNumberType: Int {
   void _writePigeonInternal(InternalSwiftOptions generatorOptions, Root root, Indent indent) {
     indent.newln();
     final String uniqueComponent = generatorOptions.fileSpecificClassNameComponent ?? '';
-    indent.writeScoped('enum ${uniqueComponent}PigeonInternal {', '}', () {
-      if (generatorOptions.useFfi) {
-        indent.writeln('static let defaultInstanceName = "$defaultNativeInteropInstanceName"');
-      }
-      _writeIsNullish(generatorOptions, indent);
-      if (root.classes.isNotEmpty) {
-        _writeDeepEquals(generatorOptions, indent);
-      }
-    });
+    indent.writeScoped(
+      '${generatorOptions.accessModifier}enum ${uniqueComponent}PigeonInternal {',
+      '}',
+      () {
+        if (generatorOptions.useFfi) {
+          indent.writeln(
+            '${generatorOptions.accessModifier}static let defaultInstanceName = "$defaultNativeInteropInstanceName"',
+          );
+        }
+        _writeIsNullish(generatorOptions, indent);
+        if (root.classes.isNotEmpty) {
+          _writeDeepEquals(generatorOptions, indent);
+        }
+      },
+    );
   }
 
   @override
