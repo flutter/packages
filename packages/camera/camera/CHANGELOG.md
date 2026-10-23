@@ -3,9 +3,7 @@
 * **BREAKING CHANGE**: Updates to `cross_file` 0.4.0. Captured files use the
   new `XFile` API; use `uri` instead of `path`, and `name()` instead of `name`.
 
-## NEXT
-
-* Updates minimum supported SDK version to Flutter 3.41/Dart 3.11.
+* Requires Flutter 3.44/Dart 3.12.
 
 ## 0.12.1
 
