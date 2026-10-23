@@ -44,7 +44,7 @@ import '../templates/range_slider_template.dart';
 import '../templates/search_bar_template.dart';
 import '../templates/search_view_template.dart';
 // import '../templates/segmented_button_template.dart';
-// import '../templates/slider_template.dart';
+import '../templates/slider_template.dart';
 import '../templates/snackbar_template.dart';
 import '../templates/switch_template.dart';
 import '../templates/tabs_template.dart';
@@ -908,8 +908,62 @@ void main() {
     });
 
     test('SliderTemplateM3 emits M3 Slider defaults from tokens', () {
-      // Intentionally empty, will be implemented during migration. See:
-      // https://github.com/flutter/flutter/issues/187899
+      const template = SliderTemplateM3();
+      expect(template.parentFilePath, 'slider.dart');
+      expect(template.outputFileName, 'slider_defaults_m3.g.dart');
+
+      final String contents = _generateContents(template);
+      expect(contents, contains('class _SliderDefaultsM3 extends SliderThemeData'));
+      expect(contents, contains('super(trackHeight: 16.0)'));
+      expect(contents, contains('Color? get activeTrackColor => _colors.primary'));
+      expect(contents, contains('Color? get inactiveTrackColor => _colors.secondaryContainer'));
+      expect(
+        contents,
+        contains('Color? get secondaryActiveTrackColor => _colors.primary.withOpacity(0.54)'),
+      );
+      expect(
+        contents,
+        contains('Color? get disabledActiveTrackColor => _colors.onSurface.withOpacity(0.38)'),
+      );
+      expect(
+        contents,
+        contains('Color? get disabledInactiveTrackColor => _colors.onSurface.withOpacity(0.12)'),
+      );
+      expect(
+        contents,
+        contains(
+          'Color? get disabledSecondaryActiveTrackColor => _colors.onSurface.withOpacity(0.38)',
+        ),
+      );
+      expect(
+        contents,
+        contains('Color? get activeTickMarkColor => _colors.onPrimary.withOpacity(1.0)'),
+      );
+      expect(
+        contents,
+        contains(
+          'Color? get inactiveTickMarkColor => _colors.onSecondaryContainer.withOpacity(1.0)',
+        ),
+      );
+      expect(
+        contents,
+        contains('Color? get disabledActiveTickMarkColor => _colors.onInverseSurface'),
+      );
+      expect(contents, contains('Color? get disabledInactiveTickMarkColor => _colors.onSurface'));
+      expect(contents, contains('Color? get thumbColor => _colors.primary'));
+      expect(
+        contents,
+        contains('Color? get disabledThumbColor => _colors.onSurface.withOpacity(0.38)'),
+      );
+      expect(contents, contains('return _colors.primary.withOpacity(0.1);'));
+      expect(contents, contains('return _colors.primary.withOpacity(0.08);'));
+      expect(contents, contains('Theme.of(context).textTheme.labelLarge!.copyWith('));
+      expect(contents, contains('color: _colors.onInverseSurface'));
+      expect(contents, contains('Color? get valueIndicatorColor => _colors.inverseSurface'));
+      expect(contents, contains('const RoundSliderTickMarkShape(tickMarkRadius: 4.0 / 2)'));
+      expect(contents, contains('return const Size(4.0, 44.0);'));
+      expect(contents, contains('return const Size(2.0, 44.0);'));
+      expect(contents, contains('double? get trackGap => 6.0'));
     });
 
     test('SnackbarTemplateM3 emits M3 Snackbar defaults from tokens', () {
