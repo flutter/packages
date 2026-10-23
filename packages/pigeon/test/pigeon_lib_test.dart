@@ -1580,6 +1580,21 @@ class Message {
     expect(options.swiftOptions?.accessLevel, SwiftAccessLevel.public);
   });
 
+  test('@ConfigurePigeon SwiftOptions.accessLevel with import prefix', () {
+    const code = '''
+@ConfigurePigeon(pg.PigeonOptions(
+  swiftOptions: pg.SwiftOptions(accessLevel: pg.SwiftAccessLevel.package),
+))
+class Message {
+  int? id;
+}
+''';
+
+    final ParseResults results = parseSource(code);
+    final PigeonOptions options = PigeonOptions.fromMap(results.pigeonOptions!);
+    expect(options.swiftOptions?.accessLevel, SwiftAccessLevel.package);
+  });
+
   test('multiple swiftOut generation', () async {
     final completer = Completer<void>();
     const code = '''

@@ -1809,6 +1809,8 @@ class RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
       return expression.name;
     } else if (expression is dart_ast.PrefixedIdentifier) {
       return expression.identifier.name;
+    } else if (expression is dart_ast.PropertyAccess) {
+      return expression.propertyName.name;
     } else if (expression is dart_ast.ListLiteral) {
       final list = <dynamic>[];
       for (final dart_ast.CollectionElement element in expression.elements) {
