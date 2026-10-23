@@ -1,3 +1,7 @@
+## 29.0.12
+
+* [kotlin] Adds class-level `@Generated` annotations to top-level generated declarations when `useGeneratedAnnotation` is enabled.
+
 ## 29.0.11
 
 * [swift] Warns after FFI code generation if the `objective_c` version constraint in `pubspec.yaml` does not match the generated `ObjCVersionCheck`.

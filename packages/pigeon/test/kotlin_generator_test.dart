@@ -856,7 +856,66 @@ void main() {
     late StringBuffer sink;
 
     setUp(() {
-      root = Root(apis: <Api>[], classes: <Class>[], enums: <Enum>[]);
+      root = Root(
+        apis: <Api>[
+          AstHostApi(
+            name: 'MyHostApi',
+            methods: <Method>[
+              Method(
+                name: 'doSomething',
+                location: ApiLocation.host,
+                returnType: const TypeDeclaration.voidDeclaration(),
+                parameters: <Parameter>[],
+              ),
+            ],
+          ),
+          AstFlutterApi(
+            name: 'MyFlutterApi',
+            methods: <Method>[
+              Method(
+                name: 'onEvent',
+                location: ApiLocation.flutter,
+                returnType: const TypeDeclaration.voidDeclaration(),
+                parameters: <Parameter>[],
+              ),
+            ],
+          ),
+          AstEventChannelApi(
+            name: 'MyEventChannelApi',
+            methods: <Method>[
+              Method(
+                name: 'streamEvents',
+                location: ApiLocation.host,
+                returnType: const TypeDeclaration(baseName: 'String', isNullable: false),
+                parameters: <Parameter>[],
+              ),
+            ],
+          ),
+          AstProxyApi(
+            name: 'MyProxyApi',
+            constructors: <Constructor>[],
+            fields: <ApiField>[],
+            methods: <Method>[],
+          ),
+        ],
+        classes: <Class>[
+          Class(
+            name: 'MyDataClass',
+            fields: <NamedType>[
+              NamedType(
+                name: 'value',
+                type: const TypeDeclaration(baseName: 'String', isNullable: false),
+              ),
+            ],
+          ),
+        ],
+        enums: <Enum>[
+          Enum(
+            name: 'MyEnum',
+            members: <EnumMember>[EnumMember(name: 'one')],
+          ),
+        ],
+      );
       generator = const KotlinGenerator();
       sink = StringBuffer();
     });
@@ -865,21 +924,116 @@ void main() {
       final kotlinOptions = InternalKotlinOptions(
         copyrightHeader: makeIterable('hello world'),
         kotlinOut: '',
+        fileSpecificClassNameComponent: 'Messages',
         useGeneratedAnnotation: true,
       );
       generator.generate(kotlinOptions, root, sink, dartPackageName: DEFAULT_PACKAGE_NAME);
       final code = sink.toString();
       expect(code, contains(kotlinGeneratedAnnotation));
+      expect(code, contains('$kotlinClassGeneratedAnnotation\nprivate object MessagesPigeonUtils'));
+      expect(code, contains('$kotlinClassGeneratedAnnotation\nclass FlutterError'));
+      expect(code, contains('$kotlinClassGeneratedAnnotation\nenum class MyEnum'));
+      expect(code, contains('$kotlinClassGeneratedAnnotation\ndata class MyDataClass'));
+      expect(
+        code,
+        contains('$kotlinClassGeneratedAnnotation\nprivate open class MessagesPigeonCodec'),
+      );
+      expect(code, contains('$kotlinClassGeneratedAnnotation\ninterface MyHostApi'));
+      expect(code, contains('$kotlinClassGeneratedAnnotation\nclass MyFlutterApi'));
+      expect(
+        code,
+        contains('$kotlinClassGeneratedAnnotation\nprivate class MessagesPigeonStreamHandler'),
+      );
+      expect(
+        code,
+        contains('$kotlinClassGeneratedAnnotation\ninterface MessagesPigeonEventChannelWrapper'),
+      );
+      expect(code, contains('$kotlinClassGeneratedAnnotation\nclass PigeonEventSink'));
+      expect(
+        code,
+        contains('$kotlinClassGeneratedAnnotation\nabstract class StreamEventsStreamHandler'),
+      );
+      expect(
+        code,
+        contains('$kotlinClassGeneratedAnnotation\nclass MessagesPigeonInstanceManager('),
+      );
+      expect(
+        code,
+        contains(
+          '$kotlinClassGeneratedAnnotation\nprivate class MessagesPigeonInstanceManagerApi(',
+        ),
+      );
+      expect(
+        code,
+        contains(
+          '$kotlinClassGeneratedAnnotation\nabstract class MessagesPigeonProxyApiRegistrar(',
+        ),
+      );
+      expect(
+        code,
+        contains('$kotlinClassGeneratedAnnotation\nprivate class MessagesPigeonProxyApiBaseCodec('),
+      );
+      expect(
+        code,
+        contains(
+          '@Suppress("UNCHECKED_CAST")\n$kotlinClassGeneratedAnnotation\nopen class PigeonApiMyProxyApi(',
+        ),
+      );
+    });
+
+    test('with generated annotation and JNI', () {
+      final jniRoot = Root(
+        apis: <Api>[
+          AstHostApi(
+            name: 'MyHostApi',
+            methods: <Method>[
+              Method(
+                name: 'doSomething',
+                location: ApiLocation.host,
+                returnType: const TypeDeclaration.voidDeclaration(),
+                parameters: <Parameter>[],
+              ),
+            ],
+          ),
+          AstFlutterApi(
+            name: 'MyFlutterApi',
+            methods: <Method>[
+              Method(
+                name: 'onEvent',
+                location: ApiLocation.flutter,
+                returnType: const TypeDeclaration.voidDeclaration(),
+                parameters: <Parameter>[],
+              ),
+            ],
+          ),
+        ],
+        classes: <Class>[],
+        enums: <Enum>[],
+      );
+      final kotlinOptions = InternalKotlinOptions(
+        copyrightHeader: makeIterable('hello world'),
+        kotlinOut: '',
+        useGeneratedAnnotation: true,
+        useJni: true,
+      );
+      generator.generate(kotlinOptions, jniRoot, sink, dartPackageName: DEFAULT_PACKAGE_NAME);
+      final code = sink.toString();
+      expect(code, contains('@Keep\n$kotlinClassGeneratedAnnotation\ninterface MyHostApi'));
+      expect(code, contains('@Keep\n$kotlinClassGeneratedAnnotation\nclass MyHostApiRegistrar'));
+      expect(code, contains('@Keep\n$kotlinClassGeneratedAnnotation\nclass MyFlutterApiRegistrar'));
+      expect(code, contains('@Keep\n$kotlinClassGeneratedAnnotation\ninterface MyFlutterApi'));
     });
 
     test('without generated annotation', () {
       final kotlinOptions = InternalKotlinOptions(
         copyrightHeader: makeIterable('hello world'),
         kotlinOut: '',
+        fileSpecificClassNameComponent: 'Messages',
       );
       generator.generate(kotlinOptions, root, sink, dartPackageName: DEFAULT_PACKAGE_NAME);
       final code = sink.toString();
       expect(code, isNot(contains(kotlinGeneratedAnnotation)));
+      expect(code, isNot(contains(kotlinClassGeneratedAnnotation)));
     });
   });
 
