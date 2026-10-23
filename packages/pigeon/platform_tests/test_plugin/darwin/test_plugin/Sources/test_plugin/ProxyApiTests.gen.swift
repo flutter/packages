@@ -201,6 +201,7 @@ final class ProxyApiTestsPigeonInstanceManager: @unchecked Sendable {
   ///   - instance: the instance to be stored
   ///   - identifier: the identifier to be paired with instance. This value must be >= 0 and unique
   nonisolated func addDartCreatedInstance(_ instance: AnyObject, withIdentifier identifier: Int64) {
+    nonisolated(unsafe) let instance = instance
     lockQueue.async {
       self.addInstance(instance, withIdentifier: identifier)
     }

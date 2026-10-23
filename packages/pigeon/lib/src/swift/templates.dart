@@ -129,7 +129,7 @@ final class ${swiftInstanceManagerClassName(options)}${options.strictConcurrency
   ///   - instance: the instance to be stored
   ///   - identifier: the identifier to be paired with instance. This value must be >= 0 and unique
   ${nonisolated}func addDartCreatedInstance(_ instance: AnyObject, withIdentifier identifier: Int64) {
-    lockQueue.async {
+    ${options.strictConcurrency ? 'nonisolated(unsafe) let instance = instance\n    ' : ''}lockQueue.async {
       self.addInstance(instance, withIdentifier: identifier)
     }
   }

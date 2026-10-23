@@ -32,7 +32,7 @@ private func awaitFlutterApi<T>(
 /// This plugin handles the native side of the integration tests in
 /// example/integration_test/.
 @MainActor
-public class TestPlugin: NSObject, @preconcurrency FlutterPlugin, HostIntegrationCoreApi,
+public class TestPlugin: NSObject, FlutterPlugin, HostIntegrationCoreApi,
   HostCallbackCoreApi
 {
   var flutterAPI: FlutterIntegrationCoreApi
