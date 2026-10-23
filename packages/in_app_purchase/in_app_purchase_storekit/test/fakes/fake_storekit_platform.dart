@@ -327,6 +327,7 @@ class FakeStoreKit2Platform implements InAppPurchase2API {
   SK2ProductPurchaseOptionsMessage? lastPurchaseOptions;
   Map<String, Set<String>> eligibleWinBackOffers = <String, Set<String>>{};
   Map<String, bool> eligibleIntroductoryOffers = <String, bool>{};
+  int showManageSubscriptionsCallCount = 0;
 
   /// Subscription info to attach to the product messages returned by
   /// [products], keyed by product ID.
@@ -355,6 +356,7 @@ class FakeStoreKit2Platform implements InAppPurchase2API {
     eligibleIntroductoryOffers = <String, bool>{};
     subscriptionInfo = <String, SK2SubscriptionInfoMessage>{};
     simulatedPurchaseResult = SK2ProductPurchaseResultMessage.success;
+    showManageSubscriptionsCallCount = 0;
     transactionsList = <SK2TransactionMessage>[
       SK2TransactionMessage(
         id: 123,
@@ -564,6 +566,11 @@ class FakeStoreKit2Platform implements InAppPurchase2API {
 
   @override
   Future<void> presentOfferCodeRedeemSheet() async {}
+
+  @override
+  Future<void> showManageSubscriptions() async {
+    showManageSubscriptionsCallCount++;
+  }
 }
 
 SK2TransactionMessage createPendingTransaction(String id, {int quantity = 1}) {

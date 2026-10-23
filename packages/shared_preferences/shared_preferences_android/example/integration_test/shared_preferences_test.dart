@@ -5,8 +5,8 @@
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:integration_test/integration_test.dart';
-import 'package:shared_preferences_android/shared_preferences_android.dart';
 import 'package:shared_preferences_android/src/messages_async.g.dart';
+import 'package:shared_preferences_android/src/shared_preferences_android_real.dart';
 import 'package:shared_preferences_platform_interface/shared_preferences_async_platform_interface.dart';
 import 'package:shared_preferences_platform_interface/shared_preferences_platform_interface.dart';
 import 'package:shared_preferences_platform_interface/types.dart';
@@ -595,6 +595,25 @@ void main() {
         // implementation detail shouldn't leak to clients; getting the wrong
         // type should still throw.
         expect(preferences.getStringList(listKey, options), throwsA(isA<TypeError>()));
+      });
+
+      testWidgets('getting mismatched primitive types throws TypeError with $backend', (
+        WidgetTester _,
+      ) async {
+        final SharedPreferencesAsyncAndroidOptions options = getOptions(
+          useDataStore: useDataStore,
+          fileName: 'notDefault',
+        );
+        final SharedPreferencesAsyncPlatform preferences = getPreferences();
+        await clearPreferences(preferences, options);
+
+        await preferences.setString(stringKey, testString, options);
+        await preferences.setBool(boolKey, testBool, options);
+
+        await expectLater(preferences.getBool(stringKey, options), throwsA(isA<TypeError>()));
+        await expectLater(preferences.getInt(stringKey, options), throwsA(isA<TypeError>()));
+        await expectLater(preferences.getDouble(stringKey, options), throwsA(isA<TypeError>()));
+        await expectLater(preferences.getString(boolKey, options), throwsA(isA<TypeError>()));
       });
 
       testWidgets('getPreferences with $backend', (WidgetTester _) async {
