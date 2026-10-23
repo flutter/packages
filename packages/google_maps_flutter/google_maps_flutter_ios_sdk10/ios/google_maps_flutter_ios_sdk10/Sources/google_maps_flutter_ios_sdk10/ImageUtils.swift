@@ -63,6 +63,10 @@ extension PlatformBitmap {
         }
       }
     case let bitmap as PlatformBitmapBytesMap:
+      let cacheKey = BytesMapIconCacheKey(bitmap: bitmap, screenScale: screenScale)
+      if let cachedIcon = bytesMapIconCache.object(forKey: cacheKey) {
+        return cachedIcon
+      }
       let bytes = bitmap.byteData
       image = UIImage(data: bytes.data, scale: screenScale)
       if let currentImage = image {
@@ -80,6 +84,9 @@ extension PlatformBitmap {
           // No scaling, load image from bytes without scale parameter.
           image = UIImage(data: bytes.data)
         }
+      }
+      if let icon = image {
+        bytesMapIconCache.setObject(icon, forKey: cacheKey)
       }
     case let bitmap as PlatformBitmapPinConfig:
       let options = GMSPinImageOptions()
@@ -116,6 +123,56 @@ extension PlatformBitmap {
     }
 
     return image
+  }
+}
+
+/// Caches the icons created from `PlatformBitmapBytesMap` bitmaps, keyed by everything that
+/// affects the resulting image.
+///
+/// The Maps SDK allocates marker texture space per `UIImage` instance instead of per image content,
+/// so creating a new `UIImage` for every marker exhausts the SDK's texture atlases ("Reached the
+/// max number of texture atlases, can not allocate more."), after which markers are drawn with the
+/// contents of other markers. Sharing one instance between identical bitmaps avoids that, and is
+/// safe because `UIImage` is immutable.
+///
+/// `NSCache` is thread-safe, and releases its contents when the system is under memory pressure.
+private let bytesMapIconCache = NSCache<BytesMapIconCacheKey, UIImage>()
+
+/// Cache key for icons created from `PlatformBitmapBytesMap` bitmaps.
+///
+/// Covers every input of the icon, so that bitmaps that would produce different images never share
+/// one. The bytes are compared directly instead of hashed: every marker update looks up its icon,
+/// and hashing the full image each time is several times slower than comparing it.
+private final class BytesMapIconCacheKey: NSObject {
+  private let data: NSData
+  private let bitmapScaling: PlatformMapBitmapScaling
+  private let imagePixelRatio: Double
+  private let width: Double?
+  private let height: Double?
+  private let screenScale: CGFloat
+
+  init(bitmap: PlatformBitmapBytesMap, screenScale: CGFloat) {
+    data = bitmap.byteData.data as NSData
+    bitmapScaling = bitmap.bitmapScaling
+    imagePixelRatio = bitmap.imagePixelRatio
+    width = bitmap.width
+    height = bitmap.height
+    self.screenScale = screenScale
+  }
+
+  override func isEqual(_ object: Any?) -> Bool {
+    guard let other = object as? BytesMapIconCacheKey else {
+      return false
+    }
+    // Compare the cheap fields first, so that the bytes are only compared when everything else
+    // matches.
+    return bitmapScaling == other.bitmapScaling && imagePixelRatio == other.imagePixelRatio
+      && width == other.width && height == other.height && screenScale == other.screenScale
+      && data.isEqual(to: other.data as Data)
+  }
+
+  override var hash: Int {
+    data.hash
   }
 }
 
