@@ -11,3 +11,14 @@ tasks:
       "--exclude=script/configs/dart_unit_tests_exceptions.yaml",
       "--exclude=script/configs/dart_unit_tests_wasm_exceptions.yaml"
     ]
+    # Re-run tests with path-based dependencies to ensure that publishing
+    # the changes won't break web tests of other packages in the repository
+    # that depend on it (e.g., a native-only dependency that doesn't compile
+    # for web).
+  - name: Dart unit tests - web (wasm) - pathified
+    script: .ci/scripts/dart_unit_tests_pathified.sh
+    args: [
+      "--platform=chrome",
+      "--wasm",
+      "--exclude=script/configs/dart_unit_tests_wasm_exceptions.yaml"
+    ]
