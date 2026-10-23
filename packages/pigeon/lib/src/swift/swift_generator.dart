@@ -39,15 +39,9 @@ enum SwiftAccessLevel {
   /// Parses a [SwiftAccessLevel] from its enum [name], or returns `null` if
   /// [name] is `null` or does not match a known value.
   static SwiftAccessLevel? fromName(String? name) {
-    if (name == null) {
-      return null;
-    }
-    for (final SwiftAccessLevel value in SwiftAccessLevel.values) {
-      if (value.name == name) {
-        return value;
-      }
-    }
-    return null;
+    return SwiftAccessLevel.values
+        .where((SwiftAccessLevel value) => value.name == name)
+        .firstOrNull;
   }
 }
 
