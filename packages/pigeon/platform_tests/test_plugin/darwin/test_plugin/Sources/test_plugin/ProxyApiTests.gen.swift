@@ -472,8 +472,11 @@ open class ProxyApiTestsPigeonProxyApiRegistrar {
     }
 
     public func onDeinit(identifier: Int64) {
-      DispatchQueue.main.async { [api] in
-        api.removeStrongReference(identifier: identifier) { _ in }
+      // `api` is owned by `InstanceManager`, so it is only deallocated when the
+      // entire `InstanceManager` (and registrar/engine) is torn down, in which
+      // case Dart no longer needs to be notified.
+      DispatchQueue.main.async { [weak api] in
+        api?.removeStrongReference(identifier: identifier) { _ in }
       }
     }
   }
