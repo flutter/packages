@@ -271,7 +271,7 @@ you've added a new widget and it has a tooltip), follow these steps:
 
 ## Updating an existing string
 
-If you or someone contributing to the Flutter framework wants to modify an
+If you (someone contributing to the package) want to modify an
 existing string in the MaterialLocalizations or CupertinoLocalizations objects,
 follow these steps:
 
