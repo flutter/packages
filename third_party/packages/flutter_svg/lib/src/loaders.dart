@@ -408,8 +408,9 @@ class SvgNetworkLoader extends SvgLoader<Uint8List> {
 
   @override
   Future<Uint8List?> prepareMessage(BuildContext? context) async {
-    final http.Client client = _httpClient ?? http.Client();
+    // Parse first: a malformed URL then throws before a client exists to leak.
     final Uri uri = Uri.parse(url);
+    final http.Client client = _httpClient ?? http.Client();
     try {
       final http.Response response = await client.get(uri, headers: headers);
       if (response.statusCode < 200 || response.statusCode > 299) {
