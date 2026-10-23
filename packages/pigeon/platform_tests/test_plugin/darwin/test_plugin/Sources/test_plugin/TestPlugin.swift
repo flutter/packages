@@ -82,9 +82,11 @@ public class TestPlugin: NSObject, FlutterPlugin, HostIntegrationCoreApi,
     NativeInteropReservedNamesHostApiSetup.register(api: NativeInteropReservedNamesHostApiImpl())
   }
 
-  public func detachFromEngine(for registrar: FlutterPluginRegistrar) {
-    proxyApiRegistrar!.tearDown()
-    proxyApiRegistrar = nil
+  nonisolated public func detachFromEngine(for registrar: FlutterPluginRegistrar) {
+    MainActor.assumeIsolated {
+      proxyApiRegistrar!.tearDown()
+      proxyApiRegistrar = nil
+    }
   }
 
   // MARK: HostCallbackCoreApi implementation
