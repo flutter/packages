@@ -175,7 +175,7 @@ targets: [
     name: "test_plugin",
     dependencies: ["test_plugin_objc_gen"]
   ),
-]
+],
 ```
 
 #### Standalone Applications & Example Apps

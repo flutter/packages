@@ -2564,7 +2564,7 @@ private class _PigeonFfiCodec {
 }
 
 class NativeInteropHostIntegrationCoreApiInstanceTracker {
-  static var instancesOfNativeInteropHostIntegrationCoreApi = [
+  nonisolated(unsafe) static var instancesOfNativeInteropHostIntegrationCoreApi = [
     String: NativeInteropHostIntegrationCoreApiSetup?
   ]()
 }
@@ -7867,7 +7867,7 @@ protocol NativeInteropHostIntegrationCoreApi {
 }
 
 @objc class NativeInteropFlutterIntegrationCoreApiRegistrar: NSObject {
-  static var registeredNativeInteropFlutterIntegrationCoreApi = [
+  nonisolated(unsafe) static var registeredNativeInteropFlutterIntegrationCoreApi = [
     String: NativeInteropFlutterIntegrationCoreApi
   ]()
 
@@ -9199,7 +9199,7 @@ class NativeInteropFlutterIntegrationCoreApi {
   }
 }
 class NativeInteropReservedNamesHostApiInstanceTracker {
-  static var instancesOfNativeInteropReservedNamesHostApi = [
+  nonisolated(unsafe) static var instancesOfNativeInteropReservedNamesHostApi = [
     String: NativeInteropReservedNamesHostApiSetup?
   ]()
 }
@@ -9552,7 +9552,7 @@ protocol NativeInteropReservedNamesHostApi {
 }
 
 @objc class NativeInteropReservedNamesFlutterApiRegistrar: NSObject {
-  static var registeredNativeInteropReservedNamesFlutterApi = [
+  nonisolated(unsafe) static var registeredNativeInteropReservedNamesFlutterApi = [
     String: NativeInteropReservedNamesFlutterApi
   ]()
 

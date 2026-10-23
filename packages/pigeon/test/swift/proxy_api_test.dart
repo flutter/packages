@@ -114,7 +114,7 @@ void main() {
       expect(
         collapsedCode,
         contains(
-          r'func pigeonNewInstance(pigeonInstance: MyLibraryApi, completion: @escaping (Result<Void, PigeonError>) -> Void) ',
+          r'func pigeonNewInstance(pigeonInstance: MyLibraryApi, completion: @escaping @Sendable @MainActor (Result<Void, PigeonError>) -> Void) ',
         ),
       );
 
@@ -144,7 +144,7 @@ void main() {
       expect(
         code,
         contains(
-          'func doSomethingElse(pigeonInstance pigeonInstanceArg: MyLibraryApi, input inputArg: Input, completion: @escaping (Result<String, PigeonError>) -> Void)',
+          'func doSomethingElse(pigeonInstance pigeonInstanceArg: MyLibraryApi, input inputArg: Input, completion: @escaping @Sendable @MainActor (Result<String, PigeonError>) -> Void)',
         ),
       );
     });
@@ -665,7 +665,7 @@ void main() {
           contains(
             'func name(pigeonApi: '
             'PigeonApiApi, validType: Int64, enumType: AnEnum, proxyApiType: Api2, nullableValidType: Int64?, nullableEnumType: AnEnum?, '
-            'nullableProxyApiType: Api2?) throws -> Api func validType(pigeonApi: PigeonApiApi, pigeonInstance: Api) throws -> Int64 ',
+            'nullableProxyApiType: Api2?) throws -> Api @MainActor func validType(pigeonApi: PigeonApiApi, pigeonInstance: Api) throws -> Int64 ',
           ),
         );
         expect(
@@ -1021,7 +1021,7 @@ void main() {
             'func doSomething(pigeonInstance pigeonInstanceArg: Api, validType validTypeArg: Int64, enumType '
             'enumTypeArg: AnEnum, proxyApiType proxyApiTypeArg: Api2, nullableValidType nullableValidTypeArg: Int64?, nullableEnumType '
             'nullableEnumTypeArg: AnEnum?, nullableProxyApiType nullableProxyApiTypeArg: Api2?, '
-            'completion: @escaping (Result<Void, PigeonError>) -> Void)',
+            'completion: @escaping @Sendable @MainActor (Result<Void, PigeonError>) -> Void)',
           ),
         );
         expect(
@@ -1032,6 +1032,150 @@ void main() {
             r'nullableEnumTypeArg, nullableProxyApiTypeArg] as [Any?])',
           ),
         );
+      });
+    });
+
+    group('Swift strict concurrency', () {
+      test('adds @MainActor to delegate and flutter methods', () {
+        final root = Root(
+          apis: <Api>[
+            AstProxyApi(
+              name: 'Api',
+              constructors: <Constructor>[
+                Constructor(name: 'aConstructor', parameters: <Parameter>[]),
+              ],
+              fields: <ApiField>[
+                ApiField(
+                  name: 'aField',
+                  type: const TypeDeclaration(isNullable: false, baseName: 'int'),
+                ),
+              ],
+              methods: <Method>[
+                Method(
+                  name: 'doHostWork',
+                  location: ApiLocation.host,
+                  returnType: const TypeDeclaration.voidDeclaration(),
+                  parameters: <Parameter>[],
+                ),
+                Method(
+                  name: 'doFlutterWork',
+                  location: ApiLocation.flutter,
+                  isRequired: false,
+                  returnType: const TypeDeclaration.voidDeclaration(),
+                  parameters: <Parameter>[],
+                ),
+              ],
+            ),
+          ],
+          classes: <Class>[],
+          enums: <Enum>[],
+        );
+
+        final sink = StringBuffer();
+        const generator = SwiftGenerator();
+        generator.generate(
+          const InternalSwiftOptions(swiftOut: ''),
+          root,
+          sink,
+          dartPackageName: DEFAULT_PACKAGE_NAME,
+        );
+
+        final code = sink.toString();
+        expect(
+          code,
+          contains(
+            '@MainActor func aConstructor(pigeonApi: PigeonApiApi, aField: Int64) throws -> Api',
+          ),
+        );
+        expect(
+          code,
+          contains(
+            '@MainActor func aField(pigeonApi: PigeonApiApi, pigeonInstance: Api) throws -> Int64',
+          ),
+        );
+        expect(
+          code,
+          contains(
+            '@MainActor func doHostWork(pigeonApi: PigeonApiApi, pigeonInstance: Api) throws',
+          ),
+        );
+        expect(
+          code,
+          contains(
+            '@MainActor func doFlutterWork(pigeonInstance pigeonInstanceArg: Api, completion: @escaping @Sendable @MainActor (Result<Void, PigeonError>) -> Void)',
+          ),
+        );
+        expect(
+          code,
+          contains(
+            '@MainActor func pigeonNewInstance(pigeonInstance: Api, completion: @escaping @Sendable @MainActor (Result<Void, PigeonError>) -> Void)',
+          ),
+        );
+      });
+
+      Root rootWithAsyncHostMethod() {
+        return Root(
+          apis: <Api>[
+            AstProxyApi(
+              name: 'Api',
+              constructors: <Constructor>[],
+              fields: <ApiField>[],
+              methods: <Method>[
+                Method(
+                  name: 'doAsyncHostWork',
+                  location: ApiLocation.host,
+                  isAsynchronous: true,
+                  returnType: const TypeDeclaration.voidDeclaration(),
+                  parameters: <Parameter>[],
+                ),
+              ],
+            ),
+          ],
+          classes: <Class>[],
+          enums: <Enum>[],
+        );
+      }
+
+      test('async host method handlers box FlutterReply and reply on the main thread', () {
+        final sink = StringBuffer();
+        const generator = SwiftGenerator();
+        generator.generate(
+          const InternalSwiftOptions(swiftOut: ''),
+          rootWithAsyncHostMethod(),
+          sink,
+          dartPackageName: DEFAULT_PACKAGE_NAME,
+        );
+
+        final code = sink.toString();
+        expect(code, contains('private struct PigeonInternalSendableReply: @unchecked Sendable {'));
+        expect(code, contains('func onMainThread(_ result: Any?) {'));
+        // Only the async ProxyApi handler is boxed; the synchronous
+        // InstanceManager handlers call `reply` directly.
+        expect(
+          RegExp(r'let reply = PigeonInternalSendableReply\(reply\)').allMatches(code).length,
+          1,
+        );
+        // The completion can be called from any thread, but encoding a
+        // ProxyApi result may need to send a new instance to Dart first.
+        expect(code, contains('reply.onMainThread(wrapResult(nil))'));
+        expect(code, contains('reply.onMainThread(wrapError(error))'));
+        expect(code, isNot(contains('@Sendable (Any?) -> Void')));
+      });
+
+      test('async host method handlers reply directly when strictConcurrency is false', () {
+        final sink = StringBuffer();
+        const generator = SwiftGenerator();
+        generator.generate(
+          const InternalSwiftOptions(swiftOut: '', strictConcurrency: false),
+          rootWithAsyncHostMethod(),
+          sink,
+          dartPackageName: DEFAULT_PACKAGE_NAME,
+        );
+
+        final code = sink.toString();
+        expect(code, contains('reply(wrapResult(nil))'));
+        expect(code, isNot(contains('PigeonInternalSendableReply')));
+        expect(code, isNot(contains('onMainThread')));
       });
     });
   });

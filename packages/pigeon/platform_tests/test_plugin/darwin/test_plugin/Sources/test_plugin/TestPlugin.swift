@@ -5,21 +5,23 @@
 import Foundation
 
 #if os(iOS)
-  import Flutter
+  @preconcurrency import Flutter
 #elseif os(macOS)
-  import FlutterMacOS
+  @preconcurrency import FlutterMacOS
 #endif
 
 /// Helper to adapt callback-based Flutter API calls into Swift async/await,
 /// allowing integration tests and host handlers to `await` Flutter API calls.
+@MainActor
 private func awaitFlutterApi<T>(
-  _ block: @escaping (@escaping (Result<T, PigeonError>) -> Void) -> Void
+  _ block: @escaping (@escaping @Sendable @MainActor (Result<T, PigeonError>) -> Void) -> Void
 ) async throws -> T {
   try await withCheckedThrowingContinuation { continuation in
     block { result in
       switch result {
       case .success(let value):
-        continuation.resume(returning: value)
+        nonisolated(unsafe) let sendableValue = value
+        continuation.resume(returning: sendableValue)
       case .failure(let error):
         continuation.resume(throwing: error)
       }
@@ -29,26 +31,32 @@ private func awaitFlutterApi<T>(
 
 /// This plugin handles the native side of the integration tests in
 /// example/integration_test/.
-public class TestPlugin: NSObject, FlutterPlugin, HostIntegrationCoreApi, HostCallbackCoreApi {
+@MainActor
+public class TestPlugin: NSObject, FlutterPlugin, HostIntegrationCoreApi,
+  HostCallbackCoreApi
+{
   var flutterAPI: FlutterIntegrationCoreApi
   var flutterCallbackAPI: FlutterCallbackCoreApi
   var flutterSmallApiOne: FlutterSmallApi
   var flutterSmallApiTwo: FlutterSmallApi
   var proxyApiRegistrar: ProxyApiTestsPigeonProxyApiRegistrar?
 
-  public static func register(with registrar: FlutterPluginRegistrar) {
-    // Workaround for https://github.com/flutter/flutter/issues/118103.
-    #if os(iOS)
-      let messenger = registrar.messenger()
-    #else
-      let messenger = registrar.messenger
-    #endif
-    let plugin = TestPlugin(binaryMessenger: messenger)
-    HostIntegrationCoreApiSetup.setUp(binaryMessenger: messenger, api: plugin)
-    HostCallbackCoreApiSetup.setUp(binaryMessenger: messenger, api: plugin)
-    TestPluginWithSuffix.register(with: registrar, suffix: "suffixOne")
-    TestPluginWithSuffix.register(with: registrar, suffix: "suffixTwo")
-    registrar.publish(plugin)
+  nonisolated public static func register(with registrar: FlutterPluginRegistrar) {
+    nonisolated(unsafe) let registrar = registrar
+    MainActor.assumeIsolated {
+      // Workaround for https://github.com/flutter/flutter/issues/118103.
+      #if os(iOS)
+        let messenger = registrar.messenger()
+      #else
+        let messenger = registrar.messenger
+      #endif
+      let plugin = TestPlugin(binaryMessenger: messenger)
+      HostIntegrationCoreApiSetup.setUp(binaryMessenger: messenger, api: plugin)
+      HostCallbackCoreApiSetup.setUp(binaryMessenger: messenger, api: plugin)
+      TestPluginWithSuffix.register(with: registrar, suffix: "suffixOne")
+      TestPluginWithSuffix.register(with: registrar, suffix: "suffixTwo")
+      registrar.publish(plugin)
+    }
   }
 
   init(binaryMessenger: FlutterBinaryMessenger) {
@@ -74,9 +82,11 @@ public class TestPlugin: NSObject, FlutterPlugin, HostIntegrationCoreApi, HostCa
     NativeInteropReservedNamesHostApiSetup.register(api: NativeInteropReservedNamesHostApiImpl())
   }
 
-  public func detachFromEngine(for registrar: FlutterPluginRegistrar) {
-    proxyApiRegistrar!.tearDown()
-    proxyApiRegistrar = nil
+  nonisolated public func detachFromEngine(for registrar: FlutterPluginRegistrar) {
+    MainActor.assumeIsolated {
+      proxyApiRegistrar!.tearDown()
+      proxyApiRegistrar = nil
+    }
   }
 
   // MARK: HostCallbackCoreApi implementation
@@ -105,8 +115,9 @@ public class TestPlugin: NSObject, FlutterPlugin, HostIntegrationCoreApi, HostCa
     completion(.failure(PigeonError(code: "code", message: "message", details: "details")))
   }
 
-  func taskQueueIsBackgroundThread(completion: @escaping (Result<Bool, Error>) -> Void) {
-    completion(.success(!Thread.isMainThread))
+  nonisolated func taskQueueIsBackgroundThread(completion: @escaping (Result<Bool, Error>) -> Void)
+  {
+    completion(.success(!TestPlugin.isCurrentThreadMain()))
   }
 
   // MARK: HostIntegrationCoreApi implementation
@@ -561,16 +572,20 @@ public class TestPlugin: NSObject, FlutterPlugin, HostIntegrationCoreApi, HostCa
     return anotherEnum
   }
 
+  private nonisolated static func isCurrentThreadMain() -> Bool {
+    Thread.isMainThread
+  }
+
   func defaultIsMainThread() -> Bool {
-    return Thread.isMainThread
+    return TestPlugin.isCurrentThreadMain()
   }
 
-  func taskQueueIsBackgroundThread() -> Bool {
-    return !Thread.isMainThread
+  nonisolated func taskQueueIsBackgroundThread() -> Bool {
+    return !TestPlugin.isCurrentThreadMain()
   }
 
-  func asyncTaskQueueIsBackgroundThread() async throws -> Bool {
-    return !Thread.isMainThread
+  nonisolated func asyncTaskQueueIsBackgroundThread() async throws -> Bool {
+    return !TestPlugin.isCurrentThreadMain()
   }
 
   func callFlutterNoop() async throws {
@@ -827,13 +842,12 @@ public class TestPlugin: NSObject, FlutterPlugin, HostIntegrationCoreApi, HostCa
     try await awaitFlutterApi { self.flutterCallbackAPI.throwErrorFromVoid(completion: $0) }
   }
 
-  @MainActor
   func callFlutterIsAsyncFlutterApiOnRoot() async throws -> Bool {
-    guard Thread.isMainThread else {
+    guard TestPlugin.isCurrentThreadMain() else {
       return false
     }
     let result = try await self.flutterAPI.isAsyncFlutterApiOnRoot()
-    guard Thread.isMainThread else {
+    guard TestPlugin.isCurrentThreadMain() else {
       return false
     }
     return result
@@ -2181,6 +2195,7 @@ class NativeInteropReservedNamesHostApiImpl: NativeInteropReservedNamesHostApi {
   }
 }
 
+@MainActor
 public class TestPluginWithSuffix: HostSmallApi {
   public static func register(with registrar: FlutterPluginRegistrar, suffix: String) {
     // Workaround for https://github.com/flutter/flutter/issues/118103.
@@ -2207,7 +2222,7 @@ class SendInts: StreamIntsStreamHandler {
   var timer: Timer?
 
   override func onListen(withArguments arguments: Any?, sink: PigeonEventSink<Int64>) {
-    var count: Int64 = 0
+    nonisolated(unsafe) var count: Int64 = 0
     if !timerActive {
       timerActive = true
       timer = Timer.scheduledTimer(withTimeInterval: 0.01, repeats: true) { _ in
@@ -2240,7 +2255,7 @@ class SendEvents: StreamEventsStreamHandler {
     ]
 
   override func onListen(withArguments arguments: Any?, sink: PigeonEventSink<PlatformEvent>) {
-    var count = 0
+    nonisolated(unsafe) var count = 0
     if !timerActive {
       timerActive = true
       timer = Timer.scheduledTimer(withTimeInterval: 0.01, repeats: true) { _ in
@@ -2268,7 +2283,7 @@ class SendConsistentNumbers: StreamConsistentNumbersStreamHandler {
 
   override func onListen(withArguments arguments: Any?, sink: PigeonEventSink<Int64>) {
     let numberThatWillBeSent: Int64 = numberToSend
-    var count: Int64 = 0
+    nonisolated(unsafe) var count: Int64 = 0
     if !timerActive {
       timerActive = true
       timer = Timer.scheduledTimer(withTimeInterval: 0.01, repeats: true) { _ in

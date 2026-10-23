@@ -1,3 +1,8 @@
+## 30.0.0
+
+* **Breaking Change** [swift] Adds Swift strict concurrency annotations to platform-channel-based APIs by default.
+  * Set `SwiftOptions.strictConcurrency` to `false` (or pass `--no-swift_strict_concurrency`) to opt out.
+
 ## 29.0.11
 
 * [swift] Warns after FFI code generation if the `objective_c` version constraint in `pubspec.yaml` does not match the generated `ObjCVersionCheck`.

@@ -16,7 +16,7 @@ For usage examples, see the [Example README](./example/README.md).
 
 Currently pigeon supports generating:
 * Kotlin and Java code for Android
-* Swift and Objective-C code for iOS and macOS
+* Swift (requires Swift compiler >= 5.10) and Objective-C code for iOS and macOS
 * C++ code for Windows
 * GObject code for Linux
 
@@ -95,6 +95,16 @@ the threading model for handling HostApi methods can be selected with the
 `TaskQueue` annotation.
 
 > **Note**: `TaskQueue` is only supported with platform channels. Native Interop (FFI/JNI) calls execute directly on the caller's thread; specifying `@TaskQueue` with Native Interop will result in a code generation error.
+
+### Swift Concurrency
+
+By default, Pigeon generates Swift code with strict concurrency annotations (such as `@MainActor` and `@Sendable`), controlled by `SwiftOptions(strictConcurrency: true)`.
+
+This flag does not instruct Pigeon to emit `Sendable` conformance on generated data classes or structs. The Swift compiler can automatically infer `Sendable` conformance for structs whose stored properties are all `Sendable`. In the case where the compiler cannot prove a generated struct or class is `Sendable` (for example, if it contains an `Object?` (`Any?`) field or uses `@SwiftClass`), you can use an extension to declare that the Pigeon-generated data class or struct is `Sendable`:
+
+```swift
+extension MyDataClass: @unchecked Sendable {}
+```
 
 ### Multi-Instance Support
 
