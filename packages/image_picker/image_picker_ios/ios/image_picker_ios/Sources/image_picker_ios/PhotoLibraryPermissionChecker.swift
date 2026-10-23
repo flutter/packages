@@ -10,6 +10,9 @@ import Photos
 protocol PhotoLibraryPermissionChecking {
   func authorizationStatus() -> PHAuthorizationStatus
   func requestAuthorization(_ handler: @escaping (PHAuthorizationStatus) -> Void)
+  func authorizationStatus(for accessLevel: PHAccessLevel) -> PHAuthorizationStatus
+  func requestAuthorization(
+    for accessLevel: PHAccessLevel, handler: @escaping (PHAuthorizationStatus) -> Void)
 }
 
 /// Production implementation that forwards to PHPhotoLibrary.
@@ -20,5 +23,15 @@ struct DefaultPhotoLibraryPermissionChecker: PhotoLibraryPermissionChecking {
 
   func requestAuthorization(_ handler: @escaping (PHAuthorizationStatus) -> Void) {
     PHPhotoLibrary.requestAuthorization(handler)
+  }
+
+  func authorizationStatus(for accessLevel: PHAccessLevel) -> PHAuthorizationStatus {
+    PHPhotoLibrary.authorizationStatus(for: accessLevel)
+  }
+
+  func requestAuthorization(
+    for accessLevel: PHAccessLevel, handler: @escaping (PHAuthorizationStatus) -> Void
+  ) {
+    PHPhotoLibrary.requestAuthorization(for: accessLevel, handler: handler)
   }
 }

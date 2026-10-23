@@ -1,3 +1,7 @@
+## 0.8.14
+
+* Adds support for `getRecentMedia`.
+
 ## 0.8.13+13
 
 * Splits the iOS implementation into mixed-language Swift Package Manager targets.

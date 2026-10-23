@@ -35,9 +35,22 @@ typedef NS_ENUM(NSUInteger, FLTSourceType) {
 - (instancetype)initWithValue:(FLTSourceType)value;
 @end
 
+typedef NS_ENUM(NSUInteger, FLTRecentMediaKind) {
+  FLTRecentMediaKindImage = 0,
+  FLTRecentMediaKindVideo = 1,
+};
+
+/// Wrapper for FLTRecentMediaKind to allow for nullability.
+@interface FLTRecentMediaKindBox : NSObject
+@property(nonatomic, assign) FLTRecentMediaKind value;
+- (instancetype)initWithValue:(FLTRecentMediaKind)value;
+@end
+
 @class FLTMaxSize;
 @class FLTMediaSelectionOptions;
 @class FLTSourceSpecification;
+@class FLTRecentMediaRequest;
+@class FLTRecentMediaItem;
 
 @interface FLTMaxSize : NSObject
 + (instancetype)makeWithWidth:(nullable NSNumber *)width height:(nullable NSNumber *)height;
@@ -68,6 +81,38 @@ typedef NS_ENUM(NSUInteger, FLTSourceType) {
 @property(nonatomic, assign) FLTSourceCamera camera;
 @end
 
+/// Options for retrieving recent media.
+@interface FLTRecentMediaRequest : NSObject
+/// `init` unavailable to enforce nonnull fields, see the `make` class method.
+- (instancetype)init NS_UNAVAILABLE;
++ (instancetype)makeWithLimit:(NSInteger)limit
+                includeImages:(BOOL)includeImages
+                includeVideos:(BOOL)includeVideos
+                        width:(NSInteger)width
+                       height:(NSInteger)height;
+/// The maximum number of items to return.
+@property(nonatomic, assign) NSInteger limit;
+/// Whether to include images.
+@property(nonatomic, assign) BOOL includeImages;
+/// Whether to include videos.
+@property(nonatomic, assign) BOOL includeVideos;
+/// The target width of each thumbnail, in pixels.
+@property(nonatomic, assign) NSInteger width;
+/// The target height of each thumbnail, in pixels.
+@property(nonatomic, assign) NSInteger height;
+@end
+
+/// A thumbnail of a recent item from the photo library.
+@interface FLTRecentMediaItem : NSObject
+/// `init` unavailable to enforce nonnull fields, see the `make` class method.
+- (instancetype)init NS_UNAVAILABLE;
++ (instancetype)makeWithPath:(NSString *)path kind:(FLTRecentMediaKind)kind;
+/// The path to the JPEG thumbnail.
+@property(nonatomic, copy) NSString *path;
+/// The type of the original item.
+@property(nonatomic, assign) FLTRecentMediaKind kind;
+@end
+
 /// The codec used by all APIs.
 NSObject<FlutterMessageCodec> *FLTGetMessagesCodec(void);
 
@@ -94,6 +139,10 @@ NSObject<FlutterMessageCodec> *FLTGetMessagesCodec(void);
 - (void)pickMediaWithMediaSelectionOptions:(FLTMediaSelectionOptions *)mediaSelectionOptions
                                 completion:(void (^)(NSArray<NSString *> *_Nullable,
                                                      FlutterError *_Nullable))completion;
+/// Returns thumbnails of the most recent items in the photo library.
+- (void)getRecentMediaWithRequest:(FLTRecentMediaRequest *)request
+                       completion:(void (^)(NSArray<FLTRecentMediaItem *> *_Nullable,
+                                            FlutterError *_Nullable))completion;
 @end
 
 extern void SetUpFLTImagePickerApi(id<FlutterBinaryMessenger> binaryMessenger,

@@ -138,6 +138,18 @@ final class FakePhotoLibraryPermissionChecker: NSObject, PhotoLibraryPermissionC
     requestAuthorizationCallCount += 1
     handler(requestAuthorizationResult ?? status)
   }
+
+  func authorizationStatus(for accessLevel: PHAccessLevel) -> PHAuthorizationStatus {
+    authorizationStatusCallCount += 1
+    return status
+  }
+
+  func requestAuthorization(
+    for accessLevel: PHAccessLevel, handler: @escaping (PHAuthorizationStatus) -> Void
+  ) {
+    requestAuthorizationCallCount += 1
+    handler(requestAuthorizationResult ?? status)
+  }
 }
 
 /// A `PickerItem` stand-in that does not require constructing a `PHPickerResult`.
@@ -263,5 +275,56 @@ final class MovieItemProvider: NSItemProvider {
   ) -> Progress {
     completionHandler(movieURL, loadError)
     return Progress()
+  }
+}
+
+/// A `PHAsset` with fixed values, since real assets can only come from a fetch.
+final class FakeAsset: PHAsset {
+  private let fakeLocalIdentifier: String
+  private let fakeMediaType: PHAssetMediaType
+  private let fakeModificationDate: Date?
+
+  init(localIdentifier: String, mediaType: PHAssetMediaType, modificationDate: Date? = nil) {
+    fakeLocalIdentifier = localIdentifier
+    fakeMediaType = mediaType
+    fakeModificationDate = modificationDate
+    super.init()
+  }
+
+  override var localIdentifier: String { fakeLocalIdentifier }
+  override var mediaType: PHAssetMediaType { fakeMediaType }
+  override var modificationDate: Date? { fakeModificationDate }
+}
+
+/// Returns fixed assets and records the fetch options.
+final class FakeRecentAssetsFetcher: NSObject, RecentAssetsFetching {
+  private(set) var lastOptions: PHFetchOptions?
+  var assets: [PHAsset] = []
+
+  func fetchAssets(options: PHFetchOptions) -> [PHAsset] {
+    lastOptions = options
+    return assets
+  }
+}
+
+/// Returns thumbnails keyed by asset local identifier and records the requests.
+final class FakeThumbnailRequester: NSObject, ThumbnailRequesting {
+  private(set) var requestedAssets: [PHAsset] = []
+  private(set) var lastTargetSize: CGSize?
+  private(set) var lastContentMode: PHImageContentMode?
+  private(set) var lastOptions: PHImageRequestOptions?
+  /// Assets without an entry get a nil image.
+  var images: [String: UIImage] = [:]
+
+  func requestImage(
+    for asset: PHAsset, targetSize: CGSize, contentMode: PHImageContentMode,
+    options: PHImageRequestOptions?,
+    resultHandler: @escaping (UIImage?, [AnyHashable: Any]?) -> Void
+  ) {
+    requestedAssets.append(asset)
+    lastTargetSize = targetSize
+    lastContentMode = contentMode
+    lastOptions = options
+    resultHandler(images[asset.localIdentifier], nil)
   }
 }

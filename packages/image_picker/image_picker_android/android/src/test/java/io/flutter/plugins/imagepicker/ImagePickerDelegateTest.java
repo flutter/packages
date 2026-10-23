@@ -9,6 +9,7 @@ import static org.hamcrest.core.IsEqual.equalTo;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.AdditionalMatchers.aryEq;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -18,6 +19,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 
 import android.Manifest;
@@ -32,6 +34,7 @@ import androidx.annotation.Nullable;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import kotlin.Result;
@@ -66,6 +69,20 @@ public class ImagePickerDelegateTest {
       new VideoSelectionOptions(null);
   private static final MediaSelectionOptions DEFAULT_MEDIA_OPTIONS =
       new MediaSelectionOptions(DEFAULT_IMAGE_OPTIONS);
+  private static final RecentMediaRequest RECENT_IMAGES_AND_VIDEOS_REQUEST =
+      new RecentMediaRequest(
+          /* limit */ 1L,
+          /* includeImages */ true,
+          /* includeVideos */ true,
+          /* width */ 256L,
+          /* height */ 256L);
+  private static final RecentMediaRequest RECENT_IMAGES_REQUEST =
+      new RecentMediaRequest(
+          /* limit */ 1L,
+          /* includeImages */ true,
+          /* includeVideos */ false,
+          /* width */ 256L,
+          /* height */ 256L);
 
   @Mock Activity mockActivity;
   @Mock ImageResizer mockImageResizer;
@@ -74,6 +91,7 @@ public class ImagePickerDelegateTest {
   @Mock Intent mockIntent;
   @Mock ImagePickerCache cache;
   @Mock ExecutorService mockExecutor;
+  @Mock RecentMediaLoader mockRecentMediaLoader;
 
   ImagePickerDelegate.FileUriResolver mockFileUriResolver;
   MockedStatic<File> mockStaticFile;
@@ -1062,6 +1080,312 @@ public class ImagePickerDelegateTest {
     assertTrue(callbackCalled[0]);
   }
 
+  @Test
+  @Config(sdk = 28)
+  public void getRecentMedia_onApi28_requestsReadExternalStorage() {
+    ImagePickerDelegate delegate = createDelegate();
+
+    delegate.getRecentMedia(RECENT_IMAGES_AND_VIDEOS_REQUEST, (result) -> null);
+
+    verify(mockPermissionManager)
+        .askForPermissions(
+            aryEq(new String[] {Manifest.permission.READ_EXTERNAL_STORAGE}),
+            eq(ImagePickerDelegate.REQUEST_RECENT_MEDIA_PERMISSION));
+    verifyNoInteractions(mockRecentMediaLoader);
+  }
+
+  @Test
+  @Config(sdk = 33)
+  public void getRecentMedia_onApi33_requestsMediaPermissionsForRequestedTypes() {
+    ImagePickerDelegate delegate = createDelegate();
+
+    delegate.getRecentMedia(RECENT_IMAGES_REQUEST, (result) -> null);
+
+    verify(mockPermissionManager)
+        .askForPermissions(
+            aryEq(new String[] {Manifest.permission.READ_MEDIA_IMAGES}),
+            eq(ImagePickerDelegate.REQUEST_RECENT_MEDIA_PERMISSION));
+  }
+
+  @Test
+  @Config(sdk = 33)
+  public void getRecentMedia_onApi33_requestsImageAndVideoPermissions() {
+    ImagePickerDelegate delegate = createDelegate();
+
+    delegate.getRecentMedia(RECENT_IMAGES_AND_VIDEOS_REQUEST, (result) -> null);
+
+    verify(mockPermissionManager)
+        .askForPermissions(
+            aryEq(
+                new String[] {
+                  Manifest.permission.READ_MEDIA_IMAGES, Manifest.permission.READ_MEDIA_VIDEO
+                }),
+            eq(ImagePickerDelegate.REQUEST_RECENT_MEDIA_PERMISSION));
+  }
+
+  @Test
+  @Config(sdk = 34)
+  public void getRecentMedia_onApi34_alsoRequestsUserSelectedPermission() {
+    ImagePickerDelegate delegate = createDelegate();
+
+    delegate.getRecentMedia(RECENT_IMAGES_AND_VIDEOS_REQUEST, (result) -> null);
+
+    verify(mockPermissionManager)
+        .askForPermissions(
+            aryEq(
+                new String[] {
+                  Manifest.permission.READ_MEDIA_IMAGES,
+                  Manifest.permission.READ_MEDIA_VIDEO,
+                  Manifest.permission.READ_MEDIA_VISUAL_USER_SELECTED
+                }),
+            eq(ImagePickerDelegate.REQUEST_RECENT_MEDIA_PERMISSION));
+  }
+
+  @Test
+  @Config(sdk = 34)
+  public void getRecentMedia_whenPermissionsGranted_loadsWithoutRequesting() {
+    setUpSynchronousExecutor();
+    List<RecentMediaItem> items =
+        Collections.singletonList(new RecentMediaItem("/thumb.jpg", RecentMediaKind.IMAGE));
+    when(mockPermissionManager.isPermissionGranted(Manifest.permission.READ_MEDIA_IMAGES))
+        .thenReturn(true);
+    when(mockPermissionManager.isPermissionGranted(Manifest.permission.READ_MEDIA_VIDEO))
+        .thenReturn(true);
+    when(mockRecentMediaLoader.load(RECENT_IMAGES_AND_VIDEOS_REQUEST)).thenReturn(items);
+    final Boolean[] callbackCalled = new Boolean[1];
+    ImagePickerDelegate delegate = createDelegate();
+
+    delegate.getRecentMedia(
+        RECENT_IMAGES_AND_VIDEOS_REQUEST,
+        ResultCompat.asCompatCallback(
+            reply -> {
+              callbackCalled[0] = true;
+              assertEquals(items, reply.getOrNull());
+              return null;
+            }));
+
+    assertTrue(callbackCalled[0]);
+    verify(mockPermissionManager, never()).askForPermissions(any(), anyInt());
+  }
+
+  @Test
+  @Config(sdk = 33)
+  public void getRecentMedia_whenOnlySomeTypesGranted_requestsAndLoadsGrantedTypes() {
+    setUpSynchronousExecutor();
+    when(mockPermissionManager.isPermissionGranted(Manifest.permission.READ_MEDIA_IMAGES))
+        .thenReturn(true);
+    when(mockRecentMediaLoader.load(RECENT_IMAGES_AND_VIDEOS_REQUEST))
+        .thenReturn(new ArrayList<>());
+    final Boolean[] callbackCalled = new Boolean[1];
+    ImagePickerDelegate delegate = createDelegate();
+
+    delegate.getRecentMedia(
+        RECENT_IMAGES_AND_VIDEOS_REQUEST,
+        ResultCompat.asCompatCallback(
+            reply -> {
+              callbackCalled[0] = true;
+              assertTrue(reply.isSuccess());
+              return null;
+            }));
+    verify(mockPermissionManager)
+        .askForPermissions(any(), eq(ImagePickerDelegate.REQUEST_RECENT_MEDIA_PERMISSION));
+
+    delegate.onRequestPermissionsResult(
+        ImagePickerDelegate.REQUEST_RECENT_MEDIA_PERMISSION,
+        new String[] {Manifest.permission.READ_MEDIA_VIDEO},
+        new int[] {PackageManager.PERMISSION_DENIED});
+
+    assertTrue(callbackCalled[0]);
+    verify(mockRecentMediaLoader).load(RECENT_IMAGES_AND_VIDEOS_REQUEST);
+  }
+
+  @Test
+  @Config(sdk = 34)
+  public void cancelPendingRecentMediaCall_finishesPendingCallWithEmptyList() {
+    final Boolean[] callbackCalled = new Boolean[1];
+    ImagePickerDelegate delegate = createDelegate();
+    delegate.getRecentMedia(
+        RECENT_IMAGES_AND_VIDEOS_REQUEST,
+        ResultCompat.asCompatCallback(
+            reply -> {
+              callbackCalled[0] = true;
+              assertTrue(reply.getOrNull().isEmpty());
+              return null;
+            }));
+
+    delegate.cancelPendingRecentMediaCall();
+
+    assertTrue(callbackCalled[0]);
+    verifyNoInteractions(mockRecentMediaLoader);
+  }
+
+  @Test
+  @Config(sdk = 34)
+  public void getRecentMedia_whenOnlyUserSelectedAccessGranted_loadsWithoutRequesting() {
+    setUpSynchronousExecutor();
+    when(mockPermissionManager.isPermissionGranted(
+            Manifest.permission.READ_MEDIA_VISUAL_USER_SELECTED))
+        .thenReturn(true);
+    when(mockRecentMediaLoader.load(RECENT_IMAGES_AND_VIDEOS_REQUEST))
+        .thenReturn(new ArrayList<>());
+    ImagePickerDelegate delegate = createDelegate();
+
+    delegate.getRecentMedia(RECENT_IMAGES_AND_VIDEOS_REQUEST, (result) -> null);
+
+    verify(mockRecentMediaLoader).load(RECENT_IMAGES_AND_VIDEOS_REQUEST);
+    verify(mockPermissionManager, never()).askForPermissions(any(), anyInt());
+  }
+
+  @Test
+  @Config(sdk = 34)
+  public void getRecentMedia_whenPermissionDenied_finishesWithEmptyList() {
+    final Boolean[] callbackCalled = new Boolean[1];
+    ImagePickerDelegate delegate = createDelegate();
+    delegate.getRecentMedia(
+        RECENT_IMAGES_AND_VIDEOS_REQUEST,
+        ResultCompat.asCompatCallback(
+            reply -> {
+              callbackCalled[0] = true;
+              assertTrue(reply.isSuccess());
+              assertTrue(reply.getOrNull().isEmpty());
+              return null;
+            }));
+
+    delegate.onRequestPermissionsResult(
+        ImagePickerDelegate.REQUEST_RECENT_MEDIA_PERMISSION,
+        new String[] {
+          Manifest.permission.READ_MEDIA_IMAGES,
+          Manifest.permission.READ_MEDIA_VIDEO,
+          Manifest.permission.READ_MEDIA_VISUAL_USER_SELECTED
+        },
+        new int[] {
+          PackageManager.PERMISSION_DENIED,
+          PackageManager.PERMISSION_DENIED,
+          PackageManager.PERMISSION_DENIED
+        });
+
+    assertTrue(callbackCalled[0]);
+    verifyNoInteractions(mockRecentMediaLoader);
+  }
+
+  @Test
+  @Config(sdk = 34)
+  public void getRecentMedia_whenPartialAccessGranted_loadsRecentMedia() {
+    setUpSynchronousExecutor();
+    List<RecentMediaItem> items =
+        Collections.singletonList(new RecentMediaItem("/thumb.jpg", RecentMediaKind.VIDEO));
+    when(mockRecentMediaLoader.load(RECENT_IMAGES_AND_VIDEOS_REQUEST)).thenReturn(items);
+    final Boolean[] callbackCalled = new Boolean[1];
+    ImagePickerDelegate delegate = createDelegate();
+    delegate.getRecentMedia(
+        RECENT_IMAGES_AND_VIDEOS_REQUEST,
+        ResultCompat.asCompatCallback(
+            reply -> {
+              callbackCalled[0] = true;
+              assertEquals(items, reply.getOrNull());
+              return null;
+            }));
+
+    delegate.onRequestPermissionsResult(
+        ImagePickerDelegate.REQUEST_RECENT_MEDIA_PERMISSION,
+        new String[] {
+          Manifest.permission.READ_MEDIA_IMAGES,
+          Manifest.permission.READ_MEDIA_VIDEO,
+          Manifest.permission.READ_MEDIA_VISUAL_USER_SELECTED
+        },
+        new int[] {
+          PackageManager.PERMISSION_DENIED,
+          PackageManager.PERMISSION_DENIED,
+          PackageManager.PERMISSION_GRANTED
+        });
+
+    assertTrue(callbackCalled[0]);
+  }
+
+  @Test
+  @Config(sdk = 34)
+  public void getRecentMedia_whilePermissionRequestIsPending_finishesWithAlreadyActiveError() {
+    ImagePickerDelegate delegate = createDelegate();
+    delegate.getRecentMedia(RECENT_IMAGES_AND_VIDEOS_REQUEST, (result) -> null);
+    final Boolean[] callbackCalled = new Boolean[1];
+
+    delegate.getRecentMedia(
+        RECENT_IMAGES_AND_VIDEOS_REQUEST,
+        ResultCompat.asCompatCallback(
+            reply -> {
+              callbackCalled[0] = true;
+              assertTrue(reply.isFailure());
+              assertIsAlreadyActiveError((FlutterError) reply.exceptionOrNull());
+              return null;
+            }));
+
+    assertTrue(callbackCalled[0]);
+    verify(mockPermissionManager, times(1)).askForPermissions(any(), anyInt());
+  }
+
+  @Test
+  @Config(sdk = 34)
+  public void getRecentMedia_whenPickerIsActive_doesNotFinishWithError() {
+    setUpSynchronousExecutor();
+    when(mockPermissionManager.isPermissionGranted(Manifest.permission.READ_MEDIA_IMAGES))
+        .thenReturn(true);
+    when(mockPermissionManager.isPermissionGranted(Manifest.permission.READ_MEDIA_VIDEO))
+        .thenReturn(true);
+    when(mockRecentMediaLoader.load(RECENT_IMAGES_AND_VIDEOS_REQUEST))
+        .thenReturn(new ArrayList<>());
+    final Boolean[] callbackCalled = new Boolean[1];
+    ImagePickerDelegate delegate =
+        createDelegateWithPendingCallbackAndOptions((result) -> null, DEFAULT_IMAGE_OPTIONS, null);
+
+    delegate.getRecentMedia(
+        RECENT_IMAGES_AND_VIDEOS_REQUEST,
+        ResultCompat.asCompatCallback(
+            reply -> {
+              callbackCalled[0] = true;
+              assertTrue(reply.isSuccess());
+              return null;
+            }));
+
+    assertTrue(callbackCalled[0]);
+  }
+
+  @Test
+  @Config(sdk = 34)
+  public void getRecentMedia_whenLoaderThrows_finishesWithError() {
+    setUpSynchronousExecutor();
+    when(mockPermissionManager.isPermissionGranted(Manifest.permission.READ_MEDIA_IMAGES))
+        .thenReturn(true);
+    when(mockPermissionManager.isPermissionGranted(Manifest.permission.READ_MEDIA_VIDEO))
+        .thenReturn(true);
+    when(mockRecentMediaLoader.load(RECENT_IMAGES_AND_VIDEOS_REQUEST))
+        .thenThrow(new SecurityException("revoked"));
+    final Boolean[] callbackCalled = new Boolean[1];
+    ImagePickerDelegate delegate = createDelegate();
+
+    delegate.getRecentMedia(
+        RECENT_IMAGES_AND_VIDEOS_REQUEST,
+        ResultCompat.asCompatCallback(
+            reply -> {
+              callbackCalled[0] = true;
+              FlutterError error = (FlutterError) reply.exceptionOrNull();
+              assertEquals("recent_media_error", error.getCode());
+              assertEquals("revoked", error.getMessage());
+              return null;
+            }));
+
+    assertTrue(callbackCalled[0]);
+  }
+
+  private void setUpSynchronousExecutor() {
+    Mockito.doAnswer(
+            invocation -> {
+              ((Runnable) invocation.getArgument(0)).run();
+              return null;
+            })
+        .when(mockExecutor)
+        .execute(any(Runnable.class));
+  }
+
   private ImagePickerDelegate createDelegate() {
     return new ImagePickerDelegate(
         mockActivity,
@@ -1073,7 +1397,8 @@ public class ImagePickerDelegateTest {
         mockPermissionManager,
         mockFileUriResolver,
         mockFileUtils,
-        mockExecutor);
+        mockExecutor,
+        mockRecentMediaLoader);
   }
 
   private ImagePickerDelegate createDelegateWithPendingCallbackAndOptions(
@@ -1093,7 +1418,8 @@ public class ImagePickerDelegateTest {
         mockPermissionManager,
         mockFileUriResolver,
         mockFileUtils,
-        mockExecutor);
+        mockExecutor,
+        mockRecentMediaLoader);
   }
 
   private void assertIsAlreadyActiveError(FlutterError error) {

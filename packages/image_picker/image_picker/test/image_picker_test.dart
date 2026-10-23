@@ -1114,5 +1114,131 @@ void main() {
         verify(mockPlatform.supportsImageSource(ImageSource.camera));
       });
     });
+
+    group('#Recent media', () {
+      test('supportsRecentMedia calls through to platform', () {
+        final picker = ImagePicker();
+        when(mockPlatform.supportsRecentMedia()).thenReturn(true);
+
+        expect(picker.supportsRecentMedia(), true);
+        verify(mockPlatform.supportsRecentMedia());
+      });
+
+      group('#getRecentMedia', () {
+        setUp(() {
+          when(mockPlatform.supportsRecentMedia()).thenReturn(true);
+          when(
+            mockPlatform.getRecentMedia(options: anyNamed('options')),
+          ).thenAnswer((Invocation _) async => <RecentMedia>[]);
+        });
+
+        test('passes default options to the platform', () async {
+          final picker = ImagePicker();
+          await picker.getRecentMedia();
+
+          verify(
+            mockPlatform.getRecentMedia(
+              options: argThat(
+                isInstanceOf<RecentMediaOptions>()
+                    .having((RecentMediaOptions options) => options.limit, 'limit', 1)
+                    .having(
+                      (RecentMediaOptions options) => options.types,
+                      'types',
+                      <MediaSelectionType>{MediaSelectionType.image, MediaSelectionType.video},
+                    )
+                    .having(
+                      (RecentMediaOptions options) => options.thumbnailWidth,
+                      'thumbnailWidth',
+                      256,
+                    )
+                    .having(
+                      (RecentMediaOptions options) => options.thumbnailHeight,
+                      'thumbnailHeight',
+                      256,
+                    ),
+                named: 'options',
+              ),
+            ),
+          );
+        });
+
+        test('passes custom options to the platform', () async {
+          final picker = ImagePicker();
+          await picker.getRecentMedia(
+            limit: 10,
+            types: <MediaSelectionType>{MediaSelectionType.video},
+            thumbnailWidth: 100,
+            thumbnailHeight: 200,
+          );
+
+          verify(
+            mockPlatform.getRecentMedia(
+              options: argThat(
+                isInstanceOf<RecentMediaOptions>()
+                    .having((RecentMediaOptions options) => options.limit, 'limit', 10)
+                    .having(
+                      (RecentMediaOptions options) => options.types,
+                      'types',
+                      <MediaSelectionType>{MediaSelectionType.video},
+                    )
+                    .having(
+                      (RecentMediaOptions options) => options.thumbnailWidth,
+                      'thumbnailWidth',
+                      100,
+                    )
+                    .having(
+                      (RecentMediaOptions options) => options.thumbnailHeight,
+                      'thumbnailHeight',
+                      200,
+                    ),
+                named: 'options',
+              ),
+            ),
+          );
+        });
+
+        test('returns the platform results', () async {
+          final media = RecentMedia(thumbnail: XFile('/thumb.jpg'), type: MediaSelectionType.video);
+          when(
+            mockPlatform.getRecentMedia(options: anyNamed('options')),
+          ).thenAnswer((Invocation _) async => <RecentMedia>[media]);
+          final picker = ImagePicker();
+
+          expect(await picker.getRecentMedia(), <RecentMedia>[media]);
+        });
+
+        test('returns an empty list without calling the platform when unsupported', () async {
+          when(mockPlatform.supportsRecentMedia()).thenReturn(false);
+          final picker = ImagePicker();
+
+          expect(await picker.getRecentMedia(), isEmpty);
+          verifyNever(mockPlatform.getRecentMedia(options: anyNamed('options')));
+        });
+
+        test('throws for invalid arguments', () async {
+          final picker = ImagePicker();
+
+          await expectLater(picker.getRecentMedia(limit: 0), throwsArgumentError);
+          await expectLater(
+            picker.getRecentMedia(limit: RecentMediaOptions.maxLimit + 1),
+            throwsArgumentError,
+          );
+          await expectLater(
+            picker.getRecentMedia(types: <MediaSelectionType>{}),
+            throwsArgumentError,
+          );
+          await expectLater(picker.getRecentMedia(thumbnailWidth: 0), throwsArgumentError);
+          await expectLater(picker.getRecentMedia(thumbnailHeight: -1), throwsArgumentError);
+          verifyNever(mockPlatform.getRecentMedia(options: anyNamed('options')));
+        });
+
+        test('validates arguments even when unsupported', () async {
+          when(mockPlatform.supportsRecentMedia()).thenReturn(false);
+          final picker = ImagePicker();
+
+          await expectLater(picker.getRecentMedia(limit: 0), throwsArgumentError);
+        });
+      });
+    });
   });
 }

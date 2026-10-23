@@ -104,6 +104,8 @@ enum SourceType { camera, gallery }
 
 enum CacheRetrievalType { image, video }
 
+enum RecentMediaKind { image, video }
+
 class GeneralOptions {
   GeneralOptions({required this.allowMultiple, required this.usePhotoPicker, this.limit});
 
@@ -434,6 +436,121 @@ class CacheRetrievalResult {
   }
 }
 
+/// Options for retrieving recent media.
+class RecentMediaRequest {
+  RecentMediaRequest({
+    required this.limit,
+    required this.includeImages,
+    required this.includeVideos,
+    required this.width,
+    required this.height,
+  });
+
+  /// The maximum number of items to return.
+  int limit;
+
+  /// Whether to include images.
+  bool includeImages;
+
+  /// Whether to include videos.
+  bool includeVideos;
+
+  /// The target width of each thumbnail, in pixels.
+  int width;
+
+  /// The target height of each thumbnail, in pixels.
+  int height;
+
+  List<Object?> _toList() {
+    return <Object?>[limit, includeImages, includeVideos, width, height];
+  }
+
+  Object encode() {
+    return _toList();
+  }
+
+  static RecentMediaRequest decode(Object result) {
+    result as List<Object?>;
+    return RecentMediaRequest(
+      limit: result[0]! as int,
+      includeImages: result[1]! as bool,
+      includeVideos: result[2]! as bool,
+      width: result[3]! as int,
+      height: result[4]! as int,
+    );
+  }
+
+  @override
+  // ignore: avoid_equals_and_hash_code_on_mutable_classes
+  bool operator ==(Object other) {
+    if (other is! RecentMediaRequest || other.runtimeType != runtimeType) {
+      return false;
+    }
+    if (identical(this, other)) {
+      return true;
+    }
+    return _deepEquals(limit, other.limit) &&
+        _deepEquals(includeImages, other.includeImages) &&
+        _deepEquals(includeVideos, other.includeVideos) &&
+        _deepEquals(width, other.width) &&
+        _deepEquals(height, other.height);
+  }
+
+  @override
+  // ignore: avoid_equals_and_hash_code_on_mutable_classes
+  int get hashCode => _deepHash(<Object?>[runtimeType, ..._toList()]);
+
+  @override
+  String toString() {
+    return 'RecentMediaRequest(limit: $limit, includeImages: $includeImages, includeVideos: $includeVideos, width: $width, height: $height)';
+  }
+}
+
+/// A thumbnail of a recent item from the media library.
+class RecentMediaItem {
+  RecentMediaItem({required this.path, required this.kind});
+
+  /// The path to the JPEG thumbnail.
+  String path;
+
+  /// The type of the original item.
+  RecentMediaKind kind;
+
+  List<Object?> _toList() {
+    return <Object?>[path, kind];
+  }
+
+  Object encode() {
+    return _toList();
+  }
+
+  static RecentMediaItem decode(Object result) {
+    result as List<Object?>;
+    return RecentMediaItem(path: result[0]! as String, kind: result[1]! as RecentMediaKind);
+  }
+
+  @override
+  // ignore: avoid_equals_and_hash_code_on_mutable_classes
+  bool operator ==(Object other) {
+    if (other is! RecentMediaItem || other.runtimeType != runtimeType) {
+      return false;
+    }
+    if (identical(this, other)) {
+      return true;
+    }
+    return _deepEquals(path, other.path) && _deepEquals(kind, other.kind);
+  }
+
+  @override
+  // ignore: avoid_equals_and_hash_code_on_mutable_classes
+  int get hashCode => _deepHash(<Object?>[runtimeType, ..._toList()]);
+
+  @override
+  String toString() {
+    return 'RecentMediaItem(path: $path, kind: $kind)';
+  }
+}
+
 class _PigeonCodec extends StandardMessageCodec {
   const _PigeonCodec();
   @override
@@ -450,26 +567,35 @@ class _PigeonCodec extends StandardMessageCodec {
     } else if (value is CacheRetrievalType) {
       buffer.putUint8(131);
       writeValue(buffer, value.index);
-    } else if (value is GeneralOptions) {
+    } else if (value is RecentMediaKind) {
       buffer.putUint8(132);
-      writeValue(buffer, value.encode());
-    } else if (value is ImageSelectionOptions) {
+      writeValue(buffer, value.index);
+    } else if (value is GeneralOptions) {
       buffer.putUint8(133);
       writeValue(buffer, value.encode());
-    } else if (value is MediaSelectionOptions) {
+    } else if (value is ImageSelectionOptions) {
       buffer.putUint8(134);
       writeValue(buffer, value.encode());
-    } else if (value is VideoSelectionOptions) {
+    } else if (value is MediaSelectionOptions) {
       buffer.putUint8(135);
       writeValue(buffer, value.encode());
-    } else if (value is SourceSpecification) {
+    } else if (value is VideoSelectionOptions) {
       buffer.putUint8(136);
       writeValue(buffer, value.encode());
-    } else if (value is CacheRetrievalError) {
+    } else if (value is SourceSpecification) {
       buffer.putUint8(137);
       writeValue(buffer, value.encode());
-    } else if (value is CacheRetrievalResult) {
+    } else if (value is CacheRetrievalError) {
       buffer.putUint8(138);
+      writeValue(buffer, value.encode());
+    } else if (value is CacheRetrievalResult) {
+      buffer.putUint8(139);
+      writeValue(buffer, value.encode());
+    } else if (value is RecentMediaRequest) {
+      buffer.putUint8(140);
+      writeValue(buffer, value.encode());
+    } else if (value is RecentMediaItem) {
+      buffer.putUint8(141);
       writeValue(buffer, value.encode());
     } else {
       super.writeValue(buffer, value);
@@ -489,19 +615,26 @@ class _PigeonCodec extends StandardMessageCodec {
         final value = readValue(buffer) as int?;
         return value == null ? null : CacheRetrievalType.values[value];
       case 132:
-        return GeneralOptions.decode(readValue(buffer)!);
+        final value = readValue(buffer) as int?;
+        return value == null ? null : RecentMediaKind.values[value];
       case 133:
-        return ImageSelectionOptions.decode(readValue(buffer)!);
+        return GeneralOptions.decode(readValue(buffer)!);
       case 134:
-        return MediaSelectionOptions.decode(readValue(buffer)!);
+        return ImageSelectionOptions.decode(readValue(buffer)!);
       case 135:
-        return VideoSelectionOptions.decode(readValue(buffer)!);
+        return MediaSelectionOptions.decode(readValue(buffer)!);
       case 136:
-        return SourceSpecification.decode(readValue(buffer)!);
+        return VideoSelectionOptions.decode(readValue(buffer)!);
       case 137:
-        return CacheRetrievalError.decode(readValue(buffer)!);
+        return SourceSpecification.decode(readValue(buffer)!);
       case 138:
+        return CacheRetrievalError.decode(readValue(buffer)!);
+      case 139:
         return CacheRetrievalResult.decode(readValue(buffer)!);
+      case 140:
+        return RecentMediaRequest.decode(readValue(buffer)!);
+      case 141:
+        return RecentMediaItem.decode(readValue(buffer)!);
       default:
         return super.readValueOfType(type, buffer);
     }
@@ -603,6 +736,26 @@ class ImagePickerApi {
       isNullValid: false,
     );
     return (pigeonVar_replyValue! as List<Object?>).cast<String>();
+  }
+
+  /// Returns thumbnails of the most recent items in the media library.
+  Future<List<RecentMediaItem>> getRecentMedia(RecentMediaRequest request) async {
+    final pigeonVar_channelName =
+        'dev.flutter.pigeon.image_picker_android.ImagePickerApi.getRecentMedia$pigeonVar_messageChannelSuffix';
+    final pigeonVar_channel = BasicMessageChannel<Object?>(
+      pigeonVar_channelName,
+      pigeonChannelCodec,
+      binaryMessenger: pigeonVar_binaryMessenger,
+    );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[request]);
+    final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
+
+    final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
+      pigeonVar_replyList,
+      pigeonVar_channelName,
+      isNullValid: false,
+    );
+    return (pigeonVar_replyValue! as List<Object?>).cast<RecentMediaItem>();
   }
 
   /// Returns results from a previous app session, if any.

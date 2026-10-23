@@ -1,3 +1,7 @@
+## 2.12.0
+
+* Adds `getRecentMedia` and `supportsRecentMedia`.
+
 ## 2.11.2
 
 * Documents that `getLostData` must clear the stored lost data once it is
