@@ -1,3 +1,7 @@
+## 0.4.16
+
+* Adds `SK2Transaction.currentEntitlements()` to query active subscriptions and non-consumable entitlements.
+
 ## 0.4.15
 
 * Exposes `sk2Transaction` on `SK2PurchaseDetails`.
