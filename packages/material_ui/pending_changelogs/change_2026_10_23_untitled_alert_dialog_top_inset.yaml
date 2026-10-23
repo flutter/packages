@@ -1,0 +1,3 @@
+changelog: |
+  - Fixes the top padding of an `AlertDialog` with no title or icon.
+version: patch
