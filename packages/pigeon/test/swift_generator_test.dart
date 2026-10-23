@@ -2295,10 +2295,10 @@ void main() {
     expect(code, contains('package protocol MyHostApi {'));
     expect(code, contains('package class MyHostApiSetup {'));
     expect(code, contains('package static func setUp('));
-    // Subclassable classes must remain open/public even in package mode because
+    // Subclassable classes must remain open even in package mode because
     // Swift SE-0386 does not support cross-module inheritance without `open`.
     expect(code, contains('open class PigeonEventChannelWrapper<ReturnType> {'));
-    expect(code, contains('public init() {}'));
+    expect(code, contains('package init() {}'));
     expect(
       code,
       contains(
@@ -2311,7 +2311,9 @@ void main() {
       code,
       contains('open class StreamEventsStreamHandler: PigeonEventChannelWrapper<String> {'),
     );
-    expect(code, contains('public override init() {}'));
+    expect(code, contains('package override init() {}'));
     expect(code, contains('package static func register(with messenger: FlutterBinaryMessenger,'));
+    expect(code, contains('open class StreamEventsStreamHandler'));
+    expect(SwiftAccessLevel.fromName('unknown'), isNull);
   });
 }

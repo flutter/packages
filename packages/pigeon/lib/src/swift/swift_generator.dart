@@ -37,12 +37,17 @@ enum SwiftAccessLevel {
   public;
 
   /// Parses a [SwiftAccessLevel] from its enum [name], or returns `null` if
-  /// [name] is `null`.
+  /// [name] is `null` or does not match a known value.
   static SwiftAccessLevel? fromName(String? name) {
     if (name == null) {
       return null;
     }
-    return SwiftAccessLevel.values.byName(name);
+    for (final SwiftAccessLevel value in SwiftAccessLevel.values) {
+      if (value.name == name) {
+        return value;
+      }
+    }
+    return null;
   }
 }
 
@@ -287,11 +292,11 @@ class InternalSwiftOptions extends InternalOptions {
   };
 
   /// Initializer access prefix on `open` classes (`''` for internal,
-  /// `'public '` across modules since Swift requires `open` class initializers
-  /// used by external subclasses to be `public`).
+  /// `'package '` for package, and `'public '` for public).
   String get subclassableInitModifier => switch (accessLevel) {
     SwiftAccessLevel.internal => '',
-    SwiftAccessLevel.package || SwiftAccessLevel.public => 'public ',
+    SwiftAccessLevel.package => 'package ',
+    SwiftAccessLevel.public => 'public ',
   };
 }
 
