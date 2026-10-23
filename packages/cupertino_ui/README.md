@@ -1,5 +1,7 @@
 # cupertino_ui
 
+<?code-excerpt path-base="example/lib"?>
+
 The official Flutter Cupertino library, implementing Apple's [Human Interface
 Guidelines](https://developer.apple.com/design/human-interface-guidelines/) for
 Flutter applications.
@@ -62,6 +64,7 @@ correctly within modern widget trees.
 
 Wrap your app using `CupertinoApp.builder`:
 
+<?code-excerpt "readme_excerpts.dart (AppWideUsage)"?>
 ```dart
 import 'package:cupertino_ui/cupertino_ui.dart';
 
@@ -86,15 +89,14 @@ class MyApp extends StatelessWidget {
 
 You can also wrap individual subtrees that contain legacy package widgets:
 
+<?code-excerpt "readme_excerpts.dart (SubtreeUsage)"?>
 ```dart
-CupertinoPageScaffold(
+return CupertinoPageScaffold(
   navigationBar: const CupertinoNavigationBar(
     middle: Text('Modern Screen'),
   ),
-  child: CupertinoUiCompatibilityBridge(
-    child: LegacyPackageWidget(),
-  ),
-)
+  child: CupertinoUiCompatibilityBridge(child: LegacyPackageWidget()),
+);
 ```
 
 ---
