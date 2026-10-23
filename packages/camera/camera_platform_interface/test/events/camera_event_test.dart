@@ -3,10 +3,29 @@
 // found in the LICENSE file.
 
 import 'package:camera_platform_interface/camera_platform_interface.dart';
+import 'package:cross_file_io/cross_file_io.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:path/path.dart' as p;
 
 void main() {
+  CrossFileIO.registerWith();
   TestWidgetsFlutterBinding.ensureInitialized();
+
+  group('VideoRecordedEvent file serialization', () {
+    test('round-trips a file-system path without serializing its escaped URI', () {
+      final String path = p.join('recordings', 'video é #1.mp4');
+      final event = VideoRecordedEvent(1, XFile.fileSystem(path: path), const Duration(seconds: 2));
+
+      final Map<String, dynamic> json = event.toJson();
+      final decoded = VideoRecordedEvent.fromJson(json);
+
+      expect(json['path'], path);
+      expect(decoded.file, isA<FileSystemXFile>());
+      expect((decoded.file as FileSystemXFile).path, path);
+      expect(decoded.maxVideoDuration, event.maxVideoDuration);
+      expect(decoded.cameraId, event.cameraId);
+    });
+  });
 
   group('CameraInitializedEvent tests', () {
     test('Constructor should initialize all properties', () {

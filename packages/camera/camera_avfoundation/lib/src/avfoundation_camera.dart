@@ -180,7 +180,7 @@ class AVFoundationCamera extends CameraPlatform {
   @override
   Future<XFile> takePicture(int cameraId) async {
     final String path = await _hostApi.takePicture();
-    return XFile(path);
+    return XFile.fileSystem(path: path);
   }
 
   @override
@@ -213,7 +213,7 @@ class AVFoundationCamera extends CameraPlatform {
   @override
   Future<XFile> stopVideoRecording(int cameraId) async {
     final String path = await _hostApi.stopVideoRecording();
-    return XFile(path);
+    return XFile.fileSystem(path: path);
   }
 
   @override

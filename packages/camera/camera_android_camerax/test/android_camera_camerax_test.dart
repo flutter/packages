@@ -9,6 +9,7 @@ import 'package:async/async.dart';
 import 'package:camera_android_camerax/camera_android_camerax.dart';
 import 'package:camera_android_camerax/src/camerax_library.dart';
 import 'package:camera_platform_interface/camera_platform_interface.dart';
+import 'package:cross_file_io/cross_file_io.dart';
 import 'package:flutter/services.dart' show DeviceOrientation, PlatformException, Uint8List;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/annotations.dart';
@@ -61,6 +62,7 @@ import 'android_camera_camerax_test.mocks.dart';
   ],
 )
 void main() {
+  CrossFileIO.registerWith();
   TestWidgetsFlutterBinding.ensureInitialized();
 
   setUp(() {
@@ -2775,7 +2777,7 @@ void main() {
       );
 
       final XFile file = await camera.stopVideoRecording(0);
-      expect(file.path, videoOutputPath);
+      expect((file as FileSystemXFile).path, videoOutputPath);
 
       // Verify that recording stops.
       verify(recording.close());
@@ -2841,7 +2843,7 @@ void main() {
       );
 
       final XFile file = await camera.stopVideoRecording(0);
-      expect(file.path, videoOutputPath);
+      expect((file as FileSystemXFile).path, videoOutputPath);
 
       await expectLater(() async {
         await camera.stopVideoRecording(0);
@@ -3318,7 +3320,7 @@ void main() {
 
     final XFile imageFile = await camera.takePicture(3);
 
-    expect(imageFile.path, equals(testPicturePath));
+    expect((imageFile as FileSystemXFile).path, equals(testPicturePath));
   });
 
   test(
@@ -3550,7 +3552,7 @@ void main() {
           mockNewImageCapture,
         ]),
       ).called(1);
-      expect(imageFile.path, equals(testPicturePath));
+      expect((imageFile as FileSystemXFile).path, equals(testPicturePath));
     },
   );
 

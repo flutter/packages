@@ -2,7 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import 'package:flutter/foundation.dart' show immutable;
+import 'package:flutter/foundation.dart' show immutable, kIsWeb;
 
 import '../../camera_platform_interface.dart';
 
@@ -241,7 +241,9 @@ class VideoRecordedEvent extends CameraEvent {
   /// Converts the supplied [Map] to an instance of the [VideoRecordedEvent]
   /// class.
   VideoRecordedEvent.fromJson(Map<String, dynamic> json)
-    : file = XFile(json['path']! as String),
+    : file = kIsWeb
+          ? XFile.scopedStorage(uri: json['path']! as String)
+          : XFile.fileSystem(path: json['path']! as String),
       maxVideoDuration = json['maxVideoDuration'] != null
           ? Duration(milliseconds: json['maxVideoDuration'] as int)
           : null,
@@ -257,7 +259,7 @@ class VideoRecordedEvent extends CameraEvent {
   /// serialized to JSON.
   Map<String, dynamic> toJson() => <String, Object?>{
     'cameraId': cameraId,
-    'path': file.path,
+    'path': file is FileSystemXFile ? (file as FileSystemXFile).path : file.uri,
     'maxVideoDuration': maxVideoDuration?.inMilliseconds,
   };
 

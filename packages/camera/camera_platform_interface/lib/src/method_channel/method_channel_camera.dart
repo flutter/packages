@@ -222,7 +222,7 @@ class MethodChannelCamera extends CameraPlatform {
       );
     }
 
-    return XFile(path);
+    return XFile.fileSystem(path: path);
   }
 
   @override
@@ -263,7 +263,7 @@ class MethodChannelCamera extends CameraPlatform {
       );
     }
 
-    return XFile(path);
+    return XFile.fileSystem(path: path);
   }
 
   @override
@@ -573,7 +573,7 @@ class MethodChannelCamera extends CameraPlatform {
         cameraEventStreamController.add(
           VideoRecordedEvent(
             cameraId,
-            XFile(arguments['path']! as String),
+            XFile.fileSystem(path: arguments['path']! as String),
             arguments['maxVideoDuration'] != null
                 ? Duration(milliseconds: arguments['maxVideoDuration']! as int)
                 : null,

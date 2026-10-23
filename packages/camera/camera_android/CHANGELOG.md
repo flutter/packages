@@ -1,3 +1,8 @@
+## 0.11.0
+
+* **BREAKING CHANGE**: Updates to `cross_file` 0.4.0. Captured files use the
+  new `XFile` API; use `uri` instead of `path`, and `name()` instead of `name`.
+
 ## 0.10.12+1
 
 * Updates Robolectric to 4.17 and adds the JVM arguments it requires for unit tests.
