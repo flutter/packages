@@ -15,6 +15,7 @@ import 'package:integration_test/integration_test.dart';
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
 import 'google_maps_controller_test.mocks.dart';
+import 'resources/pump_map.dart';
 
 // This value is used when comparing long~num, like
 // LatLng values.
@@ -32,22 +33,25 @@ gmaps.Map mapShim() => throw UnimplementedError();
   ),
   MockSpec<TileOverlaysController>(fallbackGenerators: <Symbol, Function>{#googleMap: mapShim}),
   MockSpec<GroundOverlaysController>(fallbackGenerators: <Symbol, Function>{#googleMap: mapShim}),
+  MockSpec<MyLocationController>(fallbackGenerators: <Symbol, Function>{#googleMap: mapShim}),
+  MockSpec<GeolocationApi>(fallbackGenerators: <Symbol, Function>{#googleMap: mapShim}),
 ])
 /// Test Google Map Controller
 void main() {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
 
   group('GoogleMapController', () {
-    const mapId = 33930;
+    late int mapId;
     late GoogleMapController controller;
     late StreamController<MapEvent<Object?>> stream;
 
-    // Creates a controller with the default mapId and stream controller, and any `options` needed.
+    // Creates a controller with a fresh mapId and the test's stream controller.
     GoogleMapController createController({
       CameraPosition initialCameraPosition = const CameraPosition(target: LatLng(0, 0)),
       MapObjects mapObjects = const MapObjects(),
       MapConfiguration mapConfiguration = const MapConfiguration(),
     }) {
+      mapId = getNextMapId();
       return GoogleMapController(
         mapId: mapId,
         streamController: stream,
@@ -246,6 +250,41 @@ void main() {
         expect(events[2], isA<CameraMoveStartedEvent>());
         expect(events[3], isA<CameraMoveEvent>());
         expect(events[4], isA<CameraIdleEvent>());
+      });
+
+      testWidgets('reports the map as ready on idle only once its div is laid out', (
+        WidgetTester tester,
+      ) async {
+        controller = createController()
+          ..debugSetOverrides(
+            createMap: (_, _) => map,
+            circles: circles,
+            heatmaps: heatmaps,
+            markers: markers,
+            polygons: polygons,
+            polylines: polylines,
+            groundOverlays: groundOverlays,
+          )
+          ..init();
+        final readyEvents = <MapEvent<Object?>>[];
+        final StreamSubscription<MapEvent<Object?>> subscription = stream.stream
+            .where((MapEvent<Object?> event) => event is WebMapReadyEvent)
+            .listen(readyEvents.add);
+        addTearDown(subscription.cancel);
+
+        // The map div is not in the DOM yet: idle must not report readiness.
+        gmaps.event.trigger(map, 'idle');
+        await tester.pump();
+        expect(readyEvents, isEmpty);
+
+        await tester.pumpWidget(
+          Center(child: SizedBox(width: 100, height: 100, child: controller.widget)),
+        );
+        // The platform view is created asynchronously; wait for it to render.
+        await tester.pumpAndSettle();
+        gmaps.event.trigger(map, 'idle');
+        await tester.pump();
+        expect(readyEvents, hasLength(1));
       });
 
       testWidgets('emits point of interest tap when click has placeId', (
@@ -1127,6 +1166,113 @@ void main() {
         controller.isInfoWindowShown(markerId);
 
         verify(mock.isInfoWindowShown(markerId));
+      });
+    });
+
+    group('My Location', () {
+      late MockMyLocationController mockMyLocationController;
+      late MockGeolocationApi mockGeolocationApi;
+
+      setUp(() {
+        mockMyLocationController = MockMyLocationController();
+        mockGeolocationApi = MockGeolocationApi();
+        when(mockGeolocationApi.isAvailable).thenReturn(true);
+      });
+
+      testWidgets('by default is disabled', (WidgetTester tester) async {
+        controller = createController();
+        controller.init();
+        expect(mockMyLocationController.myLocationButton, isNull);
+      });
+
+      testWidgets('does not show my location button when geolocation is unavailable', (
+        WidgetTester tester,
+      ) async {
+        when(mockGeolocationApi.isAvailable).thenReturn(false);
+        final map = gmaps.Map(createDivElement());
+        final myLocationController = MyLocationController(geolocationApi: mockGeolocationApi);
+
+        controller = createController(
+          mapConfiguration: const MapConfiguration(
+            myLocationEnabled: true,
+            myLocationButtonEnabled: true,
+          ),
+        );
+        controller.debugSetOverrides(createMap: (_, _) => map, myLocation: myLocationController);
+
+        controller.init();
+        await tester.pumpAndSettle();
+
+        expect(myLocationController.myLocationButton, isNull);
+        expect(map.getControlsAt(gmaps.ControlPosition.RIGHT_BOTTOM).length, equals(0));
+      });
+
+      testWidgets('initializes with my location & display my location button', (
+        WidgetTester tester,
+      ) async {
+        const currentLocation = LatLng(10.8231, 106.6297);
+        final map = gmaps.Map(createDivElement());
+
+        controller = createController(
+          mapConfiguration: const MapConfiguration(
+            myLocationEnabled: true,
+            myLocationButtonEnabled: true,
+          ),
+        );
+
+        final myLocationController = MyLocationController(geolocationApi: mockGeolocationApi);
+
+        controller.debugSetOverrides(createMap: (_, _) => map, myLocation: myLocationController);
+
+        when(mockGeolocationApi.watchPosition(any, any)).thenAnswer((inv) {
+          final onSuccess = inv.positionalArguments[0] as void Function(double, double);
+          onSuccess(currentLocation.latitude, currentLocation.longitude);
+          return 0;
+        });
+        when(
+          mockGeolocationApi.getCurrentPosition(any, any, timeoutMs: anyNamed('timeoutMs')),
+        ).thenAnswer((inv) {
+          final onSuccess = inv.positionalArguments[0] as void Function(double, double);
+          onSuccess(currentLocation.latitude, currentLocation.longitude);
+        });
+
+        controller.init();
+        await tester.pumpAndSettle();
+
+        expect(map.getControlsAt(gmaps.ControlPosition.RIGHT_BOTTOM).length, equals(1));
+      });
+
+      testWidgets('initializes with my location only', (WidgetTester tester) async {
+        final map = gmaps.Map(createDivElement());
+        const currentLocation = LatLng(10.8231, 106.6297);
+
+        controller = createController(
+          mapConfiguration: const MapConfiguration(
+            myLocationEnabled: true,
+            myLocationButtonEnabled: false,
+          ),
+        );
+
+        final myLocationController = MyLocationController(geolocationApi: mockGeolocationApi);
+
+        controller.debugSetOverrides(createMap: (_, _) => map, myLocation: myLocationController);
+
+        when(mockGeolocationApi.watchPosition(any, any)).thenAnswer((inv) {
+          final onSuccess = inv.positionalArguments[0] as void Function(double, double);
+          onSuccess(currentLocation.latitude, currentLocation.longitude);
+          return 0;
+        });
+        when(
+          mockGeolocationApi.getCurrentPosition(any, any, timeoutMs: anyNamed('timeoutMs')),
+        ).thenAnswer((inv) {
+          final onSuccess = inv.positionalArguments[0] as void Function(double, double);
+          onSuccess(currentLocation.latitude, currentLocation.longitude);
+        });
+
+        controller.init();
+        await tester.pumpAndSettle();
+
+        expect(map.getControlsAt(gmaps.ControlPosition.RIGHT_BOTTOM).length, equals(0));
       });
     });
   });
