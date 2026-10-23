@@ -11,11 +11,13 @@ import 'package:flutter/material.dart';
 import 'package:in_app_purchase/in_app_purchase.dart';
 // #docregion android-product-details
 // #docregion android-purchase-details
+// #docregion android-subscription-offers
 import 'package:in_app_purchase_android/billing_client_wrappers.dart';
 import 'package:in_app_purchase_android/in_app_purchase_android.dart';
 
 // #enddocregion android-product-details
 // #enddocregion android-purchase-details
+// #enddocregion android-subscription-offers
 // #docregion sk2-purchase
 // #docregion price-consent-setup
 // #docregion ios-product-details
@@ -256,6 +258,32 @@ void handleAndroidProductDetails(ProductDetails productDetails) {
   }
 }
 // #enddocregion android-product-details
+
+// #docregion android-subscription-offers
+GooglePlayProductDetails? findBasePlanOrOffer(
+  List<ProductDetails> products,
+  String productId,
+  String basePlanId, {
+  String? offerId,
+}) {
+  for (final product in products) {
+    if (product is! GooglePlayProductDetails || product.id != productId) {
+      continue;
+    }
+    final int? index = product.subscriptionIndex;
+    final List<SubscriptionOfferDetailsWrapper>? offers =
+        product.productDetails.subscriptionOfferDetails;
+    if (index == null || offers == null || index >= offers.length) {
+      continue;
+    }
+    final SubscriptionOfferDetailsWrapper offer = offers[index];
+    if (offer.basePlanId == basePlanId && offer.offerId == offerId) {
+      return product;
+    }
+  }
+  return null;
+}
+// #enddocregion android-subscription-offers
 
 // #docregion ios-product-details
 void handleIosProductDetails(ProductDetails productDetails) {
