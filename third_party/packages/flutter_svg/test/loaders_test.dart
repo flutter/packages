@@ -111,6 +111,42 @@ void main() {
     await loader.prepareMessage(null);
     expect(client.closeCalled, isFalse);
   });
+
+  test('SvgNetworkLoader throws on a non-2xx response and still closes its client', () async {
+    final createdClients = <VerifyCloseClient>[];
+
+    await http.runWithClient(
+      () async {
+        const loader = SvgNetworkLoader('https://example.com/a.svg');
+
+        await expectLater(
+          loader.prepareMessage(null),
+          throwsA(
+            isA<http.ClientException>()
+                .having((http.ClientException e) => e.message, 'message', contains('404'))
+                .having(
+                  (http.ClientException e) => e.uri,
+                  'uri',
+                  Uri.parse('https://example.com/a.svg'),
+                ),
+          ),
+        );
+        expect(createdClients[0].closeCalled, isTrue);
+      },
+      () {
+        final client = VerifyCloseClient(statusCode: 404);
+        createdClients.add(client);
+        return client;
+      },
+    );
+  });
+
+  test('SvgNetworkLoader returns the body of a 200 response', () async {
+    final client = VerifyCloseClient(body: '<svg/>');
+    final loader = SvgNetworkLoader('', httpClient: client as http.Client);
+
+    expect(await loader.prepareMessage(null), utf8.encode('<svg/>'));
+  });
 }
 
 class TestBundle extends Fake implements AssetBundle {
@@ -150,11 +186,15 @@ class _TestColorMapper extends ColorMapper {
 }
 
 class VerifyCloseClient extends Fake implements http.Client {
+  VerifyCloseClient({this.statusCode = 200, this.body = ''});
+
+  final int statusCode;
+  final String body;
   bool closeCalled = false;
 
   @override
   Future<http.Response> get(Uri url, {Map<String, String>? headers}) async {
-    return http.Response('', 200);
+    return http.Response(body, statusCode);
   }
 
   @override
