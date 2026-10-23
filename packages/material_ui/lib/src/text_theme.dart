@@ -138,96 +138,96 @@ class TextTheme with Diagnosticable {
 
   /// Largest of the display styles.
   ///
+  /// {@template material_ui.TextTheme.displayStyle}
   /// As the largest text on the screen, display styles are reserved for short,
   /// important text or numerals. They work best on large screens.
+  /// {@endtemplate}
   final TextStyle? displayLarge;
 
   /// Middle size of the display styles.
   ///
-  /// As the largest text on the screen, display styles are reserved for short,
-  /// important text or numerals. They work best on large screens.
+  /// {@macro material_ui.TextTheme.displayStyle}
   final TextStyle? displayMedium;
 
   /// Smallest of the display styles.
   ///
-  /// As the largest text on the screen, display styles are reserved for short,
-  /// important text or numerals. They work best on large screens.
+  /// {@macro material_ui.TextTheme.displayStyle}
   final TextStyle? displaySmall;
 
   /// Largest of the headline styles.
   ///
+  /// {@template material_ui.TextTheme.headlineStyle}
   /// Headline styles are smaller than display styles. They're best-suited for
   /// short, high-emphasis text on smaller screens.
+  /// {@endtemplate}
   final TextStyle? headlineLarge;
 
   /// Middle size of the headline styles.
   ///
-  /// Headline styles are smaller than display styles. They're best-suited for
-  /// short, high-emphasis text on smaller screens.
+  /// {@macro material_ui.TextTheme.headlineStyle}
   final TextStyle? headlineMedium;
 
   /// Smallest of the headline styles.
   ///
-  /// Headline styles are smaller than display styles. They're best-suited for
-  /// short, high-emphasis text on smaller screens.
+  /// {@macro material_ui.TextTheme.headlineStyle}
   final TextStyle? headlineSmall;
 
   /// Largest of the title styles.
   ///
+  /// {@template material_ui.TextTheme.titleStyle}
   /// Titles are smaller than headline styles and should be used for shorter,
   /// medium-emphasis text.
+  /// {@endtemplate}
   final TextStyle? titleLarge;
 
   /// Middle size of the title styles.
   ///
-  /// Titles are smaller than headline styles and should be used for shorter,
-  /// medium-emphasis text.
+  /// {@macro material_ui.TextTheme.titleStyle}
   final TextStyle? titleMedium;
 
   /// Smallest of the title styles.
   ///
-  /// Titles are smaller than headline styles and should be used for shorter,
-  /// medium-emphasis text.
+  /// {@macro material_ui.TextTheme.titleStyle}
   final TextStyle? titleSmall;
 
   /// Largest of the body styles.
   ///
+  /// {@template material_ui.TextTheme.bodyStyle}
   /// Body styles are used for longer passages of text.
+  /// {@endtemplate}
   final TextStyle? bodyLarge;
 
   /// Middle size of the body styles.
   ///
-  /// Body styles are used for longer passages of text.
+  /// {@macro material_ui.TextTheme.bodyStyle}
   ///
   /// The default text style for [Material].
   final TextStyle? bodyMedium;
 
   /// Smallest of the body styles.
   ///
-  /// Body styles are used for longer passages of text.
+  /// {@macro material_ui.TextTheme.bodyStyle}
   final TextStyle? bodySmall;
 
   /// Largest of the label styles.
   ///
+  /// {@template material_ui.TextTheme.labelStyle}
   /// Label styles are smaller, utilitarian styles, used for areas of the UI
   /// such as text inside of components or very small supporting text in the
   /// content body, like captions.
+  /// {@endtemplate}
   ///
   /// Used for text on [ElevatedButton], [TextButton] and [OutlinedButton].
   final TextStyle? labelLarge;
 
   /// Middle size of the label styles.
   ///
-  /// Label styles are smaller, utilitarian styles, used for areas of the UI
-  /// such as text inside of components or very small supporting text in the
-  /// content body, like captions.
+  /// {@macro material_ui.TextTheme.labelStyle}
   final TextStyle? labelMedium;
 
   /// Smallest of the label styles.
   ///
-  /// Label styles are smaller, utilitarian styles, used for areas of the UI
-  /// such as text inside of components or very small supporting text in the
-  /// content body, like captions.
+  /// {@macro material_ui.TextTheme.labelStyle}
   final TextStyle? labelSmall;
 
   /// Creates a copy of this text theme but with the given fields replaced with
@@ -369,22 +369,26 @@ class TextTheme with Diagnosticable {
     if (other == null) {
       return this;
     }
+
+    TextStyle? mergeStyles(TextStyle? style, TextStyle? otherStyle) =>
+        style?.merge(otherStyle) ?? otherStyle;
+
     return copyWith(
-      displayLarge: displayLarge?.merge(other.displayLarge) ?? other.displayLarge,
-      displayMedium: displayMedium?.merge(other.displayMedium) ?? other.displayMedium,
-      displaySmall: displaySmall?.merge(other.displaySmall) ?? other.displaySmall,
-      headlineLarge: headlineLarge?.merge(other.headlineLarge) ?? other.headlineLarge,
-      headlineMedium: headlineMedium?.merge(other.headlineMedium) ?? other.headlineMedium,
-      headlineSmall: headlineSmall?.merge(other.headlineSmall) ?? other.headlineSmall,
-      titleLarge: titleLarge?.merge(other.titleLarge) ?? other.titleLarge,
-      titleMedium: titleMedium?.merge(other.titleMedium) ?? other.titleMedium,
-      titleSmall: titleSmall?.merge(other.titleSmall) ?? other.titleSmall,
-      bodyLarge: bodyLarge?.merge(other.bodyLarge) ?? other.bodyLarge,
-      bodyMedium: bodyMedium?.merge(other.bodyMedium) ?? other.bodyMedium,
-      bodySmall: bodySmall?.merge(other.bodySmall) ?? other.bodySmall,
-      labelLarge: labelLarge?.merge(other.labelLarge) ?? other.labelLarge,
-      labelMedium: labelMedium?.merge(other.labelMedium) ?? other.labelMedium,
-      labelSmall: labelSmall?.merge(other.labelSmall) ?? other.labelSmall,
+      displayLarge: mergeStyles(displayLarge, other.displayLarge),
+      displayMedium: mergeStyles(displayMedium, other.displayMedium),
+      displaySmall: mergeStyles(displaySmall, other.displaySmall),
+      headlineLarge: mergeStyles(headlineLarge, other.headlineLarge),
+      headlineMedium: mergeStyles(headlineMedium, other.headlineMedium),
+      headlineSmall: mergeStyles(headlineSmall, other.headlineSmall),
+      titleLarge: mergeStyles(titleLarge, other.titleLarge),
+      titleMedium: mergeStyles(titleMedium, other.titleMedium),
+      titleSmall: mergeStyles(titleSmall, other.titleSmall),
+      bodyLarge: mergeStyles(bodyLarge, other.bodyLarge),
+      bodyMedium: mergeStyles(bodyMedium, other.bodyMedium),
+      bodySmall: mergeStyles(bodySmall, other.bodySmall),
+      labelLarge: mergeStyles(labelLarge, other.labelLarge),
+      labelMedium: mergeStyles(labelMedium, other.labelMedium),
+      labelSmall: mergeStyles(labelSmall, other.labelSmall),
     );
   }
 
@@ -418,292 +422,42 @@ class TextTheme with Diagnosticable {
     List<FontFeature>? fontFeatures,
     List<FontVariation>? fontVariations,
   }) {
+    TextStyle? applyTo(TextStyle? style, Color? color) => style?.apply(
+      color: color,
+      decoration: decoration,
+      decorationColor: decorationColor,
+      decorationStyle: decorationStyle,
+      fontFamily: fontFamily,
+      fontFamilyFallback: fontFamilyFallback,
+      fontSizeFactor: fontSizeFactor,
+      fontSizeDelta: fontSizeDelta,
+      letterSpacingDelta: letterSpacingDelta,
+      letterSpacingFactor: letterSpacingFactor,
+      wordSpacingDelta: wordSpacingDelta,
+      wordSpacingFactor: wordSpacingFactor,
+      heightFactor: heightFactor,
+      heightDelta: heightDelta,
+      package: package,
+      fontFeatures: fontFeatures,
+      fontVariations: fontVariations,
+    );
+
     return TextTheme(
-      displayLarge: displayLarge?.apply(
-        color: displayColor,
-        decoration: decoration,
-        decorationColor: decorationColor,
-        decorationStyle: decorationStyle,
-        fontFamily: fontFamily,
-        fontFamilyFallback: fontFamilyFallback,
-        fontSizeFactor: fontSizeFactor,
-        fontSizeDelta: fontSizeDelta,
-        letterSpacingDelta: letterSpacingDelta,
-        letterSpacingFactor: letterSpacingFactor,
-        wordSpacingDelta: wordSpacingDelta,
-        wordSpacingFactor: wordSpacingFactor,
-        heightFactor: heightFactor,
-        heightDelta: heightDelta,
-        package: package,
-        fontFeatures: fontFeatures,
-        fontVariations: fontVariations,
-      ),
-      displayMedium: displayMedium?.apply(
-        color: displayColor,
-        decoration: decoration,
-        decorationColor: decorationColor,
-        decorationStyle: decorationStyle,
-        fontFamily: fontFamily,
-        fontFamilyFallback: fontFamilyFallback,
-        fontSizeFactor: fontSizeFactor,
-        fontSizeDelta: fontSizeDelta,
-        letterSpacingDelta: letterSpacingDelta,
-        letterSpacingFactor: letterSpacingFactor,
-        wordSpacingDelta: wordSpacingDelta,
-        wordSpacingFactor: wordSpacingFactor,
-        heightFactor: heightFactor,
-        heightDelta: heightDelta,
-        package: package,
-        fontFeatures: fontFeatures,
-        fontVariations: fontVariations,
-      ),
-      displaySmall: displaySmall?.apply(
-        color: displayColor,
-        decoration: decoration,
-        decorationColor: decorationColor,
-        decorationStyle: decorationStyle,
-        fontFamily: fontFamily,
-        fontFamilyFallback: fontFamilyFallback,
-        fontSizeFactor: fontSizeFactor,
-        fontSizeDelta: fontSizeDelta,
-        letterSpacingDelta: letterSpacingDelta,
-        letterSpacingFactor: letterSpacingFactor,
-        wordSpacingDelta: wordSpacingDelta,
-        wordSpacingFactor: wordSpacingFactor,
-        heightFactor: heightFactor,
-        heightDelta: heightDelta,
-        package: package,
-        fontFeatures: fontFeatures,
-        fontVariations: fontVariations,
-      ),
-      headlineLarge: headlineLarge?.apply(
-        color: displayColor,
-        decoration: decoration,
-        decorationColor: decorationColor,
-        decorationStyle: decorationStyle,
-        fontFamily: fontFamily,
-        fontFamilyFallback: fontFamilyFallback,
-        fontSizeFactor: fontSizeFactor,
-        fontSizeDelta: fontSizeDelta,
-        letterSpacingDelta: letterSpacingDelta,
-        letterSpacingFactor: letterSpacingFactor,
-        wordSpacingDelta: wordSpacingDelta,
-        wordSpacingFactor: wordSpacingFactor,
-        heightFactor: heightFactor,
-        heightDelta: heightDelta,
-        package: package,
-        fontFeatures: fontFeatures,
-        fontVariations: fontVariations,
-      ),
-      headlineMedium: headlineMedium?.apply(
-        color: displayColor,
-        decoration: decoration,
-        decorationColor: decorationColor,
-        decorationStyle: decorationStyle,
-        fontFamily: fontFamily,
-        fontFamilyFallback: fontFamilyFallback,
-        fontSizeFactor: fontSizeFactor,
-        fontSizeDelta: fontSizeDelta,
-        letterSpacingDelta: letterSpacingDelta,
-        letterSpacingFactor: letterSpacingFactor,
-        wordSpacingDelta: wordSpacingDelta,
-        wordSpacingFactor: wordSpacingFactor,
-        heightFactor: heightFactor,
-        heightDelta: heightDelta,
-        package: package,
-        fontFeatures: fontFeatures,
-        fontVariations: fontVariations,
-      ),
-      headlineSmall: headlineSmall?.apply(
-        color: bodyColor,
-        decoration: decoration,
-        decorationColor: decorationColor,
-        decorationStyle: decorationStyle,
-        fontFamily: fontFamily,
-        fontFamilyFallback: fontFamilyFallback,
-        fontSizeFactor: fontSizeFactor,
-        fontSizeDelta: fontSizeDelta,
-        letterSpacingDelta: letterSpacingDelta,
-        letterSpacingFactor: letterSpacingFactor,
-        wordSpacingDelta: wordSpacingDelta,
-        wordSpacingFactor: wordSpacingFactor,
-        heightFactor: heightFactor,
-        heightDelta: heightDelta,
-        package: package,
-        fontFeatures: fontFeatures,
-        fontVariations: fontVariations,
-      ),
-      titleLarge: titleLarge?.apply(
-        color: bodyColor,
-        decoration: decoration,
-        decorationColor: decorationColor,
-        decorationStyle: decorationStyle,
-        fontFamily: fontFamily,
-        fontFamilyFallback: fontFamilyFallback,
-        fontSizeFactor: fontSizeFactor,
-        fontSizeDelta: fontSizeDelta,
-        letterSpacingDelta: letterSpacingDelta,
-        letterSpacingFactor: letterSpacingFactor,
-        wordSpacingDelta: wordSpacingDelta,
-        wordSpacingFactor: wordSpacingFactor,
-        heightFactor: heightFactor,
-        heightDelta: heightDelta,
-        package: package,
-        fontFeatures: fontFeatures,
-        fontVariations: fontVariations,
-      ),
-      titleMedium: titleMedium?.apply(
-        color: bodyColor,
-        decoration: decoration,
-        decorationColor: decorationColor,
-        decorationStyle: decorationStyle,
-        fontFamily: fontFamily,
-        fontFamilyFallback: fontFamilyFallback,
-        fontSizeFactor: fontSizeFactor,
-        fontSizeDelta: fontSizeDelta,
-        letterSpacingDelta: letterSpacingDelta,
-        letterSpacingFactor: letterSpacingFactor,
-        wordSpacingDelta: wordSpacingDelta,
-        wordSpacingFactor: wordSpacingFactor,
-        heightFactor: heightFactor,
-        heightDelta: heightDelta,
-        package: package,
-        fontFeatures: fontFeatures,
-        fontVariations: fontVariations,
-      ),
-      titleSmall: titleSmall?.apply(
-        color: bodyColor,
-        decoration: decoration,
-        decorationColor: decorationColor,
-        decorationStyle: decorationStyle,
-        fontFamily: fontFamily,
-        fontFamilyFallback: fontFamilyFallback,
-        fontSizeFactor: fontSizeFactor,
-        fontSizeDelta: fontSizeDelta,
-        letterSpacingDelta: letterSpacingDelta,
-        letterSpacingFactor: letterSpacingFactor,
-        wordSpacingDelta: wordSpacingDelta,
-        wordSpacingFactor: wordSpacingFactor,
-        heightFactor: heightFactor,
-        heightDelta: heightDelta,
-        package: package,
-        fontFeatures: fontFeatures,
-        fontVariations: fontVariations,
-      ),
-      bodyLarge: bodyLarge?.apply(
-        color: bodyColor,
-        decoration: decoration,
-        decorationColor: decorationColor,
-        decorationStyle: decorationStyle,
-        fontFamily: fontFamily,
-        fontFamilyFallback: fontFamilyFallback,
-        fontSizeFactor: fontSizeFactor,
-        fontSizeDelta: fontSizeDelta,
-        letterSpacingDelta: letterSpacingDelta,
-        letterSpacingFactor: letterSpacingFactor,
-        wordSpacingDelta: wordSpacingDelta,
-        wordSpacingFactor: wordSpacingFactor,
-        heightFactor: heightFactor,
-        heightDelta: heightDelta,
-        package: package,
-        fontFeatures: fontFeatures,
-        fontVariations: fontVariations,
-      ),
-      bodyMedium: bodyMedium?.apply(
-        color: bodyColor,
-        decoration: decoration,
-        decorationColor: decorationColor,
-        decorationStyle: decorationStyle,
-        fontFamily: fontFamily,
-        fontFamilyFallback: fontFamilyFallback,
-        fontSizeFactor: fontSizeFactor,
-        fontSizeDelta: fontSizeDelta,
-        letterSpacingDelta: letterSpacingDelta,
-        letterSpacingFactor: letterSpacingFactor,
-        wordSpacingDelta: wordSpacingDelta,
-        wordSpacingFactor: wordSpacingFactor,
-        heightFactor: heightFactor,
-        heightDelta: heightDelta,
-        package: package,
-        fontFeatures: fontFeatures,
-        fontVariations: fontVariations,
-      ),
-      bodySmall: bodySmall?.apply(
-        color: displayColor,
-        decoration: decoration,
-        decorationColor: decorationColor,
-        decorationStyle: decorationStyle,
-        fontFamily: fontFamily,
-        fontFamilyFallback: fontFamilyFallback,
-        fontSizeFactor: fontSizeFactor,
-        fontSizeDelta: fontSizeDelta,
-        letterSpacingDelta: letterSpacingDelta,
-        letterSpacingFactor: letterSpacingFactor,
-        wordSpacingDelta: wordSpacingDelta,
-        wordSpacingFactor: wordSpacingFactor,
-        heightFactor: heightFactor,
-        heightDelta: heightDelta,
-        package: package,
-        fontFeatures: fontFeatures,
-        fontVariations: fontVariations,
-      ),
-      labelLarge: labelLarge?.apply(
-        color: bodyColor,
-        decoration: decoration,
-        decorationColor: decorationColor,
-        decorationStyle: decorationStyle,
-        fontFamily: fontFamily,
-        fontFamilyFallback: fontFamilyFallback,
-        fontSizeFactor: fontSizeFactor,
-        fontSizeDelta: fontSizeDelta,
-        letterSpacingDelta: letterSpacingDelta,
-        letterSpacingFactor: letterSpacingFactor,
-        wordSpacingDelta: wordSpacingDelta,
-        wordSpacingFactor: wordSpacingFactor,
-        heightFactor: heightFactor,
-        heightDelta: heightDelta,
-        package: package,
-        fontFeatures: fontFeatures,
-        fontVariations: fontVariations,
-      ),
-      labelMedium: labelMedium?.apply(
-        color: bodyColor,
-        decoration: decoration,
-        decorationColor: decorationColor,
-        decorationStyle: decorationStyle,
-        fontFamily: fontFamily,
-        fontFamilyFallback: fontFamilyFallback,
-        fontSizeFactor: fontSizeFactor,
-        fontSizeDelta: fontSizeDelta,
-        letterSpacingDelta: letterSpacingDelta,
-        letterSpacingFactor: letterSpacingFactor,
-        wordSpacingDelta: wordSpacingDelta,
-        wordSpacingFactor: wordSpacingFactor,
-        heightFactor: heightFactor,
-        heightDelta: heightDelta,
-        package: package,
-        fontFeatures: fontFeatures,
-        fontVariations: fontVariations,
-      ),
-      labelSmall: labelSmall?.apply(
-        color: bodyColor,
-        decoration: decoration,
-        decorationColor: decorationColor,
-        decorationStyle: decorationStyle,
-        fontFamily: fontFamily,
-        fontFamilyFallback: fontFamilyFallback,
-        fontSizeFactor: fontSizeFactor,
-        fontSizeDelta: fontSizeDelta,
-        letterSpacingDelta: letterSpacingDelta,
-        letterSpacingFactor: letterSpacingFactor,
-        wordSpacingDelta: wordSpacingDelta,
-        wordSpacingFactor: wordSpacingFactor,
-        heightFactor: heightFactor,
-        heightDelta: heightDelta,
-        package: package,
-        fontFeatures: fontFeatures,
-        fontVariations: fontVariations,
-      ),
+      displayLarge: applyTo(displayLarge, displayColor),
+      displayMedium: applyTo(displayMedium, displayColor),
+      displaySmall: applyTo(displaySmall, displayColor),
+      headlineLarge: applyTo(headlineLarge, displayColor),
+      headlineMedium: applyTo(headlineMedium, displayColor),
+      headlineSmall: applyTo(headlineSmall, bodyColor),
+      titleLarge: applyTo(titleLarge, bodyColor),
+      titleMedium: applyTo(titleMedium, bodyColor),
+      titleSmall: applyTo(titleSmall, bodyColor),
+      bodyLarge: applyTo(bodyLarge, bodyColor),
+      bodyMedium: applyTo(bodyMedium, bodyColor),
+      bodySmall: applyTo(bodySmall, displayColor),
+      labelLarge: applyTo(labelLarge, bodyColor),
+      labelMedium: applyTo(labelMedium, bodyColor),
+      labelSmall: applyTo(labelSmall, bodyColor),
     );
   }
 
