@@ -2,11 +2,21 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'dart:math' as math;
+
+import 'package:a11y_assessments/main.dart';
 import 'package:a11y_assessments/use_cases/dropdown_menu.dart';
+import 'package:a11y_assessments/use_cases/use_cases.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';
 
 import 'test_utils.dart';
+
+double _contrastRatio(Color a, Color b) {
+  final double lumA = a.computeLuminance();
+  final double lumB = b.computeLuminance();
+  return (math.max(lumA, lumB) + 0.05) / (math.min(lumA, lumB) + 0.05);
+}
 
 void main() {
   testWidgets('dropdown menu can run', (WidgetTester tester) async {
@@ -40,4 +50,52 @@ void main() {
     await tester.pumpAndSettle();
     expect(findHeadingLevelOnes, findsOne);
   });
+
+  for (final Brightness brightness in Brightness.values) {
+    testWidgets(
+      'dropdown menu active option has at least 3:1 contrast ratio in ${brightness.name} mode',
+      (WidgetTester tester) async {
+        tester.platformDispatcher.platformBrightnessTestValue = brightness;
+        addTearDown(tester.platformDispatcher.clearAllTestValues);
+
+        await tester.pumpWidget(const App(initialTags: <Tag>{}));
+        await tester.pumpAndSettle();
+
+        final BuildContext context = tester.element(find.byType(HomePage));
+        Navigator.of(context).pushNamed(DropdownMenuUseCase().route);
+        await tester.pumpAndSettle();
+
+        final Finder enabledDropdown = find.byKey(const Key('enabled dropdown menu'));
+        await tester.tap(
+          find.descendant(of: enabledDropdown, matching: find.byIcon(Icons.arrow_drop_down)).first,
+        );
+        await tester.pumpAndSettle();
+
+        final ColorScheme colorScheme = Theme.of(tester.element(enabledDropdown)).colorScheme;
+        final Finder menuPanel = find.byWidgetPredicate(
+          (Widget w) => '${w.runtimeType}' == '_MenuPanel',
+        );
+        final Material menuMaterial = tester.widget<Material>(
+          find.descendant(of: menuPanel, matching: find.byType(Material)).first,
+        );
+        expect(menuMaterial.color, colorScheme.surfaceContainerLow);
+
+        final Finder selectedItem = find.widgetWithText(MenuItemButton, 'apple').last;
+        final Material selectedMaterial = tester.widget<Material>(
+          find.descendant(of: selectedItem, matching: find.byType(Material)),
+        );
+        expect(selectedMaterial.color, colorScheme.tertiaryContainer);
+        expect(selectedMaterial.textStyle?.color, colorScheme.onTertiaryContainer);
+
+        expect(
+          _contrastRatio(selectedMaterial.color!, menuMaterial.color!),
+          greaterThanOrEqualTo(3.0),
+        );
+        expect(
+          _contrastRatio(selectedMaterial.textStyle!.color!, selectedMaterial.color!),
+          greaterThanOrEqualTo(4.5),
+        );
+      },
+    );
+  }
 }
