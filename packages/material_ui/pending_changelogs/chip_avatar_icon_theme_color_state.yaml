@@ -1,0 +1,3 @@
+changelog: |
+  - Fixes `Chip` avatar not resolving a `WidgetStateColor` set as the `iconTheme` color against the chip's states.
+version: patch
