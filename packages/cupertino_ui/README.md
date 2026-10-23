@@ -95,7 +95,7 @@ return CupertinoPageScaffold(
   navigationBar: const CupertinoNavigationBar(
     middle: Text('Modern Screen'),
   ),
-  child: CupertinoUiCompatibilityBridge(child: LegacyPackageWidget()),
+  child: const CupertinoUiCompatibilityBridge(child: LegacyPackageWidget()),
 );
 ```
 
