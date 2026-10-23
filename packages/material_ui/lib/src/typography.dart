@@ -70,15 +70,16 @@ enum ScriptCategory {
 /// font](https://developer.apple.com/design/human-interface-guidelines/typography/)
 /// fonts as used by Apple on iOS.
 ///
-/// Two sets of geometry themes are provided: 2014 and 2018. The 2014 themes
-/// correspond to the original version of the Material Design spec and are
-/// the defaults. The 2018 themes correspond the second iteration of the
-/// specification and feature different font sizes, font weights, and
-/// letter spacing values.
+/// Three sets of geometry themes are provided: 2014, 2018, and 2021. The 2014
+/// themes correspond to the original version of the Material Design spec. The
+/// 2018 themes correspond to the second iteration of the specification and
+/// feature different font sizes, font weights, and letter spacing values. The
+/// 2021 themes correspond to the Material Design 3 specification.
 ///
-/// By default, [ThemeData.typography] is `Typography.material2014(platform:
-/// platform)` which uses [englishLike2014], [dense2014] and [tall2014]. To use
-/// the 2018 text theme geometries, specify a value using the [Typography.material2018]
+/// By default, [ThemeData.typography] is `Typography.material2021(platform:
+/// platform, colorScheme: colorScheme)` (or `Typography.material2014(platform:
+/// platform)` when [ThemeData.useMaterial3] is false). To use the 2018 text
+/// theme geometries, specify a value using the [Typography.material2018]
 /// constructor:
 ///
 /// ```dart
