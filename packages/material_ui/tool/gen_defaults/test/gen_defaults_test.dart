@@ -394,6 +394,45 @@ void main() {
       expect(contents, contains('states.contains(WidgetState.pressed)'));
     });
 
+    test('ButtonTemplateM3E emits M3E FilledButton defaults from tokens', () {
+      const template = ButtonTemplateM3E('Filled Button');
+      expect(template.parentFilePath, 'filled_button.dart');
+
+      final String contents = _generateContents(template);
+      expect(contents, contains('class _FilledButtonDefaultsM3E extends ButtonStyle'));
+      expect(contents, contains('return _colors.primary;'));
+      expect(contents, contains('return _colors.onPrimary;'));
+      // Unselected toggle buttons.
+      expect(contents, contains('return _colors.surfaceContainer;'));
+      expect(contents, contains('return _colors.onSurfaceVariant;'));
+      expect(contents, contains('return _colors.onSurfaceVariant.withValues(alpha: 0.08);'));
+      // Buttons that are not toggleable.
+      expect(contents, contains('return _colors.onPrimary.withValues(alpha: 0.08);'));
+      expect(contents, contains('return 0.0;'));
+    });
+
+    test('ButtonTemplateM3E emits M3E filled tonal button defaults from tokens', () {
+      const template = ButtonTemplateM3E('Filled Tonal Button');
+      expect(template.parentFilePath, 'filled_button.dart');
+
+      final String contents = _generateContents(template);
+      expect(contents, contains('class _FilledTonalButtonDefaultsM3E extends ButtonStyle'));
+      expect(contents, contains('return _colors.secondaryContainer;'));
+      expect(contents, contains('return _colors.onSecondaryContainer;'));
+      // Selected toggle buttons.
+      expect(contents, contains('return _colors.secondary;'));
+      expect(contents, contains('return _colors.onSecondary;'));
+      expect(contents, contains('return _colors.onSecondary.withValues(alpha: 0.08);'));
+    });
+
+    test('ButtonTemplateM3E throws for buttons without Material 3 Expressive defaults', () {
+      expect(
+        () => const ButtonTemplateM3E('Outlined Button').parentFilePath,
+        throwsUnsupportedError,
+      );
+      expect(() => const ButtonTemplateM3E('Text Button').parentFilePath, throwsUnsupportedError);
+    });
+
     test('ButtonTemplateM3 emits M3 FilledButton defaults from tokens', () {
       const template = ButtonTemplateM3('Filled Button');
       expect(template.parentFilePath, 'filled_button.dart');

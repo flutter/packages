@@ -327,11 +327,245 @@ class ButtonTemplateM3E extends TokenTemplateM3E {
   @override
   final String name;
 
-  @override
-  String get parentFilePath => switch (name) {
-    'Elevated Button' => 'elevated_button.dart',
+  _ButtonVariant get _variant => switch (name) {
+    'Elevated Button' => _ButtonVariant.elevated,
+    'Filled Button' => _ButtonVariant.filled,
+    'Filled Tonal Button' => _ButtonVariant.filledTonal,
     _ => throw UnsupportedError('Unsupported expressive button template name: $name'),
   };
+
+  @override
+  String get parentFilePath => switch (_variant) {
+    _ButtonVariant.elevated => 'elevated_button.dart',
+    _ButtonVariant.filled || _ButtonVariant.filledTonal => 'filled_button.dart',
+    _ButtonVariant.outlined || _ButtonVariant.text => throw UnsupportedError(
+      'Unsupported expressive button template name: $name',
+    ),
+  };
+
+  // Returns the token of this template's button variant. The elevated, filled,
+  // and filled tonal buttons have the same set of tokens.
+  T _byVariant<T>({required T elevated, required T filled, required T filledTonal}) =>
+      switch (_variant) {
+        _ButtonVariant.elevated => elevated,
+        _ButtonVariant.filled => filled,
+        _ButtonVariant.filledTonal => filledTonal,
+        _ButtonVariant.outlined || _ButtonVariant.text => throw UnsupportedError(
+          'Unsupported expressive button template name: $name',
+        ),
+      };
+
+  TokenColorRole get _containerColor => _byVariant(
+    elevated: TokenButtonElevated.containerColor,
+    filled: TokenButtonFilled.containerColor,
+    filledTonal: TokenButtonTonal.containerColor,
+  );
+
+  TokenColorRole get _disabledContainerColor => _byVariant(
+    elevated: TokenButtonElevated.disabledContainerColor,
+    filled: TokenButtonFilled.disabledContainerColor,
+    filledTonal: TokenButtonTonal.disabledContainerColor,
+  );
+
+  double get _disabledContainerOpacity => _byVariant(
+    elevated: TokenButtonElevated.disabledContainerOpacity,
+    filled: TokenButtonFilled.disabledContainerOpacity,
+    filledTonal: TokenButtonTonal.disabledContainerOpacity,
+  );
+
+  TokenColorRole get _selectedContainerColor => _byVariant(
+    elevated: TokenButtonElevated.selectedContainerColor,
+    filled: TokenButtonFilled.selectedContainerColor,
+    filledTonal: TokenButtonTonal.selectedContainerColor,
+  );
+
+  TokenColorRole get _unselectedContainerColor => _byVariant(
+    elevated: TokenButtonElevated.unselectedContainerColor,
+    filled: TokenButtonFilled.unselectedContainerColor,
+    filledTonal: TokenButtonTonal.unselectedContainerColor,
+  );
+
+  TokenColorRole get _containerShadowColor => _byVariant(
+    elevated: TokenButtonElevated.containerShadowColor,
+    filled: TokenButtonFilled.containerShadowColor,
+    filledTonal: TokenButtonTonal.containerShadowColor,
+  );
+
+  double get _containerElevation => _byVariant(
+    elevated: TokenButtonElevated.containerElevation,
+    filled: TokenButtonFilled.containerElevation,
+    filledTonal: TokenButtonTonal.containerElevation,
+  );
+
+  double get _disabledContainerElevation => _byVariant(
+    elevated: TokenButtonElevated.disabledContainerElevation,
+    filled: TokenButtonFilled.disabledContainerElevation,
+    filledTonal: TokenButtonTonal.disabledContainerElevation,
+  );
+
+  double get _pressedContainerElevation => _byVariant(
+    elevated: TokenButtonElevated.pressedContainerElevation,
+    filled: TokenButtonFilled.pressedContainerElevation,
+    filledTonal: TokenButtonTonal.pressedContainerElevation,
+  );
+
+  double get _focusedContainerElevation => _byVariant(
+    elevated: TokenButtonElevated.focusedContainerElevation,
+    filled: TokenButtonFilled.focusedContainerElevation,
+    filledTonal: TokenButtonTonal.focusedContainerElevation,
+  );
+
+  TokenColorRole get _labelTextColor => _byVariant(
+    elevated: TokenButtonElevated.labelTextColor,
+    filled: TokenButtonFilled.labelTextColor,
+    filledTonal: TokenButtonTonal.labelTextColor,
+  );
+
+  TokenColorRole get _disabledLabelTextColor => _byVariant(
+    elevated: TokenButtonElevated.disabledLabelTextColor,
+    filled: TokenButtonFilled.disabledLabelTextColor,
+    filledTonal: TokenButtonTonal.disabledLabelTextColor,
+  );
+
+  double get _disabledLabelTextOpacity => _byVariant(
+    elevated: TokenButtonElevated.disabledLabelTextOpacity,
+    filled: TokenButtonFilled.disabledLabelTextOpacity,
+    filledTonal: TokenButtonTonal.disabledLabelTextOpacity,
+  );
+
+  TokenColorRole get _selectedLabelTextColor => _byVariant(
+    elevated: TokenButtonElevated.selectedLabelTextColor,
+    filled: TokenButtonFilled.selectedLabelTextColor,
+    filledTonal: TokenButtonTonal.selectedLabelTextColor,
+  );
+
+  TokenColorRole get _unselectedLabelTextColor => _byVariant(
+    elevated: TokenButtonElevated.unselectedLabelTextColor,
+    filled: TokenButtonFilled.unselectedLabelTextColor,
+    filledTonal: TokenButtonTonal.unselectedLabelTextColor,
+  );
+
+  TokenColorRole get _iconColor => _byVariant(
+    elevated: TokenButtonElevated.iconColor,
+    filled: TokenButtonFilled.iconColor,
+    filledTonal: TokenButtonTonal.iconColor,
+  );
+
+  TokenColorRole get _disabledIconColor => _byVariant(
+    elevated: TokenButtonElevated.disabledIconColor,
+    filled: TokenButtonFilled.disabledIconColor,
+    filledTonal: TokenButtonTonal.disabledIconColor,
+  );
+
+  double get _disabledIconOpacity => _byVariant(
+    elevated: TokenButtonElevated.disabledIconOpacity,
+    filled: TokenButtonFilled.disabledIconOpacity,
+    filledTonal: TokenButtonTonal.disabledIconOpacity,
+  );
+
+  TokenColorRole get _selectedIconColor => _byVariant(
+    elevated: TokenButtonElevated.selectedIconColor,
+    filled: TokenButtonFilled.selectedIconColor,
+    filledTonal: TokenButtonTonal.selectedIconColor,
+  );
+
+  TokenColorRole get _unselectedIconColor => _byVariant(
+    elevated: TokenButtonElevated.unselectedIconColor,
+    filled: TokenButtonFilled.unselectedIconColor,
+    filledTonal: TokenButtonTonal.unselectedIconColor,
+  );
+
+  double get _pressedStateLayerOpacity => _byVariant(
+    elevated: TokenButtonElevated.pressedStateLayerOpacity,
+    filled: TokenButtonFilled.pressedStateLayerOpacity,
+    filledTonal: TokenButtonTonal.pressedStateLayerOpacity,
+  );
+
+  double get _hoveredStateLayerOpacity => _byVariant(
+    elevated: TokenButtonElevated.hoveredStateLayerOpacity,
+    filled: TokenButtonFilled.hoveredStateLayerOpacity,
+    filledTonal: TokenButtonTonal.hoveredStateLayerOpacity,
+  );
+
+  double get _focusedStateLayerOpacity => _byVariant(
+    elevated: TokenButtonElevated.focusedStateLayerOpacity,
+    filled: TokenButtonFilled.focusedStateLayerOpacity,
+    filledTonal: TokenButtonTonal.focusedStateLayerOpacity,
+  );
+
+  // The overlay colors of a button that isn't toggleable.
+  String get _stateLayer => _stateLayerFor(
+    pressed: _byVariant(
+      elevated: TokenButtonElevated.pressedStateLayerColor,
+      filled: TokenButtonFilled.pressedStateLayerColor,
+      filledTonal: TokenButtonTonal.pressedStateLayerColor,
+    ),
+    hovered: _byVariant(
+      elevated: TokenButtonElevated.hoveredStateLayerColor,
+      filled: TokenButtonFilled.hoveredStateLayerColor,
+      filledTonal: TokenButtonTonal.hoveredStateLayerColor,
+    ),
+    focused: _byVariant(
+      elevated: TokenButtonElevated.focusedStateLayerColor,
+      filled: TokenButtonFilled.focusedStateLayerColor,
+      filledTonal: TokenButtonTonal.focusedStateLayerColor,
+    ),
+  );
+
+  // The overlay colors of a selected toggle button.
+  String get _selectedStateLayer => _stateLayerFor(
+    pressed: _byVariant(
+      elevated: TokenButtonElevated.selectedPressedStateLayerColor,
+      filled: TokenButtonFilled.selectedPressedStateLayerColor,
+      filledTonal: TokenButtonTonal.selectedPressedStateLayerColor,
+    ),
+    hovered: _byVariant(
+      elevated: TokenButtonElevated.selectedHoveredStateLayerColor,
+      filled: TokenButtonFilled.selectedHoveredStateLayerColor,
+      filledTonal: TokenButtonTonal.selectedHoveredStateLayerColor,
+    ),
+    focused: _byVariant(
+      elevated: TokenButtonElevated.selectedFocusedStateLayerColor,
+      filled: TokenButtonFilled.selectedFocusedStateLayerColor,
+      filledTonal: TokenButtonTonal.selectedFocusedStateLayerColor,
+    ),
+  );
+
+  // The overlay colors of an unselected toggle button.
+  String get _unselectedStateLayer => _stateLayerFor(
+    pressed: _byVariant(
+      elevated: TokenButtonElevated.unselectedPressedStateLayerColor,
+      filled: TokenButtonFilled.unselectedPressedStateLayerColor,
+      filledTonal: TokenButtonTonal.unselectedPressedStateLayerColor,
+    ),
+    hovered: _byVariant(
+      elevated: TokenButtonElevated.unselectedHoveredStateLayerColor,
+      filled: TokenButtonFilled.unselectedHoveredStateLayerColor,
+      filledTonal: TokenButtonTonal.unselectedHoveredStateLayerColor,
+    ),
+    focused: _byVariant(
+      elevated: TokenButtonElevated.unselectedFocusedStateLayerColor,
+      filled: TokenButtonFilled.unselectedFocusedStateLayerColor,
+      filledTonal: TokenButtonTonal.unselectedFocusedStateLayerColor,
+    ),
+  );
+
+  String _stateLayerFor({
+    required TokenColorRole pressed,
+    required TokenColorRole hovered,
+    required TokenColorRole focused,
+  }) =>
+      '''
+if (states.contains(WidgetState.pressed)) {
+          return ${colorWithOpacity(pressed, _pressedStateLayerOpacity)};
+        }
+        if (states.contains(WidgetState.hovered)) {
+          return ${colorWithOpacity(hovered, _hoveredStateLayerOpacity)};
+        }
+        if (states.contains(WidgetState.focused)) {
+          return ${colorWithOpacity(focused, _focusedStateLayerOpacity)};
+        }
+        return null;''';
 
   String _sizeSwitch({
     required String xSmall,
@@ -479,74 +713,47 @@ class $className extends ButtonStyle {
   WidgetStateProperty<Color?>? get backgroundColor =>
       WidgetStateProperty.resolveWith((Set<WidgetState> states) {
         if (states.contains(WidgetState.disabled)) {
-          return ${colorWithOpacity(TokenButtonElevated.disabledContainerColor, TokenButtonElevated.disabledContainerOpacity)};
+          return ${colorWithOpacity(_disabledContainerColor, _disabledContainerOpacity)};
         }
         if (toggleable && states.contains(WidgetState.selected)) {
-          return ${color(TokenButtonElevated.selectedContainerColor)};
+          return ${color(_selectedContainerColor)};
         }
         if (toggleable) {
-          return ${color(TokenButtonElevated.unselectedContainerColor)};
+          return ${color(_unselectedContainerColor)};
         }
-        return ${color(TokenButtonElevated.containerColor)};
+        return ${color(_containerColor)};
       });
 
   @override
   WidgetStateProperty<Color?>? get foregroundColor =>
       WidgetStateProperty.resolveWith((Set<WidgetState> states) {
         if (states.contains(WidgetState.disabled)) {
-          return ${colorWithOpacity(TokenButtonElevated.disabledLabelTextColor, TokenButtonElevated.disabledLabelTextOpacity)};
+          return ${colorWithOpacity(_disabledLabelTextColor, _disabledLabelTextOpacity)};
         }
         if (toggleable && states.contains(WidgetState.selected)) {
-          return ${color(TokenButtonElevated.selectedLabelTextColor)};
+          return ${color(_selectedLabelTextColor)};
         }
         if (toggleable) {
-          return ${color(TokenButtonElevated.unselectedLabelTextColor)};
+          return ${color(_unselectedLabelTextColor)};
         }
-        return ${color(TokenButtonElevated.labelTextColor)};
+        return ${color(_labelTextColor)};
       });
 
   @override
   WidgetStateProperty<Color?>? get overlayColor =>
       WidgetStateProperty.resolveWith((Set<WidgetState> states) {
         if (toggleable && states.contains(WidgetState.selected)) {
-          if (states.contains(WidgetState.pressed)) {
-            return ${colorWithOpacity(TokenButtonElevated.selectedPressedStateLayerColor, TokenButtonElevated.pressedStateLayerOpacity)};
-          }
-          if (states.contains(WidgetState.hovered)) {
-            return ${colorWithOpacity(TokenButtonElevated.selectedHoveredStateLayerColor, TokenButtonElevated.hoveredStateLayerOpacity)};
-          }
-          if (states.contains(WidgetState.focused)) {
-            return ${colorWithOpacity(TokenButtonElevated.selectedFocusedStateLayerColor, TokenButtonElevated.focusedStateLayerOpacity)};
-          }
-          return null;
+          $_selectedStateLayer
         }
         if (toggleable) {
-          if (states.contains(WidgetState.pressed)) {
-            return ${colorWithOpacity(TokenButtonElevated.unselectedPressedStateLayerColor, TokenButtonElevated.pressedStateLayerOpacity)};
-          }
-          if (states.contains(WidgetState.hovered)) {
-            return ${colorWithOpacity(TokenButtonElevated.unselectedHoveredStateLayerColor, TokenButtonElevated.hoveredStateLayerOpacity)};
-          }
-          if (states.contains(WidgetState.focused)) {
-            return ${colorWithOpacity(TokenButtonElevated.unselectedFocusedStateLayerColor, TokenButtonElevated.focusedStateLayerOpacity)};
-          }
-          return null;
+          $_unselectedStateLayer
         }
-        if (states.contains(WidgetState.pressed)) {
-          return ${colorWithOpacity(TokenButtonElevated.pressedStateLayerColor, TokenButtonElevated.pressedStateLayerOpacity)};
-        }
-        if (states.contains(WidgetState.hovered)) {
-          return ${colorWithOpacity(TokenButtonElevated.hoveredStateLayerColor, TokenButtonElevated.hoveredStateLayerOpacity)};
-        }
-        if (states.contains(WidgetState.focused)) {
-          return ${colorWithOpacity(TokenButtonElevated.focusedStateLayerColor, TokenButtonElevated.focusedStateLayerOpacity)};
-        }
-        return null;
+        $_stateLayer
       });
 
   @override
   WidgetStateProperty<Color>? get shadowColor =>
-      WidgetStatePropertyAll<Color>(${color(TokenButtonElevated.containerShadowColor)});
+      WidgetStatePropertyAll<Color>(${color(_containerShadowColor)});
 
   @override
   WidgetStateProperty<Color>? get surfaceTintColor =>
@@ -556,15 +763,15 @@ class $className extends ButtonStyle {
   WidgetStateProperty<double>? get elevation =>
       WidgetStateProperty.resolveWith((Set<WidgetState> states) {
         if (states.contains(WidgetState.disabled)) {
-          return ${TokenButtonElevated.disabledContainerElevation};
+          return $_disabledContainerElevation;
         }
         if (states.contains(WidgetState.pressed)) {
-          return ${TokenButtonElevated.pressedContainerElevation};
+          return $_pressedContainerElevation;
         }
         if (states.contains(WidgetState.focused)) {
-          return ${TokenButtonElevated.focusedContainerElevation};
+          return $_focusedContainerElevation;
         }
-        return ${TokenButtonElevated.containerElevation};
+        return $_containerElevation;
       });
 
   @override
@@ -587,15 +794,15 @@ class $className extends ButtonStyle {
   WidgetStateProperty<Color>? get iconColor =>
       WidgetStateProperty.resolveWith((Set<WidgetState> states) {
         if (states.contains(WidgetState.disabled)) {
-          return ${colorWithOpacity(TokenButtonElevated.disabledIconColor, TokenButtonElevated.disabledIconOpacity)};
+          return ${colorWithOpacity(_disabledIconColor, _disabledIconOpacity)};
         }
         if (toggleable && states.contains(WidgetState.selected)) {
-          return ${color(TokenButtonElevated.selectedIconColor)};
+          return ${color(_selectedIconColor)};
         }
         if (toggleable) {
-          return ${color(TokenButtonElevated.unselectedIconColor)};
+          return ${color(_unselectedIconColor)};
         }
-        return ${color(TokenButtonElevated.iconColor)};
+        return ${color(_iconColor)};
       });
 
   @override
