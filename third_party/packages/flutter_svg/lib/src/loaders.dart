@@ -385,6 +385,9 @@ class SvgAssetLoader extends SvgLoader<ByteData> {
 
 /// A [BytesLoader] that decodes and parses a UTF-8 encoded SVG string the
 /// network in an isolate and creates a vector_graphics binary representation.
+///
+/// Loading throws an [http.ClientException] if the server responds with a
+/// status code outside the 2xx range.
 class SvgNetworkLoader extends SvgLoader<Uint8List> {
   /// See class doc.
   const SvgNetworkLoader(
