@@ -847,13 +847,21 @@ class _DropdownMenuState<T> extends State<DropdownMenu<T>> {
     if (oldWidget.menuController != widget.menuController) {
       _controller = widget.menuController ?? MenuController();
     }
-    if (widget.focusNode != oldWidget.focusNode || (widget.enabled && oldWidget.enabled)) {
+    if (widget.focusNode != oldWidget.focusNode) {
       _focusNodeCanRequestFocus = widget.focusNode?.canRequestFocus;
+    }
+    if (oldWidget.enabled && !widget.enabled) {
+      _focusNodeCanRequestFocus = widget.focusNode?.canRequestFocus;
+    }
+    if (!oldWidget.enabled && widget.enabled) {
+      if (widget.focusNode != null && _focusNodeCanRequestFocus != null) {
+        widget.focusNode!.canRequestFocus = _focusNodeCanRequestFocus!;
+      }
     }
   }
 
   bool canRequestFocus() {
-    return _focusNodeCanRequestFocus ??
+    return widget.focusNode?.canRequestFocus ??
         widget.requestFocusOnTap ??
         switch (Theme.of(context).platform) {
           TargetPlatform.iOS || TargetPlatform.android || TargetPlatform.fuchsia => false,

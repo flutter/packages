@@ -5558,6 +5558,33 @@ void main() {
     textField = tester.widget(find.byType(TextField));
     expect(textField.readOnly, isTrue);
   });
+
+  testWidgets('canRequestFocus set on the node survives an internal rebuild', (
+    WidgetTester tester,
+  ) async {
+    final focusNode = FocusNode();
+    addTearDown(focusNode.dispose);
+    await tester.pumpWidget(
+      MaterialApp(
+        theme: ThemeData(platform: TargetPlatform.macOS),
+        home: Scaffold(
+          body: DropdownMenu<int>(
+            focusNode: focusNode,
+            dropdownMenuEntries: const <DropdownMenuEntry<int>>[
+              DropdownMenuEntry<int>(value: 1, label: 'One'),
+            ],
+          ),
+        ),
+      ),
+    );
+
+    focusNode.canRequestFocus = false; // set canRequestFocus
+    await tester.tap(find.byType(IconButton).first); // Opens the menu.
+    await tester.pump();
+
+    expect(focusNode.canRequestFocus, isFalse);
+    expect(tester.widget<TextField>(find.byType(TextField)).readOnly, isTrue);
+  });
 }
 
 enum TestMenu {
