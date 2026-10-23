@@ -16,7 +16,7 @@ import '../templates/action_chip_template.dart';
 import '../templates/app_bar_template.dart';
 import '../templates/badge_template.dart';
 import '../templates/banner_template.dart';
-// import '../templates/bottom_app_bar_template.dart';
+import '../templates/bottom_app_bar_template.dart';
 import '../templates/bottom_sheet_template.dart';
 import '../templates/button_template.dart';
 import '../templates/card_template.dart';
@@ -69,7 +69,7 @@ Future<void> main(List<String> args) async {
   const AppBarTemplateM3().generateFile(verbose: verbose);
   const BadgeTemplateM3().generateFile(verbose: verbose);
   const BannerTemplateM3().generateFile(verbose: verbose);
-  // const BottomAppBarTemplateM3().generateFile(verbose: verbose);
+  const BottomAppBarTemplateM3().generateFile(verbose: verbose);
   const BottomSheetTemplateM3().generateFile(verbose: verbose);
   const ButtonTemplateM3('Elevated Button').generateFile(verbose: verbose);
   const ButtonTemplateM3('Filled Button').generateFile(verbose: verbose);
