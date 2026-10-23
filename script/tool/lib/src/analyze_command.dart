@@ -553,7 +553,7 @@ class AnalyzeCommand extends PackageLoopingCommand {
         scheme: 'Runner',
         configuration: 'Debug',
         hostPlatform: platform,
-        extraFlags: <String>[...extraFlags, 'GCC_TREAT_WARNINGS_AS_ERRORS=YES'],
+        extraFlags: <String>[...extraFlags, ...xcodeWarningsAsErrorsFlags],
       );
       if (exitCode == 0) {
         printSuccess('$examplePath ($platformString) passed analysis.');

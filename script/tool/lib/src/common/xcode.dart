@@ -15,6 +15,16 @@ import 'process_runner.dart';
 const String _xcodeBuildCommand = 'xcodebuild';
 const String _xcRunCommand = 'xcrun';
 
+/// Build setting overrides that make compiler warnings fail the build.
+///
+/// Xcode sets SWIFT_SUPPRESS_WARNINGS=YES on Swift package dependencies, and
+/// swiftc rejects -suppress-warnings combined with -warnings-as-errors, so the
+/// Swift flag is only enabled for targets that don't already suppress warnings.
+const List<String> xcodeWarningsAsErrorsFlags = <String>[
+  'GCC_TREAT_WARNINGS_AS_ERRORS=YES',
+  r'SWIFT_TREAT_WARNINGS_AS_ERRORS=$(SWIFT_SUPPRESS_WARNINGS:not)',
+];
+
 /// A utility class for interacting with the installed version of Xcode.
 class Xcode {
   /// Creates an instance that runs commands with the given [processRunner].
