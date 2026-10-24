@@ -1,0 +1,3 @@
+changelog: |
+  - Fixes the Badge text contrast in the accessibility assessment app.
+version: skip
