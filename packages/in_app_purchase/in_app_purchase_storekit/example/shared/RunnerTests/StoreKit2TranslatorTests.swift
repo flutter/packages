@@ -61,6 +61,7 @@ final class StoreKit2TranslatorTests: XCTestCase {
       priceLocale: SK2PriceLocaleMessage(currencyCode: "USD", currencySymbol: "$"))
 
     self.session = try! SKTestSession(configurationFileNamed: "Configuration")
+    self.session.resetToDefaultState()
     self.session.clearTransactions()
     let receiptManagerStub = FIAPReceiptManagerStub()
     plugin = InAppPurchasePluginStub(receiptManager: receiptManagerStub) { request in
