@@ -787,4 +787,74 @@ final class InAppPurchase2PluginTests: XCTestCase {
     waitForExpectations(timeout: 1.0)
   }
 
+  #if os(iOS)
+    @MainActor
+    func testSuccessfulPurchaseWithRegistrarScene() async throws {
+      let windowScene = try XCTUnwrap(
+        UIApplication.shared.connectedScenes.compactMap { $0 as? UIWindowScene }.first
+      )
+      let viewController = try XCTUnwrap(windowScene.windows.first?.rootViewController)
+      XCTAssertNotNil(viewController.view.window?.windowScene)
+
+      let registrarStub = TrackingPluginRegistrarStub()
+      registrarStub.viewController = viewController
+      plugin.registrar = registrarStub
+
+      let expectation = self.expectation(description: "Purchase request with scene should succeed")
+      plugin.purchase(id: "consumable", options: nil) { result in
+        switch result {
+        case .success(let message):
+          XCTAssertEqual(message, .success)
+          expectation.fulfill()
+        case .failure(let error):
+          XCTFail("Purchase should NOT fail. Failed with \(error)")
+          expectation.fulfill()
+        }
+      }
+      await fulfillment(of: [expectation], timeout: purchaseTimeout)
+      XCTAssertGreaterThan(registrarStub.viewControllerAccessCount, 0)
+    }
+
+    @MainActor
+    func testSuccessfulPurchaseWithoutSceneFallsBack() async throws {
+      let detachedViewController = UIViewController()
+      XCTAssertNil(detachedViewController.view.window?.windowScene)
+
+      let registrarStub = TrackingPluginRegistrarStub()
+      registrarStub.viewController = detachedViewController
+      plugin.registrar = registrarStub
+
+      let expectation = self.expectation(
+        description: "Purchase request with detached viewController should fall back and succeed")
+      plugin.purchase(id: "consumable", options: nil) { result in
+        switch result {
+        case .success(let message):
+          XCTAssertEqual(message, .success)
+          expectation.fulfill()
+        case .failure(let error):
+          XCTFail("Purchase should NOT fail. Failed with \(error)")
+          expectation.fulfill()
+        }
+      }
+      await fulfillment(of: [expectation], timeout: purchaseTimeout)
+      XCTAssertGreaterThan(registrarStub.viewControllerAccessCount, 0)
+    }
+  #endif
+
 }
+
+#if os(iOS)
+  private final class TrackingPluginRegistrarStub: FlutterPluginRegistrarStub {
+    var viewControllerAccessCount = 0
+
+    override var viewController: UIViewController? {
+      get {
+        viewControllerAccessCount += 1
+        return super.viewController
+      }
+      set {
+        super.viewController = newValue
+      }
+    }
+  }
+#endif

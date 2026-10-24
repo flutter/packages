@@ -1,3 +1,7 @@
+## 0.4.13+4
+
+* Uses `Product.purchase(confirmIn:options:)` in StoreKit 2 when a view controller, window scene, or window is available.
+
 ## 0.4.13+3
 
 * Removes unused handling of the deprecated `SKDownload` hosted content

@@ -108,7 +108,7 @@ extension InAppPurchasePlugin: InAppPurchase2API {
           }
         }
 
-        let result = try await product.purchase(options: purchaseOptions)
+        let result = try await confirmPurchase(of: product, options: purchaseOptions)
 
         switch result {
         case .success(let verification):
@@ -529,5 +529,31 @@ extension InAppPurchasePlugin: InAppPurchase2API {
       }
     }
     return nil
+  }
+
+  @MainActor
+  private func confirmPurchase(
+    of product: Product,
+    options: Set<Product.PurchaseOption>
+  ) async throws -> Product.PurchaseResult {
+    #if os(iOS)
+      if let viewController = self.registrar?.viewController,
+        let windowScene = viewController.view.window?.windowScene
+      {
+        if #available(iOS 18.2, *) {
+          return try await product.purchase(confirmIn: viewController, options: options)
+        }
+        if #available(iOS 17.0, *) {
+          return try await product.purchase(confirmIn: windowScene, options: options)
+        }
+      }
+    #elseif os(macOS)
+      if #available(macOS 15.2, *),
+        let window = self.registrar?.view?.window ?? self.registrar?.viewController?.view.window
+      {
+        return try await product.purchase(confirmIn: window, options: options)
+      }
+    #endif
+    return try await product.purchase(options: options)
   }
 }
