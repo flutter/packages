@@ -1,0 +1,4 @@
+changelog: |
+  - Keeps `ExpansionPanelList` dividers when expanded if `materialGapSize` is 0.
+version: minor
+
