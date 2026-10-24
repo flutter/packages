@@ -1,3 +1,7 @@
+## NEXT
+
+* Removes unnecessary Material imports.
+
 ## 0.4.15
 
 * Exposes `sk2Transaction` on `SK2PurchaseDetails`.
