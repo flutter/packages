@@ -521,6 +521,23 @@ class DartGeneratorAdapter implements GeneratorAdapter {
 
     const generator = DartGenerator();
     generator.generate(options.dartOptions!, root, sink, dartPackageName: options.dartPackageName);
+    if (usesNativeInterop(options.dartOptions!) &&
+        options.dartOptions!.dartOut != null &&
+        options.dartOptions!.dartOut!.isNotEmpty &&
+        options.dartOptions!.dartOut != 'stdout') {
+      final buffer = StringBuffer();
+      generator.generateNativeInterop(
+        options.dartOptions!,
+        root,
+        buffer,
+        dartPackageName: options.dartPackageName,
+      );
+      _writeToOutput(
+        getNativeInteropDartPath(options.dartOptions!.dartOut!),
+        buffer.toString(),
+        basePath: options.basePath ?? '',
+      );
+    }
   }
 
   @override
