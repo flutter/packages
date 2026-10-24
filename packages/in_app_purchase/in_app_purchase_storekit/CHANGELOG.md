@@ -1,3 +1,8 @@
+## 0.4.16
+
+* Uses `Product.purchase(confirmIn:options:)` for StoreKit 2 purchases when a view controller,
+  window scene, or window is available. Fixes purchases never completing on iOS 27 and iPadOS 27.
+
 ## 0.4.15
 
 * Exposes `sk2Transaction` on `SK2PurchaseDetails`.
