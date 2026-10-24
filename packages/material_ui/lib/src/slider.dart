@@ -210,6 +210,7 @@ class Slider extends StatefulWidget {
       'This feature was deprecated after v3.27.0-0.2.pre.',
     )
     this.year2023,
+    this.animationBehavior = AnimationBehavior.normal,
   }) : _sliderType = _SliderType.material,
        assert(min <= max),
        assert(
@@ -262,6 +263,7 @@ class Slider extends StatefulWidget {
       'This feature was deprecated after v3.27.0-0.1.pre.',
     )
     this.year2023,
+    this.animationBehavior = AnimationBehavior.normal,
   }) : _sliderType = _SliderType.adaptive,
        padding = null,
        assert(min <= max),
@@ -626,6 +628,9 @@ class Slider extends StatefulWidget {
   )
   final bool? year2023;
 
+  /// The [AnimationBehavior] of the internal [AnimationController]s.
+  final AnimationBehavior animationBehavior;
+
   final _SliderType _sliderType;
 
   @override
@@ -720,13 +725,26 @@ class _SliderState extends State<Slider> with TickerProviderStateMixin {
   @override
   void initState() {
     super.initState();
-    overlayController = AnimationController(duration: kRadialReactionDuration, vsync: this);
+    overlayController = AnimationController(
+      duration: kRadialReactionDuration,
+      vsync: this,
+      animationBehavior: widget.animationBehavior,
+    );
     valueIndicatorController = AnimationController(
       duration: valueIndicatorAnimationDuration,
       vsync: this,
+      animationBehavior: widget.animationBehavior,
     );
-    enableController = AnimationController(duration: enableAnimationDuration, vsync: this);
-    positionController = AnimationController(duration: Duration.zero, vsync: this);
+    enableController = AnimationController(
+      duration: enableAnimationDuration,
+      vsync: this,
+      animationBehavior: widget.animationBehavior,
+    );
+    positionController = AnimationController(
+      duration: Duration.zero,
+      vsync: this,
+      animationBehavior: widget.animationBehavior,
+    );
     enableController.value = widget.onChanged != null ? 1.0 : 0.0;
     positionController.value = _convert(widget.value);
     _actionMap = <Type, Action<Intent>>{
@@ -1083,6 +1101,7 @@ class _SliderState extends State<Slider> with TickerProviderStateMixin {
         divisions: widget.divisions,
         activeColor: widget.activeColor,
         thumbColor: widget.thumbColor ?? CupertinoColors.white,
+        animationBehavior: widget.animationBehavior,
       ),
     );
   }

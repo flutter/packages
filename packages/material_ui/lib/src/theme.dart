@@ -288,6 +288,7 @@ class AnimatedTheme extends ImplicitlyAnimatedWidget {
     super.duration = kThemeAnimationDuration,
     super.onEnd,
     required this.child,
+    this.animationBehavior = AnimationBehavior.normal,
   });
 
   /// Specifies the color and typography values for descendant widgets.
@@ -298,11 +299,17 @@ class AnimatedTheme extends ImplicitlyAnimatedWidget {
   /// {@macro flutter.widgets.ProxyWidget.child}
   final Widget child;
 
+  /// The behavior of the animation relative to the device's clock.
+  ///
+  /// Defaults to [AnimationBehavior.normal].
+  final AnimationBehavior animationBehavior;
+
   @override
   AnimatedWidgetBaseState<AnimatedTheme> createState() => _AnimatedThemeState();
 }
 
 class _AnimatedThemeState extends AnimatedWidgetBaseState<AnimatedTheme> {
+  AnimationBehavior get animationBehavior => widget.animationBehavior;
   ThemeDataTween? _data;
 
   @override
