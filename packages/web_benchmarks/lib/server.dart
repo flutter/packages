@@ -16,10 +16,14 @@ export 'src/benchmark_result.dart';
 export 'src/compilation_options.dart';
 
 /// The default port number used by the local benchmark server.
-const int defaultBenchmarkServerPort = 9999;
+///
+/// 0 means the OS allocates an ephemeral port when the server binds.
+const int defaultBenchmarkServerPort = 0;
 
 /// The default port number used for Chrome DevTool Protocol.
-const int defaultChromeDebugPort = 10000;
+///
+/// 0 means Chrome binds an ephemeral port allocated by the OS.
+const int defaultChromeDebugPort = 0;
 
 /// Builds and serves a Flutter Web app, collects raw benchmark data and
 /// summarizes the result as a [BenchmarkResult].
@@ -33,10 +37,12 @@ const int defaultChromeDebugPort = 10000;
 /// app.
 ///
 /// [benchmarkServerPort] is the port this benchmark server serves the app on.
-/// By default uses [defaultBenchmarkServerPort].
+/// By default uses [defaultBenchmarkServerPort], which lets the OS allocate an
+/// ephemeral port.
 ///
 /// [chromeDebugPort] is the port Chrome uses for DevTool Protocol used to
-/// extract tracing data. By default uses [defaultChromeDebugPort].
+/// extract tracing data. By default uses [defaultChromeDebugPort], which lets
+/// Chrome bind an ephemeral port allocated by the OS.
 ///
 /// If [headless] is true, runs Chrome without UI. In particular, this is
 /// useful in environments (e.g. CI) that doesn't have a display.

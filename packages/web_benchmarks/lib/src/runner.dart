@@ -22,10 +22,14 @@ import 'compilation_options.dart';
 import 'metrics.dart';
 
 /// The default port number used by the local benchmark server.
-const int defaultBenchmarkServerPort = 9999;
+///
+/// 0 means the OS allocates an ephemeral port when the server binds.
+const int defaultBenchmarkServerPort = 0;
 
 /// The default port number used for Chrome DevTool Protocol.
-const int defaultChromeDebugPort = 10000;
+///
+/// 0 means Chrome binds an ephemeral port allocated by the OS.
+const int defaultChromeDebugPort = 0;
 
 /// Builds and serves a Flutter Web app, collects raw benchmark data and
 /// summarizes the result as a [BenchmarkResult].
@@ -41,9 +45,11 @@ class BenchmarkServer {
   /// app.
   ///
   /// [benchmarkServerPort] is the port this benchmark server serves the app on.
+  /// If 0, the OS allocates an ephemeral port.
   ///
   /// [chromeDebugPort] is the port Chrome uses for DevTool Protocol used to
-  /// extract tracing data.
+  /// extract tracing data. If 0, Chrome binds an ephemeral port allocated by
+  /// the OS.
   ///
   /// If [headless] is true, runs Chrome without UI. In particular, this is
   /// useful in environments (e.g. CI) that doesn't have a display.
@@ -86,9 +92,13 @@ class BenchmarkServer {
   final CompilationOptions compilationOptions;
 
   /// The port this benchmark server serves the app on.
+  ///
+  /// If 0, the OS allocates an ephemeral port.
   final int benchmarkServerPort;
 
   /// The port Chrome uses for DevTool Protocol used to extract tracing data.
+  ///
+  /// If 0, Chrome binds an ephemeral port allocated by the OS.
   final int chromeDebugPort;
 
   /// Whether to run Chrome without UI.
@@ -107,15 +117,14 @@ class BenchmarkServer {
   /// This path should contain the path segments, fragment, and/or query
   /// parameters that are required for the benchmark. This value will be parsed
   /// by `Uri.parse` and combined with the benchmark URI scheme ('http'), host
-  /// ('localhost'), and port [benchmarkServerPort] to create the URL for
-  /// loading in Chrome. See [_benchmarkAppUrl].
+  /// ('localhost'), and the bound port of the benchmark server to create the
+  /// URL for loading in Chrome. See [_benchmarkAppUrl].
   ///
   /// The default value is [defaultInitialPath].
   final String benchmarkPath;
 
-  String get _benchmarkAppUrl => Uri.parse(
-    benchmarkPath,
-  ).replace(scheme: 'http', host: 'localhost', port: benchmarkServerPort).toString();
+  String _benchmarkAppUrl(int port) =>
+      Uri.parse(benchmarkPath).replace(scheme: 'http', host: 'localhost', port: port).toString();
 
   /// Builds and serves the benchmark app, and collects benchmark results.
   Future<BenchmarkResults> run() async {
@@ -299,7 +308,7 @@ class BenchmarkServer {
       ).createTempSync('chrome_user_data_').path;
 
       final options = ChromeOptions(
-        url: _benchmarkAppUrl,
+        url: _benchmarkAppUrl(server.port),
         userDataDirectory: userDataDir,
         headless: headless,
         debugPort: chromeDebugPort,
