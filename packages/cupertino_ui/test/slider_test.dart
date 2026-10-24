@@ -442,6 +442,9 @@ void main() {
       tester.getSemantics(find.byType(CupertinoSlider)),
       matchesSemantics(
         isSlider: true,
+        role: SemanticsRole.slider,
+        minValue: '0.0',
+        maxValue: '1.0',
         hasIncreaseAction: true,
         hasDecreaseAction: true,
         value: '50%',
@@ -462,7 +465,16 @@ void main() {
       ),
     );
 
-    expect(tester.getSemantics(find.byType(CupertinoSlider)), matchesSemantics(isSlider: true));
+    expect(
+      tester.getSemantics(find.byType(CupertinoSlider)),
+      matchesSemantics(
+        isSlider: true,
+        role: SemanticsRole.slider,
+        minValue: '0.0',
+        maxValue: '1.0',
+        value: '50%',
+      ),
+    );
 
     handle.dispose();
   });
@@ -483,6 +495,9 @@ void main() {
       tester.getSemantics(find.byType(CupertinoSlider)),
       matchesSemantics(
         isSlider: true,
+        role: SemanticsRole.slider,
+        minValue: '0.0',
+        maxValue: '1.0',
         hasIncreaseAction: true,
         hasDecreaseAction: true,
         value: '50%',
@@ -506,6 +521,9 @@ void main() {
       tester.getSemantics(find.byType(CupertinoSlider)),
       matchesSemantics(
         isSlider: true,
+        role: SemanticsRole.slider,
+        minValue: '0.0',
+        maxValue: '1.0',
         hasIncreaseAction: true,
         hasDecreaseAction: true,
         value: '60%',
