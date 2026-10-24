@@ -2622,21 +2622,12 @@ class _LocalizedShortcutLabeler {
         ],
       ];
       String? shortcutTrigger;
-      final int logicalKeyId = trigger.keyId;
       if (_shortcutGraphicEquivalents.containsKey(trigger)) {
         shortcutTrigger = _shortcutGraphicEquivalents[trigger];
       } else {
         // Otherwise, look it up, and if we don't have a translation for it,
         // then fall back to the key label.
-        shortcutTrigger = _getLocalizedName(trigger, localizations);
-        if (shortcutTrigger == null && logicalKeyId & LogicalKeyboardKey.planeMask == 0x0) {
-          // If the trigger is a Unicode-character-producing key, then use the
-          // character.
-          shortcutTrigger = String.fromCharCode(logicalKeyId & LogicalKeyboardKey.valueMask)
-              .toUpperCase();
-        }
-        // Fall back to the key label if all else fails.
-        shortcutTrigger ??= trigger.keyLabel;
+        shortcutTrigger = _getLocalizedName(trigger, localizations) ?? trigger.keyLabel;
       }
       return <String>[
         ...modifiers,
