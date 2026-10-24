@@ -1625,6 +1625,45 @@ void main() {
       final double finalPosition = box.localToGlobal(Offset.zero).dy;
       expect(finalPosition, initialPosition);
     });
+
+    testWidgets('drag can end while a relayout of the sheet is pending', (
+      WidgetTester tester,
+    ) async {
+      // Regression test for https://github.com/flutter/flutter/issues/194681.
+      final GlobalKey homeKey = GlobalKey();
+      final GlobalKey sheetKey = GlobalKey();
+
+      await tester.pumpWidget(dragGestureApp(homeKey, sheetKey));
+
+      await tester.tap(find.text('Push Page 2'));
+      await tester.pumpAndSettle();
+
+      var box = tester.renderObject(find.byKey(sheetKey)) as RenderBox;
+      final double initialPosition = box.localToGlobal(Offset.zero).dy;
+
+      final TestGesture gesture = await tester.startGesture(const Offset(100, 200));
+      await gesture.moveBy(const Offset(0, 100));
+      await tester.pump();
+
+      // The sheet measures the drag against the height of the box the drag
+      // gesture detector renders. Mark it dirty so the drag ends before the
+      // next layout.
+      final Finder dragGestureDetector = find.ancestor(
+        of: find.byKey(sheetKey),
+        matching: find.byWidgetPredicate(
+          (Widget widget) => '${widget.runtimeType}'.startsWith('_CupertinoDragGestureDetector'),
+        ),
+      );
+      tester.renderObject(dragGestureDetector).markNeedsLayout();
+
+      await gesture.up();
+      await tester.pumpAndSettle();
+
+      expect(tester.takeException(), isNull);
+      expect(find.text('Page 2'), findsOneWidget);
+      box = tester.renderObject(find.byKey(sheetKey)) as RenderBox;
+      expect(box.localToGlobal(Offset.zero).dy, initialPosition);
+    });
   });
 
   group('draggable scrollable CupertinoSheetRoute', () {
@@ -1864,6 +1903,44 @@ void main() {
 
       // Scrollable sheet should not be open.
       expect(find.text('Scroll Item 3'), findsNothing);
+    });
+
+    testWidgets('drag can end while a relayout of the sheet content is pending', (
+      WidgetTester tester,
+    ) async {
+      // Regression test for https://github.com/flutter/flutter/issues/194681.
+      final GlobalKey homeKey = GlobalKey();
+      final GlobalKey sheetKey = GlobalKey();
+
+      await tester.pumpWidget(draggableScrollableApp(homeKey, sheetKey));
+
+      await tester.tap(find.text('Push Page 2'));
+      await tester.pumpAndSettle();
+
+      var box = tester.renderObject(find.byKey(sheetKey)) as RenderBox;
+      final double initialPosition = box.localToGlobal(Offset.zero).dy;
+
+      // Drag the sheet down while its content is scrolled to the top.
+      final TestGesture gesture = await tester.startGesture(const Offset(100, 300));
+      // Do a small drag first to win the gesture arena.
+      await gesture.moveBy(const Offset(0, 30));
+      await gesture.moveBy(const Offset(0, 50));
+      await tester.pump();
+
+      box = tester.renderObject(find.byKey(sheetKey)) as RenderBox;
+      expect(box.localToGlobal(Offset.zero).dy, greaterThan(initialPosition));
+
+      // The sheet measures the drag against the height of its content. Mark
+      // the content dirty so the drag ends before the next layout.
+      box.markNeedsLayout();
+
+      await gesture.up();
+      await tester.pumpAndSettle();
+
+      expect(tester.takeException(), isNull);
+      expect(find.text('Scroll Item 3'), findsOneWidget);
+      box = tester.renderObject(find.byKey(sheetKey)) as RenderBox;
+      expect(box.localToGlobal(Offset.zero).dy, initialPosition);
     });
   });
 

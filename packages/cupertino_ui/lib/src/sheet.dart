@@ -1040,7 +1040,10 @@ class _CupertinoDragGestureDetectorState<T> extends State<_CupertinoDragGestureD
   static VelocityTracker _cupertinoVelocityBuilder(PointerEvent event) =>
       IOSScrollViewFlingVelocityTracker(event.kind);
 
-  double get sheetHeight => context.size!.height;
+  // Reads the height from the render box instead of context.size, which asserts
+  // when the box is dirty for layout. A drag can end while a relayout is
+  // pending, and the last laid out height is the one the drag was made against.
+  double get sheetHeight => (context.findRenderObject()! as RenderBox).size.height;
 
   @override
   void initState() {
@@ -1447,11 +1450,15 @@ class _CupertinoDraggableScrollableSheetState<T>
     _dragGestureController ??= widget.onStartPopGesture();
   }
 
+  // See _CupertinoDragGestureDetectorState.sheetHeight.
+  double get _sheetHeight => (context.findRenderObject()! as RenderBox).size.height;
+
   void _dragUpdate(double delta) {
     assert(mounted);
     if (_dragGestureController != null) {
+      final double sheetHeight = _sheetHeight;
       _dragGestureController!.dragUpdate(
-        delta / (context.size!.height - (context.size!.height * _kTopGapRatio)),
+        delta / (sheetHeight - (sheetHeight * _kTopGapRatio)),
         null,
       );
     }
@@ -1460,7 +1467,7 @@ class _CupertinoDraggableScrollableSheetState<T>
   void _handleDragEnd(double velocity) {
     assert(mounted);
     if (_dragGestureController != null) {
-      _dragGestureController!.dragEnd(-velocity / context.size!.height, null);
+      _dragGestureController!.dragEnd(-velocity / _sheetHeight, null);
       _dragGestureController = null;
     }
   }
