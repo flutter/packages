@@ -1357,18 +1357,25 @@ class PigeonEventSink<ReturnType> {
 }
 
 class VideoEventsStreamHandler: PigeonEventChannelWrapper<PlatformVideoEvent> {
+  private static var registeredChannels: [String: FlutterEventChannel] = [:]
   static func register(
     with messenger: FlutterBinaryMessenger,
     instanceName: String = "",
-    streamHandler: VideoEventsStreamHandler
+    streamHandler: VideoEventsStreamHandler?
   ) {
     var channelName = "dev.flutter.pigeon.video_player_avfoundation.VideoEventChannel.videoEvents"
     if !instanceName.isEmpty {
       channelName += ".\(instanceName)"
     }
-    let internalStreamHandler = PigeonStreamHandler<PlatformVideoEvent>(wrapper: streamHandler)
-    let channel = FlutterEventChannel(
-      name: channelName, binaryMessenger: messenger, codec: messagesPigeonMethodCodec)
-    channel.setStreamHandler(internalStreamHandler)
+    if let previousChannel = registeredChannels[channelName] {
+      previousChannel.setStreamHandler(nil)
+    }
+    if let streamHandler = streamHandler {
+      let internalStreamHandler = PigeonStreamHandler<PlatformVideoEvent>(wrapper: streamHandler)
+      let channel = FlutterEventChannel(
+        name: channelName, binaryMessenger: messenger, codec: messagesPigeonMethodCodec)
+      channel.setStreamHandler(internalStreamHandler)
+      registeredChannels[channelName] = channel
+    }
   }
 }

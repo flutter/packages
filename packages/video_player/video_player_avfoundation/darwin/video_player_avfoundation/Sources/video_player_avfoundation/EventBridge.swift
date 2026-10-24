@@ -28,7 +28,15 @@ private enum QueueableEvent {
   /// set up.
   private var queuedEvents: [QueueableEvent]? = []
 
+  /// The messenger the event channel is registered with.
+  private weak var messenger: FlutterBinaryMessenger?
+
+  /// The suffix used for the event channel.
+  private let eventChannelSuffix: String
+
   init(messenger: FlutterBinaryMessenger, channelSuffix: String) {
+    self.messenger = messenger
+    eventChannelSuffix = channelSuffix
     super.init()
     VideoEventsStreamHandler.register(
       with: messenger,
@@ -103,6 +111,13 @@ private enum QueueableEvent {
   }
 
   func videoPlayerWasDisposed() {
+    if let messenger = messenger {
+      VideoEventsStreamHandler.register(
+        with: messenger,
+        instanceName: eventChannelSuffix,
+        streamHandler: nil,
+      )
+    }
     // Ignore any future events
     eventSink = nil
     queuedEvents = nil
