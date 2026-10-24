@@ -8,6 +8,7 @@ import android.content.ContentResolver
 import android.net.Uri
 import dev.flutter.packages.crossfileandroid.TestProxyApiRegistrar
 import java.io.InputStream
+import java.io.OutputStream
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import org.mockito.kotlin.mock
@@ -35,5 +36,18 @@ class ContentResolverTest {
     whenever(instance.openInputStream(uri)).thenReturn(value)
 
     assertEquals(value, api.openInputStream(instance, uri.toString()))
+  }
+
+  @Test
+  fun openOutputStream() {
+    val api = TestProxyApiRegistrar().getPigeonApiContentResolver()
+
+    val instance = mock<ContentResolver>()
+    val uri = Uri("myString")
+    val mode = "w"
+    val value = mock<OutputStream>()
+    whenever(instance.openOutputStream(uri, mode)).thenReturn(value)
+
+    assertEquals(value, api.openOutputStream(instance, uri.toString(), mode))
   }
 }

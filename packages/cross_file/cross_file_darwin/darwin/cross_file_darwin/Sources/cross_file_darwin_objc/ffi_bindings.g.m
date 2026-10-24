@@ -166,58 +166,6 @@ _1w5ousu_wrapBlockingBlock_10c3wkj(int64_t port, DOBJC_Context *ctx,
         }
       });
 }
-
-__attribute__((visibility("default")))
-@interface _1w5ousu_BlockArgs_pfv6jd : NSObject
-@property(copy) id block;
-@property(strong) id arg0;
-@property(strong) id arg1;
-@end
-@implementation _1w5ousu_BlockArgs_pfv6jd
-@end
-
-typedef void (^_ListenerTrampoline_2)(id arg0, id arg1);
-__attribute__((visibility("default"))) __attribute__((used)) _ListenerTrampoline_2
-_1w5ousu_wrapListenerBlock_pfv6jd(int64_t port, DOBJC_Context *ctx) NS_RETURNS_RETAINED {
-  __block __weak _ListenerTrampoline_2 weakSelfBlock = nil;
-  _ListenerTrampoline_2 strongSelfBlock = [^void(id arg0, id arg1) {
-    @autoreleasepool {
-      _1w5ousu_BlockArgs_pfv6jd *args = [[_1w5ousu_BlockArgs_pfv6jd alloc] init];
-      args.block = weakSelfBlock;
-      args.arg0 = arg0;
-      args.arg1 = arg1;
-      ctx->invokeListenerPortBlock(port, (__bridge_retained void *)args);
-    }
-  } copy];
-  weakSelfBlock = strongSelfBlock;
-  return strongSelfBlock;
-}
-
-typedef void (^_BlockingTrampoline_2)(void *waiter, id arg0, id arg1);
-__attribute__((visibility("default"))) __attribute__((used)) _ListenerTrampoline_2
-_1w5ousu_wrapBlockingBlock_pfv6jd(int64_t port, DOBJC_Context *ctx,
-                                  void (*directInvoke)(void *)) NS_RETURNS_RETAINED {
-  BLOCKING_BLOCK_IMPL(
-      ctx, _ListenerTrampoline_2, ^void(id arg0, id arg1),
-      {
-        @autoreleasepool {
-          _1w5ousu_BlockArgs_pfv6jd *args = [[_1w5ousu_BlockArgs_pfv6jd alloc] init];
-          args.block = weakSelfBlock;
-          args.arg0 = arg0;
-          args.arg1 = arg1;
-          directInvoke((__bridge_retained void *)args);
-        }
-      },
-      {
-        @autoreleasepool {
-          _1w5ousu_BlockArgs_pfv6jd *args = [[_1w5ousu_BlockArgs_pfv6jd alloc] init];
-          args.block = weakSelfBlock;
-          args.arg0 = arg0;
-          args.arg1 = arg1;
-          ctx->invokeBlockingPortBlock(port, (__bridge_retained void *)args, waiter);
-        }
-      });
-}
 #undef BLOCKING_BLOCK_IMPL
 
 #pragma clang diagnostic pop
