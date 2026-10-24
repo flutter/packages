@@ -188,6 +188,50 @@ class StatefulShellBranchConfig extends RouteBaseConfig {
 
 /// A mixin that provides common functionality for GoRoute-based configurations.
 mixin _GoRouteMixin on RouteBaseConfig {
+  bool _hasRouteMethodOverride(String name) {
+    final MethodElement? method = routeDataClass.thisType.lookUpMethod(
+      name,
+      routeDataClass.library,
+    );
+    return method != null &&
+        !(method.enclosingElement?.name == '_GoRouteDataBase' &&
+            method.library.uri.toString() == 'package:go_router/src/route_data.dart');
+  }
+
+  bool get _redirectOnly {
+    final dataChecker = TypeChecker.fromUrl(
+      'package:go_router/src/route_data.dart#$routeDataClassName',
+    );
+    final InterfaceType routeDataType = routeDataClass.allSupertypes.firstWhere(
+      dataChecker.isExactlyType,
+    );
+    final bool supportsRedirectOnly =
+        routeDataType.element
+            .getMethod(r'$route')
+            ?.formalParameters
+            .any(
+              (FormalParameterElement parameter) =>
+                  parameter.isNamed && parameter.name == 'redirectOnly',
+            ) ??
+        false;
+    if (!supportsRedirectOnly) {
+      return false;
+    }
+    if (!_hasRouteMethodOverride('redirect') ||
+        _hasRouteMethodOverride('build') ||
+        _hasRouteMethodOverride('buildPage')) {
+      return false;
+    }
+    if (_hasRouteMethodOverride('onExit')) {
+      throw InvalidGenerationSourceError(
+        'A redirect-only route cannot override onExit. '
+        'Implement build or buildPage to use onExit.',
+        element: routeDataClass,
+      );
+    }
+    return true;
+  }
+
   String get _basePathForLocation;
 
   /// The path this route contributes to the URL, without any parent path.
@@ -502,6 +546,7 @@ mixin $_mixinName on $routeDataClassName {
       '${name != null ? 'name: ${escapeDartString(name!)},' : ''}'
       '${caseSensitive ? '' : 'caseSensitive: $caseSensitive,'}'
       '${'hasOverriddenOnExit: $hasOverriddenOnExit,'}'
+      '${_redirectOnly ? 'redirectOnly: true,' : ''}'
       '${parentNavigatorKey == null ? '' : 'parentNavigatorKey: $parentNavigatorKey,'}';
 
   @override
@@ -588,6 +633,7 @@ mixin $_mixinName on $routeDataClassName {
       'path: ${escapeDartString(path)},'
       '${caseSensitive ? '' : 'caseSensitive: $caseSensitive,'}'
       '${'hasOverriddenOnExit: $hasOverriddenOnExit,'}'
+      '${_redirectOnly ? 'redirectOnly: true,' : ''}'
       '${parentNavigatorKey == null ? '' : 'parentNavigatorKey: $parentNavigatorKey,'}';
 
   @override

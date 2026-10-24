@@ -1,0 +1,3 @@
+changelog: |
+  - Adds support for generated redirect-only routes that conditionally allow child routes to render.
+version: minor
