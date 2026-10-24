@@ -1,0 +1,3 @@
+changelog: |
+  - Keeps the `Material` of a `Dialog.fullscreen` covering the whole screen while the software keyboard is shown, so that a translucent keyboard shows the dialog's surface instead of the modal barrier behind it.
+version: patch
