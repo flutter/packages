@@ -433,6 +433,24 @@ ${[for (var i = 2; i <= 30; i++) '    <pattern id="lvl$i" width="10" height="10"
     ]);
   });
 
+  test('em units in text positions are relative to the font size', () {
+    final VectorInstructions instructions = parseWithoutOptimizers('''
+<svg width="1000" height="500" xmlns="http://www.w3.org/2000/svg">
+  <text x="500" y="250" dy=".5em" font-size="400">21</text>
+  <g font-size="20">
+    <text x="1em" y="2em" dx="1em" dy="-1em">inherited</text>
+  </g>
+  <text x="10" y="10" dy="1em">default</text>
+</svg>
+''');
+
+    expect(instructions.textPositions, const <TextPosition>[
+      TextPosition(x: 500, y: 250, dy: 200, reset: true),
+      TextPosition(x: 20, y: 40, dx: 20, dy: -20, reset: true),
+      TextPosition(x: 10, y: 10, dy: 16, reset: true),
+    ]);
+  });
+
   test('Non-standard root font-weight="regular" uses initial weight', () {
     final VectorInstructions instructions = parseWithoutOptimizers('''
 <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">

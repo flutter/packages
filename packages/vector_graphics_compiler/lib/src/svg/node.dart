@@ -241,10 +241,11 @@ class TextPositionNode extends ParentNode {
   TextPosition computeTextPosition(Rect bounds, AffineMatrix transform, {TextPosition? parent}) {
     final AffineMatrix computedTransform = concatTransform(transform);
 
-    double? x = attributes.x?.calculate(bounds.width);
-    double? y = attributes.y?.calculate(bounds.height);
-    double? dx = attributes.dx?.calculate(bounds.width);
-    double? dy = attributes.dy?.calculate(bounds.height);
+    final double? fontSize = attributes.fontSize;
+    double? x = attributes.x?.calculate(bounds.width, fontSize: fontSize);
+    double? y = attributes.y?.calculate(bounds.height, fontSize: fontSize);
+    double? dx = attributes.dx?.calculate(bounds.width, fontSize: fontSize);
+    double? dy = attributes.dy?.calculate(bounds.height, fontSize: fontSize);
 
     final bool hasXY = x != null && y != null;
     final bool hasDxDy = dx != null && dy != null;

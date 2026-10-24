@@ -1,3 +1,7 @@
+## 1.3.3
+
+* Fixes `em` units in text `x`, `y`, `dx` and `dy` being treated as pixels.
+
 ## 1.3.2
 
 * Fixes a `tspan` without its own position being drawn with its parent group
