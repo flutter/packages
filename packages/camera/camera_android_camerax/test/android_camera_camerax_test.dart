@@ -518,14 +518,17 @@ void main() {
 
             return mockBackCameraSelector;
           };
+      int? previewTargetRotation;
       PigeonOverrides.preview_new =
           ({
             int? targetRotation,
             CameraIntegerRange? targetFpsRange,
             ResolutionSelector? resolutionSelector,
           }) {
+            previewTargetRotation = targetRotation;
             return mockPreview;
           };
+      int? imageCaptureTargetRotation;
       PigeonOverrides.imageCapture_new =
           ({
             int? targetRotation,
@@ -534,6 +537,7 @@ void main() {
             int? jpegQuality,
             bool? zeroShutterLagEnabled,
           }) {
+            imageCaptureTargetRotation = targetRotation;
             return mockImageCapture;
           };
       int? recorderTargetVideoEncodingBitRate;
@@ -589,6 +593,9 @@ void main() {
             final manager = MockDeviceOrientationManager();
             when(manager.startListeningForDeviceOrientationChange()).thenAnswer((_) async {
               startedListeningForDeviceOrientationChanges = true;
+            });
+            when(manager.getDefaultDisplayRotation()).thenAnswer((_) async {
+              return Surface.rotation90;
             });
             when(manager.getUiOrientation()).thenAnswer((_) async {
               return 'PORTRAIT_UP';
@@ -661,9 +668,11 @@ void main() {
 
       // Verify the camera's Preview instance is instantiated properly.
       expect(camera.preview, equals(mockPreview));
+      expect(previewTargetRotation, equals(Surface.rotation90));
 
       // Verify the camera's ImageCapture instance is instantiated properly.
       expect(camera.imageCapture, equals(mockImageCapture));
+      expect(imageCaptureTargetRotation, equals(Surface.rotation90));
 
       // Verify the camera's Recorder and VideoCapture instances are instantiated properly.
       expect(camera.recorder, equals(mockRecorder));
@@ -4581,11 +4590,13 @@ void main() {
       final camera = AndroidCameraCameraX();
       const cameraId = 44;
 
+      final mockPreview = MockPreview();
       final mockImageAnalysis = MockImageAnalysis();
       final mockImageCapture = MockImageCapture();
       final mockVideoCapture = MockVideoCapture();
 
       // Set directly for test versus calling createCamera.
+      camera.preview = mockPreview;
       camera.imageAnalysis = mockImageAnalysis;
       camera.imageCapture = mockImageCapture;
       camera.videoCapture = mockVideoCapture;
@@ -4605,6 +4616,7 @@ void main() {
 
         await camera.lockCaptureOrientation(cameraId, orientation);
 
+        verify(mockPreview.setTargetRotation(expectedTargetRotation));
         verify(mockImageAnalysis.setTargetRotation(expectedTargetRotation));
         verify(mockImageCapture.setTargetRotation(expectedTargetRotation));
         verify(mockVideoCapture.setTargetRotation(expectedTargetRotation));
@@ -4623,10 +4635,23 @@ void main() {
     () async {
       final camera = AndroidCameraCameraX();
       const cameraId = 57;
+      const int defaultTargetRotation = Surface.rotation90;
+      final mockPreview = MockPreview();
+
+      camera.preview = mockPreview;
+      PigeonOverrides.deviceOrientationManager_new =
+          ({required void Function(DeviceOrientationManager, String) onDeviceOrientationChanged}) {
+            final mockDeviceOrientationManager = MockDeviceOrientationManager();
+            when(
+              mockDeviceOrientationManager.getDefaultDisplayRotation(),
+            ).thenAnswer((_) async => defaultTargetRotation);
+            return mockDeviceOrientationManager;
+          };
 
       camera.captureOrientationLocked = true;
       await camera.unlockCaptureOrientation(cameraId);
       expect(camera.captureOrientationLocked, isFalse);
+      verify(mockPreview.setTargetRotation(defaultTargetRotation));
     },
   );
 
