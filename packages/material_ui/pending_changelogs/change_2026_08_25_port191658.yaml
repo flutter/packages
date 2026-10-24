@@ -1,0 +1,3 @@
+changelog: |
+  - Fix `TextFormField` validators sometimes seeing a stale value when `FormState.validate()` runs from a `TextEditingController` listener registered before the field's own listener.
+version: patch
