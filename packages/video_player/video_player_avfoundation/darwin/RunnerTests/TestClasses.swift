@@ -193,7 +193,7 @@ final class TestPixelBufferSource: PixelBufferSource {
   }
 #endif
 
-final class StubAVFactory: NSObject, WrappedAVObjectFactory {
+final class StubAVFactory: WrappedAVObjectFactory {
   let player: AVPlayer
   let playerItem: WrappedAVPlayerItem
   let pixelBufferSource: PixelBufferSource?
@@ -217,7 +217,6 @@ final class StubAVFactory: NSObject, WrappedAVObjectFactory {
     #if os(iOS)
       self.audioSession = TestAudioSession()
     #endif
-    super.init()
   }
 
   func urlAsset(with url: URL, options: [String: Any]?) -> WrappedAVAsset {
@@ -264,14 +263,13 @@ final class StubFVPDisplayLinkFactory: DisplayLinkFactory {
   }
 }
 
-final class StubEventListener: NSObject, VideoEventListener {
+final class StubEventListener: VideoEventListener {
   var onInitialized: (() -> Void)?
   private(set) var initializationDuration: Int64 = 0
   private(set) var initializationSize: CGSize = .zero
 
   init(onInitialized: (() -> Void)? = nil) {
     self.onInitialized = onInitialized
-    super.init()
   }
 
   func videoPlayerDidComplete() {}
