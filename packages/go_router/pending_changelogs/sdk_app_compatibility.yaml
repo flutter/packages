@@ -1,0 +1,3 @@
+changelog: |
+  - Restores SDK MaterialApp and CupertinoApp support when selecting default pages, hero controllers, and error screens, while preserving material_ui and cupertino_ui support.
+version: patch
