@@ -26,7 +26,7 @@ String swiftInstanceManagerClassName(InternalSwiftOptions options) =>
 String instanceManagerFinalizerDelegateTemplate(InternalSwiftOptions options) =>
     '''
 /// Handles the callback when an object is deallocated.
-protocol ${instanceManagerFinalizerDelegateName(options)}: AnyObject {
+${options.accessModifier}protocol ${instanceManagerFinalizerDelegateName(options)}: AnyObject {
   /// Invoked when the strong reference of an object is deallocated in an `InstanceManager`.
   func onDeinit(identifier: Int64)
 }
@@ -90,7 +90,7 @@ String instanceManagerTemplate(InternalSwiftOptions options) {
 /// again.
 ///
 /// Accessing and inserting to an InstanceManager is thread safe.
-final class ${swiftInstanceManagerClassName(options)} {
+${options.accessModifier}final class ${swiftInstanceManagerClassName(options)} {
   // Identifiers are locked to a specific range to avoid collisions with objects
   // created simultaneously from Dart.
   // Host uses identifiers >= 2^16 and Dart is expected to use values n where,
@@ -107,7 +107,7 @@ final class ${swiftInstanceManagerClassName(options)} {
   private let finalizerDelegate: ${instanceManagerFinalizerDelegateName(options)}
   private var nextIdentifier: Int64 = minHostCreatedIdentifier
 
-  public init(finalizerDelegate: ${instanceManagerFinalizerDelegateName(options)}) {
+  ${options.accessModifier}init(finalizerDelegate: ${instanceManagerFinalizerDelegateName(options)}) {
     self.finalizerDelegate = finalizerDelegate
   }
 
@@ -119,7 +119,7 @@ final class ${swiftInstanceManagerClassName(options)} {
   /// - Parameters:
   ///   - instance: the instance to be stored
   ///   - identifier: the identifier to be paired with instance. This value must be >= 0 and unique
-  func addDartCreatedInstance(_ instance: AnyObject, withIdentifier identifier: Int64) {
+  ${options.accessModifier}func addDartCreatedInstance(_ instance: AnyObject, withIdentifier identifier: Int64) {
     lockQueue.async {
       self.addInstance(instance, withIdentifier: identifier)
     }
@@ -130,7 +130,7 @@ final class ${swiftInstanceManagerClassName(options)} {
   /// - Parameters:
   ///   - instance: the instance to be stored. This must be unique to all other added instances.
   /// - Returns: the unique identifier (>= 0) stored with instance
-  func addHostCreatedInstance(_ instance: AnyObject) -> Int64 {
+  ${options.accessModifier}func addHostCreatedInstance(_ instance: AnyObject) -> Int64 {
     assert(!containsInstance(instance), "Instance of \\(instance) has already been added.")
     var identifier: Int64 = -1
     lockQueue.sync {
@@ -147,7 +147,7 @@ final class ${swiftInstanceManagerClassName(options)} {
   ///   - instanceIdentifier: the identifier paired to an instance.
   /// - Returns: removed instance if the manager contains the given identifier, otherwise `nil` if
   ///   the manager doesn't contain the value
-  func removeInstance<T: AnyObject>(withIdentifier instanceIdentifier: Int64) throws -> T? {
+  ${options.accessModifier}func removeInstance<T: AnyObject>(withIdentifier instanceIdentifier: Int64) throws -> T? {
     var instance: AnyObject? = nil
     lockQueue.sync {
       instance = strongInstances.object(forKey: NSNumber(value: instanceIdentifier))
@@ -162,7 +162,7 @@ final class ${swiftInstanceManagerClassName(options)} {
   ///   - instanceIdentifier: the identifier associated with an instance
   /// - Returns: the instance associated with `instanceIdentifier` if the manager contains the value, otherwise
   ///   `nil` if the manager doesn't contain the value
-  func instance<T: AnyObject>(forIdentifier instanceIdentifier: Int64) -> T? {
+  ${options.accessModifier}func instance<T: AnyObject>(forIdentifier instanceIdentifier: Int64) -> T? {
     var instance: AnyObject? = nil
     lockQueue.sync {
       instance = weakInstances.object(forKey: NSNumber(value: instanceIdentifier))
@@ -195,7 +195,7 @@ final class ${swiftInstanceManagerClassName(options)} {
   ///   - instance: an instance that may be stored in the manager
   /// - Returns: the identifier associated with `instance` if the manager contains the value, otherwise
   ///   `nil` if the manager doesn't contain the value
-  func identifierWithStrongReference(forInstance instance: AnyObject) -> Int64? {
+  ${options.accessModifier}func identifierWithStrongReference(forInstance instance: AnyObject) -> Int64? {
     var identifier: Int64? = nil
     lockQueue.sync {
       if let existingIdentifier = identifiers.object(forKey: instance)?.int64Value {
@@ -211,7 +211,7 @@ final class ${swiftInstanceManagerClassName(options)} {
   /// - Parameters:
   ///   - instance: the instance whose presence in this manager is to be tested
   /// - Returns: whether this manager contains the given `instance`
-  func containsInstance(_ instance: AnyObject) -> Bool {
+  ${options.accessModifier}func containsInstance(_ instance: AnyObject) -> Bool {
     var containsInstance = false
     lockQueue.sync {
       containsInstance = identifiers.object(forKey: instance) != nil
@@ -222,7 +222,7 @@ final class ${swiftInstanceManagerClassName(options)} {
   /// Removes all of the instances from this manager.
   ///
   /// The manager will be empty after this call returns.
-  func removeAllObjects() throws {
+  ${options.accessModifier}func removeAllObjects() throws {
     lockQueue.sync {
       let weakInstancesEnumerator = weakInstances.objectEnumerator()!
       while let instance = weakInstancesEnumerator.nextObject() {

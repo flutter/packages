@@ -1,3 +1,7 @@
+## 29.1.0
+
+* [swift] Adds `SwiftOptions.accessLevel` (`SwiftAccessLevel.internal`, `SwiftAccessLevel.package`, `SwiftAccessLevel.public`) and `--swift_access_level` CLI flag to control access modifiers on generated Swift declarations.
+
 ## 29.0.11
 
 * [swift] Warns after FFI code generation if the `objective_c` version constraint in `pubspec.yaml` does not match the generated `ObjCVersionCheck`.
