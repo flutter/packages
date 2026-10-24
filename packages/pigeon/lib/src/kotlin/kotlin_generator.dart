@@ -37,6 +37,9 @@ const String _overflowClassName = '${classNamePrefix}CodecOverflow';
 /// Kotlin file-level annotation for generated code.
 const String kotlinGeneratedAnnotation = '@file:Generated("$defaultPluginPackageName")';
 
+/// Kotlin class-level annotation for generated code.
+const String kotlinClassGeneratedAnnotation = '@Generated("$defaultPluginPackageName")';
+
 /// Options that control how Kotlin code will be generated.
 class KotlinOptions {
   /// Creates a [KotlinOptions] object
@@ -327,6 +330,13 @@ class KotlinGenerator extends StructuredGenerator<InternalKotlinOptions> {
     }
   }
 
+  /// Writes `@Generated` on a top-level declaration if enabled in [generatorOptions].
+  void _writeGeneratedAnnotation(InternalKotlinOptions generatorOptions, Indent indent) {
+    if (generatorOptions.useGeneratedAnnotation) {
+      indent.writeln(kotlinClassGeneratedAnnotation);
+    }
+  }
+
   @override
   void writeConstants(
     InternalKotlinOptions generatorOptions,
@@ -363,6 +373,7 @@ class KotlinGenerator extends StructuredGenerator<InternalKotlinOptions> {
     indent.newln();
     addDocumentationComments(indent, anEnum.documentationComments, _docCommentSpec);
     _writeKeepAnnotationForJni(generatorOptions, indent);
+    _writeGeneratedAnnotation(generatorOptions, indent);
     indent.write('enum class ${anEnum.name}(val raw: Int) ');
     indent.addScoped('{', '}', () {
       enumerate(anEnum.members, (int index, EnumMember member) {
@@ -412,6 +423,7 @@ class KotlinGenerator extends StructuredGenerator<InternalKotlinOptions> {
       generatorComments: generatedMessages,
     );
     _writeKeepAnnotationForJni(generatorOptions, indent);
+    _writeGeneratedAnnotation(generatorOptions, indent);
     _writeDataClassSignature(indent, classDefinition);
     if (classDefinition.isSealed) {
       return;
@@ -691,6 +703,7 @@ class KotlinGenerator extends StructuredGenerator<InternalKotlinOptions> {
       );
     }
 
+    _writeGeneratedAnnotation(generatorOptions, indent);
     indent.write(
       'private open class ${generatorOptions.fileSpecificClassNameComponent}$_codecName : StandardMessageCodec() ',
     );
@@ -759,6 +772,7 @@ class KotlinGenerator extends StructuredGenerator<InternalKotlinOptions> {
       fields: overflowFields,
     );
 
+    _writeGeneratedAnnotation(generatorOptions, indent);
     _writeDataClassSignature(indent, overflowClass, private: true);
     indent.addScoped(' {', '}', () {
       writeClassEncode(
@@ -810,12 +824,13 @@ if (wrapped == null) {
     AstFlutterApi api, {
     required String dartPackageName,
   }) {
+    indent.writeln('/// Map that stores instances');
+    indent.writeln('val registered${api.name}: MutableMap<String, ${api.name}> = mutableMapOf()');
+    indent.newln();
+    indent.writeln('/// Class that stores instances');
+    indent.writeln('@Keep');
+    _writeGeneratedAnnotation(generatorOptions, indent);
     indent.format('''
-/// Map that stores instances
-val registered${api.name}: MutableMap<String, ${api.name}> = mutableMapOf()
-
-/// Class that stores instances
-@Keep
 class ${api.name}Registrar() {
 
   /// Registers an instance with the given name.
@@ -834,6 +849,7 @@ class ${api.name}Registrar() {
 }
 ''');
     indent.writeln('@Keep');
+    _writeGeneratedAnnotation(generatorOptions, indent);
     indent.writeScoped('interface ${api.name} {', '}', () {
       for (final Method method in api.methods) {
         _writeMethodDeclaration(
@@ -876,6 +892,7 @@ class ${api.name}Registrar() {
       return;
     }
     final String apiName = api.name;
+    _writeGeneratedAnnotation(generatorOptions, indent);
     indent.write(
       'class $apiName(private val binaryMessenger: BinaryMessenger, private val messageChannelSuffix: String = "") ',
     );
@@ -939,6 +956,7 @@ class ${api.name}Registrar() {
       'val ${api.name}Instances: MutableMap<String, ${api.name}Registrar> = mutableMapOf()',
     );
     indent.writeln('@Keep');
+    _writeGeneratedAnnotation(generatorOptions, indent);
     indent.writeScoped('interface ${api.name} {', '}', () {
       for (final Method method in api.methods) {
         _writeMethodDeclaration(
@@ -954,6 +972,7 @@ class ${api.name}Registrar() {
     });
 
     indent.writeln('@Keep');
+    _writeGeneratedAnnotation(generatorOptions, indent);
     indent.writeScoped('class ${api.name}Registrar : ${api.name} {', '}', () {
       indent.writeln('private var api: ${api.name}? = null');
 
@@ -1038,6 +1057,7 @@ class ${api.name}Registrar() {
       generatorComments: generatedMessages,
     );
 
+    _writeGeneratedAnnotation(generatorOptions, indent);
     indent.write('interface $apiName ');
     indent.addScoped('{', '}', () {
       for (final Method method in api.methods) {
@@ -1125,6 +1145,7 @@ class ${api.name}Registrar() {
     addDocumentationComments(indent, <String>[
       ' Generated API for managing the Dart and native `InstanceManager`s.',
     ], _docCommentSpec);
+    _writeGeneratedAnnotation(generatorOptions, indent);
     indent.writeScoped(
       'private class $instanceManagerApiName(val binaryMessenger: BinaryMessenger) {',
       '}',
@@ -1229,6 +1250,7 @@ class ${api.name}Registrar() {
       ];
     });
 
+    _writeGeneratedAnnotation(generatorOptions, indent);
     indent.writeScoped(
       'private class ${proxyApiCodecName(generatorOptions)}(val registrar: ${proxyApiRegistrarName(generatorOptions)}) : '
           '${generatorOptions.fileSpecificClassNameComponent}$_codecName() {',
@@ -1339,6 +1361,7 @@ class ${api.name}Registrar() {
 
     addDocumentationComments(indent, api.documentationComments, _docCommentSpec);
     indent.writeln('@Suppress("UNCHECKED_CAST")');
+    _writeGeneratedAnnotation(generatorOptions, indent);
     // The API only needs to be abstract if there are methods to override.
     final classModifier = api.hasMethodsRequiringImplementation() ? 'abstract' : 'open';
     indent.writeScoped(
@@ -1427,6 +1450,7 @@ class ${api.name}Registrar() {
     required String dartPackageName,
   }) {
     indent.newln();
+    _writeGeneratedAnnotation(generatorOptions, indent);
     indent.format('''
         private class ${generatorOptions.fileSpecificClassNameComponent}PigeonStreamHandler<T>(
             val wrapper: ${generatorOptions.fileSpecificClassNameComponent}PigeonEventChannelWrapper<T>
@@ -1443,7 +1467,9 @@ class ${api.name}Registrar() {
             wrapper.onCancel(p0)
           }
         }
-
+        ''');
+    _writeGeneratedAnnotation(generatorOptions, indent);
+    indent.format('''
         interface ${generatorOptions.fileSpecificClassNameComponent}PigeonEventChannelWrapper<T> {
           open fun onListen(p0: Any?, sink: PigeonEventSink<T>) {}
 
@@ -1453,6 +1479,7 @@ class ${api.name}Registrar() {
 
     if (api.kotlinOptions?.includeSharedClasses ?? true) {
       // TODO(tarrinneal): Prefix this class to avoid name collisions.
+      _writeGeneratedAnnotation(generatorOptions, indent);
       indent.format('''
         class PigeonEventSink<T>(private val sink: EventChannel.EventSink) {
           fun success(value: T) {
@@ -1471,6 +1498,7 @@ class ${api.name}Registrar() {
     }
     addDocumentationComments(indent, api.documentationComments, _docCommentSpec);
     for (final Method func in api.methods) {
+      _writeGeneratedAnnotation(generatorOptions, indent);
       indent.format('''
         abstract class ${toUpperCamelCase(func.name)}StreamHandler : ${generatorOptions.fileSpecificClassNameComponent}PigeonEventChannelWrapper<${_kotlinTypeForDartType(func.returnType)}> {
           companion object {
@@ -1537,6 +1565,7 @@ class ${api.name}Registrar() {
     );
     indent.writeln(' */');
     _writeKeepAnnotationForJni(generatorOptions, indent);
+    _writeGeneratedAnnotation(generatorOptions, indent);
     indent.write('class ${_getErrorClassName(generatorOptions)} ');
     indent.addScoped('(', ')', () {
       indent.writeln('val code: String,');
@@ -1720,6 +1749,7 @@ fun floatHash(f: Float): Int {
     Indent indent, {
     required String dartPackageName,
   }) {
+    _writeGeneratedAnnotation(generatorOptions, indent);
     indent.writeScoped('private object ${_getUtilsClassName(generatorOptions)} {', '}', () {
       if (root.containsFlutterApi || root.containsProxyApi) {
         _writeCreateConnectionError(generatorOptions, indent);
@@ -2062,6 +2092,7 @@ fun floatHash(f: Float): Int {
       ' Provides implementations for each ProxyApi implementation and provides access to resources',
       ' needed by any implementation.',
     ], _docCommentSpec);
+    _writeGeneratedAnnotation(generatorOptions, indent);
     indent.writeScoped(
       'abstract class $registrarName(val binaryMessenger: BinaryMessenger) {',
       '}',
