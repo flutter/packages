@@ -317,7 +317,7 @@ class GoRouter implements RouterConfig<RouteMatchList> {
       // allowing the caller to wrap the navigator themselves
       builderWithNav: (BuildContext context, Widget child) =>
           InheritedGoRouter(goRouter: this, child: child),
-    );
+    )..onRouteMatchListPopped = routeInformationProvider.syncWithPoppedMatchList;
 
     assert(() {
       log('setting initial location $initialLocation');
