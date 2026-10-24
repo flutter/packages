@@ -49,7 +49,7 @@ android {
     dependencies {
         implementation("androidx.annotation:annotation:1.10.0")
         implementation("com.google.android.gms:play-services-maps:20.0.0")
-        implementation("com.google.maps.android:android-maps-utils:4.1.0")
+        implementation("com.google.maps.android:android-maps-utils:5.2.0")
         androidTestImplementation("androidx.test:runner:1.7.0")
         androidTestImplementation("androidx.test:rules:1.7.0")
         androidTestImplementation("androidx.test.espresso:espresso-core:3.7.0")
