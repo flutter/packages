@@ -2,6 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import '../data/color_role.dart';
 import '../data/sheet_bottom.dart';
 import 'template.dart';
 
@@ -37,6 +38,9 @@ class $className extends BottomSheetThemeData {
 
   @override
   Color? get shadowColor => Colors.transparent;
+
+  @override
+  Color? get modalBarrierColor => ${colorWithOpacity(TokenColorRole.scrim, 0.32)};
 
   @override
   Color? get dragHandleColor => ${color(TokenSheetBottom.dockedDragHandleColor)};
