@@ -45,7 +45,7 @@ class SubtreeExample extends StatelessWidget {
       navigationBar: const CupertinoNavigationBar(
         middle: Text('Modern Screen'),
       ),
-      child: const CupertinoUiCompatibilityBridge(child: LegacyPackageWidget()),
+      child: CupertinoUiCompatibilityBridge(child: const LegacyPackageWidget()),
     );
     // #enddocregion SubtreeUsage
   }
