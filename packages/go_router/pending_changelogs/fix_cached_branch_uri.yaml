@@ -1,0 +1,3 @@
+changelog: |
+  - Fixes restoration of root-navigator child redirects by keeping cached `StatefulShellRoute` branch URIs and path parameters consistent with their route matches.
+version: patch
