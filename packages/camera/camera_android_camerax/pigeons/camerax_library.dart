@@ -152,13 +152,30 @@ enum VideoQuality {
   highest,
 }
 
+/// RecordingStats provides recording statistics such as duration and bytes recorded.
+///
+/// See https://developer.android.com/reference/androidx/camera/video/RecordingStats.
+@ProxyApi(
+  kotlinOptions: KotlinProxyApiOptions(fullClassName: 'androidx.camera.video.RecordingStats'),
+)
+abstract class RecordingStats {
+  /// The recorded duration in nanoseconds.
+  late int recordedDurationNanos;
+
+  /// The number of bytes recorded.
+  late int numBytesRecorded;
+}
+
 /// VideoRecordEvent is used to report video recording events and status.
 ///
 /// See https://developer.android.com/reference/androidx/camera/video/VideoRecordEvent.
 @ProxyApi(
   kotlinOptions: KotlinProxyApiOptions(fullClassName: 'androidx.camera.video.VideoRecordEvent'),
 )
-abstract class VideoRecordEvent {}
+abstract class VideoRecordEvent {
+  /// The recording statistics for this event.
+  RecordingStats getRecordingStats();
+}
 
 /// Indicates the start of recording.
 ///
@@ -170,6 +187,16 @@ abstract class VideoRecordEvent {}
 )
 abstract class VideoRecordEventStart extends VideoRecordEvent {}
 
+/// Indicates recording status updates.
+///
+/// See https://developer.android.com/reference/androidx/camera/video/VideoRecordEvent.Status.
+@ProxyApi(
+  kotlinOptions: KotlinProxyApiOptions(
+    fullClassName: 'androidx.camera.video.VideoRecordEvent.Status',
+  ),
+)
+abstract class VideoRecordEventStatus extends VideoRecordEvent {}
+
 /// Indicates the finalization of recording.
 ///
 /// See https://developer.android.com/reference/androidx/camera/video/VideoRecordEvent.Finalize.
@@ -178,7 +205,17 @@ abstract class VideoRecordEventStart extends VideoRecordEvent {}
     fullClassName: 'androidx.camera.video.VideoRecordEvent.Finalize',
   ),
 )
-abstract class VideoRecordEventFinalize extends VideoRecordEvent {}
+abstract class VideoRecordEventFinalize extends VideoRecordEvent {
+  /// The error code of the finalization.
+  ///
+  /// See https://developer.android.com/reference/androidx/camera/video/VideoRecordEvent.Finalize#getError().
+  int getError();
+
+  /// Whether the recording finalized with an error.
+  ///
+  /// See https://developer.android.com/reference/androidx/camera/video/VideoRecordEvent.Finalize#hasError().
+  bool hasError();
+}
 
 /// A MeteringPoint is used to specify a region which can then be converted to
 /// sensor coordinate system for focus and metering purpose.
