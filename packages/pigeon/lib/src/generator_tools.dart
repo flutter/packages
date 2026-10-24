@@ -16,7 +16,7 @@ import 'generator.dart';
 /// The current version of pigeon.
 ///
 /// This must match the version in pubspec.yaml.
-const String pigeonVersion = '29.0.11';
+const String pigeonVersion = '29.1.0';
 
 /// Default plugin package name.
 const String defaultPluginPackageName = 'dev.flutter.pigeon';
@@ -24,6 +24,43 @@ const String defaultPluginPackageName = 'dev.flutter.pigeon';
 /// The default instance name string for native interop generated APIs.
 const String defaultNativeInteropInstanceName =
     'PigeonDefaultClassName32uh4ui3lh445uh4h3l2l455g4y34u';
+
+/// How native interop (`KotlinOptions.useJni` and `SwiftOptions.useFfi`) moves
+/// values between Dart and the host platform.
+///
+/// This option is temporary. It exists so that the [hybrid] transport can be
+/// adopted and benchmarked before it becomes the only transport.
+enum NativeInteropTransport {
+  /// Converts every value to a graph of native objects.
+  ///
+  /// Each non-scalar field and each collection element costs at least one
+  /// call across the language boundary, so large data classes and collections
+  /// are slow.
+  objects,
+
+  /// Passes scalars, strings, enums and typed data directly, and encodes all
+  /// data class, `List`, `Map` and `Object` arguments of a call into one
+  /// buffer.
+  ///
+  /// Each API call makes exactly one call across the language boundary,
+  /// however large its arguments are.
+  hybrid;
+
+  /// Returns the transport named [name], or `null` if [name] is `null`.
+  static NativeInteropTransport? fromName(String? name) {
+    if (name == null) {
+      return null;
+    }
+    return NativeInteropTransport.values.firstWhere(
+      (NativeInteropTransport transport) => transport.name == name,
+      orElse: () => throw ArgumentError.value(
+        name,
+        'nativeInteropTransport',
+        'Must be one of ${NativeInteropTransport.values.map((NativeInteropTransport t) => t.name).join(', ')}',
+      ),
+    );
+  }
+}
 
 /// Converts any path containing Windows backslashes into a POSIX-style path.
 String posixPath(String inputPath) => inputPath.replaceAll(r'\', '/');
@@ -432,6 +469,47 @@ const List<String> disallowedPrefixes = <String>[
   varNamePrefix,
   'pigeonChannelCodec',
 ];
+
+/// Whether a value of [type] crosses the language boundary directly, as its
+/// own argument or return value, under [NativeInteropTransport.hybrid].
+///
+/// Values of every other type (data classes, `List`, `Map` and `Object`) are
+/// encoded with the standard message codec, and all of them in one call share
+/// one buffer.
+bool isNativeInteropDirectType(TypeDeclaration type) {
+  if (type.isEnum) {
+    return true;
+  }
+  return const <String>{
+    'bool',
+    'int',
+    'double',
+    'String',
+    'Uint8List',
+    'Int32List',
+    'Int64List',
+    'Float64List',
+  }.contains(type.baseName);
+}
+
+/// The parameters of a method that the hybrid transport encodes into the
+/// method's argument buffer, in declaration order.
+List<Parameter> nativeInteropEncodedParameters(Iterable<Parameter> parameters) {
+  return parameters
+      .where((Parameter parameter) => !isNativeInteropDirectType(parameter.type))
+      .toList();
+}
+
+/// Whether the hybrid transport returns a value of [type] in a buffer.
+bool nativeInteropReturnsBuffer(TypeDeclaration type) {
+  return !type.isVoid && !isNativeInteropDirectType(type);
+}
+
+/// The name of the buffer parameter of hybrid transport entry points.
+const String nativeInteropArgsParameterName = '${varNamePrefix}args';
+
+/// The raw index that the hybrid transport passes for a null enum.
+const int nativeInteropNullEnumIndex = -1;
 
 /// Collection of keys used in dictionaries across generators.
 class Keys {

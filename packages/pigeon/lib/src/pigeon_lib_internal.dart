@@ -93,6 +93,8 @@ class InternalPigeonOptions {
               fileSpecificClassNameComponent:
                   options.swiftOptions?.fileSpecificClassNameComponent ??
                   options.fileSpecificClassNameComponent,
+              nativeInteropTransport:
+                  options.nativeInteropTransport ?? NativeInteropTransport.hybrid,
             ),
       kotlinOptions = options.kotlinOut == null
           ? null
@@ -103,6 +105,8 @@ class InternalPigeonOptions {
               fileSpecificClassNameComponent:
                   options.kotlinOptions?.fileSpecificClassNameComponent ??
                   options.fileSpecificClassNameComponent,
+              nativeInteropTransport:
+                  options.nativeInteropTransport ?? NativeInteropTransport.hybrid,
             ),
       cppOptions = (options.cppHeaderOut == null || options.cppSourceOut == null)
           ? null
@@ -132,6 +136,8 @@ class InternalPigeonOptions {
               ffiErrorClassName: options.swiftOptions?.errorClassName ?? 'PigeonError',
               jniErrorClassName: options.kotlinOptions?.errorClassName ?? 'FlutterError',
               fileSpecificClassNameComponent: _dartNativeInteropClassNameComponent(options),
+              nativeInteropTransport:
+                  options.nativeInteropTransport ?? NativeInteropTransport.hybrid,
             ),
       copyrightHeader = options.copyrightHeader != null
           ? _lineReader(path.posix.join(options.basePath ?? '', options.copyrightHeader))
@@ -1807,6 +1813,10 @@ class RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
       return expression.value;
     } else if (expression is dart_ast.SimpleIdentifier) {
       return expression.name;
+    } else if (expression is dart_ast.PrefixedIdentifier) {
+      // Enum values, such as `NativeInteropTransport.hybrid`, are stored by
+      // name.
+      return expression.identifier.name;
     } else if (expression is dart_ast.ListLiteral) {
       final list = <dynamic>[];
       for (final dart_ast.CollectionElement element in expression.elements) {

@@ -318,6 +318,555 @@ private class _PigeonFfiCodec {
   }
 }
 
+/// Writes values in the format of Flutter's standard message codec.
+private struct NativeInteropExamplePigeonInteropWriter {
+  private(set) var bytes: [UInt8] = []
+
+  mutating func writeByte(_ byte: UInt8) {
+    bytes.append(byte)
+  }
+
+  mutating func writeRaw<T: FixedWidthInteger>(_ value: T) {
+    withUnsafeBytes(of: value.littleEndian) { bytes.append(contentsOf: $0) }
+  }
+
+  mutating func writeSize(_ size: Int) {
+    if size < 254 {
+      writeByte(UInt8(size))
+    } else if size <= 0xffff {
+      writeByte(254)
+      writeRaw(UInt16(size))
+    } else {
+      writeByte(255)
+      writeRaw(UInt32(size))
+    }
+  }
+
+  mutating func writeAlignment(_ alignment: Int) {
+    let mod = bytes.count % alignment
+    if mod != 0 {
+      bytes.append(contentsOf: repeatElement(0, count: alignment - mod))
+    }
+  }
+
+  mutating func writeTypedData<T>(_ type: UInt8, _ array: [T]?, alignment: Int) {
+    guard let array = array else {
+      writeByte(0)
+      return
+    }
+    writeByte(type)
+    writeSize(array.count)
+    writeAlignment(alignment)
+    array.withUnsafeBytes { bytes.append(contentsOf: $0) }
+  }
+
+  mutating func writeString(_ string: String) {
+    writeByte(7)
+    var string = string
+    string.withUTF8 { utf8 in
+      writeSize(utf8.count)
+      bytes.append(contentsOf: utf8)
+    }
+  }
+
+  mutating func writeValue(_ value: Any?) {
+    guard let value = value else {
+      writeByte(0)
+      return
+    }
+    // The most common types are matched by exact type first, because
+    // comparing metatypes is much cheaper than dynamic casts.
+    let valueType = Swift.type(of: value)
+    if valueType == String.self {
+      writeString(value as! String)
+      return
+    }
+    if valueType == Int64.self {
+      writeByte(4)
+      writeRaw(value as! Int64)
+      return
+    }
+    if valueType == Bool.self {
+      writeByte((value as! Bool) ? 1 : 2)
+      return
+    }
+    if valueType == Double.self {
+      writeByte(6)
+      writeAlignment(8)
+      writeRaw((value as! Double).bitPattern)
+      return
+    }
+    if valueType == [Any?].self {
+      writeList(value as! [Any?])
+      return
+    }
+    if writeCustomValue(value, type: valueType) {
+      return
+    }
+    // Typed data is matched by exact type, because casting an empty array of
+    // any element type to an array of numbers succeeds.
+    if valueType == [UInt8].self {
+      writeTypedData(8, value as! [UInt8], alignment: 1)
+      return
+    }
+    if valueType == [Int32].self {
+      writeTypedData(9, value as! [Int32], alignment: 4)
+      return
+    }
+    if valueType == [Int64].self {
+      writeTypedData(10, value as! [Int64], alignment: 8)
+      return
+    }
+    if valueType == [Float64].self {
+      writeTypedData(11, value as! [Float64], alignment: 8)
+      return
+    }
+    if valueType == [Float32].self {
+      writeTypedData(14, value as! [Float32], alignment: 4)
+      return
+    }
+    if valueType == AnyHashable.self {
+      writeValue((value as! AnyHashable).base)
+      return
+    }
+    // Collections are matched by protocol before any cast to a class, such as
+    // `NSNumber`, because those casts can bridge a whole Swift collection to
+    // Objective-C just to fail.
+    if let list = value as? NativeInteropExamplePigeonInteropList {
+      list.pigeonWrite(to: &self)
+      return
+    }
+    if let map = value as? NativeInteropExamplePigeonInteropMap {
+      map.pigeonWrite(to: &self)
+      return
+    }
+    if let optional = value as? NativeInteropExamplePigeonInteropOptional {
+      writeValue(optional.pigeonWrapped)
+      return
+    }
+    if NativeInteropExamplePigeonInternal.isNullish(value) {
+      writeByte(0)
+      return
+    }
+    if let number = value as? NSNumber {
+      if CFGetTypeID(number) == CFBooleanGetTypeID() {
+        writeByte(number.boolValue ? 1 : 2)
+      } else if CFNumberIsFloatType(number) {
+        writeByte(6)
+        writeAlignment(8)
+        writeRaw(number.doubleValue.bitPattern)
+      } else {
+        writeByte(4)
+        writeRaw(number.int64Value)
+      }
+      return
+    }
+    if let string = value as? String {
+      writeString(string)
+      return
+    }
+    if writeCustomValueFallback(value) {
+      return
+    }
+    preconditionFailure("Unsupported value: \(value) of type \(valueType)")
+  }
+
+  mutating func writeList(_ list: [Any?]) {
+    writeByte(12)
+    writeSize(list.count)
+    for item in list {
+      writeValue(item)
+    }
+  }
+
+  mutating func writeList<T>(_ list: [T]?) {
+    guard let list = list else {
+      writeByte(0)
+      return
+    }
+    writeByte(12)
+    writeSize(list.count)
+    for item in list {
+      writeValue(item)
+    }
+  }
+
+  mutating func writeList<T>(_ list: [T?]?) {
+    guard let list = list else {
+      writeByte(0)
+      return
+    }
+    writeByte(12)
+    writeSize(list.count)
+    for item in list {
+      writeOptional(item)
+    }
+  }
+
+  mutating func writeList<T>(_ list: [T]?, _ writeElement: (inout Self, T) -> Void) {
+    guard let list = list else {
+      writeByte(0)
+      return
+    }
+    writeByte(12)
+    writeSize(list.count)
+    for item in list {
+      writeElement(&self, item)
+    }
+  }
+
+  mutating func writeOptional<T>(_ value: T?) {
+    if let value = value {
+      writeValue(value)
+    } else {
+      writeByte(0)
+    }
+  }
+
+  mutating func writeMap<K, V>(_ map: [K: V]?) {
+    guard let map = map else {
+      writeByte(0)
+      return
+    }
+    writeByte(13)
+    writeSize(map.count)
+    for (key, item) in map {
+      writeValue(key)
+      writeValue(item)
+    }
+  }
+
+  mutating func writeMap<K, V>(_ map: [K?: V]?) {
+    guard let map = map else {
+      writeByte(0)
+      return
+    }
+    writeByte(13)
+    writeSize(map.count)
+    for (key, item) in map {
+      writeOptional(key)
+      writeValue(item)
+    }
+  }
+
+  mutating func writeMap<K, V>(_ map: [K: V?]?) {
+    guard let map = map else {
+      writeByte(0)
+      return
+    }
+    writeByte(13)
+    writeSize(map.count)
+    for (key, item) in map {
+      writeValue(key)
+      writeOptional(item)
+    }
+  }
+
+  mutating func writeMap<K, V>(_ map: [K?: V?]?) {
+    guard let map = map else {
+      writeByte(0)
+      return
+    }
+    writeByte(13)
+    writeSize(map.count)
+    for (key, item) in map {
+      writeOptional(key)
+      writeOptional(item)
+    }
+  }
+
+  mutating func writeMap<K, V>(_ map: [K: V]?, _ writeEntry: (inout Self, K, V) -> Void) {
+    guard let map = map else {
+      writeByte(0)
+      return
+    }
+    writeByte(13)
+    writeSize(map.count)
+    for (key, item) in map {
+      writeEntry(&self, key, item)
+    }
+  }
+
+  mutating func writeCustomValue(_ value: Any, type valueType: Any.Type) -> Bool {
+    return false
+  }
+
+  mutating func writeCustomValueFallback(_ value: Any) -> Bool {
+    return false
+  }
+}
+
+/// Unwraps optionals that a generic context boxed into `Any`.
+private protocol NativeInteropExamplePigeonInteropOptional {
+  var pigeonWrapped: Any? { get }
+}
+
+extension Optional: NativeInteropExamplePigeonInteropOptional {
+  fileprivate var pigeonWrapped: Any? {
+    switch self {
+    case .some(let wrapped):
+      return wrapped
+    case .none:
+      return nil
+    }
+  }
+}
+
+/// Writes typed lists without converting them to `[Any?]` first.
+private protocol NativeInteropExamplePigeonInteropList {
+  func pigeonWrite(to writer: inout NativeInteropExamplePigeonInteropWriter)
+}
+
+extension Array: NativeInteropExamplePigeonInteropList {
+  fileprivate func pigeonWrite(to writer: inout NativeInteropExamplePigeonInteropWriter) {
+    writer.writeByte(12)
+    writer.writeSize(count)
+    for item in self {
+      writer.writeValue(item)
+    }
+  }
+}
+
+/// Writes typed maps without converting them to `[AnyHashable?: Any?]` first.
+private protocol NativeInteropExamplePigeonInteropMap {
+  func pigeonWrite(to writer: inout NativeInteropExamplePigeonInteropWriter)
+}
+
+extension Dictionary: NativeInteropExamplePigeonInteropMap {
+  fileprivate func pigeonWrite(to writer: inout NativeInteropExamplePigeonInteropWriter) {
+    writer.writeByte(13)
+    writer.writeSize(count)
+    for (key, item) in self {
+      writer.writeValue(key)
+      writer.writeValue(item)
+    }
+  }
+}
+
+/// Reads values in the format of Flutter's standard message codec.
+private struct NativeInteropExamplePigeonInteropReader {
+  private let data: NSData
+  private let bytes: UnsafeRawBufferPointer
+  private var position = 0
+
+  init(_ data: NSData) {
+    self.data = data
+    self.bytes = UnsafeRawBufferPointer(start: data.bytes, count: data.length)
+  }
+
+  var isAtEnd: Bool { position >= bytes.count }
+
+  mutating func readByte() -> UInt8 {
+    let byte = bytes[position]
+    position += 1
+    return byte
+  }
+
+  mutating func readRaw<T: FixedWidthInteger>(_ type: T.Type) -> T {
+    let value = bytes.loadUnaligned(fromByteOffset: position, as: T.self)
+    position += MemoryLayout<T>.size
+    return T(littleEndian: value)
+  }
+
+  mutating func readSize() -> Int {
+    let byte = readByte()
+    if byte < 254 {
+      return Int(byte)
+    } else if byte == 254 {
+      return Int(readRaw(UInt16.self))
+    }
+    return Int(readRaw(UInt32.self))
+  }
+
+  mutating func readAlignment(_ alignment: Int) {
+    let mod = position % alignment
+    if mod != 0 {
+      position += alignment - mod
+    }
+  }
+
+  mutating func readTypedData<T>(_ type: T.Type, alignment: Int) -> [T] {
+    let count = readSize()
+    readAlignment(alignment)
+    let byteCount = count * MemoryLayout<T>.stride
+    let result = [T](unsafeUninitializedCapacity: count) { buffer, initializedCount in
+      if byteCount > 0 {
+        UnsafeMutableRawBufferPointer(buffer).copyMemory(
+          from: UnsafeRawBufferPointer(rebasing: bytes[position..<(position + byteCount)]))
+      }
+      initializedCount = count
+    }
+    position += byteCount
+    return result
+  }
+
+  mutating func readValue() -> Any? {
+    return readValue(ofType: readByte())
+  }
+
+  mutating func readValue(ofType type: UInt8) -> Any? {
+    switch type {
+    case 0:
+      return nil
+    case 1:
+      return true
+    case 2:
+      return false
+    case 3:
+      return Int64(readRaw(Int32.self))
+    case 4:
+      return readRaw(Int64.self)
+    case 5, 7:
+      let count = readSize()
+      let string = String(
+        decoding: UnsafeRawBufferPointer(rebasing: bytes[position..<(position + count)]),
+        as: UTF8.self)
+      position += count
+      return string
+    case 6:
+      readAlignment(8)
+      return Double(bitPattern: readRaw(UInt64.self))
+    case 8:
+      return readTypedData(UInt8.self, alignment: 1)
+    case 9:
+      return readTypedData(Int32.self, alignment: 4)
+    case 10:
+      return readTypedData(Int64.self, alignment: 8)
+    case 11:
+      return readTypedData(Float64.self, alignment: 8)
+    case 12:
+      let count = readSize()
+      var list: [Any?] = []
+      list.reserveCapacity(count)
+      for _ in 0..<count {
+        list.append(readValue())
+      }
+      return list
+    case 13:
+      let count = readSize()
+      var map: [AnyHashable?: Any?] = [:]
+      map.reserveCapacity(count)
+      for _ in 0..<count {
+        let key = readValue() as? AnyHashable
+        map[key] = readValue()
+      }
+      return map
+    case 14:
+      return readTypedData(Float32.self, alignment: 4)
+    default:
+      return readCustomValue(ofType: type)
+    }
+  }
+
+  mutating func readListHeader() {
+    _ = readByte()
+    _ = readSize()
+  }
+
+  mutating func read<T>(_ type: T.Type) -> T {
+    return readValue() as! T
+  }
+
+  mutating func read<E>(_ type: [E].Type) -> [E] {
+    let tag = readByte()
+    guard tag == 12 else {
+      return readValue(ofType: tag) as! [E]
+    }
+    let count = readSize()
+    var list: [E] = []
+    list.reserveCapacity(count)
+    for _ in 0..<count {
+      list.append(readValue() as! E)
+    }
+    return list
+  }
+
+  mutating func read<E>(_ type: [E]?.Type) -> [E]? {
+    if bytes[position] == 0 {
+      position += 1
+      return nil
+    }
+    return read([E].self)
+  }
+
+  mutating func read<K: Hashable, V>(_ type: [K: V].Type) -> [K: V] {
+    let tag = readByte()
+    guard tag == 13 else {
+      return readValue(ofType: tag) as! [K: V]
+    }
+    let count = readSize()
+    var map: [K: V] = [:]
+    map.reserveCapacity(count)
+    for _ in 0..<count {
+      let key = readValue() as! K
+      map[key] = (readValue() as! V)
+    }
+    return map
+  }
+
+  mutating func read<K: Hashable, V>(_ type: [K: V]?.Type) -> [K: V]? {
+    if bytes[position] == 0 {
+      position += 1
+      return nil
+    }
+    return read([K: V].self)
+  }
+
+  mutating func readCustomValue(ofType type: UInt8) -> Any? {
+    switch type {
+    default:
+      preconditionFailure("Unsupported type: \(type)")
+    }
+  }
+}
+
+/// Encodes and decodes the buffers that native interop calls pass to and from
+/// Dart, in the same format as the message codec.
+private enum NativeInteropExamplePigeonInteropCodec {
+  static func encode(_ value: Any?) -> NSData {
+    var writer = NativeInteropExamplePigeonInteropWriter()
+    writer.writeValue(value)
+    return writer.bytes.withUnsafeBytes { NSData(bytes: $0.baseAddress, length: $0.count) }
+  }
+
+  static func encodeOrNil(_ value: Any?) -> NSData? {
+    return NativeInteropExamplePigeonInternal.isNullish(value) ? nil : encode(value)
+  }
+
+  static func encode(_ write: (inout NativeInteropExamplePigeonInteropWriter) -> Void) -> NSData {
+    var writer = NativeInteropExamplePigeonInteropWriter()
+    write(&writer)
+    return writer.bytes.withUnsafeBytes { NSData(bytes: $0.baseAddress, length: $0.count) }
+  }
+
+  static func decode(_ data: NSData?) -> Any? {
+    guard let data = data else {
+      return nil
+    }
+    var reader = NativeInteropExamplePigeonInteropReader(data)
+    return reader.readValue()
+  }
+
+  static func decodeArguments(_ data: NSData) -> [Any?] {
+    return decode(data) as! [Any?]
+  }
+
+  static func typedData<T>(_ data: NSData, as type: T.Type) -> [T] {
+    let count = data.length / MemoryLayout<T>.stride
+    return [T](unsafeUninitializedCapacity: count) { buffer, initializedCount in
+      if data.length > 0 {
+        UnsafeMutableRawBufferPointer(buffer).copyMemory(
+          from: UnsafeRawBufferPointer(start: data.bytes, count: count * MemoryLayout<T>.stride))
+      }
+      initializedCount = count
+    }
+  }
+
+  static func data<T>(_ array: [T]) -> NSData {
+    return array.withUnsafeBytes { NSData(bytes: $0.baseAddress, length: $0.count) }
+  }
+}
+
 class NativeInteropExampleApiInstanceTracker {
   static var instancesOfNativeInteropExampleApi = [String: NativeInteropExampleApiSetup?]()
 }

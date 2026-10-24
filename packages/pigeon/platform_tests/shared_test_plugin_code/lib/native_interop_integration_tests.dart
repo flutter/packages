@@ -10,7 +10,6 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-import 'comparison_benchmarks.dart';
 import 'native_interop_test_types.dart';
 import 'src/generated/native_interop_tests.gen.dart';
 
@@ -64,6 +63,19 @@ void runPigeonNativeInteropIntegrationTests(TargetGenerator targetGenerator) {
 
       final NativeInteropAllTypes echoObject = api!.echoAllTypes(genericNativeInteropAllTypes);
       expect(echoObject, genericNativeInteropAllTypes);
+    });
+
+    testWidgets('lists and typed data keep their types', (WidgetTester _) async {
+      final NativeInteropHostIntegrationCoreApiForNativeInterop? api =
+          NativeInteropHostIntegrationCoreApiForNativeInterop.getInstance();
+
+      final NativeInteropAllTypes echoObject = api!.echoAllTypes(genericNativeInteropAllTypes);
+      // Swift represents both `List<int>` and `Int64List` as `[Int64]`, so this
+      // checks that each still crosses as the type that it was declared as.
+      expect(echoObject.intList, isNot(isA<Int64List>()));
+      expect(echoObject.doubleList, isNot(isA<Float64List>()));
+      expect(echoObject.a8ByteArray, isA<Int64List>());
+      expect(echoObject.aFloatArray, isA<Float64List>());
     });
 
     testWidgets('all nullable datatypes serialize and deserialize correctly', (
@@ -3000,7 +3012,79 @@ void runPigeonNativeInteropIntegrationTests(TargetGenerator targetGenerator) {
     });
   });
 
-  runComparisonBenchmarks(targetGenerator);
+  group('Sealed classes', () {
+    NativeInteropSealedClassFlutterApi.setUp(_NativeInteropSealedClassFlutterApiImpl());
+    final NativeInteropSealedClassHostApiForNativeInterop api =
+        NativeInteropSealedClassHostApiForNativeInterop.getInstance()!;
+    final circle = NativeInteropCircle(radius: 2.5);
+    final square = NativeInteropSquare(side: 4, label: 'square');
+
+    testWidgets('host api echoes each subclass', (WidgetTester _) async {
+      expect(api.echoShape(circle), circle);
+      expect(api.echoShape(square), square);
+      expect(api.echoNullableShape(square), square);
+      expect(api.echoNullableShape(null), isNull);
+    });
+
+    testWidgets('host api echoes collections of subclasses', (WidgetTester _) async {
+      expect(api.echoShapeList(<NativeInteropShape>[circle, square]), <NativeInteropShape>[
+        circle,
+        square,
+      ]);
+      expect(
+        api.echoShapeMap(<String, NativeInteropShape>{'circle': circle, 'square': square}),
+        <String, NativeInteropShape>{'circle': circle, 'square': square},
+      );
+    });
+
+    testWidgets('async host api echoes a subclass', (WidgetTester _) async {
+      expect(await api.echoAsyncShape(square), square);
+    });
+
+    testWidgets('flutter api echoes a subclass', (WidgetTester _) async {
+      expect(api.callFlutterEchoShape(circle), circle);
+      expect(api.callFlutterEchoShape(square), square);
+    });
+  });
+
+  group('Object-graph conversions', () {
+    testWidgets('enums and data classes round-trip through native object bindings', (
+      WidgetTester _,
+    ) async {
+      if (targetGenerator == TargetGenerator.kotlin) {
+        expect(
+          NativeInteropAnEnum.fromJni(NativeInteropAnEnum.fortyTwo.toJni()),
+          NativeInteropAnEnum.fortyTwo,
+        );
+        expect(
+          NativeInteropAllTypes.fromJni(genericNativeInteropAllTypes.toJni()),
+          genericNativeInteropAllTypes,
+        );
+        expect(
+          NativeInteropAllNullableTypes.fromJni(recursiveNativeInteropAllNullableTypes.toJni()),
+          recursiveNativeInteropAllNullableTypes,
+        );
+      } else if (targetGenerator == TargetGenerator.swift) {
+        expect(
+          NativeInteropAnEnum.fromNSNumber(NativeInteropAnEnum.fortyTwo.toNSNumber()),
+          NativeInteropAnEnum.fortyTwo,
+        );
+        expect(
+          NativeInteropAllTypes.fromFfi(genericNativeInteropAllTypes.toFfi()),
+          genericNativeInteropAllTypes,
+        );
+        expect(
+          NativeInteropAllNullableTypes.fromFfi(recursiveNativeInteropAllNullableTypes.toFfi()),
+          recursiveNativeInteropAllNullableTypes,
+        );
+      }
+    });
+  });
+}
+
+class _NativeInteropSealedClassFlutterApiImpl extends NativeInteropSealedClassFlutterApi {
+  @override
+  NativeInteropShape echoShape(NativeInteropShape shape) => shape;
 }
 
 /// Implementation of the Flutter API for Native Interop.

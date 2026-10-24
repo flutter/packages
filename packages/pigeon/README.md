@@ -116,7 +116,7 @@ Pigeon supports two distinct models for communication between Dart and native co
 | **Platform Support** | All supported platforms (Android, iOS, macOS, Windows, Linux) | Android, iOS, and macOS |
 | **Threading Model** | Main UI thread or custom background `TaskQueue` | Direct execution on caller thread (`TaskQueue` is not supported) |
 | **Dart Isolate Support** | Requires `BackgroundIsolateBinaryMessenger` | Supported for Host APIs |
-| **Serialization Overhead** | High (serialization and multiple copies) | Low (minimal copying) |
+| **Serialization Overhead** | Every value is encoded into one message and copied | Scalars, strings, enums and typed data cross directly; data classes, lists and maps are encoded into one buffer per call |
 | **Latency** | Higher (requires message loop scheduling) | Extremely low (direct execution) |
 | **Synchronous Host Calls** | Not supported | Fully supported |
 | **Setup Complexity** | Simple | Complex (requires external tools) |
@@ -128,7 +128,6 @@ Pigeon supports two distinct models for communication between Dart and native co
   - Your plugin targets Windows or Linux (Native Interop is not supported on these platforms, though you can generate platform channel code for them from the same pigeon file alongside Native Interop).
   - Your plugin primarily passes simple data objects or has low-frequency communication.
   - You want a simpler setup with no external dependencies or additional command-line tools.
-  - Your data classes contain many nested fields or custom collections where conversion overhead might offset performance gains. There are plans to address this issue in the future.
 - **Consider Native Interop if**:
   - Your plugin handles high-frequency messaging, large typed arrays (e.g., image processing, sensor data streams), or latency-sensitive communication where serialization overhead is a bottleneck.
   - You need synchronous execution for platform APIs on the host thread.

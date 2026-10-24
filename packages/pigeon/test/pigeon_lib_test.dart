@@ -185,6 +185,37 @@ void main() {
     expect(opts.appDirectory, equals('./foo/'));
   });
 
+  test('parse args - native_interop_transport', () {
+    final PigeonOptions opts = Pigeon.parseArgs(<String>['--native_interop_transport', 'hybrid']);
+    expect(opts.nativeInteropTransport, NativeInteropTransport.hybrid);
+    expect(Pigeon.parseArgs(<String>[]).nativeInteropTransport, isNull);
+  });
+
+  test('native interop transport round trips through a map', () {
+    const options = PigeonOptions(nativeInteropTransport: NativeInteropTransport.hybrid);
+    expect(options.toMap()['nativeInteropTransport'], 'hybrid');
+    expect(
+      PigeonOptions.fromMap(options.toMap()).nativeInteropTransport,
+      NativeInteropTransport.hybrid,
+    );
+  });
+
+  test('ConfigurePigeon parses the native interop transport', () {
+    const code = '''
+@ConfigurePigeon(PigeonOptions(nativeInteropTransport: NativeInteropTransport.hybrid))
+@HostApi()
+abstract class Api {
+  void doSomething();
+}
+''';
+    final ParseResults results = parseSource(code);
+    expect(results.errors, isEmpty);
+    expect(
+      PigeonOptions.fromMap(results.pigeonOptions!).nativeInteropTransport,
+      NativeInteropTransport.hybrid,
+    );
+  });
+
   test('parse args - swift options', () {
     final PigeonOptions opts = Pigeon.parseArgs(<String>[
       '--swift_error_class_name',
@@ -2897,6 +2928,7 @@ dev_dependencies:
       String source, {
       SwiftOptions swiftOptions = const SwiftOptions(useFfi: true),
       KotlinOptions kotlinOptions = const KotlinOptions(useJni: true),
+      NativeInteropTransport? nativeInteropTransport,
     }) {
       final ParseResults results = parseSource(source);
       expect(results.errors, isEmpty);
@@ -2907,6 +2939,7 @@ dev_dependencies:
           swiftOptions: swiftOptions,
           kotlinOut: 'android/Messages.g.kt',
           kotlinOptions: kotlinOptions,
+          nativeInteropTransport: nativeInteropTransport,
         ),
       );
       return adapter.validate(options, results.root);
@@ -3269,6 +3302,60 @@ const String myConst = 'hello ${1 + 2}';
           '';
       final String configPath = getFfigenConfigPath(targetDir, options.input);
       expect(configPath, equals('example/tool/pigeon/messages_ffigen_config.dart'));
+    });
+
+    test('JnigenConfigGenerator binds Registrar and Bridge in hybrid mode', () {
+      final ParseResults parseResult = parseSource('''
+enum MyEnum { one }
+class MyData { int? x; }
+@HostApi()
+abstract class MyHostApi {
+  int ping();
+}
+@FlutterApi()
+abstract class MyFlutterApi {
+  int pong();
+}
+''');
+      expect(parseResult.errors, isEmpty);
+
+      String generateConfig(NativeInteropTransport transport) {
+        final InternalPigeonOptions options = InternalPigeonOptions.fromPigeonOptions(
+          PigeonOptions(
+            input: 'pigeons/messages.dart',
+            dartOut: 'lib/messages.dart',
+            kotlinOut: 'android/src/main/kotlin/com/example/Messages.kt',
+            kotlinOptions: const KotlinOptions(package: 'com.example', useJni: true),
+            nativeInteropTransport: transport,
+          ),
+        );
+        final buffer = StringBuffer();
+        const JnigenConfigGeneratorAdapter().generate(
+          buffer,
+          options,
+          parseResult.root,
+          FileType.na,
+        );
+        return buffer.toString();
+      }
+
+      final String objectsConfig = generateConfig(NativeInteropTransport.objects);
+      expect(objectsConfig, isNot(contains("'com.example.MyHostApi',")));
+      expect(objectsConfig, contains("'com.example.MyHostApiRegistrar',"));
+      expect(objectsConfig, contains("'com.example.MyFlutterApi',"));
+      expect(objectsConfig, isNot(contains("'com.example.MyFlutterApiBridge',")));
+      expect(objectsConfig, contains("'com.example.MyFlutterApiRegistrar',"));
+      expect(objectsConfig, contains("'com.example.MyData',"));
+      expect(objectsConfig, contains("'com.example.MyEnum',"));
+
+      final String hybridConfig = generateConfig(NativeInteropTransport.hybrid);
+      expect(hybridConfig, isNot(contains("'com.example.MyHostApi',")));
+      expect(hybridConfig, contains("'com.example.MyHostApiRegistrar',"));
+      expect(hybridConfig, isNot(contains("'com.example.MyFlutterApi',")));
+      expect(hybridConfig, contains("'com.example.MyFlutterApiBridge',"));
+      expect(hybridConfig, contains("'com.example.MyFlutterApiRegistrar',"));
+      expect(hybridConfig, contains("'com.example.MyData',"));
+      expect(hybridConfig, contains("'com.example.MyEnum',"));
     });
   });
 }
