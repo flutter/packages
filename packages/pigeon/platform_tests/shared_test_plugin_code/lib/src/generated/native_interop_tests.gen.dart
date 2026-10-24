@@ -1269,7 +1269,7 @@ class _PigeonCodec extends StandardMessageCodec {
 const String defaultInstanceName = 'PigeonDefaultClassName32uh4ui3lh445uh4h3l2l455g4y34u';
 
 NativeInteropHostIntegrationCoreApiForNativeInterop?
-pigeonGetInstance_NativeInteropHostIntegrationCoreApi({String channelName = defaultInstanceName}) {
+pigeon_getInstance_NativeInteropHostIntegrationCoreApi({String channelName = defaultInstanceName}) {
   throw UnsupportedError(
     'Native Interop is not supported on this platform. Use NativeInteropHostIntegrationCoreApi instead.',
   );
@@ -1279,8 +1279,9 @@ abstract class NativeInteropHostIntegrationCoreApiForNativeInterop {
   /// Returns instance of NativeInteropHostIntegrationCoreApiForNativeInterop with specified [channelName] if one has been registered.
   static NativeInteropHostIntegrationCoreApiForNativeInterop? getInstance({
     String channelName = defaultInstanceName,
-  }) =>
-      pigeon_native.pigeonGetInstance_NativeInteropHostIntegrationCoreApi(channelName: channelName);
+  }) => pigeon_native.pigeon_getInstance_NativeInteropHostIntegrationCoreApi(
+    channelName: channelName,
+  );
 
   void noop();
 
@@ -7461,7 +7462,7 @@ class NativeInteropHostIntegrationCoreApi {
   }
 }
 
-NativeInteropFlutterIntegrationCoreApi pigeonRegister_NativeInteropFlutterIntegrationCoreApi(
+NativeInteropFlutterIntegrationCoreApi pigeon_register_NativeInteropFlutterIntegrationCoreApi(
   NativeInteropFlutterIntegrationCoreApi api, {
   String name = defaultInstanceName,
 }) {
@@ -7471,15 +7472,10 @@ NativeInteropFlutterIntegrationCoreApi pigeonRegister_NativeInteropFlutterIntegr
 }
 
 final class NativeInteropFlutterIntegrationCoreApiRegistrar {
-  NativeInteropFlutterIntegrationCoreApi? dartApi;
-
   NativeInteropFlutterIntegrationCoreApi register(
     NativeInteropFlutterIntegrationCoreApi api, {
     String name = defaultInstanceName,
-  }) {
-    dartApi = api;
-    return pigeon_native.pigeonRegister_NativeInteropFlutterIntegrationCoreApi(api, name: name);
-  }
+  }) => pigeon_native.pigeon_register_NativeInteropFlutterIntegrationCoreApi(api, name: name);
 }
 
 /// The core interface that the Dart platform_test code implements for host
@@ -10570,7 +10566,7 @@ abstract class NativeInteropFlutterIntegrationCoreApi {
 }
 
 NativeInteropReservedNamesHostApiForNativeInterop?
-pigeonGetInstance_NativeInteropReservedNamesHostApi({String channelName = defaultInstanceName}) {
+pigeon_getInstance_NativeInteropReservedNamesHostApi({String channelName = defaultInstanceName}) {
   throw UnsupportedError(
     'Native Interop is not supported on this platform. Use NativeInteropReservedNamesHostApi instead.',
   );
@@ -10580,7 +10576,8 @@ abstract class NativeInteropReservedNamesHostApiForNativeInterop {
   /// Returns instance of NativeInteropReservedNamesHostApiForNativeInterop with specified [channelName] if one has been registered.
   static NativeInteropReservedNamesHostApiForNativeInterop? getInstance({
     String channelName = defaultInstanceName,
-  }) => pigeon_native.pigeonGetInstance_NativeInteropReservedNamesHostApi(channelName: channelName);
+  }) =>
+      pigeon_native.pigeon_getInstance_NativeInteropReservedNamesHostApi(channelName: channelName);
 
   String release(String value);
 
@@ -11040,7 +11037,7 @@ class NativeInteropReservedNamesHostApi {
   }
 }
 
-NativeInteropReservedNamesFlutterApi pigeonRegister_NativeInteropReservedNamesFlutterApi(
+NativeInteropReservedNamesFlutterApi pigeon_register_NativeInteropReservedNamesFlutterApi(
   NativeInteropReservedNamesFlutterApi api, {
   String name = defaultInstanceName,
 }) {
@@ -11050,15 +11047,10 @@ NativeInteropReservedNamesFlutterApi pigeonRegister_NativeInteropReservedNamesFl
 }
 
 final class NativeInteropReservedNamesFlutterApiRegistrar {
-  NativeInteropReservedNamesFlutterApi? dartApi;
-
   NativeInteropReservedNamesFlutterApi register(
     NativeInteropReservedNamesFlutterApi api, {
     String name = defaultInstanceName,
-  }) {
-    dartApi = api;
-    return pigeon_native.pigeonRegister_NativeInteropReservedNamesFlutterApi(api, name: name);
-  }
+  }) => pigeon_native.pigeon_register_NativeInteropReservedNamesFlutterApi(api, name: name);
 }
 
 /// The Flutter API counterpart of [NativeInteropReservedNamesHostApi].

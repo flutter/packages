@@ -2083,8 +2083,9 @@ extension NativeInteropReservedNamesNativeInterop on NativeInteropReservedNames 
 }
 
 NativeInteropHostIntegrationCoreApiForNativeInterop?
-pigeonGetInstance_NativeInteropHostIntegrationCoreApi({String channelName = defaultInstanceName}) =>
-    _NativeInteropHostIntegrationCoreApiForNativeInterop.getInstance(channelName: channelName);
+pigeon_getInstance_NativeInteropHostIntegrationCoreApi({
+  String channelName = defaultInstanceName,
+}) => _NativeInteropHostIntegrationCoreApiForNativeInterop.getInstance(channelName: channelName);
 
 class _NativeInteropHostIntegrationCoreApiForNativeInterop
     implements NativeInteropHostIntegrationCoreApiForNativeInterop {
@@ -14815,13 +14816,13 @@ final class _NativeInteropFlutterIntegrationCoreApiRegistrar
   }
 }
 
-NativeInteropFlutterIntegrationCoreApi pigeonRegister_NativeInteropFlutterIntegrationCoreApi(
+NativeInteropFlutterIntegrationCoreApi pigeon_register_NativeInteropFlutterIntegrationCoreApi(
   NativeInteropFlutterIntegrationCoreApi api, {
   String name = defaultInstanceName,
 }) => _NativeInteropFlutterIntegrationCoreApiRegistrar().register(api, name: name);
 
 NativeInteropReservedNamesHostApiForNativeInterop?
-pigeonGetInstance_NativeInteropReservedNamesHostApi({String channelName = defaultInstanceName}) =>
+pigeon_getInstance_NativeInteropReservedNamesHostApi({String channelName = defaultInstanceName}) =>
     _NativeInteropReservedNamesHostApiForNativeInterop.getInstance(channelName: channelName);
 
 class _NativeInteropReservedNamesHostApiForNativeInterop
@@ -15401,7 +15402,7 @@ final class _NativeInteropReservedNamesFlutterApiRegistrar
   }
 }
 
-NativeInteropReservedNamesFlutterApi pigeonRegister_NativeInteropReservedNamesFlutterApi(
+NativeInteropReservedNamesFlutterApi pigeon_register_NativeInteropReservedNamesFlutterApi(
   NativeInteropReservedNamesFlutterApi api, {
   String name = defaultInstanceName,
 }) => _NativeInteropReservedNamesFlutterApiRegistrar().register(api, name: name);

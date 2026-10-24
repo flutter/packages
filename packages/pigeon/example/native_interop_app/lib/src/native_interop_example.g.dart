@@ -64,7 +64,7 @@ class _PigeonCodec extends StandardMessageCodec {
 
 const String defaultInstanceName = 'PigeonDefaultClassName32uh4ui3lh445uh4h3l2l455g4y34u';
 
-NativeInteropExampleApiForNativeInterop? pigeonGetInstance_NativeInteropExampleApi({
+NativeInteropExampleApiForNativeInterop? pigeon_getInstance_NativeInteropExampleApi({
   String channelName = defaultInstanceName,
 }) {
   throw UnsupportedError(
@@ -76,7 +76,7 @@ abstract class NativeInteropExampleApiForNativeInterop {
   /// Returns instance of NativeInteropExampleApiForNativeInterop with specified [channelName] if one has been registered.
   static NativeInteropExampleApiForNativeInterop? getInstance({
     String channelName = defaultInstanceName,
-  }) => pigeon_native.pigeonGetInstance_NativeInteropExampleApi(channelName: channelName);
+  }) => pigeon_native.pigeon_getInstance_NativeInteropExampleApi(channelName: channelName);
 
   void doSomething();
 }

@@ -392,7 +392,7 @@ PlatformException _wrapJniException(JThrowable e) {
   );
 }
 
-NativeInteropExampleApiForNativeInterop? pigeonGetInstance_NativeInteropExampleApi({
+NativeInteropExampleApiForNativeInterop? pigeon_getInstance_NativeInteropExampleApi({
   String channelName = defaultInstanceName,
 }) => _NativeInteropExampleApiForNativeInterop.getInstance(channelName: channelName);
 

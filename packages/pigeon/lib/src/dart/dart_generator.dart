@@ -708,7 +708,7 @@ class DartGenerator extends StructuredGenerator<InternalDartOptions> {
       indent.writeln("import 'package:flutter/widgets.dart' show WidgetsFlutterBinding;");
     }
     indent.writeln("import 'package:meta/meta.dart' show immutable, protected, visibleForTesting;");
-    if (usesNativeInterop(generatorOptions) && generatorOptions.dartOut != null) {
+    if (usesNativeInterop(generatorOptions)) {
       final String baseName = path.basename(generatorOptions.dartOut!);
       final String nativeInteropBaseName = path.basename(
         getNativeInteropDartPath(generatorOptions.dartOut!),
@@ -1566,7 +1566,7 @@ class DartGenerator extends StructuredGenerator<InternalDartOptions> {
     });
     indent.newln();
     indent.format('''
-${api.name} pigeonRegister_${api.name}(
+${api.name} ${classMemberNamePrefix}register_${api.name}(
   ${api.name} api, {
   String name = defaultInstanceName,
 }) => _${api.name}Registrar().register(api, name: name);
@@ -1597,7 +1597,7 @@ ${api.name} pigeonRegister_${api.name}(
     indent.newln();
     if (usesNativeInterop(generatorOptions)) {
       indent.format('''
-${api.name} pigeonRegister_${api.name}(
+${api.name} ${classMemberNamePrefix}register_${api.name}(
   ${api.name} api, {
   String name = defaultInstanceName,
 }) {
@@ -1607,15 +1607,10 @@ ${api.name} pigeonRegister_${api.name}(
 }
 
 final class ${api.name}Registrar {
-  ${api.name}? dartApi;
-
   ${api.name} register(
     ${api.name} api, {
     String name = defaultInstanceName,
-  }) {
-    dartApi = api;
-    return pigeon_native.pigeonRegister_${api.name}(api, name: name);
-  }
+  }) => pigeon_native.${classMemberNamePrefix}register_${api.name}(api, name: name);
 }
 ''');
       indent.newln();
@@ -1717,7 +1712,7 @@ final class ${api.name}Registrar {
     final ffiApiRegistrarName = '$_ffiBridgePrefix.${api.name}Setup';
     indent.newln();
     indent.format('''
-$dartApiName? pigeonGetInstance_${api.name}({
+$dartApiName? ${classMemberNamePrefix}getInstance_${api.name}({
   String channelName = defaultInstanceName,
 }) => $implClassName.getInstance(channelName: channelName);
 ''');
@@ -2063,7 +2058,7 @@ return ${generatorOptions.useJni ? 'await ' : ''}$completerVar.future;
     final dartApiName = '${api.name}ForNativeInterop';
     indent.newln();
     indent.format('''
-$dartApiName? pigeonGetInstance_${api.name}({
+$dartApiName? ${classMemberNamePrefix}getInstance_${api.name}({
   String channelName = defaultInstanceName,
 }) {
   throw UnsupportedError(
@@ -2074,7 +2069,7 @@ $dartApiName? pigeonGetInstance_${api.name}({
 abstract class $dartApiName {
   /// Returns instance of $dartApiName with specified [channelName] if one has been registered.
   static $dartApiName? getInstance({String channelName = defaultInstanceName}) =>
-      pigeon_native.pigeonGetInstance_${api.name}(channelName: channelName);
+      pigeon_native.${classMemberNamePrefix}getInstance_${api.name}(channelName: channelName);
 ''');
     indent.inc();
     for (final Method method in api.methods) {
