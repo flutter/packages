@@ -1,0 +1,3 @@
+changelog: |
+  - Fixes discrete `Slider` and `RangeSlider` with a rounded track selecting the neighboring division when tapping ticks near the ends of the track.
+version: patch
