@@ -1,5 +1,7 @@
-## NEXT
+## 4.2.0
 
+* Exports `BenchmarkServer` and adds `BenchmarkServer.stop()` to abort a running
+  benchmark, killing Chrome and closing the benchmark server.
 * Updates minimum supported SDK version to Flutter 3.41/Dart 3.11.
 
 ## 4.1.2
