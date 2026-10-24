@@ -108,7 +108,7 @@ extension InAppPurchasePlugin: InAppPurchase2API {
           }
         }
 
-        let result = try await product.purchase(options: purchaseOptions)
+        let result = try await confirmPurchase(of: product, options: purchaseOptions)
 
         switch result {
         case .success(let verification):
@@ -564,5 +564,34 @@ extension InAppPurchasePlugin: InAppPurchase2API {
       }
     }
     return nil
+  }
+
+  /// Purchases `product`, anchoring the confirmation UI to the Flutter view when possible.
+  ///
+  /// The scene-less `purchase(options:)` leaves StoreKit to find a UI anchor itself, which fails
+  /// on iOS 27 and leaves the purchase pending forever; it remains the fallback for older OS
+  /// versions and for engines whose view is not in a window.
+  @MainActor
+  private func confirmPurchase(
+    of product: Product,
+    options: Set<Product.PurchaseOption>
+  ) async throws -> Product.PurchaseResult {
+    #if os(iOS)
+      if let viewController = self.registrar?.viewController,
+        let windowScene = viewController.view.window?.windowScene
+      {
+        if #available(iOS 18.2, *) {
+          return try await product.purchase(confirmIn: viewController, options: options)
+        }
+        if #available(iOS 17.0, *) {
+          return try await product.purchase(confirmIn: windowScene, options: options)
+        }
+      }
+    #elseif os(macOS)
+      if #available(macOS 15.2, *), let window = self.registrar?.view?.window {
+        return try await product.purchase(confirmIn: window, options: options)
+      }
+    #endif
+    return try await product.purchase(options: options)
   }
 }
