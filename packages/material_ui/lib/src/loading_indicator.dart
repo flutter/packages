@@ -558,18 +558,19 @@ class _LoadingIndicatorPainter extends CustomPainter {
       null => _indeterminatePose(elapsed.value, morphs.length, indeterminateStartRotation),
     };
     final double side = size.shortestSide * scaleFactor;
-    final Path path = morphs[pose.morphIndex]
-        .toPath(pose.morphProgress)
-        .transform(Matrix4.diagonal3Values(side, side, 1.0).storage);
+    final Path path = morphs[pose.morphIndex].toPath(pose.morphProgress);
+    // Centering the shape by its bounds, rather than its polygon's center,
+    // keeps lopsided shapes from wobbling as they rotate.
+    final Offset pathCenter = path.getBounds().center;
     final Offset center = size.center(Offset.zero);
 
     canvas
       ..save()
       ..translate(center.dx, center.dy)
       ..rotate(pose.rotation)
-      // Centering the shape by its bounds, rather than its polygon's center,
-      // keeps lopsided shapes from wobbling as they rotate.
-      ..drawPath(path.shift(-path.getBounds().center), Paint()..color = color)
+      ..scale(side)
+      ..translate(-pathCenter.dx, -pathCenter.dy)
+      ..drawPath(path, Paint()..color = color)
       ..restore();
   }
 
