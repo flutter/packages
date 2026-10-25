@@ -167,6 +167,38 @@ void main() {
     );
   }
 
+  Widget buildReservedPaddingTestApp({
+    required EdgeInsets safeAreaPadding,
+    required EdgeInsetsGeometry reservedPadding,
+    required AlignmentGeometry anchorAlignment,
+    required Widget menuContent,
+  }) {
+    return MaterialApp(
+      builder: (BuildContext context, Widget? child) {
+        return MediaQuery(
+          data: MediaQuery.of(context).copyWith(padding: safeAreaPadding),
+          child: child ?? const SizedBox.shrink(),
+        );
+      },
+      home: Material(
+        child: Align(
+          alignment: anchorAlignment,
+          child: MenuAnchor(
+            controller: controller,
+            reservedPadding: reservedPadding,
+            style: const MenuStyle(
+              padding: WidgetStatePropertyAll<EdgeInsetsGeometry>(EdgeInsets.zero),
+            ),
+            menuChildren: <Widget>[menuContent],
+            builder: (BuildContext context, MenuController controller, Widget? child) {
+              return const SizedBox(width: 32.0, height: 32.0);
+            },
+          ),
+        ),
+      ),
+    );
+  }
+
   Future<TestGesture> hoverOver(WidgetTester tester, Finder finder) async {
     final TestGesture gesture = await tester.createGesture(kind: PointerDeviceKind.mouse);
     await gesture.moveTo(tester.getCenter(finder));
@@ -1001,7 +1033,7 @@ void main() {
       await tester.pump();
       expect(
         tester.getRect(findMenuScope),
-        equals(const Rect.fromLTRB(526.0, 214.0, 800.0, 326.0)),
+        equals(const Rect.fromLTRB(518.0, 214.0, 792.0, 326.0)),
       );
     });
 
@@ -1029,7 +1061,7 @@ void main() {
       await tester.pump();
       expect(
         tester.getRect(findMenuScope),
-        equals(const Rect.fromLTRB(526.0, 214.0, 800.0, 326.0)),
+        equals(const Rect.fromLTRB(518.0, 214.0, 792.0, 326.0)),
       );
     });
 
@@ -3661,7 +3693,7 @@ void main() {
         equals(const <Rect>[
           Rect.fromLTRB(4.0, 0.0, 112.0, 48.0),
           Rect.fromLTRB(112.0, 0.0, 220.0, 48.0),
-          Rect.fromLTRB(86.0, 104.0, 300.0, 152.0),
+          Rect.fromLTRB(78.0, 104.0, 292.0, 152.0),
           Rect.fromLTRB(220.0, 0.0, 328.0, 48.0),
           Rect.fromLTRB(328.0, 0.0, 506.0, 48.0),
         ]),
@@ -3754,7 +3786,7 @@ void main() {
         equals(const <Rect>[
           Rect.fromLTRB(188.0, 0.0, 296.0, 48.0),
           Rect.fromLTRB(80.0, 0.0, 188.0, 48.0),
-          Rect.fromLTRB(0.0, 104.0, 214.0, 152.0),
+          Rect.fromLTRB(8.0, 104.0, 222.0, 152.0),
           Rect.fromLTRB(-28.0, 0.0, 80.0, 48.0),
           Rect.fromLTRB(-206.0, 0.0, -28.0, 48.0),
         ]),
@@ -3832,10 +3864,10 @@ void main() {
       expect(
         collectSubmenuRects(),
         equals(const <Rect>[
-          Rect.fromLTRB(0.0, 48.0, 256.0, 112.0),
-          Rect.fromLTRB(266.0, 48.0, 522.0, 112.0),
-          Rect.fromLTRB(522.0, 48.0, 778.0, 112.0),
-          Rect.fromLTRB(256.0, 48.0, 512.0, 112.0),
+          Rect.fromLTRB(8.0, 48.0, 264.0, 112.0),
+          Rect.fromLTRB(274.0, 48.0, 530.0, 112.0),
+          Rect.fromLTRB(530.0, 48.0, 786.0, 112.0),
+          Rect.fromLTRB(264.0, 48.0, 520.0, 112.0),
         ]),
       );
     });
@@ -3911,10 +3943,10 @@ void main() {
       expect(
         collectSubmenuRects(),
         equals(const <Rect>[
-          Rect.fromLTRB(544.0, 48.0, 800.0, 112.0),
-          Rect.fromLTRB(278.0, 48.0, 534.0, 112.0),
-          Rect.fromLTRB(22.0, 48.0, 278.0, 112.0),
-          Rect.fromLTRB(288.0, 48.0, 544.0, 112.0),
+          Rect.fromLTRB(536.0, 48.0, 792.0, 112.0),
+          Rect.fromLTRB(270.0, 48.0, 526.0, 112.0),
+          Rect.fromLTRB(14.0, 48.0, 270.0, 112.0),
+          Rect.fromLTRB(280.0, 48.0, 536.0, 112.0),
         ]),
       );
     });
@@ -3960,7 +3992,7 @@ void main() {
 
       expect(find.byType(MenuItemButton), findsNWidgets(1));
       // Test the default offset (0, 0) vertical position.
-      expect(collectSubmenuRects(), equals(const <Rect>[Rect.fromLTRB(0.0, 488.0, 122.0, 552.0)]));
+      expect(collectSubmenuRects(), equals(const <Rect>[Rect.fromLTRB(8.0, 488.0, 130.0, 552.0)]));
     });
 
     testWidgets(
@@ -4007,7 +4039,7 @@ void main() {
         // Test the offset (0, 50) vertical position.
         expect(
           collectSubmenuRects(),
-          equals(const <Rect>[Rect.fromLTRB(0.0, 438.0, 122.0, 502.0)]),
+          equals(const <Rect>[Rect.fromLTRB(8.0, 438.0, 130.0, 502.0)]),
         );
       },
     );
@@ -7004,6 +7036,52 @@ void main() {
     await tester.pump();
 
     expect(tester.getRect(findMenuPanels()).width, 800.0 - reservedPadding.horizontal);
+  });
+
+  testWidgets('Menu panel positions small menus inside reserved safe-area padding', (
+    WidgetTester tester,
+  ) async {
+    const safeAreaPadding = EdgeInsets.fromLTRB(10.0, 20.0, 30.0, 40.0);
+    const reservedPadding = EdgeInsets.all(64.0);
+    await changeSurfaceSize(tester, const Size(800.0, 600.0));
+    await tester.pumpWidget(
+      buildReservedPaddingTestApp(
+        safeAreaPadding: safeAreaPadding,
+        reservedPadding: reservedPadding,
+        anchorAlignment: Alignment.bottomRight,
+        menuContent: const SizedBox(width: 100.0, height: 100.0),
+      ),
+    );
+
+    controller.open(position: const Offset(-1000.0, -1000.0));
+    await tester.pumpAndSettle();
+
+    final Rect menuRect = tester.getRect(findMenuPanels());
+    expect(menuRect.left, safeAreaPadding.left + reservedPadding.left);
+    expect(menuRect.top, safeAreaPadding.top + reservedPadding.top);
+  });
+
+  testWidgets('Menu panel constraints include safe-area and reserved padding', (
+    WidgetTester tester,
+  ) async {
+    const safeAreaPadding = EdgeInsets.fromLTRB(10.0, 20.0, 30.0, 40.0);
+    const reservedPadding = EdgeInsets.all(64.0);
+    await changeSurfaceSize(tester, const Size(800.0, 600.0));
+    await tester.pumpWidget(
+      buildReservedPaddingTestApp(
+        safeAreaPadding: safeAreaPadding,
+        reservedPadding: reservedPadding,
+        anchorAlignment: Alignment.center,
+        menuContent: const SizedBox(width: 1000.0, height: 1000.0),
+      ),
+    );
+
+    controller.open();
+    await tester.pumpAndSettle();
+
+    final Rect menuRect = tester.getRect(findMenuPanels());
+    expect(menuRect.width, 800.0 - safeAreaPadding.horizontal - reservedPadding.horizontal);
+    expect(menuRect.height, 600.0 - safeAreaPadding.vertical - reservedPadding.vertical);
   });
 
   testWidgets('MenuAcceleratorLabel does not crash at zero area', (WidgetTester tester) async {
