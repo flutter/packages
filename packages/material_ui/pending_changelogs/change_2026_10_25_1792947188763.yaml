@@ -1,0 +1,3 @@
+changelog: |
+  - Fix SimpleDialog padding when the title or children are absent.
+version: patch
