@@ -59,10 +59,12 @@ void main() {
       );
       expect(tester.widget<Opacity>(opacity).opacity, 1.0);
       final Size enabledSize = tester.getSize(find.byType(CupertinoSlider));
+      final RenderObject sliderRenderObject = tester.renderObject(sliderRenderWidget);
 
       updateState(() => enabled = false);
       await tester.pump();
       expect(tester.widget<Opacity>(opacity).opacity, 0.5);
+      expect(tester.renderObject(sliderRenderWidget), same(sliderRenderObject));
       expect(tester.getSize(find.byType(CupertinoSlider)), enabledSize);
       final CupertinoSlider slider = tester.widget<CupertinoSlider>(find.byType(CupertinoSlider));
       expect(slider.activeColor, CupertinoColors.systemPurple);
@@ -73,6 +75,7 @@ void main() {
       updateState(() => enabled = true);
       await tester.pump();
       expect(tester.widget<Opacity>(opacity).opacity, 1.0);
+      expect(tester.renderObject(sliderRenderWidget), same(sliderRenderObject));
       await tester.dragFrom(tester.getCenter(find.byType(CupertinoSlider)), const Offset(50, 0));
       expect(value, greaterThan(0.5));
     });
