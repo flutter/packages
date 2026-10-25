@@ -172,11 +172,12 @@ void main() {
     required EdgeInsetsGeometry reservedPadding,
     required AlignmentGeometry anchorAlignment,
     required Widget menuContent,
+    EdgeInsets viewInsets = EdgeInsets.zero,
   }) {
     return MaterialApp(
       builder: (BuildContext context, Widget? child) {
         return MediaQuery(
-          data: MediaQuery.of(context).copyWith(padding: safeAreaPadding),
+          data: MediaQuery.of(context).copyWith(padding: safeAreaPadding, viewInsets: viewInsets),
           child: child ?? const SizedBox.shrink(),
         );
       },
@@ -7082,6 +7083,52 @@ void main() {
     final Rect menuRect = tester.getRect(findMenuPanels());
     expect(menuRect.width, 800.0 - safeAreaPadding.horizontal - reservedPadding.horizontal);
     expect(menuRect.height, 600.0 - safeAreaPadding.vertical - reservedPadding.vertical);
+  });
+
+  testWidgets('Menu panel relayouts when MediaQuery insets change', (WidgetTester tester) async {
+    const safeAreaPadding = EdgeInsets.fromLTRB(10.0, 20.0, 30.0, 40.0);
+    const reservedPadding = EdgeInsets.all(64.0);
+    await changeSurfaceSize(tester, const Size(800.0, 600.0));
+    await tester.pumpWidget(
+      buildReservedPaddingTestApp(
+        safeAreaPadding: safeAreaPadding,
+        reservedPadding: reservedPadding,
+        anchorAlignment: Alignment.topRight,
+        menuContent: const SizedBox(width: 100.0, height: 100.0),
+      ),
+    );
+
+    controller.open(position: const Offset(-1000.0, 1000.0));
+    await tester.pumpAndSettle();
+
+    final Rect initialMenuRect = tester.getRect(findMenuPanels());
+    expect(initialMenuRect.left, safeAreaPadding.left + reservedPadding.left);
+
+    const updatedSafeAreaPadding = EdgeInsets.fromLTRB(50.0, 60.0, 70.0, 80.0);
+    const updatedViewInsets = EdgeInsets.only(bottom: 100.0);
+    await tester.pumpWidget(
+      buildReservedPaddingTestApp(
+        safeAreaPadding: updatedSafeAreaPadding,
+        reservedPadding: reservedPadding,
+        anchorAlignment: Alignment.topRight,
+        menuContent: const SizedBox(width: 100.0, height: 100.0),
+        viewInsets: updatedViewInsets,
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    final Rect updatedMenuRect = tester.getRect(findMenuPanels());
+    expect(
+      updatedMenuRect.left,
+      initialMenuRect.left + updatedSafeAreaPadding.left - safeAreaPadding.left,
+    );
+    expect(
+      updatedMenuRect.bottom,
+      initialMenuRect.bottom -
+          updatedSafeAreaPadding.bottom +
+          safeAreaPadding.bottom -
+          updatedViewInsets.bottom,
+    );
   });
 
   testWidgets('MenuAcceleratorLabel does not crash at zero area', (WidgetTester tester) async {

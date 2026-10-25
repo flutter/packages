@@ -3626,6 +3626,8 @@ class _MenuLayout extends SingleChildLayoutDelegate {
         parentOrientation != oldDelegate.parentOrientation ||
         reservedPadding != oldDelegate.reservedPadding ||
         heightFactor != oldDelegate.heightFactor ||
+        mediaQueryData.padding != oldDelegate.mediaQueryData.padding ||
+        mediaQueryData.viewInsets != oldDelegate.mediaQueryData.viewInsets ||
         !setEquals(avoidBounds, oldDelegate.avoidBounds);
   }
 
