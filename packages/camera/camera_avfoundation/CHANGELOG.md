@@ -1,3 +1,7 @@
+## 0.11.2
+
+* Reports an error when appending a video frame to the asset writer fails.
+
 ## 0.11.1
 
 * Adds support for zero-shutter-lag still image capture via
