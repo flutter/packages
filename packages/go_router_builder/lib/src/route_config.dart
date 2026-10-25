@@ -704,9 +704,7 @@ abstract class RouteBaseConfig {
         }
         final ConstantReader nameValue = reader.read('name');
         final ConstantReader caseSensitiveValue = reader.read('caseSensitive');
-        final bool hasOverriddenOnExit = classElement.methods.any(
-          (method) => method.name == 'onExit',
-        );
+        final bool hasOverriddenOnExit = _hasOverriddenOnExit(classElement, 'GoRouteData');
         value = GoRouteConfig._(
           path: pathValue.stringValue,
           name: nameValue.isNull ? null : nameValue.stringValue,
@@ -735,9 +733,7 @@ abstract class RouteBaseConfig {
           );
         }
         final ConstantReader caseSensitiveValue = reader.read('caseSensitive');
-        final bool hasOverriddenOnExit = classElement.methods.any(
-          (method) => method.name == 'onExit',
-        );
+        final bool hasOverriddenOnExit = _hasOverriddenOnExit(classElement, 'RelativeGoRouteData');
         value = RelativeGoRouteConfig._(
           path: pathValue.stringValue,
           caseSensitive: caseSensitiveValue.boolValue,
@@ -912,6 +908,30 @@ $routeDataClassName.$dataConvertionFunctionName(
   /// Returns all class declarations code.
   @protected
   Iterable<String> classDeclarations();
+}
+
+/// Whether [routeDataClass] overrides the default route data `onExit` method.
+bool _hasOverriddenOnExit(InterfaceElement routeDataClass, String baseClassName) {
+  if (routeDataClass.methods.any((method) => method.name == 'onExit')) {
+    return true;
+  }
+
+  final LibraryElement library = routeDataClass.library;
+  final MethodElement? inheritedOnExit = routeDataClass.lookUpInheritedMethod(
+    methodName: 'onExit',
+    library: library,
+  );
+  final baseClassChecker = TypeChecker.fromUrl(
+    'package:go_router/src/route_data.dart#$baseClassName',
+  );
+  final InterfaceElement? baseClassElement = routeDataClass.allSupertypes
+      .firstWhereOrNull(baseClassChecker.isExactlyType)
+      ?.element;
+  final MethodElement? defaultOnExit = baseClassElement?.lookUpInheritedMethod(
+    methodName: 'onExit',
+    library: library,
+  );
+  return inheritedOnExit != null && inheritedOnExit != defaultOnExit;
 }
 
 String _enumMapConst(InterfaceType type) {
