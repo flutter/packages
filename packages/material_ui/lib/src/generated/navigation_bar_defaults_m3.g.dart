@@ -2,13 +2,17 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-class _NavigationDrawerDefaultsM3 extends NavigationDrawerThemeData {
-  _NavigationDrawerDefaultsM3(this.context)
+// Do not edit by hand. The code is generated from data in the Material
+// Design token database by the script:
+//   packages/material_ui/tool/gen_defaults/bin/gen_defaults.dart.
+part of '../navigation_bar.dart';
+
+class _NavigationBarDefaultsM3 extends NavigationBarThemeData {
+  _NavigationBarDefaultsM3(this.context)
     : super(
-        elevation: 1.0,
-        tileHeight: 56.0,
-        indicatorShape: const StadiumBorder(),
-        indicatorSize: const Size(336.0, 56.0),
+        height: 80.0,
+        elevation: 3.0,
+        labelBehavior: NavigationDestinationLabelBehavior.alwaysShow,
       );
 
   final BuildContext context;
@@ -16,16 +20,13 @@ class _NavigationDrawerDefaultsM3 extends NavigationDrawerThemeData {
   late final TextTheme _textTheme = Theme.of(context).textTheme;
 
   @override
-  Color? get backgroundColor => _colors.surfaceContainerLow;
-
-  @override
-  Color? get surfaceTintColor => Colors.transparent;
+  Color? get backgroundColor => _colors.surfaceContainer;
 
   @override
   Color? get shadowColor => Colors.transparent;
 
   @override
-  Color? get indicatorColor => _colors.secondaryContainer;
+  Color? get surfaceTintColor => Colors.transparent;
 
   @override
   WidgetStateProperty<IconThemeData?>? get iconTheme {
@@ -42,16 +43,25 @@ class _NavigationDrawerDefaultsM3 extends NavigationDrawerThemeData {
   }
 
   @override
+  Color? get indicatorColor => _colors.secondaryContainer;
+
+  @override
+  ShapeBorder? get indicatorShape => const StadiumBorder();
+
+  @override
   WidgetStateProperty<TextStyle?>? get labelTextStyle {
     return WidgetStateProperty.resolveWith((Set<WidgetState> states) {
-      final TextStyle style = _textTheme.labelLarge!;
+      final TextStyle style = _textTheme.labelMedium!;
       return style.apply(
         color: states.contains(WidgetState.disabled)
             ? _colors.onSurfaceVariant.withOpacity(0.38)
             : states.contains(WidgetState.selected)
-            ? _colors.onSecondaryContainer
+            ? _colors.onSurface
             : _colors.onSurfaceVariant,
       );
     });
   }
+
+  @override
+  EdgeInsetsGeometry? get labelPadding => const EdgeInsets.only(top: 4);
 }
