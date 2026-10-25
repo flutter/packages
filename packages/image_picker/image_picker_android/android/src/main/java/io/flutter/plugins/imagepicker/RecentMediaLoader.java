@@ -90,6 +90,9 @@ class RecentMediaLoader {
     if (request.getIncludeVideos()) {
       mediaTypes.add(String.valueOf(MediaStore.Files.FileColumns.MEDIA_TYPE_VIDEO));
     }
+    if (mediaTypes.isEmpty()) {
+      return null;
+    }
     String selection =
         MediaStore.Files.FileColumns.MEDIA_TYPE
             + " IN ("

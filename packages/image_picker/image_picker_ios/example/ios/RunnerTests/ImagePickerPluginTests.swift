@@ -1173,6 +1173,20 @@ struct ImagePickerPluginTests {
     #expect(thumbnails.requestedAssets.isEmpty)
   }
 
+  @Test func getRecentMediaWithNoMediaTypesReturnsEmptyListWithoutAskingForAccess() async {
+    let (plugin, photo, fetcher, _) = recentMediaPlugin(status: .notDetermined)
+
+    let (items, error, _) = await getRecentMedia(
+      plugin,
+      request: FLTRecentMediaRequest.make(
+        withLimit: 1, includeImages: false, includeVideos: false, width: 100, height: 100))
+
+    #expect(items?.isEmpty == true)
+    #expect(error == nil)
+    #expect(photo.requestAuthorizationCallCount == 0)
+    #expect(fetcher.lastOptions == nil)
+  }
+
   @Test func getRecentMediaDoesNotCancelInProgressPicker() async {
     let (plugin, _, _, _) = recentMediaPlugin(status: .authorized)
     var pickerCompleted = false

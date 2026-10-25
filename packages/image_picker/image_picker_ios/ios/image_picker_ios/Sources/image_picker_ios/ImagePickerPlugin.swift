@@ -324,6 +324,10 @@ public final class ImagePickerPlugin: NSObject, FlutterPlugin, FLTImagePickerApi
     with request: FLTRecentMediaRequest,
     completion: @escaping ([FLTRecentMediaItem]?, FlutterError?) -> Void
   ) {
+    guard request.includeImages || request.includeVideos else {
+      completion([], nil)
+      return
+    }
     switch photoLibraryPermissionChecker.authorizationStatus(for: .readWrite) {
     case .authorized, .limited:
       loadRecentMedia(with: request, completion: completion)

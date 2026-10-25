@@ -19,6 +19,16 @@ void main() {
       expect(options.thumbnailHeight, 256);
     });
 
+    test('asserts on out of range values', () {
+      expect(() => RecentMediaOptions(limit: 0), throwsAssertionError);
+      expect(
+        () => RecentMediaOptions(limit: RecentMediaOptions.maxLimit + 1),
+        throwsAssertionError,
+      );
+      expect(() => RecentMediaOptions(thumbnailWidth: 0), throwsAssertionError);
+      expect(() => RecentMediaOptions(thumbnailHeight: 0), throwsAssertionError);
+    });
+
     test('createAndValidate does not throw for default values', () {
       expect(() => RecentMediaOptions.createAndValidate(), returnsNormally);
     });

@@ -15,6 +15,7 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 
 import android.content.ContentResolver;
@@ -211,6 +212,13 @@ public class RecentMediaLoaderTest {
         .thenReturn(null);
 
     assertTrue(loader.load(ALL_MEDIA_REQUEST).isEmpty());
+  }
+
+  @Test
+  @Config(sdk = 30)
+  public void load_withNoMediaTypes_returnsEmptyListWithoutQuerying() {
+    assertTrue(loader.load(new RecentMediaRequest(1L, false, false, 100L, 100L)).isEmpty());
+    verifyNoInteractions(mockResolver);
   }
 
   @Test

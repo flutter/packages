@@ -15,7 +15,9 @@ class RecentMediaOptions {
     this.types = const <MediaSelectionType>{MediaSelectionType.image, MediaSelectionType.video},
     this.thumbnailWidth = 256,
     this.thumbnailHeight = 256,
-  });
+  }) : assert(limit >= 1 && limit <= maxLimit, 'limit must be between 1 and $maxLimit'),
+       assert(thumbnailWidth > 0, 'thumbnailWidth must be greater than 0'),
+       assert(thumbnailHeight > 0, 'thumbnailHeight must be greater than 0');
 
   /// Construct a new RecentMediaOptions instance.
   ///
