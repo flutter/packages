@@ -42,6 +42,10 @@ import 'package:material_ui_examples/progress_indicator/circular_progress_indica
     as circular_progress_indicator_0;
 import 'package:material_ui_examples/dropdown_menu/dropdown_menu.1.dart'
     as dropdown_menu_1;
+import 'package:material_ui_examples/loading_indicator/loading_indicator.0.dart'
+    as loading_indicator_0;
+import 'package:material_ui_examples/loading_indicator/loading_indicator.1.dart'
+    as loading_indicator_1;
 import 'package:material_ui_examples/material_shapes/material_shapes.0.dart'
     as material_shapes_0;
 import 'package:material_ui_examples/navigation_bar/navigation_bar.1.dart'
@@ -89,6 +93,9 @@ const Map<String, Type> _examples = <String, Type>{
       linear_progress_indicator_0.ProgressIndicatorExampleApp,
   'Circular progress indicators':
       circular_progress_indicator_0.ProgressIndicatorExampleApp,
+  'Loading indicators': loading_indicator_0.LoadingIndicatorExampleApp,
+  'Loading indicator pull to refresh':
+      loading_indicator_1.LoadingIndicatorExampleApp,
   'Material 3 Expressive shapes': material_shapes_0.MaterialShapesExampleApp,
   'Menu': dropdown_menu_1.DropdownMenuApp,
   'Navigation bar': navigation_bar_1.NavigationBarApp,

@@ -116,6 +116,8 @@ export 'src/input_decorator.dart';
 export 'src/l10n/generated_material_localizations.dart';
 export 'src/list_tile.dart';
 export 'src/list_tile_theme.dart';
+export 'src/loading_indicator.dart';
+export 'src/loading_indicator_theme.dart';
 export 'src/magnifier.dart';
 export 'src/material.dart';
 export 'src/material_button.dart';
