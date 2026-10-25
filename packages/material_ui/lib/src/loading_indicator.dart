@@ -28,7 +28,7 @@ import 'theme.dart';
 part 'generated/loading_indicator_defaults_m3e.g.dart';
 
 /// How long the indeterminate indicator takes to morph from one shape to the
-/// next, including the time it holds a shape after the morph settles.
+/// next.
 const Duration _kMorphInterval = Duration(milliseconds: 650);
 
 /// How long the indeterminate indicator takes to complete one full turn of
@@ -39,6 +39,10 @@ const Duration _kGlobalRotationDuration = Duration(milliseconds: 4666);
 ///
 /// Its overshoot carries the morph slightly past its end shape, which gives
 /// the indicator its bounce.
+///
+/// Unlike Compose, which stops the spring early and snaps it back to the end
+/// shape, the spring runs for the whole [_kMorphInterval], so that the
+/// overshoot settles smoothly.
 final SpringSimulation _kMorphSpring = SpringSimulation(
   SpringDescription.withDampingRatio(mass: 1, stiffness: 200, ratio: 0.6),
   0,
@@ -72,7 +76,9 @@ final SpringSimulation _kMorphSpring = SpringSimulation(
 /// active indicator takes up 38 by 38. If the incoming constraints require a
 /// different size, it grows or shrinks to fit them, keeping the active
 /// indicator at the same ratio to the shortest side and centered in the
-/// middle.
+/// middle. The default determinate and indeterminate shapes are drawn at the
+/// same size, so that a determinate loading indicator can turn into an
+/// indeterminate one without a jump in size.
 ///
 /// <callout-box>
 ///
@@ -339,6 +345,9 @@ class _LoadingIndicatorState extends State<LoadingIndicator> with SingleTickerPr
 
   /// The scale factor shared by the default determinate and indeterminate
   /// shapes, so that one can turn into the other without changing size.
+  ///
+  /// Compose scales each sequence on its own instead, which draws its
+  /// determinate shapes larger than its indeterminate ones.
   static final double _defaultScaleFactor = _calculateScaleFactor(<RoundedPolygon>[
     ...LoadingIndicator.determinatePolygons,
     ...LoadingIndicator.indeterminatePolygons,
