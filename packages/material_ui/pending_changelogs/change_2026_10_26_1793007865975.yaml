@@ -1,0 +1,3 @@
+changelog: |
+  - Fixes RefreshIndicatorStatus.armed threshold on Android so releasing when armed triggers onRefresh, and dragging back above the threshold disarms to RefreshIndicatorStatus.drag.
+version: patch
