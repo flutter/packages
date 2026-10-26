@@ -1,3 +1,12 @@
+## 2.12.3
+
+* Fixes a potential crash when a player is disposed while an async method is in progress.
+
+## 2.12.2
+
+* Converts native player implementation to Swift.
+* Updates minimum supported SDK version to Flutter 3.47/Dart 3.13.
+
 ## 2.12.1
 
 * Fixes a crash when a video track reports a zero `minFrameDuration`.
