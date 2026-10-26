@@ -194,6 +194,7 @@ class CalendarDatePicker extends StatefulWidget {
     this.dayBuilder,
     this.weekdayBuilder,
     this.calendarDelegate = const GregorianCalendarDelegate(),
+    this.animationBehavior = AnimationBehavior.normal,
   }) : initialDate = initialDate == null ? null : calendarDelegate.dateOnly(initialDate),
        firstDate = calendarDelegate.dateOnly(firstDate),
        lastDate = calendarDelegate.dateOnly(lastDate),
@@ -266,6 +267,9 @@ class CalendarDatePicker extends StatefulWidget {
 
   /// {@macro material_ui.calendar_date_picker.calendarDelegate}
   final CalendarDelegate<DateTime> calendarDelegate;
+
+  /// The [AnimationBehavior] of the internal [AnimationController]s.
+  final AnimationBehavior animationBehavior;
 
   @override
   State<CalendarDatePicker> createState() => _CalendarDatePickerState();
@@ -505,6 +509,7 @@ class _CalendarDatePickerState extends State<CalendarDatePicker> {
               DatePickerMode.day => DatePickerMode.year,
               DatePickerMode.year => DatePickerMode.day,
             }),
+            animationBehavior: widget.animationBehavior,
           ),
         ),
       ],
@@ -521,6 +526,7 @@ class _DatePickerModeToggleButton extends StatefulWidget {
     required this.mode,
     required this.title,
     required this.onTitlePressed,
+    this.animationBehavior = AnimationBehavior.normal,
   });
 
   /// The current display of the calendar picker.
@@ -531,6 +537,8 @@ class _DatePickerModeToggleButton extends StatefulWidget {
 
   /// The callback when the title is pressed.
   final VoidCallback onTitlePressed;
+
+  final AnimationBehavior animationBehavior;
 
   @override
   _DatePickerModeToggleButtonState createState() => _DatePickerModeToggleButtonState();
@@ -548,6 +556,7 @@ class _DatePickerModeToggleButtonState extends State<_DatePickerModeToggleButton
       upperBound: 0.5,
       duration: const Duration(milliseconds: 200),
       vsync: this,
+      animationBehavior: widget.animationBehavior,
     );
   }
 

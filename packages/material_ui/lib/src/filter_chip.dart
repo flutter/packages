@@ -121,6 +121,7 @@ class FilterChip extends StatelessWidget
     this.deleteIconBoxConstraints,
     this.chipAnimationStyle,
     this.mouseCursor,
+    this.animationBehavior = AnimationBehavior.normal,
   }) : assert(pressElevation == null || pressElevation >= 0.0),
        assert(elevation == null || elevation >= 0.0),
        _chipVariant = _ChipVariant.flat;
@@ -169,6 +170,7 @@ class FilterChip extends StatelessWidget
     this.deleteIconBoxConstraints,
     this.chipAnimationStyle,
     this.mouseCursor,
+    this.animationBehavior = AnimationBehavior.normal,
   }) : assert(pressElevation == null || pressElevation >= 0.0),
        assert(elevation == null || elevation >= 0.0),
        _chipVariant = _ChipVariant.elevated;
@@ -246,6 +248,9 @@ class FilterChip extends StatelessWidget
   @override
   final MouseCursor? mouseCursor;
 
+  /// The [AnimationBehavior] of the internal [AnimationController]s.
+  final AnimationBehavior animationBehavior;
+
   @override
   bool get isEnabled => onSelected != null;
 
@@ -298,6 +303,7 @@ class FilterChip extends StatelessWidget
       deleteIconBoxConstraints: deleteIconBoxConstraints,
       chipAnimationStyle: chipAnimationStyle,
       mouseCursor: mouseCursor,
+      animationBehavior: animationBehavior,
     );
   }
 }

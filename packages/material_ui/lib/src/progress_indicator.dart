@@ -70,6 +70,7 @@ abstract class ProgressIndicator extends StatefulWidget {
     this.valueColor,
     this.semanticsLabel,
     this.semanticsValue,
+    this.animationBehavior = AnimationBehavior.normal,
   });
 
   /// If non-null, the value of this progress indicator.
@@ -130,6 +131,9 @@ abstract class ProgressIndicator extends StatefulWidget {
   /// become '10%'.
   /// {@endtemplate}
   final String? semanticsValue;
+
+  /// The [AnimationBehavior] of the internal [AnimationController]s.
+  final AnimationBehavior animationBehavior;
 
   Color _getValueColor(BuildContext context, {Color? defaultColor}) {
     return valueColor?.value ??
@@ -449,6 +453,7 @@ class LinearProgressIndicator extends ProgressIndicator {
     )
     this.year2023,
     this.controller,
+    super.animationBehavior,
   }) : assert(minHeight == null || minHeight > 0),
        assert(value == null || controller == null, _kValueControllerAssertion);
 
@@ -574,6 +579,7 @@ class _LinearProgressIndicatorState extends State<LinearProgressIndicator>
     _internalController = AnimationController(
       duration: LinearProgressIndicator.defaultAnimationDuration,
       vsync: this,
+      animationBehavior: widget.animationBehavior,
     );
     _updateControllerAnimatingStatus();
   }
@@ -917,6 +923,7 @@ class CircularProgressIndicator extends ProgressIndicator {
     this.year2023,
     this.padding,
     this.controller,
+    super.animationBehavior,
   }) : assert(value == null || controller == null, _kValueControllerAssertion),
        _indicatorType = _ActivityIndicatorType.material;
 
@@ -950,6 +957,7 @@ class CircularProgressIndicator extends ProgressIndicator {
     this.year2023,
     this.padding,
     this.controller,
+    super.animationBehavior,
   }) : assert(value == null || controller == null, _kValueControllerAssertion),
        _indicatorType = _ActivityIndicatorType.adaptive;
 
@@ -1108,6 +1116,7 @@ class _CircularProgressIndicatorState extends State<CircularProgressIndicator>
     _internalController = AnimationController(
       duration: CircularProgressIndicator.defaultAnimationDuration,
       vsync: this,
+      animationBehavior: widget.animationBehavior,
     );
     _updateControllerAnimatingStatus();
   }
@@ -1142,12 +1151,17 @@ class _CircularProgressIndicatorState extends State<CircularProgressIndicator>
     final Color? tickColor = widget.backgroundColor;
     final double? value = widget._effectiveValue;
     if (value == null) {
-      return CupertinoActivityIndicator(key: widget.key, color: tickColor);
+      return CupertinoActivityIndicator(
+        key: widget.key,
+        color: tickColor,
+        animationBehavior: widget.animationBehavior,
+      );
     }
     return CupertinoActivityIndicator.partiallyRevealed(
       key: widget.key,
       color: tickColor,
       progress: value,
+      animationBehavior: widget.animationBehavior,
     );
   }
 
@@ -1352,6 +1366,7 @@ class RefreshProgressIndicator extends CircularProgressIndicator {
     this.elevation = 2.0,
     this.indicatorMargin = const EdgeInsets.all(4.0),
     this.indicatorPadding = const EdgeInsets.all(12.0),
+    super.animationBehavior,
   });
 
   /// {@macro material_ui.material.elevation}
