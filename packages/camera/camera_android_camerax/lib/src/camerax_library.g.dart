@@ -1685,16 +1685,25 @@ class VideoRecordEventFinalize extends VideoRecordEvent {
   VideoRecordEventFinalize.pigeon_detached({
     super.pigeon_binaryMessenger,
     super.pigeon_instanceManager,
+    required this.error,
+    required this.hasError,
   }) : super.pigeon_detached();
 
-  late final _PigeonInternalProxyApiBaseCodec _pigeonVar_codecVideoRecordEventFinalize =
-      _PigeonInternalProxyApiBaseCodec(pigeon_instanceManager);
+  /// The error code of the finalization.
+  ///
+  /// See https://developer.android.com/reference/androidx/camera/video/VideoRecordEvent.Finalize#getError().
+  final int error;
+
+  /// Whether the recording finalized with an error.
+  ///
+  /// See https://developer.android.com/reference/androidx/camera/video/VideoRecordEvent.Finalize#hasError().
+  final bool hasError;
 
   static void pigeon_setUpMessageHandlers({
     bool pigeon_clearHandlers = false,
     BinaryMessenger? pigeon_binaryMessenger,
     PigeonInstanceManager? pigeon_instanceManager,
-    VideoRecordEventFinalize Function()? pigeon_newInstance,
+    VideoRecordEventFinalize Function(int error, bool hasError)? pigeon_newInstance,
   }) {
     final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec = _PigeonInternalProxyApiBaseCodec(
       pigeon_instanceManager ?? PigeonInstanceManager.instance,
@@ -1712,12 +1721,16 @@ class VideoRecordEventFinalize extends VideoRecordEvent {
         pigeonVar_channel.setMessageHandler((Object? message) async {
           final List<Object?> args = message! as List<Object?>;
           final int arg_pigeon_instanceIdentifier = args[0]! as int;
+          final int arg_error = args[1]! as int;
+          final bool arg_hasError = args[2]! as bool;
           try {
             (pigeon_instanceManager ?? PigeonInstanceManager.instance).addHostCreatedInstance(
-              pigeon_newInstance?.call() ??
+              pigeon_newInstance?.call(arg_error, arg_hasError) ??
                   VideoRecordEventFinalize.pigeon_detached(
                     pigeon_binaryMessenger: pigeon_binaryMessenger,
                     pigeon_instanceManager: pigeon_instanceManager,
+                    error: arg_error,
+                    hasError: arg_hasError,
                   ),
               arg_pigeon_instanceIdentifier,
             );
@@ -1734,61 +1747,13 @@ class VideoRecordEventFinalize extends VideoRecordEvent {
     }
   }
 
-  /// The error code of the finalization.
-  ///
-  /// See https://developer.android.com/reference/androidx/camera/video/VideoRecordEvent.Finalize#getError().
-  Future<int> getError() async {
-    final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
-        _pigeonVar_codecVideoRecordEventFinalize;
-    final BinaryMessenger? pigeonVar_binaryMessenger = pigeon_binaryMessenger;
-    const pigeonVar_channelName =
-        'dev.flutter.pigeon.camera_android_camerax.VideoRecordEventFinalize.getError';
-    final pigeonVar_channel = BasicMessageChannel<Object?>(
-      pigeonVar_channelName,
-      pigeonChannelCodec,
-      binaryMessenger: pigeonVar_binaryMessenger,
-    );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[this]);
-    final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
-
-    final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
-      pigeonVar_replyList,
-      pigeonVar_channelName,
-      isNullValid: false,
-    );
-    return pigeonVar_replyValue! as int;
-  }
-
-  /// Whether the recording finalized with an error.
-  ///
-  /// See https://developer.android.com/reference/androidx/camera/video/VideoRecordEvent.Finalize#hasError().
-  Future<bool> hasError() async {
-    final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
-        _pigeonVar_codecVideoRecordEventFinalize;
-    final BinaryMessenger? pigeonVar_binaryMessenger = pigeon_binaryMessenger;
-    const pigeonVar_channelName =
-        'dev.flutter.pigeon.camera_android_camerax.VideoRecordEventFinalize.hasError';
-    final pigeonVar_channel = BasicMessageChannel<Object?>(
-      pigeonVar_channelName,
-      pigeonChannelCodec,
-      binaryMessenger: pigeonVar_binaryMessenger,
-    );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[this]);
-    final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
-
-    final Object? pigeonVar_replyValue = _extractReplyValueOrThrow(
-      pigeonVar_replyList,
-      pigeonVar_channelName,
-      isNullValid: false,
-    );
-    return pigeonVar_replyValue! as bool;
-  }
-
   @override
   VideoRecordEventFinalize pigeon_copy() {
     return VideoRecordEventFinalize.pigeon_detached(
       pigeon_binaryMessenger: pigeon_binaryMessenger,
       pigeon_instanceManager: pigeon_instanceManager,
+      error: error,
+      hasError: hasError,
     );
   }
 }

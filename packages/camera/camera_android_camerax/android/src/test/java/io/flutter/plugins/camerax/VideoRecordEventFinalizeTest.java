@@ -13,14 +13,14 @@ import org.junit.Test;
 
 public class VideoRecordEventFinalizeTest {
   @Test
-  public void getError_returnsExpectedValue() {
+  public void error_returnsExpectedValue() {
     final PigeonApiVideoRecordEventFinalize api =
         new TestProxyApiRegistrar().getPigeonApiVideoRecordEventFinalize();
     final VideoRecordEvent.Finalize instance = mock(VideoRecordEvent.Finalize.class);
 
     when(instance.getError()).thenReturn(VideoRecordEvent.Finalize.ERROR_NO_VALID_DATA);
 
-    assertEquals((long) VideoRecordEvent.Finalize.ERROR_NO_VALID_DATA, api.getError(instance));
+    assertEquals((long) VideoRecordEvent.Finalize.ERROR_NO_VALID_DATA, api.error(instance));
   }
 
   @Test

@@ -126,8 +126,8 @@ void main() {
   /// Helper method to simulate video recording finalize events.
   void emitRecordingFinalized({bool hasError = false, int error = 0}) {
     final mockFinalizeEvent = MockVideoRecordEventFinalize();
-    when(mockFinalizeEvent.hasError()).thenAnswer((_) async => hasError);
-    when(mockFinalizeEvent.getError()).thenAnswer((_) async => error);
+    when(mockFinalizeEvent.hasError).thenReturn(hasError);
+    when(mockFinalizeEvent.error).thenReturn(error);
 
     scheduleMicrotask(() {
       AndroidCameraCameraX.videoRecordingEventStreamController.add(mockFinalizeEvent);
@@ -2729,7 +2729,7 @@ void main() {
         // Simulate a leftover finalize event from a previous session that ended
         // without calling stopVideoRecording().
         final mockLeftoverFinalize = MockVideoRecordEventFinalize();
-        when(mockLeftoverFinalize.getError()).thenAnswer((_) async => 8);
+        when(mockLeftoverFinalize.error).thenReturn(8);
         AndroidCameraCameraX.videoRecordingEventStreamController.add(mockLeftoverFinalize);
 
         // Simulate the new recording session emitting its own start and status events.

@@ -14,7 +14,7 @@ class VideoRecordEventFinalizeProxyApi extends PigeonApiVideoRecordEventFinalize
   }
 
   @Override
-  public long getError(@NonNull VideoRecordEvent.Finalize pigeonInstance) {
+  public long error(@NonNull VideoRecordEvent.Finalize pigeonInstance) {
     return (long) pigeonInstance.getError();
   }
 

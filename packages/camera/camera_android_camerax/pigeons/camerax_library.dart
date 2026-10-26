@@ -209,12 +209,12 @@ abstract class VideoRecordEventFinalize extends VideoRecordEvent {
   /// The error code of the finalization.
   ///
   /// See https://developer.android.com/reference/androidx/camera/video/VideoRecordEvent.Finalize#getError().
-  int getError();
+  late int error;
 
   /// Whether the recording finalized with an error.
   ///
   /// See https://developer.android.com/reference/androidx/camera/video/VideoRecordEvent.Finalize#hasError().
-  bool hasError();
+  late bool hasError;
 }
 
 /// A MeteringPoint is used to specify a region which can then be converted to

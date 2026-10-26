@@ -756,8 +756,6 @@ abstract class CameraXLibraryPigeonProxyApiRegistrar(val binaryMessenger: Binary
     PigeonApiCameraIntegerRange.setUpMessageHandlers(
         binaryMessenger, getPigeonApiCameraIntegerRange())
     PigeonApiVideoRecordEvent.setUpMessageHandlers(binaryMessenger, getPigeonApiVideoRecordEvent())
-    PigeonApiVideoRecordEventFinalize.setUpMessageHandlers(
-        binaryMessenger, getPigeonApiVideoRecordEventFinalize())
     PigeonApiMeteringPoint.setUpMessageHandlers(binaryMessenger, getPigeonApiMeteringPoint())
     PigeonApiObserver.setUpMessageHandlers(binaryMessenger, getPigeonApiObserver())
     PigeonApiCameraInfo.setUpMessageHandlers(binaryMessenger, getPigeonApiCameraInfo())
@@ -814,7 +812,6 @@ abstract class CameraXLibraryPigeonProxyApiRegistrar(val binaryMessenger: Binary
     PigeonApiCameraSize.setUpMessageHandlers(binaryMessenger, null)
     PigeonApiCameraIntegerRange.setUpMessageHandlers(binaryMessenger, null)
     PigeonApiVideoRecordEvent.setUpMessageHandlers(binaryMessenger, null)
-    PigeonApiVideoRecordEventFinalize.setUpMessageHandlers(binaryMessenger, null)
     PigeonApiMeteringPoint.setUpMessageHandlers(binaryMessenger, null)
     PigeonApiObserver.setUpMessageHandlers(binaryMessenger, null)
     PigeonApiCameraInfo.setUpMessageHandlers(binaryMessenger, null)
@@ -2112,7 +2109,7 @@ abstract class PigeonApiVideoRecordEventFinalize(
    * See
    * https://developer.android.com/reference/androidx/camera/video/VideoRecordEvent.Finalize#getError().
    */
-  abstract fun getError(pigeon_instance: androidx.camera.video.VideoRecordEvent.Finalize): Long
+  abstract fun error(pigeon_instance: androidx.camera.video.VideoRecordEvent.Finalize): Long
 
   /**
    * Whether the recording finalized with an error.
@@ -2121,60 +2118,6 @@ abstract class PigeonApiVideoRecordEventFinalize(
    * https://developer.android.com/reference/androidx/camera/video/VideoRecordEvent.Finalize#hasError().
    */
   abstract fun hasError(pigeon_instance: androidx.camera.video.VideoRecordEvent.Finalize): Boolean
-
-  companion object {
-    @Suppress("LocalVariableName")
-    fun setUpMessageHandlers(
-        binaryMessenger: BinaryMessenger,
-        api: PigeonApiVideoRecordEventFinalize?
-    ) {
-      val codec = api?.pigeonRegistrar?.codec ?: CameraXLibraryPigeonCodec()
-      run {
-        val channel =
-            BasicMessageChannel<Any?>(
-                binaryMessenger,
-                "dev.flutter.pigeon.camera_android_camerax.VideoRecordEventFinalize.getError",
-                codec)
-        if (api != null) {
-          channel.setMessageHandler { message, reply ->
-            val args = message as List<Any?>
-            val pigeon_instanceArg = args[0] as androidx.camera.video.VideoRecordEvent.Finalize
-            val wrapped: List<Any?> =
-                try {
-                  listOf(api.getError(pigeon_instanceArg))
-                } catch (exception: Throwable) {
-                  CameraXLibraryPigeonUtils.wrapError(exception)
-                }
-            reply.reply(wrapped)
-          }
-        } else {
-          channel.setMessageHandler(null)
-        }
-      }
-      run {
-        val channel =
-            BasicMessageChannel<Any?>(
-                binaryMessenger,
-                "dev.flutter.pigeon.camera_android_camerax.VideoRecordEventFinalize.hasError",
-                codec)
-        if (api != null) {
-          channel.setMessageHandler { message, reply ->
-            val args = message as List<Any?>
-            val pigeon_instanceArg = args[0] as androidx.camera.video.VideoRecordEvent.Finalize
-            val wrapped: List<Any?> =
-                try {
-                  listOf(api.hasError(pigeon_instanceArg))
-                } catch (exception: Throwable) {
-                  CameraXLibraryPigeonUtils.wrapError(exception)
-                }
-            reply.reply(wrapped)
-          }
-        } else {
-          channel.setMessageHandler(null)
-        }
-      }
-    }
-  }
 
   @Suppress("LocalVariableName", "FunctionName")
   /**
@@ -2193,12 +2136,14 @@ abstract class PigeonApiVideoRecordEventFinalize(
     } else {
       val pigeon_identifierArg =
           pigeonRegistrar.instanceManager.addHostCreatedInstance(pigeon_instanceArg)
+      val errorArg = error(pigeon_instanceArg)
+      val hasErrorArg = hasError(pigeon_instanceArg)
       val binaryMessenger = pigeonRegistrar.binaryMessenger
       val codec = pigeonRegistrar.codec
       val channelName =
           "dev.flutter.pigeon.camera_android_camerax.VideoRecordEventFinalize.pigeon_newInstance"
       val channel = BasicMessageChannel<Any?>(binaryMessenger, channelName, codec)
-      channel.send(listOf(pigeon_identifierArg)) {
+      channel.send(listOf(pigeon_identifierArg, errorArg, hasErrorArg)) {
         if (it is List<*>) {
           if (it.size > 1) {
             callback(

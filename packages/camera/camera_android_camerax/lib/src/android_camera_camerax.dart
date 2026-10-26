@@ -1256,7 +1256,7 @@ class AndroidCameraCameraX extends CameraPlatform {
     VideoRecordEvent event = await videoRecordingEventStreamQueue.next;
     while (true) {
       if (event is VideoRecordEventFinalize) {
-        final int errorCode = await event.getError();
+        final int errorCode = event.error;
         recording = null;
         pendingRecording = null;
         await _unbindUseCaseFromLifecycle(videoCapture!);
@@ -1312,8 +1312,8 @@ class AndroidCameraCameraX extends CameraPlatform {
 
     await _unbindUseCaseFromLifecycle(videoCapture!);
 
-    if (await event.hasError()) {
-      final int errorCode = await event.getError();
+    if (event.hasError) {
+      final int errorCode = event.error;
       throw CameraException(
         'videoRecordingFailed',
         'Video recording finalized with error: $errorCode',
