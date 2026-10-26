@@ -1670,21 +1670,29 @@ class PigeonEventSink<T>(private val sink: EventChannel.EventSink) {
 
 abstract class VideoEventsStreamHandler : MessagesPigeonEventChannelWrapper<PlatformVideoEvent> {
   companion object {
+    private var registeredChannels = mutableMapOf<String, EventChannel>()
+
     fun register(
         messenger: BinaryMessenger,
-        streamHandler: VideoEventsStreamHandler,
+        streamHandler: VideoEventsStreamHandler?,
         instanceName: String = ""
     ) {
-      var channelName: String =
-          "dev.flutter.pigeon.video_player_android.VideoEventChannel.videoEvents"
+      var channelName = "dev.flutter.pigeon.video_player_android.VideoEventChannel.videoEvents"
       if (instanceName.isNotEmpty()) {
         channelName += ".$instanceName"
       }
-      val internalStreamHandler = MessagesPigeonStreamHandler<PlatformVideoEvent>(streamHandler)
-      EventChannel(messenger, channelName, MessagesPigeonMethodCodec)
-          .setStreamHandler(internalStreamHandler)
+      if (registeredChannels[channelName] != null) {
+        registeredChannels[channelName]?.setStreamHandler(null)
+      }
+      if (streamHandler != null) {
+        val internalStreamHandler = MessagesPigeonStreamHandler(streamHandler)
+        val channel = EventChannel(messenger, channelName, MessagesPigeonMethodCodec)
+        channel.setStreamHandler(internalStreamHandler)
+        registeredChannels[channelName] = channel
+      }
     }
   }
+
   // Implement methods from MessagesPigeonEventChannelWrapper
   override fun onListen(p0: Any?, sink: PigeonEventSink<PlatformVideoEvent>) {}
 

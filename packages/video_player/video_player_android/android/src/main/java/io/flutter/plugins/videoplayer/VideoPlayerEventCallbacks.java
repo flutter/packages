@@ -8,9 +8,12 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.VisibleForTesting;
 import io.flutter.plugin.common.BinaryMessenger;
+import java.lang.ref.WeakReference;
 
 final class VideoPlayerEventCallbacks implements VideoPlayerCallbacks {
   private final QueuingEventSink eventSink;
+  private final WeakReference<BinaryMessenger> binaryMessenger;
+  private final String identifier;
 
   static VideoPlayerEventCallbacks bindTo(
       @NonNull BinaryMessenger binaryMessenger, @NonNull String identifier) {
@@ -30,16 +33,21 @@ final class VideoPlayerEventCallbacks implements VideoPlayerCallbacks {
           }
         },
         identifier);
-    return VideoPlayerEventCallbacks.withSink(eventSink);
+    return new VideoPlayerEventCallbacks(eventSink, binaryMessenger, identifier);
   }
 
   @VisibleForTesting
-  static VideoPlayerEventCallbacks withSink(QueuingEventSink eventSink) {
-    return new VideoPlayerEventCallbacks(eventSink);
+  static VideoPlayerEventCallbacks withSink(@NonNull QueuingEventSink eventSink) {
+    return new VideoPlayerEventCallbacks(eventSink, null, "");
   }
 
-  private VideoPlayerEventCallbacks(QueuingEventSink eventSink) {
+  private VideoPlayerEventCallbacks(
+      @NonNull QueuingEventSink eventSink,
+      @Nullable BinaryMessenger binaryMessenger,
+      @NonNull String identifier) {
     this.eventSink = eventSink;
+    this.binaryMessenger = new WeakReference<>(binaryMessenger);
+    this.identifier = identifier;
   }
 
   @Override
@@ -72,5 +80,13 @@ final class VideoPlayerEventCallbacks implements VideoPlayerCallbacks {
   @Override
   public void onVideoTrackChanged(@Nullable String selectedTrackId) {
     eventSink.success(new VideoTrackChangedEvent(selectedTrackId));
+  }
+
+  @Override
+  public void onDisposed() {
+    final BinaryMessenger binaryMessenger = this.binaryMessenger.get();
+    if (binaryMessenger != null) {
+      VideoEventsStreamHandler.Companion.register(binaryMessenger, null, identifier);
+    }
   }
 }
