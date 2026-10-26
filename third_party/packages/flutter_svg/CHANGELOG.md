@@ -1,5 +1,6 @@
-## NEXT
+## 2.3.1
 
+* Adds support for SVG alpha masks (`mask-type="alpha"`).
 * Updates minimum supported SDK version to Flutter 3.41/Dart 3.11.
 
 ## 2.3.0

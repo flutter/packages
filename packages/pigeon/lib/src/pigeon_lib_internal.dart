@@ -436,14 +436,6 @@ void _errorOnSwiftFfiUnsupportedFeatures(
     }
   }
   for (final Class classDefinition in root.classes) {
-    if (classDefinition.isSealed) {
-      errors.add(
-        Error(
-          message:
-              'Swift FFI does not support sealed classes yet (class "${classDefinition.name}"). $_moveToNonFfiFileSuggestion',
-        ),
-      );
-    }
     for (final NamedType field in classDefinition.fields) {
       // `description` has its own error for all Swift generation.
       if (field.name != 'description' && _swiftFfiReservedFieldNames.contains(field.name)) {
@@ -486,14 +478,6 @@ void _errorOnKotlinJniUnsupportedFeatures(List<Error> errors, Root root) {
         ),
       );
     }
-  }
-  for (final Class classDefinition in root.classes.where((Class c) => c.isSealed)) {
-    errors.add(
-      Error(
-        message:
-            'Kotlin JNI does not support sealed classes yet (class "${classDefinition.name}"). $_moveToNonJniFileSuggestion',
-      ),
-    );
   }
 }
 
@@ -2684,16 +2668,11 @@ int calculateLineNumber(String contents, int offset) {
   return result;
 }
 
-List<Error> _validateDependencies({
+String? _findTargetPubspecPath({
   required String? appDirectory,
   required String? dartOutPath,
   String? basePath,
-  required String apiName,
-  required List<String> requiredDeps,
-  List<String> requiredDevDeps = const <String>[],
 }) {
-  final errors = <Error>[];
-
   String? pubspecPath;
   if (dartOutPath != null && dartOutPath.isNotEmpty) {
     final String fullDartOut =
@@ -2717,6 +2696,169 @@ List<Error> _validateDependencies({
       (dartOutPath == null || dartOutPath.isEmpty)) {
     pubspecPath = findPubspecPath(Directory.current);
   }
+  return pubspecPath;
+}
+
+/// Checks whether the `objective_c` dependency constraint in `pubspec.yaml`
+/// matches the `ObjCVersionCheck(major, minor)` emitted by `ffigen` in the
+/// generated `.ffi.dart` file.
+///
+/// Returns a warning message if the constraint allows incompatible versions, or
+/// `null` if the constraint is compatible or cannot be checked.
+String? checkObjectiveCPubspecVersion(InternalPigeonOptions options) {
+  return _checkGeneratedBindingsPubspecVersion(
+    options: options,
+    appDirectory: options.swiftOptions?.appDirectory ?? options.appDirectory,
+    generatedFileSuffix: '.ffi.dart',
+    versionCheckName: 'ObjCVersionCheck',
+    packageName: 'objective_c',
+    bindingTypeLabel: 'FFI',
+  );
+}
+
+/// Checks whether the `jni` dependency constraint in `pubspec.yaml`
+/// matches the `JniVersionCheck(major, minor)` emitted by `jnigen` in the
+/// generated `.jni.dart` file.
+///
+/// Returns a warning message if the constraint allows incompatible versions, or
+/// `null` if the constraint is compatible or cannot be checked.
+String? checkJniPubspecVersion(InternalPigeonOptions options) {
+  return _checkGeneratedBindingsPubspecVersion(
+    options: options,
+    appDirectory: options.kotlinOptions?.appDirectory ?? options.appDirectory,
+    generatedFileSuffix: '.jni.dart',
+    versionCheckName: 'JniVersionCheck',
+    packageName: 'jni',
+    bindingTypeLabel: 'JNI',
+  );
+}
+
+String? _checkGeneratedBindingsPubspecVersion({
+  required InternalPigeonOptions options,
+  required String? appDirectory,
+  required String generatedFileSuffix,
+  required String versionCheckName,
+  required String packageName,
+  required String bindingTypeLabel,
+}) {
+  final String? dartOutPath = options.dartOptions?.dartOut;
+  if (dartOutPath == null || dartOutPath.isEmpty) {
+    return null;
+  }
+  final String basePath = options.basePath ?? '';
+  final String fullDartOut = (basePath.isNotEmpty && !dartOutPath.startsWith(basePath))
+      ? path.join(basePath, dartOutPath)
+      : dartOutPath;
+  final bindingsDartFile = File('${path.withoutExtension(fullDartOut)}$generatedFileSuffix');
+  if (!bindingsDartFile.existsSync()) {
+    return null;
+  }
+
+  final String bindingsContent;
+  try {
+    bindingsContent = bindingsDartFile.readAsStringSync();
+  } catch (_) {
+    return null;
+  }
+
+  final RegExpMatch? match = RegExp(
+    '$versionCheckName\\(\\s*(\\d+)\\s*,\\s*(\\d+)\\s*\\)',
+  ).firstMatch(bindingsContent);
+  if (match == null) {
+    return null;
+  }
+
+  final int major = int.parse(match.group(1)!);
+  final int minor = int.parse(match.group(2)!);
+  final requiredMinVersion = Version(major, minor, 0);
+  final nextMajorVersion = Version(major + 1, 0, 0);
+
+  final String? pubspecPath = _findTargetPubspecPath(
+    appDirectory: appDirectory,
+    dartOutPath: fullDartOut,
+    basePath: options.basePath,
+  );
+  if (pubspecPath == null) {
+    return null;
+  }
+
+  final resolvedPubspec = File(pubspecPath);
+  if (!resolvedPubspec.existsSync()) {
+    return null;
+  }
+
+  try {
+    final dynamic doc = yaml.loadYaml(resolvedPubspec.readAsStringSync());
+    if (doc is! yaml.YamlMap) {
+      return null;
+    }
+    final dependencies = doc['dependencies'] as yaml.YamlMap?;
+    final dependencyOverrides = doc['dependency_overrides'] as yaml.YamlMap?;
+    final bool hasOverride =
+        dependencyOverrides != null && dependencyOverrides.containsKey(packageName);
+    final bool hasDependency =
+        hasOverride || (dependencies != null && dependencies.containsKey(packageName));
+    if (!hasDependency) {
+      return null;
+    }
+    final Object? rawDependency = hasOverride
+        ? dependencyOverrides[packageName]
+        : dependencies![packageName];
+    final Object? rawConstraint;
+    if (rawDependency == null) {
+      rawConstraint = 'any';
+    } else if (rawDependency is Map) {
+      if (!rawDependency.containsKey('version') &&
+          (rawDependency.containsKey('path') ||
+              rawDependency.containsKey('git') ||
+              rawDependency.containsKey('sdk'))) {
+        return null;
+      }
+      rawConstraint = rawDependency['version'] ?? 'any';
+    } else {
+      rawConstraint = rawDependency;
+    }
+    if (rawConstraint is! String) {
+      return null;
+    }
+
+    final constraint = VersionConstraint.parse(rawConstraint);
+    final bool allowsValidVersion = constraint.allowsAny(
+      VersionRange(min: requiredMinVersion, max: nextMajorVersion, includeMin: true),
+    );
+    final bool allowsLowerVersion = constraint.allowsAny(VersionRange(max: requiredMinVersion));
+    final bool allowsHigherMajorVersion = constraint.allowsAny(
+      VersionRange(min: nextMajorVersion.firstPreRelease, includeMin: true),
+    );
+
+    if (!allowsValidVersion || allowsLowerVersion || allowsHigherMajorVersion) {
+      return 'Generated $bindingTypeLabel bindings in "${path.basename(bindingsDartFile.path)}" require '
+          'package:$packageName ^$major.$minor.0 (from $versionCheckName($major, $minor)), '
+          'but "$pubspecPath" specifies "$packageName: $rawConstraint". '
+          'Consider updating pubspec.yaml to "$packageName: ^$major.$minor.0".';
+    }
+  } catch (_) {
+    return null;
+  }
+
+  return null;
+}
+
+List<Error> _validateDependencies({
+  required String? appDirectory,
+  required String? dartOutPath,
+  String? basePath,
+  required String apiName,
+  required List<String> requiredDeps,
+  List<String> requiredDevDeps = const <String>[],
+}) {
+  final errors = <Error>[];
+
+  final String? pubspecPath = _findTargetPubspecPath(
+    appDirectory: appDirectory,
+    dartOutPath: dartOutPath,
+    basePath: basePath,
+  );
 
   if (pubspecPath == null) {
     errors.add(

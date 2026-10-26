@@ -1,3 +1,15 @@
+## 6.3.9
+
+* Converts the iOS example app and UI tests to Swift.
+
+## 6.3.8
+
+* Removes the public iOS `handleOpen` helper. On macOS `handleOpen` remains public because it implements `FlutterAppLifecycleDelegate`.
+
+## 6.3.7
+
+* Converts the plugin to Swift-only by removing the Objective-C exception catcher. SDK configuration failures now crash natively instead of being reported as Dart errors.
+
 ## 6.3.6
 
 * Converts the Pigeon host API from Objective-C to Swift.
