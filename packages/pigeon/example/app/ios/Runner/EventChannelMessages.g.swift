@@ -311,18 +311,25 @@ class PigeonEventSink<ReturnType> {
 }
 
 class StreamEventsStreamHandler: PigeonEventChannelWrapper<PlatformEvent> {
+  private static var registeredChannels: [String: FlutterEventChannel] = [:]
   static func register(
     with messenger: FlutterBinaryMessenger,
     instanceName: String = "",
-    streamHandler: StreamEventsStreamHandler
+    streamHandler: StreamEventsStreamHandler?
   ) {
     var channelName = "dev.flutter.pigeon.pigeon_example_package.EventChannelMethods.streamEvents"
     if !instanceName.isEmpty {
       channelName += ".\(instanceName)"
     }
-    let internalStreamHandler = PigeonStreamHandler<PlatformEvent>(wrapper: streamHandler)
-    let channel = FlutterEventChannel(
-      name: channelName, binaryMessenger: messenger, codec: eventChannelMessagesPigeonMethodCodec)
-    channel.setStreamHandler(internalStreamHandler)
+    if let previousChannel = registeredChannels.removeValue(forKey: channelName) {
+      previousChannel.setStreamHandler(nil)
+    }
+    if let streamHandler = streamHandler {
+      let internalStreamHandler = PigeonStreamHandler<PlatformEvent>(wrapper: streamHandler)
+      let channel = FlutterEventChannel(
+        name: channelName, binaryMessenger: messenger, codec: eventChannelMessagesPigeonMethodCodec)
+      channel.setStreamHandler(internalStreamHandler)
+      registeredChannels[channelName] = channel
+    }
   }
 }

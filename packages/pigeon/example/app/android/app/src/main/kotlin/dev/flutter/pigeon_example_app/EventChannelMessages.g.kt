@@ -306,9 +306,11 @@ class PigeonEventSink<T>(private val sink: EventChannel.EventSink) {
 abstract class StreamEventsStreamHandler :
     EventChannelMessagesPigeonEventChannelWrapper<PlatformEvent> {
   companion object {
+    private var registeredChannels = mutableMapOf<String, EventChannel>()
+
     fun register(
         messenger: BinaryMessenger,
-        streamHandler: StreamEventsStreamHandler,
+        streamHandler: StreamEventsStreamHandler?,
         instanceName: String = ""
     ) {
       var channelName: String =
@@ -316,12 +318,20 @@ abstract class StreamEventsStreamHandler :
       if (instanceName.isNotEmpty()) {
         channelName += ".$instanceName"
       }
-      val internalStreamHandler =
-          EventChannelMessagesPigeonStreamHandler<PlatformEvent>(streamHandler)
-      EventChannel(messenger, channelName, EventChannelMessagesPigeonMethodCodec)
-          .setStreamHandler(internalStreamHandler)
+      val previousChannel = registeredChannels.remove(channelName)
+      if (previousChannel != null) {
+        previousChannel.setStreamHandler(null)
+      }
+      if (streamHandler != null) {
+        val internalStreamHandler =
+            EventChannelMessagesPigeonStreamHandler<PlatformEvent>(streamHandler)
+        val channel = EventChannel(messenger, channelName, EventChannelMessagesPigeonMethodCodec)
+        channel.setStreamHandler(internalStreamHandler)
+        registeredChannels[channelName] = channel
+      }
     }
   }
+
   // Implement methods from EventChannelMessagesPigeonEventChannelWrapper
   override fun onListen(p0: Any?, sink: PigeonEventSink<PlatformEvent>) {}
 

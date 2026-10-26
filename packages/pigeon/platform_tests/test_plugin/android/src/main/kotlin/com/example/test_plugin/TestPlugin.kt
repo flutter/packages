@@ -68,6 +68,8 @@ class TestPlugin : FlutterPlugin, HostIntegrationCoreApi, HostCallbackCoreApi {
   override fun onDetachedFromEngine(binding: FlutterPluginBinding) {
     HostIntegrationCoreApi.setUp(binding.binaryMessenger, null)
     HostCallbackCoreApi.setUp(binding.binaryMessenger, null)
+    StreamConsistentNumbersStreamHandler.register(binding.binaryMessenger, null, "1")
+    StreamConsistentNumbersStreamHandler.register(binding.binaryMessenger, null, "2")
     proxyApiRegistrar?.tearDown()
   }
 

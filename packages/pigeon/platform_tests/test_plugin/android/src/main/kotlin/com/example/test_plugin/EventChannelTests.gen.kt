@@ -855,9 +855,11 @@ class PigeonEventSink<T>(private val sink: EventChannel.EventSink) {
 
 abstract class StreamIntsStreamHandler : EventChannelTestsPigeonEventChannelWrapper<Long> {
   companion object {
+    private var registeredChannels = mutableMapOf<String, EventChannel>()
+
     fun register(
         messenger: BinaryMessenger,
-        streamHandler: StreamIntsStreamHandler,
+        streamHandler: StreamIntsStreamHandler?,
         instanceName: String = ""
     ) {
       var channelName: String =
@@ -865,11 +867,19 @@ abstract class StreamIntsStreamHandler : EventChannelTestsPigeonEventChannelWrap
       if (instanceName.isNotEmpty()) {
         channelName += ".$instanceName"
       }
-      val internalStreamHandler = EventChannelTestsPigeonStreamHandler<Long>(streamHandler)
-      EventChannel(messenger, channelName, EventChannelTestsPigeonMethodCodec)
-          .setStreamHandler(internalStreamHandler)
+      val previousChannel = registeredChannels.remove(channelName)
+      if (previousChannel != null) {
+        previousChannel.setStreamHandler(null)
+      }
+      if (streamHandler != null) {
+        val internalStreamHandler = EventChannelTestsPigeonStreamHandler<Long>(streamHandler)
+        val channel = EventChannel(messenger, channelName, EventChannelTestsPigeonMethodCodec)
+        channel.setStreamHandler(internalStreamHandler)
+        registeredChannels[channelName] = channel
+      }
     }
   }
+
   // Implement methods from EventChannelTestsPigeonEventChannelWrapper
   override fun onListen(p0: Any?, sink: PigeonEventSink<Long>) {}
 
@@ -879,9 +889,11 @@ abstract class StreamIntsStreamHandler : EventChannelTestsPigeonEventChannelWrap
 abstract class StreamEventsStreamHandler :
     EventChannelTestsPigeonEventChannelWrapper<PlatformEvent> {
   companion object {
+    private var registeredChannels = mutableMapOf<String, EventChannel>()
+
     fun register(
         messenger: BinaryMessenger,
-        streamHandler: StreamEventsStreamHandler,
+        streamHandler: StreamEventsStreamHandler?,
         instanceName: String = ""
     ) {
       var channelName: String =
@@ -889,11 +901,20 @@ abstract class StreamEventsStreamHandler :
       if (instanceName.isNotEmpty()) {
         channelName += ".$instanceName"
       }
-      val internalStreamHandler = EventChannelTestsPigeonStreamHandler<PlatformEvent>(streamHandler)
-      EventChannel(messenger, channelName, EventChannelTestsPigeonMethodCodec)
-          .setStreamHandler(internalStreamHandler)
+      val previousChannel = registeredChannels.remove(channelName)
+      if (previousChannel != null) {
+        previousChannel.setStreamHandler(null)
+      }
+      if (streamHandler != null) {
+        val internalStreamHandler =
+            EventChannelTestsPigeonStreamHandler<PlatformEvent>(streamHandler)
+        val channel = EventChannel(messenger, channelName, EventChannelTestsPigeonMethodCodec)
+        channel.setStreamHandler(internalStreamHandler)
+        registeredChannels[channelName] = channel
+      }
     }
   }
+
   // Implement methods from EventChannelTestsPigeonEventChannelWrapper
   override fun onListen(p0: Any?, sink: PigeonEventSink<PlatformEvent>) {}
 
@@ -903,9 +924,11 @@ abstract class StreamEventsStreamHandler :
 abstract class StreamConsistentNumbersStreamHandler :
     EventChannelTestsPigeonEventChannelWrapper<Long> {
   companion object {
+    private var registeredChannels = mutableMapOf<String, EventChannel>()
+
     fun register(
         messenger: BinaryMessenger,
-        streamHandler: StreamConsistentNumbersStreamHandler,
+        streamHandler: StreamConsistentNumbersStreamHandler?,
         instanceName: String = ""
     ) {
       var channelName: String =
@@ -913,11 +936,19 @@ abstract class StreamConsistentNumbersStreamHandler :
       if (instanceName.isNotEmpty()) {
         channelName += ".$instanceName"
       }
-      val internalStreamHandler = EventChannelTestsPigeonStreamHandler<Long>(streamHandler)
-      EventChannel(messenger, channelName, EventChannelTestsPigeonMethodCodec)
-          .setStreamHandler(internalStreamHandler)
+      val previousChannel = registeredChannels.remove(channelName)
+      if (previousChannel != null) {
+        previousChannel.setStreamHandler(null)
+      }
+      if (streamHandler != null) {
+        val internalStreamHandler = EventChannelTestsPigeonStreamHandler<Long>(streamHandler)
+        val channel = EventChannel(messenger, channelName, EventChannelTestsPigeonMethodCodec)
+        channel.setStreamHandler(internalStreamHandler)
+        registeredChannels[channelName] = channel
+      }
     }
   }
+
   // Implement methods from EventChannelTestsPigeonEventChannelWrapper
   override fun onListen(p0: Any?, sink: PigeonEventSink<Long>) {}
 

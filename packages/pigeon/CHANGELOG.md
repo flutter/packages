@@ -1,3 +1,8 @@
+## 29.1.0
+
+* [kotlin,swift] Adds support for removing event channel handler registration
+  by passing `null` to the stream handler registration method.
+
 ## 29.0.11
 
 * [swift] Warns after FFI code generation if the `objective_c` version constraint in `pubspec.yaml` does not match the generated `ObjCVersionCheck`.

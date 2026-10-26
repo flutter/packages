@@ -63,10 +63,16 @@ public class TestPlugin: NSObject, FlutterPlugin, HostIntegrationCoreApi, HostCa
     StreamEventsStreamHandler.register(with: binaryMessenger, streamHandler: SendEvents())
     StreamConsistentNumbersStreamHandler.register(
       with: binaryMessenger, instanceName: "1",
-      streamHandler: SendConsistentNumbers(numberToSend: 1))
+      streamHandler: SendConsistentNumbers(numberToSend: 1) {
+        StreamConsistentNumbersStreamHandler.register(
+      with: binaryMessenger, instanceName: "1", streamHandler: nil)
+      })
     StreamConsistentNumbersStreamHandler.register(
       with: binaryMessenger, instanceName: "2",
-      streamHandler: SendConsistentNumbers(numberToSend: 2))
+      streamHandler: SendConsistentNumbers(numberToSend: 2) {
+        StreamConsistentNumbersStreamHandler.register(
+      with: binaryMessenger, instanceName: "2", streamHandler: nil)
+      })
     proxyApiRegistrar = ProxyApiTestsPigeonProxyApiRegistrar(
       binaryMessenger: binaryMessenger, apiDelegate: ProxyApiDelegate())
     proxyApiRegistrar!.setUp()
@@ -2260,8 +2266,10 @@ class SendEvents: StreamEventsStreamHandler {
 
 class SendConsistentNumbers: StreamConsistentNumbersStreamHandler {
   let numberToSend: Int64
-  init(numberToSend: Int64) {
+  let onCompleted: () -> Void
+  init(numberToSend: Int64, onCompleted: @escaping () -> Void) {
     self.numberToSend = numberToSend
+    self.onCompleted = onCompleted
   }
   var timerActive = false
   var timer: Timer?
@@ -2278,6 +2286,7 @@ class SendConsistentNumbers: StreamConsistentNumbersStreamHandler {
           if count >= 10 {
             sink.endOfStream()
             self.timer?.invalidate()
+            self.onCompleted()
           }
         }
       }

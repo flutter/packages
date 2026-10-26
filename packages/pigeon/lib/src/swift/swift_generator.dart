@@ -2672,16 +2672,23 @@ enum ${_classNamePrefix}PigeonInternalNumberType: Int {
     for (final Method func in api.methods) {
       indent.format('''
         class ${toUpperCamelCase(func.name)}StreamHandler: PigeonEventChannelWrapper<${_swiftTypeForDartType(func.returnType)}> {
+          private static var registeredChannels: [String: FlutterEventChannel] = [:]
           static func register(with messenger: FlutterBinaryMessenger,
                               instanceName: String = "",
-                              streamHandler: ${toUpperCamelCase(func.name)}StreamHandler) {
+                              streamHandler: ${toUpperCamelCase(func.name)}StreamHandler?) {
             var channelName = "${makeChannelName(api, func, dartPackageName)}"
             if !instanceName.isEmpty {
               channelName += ".\\(instanceName)"
             }
-            let internalStreamHandler = PigeonStreamHandler<${_swiftTypeForDartType(func.returnType)}>(wrapper: streamHandler)
-            let channel = FlutterEventChannel(name: channelName, binaryMessenger: messenger, codec: ${_getMethodCodecVarName(generatorOptions)})
-            channel.setStreamHandler(internalStreamHandler)
+            if let previousChannel = registeredChannels.removeValue(forKey: channelName) {
+              previousChannel.setStreamHandler(nil)
+            }
+            if let streamHandler = streamHandler {
+              let internalStreamHandler = PigeonStreamHandler<${_swiftTypeForDartType(func.returnType)}>(wrapper: streamHandler)
+              let channel = FlutterEventChannel(name: channelName, binaryMessenger: messenger, codec: ${_getMethodCodecVarName(generatorOptions)})
+              channel.setStreamHandler(internalStreamHandler)
+              registeredChannels[channelName] = channel
+            }
           }
         }
       ''');

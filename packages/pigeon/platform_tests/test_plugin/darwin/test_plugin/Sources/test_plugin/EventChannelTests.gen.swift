@@ -881,53 +881,74 @@ class PigeonEventSink<ReturnType> {
 }
 
 class StreamIntsStreamHandler: PigeonEventChannelWrapper<Int64> {
+  private static var registeredChannels: [String: FlutterEventChannel] = [:]
   static func register(
     with messenger: FlutterBinaryMessenger,
     instanceName: String = "",
-    streamHandler: StreamIntsStreamHandler
+    streamHandler: StreamIntsStreamHandler?
   ) {
     var channelName = "dev.flutter.pigeon.pigeon_integration_tests.EventChannelMethods.streamInts"
     if !instanceName.isEmpty {
       channelName += ".\(instanceName)"
     }
-    let internalStreamHandler = PigeonStreamHandler<Int64>(wrapper: streamHandler)
-    let channel = FlutterEventChannel(
-      name: channelName, binaryMessenger: messenger, codec: eventChannelTestsPigeonMethodCodec)
-    channel.setStreamHandler(internalStreamHandler)
+    if let previousChannel = registeredChannels.removeValue(forKey: channelName) {
+      previousChannel.setStreamHandler(nil)
+    }
+    if let streamHandler = streamHandler {
+      let internalStreamHandler = PigeonStreamHandler<Int64>(wrapper: streamHandler)
+      let channel = FlutterEventChannel(
+        name: channelName, binaryMessenger: messenger, codec: eventChannelTestsPigeonMethodCodec)
+      channel.setStreamHandler(internalStreamHandler)
+      registeredChannels[channelName] = channel
+    }
   }
 }
 
 class StreamEventsStreamHandler: PigeonEventChannelWrapper<PlatformEvent> {
+  private static var registeredChannels: [String: FlutterEventChannel] = [:]
   static func register(
     with messenger: FlutterBinaryMessenger,
     instanceName: String = "",
-    streamHandler: StreamEventsStreamHandler
+    streamHandler: StreamEventsStreamHandler?
   ) {
     var channelName = "dev.flutter.pigeon.pigeon_integration_tests.EventChannelMethods.streamEvents"
     if !instanceName.isEmpty {
       channelName += ".\(instanceName)"
     }
-    let internalStreamHandler = PigeonStreamHandler<PlatformEvent>(wrapper: streamHandler)
-    let channel = FlutterEventChannel(
-      name: channelName, binaryMessenger: messenger, codec: eventChannelTestsPigeonMethodCodec)
-    channel.setStreamHandler(internalStreamHandler)
+    if let previousChannel = registeredChannels.removeValue(forKey: channelName) {
+      previousChannel.setStreamHandler(nil)
+    }
+    if let streamHandler = streamHandler {
+      let internalStreamHandler = PigeonStreamHandler<PlatformEvent>(wrapper: streamHandler)
+      let channel = FlutterEventChannel(
+        name: channelName, binaryMessenger: messenger, codec: eventChannelTestsPigeonMethodCodec)
+      channel.setStreamHandler(internalStreamHandler)
+      registeredChannels[channelName] = channel
+    }
   }
 }
 
 class StreamConsistentNumbersStreamHandler: PigeonEventChannelWrapper<Int64> {
+  private static var registeredChannels: [String: FlutterEventChannel] = [:]
   static func register(
     with messenger: FlutterBinaryMessenger,
     instanceName: String = "",
-    streamHandler: StreamConsistentNumbersStreamHandler
+    streamHandler: StreamConsistentNumbersStreamHandler?
   ) {
     var channelName =
       "dev.flutter.pigeon.pigeon_integration_tests.EventChannelMethods.streamConsistentNumbers"
     if !instanceName.isEmpty {
       channelName += ".\(instanceName)"
     }
-    let internalStreamHandler = PigeonStreamHandler<Int64>(wrapper: streamHandler)
-    let channel = FlutterEventChannel(
-      name: channelName, binaryMessenger: messenger, codec: eventChannelTestsPigeonMethodCodec)
-    channel.setStreamHandler(internalStreamHandler)
+    if let previousChannel = registeredChannels.removeValue(forKey: channelName) {
+      previousChannel.setStreamHandler(nil)
+    }
+    if let streamHandler = streamHandler {
+      let internalStreamHandler = PigeonStreamHandler<Int64>(wrapper: streamHandler)
+      let channel = FlutterEventChannel(
+        name: channelName, binaryMessenger: messenger, codec: eventChannelTestsPigeonMethodCodec)
+      channel.setStreamHandler(internalStreamHandler)
+      registeredChannels[channelName] = channel
+    }
   }
 }
