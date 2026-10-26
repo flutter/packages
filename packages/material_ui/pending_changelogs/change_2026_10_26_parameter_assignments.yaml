@@ -1,0 +1,3 @@
+changelog: |
+  - Disables parameter reassignment via the parameter_assignments lint rule.
+version: patch
