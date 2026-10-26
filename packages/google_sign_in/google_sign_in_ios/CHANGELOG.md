@@ -1,6 +1,6 @@
 ## 6.4.0
 
-* Adds support for `GoogleSignIn` 10.x when using Swift Package Manager.
+* Adds support for `GoogleSignIn` 10.x.
 * Updates minimum supported SDK version to Flutter 3.47/Dart 3.13.
 * Updates minimum iOS version to 15 and minimum macOS version to 12.
 

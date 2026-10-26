@@ -22,7 +22,7 @@ Enables Google Sign-In in Flutter apps.
   # GTMSessionFetcher is a GoogleSignIn transitive dependency, added here as a
   # direct dependency to ensure a version which defines modules.
   s.dependency 'GTMSessionFetcher', '>= 3.4.0'
-  s.dependency 'GoogleSignIn', '~> 9.0'
+  s.dependency 'GoogleSignIn', '>= 9.0', '< 11.0'
   s.static_framework = true
   s.ios.dependency 'Flutter'
   s.osx.dependency 'FlutterMacOS'
