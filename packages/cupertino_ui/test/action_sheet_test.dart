@@ -2318,7 +2318,7 @@ void main() {
     tester.binding.focusManager.highlightStrategy = FocusHighlightStrategy.alwaysTraditional;
 
     final Color defaultLightFocusColor = HSLColor.fromColor(
-      CupertinoColors.activeBlue.withOpacity(kCupertinoButtonTintedOpacityLight),
+      CupertinoColors.activeBlue.withOpacity(0.18),
     ).toColor();
 
     await tester.pumpWidget(
