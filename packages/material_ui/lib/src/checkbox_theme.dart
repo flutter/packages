@@ -233,16 +233,14 @@ class CheckboxThemeData with Diagnosticable {
     if (a == null && b == null) {
       return null;
     }
-    if (a is WidgetStateBorderSide) {
-      a = a.resolve(const <WidgetState>{});
-    }
-    if (b is WidgetStateBorderSide) {
-      b = b.resolve(const <WidgetState>{});
-    }
-    a ??= BorderSide(width: 0, color: b!.color.withAlpha(0));
-    b ??= BorderSide(width: 0, color: a.color.withAlpha(0));
+    final BorderSide? resolvedA = a is WidgetStateBorderSide ? a.resolve(const <WidgetState>{}) : a;
+    final BorderSide? resolvedB = b is WidgetStateBorderSide ? b.resolve(const <WidgetState>{}) : b;
+    final BorderSide effectiveA =
+        resolvedA ?? BorderSide(width: 0, color: resolvedB!.color.withAlpha(0));
+    final BorderSide effectiveB =
+        resolvedB ?? BorderSide(width: 0, color: effectiveA.color.withAlpha(0));
 
-    return BorderSide.lerp(a, b, t);
+    return BorderSide.lerp(effectiveA, effectiveB, t);
   }
 }
 

@@ -928,7 +928,7 @@ class DataTable extends StatelessWidget {
     final DataTableSortIconBuilder? effectiveSortIconBuilder =
         sortIconBuilder ?? dataTableTheme.sortIconBuilder;
 
-    label = Semantics(
+    Widget headingCell = Semantics(
       role: SemanticsRole.columnHeader,
       child: Row(
         textDirection: numeric ? TextDirection.rtl : null,
@@ -962,7 +962,7 @@ class DataTable extends StatelessWidget {
         dataTableTheme.headingRowHeight ??
         themeData.dataTableTheme.headingRowHeight ??
         _headingRowHeight;
-    label = Container(
+    headingCell = Container(
       padding: padding,
       height: effectiveHeadingRowHeight,
       alignment: numeric ? Alignment.centerRight : AlignmentDirectional.centerStart,
@@ -970,20 +970,20 @@ class DataTable extends StatelessWidget {
         style: DefaultTextStyle.of(context).style.merge(effectiveHeadingTextStyle),
         softWrap: false,
         duration: _sortArrowAnimationDuration,
-        child: label,
+        child: headingCell,
       ),
     );
     if (tooltip != null) {
-      label = Tooltip(message: tooltip, child: label);
+      headingCell = Tooltip(message: tooltip, child: headingCell);
     }
 
-    label = InkWell(
+    headingCell = InkWell(
       onTap: onSort,
       overlayColor: overlayColor,
       mouseCursor: mouseCursor,
-      child: label,
+      child: headingCell,
     );
-    return label;
+    return headingCell;
   }
 
   Widget _buildDataCell({
@@ -1006,12 +1006,13 @@ class DataTable extends StatelessWidget {
   }) {
     final ThemeData themeData = Theme.of(context);
     final DataTableThemeData dataTableTheme = DataTableTheme.of(context);
+    var dataCell = label;
     if (showEditIcon) {
       const Widget icon = Icon(Icons.edit, size: 18.0);
-      label = Expanded(child: label);
-      label = Row(
+      dataCell = Expanded(child: dataCell);
+      dataCell = Row(
         textDirection: numeric ? TextDirection.rtl : null,
-        children: <Widget>[label, icon],
+        children: <Widget>[dataCell, icon],
       );
     }
 
@@ -1030,7 +1031,7 @@ class DataTable extends StatelessWidget {
         dataTableTheme.dataRowMaxHeight ??
         themeData.dataTableTheme.dataRowMaxHeight ??
         kMinInteractiveDimension;
-    label = Container(
+    dataCell = Container(
       padding: padding,
       constraints: BoxConstraints(
         minHeight: effectiveDataRowMinHeight,
@@ -1041,7 +1042,7 @@ class DataTable extends StatelessWidget {
         style: DefaultTextStyle.of(context).style
             .merge(effectiveDataTextStyle)
             .copyWith(color: placeholder ? effectiveDataTextStyle.color!.withOpacity(0.6) : null),
-        child: DropdownButtonHideUnderline(child: label),
+        child: DropdownButtonHideUnderline(child: dataCell),
       ),
     );
     if (onTap != null ||
@@ -1049,26 +1050,26 @@ class DataTable extends StatelessWidget {
         onLongPress != null ||
         onTapDown != null ||
         onTapCancel != null) {
-      label = InkWell(
+      dataCell = InkWell(
         onTap: onTap,
         onDoubleTap: onDoubleTap,
         onLongPress: onLongPress,
         onTapCancel: onTapCancel,
         onTapDown: onTapDown,
         overlayColor: overlayColor,
-        child: label,
+        child: dataCell,
       );
     } else if (onSelectChanged != null || onRowLongPress != null || onRowHover != null) {
-      label = TableRowInkWell(
+      dataCell = TableRowInkWell(
         onTap: onSelectChanged,
         onLongPress: onRowLongPress,
         onHover: onRowHover,
         overlayColor: overlayColor,
         mouseCursor: mouseCursor,
-        child: label,
+        child: dataCell,
       );
     }
-    return TableCell(child: label);
+    return TableCell(child: dataCell);
   }
 
   @override
