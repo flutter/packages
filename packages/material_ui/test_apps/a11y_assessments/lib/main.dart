@@ -15,7 +15,7 @@ void main() {
   }
 }
 
-ThemeData _buildTheme({required Brightness brightness, double contrastLevel = 0.5}) {
+ThemeData _buildTheme({required Brightness brightness, double contrastLevel = 0.0}) {
   final scheme = ColorScheme.fromSeed(
     brightness: brightness,
     seedColor: const Color(0xff6750a4),

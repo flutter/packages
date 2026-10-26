@@ -1220,10 +1220,7 @@ class _DropdownMenuState<T> extends State<DropdownMenu<T>> {
     MenuStyle effectiveMenuStyle = widget.menuStyle ?? theme.menuStyle ?? defaults.menuStyle!;
     if (effectiveMenuStyle.backgroundColor == null) {
       effectiveMenuStyle = effectiveMenuStyle.copyWith(
-        backgroundColor:
-            theme.menuStyle?.backgroundColor ??
-            MenuTheme.of(context).style?.backgroundColor ??
-            defaults.menuStyle!.backgroundColor,
+        backgroundColor: theme.menuStyle?.backgroundColor ?? defaults.menuStyle!.backgroundColor,
       );
     }
 

@@ -4,9 +4,7 @@
 
 import 'dart:math' as math;
 
-import 'package:a11y_assessments/main.dart';
 import 'package:a11y_assessments/use_cases/dropdown_menu.dart';
-import 'package:a11y_assessments/use_cases/use_cases.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';
 
@@ -51,51 +49,48 @@ void main() {
     expect(findHeadingLevelOnes, findsOne);
   });
 
+  // Under standard contrast, tertiaryContainer against surfaceContainerLow does
+  // not reach a 3:1 contrast ratio. Medium contrast (contrastLevel: 0.5) is
+  // required to satisfy WCAG 2.1 Success Criterion 1.4.11 (Non-text Contrast).
   for (final Brightness brightness in Brightness.values) {
-    testWidgets(
-      'dropdown menu active option has at least 3:1 contrast ratio in ${brightness.name} mode',
-      (WidgetTester tester) async {
-        tester.platformDispatcher.platformBrightnessTestValue = brightness;
-        addTearDown(tester.platformDispatcher.clearAllTestValues);
+    testWidgets('dropdown menu active option has at least 3:1 contrast ratio in '
+        'medium contrast ${brightness.name} mode', (WidgetTester tester) async {
+      tester.platformDispatcher.platformBrightnessTestValue = brightness;
+      addTearDown(tester.platformDispatcher.clearAllTestValues);
 
-        await tester.pumpWidget(const App(initialTags: <Tag>{}));
-        await tester.pumpAndSettle();
+      await pumpsUseCase(tester, DropdownMenuUseCase());
+      await tester.pumpAndSettle();
 
-        final BuildContext context = tester.element(find.byType(HomePage));
-        Navigator.of(context).pushNamed(DropdownMenuUseCase().route);
-        await tester.pumpAndSettle();
+      final Finder enabledDropdown = find.byKey(const Key('enabled dropdown menu'));
+      await tester.tap(
+        find.descendant(of: enabledDropdown, matching: find.byIcon(Icons.arrow_drop_down)).first,
+      );
+      await tester.pumpAndSettle();
 
-        final Finder enabledDropdown = find.byKey(const Key('enabled dropdown menu'));
-        await tester.tap(
-          find.descendant(of: enabledDropdown, matching: find.byIcon(Icons.arrow_drop_down)).first,
-        );
-        await tester.pumpAndSettle();
+      final ColorScheme colorScheme = Theme.of(tester.element(enabledDropdown)).colorScheme;
+      final Finder menuPanel = find.byWidgetPredicate(
+        (Widget w) => '${w.runtimeType}' == '_MenuPanel',
+      );
+      final Material menuMaterial = tester.widget<Material>(
+        find.descendant(of: menuPanel, matching: find.byType(Material)).first,
+      );
+      expect(menuMaterial.color, colorScheme.surfaceContainerLow);
 
-        final ColorScheme colorScheme = Theme.of(tester.element(enabledDropdown)).colorScheme;
-        final Finder menuPanel = find.byWidgetPredicate(
-          (Widget w) => '${w.runtimeType}' == '_MenuPanel',
-        );
-        final Material menuMaterial = tester.widget<Material>(
-          find.descendant(of: menuPanel, matching: find.byType(Material)).first,
-        );
-        expect(menuMaterial.color, colorScheme.surfaceContainerLow);
+      final Finder selectedItem = find.widgetWithText(MenuItemButton, 'apple').last;
+      final Material selectedMaterial = tester.widget<Material>(
+        find.descendant(of: selectedItem, matching: find.byType(Material)),
+      );
+      expect(selectedMaterial.color, colorScheme.tertiaryContainer);
+      expect(selectedMaterial.textStyle?.color, colorScheme.onTertiaryContainer);
 
-        final Finder selectedItem = find.widgetWithText(MenuItemButton, 'apple').last;
-        final Material selectedMaterial = tester.widget<Material>(
-          find.descendant(of: selectedItem, matching: find.byType(Material)),
-        );
-        expect(selectedMaterial.color, colorScheme.tertiaryContainer);
-        expect(selectedMaterial.textStyle?.color, colorScheme.onTertiaryContainer);
-
-        expect(
-          _contrastRatio(selectedMaterial.color!, menuMaterial.color!),
-          greaterThanOrEqualTo(3.0),
-        );
-        expect(
-          _contrastRatio(selectedMaterial.textStyle!.color!, selectedMaterial.color!),
-          greaterThanOrEqualTo(4.5),
-        );
-      },
-    );
+      expect(
+        _contrastRatio(selectedMaterial.color!, menuMaterial.color!),
+        greaterThanOrEqualTo(3.0),
+      );
+      expect(
+        _contrastRatio(selectedMaterial.textStyle!.color!, selectedMaterial.color!),
+        greaterThanOrEqualTo(4.5),
+      );
+    });
   }
 }
