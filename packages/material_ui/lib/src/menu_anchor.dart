@@ -589,9 +589,6 @@ class _MenuAnchorState extends State<MenuAnchor> with SingleTickerProviderStateM
       animation.dispose();
     }
     _internalMenuController = null;
-    if (_menuScopeNode.context == null) {
-      _menuScopeNode.attach(null).detach();
-    }
     _menuScopeNode.dispose();
     heightAnimation.dispose();
     opacityAnimation.dispose();
@@ -697,15 +694,12 @@ class _MenuAnchorState extends State<MenuAnchor> with SingleTickerProviderStateM
       final bool isAnchorFocused =
           focusedContext != null && _maybeOf(focusedContext)?._root == this;
       if (!isAnchorFocused) {
-        if (_menuScopeNode.canRequestFocus) {
-          scope.setFirstFocus(_menuScopeNode);
-        } else {
-          SchedulerBinding.instance.addPostFrameCallback((Duration _) {
-            if (mounted && !isClosingOrClosed) {
-              scope.setFirstFocus(_menuScopeNode);
-            }
-          });
-        }
+        final FocusNode? initialFocus = FocusManager.instance.primaryFocus;
+        SchedulerBinding.instance.addPostFrameCallback((Duration _) {
+          if (mounted && !isClosingOrClosed && FocusManager.instance.primaryFocus == initialFocus) {
+            scope.setFirstFocus(_menuScopeNode);
+          }
+        });
       }
     }
   }
@@ -715,12 +709,7 @@ class _MenuAnchorState extends State<MenuAnchor> with SingleTickerProviderStateM
       return;
     }
 
-    _animationController.reverse().whenComplete(() {
-      if (_menuScopeNode.context == null) {
-        _menuScopeNode.attach(null).detach();
-      }
-      hideOverlay();
-    });
+    _animationController.reverse().whenComplete(hideOverlay);
   }
 
   @override
