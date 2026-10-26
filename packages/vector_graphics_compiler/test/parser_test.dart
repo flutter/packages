@@ -414,6 +414,25 @@ ${[for (var i = 2; i <= 30; i++) '    <pattern id="lvl$i" width="10" height="10"
     ]);
   });
 
+  test('tspan without position does not apply the group transform twice', () {
+    final VectorInstructions instructions = parseWithoutOptimizers('''
+<svg width="400" height="100" xmlns="http://www.w3.org/2000/svg">
+  <g transform="translate(10,10)">
+    <g transform="translate(10,10)">
+      <text x="15" y="25">bare text</text>
+      <text x="15" y="50"><tspan>text in tspan</tspan></text>
+    </g>
+  </g>
+</svg>
+''');
+
+    expect(instructions.textPositions, const <TextPosition>[
+      TextPosition(x: 35, y: 45, reset: true),
+      TextPosition(x: 35, y: 70, reset: true),
+      TextPosition(),
+    ]);
+  });
+
   test('Non-standard root font-weight="regular" uses initial weight', () {
     final VectorInstructions instructions = parseWithoutOptimizers('''
 <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">

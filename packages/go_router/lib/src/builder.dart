@@ -339,7 +339,7 @@ class _CustomNavigatorState extends State<_CustomNavigator> {
           ) {
             final Widget navigator = _CustomNavigator(
               // The state needs to persist across rebuild.
-              key: GlobalObjectKey(navigatorKey.hashCode),
+              key: ValueKey<GlobalKey<NavigatorState>>(navigatorKey),
               navigatorRestorationId: restorationScopeId,
               navigatorKey: navigatorKey,
               matches: match.matches,
@@ -521,7 +521,9 @@ class _CustomNavigatorState extends State<_CustomNavigator> {
         // semantics of shell chrome painted before this navigator (e.g. a
         // side rail in a Row-based ShellRoute shell). See
         // https://github.com/flutter/flutter/issues/135656.
-        child: widget.isShellNavigator ? Semantics(container: true, child: navigator) : navigator,
+        child: widget.isShellNavigator
+            ? Semantics(container: true, explicitChildNodes: true, child: navigator)
+            : navigator,
       ),
     );
   }
