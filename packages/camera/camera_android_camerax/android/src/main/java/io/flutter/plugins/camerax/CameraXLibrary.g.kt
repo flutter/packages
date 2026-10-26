@@ -2199,6 +2199,13 @@ abstract class PigeonApiCameraInfo(
       pigeon_instance: androidx.camera.core.CameraInfo
   ): io.flutter.plugins.camerax.LiveDataProxyApi.LiveDataWrapper
 
+  /**
+   * Returns whether the camera supports zero-shutter-lag capture.
+   *
+   * See https://developer.android.com/reference/androidx/camera/core/CameraInfo#isZslSupported().
+   */
+  abstract fun isZslSupported(pigeon_instance: androidx.camera.core.CameraInfo): Boolean
+
   companion object {
     @Suppress("LocalVariableName")
     fun setUpMessageHandlers(binaryMessenger: BinaryMessenger, api: PigeonApiCameraInfo?) {
@@ -2238,6 +2245,28 @@ abstract class PigeonApiCameraInfo(
             val wrapped: List<Any?> =
                 try {
                   listOf(api.getZoomState(pigeon_instanceArg))
+                } catch (exception: Throwable) {
+                  CameraXLibraryPigeonUtils.wrapError(exception)
+                }
+            reply.reply(wrapped)
+          }
+        } else {
+          channel.setMessageHandler(null)
+        }
+      }
+      run {
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.camera_android_camerax.CameraInfo.isZslSupported",
+                codec)
+        if (api != null) {
+          channel.setMessageHandler { message, reply ->
+            val args = message as List<Any?>
+            val pigeon_instanceArg = args[0] as androidx.camera.core.CameraInfo
+            val wrapped: List<Any?> =
+                try {
+                  listOf(api.isZslSupported(pigeon_instanceArg))
                 } catch (exception: Throwable) {
                   CameraXLibraryPigeonUtils.wrapError(exception)
                 }
@@ -4248,7 +4277,8 @@ abstract class PigeonApiImageCapture(
       resolutionSelector: androidx.camera.core.resolutionselector.ResolutionSelector?,
       targetRotation: Long?,
       flashMode: CameraXFlashMode?,
-      jpegQuality: Long?
+      jpegQuality: Long?,
+      zeroShutterLagEnabled: Boolean?
   ): androidx.camera.core.ImageCapture
 
   abstract fun resolutionSelector(
@@ -4290,11 +4320,16 @@ abstract class PigeonApiImageCapture(
             val targetRotationArg = args[2] as Long?
             val flashModeArg = args[3] as CameraXFlashMode?
             val jpegQualityArg = args[4] as Long?
+            val zeroShutterLagEnabledArg = args[5] as Boolean?
             val wrapped: List<Any?> =
                 try {
                   api.pigeonRegistrar.instanceManager.addDartCreatedInstance(
                       api.pigeon_defaultConstructor(
-                          resolutionSelectorArg, targetRotationArg, flashModeArg, jpegQualityArg),
+                          resolutionSelectorArg,
+                          targetRotationArg,
+                          flashModeArg,
+                          jpegQualityArg,
+                          zeroShutterLagEnabledArg),
                       pigeon_identifierArg)
                   listOf(null)
                 } catch (exception: Throwable) {

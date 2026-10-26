@@ -1,3 +1,19 @@
+## 2.5.3
+
+* Fixes web compilation of apps that import `package:shared_preferences_android`, for example to use `SharedPreferencesAsyncAndroidOptions`.
+
+## 2.5.2
+
+* Fixes a `NoSuchMethodError` at startup in Android release builds by adding consumer R8 rules that keep the Kotlin classes looked up through JNI.
+
+## 2.5.1
+
+* Updates `androidx.datastore:datastore` to 1.2.1.
+
+## 2.5.0
+
+* Updates internal implementation to use Pigeon JNI.
+
 ## 2.4.29
 
 * Updates Robolectric to 4.17 and adds the JVM arguments it requires for unit tests.

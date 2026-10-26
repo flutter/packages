@@ -1,3 +1,0 @@
-changelog: |
-  - Fixes an Android semantics assertion when an `ExpansionTile` is embedded in a `WidgetSpan`.
-version: patch
