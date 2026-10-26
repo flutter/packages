@@ -3,10 +3,12 @@
 // found in the LICENSE file.
 
 import 'dart:async';
-import 'dart:typed_data';
+import 'dart:ui' as ui;
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:vector_graphics/src/render_vector_graphic.dart';
 import 'package:vector_graphics/src/vector_graphics.dart';
 import 'package:vector_graphics_codec/vector_graphics_codec.dart';
 
@@ -249,6 +251,110 @@ void main() {
 
     expect(testBundle.loadKeys, <String>['bar.svg', 'foo.svg', 'foo.svg']);
   });
+
+  group('Pictures decoded after their VectorGraphic is removed', () {
+    // Collects the native pictures created and disposed during a test.
+    (Set<Object>, Set<Object>) trackPictures() {
+      final created = <Object>{};
+      final disposed = <Object>{};
+      void listener(ObjectEvent event) {
+        if (event.object.runtimeType.toString() != '_NativePicture') {
+          return;
+        }
+        if (event is ObjectCreated) {
+          created.add(event.object);
+        } else if (event is ObjectDisposed) {
+          disposed.add(event.object);
+        }
+      }
+
+      FlutterMemoryAllocations.instance.addListener(listener);
+      addTearDown(() => FlutterMemoryAllocations.instance.removeListener(listener));
+      return (created, disposed);
+    }
+
+    testWidgets('are disposed', (WidgetTester tester) async {
+      final loader = CompleterBytesLoader();
+      final (Set<Object> created, Set<Object> disposed) = trackPictures();
+
+      await tester.pumpWidget(VectorGraphic(loader: loader));
+      await tester.pumpWidget(const SizedBox());
+      loader.complete();
+      await tester.pumpAndSettle();
+
+      expect(created, hasLength(1));
+      expect(disposed, containsAll(created));
+    });
+
+    testWidgets('are disposed once when every widget sharing the load is removed', (
+      WidgetTester tester,
+    ) async {
+      final loader = CompleterBytesLoader();
+      final (Set<Object> created, Set<Object> disposed) = trackPictures();
+
+      await tester.pumpWidget(
+        Column(
+          children: <Widget>[
+            VectorGraphic(loader: loader),
+            VectorGraphic(loader: loader),
+          ],
+        ),
+      );
+      await tester.pumpWidget(const SizedBox());
+      loader.complete();
+      await tester.pumpAndSettle();
+
+      expect(tester.takeException(), isNull);
+      expect(created, hasLength(1));
+      expect(disposed, containsAll(created));
+    });
+
+    testWidgets('stay alive while another widget sharing the load shows them', (
+      WidgetTester tester,
+    ) async {
+      final loader = CompleterBytesLoader();
+
+      await tester.pumpWidget(
+        Column(
+          children: <Widget>[
+            VectorGraphic(key: GlobalKey(), loader: loader),
+            VectorGraphic(loader: loader),
+          ],
+        ),
+      );
+      await tester.pumpWidget(Column(children: <Widget>[VectorGraphic(loader: loader)]));
+      loader.complete();
+      await tester.pumpAndSettle();
+
+      expect(tester.takeException(), isNull);
+      final ui.Picture picture = tester.allRenderObjects
+          .whereType<RenderVectorGraphic>()
+          .single
+          .pictureInfo
+          .picture;
+      expect(picture.debugDisposed, isFalse);
+
+      await tester.pumpWidget(const SizedBox());
+      expect(picture.debugDisposed, isTrue);
+    });
+
+    testWidgets('are disposed when the loader changes before decoding finishes', (
+      WidgetTester tester,
+    ) async {
+      final first = CompleterBytesLoader();
+      final second = CompleterBytesLoader();
+
+      await tester.pumpWidget(VectorGraphic(loader: first));
+      await tester.pumpWidget(VectorGraphic(loader: second));
+      final (Set<Object> created, Set<Object> disposed) = trackPictures();
+      first.complete();
+      await tester.pumpAndSettle();
+
+      expect(tester.takeException(), isNull);
+      expect(created, hasLength(1));
+      expect(disposed, containsAll(created));
+    });
+  });
 }
 
 class TestAssetBundle extends Fake implements AssetBundle {
@@ -295,4 +401,18 @@ class TestLocalizationsDelegate extends LocalizationsDelegate<WidgetsLocalizatio
 class TestWidgetsLocalizations extends DefaultWidgetsLocalizations {
   @override
   TextDirection get textDirection => TextDirection.ltr;
+}
+
+class CompleterBytesLoader extends BytesLoader {
+  final Completer<ByteData> _completer = Completer<ByteData>();
+
+  /// Finishes loading with a small, empty vector graphic.
+  void complete() {
+    final buffer = VectorGraphicsBuffer();
+    codec.writeSize(buffer, 10, 10);
+    _completer.complete(buffer.done());
+  }
+
+  @override
+  Future<ByteData> loadBytes(BuildContext? context) => _completer.future;
 }

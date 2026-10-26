@@ -421,16 +421,17 @@ class _VectorGraphicWidgetState extends State<VectorGraphic> {
     try {
       final _PictureData data = await _loadPicture(context, key, loader);
       data.count += 1;
+      if (data.count == 1) {
+        _livePictureCache[key] = data;
+      }
 
       // The widget may have changed, requesting a new vector graphic before
       // this operation could complete.
       if (!mounted || loader != widget.loader) {
-        _maybeReleasePicture(data);
+        // Other widgets waiting on the same load resume after this one and may
+        // still use the picture, so only release it once they have.
+        scheduleMicrotask(() => _maybeReleasePicture(data));
         return;
-      }
-
-      if (data.count == 1) {
-        _livePictureCache[key] = data;
       }
 
       setState(() {
