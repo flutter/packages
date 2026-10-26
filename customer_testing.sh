@@ -23,6 +23,31 @@ flutter test
 popd
 
 
+# CUPERTINO_UI PACKAGE
+
+pushd packages/cupertino_ui
+flutter analyze --no-fatal-infos
+if [[ "$OSTYPE" == "linux-gnu" ]]; then
+    flutter test
+fi
+popd
+
+
+# MATERIAL_UI PACKAGE
+
+pushd packages/material_ui
+
+# Update the subpackages so that the analysis doesn't get confused.
+pushd test_apps/a11y_assessments; flutter packages get; popd
+pushd tool/gen_defaults; dart pub get; popd
+
+flutter analyze --no-fatal-infos
+if [[ "$OSTYPE" == "linux-gnu" ]]; then
+    flutter test
+fi
+popd
+
+
 # RFW PACKAGE
 
 pushd packages/rfw

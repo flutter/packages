@@ -1,0 +1,2 @@
+# Fragment shaders are not supported in web unit tests.
+test_on: vm

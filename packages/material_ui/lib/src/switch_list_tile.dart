@@ -68,22 +68,7 @@ enum _SwitchListTileType { material, adaptive }
 ///
 /// <callout-box>
 ///
-// TODO(framework): Add unit tests to this code snippet.
-// https://github.com/flutter/flutter/issues/188530
-///
-/// ```dart
-/// ColoredBox(
-///   color: Colors.green,
-///   child: Material(
-///     child: SwitchListTile(
-///       tileColor: Colors.red,
-///       title: const Text('SwitchListTile with red background'),
-///       value: true,
-///       onChanged:(bool? value) { },
-///     ),
-///   ),
-/// )
-/// ```
+/// {@example /example/lib/switch_list_tile/switch_list_tile.snippet.0.dart#body indent=strip}
 ///
 /// </callout-box>
 ///
@@ -338,20 +323,7 @@ class SwitchListTile extends StatelessWidget {
   ///
   /// <callout-box>
   ///
-  // TODO(framework): Add unit tests to this code snippet.
-  // https://github.com/flutter/flutter/issues/188530
-  ///
-  /// ```dart
-  /// SwitchListTile(
-  ///   value: _isSelected,
-  ///   onChanged: (bool newValue) {
-  ///     setState(() {
-  ///       _isSelected = newValue;
-  ///     });
-  ///   },
-  ///   title: const Text('Selection'),
-  /// )
-  /// ```
+  /// {@example /example/lib/switch_list_tile/switch_list_tile.snippet.1.dart#body indent=strip}
   ///
   /// </callout-box>
   final ValueChanged<bool>? onChanged;
