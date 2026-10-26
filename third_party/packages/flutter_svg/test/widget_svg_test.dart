@@ -884,6 +884,251 @@ void main() {
     });
   });
 
+  group('SvgPicture filters', () {
+    testWidgets('feGaussianBlur', (WidgetTester tester) async {
+      final GlobalKey key = GlobalKey();
+
+      const svgStr = '''
+<svg width="100" height="100" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <filter id="blur">
+      <feGaussianBlur stdDeviation="5" />
+    </filter>
+  </defs>
+  <rect x="20" y="20" width="60" height="60" fill="#FF8800" filter="url(#blur)" />
+</svg>
+''';
+
+      await tester.pumpWidget(
+        RepaintBoundary(key: key, child: SvgPicture.string(svgStr, width: 100.0, height: 100.0)),
+      );
+
+      await tester.pumpAndSettle();
+      await _checkWidgetAndGolden(key, 'filter.gaussian_blur.png');
+    });
+
+    testWidgets('feOffset', (WidgetTester tester) async {
+      final GlobalKey key = GlobalKey();
+
+      const svgStr = '''
+<svg width="100" height="100" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <filter id="offset">
+      <feOffset dx="15" dy="15" />
+    </filter>
+  </defs>
+  <rect x="15" y="15" width="50" height="50" fill="#FF8800" filter="url(#offset)" />
+</svg>
+''';
+
+      await tester.pumpWidget(
+        RepaintBoundary(key: key, child: SvgPicture.string(svgStr, width: 100.0, height: 100.0)),
+      );
+
+      await tester.pumpAndSettle();
+      await _checkWidgetAndGolden(key, 'filter.offset.png');
+    });
+
+    testWidgets('feMerge drop shadow with SourceAlpha', (WidgetTester tester) async {
+      final GlobalKey key = GlobalKey();
+
+      const svgStr = '''
+<svg width="100" height="100" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <filter id="drop-shadow">
+      <feGaussianBlur in="SourceAlpha" stdDeviation="4" result="blur" />
+      <feOffset in="blur" dx="6" dy="6" result="offsetBlur" />
+      <feMerge>
+        <feMergeNode in="offsetBlur" />
+        <feMergeNode in="SourceGraphic" />
+      </feMerge>
+    </filter>
+  </defs>
+  <circle cx="45" cy="45" r="30" fill="#FF8800" filter="url(#drop-shadow)" />
+</svg>
+''';
+
+      await tester.pumpWidget(
+        RepaintBoundary(key: key, child: SvgPicture.string(svgStr, width: 100.0, height: 100.0)),
+      );
+
+      await tester.pumpAndSettle();
+      await _checkWidgetAndGolden(key, 'filter.drop_shadow.png');
+    });
+
+    testWidgets('gradient shape drop shadow with SourceAlpha', (WidgetTester tester) async {
+      final GlobalKey key = GlobalKey();
+
+      const svgStr = '''
+<svg width="100" height="100" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="fade" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#FF8800" stop-opacity="1" />
+      <stop offset="100%" stop-color="#FF8800" stop-opacity="0.2" />
+    </linearGradient>
+    <filter id="shadow">
+      <feGaussianBlur in="SourceAlpha" stdDeviation="3" result="blur" />
+      <feOffset in="blur" dx="5" dy="5" result="offsetBlur" />
+      <feMerge>
+        <feMergeNode in="offsetBlur" />
+        <feMergeNode in="SourceGraphic" />
+      </feMerge>
+    </filter>
+  </defs>
+  <rect x="15" y="15" width="60" height="60" fill="url(#fade)" filter="url(#shadow)" />
+</svg>
+''';
+
+      await tester.pumpWidget(
+        RepaintBoundary(key: key, child: SvgPicture.string(svgStr, width: 100.0, height: 100.0)),
+      );
+
+      await tester.pumpAndSettle();
+      await _checkWidgetAndGolden(key, 'filter.gradient_drop_shadow.png');
+    });
+
+    testWidgets('group opacity with feMerge drop shadow', (WidgetTester tester) async {
+      final GlobalKey key = GlobalKey();
+
+      const svgStr = '''
+<svg width="100" height="100" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <filter id="drop-shadow">
+      <feGaussianBlur in="SourceAlpha" stdDeviation="4" result="blur" />
+      <feOffset in="blur" dx="6" dy="6" result="offsetBlur" />
+      <feMerge>
+        <feMergeNode in="offsetBlur" />
+        <feMergeNode in="SourceGraphic" />
+      </feMerge>
+    </filter>
+  </defs>
+  <g filter="url(#drop-shadow)" opacity="0.5">
+    <rect x="15" y="15" width="45" height="45" fill="#0066CC" />
+    <circle cx="55" cy="55" r="25" fill="#FF8800" />
+  </g>
+</svg>
+''';
+
+      await tester.pumpWidget(
+        RepaintBoundary(key: key, child: SvgPicture.string(svgStr, width: 100.0, height: 100.0)),
+      );
+
+      await tester.pumpAndSettle();
+      await _checkWidgetAndGolden(key, 'filter.group_opacity.png');
+    });
+
+    testWidgets('anisotropic feGaussianBlur', (WidgetTester tester) async {
+      final GlobalKey key = GlobalKey();
+
+      const svgStr = '''
+<svg width="100" height="100" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <filter id="hblur">
+      <feGaussianBlur stdDeviation="12 1" />
+    </filter>
+  </defs>
+  <rect x="35" y="25" width="30" height="50" fill="#FF3333" filter="url(#hblur)" />
+</svg>
+''';
+
+      await tester.pumpWidget(
+        RepaintBoundary(key: key, child: SvgPicture.string(svgStr, width: 100.0, height: 100.0)),
+      );
+
+      await tester.pumpAndSettle();
+      await _checkWidgetAndGolden(key, 'filter.anisotropic_blur.png');
+    });
+
+    testWidgets('scaled transform filter', (WidgetTester tester) async {
+      final GlobalKey key = GlobalKey();
+
+      const svgStr = '''
+<svg width="100" height="100" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <filter id="shadow">
+      <feGaussianBlur in="SourceAlpha" stdDeviation="2" result="blur" />
+      <feOffset in="blur" dx="4" dy="4" result="offsetBlur" />
+      <feMerge>
+        <feMergeNode in="offsetBlur" />
+        <feMergeNode in="SourceGraphic" />
+      </feMerge>
+    </filter>
+  </defs>
+  <g transform="scale(2)">
+    <rect x="10" y="10" width="25" height="25" fill="#FF8800" filter="url(#shadow)" />
+  </g>
+</svg>
+''';
+
+      await tester.pumpWidget(
+        RepaintBoundary(key: key, child: SvgPicture.string(svgStr, width: 100.0, height: 100.0)),
+      );
+
+      await tester.pumpAndSettle();
+      await _checkWidgetAndGolden(key, 'filter.scaled_transform.png');
+    });
+
+    testWidgets('feGaussianBlur with stdDeviation 0 renders cleanly', (WidgetTester tester) async {
+      const svgStr = '''
+<svg width="100" height="100" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <filter id="zero-blur">
+      <feGaussianBlur stdDeviation="0" />
+    </filter>
+  </defs>
+  <rect x="20" y="20" width="60" height="60" fill="#FF8800" filter="url(#zero-blur)" />
+</svg>
+''';
+
+      await tester.pumpWidget(SvgPicture.string(svgStr, width: 100.0, height: 100.0));
+      await tester.pumpAndSettle();
+
+      expect(find.byType(SvgPicture), findsOneWidget);
+      expect(tester.takeException(), isNull);
+    });
+
+    testWidgets('feOffset with negative dx and dy renders cleanly', (WidgetTester tester) async {
+      const svgStr = '''
+<svg width="100" height="100" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <filter id="neg-offset">
+      <feOffset dx="-10" dy="-10" />
+    </filter>
+  </defs>
+  <rect x="30" y="30" width="50" height="50" fill="#FF8800" filter="url(#neg-offset)" />
+</svg>
+''';
+
+      await tester.pumpWidget(SvgPicture.string(svgStr, width: 100.0, height: 100.0));
+      await tester.pumpAndSettle();
+
+      expect(find.byType(SvgPicture), findsOneWidget);
+      expect(tester.takeException(), isNull);
+    });
+
+    testWidgets('mixed unsupported filter primitive falls back gracefully', (
+      WidgetTester tester,
+    ) async {
+      const svgStr = '''
+<svg width="100" height="100" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <filter id="mixed">
+      <feFlood flood-color="#0000FF" />
+      <feGaussianBlur stdDeviation="4" />
+    </filter>
+  </defs>
+  <rect x="20" y="20" width="60" height="60" fill="#FF8800" filter="url(#mixed)" />
+</svg>
+''';
+
+      await tester.pumpWidget(SvgPicture.string(svgStr, width: 100.0, height: 100.0));
+      await tester.pumpAndSettle();
+
+      expect(find.byType(SvgPicture), findsOneWidget);
+      expect(tester.takeException(), isNull);
+    });
+  });
+
   testWidgets('SvgPicture - two of the same', (WidgetTester tester) async {
     // Regression test to make sure the same SVG can render twice in the same
     // view. If layers are incorrectly reused, this will fail.
