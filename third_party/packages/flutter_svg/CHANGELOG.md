@@ -1,3 +1,7 @@
+## 2.4.1
+
+* Adds support for SVG filters (`feGaussianBlur`, `feOffset`, and `feMerge`).
+
 ## 2.4.0
 
 * Adds a configurable compiled SVG cache byte budget, defaulting to 32 MiB,
