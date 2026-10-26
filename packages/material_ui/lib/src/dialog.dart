@@ -1241,8 +1241,7 @@ class SimpleDialog extends StatelessWidget {
   ///
   /// By default, this provides the recommend Material Design padding of 24
   /// pixels around the left, top, and right edges of the title.
-  /// When the title has no children below it, the bottom padding defaults to 24
-  /// pixels as well.
+  /// When [children] is null, the bottom padding defaults to 24 pixels as well.
   ///
   /// See [contentPadding] for the conventions regarding padding between the
   /// [title] and the [children].
@@ -1263,13 +1262,12 @@ class SimpleDialog extends StatelessWidget {
   /// Padding around the content.
   ///
   /// By default, this is 12 pixels on the top and 16 pixels on the bottom when
-  /// a title is present. Without a title, the top padding is 16 pixels. This is
-  /// intended to be combined with children that have 24 pixels of padding on
-  /// the left and right, and 8 pixels of padding on the top and bottom, so that
-  /// the content ends up being indented 20 pixels from the title, 24 pixels
-  /// from the bottom, and 24 pixels from the sides.
-  ///
-  /// The [SimpleDialogOption] widget uses such padding.
+  /// a title is present. When a title is absent and [children] is provided, the
+  /// top padding is 16 pixels. Combined with the padding of [SimpleDialogOption]
+  /// (8 pixels vertically and 24 horizontally), this results in a 24-pixel
+  /// inset from the top and bottom when there is no title. When a title and
+  /// children are provided, the content is 20 pixels below the title, and 24
+  /// pixels from the bottom and sides.
   ///
   final EdgeInsetsGeometry contentPadding;
 
