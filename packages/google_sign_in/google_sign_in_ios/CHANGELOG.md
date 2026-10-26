@@ -4,6 +4,10 @@
 * Updates minimum supported SDK version to Flutter 3.47/Dart 3.13.
 * Updates minimum iOS version to 15 and minimum macOS version to 12.
 
+## 6.3.9
+
+* Converts the iOS example app and UI tests to Swift.
+
 ## 6.3.8
 
 * Removes the public iOS `handleOpen` helper. On macOS `handleOpen` remains public because it implements `FlutterAppLifecycleDelegate`.
