@@ -65,13 +65,13 @@ public class TestPlugin: NSObject, FlutterPlugin, HostIntegrationCoreApi, HostCa
       with: binaryMessenger, instanceName: "1",
       streamHandler: SendConsistentNumbers(numberToSend: 1) {
         StreamConsistentNumbersStreamHandler.register(
-      with: binaryMessenger, instanceName: "1", streamHandler: nil)
+          with: binaryMessenger, instanceName: "1", streamHandler: nil)
       })
     StreamConsistentNumbersStreamHandler.register(
       with: binaryMessenger, instanceName: "2",
       streamHandler: SendConsistentNumbers(numberToSend: 2) {
         StreamConsistentNumbersStreamHandler.register(
-      with: binaryMessenger, instanceName: "2", streamHandler: nil)
+          with: binaryMessenger, instanceName: "2", streamHandler: nil)
       })
     proxyApiRegistrar = ProxyApiTestsPigeonProxyApiRegistrar(
       binaryMessenger: binaryMessenger, apiDelegate: ProxyApiDelegate())
