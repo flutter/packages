@@ -251,7 +251,7 @@ void main() {
     await tester.sendEventToBinding(testPointer.down(startLocation));
     await tester.sendEventToBinding(testPointer.move(startLocation + const Offset(0.0, 175)));
     await tester.pump();
-    await tester.sendEventToBinding(testPointer.move(startLocation + const Offset(0.0, 150)));
+    await tester.sendEventToBinding(testPointer.move(startLocation + const Offset(0.0, 100)));
     await tester.pump();
     await tester.sendEventToBinding(testPointer.up());
     await tester.pump();
@@ -287,7 +287,7 @@ void main() {
     await tester.sendEventToBinding(testPointer.down(startLocation));
     await tester.sendEventToBinding(testPointer.move(startLocation + const Offset(0.0, 175)));
     await tester.pump();
-    await tester.sendEventToBinding(testPointer.move(startLocation + const Offset(0.0, 149)));
+    await tester.sendEventToBinding(testPointer.move(startLocation + const Offset(0.0, 99)));
     await tester.pump();
     await tester.sendEventToBinding(testPointer.up());
     await tester.pump();
@@ -1134,6 +1134,130 @@ void main() {
       expect(modeArmed, true);
       expect(modeDone, true);
     });
+
+    // Regression test for https://github.com/flutter/flutter/issues/165950.
+    testWidgets('releasing immediately when status becomes armed triggers onRefresh', (
+      WidgetTester tester,
+    ) async {
+      refreshCalled = false;
+      final statuses = <RefreshIndicatorStatus?>[];
+
+      await tester.pumpWidget(
+        MaterialApp(
+          home: RefreshIndicator.noSpinner(
+            onStatusChange: statuses.add,
+            onRefresh: refresh,
+            child: ListView(
+              physics: const AlwaysScrollableScrollPhysics(),
+              children: const <Widget>[SizedBox(height: 200.0, child: Text('A'))],
+            ),
+          ),
+        ),
+      );
+
+      final Offset startLocation = tester.getCenter(find.text('A'));
+      final testPointer = TestPointer();
+      await tester.sendEventToBinding(testPointer.down(startLocation));
+      await tester.pump();
+
+      // Drag down incrementally until the status transitions to armed.
+      var dragDistance = 0.0;
+      while ((statuses.isEmpty || statuses.last != RefreshIndicatorStatus.armed) &&
+          dragDistance < 300.0) {
+        dragDistance += 5.0;
+        await tester.sendEventToBinding(
+          testPointer.move(startLocation + Offset(0.0, dragDistance)),
+        );
+        await tester.pump();
+      }
+
+      expect(statuses, <RefreshIndicatorStatus?>[
+        RefreshIndicatorStatus.drag,
+        RefreshIndicatorStatus.armed,
+      ]);
+
+      // Release immediately upon reaching armed status.
+      await tester.sendEventToBinding(testPointer.up());
+      await tester.pump();
+      await tester.pump(const Duration(seconds: 1));
+      await tester.pump(const Duration(seconds: 1));
+      await tester.pump(const Duration(seconds: 1));
+
+      expect(refreshCalled, isTrue);
+      expect(statuses, <RefreshIndicatorStatus?>[
+        RefreshIndicatorStatus.drag,
+        RefreshIndicatorStatus.armed,
+        RefreshIndicatorStatus.snap,
+        RefreshIndicatorStatus.done,
+      ]);
+    }, variant: TargetPlatformVariant.mobile());
+
+    testWidgets('dragging back above armed threshold disarms status to drag and cancels', (
+      WidgetTester tester,
+    ) async {
+      refreshCalled = false;
+      final statuses = <RefreshIndicatorStatus?>[];
+
+      await tester.pumpWidget(
+        MaterialApp(
+          home: RefreshIndicator.noSpinner(
+            onStatusChange: statuses.add,
+            onRefresh: refresh,
+            child: ListView(
+              physics: const AlwaysScrollableScrollPhysics(),
+              children: const <Widget>[
+                SizedBox(height: 200.0, child: Text('A')),
+                SizedBox(height: 1000.0),
+              ],
+            ),
+          ),
+        ),
+      );
+
+      final Offset startLocation = tester.getCenter(find.text('A'));
+      final testPointer = TestPointer();
+      await tester.sendEventToBinding(testPointer.down(startLocation));
+      await tester.pump();
+
+      var dragDistance = 0.0;
+      while ((statuses.isEmpty || statuses.last != RefreshIndicatorStatus.armed) &&
+          dragDistance < 300.0) {
+        dragDistance += 5.0;
+        await tester.sendEventToBinding(
+          testPointer.move(startLocation + Offset(0.0, dragDistance)),
+        );
+        await tester.pump();
+      }
+
+      expect(statuses, <RefreshIndicatorStatus?>[
+        RefreshIndicatorStatus.drag,
+        RefreshIndicatorStatus.armed,
+      ]);
+
+      // Drag back up above the armed threshold.
+      await tester.sendEventToBinding(
+        testPointer.move(startLocation + Offset(0.0, dragDistance - 20.0)),
+      );
+      await tester.pump();
+      expect(statuses, <RefreshIndicatorStatus?>[
+        RefreshIndicatorStatus.drag,
+        RefreshIndicatorStatus.armed,
+        RefreshIndicatorStatus.drag,
+      ]);
+
+      await tester.sendEventToBinding(testPointer.up());
+      await tester.pump();
+      await tester.pump(const Duration(seconds: 1));
+      await tester.pump(const Duration(seconds: 1));
+
+      expect(refreshCalled, isFalse);
+      expect(statuses, <RefreshIndicatorStatus?>[
+        RefreshIndicatorStatus.drag,
+        RefreshIndicatorStatus.armed,
+        RefreshIndicatorStatus.drag,
+        RefreshIndicatorStatus.canceled,
+      ]);
+    }, variant: TargetPlatformVariant.mobile());
   });
 
   testWidgets('RefreshIndicator manipulates value color opacity correctly', (
