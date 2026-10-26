@@ -589,6 +589,9 @@ class _MenuAnchorState extends State<MenuAnchor> with SingleTickerProviderStateM
       animation.dispose();
     }
     _internalMenuController = null;
+    if (_menuScopeNode.context == null) {
+      _menuScopeNode.attach(null).detach();
+    }
     _menuScopeNode.dispose();
     heightAnimation.dispose();
     opacityAnimation.dispose();
@@ -687,6 +690,24 @@ class _MenuAnchorState extends State<MenuAnchor> with SingleTickerProviderStateM
     }
 
     _animationController.forward();
+
+    if (!isSubmenu && widget.childFocusNode == null) {
+      final FocusScopeNode scope = FocusScope.of(context);
+      final BuildContext? focusedContext = scope.focusedChild?.context;
+      final bool isAnchorFocused =
+          focusedContext != null && _maybeOf(focusedContext)?._root == this;
+      if (!isAnchorFocused) {
+        if (_menuScopeNode.canRequestFocus) {
+          scope.setFirstFocus(_menuScopeNode);
+        } else {
+          SchedulerBinding.instance.addPostFrameCallback((Duration _) {
+            if (mounted && !isClosingOrClosed) {
+              scope.setFirstFocus(_menuScopeNode);
+            }
+          });
+        }
+      }
+    }
   }
 
   void _handleMenuCloseRequest(VoidCallback hideOverlay) {
@@ -694,7 +715,12 @@ class _MenuAnchorState extends State<MenuAnchor> with SingleTickerProviderStateM
       return;
     }
 
-    _animationController.reverse().whenComplete(hideOverlay);
+    _animationController.reverse().whenComplete(() {
+      if (_menuScopeNode.context == null) {
+        _menuScopeNode.attach(null).detach();
+      }
+      hideOverlay();
+    });
   }
 
   @override
@@ -3934,15 +3960,15 @@ class _Submenu extends StatelessWidget {
       child: MouseRegion(
         cursor: mouseCursor,
         hitTestBehavior: HitTestBehavior.deferToChild,
-        child: FocusScope(
-          node: anchor._menuScopeNode,
-          skipTraversal: true,
-          child: Actions(
-            actions: <Type, Action<Intent>>{
-              DismissIntent: DismissMenuAction(controller: anchor._menuController),
-            },
-            child: Shortcuts(
-              shortcuts: _kMenuTraversalShortcuts,
+        child: Actions(
+          actions: <Type, Action<Intent>>{
+            DismissIntent: DismissMenuAction(controller: anchor._menuController),
+          },
+          child: Shortcuts(
+            shortcuts: _kMenuTraversalShortcuts,
+            child: FocusScope(
+              node: anchor._menuScopeNode,
+              skipTraversal: true,
               child: FadeTransition(
                 opacity: fadeAnimation,
                 alwaysIncludeSemantics: true,
