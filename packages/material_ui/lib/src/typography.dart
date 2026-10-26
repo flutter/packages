@@ -163,21 +163,52 @@ class Typography with Diagnosticable {
 
   /// Creates a typography instance using Material Design 3 2021 defaults.
   ///
-  /// If [platform] is [TargetPlatform.iOS] or [TargetPlatform.macOS], the
-  /// default values for [black] and [white] are [blackCupertino] and
-  /// [whiteCupertino] respectively. Otherwise they are [blackMountainView] and
-  /// [whiteMountainView]. If [platform] is null then both [black] and [white]
-  /// must be specified.
+  /// Text colors are derived from [colorScheme]. For a light [colorScheme],
+  /// every style in the resulting [Typography.black] uses
+  /// [ColorScheme.onSurface] and every style in [Typography.white] uses
+  /// [ColorScheme.surface]. For a dark [colorScheme], these are reversed. The
+  /// same colors are used for [TextStyle.decorationColor].
+  ///
+  /// The default values for [black] and [white] depend on [platform]:
+  /// [blackCupertino] and [whiteCupertino] on iOS, [blackRedwoodCity] and
+  /// [whiteRedwoodCity] on macOS, [blackRedmond] and [whiteRedmond] on
+  /// Windows, [blackHelsinki] and [whiteHelsinki] on Linux, and
+  /// [blackMountainView] and [whiteMountainView] otherwise. If [platform] is
+  /// null then both [black] and [white] must be specified.
   ///
   /// The default values for [englishLike], [dense], and [tall] are
   /// [englishLike2021], [dense2021], and [tall2021].
+  ///
+  /// The [black] and [white] parameters are deprecated. Only their non-color
+  /// properties (such as font family) are used. Any [TextStyle.color] or
+  /// [TextStyle.decorationColor] they specify is replaced with a color from
+  /// [colorScheme] as described above. To customize the text theme's colors,
+  /// call [copyWith] on the result:
+  ///
+  /// ```dart
+  /// final Typography base = Typography.material2021(colorScheme: colorScheme);
+  /// final Typography typography = base.copyWith(
+  ///   black: base.black.merge(myBlack),
+  ///   white: base.white.merge(myWhite),
+  /// );
+  /// ```
   ///
   /// See also:
   ///  * <https://m3.material.io/styles/typography>
   factory Typography.material2021({
     TargetPlatform? platform = TargetPlatform.android,
     ColorScheme colorScheme = const ColorScheme.light(),
+    @Deprecated(
+      'Text colors are derived from colorScheme, so colors in this text theme are ignored. '
+      'Use copyWith on the result to customize the black text theme. '
+      'This feature was deprecated after material_ui v1.8.0.',
+    )
     TextTheme? black,
+    @Deprecated(
+      'Text colors are derived from colorScheme, so colors in this text theme are ignored. '
+      'Use copyWith on the result to customize the white text theme. '
+      'This feature was deprecated after material_ui v1.8.0.',
+    )
     TextTheme? white,
     TextTheme? englishLike,
     TextTheme? dense,
