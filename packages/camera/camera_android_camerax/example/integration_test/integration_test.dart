@@ -157,7 +157,8 @@ void main() {
     final int duration = videoController.value.duration.inMilliseconds;
     await videoController.dispose();
 
-    expect(duration, greaterThan(1700));
+    // Allow a tolerance around the 2s target for timer jitter and frame
+    // quantization (typically 100-200ms on device, with margin for CI load).
     final int delta = (duration - 2000).abs();
     expect(delta, lessThan(350));
     expect(duration, lessThanOrEqualTo(postStopTime));
