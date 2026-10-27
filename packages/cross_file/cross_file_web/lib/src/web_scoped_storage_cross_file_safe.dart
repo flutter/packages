@@ -31,14 +31,14 @@ base class WebScopedStorageXFileCreationParams extends PlatformScopedStorageXFil
   ///
   /// `autoRevokeObjectUrl`: Whether the created object url should be revoked
   /// when this instance is garbage collected. See [URL.revokeObjectURL].
-  const WebScopedStorageXFileCreationParams.fromBytes(
+  factory WebScopedStorageXFileCreationParams.fromBytes(
     // ignore: avoid_unused_constructor_parameters
     Uint8List bytes, {
     // ignore: avoid_unused_constructor_parameters
     String? fileName,
     // ignore: avoid_unused_constructor_parameters
     bool autoRevokeObjectUrl = true,
-  }) : super(uri: '');
+  }) => const WebScopedStorageXFileCreationParams(uri: '');
 }
 
 /// Implementation of [PlatformScopedStorageXFile] for web.
