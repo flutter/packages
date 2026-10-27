@@ -19,6 +19,9 @@ String proxyApiCodecName(InternalKotlinOptions options) =>
 
 /// The Kotlin `InstanceManager`.
 String instanceManagerTemplate(InternalKotlinOptions options) {
+  final generatedAnnotation = options.useGeneratedAnnotation
+      ? '$kotlinClassGeneratedAnnotation\n'
+      : '';
   return '''
 /**
  * Maintains instances used to communicate with the corresponding objects in Dart.
@@ -36,7 +39,7 @@ String instanceManagerTemplate(InternalKotlinOptions options) {
  * is recreated. The strong reference will then need to be removed manually again.
  */
 @Suppress("UNCHECKED_CAST", "MemberVisibilityCanBePrivate")
-class ${kotlinInstanceManagerClassName(options)}(private val finalizationListener: $_finalizationListenerClassName) {
+${generatedAnnotation}class ${kotlinInstanceManagerClassName(options)}(private val finalizationListener: $_finalizationListenerClassName) {
   /** Interface for listening when a weak reference of an instance is removed from the manager. */
   interface $_finalizationListenerClassName {
     fun onFinalize(identifier: Long)
