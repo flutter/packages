@@ -147,6 +147,24 @@ void main() {
 
     expect(await loader.prepareMessage(null), utf8.encode('<svg/>'));
   });
+
+  test('SvgNetworkLoader throws on a malformed URL without creating a client', () async {
+    final createdClients = <VerifyCloseClient>[];
+
+    await http.runWithClient(
+      () async {
+        const loader = SvgNetworkLoader('http://[invalid');
+
+        await expectLater(loader.prepareMessage(null), throwsFormatException);
+        expect(createdClients, isEmpty);
+      },
+      () {
+        final client = VerifyCloseClient();
+        createdClients.add(client);
+        return client;
+      },
+    );
+  });
 }
 
 class TestBundle extends Fake implements AssetBundle {
