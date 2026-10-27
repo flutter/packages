@@ -599,8 +599,23 @@ class KotlinGenerator extends StructuredGenerator<InternalKotlinOptions> {
   void _writeClassField(Indent indent, NamedType field) {
     addDocumentationComments(indent, field.documentationComments, _docCommentSpec);
     indent.write('val ${field.name}: ${_nullSafeKotlinTypeForDartType(field.type)}');
-    final defaultNil = field.type.isNullable ? ' = null' : '';
-    indent.add(defaultNil);
+    final String? defaultValue = _kotlinDefaultValue(field);
+    if (defaultValue != null) {
+      indent.add(' = $defaultValue');
+    }
+  }
+
+  /// The Kotlin default value of a data class field, if it has one.
+  String? _kotlinDefaultValue(NamedType field) {
+    final Object? value = field.literalDefaultValue;
+    if (value is EnumMember) {
+      if (field.type.isEnum) {
+        return '${field.type.baseName}.${toScreamingSnakeCase(value.name)}';
+      }
+    } else if (value != null) {
+      return _formatKotlinValue(field.type.baseName, value);
+    }
+    return field.type.isNullable ? 'null' : null;
   }
 
   @override

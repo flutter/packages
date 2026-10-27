@@ -400,17 +400,17 @@ struct NativeInteropUnusedClass: Hashable, CustomStringConvertible {
 ///
 /// Generated class from Pigeon that represents data sent in messages.
 struct NativeInteropAllTypes: Hashable, CustomStringConvertible {
-  var aBool: Bool
-  var anInt: Int64
-  var anInt64: Int64
-  var aDouble: Double
+  var aBool: Bool = false
+  var anInt: Int64 = 0
+  var anInt64: Int64 = 0
+  var aDouble: Double = 0.0
   var aByteArray: [UInt8]
   var a4ByteArray: [Int32]
   var a8ByteArray: [Int64]
   var aFloatArray: [Float64]
-  var anEnum: NativeInteropAnEnum
-  var anotherEnum: NativeInteropAnotherEnum
-  var aString: String
+  var anEnum: NativeInteropAnEnum = .one
+  var anotherEnum: NativeInteropAnotherEnum = .justInCase
+  var aString: String = ""
   var anObject: Any
   var list: [Any?]
   var stringList: [String]
@@ -2188,9 +2188,9 @@ struct NativeInteropReservedNames: Hashable, CustomStringConvertible {
   var jClass: String? = nil
   var isInstanceOf: String? = nil
   var isNull: String? = nil
-  var isReleased: Bool
+  var isReleased: Bool = false
   var equals: String? = nil
-  var isEnabled: Bool
+  var isEnabled: Bool = false
   var isMaybe: Bool? = nil
   var isCount: Int64? = nil
   var getValue: String? = nil

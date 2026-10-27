@@ -48,6 +48,75 @@ void main() {
     expect(code, isNot(contains('containsKey')));
   });
 
+  test('gen class with default values', () {
+    final anEnum = Enum(
+      name: 'Color',
+      members: <EnumMember>[
+        EnumMember(name: 'red'),
+        EnumMember(name: 'darkBlue'),
+      ],
+    );
+    final classDefinition = Class(
+      name: 'Foobar',
+      fields: <NamedType>[
+        NamedType(
+          type: const TypeDeclaration(baseName: 'int', isNullable: false),
+          name: 'anInt',
+          defaultValue: '-5',
+          literalDefaultValue: -5,
+        ),
+        NamedType(
+          type: const TypeDeclaration(baseName: 'double', isNullable: false),
+          name: 'aDouble',
+          defaultValue: '0',
+          literalDefaultValue: 0.0,
+        ),
+        NamedType(
+          type: const TypeDeclaration(baseName: 'bool', isNullable: false),
+          name: 'aBool',
+          defaultValue: 'true',
+          literalDefaultValue: true,
+        ),
+        NamedType(
+          type: const TypeDeclaration(baseName: 'String', isNullable: false),
+          name: 'aString',
+          defaultValue: r"""'\$5 "a"'""",
+          literalDefaultValue: r'$5 "a"',
+        ),
+        NamedType(
+          type: TypeDeclaration(baseName: 'Color', isNullable: false, associatedEnum: anEnum),
+          name: 'aColor',
+          defaultValue: 'Color.darkBlue',
+          literalDefaultValue: EnumMember(name: 'darkBlue'),
+        ),
+        NamedType(
+          type: const TypeDeclaration(baseName: 'int', isNullable: true),
+          name: 'aNullableInt',
+          defaultValue: '7',
+          literalDefaultValue: 7,
+        ),
+        NamedType(
+          type: const TypeDeclaration(baseName: 'List', isNullable: false),
+          name: 'aList',
+          defaultValue: 'const <Object?>[]',
+        ),
+      ],
+    );
+    final root = Root(apis: <Api>[], classes: <Class>[classDefinition], enums: <Enum>[anEnum]);
+    final sink = StringBuffer();
+    const kotlinOptions = InternalKotlinOptions(kotlinOut: '');
+    const generator = KotlinGenerator();
+    generator.generate(kotlinOptions, root, sink, dartPackageName: DEFAULT_PACKAGE_NAME);
+    final code = sink.toString();
+    expect(code, contains('val anInt: Long = -5L,'));
+    expect(code, contains('val aDouble: Double = 0.0,'));
+    expect(code, contains('val aBool: Boolean = true,'));
+    expect(code, contains(r'val aString: String = "\$5 \"a\"",'));
+    expect(code, contains('val aColor: Color = Color.DARK_BLUE,'));
+    expect(code, contains('val aNullableInt: Long? = 7L,'));
+    expect(code, contains('val aList: List<Any?>\n'));
+  });
+
   test('fileSpecificClassNameComponent defaults to UpperCamelCase from kotlinOut', () {
     final kotlinOptions = InternalKotlinOptions.fromKotlinOptions(
       const KotlinOptions(),

@@ -606,6 +606,7 @@ class NamedType extends Node {
     required this.type,
     this.offset,
     this.defaultValue,
+    this.literalDefaultValue,
     this.documentationComments = const <String>[],
   });
 
@@ -620,6 +621,13 @@ class NamedType extends Node {
 
   /// Stringified version of the default value of types that have default values.
   final String? defaultValue;
+
+  /// The value of [defaultValue] when it is a literal of the field's type (a
+  /// [bool], [int], [double] or [String]) or an [EnumMember] of its enum.
+  ///
+  /// Null for other default values, such as collections, which only the Dart
+  /// generator writes.
+  final Object? literalDefaultValue;
 
   /// List of documentation comments, separated by line.
   ///
@@ -636,13 +644,14 @@ class NamedType extends Node {
       type: type,
       offset: offset,
       defaultValue: defaultValue,
+      literalDefaultValue: literalDefaultValue,
       documentationComments: documentationComments,
     );
   }
 
   @override
   String toString() {
-    return '(NamedType name:$name type:$type defaultValue:$defaultValue documentationComments:$documentationComments)';
+    return '(NamedType name:$name type:$type defaultValue:$defaultValue literalDefaultValue:$literalDefaultValue documentationComments:$documentationComments)';
   }
 }
 

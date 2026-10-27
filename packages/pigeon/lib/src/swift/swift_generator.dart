@@ -734,7 +734,7 @@ private class _PigeonFfiCodec {
         _writeClassField(
           indent,
           field,
-          addNil: !classDefinition.isSwiftClass,
+          addDefaultValue: !classDefinition.isSwiftClass,
           useFfi: useFfi,
           useFfiTypedData: useFfiTypedData,
         );
@@ -1123,14 +1123,28 @@ if (wrapped == nil) {
   void _writeClassField(
     Indent indent,
     NamedType field, {
-    bool addNil = true,
+    bool addDefaultValue = true,
     bool useFfi = false,
     bool useFfiTypedData = false,
   }) {
-    final defaultNil = field.type.isNullable && addNil ? ' = nil' : '';
+    final String? defaultValue = addDefaultValue ? _swiftDefaultValue(field, useFfi: useFfi) : null;
     indent.add(
-      '${field.name}: ${_nullSafeSwiftTypeForDartType(field.type, useFfi: useFfi, ffiTypedData: useFfiTypedData)}$defaultNil',
+      '${field.name}: ${_nullSafeSwiftTypeForDartType(field.type, useFfi: useFfi, ffiTypedData: useFfiTypedData)}${defaultValue == null ? '' : ' = $defaultValue'}',
     );
+  }
+
+  /// The Swift default value of a data class field, if it has one.
+  String? _swiftDefaultValue(NamedType field, {required bool useFfi}) {
+    // Native interop bridge classes use other Swift types for the fields.
+    final Object? value = useFfi ? null : field.literalDefaultValue;
+    if (value is EnumMember) {
+      if (field.type.isEnum) {
+        return '.${_camelCase(value.name)}';
+      }
+    } else if (value != null) {
+      return _formatSwiftValue(field.type.baseName, value);
+    }
+    return field.type.isNullable ? 'nil' : null;
   }
 
   void _writeClassFieldInit(Indent indent, NamedType field, {bool useFfiTypedData = false}) {
