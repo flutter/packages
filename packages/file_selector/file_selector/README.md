@@ -79,7 +79,9 @@ if (result.file case final FileSystemXFile file) {
 }
 ```
 
-#### Get a directory path
+#### Open a directory
+
+Open a directory selection dialog to access all entities within:
 
 <?code-excerpt "readme_standalone_excerpts.dart (GetDirectory)"?>
 ```dart

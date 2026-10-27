@@ -8,8 +8,6 @@ import 'package:file_selector_platform_interface/file_selector_platform_interfac
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
-  CrossFilePlatform.instance = CrossFileTest();
-
   late FakeFileSelector fakePlatformImplementation;
   const initialDirectory = '/home/flutteruser';
   const confirmButtonText = 'Use this profile picture';
@@ -27,6 +25,8 @@ void main() {
   ];
 
   setUp(() {
+    CrossFilePlatform.instance = CrossFileTest();
+
     fakePlatformImplementation = FakeFileSelector();
     FileSelectorPlatform.instance = fakePlatformImplementation;
   });

@@ -34,7 +34,7 @@ class _MyAppState extends State<MyApp> {
     );
   }
 
-  Future<void> writeAsBytes() async {
+  Future<void> saveFile() async {
     // #docregion Save
     const fileName = 'suggested_name.txt';
     final FileSaveLocation? result = await getSaveLocation(suggestedName: fileName);
