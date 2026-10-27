@@ -131,6 +131,18 @@ void main() {
     expect(nonDefaultPropertyNames, <String>['black', 'white', 'englishLike', 'dense', 'tall']);
   });
 
+  test('Default Typography debugFillProperties', () {
+    final builder = DiagnosticPropertiesBuilder();
+    ThemeData.fallback().typography.debugFillProperties(builder);
+
+    final List<String> nonDefaultPropertyNames = builder.properties
+        .where((DiagnosticsNode node) => !node.isFiltered(DiagnosticLevel.info))
+        .map((DiagnosticsNode node) => node.name!)
+        .toList();
+
+    expect(nonDefaultPropertyNames, isEmpty);
+  });
+
   test('Can lerp between different typographies', () {
     final all = <Typography>[
       for (final TargetPlatform platform in TargetPlatform.values)
@@ -431,5 +443,99 @@ void main() {
     expect(textTheme.labelLarge!.color, light);
     expect(textTheme.labelMedium!.color, light);
     expect(textTheme.labelSmall!.color, light);
+  });
+
+  group('Typography.material2021 deprecated black and white', () {
+    const lightScheme = ColorScheme.light(onSurface: Color(0xFF000001), surface: Color(0xFFFFFFF1));
+    const custom = TextTheme(
+      bodyMedium: TextStyle(
+        fontFamily: 'Custom',
+        color: Color(0xFFFF0000),
+        decorationColor: Color(0xFF00FF00),
+      ),
+    );
+
+    test('keep non-color properties but replace colors from the color scheme', () {
+      final typography = Typography.material2021(
+        colorScheme: lightScheme,
+        // ignore: deprecated_member_use_from_same_package
+        black: custom,
+        // ignore: deprecated_member_use_from_same_package
+        white: custom,
+      );
+      expect(typography.black.bodyMedium!.fontFamily, 'Custom');
+      expect(typography.black.bodyMedium!.color, lightScheme.onSurface);
+      expect(typography.black.bodyMedium!.decorationColor, lightScheme.onSurface);
+      expect(typography.white.bodyMedium!.fontFamily, 'Custom');
+      expect(typography.white.bodyMedium!.color, lightScheme.surface);
+      expect(typography.white.bodyMedium!.decorationColor, lightScheme.surface);
+    });
+
+    test('copyWith can be used to customize colors instead', () {
+      final base = Typography.material2021(colorScheme: lightScheme);
+      final Typography typography = base.copyWith(
+        black: base.black.merge(custom),
+        white: base.white.merge(custom),
+      );
+      expect(typography.black.bodyMedium!.fontFamily, 'Custom');
+      expect(typography.black.bodyMedium!.color, const Color(0xFFFF0000));
+      expect(typography.white.bodyMedium!.color, const Color(0xFFFF0000));
+      // Styles that are not overridden keep the generated values.
+      expect(typography.black.bodyLarge!.fontFamily, 'Roboto');
+      expect(typography.black.bodyLarge!.color, lightScheme.onSurface);
+    });
+  });
+
+  test('Typography.material2021 colors black and white text themes from the colorScheme', () {
+    const lightScheme = ColorScheme.light(onSurface: Color(0xFF000001), surface: Color(0xFFFFFFF1));
+    const darkScheme = ColorScheme.dark(onSurface: Color(0xFFFFFFF2), surface: Color(0xFF000002));
+
+    void expectUniform(TextTheme theme, Color color) {
+      final styles = <TextStyle?>[
+        theme.displayLarge,
+        theme.displayMedium,
+        theme.displaySmall,
+        theme.headlineLarge,
+        theme.headlineMedium,
+        theme.headlineSmall,
+        theme.titleLarge,
+        theme.titleMedium,
+        theme.titleSmall,
+        theme.bodyLarge,
+        theme.bodyMedium,
+        theme.bodySmall,
+        theme.labelLarge,
+        theme.labelMedium,
+        theme.labelSmall,
+      ];
+      for (final style in styles) {
+        expect(style!.color, color);
+        expect(style.decorationColor, color);
+      }
+    }
+
+    final light = Typography.material2021(colorScheme: lightScheme);
+    expectUniform(light.black, lightScheme.onSurface);
+    expectUniform(light.white, lightScheme.surface);
+
+    final dark = Typography.material2021(colorScheme: darkScheme);
+    expectUniform(dark.black, darkScheme.surface);
+    expectUniform(dark.white, darkScheme.onSurface);
+  });
+
+  test('Typography.material2021 uses the provided geometry text themes', () {
+    const englishLike = TextTheme(bodyMedium: TextStyle(fontSize: 1.0));
+    const dense = TextTheme(bodyMedium: TextStyle(fontSize: 2.0));
+    const tall = TextTheme(bodyMedium: TextStyle(fontSize: 3.0));
+
+    final typography = Typography.material2021(englishLike: englishLike, dense: dense, tall: tall);
+    expect(typography.englishLike, englishLike);
+    expect(typography.dense, dense);
+    expect(typography.tall, tall);
+
+    final defaults = Typography.material2021();
+    expect(defaults.englishLike, Typography.englishLike2021);
+    expect(defaults.dense, Typography.dense2021);
+    expect(defaults.tall, Typography.tall2021);
   });
 }

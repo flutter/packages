@@ -8,13 +8,13 @@
 /// @docImport 'text_button.dart';
 /// @docImport 'theme.dart';
 /// @docImport 'theme_data.dart';
+/// @docImport 'typography.dart';
 library;
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
 
 import 'theme.dart';
-import 'typography.dart';
 
 /// Material design text theme.
 ///
@@ -369,22 +369,26 @@ class TextTheme with Diagnosticable {
     if (other == null) {
       return this;
     }
+
+    TextStyle? mergeStyles(TextStyle? style, TextStyle? otherStyle) =>
+        style?.merge(otherStyle) ?? otherStyle;
+
     return copyWith(
-      displayLarge: displayLarge?.merge(other.displayLarge) ?? other.displayLarge,
-      displayMedium: displayMedium?.merge(other.displayMedium) ?? other.displayMedium,
-      displaySmall: displaySmall?.merge(other.displaySmall) ?? other.displaySmall,
-      headlineLarge: headlineLarge?.merge(other.headlineLarge) ?? other.headlineLarge,
-      headlineMedium: headlineMedium?.merge(other.headlineMedium) ?? other.headlineMedium,
-      headlineSmall: headlineSmall?.merge(other.headlineSmall) ?? other.headlineSmall,
-      titleLarge: titleLarge?.merge(other.titleLarge) ?? other.titleLarge,
-      titleMedium: titleMedium?.merge(other.titleMedium) ?? other.titleMedium,
-      titleSmall: titleSmall?.merge(other.titleSmall) ?? other.titleSmall,
-      bodyLarge: bodyLarge?.merge(other.bodyLarge) ?? other.bodyLarge,
-      bodyMedium: bodyMedium?.merge(other.bodyMedium) ?? other.bodyMedium,
-      bodySmall: bodySmall?.merge(other.bodySmall) ?? other.bodySmall,
-      labelLarge: labelLarge?.merge(other.labelLarge) ?? other.labelLarge,
-      labelMedium: labelMedium?.merge(other.labelMedium) ?? other.labelMedium,
-      labelSmall: labelSmall?.merge(other.labelSmall) ?? other.labelSmall,
+      displayLarge: mergeStyles(displayLarge, other.displayLarge),
+      displayMedium: mergeStyles(displayMedium, other.displayMedium),
+      displaySmall: mergeStyles(displaySmall, other.displaySmall),
+      headlineLarge: mergeStyles(headlineLarge, other.headlineLarge),
+      headlineMedium: mergeStyles(headlineMedium, other.headlineMedium),
+      headlineSmall: mergeStyles(headlineSmall, other.headlineSmall),
+      titleLarge: mergeStyles(titleLarge, other.titleLarge),
+      titleMedium: mergeStyles(titleMedium, other.titleMedium),
+      titleSmall: mergeStyles(titleSmall, other.titleSmall),
+      bodyLarge: mergeStyles(bodyLarge, other.bodyLarge),
+      bodyMedium: mergeStyles(bodyMedium, other.bodyMedium),
+      bodySmall: mergeStyles(bodySmall, other.bodySmall),
+      labelLarge: mergeStyles(labelLarge, other.labelLarge),
+      labelMedium: mergeStyles(labelMedium, other.labelMedium),
+      labelSmall: mergeStyles(labelSmall, other.labelSmall),
     );
   }
 
@@ -418,292 +422,42 @@ class TextTheme with Diagnosticable {
     List<FontFeature>? fontFeatures,
     List<FontVariation>? fontVariations,
   }) {
+    TextStyle? applyTo(TextStyle? style, Color? color) => style?.apply(
+      color: color,
+      decoration: decoration,
+      decorationColor: decorationColor,
+      decorationStyle: decorationStyle,
+      fontFamily: fontFamily,
+      fontFamilyFallback: fontFamilyFallback,
+      fontSizeFactor: fontSizeFactor,
+      fontSizeDelta: fontSizeDelta,
+      letterSpacingDelta: letterSpacingDelta,
+      letterSpacingFactor: letterSpacingFactor,
+      wordSpacingDelta: wordSpacingDelta,
+      wordSpacingFactor: wordSpacingFactor,
+      heightFactor: heightFactor,
+      heightDelta: heightDelta,
+      package: package,
+      fontFeatures: fontFeatures,
+      fontVariations: fontVariations,
+    );
+
     return TextTheme(
-      displayLarge: displayLarge?.apply(
-        color: displayColor,
-        decoration: decoration,
-        decorationColor: decorationColor,
-        decorationStyle: decorationStyle,
-        fontFamily: fontFamily,
-        fontFamilyFallback: fontFamilyFallback,
-        fontSizeFactor: fontSizeFactor,
-        fontSizeDelta: fontSizeDelta,
-        letterSpacingDelta: letterSpacingDelta,
-        letterSpacingFactor: letterSpacingFactor,
-        wordSpacingDelta: wordSpacingDelta,
-        wordSpacingFactor: wordSpacingFactor,
-        heightFactor: heightFactor,
-        heightDelta: heightDelta,
-        package: package,
-        fontFeatures: fontFeatures,
-        fontVariations: fontVariations,
-      ),
-      displayMedium: displayMedium?.apply(
-        color: displayColor,
-        decoration: decoration,
-        decorationColor: decorationColor,
-        decorationStyle: decorationStyle,
-        fontFamily: fontFamily,
-        fontFamilyFallback: fontFamilyFallback,
-        fontSizeFactor: fontSizeFactor,
-        fontSizeDelta: fontSizeDelta,
-        letterSpacingDelta: letterSpacingDelta,
-        letterSpacingFactor: letterSpacingFactor,
-        wordSpacingDelta: wordSpacingDelta,
-        wordSpacingFactor: wordSpacingFactor,
-        heightFactor: heightFactor,
-        heightDelta: heightDelta,
-        package: package,
-        fontFeatures: fontFeatures,
-        fontVariations: fontVariations,
-      ),
-      displaySmall: displaySmall?.apply(
-        color: displayColor,
-        decoration: decoration,
-        decorationColor: decorationColor,
-        decorationStyle: decorationStyle,
-        fontFamily: fontFamily,
-        fontFamilyFallback: fontFamilyFallback,
-        fontSizeFactor: fontSizeFactor,
-        fontSizeDelta: fontSizeDelta,
-        letterSpacingDelta: letterSpacingDelta,
-        letterSpacingFactor: letterSpacingFactor,
-        wordSpacingDelta: wordSpacingDelta,
-        wordSpacingFactor: wordSpacingFactor,
-        heightFactor: heightFactor,
-        heightDelta: heightDelta,
-        package: package,
-        fontFeatures: fontFeatures,
-        fontVariations: fontVariations,
-      ),
-      headlineLarge: headlineLarge?.apply(
-        color: displayColor,
-        decoration: decoration,
-        decorationColor: decorationColor,
-        decorationStyle: decorationStyle,
-        fontFamily: fontFamily,
-        fontFamilyFallback: fontFamilyFallback,
-        fontSizeFactor: fontSizeFactor,
-        fontSizeDelta: fontSizeDelta,
-        letterSpacingDelta: letterSpacingDelta,
-        letterSpacingFactor: letterSpacingFactor,
-        wordSpacingDelta: wordSpacingDelta,
-        wordSpacingFactor: wordSpacingFactor,
-        heightFactor: heightFactor,
-        heightDelta: heightDelta,
-        package: package,
-        fontFeatures: fontFeatures,
-        fontVariations: fontVariations,
-      ),
-      headlineMedium: headlineMedium?.apply(
-        color: displayColor,
-        decoration: decoration,
-        decorationColor: decorationColor,
-        decorationStyle: decorationStyle,
-        fontFamily: fontFamily,
-        fontFamilyFallback: fontFamilyFallback,
-        fontSizeFactor: fontSizeFactor,
-        fontSizeDelta: fontSizeDelta,
-        letterSpacingDelta: letterSpacingDelta,
-        letterSpacingFactor: letterSpacingFactor,
-        wordSpacingDelta: wordSpacingDelta,
-        wordSpacingFactor: wordSpacingFactor,
-        heightFactor: heightFactor,
-        heightDelta: heightDelta,
-        package: package,
-        fontFeatures: fontFeatures,
-        fontVariations: fontVariations,
-      ),
-      headlineSmall: headlineSmall?.apply(
-        color: bodyColor,
-        decoration: decoration,
-        decorationColor: decorationColor,
-        decorationStyle: decorationStyle,
-        fontFamily: fontFamily,
-        fontFamilyFallback: fontFamilyFallback,
-        fontSizeFactor: fontSizeFactor,
-        fontSizeDelta: fontSizeDelta,
-        letterSpacingDelta: letterSpacingDelta,
-        letterSpacingFactor: letterSpacingFactor,
-        wordSpacingDelta: wordSpacingDelta,
-        wordSpacingFactor: wordSpacingFactor,
-        heightFactor: heightFactor,
-        heightDelta: heightDelta,
-        package: package,
-        fontFeatures: fontFeatures,
-        fontVariations: fontVariations,
-      ),
-      titleLarge: titleLarge?.apply(
-        color: bodyColor,
-        decoration: decoration,
-        decorationColor: decorationColor,
-        decorationStyle: decorationStyle,
-        fontFamily: fontFamily,
-        fontFamilyFallback: fontFamilyFallback,
-        fontSizeFactor: fontSizeFactor,
-        fontSizeDelta: fontSizeDelta,
-        letterSpacingDelta: letterSpacingDelta,
-        letterSpacingFactor: letterSpacingFactor,
-        wordSpacingDelta: wordSpacingDelta,
-        wordSpacingFactor: wordSpacingFactor,
-        heightFactor: heightFactor,
-        heightDelta: heightDelta,
-        package: package,
-        fontFeatures: fontFeatures,
-        fontVariations: fontVariations,
-      ),
-      titleMedium: titleMedium?.apply(
-        color: bodyColor,
-        decoration: decoration,
-        decorationColor: decorationColor,
-        decorationStyle: decorationStyle,
-        fontFamily: fontFamily,
-        fontFamilyFallback: fontFamilyFallback,
-        fontSizeFactor: fontSizeFactor,
-        fontSizeDelta: fontSizeDelta,
-        letterSpacingDelta: letterSpacingDelta,
-        letterSpacingFactor: letterSpacingFactor,
-        wordSpacingDelta: wordSpacingDelta,
-        wordSpacingFactor: wordSpacingFactor,
-        heightFactor: heightFactor,
-        heightDelta: heightDelta,
-        package: package,
-        fontFeatures: fontFeatures,
-        fontVariations: fontVariations,
-      ),
-      titleSmall: titleSmall?.apply(
-        color: bodyColor,
-        decoration: decoration,
-        decorationColor: decorationColor,
-        decorationStyle: decorationStyle,
-        fontFamily: fontFamily,
-        fontFamilyFallback: fontFamilyFallback,
-        fontSizeFactor: fontSizeFactor,
-        fontSizeDelta: fontSizeDelta,
-        letterSpacingDelta: letterSpacingDelta,
-        letterSpacingFactor: letterSpacingFactor,
-        wordSpacingDelta: wordSpacingDelta,
-        wordSpacingFactor: wordSpacingFactor,
-        heightFactor: heightFactor,
-        heightDelta: heightDelta,
-        package: package,
-        fontFeatures: fontFeatures,
-        fontVariations: fontVariations,
-      ),
-      bodyLarge: bodyLarge?.apply(
-        color: bodyColor,
-        decoration: decoration,
-        decorationColor: decorationColor,
-        decorationStyle: decorationStyle,
-        fontFamily: fontFamily,
-        fontFamilyFallback: fontFamilyFallback,
-        fontSizeFactor: fontSizeFactor,
-        fontSizeDelta: fontSizeDelta,
-        letterSpacingDelta: letterSpacingDelta,
-        letterSpacingFactor: letterSpacingFactor,
-        wordSpacingDelta: wordSpacingDelta,
-        wordSpacingFactor: wordSpacingFactor,
-        heightFactor: heightFactor,
-        heightDelta: heightDelta,
-        package: package,
-        fontFeatures: fontFeatures,
-        fontVariations: fontVariations,
-      ),
-      bodyMedium: bodyMedium?.apply(
-        color: bodyColor,
-        decoration: decoration,
-        decorationColor: decorationColor,
-        decorationStyle: decorationStyle,
-        fontFamily: fontFamily,
-        fontFamilyFallback: fontFamilyFallback,
-        fontSizeFactor: fontSizeFactor,
-        fontSizeDelta: fontSizeDelta,
-        letterSpacingDelta: letterSpacingDelta,
-        letterSpacingFactor: letterSpacingFactor,
-        wordSpacingDelta: wordSpacingDelta,
-        wordSpacingFactor: wordSpacingFactor,
-        heightFactor: heightFactor,
-        heightDelta: heightDelta,
-        package: package,
-        fontFeatures: fontFeatures,
-        fontVariations: fontVariations,
-      ),
-      bodySmall: bodySmall?.apply(
-        color: displayColor,
-        decoration: decoration,
-        decorationColor: decorationColor,
-        decorationStyle: decorationStyle,
-        fontFamily: fontFamily,
-        fontFamilyFallback: fontFamilyFallback,
-        fontSizeFactor: fontSizeFactor,
-        fontSizeDelta: fontSizeDelta,
-        letterSpacingDelta: letterSpacingDelta,
-        letterSpacingFactor: letterSpacingFactor,
-        wordSpacingDelta: wordSpacingDelta,
-        wordSpacingFactor: wordSpacingFactor,
-        heightFactor: heightFactor,
-        heightDelta: heightDelta,
-        package: package,
-        fontFeatures: fontFeatures,
-        fontVariations: fontVariations,
-      ),
-      labelLarge: labelLarge?.apply(
-        color: bodyColor,
-        decoration: decoration,
-        decorationColor: decorationColor,
-        decorationStyle: decorationStyle,
-        fontFamily: fontFamily,
-        fontFamilyFallback: fontFamilyFallback,
-        fontSizeFactor: fontSizeFactor,
-        fontSizeDelta: fontSizeDelta,
-        letterSpacingDelta: letterSpacingDelta,
-        letterSpacingFactor: letterSpacingFactor,
-        wordSpacingDelta: wordSpacingDelta,
-        wordSpacingFactor: wordSpacingFactor,
-        heightFactor: heightFactor,
-        heightDelta: heightDelta,
-        package: package,
-        fontFeatures: fontFeatures,
-        fontVariations: fontVariations,
-      ),
-      labelMedium: labelMedium?.apply(
-        color: bodyColor,
-        decoration: decoration,
-        decorationColor: decorationColor,
-        decorationStyle: decorationStyle,
-        fontFamily: fontFamily,
-        fontFamilyFallback: fontFamilyFallback,
-        fontSizeFactor: fontSizeFactor,
-        fontSizeDelta: fontSizeDelta,
-        letterSpacingDelta: letterSpacingDelta,
-        letterSpacingFactor: letterSpacingFactor,
-        wordSpacingDelta: wordSpacingDelta,
-        wordSpacingFactor: wordSpacingFactor,
-        heightFactor: heightFactor,
-        heightDelta: heightDelta,
-        package: package,
-        fontFeatures: fontFeatures,
-        fontVariations: fontVariations,
-      ),
-      labelSmall: labelSmall?.apply(
-        color: bodyColor,
-        decoration: decoration,
-        decorationColor: decorationColor,
-        decorationStyle: decorationStyle,
-        fontFamily: fontFamily,
-        fontFamilyFallback: fontFamilyFallback,
-        fontSizeFactor: fontSizeFactor,
-        fontSizeDelta: fontSizeDelta,
-        letterSpacingDelta: letterSpacingDelta,
-        letterSpacingFactor: letterSpacingFactor,
-        wordSpacingDelta: wordSpacingDelta,
-        wordSpacingFactor: wordSpacingFactor,
-        heightFactor: heightFactor,
-        heightDelta: heightDelta,
-        package: package,
-        fontFeatures: fontFeatures,
-        fontVariations: fontVariations,
-      ),
+      displayLarge: applyTo(displayLarge, displayColor),
+      displayMedium: applyTo(displayMedium, displayColor),
+      displaySmall: applyTo(displaySmall, displayColor),
+      headlineLarge: applyTo(headlineLarge, displayColor),
+      headlineMedium: applyTo(headlineMedium, displayColor),
+      headlineSmall: applyTo(headlineSmall, bodyColor),
+      titleLarge: applyTo(titleLarge, bodyColor),
+      titleMedium: applyTo(titleMedium, bodyColor),
+      titleSmall: applyTo(titleSmall, bodyColor),
+      bodyLarge: applyTo(bodyLarge, bodyColor),
+      bodyMedium: applyTo(bodyMedium, bodyColor),
+      bodySmall: applyTo(bodySmall, displayColor),
+      labelLarge: applyTo(labelLarge, bodyColor),
+      labelMedium: applyTo(labelMedium, bodyColor),
+      labelSmall: applyTo(labelSmall, bodyColor),
     );
   }
 
@@ -800,103 +554,33 @@ class TextTheme with Diagnosticable {
   @override
   void debugFillProperties(DiagnosticPropertiesBuilder properties) {
     super.debugFillProperties(properties);
-    final TextTheme defaultTheme = Typography.material2018(platform: defaultTargetPlatform).black;
-    properties.add(
-      DiagnosticsProperty<TextStyle>(
-        'displayLarge',
-        displayLarge,
-        defaultValue: defaultTheme.displayLarge,
-      ),
-    );
-    properties.add(
-      DiagnosticsProperty<TextStyle>(
-        'displayMedium',
-        displayMedium,
-        defaultValue: defaultTheme.displayMedium,
-      ),
-    );
-    properties.add(
-      DiagnosticsProperty<TextStyle>(
-        'displaySmall',
-        displaySmall,
-        defaultValue: defaultTheme.displaySmall,
-      ),
-    );
-    properties.add(
-      DiagnosticsProperty<TextStyle>(
-        'headlineLarge',
-        headlineLarge,
-        defaultValue: defaultTheme.headlineLarge,
-      ),
-    );
-    properties.add(
-      DiagnosticsProperty<TextStyle>(
-        'headlineMedium',
-        headlineMedium,
-        defaultValue: defaultTheme.headlineMedium,
-      ),
-    );
-    properties.add(
-      DiagnosticsProperty<TextStyle>(
-        'headlineSmall',
-        headlineSmall,
-        defaultValue: defaultTheme.headlineSmall,
-      ),
-    );
-    properties.add(
-      DiagnosticsProperty<TextStyle>(
-        'titleLarge',
-        titleLarge,
-        defaultValue: defaultTheme.titleLarge,
-      ),
-    );
-    properties.add(
-      DiagnosticsProperty<TextStyle>(
-        'titleMedium',
-        titleMedium,
-        defaultValue: defaultTheme.titleMedium,
-      ),
-    );
-    properties.add(
-      DiagnosticsProperty<TextStyle>(
-        'titleSmall',
-        titleSmall,
-        defaultValue: defaultTheme.titleSmall,
-      ),
-    );
-    properties.add(
-      DiagnosticsProperty<TextStyle>('bodyLarge', bodyLarge, defaultValue: defaultTheme.bodyLarge),
-    );
-    properties.add(
-      DiagnosticsProperty<TextStyle>(
-        'bodyMedium',
-        bodyMedium,
-        defaultValue: defaultTheme.bodyMedium,
-      ),
-    );
-    properties.add(
-      DiagnosticsProperty<TextStyle>('bodySmall', bodySmall, defaultValue: defaultTheme.bodySmall),
-    );
-    properties.add(
-      DiagnosticsProperty<TextStyle>(
-        'labelLarge',
-        labelLarge,
-        defaultValue: defaultTheme.labelLarge,
-      ),
-    );
-    properties.add(
-      DiagnosticsProperty<TextStyle>(
-        'labelMedium',
-        labelMedium,
-        defaultValue: defaultTheme.labelMedium,
-      ),
-    );
-    properties.add(
-      DiagnosticsProperty<TextStyle>(
-        'labelSmall',
-        labelSmall,
-        defaultValue: defaultTheme.labelSmall,
-      ),
-    );
+    final TextTheme defaultTheme = ThemeData.fallback().textTheme;
+    // A null style falls back to the default style when merged into a
+    // ThemeData, so it is not reported as differing from the default.
+    void add(String name, TextStyle? style, TextStyle? defaultStyle) {
+      properties.add(
+        DiagnosticsProperty<TextStyle>(
+          name,
+          style,
+          defaultValue: style == null ? null : defaultStyle,
+        ),
+      );
+    }
+
+    add('displayLarge', displayLarge, defaultTheme.displayLarge);
+    add('displayMedium', displayMedium, defaultTheme.displayMedium);
+    add('displaySmall', displaySmall, defaultTheme.displaySmall);
+    add('headlineLarge', headlineLarge, defaultTheme.headlineLarge);
+    add('headlineMedium', headlineMedium, defaultTheme.headlineMedium);
+    add('headlineSmall', headlineSmall, defaultTheme.headlineSmall);
+    add('titleLarge', titleLarge, defaultTheme.titleLarge);
+    add('titleMedium', titleMedium, defaultTheme.titleMedium);
+    add('titleSmall', titleSmall, defaultTheme.titleSmall);
+    add('bodyLarge', bodyLarge, defaultTheme.bodyLarge);
+    add('bodyMedium', bodyMedium, defaultTheme.bodyMedium);
+    add('bodySmall', bodySmall, defaultTheme.bodySmall);
+    add('labelLarge', labelLarge, defaultTheme.labelLarge);
+    add('labelMedium', labelMedium, defaultTheme.labelMedium);
+    add('labelSmall', labelSmall, defaultTheme.labelSmall);
   }
 }
