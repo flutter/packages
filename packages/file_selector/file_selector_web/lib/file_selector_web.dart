@@ -45,7 +45,7 @@ base class FileSelectorWeb extends FileSelectorPlatform {
   ]) async {
     // This is intended to be passed to XFile, which ignores the path, so
     // provide a non-null dummy value.
-    return FileSaveLocation(XFile.fileSystem(path: ''));
+    return FileSaveLocation(XFile.scopedStorage(uri: ''));
   }
 
   @override

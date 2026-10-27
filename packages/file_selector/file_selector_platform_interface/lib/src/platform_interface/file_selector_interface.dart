@@ -5,7 +5,7 @@
 import '../types/types.dart';
 
 /// The interface that implementations of file_selector must implement.
-base class FileSelectorPlatform {
+abstract base class FileSelectorPlatform {
   /// The default instance of [FileSelectorPlatform] to use.
   static FileSelectorPlatform? instance;
 
