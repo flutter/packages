@@ -8,6 +8,7 @@ import 'dart:typed_data';
 
 import 'package:cross_file_platform_interface/cross_file_platform_interface.dart';
 import 'package:cross_file_web/cross_file_web.dart';
+import 'package:cross_file_web/cross_file_web_safe.dart' as web_safe;
 import 'package:cross_file_web/src/web_helpers.dart';
 import 'package:cross_file_web/src/web_scoped_storage_cross_file.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -144,11 +145,11 @@ void main() {
       });
     });
 
-    group('Create with bytes', () {
+    group('Create with bytes with platform safe import', () {
       testWidgets('Create with bytes and fileName', (_) async {
         const testName = 'goodbye.txt';
         final file = PlatformScopedStorageXFile(
-          WebScopedStorageXFileCreationParams.fromBytes(testFileBytes, fileName: testName),
+          web_safe.WebScopedStorageXFileCreationParams.fromBytes(testFileBytes, fileName: testName),
         );
 
         expect(await file.readAsBytes(), testFileBytes);
@@ -157,7 +158,7 @@ void main() {
 
       testWidgets('Create with bytes and no fileName', (_) async {
         final file = PlatformScopedStorageXFile(
-          WebScopedStorageXFileCreationParams.fromBytes(testFileBytes),
+          web_safe.WebScopedStorageXFileCreationParams.fromBytes(testFileBytes),
         );
 
         expect(await file.readAsBytes(), testFileBytes);
