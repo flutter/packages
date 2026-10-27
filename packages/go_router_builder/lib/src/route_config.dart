@@ -912,26 +912,19 @@ $routeDataClassName.$dataConvertionFunctionName(
 
 /// Whether [routeDataClass] overrides the default route data `onExit` method.
 bool _hasOverriddenOnExit(InterfaceElement routeDataClass, String baseClassName) {
-  if (routeDataClass.methods.any((method) => method.name == 'onExit')) {
-    return true;
-  }
-
   final LibraryElement library = routeDataClass.library;
-  final MethodElement? inheritedOnExit = routeDataClass.lookUpInheritedMethod(
-    methodName: 'onExit',
-    library: library,
-  );
+  final MethodElement? routeOnExit = routeDataClass.lookUpMethod(name: 'onExit', library: library);
   final baseClassChecker = TypeChecker.fromUrl(
     'package:go_router/src/route_data.dart#$baseClassName',
   );
   final InterfaceElement? baseClassElement = routeDataClass.allSupertypes
       .firstWhereOrNull(baseClassChecker.isExactlyType)
       ?.element;
-  final MethodElement? defaultOnExit = baseClassElement?.lookUpInheritedMethod(
-    methodName: 'onExit',
+  final MethodElement? defaultOnExit = baseClassElement?.lookUpMethod(
+    name: 'onExit',
     library: library,
   );
-  return inheritedOnExit != null && inheritedOnExit != defaultOnExit;
+  return routeOnExit != null && routeOnExit != defaultOnExit;
 }
 
 String _enumMapConst(InterfaceType type) {
