@@ -11,6 +11,23 @@ so you do not need to add it to your `pubspec.yaml`.
 However, if you `import` this package to use any of its APIs directly, you
 should add it to your `pubspec.yaml` as usual.
 
+## Importing `cross_file_web`
+
+This plugin provides an import to access platform specific features that only compiles when
+targeting web and one that compiles on all other platforms.
+
+To ensure compilation on all platforms, use:
+
+```dart
+import 'package:cross_file_web/cross_file_web_safe.dart';
+```
+
+To access all features that can only compile on web, use:
+
+```dart
+import 'package:cross_file_web/cross_file_web.dart';
+```
+
 ### Browser compatibility
 
 [![Data on Global support for Blob constructing](https://caniuse.bitsofco.de/image/blobbuilder.png)](https://caniuse.com/blobbuilder)
