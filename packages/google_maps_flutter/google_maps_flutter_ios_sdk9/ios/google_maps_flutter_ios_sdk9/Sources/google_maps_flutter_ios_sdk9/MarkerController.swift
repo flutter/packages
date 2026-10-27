@@ -4,6 +4,7 @@
 
 import Flutter
 import GoogleMaps
+import QuartzCore
 import UIKit
 
 /// Defines marker controllable by Flutter.
@@ -44,7 +45,8 @@ class MarkerController {
   func update(
     from platformMarker: PlatformMarker,
     assetProvider: AssetProvider,
-    screenScale: CGFloat
+    screenScale: CGFloat,
+    markerUpdateAnimationConfiguration: PlatformMarkerUpdateAnimationConfiguration
   ) {
     clusterManagerIdentifier = platformMarker.clusterManagerId
     consumeTapEvents = platformMarker.consumeTapEvents
@@ -62,6 +64,7 @@ class MarkerController {
       mapView: mapView,
       assetProvider: assetProvider,
       screenScale: screenScale,
+      markerUpdateAnimationConfiguration: markerUpdateAnimationConfiguration,
       usingOpacityForVisibility: useOpacityForVisibility
     )
   }
@@ -75,6 +78,7 @@ class MarkerController {
     mapView: GMSMapView?,
     assetProvider: AssetProvider,
     screenScale: CGFloat,
+    markerUpdateAnimationConfiguration: PlatformMarkerUpdateAnimationConfiguration?,
     usingOpacityForVisibility useOpacityForVisibility: Bool
   ) {
     marker.groundAnchor = platformMarker.anchor.toCGPoint()
@@ -84,8 +88,27 @@ class MarkerController {
       screenScale: screenScale
     )
     marker.isFlat = platformMarker.flat
-    marker.position = platformMarker.position.toCLLocationCoordinate2D()
-    marker.rotation = platformMarker.rotation
+    let position = platformMarker.position.toCLLocationCoordinate2D()
+    let rotation = platformMarker.rotation
+    // The iOS Maps SDK implicitly animates marker position and rotation changes.
+    // For each property whose animation is disabled, apply the update inside a
+    // CATransaction with actions disabled so it takes effect immediately.
+    if markerUpdateAnimationConfiguration?.positionAnimationsEnabled == false {
+      CATransaction.begin()
+      CATransaction.setDisableActions(true)
+      marker.position = position
+      CATransaction.commit()
+    } else {
+      marker.position = position
+    }
+    if markerUpdateAnimationConfiguration?.rotationAnimationsEnabled == false {
+      CATransaction.begin()
+      CATransaction.setDisableActions(true)
+      marker.rotation = rotation
+      CATransaction.commit()
+    } else {
+      marker.rotation = rotation
+    }
     marker.zIndex = Int32(platformMarker.zIndex)
     let infoWindow = platformMarker.infoWindow
     marker.infoWindowAnchor = infoWindow.anchor.toCGPoint()
@@ -118,6 +141,7 @@ class MarkersController {
   private let assetProvider: AssetProvider
   private weak var mapView: GMSMapView?
   private let markerType: PlatformMarkerType
+  private var markerUpdateAnimationConfiguration: PlatformMarkerUpdateAnimationConfiguration
 
   init(
     mapView: GMSMapView,
@@ -131,6 +155,10 @@ class MarkersController {
     self.clusterManagersController = clusterManagersController
     self.assetProvider = assetProvider
     self.markerType = markerType
+    self.markerUpdateAnimationConfiguration = PlatformMarkerUpdateAnimationConfiguration(
+      positionAnimationsEnabled: true,
+      rotationAnimationsEnabled: true
+    )
   }
 
   func add(_ markersToAdd: [PlatformMarker]) {
@@ -158,7 +186,8 @@ class MarkersController {
     controller.update(
       from: markerToAdd,
       assetProvider: assetProvider,
-      screenScale: getScreenScale()
+      screenScale: getScreenScale(),
+      markerUpdateAnimationConfiguration: markerUpdateAnimationConfiguration
     )
 
     if let clusterManagerIdentifier = clusterManagerIdentifier {
@@ -184,7 +213,8 @@ class MarkersController {
     controller.update(
       from: markerToChange,
       assetProvider: assetProvider,
-      screenScale: getScreenScale()
+      screenScale: getScreenScale(),
+      markerUpdateAnimationConfiguration: markerUpdateAnimationConfiguration
     )
 
     if let previousId = previousClusterManagerIdentifier, previousId != clusterManagerIdentifier {
@@ -213,6 +243,12 @@ class MarkersController {
       controller.removeMarker()
     }
     markerIdentifierToController.removeValue(forKey: identifier)
+  }
+
+  func setMarkerUpdateAnimationConfiguration(
+    _ configuration: PlatformMarkerUpdateAnimationConfiguration
+  ) {
+    markerUpdateAnimationConfiguration = configuration
   }
 
   func didTapMarker(withIdentifier identifier: String) -> Bool {
