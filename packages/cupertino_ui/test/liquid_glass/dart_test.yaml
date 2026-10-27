@@ -1,0 +1,3 @@
+tags:
+  golden:
+    description: "Golden tests that generate or compare against golden files"
