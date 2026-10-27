@@ -9,6 +9,12 @@ import 'package:cross_file_platform_interface/cross_file_platform_interface.dart
 import 'package:flutter/foundation.dart' show immutable;
 
 /// Base implementation of [PlatformScopedStorageXFileCreationParams] for web.
+///
+/// This implementation exists to provide access to platform-specific features
+/// that are safe to use when compiling on multiple platforms without a stub.
+///
+/// This class is a stub for the implementation in
+/// `web_scoped_storage_cross_file.dart`.
 @immutable
 base class WebScopedStorageXFileCreationParams extends PlatformScopedStorageXFileCreationParams {
   /// Constructs a [WebScopedStorageXFileCreationParams].
@@ -36,6 +42,12 @@ base class WebScopedStorageXFileCreationParams extends PlatformScopedStorageXFil
 }
 
 /// Implementation of [PlatformScopedStorageXFile] for web.
+///
+/// This implementation exists to provide access to platform-specific features
+/// that are safe to use when compiling on multiple platforms without a stub.
+///
+/// This class is a stub for the implementation in
+/// `web_scoped_storage_cross_file.dart`.
 base class WebScopedStorageXFile extends PlatformScopedStorageXFile
     with WebScopedStorageXFileExtension {
   /// Constructs a [WebScopedStorageXFile].
