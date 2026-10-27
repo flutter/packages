@@ -12,14 +12,14 @@ abstract base class FileSelectorPlatform {
   /// Opens a file dialog for loading files and returns a file.
   ///
   /// Returns `null` if the user cancels the operation.
-  Future<XFile?> openFile([OpenDialogOptions options = const OpenDialogOptions()]) {
+  Future<XFile?> openFile({OpenFileDialogOptions options = const OpenFileDialogOptions()}) {
     throw UnimplementedError('openFile() has not been implemented.');
   }
 
   /// Opens a file dialog for loading files and returns a list of files.
   ///
   /// Returns an empty list if the user cancels the operation.
-  Future<List<XFile>> openFiles([OpenDialogOptions options = const OpenDialogOptions()]) {
+  Future<List<XFile>> openFiles({OpenFilesDialogOptions options = const OpenFilesDialogOptions()}) {
     throw UnimplementedError('openFiles() has not been implemented.');
   }
 
@@ -27,9 +27,9 @@ abstract base class FileSelectorPlatform {
   /// to save.
   ///
   /// Returns `null` if the user cancels the operation.
-  Future<FileSaveLocation?> getSaveLocation([
+  Future<FileSaveLocation?> getSaveLocation({
     SaveLocationOptions options = const SaveLocationOptions(),
-  ]) async {
+  }) async {
     throw UnimplementedError('getSaveLocation() has not been implemented.');
   }
 
@@ -39,7 +39,9 @@ abstract base class FileSelectorPlatform {
   /// file dialog. See [FileDialogOptions] for more details.
   ///
   /// Returns `null` if the user cancels the operation.
-  Future<XDirectory?> getDirectory([FileDialogOptions options = const FileDialogOptions()]) {
+  Future<XDirectory?> getDirectory({
+    GetDirectoryDialogOptions options = const GetDirectoryDialogOptions(),
+  }) {
     throw UnimplementedError('getDirectory() has not been implemented.');
   }
 
@@ -49,7 +51,9 @@ abstract base class FileSelectorPlatform {
   /// the file dialog. See [FileDialogOptions] for more details.
   ///
   /// Returns an empty list if the user cancels the operation.
-  Future<List<XDirectory>> getDirectories([FileDialogOptions options = const FileDialogOptions()]) {
+  Future<List<XDirectory>> getDirectories({
+    GetDirectoriesDialogOptions options = const GetDirectoriesDialogOptions(),
+  }) {
     throw UnimplementedError('getDirectories() has not been implemented.');
   }
 }

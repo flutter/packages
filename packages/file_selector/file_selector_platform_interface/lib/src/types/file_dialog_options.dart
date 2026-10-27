@@ -32,9 +32,9 @@ class FileDialogOptions {
 
 /// Configuration options to open a file.
 @immutable
-class OpenDialogOptions extends FileDialogOptions {
+class OpenFileDialogOptions extends FileDialogOptions {
   /// Creates a new options set with the given settings.
-  const OpenDialogOptions({
+  const OpenFileDialogOptions({
     super.initialDirectory,
     super.confirmButtonText,
     super.canCreateDirectories,
@@ -43,6 +43,43 @@ class OpenDialogOptions extends FileDialogOptions {
 
   /// A set of allowed XTypes.
   final List<XTypeGroup>? acceptedTypeGroups;
+}
+
+/// Configuration options to open multiple files.
+@immutable
+class OpenFilesDialogOptions extends FileDialogOptions {
+  /// Creates a new options set with the given settings.
+  const OpenFilesDialogOptions({
+    super.initialDirectory,
+    super.confirmButtonText,
+    super.canCreateDirectories,
+    this.acceptedTypeGroups,
+  });
+
+  /// A set of allowed XTypes.
+  final List<XTypeGroup>? acceptedTypeGroups;
+}
+
+/// Configuration options to open a directory.
+@immutable
+class GetDirectoryDialogOptions extends FileDialogOptions {
+  /// Creates a new options set with the given settings.
+  const GetDirectoryDialogOptions({
+    super.initialDirectory,
+    super.confirmButtonText,
+    super.canCreateDirectories,
+  });
+}
+
+/// Configuration options to open multiple directories.
+@immutable
+class GetDirectoriesDialogOptions extends FileDialogOptions {
+  /// Creates a new options set with the given settings.
+  const GetDirectoriesDialogOptions({
+    super.initialDirectory,
+    super.confirmButtonText,
+    super.canCreateDirectories,
+  });
 }
 
 /// Configuration options for a save location.
