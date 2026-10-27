@@ -485,4 +485,57 @@ void main() {
       expect(typography.black.bodyLarge!.color, lightScheme.onSurface);
     });
   });
+
+  test('Typography.material2021 colors black and white text themes from the colorScheme', () {
+    const lightScheme = ColorScheme.light(onSurface: Color(0xFF000001), surface: Color(0xFFFFFFF1));
+    const darkScheme = ColorScheme.dark(onSurface: Color(0xFFFFFFF2), surface: Color(0xFF000002));
+
+    void expectUniform(TextTheme theme, Color color) {
+      final styles = <TextStyle?>[
+        theme.displayLarge,
+        theme.displayMedium,
+        theme.displaySmall,
+        theme.headlineLarge,
+        theme.headlineMedium,
+        theme.headlineSmall,
+        theme.titleLarge,
+        theme.titleMedium,
+        theme.titleSmall,
+        theme.bodyLarge,
+        theme.bodyMedium,
+        theme.bodySmall,
+        theme.labelLarge,
+        theme.labelMedium,
+        theme.labelSmall,
+      ];
+      for (final style in styles) {
+        expect(style!.color, color);
+        expect(style.decorationColor, color);
+      }
+    }
+
+    final light = Typography.material2021(colorScheme: lightScheme);
+    expectUniform(light.black, lightScheme.onSurface);
+    expectUniform(light.white, lightScheme.surface);
+
+    final dark = Typography.material2021(colorScheme: darkScheme);
+    expectUniform(dark.black, darkScheme.surface);
+    expectUniform(dark.white, darkScheme.onSurface);
+  });
+
+  test('Typography.material2021 uses the provided geometry text themes', () {
+    const englishLike = TextTheme(bodyMedium: TextStyle(fontSize: 1.0));
+    const dense = TextTheme(bodyMedium: TextStyle(fontSize: 2.0));
+    const tall = TextTheme(bodyMedium: TextStyle(fontSize: 3.0));
+
+    final typography = Typography.material2021(englishLike: englishLike, dense: dense, tall: tall);
+    expect(typography.englishLike, englishLike);
+    expect(typography.dense, dense);
+    expect(typography.tall, tall);
+
+    final defaults = Typography.material2021();
+    expect(defaults.englishLike, Typography.englishLike2021);
+    expect(defaults.dense, Typography.dense2021);
+    expect(defaults.tall, Typography.tall2021);
+  });
 }
