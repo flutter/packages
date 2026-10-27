@@ -28,7 +28,6 @@ abstract class TokenTemplateM3E extends TokenTemplate {
   _MaterialVersion get _version => _MaterialVersion.material3Expressive;
 }
 
-@visibleForTesting
 abstract class TokenTemplate {
   const TokenTemplate();
 
