@@ -1198,6 +1198,7 @@ class WebKitNavigationDelegate extends PlatformNavigationDelegate {
 
           switch (protectionSpace.authenticationMethod) {
             case NSUrlAuthenticationMethod.httpBasic:
+            case NSUrlAuthenticationMethod.httpDigest:
             case NSUrlAuthenticationMethod.httpNtlm:
               final void Function(HttpAuthRequest)? callback = delegate._onHttpAuthRequest;
               if (callback != null) {
