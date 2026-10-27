@@ -25,7 +25,7 @@ dev_dependencies:
   # in lib/src/dart/dart_generator.dart and _swiftFfiReservedFieldNames in
   # lib/src/pigeon_lib_internal.dart still match the Dart names FFIgen generates.
   ffigen: 22.0.0
-  jni: ^1.1.0
+  jni: ^1.1.1
   # When updating jnigen, check that _JniBindingNamer in
   # lib/src/dart/dart_generator.dart, and the name lists it uses, still match
   # JNIgen's renamer, then update the version linked in its doc comment.
