@@ -1,6 +1,12 @@
-## 0.8.13+13
+## 0.8.13+14
 
 * Returns an `invalid_image` error instead of an empty or missing file when a picked image cannot be saved.
+
+## 0.8.13+13
+
+* Splits the iOS implementation into mixed-language Swift Package Manager targets.
+* Migrates the plugin class from Objective-C to Swift.
+* Calls the single-item image and video completions once when more than one path is returned.
 
 ## 0.8.13+12
 

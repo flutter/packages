@@ -5,6 +5,11 @@
 #import "./include/in_app_purchase_storekit_objc/FIAPPaymentQueueDelegate.h"
 #import "./include/in_app_purchase_storekit_objc/FIAObjectTranslator.h"
 
+// StoreKit 1 is intentionally used as the fallback on iOS < 15 and macOS < 12,
+// where StoreKit 2 is unavailable. Suppress its deprecation warnings.
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
+
 @interface FIAPPaymentQueueDelegate ()
 
 // The designated Flutter method channel that handles if a transaction should be continued
@@ -79,3 +84,5 @@
 #endif
 
 @end
+
+#pragma clang diagnostic pop

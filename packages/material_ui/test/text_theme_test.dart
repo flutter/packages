@@ -2,6 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';
 
@@ -492,5 +493,47 @@ void main() {
     final TextTheme actualTextTheme = TextTheme.primaryOf(context);
 
     expect(actualTextTheme, equals(expectedTextTheme));
+  });
+
+  test('Default TextTheme debugFillProperties', () {
+    final builder = DiagnosticPropertiesBuilder();
+    ThemeData.fallback().textTheme.debugFillProperties(builder);
+
+    final List<String> nonDefaultPropertyNames = builder.properties
+        .where((DiagnosticsNode node) => !node.isFiltered(DiagnosticLevel.info))
+        .map((DiagnosticsNode node) => node.name!)
+        .toList();
+
+    expect(nonDefaultPropertyNames, isEmpty);
+  });
+
+  test('Custom TextTheme debugFillProperties', () {
+    final builder = DiagnosticPropertiesBuilder();
+    const TextTheme(
+      displayLarge: TextStyle(fontSize: 40.0),
+      bodyMedium: TextStyle(color: Color(0xFF123456)),
+    ).debugFillProperties(builder);
+
+    final List<String> nonDefaultPropertyNames = builder.properties
+        .where((DiagnosticsNode node) => !node.isFiltered(DiagnosticLevel.info))
+        .map((DiagnosticsNode node) => node.name!)
+        .toList();
+
+    expect(nonDefaultPropertyNames, <String>['displayLarge', 'bodyMedium']);
+  });
+
+  test('TextTheme debugFillProperties does not report styles that match the default', () {
+    final builder = DiagnosticPropertiesBuilder();
+    TextTheme(
+      displayLarge: ThemeData.fallback().textTheme.displayLarge,
+      bodyMedium: const TextStyle(color: Color(0xFF123456)),
+    ).debugFillProperties(builder);
+
+    final List<String> nonDefaultPropertyNames = builder.properties
+        .where((DiagnosticsNode node) => !node.isFiltered(DiagnosticLevel.info))
+        .map((DiagnosticsNode node) => node.name!)
+        .toList();
+
+    expect(nonDefaultPropertyNames, <String>['bodyMedium']);
   });
 }

@@ -1,3 +1,13 @@
+## 1.3.3
+
+* Throws an `UnimplementedError` instead of a `FormatException` when `text` or
+  `tspan` has a list of `x`, `y`, `dx` or `dy` values, which isn't supported.
+
+## 1.3.2
+
+* Fixes a `tspan` without its own position being drawn with its parent group
+  transform applied twice.
+
 ## 1.3.1
 
 * Adds support for SVG alpha masks (`mask-type="alpha"`).

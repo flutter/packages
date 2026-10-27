@@ -9,6 +9,10 @@ import UIKit
 
 @testable import image_picker_ios
 
+#if canImport(image_picker_ios_objc)
+  @testable import image_picker_ios_objc
+#endif
+
 /// Saves into a directory that does not exist, so writing the file fails.
 private final class UnwritablePhotoAssetUtil: FLTImagePickerPhotoAssetUtil {
   // Replaces the private +temporaryFilePath: helper, which the save methods call on `self`.
