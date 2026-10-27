@@ -1,3 +1,7 @@
+## 4.5.3
+
+* Adds support for `build` 5.
+
 ## 4.5.2
 
 - Adopts shared analyzer helpers from `package:source_helper` `^1.4.0`.
