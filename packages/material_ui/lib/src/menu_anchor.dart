@@ -627,13 +627,13 @@ class _MenuAnchorState extends State<MenuAnchor> with SingleTickerProviderStateM
     const double forwardFinalItemOffset = 1 - _kMenuItemRelativeFadeInDuration;
     const double reverseFinalItemOffset =
         1 - _kMenuItemRelativeFadeOutDuration - _kMenuItemRelativeFadeOutDelay;
+    final double divisor = (itemCount > 1 ? itemCount - 1 : 1).toDouble();
 
     // Spread every item evenly across the remaining time after accounting for
     // the fade in/out durations. Compute progress from the index so rounding
     // errors do not accumulate past the final item's interval.
-    for (var index = 0; index < itemCount; index++) {
-      final Widget child = widget.menuChildren[index];
-      final double itemProgress = itemCount > 1 ? index / (itemCount - 1) : 0.0;
+    for (final (int index, Widget child) in widget.menuChildren.indexed) {
+      final double itemProgress = index / divisor;
       final double forwardProgress = forwardFinalItemOffset * itemProgress;
       final double reverseProgress = reverseFinalItemOffset * itemProgress;
       final forwardCurve = Interval(
