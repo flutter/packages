@@ -14,7 +14,7 @@ class SharedPreferencesAsyncFoundationOptions extends SharedPreferencesOptions {
   SharedPreferencesAsyncFoundationOptions({this.suiteName}) {
     // Ensure that use of suite is compliant with required reason API category 1C8F.1; see
     // https://developer.apple.com/documentation/bundleresources/privacy_manifest_files/describing_use_of_required_reason_api
-    if (Platform.isIOS && !(suiteName?.startsWith('group.') ?? true)) {
+    if (!kIsWeb && Platform.isIOS && !(suiteName?.startsWith('group.') ?? true)) {
       throw ArgumentError('iOS suite name must begin with "group."');
     }
   }
