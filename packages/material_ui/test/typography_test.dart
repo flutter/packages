@@ -444,4 +444,45 @@ void main() {
     expect(textTheme.labelMedium!.color, light);
     expect(textTheme.labelSmall!.color, light);
   });
+
+  group('Typography.material2021 deprecated black and white', () {
+    const lightScheme = ColorScheme.light(onSurface: Color(0xFF000001), surface: Color(0xFFFFFFF1));
+    const custom = TextTheme(
+      bodyMedium: TextStyle(
+        fontFamily: 'Custom',
+        color: Color(0xFFFF0000),
+        decorationColor: Color(0xFF00FF00),
+      ),
+    );
+
+    test('keep non-color properties but replace colors from the color scheme', () {
+      final typography = Typography.material2021(
+        colorScheme: lightScheme,
+        // ignore: deprecated_member_use_from_same_package
+        black: custom,
+        // ignore: deprecated_member_use_from_same_package
+        white: custom,
+      );
+      expect(typography.black.bodyMedium!.fontFamily, 'Custom');
+      expect(typography.black.bodyMedium!.color, lightScheme.onSurface);
+      expect(typography.black.bodyMedium!.decorationColor, lightScheme.onSurface);
+      expect(typography.white.bodyMedium!.fontFamily, 'Custom');
+      expect(typography.white.bodyMedium!.color, lightScheme.surface);
+      expect(typography.white.bodyMedium!.decorationColor, lightScheme.surface);
+    });
+
+    test('copyWith can be used to customize colors instead', () {
+      final base = Typography.material2021(colorScheme: lightScheme);
+      final Typography typography = base.copyWith(
+        black: base.black.merge(custom),
+        white: base.white.merge(custom),
+      );
+      expect(typography.black.bodyMedium!.fontFamily, 'Custom');
+      expect(typography.black.bodyMedium!.color, const Color(0xFFFF0000));
+      expect(typography.white.bodyMedium!.color, const Color(0xFFFF0000));
+      // Styles that are not overridden keep the generated values.
+      expect(typography.black.bodyLarge!.fontFamily, 'Roboto');
+      expect(typography.black.bodyLarge!.color, lightScheme.onSurface);
+    });
+  });
 }
