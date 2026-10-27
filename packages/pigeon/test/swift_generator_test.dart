@@ -1815,6 +1815,87 @@ void main() {
     expect(code, contains('FlutterApiRegistrar.registeredFlutterApi.removeValue(forKey: name)'));
   });
 
+  test('ffi bridges of sealed class subclasses extend the sealed bridge', () {
+    final sink = StringBuffer();
+    const swiftOptions = InternalSwiftOptions(swiftOut: '', useFfi: true);
+    const generator = SwiftGenerator();
+    generator.generate(
+      swiftOptions,
+      buildSealedClassRoot(),
+      sink,
+      dartPackageName: DEFAULT_PACKAGE_NAME,
+    );
+    final code = sink.toString();
+
+    expect(code, contains('protocol Shape {'));
+    expect(code, contains('struct Circle: Shape, Hashable, CustomStringConvertible {'));
+    expect(code, contains('@objc class ShapeBridge: NSObject {'));
+    expect(code, contains('@objc class CircleBridge: ShapeBridge {'));
+    expect(code, contains('@objc class EmptyShapeBridge: ShapeBridge {'));
+    expect(code, isNot(contains('NSObject, Shape')));
+  });
+
+  test('ffi bridge of a sealed class dispatches to its subclasses', () {
+    final sink = StringBuffer();
+    const swiftOptions = InternalSwiftOptions(swiftOut: '', useFfi: true);
+    const generator = SwiftGenerator();
+    generator.generate(
+      swiftOptions,
+      buildSealedClassRoot(),
+      sink,
+      dartPackageName: DEFAULT_PACKAGE_NAME,
+    );
+    final code = sink.toString();
+
+    expect(code, contains('static func fromSwift(_ pigeonVar_Class: Shape?) -> ShapeBridge? {'));
+    expect(code, contains('case let pigeonVar_value as Circle:'));
+    expect(code, contains('return CircleBridge.fromSwift(pigeonVar_value)'));
+    expect(code, contains('static func toSwift(_ pigeonVar_bridge: ShapeBridge?) -> Shape? {'));
+    expect(code, contains('case let pigeonVar_value as CircleBridge:'));
+    expect(code, contains('return pigeonVar_value.toSwift()'));
+    expect(code, contains('ShapeBridge.toSwift(shapeArg)!'));
+    expect(code, contains('ShapeBridge.toSwift(shapeArg))'));
+    expect(code, contains('ShapeBridge.fromSwift(res)'));
+  });
+
+  test('ffi codec has no branch for sealed classes', () {
+    final sink = StringBuffer();
+    const swiftOptions = InternalSwiftOptions(swiftOut: '', useFfi: true);
+    const generator = SwiftGenerator();
+    generator.generate(
+      swiftOptions,
+      buildSealedClassRoot(),
+      sink,
+      dartPackageName: DEFAULT_PACKAGE_NAME,
+    );
+    final code = sink.toString();
+
+    expect(code, contains('} else if (value is CircleBridge) {'));
+    expect(code, isNot(contains('} else if (value is ShapeBridge) {')));
+    expect(code, contains('} else if (value is Circle) {'));
+    expect(code, isNot(contains('} else if (value is Shape) {')));
+  });
+
+  test('ffi bridge without fields inherits init', () {
+    final sink = StringBuffer();
+    const swiftOptions = InternalSwiftOptions(swiftOut: '', useFfi: true);
+    const generator = SwiftGenerator();
+    generator.generate(
+      swiftOptions,
+      buildSealedClassRoot(),
+      sink,
+      dartPackageName: DEFAULT_PACKAGE_NAME,
+    );
+    final code = sink.toString();
+
+    expect(code, contains(RegExp(r'@objc class CircleBridge: ShapeBridge \{\s*@objc init\(')));
+    expect(code, isNot(contains(RegExp(r'@objc class ShapeBridge: NSObject \{\s*@objc init\('))));
+    expect(
+      code,
+      isNot(contains(RegExp(r'@objc class EmptyShapeBridge: ShapeBridge \{\s*@objc init\('))),
+    );
+  });
+
   test('ffi codec is private to its file', () {
     final root = Root(apis: <Api>[], classes: <Class>[], enums: <Enum>[]);
     final sink = StringBuffer();

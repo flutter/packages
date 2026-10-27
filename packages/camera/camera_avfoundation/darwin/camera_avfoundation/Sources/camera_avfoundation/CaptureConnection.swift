@@ -11,7 +11,12 @@ protocol CaptureConnection: NSObjectProtocol {
   var isVideoMirrored: Bool { get set }
 
   /// Corresponds to the `videoOrientation` property of `AVCaptureConnection`
+  @available(iOS, deprecated: 17.0, renamed: "videoRotationAngle")
   var videoOrientation: AVCaptureVideoOrientation { get set }
+
+  /// Corresponds to the `videoRotationAngle` property of `AVCaptureConnection`
+  @available(iOS 17.0, *)
+  var videoRotationAngle: CGFloat { get set }
 
   /// Corresponds to the `inputPorts` property of `AVCaptureConnection`
   var inputPorts: [AVCaptureInput.Port] { get }
@@ -20,7 +25,12 @@ protocol CaptureConnection: NSObjectProtocol {
   var isVideoMirroringSupported: Bool { get }
 
   /// Corresponds to the `supportsVideoOrientation` property of `AVCaptureConnection`
+  @available(iOS, deprecated: 17.0, renamed: "isVideoRotationAngleSupported(_:)")
   var isVideoOrientationSupported: Bool { get }
+
+  /// Corresponds to the `isVideoRotationAngleSupported(_:)` method of `AVCaptureConnection`
+  @available(iOS 17.0, *)
+  func isVideoRotationAngleSupported(_ videoRotationAngle: CGFloat) -> Bool
 
   /// Corresponds to the preferredVideoStabilizationMode property of `AVCaptureConnection`
   var preferredVideoStabilizationMode: AVCaptureVideoStabilizationMode { get set }

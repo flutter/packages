@@ -8,10 +8,14 @@ import UIKit
 
 @testable import image_picker_ios
 
+#if canImport(image_picker_ios_objc)
+  @testable import image_picker_ios_objc
+#endif
+
 @Suite
 struct PickerSaveImageToPathOperationTests {
   private var testBundle: Bundle {
-    Bundle(for: ImagePickerTestImages.self)
+    ImagePickerTestImages.bundle
   }
 
   private func pickerItem(forResource name: String, ext: String) throws -> FakePickerItem {
