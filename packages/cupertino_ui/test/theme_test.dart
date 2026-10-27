@@ -228,6 +228,15 @@ void main() {
     final NoDefaultCupertinoThemeData c = a.copyWith(brightness: Brightness.light);
     expect(a, equals(b));
     expect(a, isNot(c));
+
+    const red = NoDefaultCupertinoThemeData(selectionHandleColor: CupertinoColors.systemRed);
+    const blue = NoDefaultCupertinoThemeData(selectionHandleColor: CupertinoColors.systemBlue);
+    expect(red, isNot(blue));
+    expect(red, const NoDefaultCupertinoThemeData(selectionHandleColor: CupertinoColors.systemRed));
+    expect(
+      red.hashCode,
+      const NoDefaultCupertinoThemeData(selectionHandleColor: CupertinoColors.systemRed).hashCode,
+    );
   });
 
   late Brightness currentBrightness;
@@ -283,18 +292,6 @@ void main() {
   }
 
   currentBrightness = Brightness.light;
-  test('NoDefaultCupertinoThemeData equality includes selectionHandleColor', () {
-    const red = NoDefaultCupertinoThemeData(selectionHandleColor: CupertinoColors.systemRed);
-    const blue = NoDefaultCupertinoThemeData(selectionHandleColor: CupertinoColors.systemBlue);
-
-    expect(red, isNot(blue));
-    expect(red, const NoDefaultCupertinoThemeData(selectionHandleColor: CupertinoColors.systemRed));
-    expect(
-      red.hashCode,
-      const NoDefaultCupertinoThemeData(selectionHandleColor: CupertinoColors.systemRed).hashCode,
-    );
-  });
-
   group('light colors', dynamicColorsTestGroup);
 
   currentBrightness = Brightness.dark;
