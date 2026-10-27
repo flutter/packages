@@ -1600,7 +1600,7 @@ void main() {
         ),
     );
     await gesture.up();
-  }, skip: kIsWeb); // https://github.com/flutter/flutter/issues/100587
+  }, skip: kIsWeb); // [intended] InkSparkle is not used on the web.
 
   testWidgets('DataTable can render inside an AlertDialog', (WidgetTester tester) async {
     await tester.pumpWidget(
