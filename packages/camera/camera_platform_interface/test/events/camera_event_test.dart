@@ -452,4 +452,29 @@ void main() {
       expect(event.hashCode, expectedHashCode);
     });
   });
+
+  group('VideoRecordedEvent tests', () {
+    test('Equal when camera, file path and duration match', () {
+      final first = VideoRecordedEvent(1, XFile('/tmp/video.mp4'), const Duration(seconds: 5));
+      final second = VideoRecordedEvent(1, XFile('/tmp/video.mp4'), const Duration(seconds: 5));
+
+      expect(first, second);
+      expect(first.hashCode, second.hashCode);
+    });
+
+    test('Not equal when the file path differs', () {
+      final first = VideoRecordedEvent(1, XFile('/tmp/first.mp4'), null);
+      final second = VideoRecordedEvent(1, XFile('/tmp/second.mp4'), null);
+
+      expect(first, isNot(second));
+    });
+
+    test('Round-trips through JSON as an equal event', () {
+      final event = VideoRecordedEvent(1, XFile('/tmp/video.mp4'), const Duration(seconds: 5));
+      final decoded = VideoRecordedEvent.fromJson(event.toJson());
+
+      expect(decoded, event);
+      expect(decoded.hashCode, event.hashCode);
+    });
+  });
 }
