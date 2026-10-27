@@ -151,7 +151,7 @@ void main() {
     final XFile file = await controller.stopVideoRecording();
     final int postStopTime = DateTime.now().millisecondsSinceEpoch - recordingStart;
 
-    final videoFile = File(file.path);
+    final videoFile = File.fromUri(Uri.parse(file.uri));
     final videoController = VideoPlayerController.file(videoFile);
     await videoController.initialize();
     final int duration = videoController.value.duration.inMilliseconds;
@@ -195,7 +195,7 @@ void main() {
     final XFile file = await controller.stopVideoRecording();
     final int recordingTime = DateTime.now().millisecondsSinceEpoch - recordingStart;
 
-    final videoFile = File(file.path);
+    final videoFile = File.fromUri(Uri.parse(file.uri));
     final videoController = VideoPlayerController.file(videoFile);
     await videoController.initialize();
     final int duration = videoController.value.duration.inMilliseconds;
@@ -234,7 +234,7 @@ void main() {
 
     final XFile file = await controller.stopVideoRecording();
 
-    final videoFile = File(file.path);
+    final videoFile = File.fromUri(Uri.parse(file.uri));
     final videoController = VideoPlayerController.file(videoFile);
     await videoController.initialize();
     final int duration = videoController.value.duration.inMilliseconds;
@@ -280,7 +280,7 @@ void main() {
     expect(file, isNotNull);
 
     // Ensure the video was saved correctly
-    final videoFile = File(file.path);
+    final videoFile = File.fromUri(Uri.parse(file.uri));
     expect(videoFile.existsSync(), isTrue);
     expect(videoFile.lengthSync(), greaterThan(0));
 

@@ -4,6 +4,7 @@
 
 import 'package:camera/camera.dart';
 import 'package:camera_platform_interface/camera_platform_interface.dart';
+import 'package:cross_file_io/cross_file_io.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -118,10 +119,10 @@ class FakeController extends ValueNotifier<CameraValue> implements CameraControl
   Future<void> stopImageStream() async {}
 
   @override
-  Future<XFile> stopVideoRecording() async => XFile('');
+  Future<XFile> stopVideoRecording() async => XFile.fileSystem(path: '');
 
   @override
-  Future<XFile> takePicture() async => XFile('');
+  Future<XFile> takePicture() async => XFile.fileSystem(path: '');
 
   @override
   Future<void> unlockCaptureOrientation() async {}
@@ -156,6 +157,7 @@ class FakeController extends ValueNotifier<CameraValue> implements CameraControl
 }
 
 void main() {
+  CrossFileIO.registerWith();
   group('RotatedBox (Android only)', () {
     testWidgets(
       'when recording in DeviceOrientaiton.portraitUp, rotatedBox should not be rotated',

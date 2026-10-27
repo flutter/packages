@@ -173,3 +173,20 @@ For a more elaborate usage example see [here](https://github.com/flutter/package
 [4]: https://pub.dev/packages/camera_android
 [5]: https://pub.dev/packages/camera_android#usage
 [6]: https://pub.dev/packages/camera_android_camerax#allowing-image-streaming-in-the-background
+
+## Migrating to `camera` 0.13
+
+This release adopts `cross_file` 0.4.0, including its federated implementations.
+Update explicitly selected camera implementations, including `camera_windows`,
+to versions that use `camera_platform_interface` 3.0.0.
+
+Captured photos and videos still return `XFile`. Native implementations return
+`FileSystemXFile`; the web implementation returns `ScopedStorageXFile`.
+
+* Replace `file.path` with `file.uri` when passing a URI to a network image or
+  video player. On native platforms, use `File.fromUri(Uri.parse(file.uri))`, or
+  access `(file as FileSystemXFile).path` when a file-system path is required.
+* Replace `file.name` with `await file.name()`. The result may be null.
+* `XFile.saveTo`, `XFile.fromData`, and `XFile.mimeType` were removed. See the
+  [cross_file migration notes](https://pub.dev/packages/cross_file/changelog#040)
+  for platform-specific replacements.

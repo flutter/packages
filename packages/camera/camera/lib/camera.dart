@@ -9,10 +9,12 @@ export 'package:camera_platform_interface/camera_platform_interface.dart'
         CameraLensDirection,
         CameraLensType,
         ExposureMode,
+        FileSystemXFile,
         FlashMode,
         FocusMode,
         ImageFormatGroup,
         ResolutionPreset,
+        ScopedStorageXFile,
         VideoStabilizationMode,
         XFile;
 

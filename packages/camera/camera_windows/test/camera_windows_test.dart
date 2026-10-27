@@ -2,20 +2,25 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'dart:io';
+
 import 'package:async/async.dart';
 import 'package:camera_platform_interface/camera_platform_interface.dart';
 import 'package:camera_windows/camera_windows.dart';
 import 'package:camera_windows/src/messages.g.dart';
+import 'package:cross_file_io/cross_file_io.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
+import 'package:path/path.dart' as p;
 
 import 'camera_windows_test.mocks.dart';
 
 @GenerateNiceMocks(<MockSpec<Object>>[MockSpec<CameraApi>()])
 void main() {
+  CrossFileIO.registerWith();
   TestWidgetsFlutterBinding.ensureInitialized();
 
   group('$CameraWindows()', () {
@@ -321,8 +326,37 @@ void main() {
         final XFile file = await plugin.takePicture(cameraId);
 
         // Assert
-        expect(file.path, '/test/path.jpg');
+        expect((file as FileSystemXFile).path, '/test/path.jpg');
       });
+
+      for (final captureVideo in <bool>[false, true]) {
+        test(
+          'reads captured ${captureVideo ? 'video' : 'photo'} with an escaped file URI',
+          () async {
+            final Directory directory = await Directory.systemTemp.createTemp('camera_windows_');
+            addTearDown(() => directory.delete(recursive: true));
+            final source = File(
+              p.join(directory.path, 'capture é #1.${captureVideo ? 'mp4' : 'jpg'}'),
+            );
+            const bytes = <int>[1, 2, 3, 255];
+            await source.writeAsBytes(bytes);
+            if (captureVideo) {
+              when(mockApi.stopVideoRecording(cameraId)).thenAnswer((_) async => source.path);
+            } else {
+              when(mockApi.takePicture(cameraId)).thenAnswer((_) async => source.path);
+            }
+
+            final XFile result = captureVideo
+                ? await plugin.stopVideoRecording(cameraId)
+                : await plugin.takePicture(cameraId);
+
+            expect(result, isA<FileSystemXFile>());
+            expect(result.uri, source.uri.toString());
+            expect(await result.readAsBytes(), bytes);
+            expect(await result.name(), p.basename(source.path));
+          },
+        );
+      }
 
       test('prepare for video recording should no-op', () async {
         // Act
@@ -370,7 +404,7 @@ void main() {
         final XFile file = await plugin.stopVideoRecording(cameraId);
 
         // Assert
-        expect(file.path, '/test/path.mp4');
+        expect((file as FileSystemXFile).path, '/test/path.mp4');
       });
 
       test('Should throw UnsupportedError when pause video recording is called', () async {
